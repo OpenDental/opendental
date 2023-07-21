@@ -24,21 +24,33 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrPatientConfidentialPrefEdit));
-			this.butSave = new System.Windows.Forms.Button();
+			this.butCancel = new System.Windows.Forms.Button();
+			this.butOK = new System.Windows.Forms.Button();
 			this.comboConfidentialContact = new System.Windows.Forms.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(267, 77);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 23);
-			this.butSave.TabIndex = 9;
-			this.butSave.Text = "&Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(345, 81);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 23);
+			this.butCancel.TabIndex = 8;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(264, 81);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 23);
+			this.butOK.TabIndex = 9;
+			this.butOK.Text = "OK";
+			this.butOK.UseVisualStyleBackColor = true;
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// comboConfidentialContact
 			// 
@@ -60,11 +72,12 @@
 			// 
 			// FormEhrPatientConfidentialPrefEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(362, 112);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(432, 112);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.comboConfidentialContact);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrPatientConfidentialPrefEdit";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -75,7 +88,9 @@
 		}
 
 		#endregion
-		private System.Windows.Forms.Button butSave;
+
+		private System.Windows.Forms.Button butCancel;
+		private System.Windows.Forms.Button butOK;
 		private System.Windows.Forms.ComboBox comboConfidentialContact;
 		private System.Windows.Forms.Label label3;
 	}

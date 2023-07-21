@@ -78,7 +78,7 @@ namespace OpenDental {
 		}
 
 		private void menuItemSuppliers_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SupplierEdit)) {
+			if(!Security.IsAuthorized(Permissions.SupplierEdit)) {
 				return;
 			}
 			using FormSuppliers formSuppliers=new FormSuppliers();
@@ -86,16 +86,16 @@ namespace OpenDental {
 		}
 
 		private void menuItemCategories_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.DefEdit)) {
+			if(!Security.IsAuthorized(Permissions.DefEdit)) {
 				return;
 			}
 			using FormDefinitions formDefinitions=new FormDefinitions(DefCat.SupplyCats);
 			formDefinitions.ShowDialog();
-			SecurityLogs.MakeLogEntry(EnumPermType.DefEdit,0,"Definitions.");
+			SecurityLogs.MakeLogEntry(Permissions.DefEdit,0,"Definitions.");
 		}
 
 		private void butEquipment_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.EquipmentSetup)) {
+			if(!Security.IsAuthorized(Permissions.EquipmentSetup)) {
 				return;
 			}
 			using FormEquipment formEquipment=new FormEquipment();
@@ -115,7 +115,7 @@ namespace OpenDental {
 		private void butPrint_Click(object sender,EventArgs e) {
 			_pagesPrinted=0;
 			_isHeadingPrinted=false;
-			PrinterL.TryPrintOrDebugRpPreview(pd_PrintPage,Lan.g(this,"Supplies needed list printed"));
+			PrinterL.TryPrintOrDebugRpPreview(pd_PrintPage,Lan.g(this,"Supplies needed list printed"),PrintoutOrientation.Portrait);
 		}
 
 		private void pd_PrintPage(object sender,System.Drawing.Printing.PrintPageEventArgs e) {
@@ -150,5 +150,13 @@ namespace OpenDental {
 			}
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
+		
+
+		
+	
 	}
 }

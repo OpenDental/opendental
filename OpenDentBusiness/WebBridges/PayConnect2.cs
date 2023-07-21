@@ -86,9 +86,6 @@ namespace OpenDentBusiness {
 				req.CardToken=token;
 				req.Expiry=ccExpiration;
 				req.CardHolder=pat.GetNameFLnoPref();
-				if(!zipCode.IsNullOrEmpty()) {
-					req.ZipCode=zipCode;
-				}
 				response=PostCreateTransaction(req,clinicNum);
 			}
 			return response;
@@ -172,6 +169,7 @@ namespace OpenDentBusiness {
 		}
 
 		public static PayConnect2Response PostEmbedSession(EmbedSessionRequest requestBody,long clinicNum) {
+			requestBody.ClientType="Patient";//This forces Surcharge fees to always show in the iFrame.
 			string body=JsonConvert.SerializeObject(requestBody,new JsonSerializerSettings {NullValueHandling=NullValueHandling.Ignore});
 			List<string> listHeaders=GetHeadersForApi(clinicNum);
 			PayConnect2Response response=Request(ApiRoute.EmbedSession,HttpMethod.Post,listHeaders,body);
@@ -185,13 +183,6 @@ namespace OpenDentBusiness {
 			return response;
 		}
 
-		/// <summary>Throws exeptions.</summary>
-		public static PayConnect2Response GetMerchantInfo(long clinicNum,string merchantSecret) {
-			List<string> listHeaders=GetHeadersForApi(clinicNum,merchantSecret);
-			PayConnect2Response response=Request(ApiRoute.GetMerchantInfo,HttpMethod.Get,listHeaders,"");
-			return response;
-		}
-
 		///<summary>Handles Debug/Introspection overrides</summary>
 		public static string GetApiBaseUrl() {
 			string apiUrl=Introspection.GetOverride(Introspection.IntrospectionEntity.PayConnectRestURL,"https://api.dentalxchange.com/payments");
@@ -201,13 +192,10 @@ namespace OpenDentBusiness {
 			return apiUrl;
 		}
 
-		public static List<string> GetHeadersForApi(long clinicNum,string secret="") {
+		public static List<string> GetHeadersForApi(long clinicNum) {
 			List<string> retVal=new List<string>();
 			retVal.Add("API-Key: "+GetPayConnect2ApiKey());
-			if(string.IsNullOrEmpty(secret)) {
-				secret=GetApiSecretForClinic(clinicNum);
-			}
-			retVal.Add("Secret: "+secret);
+			retVal.Add("Secret: "+GetApiSecretForClinic(clinicNum));
 			return retVal;
 		}
 
@@ -317,9 +305,6 @@ namespace OpenDentBusiness {
 				case ApiRoute.CreateTerminalTransaction:
 					apiUrl+=$"/terminals/transactions";
 					break;
-				case ApiRoute.GetMerchantInfo:
-					apiUrl+=$"/merchants";
-					break;
 				default:
 					break;
 			}
@@ -336,7 +321,6 @@ namespace OpenDentBusiness {
 			VoidTransaction,
 			GetStatus,
 			CreateTerminalTransaction,
-			GetMerchantInfo,
 		}
 
 		#region Converters
@@ -380,10 +364,6 @@ namespace OpenDentBusiness {
 					payConnect2Response.TerminalTransactionResponse=JsonConvert.DeserializeObject<TerminalTransactionResponse>(rawResponse,settings);
 					payConnect2Response.ResponseType=ResponseType.TerminalTransaction;
 					break;
-				case ApiRoute.GetMerchantInfo:
-					payConnect2Response.GetMerchantInfoResponse=JsonConvert.DeserializeObject<GetMerchantInfoResponse>(rawResponse,settings);
-					payConnect2Response.ResponseType=ResponseType.MerchantInfo;
-					break;
 				default:
 						break;
 			}
@@ -393,7 +373,7 @@ namespace OpenDentBusiness {
 		/// <summary>Throws exceptions. The PayConnect2 API accepts an integer amount field in total cents i.e. $13.62 should be sent as 1362. This method takes in a double as that is what Open Dental generally uses to store dollar amounts and multiplies it by 100 to move the decimal 2 places and then casts to an int.</summary>
 		public static int FormatAmountForApi(double amount) {
 			try {
-				return Convert.ToInt32(amount*100);
+				return (int)(amount*100);
 			}
 			catch(Exception ex) {
 				throw new ODException("Unable to convert transaction amount for PayConnect.",ex);
@@ -485,7 +465,6 @@ namespace OpenDentBusiness {
 					payConnectResponse.StatusCode="0";//0 indicates success
 					payConnectResponse.RefNumber=refundResponse.ReferenceId;
 					payConnectResponse.Amount=((decimal)refundResponse.AmountRefunded)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
-					payConnectResponse.AmountSurcharged=((decimal)refundResponse.AmountAuthorized-refundResponse.Amount)/100;//This response type doesn't include a line item for surcharge, so we have to subtract the difference to get it.
 					payConnectResponse.AuthCode=refundResponse.AuthCode;
 					payConnectResponse.MerchantId=refundResponse.MerchantId.ToString();
 					if(refundResponse.PaymentMethod!=null) {
@@ -497,20 +476,20 @@ namespace OpenDentBusiness {
 					break;
 				case ResponseType.IFrame:
 					iFrameResponse iFrameResponse=response.iFrameResponse;
-					//Use IFrameStatus if we did not get a 'success' back. This would mean that they did not complete the transation in the iFrame.
-					payConnectResponse.Description=iFrameResponse.IFrameStatus;
-					if(iFrameResponse.IFrameStatus.ToLower()!="success") {
+					payConnectResponse.Description=iFrameResponse.Status;
+					if(iFrameResponse.Status.ToLower()!="success") {
 						payConnectResponse.StatusCode="";
 						break;
 					}
-					payConnectResponse.Description=iFrameResponse.Response.TransactionStatus;
 					payConnectResponse.PaymentToken=iFrameResponse.Response.CardToken;
 					payConnectResponse.RefNumber=iFrameResponse.Response.ReferenceId;
 					int year=int.Parse(iFrameResponse.Response.ExpiryYear);
 					int month=int.Parse(iFrameResponse.Response.ExpiryMonth);
 					payConnectResponse.TokenExpiration=new DateTime(year,month,1);
 					payConnectResponse.Amount=((decimal)iFrameResponse.Response.Amount)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
-					payConnectResponse.StatusCode="0";//0 indicates success
+					if(iFrameResponse.Status.ToLower()=="success") {
+						payConnectResponse.StatusCode="0";
+					}
 					payConnectResponse.SurchargePercent=iFrameResponse.Response.SurchargePercent;
 					payConnectResponse.AmountSurcharged=((decimal)iFrameResponse.Response.AmountSurcharged)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
 					break;
@@ -530,30 +509,6 @@ namespace OpenDentBusiness {
 						payConnectResponse.TransType=PayConnectResponse.TransactionType.Sale;
 					}
 					break;
-				case ResponseType.GetStatus:
-					GetStatusResponse statusResponse=response.GetStatusResponse;
-					payConnectResponse.Description=statusResponse.Status;
-					payConnectResponse.StatusCode="0";//0 indicates success
-					payConnectResponse.RefNumber=statusResponse.ReferenceId;
-					payConnectResponse.Amount=((decimal)statusResponse.Amount)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
-					payConnectResponse.SurchargePercent=statusResponse.SurchargePercent;
-					payConnectResponse.AmountSurcharged=((decimal)statusResponse.AmountSurcharged)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
-					payConnectResponse.AuthCode=statusResponse.AuthCode;
-					payConnectResponse.MerchantId=statusResponse.MerchantId.ToString();
-					payConnectResponse.PaymentToken=statusResponse.PaymentMethod.CardPaymentMethod.CardToken;
-					payConnectResponse.CardType=statusResponse.PaymentMethod.CardPaymentMethod.Network.ToString();
-					payConnectResponse.CardNumber=statusResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
-					if(statusResponse.TransType==TransactionType.Sale) {
-						payConnectResponse.TransType=PayConnectResponse.TransactionType.Sale;
-					}
-					else if(statusResponse.TransType==TransactionType.AuthorizeOnly) {
-						payConnectResponse.TransType=PayConnectResponse.TransactionType.Authorize;
-					}
-					else if(statusResponse.TransType==TransactionType.Refund) {
-						payConnectResponse.TransType=PayConnectResponse.TransactionType.Refund;
-					}
-					
-					break;
 				default:
 					break;
 			}
@@ -567,7 +522,7 @@ namespace OpenDentBusiness {
 
 		[DataContract]
 		public class CreateTransactionRequest {
-			///<summary>Identify if transaction is Recurring or OneTime</summary>
+			///<summary>Identidy if transaction is Recurring or OneTime</summary>
 			[DataMember(Name = "frequency"),JsonConverter(typeof(StringEnumConverter))]
 			public TransactionFrequency Frequency;
 			///<summary>Type of transaction</summary>
@@ -594,14 +549,11 @@ namespace OpenDentBusiness {
 			///<summary>Patient for the payment.</summary>
 			[DataMember(Name = "patient",IsRequired=false)]
 			public PayConnectPatient Patient;
-			///<summary>ZipCode of the card holder</summary>
-			[DataMember(Name = "zipCode",IsRequired=false)]
-			public string ZipCode;
 		}
 
 		[DataContract]
 		public class CreateSurchargeTransactionRequest {
-			///<summary>Identify if transaction is Recurring or OneTime</summary>
+			///<summary>Identidy if transaction is Recurring or OneTime</summary>
 			[DataMember(Name = "frequency")]
 			public TransactionFrequency Frequency;
 			///<summary>Type of transaction</summary>
@@ -723,9 +675,9 @@ namespace OpenDentBusiness {
 			///<summary>Base64 string representation of the signature image. Default is Tokenizer. Required.</summary>
 			[DataMember(Name = "type")]
 			public IframeType Type;
-			///<summary>Show swiper button. False by default.</summary>
-			[DataMember(Name = "swiper")]
-			public bool Swiper;
+			///<summary>The consumer of the iFrame. Set to "Patient" to display surcharge info in iFrame.</summary>
+			[DataMember(Name = "clientType")]
+			public string ClientType;
 			///<summary>Amount in cents. If the amount is provided, Payment iFrame will disable the amount field.</summary>
 			[DataMember(Name = "amount",IsRequired=false)]
 			public int Amount;
@@ -792,7 +744,6 @@ namespace OpenDentBusiness {
 			public iFrameResponse iFrameResponse;
 			public TerminalTransactionResponse TerminalTransactionResponse;
 			public HttpStatusCode httpStatusCode;
-			public GetMerchantInfoResponse GetMerchantInfoResponse;
 		}
 
 		[DataContract]
@@ -1200,7 +1151,7 @@ namespace OpenDentBusiness {
 			///<summary>Transaction origination point</summary>
 			[DataMember(Name = "source")]
 			public TransactionSource Source;
-			///<summary>Raw response from the gateway</summary>
+			///<summary>Raw response form the gateway</summary>
 			[DataMember(Name = "gatewayResponse")]
 			public object GatewayResponse;
 			///<summary>Merchant identification number</summary>
@@ -1418,11 +1369,8 @@ namespace OpenDentBusiness {
 
 		[DataContract]
 		public class iFrameResponse {
-			///<summary>This status field contains the last known 'state' of the iFrame window. Known statuses: 
-			///ONLOAD - the iFrame has loaded. 
-			///SUCCESS - a request has been submitted successfully via the iFrame window. This does NOT correspond to the result of said request.</summary>
 			[DataMember(Name="status")]
-			public string IFrameStatus;
+			public string Status;
 			[DataMember(Name="response")]
 			public iFrameSuccessResponse Response;
 		}
@@ -1455,62 +1403,6 @@ namespace OpenDentBusiness {
 			///<summary>Percentage of the amount surcharged</summary>
 			[DataMember(Name="surchargePercent")]
 			public int SurchargePercent;
-			///<summary>Status - The actual status of the transaction being ran by PayConnect.</summary>
-			[DataMember(Name="status")]
-			public string TransactionStatus;
-		}
-
-		///<summary>https://staging-developer.dentalxchange.com/payment-api#tag/Merchant/operation/merchant-info</summary>
-		[DataContract]
-		public class GetMerchantInfoResponse {
-			///<summary>Merchant identification number</summary>
-			[DataMember(Name="merchantId")]
-			public int MerchantId;
-			///<summary>Name of the merchant</summary>
-			[DataMember(Name="name")]
-			public string Name;
-			///<summary>Street line 1 in merchant address</summary>
-			[DataMember(Name="address1")]
-			public string Address1;
-			///<summary>Street line 2 in merchant address</summary>
-			[DataMember(Name="address2")]
-			public string Address2;
-			///<summary>City in merchant address</summary>
-			[DataMember(Name="city")]
-			public string City;
-			///<summary>State in merchant address</summary>
-			[DataMember(Name="state")]
-			public string State;
-			///<summary>ZipCode in merchant address</summary>
-			[DataMember(Name="zipCode")]
-			public string ZipCode;
-			///<summary>Phone number of merchant</summary>
-			[DataMember(Name="phoneNumber")]
-			public string PhoneNumber;
-			///<summary>DentalXChange group identifier</summary>
-			[DataMember(Name="dxcGroupId")]
-			public int DxcGroupId;
-			///<summary>Email address of merchant</summary>
-			[DataMember(Name="email")]
-			public string Email;
-			///<summary>Reporting emails to send the reports</summary>
-			[DataMember(Name="reportingEmails")]
-			public string[] ReportingEmails;
-			///<summary>Refund without reference is enabled if true</summary>
-			[DataMember(Name="refundWithoutReferenceEnabled")]
-			public bool RefundWithoutReferenceEnabled;
-			///<summary>Text-to-Pay feature is enabled if true</summary>
-			[DataMember(Name="text2PayEnabled")]
-			public bool Text2PayEnabled;
-			///<summary>Enum: Active,Inactive</summary>
-			[DataMember(Name="status")]
-			public string Status;
-			///<summary>Date the merchant was created</summary>
-			[DataMember(Name="createdAt")]
-			public string CreatedAt;
-			///<summary>Date the merchant was updated</summary>
-			[DataMember(Name="updatedAt")]
-			public string UpdatedAt;
 		}
 		#endregion Response Objects
 
@@ -1536,16 +1428,14 @@ namespace OpenDentBusiness {
 			Text2Pay,
 		}
 
-		[JsonConverter(typeof(StringEnumConverterWithDefault<CardNetwork>),CardNetwork.Unrecognized)]
+		[JsonConverter(typeof(StringEnumConverter))]
 		public enum CardNetwork {
-			Unrecognized,//Used when the json string value doesn't match any value in this enum.
 			Amex,
 			Discover,
 			Mastercard,
 			[Description("Non-co-branded debit card")]
 			NonCoBrandedDebitCard,
 			Visa,
-			Unknown
 		}
 
 		[JsonConverter(typeof(StringEnumConverter))]
@@ -1583,8 +1473,6 @@ namespace OpenDentBusiness {
 			[Description("Get Status")]
 			GetStatus,
 			TerminalTransaction,
-			[Description("Get Merchant Info")]
-			MerchantInfo,
 		}
 		#endregion Request/Response Objects
 
@@ -1599,42 +1487,5 @@ namespace OpenDentBusiness {
 			return Mock.Response;
 		}
 		#endregion
-
-		///<summary>Custom string to enum json converter that uses a default enum value when the string doesn't match any values in enum type T.
-		///To use, apply a JsonConverter attribute to an enum type like this:
-		///[JsonConverter(typeof(StringEnumConverterWithDefault<CardNetwork>),CardNetwork.Unknown)]
-		///The type of this class with the enum type assigned to generic type T is the first argument, and the desired default value is the second argument. 
-		///We require type T to be a struct and Enum because using just Enum references the abstract Enum class. Including struct requires it to also be a value
-		///type which is what specific enum types are.</summary>
-		private class StringEnumConverterWithDefault<T> : StringEnumConverter where T : struct,Enum {
-			///<summary>The default enum value to use when the string value doesn't match any values in enum type T</summary>
-			private T _enumValueDefault;
-
-			///<summary>Parameterless constructor throws because failing to provide the T defaultValue argument
-			///when applying the attribute will not cause syntax or build errors and deserialization will fail silently.</summary>
-			public StringEnumConverterWithDefault() {
-				throw new InvalidOperationException("Default value must be provided for StringEnumConverterWithDefault.");
-			}
-
-			///<summary>NewtonSoft.Json.JsonConverter calls this constructor when we provide an array of arguments
-			///to the attribute.</summary>
-			public StringEnumConverterWithDefault(T defaultEnumValue) {
-				_enumValueDefault=defaultEnumValue;
-			}
-
-			///<summary>NewtonSoft.Json.JsonConverter calls this to convert string values to Enum type T.</summary>
-			public override object ReadJson(JsonReader jsonReader,Type type,object enumValueCurrent,JsonSerializer jsonSerializer) {
-				string jsonValue=null;
-				if(jsonReader.Value!=null) {
-					jsonValue=jsonReader.Value.ToString().Trim();
-				}
-				bool didFindMatch=Enum.TryParse(jsonValue,ignoreCase:true,out T enumValueMatch);
-				if(didFindMatch) {
-					return enumValueMatch;
-				}
-				return _enumValueDefault;
-			}
-		}
-
 	}
 }

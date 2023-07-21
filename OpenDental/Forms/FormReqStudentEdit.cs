@@ -30,7 +30,7 @@ namespace OpenDental{
 					//but this should never happen
 					MsgBox.Show(this,"Students may only edit their own requirements.");
 					butDelete.Enabled=false;
-					butSave.Enabled=false;
+					butOK.Enabled=false;
 				}
 				else{//the student matches
 					butDelete.Enabled=false;
@@ -43,7 +43,7 @@ namespace OpenDental{
 			else {//A student is not logged in
 				if(provider!=null && provider.IsInstructor && ReqStudentCur.InstructorNum!=0 && ReqStudentCur.InstructorNum!=provider.ProvNum) {
 					butDelete.Enabled=false;
-					butSave.Enabled=false;
+					butOK.Enabled=false;
 				}
 			}
 			textStudent.Text=Providers.GetLongDesc(ReqStudentCur.ProvNum);
@@ -106,7 +106,7 @@ namespace OpenDental{
 		}
 
 		private void butDelete_Click(object sender, System.EventArgs e) {
-			//if(!MsgBox.Show(this,true,"Delete this student requirement?  This is typically handled by using the sync feature from requirements needed.")){
+			//if(!MsgBox.Show(this,true,"Delete this student requirement?  This is typically handled by using the synch feature from requirements needed.")){
 			//	return;
 			//}
 			try{
@@ -118,7 +118,7 @@ namespace OpenDental{
 			}
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(textDateCompleted.Text!=""){
 				try{
 					DateTime.Parse(textDateCompleted.Text);
@@ -158,5 +158,53 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -97,9 +97,9 @@
 			this.menuItemIncomeTransfer = new System.Windows.Forms.MenuItem();
 			this.menuPrepayment = new System.Windows.Forms.MenuItem();
 			this.menuItemSendPaymentToDevice = new System.Windows.Forms.MenuItem();
-			this.menuItemSendMsgToPay = new System.Windows.Forms.MenuItem();
 			this.contextMenuPayPlan = new System.Windows.Forms.ContextMenu();
 			this.menuItemDynamicPayPlan = new System.Windows.Forms.MenuItem();
+			this.menuItemPatPayPlan = new System.Windows.Forms.MenuItem();
 			this.menuItemInsPayPlan = new System.Windows.Forms.MenuItem();
 			this.contextMenuAdjust = new System.Windows.Forms.ContextMenu();
 			this.menuItemSalesTax = new System.Windows.Forms.MenuItem();
@@ -108,10 +108,6 @@
 			this.menuItemAddAdj = new System.Windows.Forms.MenuItem();
 			this.menuItemAddRefund = new System.Windows.Forms.MenuItem();
 			this.menuItemDeletePayPlanCharge = new System.Windows.Forms.MenuItem();
-			this.menuItemSnipAttachment = new System.Windows.Forms.MenuItem();
-			this.menuItemSelectImage = new System.Windows.Forms.MenuItem();
-			this.menuItemPasteAttachment = new System.Windows.Forms.MenuItem();
-			this.menuItemAttachmentHistory = new System.Windows.Forms.MenuItem();
 			this.menuItemAddRefundWorkNotPerformed = new System.Windows.Forms.MenuItem();
 			this.groupBoxIndDis = new OpenDental.DashIndividualDiscount();
 			this.groupBoxFamilyIns = new OpenDental.UI.GroupBox();
@@ -184,7 +180,6 @@
 			this.splitContainerParent = new OpenDental.UI.SplitContainer();
 			this.splitterPanel9 = new OpenDental.UI.SplitterPanel();
 			this.splitterPanel10 = new OpenDental.UI.SplitterPanel();
-			this.menuItemEditPayPlanCharge = new System.Windows.Forms.MenuItem();
 			this.panelAging.SuspendLayout();
 			this.panelTotalOwes.SuspendLayout();
 			this.tabControlShow.SuspendLayout();
@@ -716,7 +711,7 @@
 			this.textUrgFinNote.ForeColor = System.Drawing.Color.Red;
 			this.textUrgFinNote.Location = new System.Drawing.Point(0, 20);
 			this.textUrgFinNote.Name = "textUrgFinNote";
-			this.textUrgFinNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.FinancialNotes;
+			this.textUrgFinNote.QuickPasteType = OpenDentBusiness.QuickPasteType.FinancialNotes;
 			this.textUrgFinNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textUrgFinNote.Size = new System.Drawing.Size(178, 77);
 			this.textUrgFinNote.TabIndex = 11;
@@ -743,7 +738,7 @@
 			this.textFinNote.DetectUrls = false;
 			this.textFinNote.Location = new System.Drawing.Point(0, 365);
 			this.textFinNote.Name = "textFinNote";
-			this.textFinNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.FinancialNotes;
+			this.textFinNote.QuickPasteType = OpenDentBusiness.QuickPasteType.FinancialNotes;
 			this.textFinNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textFinNote.Size = new System.Drawing.Size(178, 134);
 			this.textFinNote.TabIndex = 70;
@@ -777,7 +772,6 @@
 			// 
 			// checkShowCommAuto
 			// 
-			this.checkShowCommAuto.BackColor = System.Drawing.SystemColors.Window;
 			this.checkShowCommAuto.Location = new System.Drawing.Point(6, 242);
 			this.checkShowCommAuto.Name = "checkShowCommAuto";
 			this.checkShowCommAuto.Size = new System.Drawing.Size(168, 18);
@@ -787,7 +781,6 @@
 			// 
 			// checkShowCompletePayPlans
 			// 
-			this.checkShowCompletePayPlans.BackColor = System.Drawing.SystemColors.Window;
 			this.checkShowCompletePayPlans.Location = new System.Drawing.Point(6, 265);
 			this.checkShowCompletePayPlans.Name = "checkShowCompletePayPlans";
 			this.checkShowCompletePayPlans.Size = new System.Drawing.Size(168, 18);
@@ -797,7 +790,6 @@
 			// 
 			// checkShowFamilyComm
 			// 
-			this.checkShowFamilyComm.BackColor = System.Drawing.SystemColors.Window;
 			this.checkShowFamilyComm.Location = new System.Drawing.Point(6, 219);
 			this.checkShowFamilyComm.Name = "checkShowFamilyComm";
 			this.checkShowFamilyComm.Size = new System.Drawing.Size(168, 18);
@@ -807,7 +799,6 @@
 			// 
 			// checkShowDetail
 			// 
-			this.checkShowDetail.BackColor = System.Drawing.SystemColors.Window;
 			this.checkShowDetail.Checked = true;
 			this.checkShowDetail.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.checkShowDetail.Location = new System.Drawing.Point(6, 196);
@@ -910,8 +901,7 @@
             this.menuItemAllocateUnearned,
             this.menuItemIncomeTransfer,
             this.menuPrepayment,
-            this.menuItemSendPaymentToDevice,
-            this.menuItemSendMsgToPay});
+            this.menuItemSendPaymentToDevice});
 			this.contextMenuPayment.Popup += new System.EventHandler(this.contextMenuPayment_Popup);
 			// 
 			// menuItemAllocateUnearned
@@ -938,27 +928,28 @@
 			this.menuItemSendPaymentToDevice.Text = "Send Payment to eClipboard";
 			this.menuItemSendPaymentToDevice.Click += new System.EventHandler(this.menuItemSendPaymentToDevice_Click);
 			// 
-			// menuItemSendMsgToPay
-			// 
-			this.menuItemSendMsgToPay.Index = 4;
-			this.menuItemSendMsgToPay.Text = "Send Message-to-Pay";
-			this.menuItemSendMsgToPay.Click += new System.EventHandler(this.menuItemSendMessageToPay_Click);
-			// 
 			// contextMenuPayPlan
 			// 
 			this.contextMenuPayPlan.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItemDynamicPayPlan,
+            this.menuItemPatPayPlan,
             this.menuItemInsPayPlan});
 			// 
 			// menuItemDynamicPayPlan
 			// 
 			this.menuItemDynamicPayPlan.Index = 0;
-			this.menuItemDynamicPayPlan.Text = "Payment Plan";
+			this.menuItemDynamicPayPlan.Text = "Dynamic Payment Plan";
 			this.menuItemDynamicPayPlan.Click += new System.EventHandler(this.MenuItemDynamicPayPlan_Click);
+			// 
+			// menuItemPatPayPlan
+			// 
+			this.menuItemPatPayPlan.Index = 1;
+			this.menuItemPatPayPlan.Text = "Patient Payment Plan";
+			this.menuItemPatPayPlan.Click += new System.EventHandler(this.menuItemPatPayPlan_Click);
 			// 
 			// menuItemInsPayPlan
 			// 
-			this.menuItemInsPayPlan.Index = 1;
+			this.menuItemInsPayPlan.Index = 2;
 			this.menuItemInsPayPlan.Text = "Insurance Payment Plan";
 			this.menuItemInsPayPlan.Click += new System.EventHandler(this.menuItemInsPayPlan_Click);
 			// 
@@ -985,56 +976,27 @@
 			this.contextMenuAcctGrid.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItemAddAdj,
             this.menuItemAddRefund,
-            this.menuItemEditPayPlanCharge,
-            this.menuItemDeletePayPlanCharge,
-            this.menuItemSnipAttachment,
-            this.menuItemSelectImage,
-            this.menuItemPasteAttachment,
-            this.menuItemAttachmentHistory});
+            this.menuItemDeletePayPlanCharge});
 			this.contextMenuAcctGrid.Popup += new System.EventHandler(this.contextMenuAcctGrid_Popup);
 			// 
 			// menuItemAddAdj
 			// 
-			this.menuItemAddAdj.Index = 4;
+			this.menuItemAddAdj.Index = 0;
 			this.menuItemAddAdj.Text = "Add Adjustment";
 			this.menuItemAddAdj.Click += new System.EventHandler(this.menuItemAddAdj_Click);
 			// 
 			// menuItemAddRefund
 			// 
-			this.menuItemAddRefund.Index = 5;
+			this.menuItemAddRefund.Index = 1;
 			this.menuItemAddRefund.Text = "Refund";
 			this.menuItemAddRefund.Click += new System.EventHandler(this.menuItemAddRefund_Click);
 			// 
 			// menuItemDeletePayPlanCharge
 			// 
-			this.menuItemDeletePayPlanCharge.Index = 7;
+			this.menuItemDeletePayPlanCharge.Index = 2;
 			this.menuItemDeletePayPlanCharge.Text = "Delete Charge";
 			this.menuItemDeletePayPlanCharge.Visible = false;
 			this.menuItemDeletePayPlanCharge.Click += new System.EventHandler(this.menuItemDeletePayPlanCharge_Click);
-			// 
-			// menuItemSelectImage
-			// 
-			this.menuItemSelectImage.Index = 0;
-			this.menuItemSelectImage.Text = "Select Attachment for DentalXChange";
-			this.menuItemSelectImage.Click += new System.EventHandler(this.menuItemSelectImage_Click);
-			// 
-			// menuItemSnipAttachment
-			// 
-			this.menuItemSnipAttachment.Index = 1;
-			this.menuItemSnipAttachment.Text = "Snip Attachment for DentalXChange";
-			this.menuItemSnipAttachment.Click += new System.EventHandler(this.menuItemSnipAttachment_Click);
-			// 
-			// menuItemPasteAttachment
-			// 
-			this.menuItemPasteAttachment.Index = 2;
-			this.menuItemPasteAttachment.Text = "Paste Attachment(s) for DentalXChange";
-			this.menuItemPasteAttachment.Click += new System.EventHandler(this.menuItemPasteAttachment_Click);
-			//
-			// menuItemAttachmentHistory
-			//
-			this.menuItemAttachmentHistory.Index = 3;
-			this.menuItemAttachmentHistory.Text = "View Sent Attachments for DentalXChange";
-			this.menuItemAttachmentHistory.Click += new System.EventHandler(this.menuItemAttachmentHistory_Click);
 			// 
 			// menuItemAddRefundWorkNotPerformed
 			// 
@@ -1062,9 +1024,9 @@
 			this.groupBoxFamilyIns.Controls.Add(this.label9);
 			this.groupBoxFamilyIns.Controls.Add(this.textFamSecDed);
 			this.groupBoxFamilyIns.Controls.Add(this.label17);
-			this.groupBoxFamilyIns.Location = new System.Drawing.Point(543, 64);
+			this.groupBoxFamilyIns.Location = new System.Drawing.Point(556, 64);
 			this.groupBoxFamilyIns.Name = "groupBoxFamilyIns";
-			this.groupBoxFamilyIns.Size = new System.Drawing.Size(206, 80);
+			this.groupBoxFamilyIns.Size = new System.Drawing.Size(193, 80);
 			this.groupBoxFamilyIns.TabIndex = 218;
 			this.groupBoxFamilyIns.Text = "Family Insurance";
 			this.groupBoxFamilyIns.Visible = false;
@@ -1072,7 +1034,7 @@
 			// textFamPriMax
 			// 
 			this.textFamPriMax.BackColor = System.Drawing.Color.White;
-			this.textFamPriMax.Location = new System.Drawing.Point(81, 35);
+			this.textFamPriMax.Location = new System.Drawing.Point(72, 35);
 			this.textFamPriMax.Name = "textFamPriMax";
 			this.textFamPriMax.ReadOnly = true;
 			this.textFamPriMax.Size = new System.Drawing.Size(60, 20);
@@ -1082,7 +1044,7 @@
 			// textFamPriDed
 			// 
 			this.textFamPriDed.BackColor = System.Drawing.Color.White;
-			this.textFamPriDed.Location = new System.Drawing.Point(81, 55);
+			this.textFamPriDed.Location = new System.Drawing.Point(72, 55);
 			this.textFamPriDed.Name = "textFamPriDed";
 			this.textFamPriDed.ReadOnly = true;
 			this.textFamPriDed.Size = new System.Drawing.Size(60, 20);
@@ -1091,7 +1053,7 @@
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(76, 16);
+			this.label4.Location = new System.Drawing.Point(74, 16);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(60, 15);
 			this.label4.TabIndex = 66;
@@ -1100,7 +1062,7 @@
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(14, 37);
+			this.label8.Location = new System.Drawing.Point(4, 37);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(66, 15);
 			this.label8.TabIndex = 67;
@@ -1110,7 +1072,7 @@
 			// textFamSecMax
 			// 
 			this.textFamSecMax.BackColor = System.Drawing.Color.White;
-			this.textFamSecMax.Location = new System.Drawing.Point(140, 35);
+			this.textFamSecMax.Location = new System.Drawing.Point(131, 35);
 			this.textFamSecMax.Name = "textFamSecMax";
 			this.textFamSecMax.ReadOnly = true;
 			this.textFamSecMax.Size = new System.Drawing.Size(60, 20);
@@ -1119,9 +1081,9 @@
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(135, 16);
+			this.label9.Location = new System.Drawing.Point(131, 16);
 			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(69, 15);
+			this.label9.Size = new System.Drawing.Size(60, 14);
 			this.label9.TabIndex = 68;
 			this.label9.Text = "Secondary";
 			this.label9.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1129,7 +1091,7 @@
 			// textFamSecDed
 			// 
 			this.textFamSecDed.BackColor = System.Drawing.Color.White;
-			this.textFamSecDed.Location = new System.Drawing.Point(140, 55);
+			this.textFamSecDed.Location = new System.Drawing.Point(131, 55);
 			this.textFamSecDed.Name = "textFamSecDed";
 			this.textFamSecDed.ReadOnly = true;
 			this.textFamSecDed.Size = new System.Drawing.Size(60, 20);
@@ -1138,7 +1100,7 @@
 			// 
 			// label17
 			// 
-			this.label17.Location = new System.Drawing.Point(14, 57);
+			this.label17.Location = new System.Drawing.Point(4, 57);
 			this.label17.Name = "label17";
 			this.label17.Size = new System.Drawing.Size(66, 15);
 			this.label17.TabIndex = 63;
@@ -1168,9 +1130,9 @@
 			this.groupBoxIndIns.Controls.Add(this.label16);
 			this.groupBoxIndIns.Controls.Add(this.textSecDed);
 			this.groupBoxIndIns.Controls.Add(this.textSecUsed);
-			this.groupBoxIndIns.Location = new System.Drawing.Point(543, 144);
+			this.groupBoxIndIns.Location = new System.Drawing.Point(556, 144);
 			this.groupBoxIndIns.Name = "groupBoxIndIns";
-			this.groupBoxIndIns.Size = new System.Drawing.Size(206, 160);
+			this.groupBoxIndIns.Size = new System.Drawing.Size(193, 160);
 			this.groupBoxIndIns.TabIndex = 219;
 			this.groupBoxIndIns.Text = "Individual Insurance";
 			this.groupBoxIndIns.Visible = false;
@@ -1178,7 +1140,7 @@
 			// textPriDed
 			// 
 			this.textPriDed.BackColor = System.Drawing.Color.White;
-			this.textPriDed.Location = new System.Drawing.Point(81, 55);
+			this.textPriDed.Location = new System.Drawing.Point(71, 55);
 			this.textPriDed.Name = "textPriDed";
 			this.textPriDed.ReadOnly = true;
 			this.textPriDed.Size = new System.Drawing.Size(60, 20);
@@ -1188,7 +1150,7 @@
 			// textPriUsed
 			// 
 			this.textPriUsed.BackColor = System.Drawing.Color.White;
-			this.textPriUsed.Location = new System.Drawing.Point(81, 95);
+			this.textPriUsed.Location = new System.Drawing.Point(71, 95);
 			this.textPriUsed.Name = "textPriUsed";
 			this.textPriUsed.ReadOnly = true;
 			this.textPriUsed.Size = new System.Drawing.Size(60, 20);
@@ -1198,7 +1160,7 @@
 			// textPriDedRem
 			// 
 			this.textPriDedRem.BackColor = System.Drawing.Color.White;
-			this.textPriDedRem.Location = new System.Drawing.Point(81, 75);
+			this.textPriDedRem.Location = new System.Drawing.Point(71, 75);
 			this.textPriDedRem.Name = "textPriDedRem";
 			this.textPriDedRem.ReadOnly = true;
 			this.textPriDedRem.Size = new System.Drawing.Size(60, 20);
@@ -1208,7 +1170,7 @@
 			// textPriPend
 			// 
 			this.textPriPend.BackColor = System.Drawing.Color.White;
-			this.textPriPend.Location = new System.Drawing.Point(81, 115);
+			this.textPriPend.Location = new System.Drawing.Point(71, 115);
 			this.textPriPend.Name = "textPriPend";
 			this.textPriPend.ReadOnly = true;
 			this.textPriPend.Size = new System.Drawing.Size(60, 20);
@@ -1218,7 +1180,7 @@
 			// textPriRem
 			// 
 			this.textPriRem.BackColor = System.Drawing.Color.White;
-			this.textPriRem.Location = new System.Drawing.Point(81, 135);
+			this.textPriRem.Location = new System.Drawing.Point(71, 135);
 			this.textPriRem.Name = "textPriRem";
 			this.textPriRem.ReadOnly = true;
 			this.textPriRem.Size = new System.Drawing.Size(60, 20);
@@ -1228,7 +1190,7 @@
 			// textPriMax
 			// 
 			this.textPriMax.BackColor = System.Drawing.Color.White;
-			this.textPriMax.Location = new System.Drawing.Point(81, 35);
+			this.textPriMax.Location = new System.Drawing.Point(71, 35);
 			this.textPriMax.Name = "textPriMax";
 			this.textPriMax.ReadOnly = true;
 			this.textPriMax.Size = new System.Drawing.Size(60, 20);
@@ -1238,7 +1200,7 @@
 			// textSecRem
 			// 
 			this.textSecRem.BackColor = System.Drawing.Color.White;
-			this.textSecRem.Location = new System.Drawing.Point(140, 135);
+			this.textSecRem.Location = new System.Drawing.Point(130, 135);
 			this.textSecRem.Name = "textSecRem";
 			this.textSecRem.ReadOnly = true;
 			this.textSecRem.Size = new System.Drawing.Size(60, 20);
@@ -1247,7 +1209,7 @@
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(76, 16);
+			this.label10.Location = new System.Drawing.Point(73, 16);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(60, 15);
 			this.label10.TabIndex = 31;
@@ -1257,7 +1219,7 @@
 			// textSecPend
 			// 
 			this.textSecPend.BackColor = System.Drawing.Color.White;
-			this.textSecPend.Location = new System.Drawing.Point(140, 115);
+			this.textSecPend.Location = new System.Drawing.Point(130, 115);
 			this.textSecPend.Name = "textSecPend";
 			this.textSecPend.ReadOnly = true;
 			this.textSecPend.Size = new System.Drawing.Size(60, 20);
@@ -1266,7 +1228,7 @@
 			// 
 			// label11
 			// 
-			this.label11.Location = new System.Drawing.Point(14, 37);
+			this.label11.Location = new System.Drawing.Point(4, 37);
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(66, 15);
 			this.label11.TabIndex = 32;
@@ -1275,25 +1237,25 @@
 			// 
 			// label18
 			// 
-			this.label18.Location = new System.Drawing.Point(1, 77);
+			this.label18.Location = new System.Drawing.Point(2, 77);
 			this.label18.Name = "label18";
-			this.label18.Size = new System.Drawing.Size(79, 15);
+			this.label18.Size = new System.Drawing.Size(69, 15);
 			this.label18.TabIndex = 50;
 			this.label18.Text = "Ded Remain";
 			this.label18.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// label12
 			// 
-			this.label12.Location = new System.Drawing.Point(11, 57);
+			this.label12.Location = new System.Drawing.Point(4, 57);
 			this.label12.Name = "label12";
-			this.label12.Size = new System.Drawing.Size(69, 15);
+			this.label12.Size = new System.Drawing.Size(66, 15);
 			this.label12.TabIndex = 33;
 			this.label12.Text = "Deductible";
 			this.label12.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// label13
 			// 
-			this.label13.Location = new System.Drawing.Point(14, 97);
+			this.label13.Location = new System.Drawing.Point(4, 97);
 			this.label13.Name = "label13";
 			this.label13.Size = new System.Drawing.Size(66, 15);
 			this.label13.TabIndex = 34;
@@ -1303,7 +1265,7 @@
 			// textSecDedRem
 			// 
 			this.textSecDedRem.BackColor = System.Drawing.Color.White;
-			this.textSecDedRem.Location = new System.Drawing.Point(140, 75);
+			this.textSecDedRem.Location = new System.Drawing.Point(130, 75);
 			this.textSecDedRem.Name = "textSecDedRem";
 			this.textSecDedRem.ReadOnly = true;
 			this.textSecDedRem.Size = new System.Drawing.Size(60, 20);
@@ -1312,18 +1274,18 @@
 			// 
 			// label14
 			// 
-			this.label14.Location = new System.Drawing.Point(12, 137);
+			this.label14.Location = new System.Drawing.Point(4, 137);
 			this.label14.Name = "label14";
-			this.label14.Size = new System.Drawing.Size(68, 16);
+			this.label14.Size = new System.Drawing.Size(66, 15);
 			this.label14.TabIndex = 35;
 			this.label14.Text = "Remaining";
 			this.label14.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// label15
 			// 
-			this.label15.Location = new System.Drawing.Point(14, 117);
+			this.label15.Location = new System.Drawing.Point(4, 117);
 			this.label15.Name = "label15";
-			this.label15.Size = new System.Drawing.Size(66, 16);
+			this.label15.Size = new System.Drawing.Size(66, 15);
 			this.label15.TabIndex = 36;
 			this.label15.Text = "Pending";
 			this.label15.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -1331,7 +1293,7 @@
 			// textSecMax
 			// 
 			this.textSecMax.BackColor = System.Drawing.Color.White;
-			this.textSecMax.Location = new System.Drawing.Point(140, 35);
+			this.textSecMax.Location = new System.Drawing.Point(130, 35);
 			this.textSecMax.Name = "textSecMax";
 			this.textSecMax.ReadOnly = true;
 			this.textSecMax.Size = new System.Drawing.Size(60, 20);
@@ -1340,9 +1302,9 @@
 			// 
 			// label16
 			// 
-			this.label16.Location = new System.Drawing.Point(135, 16);
+			this.label16.Location = new System.Drawing.Point(130, 16);
 			this.label16.Name = "label16";
-			this.label16.Size = new System.Drawing.Size(69, 15);
+			this.label16.Size = new System.Drawing.Size(60, 14);
 			this.label16.TabIndex = 37;
 			this.label16.Text = "Secondary";
 			this.label16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1350,7 +1312,7 @@
 			// textSecDed
 			// 
 			this.textSecDed.BackColor = System.Drawing.Color.White;
-			this.textSecDed.Location = new System.Drawing.Point(140, 55);
+			this.textSecDed.Location = new System.Drawing.Point(130, 55);
 			this.textSecDed.Name = "textSecDed";
 			this.textSecDed.ReadOnly = true;
 			this.textSecDed.Size = new System.Drawing.Size(60, 20);
@@ -1360,7 +1322,7 @@
 			// textSecUsed
 			// 
 			this.textSecUsed.BackColor = System.Drawing.Color.White;
-			this.textSecUsed.Location = new System.Drawing.Point(140, 95);
+			this.textSecUsed.Location = new System.Drawing.Point(130, 95);
 			this.textSecUsed.Name = "textSecUsed";
 			this.textSecUsed.ReadOnly = true;
 			this.textSecUsed.Size = new System.Drawing.Size(60, 20);
@@ -1812,12 +1774,6 @@
 			this.splitterPanel10.Size = new System.Drawing.Size(749, 470);
 			this.splitterPanel10.TabIndex = 14;
 			// 
-			// menuItemEditPayPlanCharge
-			// 
-			this.menuItemEditPayPlanCharge.Index = 6;
-			this.menuItemEditPayPlanCharge.Text = "Edit Charge";
-			this.menuItemEditPayPlanCharge.Click += new System.EventHandler(this.menuItemEditPayPlanCharge_Click);
-			// 
 			// ControlAccount
 			// 
 			this.BackColor = System.Drawing.Color.White;
@@ -1932,11 +1888,7 @@
 		private System.Windows.Forms.MenuItem menuInsPri;
 		private System.Windows.Forms.MenuItem menuInsSec;
 		private System.Windows.Forms.MenuItem menuItemAddAdj;
-		private System.Windows.Forms.MenuItem menuItemSnipAttachment;
-		private System.Windows.Forms.MenuItem menuItemSelectImage;
-		private System.Windows.Forms.MenuItem menuItemPasteAttachment;
-		private System.Windows.Forms.MenuItem menuItemAttachmentHistory;
-		private System.Windows.Forms.MenuItem menuItemAddRefundWorkNotPerformed;
+		private System.Windows.Forms.MenuItem menuItemAddRefundWorkNotPerformed;		
 		private System.Windows.Forms.MenuItem menuItemAddRefund;
 		private System.Windows.Forms.MenuItem menuItemAddMultAdj;
 		private System.Windows.Forms.MenuItem menuItemDynamicPayPlan;
@@ -1945,6 +1897,7 @@
 		private System.Windows.Forms.MenuItem menuItemInvoice;
 		private System.Windows.Forms.MenuItem menuItemLimited;
 		private System.Windows.Forms.MenuItem menuItemLimitedCustom;
+		private System.Windows.Forms.MenuItem menuItemPatPayPlan;
 		private System.Windows.Forms.MenuItem menuItemReceipt;
 		private System.Windows.Forms.MenuItem menuItemRepeatCanada;
 		private System.Windows.Forms.MenuItem menuItemRepeatEmail;
@@ -1952,7 +1905,6 @@
 		private System.Windows.Forms.MenuItem menuItemRepeatStand;
 		private System.Windows.Forms.MenuItem menuItemSalesTax;
 		private System.Windows.Forms.MenuItem menuItemSendPaymentToDevice;
-		private System.Windows.Forms.MenuItem menuItemSendMsgToPay;
 		private System.Windows.Forms.MenuItem menuItemStatementEmail;
 		private System.Windows.Forms.MenuItem menuItemStatementMore;
 		private System.Windows.Forms.MenuItem menuItemStatementWalkout;
@@ -2044,6 +1996,5 @@
 		private UI.SplitContainer splitContainerParent;
 		private UI.SplitterPanel splitterPanel9;
 		private UI.SplitterPanel splitterPanel10;
-		private System.Windows.Forms.MenuItem menuItemEditPayPlanCharge;
 	}
 }

@@ -87,12 +87,8 @@ namespace OpenDental.InternalTools.Job_Manager {
 			Enum.GetNames(typeof(JobPhase)).ToList().ForEach(x => comboPhase.Items.Add(x));
 			Enum.GetNames(typeof(JobPatternReviewProject)).ToList().ForEach(x => comboProject.Items.Add(x));
 			Enum.GetNames(typeof(JobProposedVersion)).ToList().ForEach(x => comboProposedVersion.Items.Add(x));
-			List<JobTeam> listJobTeams=JobTeams.GetDeepCopy();
-			comboJobTeam.Items.Add("None", new JobTeam(){JobTeamNum=-1});
-			comboJobTeam.Items.AddList(listJobTeams,x => x.TeamName);
-			comboJobTeam.SelectedIndex=0;
 			_listCategoryNames=Enum.GetNames(typeof(JobCategory)).ToList();
-			_listCategoryNamesFiltered=_listCategoryNames.Where(x => !x.In(JobCategory.Query.ToString(),JobCategory.MarketingDesign.ToString(),JobCategory.Project.ToString())).ToList();
+			_listCategoryNamesFiltered=_listCategoryNames.Where(x => !x.In(JobCategory.Query.ToString(),JobCategory.MarketingDesign.ToString())).ToList();
 			_listCategoryNamesFiltered.ForEach(x => comboCategory.Items.Add(x));
 			if(!JobPermissions.IsAuthorized(JobPerm.TestingCoordinator,true) && tabControlMain.TabPages.Contains(tabTesting)) {
 				tabControlMain.TabPages.Remove(tabTesting);
@@ -189,16 +185,13 @@ namespace OpenDental.InternalTools.Job_Manager {
 			}
 			JobLink link = _jobCur.ListJobLinks.FirstOrDefault(x => x.JobLinkNum==((JobLink)gridFiles.ListGridRows[gridFiles.SelectedIndices[0]].Tag).JobLinkNum);
 			menu.MenuItems.Add("Override display name",(o,arg) => {
-				InputBoxParam inputBoxParam=new InputBoxParam();
-				inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-				inputBoxParam.LabelText="Give a name override for the file";
-				inputBoxParam.Text=link.DisplayOverride;
-				InputBox inputBox=new InputBox(inputBoxParam);
-				inputBox.ShowDialog();
-				if(inputBox.IsDialogCancel) {
+				using InputBox inputBox = new InputBox("Give a name override for the file");
+				inputBox.textResult.Text=link.DisplayOverride;
+				inputBox.textResult.SelectAll();
+				if(inputBox.ShowDialog()==DialogResult.Cancel) {
 					return;
 				}
-				link.DisplayOverride=inputBox.StringResult;
+				link.DisplayOverride=inputBox.textResult.Text;
 				JobLinks.Update(link);
 				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 				FillGridFiles();
@@ -354,7 +347,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 		}
 
 		private void menuItemCustomersGoToChart_Click(object sender,EventArgs e) {
-			GlobalFormOpenDental.GotoChart(gridCustomers.SelectedTag<Patient>().PatNum);
+			GotoModule.GotoChart(gridCustomers.SelectedTag<Patient>().PatNum);
 		}
 
 		private void menuItemCustomersUnlink_Click(object sender,EventArgs e) {
@@ -388,11 +381,10 @@ namespace OpenDental.InternalTools.Job_Manager {
 				}
 			}
 			review.ReviewStatus=JobReviewStatus.Done;
-			InputBox inputBox = new InputBox("Please enter the number of minutes spent on this review.",review.Minutes.ToString());
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogOK) {
+			using InputBox inputBox = new InputBox("Please enter the number of minutes spent on this review.",review.Minutes.ToString());
+			if(inputBox.ShowDialog()==DialogResult.OK) {
 				double time = 0;
-				if(!Double.TryParse(inputBox.StringResult,out time)) {
+				if(!Double.TryParse(inputBox.textResult.Text,out time)) {
 					return;
 				}
 				review.Minutes=time;
@@ -419,11 +411,10 @@ namespace OpenDental.InternalTools.Job_Manager {
 				}
 			}
 			review.ReviewStatus=JobReviewStatus.NeedsAdditionalReview;
-			InputBox inputBox = new InputBox("Please enter the number of minutes spent on this review.",review.Minutes.ToString());
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogOK) {
+			using InputBox inputBox = new InputBox("Please enter the number of minutes spent on this review.",review.Minutes.ToString());
+			if(inputBox.ShowDialog()==DialogResult.OK) {
 				double time = 0;
-				if(!Double.TryParse(inputBox.StringResult,out time)) {
+				if(!Double.TryParse(inputBox.textResult.Text,out time)) {
 					return;
 				}
 				review.Minutes=time;
@@ -434,10 +425,8 @@ namespace OpenDental.InternalTools.Job_Manager {
 		}
 
 		private void menuItemSubscribersUnlink_Click(object sender,EventArgs e) {
-			long FKey=gridSubscribers?.SelectedTag<Userod>()?.UserNum??0;
-			if(FKey>0) {
-				RemoveJobLink(JobLinkType.Subscriber,FKey);
-			}
+			long FKey=gridSubscribers.SelectedTag<Userod>().UserNum;
+			RemoveJobLink(JobLinkType.Subscriber,FKey);
 			FillGridWatchers();
 		}
 
@@ -850,10 +839,10 @@ namespace OpenDental.InternalTools.Job_Manager {
 			job.Implementation=textJobEditor.WriteupRtf;
 			job.RequirementsJSON=JsonConvert.SerializeObject(textJobEditor.GetListJobRequirements());
 			if(comboPriority.SelectedIndex>-1) {
-				job.Priority=_listPriorities[comboPriority.SelectedIndex].DefNum;
+				job.Priority=comboPriority.GetSelectedDefNum();
 			}
 			if(comboPriorityTesting.SelectedIndex > -1) {
-				job.PriorityTesting=_listPriorities[comboPriorityTesting.SelectedIndex].DefNum;
+				job.PriorityTesting=comboPriorityTesting.GetSelectedDefNum();
 			}
 			job.PhaseCur=(JobPhase)comboPhase.SelectedIndex;
 			job.Category=(JobCategory)_listCategoryNames.IndexOf(comboCategory.SelectedItem.ToString());
@@ -889,8 +878,8 @@ namespace OpenDental.InternalTools.Job_Manager {
 			if(comboPriority.Items.Count==0) {
 				_listPriorities=Defs.GetDefsForCategory(DefCat.JobPriorities,true).OrderBy(x => x.ItemOrder).ToList();
 				_listPrioritiesAll=Defs.GetDefsForCategory(DefCat.JobPriorities).OrderBy(x => x.ItemOrder).ToList();
-				_listPriorities.ForEach(x => comboPriority.Items.Add(x.ItemName));
-				_listPriorities.ForEach(x => comboPriorityTesting.Items.Add(x.ItemName));
+				comboPriority.Items.AddDefs(_listPriorities);
+				comboPriorityTesting.Items.AddDefs(_listPriorities);
 			}
 			this.Enabled=false;//disable control while it is filled.
 			_isOverride=false;
@@ -905,18 +894,11 @@ namespace OpenDental.InternalTools.Job_Manager {
 			_jobOld=_jobCur.Copy();//cannot be null
 			textTitle.Text=_jobCur.Title;
 			textJobNum.Text=_jobCur.JobNum>0?_jobCur.JobNum.ToString():Lan.g("Jobs","New Job");
-			comboPriority.SelectedIndex=_listPriorities.FirstOrDefault(x => x.DefNum==_jobCur.Priority)?.ItemOrder??0;
-			comboPriorityTesting.SelectedIndex=_listPriorities.FirstOrDefault(x => x.DefNum==_jobCur.PriorityTesting)?.ItemOrder??0;
+			comboPriority.SetSelectedDefNum(_jobCur.Priority);
+			comboPriorityTesting.SetSelectedDefNum(_jobCur.PriorityTesting);
 			comboPhase.SelectedIndex=(int)_jobCur.PhaseCur;
 			comboProposedVersion.SelectedIndex=(int)_jobCur.ProposedVersion;
 			comboProject.SelectedIndex=(int)_jobCur.PatternReviewProject;
-			JobLink jobLink=_jobCur.ListJobLinks.Find(x => x.LinkType==JobLinkType.JobTeam);
-			if(jobLink==null) {
-				comboJobTeam.SelectedIndex=0;
-			}
-			else {
-				comboJobTeam.SetSelectedKey<JobTeam>(jobLink.FKey,x => x.JobTeamNum);
-			}
 			textDateTested.Text=_jobCur.DateTimeTested.ToShortDateString();
 			checkNotTested.Checked=_jobCur.IsNotTested;
 			checkIsActive.Checked=job.ListJobActiveLinks.Exists(x => x.UserNum==Security.CurUser.UserNum && x.DateTimeEnd==DateTime.MinValue);
@@ -990,7 +972,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 			CreateViewLog(jobPrev);
 			if(job!=null) {//re-enable control after we have loaded the job.
 				JobNotifications.DeleteForJobAndUser(job.JobNum,Security.CurUser.UserNum);
-				Signalods.SetInvalid(InvalidType.Jobs, KeyType.Job,job.JobNum);
 				this.Enabled=true;
 			}
 			if(jobPrev==null || jobPrev.JobNum!=job.JobNum) {
@@ -1026,7 +1007,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 		#region Tree Related Jobs
 		private void TryMoveJobtoJob(TreeNode sourceNode,TreeNode destinationNode) {
 			Job sourceJob = (Job)sourceNode.Tag;
-			Job jobOld=sourceJob.Copy();
 			long topParentNumOld = sourceJob.TopParentNum;
 			if(!_isOverride
 				&& sourceJob.UserNumEngineer!=Security.CurUser.UserNum
@@ -1082,7 +1062,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 			else {
 				return;//no valid target
 			}
-			Jobs.Update(sourceJob,jobOld);
+			Jobs.Update(sourceJob);
 			List<Job> listJobsUpdated=new List<Job>() {sourceJob};
 			if(sourceJob.TopParentNum!=topParentNumOld) {
 				List<Job> listTopParentJobs = Jobs.GetAllByTopParentNum(topParentNumOld);
@@ -1195,28 +1175,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 			textJobEditor.ReadOnlyRequirementsGrid=true;
 			comboProject.Enabled=false;
 			textDateTested.ReadOnly=true;
-			comboJobTeam.Enabled=true;
-			butVersionPrompt.Enabled=true;
-			butTimeLog.Enabled=true;
-			butAddTime.Enabled=true;
-			comboProposedVersion.Enabled=true;
-			butChangeEst.Enabled=true;
-			butTested.Enabled=true;
-			textTestingHours.Enabled=true;
-			checkNotTested.Enabled=true;
-			comboPriorityTesting.Enabled=true;
 			if(_jobCur==null) {
-				comboJobTeam.Enabled=false;
-				butVersionPrompt.Enabled=false;
-				butTimeLog.Enabled=false;
-				butAddTime.Enabled=false;
-				comboProposedVersion.Enabled=false;
-				textEditorDocumentation.ReadOnly=true;
-				butChangeEst.Enabled=false;
-				butTested.Enabled=false;
-				textTestingHours.Enabled=false;
-				checkNotTested.Enabled=false;
-				comboPriorityTesting.Enabled=false;
 				return;
 			}
 			if(JobPermissions.IsAuthorized(JobPerm.Quote,true) && _jobOld.PhaseCur!=JobPhase.Complete && _jobOld.PhaseCur!=JobPhase.Cancelled) {
@@ -2733,12 +2692,10 @@ namespace OpenDental.InternalTools.Job_Manager {
 			_jobOld.UserNumCustContact=Security.CurUser.UserNum;
 			if(!IsNew) {
 				Job job = Jobs.GetOne(_jobCur.JobNum);
-				Job jobOld=job.Copy();
 				job.DateTimeCustContact=MiscData.GetNowDateTime();
 				job.UserNumCustContact=Security.CurUser.UserNum;
-				if(Jobs.Update(job,jobOld)) {
-					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
-				}
+				Jobs.Update(job);
+				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 			}
 			SaveJob(_jobCur);
 		}
@@ -2772,11 +2729,52 @@ namespace OpenDental.InternalTools.Job_Manager {
 			//Save Commits are for the Head Only!
 			textVersion.Text=VersionReleases.GetPossibleHeadRelease();
 			_jobCur.JobVersion=textVersion.Text;
-			string description=_jobCur.Category.ToString().Substring(0,1)+_jobCur.JobNum+" - (Save Commit) "+_jobCur.Title;
-			string reviewers=String.Join(", ",_jobCur.ListJobReviews.Where(x => x.ReviewStatus==JobReviewStatus.SaveCommit).Select(x => Userods.GetName(x.ReviewerNum)).Distinct().ToList());
-			string logMsg=POut.String(description)+"\r\nCommitted to: "+POut.String(textVersion.Text)+"\r\nReviewed by: "+POut.String(reviewers);
-			using MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(logMsg);
-			msgBoxCopyPaste.ShowDialog();
+			string description = "";
+			description=_jobCur.Category.ToString().Substring(0,1)+_jobCur.JobNum+" - (Save Commit) "+_jobCur.Title;
+			string reviewers = String.Join(", ",_jobCur.ListJobReviews.Where(x => x.ReviewStatus==JobReviewStatus.SaveCommit).Select(x => Userods.GetName(x.ReviewerNum)).Distinct().ToList());
+			string logMsg = "";
+			logMsg=POut.String(description)+"\r\nCommitted to: "+POut.String(textVersion.Text)+"\r\nReviewed by: "+POut.String(reviewers);
+			using FormCommitPrompt FormCP=new FormCommitPrompt(0,logMsg);
+			FormCP.ShowDialog();
+			int commitVal=FormCP.GetCommitValue();
+			string pathCommit = "";
+			string pathCommitInternal = "";
+			switch(System.Environment.MachineName) {
+				default:
+					pathCommit=@"C:\development\OPEN DENTAL SUBVERSION";
+					pathCommitInternal=@"C:\development\Shared Projects Subversion";
+					break;
+				case "JORDANS":
+					pathCommit=@"E:\Documents\OPEN DENTAL SUBVERSION";
+					pathCommitInternal=@"E:\development\Shared Projects Subversion";
+					break;
+				case "CAMERON":
+				case "JASON":
+				case "DEREK":
+				case "RYAN":
+				case "RYAN1":
+				case "MICHAEL":
+				case "TRAVIS":
+					pathCommit=@"C:\development\OPEN DENTAL SUBVERSION";
+					pathCommitInternal=@"C:\development\Shared Projects Subversion";
+					break;
+			}
+			Process process = new Process();
+			string arguments = "/command:commit /path:\""+pathCommit+"\" /logmsg:\""+logMsg+"\"";
+			ProcessStartInfo startInfo = new ProcessStartInfo("TortoiseProc.exe",arguments);
+			if(FormCP.DialogResult==DialogResult.OK && (commitVal==1 || commitVal==3)) {//Public Repo or Both
+				process.StartInfo=startInfo;
+				process.Start();
+				process.WaitForExit();
+			}
+			if(FormCP.DialogResult==DialogResult.OK && (commitVal==2 || commitVal==3)) {//Internal Repo or Both
+				process=new Process();
+				arguments="/command:commit /path:\""+pathCommitInternal+"\" /logmsg:\""+logMsg+"\"";
+				startInfo=new ProcessStartInfo("TortoiseProc.exe",arguments);
+				process.StartInfo=startInfo;
+				process.Start();
+				process.WaitForExit();
+			}
 			//Set all the save commit reviews to save committed.
 			_jobCur.ListJobReviews.Where(x => x.ReviewStatus==JobReviewStatus.SaveCommit).ToList().ForEach(x => x.ReviewStatus=JobReviewStatus.SaveCommitted);
 			JobLogs.MakeLogEntryForSaveCommit(_jobCur);
@@ -2808,8 +2806,8 @@ namespace OpenDental.InternalTools.Job_Manager {
 				if(FormVP.DialogResult!=DialogResult.OK || string.IsNullOrEmpty(FormVP.VersionText)) {
 					return;
 				}
-				isHeadOnlyCommit=FormVP.IsHeadOnly;
-				isUnversioned=FormVP.IsUnversioned;
+				isHeadOnlyCommit = FormVP.IsHeadOnly;
+				isUnversioned = FormVP.IsUnversioned;
 				if(!isHeadOnlyCommit && !isUnversioned && !_jobCur.ListJobLinks.Any(x => x.LinkType==JobLinkType.Bug || x.LinkType==JobLinkType.MobileBug)) {
 					if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"All backported jobs must have a bug attached. Would you like to add one?")) {
 						return;
@@ -2836,29 +2834,26 @@ namespace OpenDental.InternalTools.Job_Manager {
 			if(string.IsNullOrEmpty(textEditorDocumentation.MainText) 
 				&& _jobCur.Category!=JobCategory.Conversion) 
 			{
-				InputBoxParam inputBoxParam=new InputBoxParam();
-				inputBoxParam.InputBoxType_=InputBoxType.TextBoxMultiLine;
-				inputBoxParam.LabelText="Please add a brief description of the job for documentation (including simple step by step usage instructions)."; 
-				InputBox inBoxDocumentation=new InputBox(inputBoxParam);
+				using InputBox inBoxDocumentation = new InputBox("Please add a brief description of the job for documentation (including simple step by step usage instructions).",true);
 				inBoxDocumentation.Text="Documentation Summary";
 				inBoxDocumentation.ShowDialog();
-				if(inBoxDocumentation.IsDialogCancel || string.IsNullOrEmpty(inBoxDocumentation.StringResult)) {
+				if(inBoxDocumentation.DialogResult!=DialogResult.OK || string.IsNullOrEmpty(inBoxDocumentation.textResult.Text)) {
 					return;
 				}
-				textEditorDocumentation.MainText=Security.CurUser.UserName+" - "+DateTime.Now.ToString()+"\r\n"+inBoxDocumentation.StringResult;
+				textEditorDocumentation.MainText=Security.CurUser.UserName+" - "+DateTime.Now.ToString()+"\r\n"+inBoxDocumentation.textResult.Text;
 			}
-			InputBox inBoxTesting=new InputBox("Please choose a new priority for testing.",_listPrioritiesAll.Select(x => x.ItemName).ToList()
+			using InputBox inBoxTesting = new InputBox("Please choose a new priority for testing.",_listPrioritiesAll.Select(x => x.ItemName).ToList()
 				,_listPrioritiesAll.FindIndex(x => x.ItemValue.Contains("JobDefault")));
 			inBoxTesting.Text="Testing Priority";
 			inBoxTesting.ShowDialog();
-			if(inBoxTesting.IsDialogCancel || inBoxTesting.SelectedIndex==-1) {
+			if(inBoxTesting.DialogResult!=DialogResult.OK || inBoxTesting.SelectedIndex==-1) {
 				_jobCur.PriorityTesting=_listPrioritiesAll.FirstOrDefault(x => x.ItemValue.Contains("JobDefault")).DefNum;
 			}
 			else {
 				_jobCur.PriorityTesting=_listPrioritiesAll[inBoxTesting.SelectedIndex].DefNum;
 			}
-			comboPriorityTesting.SelectedIndex=_listPriorities.FirstOrDefault(x => x.DefNum==_jobCur.PriorityTesting)?.ItemOrder??0;
-			string description="";
+			comboPriorityTesting.SetSelectedDefNum(_jobCur.PriorityTesting);
+			string description = "";
 			if(_jobCur.Category==JobCategory.Bug) {
 				JobLink jobLink=_jobCur.ListJobLinks.First(x => x.LinkType==JobLinkType.Bug || x.LinkType==JobLinkType.MobileBug);
 				string bugDescription="";
@@ -2873,18 +2868,61 @@ namespace OpenDental.InternalTools.Job_Manager {
 			else {
 				description=_jobCur.Category.ToString().Substring(0,1)+_jobCur.JobNum+" - "+_jobCur.Title;
 			}
-			string reviewers=String.Join(", ",_jobCur.ListJobReviews.Where(x => x.ReviewStatus==JobReviewStatus.Done || x.ReviewStatus==JobReviewStatus.NeedsAdditionalReview).Select(x => Userods.GetName(x.ReviewerNum)).ToList());
-			string logMsg="";
+			string reviewers = String.Join(", ",_jobCur.ListJobReviews.Where(x => x.ReviewStatus==JobReviewStatus.Done || x.ReviewStatus==JobReviewStatus.NeedsAdditionalReview).Select(x => Userods.GetName(x.ReviewerNum)).ToList());
+			string logMsg = "";
 			if(isHeadOnlyCommit) {
 				logMsg=POut.String(description)+"\r\nCommitted to: "+POut.String(textVersion.Text)+"\r\nReviewed by: "+POut.String(reviewers);
 			}
 			else {
 				logMsg=POut.String(description)+"\r\nBackported to: "+POut.String(textVersion.Text)+"\r\nReviewed by: "+POut.String(reviewers);
 			}
-			using MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(logMsg);
-			msgBoxCopyPaste.ShowDialog();
+			int repository=0;
+			if(_jobCur.Category==JobCategory.Conversion) {
+				repository=2;//Internal Repo
+			}
+			using FormCommitPrompt FormCP=new FormCommitPrompt(repository,logMsg);
+			FormCP.ShowDialog();
+			int commitVal=FormCP.GetCommitValue();
+			string pathCommit = "";
+			string pathCommitInternal = "";
+			switch(System.Environment.MachineName) {
+				default:
+					pathCommit=@"C:\development\OPEN DENTAL SUBVERSION";
+					pathCommitInternal=@"C:\development\Shared Projects Subversion";
+					break;
+				case "JORDANS":
+					pathCommit=@"E:\Documents\OPEN DENTAL SUBVERSION";
+					pathCommitInternal=@"E:\development\Shared Projects Subversion";
+					break;
+				case "CAMERON":
+				case "JASON":
+				case "DEREK":
+				case "RYAN":
+				case "RYAN1":
+				case "MICHAEL":
+				case "TRAVIS":
+					pathCommit=@"C:\development\OPEN DENTAL SUBVERSION";
+					pathCommitInternal=@"C:\development\Shared Projects Subversion";
+					break;
+			}
+			Process process = new Process();
+			string arguments = "/command:commit /path:\""+pathCommit+"\" /logmsg:\""+logMsg+"\"";
+			ProcessStartInfo startInfo = new ProcessStartInfo("TortoiseProc.exe",arguments);
+			if(FormCP.DialogResult==DialogResult.OK && (commitVal==1 || commitVal==3)) {//Public Repo or Both
+				process.StartInfo=startInfo;
+				process.Start();
+				process.WaitForExit();
+			}
+			if(FormCP.DialogResult==DialogResult.OK && (commitVal==2 || commitVal==3)) {//Internal Repo or Both
+				process=new Process();
+				arguments="/command:commit /path:\""+pathCommitInternal+"\" /logmsg:\""+logMsg+"\"";
+				startInfo=new ProcessStartInfo("TortoiseProc.exe",arguments);
+				process.StartInfo=startInfo;
+				process.Start();
+				process.WaitForExit();
+			}
 			_jobCur.Priority=_listPrioritiesAll.FirstOrDefault(x => x.ItemValue.Contains("DocumentationDefault")).DefNum;
-			comboPriority.SelectedIndex=_listPriorities.FirstOrDefault(x => x.DefNum==_jobCur.Priority)?.ItemOrder??0;
+			comboPriority.SetSelectedDefNum(_jobCur.Priority);
 			IsChanged=true;
 			if(_jobCur.Category==JobCategory.Conversion) {
 				_jobCur.PhaseCur=JobPhase.Complete;//Conversion Jobs go directly to complete.
@@ -2957,9 +2995,8 @@ namespace OpenDental.InternalTools.Job_Manager {
 		///<summary>Deprecated: Show an input box to allow the user to choose a project for the job. Returns JobPatternReviewProject.None if the user hits cancel.</summary>
 		private JobPatternReviewProject ShowProjectMessage() {
 			List<string> listProjectNames=Enum.GetNames(typeof(JobPatternReviewProject)).Where(x => x!=JobPatternReviewProject.None.ToString()).ToList();
-			InputBox projectSelection=new InputBox("Choose a project for this job",listProjectNames);
-			projectSelection.ShowDialog();
-			if(projectSelection.IsDialogCancel) {
+			using InputBox projectSelection=new InputBox("Choose a project for this job",listProjectNames);
+			if(projectSelection.ShowDialog()!=DialogResult.OK) {
 				return JobPatternReviewProject.None;
 			}
 			return (JobPatternReviewProject)(projectSelection.SelectedIndex+1);//+1 added since None is removed as an option
@@ -3103,13 +3140,13 @@ namespace OpenDental.InternalTools.Job_Manager {
 			if(_jobCur.Priority!=jobMerge.Priority) {
 				_jobCur.Priority=jobMerge.Priority;
 				_jobOld.Priority=jobMerge.Priority;
-				comboPriority.SelectedIndex=_listPriorities.FirstOrDefault(x => x.DefNum==_jobCur.Priority)?.ItemOrder??0;
+				comboPriority.SetSelectedDefNum(_jobCur.Priority);
 			}
 			//PRIORITY TESTING
 			if(_jobCur.PriorityTesting!=jobMerge.PriorityTesting) {
 				_jobCur.PriorityTesting=jobMerge.PriorityTesting;
 				_jobOld.PriorityTesting=jobMerge.PriorityTesting;
-				comboPriorityTesting.SelectedIndex=_listPriorities.FirstOrDefault(x => x.DefNum==_jobCur.PriorityTesting)?.ItemOrder??0;
+				comboPriorityTesting.SetSelectedDefNum(_jobCur.PriorityTesting);
 			}
 			//STATUS
 			if(_jobCur.PhaseCur!=jobMerge.PhaseCur) {
@@ -3122,14 +3159,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 				_jobCur.ProposedVersion=jobMerge.ProposedVersion;
 				_jobOld.ProposedVersion=jobMerge.ProposedVersion;
 				comboProposedVersion.SelectedIndex=(int)_jobCur.ProposedVersion;
-			}
-			//JOBTEAM
-			JobLink jobLink=_jobCur.ListJobLinks.Find(x => x.LinkType==JobLinkType.JobTeam);
-			if(jobLink==null) {
-				comboJobTeam.SelectedIndex=0;
-			}
-			else {
-				comboJobTeam.SetSelectedKey<JobTeam>(jobLink.FKey,x => x.JobTeamNum);
 			}
 			//APPROVAL STATUS
 			if(_jobCur.IsApprovalNeeded!=jobMerge.IsApprovalNeeded) {
@@ -3222,11 +3251,10 @@ namespace OpenDental.InternalTools.Job_Manager {
 			}
 			else {
 				Job jobCur=Jobs.GetOne(_jobCur.JobNum);
-				Job jobOld=jobCur.Copy();
 				long topParentNumOld=jobCur.TopParentNum;
 				jobCur.ParentNum=0;
 				jobCur.TopParentNum=jobCur.JobNum;
-				Jobs.Update(jobCur,jobOld);
+				Jobs.Update(jobCur);
 				List<Job> listJobsUpdated = new List<Job>();
 				listJobsUpdated.Add(jobCur);
 				if(jobCur.TopParentNum!=topParentNumOld) {
@@ -3246,14 +3274,14 @@ namespace OpenDental.InternalTools.Job_Manager {
 		}
 
 		private void butParentPick_Click(object sender,EventArgs e) {
-			InputBox inBox=new InputBox("Input parent job number.");
+			using InputBox inBox=new InputBox("Input parent job number.");
 			inBox.ShowDialog();
-			if(inBox.IsDialogCancel) {
+			if(inBox.DialogResult!=DialogResult.OK) {
 				return;
 			}
 			long parentNum=0;
 			long topParentNumOld=_jobCur.TopParentNum;
-			long.TryParse(new string(inBox.StringResult.Where(char.IsDigit).ToArray()),out parentNum);
+			long.TryParse(new string(inBox.textResult.Text.Where(char.IsDigit).ToArray()),out parentNum);
 			Job job=Jobs.GetOne(parentNum);
 			if(job==null) {
 				return;
@@ -3271,10 +3299,9 @@ namespace OpenDental.InternalTools.Job_Manager {
 			}
 			else {
 				Job jobCur = Jobs.GetOne(_jobCur.JobNum);
-				Job jobOld=jobCur.Copy();
 				jobCur.ParentNum=parentNum;
 				jobCur.TopParentNum=job.TopParentNum;
-				Jobs.Update(jobCur,jobOld);
+				Jobs.Update(jobCur);
 				List<Job> listJobsUpdated = new List<Job>{jobCur};
 				if(jobCur.TopParentNum!=topParentNumOld) {
 					List<Job> listTopParentJobs = Jobs.GetAllByTopParentNum(topParentNumOld);
@@ -3303,10 +3330,10 @@ namespace OpenDental.InternalTools.Job_Manager {
 			job.Documentation=textEditorDocumentation.MainRtf;
 			job.RequirementsJSON=JsonConvert.SerializeObject(textJobEditor.GetListJobRequirements());
 			if(comboPriority.SelectedIndex>-1) {
-				job.Priority=_listPriorities[comboPriority.SelectedIndex].DefNum;
+				job.Priority=comboPriority.GetSelectedDefNum();
 			}
 			if(comboPriorityTesting.SelectedIndex > -1) {
-				job.PriorityTesting=_listPriorities[comboPriorityTesting.SelectedIndex].DefNum;
+				job.PriorityTesting=comboPriorityTesting.GetSelectedDefNum();
 			}
 			if(job.ListJobLinks.Exists(x => x.LinkType==JobLinkType.Request) && job.PhaseCur==JobPhase.Development) {
 				if(_listPrioritiesAll.FirstOrDefault(x => x.DefNum==job.Priority).ItemValue.Contains("OnHold")) {
@@ -3407,46 +3434,23 @@ namespace OpenDental.InternalTools.Job_Manager {
 			if(_isLoading) {
 				return;
 			}
-			SaveComboPriorityHelper(_listPriorities[comboPriority.SelectedIndex]);
-		}
-
-		private void comboPriority_Leave(object sender,EventArgs e) {
-			if(_isLoading) {
-				return;
-			}
-			Def defPriorityFromText=_listPriorities.Find(x => x.ItemName==comboPriority.Text);
-			if(defPriorityFromText==null) {
-				MsgBox.Show("Invalid Job Priority. Priority not saved.");
-				comboPriority.SelectedIndex=_listPriorities.Find(x => x.DefNum==_jobCur.Priority)?.ItemOrder??0;//Revert to saved priority
-				return;
-			}
-			if(defPriorityFromText.DefNum==_jobCur.Priority) {
-				return;
-			}
-			//Synchronize the SelectedIndex property of the combo box with the matching definition.
-			comboPriority.SelectedIndex=defPriorityFromText.ItemOrder;
-			SaveComboPriorityHelper(defPriorityFromText);
-		}
-
-		private void SaveComboPriorityHelper(Def defPriority) {
 			if(_jobCur.PhaseCur.In(JobPhase.Concept,JobPhase.Definition,JobPhase.Development,JobPhase.Quote) 
-				&& defPriority.ItemValue.Contains("OnHold") 
+				&& comboPriority.GetSelected<Def>().ItemValue.Contains("OnHold") 
 				&& _jobCur.ListJobLinks.Any(x => x.LinkType==JobLinkType.Bug || x.LinkType==JobLinkType.MobileBug))
 			{
-				comboPriority.SelectedIndex=_listPriorities.FirstOrDefault(x => x.DefNum==_jobCur.Priority)?.ItemOrder??0;
+				comboPriority.SetSelectedDefNum(_jobCur.Priority);
 				MsgBox.Show(this,"Please remove all bugs from a job before marking it as on hold.");
 				return;
 			}
-			_jobCur.Priority=defPriority.DefNum;
+			long priorityNum=comboPriority.GetSelectedDefNum();
+			_jobCur.Priority=priorityNum;
 			JobLogs.MakeLogEntryForPriority(_jobCur,_jobOld);
-			_jobOld.Priority=defPriority.DefNum;
+			_jobOld.Priority=priorityNum;
 			if(!IsNew) {
-				Job job=Jobs.GetOne(_jobCur.JobNum);
-				Job jobOld=job.Copy();
-				job.Priority=defPriority.DefNum;
-				if(Jobs.Update(job,jobOld)) {
-					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
-				}
+				Job job = Jobs.GetOne(_jobCur.JobNum);
+				job.Priority=priorityNum;
+				Jobs.Update(job);
+				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 			}
 		}
 
@@ -3460,79 +3464,24 @@ namespace OpenDental.InternalTools.Job_Manager {
 			_jobOld.ProposedVersion=proposedVersion;
 			if(!IsNew) {
 				Job job = Jobs.GetOne(_jobCur.JobNum);
-				Job jobOld=job.Copy();
 				job.ProposedVersion=(JobProposedVersion)comboProposedVersion.SelectedIndex;
-				if(Jobs.Update(job,jobOld)) {
-					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
-				}
+				Jobs.Update(job);
+				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 			}
-		}
-
-		private void comboJobTeam_SelectionChangeCommitted(object sender,EventArgs e) {
-			if(_isLoading) {
-				return;
-			}
-			long fKey=comboJobTeam.GetSelected<JobTeam>().JobTeamNum;
-			JobLink jobLink=_jobCur.ListJobLinks.FirstOrDefault(x=>x.LinkType==JobLinkType.JobTeam);
-			//If it was switched from a team to none, remove jobLink.
-			if(fKey==-1) {
-				if(jobLink!=null) {
-					RemoveJobLink(JobLinkType.JobTeam,jobLink.FKey);
-				}
-				return;
-			}
-			//If it was switched from one team to another.
-			if(jobLink!=null) {
-				jobLink.FKey=fKey;
-				JobLinks.Update(jobLink);
-			}
-			else {//If it was switched from none to a team.
-				jobLink=new JobLink();
-				jobLink.FKey=fKey;
-				jobLink.JobNum=_jobCur.JobNum;
-				jobLink.LinkType=JobLinkType.JobTeam;
-				JobLinks.Insert(jobLink);
-				_jobCur.ListJobLinks.Add(jobLink);
-				_jobOld.ListJobLinks.Add(jobLink);
-			}
-			Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 		}
 
 		private void comboPriorityTesting_SelectionChangeCommitted(object sender,EventArgs e) {
 			if(_isLoading) {
 				return;
 			}
-			SaveComboPriorityTestingHelper(_listPriorities[comboPriorityTesting.SelectedIndex].DefNum);
-		}
-
-		private void comboPriorityTesting_Leave(object sender,EventArgs e) {
-			if(_isLoading) {
-				return;
-			}
-			Def defPriorityFromText=_listPriorities.Find(x => x.ItemName==comboPriorityTesting.Text);
-			if(defPriorityFromText==null) {
-				MsgBox.Show("Invalid Job Priority. Priority not saved.");
-				comboPriorityTesting.SelectedIndex=_listPriorities.Find(x => x.DefNum==_jobCur.PriorityTesting)?.ItemOrder??0;//Revert to saved priority
-				return;
-			}
-			if(defPriorityFromText.DefNum==_jobCur.PriorityTesting) {
-				return;
-			}
-			//Synchronize the SelectedIndex property of the combo box with the matching definition.
-			comboPriorityTesting.SelectedIndex=defPriorityFromText.ItemOrder;
-			SaveComboPriorityTestingHelper(defPriorityFromText.DefNum);
-		}
-
-		private void SaveComboPriorityTestingHelper(long priorityNum) {
+			long priorityNum=comboPriorityTesting.GetSelectedDefNum();
 			_jobCur.PriorityTesting=priorityNum;
 			_jobOld.PriorityTesting=priorityNum;
 			if(!IsNew) {
 				Job job=Jobs.GetOne(_jobCur.JobNum);
-				Job jobOld=job.Copy();
 				job.PriorityTesting=priorityNum;
-				if(Jobs.Update(job,jobOld)) {
-					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
-				}
+				Jobs.Update(job);
+				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 			}
 		}
 
@@ -3547,11 +3496,9 @@ namespace OpenDental.InternalTools.Job_Manager {
 			_jobOld.PatternReviewProject=jobProject;
 			if(!IsNew) {
 				Job job = Jobs.GetOne(_jobCur.JobNum);
-				Job jobOld=job.Copy();
 				job.PatternReviewProject=(JobPatternReviewProject)comboProject.SelectedIndex;
-				if(Jobs.Update(job,jobOld)) {
-					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
-				}
+				Jobs.Update(job);
+				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 			}
 		}
 
@@ -3574,11 +3521,9 @@ namespace OpenDental.InternalTools.Job_Manager {
 			_jobOld.PhaseCur=jobPhaseNew;
 			if(!IsNew) {
 				Job job = Jobs.GetOne(_jobCur.JobNum);
-				Job jobOld=job.Copy();
 				job.PhaseCur=(JobPhase)comboPhase.SelectedIndex;
-				if(Jobs.Update(job,jobOld)) {
-					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
-				}
+				Jobs.Update(job);
+				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 			}
 		}
 
@@ -3598,16 +3543,14 @@ namespace OpenDental.InternalTools.Job_Manager {
 			_jobOld.Category=jobCategoryNew;
 			if(!IsNew) {
 				Job job = Jobs.GetOne(_jobCur.JobNum);
-				Job jobOld=job.Copy();
 				job.Category=(JobCategory)_listCategoryNames.IndexOf(comboCategory.SelectedItem.ToString());
-				if(Jobs.Update(job,jobOld)) {
-					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
-				}
+				Jobs.Update(job);
+				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 			}
 		}
 
 		private void gridCustomers_TitleAddClick(object sender,EventArgs e) {
-			if(_isLoading || _jobCur==null) {
+			if(_isLoading) {
 				return;
 			}
 			using FormPatientSelect FormPS=new FormPatientSelect();
@@ -3744,7 +3687,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 		}
 
 		private void gridAppointments_TitleAddClick(object sender,EventArgs e) {
-			if(_isLoading || _jobCur==null) {
+			if(_isLoading) {
 				return;
 			}
 			using FormPatientSelect FormPS=new FormPatientSelect();
@@ -4093,11 +4036,9 @@ namespace OpenDental.InternalTools.Job_Manager {
 			}
 			else {
 				Job job = Jobs.GetOne(_jobCur.JobNum);
-				Job jobOld=job.Copy();
 				job.Title=textTitle.Text;
-				if(Jobs.Update(job,jobOld)) {
-					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,job.JobNum);
-				}
+				Jobs.Update(job);
+				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,job.JobNum);
 			}
 			textTitle.SpellCheck();
 		}
@@ -4139,11 +4080,9 @@ namespace OpenDental.InternalTools.Job_Manager {
 			}
 			else {
 				Job job = Jobs.GetOne(_jobCur.JobNum);
-				Job jobOld=job.Copy();
 				job.JobVersion=textVersion.Text;
-				if(Jobs.Update(job,jobOld)) {
-					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,job.JobNum);
-				}
+				Jobs.Update(job);
+				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,job.JobNum);
 			}
 		}
 
@@ -4175,11 +4114,9 @@ namespace OpenDental.InternalTools.Job_Manager {
 				if(!_isLoading && _jobCur.UserNumCheckout==0) {
 					_jobCur.UserNumCheckout=Security.CurUser.UserNum;
 					Job jobFromDB = Jobs.GetOne(_jobCur.JobNum);//Get from DB to ensure freshest copy (Lists not filled)
-					Job jobOld=jobFromDB.Copy();
 					jobFromDB.UserNumCheckout=Security.CurUser.UserNum;//change only the userNumCheckout.
-					if(Jobs.Update(jobFromDB,jobOld)) {//update the checkout num.
-						Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);//send signal that the job has been checked out.
-					}
+					Jobs.Update(jobFromDB);//update the checkout num.
+					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);//send signal that the job has been checked out.
 				}
 			}
 		}
@@ -4216,11 +4153,9 @@ namespace OpenDental.InternalTools.Job_Manager {
 				_jobCur.DateTimeTested=PIn.DateT(textDateTested.Text);
 				_jobCur.HoursTesting=PIn.Double(textTestingHours.Text);
 				Job jobFromDB = Jobs.GetOne(_jobCur.JobNum);//Get from DB to ensure freshest copy (Lists not filled)
-				Job jobOld=jobFromDB.Copy();
 				jobFromDB.HoursTesting=PIn.Double(textTestingHours.Text);
-				if(Jobs.Update(jobFromDB,jobOld)) {
-					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
-				}
+				Jobs.Update(jobFromDB);
+				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 			}
 		}
 
@@ -4453,14 +4388,12 @@ namespace OpenDental.InternalTools.Job_Manager {
 			}
 			textEstHours.Text=_jobCur.HoursEstimate.ToString();
 			Job jobFromDB = Jobs.GetOne(_jobCur.JobNum);//Get from DB to ensure freshest copy (Lists not filled)
-			Job jobOld=jobFromDB.Copy();
 			jobFromDB.HoursEstimateConcept=_jobCur.HoursEstimateConcept;
 			jobFromDB.HoursEstimateWriteup=_jobCur.HoursEstimateWriteup;
 			jobFromDB.HoursEstimateDevelopment=_jobCur.HoursEstimateDevelopment;
 			jobFromDB.HoursEstimateReview=_jobCur.HoursEstimateReview;
-			if(Jobs.Update(jobFromDB,jobOld)) {//update the checkout num.
-				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);//send signal that the job has been checked out.
-			}
+			Jobs.Update(jobFromDB);//update the checkout num.
+			Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);//send signal that the job has been checked out.
 			SetHoursLeft();
 		}
 

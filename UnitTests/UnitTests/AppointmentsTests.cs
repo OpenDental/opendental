@@ -180,8 +180,6 @@ namespace UnitTests.Appointments_Tests {
 		[TestMethod]
 		public void Appointments_TryAddPerVisitProcCodesToAppt_PlannedToScheduledToComplete() {
 			//Models and appointment going from Planned to Scheduled to complete. Adds both procs.
-			ProcedureCodeT.AddIfNotPresent("D9430");
-			ProcedureCodeT.AddIfNotPresent("D9440");
 			PrefT.UpdateString(PrefName.PerVisitInsAmountProcCode,"D9430");//Set Per Visit Prefs.
 			PrefT.UpdateString(PrefName.PerVisitPatAmountProcCode,"D9440");
 			//create provider and schedule.
@@ -218,8 +216,6 @@ namespace UnitTests.Appointments_Tests {
 		[TestMethod]
 		public void Appointments_TryAddPerVisitProcCodesToAppt_ScheduledToScheduled() {
 			//Models and appointment going from Scheduled to Scheduled so it will not add procs.
-			ProcedureCodeT.AddIfNotPresent("D9430");
-			ProcedureCodeT.AddIfNotPresent("D9440");
 			PrefT.UpdateString(PrefName.PerVisitInsAmountProcCode,"D9430");//Sets Per Visit Prefs.
 			PrefT.UpdateString(PrefName.PerVisitPatAmountProcCode,"D9440");
 			//create provider and schedule.
@@ -244,7 +240,6 @@ namespace UnitTests.Appointments_Tests {
 		[TestMethod]
 		public void Appointments_TryAddPerVisitProcCodesToAppt_ScheduledToCompletePerVisitInsOnly() {
 			//Models and appointment going from Scheduled to complete. Only adds Per Visit Ins proc.
-			ProcedureCodeT.AddIfNotPresent("D9430");
 			PrefT.UpdateString(PrefName.PerVisitPatAmountProcCode,"");//Sets Per Visit Prefs.
 			PrefT.UpdateString(PrefName.PerVisitInsAmountProcCode,"D9430");//Sets Per Visit Prefs.
 			long provNum=ProviderT.CreateProvider(MethodBase.GetCurrentMethod().Name+"ProvDentTest");
@@ -293,8 +288,6 @@ namespace UnitTests.Appointments_Tests {
 		[TestMethod]
 		public void Appointments_TryAddPerVisitProcCodesToAppt_ScheduledToCompleteNoInsSub() {
 			//Models and appointment going from Scheduled to complete. There is not InsSub so procs won't be added.
-			ProcedureCodeT.AddIfNotPresent("D9430");
-			ProcedureCodeT.AddIfNotPresent("D9440");
 			PrefT.UpdateString(PrefName.PerVisitInsAmountProcCode,"D9430");//Sets Per Visit Prefs.
 			PrefT.UpdateString(PrefName.PerVisitPatAmountProcCode,"D9440");
 			long provNum=ProviderT.CreateProvider(MethodBase.GetCurrentMethod().Name+"ProvDentTest");
@@ -619,86 +612,6 @@ namespace UnitTests.Appointments_Tests {
 			Assert.AreEqual(1,searchResults.FindAll(x => x.DateTimeAvail.Hour==8 && x.DateTimeAvail.Minute==50).Count);
 			Assert.AreEqual(1,searchResults.FindAll(x => x.DateTimeAvail.Hour==9 && x.DateTimeAvail.Minute==00).Count);
 			Assert.AreEqual(1,searchResults.FindAll(x => x.DateTimeAvail.Hour==9 && x.DateTimeAvail.Minute==10).Count);
-		}
-
-		[TestMethod]
-		public void Appointments_GetSearchResults_MultipleOpsForProvWithBlockouts() {
-			PrefT.UpdateInt(PrefName.AppointmentSearchBehavior,(int)SearchBehaviorCriteria.ProviderTimeOperatory);
-			long patNum=PatientT.CreatePatient("MOFPWB").PatNum;
-			//Create a provider, two operatories, and two provider schedules--one for each operatory. Schedules are for today.
-			long provNum=ProviderT.CreateProvider(MethodBase.GetCurrentMethod().Name+"ProvDentTest");
-			Operatory operatory1=OperatoryT.CreateOperatory("abbr-MOFPWB1","opName--MOFPWB1");
-			Operatory operatory2=OperatoryT.CreateOperatory("abbr-MOFPWB2","opName--MOFPWB2");
-			Schedule schedule1=ScheduleT.CreateSchedule(DateTime.Today
-				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,8,0,0).TimeOfDay
-				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,16,0,0).TimeOfDay
-				,ScheduleType.Provider,provNum:provNum,listOpNums:new List<long>{operatory1.OperatoryNum});//Op 1 is 8a-4p
-			Schedule schedule2=ScheduleT.CreateSchedule(DateTime.Today
-				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,10,0,0).TimeOfDay
-				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,14,0,0).TimeOfDay
-				,ScheduleType.Provider,provNum:provNum,listOpNums:new List<long>{operatory2.OperatoryNum});//Op 2 is 10a-2p
-			//Create an "NS" blockout on the first operatory, which will not allow scheduling. 
-			long defNumNoSchedBlockout=DefT.CreateDefinition(DefCat.BlockoutTypes,"NS-MOFPWB",BlockoutType.NoSchedule.GetDescription()).DefNum;
-			Schedule scheduleNoSchedBlockout=ScheduleT.CreateSchedule(DateTime.Today
-				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,8,0,0).TimeOfDay
-				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,12,0,0).TimeOfDay
-				,ScheduleType.Blockout,blockoutType:defNumNoSchedBlockout,listOpNums:new List<long>{operatory1.OperatoryNum}); //NS blockout on Op 1 from 8a-12p
-			//Create appointment that the search will be to find a spot for.
-			Appointment patApt=AppointmentT.CreateAppointment(patNum,DateTime.Now,operatory1.OperatoryNum,provNum);
-			TimeSpan beforeTime=TestT.SetDateTime(hour:18);
-			TimeSpan afterTime=TestT.SetDateTime();//8 AM
-			List<long> listOpsInView=new List<long>() {operatory1.OperatoryNum,operatory2.OperatoryNum };
-			//Search starting yesterday, so that we see today's schedules.
-			List<ScheduleOpening> searchResults=ApptSearch.GetSearchResults(patApt.AptNum,DateTime.Today.AddDays(-1),DateTime.Today.AddDays(2),new List<long>() {provNum,0}
-			,listOpsInView,new List<long> {0},beforeTime,afterTime,new List<long>(){0});
-			Assert.AreEqual(1,searchResults.FindAll(x => x.DateTimeAvail.Hour==10 && x.DateTimeAvail.Minute==0 
-				&& x.DateTimeAvail.Date==DateTime.Today.Date).Count);
-		}
-
-		[TestMethod]
-		public void Appointments_GetSearchResults_MultipleOpsForDynamicProvWithBlockouts() {
-			PrefT.UpdateInt(PrefName.AppointmentSearchBehavior,(int)SearchBehaviorCriteria.ProviderTimeOperatory);
-			long patNum=PatientT.CreatePatient("MOFPWB").PatNum;
-			//Create a provider, two operatories with the provider assigned to them, and two provider schedules. Schedules are for today.
-			long provNum=ProviderT.CreateProvider(MethodBase.GetCurrentMethod().Name+"ProvDentTest");
-			Operatory operatory1=OperatoryT.CreateOperatory("abbr-MOFDPWB1","opName--MOFDPWB1",provDentist:provNum);
-			Operatory operatory2=OperatoryT.CreateOperatory("abbr-MOFDPWB2","opName--MOFDPWB2",provDentist:provNum);
-			Schedule schedule1=ScheduleT.CreateSchedule(DateTime.Today
-				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,8,0,0).TimeOfDay
-				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,12,0,0).TimeOfDay
-				,ScheduleType.Provider,provNum:provNum,listOpNums:new List<long>{}); //Dynamic, 8a-12p
-			Schedule schedule2=ScheduleT.CreateSchedule(DateTime.Today
-				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,14,0,0).TimeOfDay
-				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,16,0,0).TimeOfDay
-				,ScheduleType.Provider,provNum:provNum,listOpNums:new List<long>{}); //Dynamic, 2p-4p
-			//Create an "NS" blockout on the first operatory, which will not allow scheduling. 
-			long defNumNoSchedBlockout=DefT.CreateDefinition(DefCat.BlockoutTypes,"NS-MOFDPWB",BlockoutType.NoSchedule.GetDescription()).DefNum;
-			Schedule scheduleNoSchedBlockout=ScheduleT.CreateSchedule(DateTime.Today
-				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,8,0,0).TimeOfDay
-				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,12,0,0).TimeOfDay
-				,ScheduleType.Blockout,blockoutType:defNumNoSchedBlockout,listOpNums:new List<long>{operatory1.OperatoryNum}); //NS blockout on Op 1 from 8a-12p
-			//Create appointment that the search will be to find a spot for.
-			Appointment patApt=AppointmentT.CreateAppointment(patNum,DateTime.Now,operatory1.OperatoryNum,provNum);
-			TimeSpan beforeTime=TestT.SetDateTime(hour:18);
-			TimeSpan afterTime=TestT.SetDateTime();//8 AM
-			List<long> listOpsInView=new List<long>() {operatory1.OperatoryNum,operatory2.OperatoryNum };
-			//Search starting yesterday, so that we see today's schedules.
-			List<ScheduleOpening> searchResults=ApptSearch.GetSearchResults(patApt.AptNum,DateTime.Today.AddDays(-1),DateTime.Today.AddDays(2),new List<long>() {provNum,0}
-			,listOpsInView,new List<long> {0},beforeTime,afterTime,new List<long>(){0});
-			//Should be an opening at 8am, since the provider is scheduled for both operatories at the same times, and only one of the two has a blockout.
-			Assert.AreEqual(1,searchResults.FindAll(x => x.DateTimeAvail.Hour==8 && x.DateTimeAvail.Minute==0 
-				&& x.DateTimeAvail.Date==DateTime.Today.Date).Count);
-			//Put another "NS" blockout down, this time on the second operatory from 8:30-10:30.
-			Schedule scheduleNoSchedBlockout2=ScheduleT.CreateSchedule(DateTime.Today
-				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,8,30,0).TimeOfDay
-				,new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,10,30,0).TimeOfDay
-				,ScheduleType.Blockout,blockoutType:defNumNoSchedBlockout,listOpNums:new List<long>{operatory2.OperatoryNum}); //NS blockout on Op 2 from 830a-1030a
-			//Try search again.
-			searchResults=ApptSearch.GetSearchResults(patApt.AptNum,DateTime.Today.AddDays(-1),DateTime.Today.AddDays(2),new List<long>() {provNum,0}
-			,listOpsInView,new List<long> {0},beforeTime,afterTime,new List<long>(){0});
-			//Should be an opening at 10:30am, since the provider is scheduled for both operatories at the same times, and both are blocked out in the morning until 1030, and the appointment is too large to fit at 8.
-			Assert.AreEqual(1,searchResults.FindAll(x => x.DateTimeAvail.Hour==10 && x.DateTimeAvail.Minute==30 
-				&& x.DateTimeAvail.Date==DateTime.Today.Date).Count);
 		}
 
 		[TestMethod]
@@ -2038,163 +1951,6 @@ namespace UnitTests.Appointments_Tests {
 			Assert.IsTrue(timeSpanResult==new TimeSpan(10,5,0));
 		}
 
-		[TestMethod]
-		public void ChartModules_GetPlannedAppts_PlannedToScheduledToBrokenToScheduled() {
-			//Models and appointment going from Planned to Scheduled to complete. Adds both procs.
-			PrefT.UpdateString(PrefName.PerVisitInsAmountProcCode,"D9430");//Set Per Visit Prefs.
-			PrefT.UpdateString(PrefName.PerVisitPatAmountProcCode,"D9440");
-			//create provider and schedule.
-			long provNum=ProviderT.CreateProvider(MethodBase.GetCurrentMethod().Name+"ProvDentTest");
-			AppointmentSearchData appSearchData=AppointmentT.CreateScheduleAndOpsForProv(2,0,provNum,11);
-			Operatory operatory=appSearchData.ListOps[0];//Get one of the ops for the provider. 
-			Patient patient=PatientT.CreatePatient("pat1");
-			Appointment appointmentPlanned=AppointmentT.CreateAppointment(patient.PatNum,DateTime.Now,operatory.OperatoryNum,provNum,aptStatus:ApptStatus.Planned);
-			//Create the PlannedAppt record
-			PlannedAppt plannedAppt=new PlannedAppt();
-			plannedAppt.AptNum=appointmentPlanned.AptNum;
-			plannedAppt.PatNum=patient.PatNum;
-			PlannedAppts.Insert(plannedAppt);
-			//Create planned appt
-			Appointment appointmentPlannedScheduled=Appointments.SchedulePlannedApt(appointmentPlanned,patient,new List<ApptField>(),DateTime.Now,appointmentPlanned.Op);
-			//Break the scheduled appointment. 
-			Appointment appointmentBroken=appointmentPlannedScheduled.Copy();
-			appointmentPlannedScheduled.AptStatus=ApptStatus.Broken;
-			Appointments.Update(appointmentPlannedScheduled,appointmentBroken);
-			//Schedule the planned appointment again.
-			Appointment appointmentPlannedScheduled2=Appointments.SchedulePlannedApt(appointmentPlanned,patient,new List<ApptField>(),DateTime.Now,appointmentPlanned.Op);
-			//Need to call this method to set the patient appointments.
-			ChartModules.GetProgNotes(patient.PatNum,false);
-			//Get the planned appointment
-			DataTable tablePlannedAppt=ChartModules.GetPlannedApt(patient.PatNum);
-			Assert.AreEqual(1,tablePlannedAppt.Rows.Count);
-			//The planned appointment should be linked to the appointment
-			Assert.AreEqual(appointmentPlannedScheduled2.AptNum,long.Parse(tablePlannedAppt.Rows[0]["SchedAptNum"].ToString()));
-			Assert.AreEqual((int)appointmentPlannedScheduled2.AptStatus,int.Parse(tablePlannedAppt.Rows[0]["AptStatus"].ToString()));
-		}
 
-		[TestMethod]
-		public void ChartModules_GetPlannedAppts_PlannedToScheduledToBrokenToScheduled_MultiplePlannedAppt() {
-			//Models and appointment going from Planned to Scheduled to complete. Adds both procs.
-			PrefT.UpdateString(PrefName.PerVisitInsAmountProcCode,"D9430");//Set Per Visit Prefs.
-			PrefT.UpdateString(PrefName.PerVisitPatAmountProcCode,"D9440");
-			//create provider and schedule.
-			long provNum=ProviderT.CreateProvider(MethodBase.GetCurrentMethod().Name+"ProvDentTest");
-			AppointmentSearchData appSearchData=AppointmentT.CreateScheduleAndOpsForProv(2,0,provNum,11);
-			Operatory operatory=appSearchData.ListOps[0];//Get one of the ops for the provider. 
-			Patient patient=PatientT.CreatePatient("pat1");
-			Appointment appointmentPlannedNotUsed=AppointmentT.CreateAppointment(patient.PatNum,DateTime.Now.AddDays(-1),operatory.OperatoryNum,provNum,aptStatus:ApptStatus.Planned);
-			//Create the PlannedAppt record
-			PlannedAppt plannedApptNotUsed=new PlannedAppt();
-			plannedApptNotUsed.AptNum=appointmentPlannedNotUsed.AptNum;
-			plannedApptNotUsed.PatNum=patient.PatNum;
-			PlannedAppts.Insert(plannedApptNotUsed);
-			Appointment appointmentPlanned=AppointmentT.CreateAppointment(patient.PatNum,DateTime.Now,operatory.OperatoryNum,provNum,aptStatus:ApptStatus.Planned);
-			//Create the PlannedAppt record
-			PlannedAppt plannedAppt=new PlannedAppt();
-			plannedAppt.AptNum=appointmentPlanned.AptNum;
-			plannedAppt.PatNum=patient.PatNum;
-			PlannedAppts.Insert(plannedAppt);
-			//Create planned appt
-			Appointment appointmentPlannedScheduled=Appointments.SchedulePlannedApt(appointmentPlanned,patient,new List<ApptField>(),DateTime.Now,appointmentPlanned.Op);
-			//Break the scheduled appointment. 
-			Appointment appointmentBroken=appointmentPlannedScheduled.Copy();
-			appointmentPlannedScheduled.AptStatus=ApptStatus.Broken;
-			Appointments.Update(appointmentPlannedScheduled,appointmentBroken);
-			//Schedule the planned appointment again.
-			Appointment appointmentPlannedScheduled2=Appointments.SchedulePlannedApt(appointmentPlanned,patient,new List<ApptField>(),DateTime.Now,appointmentPlanned.Op);
-			//Need to call this method to set the patient appointments.
-			ChartModules.GetProgNotes(patient.PatNum,false);
-			//Get the planned appointment
-			DataTable tablePlannedAppt=ChartModules.GetPlannedApt(patient.PatNum);
-			Assert.AreEqual(2,tablePlannedAppt.Rows.Count);
-			DataRow dataRow=tablePlannedAppt.Select().FirstOrDefault(x => PIn.Long(x["AptNum"].ToString())==plannedAppt.AptNum);
-			//The planned appointment should be linked to the appointment
-			Assert.AreEqual(appointmentPlannedScheduled2.AptNum,PIn.Long(dataRow["SchedAptNum"].ToString()));
-			Assert.AreEqual((int)appointmentPlannedScheduled2.AptStatus,PIn.Int(dataRow["AptStatus"].ToString()));
-		}
-
-		[TestMethod]
-		public void Appointments_GetPeriodApptsTable_OneLabcaseAssociatedToAppt() {
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			long provNum=ProviderT.CreateProvider("prov1","terry","smith",ssn:"123456789",isUsingTIN:true,nationalProvID:"0123456789");
-			Patient pat=PatientT.CreatePatient(suffix,priProvNum:provNum,birthDate:DateTime.Today);
-			Operatory op=OperatoryT.CreateOperatory();
-			Appointment appt=AppointmentT.CreateAppointment(pat.PatNum,DateTime.Today,op.OperatoryNum,provNum);
-			LabCase labCase=new LabCase();
-			labCase.AptNum=appt.AptNum;
-			labCase.ProvNum=pat.PriProv;
-			labCase.PatNum=pat.PatNum;
-			labCase.DateTimeChecked=DateTime.Now;
-			LabCases.Insert(labCase);
-			DataTable tableAppt=Appointments.GetPeriodApptsTable(DateTime.Today,DateTime.Today,0,false);
-			Assert.AreEqual(1,tableAppt.Rows.Count);
-			Assert.IsTrue(!string.IsNullOrEmpty(tableAppt.Rows[0]["lab"].ToString()));
-		}
-
-		[TestMethod]
-		public void Appointments_GetPeriodApptsTable_OneLabcaseAssociatedToAppt_PlannedApt() {
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			long provNum=ProviderT.CreateProvider("prov1","terry","smith",ssn:"123456789",isUsingTIN:true,nationalProvID:"0123456789");
-			Patient pat=PatientT.CreatePatient(suffix,priProvNum:provNum,birthDate:DateTime.Today);
-			Operatory op=OperatoryT.CreateOperatory();
-			Appointment appt=AppointmentT.CreateAppointment(pat.PatNum,DateTime.Today,op.OperatoryNum,provNum);
-			LabCase labCase=new LabCase();
-			labCase.PlannedAptNum=appt.AptNum;
-			labCase.ProvNum=pat.PriProv;
-			labCase.PatNum=pat.PatNum;
-			labCase.DateTimeChecked=DateTime.Now;
-			LabCases.Insert(labCase);
-			DataTable tableAppt=Appointments.GetPeriodApptsTable(DateTime.Today,DateTime.Today,0,true);
-			Assert.AreEqual(1,tableAppt.Rows.Count);
-			Assert.IsTrue(!string.IsNullOrEmpty(tableAppt.Rows[0]["lab"].ToString()));
-		}
-
-		[TestMethod]
-		public void Appointments_GetPeriodApptsTable_MoreThanOneLabcaseAssociatedToAppt() {
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			long provNum=ProviderT.CreateProvider("prov1","terry","smith",ssn:"123456789",isUsingTIN:true,nationalProvID:"0123456789");
-			Patient pat=PatientT.CreatePatient(suffix,priProvNum:provNum,birthDate:DateTime.Today);
-			Operatory op=OperatoryT.CreateOperatory();
-			Appointment appt=AppointmentT.CreateAppointment(pat.PatNum,DateTime.Today,op.OperatoryNum,provNum);
-			LabCase labCase=new LabCase();
-			labCase.AptNum=appt.AptNum;
-			labCase.ProvNum=pat.PriProv;
-			labCase.PatNum=pat.PatNum;
-			labCase.DateTimeChecked=DateTime.Now;
-			LabCases.Insert(labCase);
-			labCase=new LabCase();
-			labCase.AptNum=appt.AptNum;
-			labCase.ProvNum=pat.PriProv;
-			labCase.PatNum=pat.PatNum;
-			labCase.DateTimeChecked=DateTime.Now;
-			LabCases.Insert(labCase);
-			DataTable tableAppt=Appointments.GetPeriodApptsTable(DateTime.Today,DateTime.Today,0,false);
-			Assert.AreEqual(1,tableAppt.Rows.Count);
-			Assert.IsTrue(!string.IsNullOrEmpty(tableAppt.Rows[0]["lab"].ToString()));
-		}
-
-		[TestMethod]
-		public void Appointments_GetPeriodApptsTable_MoreThanOneLabcaseAssociatedToAppt_PlannedApt() {
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			long provNum=ProviderT.CreateProvider("prov1","terry","smith",ssn:"123456789",isUsingTIN:true,nationalProvID:"0123456789");
-			Patient pat=PatientT.CreatePatient(suffix,priProvNum:provNum,birthDate:DateTime.Today);
-			Operatory op=OperatoryT.CreateOperatory();
-			Appointment appt=AppointmentT.CreateAppointment(pat.PatNum,DateTime.Today,op.OperatoryNum,provNum);
-			LabCase labCase=new LabCase();
-			labCase.PlannedAptNum=appt.AptNum;
-			labCase.ProvNum=pat.PriProv;
-			labCase.PatNum=pat.PatNum;
-			labCase.DateTimeChecked=DateTime.Now;
-			LabCases.Insert(labCase);
-			labCase=new LabCase();
-			labCase.PlannedAptNum=appt.AptNum;
-			labCase.ProvNum=pat.PriProv;
-			labCase.PatNum=pat.PatNum;
-			labCase.DateTimeChecked=DateTime.Now;
-			LabCases.Insert(labCase);
-			DataTable tableAppt=Appointments.GetPeriodApptsTable(DateTime.Today,DateTime.Today,0,true);
-			Assert.AreEqual(1,tableAppt.Rows.Count);
-			Assert.IsTrue(!string.IsNullOrEmpty(tableAppt.Rows[0]["lab"].ToString()));
-		}
 	}
 }

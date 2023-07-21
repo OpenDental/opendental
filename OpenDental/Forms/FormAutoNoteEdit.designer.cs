@@ -37,7 +37,8 @@ namespace OpenDental
 			this.butDelete = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butInsert = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// textBoxAutoNoteName
@@ -127,21 +128,32 @@ namespace OpenDental
 			this.butInsert.Text = "Insert";
 			this.butInsert.Click += new System.EventHandler(this.butInsert_Click);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(766, 620);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(78, 24);
-			this.butSave.TabIndex = 5;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(683, 620);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(78, 24);
+			this.butOK.TabIndex = 5;
+			this.butOK.Text = "OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(767, 620);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(78, 24);
+			this.butCancel.TabIndex = 6;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// FormAutoNoteEdit
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(857, 656);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textMain);
@@ -164,7 +176,8 @@ namespace OpenDental
 
         private System.Windows.Forms.TextBox textBoxAutoNoteName;
 				private System.Windows.Forms.Label labelName;
-				private OpenDental.UI.Button butSave;
+        private OpenDental.UI.Button butCancel;
+				private OpenDental.UI.Button butOK;
 				private OpenDental.UI.Button butInsert;
 				private OpenDental.UI.Button butDelete;
 				private OpenDental.UI.GridOD gridMain;

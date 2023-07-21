@@ -34,7 +34,7 @@ namespace OpenDental{
 			checkFieldValue.Checked=PIn.Bool(_patField.FieldValue);
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!checkFieldValue.Checked){//if blank, then delete
 				if(IsNew) {
 					DialogResult=DialogResult.Cancel;
@@ -59,5 +59,39 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void FormPatFieldDefEdit_FormClosing(object sender,FormClosingEventArgs e) {
+			
+		}
+
+	
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

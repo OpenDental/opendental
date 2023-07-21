@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormFeeSchedGroups));
+			this.butClose = new OpenDental.UI.Button();
 			this.gridGroups = new OpenDental.UI.GridOD();
 			this.gridClinics = new OpenDental.UI.GridOD();
 			this.butAdd = new OpenDental.UI.Button();
@@ -34,6 +35,16 @@ namespace OpenDental{
 			this.textFeeSched = new System.Windows.Forms.TextBox();
 			this.groupFilters.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(825, 661);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridGroups
 			// 
@@ -128,6 +139,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.gridClinics);
 			this.Controls.Add(this.gridGroups);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormFeeSchedGroups";
 			this.Text = "Fee Schedule Groups";
@@ -139,6 +151,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridGroups;
 		private UI.GridOD gridClinics;
 		private UI.Button butAdd;

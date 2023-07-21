@@ -15,8 +15,6 @@ namespace OpenDental {
 	//The easiest approach is to just deal with it by keeping it on 96 dpi monitors only.
 	//If we someday decide that we must do better, we might create a separate application that's not dpi aware, which will at least not malfuction, although it will look blurry because it will still only be 96 dpi.
 	public partial class FormJobManager:FormODBase {
-		///<summary>Holds the time of the most recent refresh of the active tab and job edit UI.</summary>
-		public static DateTime LocalLastRefreshDateTime=DateTime.MinValue;
 		///<summary>Dictionary containing row notes shown when hovering.
 		///Key		=> Row index
 		///Value	=> Note for the row.</summary>
@@ -38,13 +36,8 @@ namespace OpenDental {
 		private static Color _colorGridHeaderBack=Color.FromArgb(223,234,245);
 		///<summary>Filled with JobActions that will be collapsed when filling the Needs Action grid.</summary>
 		private List<JobAction> _listJobActionsCollapsed=new List<JobAction>();
-		///<summary>Filled with JobActions that will be collapsed when filling the Project Management grid.</summary>
-		private List<JobAction> _listJobActionsCollapsedProject=new List<JobAction>();
-		///<summary>Filled with JobActions that will be collapsed when filling the Needs Action grid.</summary>
-		private List<JobTeam> _listJobTeams;
-		private List<long> _listQueryPriorityFilter=new List<long>();
-		private List<JobPhase> _listQueryJobPhaseFilter=new List<JobPhase>();
-		private readonly long _defNumIsOnHold;
+		///<summary>There is a timer monitoring this and refreshing the UI every second. The timer will set this to false once a refresh has taken place. Setting this to true will cause a refresh of the active tab and the job edit UI.</summary>
+		public static DateTime LocalLastRefreshDateTime=DateTime.MinValue;
 
 		private Brush _brushDefault {
 			get {
@@ -64,25 +57,56 @@ namespace OpenDental {
 			}
 		}
 
+		///<summary>Returns a list of permissions based on the current user logged in.</summary>
+		private List<string> CategoryList {
+			get {
+				List<string> categoryList=Enum.GetNames(typeof(JobCategory)).ToList();
+				if(!JobPermissions.IsAuthorized(JobPerm.QueryTech,true)) {
+					//Queries can't be created from here
+					categoryList.Remove("Query");
+				}
+				if(!JobPermissions.IsAuthorized(JobPerm.DesignTech,true)) {
+					//Marketing Jobs can't be created from here
+					categoryList.Remove("MarketingDesign");
+				}
+				if(!JobPermissions.IsAuthorized(JobPerm.SpecialProject,true)) {
+					//SpecialProjects can't be created from here
+					categoryList.Remove("SpecialProject");
+				}
+				if(!JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
+					//NeedNoApproval can't be created from here
+					categoryList.Remove("NeedNoApproval");
+				}
+				if(!JobPermissions.IsAuthorized(JobPerm.UnresolvedIssues,true)) {
+					//NeedNoApproval can't be created from here
+					categoryList.Remove("UnresolvedIssue");
+				}
+				if(!JobPermissions.IsAuthorized(JobPerm.Concept,true)) {
+					categoryList.Remove("Feature");
+					categoryList.Remove("Bug");
+					categoryList.Remove("Enhancement");
+					categoryList.Remove("ProgramBridge");
+					categoryList.Remove("InternalRequest");
+					categoryList.Remove("Conversion");
+					categoryList.Remove("Research");
+				}
+				return categoryList;
+			}
+		}
+
 		public FormJobManager() {
 			InitializeComponent();
 			InitializeLayoutManager(isLayoutMS:true);
 			//This is here so we can see the tabs in the designer, but use the ownerdraw when the program is run.
 			tabControlNav.DrawMode=TabDrawMode.OwnerDrawFixed;
-			FillPriorityList();
-			_defNumIsOnHold=_listJobPriorities.Find(x => x.ItemValue.Contains("OnHold")).DefNum;
 		}
 
 		private void FormJobManager_Load(object sender,EventArgs e) {
 			comboUser.Tag=Security.CurUser;
 			FillMenu();
 			_listUsers=Userods.GetUsersForJobs();
-			_listJobTeams=JobTeams.GetDeepCopy();
+			FillPriorityList();
 			FillComboUser();
-			FillComboTeamFilter(comboTeamFilterNeedsEngineer,doAddAllOption:true);
-			FillComboTeamFilter(comboTeamFilterNeedsExpert,doAddAllOption:true);
-			FillComboTeamFilter(comboTeamSearch,doAddAllOption:true);
-			FillComboTeamFilter(comboTeamFilterProjectManagement,doAddAllOption:true);
 			#region Fill Proposed Version Combos
 			comboProposedVersionNeedsAction.Items.Add("All");
 			comboProposedVersionNeedsEngineer.Items.Add("All");
@@ -107,19 +131,11 @@ namespace OpenDental {
 			}
 			comboCatSearch.SelectedIndex=0;
 			comboPrioritySearch.Items.Add("All");
-			comboQueryPriorityFilter.IncludeAll=true;
 			List<Def> jobPriorities=Defs.GetCatList((int)DefCat.JobPriorities).ToList();
 			foreach(Def jobPriority in jobPriorities) {
 				comboPrioritySearch.Items.Add(jobPriority.ItemName,jobPriority);
-				comboQueryPriorityFilter.Items.Add(jobPriority.ItemName,jobPriority);
 			}
 			comboPrioritySearch.SelectedIndex=0;
-			comboQueryPriorityFilter.IsAllSelected=true;
-			comboQueryPhaseFilter.IncludeAll=true;
-			comboQueryPhaseFilter.Items.AddEnums<JobPhase>();
-			comboQueryPhaseFilter.IsAllSelected=true;
-			_listQueryPriorityFilter=comboQueryPriorityFilter.Items.GetAll<Def>().ConvertAll(x=>x.DefNum);
-			_listQueryJobPhaseFilter=comboQueryPhaseFilter.Items.GetAll<JobPhase>();
 			dateExcludeCompleteBefore.Value=DateTime.Now.AddMonths(-3);
 			_listHiddenTabs=new List<System.Windows.Forms.TabPage>();
 			UpdateTabVisibility();//This speeds up RefreshAndFillThreaded since it will remove some of the grids.
@@ -171,10 +187,6 @@ namespace OpenDental {
 					tabControlNav.TabPages.Add(tabNeedsEngineer);
 					_listHiddenTabs.Remove(tabNeedsEngineer);
 				}
-				if(_listHiddenTabs.Contains(tabProjectManagement)) {
-					tabControlNav.TabPages.Add(tabProjectManagement);
-					_listHiddenTabs.Remove(tabProjectManagement);
-				}
 			}
 			else {
 				if(tabControlNav.TabPages.Contains(tabAction)) {
@@ -188,10 +200,6 @@ namespace OpenDental {
 				if(tabControlNav.TabPages.Contains(tabNeedsEngineer)) {
 					tabControlNav.TabPages.Remove(tabNeedsEngineer);
 					_listHiddenTabs.Add(tabNeedsEngineer);
-				}
-				if(tabControlNav.TabPages.Contains(tabProjectManagement)) {
-					tabControlNav.TabPages.Remove(tabProjectManagement);
-					_listHiddenTabs.Add(tabProjectManagement);
 				}
 			}
 			#endregion
@@ -316,7 +324,7 @@ namespace OpenDental {
 			}
 			#endregion
 			#region JobPerm.UnresolvedIssues
-			//If user has UnresolvedIssues permission, user has access to the UnresolvedIssues tab
+			//If user has UnresolvedIssues permission, user as access to the UnresolvedIssues tab
 			if(JobPermissions.IsAuthorized(JobPerm.UnresolvedIssues,true)) {
 				if(_listHiddenTabs.Contains(tabUnresolvedIssues)) {
 					tabControlNav.TabPages.Add(tabUnresolvedIssues);
@@ -336,12 +344,10 @@ namespace OpenDental {
 		private void tabControlNav_DrawItem(object sender,DrawItemEventArgs e) {
 			System.Windows.Forms.TabPage page=tabControlNav.TabPages[e.Index];
 			//We only care about changing the color for the Subscribed Jobs tab
-			List<Job> listJobsWithNotifications=JobManagerCore.ListJobsAll.FindAll(x => x.ListJobLinks.Exists(y => y.LinkType==JobLinkType.Subscriber && y.FKey==Security.CurUser.UserNum) && x.ListJobNotifications.Exists(y => y.UserNum==Security.CurUser.UserNum));
-			if(page.Equals(tabSubscribed) && listJobsWithNotifications.Count>0) {
+			bool hasNotifications=JobManagerCore.ListJobsAll.Where(x => x.ListJobLinks.Exists(y => y.LinkType==JobLinkType.Subscriber && y.FKey==Security.CurUser.UserNum) 
+			&& x.ListJobNotifications.Exists(y => y.UserNum==Security.CurUser.UserNum)).Count()>0;
+			if(page.Equals(tabSubscribed) && hasNotifications) {
 				e.Graphics.FillRectangle(_brushNotify,e.Bounds);
-				if(listJobsWithNotifications.Any(x=>x.Priority==_defNumIsOnHold)) {
-					checkSubscribedIncludeOnHold.Checked=true;
-				}
 			}
 			else if(e.State == DrawItemState.Selected) {
 				e.Graphics.FillRectangle(_brushSelected,e.Bounds);
@@ -407,9 +413,6 @@ namespace OpenDental {
 			}
 			else if(tabControlNav.SelectedTab==tabSubmittedJobs) {
 				FillGridSubmittedJobs();
-			}
-			else if(tabControlNav.SelectedTab==tabProjectManagement) {
-				FillGridProjectManagement();
 			}
 			Cursor=Cursors.Default;
 		}		
@@ -478,7 +481,7 @@ namespace OpenDental {
 
 		private void menuGoToAccountQueries_Click(object sender,EventArgs e) {
 			try {
-				GlobalFormOpenDental.GotoChart(((Job)gridQueries.ListGridRows[gridQueries.SelectedIndices[0]].Tag).ListJobQuotes[0].PatNum);
+				GotoModule.GotoChart(((Job)gridQueries.ListGridRows[gridQueries.SelectedIndices[0]].Tag).ListJobQuotes[0].PatNum);
 			}
 			catch(Exception ex) {
 				MsgBox.Show(this, "Please select a job.");
@@ -487,7 +490,7 @@ namespace OpenDental {
 
 		private void menuGoToAccountMarketing_Click(object sender,EventArgs e) {
 			try {
-				GlobalFormOpenDental.GotoChart(((Job)gridMarketing.ListGridRows[gridMarketing.SelectedIndices[0]].Tag).ListJobQuotes[0].PatNum);
+				GotoModule.GotoChart(((Job)gridMarketing.ListGridRows[gridMarketing.SelectedIndices[0]].Tag).ListJobQuotes[0].PatNum);
 			}
 			catch(Exception ex) {
 				MsgBox.Show(this, "Please select a job.");
@@ -672,7 +675,7 @@ namespace OpenDental {
 					.ThenBy(x => x.Category==JobCategory.Bug)
 					.ThenBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder).ToList();
 				if(!checkShowUnassigned.Checked) {
-					listJobsSorted.RemoveAll(x => x.Priority==_defNumIsOnHold);
+					listJobsSorted.RemoveAll(x => x.Priority==_listJobPriorities.FirstOrDefault(y => y.ItemValue.Contains("OnHold")).DefNum);
 					if(userFilter!=null) {
 						//Actions in this list will be filtered by checkShowUnassigned. If not in this list, items will always show if applicable 
 						//(For example ApproveJob always shows if user has approval permission.)
@@ -800,7 +803,7 @@ namespace OpenDental {
 					.ThenBy(x => x.OwnerNum!=0)
 					.ThenBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder).ToList();
 				if(!checkShowUnassigned.Checked) {
-					listJobsSorted.RemoveAll(x => x.Priority==_defNumIsOnHold);
+					listJobsSorted.RemoveAll(x => x.Priority==_listJobPriorities.FirstOrDefault(y => y.ItemValue.Contains("OnHold")).DefNum);
 					if(userFilter!=null) {
 						//Actions in this list will be filtered by checkShowUnassigned. If not in this list, items will always show if applicable 
 						//(For example ApproveJob always shows if user has approval permission.)
@@ -986,7 +989,7 @@ namespace OpenDental {
 			JobManagerCore.AddTestingJobsToList(textVersionText.Text);
 			//Get a list of all jobs that should be tested.
 			List<Job> listTestingJobs=JobManagerCore.ListJobsAll.FindAll(x => !x.Category.In(
-			JobCategory.Query,JobCategory.Research,JobCategory.Conversion,JobCategory.UnresolvedIssue,JobCategory.MarketingDesign,JobCategory.Project)
+			JobCategory.Query,JobCategory.Research,JobCategory.Conversion,JobCategory.UnresolvedIssue,JobCategory.MarketingDesign)
 					&& x.PhaseCur.In(JobPhase.Complete,JobPhase.Documentation)
 					&& (string.IsNullOrEmpty(textVersionText.Text) ? true : x.JobVersion.ToLower().Contains(textVersionText.Text.ToLower()))
 					&& (string.IsNullOrEmpty(textSearch.Text) ? true : x.ToString().ToLower().Contains(textSearch.Text.ToLower())))
@@ -1079,7 +1082,7 @@ namespace OpenDental {
 				(int)JobCategory.NeedNoApproval,
 			};
 			//Sort jobs into category dictionary
-			Dictionary<JobCategory,List<Job>> dictCategories=GetDictJobsForTeamByCategory(comboTeamFilterNeedsEngineer.GetSelected<JobTeam>().JobTeamNum);
+			Dictionary<JobCategory,List<Job>> dictCategories=JobManagerCore.ListJobsAll.GroupBy(x => x.Category).ToDictionary(y => y.Key,y => y.ToList());
 			LayoutManager.Move(gridAvailableJobs,new Rectangle(0,33,tabControlNav.ClientSize.Width,tabControlNav.ClientSize.Height-33));
 			gridAvailableJobs.BeginUpdate();
 			gridAvailableJobs.Columns.Clear();
@@ -1092,7 +1095,7 @@ namespace OpenDental {
 					continue;
 				}
 				List<Job> listJobsSorted=kvp.Value.OrderBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder).ToList();
-				listJobsSorted.RemoveAll(x => x.Priority==_defNumIsOnHold || x.OwnerAction!=JobAction.AssignEngineer);
+				listJobsSorted.RemoveAll(x => x.Priority==_listJobPriorities.FirstOrDefault(y => y.ItemValue.Contains("OnHold")).DefNum || x.OwnerAction!=JobAction.AssignEngineer);
 				if(comboProposedVersionNeedsEngineer.SelectedIndex!=0) {//All is not selected, only select the jobs with the specified proposedversion
 					listJobsSorted.RemoveAll(x => x.ProposedVersion!=comboProposedVersionNeedsEngineer.GetSelected<JobProposedVersion>());
 				}
@@ -1124,88 +1127,6 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>Fills tabProjectManagement with top parent Projects.</summary>
-		private void FillGridProjectManagement() {
-			if(!tabControlNav.TabPages.Contains(tabProjectManagement)) {
-				return; 
-			}
-			long jobTeamNum=comboTeamFilterProjectManagement.GetSelected<JobTeam>().JobTeamNum;
-			List<Job> listJobs;
-			if(checkOnlyShowTopLevel.Checked) {
-				listJobs=GetListJobsForTeam(jobTeamNum).FindAll(x => x.Category==JobCategory.Project && x.JobNum==x.TopParentNum && !x.PhaseCur.In(JobPhase.Complete,JobPhase.Cancelled));
-			}
-			else{
-				listJobs=GetListJobsForTeam(jobTeamNum).FindAll(x => x.Category==JobCategory.Project && !x.PhaseCur.In(JobPhase.Complete,JobPhase.Cancelled));
-			}
-			_dicRowNotes.Clear();
-			gridProjectManagement.Title="Projects";
-			long selectedJobNum=userControlJobManagerEditor.JobNumCur;
-			gridProjectManagement.BeginUpdate();
-			gridProjectManagement.Columns.Clear();
-			gridProjectManagement.Columns.Add(new GridColumn("Priority",50,HorizontalAlignment.Center));
-			gridProjectManagement.Columns.Add(new GridColumn("Owner",65,HorizontalAlignment.Center));
-			gridProjectManagement.Columns.Add(new GridColumn("",245));
-			gridProjectManagement.ListGridRows.Clear();
-			//Sort jobs into action dictionary
-			Dictionary<JobAction,List<Job>> dictActions=new Dictionary<JobAction,List<Job>>();
-			foreach(Job job in listJobs) {
-				JobAction action=job.OwnerAction;
-				if(!dictActions.ContainsKey(action)) {
-					dictActions[action]=new List<Job>();
-				}
-				dictActions[action].Add(job);
-			}
-			//sort dictionary so actions will appear in same order
-			dictActions=dictActions.OrderBy(x => (int)x.Key).ToDictionary(x => x.Key,x => x.Value);
-			foreach(KeyValuePair<JobAction,List<Job>> kvp in dictActions) {
-				if(kvp.Key==JobAction.Undefined || kvp.Key==JobAction.UnknownJobPhase || kvp.Key==JobAction.None) {
-					//Undefined occurs when there is no action to take. 
-					//UnknownJobPhase occurs when there is something wrong with the programming.
-					continue;
-				}
-				List<Job> listJobsSorted=kvp.Value//filter
-					.OrderBy(x => x.OwnerNum!=0)//sort
-					.ThenBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder).ToList();
-				if(listJobsSorted.Count==0) {
-					continue;
-				}
-				//Add a 'category title' row to the grid which will have the corresponding JobAction enum as its tag.
-				//Always show the count of sorted jobs within each job action category regardless if the category is collapsed or not.
-				string jobActionRowTitleStr=$"{kvp.Key.ToString()} ({listJobsSorted.Count})";
-				gridProjectManagement.ListGridRows.Add(new GridRow("","",jobActionRowTitleStr) { ColorBackG=_colorGridHeaderBack,Bold=true,Tag=kvp.Key });
-				if(_listJobActionsCollapsedProject.Contains(kvp.Key)) {
-					continue;
-				}
-				JobAction[] writeAdviseReview=new[] { JobAction.WriteCode,JobAction.ReviewCode,JobAction.WaitForReview,JobAction.Advise };
-				foreach(Job job in listJobsSorted) {
-					Def jobPriority=_listJobPriorities.FirstOrDefault(y => y.DefNum==job.Priority);
-					string ownerString=job.OwnerNum==0 ? "-" : Userods.GetName(job.OwnerNum);
-					gridProjectManagement.ListGridRows.Add(
-					new GridRow(
-						new GridCell(jobPriority.ItemName) {
-							ColorBackG=jobPriority.ItemColor,
-							ColorText=(job.Priority==_listJobPriorities.FirstOrDefault(y => y.ItemValue.Contains("Urgent")).DefNum) ? Color.White : Color.Black,
-						},
-						new GridCell(ownerString),
-						new GridCell(job.ToString()) { ColorBackG=(job.ToString().ToLower().Contains(textSearch.Text.ToLower())&&!string.IsNullOrWhiteSpace(textSearch.Text) ? Color.LightYellow : Color.Empty) }
-						) {
-						Tag=job
-					}
-					);
-				}
-			}
-			gridProjectManagement.EndUpdate();
-			//RESELECT JOB
-			if(selectedJobNum>0 && selectedJobNum==userControlJobManagerEditor.JobNumCur) {
-				for(int i=0;i<gridProjectManagement.ListGridRows.Count;i++) {
-					if((gridProjectManagement.ListGridRows[i].Tag is Job) && ((Job)gridProjectManagement.ListGridRows[i].Tag).JobNum==selectedJobNum) {
-						gridProjectManagement.SetSelected(i,true);
-						break;
-					}
-				}
-			}
-		}
-
 		private void FillGridNeedsExpert() {
 			if(!tabControlNav.TabPages.Contains(tabNeedsExpert)) {
 				return;
@@ -1228,7 +1149,7 @@ namespace OpenDental {
 				(int)JobCategory.NeedNoApproval,
 			};
 			//Sort jobs into category dictionary
-			Dictionary<JobCategory,List<Job>> dictCategories=GetDictJobsForTeamByCategory(comboTeamFilterNeedsExpert.GetSelected<JobTeam>().JobTeamNum);
+			Dictionary<JobCategory,List<Job>> dictCategories = JobManagerCore.ListJobsAll.GroupBy(x => x.Category).ToDictionary(y => y.Key,y => y.ToList());
 			LayoutManager.Move(gridAvailableJobsExpert,new Rectangle(0,33,tabControlNav.ClientSize.Width,tabControlNav.ClientSize.Height-33));
 			gridAvailableJobsExpert.BeginUpdate();
 			gridAvailableJobsExpert.Columns.Clear();
@@ -1242,7 +1163,7 @@ namespace OpenDental {
 					continue;
 				}
 				List<Job> listJobsSorted = kvp.Value.OrderBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder).ToList();
-				listJobsSorted.RemoveAll(x => x.Priority==_defNumIsOnHold||x.OwnerAction!=JobAction.AssignExpert);
+				listJobsSorted.RemoveAll(x => x.Priority==_listJobPriorities.FirstOrDefault(y => y.ItemValue.Contains("OnHold")).DefNum||x.OwnerAction!=JobAction.AssignExpert);
 				if(comboProposedVersionNeedsExpert.SelectedIndex!=0) {//All is not selected, only select the jobs with the specified proposedversion
 					listJobsSorted.RemoveAll(x => x.ProposedVersion!=comboProposedVersionNeedsExpert.GetSelected<JobProposedVersion>());
 				}
@@ -1310,7 +1231,7 @@ namespace OpenDental {
 					continue;
 				}
 				List<Job> listJobsSorted = kvp.Value.OrderBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder).ToList();
-				listJobsSorted.RemoveAll(x => x.Priority!=_defNumIsOnHold||x.PhaseCur==JobPhase.Complete||x.PhaseCur==JobPhase.Documentation||x.PhaseCur==JobPhase.Cancelled);
+				listJobsSorted.RemoveAll(x => x.Priority!=_listJobPriorities.FirstOrDefault(y => y.ItemValue.Contains("OnHold")).DefNum||x.PhaseCur==JobPhase.Complete||x.PhaseCur==JobPhase.Documentation||x.PhaseCur==JobPhase.Cancelled);
 				if(listJobsSorted.Count==0) {
 					continue;
 				}
@@ -1509,24 +1430,7 @@ namespace OpenDental {
 			}
 			long selectedJobNum=userControlJobManagerEditor.JobNumCur;
 			int jobCount=0;
-			Userod userFilter=Security.CurUser;
-			if(comboUser.SelectedIndex==1) {
-				userFilter=new Userod() { UserName="Unassigned",UserNum=0 };
-			}
-			else if(comboUser.SelectedIndex>1) {
-				userFilter=_listUsers[comboUser.SelectedIndex-2];
-			}
-			//Filter down to all incomplete jobs with subscription for selected user.
-			List<Job> listJobsFiltered=JobManagerCore.ListJobsAll.Where(x=>x.ListJobLinks.Exists(y=>y.LinkType==JobLinkType.Subscriber && y.FKey==userFilter.UserNum) && x.PhaseCur!=JobPhase.Complete).ToList();
-			//Optionally exclude OnHold jobs.
-			if(!checkSubscribedIncludeOnHold.Checked) {
-				listJobsFiltered.RemoveAll(x => x.Priority==_defNumIsOnHold);
-			}
-			//Order by priority.
-			listJobsFiltered=listJobsFiltered.OrderBy(x=>_listJobPriorities.Find(y=>y.DefNum == x.Priority).ItemOrder).ToList();
-			//Group jobs in dictionary by category
-			Dictionary<JobCategory,List<Job>> dictCategories=listJobsFiltered.GroupBy(x=>x.Category).ToDictionary(y=>y.Key,y=>y.ToList());
-			//sort dictionary so actions will appear in this order
+			//sort dictionary so actions will appear in same order
 			List<int> listCategoriesSorted=new List<int> {
 				(int)JobCategory.Bug,
 				(int)JobCategory.Enhancement,
@@ -1541,7 +1445,15 @@ namespace OpenDental {
 				(int)JobCategory.Research,
 				(int)JobCategory.NeedNoApproval,
 			};
-			dictCategories=dictCategories.OrderBy(x=>listCategoriesSorted.IndexOf((int)x.Key)).ToDictionary(x=>x.Key,x=>x.Value);
+			//Sort jobs into category dictionary
+			Dictionary<JobCategory,List<Job>> dictCategories=JobManagerCore.ListJobsAll.GroupBy(x => x.Category).ToDictionary(y => y.Key,y => y.ToList());
+			Userod userFilter=Security.CurUser;
+			if(comboUser.SelectedIndex==1) {
+				userFilter=new Userod() { UserName="Unassigned",UserNum=0 };
+			}
+			else if(comboUser.SelectedIndex>1) {
+				userFilter=_listUsers[comboUser.SelectedIndex-2];
+			}
 			gridSubscribedJobs.BeginUpdate();
 			gridSubscribedJobs.Columns.Clear();
 			gridSubscribedJobs.Columns.Add(new GridColumn("Priority",50,HorizontalAlignment.Center));
@@ -1550,16 +1462,20 @@ namespace OpenDental {
 			gridSubscribedJobs.Columns.Add(new GridColumn("Phase",85,HorizontalAlignment.Center));
 			gridSubscribedJobs.Columns.Add(new GridColumn("",85){ IsWidthDynamic=true });
 			gridSubscribedJobs.ListGridRows.Clear();
-			//Create rows and cells for jobs of each category
+			dictCategories=dictCategories.OrderBy(x => listCategoriesSorted.IndexOf((int)x.Key)).ToDictionary(x => x.Key,x => x.Value);
 			foreach(KeyValuePair<JobCategory,List<Job>> kvp in dictCategories) {
-				List<Job> listJobsSorted=kvp.Value;
+				List<Job> listJobsSorted=kvp.Value.OrderBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder).ToList();
+				if(!checkSubscribedIncludeOnHold.Checked) {
+					listJobsSorted.RemoveAll(x => x.Priority==_listJobPriorities.FirstOrDefault(y => y.ItemValue.Contains("OnHold")).DefNum);
+				}
+				listJobsSorted.RemoveAll(x => !x.ListJobLinks.Exists(y => y.LinkType==JobLinkType.Subscriber && y.FKey==userFilter.UserNum));
 				if(listJobsSorted.Count==0) {
 					continue;
 				}
 				gridSubscribedJobs.ListGridRows.Add(new GridRow("","","","",kvp.Key.ToString()) { ColorBackG=_colorGridHeaderBack,Bold=true });
 				foreach(Job job in listJobsSorted) {
-					Def jobPriority=_listJobPriorities.Find(y => y.DefNum==job.Priority);
-					string note=JobNotifications.GetNoteForChanges(job.ListJobNotifications.Find(x=>x.UserNum==Security.CurUser.UserNum)?.Changes??JobNotificationChanges.None);
+					Def jobPriority=_listJobPriorities.FirstOrDefault(y => y.DefNum==job.Priority);
+					string note=JobNotifications.GetNoteForChanges(job.ListJobNotifications.FirstOrDefault(x => x.UserNum==Security.CurUser.UserNum)?.Changes??JobNotificationChanges.None);
 					gridSubscribedJobs.ListGridRows.Add(
 						new GridRow(
 							new GridCell(jobPriority.ItemName),
@@ -1614,21 +1530,19 @@ namespace OpenDental {
 			gridQueries.Columns.Add(new GridColumn("",225));
 			gridQueries.ListGridRows.Clear();
 			//Sort jobs into action dictionary
-			List<Job> listJobsSorted=JobManagerCore.ListJobsAll
-				.Where(x => x.Category==JobCategory.Query
-				&& _listQueryPriorityFilter.Contains(x.Priority)
-				&& _listQueryJobPhaseFilter.Contains(x.PhaseCur))
-				.ToList();
+			List<Job> listJobsSorted=JobManagerCore.ListJobsAll.Where(x => x.Category==JobCategory.Query).ToList();
 			listJobsSorted=listJobsSorted.OrderBy(x => x.AckDateTime).ThenBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder).ToList();
 			Dictionary<JobPhase,List<Job>> dictPhases=new Dictionary<JobPhase,List<Job>>();
 			foreach(Job job in listJobsSorted) {
 				if(userFilter!=null && userFilter.UserNum!=job.UserNumEngineer) {
 					continue;
 				}
-				if(!checkShowQueryComplete.Checked && job.PhaseCur==JobPhase.Complete) {
+				if(!checkShowQueryComplete.Checked && job.PhaseCur==JobPhase.Complete) 
+				{
 					continue;
 				}
-				if(!checkShowQueryCancelled.Checked && job.PhaseCur==JobPhase.Cancelled) {
+				if(!checkShowQueryCancelled.Checked && job.PhaseCur==JobPhase.Cancelled) 
+				{
 					continue;
 				}
 				JobPhase phase=job.PhaseCur;
@@ -1661,7 +1575,7 @@ namespace OpenDental {
 					gridQueries.ListGridRows.Add(
 					new GridRow(
 						new GridCell(job.AckDateTime.Year>1880?job.AckDateTime.ToShortDateString():"N/A"),
-						new GridCell($"{jobPriority.ItemName}\r\n{(job.DateTimeTested.Year>1880?job.DateTimeTested.ToShortDateString():"")}") {
+						new GridCell(job.DateTimeTested.Year<1880?jobPriority.ItemName:job.DateTimeTested.ToShortDateString()) {
 							ColorBackG=jobPriority.ItemColor,
 							ColorText=(job.Priority==_listJobPriorities.FirstOrDefault(y => y.ItemValue.Contains("Urgent")).DefNum) ? Color.White : Color.Black,
 						},
@@ -1902,7 +1816,7 @@ namespace OpenDental {
 				.ThenBy(x => x.Category==JobCategory.Bug)
 				.ThenBy(x => _listJobPriorities.FirstOrDefault(y => y.DefNum==x.Priority).ItemOrder).ToList();
 			if(!checkShowOnHoldSubmitted.Checked) {
-				listJobsSorted.RemoveAll(x => x.Priority==_defNumIsOnHold);
+				listJobsSorted.RemoveAll(x => x.Priority==_listJobPriorities.FirstOrDefault(y => y.ItemValue.Contains("OnHold")).DefNum);
 			}
 			Color changedColor = Security.CurUser.UserNum==9 ? Color.FromArgb(20,Color.LightGreen) : Color.FromArgb(80,Color.LightGreen);
 			foreach(Job job in listJobsSorted) {
@@ -1934,25 +1848,6 @@ namespace OpenDental {
 						break;
 					}
 				}
-			}
-		}
-
-		///<summary>Helper method. Returns a dictionary of lists of jobs per job category for a given jobTeamNum.</summary>
-		private Dictionary<JobCategory,List<Job>> GetDictJobsForTeamByCategory(long jobTeamNum,List<Job> listJobs=null) {
-			return GetListJobsForTeam(jobTeamNum,listJobs).GroupBy(x => x.Category).ToDictionary(y => y.Key,y => y.ToList());
-		}
-
-		///<summary>Filters the passed in list of jobs by JobTeamNum. Considers -1 and -2 for comboBox 'none' and 'all' options.
-		///If listJobs is null, it defaults to JobManagerCore.ListJobsAll.</summary>
-		private List<Job> GetListJobsForTeam(long jobTeamNum,List<Job> listJobs=null) {
-			listJobs??=JobManagerCore.ListJobsAll;//Default list to all jobs if null
-			switch(jobTeamNum) {
-				case -1://None selected, only jobs not assigned to a team
-					return listJobs.FindAll(x => !x.ListJobLinks.Exists(y => y.LinkType==JobLinkType.JobTeam));
-				case -2://All selected, all jobs regardless of team
-					return listJobs;
-				default://Team selected, only jobs for that team
-					return listJobs.FindAll(x => x.ListJobLinks.Exists(y => y.LinkType==JobLinkType.JobTeam && y.FKey==(jobTeamNum)));
 			}
 		}
 		#endregion
@@ -1989,12 +1884,9 @@ namespace OpenDental {
 			if(comboProposedVersionSearch.SelectedIndex!=0) {//All is not selected
 				listJobsSorted=listJobsSorted.Where(x => x.ProposedVersion==comboProposedVersionSearch.GetSelected<JobProposedVersion>()).ToList();
 			}
-			if(comboPrioritySearch.SelectedIndices.Count > 0 && !comboPrioritySearch.SelectedIndices.Contains(0)) {
-				//At least one item is selected, but none of them are 'All'.
-				List<long> listDefNumsSelected=comboPrioritySearch.GetListSelected<Def>().Select(x => x.DefNum).ToList();
-				listJobsSorted=listJobsSorted.FindAll(x => listDefNumsSelected.Contains(x.Priority));
+			if(comboPrioritySearch.SelectedIndex!=0) {//All is not selected
+				listJobsSorted=listJobsSorted.Where(x => x.Priority==comboPrioritySearch.GetSelected<Def>().DefNum).ToList();
 			}
-			listJobsSorted=GetListJobsForTeam(comboTeamSearch.GetSelected<JobTeam>().JobTeamNum,listJobsSorted);
 			if(!String.IsNullOrEmpty(textUserSearch.Text)) {
 				listJobsSorted=listJobsSorted.Where(x => Userods.GetName(x.OwnerNum).ToLower().Contains(textUserSearch.Text.ToLower())).ToList();
 			}
@@ -2081,27 +1973,11 @@ namespace OpenDental {
 			FillActiveTabGrid();
 		}
 
-		private void comboTeamFilterNeedsExpert_SelectionChangeCommitted(object sender,EventArgs e) {
-			FillActiveTabGrid();
-		}
-
-		private void comboTeamFilterNeedsEngineer_SelectionChangeCommitted(object sender,EventArgs e) {
-			FillActiveTabGrid();
-		}
-
-		private void comboTeamFilterProjectManagement_SelectionChangeCommitted(object sender,EventArgs e) {
-			FillActiveTabGrid();
-		}
-
 		private void comboProposedVersionNeedsExpert_SelectionChangeCommitted(object sender,EventArgs e) {
 			FillActiveTabGrid();
 		}
 
 		private void comboProposedVersionSearch_SelectionChangeCommitted(object sender,EventArgs e) {
-			FillActiveTabGrid();
-		}
-
-		private void comboTeamSearch_SelectionChangeCommitted(object sender,EventArgs e) {
 			FillActiveTabGrid();
 		}
 
@@ -2202,10 +2078,6 @@ namespace OpenDental {
 			OpenNonModalJob(GetSelectedJob(gridSubmittedJobs,e.Row));
 		}
 
-		private void gridProjectManagement_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			OpenNonModalJob(GetSelectedJob(gridProjectManagement,e.Row));
-		}
-
 		private void gridAction_CellClick(object sender,ODGridClickEventArgs e) {
 			if(gridAction.ListGridRows[e.Row].Tag==null) {
 				return;
@@ -2226,30 +2098,6 @@ namespace OpenDental {
 			//Rows that have a tag of type Job should cause the entire JM window and registered entities notified that they need to load the selected job.
 			if(gridAction.ListGridRows[e.Row].Tag is Job) {
 				LoadJob((Job)gridAction.ListGridRows[e.Row].Tag,false);
-				return;
-			}
-		}
-
-		private void gridProjectManagement_CellClick(object sender,ODGridClickEventArgs e) {
-			if(gridProjectManagement.ListGridRows[e.Row].Tag==null) {
-				return;
-			}
-			//Rows that have a tag of type JobAction are the 'category title' rows that are bold with a colored background.
-			//When a user single clicks on one of these rows it should collapse or expand the entire category based on its current state.
-			if(gridProjectManagement.ListGridRows[e.Row].Tag is JobAction) {
-				JobAction jobAction=(JobAction)gridProjectManagement.ListGridRows[e.Row].Tag;
-				if(_listJobActionsCollapsedProject.Contains(jobAction)) {
-					_listJobActionsCollapsedProject.RemoveAll(x => x==jobAction);
-				}
-				else {
-					_listJobActionsCollapsedProject.Add(jobAction);
-				}
-				FillGridProjectManagement();
-				return;
-			}
-			//Rows that have a tag of type Job should cause the entire JM window and registered entities notified that they need to load the selected job.
-			if(gridProjectManagement.ListGridRows[e.Row].Tag is Job) {
-				LoadJob((Job)gridProjectManagement.ListGridRows[e.Row].Tag,false);
 				return;
 			}
 		}
@@ -2433,9 +2281,8 @@ namespace OpenDental {
 			}
 			Job jobOld=job.Copy();
 			job.PatternReviewStatus=status;
-			if(Jobs.Update(job,jobOld)) {
-				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,job.JobNum);
-			}
+			Jobs.Update(job);
+			Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,job.JobNum);
 			LoadJob(job,true);
 			JobLogs.MakeLogEntryForPatternReview(job,jobOld);
 			FillGridPatternReview();
@@ -2470,10 +2317,6 @@ namespace OpenDental {
 		}
 
 		private void checkSubscribedIncludeOnHold_CheckedChanged(object sender,EventArgs e) {
-			FillActiveTabGrid();
-		}
-
-		private void checkOnlyShowTopLevel_CheckedChanged(object sender,EventArgs e) {
 			FillActiveTabGrid();
 		}
 
@@ -2541,7 +2384,6 @@ namespace OpenDental {
 			menuMain.Add(menuItemTools);
 			menuItemTools.Add("Backport",backportToolStripMenuItem_Click);
 			menuItemTools.Add("Bug Submissions",butBugSubs_Click);
-			menuItemTools.Add("Code Review Report",butCodeReview_Click);
 			//TODO: Add this back in later
 			//menuItemTools.Add("Job Time Helper",jobTimeHelperToolStripMenuItem_Click);
 			menuItemTools.Add("Wiki",butWiki_Click);
@@ -2635,16 +2477,6 @@ namespace OpenDental {
 			}
 			this.Text="Job Manager"+(comboUser.Text=="" ? "" : " - "+comboUser.Text);
 		}
-
-		private void FillComboTeamFilter(UI.ComboBox comboTeam, bool doAddAllOption=false) {
-			comboTeam.Items.Clear();
-			if(doAddAllOption) {
-				comboTeam.Items.Add("All",new JobTeam(){JobTeamNum=-2});
-			}
-			comboTeam.Items.Add("None",new JobTeam(){JobTeamNum=-1});
-			comboTeam.Items.AddList(_listJobTeams, x => x.TeamName);
-			comboTeam.SelectedIndex=0;
-		}
 		#endregion
 
 		#region MainMenu Events
@@ -2671,24 +2503,20 @@ namespace OpenDental {
 				return;
 			}
 			//Get category list for the user
-			List<string> categoryList=JobManagerCore.CategoryList;
-			if(parentNum>0 && topParentNum>0 && userControlJobManagerEditor.JobCur.Category!=JobCategory.Project) {
-				categoryList.Remove("Project");//Projects can only have other Projects as Parents
-			}
+			List<string> categoryList=CategoryList;
 			if(categoryList.Count==0) {//Should only happen if we forget to stop them from being able to click the button
 				MsgBox.Show(this,"You are not authorized to create jobs.");
 				return;
 			}
-			InputBox inputBoxCategory=new InputBox("Choose a job category",categoryList,0);
-			inputBoxCategory.ShowDialog();
-			if(inputBoxCategory.IsDialogCancel) {
+			using InputBox categoryChoose=new InputBox("Choose a job category",categoryList,0);
+			if(categoryChoose.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
-			if(inputBoxCategory.SelectedIndex==-1) {//Shouldn't ever happen, but I am leaving this here
+			if(categoryChoose.comboSelection.SelectedIndex==-1) {//Shouldn't ever happen, but I am leaving this here
 				MsgBox.Show(this,"You must choose a category to create a job.");
 				return;
 			}
-			jobNew.Category=(JobCategory)Enum.GetNames(typeof(JobCategory)).ToList().IndexOf(categoryList[inputBoxCategory.SelectedIndex]);
+			jobNew.Category=(JobCategory)Enum.GetNames(typeof(JobCategory)).ToList().IndexOf(categoryChoose.comboSelection.GetSelected<string>());
 			long priorityNum=0;
 			priorityNum=listJobPriorities.FirstOrDefault(x => x.ItemValue.Contains("JobDefault")).DefNum;
 			if(jobNew.Category.In(JobCategory.Bug,JobCategory.Conversion,JobCategory.NeedNoApproval,JobCategory.UnresolvedIssue)) {
@@ -2706,28 +2534,26 @@ namespace OpenDental {
 				return;//We don't want to continue for normal jobs
 			}
 			//------------EVERYTHING BELOW IS ONLY FOR QUERY AND MARKETING JOBS----------------------
-			InputBox titleBox=new InputBox("Provide a brief title for the job.");
-			titleBox.ShowDialog();
-			if(titleBox.IsDialogCancel) {
+			using InputBox titleBox=new InputBox("Provide a brief title for the job.");
+			if(titleBox.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
-			if(String.IsNullOrEmpty(titleBox.StringResult)) {
+			if(String.IsNullOrEmpty(titleBox.textResult.Text)) {
 				MsgBox.Show(this,"You must type a title to create a job.");
 				return;
 			}
-			jobNew.Title=titleBox.StringResult;
+			jobNew.Title=titleBox.textResult.Text;
 			JobLink jobLinkNew=new JobLink();
 			JobQuote jobQuoteNew=new JobQuote();
 			Bug bugNew=new Bug();
 			if(jobNew.Category==JobCategory.Bug) {
 				jobLinkNew.LinkType=JobLinkType.Bug;
 				bugNew=Bugs.GetNewBugForUser();
-				InputBox bugDescription=new InputBox("Provide a brief description for the bug. This will appear in the bug tracker.",jobNew.Title);
-				bugDescription.ShowDialog();
-				if(bugDescription.IsDialogCancel) {
+				using InputBox bugDescription=new InputBox("Provide a brief description for the bug. This will appear in the bug tracker.",jobNew.Title);
+				if(bugDescription.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
-				if(String.IsNullOrEmpty(bugDescription.StringResult)) {
+				if(String.IsNullOrEmpty(bugDescription.textResult.Text)) {
 					MsgBox.Show(this,"You must type a description to create a bug.");
 					return;
 				}
@@ -2739,7 +2565,7 @@ namespace OpenDental {
 				}
 				bugNew.Status_=BugStatus.Accepted;
 				bugNew.VersionsFound=FormVP.VersionText;
-				bugNew.Description=bugDescription.StringResult;
+				bugNew.Description=bugDescription.textResult.Text;
 			}
 			else if(jobNew.Category==JobCategory.Query || jobNew.Category==JobCategory.MarketingDesign) {
 				using FormPatientSelect FormPS=new FormPatientSelect();
@@ -2780,11 +2606,6 @@ namespace OpenDental {
 		private void butBugSubs_Click(object sender,EventArgs e) {
 			FormBugSubmissions FormBugSubs=new FormBugSubmissions();
 			FormBugSubs.Show();//Non-modal
-		}
-
-		private void butCodeReview_Click(object sender,EventArgs e) {
-			FormCodeReviewReport formCodeReviewReport=new FormCodeReviewReport();
-			formCodeReviewReport.Show();//Non-modal
 		}
 		
 		private void butOverview_Click(object sender,EventArgs e) {
@@ -2884,17 +2705,17 @@ namespace OpenDental {
 		}
 
 		private void butAdvSearch_Click(object sender,EventArgs e) {
-			using FormJobSearch formJobSearch=new FormJobSearch();
-			formJobSearch.InitialSearchString=textSearch.Text;
+			using FormJobSearch FormJS=new FormJobSearch();
+			FormJS.InitialSearchString=textSearch.Text;
 			//pass in data here to reduce calls to DB.
-			formJobSearch.ShowDialog(this);
-			if(formJobSearch.DialogResult!=DialogResult.OK) {
+			FormJS.ShowDialog(this);
+			if(FormJS.DialogResult!=DialogResult.OK) {
 				return;
 			}
 			checkContactSearch.Checked=true;
 			checkResults.Checked=true;//sets control visibility as well.
 			tabControlNav.SelectedTab=tabSearch;//Search tab to see search results.
-			LoadJob(formJobSearch.SelectedJob,true);
+			LoadJob(FormJS.SelectedJob,true);
 			//Search list has already been updated
 			FillGridSearch();
 		}
@@ -2908,7 +2729,6 @@ namespace OpenDental {
 			comboCatSearch.Visible=!checkResults.Checked;
 			comboPrioritySearch.Visible=!checkResults.Checked;
 			comboProposedVersionSearch.Visible=!checkResults.Checked;
-			comboTeamSearch.Visible=!checkResults.Checked;
 			textUserSearch.Visible=!checkResults.Checked;
 			labelCatSearch.Visible=!checkResults.Checked;
 			labelPrioritySearch.Visible=!checkResults.Checked;
@@ -2921,10 +2741,6 @@ namespace OpenDental {
 		#endregion
 
 		#region JobEdit Methods
-		private void userControlJobManagerEditor_GoToJob(object sender,long jobNum) {
-			LoadJob(Jobs.GetOneFilled(jobNum),true);
-		}
-
 		///<summary>Loads whatever job control is necessary in order to display the job within the manager.
 		///Also refreshes the cache with the job passed in and updates all corresponding controls and grids.
 		///This method will not load the passed in job if the current job cannot be saved correctly.</summary>
@@ -3023,30 +2839,12 @@ namespace OpenDental {
 			ODThread.QuitSyncThreadsByGroupName(100,"RefreshAndFillJobManager");//Give the thread 100ms before killing it.
 		}
 
+		private void tabControlNav_SelectedIndexChanged(object sender,EventArgs e) {
+
+		}
+
 		private void butExport_Click(object sender,EventArgs e) {
 			gridAction.Export($"JobManagerActionItems_{DateTime.Today.ToString("yyyy-MM-dd")}");
-		}
-
-		private void comboQueryPhaseFilter_SelectionChangeCommitted(object sender,EventArgs e) {
-			_listQueryJobPhaseFilter.Clear();
-			_listQueryJobPhaseFilter=comboQueryPhaseFilter.GetListSelected<JobPhase>();
-			if(_listQueryJobPhaseFilter.Count==0 || comboQueryPhaseFilter.IsAllSelected) {
-				_listQueryJobPhaseFilter=comboQueryPhaseFilter.Items.GetAll<JobPhase>();
-				comboQueryPhaseFilter.SetAll(false);
-				comboQueryPhaseFilter.IsAllSelected=true;
-			}
-			FillGridQueries();
-		}
-
-		private void comboQueryPriorityFilter_SelectionChangeCommitted(object sender,EventArgs e) {
-			_listQueryPriorityFilter.Clear();
-			_listQueryPriorityFilter=comboQueryPriorityFilter.GetListSelected<Def>().ConvertAll(x=>x.DefNum);
-			if(_listQueryPriorityFilter.Count==0 || comboQueryPriorityFilter.IsAllSelected) {
-				_listQueryPriorityFilter=comboQueryPriorityFilter.Items.GetAll<Def>().ConvertAll(x=>x.DefNum);
-				comboQueryPriorityFilter.SetAll(false);
-				comboQueryPriorityFilter.IsAllSelected=true;
-			}
-			FillGridQueries();
 		}
 	}
 }

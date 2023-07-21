@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPhoneConfs));
+			this.butClose = new OpenDental.UI.Button();
 			this.gridConfRoom = new OpenDental.UI.GridOD();
 			this.butRefresh = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
@@ -31,6 +32,17 @@ namespace OpenDental{
 			this.butKick = new OpenDental.UI.Button();
 			this.checkHideEmpty = new OpenDental.UI.CheckBox();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(590, 584);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(82, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridConfRoom
 			// 
@@ -62,7 +74,7 @@ namespace OpenDental{
 			this.butAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.butAdd.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAdd.Location = new System.Drawing.Point(574, 127);
+			this.butAdd.Location = new System.Drawing.Point(590, 127);
 			this.butAdd.Name = "butAdd";
 			this.butAdd.Size = new System.Drawing.Size(82, 26);
 			this.butAdd.TabIndex = 142;
@@ -74,7 +86,7 @@ namespace OpenDental{
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(574, 174);
+			this.butDelete.Location = new System.Drawing.Point(590, 174);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(82, 25);
 			this.butDelete.TabIndex = 143;
@@ -84,7 +96,7 @@ namespace OpenDental{
 			// butKick
 			// 
 			this.butKick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.butKick.Location = new System.Drawing.Point(574, 298);
+			this.butKick.Location = new System.Drawing.Point(590, 298);
 			this.butKick.Name = "butKick";
 			this.butKick.Size = new System.Drawing.Size(82, 24);
 			this.butKick.TabIndex = 144;
@@ -103,6 +115,7 @@ namespace OpenDental{
 			// 
 			// FormPhoneConfs
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(684, 620);
 			this.Controls.Add(this.checkHideEmpty);
 			this.Controls.Add(this.butKick);
@@ -110,6 +123,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.butRefresh);
 			this.Controls.Add(this.gridConfRoom);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormPhoneConfs";
 			this.Text = "Conference Rooms";
@@ -119,6 +133,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridConfRoom;
 		private UI.Button butRefresh;
 		private UI.Button butAdd;

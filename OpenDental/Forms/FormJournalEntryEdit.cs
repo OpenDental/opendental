@@ -104,7 +104,7 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textDebit.IsValid() || !textCredit.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
@@ -137,14 +137,20 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void FormJournalEntryEdit_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult!=DialogResult.Cancel) {
-				return;
-			}
+		private void butCancel_Click(object sender, System.EventArgs e) {
 			if(IsNew){
 				JournalEntryCur=null;
 			}
+			DialogResult=DialogResult.Cancel;
 		}
 
+		
+
+		
+
+	
+
 	}
+
+
 }

@@ -261,7 +261,7 @@ namespace OpenDentBusiness {
 			return (BugSubmission)this.MemberwiseClone();
 		}
 
-		///<summary>Returns serialized DbInfo object as JSON string of database info from both the preference table and non preference table info.
+		///<summary>Returns serialized DbInfo object as JSON string of database info from both the preference table and non preferernce table info.
 		///Every unique bit of information is individually try / caught so that we return as much information as possible.</summary>
 		private string GetDbInfoJSON(long patNum,string moduleName) {
 			_info=new BugSubmission.SubmissionInfo();

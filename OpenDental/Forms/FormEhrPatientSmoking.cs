@@ -510,7 +510,7 @@ namespace OpenDental {
 			FillGridInterventions();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(comboSmokeStatus.SelectedIndex==0) {//None
 				PatCur.SmokingSnoMed="";
 			}
@@ -519,6 +519,10 @@ namespace OpenDental {
 			}
 			Patients.Update(PatCur,_patOld);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

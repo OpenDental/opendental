@@ -220,7 +220,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			//In case only one change was made before saving
 			UserControlHostedURL userControlHostedURL = (UserControlHostedURL)panelHostedURLs.Controls.Find("UserControlHostedURL",true).FirstOrDefault();
 			if(userControlHostedURL!=null && !_listUserControlHostedURLs.Any(x => x.GetClinicNum()==userControlHostedURL.GetClinicNum())) {//No duplicates.
@@ -230,6 +230,9 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 
 		private void gridClinics_Click(object sender,ODGridClickEventArgs e) {
 			LoadAndDisplayClinic(_listEserviceClinicNames[e.Row]);

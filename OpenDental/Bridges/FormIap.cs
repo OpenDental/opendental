@@ -15,7 +15,11 @@ namespace OpenDental{
 		private ArrayList list=null;
 
 		///<summary></summary>
-		public FormIap() {
+		public FormIap()
+		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
@@ -72,5 +76,36 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

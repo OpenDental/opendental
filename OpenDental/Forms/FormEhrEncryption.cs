@@ -168,5 +168,9 @@ namespace OpenDental {
 			MessageBox.Show("Sent");
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 	}
 }

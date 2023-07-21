@@ -26,6 +26,7 @@ namespace OpenDental{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormProvStudentBulkEdit));
 			this.butBulkEdit = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.gridStudents = new OpenDental.UI.GridOD();
 			this.label7 = new System.Windows.Forms.Label();
 			this.textProvNum = new System.Windows.Forms.TextBox();
@@ -48,6 +49,16 @@ namespace OpenDental{
 			this.butBulkEdit.TabIndex = 3;
 			this.butBulkEdit.Text = "Save";
 			this.butBulkEdit.Click += new System.EventHandler(this.butBulkEdit_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(496, 458);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 4;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridStudents
 			// 
@@ -165,6 +176,7 @@ namespace OpenDental{
 			this.Controls.Add(this.comboClass);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.gridStudents);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormProvStudentBulkEdit";
 			this.Text = "Student Bulk Edit";
@@ -178,6 +190,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butBulkEdit;
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridStudents;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.TextBox textProvNum;

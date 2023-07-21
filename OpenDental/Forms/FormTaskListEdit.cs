@@ -66,17 +66,17 @@ namespace OpenDental{
 		}
 
 		private void FillComboGlobalFilter() {
-			if((EnumTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType)==EnumTaskFilterType.Disabled) {
+			if((GlobalTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType)==GlobalTaskFilterType.Disabled) {
 				comboGlobalFilter.Visible=false;
 				labelGlobalFilter.Visible=false;
 				return;
 			}
-			comboGlobalFilter.Items.Add(Lan.g(this,EnumTaskFilterType.Default.GetDescription()),EnumTaskFilterType.Default);
-			comboGlobalFilter.Items.Add(Lan.g(this,EnumTaskFilterType.None.GetDescription()),EnumTaskFilterType.None);
+			comboGlobalFilter.Items.Add(Lan.g(this,GlobalTaskFilterType.Default.GetDescription()),GlobalTaskFilterType.Default);
+			comboGlobalFilter.Items.Add(Lan.g(this,GlobalTaskFilterType.None.GetDescription()),GlobalTaskFilterType.None);
 			if(PrefC.HasClinicsEnabled) {
-				comboGlobalFilter.Items.Add(Lan.g(this,EnumTaskFilterType.Clinic.GetDescription()),EnumTaskFilterType.Clinic);
+				comboGlobalFilter.Items.Add(Lan.g(this,GlobalTaskFilterType.Clinic.GetDescription()),GlobalTaskFilterType.Clinic);
 				if(Defs.GetDefsForCategory(DefCat.Regions).Count>0) {
-					comboGlobalFilter.Items.Add(Lan.g(this,EnumTaskFilterType.Region.GetDescription()),EnumTaskFilterType.Region);
+					comboGlobalFilter.Items.Add(Lan.g(this,GlobalTaskFilterType.Region.GetDescription()),GlobalTaskFilterType.Region);
 				}
 			}
 			comboGlobalFilter.SetSelectedEnum(_taskList.GlobalTaskFilterType);
@@ -92,7 +92,7 @@ namespace OpenDental{
 			errorProvider1.SetError(comboGlobalFilter,string.Empty);//Clear the error, if applicable.
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textDateTL.IsValid()) {
 				MessageBox.Show(Lan.g(this,"Please fix data entry errors first."));
 				return;
@@ -104,10 +104,7 @@ namespace OpenDental{
 				_taskList.FromNum=0;
 			}
 			_taskList.ObjectType=listObjectType.GetSelected<TaskObjectType>();
-			//Save filter type only if filtering is not disabled in Task Preferences.
-			if((EnumTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType)!=EnumTaskFilterType.Disabled) {
-				_taskList.GlobalTaskFilterType=comboGlobalFilter.GetSelected<EnumTaskFilterType>();
-			}
+			_taskList.GlobalTaskFilterType=comboGlobalFilter.GetSelected<GlobalTaskFilterType>();
 			if(IsNew) {
 				try{
 					TaskLists.Insert(_taskList);
@@ -116,7 +113,7 @@ namespace OpenDental{
 					MessageBox.Show(ex.Message);
 					return;
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.TaskListCreate,0,_taskList.Descript+" "+Lan.g(this,"added"));
+				SecurityLogs.MakeLogEntry(Permissions.TaskListCreate,0,_taskList.Descript+" "+Lan.g(this,"added"));
 				DialogResult=DialogResult.OK;
 				return;
 			}
@@ -130,5 +127,30 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

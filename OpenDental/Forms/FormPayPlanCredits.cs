@@ -35,8 +35,8 @@ namespace OpenDental {
 		private void FormPayPlanCredits_Load(object sender,EventArgs e) {
 			textCode.Text=Lan.g(this,"None");
 			FillGrid();
-			if(!Security.IsAuthorized(EnumPermType.PayPlanEdit,true)) {
-				this.DisableAllExcept(checkHideUnattached,checkShowImplicit,butPrint,gridMain);
+			if(!Security.IsAuthorized(Permissions.PayPlanEdit,true)) {
+				this.DisableAllExcept(butCancel,checkHideUnattached,checkShowImplicit,butPrint,gridMain);
 			}
 			Plugins.HookAddCode(this,"FormPayPlanCredits.Load_end",_payPlan,_patient,_constructResults);
 		}
@@ -215,7 +215,7 @@ namespace OpenDental {
 				textDate.ReadOnly=true;
 				textNote.ReadOnly=true;
 			}
-			if(listPayPlanEntriesSelected.Any(x => Security.IsGlobalDateLock(EnumPermType.PayPlanEdit,x.DateOrd,true))) {
+			if(listPayPlanEntriesSelected.Any(x => Security.IsGlobalDateLock(Permissions.PayPlanEdit,x.DateOrd,true))) {
 				if(isUpdateButton) {
 					butAddOrUpdate.Enabled=false;//only disallow them from updating a tx credit, adding a new one is okay. 
 				}
@@ -248,7 +248,7 @@ namespace OpenDental {
 			if(textDate.Text=="") {
 				textDate.Text=DateTime.Today.ToShortDateString();
 			}
-			if(Security.IsGlobalDateLock(EnumPermType.PayPlanEdit,PIn.Date(textDate.Text))) {
+			if(Security.IsGlobalDateLock(Permissions.PayPlanEdit,PIn.Date(textDate.Text))) {
 				return;
 			}
 			//There will be no FauxAccountEntries for procedures associated to a dynamic payment plans that do not have any debits.
@@ -274,7 +274,7 @@ namespace OpenDental {
 			else if(listPayPlanEntriesSelected.Count==1) { //if they have one selected
 				PayPlanEdit.PayPlanEntry payPlanEntrySelected=listPayPlanEntriesSelected[0];
 				if(payPlanEntrySelected.Proc!=null && listProcNumsDynamicPayPlan.Contains(payPlanEntrySelected.Proc.ProcNum)) {
-					MsgBox.Show(this,"This procedure is already linked to a payment plan.");
+					MsgBox.Show(this,"This procedure is already linked to a dynamic payment plan.");
 					return;
 				}
 				if(PrefC.GetInt(PrefName.RigorousAccounting)==(int)RigorousAccounting.EnforceFully) {
@@ -311,7 +311,7 @@ namespace OpenDental {
 				ListPayPlanChargesCredit=PayPlanEdit.CreateCreditsForAllSelectedEntries(listPayPlanEntriesProcSelected,_listPayPlanEntries,DateTime.Today,_patient.PatNum,
 					_payPlan.PayPlanNum,ListPayPlanChargesCredit);
 				if(countProcsSkipped>0) {
-					MsgBox.Show(this,"Credits were not made for some procedures because they were linked to one or more payment plans.");
+					MsgBox.Show(this,"Credits were not made for some procedures because they were linked to one or more dynamic payment plans.");
 				}
 			}
 			textAmt.Text="";
@@ -400,7 +400,7 @@ namespace OpenDental {
 			SetTextBoxes();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(PrefC.GetInt(PrefName.RigorousAccounting)==(int)RigorousAccounting.EnforceFully) {
 				//If no procs attached and not an adjustment with a negative amount
 				if(ListPayPlanChargesCredit.Any(x => x.ProcNum==0 && !x.IsCreditAdjustment)) {
@@ -419,11 +419,10 @@ namespace OpenDental {
 			Plugins.HookAddCode(this,"FormPayPlanCredits.butOK_Click_end",_patient,_payPlan,_listPayPlanEntries);
 		}
 
-		private void FormPayPlanCredits_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult!=DialogResult.Cancel) {
-				return;
-			}
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 			Plugins.HookAddCode(this,"FormPayPlanCredits.butCancel_Click_end");
 		}
+
 	}
 }

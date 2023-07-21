@@ -61,8 +61,8 @@ namespace OpenDentalCloud {
 			}
 
 			protected override async Task PerformIO() {
-				int numOfChunks=Math.Max(ByteArray.Length/MAX_FILE_SIZE_BYTES+1,2);//Add 1 so that we are under the max file size limit, since an integer will truncate remainders.
-				int chunkSize=ByteArray.Length/numOfChunks;
+				int numOfChunks=Math.Max(FileContent.Length/MAX_FILE_SIZE_BYTES+1,2);//Add 1 so that we are under the max file size limit, since an integer will truncate remainders.
+				int chunkSize=FileContent.Length/numOfChunks;
 				string sessionId=null;
 				int index=0;
 				for(int i=1;i<=numOfChunks;i++) {
@@ -72,9 +72,9 @@ namespace OpenDentalCloud {
 					bool lastChunk=i==numOfChunks;
 					int curChunkSize=chunkSize;
 					if(lastChunk) {
-						curChunkSize=ByteArray.Length-index;
+						curChunkSize=FileContent.Length-index;
 					}
-					using(MemoryStream memStream=new MemoryStream(ByteArray,index,curChunkSize)) {
+					using(MemoryStream memStream=new MemoryStream(FileContent,index,curChunkSize)) {
 						if(i==1) {
 							UploadSessionStartResult result=await _client.Files.UploadSessionStartAsync(false,memStream);
 							sessionId=result.SessionId;
@@ -94,6 +94,7 @@ namespace OpenDentalCloud {
 						}
 						index+=curChunkSize;
 					}
+					OnProgress((double)(chunkSize*i)/(double)1024/(double)1024,"?currentVal MB of ?maxVal MB uploaded",(double)FileContent.Length/(double)1024/(double)1024,"");					
 				}
 			}
 
@@ -129,12 +130,13 @@ namespace OpenDentalCloud {
 							memstream.Write(buffer,0,length);
 							Array.Copy(memstream.ToArray(),0,finalBuffer,index,length);
 							index+=length;
-							//null is ok
+							OnProgress((double)index/(double)1024/(double)1024,"?currentVal MB of ?maxVal MB downloaded",(double)DownloadFileSize/(double)1024/(double)1024,"");
 						}
 					} while(length>0);
 				}
-				ByteArray=finalBuffer;
+				FileContent=finalBuffer;
 			}
+
 		}
 
 		public class Delete : TaskStateDelete {
@@ -160,7 +162,7 @@ namespace OpenDentalCloud {
 			protected override async Task PerformIO() {
 				IDownloadResponse<FileMetadata> data=await _client.Files.GetThumbnailAsync(ODFileUtils.CombinePaths(Folder,FileName,'/')
 					,size:ThumbnailSize.W128h128.Instance);
-				ByteArray=await data.GetContentAsByteArrayAsync();
+				FileContent=await data.GetContentAsByteArrayAsync();
 			}
 		}
 
@@ -239,6 +241,14 @@ namespace OpenDentalCloud {
 					catch(Exception) {
 						CountFailed++;
 					}
+					finally {
+						if(IsCopy) {
+							OnProgress(i+1,"?currentVal files of ?maxVal files copied",CountTotal,"");
+						}
+						else {
+							OnProgress(i+1,"?currentVal files of ?maxVal files moved",CountTotal,"");
+						}
+					}
 				}
 			}
 		}
@@ -254,7 +264,8 @@ namespace OpenDentalCloud {
 				TaskStateMove stateMove=new Move() { _client=this._client,IsCopy=true };
 				stateMove.FromPath=FromPath;
 				stateMove.ToPath=ToPath;
-				stateMove.Execute(isAsync:true);
+				stateMove.ProgressHandler=ProgressHandler;
+				stateMove.Execute(true);
 				while(!stateMove.IsDone) {
 					Thread.Sleep(10);
 					if(DoCancel) {

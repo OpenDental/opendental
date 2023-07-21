@@ -35,7 +35,7 @@ namespace OpenDental{
 
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(CultureInfo.CurrentCulture.Name=="en-US"){
 				//if not match to D****
 				if(!Regex.IsMatch(textFrom.Text,@"^D\w{4}$") || !Regex.IsMatch(textTo.Text,@"^D\w{4}$")){
@@ -70,6 +70,12 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 
 		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
 
 	}
 }

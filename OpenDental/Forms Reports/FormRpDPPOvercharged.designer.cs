@@ -17,6 +17,7 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpDPPOvercharged));
+			this.butClose = new OpenDental.UI.Button();
 			this.butPrint = new OpenDental.UI.Button();
 			this.imageListCalendar = new System.Windows.Forms.ImageList(this.components);
 			this.gridMain = new OpenDental.UI.GridOD();
@@ -36,6 +37,17 @@
 			this.butFix = new OpenDental.UI.Button();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(1102, 658);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 4;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butPrint
 			// 
@@ -181,7 +193,7 @@
 			this.comboBoxMultiClinics.IncludeUnassigned = true;
 			this.comboBoxMultiClinics.Location = new System.Drawing.Point(432, 34);
 			this.comboBoxMultiClinics.Name = "comboBoxMultiClinics";
-			this.comboBoxMultiClinics.IsMultiSelect = true;
+			this.comboBoxMultiClinics.SelectionModeMulti = true;
 			this.comboBoxMultiClinics.Size = new System.Drawing.Size(197, 21);
 			this.comboBoxMultiClinics.TabIndex = 71;
 			// 
@@ -213,12 +225,13 @@
 			this.ClientSize = new System.Drawing.Size(1189, 696);
 			this.Controls.Add(this.butFix);
 			this.Controls.Add(this.butRefresh);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.groupBox2);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormRpDPPOvercharged";
-			this.Text = "Payment Plans Overcharged Report";
+			this.Text = "Dynamic Pay Plans Overcharged Report";
 			this.Load += new System.EventHandler(this.FormRpDPPOvercharged_Load);
 			this.Shown += new System.EventHandler(this.FormRpDPPOvercharged_Shown);
 			this.groupBox2.ResumeLayout(false);
@@ -232,6 +245,7 @@
 		private System.Windows.Forms.MenuItem menuItemGoToAccount;
 		private System.Windows.Forms.ImageList imageListCalendar;
 		private UI.Button butRefresh;
+		private UI.Button butClose;
 		private UI.Button butPrint;
 		private UI.GridOD gridMain;
 		private OpenDental.UI.GroupBox groupBox2;

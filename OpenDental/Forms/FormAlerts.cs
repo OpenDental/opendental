@@ -128,6 +128,9 @@ namespace OpenDental {
 			}
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 		#endregion Methods - Event Handlers
 
 		#region Methods - Public
@@ -202,9 +205,6 @@ namespace OpenDental {
 					break;
 				case AlertType.WebFormsReady:
 					value+=Lan.g(this,"Web Forms Ready to Retrieve")+": ";
-					break;
-				case AlertType.SignatureCleared:
-					value+=Lan.g(this,"Signature Cleared")+": ";
 					break;
 				case AlertType.EconnectorEmailTooManySendFails:
 				case AlertType.NumberBarredFromTexting:

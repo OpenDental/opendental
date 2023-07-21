@@ -40,6 +40,7 @@
 			this.textPatient = new System.Windows.Forms.TextBox();
 			this.labelPatient = new System.Windows.Forms.Label();
 			this.labelStartDate = new System.Windows.Forms.Label();
+			this.butClose = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
@@ -204,6 +205,16 @@
 			this.labelStartDate.Text = "Start Date";
 			this.labelStartDate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(887, 526);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// gridMain
 			// 
 			this.gridMain.AllowSortingByColumn = true;
@@ -213,7 +224,7 @@
 			this.gridMain.HScrollVisible = true;
 			this.gridMain.Location = new System.Drawing.Point(12, 80);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(950, 469);
+			this.gridMain.Size = new System.Drawing.Size(950, 436);
 			this.gridMain.TabIndex = 5;
 			this.gridMain.Title = "Labs";
 			this.gridMain.TranslationName = "TableLabs";
@@ -224,6 +235,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(974, 561);
 			this.Controls.Add(this.groupBox1);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.gridMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMedLabs";
@@ -238,6 +250,7 @@
 		#endregion
 
 		private OpenDental.UI.GridOD gridMain;
+		private UI.Button butClose;
 		private OpenDental.UI.CheckBox checkIncludeNoPat;
 		private OpenDental.UI.GroupBox groupBox1;
 		private UI.Button butCurrent;

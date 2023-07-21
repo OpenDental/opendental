@@ -67,7 +67,6 @@ namespace OpenDental{
 			// ToolBarMain
 			// 
 			this.ToolBarMain.Dock = System.Windows.Forms.DockStyle.Top;
-			this.ToolBarMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.ToolBarMain.ImageList = this.imageListMain;
 			this.ToolBarMain.Location = new System.Drawing.Point(0, 0);
 			this.ToolBarMain.Name = "ToolBarMain";
@@ -87,7 +86,6 @@ namespace OpenDental{
 			this.webBrowserWiki.TabIndex = 0;
 			this.webBrowserWiki.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowserWiki_DocumentCompleted);
 			this.webBrowserWiki.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowserWiki_Navigating);
-			this.webBrowserWiki.NewWindow += new System.ComponentModel.CancelEventHandler(this.webBrowserWiki_NewWindow);
 			// 
 			// menuHomeDropDown
 			// 

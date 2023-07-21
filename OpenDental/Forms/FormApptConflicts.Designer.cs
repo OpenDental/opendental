@@ -25,6 +25,7 @@
 		private void InitializeComponent() {
 			this.butPrint = new OpenDental.UI.Button();
 			this.gridConflicts = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.contextRightClick = new System.Windows.Forms.ContextMenu();
 			this.menuItemSelectPatient = new System.Windows.Forms.MenuItem();
 			this.menuItemPin = new System.Windows.Forms.MenuItem();
@@ -55,6 +56,17 @@
 			this.gridConflicts.TranslationName = "TableApptConflicts";
 			this.gridConflicts.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridConflicts_DoubleClick);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(759, 636);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(87, 24);
+			this.butClose.TabIndex = 22;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// contextRightClick
 			// 
 			this.contextRightClick.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
@@ -79,6 +91,7 @@
 			this.ClientSize = new System.Drawing.Size(858, 672);
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.gridConflicts);
+			this.Controls.Add(this.butClose);
 			this.Name = "FormApptConflicts";
 			this.Text = "Appointment Conflicts";
 			this.Load += new System.EventHandler(this.FormApptConflicts_Load);
@@ -90,6 +103,7 @@
 
 		private UI.Button butPrint;
 		private UI.GridOD gridConflicts;
+		private UI.Button butClose;
 		private System.Windows.Forms.ContextMenu contextRightClick;
 		private System.Windows.Forms.MenuItem menuItemSelectPatient;
 		private System.Windows.Forms.MenuItem menuItemPin;

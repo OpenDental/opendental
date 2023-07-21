@@ -17,13 +17,13 @@
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
-		<Border Name="border" x:FieldModifier="internal" Width="13" Height="13" BorderThickness="1" SnapsToDevicePixels="True" BorderBrush="#FF6F6F6F" Background="White" VerticalAlignment="Center" HorizontalAlignment="Center">
+		<Border Name="border" x:FieldModifier="internal" Width="14" Height="13" BorderThickness="1" BorderBrush="#FF6F6F6F" Background="White" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="1">
 			<Canvas>
-				<Polyline Name="polylineCheck" x:FieldModifier="internal" StrokeThickness="1.8" Stroke="#141414" Points="1.2,5.4 5,8.6 9.8,1.6"  Visibility="Collapsed" />
+				<Polyline Name="polylineCheck" x:FieldModifier="internal" StrokeThickness="2" Stroke="#141414" Points="1.7,5.4 5.5,8.6 10.3,1.6"  Visibility="Collapsed" />
 				<Rectangle Name="rectangleIndeterm" x:FieldModifier="internal" Canvas.Left="1.9" Canvas.Top="2" Width="8.1" Height="7" Fill="#FF1B1B1B" Visibility="Collapsed"/>
 			</Canvas>
 		</Border>
-		<TextBlock Grid.Column="1" Name="textBlock" Padding="5,0,0,0" TextWrapping="Wrap" TextAlignment="Left" VerticalAlignment="Center" HorizontalAlignment="Left">
+		<TextBlock Grid.Column="1" Name="textBlock" Margin="4,0,4,0" TextWrapping="Wrap" TextAlignment="Left" VerticalAlignment="Center">
 		CheckBox
 		</TextBlock>
 	</Grid>

@@ -35,18 +35,29 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSubscriberSelect));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.listPats = new OpenDental.UI.ListBox();
 			this.butMore = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(277,241);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(92,26);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(254, 236);
+			this.butOK.Location = new System.Drawing.Point(277,200);
 			this.butOK.Name = "butOK";
-			this.butOK.Size = new System.Drawing.Size(92, 26);
+			this.butOK.Size = new System.Drawing.Size(92,26);
 			this.butOK.TabIndex = 1;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
@@ -56,34 +67,35 @@ namespace OpenDental {
 			this.listPats.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.listPats.Location = new System.Drawing.Point(32, 79);
+			this.listPats.Location = new System.Drawing.Point(32,79);
 			this.listPats.Name = "listPats";
-			this.listPats.Size = new System.Drawing.Size(185, 183);
+			this.listPats.Size = new System.Drawing.Size(187,186);
 			this.listPats.TabIndex = 2;
 			this.listPats.DoubleClick += new System.EventHandler(this.listPats_DoubleClick);
 			// 
 			// butMore
 			// 
 			this.butMore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.butMore.Location = new System.Drawing.Point(254, 79);
+			this.butMore.Location = new System.Drawing.Point(277,79);
 			this.butMore.Name = "butMore";
-			this.butMore.Size = new System.Drawing.Size(92, 26);
+			this.butMore.Size = new System.Drawing.Size(92,26);
 			this.butMore.TabIndex = 3;
 			this.butMore.Text = "More Patients";
 			this.butMore.Click += new System.EventHandler(this.butMore_Click);
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(33, 8);
+			this.label1.Location = new System.Drawing.Point(33,8);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(287, 38);
+			this.label1.Size = new System.Drawing.Size(287,38);
 			this.label1.TabIndex = 4;
 			this.label1.Text = "If subscriber has not been entered, cancel and add them before continuing.";
 			// 
 			// FormSubscriberSelect
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5,13);
-			this.ClientSize = new System.Drawing.Size(358, 274);
+			this.ClientSize = new System.Drawing.Size(401,295);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butMore);
@@ -100,6 +112,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.ListBox listPats;
 		private OpenDental.UI.Button butMore;

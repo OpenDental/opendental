@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormCertificationSetup));
+			this.butCancel = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butDown = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
@@ -31,6 +32,17 @@ namespace OpenDental{
 			this.listBoxCategories = new OpenDental.UI.ListBox();
 			this.labelCategories = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(766, 608);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(79, 24);
+			this.butCancel.TabIndex = 5;
+			this.butCancel.Text = "Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// gridMain
 			// 
@@ -100,9 +112,11 @@ namespace OpenDental{
 			// 
 			// FormCertificationSetup
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(853, 643);
 			this.Controls.Add(this.labelCategories);
 			this.Controls.Add(this.listBoxCategories);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butUp);
 			this.Controls.Add(this.butDown);
 			this.Controls.Add(this.butAdd);
@@ -116,6 +130,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butCancel;
 		private UI.GridOD gridMain;
 		private UI.Button butDown;
 		private UI.Button butUp;

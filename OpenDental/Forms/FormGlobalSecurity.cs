@@ -36,7 +36,6 @@ namespace OpenDental {
 			textDomainLoginPath.Text=PrefC.GetString(PrefName.DomainLoginPath);
 			checkLogOffWindows.Checked=PrefC.GetBool(PrefName.SecurityLogOffWithWindows);
 			checkUserNameManualEntry.Checked=PrefC.GetBool(PrefName.UserNameManualEntry);
-			checkBadgeLogIn.Checked=PrefC.GetBool(PrefName.SecurityBadgesRequirePassword);
 			checkMaintainPatient.Checked=PrefC.GetBool(PrefName.PatientMaintainedOnUserChange);
 			if(!PrefC.HasClinicsEnabled) {
 				//This pref only matters when clinics are turned on. When clinics are off it behaves the same as if the pref were on. 
@@ -55,7 +54,7 @@ namespace OpenDental {
 				butChange.Enabled=false;
 				labelGlobalDateLockDisabled.Visible=true;
 			}
-			List<UserGroup> listGroupsNotAdmin=UserGroups.GetList().FindAll(x => !GroupPermissions.HasPermission(x.UserGroupNum,EnumPermType.SecurityAdmin,0));
+			List<UserGroup> listGroupsNotAdmin=UserGroups.GetList().FindAll(x => !GroupPermissions.HasPermission(x.UserGroupNum,Permissions.SecurityAdmin,0));
 			for(int i=0;i<listGroupsNotAdmin.Count;i++){
 				comboGroups.Items.Add(listGroupsNotAdmin[i].Description,listGroupsNotAdmin[i]);
 				if(PrefC.GetLong(PrefName.DefaultUserGroup)==listGroupsNotAdmin[i].UserGroupNum) {
@@ -145,14 +144,14 @@ namespace OpenDental {
 		}
 
 		private void checkDisableBackupReminder_Click(object sender,EventArgs e) {
-			InputBox inputbox = new InputBox("Please enter password");
-			inputbox.SetTitle("Change Backup Reminder Settings");
+			using InputBox inputbox = new InputBox("Please enter password");
+			inputbox.setTitle("Change Backup Reminder Settings");
 			inputbox.ShowDialog();
-			if(inputbox.IsDialogCancel) {
+			if(inputbox.DialogResult!=DialogResult.OK) {
 				checkDisableBackupReminder.Checked=!checkDisableBackupReminder.Checked;
 				return;
 			}
-			if(inputbox.StringResult!="abracadabra") {
+			if(inputbox.textResult.Text!="abracadabra") {
 				checkDisableBackupReminder.Checked=!checkDisableBackupReminder.Checked;
 				MsgBox.Show(this,"Wrong password");
 				return;
@@ -176,7 +175,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			int logOffMinutes;
 			bool isLogOffMinutesParseValid = Int32.TryParse(textLogOffAfterMinutes.Text, out logOffMinutes);
 			if(!isLogOffMinutesParseValid) {
@@ -194,7 +193,6 @@ namespace OpenDental {
 			doInvalidatePrefs |=Prefs.UpdateBool(PrefName.TimecardUsersDontEditOwnCard,checkCannotEditOwn.Checked);
 			doInvalidatePrefs |=Prefs.UpdateBool(PrefName.SecurityLogOffWithWindows,checkLogOffWindows.Checked);
 			doInvalidatePrefs |=Prefs.UpdateBool(PrefName.UserNameManualEntry,checkUserNameManualEntry.Checked);
-			doInvalidatePrefs |=Prefs.UpdateBool(PrefName.SecurityBadgesRequirePassword,checkBadgeLogIn.Checked);
 			doInvalidatePrefs |=Prefs.UpdateBool(PrefName.PasswordsStrongIncludeSpecial,checkPasswordsStrongIncludeSpecial.Checked);
 			doInvalidatePrefs |=Prefs.UpdateBool(PrefName.PasswordsWeakChangeToStrong,checkPasswordForceWeakToStrong.Checked);
 			doInvalidatePrefs |=Prefs.UpdateInt(PrefName.SecurityLogOffAfterMinutes,PIn.Int(textLogOffAfterMinutes.Text));
@@ -226,6 +224,10 @@ namespace OpenDental {
 				DataValid.SetInvalid(InvalidType.Prefs);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 		
 	}

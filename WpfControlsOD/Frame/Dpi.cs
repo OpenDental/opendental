@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
@@ -79,19 +78,8 @@ namespace OpenDental{
 		[DllImport("Shcore.dll")]
 		private static extern IntPtr GetDpiForMonitor(IntPtr hmonitor,DpiType dpiType,out uint dpiX,out uint dpiY);
 
-		[DllImport("User32.dll")]
-		private static extern int GetDpiForWindow(IntPtr hwnd);
-
-		[DllImport("user32")]
-		private extern static int GetWindowThreadProcessId(IntPtr hWnd, out int processId);
-
-		[DllImport("user32")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private extern static bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
-
-		[UnmanagedFunctionPointer(CallingConvention.Winapi)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+		//[DllImport("User32.dll")]
+		//private static extern int GetDpiForWindow(IntPtr hwnd);
 
 		[DllImport("user32.dll")]
 		private static extern IntPtr SendMessage(IntPtr hWnd, int msg, uint wParam, IntPtr lParam);
@@ -167,37 +155,9 @@ namespace OpenDental{
 			}
 			return (int)dpiMonitorX;//same as y
 		}
-
-		///<summary>2023-12-23 I'm trying this as replacement for GetScreenDpi. It uses GetDpiForWindow instead of GetDpiForMonitor, as recommended by MS. No references because I never finished debugging it. But it's close to functional</summary>
-		public static int GetScreenDpi2(System.Windows.Forms.Screen screen){
-			Process process=Process.GetCurrentProcess();
-			EnumWindows(WindowHandleFromProcessId, new IntPtr(process.Id));
-			//Point point= new Point(screen.Bounds.Left+1,screen.Bounds.Top+1);
-			//IntPtr hMon=MonitorFromPoint(point,2);//2=MONITOR_DEFAULTTONEAREST
-			int dpiWindow;
-			try{
-				dpiWindow=GetDpiForWindow(editorWindow);
-				//GetDpiForMonitor(hMon, DpiType.Effective, out dpiMonitorX, out dpiMonitorY);//requires Windows 8.1
-			}
-			catch{//DllNotFoundException){//there can be other exception types as well
-				return 96;
-			}
-			return (int)dpiWindow;
-		}
-
-		private static IntPtr editorWindow;
-
-		static bool WindowHandleFromProcessId(IntPtr hWnd,IntPtr lParam) {
-			GetWindowThreadProcessId(hWnd,out int processId);
-			if(lParam.ToInt32() == processId) {
-				editorWindow = hWnd;
-				return false;
-			}
-			return true;
-		}
 		#endregion FixInitial
 
-
+		
 	}
 
 

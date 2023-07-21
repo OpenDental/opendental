@@ -405,12 +405,5 @@ namespace OpenDentBusiness {
 			PostcardManiaMetaData res=new PostcardManiaMetaData();
 			return PayloadHelper.CreateSuccessResponse(res,AdvertisingPostcards.MassPostcardResponseNode);
 		}
-
-		/// <summary>This is never run in demo mode currently. 
-		/// It does not run because the demo checkin does not contain any ImageCaptureXs with non-misc image capture types. 
-		/// A signup is also required.</summary>
-		public string ProcessOCRIIDRequest(string imgRequest) {
-			throw new NotImplementedException();
-		}
 	}
 }

@@ -7,7 +7,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Media.TextFormatting;
 
 namespace OpenDental {
 	///<summary></summary>
@@ -23,13 +22,8 @@ namespace OpenDental {
 		private readonly PaymentEdit.LoadData _loadData;
 		private Patient _patient;
 		private RigorousAdjustments _rigorousAdjustment;
-		private Program _program;
-		private Patient _patientGuar;
-		private List<Def> _listDefsAdjPosCats;
-		private List<Def> _listDefsAdjNegCats;
-		private List<long> _listExcludedAdjTypeNums;
 		#endregion
-
+		
 		///<summary>Optionally pass in a list of ProcNums to always display. Pass in a list of new adjustments that are not in the database which will always display. Any procedures associated to the adjustments passed in will always display as well.</summary>
 		public FormAdjMulti(Patient patient,List<long> listProcNums=null,List<Adjustment> listAdjustments=null) {
 			InitializeComponent();
@@ -39,44 +33,22 @@ namespace OpenDental {
 			_listProcNums=listProcNums??new List<long>();
 			_listAdjustments=listAdjustments??new List<Adjustment>();
 			_loadData=PaymentEdit.GetLoadData(patient,new Payment(),true,false);
-			_program=Programs.GetCur(ProgramName.Transworld);
-			_patientGuar=Patients.GetGuarForPat(_patient.PatNum);
 		}
-
+		
 		private void FormMultiAdj_Load(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.AdjustmentCreate,true) && !Security.IsAuthorized(EnumPermType.AdjustmentEditZero,true)) {
+			if(!Security.IsAuthorized(Permissions.AdjustmentCreate,true) && !Security.IsAuthorized(Permissions.AdjustmentEditZero,true)) {
 				MessageBox.Show(Lans.g("Security","Not authorized for")
-					+"\r\n"+GroupPermissions.GetDesc(EnumPermType.AdjustmentCreate)+" "+Lan.g(this,"and")+" "+GroupPermissions.GetDesc(EnumPermType.AdjustmentEditZero));
+					+"\r\n"+GroupPermissions.GetDesc(Permissions.AdjustmentCreate)+" "+Lan.g(this,"and")+" "+GroupPermissions.GetDesc(Permissions.AdjustmentEditZero));
 				DialogResult=DialogResult.Cancel;
 				return;
 			}
 			dateAdjustment.Text=DateTime.Today.ToShortDateString();
 			_rigorousAdjustment=PrefC.GetEnum<RigorousAdjustments>(PrefName.RigorousAdjustments);
-			checkOnlyTsiExcludedAdjTypes.CheckedChanged-=checkOnlyTsiExcludedAdjTypes_Checked;
-			List<ProgramProperty> listProgramPropertiesExcludedAdjTypes=ProgramProperties
-				.GetWhere(x => x.ProgramNum==_program.ProgramNum
-					&& _program.Enabled
-					&& (x.PropertyDesc==ProgramProperties.PropertyDescs.TransWorld.SyncExcludePosAdjType
-						|| x.PropertyDesc==ProgramProperties.PropertyDescs.TransWorld.SyncExcludeNegAdjType));
-			//use guar's clinic if clinics are enabled and props for that clinic exist, otherwise use ClinicNum 0
-			List<ProgramProperty> listProgramPropertiesForClinicExcludedAdjTypes=listProgramPropertiesExcludedAdjTypes.FindAll(x=>x.ClinicNum==_patientGuar.ClinicNum);
-			if(!PrefC.HasClinicsEnabled || listProgramPropertiesForClinicExcludedAdjTypes.Count==0){
-				listProgramPropertiesForClinicExcludedAdjTypes=listProgramPropertiesExcludedAdjTypes.FindAll(x=>x.ClinicNum==0);
-			}
-			_listExcludedAdjTypeNums=listProgramPropertiesForClinicExcludedAdjTypes.Select(x=>PIn.Long(x.PropertyValue,false)).ToList();
-			if(_program.Enabled && Patients.IsGuarCollections(_patientGuar.PatNum) && _listExcludedAdjTypeNums.Any(x => x>0)) { //Transworld program link is enabled and the patient is part of a family where the guarantor has been sent to TSI
-				checkOnlyTsiExcludedAdjTypes.Checked=true;
-			}
-			else {
-				checkOnlyTsiExcludedAdjTypes.Visible=false;
-				checkOnlyTsiExcludedAdjTypes.Checked=false;
-			}
 			FillListBoxAdjTypes();
-			checkOnlyTsiExcludedAdjTypes.CheckedChanged+=checkOnlyTsiExcludedAdjTypes_Checked;
 			FillComboProv();
 			if(PrefC.HasClinicsEnabled) {
 				//Select 'Inherit' by default which is the unassigned option and was carefully approved by Nathan and Allen.
-				comboClinic.ClinicNumSelected=0;
+				comboClinic.SelectedClinicNum=0;
 			}
 			//Must happen after comboboxes are filled
 			if(_rigorousAdjustment==RigorousAdjustments.EnforceFully) {
@@ -192,21 +164,8 @@ namespace OpenDental {
 		}
 
 		private void FillListBoxAdjTypes() {
-			listTypePos.Items.Clear();
-			listTypeNeg.Items.Clear();
-			_listDefsAdjPosCats=Defs.GetPositiveAdjTypes(considerPermission:true);
-			_listDefsAdjNegCats=Defs.GetNegativeAdjTypes(considerPermission:true);
-			if(checkOnlyTsiExcludedAdjTypes.Checked) {
-				_listDefsAdjPosCats=_listDefsAdjPosCats.FindAll(x => _listExcludedAdjTypeNums.Contains(x.DefNum));
-				_listDefsAdjNegCats=_listDefsAdjNegCats.FindAll(x => _listExcludedAdjTypeNums.Contains(x.DefNum));
-				listTypePos.Items.AddList(_listDefsAdjPosCats,x=>x.ItemName);
-				listTypeNeg.Items.AddList(_listDefsAdjNegCats,x=>x.ItemName);
-				return;
-			}
-			_listDefsAdjPosCats=_listDefsAdjPosCats.FindAll(x => !_listExcludedAdjTypeNums.Contains(x.DefNum));
-			_listDefsAdjNegCats=_listDefsAdjNegCats.FindAll(x => !_listExcludedAdjTypeNums.Contains(x.DefNum));
-			listTypePos.Items.AddList(_listDefsAdjPosCats,x=>x.ItemName);
-			listTypeNeg.Items.AddList(_listDefsAdjNegCats,x=>x.ItemName);
+			listTypePos.Items.AddList(Defs.GetPositiveAdjTypes(considerPermission:true),x => x.ItemName);
+			listTypeNeg.Items.AddList(Defs.GetNegativeAdjTypes(considerPermission:true),x => x.ItemName);
 		}
 		#endregion
 
@@ -222,47 +181,18 @@ namespace OpenDental {
 			}
 			else {//Add an adjustment for every procedure selected.
 				List<Procedure> listCompleteProcs=listProcedures.FindAll(x=>x.ProcStatus==ProcStat.C);
-				//If the user does not have permission to add adjustments to any of the selected procedures, show an error message and return false.
+				//If the user does not have permission to add adjustments to any of the selected procedures, show an error message and  return false.
 				if(listCompleteProcs.Count()>0) {
-					if(!listCompleteProcs.All(x => Security.IsAuthorized(EnumPermType.ProcCompleteAddAdj,Procedures.GetDateForPermCheck(x), suppressMessage:true))) 
+					if(!listCompleteProcs.All(x => Security.IsAuthorized(Permissions.ProcCompleteAddAdj,Procedures.GetDateForPermCheck(x), suppressMessage:true))) 
 					{ 
 						MsgBox.Show("Not allowed to add adjustments to completed procedures exceeding date limitation.");
 						return false;
 					}
 				}
-				List<Adjustment> listAdjustmentsWarnOrBlock=new List<Adjustment>();
-				EnumAdjustmentBlockOrWarn enumAdjustmentBlockOrWarn=PrefC.GetEnum<EnumAdjustmentBlockOrWarn>(PrefName.AdjustmentBlockNegativeExceedingPatPortion);
 				for(int i=0;i<listProcedures.Count;i++) {
 					ProcAdjs procAdjs=_listProcAdjs.First(x => x.ProcedureCur==listProcedures[i]);
-					Adjustment adjustment=GetAdjFromUI(procedureSelected: listProcedures[i],
-						listAdjustmentsRelated: procAdjs.ListAccountEntryAdjustments.Select(x => (Adjustment)x.Tag).ToList());//Get the new adjustment to be added from the UI.
-					if(((double)procAdjs.AccountEntryProc.AmountEnd<=0 && adjustment.AdjAmt>0 && listTypeNeg.SelectedIndices.Count>0 && PIn.Decimal(textAmt.Text)>0)
-						|| adjustment.AdjNum!=0)//only enforce for brand new adjustments
-					{
-						continue;
-					}
-					double adjustmentAmtTotal=_listAdjustments.FindAll(x => x.ProcNum==listProcedures[i].ProcNum).Sum(x => x.AdjAmt);//Get the sum of all new adjustments.
-					//If user is adding a negative adjustment to a procedure that is already overpaid, place the new adjustment in a separate list for now if the
-					//AdjustmentBlockNegativeExceedingPatPortion pref is set to someting other than allow.
-					if(enumAdjustmentBlockOrWarn!=EnumAdjustmentBlockOrWarn.Allow
-						&& (double)procAdjs.AccountEntryProc.AmountEnd+adjustmentAmtTotal+adjustment.AdjAmt < 0 
-						&& adjustment.AdjAmt<0) {
-						listAdjustmentsWarnOrBlock.Add(adjustment);
-						continue;
-					}
-					_listAdjustments.Add(adjustment);
-				}
-				if(listAdjustmentsWarnOrBlock.Count>0) {
-					//If pref is set to block then show error message but do not add negative adjustments to overpaid procs.
-					if(enumAdjustmentBlockOrWarn==EnumAdjustmentBlockOrWarn.Block) {//block preference set
-						MsgBox.Show(Lan.g(this,"Could not create a negative adjustment exceeding the remaining amount on ")+listAdjustmentsWarnOrBlock.Count+Lan.g(this," procedure(s)."));
-					}
-					//if pref is set to warn, then warn and only add list of negative adjustments to an overpaid proc if the user allows it.
-					else if(enumAdjustmentBlockOrWarn==EnumAdjustmentBlockOrWarn.Warn) {//warning preference set
-						if(MsgBox.Show(MsgBoxButtons.YesNo,Lan.g(this,"Remaining amount on ")+listAdjustmentsWarnOrBlock.Count+Lan.g(this," procedure(s) is negative. Continue?"),"Overpaid Procedure Warning")) {
-							_listAdjustments.AddRange(listAdjustmentsWarnOrBlock);
-						}
-					}
+					_listAdjustments.Add(GetAdjFromUI(procedureSelected: listProcedures[i],
+						listAdjustmentsRelated: procAdjs.ListAccountEntryAdjustments.Select(x => (Adjustment)x.Tag).ToList()));
 				}
 			}
 			FillGrid();
@@ -292,7 +222,7 @@ namespace OpenDental {
 					}
 				}
 				else {
-					clinicNumSelected=comboClinic.ClinicNumSelected;
+					clinicNumSelected=comboClinic.SelectedClinicNum;
 				}
 			}
 			adjustment.ClinicNum=clinicNumSelected;
@@ -399,7 +329,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please pick a provider.");
 				return false;
 			}
-			if(PrefC.HasClinicsEnabled && comboClinic.ClinicNumSelected==-1) {
+			if(PrefC.HasClinicsEnabled && comboClinic.SelectedClinicNum==-1) {
 				MsgBox.Show(this,"Please pick a clinic.");
 				return false;
 			}
@@ -445,11 +375,10 @@ namespace OpenDental {
 		private void butPickProv_Click(object sender,EventArgs e) {
 			//Don't send the fake "Inherit" provider into the Providers picker window (even though it probably wouldn't hurt anything).
 			List<Provider> listProviders=comboProv.Items.GetAll<Provider>().FindAll(x => x.ProvNum > 0);
-			FrmProviderPick frmProviderPick=new FrmProviderPick(listProviders);
-			frmProviderPick.ShowDialog();
-			if(frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick=new FormProviderPick(listProviders);
+			if(formProviderPick.ShowDialog()==DialogResult.OK) {
 				comboProv.SelectedIndex=-1;
-				comboProv.SetSelectedKey<Provider>(frmProviderPick.ProvNumSelected,x => x.ProvNum);
+				comboProv.SetSelectedKey<Provider>(formProviderPick.ProvNumSelected,x => x.ProvNum);
 			}
 		}
 
@@ -458,7 +387,6 @@ namespace OpenDental {
 			if(listAdjustments.IsNullOrEmpty()) {
 				return;//No adjustments to update.
 			}
-			bool hasSkipped=false;
 			for(int i=0;i<listAdjustments.Count;i++) {
 				Procedure procedure=null;
 				List<Adjustment> listAdjustmentsRelated=new List<Adjustment>();
@@ -477,16 +405,8 @@ namespace OpenDental {
 						listAdjustmentsRelated.Add((Adjustment)procAdjs.ListAccountEntryAdjustments[j].Tag);
 					}
 				}
-				//zero adjustments are checked in the save click
-				if(!Security.IsAuthorized(EnumPermType.AdjustmentCreate,dateAdjustment.Value,true) && listAdjustments[i].AdjAmt!=0) {
-					hasSkipped=true;
-					continue;
-				}
 				//Pass in a shallow copy of the adjustment which will get directly manipulated / updated.
 				GetAdjFromUI(adjustment:listAdjustments[i],procedureSelected:procedure,listAdjustmentsRelated:listAdjustmentsRelated);
-			}
-			if(hasSkipped) {
-				MsgBox.Show(this,"Adjustment amount has to be 0.00 due to security permission.");
 			}
 			FillGrid();
 		}
@@ -525,51 +445,10 @@ namespace OpenDental {
 		}
 		#endregion
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(_listAdjustments.IsNullOrEmpty()) {//No adjustments have been added. Attempt to add adjustments with the current info.
 				if(!AddAdjustments()) {
-					return;//The UI is in an invalid state so no new adjustments can be created. This preserves old behavior
-				}
-			}
-			EnumAdjustmentBlockOrWarn enumAdjustmentBlockOrWarn=PrefC.GetEnum<EnumAdjustmentBlockOrWarn>(PrefName.AdjustmentBlockNegativeExceedingPatPortion);
-			if(enumAdjustmentBlockOrWarn!=EnumAdjustmentBlockOrWarn.Allow){
-				int count=0;
-				List<ProcAdjs> listProcAdjs=GetProcAdjs().Where(x => x.AccountEntryProc!=null).ToList();
-				for(int i=0;i<listProcAdjs.Count;i++) {
-					decimal sum=0;
-					if(listProcAdjs[i].ListAccountEntryAdjustments.All(x => x.AdjNum!=0)) {//No new adjusments were created, do not enfore preference
-						continue;
-					}
-					for(int k=0;k<listProcAdjs[i].ListAccountEntryAdjustments.Count;k++) {
-						sum+=listProcAdjs[i].ListAccountEntryAdjustments[k].AmountEnd;
-					}
-					if((listProcAdjs[i].AccountEntryProc.AmountEnd+sum) < 0) {
-						count++;
-					}
-				}
-				if(count>0) {
-					if(enumAdjustmentBlockOrWarn==EnumAdjustmentBlockOrWarn.Warn) {
-						if(!MsgBox.Show(MsgBoxButtons.YesNo,Lan.g(this,"There are")+" "+count+" "+Lan.g(this,"procedure(s) with negative amounts.")+" "+Lan.g(this,"Proceed?"))) {
-							return;
-						}
-					}
-					if(enumAdjustmentBlockOrWarn==EnumAdjustmentBlockOrWarn.Block) {
-						MsgBox.Show(count+ " " +Lan.g(this,"procedure(s) cannot have their adjustments updated due to negative remaining values.")+" "+Lan.g(this,"Please fix to save"));
-						return;
-					}
-				}
-			}
-			if(_program.Enabled && Patients.IsGuarCollections(_patientGuar.PatNum) && _listExcludedAdjTypeNums.Any(x => x>0)) {
-				List<Adjustment> listAdjustmentsPosExcluded=_listAdjustments.FindAll(x=>_listExcludedAdjTypeNums.Contains(x.AdjType));
-				List<Adjustment> listAdjustmentsNegExcluded=_listAdjustments.FindAll(x=>_listExcludedAdjTypeNums.Contains(x.AdjType));
-				string msgTxt="The guarantor of this family has been sent to TSI for a past due balance and you have selected an adjustment type that will be synched with TSI."
-					+" This balance adjustment could result in a TSI charge for collection. Continue?";
-				if(listAdjustmentsPosExcluded.Count()>0 || listAdjustmentsNegExcluded.Count()>0) {
-					msgTxt="The guarantor of this family has been sent to TSI for a past due balance and you have selected an adjustment type that is excluded from being synched with TSI."
-						+" This will not reduce the balance sent for collection by TSI. Continue?";
-				}
-				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,msgTxt)) {
-					return;
+					return;//The UI is in an invalid state so no new adjustments can be created. This preserves old behavior.
 				}
 			}
 			//Now we should be guaranteed to have adjustments.
@@ -581,8 +460,25 @@ namespace OpenDental {
 				listPatNums:ListTools.FromSingle(_patient.PatNum),
 				isIncomeTxfr:!radioIncludeAll.Checked,
 				loadData:loadData,hasInsOverpay:true);
-			if(!Security.IsAuthorized(EnumPermType.AdjustmentCreate,PIn.Date(dateAdjustment.Text),true) 
-				||_listAdjustments.Any(x =>!Security.IsAuthorized(EnumPermType.AdjustmentCreate,x.AdjDate,true))) {//User does not have full edit permission.
+			//Verify that the user has permission to add adjustments to completed procedures if such adjustments were created.
+			List<long> listProcNums=_listAdjustments.Select(x => x.ProcNum).ToList();
+			List<AccountEntry> listAccountEntriesCompletedProcs=constructResults.ListAccountEntries.FindAll(x => x.PatNum==_patient.PatNum
+					&& x.GetType()==typeof(Procedure)
+					&& ((Procedure)x.Tag).ProcStatus==ProcStat.C
+					&& listProcNums.Contains(x.ProcNum));
+			//See if the adjustments added by the user will cause any procedures to go into the negative.
+			bool hasNegAmt=listAccountEntriesCompletedProcs.Any(x => CompareDecimal.IsLessThanZero(x.AmountEnd));
+			EnumAdjustmentBlockOrWarn enumAdjustmentBlockOrWarn=PrefC.GetEnum<EnumAdjustmentBlockOrWarn>(PrefName.AdjustmentBlockNegativeExceedingPatPortion);
+			if(enumAdjustmentBlockOrWarn==EnumAdjustmentBlockOrWarn.Block && hasNegAmt) {//block preference set
+				MsgBox.Show(this,"Cannot create a negative adjustment exceeding the remaining amount on a procedure.","Overpaid Procedure Warning");
+				return;
+			}
+			if(enumAdjustmentBlockOrWarn==EnumAdjustmentBlockOrWarn.Warn && hasNegAmt) {//warning preference set
+				if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Remaining amount on a procedure is negative. Continue?","Overpaid Procedure Warning")) {
+					return;
+				}
+			}
+			if(!Security.IsAuthorized(Permissions.AdjustmentCreate,PIn.Date(dateAdjustment.Text),true)) {//User does not have full edit permission.
 				//Therefore the user only has the ability to edit $0 adjustments (see Load()).
 				if(_listAdjustments.Any(x => !CompareDouble.IsZero(x.AdjAmt))) {
 					MsgBox.Show(this,"Amount has to be 0.00 due to security permission.");
@@ -597,12 +493,14 @@ namespace OpenDental {
 			}
 			if(listStringAdjustmentAmounts.Count>0) {
 				string log=Lan.g(this,"Adjustment(s) created from Add Multiple Adjustments window:")+" ";
-				SecurityLogs.MakeLogEntry(EnumPermType.AdjustmentCreate,_patient.PatNum,log+string.Join(",",listStringAdjustmentAmounts));
+				SecurityLogs.MakeLogEntry(Permissions.AdjustmentCreate,_patient.PatNum,log+string.Join(",",listStringAdjustmentAmounts));
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 
 		///<summary>Helper class that ties a procedure and its assigned adjustments together. AccountEntryProc will be null for unassigned adjustments.</summary>
 		private class ProcAdjs {
@@ -689,10 +587,6 @@ namespace OpenDental {
 			FixedAmt,
 			PercentOfRemBal,
 			PercentOfFee,
-		}
-
-		private void checkOnlyTsiExcludedAdjTypes_Checked(object sender,EventArgs e) {
-			FillListBoxAdjTypes();
 		}
 	}
 }

@@ -42,7 +42,7 @@ namespace OpenDental.UI{
 		private static Pen _penBlack=new Pen(Color.Black,1.5f);
 		///<summary>Current position of mouse on control.  -1,-1 indicates not over control.</summary>
 		private Point _pointMouse=new Point(-1,-1);
-		///<summary>Point where mouse was initially down.  If dragging, it will get the original position.</summary>
+		///<summary>Point where mouse was initially down.  If dragging, it will ge the original position.</summary>
 		private Point _pointMouseDown;
 		///<summary>The rectangle defining the Fit button</summary>
 		private Rectangle _rectangleFit;
@@ -52,9 +52,9 @@ namespace OpenDental.UI{
 		private Rectangle _rectanglePlus;
 		///<summary>The rectangle defining the slider that contains the current zoom text.  Always falls within rectangleTickline.  Since user can only drag in whole pixel increments, we won't use a RectangleF.</summary>
 		private Rectangle _rectangleSlider;
-		///<summary>The rectangle defining tick line itself.  We never draw a rectangle around it, but it's useful for lots of math. It spans the height of the entire control. It extends left and right to the extent of the tick line.</summary>
+		///<summary>The rectangle defining tick line itself.  We never draw a rectangle around it, but it's useful for lots of math.</summary>
 		private Rectangle _rectangleTickLine;
-		///<summary>The rectangle defining the tickline plus left and right padding. So the entire cell.</summary>
+		///<summary>The rectangle defining the tickline plus left and right padding.</summary>
 		private Rectangle _rectangleTickLineMargin;
 		///<summary>The rectangle defining the 100 button</summary>
 		private Rectangle _rectangle100;
@@ -232,12 +232,12 @@ namespace OpenDental.UI{
 			g.DrawString("100",_font,brushText,_rectangle100.Left+3,_rectangle100.Top+4);
 			//Tick line
 			int yTickLine=LayoutManager.Scale(4);
-			g.DrawLine(_penTickLine,_rectangleTickLine.X,yTickLine,_rectangleTickLine.Right,yTickLine);//horiz
-			g.DrawLine(_penTickLine,_rectangleTickLine.X,0,_rectangleTickLine.X,yTickLine);//left vert. Const won't need to change once I measure it.
-			int xFitPixels=(int)(((float)_rectangleTickLine.Right-_rectangleTickLine.Left)//how many pixels to the Fit tick line
+			g.DrawLine(_penTickLine,_rectangleTickLine.X,yTickLine,_rectangleTickLine.Right,yTickLine);
+			g.DrawLine(_penTickLine,_rectangleTickLine.X,0,_rectangleTickLine.X,yTickLine);
+			int xFitPixels=(int)(((float)_rectangleTickLine.Right-_rectangleTickLine.Left)//how many pixels in tick line
 				/(_maximum-1) *_fit);
-			g.DrawLine(_penTickLine,_rectangleTickLine.Left+xFitPixels,0,_rectangleTickLine.Left+xFitPixels,yTickLine);//vertFit
-			g.DrawLine(_penTickLine,_rectangleTickLine.Right,0,_rectangleTickLine.Right,yTickLine);//right vert
+			g.DrawLine(_penTickLine,_rectangleTickLine.Left+xFitPixels,0,_rectangleTickLine.Left+xFitPixels,yTickLine);
+			g.DrawLine(_penTickLine,_rectangleTickLine.Right,0,_rectangleTickLine.Right,yTickLine);
 			//Slider
 			g.FillRectangle(Brushes.White,_rectangleSlider);
 			if(_isMouseDown){//outline any pressed button

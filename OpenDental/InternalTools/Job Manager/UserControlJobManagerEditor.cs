@@ -26,9 +26,6 @@ namespace OpenDental {
 				else if(userControlMarketingEdit.Visible) {
 					return userControlMarketingEdit.GetJob()?.JobNum??0;
 				}
-				else if(userControlProjectEdit.Visible) {
-					return userControlProjectEdit.GetJob()?.JobNum??0;
-				}
 				return 0;
 			}
 		}		
@@ -44,9 +41,6 @@ namespace OpenDental {
 				}
 				else if(userControlMarketingEdit.Visible) {
 					return userControlMarketingEdit.GetJob();
-				}
-				else if(userControlProjectEdit.Visible) {
-					return userControlProjectEdit.GetJob();
 				}
 				return null;
 			}
@@ -67,9 +61,6 @@ namespace OpenDental {
 				else if(userControlMarketingEdit.Visible) {
 					return userControlMarketingEdit.IsChanged;
 				}
-				else if(userControlProjectEdit.Visible) {
-					return userControlProjectEdit.IsChanged;
-				}
 				return false;
 			}
 		}
@@ -80,12 +71,8 @@ namespace OpenDental {
 				userControlJobEdit.IsPopout=value;
 				userControlMarketingEdit.IsPopout=value;
 				userControlQueryEdit.IsPopout=value;
-				userControlProjectEdit.IsPopout=value;
 			}
 		}
-
-		public delegate void UserControlJobManagerEditorGoToJobEventHandler(object sender,long jobNum);
-		public event UserControlJobManagerEditorGoToJobEventHandler GoToJobEvent=null;
 
 		public UserControlJobManagerEditor() {
 			InitializeComponent();
@@ -148,20 +135,6 @@ namespace OpenDental {
 						return true;
 				}
 			}
-			if(userControlProjectEdit.Visible && userControlProjectEdit.IsChanged) {
-				switch(MessageBox.Show("Save changes to current job?","",MessageBoxButtons.YesNoCancel)) {
-					case System.Windows.Forms.DialogResult.OK:
-					case System.Windows.Forms.DialogResult.Yes:
-						if(!userControlProjectEdit.ForceSave()) {
-							return true;
-						}
-						break;
-					case System.Windows.Forms.DialogResult.No:
-						break;
-					case System.Windows.Forms.DialogResult.Cancel:
-						return true;
-				}
-			}
 			return false;//no unsaved changes
 		}
 
@@ -171,11 +144,9 @@ namespace OpenDental {
 			}
 			if(_jobCur.UserNumCheckout==Security.CurUser.UserNum) {
 				_jobCur=Jobs.GetOne(_jobCur.JobNum);
-				Job jobOld=_jobCur.Copy();
 				_jobCur.UserNumCheckout=0;
-				if(Jobs.Update(_jobCur,jobOld)) {
-					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
-				}
+				Jobs.Update(_jobCur);
+				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 			}
 		}
 
@@ -183,32 +154,22 @@ namespace OpenDental {
 			_jobCur=jobCur;
 			if(_jobCur!=null) {
 				//Forcefully load the new job into whatever control it needs to be loaded into in order to be interacted with.
-				if(_jobCur.Category==JobCategory.Project) {
-					userControlQueryEdit.Visible=false;
-					userControlMarketingEdit.Visible=false;
-					userControlJobEdit.Visible=false;
-					userControlProjectEdit.Visible=true;
-					userControlProjectEdit.LoadJob(_jobCur);
-				}
-				else if(_jobCur.Category==JobCategory.Query) {
+				if(_jobCur.Category==JobCategory.Query) {
 					userControlQueryEdit.Visible=true;
 					userControlMarketingEdit.Visible=false;
 					userControlJobEdit.Visible=false;
-					userControlProjectEdit.Visible=false;
 					userControlQueryEdit.LoadJob(_jobCur);
 				}
 				else if(_jobCur.Category==JobCategory.MarketingDesign) {
 					userControlQueryEdit.Visible=false;
 					userControlMarketingEdit.Visible=true;
 					userControlJobEdit.Visible=false;
-					userControlProjectEdit.Visible=false;
 					userControlMarketingEdit.LoadJob(_jobCur);
 				}
 				else {
 					userControlQueryEdit.Visible=false;
 					userControlMarketingEdit.Visible=false;
 					userControlJobEdit.Visible=true;
-					userControlProjectEdit.Visible=false;
 					userControlJobEdit.LoadJob(_jobCur);
 				}
 			}
@@ -248,9 +209,6 @@ namespace OpenDental {
 			if(userControlMarketingEdit.Visible) {
 				userControlMarketingEdit.LoadMergeJob(jobCur);
 			}
-			if(userControlProjectEdit.Visible) {
-				userControlProjectEdit.LoadMergeJob(jobCur);
-			}
 		}
 
 		public bool ForceSave() {
@@ -262,9 +220,6 @@ namespace OpenDental {
 			}
 			if(userControlMarketingEdit.Visible) {
 				return userControlMarketingEdit.ForceSave();
-			}
-			if(userControlProjectEdit.Visible) {
-				return userControlProjectEdit.ForceSave();
 			}
 			return true;
 		}
@@ -288,22 +243,6 @@ namespace OpenDental {
 		}		
 		
 		private void userControlJobEdit_RequestJob(object sender,long jobNum) {
-			Job job=JobManagerCore.ListJobsAll.FirstOrDefault(x => x.JobNum==jobNum);
-			if(job==null) {
-				GoToJob(jobNum);//Try and get the job from the database.
-				return;
-			}
-			LoadJob(job,true);
-		}
-
-		private void userControlProjectEdit_RequestJob(object sender,long jobNum) {
-			if(!userControlProjectEdit.IsPopout) {
-				//Pass this to the containing form so the job stack can be updated and UI will be refreshed.
-				if(GoToJobEvent!=null) {
-					GoToJobEvent(sender,jobNum);
-				}
-				return;
-			}
 			Job job=JobManagerCore.ListJobsAll.FirstOrDefault(x => x.JobNum==jobNum);
 			if(job==null) {
 				GoToJob(jobNum);//Try and get the job from the database.

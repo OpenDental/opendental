@@ -42,6 +42,7 @@ namespace OpenDental {
 			this.butRefresh = new OpenDental.UI.Button();
 			this.textDateTo = new OpenDental.ValidDate();
 			this.textDateFrom = new OpenDental.ValidDate();
+			this.butClose = new OpenDental.UI.Button();
 			this.butPrint = new OpenDental.UI.Button();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.SuspendLayout();
@@ -127,6 +128,16 @@ namespace OpenDental {
 			this.textDateFrom.Size = new System.Drawing.Size(100, 20);
 			this.textDateFrom.TabIndex = 3;
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(858, 497);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butPrint
 			// 
 			this.butPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -152,6 +163,7 @@ namespace OpenDental {
 			// FormLabCases
 			// 
 			this.ClientSize = new System.Drawing.Size(945, 533);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.comboClinic);
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.checkShowUnattached);
@@ -174,6 +186,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private Label label1;
 		private ValidDate textDateFrom;

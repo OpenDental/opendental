@@ -110,7 +110,7 @@ namespace OpenDental {
 				}
 				if(PrefC.HasClinicsEnabled 
 					&& !comboClinics.IsAllSelected
-					&& !comboClinics.ListClinicNumsSelected.Contains(payPlanCur.ListPayPlanCharges[0].ClinicNum))
+					&& !comboClinics.ListSelectedClinicNums.Contains(payPlanCur.ListPayPlanCharges[0].ClinicNum))
 				{
 					continue;
 				}
@@ -194,11 +194,11 @@ namespace OpenDental {
 		}
 
 		//Copied from FormRpOutstandingIns.cs
-		private void butExport_Click(object sender,System.EventArgs e) {
+		private void butExport_Click(object sender,System.EventArgs e) {			
 			string fileName=Lan.g(this,"Outstanding Insurance Payment Plans");
 			string filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
-			if(ODEnvironment.IsCloudServer) {
-				//Thinfinity: file download dialog will come up later, after file is created. AppStream: File will be created in client's Downloads folder.
+			if(ODBuild.IsWeb()) {
+				//file download dialog will come up later, after file is created.
 				filePath+=".txt";//Provide the filepath an extension so that Thinfinity can offer as a download.
 			}
 			else {
@@ -249,15 +249,17 @@ namespace OpenDental {
 				MessageBox.Show(Lan.g(this,"File in use by another program.  Close and try again."));
 				return;
 			}
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.ExportForDownload(filePath);
-			}
-			else if(ODCloudClient.IsAppStream) {
-				CloudClientL.ExportForCloud(filePath);
 			}
 			else {
 				MessageBox.Show(Lan.g(this,"File created successfully"));
 			}
+		}
+
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		///<summary>Class that contains a singular payment plan and all relevant information to be displayed in the grid.
@@ -345,5 +347,8 @@ namespace OpenDental {
 			}
 		}
 
+		
 	}
+
+
 }

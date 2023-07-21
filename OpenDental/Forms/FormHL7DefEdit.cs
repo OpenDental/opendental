@@ -358,13 +358,12 @@ namespace OpenDental {
 
 		///<summary>Make user enter password before allowing them to add patients through OD since this could be dangerous</summary>
 		private void RadioAddPts_Click(object sender,EventArgs e) {
-			InputBox password=new InputBox("In our online manual, on the HL7 page, look for the password and enter it below.");
-			password.ShowDialog();
-			if(password.IsDialogCancel) {
+			using InputBox password=new InputBox("In our online manual, on the HL7 page, look for the password and enter it below.");
+			if(password.ShowDialog()!=DialogResult.OK) {
 				SetShowRadioButtons();
 				return;
 			}
-			if(password.StringResult!="hl7") {
+			if(password.textResult.Text!="hl7") {
 				MessageBox.Show("Wrong password.");
 				SetShowRadioButtons();
 			}
@@ -375,8 +374,8 @@ namespace OpenDental {
 			if(!checkEnabled.Checked) {
 				return true;
 			}
-			if(ODEnvironment.IsCloudServer) {
-				MsgBox.Show(this,"HL7 is not supported while using Open Dental Cloud.");
+			if(ODBuild.IsWeb()) {
+				MsgBox.Show(this,"HL7 is not supported in web mode.");
 				return false;
 			}
 			if(textHL7Server.Text=="") {
@@ -499,7 +498,7 @@ namespace OpenDental {
 			return true;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!ValidateData()) {
 				return;
 			}
@@ -603,5 +602,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

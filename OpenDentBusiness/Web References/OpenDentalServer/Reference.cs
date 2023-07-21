@@ -14,16 +14,16 @@
 #pragma warning disable 1591
 
 namespace OpenDentBusiness.OpenDentalServer {
-    using System.Diagnostics;
     using System;
+    using System.Web.Services;
+    using System.Diagnostics;
+    using System.Web.Services.Protocols;
     using System.Xml.Serialization;
     using System.ComponentModel;
-    using System.Web.Services.Protocols;
-    using System.Web.Services;
     
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Web.Services.WebServiceBindingAttribute(Name="ServiceMainSoap", Namespace="http://www.open-dent.com/OpenDentalServer")]
@@ -35,7 +35,7 @@ namespace OpenDentBusiness.OpenDentalServer {
         
         /// <remarks/>
         public ServiceMain() {
-            this.Url = global::OpenDentBusiness.Properties.Settings.Default.OpenDentBusiness_OpenDentalServer_ServiceMain;
+            this.Url = "http://localhost/OpenDentalServer/ServiceMain.asmx";
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;
@@ -121,11 +121,11 @@ namespace OpenDentBusiness.OpenDentalServer {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
     public delegate void ProcessRequestCompletedEventHandler(object sender, ProcessRequestCompletedEventArgs e);
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class ProcessRequestCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {

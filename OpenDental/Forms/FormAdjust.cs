@@ -25,13 +25,9 @@ namespace OpenDental {
 		///<summary>Filtered list of providers based on which clinic is selected. If no clinic is selected displays all providers. Also includes a dummy clinic at index 0 for "none"</summary>
 		//private List<Provider> _listProviders;
 		private decimal _adjRemAmt;
+		private bool _isTsiAdj;
 		private bool _isEditAnyway;
 		private List<PaySplit> _listPaySplitsForAdjustment;
-		private bool _isNegativeAdjustment;
-		private List<long> _listTsiExcludedAdjDefNums;
-		private Program _program;
-		private Patient _patientGuar;
-		private bool _isTsiAdj;
 
 		///<summary></summary>
 		public FormAdjust(Patient patient,Adjustment adjustment,bool isTsiAdj=false){
@@ -39,8 +35,6 @@ namespace OpenDental {
 			InitializeLayoutManager();
 			_patient=patient;
 			_adjustment=adjustment;
-			_program=Programs.GetCur(ProgramName.Transworld);
-			_patientGuar=Patients.GetGuarForPat(_adjustment.PatNum);
 			_isTsiAdj=isTsiAdj;
 			Lan.F(this);
 		}
@@ -50,15 +44,15 @@ namespace OpenDental {
 				//We do not want to allow the user to make edits or delete SalesTax and SalesTaxReturn Adjustments.  Popup if no permission so user knows why disabled.
 				if(AvaTax.IsEnabled() && 
 					(_adjustment.AdjType==AvaTax.GetSalesTaxAdjType() || _adjustment.AdjType==AvaTax.GetSalesTaxReturnAdjType()) && 
-					!Security.IsAuthorized(EnumPermType.SalesTaxAdjEdit)) {
-					DisableAllExcept(textNote);
+					!Security.IsAuthorized(Permissions.SalesTaxAdjEdit)) {
+					DisableAllExcept(textNote,butCancel);
 					textNote.ReadOnly=true;//This will allow the user to copy the note if desired.
 				}
 			}
 			if(IsNew){
-				if(!Security.IsAuthorized(EnumPermType.AdjustmentCreate,DateTime.Now,true)) {//Date not checked here.  Message will show later.
-					if(!Security.IsAuthorized(EnumPermType.AdjustmentEditZero,true)) {//Let user create an adjustment of zero if they have this perm.
-						MessageBox.Show(Lans.g("Security","Not authorized for")+"\r\n"+GroupPermissions.GetDesc(EnumPermType.AdjustmentCreate));
+				if(!Security.IsAuthorized(Permissions.AdjustmentCreate,true)) {//Date not checked here.  Message will show later.
+					if(!Security.IsAuthorized(Permissions.AdjustmentEditZero,true)) {//Let user create an adjustment of zero if they have this perm.
+						MessageBox.Show(Lans.g("Security","Not authorized for")+"\r\n"+GroupPermissions.GetDesc(Permissions.AdjustmentCreate));
 						DialogResult=DialogResult.Cancel;
 						return;
 					}
@@ -68,11 +62,11 @@ namespace OpenDental {
 			}
 			else{
 				Def def=Defs.GetDef(DefCat.AdjTypes,_adjustment.AdjType);
-				if(!GroupPermissions.HasPermissionForAdjType(EnumPermType.AdjustmentEdit,def,_adjustment.AdjDate,suppressMessage:false)){
+				if(!GroupPermissions.HasPermissionForAdjType(Permissions.AdjustmentEdit,def,_adjustment.AdjDate,suppressMessage:false)){
 					butOK.Enabled=false;
 					butDelete.Enabled=false;
 					//User can't edit but has edit zero amount perm.  Allow delete only if date is today.
-					if(GroupPermissions.HasPermissionForAdjType(EnumPermType.AdjustmentEditZero,def) 
+					if(GroupPermissions.HasPermissionForAdjType(Permissions.AdjustmentEditZero,def) 
 						&& _adjustment.AdjAmt==0
 						&& _adjustment.DateEntry.Date==MiscData.GetNowDateTime().Date) 
 					{
@@ -99,10 +93,6 @@ namespace OpenDental {
 			if(_adjustment.ProcDate.Year > 1880) {
 				textProcDate.Text=_adjustment.ProcDate.ToShortDateString();
 			}
-			if(_adjustment.ProcNum!=0) {
-				textProcDate.ReadOnly=true;
-				butDetachProc.Enabled=true;
-			}
 			if(Defs.GetValue(DefCat.AdjTypes,_adjustment.AdjType)=="+"){//pos
 				textAmount.Text=_adjustment.AdjAmt.ToString("F");
 			}
@@ -112,39 +102,31 @@ namespace OpenDental {
 			else if(Defs.GetValue(DefCat.AdjTypes,_adjustment.AdjType)=="dp") {//Discount Plan (neg)
 				textAmount.Text=(-_adjustment.AdjAmt).ToString("F");//shows without the neg sign
 			}
-			comboClinic.ClinicNumSelected=_adjustment.ClinicNum;
+			comboClinic.SelectedClinicNum=_adjustment.ClinicNum;
 			comboProv.SetSelectedProvNum(_adjustment.ProvNum);
 			FillComboProv();
 			if(_adjustment.ProcNum!=0 && PrefC.GetInt(PrefName.RigorousAdjustments)==(int)RigorousAdjustments.EnforceFully) {
 				comboProv.Enabled=false;
 				butPickProv.Enabled=false;
 				comboClinic.Enabled=false;
-				if(Security.IsAuthorized(EnumPermType.Setup,true)) {
+				if(Security.IsAuthorized(Permissions.Setup,true)) {
 					labelEditAnyway.Visible=true;
 					butEditAnyway.Visible=true;
 				}
 			}
-			checkOnlyTsiExcludedAdjTypes.CheckedChanged-=checkOnlyTsiExcludedAdjTypes_Checked;
-			List<ProgramProperty> listProgramPropertiesExcludedAdjTypes=ProgramProperties
-				.GetWhere(x => x.ProgramNum==_program.ProgramNum
-					&& _program.Enabled
-					&& (x.PropertyDesc==ProgramProperties.PropertyDescs.TransWorld.SyncExcludePosAdjType
-						|| x.PropertyDesc==ProgramProperties.PropertyDescs.TransWorld.SyncExcludeNegAdjType));
-			//use guar's clinic if clinics are enabled and props for that clinic exist, otherwise use ClinicNum 0
-			List<ProgramProperty> listProgramPropertiesForClinicExcludedAdjTypes=listProgramPropertiesExcludedAdjTypes.FindAll(x => x.ClinicNum==_patientGuar.ClinicNum);
-			if(!PrefC.HasClinicsEnabled || listProgramPropertiesForClinicExcludedAdjTypes.Count==0) {
-				listProgramPropertiesForClinicExcludedAdjTypes=listProgramPropertiesExcludedAdjTypes.FindAll(x => x.ClinicNum==0);
-			}
-			_listTsiExcludedAdjDefNums=listProgramPropertiesForClinicExcludedAdjTypes.Select(x=>PIn.Long(x.PropertyValue,false)).ToList();
-			if(_program.Enabled && Patients.IsGuarCollections(_patientGuar.PatNum) && _listTsiExcludedAdjDefNums.Any(x => x>0)) { //Transworld program link is enabled and the patient is part of a family where the guarantor has been sent to TSI
-				checkOnlyTsiExcludedAdjTypes.Checked=true;
-			}
-			else {
-				checkOnlyTsiExcludedAdjTypes.Visible=false;
-				checkOnlyTsiExcludedAdjTypes.Checked=false;
-			}
-			FillListBoxAdjTypes();
-			checkOnlyTsiExcludedAdjTypes.CheckedChanged+=checkOnlyTsiExcludedAdjTypes_Checked;
+			//prevents FillProcedure from being called too many times.  Event handlers hooked back up after the lists are filled.
+			listTypeNeg.SelectedIndexChanged-=listTypeNeg_SelectedIndexChanged;
+			listTypePos.SelectedIndexChanged-=listTypePos_SelectedIndexChanged;
+			//Positive adjustment types
+			_listDefsAdjPosCats=Defs.GetPositiveAdjTypes(considerPermission:true);
+			_listDefsAdjPosCats.ForEach(x => listTypePos.Items.Add(x.ItemName));
+			listTypePos.SelectedIndex=_listDefsAdjPosCats.FindIndex(x => x.DefNum==_adjustment.AdjType);//can be -1
+			//Negative adjustment types
+			_listDefsAdjNegCats=Defs.GetNegativeAdjTypes(considerPermission:true);
+			_listDefsAdjNegCats.ForEach(x => listTypeNeg.Items.Add(x.ItemName));
+			listTypeNeg.SelectedIndex=_listDefsAdjNegCats.FindIndex(x => x.DefNum==_adjustment.AdjType);//can be -1
+			listTypeNeg.SelectedIndexChanged+=listTypeNeg_SelectedIndexChanged;
+			listTypePos.SelectedIndexChanged+=listTypePos_SelectedIndexChanged;
 			FillProcedure();
 			textNote.Text=_adjustment.AdjNote;
 		}
@@ -168,13 +150,13 @@ namespace OpenDental {
 		}
 
 		private void butPickProv_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick = new FrmProviderPick(comboProv.Items.GetAll<Provider>());
-			frmProviderPick.ProvNumSelected=comboProv.GetSelectedProvNum();
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick = new FormProviderPick(comboProv.Items.GetAll<Provider>());
+			formProviderPick.ProvNumSelected=comboProv.GetSelectedProvNum();
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboProv.SetSelectedProvNum(frmProviderPick.ProvNumSelected);
+			comboProv.SetSelectedProvNum(formProviderPick.ProvNumSelected);
 		}
 
 		private void comboClinic_SelectedIndexChanged(object sender,EventArgs e) {
@@ -189,7 +171,7 @@ namespace OpenDental {
 		private void FillComboProv() {
 			long provNum=comboProv.GetSelectedProvNum();
 			comboProv.Items.Clear();
-			comboProv.Items.AddProvsAbbr(Providers.GetProvsForClinic(comboClinic.ClinicNumSelected));
+			comboProv.Items.AddProvsAbbr(Providers.GetProvsForClinic(comboClinic.SelectedClinicNum));
 			comboProv.SetSelectedProvNum(provNum);
 		}
 
@@ -214,7 +196,7 @@ namespace OpenDental {
 			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(procedure.PatNum);
 			List<Adjustment> listAdjustments=Adjustments.Refresh(procedure.PatNum)
 				.Where(x => x.ProcNum==procedure.ProcNum && x.AdjNum!=_adjustment.AdjNum).ToList();
-			textProcDate.Text=procedure.ProcDate.ToShortDateString();	
+			textProcDate.Text=procedure.ProcDate.ToShortDateString();
 			textProcDate2.Text=procedure.ProcDate.ToShortDateString();
 			textProcProv.Text=Providers.GetAbbr(procedure.ProvNum);
 			textProcTooth.Text=Tooth.Display(procedure.ToothNum);
@@ -242,7 +224,6 @@ namespace OpenDental {
 					procAdjCur=-PIn.Double(textAmount.Text);
 				}
 			}
-			_isNegativeAdjustment=procAdjCur<0;
 			textProcAdjCur.Text=procAdjCur==0?"":procAdjCur.ToString("F");
 			//Add the current adjustment amount to the patient portion which will give the newly calculated remaining amount.
 			_adjRemAmt=(decimal)procAdjCur+(decimal)procPatPaid+patPort;
@@ -260,15 +241,15 @@ namespace OpenDental {
 				return;
 			}
 			//No need to check for completed status. Only allowed to select completed procedures.
-			if(!Security.IsAuthorized(EnumPermType.ProcCompleteAddAdj,Procedures.GetDateForPermCheck(formProcSelect.ListProceduresSelected[0]))) {
+			if(!Security.IsAuthorized(Permissions.ProcCompleteAddAdj,Procedures.GetDateForPermCheck(formProcSelect.ListProceduresSelected[0]))) {
 				return;
 			}
 			if(PrefC.GetInt(PrefName.RigorousAdjustments)<2) {//Enforce Linking
 				//_selectedProvNum=FormPS.ListSelectedProcs[0].ProvNum;
-				comboClinic.ClinicNumSelected=formProcSelect.ListProceduresSelected[0].ClinicNum;
+				comboClinic.SelectedClinicNum=formProcSelect.ListProceduresSelected[0].ClinicNum;
 				comboProv.SetSelectedProvNum(formProcSelect.ListProceduresSelected[0].ProvNum);
 				if(PrefC.GetInt(PrefName.RigorousAdjustments)==(int)RigorousAdjustments.EnforceFully && !_isEditAnyway) {
-					if(Security.IsAuthorized(EnumPermType.Setup,true)) {
+					if(Security.IsAuthorized(Permissions.Setup,true)) {
 						labelEditAnyway.Visible=true;
 						butEditAnyway.Visible=true;
 					}
@@ -280,11 +261,9 @@ namespace OpenDental {
 			_adjustment.ProcNum=formProcSelect.ListProceduresSelected[0].ProcNum;
 			FillProcedure();
 			textProcDate.Text=formProcSelect.ListProceduresSelected[0].ProcDate.ToShortDateString();
-			textProcDate.ReadOnly=true;
 		}
 
 		private void butDetachProc_Click(object sender, System.EventArgs e) {
-			textProcDate.ReadOnly=false;
 			comboProv.Enabled=true;
 			butPickProv.Enabled=true;
 			comboClinic.Enabled=true;
@@ -303,20 +282,15 @@ namespace OpenDental {
 			butEditAnyway.Visible=false;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
-			if(!textAdjDate.IsValid() || !textProcDate.IsValid() || !textAmount.IsValid()) {
-				MessageBox.Show(Lan.g(this,"Please fix data entry error first."));
+		private void butOK_Click(object sender, System.EventArgs e) {
+			if(Security.IsGlobalDateLock(Permissions.AdjustmentCreate,textProcDate.Value)) {
 				return;
-			}
-			if(Security.IsGlobalDateLock(EnumPermType.AdjustmentEdit,textAdjDate.Value)) {
-				return;
-			}
-			if(textAmount.Value!=0 || !Security.IsAuthorized(EnumPermType.AdjustmentEditZero)) {//if it's a $0 adjustment and they have that permission we don't care about AdjustmentCreate
-				if(IsNew && !Security.IsAuthorized(EnumPermType.AdjustmentCreate,textAdjDate.Value,false)) {
-					return;
-				}
 			}
 			bool isDiscountPlanAdj=(Defs.GetValue(DefCat.AdjTypes,_adjustment.AdjType)=="dp");
+			if(!textAdjDate.IsValid() || !textProcDate.IsValid() || !textAmount.IsValid()) {
+				MsgBox.Show(this,"Please fix data entry errors first.");
+				return;
+			}
 			if(PIn.Date(textAdjDate.Text).Date > DateTime.Today.Date && !PrefC.GetBool(PrefName.FutureTransDatesAllowed)) {
 				MsgBox.Show(this,"Adjustment date can not be in the future.");
 				return;
@@ -331,7 +305,7 @@ namespace OpenDental {
 			}
 			if(IsNew && AvaTax.IsEnabled() && listTypePos.SelectedIndex>-1 && 
 				(_listDefsAdjPosCats[listTypePos.SelectedIndex].DefNum==AvaTax.GetSalesTaxAdjType() || _listDefsAdjPosCats[listTypePos.SelectedIndex].DefNum==AvaTax.GetSalesTaxReturnAdjType()) && 
-				!Security.IsAuthorized(EnumPermType.SalesTaxAdjEdit))
+				!Security.IsAuthorized(Permissions.SalesTaxAdjEdit))
 			{
 				return;
 			}
@@ -352,11 +326,11 @@ namespace OpenDental {
 					value*=-1;
 				}
 				if(value<0) {
-					MsgBox.Show(this, "This adjustment is attached to a payment plan and it cannot be negative.");
+					MsgBox.Show(this, "This adjustment is attached to a dynamic payment plan and it cannot be negative.");
 					return;
 				}
 			}
-			if(_adjRemAmt<0 && _isNegativeAdjustment) {
+			if(_adjRemAmt<0) {
 				EnumAdjustmentBlockOrWarn enumAdjustmentBlockOrWarn=PrefC.GetEnum<EnumAdjustmentBlockOrWarn>(PrefName.AdjustmentBlockNegativeExceedingPatPortion);
 				if(enumAdjustmentBlockOrWarn==EnumAdjustmentBlockOrWarn.Warn) {
 					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Remaining amount is negative.  Continue?","Overpaid Procedure Warning")) {
@@ -372,9 +346,9 @@ namespace OpenDental {
 			List<PaySplit> listPaySplitsForAdjust=new List<PaySplit>();
 			if(IsNew){
 				//prevents backdating of initial adjustment
-				if(!Security.IsAuthorized(EnumPermType.AdjustmentCreate,PIn.Date(textAdjDate.Text),true)){//Give message later.
+				if(!Security.IsAuthorized(Permissions.AdjustmentCreate,PIn.Date(textAdjDate.Text),true)){//Give message later.
 					if(!_checkZeroAmount) {//Let user create as long as Amount is zero and has edit zero permissions.  This was checked on load.
-						MessageBox.Show(Lans.g("Security","Not authorized for")+"\r\n"+GroupPermissions.GetDesc(EnumPermType.AdjustmentCreate));
+						MessageBox.Show(Lans.g("Security","Not authorized for")+"\r\n"+GroupPermissions.GetDesc(Permissions.AdjustmentCreate));
 						return;
 					}
 				}
@@ -382,13 +356,13 @@ namespace OpenDental {
 			else{
 				//Editing an old entry will already be blocked if the date was too old, and user will not be able to click OK button
 				//This catches it if user changed the date to be older.
-				if(!Security.IsAuthorized(EnumPermType.AdjustmentEdit,PIn.Date(textAdjDate.Text))){
+				if(!Security.IsAuthorized(Permissions.AdjustmentEdit,PIn.Date(textAdjDate.Text))){
 					return;
 				}
 				if(_adjustment.ProvNum!=comboProv.GetSelectedProvNum()) {
 					listPaySplitsForAdjust=PaySplits.GetForAdjustments(new List<long>() {_adjustment.AdjNum});
 					for(int i=0;i<listPaySplitsForAdjust.Count;i++) {
-						if(!Security.IsAuthorized(EnumPermType.PaymentEdit,Payments.GetPayment(listPaySplitsForAdjust[i].PayNum).PayDate)) {
+						if(!Security.IsAuthorized(Permissions.PaymentEdit,Payments.GetPayment(listPaySplitsForAdjust[i].PayNum).PayDate)) {
 							return;
 						}
 						if(comboProv.GetSelectedProvNum()!=listPaySplitsForAdjust[i].ProvNum && PrefC.GetInt(PrefName.RigorousAccounting)==(int)RigorousAdjustments.EnforceFully) {
@@ -409,7 +383,7 @@ namespace OpenDental {
 			_adjustment.AdjDate=PIn.Date(textAdjDate.Text);
 			_adjustment.ProcDate=PIn.Date(textProcDate.Text);
 			_adjustment.ProvNum=comboProv.GetSelectedProvNum();
-			_adjustment.ClinicNum=comboClinic.ClinicNumSelected;
+			_adjustment.ClinicNum=comboClinic.SelectedClinicNum;
 			if(listTypePos.SelectedIndex!=-1) {
 				_adjustment.AdjType=_listDefsAdjPosCats[listTypePos.SelectedIndex].DefNum;
 				_adjustment.AdjAmt=PIn.Double(textAmount.Text);
@@ -426,14 +400,6 @@ namespace OpenDental {
 				MsgBox.Show(this,"Amount has to be 0.00 due to security permission.");
 				return;
 			}
-			if(_program.Enabled && Patients.IsGuarCollections(_patientGuar.PatNum) && _listTsiExcludedAdjDefNums.Any(x => x>0)) {
-				if(checkOnlyTsiExcludedAdjTypes.Checked && !MsgBox.Show(this,MsgBoxButtons.OKCancel,"The guarantor of this family has been sent to TSI for a past due balance and you have selected an adjustment type that is excluded from being synched with TSI. This will not reduce the balance sent for collection by TSI. Continue?")){
-					return;
-				}
-				if(!checkOnlyTsiExcludedAdjTypes.Checked && !MsgBox.Show(this,MsgBoxButtons.OKCancel,"The guarantor of this family has been sent to TSI for a past due balance and you have selected an adjustment type that will be synched with TSI. This balance adjustment could result in a TSI charge for collection. Continue?")){
-					return;
-				}
-			}
 			_adjustment.AdjNote=textNote.Text;
 			if(IsNew) {
 				try{
@@ -443,7 +409,7 @@ namespace OpenDental {
 					MessageBox.Show(ex.Message);
 					return;
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.AdjustmentCreate,_adjustment.PatNum,
+				SecurityLogs.MakeLogEntry(Permissions.AdjustmentCreate,_adjustment.PatNum,
 					_patient.GetNameLF()+", "
 					+_adjustment.AdjAmt.ToString("c"));
 				TsiTransLogs.CheckAndInsertLogsIfAdjTypeExcluded(_adjustment,_isTsiAdj);
@@ -456,12 +422,11 @@ namespace OpenDental {
 					MessageBox.Show(ex.Message);
 					return;
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.AdjustmentEdit,_adjustment.PatNum,_patient.GetNameLF()+", "+_adjustment.AdjAmt.ToString("c"),0,datePreviousChange);
+				SecurityLogs.MakeLogEntry(Permissions.AdjustmentEdit,_adjustment.PatNum,_patient.GetNameLF()+", "+_adjustment.AdjAmt.ToString("c"),0,datePreviousChange);
 			}
 			if(changeAdjSplit) {
 				PaySplits.UpdateProvForAdjust(_adjustment,listPaySplitsForAdjust);
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 		}
 
@@ -476,7 +441,7 @@ namespace OpenDental {
 			}
 			bool isAttachedToPayPlan=PayPlanLinks.GetForFKeyAndLinkType(_adjustment.AdjNum,PayPlanLinkType.Adjustment).Count>0;
 			if(isAttachedToPayPlan) {
-				MsgBox.Show(this,"Cannot delete adjustment that is attached to a payment plan.");
+				MsgBox.Show(this,"Cannot delete adjustment that is attached to a dynamic payment plan.");
 				return;
 			}
 			if(_listPaySplitsForAdjustment.Count>0 
@@ -484,45 +449,14 @@ namespace OpenDental {
 			{//There are splits for this adjustment
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.AdjustmentEdit,_adjustment.PatNum
+			SecurityLogs.MakeLogEntry(Permissions.AdjustmentEdit,_adjustment.PatNum
 				,"Delete for patient: "+_patient.GetNameLF()+", "+_adjustment.AdjAmt.ToString("c"),0,_adjustment.SecDateTEdit);
 			Adjustments.Delete(_adjustment);
-			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 		}
 
-		private void FillListBoxAdjTypes() {
-			listTypePos.Items.Clear();
-			listTypeNeg.Items.Clear();
-			//prevents FillProcedure from being called too many times.  Event handlers hooked back up after the lists are filled.
-			listTypeNeg.SelectedIndexChanged-=listTypeNeg_SelectedIndexChanged;
-			listTypePos.SelectedIndexChanged-=listTypePos_SelectedIndexChanged;
-			//Positive adjustment types
-			_listDefsAdjPosCats=Defs.GetPositiveAdjTypes(considerPermission:true);
-			if(checkOnlyTsiExcludedAdjTypes.Checked) {
-				_listDefsAdjPosCats=_listDefsAdjPosCats.FindAll(x=>_listTsiExcludedAdjDefNums.Contains(x.DefNum));
-			}
-			else {
-				_listDefsAdjPosCats=_listDefsAdjPosCats.FindAll(x=> !_listTsiExcludedAdjDefNums.Contains(x.DefNum));
-			}
-			_listDefsAdjPosCats.ForEach(x => listTypePos.Items.Add(x.ItemName));
-			listTypePos.SelectedIndex=_listDefsAdjPosCats.FindIndex(x => x.DefNum==_adjustment.AdjType);//can be -1
-			//Negative adjustment types
-			_listDefsAdjNegCats=Defs.GetNegativeAdjTypes(considerPermission:true);
-			if(checkOnlyTsiExcludedAdjTypes.Checked) {
-				_listDefsAdjNegCats=_listDefsAdjNegCats.FindAll(x => _listTsiExcludedAdjDefNums.Contains(x.DefNum));
-			}
-			else {
-				_listDefsAdjNegCats=_listDefsAdjNegCats.FindAll(x=> !_listTsiExcludedAdjDefNums.Contains(x.DefNum));
-			}
-			_listDefsAdjNegCats.ForEach(x => listTypeNeg.Items.Add(x.ItemName));
-			listTypeNeg.SelectedIndex=_listDefsAdjNegCats.FindIndex(x => x.DefNum==_adjustment.AdjType);//can be -1
-			listTypeNeg.SelectedIndexChanged+=listTypeNeg_SelectedIndexChanged;
-			listTypePos.SelectedIndexChanged+=listTypePos_SelectedIndexChanged;
-		}
-
-		private void checkOnlyTsiExcludedAdjTypes_Checked(object sender,EventArgs e) {
-			FillListBoxAdjTypes();
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 	}
 

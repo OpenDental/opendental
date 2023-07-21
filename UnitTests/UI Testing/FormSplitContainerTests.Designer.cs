@@ -86,7 +86,7 @@ namespace UnitTests{
 			this.button4.Name = "button4";
 			this.button4.Size = new System.Drawing.Size(75, 23);
 			this.button4.TabIndex = 8;
-			this.button4.Text = "Set 73%";
+			this.button4.Text = "Set 50";
 			this.button4.UseVisualStyleBackColor = true;
 			this.button4.Click += new System.EventHandler(this.button4_Click);
 			// 
@@ -96,7 +96,7 @@ namespace UnitTests{
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(75, 23);
 			this.button1.TabIndex = 9;
-			this.button1.Text = "Set 30%";
+			this.button1.Text = "Set 20";
 			this.button1.UseVisualStyleBackColor = true;
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
@@ -105,7 +105,6 @@ namespace UnitTests{
 			this.splitContainerOD.Controls.Add(this.splitterPanel1);
 			this.splitContainerOD.Controls.Add(this.splitterPanel2);
 			this.splitContainerOD.Cursor = System.Windows.Forms.Cursors.Default;
-			this.splitContainerOD.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.splitContainerOD.Location = new System.Drawing.Point(598, 60);
 			this.splitContainerOD.Name = "splitContainerOD";
 			this.splitContainerOD.Orientation = System.Windows.Forms.Orientation.Horizontal;

@@ -70,7 +70,6 @@ namespace UnitTestsCore {
 				DELETE FROM claim;
 				DELETE FROM claimproc;
 				DELETE FROM clinic;
-				DELETE FROM clinicpref;
 				DELETE FROM clockevent;
 				DELETE FROM confirmationrequest;
 				DELETE FROM creditcard;

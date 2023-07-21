@@ -48,9 +48,6 @@ namespace OpenDental {
 		private bool _isUsingReplication=false;
 		///<summary>True if the MySQL user has the privileges necessary to determine if the database is using replication (REPLICATION CLIENT and SUPER). Otherwise, false.</summary>
 		private bool _hasReplicationPermission=true;
-		/// <summary>True if there is a critical warning message to be shown via pop-up msgbox</summary>
-		private bool _isWarningMessageNeeded;
-		private List<string>_listWarningMessages=new List<string>();
 
 		///<summary></summary>
 		public FormDatabaseMaintenance() {
@@ -59,7 +56,7 @@ namespace OpenDental {
 			//
 			InitializeComponent();
 			InitializeLayoutManager();
-			Lan.C(this,new Control[] {
+			Lan.C(this,new System.Windows.Forms.Control[]{
 				this.textChecks,
 			});
 			Lan.F(this);
@@ -81,7 +78,7 @@ namespace OpenDental {
 				butClearUpdateInProgress.Enabled=false;
 			}
 			try {
-				_isUsingReplication=PrefC.GetBool(PrefName.DatabaseGlobalVariablesDontSet) || ReplicationServers.IsUsingReplication();
+				_isUsingReplication=ReplicationServers.IsUsingReplication();
 			}
 			catch {
 				_hasReplicationPermission=false;
@@ -123,8 +120,8 @@ namespace OpenDental {
 			for(int i=0;i<_listMethodInfosHidden.Count;i++) {
 				row=new GridRow();
 				row.Cells.Add(_listMethodInfosHidden[i].Name);
-				bool hasExplain=DatabaseMaintenances.MethodHasExplain(_listMethodInfosHidden[i]);
-				row.Cells.Add(hasExplain ? "X" : "");
+				bool hasExlpain=DatabaseMaintenances.MethodHasExplain(_listMethodInfosHidden[i]);
+				row.Cells.Add(hasExlpain ? "X" : "");
 				row.Tag=_listMethodInfosHidden[i];
 				gridHidden.ListGridRows.Add(row);
 			}
@@ -197,12 +194,12 @@ namespace OpenDental {
 			row=new GridRow(Lan.g(this,"Email Duplicates"),Lan.g(this,"Deletes all duplicated email messages."));
 			row.Tag=new Action(DuplicateEmailsFix);
 			gridTools.ListGridRows.Add(row);
-			if(Security.IsAuthorized(EnumPermType.SecurityAdmin,true)){
+			if(Security.IsAuthorized(Permissions.SecurityAdmin,true)){
 				row=new GridRow(Lan.g(this,"Etrans"),Lan.g(this,"Clear out etrans entries older than a year old."));
 				row.Tag=new Action(EtransFix);
 				gridTools.ListGridRows.Add(row);
 			}
-			if(!ODEnvironment.IsCloudServer) {
+			if(!ODBuild.IsWeb()) {
 				//If the office converted their db to MyISAM, their backups would stop working.
 				row=new GridRow(Lan.g(this,"InnoDB"),Lan.g(this,"Converts database storage engine to/from InnoDb."));
 				row.Tag=new Action(InnoDBFix);
@@ -211,14 +208,6 @@ namespace OpenDental {
 			row=new GridRow(Lan.g(this,"Ins Pay Fix"),Lan.g(this,"Creates checks for insurance payments that are not attached to a check."));
 			row.Tag=new Action(InsPayFix);
 			gridTools.ListGridRows.Add(row);
-			if(Security.IsAuthorized(EnumPermType.SecurityAdmin,true)) {
-				row=new GridRow(Lan.g(this,"Insurance Plan Type Category Percentage"),Lan.g(this,"Changes all PPO Percentage plans to Category Percentage plans."));
-				row.Tag=new Action(ChangeToCategoryInsurancePlanType);
-				gridTools.ListGridRows.Add(row);
-				row=new GridRow(Lan.g(this,"Insurance Plan Type PPO Percentage"),Lan.g(this,"Changes all Category Percentage plans to PPO Percentage plans."));
-				row.Tag=new Action(ChangeToPercentageInsurancePlanType);
-				gridTools.ListGridRows.Add(row);
-			}
 			if(!PrefC.GetBool(PrefName.DatabaseMaintenanceDisableOptimize)) {
 				row=new GridRow(Lan.g(this,"Optimize"),Lan.g(this,"Back up, optimize, and repair tables."));
 				row.Tag=new Action(OptimizeFix);
@@ -248,7 +237,7 @@ namespace OpenDental {
 				row.Tag=new Action(RemoveNullsFix);
 				gridTools.ListGridRows.Add(row);
 			}
-			if(Security.IsAuthorized(EnumPermType.RepeatChargeTool,true)) {
+			if(Security.IsAuthorized(Permissions.RepeatChargeTool,true)) {
 				row=new GridRow(Lan.g(this,"Repeat Charge"),Lan.g(this,"Update multiple repeat charge amounts."));
 				row.Tag=new Action(RepeatChargeEditMultiFix);
 				gridTools.ListGridRows.Add(row);
@@ -258,9 +247,6 @@ namespace OpenDental {
 			gridTools.ListGridRows.Add(row);
 			row=new GridRow(Lan.g(this,"Tokens"),Lan.g(this,"Validates tokens on file with the X-Charge server."));
 			row.Tag=new Action(TokensFix);
-			gridTools.ListGridRows.Add(row);
-			row=new GridRow(Lan.g(this,"Wiki Search"),Lan.g(this,"Fixes wiki pages that don't show up when their terms are searched for."));
-			row.Tag=new Action(WikiSearchFix);
 			gridTools.ListGridRows.Add(row);
 			gridTools.EndUpdate();
 		}
@@ -373,23 +359,6 @@ namespace OpenDental {
 			formInsPayFix.ShowDialog();
 		}
 
-		private void WikiSearchFix() {
-			if(MessageBox.Show(Lan.g("FormDatabaseMaintenance","This tool will update the search parameters for every wiki page. Continue?")
-				,Lan.g("FormDatabaseMaintenance","Wiki Search Fix")
-				,MessageBoxButtons.OKCancel)!=DialogResult.OK) {
-				return;
-			}
-			List<WikiPage> listWikiPages=WikiPages.GetAll();
-			Cursor=Cursors.WaitCursor;
-			for(int i=0;i<listWikiPages.Count;i++) {
-				WikiPage wikiPageOld=listWikiPages[i].Copy();
-				listWikiPages[i].PageContentPlainText=MarkupEdit.ConvertToPlainText(listWikiPages[i].PageContent);
-				WikiPages.Update(listWikiPages[i],wikiPageOld);
-			}
-			Cursor=Cursors.Default;
-			MsgBox.Show(this,"Done.");
-		}
-
 		private void OptimizeFix() {
 			if(MessageBox.Show(Lan.g("FormDatabaseMaintenance","This tool will backup, optimize, and repair all tables.")+"\r\n"
 				+Lan.g("FormDatabaseMaintenance","Continue?")
@@ -429,23 +398,22 @@ namespace OpenDental {
 		}
 
 		private void SpecCharFix() {
-			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"This is only used if your mobile sync or middle tier is failing.  This cannot be undone.  "
+			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"This is only used if your mobile synch or middle tier is failing.  This cannot be undone.  "
 				+"Do you wish to continue?"))
 			{
 				return;
 			}
-			InputBox inputBox=new InputBox("In our online manual, on the database maintenance page, look for the password and enter it below.");
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			using InputBox inputBox=new InputBox("In our online manual, on the database maintenance page, look for the password and enter it below.");
+			if(inputBox.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
-			if(inputBox.StringResult!="fix") {
+			if(inputBox.textResult.Text!="fix") {
 				MessageBox.Show("Wrong password.");
 				return;
 			}
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=DatabaseMaintenances.FixSpecialCharacters;
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled){
 				return;
 			}
@@ -549,10 +517,10 @@ namespace OpenDental {
 				return;
 			}
 			string strResult="";
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => strResult=DatabaseMaintenances.CleanUpRawEmails();
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
 				strResult=Lan.g(this,"There was an error cleaning up email bloat:")+"\r\n"+ex.Message;
@@ -573,10 +541,10 @@ namespace OpenDental {
 				return;
 			}
 			string strResult="";
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => strResult=DatabaseMaintenances.CleanUpAttachmentsRootDirectory();
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
 				strResult=Lan.g(this,"There was an error cleaning up email attachments:")+"\r\n"+ex.Message;
@@ -598,9 +566,9 @@ namespace OpenDental {
 			{
 				return;
 			}
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => DatabaseMaintenances.RecalcEstimates(Procedures.GetProcsWithOldEstimates());
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 		}
 		
 		private void PayPlanPaymentsFix() {
@@ -613,9 +581,9 @@ namespace OpenDental {
 			}
 			
 			string strResult="";
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => strResult=DatabaseMaintenances.DetachInvalidPaymentPlanPayments();
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled){
 				return;
 			}
@@ -626,21 +594,18 @@ namespace OpenDental {
 		}
 
 		private void FamilyBalanceFix(bool isSingleFamilyMode=false) {
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-			inputBoxParam.LabelText="Please enter password";
-			inputBoxParam.IsPassswordCharStar=true;
-			InputBox inputBox=new InputBox(inputBoxParam);
-			inputBox.SetTitle("Family Balancer");
+			using InputBox inputBox=new InputBox("Please enter password");
+			inputBox.setTitle("Family Balancer");
+			inputBox.textResult.PasswordChar='*';
 			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			if(inputBox.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			if(inputBox.StringResult!="ConversionsDepartment") {
+			if(inputBox.textResult.Text!="ConversionsDepartment") {
 				MsgBox.Show(this,"Wrong password");
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
 			using FormFamilyBalancer formFamilyBalancer=new FormFamilyBalancer();
@@ -656,17 +621,14 @@ namespace OpenDental {
 
 		private void RedundantIndexesFix() {
 			if(!_isRedundantPasswordEntered) {
-				InputBoxParam inputBoxParam=new InputBoxParam();
-				inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-				inputBoxParam.LabelText="Please enter password";
-				inputBoxParam.IsPassswordCharStar=true;
-				InputBox inputBox=new InputBox(inputBoxParam);
-				inputBox.SetTitle("Remove Redundant Indexes");
+				using InputBox inputBox=new InputBox("Please enter password");
+				inputBox.setTitle("Remove Redundant Indexes");
+				inputBox.textResult.PasswordChar='*';
 				inputBox.ShowDialog();
-				if(inputBox.IsDialogCancel) {
+				if(inputBox.DialogResult!=DialogResult.OK) {
 					return;
 				}
-				if(inputBox.StringResult!="abracadabra") {
+				if(inputBox.textResult.Text!="abracadabra") {
 					_isRedundantPasswordEntered=false;
 					MsgBox.Show(this,"Wrong password");
 					return;
@@ -692,10 +654,10 @@ namespace OpenDental {
 				return;
 			}
 			string strResult="";
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => strResult=DatabaseMaintenances.CleanUpDuplicateEmails();
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
 				strResult=Lan.g(this,"There was an error cleaning up duplicate emails:")+"\r\n"+ex.Message;
@@ -717,10 +679,10 @@ namespace OpenDental {
 				return;
 			}
 			string strResult="";
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => strResult=DatabaseMaintenances.CleanUpUnattachedAttachments();
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
 				strResult=Lan.g(this,"There was an error deleting the attachments:")+"\r\n"+ex.Message;
@@ -730,58 +692,6 @@ namespace OpenDental {
 			}
 			MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(strResult);
 			msgBoxCopyPaste.Show();
-		}
-
-		private bool VerifyPermissionToChangeInsuranceType() {
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-			inputBoxParam.LabelText="Please enter password";
-			inputBoxParam.IsPassswordCharStar=true;
-			InputBox inputBox=new InputBox(inputBoxParam);
-			inputBox.SetTitle("Insurance Plan Type Change");
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
-				return false;
-			}
-			if(inputBox.StringResult!="ChangePlanType") {
-				MsgBox.Show(this,"Wrong password");
-				return false;
-			}
-			return true;
-		}
-
-		private void ChangeToCategoryInsurancePlanType() {
-			if(!VerifyPermissionToChangeInsuranceType()) {
-				return;
-			}
-			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel
-				,"Warning! This will change all PPO Percentage insurance plans to Category Percentage plan type. This action is not reversible. Continue?")) {
-				return;
-			}
-			ProgressWin progressOD=new ProgressWin();
-			progressOD.ActionMain=() => DatabaseMaintenances.UpdateInsurancePlanType("Category");
-			progressOD.ShowDialog();
-			if(progressOD.IsCancelled){
-				return;
-			}
-			MsgBox.Show(this,"Done.");
-		}
-
-		private void ChangeToPercentageInsurancePlanType() {
-			if (!VerifyPermissionToChangeInsuranceType()) {
-				return;
-			}
-			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel
-				,"Warning! This will change all Category Percentage insurance plans to PPO Percentage plan type. This action is not reversible. Continue?")) {
-				return;
-			}
-			ProgressWin progressOD=new ProgressWin();
-			progressOD.ActionMain=() => DatabaseMaintenances.UpdateInsurancePlanType("Percentage");
-			progressOD.ShowDialog();
-			if(progressOD.IsCancelled){
-				return;
-			}
-			MsgBox.Show(this,"Done.");
 		}
 
 		#endregion
@@ -809,31 +719,11 @@ namespace OpenDental {
 				grid.ListGridRows[i].Cells[colResultsIndex].Text="";
 			}
 			bool isVerbose=checkShow.Checked;
-			long databaseSize=MiscData.GetDatabaseSize();
-			TimeSpan totalTime=TimeSpan.FromSeconds((0.00000008d)*databaseSize);
-			string strTotalTime="";
-			if (totalTime.TotalMinutes > 1) {
-				strTotalTime += totalTime.TotalMinutes.ToString("0") + " minutes";
-			}
-			else {
-				strTotalTime += totalTime.TotalSeconds.ToString("0") + " seconds";
-			}
-			string warningMessage="CHECK TABLES will be run first.  This will take an estimated "+strTotalTime+" and may limit users from accessing Open Dental while this action runs. Would you like to continue?";
-			//In binary 6442450944 bytes is 6GBs.
-			//After some testing (0.00000008 seconds per byte) 0.00000008 * 6442450944 = 515 seconds per 6 GBs or about 8 minutes.
-			//A typical small office might take two minutes.
-			//Not sure where we should set this cutoff. If it limits access to OD, we should warn them more. But warnings are annoying.
-			if((totalTime.TotalMinutes>4) && !MsgBox.Show(this,MsgBoxButtons.YesNo,warningMessage,"Warning")) {
-				Cursor=Cursors.Default;
-				ToggleUI(false);
-				return;
-			}
 			StringBuilder stringBuilderLogText=new StringBuilder();
 			ODTuple<string,bool> tupleTableCheckResult=null;
-			ProgressWin progressOD=new ProgressWin();
-			//We always run CHECK TABLES
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => tupleTableCheckResult=DatabaseMaintenances.MySQLTables(isVerbose,dbmModeCur);
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled){
 				Cursor=Cursors.Default;
 				ToggleUI(false);
@@ -880,17 +770,16 @@ namespace OpenDental {
 				}
 				ToggleUI(false);
 				grid.SetSelected(intArraySelectedIndices,true);//Reselect all rows that were originally selected.
-				ShowWarningPopupIfNeeded();
 			}));
 			_threadRunDBM.AddExitHandler((ex) => SaveLogToFile(stringBuilderLogText.ToString()));
 			_threadRunDBM.AddExceptionHandler(ex => this.InvokeIfRequired(() => {
-			FriendlyException.Show("Error during database maintenance.",ex);
-			if(selectedIndex>=0) {
-				UpdateResultTextForRow(grid,selectedIndex,Lan.g(this,"ERROR: ")+ex.Message);
-			}
-			stringBuilderLogText.Append(Lan.g(this,"ERROR: ")+ex.Message);
-			ToggleUI(false);
-			grid.SetSelected(intArraySelectedIndices,true);//Reselect all rows that were originally selected.
+				FriendlyException.Show("Error during database maintenance.",ex);
+				if(selectedIndex>=0) {
+					UpdateResultTextForRow(grid,selectedIndex,Lan.g(this,"ERROR: ")+ex.Message);
+				}
+				stringBuilderLogText.Append(Lan.g(this,"ERROR: ")+ex.Message);
+				ToggleUI(false);
+				grid.SetSelected(intArraySelectedIndices,true);//Reselect all rows that were originally selected.
 			}));
 			_threadRunDBM.Name="RunDBMThread";
 			_threadRunDBM.Start();
@@ -919,19 +808,10 @@ namespace OpenDental {
 			string strResult="";
 			try {
 				strResult=(string)methodInfo.Invoke(null,listObjectsParameters.ToArray());
-				DbmMethodAttr dbmMethodAttr = (DbmMethodAttr)Attribute.GetCustomAttribute(methodInfo,typeof(DbmMethodAttr));
-				if(dbmMethodAttr?.HasWarningMessage==true && strResult.Contains("$#$")) {
-					_isWarningMessageNeeded=true;
-					// When setting up return strings, make sure to use the "$#$" delimiter, have the (translated) popup message follow the normal (translated) message. See DatabaseMaintenances.MySQLServerOptionsValidate() for example usage.
-					string warningMsgTemp=strResult.Split(new string[] { "$#$" },StringSplitOptions.RemoveEmptyEntries)[1];
-					strResult=strResult.Split("$#$",StringSplitOptions.RemoveEmptyEntries)[0];
-					if(!_listWarningMessages.Contains(warningMsgTemp)) {
-						_listWarningMessages.Add(warningMsgTemp);
-					}
-				}
 				if(dbmModeCur==DbmMode.Fix) {
-					DatabaseMaintenance databaseMaintenance = _listDatabaseMaintenances.FirstOrDefault(x => x.MethodName==methodInfo.Name);
-					if(dbmMethodAttr?.IsOneOff==true && databaseMaintenance?.IsOld==false) {
+					DbmMethodAttr dbmMethodAttr=(DbmMethodAttr)Attribute.GetCustomAttribute(methodInfo,typeof(DbmMethodAttr));
+					DatabaseMaintenance databaseMaintenance=_listDatabaseMaintenances.FirstOrDefault(x=>x.MethodName==methodInfo.Name);
+					if(dbmMethodAttr!=null && dbmMethodAttr.IsOneOff && databaseMaintenance!=null && !databaseMaintenance.IsOld) {
 						DatabaseMaintenances.MoveToOld(methodInfo.Name);
 					}
 					DatabaseMaintenances.UpdateDateLastRun(methodInfo.Name);
@@ -944,17 +824,6 @@ namespace OpenDental {
 				throw;
 			}
 			return strResult;
-		}
-
-		private void ShowWarningPopupIfNeeded() {
-			if(_isWarningMessageNeeded) {
-				StringBuilder sb=new StringBuilder();
-				foreach(string msg in _listWarningMessages) {
-					sb.AppendLine(msg).AppendLine();
-				}
-				MsgBoxCopyPaste msgBox=new MsgBoxCopyPaste(sb.ToString());
-				msgBox.ShowDialog();
-			}
 		}
 
 		///<summary>Returns true if any of the selected gridrows have a method tag that is marked as IsReplicationUnsafe and the office is running replication. Otherwise false.</summary>
@@ -978,40 +847,19 @@ namespace OpenDental {
 					" At least one dbm method is not safe to run when replication is enabled. Unsafe methods will be skipped.");
 				return;
 			}
-			if(PrefC.GetBool(PrefName.DatabaseGlobalVariablesDontSet)) {
-				InputBoxParam inputBoxParam=new InputBoxParam();
-				inputBoxParam.InputBoxType_=InputBoxType.CheckBox;
-				inputBoxParam.LabelText="Replication might be enabled. Running unsafe replication methods may cause database damage. Additional steps must be taken before running unsafe database methods.";
-				inputBoxParam.Text="I have taken the special published process provided by the software support team.";
-				inputBoxParam.SizeParam=new System.Windows.Size(400,40);
-				InputBox inputBox=new InputBox(inputBoxParam);
-				inputBox.SetTitle("Replication Warning");
-				inputBox.ShowDialog();
-				if(inputBox.IsDialogCancel){
-					return;
-				}
-				if(!inputBox.BoolResult) {
-					return;
-				}
+			if(!MsgBox.Show(MsgBoxButtons.YesNo,"At least one dbm method is not safe to run when replication is enabled. Would you like to continue?")) {
+				return;
 			}
-			else {
-				if(!MsgBox.Show(MsgBoxButtons.YesNo,"At least one dbm method is not safe to run when replication is enabled. Would you like to continue?")) {
-					return;
-				}
-				InputBoxParam inputBoxParam=new InputBoxParam();
-				inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-				inputBoxParam.LabelText="Please enter password";
-				inputBoxParam.IsPassswordCharStar=true;
-				InputBox inputBox=new InputBox(inputBoxParam);
-				inputBox.SetTitle("Run Replication Unsafe DBMs");
-				inputBox.ShowDialog();
-				if(inputBox.IsDialogCancel) {
-					return;
-				}
-				if(inputBox.StringResult!="abracadabra") {
-					MsgBox.Show(this,"Wrong password");
-					return;
-				}
+			using InputBox inputBox=new InputBox("Please enter password");
+			inputBox.setTitle("Run Replication Unsafe DBMs");
+			inputBox.textResult.PasswordChar='*';
+			inputBox.ShowDialog();
+			if(inputBox.DialogResult!=DialogResult.OK) {
+				return;
+			}
+			if(inputBox.textResult.Text!="abracadabra") {
+				MsgBox.Show(this,"Wrong password");
+				return;
 			}
 			_isReplicationPasswordEntered=true;
 		}
@@ -1029,7 +877,6 @@ namespace OpenDental {
 				strResult=Lan.g("FormDatabaseMaintenance","Done.  No maintenance needed.");
 			}
 			SaveLogToFile(methodInfo.Name+":\r\n"+strResult);
-			ShowWarningPopupIfNeeded();
 			//Show the result of the dbm method in a simple copy paste msg box.
 			MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(strResult);
 			msgBoxCopyPaste.Show();//Let this window be non-modal so that they can keep it open while they fix their problems.
@@ -1052,7 +899,6 @@ namespace OpenDental {
 		///<summary>Tries to log the text passed in to a centralized DBM log.  Displays an error message to the user if anything goes wrong.
 		///Always sets the current Cursor state back to Cursors.Default once finished.</summary>
 		private void SaveLogToFile(string logText) {
-			logText="Database Maintenance - Results: \r\n"+logText;
 			this.InvokeIfNotDisposed(() => {
 				try {
 					DatabaseMaintenances.SaveLogToFile(logText);
@@ -1130,6 +976,7 @@ namespace OpenDental {
 				butFixOld.Enabled=false;
 				butPrint.Enabled=false;
 				butNoneChecks.Enabled=false;
+				butClose.Enabled=false;
 				butStopDBM.Enabled=true;
 				butStopDBMOld.Enabled=true;
 				tabTools.Enabled=false;
@@ -1144,6 +991,7 @@ namespace OpenDental {
 				butFixOld.Enabled=true;
 				butPrint.Enabled=true;
 				butNoneChecks.Enabled=true;
+				butClose.Enabled=true;
 				butStopDBM.Enabled=false;
 				butStopDBMOld.Enabled=false;
 				tabTools.Enabled=true;
@@ -1248,17 +1096,21 @@ namespace OpenDental {
 			}
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 		private void FormDatabaseMaintenance_FormClosing(object sender,FormClosingEventArgs e) {
 			if(!_isCacheInvalid) {
 				return;
 			}
 			//Invalidate all cached tables.  DBM could have touched anything so blast them all.
 			//Failure to invalidate cache can cause UEs in the main program.
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			InvalidType[] invalidTypeArrayCached=Cache.GetAllCachedInvalidTypes().ToArray();
 			progressOD.ActionMain=() => DataValid.SetInvalid(invalidTypeArrayCached);
-			progressOD.ShowDialog();
+			progressOD.ODEventType=ODEventType.Cache;
+			progressOD.ShowDialogProgress();
 		}
-
 	}
 }

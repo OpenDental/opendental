@@ -53,20 +53,20 @@ namespace OpenDental {
 		private void checkInsDefaultAssignmentOfBenefits_Click(object sender,EventArgs e) {
 			//Users with Setup permission are always allowed to change the Checked property of this check box.
 			//However, there is a second step when changing the value that can only be performed by users with the InsPlanChangeAssign permission.
-			if(!Security.IsAuthorized(EnumPermType.InsPlanChangeAssign,true)) {
+			if(!Security.IsAuthorized(Permissions.InsPlanChangeAssign,true)) {
 				return;
 			}
 			string promptMsg=Lan.g(this,"Would you like to immediately change all plans to use assignment of benefits?\r\n"
 					+$"Warning: This will update all existing plans to render payment to the provider on all future claims.");
 			if(!checkInsDefaultAssignmentOfBenefits.Checked) {
-				promptMsg=Lan.g(this,"Would you like to immediately change all plans to not use assignment of benefits?\r\n"
+				promptMsg=Lan.g(this,"Would you like to immediately change all plans to use assignment of benefits?\r\n"
 					+$"Warning: This will update all existing plans to render payment to the patient on all future claims.");
 			}
 			if(MessageBox.Show(promptMsg,Lan.g(this,"Change all plans?"),MessageBoxButtons.YesNo)==DialogResult.No) {
 				return;
 			}
 			long subsAffected=InsSubs.SetAllSubsAssignBen(checkInsDefaultAssignmentOfBenefits.Checked);
-			SecurityLogs.MakeLogEntry(EnumPermType.InsPlanChangeAssign,0
+			SecurityLogs.MakeLogEntry(Permissions.InsPlanChangeAssign,0
 				,Lan.g(this,"The following count of plan(s) had their assignment of benefits updated in the Family tab in Module Preferences:")+" "+POut.Long(subsAffected)
 			);
 			MessageBox.Show(Lan.g(this,"Plans affected:")+" "+POut.Long(subsAffected));

@@ -28,27 +28,27 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static List<ClaimTracking> RefreshForUsers(ClaimTrackingType claimTrackingType,List<long> listUserNums){
+		public static List<ClaimTracking> RefreshForUsers(ClaimTrackingType type,List<long> listUserNums){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ClaimTracking>>(MethodBase.GetCurrentMethod(),claimTrackingType,listUserNums);
+				return Meth.GetObject<List<ClaimTracking>>(MethodBase.GetCurrentMethod(),type,listUserNums);
 			}
 			if(listUserNums==null || listUserNums.Count==0) {
 				return new List<ClaimTracking>();
 			}
-			string command="SELECT * FROM claimtracking WHERE TrackingType='"+POut.String(claimTrackingType.ToString())+"' "
+			string command="SELECT * FROM claimtracking WHERE TrackingType='"+POut.String(type.ToString())+"' "
 				+"AND UserNum IN ("+String.Join(",",listUserNums)+")";
 			return Crud.ClaimTrackingCrud.SelectMany(command);
 		}
 
 		///<summary></summary>
-		public static List<ClaimTracking> RefreshForClaim(ClaimTrackingType claimTrackingType,long claimNum) {
+		public static List<ClaimTracking> RefreshForClaim(ClaimTrackingType type,long claimNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ClaimTracking>>(MethodBase.GetCurrentMethod(),claimTrackingType,claimNum);
+				return Meth.GetObject<List<ClaimTracking>>(MethodBase.GetCurrentMethod(),type,claimNum);
 			}
 			if(claimNum==0) {
 				return new List<ClaimTracking>();
 			}
-			string command="SELECT * FROM claimtracking WHERE TrackingType='"+POut.String(claimTrackingType.ToString())+"' "
+			string command="SELECT * FROM claimtracking WHERE TrackingType='"+POut.String(type.ToString())+"' "
 				+"AND ClaimNum="+POut.Long(claimNum);
 			return Crud.ClaimTrackingCrud.SelectMany(command);
 		}
@@ -62,20 +62,6 @@ namespace OpenDentBusiness{
 				return Meth.GetObject<List<ClaimTracking>>(MethodBase.GetCurrentMethod(),claimNum);
 			}
 			string command="SELECT * FROM claimtracking WHERE ClaimNum="+POut.Long(claimNum);
-			return Crud.ClaimTrackingCrud.SelectMany(command);
-		}
-
-		///<summary>Gets a list of ClaimTrackings from the database. Used in ODAPI. Please contact API team if modifying.</summary>
-		public static List<ClaimTracking> GetClaimTrackingsForApi(long claimNum,int limit,int offset) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ClaimTracking>>(MethodBase.GetCurrentMethod(),claimNum,limit,offset);
-			}
-			string command="SELECT * FROM claimtracking ";
-			if(claimNum>0){
-				command+="WHERE ClaimNum="+POut.Long(claimNum)+" ";
-			}
-			command+="ORDER BY DateTimeEntry DESC "
-				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
 			return Crud.ClaimTrackingCrud.SelectMany(command);
 		}
 
@@ -120,12 +106,12 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static void Sync(List<ClaimTracking> listClaimTrackings,List<ClaimTracking> listClaimTrackingsOld) {
+		public static void Sync(List<ClaimTracking> listNew,List<ClaimTracking> listOld) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listClaimTrackings,listClaimTrackingsOld);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),listNew,listOld);
 				return;
 			}
-			Crud.ClaimTrackingCrud.Sync(listClaimTrackings,listClaimTrackingsOld);
+			Crud.ClaimTrackingCrud.Sync(listNew,listOld);
 		}
 		#endregion
 
@@ -150,12 +136,12 @@ namespace OpenDentBusiness{
 			}
 			string command="SELECT * FROM claimtracking WHERE claimtracking.TrackingType='"+POut.String(ClaimTrackingType.ClaimUser.ToString())+"' "
 				+"AND claimtracking.ClaimNum IN("+string.Join(",",listTrackingNumsAndClaimNums.Select(x => x.Item2).ToList())+")";
-			List<ClaimTracking> listClaimTrackingsDb=Crud.ClaimTrackingCrud.SelectMany(command);//up to date copy from the database
-			List<ClaimTracking> listClaimTrackingsNew=listClaimTrackingsDb.Select(x => x.Copy()).ToList();
+			List<ClaimTracking> listClaimTrackingDb=Crud.ClaimTrackingCrud.SelectMany(command);//up to date copy from the database
+			List<ClaimTracking> listClaimTrackingNew=listClaimTrackingDb.Select(x => x.Copy()).ToList();
 			foreach(Tuple<long,long> claimTrackingEntry in listTrackingNumsAndClaimNums) {//Item1=>claim tracking num & Item2=>claim num
 				ClaimTracking claimTracking=new ClaimTracking();
 				if(claimTrackingEntry.Item1==0 //Given claim did not have an existing ClaimTracking when dictClaimTracking was constructed.
-					&& !listClaimTrackingsDb.Exists(x => x.ClaimNum==claimTrackingEntry.Item2))//DB does not contain ClaimTracking row for this claimNum.
+					&& !listClaimTrackingDb.Exists(x => x.ClaimNum==claimTrackingEntry.Item2))//DB does not contain ClaimTracking row for this claimNum.
 				{
 					if(assignUserNum==0) {
 						continue;
@@ -163,47 +149,45 @@ namespace OpenDentBusiness{
 					claimTracking.UserNum=assignUserNum;
 					claimTracking.ClaimNum=claimTrackingEntry.Item2;//dict value is ClaimNum
 					claimTracking.TrackingType=ClaimTrackingType.ClaimUser;
-					listClaimTrackingsNew.Add(claimTracking);
-					continue;
-				}
-				if(claimTrackingEntry.Item1==0) {//claim tracking did not originally exist but someone modified while we were here and it exists in the database now.
-					claimTracking=listClaimTrackingsNew.FirstOrDefault(x => x.ClaimNum==claimTrackingEntry.Item2);
-					claimTracking.UserNum=assignUserNum;
-					continue;
-				}
-				//claim tracking already exsisted in the db for this claim
-				claimTracking=listClaimTrackingsNew.FirstOrDefault(x => x.ClaimTrackingNum==claimTrackingEntry.Item1);
-				if(claimTracking==null) {//ClaimTracking existed when method called but has been removed since.
-					if(assignUserNum==0) {
-						continue;//ClaimTracking was already removed for us.
-					}
-					claimTracking=new ClaimTracking();
-					claimTracking.UserNum=assignUserNum;
-					claimTracking.ClaimNum=claimTrackingEntry.Item2;//dict value is ClaimNum
-					claimTracking.TrackingType=ClaimTrackingType.ClaimUser;
-					listClaimTrackingsNew.Add(claimTracking);
-				}
-				if(assignUserNum==0) {
-					listClaimTrackingsNew.Remove(claimTracking);
+					listClaimTrackingNew.Add(claimTracking);
 				}
 				else {
-					claimTracking.UserNum=assignUserNum;
+					if(claimTrackingEntry.Item1==0) {//claim tracking did not originally exist but someone modified while we were here and it exists in the database now.
+						claimTracking=listClaimTrackingNew.FirstOrDefault(x => x.ClaimNum==claimTrackingEntry.Item2);
+						claimTracking.UserNum=assignUserNum;
+					}
+					else {//claim tracking already exsisted in the db for this claim
+						claimTracking=listClaimTrackingNew.FirstOrDefault(x => x.ClaimTrackingNum==claimTrackingEntry.Item1);
+						if(claimTracking==null) {//ClaimTracking existed when method called but has been removed since.
+							if(assignUserNum==0) {
+								continue;//ClaimTracking was already removed for us.
+							}
+							claimTracking=new ClaimTracking();
+							claimTracking.UserNum=assignUserNum;
+							claimTracking.ClaimNum=claimTrackingEntry.Item2;//dict value is ClaimNum
+							claimTracking.TrackingType=ClaimTrackingType.ClaimUser;
+							listClaimTrackingNew.Add(claimTracking);
+						}
+						if(assignUserNum==0) {
+							listClaimTrackingNew.Remove(claimTracking);
+						}
+						else {
+							claimTracking.UserNum=assignUserNum;
+						}
+					}
 				}
 			}
-			ClaimTrackings.Sync(listClaimTrackingsNew,listClaimTrackingsDb);
-			return listClaimTrackingsNew;
+			ClaimTrackings.Sync(listClaimTrackingNew,listClaimTrackingDb);
+			return listClaimTrackingNew;
 		}
 
 		///<summary>Supplied two claims, this function will make new copies of the custom trackings for claimOrig, attach them to claimDest, and insert them. </summary>
 		public static void CopyToClaim(long claimOrigNum,long claimDestNum) {
-			List<ClaimTracking> listClaimTrackings=GetForClaim(claimOrigNum).OrderByDescending(x=>x.DateTimeEntry).ToList();
-			for(int i=0;i<listClaimTrackings.Count;i++){
-				listClaimTrackings[i].ClaimNum=claimDestNum;
-				listClaimTrackings[i].Note="Split claim original entry timestamp: "
-					+listClaimTrackings[i].DateTimeEntry.ToString()+"\r\n"
-					+listClaimTrackings[i].Note;
-				Insert(listClaimTrackings[i]);
-			}
+			GetForClaim(claimOrigNum).OrderByDescending(x => x.DateTimeEntry).ForEach(x => {
+				x.ClaimNum=claimDestNum;
+				x.Note=$"Split claim original entry timestamp: {x.DateTimeEntry.ToString()}\r\n{x.Note}";
+				Insert(x);
+			});
 		}
 		#endregion
 

@@ -10,25 +10,9 @@ using System.Linq;
 namespace OpenDentBusiness{
 	///<summary></summary>
 	public class TimeCardRules{
-		///<summary>One list of ClinicNumTimeSpans per week, each list of ClinicNumTimeSpans contains up to one entry per clinic, if employee clocked any time at that clinic.
-		private static List<List<ClinicNumTimeSpan>> _listEvents;
-		//==Jordan A list of lists is a bad pattern. Also, each item in the lists of lists shouldn't be pre-grouped.
-		//The correct way to do it is a flat list with one entry per date/clinic.
-		//Then, pull out lists at the last minute using LINQ and date ranges.
-
-		private class ClinicNumTimeSpan {
-			public long ClinicNum;
-			public TimeSpan TimeSpan;
-			//public DateTime Date;//Jordan need to add this so that we don't have to do any grouping at all.
-
-			public ClinicNumTimeSpan(){
-			}
-
-			public ClinicNumTimeSpan(long clinicNum,TimeSpan timeSpan) {
-				ClinicNum=clinicNum;
-				TimeSpan=timeSpan;
-			}
-		}
+		///<summary>One list of tuples per week, each list of tuples contains up to one entry per clinic, if employee clocked any time at that clinic.
+		///<para>Tuple is &lt;ClinicNum,TimeSpan></para></summary>
+		private static List<List<Tuple<long,TimeSpan>>> _listEvents;
 
 		#region CachePattern
 
@@ -73,13 +57,13 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Always refreshes the ClientWeb's cache.</summary>
-		public static DataTable GetTableFromCache(bool refreshCache) {
+		public static DataTable GetTableFromCache(bool doRefreshCache) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),refreshCache);
+				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),doRefreshCache);
 				_timeCardRuleCache.FillCacheFromTable(table);
 				return table;
 			}
-			return _timeCardRuleCache.GetTableFromCache(refreshCache);
+			return _timeCardRuleCache.GetTableFromCache(doRefreshCache);
 		}
 
 		public static void ClearCache() {
@@ -160,63 +144,60 @@ namespace OpenDentBusiness{
 
 		///<summary>Validates pay period before making any adjustments.
 		///If today falls before the stopDate passed in, stopDate will be set to today's date.</summary>
-		public static string ValidatePayPeriod(Employee employee,DateTime dateStart,DateTime dateStop) {
+		public static string ValidatePayPeriod(Employee employeeCur,DateTime startDate,DateTime stopDate) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {//Middle tier check here just to save trips.  No call to the db.
-				return Meth.GetString(MethodBase.GetCurrentMethod(),employee,dateStart,dateStop);
+				return Meth.GetString(MethodBase.GetCurrentMethod(),employeeCur,startDate,stopDate);
 			}
 			//If calculating breaks before the end date of the pay period, only calculate breaks and validate clock in and out events for days
 			//before today.  Use the server time just because we are dealing with time cards.
 			DateTime dateTimeNow=MiscData.GetNowDateTime();
-			ClockEvent clockEventLast=ClockEvents.GetLastEvent(employee.EmployeeNum);
-			bool isStillWorking=(clockEventLast!=null && (clockEventLast.ClockStatus==TimeClockStatus.Break || clockEventLast.TimeDisplayed2.Year<1880));
-			if(dateTimeNow.Date < dateStop.Date && isStillWorking) {
-				dateStop=dateTimeNow.Date.AddDays(-1);
+			ClockEvent lastClockEvent=ClockEvents.GetLastEvent(employeeCur.EmployeeNum);
+			bool isStillWorking=(lastClockEvent!=null && (lastClockEvent.ClockStatus==TimeClockStatus.Break || lastClockEvent.TimeDisplayed2.Year<1880));
+			if(dateTimeNow.Date < stopDate.Date && isStillWorking) {
+				stopDate=dateTimeNow.Date.AddDays(-1);
 			}
-			List<ClockEvent> listClockEventsBreak=ClockEvents.Refresh(employee.EmployeeNum,dateStart,dateStop,true);
-			List<ClockEvent> listClockEvents=ClockEvents.Refresh(employee.EmployeeNum,dateStart,dateStop,false);
-			bool hasError=false;
-			string retVal="Time card errors for employee : "+Employees.GetNameFL(employee)+"\r\n";
+			List<ClockEvent> breakList=ClockEvents.Refresh(employeeCur.EmployeeNum,startDate,stopDate,true);
+			List<ClockEvent> clockEventList=ClockEvents.Refresh(employeeCur.EmployeeNum,startDate,stopDate,false);
+			bool errorFound=false;
+			string retVal="Time card errors for employee : "+Employees.GetNameFL(employeeCur)+"\r\n";
 			//Validate clock events
-			for(int i=0;i<listClockEvents.Count;i++) {
-				if(listClockEvents[i].TimeDisplayed2.Year<1880) {
-					retVal+="  "+listClockEvents[i].TimeDisplayed1.ToShortDateString()+" : Employee not clocked out.\r\n";
-					hasError=true;
+			foreach(ClockEvent cCur in clockEventList) {
+				if(cCur.TimeDisplayed2.Year<1880) {
+					retVal+="  "+cCur.TimeDisplayed1.ToShortDateString()+" : Employee not clocked out.\r\n";
+					errorFound=true;
 				}
-				else if(listClockEvents[i].TimeDisplayed1.Date!=listClockEvents[i].TimeDisplayed2.Date) {
-					retVal+="  "+listClockEvents[i].TimeDisplayed1.ToShortDateString()+" : Clock entry spans multiple days.\r\n";
-					hasError=true;
+				else if(cCur.TimeDisplayed1.Date!=cCur.TimeDisplayed2.Date) {
+					retVal+="  "+cCur.TimeDisplayed1.ToShortDateString()+" : Clock entry spans multiple days.\r\n";
+					errorFound=true;
 				}
 			}
 			//Validate Breaks
-			for(int i=0;i<listClockEventsBreak.Count;i++) {
-				if(listClockEventsBreak[i].TimeDisplayed2.Year<1880) {
-					retVal+="  "+listClockEventsBreak[i].TimeDisplayed1.ToShortDateString()+" : Employee not clocked in from break.\r\n";
-					hasError=true;
+			foreach(ClockEvent bCur in breakList) {
+				if(bCur.TimeDisplayed2.Year<1880) {
+					retVal+="  "+bCur.TimeDisplayed1.ToShortDateString()+" : Employee not clocked in from break.\r\n";
+					errorFound=true;
 				}
-				if(listClockEventsBreak[i].TimeDisplayed1.Date!=listClockEventsBreak[i].TimeDisplayed2.Date) {
-					retVal+="  "+listClockEventsBreak[i].TimeDisplayed1.ToShortDateString()+" : One break spans multiple days.\r\n";
-					hasError=true;
+				if(bCur.TimeDisplayed1.Date!=bCur.TimeDisplayed2.Date) {
+					retVal+="  "+bCur.TimeDisplayed1.ToShortDateString()+" : One break spans multiple days.\r\n";
+					errorFound=true;
 				}
-				for(int c=listClockEvents.Count-1;c>=0;c--) {
-					if(listClockEvents[c].TimeDisplayed1.Date==listClockEventsBreak[i].TimeDisplayed1.Date) {
+				for(int c=clockEventList.Count-1;c>=0;c--) {
+					if(clockEventList[c].TimeDisplayed1.Date==bCur.TimeDisplayed1.Date) {
 						break;
 					}
 					if(c==0) { //we never found a match
-						retVal+="  "+listClockEventsBreak[i].TimeDisplayed1.ToShortDateString()+" : Break found during non-working day.\r\n";
-						hasError=true;
+						retVal+="  "+bCur.TimeDisplayed1.ToShortDateString()+" : Break found during non-working day.\r\n";
+						errorFound=true;
 					}
 				}
 			}
-			if(hasError) {
-				return retVal;
-			}
-			return "";
+			return (errorFound?retVal:"");
 		}
 
 		///<summary>Cannot have both AM/PM rules and OverHours rules defined. 
 		/// We no longer block having multiple rules defined. With a better interface we can improve some of this functionality. Per NS 09/15/2015.</summary>
 		public static string ValidateOvertimeRules(List<long> listEmployeeNums=null) {
-			StringBuilder stringBuilder=new StringBuilder();
+			StringBuilder sb=new StringBuilder();
 			TimeCardRules.RefreshCache();
 			List<TimeCardRule> listTimeCardRules=TimeCardRules.GetDeepCopy();
 			if(listEmployeeNums!=null && listEmployeeNums.Count>0) {
@@ -227,9 +208,9 @@ namespace OpenDentBusiness{
 			if(listTimeCardRulesAll.Any(x => x.AfterTimeOfDay>TimeSpan.Zero || x.BeforeTimeOfDay>TimeSpan.Zero) //There exists an AM or PM rule
 				   && listTimeCardRulesAll.Any(x => x.OverHoursPerDay>TimeSpan.Zero)) //There also exists an Over hours rule.
 			{
-				stringBuilder.AppendLine("Time card errors found for \"All Employees\":");
-				stringBuilder.AppendLine("  Both a time of day rule and an over hours per day rule found. Only one or the other is allowed.");
-				return stringBuilder.ToString();
+				sb.AppendLine("Time card errors found for \"All Employees\":");
+				sb.AppendLine("  Both a time of day rule and an over hours per day rule found. Only one or the other is allowed.");
+				return sb.ToString();
 			}
 			listEmployeeNums=listTimeCardRules.Where(x=>x.EmployeeNum>0).Select(x=>x.EmployeeNum).Distinct().ToList();
 			//Generate Employee specific errors
@@ -237,14 +218,14 @@ namespace OpenDentBusiness{
 				long empNum=listEmployeeNums[i];
 				List<TimeCardRule> listTimeCardRulesEmp=listTimeCardRules.FindAll(x => x.EmployeeNum==0 || x.EmployeeNum==empNum);
 				if(listTimeCardRulesEmp.Any(x => x.AfterTimeOfDay>TimeSpan.Zero || x.BeforeTimeOfDay>TimeSpan.Zero) //There exists an AM or PM rule
-					&& listTimeCardRulesEmp.Any(x => x.OverHoursPerDay>TimeSpan.Zero)) //There also exists an Over hours rule.
+				   && listTimeCardRulesEmp.Any(x => x.OverHoursPerDay>TimeSpan.Zero)) //There also exists an Over hours rule.
 				{
 					string empName=Employees.GetNameFL(Employees.GetEmp(empNum));
-					stringBuilder.AppendLine("Time card errors found for "+empName+":");
-					stringBuilder.AppendLine("  Both a time of day rule and an over hours per day rule found. Only one or the other is allowed.\r\n");
+					sb.AppendLine("Time card errors found for "+empName+":");
+					sb.AppendLine("  Both a time of day rule and an over hours per day rule found. Only one or the other is allowed.\r\n");
 				}
 			}
-			return stringBuilder.ToString();
+			return sb.ToString();
 		}
 
 		///<summary>Clears automatic adjustment/adjustOT values and deletes automatic TimeAdjusts for period.</summary>
@@ -253,19 +234,19 @@ namespace OpenDentBusiness{
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),employeeNum,dateStart,dateStop);
 				return;
 			}
-			List<ClockEvent> listClockEvents=ClockEvents.GetSimpleList(employeeNum,dateStart,dateStop);
-			for(int i=0;i<listClockEvents.Count;i++) {
-				listClockEvents[i].AdjustAuto=TimeSpan.Zero;
-				listClockEvents[i].OTimeAuto=TimeSpan.Zero;
-				listClockEvents[i].Rate2Auto=TimeSpan.Zero;
-				listClockEvents[i].Rate3Auto=TimeSpan.Zero;
-				ClockEvents.Update(listClockEvents[i]);
+			List<ClockEvent> ListCE=ClockEvents.GetSimpleList(employeeNum,dateStart,dateStop);
+			for(int i=0;i<ListCE.Count;i++) {
+				ListCE[i].AdjustAuto=TimeSpan.Zero;
+				ListCE[i].OTimeAuto=TimeSpan.Zero;
+				ListCE[i].Rate2Auto=TimeSpan.Zero;
+				ListCE[i].Rate3Auto=TimeSpan.Zero;
+				ClockEvents.Update(ListCE[i]);
 			}
-			List<TimeAdjust> listTimeAdjusts=TimeAdjusts.GetSimpleListAuto(employeeNum,dateStart,dateStop);
-			for(int i=0;i<listTimeAdjusts.Count;i++) {
-				TimeAdjusts.Delete(listTimeAdjusts[i]);
-				SecurityLogs.MakeLogEntry(EnumPermType.TimeAdjustEdit,0,
-					$"Automatic Time Card Adjustments were cleared. Adjustment deleted for Employee: {Employees.GetNameFL(listTimeAdjusts[i].EmployeeNum)}.");
+			List<TimeAdjust> ListTA=TimeAdjusts.GetSimpleListAuto(employeeNum,dateStart,dateStop);
+			for(int i=0;i<ListTA.Count;i++) {
+				TimeAdjusts.Delete(ListTA[i]);
+				SecurityLogs.MakeLogEntry(Permissions.TimeAdjustEdit,0,
+					$"Automatic Time Card Adjustments were cleared. Adjustment deleted for Employee: {Employees.GetNameFL(ListTA[i].EmployeeNum)}.");
 			}
 		}
 
@@ -275,212 +256,212 @@ namespace OpenDentBusiness{
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),employeeNum,dateStart,dateStop);
 				return;
 			}
-			List<ClockEvent> listClockEvents=ClockEvents.GetSimpleList(employeeNum,dateStart,dateStop);
-			for(int i=0;i<listClockEvents.Count;i++) {
-				listClockEvents[i].Adjust=TimeSpan.Zero;
-				listClockEvents[i].AdjustIsOverridden=false;
-				listClockEvents[i].OTimeHours=TimeSpan.FromHours(-1);
-				listClockEvents[i].Rate2Hours=TimeSpan.FromHours(-1);
-				listClockEvents[i].Rate3Hours=TimeSpan.FromHours(-1);
-				ClockEvents.Update(listClockEvents[i]);
+			List<ClockEvent> ListCE=ClockEvents.GetSimpleList(employeeNum,dateStart,dateStop);
+			for(int i=0;i<ListCE.Count;i++) {
+				ListCE[i].Adjust=TimeSpan.Zero;
+				ListCE[i].AdjustIsOverridden=false;
+				ListCE[i].OTimeHours=TimeSpan.FromHours(-1);
+				ListCE[i].Rate2Hours=TimeSpan.FromHours(-1);
+				ListCE[i].Rate3Hours=TimeSpan.FromHours(-1);
+				ClockEvents.Update(ListCE[i]);
 			}
 		}
 
 		///<summary>Validates list and throws exceptions. Always returns a value. Creates a timecard rule based on all applicable timecard rules for a given employee.</summary>
-		public static TimeCardRule GetTimeCardRule(Employee employee) {
+		public static TimeCardRule GetTimeCardRule(Employee employeeCur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<TimeCardRule>(MethodBase.GetCurrentMethod(),employee);
+				return Meth.GetObject<TimeCardRule>(MethodBase.GetCurrentMethod(),employeeCur);
 			}
 			//Validate Rules---------------------------------------------------------------------------------------------------------------
-			string errors=TimeCardRules.ValidateOvertimeRules(new List<long> {employee.EmployeeNum});
+			string errors=TimeCardRules.ValidateOvertimeRules(new List<long> {employeeCur.EmployeeNum});
 			if(errors.Length>0) {
 				throw new Exception(errors);
 			}
 			//Build return value ----------------------------------------------------------------------------------------------------------
-			List<TimeCardRule> listTimeCardRulesEmp=GetWhere(x => x.EmployeeNum==0 || x.EmployeeNum==employee.EmployeeNum);
-			TimeCardRule timeCardRuleAm=listTimeCardRulesEmp.Where(x => x.BeforeTimeOfDay>TimeSpan.Zero).OrderByDescending(x => x.BeforeTimeOfDay).FirstOrDefault();
-			TimeCardRule timeCardRulePm=listTimeCardRulesEmp.Where(x => x.AfterTimeOfDay>TimeSpan.Zero).OrderBy(x => x.AfterTimeOfDay).FirstOrDefault();
-			TimeCardRule timeCardRuleHours=listTimeCardRulesEmp.Where(x => x.OverHoursPerDay>TimeSpan.Zero).OrderBy(x => x.OverHoursPerDay).FirstOrDefault();
-			TimeCardRule timeCardRuleIsOvertimeExempt=listTimeCardRulesEmp.Where(x => x.IsOvertimeExempt).FirstOrDefault();
-			TimeCardRule timeCardRuleIsWeekendRate3=listTimeCardRulesEmp.Where(x => x.HasWeekendRate3).FirstOrDefault();
-			TimeCardRule timeCardRule=new TimeCardRule();
-			if(timeCardRuleAm!=null) {
-				timeCardRule.BeforeTimeOfDay=timeCardRuleAm.BeforeTimeOfDay;
+			List<TimeCardRule> listTimeCardRulesEmp=GetWhere(x => x.EmployeeNum==0 || x.EmployeeNum==employeeCur.EmployeeNum);
+			TimeCardRule amRule=listTimeCardRulesEmp.Where(x => x.BeforeTimeOfDay>TimeSpan.Zero).OrderByDescending(x => x.BeforeTimeOfDay).FirstOrDefault();
+			TimeCardRule pmRule=listTimeCardRulesEmp.Where(x => x.AfterTimeOfDay>TimeSpan.Zero).OrderBy(x => x.AfterTimeOfDay).FirstOrDefault();
+			TimeCardRule hoursRule=listTimeCardRulesEmp.Where(x => x.OverHoursPerDay>TimeSpan.Zero).OrderBy(x => x.OverHoursPerDay).FirstOrDefault();
+			TimeCardRule isOvertimeExempt=listTimeCardRulesEmp.Where(x => x.IsOvertimeExempt).FirstOrDefault();
+			TimeCardRule isWeekendRate3=listTimeCardRulesEmp.Where(x => x.HasWeekendRate3).FirstOrDefault();
+			TimeCardRule retVal=new TimeCardRule();
+			if(amRule!=null) {
+				retVal.BeforeTimeOfDay=amRule.BeforeTimeOfDay;
 			}
-			if(timeCardRulePm!=null) {
-				timeCardRule.AfterTimeOfDay=timeCardRulePm.AfterTimeOfDay;
+			if(pmRule!=null) {
+				retVal.AfterTimeOfDay=pmRule.AfterTimeOfDay;
 			}
-			if(timeCardRuleHours!=null) {
-				timeCardRule.OverHoursPerDay=timeCardRuleHours.OverHoursPerDay;
+			if(hoursRule!=null) {
+				retVal.OverHoursPerDay=hoursRule.OverHoursPerDay;
 			}
-			if(timeCardRuleIsOvertimeExempt!=null) {
-				timeCardRule.IsOvertimeExempt=timeCardRuleIsOvertimeExempt.IsOvertimeExempt;
+			if(isOvertimeExempt!=null) {
+				retVal.IsOvertimeExempt=isOvertimeExempt.IsOvertimeExempt;
 			}
-			if(timeCardRuleIsWeekendRate3!=null) {
-				timeCardRule.HasWeekendRate3=timeCardRuleIsWeekendRate3.HasWeekendRate3;
+			if(isWeekendRate3!=null) {
+				retVal.HasWeekendRate3=isWeekendRate3.HasWeekendRate3;
 			}
-			return timeCardRule;
+			return retVal;
 		}
 
 		///<summary>Calculates daily overtime. Throws exceptions when encountering errors, though all errors SHOULD have been caught already by using the ValidatePayPeriod() function and generating a msgbox.</summary>
-		public static void CalculateDailyOvertime_Old(Employee employee,DateTime dateStart,DateTime dateStop) {
-			DateTime datePrevious;
-			List<ClockEvent> listClockEvents=ClockEvents.Refresh(employee.EmployeeNum,dateStart,dateStop,false);//PIn.Date(textDateStart.Text),PIn.Date(textDateStop.Text),IsBreaks);
+		public static void CalculateDailyOvertime_Old(Employee EmployeeCur,DateTime StartDate,DateTime StopDate) {
+			DateTime previousDate;
+			List<ClockEvent> ClockEventList=ClockEvents.Refresh(EmployeeCur.EmployeeNum,StartDate,StopDate,false);//PIn.Date(textDateStart.Text),PIn.Date(textDateStop.Text),IsBreaks);
 			//Over breaks-------------------------------------------------------------------------------------------------
 			if(PrefC.GetBool(PrefName.TimeCardsMakesAdjustmentsForOverBreaks)) {
 				//set adj auto to zero for all.
-				for(int i=0;i<listClockEvents.Count;i++) {
-					listClockEvents[i].AdjustAuto=TimeSpan.Zero;
-					ClockEvents.Update(listClockEvents[i]);
+				for(int i=0;i<ClockEventList.Count;i++) {
+					ClockEventList[i].AdjustAuto=TimeSpan.Zero;
+					ClockEvents.Update(ClockEventList[i]);
 				}
-				List<ClockEvent> listClockEventsBreak=ClockEvents.Refresh(employee.EmployeeNum,dateStart,dateStop,true);//PIn.Date(textDateStart.Text),PIn.Date(textDateStop.Text),true);
-				TimeSpan timeSpanTotalToday=TimeSpan.Zero;
-				TimeSpan timeSpanTotalOne=TimeSpan.Zero;
-				datePrevious=DateTime.MinValue;
-				for(int b=0;b<listClockEventsBreak.Count;b++) {
-					if(listClockEventsBreak[b].TimeDisplayed2.Year<1880) {
+				List<ClockEvent> breakList=ClockEvents.Refresh(EmployeeCur.EmployeeNum,StartDate,StopDate,true);//PIn.Date(textDateStart.Text),PIn.Date(textDateStop.Text),true);
+				TimeSpan totalToday=TimeSpan.Zero;
+				TimeSpan totalOne=TimeSpan.Zero;
+				previousDate=DateTime.MinValue;
+				for(int b=0;b<breakList.Count;b++) {
+					if(breakList[b].TimeDisplayed2.Year<1880) {
 						throw new Exception("Error. Employee break malformed.");
 					}
-					if(listClockEventsBreak[b].TimeDisplayed1.Date != listClockEventsBreak[b].TimeDisplayed2.Date) {
+					if(breakList[b].TimeDisplayed1.Date != breakList[b].TimeDisplayed2.Date) {
 						throw new Exception("Error. One break spans multiple dates.");
 					}
 					//calc time for the one break
-					timeSpanTotalOne=listClockEventsBreak[b].TimeDisplayed2-listClockEventsBreak[b].TimeDisplayed1;
+					totalOne=breakList[b].TimeDisplayed2-breakList[b].TimeDisplayed1;
 					//calc daily total
-					if(datePrevious.Date != listClockEventsBreak[b].TimeDisplayed1.Date) {//if date changed, this is the first pair of the day
-						timeSpanTotalToday=TimeSpan.Zero;//new day
-						datePrevious=listClockEventsBreak[b].TimeDisplayed1.Date;//for the next loop
+					if(previousDate.Date != breakList[b].TimeDisplayed1.Date) {//if date changed, this is the first pair of the day
+						totalToday=TimeSpan.Zero;//new day
+						previousDate=breakList[b].TimeDisplayed1.Date;//for the next loop
 					}
-					timeSpanTotalToday+=timeSpanTotalOne;
+					totalToday+=totalOne;
 					//decide if breaks for the day went over 30 min.
-					if(timeSpanTotalToday > TimeSpan.FromMinutes(31)) {//31 to prevent silly fractions less than 1.
+					if(totalToday > TimeSpan.FromMinutes(31)) {//31 to prevent silly fractions less than 1.
 						//loop through all ClockEvents in this grid to find one to adjust.
 						//Go backwards to find the last entry for a given date.
-						for(int c=listClockEvents.Count-1;c>=0;c--) {
-							if(listClockEvents[c].TimeDisplayed1.Date==listClockEventsBreak[b].TimeDisplayed1.Date) {
-								listClockEvents[c].AdjustAuto-=(timeSpanTotalToday-TimeSpan.FromMinutes(30));
-								ClockEvents.Update(listClockEvents[c]);
-								timeSpanTotalToday=TimeSpan.FromMinutes(30);//reset to 30.  Therefore, any additional breaks will be wholly adjustments.
+						for(int c=ClockEventList.Count-1;c>=0;c--) {
+							if(ClockEventList[c].TimeDisplayed1.Date==breakList[b].TimeDisplayed1.Date) {
+								ClockEventList[c].AdjustAuto-=(totalToday-TimeSpan.FromMinutes(30));
+								ClockEvents.Update(ClockEventList[c]);
+								totalToday=TimeSpan.FromMinutes(30);//reset to 30.  Therefore, any additional breaks will be wholly adjustments.
 								break;
 							}
 							if(c==0) {//we never found a match
 								throw new Exception("Error. Over breaks, but could not adjust because not regular time entered for date:"
-									+listClockEventsBreak[b].TimeDisplayed1.Date.ToShortDateString());
+								  +breakList[b].TimeDisplayed1.Date.ToShortDateString());
 							}
 						}
 					}
 				}
 			}
 			//OT-------------------------------------------------------------------------------------------------------------
-			TimeCardRule timeCardRuleAfter=null;
-			TimeCardRule timeCardRuleBefore=null;
-			TimeCardRule timeCardRuleOverHours=null;
+			TimeCardRule afterTimeRule=null;
+			TimeCardRule beforeTimeRule=null;
+			TimeCardRule overHoursRule=null;
 			//loop through timecardrules to find one rule of each kind.
 			List<TimeCardRule> listTimeCardRules=GetDeepCopy();
 			for(int i=0;i<listTimeCardRules.Count;i++) {
-				if(listTimeCardRules[i].EmployeeNum!=0 && listTimeCardRules[i].EmployeeNum!=employee.EmployeeNum) {
+				if(listTimeCardRules[i].EmployeeNum!=0 && listTimeCardRules[i].EmployeeNum!=EmployeeCur.EmployeeNum) {
 					continue;
 				}
 				if(listTimeCardRules[i].AfterTimeOfDay > TimeSpan.Zero) {
-					if(timeCardRuleAfter != null) {//already found a match, and this is a second match
+					if(afterTimeRule != null) {//already found a match, and this is a second match
 						throw new Exception("Error.  Multiple matches of AfterTimeOfDay found for this employee.  Only one allowed.");
 						//return;
 					}
-					timeCardRuleAfter=listTimeCardRules[i];
+					afterTimeRule=listTimeCardRules[i];
 				}
 				else if(listTimeCardRules[i].OverHoursPerDay > TimeSpan.Zero) {
-					if(timeCardRuleOverHours != null) {//already found a match, and this is a second match
+					if(overHoursRule != null) {//already found a match, and this is a second match
 						throw new Exception("Error.  Multiple matches of OverHoursPerDay found for this employee.  Only one allowed.");
 						//return;
 					}
-					timeCardRuleOverHours=listTimeCardRules[i];
+					overHoursRule=listTimeCardRules[i];
 				}
-				if(timeCardRuleAfter!= null && timeCardRuleOverHours != null) {
+				if(afterTimeRule!= null && overHoursRule != null) {
 					throw new Exception("Error.  Both an OverHoursPerDay and an AfterTimeOfDay found for this employee.  Only one or the other is allowed.");
 					//return;
 				}
-				if(timeCardRuleBefore != null && timeCardRuleOverHours != null) {
+				if(beforeTimeRule != null && overHoursRule != null) {
 					throw new Exception("Error.  Both an OverHoursPerDay and an BeforeTimeOfDay found for this employee.  Only one or the other is allowed.");
 					//return;
 				}
 				if(listTimeCardRules[i].BeforeTimeOfDay > TimeSpan.Zero) {
-					if(timeCardRuleBefore != null) {//already found a match, and this is a second match
+					if(beforeTimeRule != null) {//already found a match, and this is a second match
 						throw new Exception("Error.  Multiple matches of BeforeTimeOfDay found for this employee.  Only one allowed.");
 						//return;
 					}
-					timeCardRuleBefore=listTimeCardRules[i];
+					beforeTimeRule=listTimeCardRules[i];
 				}
 			}
 			//loop through all ClockEvents in this grid.
-			TimeSpan timeSpanDailyTotal=TimeSpan.Zero;
-			TimeSpan timeSpanPairTotal=TimeSpan.Zero;
-			datePrevious=DateTime.MinValue;
-			for(int i=0;i<listClockEvents.Count;i++) {
-				if(listClockEvents[i].TimeDisplayed2.Year<1880) {
+			TimeSpan dailyTotal=TimeSpan.Zero;
+			TimeSpan pairTotal=TimeSpan.Zero;
+			previousDate=DateTime.MinValue;
+			for(int i=0;i<ClockEventList.Count;i++) {
+				if(ClockEventList[i].TimeDisplayed2.Year<1880) {
 					throw new Exception("Error. Employee not clocked out.");
 					//return;
 				}
-				if(listClockEvents[i].TimeDisplayed1.Date != listClockEvents[i].TimeDisplayed2.Date) {
+				if(ClockEventList[i].TimeDisplayed1.Date != ClockEventList[i].TimeDisplayed2.Date) {
 					throw new Exception("Error. One clock pair spans multiple dates.");
 					//return;
 				}
-				timeSpanPairTotal=listClockEvents[i].TimeDisplayed2-listClockEvents[i].TimeDisplayed1;
+				pairTotal=ClockEventList[i].TimeDisplayed2-ClockEventList[i].TimeDisplayed1;
 				//add any adjustments, manual or overrides.
-				if(listClockEvents[i].AdjustIsOverridden) {
-					timeSpanPairTotal+=listClockEvents[i].Adjust;
+				if(ClockEventList[i].AdjustIsOverridden) {
+					pairTotal+=ClockEventList[i].Adjust;
 				}
 				else {
-					timeSpanPairTotal+=listClockEvents[i].AdjustAuto;
+					pairTotal+=ClockEventList[i].AdjustAuto;
 				}
 				//calc daily total
-				if(datePrevious.Date != listClockEvents[i].TimeDisplayed1.Date) { //if date changed
-					timeSpanDailyTotal=TimeSpan.Zero;//new day
-					datePrevious=listClockEvents[i].TimeDisplayed1.Date;//for the next loop
+				if(previousDate.Date != ClockEventList[i].TimeDisplayed1.Date) { //if date changed
+					dailyTotal=TimeSpan.Zero;//new day
+					previousDate=ClockEventList[i].TimeDisplayed1.Date;//for the next loop
 				}
-				timeSpanDailyTotal+=timeSpanPairTotal;
+				dailyTotal+=pairTotal;
 				//handle OT
-				listClockEvents[i].OTimeAuto=TimeSpan.Zero;//set auto OT to zero.
-				if(listClockEvents[i].OTimeHours != TimeSpan.FromHours(-1)) {//if OT is overridden
+				ClockEventList[i].OTimeAuto=TimeSpan.Zero;//set auto OT to zero.
+				if(ClockEventList[i].OTimeHours != TimeSpan.FromHours(-1)) {//if OT is overridden
 					//don't try to calc a time.
-					ClockEvents.Update(listClockEvents[i]);//just to possibly clear autoOT, even though it doesn't count.
+					ClockEvents.Update(ClockEventList[i]);//just to possibly clear autoOT, even though it doesn't count.
 					//but still need to subtract OT from dailyTotal
-					timeSpanDailyTotal-=listClockEvents[i].OTimeHours;
+					dailyTotal-=ClockEventList[i].OTimeHours;
 					continue;
 				}
-				if(timeCardRuleAfter != null) {
+				if(afterTimeRule != null) {
 					//test to see if this span is after specified time
-					TimeSpan timeSpanAfter=TimeSpan.Zero;
-					if(listClockEvents[i].TimeDisplayed1.TimeOfDay > timeCardRuleAfter.AfterTimeOfDay) {//the start time is after time, so the whole pairTotal is OT
-						timeSpanAfter=timeSpanPairTotal;
+					TimeSpan afterTime=TimeSpan.Zero;
+					if(ClockEventList[i].TimeDisplayed1.TimeOfDay > afterTimeRule.AfterTimeOfDay) {//the start time is after time, so the whole pairTotal is OT
+						afterTime=pairTotal;
 					}
-					else if(listClockEvents[i].TimeDisplayed2.TimeOfDay > timeCardRuleAfter.AfterTimeOfDay) {//only the second time is after time
-						timeSpanAfter=listClockEvents[i].TimeDisplayed2.TimeOfDay-timeCardRuleAfter.AfterTimeOfDay;//only a portion of the pairTotal is OT
+					else if(ClockEventList[i].TimeDisplayed2.TimeOfDay > afterTimeRule.AfterTimeOfDay) {//only the second time is after time
+						afterTime=ClockEventList[i].TimeDisplayed2.TimeOfDay-afterTimeRule.AfterTimeOfDay;//only a portion of the pairTotal is OT
 					}
-					listClockEvents[i].OTimeAuto=timeSpanAfter;
+					ClockEventList[i].OTimeAuto=afterTime;
 				}
-				if(timeCardRuleBefore != null) {
+				if(beforeTimeRule != null) {
 					//test to see if this span is after specified time
-					TimeSpan timeSpanBefore=TimeSpan.Zero;
-					if(listClockEvents[i].TimeDisplayed2.TimeOfDay < timeCardRuleBefore.BeforeTimeOfDay) {//the end time is before time, so the whole pairTotal is OT
-						timeSpanBefore+=timeSpanPairTotal;
+					TimeSpan beforeTime=TimeSpan.Zero;
+					if(ClockEventList[i].TimeDisplayed2.TimeOfDay < beforeTimeRule.BeforeTimeOfDay) {//the end time is before time, so the whole pairTotal is OT
+						beforeTime+=pairTotal;
 					}
-					else if(listClockEvents[i].TimeDisplayed1.TimeOfDay < timeCardRuleBefore.BeforeTimeOfDay) {//only the first time is before time
-						timeSpanBefore+=timeCardRuleBefore.BeforeTimeOfDay-listClockEvents[i].TimeDisplayed1.TimeOfDay;//only a portion of the pairTotal is OT
+					else if(ClockEventList[i].TimeDisplayed1.TimeOfDay < beforeTimeRule.BeforeTimeOfDay) {//only the first time is before time
+						beforeTime+=beforeTimeRule.BeforeTimeOfDay-ClockEventList[i].TimeDisplayed1.TimeOfDay;//only a portion of the pairTotal is OT
 					} 
-					listClockEvents[i].OTimeAuto+=timeSpanBefore;
+					ClockEventList[i].OTimeAuto+=beforeTime;
 				}
-				if(timeCardRuleOverHours != null) {
+				if(overHoursRule != null) {
 					//test dailyTotal
-					TimeSpan timeSpanOverHours=TimeSpan.Zero;
-					if(timeSpanDailyTotal > timeCardRuleOverHours.OverHoursPerDay) {
-						timeSpanOverHours=timeSpanDailyTotal-timeCardRuleOverHours.OverHoursPerDay;
-						timeSpanDailyTotal=timeCardRuleOverHours.OverHoursPerDay;//e.g. reset to 8.  Any further pairs on this date will be wholly OT
-						listClockEvents[i].OTimeAuto+=timeSpanOverHours;
+					TimeSpan overHours=TimeSpan.Zero;
+					if(dailyTotal > overHoursRule.OverHoursPerDay) {
+						overHours=dailyTotal-overHoursRule.OverHoursPerDay;
+						dailyTotal=overHoursRule.OverHoursPerDay;//e.g. reset to 8.  Any further pairs on this date will be wholly OT
+						ClockEventList[i].OTimeAuto+=overHours;
 					}
 				}
-				ClockEvents.Update(listClockEvents[i]);
+				ClockEvents.Update(ClockEventList[i]);
 			}
-			AdjustBreaksHelper(employee,dateStart,dateStop);
+			AdjustBreaksHelper(EmployeeCur,StartDate,StopDate);
 		}
 
 		///<summary>Calculates daily overtime.  Daily overtime does not take into account any time adjust events.
@@ -492,8 +473,8 @@ namespace OpenDentBusiness{
 				return;
 			}
 			#region Fill Lists, validate data sets, generate error messages.
-			List<ClockEvent> listClockEvents=new List<ClockEvent>();
-			List<ClockEvent> listClockEventsBreak=new List<ClockEvent>();
+			List<ClockEvent> listClockEvent=new List<ClockEvent>();
+			List<ClockEvent> listClockEventBreak=new List<ClockEvent>();
 			TimeCardRule timeCardRule=new TimeCardRule();
 			string errors="";
 			string clockErrors="";
@@ -502,20 +483,20 @@ namespace OpenDentBusiness{
 			//If calculating breaks before the end date of the pay period, only calculate breaks and validate clock in and out events for days
 			//before today.  Use the server time just because we are dealing with time cards.
 			DateTime dateTimeNow=MiscData.GetNowDateTime();
-			ClockEvent clockEventLast=ClockEvents.GetLastEvent(employee.EmployeeNum);
-			bool isStillWorking=(clockEventLast!=null && (clockEventLast.ClockStatus==TimeClockStatus.Break || clockEventLast.TimeDisplayed2.Year<1880));
+			ClockEvent lastClockEvent=ClockEvents.GetLastEvent(employee.EmployeeNum);
+			bool isStillWorking=(lastClockEvent!=null && (lastClockEvent.ClockStatus==TimeClockStatus.Break || lastClockEvent.TimeDisplayed2.Year<1880));
 			if(dateTimeNow.Date < dateStop.Date && isStillWorking) {
 				dateStop=dateTimeNow.Date.AddDays(-1);
 			}
 			//Fill lists and catch validation error messages------------------------------------------------------------------------------------------------------------
 			try {
-				listClockEvents=ClockEvents.GetValidList(employee.EmployeeNum,dateStart,dateStop,false);
+				listClockEvent=ClockEvents.GetValidList(employee.EmployeeNum,dateStart,dateStop,false);
 			}
 			catch(Exception ex) {
 				clockErrors+=ex.Message;
 			}
 			try {
-				listClockEventsBreak=ClockEvents.GetValidList(employee.EmployeeNum,dateStart,dateStop,true);
+				listClockEventBreak=ClockEvents.GetValidList(employee.EmployeeNum,dateStart,dateStop,true);
 			}
 			catch(Exception ex) {
 				breakErrors+=ex.Message;
@@ -527,12 +508,12 @@ namespace OpenDentBusiness{
 				ruleErrors+=ex.Message;
 			}
 			//Validation between two or more lists above----------------------------------------------------------------------------------------------------------------
-			for(int b=0;b<listClockEventsBreak.Count;b++) {
+			for(int b=0;b<listClockEventBreak.Count;b++) {
 				bool isValidBreak=false;
-				for(int c=0;c<listClockEvents.Count;c++) {
-					if(timeClockEventsOverlapHelper(listClockEventsBreak[b],listClockEvents[c])) {
-						if(listClockEventsBreak[b].TimeDisplayed1>listClockEvents[c].TimeDisplayed1//break started after work did
-							&& listClockEventsBreak[b].TimeDisplayed2<listClockEvents[c].TimeDisplayed2)//break ended before working hours
+				for(int c=0;c<listClockEvent.Count;c++) {
+					if(timeClockEventsOverlapHelper(listClockEventBreak[b],listClockEvent[c])) {
+						if(listClockEventBreak[b].TimeDisplayed1>listClockEvent[c].TimeDisplayed1//break started after work did
+							&& listClockEventBreak[b].TimeDisplayed2<listClockEvent[c].TimeDisplayed2)//break ended before working hours
 						{
 							//valid break.
 							isValidBreak=true;
@@ -546,7 +527,7 @@ namespace OpenDentBusiness{
 				if(isValidBreak) {
 					continue;
 				}
-				breakErrors+="  "+listClockEventsBreak[b].TimeDisplayed1.ToString()+" : break found during non-working hours.\r\n";//ToString() instead of ToShortDateString() to show time.
+				breakErrors+="  "+listClockEventBreak[b].TimeDisplayed1.ToString()+" : break found during non-working hours.\r\n";//ToString() instead of ToShortDateString() to show time.
 			}
 			//Report Errors---------------------------------------------------------------------------------------------------------------------------------------------
 			errors=ruleErrors+clockErrors+breakErrors;
@@ -557,247 +538,247 @@ namespace OpenDentBusiness{
 			#endregion
 			#region Fill time card rules
 			//Begin calculations=========================================================================================================================================
-			TimeSpan timeSpanHoursWorkedTotal  =new TimeSpan()      ;
-			TimeSpan timeSpanOTHoursRule =new TimeSpan(24,0,0);//Example 10:00 for overtime rule after 10 hours per day.
-			TimeSpan timeSpanRate2AMRule=new TimeSpan()      ;//Example 06:00 for Rate2 rule before 6am.
-			TimeSpan timeSpanRate2PMRule=new TimeSpan(24,0,0);//Example 17:00 for Rate2 rule after  5pm.
+			TimeSpan tsHoursWorkedTotal  =new TimeSpan()      ;
+			TimeSpan tsOvertimeHoursRule =new TimeSpan(24,0,0);//Example 10:00 for overtime rule after 10 hours per day.
+			TimeSpan tsRate2AMRule=new TimeSpan()      ;//Example 06:00 for Rate2 rule before 6am.
+			TimeSpan tsRate2PMRule=new TimeSpan(24,0,0);//Example 17:00 for Rate2 rule after  5pm.
 			//Fill over hours rule from list-------------------------------------------------------------------------------------
 			if(timeCardRule.OverHoursPerDay!=TimeSpan.Zero) {//OverHours Rule
-				timeSpanOTHoursRule=timeCardRule.OverHoursPerDay;//at most, one non-zero OverHours rule available at this point.
+				tsOvertimeHoursRule=timeCardRule.OverHoursPerDay;//at most, one non-zero OverHours rule available at this point.
 			}
 			if(timeCardRule.BeforeTimeOfDay!=TimeSpan.Zero) {//AM Rule
-				timeSpanRate2AMRule=timeCardRule.BeforeTimeOfDay;//at most, one non-zero AM rule available at this point.
+				tsRate2AMRule=timeCardRule.BeforeTimeOfDay;//at most, one non-zero AM rule available at this point.
 			}
 			if(timeCardRule.AfterTimeOfDay!=TimeSpan.Zero) {//PM Rule
-				timeSpanRate2PMRule=timeCardRule.AfterTimeOfDay;//at most, one non-zero PM rule available at this point.
+				tsRate2PMRule=timeCardRule.AfterTimeOfDay;//at most, one non-zero PM rule available at this point.
 			}
 			#endregion
 			//Calculations: Regular Time, Overtime, Rate2, Rate3 time---------------------------------------------------------------------------------------------------
-			TimeSpan timeSpanDailyBreaksAdjustTotal=new TimeSpan();//used to adjust the clock event
-			TimeSpan timeSpanDailyBreaksTotal=new TimeSpan();//used in calculating breaks per day.
-			TimeSpan timeSpanDailyBreaksCalc=new TimeSpan();//used in calculating breaks per day.
-			TimeSpan timeSpanDailyHoursMinusBreaksTotal=new TimeSpan();//used in calculating breaks per day.
-			TimeSpan timeSpanDailyRate2Total=new TimeSpan(); //hours before and after AM/PM Rate2 rules. Adjusted for overbreaks.
-			TimeSpan timeSpanDailyRate3Total=new TimeSpan(); //hours worked on weekend for Rate3. Adjusted for overbreaks.
+			TimeSpan tsDailyBreaksAdjustTotal=new TimeSpan();//used to adjust the clock event
+			TimeSpan tsDailyBreaksTotal=new TimeSpan();//used in calculating breaks per day.
+			TimeSpan tsDailyBreaksCalc=new TimeSpan();//used in calculating breaks per day.
+			TimeSpan tsDailyHoursMinusBreaksTotal=new TimeSpan();//used in calculating breaks per day.
+			TimeSpan tsDailyRate2Total=new TimeSpan(); //hours before and after AM/PM Rate2 rules. Adjusted for overbreaks.
+			TimeSpan tsDailyRate3Total=new TimeSpan(); //hours worked on weekend for Rate3. Adjusted for overbreaks.
 			//Note: If TimeCardsMakesAdjustmentsForOverBreaks is true, only the first 30 minutes of break per day are paid. 
 			//All breaktime thereafter will be calculated as if the employee was clocked out at that time.
-			for(int i=0;i<listClockEvents.Count;i++) {
+			for(int i=0;i<listClockEvent.Count;i++) {
 				#region  Rate3 pay (including overbreak adjustments)--------------------------------------------------------------
 				//Determine if using Rate3 rule and hours worked are on the weekend.
 				//Rate3 overrides Rate2, meaning any hours worked on the weekend are earned at Rate3 even if working before Rate2 AM rule or after Rate2 PM rule.
 				if(timeCardRule.HasWeekendRate3 &&
-					(  (listClockEvents[i].TimeDisplayed1.DayOfWeek==DayOfWeek.Saturday && listClockEvents[i].TimeDisplayed2.DayOfWeek==DayOfWeek.Saturday)
-					|| (listClockEvents[i].TimeDisplayed1.DayOfWeek==DayOfWeek.Sunday   && listClockEvents[i].TimeDisplayed2.DayOfWeek==DayOfWeek.Sunday  )))
+					(  (listClockEvent[i].TimeDisplayed1.DayOfWeek==DayOfWeek.Saturday && listClockEvent[i].TimeDisplayed2.DayOfWeek==DayOfWeek.Saturday)
+					|| (listClockEvent[i].TimeDisplayed1.DayOfWeek==DayOfWeek.Sunday   && listClockEvent[i].TimeDisplayed2.DayOfWeek==DayOfWeek.Sunday  )))
 				{
 					//All time worked on weekend qualifies for Rate3
-					timeSpanDailyRate3Total=listClockEvents[i].TimeDisplayed2-listClockEvents[i].TimeDisplayed1;
-					TimeSpan timeSpanRate3BreakTimeCounter=new TimeSpan();
+					tsDailyRate3Total=listClockEvent[i].TimeDisplayed2-listClockEvent[i].TimeDisplayed1;
+					TimeSpan tsRate3BreakTimeCounter=new TimeSpan();
 					//Subtract overbreaks
-					for(int b=0;b<listClockEventsBreak.Count;b++) {
+					for(int b=0;b<listClockEventBreak.Count;b++) {
 						//sum breaks that occur during this clock event
-						if(timeClockEventsOverlapHelper(listClockEvents[i],listClockEventsBreak[b])) {
-							timeSpanRate3BreakTimeCounter+=listClockEventsBreak[b].TimeDisplayed2-listClockEventsBreak[b].TimeDisplayed1;
+						if(timeClockEventsOverlapHelper(listClockEvent[i],listClockEventBreak[b])) {
+							tsRate3BreakTimeCounter+=listClockEventBreak[b].TimeDisplayed2-listClockEventBreak[b].TimeDisplayed1;
 						}
 					}
-					TimeSpan timeSpanRate3AdjustAmount=timeSpanRate3BreakTimeCounter-System.TimeSpan.FromMinutes(30); //Overbreak
-					if(timeSpanRate3AdjustAmount>TimeSpan.Zero) {
-						timeSpanDailyRate3Total-=timeSpanRate3AdjustAmount;
+					TimeSpan tsRate3AdjustAmount=tsRate3BreakTimeCounter-System.TimeSpan.FromMinutes(30); //Overbreak
+					if(tsRate3AdjustAmount>TimeSpan.Zero) {
+						tsDailyRate3Total-=tsRate3AdjustAmount;
 					}
-					if(timeSpanDailyRate3Total<TimeSpan.Zero) {
+					if(tsDailyRate3Total<TimeSpan.Zero) {
 						//this should never happen. If it ever does, we need to know about it, because that means some math has been miscalculated.
-						throw new Exception(" - "+listClockEvents[i].TimeDisplayed1.Date.ToShortDateString()+", "+employee.FName+" "+employee.LName+" : calculated Rate3 hours was negative.");
+						throw new Exception(" - "+listClockEvent[i].TimeDisplayed1.Date.ToShortDateString()+", "+employee.FName+" "+employee.LName+" : calculated Rate3 hours was negative.");
 					}
-					listClockEvents[i].Rate3Auto=timeSpanDailyRate3Total;//should be zero or greater.
-					listClockEvents[i].Rate2Auto=new TimeSpan(0); //No ClockEvent can have both Rate2 and Rate3 hours. Zero out in case modifications were made.
+					listClockEvent[i].Rate3Auto=tsDailyRate3Total;//should be zero or greater.
+					listClockEvent[i].Rate2Auto=new TimeSpan(0); //No ClockEvent can have both Rate2 and Rate3 hours. Zero out in case modifications were made.
 				}
 				#endregion
 				#region  Rate2 pay (including overbreak adjustments)--------------------------------------------------------------
 				else {
-					if(i==0||listClockEvents[i].TimeDisplayed1.Date!=listClockEvents[i-1].TimeDisplayed1.Date) {
-						timeSpanDailyRate2Total=TimeSpan.Zero;
+					if(i==0||listClockEvent[i].TimeDisplayed1.Date!=listClockEvent[i-1].TimeDisplayed1.Date) {
+						tsDailyRate2Total=TimeSpan.Zero;
 					}
 					//AM-----------------------------------
-					if(listClockEvents[i].TimeDisplayed1.TimeOfDay<timeSpanRate2AMRule) {//clocked in before Rate2 AM rule
-						timeSpanDailyRate2Total+=timeSpanRate2AMRule-listClockEvents[i].TimeDisplayed1.TimeOfDay;
-						if(listClockEvents[i].TimeDisplayed2.TimeOfDay<timeSpanRate2AMRule) {//clocked out before Rate2 AM rule also
-							timeSpanDailyRate2Total+=listClockEvents[i].TimeDisplayed2.TimeOfDay-timeSpanRate2AMRule;//add a negative timespan
+					if(listClockEvent[i].TimeDisplayed1.TimeOfDay<tsRate2AMRule) {//clocked in before Rate2 AM rule
+						tsDailyRate2Total+=tsRate2AMRule-listClockEvent[i].TimeDisplayed1.TimeOfDay;
+						if(listClockEvent[i].TimeDisplayed2.TimeOfDay<tsRate2AMRule) {//clocked out before Rate2 AM rule also
+							tsDailyRate2Total+=listClockEvent[i].TimeDisplayed2.TimeOfDay-tsRate2AMRule;//add a negative timespan
 						}
 						//Adjust Rate2 AM by overbreaks-----
-						TimeSpan timeSpanAMBreakTimeCounter=new TimeSpan();//tracks all break time for use in calculating overages.
-						TimeSpan timeSpanAMBreakDuringRate2=new TimeSpan();//tracks only the portion of breaks that occurred during Rate2 hours.
-						for(int b = 0;b<listClockEventsBreak.Count;b++) {
-							if(timeSpanAMBreakTimeCounter>TimeSpan.FromMinutes(30)) {
-								timeSpanAMBreakTimeCounter=TimeSpan.FromMinutes(30);//reset overages for next calculation.
+						TimeSpan tsAMBreakTimeCounter=new TimeSpan();//tracks all break time for use in calculating overages.
+						TimeSpan tsAMBreakDuringRate2=new TimeSpan();//tracks only the portion of breaks that occurred during Rate2 hours.
+						for(int b = 0;b<listClockEventBreak.Count;b++) {
+							if(tsAMBreakTimeCounter>TimeSpan.FromMinutes(30)) {
+								tsAMBreakTimeCounter=TimeSpan.FromMinutes(30);//reset overages for next calculation.
 							}
-							if(listClockEventsBreak[b].TimeDisplayed1.Date!=listClockEvents[i].TimeDisplayed1.Date) {
+							if(listClockEventBreak[b].TimeDisplayed1.Date!=listClockEvent[i].TimeDisplayed1.Date) {
 								continue;//skip breaks for other days.
 							}
-							timeSpanAMBreakTimeCounter+=listClockEventsBreak[b].TimeDisplayed2-listClockEventsBreak[b].TimeDisplayed1;
-							timeSpanAMBreakDuringRate2+=calcRate2Portion(timeSpanRate2AMRule,TimeSpan.FromHours(24),listClockEventsBreak[b]);
-							if(timeSpanAMBreakTimeCounter<TimeSpan.FromMinutes(30)) {
+							tsAMBreakTimeCounter+=listClockEventBreak[b].TimeDisplayed2-listClockEventBreak[b].TimeDisplayed1;
+							tsAMBreakDuringRate2+=calcRate2Portion(tsRate2AMRule,TimeSpan.FromHours(24),listClockEventBreak[b]);
+							if(tsAMBreakTimeCounter<TimeSpan.FromMinutes(30)) {
 								continue;//not over thirty minutes yet.
 							}
-							if(timeClockEventsOverlapHelper(listClockEvents[i],listClockEventsBreak[b])) {
+							if(timeClockEventsOverlapHelper(listClockEvent[i],listClockEventBreak[b])) {
 								continue;//There must be multiple clock events for this day, and we have gone over breaks during a later clock event period
 							}
-							if(listClockEventsBreak[b].TimeDisplayed1.TimeOfDay>timeSpanRate2AMRule) {
+							if(listClockEventBreak[b].TimeDisplayed1.TimeOfDay>tsRate2AMRule) {
 								continue;//this break started after the Rate2 AM rule so there is nothing left to do in this loop. break out of the entire loop.
 							}
-							if(listClockEventsBreak[b].TimeDisplayed2.TimeOfDay-(timeSpanAMBreakTimeCounter-TimeSpan.FromMinutes(30))>timeSpanRate2AMRule) {
+							if(listClockEventBreak[b].TimeDisplayed2.TimeOfDay-(tsAMBreakTimeCounter-TimeSpan.FromMinutes(30))>tsRate2AMRule) {
 								continue;//entirety of break overage occurred after Rate2 AM rule time.
 							}
 							//Make adjustments because: 30+ minutes of break, break occurred during clockEvent, break started before the AM rule.
-							TimeSpan timeSpanAMAdjustAmount=System.TimeSpan.FromMinutes(30)-timeSpanAMBreakTimeCounter;
-							if(timeSpanAMAdjustAmount<-timeSpanAMBreakDuringRate2) {
-								timeSpanAMAdjustAmount=-timeSpanAMBreakDuringRate2;//cannot adjust off more break overage time than we have had breaks during this time.
+							TimeSpan tsAMAdjustAmount=System.TimeSpan.FromMinutes(30)-tsAMBreakTimeCounter;
+							if(tsAMAdjustAmount<-tsAMBreakDuringRate2) {
+								tsAMAdjustAmount=-tsAMBreakDuringRate2;//cannot adjust off more break overage time than we have had breaks during this time.
 							}
-							timeSpanDailyRate2Total+=timeSpanAMAdjustAmount;//adjust down
-							timeSpanAMBreakDuringRate2+=timeSpanAMAdjustAmount;//adjust down
+							tsDailyRate2Total+=tsAMAdjustAmount;//adjust down
+							tsAMBreakDuringRate2+=tsAMAdjustAmount;//adjust down
 						}
 					}
 					//PM-------------------------------------
-					if(listClockEvents[i].TimeDisplayed2.TimeOfDay>timeSpanRate2PMRule) {//clocked out after Rate2 PM rule
-						timeSpanDailyRate2Total+=listClockEvents[i].TimeDisplayed2.TimeOfDay-timeSpanRate2PMRule;
-						if(listClockEvents[i].TimeDisplayed1.TimeOfDay>timeSpanRate2PMRule) {//clocked in after Rate2 PM rule also
-							timeSpanDailyRate2Total+=timeSpanRate2PMRule-listClockEvents[i].TimeDisplayed1.TimeOfDay;//add a negative timespan
+					if(listClockEvent[i].TimeDisplayed2.TimeOfDay>tsRate2PMRule) {//clocked out after Rate2 PM rule
+						tsDailyRate2Total+=listClockEvent[i].TimeDisplayed2.TimeOfDay-tsRate2PMRule;
+						if(listClockEvent[i].TimeDisplayed1.TimeOfDay>tsRate2PMRule) {//clocked in after Rate2 PM rule also
+							tsDailyRate2Total+=tsRate2PMRule-listClockEvent[i].TimeDisplayed1.TimeOfDay;//add a negative timespan
 						}
 						//Adjust Rate2 PM by overbreaks-----
-						TimeSpan timeSpanPMBreakTimeCounter=new TimeSpan();//tracks all break time for use in calculating overages.
-						TimeSpan timeSpanPMBreakDuringRate2=new TimeSpan();//tracks only the portion of breaks that occurred during Rate2 hours.
-						for(int b = 0;b<listClockEventsBreak.Count;b++) {
-							if(timeSpanPMBreakTimeCounter>TimeSpan.FromMinutes(30)) {
-								timeSpanPMBreakTimeCounter=TimeSpan.FromMinutes(30);//reset overages for next calculation.
+						TimeSpan tsPMBreakTimeCounter=new TimeSpan();//tracks all break time for use in calculating overages.
+						TimeSpan tsPMBreakDuringRate2=new TimeSpan();//tracks only the portion of breaks that occurred during Rate2 hours.
+						for(int b = 0;b<listClockEventBreak.Count;b++) {
+							if(tsPMBreakTimeCounter>TimeSpan.FromMinutes(30)) {
+								tsPMBreakTimeCounter=TimeSpan.FromMinutes(30);//reset overages for next calculation.
 							}
-							if(listClockEventsBreak[b].TimeDisplayed1.Date!=listClockEvents[i].TimeDisplayed1.Date) {
+							if(listClockEventBreak[b].TimeDisplayed1.Date!=listClockEvent[i].TimeDisplayed1.Date) {
 								continue;//skip breaks for other days.
 							}
-							timeSpanPMBreakTimeCounter+=listClockEventsBreak[b].TimeDisplayed2-listClockEventsBreak[b].TimeDisplayed1;
-							timeSpanPMBreakDuringRate2+=calcRate2Portion(TimeSpan.Zero,timeSpanRate2PMRule,listClockEventsBreak[b]);
-							if(timeSpanPMBreakTimeCounter<TimeSpan.FromMinutes(30)) {
+							tsPMBreakTimeCounter+=listClockEventBreak[b].TimeDisplayed2-listClockEventBreak[b].TimeDisplayed1;
+							tsPMBreakDuringRate2+=calcRate2Portion(TimeSpan.Zero,tsRate2PMRule,listClockEventBreak[b]);
+							if(tsPMBreakTimeCounter<TimeSpan.FromMinutes(30)) {
 								continue;//not over thirty minutes yet.
 							}
-							if(!timeClockEventsOverlapHelper(listClockEvents[i],listClockEventsBreak[b])) {
+							if(!timeClockEventsOverlapHelper(listClockEvent[i],listClockEventBreak[b])) {
 								continue;//There must be multiple clock events for this day, and we have gone over breaks during a different clock event period
 							}
-							if(listClockEventsBreak[b].TimeDisplayed2.TimeOfDay<timeSpanRate2PMRule) {
+							if(listClockEventBreak[b].TimeDisplayed2.TimeOfDay<tsRate2PMRule) {
 								continue;//entirety of break overage occurred before Rate2 PM time.
 							}
 							//Make adjustments because: 30+ minutes of break, break occurred during clockEvent, break ended after the PM rule.
-							TimeSpan timeSpanPMAdjustAmount=System.TimeSpan.FromMinutes(30)-timeSpanPMBreakTimeCounter;//tsPMBreakTimeCounter is always > 30 at this point in time
-							if(timeSpanPMAdjustAmount<-timeSpanPMBreakDuringRate2) {
-								timeSpanPMAdjustAmount=-timeSpanPMBreakDuringRate2;//cannot adjust off more break overage time than we have had breaks during this time.
+							TimeSpan tsPMAdjustAmount=System.TimeSpan.FromMinutes(30)-tsPMBreakTimeCounter;//tsPMBreakTimeCounter is always > 30 at this point in time
+							if(tsPMAdjustAmount<-tsPMBreakDuringRate2) {
+								tsPMAdjustAmount=-tsPMBreakDuringRate2;//cannot adjust off more break overage time than we have had breaks during this time.
 							}
-							timeSpanDailyRate2Total+=timeSpanPMAdjustAmount;//adjust down
-							timeSpanPMBreakDuringRate2+=timeSpanPMAdjustAmount;//adjust down
+							tsDailyRate2Total+=tsPMAdjustAmount;//adjust down
+							tsPMBreakDuringRate2+=tsPMAdjustAmount;//adjust down
 						}
 					}
 					//Apply Rate2 to clock event-----------------------------------------------------------------------------------
-					if(timeSpanDailyRate2Total<TimeSpan.Zero) {
+					if(tsDailyRate2Total<TimeSpan.Zero) {
 						//this should never happen. If it ever does, we need to know about it, because that means some math has been miscalculated.
-						throw new Exception(" - "+listClockEvents[i].TimeDisplayed1.Date.ToShortDateString()+", "+employee.FName+" "+employee.LName+" : calculated Rate2 hours was negative.");
+						throw new Exception(" - "+listClockEvent[i].TimeDisplayed1.Date.ToShortDateString()+", "+employee.FName+" "+employee.LName+" : calculated Rate2 hours was negative.");
 					}
-					listClockEvents[i].Rate2Auto=timeSpanDailyRate2Total;//should be zero or greater.
-					listClockEvents[i].Rate3Auto=new TimeSpan(0); //No ClockEvent can have both Rate2 and Rate3 hours. Zero out in case modifications were made.
+					listClockEvent[i].Rate2Auto=tsDailyRate2Total;//should be zero or greater.
+					listClockEvent[i].Rate3Auto=new TimeSpan(0); //No ClockEvent can have both Rate2 and Rate3 hours. Zero out in case modifications were made.
 				}
 				#endregion
 				#region Regular hours and OT hours calulations (including overbreak adjustments)----------------------------------------
-				listClockEvents[i].OTimeAuto	=TimeSpan.Zero;
-				listClockEvents[i].AdjustAuto=TimeSpan.Zero;
-				if(i==0 || listClockEvents[i].TimeDisplayed1.Date!=listClockEvents[i-1].TimeDisplayed1.Date) {
-					timeSpanHoursWorkedTotal=TimeSpan.Zero;
-					timeSpanDailyBreaksAdjustTotal=TimeSpan.Zero;
-					timeSpanDailyBreaksCalc=TimeSpan.Zero;
-					timeSpanDailyBreaksTotal=TimeSpan.Zero;
-					timeSpanDailyRate2Total=TimeSpan.Zero;
-					timeSpanDailyRate3Total=TimeSpan.Zero;
+				listClockEvent[i].OTimeAuto	=TimeSpan.Zero;
+				listClockEvent[i].AdjustAuto=TimeSpan.Zero;
+				if(i==0 || listClockEvent[i].TimeDisplayed1.Date!=listClockEvent[i-1].TimeDisplayed1.Date) {
+					tsHoursWorkedTotal=TimeSpan.Zero;
+					tsDailyBreaksAdjustTotal=TimeSpan.Zero;
+					tsDailyBreaksCalc=TimeSpan.Zero;
+					tsDailyBreaksTotal=TimeSpan.Zero;
+					tsDailyRate2Total=TimeSpan.Zero;
+					tsDailyRate3Total=TimeSpan.Zero;
 				}
-				timeSpanHoursWorkedTotal+=listClockEvents[i].TimeDisplayed2-listClockEvents[i].TimeDisplayed1;//Hours worked
-				if(timeSpanHoursWorkedTotal>timeSpanOTHoursRule) {//if OverHoursPerDay then make AutoOTAdjustments.
-					listClockEvents[i].OTimeAuto	+=timeSpanHoursWorkedTotal-timeSpanOTHoursRule;//++OTimeAuto
+				tsHoursWorkedTotal+=listClockEvent[i].TimeDisplayed2-listClockEvent[i].TimeDisplayed1;//Hours worked
+				if(tsHoursWorkedTotal>tsOvertimeHoursRule) {//if OverHoursPerDay then make AutoOTAdjustments.
+					listClockEvent[i].OTimeAuto	+=tsHoursWorkedTotal-tsOvertimeHoursRule;//++OTimeAuto
 					//listClockEvent[i].AdjustAuto-=tsHoursWorkedTotal-tsOvertimeHoursRule;//--AdjustAuto
-					timeSpanHoursWorkedTotal=timeSpanOTHoursRule;//subsequent clock events should be counted as overtime.
+					tsHoursWorkedTotal=tsOvertimeHoursRule;//subsequent clock events should be counted as overtime.
 				}
-				if(i==listClockEvents.Count-1 || listClockEvents[i].TimeDisplayed1.Date!=listClockEvents[i+1].TimeDisplayed1.Date) {
+				if(i==listClockEvent.Count-1 || listClockEvent[i].TimeDisplayed1.Date!=listClockEvent[i+1].TimeDisplayed1.Date) {
 					//Either the last clock event in the list or last clock event for the day.
 					//OVERBREAKS--------------------------------------------------------------------------------------------------------
 					if(PrefC.GetBool(PrefName.TimeCardsMakesAdjustmentsForOverBreaks)) {//Apply overbreaks to this clockEvent.
-						timeSpanDailyBreaksAdjustTotal=new TimeSpan();//used to adjust the clock event
-						timeSpanDailyBreaksTotal=new TimeSpan();//used in calculating Daily Hours.
-						timeSpanDailyBreaksCalc=new TimeSpan();//used in calculating breaks.
-						for(int b=0;b<listClockEventsBreak.Count;b++) {//check all breaks for current day.
-							if(listClockEventsBreak[b].TimeDisplayed1.Date!=listClockEvents[i].TimeDisplayed1.Date) {
+						tsDailyBreaksAdjustTotal=new TimeSpan();//used to adjust the clock event
+						tsDailyBreaksTotal=new TimeSpan();//used in calculating Daily Hours.
+						tsDailyBreaksCalc=new TimeSpan();//used in calculating breaks.
+						for(int b=0;b<listClockEventBreak.Count;b++) {//check all breaks for current day.
+							if(listClockEventBreak[b].TimeDisplayed1.Date!=listClockEvent[i].TimeDisplayed1.Date) {
 								continue;//skip breaks for other dates than current ClockEvent
 							}
-							timeSpanDailyBreaksCalc+=(listClockEventsBreak[b].TimeDisplayed2.TimeOfDay-listClockEventsBreak[b].TimeDisplayed1.TimeOfDay);
-							timeSpanDailyBreaksTotal+=(listClockEventsBreak[b].TimeDisplayed2.TimeOfDay-listClockEventsBreak[b].TimeDisplayed1.TimeOfDay);
-							timeSpanDailyHoursMinusBreaksTotal=timeSpanHoursWorkedTotal-timeSpanDailyBreaksTotal;
+							tsDailyBreaksCalc+=(listClockEventBreak[b].TimeDisplayed2.TimeOfDay-listClockEventBreak[b].TimeDisplayed1.TimeOfDay);
+							tsDailyBreaksTotal+=(listClockEventBreak[b].TimeDisplayed2.TimeOfDay-listClockEventBreak[b].TimeDisplayed1.TimeOfDay);
+							tsDailyHoursMinusBreaksTotal=tsHoursWorkedTotal-tsDailyBreaksTotal;
 							if(PrefC.IsODHQ) {
-								if(timeSpanDailyHoursMinusBreaksTotal>=TimeSpan.FromMinutes(331) && timeSpanDailyBreaksCalc>=TimeSpan.FromMinutes(30)) {//Break is over 30 minutes and total time worked is over 5 hour and 30 minutes.
-									listClockEventsBreak[b].AdjustAuto=TimeSpan.FromMinutes(30)-timeSpanDailyBreaksCalc;
-									ClockEvents.Update(listClockEventsBreak[b]);//save adjustments to breaks.
-									timeSpanDailyBreaksAdjustTotal+=listClockEventsBreak[b].AdjustAuto;
-									timeSpanDailyBreaksCalc=TimeSpan.FromMinutes(30);//reset daily breaks to 30 minutes so the next break is all adjustment
+								if(tsDailyHoursMinusBreaksTotal>=TimeSpan.FromMinutes(331) && tsDailyBreaksCalc>=TimeSpan.FromMinutes(30)) {//Break is over 30 minutes and total time worked is over 5 hour and 30 minutes.
+									listClockEventBreak[b].AdjustAuto=TimeSpan.FromMinutes(30)-tsDailyBreaksCalc;
+									ClockEvents.Update(listClockEventBreak[b]);//save adjustments to breaks.
+									tsDailyBreaksAdjustTotal+=listClockEventBreak[b].AdjustAuto;
+									tsDailyBreaksCalc=TimeSpan.FromMinutes(30);//reset daily breaks to 30 minutes so the next break is all adjustment
 								}
-								else if(timeSpanDailyHoursMinusBreaksTotal<TimeSpan.FromMinutes(331) && timeSpanDailyHoursMinusBreaksTotal>=TimeSpan.FromMinutes(221) && timeSpanDailyBreaksCalc>=TimeSpan.FromMinutes(20)) {//Break is over 20 minutes and total time worked is over 3 hour and 40 minutes.
-									listClockEventsBreak[b].AdjustAuto=TimeSpan.FromMinutes(20)-timeSpanDailyBreaksCalc;
-									ClockEvents.Update(listClockEventsBreak[b]);//save adjustments to breaks.
-									timeSpanDailyBreaksAdjustTotal+=listClockEventsBreak[b].AdjustAuto;
-									timeSpanDailyBreaksCalc=TimeSpan.FromMinutes(20);//reset daily breaks to 20 minutes so the next break is all adjustment
+								else if(tsDailyHoursMinusBreaksTotal<TimeSpan.FromMinutes(331) && tsDailyHoursMinusBreaksTotal>=TimeSpan.FromMinutes(221) && tsDailyBreaksCalc>=TimeSpan.FromMinutes(20)) {//Break is over 20 minutes and total time worked is over 3 hour and 40 minutes.
+									listClockEventBreak[b].AdjustAuto=TimeSpan.FromMinutes(20)-tsDailyBreaksCalc;
+									ClockEvents.Update(listClockEventBreak[b]);//save adjustments to breaks.
+									tsDailyBreaksAdjustTotal+=listClockEventBreak[b].AdjustAuto;
+									tsDailyBreaksCalc=TimeSpan.FromMinutes(20);//reset daily breaks to 20 minutes so the next break is all adjustment
 								}
-								else if(timeSpanDailyHoursMinusBreaksTotal<TimeSpan.FromMinutes(221) && timeSpanDailyHoursMinusBreaksTotal>=TimeSpan.FromMinutes(111) && timeSpanDailyBreaksCalc>=TimeSpan.FromMinutes(10)) {//Break is over 10 minutes and total time worked is over 1 hour and 50 minutes.
-									listClockEventsBreak[b].AdjustAuto=TimeSpan.FromMinutes(10)-timeSpanDailyBreaksCalc;
-									ClockEvents.Update(listClockEventsBreak[b]);//save adjustments to breaks.
-									timeSpanDailyBreaksAdjustTotal+=listClockEventsBreak[b].AdjustAuto;
-									timeSpanDailyBreaksCalc=TimeSpan.FromMinutes(10);//reset daily breaks to 10 minutes so the next break is all adjustment
+								else if(tsDailyHoursMinusBreaksTotal<TimeSpan.FromMinutes(221) && tsDailyHoursMinusBreaksTotal>=TimeSpan.FromMinutes(111) && tsDailyBreaksCalc>=TimeSpan.FromMinutes(10)) {//Break is over 10 minutes and total time worked is over 1 hour and 50 minutes.
+									listClockEventBreak[b].AdjustAuto=TimeSpan.FromMinutes(10)-tsDailyBreaksCalc;
+									ClockEvents.Update(listClockEventBreak[b]);//save adjustments to breaks.
+									tsDailyBreaksAdjustTotal+=listClockEventBreak[b].AdjustAuto;
+									tsDailyBreaksCalc=TimeSpan.FromMinutes(10);//reset daily breaks to 10 minutes so the next break is all adjustment
 								}
-								else if(timeSpanDailyHoursMinusBreaksTotal<TimeSpan.FromMinutes(111)){//Total time worked is less than 1 hour and 50 minutes.
-									listClockEventsBreak[b].AdjustAuto=-timeSpanDailyBreaksCalc;
-									ClockEvents.Update(listClockEventsBreak[b]);//save adjustments to breaks.
-									timeSpanDailyBreaksAdjustTotal+=listClockEventsBreak[b].AdjustAuto;
-									timeSpanDailyBreaksCalc=TimeSpan.FromMinutes(0);//reset daily breaks to 0 minutes so the next break is all adjustment
+								else if(tsDailyHoursMinusBreaksTotal<TimeSpan.FromMinutes(111)){//Total time worked is less than 1 hour and 50 minutes.
+									listClockEventBreak[b].AdjustAuto=-tsDailyBreaksCalc;
+									ClockEvents.Update(listClockEventBreak[b]);//save adjustments to breaks.
+									tsDailyBreaksAdjustTotal+=listClockEventBreak[b].AdjustAuto;
+									tsDailyBreaksCalc=TimeSpan.FromMinutes(0);//reset daily breaks to 0 minutes so the next break is all adjustment
 								}
 							}
 							else {
-								if(timeSpanDailyBreaksCalc>TimeSpan.FromMinutes(31)) {//over 31 to avoid adjustments less than 1 minutes.
-									listClockEventsBreak[b].AdjustAuto=TimeSpan.FromMinutes(30)-timeSpanDailyBreaksCalc;
-									ClockEvents.Update(listClockEventsBreak[b]);//save adjustments to breaks.
-									timeSpanDailyBreaksAdjustTotal+=listClockEventsBreak[b].AdjustAuto;
-									timeSpanDailyBreaksCalc=TimeSpan.FromMinutes(30);//reset daily breaks to 30 minutes so the next break is all adjustment.
+								if(tsDailyBreaksCalc>TimeSpan.FromMinutes(31)) {//over 31 to avoid adjustments less than 1 minutes.
+									listClockEventBreak[b].AdjustAuto=TimeSpan.FromMinutes(30)-tsDailyBreaksCalc;
+									ClockEvents.Update(listClockEventBreak[b]);//save adjustments to breaks.
+									tsDailyBreaksAdjustTotal+=listClockEventBreak[b].AdjustAuto;
+									tsDailyBreaksCalc=TimeSpan.FromMinutes(30);//reset daily breaks to 30 minutes so the next break is all adjustment.
 								}//end overBreaks>31 minutes
 								else {
 									//If the adjustment is 30 minutes or less, the adjustment amount should be set to 0 
-									listClockEventsBreak[b].AdjustAuto=TimeSpan.Zero;
-									ClockEvents.Update(listClockEventsBreak[b]);
+									listClockEventBreak[b].AdjustAuto=TimeSpan.Zero;
+									ClockEvents.Update(listClockEventBreak[b]);
 								}
 							}
 						}//end checking all breaks for current day
 						//OverBreaks applies to overtime and then to RegularTime
-						listClockEvents[i].OTimeAuto+=timeSpanDailyBreaksAdjustTotal;//tsDailyBreaksTotal<=TimeSpan.Zero
-						listClockEvents[i].AdjustAuto+=timeSpanDailyBreaksAdjustTotal;//tsDailyBreaksTotal is less than or equal to zero
-						if(listClockEvents[i].OTimeAuto<TimeSpan.Zero) {//we have adjusted OT too far
+						listClockEvent[i].OTimeAuto+=tsDailyBreaksAdjustTotal;//tsDailyBreaksTotal<=TimeSpan.Zero
+						listClockEvent[i].AdjustAuto+=tsDailyBreaksAdjustTotal;//tsDailyBreaksTotal is less than or equal to zero
+						if(listClockEvent[i].OTimeAuto<TimeSpan.Zero) {//we have adjusted OT too far
 							//listClockEvent[i].AdjustAuto+=listClockEvent[i].OTimeAuto;
-							listClockEvents[i].OTimeAuto=TimeSpan.Zero;
+							listClockEvent[i].OTimeAuto=TimeSpan.Zero;
 						}
-						timeSpanDailyBreaksTotal=TimeSpan.Zero;//zero out for the next day.
-						timeSpanHoursWorkedTotal=TimeSpan.Zero;//zero out for next day.
+						tsDailyBreaksTotal=TimeSpan.Zero;//zero out for the next day.
+						tsHoursWorkedTotal=TimeSpan.Zero;//zero out for next day.
 					}//end overbreaks
 				}
 				#endregion
-				ClockEvents.Update(listClockEvents[i]);
+				ClockEvents.Update(listClockEvent[i]);
 			}//end clockEvent loop.
 		}
 
-		private static TimeSpan calcRate2Portion(TimeSpan timeSpanRate2AMRule,TimeSpan timeSpanRate2PMRule,ClockEvent clockEventBreak) {
-			TimeSpan timeSpan=new TimeSpan();
+		private static TimeSpan calcRate2Portion(TimeSpan tsRate2AMRule,TimeSpan tsRate2PMRule,ClockEvent clockEventBreak) {
+			TimeSpan retVal=new TimeSpan();
 			//AM overlap==========================================================
 			//Visual representation
 			//AM Rule      :           X
 			//Entire Break :o-------o  |             Stop-Start == Entire Break
 			//Partial Break:      o----|---o         Rule-Start == Partial Break
 			//No Break     :           |  o------o   Rule-Rule  == No break (won't actually happen in this block)
-			timeSpan+=TimeSpan.FromTicks(
-				Math.Min(clockEventBreak.TimeDisplayed2.TimeOfDay.Ticks,timeSpanRate2AMRule.Ticks)//min of stop or rule
-				-Math.Min(clockEventBreak.TimeDisplayed1.TimeOfDay.Ticks,timeSpanRate2AMRule.Ticks)//min of start or rule
+			retVal+=TimeSpan.FromTicks(
+				Math.Min(clockEventBreak.TimeDisplayed2.TimeOfDay.Ticks,tsRate2AMRule.Ticks)//min of stop or rule
+				-Math.Min(clockEventBreak.TimeDisplayed1.TimeOfDay.Ticks,tsRate2AMRule.Ticks)//min of start or rule
 				);//equals the entire break, part of the break, or non of the break.
 			//PM overlap==========================================================
 			//Visual representation
@@ -805,11 +786,11 @@ namespace OpenDentBusiness{
 			//Entire Break :o-------o  |             Rule-Rule   == No Break
 			//Partial Break:      o----|---o         Stop-Rule   == Partial Break
 			//No Break     :           |  o------o   Stop-Start  == Entire break
-			timeSpan+=TimeSpan.FromTicks(
-				Math.Max(clockEventBreak.TimeDisplayed2.TimeOfDay.Ticks,timeSpanRate2PMRule.Ticks)//max of stop or rule
-				-Math.Max(clockEventBreak.TimeDisplayed1.TimeOfDay.Ticks,timeSpanRate2PMRule.Ticks)//max of start or rule
+			retVal+=TimeSpan.FromTicks(
+				Math.Max(clockEventBreak.TimeDisplayed2.TimeOfDay.Ticks,tsRate2PMRule.Ticks)//max of stop or rule
+				-Math.Max(clockEventBreak.TimeDisplayed1.TimeOfDay.Ticks,tsRate2PMRule.Ticks)//max of start or rule
 				);//equals the entire break, part of the break, or non of the break.
-			return timeSpan;
+			return retVal;
 		}
 
 		///<summary>Returns true if two clock events overlap. Useful for determining if a break applies to a given clock event.  
@@ -826,11 +807,11 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Updates OTimeAuto, AdjustAuto (calculated and set above., and Rate2Auto based on the rules passed in, and calculated break time overages.</summary>
-		private static void AdjustAutoClockEventEntriesHelper(List<ClockEvent> listClockEvents,List<ClockEvent> listClockEventsBreak,TimeSpan timeSpanDifferentialAMRule,TimeSpan timeSpanDifferentialPMRule,TimeSpan timeSpanOvertimeHoursRule) {
-			for(int i=0;i<listClockEvents.Count;i++) {
+		private static void AdjustAutoClockEventEntriesHelper(List<ClockEvent> listClockEvent,List<ClockEvent> listClockEventBreak,TimeSpan tsDifferentialAMRule,TimeSpan tsDifferentialPMRule,TimeSpan tsOvertimeHoursRule) {
+			for(int i=0;i<listClockEvent.Count;i++) {
 				//listClockEvent[i].OTimeAuto	=TimeSpan.Zero;
-				listClockEvents[i].AdjustAuto	=TimeSpan.Zero;
-				listClockEvents[i].Rate2Auto		=TimeSpan.Zero;
+				listClockEvent[i].AdjustAuto	=TimeSpan.Zero;
+				listClockEvent[i].Rate2Auto		=TimeSpan.Zero;
 				//OTimeAuto and AdjustAuto---------------------------------------------------------------------------------
 				//if((listClockEvent[i].TimeDisplayed2.TimeOfDay-listClockEvent[i].TimeDisplayed1.TimeOfDay)>tsOvertimeHoursRule) {
 				//	listClockEvent[i].OTimeAuto+=listClockEvent[i].TimeDisplayed2.TimeOfDay-listClockEvent[i].TimeDisplayed1.TimeOfDay-tsOvertimeHoursRule;
@@ -838,212 +819,264 @@ namespace OpenDentBusiness{
 				//}
 				//AdjustAuto due to break overages-------------------------------------------------------------------------
 				if(PrefC.GetBool(PrefName.TimeCardsMakesAdjustmentsForOverBreaks)) {
-					if(i==listClockEvents.Count-1 || listClockEvents[i].TimeDisplayed1.Date!=listClockEvents[i+1].TimeDisplayed1.Date) {//last item or last item for a given day.
-						TimeSpan timeSpanTotalBreaksToday=TimeSpan.Zero;
-						for(int j=0;j<listClockEventsBreak.Count;j++) {
-							if(listClockEventsBreak[j].TimeDisplayed1.Date!=listClockEvents[i].TimeDisplayed1.Date) {//skip breaks that occurred on different days.
+					if(i==listClockEvent.Count-1 || listClockEvent[i].TimeDisplayed1.Date!=listClockEvent[i+1].TimeDisplayed1.Date) {//last item or last item for a given day.
+						TimeSpan tsTotalBreaksToday=TimeSpan.Zero;
+						for(int j=0;j<listClockEventBreak.Count;j++) {
+							if(listClockEventBreak[j].TimeDisplayed1.Date!=listClockEvent[i].TimeDisplayed1.Date) {//skip breaks that occurred on different days.
 								continue;
 							}
-							timeSpanTotalBreaksToday+=listClockEventsBreak[j].TimeDisplayed2.TimeOfDay-listClockEventsBreak[j].TimeDisplayed1.TimeOfDay;
+							tsTotalBreaksToday+=listClockEventBreak[j].TimeDisplayed2.TimeOfDay-listClockEventBreak[j].TimeDisplayed1.TimeOfDay;
 						}
-						if(timeSpanTotalBreaksToday>TimeSpan.FromMinutes(31)) {
-							listClockEvents[i].AdjustAuto+=TimeSpan.FromMinutes(30)-timeSpanTotalBreaksToday;//should add a negative time span.
-							listClockEvents[i].OTimeAuto+=TimeSpan.FromMinutes(30)-timeSpanTotalBreaksToday;//should add a negative time span.
-							if(listClockEvents[i].OTimeAuto<TimeSpan.Zero) {//if we removed too much overbreak from otAuto, remove it from adjust auto instead and set otauto to zero
-								listClockEvents[i].AdjustAuto+=listClockEvents[i].OTimeAuto;
-								listClockEvents[i].OTimeAuto=TimeSpan.Zero;
+						if(tsTotalBreaksToday>TimeSpan.FromMinutes(31)) {
+							listClockEvent[i].AdjustAuto+=TimeSpan.FromMinutes(30)-tsTotalBreaksToday;//should add a negative time span.
+							listClockEvent[i].OTimeAuto+=TimeSpan.FromMinutes(30)-tsTotalBreaksToday;//should add a negative time span.
+							if(listClockEvent[i].OTimeAuto<TimeSpan.Zero) {//if we removed too much overbreak from otAuto, remove it from adjust auto instead and set otauto to zero
+								listClockEvent[i].AdjustAuto+=listClockEvent[i].OTimeAuto;
+								listClockEvent[i].OTimeAuto=TimeSpan.Zero;
 							}
-							timeSpanTotalBreaksToday=TimeSpan.FromMinutes(30);//reset break today to 30 minutes, so next break is entirely overBreak.
+							tsTotalBreaksToday=TimeSpan.FromMinutes(30);//reset break today to 30 minutes, so next break is entirely overBreak.
 						}
 					}
 				}
 				//Rate2Auto-------------------------------------------------------------------------------------------------
-				if(listClockEvents[i].TimeDisplayed1.TimeOfDay<timeSpanDifferentialAMRule) {//AM, example rule before 8am, work from 5am to 7am
-					listClockEvents[i].Rate2Auto+=timeSpanDifferentialAMRule-listClockEvents[i].TimeDisplayed1.TimeOfDay;//8am-5am=3hrs
-					if(listClockEvents[i].TimeDisplayed2.TimeOfDay<timeSpanDifferentialAMRule) {
-						listClockEvents[i].Rate2Auto+=listClockEvents[i].TimeDisplayed2.TimeOfDay-timeSpanDifferentialAMRule;//8am-7am=-1hr =>2hrs total
+				if(listClockEvent[i].TimeDisplayed1.TimeOfDay<tsDifferentialAMRule) {//AM, example rule before 8am, work from 5am to 7am
+					listClockEvent[i].Rate2Auto+=tsDifferentialAMRule-listClockEvent[i].TimeDisplayed1.TimeOfDay;//8am-5am=3hrs
+					if(listClockEvent[i].TimeDisplayed2.TimeOfDay<tsDifferentialAMRule) {
+						listClockEvent[i].Rate2Auto+=listClockEvent[i].TimeDisplayed2.TimeOfDay-tsDifferentialAMRule;//8am-7am=-1hr =>2hrs total
 					}
 				}
-				if(listClockEvents[i].TimeDisplayed2.TimeOfDay>timeSpanDifferentialPMRule) {//PM, example diffRule after 8pm, work from 9 to 11pm. 
-					listClockEvents[i].Rate2Auto+=listClockEvents[i].TimeDisplayed2.TimeOfDay-timeSpanDifferentialPMRule;//11pm-8pm = 3hrs 
-					if(listClockEvents[i].TimeDisplayed1.TimeOfDay>timeSpanDifferentialPMRule) {
-						listClockEvents[i].Rate2Auto+=timeSpanDifferentialPMRule-listClockEvents[i].TimeDisplayed1.TimeOfDay;//8pm-9pm = -1hr =>2hrs total
+				if(listClockEvent[i].TimeDisplayed2.TimeOfDay>tsDifferentialPMRule) {//PM, example diffRule after 8pm, work from 9 to 11pm. 
+					listClockEvent[i].Rate2Auto+=listClockEvent[i].TimeDisplayed2.TimeOfDay-tsDifferentialPMRule;//11pm-8pm = 3hrs 
+					if(listClockEvent[i].TimeDisplayed1.TimeOfDay>tsDifferentialPMRule) {
+						listClockEvent[i].Rate2Auto+=tsDifferentialPMRule-listClockEvent[i].TimeDisplayed1.TimeOfDay;//8pm-9pm = -1hr =>2hrs total
 					}
 				}
-				ClockEvents.Update(listClockEvents[i]);
+				ClockEvents.Update(listClockEvent[i]);
 			}//end ClockEvent list
 		}
 
 		///<summary>Deprecated.  This function is aesthetic and has no bearing on actual OT calculations. It adds adjustments to breaks so that when viewing them you can see if they went over 30 minutes.</summary>
-		private static void AdjustBreaksHelper(Employee employee,DateTime dateStart,DateTime dateStop) {
+		private static void AdjustBreaksHelper(Employee EmployeeCur,DateTime StartDate,DateTime StopDate) {
 			if(!PrefC.GetBool(PrefName.TimeCardsMakesAdjustmentsForOverBreaks)){
 				//Only adjust breaks if preference is set.
 				return;
 			}
-			List<ClockEvent> listClockEventsBreak=ClockEvents.Refresh(employee.EmployeeNum,dateStart,dateStop,true);//PIn.Date(textDateStart.Text),PIn.Date(textDateStop.Text),true);
-			TimeSpan timeSpanTotalToday=TimeSpan.Zero;
-			TimeSpan timeSpanTotalOne=TimeSpan.Zero;
-			DateTime datePrevious=DateTime.MinValue;
-			for(int b=0;b<listClockEventsBreak.Count;b++) {
-				if(listClockEventsBreak[b].TimeDisplayed2.Year<1880) {
+			List<ClockEvent> breakList=ClockEvents.Refresh(EmployeeCur.EmployeeNum,StartDate,StopDate,true);//PIn.Date(textDateStart.Text),PIn.Date(textDateStop.Text),true);
+			TimeSpan totalToday=TimeSpan.Zero;
+			TimeSpan totalOne=TimeSpan.Zero;
+			DateTime previousDate=DateTime.MinValue;
+			for(int b=0;b<breakList.Count;b++) {
+				if(breakList[b].TimeDisplayed2.Year<1880) {
 					return;
 				}
-				if(listClockEventsBreak[b].TimeDisplayed1.Date != listClockEventsBreak[b].TimeDisplayed2.Date) {
+				if(breakList[b].TimeDisplayed1.Date != breakList[b].TimeDisplayed2.Date) {
 					//MsgBox.Show(this,"Error. One break spans multiple dates.");
 					return;
 				}
 				//calc time for the one break
-				timeSpanTotalOne=listClockEventsBreak[b].TimeDisplayed2-listClockEventsBreak[b].TimeDisplayed1;
+				totalOne=breakList[b].TimeDisplayed2-breakList[b].TimeDisplayed1;
 				//calc daily total
-				if(datePrevious.Date != listClockEventsBreak[b].TimeDisplayed1.Date) {//if date changed, this is the first pair of the day
-					timeSpanTotalToday=TimeSpan.Zero;//new day
-					datePrevious=listClockEventsBreak[b].TimeDisplayed1.Date;//for the next loop
+				if(previousDate.Date != breakList[b].TimeDisplayed1.Date) {//if date changed, this is the first pair of the day
+					totalToday=TimeSpan.Zero;//new day
+					previousDate=breakList[b].TimeDisplayed1.Date;//for the next loop
 				}
-				timeSpanTotalToday+=timeSpanTotalOne;
+				totalToday+=totalOne;
 				//decide if breaks for the day went over 30 min.
-				if(timeSpanTotalToday > TimeSpan.FromMinutes(31)) {//31 to prevent silly fractions less than 1.
-					listClockEventsBreak[b].AdjustAuto=-(timeSpanTotalToday-TimeSpan.FromMinutes(30));
-					ClockEvents.Update(listClockEventsBreak[b]);
-					timeSpanTotalToday=TimeSpan.FromMinutes(30);//reset to 30.  Therefore, any additional breaks will be wholly adjustments.
+				if(totalToday > TimeSpan.FromMinutes(31)) {//31 to prevent silly fractions less than 1.
+					breakList[b].AdjustAuto=-(totalToday-TimeSpan.FromMinutes(30));
+					ClockEvents.Update(breakList[b]);
+					totalToday=TimeSpan.FromMinutes(30);//reset to 30.  Therefore, any additional breaks will be wholly adjustments.
 				}
 			}//end breaklist
 		}
 
 		///<summary>Calculates weekly overtime and inserts TimeAdjustments accordingly.</summary>
-		public static void CalculateWeeklyOvertime(Employee employee,DateTime dateStart,DateTime dateTime) {
-			TimeCardRule timeCardRule=GetTimeCardRule(employee);
+		public static void CalculateWeeklyOvertime_Old(Employee EmployeeCur,DateTime StartDate,DateTime StopDate) {
+			List<TimeAdjust> TimeAdjustList=TimeAdjusts.Refresh(EmployeeCur.EmployeeNum,StartDate,StopDate);
+			List<ClockEvent> ClockEventList=ClockEvents.Refresh(EmployeeCur.EmployeeNum,StartDate,StopDate,false);
+			//first, delete all existing overtime entries
+			for(int i=0;i<TimeAdjustList.Count;i++) {
+				if(TimeAdjustList[i].OTimeHours==TimeSpan.Zero) {
+					continue;
+				}
+				if(!TimeAdjustList[i].IsAuto) {
+					continue;
+				}
+				TimeAdjusts.Delete(TimeAdjustList[i]);
+				SecurityLogs.MakeLogEntry(Permissions.TimeAdjustEdit,0,
+					$"Weekly overtime was calculated. Time Card Adjustment deleted for Employee: {Employees.GetNameFL(EmployeeCur)}.");
+			}
+			//refresh list after it has been cleaned up.
+			TimeAdjustList=TimeAdjusts.Refresh(EmployeeCur.EmployeeNum,StartDate,StopDate);
+			ArrayList mergedAL = new ArrayList();
+			foreach(ClockEvent clockEvent in ClockEventList) {
+				mergedAL.Add(clockEvent);
+			}
+			foreach(TimeAdjust timeAdjust in TimeAdjustList) {
+				mergedAL.Add(timeAdjust);
+			}
+			//then, fill grid
+			Calendar cal=CultureInfo.CurrentCulture.Calendar;
+			CalendarWeekRule rule=CalendarWeekRule.FirstFullWeek;//CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule;
+			//rule=CalendarWeekRule.FirstFullWeek;//CalendarWeekRule is an Enum. For these calculations, we want to use FirstFullWeek, not FirstDay;
+			List<TimeSpan> WeeklyTotals = new List<TimeSpan>();
+			WeeklyTotals = FillWeeklyTotalsHelper(true,EmployeeCur,mergedAL);
+			//loop through all rows
+			for(int i=0;i<mergedAL.Count;i++) {
+				//ignore rows that aren't weekly totals
+				if(i<mergedAL.Count-1//if not the last row
+					//if the next row has the same week as this row
+					&& cal.GetWeekOfYear(GetDateForRowHelper(mergedAL[i+1]),rule,(DayOfWeek)PrefC.GetInt(PrefName.TimeCardOvertimeFirstDayOfWeek))//Default is 0-Sunday
+					== cal.GetWeekOfYear(GetDateForRowHelper(mergedAL[i]),rule,(DayOfWeek)PrefC.GetInt(PrefName.TimeCardOvertimeFirstDayOfWeek))) {
+					continue;
+				}
+				if(WeeklyTotals[i]<=TimeSpan.FromHours(40)) {
+					continue;
+				}
+				//found a weekly total over 40 hours
+				TimeAdjust adjust=new TimeAdjust();
+				adjust.IsAuto=true;
+				adjust.EmployeeNum=EmployeeCur.EmployeeNum;
+				adjust.TimeEntry=GetDateForRowHelper(mergedAL[i]).AddHours(20);//puts it at 8pm on the same day.
+				adjust.OTimeHours=WeeklyTotals[i]-TimeSpan.FromHours(40);
+				adjust.RegHours=-adjust.OTimeHours;
+				adjust.IsUnpaidProtectedLeave=false;
+				adjust.SecuUserNumEntry=Security.CurUser.UserNum;
+				TimeAdjusts.Insert(adjust);
+				SecurityLogs.MakeLogEntry(Permissions.TimeAdjustEdit,0,
+					$"Weekly overtime was calculated. Time Card Adjustment created for Employee: {Employees.GetNameFL(EmployeeCur)}.");
+			}
+
+		}
+
+		///<summary>Calculates weekly overtime and inserts TimeAdjustments accordingly.</summary>
+		public static void CalculateWeeklyOvertime(Employee EmployeeCur,DateTime StartDate,DateTime StopDate) {
+			TimeCardRule timeCardRule=GetTimeCardRule(EmployeeCur);
 			if(timeCardRule!=null && timeCardRule.IsOvertimeExempt) {
 				return;
 			}
-			List<ClockEvent> listClockEvents=new List<ClockEvent>();
-			List<TimeAdjust> listTimeAdjusts=new List<TimeAdjust>();
+			List<ClockEvent> listClockEvent=new List<ClockEvent>();
+			List<TimeAdjust> listTimeAdjust=new List<TimeAdjust>();
 			string errors="";
 			string clockErrors="";
 			string timeAdjustErrors="";
 			//Fill lists and catch validation error messages------------------------------------------------------------------------------------------------------------
-			try{
-				listClockEvents=ClockEvents.GetValidList(employee.EmployeeNum,dateStart,dateTime,false)	;
-			}
-			catch(Exception ex) {
-				clockErrors+=ex.Message;
-			}
-			try{
-				listTimeAdjusts=TimeAdjusts.GetValidList(employee.EmployeeNum,dateStart,dateTime);
-			}
-			catch(Exception ex) {
-				timeAdjustErrors+=ex.Message;
-			}
+			try{listClockEvent=ClockEvents.GetValidList(EmployeeCur.EmployeeNum,StartDate,StopDate,false)	;}catch(Exception ex) {clockErrors+=ex.Message;}
+			try{listTimeAdjust=TimeAdjusts.GetValidList(EmployeeCur.EmployeeNum,StartDate,StopDate)				;}catch(Exception ex) {timeAdjustErrors+=ex.Message;}
 			//Report Errors---------------------------------------------------------------------------------------------------------------------------------------------
 			errors=clockErrors+timeAdjustErrors;
 			if(errors!="") {
-				throw new Exception(Employees.GetNameFL(employee)+" has the following errors:\r\n"+errors);
+				throw new Exception(Employees.GetNameFL(EmployeeCur)+" has the following errors:\r\n"+errors);
 			}
 			//first, delete all existing non manual overtime entries
-			for(int i=0;i<listTimeAdjusts.Count;i++) {
-				if(listTimeAdjusts[i].IsAuto) {
-					TimeAdjusts.Delete(listTimeAdjusts[i]);
-					SecurityLogs.MakeLogEntry(EnumPermType.TimeAdjustEdit,0,
-						$"Weekly overtime was calculated. Time Card Adjustment deleted for Employee: {Employees.GetNameFL(employee)}.");
+			for(int i=0;i<listTimeAdjust.Count;i++) {
+				if(listTimeAdjust[i].IsAuto) {
+					TimeAdjusts.Delete(listTimeAdjust[i]);
+					SecurityLogs.MakeLogEntry(Permissions.TimeAdjustEdit,0,
+						$"Weekly overtime was calculated. Time Card Adjustment deleted for Employee: {Employees.GetNameFL(EmployeeCur)}.");
 				}
 			}
 			//refresh list after it has been cleaned up.
-			listTimeAdjusts=TimeAdjusts.Refresh(employee.EmployeeNum,dateStart,dateTime);
-			ArrayList arrayListMerged=MergeClockEventAndTimeAdjust(listClockEvents,listTimeAdjusts);
+			listTimeAdjust=TimeAdjusts.Refresh(EmployeeCur.EmployeeNum,StartDate,StopDate);
+			ArrayList mergedAL=MergeClockEventAndTimeAdjust(listClockEvent,listTimeAdjust);
 			//then, fill grid
-			Calendar calendar=CultureInfo.CurrentCulture.Calendar;
-			CalendarWeekRule calendarWeekRule=CalendarWeekRule.FirstFullWeek;//CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule;
+			Calendar cal=CultureInfo.CurrentCulture.Calendar;
+			CalendarWeekRule rule=CalendarWeekRule.FirstFullWeek;//CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule;
 			//rule=CalendarWeekRule.FirstFullWeek;//CalendarWeekRule is an Enum. For these calculations, we want to use FirstFullWeek, not FirstDay;
-			List<TimeSpan> listTimeSpansWeeklyTotal = new List<TimeSpan>();
-			listTimeSpansWeeklyTotal = FillWeeklyTotalsHelper(true,employee,arrayListMerged);
+			List<TimeSpan> WeeklyTotals = new List<TimeSpan>();
+			WeeklyTotals = FillWeeklyTotalsHelper(true,EmployeeCur,mergedAL);
 			//loop through all rows
 			int weekIdx=0;//first week index==0
-			for(int i=0;i<arrayListMerged.Count;i++) {
+			for(int i=0;i<mergedAL.Count;i++) {
 				//ignore rows that aren't weekly totals
-				if(i<arrayListMerged.Count-1//if not the last row
+				if(i<mergedAL.Count-1//if not the last row
 					//if the next row has the same week as this row
-					&& calendar.GetWeekOfYear(GetDateForRowHelper(arrayListMerged[i+1]),calendarWeekRule,(DayOfWeek)PrefC.GetInt(PrefName.TimeCardOvertimeFirstDayOfWeek))//Default is 0-Sunday
-					== calendar.GetWeekOfYear(GetDateForRowHelper(arrayListMerged[i]),calendarWeekRule,(DayOfWeek)PrefC.GetInt(PrefName.TimeCardOvertimeFirstDayOfWeek))) {
+					&& cal.GetWeekOfYear(GetDateForRowHelper(mergedAL[i+1]),rule,(DayOfWeek)PrefC.GetInt(PrefName.TimeCardOvertimeFirstDayOfWeek))//Default is 0-Sunday
+					== cal.GetWeekOfYear(GetDateForRowHelper(mergedAL[i]),rule,(DayOfWeek)PrefC.GetInt(PrefName.TimeCardOvertimeFirstDayOfWeek))) {
 					continue;//continue within a single week
 				}
-				if(listTimeSpansWeeklyTotal[i]<=TimeSpan.FromHours(40)) {
-					weekIdx++;//Going to the next week, go to the next week's entry in the list of ClinicNumTimeSpans
+				if(WeeklyTotals[i]<=TimeSpan.FromHours(40)) {
+					weekIdx++;//Going to the next week, go to the next week's entry in the list of tuples
 					continue;
 				}
 				//======CALUCLATE WEEKLY OVERTIME ADJUSTMENTS IF NEEDED======
 				//found a weekly total over 40 hours
-				List<ClinicNumTimeSpan> listClinicNumTimeSpans=_listEvents[weekIdx];//stores all worked hours per clinic in the order they were worked, sans dates, for a week.
+				List<Tuple<long,TimeSpan>> listEvents=_listEvents[weekIdx];//stores all worked hours per clinic in the order they were worked, sans dates, for a week.
 				//validate the list of clock events.
-				if(listClinicNumTimeSpans.GroupBy(x=>x.ClinicNum).Any(x=>x.Select(y=>y.TimeSpan.TotalHours).Sum()<0)) {
+				if(listEvents.GroupBy(x=>x.Item1).Any(x=>x.Select(y=>y.Item2.TotalHours).Sum()<0)) {
 					//should never happen.
 					throw new ApplicationException("Clock events for employee total a negative number of hours for a clinic.");
 				}
-				TimeSpan timeSpanWeeklyHours=TimeSpan.Zero;
+				TimeSpan weeklyHours=TimeSpan.Zero;
 				//this tracks each OT entry as it occurs, in the order it occurred, so that we can properly account for negative adjustments later.
-				List<ClinicNumTimeSpan> listClinicNumsTimeSpansOTEntries=new List<ClinicNumTimeSpan>();
-				for(int k=0;k<listClinicNumTimeSpans.Count;k++) {
-					TimeSpan timeSpanPrevTotal=TimeSpan.FromHours(timeSpanWeeklyHours.TotalHours);//deep copy of timeSpan.
-					timeSpanWeeklyHours=timeSpanWeeklyHours.Add(listClinicNumTimeSpans[k].TimeSpan);//add new timespan to running total.
-					if(listClinicNumTimeSpans[k].TimeSpan<TimeSpan.Zero) { //negative span
-						TimeSpan timeSpanNeg=-listClinicNumTimeSpans[k].TimeSpan;//store as positive balance to simplify comparisons below.
+				List<Tuple<long,TimeSpan>> listOTEntries=new List<Tuple<long, TimeSpan>>();
+				Dictionary <long,TimeSpan> dictOvertime=new Dictionary<long, TimeSpan>();
+				foreach(Tuple<long,TimeSpan> tupleCur in listEvents) {
+					TimeSpan prevTotal=TimeSpan.FromHours(weeklyHours.TotalHours);//deep copy of timeSpan.
+					weeklyHours=weeklyHours.Add(tupleCur.Item2);//add new timespan to running total.
+					if(tupleCur.Item2<TimeSpan.Zero) { //negative span
+						TimeSpan negTime=-tupleCur.Item2;//store as positive balance to simplify comparisons below.
 						//First try to compensate "using up" Ot from this clinic
-						for(int j=listClinicNumsTimeSpansOTEntries.Count-1;j>=0;j--) {
-							if(listClinicNumsTimeSpansOTEntries[j].ClinicNum!=listClinicNumTimeSpans[k].ClinicNum) {//only events for this clinic to start with.
+						for(int j=listOTEntries.Count-1;j>=0;j--) {
+							if(listOTEntries[j].Item1!=tupleCur.Item1) {//only events for this clinic to start with.
 								continue;
 							}
-							if(listClinicNumsTimeSpansOTEntries[j].TimeSpan>timeSpanNeg) {
-								listClinicNumsTimeSpansOTEntries[j]=new ClinicNumTimeSpan(listClinicNumsTimeSpansOTEntries[j].ClinicNum,listClinicNumsTimeSpansOTEntries[j].TimeSpan.Subtract(timeSpanNeg));
-								timeSpanNeg=TimeSpan.Zero;
+							if(listOTEntries[j].Item2>negTime) {
+								listOTEntries[j]=new Tuple<long,TimeSpan>(listOTEntries[j].Item1,listOTEntries[j].Item2.Subtract(negTime));
+								negTime=TimeSpan.Zero;
 								break;//we zeroed out the adjustment using only overtime from this clinic.
 							}
-							timeSpanNeg=timeSpanNeg.Subtract(listClinicNumsTimeSpansOTEntries[j].TimeSpan);
-							listClinicNumsTimeSpansOTEntries[j]=new ClinicNumTimeSpan(listClinicNumsTimeSpansOTEntries[j].ClinicNum,listClinicNumsTimeSpansOTEntries[j].TimeSpan.Subtract(listClinicNumsTimeSpansOTEntries[j].TimeSpan));//zero it out.
+							else {
+								negTime=negTime.Subtract(listOTEntries[j].Item2);
+								listOTEntries[j]=new Tuple<long,TimeSpan>(listOTEntries[j].Item1,listOTEntries[j].Item2.Subtract(listOTEntries[j].Item2));//zero it out.
+							}
 						}
 						//houskeeping
-						listClinicNumsTimeSpansOTEntries.RemoveAll(x=>x.TimeSpan==TimeSpan.Zero);
+						listOTEntries.RemoveAll(x=>x.Item2==TimeSpan.Zero);
 						//possibly adjust off OT using time from other clinics in the order the time was accrued.
-						for(int j=listClinicNumsTimeSpansOTEntries.Count-1;j>=0;j--) {
-							if(timeSpanNeg<=TimeSpan.Zero) {
+						for(int j=listOTEntries.Count-1;j>=0;j--) {
+							if(negTime<=TimeSpan.Zero) {
 								break;
 							}
-							if(listClinicNumsTimeSpansOTEntries[j].TimeSpan>timeSpanNeg) {
-								listClinicNumsTimeSpansOTEntries[j]=new ClinicNumTimeSpan(listClinicNumsTimeSpansOTEntries[j].ClinicNum,listClinicNumsTimeSpansOTEntries[j].TimeSpan.Subtract(timeSpanNeg));
-								timeSpanNeg=TimeSpan.Zero;
+							if(listOTEntries[j].Item2>negTime) {
+								listOTEntries[j]=new Tuple<long,TimeSpan>(listOTEntries[j].Item1,listOTEntries[j].Item2.Subtract(negTime));
+								negTime=TimeSpan.Zero;
 								break;//we zeroed out the adjustment using only overtime from this clinic.
 							}
-							timeSpanNeg=timeSpanNeg.Subtract(listClinicNumsTimeSpansOTEntries[j].TimeSpan);
-							listClinicNumsTimeSpansOTEntries[j]=new ClinicNumTimeSpan(listClinicNumsTimeSpansOTEntries[j].ClinicNum,listClinicNumsTimeSpansOTEntries[j].TimeSpan.Subtract(listClinicNumsTimeSpansOTEntries[j].TimeSpan));//zero it out.
+							else {
+								negTime=negTime.Subtract(listOTEntries[j].Item2);
+								listOTEntries[j]=new Tuple<long,TimeSpan>(listOTEntries[j].Item1,listOTEntries[j].Item2.Subtract(listOTEntries[j].Item2));//zero it out.
+							}
 						}
 						//houskeeping
-						listClinicNumsTimeSpansOTEntries.RemoveAll(x=>x.TimeSpan==TimeSpan.Zero);
+						listOTEntries.RemoveAll(x=>x.Item2==TimeSpan.Zero);
 					}
-					if(timeSpanWeeklyHours.TotalHours>40) {//this clock event put us into overtime.
-						ClinicNumTimeSpan clinicNumTimeSpan=new ClinicNumTimeSpan();
-						clinicNumTimeSpan.ClinicNum=listClinicNumTimeSpans[k].ClinicNum;
-						clinicNumTimeSpan.TimeSpan=TimeSpan.FromHours(timeSpanWeeklyHours.TotalHours-Math.Max(40,timeSpanPrevTotal.TotalHours));
-						if(clinicNumTimeSpan.TimeSpan>TimeSpan.Zero) {
-							listClinicNumsTimeSpansOTEntries.Add(clinicNumTimeSpan);
+					if(weeklyHours.TotalHours>40) {//this clock event put us into overtime.
+						Tuple<long,TimeSpan> otEntry=new Tuple<long, TimeSpan>(tupleCur.Item1,TimeSpan.FromHours(weeklyHours.TotalHours-Math.Max(40,prevTotal.TotalHours)));
+						if(otEntry.Item2>TimeSpan.Zero) {
+							listOTEntries.Add(otEntry);
 						}
 					}
 				}
+				//Build dictOvertime by aggregating all entries in list above. Dict contains one entry per clinic with a timespan for OT time worked.
+				dictOvertime=listOTEntries.GroupBy(x=>x.Item1).ToDictionary(x=>x.Key,x=>TimeSpan.FromHours(x.Select(y=>y.Item2.TotalHours).Sum()));
 				//======ADD OT ADJUSTMENTS FOR ONE WEEK AFTER ALL CALCULATIONS FOR THAT WEEK HAVE BEEN COMPLETED======
-				List<long> listClinicNums=listClinicNumsTimeSpansOTEntries.Select(x=>x.ClinicNum).Distinct().ToList();
-				for(int c=0;c<listClinicNums.Count;c++) {
-					TimeSpan timeSpanForClinic=TimeSpan.FromHours(listClinicNumsTimeSpansOTEntries.FindAll(x=>x.ClinicNum==listClinicNums[c]).Sum(x=>x.TimeSpan.TotalHours));
-					if(timeSpanForClinic<=TimeSpan.Zero) {
+				foreach(KeyValuePair<long,TimeSpan> kvp in dictOvertime) {
+					if(kvp.Value<=TimeSpan.Zero) {
 						continue;
 					}
-					TimeAdjust timeAdjust=new TimeAdjust();
-					timeAdjust.IsAuto=true;
-					timeAdjust.EmployeeNum=employee.EmployeeNum;
-					timeAdjust.TimeEntry=GetDateForRowHelper(arrayListMerged[i]).AddHours(20);
-					timeAdjust.OTimeHours=timeSpanForClinic;
-					timeAdjust.RegHours=-timeAdjust.OTimeHours;
-					timeAdjust.ClinicNum=listClinicNums[c];
-					timeAdjust.IsUnpaidProtectedLeave=false;
-					timeAdjust.SecuUserNumEntry=Security.CurUser.UserNum;
-					TimeAdjusts.Insert(timeAdjust);
-					SecurityLogs.MakeLogEntry(EnumPermType.TimeAdjustEdit,0,
-						$"Weekly overtime was calculated. Time Card Adjustment created for Employee: {Employees.GetNameFL(employee)}.");
+					TimeAdjust adjust=new TimeAdjust();
+					adjust.IsAuto=true;
+					adjust.EmployeeNum=EmployeeCur.EmployeeNum;
+					adjust.TimeEntry=GetDateForRowHelper(mergedAL[i]).AddHours(20);
+					adjust.OTimeHours=kvp.Value;
+					adjust.RegHours=-adjust.OTimeHours;
+					adjust.ClinicNum=kvp.Key;
+					adjust.IsUnpaidProtectedLeave=false;
+					adjust.SecuUserNumEntry=Security.CurUser.UserNum;
+					TimeAdjusts.Insert(adjust);
+					SecurityLogs.MakeLogEntry(Permissions.TimeAdjustEdit,0,
+						$"Weekly overtime was calculated. Time Card Adjustment created for Employee: {Employees.GetNameFL(EmployeeCur)}.");
 				}
 				weekIdx++;
 			}
@@ -1051,189 +1084,183 @@ namespace OpenDentBusiness{
 
 		///<summary>Merges a list of ClockEvent and a list of TimeAdjust, sorted by ClockEvent.TimeDisplayed1 and TimeAdjust.TimeEntry</summary>
 		private static ArrayList MergeClockEventAndTimeAdjust(List<ClockEvent> listClockEvents,List<TimeAdjust> listTimeAdjusts) {
-			List<ClockEvent> listClockEventsOrdered=listClockEvents.OrderBy(x => x.TimeDisplayed1).ToList();//Oldest entries first
-			List<TimeAdjust> listTimeAdjustsOrdered=listTimeAdjusts.OrderBy(x => x.TimeEntry).ToList();
-			ArrayList arrayListMerged=new ArrayList();
-			int indexClockEvent=0;
-			int indexTimeAdjust=0;
-			while(true) {//Merge listClockEvent and listTimeAdjust, sort by TimeDisplayed1/TimeEntry
-				if(indexClockEvent>=listClockEventsOrdered.Count && indexTimeAdjust>=listTimeAdjustsOrdered.Count) {
-					break;
+			List<ClockEvent> listOrderedClockEvents=listClockEvents.OrderBy(x => x.TimeDisplayed1).ToList();//Oldest entries first
+			List<TimeAdjust> listOrderedTimeAdjusts=listTimeAdjusts.OrderBy(x => x.TimeEntry).ToList();
+			ArrayList mergedAL=new ArrayList();
+			int idxCE=0;
+			int idxTA=0;
+			while(idxCE<listOrderedClockEvents.Count || idxTA<listOrderedTimeAdjusts.Count) {//Merge listClockEvent and listTimeAdjust, sort by TimeDisplayed1/TimeEntry
+				if(idxCE>listOrderedClockEvents.Count || idxTA>listOrderedTimeAdjusts.Count) {
+						break;//Shouldn't happen.
 				}
-				if(indexClockEvent==listClockEventsOrdered.Count) {//All ClockEvents added, so remaining TimeAdjusts will all be added.
-					arrayListMerged.Add(listTimeAdjustsOrdered[indexTimeAdjust]);
-					indexTimeAdjust++;
+				if(idxCE==listOrderedClockEvents.Count) {//All ClockEvents added, so remaining TimeAdjusts will all be added.
+					mergedAL.Add(listOrderedTimeAdjusts[idxTA]);
+					idxTA++;
 				}
-				else if(indexTimeAdjust==listTimeAdjustsOrdered.Count) {//All TimeAdjusts added, so remaining ClockEvents will all be added.
-					arrayListMerged.Add(listClockEventsOrdered[indexClockEvent]);//So add next ClockEvent
-					indexClockEvent++;
+				else if(idxTA==listOrderedTimeAdjusts.Count) {//All TimeAdjusts added, so remaining ClockEvents will all be added.
+					mergedAL.Add(listOrderedClockEvents[idxCE]);//So add next ClockEvent
+					idxCE++;
 				}
-				else if(listClockEventsOrdered[indexClockEvent].TimeDisplayed1<=listTimeAdjustsOrdered[indexTimeAdjust].TimeEntry) {//ClockEvent is next
-					arrayListMerged.Add(listClockEventsOrdered[indexClockEvent]);
-					indexClockEvent++;
+				else if(listOrderedClockEvents[idxCE].TimeDisplayed1<=listOrderedTimeAdjusts[idxTA].TimeEntry) {//ClockEvent is next
+					mergedAL.Add(listOrderedClockEvents[idxCE]);
+					idxCE++;
 				}
 				else {//TimeAdjust is next
-					arrayListMerged.Add(listTimeAdjustsOrdered[indexTimeAdjust]);
-					indexTimeAdjust++;
+					mergedAL.Add(listOrderedTimeAdjusts[idxTA]);
+					idxTA++;
 				}
 			}
-			return arrayListMerged;
+			return mergedAL;
 		}
 
 		/// <summary>This was originally analogous to the FormTimeCard.FillGrid(), before this logic was moved to the business layer.</summary>
-		private static List<TimeSpan> FillWeeklyTotalsHelper(bool existsInDB,Employee employee,ArrayList arrayListMerged) {
-			List<ClinicNumTimeSpan> listClinicNumTimeSpansWeek=new List<ClinicNumTimeSpan>();
-			_listEvents=new List<List<ClinicNumTimeSpan>>();
-			List<TimeSpan> listTimeSpans = new List<TimeSpan>();
-			TimeSpan[] timeSpanArrayWeeklyTotals=new TimeSpan[arrayListMerged.Count];
-			TimeSpan timeSpanAlteredSpan=TimeSpan.Zero;//used to display altered times
-			TimeSpan timeSpanOne=TimeSpan.Zero;//used to sum one pair of clock-in/clock-out
-			TimeSpan timeSpanOneAdj;
-			TimeSpan timeSpanOneOT;
-			TimeSpan timeSpanDay=TimeSpan.Zero;//used for daily totals.
-			TimeSpan timeSpanWeek=TimeSpan.Zero;//used for weekly totals.
-			TimeSpan timeSpanPreviousHours=TimeSpan.Zero;
-			if(arrayListMerged.Count>0) {
-				timeSpanPreviousHours=ClockEvents.GetWeekTotal(employee.EmployeeNum,GetDateForRowHelper(arrayListMerged[0]));
+		private static List<TimeSpan> FillWeeklyTotalsHelper(bool fromDB,Employee EmployeeCur,ArrayList mergedAL) {
+			List<Tuple<long,TimeSpan>> listWeek=new List<Tuple<long,TimeSpan>>();
+			_listEvents=new List<List<Tuple<long,TimeSpan>>>();
+			List<TimeSpan> retVal = new List<TimeSpan>();
+			TimeSpan[] WeeklyTotals=new TimeSpan[mergedAL.Count];
+			TimeSpan alteredSpan=TimeSpan.Zero;//used to display altered times
+			TimeSpan oneSpan=TimeSpan.Zero;//used to sum one pair of clock-in/clock-out
+			TimeSpan oneAdj;
+			TimeSpan oneOT;
+			TimeSpan daySpan=TimeSpan.Zero;//used for daily totals.
+			TimeSpan weekSpan=TimeSpan.Zero;//used for weekly totals.
+			if(mergedAL.Count>0) {
+				weekSpan=ClockEvents.GetWeekTotal(EmployeeCur.EmployeeNum,GetDateForRowHelper(mergedAL[0]));
 			}
-			TimeSpan timeSpanPeriod=TimeSpan.Zero;//used to add up totals for entire page. (Not used. Left over from when this code existed in the UI.)
-			TimeSpan timeSpanOT=TimeSpan.Zero;//overtime for the entire period
-			Calendar calendar=CultureInfo.CurrentCulture.Calendar;
-			CalendarWeekRule calendarWeekRule=CalendarWeekRule.FirstFullWeek;// CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule;
-			DateTime dateNow=DateTime.MinValue;
-			DateTime datePrevious=DateTime.MinValue;
+			bool prevHours=weekSpan!=TimeSpan.Zero;
+			TimeSpan periodSpan=TimeSpan.Zero;//used to add up totals for entire page. (Not used. Left over from when this code existed in the UI.)
+			TimeSpan otspan=TimeSpan.Zero;//overtime for the entire period
+			Calendar cal=CultureInfo.CurrentCulture.Calendar;
+			CalendarWeekRule rule=CalendarWeekRule.FirstFullWeek;// CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule;
+			DateTime curDate=DateTime.MinValue;
+			DateTime previousDate=DateTime.MinValue;
 			Type type;
-			ClockEvent clockEvent;
-			TimeAdjust timeAdjust;
-			for(int i=0;i<arrayListMerged.Count;i++) {
-				type=arrayListMerged[i].GetType();
-				datePrevious=dateNow;
+			ClockEvent clock;
+			TimeAdjust adjust;
+			for(int i=0;i<mergedAL.Count;i++) {
+				type=mergedAL[i].GetType();
+				previousDate=curDate;
 				//clock event row---------------------------------------------------------------------------------------------
 				if(type==typeof(ClockEvent)) {
-					clockEvent=(ClockEvent)arrayListMerged[i];
-					if(timeSpanPreviousHours!=TimeSpan.Zero) {//Add in previous pay period's hours for this week if the week started in the middle of last payperiod.  Only need to do it once.
-						listClinicNumTimeSpansWeek.Add(new ClinicNumTimeSpan(clockEvent.ClinicNum,timeSpanPreviousHours));
-						timeSpanWeek+=timeSpanPreviousHours;
-						timeSpanPreviousHours=TimeSpan.Zero;
+					clock=(ClockEvent)mergedAL[i];
+					if(prevHours) {//Add in previous pay period's hours for this week if the week started in the middle of last payperiod.  Only need to do it once.
+						listWeek.Add(Tuple.Create(clock.ClinicNum,weekSpan));
+						prevHours=false;
 					}
-					dateNow=clockEvent.TimeDisplayed1.Date;
-					if(clockEvent.TimeDisplayed2.Year<1880) {
+					curDate=clock.TimeDisplayed1.Date;
+					if(clock.TimeDisplayed2.Year<1880) {
 						//ignore clock event where user has not clocked out yet.
 					}
 					else {
-						timeSpanOne=clockEvent.TimeDisplayed2-clockEvent.TimeDisplayed1;
-						timeSpanDay+=timeSpanOne;
-						timeSpanWeek+=timeSpanOne;
-						timeSpanPeriod+=timeSpanOne;
-						listClinicNumTimeSpansWeek.Add(new ClinicNumTimeSpan(clockEvent.ClinicNum,timeSpanOne));
+						oneSpan=clock.TimeDisplayed2-clock.TimeDisplayed1;
+						daySpan+=oneSpan;
+						weekSpan+=oneSpan;
+						periodSpan+=oneSpan;
+						listWeek.Add(Tuple.Create(clock.ClinicNum,oneSpan));
 					}
 					//Adjust---------------------------------
-					timeSpanOneAdj=TimeSpan.Zero;
-					if(clockEvent.AdjustIsOverridden) {
-						timeSpanOneAdj+=clockEvent.Adjust;
+					oneAdj=TimeSpan.Zero;
+					if(clock.AdjustIsOverridden) {
+						oneAdj+=clock.Adjust;
 					}
 					else {
-						timeSpanOneAdj+=clockEvent.AdjustAuto;//typically zero
+						oneAdj+=clock.AdjustAuto;//typically zero
 					}
-					timeSpanDay+=timeSpanOneAdj;
-					timeSpanWeek+=timeSpanOneAdj;
-					timeSpanPeriod+=timeSpanOneAdj;
-					if(timeSpanOneAdj!=TimeSpan.Zero) {//take adjustments from breaks away from the OT values in the dictionary
-						listClinicNumTimeSpansWeek.Add(new ClinicNumTimeSpan(clockEvent.ClinicNum,timeSpanOneAdj));
+					daySpan+=oneAdj;
+					weekSpan+=oneAdj;
+					periodSpan+=oneAdj;
+					if(oneAdj!=TimeSpan.Zero) {//take adjustments from breaks away from the OT values in the dictionary
+						listWeek.Add(Tuple.Create(clock.ClinicNum,oneAdj));
 					}
 					//Overtime------------------------------
-					timeSpanOneOT=TimeSpan.Zero;
-					if(clockEvent.OTimeHours!=TimeSpan.FromHours(-1)) {//overridden
-						timeSpanOneOT=clockEvent.OTimeHours;
+					oneOT=TimeSpan.Zero;
+					if(clock.OTimeHours!=TimeSpan.FromHours(-1)) {//overridden
+						oneOT=clock.OTimeHours;
 					}
 					else {
-						timeSpanOneOT=clockEvent.OTimeAuto;//typically zero
+						oneOT=clock.OTimeAuto;//typically zero
 					}
-					timeSpanOT+=timeSpanOneOT;
-					timeSpanDay-=timeSpanOneOT;
-					timeSpanWeek-=timeSpanOneOT;
-					timeSpanPeriod-=timeSpanOneOT;
-					if(timeSpanOneOT>TimeSpan.Zero) {
-						listClinicNumTimeSpansWeek.Add(new ClinicNumTimeSpan(clockEvent.ClinicNum,-timeSpanOneOT));
+					otspan+=oneOT;
+					daySpan-=oneOT;
+					weekSpan-=oneOT;
+					periodSpan-=oneOT;
+					if(oneOT>TimeSpan.Zero) {
+						listWeek.Add(Tuple.Create(clock.ClinicNum,-oneOT));
 					}					
 					//Daily-----------------------------------
 					//if this is the last entry for a given date
-					if(i==arrayListMerged.Count-1//if this is the last row
-						|| GetDateForRowHelper(arrayListMerged[i+1]) != dateNow)//or the next row is a different date
-					{
-						timeSpanDay=TimeSpan.Zero;
+					if(i==mergedAL.Count-1//if this is the last row
+		        || GetDateForRowHelper(mergedAL[i+1]) != curDate)//or the next row is a different date
+		      {
+						daySpan=TimeSpan.Zero;
 					}
 					else {//not the last entry for the day
 					}
 					//Weekly-------------------------------------
-					timeSpanArrayWeeklyTotals[i]=timeSpanWeek;
+					WeeklyTotals[i]=weekSpan;
 					//if this is the last entry for a given week
-					if(i==arrayListMerged.Count-1//if this is the last row 
-						|| calendar.GetWeekOfYear(GetDateForRowHelper(arrayListMerged[i+1]),calendarWeekRule,(DayOfWeek)PrefC.GetInt(PrefName.TimeCardOvertimeFirstDayOfWeek))//or the next row has a
-						!= calendar.GetWeekOfYear(clockEvent.TimeDisplayed1.Date,calendarWeekRule,(DayOfWeek)PrefC.GetInt(PrefName.TimeCardOvertimeFirstDayOfWeek)))//different week of year
-					{
-						_listEvents.Add(listClinicNumTimeSpansWeek);
-						listClinicNumTimeSpansWeek=new List<ClinicNumTimeSpan>();//start over for the next week.
-						timeSpanWeek=TimeSpan.Zero;
+					if(i==mergedAL.Count-1//if this is the last row 
+		        || cal.GetWeekOfYear(GetDateForRowHelper(mergedAL[i+1]),rule,(DayOfWeek)PrefC.GetInt(PrefName.TimeCardOvertimeFirstDayOfWeek))//or the next row has a
+		        != cal.GetWeekOfYear(clock.TimeDisplayed1.Date,rule,(DayOfWeek)PrefC.GetInt(PrefName.TimeCardOvertimeFirstDayOfWeek)))//different week of year
+		      {
+						_listEvents.Add(listWeek);
+						listWeek=new List<Tuple<long,TimeSpan>>();//start over for the next week.
+						weekSpan=TimeSpan.Zero;
 					}
 				}
 				//adjustment row--------------------------------------------------------------------------------------
 				else if(type==typeof(TimeAdjust)) {
-					timeAdjust=(TimeAdjust)arrayListMerged[i];
-					if(timeSpanPreviousHours!=TimeSpan.Zero) {//Add in previous pay period's hours for this week if the payperiod starts in the middle of the week.  Only need to do it once.
-						listClinicNumTimeSpansWeek.Add(new ClinicNumTimeSpan(timeAdjust.ClinicNum,timeSpanPreviousHours));
-						timeSpanWeek+=timeSpanPreviousHours;
-						timeSpanPreviousHours=TimeSpan.Zero;
-					}
-					dateNow=timeAdjust.TimeEntry.Date;
-					if(!timeAdjust.IsUnpaidProtectedLeave) {
+					adjust=(TimeAdjust)mergedAL[i];
+					curDate=adjust.TimeEntry.Date;
+					if(!adjust.IsUnpaidProtectedLeave) {
 						//Adjust------------------------------
-						timeSpanDay+=timeAdjust.RegHours;//might be negative
-						timeSpanWeek+=timeAdjust.RegHours;
-						timeSpanPeriod+=timeAdjust.RegHours;
-						timeSpanOneAdj=timeAdjust.RegHours;
-						if(timeSpanOneAdj!=TimeSpan.Zero) {
-							listClinicNumTimeSpansWeek.Add(new ClinicNumTimeSpan(timeAdjust.ClinicNum,timeSpanOneAdj));
+						daySpan+=adjust.RegHours;//might be negative
+						weekSpan+=adjust.RegHours;
+						periodSpan+=adjust.RegHours;
+						oneAdj=adjust.RegHours;
+						if(oneAdj!=TimeSpan.Zero) {
+							listWeek.Add(Tuple.Create(adjust.ClinicNum,oneAdj));
 						}
 						//Overtime------------------------------
-						timeSpanOT+=timeAdjust.OTimeHours;
-						timeSpanOneOT=timeAdjust.OTimeHours;
-						if(timeSpanOneOT!=TimeSpan.Zero) {
-							listClinicNumTimeSpansWeek.Add(new ClinicNumTimeSpan(timeAdjust.ClinicNum,timeSpanOneOT));
+						otspan+=adjust.OTimeHours;
+						oneOT=adjust.OTimeHours;
+						if(oneOT!=TimeSpan.Zero) {
+							listWeek.Add(Tuple.Create(adjust.ClinicNum,oneOT));
 						}
 					}
 					//Daily-----------------------------------
 					//if this is the last entry for a given date
-					if(i==arrayListMerged.Count-1//if this is the last row
-						|| GetDateForRowHelper(arrayListMerged[i+1]) != dateNow)//or the next row is a different date
-					{
-						timeSpanDay=new TimeSpan(0);
+					if(i==mergedAL.Count-1//if this is the last row
+		        || GetDateForRowHelper(mergedAL[i+1]) != curDate)//or the next row is a different date
+		      {
+						daySpan=new TimeSpan(0);
 					}
 					//Weekly-------------------------------------
-					timeSpanArrayWeeklyTotals[i]=timeSpanWeek;
+					WeeklyTotals[i]=weekSpan;
 					//if this is the last entry for a given week
-					if(i==arrayListMerged.Count-1//if this is the last row 
-						|| calendar.GetWeekOfYear(GetDateForRowHelper(arrayListMerged[i+1]),calendarWeekRule,(DayOfWeek)PrefC.GetInt(PrefName.TimeCardOvertimeFirstDayOfWeek))//or the next row has a
-						!= calendar.GetWeekOfYear(timeAdjust.TimeEntry.Date,calendarWeekRule,(DayOfWeek)PrefC.GetInt(PrefName.TimeCardOvertimeFirstDayOfWeek)))//different week of year
-					{
-						_listEvents.Add(listClinicNumTimeSpansWeek);
-						listClinicNumTimeSpansWeek=new List<ClinicNumTimeSpan>();//start over for the next week.
-						timeSpanWeek=new TimeSpan(0);
+					if(i==mergedAL.Count-1//if this is the last row 
+		        || cal.GetWeekOfYear(GetDateForRowHelper(mergedAL[i+1]),rule,(DayOfWeek)PrefC.GetInt(PrefName.TimeCardOvertimeFirstDayOfWeek))//or the next row has a
+		        != cal.GetWeekOfYear(adjust.TimeEntry.Date,rule,(DayOfWeek)PrefC.GetInt(PrefName.TimeCardOvertimeFirstDayOfWeek)))//different week of year
+		      {
+						_listEvents.Add(listWeek);
+						listWeek=new List<Tuple<long,TimeSpan>>();//start over for the next week.
+						weekSpan=new TimeSpan(0);
 					}
 				}
 			}
-			for(int i=0;i<timeSpanArrayWeeklyTotals.Length;i++) {
-				listTimeSpans.Add(timeSpanArrayWeeklyTotals[i]);
+			foreach(TimeSpan week in WeeklyTotals) {
+				retVal.Add(week);
 			}
-			return listTimeSpans;
+			return retVal;
 		}
 
-		private static DateTime GetDateForRowHelper(object objTimeEvent) {
-			if(objTimeEvent.GetType()==typeof(ClockEvent)) {
-				return ((ClockEvent)objTimeEvent).TimeDisplayed1.Date;
+		private static DateTime GetDateForRowHelper(object timeEvent) {
+			if(timeEvent.GetType()==typeof(ClockEvent)) {
+				return ((ClockEvent)timeEvent).TimeDisplayed1.Date;
 			}
-			if(objTimeEvent.GetType()==typeof(TimeAdjust)) {
-				return ((TimeAdjust)objTimeEvent).TimeEntry.Date;
+			else if(timeEvent.GetType()==typeof(TimeAdjust)) {
+				return ((TimeAdjust)timeEvent).TimeEntry.Date;
 			}
 			return DateTime.MinValue;
 		}

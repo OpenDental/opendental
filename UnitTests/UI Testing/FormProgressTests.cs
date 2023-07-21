@@ -26,6 +26,8 @@ namespace UnitTests
 			ODProgress.ShowAction(
 				DoThings,
 				startingMessage:"Doing things...",
+				typeEvent:typeof(ProgressBarEvent),
+				odEventType:ODEventType.ProgressBar,
 				actionException:ex =>  {
 					FriendlyException.Show("Error doing things.",ex);
 				}
@@ -33,110 +35,72 @@ namespace UnitTests
 		}
 
 		private void butNew_Click(object sender, EventArgs e){
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
+			//progressOD.ProgStyle=ProgressBarStyle.Blocks;
 			progressOD.StartingMessage="Preparing";
 			progressOD.ActionMain=DoThings;
-			//progressOD.TestSleep=true;
-			try{
-				progressOD.ShowDialog();
-			}
-			catch(Exception ex){
-				MsgBox.Show(ex.Message);
-			}
-			if(progressOD.IsCancelled){
-				MsgBox.Show("Cancelled");
-			}
-			if(progressOD.IsSuccess){
-				MsgBox.Show("Success");
-			}
-			else{
-				MsgBox.Show("Failure");
-			}
+			progressOD.TestSleep=true;
+			progressOD.ShowDialogProgress();
 		}
 
 		private void butHistory_Click(object sender,EventArgs e) {
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			//progressOD.ProgStyle=ProgressBarStyle.Blocks;
 			progressOD.StartingMessage="Preparing";
 			progressOD.ActionMain=DoThings;
 			progressOD.HasHistory=true;
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
 				FriendlyException.Show("Error doing things.",ex);
 			}
 		}
 
-		private void butBlocks_Click(object sender,EventArgs e) {
-			ProgressWin progressOD=new ProgressWin();
-			progressOD.IsBlocks=true;
-			progressOD.StartingMessage="Preparing";
-			progressOD.ActionMain=DoThings;
-			//progressOD.TestSleep=true;
-			progressOD.ShowDialog();
-		}
-
 		private void butChain_Click(object sender,EventArgs e) {
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.HasHistory=true;
-			progressOD.ForceCloseHistory=true;
+			progressOD.HistoryClose=true;
 			progressOD.ActionMain=() => { 
-				ODEvent.Fire(ODEventType.ProgressBar,"Doing first thing");
-				Thread.Sleep(1000);
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,"Doing first thing");
+				//do something
 				};
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			string progressMsg=progressOD.HistoryMsg;
 			//some intermittent code here
-			Thread.Sleep(1000);
-			progressOD=new ProgressWin();
+			progressOD=new ProgressOD();
 			progressOD.HasHistory=true;
 			progressOD.HistoryMsg=progressMsg;
 			progressOD.ActionMain=() => { 
-				ODEvent.Fire(ODEventType.ProgressBar,"Doing second thing");
-				Thread.Sleep(1000);
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,"Doing second thing");
+				//do something
 				};
 			//dlg will not close here because HistoryClose is not set true
-			progressOD.ShowDialog();			
+			progressOD.ShowDialogProgress();			
 		}
 
 		private void DoThings(){
 			for(int i=0;i<10;i++){
 				if(i==3){
-					//throw new Exception("Exception msg");
-					string str="Doing step "+i.ToString()+" plus extra text";
-					ProgressBarHelper progressBarHelper = new ProgressBarHelper(str,
+					ProgressBarHelper progressBarHelper = new ProgressBarHelper("Doing step "+i.ToString()+" plus extra text",
 						blockValue: i+1,blockMax: 9);
-					//ODEvent.UpdateProgressMsg(progressBarHelper);
-					//This next line is an alternative to the above to demonstrate that the old style of ODEvents is still supported.
-					ODEvent.Fire(ODEventType.Cache,progressBarHelper);
-					//old:
-					//ProgressBarEvent.Fire(ODEventType.ProgressBar,progressBarHelper);
+					ProgressBarEvent.Fire(ODEventType.ProgressBar,progressBarHelper);
 				}
 				else{
-					string str="Doing step "+i.ToString();
-					ProgressBarHelper progressBarHelper = new ProgressBarHelper(str,
+					ProgressBarHelper progressBarHelper = new ProgressBarHelper("Doing step "+i.ToString(),
 						blockValue: i+1,blockMax: 9);
-					//ODEvent.UpdateProgressMsg(progressBarHelper);
-					//This next line is an alternative to the above to demonstrate that the old style of ODEvents is still supported.
-					//ODEvent.Fire(ODEventType.Cache,str);
-					//the line below was yet another way to do it, but it was never working:
-					//ProgressBarEvent.Fire(ODEventType.ProgressBar,str);
-					//The line below is a way to fix the line above:
-					ODEvent.Fire(ODEventType.ProgressBar,progressBarHelper);
-					//old:
-					//ProgressBarEvent.Fire(ODEventType.ProgressBar,progressBarHelper);
+					ProgressBarEvent.Fire(ODEventType.ProgressBar,progressBarHelper);
 				}
 				Thread.Sleep(1000);
 			}
 		}
 
 		private void butException_Click(object sender, EventArgs e){
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=()=> throw new Exception("error") ;
 			progressOD.TestSleep=true;
 			//try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			//}
 			//catch{
 
@@ -145,14 +109,14 @@ namespace UnitTests
 		}
 
 		private void butInnerException_Click(object sender,EventArgs e) {
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=()=> {
 				//Type typeFormProgressTests=typeof(FormProgressTests);
 				MethodInfo methodInfo=typeof(FormProgressTests).GetMethod("MethodForInnerException");
 				methodInfo.Invoke(null,null);
 			};
 			//progressOD.TestSleep=true;
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 		}
 
 		public static void MethodForInnerException(){
@@ -161,12 +125,12 @@ namespace UnitTests
 		}
 
 		private void butHideCancel_Click(object sender,EventArgs e) {
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				Thread.Sleep(8000);
 			};
 			progressOD.ShowCancelButton=false;
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled){
 				return;
 			}

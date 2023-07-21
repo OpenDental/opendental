@@ -79,8 +79,12 @@ namespace OpenDental {
 					return;
 				}
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.UserLogOnOff,0,"User: "+Security.CurUser.UserNum+" has logged on.");
+			SecurityLogs.MakeLogEntry(Permissions.UserLogOnOff,0,"User: "+Security.CurUser.UserNum+" has logged on.");
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butExit_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

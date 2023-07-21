@@ -18,20 +18,12 @@ namespace OpenDental {
 		public FrmAccountingLock()
 		{
 			InitializeComponent();
-			Load+=FrmAccountingLock_Load;
-			PreviewKeyDown+=FrmAccountingLock_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmAccountingLock_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmAccountingLock_Loaded(object sender,RoutedEventArgs e) {
 			if(PrefC.GetDate(PrefName.AccountingLockDate).Year>1880){
 				textVDate.Text=PrefC.GetDate(PrefName.AccountingLockDate).ToShortDateString();
-			}
-		}
-
-		private void FrmAccountingLock_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
 			}
 		}
 
@@ -45,6 +37,26 @@ namespace OpenDental {
 			}
 			IsDialogOK=true;
 		}
-
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

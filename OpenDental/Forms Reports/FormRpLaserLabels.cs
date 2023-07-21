@@ -78,6 +78,9 @@ namespace OpenDental {
 		//
 		//Common Area for All Tabs in Laser Labels Report
 		//
+		private void butCancel_Click(object sender,EventArgs e) {
+			Close();
+		}
 
 		private void butOK_Click(object sender,EventArgs e) {
 			string patStat;
@@ -356,7 +359,7 @@ namespace OpenDental {
 				text += AddrTable.Rows[labelsPrinted]["State"].ToString() + "   "
                     + AddrTable.Rows[labelsPrinted]["Zip"].ToString() + "\r\n";
 				Rectangle rect=new Rectangle((int)xPos,(int)yPos,275,100);
-				OpenDental.InternalTools.Phones.MapPanel.FitTextOld(text,new Font(FontFamily.GenericSansSerif,11),Brushes.Black,rect,new StringFormat(),g);
+				MapCubicle.FitText(text,new Font(FontFamily.GenericSansSerif,11),Brushes.Black,rect,new StringFormat(),g);
 				//reposition for next label
 				xPos += 275;
 				if(xPos > 850) {//drop a line
@@ -458,21 +461,23 @@ namespace OpenDental {
 		}
 
 		private void butStartName_Click(object sender,EventArgs e) {
-			FrmPatientSelect frmPatientSelect = new FrmPatientSelect();
-			frmPatientSelect.ShowDialog();
-			if(frmPatientSelect.IsDialogCancel) {
+			using FormPatientSelect FormPS = new FormPatientSelect();
+			FormPS.IsSelectionModeOnly = true;
+			FormPS.ShowDialog();
+			if(FormPS.DialogResult != DialogResult.OK) {
 				return;
 			}
-			textStartName.Text=Patients.GetPat(frmPatientSelect.PatNumSelected).GetNameLFnoPref();
+			textStartName.Text=Patients.GetPat(FormPS.PatNumSelected).GetNameLFnoPref();
 		}
 
 		private void butEndName_Click(object sender,EventArgs e) {
-			FrmPatientSelect frmPatientSelect = new FrmPatientSelect();
-			frmPatientSelect.ShowDialog();
-			if(frmPatientSelect.IsDialogCancel) {
+			using FormPatientSelect FormPS = new FormPatientSelect();
+			FormPS.IsSelectionModeOnly = true;
+			FormPS.ShowDialog();
+			if(FormPS.DialogResult != DialogResult.OK) {
 				return;
 			}
-			textEndName.Text=Patients.GetPat(frmPatientSelect.PatNumSelected).GetNameLFnoPref();
+			textEndName.Text=Patients.GetPat(FormPS.PatNumSelected).GetNameLFnoPref();
 			if(String.Compare(textStartName.Text,textEndName.Text)==1) {
 				textEndName.Text = textStartName.Text.ToString();
 
@@ -523,16 +528,17 @@ namespace OpenDental {
 		}
 
 		private void butInsCo_Click(object sender,EventArgs e) {
-			FrmInsPlanSelect frmInsPlanSelect = new FrmInsPlanSelect();
-			frmInsPlanSelect.ShowDialog();
-			if(!frmInsPlanSelect.IsDialogOK) {
+			using FormInsPlans FormIP = new FormInsPlans();
+			FormIP.IsSelectMode = true;
+			FormIP.ShowDialog();
+			if(FormIP.DialogResult == DialogResult.Cancel) {
 				return;
 			}
 			insRange=0;
 			if(sender==butInsCoEnd) {
 				insRange=1;
 			}
-			FillFromInsCoList(frmInsPlanSelect.InsPlanSelected.CarrierNum);
+			FillFromInsCoList(FormIP.InsPlanSelected.CarrierNum);
 		}
 		//
 		//Custom Tab
@@ -625,6 +631,5 @@ namespace OpenDental {
 		private void butBirthdayMonth_Click(object sender,EventArgs e) {
 			SetNextMonth();
 		}
-
 	}
 }

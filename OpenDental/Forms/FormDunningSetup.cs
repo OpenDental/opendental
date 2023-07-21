@@ -24,7 +24,7 @@ namespace OpenDental {
 			listBill.Items.Add("("+Lan.g(this,"all")+")");
 			listBill.SetSelected(0,true);
 			listBill.Items.AddStrings(_listDefsBillingTypes.Select(x => x.ItemName));
-			comboClinics.ClinicNumSelected=Clinics.ClinicNum;
+			comboClinics.SelectedClinicNum=Clinics.ClinicNum;
 			FillGrids(true);
 		}
 
@@ -104,7 +104,7 @@ namespace OpenDental {
 		}
 
 		private bool ValidateDunningFilters(Dunning dunning) {
-			if((!comboClinics.IsAllSelected && comboClinics.ClinicNumSelected!=dunning.ClinicNum)
+			if((!comboClinics.IsAllSelected && comboClinics.SelectedClinicNum!=dunning.ClinicNum)
 				||(!listBill.SelectedIndices.Contains(0) && !listBill.SelectedIndices.OfType<int>().Select(x => _listDefsBillingTypes[x-1].DefNum).Contains(dunning.BillingType))
 				||(!radioAny.Checked && dunning.AgeAccount!=(byte)(30*new List<RadioButton> { radioAny,radio30,radio60,radio90 }.FindIndex(x => x.Checked)))//0, 30, 60, or 90
 				||(!string.IsNullOrWhiteSpace(textAdv.Text) && dunning.DaysInAdvance!=PIn.Int(textAdv.Text,false))//blank=0
@@ -134,7 +134,7 @@ namespace OpenDental {
 			Dunning dunning=new Dunning();
 			long clinicNum=0;
 			if(!comboClinics.IsAllSelected) {
-				clinicNum=comboClinics.ClinicNumSelected;
+				clinicNum=comboClinics.SelectedClinicNum;
 			}
 			if(Security.CurUser.ClinicIsRestricted) {
 				long UserClinicNum=Clinics.GetForUserod(Security.CurUser,true).Select(x => x.ClinicNum).FirstOrDefault();
@@ -157,6 +157,10 @@ namespace OpenDental {
 			Dunnings.Insert(dunning);
 			FillGrids(true);
 			gridDunning.SetSelected(gridDunning.ListGridRows.OfType<GridRow>().ToList().FindIndex(x => ((Dunning)x.Tag).DunningNum==dunning.DunningNum),true);
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
 		}
 		
 	}

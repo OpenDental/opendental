@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpActivePatients));
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.listBillingTypes = new OpenDental.UI.ListBox();
 			this.checkAllClin = new OpenDental.UI.CheckBox();
 			this.listClin = new OpenDental.UI.ListBox();
@@ -46,12 +47,22 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(592, 454);
+			this.butOK.Location = new System.Drawing.Point(511, 454);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(592, 454);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// listBillingTypes
 			// 
@@ -189,10 +200,10 @@ namespace OpenDental{
 			this.label4.Text = "Patient Status";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
-			// listPatientStatuses
+			// listPatStatus
 			// 
 			this.listPatientStatuses.Location = new System.Drawing.Point(181, 240);
-			this.listPatientStatuses.Name = "listPatientStatuses";
+			this.listPatientStatuses.Name = "listPatStatus";
 			this.listPatientStatuses.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
 			this.listPatientStatuses.Size = new System.Drawing.Size(163, 199);
 			this.listPatientStatuses.TabIndex = 73;
@@ -218,6 +229,7 @@ namespace OpenDental{
 			this.Controls.Add(this.dateStart);
 			this.Controls.Add(this.labelTO);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormRpActivePatients";
 			this.Text = "Active Patients Report";
@@ -229,6 +241,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.ListBox listBillingTypes;
 		private OpenDental.UI.CheckBox checkAllClin;
 		private OpenDental.UI.ListBox listClin;

@@ -10,7 +10,7 @@ namespace UnitTestsCore {
 		///<param name="procDate">If not included, will be set to DateTime.Now.</param>
 		public static Procedure CreateProcedure(Patient pat,string procCodeStr,ProcStat procStatus,string toothNum,double procFee,
 			DateTime procDate=default(DateTime),int priority=0,long plannedAptNum=0,long provNum=0,long aptNum=0,int baseUnits=0,string surf="",
-			long procNumLab=0,bool doInsert=true, double discount=0, long clinicNum=0,bool isLocked=false,long codeNum=0,DateTime dateTStamp=default(DateTime),string toothRange="")
+			long procNumLab=0,bool doInsert=true, double discount=0, long clinicNum=0,bool isLocked=false,long codeNum=0,DateTime dateTStamp=default(DateTime))
 		{
 			Procedure proc=new Procedure();
 			proc.CodeNum=ProcedureCodeT.CreateProcCode(procCodeStr).CodeNum;
@@ -34,7 +34,7 @@ namespace UnitTestsCore {
 			proc.AptNum=aptNum;
 			proc.PlannedAptNum=plannedAptNum;
 			proc.ClinicNum=pat.ClinicNum;
-			proc.ToothRange=toothRange;
+			proc.ToothRange="";
 			proc.Surf=surf;
 			proc.BaseUnits=baseUnits;
 			proc.Discount=discount;

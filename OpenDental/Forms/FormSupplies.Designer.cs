@@ -29,6 +29,7 @@ namespace OpenDental{
 			this.butUp = new OpenDental.UI.Button();
 			this.butDown = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butPrint = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.labelSuppliers = new System.Windows.Forms.Label();
@@ -85,12 +86,22 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(675, 621);
+			this.butOK.Location = new System.Drawing.Point(594, 622);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 27;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(675, 622);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 26;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butPrint
 			// 
@@ -271,6 +282,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butUp);
 			this.Controls.Add(this.butDown);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.labelSuppliers);
@@ -301,6 +313,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textFind;
 		private UI.Button butPrint;
 		private UI.Button butOK;
+		private UI.Button butCancel;
 		private UI.Button butUp;
 		private UI.Button butDown;
 		private System.Windows.Forms.Label label2;

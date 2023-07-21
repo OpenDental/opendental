@@ -21,14 +21,15 @@ namespace OpenDental {
 		///<summary></summary>
 		public FrmDiseaseEdit(Disease disease)
 		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
+			//Lan.F(this);
 			_disease=disease;
-			Load+=FrmDiseaseEdit_Load;
-			PreviewKeyDown+=FrmDiseaseEdit_PreviewKeyDown;
 		}
 
-		private void FrmDiseaseEdit_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmDiseaseEdit_Loaded(object sender,RoutedEventArgs e) {
 			DiseaseDef diseaseDef=DiseaseDefs.GetItem(_disease.DiseaseDefNum);//guaranteed to have one
 			textProblem.Text=diseaseDef.DiseaseName;
 			string snomedDesc=Snomeds.GetCodeAndDescription(diseaseDef.SnomedCode);
@@ -96,7 +97,8 @@ namespace OpenDental {
 				comboEhrFunctionalStatus.Items.Add(nameFunctionalStatusTranslated);
 			}
 			comboEhrFunctionalStatus.SelectedIndex=(int)_disease.FunctionStatus;//The default value is 'Problem'
-			if(!Security.IsAuthorized(EnumPermType.PatProblemListEdit)) {
+			if(!Security.IsAuthorized(Permissions.PatProblemListEdit)) {
+				//When disabled they are not faded
 				butSave.IsEnabled=false;
 				butDelete.IsEnabled=false;
 			}
@@ -128,15 +130,9 @@ namespace OpenDental {
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete?")) {
 				return;
 			}			
-			SecurityLogs.MakeLogEntry(EnumPermType.PatProblemListEdit,_disease.PatNum,DiseaseDefs.GetName(_disease.DiseaseDefNum)+" deleted");
+			SecurityLogs.MakeLogEntry(Permissions.PatProblemListEdit,_disease.PatNum,DiseaseDefs.GetName(_disease.DiseaseDefNum)+" deleted");
 			Diseases.Delete(_disease);
 			IsDialogOK=true;
-		}
-
-		private void FrmDiseaseEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
 		}
 
 		private void butSave_Click(object sender, System.EventArgs e) {
@@ -149,7 +145,7 @@ namespace OpenDental {
 			if(IsNew){
 				//This code is never hit in current implementation 09/26/2013.
 				Diseases.Insert(_disease);
-				SecurityLogs.MakeLogEntry(EnumPermType.PatProblemListEdit,_disease.PatNum,DiseaseDefs.GetName(_disease.DiseaseDefNum)+" added");
+				SecurityLogs.MakeLogEntry(Permissions.PatProblemListEdit,_disease.PatNum,DiseaseDefs.GetName(_disease.DiseaseDefNum)+" added");
 			}
 			else{
 				try { 
@@ -160,10 +156,30 @@ namespace OpenDental {
 					return;
 				}
 				Diseases.Update(_disease);
-				SecurityLogs.MakeLogEntry(EnumPermType.PatProblemListEdit,_disease.PatNum,DiseaseDefs.GetName(_disease.DiseaseDefNum)+" edited");
+				SecurityLogs.MakeLogEntry(Permissions.PatProblemListEdit,_disease.PatNum,DiseaseDefs.GetName(_disease.DiseaseDefNum)+" edited");
 			}
 			IsDialogOK=true;
 		}
-
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

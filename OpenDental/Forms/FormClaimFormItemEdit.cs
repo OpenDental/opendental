@@ -53,7 +53,6 @@ namespace OpenDental {
 				"PriInsAddress2",
 				"PriInsAddressComplete",
 				"PriInsCity",
-				"PriInsElectID",
 				"PriInsST",
 				"PriInsZip",
 				"OtherInsExists",
@@ -75,7 +74,6 @@ namespace OpenDental {
 				"OtherInsCarrierName",
 				"OtherInsAddress",
 				"OtherInsCity",
-				"OtherInsElectID",
 				"OtherInsST",
 				"OtherInsZip",
 				"SubscrLastFirst",
@@ -282,7 +280,6 @@ namespace OpenDental {
 				"CorrectionType",
 				"DateIllnessInjuryPreg",
 				"DateIllnessInjuryPregQualifier",
-				"DateLastSRP",
 				"DateOther",
 				"DateOtherQualifier",
 				"IsOutsideLab",
@@ -326,7 +323,6 @@ namespace OpenDental {
 				"ToothNumOrArea",
 				"TreatDentMedicaidID",
 				"TreatProvNPI",
-				"TreatProvSpecialty",
 				"UnitQty",
 				"UnitQtyOrCount"
 			}.Select(y => "P"+x+y)))//P1-15SystemAndTeeth..., 28 fields, these will be alphabatized at the end of the list of all fields
@@ -355,7 +351,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			SaveAndClose();
 		}
 
@@ -375,5 +371,37 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

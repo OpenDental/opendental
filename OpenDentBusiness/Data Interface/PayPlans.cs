@@ -106,17 +106,17 @@ namespace OpenDentBusiness{
 			List<Adjustment> listAdjForProcs=Adjustments.GetForProcs(listProcedureLinkFKeys);
 			List<PaySplit> listSplitsForProcs=PaySplits.GetPaySplitsFromProcs(listProcedureLinkFKeys);
 			List<PaySplit> listSplitsForAdjustments=PaySplits.GetForAdjustments(listAdjustmentLinkFKeys);
-			List<PayPlan> listPayPlans=GetMany(listPayPlanNums.ToArray());
 			#endregion Get Data
 			List<long> listPayPlansOvercharged=new List<long>();
-			foreach(PayPlan payPlan in listPayPlans) {
-				if(payPlan.DatePayPlanStart.Date>DateTime.Now.Date) {
-					continue;
-				}
-				List<PayPlanLink> listLinksForPayPlan=listPayPlanLinksAll.FindAll(x => x.PayPlanNum==payPlan.PayPlanNum);
+			foreach(long payPlanNum in listPayPlanNums) {
+				List<PayPlanLink> listLinksForPayPlan=listPayPlanLinksAll.FindAll(x => x.PayPlanNum==payPlanNum);
+				//Get total amount that has been debited for the current pay plan thus far.
+				decimal amtDebitedTotal=listPayPlanCharges.FindAll(x => x.PayPlanNum==payPlanNum && x.ChargeType==PayPlanChargeType.Debit)
+					.Sum(x => (decimal)x.Principal);
 				#region Sum Linked Production
-				double amountOvercharged=0;
+				decimal totalPrincipalForPayPlan=0;
 				foreach(PayPlanLink payPlanLink in listLinksForPayPlan) {
+					PayPlanProductionEntry productionEntry=null;
 					if(payPlanLink.LinkType==PayPlanLinkType.Procedure) {
 						Procedure proc=listProcsAttachedToPayPlan.FirstOrDefault(x => x.ProcNum==payPlanLink.FKey);
 						if(proc!=null) {
@@ -124,57 +124,28 @@ namespace OpenDentBusiness{
 								&& x.PatNum==proc.PatNum
 								&& x.ProvNum==proc.ProvNum
 								&& x.ClinicNum==proc.ClinicNum);
-							if(payPlanLink.AmountOverride!=0) {
-								amountOvercharged+=payPlanLink.AmountOverride;
-							}
-							else {
-								amountOvercharged+=proc.ProcFee*Math.Max(1,proc.BaseUnits+proc.UnitQty);
-								if(!listExplicitAdjs.IsNullOrEmpty()) {
-									amountOvercharged+=listExplicitAdjs.Sum(x=>x.AdjAmt);
-								}
-								List<ClaimProc> listClaimProcsForProc=listClaimProcsForProcs.FindAll(x=>x.ProcNum==proc.ProcNum);
-								double sumIns=0;
-								if(!listClaimProcsForProc.IsNullOrEmpty()) {
-									List<int> listClaimProcStatForInsPaid=ClaimProcs.GetInsPaidStatuses().Select(x => (int)x).ToList();
-									List<int> listClaimProcStatForInsEst=ClaimProcs.GetEstimatedStatuses().Select(x => (int)x).ToList();
-									for(int i=0;i<listClaimProcsForProc.Count();i++) {
-										if(listClaimProcStatForInsPaid.Contains((int)listClaimProcsForProc[i].Status)) {
-											sumIns+=listClaimProcsForProc[i].InsPayAmt+listClaimProcsForProc[i].WriteOff;
-										}
-										else if(listClaimProcStatForInsEst.Contains((int)listClaimProcsForProc[i].Status)) {
-											sumIns+=listClaimProcsForProc[i].InsPayEst;
-											if(listClaimProcsForProc[i].WriteOffEstOverride!=-1) {
-												sumIns+=listClaimProcsForProc[i].WriteOffEstOverride;
-											}
-											else if(listClaimProcsForProc[i].WriteOffEst!=-1) {
-												sumIns+=listClaimProcsForProc[i].WriteOffEst;
-											}
-										}
-									}
-								}
-								amountOvercharged-=sumIns;
-								amountOvercharged-=listSplitsForProcs.FindAll(x=>x.ProcNum==payPlanLink.FKey && x.PayPlanNum==0 && x.PayPlanChargeNum==0).Sum(x=>x.SplitAmt); // Outside Procedure PaySplits
-							}
+							productionEntry=new PayPlanProductionEntry(proc,payPlanLink,listClaimProcsForProcs,listExplicitAdjs,listSplitsForProcs);
 						}
 					}
 					else if(payPlanLink.LinkType==PayPlanLinkType.Adjustment) {
 						Adjustment adj=listAdjsAttachedToPayPlan.FirstOrDefault(x => x.AdjNum==payPlanLink.FKey);
 						if(adj!=null) {
-							if(payPlanLink.AmountOverride!=0) {
-								amountOvercharged+=payPlanLink.AmountOverride;
-							}
-							else {
-								amountOvercharged+=adj.AdjAmt;
-								amountOvercharged-=listSplitsForAdjustments.FindAll(x => x.AdjNum==payPlanLink.FKey && x.PayPlanNum==0 && x.PayPlanChargeNum==0).Sum(x => x.SplitAmt); // Outside Adjustment PaySplits
-							}
+							productionEntry=new PayPlanProductionEntry(adj,payPlanLink,listSplitsForAdjustments);
 						}
 					}
-					amountOvercharged-=listPayPlanCharges.FindAll(x=>x.ChargeType==(int)PayPlanChargeType.Debit && x.FKey==payPlanLink.FKey && x.LinkType==payPlanLink.LinkType).Sum(x=>x.Principal); // Debit PayPlanCharges
+					if(productionEntry!=null) {
+						if(productionEntry.AmountOverride==0) {
+							totalPrincipalForPayPlan+=productionEntry.AmountOriginal;
+						}
+						else {
+							totalPrincipalForPayPlan+=productionEntry.AmountOverride;
+						}
+					}
 				}
 				#endregion Sum Linked Production
-				amountOvercharged=Math.Abs(Math.Min(Math.Round(amountOvercharged,2),0));
-				if(CompareDecimal.IsGreaterThanZero(amountOvercharged)) {
-					listPayPlansOvercharged.Add(payPlan.PayPlanNum);
+				//If the total that has been debited thus far exceeds the total principal for the pay plan, it is overcharged.
+				if(CompareDecimal.IsGreaterThan(amtDebitedTotal,totalPrincipalForPayPlan)) {
+					listPayPlansOvercharged.Add(payPlanNum);
 				}
 			}
 			return GetMany(listPayPlansOvercharged.ToArray()).FindAll(x => x.IsDynamic);
@@ -734,9 +705,9 @@ namespace OpenDentBusiness{
 
 		///<summary>Automatically closes all payment plans that have no future charges and that are paid off.
 		///Returns the number of payment plans that were closed.</summary>
-		public static long AutoClose(bool canIncludeOldPaymentPlans=false,bool canIncludeInsPaymentPlans=false) {
+		public static long AutoClose(bool canIncludeDynamic=false) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetLong(MethodBase.GetCurrentMethod(),canIncludeOldPaymentPlans,canIncludeInsPaymentPlans);
+				return Meth.GetLong(MethodBase.GetCurrentMethod(),canIncludeDynamic);
 			}
 			string command="";
 			DataTable table;
@@ -763,22 +734,19 @@ namespace OpenDentBusiness{
 			long[] arrayPayPlanNums=table.AsEnumerable().Select(x => (long)x["PayPlanNum"]).ToArray();
 			List<PayPlan> listPayPlans=PayPlans.GetMany(arrayPayPlanNums);
 			List<long> listPayPlanNumWithTP=new List<long>();
-			listPayPlanNumWithTP=GetDynamicPayPlanNumsWithTP(listPayPlans.Where(x => x.IsDynamic).Select(x => x.PayPlanNum).ToList());
+			if(canIncludeDynamic) {
+				listPayPlanNumWithTP=GetDynamicPayPlanNumsWithTP(listPayPlans.Where(x => x.IsDynamic).Select(x => x.PayPlanNum).ToList());
+			}
 			int count=0;
-			for(int i=0;i<table.Rows.Count;i++) {
-				long payPlanNum=PIn.Long(table.Rows[i]["PayPlanNum"].ToString());
-				PayPlan payPlan=listPayPlans.Find(x => x.PayPlanNum==payPlanNum);
-				if(payPlan==null) {
-					continue;
-				}
-				if(payPlan.IsDynamic) {
-					if(payPlan.DynamicPayPlanTPOption==DynamicPayPlanTPOptions.AwaitComplete && listPayPlanNumWithTP.Contains(payPlan.PayPlanNum)) {
+			for(int i=0;i<listPayPlans.Count;i++) {
+				if(listPayPlans[i].IsDynamic && canIncludeDynamic) {
+					if(listPayPlans[i].DynamicPayPlanTPOption==DynamicPayPlanTPOptions.AwaitComplete && listPayPlanNumWithTP.Contains(listPayPlans[i].PayPlanNum)) {
 						continue;
 					}
 					double totalPaidAmt=0.00;
-					DynamicPaymentPlanModuleData dynamicPaymentPlanModuleData=PayPlanEdit.GetDynamicPaymentPlanModuleData(payPlan);
-					PayPlanTerms payPlanTerms=PayPlanEdit.GetPayPlanTerms(payPlan,dynamicPaymentPlanModuleData.ListPayPlanLinks);
-					List<PayPlanCharge> listPayPlanChargesExpected=PayPlanEdit.GetPayPlanChargesForDynamicPaymentPlanSchedule(payPlan,payPlanTerms,
+					DynamicPaymentPlanModuleData dynamicPaymentPlanModuleData=PayPlanEdit.GetDynamicPaymentPlanModuleData(listPayPlans[i]);
+					PayPlanTerms payPlanTerms=PayPlanEdit.GetPayPlanTerms(listPayPlans[i],dynamicPaymentPlanModuleData.ListPayPlanLinks);
+					List<PayPlanCharge> listPayPlanChargesExpected=PayPlanEdit.GetPayPlanChargesForDynamicPaymentPlanSchedule(listPayPlans[i],payPlanTerms,
 						dynamicPaymentPlanModuleData.ListPayPlanChargesDb,dynamicPaymentPlanModuleData.ListPayPlanLinks,dynamicPaymentPlanModuleData.ListPaySplits);
 					totalPaidAmt+=PIn.Double(table.Rows[i]["TotPay"].ToString());
 					totalPaidAmt+=PIn.Double(table.Rows[i]["InsPay"].ToString());
@@ -795,28 +763,13 @@ namespace OpenDentBusiness{
 					}
 					//"isLocked" here is passed into "isLocking" further down. We are not locking here because the user has not way to lock the dynamic payment plan from this UI.
 					PayPlanEdit.CloseOutDynamicPaymentPlan(payPlanTerms,dynamicPaymentPlanModuleData,false,dynamicPaymentPlanModuleData.PayPlan.PlanCategory);
-					SecurityLogs.MakeLogEntry(EnumPermType.PayPlanEdit,payPlan.PatNum,Lans.g("PayPlans","Payment Plan closed using Close Payment Plan tool."));
+					SecurityLogs.MakeLogEntry(Permissions.PayPlanEdit,listPayPlans[i].PatNum,Lans.g("PayPlans","Dynamic Payment Plan closed using Close Payment Plan tool."));
 					count++;
 				}
-				else {
-					if(payPlan.InsSubNum>0 && !canIncludeInsPaymentPlans) {
-						continue;
-					}
-					if(payPlan.InsSubNum==0 && !canIncludeOldPaymentPlans) {
-						continue;
-					}
-					payPlan.IsClosed=true;
-					if(payPlan.InsSubNum>0) {
-						//Manually closing ins payment plan will set the CompletedAmt to the total InsPay.
-						payPlan.CompletedAmt=PIn.Double(table.Rows[i]["InsPay"].ToString());
-						PayPlanCharges.UpdateInsPlanPayPlanCharges(payPlan);
-					}
-					PayPlans.Update(payPlan);
-					string logMessage=Lans.g("PayPlans","Patient Payment Plan closed using Close Payment Plan tool.");
-					if(payPlan.InsSubNum>0) {
-						logMessage=Lans.g("PayPlans","Insurance Payment Plan closed using Close Payment Plan tool.");
-					}
-					SecurityLogs.MakeLogEntry(EnumPermType.PayPlanEdit,payPlan.PatNum,logMessage);
+				else if(!listPayPlans[i].IsDynamic) {
+					listPayPlans[i].IsClosed=true;
+					PayPlans.Update(listPayPlans[i]);
+					SecurityLogs.MakeLogEntry(Permissions.PayPlanEdit,listPayPlans[i].PatNum,Lans.g("PayPlans","Patient Payment Plan closed using Close Payment Plan tool."));
 					count++;
 				}
 			}
@@ -844,7 +797,7 @@ namespace OpenDentBusiness{
 			if(payPlan.SecurityHash==null) {//When a payplan is first created through middle tier and not yet refreshed from db, this can be null and should not show a warning triangle.
 				return true;
 			}
-			DateTime dateHashStart=Misc.SecurityHash.GetHashingDate();
+			DateTime dateHashStart=Misc.SecurityHash.DateStart;
 			if(payPlan.PayPlanDate < dateHashStart) { //old
 				return true;
 			}
@@ -865,21 +818,6 @@ namespace OpenDentBusiness{
 				return false;
 			}
 			return true;
-		}
-
-		public static string GetChangeLog(List<string> listChanges) {
-			string log="";
-			for(int i=0;i<listChanges.Count;i++) {
-				if(i > 0) {
-					log+=", ";
-				}
-				if(i==listChanges.Count-1 && listChanges.Count!=1) {
-					log+="and ";
-				}
-				log+=listChanges[i];
-			}
-			log+=" changed.";
-			return log;
 		}
 		#endregion
 

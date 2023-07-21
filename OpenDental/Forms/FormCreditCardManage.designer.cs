@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormCreditCardManage));
+			this.butClose = new OpenDental.UI.Button();
 			this.butDown = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
@@ -32,6 +33,16 @@ namespace OpenDental{
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butAddRecCharge = new OpenDental.UI.Button();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(910, 312);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(82, 26);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butDown
 			// 
@@ -126,6 +137,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butDown);
 			this.Controls.Add(this.butUp);
 			this.Controls.Add(this.butAdd);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormCreditCardManage";
 			this.Text = "Credit Card Manage";
@@ -135,6 +147,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private UI.Button butDown;
 		private UI.Button butUp;
 		private UI.Button butAdd;

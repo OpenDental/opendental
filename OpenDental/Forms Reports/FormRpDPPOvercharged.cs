@@ -144,18 +144,18 @@ namespace OpenDental {
 			bool hasValidationPassed=ValidateDateFields();
 			DataTable tableOverchargedDPP=new DataTable();
 			if(hasValidationPassed) {
-				ProgressWin progressOD=new ProgressWin();
+				ProgressOD progressOD=new ProgressOD();
 				progressOD.ActionMain=() => { 
-					tableOverchargedDPP=RpDPPOvercharged.GetDPPOvercharged(_dateFrom,_dateTo,comboBoxMultiClinics.ListClinicNumsSelected,
+					tableOverchargedDPP=RpDPPOvercharged.GetDPPOvercharged(_dateFrom,_dateTo,comboBoxMultiClinics.ListSelectedClinicNums,
 						comboBoxMultiProv.GetSelectedProvNums(),_patNum);
 				};
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 				if(progressOD.IsCancelled){
 					return;
 				}
 			}
 			string subTitleProviders=Lan.g(this,"All Providers");
-			if(!comboBoxMultiProv.IsAllSelected) {
+			if(comboBoxMultiProv.GetSelectedProvNums().Count>0) {
 				subTitleProviders=Lan.g(this,"For Providers:")+" "+string.Join(",",comboBoxMultiProv.GetSelectedProvNums().Select(x => Providers.GetFormalName(x)));
 			}
 			string subtitleClinics="";
@@ -165,8 +165,8 @@ namespace OpenDental {
 			#region Report Logic
 			//This report will never show progress for printing.  This is because the report is being rebuilt whenever the grid is refreshed.
 			_reportCur=new ReportComplex(true,true,false);
-			_reportCur.ReportName=Lan.g(this,"Overcharged Payment Plans");
-			_reportCur.AddTitle("Title",Lan.g(this,"Overcharged Payment Plans"));
+			_reportCur.ReportName=Lan.g(this,"Overcharged Dynamic Payment Plans");
+			_reportCur.AddTitle("Title",Lan.g(this,"Overcharged Dynamic Payment Plans"));
 			_reportCur.AddSubTitle("Practice Name",PrefC.GetString(PrefName.PracticeTitle));
 			if(_dateFrom==_dateTo) {
 				_reportCur.AddSubTitle("Report Dates",_dateFrom.ToShortDateString());
@@ -240,12 +240,11 @@ namespace OpenDental {
 		}
 
 		private void butFind_Click(object sender,EventArgs e) {
-			FrmPatientSelect frmPatientSelect=new FrmPatientSelect();
-			frmPatientSelect.ShowDialog();
-			if(frmPatientSelect.IsDialogCancel) {
+			using FormPatientSelect formPatientSelect=new FormPatientSelect();
+			if(formPatientSelect.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
-			_patNum=frmPatientSelect.PatNumSelected;
+			_patNum=formPatientSelect.PatNumSelected;
 			textPatient.Text=Patients.GetLim(_patNum).GetNameLF();
 		}
 
@@ -259,34 +258,23 @@ namespace OpenDental {
 				listSelectedGridRows=gridMain.ListGridRows;
 			}
 			List<PayPlanCharge> listChargesToInsert=new List<PayPlanCharge>();
-			List<long> listPatNums=listSelectedGridRows.Select(x => (DataRow)x.Tag)
-				.Select(x => PIn.Long(x["PatNum"].ToString()))
-				.ToList();
-			long[] longArrPayPlanNums=listSelectedGridRows.Select(x => (DataRow)x.Tag)
-				.Select(y => PIn.Long(y["PayPlanNum"].ToString()))
-				.ToArray();
-			List<Family> listFamilies=Patients.GetFamilies(listPatNums);
-			List<PayPlan> listPayPlans=PayPlans.GetMany(longArrPayPlanNums);
 			for(int i = 0;i<listSelectedGridRows.Count;i++) {
 				DataRow dataRow=(DataRow)listSelectedGridRows[i].Tag;
-				PayPlan payPlan=listPayPlans.ToList().Find(x => x.PayPlanNum==PIn.Long(dataRow["PayPlanNum"].ToString()));
-				Family family=listFamilies.Find(x => x.ListPats.Select(x => x.PatNum).Contains(PIn.Long(dataRow["PatNum"].ToString())));
-				if(family==null || payPlan==null) {
-					continue;
-				}
 				//Create Negative PayPlan Charge that counters the debit
-				PayPlanCharge payPlanChargeOffset=PayPlanEdit.CreateDebitChargeDynamic(payPlan,
-					family,
-					PIn.Long(dataRow["ProvNum"].ToString()),
-					PIn.Long(dataRow["ClinicNum"].ToString()),
-					principalAmt:-PIn.Double(dataRow["amtOverCharged"].ToString()),
-					interestAmt:0,
-					dateCharge:DateTime.Now,
-					note:"Offsetting overcharge.",
-					PIn.Long(dataRow["FKey"].ToString()),
-					PIn.Enum<PayPlanLinkType>(dataRow["LinkType"].ToString())
-				);
-				listChargesToInsert.Add(payPlanChargeOffset);
+				PayPlanCharge offSetCharge=new PayPlanCharge();
+				offSetCharge.PatNum=PIn.Long(dataRow["PatNum"].ToString());
+				offSetCharge.PayPlanNum=PIn.Long(dataRow["PayPlanNum"].ToString());
+				offSetCharge.ProvNum=PIn.Long(dataRow["ProvNum"].ToString());
+				offSetCharge.ClinicNum=PIn.Long(dataRow["ClinicNum"].ToString());
+				offSetCharge.Guarantor=PIn.Long(dataRow["Guarantor"].ToString());
+				offSetCharge.Principal=-PIn.Double(dataRow["amtOverCharged"].ToString());
+				offSetCharge.LinkType=PIn.Enum<PayPlanLinkType>(dataRow["LinkType"].ToString());
+				offSetCharge.FKey=PIn.Long(dataRow["FKey"].ToString());
+				offSetCharge.ChargeDate=DateTime.Now;
+				offSetCharge.ChargeType=PayPlanChargeType.Debit;
+				offSetCharge.IsOffset=true;
+				offSetCharge.Note="Offsetting overcharge.";
+				listChargesToInsert.Add(offSetCharge);
 			}
 			PayPlanCharges.InsertMany(listChargesToInsert);
 			FillGrid();
@@ -313,8 +301,12 @@ namespace OpenDental {
 			}
 			DataRow row=(DataRow)gridMain.ListGridRows[gridMain.GetSelectedIndex()].Tag;
 			long patNum=PIn.Long(row["patNum"].ToString());
-			GlobalFormOpenDental.GotoAccount(patNum);
+			GotoModule.GotoAccount(patNum);
 			SendToBack();
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 
 	}

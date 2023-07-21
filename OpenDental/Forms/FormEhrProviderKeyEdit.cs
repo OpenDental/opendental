@@ -38,7 +38,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textYear.Text==""){
 				MessageBox.Show("Please enter a year.");
 				return;
@@ -73,5 +73,12 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
 	}
 }

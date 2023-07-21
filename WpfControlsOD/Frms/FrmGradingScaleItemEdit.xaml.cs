@@ -16,25 +16,14 @@ namespace OpenDental {
 
 		public FrmGradingScaleItemEdit(GradingScaleItem gradingScaleItem) {
 			InitializeComponent();
+			//Lan.F(this);
 			_gradingScaleItem=gradingScaleItem;
-			Load+=FrmGradingScaleItemEdit_Load;
-			PreviewKeyDown+=FrmGradingScaleItemEdit_PreviewKeyDown;
 		}
 
-		private void FrmGradingScaleItemEdit_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmGradingScaleItemEdit_Loaded(object sender,RoutedEventArgs e) {
 			textGradeShowing.Text=_gradingScaleItem.GradeShowing;
 			textGradeNumber.Text=_gradingScaleItem.GradeNumber.ToString();
 			textDescription.Text=_gradingScaleItem.Description;
-		}
-
-		private void FrmGradingScaleItemEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
-			if(butDelete.IsAltKey(Key.D,e)) {
-				butDelete_Click(this,new EventArgs());
-			}
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
@@ -70,6 +59,8 @@ namespace OpenDental {
 			}
 			IsDialogOK=true;
 		}
+
+
 
 	}
 }

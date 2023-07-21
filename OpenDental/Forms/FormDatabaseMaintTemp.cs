@@ -77,6 +77,10 @@ namespace OpenDental {
 			Cursor=Cursors.Default;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void butPrint_Click(object sender,EventArgs e) {
 			string fileName=CodeBase.ODFileUtils.CombinePaths(PrefC.GetTempFolderPath(),"results.txt");
 			ODFileUtils.WriteAllTextThenStart(fileName,textResults.Text,"");
@@ -120,6 +124,5 @@ namespace OpenDental {
 			textResults.Text=DatabaseMaintenances.FixMissingClaimProcs(comboDbs.SelectedItem.ToString());
 			Cursor=Cursors.Default;
 		}
-
 	}
 }

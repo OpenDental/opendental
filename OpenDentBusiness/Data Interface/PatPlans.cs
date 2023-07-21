@@ -57,8 +57,8 @@ namespace OpenDentBusiness{
 			}
 			//Cameron_ Possibly create outbound ADT message to update insurance info
 			long patPlanNum=Crud.PatPlanCrud.Insert(patPlan);
-			//Upsert an InsVerify for the patplan to ensure that the patplan can be verified.
-			InsVerifies.Upsert(patPlanNum,VerifyTypes.PatientEnrollment);
+			//Insert an InsVerify for the patplan to ensure that the patplan can be verified.
+			InsVerifies.InsertForPatPlanNum(patPlanNum);
 			InsEditPatLogs.MakeLogEntry(patPlan,null,InsEditPatLogType.PatPlan);
 			return patPlanNum;
 		}
@@ -431,7 +431,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Removes the assigned user from the InsVerify of the InsPlan that is associated to the PatPlan passed in.
-		///Will only unassign if the user assigned to the patplan matches the user assigned to the insplan. Used when a plan gets deleted.</summary>
+		///Will only unassign if the user assigned to the patplan matches the user assigned to the insplan.</summary>
 		private static void RemoveAssignedUser(PatPlan patPlanCur) {
 			//No Remoting check; no call to db.
 			//Get the insurance verified assigned to the PatPlan.
@@ -453,7 +453,7 @@ namespace OpenDentBusiness{
 					if(insVerifyForInsPlan!=null && insVerifyForInsPlan.UserNum==insVerifyForPatPlan.UserNum) {
 						//Remove user and set DateLastVerified to MinValue.
 						insVerifyForInsPlan.UserNum=0;
-						insVerifyForInsPlan.DateLastAssigned=DateTime.MinValue;
+						insVerifyForInsPlan.DateLastVerified=DateTime.MinValue;
 						InsVerifies.Update(insVerifyForInsPlan);
 					}
 				}

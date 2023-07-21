@@ -24,6 +24,7 @@ namespace OpenDental {
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormContinuityOfCareDocument));
+			this.butClose = new OpenDental.UI.Button();
 			this.labelTitle = new System.Windows.Forms.Label();
 			this.butExportToFile = new OpenDental.UI.Button();
 			this.butShowAndPrint = new OpenDental.UI.Button();
@@ -31,11 +32,22 @@ namespace OpenDental {
 			this.textInstructions = new OpenDental.ODtextBox();
 			this.SuspendLayout();
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(292, 215);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 4;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// labelTitle
 			// 
 			this.labelTitle.Location = new System.Drawing.Point(14, 15);
 			this.labelTitle.Name = "labelTitle";
-			this.labelTitle.Size = new System.Drawing.Size(259, 43);
+			this.labelTitle.Size = new System.Drawing.Size(332, 32);
 			this.labelTitle.TabIndex = 0;
 			this.labelTitle.Text = "A Continuity of Care Document (CCD) is used to share a patient health summary ele" +
     "ctronically.";
@@ -75,7 +87,7 @@ namespace OpenDental {
 			this.textInstructions.DetectUrls = false;
 			this.textInstructions.Location = new System.Drawing.Point(17, 120);
 			this.textInstructions.Name = "textInstructions";
-			this.textInstructions.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.MedicalSummary;
+			this.textInstructions.QuickPasteType = OpenDentBusiness.QuickPasteType.MedicalSummary;
 			this.textInstructions.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textInstructions.Size = new System.Drawing.Size(256, 73);
 			this.textInstructions.TabIndex = 3;
@@ -83,12 +95,14 @@ namespace OpenDental {
 			// 
 			// FormContinuityOfCareDocument
 			// 
-			this.ClientSize = new System.Drawing.Size(284, 209);
+			this.CancelButton = this.butClose;
+			this.ClientSize = new System.Drawing.Size(379, 251);
 			this.Controls.Add(this.textInstructions);
 			this.Controls.Add(this.butExportToFile);
 			this.Controls.Add(this.labelInstructions);
 			this.Controls.Add(this.butShowAndPrint);
 			this.Controls.Add(this.labelTitle);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormContinuityOfCareDocument";
 			this.Text = "Continuity of Care";
@@ -97,6 +111,7 @@ namespace OpenDental {
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label labelTitle;
 		private UI.Button butExportToFile;
 		private UI.Button butShowAndPrint;

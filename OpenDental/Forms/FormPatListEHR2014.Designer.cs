@@ -25,6 +25,7 @@
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPatListEHR2014));
 			this.butShow = new System.Windows.Forms.Button();
+			this.butClose = new System.Windows.Forms.Button();
 			this.butGender = new System.Windows.Forms.Button();
 			this.butLabResult = new System.Windows.Forms.Button();
 			this.butMedication = new System.Windows.Forms.Button();
@@ -46,6 +47,17 @@
 			this.butShow.Text = "Results";
 			this.butShow.UseVisualStyleBackColor = true;
 			this.butShow.Click += new System.EventHandler(this.butResults_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(660, 495);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 23);
+			this.butClose.TabIndex = 17;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butGender
 			// 
@@ -153,6 +165,7 @@
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(747, 530);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butClear);
 			this.Controls.Add(this.butCommPref);
 			this.Controls.Add(this.butAllergy);
@@ -176,6 +189,7 @@
 
 		private OpenDental.UI.GridOD gridMain;
 		private System.Windows.Forms.Button butShow;
+		private System.Windows.Forms.Button butClose;
 		private System.Windows.Forms.Button butGender;
 		private System.Windows.Forms.Button butLabResult;
 		private System.Windows.Forms.Button butMedication;

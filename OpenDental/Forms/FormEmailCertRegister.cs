@@ -76,7 +76,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textVerificationCode.Text.Trim()=="") {
 				MsgBox.Show(this,"Verification Code is blank.");
 				return;

@@ -85,7 +85,7 @@ namespace OpenDental {
 			List<Procedure> listProcedures=new List<Procedure>(){_procedure };
 			long discountPlanNum=DiscountPlanSubs.GetDiscountPlanNumForPat(_patient.PatNum,_procedure.ProcDate);
 			_listFees=Fees.GetListFromObjects(listProcedureCodes,listProcedures.Select(x=>x.MedicalCode).ToList(),
-				Providers.GetProvsForClinic(comboClinic.ClinicNumSelected).Select(x=>x.ProvNum).ToList(), //Get fees for all selectable providers.
+				Providers.GetProvsForClinic(comboClinic.SelectedClinicNum).Select(x=>x.ProvNum).ToList(), //Get fees for all selectable providers.
 				_patient.PriProv,_patient.SecProv,_patient.FeeSched,_listInsPlans,listProcedures.Select(x=>x.ClinicNum).ToList(),null,//appts not needed
 				_listSubstitutionLinks,discountPlanNum);
 			_lookupFees=(Lookup<FeeKey2,Fee>)_listFees.ToLookup(x => new FeeKey2(x.CodeNum,x.FeeSched));
@@ -115,6 +115,13 @@ namespace OpenDental {
 		}
 
 		private void FormProcInfo_Load(object sender,System.EventArgs e) {
+			if(Security.IsGlobalDateLock(Permissions.AdjustmentCreate,_procedureOld.ProcDate,suppressMsgBox:true)) {
+				butAddExistAdj.Enabled=false;
+				butAddAdjust.Enabled=false;
+			}
+			if(Security.IsGlobalDateLock(Permissions.ProcComplCreate,_procedureOld.ProcDate,suppressMsgBox:true)) {
+				butSetComplete.Enabled=false;
+			}
 			if(PrefC.IsODHQ) {
 				labelTaxEst.Visible=true;
 				textTaxAmt.Visible=true;
@@ -149,7 +156,7 @@ namespace OpenDental {
 				textSite.Visible=false;
 				butPickSite.Visible=false;
 			}
-			if(!Security.IsAuthorized(EnumPermType.ProcEditShowFee,true)){
+			if(!Security.IsAuthorized(Permissions.ProcEditShowFee,true)){
 				labelAmount.Visible=false;
 				textProcFee.Visible=false;
 				labelTaxEst.Visible=false;
@@ -164,12 +171,12 @@ namespace OpenDental {
 				butLock.Visible=false;
 			}
 			Def def=Defs.GetDef(DefCat.AdjTypes,PrefC.GetLong(PrefName.TreatPlanDiscountAdjustmentType));
-			if(!GroupPermissions.HasPermissionForAdjType(EnumPermType.AdjustmentCreate,def,DateTime.Today)) {
+			if(!GroupPermissions.HasPermissionForAdjType(Permissions.AdjustmentCreate,def)) {
 				textDiscount.Enabled=false;
 			}
 			if(IsNew){
 				if(_procedure.ProcStatus==ProcStat.C){
-					if(!_isQuickAdd && !Security.IsAuthorized(EnumPermType.ProcComplCreate,_procedure.ProcDate)){
+					if(!_isQuickAdd && !Security.IsAuthorized(Permissions.ProcComplCreate)){
 						DialogResult=DialogResult.Cancel;
 						return;
 					}
@@ -181,7 +188,7 @@ namespace OpenDental {
 				if(_procedure.ProcStatus==ProcStat.C){
 					textDiscount.Enabled=false;
 					if(_procedure.IsLocked) {//Whether locking is currently allowed, this proc may have been locked previously.
-						butSave.Enabled=false;//use this state to cascade permission to any form opened from here
+						butOK.Enabled=false;//use this state to cascade permission to any form opened from here
 						butDelete.Enabled=false;
 						butChange.Enabled=false;
 						butEditAnyway.Enabled=false;
@@ -208,7 +215,19 @@ namespace OpenDental {
 				_startedAttachedToClaim=true;
 				//however, this doesn't stop someone from creating a claim while this window is open,
 				//so this is checked at the end, too.
-				SetControlsAttachedToClaim();
+				panel1.Enabled=false;
+				comboProcStatus.Enabled=false;
+				checkNoBillIns.Enabled=false;
+				butChange.Enabled=false;
+				butEditAnyway.Visible=true;
+				butSetComplete.Enabled=false;
+				textCanadaLabFee1.Enabled=false;
+				textCanadaLabFee2.Enabled=false;
+			}
+			if(Procedures.IsAttachedToClaim(_procedure,_listClaimProcs,false)) {
+				butDelete.Enabled=false;
+				labelClaim.Visible=true;
+				butAddEstimate.Enabled=false;
 			}
 			if(PrefC.GetBool(PrefName.EasyHideClinical)){
 				labelDx.Visible=false;
@@ -293,7 +312,7 @@ namespace OpenDental {
 				SetOrderingReferral(referral);
 			}
 			FillComboClinic();
-			comboClinic.ClinicNumSelected=_procedure.ClinicNum;
+			comboClinic.SelectedClinicNum=_procedure.ClinicNum;
 			FillComboProv();
 			comboProv.SetSelectedProvNum(_procedure.ProvNum);
 			_isStartingUp=true;
@@ -310,10 +329,10 @@ namespace OpenDental {
 				_procedureOld.ProcStatus=ProcStat.D;
 			}
 			bool canEditNote=false;
-			if(Security.IsAuthorized(EnumPermType.ProcedureNoteFull,true)) {
+			if(Security.IsAuthorized(Permissions.ProcedureNoteFull,true)) {
 				canEditNote=true;
 			}
-			else if(Security.IsAuthorized(EnumPermType.ProcedureNoteUser,true) && (_procedure.UserNum==Security.CurUser.UserNum || signatureBoxWrapper.SigIsBlank)) {
+			else if(Security.IsAuthorized(Permissions.ProcedureNoteUser,true) && (_procedure.UserNum==Security.CurUser.UserNum || signatureBoxWrapper.SigIsBlank)) {
 				canEditNote=true;//They have limited permission and this is their note that they signed.
 			}
 			if(!canEditNote) {
@@ -337,8 +356,8 @@ namespace OpenDental {
 			//msgb.ShowDialog();
 			if(_isQuickAdd) {
 				textDate.Enabled=false;
-				textNotes.Text=ProcNotes.SetProcCompleteNoteHelper(_isQuickAdd,_procedure,_procedureOld,comboProv.GetSelectedProvNum(),textNotes.Text);//Add any default notes.
-				butSave_Click(this,new EventArgs());
+				ProcNoteUiHelper();//Add any default notes.
+				butOK_Click(this,new EventArgs());
 				if(this.DialogResult!=DialogResult.OK) {
 					this.Opacity=100;
 					this.CenterToScreen();
@@ -352,10 +371,10 @@ namespace OpenDental {
 		}
 
 		private void FillComboClinic() {
-			long clinicNum=comboClinic.ClinicNumSelected;
+			long clinicNum=comboClinic.SelectedClinicNum;
 			comboClinic.SetUser(_Userod);//Not Security.CurUser
 			if(clinicNum!=-1){
-				comboClinic.ClinicNumSelected=clinicNum;
+				comboClinic.SelectedClinicNum=clinicNum;
 			}
 		}
 
@@ -364,37 +383,37 @@ namespace OpenDental {
 		}
 
 		private void butPickProv_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick = new FrmProviderPick(comboProv.Items.GetAll<Provider>());
-			frmProviderPick.ProvNumSelected=comboProv.GetSelectedProvNum();
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick = new FormProviderPick(comboProv.Items.GetAll<Provider>());
+			formProviderPick.ProvNumSelected=comboProv.GetSelectedProvNum();
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboProv.SetSelectedProvNum(frmProviderPick.ProvNumSelected);
+			comboProv.SetSelectedProvNum(formProviderPick.ProvNumSelected);
 		}
 
 		private void butPickOrderProvInternal_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick = new FrmProviderPick(comboProv.Items.GetAll<Provider>());
-			frmProviderPick.ProvNumSelected=_provNumSelectedOrder;
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick = new FormProviderPick(comboProv.Items.GetAll<Provider>());
+			formProviderPick.ProvNumSelected=_provNumSelectedOrder;
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			SetOrderingProvider(Providers.GetProv(frmProviderPick.ProvNumSelected));
+			SetOrderingProvider(Providers.GetProv(formProviderPick.ProvNumSelected));
 		}
 
 		private void butPickOrderProvReferral_Click(object sender,EventArgs e) {
-			FrmReferralSelect frmReferralSelect=new FrmReferralSelect();
-			frmReferralSelect.IsSelectionMode=true;
-			frmReferralSelect.IsDoctorSelectionMode=true;
-			frmReferralSelect.IsShowPat=false;
-			frmReferralSelect.IsShowDoc=true;
-			frmReferralSelect.IsShowOther=false;
-			frmReferralSelect.ShowDialog();
-			if(frmReferralSelect.IsDialogCancel) {
+			using FormReferralSelect formReferralSelect=new FormReferralSelect();
+			formReferralSelect.IsSelectionMode=true;
+			formReferralSelect.IsDoctorSelectionMode=true;
+			formReferralSelect.IsShowPat=false;
+			formReferralSelect.IsShowDoc=true;
+			formReferralSelect.IsShowOther=false;
+			formReferralSelect.ShowDialog();
+			if(formReferralSelect.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			SetOrderingReferral(frmReferralSelect.ReferralSelected);
+			SetOrderingReferral(formReferralSelect.ReferralSelected);
 		}
 
 		private void butNoneOrderProv_Click(object sender,EventArgs e) {
@@ -428,7 +447,7 @@ namespace OpenDental {
 		private void FillComboProv() {
 			long provNum=comboProv.GetSelectedProvNum();
 			comboProv.Items.Clear();
-			comboProv.Items.AddProvsAbbr(Providers.GetProvsForClinic(comboClinic.ClinicNumSelected));
+			comboProv.Items.AddProvsAbbr(Providers.GetProvsForClinic(comboClinic.SelectedClinicNum));
 			comboProv.SetSelectedProvNum(provNum);
 		}
 
@@ -461,7 +480,7 @@ namespace OpenDental {
 			if(comboProcStatus.GetSelected<ProcStat>()==ProcStat.D){//an invalidated proc
 				comboProcStatus.Enabled=false;
 				butInvalidate.Visible=false;
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 				butChange.Enabled=false;
 				butEditAnyway.Enabled=false;
@@ -644,17 +663,17 @@ namespace OpenDental {
 				string autoNoteTitle = listMatches[i].Value.TrimStart('[').TrimEnd(']');
 				string note=AutoNotes.GetByTitle(autoNoteTitle);
 				int matchloc=textNotes.Text.IndexOf(listMatches[i].Value,location);
-				FrmAutoNoteCompose frmAutoNoteCompose=new FrmAutoNoteCompose();
-				frmAutoNoteCompose.StrMainTextNote=note;
-				frmAutoNoteCompose.ShowDialog();
-				if(!frmAutoNoteCompose.IsDialogOK) {
+				using FormAutoNoteCompose formAutoNoteCompose=new FormAutoNoteCompose();
+				formAutoNoteCompose.StrMainTextNote=note;
+				formAutoNoteCompose.ShowDialog();
+				if(formAutoNoteCompose.DialogResult==DialogResult.Cancel) {
 					location=matchloc+listMatches[i].Value.Length;
 					continue;//if they cancel, go to the next autonote.
 				}
-				if(frmAutoNoteCompose.IsDialogOK) {
+				if(formAutoNoteCompose.DialogResult==DialogResult.OK) {
 					//When setting the Text on a RichTextBox, \r\n is replaced with \n, so we need to do the same so that our location variable is correct.
-					location=matchloc+frmAutoNoteCompose.StrCompletedNote.Replace("\r\n","\n").Length;
-					string resultstr=textNotes.Text.Substring(0,matchloc)+frmAutoNoteCompose.StrCompletedNote;
+					location=matchloc+formAutoNoteCompose.StrCompletedNote.Replace("\r\n","\n").Length;
+					string resultstr=textNotes.Text.Substring(0,matchloc)+formAutoNoteCompose.StrCompletedNote;
 					if(textNotes.Text.Length > matchloc+listMatches[i].Value.Length) {
 						resultstr+=textNotes.Text.Substring(matchloc+listMatches[i].Value.Length);
 					}
@@ -888,31 +907,31 @@ namespace OpenDental {
 			}
 			DateTime dateForPerm=Procedures.GetDateForPermCheck(_procedure);//Use ProcDate to compare to the date/days newer restriction.
 			bool isProcStatComplete=_procedure.ProcStatus==ProcStat.C;
-			EnumPermType permissions=GroupPermissions.SwitchExistingPermissionIfNeeded(EnumPermType.ProcCompleteEdit,_procedure);
+			Permissions permissions=GroupPermissions.SwitchExistingPermissionIfNeeded(Permissions.ProcCompleteEdit,_procedure);
 			#region Setting up dictionary for removing controls
-			Dictionary<EnumPermType,List<Control>> dictPermControls=new Dictionary<EnumPermType, List<Control>>();
-			dictPermControls[EnumPermType.ProcCompleteEdit]=new List<Control> {
+			Dictionary<Permissions,List<Control>> dictPermControls=new Dictionary<Permissions, List<Control>>();
+			dictPermControls[Permissions.ProcCompleteEdit]=new List<Control> {
 				butChange,textReferral,butReferral,comboPriority,butAddEstimate,butAddExistAdj,comboProv,butPickProv,comboClinic
 			};
-			dictPermControls[EnumPermType.ProcCompleteEdit].AddRange(new List<Control> { panel1,tabPageCanada }.SelectMany(x => x.Controls.OfType<Control>()));
-			dictPermControls[EnumPermType.ProcCompleteStatusEdit]=new List<Control> {comboProcStatus,butSetComplete,butDelete };
-			dictPermControls[EnumPermType.ProcCompleteNote]=new List<Control> {
+			dictPermControls[Permissions.ProcCompleteEdit].AddRange(new List<Control> { panel1,tabPageCanada }.SelectMany(x => x.Controls.OfType<Control>()));
+			dictPermControls[Permissions.ProcCompleteStatusEdit]=new List<Control> {comboProcStatus,butSetComplete,butDelete };
+			dictPermControls[Permissions.ProcCompleteNote]=new List<Control> {
 				textNotes,signatureBoxWrapper,buttonUseAutoNote,butEditAutoNote,textClaimNote,butAppend,textProc
 			};
-			dictPermControls[EnumPermType.ProcCompleteEditMisc]=new List<Control> { checkHideGraphics,checkNoBillIns,comboClinic,textSurfaces,comboDx };
-			dictPermControls[EnumPermType.ProcCompleteEditMisc].AddRange(new List<UI.TabPage>{tabPageMisc,tabPageMedical}.SelectMany(x => x.Controls.OfType<Control>()));
+			dictPermControls[Permissions.ProcCompleteEditMisc]=new List<Control> { checkHideGraphics,checkNoBillIns,comboClinic,textSurfaces,comboDx };
+			dictPermControls[Permissions.ProcCompleteEditMisc].AddRange(new List<UI.TabPage>{tabPageMisc,tabPageMedical}.SelectMany(x => x.Controls.OfType<Control>()));
 			#endregion
 			List<Control> listDisabled=new List<Control>();
 			bool isGlobalDateLocked=Security.IsGlobalDateLock(permissions,dateForPerm,isSilent);//only used to silence other security messages.
 			if(!isProcStatComplete) {//either Eo or Ec
 				if(!Security.IsAuthorized(permissions,dateForPerm,isSilent,isGlobalDateLocked)) {
 					listDisabled.AddRange(dictPermControls.Values.SelectMany(x => x));
-					listDisabled.Add(butSave);
+					listDisabled.Add(butOK);
 				}
 			}
 			else {
 				bool isSuppressed=(!isProcStatComplete||isSilent||isGlobalDateLocked);//don't want a bunch of popups in a row so suppressing the message in checking permissions
-				foreach(EnumPermType permission in dictPermControls.Keys) {
+				foreach(Permissions permission in dictPermControls.Keys) {
 					bool isAuthorized=Security.IsAuthorized(permission,dateForPerm,isSuppressed,isGlobalDateLocked);
 					if(!isAuthorized) {
 						listDisabled.AddRange(dictPermControls[permission]);
@@ -921,7 +940,7 @@ namespace OpenDental {
 				}
 				//disable 'OK' if user has no completed procedure permissions
 				if(dictPermControls.Keys.All(x => !Security.IsAuthorized(x,dateForPerm,true))) {
-					butSave.Enabled=false;
+					butOK.Enabled=false;
 				}
 			}
 			SetControlsDisabled(listDisabled);
@@ -959,10 +978,10 @@ namespace OpenDental {
 		}
 
 		private void butReferral_Click(object sender,EventArgs e) {
-			FrmReferralsPatient frmReferralsPatient=new FrmReferralsPatient();
-			frmReferralsPatient.PatNum=_procedure.PatNum;
-			frmReferralsPatient.ProcNum=_procedure.ProcNum;
-			frmReferralsPatient.ShowDialog();
+			using FormReferralsPatient formReferralsPatient=new FormReferralsPatient();
+			formReferralsPatient.PatNum=_procedure.PatNum;
+			formReferralsPatient.ProcNum=_procedure.ProcNum;
+			formReferralsPatient.ShowDialog();
 			FillReferral();
 		}
 
@@ -1147,10 +1166,10 @@ namespace OpenDental {
 				MsgBox.Show(this,"Estimates cannot be added directly to labs.  Lab estimates will be created automatically when the parent procedure estimates are calculated.");
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.InsWriteOffEdit,_procedure.DateEntryC)) {
+			if(!Security.IsAuthorized(Permissions.InsWriteOffEdit,_procedure.DateEntryC)) {
 				return;
 			}
-			using FormInsPlanSelectFam formInsPlanSelect=new FormInsPlanSelectFam(_patient.PatNum);
+			using FormInsPlanSelect formInsPlanSelect=new FormInsPlanSelect(_patient.PatNum);
 			if(formInsPlanSelect.InsPlanSelected==null) {
 				formInsPlanSelect.ShowDialog();
 				if(formInsPlanSelect.DialogResult==DialogResult.Cancel){
@@ -1299,11 +1318,10 @@ namespace OpenDental {
 			}
 			_loadData.ArrAdjustments=Adjustments.GetForProcs(new List<long>() { _procedure.ProcNum }).ToArray();
 			FillAdj();
-			Signalods.SetInvalid(InvalidType.BillingList);
 		}
 
 		private void butAddAdjust_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ProcCompleteAddAdj,Procedures.GetDateForPermCheck(_procedure))) {
+			if(!Security.IsAuthorized(Permissions.ProcCompleteAddAdj,Procedures.GetDateForPermCheck(_procedure))) {
 				return;
 			}
 			if(_procedure.ProcStatus!=ProcStat.C){
@@ -1331,37 +1349,36 @@ namespace OpenDental {
 			}
 			_loadData.ArrAdjustments=Adjustments.GetForProcs(new List<long>() { _procedure.ProcNum }).ToArray();
 			FillAdj();
-			Signalods.SetInvalid(InvalidType.BillingList);
 		}
 
 		private void butAddExistAdj_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.AdjustmentEdit)) {
+			if(!Security.IsAuthorized(Permissions.AdjustmentEdit)) {
 				return;
 			}
 			if(_procedure.ProcStatus!=ProcStat.C){
 				MsgBox.Show(this,"Adjustments may only be added to completed procedures.");
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.ProcCompleteAddAdj)) {
+			if(!Security.IsAuthorized(Permissions.ProcCompleteAddAdj)) {
 				return;
 			}
 			using FormAdjustmentPicker formAdjustmentPicker=new FormAdjustmentPicker(_patient.PatNum,true,clinicNum:_procedure.ClinicNum, provNum: _procedure.ProvNum);
 			if(formAdjustmentPicker.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.AdjustmentEdit,formAdjustmentPicker.AdjustmentSelected.AdjDate)) {
+			if(!Security.IsAuthorized(Permissions.AdjustmentEdit,formAdjustmentPicker.AdjustmentSelected.AdjDate)) {
 				return;
 			}
 			if(AvaTax.IsEnabled() && 
 				(formAdjustmentPicker.AdjustmentSelected.AdjType==AvaTax.GetSalesTaxAdjType() || formAdjustmentPicker.AdjustmentSelected.AdjType==AvaTax.GetSalesTaxReturnAdjType()) && 
-					!Security.IsAuthorized(EnumPermType.SalesTaxAdjEdit)) 
+					!Security.IsAuthorized(Permissions.SalesTaxAdjEdit)) 
 			{
 				return;
 			}
 			decimal estPatPort=ClaimProcs.GetPatPortion(_procedure,_loadData.ListClaimProcsForProc,_loadData.ArrAdjustments.ToList());
 			decimal procPatPaid=(decimal)PaySplits.GetTotForProc(_procedure);
 			decimal adjRemAmt=estPatPort-procPatPaid+(decimal)formAdjustmentPicker.AdjustmentSelected.AdjAmt;
-			if(adjRemAmt<0 && (decimal)formAdjustmentPicker.AdjustmentSelected.AdjAmt<0) {
+			if(adjRemAmt<0) {
 				EnumAdjustmentBlockOrWarn enumAdjustmentBlockOrWarn=PrefC.GetEnum<EnumAdjustmentBlockOrWarn>(PrefName.AdjustmentBlockNegativeExceedingPatPortion);
 				if(enumAdjustmentBlockOrWarn==EnumAdjustmentBlockOrWarn.Warn) {
 					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Remaining amount is negative.  Continue?","Overpaid Procedure Warning")) {
@@ -1378,7 +1395,6 @@ namespace OpenDental {
 			Adjustments.Update(formAdjustmentPicker.AdjustmentSelected);
 			_loadData.ArrAdjustments=Adjustments.GetForProcs(new List<long>() { _procedure.ProcNum }).ToArray();
 			FillAdj();
-			Signalods.SetInvalid(InvalidType.BillingList);
 		}
 
 		private void textProcFee_Validating(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -1566,8 +1582,43 @@ namespace OpenDental {
 			SetControlsUpperLeft();
 		}
 
+		///<summary>This method is called where a user is attempting to edit a procedure that is attached to a claim. There are two separate permissions 
+		///	that deal with this scenario and we need to consider if we need to check for one or both and why.</summary>
+		private bool HasPermissions(List<ClaimProc> listClaimProcs,List<Claim> listClaims) {
+			bool hasSentOrRecPreauth=false;
+			bool hasSentOrRecClaim=false;
+			DateTime dateOldestClaim=Procedures.GetOldestClaimDate(listClaimProcs,includePreAuth:false);
+			DateTime dateOldestPreAuth=Procedures.GetOldestPreAuth(listClaimProcs);
+			List<Permissions> listPermissionss=new List<Permissions>();
+			List<long> listClaimProcClaimNums=listClaimProcs.Select(x=>x.ClaimNum).ToList();
+			List<Claim> listClaimsSentOrReceived=listClaims.Where(x=>x.ClaimStatus=="R" || x.ClaimStatus=="S").ToList();
+			for(int i=0;i<listClaimsSentOrReceived.Count;i++) {
+				Claim claim=listClaimsSentOrReceived[i];
+				if(listClaimProcClaimNums.Contains(claim.ClaimNum)) {
+					hasSentOrRecPreauth|=claim.ClaimType=="PreAuth";
+					hasSentOrRecClaim|=claim.ClaimType!="PreAuth";
+				}
+			}
+			if(hasSentOrRecPreauth) {
+				listPermissionss.Add(Permissions.PreAuthSentEdit);
+			}
+			if(hasSentOrRecClaim) {
+				listPermissionss.Add(Permissions.ClaimSentEdit);
+			}
+			bool isAllowed=true;
+			for(int i=0;i<listPermissionss.Count();i++) {
+				if(listPermissionss[i]==Permissions.PreAuthSentEdit) {
+					isAllowed&=Security.IsAuthorized(listPermissionss[i],dateOldestPreAuth);
+				}
+				else {
+					isAllowed&=Security.IsAuthorized(listPermissionss[i],dateOldestClaim);
+				}
+			}
+			return isAllowed;
+		}
+
 		private void butEditAnyway_Click(object sender, System.EventArgs e) {
-			if(!Procedures.HasPermissionsToEditProcWithClaim(_loadData.ListClaimProcsForProc,_loadData.ListClaims)) {
+			if(!HasPermissions(_loadData.ListClaimProcsForProc,_loadData.ListClaims)) {
 				return;
 			}
 			if(_orthoProcLink!=null) {
@@ -1628,7 +1679,7 @@ namespace OpenDental {
 					isAllowedToCompl=false;
 				}
 				//else if so that we don't give multiple notifications to the user.
-				else if(!Security.IsAuthorized(EnumPermType.ProcComplCreate,PIn.Date(textDate.Text),_procedure.CodeNum,PIn.Double(textProcFee.Text))) {
+				else if(!Security.IsAuthorized(Permissions.ProcComplCreate,PIn.Date(textDate.Text),_procedure.CodeNum,PIn.Double(textProcFee.Text))) {
 					isAllowedToCompl=false;
 				}
 				//Check to see if the user is allowed to set the procedure complete.
@@ -1735,7 +1786,7 @@ namespace OpenDental {
 				dateTimeProc=MiscData.GetNowDateTime();
 			}
 			//Use procDateNew since this is the date that the procedure would end up as
-			if(!Security.IsAuthorized(EnumPermType.ProcComplCreate,dateTimeProc,_procedure.CodeNum,PIn.Double(textProcFee.Text))) {
+			if(!Security.IsAuthorized(Permissions.ProcComplCreate,dateTimeProc,_procedure.CodeNum,PIn.Double(textProcFee.Text))) {
 				return;
 			}
 			//broken appointment procedure codes shouldn't trigger DateFirstVisit update.
@@ -1747,14 +1798,36 @@ namespace OpenDental {
 				//Procedures.SetHideGraphical(ProcCur);//might not matter anymore
 				ToothInitials.SetValue(_procedure.PatNum,_procedure.ToothNum,ToothInitialType.Missing);
 			}
-			_procedure.ProcStatus=ProcStat.C;
-			_procedure.SiteNum=_patient.SiteNum;
-			textNotes.Text=ProcNotes.SetProcCompleteNoteHelper(_isQuickAdd,_procedure,_procedureOld,comboProv.GetSelectedProvNum(),textNotes.Text);
+			ProcNoteUiHelper();
 			Plugins.HookAddCode(this,"FormProcEdit.butSetComplete_Click_end",_procedure,_procedureOld,textNotes);
 			comboProcStatus.SelectedIndex=-1;
+			_procedure.ProcStatus=ProcStat.C;
+			_procedure.SiteNum=_patient.SiteNum;
 			comboPlaceService.SelectedIndex=PrefC.GetInt(PrefName.DefaultProcedurePlaceService);
 			if(EntriesAreValid()){
 				SaveAndClose();
+			}
+		}
+
+		///<summary>Sets the UI textNotes.Text to the default proc note if any. Also checks PrefName.ProcPromptForAutoNote and remots auto notes if needed.</summary>
+		private void ProcNoteUiHelper() {
+			string procNoteDefault="";
+			if(_isQuickAdd) {//Quick Procs should insert both TP Default Note and C Default Note.
+				procNoteDefault=ProcCodeNotes.GetNote(comboProv.GetSelectedProvNum(),_procedure.CodeNum,ProcStat.TP);
+				if(!string.IsNullOrEmpty(procNoteDefault)) {
+					procNoteDefault+="\r\n";
+				}
+			}
+			procNoteDefault+=ProcCodeNotes.GetNote(comboProv.GetSelectedProvNum(),_procedure.CodeNum,ProcStat.C);
+			if(textNotes.Text!="" && procNoteDefault!="") { //check to see if a default note is defined.
+				textNotes.Text+="\r\n"; //add a new line if there was already a ProcNote on the procedure.
+			}
+			if(!string.IsNullOrEmpty(procNoteDefault)) {
+				textNotes.Text+=procNoteDefault;
+			}
+			if(!PrefC.GetBool(PrefName.ProcPromptForAutoNote)) {
+				//Users do not want to be prompted for auto notes, so remove them all from the procedure note.
+				textNotes.Text=Regex.Replace(textNotes.Text,@"\[\[.+?\]\]","");
 			}
 		}
 
@@ -1815,7 +1888,7 @@ namespace OpenDental {
 		}
 
 		private void checkNoBillIns_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsWriteOffEdit,_procedure.DateEntryC)) {
+			if(!Security.IsAuthorized(Permissions.InsWriteOffEdit,_procedure.DateEntryC)) {
 				checkNoBillIns.CheckState=checkNoBillIns.Checked ? CheckState.Unchecked : CheckState.Checked;
 				return;
 			}
@@ -1864,13 +1937,13 @@ namespace OpenDental {
 		}
 
 		private void butSearch_Click(object sender,EventArgs e) {
-			InputBox inputBox=new InputBox(Lan.g(this,"Search for"));
+			using InputBox inputBox=new InputBox(Lan.g(this,"Search for"));
 			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			if(inputBox.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			string searchText=inputBox.StringResult;
-			int index=textNotes.Find(inputBox.StringResult);//Gets the location of the first character in the control.
+			string searchText=inputBox.textResult.Text;
+			int index=textNotes.Find(inputBox.textResult.Text);//Gets the location of the first character in the control.
 			if(index<0) {//-1 is returned when the text is not found.
 				textNotes.DeselectAll();
 				MessageBox.Show("\""+searchText+"\"\r\n"+Lan.g(this,"was not found in the notes")+".");
@@ -1882,17 +1955,14 @@ namespace OpenDental {
 		private void signatureBoxWrapper_SignatureChanged(object sender,EventArgs e) {
 			_signatureChanged=true;
 			_procedure.UserNum=_Userod.UserNum;
-			if(!textUser.Text.IsNullOrEmpty() && _procedure.UserNum!=0 && textUser.Text!=_Userod.UserName) {
-				_hasUserChanged=true;
-			}
 			textUser.Text=_Userod.UserName;
 		}
 
 		private void buttonUseAutoNote_Click(object sender,EventArgs e) {
-			FrmAutoNoteCompose frmAutoNoteCompose=new FrmAutoNoteCompose();
-			frmAutoNoteCompose.ShowDialog();
-			if(frmAutoNoteCompose.IsDialogOK) {
-				textNotes.AppendText(frmAutoNoteCompose.StrCompletedNote);
+			using FormAutoNoteCompose formAutoNoteCompose=new FormAutoNoteCompose();
+			formAutoNoteCompose.ShowDialog();
+			if(formAutoNoteCompose.DialogResult==DialogResult.OK) {
+				textNotes.AppendText(formAutoNoteCompose.StrCompletedNote);
 				bool hasAutoNotePrompt=Regex.IsMatch(textNotes.Text,Procedures.AutoNotePromptRegex);
 				butEditAutoNote.Visible=hasAutoNotePrompt;
 			}
@@ -1900,11 +1970,11 @@ namespace OpenDental {
 
 		private void butEditAutoNote_Click(object sender,EventArgs e) {
 			if(Regex.IsMatch(textNotes.Text,Procedures.AutoNotePromptRegex)) {
-				FrmAutoNoteCompose frmAutoNoteCompose=new FrmAutoNoteCompose();
-				frmAutoNoteCompose.StrMainTextNote=textNotes.Text;
-				frmAutoNoteCompose.ShowDialog();
-				if(frmAutoNoteCompose.IsDialogOK) {
-					textNotes.Text=frmAutoNoteCompose.StrCompletedNote;
+				using FormAutoNoteCompose formAutoNoteCompose=new FormAutoNoteCompose();
+				formAutoNoteCompose.StrMainTextNote=textNotes.Text;
+				formAutoNoteCompose.ShowDialog();
+				if(formAutoNoteCompose.DialogResult==DialogResult.OK) {
+					textNotes.Text=formAutoNoteCompose.StrCompletedNote;
 					bool hasAutoNotePrompt=Regex.IsMatch(textNotes.Text,Procedures.AutoNotePromptRegex);
 					butEditAutoNote.Visible=hasAutoNotePrompt;
 				}
@@ -2077,14 +2147,14 @@ namespace OpenDental {
 		}
 
 		private void butPickSite_Click(object sender,EventArgs e) {
-			FrmSites frmSites=new FrmSites();
-			frmSites.IsSelectionMode=true;
-			frmSites.SiteNumSelected=_procedure.SiteNum;
-			frmSites.ShowDialog();
-			if(!frmSites.IsDialogOK){
+			using FormSites formSites=new FormSites();
+			formSites.IsSelectionMode=true;
+			formSites.SiteNumSelected=_procedure.SiteNum;
+			formSites.ShowDialog();
+			if(formSites.DialogResult!=DialogResult.OK){
 				return;
 			}
-			_procedure.SiteNum=frmSites.SiteNumSelected;
+			_procedure.SiteNum=formSites.SiteNumSelected;
 			textSite.Text=Sites.GetDescription(_procedure.SiteNum);
 		}
 
@@ -2100,7 +2170,7 @@ namespace OpenDental {
 
 		///<summary>This button is only visible when proc IsLocked.</summary>
 		private void butInvalidate_Click(object sender,EventArgs e) {
-			EnumPermType permissions=GroupPermissions.SwitchExistingPermissionIfNeeded(EnumPermType.ProcCompleteStatusEdit,_procedure);
+			Permissions permissions=GroupPermissions.SwitchExistingPermissionIfNeeded(Permissions.ProcCompleteStatusEdit,_procedure);
 			DateTime dateForPerm=Procedures.GetDateForPermCheck(_procedure);
 			//What this will really do is "delete" the procedure.
 			if(!Security.IsAuthorized(permissions,dateForPerm)) {
@@ -2219,7 +2289,7 @@ namespace OpenDental {
 			}
 			//If this is an existing completed proc, then this delete button is only enabled if the user has permission for ProcComplEdit based on the ProcDate.
 			if(!_procedureOld.ProcStatus.In(ProcStat.C,ProcStat.EO,ProcStat.EC)
-				&& !Security.IsAuthorized(EnumPermType.ProcDelete,Procedures.GetDateForPermCheck(_procedure))) //This should be a much more lenient permission since completed procedures are already safeguarded.
+				&& !Security.IsAuthorized(Permissions.ProcDelete,Procedures.GetDateForPermCheck(_procedure))) //This should be a much more lenient permission since completed procedures are already safeguarded.
 			{
 				return;
 			}
@@ -2229,13 +2299,49 @@ namespace OpenDental {
 			if(MessageBox.Show(Lan.g(this,"Delete Procedure?"),"",MessageBoxButtons.OKCancel)!=DialogResult.OK){
 				return;
 			}
-			Result result=Procedures.DeleteProcedure(_procedure,_procedureOld);
-			if(result.IsFailure()) {
-				MsgBox.Show(this,result.Msg);
+			if(_procedureOld.ProcStatus==ProcStat.TP || _procedureOld.ProcStatus==ProcStat.TPi) {
+				ClaimProc claimProcPreAuth=_listClaimProcs.Where(x=>x.ProcNum==_procedureOld.ProcNum && x.ClaimNum!=0 && x.Status==ClaimProcStatus.Preauth).FirstOrDefault();
+				if(claimProcPreAuth!=null && ClaimProcs.RefreshForClaim(claimProcPreAuth.ClaimNum).GroupBy(x=>x.ProcNum).Count()==1) {
+					MsgBox.Show(this,"Not allowed to delete the last procedure from a preauthorization. The entire preauthorization would have to be deleted.");
+					return;
+				}
+			}
+			if(_orthoProcLink!=null) {
+				MsgBox.Show(this,"Not allowed to delete a procedure that is linked to an ortho case. " +
+					"Detach the procedure from the ortho case or delete the ortho case first.");
+				return;
+			}
+			if(PrefC.GetBool(PrefName.ApptsRequireProc)) {
+				bool areApptsGoingToBeEmpty=Appointments.AreApptsGoingToBeEmpty(new List<Procedure>() { _procedure });
+				if(areApptsGoingToBeEmpty) {
+					MsgBox.Show("At least one procedure must be attached to the appointment.");
+					return;
+				}
+			}
+			try {
+				Procedures.Delete(_procedure.ProcNum);//also deletes the claimProcs and adjustments. Might throw exception.
+				Recalls.Synch(_procedure.PatNum);//needs to be moved into Procedures.Delete
+			}
+			catch(Exception ex){
+				MessageBox.Show(ex.Message);
 				return;
 			}
 			_isEstimateRecompute=true;
-			Signalods.SetInvalid(InvalidType.BillingList);
+			Permissions permissions=Permissions.ProcDelete;
+			string tag="";
+			switch(_procedureOld.ProcStatus) {
+				case ProcStat.C:
+					permissions=Permissions.ProcCompleteStatusEdit;
+					tag=", "+Lan.g(this,"Deleted");
+					break;
+				case ProcStat.EO:
+				case ProcStat.EC:
+					permissions=Permissions.ProcExistingEdit;
+					tag=", "+Lan.g(this,"Deleted");
+					break;
+			}
+			SecurityLogs.MakeLogEntry(permissions,_procedureOld.PatNum,
+				ProcedureCodes.GetProcCode(_procedureOld.CodeNum).ProcCode+" ("+_procedureOld.ProcStatus+"), "+_procedureOld.ProcFee.ToString("c")+tag);
 			DialogResult=DialogResult.OK;
 			Plugins.HookAddCode(this,"FormProcEdit.butDelete_Click_end",_procedure);
 		}
@@ -2322,7 +2428,6 @@ namespace OpenDental {
 				{
 					return null;//send user back to fix information or use suggested auto code.
 				}
-				FillFees();//Make sure _lookupFees is up to date in case proc has changed.
 				return frmAutoCodeLessIntrusive.ProcedureCur;
 			};
 			string translationSource=nameof(FormProcEdit);
@@ -2335,7 +2440,7 @@ namespace OpenDental {
 				_snomedBodySite,checkIcdVersion.Checked,GetListDiagnosticCodes(),checkIsPrincDiag.Checked,_provNumSelectedOrder,_referralOrdering,
 				textCodeMod1.Text,textCodeMod2.Text,textCodeMod3.Text,textCodeMod4.Text,PIn.Int(textUnitQty.Text),(ProcUnitQtyType)comboUnitType.SelectedIndex,
 				textRevCode.Text,(EnumProcDrugUnit)comboDrugUnit.SelectedIndex,PIn.Float(textDrugQty.Text),(checkIsEmergency.Checked?ProcUrgency.Emergency:ProcUrgency.Normal),
-				comboProv.GetSelectedProvNum(),comboClinic.ClinicNumSelected
+				comboProv.GetSelectedProvNum(),comboClinic.SelectedClinicNum
 			);
 			ClaimProcs.TrySetProvFromProc(_procedure,_listClaimProcs);
 			#endregion Sync UI with object fields.
@@ -2352,13 +2457,7 @@ namespace OpenDental {
 			#region Additional UI syncing (_procedure dates and fee).
 			Procedures.SetMiscDateAndTimeEditFields(_procedure,textDateTP.Text,PIn.Date(textDate.Text),textTimeStart.Text,textTimeEnd.Text);
 			DateTime procedureDate=DateTime.Parse(textDate.Text);
-			List<ProcMultiVisit> listPmvs=ProcMultiVisits.GetGroupsForProcsFromDb(_listClaimProcs.Select(x => x.ProcNum).ToArray());
 			for(int i=0;i<_listClaimProcs.Count;i++) {//if the proc date has changed update the ClaimProcs
-				ProcMultiVisit pmv=listPmvs.FirstOrDefault(x => x.ProcNum==_listClaimProcs[i].ProcNum);
-				if(_listClaimProcs[i].ClaimNum!=0 && pmv!=null && !ProcMultiVisits.IsGroupInProcess(new List<ProcMultiVisit> { pmv })) {
-					//Claimproc ProcDate cannot be modified when attached to claims, where the attached procedures are also part of a complete multi-visit group.
-					continue;
-				}
 				if(_listClaimProcs[i].DateCP!=procedureDate && procedureDate.Year>1880) {
 					ClaimProc claimProcOld=_listClaimProcs[i].Copy();
 					_listClaimProcs[i].ProcDate=procedureDate;
@@ -2423,12 +2522,7 @@ namespace OpenDental {
 			#endregion Additional UI syncing (_procedure fields). In Canada, Procedures.SetCanadianEditFields(...) can also create and/or update rows in the DB.
 			//Last chance to run this code before Proc gets updated.
 			Procedures.TryValidateProcFee(_procedure,_procedureOld,_patient,_listFees,_listPatPlans,_listInsSubs,_listInsPlans,_listBenefits,funcYesNoPrompt);
-			bool doClose=Procedures.TryAutoCodesPrompt(ref _procedure,_procedureOld,_procedureCode,(listBoxTeeth.SelectedIndices.Count < 1),_patient,ref _listClaimProcs,funcPromptFormACLI);
-			if(!doClose) {
-				//Preference is on to require use of suggested auto codes, but user didn't accept suggested code.
-				//Keep them on this window so they can select a treatment area appropriate for their current code.
-				return;
-			}
+			Procedures.TryAutoCodesPrompt(ref _procedure,_procedureOld,_procedureCode,(listBoxTeeth.SelectedIndices.Count < 1),_patient,ref _listClaimProcs,funcPromptFormACLI);
 			_orthoProcLink=OrthoCaseProcedureLinker.CreateOrUpdateOrthoProcLink(_procedureOld,_procedure);
 			bool isProcLinkedToOrthoCase=(_orthoProcLink!=null);
 			//The actual update----------------------------------------------------------------------------------------------------------------------------------
@@ -2438,19 +2532,16 @@ namespace OpenDental {
 			}
 			Procedures.FormProcEditUpdate(_procedure,_procedureOld,_procedureCode,isProcLinkedToOrthoCase,IsNew,listBoxTeeth.Text);
 			for(int i=0;i<_listClaimProcs.Count;i++) {
-				_listClaimProcs[i].ClinicNum=comboClinic.ClinicNumSelected;//These changes save in Form_Closing ComputeEstimates depending on DialogResult
+				_listClaimProcs[i].ClinicNum=comboClinic.SelectedClinicNum;//These changes save in Form_Closing ComputeEstimates depending on DialogResult
 			}
 			//Recall synch---------------------------------------------------------------------------------------------------------------------------------
 			Recalls.Synch(_procedure.PatNum);
-			//We don't want this to happen in QuickAdd mode because the estimate claimprocs we use to calculate tax info aren't present yet.
-			//Quickadd procs will get their taxes calculated after this form closes.
-			if(_procedureOld.ProcStatus!=ProcStat.C && _procedure.ProcStatus==ProcStat.C && !_isQuickAdd) {
+			if(_procedureOld.ProcStatus!=ProcStat.C && _procedure.ProcStatus==ProcStat.C) {
 				List<string> listprocCodes=new List<string>();
 				listprocCodes.Add(ProcedureCodes.GetStringProcCode(_procedure.CodeNum));
-				AutomationL.Trigger(EnumAutomationTrigger.ProcedureComplete,listprocCodes,_procedure.PatNum);
+				AutomationL.Trigger(AutomationTrigger.CompleteProcedure,listprocCodes,_procedure.PatNum);
 				Procedures.AfterProcsSetComplete(new List<Procedure>() { _procedure });
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 			//it is assumed that we will do an immediate refresh after closing this window.
 		}
@@ -2520,70 +2611,31 @@ namespace OpenDental {
 			}
 		}
 
-		/// <summary>Disables/enables various controls if the current procedure is attached to a claim.</summary>
-		private void SetControlsAttachedToClaim() {
-			panel1.Enabled=false;
-			comboProcStatus.Enabled=false;
-			checkNoBillIns.Enabled=false;
-			butChange.Enabled=false;
-			butEditAnyway.Visible=true;
-			butSetComplete.Enabled=false;
-			textCanadaLabFee1.Enabled=false;
-			textCanadaLabFee2.Enabled=false;
-			if(Procedures.IsAttachedToClaim(_procedure,_listClaimProcs,isPreauthIncluded:false)) {//This procedure is not a preauth
-				butDelete.Enabled=false;
-				labelClaim.Visible=true;
-				butAddEstimate.Enabled=false;
-			}
-		}
-
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			if(!EntriesAreValid()) {
 				return;
 			}
-			if(_procedure.ProcStatus!=ProcStat.C && ProcedureL.IsProcCompleteAttachedToClaim(_procedureOld,_listClaimProcs)) {
-				SetControlsAttachedToClaim();
-				_procedure.ProcStatus=ProcStat.C;
-				comboProcStatus.SetSelectedEnum(ProcStat.C);
+			if(!Security.IsAuthorized(Permissions.ProcComplCreate,PIn.Date(textDate.Text),_procedure.CodeNum,PIn.Double(textProcFee.Text))) {
 				return;
 			}
-			if(_hasUserChanged && !_procedureOld.Signature.IsNullOrEmpty()) {
-				//Ask the user to re-sign if the user has changed, there was a signature when the window loaded, and the signature box is currently blank.
-				if(signatureBoxWrapper.SigIsBlank) {
-					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,
-						"The signature box has not been re-signed.  Continuing will remove the previous signature from this procedure.  Exit anyway?"))
-					{
-						return;
-					}
-				}
-				//Check if user is subcribed to the alertType and create an alert.
-				if(AlertSubs.GetAllAlertTypesForUser(_procedureOld.UserNum).Contains(AlertType.SignatureCleared)) {
-					string procCode=ProcedureCodes.GetStringProcCode(_procedureOld.CodeNum);
-					string alertDescription="Procedure Note Changed for PatNum: "+_procedureOld.PatNum.ToString()
-					+" Date: "+_procedureOld.ProcDate.ToShortDateString()
-					+" Procedure Code: "+procCode;
-					AlertItems.Insert(new AlertItem {
-						//Allow to alert to be deleted or marked as read.
-						Actions=ActionType.MarkAsRead | ActionType.Delete,
-						Description=Lans.g("Procedures",alertDescription),
-						Severity=SeverityType.Low,
-						Type=AlertType.SignatureCleared,
-						UserNum=_procedureOld.UserNum,
-						ClinicNum=_procedureOld.ClinicNum,
-					});
-				}
+			//Ask the user to re-sign if the user has changed, there was a signature when the window loaded, and the signature box is currently blank.
+			if(_hasUserChanged 
+				&& !_procedureOld.Signature.IsNullOrEmpty()
+				&& signatureBoxWrapper.SigIsBlank 
+				&& !MsgBox.Show(this,MsgBoxButtons.OKCancel,
+					"The signature box has not been re-signed.  Continuing will remove the previous signature from this procedure.  Exit anyway?")) 
+			{
+				return;
 			}
-			if(!_isQuickAdd){
-				if(_procedure.ProcStatus==ProcStat.C 
-					|| (_procedure.ProcStatus==ProcStat.TP && _procedure.Note=="")){
-					string procNotes=ProcNotes.SetProcCompleteNoteHelper(_isQuickAdd,_procedure,_procedureOld,comboProv.GetSelectedProvNum(),textNotes.Text);
-					if (textNotes.Text!=procNotes) {
-						textNotes.Text=procNotes;
-					}
-				}
+			if(_procedure.ProcStatus==ProcStat.C && !_isQuickAdd){
+				ProcNoteUiHelper();
 			}
 			SaveAndClose();
 			Plugins.HookAddCode(this,"FormProcEdit.butOK_Click_end",_procedure); 
+		}
+
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void FormProcEdit_FormClosing(object sender,FormClosingEventArgs e) {
@@ -2593,7 +2645,7 @@ namespace OpenDental {
 				//There's a possibility that we are making a second, unnecessary call to the database here but it is worth it to help meet EHR measures.
 				Procedures.UpdateCpoeForProc(_procedure.ProcNum,true);
 				//Make a log that we edited this procedure's CPOE flag.
-				SecurityLogs.MakeLogEntry(EnumPermType.ProcEdit,_procedure.PatNum,ProcedureCodes.GetProcCode(_procedure.CodeNum).ProcCode
+				SecurityLogs.MakeLogEntry(Permissions.ProcEdit,_procedure.PatNum,ProcedureCodes.GetProcCode(_procedure.CodeNum).ProcCode
 					+", "+_procedure.ProcFee.ToString("c")+", "+Lan.g(this,"automatically flagged as CPOE."));
 			}
 			if(DialogResult==DialogResult.OK) {
@@ -2643,8 +2695,6 @@ namespace OpenDental {
 					Adjustments.Delete(_listAdjustments[i]);
 				}
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
 		}
-
 	}
 }

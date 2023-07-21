@@ -29,7 +29,7 @@ namespace OpenDental {
 				comboClinics.IsAllSelected=true;
 			}
 			else {
-				comboClinics.ClinicNumSelected=Clinics.ClinicNum;
+				comboClinics.SelectedClinicNum=Clinics.ClinicNum;
 			}
 			FillGrid();
 		}
@@ -37,7 +37,7 @@ namespace OpenDental {
 		private void FillGrid() {
 			long clinicNum = 0;
 			if(!comboClinics.IsAllSelected) {
-				clinicNum=comboClinics.ClinicNumSelected;
+				clinicNum=comboClinics.SelectedClinicNum;
 			}
 			int clinicWidth=80;
 			int patientWidth=180;
@@ -130,7 +130,6 @@ namespace OpenDental {
 			List<InsSub> listInsSubsSelected=InsSubs.GetMany(listInsSubNums);
 			List<DataRow> listRowsSucceeded=new List<DataRow>();
 			int rowsFailed=0;
-			List<Patient> listPatientsFailed=new List<Patient>();
 			List<Benefit> listBenefitsAll=Benefits.Refresh(listPatPlansSelected,listInsSubsSelected);
 			List<string> listHiddenProcCodes=new List<string>();
 			for(int i = 0;i < gridMain.SelectedIndices.Count();i++) {
@@ -160,10 +159,6 @@ namespace OpenDental {
 					rowsFailed++;
 					continue;
 				}
-				if(provNum==0) {//Procedure was possibly deleted, 
-					listPatientsFailed.Add(patient);
-					continue;
-				}
 				Procedure procedure = Procedures.CreateOrthoAutoProcsForPat(patNum,codeNum,provNum,clinicNum,dateTimeDue);
 				InsPlan insPlan = InsPlans.GetPlan(insPlanNum,listInsPlansSelected);
 				PatPlan patPlan = listPatPlansSelected.FirstOrDefault(x => x.PatPlanNum == patPlanNum);
@@ -191,17 +186,13 @@ namespace OpenDental {
 					PIn.Int(row["MonthsTreat"].ToString()),((dateSpanMonthsRem.YearsDiff * 12) + dateSpanMonthsRem.MonthsDiff));
 				PatPlans.IncrementOrthoNextClaimDates(patPlan,insPlan,monthsTreat,patientNote);
 				listRowsSucceeded.Add(row);
-				SecurityLogs.MakeLogEntry(EnumPermType.ProcComplCreate,patient.PatNum
+				SecurityLogs.MakeLogEntry(Permissions.ProcComplCreate,patient.PatNum
 						,Lan.g(this,"Automatic ortho procedure and claim generated for")+" "+dateTimeDue.ToShortDateString());
 			}
 			string message=Lan.g(this,"Done.")+" "+Lan.g(this,"There were")+" "+listRowsSucceeded.Count+" "
-				+Lan.g(this,"claim(s) generated and")+" "+(rowsFailed+listPatientsFailed.Count)+" "+Lan.g(this,"failures")+".";
+				+Lan.g(this,"claim(s) generated and")+" "+rowsFailed+" "+Lan.g(this,"failures")+".";
 			if(listHiddenProcCodes.Count > 0) {
 				message+="\r\n"+Lan.g(this,"Some failed because the following procedures are in a hidden category")+$": {string.Join(", ",listHiddenProcCodes)}";
-			}
-			if(listPatientsFailed.Count > 0) {
-				message+="\r\n"+Lan.g(this,"Claims could not be made for these patients because of deleted ortho procedures")
-					+$": {string.Join(", ",listPatientsFailed.Select(x => x.FName+" "+x.LName).ToList())}";
 			}
 			MsgBox.Show(message);
 			for(int i=0;i<listRowsSucceeded.Count;i++) {
@@ -218,5 +209,8 @@ namespace OpenDental {
 			FillGrid();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+		}
 	}
 }

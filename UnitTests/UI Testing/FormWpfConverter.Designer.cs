@@ -28,6 +28,7 @@
 			this.butConvert = new System.Windows.Forms.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.checkOverwrite = new OpenDental.UI.CheckBox();
+			this.checkOverwrite2 = new OpenDental.UI.CheckBox();
 			this.butConvert2 = new System.Windows.Forms.Button();
 			this.label4 = new System.Windows.Forms.Label();
 			this.textName2 = new System.Windows.Forms.TextBox();
@@ -35,18 +36,6 @@
 			this.butWPFgrid = new System.Windows.Forms.Button();
 			this.butGridOD = new System.Windows.Forms.Button();
 			this.button1 = new System.Windows.Forms.Button();
-			this.butShowFocus = new System.Windows.Forms.Button();
-			this.label3 = new System.Windows.Forms.Label();
-			this.textTabIndex = new System.Windows.Forms.TextBox();
-			this.label5 = new System.Windows.Forms.Label();
-			this.butFilterActs = new System.Windows.Forms.Button();
-			this.buttonSplitTests = new System.Windows.Forms.Button();
-			this.butSplitsWPF = new System.Windows.Forms.Button();
-			this.butCombosWPF = new System.Windows.Forms.Button();
-			this.butDatePickerTests = new System.Windows.Forms.Button();
-			this.butGraphics = new System.Windows.Forms.Button();
-			this.butMsgBox = new System.Windows.Forms.Button();
-			this.butButtonTests = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// textName
@@ -58,7 +47,7 @@
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(48, 50);
+			this.label1.Location = new System.Drawing.Point(46, 50);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(159, 23);
 			this.label1.TabIndex = 1;
@@ -77,12 +66,12 @@
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(208, 26);
+			this.label2.Location = new System.Drawing.Point(123, 75);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(177, 23);
 			this.label2.TabIndex = 3;
 			this.label2.Text = "Example: FormAccountEdit";
-			this.label2.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkOverwrite
 			// 
@@ -94,9 +83,19 @@
 			this.checkOverwrite.TabIndex = 4;
 			this.checkOverwrite.Text = "Overwrite existing";
 			// 
+			// checkOverwrite2
+			// 
+			this.checkOverwrite2.Checked = true;
+			this.checkOverwrite2.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkOverwrite2.Location = new System.Drawing.Point(393, 155);
+			this.checkOverwrite2.Name = "checkOverwrite2";
+			this.checkOverwrite2.Size = new System.Drawing.Size(120, 18);
+			this.checkOverwrite2.TabIndex = 9;
+			this.checkOverwrite2.Text = "Overwrite existing";
+			// 
 			// butConvert2
 			// 
-			this.butConvert2.Location = new System.Drawing.Point(519, 183);
+			this.butConvert2.Location = new System.Drawing.Point(519, 127);
 			this.butConvert2.Name = "butConvert2";
 			this.butConvert2.Size = new System.Drawing.Size(75, 23);
 			this.butConvert2.TabIndex = 7;
@@ -106,7 +105,7 @@
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(46, 183);
+			this.label4.Location = new System.Drawing.Point(46, 127);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(159, 23);
 			this.label4.TabIndex = 6;
@@ -115,16 +114,16 @@
 			// 
 			// textName2
 			// 
-			this.textName2.Location = new System.Drawing.Point(211, 185);
+			this.textName2.Location = new System.Drawing.Point(211, 129);
 			this.textName2.Name = "textName2";
 			this.textName2.ReadOnly = true;
 			this.textName2.Size = new System.Drawing.Size(302, 20);
 			this.textName2.TabIndex = 5;
-			this.textName2.Text = "FormTestAllControls";
+			this.textName2.Text = "FormUIManagerTests";
 			// 
 			// butShowTest
 			// 
-			this.butShowTest.Location = new System.Drawing.Point(349, 272);
+			this.butShowTest.Location = new System.Drawing.Point(346, 233);
 			this.butShowTest.Name = "butShowTest";
 			this.butShowTest.Size = new System.Drawing.Size(102, 23);
 			this.butShowTest.TabIndex = 10;
@@ -134,7 +133,7 @@
 			// 
 			// butWPFgrid
 			// 
-			this.butWPFgrid.Location = new System.Drawing.Point(348, 315);
+			this.butWPFgrid.Location = new System.Drawing.Point(345, 292);
 			this.butWPFgrid.Name = "butWPFgrid";
 			this.butWPFgrid.Size = new System.Drawing.Size(103, 23);
 			this.butWPFgrid.TabIndex = 11;
@@ -144,7 +143,7 @@
 			// 
 			// butGridOD
 			// 
-			this.butGridOD.Location = new System.Drawing.Point(200, 315);
+			this.butGridOD.Location = new System.Drawing.Point(197, 292);
 			this.butGridOD.Name = "butGridOD";
 			this.butGridOD.Size = new System.Drawing.Size(102, 23);
 			this.butGridOD.TabIndex = 12;
@@ -154,7 +153,7 @@
 			// 
 			// button1
 			// 
-			this.button1.Location = new System.Drawing.Point(200, 272);
+			this.button1.Location = new System.Drawing.Point(197, 233);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(122, 23);
 			this.button1.TabIndex = 13;
@@ -162,142 +161,16 @@
 			this.button1.UseVisualStyleBackColor = true;
 			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
-			// butShowFocus
-			// 
-			this.butShowFocus.Location = new System.Drawing.Point(486, 272);
-			this.butShowFocus.Name = "butShowFocus";
-			this.butShowFocus.Size = new System.Drawing.Size(102, 23);
-			this.butShowFocus.TabIndex = 14;
-			this.butShowFocus.Text = "Show Focus Test";
-			this.butShowFocus.UseVisualStyleBackColor = true;
-			this.butShowFocus.Click += new System.EventHandler(this.butShowFocus_Click);
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(48, 100);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(159, 23);
-			this.label3.TabIndex = 16;
-			this.label3.Text = "Include TabIndex up to";
-			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// textTabIndex
-			// 
-			this.textTabIndex.Location = new System.Drawing.Point(211, 102);
-			this.textTabIndex.Name = "textTabIndex";
-			this.textTabIndex.Size = new System.Drawing.Size(55, 20);
-			this.textTabIndex.TabIndex = 15;
-			// 
-			// label5
-			// 
-			this.label5.Location = new System.Drawing.Point(269, 102);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(227, 20);
-			this.label5.TabIndex = 17;
-			this.label5.Text = "Enter a hyphen to not convert TabIndexes";
-			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// butFilterActs
-			// 
-			this.butFilterActs.Location = new System.Drawing.Point(200, 344);
-			this.butFilterActs.Name = "butFilterActs";
-			this.butFilterActs.Size = new System.Drawing.Size(103, 23);
-			this.butFilterActs.TabIndex = 18;
-			this.butFilterActs.Text = "Show Filter Acts";
-			this.butFilterActs.UseVisualStyleBackColor = true;
-			this.butFilterActs.Click += new System.EventHandler(this.butFilterActs_Click);
-			// 
-			// buttonSplitTests
-			// 
-			this.buttonSplitTests.Location = new System.Drawing.Point(200, 373);
-			this.buttonSplitTests.Name = "buttonSplitTests";
-			this.buttonSplitTests.Size = new System.Drawing.Size(102, 23);
-			this.buttonSplitTests.TabIndex = 19;
-			this.buttonSplitTests.Text = "Show Split Tests";
-			this.buttonSplitTests.UseVisualStyleBackColor = true;
-			this.buttonSplitTests.Click += new System.EventHandler(this.buttonSplitTests_Click);
-			// 
-			// butSplitsWPF
-			// 
-			this.butSplitsWPF.Location = new System.Drawing.Point(348, 373);
-			this.butSplitsWPF.Name = "butSplitsWPF";
-			this.butSplitsWPF.Size = new System.Drawing.Size(102, 23);
-			this.butSplitsWPF.TabIndex = 20;
-			this.butSplitsWPF.Text = "Show WPF Splits";
-			this.butSplitsWPF.UseVisualStyleBackColor = true;
-			this.butSplitsWPF.Click += new System.EventHandler(this.butSplitsWPF_Click);
-			// 
-			// butCombosWPF
-			// 
-			this.butCombosWPF.Location = new System.Drawing.Point(349, 344);
-			this.butCombosWPF.Name = "butCombosWPF";
-			this.butCombosWPF.Size = new System.Drawing.Size(114, 23);
-			this.butCombosWPF.TabIndex = 21;
-			this.butCombosWPF.Text = "Show WPF Combo";
-			this.butCombosWPF.UseVisualStyleBackColor = true;
-			this.butCombosWPF.Click += new System.EventHandler(this.butCombosWPF_Click);
-			// 
-			// butDatePickerTests
-			// 
-			this.butDatePickerTests.Location = new System.Drawing.Point(83, 373);
-			this.butDatePickerTests.Name = "butDatePickerTests";
-			this.butDatePickerTests.Size = new System.Drawing.Size(102, 23);
-			this.butDatePickerTests.TabIndex = 22;
-			this.butDatePickerTests.Text = "DatePicker Tests";
-			this.butDatePickerTests.UseVisualStyleBackColor = true;
-			this.butDatePickerTests.Click += new System.EventHandler(this.butDatePickerTests_Click);
-			// 
-			// butGraphics
-			// 
-			this.butGraphics.Location = new System.Drawing.Point(486, 315);
-			this.butGraphics.Name = "butGraphics";
-			this.butGraphics.Size = new System.Drawing.Size(102, 23);
-			this.butGraphics.TabIndex = 23;
-			this.butGraphics.Text = "Graphics Tests";
-			this.butGraphics.UseVisualStyleBackColor = true;
-			this.butGraphics.Click += new System.EventHandler(this.butGraphics_Click);
-			// 
-			// butMsgBox
-			// 
-			this.butMsgBox.Location = new System.Drawing.Point(486, 344);
-			this.butMsgBox.Name = "butMsgBox";
-			this.butMsgBox.Size = new System.Drawing.Size(108, 23);
-			this.butMsgBox.TabIndex = 24;
-			this.butMsgBox.Text = "MsgBoxCopyPaste";
-			this.butMsgBox.UseVisualStyleBackColor = true;
-			this.butMsgBox.Click += new System.EventHandler(this.butMsgBox_Click);
-			// 
-			// butButtonTests
-			// 
-			this.butButtonTests.Location = new System.Drawing.Point(83, 344);
-			this.butButtonTests.Name = "butButtonTests";
-			this.butButtonTests.Size = new System.Drawing.Size(102, 23);
-			this.butButtonTests.TabIndex = 25;
-			this.butButtonTests.Text = "Button Tests";
-			this.butButtonTests.UseVisualStyleBackColor = true;
-			this.butButtonTests.Click += new System.EventHandler(this.butButtonTests_Click);
-			// 
 			// FormWpfConverter
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(658, 403);
-			this.Controls.Add(this.butButtonTests);
-			this.Controls.Add(this.butMsgBox);
-			this.Controls.Add(this.butGraphics);
-			this.Controls.Add(this.butDatePickerTests);
-			this.Controls.Add(this.butCombosWPF);
-			this.Controls.Add(this.butSplitsWPF);
-			this.Controls.Add(this.buttonSplitTests);
-			this.Controls.Add(this.butFilterActs);
-			this.Controls.Add(this.label5);
-			this.Controls.Add(this.label3);
-			this.Controls.Add(this.textTabIndex);
-			this.Controls.Add(this.butShowFocus);
 			this.Controls.Add(this.button1);
 			this.Controls.Add(this.butGridOD);
 			this.Controls.Add(this.butWPFgrid);
 			this.Controls.Add(this.butShowTest);
+			this.Controls.Add(this.checkOverwrite2);
 			this.Controls.Add(this.butConvert2);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.textName2);
@@ -320,6 +193,7 @@
 		private System.Windows.Forms.Button butConvert;
 		private System.Windows.Forms.Label label2;
 		private OpenDental.UI.CheckBox checkOverwrite;
+		private OpenDental.UI.CheckBox checkOverwrite2;
 		private System.Windows.Forms.Button butConvert2;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.TextBox textName2;
@@ -327,17 +201,5 @@
 		private System.Windows.Forms.Button butWPFgrid;
 		private System.Windows.Forms.Button butGridOD;
 		private System.Windows.Forms.Button button1;
-		private System.Windows.Forms.Button butShowFocus;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.TextBox textTabIndex;
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.Button butFilterActs;
-		private System.Windows.Forms.Button buttonSplitTests;
-		private System.Windows.Forms.Button butSplitsWPF;
-		private System.Windows.Forms.Button butCombosWPF;
-		private System.Windows.Forms.Button butDatePickerTests;
-		private System.Windows.Forms.Button butGraphics;
-		private System.Windows.Forms.Button butMsgBox;
-		private System.Windows.Forms.Button butButtonTests;
 	}
 }

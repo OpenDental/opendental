@@ -23,12 +23,10 @@ namespace OpenDental {
 
 		public FrmWikiRename() {
 			InitializeComponent();
-			Load+=FrmWikiRename_Load;
-			PreviewKeyDown+=FrmWikiRename_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmWikiRename_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmWikiRename_Loaded(object sender,RoutedEventArgs e) {
 			if(PageTitle!="" && PageTitle!=null) {
 				textPageTitle.Text=PageTitle;
 				Text="Page Title - "+PageTitle;
@@ -40,7 +38,6 @@ namespace OpenDental {
 				//textPageTitle.Enabled=false;
 				IsDialogOK=false;//user doesn't need to see this form
 			}
-			textPageTitle.SelectAll(); //textPageTitle needs to be TabIndexOD 0 to have starting focus in WPF
 		}
 
 		private bool ValidateTitle() {
@@ -70,12 +67,6 @@ namespace OpenDental {
 			return true;
 		}
 
-		private void FrmWikiRename_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
-		}
-
 		private void butSave_Click(object sender,EventArgs e) {
 			if(!ValidateTitle()) {
 				return;
@@ -84,6 +75,7 @@ namespace OpenDental {
 			//do not save here. Save is handled where this form is called from.
 			IsDialogOK=true;
 		}
+
 
 	}
 }

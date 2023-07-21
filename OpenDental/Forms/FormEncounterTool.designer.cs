@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEncounterTool));
 			this.butRun = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.label8 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.textDateEnd = new OpenDental.ValidDate();
@@ -47,12 +48,22 @@ namespace OpenDental{
 			// butRun
 			// 
 			this.butRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butRun.Location = new System.Drawing.Point(375, 280);
+			this.butRun.Location = new System.Drawing.Point(288, 280);
 			this.butRun.Name = "butRun";
 			this.butRun.Size = new System.Drawing.Size(75, 24);
 			this.butRun.TabIndex = 8;
 			this.butRun.Text = "&Run";
 			this.butRun.Click += new System.EventHandler(this.butRun_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(369, 280);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 9;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// label8
 			// 
@@ -232,6 +243,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butEncSnomed);
 			this.Controls.Add(this.butEncCdt);
 			this.Controls.Add(this.butRun);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEncounterTool";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -245,6 +257,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butRun;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Label label7;
 		private ValidDate textDateEnd;

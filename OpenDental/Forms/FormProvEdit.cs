@@ -133,9 +133,8 @@ namespace OpenDental{
 			else {
 				radioSSN.Checked=true;
 			}
-			_listClinicsForUser=Clinics.GetAllForUserod(Security.CurUser);
 			_listProviderClinicsOld=ProviderClinics.GetListForProvider(ProviderCur.ProvNum,
-				_listClinicsForUser.Select(x => x.ClinicNum)
+				Clinics.GetForUserod(Security.CurUser,true).Select(x => x.ClinicNum)
 				.Union(new List<long>() { 0 })//Always include 0 clinic, this is the default, NOT a headquarters only value.
 				.Distinct()
 				.ToList());
@@ -235,18 +234,18 @@ namespace OpenDental{
 			textWebSchedDescript.Text=ProviderCur.WebSchedDescript;
 			FillImage();
 			if(ProviderCur.ProvStatus==ProviderStatus.Deleted) {
-				this.DisableAllExcept();
+				this.DisableAllExcept(new Control[]{butCancel});
 				//Make the cancel button the only thing the user can click on.
 			}
 			if(PrefC.HasClinicsEnabled) {
 				_listProviderClinicLinks=ProviderClinicLinks.GetForProvider(ProviderCur.ProvNum);
+				_listClinicsForUser=Clinics.GetForUserod(Security.CurUser);
 				//If there are no ProviderClinicLinks, then the provider is associated to all clinics.
 				bool doSelectAll=(_listProviderClinicLinks.Count==0 || _listClinicsForUser.All(x => _listProviderClinicLinks.Any(y => y.ClinicNum==x.ClinicNum)));
-				List<Clinic> listClinicsForUserUnhidden=_listClinicsForUser.FindAll(x => !x.IsHidden);
-				listBoxClinics.Items.AddList(listClinicsForUserUnhidden,x => x.Abbr);
+				listBoxClinics.Items.AddList(_listClinicsForUser,x => x.Abbr);
 				List<long> listClinicNumsForClinicLinks=_listProviderClinicLinks.Select(x => x.ClinicNum).ToList();;
-				for(int i=0;i<listClinicsForUserUnhidden.Count;i++) {
-					if(!doSelectAll && listClinicNumsForClinicLinks.Contains(listClinicsForUserUnhidden[i].ClinicNum)) {
+				for(int i=0; i<_listClinicsForUser.Count;i++) {
+					if(!doSelectAll && listClinicNumsForClinicLinks.Contains(_listClinicsForUser[i].ClinicNum)) {
 						listBoxClinics.SetSelected(i,true);
 					}
 				}
@@ -417,7 +416,7 @@ namespace OpenDental{
 			}
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			if(!dateTerm.IsValid()) {
 				MsgBox.Show(this,"Term Date invalid.");
 				return;
@@ -669,7 +668,7 @@ namespace OpenDental{
 			ProviderClinics.Sync(_listProviderClinicsNew,_listProviderClinicsOld);
 			if(PrefC.HasClinicsEnabled) {
 				List<long> listClinicNumsSelectedLinks=listBoxClinics.GetListSelected<Clinic>().Select(x => x.ClinicNum).ToList();
-				List<Clinic> listClinicsAll=Clinics.GetDeepCopy();
+				List<Clinic> listClinicsAll=Clinics.GetDeepCopy(true);
 				List<long> listClinicNumsForUser=_listClinicsForUser.Select(x => x.ClinicNum).ToList();
 				bool canUserAccessAllClinics=(_listClinicsForUser.Count==listClinicsAll.Count);
 				if(checkAllClinics.Checked) {
@@ -702,6 +701,10 @@ namespace OpenDental{
 			DialogResult = DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormProvEdit_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
 			if(DialogResult==DialogResult.OK) {
 				//There can be a "hasChanged" boolean added in the future.  For now, due to FormProviderSetup, we need to refresh the cache just in case.
@@ -714,6 +717,9 @@ namespace OpenDental{
 				Providers.Delete(ProviderCur);
 			}
 		}
-
 	}
 }
+
+
+
+

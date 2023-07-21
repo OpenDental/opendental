@@ -44,6 +44,11 @@ namespace OpenDental {
 			textSpeed.Text=speed.ToString();
 			Cursor=Cursors.Default;
 		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 	
 	}
 }

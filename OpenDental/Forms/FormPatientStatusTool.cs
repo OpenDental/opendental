@@ -61,20 +61,14 @@ namespace OpenDental {
 			List<long> listClinicNums=new List<long>();
 			if(PrefC.HasClinicsEnabled) {
 				if(comboClinic.IsAllSelected) {
-					listClinicNums=comboClinic.ListClinicNumsSelected;
+					listClinicNums=comboClinic.ListSelectedClinicNums;
 				}
 				else {
-					listClinicNums.Add(comboClinic.ClinicNumSelected);
+					listClinicNums.Add(comboClinic.SelectedClinicNum);
 				}
 			}
 			List<Patient> listPatients=Patients.GetPatsToChangeStatus(_patientStatusFrom,odDatePickerSince.GetDateTime()
 				,includeTPProc,includeCompletedProc,includeAppointments,listClinicNums);
-			List<PatientLink> listPatientLinks=PatientLinks.GetLinks(listPatients.Select(x => x.PatNum).ToList(),PatientLinkType.Merge);
-			for(int i=listPatients.Count-1;i>=0;i--) {
-				if(PatientLinks.WasPatientMerged(listPatients[i].PatNum,listPatientLinks)) {
-					listPatients.RemoveAt(i);
-				}
-			}
 			gridMain.BeginUpdate();
 			if(gridMain.Columns.Count==0) {
 				gridMain.Columns.Add(new GridColumn(Lan.g(this,"PatNum"),75,GridSortingStrategy.AmountParse));
@@ -163,12 +157,15 @@ namespace OpenDental {
 			using MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(stringBuilder.ToString());
 			msgBoxCopyPaste.Text=Lans.g(this,"Done");
 			msgBoxCopyPaste.ShowDialog();
-			SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,listPatNums,Lans.g(this,"Patient status changed from")+" "
+			SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,listPatNums,Lans.g(this,"Patient status changed from")+" "
 				+patientStatusFrom+" "
 				+Lans.g(this,"to")+" "+patientStatusTo
 				+Lans.g(this," by the Patient Status Setter tool."));
 			FillGrid();
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

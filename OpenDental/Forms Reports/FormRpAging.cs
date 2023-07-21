@@ -241,12 +241,12 @@ namespace OpenDental{
 			}
 			ReportComplex report=new ReportComplex(true,false); 
 			DataTable tableAging=new DataTable();
-			ProgressWin progressOD = new ProgressWin {
+			ProgressOD progressOD = new ProgressOD {
 				ActionMain=() => {
 					tableAging=RpAging.GetAgingTable(GetParamsFromForm());
 				}
 			};
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled){
 				return;
 			}
@@ -318,4 +318,7 @@ namespace OpenDental{
 		}
 
 	}
+
+
+
 }

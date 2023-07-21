@@ -7,11 +7,11 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="604" Height="146" 
-             Text="Edit Claim Filing Code Subtype" MinMaxBoxes="False" >
+             Text="Edit Claim Filing Code Subtype" Loaded="FrmInsFilingCodeSubtypeEdit_Loaded" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butDelete" Width="81" VerticalAlignment="Bottom" Height="26" Margin="27,0,0,18" Text="Delete" Icon="DeleteX" Click="butDelete_Click" />
 		<ui:TextBox x:Name="textDescription" Width="291" Height="20" Margin="160,20,0,0" />
-		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,26,18" Text="_Save" Click="butSave_Click" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,26,18" Text="Save" Click="butSave_Click" />
 		<ui:Label x:Name="label1" Width="148" Height="17" Margin="9,21,0,0" Text="Description" HAlign="Right" VAlign="Center" />
 	</Grid>
 </local:FrmODBase>

@@ -107,11 +107,11 @@ namespace OpenDental {
 			DataTable tableOverpaidProcs=new DataTable();
 			List<long> listSelectedProvNums=comboBoxMultiProv.GetSelectedProvNums();
 			if(hasValidationPassed) {
-				tableOverpaidProcs=RpProcOverpaid.GetOverPaidProcs(_patNum,listSelectedProvNums,comboBoxMultiClinics.ListClinicNumsSelected,_myReportDateFrom,_myReportDateTo,
+				tableOverpaidProcs=RpProcOverpaid.GetOverPaidProcs(_patNum,listSelectedProvNums,comboBoxMultiClinics.ListSelectedClinicNums,_myReportDateFrom,_myReportDateTo,
 					checkExcludeOverpaidWithIns.Checked);
 			}
 			string subTitleProviders=Lan.g(this,"All Providers");
-			if(!comboBoxMultiProv.IsAllSelected) {
+			if(listSelectedProvNums.Count>0) {
 				subTitleProviders=Lan.g(this,"For Providers:")+" "+string.Join(",",listSelectedProvNums.Select(x => Providers.GetFormalName(x)));
 			}
 			string subtitleClinics=comboBoxMultiClinics.GetStringSelectedClinics();
@@ -175,12 +175,11 @@ namespace OpenDental {
 		}
 
 		private void butFind_Click(object sender,EventArgs e) {
-			FrmPatientSelect frmPatientSelect=new FrmPatientSelect();
-			frmPatientSelect.ShowDialog();
-			if(frmPatientSelect.IsDialogCancel) {
+			using FormPatientSelect formPatientSelect=new FormPatientSelect();
+			if(formPatientSelect.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
-			_patNum=frmPatientSelect.PatNumSelected;
+			_patNum=formPatientSelect.PatNumSelected;
 			textPatient.Text=Patients.GetLim(_patNum).GetNameLF();
 		}
 
@@ -205,9 +204,12 @@ namespace OpenDental {
 			}
 			DataRow row=(DataRow)gridMain.ListGridRows[gridMain.GetSelectedIndex()].Tag;
 			long patNum=PIn.Long(row["PatNum"].ToString());
-			GlobalFormOpenDental.GotoAccount(patNum);
+			GotoModule.GotoAccount(patNum);
 			SendToBack();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }

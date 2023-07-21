@@ -26,6 +26,7 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrLabOrders));
 			this.butAdd = new System.Windows.Forms.Button();
 			this.butImport = new System.Windows.Forms.Button();
+			this.butClose = new System.Windows.Forms.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.SuspendLayout();
 			// 
@@ -51,6 +52,17 @@
 			this.butImport.UseVisualStyleBackColor = true;
 			this.butImport.Click += new System.EventHandler(this.butImport_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(887, 367);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 23);
+			this.butClose.TabIndex = 9;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// gridMain
 			// 
 			this.gridMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -68,6 +80,7 @@
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(974, 402);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.butImport);
 			this.Controls.Add(this.gridMain);
@@ -84,5 +97,6 @@
 		private System.Windows.Forms.Button butAdd;
 		private System.Windows.Forms.Button butImport;
 		private OpenDental.UI.GridOD gridMain;
+		private System.Windows.Forms.Button butClose;
 	}
 }

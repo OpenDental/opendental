@@ -24,7 +24,8 @@ namespace OpenDental {
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPrinterSetup));
 			this.label1 = new System.Windows.Forms.Label();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.comboDefault = new OpenDental.UI.ComboBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
@@ -76,15 +77,26 @@ namespace OpenDental {
 			this.label1.TabIndex = 2;
 			this.label1.Text = "These settings only apply to this workstation";
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(554, 368);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 2;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(550, 359);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 2;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(550, 393);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 3;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// comboDefault
 			// 
@@ -314,7 +326,7 @@ namespace OpenDental {
 			// checkSimple
 			// 
 			this.checkSimple.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.checkSimple.Location = new System.Drawing.Point(49, 367);
+			this.checkSimple.Location = new System.Drawing.Point(49, 396);
 			this.checkSimple.Name = "checkSimple";
 			this.checkSimple.Size = new System.Drawing.Size(440, 24);
 			this.checkSimple.TabIndex = 33;
@@ -436,9 +448,11 @@ namespace OpenDental {
 			// 
 			// FormPrinterSetup
 			// 
-			this.AcceptButton = this.butSave;
-			this.ClientSize = new System.Drawing.Size(641, 404);
-			this.Controls.Add(this.butSave);
+			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(654, 433);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.comboDefault);
 			this.Controls.Add(this.panelSimple);
@@ -457,7 +471,8 @@ namespace OpenDental {
 		#endregion
 
 		private System.Windows.Forms.Label label1;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.ComboBox comboDefault;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;

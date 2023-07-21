@@ -15,7 +15,6 @@ using OpenDental.Thinfinity;
 using OpenDental.UI;
 using System.Drawing.Imaging;
 using CodeBase.Controls;
-using KnowledgeRequestNotification;
 
 namespace OpenDental {
 	public partial class FormImageFloat:FormODBase {
@@ -33,7 +32,7 @@ namespace OpenDental {
 		///<summary></summary>
 		public string PatFolder="";
 		///<summary>For a few things, an actual reference to the imageSelector of the parent is handy.</summary>
-		public WpfControls.UI.ImageSelector ImageSelector_;
+		public ImageSelector ImageSelector_;
 		///<summary>Just used to get the list of windows.</summary>
 		public List<FormImageFloat> ListFormImageFloats;
 		///<summary>The currently selected node type, key, and category.  This is specific to each window.  Can be null if nothing selected, which will cause pasted items to go to DefaultImageCategoryImportFolder pref if a DefNum exists, first category otherwise.</summary>
@@ -63,7 +62,7 @@ namespace OpenDental {
 		private DateTime _dateTimeMouseDownPanel;
 		private EnumDrawMode _drawMode;
 		///<summary>Dispose handled automatically when this form closes.</summary>
-		private FormLauncher _formLauncherImageFloatWindows=new FormLauncher(EnumFormName.FormImageFloatWindows);
+		private FormImageFloatWindows _formImageFloatWindows;
 		///<summary>Used in Line mode and in Line Point editing. The index within _listImageDraws that we are editing.</summary>
 		private int _idxImageDraw;
 		///<summary>Only for Line Point editing. The index within the imageDraw.DrawingSegment.</summary>
@@ -75,6 +74,8 @@ namespace OpenDental {
 		///<summary>True when the menu is showing.</summary>
 		private bool _isButWindowPressed;
 		private bool _isDraggingMount=false;
+		///<summary></summary>
+		private bool _isExportable;
 		///<summary>True if the mouse is currently over the "Windows" button at the top.</summary>
 		private bool _isHotButWindow;
 		private bool _isLineExtending;
@@ -82,18 +83,14 @@ namespace OpenDental {
 		private bool _isLineStarted;
 		private bool _isMouseDownPanel;
 		private bool _isDraggingText;
-		///<summary>This is the label that goes on panelHover</summary>
-		private Label labelHover;
 		///<summary>All the ImageDraw rows for this document or mount.</summary>
 		private List<ImageDraw> _listImageDraws;
-		///<summary>If a mount is currently selected, this is the list of the mount items on it. This is pulled from the database, and then the other two lists (_bitmapArrayShowing and _documentArrayShowing) are set to match this in length so that all three have a 1:1:1 relationship.</summary>
+		///<summary>If a mount is currently selected, this is the list of the mount items on it.</summary>
 		private List<MountItem> _listMountItems=null;
-		///<summary>For drawings and polygons.  This is just a temporary list while the mouse is down.  All points are in bitmap or mount coords. As the mouse is moved this list gets longer. On mouse up, it gets saved to the db, this list of points gets cleared, and panel invalidated.</summary>
+		///<summary>For drawings.  This is just a temporary list while the mouse is down.  All points are in bitmap or mount coords. As the mouse is moved this list gets longer. On mouse up, it gets saved to the db, this list of points gets cleared, and panel invalidated.</summary>
 		private List<PointF> _listPointFsDrawing=new List<PointF>();
 		///<summary>Keeps track of the currently selected mount object (only when a mount is selected).</summary>
 		private Mount _mountShowing=null;
-		///<summary>For Pearl hover effect. Could be a window, but panel was slightly faster and easier. No logic for crashing into bounds. They can pan.</summary>
-		private PanelOD panelHover;
 		///<summary>When dragging mount bitmap, this is the current point of the bitmap, in mount coordinates.</summary>
 		private Point _pointDragNow;
 		///<summary>When dragging mount item, this is the starting point of the center of the mount item where raw image will draw, in mount coordinates.</summary>
@@ -111,16 +108,6 @@ namespace OpenDental {
 		private Rectangle _rectangleButWindows;
 		///<summary>In panel coords.</summary>
 		private Rectangle _rectangleCrop;
-		///<summary>Does not control showing drawings for Pearl or any other external source.</summary>
-		private bool _showDrawingsOD;
-		///<summary></summary>
-		private bool _showDrawingsPearlToothParts;
-		///<summary></summary>
-		private bool _showDrawingsPearlPolyAnnotations;
-		///<summary></summary>
-		private bool _showDrawingsPearlBoxAnnotations;
-		///<summary></summary>
-		private bool _showDrawingsPearlMeasurements;
 		///<summary>Temporary text that will show for measurement. Also see _pointMeasureText.</summary>
 		private string _stringMeasure;
 		///<summary>Displays PDFs.</summary>
@@ -144,14 +131,14 @@ namespace OpenDental {
 			panelMain.Cursor=_cursorPan;
 			panelMain.MouseWheel += panelMain_MouseWheel;//here because not browsable in designer
 			panelMain.ContextMenu=menuPanelMain;
-			if(!ODBuild.IsThinfinity()) {//WebView2 does not work on Cloud
+			if(!ODBuild.IsWeb()) {//WebView2 does not work on Cloud
 				_odWebView2=new ODWebView2();//Include a WebView2 object for loading .pdf files.
 				_odWebView2.Visible=false;
 				_odWebView2.Dock=DockStyle.Fill;
 				_odWebView2.DoBlockNavigation=true;
 				LayoutManager.Add(_odWebView2,this);
 			}
-			else if(ODBuild.IsThinfinity()) {//For cloud, instead use CloudIframe.
+			else if(ODBuild.IsWeb()) {//For cloud, instead use CloudIframe.
 				_cloudIframe=new CloudIframe();
 				_cloudIframe.Initialize();
 				_cloudIframe.HideIframe();
@@ -165,15 +152,6 @@ namespace OpenDental {
 			_cursorLineSubtract=new Cursor(GetType(),"CursorLineSubtract.cur");
 			_cursorMeasure=new Cursor(GetType(),"CursorMeasure.cur");
 			_cursorScale=new Cursor(GetType(),"CursorScale.cur");
-			panelHover=new PanelOD();
-			panelHover.Size=new Size(200,200);
-			panelHover.Visible=false;
-			LayoutManager.Add(panelHover,panelMain);
-			labelHover=new Label();
-			labelHover.Size=new Size(180,180);//10 pixels of margin all around
-			labelHover.Location=new Point(10,10);
-			labelHover.Anchor=AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom;
-			LayoutManager.Add(labelHover,panelHover);
 		}
 		#endregion Constructor
 
@@ -280,7 +258,7 @@ namespace OpenDental {
 		#region Methods - Public
 		///<summary>Disposes and recreates a new CloudIframe control for ODCloud that is hidden.</summary>
 		public void ClearPDFBrowser() {
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				//ODCloud does not use _odWebView2
 				_cloudIframe.HideIframe();
 				IsImageFloatLocked=false;
@@ -292,7 +270,7 @@ namespace OpenDental {
 		///<summary>Deletes the specified document from the database and refreshes the tree view. Set securityCheck false when creating a new document that might get cancelled.  Document is passed in because it might not be in the tree if the image folder it belongs to is now hidden.</summary>
 		public void DeleteDocument(bool isVerbose,bool doSecurityCheck,Document document) {
 			if(doSecurityCheck) {
-				if(!Security.IsAuthorized(EnumPermType.ImageDelete,document.DateCreated)) {
+				if(!Security.IsAuthorized(Permissions.ImageDelete,document.DateCreated)) {
 					return;
 				}
 			}
@@ -386,8 +364,7 @@ namespace OpenDental {
 			if(IsDocumentShowing()){
 				//In Web mode, the buttons do not appear when hovering over the PDF, so we need to enable the print toolbar button.
 				bool doShowPrint=panelMain.Visible;
-				bool doShowExport=!GetDocumentShowing(0).FileName.IsNullOrEmpty();
-				toolBarButtonState=new ToolBarButtonState(print:doShowPrint, delete:true, info:true, sign:true, export:doShowExport, copy:panelMain.Visible, brightAndContrast:panelMain.Visible, zoom:panelMain.Visible, zoomOne:false, crop:panelMain.Visible, pan:panelMain.Visible, adj:false, size:panelMain.Visible, flip:panelMain.Visible, rotateL:panelMain.Visible, rotateR:panelMain.Visible, rotate180:panelMain.Visible,draw:panelMain.Visible, unmount:false);
+				toolBarButtonState=new ToolBarButtonState(print:doShowPrint, delete:true, info:true, sign:true, export:_isExportable, copy:panelMain.Visible, brightAndContrast:panelMain.Visible, zoom:panelMain.Visible, zoomOne:false, crop:panelMain.Visible, pan:panelMain.Visible, adj:false, size:panelMain.Visible, flip:panelMain.Visible, rotateL:panelMain.Visible, rotateR:panelMain.Visible, rotate180:panelMain.Visible,draw:panelMain.Visible, unmount:false);
 				EventEnableToolBarButtons?.Invoke(this,toolBarButtonState);
 			}
 			else if(IsMountShowing()){
@@ -408,7 +385,7 @@ namespace OpenDental {
 			}
 		}
 
-		public void formVideo_BitmapCaptured(object sender, Bitmap bitmap){
+		public void formVideo_BitmapCaptured(object sender, VideoEventArgs e){
 			Document document = null;
 			long defNumCategory=GetCurrentCategory();
 			if(PrefC.GetLong(PrefName.VideoImageCategoryDefault)>0){
@@ -416,10 +393,10 @@ namespace OpenDental {
 			}
 			try {
 				//it seems to sometimes fire a second time, with bitmap null
-				if(bitmap is null){
+				if(e.Bitmap is null){
 					return;
 				}
-				document=ImageStore.Import(bitmap,defNumCategory,ImageType.Photo,PatientCur);
+				document=ImageStore.Import(e.Bitmap,defNumCategory,ImageType.Photo,PatientCur);
 			}
 			catch(Exception ex) {
 				MessageBox.Show(Lan.g(this,"Unable to save")+": "+ex.Message);
@@ -452,11 +429,11 @@ namespace OpenDental {
 			Documents.Update(document,documentOld);
 			//The following lines are from LoadBitmap(OnlyIdx), but optimized for the situation when we already have the bitmap
 			_documentArrayShowing[_idxSelectedInMount]=document;
-			SetBitmapShowing(_idxSelectedInMount,new Bitmap(bitmap));
+			SetBitmapShowing(_idxSelectedInMount,new Bitmap(e.Bitmap));
 			//_bitmapRaw: don't load this because it would waste time.  Instead, deselect after loop.
 			ImageHelper.ApplyColorSettings(GetBitmapShowing(_idxSelectedInMount),
 				_documentArrayShowing[_idxSelectedInMount].WindowingMin,_documentArrayShowing[_idxSelectedInMount].WindowingMax);
-			bitmap?.Dispose();
+			e.Bitmap?.Dispose();
 			//Select next slot position, in preparation for next image.-------------------------------------------------
 			List<MountItem> listMountItemsAvail=GetAvailSlots(1);
 			if(listMountItemsAvail is null){//no more available slots, so we are done
@@ -543,11 +520,6 @@ namespace OpenDental {
 			return _idxSelectedInMount;
 		}
 
-
-		public List<Bitmap> GetListBitmaps(){
-			return _bitmapArrayShowing.ToList();
-		}
-
 		public List<FormImageFloat> GetListWindows(){
 			return ListFormImageFloats;
 			/*
@@ -591,24 +563,24 @@ namespace OpenDental {
 			return _nodeTypeKeyCatSelected.PriKey;
 		}
 
-		public List<WpfControls.UI.UnmountedObj> GetUmountedObjs(){
-			List<WpfControls.UI.UnmountedObj> listUnmountedObjs=new List<WpfControls.UI.UnmountedObj>();
+		public List<UnmountedObject> GetUmountedObjects(){
+			List<UnmountedObject> listUnmountedObjects=new List<UnmountedObject>();
 			for(int i=0;i<_listMountItems.Count;i++){
 				if(_listMountItems[i].ItemOrder!=-1){
 					continue;
 				}
-				WpfControls.UI.UnmountedObj unmountedObj=new WpfControls.UI.UnmountedObj();
-				unmountedObj.MountItem_=_listMountItems[i];
-				unmountedObj.Document_=_documentArrayShowing[i];//could be null
-				unmountedObj.SetBitmap(_bitmapArrayShowing[i]);//could be null
-				listUnmountedObjs.Add(unmountedObj);
+				UnmountedObject unmountedObject=new UnmountedObject();
+				unmountedObject.MountItem=_listMountItems[i];
+				unmountedObject.Document=_documentArrayShowing[i];//could be null
+				unmountedObject.Bitmap=_bitmapArrayShowing[i];//could be null
+				listUnmountedObjects.Add(unmountedObject);
 			}
-			return listUnmountedObjs;
+			return listUnmountedObjects;
 		}
 
 		///<summary>Returns true if the CloudIframe control was hidden for ODCloud. Otherwise; false.</summary>
 		public bool HideWebBrowser() {
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				//ODCloud uses _cloudIframe instead of _odWebView2
 				_cloudIframe.HideIframe();
 			}
@@ -706,7 +678,7 @@ namespace OpenDental {
 		}
 
 		public void PdfPrintPreview(){
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				if(_odWebView2FilePath.IsNullOrEmpty()) {
 					SetPdfFilePath(PatFolder,GetDocumentShowing(0).FileName,"","Downloading Document...");
 				}
@@ -718,7 +690,7 @@ namespace OpenDental {
 				ThinfinityUtils.HandleFile(_odWebView2FilePath);//This will do a PDF preview. WebView2 does not work with cloud.
 			}
 			//WebView2 has its own built-in pdf preview that is shown when clicking 'Print'.
-			SecurityLogs.MakeLogEntry(EnumPermType.Printing,PatientCur.PatNum,"Patient PDF "+GetDocumentShowing(0).FileName+" "+GetDocumentShowing(0).Description+" printed");
+			SecurityLogs.MakeLogEntry(Permissions.Printing,PatientCur.PatNum,"Patient PDF "+GetDocumentShowing(0).FileName+" "+GetDocumentShowing(0).Description+" printed");
 		}
 
 		///<summary>If a mount is showing, and if no item is selected, then this will select the first open item. If one is already selected, but it's occupied, this does not check that.  There is also no guarantee that one will be selected after this because all positions could be full.</summary>
@@ -759,12 +731,7 @@ namespace OpenDental {
 				Document document=GetDocumentShowing(0);
 				xTitle=e.MarginBounds.X+e.MarginBounds.Width/2;
 				yTitle=e.MarginBounds.Top;
-				//Job 20502 added this info for all patient images
-				//Job 35304 removed this info except for xrays because some people found it annoying
-				//Job 50474 added this info back for toothchart.
-				//Job 51614 removed this for Perio, Graphical Perio, and toothcharts.
-				//Job 52144 PrintHeading was added via an enhancement so that user can control per image.
-				if(document.PrintHeading) {
+				if(document.ImgType==ImageType.Radiograph) {
 					str=PatientCur.GetNameLF();
 					widthStr=(int)g.MeasureString(str,fontTitle).Width;
 					g.DrawString(str,fontTitle,Brushes.Black,xTitle-widthStr/2,yTitle);
@@ -822,37 +789,35 @@ namespace OpenDental {
 				//Single mount item
 				xTitle=e.MarginBounds.X+e.MarginBounds.Width/2;
 				yTitle=e.MarginBounds.Top;
-				if(_documentArrayShowing[_idxSelectedInMount].PrintHeading) {
-					str=PatientCur.GetNameLF();
-					widthStr=(int)g.MeasureString(str,fontTitle).Width;
-					g.DrawString(str,fontTitle,Brushes.Black,xTitle-widthStr/2,yTitle);
-					yTitle+=fontTitle.Height+4;
-					str="DOB: "+PatientCur.Birthdate.ToShortDateString();
+				str=PatientCur.GetNameLF();
+				widthStr=(int)g.MeasureString(str,fontTitle).Width;
+				g.DrawString(str,fontTitle,Brushes.Black,xTitle-widthStr/2,yTitle);
+				yTitle+=fontTitle.Height+4;
+				str="DOB: "+PatientCur.Birthdate.ToShortDateString();
+				widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
+				g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
+				yTitle+=fontSubTitles.Height;
+				str=_documentArrayShowing[_idxSelectedInMount].DateCreated.ToShortDateString();
+				widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
+				g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
+				yTitle+=fontSubTitles.Height;
+				if(_documentArrayShowing[_idxSelectedInMount].ProvNum!=0){
+					str=Providers.GetFormalName(_documentArrayShowing[_idxSelectedInMount].ProvNum);
 					widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
 					g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
 					yTitle+=fontSubTitles.Height;
-					str=_documentArrayShowing[_idxSelectedInMount].DateCreated.ToShortDateString();
+				}
+				if(_documentArrayShowing[_idxSelectedInMount].Description!=""){
+					str=_documentArrayShowing[_idxSelectedInMount].Description;
 					widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
 					g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
 					yTitle+=fontSubTitles.Height;
-					if(_documentArrayShowing[_idxSelectedInMount].ProvNum!=0){
-						str=Providers.GetFormalName(_documentArrayShowing[_idxSelectedInMount].ProvNum);
-						widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
-						g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
-						yTitle+=fontSubTitles.Height;
-					}
-					if(_documentArrayShowing[_idxSelectedInMount].Description!=""){
-						str=_documentArrayShowing[_idxSelectedInMount].Description;
-						widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
-						g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
-						yTitle+=fontSubTitles.Height;
-					}
-					if(_documentArrayShowing[_idxSelectedInMount].ToothNumbers!=""){
-						str=Lan.g(this,"Tooth numbers: ") +_documentArrayShowing[_idxSelectedInMount].ToothNumbers;
-						widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
-						g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
-						yTitle+=fontSubTitles.Height;
-					}
+				}
+				if(_documentArrayShowing[_idxSelectedInMount].ToothNumbers!=""){
+					str=Lan.g(this,"Tooth numbers: ") +_documentArrayShowing[_idxSelectedInMount].ToothNumbers;
+					widthStr=(int)g.MeasureString(str,fontSubTitles).Width;
+					g.DrawString(str,fontSubTitles,Brushes.Black,xTitle-widthStr/2,yTitle);
+					yTitle+=fontSubTitles.Height;
 				}
 				yTitle+=20;
 				Rectangle rectangleAvail=new Rectangle(e.MarginBounds.X,yTitle,e.MarginBounds.Width,e.MarginBounds.Height-yTitle);
@@ -875,6 +840,7 @@ namespace OpenDental {
 				return;
 			}
 			//entire mount from here down----------------------------------------------------------------------------------------------------------------------------
+			//This needs different drawing strategy
 			g.TranslateTransform(e.MarginBounds.X+e.MarginBounds.Width/2,e.MarginBounds.Y+e.MarginBounds.Height/2);//Center of page
 			int heightTitle=55;
 			bool isWide=false;
@@ -977,10 +943,10 @@ namespace OpenDental {
 				}
 				_bitmapArrayShowing=new Bitmap[1]; 
 				if(CloudStorage.IsCloudStorage) {
-					ProgressWin progressOD=new ProgressWin();
+					ProgressOD progressOD=new ProgressOD();
 					progressOD.ActionMain=() =>	LoadBitmap(0,EnumLoadBitmapType.IdxAndRaw);
 					progressOD.StartingMessage=Lan.g("ContrImages","Downloading...");
-					progressOD.ShowDialog();
+					progressOD.ShowDialogProgress();
 					if(progressOD.IsCancelled){
 						return;
 					}
@@ -991,7 +957,7 @@ namespace OpenDental {
 				//_bitmapRaw will always be null for PDFs
 				//Diverges slightly from the normal use of this event, in that it is fired from SelectTreeNode() rather than ModuleSelected.  Appropriate
 				//here because this is the only data in ContrImages that might affect the PatientDashboard, and there is no "LoadData" in this Module.
-				ODEvent.Fire(ODEventType.ModuleSelected
+				PatientDashboardDataEvent.Fire(ODEventType.ModuleSelected
 					,new PatientDashboardDataEventArgs() {
 						Pat=PatientCur,
 						ListDocuments=_documentArrayShowing.ToList(),
@@ -999,6 +965,7 @@ namespace OpenDental {
 					}
 				);
 				DownloadDocumentNoteFile(nodeTypeAndKey);
+				_isExportable=panelMain.Visible;
 				if(_bitmapRaw==null && _bitmapDicomRaw==null) {
 					panelMain.Visible=false;
 					if(ImageHelper.HasImageExtension(document.FileName)) {
@@ -1043,11 +1010,11 @@ namespace OpenDental {
 					}
 					if(CloudStorage.IsCloudStorage) {
 						//this will flicker since it will be a series of progress bars.  Improve later if needed.
-						ProgressWin progressWin=new ProgressWin();
-						progressWin.ActionMain=() =>	LoadBitmap(i,EnumLoadBitmapType.OnlyIdx);
-						progressWin.StartingMessage=Lan.g("ContrImages","Downloading...");
-						progressWin.ShowDialog();
-						if(progressWin.IsCancelled){
+						ProgressOD progressOD=new ProgressOD();
+						progressOD.ActionMain=() =>	LoadBitmap(i,EnumLoadBitmapType.OnlyIdx);
+						progressOD.StartingMessage=Lan.g("ContrImages","Downloading...");
+						progressOD.ShowDialogProgress();
+						if(progressOD.IsCancelled){
 							Cursor=Cursors.Default;
 							return;//not sure if we need to do any cleanup
 						}
@@ -1140,7 +1107,6 @@ namespace OpenDental {
 					ToolBarSetScale_Click();
 					break;
 				case EnumDrawMode.Pen:
-				case EnumDrawMode.Polygon://for now, just use the pen
 					using(MemoryStream memoryStream=new MemoryStream(Properties.Resources.Pen)){
 						panelMain.Cursor=new Cursor(memoryStream);
 					}
@@ -1167,15 +1133,6 @@ namespace OpenDental {
 				return;
 			}
 			_idxSelectedInMount=idx;
-			panelMain.Invalidate();
-		}
-
-		public void SetShowDrawings(bool showOD,bool showPearlToothParts,bool showPearlPolyAnnotations,bool showPearlBoxAnnotations,bool showPearlMeasurements){
-			_showDrawingsOD=showOD;
-			_showDrawingsPearlToothParts=showPearlToothParts;
-			_showDrawingsPearlPolyAnnotations=showPearlPolyAnnotations;
-			_showDrawingsPearlBoxAnnotations=showPearlBoxAnnotations;
-			_showDrawingsPearlMeasurements=showPearlMeasurements;
 			panelMain.Invalidate();
 		}
 
@@ -1214,45 +1171,39 @@ namespace OpenDental {
 			if(IsDocumentShowing()){
 				if(_bitmapRaw==null && _bitmapDicomRaw==null){
 					//pdf. It will be disabled anyway
-					ZoomSliderStateInitial=new ZoomSliderState(new System.Windows.Size(panelMain.Width,panelMain.Height), new System.Windows.Size(panelMain.Width,panelMain.Height),0);//100
+					ZoomSliderStateInitial=new ZoomSliderState(panelMain.Size,panelMain.Size,0);//100
 					EventSetZoomSlider?.Invoke(this,ZoomSliderStateInitial);
 					return;
 				}
 				if(_bitmapRaw!=null){
-					System.Windows.Size sizeImage=new System.Windows.Size(_bitmapRaw.Width,_bitmapRaw.Height);
+					Size sizeImage=_bitmapRaw.Size;
 					if(GetDocumentShowing(0).CropW>0){
-						sizeImage=new System.Windows.Size(GetDocumentShowing(0).CropW,GetDocumentShowing(0).CropH);
+						sizeImage=new Size(GetDocumentShowing(0).CropW,GetDocumentShowing(0).CropH);
 					}
-					ZoomSliderStateInitial=new ZoomSliderState(new System.Windows.Size(panelMain.Width,panelMain.Height), sizeImage,GetDocumentShowing(0).DegreesRotated);
+					ZoomSliderStateInitial=new ZoomSliderState(panelMain.Size,sizeImage,GetDocumentShowing(0).DegreesRotated);
 					EventSetZoomSlider?.Invoke(this,ZoomSliderStateInitial);
 				}
 				if(_bitmapDicomRaw!=null){
-					System.Windows.Size sizeImage=new System.Windows.Size(_bitmapDicomRaw.Width,_bitmapDicomRaw.Height);
+					Size sizeImage=new Size(_bitmapDicomRaw.Width,_bitmapDicomRaw.Height);
 					if(GetDocumentShowing(0).CropW>0){
-						sizeImage=new System.Windows.Size(GetDocumentShowing(0).CropW,GetDocumentShowing(0).CropH);
+						sizeImage=new Size(GetDocumentShowing(0).CropW,GetDocumentShowing(0).CropH);
 					}
-					ZoomSliderStateInitial=new ZoomSliderState(new System.Windows.Size(panelMain.Width,panelMain.Height),
-						sizeImage,GetDocumentShowing(0).DegreesRotated);
+					ZoomSliderStateInitial=new ZoomSliderState(panelMain.Size,sizeImage,GetDocumentShowing(0).DegreesRotated);
 					EventSetZoomSlider?.Invoke(this,ZoomSliderStateInitial);
 				}
 			}
 			if(IsMountShowing()){
-				ZoomSliderStateInitial=new ZoomSliderState(new System.Windows.Size(panelMain.Width,panelMain.Height), new System.Windows.Size(_mountShowing.Width,_mountShowing.Height),0);
+				ZoomSliderStateInitial=new ZoomSliderState(panelMain.Size,new Size(_mountShowing.Width,_mountShowing.Height),0);
 				EventSetZoomSlider?.Invoke(this,ZoomSliderStateInitial);
 			}
 		}
 
-		///<summary>Three to four objects will end up on clipboard: 1:NodeTypeAndKey, 2:Bitmap(if it's an image type), 3:FileDrop, 4:Database name (if NodeTypeAndKey is not null). For images, the filedrop will point to a temp copy of the saved bitmap.  For non-images, filedrop will point to the original file.</summary>
-		public void ToolBarCopy_Click(object sender, EventArgs e){
+		///<summary>Three objects will end up on clipboard: 1:NodeTypeAndKey , 2:Bitmap(if it's an image type), 3:FileDrop. For images, the filedrop will point to a temp copy of the saved bitmap.  For non-images, filedrop will point to the original file.</summary>
+		public void ToolBarCopy_Click(){
 			//not enabled when pdf selected
 			NodeTypeAndKey nodeTypeAndKey=null;
 			Bitmap bitmapCopy=null;
 			string fileName="";
-			string dbNameOrUri="";//Used to prevent issues with copying images across different databases.
-			dbNameOrUri=DataConnectionBase.DataConnection.GetDatabaseName();
-			if(RemotingClient.MiddleTierRole!=MiddleTierRole.ClientDirect) {//using Middle Tier
-				dbNameOrUri=RemotingClient.ServerURI;
-			}
 			Cursor=Cursors.WaitCursor;
 			if(IsMountItemSelected()){
 				if(ImageHelper.HasImageExtension(GetDocumentShowing(_idxSelectedInMount).FileName) || GetDocumentShowing(_idxSelectedInMount).FileName.EndsWith(".dcm"))
@@ -1307,12 +1258,9 @@ namespace OpenDental {
 							fileName=Path.GetDirectoryName(fileName)+"\\"+Path.GetFileNameWithoutExtension(fileName)+random.Next(9)+Path.GetExtension(fileName);
 						}
 						File.Copy(filePathSource,fileName);
-						if(ODEnvironment.IsCloudServer){//File path/name will not exist. Still copy the Bitmap so that it can be pasted on local computer.
-							bitmapCopy=ImageHelper.CopyWithCropRotate(GetDocumentShowing(0),GetBitmapShowing(0));
-						}
 					}
-					else{
-						bitmapCopy=ImageHelper.CopyWithCropRotate(GetDocumentShowing(0),GetBitmapShowing(0));
+					else {
+						bitmapCopy = ImageHelper.CopyWithCropRotate(GetDocumentShowing(0),GetBitmapShowing(0));
 						using Graphics g = Graphics.FromImage(bitmapCopy);
 						//Rectangle rectangleAvail=new Rectangle(e.MarginBounds.X,yTitle,e.MarginBounds.Width,e.MarginBounds.Height-yTitle);
 						//translate to center of drawing area (and center of crop area)
@@ -1339,8 +1287,7 @@ namespace OpenDental {
 			}
 			System.Windows.DataObject dataObject=new System.Windows.DataObject();
 			if(nodeTypeAndKey!=null){
-				dataObject.SetData(nodeTypeAndKey);//DataFormat automatically determined
-				dataObject.SetData("stringDbNameOrUri",dbNameOrUri);//this is in addition to the other DataFormat with the nodeTypeAndKey
+				dataObject.SetData(nodeTypeAndKey);
 			}
 			if(bitmapCopy!=null){
 				dataObject.SetData(DataFormats.Bitmap,bitmapCopy);
@@ -1350,41 +1297,34 @@ namespace OpenDental {
 				stringArray[0]=fileName;
 				dataObject.SetData(DataFormats.FileDrop,stringArray);
 			}
-			if(ODEnvironment.IsCloudServer){
-				int nodeType=(int)nodeTypeAndKey.NodeType;
-				ODCloudClient.CopyToClipboard(bitmapCopy,fileName,nodeType,nodeTypeAndKey.PriKey,dbNameOrUri);
+			try {
+				System.Windows.Clipboard.SetDataObject(dataObject);//System.Windows.Forms.Clipboard fails for Thinfinity
 			}
-			else{
-				try {
-					System.Windows.Clipboard.SetDataObject(dataObject);//System.Windows.Forms.Clipboard fails for Thinfinity
-				}
-				catch(Exception ex) {
-					MsgBox.Show(this,"Could not copy contents to the clipboard.  Please try again.");
-					ex.DoNothing();
-					return;
-				}
+			catch(Exception ex) {
+				MsgBox.Show(this,"Could not copy contents to the clipboard.  Please try again.");
+				ex.DoNothing();
+				return;
 			}
-			if(bitmapCopy!=null) {
-				bitmapCopy.Dispose();
-				bitmapCopy=null;
-			}
+			//Can't do this, or the clipboard object goes away.
+			//bitmapCopy.Dispose();
+			//bitmapCopy=null;
 			long patNum=0;
 			if(PatientCur!=null) {
 				patNum=PatientCur.PatNum;
 			}
 			Cursor=Cursors.Default;
 			if(IsMountItemSelected()){
-				SecurityLogs.MakeLogEntry(EnumPermType.Copy,patNum,"Patient image "+_documentArrayShowing[_idxSelectedInMount].FileName+" copied to clipboard");
+				SecurityLogs.MakeLogEntry(Permissions.Copy,patNum,"Patient image "+_documentArrayShowing[_idxSelectedInMount].FileName+" copied to clipboard");
 			}
 			else if(IsMountShowing()){
-				SecurityLogs.MakeLogEntry(EnumPermType.Copy,patNum,"Patient mount "+_mountShowing.Description+" copied to clipboard");
+				SecurityLogs.MakeLogEntry(Permissions.Copy,patNum,"Patient mount "+_mountShowing.Description+" copied to clipboard");
 			}
 			else if(IsDocumentShowing()){
-				SecurityLogs.MakeLogEntry(EnumPermType.Copy,patNum,"Patient image "+GetDocumentShowing(0).FileName+" copied to clipboard");
+				SecurityLogs.MakeLogEntry(Permissions.Copy,patNum,"Patient image "+GetDocumentShowing(0).FileName+" copied to clipboard");
 			}
 		}
 
-		public void ToolBarDelete_Click(object sender,EventArgs e){
+		public void ToolBarDelete_Click(){
 			if(GetSelectedType()==EnumImageNodeType.None || ImageSelector_.GetSelectedType()==EnumImageNodeType.None){
 				MsgBox.Show(this,"No item is currently selected");
 				return;
@@ -1420,7 +1360,7 @@ namespace OpenDental {
 				return;
 			}
 			if(!isEmpty){
-				if(!Security.IsAuthorized(EnumPermType.ImageDelete,_mountShowing.DateCreated)) {
+				if(!Security.IsAuthorized(Permissions.ImageDelete,_mountShowing.DateCreated)) {
 					return;
 				}
 				if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Delete the entire mount and all images?")){
@@ -1443,18 +1383,18 @@ namespace OpenDental {
 			Def defDocCategory = Defs.GetDef(DefCat.ImageCats,_mountShowing.DocCategory);
 			string logText = "Mount Deleted: "+_mountShowing.Description+" with category "
 				+defDocCategory.ItemName;
-			SecurityLogs.MakeLogEntry(EnumPermType.ImageDelete,PatientCur.PatNum,logText);
+			SecurityLogs.MakeLogEntry(Permissions.ImageDelete,PatientCur.PatNum,logText);
 			EventFillTree?.Invoke(this,false);
 			EventSelectTreeNode?.Invoke(this,nodeTypeAndKeyAbove);
 		}
 
 		public void ToolBarExport_Click(bool doExportAsTiff=false){
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				ToolBarExport_ClickWeb();
 				return;
 			}
 			if(IsDocumentShowing()){
-				if(!Security.IsAuthorized(EnumPermType.ImageExport,GetDocumentShowing(0).DateCreated)) {
+				if(!Security.IsAuthorized(Permissions.ImageExport,GetDocumentShowing(0).DateCreated)) {
 					return;
 				}		
 				bool isTiff = Path.GetExtension(GetDocumentShowing(0).FileName)==".tiff" || Path.GetExtension(GetDocumentShowing(0).FileName)==".tif";
@@ -1485,10 +1425,6 @@ namespace OpenDental {
 				}
 				if(ImageHelper.HasImageExtension(GetDocumentShowing(0).FileName) || GetDocumentShowing(0).FileName.EndsWith(".dcm")){
 					using Bitmap bitmapCopy=ImageHelper.CopyWithCropRotate(GetDocumentShowing(0),GetBitmapShowing(0));
-					if(bitmapCopy==null){
-						MessageBox.Show(Lan.g(this,"Unable to export, file not found."));
-						return;
-					}
 					using Graphics g=Graphics.FromImage(bitmapCopy);
 					//Rectangle rectangleAvail=new Rectangle(e.MarginBounds.X,yTitle,e.MarginBounds.Width,e.MarginBounds.Height-yTitle);
 					//translate to center of drawing area (and center of crop area)
@@ -1503,7 +1439,7 @@ namespace OpenDental {
 						ImageStore.Export(saveFileDialog.FileName,GetDocumentShowing(0),PatientCur);
 					}
 					catch(Exception ex) {
-						MessageBox.Show(Lan.g(this,"Unable to export file, may be in use")+": " + ex.Message);
+						MessageBox.Show(Lan.g(this,"Unable to export file, May be in use")+": " + ex.Message);
 						return;
 					}
 				}				
@@ -1511,11 +1447,11 @@ namespace OpenDental {
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
 				string logText="Document Exported: "+GetDocumentShowing(0).FileName+" with category "
 					+defDocCategory.ItemName+" to "+Path.GetDirectoryName(saveFileDialog.FileName);
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageExport,PatientCur.PatNum,logText,GetDocumentShowing(0).DocNum,GetDocumentShowing(0).DateTStamp);
+				SecurityLogs.MakeLogEntry(Permissions.ImageExport,PatientCur.PatNum,logText,GetDocumentShowing(0).DocNum,GetDocumentShowing(0).DateTStamp);
 				return;
 			}
 			if(IsMountItemSelected()){
-				if(!Security.IsAuthorized(EnumPermType.ImageExport,_documentArrayShowing[_idxSelectedInMount].DateCreated)) {
+				if(!Security.IsAuthorized(Permissions.ImageExport,_documentArrayShowing[_idxSelectedInMount].DateCreated)) {
 					return;
 				}	
 				bool isTiff = Path.GetExtension(_documentArrayShowing[_idxSelectedInMount].FileName)==".tiff" || Path.GetExtension(_documentArrayShowing[_idxSelectedInMount].FileName)==".tif";
@@ -1580,12 +1516,12 @@ namespace OpenDental {
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
 				string logText="Document Exported: "+_documentArrayShowing[_idxSelectedInMount].FileName+" within mount "
 					+_mountShowing.Description+" with category "+defDocCategory.ItemName+" to "+Path.GetDirectoryName(saveFileDialog.FileName);
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageExport,PatientCur.PatNum,logText,_documentArrayShowing[_idxSelectedInMount].DocNum,
+				SecurityLogs.MakeLogEntry(Permissions.ImageExport,PatientCur.PatNum,logText,_documentArrayShowing[_idxSelectedInMount].DocNum,
 					_documentArrayShowing[_idxSelectedInMount].DateTStamp);
 				return;
 			}
 			if(IsMountShowing()){
-				if(!Security.IsAuthorized(EnumPermType.ImageExport,_mountShowing.DateCreated)) {
+				if(!Security.IsAuthorized(Permissions.ImageExport,_mountShowing.DateCreated)) {
 					return;
 				}
 				if(doExportAsTiff) {
@@ -1616,14 +1552,14 @@ namespace OpenDental {
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_mountShowing.DocCategory);
 				string logText="Mount Exported: "+_mountShowing.Description+" with category "
 					+defDocCategory.ItemName+" to "+Path.GetDirectoryName(saveFileDialog.FileName);
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageExport,PatientCur.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.ImageExport,PatientCur.PatNum,logText);
 				return;
 			}
 		}
 
 		public void ToolBarFlip_Click(){
 			if(IsDocumentShowing()) {
-				if(!Security.IsAuthorized(EnumPermType.ImageEdit,GetDocumentShowing(0).DateCreated)) {
+				if(!Security.IsAuthorized(Permissions.ImageEdit,GetDocumentShowing(0).DateCreated)) {
 					return;
 				}	
 				Document documentOld=GetDocumentShowing(0).Copy();
@@ -1642,10 +1578,10 @@ namespace OpenDental {
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
 				string logText="Document Edited: "+GetDocumentShowing(0).FileName+" with category "
 					+defDocCategory.ItemName+" flipped horizontally";
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageEdit,PatientCur.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 			}
 			if(IsMountItemSelected()){ 
-				if(!Security.IsAuthorized(EnumPermType.ImageEdit,_documentArrayShowing[_idxSelectedInMount].DateCreated)) {
+				if(!Security.IsAuthorized(Permissions.ImageEdit,_documentArrayShowing[_idxSelectedInMount].DateCreated)) {
 					return;
 				}	
 				Document documentOld=_documentArrayShowing[_idxSelectedInMount].Copy();
@@ -1661,14 +1597,13 @@ namespace OpenDental {
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
 				string logText="Document Edited: "+_documentArrayShowing[_idxSelectedInMount].FileName+" within mount "
 					+_mountShowing.Description+" with category "+defDocCategory.ItemName+" flipped horizontally";
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageEdit,PatientCur.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 			}
-			ThumbnailRefresh();
 			panelMain.Invalidate();
 		}
 
-		public void ToolBarImport_Click(object sender,EventArgs e){
-			if(!Security.IsAuthorized(EnumPermType.ImageCreate)) {
+		public void ToolBarImport_Click(){
+			if(!Security.IsAuthorized(Permissions.ImageCreate)) {
 				return;
 			}
 			//"Alternate" appended to hook name because "ToolBarImport_Click_Start" already exists in ToolBarImportSingle()
@@ -1684,22 +1619,22 @@ namespace OpenDental {
 			}
 		}
 
-		public void ToolBarInfo_Click(object sender,EventArgs e){
+		public void ToolBarInfo_Click(){
 			if(IsMountItemSelected()){
 				if(_documentArrayShowing[_idxSelectedInMount]==null){
 					return;//silent fail is fine
 				}
-				FrmDocInfo frmDocInfo=new FrmDocInfo(PatientCur,_documentArrayShowing[_idxSelectedInMount]);
-				frmDocInfo.IsMountItem=true;
-				frmDocInfo.ShowDialog();
+				using FormDocInfo formDocInfo=new FormDocInfo(PatientCur,_documentArrayShowing[_idxSelectedInMount]);
+				formDocInfo.IsMountItem=true;
+				formDocInfo.ShowDialog();
 				LoadBitmap(_idxSelectedInMount,EnumLoadBitmapType.IdxAndRaw);
 				panelMain.Invalidate();
 				return;
 			}
 			if(IsMountShowing()) {
-				FrmMountEdit frmMountEdit=new FrmMountEdit();
-				frmMountEdit.MountCur=_mountShowing;
-				frmMountEdit.ShowDialog();
+				using FormMountEdit formMountEdit=new FormMountEdit();
+				formMountEdit.MountCur=_mountShowing;
+				formMountEdit.ShowDialog();
 				//Always reload because layout could have changed
 				Cursor=Cursors.WaitCursor;//because it can take a few seconds to reload.
 				EventFillTree?.Invoke(this,true);
@@ -1708,9 +1643,9 @@ namespace OpenDental {
 				return;
 			}
 			if(IsDocumentShowing()) {
-				FrmDocInfo frmDocInfo=new FrmDocInfo(PatientCur,GetDocumentShowing(0));
-				frmDocInfo.ShowDialog();
-				if(frmDocInfo.IsDialogCancel) {
+				using FormDocInfo formDocInfo=new FormDocInfo(PatientCur,GetDocumentShowing(0));
+				formDocInfo.ShowDialog();
+				if(formDocInfo.DialogResult!=DialogResult.OK) {
 					return;
 				}
 				EventFillTree?.Invoke(this,true);
@@ -1718,23 +1653,13 @@ namespace OpenDental {
 		}
 
 		///<summary>Copy/paste that's entirely within OD will use PK of mount or doc in order to preserve windowing, rotation, crop etc.  Paste from outside OD prefers a bitmap.  If no bitmap, then it will use a filedrop which could include multiple files.</summary>
-		public void ToolBarPaste_Click(object sender,EventArgs e){
-			if(!Security.IsAuthorized(EnumPermType.ImageCreate)) {
+		public void ToolBarPaste_Click(){
+			if(!Security.IsAuthorized(Permissions.ImageCreate)) {
 				return;
 			}
 			IDataObject iDataObject=null;
 			NodeTypeAndKey nodeTypeAndKey=null;
-			string dbNameOrUriCopied="";
-			if(ODEnvironment.IsCloudServer) {
-				dbNameOrUriCopied=ODCloudClient.GetDbNameOrUriFromClipboard();
-				ODCloudClient.CloudNodeTypeAndKey cloudNodeTypeAndKey=ODCloudClient.GetNodeTypeAndKey();
-				if(cloudNodeTypeAndKey!=null){
-					EnumImageNodeType enumImageNodeTypeCopied=(EnumImageNodeType)cloudNodeTypeAndKey.nodeType;
-					long imagePriKey=cloudNodeTypeAndKey.imagekey;
-					nodeTypeAndKey=new NodeTypeAndKey(enumImageNodeTypeCopied,imagePriKey);
-				}
-			}
-			else{
+			if(!ODBuild.IsWeb()) {
 				try {
 					iDataObject=Clipboard.GetDataObject();
 				}
@@ -1747,13 +1672,8 @@ namespace OpenDental {
 					return;
 				}
 				nodeTypeAndKey=(NodeTypeAndKey)iDataObject.GetData(typeof(NodeTypeAndKey));
-				dbNameOrUriCopied=(string)iDataObject.GetData("stringDbNameOrUri");//safe even if null
 			}
-			string dbNameOrUri=DataConnectionBase.DataConnection.GetDatabaseName();
-			if(RemotingClient.MiddleTierRole!=MiddleTierRole.ClientDirect) {//using Middle Tier
-				dbNameOrUri=RemotingClient.ServerURI;
-			}
-			if(dbNameOrUri==dbNameOrUriCopied && nodeTypeAndKey!=null){
+			if(nodeTypeAndKey!=null){
 				ToolBarPasteTypeAndKey(nodeTypeAndKey);
 				return;
 			}
@@ -1806,9 +1726,9 @@ namespace OpenDental {
 						try {
 							//fileName is full path
 							if(CloudStorage.IsCloudStorage) {
-								ProgressWin progressOD=new ProgressWin();
+								ProgressOD progressOD=new ProgressOD();
 								progressOD.ActionMain=() => doc=ImageStore.Import(stringArrayfileNames[i],GetCurrentCategory(),PatientCur);;
-								progressOD.ShowDialog();
+								progressOD.ShowDialogProgress();
 								if(progressOD.IsCancelled){
 									Cursor=Cursors.Default;
 									return;//cleanup?
@@ -1846,14 +1766,15 @@ namespace OpenDental {
 					MessageBox.Show(Lan.g(this,"Error saving document."));
 					return;
 				}
-				FrmDocInfo frmDocInfo = new FrmDocInfo(PatientCur,document,isDocCreate: true);
-				frmDocInfo.ShowDialog();//some of the fields might get changed, but not the filename
-				if(frmDocInfo.IsDialogCancel) {
+				using FormDocInfo formDocInfo = new FormDocInfo(PatientCur,document,isDocCreate: true);
+				formDocInfo.TopMost=true;
+				formDocInfo.ShowDialog(this);//some of the fields might get changed, but not the filename
+				if(formDocInfo.DialogResult!=DialogResult.OK) {
 					DeleteDocument(false,false,document);
 				}
 				else {
 					if(document.ImgType==ImageType.Photo) {
-						ODEvent.Fire(ODEventType.Patient,PatientCur);//Possibly updated the patient picture.
+						PatientEvent.Fire(ODEventType.Patient,PatientCur);//Possibly updated the patient picture.
 					}
 					nodeTypeAndKey=new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum);
 					SetDocumentShowing(0,document.Copy());
@@ -1865,9 +1786,9 @@ namespace OpenDental {
 						//fileNames contains full paths
 						if(CloudStorage.IsCloudStorage) {
 							//this will flicker because multiple progress bars.  Improve later.
-							ProgressWin progressOD=new ProgressWin();
+							ProgressOD progressOD=new ProgressOD();
 							progressOD.ActionMain=() => document=ImageStore.Import(stringArrayfileNames[i],GetCurrentCategory(),PatientCur);
-							progressOD.ShowDialog();
+							progressOD.ShowDialogProgress();
 							if(progressOD.IsCancelled){
 								return;
 							}
@@ -1880,14 +1801,15 @@ namespace OpenDental {
 						MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ")+ex.Message+": "+stringArrayfileNames[i]);
 						continue;
 					}
-					FrmDocInfo frmDocInfo=new FrmDocInfo(PatientCur,document,isDocCreate:true);
-					frmDocInfo.ShowDialog();//some of the fields might get changed, but not the filename
-					if(frmDocInfo.IsDialogCancel) {
+					using FormDocInfo formDocInfo=new FormDocInfo(PatientCur,document,isDocCreate:true);
+					formDocInfo.TopMost=true;
+					formDocInfo.ShowDialog(this);//some of the fields might get changed, but not the filename
+					if(formDocInfo.DialogResult!=DialogResult.OK) {
 						DeleteDocument(false,false,document);
 					}
 					else {
 						if(document.ImgType==ImageType.Photo) {
-							ODEvent.Fire(ODEventType.Patient,PatientCur);//Possibly updated the patient picture.
+							PatientEvent.Fire(ODEventType.Patient,PatientCur);//Possibly updated the patient picture.
 						}
 						nodeTypeAndKey=new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum);
 						SetDocumentShowing(0,document.Copy());
@@ -1992,7 +1914,7 @@ namespace OpenDental {
 
 		public void ToolBarRotateL_Click(){
 			if(IsDocumentShowing()) {
-				if(!Security.IsAuthorized(EnumPermType.ImageEdit,GetDocumentShowing(0).DateCreated)) {
+				if(!Security.IsAuthorized(Permissions.ImageEdit,GetDocumentShowing(0).DateCreated)) {
 					return;
 				}	
 				if(GetDocumentShowing(0).CropW>0
@@ -2012,10 +1934,10 @@ namespace OpenDental {
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
 				string logText="Document Edited: "+GetDocumentShowing(0).FileName+" with category "
 					+defDocCategory.ItemName+" rotated left 90 degrees";
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageEdit,PatientCur.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 			}
 			if(IsMountItemSelected()) {
-				if(!Security.IsAuthorized(EnumPermType.ImageEdit,_documentArrayShowing[_idxSelectedInMount].DateCreated)) {
+				if(!Security.IsAuthorized(Permissions.ImageEdit,_documentArrayShowing[_idxSelectedInMount].DateCreated)) {
 					return;
 				}
 				if(_documentArrayShowing[_idxSelectedInMount].CropW>0
@@ -2043,7 +1965,7 @@ namespace OpenDental {
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
 				string logText="Document Edited: "+_documentArrayShowing[_idxSelectedInMount].FileName+" within mount "
 					+_mountShowing.Description+" with category "+defDocCategory.ItemName+" rotated left 90 degrees";
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageEdit,PatientCur.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 			}
 			ThumbnailRefresh();
 			panelMain.Invalidate();
@@ -2051,7 +1973,7 @@ namespace OpenDental {
 
 		public void ToolBarRotateR_Click(){
 			if(IsDocumentShowing()) {
-				if(!Security.IsAuthorized(EnumPermType.ImageEdit,GetDocumentShowing(0).DateCreated)) {
+				if(!Security.IsAuthorized(Permissions.ImageEdit,GetDocumentShowing(0).DateCreated)) {
 					return;
 				}
 				if(GetDocumentShowing(0).CropW>0
@@ -2069,10 +1991,10 @@ namespace OpenDental {
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
 				string logText="Document Edited: "+GetDocumentShowing(0).FileName+" with category "
 					+defDocCategory.ItemName+" rotated right 90 degrees";
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageEdit,PatientCur.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 			}
 			if(IsMountItemSelected()) {
-				if(!Security.IsAuthorized(EnumPermType.ImageEdit,_documentArrayShowing[_idxSelectedInMount].DateCreated)) {
+				if(!Security.IsAuthorized(Permissions.ImageEdit,_documentArrayShowing[_idxSelectedInMount].DateCreated)) {
 					return;
 				}	
 				if(_documentArrayShowing[_idxSelectedInMount].CropW>0
@@ -2097,7 +2019,7 @@ namespace OpenDental {
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
 				string logText="Document Edited: "+_documentArrayShowing[_idxSelectedInMount].FileName+" within mount "
 					+_mountShowing.Description+" with category "+defDocCategory.ItemName+" rotated right 90 degrees";
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageEdit,PatientCur.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 			}
 			ThumbnailRefresh();
 			panelMain.Invalidate();
@@ -2105,7 +2027,7 @@ namespace OpenDental {
 
 		public void ToolBarRotate180_Click(){
 			if(IsDocumentShowing()){
-				if(!Security.IsAuthorized(EnumPermType.ImageEdit,GetDocumentShowing(0).DateCreated)) {
+				if(!Security.IsAuthorized(Permissions.ImageEdit,GetDocumentShowing(0).DateCreated)) {
 					return;
 				}
 				if(GetDocumentShowing(0).CropW>0
@@ -2127,10 +2049,10 @@ namespace OpenDental {
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
 				string logText="Document Edited: "+GetDocumentShowing(0).FileName+" with category "
 					+defDocCategory.ItemName+" rotated 180 degrees";
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageEdit,PatientCur.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 			}
 			if(IsMountItemSelected()) {
-				if(!Security.IsAuthorized(EnumPermType.ImageEdit,_documentArrayShowing[_idxSelectedInMount].DateCreated)) {
+				if(!Security.IsAuthorized(Permissions.ImageEdit,_documentArrayShowing[_idxSelectedInMount].DateCreated)) {
 					return;
 				}	
 				if(_documentArrayShowing[_idxSelectedInMount].CropW>0
@@ -2152,7 +2074,7 @@ namespace OpenDental {
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
 				string logText="Document Edited: "+_documentArrayShowing[_idxSelectedInMount].FileName+" within mount "
 					+_mountShowing.Description+" with category "+defDocCategory.ItemName+" rotated 180 degrees";
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageEdit,PatientCur.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 			}
 			ThumbnailRefresh();
 			panelMain.Invalidate();
@@ -2160,50 +2082,45 @@ namespace OpenDental {
 
 		public void ToolBarSize_Click(){
 			if(IsDocumentShowing()){
-				if(!Security.IsAuthorized(EnumPermType.ImageEdit,_documentArrayShowing[0].DateCreated)) {
+				if(!Security.IsAuthorized(Permissions.ImageEdit,_documentArrayShowing[0].DateCreated)) {
 					return;
 				}	
 				if(GetDocumentShowing(0)==null){
 					return;
 				}
-				FrmDocumentSize frmDocumentSize=new FrmDocumentSize();
-				frmDocumentSize.DocumentCur=GetDocumentShowing(0);
-				if(_bitmapDicomRaw!=null) {
-					frmDocumentSize.SizeRaw=new Size(_bitmapDicomRaw.Width,_bitmapDicomRaw.Height);
-				}
-				else {
-					frmDocumentSize.SizeRaw=_bitmapRaw.Size;
-				}
-				frmDocumentSize.ShowDialog();
+				using FormDocumentSize formDocumentSize=new FormDocumentSize();
+				formDocumentSize.DocumentCur=GetDocumentShowing(0);
+				formDocumentSize.SizeRaw=_bitmapRaw.Size;
+				formDocumentSize.ShowDialog();
 				////the form will change DocumentCur and save it
-				if(frmDocumentSize.IsDialogOK) {
+				if(formDocumentSize.DialogResult==DialogResult.OK) {
 					EventFillTree?.Invoke(this,true);
 					EventSelectTreeNode?.Invoke(this,null);
 					Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[0].DocCategory);
 					string logText="Document Edited: "+_documentArrayShowing[0].FileName+" with category "
 						+defDocCategory.ItemName+" was adjusted using the Size button";
-					SecurityLogs.MakeLogEntry(EnumPermType.ImageEdit,PatientCur.PatNum,logText);
+					SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 				}
 			}
 			if(IsMountItemSelected()){
-				if(!Security.IsAuthorized(EnumPermType.ImageEdit,_documentArrayShowing[_idxSelectedInMount].DateCreated)) {
+				if(!Security.IsAuthorized(Permissions.ImageEdit,_documentArrayShowing[_idxSelectedInMount].DateCreated)) {
 					return;
 				}	
 				if(_documentArrayShowing[_idxSelectedInMount]==null){
 					return;
 				}
-				FrmDocumentSizeMount frmDocumentSizeMount=new FrmDocumentSizeMount();
-				frmDocumentSizeMount.DocumentCur=_documentArrayShowing[_idxSelectedInMount];
-				frmDocumentSizeMount.SizeRaw=_bitmapArrayShowing[_idxSelectedInMount].Size;
-				frmDocumentSizeMount.SizeMount=new Size(_listMountItems[_idxSelectedInMount].Width,_listMountItems[_idxSelectedInMount].Height);
-				frmDocumentSizeMount.ShowDialog();
+				using FormDocumentSizeMount formDocumentSizeMount=new FormDocumentSizeMount();
+				formDocumentSizeMount.DocumentCur=_documentArrayShowing[_idxSelectedInMount];
+				formDocumentSizeMount.SizeRaw=_bitmapArrayShowing[_idxSelectedInMount].Size;
+				formDocumentSizeMount.SizeMount=new Size(_listMountItems[_idxSelectedInMount].Width,_listMountItems[_idxSelectedInMount].Height);
+				formDocumentSizeMount.ShowDialog();
 				//the form will change DocumentCur and save it
-				if(frmDocumentSizeMount.IsDialogOK){
+				if(formDocumentSizeMount.DialogResult==DialogResult.OK){
 					LoadBitmap(_idxSelectedInMount,EnumLoadBitmapType.IdxAndRaw);
 					Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
 					string logText="Document Edited: "+_documentArrayShowing[_idxSelectedInMount].FileName+" within mount "
 						+_mountShowing.Description+" with category "+defDocCategory.ItemName+" was adjusted using the Size button";
-					SecurityLogs.MakeLogEntry(EnumPermType.ImageEdit,PatientCur.PatNum,logText);
+					SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 				}
 			}
 			ThumbnailRefresh();
@@ -2235,8 +2152,8 @@ namespace OpenDental {
 
 		#region Methods - Event Handlers
 		private void FormImageFloat_FormClosed(object sender, FormClosedEventArgs e){
-			if(!_formLauncherImageFloatWindows.IsNullOrDisposedOrNotVis()){
-				_formLauncherImageFloatWindows.Close();
+			if(_formImageFloatWindows!=null && _formImageFloatWindows.Visible){
+				_formImageFloatWindows.Close();
 			}
 		}
 
@@ -2287,21 +2204,20 @@ namespace OpenDental {
 			}
 			//But this also causes FormODBase mouseUp to not register. User then clicks title to hide the menu, and that's when FormODBase MouseMove fires. 
 			_pointMouseScreenPrevious=new Point(0,0);//Gets around the above problem.
-			if(_formLauncherImageFloatWindows.IsNullOrDisposedOrNotVis()){
-				_formLauncherImageFloatWindows=new FormLauncher(EnumFormName.FormImageFloatWindows);
-				_formLauncherImageFloatWindows.SetField("FormOwner",this);
-				_formLauncherImageFloatWindows.SetField("LayoutManager",LayoutManager);
+			if(_formImageFloatWindows==null || _formImageFloatWindows.IsDisposed){
+				_formImageFloatWindows=new FormImageFloatWindows();
+				_formImageFloatWindows.LayoutManager=LayoutManager;
 				//_formImageFloatWindows.Font=Font;//It will figure out its own font
-				_formLauncherImageFloatWindows.SetEvent("EventWindowClicked",_formImageFloatWindows_EventWindowClicked);
-				_formLauncherImageFloatWindows.SetEvent("EventWindowCloseOthers",eventHandler:_formImageFloatWindows_EventWindowCloseOthers);
-				_formLauncherImageFloatWindows.SetEvent("EventWindowDockThis",eventHandler:_formImageFloatWindows_EventWindowDockThis);
-				_formLauncherImageFloatWindows.SetEvent("EventWindowShowAll",eventHandler:_formImageFloatWindows_EventWindowShowAll);
-				_formLauncherImageFloatWindows.SetEvent("FormClosed",_formImageFloatWindows_FormClosed);
+				_formImageFloatWindows.EventWindowClicked+=_formImageFloatWindows_EventWindowClicked;
+				_formImageFloatWindows.EventWindowCloseOthers += _formImageFloatWindows_EventWindowCloseOthers;
+				_formImageFloatWindows.EventWindowDockThis += _formImageFloatWindows_EventWindowDockThis;
+				_formImageFloatWindows.EventWindowShowAll += _formImageFloatWindows_EventWindowShowAll;
+				_formImageFloatWindows.FormClosed+=_formImageFloatWindows_FormClosed;
 			}
-			_formLauncherImageFloatWindows.BringToFront();
-			_formLauncherImageFloatWindows.SetField("PointAnchor1",new Point(Location.X+_rectangleButWindows.Left,Location.Y+_rectangleButWindows.Bottom-LayoutManager.Scale(9)));
-			_formLauncherImageFloatWindows.SetField("PointAnchor2",new Point(Location.X+_rectangleButWindows.Right,Location.Y+_rectangleButWindows.Bottom-LayoutManager.Scale(9)));
-			_formLauncherImageFloatWindows.Show();//not a dialog.  They can click elsewhere
+			_formImageFloatWindows.BringToFront();
+			_formImageFloatWindows.PointAnchor1=new Point(Location.X+_rectangleButWindows.Left,Location.Y+_rectangleButWindows.Bottom-LayoutManager.Scale(9));
+			_formImageFloatWindows.PointAnchor2=new Point(Location.X+_rectangleButWindows.Right,Location.Y+_rectangleButWindows.Bottom-LayoutManager.Scale(9));
+			_formImageFloatWindows.Show(this);//not a dialog.  They can click elsewhere
 			_isButWindowPressed=true;
 			PanelBorders.Invalidate();
 		}
@@ -2390,10 +2306,10 @@ namespace OpenDental {
 			}
 			switch(((MenuItem)sender).Index) {
 				case 0:
-					ToolBarCopy_Click(this,new EventArgs());
+					ToolBarCopy_Click();
 					break;
 				case 1://paste
-					ToolBarPaste_Click(this,new EventArgs());
+					ToolBarPaste_Click();
 					break;
 				case 2:
 					ToolBarFlip_Click();
@@ -2408,10 +2324,10 @@ namespace OpenDental {
 					ToolBarRotate180_Click();
 					break;
 				case 6://info
-					ToolBarDelete_Click(this,new EventArgs());
+					ToolBarDelete_Click();
 					break;
 				case 7://info
-					ToolBarInfo_Click(this,new EventArgs());
+					ToolBarInfo_Click();
 					break;
 			}
 		}
@@ -2490,9 +2406,9 @@ namespace OpenDental {
 					//stringArrayFiles contains full paths
 					if(CloudStorage.IsCloudStorage) {
 						//this will flicker because multiple progress bars.  Improve later.
-						ProgressWin progressOD=new ProgressWin();
+						ProgressOD progressOD=new ProgressOD();
 						progressOD.ActionMain=() => document=ImageStore.Import(stringArrayFiles[i],GetCurrentCategory(),PatientCur);
-						progressOD.ShowDialog();
+						progressOD.ShowDialogProgress();
 						if(progressOD.IsCancelled){
 							return;
 						}
@@ -2519,19 +2435,24 @@ namespace OpenDental {
 					return;
 				}
 				//double click inside existing text
-				FrmImageDrawEdit frmImageDrawEdit=new FrmImageDrawEdit();
-				frmImageDrawEdit.ImageDrawCur=_listImageDraws[_idxTextMouseDown];
-				frmImageDrawEdit.ZoomVal=ZoomSliderValue;
+				using FormImageDrawEdit formImageDrawEdit=new FormImageDrawEdit();
+				formImageDrawEdit.ImageDrawCur=_listImageDraws[_idxTextMouseDown];
+				if(IsMountShowing()){
+					formImageDrawEdit.ColorBack=GetMountShowing().ColorBack;
+				}
+				else{
+					formImageDrawEdit.ColorBack=Color.White;
+				}
+				formImageDrawEdit.ZoomVal=ZoomSliderValue;
 				if(IsBitmapShowing()){
-					frmImageDrawEdit.SizeBitmap.Width=GetBitmapShowing(0).Size.Width;
-					frmImageDrawEdit.SizeBitmap.Height=GetBitmapShowing(0).Size.Height;
+					formImageDrawEdit.SizeBitmap=GetBitmapShowing(0).Size;
 				}
 				else if(IsMountShowing()){
-					frmImageDrawEdit.SizeBitmap=new System.Windows.Size(_mountShowing.Width,_mountShowing.Height);
+					formImageDrawEdit.SizeBitmap=new Size(_mountShowing.Width,_mountShowing.Height);
 				}
 				//else should not happen 
-				frmImageDrawEdit.ShowDialog();
-				if(frmImageDrawEdit.IsDialogOK){
+				formImageDrawEdit.ShowDialog();
+				if(formImageDrawEdit.DialogResult==DialogResult.OK){
 					if(IsBitmapShowing()){
 						_listImageDraws=ImageDraws.RefreshForDoc(GetDocumentShowing(0).DocNum);
 					}
@@ -2551,17 +2472,17 @@ namespace OpenDental {
 				if(_idxSelectedInMount==-1){
 					int idx=HitTestInMount(e.X,e.Y,includeText:true);
 					if(idx>-1){//double clicked on text
-						FrmMountItemEdit frmMountItemEdit=new FrmMountItemEdit();
-						frmMountItemEdit.MountItemCur=_listMountItems[idx];
-						frmMountItemEdit.ShowDialog();
-						if(frmMountItemEdit.IsDialogOK){
+						using FormMountItemEdit formMountItemEdit=new FormMountItemEdit();
+						formMountItemEdit.MountItemCur=_listMountItems[idx];
+						formMountItemEdit.ShowDialog();
+						if(formMountItemEdit.DialogResult==DialogResult.OK){
 							panelMain.Invalidate();
 						}
 					}
 					else{
-						FrmMountEdit frmMountEdit=new FrmMountEdit();
-						frmMountEdit.MountCur=_mountShowing;
-						frmMountEdit.ShowDialog();
+						using FormMountEdit formMountEdit=new FormMountEdit();
+						formMountEdit.MountCur=_mountShowing;
+						formMountEdit.ShowDialog();
 						//Always reload because layout could have changed
 						EventFillTree?.Invoke(this,true);
 						EventSelectTreeNode?.Invoke(this,null);
@@ -2569,18 +2490,18 @@ namespace OpenDental {
 				}
 				else{//mount item
 					if(_documentArrayShowing[_idxSelectedInMount]!=null){
-						FrmDocInfo frmDocInfo=new FrmDocInfo(PatientCur,_documentArrayShowing[_idxSelectedInMount]);
-						frmDocInfo.IsMountItem=true;
-						frmDocInfo.ShowDialog();
+						using FormDocInfo formDocInfo=new FormDocInfo(PatientCur,_documentArrayShowing[_idxSelectedInMount]);
+						formDocInfo.IsMountItem=true;
+						formDocInfo.ShowDialog();
 						//nothing to refresh
 					}
 				}
 			}
 			else{
 				if(GetDocumentShowing(0)!=null) {
-					FrmDocInfo frmDocInfo=new FrmDocInfo(PatientCur,GetDocumentShowing(0));
-					frmDocInfo.ShowDialog();
-					if(frmDocInfo.IsDialogOK){
+					using FormDocInfo formDocInfo=new FormDocInfo(PatientCur,GetDocumentShowing(0));
+					formDocInfo.ShowDialog();
+					if(formDocInfo.DialogResult==DialogResult.OK){
 						EventFillTree?.Invoke(this,true);
 					}
 				}
@@ -2593,7 +2514,7 @@ namespace OpenDental {
 			//MsgBox.Show(idxT.ToString());
 			//return;
 			if(IsDocumentShowing() && _cropPanAdj==EnumCropPanAdj.Crop) {
-				if(!Security.IsAuthorized(EnumPermType.ImageEdit,_documentArrayShowing[0].DateCreated)) {
+				if(!Security.IsAuthorized(Permissions.ImageEdit,_documentArrayShowing[0].DateCreated)) {
 					return;
 				}
 			}
@@ -2639,34 +2560,32 @@ namespace OpenDental {
 				//The dialog needs to come up now, but that will happen before the mouse up.
 				//Here's how we handle that:
 				_isMouseDownPanel=false;
-				FrmImageDrawEdit frmImageDrawEdit=new FrmImageDrawEdit();
-				frmImageDrawEdit.ImageDrawCur=new ImageDraw();
+				using FormImageDrawEdit formImageDrawEdit=new FormImageDrawEdit();
+				formImageDrawEdit.ImageDrawCur=new ImageDraw();
 				//Point pointLoc=new Point();
-				frmImageDrawEdit.ImageDrawCur.SetLocAndText(pointCursorInBitmap,"");
+				formImageDrawEdit.ImageDrawCur.SetLocAndText(pointCursorInBitmap,"");
 				float fontSizeApparent=8;
-				frmImageDrawEdit.ImageDrawCur.FontSize=fontSizeApparent/(float)ZoomSliderValue*100f*LayoutManager.ScaleMyFont();
-				frmImageDrawEdit.ZoomVal=ZoomSliderValue;
+				formImageDrawEdit.ImageDrawCur.FontSize=fontSizeApparent/(float)ZoomSliderValue*100f*LayoutManager.ScaleMyFont();
+				formImageDrawEdit.ZoomVal=ZoomSliderValue;
 				if(IsMountShowing()){
-					frmImageDrawEdit.ImageDrawCur.ColorBack=GetMountShowing().ColorBack;
+					formImageDrawEdit.ColorBack=GetMountShowing().ColorBack;
 				}
 				else{
-					frmImageDrawEdit.ImageDrawCur.ColorBack=Color.White;
+					formImageDrawEdit.ColorBack=Color.White;
 				}
-				frmImageDrawEdit.ImageDrawCur.ColorDraw=ColorFore;
-				frmImageDrawEdit.ImageDrawCur.ColorBack=ColorTextBack;//can be transparent
-				frmImageDrawEdit.ImageDrawCur.IsNew=true;
+				formImageDrawEdit.ImageDrawCur.ColorDraw=ColorFore;
+				formImageDrawEdit.ImageDrawCur.ColorBack=ColorTextBack;//can be transparent
+				formImageDrawEdit.ImageDrawCur.IsNew=true;
 				if(IsBitmapShowing()){
-					frmImageDrawEdit.ImageDrawCur.DocNum=GetDocumentShowing(0).DocNum;
-					frmImageDrawEdit.SizeBitmap.Width=GetBitmapShowing(0).Size.Width;
-					frmImageDrawEdit.SizeBitmap.Height=GetBitmapShowing(0).Size.Height;
+					formImageDrawEdit.ImageDrawCur.DocNum=GetDocumentShowing(0).DocNum;
+					formImageDrawEdit.SizeBitmap=GetBitmapShowing(0).Size;
 				}
 				if(IsMountShowing()){
-					frmImageDrawEdit.ImageDrawCur.MountNum=_mountShowing.MountNum;
-					frmImageDrawEdit.SizeBitmap=new System.Windows.Size(_mountShowing.Width,_mountShowing.Height);
-
+					formImageDrawEdit.ImageDrawCur.MountNum=_mountShowing.MountNum;
+					formImageDrawEdit.SizeBitmap=new Size(_mountShowing.Width,_mountShowing.Height);
 				}
-				frmImageDrawEdit.ShowDialog();
-				if(frmImageDrawEdit.IsDialogOK){
+				formImageDrawEdit.ShowDialog();
+				if(formImageDrawEdit.DialogResult==DialogResult.OK){
 					if(IsBitmapShowing()){
 						_listImageDraws=ImageDraws.RefreshForDoc(GetDocumentShowing(0).DocNum);
 					}
@@ -2817,32 +2736,31 @@ namespace OpenDental {
 					return;
 				}
 				PointF pointFPenInBitmap=ControlPointToBitmapPointF(e.Location);
-				FrmImageDrawEdit frmImageDrawEdit=new FrmImageDrawEdit();
-				frmImageDrawEdit.ImageDrawCur=new ImageDraw();
-				frmImageDrawEdit.ImageDrawCur.SetLocAndText(Point.Round(pointFPenInBitmap),_stringMeasure);
+				using FormImageDrawEdit formImageDrawEdit=new FormImageDrawEdit();
+				formImageDrawEdit.ImageDrawCur=new ImageDraw();
+				formImageDrawEdit.ImageDrawCur.SetLocAndText(Point.Round(pointFPenInBitmap),_stringMeasure);
 				float fontSizeApparent=9;
-				frmImageDrawEdit.ImageDrawCur.FontSize=fontSizeApparent/(float)ZoomSliderValue*100f*LayoutManager.ScaleMyFont();
-				frmImageDrawEdit.ZoomVal=ZoomSliderValue;
+				formImageDrawEdit.ImageDrawCur.FontSize=fontSizeApparent/(float)ZoomSliderValue*100f*LayoutManager.ScaleMyFont();
+				formImageDrawEdit.ZoomVal=ZoomSliderValue;
 				if(IsMountShowing()){
-					frmImageDrawEdit.ImageDrawCur.ColorBack=GetMountShowing().ColorBack;
+					formImageDrawEdit.ColorBack=GetMountShowing().ColorBack;
 				}
 				else{
-					frmImageDrawEdit.ImageDrawCur.ColorBack=Color.White;
+					formImageDrawEdit.ColorBack=Color.White;
 				}
-				frmImageDrawEdit.ImageDrawCur.ColorDraw=ColorFore;
-				frmImageDrawEdit.ImageDrawCur.ColorBack=ColorTextBack;//can be transparent
-				frmImageDrawEdit.ImageDrawCur.IsNew=true;
+				formImageDrawEdit.ImageDrawCur.ColorDraw=ColorFore;
+				formImageDrawEdit.ImageDrawCur.ColorBack=ColorTextBack;//can be transparent
+				formImageDrawEdit.ImageDrawCur.IsNew=true;
 				if(IsBitmapShowing()){
-					frmImageDrawEdit.ImageDrawCur.DocNum=GetDocumentShowing(0).DocNum;
-					frmImageDrawEdit.SizeBitmap.Width=GetBitmapShowing(0).Size.Width;
-					frmImageDrawEdit.SizeBitmap.Height=GetBitmapShowing(0).Size.Height;
+					formImageDrawEdit.ImageDrawCur.DocNum=GetDocumentShowing(0).DocNum;
+					formImageDrawEdit.SizeBitmap=GetBitmapShowing(0).Size;
 				}
 				if(IsMountShowing()){
-					frmImageDrawEdit.ImageDrawCur.MountNum=_mountShowing.MountNum;
-					frmImageDrawEdit.SizeBitmap=new System.Windows.Size(_mountShowing.Width,_mountShowing.Height);
+					formImageDrawEdit.ImageDrawCur.MountNum=_mountShowing.MountNum;
+					formImageDrawEdit.SizeBitmap=new Size(_mountShowing.Width,_mountShowing.Height);
 				}
-				frmImageDrawEdit.ShowDialog();
-				if(frmImageDrawEdit.IsDialogCancel){
+				formImageDrawEdit.ShowDialog();
+				if(formImageDrawEdit.DialogResult!=DialogResult.OK){
 					return;
 				}
 				if(IsBitmapShowing()){
@@ -2870,10 +2788,10 @@ namespace OpenDental {
 						if(!HitTestLine(listPointFs[p-1],listPointFs[p],pointFPenInBitmap,testRadius)){
 							continue;
 						}
-						FrmImageScale frmImageScale=new FrmImageScale();
-						frmImageScale.Pixels=CalcLengthLine(listPointFs);
-						frmImageScale.ShowDialog();
-						if(frmImageScale.IsDialogCancel){
+						using FormImageScale formImageScale=new FormImageScale();
+						formImageScale.Pixels=CalcLengthLine(listPointFs);
+						formImageScale.ShowDialog();
+						if(formImageScale.DialogResult!=DialogResult.OK){
 							return;
 						}
 						//see if we have an existing scale to replace
@@ -2893,12 +2811,12 @@ namespace OpenDental {
 							if(IsMountShowing()){
 								imageDraw.MountNum=_mountShowing.MountNum;
 							}
-							imageDraw.SetScale(frmImageScale.ScaleVal,frmImageScale.Decimals,frmImageScale.StringUnits);
+							imageDraw.SetScale(formImageScale.ScaleVal,formImageScale.Decimals,formImageScale.StringUnits);
 							ImageDraws.Insert(imageDraw);
 							_listImageDraws.Add(imageDraw);
 						}
 						else{//existing scale
-							imageDraw.SetScale(frmImageScale.ScaleVal,frmImageScale.Decimals,frmImageScale.StringUnits);
+							imageDraw.SetScale(formImageScale.ScaleVal,formImageScale.Decimals,formImageScale.StringUnits);
 							ImageDraws.Update(imageDraw);
 						}							
 						_isMouseDownPanel=false;
@@ -2915,23 +2833,6 @@ namespace OpenDental {
 			if(_drawMode==EnumDrawMode.ChangeColor){
 				PointF pointFPenInBitmap=ControlPointToBitmapPointF(e.Location);
 				ChangeColorAt(pointFPenInBitmap);
-				return;
-			}
-			if(_drawMode==EnumDrawMode.Polygon){
-				PointF pointFPenInBitmap=ControlPointToBitmapPointF(e.Location);
-				_listPointFsDrawing.Add(pointFPenInBitmap);
-				ImageDraw imageDraw=new ImageDraw();
-				imageDraw.DrawType=ImageDrawType.Polygon;
-				if(IsBitmapShowing()){
-					imageDraw.DocNum=GetDocumentShowing(0).DocNum;
-				}
-				if(IsMountShowing()){
-					imageDraw.MountNum=GetMountShowing().MountNum;
-				}
-				imageDraw.ColorDraw=ColorFore;
-				imageDraw.SetDrawingSegment(_listPointFsDrawing);
-				//Gets inserted on MouseUp
-				_listImageDraws.Add(imageDraw);
 				return;
 			}
 			if(!IsMountShowing()){
@@ -2976,7 +2877,7 @@ namespace OpenDental {
 				//handled on mouse up
 			//}
 			if(_cropPanAdj==EnumCropPanAdj.Adj){
-				if(!Security.IsAuthorized(EnumPermType.ImageEdit,_mountShowing.DateCreated)) {
+				if(!Security.IsAuthorized(Permissions.ImageEdit,_mountShowing.DateCreated)) {
 					_isMouseDownPanel=false;
 					return;
 				}
@@ -3005,10 +2906,6 @@ namespace OpenDental {
 				}
 				panelMain.Invalidate();
 			}
-		}
-
-		private void panelMain_MouseLeave(object sender,EventArgs e) {
-			panelHover.Visible=false;
 		}
 
 		private void panelMain_MouseMove(object sender, MouseEventArgs e){
@@ -3046,9 +2943,7 @@ namespace OpenDental {
 				}
 				return;
 			}
-			if(_drawMode==EnumDrawMode.Pen
-				|| _drawMode==EnumDrawMode.Polygon)
-			{
+			if(_drawMode==EnumDrawMode.Pen){
 				if(!_isMouseDownPanel) {
 					return;
 				}
@@ -3208,32 +3103,6 @@ namespace OpenDental {
 				ChangeColorAt(pointFPenInBitmap);
 				return;
 			}
-			if(_cropPanAdj==EnumCropPanAdj.Pan && !_isMouseDownPanel){
-				//hover effect
-				PointF pointFPenInBitmap=ControlPointToBitmapPointF(e.Location);//either bitmap coords or mount coords
-				int idxHover=HitTestHover(pointFPenInBitmap);
-				if(idxHover==-1){
-					panelHover.Visible=false;
-				}
-				else{
-					//panelHover was initialized in the ctor at set visible false
-					if(!panelHover.Visible){
-						//just the first time that it's made visible.
-						panelHover.Visible=true;
-						panelHover.BackColor=Color.Pink;
-						using Graphics g=panelHover.CreateGraphics();
-						using Font font=new Font(FontFamily.GenericSansSerif,LayoutManager.ScaleF(8.25f));
-						//StringFormat stringFormat=new StringFormat();
-						//stringFormat.
-						SizeF sizeF=g.MeasureString(_listImageDraws[idxHover].Details,font,300);//,stringFormat
-						Size sizePanel=new Size(LayoutManager.Scale((int)sizeF.Width+20),LayoutManager.Scale((int)sizeF.Height+25));
-						LayoutManager.MoveSize(panelHover,sizePanel);
-						labelHover.Text=_listImageDraws[idxHover].Details;
-					}
-					//this needs to be done whether or not it was already visible
-					panelHover.Location=new Point(e.X+LayoutManager.Scale(15),e.Y+LayoutManager.Scale(5));
-				}
-			}
 			if(!_isMouseDownPanel) {
 				return;
 			}
@@ -3294,9 +3163,7 @@ namespace OpenDental {
 				_isMouseDownPanel=false;
 				return;
 			}
-			if(_drawMode==EnumDrawMode.Pen
-				|| _drawMode==EnumDrawMode.Polygon)
-			{
+			if(_drawMode==EnumDrawMode.Pen){
 				if(!_isMouseDownPanel) {
 					return;
 				}
@@ -3506,7 +3373,7 @@ namespace OpenDental {
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
 				string logText="Document Edited: "+_documentArrayShowing[_idxSelectedInMount].FileName+" within mount "
 					+_mountShowing.Description+" with category "+defDocCategory.ItemName+" was moved using the Adjust button";
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageEdit,PatientCur.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 				panelMain.Invalidate();
 				return;
 			}
@@ -3567,7 +3434,7 @@ namespace OpenDental {
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[0].DocCategory);
 				string logText="Document Edited: "+_documentArrayShowing[0].FileName
 					+" with category "+defDocCategory.ItemName+" was changed using the Crop button";
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageEdit,PatientCur.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,PatientCur.PatNum,logText);
 				panelMain.Invalidate();
 			}
 		}
@@ -3650,8 +3517,7 @@ namespace OpenDental {
 			//since the line segments are so short, it's sufficient to check end points.
 			for(int i=0;i<_listImageDraws.Count;i++) {
 				if(_listImageDraws[i].DrawType==ImageDrawType.Pen
-					|| _listImageDraws[i].DrawType==ImageDrawType.Line
-					|| _listImageDraws[i].DrawType==ImageDrawType.Polygon)
+					|| _listImageDraws[i].DrawType==ImageDrawType.Line)
 				{
 					List<PointF> listPointFs=_listImageDraws[i].GetPoints();
 					for(int p=1;p<listPointFs.Count;p++) {
@@ -3667,26 +3533,10 @@ namespace OpenDental {
 						return;
 					}
 				}
-				if(_listImageDraws[i].DrawType==ImageDrawType.Polygon){
-					//This supports changing color of a polygon by clicking in the middle
-					List<PointF> listPointFs=_listImageDraws[i].GetPoints();
-					using GraphicsPath graphicsPath=new GraphicsPath();
-					graphicsPath.AddLines(listPointFs.ToArray());
-					Region region=new Region(graphicsPath);
-					if(region.IsVisible(pointFWandTip.X,pointFWandTip.Y)){//IsVisible really means contains
-						if(_listImageDraws[i].ColorDraw==ColorFore){
-							return;
-						}
-						_listImageDraws[i].ColorDraw=ColorFore;
-						ImageDraws.Update(_listImageDraws[i]);
-						panelMain.Invalidate();
-						return;
-					}
-				}
 				if(_listImageDraws[i].DrawType==ImageDrawType.Text){
 					Point pointText=_listImageDraws[i].GetTextPoint();
 					string str=_listImageDraws[i].GetTextString();
-					using Font font=new Font(FontFamily.GenericSansSerif,_listImageDraws[i].GetFontSize());
+					using Font font=new Font(FontFamily.GenericSansSerif,_listImageDraws[i].FontSize);
 					int widthText=(int)LayoutManager.ScaleMS(TextRenderer.MeasureText(str,font).Width);
 					Rectangle rectangleText=new Rectangle(pointText.X,pointText.Y,widthText,font.Height);
 					if(!rectangleText.Contains(Point.Round(pointF))){
@@ -3791,18 +3641,13 @@ namespace OpenDental {
 			string fileNameFull=Path.Combine(PatFolder,"Thumbnails",fileName);
 			//todo: if storage in db
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
-				if(File.Exists(fileNameFull)) {
-					try {
-						File.Delete(fileNameFull);
-					}
-					catch (Exception ex) {
-						ex.DoNothing();
-					}
+				if(File.Exists(fileNameFull)){
+					File.Delete(fileNameFull);
 				}
 				try {
 					bitmap.Save(fileNameFull);
 				}
-				catch(Exception ex) {
+				catch(Exception ex){
 					ex.DoNothing();
 				}
 			}
@@ -3819,7 +3664,7 @@ namespace OpenDental {
 			if(!document.Note.StartsWith(downloadPrefix) && !document.Note.StartsWith(base64Prefix)) { //only process notes that contain a url or base64
 				return;
 			}
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			Document documentImported=new Document();
 			if(document.Note.StartsWith(downloadPrefix)) {
 				string url=document.Note.Substring(downloadPrefix.Length);
@@ -3846,7 +3691,7 @@ namespace OpenDental {
 				};
 			}
 			try {
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception e) {
 				MsgBox.Show(this,"Unable to download file.");
@@ -3860,7 +3705,6 @@ namespace OpenDental {
 			documentImported.DocCategory=document.DocCategory;
 			documentImported.ImgType=document.ImgType;
 			documentImported.DateCreated=document.DateCreated;
-			documentImported.ToothNumbers=document.ToothNumbers;
 			Documents.Update(documentImported);
 			EventFillTree?.Invoke(this,false);//updates tree to immediately include new file
 			NodeTypeAndKey nodeTypeAndKey2=new NodeTypeAndKey(EnumImageNodeType.Document,documentImported.DocNum);
@@ -3934,39 +3778,11 @@ namespace OpenDental {
 
 		private void DrawDrawings(Graphics g,float rotateText){
 			for(int i=0;i<_listImageDraws.Count;i++){
-				if(!_showDrawingsOD && _listImageDraws[i].ImageAnnotVendor==EnumImageAnnotVendor.OpenDental){
-					continue;
-				}
-				if(_listImageDraws[i].ImageAnnotVendor==EnumImageAnnotVendor.Pearl){
-					if(!_showDrawingsPearlToothParts){
-						if(_listImageDraws[i].DrawType==ImageDrawType.Polygon && _listImageDraws[i].Details==""){
-							continue;
-						}
-					}
-					if(!_showDrawingsPearlPolyAnnotations){
-						if(_listImageDraws[i].DrawType==ImageDrawType.Polygon && _listImageDraws[i].Details!=""){
-							continue;
-						}
-					}
-					if(!_showDrawingsPearlBoxAnnotations){
-						if(_listImageDraws[i].DrawType==ImageDrawType.Line && _listImageDraws[i].Details!=""){
-							continue;
-						}
-					}
-					if(!_showDrawingsPearlMeasurements){
-						if(_listImageDraws[i].DrawType==ImageDrawType.Line && _listImageDraws[i].Details==""){
-							continue;
-						}
-						if(_listImageDraws[i].DrawType==ImageDrawType.Text){
-							continue;
-						}
-					}
-				}
 				if(_listImageDraws[i].DrawType==ImageDrawType.Text){
 					GraphicsState graphicsState=g.Save();
 					Point point=_listImageDraws[i].GetTextPoint();
 					g.TranslateTransform(point.X,point.Y);
-					using Font font=new Font(FontFamily.GenericSansSerif,_listImageDraws[i].GetFontSize());
+					using Font font=new Font(FontFamily.GenericSansSerif,_listImageDraws[i].FontSize);
 					string str=_listImageDraws[i].GetTextString();
 					Size size= g.MeasureString(str,font).ToSize();
 					size=new Size((int)LayoutManager.ScaleMS(size.Width),(int)LayoutManager.ScaleMS(size.Height));
@@ -3993,14 +3809,8 @@ namespace OpenDental {
 						g.FillEllipse(solidBrush,rectangleF);
 					}
 				}
-				if(_listImageDraws[i].DrawType==ImageDrawType.Polygon){
-					g.SmoothingMode=SmoothingMode.HighQuality;
-					List<PointF> listPointFs=_listImageDraws[i].GetPoints();
-					using SolidBrush solidBrush=new SolidBrush(_listImageDraws[i].ColorDraw);
-					g.FillPolygon(solidBrush,listPointFs.ToArray());
-				}
 			}
-			//for the measurement hover effect:
+			//for the hover effect:
 			if(!_stringMeasure.IsNullOrEmpty()){
 				SolidBrush solidBrushBack=new SolidBrush(ColorTextBack);
 				float fontSize=8f/(float)ZoomSliderValue*100f;
@@ -4038,12 +3848,6 @@ namespace OpenDental {
 				string str=_listMountItems[i].TextShowing;
 				str=Patients.ReplacePatient(str,PatientCur);
 				str=Mounts.ReplaceMount(str,_mountShowing);
-				PatPlan patPlan=PatPlans.GetPatPlan(PatientCur.PatNum,1);
-				InsSub insSub=null;
-				if(patPlan!=null){
-					insSub=InsSubs.GetOne(patPlan.InsSubNum);
-				}
-				str=InsSubs.ReplaceInsSub(str, insSub);
 				Clinic clinic=Clinics.GetClinic(PatientCur.ClinicNum);
 				str=Clinics.ReplaceOffice(str,clinic);
 				g.DrawString(str,font,solidBrushFore,rectangleF);
@@ -4120,8 +3924,7 @@ namespace OpenDental {
 			//since the line segments are so short, it's sufficient to check end points.
 			for(int i=0;i<_listImageDraws.Count;i++) {
 				if(_listImageDraws[i].DrawType==ImageDrawType.Line
-					|| _listImageDraws[i].DrawType==ImageDrawType.Pen
-					|| _listImageDraws[i].DrawType==ImageDrawType.Polygon)
+					|| _listImageDraws[i].DrawType==ImageDrawType.Pen)
 				{
 					List<PointF> listPointFs=_listImageDraws[i].GetPoints();
 					for(int p=1;p<listPointFs.Count;p++) {
@@ -4134,24 +3937,10 @@ namespace OpenDental {
 						return;
 					}
 				}
-				if(_listImageDraws[i].DrawType==ImageDrawType.Polygon){
-					//This supports deleting a polygon by clicking in the middle
-					List<PointF> listPointFs=_listImageDraws[i].GetPoints();
-					using GraphicsPath graphicsPath=new GraphicsPath();
-					graphicsPath.AddLines(listPointFs.ToArray());
-					Region region=new Region(graphicsPath);
-					if(region.IsVisible(pointFCircleCenter.X,pointFCircleCenter.Y)){//IsVisible really means contains
-						ImageDraws.Delete(_listImageDraws[i].ImageDrawNum);
-						_listImageDraws.RemoveAt(i);
-						panelMain.Invalidate();
-						return;
-					}
-				}
 				if(_listImageDraws[i].DrawType==ImageDrawType.Text){
 					Point pointText=_listImageDraws[i].GetTextPoint();
 					string str=_listImageDraws[i].GetTextString();
-					float fontSize=_listImageDraws[i].GetFontSize();
-					using Font font=new Font(FontFamily.GenericSansSerif,LayoutManager.ScaleFontODZoom(fontSize));
+					using Font font=new Font(FontFamily.GenericSansSerif,LayoutManager.ScaleFontODZoom(_listImageDraws[i].FontSize));
 					int widthText=(int)LayoutManager.ScaleMS(TextRenderer.MeasureText(str,font).Width);
 					//this isn't really the rectangle where the text is.  It's adjusted for the eraser size.
 					int heightFont=(int)LayoutManager.ScaleMS(font.Height);
@@ -4178,45 +3967,6 @@ namespace OpenDental {
 				return Defs.GetDefsForCategory(DefCat.ImageCats,true)[0].DefNum;//No default Image Category set, return first category.
 			}
 			return _nodeTypeKeyCatSelected.DefNumCategory;
-		}
-
-		///<summary>Only for Pearl. Pass in bitmap or mount coords. Looks for polygon or square (Line) that meets criteria for hover. Returns index within _listImageDraws, or -1 if no hit.</summary>
-		private int HitTestHover(PointF pointfBitmap){
-			//The only Pearl types that have details to hover on are polyAnnotations and boxAnnotations
-			if(!Programs.IsEnabled(ProgramName.Pearl)){
-				return -1;
-			}
-			for(int i=0;i<_listImageDraws.Count;i++){
-				if(_listImageDraws[i].ImageAnnotVendor!=EnumImageAnnotVendor.Pearl){
-					continue;
-				}
-				if(_listImageDraws[i].Details==""){//nothing to show
-					continue;
-				}
-				if(_listImageDraws[i].DrawType!=ImageDrawType.Polygon
-					&& _listImageDraws[i].DrawType!=ImageDrawType.Line)//treat it like a closed polygon for hit test
-				{
-					continue;
-				}
-				if(!_showDrawingsPearlPolyAnnotations){
-					if(_listImageDraws[i].DrawType==ImageDrawType.Polygon){
-						continue;
-					}
-				}
-				if(!_showDrawingsPearlBoxAnnotations){
-					if(_listImageDraws[i].DrawType==ImageDrawType.Line){
-						continue;
-					}
-				}
-				List<PointF> listPointFs=_listImageDraws[i].GetPoints();
-				using GraphicsPath graphicsPath=new GraphicsPath();
-				graphicsPath.AddLines(listPointFs.ToArray());
-				Region region=new Region(graphicsPath);
-				if(region.IsVisible(pointfBitmap.X,pointfBitmap.Y)){//IsVisible really means contains
-					return i;
-				}
-			}
-			return -1;
 		}
 
 		///<summary>Pass in panel or mount coords. Returns index of item in mount, or -1 if no hit.</summary>
@@ -4323,7 +4073,7 @@ namespace OpenDental {
 				matrix.TransformPoints(pointFArray);
 				Point pointTextInPanel=Point.Round(pointFArray[0]);
 				//Font must be in panel scale rather than image scale
-				float sizeFont=LayoutManager.ScaleFontODZoom(_listImageDraws[i].GetFontSize())*ZoomSliderValue/100f;
+				float sizeFont=LayoutManager.ScaleFontODZoom(_listImageDraws[i].FontSize)*ZoomSliderValue/100f;
 				using Font font=new Font(FontFamily.GenericSansSerif,sizeFont);
 				string str=_listImageDraws[i].GetTextString();
 				int widthText=(int)LayoutManager.ScaleMS(TextRenderer.MeasureText(str,font).Width);
@@ -4458,9 +4208,10 @@ namespace OpenDental {
 					MessageBox.Show(Lan.g(this,"File not found")+": " + atoZFileName);
 				}
 				else {
-					if(ODBuild.IsThinfinity()) {
+					if(ODBuild.IsWeb()) {
 						_cloudIframe.ShowIframe();
 						_cloudIframe.DisplayFile(_odWebView2FilePath);
+						_isExportable=true;
 						IsImageFloatLocked=true;
 						return;
 					}
@@ -4468,6 +4219,7 @@ namespace OpenDental {
 						await _odWebView2.Init();//Throws exception if Microsoft WebView2 Runtime is not installed so need to have in try-catch.
 					}
 					_odWebView2.ODWebView2Navigate(_odWebView2FilePath);
+					_isExportable=true;
 					IsImageFloatLocked=true;
 				}
 			}
@@ -4557,7 +4309,7 @@ namespace OpenDental {
 
 		///<summary>Only when clicking on the button in the toolbar.  The window is separately shown when clicking on a line to set scale.</summary>
 		private void ToolBarSetScale_Click(){
-			FrmImageScale frmImageScale=new FrmImageScale();
+			using FormImageScale formImageScale=new FormImageScale();
 			//see if we have an existing scale
 			ImageDraw imageDraw=null;
 			for(int j=0;j<_listImageDraws.Count;j++){
@@ -4569,27 +4321,27 @@ namespace OpenDental {
 			if(IsBitmapShowing()){
 				if(imageDraw is null){
 					//this works even if no default set
-					frmImageScale.StringUnits=MountDefs.GetScaleUnits(PrefC.GetString(PrefName.ImagingDefaultScaleValue));
-					frmImageScale.ScaleVal=MountDefs.GetScale(PrefC.GetString(PrefName.ImagingDefaultScaleValue));
-					frmImageScale.Decimals=MountDefs.GetDecimals(PrefC.GetString(PrefName.ImagingDefaultScaleValue));
+					formImageScale.StringUnits=MountDefs.GetScaleUnits(PrefC.GetString(PrefName.ImagingDefaultScaleValue));
+					formImageScale.ScaleVal=MountDefs.GetScale(PrefC.GetString(PrefName.ImagingDefaultScaleValue));
+					formImageScale.Decimals=MountDefs.GetDecimals(PrefC.GetString(PrefName.ImagingDefaultScaleValue));
 				}
 				else{
-					frmImageScale.ScaleVal=imageDraw.GetScale();
-					frmImageScale.Decimals=imageDraw.GetDecimals();
-					frmImageScale.StringUnits=imageDraw.GetScaleUnits();
+					formImageScale.ScaleVal=imageDraw.GetScale();
+					formImageScale.Decimals=imageDraw.GetDecimals();
+					formImageScale.StringUnits=imageDraw.GetScaleUnits();
 				}
 			}
 			if(IsMountShowing()){
 				//If the mountDef had a ScaleValue, then it will already have created an ImageDraw when mount created.
 				//There's no way to create a default on the fly unless we add a column to mount.
 				if(imageDraw!=null){
-					frmImageScale.ScaleVal=imageDraw.GetScale();
-					frmImageScale.Decimals=imageDraw.GetDecimals();
-					frmImageScale.StringUnits=imageDraw.GetScaleUnits();
+					formImageScale.ScaleVal=imageDraw.GetScale();
+					formImageScale.Decimals=imageDraw.GetDecimals();
+					formImageScale.StringUnits=imageDraw.GetScaleUnits();
 				}	
 			}
-			frmImageScale.ShowDialog();
-			if(frmImageScale.IsDialogCancel){
+			formImageScale.ShowDialog();
+			if(formImageScale.DialogResult!=DialogResult.OK){
 				return;
 			}
 			if(imageDraw is null){
@@ -4602,12 +4354,12 @@ namespace OpenDental {
 				if(IsMountShowing()){
 					imageDraw.MountNum=_mountShowing.MountNum;
 				}
-				imageDraw.SetScale(frmImageScale.ScaleVal,frmImageScale.Decimals,frmImageScale.StringUnits);
+				imageDraw.SetScale(formImageScale.ScaleVal,formImageScale.Decimals,formImageScale.StringUnits);
 				ImageDraws.Insert(imageDraw);
 				_listImageDraws.Add(imageDraw);
 			}
 			else{//edit the existing
-				imageDraw.SetScale(frmImageScale.ScaleVal,frmImageScale.Decimals,frmImageScale.StringUnits);
+				imageDraw.SetScale(formImageScale.ScaleVal,formImageScale.Decimals,formImageScale.StringUnits);
 				ImageDraws.Update(imageDraw);
 			}
 		}
@@ -4633,49 +4385,39 @@ namespace OpenDental {
 		}
 
 		private void ToolBarExport_ClickWeb(){
-			if(IsDocumentShowing()) {
-				if(!Security.IsAuthorized(EnumPermType.ImageExport,GetDocumentShowing(0).DateCreated)) {
+			if(IsDocumentShowing()){
+				if(!Security.IsAuthorized(Permissions.ImageExport,GetDocumentShowing(0).DateCreated)) {
 					return;
 				}	
 				string tempFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),GetDocumentShowing(0).FileName);
 				string docPath=FileAtoZ.CombinePaths(ImageStore.GetPatientFolder(PatientCur,ImageStore.GetPreferredAtoZpath()),GetDocumentShowing(0).FileName);
 				FileAtoZ.Copy(docPath,tempFilePath,FileAtoZSourceDestination.AtoZToLocal,"Exporting file...",doOverwrite:true);
-				if(ODBuild.IsThinfinity()) {
-					ThinfinityUtils.ExportForDownload(tempFilePath);
-					MsgBox.Show(this,"Done.");
-				}
-				else {//Is AppStream
-					CloudClientL.ExportForCloud(tempFilePath);
-				}
+				ThinfinityUtils.ExportForDownload(tempFilePath);
+				MsgBox.Show(this,"Done.");
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,GetDocumentShowing(0).DocCategory);
 				string logText="Document Exported: "+GetDocumentShowing(0).FileName+" with category "
 					+defDocCategory.ItemName+" to "+Path.GetDirectoryName(tempFilePath);
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageExport,PatientCur.PatNum,logText,GetDocumentShowing(0).DocNum,GetDocumentShowing(0).DateTStamp);
+				SecurityLogs.MakeLogEntry(Permissions.ImageExport,PatientCur.PatNum,logText,GetDocumentShowing(0).DocNum,GetDocumentShowing(0).DateTStamp);
 				return;
 			}
-			if(IsMountItemSelected()) {
-				if(!Security.IsAuthorized(EnumPermType.ImageExport,_documentArrayShowing[_idxSelectedInMount].DateCreated)) {
+			if(IsMountItemSelected()){
+				if(!Security.IsAuthorized(Permissions.ImageExport,_documentArrayShowing[_idxSelectedInMount].DateCreated)) {
 					return;
 				}	
 				string tempFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),_documentArrayShowing[_idxSelectedInMount].FileName);
 				string docPath=FileAtoZ.CombinePaths(ImageStore.GetPatientFolder(PatientCur,ImageStore.GetPreferredAtoZpath()),_documentArrayShowing[_idxSelectedInMount].FileName);
 				FileAtoZ.Copy(docPath,tempFilePath,FileAtoZSourceDestination.AtoZToLocal,"Exporting file...",doOverwrite:true);
-				if(ODBuild.IsThinfinity()) {
-					ThinfinityUtils.ExportForDownload(tempFilePath);
-					MsgBox.Show(this,"Done.");
-				}
-				else {//Is AppStream
-					CloudClientL.ExportForCloud(tempFilePath);
-				}
+				ThinfinityUtils.ExportForDownload(tempFilePath);
+				MsgBox.Show(this,"Done.");
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_documentArrayShowing[_idxSelectedInMount].DocCategory);
 				string logText="Document Exported: "+_documentArrayShowing[_idxSelectedInMount].FileName+" within mount "
 					+_mountShowing.Description+" with category "+defDocCategory.ItemName+" to "+Path.GetDirectoryName(tempFilePath);
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageExport,PatientCur.PatNum,logText,_documentArrayShowing[_idxSelectedInMount].DocNum,
+				SecurityLogs.MakeLogEntry(Permissions.ImageExport,PatientCur.PatNum,logText,_documentArrayShowing[_idxSelectedInMount].DocNum,
 					_documentArrayShowing[_idxSelectedInMount].DateTStamp);
 				return;
 			}
 			if(IsMountShowing()){
-				if(!Security.IsAuthorized(EnumPermType.ImageExport,_mountShowing.DateCreated)) {
+				if(!Security.IsAuthorized(Permissions.ImageExport,_mountShowing.DateCreated)) {
 					return;
 				}
 				string tempFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),"mount.jpg");
@@ -4685,47 +4427,31 @@ namespace OpenDental {
 				DrawMount(g);
 				g.Dispose();
 				bitmapExport.Save(tempFilePath);
-				if(ODBuild.IsThinfinity()) {
-					ThinfinityUtils.ExportForDownload(tempFilePath);
-					bitmapExport.Dispose();
-					MsgBox.Show(this,"Done.");
-				}
-				else {//Is AppStream
-					CloudClientL.ExportForCloud(tempFilePath);
-					bitmapExport.Dispose();
-				}
+				ThinfinityUtils.ExportForDownload(tempFilePath);
+				bitmapExport.Dispose();
+				MsgBox.Show(this,"Done.");
 				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,_mountShowing.DocCategory);
 				string logText="Mount Exported: "+_mountShowing.Description+" with category "
 					+defDocCategory.ItemName+" to "+Path.GetDirectoryName(tempFilePath);
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageExport,PatientCur.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.ImageExport,PatientCur.PatNum,logText);
 				return;
 			}
 		}
 
-		///<summary>Supports multiple file imports (unless in Appstream), and user doesn't actually need to select a mount item first.</summary>
+		///<summary>Supports multiple file imports, and user doesn't actually need to select a mount item first.</summary>
 		private void ToolBarImportMount(){
-			string[] stringArrayFileNames=new string[0];
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				List<string> listImportFilePaths=new List<string>(){ODCloudClient.ImportFileForCloud()};
-				if(listImportFilePaths[0].IsNullOrEmpty()) {
-					return;
-				}
-				stringArrayFileNames=listImportFilePaths.ToArray();
+			OpenFileDialog openFileDialog=new OpenFileDialog();
+			openFileDialog.Multiselect=true;
+			if(Prefs.GetContainsKey(nameof(PrefName.UseAlternateOpenFileDialogWindow)) && PrefC.GetBool(PrefName.UseAlternateOpenFileDialogWindow)){//Hidden pref, almost always false.
+				//We don't know why this makes any difference but people have mentioned this will stop some hanging issues.
+				//https://stackoverflow.com/questions/6718148/windows-forms-gui-hangs-when-calling-openfiledialog-showdialog
+				openFileDialog.ShowHelp=true;
 			}
-			else {
-				OpenFileDialog openFileDialog=new OpenFileDialog();
-				openFileDialog.Multiselect=true;
-				if(Prefs.GetContainsKey(nameof(PrefName.UseAlternateOpenFileDialogWindow)) && PrefC.GetBool(PrefName.UseAlternateOpenFileDialogWindow)){//Hidden pref, almost always false.
-					//We don't know why this makes any difference but people have mentioned this will stop some hanging issues.
-					//https://stackoverflow.com/questions/6718148/windows-forms-gui-hangs-when-calling-openfiledialog-showdialog
-					openFileDialog.ShowHelp=true;
-				}
-				openFileDialog.InitialDirectory=PrefC.GetString(PrefName.DefaultImageImportFolder);
-				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-					return;
-				}
-				stringArrayFileNames=openFileDialog.FileNames;
+			openFileDialog.InitialDirectory=PrefC.GetString(PrefName.DefaultImageImportFolder);
+			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+				return;
 			}
+			string[] stringArrayFileNames=openFileDialog.FileNames;
 			if(stringArrayFileNames.Length<1) {
 				return;
 			}
@@ -4740,9 +4466,9 @@ namespace OpenDental {
 					//.FileName is full path
 					if(CloudStorage.IsCloudStorage) {
 						//this will flicker because multiple progress bars.  Improve later.
-						ProgressWin progressOD=new ProgressWin();
+						ProgressOD progressOD=new ProgressOD();
 						progressOD.ActionMain=() => document=ImageStore.Import(stringArrayFileNames[i],GetCurrentCategory(),PatientCur);
-						progressOD.ShowDialog();
+						progressOD.ShowDialogProgress();
 						if(progressOD.IsCancelled){
 							return;
 						}
@@ -4772,49 +4498,35 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>Not importing to mount. Supports multiple imports at once (unless in AppStream).</summary>
+		///<summary>Not importing to mount.  Still supports multiple imports at once.</summary>
 		private void ToolBarImportSingle() {
 			if(Plugins.HookMethod(this,"ContrImages.ToolBarImport_Click_Start",PatientCur)) {//Named differently for backwards compatibility
 				EventFillTree?.Invoke(this,true);
 				return;
 			}
-			string[] stringArrayFileNames=new string[0];
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				List<string> listImportFilePaths=new List<string>(){ODCloudClient.ImportFileForCloud()};
-				if(listImportFilePaths[0].IsNullOrEmpty()) {
-					return;
-				}
-				stringArrayFileNames=listImportFilePaths.ToArray();
+			OpenFileDialog openFileDialog=new OpenFileDialog();
+			openFileDialog.Multiselect=true;
+			if(Prefs.GetContainsKey(nameof(PrefName.UseAlternateOpenFileDialogWindow)) && PrefC.GetBool(PrefName.UseAlternateOpenFileDialogWindow)){//Hidden pref, almost always false.
+				//We don't know why this makes any difference but people have mentioned this will stop some hanging issues.
+				//https://stackoverflow.com/questions/6718148/windows-forms-gui-hangs-when-calling-openfiledialog-showdialog
+				openFileDialog.ShowHelp=true;
 			}
-			else {
-				OpenFileDialog openFileDialog=new OpenFileDialog();
-				openFileDialog.Multiselect=true;
-				if(Prefs.GetContainsKey(nameof(PrefName.UseAlternateOpenFileDialogWindow)) && PrefC.GetBool(PrefName.UseAlternateOpenFileDialogWindow)){//Hidden pref, almost always false.
-					//We don't know why this makes any difference but people have mentioned this will stop some hanging issues.
-					//https://stackoverflow.com/questions/6718148/windows-forms-gui-hangs-when-calling-openfiledialog-showdialog
-					openFileDialog.ShowHelp=true;
-				}
-				openFileDialog.InitialDirectory=PrefC.GetString(PrefName.DefaultImageImportFolder);
-				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-					return;
-				}
-				stringArrayFileNames=openFileDialog.FileNames;
+			openFileDialog.InitialDirectory=PrefC.GetString(PrefName.DefaultImageImportFolder);
+			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+				return;
 			}
+			string[] stringArrayFileNames=openFileDialog.FileNames;
 			if(stringArrayFileNames.Length<1) {
 				return;
 			}
 			NodeTypeAndKey nodeTypeAndKey=null;
 			Document document=null;
-			bool isBlockingNavigation=false;
-			if(!ODBuild.IsThinfinity()){
-				isBlockingNavigation=_odWebView2.DoBlockNavigation;
-			}
 			for(int i=0;i<stringArrayFileNames.Length;i++) {
 				try {
 					if(CloudStorage.IsCloudStorage) {
-						ProgressWin progressOD=new ProgressWin();
+						ProgressOD progressOD=new ProgressOD();
 						progressOD.ActionMain=() => document=ImageStore.Import(stringArrayFileNames[i],GetCurrentCategory(),PatientCur);
-						progressOD.ShowDialog();
+						progressOD.ShowDialogProgress();
 						if(progressOD.IsCancelled){
 							return;
 						}
@@ -4824,22 +4536,19 @@ namespace OpenDental {
 					}
 				}
 				catch(Exception ex) {
-					MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ")+ex.Message+": "+stringArrayFileNames[i]);
+					MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ")+ex.Message+": "+openFileDialog.FileName);
 					continue;
-				}
-				if(!ODBuild.IsThinfinity() && i>0){
-					_odWebView2.DoBlockNavigation=false;//Allows previewing of additional PDFs when importing more than one file.
 				}
 				EventFillTree?.Invoke(this,false);
 				EventSelectTreeNode?.Invoke(this,new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
-				FrmDocInfo frmDocInfo=new FrmDocInfo(PatientCur,document,isDocCreate:true);
-				frmDocInfo.ShowDialog();//some of the fields might get changed, but not the filename
-				if(frmDocInfo.IsDialogCancel) {
+				using FormDocInfo formDocInfo=new FormDocInfo(PatientCur,document,isDocCreate:true);
+				formDocInfo.ShowDialog(this);//some of the fields might get changed, but not the filename
+				if(formDocInfo.DialogResult!=DialogResult.OK) {
 					DeleteDocument(false,false,document);
 				}
 				else {
 					if(document.ImgType==ImageType.Photo) {
-						ODEvent.Fire(ODEventType.Patient,PatientCur);//Possibly updated the patient picture.
+						PatientEvent.Fire(ODEventType.Patient,PatientCur);//Possibly updated the patient picture.
 					}
 					nodeTypeAndKey=new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum);
 					SetDocumentShowing(0,document.Copy());
@@ -4847,9 +4556,6 @@ namespace OpenDental {
 					EventFillTree?.Invoke(this,true);
 					EventSelectTreeNode?.Invoke(this,new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
 				}
-			}
-			if(!ODBuild.IsThinfinity()){
-				_odWebView2.DoBlockNavigation=isBlockingNavigation;//Set back to how it was prior to importing.
 			}
 			/*todo:
 			if(treeMain.SelectedNode!=null) {
@@ -4870,7 +4576,6 @@ namespace OpenDental {
 
 		private void FormImageFloat_LocationChanged(object sender, EventArgs e)
 		{
-			//for testing
 			Rectangle rectangleDTB=this.DesktopBounds;
 			Rectangle rectangleB=this.Bounds;
 		}

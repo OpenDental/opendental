@@ -9,41 +9,45 @@ namespace OpenDentBusiness {
 	public class RpTreatPlanPresentationStatistics {
 		///<summary>If not using clinics then supply an empty list of clinicNums.</summary>
 		public static DataTable GetTreatPlanPresentationStatistics(DateTime dateStart,DateTime dateEnd,bool isFirstPresented,bool hasAllClinics
-			,bool hasClinicsEnabled,bool isPresenter,bool isGross,bool hasAllUsers,List<long> listUserNums,List<long> listClinicNums) {
+			,bool hasClinicsEnabled,bool isPresenter,bool isGross,bool hasAllUsers,List<long> listUserNums,List<long> listClinicNums) 
+		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetTable(MethodBase.GetCurrentMethod(),dateStart,dateEnd,isFirstPresented,hasAllClinics,hasClinicsEnabled,isPresenter,isGross
 					,hasAllUsers,listUserNums,listClinicNums);
 			}
-			List<TreatPlan> listTreatPlansSaved=ReportsComplex.RunFuncOnReportServer(() => TreatPlans.GetAllSavedLim(dateStart,dateEnd));
-			List<long> listTreatPlanNums=listTreatPlansSaved.Select(x => x.TreatPlanNum).ToList();
-			List<ProcTP> listProcTPs=ReportsComplex.RunFuncOnReportServer(() => ProcTPs.GetAllLim(listTreatPlanNums));
+			List<ProcTP> listProcTPsAll=ReportsComplex.RunFuncOnReportServer(() => ProcTPs.GetAllLim());
+			List<TreatPlan> listSavedTreatPlans=ReportsComplex.RunFuncOnReportServer(() => TreatPlans.GetAllSavedLim());
 			List<ProcTpTreatPlan> listProcTPTreatPlans=new List<ProcTpTreatPlan>();
-			for(int i=0;i<listProcTPs.Count();i++) {
+			listProcTPsAll.ForEach(x =>
+			{
 				listProcTPTreatPlans.Add(new ProcTpTreatPlan()
 				{
-					TreatPlanCur=listTreatPlansSaved.First(x => x.TreatPlanNum==listProcTPs[i].TreatPlanNum),
-					ProcTPCur=listProcTPs[i]
+					TreatPlanCur = listSavedTreatPlans.First(y => y.TreatPlanNum == x.TreatPlanNum),
+					ProcTPCur = x
 				});
-			}
+			});
 			//get one entry per procedure with their first/last date of presentation based on radio buttons.
 			if(isFirstPresented) {
 				listProcTPTreatPlans = listProcTPTreatPlans
-				.OrderBy(x => x.ProcTPCur.ProcNumOrig)
-				.ThenBy(x => x.TreatPlanCur.DateTP)
-				.ThenBy(x => x.TreatPlanCur.TreatPlanNum)
-				.GroupBy(x => x.ProcTPCur.ProcNumOrig)
-				.Select(x => x.First())
-				.ToList();
+					.OrderBy(x => x.ProcTPCur.ProcNumOrig)
+					.ThenBy(x => x.TreatPlanCur.DateTP)
+					.ThenBy(x => x.TreatPlanCur.TreatPlanNum)
+					.GroupBy(x => x.ProcTPCur.ProcNumOrig)
+					.Select(x => x.First())
+					.ToList();
 			}
 			else {
 				listProcTPTreatPlans = listProcTPTreatPlans
-				.OrderBy(x => x.ProcTPCur.ProcNumOrig)
-				.ThenByDescending(x => x.TreatPlanCur.DateTP)
-				.ThenBy(x => x.TreatPlanCur.TreatPlanNum)
-				.GroupBy(x => x.ProcTPCur.ProcNumOrig)
-				.Select(x => x.First())
-				.ToList();
+					.OrderBy(x => x.ProcTPCur.ProcNumOrig)
+					.ThenByDescending(x => x.TreatPlanCur.DateTP)
+					.ThenBy(x => x.TreatPlanCur.TreatPlanNum)
+					.GroupBy(x => x.ProcTPCur.ProcNumOrig)
+					.Select(x => x.First())
+					.ToList();
 			}
+			//get rid of any entries that are outside the range selected.
+			listProcTPTreatPlans=listProcTPTreatPlans.Where(x => x.TreatPlanCur.DateTP.Date >= dateStart
+				&& x.TreatPlanCur.DateTP.Date <= dateEnd).ToList();
 			//Get the associated procedures, claimprocs, adjustments, users, appointments.
 			List<Procedure> listProcsForTreatPlans = ReportsComplex.RunFuncOnReportServer(() => 
 				Procedures.GetForProcTPs(listProcTPTreatPlans.Select(x => x.ProcTPCur).ToList(),ProcStat.C,ProcStat.TP));
@@ -186,6 +190,6 @@ namespace OpenDentBusiness {
 			public long AptNum;
 		}
 	}
-
+	
 
 }

@@ -30,7 +30,7 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
 			if(!textDate.IsValid()) {
@@ -47,10 +47,17 @@ namespace OpenDental {
 				return;
 			}
 			Commlogs.RecallUndo(date);
-			SecurityLogs.MakeLogEntry(EnumPermType.CommlogEdit,0,"Recall list undo tool ran");
+			SecurityLogs.MakeLogEntry(Permissions.CommlogEdit,0,"Recall list undo tool ran");
 			MsgBox.Show(this,"Done");
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
 	}
 }

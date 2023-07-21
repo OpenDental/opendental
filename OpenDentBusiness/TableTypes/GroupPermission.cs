@@ -19,8 +19,8 @@ namespace OpenDentBusiness{
 		public int NewerDays;
 		///<summary>FK to usergroup.UserGroupNum.  The user group for which this permission is granted.  If not authorized, then this groupPermission will have been deleted.</summary>
 		public long UserGroupNum;
-		///<summary>Enum:EnumPermType Some permissions will treat a zero FKey differently. Some denote it as having access to everything for that PermType. I.e. Reports.</summary>
-		public EnumPermType PermType;
+		///<summary>Enum:Permissions Some permissions will treat a zero FKey differently. Some denote it as having access to everything for that PermType. I.e. Reports.</summary>
+		public Permissions PermType;
 		///<summary>Generic foreign key to any other table.  Typically used in combination with PermType to give permission to specific things.</summary>
 		public long FKey;
 
@@ -32,7 +32,7 @@ namespace OpenDentBusiness{
 	}
 
 	///<summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
-	public enum EnumPermType {
+	public enum Permissions {
 		///<summary>0</summary>
 		[Description("")]
 		None,
@@ -419,8 +419,8 @@ namespace OpenDentBusiness{
 		ClaimProcReceivedEdit,
 		///<summary>126 - Used to diagnose an error in statement creation. Audit Trail Permission Only</summary>
 		StatementPatNumMismatch,
-		///<summary>127 - User has access to ODTouch.</summary>
-		[Description("ODTouch/ODMobile")]
+		///<summary>127 - User has access to Mobile Web.</summary>
+		[Description("Mobile Web/ODMobile")]
 		MobileWeb,
 		///<summary>128 - For logging purposes only.  Used when PatPlans are created and not otherwise logged.</summary>
 		PatPlanCreate,
@@ -754,7 +754,7 @@ namespace OpenDentBusiness{
 		///<summary>239 - Logs when Appointment Types are edited. For audit trails only.</summary>
 		[Description("Appointment Type Edit")]
 		AppointmentTypeEdit,
-		///<summary>240 - Only used at OD HQ. Allows users to make high level changes in regards to texting.</summary>
+		///<summary>240 - Allows users to edit tendlc brand information </summary>
 		[Description("Texting Account Edit")]
 		TextingAccountEdit,
 		///<summary>241 - Logs when web chat sessions are edited. For audit trails only.</summary>
@@ -784,9 +784,6 @@ namespace OpenDentBusiness{
 		///<summary>249 - Also see ArchivedPatientEdit. Blocking user from patient selection prevents changes to all the other tables besides the patient table.  It's more rigorous.</summary>
 		[Description("Archived Patient Select")]
 		ArchivedPatientSelect,
-		///<summary>250 - Only used at OD HQ. Ability to edit Cloud tab info via Broadcast Monitor.</summary>
-		[Description("Cloud Customer Edit")]
-		CloudCustomerEdit,
 	}
 }
 

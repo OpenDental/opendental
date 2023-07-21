@@ -49,7 +49,7 @@ namespace OpenDentBusiness {
 				return;
 			}
 			//Get all PhoneNumbers we will delete later, anything except 'Other' that has a PhoneNumberVal.
-			ODEvent.Fire(ODEventType.ProgressBar,Lans.g("PhoneNumber","Initializing..."));
+			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("PhoneNumber","Initializing..."));
 			string command=$"SELECT PhoneNumberNum FROM phonenumber WHERE PhoneType!={(int)PhoneType.Other} OR PhoneNumberVal=''";
 			List<long> listPhoneNumberNumsToDelete=Db.GetList(command,x => PIn.Long(x["PhoneNumberNum"].ToString()));
 			//Per clinic, including 0 clinic.
@@ -63,7 +63,7 @@ namespace OpenDentBusiness {
 				}
 			}
 			//Remove old PhoneNumbers in batches of 5000
-			ODEvent.Fire(ODEventType.ProgressBar,Lans.g("PhoneNumber","Cleaning up..."));
+			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("PhoneNumber","Cleaning up..."));
 			while(listPhoneNumberNumsToDelete.Count>0) {
 				command=$"DELETE FROM phonenumber WHERE PhoneNumberNum IN ({string.Join(",",listPhoneNumberNumsToDelete.Take(SyncBatchSize).Select(x => POut.Long(x)))})";
 				Db.NonQ(command);
@@ -93,7 +93,7 @@ namespace OpenDentBusiness {
 				//Process in batches.
 				List<long> listPatNumsBatch=listPatNums.Take(SyncBatchSize).ToList();
 				countPatsProcessed+=listPatNumsBatch.Count;
-				ODEvent.Fire(ODEventType.ProgressBar,Lans.g("PhoneNumber","Processing")
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("PhoneNumber","Processing")
 					+$" ({clinicIndex+1}/{countClinics}): {clinic.Abbr} {phoneType.GetDescription()} {countPatsProcessed}/{countPatNums}");
 				//PhoneNumberNum,PatNum,PhoneNumberVal,PhoneNumberDigits,PhoneType
 				command=$@"SELECT 

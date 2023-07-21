@@ -36,6 +36,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormElectIDs));
 			this.gridElectIDs = new OpenDental.UI.GridOD();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.labelCommBridge = new System.Windows.Forms.Label();
 			this.comboCommBridge = new OpenDental.UI.ComboBox();
@@ -58,12 +59,23 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(832, 692);
+			this.butOK.Location = new System.Drawing.Point(742, 692);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 25);
 			this.butOK.TabIndex = 1;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(829, 692);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 25);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butAdd
 			// 
@@ -100,6 +112,7 @@ namespace OpenDental {
 			this.Controls.Add(this.labelCommBridge);
 			this.Controls.Add(this.comboCommBridge);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.gridElectIDs);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -113,6 +126,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private UI.GridOD gridElectIDs;
 		private UI.Button butAdd;

@@ -27,7 +27,8 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRxEdit));
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.textSig = new System.Windows.Forms.TextBox();
 			this.textDisp = new System.Windows.Forms.TextBox();
 			this.textRefills = new System.Windows.Forms.TextBox();
@@ -70,15 +71,26 @@ namespace OpenDental {
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(550, 586);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 17;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(550, 586);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 18;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(550, 546);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 17;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// textSig
 			// 
@@ -319,7 +331,7 @@ namespace OpenDental {
 			this.textNotes.DetectUrls = false;
 			this.textNotes.Location = new System.Drawing.Point(138, 288);
 			this.textNotes.Name = "textNotes";
-			this.textNotes.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Rx;
+			this.textNotes.QuickPasteType = OpenDentBusiness.QuickPasteType.Rx;
 			this.textNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNotes.Size = new System.Drawing.Size(396, 77);
 			this.textNotes.TabIndex = 12;
@@ -363,7 +375,7 @@ namespace OpenDental {
 			this.textPharmInfo.DetectUrls = false;
 			this.textPharmInfo.Location = new System.Drawing.Point(138, 451);
 			this.textPharmInfo.Name = "textPharmInfo";
-			this.textPharmInfo.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Rx;
+			this.textPharmInfo.QuickPasteType = OpenDentBusiness.QuickPasteType.Rx;
 			this.textPharmInfo.ReadOnly = true;
 			this.textPharmInfo.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textPharmInfo.Size = new System.Drawing.Size(396, 50);
@@ -422,7 +434,7 @@ namespace OpenDental {
 			this.textPatInstructions.DetectUrls = false;
 			this.textPatInstructions.Location = new System.Drawing.Point(138, 367);
 			this.textPatInstructions.Name = "textPatInstructions";
-			this.textPatInstructions.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Rx;
+			this.textPatInstructions.QuickPasteType = OpenDentBusiness.QuickPasteType.Rx;
 			this.textPatInstructions.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textPatInstructions.Size = new System.Drawing.Size(396, 82);
 			this.textPatInstructions.TabIndex = 13;
@@ -461,9 +473,11 @@ namespace OpenDental {
 			// 
 			// FormRxEdit
 			// 
-			this.AcceptButton = this.butSave;
+			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(637, 630);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.comboClinic);
 			this.Controls.Add(this.butPrintPatInstructions);
 			this.Controls.Add(this.textPatInstructions);
@@ -516,7 +530,9 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.TextBox textSig;
 		private System.Windows.Forms.TextBox textDisp;
 		private System.Windows.Forms.TextBox textRefills;

@@ -10,7 +10,7 @@ namespace OpenDental {
 		public static void AddPatFieldsToGrid(GridOD grid,List<PatField> listPatFields,FieldLocations fieldLocation) {
 			List<PatFieldDef> listPatFieldDefs=PatFieldDefs.GetDeepCopy(true);
 			//Add a row for each existing PatFieldDef 
-			for(int i=0;i<listPatFieldDefs.Count;i++) {
+			for(int i=0;i<listPatFieldDefs.Count;i++){
 				if(FieldDefLinks.GetExists(x => x.FieldDefNum==listPatFieldDefs[i].PatFieldDefNum && x.FieldDefType==FieldDefTypes.Patient && x.FieldLocation==fieldLocation)) {
 					continue;
 				}
@@ -42,8 +42,8 @@ namespace OpenDental {
 				return;
 			}
 			//Now loop through the PatFields that do not have a matching PatFieldDef.
-			List<PatField> listPatFieldsFiltered=listPatFields.Where(x => !listPatFieldDefs.Exists(y => y.FieldName==x.FieldName)).ToList();
-			for(int i=0;i<listPatFieldsFiltered.Count;i++) {
+			List<PatField> listPatFieldsFiltered=listPatFields.Where(x => !listPatFieldDefs.Any(y => y.FieldName==x.FieldName)).ToList();
+			for(int i=0;i<listPatFieldsFiltered.Count;i++){
 				GridRow row=new GridRow();
 				row.Cells.Add(listPatFieldsFiltered[i].FieldName);
 				row.Cells.Add(listPatFieldsFiltered[i].FieldValue);
@@ -76,8 +76,8 @@ namespace OpenDental {
 					formPatFieldEdit.ShowDialog();
 				}
 				if(patFieldDef.FieldType==PatFieldType.PickList) {
-					patField.IsNew=true;
 					using FormPatFieldPickEdit formPatFieldPickEdit=new FormPatFieldPickEdit(patField);
+					formPatFieldPickEdit.IsNew=true;
 					formPatFieldPickEdit.ShowDialog();
 				}
 				if(patFieldDef.FieldType==PatFieldType.Date) {
@@ -100,7 +100,6 @@ namespace OpenDental {
 				}
 				return;
 			}
-			patField=PatFields.GetPatField(patField.PatFieldNum);
 			if(patFieldDef.FieldType==PatFieldType.Text) {
 				using FormPatFieldEdit formPatFieldEdit=new FormPatFieldEdit(patField);
 				formPatFieldEdit.IsLaunchedFromOrtho=isForOrtho;
@@ -126,5 +125,7 @@ namespace OpenDental {
 				//Deprecated
 			}
 		}
+
+
 	}
 }

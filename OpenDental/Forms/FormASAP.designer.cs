@@ -30,6 +30,7 @@ namespace OpenDental {
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormASAP));
+			this.butClose = new OpenDental.UI.Button();
 			this.menuApptsRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.menuApptSelectPatient = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuApptSeeChart = new System.Windows.Forms.ToolStripMenuItem();
@@ -90,6 +91,17 @@ namespace OpenDental {
 			this.splitterPanel1.SuspendLayout();
 			this.splitterPanel2.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(966, 597);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(87, 24);
+			this.butClose.TabIndex = 7;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// menuApptsRightClick
 			// 
@@ -582,6 +594,7 @@ namespace OpenDental {
 			// 
 			// FormASAP
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(1089, 635);
 			this.Controls.Add(this.splitContainer);
 			this.Controls.Add(this.labelCodeRange);
@@ -595,6 +608,7 @@ namespace OpenDental {
 			this.Controls.Add(this.comboProv);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.butPrint);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.menuMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -616,6 +630,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GridOD gridAppts;
 		private OpenDental.UI.Button butPrint;
 		private OpenDental.UI.ComboBox comboProv;

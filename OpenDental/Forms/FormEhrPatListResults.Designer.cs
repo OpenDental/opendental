@@ -24,6 +24,7 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrPatListResults));
+			this.butClose = new System.Windows.Forms.Button();
 			this.groupOrderBy = new OpenDental.UI.GroupBox();
 			this.radioDesc = new System.Windows.Forms.RadioButton();
 			this.radioAsc = new System.Windows.Forms.RadioButton();
@@ -31,6 +32,17 @@
 			this.butPrint = new System.Windows.Forms.Button();
 			this.groupOrderBy.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(799, 335);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 23);
+			this.butClose.TabIndex = 17;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// groupOrderBy
 			// 
@@ -82,11 +94,11 @@
 			// butPrint
 			// 
 			this.butPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butPrint.Location = new System.Drawing.Point(799, 335);
+			this.butPrint.Location = new System.Drawing.Point(799, 279);
 			this.butPrint.Name = "butPrint";
 			this.butPrint.Size = new System.Drawing.Size(75, 23);
 			this.butPrint.TabIndex = 20;
-			this.butPrint.Text = "&Print";
+			this.butPrint.Text = "Print";
 			this.butPrint.UseVisualStyleBackColor = true;
 			this.butPrint.Click += new System.EventHandler(this.butPrint_Click);
 			// 
@@ -95,6 +107,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(886, 370);
 			this.Controls.Add(this.butPrint);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.groupOrderBy);
 			this.Controls.Add(this.gridMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -111,6 +124,7 @@
 		#endregion
 
 		private OpenDental.UI.GridOD gridMain;
+		private System.Windows.Forms.Button butClose;
 		private OpenDental.UI.GroupBox groupOrderBy;
 		private System.Windows.Forms.RadioButton radioDesc;
 		private System.Windows.Forms.RadioButton radioAsc;

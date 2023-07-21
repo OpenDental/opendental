@@ -51,7 +51,7 @@ namespace OpenDental {
 			textTreatingOfficeNumber.Text=_listProviders[listTreatingProvider.SelectedIndex].CanadianOfficeNum;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(listCarriers.SelectedIndex<0) {
 				MsgBox.Show(this,"You must first choose a carrier.");
 				return;
@@ -87,6 +87,10 @@ namespace OpenDental {
 				MessageBox.Show(Lan.g(this,"Request failed: ")+ex.Message);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

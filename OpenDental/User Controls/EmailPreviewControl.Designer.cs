@@ -281,7 +281,7 @@
 			this.textBccAddress.Location = new System.Drawing.Point(89, 114);
 			this.textBccAddress.Multiline = false;
 			this.textBccAddress.Name = "textBccAddress";
-			this.textBccAddress.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textBccAddress.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textBccAddress.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
 			this.textBccAddress.Size = new System.Drawing.Size(658, 20);
 			this.textBccAddress.SpellCheckIsEnabled = false;
@@ -302,7 +302,7 @@
 			this.textCcAddress.Location = new System.Drawing.Point(89, 93);
 			this.textCcAddress.Multiline = false;
 			this.textCcAddress.Name = "textCcAddress";
-			this.textCcAddress.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textCcAddress.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textCcAddress.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
 			this.textCcAddress.Size = new System.Drawing.Size(658, 20);
 			this.textCcAddress.SpellCheckIsEnabled = false;
@@ -333,7 +333,7 @@
 			this.textSubject.Location = new System.Drawing.Point(89, 156);
 			this.textSubject.Multiline = false;
 			this.textSubject.Name = "textSubject";
-			this.textSubject.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textSubject.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textSubject.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
 			this.textSubject.Size = new System.Drawing.Size(658, 20);
 			this.textSubject.TabIndex = 7;
@@ -351,7 +351,7 @@
 			this.textSignedBy.Location = new System.Drawing.Point(89, 135);
 			this.textSignedBy.Multiline = false;
 			this.textSignedBy.Name = "textSignedBy";
-			this.textSignedBy.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textSignedBy.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textSignedBy.ReadOnly = true;
 			this.textSignedBy.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
 			this.textSignedBy.Size = new System.Drawing.Size(622, 20);
@@ -372,7 +372,7 @@
 			this.textToAddress.Location = new System.Drawing.Point(89, 72);
 			this.textToAddress.Multiline = false;
 			this.textToAddress.Name = "textToAddress";
-			this.textToAddress.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textToAddress.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textToAddress.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
 			this.textToAddress.Size = new System.Drawing.Size(658, 20);
 			this.textToAddress.SpellCheckIsEnabled = false;
@@ -393,7 +393,7 @@
 			this.textFromAddress.Location = new System.Drawing.Point(89, 51);
 			this.textFromAddress.Multiline = false;
 			this.textFromAddress.Name = "textFromAddress";
-			this.textFromAddress.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textFromAddress.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textFromAddress.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
 			this.textFromAddress.Size = new System.Drawing.Size(622, 20);
 			this.textFromAddress.SpellCheckIsEnabled = false;
@@ -439,7 +439,7 @@
 			this.textBodyText.DetectUrls = false;
 			this.textBodyText.Location = new System.Drawing.Point(89, 177);
 			this.textBodyText.Name = "textBodyText";
-			this.textBodyText.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textBodyText.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textBodyText.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textBodyText.Size = new System.Drawing.Size(884, 242);
 			this.textBodyText.TabIndex = 8;

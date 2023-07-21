@@ -62,7 +62,6 @@ namespace OpenDentBusiness.Crud{
 				benefit.SecDateTEntry    = PIn.DateT (row["SecDateTEntry"].ToString());
 				benefit.SecDateTEdit     = PIn.DateT (row["SecDateTEdit"].ToString());
 				benefit.CodeGroupNum     = PIn.Long  (row["CodeGroupNum"].ToString());
-				benefit.TreatArea        = (OpenDentBusiness.TreatmentArea)PIn.Int(row["TreatArea"].ToString());
 				retVal.Add(benefit);
 			}
 			return retVal;
@@ -89,7 +88,6 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("SecDateTEntry");
 			table.Columns.Add("SecDateTEdit");
 			table.Columns.Add("CodeGroupNum");
-			table.Columns.Add("TreatArea");
 			foreach(Benefit benefit in listBenefits) {
 				table.Rows.Add(new object[] {
 					POut.Long  (benefit.BenefitNum),
@@ -107,7 +105,6 @@ namespace OpenDentBusiness.Crud{
 					POut.DateT (benefit.SecDateTEntry,false),
 					POut.DateT (benefit.SecDateTEdit,false),
 					POut.Long  (benefit.CodeGroupNum),
-					POut.Int   ((int)benefit.TreatArea),
 				});
 			}
 			return table;
@@ -127,7 +124,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="BenefitNum,";
 			}
-			command+="PlanNum,PatPlanNum,CovCatNum,BenefitType,Percent,MonetaryAmt,TimePeriod,QuantityQualifier,Quantity,CodeNum,CoverageLevel,SecDateTEntry,CodeGroupNum,TreatArea) VALUES(";
+			command+="PlanNum,PatPlanNum,CovCatNum,BenefitType,Percent,MonetaryAmt,TimePeriod,QuantityQualifier,Quantity,CodeNum,CoverageLevel,SecDateTEntry,CodeGroupNum) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(benefit.BenefitNum)+",";
 			}
@@ -145,8 +142,7 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Int   ((int)benefit.CoverageLevel)+","
 				+    DbHelper.Now()+","
 				//SecDateTEdit can only be set by MySQL
-				+    POut.Long  (benefit.CodeGroupNum)+","
-				+    POut.Int   ((int)benefit.TreatArea)+")";
+				+    POut.Long  (benefit.CodeGroupNum)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -171,7 +167,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="BenefitNum,";
 			}
-			command+="PlanNum,PatPlanNum,CovCatNum,BenefitType,Percent,MonetaryAmt,TimePeriod,QuantityQualifier,Quantity,CodeNum,CoverageLevel,SecDateTEntry,CodeGroupNum,TreatArea) VALUES(";
+			command+="PlanNum,PatPlanNum,CovCatNum,BenefitType,Percent,MonetaryAmt,TimePeriod,QuantityQualifier,Quantity,CodeNum,CoverageLevel,SecDateTEntry,CodeGroupNum) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(benefit.BenefitNum)+",";
 			}
@@ -189,8 +185,7 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Int   ((int)benefit.CoverageLevel)+","
 				+    DbHelper.Now()+","
 				//SecDateTEdit can only be set by MySQL
-				+    POut.Long  (benefit.CodeGroupNum)+","
-				+    POut.Int   ((int)benefit.TreatArea)+")";
+				+    POut.Long  (benefit.CodeGroupNum)+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -216,8 +211,7 @@ namespace OpenDentBusiness.Crud{
 				+"CoverageLevel    =  "+POut.Int   ((int)benefit.CoverageLevel)+", "
 				//SecDateTEntry not allowed to change
 				//SecDateTEdit can only be set by MySQL
-				+"CodeGroupNum     =  "+POut.Long  (benefit.CodeGroupNum)+", "
-				+"TreatArea        =  "+POut.Int   ((int)benefit.TreatArea)+" "
+				+"CodeGroupNum     =  "+POut.Long  (benefit.CodeGroupNum)+" "
 				+"WHERE BenefitNum = "+POut.Long(benefit.BenefitNum);
 			Db.NonQ(command);
 		}
@@ -275,10 +269,6 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="CodeGroupNum = "+POut.Long(benefit.CodeGroupNum)+"";
 			}
-			if(benefit.TreatArea != oldBenefit.TreatArea) {
-				if(command!="") { command+=",";}
-				command+="TreatArea = "+POut.Int   ((int)benefit.TreatArea)+"";
-			}
 			if(command=="") {
 				return false;
 			}
@@ -327,9 +317,6 @@ namespace OpenDentBusiness.Crud{
 			//SecDateTEntry not allowed to change
 			//SecDateTEdit can only be set by MySQL
 			if(benefit.CodeGroupNum != oldBenefit.CodeGroupNum) {
-				return true;
-			}
-			if(benefit.TreatArea != oldBenefit.TreatArea) {
 				return true;
 			}
 			return false;

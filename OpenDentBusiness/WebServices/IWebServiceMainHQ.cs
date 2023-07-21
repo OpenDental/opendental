@@ -95,8 +95,5 @@ namespace OpenDentBusiness {
 		string GetLatestCloudClientVersion();
 		string GetCareCreditWebToken(string officeData);
 		string ProvisionTenDlcBrand(string officeData);
-		string ProcessOCRIIDRequest(string officeData);
-		string BuildPaymentPortalRedirectUrl(string shortGuid);
-		string MsgToPaySend(string officeData);
 	}
 }

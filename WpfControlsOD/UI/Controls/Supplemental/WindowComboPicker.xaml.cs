@@ -29,6 +29,7 @@ Jordan is the only one allowed to edit this file.
 		public List<string> ListAbbrevs;
 		///<summary>The initial point where the UL corner of this picker window should start, in Desktop coordinates.  It might grow up from here if it runs out of room below. This point is not in DIPs, but is actual pixels of the entire desktop.  So it could be a very big number if on the righthand monitor at high dpi.</summary>
 		public Point PointInitial;
+		public string OverrideText="";
 		#endregion Fields - Public
 
 		#region Fields - Private
@@ -39,6 +40,8 @@ Jordan is the only one allowed to edit this file.
 		private bool _isCtrlDown;
 		//private bool _isMouseDown;
 		private bool _isShiftDown;
+		///<summary>True if we're still at _pointInitialUR.  False, if we had to shift because we hit the bottom of the screen, etc.  Then, we don't want to draw the "combobox" at the top.</summary>
+		private bool _isOriginalLocation;
 		///<summary>On mouse down, this copy is made.  Use as needed for logic.  No need to clear when done.</summary>
 		private List<int> _listSelectedOrig=new List<int>();
 		///<summary></summary>
@@ -64,7 +67,7 @@ Jordan is the only one allowed to edit this file.
 		#endregion Constructor
 
 		#region Events
-		///<summary>Only relevant if IsMultiSelect, so generally not raised for single.</summary>
+		///<summary>Only fired if IsMultiSelect</summary>
 		public event EventHandler SelectionChanged;
 		#endregion Events
 
@@ -325,17 +328,19 @@ Jordan is the only one allowed to edit this file.
 				Height=rectScreenBounds.Height/scaleWindows;//DIP
 				pointNewDesktop.Y=rectScreenBounds.Top;
 				pointNewDesktop.X-=14*scaleWindows;
+				_isOriginalLocation=false;
 			}
 			//less than full screen height:
 			else if(pointNewDesktop.Y+heightAllPix>rectScreenBounds.Bottom) {
 				//hitting the bottom, so bump it up
 				Height=heightAllPix/scaleWindows;//DIP
 				pointNewDesktop.Y=rectScreenBounds.Bottom-heightAllPix;
-				//Move list left without changing width. This allows the dropdown button to still show.
 				pointNewDesktop.X-=14*scaleWindows;
+				_isOriginalLocation=false;
 			}
 			else{
 				Height=heightAllPix/scaleWindows;//DIP
+				_isOriginalLocation=true;
 			}
 			Point pointDIP=new Point(pointNewDesktop.X/scaleWindows,pointNewDesktop.Y/scaleWindows);
 			Left=pointDIP.X;

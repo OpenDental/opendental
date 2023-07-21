@@ -38,6 +38,7 @@ namespace OpenDental {
 			this.listCategory = new OpenDental.UI.ListBox();
 			this.butOK = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
+			this.butCancel = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// listCategory
@@ -47,18 +48,18 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.listCategory.Location = new System.Drawing.Point(23, 34);
 			this.listCategory.Name = "listCategory";
-			this.listCategory.Size = new System.Drawing.Size(225, 298);
+			this.listCategory.Size = new System.Drawing.Size(225, 251);
 			this.listCategory.TabIndex = 57;
 			this.listCategory.DoubleClick += new System.EventHandler(this.listCategory_DoubleClick);
 			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(173, 350);
+			this.butOK.Location = new System.Drawing.Point(92, 300);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 56;
-			this.butOK.Text = "&OK";
+			this.butOK.Text = "OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// label1
@@ -70,12 +71,24 @@ namespace OpenDental {
 			this.label1.Text = "Select a category";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(173, 300);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "Cancel";
+			// 
 			// FormDisplayFieldCategories
 			// 
-			this.ClientSize = new System.Drawing.Size(271, 386);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(271, 339);
 			this.Controls.Add(this.listCategory);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label1);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -90,6 +103,7 @@ namespace OpenDental {
 
 		private Label label1;
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.ListBox listCategory;
 	}
 }

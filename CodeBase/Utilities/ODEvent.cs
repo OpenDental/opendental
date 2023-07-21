@@ -1,24 +1,36 @@
 ﻿using System;
 
 namespace CodeBase {
-	///<summary>These events are mostly related to progress bars.</summary>
+	///<summary>Helper class to allow multiple areas of the program to subscribe to various events which they care about.</summary>
 	public class ODEvent {
 		///<summary>Occurs when any developer calls Fire().  Can happen from anywhere in the program.
-		///Consumers of "global" ODEvents need to subscribe because this will be the event that gets fired.</summary>
+		///Consumers of "global" ODEvents need to register for this handler because this will be the event that mainly gets fired.</summary>
 		public static event ODEventHandler Fired;
-		public static bool IsCredentialsFailedAfterLogin_EventSubscribed;
 
-		///<summary>Triggers the global Fired event to get invoked with the passed in arguments.</summary>
-		public static void Fire(ODEventType odEventType,object tag=null) {
+		///<summary>Triggers the global Fired event to get called with the passed in arguments.</summary>
+		public static void Fire(ODEventType odEventType,object tag) {
 			Fired?.Invoke(new ODEventArgs(odEventType,tag));
 		}
 	}
 
 	///<summary>Arguments specifically designed for use in ODEvent.</summary>
 	public class ODEventArgs {
-		///<summary>An object related to the event, such as a Commlog object.  Can be null.</summary>
-		public object Tag;
-		public ODEventType EventType=ODEventType.Undefined;
+		private object _tag;
+		private ODEventType _eventType=ODEventType.Undefined;
+
+		///<summary>A generic object related to the event, such as a Commlog object.  Can be null.</summary>
+		public object Tag {
+			get {
+				return _tag;
+			}
+		}
+
+		///<summary>Used to uniquly identify this ODEvent for consumers.  And event type of Undefined will be treated as a generic ODEvent.</summary>
+		public ODEventType EventType {
+			get {
+				return _eventType;
+			}
+		}
 
 		///<summary>Used when an ODEvent is needed but no object is needed in the consuming class.</summary>
 		public ODEventArgs(ODEventType eventType) : this(eventType,null) {
@@ -29,21 +41,21 @@ namespace CodeBase {
 		///An event type of Undefined will be treated as a generic ODEvent.</param>
 		///<param name="tag">Tag can be set to anything that the consumer may need.  E.g. a string for FormProgressStatus to show to users.</param>
 		public ODEventArgs(ODEventType eventType,object tag) {
-			Tag=tag;
-			EventType=eventType;
+			_tag=tag;
+			_eventType=eventType;
 		}
 	}
 
 	///<summary>Only used for ODEvent.  Not necessary to reference this delegate directly.</summary>
 	public delegate void ODEventHandler(ODEventArgs e);
 
-	///<summary>The new progress bar (ProgressOD) no longer cares about any of these types. But they are required in other areas for ignoring event types that you're not interested in.</summary>
+	///<summary>Progress windows will be monitoring for these specific event types.  New ones should be alphabetical.</summary>
 	public enum ODEventType {
 		///<summary>0 - The event type has not been set.  Treated as a generic ODEvent.</summary>
 		Undefined,
-		///<summary>Events that occur when a change has been made to an Appointment. Causes Dashboard refresh.</summary>
+		///<summary>Events that occur when a change has been made to an Appointment.</summary>
 		AppointmentEdited,
-		///<summary>Where this is used as a type, it's just consumed by progress bars.</summary>
+		///<summary></summary>
 		Billing,
 		///<summary></summary>
 		BugSubmission,
@@ -98,13 +110,12 @@ namespace CodeBase {
 		///<summary>Events that occur when a Module is selected/refreshed.</summary>
 		ModuleSelected,
 		///<summary>Events that occurs during long ODGrid computations.</summary>
-		[Obsolete("Deprecated")]
 		ODGrid,
 		///<summary></summary>
 		Patient,
 		///<summary></summary>
 		PrefL,
-		///<summary></summary>
+		///<summary>This can be used for any event fired from within a progress bar action.</summary>
 		ProgressBar,
 		///<summary></summary>
 		Provider,

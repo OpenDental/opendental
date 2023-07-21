@@ -20,6 +20,11 @@ namespace OpenDental
 			//
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e)
+		{
+			DialogResult = DialogResult.Cancel;
+		}
+
 		private void butOK_Click(object sender, System.EventArgs e)
 		{
 			string phrase = textPharse.Text.Replace("\t","").Replace("\n","");
@@ -37,8 +42,8 @@ namespace OpenDental
 			report.Query= sbSQL.ToString();
 			using FormQuery FormQuery2=new FormQuery(report);
 			FormQuery2.IsReport=false;
-			FormQuery2.SubmitQuery();
-			FormQuery2.textQuery.Text=report.Query;
+			FormQuery2.SubmitQuery();	
+			FormQuery2.textQuery.Text=report.Query;					
 			FormQuery2.ShowDialog();
 		}
 
@@ -53,6 +58,5 @@ namespace OpenDental
 		private void FormSearchPatNotes_Load(object sender,EventArgs e) {
 
 		}
-
 	}
 }

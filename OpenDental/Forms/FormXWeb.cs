@@ -39,7 +39,7 @@ namespace OpenDental {
 		}
 
 		private void FormXWeb_Load(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.PaymentCreate,DateTime.Today)) {
+			if(!Security.IsAuthorized(Permissions.PaymentCreate,DateTime.Today)) {
 				DialogResult=DialogResult.Cancel;
 				return;
 			}
@@ -143,7 +143,7 @@ namespace OpenDental {
 			return true;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(radioReturn.Checked) {
 				_xWebTransactionType=XWebTransactionType.CreditReturnTransaction;
 			}
@@ -156,6 +156,10 @@ namespace OpenDental {
 			if(ProcessSelectedTransaction()) {
 				DialogResult=DialogResult.OK;
 			}
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

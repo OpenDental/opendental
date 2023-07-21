@@ -14,7 +14,7 @@ namespace OpenDentBusiness{
 		public string CountyCode;
 		///<summary>Not a database field. This is the unaltered CountyName. Used for Update.</summary>
 		[CrudColumn(IsNotDbColumn=true)]
-		public string CountyNameOld;
+		public string OldCountyName;
 	}
 
 

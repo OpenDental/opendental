@@ -59,8 +59,6 @@ namespace OpenDentBusiness{
 		public DateTime SecDateTEdit;
 		///<summary>FK to codegroup.CodeGroupNum  The group of procedure codes that apply to this frequency limitation benefit.</summary>
 		public long CodeGroupNum;
-		///<summary>Enum:TreatmentArea . Only for frequency limitations, ignored for all other benefits. Enforced by the UI. Example 3 fillings per year [mouth]. Tests: 140 through 147. 0 means default.</summary>
-		public TreatmentArea TreatArea;
 
 		public Benefit() {
 			Percent=-1;
@@ -194,46 +192,6 @@ namespace OpenDentBusiness{
 			return 0;//then values are the same.
 		}
 
-		/// <summary> Will determine the FrequencyOptions enum value that was used to create a given frequency benefit. </summary>
-		public FrequencyOptions GetFrequencyOption() {
-			if(QuantityQualifier==BenefitQuantity.Years) {
-				return FrequencyOptions.Every_Years;
-			}
-			else if(TimePeriod==BenefitTimePeriod.ServiceYear || TimePeriod==BenefitTimePeriod.CalendarYear) {
-				return FrequencyOptions._PerBenefitYear;
-			}
-			else if(QuantityQualifier==BenefitQuantity.Months) {
-				return FrequencyOptions.Every_Months;
-			}
-			else if(TimePeriod==BenefitTimePeriod.NumberInLast12Months) {
-				return FrequencyOptions._InLast12Months;
-			}
-			throw new Exception("Frequency Benefit did not have a matching Frequency Option");
-		}
-
-		public void SetFrequencyOption(FrequencyOptions frequencyOptions,bool isCalendarYr){
-			TimePeriod=BenefitTimePeriod.None;
-			if(frequencyOptions==FrequencyOptions.Every_Years) {
-				QuantityQualifier=BenefitQuantity.Years;
-			}
-			else if(frequencyOptions==FrequencyOptions._PerBenefitYear) {
-				QuantityQualifier=BenefitQuantity.NumberOfServices;
-				if(isCalendarYr){
-					TimePeriod=BenefitTimePeriod.CalendarYear;
-				}
-				else {
-					TimePeriod=BenefitTimePeriod.ServiceYear;
-				}
-			}
-			else if(frequencyOptions==FrequencyOptions.Every_Months) {
-				QuantityQualifier=BenefitQuantity.Months;
-			}
-			else if(frequencyOptions==FrequencyOptions._InLast12Months) {
-				QuantityQualifier=BenefitQuantity.NumberOfServices;
-				TimePeriod=BenefitTimePeriod.NumberInLast12Months;
-			}
-		}
-
 		///<summary></summary>
 		public Benefit Copy() {
 			return (Benefit)MemberwiseClone();
@@ -242,8 +200,8 @@ namespace OpenDentBusiness{
 		///<summary>Returns true if most of the fields match except BenefitNum</summary>
 		public bool IsSimilar(Benefit ben){
 			if(//PlanNum             != oldBenefitList[i].PlanNum
-				   PatPlanNum        != ben.PatPlanNum
-				|| CovCatNum         != ben.CovCatNum
+				//|| PatPlanNum        != oldBenefitList[i].PatPlanNum
+					 CovCatNum         != ben.CovCatNum
 				|| BenefitType       != ben.BenefitType
 				|| Percent           != ben.Percent
 				|| MonetaryAmt       != ben.MonetaryAmt
@@ -252,8 +210,7 @@ namespace OpenDentBusiness{
 				|| Quantity          != ben.Quantity
 				|| CodeNum           != ben.CodeNum 
 				|| CoverageLevel     != ben.CoverageLevel
-				|| CodeGroupNum      != ben.CodeGroupNum
-				|| TreatArea         != ben.TreatArea) 
+				|| CodeGroupNum      != ben.CodeGroupNum) 
 			{
 				return false;
 			}
@@ -313,21 +270,7 @@ namespace OpenDentBusiness{
 
 	}
 
-	///<summary>Used in Benefit frequency limitation because using QuantityQualifier and TimePeriod is too hard for user to understand. so this just combines those two fields.</summary>
-	public enum FrequencyOptions {
-		///<summary>0 - Every # Years</summary>
-		[Description("Every # Years")]
-		Every_Years,
-		///<summary>1 - # Per Benefit Year</summary>
-		[Description("# Per Benefit Year")]
-		_PerBenefitYear,
-		///<summary>2 - Every # Months</summary>
-		[Description("Every # Months")]
-		Every_Months,
-		///<summary>3 - # in Last 12 Months</summary>
-		[Description("# in Last 12 Months")]
-		_InLast12Months,
-	}
+		
 
 
 

@@ -27,6 +27,7 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.textPreferedConfidentialContact = new System.Windows.Forms.TextBox();
 			this.gridMain = new OpenDental.UI.GridOD();
+			this.butClose = new System.Windows.Forms.Button();
 			this.butSend = new System.Windows.Forms.Button();
 			this.butDelete = new System.Windows.Forms.Button();
 			this.gridProvided = new OpenDental.UI.GridOD();
@@ -62,6 +63,17 @@
 			this.gridMain.TabIndex = 3;
 			this.gridMain.Title = "Reminders";
 			this.gridMain.TranslationName = "TableReminders";
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(475, 585);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 4;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butSend
 			// 
@@ -112,6 +124,7 @@
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(562, 617);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butEdit);
 			this.Controls.Add(this.gridProvided);
 			this.Controls.Add(this.butDelete);
@@ -133,6 +146,7 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textPreferedConfidentialContact;
 		private OpenDental.UI.GridOD gridMain;
+		private System.Windows.Forms.Button butClose;
 		private System.Windows.Forms.Button butSend;
 		private System.Windows.Forms.Button butDelete;
 		private OpenDental.UI.GridOD gridProvided;

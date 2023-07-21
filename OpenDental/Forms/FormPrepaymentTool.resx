@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="label5.Text" xml:space="preserve">
-    <value>When you click Save:
+    <value>When you click OK:
 Repeating Charges:
      1. Inserts zero dollar repeating charge for next # months to prevent billing.
      2. Might change start dates on other repeating charges 

@@ -41,7 +41,7 @@ namespace OpenDental {
 			FillActivationButtons();
 			SetListClinicsAndRulesHelper();
 			FillRemindConfirmData();
-			bool allowEdit=Security.IsAuthorized(EnumPermType.EServicesSetup,suppressMessage:true);
+			bool allowEdit=Security.IsAuthorized(Permissions.EServicesSetup,suppressMessage:true);
 			butActivateReminder.Enabled=allowEdit;
 			butActivateConfirm.Enabled=allowEdit;
 			butActivateThanks.Enabled=allowEdit;
@@ -236,13 +236,13 @@ namespace OpenDental {
 
 		private void FillActivateButton(PrefName prefNameEnabled,string serviceName,UI.Button but,System.Windows.Forms.TextBox textBox) {
 			if(PrefC.GetBool(prefNameEnabled)) {
-				textBox.Text=serviceName+": "+Lan.g(this,"Active");
+				textBox.Text=serviceName+" : "+Lan.g(this,"Active");
 				textBox.BackColor=Color.FromArgb(236,255,236);//light green
 				textBox.ForeColor=Color.Black;//instead of disabled grey
 				but.Text=Lan.g(this,"Deactivate ")+serviceName;
 			}
 			else {
-				textBox.Text=serviceName+": "+Lan.g(this,"Inactive");
+				textBox.Text=serviceName+" : "+Lan.g(this,"Inactive");
 				textBox.BackColor=Color.FromArgb(254,235,233);//light red;
 				textBox.ForeColor=Color.Black;//instead of disabled grey
 				but.Text=Lan.g(this,"Activate ")+serviceName;
@@ -260,7 +260,7 @@ namespace OpenDental {
 		}
 
 		private void GridRemindersMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.EServicesSetup)) {
+			if(!Security.IsAuthorized(Permissions.EServicesSetup)) {
 				return;
 			}
 			if(e.Row<0 || !(gridRemindersMain.ListGridRows[e.Row].Tag is ApptReminderRule)) {
@@ -541,10 +541,10 @@ namespace OpenDental {
 			isAutoEnabled=!isAutoEnabled;
 			Prefs.UpdateBool(prefNameEnabled, isAutoEnabled);
 			if(isAutoEnabled) {
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,$"{apptReminderType.GetDescription()}"+("activated")+".");
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,$"{apptReminderType.GetDescription()}"+("activated")+".");
 			}
 			else {
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,$"{apptReminderType.GetDescription()}"+("deactivated")+".");
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,$"{apptReminderType.GetDescription()}"+("deactivated")+".");
 			}
 			Prefs.RefreshCache();
 			Signalods.SetInvalid(InvalidType.Prefs);
@@ -607,7 +607,7 @@ namespace OpenDental {
 			return note.Substring(0,100)+"(...)";
 		}
 
-		private void ButSave_Click(object sender,EventArgs e) {
+		private void ButOK_Click(object sender,EventArgs e) {
 			//check for duplicate rules
 			List<long> listClinicNums=_listApptReminderRules.Select(x => x.ClinicNum).Distinct().ToList();
 			for(int i=0;i<listClinicNums.Count;i++) {
@@ -628,5 +628,9 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-	}
+		private void ButCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+    }
 }

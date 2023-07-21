@@ -29,6 +29,7 @@ namespace OpenDental{
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butSearch = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// textCode
@@ -76,12 +77,22 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(877, 655);
+			this.butOK.Location = new System.Drawing.Point(877, 625);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(877, 655);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// FormHcpcs
 			// 
@@ -92,6 +103,7 @@ namespace OpenDental{
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textCode);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormHcpcs";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -105,6 +117,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.TextBox textCode;
 		private System.Windows.Forms.Label label1;
 		private UI.Button butSearch;

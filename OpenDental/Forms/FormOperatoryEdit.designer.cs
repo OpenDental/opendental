@@ -54,7 +54,8 @@ namespace OpenDental {
 			this.textAbbrev = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textOpName = new System.Windows.Forms.TextBox();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.groupBoxApptType = new OpenDental.UI.GroupBox();
 			this.labelWSEPDesc = new System.Windows.Forms.Label();
@@ -75,9 +76,9 @@ namespace OpenDental {
 			// 
 			// labelApptType
 			// 
-			this.labelApptType.Location = new System.Drawing.Point(2, 42);
+			this.labelApptType.Location = new System.Drawing.Point(16, 42);
 			this.labelApptType.Name = "labelApptType";
-			this.labelApptType.Size = new System.Drawing.Size(143, 17);
+			this.labelApptType.Size = new System.Drawing.Size(117, 17);
 			this.labelApptType.TabIndex = 126;
 			this.labelApptType.Text = "New Pat Appt Types";
 			this.labelApptType.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -87,7 +88,7 @@ namespace OpenDental {
 			this.butPickHyg.Location = new System.Drawing.Point(412, 124);
 			this.butPickHyg.Name = "butPickHyg";
 			this.butPickHyg.Size = new System.Drawing.Size(23, 21);
-			this.butPickHyg.TabIndex = 6;
+			this.butPickHyg.TabIndex = 123;
 			this.butPickHyg.Text = "...";
 			this.butPickHyg.Click += new System.EventHandler(this.butPickHyg_Click);
 			// 
@@ -96,26 +97,25 @@ namespace OpenDental {
 			this.butPickProv.Location = new System.Drawing.Point(412, 103);
 			this.butPickProv.Name = "butPickProv";
 			this.butPickProv.Size = new System.Drawing.Size(23, 21);
-			this.butPickProv.TabIndex = 5;
+			this.butPickProv.TabIndex = 122;
 			this.butPickProv.Text = "...";
 			this.butPickProv.Click += new System.EventHandler(this.butPickProv_Click);
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(160, 20);
+			this.label4.Location = new System.Drawing.Point(151, 20);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(394, 16);
+			this.label4.Size = new System.Drawing.Size(358, 16);
 			this.label4.TabIndex = 120;
 			this.label4.Text = "This operatory will be available for Web Sched Recall appointments.";
 			// 
 			// checkIsWebSched
 			// 
 			this.checkIsWebSched.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIsWebSched.Location = new System.Drawing.Point(24, 19);
+			this.checkIsWebSched.Location = new System.Drawing.Point(12, 19);
 			this.checkIsWebSched.Name = "checkIsWebSched";
 			this.checkIsWebSched.Size = new System.Drawing.Size(135, 16);
 			this.checkIsWebSched.TabIndex = 119;
-			this.checkIsWebSched.TabStop = false;
 			this.checkIsWebSched.Text = "Is Recall";
 			// 
 			// comboClinic
@@ -126,7 +126,6 @@ namespace OpenDental {
 			this.comboClinic.Name = "comboClinic";
 			this.comboClinic.Size = new System.Drawing.Size(289, 21);
 			this.comboClinic.TabIndex = 4;
-			this.comboClinic.TabStop = false;
 			this.comboClinic.SelectionChangeCommitted += new System.EventHandler(this.ComboClinic_SelectionChangeCommitted);
 			// 
 			// label3
@@ -152,7 +151,6 @@ namespace OpenDental {
 			this.checkSetProspective.Name = "checkSetProspective";
 			this.checkSetProspective.Size = new System.Drawing.Size(104, 16);
 			this.checkSetProspective.TabIndex = 8;
-			this.checkSetProspective.TabStop = false;
 			this.checkSetProspective.Text = "Set Prospective";
 			// 
 			// checkIsHygiene
@@ -162,7 +160,6 @@ namespace OpenDental {
 			this.checkIsHygiene.Name = "checkIsHygiene";
 			this.checkIsHygiene.Size = new System.Drawing.Size(104, 16);
 			this.checkIsHygiene.TabIndex = 7;
-			this.checkIsHygiene.TabStop = false;
 			this.checkIsHygiene.Text = "Is Hygiene";
 			// 
 			// label8
@@ -179,7 +176,6 @@ namespace OpenDental {
 			this.comboHyg.Name = "comboHyg";
 			this.comboHyg.Size = new System.Drawing.Size(252, 21);
 			this.comboHyg.TabIndex = 6;
-			this.comboHyg.TabStop = false;
 			// 
 			// comboProv
 			// 
@@ -187,7 +183,6 @@ namespace OpenDental {
 			this.comboProv.Name = "comboProv";
 			this.comboProv.Size = new System.Drawing.Size(252, 21);
 			this.comboProv.TabIndex = 5;
-			this.comboProv.TabStop = false;
 			// 
 			// label6
 			// 
@@ -214,7 +209,6 @@ namespace OpenDental {
 			this.checkIsHidden.Name = "checkIsHidden";
 			this.checkIsHidden.Size = new System.Drawing.Size(104, 16);
 			this.checkIsHidden.TabIndex = 3;
-			this.checkIsHidden.TabStop = false;
 			this.checkIsHidden.Text = "Is Hidden";
 			// 
 			// textAbbrev
@@ -223,7 +217,7 @@ namespace OpenDental {
 			this.textAbbrev.MaxLength = 5;
 			this.textAbbrev.Name = "textAbbrev";
 			this.textAbbrev.Size = new System.Drawing.Size(78, 20);
-			this.textAbbrev.TabIndex = 1;
+			this.textAbbrev.TabIndex = 2;
 			// 
 			// label2
 			// 
@@ -242,15 +236,25 @@ namespace OpenDental {
 			this.textOpName.Size = new System.Drawing.Size(252, 20);
 			this.textOpName.TabIndex = 0;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(502, 451);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 9;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(411, 463);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 8;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(502, 463);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 9;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// label1
 			// 
@@ -273,24 +277,24 @@ namespace OpenDental {
 			this.groupBoxApptType.Controls.Add(this.labelApptType);
 			this.groupBoxApptType.Controls.Add(this.label4);
 			this.groupBoxApptType.Controls.Add(this.checkIsWebSched);
-			this.groupBoxApptType.Location = new System.Drawing.Point(18, 191);
+			this.groupBoxApptType.Location = new System.Drawing.Point(26, 191);
 			this.groupBoxApptType.Name = "groupBoxApptType";
-			this.groupBoxApptType.Size = new System.Drawing.Size(556, 186);
-			this.groupBoxApptType.TabIndex = 7;
+			this.groupBoxApptType.Size = new System.Drawing.Size(515, 182);
+			this.groupBoxApptType.TabIndex = 128;
 			this.groupBoxApptType.Text = "Web Sched Settings";
 			// 
 			// labelWSEPDesc
 			// 
-			this.labelWSEPDesc.Location = new System.Drawing.Point(143, 137);
+			this.labelWSEPDesc.Location = new System.Drawing.Point(133, 128);
 			this.labelWSEPDesc.Name = "labelWSEPDesc";
-			this.labelWSEPDesc.Size = new System.Drawing.Size(411, 47);
+			this.labelWSEPDesc.Size = new System.Drawing.Size(334, 45);
 			this.labelWSEPDesc.TabIndex = 133;
 			this.labelWSEPDesc.Text = "Only the above Appointment Types will be allowed within this operatory. Appt Type" +
     " is required to be considered for Web Sched Existing Patient.";
 			// 
 			// butWSEPPickApptTypes
 			// 
-			this.butWSEPPickApptTypes.Location = new System.Drawing.Point(398, 113);
+			this.butWSEPPickApptTypes.Location = new System.Drawing.Point(386, 102);
 			this.butWSEPPickApptTypes.Name = "butWSEPPickApptTypes";
 			this.butWSEPPickApptTypes.Size = new System.Drawing.Size(23, 22);
 			this.butWSEPPickApptTypes.TabIndex = 132;
@@ -300,35 +304,33 @@ namespace OpenDental {
 			// 
 			// textWSEPApptTypes
 			// 
-			this.textWSEPApptTypes.Location = new System.Drawing.Point(146, 114);
+			this.textWSEPApptTypes.Location = new System.Drawing.Point(134, 103);
 			this.textWSEPApptTypes.Name = "textWSEPApptTypes";
 			this.textWSEPApptTypes.ReadOnly = true;
 			this.textWSEPApptTypes.Size = new System.Drawing.Size(252, 20);
 			this.textWSEPApptTypes.TabIndex = 131;
-			this.textWSEPApptTypes.TabStop = false;
 			// 
 			// labelWSEPApptTypes
 			// 
-			this.labelWSEPApptTypes.Location = new System.Drawing.Point(2, 117);
+			this.labelWSEPApptTypes.Location = new System.Drawing.Point(2, 106);
 			this.labelWSEPApptTypes.Name = "labelWSEPApptTypes";
 			this.labelWSEPApptTypes.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.labelWSEPApptTypes.Size = new System.Drawing.Size(143, 18);
+			this.labelWSEPApptTypes.Size = new System.Drawing.Size(131, 18);
 			this.labelWSEPApptTypes.TabIndex = 130;
 			this.labelWSEPApptTypes.Text = "Existing Pat Appt Types";
 			// 
 			// textWSNPAApptTypes
 			// 
-			this.textWSNPAApptTypes.Location = new System.Drawing.Point(146, 41);
+			this.textWSNPAApptTypes.Location = new System.Drawing.Point(134, 41);
 			this.textWSNPAApptTypes.MaxLength = 255;
 			this.textWSNPAApptTypes.Name = "textWSNPAApptTypes";
 			this.textWSNPAApptTypes.ReadOnly = true;
 			this.textWSNPAApptTypes.Size = new System.Drawing.Size(252, 20);
 			this.textWSNPAApptTypes.TabIndex = 129;
-			this.textWSNPAApptTypes.TabStop = false;
 			// 
 			// butWSNPAPickApptTypes
 			// 
-			this.butWSNPAPickApptTypes.Location = new System.Drawing.Point(398, 40);
+			this.butWSNPAPickApptTypes.Location = new System.Drawing.Point(386, 40);
 			this.butWSNPAPickApptTypes.Name = "butWSNPAPickApptTypes";
 			this.butWSNPAPickApptTypes.Size = new System.Drawing.Size(23, 22);
 			this.butWSNPAPickApptTypes.TabIndex = 129;
@@ -337,9 +339,9 @@ namespace OpenDental {
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(143, 64);
+			this.label10.Location = new System.Drawing.Point(131, 65);
 			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(411, 47);
+			this.label10.Size = new System.Drawing.Size(378, 29);
 			this.label10.TabIndex = 128;
 			this.label10.Text = "Only the above Appointment Types will be allowed within this operatory.\r\nAppt Typ" +
     "e is required to be considered for Web Sched New Pat Appt.";
@@ -350,7 +352,6 @@ namespace OpenDental {
 			this.butUpdateProvs.Name = "butUpdateProvs";
 			this.butUpdateProvs.Size = new System.Drawing.Size(75, 26);
 			this.butUpdateProvs.TabIndex = 129;
-			this.butUpdateProvs.TabStop = false;
 			this.butUpdateProvs.Text = "Update All";
 			this.butUpdateProvs.Click += new System.EventHandler(this.ButUpdateProvs_Click);
 			// 
@@ -377,7 +378,6 @@ namespace OpenDental {
 			this.comboOpType.Name = "comboOpType";
 			this.comboOpType.Size = new System.Drawing.Size(252, 21);
 			this.comboOpType.TabIndex = 1;
-			this.comboOpType.TabStop = false;
 			// 
 			// label12
 			// 
@@ -399,7 +399,7 @@ namespace OpenDental {
 			// 
 			// FormOperatoryEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(589, 489);
+			this.ClientSize = new System.Drawing.Size(589, 501);
 			this.Controls.Add(this.label13);
 			this.Controls.Add(this.label12);
 			this.Controls.Add(this.comboOpType);
@@ -423,7 +423,8 @@ namespace OpenDental {
 			this.Controls.Add(this.textAbbrev);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.textOpName);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.label1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -439,7 +440,9 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label6;

@@ -34,7 +34,7 @@ namespace OpenDental {
 		}
 
 		private void DashApptGrid_Load(object sender,EventArgs e) {
-			ODEvent.Fired+=AppointmentEvent_Fired;//Only subscribe to this event if actually showing.
+			AppointmentEvent.Fired+=AppointmentEvent_Fired;//Only subscribe to this event if actually showing.
 			//Need to be able to unsubscribe when the Parent's handle is destroyed, otherwise this subscription sticks around, i.e. memory leak that will 
 			//cause the AppointmentEvent_Fired handler to run for the Parent even though it's already "closed" (though not actually disposed due to this 
 			//subscription).
@@ -48,13 +48,10 @@ namespace OpenDental {
 		}
 
 		private void UnsubscribeApptEvent(object sender,EventArgs e) {
-			ODEvent.Fired-=AppointmentEvent_Fired;
+			AppointmentEvent.Fired-=AppointmentEvent_Fired;
 		}
 
 		private void AppointmentEvent_Fired(ODEventArgs e) {
-			if(e.EventType!=ODEventType.AppointmentEdited){
-				return;
-			}
 			if(PatientCur==null) {
 				return;
 			}
@@ -162,7 +159,7 @@ namespace OpenDental {
 				if(IsSelectedApptOtherNull()) {
 					return;
 				}
-				ODEvent.Fire(ODEventType.SendToPinboard,new PinBoardArgs(PatientCur,ListApptOthers.FirstOrDefault(x=>x.AptNum==gridMain.SelectedTag<long>()),ListApptOthers));
+				SendToPinboardEvent.Fire(ODEventType.SendToPinboard,new PinBoardArgs(PatientCur,ListApptOthers.FirstOrDefault(x=>x.AptNum==gridMain.SelectedTag<long>()),ListApptOthers));
 				return;
 			}
 			RefreshData(PatientCur,null);

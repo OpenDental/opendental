@@ -24,8 +24,9 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormApptReminderRuleEdit));
+			this.butCancel = new OpenDental.UI.Button();
 			this.labelLeadTime = new System.Windows.Forms.Label();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOk = new OpenDental.UI.Button();
 			this.gridPriorities = new OpenDental.UI.GridOD();
 			this.butUp = new OpenDental.UI.Button();
 			this.butDown = new OpenDental.UI.Button();
@@ -66,6 +67,17 @@
 			this.groupPatientPortalInvites.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(656, 666);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// labelLeadTime
 			// 
 			this.labelLeadTime.Location = new System.Drawing.Point(7, 48);
@@ -75,16 +87,16 @@
 			this.labelLeadTime.Text = "Hours";
 			this.labelLeadTime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// butSave
+			// butOk
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(655, 666);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(76, 26);
-			this.butSave.TabIndex = 124;
-			this.butSave.Text = "&Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOk.Location = new System.Drawing.Point(574, 666);
+			this.butOk.Name = "butOk";
+			this.butOk.Size = new System.Drawing.Size(76, 26);
+			this.butOk.TabIndex = 124;
+			this.butOk.Text = "&OK";
+			this.butOk.UseVisualStyleBackColor = true;
+			this.butOk.Click += new System.EventHandler(this.butOk_Click);
 			// 
 			// gridPriorities
 			// 
@@ -436,7 +448,8 @@
 			this.Controls.Add(this.butLanguage);
 			this.Controls.Add(this.checkEnabled);
 			this.Controls.Add(this.butAdvanced);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOk);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupSendOrder);
 			this.Controls.Add(this.butDelete);
@@ -457,8 +470,10 @@
 		}
 
 		#endregion
+
+		private UI.Button butCancel;
 		private System.Windows.Forms.Label labelLeadTime;
-		private UI.Button butSave;
+		private UI.Button butOk;
 		private UI.GridOD gridPriorities;
 		private UI.Button butUp;
 		private UI.Button butDown;

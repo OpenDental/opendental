@@ -23,6 +23,7 @@ namespace OpenDental {
 
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpInsOverpaid));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.radioGroupByProc = new System.Windows.Forms.RadioButton();
@@ -35,10 +36,20 @@ namespace OpenDental {
 			this.labelDisclaimer = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(445, 454);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 19;
+			this.butCancel.Text = "&Cancel";
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(458, 458);
+			this.butOK.Location = new System.Drawing.Point(349, 454);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 18;
@@ -52,15 +63,15 @@ namespace OpenDental {
 			this.label1.Size = new System.Drawing.Size(501, 38);
 			this.label1.TabIndex = 20;
 			this.label1.Text = "Helps find situations where the insurance payment plus any write-off exceeds the " +
-    "fee for procedures in the date range.  See the manual for suggestions on how to " +
-    "handle the results.";
+			"fee for procedures in the date range.  See the manual for suggestions on how to " +
+			"handle the results.";
 			// 
 			// radioGroupByProc
 			// 
 			this.radioGroupByProc.Checked = true;
 			this.radioGroupByProc.Location = new System.Drawing.Point(255, 268);
 			this.radioGroupByProc.Name = "radioGroupByProc";
-			this.radioGroupByProc.Size = new System.Drawing.Size(245, 17);
+			this.radioGroupByProc.Size = new System.Drawing.Size(189, 17);
 			this.radioGroupByProc.TabIndex = 21;
 			this.radioGroupByProc.TabStop = true;
 			this.radioGroupByProc.Text = "Filter results by procedure (default)";
@@ -118,15 +129,16 @@ namespace OpenDental {
 			// 
 			this.labelDisclaimer.Location = new System.Drawing.Point(252, 347);
 			this.labelDisclaimer.Name = "labelDisclaimer";
-			this.labelDisclaimer.Size = new System.Drawing.Size(270, 54);
+			this.labelDisclaimer.Size = new System.Drawing.Size(248, 52);
 			this.labelDisclaimer.TabIndex = 60;
 			this.labelDisclaimer.Text = "This report only considers insurance payments and \r\nwrite-offs, not patient payme" +
-    "nts and adjustments. \r\nUse the Procedures Overpaid Report to include \r\npatient p" +
-    "ayments and adjustments.";
+			"nts and adjustments. \r\nUse the Procedures Overpaid Report to include \r\npatient p" +
+			"ayments and adjustments.";
 			// 
 			// FormRpInsOverpaid
 			// 
 			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(545, 496);
 			this.Controls.Add(this.labelDisclaimer);
 			this.Controls.Add(this.dateEnd);
@@ -137,6 +149,7 @@ namespace OpenDental {
 			this.Controls.Add(this.radioGroupByPat);
 			this.Controls.Add(this.radioGroupByProc);
 			this.Controls.Add(this.label1);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -149,6 +162,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private Label label1;
 		private RadioButton radioGroupByProc;

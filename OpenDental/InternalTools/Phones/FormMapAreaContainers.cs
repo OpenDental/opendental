@@ -64,12 +64,15 @@ namespace OpenDental {
 			_isChanged=true;
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormMapAreaContainers_FormClosing(object sender,FormClosingEventArgs e) {
 			if(_isChanged){
 				DataValid.SetInvalid(InvalidType.PhoneMap);
 				//this just handles adding new containers.  Most of the signals are sent from within other forms.
 			}
 		}
-
 	}
 }

@@ -192,5 +192,26 @@ namespace OpenDental {
 			FillGrid(true);//By default, FillGrid limits number of DataTable rows retrieved to 200, this will retrieve every single DataTable row and display in grid.
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.OK;
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

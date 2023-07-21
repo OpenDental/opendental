@@ -127,7 +127,7 @@ namespace OpenDental {
 			formEServicesAutoMsging.ShowDialog();
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			Prefs.UpdateLong(PrefName.ConfirmStatusEmailed,comboStatusEmailedConfirm.GetSelectedDefNum());
 			Prefs.UpdateLong(PrefName.ConfirmStatusTextMessaged,comboStatusTextMessagedConfirm.GetSelectedDefNum());
 			Prefs.UpdateBool(PrefName.ConfirmGroupByFamily,checkGroupFamilies.Checked);
@@ -137,5 +137,9 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
+
 }

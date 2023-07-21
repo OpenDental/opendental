@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWebSchedCarrierRuleCopyToClinics));
+			this.butClose = new OpenDental.UI.Button();
 			this.labelCopyFrom = new System.Windows.Forms.Label();
 			this.listClinicsCopyTo = new OpenDental.UI.ListBox();
 			this.labelCopyTo = new System.Windows.Forms.Label();
@@ -33,8 +34,18 @@ namespace OpenDental{
 			this.gridWebSchedCarrierRules = new OpenDental.UI.GridOD();
 			this.labelGridRules = new System.Windows.Forms.Label();
 			this.checkOverride = new OpenDental.UI.CheckBox();
-			this.butOK = new OpenDental.UI.Button();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(943, 453);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 7;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// labelCopyFrom
 			// 
@@ -121,20 +132,9 @@ namespace OpenDental{
 			this.checkOverride.TabIndex = 6;
 			this.checkOverride.Text = "Delete all rules for \"Copy To\" clinics and replace with \"Copy From\"";
 			// 
-			// butOK
-			// 
-			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butOK.Location = new System.Drawing.Point(943, 453);
-			this.butOK.Name = "butOK";
-			this.butOK.Size = new System.Drawing.Size(75, 24);
-			this.butOK.TabIndex = 7;
-			this.butOK.Text = "OK";
-			this.butOK.Click += new System.EventHandler(this.butOK_Click);
-			// 
 			// FormWebSchedCarrierRuleCopyToClinics
 			// 
-			this.CancelButton = this.butOK;
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(1031, 486);
 			this.Controls.Add(this.checkOverride);
 			this.Controls.Add(this.labelGridRules);
@@ -144,7 +144,7 @@ namespace OpenDental{
 			this.Controls.Add(this.labelCopyTo);
 			this.Controls.Add(this.listClinicsCopyTo);
 			this.Controls.Add(this.comboClinicsFrom);
-			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.labelCopyFrom);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormWebSchedCarrierRuleCopyToClinics";
@@ -155,6 +155,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label labelCopyFrom;
 		private UI.ListBox listClinicsCopyTo;
 		private System.Windows.Forms.Label labelCopyTo;
@@ -164,6 +165,5 @@ namespace OpenDental{
 		private UI.GridOD gridWebSchedCarrierRules;
 		private System.Windows.Forms.Label labelGridRules;
 		private OpenDental.UI.CheckBox checkOverride;
-		private UI.Button butOK;
 	}
 }

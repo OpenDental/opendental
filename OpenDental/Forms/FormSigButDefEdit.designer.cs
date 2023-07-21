@@ -43,7 +43,8 @@ namespace OpenDental {
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
 			this.butDelete = new OpenDental.UI.Button();
 			this.textSynchIcon = new OpenDental.ValidNum();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.radioAll = new System.Windows.Forms.RadioButton();
 			this.radioOne = new System.Windows.Forms.RadioButton();
 			this.textComputerName = new System.Windows.Forms.TextBox();
@@ -90,7 +91,7 @@ namespace OpenDental {
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(100, 20);
 			this.label5.TabIndex = 8;
-			this.label5.Text = "Sync Icon";
+			this.label5.Text = "Synch Icon";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// openFileDialog1
@@ -101,7 +102,7 @@ namespace OpenDental {
 			// 
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(12, 305);
+			this.butDelete.Location = new System.Drawing.Point(45, 292);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(82, 26);
 			this.butDelete.TabIndex = 14;
@@ -112,19 +113,30 @@ namespace OpenDental {
 			// 
 			this.textSynchIcon.Location = new System.Drawing.Point(204, 114);
 			this.textSynchIcon.MaxVal = 9;
+			this.textSynchIcon.MinVal = 0;
 			this.textSynchIcon.Name = "textSynchIcon";
 			this.textSynchIcon.Size = new System.Drawing.Size(51, 20);
 			this.textSynchIcon.TabIndex = 1;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(490, 305);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 2;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(442, 292);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 2;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(544, 292);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 3;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// radioAll
 			// 
@@ -213,7 +225,8 @@ namespace OpenDental {
 			// 
 			// FormSigButDefEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(580, 343);
+			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.ClientSize = new System.Drawing.Size(671, 343);
 			this.Controls.Add(this.label11);
 			this.Controls.Add(this.comboMessage);
 			this.Controls.Add(this.label10);
@@ -229,12 +242,14 @@ namespace OpenDental {
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.textButtonText);
 			this.Controls.Add(this.label2);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "FormSigButDefEdit";
 			this.ShowInTaskbar = false;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Edit Message Button";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormSigButDefEdit_FormClosing);
 			this.Load += new System.EventHandler(this.FormSigButDefEdit_Load);
@@ -243,7 +258,9 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private Label label2;
 		private TextBox textButtonText;
 		private Label label3;

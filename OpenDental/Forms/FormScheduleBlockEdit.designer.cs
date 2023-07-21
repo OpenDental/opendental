@@ -27,7 +27,8 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormScheduleBlockEdit));
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.textNote = new OpenDental.ODtextBox();
@@ -41,15 +42,26 @@ namespace OpenDental {
 			this.comboStop = new System.Windows.Forms.ComboBox();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(539, 352);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 12;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(539, 382);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 14;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(539, 348);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 12;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// label2
 			// 
@@ -77,7 +89,7 @@ namespace OpenDental {
 			this.textNote.DetectUrls = false;
 			this.textNote.Location = new System.Drawing.Point(75, 64);
 			this.textNote.Name = "textNote";
-			this.textNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Schedule;
+			this.textNote.QuickPasteType = OpenDentBusiness.QuickPasteType.Schedule;
 			this.textNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNote.Size = new System.Drawing.Size(220, 113);
 			this.textNote.TabIndex = 15;
@@ -97,7 +109,7 @@ namespace OpenDental {
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(18, 352);
+			this.butDelete.Location = new System.Drawing.Point(18, 382);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(84, 26);
 			this.butDelete.TabIndex = 17;
@@ -108,7 +120,7 @@ namespace OpenDental {
 			// 
 			this.listOp.Location = new System.Drawing.Point(443, 43);
 			this.listOp.Name = "listOp";
-			this.listOp.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
+			this.listOp.SelectionMode = UI.SelectionMode.MultiExtended;
 			this.listOp.Size = new System.Drawing.Size(171, 290);
 			this.listOp.TabIndex = 21;
 			// 
@@ -157,8 +169,9 @@ namespace OpenDental {
 			// 
 			// FormScheduleBlockEdit
 			// 
-			this.AcceptButton = this.butSave;
-			this.ClientSize = new System.Drawing.Size(638, 396);
+			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(638, 426);
 			this.Controls.Add(this.comboStop);
 			this.Controls.Add(this.comboStart);
 			this.Controls.Add(this.listOp);
@@ -167,7 +180,8 @@ namespace OpenDental {
 			this.Controls.Add(this.labelType);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.textNote);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
@@ -183,7 +197,9 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.ODtextBox textNote;

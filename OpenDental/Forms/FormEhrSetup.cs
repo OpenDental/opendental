@@ -28,7 +28,7 @@ namespace OpenDental {
 			else {
 				panelEmergencyNow.BackColor=SystemColors.Control;
 			}
-			if(!Security.IsAuthorized(EnumPermType.Setup,true)) {
+			if(!Security.IsAuthorized(Permissions.Setup,true)) {
 				//Hide all the buttons except Emergency Now and Close.
 				//Unhiding all code system buttons since code systems can no longer be edited.
 				butAllergies.Visible=false;
@@ -268,6 +268,11 @@ namespace OpenDental {
 			FormOIDI.ShowDialog();
 		}
 
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private List<string> getTestMessagesHelper(){
 			List<string> retVal=new List<string>();
 			#region LRI_1.0-GU_Final
@@ -405,6 +410,7 @@ OBX|1|SN|11011-4^Hepatitis C virus RNA [Units/volume] (viral load) in Serum or P
 #endregion
 			return retVal;
 		}
+		
 
 	}
 }

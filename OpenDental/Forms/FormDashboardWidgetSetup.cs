@@ -45,7 +45,7 @@ namespace OpenDental {
 				comboUserGroup.SelectedIndex=0;
 			}
 			List<long> listUserGroupNums=_listUserGroups.Select(x => x.UserGroupNum).ToList();
-			_listGroupPermissions=GroupPermissions.GetForUserGroups(listUserGroupNums,EnumPermType.DashboardWidget);
+			_listGroupPermissions=GroupPermissions.GetForUserGroups(listUserGroupNums,Permissions.DashboardWidget);
 			_listGroupPermissionsOld=_listGroupPermissions.Select(x => x.Copy()).ToList();
 		}
 
@@ -122,7 +122,7 @@ namespace OpenDental {
 			}
 			//There are no explicit 'zero FKey' permissions. Check to see if the user group does in fact have permission to every single widget available.
 			List<SheetDef> listSheetDefsWidgets=SheetDefs.GetCustomForType(SheetTypeEnum.PatientDashboardWidget);
-			int countExplicitGroupPermissions=_listGroupPermissions.Count(x => x.PermType==EnumPermType.DashboardWidget && x.UserGroupNum==userGroupNum && x.FKey!=0);
+			int countExplicitGroupPermissions=_listGroupPermissions.Count(x => x.PermType==Permissions.DashboardWidget && x.UserGroupNum==userGroupNum && x.FKey!=0);
 			if(listSheetDefsWidgets.Count==countExplicitGroupPermissions) {
 				//Correct the group permission cache by removing all permissions related to this user group and making sure that only one 'zero FKey' row is present.
 				GiveUserGroupPermissionAll(userGroupNum);
@@ -138,7 +138,7 @@ namespace OpenDental {
 				GroupPermission groupPermission=new GroupPermission();
 				groupPermission.NewerDate=DateTime.MinValue;
 				groupPermission.NewerDays=0;
-				groupPermission.PermType=EnumPermType.DashboardWidget;
+				groupPermission.PermType=Permissions.DashboardWidget;
 				groupPermission.UserGroupNum=userGroupNum;
 				groupPermission.FKey=0;
 				_listGroupPermissions.Add(groupPermission);
@@ -158,7 +158,7 @@ namespace OpenDental {
 					groupPermission=new GroupPermission();
 					groupPermission.NewerDate=DateTime.MinValue;
 					groupPermission.NewerDays=0;
-					groupPermission.PermType=EnumPermType.DashboardWidget;
+					groupPermission.PermType=Permissions.DashboardWidget;
 					groupPermission.UserGroupNum=userGroup.UserGroupNum;
 					groupPermission.FKey=listSheetDefsWidgets[i].SheetDefNum;
 					_listGroupPermissions.Add(groupPermission);
@@ -173,7 +173,7 @@ namespace OpenDental {
 			groupPermission=new GroupPermission();
 			groupPermission.NewerDate=DateTime.MinValue;
 			groupPermission.NewerDays=0;
-			groupPermission.PermType=EnumPermType.DashboardWidget;
+			groupPermission.PermType=Permissions.DashboardWidget;
 			groupPermission.UserGroupNum=userGroup.UserGroupNum;
 			groupPermission.FKey=sheetDef.SheetDefNum;
 			_listGroupPermissions.Add(groupPermission);
@@ -201,6 +201,7 @@ namespace OpenDental {
 				sheetDef.IsNew=true;
 			}
 			SheetDefs.GetFieldsAndParameters(sheetDef);
+			FormHelpBrowser.InitializeIfNull();
 			using FormSheetDefEdit formSheetDefEdit=new FormSheetDefEdit(sheetDef);
 			if(formSheetDefEdit.ShowDialog()==DialogResult.OK) {
 				DataValid.SetInvalid(InvalidType.Sheets);
@@ -215,6 +216,7 @@ namespace OpenDental {
 			if(gridInternal.SelectedGridRows.Count==0) {
 				return;
 			}
+			FormHelpBrowser.InitializeIfNull();
 			SheetDef sheetDefSelected=gridInternal.SelectedTag<SheetDef>();
 			using FormSheetDefEdit formSheetDefEdit=new FormSheetDefEdit(sheetDefSelected);
 			formSheetDefEdit.IsInternal=true;
@@ -244,7 +246,7 @@ namespace OpenDental {
 			if(gridCustom.SelectedCell.X!=_colAllowed) {//Not setting/unsetting permission.
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
 			UserGroup userGroupSelected=comboUserGroup.GetSelected<UserGroup>();
@@ -334,7 +336,7 @@ namespace OpenDental {
 			SelectDashboardDef(sheetDefImported);
 		}
 		
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butClose_Click(object sender,EventArgs e) {
 			DialogResult=DialogResult.OK;
 		}
 
@@ -346,6 +348,5 @@ namespace OpenDental {
 				DataValid.SetInvalid(InvalidType.Sheets);
 			}
 		}
-
 	}
 }

@@ -36,9 +36,6 @@ namespace DocumentationBuilder {
 			this.labelPrevVersion = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
 			this.butBuildUnitTest = new System.Windows.Forms.Button();
-			this.label7 = new System.Windows.Forms.Label();
-			this.labelPrefDocumentation = new System.Windows.Forms.Label();
-			this.buttonPrefDocumentation = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -51,11 +48,11 @@ namespace DocumentationBuilder {
 			// 
 			// butBuild
 			// 
-			this.butBuild.Location = new System.Drawing.Point(26, 301);
+			this.butBuild.Location = new System.Drawing.Point(86, 282);
 			this.butBuild.Name = "butBuild";
-			this.butBuild.Size = new System.Drawing.Size(150, 24);
+			this.butBuild.Size = new System.Drawing.Size(75, 24);
 			this.butBuild.TabIndex = 1;
-			this.butBuild.Text = "Build OD Documentation";
+			this.butBuild.Text = "Build";
 			this.butBuild.UseVisualStyleBackColor = true;
 			this.butBuild.Click += new System.EventHandler(this.butBuild_Click);
 			// 
@@ -65,9 +62,8 @@ namespace DocumentationBuilder {
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(558, 41);
 			this.label2.TabIndex = 2;
-			this.label2.Text = "Step 1: Build the release of OpenDental and UnitTests. This generates OpenDentBus" +
-    "iness.xml etc. which contain all the xml Summaries that we will then pull from. " +
-    "";
+			this.label2.Text = "Step 1: Build the release of OpenDental, which also generates OpenDentBusiness.xm" +
+    "l which contains all the comments for each database column.";
 			// 
 			// label3
 			// 
@@ -75,15 +71,16 @@ namespace DocumentationBuilder {
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(558, 33);
 			this.label3.TabIndex = 3;
-			this.label3.Text = resources.GetString("label3.Text");
+			this.label3.Text = "Step 2: Make sure you have run the exe so that the config file points to a runnin" +
+    "g database of the same version as the program.  Connection string:";
 			// 
 			// label4
 			// 
 			this.label4.Location = new System.Drawing.Point(23, 246);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(558, 18);
+			this.label4.Size = new System.Drawing.Size(558, 33);
 			this.label4.TabIndex = 4;
-			this.label4.Text = "Step 5: Click one of the Build buttons below.";
+			this.label4.Text = resources.GetString("label4.Text");
 			// 
 			// label6
 			// 
@@ -125,16 +122,17 @@ namespace DocumentationBuilder {
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(23, 342);
+			this.label5.Location = new System.Drawing.Point(23, 322);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(558, 33);
 			this.label5.TabIndex = 14;
-			this.label5.Text = "The output file is DocumentationBuilder/UnitTestsDocumentation.xml.\r\nApproximate " +
-    "time to complete is 5 seconds on a fast computer";
+			this.label5.Text = "Step 5 (alternate) Click Build Unit Test. The output file is DocumentationBuilder" +
+    "/UnitTestsDocumentation.xml.\r\nApproximate time to complete is 5 seconds on a fas" +
+    "t computer";
 			// 
 			// butBuildUnitTest
 			// 
-			this.butBuildUnitTest.Location = new System.Drawing.Point(26, 376);
+			this.butBuildUnitTest.Location = new System.Drawing.Point(86, 358);
 			this.butBuildUnitTest.Name = "butBuildUnitTest";
 			this.butBuildUnitTest.Size = new System.Drawing.Size(182, 24);
 			this.butBuildUnitTest.TabIndex = 13;
@@ -142,44 +140,11 @@ namespace DocumentationBuilder {
 			this.butBuildUnitTest.UseVisualStyleBackColor = true;
 			this.butBuildUnitTest.Click += new System.EventHandler(this.butBuildUnitTest_Click);
 			// 
-			// label7
-			// 
-			this.label7.Location = new System.Drawing.Point(23, 269);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(558, 33);
-			this.label7.TabIndex = 15;
-			this.label7.Text = "The output file is DocumentationBuilder/OpenDentalDocumentation.xml, which will b" +
-    "e automatically launched when done.  Approximate time to complete is 20 seconds " +
-    "on a fast computer.";
-			// 
-			// labelPrefDocumentation
-			// 
-			this.labelPrefDocumentation.Location = new System.Drawing.Point(23, 417);
-			this.labelPrefDocumentation.Name = "labelPrefDocumentation";
-			this.labelPrefDocumentation.Size = new System.Drawing.Size(558, 44);
-			this.labelPrefDocumentation.TabIndex = 17;
-			this.labelPrefDocumentation.Text = "Approximate time to complete is 3 seconds on a fast computer\r\nThen, manually copy" +
-    " Pref(version).html to unversioned\\ODHelpFaqSite\\ODHelpFaqSite\\PreferenceTable\\";
-			this.labelPrefDocumentation.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-			// 
-			// buttonPrefDocumentation
-			// 
-			this.buttonPrefDocumentation.Location = new System.Drawing.Point(26, 464);
-			this.buttonPrefDocumentation.Name = "buttonPrefDocumentation";
-			this.buttonPrefDocumentation.Size = new System.Drawing.Size(161, 24);
-			this.buttonPrefDocumentation.TabIndex = 16;
-			this.buttonPrefDocumentation.Text = "Build Pref Documentation";
-			this.buttonPrefDocumentation.UseVisualStyleBackColor = true;
-			this.buttonPrefDocumentation.Click += new System.EventHandler(this.buttonPrefDocumentation_Click);
-			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(612, 508);
-			this.Controls.Add(this.labelPrefDocumentation);
-			this.Controls.Add(this.buttonPrefDocumentation);
-			this.Controls.Add(this.label7);
+			this.ClientSize = new System.Drawing.Size(612, 411);
 			this.Controls.Add(this.label5);
 			this.Controls.Add(this.butBuildUnitTest);
 			this.Controls.Add(this.textPrevVersion);
@@ -216,9 +181,6 @@ namespace DocumentationBuilder {
 		private System.Windows.Forms.Label labelPrevVersion;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Button butBuildUnitTest;
-		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.Label labelPrefDocumentation;
-		private System.Windows.Forms.Button buttonPrefDocumentation;
 	}
 }
 

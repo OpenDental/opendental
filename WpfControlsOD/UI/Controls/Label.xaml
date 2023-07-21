@@ -6,7 +6,7 @@
 		xmlns:local="clr-namespace:WpfControls.UI"
 		mc:Ignorable="d" 
 		x:Name="label"
-		d:DesignWidth="75" d:DesignHeight="18">
+		d:DesignHeight="20" d:DesignWidth="75">
 	<UserControl.Style>
 		<Style>
 			<Setter Property="local:Label.HorizontalAlignment" Value="Left"/>

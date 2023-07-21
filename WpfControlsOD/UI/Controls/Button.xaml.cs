@@ -23,20 +23,16 @@ How to use the Button control:
 -Generally leave about 10-20% whitespace on left and right of text for foreign language translation.
 -There are only 2 ways to add images:
 	1. Set Icon if EnumIcon has the one you need.
-	2. (will soon be deprecated) If there is no Icon, then add the bitmap (usually a png) to WpfControlsOD/Resources as follows:
-		a. Look in Solution Explorer, Resources folder. If the file you need is there, set the button.BitmapFileName. Example: EditPencil.gif. You are done.
-		b. If you need to add a file, do some research to find the file you need. It's probably in OpenDental/Resources, or Unversioned/Icons is also an option.
-		c. Right click WpfControlsOD, Properties, Resources.
-		d. On the Add Resource dropdown, Add Existing File. It will make a copy, which is what you want.
-		e. In Solution Explorer, Resources folder, find the new file. Right click, Properties, Build Action: Resource.
-		f. Set the button.BitmapFileName. Example: EditPencil.gif
+	2. If there is no Icon, then add the bitmap (usually a png) to WpfControlsOD/Resources as follows:
+		a. Do some research to find the file you need. It's probably in OpenDental/Resources, or Unversioned/Icons is also an option.
+		b. Right click WpfControlsOD, Properties, Resources.
+		c. On the Add Resource dropdown, Add Existing File. It will make a copy, which is what you want.
+		d. In Solution Explorer, Resources folder, find the new file. Right click, Properties, Build Action: Resource.
+		e. Set the button.BitmapFileName. Example: EditPencil.gif
 	3. WPF doesn't use anything like the WF ImageList, so all of those are going away during the conversion to WPF. Image index is not an option.
-	4. Someday, we could add option to set any in-memory image, although buttons probably don't need that feature.
 -Keyboard shortcuts for buttons are discussed in FrmODBase. For example Enter for OK or Alt-P for print.
 -Click event handlers usually look like this:
 		private void butEdit_Click(object sender,EventArgs e) { etc.
-
-	https://wpf-tutorial.com/basic-controls/the-textblock-control-inline-formatting/#google_vignette
 
 */
 	///<summary></summary>
@@ -45,25 +41,16 @@ How to use the Button control:
 		//public object Tag;//already has one
 		private EnumIcons _icon;
 		private string _bitmapFileName;
-		private EnumImageAlign _imageAlign=EnumImageAlign.Left;
 		private bool _isEnabled=true;
 		private bool _isHover;
 		private SolidColorBrush _solidColorBrushHoverBackground=new SolidColorBrush(Color.FromArgb(10,0,100,255));//20% blue wash
-		private Thickness _thicknessMarginImage=new Thickness(3,0,3,0);
 		//public static RoutedCommand MyRoutedCommand=new RoutedCommand();
 		//this didn't work because AccessText is not focusable, although we could make it focusable.
 		//But even then, this button would also have to have focus before keystrokes would register.  That's completely unworkable.
 		//So, I had to move the event handler up to the window level.
 
-		//static Button(){
-			//It works to set width and height either here or in ctor. Ctor is easier for usercontrols.
-			//WidthProperty.OverrideMetadata(typeof(Button), new FrameworkPropertyMetadata(75.0));
-			//HeightProperty.OverrideMetadata(typeof(Button), new FrameworkPropertyMetadata(24.0));
-		//}
-
 		public Button(){
 			InitializeComponent();
-			Focusable=false;
 			//CommandBinding commandBinding = new CommandBinding(MyRoutedCommand,MyRoutedCommandExecuted,MyRoutedCommandCanExecute);
 			//CommandBindings.Add(commandBinding);
 			IsEnabledChanged+=Button_IsEnabledChanged;
@@ -75,33 +62,23 @@ How to use the Button control:
 		#region Properties
 		///<summary>Example: EditPencil.gif</summary>
 		[Category("OD")]
-		[Description("Example: editPencil.gif")]
+		[Description("Example: EditPencil.gif")]
 		public string BitmapFileName{
 			get{
 				return _bitmapFileName;
 			}
 			set{
 				_bitmapFileName=value;
-				gridImage.Children.Clear();
-				if(string.IsNullOrEmpty(_bitmapFileName)) {
-					gridImage.Margin=new Thickness(0);
-					return;
-				}
+				//if(_icon==EnumIcons.None){
+				//	image.Margin=new Thickness(0);
+				//	return;
+				//}
 				Uri uri=new Uri("pack://application:,,,/WPFControlsOD;component/Resources/"+_bitmapFileName);
-				BitmapImage bitmapImage;
-				//This can fail for a few bitmaps for a very small number of computers for unknown reasons
-				try{
-					bitmapImage = new BitmapImage(uri);
-				}
-				catch{
-					bitmapImage = new BitmapImage();
-				}
-				Image image=new Image();
+				BitmapImage bitmapImage = new BitmapImage(uri);
 				image.Source=bitmapImage;
-				gridImage.Children.Add(image);
-				gridImage.Width=22;
-				gridImage.Height=22;
-				gridImage.Margin=_thicknessMarginImage;
+				image.Width=bitmapImage.Width;
+				image.Height=bitmapImage.Height;
+				image.Margin=new Thickness(3,0,3,0);
 			}
 		}
 
@@ -112,62 +89,16 @@ How to use the Button control:
 			}
 			set{
 				_icon=value;
-				gridImage.Children.Clear();
 				if(_icon==EnumIcons.None){
-					gridImage.Margin=new Thickness(0);
+					image.Margin=new Thickness(0);
 					return;
 				}
-				gridImage.Width=22;
-				gridImage.Height=22;
-				IconLibrary.DrawWpf(_icon,gridImage);
-				gridImage.Margin=_thicknessMarginImage;
-			}
-		}
-
-		[Category("OD")]
-		[DefaultValue(EnumImageAlign.Left)]
-		public EnumImageAlign ImageAlign{
-			get{
-				return _imageAlign;
-			}
-			set{
-				_imageAlign=value;
-				if(_imageAlign==EnumImageAlign.Left){
-					grid.ColumnDefinitions.Clear();
-					ColumnDefinition columnDefinition;
-					columnDefinition=new ColumnDefinition();
-					columnDefinition.Width=new GridLength(1,GridUnitType.Auto);//image
-					grid.ColumnDefinitions.Add(columnDefinition);
-					columnDefinition=new ColumnDefinition();
-					columnDefinition.Width=new GridLength(1,GridUnitType.Star);//text
-					grid.ColumnDefinitions.Add(columnDefinition);
-					System.Windows.Controls.Grid.SetColumn(gridImage,0);
-					System.Windows.Controls.Grid.SetColumn(accessText,1);
-					System.Windows.Controls.Grid.SetColumn(textBlock,1);
-					gridImage.HorizontalAlignment=HorizontalAlignment.Left;
-				}
-				if(_imageAlign==EnumImageAlign.Right){
-					grid.ColumnDefinitions.Clear();
-					ColumnDefinition columnDefinition;
-					columnDefinition=new ColumnDefinition();
-					columnDefinition.Width=new GridLength(1,GridUnitType.Star);//text
-					grid.ColumnDefinitions.Add(columnDefinition);
-					columnDefinition=new ColumnDefinition();
-					columnDefinition.Width=new GridLength(1,GridUnitType.Auto);//image
-					grid.ColumnDefinitions.Add(columnDefinition);
-					System.Windows.Controls.Grid.SetColumn(gridImage,1);
-					System.Windows.Controls.Grid.SetColumn(accessText,0);
-					System.Windows.Controls.Grid.SetColumn(textBlock,0);
-					gridImage.HorizontalAlignment=HorizontalAlignment.Left;
-				}
-				if(_imageAlign==EnumImageAlign.Center){
-					grid.ColumnDefinitions.Clear();
-					//Just one cell. Not designed for text, so text would just overlap image.
-					System.Windows.Controls.Grid.SetColumn(gridImage,0);
-					System.Windows.Controls.Grid.SetColumn(accessText,0);
-					System.Windows.Controls.Grid.SetColumn(textBlock,0);
-					gridImage.HorizontalAlignment=HorizontalAlignment.Center;
-				}
+				BitmapImage bitmapImage=UI.IconLibrary.DrawWpf(_icon);
+				image.Source=bitmapImage;
+				int width=IconLibrary.Width(_icon);
+				image.Width=width;
+				image.Height=width;
+				image.Margin=new Thickness(3,0,3,0);
 			}
 		}
 
@@ -196,20 +127,6 @@ How to use the Button control:
 		//	}
 		//}
 
-		///<summary>Default is 3,0,3,0</summary>
-		[Category("OD")]
-		[DefaultValue(typeof(Thickness), "3,0,3,0")]
-		[Description("Default is 3,0,3,0")]
-		public Thickness MarginImageOverride{
-			get{
-				return _thicknessMarginImage;
-			}
-			set{
-				_thicknessMarginImage=value;
-				gridImage.Margin=_thicknessMarginImage;
-			}
-		}
-
 		[Category("OD")]
 		public string Text{
 			get{
@@ -217,34 +134,6 @@ How to use the Button control:
 			}
 			set{
 				accessText.Text=value;
-				if(!DesignerProperties.GetIsInDesignMode(this)){
-					return;
-				}
-				//design mode from here down.
-				//Need to show the underscore.
-				//accessText is still the sole structure where the text is stored, even when we set it not visible.
-				accessText.Visibility=Visibility.Collapsed;
-				if(!value.Contains("_")){
-					textBlock.Text=value;
-					return;
-				}
-				textBlock.Inlines.Clear();
-				int idx=value.IndexOf("_");
-				if(idx==value.Length-1){//example 0123_, idx=4 which =5-1
-					textBlock.Text=value.Substring(0,value.Length-1);
-					return;
-				}
-				//example 01_34
-				if(idx>0){
-					textBlock.Inlines.Add(value.Substring(0,idx));//example 01
-				}
-				Run run=new Run();
-				run.Text=value.Substring(idx+1,1);//example 3
-				run.TextDecorations=TextDecorations.Underline;
-				textBlock.Inlines.Add(run);
-				if(value.Length>idx+2){//example 5>4
-					textBlock.Inlines.Add(value.Substring(idx+2,value.Length-idx-2));//example substring(4,5-2-2)=(4,1) =4
-				}
 				//InputBindings.Clear();
 				//if(string.IsNullOrEmpty(value)) {
 				//	return;
@@ -309,35 +198,6 @@ How to use the Button control:
 		//	//RaiseEvent(new RoutedEventArgs(ClickEvent));
 		//}
 
-		///<summary></summary>
-		public bool IsAltKey(Key key,KeyEventArgs e){
-			if(Keyboard.Modifiers!=ModifierKeys.Alt) {
-				return false;
-			}
-			if(key!=e.SystemKey){//Use e.SystemKey instead of e.Key because the presence of the Alt modifier causes it to be interpreted as a system command.
-				return false;
-			}
-			if(!Visible){
-				return false;
-			}
-			if(!IsEnabled){
-				return false;
-			}
-			DependencyObject dependencyObject=Parent;
-			GroupBox groupBoxParent=new GroupBox();
-			try {
-				groupBoxParent=(GroupBox)dependencyObject;
-			}
-			catch {//The button is not in a GroupBox, so the last check is irrelevant
-				return true;
-			}
-			if(!groupBoxParent.Visible) {
-				return false;
-			}
-
-			return true;
-		}
-
 		private void Button_IsEnabledChanged(object sender,DependencyPropertyChangedEventArgs e) {
 			//This is nice because it gets hit when changing the property in the designer.
 			SetColors();
@@ -377,20 +237,12 @@ How to use the Button control:
 			}
 			if(IsEnabled){
 				accessText.Foreground=Brushes.Black;//not hit very often. Usually black because of default.
-				textBlock.Foreground=Brushes.Black;
 			}
 			else{
 				accessText.Foreground=new SolidColorBrush(OpenDental.ColorOD.Gray_Wpf(170));
-				textBlock.Foreground=new SolidColorBrush(OpenDental.ColorOD.Gray_Wpf(170));
 			}
 		}
 
-	}
-
-	public enum EnumImageAlign{
-		Left,
-		Right,
-		Center
 	}
 
 }

@@ -75,11 +75,11 @@ namespace OpenDental {
 				}
 			}
 			checkHidden.Checked=DiscountPlanCur.IsHidden;
-			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit,true)) {//User may be able to get here if FormDiscountPlans is not in selection mode.
+			if(!Security.IsAuthorized(Permissions.InsPlanEdit,true)) {//User may be able to get here if FormDiscountPlans is not in selection mode.
 				textDescript.ReadOnly=true;
 				comboBoxAdjType.Enabled=false;
 				butFeeSched.Enabled=false;
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				checkHidden.Enabled=false;
 			}
 			textPlanNote.Text=DiscountPlanCur.PlanNote;
@@ -171,7 +171,7 @@ namespace OpenDental {
 			return "";
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textDescript.Text.Trim()=="") {
 				MsgBox.Show(this,"Please enter a description.");
 				return;
@@ -216,20 +216,24 @@ namespace OpenDental {
 			DiscountPlanCur.DefNum=_listDefsAdjTypes[comboBoxAdjType.SelectedIndex].DefNum;
 			DiscountPlanCur.IsHidden=checkHidden.Checked;
 			DiscountPlanCur.PlanNote=textPlanNote.Text;
-			EnumPermType permissionsType;
+			Permissions permissionsType;
 			if(DiscountPlanCur.IsNew) {
 				DiscountPlans.Insert(DiscountPlanCur);
-				permissionsType=EnumPermType.DiscountPlanAdd;
+				permissionsType=Permissions.DiscountPlanAdd;
 			}
 			else {
 				DiscountPlans.Update(DiscountPlanCur);
-				permissionsType=EnumPermType.DiscountPlanEdit;
+				permissionsType=Permissions.DiscountPlanEdit;
 			}
 			string logMessage=GetSecurityLogMessage();
 			if(!string.IsNullOrEmpty(logMessage)) {
 				SecurityLogs.MakeLogEntry(permissionsType,0,GetSecurityLogMessage());
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

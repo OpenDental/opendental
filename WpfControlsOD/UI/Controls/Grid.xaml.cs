@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -20,7 +19,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using CodeBase;
 
 namespace WpfControls.UI{
 /*
@@ -63,6 +61,7 @@ using WpfControls.UI;
 		#endregion Fields - Public
 
 		#region Fields - Private for Properties
+		private bool _allowSortingByColumn=false;
 		private Color _colorSelectedRow=Color.FromRgb(205,220,235);
 		private bool _headersVisible=true;
 		private bool _hScrollVisible=false;
@@ -70,7 +69,6 @@ using WpfControls.UI;
 		private List<int> _listSelectedIndices=new List<int>();
 		private ColRow _selectedCell=new ColRow(-1,-1);
 		private GridSelectionMode _selectionMode=GridSelectionMode.OneRow;
-		private bool _sortingAllowByColumn=false;
 		private string _title="";
 		private bool _titleVisible=true;
 		#endregion Fields - Private for Properties
@@ -92,8 +90,6 @@ using WpfControls.UI;
 		private int _heightTotal;
 		///<summary>-1 if none. A possible future enhancement would be to hover single cell instead of entire row for selectionMode=OneCell.</summary>
 		private int _hoverRow=-1;
-				///<summary>True to show a triangle pointing up.  False to show a triangle pointing down.  Only works if _sortedByColumnIdx is not -1.</summary>
-		private bool _isSortedAscending;
 		///<summary>True between BeginUpdate-EndUpdate.</summary>
 		private bool _isUpdating;
 		///<summary></summary>
@@ -105,20 +101,15 @@ using WpfControls.UI;
 		///<summary></summary>
 		private Rectangle _rectangleHover;
 		private ColRow _selectedCellOld;
-		///<summary>Typically -1 to show no triangle.  Or, specify a column to show a triangle.  The actual sorting happens at mouse down.</summary>
-		private int _sortedByColumnIdx = -1;
 		///<summary>This single textBox is always present as a child of canvasMain.  We set it to not visible when we don't need it. I had to use the raw textBox instead of UI.TextBox because ours had trouble getting focus immediately.</summary>
 		private System.Windows.Controls.TextBox textEdit;
 		///<summary>The total width of the grid, including the parts hidden by scroll.</summary>
 		private int _widthTotal;
-		private bool _wrapText = true;
 		#endregion Fields - Private
 
 		#region Constructor
 		public Grid() {
 			InitializeComponent();
-			//Width=300;
-			//Height=300;
 			Columns=new GridColumnCollection(this);
 			FontSize=11.5;//equivalent to WF 8.6. This is same as declared on each frm, but it's here in case we need to print without a frm.
 			_heightTotal=0;//instead of	ComputeRows(g);
@@ -133,7 +124,6 @@ using WpfControls.UI;
 			canvasMain.Children.Add(textEdit);
 			Focusable=true;//so that clicking causes lost focus on textbox
 			Loaded+=Grid_Loaded;
-			MouseWheel+=Grid_MouseWheel;
 			PreviewKeyDown+=Grid_PreviewKeyDown;
 		}
 		#endregion Constructor
@@ -188,15 +178,15 @@ using WpfControls.UI;
 		//Not implemented
 		public event EventHandler TitleAddClick=null;
 
-		//<summary></summary>
-		//[Category("OD")]
-		//[Description("If SortingAllowByColumn is true, this event will fire when a column header is clicked and before the grid has sorted. Used to disable pagination so that the entire grid's data is sorted.")]
-		//public event EventHandler ColumnSortClick=null;
-		//Was never even used in GridOD and we don't ever plan to do pagination anyway
+		///<summary></summary>
+		[Category("OD")]
+		[Description("If AllowSortingByColumn is true, this event will fire when a column header is clicked and before the grid has sorted. Used to disable pagination so that the entire grid's data is sorted.")]
+		//Not implemented
+		public event EventHandler ColumnSortClick=null;
 
 		///<summary></summary>
 		[Category("OD")]
-		[Description("If SortingAllowByColumn is true, this event will fire when a column header is clicked and the grid is sorted.  Used to reselect rows after sorting.")]
+		[Description("If AllowSortingByColumn is true, this event will fire when a column header is clicked and the grid is sorted.  Used to reselect rows after sorting.")]
 		//Not implemented
 		public event EventHandler ColumnSorted=null;
 
@@ -210,7 +200,7 @@ using WpfControls.UI;
 		#region Properties - Public
 		///<summary></summary>
 		[Category("OD")]
-		[Description("Set false to disable row selection when user clicks.  Row selection should then be handled by the form in response to the cellClick event.")]
+		[Description("Set false to disable row selection when user clicks.  Row selection should then be handled by the form using the cellClick event.")]
 		[DefaultValue(true)]
 		public bool AllowSelection { get; set; }=true;
 
@@ -239,7 +229,7 @@ using WpfControls.UI;
 
 		///<summary></summary>
 		[Category("OD")]
-		[Description("Set to false to disable showing any context menu that you may have set for the grid.")]
+		[Description("Set to false to disable the context menu for the grid.")]
 		[DefaultValue(true)]
 		//Not implemented
 		public bool ContextMenuShows { get; set; } = true;
@@ -313,12 +303,6 @@ using WpfControls.UI;
 			set {
 				_hScrollVisible=value;
 				//LayoutScrolls();
-				if(_hScrollVisible){
-					scrollH.Visibility=Visibility.Visible;
-				}
-				else{
-					scrollH.Visibility=Visibility.Collapsed;
-				}
 			}
 		}
 
@@ -340,6 +324,7 @@ using WpfControls.UI;
 		[Category("OD")]
 		[Description("If right click, and there is 'PatNum:##', 'TaskNum:##', or 'JobNum:##', then the context menu will show a clickable link. Only used task edit, task list, and account commlog.")]
 		[DefaultValue(false)]
+		//Not implemented
 		public bool RightClickLinks { get; set; }=false;
 
 		///<summary></summary>
@@ -363,13 +348,14 @@ using WpfControls.UI;
 		[Category("OD")]
 		[Description("Set true to allow user to click on column headers to sort rows, alternating between ascending and descending.")]
 		[DefaultValue(false)]
-		public bool SortingAllowByColumn {
-			get => _sortingAllowByColumn;
+		//Not implemented
+		public bool SortingByColumnAllowed {
+			get => _allowSortingByColumn;
 			set {
-				_sortingAllowByColumn=value;
-				if(!_sortingAllowByColumn) {
-					_sortedByColumnIdx=-1;
-				}
+				_allowSortingByColumn=value;
+				//if(!_allowSortingByColumn) {
+				//	SortedByColumnIdx=-1;
+				//}
 			}
 		}
 
@@ -421,17 +407,9 @@ using WpfControls.UI;
 
 		///<summary>Text within each cell will wrap, making some rows taller. Default true.</summary>
 		[Category("OD")]
-		[Description("Text within each cell will wrap, making some rows taller. Default true.")]
+		[Description("Text within each cell will wrap, making some rows taller.")]
 		[DefaultValue(true)]
-		public bool WrapText {
-			get {
-				return _wrapText;
-			}
-			set {
-				_wrapText=value;
-				EndUpdate();
-			}
-		}
+		public bool WrapText{get;set; }=true;
 		#endregion Properties - Public
 
 		#region Properties - Not Browsable
@@ -573,7 +551,7 @@ using WpfControls.UI;
 			_listSelectedIndices=new List<int>();
 			_selectedCell=new ColRow(-1,-1);
 			textEdit.Visibility=Visibility.Collapsed;
-			_sortedByColumnIdx=-1;
+			//SortedByColumnIdx=-1;
 			DrawHeaders();
 			ClearAll();
 			DateTime dateTStart=DateTime.Now;
@@ -585,16 +563,32 @@ using WpfControls.UI;
 
 		///<summary>Returns row. -1 if no valid row.  Supply the y position in DiPs of canvasMain.</summary>
 		public int PointToRow(double y) {
-			if(y<borderTitle.ActualHeight+borderHeaders.ActualHeight){
-				return -1;
+			for(int i=0;i<ListGridRows.Count;i++) {
+				if(!ListGridRows[i].State.Visible){
+					continue;
+				}
+				if(y>ListGridRows[i].State.YPos+ListGridRows[i].State.HeightTotal) {
+					continue;//clicked below this row.
+				}
+				return i;
 			}
-			//this can handle clicking below the rows.
-			return CanvasPointToRow(y-ScrollValue-borderTitle.ActualHeight-borderHeaders.ActualHeight);
+			return -1;
 		}
 
 		///<summary>Returns col.  Supply the x position in DiPs of canvasMain. -1 if no valid column.</summary>
 		public int PointToCol(double x) {
-			return CanvasPointToCol(x+HScrollValue);
+			int colRight;//the right edge of each column
+			for(int i=0; i < Columns.Count; i++) {
+				colRight=0;
+				for(int c=0; c < i + 1; c++) {
+					colRight+= Columns[c].State.Width;
+				}
+				if(x > colRight) {
+					continue;//clicked to the right of this col
+				}
+				return i;
+			}
+			return -1;
 		}
 		#endregion Methods - public
 
@@ -639,25 +633,39 @@ using WpfControls.UI;
 				//label.ColorText=
 				canvasHeaders.Children.Add(label);
 			}
+			/*
+			GraphicsState graphicsState=g.Save();
+			g.SmoothingMode=SmoothingMode.HighQuality;
 			for(int i=0;i<Columns.Count;i++) {
-				if(_sortedByColumnIdx!=i) {
-					continue;
-				}
-				Polygon polygon=new Polygon();
-				polygon.Fill=Brushes.Black;
-				Point point=new Point(Columns[i].State.XPos+6,_heightHeader/2f);
-				if(_isSortedAscending) {//pointing up
-					polygon.Points.Add(new Point(point.X-4,point.Y+2));//LL
-					polygon.Points.Add(new Point(point.X+4,point.Y+2));//LR
-					polygon.Points.Add(new Point(point.X,point.Y-2));//Top
-				}
-				else{//pointing down
-					polygon.Points.Add(new Point(point.X-4,point.Y-2));//UL
-					polygon.Points.Add(new Point(point.X+4,point.Y-2));//UR
-					polygon.Points.Add(new Point(point.X,point.Y+2));//Bottom
-				}
-				canvasHeaders.Children.Add(polygon);
+				if(SortedByColumnIdx == i) {
+					PointF p=new PointF(-hScroll.Value+Columns[i].State.XPos+6,ScaleF(_heightTitle+_heightHeader/2f));
+					if(SortedIsAscending) {//pointing up
+						g.FillPolygon(Brushes.White,new PointF[] {
+						new PointF(p.X-4.9f,p.Y+2f),//LLstub
+						new PointF(p.X-4.9f,p.Y+2.5f),//LLbase
+						new PointF(p.X+4.9f,p.Y+2.5f),//LRbase
+						new PointF(p.X+4.9f,p.Y+2f),//LRstub
+						new PointF(p.X,p.Y-2.8f)});//Top
+						g.FillPolygon(Brushes.Black,new PointF[] {
+						new PointF(p.X-4,p.Y+2),//LL
+						new PointF(p.X+4,p.Y+2),//LR
+						new PointF(p.X,p.Y-2)});//Top
+					}
+					else {//pointing down
+						g.FillPolygon(Brushes.White,new PointF[] {//shaped like home plate
+						new PointF(p.X-4.9f,p.Y-2f),//ULstub
+						new PointF(p.X-4.9f,p.Y-2.7f),//ULtop
+						new PointF(p.X+4.9f,p.Y-2.7f),//URtop
+						new PointF(p.X+4.9f,p.Y-2f),//URstub
+						new PointF(p.X,p.Y+2.8f)});//Bottom
+						g.FillPolygon(Brushes.Black,new PointF[] {
+						new PointF(p.X-4,p.Y-2),//UL
+						new PointF(p.X+4,p.Y-2),//UR
+						new PointF(p.X,p.Y+2)});//Bottom
+					}
+				}//if
 			}//for
+			g.Restore(graphicsState);//to possibly turn off HighQuality*/
 		}
 
 		///<summary>Draws the background, horizontal lines, and text for all rows that are visible (for now, it just draws all rows) For less than 500 rows, it draws all rows. Also recalulates each row height that draws.</summary>
@@ -724,27 +732,18 @@ using WpfControls.UI;
 					continue;
 				}
 				TextBlock textBlock=new TextBlock();
-				textBlock.Width=Math.Max(0,Columns[i].State.Width-3);
+				textBlock.Width=Columns[i].State.Width-3;
 				if(WrapText){
 					textBlock.TextWrapping=TextWrapping.Wrap;
-					//textBlock.Height=double.NaN
+					//textBlock.Height=Nan
 				}
 				else{
-					//textBlock.TextTrimming=TextTrimming.//this didn't work because I don't want ellipsis
 					textBlock.Height=heightFont+1;
-					//textBlock.Clip=new RectangleGeometry(new Rect(0,0,textBlock.Width,textBlock.Height));
 				}
 				Canvas.SetLeft(textBlock,Columns[i].State.XPos+2);
 				//Canvas.SetTop(textBlock,0);
 				//Canvas.SetZIndex(textBlock,0);
-				if(gridRow.Cells[i].Underline){
-					//underline is very simple per cell. No row override involved.
-					//There's also no partial underlining of a cell. It's all or nothing.
-					textBlock.Inlines.Add(new Underline(new Run(gridRow.Cells[i].Text)));
-				}
-				else{
-					textBlock.Text=gridRow.Cells[i].Text;
-				}
+				textBlock.Text=gridRow.Cells[i].Text;
 				switch(Columns[i].TextAlign) {
 					case HorizontalAlignment.Left:
 						//already left by default
@@ -784,17 +783,9 @@ using WpfControls.UI;
 				//}
 				//}
 				gridRow.CanvasText.Children.Add(textBlock);
-				double heightCell;
-				if(WrapText){
-					textBlock.Measure(new Size(textBlock.Width,double.PositiveInfinity));
-					textBlock.Arrange(new Rect(textBlock.DesiredSize));
-					heightCell=textBlock.ActualHeight;
-				}
-				else{
-					textBlock.Measure(new Size(textBlock.Width,textBlock.Height));
-					textBlock.Arrange(new Rect(0,0,textBlock.Width,textBlock.Height));
-					heightCell=textBlock.Height;
-				}
+				textBlock.Measure(new Size(textBlock.Width,Double.PositiveInfinity));
+				textBlock.Arrange(new Rect(textBlock.DesiredSize));
+				double heightCell=textBlock.ActualHeight;
 				if(heightCell>gridRow.State.HeightMain){
 					gridRow.State.HeightMain=(int)heightCell;
 					ComputeRowYposStartingAt(rowI);
@@ -910,7 +901,7 @@ using WpfControls.UI;
 			}
 		}
 
-		///<summary>Covers one row or cell with semitransparent rectangles over the normal rows.</summary>
+		///<summary>Covers one row, multiple rows, or cell with semitransparent rectangles over the normal rows.</summary>
 		private void DrawRowHover(){
 			if(_hoverRow==-1){
 				if(_rectangleHover is null){
@@ -1116,7 +1107,7 @@ using WpfControls.UI;
 			LayoutScrolls();
 		}
 
-		private void UserControl_SizeChanged(object sender,System.Windows.SizeChangedEventArgs e) {
+		private void UserControl_SizeChanged(object sender,SizeChangedEventArgs e) {
 			if(_isUpdating){
 				return;
 			}
@@ -1127,8 +1118,8 @@ using WpfControls.UI;
 			if(_dispatcherTimerSizing is null){
 				_dispatcherTimerSizing=new DispatcherTimer();
 				_dispatcherTimerSizing.Tick += new EventHandler(timerSizing_Tick);
-				//Tested 500,400,300,200,100,175,150 milliseconds. 150 was the highest without a noticeable column size adjustment upon opening a frm. The adjustment occurs when a vertical scrollbar is not needed.
-				_dispatcherTimerSizing.Interval = TimeSpan.FromMilliseconds(150);
+				_dispatcherTimerSizing.Interval = TimeSpan.FromMilliseconds(500);
+				
 			}
 			_dispatcherTimerSizing.Start();
 			//todo:
@@ -1211,9 +1202,7 @@ using WpfControls.UI;
 					return;
 				}
 				if(EditableEnterMovesDown){
-					//code here is copied from editBox_NextCellRight().
 					textEdit.Visibility=Visibility.Collapsed;
-					textEdit_LostFocus(textEdit,new EventArgs());
 					if(_selectedCellOld.Row==ListGridRows.Count-1) {
 						return;//can't move down
 					}
@@ -1311,32 +1300,17 @@ using WpfControls.UI;
 		#endregion Method - Event Handlers - Key
 
 		#region Methods - Event Handlers - Mouse
-		private void canvasHeaders_MouseLeftButtonDown(object sender,MouseButtonEventArgs e) {
-			Point point=e.GetPosition(canvasHeaders);
-			_mouseDownCol=CanvasPointToCol(point.X);
-			if(_mouseDownCol!=-1 && Columns[_mouseDownCol].HeaderClick!=null) {
-				Columns[_mouseDownCol].HeaderClick(this,new EventArgs());
-				return;
-			}
-			if(!_sortingAllowByColumn) {
-				return;
-			}
-			if(_mouseDownCol==-1) {
-				return;
-			}
-			SortByColumn(_mouseDownCol);
-		}
-
 		private void canvasMain_MouseLeave(object sender,MouseEventArgs e) {
 			_hoverRow=-1;
 			DrawRowHover();
 		}
 
 		private void canvasMain_MouseLeftButtonDown(object sender,MouseButtonEventArgs e) {
+			
 			bool gotFocus=Focus();//this is important. See notes in OneCell section
 			Point point=e.GetPosition(canvasMain);
-			_mouseDownCol=CanvasPointToCol(point.X);
-			_mouseDownRow=CanvasPointToRow(point.Y);
+			_mouseDownCol=PointToCol(point.X);
+			_mouseDownRow=PointToRow(point.Y);
 			GridClickEventArgs gridClickEventArgs = new GridClickEventArgs(_mouseDownCol,_mouseDownRow,MouseButton.Left);
 			if(e.ClickCount==2) {//double click
 				CellDoubleClick?.Invoke(this,gridClickEventArgs);
@@ -1353,9 +1327,6 @@ using WpfControls.UI;
 				case GridSelectionMode.OneRow:
 					List<int> listSelectedIndicesOld=new List<int>(_listSelectedIndices);
 					_listSelectedIndices.Clear();
-					if(_mouseDownRow==-1){
-						break;
-					}
 					_listSelectedIndices.Add(_mouseDownRow);
 					SelectionCommitted?.Invoke(this,new EventArgs());
 					DrawRowSelections();
@@ -1415,9 +1386,6 @@ using WpfControls.UI;
 					DrawRowSelections();
 					break;
 				case GridSelectionMode.MultiExtended:
-					if(_mouseDownRow==-1){
-						break;
-					}
 					if(ControlIsDown()) {
 						//we need to remember exactly which rows were selected the moment the mouse down started.
 						//Then, if the mouse gets dragged up or down, the rows between mouse start and mouse end
@@ -1464,7 +1432,7 @@ using WpfControls.UI;
 			Point point=e.GetPosition(canvasMain);
 			if(!isMouseDown) {
 				//if(AllowSelection){
-				_hoverRow=CanvasPointToRow(point.Y);
+				_hoverRow=PointToRow(point.Y);
 				//else{	_hoverRow=-1;
 				//decided not to suppress hover effect for now to be conistent with GridOD.
 				DrawRowHover();
@@ -1477,7 +1445,7 @@ using WpfControls.UI;
 			if(!AllowSelection) {
 				return;//dragging does not change selection of rows
 			}
-			int row=CanvasPointToRow(point.Y);
+			int row=PointToRow(point.Y);
 			if(row==-1 || row==_mouseDownRow) {
 				return;
 			}
@@ -1517,145 +1485,6 @@ using WpfControls.UI;
 				}
 			}
 			DrawRowSelections();
-		}
-
-		private void canvasMain_MouseRightButtonUp(object sender,MouseButtonEventArgs e) {
-			//Context menus are added to grids in various places.
-			//We want to add a few extra items to any existing contextMenu or to a null contextMenu:
-			//Separator
-			//Copy Cell Text
-			//Copy Rows
-			//Separator
-			//Wiki links
-			//We can't do this earlier because there is no ContextMenuChanged event in WPF
-			if(!ContextMenuShows) {
-				return;
-			}
-			Point point=e.GetPosition(canvasMain);
-			_mouseDownRow=CanvasPointToRow(point.Y);
-			_mouseDownCol=CanvasPointToCol(point.X);
-			if(_mouseDownRow<0){
-				return;
-			}
-			if(_mouseDownCol<0){
-				return;
-			}
-			//select the row or cell, just like if they left clicked.
-			GridClickEventArgs gridClickEventArgs=new GridClickEventArgs(_mouseDownCol,_mouseDownRow,MouseButton.Right);
-			CellClick?.Invoke(this,gridClickEventArgs);
-			if(AllowSelection) {
-				switch(_selectionMode) {
-					case GridSelectionMode.None:
-						break;
-					case GridSelectionMode.OneRow:
-					case GridSelectionMode.MultiExtended:
-						_listSelectedIndices.Clear();
-						_listSelectedIndices.Add(_mouseDownRow);
-						SelectionCommitted?.Invoke(this,new EventArgs());
-						DrawRowSelections();
-						break;
-					case GridSelectionMode.OneCell:
-						_listSelectedIndices.Clear();
-						_selectedCell=new ColRow(_mouseDownCol,_mouseDownRow);
-						//Do not create a floating textbox when right click
-						DrawRowSelections();
-						break;
-				}
-			}
-			else{
-				//clicks do not trigger selection of rows, but cell click event still gets fired
-				//and right click menu still works.
-			}
-			ContextMenu contextMenu=(ContextMenu)this.ContextMenu;
-			if(contextMenu is null){
-				contextMenu=new ContextMenu();
-				ContextMenu=contextMenu;
-			}
-			List<MenuItem> listMenuItems=contextMenu.GetMenuItems();
-			//Copy Cell-----------------------------------------------------
-			MenuItem menuItemCopy = listMenuItems.Find(x => x.Tag?.ToString() == "copy");
-			if(menuItemCopy==null) {//Add it the first time
-				if(listMenuItems.Count>0){
-					contextMenu.AddSeparator();
-				}
-				//Debug.WriteLine("Copy Cell Text");
-				menuItemCopy =new MenuItem("Copy Cell Text",CopyCellClick);
-				menuItemCopy.Tag="copy";
-				contextMenu.Add(menuItemCopy);
-			}
-			if(string.IsNullOrEmpty(ListGridRows[_mouseDownRow].Cells[_mouseDownCol].Text)) {
-				menuItemCopy.IsEnabled = false;
-			}
-			else {
-				menuItemCopy.IsEnabled = true;
-			}
-			//Copy Rows----------------------------------------------------
-			MenuItem menuItemCopyRows = listMenuItems.Find(x => x.Tag?.ToString() == "copyrows");
-			if(menuItemCopyRows==null) {//Add it the first time
-				menuItemCopyRows=new MenuItem("Copy Rows",CopyRowsClick);
-				menuItemCopyRows.Tag="copyrows";
-				contextMenu.Add(menuItemCopyRows);
-			}
-			if(_listSelectedIndices.Contains(_mouseDownRow)){//If clicked row is selected
-				menuItemCopyRows.IsEnabled = true;
-			}
-			else {
-				menuItemCopyRows.IsEnabled = false;
-			}
-			//Link items----------------------------------------------------
-			for(int i=listMenuItems.Count-1;i>=0;i--) {//backward because removing
-				if(listMenuItems[i].Tag?.ToString()!="autolink"){
-					continue;
-				}
-				contextMenu.RemoveAt(i);
-			}
-			StringBuilder stringBuilder = new StringBuilder();
-			ListGridRows[_mouseDownRow].Cells.OfType<GridCell>().ToList().ForEach(x => stringBuilder.AppendLine(x.Text));
-			stringBuilder.AppendLine(ListGridRows[_mouseDownRow].Note);
-			List<MenuItem> listMenuItemsLinks=PopupHelper2.GetContextMenuItemLinks(stringBuilder.ToString(),RightClickLinks);
-			for(int i=0;i<listMenuItemsLinks.Count;i++){
-				if(i==0){
-					contextMenu.AddSeparator();
-				}
-				contextMenu.Add(listMenuItemsLinks[i]);
-			}
-			//_mouseClickLocation
-			ContextMenu.Visibility=Visibility.Visible;
-		}
-
-		private void CopyCellClick(object sender,EventArgs e) {
-			try {
-				string copyText = ListGridRows[_mouseDownRow].Cells[_mouseDownCol].Text;
-				ODClipboard.SetClipboard(copyText);
-			}
-			catch {
-				//show a message box?
-			}
-		}
-
-		/// <summary>Copies selected rows to clipboard in tab-delimited format</summary>
-		private void CopyRowsClick(object sender,EventArgs e) {
-			List<GridRow> listGridRowsSelected=new List<GridRow>();
-			_listSelectedIndices.ForEach(x => listGridRowsSelected.Add(ListGridRows[x]));
-			StringBuilder stringBuilder=new StringBuilder();
-			for(int i=0;i<listGridRowsSelected.Count;i++) {
-				string parsedRow="";
-				for(int j=0;j<listGridRowsSelected[i].Cells.Count;j++) {
-					if(!string.IsNullOrEmpty(listGridRowsSelected[i].Cells[j].Text)) {
-						parsedRow+=listGridRowsSelected[i].Cells[j].Text.Replace("\t","    "); //remove tabs in string so we keep each column separated by tabs
-					}
-					if(j!=listGridRowsSelected[i].Cells.Count-1) {
-						parsedRow+="\t";
-					}
-				}
-				stringBuilder.AppendLine(parsedRow);
-			}
-			try {
-				ODClipboard.SetClipboard(stringBuilder.ToString());
-			}
-			catch { 
-				//show a message box?
-			}
 		}
 		#endregion Methods - Event Handlers - Mouse
 
@@ -1788,10 +1617,6 @@ using WpfControls.UI;
 		#endregion Methods - Selections
 
 		#region Methods - Scrolling
-		private void Grid_MouseWheel(object sender,MouseWheelEventArgs e) {
-			ScrollValue-=e.Delta/3;
-		}
-
 		///<summary>Usually called after entering a new list to automatically scroll to the top.</summary>
 		public void ScrollToTop() {
 			ScrollValue=(int)scrollV.Minimum;//this does all error checking
@@ -1873,10 +1698,9 @@ using WpfControls.UI;
 				}
 			}*/
 			if(_hScrollVisible) {
-				//We can't be resetting the scrollH without a reason.
-				//scrollH.Value=0;
-				//Canvas.SetLeft(canvasMain,0);
-				//Canvas.SetLeft(canvasHeaders,0);
+				scrollH.Value=0;
+				Canvas.SetLeft(canvasMain,0);
+				Canvas.SetLeft(canvasHeaders,0);
 				scrollH.Visibility=Visibility.Visible;
 				//vScroll.Height=this.Height-OriginY()-scrollH.Height-2;
 				//if(vScroll.Height<0){
@@ -1927,250 +1751,7 @@ using WpfControls.UI;
 		}
 		#endregion Methods - Scrolling
 
-		#region Methods - Sorting
-		///<summary>Returns current sort column index.  Use SortForced to maintain current grid sorting after refreshing a grid.  </summary>
-		public int GetSortedByColumnIdx(){
-			return _sortedByColumnIdx;
-		}
-
-		///<summary>Returns current sort order.  Use SortForced to maintain current grid sorting after refreshing a grid.</summary>
-		public bool IsSortedAscending(){
-			return _isSortedAscending;
-		}
-
-		///<summary>Set sortedByColIdx to -1 to clear sorting. Copied from SortByColumn. No need to call fill grid after calling this.  Also used in PatientPortalManager.</summary>
-		public void SortForced(int sortedByColumnIdx,bool sortedIsAscending) {
-			_isSortedAscending=sortedIsAscending;
-			_sortedByColumnIdx=sortedByColumnIdx;
-			if(sortedByColumnIdx==-1) {
-				return;
-			}
-			List<GridRow> rowsSorted=new List<GridRow>();
-			for(int i=0;i<ListGridRows.Count;i++) {
-				rowsSorted.Add(ListGridRows[i]);
-			}
-			if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.StringCompare) {
-				rowsSorted.Sort(SortStringCompare);
-			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.DateParse) {
-				rowsSorted.Sort(SortDateParse);
-			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.ToothNumberParse) {
-				rowsSorted.Sort(SortToothNumberParse);
-			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.AmountParse) {
-				rowsSorted.Sort(SortAmountParse);
-			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.TimeParse) {
-				rowsSorted.Sort(SortTimeParse);
-			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.VersionNumber) {
-				rowsSorted.Sort(SortVersionParse);
-			}
-			BeginUpdate();
-			ListGridRows.Clear();
-			for(int i=0;i<rowsSorted.Count;i++) {
-				ListGridRows.Add(rowsSorted[i]);
-			}
-			EndUpdate();
-			_sortedByColumnIdx=sortedByColumnIdx;//Must be set again since set to -1 in EndUpdate();
-		}
-
-		///<summary>Swaps two rows in the grid. Returns false if either of the indexes is greater than the number of rows in the grid.</summary>
-		public bool SwapRows(int indxMoveFrom,int indxMoveTo) {
-			if(ListGridRows.Count<=Math.Max(indxMoveFrom,indxMoveTo)
-				|| Math.Min(indxMoveFrom,indxMoveTo)<0) 
-			{
-				return false;
-			}
-			BeginUpdate();
-			GridRow dataRowFrom=ListGridRows[indxMoveFrom];
-			ListGridRows[indxMoveFrom]=ListGridRows[indxMoveTo];
-			ListGridRows[indxMoveTo]=dataRowFrom;
-			EndUpdate();
-			return true;
-		}
-
-		///<summary>Gets run on mouse down on a column header.</summary>
-		private void SortByColumn(int mouseDownCol) {
-			if(mouseDownCol==-1) {
-				return;
-			}
-			if(_sortedByColumnIdx==mouseDownCol) {//already sorting by this column
-				_isSortedAscending=!_isSortedAscending;//switch ascending/descending.
-			}
-			else {
-				_isSortedAscending=true;//start out ascending
-				_sortedByColumnIdx=mouseDownCol;
-			}
-			List<GridRow> listGridRowsSorted=new List<GridRow>();
-			for(int i=0;i<ListGridRows.Count;i++) {
-				listGridRowsSorted.Add(ListGridRows[i]);
-			}
-			if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.StringCompare) {
-				listGridRowsSorted.Sort(SortStringCompare);
-			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.DateParse) {
-				listGridRowsSorted.Sort(SortDateParse);
-			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.ToothNumberParse) {
-				listGridRowsSorted.Sort(SortToothNumberParse);
-			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.AmountParse) {
-				listGridRowsSorted.Sort(SortAmountParse);
-			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.TimeParse) {
-				listGridRowsSorted.Sort(SortTimeParse);
-			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.VersionNumber) {
-				listGridRowsSorted.Sort(SortVersionParse);
-			}
-			BeginUpdate();
-			ListGridRows.Clear();
-			for(int i=0;i<listGridRowsSorted.Count;i++) {
-				ListGridRows.Add(listGridRowsSorted[i]);
-			}
-			EndUpdate();
-			_sortedByColumnIdx=mouseDownCol;//Must be set again since set to -1 in EndUpdate();
-			if(_sortingAllowByColumn) { //only check this if sorting by column is enabled for the grid
-				ColumnSorted?.Invoke(this,new EventArgs());
-			}
-			DrawHeaders();
-		}
-
-		private int SortStringCompare(GridRow row1,GridRow row2) {
-			string textRow1=row1?.Cells[_sortedByColumnIdx].Text??"";
-			return (_isSortedAscending?1:-1)*textRow1.CompareTo(row2?.Cells[_sortedByColumnIdx].Text??"");
-		}
-
-		private int SortDateParse(GridRow row1,GridRow row2) {
-			string raw1=row1.Cells[_sortedByColumnIdx].Text;
-			string raw2=row2.Cells[_sortedByColumnIdx].Text;
-			DateTime date1=DateTime.MinValue;
-			DateTime date2=DateTime.MinValue;
-			//TryParse is a much faster operation than Parse in the event that the input won't parse to a date.
-			if(DateTime.TryParse(raw1,out date1) &&
-				DateTime.TryParse(raw2,out date2)) {
-				return (_isSortedAscending?1:-1)*date1.CompareTo(date2);
-			}
-			else { //One of the inputs is not a date so default string compare.
-				return SortStringCompare(row1,row2);
-			}
-		}
-
-		private int SortTimeParse(GridRow row1,GridRow row2) {
-			string raw1=row1.Cells[_sortedByColumnIdx].Text;
-			string raw2=row2.Cells[_sortedByColumnIdx].Text;
-			TimeSpan time1;
-			TimeSpan time2;
-			//TryParse is a much faster operation than Parse in the event that the input won't parse to a date.
-			if(TimeSpan.TryParse(raw1,out time1) &&
-				TimeSpan.TryParse(raw2,out time2)) {
-				return (_isSortedAscending?1:-1)*time1.CompareTo(time2);
-			}
-			else { //One of the inputs is not a date so default string compare.
-				return SortStringCompare(row1,row2);
-			}
-		}
-
-		private int SortToothNumberParse(GridRow row1,GridRow row2) {
-			/*
-			//remember that teeth could be in international format.
-			//fail gracefully
-			string raw1=row1.Cells[_sortedByColumnIdx].Text;
-			string raw2=row2.Cells[_sortedByColumnIdx].Text;
-			if(!Tooth.IsValidEntry(raw1) && !Tooth.IsValidEntry(raw2)) {//both invalid
-				return 0;
-			}
-			int retVal=0;
-			if(!Tooth.IsValidEntry(raw1)) {//only first invalid
-				retVal=-1; ;
-			}
-			else if(!Tooth.IsValidEntry(raw2)) {//only second invalid
-				retVal=1; ;
-			}
-			else {//both valid
-				string tooth1=Tooth.Parse(raw1);
-				string tooth2=Tooth.Parse(raw2);
-				int toothInt1=Tooth.ToInt(tooth1);
-				int toothInt2=Tooth.ToInt(tooth2);
-				retVal=toothInt1.CompareTo(toothInt2);
-			}
-			return (_isSortedAscending?1:-1)*retVal;*/
-			return -1;
-		}
-
-		private int SortVersionParse(GridRow row1,GridRow row2) {
-			Version v1, v2;
-			if(!Version.TryParse(row1.Cells[_sortedByColumnIdx].Text,out v1)) {
-				v1=new Version();//0.0.0.0
-			}
-			if(!Version.TryParse(row2.Cells[_sortedByColumnIdx].Text,out v2)) {
-				v2=new Version();//0.0.0.0
-			}
-			return (_isSortedAscending?1:-1)*v1.CompareTo(v2);
-		}
-
-		private int SortAmountParse(GridRow row1,GridRow row2) {
-			//This is here because AmountParse does not sort correctly when the amount contains non-numeric characters
-			//We could improve this later with some kind of grid text cleaner that is called before running this sort.
-			string raw1=row1.Cells[_sortedByColumnIdx].Text;			
-			raw1=raw1.Replace("$","");
-			string raw2=row2.Cells[_sortedByColumnIdx].Text;
-			raw2=raw2.Replace("$","");
-			Decimal amt1=0;
-			Decimal amt2=0;
-			if(raw1!="") {
-				try {
-					amt1=Decimal.Parse(raw1);
-				}
-				catch {
-					return 0;//shouldn't happen
-				}
-			}
-			if(raw2!="") {
-				try {
-					amt2=Decimal.Parse(raw2);
-				}
-				catch {
-					return 0;//shouldn't happen
-				}
-			}
-			return (_isSortedAscending?1:-1)*amt1.CompareTo(amt2);
-		}
-		#endregion Methods - Sorting		
-
 		#region Methods - private
-		///<summary>Returns row. -1 if no valid row.  Supply the y position in DiPs of canvasMain.</summary>
-		private int CanvasPointToRow(double y) {
-			for(int i=0;i<ListGridRows.Count;i++) {
-				if(!ListGridRows[i].State.Visible){
-					continue;
-				}
-				if(y>ListGridRows[i].State.YPos+ListGridRows[i].State.HeightTotal) {
-					continue;//clicked below this row.
-				}
-				return i;
-			}
-			return -1;
-		}
-
-		///<summary>Returns col.  Supply the x position in DiPs of canvasMain. -1 if no valid column.</summary>
-		private int CanvasPointToCol(double x) {
-			int colRight;//the right edge of each column
-			for(int i=0; i < Columns.Count; i++) {
-				colRight=0;
-				for(int c=0; c < i + 1; c++) {
-					colRight+= Columns[c].State.Width;
-				}
-				if(x > colRight) {
-					continue;//clicked to the right of this col
-				}
-				return i;
-			}
-			return -1;
-		}
-
 		///<summary>This clears all the children from all the canvases and clears out the various selection and hover rectangles.  Called from EndUpdate and from resize.</summary>
 		private void ClearAll(){
 			canvasMain.Children.Clear();//this does not set the children to null, however
@@ -2222,8 +1803,7 @@ using WpfControls.UI;
 					for(int i=0;i<Columns.Count;i++){
 						if(Columns[i].IsWidthDynamic){
 							//example sum=1+2.5, width=350/3.5*2.5=250
-							Columns[i].State.Width=Math.Max((int)(widthExtra/sumDynamic*Columns[i].DynamicWeight),20);
-							//The min width width of 20 is arbitrary, but no dynamic column should be narrower than that.
+							Columns[i].State.Width=(int)(widthExtra/sumDynamic*Columns[i].DynamicWeight);
 						}
 					}
 				}

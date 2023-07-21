@@ -36,8 +36,8 @@ namespace OpenDental{
 
 		private void MedicationEdit_Load(object sender, System.EventArgs e) {
 			//Medications.RefreshCache() should have already been run.
-			if(!Security.IsAuthorized(EnumPermType.MedicationDefEdit)) {
-				butSave.Enabled=false;
+			if(!Security.IsAuthorized(Permissions.MedicationDefEdit)) {
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 			}
 			FillForm();
@@ -135,7 +135,7 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			//generic num already handled
 			MedicationCur.MedName=textMedName.Text;
 			if(MedicationCur.MedName=="") {
@@ -173,6 +173,10 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormMedicationEdit_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
 			if(DialogResult==DialogResult.OK)
 				return;
@@ -186,5 +190,37 @@ namespace OpenDental{
 			}
 		}
 
+		
+
+		
+
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

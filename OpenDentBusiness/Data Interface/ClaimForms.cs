@@ -83,19 +83,19 @@ namespace OpenDentBusiness{
 
 		///<summary>Inserts this claimform into database and retrieves the new primary key.
 		///Assigns all claimformitems to the claimform and inserts them if the bool is true.</summary>
-		public static long Insert(ClaimForm claimForm,bool includeClaimFormItems) {
+		public static long Insert(ClaimForm cf,bool includeClaimFormItems) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				claimForm.ClaimFormNum=Meth.GetLong(MethodBase.GetCurrentMethod(),claimForm,includeClaimFormItems);
-				return claimForm.ClaimFormNum;
+				cf.ClaimFormNum=Meth.GetLong(MethodBase.GetCurrentMethod(),cf,includeClaimFormItems);
+				return cf.ClaimFormNum;
 			}
-			long claimFormNum=Crud.ClaimFormCrud.Insert(claimForm);
+			long retVal=Crud.ClaimFormCrud.Insert(cf);
 			if(includeClaimFormItems) {
-				for(int i=0;i<claimForm.Items.Count;i++){
-					claimForm.Items[i].ClaimFormNum=claimForm.ClaimFormNum;//so even though the ClaimFormNum is wrong, this line fixes it.
-					ClaimFormItems.Insert(claimForm.Items[i]);
+				foreach(ClaimFormItem claimFormItemCur in cf.Items) {
+					claimFormItemCur.ClaimFormNum=cf.ClaimFormNum;//so even though the ClaimFormNum is wrong, this line fixes it.
+					ClaimFormItems.Insert(claimFormItemCur);
 				}
 			}
-			return claimFormNum;
+			return retVal;
 		}
 
 		///<summary>Can be called externally as part of the conversion sequence.  Surround with try catch.
@@ -103,15 +103,15 @@ namespace OpenDentBusiness{
 		///If xmlData is provided then path will be ignored.  If xmlData is not provided, a valid path is required.</summary>
 		public static ClaimForm DeserializeClaimForm(string path,string xmlData) {
 			//No need to check MiddleTierRole; no call to db.
-			ClaimForm claimForm = new ClaimForm();
-			XmlSerializer xmlSerializer = new XmlSerializer(typeof(ClaimForm));
+			ClaimForm tempClaimForm = new ClaimForm();
+			XmlSerializer serializer = new XmlSerializer(typeof(ClaimForm));
 			if(xmlData=="") {//use path
 				if(!File.Exists(path)) {
 					throw new ApplicationException(Lans.g("FormClaimForm","File does not exist."));
 				}
 				try {
-					using(TextReader textReader = new StreamReader(path)) {
-						claimForm=(ClaimForm)xmlSerializer.Deserialize(textReader);
+					using(TextReader reader = new StreamReader(path)) {
+						tempClaimForm=(ClaimForm)serializer.Deserialize(reader);
 					}
 				}
 				catch {
@@ -120,40 +120,40 @@ namespace OpenDentBusiness{
 			}
 			else {//use xmlData
 				try {
-					using(TextReader textReader = new StringReader(xmlData)) {
-						claimForm=(ClaimForm)xmlSerializer.Deserialize(textReader);
+					using(TextReader reader = new StringReader(xmlData)) {
+						tempClaimForm=(ClaimForm)serializer.Deserialize(reader);
 					}
 				}
 				catch {
 					throw new ApplicationException(Lans.g("FormClaimForm","Invalid file format"));
 				}
 			}
-			return claimForm;
+			return tempClaimForm;
 		}
 
 		///<summary></summary>
-		public static void Update(ClaimForm claimForm){
+		public static void Update(ClaimForm cf){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),claimForm);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),cf);
 				return;
 			}
 			//Synch the claim form items associated to this claim form first.
-			ClaimFormItems.DeleteAllForClaimForm(claimForm.ClaimFormNum);
-			for(int i=0;i<claimForm.Items.Count;i++){
-				ClaimFormItems.Insert(claimForm.Items[i]);
+			ClaimFormItems.DeleteAllForClaimForm(cf.ClaimFormNum);
+			foreach(ClaimFormItem item in cf.Items) {
+				ClaimFormItems.Insert(item);
 			}
 			//Now we can update any information specific to the claim form itself.
-			Crud.ClaimFormCrud.Update(claimForm);
+			Crud.ClaimFormCrud.Update(cf);
 		}
 
 		///<summary> Called when cancelling out of creating a new claimform, and from the claimform window when clicking delete. Returns true if successful or false if dependencies found.</summary>
-		public static bool Delete(ClaimForm claimForm){
+		public static bool Delete(ClaimForm cf){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),claimForm);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),cf);
 			}
 			//first, do dependency testing
 			string command="SELECT * FROM insplan WHERE claimformnum = '"
-				+claimForm.ClaimFormNum.ToString()+"' ";
+				+cf.ClaimFormNum.ToString()+"' ";
 			command+=DbHelper.LimitAnd(1);
  			DataTable table=Db.GetTable(command);
 			if(table.Rows.Count==1){
@@ -161,10 +161,10 @@ namespace OpenDentBusiness{
 			}
 			//Then, delete the claimform
 			command="DELETE FROM claimform "
-				+"WHERE ClaimFormNum = '"+POut.Long(claimForm.ClaimFormNum)+"'";
+				+"WHERE ClaimFormNum = '"+POut.Long(cf.ClaimFormNum)+"'";
 			Db.NonQ(command);
 			command="DELETE FROM claimformitem "
-				+"WHERE ClaimFormNum = '"+POut.Long(claimForm.ClaimFormNum)+"'";
+				+"WHERE ClaimFormNum = '"+POut.Long(cf.ClaimFormNum)+"'";
 			Db.NonQ(command);
 			return true;
 		}
@@ -178,43 +178,28 @@ namespace OpenDentBusiness{
 		///<summary>Returns a list of all internal claims within the OpenDentBusiness resources.  Throws exceptions.</summary>
 		public static List<ClaimForm> GetInternalClaims() {
 			//No need to check MiddleTierRole; no call to db.
-			List<ClaimForm> listClaimFormsInternal = new List<ClaimForm>();
-			ResourceSet resourceSet=OpenDentBusiness.Properties.Resources.ResourceManager.GetResourceSet(CultureInfo.CurrentUICulture,true,true);
-			//No way to refactor dictionaryEntry out.
-			foreach(DictionaryEntry item in resourceSet) {
+			List<ClaimForm> listInternalClaimForms = new List<ClaimForm>();
+			ResourceSet resources=OpenDentBusiness.Properties.Resources.ResourceManager.GetResourceSet(CultureInfo.CurrentUICulture,true,true);
+			foreach(DictionaryEntry item in resources) {
 				if(!item.Key.ToString().StartsWith("ClaimForm")) {
 					continue;
 				}
 				//Resources that start with ClaimForm are serialized ClaimForm objects in XML.
-				ClaimForm claimForm = ClaimForms.DeserializeClaimForm("",item.Value.ToString());
-				claimForm.IsInternal=true;
-				listClaimFormsInternal.Add(claimForm);
+				ClaimForm cfCur = ClaimForms.DeserializeClaimForm("",item.Value.ToString());
+				cfCur.IsInternal=true;
+				listInternalClaimForms.Add(cfCur);
 			}
-			return listClaimFormsInternal;
+			return listInternalClaimForms;
 		}
 
 		///<summary>Returns number of insplans affected.</summary>
-		public static long Reassign(long claimFormNumOld,long claimFormNumNew) {
+		public static long Reassign(long oldClaimFormNum,long newClaimFormNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetLong(MethodBase.GetCurrentMethod(),claimFormNumOld,claimFormNumNew);
+				return Meth.GetLong(MethodBase.GetCurrentMethod(),oldClaimFormNum,newClaimFormNum);
 			}
-			string command="UPDATE insplan SET ClaimFormNum="+POut.Long(claimFormNumNew)
-				+" WHERE ClaimFormNum="+POut.Long(claimFormNumOld);
+			string command="UPDATE insplan SET ClaimFormNum="+POut.Long(newClaimFormNum)
+				+" WHERE ClaimFormNum="+POut.Long(oldClaimFormNum);
 			return Db.NonQ(command);
-		}
-		
-		///<summary>Sets the Default Claim Form to the Default description passed in.</summary>
-		public static void SetDefaultClaimForm(string claimFormDescriptFrom,string claimFormDescriptTo) {
-			//No need to check MiddleTierRole; no call to db.
-			ClaimForm claimFormFrom=GetDeepCopy().Find(x => x.Description.ToLower()==claimFormDescriptFrom.ToLower());
-			ClaimForm claimFormTo=GetDeepCopy().Find(x => x.Description.ToLower()==claimFormDescriptTo.ToLower());
-			long defaultClaimFormNum=PrefC.GetLong(PrefName.DefaultClaimForm);
-			if(claimFormFrom!=null && claimFormTo!=null) {
-				Reassign(claimFormFrom.ClaimFormNum,claimFormTo.ClaimFormNum);
-				if(defaultClaimFormNum==claimFormFrom.ClaimFormNum) {
-					Prefs.UpdateLong(PrefName.DefaultClaimForm,claimFormTo.ClaimFormNum);
-				}
-			}
 		}
 	}
 

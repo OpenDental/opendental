@@ -9,19 +9,19 @@ using CodeBase;
 namespace OpenDentBusiness {
 	public class ComputerPrefs {
 		///<summary>Null prior to conversion script, then it always has a value.</summary>
-		private static ComputerPref _computerPrefLocal;
+		private static ComputerPref _localComputer;
 		///<summary>Used when updating so that we only update columns that changed.</summary>
-		private static ComputerPref _computerPrefLocalOld;
+		private static ComputerPref _localComputerOld;
 		///<summary>Used when initially loading GetForLocalComputer(). Lets us display the warning about duplicate computer names only once.</summary>
 		private static bool _didShowError=false;
 
 		public static ComputerPref LocalComputer{
 			get {
-				if(_computerPrefLocal==null || (ODEnvironment.IsCloudInstance && _computerPrefLocal.ComputerName.ToLower()!=ODEnvironment.MachineName.ToLower())) {
-					_computerPrefLocal=GetForLocalComputer();
-					_computerPrefLocalOld=_computerPrefLocal.Copy();
+				if(_localComputer==null) {
+					_localComputer=GetForLocalComputer();
+					_localComputerOld=_localComputer.Copy();
 				}
-				return _computerPrefLocal;
+				return _localComputer;
 			}
 			//set {
 				//I don't think this gets used.
@@ -29,13 +29,11 @@ namespace OpenDentBusiness {
 		}
 
 		public static bool IsLocalComputerNull(){
-			//No need to check MiddleTierRole; no call to db.
-			return _computerPrefLocal is null;
+			return _localComputer is null;
 		}
 
 		///<summary>Returns the computer preferences for the computer which this instance of Open Dental is running on.</summary>
 		private static ComputerPref GetForLocalComputer(){
-			//No need to check MiddleTierRole; no call to db.
 			return GetForComputer(ODEnvironment.MachineName);
 		}
 
@@ -53,9 +51,9 @@ namespace OpenDentBusiness {
 				if(!_didShowError) {
 					//This shows a dialog box, which causes paint to call this again. Recursive bad stuff happens, so we essentially only want to show this once.
 					_didShowError=true;
-					Logger.openlog.LogMB("Error in the database computerpref table. The computer name '"
+					Logger.openlog.LogMB("Error in the database compduterpref table. The computer name '"
 						+POut.String(computerName)+"' is a ComputerName in multiple records. Please run the "
-						+$"database maintenance method {POut.String(nameof(DatabaseMaintenances.ComputerPrefDuplicates))}, then call us for help if you still get this message.",
+						+$"database maintenance method {nameof(DatabaseMaintenances.ComputerPrefDuplicates)}, then call us for help if you still get this message.",
 						Logger.Severity.WARNING);
 				}
 			}
@@ -89,7 +87,6 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns a ComputerPref object with the default preferences and the given computer name.</summary>
 		private static ComputerPref GetDefaultComputerPref(string computerName) {
-			//No need to check MiddleTierRole; no call to db.
 			ComputerPref computerPref=new ComputerPref();
 			computerPref.SensorType="D";
 			computerPref.SensorPort=0;
@@ -149,7 +146,7 @@ namespace OpenDentBusiness {
 		///It will have already been changed for local use, and this saves it for next time.</summary>
 		public static void Update(ComputerPref computerPref) {
 			//No need to check MiddleTierRole; no call to db.
-			Update(computerPref,_computerPrefLocalOld);
+			Update(computerPref,_localComputerOld);
 		}
 
 		///<summary>Updates the database with computerPrefNew.  Returns true if changes were needed or if computerPrefOld is null.
@@ -157,14 +154,13 @@ namespace OpenDentBusiness {
 		public static bool Update(ComputerPref computerPrefNew,ComputerPref computerPrefOld) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				bool wasUpdateNeeded=Meth.GetBool(MethodBase.GetCurrentMethod(),computerPrefNew,computerPrefOld);
-				if(!wasUpdateNeeded) {
-					return wasUpdateNeeded;
+				if(wasUpdateNeeded) {
+					//If we are running Middle Tier, we need to make sure these variables are reset on the client.
+					//_localComputer=null;
+					//_localComputerOld=null;
+					_localComputer=GetForLocalComputer();
+					_localComputerOld=_localComputer.Copy();
 				}
-				//If we are running Middle Tier, we need to make sure these variables are reset on the client.
-				//_localComputer=null;
-				//_localComputerOld=null;
-				_computerPrefLocal=GetForLocalComputer();
-				_computerPrefLocalOld=_computerPrefLocal.Copy();
 				return wasUpdateNeeded;
 			}
 			bool hadChanges=false;
@@ -175,15 +171,14 @@ namespace OpenDentBusiness {
 			else {
 				hadChanges=Crud.ComputerPrefCrud.Update(computerPrefNew,computerPrefOld);
 			}
-			if(!hadChanges) {
-				return hadChanges;
+			if(hadChanges) {
+				//DB was updated, may also contain other changes from other WS.
+				//Set to null so that we can go to DB again when needed, ensures _localComputer is never stale.
+				//_localComputer=null;
+				//_localComputerOld=null;
+				_localComputer=GetForLocalComputer();
+				_localComputerOld=_localComputer.Copy();
 			}
-			//DB was updated, may also contain other changes from other WS.
-			//Set to null so that we can go to DB again when needed, ensures _localComputer is never stale.
-			//_localComputer=null;
-			//_localComputerOld=null;
-			_computerPrefLocal=GetForLocalComputer();
-			_computerPrefLocalOld=_computerPrefLocal.Copy();
 			return hadChanges;
 		}
 
@@ -209,14 +204,14 @@ namespace OpenDentBusiness {
 		///<summary>Updates the local computerpref's ComputerOS if it is different than what is stored.</summary>
 		public static void UpdateLocalComputerOS() {
 			//No need to check MiddleTierRole; no call to db.
-			string stringPlatformId=POut.String(Environment.OSVersion.Platform.ToString());
-			if(LocalComputer.ComputerOS.ToString()==stringPlatformId) {//We only want to update this column if there is indeed a difference between values.
+			string platformIdAsString=POut.String(Environment.OSVersion.Platform.ToString());
+			if(LocalComputer.ComputerOS.ToString()==platformIdAsString) {//We only want to update this column if there is indeed a difference between values.
 				return;
 			}
-			UpdateComputerOS(stringPlatformId,ComputerPrefs.LocalComputer.ComputerPrefNum);
+			UpdateComputerOS(platformIdAsString,ComputerPrefs.LocalComputer.ComputerPrefNum);
 			//_localComputer=null;//Setting to null will trigger LocalComputer to update from DB next time it is accessed.
-			_computerPrefLocal=GetForLocalComputer();
-			_computerPrefLocalOld=_computerPrefLocal.Copy();
+			_localComputer=GetForLocalComputer();
+			_localComputerOld=_localComputer.Copy();
 		}
 
 		///<summary>Updates the ComputerOS for the computerPrefNum passed in.</summary>
@@ -227,7 +222,7 @@ namespace OpenDentBusiness {
 			}
 			//We have to use a query and not the normal Update(computerPref) method because the 
 			//Environment.OSVersion.Platform enum is different than the computerpref.ComputerOS enum.
-			string command="UPDATE computerpref SET ComputerOS = '"+POut.String(platformId)+"' "
+			string command="UPDATE computerpref SET ComputerOS = '"+platformId+"' "
 				+"WHERE ComputerPrefNum = "+POut.Long(computerPrefNum);
 			Db.NonQ(command);
 		}

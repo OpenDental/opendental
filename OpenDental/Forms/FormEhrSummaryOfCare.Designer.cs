@@ -24,6 +24,7 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrSummaryOfCare));
+			this.butClose = new System.Windows.Forms.Button();
 			this.butRecEmail = new System.Windows.Forms.Button();
 			this.butDelete = new System.Windows.Forms.Button();
 			this.butShowXhtml = new System.Windows.Forms.Button();
@@ -41,6 +42,17 @@
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(343, 401);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 23);
+			this.butClose.TabIndex = 7;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butRecEmail
 			// 
@@ -191,6 +203,7 @@
 			this.Controls.Add(this.gridRec);
 			this.Controls.Add(this.gridSent);
 			this.Controls.Add(this.butDelete);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrSummaryOfCare";
 			this.Text = "Summary of Care";
@@ -203,6 +216,8 @@
 		}
 
 		#endregion
+
+		private System.Windows.Forms.Button butClose;
 		private System.Windows.Forms.Button butRecEmail;
 		private OpenDental.UI.GridOD gridSent;
 				private System.Windows.Forms.Button butDelete;

@@ -43,7 +43,7 @@ namespace OpenDental {
 			if(IsNew){
 				DialogResult=DialogResult.Cancel;
 			}
-			if(!Security.IsAuthorized(EnumPermType.EquipmentDelete,EquipmentCur.DateEntry)) {
+			if(!Security.IsAuthorized(Permissions.EquipmentDelete,EquipmentCur.DateEntry)) {
 				return;
 			}
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete?")){
@@ -64,7 +64,7 @@ namespace OpenDental {
 			textSerialNumber.Text=EquipmentCur.SerialNumber;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textDatePurchased.IsValid()
 				|| !textDateSold.IsValid()
 				|| !textPurchaseCost.IsValid()
@@ -108,5 +108,12 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+      
+
+		
 	}
 }

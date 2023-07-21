@@ -85,7 +85,6 @@
 			this.tabAttachments = new OpenDental.UI.TabPage();
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.tabControlAttach = new OpenDental.UI.TabControl();
-			this.tabDXC = new OpenDental.UI.TabPage();
 			this.tabNEA = new OpenDental.UI.TabPage();
 			this.groupAttachments = new OpenDental.UI.GroupBox();
 			this.label65 = new System.Windows.Forms.Label();
@@ -109,11 +108,11 @@
 			this.butAttachPerio = new OpenDental.UI.Button();
 			this.labelAttachedImagesWillNotBeSent = new System.Windows.Forms.Label();
 			this.listAttachments = new OpenDental.UI.ListBox();
-			this.tabEDS = new OpenDental.UI.TabPage();
-			this.butEDSClaimAttachment = new OpenDental.UI.Button();
-			this.textEDSAttachmentID = new OpenDental.ODtextBox();
-			this.label7 = new System.Windows.Forms.Label();
-			this.gridEDSSent = new OpenDental.UI.GridOD();
+			this.tabDXC = new OpenDental.UI.TabPage();
+			this.butClaimAttachment = new OpenDental.UI.Button();
+			this.textAttachmentID = new OpenDental.ODtextBox();
+			this.labelAttachmentID = new System.Windows.Forms.Label();
+			this.gridSent = new OpenDental.UI.GridOD();
 			this.tabCanadianAttachments = new OpenDental.UI.TabPage();
 			this.groupCanadianAttachedImages = new OpenDental.UI.GroupBox();
 			this.butCanadianExport = new OpenDental.UI.Button();
@@ -144,7 +143,7 @@
 			this.panel4 = new System.Windows.Forms.Panel();
 			this.groupBox4 = new OpenDental.UI.GroupBox();
 			this.butPickOrderProvInternal = new OpenDental.UI.Button();
-			this.textOrderingProviderOverride = new System.Windows.Forms.TextBox();
+			this.textOrderingProviderOverride = new OpenDental.ODtextBox();
 			this.butPickOrderProvReferral = new OpenDental.UI.Button();
 			this.butNoneOrderProv = new OpenDental.UI.Button();
 			this.groupDateOtherCondOrTreatment = new OpenDental.UI.GroupBox();
@@ -329,7 +328,8 @@
 			this.butPrint = new OpenDental.UI.Button();
 			this.butRecalc = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.butOtherNone = new OpenDental.UI.Button();
 			this.butOtherCovChange = new OpenDental.UI.Button();
@@ -357,8 +357,6 @@
 			this.groupBoxPendingPayment = new OpenDental.UI.GroupBox();
 			this.butInsuranceOverpaid = new OpenDental.UI.Button();
 			this.butInsuranceUnderpaid = new OpenDental.UI.Button();
-			this.warningIntegrity = new OpenDental.UI.WarningIntegrity();
-			this.labelWorkflowMsg = new System.Windows.Forms.Label();
 			this.groupFinalizePayment.SuspendLayout();
 			this.tabControlMain.SuspendLayout();
 			this.tabGeneral.SuspendLayout();
@@ -370,11 +368,10 @@
 			this.tabAttachments.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.tabControlAttach.SuspendLayout();
-			this.tabDXC.SuspendLayout();
 			this.tabNEA.SuspendLayout();
 			this.groupAttachments.SuspendLayout();
 			this.groupAttachedImages.SuspendLayout();
-			this.tabEDS.SuspendLayout();
+			this.tabDXC.SuspendLayout();
 			this.tabCanadianAttachments.SuspendLayout();
 			this.groupCanadianAttachedImages.SuspendLayout();
 			this.tabMisc.SuspendLayout();
@@ -520,9 +517,9 @@
 			// 
 			this.butBatch.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butBatch.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butBatch.Location = new System.Drawing.Point(3, 14);
+			this.butBatch.Location = new System.Drawing.Point(22, 14);
 			this.butBatch.Name = "butBatch";
-			this.butBatch.Size = new System.Drawing.Size(96, 24);
+			this.butBatch.Size = new System.Drawing.Size(130, 24);
 			this.butBatch.TabIndex = 150;
 			this.butBatch.Text = "Batch";
 			this.butBatch.Click += new System.EventHandler(this.butBatch_Click);
@@ -531,21 +528,21 @@
 			// 
 			this.butThisClaimOnly.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butThisClaimOnly.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butThisClaimOnly.Location = new System.Drawing.Point(3, 66);
+			this.butThisClaimOnly.Location = new System.Drawing.Point(22, 66);
 			this.butThisClaimOnly.Name = "butThisClaimOnly";
-			this.butThisClaimOnly.Size = new System.Drawing.Size(96, 24);
+			this.butThisClaimOnly.Size = new System.Drawing.Size(130, 24);
 			this.butThisClaimOnly.TabIndex = 264;
-			this.butThisClaimOnly.Text = "This Claim";
+			this.butThisClaimOnly.Text = "This Claim Only";
 			this.butThisClaimOnly.Click += new System.EventHandler(this.butThisClaimOnly_Click);
 			// 
 			// labelBatch
 			// 
-			this.labelBatch.Location = new System.Drawing.Point(1, 37);
+			this.labelBatch.Location = new System.Drawing.Point(2, 38);
 			this.labelBatch.Name = "labelBatch";
 			this.labelBatch.Size = new System.Drawing.Size(167, 28);
 			this.labelBatch.TabIndex = 151;
 			this.labelBatch.Text = "Click Batch after entering all ins payments for one EOB; or";
-			this.labelBatch.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+			this.labelBatch.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// tabControlMain
 			// 
@@ -607,7 +604,7 @@
 			this.groupProsth.Controls.Add(this.label16);
 			this.groupProsth.Location = new System.Drawing.Point(3, 3);
 			this.groupProsth.Name = "groupProsth";
-			this.groupProsth.Size = new System.Drawing.Size(294, 114);
+			this.groupProsth.Size = new System.Drawing.Size(286, 114);
 			this.groupProsth.TabIndex = 9;
 			this.groupProsth.Text = "Crown, Bridge, or Denture";
 			// 
@@ -615,7 +612,7 @@
 			// 
 			this.labelMissingTeeth.Location = new System.Drawing.Point(3, 77);
 			this.labelMissingTeeth.Name = "labelMissingTeeth";
-			this.labelMissingTeeth.Size = new System.Drawing.Size(290, 32);
+			this.labelMissingTeeth.Size = new System.Drawing.Size(280, 32);
 			this.labelMissingTeeth.TabIndex = 28;
 			this.labelMissingTeeth.Text = "For bridges, dentures, and partials, missing teeth must have been correctly enter" +
     "ed in the Chart module. ";
@@ -773,7 +770,7 @@
 			this.groupAccident.Controls.Add(this.labelAccidentST);
 			this.groupAccident.Location = new System.Drawing.Point(3, 165);
 			this.groupAccident.Name = "groupAccident";
-			this.groupAccident.Size = new System.Drawing.Size(294, 79);
+			this.groupAccident.Size = new System.Drawing.Size(286, 79);
 			this.groupAccident.TabIndex = 149;
 			this.groupAccident.Text = "Accident";
 			// 
@@ -903,7 +900,7 @@
 			// 
 			// comboEmployRelated
 			// 
-			this.comboEmployRelated.Location = new System.Drawing.Point(142, 143);
+			this.comboEmployRelated.Location = new System.Drawing.Point(134, 143);
 			this.comboEmployRelated.Name = "comboEmployRelated";
 			this.comboEmployRelated.Size = new System.Drawing.Size(155, 21);
 			this.comboEmployRelated.TabIndex = 141;
@@ -918,7 +915,7 @@
 			// 
 			// comboPlaceService
 			// 
-			this.comboPlaceService.Location = new System.Drawing.Point(142, 122);
+			this.comboPlaceService.Location = new System.Drawing.Point(134, 122);
 			this.comboPlaceService.Name = "comboPlaceService";
 			this.comboPlaceService.Size = new System.Drawing.Size(155, 21);
 			this.comboPlaceService.TabIndex = 140;
@@ -932,7 +929,7 @@
 			this.textNote.Location = new System.Drawing.Point(619, 22);
 			this.textNote.MaxLength = 400;
 			this.textNote.Name = "textNote";
-			this.textNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Claim;
+			this.textNote.QuickPasteType = OpenDentBusiness.QuickPasteType.Claim;
 			this.textNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNote.Size = new System.Drawing.Size(488, 136);
 			this.textNote.TabIndex = 118;
@@ -941,7 +938,7 @@
 			// label48
 			// 
 			this.label48.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.label48.Location = new System.Drawing.Point(23, 123);
+			this.label48.Location = new System.Drawing.Point(15, 123);
 			this.label48.Name = "label48";
 			this.label48.Size = new System.Drawing.Size(117, 17);
 			this.label48.TabIndex = 136;
@@ -951,7 +948,7 @@
 			// label49
 			// 
 			this.label49.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.label49.Location = new System.Drawing.Point(23, 144);
+			this.label49.Location = new System.Drawing.Point(15, 144);
 			this.label49.Name = "label49";
 			this.label49.Size = new System.Drawing.Size(117, 17);
 			this.label49.TabIndex = 137;
@@ -981,25 +978,14 @@
 			// 
 			// tabControlAttach
 			// 
-			this.tabControlAttach.Controls.Add(this.tabDXC);
 			this.tabControlAttach.Controls.Add(this.tabNEA);
-			this.tabControlAttach.Controls.Add(this.tabEDS);
+			this.tabControlAttach.Controls.Add(this.tabDXC);
 			this.tabControlAttach.Controls.Add(this.tabCanadianAttachments);
 			this.tabControlAttach.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.tabControlAttach.Location = new System.Drawing.Point(6, 6);
 			this.tabControlAttach.Name = "tabControlAttach";
 			this.tabControlAttach.Size = new System.Drawing.Size(671, 221);
 			this.tabControlAttach.TabIndex = 152;
-			// 
-			// tabDXC
-			// 
-			this.tabDXC.Controls.Add(this.labelWorkflowMsg);
-			this.tabDXC.Location = new System.Drawing.Point(2, 21);
-			this.tabDXC.Name = "tabDXC";
-			this.tabDXC.Padding = new System.Windows.Forms.Padding(3);
-			this.tabDXC.Size = new System.Drawing.Size(667, 198);
-			this.tabDXC.TabIndex = 1;
-			this.tabDXC.Text = "DentalXChange";
 			// 
 			// tabNEA
 			// 
@@ -1066,7 +1052,7 @@
 			// 
 			this.radioAttachElect.Location = new System.Drawing.Point(171, 59);
 			this.radioAttachElect.Name = "radioAttachElect";
-			this.radioAttachElect.Size = new System.Drawing.Size(104, 19);
+			this.radioAttachElect.Size = new System.Drawing.Size(104, 16);
 			this.radioAttachElect.TabIndex = 129;
 			this.radioAttachElect.Text = "Electronically";
 			// 
@@ -1075,7 +1061,7 @@
 			this.radioAttachMail.Checked = true;
 			this.radioAttachMail.Location = new System.Drawing.Point(171, 39);
 			this.radioAttachMail.Name = "radioAttachMail";
-			this.radioAttachMail.Size = new System.Drawing.Size(104, 19);
+			this.radioAttachMail.Size = new System.Drawing.Size(104, 16);
 			this.radioAttachMail.TabIndex = 128;
 			this.radioAttachMail.TabStop = true;
 			this.radioAttachMail.Text = "By Mail";
@@ -1237,61 +1223,62 @@
 			this.listAttachments.DoubleClick += new System.EventHandler(this.listAttachments_DoubleClick);
 			this.listAttachments.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listAttachments_MouseDown);
 			// 
-			// tabEDS
+			// tabDXC
 			// 
-			this.tabEDS.Controls.Add(this.butEDSClaimAttachment);
-			this.tabEDS.Controls.Add(this.textEDSAttachmentID);
-			this.tabEDS.Controls.Add(this.label7);
-			this.tabEDS.Controls.Add(this.gridEDSSent);
-			this.tabEDS.Location = new System.Drawing.Point(2, 21);
-			this.tabEDS.Name = "tabEDS";
-			this.tabEDS.Size = new System.Drawing.Size(667, 198);
-			this.tabEDS.TabIndex = 5;
-			this.tabEDS.Text = "EDS";
+			this.tabDXC.Controls.Add(this.butClaimAttachment);
+			this.tabDXC.Controls.Add(this.textAttachmentID);
+			this.tabDXC.Controls.Add(this.labelAttachmentID);
+			this.tabDXC.Controls.Add(this.gridSent);
+			this.tabDXC.Location = new System.Drawing.Point(2, 21);
+			this.tabDXC.Name = "tabDXC";
+			this.tabDXC.Padding = new System.Windows.Forms.Padding(3);
+			this.tabDXC.Size = new System.Drawing.Size(667, 198);
+			this.tabDXC.TabIndex = 1;
+			this.tabDXC.Text = "DXC";
 			// 
-			// butEDSClaimAttachment
+			// butClaimAttachment
 			// 
-			this.butEDSClaimAttachment.Location = new System.Drawing.Point(6, 62);
-			this.butEDSClaimAttachment.Name = "butEDSClaimAttachment";
-			this.butEDSClaimAttachment.Size = new System.Drawing.Size(113, 24);
-			this.butEDSClaimAttachment.TabIndex = 156;
-			this.butEDSClaimAttachment.Text = "Add Attachment";
-			this.butEDSClaimAttachment.UseVisualStyleBackColor = true;
-			this.butEDSClaimAttachment.Click += new System.EventHandler(this.butEDSClaimAttachment_Click);
+			this.butClaimAttachment.Location = new System.Drawing.Point(6, 62);
+			this.butClaimAttachment.Name = "butClaimAttachment";
+			this.butClaimAttachment.Size = new System.Drawing.Size(113, 24);
+			this.butClaimAttachment.TabIndex = 152;
+			this.butClaimAttachment.Text = "Add Attachment";
+			this.butClaimAttachment.UseVisualStyleBackColor = true;
+			this.butClaimAttachment.Click += new System.EventHandler(this.buttonClaimAttachment_Click);
 			// 
-			// textEDSAttachmentID
+			// textAttachmentID
 			// 
-			this.textEDSAttachmentID.AcceptsTab = true;
-			this.textEDSAttachmentID.BackColor = System.Drawing.SystemColors.Control;
-			this.textEDSAttachmentID.DetectLinksEnabled = false;
-			this.textEDSAttachmentID.DetectUrls = false;
-			this.textEDSAttachmentID.Location = new System.Drawing.Point(6, 35);
-			this.textEDSAttachmentID.Name = "textEDSAttachmentID";
-			this.textEDSAttachmentID.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Claim;
-			this.textEDSAttachmentID.ReadOnly = true;
-			this.textEDSAttachmentID.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this.textEDSAttachmentID.Size = new System.Drawing.Size(176, 21);
-			this.textEDSAttachmentID.TabIndex = 154;
-			this.textEDSAttachmentID.Text = "";
+			this.textAttachmentID.AcceptsTab = true;
+			this.textAttachmentID.BackColor = System.Drawing.SystemColors.Control;
+			this.textAttachmentID.DetectLinksEnabled = false;
+			this.textAttachmentID.DetectUrls = false;
+			this.textAttachmentID.Location = new System.Drawing.Point(6, 35);
+			this.textAttachmentID.Name = "textAttachmentID";
+			this.textAttachmentID.QuickPasteType = OpenDentBusiness.QuickPasteType.Claim;
+			this.textAttachmentID.ReadOnly = true;
+			this.textAttachmentID.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+			this.textAttachmentID.Size = new System.Drawing.Size(176, 21);
+			this.textAttachmentID.TabIndex = 10;
+			this.textAttachmentID.Text = "";
 			// 
-			// label7
+			// labelAttachmentID
 			// 
-			this.label7.AutoSize = true;
-			this.label7.Location = new System.Drawing.Point(3, 19);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(75, 13);
-			this.label7.TabIndex = 155;
-			this.label7.Text = "Attachment ID";
+			this.labelAttachmentID.AutoSize = true;
+			this.labelAttachmentID.Location = new System.Drawing.Point(3, 19);
+			this.labelAttachmentID.Name = "labelAttachmentID";
+			this.labelAttachmentID.Size = new System.Drawing.Size(75, 13);
+			this.labelAttachmentID.TabIndex = 11;
+			this.labelAttachmentID.Text = "Attachment ID";
 			// 
-			// gridEDSSent
+			// gridSent
 			// 
-			this.gridEDSSent.Location = new System.Drawing.Point(200, 6);
-			this.gridEDSSent.Name = "gridEDSSent";
-			this.gridEDSSent.Size = new System.Drawing.Size(261, 188);
-			this.gridEDSSent.TabIndex = 153;
-			this.gridEDSSent.Title = "Attachments Sent";
-			this.gridEDSSent.TranslationName = "gridSent";
-			this.gridEDSSent.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridSent_CellDoubleClick);
+			this.gridSent.Location = new System.Drawing.Point(200, 6);
+			this.gridSent.Name = "gridSent";
+			this.gridSent.Size = new System.Drawing.Size(261, 188);
+			this.gridSent.TabIndex = 0;
+			this.gridSent.Title = "Attachments Sent";
+			this.gridSent.TranslationName = "gridSent";
+			this.gridSent.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridSent_CellDoubleClick);
 			// 
 			// tabCanadianAttachments
 			// 
@@ -1597,13 +1584,20 @@
 			// 
 			// textOrderingProviderOverride
 			// 
+			this.textOrderingProviderOverride.AcceptsTab = true;
 			this.textOrderingProviderOverride.BackColor = System.Drawing.SystemColors.Control;
+			this.textOrderingProviderOverride.DetectLinksEnabled = false;
+			this.textOrderingProviderOverride.DetectUrls = false;
 			this.textOrderingProviderOverride.Location = new System.Drawing.Point(6, 38);
 			this.textOrderingProviderOverride.Name = "textOrderingProviderOverride";
+			this.textOrderingProviderOverride.QuickPasteType = OpenDentBusiness.QuickPasteType.ReadOnly;
 			this.textOrderingProviderOverride.ReadOnly = true;
-			this.textOrderingProviderOverride.Size = new System.Drawing.Size(310, 20);
+			this.textOrderingProviderOverride.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+			this.textOrderingProviderOverride.Size = new System.Drawing.Size(310, 21);
+			this.textOrderingProviderOverride.SpellCheckIsEnabled = false;
 			this.textOrderingProviderOverride.TabIndex = 0;
 			this.textOrderingProviderOverride.TabStop = false;
+			this.textOrderingProviderOverride.Text = "";
 			// 
 			// butPickOrderProvReferral
 			// 
@@ -3133,7 +3127,7 @@
 			// 
 			this.label4.Location = new System.Drawing.Point(752, 389);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(280, 26);
+			this.label4.Size = new System.Drawing.Size(213, 26);
 			this.label4.TabIndex = 131;
 			this.label4.Text = "Reasons underpaid:  (shows on patient bill)";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
@@ -3190,11 +3184,11 @@
 			// label20
 			// 
 			this.label20.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.label20.Location = new System.Drawing.Point(916, 656);
+			this.label20.Location = new System.Drawing.Point(894, 644);
 			this.label20.Name = "label20";
-			this.label20.Size = new System.Drawing.Size(146, 32);
+			this.label20.Size = new System.Drawing.Size(215, 18);
 			this.label20.TabIndex = 92;
-			this.label20.Text = "(payment changes are saved as they are made)";
+			this.label20.Text = "(does not cancel payment edits)";
 			this.label20.TextAlign = System.Drawing.ContentAlignment.BottomRight;
 			// 
 			// butSend
@@ -3386,15 +3380,26 @@
 			this.butDelete.Text = "&Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(1069, 665);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 14;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(1037, 665);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 15;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(956, 665);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 14;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// groupBox3
 			// 
@@ -3632,26 +3637,10 @@
 			this.butInsuranceUnderpaid.Text = "&Ins Underpaid";
 			this.butInsuranceUnderpaid.Click += new System.EventHandler(this.butInsuranceUnderpaid_Click);
 			// 
-			// warningIntegrity
-			// 
-			this.warningIntegrity.Location = new System.Drawing.Point(2, 2);
-			this.warningIntegrity.Name = "warningIntegrity";
-			this.warningIntegrity.Size = new System.Drawing.Size(18, 18);
-			this.warningIntegrity.TabIndex = 269;
-			// 
-			// labelWorkflowMsg
-			// 
-			this.labelWorkflowMsg.Location = new System.Drawing.Point(6, 12);
-			this.labelWorkflowMsg.Name = "labelWorkflowMsg";
-			this.labelWorkflowMsg.Size = new System.Drawing.Size(263, 27);
-			this.labelWorkflowMsg.TabIndex = 155;
-			this.labelWorkflowMsg.Text = "Use right-click options on Claim";
-			// 
 			// FormClaimEdit
 			// 
 			this.AutoScroll = true;
 			this.ClientSize = new System.Drawing.Size(1156, 696);
-			this.Controls.Add(this.warningIntegrity);
 			this.Controls.Add(this.groupBoxPendingPayment);
 			this.Controls.Add(this.textPatResp);
 			this.Controls.Add(this.comboClaimStatus);
@@ -3693,7 +3682,8 @@
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.butRecalc);
 			this.Controls.Add(this.butDelete);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.label9);
@@ -3712,9 +3702,10 @@
 			this.MinimizeBox = false;
 			this.Name = "FormClaimEdit";
 			this.ShowInTaskbar = false;
-			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Edit Claim";
-			this.Closing += new System.ComponentModel.CancelEventHandler(this.FormClaimEdit_FormClosing);
+			this.CloseXClicked += new System.ComponentModel.CancelEventHandler(this.FormClaimEdit_CloseXClicked);
+			this.Closing += new System.ComponentModel.CancelEventHandler(this.FormClaimEdit_Closing);
 			this.Load += new System.EventHandler(this.FormClaimEdit_Load);
 			this.Shown += new System.EventHandler(this.FormClaimEdit_Shown);
 			this.LocationChanged += new System.EventHandler(this.FormClaimEdit_LocationChanged);
@@ -3734,13 +3725,12 @@
 			this.tabAttachments.ResumeLayout(false);
 			this.panel1.ResumeLayout(false);
 			this.tabControlAttach.ResumeLayout(false);
-			this.tabDXC.ResumeLayout(false);
 			this.tabNEA.ResumeLayout(false);
 			this.groupAttachments.ResumeLayout(false);
 			this.groupAttachments.PerformLayout();
 			this.groupAttachedImages.ResumeLayout(false);
-			this.tabEDS.ResumeLayout(false);
-			this.tabEDS.PerformLayout();
+			this.tabDXC.ResumeLayout(false);
+			this.tabDXC.PerformLayout();
 			this.tabCanadianAttachments.ResumeLayout(false);
 			this.groupCanadianAttachedImages.ResumeLayout(false);
 			this.tabMisc.ResumeLayout(false);
@@ -3749,7 +3739,6 @@
 			this.tabUB04.ResumeLayout(false);
 			this.panel4.ResumeLayout(false);
 			this.groupBox4.ResumeLayout(false);
-			this.groupBox4.PerformLayout();
 			this.groupDateOtherCondOrTreatment.ResumeLayout(false);
 			this.groupDateOtherCondOrTreatment.PerformLayout();
 			this.groupUb04.ResumeLayout(false);
@@ -3890,7 +3879,7 @@
 		private System.Windows.Forms.TextBox textPredeterm;
 		private OpenDental.ValidDate textDateRec;
 		private OpenDental.ValidDate textDateSentOrig;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.RadioButton radioProsthN;
 		private System.Windows.Forms.RadioButton radioProsthR;
 		private System.Windows.Forms.RadioButton radioProsthI;
@@ -3899,6 +3888,7 @@
 		private OpenDental.ValidDouble textDedApplied;
 		private OpenDental.ValidDouble textInsPayAmt;
 		private OpenDental.ValidDate textPriorDate;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.GroupBox groupOrtho;
 		private System.Windows.Forms.Label labelOrthoRemainM;
 		private OpenDental.UI.CheckBox checkIsOrtho;
@@ -4067,7 +4057,7 @@
 		private OpenDental.UI.TabPage tabHistory;
 		private OpenDental.UI.TabPage tabAttachments;
 		private OpenDental.UI.TabPage tabMisc;
-		private System.Windows.Forms.TextBox textOrderingProviderOverride;
+		private ODtextBox textOrderingProviderOverride;
 		private UI.GridOD gridPay;
 		private System.Windows.Forms.ContextMenu contextMenuAttachments;
 		private System.Windows.Forms.MenuItem menuItemOpen;
@@ -4085,6 +4075,10 @@
 		private OpenDental.UI.TabControl tabControlAttach;
 		private OpenDental.UI.TabPage tabNEA;
 		private OpenDental.UI.TabPage tabDXC;
+		private UI.GridOD gridSent;
+		private ODtextBox textAttachmentID;
+		private System.Windows.Forms.Label labelAttachmentID;
+		private UI.Button butClaimAttachment;
 		private System.Windows.Forms.ErrorProvider _recalcErrorProvider;
 		private OpenDental.UI.GroupBox groupDateOtherCondOrTreatment;
 		private ValidDate textDateOther;
@@ -4114,12 +4108,5 @@
 		private UI.GroupBox groupBoxPendingPayment;
 		private UI.Button butInsuranceOverpaid;
 		private UI.Button butInsuranceUnderpaid;
-		private UI.TabPage tabEDS;
-		private UI.Button butEDSClaimAttachment;
-		private ODtextBox textEDSAttachmentID;
-		private System.Windows.Forms.Label label7;
-		private UI.GridOD gridEDSSent;
-		private UI.WarningIntegrity warningIntegrity;
-		private System.Windows.Forms.Label labelWorkflowMsg;
 	}
 }

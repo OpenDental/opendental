@@ -28,13 +28,14 @@ namespace OpenDental{
 			this.label6 = new System.Windows.Forms.Label();
 			this.checkAllCourses = new OpenDental.UI.CheckBox();
 			this.checkAllInstructors = new OpenDental.UI.CheckBox();
-			this.textDateStart = new OpenDental.ValidDate();
-			this.textDateEnd = new OpenDental.ValidDate();
+			this.textDateStart = new ValidDate();
+			this.textDateEnd = new ValidDate();
 			this.gridCourses = new OpenDental.UI.GridOD();
 			this.gridInstructors = new OpenDental.UI.GridOD();
 			this.gridStudents = new OpenDental.UI.GridOD();
 			this.butAllStudents = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// label7
@@ -98,7 +99,7 @@ namespace OpenDental{
 			this.gridCourses.Location = new System.Drawing.Point(12, 68);
 			this.gridCourses.Name = "gridCourses";
 			this.gridCourses.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridCourses.Size = new System.Drawing.Size(308, 358);
+			this.gridCourses.Size = new System.Drawing.Size(308, 362);
 			this.gridCourses.TabIndex = 16;
 			this.gridCourses.Title = "Courses";
 			this.gridCourses.TranslationName = "TableCourses";
@@ -112,7 +113,7 @@ namespace OpenDental{
 			this.gridInstructors.Location = new System.Drawing.Point(333, 68);
 			this.gridInstructors.Name = "gridInstructors";
 			this.gridInstructors.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridInstructors.Size = new System.Drawing.Size(308, 358);
+			this.gridInstructors.Size = new System.Drawing.Size(308, 362);
 			this.gridInstructors.TabIndex = 15;
 			this.gridInstructors.Title = "Instructors";
 			this.gridInstructors.TranslationName = "TableInstructors";
@@ -125,7 +126,7 @@ namespace OpenDental{
 			this.gridStudents.Location = new System.Drawing.Point(654, 68);
 			this.gridStudents.Name = "gridStudents";
 			this.gridStudents.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridStudents.Size = new System.Drawing.Size(308, 358);
+			this.gridStudents.Size = new System.Drawing.Size(308, 362);
 			this.gridStudents.TabIndex = 14;
 			this.gridStudents.Title = "Students";
 			this.gridStudents.TranslationName = "TableStudents";
@@ -143,16 +144,27 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(887, 439);
+			this.butOK.Location = new System.Drawing.Point(887, 452);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 19;
-			this.butOK.Text = "&OK";
+			this.butOK.Text = "OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(887, 482);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// FormEvaluationReport
 			// 
-			this.ClientSize = new System.Drawing.Size(974, 475);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(974, 518);
 			this.Controls.Add(this.butAllStudents);
 			this.Controls.Add(this.checkAllInstructors);
 			this.Controls.Add(this.checkAllCourses);
@@ -164,6 +176,7 @@ namespace OpenDental{
 			this.Controls.Add(this.gridCourses);
 			this.Controls.Add(this.gridInstructors);
 			this.Controls.Add(this.gridStudents);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEvaluationReport";
 			this.Text = "Evaluation Report";
@@ -174,6 +187,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridStudents;
 		private UI.GridOD gridInstructors;
 		private UI.GridOD gridCourses;

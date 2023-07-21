@@ -155,7 +155,7 @@ namespace OpenDental{
 			SetSimple();
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e){
+		private void butOK_Click(object sender, System.EventArgs e){
 			string compName=ODEnvironment.MachineName;
 			if(checkSimple.Checked && !PrefC.GetBool(PrefName.EasyHidePrinters)){
 				//if user clicked the simple option
@@ -223,6 +223,12 @@ namespace OpenDental{
 			Printers.RefreshCache();//the other computers don't care
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
 
 	}
 }

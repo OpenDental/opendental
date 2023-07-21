@@ -267,7 +267,7 @@ namespace OpenDental{
 			catch(Exception ex){
 				MessageBox.Show(ex.Message);
 			}*/
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
 			if(listTriggers.Items.Count>0) {
@@ -277,14 +277,14 @@ namespace OpenDental{
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Are you absolutely sure you want to delete all recalls of this type?")) {
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.RecallEdit,0,"Recall type deleted with description '"+RecallTypeCur.Description+"'");
+			SecurityLogs.MakeLogEntry(Permissions.RecallEdit,0,"Recall type deleted with description '"+RecallTypeCur.Description+"'");
 			Recalls.DeleteAllOfType(RecallTypeCur.RecallTypeNum);
 			_countForType=Recalls.GetCountForType(RecallTypeCur.RecallTypeNum);
 			MsgBox.Show(this,"Done.");
 
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(textDescription.Text==""){
 				MsgBox.Show(this,"Description cannot be blank.");
 				return;
@@ -344,10 +344,10 @@ namespace OpenDental{
 					MessageBox.Show(ex.Message);
 					return;
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.RecallEdit,0,"Recall type added '"+RecallTypeCur.Description+"'");
+				SecurityLogs.MakeLogEntry(Permissions.RecallEdit,0,"Recall type added '"+RecallTypeCur.Description+"'");
 			}
 			else {
-				SecurityLogs.MakeLogEntry(EnumPermType.RecallEdit,0,"Recall type having description '"+RecallTypeCur.Description+"' edited");
+				SecurityLogs.MakeLogEntry(Permissions.RecallEdit,0,"Recall type having description '"+RecallTypeCur.Description+"' edited");
 				try {
 					RecallTypes.Update(RecallTypeCur);
 				}
@@ -434,5 +434,49 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+	
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

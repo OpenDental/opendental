@@ -104,5 +104,32 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			if(IsNew) {
+				AccountingAutoPayCur=null;
+			}
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

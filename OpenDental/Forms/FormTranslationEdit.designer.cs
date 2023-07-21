@@ -23,7 +23,8 @@ namespace OpenDental {
 
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTranslationEdit));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textEnglish = new System.Windows.Forms.TextBox();
@@ -34,30 +35,41 @@ namespace OpenDental {
 			this.label3 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(754, 582);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(786,594);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75,26);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(786,628);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75,26);
+			this.butCancel.TabIndex = 4;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(43, 36);
+			this.label1.Location = new System.Drawing.Point(43,36);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(82, 23);
+			this.label1.Size = new System.Drawing.Size(82,23);
 			this.label1.TabIndex = 0;
 			this.label1.Text = "English";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(38, 168);
+			this.label2.Location = new System.Drawing.Point(38,168);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(88, 16);
+			this.label2.Size = new System.Drawing.Size(88,16);
 			this.label2.TabIndex = 0;
 			this.label2.Text = "Translation";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -65,28 +77,28 @@ namespace OpenDental {
 			// textEnglish
 			// 
 			this.textEnglish.AcceptsReturn = true;
-			this.textEnglish.Location = new System.Drawing.Point(127, 34);
+			this.textEnglish.Location = new System.Drawing.Point(127,34);
 			this.textEnglish.Multiline = true;
 			this.textEnglish.Name = "textEnglish";
 			this.textEnglish.ReadOnly = true;
-			this.textEnglish.Size = new System.Drawing.Size(672, 130);
+			this.textEnglish.Size = new System.Drawing.Size(672,130);
 			this.textEnglish.TabIndex = 0;
 			this.textEnglish.TabStop = false;
 			// 
 			// textTranslation
 			// 
 			this.textTranslation.AcceptsReturn = true;
-			this.textTranslation.Location = new System.Drawing.Point(127, 166);
+			this.textTranslation.Location = new System.Drawing.Point(127,166);
 			this.textTranslation.Multiline = true;
 			this.textTranslation.Name = "textTranslation";
-			this.textTranslation.Size = new System.Drawing.Size(672, 130);
+			this.textTranslation.Size = new System.Drawing.Size(672,130);
 			this.textTranslation.TabIndex = 1;
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(44, 434);
+			this.label4.Location = new System.Drawing.Point(44,434);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(82, 14);
+			this.label4.Size = new System.Drawing.Size(82,14);
 			this.label4.TabIndex = 0;
 			this.label4.Text = "Comments";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -94,36 +106,38 @@ namespace OpenDental {
 			// textComments
 			// 
 			this.textComments.AcceptsReturn = true;
-			this.textComments.Location = new System.Drawing.Point(127, 432);
+			this.textComments.Location = new System.Drawing.Point(127,432);
 			this.textComments.Multiline = true;
 			this.textComments.Name = "textComments";
-			this.textComments.Size = new System.Drawing.Size(672, 130);
+			this.textComments.Size = new System.Drawing.Size(672,130);
 			this.textComments.TabIndex = 2;
 			// 
 			// textOtherTranslation
 			// 
-			this.textOtherTranslation.Location = new System.Drawing.Point(127, 299);
+			this.textOtherTranslation.Location = new System.Drawing.Point(127,299);
 			this.textOtherTranslation.Multiline = true;
 			this.textOtherTranslation.Name = "textOtherTranslation";
 			this.textOtherTranslation.ReadOnly = true;
-			this.textOtherTranslation.Size = new System.Drawing.Size(671, 130);
+			this.textOtherTranslation.Size = new System.Drawing.Size(671,130);
 			this.textOtherTranslation.TabIndex = 0;
 			this.textOtherTranslation.TabStop = false;
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(4, 301);
+			this.label3.Location = new System.Drawing.Point(4,301);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(121, 16);
+			this.label3.Size = new System.Drawing.Size(121,16);
 			this.label3.TabIndex = 0;
 			this.label3.Text = "Other Translation";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// FormTranslationEdit
 			// 
-			this.AcceptButton = this.butSave;
-			this.ClientSize = new System.Drawing.Size(856, 621);
-			this.Controls.Add(this.butSave);
+			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(880,668);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.textOtherTranslation);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.textComments);
@@ -146,8 +160,9 @@ namespace OpenDental {
 		}
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label label1;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox textEnglish;
 		private System.Windows.Forms.Label label4;

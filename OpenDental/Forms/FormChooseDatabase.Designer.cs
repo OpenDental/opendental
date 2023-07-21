@@ -49,6 +49,7 @@ namespace OpenDental{
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.checkDynamicMode = new OpenDental.UI.CheckBox();
 			this.textPEM = new System.Windows.Forms.TextBox();
@@ -296,10 +297,21 @@ namespace OpenDental{
 			this.label4.Text = "Database: usually opendental unless you changed the name.";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(630, 602);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 25);
+			this.butCancel.TabIndex = 36;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(636, 605);
+			this.butOK.Location = new System.Drawing.Point(537, 602);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 25);
 			this.butOK.TabIndex = 35;
@@ -328,13 +340,13 @@ namespace OpenDental{
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(509, 18);
 			this.label5.TabIndex = 7;
-			this.label5.Text = "(only if using MariaDB SkySQL) PEM path";
+			this.label5.Text = "MariaDB SkySQL PEM path";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// FormChooseDatabase
 			// 
 			this.AcceptButton = this.butOK;
-			this.ClientSize = new System.Drawing.Size(723, 642);
+			this.ClientSize = new System.Drawing.Size(733, 642);
 			this.Controls.Add(this.textPEM);
 			this.Controls.Add(this.checkDynamicMode);
 			this.Controls.Add(this.label5);
@@ -345,6 +357,7 @@ namespace OpenDental{
 			this.Controls.Add(this.checkConnectServer);
 			this.Controls.Add(this.groupServer);
 			this.Controls.Add(this.groupDirect);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.HasHelpButton = false;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -388,6 +401,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label4;
+		private UI.Button butCancel;
 		private UI.Button butOK;
 		private OpenDental.UI.CheckBox checkBoxAutomaticLogin;
 		private OpenDental.UI.CheckBox checkDynamicMode;

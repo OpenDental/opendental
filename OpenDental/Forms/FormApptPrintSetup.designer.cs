@@ -26,6 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormApptPrintSetup));
 			this.butSave = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butPreview = new OpenDental.UI.Button();
 			this.groupBoxPrintRouting = new OpenDental.UI.GroupBox();
 			this.butSelectedView = new OpenDental.UI.Button();
@@ -56,7 +57,7 @@ namespace OpenDental{
 			// butSave
 			// 
 			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butSave.Location = new System.Drawing.Point(311, 269);
+			this.butSave.Location = new System.Drawing.Point(20, 268);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(75, 24);
 			this.butSave.TabIndex = 11;
@@ -66,19 +67,29 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(153, 269);
+			this.butOK.Location = new System.Drawing.Point(314, 268);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 13;
 			this.butOK.Text = "&Print";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(364, 423);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butPreview
 			// 
 			this.butPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butPreview.Image = global::OpenDental.Properties.Resources.butPreview;
 			this.butPreview.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPreview.Location = new System.Drawing.Point(9, 269);
+			this.butPreview.Location = new System.Drawing.Point(233, 268);
 			this.butPreview.Name = "butPreview";
 			this.butPreview.Size = new System.Drawing.Size(75, 24);
 			this.butPreview.TabIndex = 12;
@@ -289,8 +300,9 @@ namespace OpenDental{
 			// 
 			// FormApptPrintSetup
 			// 
-			this.ClientSize = new System.Drawing.Size(415, 438);
+			this.ClientSize = new System.Drawing.Size(452, 459);
 			this.Controls.Add(this.groupBoxPrintRouting);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.groupBox1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormApptPrintSetup";
@@ -308,6 +320,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private UI.Button butSave;
 		private UI.Button butPreview;
 		private OpenDental.UI.GroupBox groupBoxPrintRouting;

@@ -38,6 +38,7 @@ namespace OpenDental {
 			this.labelRetrieving = new System.Windows.Forms.Label();
 			this.comboClearhouse = new OpenDental.UI.ComboBox();
 			this.butRetrieve = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// labelRetrieving
@@ -66,13 +67,24 @@ namespace OpenDental {
 			this.butRetrieve.Text = "Retrieve";
 			this.butRetrieve.Click += new System.EventHandler(this.butRetrieve_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(289,152);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75,26);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormClaimReports
 			// 
-			this.ClientSize = new System.Drawing.Size(324, 101);
 			this.AutoScaleBaseSize = new System.Drawing.Size(5,13);
+			this.ClientSize = new System.Drawing.Size(401,202);
 			this.Controls.Add(this.butRetrieve);
 			this.Controls.Add(this.comboClearhouse);
 			this.Controls.Add(this.labelRetrieving);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -86,6 +98,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label labelRetrieving;
 		private OpenDental.UI.ComboBox comboClearhouse;
 		private OpenDental.UI.Button butRetrieve;

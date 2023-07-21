@@ -86,15 +86,15 @@ namespace OpenDental{
 			else {
 				butLock.Visible=false;
 			}
-			EnumPermType permissions=EnumPermType.ProcCompleteEdit;
+			Permissions permissions=Permissions.ProcCompleteEdit;
 			if(ProcedureGroup.ProcStatus.In(ProcStat.EO,ProcStat.EC)) {
-				permissions=EnumPermType.ProcExistingEdit;
+				permissions=Permissions.ProcExistingEdit;
 			}
 			if(Security.IsGlobalDateLock(permissions,ProcedureGroup.ProcDate)) {
 				butLock.Enabled=false;
 			}
 			if(ProcedureGroup.IsLocked) {//Whether locking is currently allowed, this proc group may have been locked previously.
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 				labelLocked.Visible=true;
 				butAppend.Visible=true;
@@ -105,17 +105,17 @@ namespace OpenDental{
 			}
 			else {
 				butInvalidate.Visible=false;
-				permissions=EnumPermType.ProcDelete;
+				permissions=Permissions.ProcDelete;
 				DateTime dateForPerm=ProcedureGroup.DateEntryC;
 				//because islocked overrides security:
 				_attachedToCompletedProc=(ProcGroupItems.GetCountCompletedProcsForGroup(ProcedureGroup.ProcNum)!=0);
 				if(_attachedToCompletedProc) {
-					permissions=EnumPermType.ProcCompleteNote;
+					permissions=Permissions.ProcCompleteNote;
 					dateForPerm=ProcedureGroup.ProcDate;
 				}
 				//This is mainly to make sure that the global security lock date is considered.
 				if(!Security.IsAuthorized(permissions,dateForPerm)) {
-					butSave.Enabled=false;
+					butOK.Enabled=false;
 					butDelete.Enabled=false;
 					textNotes.ReadOnly=true;
 					textNotes.BackColor=SystemColors.Control;
@@ -132,7 +132,7 @@ namespace OpenDental{
 				butInvalidate.Visible=false;
 				labelLocked.Visible=false;
 				butAppend.Visible=false;
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 			}
 			FillProcedures();
@@ -140,7 +140,7 @@ namespace OpenDental{
 			string keyData=GetSignatureKey();
 			signatureBoxWrapper.FillSignature(ProcedureGroup.SigIsTopaz,keyData,ProcedureGroup.Signature);
 			signatureBoxWrapper.BringToFront();
-			if(!(Security.IsAuthorized(EnumPermType.GroupNoteEditSigned,true) || signatureBoxWrapper.SigIsBlank || ProcedureGroup.UserNum==Security.CurUser.UserNum)) {
+			if(!(Security.IsAuthorized(Permissions.GroupNoteEditSigned,true) || signatureBoxWrapper.SigIsBlank || ProcedureGroup.UserNum==Security.CurUser.UserNum)) {
 				//User does not have permission and this note was signed by someone else.
 				textNotes.ReadOnly=true;
 				signatureBoxWrapper.Enabled=false;
@@ -247,7 +247,7 @@ namespace OpenDental{
 
 		private void butRx_Click(object sender,EventArgs e) {
 			//only visible in Orion mode
-			if(!Security.IsAuthorized(EnumPermType.RxCreate)) {
+			if(!Security.IsAuthorized(Permissions.RxCreate)) {
 				return;
 			}
 			using FormRxSelect formRxSelect=new FormRxSelect(_patient);
@@ -255,7 +255,7 @@ namespace OpenDental{
 			if(formRxSelect.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.RxCreate,_patient.PatNum,_patient.GetNameLF());
+			SecurityLogs.MakeLogEntry(Permissions.RxCreate,_patient.PatNum,_patient.GetNameLF());
 			RxPat rxPat=RxPats.GetRx(RxNum);
 			if(textNotes.Text!=""){
 				textNotes.Text+="\r\n";
@@ -268,21 +268,21 @@ namespace OpenDental{
 		}
 
 		private void buttonUseAutoNote_Click(object sender,EventArgs e) {
-			FrmAutoNoteCompose frmAutoNoteCompose=new FrmAutoNoteCompose();
-			frmAutoNoteCompose.ShowDialog();
-			if(frmAutoNoteCompose.IsDialogOK) {
-				textNotes.AppendText(frmAutoNoteCompose.StrCompletedNote);
+			using FormAutoNoteCompose formAutoNoteCompose=new FormAutoNoteCompose();
+			formAutoNoteCompose.ShowDialog();
+			if(formAutoNoteCompose.DialogResult==DialogResult.OK) {
+				textNotes.AppendText(formAutoNoteCompose.StrCompletedNote);
 				butEditAutoNote.Visible=HasAutoNotePrompt();
 			}
 		}
 
 		private void ButEditAutoNote_Click(object sender,EventArgs e) {
 			if(HasAutoNotePrompt()) {
-				FrmAutoNoteCompose frmAutoNoteCompose=new FrmAutoNoteCompose();
-				frmAutoNoteCompose.StrMainTextNote=textNotes.Text;
-				frmAutoNoteCompose.ShowDialog();
-				if(frmAutoNoteCompose.IsDialogOK) {
-					textNotes.Text=frmAutoNoteCompose.StrCompletedNote;
+				using FormAutoNoteCompose formAutoNoteCompose=new FormAutoNoteCompose();
+				formAutoNoteCompose.StrMainTextNote=textNotes.Text;
+				formAutoNoteCompose.ShowDialog();
+				if(formAutoNoteCompose.DialogResult==DialogResult.OK) {
+					textNotes.Text=formAutoNoteCompose.StrCompletedNote;
 					butEditAutoNote.Visible=HasAutoNotePrompt();
 				}
 				return;
@@ -353,9 +353,6 @@ namespace OpenDental{
 
 		private void signatureBoxWrapper_SignatureChanged(object sender,EventArgs e) {
 			ProcedureGroup.UserNum=_userod.UserNum;
-			if(!textUser.Text.IsNullOrEmpty() && textUser.Text!=_userod.UserName) {
-				_hasUserChanged=true;
-			}
 			textUser.Text=_userod.UserName;
 			_hasSigChanged=true;
 		}
@@ -372,10 +369,10 @@ namespace OpenDental{
 		///<summary>This button is only visible when proc IsLocked.</summary>
 		private void butInvalidate_Click(object sender,EventArgs e) {
 			//What this will really do is "delete" the procedure.
-			if(!Security.IsAuthorized(EnumPermType.ProcDelete,ProcedureGroup.DateEntryC)) {
+			if(!Security.IsAuthorized(Permissions.ProcDelete,ProcedureGroup.DateEntryC)) {
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.GroupNoteEditSigned)) {
+			if(!Security.IsAuthorized(Permissions.GroupNoteEditSigned)) {
 				return;
 			}
 			try {
@@ -386,7 +383,7 @@ namespace OpenDental{
 				return;
 			}
 			//Log entry does not show procstatus because group notes don't technically have a status, always EC.
-			SecurityLogs.MakeLogEntry(EnumPermType.ProcDelete,_patient.PatNum,Lan.g(this,"Invalidated: ")+
+			SecurityLogs.MakeLogEntry(Permissions.ProcDelete,_patient.PatNum,Lan.g(this,"Invalidated: ")+
 				ProcedureCodes.GetStringProcCode(ProcedureGroup.CodeNum).ToString()+", "+ProcedureGroup.ProcDate.ToShortDateString());
 			DialogResult=DialogResult.OK;
 		}
@@ -450,50 +447,33 @@ namespace OpenDental{
 			//This log entry is similar to the log entry made when right-clicking in the Chart and using the delete option,
 			//except there is an extra : in the description for this log entry, so we programmers can know for sure where the entry was made from.
 			if(_attachedToCompletedProc) {
-				SecurityLogs.MakeLogEntry(EnumPermType.ProcCompleteStatusEdit,_patient.PatNum,
+				SecurityLogs.MakeLogEntry(Permissions.ProcCompleteStatusEdit,_patient.PatNum,
 					":"+ProcedureCodes.GetStringProcCode(ProcedureGroup.CodeNum).ToString()+" ("+ProcedureGroup.ProcStatus+"), "+ProcedureGroup.ProcDate.ToShortDateString());
 			}
 			else {
-				SecurityLogs.MakeLogEntry(EnumPermType.ProcDelete,_patient.PatNum,
+				SecurityLogs.MakeLogEntry(Permissions.ProcDelete,_patient.PatNum,
 					":"+ProcedureCodes.GetStringProcCode(ProcedureGroup.CodeNum).ToString()+" ("+ProcedureGroup.ProcStatus+"), "+ProcedureGroup.ProcDate.ToShortDateString());
 			}
 			DialogResult=DialogResult.OK;
 			IsOpen=false;
 		}		
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			if(!EntriesAreValid()){
 				return;
 			}
-			if(_hasUserChanged && !_procedureGroupOld.Signature.IsNullOrEmpty()) {
-				//Ask the user to re-sign if the user has changed, there was a signature when the window loaded, and the signature box is currently blank.
-				if(signatureBoxWrapper.SigIsBlank) {
-					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,
-						"The signature box has not been re-signed.  Continuing will remove the previous signature from this procedure.  Exit anyway?"))
-					{
-						return;
-					}
-				}
-				//Check if user is subcribed to the alertType.SignatureCleared and create an alert.
-				if(AlertSubs.GetAllAlertTypesForUser(_procedureGroupOld.UserNum).Contains(AlertType.SignatureCleared)) {
-					string procCode=ProcedureCodes.GetStringProcCode(_procedureGroupOld.CodeNum);
-					string provider=Providers.GetAbbr(_procedureGroupOld.ProvNum);
-					string alertDescription="Group Note Changed for PatNum: "+_procedureGroupOld.PatNum
-					+" Provider: "+provider
-					+" Date: "+_procedureGroupOld.ProcDate.ToShortDateString()
-					+" Procedure Code: "+procCode;
-					AlertItems.Insert(new AlertItem {
-						//Allow to alert to be deleted or marked as read.
-						Actions=ActionType.MarkAsRead | ActionType.Delete,
-						Description=Lans.g("Procedures",alertDescription),
-						Severity=SeverityType.Low,
-						Type=AlertType.SignatureCleared,
-						UserNum=_procedureGroupOld.UserNum,
-						ClinicNum=_procedureGroupOld.ClinicNum,
-					});
-				}
+			if(_hasUserChanged && signatureBoxWrapper.SigIsBlank 
+				&& !MsgBox.Show(this,MsgBoxButtons.OKCancel,
+					"The signature box has not been re-signed.  Continuing will remove the previous signature from this procedure.  Exit anyway?")) 
+			{
+				return;
 			}
 			SaveAndClose();
+		}
+
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+			IsOpen=false;
 		}
 
 		private void FormProcGroup_FormClosing(object sender,FormClosingEventArgs e) {

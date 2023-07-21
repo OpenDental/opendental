@@ -39,7 +39,7 @@ namespace OpenDental {
 			textAtoZpath.Text=ReplicationServerCur.AtoZpath;
 			checkUpdateBlocked.Checked=ReplicationServerCur.UpdateBlocked;
 			if(ReplicationServerCur.ReplicationServerNum==PrefC.GetLong(PrefName.ReplicationUserQueryServer)) {
-				checkTempTablesAllowedServer.Checked=true;
+				checkReportServer.Checked=true;
 			}
 		}
 
@@ -64,7 +64,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textDescript.Text=="") {
 				//I guess we don't need to force descript to have a value
 			}
@@ -124,7 +124,7 @@ namespace OpenDental {
 				ReplicationServers.Update(ReplicationServerCur);
 			}
 			//Update the ReplicationUserQueryServer preference as needed.
-			if(checkTempTablesAllowedServer.Checked) {
+			if(checkReportServer.Checked) {
 				if(Prefs.UpdateLong(PrefName.ReplicationUserQueryServer,ReplicationServerCur.ReplicationServerNum)) {
 					DataValid.SetInvalid(InvalidType.Prefs);
 				}
@@ -137,5 +137,13 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+
+
 	}
+
+		
 }

@@ -81,5 +81,9 @@ namespace OpenDental {
 			FillForm();
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 	}
 }

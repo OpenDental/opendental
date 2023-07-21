@@ -39,7 +39,7 @@ namespace OpenDental{
 				}
 				MsgBox.Show(this,"Warning, editing another computers graphical settings should be done from that computer to ensure the selected settings work." 
 					+" We do not recommend editing this way. If you make changes for another computer you should still verifiy that they work on that machine.");
-					SecurityLogs.MakeLogEntry(EnumPermType.GraphicsRemoteEdit,0,"Edited graphical settings for "+ComputerPrefCur.ComputerName);
+					SecurityLogs.MakeLogEntry(Permissions.GraphicsRemoteEdit,0,"Edited graphical settings for "+ComputerPrefCur.ComputerName);
 			}
 			Text+=" - "+ComputerPrefCur.ComputerName;
 			if(ComputerPrefCur.ComputerOS==PlatformOD.Undefined){//Remote computer has not updated yet. 
@@ -308,7 +308,7 @@ namespace OpenDental{
 			return true;
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			bool isChanged=Prefs.UpdateBool(PrefName.DirectX11ToothChartUseIfAvail,radioDirectX11Use.Checked);
 			//ComputerPrefCur doesn't change until here, so make the old copy exactly when we need it instead of when the form is created.
 			ComputerPref computerPrefOld=ComputerPrefCur.Copy();
@@ -357,5 +357,8 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

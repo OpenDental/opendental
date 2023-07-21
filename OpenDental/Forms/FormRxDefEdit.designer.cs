@@ -33,7 +33,8 @@ namespace OpenDental {
 			this.textRefills = new System.Windows.Forms.TextBox();
 			this.textDisp = new System.Windows.Forms.TextBox();
 			this.textSig = new System.Windows.Forms.TextBox();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.listAlerts = new OpenDental.UI.ListBox();
 			this.butDelete = new OpenDental.UI.Button();
@@ -134,15 +135,26 @@ namespace OpenDental {
 			this.textSig.Size = new System.Drawing.Size(254, 44);
 			this.textSig.TabIndex = 3;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(533, 551);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 13;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(542, 511);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 13;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(542, 551);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 14;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// label2
 			// 
@@ -269,7 +281,7 @@ namespace OpenDental {
 			this.textPatInstruction.DetectUrls = false;
 			this.textPatInstruction.Location = new System.Drawing.Point(134, 291);
 			this.textPatInstruction.Name = "textPatInstruction";
-			this.textPatInstruction.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Rx;
+			this.textPatInstruction.QuickPasteType = OpenDentBusiness.QuickPasteType.Rx;
 			this.textPatInstruction.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textPatInstruction.Size = new System.Drawing.Size(386, 143);
 			this.textPatInstruction.TabIndex = 8;
@@ -286,7 +298,8 @@ namespace OpenDental {
 			// 
 			// FormRxDefEdit
 			// 
-			this.AcceptButton = this.butSave;
+			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(634, 587);
 			this.Controls.Add(this.textPatInstruction);
 			this.Controls.Add(this.labelPatInstruct);
@@ -302,7 +315,8 @@ namespace OpenDental {
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.listAlerts);
 			this.Controls.Add(this.label2);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.textSig);
 			this.Controls.Add(this.textDisp);
 			this.Controls.Add(this.textRefills);
@@ -332,7 +346,8 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label label6;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.TextBox textDrug;
 		private System.Windows.Forms.TextBox textNotes;
 		private System.Windows.Forms.TextBox textRefills;

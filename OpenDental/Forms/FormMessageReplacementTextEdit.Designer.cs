@@ -24,22 +24,34 @@ namespace OpenDental {
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMessageReplacementTextEdit));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.textBoxEditor = new OpenDental.ODtextBox();
 			this.butReplacementText = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(417, 434);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 2;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(336, 434);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 2;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
-			// textBoxEditor
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(417, 434);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 3;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// textTermsAndConditions
 			// 
 			this.textBoxEditor.AcceptsTab = true;
 			this.textBoxEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -49,8 +61,8 @@ namespace OpenDental {
 			this.textBoxEditor.DetectLinksEnabled = false;
 			this.textBoxEditor.DetectUrls = false;
 			this.textBoxEditor.Location = new System.Drawing.Point(12, 12);
-			this.textBoxEditor.Name = "textBoxEditor";
-			this.textBoxEditor.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.PayPlan;
+			this.textBoxEditor.Name = "textTermsAndConditions";
+			this.textBoxEditor.QuickPasteType = OpenDentBusiness.QuickPasteType.PayPlan;
 			this.textBoxEditor.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textBoxEditor.Size = new System.Drawing.Size(480, 416);
 			this.textBoxEditor.TabIndex = 0;
@@ -68,10 +80,12 @@ namespace OpenDental {
 			// 
 			// FormMessageReplacementTextEdit
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(504, 470);
 			this.Controls.Add(this.butReplacementText);
 			this.Controls.Add(this.textBoxEditor);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMessageReplacementTextEdit";
 			this.Text = "Payment Plan Terms and Conditions";
@@ -82,7 +96,8 @@ namespace OpenDental {
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private ODtextBox textBoxEditor;
 		private UI.Button butReplacementText;
 	}

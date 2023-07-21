@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPayConnect2));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.sigBoxWrapper = new OpenDental.UI.SignatureBoxWrapper();
 			this.checkSaveToken = new OpenDental.UI.CheckBox();
@@ -45,10 +46,20 @@ namespace OpenDental{
 			this.groupProcessMethod.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(342, 362);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 40;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(333, 359);
+			this.butOK.Location = new System.Drawing.Point(245, 362);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 39;
@@ -216,11 +227,12 @@ namespace OpenDental{
 			// 
 			// FormPayConnect2
 			// 
-			this.ClientSize = new System.Drawing.Size(420, 395);
+			this.ClientSize = new System.Drawing.Size(436, 407);
 			this.Controls.Add(this.textAmount);
 			this.Controls.Add(this.labelTerminal);
 			this.Controls.Add(this.comboTerminal);
 			this.Controls.Add(this.groupProcessMethod);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.sigBoxWrapper);
 			this.Controls.Add(this.checkSaveToken);
@@ -242,6 +254,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private UI.Button butCancel;
 		private UI.Button butOK;
 		private UI.SignatureBoxWrapper sigBoxWrapper;
 		private UI.CheckBox checkSaveToken;

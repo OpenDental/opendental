@@ -38,7 +38,7 @@ namespace OpenDentBusiness {
 				INNER JOIN usergroupattach ON userod.UserNum=usergroupattach.UserNum
 				INNER JOIN grouppermission ON usergroupattach.UserGroupNum=grouppermission.UserGroupNum 
 				WHERE userod.IsHidden=0
-				AND grouppermission.PermType="+POut.Int((int)EnumPermType.SecurityAdmin)+@"
+				AND grouppermission.PermType="+POut.Int((int)Permissions.SecurityAdmin)+@"
 				GROUP BY userod.UserNum
 				ORDER BY userod.UserName
 				LIMIT 1";
@@ -102,10 +102,9 @@ namespace OpenDentBusiness {
 				FROM userod 
 				WHERE IsHidden=0";
 			//Not sure how to do an InvariantCultureIgnoreCase via a query so doing it over in C# in order to preserve old behavior.
-			SerializableDictionary<long,string> dictNonHiddenUsers=Db.GetTable(command).Select()
+			return Db.GetTable(command).Select()
 				.Where(x => PIn.String(x["DomainUser"].ToString()).Equals(domainUser,StringComparison.InvariantCultureIgnoreCase))
 				.ToSerializableDictionary(x => PIn.Long(x["UserNum"].ToString()),x => PIn.String(x["UserName"].ToString()));
-			return dictNonHiddenUsers;
 		}
 
 		/// <summary>Gets Domain Users</summary>
@@ -113,9 +112,9 @@ namespace OpenDentBusiness {
 			//No remoting role check; no call to db
 			string loginPath=PrefC.GetString(PrefName.DomainLoginPath);
 			try {
-				DirectoryEntry directoryEntry=new DirectoryEntry(loginPath);
-				string distinguishedName=directoryEntry.Properties["distinguishedName"].Value.ToString();
-				string domainGuid=directoryEntry.Guid.ToString();
+				DirectoryEntry loginEntry=new DirectoryEntry(loginPath);
+				string distinguishedName=loginEntry.Properties["distinguishedName"].Value.ToString();
+				string domainGuid=loginEntry.Guid.ToString();
 				string domainGuidPref=PrefC.GetString(PrefName.DomainObjectGuid);
 				string domainUser=(domainGuidPref+'\\'+Environment.UserName);
 				if(domainGuidPref.IsNullOrEmpty()) {
@@ -131,21 +130,6 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		public static List<Userod> GetListByJobTeams(List<JobTeam> listJobTeams) {
-			if(listJobTeams.IsNullOrEmpty()) {
-				return new List<Userod>();
-			}
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Userod>>(MethodBase.GetCurrentMethod(),listJobTeams);
-			}
-			string command=@$"
-				SELECT userod.*
-				FROM userod
-				INNER JOIN jobteamuser ON userod.UserNum=jobteamuser.UserNumEngineer
-				WHERE userod.IsHidden = 0
-				AND jobteamuser.JobTeamNum IN({POut.String(string.Join(",",listJobTeams.Select(x => x.JobTeamNum).ToList()))})";
-			return UserodCrud.SelectMany(command);
-		}
 		#endregion
 
 		#region Misc Methods
@@ -159,7 +143,7 @@ namespace OpenDentBusiness {
 				INNER JOIN usergroupattach ON userod.UserNum=usergroupattach.UserNum
 				INNER JOIN grouppermission ON usergroupattach.UserGroupNum=grouppermission.UserGroupNum 
 				WHERE userod.IsHidden=0
-				AND grouppermission.PermType="+POut.Int((int)EnumPermType.SecurityAdmin);
+				AND grouppermission.PermType="+POut.Int((int)Permissions.SecurityAdmin);
 			return (Db.GetCount(command)!="0");
 		}
 
@@ -174,13 +158,10 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Returns true if the user can sign notes. Uses the NotesProviderSignatureOnly preference to validate.</summary>
-		public static bool CanUserSignNote(Userod userod=null) {
+		public static bool CanUserSignNote(Userod user=null) {
 			//No need to check MiddleTierRole; no call to db.
-			Userod userodSig=userod;
-			if(userod==null) {
-				userodSig=Security.CurUser;
-			}
-			if(PrefC.GetBool(PrefName.NotesProviderSignatureOnly) && userodSig.ProvNum==0) {
+			Userod userSig=user==null ? Security.CurUser : user;
+			if(PrefC.GetBool(PrefName.NotesProviderSignatureOnly) && userSig.ProvNum==0) {
 				return false;//Prefernce is on and our user is not a provider.
 			}
 			return true;//Either pref is off or it is on and user is a provider.
@@ -239,14 +220,14 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Always refreshes the ClientWeb's cache.</summary>
-		public static DataTable GetTableFromCache(bool refreshCache) {
+		public static DataTable GetTableFromCache(bool doRefreshCache) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				DataTable tableOnClient=Meth.GetTable(MethodBase.GetCurrentMethod(),refreshCache);
+				DataTable tableOnClient=Meth.GetTable(MethodBase.GetCurrentMethod(),doRefreshCache);
 				_userodCache.FillCacheFromTable(tableOnClient);
 				Security.SyncCurUser();//Cache can have a stale reference to the Security.CurUser to ensure it has a current one.
 				return tableOnClient;
 			}
-			DataTable table=_userodCache.GetTableFromCache(refreshCache);
+			DataTable table=_userodCache.GetTableFromCache(doRefreshCache);
 			Security.SyncCurUser();//Cache can have a stale reference to the Security.CurUser to ensure it has a current one.
 			return table;
 		}
@@ -293,27 +274,26 @@ namespace OpenDentBusiness {
 		///<summary>Returns a list of all non-hidden users.  Set includeCEMT to true if you want CEMT users included.</summary>
 		public static List<Userod> GetUsers(bool includeCEMT=false) {
 			//No need to check MiddleTierRole; no call to db.
-			List<Userod> listUserodsNonHidden=new List<Userod>();
-			List<Userod> listUserodsLong=Userods.GetDeepCopy();
-			for(int i=0;i<listUserodsLong.Count;i++) {
-				if(listUserodsLong[i].IsHidden) {
+			List<Userod> retVal=new List<Userod>();
+			List<Userod> listUsersLong=Userods.GetDeepCopy();
+			for(int i=0;i<listUsersLong.Count;i++) {
+				if(listUsersLong[i].IsHidden) {
 					continue;
 				}
-				if(!includeCEMT && listUserodsLong[i].UserNumCEMT!=0) {
+				if(!includeCEMT && listUsersLong[i].UserNumCEMT!=0) {
 					continue;
 				}
-				listUserodsNonHidden.Add(listUserodsLong[i]);
+				retVal.Add(listUsersLong[i]);
 			}
-			return listUserodsNonHidden;
+			return retVal;
 		}
 
 		///<summary>Returns a list of all non-hidden users.  Does not include CEMT users.</summary>
 		public static List<Userod> GetUsersByClinic(long clinicNum) {
 			//No need to check MiddleTierRole; no call to db.
-			List<Userod> listUserRods=Userods.GetWhere(x => !x.IsHidden)//all non-hidden users
+			return Userods.GetWhere(x => !x.IsHidden)//all non-hidden users
 				.FindAll(x => !x.ClinicIsRestricted || x.ClinicNum==clinicNum); //for the given clinic or unassigned to clinic
 				//CEMT user filter not required. CEMT users SHOULD be unrestricted to a clinic.
-			return listUserRods;
 		}
 		
 		///<summary>Returns a list of all users without using the local cache.  Useful for multithreaded connections.</summary>
@@ -321,11 +301,11 @@ namespace OpenDentBusiness {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<Userod>>(MethodBase.GetCurrentMethod());
 			}
-			List<Userod> listUserods=new List<Userod>();
+			List<Userod> retVal=new List<Userod>();
 			string command="SELECT * FROM userod";
 			DataTable tableUsers=Db.GetTable(command);
-			listUserods=Crud.UserodCrud.TableToList(tableUsers);
-			return listUserods;
+			retVal=Crud.UserodCrud.TableToList(tableUsers);
+			return retVal;
 		}
 
 		///<summary>Returns a list of all CEMT users.</summary>
@@ -356,17 +336,6 @@ namespace OpenDentBusiness {
 			//No need to check MiddleTierRole; no call to db.
 			return GetFirstOrDefault(x => x.EmployeeNum==employeeNum);
 		}
-		
-		///<summary>Gets the first user with the matching badgeId passed in. Expecting int with 4 digits or less.  Returns null if not found.</summary>
-		public static Userod GetUserByBadgeId(string badgeId) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<Userod>(MethodBase.GetCurrentMethod(),badgeId);
-			}
-			string command="SELECT * FROM userod WHERE BadgeId <> '' AND BadgeId = RIGHT('"+POut.String(badgeId)+"', LENGTH(BadgeId))";
-			//Example BadgeId in db="123". Select compares "123" with RIGHT('00000123',3)
-			List<Userod> listUserods=Crud.UserodCrud.TableToList(Db.GetTable(command));
-			return listUserods.FirstOrDefault();
-		}
 
 		///<summary>Returns all users that are associated to the employee passed in.  Returns empty list if no matches found.</summary>
 		public static List<Userod> GetUsersByEmployeeNum(long employeeNum) {
@@ -375,18 +344,18 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Returns all users that are associated to the permission passed in. Returns empty list if no matches found.</summary>
-		public static List<Userod> GetUsersByPermission(EnumPermType permissions,bool showHidden) {
+		public static List<Userod> GetUsersByPermission(Permissions permission,bool showHidden) {
 			//No need to check MiddleTierRole; no call to db.
-			List<UserGroup> listUserGroups=UserGroups.GetForPermission(permissions);
+			List<UserGroup> listUserGroups=UserGroups.GetForPermission(permission);
 			List<long> listUserNums=UserGroupAttaches.GetUserNumsForUserGroups(listUserGroups);
 			return Userods.GetWhere(x => listUserNums.Contains(x.UserNum),!showHidden);
-		}
+    }
 
 		///<summary>Returns all users that are associated to the permission passed in.  Returns empty list if no matches found.</summary>
 		public static List<Userod> GetUsersByJobRole(JobPerm jobPerm,bool showHidden) {
 			//No need to check MiddleTierRole; no call to db.
-			List<JobPermission> listJobPermissionsRoles=JobPermissions.GetList().FindAll(x=>x.JobPermType==jobPerm);
-			return Userods.GetWhere(x=>listJobPermissionsRoles.Any(y=>x.UserNum==y.UserNum),!showHidden);
+			List<JobPermission> listJobRoles=JobPermissions.GetList().FindAll(x=>x.JobPermType==jobPerm);
+			return Userods.GetWhere(x=>listJobRoles.Any(y=>x.UserNum==y.UserNum),!showHidden);
 		}
 
 		///<summary>Gets all non-hidden users that have an associated provider.</summary>
@@ -426,15 +395,15 @@ namespace OpenDentBusiness {
 				listUserNumsInInsVerify.AddRange(GetUsers(listUserNumsInInsVerify).FindAll(x => !x.ClinicIsRestricted).Select(x => x.UserNum).Distinct().ToList());//Always add unrestricted users into the list.
 				listUserNumsInInsVerify=listUserNumsInInsVerify.Distinct().ToList();
 			}
-			List<Userod> listUserodsWithPerm=GetUsersByPermission(EnumPermType.InsPlanVerifyList,includeHiddenUsers);
+			List<Userod> listUsersWithPerm=GetUsersByPermission(Permissions.InsPlanVerifyList,includeHiddenUsers);
 			if(isAssigning) {
 				if(listClinicNums.Count==0) {
-					return listUserodsWithPerm;//Return unfiltered list of users with permission
+					return listUsersWithPerm;//Return unfiltered list of users with permission
 				}
 				//Don't limit user list to already assigned insurance verifications.
-				return listUserodsWithPerm.FindAll(x => listUserNumsInClinic.Contains(x.UserNum));//Return users with permission, limited by their clinics
+				return listUsersWithPerm.FindAll(x => listUserNumsInClinic.Contains(x.UserNum));//Return users with permission, limited by their clinics
 			}
-			return listUserodsWithPerm.FindAll(x => listUserNumsInInsVerify.Contains(x.UserNum));//Return users limited by permission, clinic, and having an insurance already assigned.
+			return listUsersWithPerm.FindAll(x => listUserNumsInInsVerify.Contains(x.UserNum));//Return users limited by permission, clinic, and having an insurance already assigned.
 		}
 
 		///<summary>Returns all non-hidden users associated with the domain user name passed in. Returns an empty list if no matches found.</summary>
@@ -445,25 +414,22 @@ namespace OpenDentBusiness {
 		///<summary>This handles situations where we have a usernum, but not a user.  And it handles usernum of zero.</summary>
 		public static string GetName(long userNum) {
 			//No need to check MiddleTierRole; no call to db.
-			Userod userod=GetFirstOrDefault(x => x.UserNum==userNum);
-			if (userod==null) {
-				return "";
-			}
-			return userod.UserName;
+			Userod user=GetFirstOrDefault(x => x.UserNum==userNum);
+			return (user==null ? "" : user.UserName);
 		}
 
 		///<summary>Returns true if the user passed in is associated with a provider that has (or had) an EHR prov key.</summary>
-		public static bool IsUserCpoe(Userod userod) {
+		public static bool IsUserCpoe(Userod user) {
 			//No need to check MiddleTierRole; no call to db.
-			if(userod==null) {
+			if(user==null) {
 				return false;
 			}
-			Provider provider=Providers.GetProv(userod.ProvNum);
-			if(provider==null) {
+			Provider prov=Providers.GetProv(user.ProvNum);
+			if(prov==null) {
 				return false;
 			}
 			//Check to see if this provider has had a valid key at any point in history.
-			return EhrProvKeys.HasProvHadKey(provider.LName,provider.FName);
+			return EhrProvKeys.HasProvHadKey(prov.LName,prov.FName);
 		}
 
 		///<summary>Searches the database for a corresponding user by username (not case sensitive).  Returns null is no match found.
@@ -473,8 +439,8 @@ namespace OpenDentBusiness {
 		///hashing algorithm for the password (if necessary) and then returns the entire user object for the corresponding user found.  Throws exceptions 
 		///with error message to display to the user if anything goes wrong.  Manipulates the appropriate log in failure columns in the db as 
 		///needed.</summary>
-		public static Userod CheckUserAndPassword(string userName,string plaintext,bool isEcw) {
-			return CheckUserAndPassword(userName,plaintext,isEcw,true);
+		public static Userod CheckUserAndPassword(string username,string plaintext,bool isEcw) {
+			return CheckUserAndPassword(username,plaintext,isEcw,true);
 		}
 
 		///<summary>Searches the database for a corresponding user by username (not case sensitive).  Returns null is no match found.
@@ -484,14 +450,14 @@ namespace OpenDentBusiness {
 		///hashing algorithm for the password (if necessary) and then returns the entire user object for the corresponding user found.  Throws exceptions 
 		///with error message to display to the user if anything goes wrong.  Manipulates the appropriate log in failure columns in the db as 
 		///needed.  Null will be returned when hasExceptions is false and no matching user found, credentials are invalid, or account is locked.</summary>
-		public static Userod CheckUserAndPassword(string userName,string plaintext,bool isEcw,bool hasExceptions) {
+		public static Userod CheckUserAndPassword(string username,string plaintext,bool isEcw,bool hasExceptions) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<Userod>(MethodBase.GetCurrentMethod(),userName,plaintext,isEcw,hasExceptions);
+				return Meth.GetObject<Userod>(MethodBase.GetCurrentMethod(),username,plaintext,isEcw,hasExceptions);
 			}
 			//Do not use the cache here because an administrator could have cleared the log in failure attempt columns for this user.
 			//Also, middle tier calls this method every single time a process request comes to it.
-			Userod userodDb=GetUserByNameNoCache(userName);
-			if(userodDb==null) {
+			Userod userDb=GetUserByNameNoCache(username);
+			if(userDb==null) {
 				if(hasExceptions) {
 					throw new ODException(Lans.g("Userods","Invalid username or password."),ODException.ErrorCodes.CheckUserAndPasswordFailed);
 				}
@@ -501,9 +467,9 @@ namespace OpenDentBusiness {
 			//We found a user via matching just the username passed in.  Now we need to check to see if they have exceeded the log in failure attempts.
 			//For now we are hardcoding a 5 minute delay when the user has failed to log in 5 times in a row.  
 			//An admin user can reset the password or the failure attempt count for the user failing to log in via the Security window.
-			if(userodDb.DateTFail.Year > 1880 //The user has failed to log in recently
-				&& dateTimeNowDb.Subtract(userodDb.DateTFail) < TimeSpan.FromMinutes(5) //The last failure has been within the last 5 minutes.
-				&& userodDb.FailedAttempts >= 5) //The user failed 5 or more times.
+			if(userDb.DateTFail.Year > 1880 //The user has failed to log in recently
+				&& dateTimeNowDb.Subtract(userDb.DateTFail) < TimeSpan.FromMinutes(5) //The last failure has been within the last 5 minutes.
+				&& userDb.FailedAttempts >= 5) //The user failed 5 or more times.
 			{
 				if(hasExceptions) {
 					throw new ApplicationException(Lans.g("Userods","Account has been locked due to failed log in attempts."
@@ -511,37 +477,38 @@ namespace OpenDentBusiness {
 				}
 				return null;
 			}
-			bool isPasswordValid=Authentication.CheckPassword(userodDb,plaintext,isEcw);
-			Userod userodNew=userodDb.Copy();
+			bool isPasswordValid=Authentication.CheckPassword(userDb,plaintext,isEcw);
+			Userod userNew=userDb.Copy();
 			//If the last failed log in attempt was more than 5 minutes ago, reset the columns in the database so the user can try 5 more times.
-			if(userodDb.DateTFail.Year > 1880 && dateTimeNowDb.Subtract(userodDb.DateTFail) > TimeSpan.FromMinutes(5)) {
-				userodNew.FailedAttempts=0;
-				userodNew.DateTFail=DateTime.MinValue;
+			if(userDb.DateTFail.Year > 1880 && dateTimeNowDb.Subtract(userDb.DateTFail) > TimeSpan.FromMinutes(5)) {
+				userNew.FailedAttempts=0;
+				userNew.DateTFail=DateTime.MinValue;
 			}
 			if(!isPasswordValid) {
-				userodNew.DateTFail=dateTimeNowDb;
-				userodNew.FailedAttempts+=1;
+				userNew.DateTFail=dateTimeNowDb;
+				userNew.FailedAttempts+=1;
 			}
 			//Synchronize the database with the results of the log in attempt above
-			Crud.UserodCrud.Update(userodNew,userodDb);
+			Crud.UserodCrud.Update(userNew,userDb);
 			if(isPasswordValid) {
 				//Upgrade the encryption for the password if this is not an eCW user (eCW uses md5) and the password is using an outdated hashing algorithm.
-				if(!isEcw && !string.IsNullOrEmpty(plaintext) && userodNew.LoginDetails.HashType!=HashTypes.SHA3_512) {
+				if(!isEcw && !string.IsNullOrEmpty(plaintext) && userNew.LoginDetails.HashType!=HashTypes.SHA3_512) {
 					//Update the password to the default hash type which should be the most secure hashing algorithm possible.
-					Authentication.UpdatePasswordUserod(userodNew,plaintext,HashTypes.SHA3_512);
+					Authentication.UpdatePasswordUserod(userNew,plaintext,HashTypes.SHA3_512);
 					//The above method is almost guaranteed to have changed the password for userNew so go back out the db and get the changes that were made.
-					userodNew=GetUserNoCache(userodNew.UserNum);
+					userNew=GetUserNoCache(userNew.UserNum);
 				}
-				return userodNew;
+				return userNew;
 			}
-			//Password was not valid.
-			if(hasExceptions) {
-				throw new ODException(Lans.g("Userods","Invalid username or password."),ODException.ErrorCodes.CheckUserAndPasswordFailed);
+			else {//Password was not valid.
+				if(hasExceptions) {
+					throw new ODException(Lans.g("Userods","Invalid username or password."),ODException.ErrorCodes.CheckUserAndPasswordFailed);
+				}
+				return null;
 			}
-			return null;
 		}
 
-		///<summary>Only used from Middle Tier. Will throw an exception if it fails for any reason.  This will directly access the config file on the disk, read the values, and set 
+		///<summary>Will throw an exception if it fails for any reason.  This will directly access the config file on the disk, read the values, and set 
 		///the DataConnection to the new database.  If the web service attmepts to access the config file, and the config file xml node 
 		///'ApplicationName' is missing or blank, it will be appended to the xml file.  If the 'ApplicationName' node
 		///is set and the Application Virtual Path for the web service is not the same as the node value, throws an exception, which keeps the IIS service
@@ -551,62 +518,39 @@ namespace OpenDentBusiness {
 			if(!File.Exists(configFilePath)){
 				throw new Exception("Could not find "+configFilePath+" on the web server.");
 			}
-			XmlDocument xmlDocument=new XmlDocument();
+			XmlDocument doc=new XmlDocument();
 			try {
-				xmlDocument.Load(configFilePath);
+				doc.Load(configFilePath);
 			}
 			catch{
 				throw new Exception("Web server "+configFilePath+" could not be opened or is in an invalid format.");
 			}
-			XPathNavigator xPathNavigator=xmlDocument.CreateNavigator();
+			XPathNavigator Navigator=doc.CreateNavigator();
 			//always picks the first database entry in the file:
-			XPathNavigator xPathNavigatorConn=xPathNavigator.SelectSingleNode("//DatabaseConnection");//[Database='"+database+"']");
-			if(xPathNavigatorConn==null) {
+			XPathNavigator navConn=Navigator.SelectSingleNode("//DatabaseConnection");//[Database='"+database+"']");
+			if(navConn==null) {
 				throw new Exception(configFilePath+" does not contain a valid database entry.");//database+" is not an allowed database.");
 			}
-			XPathNavigator xPathNavigatorLogging=xPathNavigatorConn.SelectSingleNode("VerboseLogging");
-			bool doLogVerbosely=false;
-			try {
-				doLogVerbosely = xPathNavigatorLogging.ValueAsBoolean;
-			}
-			catch { } // Do nothing, Verbose Logging just won't activate.
-			Logger.DoVerboseLogging = () => doLogVerbosely;
-			if( doLogVerbosely ) {
-				XPathNavigator xPathNavigatorLogDirPath=xPathNavigatorConn.SelectSingleNode("LogDirectory");
-				string pathLogDir="";
-				if(xPathNavigatorLogDirPath!=null) {
-					pathLogDir=xPathNavigatorLogDirPath.Value.Trim();
-				}
-				bool isValidPath=false;
-				try {
-					isValidPath=Path.IsPathRooted(pathLogDir); // Check for drive letter and for invalid path characters
-				}
-				catch { } // Do nothing, will default to server's virtual directory.
-				Logger.LoggerDirOverride=ODFileUtils.CombinePaths(HostingEnvironment.ApplicationPhysicalPath, "Logging");
-				if( isValidPath ) {
-					Logger.LoggerDirOverride=pathLogDir;
-				}
-			}
 			#region Verify ApplicationName Config File Value
-			XPathNavigator xPathNavigatorConfigFileNode=xPathNavigatorConn.SelectSingleNode("ApplicationName");//usually /OpenDentalServer
-			if(xPathNavigatorConfigFileNode==null) {//when first updating, this node will not exist in the xml file, so just add it.
+			XPathNavigator configFileNode=navConn.SelectSingleNode("ApplicationName");//usually /OpenDentalServer
+			if(configFileNode==null) {//when first updating, this node will not exist in the xml file, so just add it.
 				try {
 					//AppendChild does not affect the position of the XPathNavigator; adds <ApplicationName>/OpenDentalServer<ApplicationName/> to the xml
-					using(XmlWriter xmlWriter=xPathNavigatorConn.AppendChild()) {
-						xmlWriter.WriteElementString("ApplicationName",HostingEnvironment.ApplicationVirtualPath);
+					using(XmlWriter writer=navConn.AppendChild()) {
+						writer.WriteElementString("ApplicationName",HostingEnvironment.ApplicationVirtualPath);
 					}
-					xmlDocument.Save(configFilePath);
+					doc.Save(configFilePath);
 				}
 				catch { }//do nothing, unable to write to the XML file, move on anyway
 			}
-			else if(string.IsNullOrWhiteSpace(xPathNavigatorConfigFileNode.Value)) {//empty node, add the Application Virtual Path
+			else if(string.IsNullOrWhiteSpace(configFileNode.Value)) {//empty node, add the Application Virtual Path
 				try {
-					xPathNavigatorConfigFileNode.SetValue(HostingEnvironment.ApplicationVirtualPath);//sets value to /OpenDentalServer or whatever they named their app
-					xmlDocument.Save(configFilePath);
+					configFileNode.SetValue(HostingEnvironment.ApplicationVirtualPath);//sets value to /OpenDentalServer or whatever they named their app
+					doc.Save(configFilePath);
 				}
 				catch { }//do nothing, unable to write to the XML file, move on anyway
 			}
-			else if(xPathNavigatorConfigFileNode.Value.ToLower()!=HostingEnvironment.ApplicationVirtualPath.ToLower()) {
+			else if(configFileNode.Value.ToLower()!=HostingEnvironment.ApplicationVirtualPath.ToLower()) {
 				//the xml node exists and this file already has an Application Virtual Path in it that does not match the name of the IIS attempting to access it
 				string filePath=ODFileUtils.CombinePaths(Path.GetDirectoryName(configFilePath),HostingEnvironment.ApplicationVirtualPath.Trim('/')+"Config.xml");
 				throw new Exception("Multiple middle tier servers are potentially trying to connect to the same database.\r\n"
@@ -616,36 +560,36 @@ namespace OpenDentBusiness {
 			}
 			#endregion Verify ApplicationName Config File Value
 			string connString="",server="",database="",mysqlUser="",mysqlPassword="",mysqlUserLow="",mysqlPasswordLow="";
-			XPathNavigator xPathNavigatorConString=xPathNavigatorConn.SelectSingleNode("ConnectionString");
-			if(xPathNavigatorConString!=null) {//If there is a connection string then use it.
-				connString=xPathNavigatorConString.Value;
+			XPathNavigator navConString=navConn.SelectSingleNode("ConnectionString");
+			if(navConString!=null) {//If there is a connection string then use it.
+				connString=navConString.Value;
 			}
 			else {
 				//return navOne.SelectSingleNode("summary").Value;
 				//now, get the values for this connection
-				server=xPathNavigatorConn.SelectSingleNode("ComputerName").Value;
-				database=xPathNavigatorConn.SelectSingleNode("Database").Value;
-				mysqlUser=xPathNavigatorConn.SelectSingleNode("User").Value;
-				mysqlPassword=xPathNavigatorConn.SelectSingleNode("Password").Value;
-				XPathNavigator xPathNavigatorEncryptPwdNode=xPathNavigatorConn.SelectSingleNode("MySQLPassHash");
+				server=navConn.SelectSingleNode("ComputerName").Value;
+				database=navConn.SelectSingleNode("Database").Value;
+				mysqlUser=navConn.SelectSingleNode("User").Value;
+				mysqlPassword=navConn.SelectSingleNode("Password").Value;
+				XPathNavigator encryptedPwdNode=navConn.SelectSingleNode("MySQLPassHash");
 				string decryptedPwd;
-				if(mysqlPassword=="" && xPathNavigatorEncryptPwdNode!=null && xPathNavigatorEncryptPwdNode.Value!="" && CDT.Class1.Decrypt(xPathNavigatorEncryptPwdNode.Value,out decryptedPwd)) {
+				if(mysqlPassword=="" && encryptedPwdNode!=null && encryptedPwdNode.Value!="" && CDT.Class1.Decrypt(encryptedPwdNode.Value,out decryptedPwd)) {
 					mysqlPassword=decryptedPwd;
 				}
-				mysqlUserLow=xPathNavigatorConn.SelectSingleNode("UserLow").Value;
-				mysqlPasswordLow=xPathNavigatorConn.SelectSingleNode("PasswordLow").Value;
+				mysqlUserLow=navConn.SelectSingleNode("UserLow").Value;
+				mysqlPasswordLow=navConn.SelectSingleNode("PasswordLow").Value;
 			}
-			XPathNavigator xPathNavigatorDbType=xPathNavigatorConn.SelectSingleNode("DatabaseType");
-			DatabaseType databaseType=DatabaseType.MySql;
-			if(xPathNavigatorDbType!=null){
-				if(xPathNavigatorDbType.Value=="Oracle"){
-					databaseType=DatabaseType.Oracle;
+			XPathNavigator dbTypeNav=navConn.SelectSingleNode("DatabaseType");
+			DatabaseType dbtype=DatabaseType.MySql;
+			if(dbTypeNav!=null){
+				if(dbTypeNav.Value=="Oracle"){
+					dbtype=DatabaseType.Oracle;
 				}
 			}
-			DataConnection dataConnection=new DataConnection();
+			DataConnection dcon=new DataConnection();
 			if(connString!="") {
 				try {
-					dataConnection.SetDb(connString,"",databaseType);
+					dcon.SetDb(connString,"",dbtype);
 				}
 				catch(Exception e) {
 					throw new Exception(e.Message+"\r\n"+"Connection to database failed.  Check the values in the config file on the web server "+configFilePath);
@@ -653,7 +597,7 @@ namespace OpenDentBusiness {
 			}
 			else {
 				try {
-					dataConnection.SetDb(server,database,mysqlUser,mysqlPassword,mysqlUserLow,mysqlPasswordLow,databaseType);
+					dcon.SetDb(server,database,mysqlUser,mysqlPassword,mysqlUserLow,mysqlPasswordLow,dbtype);
 				}
 				catch(Exception e) {
 					throw new Exception(e.Message+"\r\n"+"Connection to database failed.  Check the values in the config file on the web server "+configFilePath);
@@ -686,7 +630,7 @@ namespace OpenDentBusiness {
 			}
 			string command;
 			//Check if the user group that the students or instructors are trying to go to has the SecurityAdmin permission.
-			if(!GroupPermissions.HasPermission(userGroup.UserGroupNum,EnumPermType.SecurityAdmin,0)) {
+			if(!GroupPermissions.HasPermission(userGroup.UserGroupNum,Permissions.SecurityAdmin,0)) {
 				//We need to make sure that moving these users to the new user group does not eliminate all SecurityAdmin users in db.
 				command="SELECT COUNT(*) FROM usergroupattach "
 					+"INNER JOIN usergroup ON usergroupattach.UserGroupNum=usergroup.UserGroupNum "
@@ -694,14 +638,14 @@ namespace OpenDentBusiness {
 					+"WHERE usergroupattach.UserNum NOT IN "
 					+"(SELECT userod.UserNum FROM userod,provider "
 						+"WHERE userod.ProvNum=provider.ProvNum ";
-				if(isInstructor) {
-					command+="AND provider.IsInstructor="+POut.Bool(isInstructor)+") ";
-				}
-				else {
+				if(!isInstructor) {
 					command+="AND provider.IsInstructor="+POut.Bool(isInstructor)+" ";
 					command+="AND provider.SchoolClassNum!=0) ";
 				}
-				command+="AND grouppermission.PermType="+POut.Int((int)EnumPermType.SecurityAdmin)+" ";
+				else {
+					command+="AND provider.IsInstructor="+POut.Bool(isInstructor)+") ";
+				}
+					command+="AND grouppermission.PermType="+POut.Int((int)Permissions.SecurityAdmin)+" ";
 				int lastAdmin=PIn.Int(Db.GetCount(command));
 				if(lastAdmin==0) {
 					throw new Exception("Cannot move students or instructors to the new user group because it would leave no users with the SecurityAdmin permission.");
@@ -740,31 +684,31 @@ namespace OpenDentBusiness {
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),userod);
 				return;
 			}
-			UserodCrud.UpdateCemt(userod);
-		}
+      UserodCrud.UpdateCemt(userod);
+    }
 
-		///<summary>DEPRICATED DO NOT USE. Use OpenDentBusiness.Authentication class instead.  For middle tier backward-compatability only.</summary>
-		public static void UpdatePassword(Userod userod,string newPassHashed,bool isPasswordStrong) {
+    ///<summary>DEPRICATED DO NOT USE. Use OpenDentBusiness.Authentication class instead.  For middle tier backward-compatability only.</summary>
+    public static void UpdatePassword(Userod userod,string newPassHashed,bool isPasswordStrong) {
 			//Before 18.3, we only used MD5
 			UpdatePassword(userod,new PasswordContainer(HashTypes.MD5,"",newPassHashed),isPasswordStrong);
 		}
 
 		///<summary>Surround with try/catch because it can throw exceptions.
 		///Same as Update(), only the Validate call skips checking duplicate names for hidden users.</summary>
-		public static void UpdatePassword(Userod userod,PasswordContainer passwordContainer,bool isPasswordStrong, bool includeCEMT = false) {
+		public static void UpdatePassword(Userod userod,PasswordContainer loginDetails,bool isPasswordStrong, bool includeCEMT = false) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),userod,passwordContainer,isPasswordStrong,includeCEMT);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),userod,loginDetails,isPasswordStrong,includeCEMT);
 				return;
 			}
-			Userod userodToUpdate=userod.Copy();
-			userodToUpdate.LoginDetails=passwordContainer;
-			userodToUpdate.PasswordIsStrong=isPasswordStrong;
-			List<UserGroup> listUserGroups=userodToUpdate.GetGroups(includeCEMT);
+			Userod userToUpdate=userod.Copy();
+			userToUpdate.LoginDetails=loginDetails;
+			userToUpdate.PasswordIsStrong=isPasswordStrong;
+			List<UserGroup> listUserGroups=userToUpdate.GetGroups(includeCEMT);
 			if(listUserGroups.Count < 1) {
 				throw new Exception(Lans.g("Userods","The current user must be in at least one user group."));
 			}
-			Validate(false,userodToUpdate,true,listUserGroups.Select(x => x.UserGroupNum).ToList());
-			Crud.UserodCrud.Update(userodToUpdate);
+			Validate(false,userToUpdate,true,listUserGroups.Select(x => x.UserGroupNum).ToList());
+			Crud.UserodCrud.Update(userToUpdate);
 		}
 
 		///<summary>Sets the TaskListInBox to 0 for any users that have this as their inbox.</summary>
@@ -807,9 +751,9 @@ namespace OpenDentBusiness {
 		///<summary>Surround with try/catch because it can throw exceptions.  
 		///We don't really need to make this public, but it's required in order to follow the RemotingRole pattern.
 		///listUserGroupNum can only be null when validating for an Update.</summary>
-		public static void Validate(bool isNew,Userod userod,bool excludeHiddenUsers,List<long> listUserGroupNums) {
+		public static void Validate(bool isNew,Userod user,bool excludeHiddenUsers,List<long> listUserGroupNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),isNew,userod,excludeHiddenUsers,listUserGroupNums);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),isNew,user,excludeHiddenUsers,listUserGroupNum);
 				return;
 			}
 			//should add a check that employeenum and provnum are not both set.
@@ -820,38 +764,38 @@ namespace OpenDentBusiness {
 				excludeUserNum=0;
 			}
 			else{
-				excludeUserNum=userod.UserNum;//it's ok if the name matches the current username
+				excludeUserNum=user.UserNum;//it's ok if the name matches the current username
 			}
 			//It doesn't matter if the UserName is already in use if the user being updated is going to be hidden.  This check will block them from unhiding duplicate users.
-			if(!userod.IsHidden) {//if the user is now not hidden
+			if(!user.IsHidden) {//if the user is now not hidden
 				//CEMT users will not be visible from within Open Dental.  Therefore, make a different check so that we can know if the name
 				//the user typed in is a duplicate of a CEMT user.  In doing this, we are able to give a better message.
-				if(!IsUserNameUnique(userod.UserName,excludeUserNum,excludeHiddenUsers,true)) {
+				if(!IsUserNameUnique(user.UserName,excludeUserNum,excludeHiddenUsers,true)) {
 					throw new ApplicationException(Lans.g("Userods","UserName already in use by CEMT member."));
 				}
-				if(!IsUserNameUnique(userod.UserName,excludeUserNum,excludeHiddenUsers)) {
+				if(!IsUserNameUnique(user.UserName,excludeUserNum,excludeHiddenUsers)) {
 					//IsUserNameUnique doesn't care if it's a CEMT user or not.. It just gets a count based on username.
 					throw new ApplicationException(Lans.g("Userods","UserName already in use."));
 				}
 			}
-			if(listUserGroupNums==null) {//Not validating UserGroup selections.
+			if(listUserGroupNum==null) {//Not validating UserGroup selections.
 				return;
 			}
-			if(listUserGroupNums.Count<1) {
+			if(listUserGroupNum.Count<1) {
 				throw new ApplicationException(Lans.g("Userods","The current user must be in at least one user group."));
 			}
 			//an admin user can never be hidden
 			command="SELECT COUNT(*) FROM grouppermission "
-				+"WHERE PermType='"+POut.Long((int)EnumPermType.SecurityAdmin)+"' "
-				+"AND UserGroupNum IN ("+string.Join(",",listUserGroupNums)+") ";
+				+"WHERE PermType='"+POut.Long((int)Permissions.SecurityAdmin)+"' "
+				+"AND UserGroupNum IN ("+string.Join(",",listUserGroupNum)+") ";
 			if(!isNew//Updating.
 				&& Db.GetCount(command)=="0"//if this user would not have admin
-				&& !IsSomeoneElseSecurityAdmin(userod))//make sure someone else has admin
+				&& !IsSomeoneElseSecurityAdmin(user))//make sure someone else has admin
 			{
 				throw new ApplicationException(Lans.g("Users","At least one user must have Security Admin permission."));
 			}
-			if(userod.IsHidden//hidden 
-				&& userod.UserNumCEMT==0//and non-CEMT
+			if(user.IsHidden//hidden 
+				&& user.UserNumCEMT==0//and non-CEMT
 				&& Db.GetCount(command)!="0")//if this user is admin
 			{
 				throw new ApplicationException(Lans.g("Userods","Admins cannot be hidden."));
@@ -859,32 +803,32 @@ namespace OpenDentBusiness {
 		}
 
 		/// <summary>Returns true if there is at least one user part of the SecurityAdmin permission excluding the user passed in.</summary>
-		public static bool IsSomeoneElseSecurityAdmin(Userod userod) {
+		public static bool IsSomeoneElseSecurityAdmin(Userod user) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),userod);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),user);
 			}
 			string command="SELECT COUNT(*) FROM userod "
 				+"INNER JOIN usergroupattach ON usergroupattach.UserNum=userod.UserNum "
 				+"INNER JOIN grouppermission ON usergroupattach.UserGroupNum=grouppermission.UserGroupNum "
-				+"WHERE grouppermission.PermType='"+POut.Long((int)EnumPermType.SecurityAdmin)+"'"
+				+"WHERE grouppermission.PermType='"+POut.Long((int)Permissions.SecurityAdmin)+"'"
 				+" AND userod.IsHidden =0"
-				+" AND userod.UserNum != "+POut.Long(userod.UserNum);
+				+" AND userod.UserNum != "+POut.Long(user.UserNum);
 			if(Db.GetCount(command)=="0") {//there are no other users with this permission
 				return false;
 			}
 			return true;
 		}
 
-		public static bool IsUserNameUnique(string userName,long excludeUserNum,bool excludeHiddenUsers) {
-			return IsUserNameUnique(userName,excludeUserNum,excludeHiddenUsers,false);
+		public static bool IsUserNameUnique(string username,long excludeUserNum,bool excludeHiddenUsers) {
+			return IsUserNameUnique(username,excludeUserNum,excludeHiddenUsers,false);
 		}
 
 		///<summary>Supply 0 or -1 for the excludeUserNum to not exclude any.</summary>
-		public static bool IsUserNameUnique(string userName,long excludeUserNum,bool excludeHiddenUsers,bool searchCEMTUsers) {
+		public static bool IsUserNameUnique(string username,long excludeUserNum,bool excludeHiddenUsers,bool searchCEMTUsers) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),userName,excludeUserNum,excludeHiddenUsers,searchCEMTUsers);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),username,excludeUserNum,excludeHiddenUsers,searchCEMTUsers);
 			}
-			if(userName==""){
+			if(username==""){
 				return false;
 			}
 			string command="SELECT COUNT(*) FROM userod WHERE ";
@@ -892,7 +836,7 @@ namespace OpenDentBusiness {
 			//	command+="BINARY ";//allows different usernames based on capitalization.//we no longer allow this
 				//Does not need to be tested under Oracle because eCW users do not use Oracle.
 			//}
-			command+="UserName='"+POut.String(userName)+"' "
+			command+="UserName='"+POut.String(username)+"' "
 				+"AND UserNum !="+POut.Long(excludeUserNum)+" ";
 			if(excludeHiddenUsers) {
 				command+="AND IsHidden=0 ";//not hidden
@@ -911,21 +855,21 @@ namespace OpenDentBusiness {
 		/// Generates a unique username based on what is passed into it.
 		/// Returns null if given userName can not be easily identified as unique.
 		/// </summary>
-		/// <param name="userName">The username you are copying</param>
+		/// <param name="username">The username you are copying</param>
 		/// <param name="excludeUserNum">The UserNum that is excluded when checking if a username is in use.</param>
 		/// <param name="excludeHiddenUsers">Set to true to exclude hidden patients when checking if a username is in use, otherwise false</param>
 		/// <param name="searchCEMTUsers">Set to true to include checking usernames that are associated to CEMT users.</param>
 		/// <param name="uniqueUserName">When returning true this is set to a unique username, otherwise null.</parm>
 		/// <returns></returns>
-		public static bool TryGetUniqueUsername(string userName,long excludeUserNum,bool excludeHiddenUsers,bool searchCEMTUsers,out string uniqueUserName) {
+		public static bool TryGetUniqueUsername(string username,long excludeUserNum,bool excludeHiddenUsers,bool searchCEMTUsers,out string uniqueUserName) {
 			int attempt=1;
-			uniqueUserName=userName;//Default to given username, will change if not unique.
+			uniqueUserName=username;//Default to given username, will change if not unique.
 			while(!IsUserNameUnique(uniqueUserName,excludeUserNum,excludeHiddenUsers,searchCEMTUsers)) {
 				if(attempt>100) {
-					uniqueUserName=null;
-					return false;
+						uniqueUserName=null;
+						return false;
 				}
-				uniqueUserName=userName+$"({++attempt})";
+				uniqueUserName=username+$"({++attempt})";
 			}
 			return true;
 		}
@@ -933,36 +877,36 @@ namespace OpenDentBusiness {
 		/// <summary>
 		/// Inserts a new user into table and returns that new user. Not all fields are copied from original user.
 		/// </summary>
-		/// <param name="userod">The user that we will be copying from, not all fields are copied.</param>
-		/// <param name="passwordContainer"></param>
+		/// <param name="user">The user that we will be copying from, not all fields are copied.</param>
+		/// <param name="loginDetails"></param>
 		/// <param name="isPasswordStrong"></param>
-		/// <param name="userName"></param>
+		/// <param name="username"></param>
 		/// <param name="isForCemt">When true newly inserted user.UserNumCEMT will be set to the user.UserNum</param>
 		/// <returns></returns>
-		public static Userod CopyUser(Userod userod,PasswordContainer passwordContainer,bool isPasswordStrong,string userName=null,bool isForCemt=false) {
-			if(!TryGetUniqueUsername(userName??(userod.UserName+"(Copy)"),0,false,isForCemt,out string uniqueUserName)) {
+		public static Userod CopyUser(Userod user,PasswordContainer loginDetails,bool isPasswordStrong,string username=null,bool isForCemt=false) {
+			if(!TryGetUniqueUsername(username??(user.UserName+"(Copy)"),0,false,isForCemt,out string uniqueUserName)) {
 					return null;
 			}
-			Userod userodCopy=new Userod();		
+			Userod copy=new Userod();		
 			//if function is ever called outside of the security form this ensures that we will know if a user is a copy of another user
-			userodCopy.UserName=uniqueUserName;
-			userodCopy.LoginDetails=passwordContainer;
-			userodCopy.PasswordIsStrong=isPasswordStrong;
-			userodCopy.ClinicIsRestricted=userod.ClinicIsRestricted;
-			userodCopy.ClinicNum=userod.ClinicNum;
+			copy.UserName=uniqueUserName;
+			copy.LoginDetails=loginDetails;
+			copy.PasswordIsStrong=isPasswordStrong;
+			copy.ClinicIsRestricted=user.ClinicIsRestricted;
+			copy.ClinicNum=user.ClinicNum;
 			//Insert also validates the user.
-			userodCopy.UserNum=Insert(userodCopy,UserGroups.GetForUser(userod.UserNum,isForCemt).Select(x => x.UserGroupNum).ToList(),isForCemt);
+			copy.UserNum=Insert(copy,UserGroups.GetForUser(user.UserNum,isForCemt).Select(x => x.UserGroupNum).ToList(),isForCemt);
 			#region UserClinics
-			List<UserClinic> listUserClinics=new List<UserClinic>(UserClinics.GetForUser(userod.UserNum));
-			listUserClinics.ForEach(x => x.UserNum=userodCopy.UserNum);
-			UserClinics.Sync(listUserClinics,userodCopy.UserNum);
+			List<UserClinic> listUserClinics=new List<UserClinic>(UserClinics.GetForUser(user.UserNum));
+			listUserClinics.ForEach(x => x.UserNum=copy.UserNum);
+			UserClinics.Sync(listUserClinics,copy.UserNum);
 			#endregion
 			#region Alerts
-			List<AlertSub> listAlertSubsUsers=AlertSubs.GetAllForUser(userod.UserNum);
-			listAlertSubsUsers.ForEach(x => x.UserNum=userodCopy.UserNum);
-			AlertSubs.Sync(listAlertSubsUsers,new List<AlertSub>());
+			List<AlertSub> listUserAlert=AlertSubs.GetAllForUser(user.UserNum);
+			listUserAlert.ForEach(x => x.UserNum=copy.UserNum);
+			AlertSubs.Sync(listUserAlert,new List<AlertSub>());
 			#endregion
-			return userodCopy;
+			return copy;
 		}
 
 		public static List<Userod> GetForGroup(long userGroupNum) {
@@ -991,20 +935,14 @@ namespace OpenDentBusiness {
 		public static long GetInbox(long userNum) {
 			//No need to check MiddleTierRole; no call to db.
 			Userod userod=GetFirstOrDefault(x => x.UserNum==userNum);
-			if (userod==null) {
-				return 0;
-			}
-			return userod.TaskListInBox;
+			return (userod==null ? 0 : userod.TaskListInBox);
 		}
 
 		///<summary>Returns 3, which is non-admin provider type, if no match found.</summary>
 		public static long GetAnesthProvType(long anesthProvType) {
 			//No need to check MiddleTierRole; no call to db.
 			Userod userod=GetFirstOrDefault(x => x.AnesthProvType==anesthProvType);
-			if (userod==null) {
-				return 3;
-			}
-			return userod.AnesthProvType;
+			return (userod==null ? 3 : userod.AnesthProvType);
 		}
 
 		public static List<Userod> GetUsersForJobs() {
@@ -1018,21 +956,21 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Returns empty string if password is strong enough.  Otherwise, returns explanation of why it's not strong enough.</summary>
-		public static string IsPasswordStrong(string password,bool requireStrong=false) {
+		public static string IsPasswordStrong(string pass,bool requireStrong=false) {
 			//No need to check MiddleTierRole; no call to db.
 			string strongPasswordMsg=" when the strong password feature is turned on";
 			if(requireStrong) {//Just used by the API, which always requires strong pw
 				strongPasswordMsg="";
 			}
-			if(password=="") {
+			if(pass=="") {
 				return Lans.g("FormUserPassword","Password may not be blank"+strongPasswordMsg+".");
 			}
-			if(password.Length<8) {
+			if(pass.Length<8) {
 				return Lans.g("FormUserPassword","Password must be at least eight characters long"+strongPasswordMsg+".");
 			}
 			bool containsCap=false;
-			for(int i=0;i<password.Length;i++) {
-				if(Char.IsUpper(password[i])) {
+			for(int i=0;i<pass.Length;i++) {
+				if(Char.IsUpper(pass[i])) {
 					containsCap=true;
 				}
 			}
@@ -1040,8 +978,8 @@ namespace OpenDentBusiness {
 				return Lans.g("FormUserPassword","Password must contain at least one capital letter"+strongPasswordMsg+".");
 			}
 			bool containsLower=false;
-			for(int i=0;i<password.Length;i++) {
-				if(Char.IsLower(password[i])) {
+			for(int i=0;i<pass.Length;i++) {
+				if(Char.IsLower(pass[i])) {
 					containsLower=true;
 				}
 			}
@@ -1050,8 +988,8 @@ namespace OpenDentBusiness {
 			}
 			if(PrefC.GetBool(PrefName.PasswordsStrongIncludeSpecial)) {
 				bool hasSpecial=false;
-				for(int i=0;i<password.Length;i++) {
-					if(!Char.IsLetterOrDigit(password[i])) {
+				for(int i=0;i<pass.Length;i++) {
+					if(!Char.IsLetterOrDigit(pass[i])) {
 						hasSpecial=true;
 						break;
 					}
@@ -1061,8 +999,8 @@ namespace OpenDentBusiness {
 				}
 			}
 			bool containsNum=false;
-			for(int i=0;i<password.Length;i++) {
-				if(Char.IsNumber(password[i])) {
+			for(int i=0;i<pass.Length;i++) {
+				if(Char.IsNumber(pass[i])) {
 					containsNum=true;
 				}
 			}
@@ -1085,8 +1023,8 @@ namespace OpenDentBusiness {
 		///<summary>Returns true if the passed-in user is apart of the passed-in usergroup.</summary>
 		public static bool IsInUserGroup(long userNum,long userGroupNum) {
 			//No need to check MiddleTierRole; no call to db.
-			List<UserGroupAttach> listUserGroupAttaches = UserGroupAttaches.GetForUser(userNum);
-			return listUserGroupAttaches.Select(x => x.UserGroupNum).Contains(userGroupNum);
+			List<UserGroupAttach> listAttaches = UserGroupAttaches.GetForUser(userNum);
+			return listAttaches.Select(x => x.UserGroupNum).Contains(userGroupNum);
 		}
 	}
 }

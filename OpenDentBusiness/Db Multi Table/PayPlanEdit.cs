@@ -493,40 +493,22 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		///<summary>Returns the amount of the close out charge for patient payment plans being closed.</summary>
-		public static PayPlanCharge CalculatePatPayPlanCloseoutCharge(List<PayPlanCharge> listPayPlanCharges,List<Procedure> listProceduresCredited,PayPlan payPlan,DateTime dateToday) {
-			List<long> listProcNumsTreatmentPlanned=listProceduresCredited
-				.Where(x => x.ProcStatus!=ProcStat.C)
-				.Select(x => x.ProcNum)
-				.ToList();
-			double totalPrincipal=listPayPlanCharges.Where(x => x.ChargeType==PayPlanChargeType.Debit).Sum(x => x.Principal);
-			double treatmentPlannedProcedureCredits=listPayPlanCharges
-				.Where(x => listProcNumsTreatmentPlanned.Contains(x.ProcNum))
+		///<summary>Returns a PayPlanCharge debit whose principal is the sum of all future debits.</summary>
+		public static PayPlanCharge CloseOutPatPayPlan(List<PayPlanCharge> listPayPlanCharges,PayPlan payPlan,DateTime dateToday) {
+			//Sum up the total amount of principal associated with future debits.
+			double amountPrincipal=listPayPlanCharges.Where(x => x.ChargeType==PayPlanChargeType.Debit && x.ChargeDate > dateToday)
 				.Sum(x => x.Principal);
-			//We can't just use credits for completed procedures here because credits don't have to be attached to anything.
-			double otherCredits=Math.Max(0,listPayPlanCharges
-				.Where(x => !listProcNumsTreatmentPlanned.Contains(x.ProcNum) && x.ChargeType==PayPlanChargeType.Credit)
-				.Sum(x => x.Principal));
-			double futureChargesPrincipal=listPayPlanCharges
-				.Where(x => x.ChargeType==PayPlanChargeType.Debit && x.ChargeDate > dateToday)
-				.Sum(x => x.Principal);
-			//Treatment planned procedure credits will be removed upon closing. We want to subtract them from the close out charge,
-			//but we don't want to force the total of all charges to be less than the total of other credits.
-			double amountToSubtract=Math.Min(treatmentPlannedProcedureCredits,totalPrincipal - otherCredits);
-			//amountToSubtract could only be negative if we have a negative credit for a TP'd procedure or more other credits than principal.
-			//Both scenarios might be possible but aren't practical, so let's avoid them.
-			amountToSubtract=Math.Max(0,amountToSubtract);
-			double closeoutChargeAmount = futureChargesPrincipal - amountToSubtract;
-			return new PayPlanCharge() {
+			PayPlanCharge closeoutCharge=new PayPlanCharge() {
 				PayPlanNum=payPlan.PayPlanNum,
 				Guarantor=payPlan.PatNum, //the closeout charge should always appear on the patient of the payment plan.
 				PatNum=payPlan.PatNum,
 				ChargeDate=dateToday,
 				Interest=0,
-				Principal=closeoutChargeAmount,
+				Principal=amountPrincipal,
 				Note=Lans.g("FormPayPlan","Close Out Charge"),
 				ChargeType=PayPlanChargeType.Debit,
 			};
+			return closeoutCharge;
 		}
 
 		public static void CreateScheduleCharges(PayPlanTerms terms,PayPlan payPlan,Family fam,long provNum,long clinicNum,
@@ -1108,14 +1090,16 @@ namespace OpenDentBusiness {
 					dateFirstCharge=dateFirstCharge.AddDays(7);
 					period++;
 				}
+				return period;
 			}
-			else if(frequency==PayPlanFrequency.EveryOtherWeek) {
+			if(frequency==PayPlanFrequency.EveryOtherWeek) {
 				while(DateTime_.Today>dateFirstCharge) {
 					dateFirstCharge=dateFirstCharge.AddDays(14);
 					period++;
 				}
+				return period;
 			}
-			else if(frequency==PayPlanFrequency.OrdinalWeekday) {
+			if(frequency==PayPlanFrequency.OrdinalWeekday) {
 				while(DateTime_.Today>dateFirstCharge) {
 					DateTime roughMonth=dateFirstCharge.AddMonths(1);
 					DayOfWeek dayOfWeekFirstDate=dateFirstCharge.DayOfWeek;
@@ -1133,18 +1117,21 @@ namespace OpenDentBusiness {
 					dateFirstCharge=dateFirstCharge.AddDays(7*(ordinalOfMonth-1));
 					period++;
 				}
+				return period;
 			}
-			else if(frequency==PayPlanFrequency.Monthly) {
+			if(frequency==PayPlanFrequency.Monthly) {
 				while(DateTime_.Today>dateFirstCharge) {
 					dateFirstCharge=dateFirstCharge.AddMonths(1);
 					period++;
 				}
+				return period;
 			}
-			else if(frequency==PayPlanFrequency.Quarterly) {
+			if(frequency==PayPlanFrequency.Quarterly) {
 				while(DateTime_.Today>dateFirstCharge) {
 					dateFirstCharge=dateFirstCharge.AddMonths(3);
 					period++;
 				}
+				return period;
 			}
 			return period;
 		}
@@ -1188,7 +1175,7 @@ namespace OpenDentBusiness {
 				foreach(long patNum in listPatNums) {
 					dictFamilies[patNum]=listFamilies.First(x => x.ListPats.Any(y => y.PatNum==patNum));
 				}
-				log.WriteLine($"Payment plans found: {listDynamicPayPlans.Count}",LogLevel.Verbose);
+				log.WriteLine($"Dynamic payment plans found: {listDynamicPayPlans.Count}",LogLevel.Verbose);
 				//Create any necessary pay plan charges for dynamic payment plans.
 				foreach(PayPlan payplan in listDynamicPayPlans) {
 					if(!dictPayPlanCharges.TryGetValue(payplan.PayPlanNum,out List<PayPlanCharge> listPayPlanChargesInDb)) {
@@ -1261,7 +1248,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Run by OpenDentalService.PaymentThread. Takes any hiddenUnearnedTotal from hidden unearned, and applies it to listPayPlanChargesExpected.</summary>
 		public static void ApplyPrepaymentToDynamicPaymentPlan(long patNum,double hiddenUnearnedTotal,List<PayPlanCharge> listPayPlanChargesExpected,long payPlanNum=0) {
-			if(listPayPlanChargesExpected.IsNullOrEmpty() && CompareDouble.IsZero(hiddenUnearnedTotal)) {
+			if(listPayPlanChargesExpected.IsNullOrEmpty()) {
 				return;
 			}
 			List<PaySplit> listTransferSplits=new List<PaySplit>();
@@ -1291,20 +1278,18 @@ namespace OpenDentBusiness {
 				}
 			}
 			if(!CompareDouble.IsZero(listTransferSplits.Sum(x=>x.SplitAmt))) {
-				throw new ApplicationException("Applying prepayments to payment plan tried to create a non-zero amount income transfer.");
+				throw new ApplicationException("Applying prepayments to dynamic payment plan tried to create a non-zero amount income transfer.");
 			}
 			transferPayment.PayAmt=0;//Income transfers are always $0.
 			transferPayment.PayNum=Payments.Insert(transferPayment,listTransferSplits);
-			string logText=Payments.GetSecuritylogEntryText(transferPayment,transferPayment,isNew:true)+", "+Lans.g("PayPlanEdit","from the payment plan prepayment processing service.");
-			if(transferPayment.PayNum>0) {
-				SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,transferPayment.PatNum,logText);
-			}
+			string logText=Payments.GetSecuritylogEntryText(transferPayment,transferPayment,isNew:true)+", "+Lans.g("PayPlanEdit","from the dynamic payment plan prepayment processing service.");
+			SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,transferPayment.PatNum,logText);
 			if(CompareDouble.IsGreaterThan(hiddenUnearnedTotal,0) && payPlanNum!=0) {
 				PaymentEdit.IncomeTransferData notUsed=new PaymentEdit.IncomeTransferData();
 				listTransferSplits=new List<PaySplit>();
 				listTransferSplits.AddRange(PaymentEdit.CreateUnearnedTransfer((decimal)hiddenUnearnedTotal,patNum,0,0,ref notUsed,unearnedType:PrepayUnearnedType,payPlanNum:payPlanNum,isMovingFromHiddenUnearnedToUnearned:true));
 				transferPayment.PayNum=Payments.Insert(transferPayment,listTransferSplits);
-				SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,transferPayment.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,transferPayment.PatNum,logText);
 			}
 		}
 
@@ -1489,7 +1474,9 @@ namespace OpenDentBusiness {
 			//Apply overpayments to principal
 			List<PayPlanChargeSplits> listPrincipalChargeSplits=new List<PayPlanChargeSplits>();
 			if(isPayOnPrincipal) {
-				listPrincipalChargeSplits=CreatePrincipalChargeSplitsForAmount(recalcData.GetOverpaidAmount(),DateTime.Today,prepayUnearnedType,ref recalcData.ListProductionEntry,payPlan);
+				//All new principal charges suggested will be for the same date as the most recent charge (for DPP reasons). Do not use today's date.
+				DateTime chargeDateMostRecent=recalcData.ListPayPlanCharges.Max(x => x.ChargeDate);
+				listPrincipalChargeSplits=CreatePrincipalChargeSplitsForAmount(recalcData.GetOverpaidAmount(),chargeDateMostRecent,prepayUnearnedType,ref recalcData.ListProductionEntry,payPlan);
 				listPayPlanChargeSplits.AddRange(listPrincipalChargeSplits);
 			}
 			#endregion
@@ -1516,7 +1503,7 @@ namespace OpenDentBusiness {
 			//Create Transfer Payments
 			if(listPaySplitsToInsert.Count>0) {
 				if(!CompareDouble.IsZero(listPaySplitsToInsert.Sum(x=>x.SplitAmt))) {
-					throw new ApplicationException("Balancing overpaid interest for payment plan tried to create a non-zero amount income transfer.");
+					throw new ApplicationException("Balancing overpaid interest for dynamic payment plan tried to create a non-zero amount income transfer.");
 				}
 				Payment transferPayment=new Payment();
 				transferPayment.DateEntry=DateTime_.Today;
@@ -1538,8 +1525,8 @@ namespace OpenDentBusiness {
 					}
 				}
 				Payments.Insert(transferPayment,listPaySplitsToInsert);
-				string logText=Payments.GetSecuritylogEntryText(transferPayment,transferPayment,isNew:true)+", "+Lans.g("PayPlanEdit","from Payment Plan Balancer.");
-				SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,transferPayment.PatNum,logText);
+				string logText=Payments.GetSecuritylogEntryText(transferPayment,transferPayment,isNew:true)+", "+Lans.g("PayPlanEdit","from Dynamic Payment Plan Balancer.");
+				SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,transferPayment.PatNum,logText);
 			}
 			#endregion
 		}
@@ -1683,6 +1670,7 @@ namespace OpenDentBusiness {
 			if(listSplitsCur.All(x => x.PayPlanNum==0)) {
 				return listRecalcData;
 			}
+			Family family=Patients.GetFamily(pat.PatNum);
 			List<long> listPayPlanNums=listSplitsCur.Where(x=>x.PayPlanNum!=0).Select(x=>x.PayPlanNum).Distinct().ToList();
 			List<PayPlan> listPayPlans=PayPlans.GetMany(listPayPlanNums.ToArray());
 			List<PayPlanCharge> listPayPlanCharges=PayPlanCharges.GetForPayPlans(listPayPlanNums);
@@ -1691,7 +1679,6 @@ namespace OpenDentBusiness {
 			List<PayPlanProductionEntry> listPayPlanProductionEntries=PayPlanProductionEntry.GetWithAmountRemaining(listPayPlanLinks,listPayPlanCharges);
 			for(int i = 0;i<listPayPlans.Count;i++) {
 				PayPlan payPlan=listPayPlans[i];
-				Family family=Patients.GetFamily(payPlan.PatNum);
 				List<PayPlanLink> listPayPlanLinksForPlan=listPayPlanLinks.FindAll(x=>x.PayPlanNum==payPlan.PayPlanNum);
 				PayPlanTerms terms=GetPayPlanTerms(payPlan,listPayPlanLinksForPlan);
 				List<PayPlanCharge> listPayPlanChargesForPlan=listPayPlanCharges.FindAll(x=>x.PayPlanNum==payPlan.PayPlanNum);
@@ -1927,6 +1914,9 @@ namespace OpenDentBusiness {
 			if(payPlanTerms.DateAgreement > DateTime_.Today.Date && !PrefC.GetBool(PrefName.FutureTransDatesAllowed)){
 				sb.AppendLine(Lans.g("FormPayPlanDynamic","Payment plan date cannot be set for the future."));
 			}
+			if(payPlanTerms.DateFirstPayment.Date < DateTime_.Today && isNew){
+				sb.AppendLine(Lans.g("FormPayPlanDynamic","Please enter a date on or after today for the date of the first payment."));
+			}
 			if(linkedProdCount!=0 && payPlanTerms.PayCount==0 && payPlanTerms.PeriodPayment==0){
 				sb.AppendLine(Lans.g("FormPayPlanDynamic","Payment cannot be 0."));
 			}
@@ -1939,8 +1929,8 @@ namespace OpenDentBusiness {
 			if(payPlanTerms.PrincipalAmount-payPlanTerms.DownPayment < 0) {
 				sb.AppendLine(Lans.g("FormPayPlanDynamic","Down payment must be less than or equal to total amount."));
 			}
-			if(doCheckApr && !CompareDouble.IsZero(payPlanTerms.APR) && PrefC.GetBool(PrefName.PayPlanRequireLockForAPR) && !isLocked){
-				sb.AppendLine(Lans.g("FormPayPlanDynamic","Payment plans with APR must be locked. Remove the APR or check the box for FullLock."));
+			if(doCheckApr && !CompareDouble.IsZero(payPlanTerms.APR) && !isLocked){
+				sb.AppendLine(Lans.g("FormPayPlanDynamic","Payment plans with APR must be locked. Remove the APR or check the box for Full Lock."));
 			}
 			return sb.ToString();
 		}
@@ -1984,9 +1974,9 @@ namespace OpenDentBusiness {
 			if(payPlan.IsNew) {
 				listPayPlanChargesDownPayment=GetDownPaymentCharges(payPlan,payPlanTerms,listPayPlanLink);
 			}
-			if(payPlan.IsNew && payPlanTerms.DateFirstPayment.Date<=DateTime_.Today) {
-				//immediately call the code to run the "service" on this payment plan in case they created a plan who's first charge is today or in the past. 
-				List<PayPlanCharge> listPayPlanCharges=GetListExpectedCharges(listPayPlanChargesDB,payPlanTerms,family,listPayPlanLink,payPlan,false
+			if(payPlan.IsNew && payPlanTerms.DateFirstPayment.Date==DateTime_.Today) {
+				//immediately call the code to run the "service" on this payment plan in case they created a plan who's first charge is today. 
+				List<PayPlanCharge> listPayPlanCharges=GetListExpectedCharges(listPayPlanChargesDB,payPlanTerms,family,listPayPlanLink,payPlan,true
 					,listPaySplits:dynamicPaymentPlanModuleData.ListPaySplits,listExpectedChargesDownPayment:listPayPlanChargesDownPayment)
 					.FindAll(x => x.ChargeDate <= DateTime_.Today);
 				if(listPayPlanCharges.Count > 0) {
@@ -2132,9 +2122,8 @@ namespace OpenDentBusiness {
 			Patient patient=dynamicPaymentPlanModuleData.Patient;
 			Family family=dynamicPaymentPlanModuleData.Family;
 			//Gather account information as if an income transfer is about to be made so that explicit linking is the only type of linking performed.
-			//Unattached positive adjustments can be associated with dynamic payment plans so turn off the offsetting adjustments logic so their values are not manipulated.
-			PaymentEdit.ConstructResults constructResults=PaymentEdit.ConstructAndLinkChargeCredits(patient.PatNum,listPatNums:family.GetPatNums(),
-				isIncomeTxfr:true,doIncludeTreatmentPlanned:true,hasOffsettingAdjustmets:false);
+			PaymentEdit.ConstructResults constructResults=PaymentEdit.ConstructAndLinkChargeCredits(family.GetPatNums(),patient.PatNum,
+				new List<PaySplit>(),new Payment(),new List<AccountEntry>(),isIncomeTxfr:true,doIncludeTreatmentPlanned:true);
 			List<Type> listTypesProd=new List<Type>() { typeof(Adjustment),typeof(Procedure) };
 			#region Invalid Procedures
 			List<AccountEntry> listAccountEntriesAll=constructResults.ListAccountEntries;

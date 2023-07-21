@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormImageCatMerge));
 			this.butMerge = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupBoxInto = new OpenDental.UI.GroupBox();
 			this.buttonChangeInto = new OpenDental.UI.Button();
 			this.textBoxInto = new System.Windows.Forms.TextBox();
@@ -41,12 +42,23 @@ namespace OpenDental{
 			// 
 			this.butMerge.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butMerge.Enabled = false;
-			this.butMerge.Location = new System.Drawing.Point(515,213);
+			this.butMerge.Location = new System.Drawing.Point(441, 211);
 			this.butMerge.Name = "butMerge";
 			this.butMerge.Size = new System.Drawing.Size(75, 24);
 			this.butMerge.TabIndex = 3;
-			this.butMerge.Text = "&Merge";
+			this.butMerge.Text = "Merge";
 			this.butMerge.Click += new System.EventHandler(this.butMerge_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(525, 211);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// groupBoxInto
 			// 
@@ -130,11 +142,13 @@ namespace OpenDental{
 			// 
 			// FormImageCatMerge
 			// 
-			this.ClientSize = new System.Drawing.Size(600, 249);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.CancelButton = this.butClose;
+			this.ClientSize = new System.Drawing.Size(629, 249);
 			this.Controls.Add(this.groupBoxFrom);
 			this.Controls.Add(this.groupBoxInto);
 			this.Controls.Add(this.butMerge);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormImageCatMerge";
 			this.Text = "Merge Image Categories";
@@ -149,6 +163,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butMerge;
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GroupBox groupBoxInto;
 		private UI.Button buttonChangeInto;
 		private System.Windows.Forms.TextBox textBoxInto;

@@ -10,7 +10,7 @@ using OpenDentBusiness;
 using CodeBase;
 
 namespace OpenDental.UI {
-	///<summary>Wraps the Topaz SigPlusNET control and the alternate SignatureBox control.  Also includes both needed buttons.  Should vastly simplify using signature boxes throughout the program. In WPF, this WinForms control is also used by wrapping it with a WindowsFormsHost container because Topaz does not have a WPF version, and wrapping is what they recommend.</summary>
+	///<summary>Wraps the Topaz SigPlusNET control and the alternate SignatureBox control.  Also includes both needed buttons.  Should vastly simplify using signature boxes throughout the program.</summary>
 	public partial class SignatureBoxWrapper:UserControl {
 		///<summary>Default 1. Typical value 1.5</summary>
 		private float _scaleMS = 1;
@@ -45,6 +45,35 @@ namespace OpenDental.UI {
 			}
 		}
 
+		/*
+		///<summary>A new Width property with local scope to SignatureBoxWrapper.  
+		///Sets the width of this control as well as the width of the topaz signature control.
+		///This is necessary because resizing the SigBoxWrapper will cause the sigBox control (via anchors) to resize.
+		///sigBoxTopaz does not have high dpi support, so it must remain a fixed size.</summary>
+		public new int Width {
+			get {
+				return base.Width;
+			}
+			set {
+				base.Width=value;
+				sigBoxTopaz.Width=362;
+			}
+		}
+
+		///<summary>A new Height property with local scope to SignatureBoxWrapper.  
+		///Set the height of this control as well as the width of the topaz signature control.
+		///This is necessary because resizing the SigBoxWrapper will cause the sigBox control (via anchors) to resize.
+		///sigBoxTopaz does not have high dpi support, so it must remain a fixed size.</summary>
+		public new int Height {
+			get {
+				return base.Height;
+			}
+			set {
+				base.Height=value;
+				sigBoxTopaz.Height=79;
+			}
+		}*/
+
 		protected override void OnLayout(LayoutEventArgs e){
 			base.OnLayout(e);
 			butESign.Size=new Size(ScaleI(20),ScaleI(20));
@@ -55,11 +84,8 @@ namespace OpenDental.UI {
 			signatureBox.Width=Width-2;
 			signatureBox.Height=Height-2;
 			if(sigBoxTopaz!=null){
-				//sigBoxTopaz just shows an image that user signed on the hardware. There is no pen input.
-				//In testing, the image just scales to fit the size of the control.
-				//Copy the size and location that were just set above for our sigbox.
-				sigBoxTopaz.Location=signatureBox.Location;
-				sigBoxTopaz.Size=signatureBox.Size;//sigBoxTopaz needs to be the same as or smaller than its container so the signature is not cut off.
+				sigBoxTopaz.Location=new Point(1,1);
+				sigBoxTopaz.Size=new Size(362,79);//because it has no high dpi support.  No big deal if it's a little small.
 			}
 		}
 
@@ -103,7 +129,7 @@ namespace OpenDental.UI {
 			sigBoxTopaz=TopazWrapper.GetTopaz();
 			sigBoxTopaz.Location=signatureBox.Location;//this puts both boxes in the same spot.
 			sigBoxTopaz.Name="sigBoxTopaz";
-			sigBoxTopaz.Size=signatureBox.Size;//See comments in OnLayout() above.
+			sigBoxTopaz.Size=new Size(362,79);
 			signatureBox.Anchor=(AnchorStyles)(AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
 			sigBoxTopaz.TabIndex=92;
 			sigBoxTopaz.Text="sigPlusNET1";
@@ -225,14 +251,6 @@ namespace OpenDental.UI {
 			if(TopazWrapper.GetTopazNumberOfTabletPoints(sigBoxTopaz)==0) {
 				//Try reading in the signature using the old way that we used to handle signatures.
 				FillSignatureTopazOld(keyData,signature);
-			}
-			if(TopazWrapper.GetTopazNumberOfTabletPoints(sigBoxTopaz)==0) {
-				//Try reading in the signature using the ANSI paradigm.
-				TopazWrapper.FillSignatureANSI(sigBoxTopaz,keyData,signature,_signatureMode);
-			}
-			if(TopazWrapper.GetTopazNumberOfTabletPoints(sigBoxTopaz)==0) {
-				//Try reading in the signature using different encodings for keyData.
-				TopazWrapper.FillSignatureEncodings(sigBoxTopaz,keyData,signature,_signatureMode);
 			}
 			//If sig still not showing it must be invalid.
 			if(TopazWrapper.GetTopazNumberOfTabletPoints(sigBoxTopaz)==0) {

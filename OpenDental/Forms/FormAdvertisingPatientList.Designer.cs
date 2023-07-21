@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAdvertisingPatientList));
+			this.butCancel = new OpenDental.UI.Button();
 			this.comboClinics = new OpenDental.UI.ComboBoxClinicPicker();
 			this.checkUserQuery = new OpenDental.UI.CheckBox();
 			this.butRefreshPatientFilters = new OpenDental.UI.Button();
@@ -50,7 +51,7 @@ namespace OpenDental{
 			this.panelUserQuery = new OpenDental.UI.PanelOD();
 			this.butFavorite = new OpenDental.UI.Button();
 			this.labelUserQuery = new System.Windows.Forms.Label();
-			this.textUserQuery = new System.Windows.Forms.TextBox();
+			this.textUserQuery = new OpenDental.ODtextBox();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butClearAll = new OpenDental.UI.Button();
 			this.butClearSelected = new OpenDental.UI.Button();
@@ -62,6 +63,17 @@ namespace OpenDental{
 			this.groupBox1.SuspendLayout();
 			this.panelUserQuery.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(1152, 676);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// comboClinics
 			// 
@@ -169,7 +181,6 @@ namespace OpenDental{
 			// datePickerPatientsSeenSince
 			// 
 			this.datePickerPatientsSeenSince.BackColor = System.Drawing.Color.Transparent;
-			this.datePickerPatientsSeenSince.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.datePickerPatientsSeenSince.Location = new System.Drawing.Point(140, 55);
 			this.datePickerPatientsSeenSince.MaximumSize = new System.Drawing.Size(0, 184);
 			this.datePickerPatientsSeenSince.MinimumSize = new System.Drawing.Size(227, 23);
@@ -180,7 +191,6 @@ namespace OpenDental{
 			// datePickerPatientsNotSeenSince
 			// 
 			this.datePickerPatientsNotSeenSince.BackColor = System.Drawing.Color.Transparent;
-			this.datePickerPatientsNotSeenSince.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.datePickerPatientsNotSeenSince.Location = new System.Drawing.Point(140, 31);
 			this.datePickerPatientsNotSeenSince.MaximumSize = new System.Drawing.Size(0, 184);
 			this.datePickerPatientsNotSeenSince.MinimumSize = new System.Drawing.Size(227, 23);
@@ -323,16 +333,20 @@ namespace OpenDental{
 			// 
 			// textUserQuery
 			// 
+			this.textUserQuery.AcceptsTab = true;
 			this.textUserQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.textUserQuery.BackColor = System.Drawing.SystemColors.Window;
+			this.textUserQuery.DetectLinksEnabled = false;
+			this.textUserQuery.DetectUrls = false;
 			this.textUserQuery.Location = new System.Drawing.Point(0, 31);
-			this.textUserQuery.Multiline = true;
 			this.textUserQuery.Name = "textUserQuery";
-			this.textUserQuery.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.textUserQuery.QuickPasteType = OpenDentBusiness.QuickPasteType.ReadOnly;
+			this.textUserQuery.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textUserQuery.Size = new System.Drawing.Size(498, 187);
 			this.textUserQuery.TabIndex = 224;
+			this.textUserQuery.Text = "";
 			// 
 			// gridMain
 			// 
@@ -398,15 +412,16 @@ namespace OpenDental{
 			// butCommitList
 			// 
 			this.butCommitList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCommitList.Location = new System.Drawing.Point(1152, 676);
+			this.butCommitList.Location = new System.Drawing.Point(1072, 676);
 			this.butCommitList.Name = "butCommitList";
 			this.butCommitList.Size = new System.Drawing.Size(75, 24);
 			this.butCommitList.TabIndex = 247;
 			this.butCommitList.Text = "&OK";
-			this.butCommitList.Click += new System.EventHandler(this.butOK_Click);
+			this.butCommitList.Click += new System.EventHandler(this.butCommitList_Click);
 			// 
 			// FormAdvertisingPatientList
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(1230, 707);
 			this.Controls.Add(this.butRefreshPatientFilters);
 			this.Controls.Add(this.butCommitList);
@@ -418,6 +433,7 @@ namespace OpenDental{
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.labelNumberPatientsSelected);
 			this.Controls.Add(this.labelPatsSelected);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.panelFilterControls);
 			this.Controls.Add(this.panelUserQuery);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -429,12 +445,12 @@ namespace OpenDental{
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
 			this.panelUserQuery.ResumeLayout(false);
-			this.panelUserQuery.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
+		private OpenDental.UI.Button butCancel;
 		private UI.ComboBoxClinicPicker comboClinics;
 		private OpenDental.UI.CheckBox checkUserQuery;
 		private UI.Button butRefreshPatientFilters;
@@ -459,7 +475,7 @@ namespace OpenDental{
 		private UI.ODDatePicker datePickerPatientsSeenSince;
 		private UI.PanelOD panelUserQuery;
 		private System.Windows.Forms.Label labelUserQuery;
-		private System.Windows.Forms.TextBox textUserQuery;
+		private ODtextBox textUserQuery;
 		private UI.GridOD gridMain;
 		private UI.Button butClearAll;
 		private UI.Button butClearSelected;

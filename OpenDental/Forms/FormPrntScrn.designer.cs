@@ -29,6 +29,7 @@ namespace OpenDental {
 			this.label1 = new System.Windows.Forms.Label();
 			this.printPreviewControl2 = new System.Windows.Forms.PrintPreviewControl();
 			this.pd2 = new System.Drawing.Printing.PrintDocument();
+			this.butCancel = new OpenDental.UI.Button();			
 			this.textMouseX = new System.Windows.Forms.TextBox();
 			this.textMouseY = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
@@ -65,6 +66,17 @@ namespace OpenDental {
 			// pd2
 			// 
 			this.pd2.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.pd2_PrintPage);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(884,759);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75,26);
+			this.butCancel.TabIndex = 4;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// textMouseX
 			// 
@@ -157,8 +169,10 @@ namespace OpenDental {
 			// FormPrntScrn
 			// 
 			this.AcceptButton = this.butPrint;
-			this.ClientSize = new System.Drawing.Size(976, 792);
 			this.AutoScaleBaseSize = new System.Drawing.Size(5,13);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(976,792);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butExport);
 			this.Controls.Add(this.butZoomOut);
 			this.Controls.Add(this.butZoomIn);
@@ -167,6 +181,7 @@ namespace OpenDental {
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.textMouseY);
 			this.Controls.Add(this.textMouseX);
+
 			this.Controls.Add(this.printPreviewControl2);
 			this.Controls.Add(this.label1);
 			this.Cursor = System.Windows.Forms.Cursors.Default;
@@ -187,6 +202,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label1;
 		private System.Drawing.Printing.PrintDocument pd2;
 		private System.Windows.Forms.PrintPreviewControl printPreviewControl2;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.TextBox textMouseX;
 		private System.Windows.Forms.TextBox textMouseY;
 		private System.Windows.Forms.Label label2;

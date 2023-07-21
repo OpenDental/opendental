@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Text;
-using OpenDentBusiness;
-using OpenDentBusiness.WebTypes.WebForms;
 
 namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 	public class WebForms_PreferenceCrud {
@@ -55,7 +53,6 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 			table.Columns.Add("DisableSignatures");
 			table.Columns.Add("RegistrationKeyNum");
 			table.Columns.Add("DentalOfficeID");
-			table.Columns.Add("IsLogging");
 			foreach(WebForms_Preference webForms_Preference in listWebForms_Preferences) {
 				table.Rows.Add(new object[] {
 					POut.Long  (webForms_Preference.WebFormPrefNum),
@@ -64,7 +61,6 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 					POut.Bool  (webForms_Preference.DisableSignatures),
 					POut.Long  (webForms_Preference.RegistrationKeyNum),
 					POut.Long  (webForms_Preference.DentalOfficeID),
-					POut.Bool  (webForms_Preference.IsLogging),
 				});
 			}
 			return table;
@@ -82,7 +78,6 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 				webForms_Preference.DisableSignatures = PIn.Bool  (table.Rows[i]["DisableSignatures"].ToString());
 				webForms_Preference.RegistrationKeyNum= PIn.Long  (table.Rows[i]["RegistrationKeyNum"].ToString());
 				webForms_Preference.DentalOfficeID    = PIn.Long  (table.Rows[i]["DentalOfficeID"].ToString());
-				webForms_Preference.IsLogging         = PIn.Bool  (table.Rows[i]["IsLogging"].ToString());
 				retVal.Add(webForms_Preference);
 			}
 			return retVal;
@@ -99,7 +94,7 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 			if(useExistingPK) {
 				command+="WebFormPrefNum,";
 			}
-			command+="ColorBorder,CultureName,DisableSignatures,RegistrationKeyNum,DentalOfficeID,IsLogging) VALUES(";
+			command+="ColorBorder,CultureName,DisableSignatures,RegistrationKeyNum,DentalOfficeID) VALUES(";
 			if(useExistingPK) {
 				command+=POut.Long(webForms_Preference.WebFormPrefNum)+",";
 			}
@@ -108,8 +103,7 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 				+"'"+POut.String(webForms_Preference.CultureName)+"',"
 				+    POut.Bool  (webForms_Preference.DisableSignatures)+","
 				+    POut.Long  (webForms_Preference.RegistrationKeyNum)+","
-				+    POut.Long  (webForms_Preference.DentalOfficeID)+","
-				+    POut.Bool  (webForms_Preference.IsLogging)+")";
+				+    POut.Long  (webForms_Preference.DentalOfficeID)+")";
 			if(useExistingPK) {
 				DataCore.NonQ(command);
 			}
@@ -139,7 +133,7 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 					if(useExistingPK) {
 						sbCommands.Append("WebFormPrefNum,");
 					}
-					sbCommands.Append("ColorBorder,CultureName,DisableSignatures,RegistrationKeyNum,DentalOfficeID,IsLogging) VALUES ");
+					sbCommands.Append("ColorBorder,CultureName,DisableSignatures,RegistrationKeyNum,DentalOfficeID) VALUES ");
 					countRows=0;
 				}
 				else {
@@ -152,8 +146,7 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 				sbRow.Append("'"+POut.String(webForms_Preference.CultureName)+"'"); sbRow.Append(",");
 				sbRow.Append(POut.Bool(webForms_Preference.DisableSignatures)); sbRow.Append(",");
 				sbRow.Append(POut.Long(webForms_Preference.RegistrationKeyNum)); sbRow.Append(",");
-				sbRow.Append(POut.Long(webForms_Preference.DentalOfficeID)); sbRow.Append(",");
-				sbRow.Append(POut.Bool(webForms_Preference.IsLogging)); sbRow.Append(")");
+				sbRow.Append(POut.Long(webForms_Preference.DentalOfficeID)); sbRow.Append(")");
 				if(sbCommands.Length+sbRow.Length+1 > TableBase.MaxAllowedPacketCount && countRows > 0) {
 					DataCore.NonQ(sbCommands.ToString());
 					sbCommands=null;
@@ -179,8 +172,7 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 				+"CultureName       = '"+POut.String(webForms_Preference.CultureName)+"', "
 				+"DisableSignatures =  "+POut.Bool  (webForms_Preference.DisableSignatures)+", "
 				+"RegistrationKeyNum=  "+POut.Long  (webForms_Preference.RegistrationKeyNum)+", "
-				+"DentalOfficeID    =  "+POut.Long  (webForms_Preference.DentalOfficeID)+", "
-				+"IsLogging         =  "+POut.Bool  (webForms_Preference.IsLogging)+" "
+				+"DentalOfficeID    =  "+POut.Long  (webForms_Preference.DentalOfficeID)+" "
 				+"WHERE WebFormPrefNum = "+POut.Long(webForms_Preference.WebFormPrefNum);
 			DataCore.NonQ(command);
 		}
@@ -207,10 +199,6 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 			if(webForms_Preference.DentalOfficeID != oldWebForms_Preference.DentalOfficeID) {
 				if(command!="") { command+=",";}
 				command+="DentalOfficeID = "+POut.Long(webForms_Preference.DentalOfficeID)+"";
-			}
-			if(webForms_Preference.IsLogging != oldWebForms_Preference.IsLogging) {
-				if(command!="") { command+=",";}
-				command+="IsLogging = "+POut.Bool(webForms_Preference.IsLogging)+"";
 			}
 			if(command=="") {
 				return false;

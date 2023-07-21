@@ -39,8 +39,8 @@ namespace OpenDentBusiness{
 			return _siteCache.GetDeepCopy(isShort);
 		}
 
-		public static List<Site> GetWhere(Predicate<Site> match,bool isShort=false) {
-			return _siteCache.GetWhere(match,isShort);
+		public static List<Site> GetWhere(Predicate<Site> math,bool isShort=false) {
+			return _siteCache.GetWhere(math,isShort);
 		}
 
 		public static Site GetFirst(bool isShort=false) {
@@ -151,10 +151,7 @@ namespace OpenDentBusiness{
 				return 0;//Preserving old behavior...
 			}
 			Site site=GetFirstOrDefault(x => x.Description.ToLower()==description.ToLower());
-			if(site==null) {
-				return -1;
-			}
-			return site.SiteNum;
+			return (site==null ? -1 : site.SiteNum);
 		}
 	}
 }

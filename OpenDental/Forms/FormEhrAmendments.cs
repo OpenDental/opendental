@@ -78,5 +78,8 @@ namespace OpenDental {
 			FillGrid();//Always have to refresh grid due to using the images module to update the db.
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

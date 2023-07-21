@@ -60,14 +60,10 @@ namespace CodeBase {
 		}
 
 		#region Parseable Logging
-		///<summary>Uses reflection to figure out the calling method and makes a time stamped verbose log if verbose logging is turned on.
-		///The log parameter is typically a short identifier for the action being logged.
-		///LogPath determines the directory to log to and LogPhase determines whether the logger is a "Start" line or a "Stop" line.
-		///The optionalDesc string is for any additional information the implementer finds useful to be in the log string. </summary>
+		///<summary>This method takes a string that should be some kind of an identifier (usually method name) for the method that is being logged. 
+		///The optional string is for any additional information the implementer finds useful to be in the log string. 
+		///LogPath determines the directory to log to and LogPhase determines whether the logger is a "Start" line or a "Stop" line.</summary>
 		public static void LogToPath(string log,LogPath path,LogPhase logPhase,string optionalDesc="") {
-			if(DoVerboseLogging==null || !DoVerboseLogging()) {
-				return;
-			}
 			string logWrite=GetCallingMethod()+" "+log;
 			switch(logPhase) {
 				case LogPhase.Unspecified:
@@ -130,7 +126,7 @@ namespace CodeBase {
 		///<summary>If HasVerboseLogging(Environment.MachineName) then Logger.WriteLine(log). Otherwise do nothing.</summary>
 		public static void LogVerbose(string log,string subDirectory = "") {
 			if(DoVerboseLogging==null || !DoVerboseLogging()) {
-				return;
+					return;
 			}
 			Logger.WriteLine(log,subDirectory,daysOld:30);
 		}
@@ -193,23 +189,8 @@ namespace CodeBase {
 			WriteLine(line,subDirectory,false,true,daysOld);
 		}
 
-		public static bool HasRoomToWrite(){
-			string strLoggerDirDrive = Path.GetPathRoot(Logger.LoggerDirOverride);
-			DriveInfo driveInfo=DriveInfo.GetDrives().FirstOrDefault(x=>x.Name==strLoggerDirDrive);
-			if(driveInfo is null){
-				return false;
-			}
-			long freeSpaceRequired=5 * 1024;
-			freeSpaceRequired*= 1024;
-			freeSpaceRequired*= 1024;//typical HD has 500 to 1000 GB, currently requiring 5GB
-			if(driveInfo.AvailableFreeSpace>freeSpaceRequired){
-				return true;
-			}
-			return false;
-		}
-
 		public static void WriteLine(string line,string subDirectory,bool singleFileOnly,bool includeTimestamp,int daysOld=90) {
-			if(ODBuild.IsUnitTest) {
+			if(ODInitialize.IsRunningInUnitTest) {
 				return;
 			}
 			CleanupLoggerDirectoryOncePerDay(daysOld);

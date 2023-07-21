@@ -24,7 +24,8 @@ namespace OpenDental {
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormClaimCustomTrackingUpdate));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.labelClaimTrack = new System.Windows.Forms.Label();
 			this.labelNote = new System.Windows.Forms.Label();
 			this.textNotes = new OpenDental.ODtextBox();
@@ -34,15 +35,25 @@ namespace OpenDental {
 			this.textErrorDesc = new OpenDental.ODtextBox();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(274, 343);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(193, 343);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&Update";
+			this.butOK.Click += new System.EventHandler(this.butUpdate_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(274, 343);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// labelClaimTrack
 			// 
@@ -71,7 +82,7 @@ namespace OpenDental {
 			this.textNotes.DetectUrls = false;
 			this.textNotes.Location = new System.Drawing.Point(13, 148);
 			this.textNotes.Name = "textNotes";
-			this.textNotes.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.ClaimCustomTrack;
+			this.textNotes.QuickPasteType = OpenDentBusiness.QuickPasteType.ClaimCustomTrack;
 			this.textNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNotes.Size = new System.Drawing.Size(336, 189);
 			this.textNotes.TabIndex = 56;
@@ -107,8 +118,8 @@ namespace OpenDental {
 			this.textErrorDesc.DetectLinksEnabled = false;
 			this.textErrorDesc.DetectUrls = false;
 			this.textErrorDesc.Location = new System.Drawing.Point(14, 90);
-			this.textErrorDesc.Name = "textErrorDesc";
-			this.textErrorDesc.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Claim;
+			this.textErrorDesc.Name = "roTextErrorDesc";
+			this.textErrorDesc.QuickPasteType = OpenDentBusiness.QuickPasteType.Claim;
 			this.textErrorDesc.ReadOnly = true;
 			this.textErrorDesc.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textErrorDesc.Size = new System.Drawing.Size(237, 36);
@@ -126,7 +137,8 @@ namespace OpenDental {
 			this.Controls.Add(this.labelClaimTrack);
 			this.Controls.Add(this.labelNote);
 			this.Controls.Add(this.textNotes);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormClaimCustomTrackingUpdate";
 			this.Text = "Custom Tracking Status Update";
@@ -137,7 +149,8 @@ namespace OpenDental {
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label labelClaimTrack;
 		private System.Windows.Forms.Label labelNote;
 		private ODtextBox textNotes;

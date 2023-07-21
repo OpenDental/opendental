@@ -27,6 +27,7 @@ namespace OpenDental{
 			this.gridImbalances = new OpenDental.UI.GridOD();
 			this.gridTransfers = new OpenDental.UI.GridOD();
 			this.butTransfer = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.checkShowBreakdown = new OpenDental.UI.CheckBox();
 			this.datePickerAsOf = new System.Windows.Forms.DateTimePicker();
 			this.labelAsOfDate = new System.Windows.Forms.Label();
@@ -48,7 +49,7 @@ namespace OpenDental{
 			this.gridImbalances.Location = new System.Drawing.Point(426, 99);
 			this.gridImbalances.Name = "gridImbalances";
 			this.gridImbalances.SelectionMode = OpenDental.UI.GridSelectionMode.None;
-			this.gridImbalances.Size = new System.Drawing.Size(635, 454);
+			this.gridImbalances.Size = new System.Drawing.Size(640, 465);
 			this.gridImbalances.TabIndex = 13;
 			this.gridImbalances.Title = "Provider/Family Balances";
 			this.gridImbalances.TranslationName = "TableImbalances";
@@ -59,7 +60,7 @@ namespace OpenDental{
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.gridTransfers.Location = new System.Drawing.Point(12, 99);
 			this.gridTransfers.Name = "gridTransfers";
-			this.gridTransfers.Size = new System.Drawing.Size(408, 454);
+			this.gridTransfers.Size = new System.Drawing.Size(408, 465);
 			this.gridTransfers.TabIndex = 12;
 			this.gridTransfers.Title = "Existing Transfers (editable)";
 			this.gridTransfers.TranslationName = "TableTransfers";
@@ -76,6 +77,17 @@ namespace OpenDental{
 			this.butTransfer.Text = "Transfer";
 			this.butTransfer.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.butTransfer.Click += new System.EventHandler(this.butTransfer_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(1011, 575);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// checkShowBreakdown
 			// 
@@ -155,12 +167,14 @@ namespace OpenDental{
 			// 
 			// FormIncomeTransferManage
 			// 
-			this.ClientSize = new System.Drawing.Size(1073, 565);
+			this.CancelButton = this.butClose;
+			this.ClientSize = new System.Drawing.Size(1095, 606);
 			this.Controls.Add(this.groupBoxOD1);
 			this.Controls.Add(this.label8);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.datePickerAsOf);
 			this.Controls.Add(this.labelAsOfDate);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.checkShowBreakdown);
 			this.Controls.Add(this.butTransfer);
 			this.Controls.Add(this.gridImbalances);
@@ -178,6 +192,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridTransfers;
 		private UI.GridOD gridImbalances;
 		private UI.Button butTransfer;

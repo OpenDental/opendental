@@ -88,7 +88,7 @@ namespace OpenDental{
 
 		private void checkUnpaidProtectedLeave_Click(object sender,EventArgs e) {
 			//User that is not the employee on the adjustment must have the  ProtectedLeaveAdjustmentEdit permission.
-			if(Security.CurUser.EmployeeNum!=_timeAdjust.EmployeeNum && !Security.IsAuthorized(EnumPermType.ProtectedLeaveAdjustmentEdit)) {
+			if(Security.CurUser.EmployeeNum!=_timeAdjust.EmployeeNum && !Security.IsAuthorized(Permissions.ProtectedLeaveAdjustmentEdit)) {
 				checkUnpaidProtectedLeave.Checked=!checkUnpaidProtectedLeave.Checked;
 			}
 		}
@@ -155,16 +155,16 @@ namespace OpenDental{
 			TimeAdjusts.Delete(_timeAdjust);
 			if(_timeAdjust.IsUnpaidProtectedLeave) {
 				string logText=CreateUnpaidProtectedLeaveSecurityLogText(UnpaidProtectedLeaveLogType.Deleted,_timeAdjustOld);
-				SecurityLogs.MakeLogEntry(EnumPermType.ProtectedLeaveAdjustmentEdit,0,logText);
+				SecurityLogs.MakeLogEntry(Permissions.ProtectedLeaveAdjustmentEdit,0,logText);
 			}
 			else if(_timeAdjust.TimeAdjustNum!=0){//If we are deleting a time card adjustment that is in the DB, log this action.
-				SecurityLogs.MakeLogEntry(EnumPermType.TimeAdjustEdit,0,
+				SecurityLogs.MakeLogEntry(Permissions.TimeAdjustEdit,0,
 					$"Time Card Adjustment deleted for Employee: {Employees.GetNameFL(_timeAdjust.EmployeeNum)}.");
 			}
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			DateTime dateTimeEntry;
 			try {
 				dateTimeEntry=DateTime.Parse(textTimeEntry.Text);
@@ -208,7 +208,7 @@ namespace OpenDental{
 			if(PrefC.IsODHQ
 				&& !checkUnpaidProtectedLeave.Checked
 				&& comboPTO.SelectedIndex==0
-				&& !Security.IsAuthorized(EnumPermType.TimecardsEditAll,suppressMessage:true)) 
+				&& !Security.IsAuthorized(Permissions.TimecardsEditAll,suppressMessage:true)) 
 			{
 				MsgBox.Show(this,"HQ users without the Edit All Time Cards permission must select a PTO Type or check the Protected Leave box.");
 				return;
@@ -245,10 +245,10 @@ namespace OpenDental{
 				TimeAdjusts.Insert(_timeAdjust);
 				if(_timeAdjust.IsUnpaidProtectedLeave) {
 					string logText=CreateUnpaidProtectedLeaveSecurityLogText(UnpaidProtectedLeaveLogType.Created,_timeAdjust);
-					SecurityLogs.MakeLogEntry(EnumPermType.ProtectedLeaveAdjustmentEdit,0,logText);
+					SecurityLogs.MakeLogEntry(Permissions.ProtectedLeaveAdjustmentEdit,0,logText);
 				}
 				else {
-					SecurityLogs.MakeLogEntry(EnumPermType.TimeAdjustEdit,0,
+					SecurityLogs.MakeLogEntry(Permissions.TimeAdjustEdit,0,
 					$"Time Card Adjustment created for Employee: {Employees.GetNameFL(_timeAdjust.EmployeeNum)}.");
 				}
 			}
@@ -256,16 +256,19 @@ namespace OpenDental{
 				TimeAdjusts.Update(_timeAdjust,_timeAdjustOld);
 				if(_timeAdjust.IsUnpaidProtectedLeave || _timeAdjustOld.IsUnpaidProtectedLeave) {
 					string logText=CreateUnpaidProtectedLeaveSecurityLogText(UnpaidProtectedLeaveLogType.Edited,_timeAdjustOld,_timeAdjust);
-					SecurityLogs.MakeLogEntry(EnumPermType.ProtectedLeaveAdjustmentEdit,0,logText);
+					SecurityLogs.MakeLogEntry(Permissions.ProtectedLeaveAdjustmentEdit,0,logText);
 				}
 				else {
-					SecurityLogs.MakeLogEntry(EnumPermType.TimeAdjustEdit,0,
+					SecurityLogs.MakeLogEntry(Permissions.TimeAdjustEdit,0,
 					$"Time Card Adjustment edited for Employee: {Employees.GetNameFL(_timeAdjust.EmployeeNum)}.");
 				}
 			}
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }
 

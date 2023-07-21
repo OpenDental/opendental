@@ -16,9 +16,9 @@ namespace OpenDental {
 		}
 
 		private void FormPhoneConf_Load(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup,true)) {
+			if(!Security.IsAuthorized(Permissions.Setup,true)) {
 				//Dwayne explicitly requested allowing users to click the Kick button and then to warn them of which permission is required.
-				this.DisableAllExcept(butRefresh,checkHideEmpty,butKick);
+				this.DisableAllExcept(butRefresh,checkHideEmpty,butKick,butClose);
 			}
 			FillGrid();
 		}
@@ -99,7 +99,7 @@ namespace OpenDental {
 
 		private void butKick_Click(object sender,EventArgs e) {
 			//Dwayne explicitly requested allowing users to click the Kick button and then to warn them of which permission is required.
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			if(gridConfRoom.SelectedIndices.Length < 1) {
@@ -118,5 +118,8 @@ namespace OpenDental {
 				+"Wait a few seconds for Asterisk to process the signals and then click Refresh.");
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

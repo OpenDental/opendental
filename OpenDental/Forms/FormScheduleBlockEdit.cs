@@ -89,7 +89,7 @@ namespace OpenDental{
 			DialogResult=DialogResult.Cancel;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) { 
+		private void butOK_Click(object sender, System.EventArgs e) { 
 			if(listOp.SelectedIndices.Count==0){
 				MsgBox.Show(this,"Please select at least one operatory first.");
 				return;
@@ -141,8 +141,18 @@ namespace OpenDental{
 				MessageBox.Show(ex.Message);
 				return;
 			}
-			DialogResult=DialogResult.OK;
+			DialogResult=DialogResult.OK;		  
 		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}   
 
 	}
 }
+
+
+
+
+
+

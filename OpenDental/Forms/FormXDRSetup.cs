@@ -89,7 +89,7 @@ namespace OpenDental {
 			}
 			List<ToolButItem> listToolButItems=ToolButItems.GetForProgram(_program.ProgramNum);
 			listToolBars.Items.Clear();
-			listToolBars.Items.AddEnums<EnumToolBar>();
+			listToolBars.Items.AddEnums<ToolBarsAvail>();
 			for(int i=0;i<listToolButItems.Count;i++) {
 				listToolBars.SetSelectedEnum(listToolButItems[i].ToolBar);
 			}
@@ -155,7 +155,7 @@ namespace OpenDental {
 				toolButItem=new ToolButItem() {
 					ProgramNum=_program.ProgramNum,
 					ButtonText=textButtonText.Text,
-					ToolBar=(EnumToolBar)listToolBars.SelectedIndices[i]
+					ToolBar=(ToolBarsAvail)listToolBars.SelectedIndices[i]
 				};
 				ToolButItems.Insert(toolButItem);
 			}
@@ -180,17 +180,15 @@ namespace OpenDental {
 
 		private void UpsertLocationIdsForClinics() {
 			List<ProgramProperty> listProgramPropertiesDb=ProgramProperties.GetForProgram(_program.ProgramNum).FindAll(x => x.PropertyDesc==XDR.PropertyDescs.LocationID);
-			for(int i=0;i<_listProgramProperties.Count;i++) {
-				if(_listProgramProperties[i].PropertyDesc!=XDR.PropertyDescs.LocationID) {
-					continue;
-				}
+			for(int i=0;i<_listProgramProperties.Count;i++) { 
 				ProgramProperty programProperty=listProgramPropertiesDb.Find(x => x.ProgramPropertyNum == _listProgramProperties[i].ProgramPropertyNum);
-				if(programProperty!=null) {
-					UpdateProgramProperty(programProperty,_listProgramProperties[i].PropertyValue);
-					continue;
+				if(programProperty is null) {//Program property for that clinicnum didn't exist, so insert it into the db.
+					ProgramProperties.Insert(_listProgramProperties[i]);//Program property for that clinicnum didn't exist, so insert it into the db.
+					_hasProgramPropertyChanged=true;
 				}
-				ProgramProperties.Insert(_listProgramProperties[i]); //Program property for that clinicnum didn't exist, so insert it into the db.
-				_hasProgramPropertyChanged=true;
+				else {//update existing
+					UpdateProgramProperty(programProperty,_listProgramProperties[i].PropertyValue);
+				}
 			}
 		}
 
@@ -198,33 +196,21 @@ namespace OpenDental {
 			SaveLocationIdToList();
 			_clinicNum=_listClinicNumsUser[comboClinic.SelectedIndex];
 			//This will either display the HQ value, or the clinic specific value.
-			ProgramProperty programProperty=_listProgramProperties.Find(x=>x.ClinicNum==_clinicNum && x.PropertyDesc==XDR.PropertyDescs.LocationID);
-			if(programProperty!=null) {
-				textLocationID.Text=programProperty.PropertyValue;
+			textLocationID.Text=_listProgramProperties.Find(x=>x.ClinicNum==_clinicNum && x.PropertyDesc==XDR.PropertyDescs.LocationID).PropertyValue;
+			if(textLocationID.Text==null) {
+				textLocationID.Text=_listProgramProperties.Find(x=>x.ClinicNum==0).PropertyValue;//Default to showing the HQ value when filling info for a clinic with no program property.
 				return;
 			}
-			//Default to showing the HQ value when filling info for a clinic with no program property.
-			textLocationID.Text=_listProgramProperties.Find(x=>x.ClinicNum==0 && x.PropertyDesc==XDR.PropertyDescs.LocationID).PropertyValue;
 		}
 
 		private void ButImport_Click(object sender,EventArgs e) {
-			string importFilePath;
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				importFilePath=ODCloudClient.ImportFileForCloud();
-				if(importFilePath.IsNullOrEmpty()) {
-					return; //User cancelled out of OpenFileDialog
-				}
-			}
-			else {
-				using OpenFileDialog openFileDialog=new OpenFileDialog();
-				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-					return;
-				}
-				importFilePath=openFileDialog.FileName;
+			using OpenFileDialog openFileDialog=new OpenFileDialog();
+			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+				return;
 			}
 			Image imageImported;
 			try {
-				imageImported=Image.FromFile(importFilePath);
+				imageImported=Image.FromFile(openFileDialog.FileName);
 			}
 			catch {
 				MsgBox.Show(this,"Error loading file.");
@@ -242,7 +228,7 @@ namespace OpenDental {
 			pictureBox.Image=null;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(checkEnabled.Checked && !Programs.IsEnabledByHq(ProgramName.XDR,out string err)) {
 				MessageBox.Show(err);
 				return;
@@ -252,6 +238,10 @@ namespace OpenDental {
 				DataValid.SetInvalid(InvalidType.Programs,InvalidType.ToolButsAndMounts);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 	}
 }

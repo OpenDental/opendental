@@ -107,7 +107,7 @@ namespace OpenDental {
 				datePicker.GetDateTimeFrom(),
 				datePicker.GetDateTimeTo(),
 				listProvNums,
-				comboBoxClinicMulti.ListClinicNumsSelected,
+				comboBoxClinicMulti.ListSelectedClinicNums,
 				PrefC.HasClinicsEnabled,
 				checkWebSchedRecall.Checked,
 				checkWebSchedNewPat.Checked,
@@ -135,7 +135,7 @@ namespace OpenDental {
 			if(listRowsSelected.Count==1) {
 				long aptNum=PIn.Long(listRowsSelected[0].Tag.ToString());
 				Appointment appointment=Appointments.GetOneApt(aptNum);
-				GlobalFormOpenDental.GotoChart(appointment.PatNum);
+				GotoModule.GotoChart(appointment.PatNum);
 				DialogResult=DialogResult.OK;
 			}
 		}
@@ -155,6 +155,9 @@ namespace OpenDental {
 				FillGrid();
 			}
 		}
-
+		
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }

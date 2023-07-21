@@ -44,7 +44,8 @@ namespace OpenDental {
 			this.textHours = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.butDelete = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.radioAuto = new System.Windows.Forms.RadioButton();
 			this.radioManual = new System.Windows.Forms.RadioButton();
 			this.label5 = new System.Windows.Forms.Label();
@@ -96,7 +97,7 @@ namespace OpenDental {
 			this.textNote.Location = new System.Drawing.Point(164, 204);
 			this.textNote.Multiline = true;
 			this.textNote.Name = "textNote";
-			this.textNote.Size = new System.Drawing.Size(350, 96);
+			this.textNote.Size = new System.Drawing.Size(377, 96);
 			this.textNote.TabIndex = 7;
 			// 
 			// checkOvertime
@@ -129,22 +130,32 @@ namespace OpenDental {
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(12, 328);
+			this.butDelete.Location = new System.Drawing.Point(37, 320);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(79, 24);
 			this.butDelete.TabIndex = 90;
 			this.butDelete.Text = "&Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(480, 328);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 98;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(385, 320);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 98;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(466, 320);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 99;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// radioAuto
 			// 
@@ -243,7 +254,8 @@ namespace OpenDental {
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -256,7 +268,9 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private Label label1;
 		private Label label2;
 		private TextBox textTimeEntry;

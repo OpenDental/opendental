@@ -46,7 +46,7 @@ namespace OpenDentBusiness.WebTypes.WebSched.TimeSlot {
 		///Optionally pass in a recall object in order to consider all other recalls due for the patient.  This will potentially affect the time pattern.
 		///Throws exceptions.</summary>
 		public static List<TimeSlot> GetAvailableWebSchedTimeSlots(RecallType recallType,List<Provider> listProviders,Clinic clinic
-			,DateTime dateStart,DateTime dateEnd,Recall recallCur=null,Logger.IWriteLine log=null,bool isFromWebSched=true) 
+			,DateTime dateStart,DateTime dateEnd,Recall recallCur=null,Logger.IWriteLine log=null) 
 		{
 			//No need to check MiddleTierRole; no call to db.
 			if(recallType==null) {//Validate that recallType is not null.
@@ -56,11 +56,8 @@ namespace OpenDentBusiness.WebTypes.WebSched.TimeSlot {
 			//Get all the Operatories that are flagged for Web Sched.
 			List<Operatory> listOperatories=Operatories.GetOpsForWebSched();
 			if(listOperatories.Count < 1) {//This is very possible for offices that aren't set up the way that we expect them to be.
-				string errrorMessage=Lans.g("WebSched","There are no operatories set up for Web Sched.");
-				if(isFromWebSched) {
-					errrorMessage+="\r\n"+Lans.g("WebSched","Please call us to schedule your appointment.");
-				}
-				throw new ODException(errrorMessage,ODException.ErrorCodes.NoOperatoriesSetup);
+				throw new ODException(Lans.g("WebSched","There are no operatories set up for Web Sched.")+"\r\n"
+					+Lans.g("WebSched","Please call us to schedule your appointment."),ODException.ErrorCodes.NoOperatoriesSetup);
 			}
 			log?.WriteLine("listOperatories:\r\n\t"+string.Join(",\r\n\t",listOperatories.Select(x => x.OperatoryNum+" - "+x.Abbrev)),LogLevel.Verbose);
 			//Make sure that we only return not is not persons.
@@ -79,10 +76,10 @@ namespace OpenDentBusiness.WebTypes.WebSched.TimeSlot {
 			List<DefLink> listRestrictedToBlockoutDefLinks=DefLinks.GetListByFKey(recallType.RecallTypeNum,DefLinkType.RecallType);
 			if(listRestrictedToBlockoutDefLinks.Count>0) {	
 				listRestrictedToBlockouts=Schedules.GetRestrictedToBlockoutsByRecallType(recallType.RecallTypeNum,dateStart,dateEnd,
-					listOperatories.Select(x => x.OperatoryNum).ToList(),listDefLinksBlockouts:listRestrictedToBlockoutDefLinks);
+					listOperatories.Select(x => x.OperatoryNum).ToList(),listRestrictedBlockouts:listRestrictedToBlockoutDefLinks);
 			}
 			List<Schedule> listSchedules=Schedules.GetSchedulesAndBlockoutsForWebSched(listProvNums,dateStart,dateEnd,isRecall:true
-				,(clinic==null) ? 0 : clinic.ClinicNum,log,listSchedulesBlockouts:listRestrictedToBlockouts);
+				,(clinic==null) ? 0 : clinic.ClinicNum,log,listRestrictedToBlockouts:listRestrictedToBlockouts);
 			log?.WriteLine("listSchedules:\r\n\t"+string.Join(",\r\n\t",listSchedules.Select(x => x.ScheduleNum+" - "+x.SchedDate+" "+x.StartTime))
 				,LogLevel.Verbose);
 			return GetTimeSlotsForRange(dateStart,dateEnd,timePatternAppointment,listProvNums,listOperatories,listSchedules,clinic,log:log,
@@ -132,10 +129,10 @@ namespace OpenDentBusiness.WebTypes.WebSched.TimeSlot {
 					listOperatoryNums=listOperatories.Select(x => x.OperatoryNum).ToList();
 				}
 				listRestrictedToBlockouts=Schedules.GetRestrictedToBlockoutsByReason(defNumApptType,dateStart,dateEnd,
-					listOperatoryNums,listDefLinksBlockouts:listRestrictedToBlockoutDefLinks);
+					listOperatoryNums,listRestrictedBlockouts:listRestrictedToBlockoutDefLinks);
 			}
 			List<Schedule> listSchedules=Schedules.GetSchedulesAndBlockoutsForWebSched(listProvNums,dateStart,dateEnd,isRecall:false,clinicNum,
-				listSchedulesBlockouts:listRestrictedToBlockouts,isNewPat:isNewPat);
+				listRestrictedToBlockouts:listRestrictedToBlockouts,isNewPat:isNewPat);
 			return GetTimeSlotsForRange(dateStart,dateEnd,timePattern,listProvNums,listOperatories,listSchedules,clinic,defNumApptType,
 				isDoubleBookingAllowed:PrefC.GetInt(prefName)==0,listRestrictToBlockouts:listRestrictedToBlockouts);//is double booking allowed according to the preference
 		}

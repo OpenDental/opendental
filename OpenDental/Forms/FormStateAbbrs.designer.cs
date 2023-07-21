@@ -23,10 +23,22 @@ namespace OpenDental {
 
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormStateAbbrs));
+			this.butClose = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butOK = new OpenDental.UI.Button();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(245, 473);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 4;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butAdd
 			// 
@@ -57,16 +69,19 @@ namespace OpenDental {
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butOK.Location = new System.Drawing.Point(245, 473);
+			this.butOK.Location = new System.Drawing.Point(159, 473);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 3;
 			this.butOK.Text = "&OK";
+			this.butOK.Visible = false;
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// FormStateAbbrs
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(336, 515);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butAdd);
@@ -82,6 +97,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butAdd;
 		private UI.GridOD gridMain;
 		private UI.Button butOK;

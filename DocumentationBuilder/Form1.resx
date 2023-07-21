@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="label1.Text" xml:space="preserve">
-    <value>The purpose of this tool is to generate one of three different XML documentation files.  These files are then manually published and are viewed with a stylesheet. Use VS to preview XML with stylesheet.</value>
+    <value>The purpose of this tool is to generate an XML documentation file which fully describes the database.  The file is useful in itself when viewed with a stylesheet, but it will also eventually form the basis for other interactive viewing tools.</value>
   </data>
-  <data name="label3.Text" xml:space="preserve">
-    <value>Step 2: Make sure you have run the OpenDental.exe so that the config file points to a running database of the same version as the program. Or just use CLAs which is more powerful for scripts, etc. Connection string:</value>
+  <data name="label4.Text" xml:space="preserve">
+    <value>Step 5: Click the Build button below.  The output file is DocumentationBuilder/OpenDentalDocumentation.xml, which will be automatically launched when done.  Approximate time to complete is 20 seconds on a fast computer.</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

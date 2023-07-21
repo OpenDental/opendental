@@ -24,7 +24,8 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormOrthoSetup));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.checkPatClone = new OpenDental.UI.CheckBox();
 			this.checkApptModuleShowOrthoChartItem = new OpenDental.UI.CheckBox();
 			this.butOrthoDisplayFields = new OpenDental.UI.Button();
@@ -58,20 +59,29 @@ namespace OpenDental{
 			this.butOrthoHardwareSpecs = new OpenDental.UI.Button();
 			this.label5 = new System.Windows.Forms.Label();
 			this.butOrthoPrescriptions = new OpenDental.UI.Button();
-			this.checkOrthoChartLoggingOn = new OpenDental.UI.CheckBox();
 			this.groupBox4.SuspendLayout();
 			this.groupOrthoCaseProcedures.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(275, 613);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 11;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(213, 588);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 11;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(294, 588);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 12;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// checkPatClone
 			// 
@@ -108,7 +118,7 @@ namespace OpenDental{
 			this.checkOrthoFinancialInfoInChart.Size = new System.Drawing.Size(327, 17);
 			this.checkOrthoFinancialInfoInChart.TabIndex = 1;
 			this.checkOrthoFinancialInfoInChart.Text = "Show Auto Ortho information in the Ortho Chart";
-			// 
+			//
 			// checkOrthoClaimUseDatePlacement
 			// 
 			this.checkOrthoClaimUseDatePlacement.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -151,7 +161,7 @@ namespace OpenDental{
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(245, 17);
 			this.label2.TabIndex = 237;
-			this.label2.Text = "Ortho Chart Display Fields";
+			this.label2.Text = "Ortho Chart Display Fields:";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label3
@@ -235,7 +245,7 @@ namespace OpenDental{
 			this.label29.Name = "label29";
 			this.label29.Size = new System.Drawing.Size(209, 31);
 			this.label29.TabIndex = 223;
-			this.label29.Text = "Current Procedures to Consider for Patient's Date of Placement";
+			this.label29.Text = "Current Procedures to Consider for Patients\' Date Placement";
 			this.label29.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// butPlacementProcsEdit
@@ -381,19 +391,9 @@ namespace OpenDental{
 			this.butOrthoPrescriptions.Text = "Setup";
 			this.butOrthoPrescriptions.Click += new System.EventHandler(this.butOrthoPrescriptions_Click);
 			// 
-			// checkOrthoChartLoggingOn
-			// 
-			this.checkOrthoChartLoggingOn.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkOrthoChartLoggingOn.Location = new System.Drawing.Point(1, 576);
-			this.checkOrthoChartLoggingOn.Name = "checkOrthoChartLoggingOn";
-			this.checkOrthoChartLoggingOn.Size = new System.Drawing.Size(327, 19);
-			this.checkOrthoChartLoggingOn.TabIndex = 247;
-			this.checkOrthoChartLoggingOn.Text = "Turn on Logging (only use if instructed)";
-			// 
 			// FormOrthoSetup
 			// 
-			this.ClientSize = new System.Drawing.Size(362, 649);
-			this.Controls.Add(this.checkOrthoChartLoggingOn);
+			this.ClientSize = new System.Drawing.Size(381, 624);
 			this.Controls.Add(this.label5);
 			this.Controls.Add(this.butOrthoPrescriptions);
 			this.Controls.Add(this.label4);
@@ -416,7 +416,8 @@ namespace OpenDental{
 			this.Controls.Add(this.butOrthoDisplayFields);
 			this.Controls.Add(this.checkApptModuleShowOrthoChartItem);
 			this.Controls.Add(this.checkPatClone);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormOrthoSetup";
 			this.Text = "Ortho Setup";
@@ -432,7 +433,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.CheckBox checkPatClone;
 		private OpenDental.UI.CheckBox checkApptModuleShowOrthoChartItem;
 		private UI.Button butOrthoDisplayFields;
@@ -466,6 +468,5 @@ namespace OpenDental{
 		private UI.Button butOrthoHardwareSpecs;
 		private System.Windows.Forms.Label label5;
 		private UI.Button butOrthoPrescriptions;
-		private UI.CheckBox checkOrthoChartLoggingOn;
 	}
 }

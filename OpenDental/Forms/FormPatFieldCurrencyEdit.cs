@@ -26,7 +26,7 @@ namespace OpenDental {
 			textFieldCurrency.Text=_patField.FieldValue;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textFieldCurrency.IsValid()) {
 				MsgBox.Show(this,"Invalid currency");
 				return;
@@ -54,5 +54,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

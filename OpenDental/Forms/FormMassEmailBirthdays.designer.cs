@@ -24,7 +24,8 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMassEmailBirthdays));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.checkBoxSendGuarantorBirthdayForMinor = new OpenDental.UI.CheckBox();
 			this.groupSendTime = new OpenDental.UI.GroupBox();
 			this.radioOnBirthday = new System.Windows.Forms.RadioButton();
@@ -49,15 +50,26 @@ namespace OpenDental{
 			this.tabPageDefault.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(846, 660);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(761, 660);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(842, 660);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// checkBoxSendGuarantorBirthdayForMinor
 			// 
@@ -254,10 +266,12 @@ namespace OpenDental{
 			// 
 			// FormMassEmailBirthdays
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(933, 696);
 			this.Controls.Add(this.labelDefaults);
 			this.Controls.Add(this.labelNotActivated);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.comboMinorAge);
 			this.Controls.Add(this.comboClinic);
 			this.Controls.Add(this.butLanguageRemove);
@@ -282,7 +296,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.CheckBox checkBoxSendGuarantorBirthdayForMinor;
 		private OpenDental.UI.GroupBox groupSendTime;
 		private System.Windows.Forms.RadioButton radioAfterBirthday;

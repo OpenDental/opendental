@@ -16,6 +16,10 @@ namespace OpenDental {
 
 		public FormExamSheets() {
 			InitializeComponent();
+			if(!LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.ODTouch,Clinics.ClinicNum)) {
+				//When this is no longer in limited beta, remove this code and if statement
+				gridMain.Size=new Size(gridMain.Width,gridMain.Height+groupEClipboard.Height);
+			}
 			InitializeLayoutManager();
 			Lan.F(this);
 		}
@@ -26,6 +30,14 @@ namespace OpenDental {
 			LayoutMenu();
 			FillListExamTypes();
 			FillGrid();
+			if(!LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.ODTouch,Clinics.ClinicNum)) {
+				//When this is no longer in limited beta, remove this code and if statement
+				groupEClipboard.Visible=false;
+				groupEClipboard.Enabled=false;
+			}
+			if(gridMain.GetSelectedIndex()==-1) {
+				butSendToDevice.Enabled=false;
+			}
 		}
 
 		private void LayoutMenu() {
@@ -127,10 +139,6 @@ namespace OpenDental {
 			if(widthRatio<heightRatio) {
 				scalingRatio=widthRatio;
 			}
-			//Passing in 0 causes g.ScaleTransform to throw an error.
-			if(scalingRatio==0) {
-				return;
-			}
 			g.ScaleTransform(scalingRatio,scalingRatio);
 			Rectangle rectangle=new Rectangle(0,0,sheetSelected.WidthPage,sheetSelected.HeightPage);
 			g.FillRectangle(Brushes.White,rectangle);
@@ -145,12 +153,12 @@ namespace OpenDental {
 		}
 
 		private void menuItemSheets_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			using FormSheetDefs formSheetDefs=new FormSheetDefs();
 			formSheetDefs.ShowDialog();
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Sheets");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Sheets");
 			FillListExamTypes();
 			FillGrid();
 		}
@@ -196,8 +204,19 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>Tries to send a single exam sheet. It attempts to do this by looking for a mobile device that has a logged in user that has also selected a patient.</summary>
-		private void butSendToDevice_Click(object sender,EventArgs e) {
+		private void butCancel_Click(object sender,EventArgs e) {
+			Close();
+		}
+
+		///<summary>This attempts to do one of two things, both behave very differently from each other. The first thing that it will do is try to 
+		///send a single exam sheet. It attempts to do this by looking for a mobile device that has a logged in user that has also selected a patient.
+		///The second thing it will try to do is "send" all of the exam sheets, which in turn will login in the user, and auto select the patient.</summary>
+		private void TrySendToDevice(bool isSendingAll=false) {
+			//They don't need to have the mobile web permission if they are sending a single sheet, because it won't log them in
+			if(!Security.IsAuthorized(Permissions.MobileWeb) && isSendingAll) {
+				MsgBox.Show(this,"Currently logged in user doesn't have the Mobile Web permission.");
+				return;
+			}
 			if(PatNum==0){
 				MsgBox.Show("Please select a patient first.");
 				return;
@@ -209,12 +228,29 @@ namespace OpenDental {
 			List<MobileAppDevice> listMobileAppDevices=MobileAppDevices.GetAll();
 			//Get the device that we know has a clinical user logged in, plus they will have to have selected a patient
 			MobileAppDevice mobileAppDevice=listMobileAppDevices.Where(x => x.UserNum!=0 && x.PatNum==PatNum).FirstOrDefault();
-			if(mobileAppDevice==null || gridMain.SelectedIndices.Count()==0) {
+			if(mobileAppDevice!=null && !isSendingAll) {//If you're sending all, it needs to login in the current user, so never push when sending all
+				PushSelectedExamSheetToClinical(mobileAppDevice);
+			}
+			else {
+				OpenUnlockCodeForExamSheet(isSendingAll);
+			}
+		}
+
+		private void butSendToDevice_Click(object sender,EventArgs e) {
+			TrySendToDevice();
+		}
+
+		private void butSendAllToDevice_Click(object sender,EventArgs e) {
+			TrySendToDevice(true);
+		}
+
+		private void PushSelectedExamSheetToClinical(MobileAppDevice mobileAppDevice) { 
+			if(gridMain.SelectedIndices.Count()==0) {
 				return;//Nothing is selected, but the button was some how still enabled
 			}
 			Sheet sheetSelected=gridMain.SelectedTag<Sheet>();
 			SheetDrawingJob sheetDrawingJob=new SheetDrawingJob();
-			if(MobileNotifications.ODT_ExamSheet(PatNum,sheetSelected.SheetNum,mobileAppDevice.MobileAppDeviceNum,
+			if(PushNotificationUtils.CL_ExamSheet(PatNum,sheetSelected.SheetNum,mobileAppDevice.MobileAppDeviceNum,
 				out string errorMessge)) 
 			{
 				MsgBox.Show(this,$"Exam sheet sent to device: {mobileAppDevice.DeviceName}");
@@ -222,6 +258,34 @@ namespace OpenDental {
 			}
 			MsgBox.Show($"Error sending the exam sheet: {errorMessge}");
 		}
+
+		private void OpenUnlockCodeForExamSheet(bool isSendingAll=false) {
+			if(!Security.IsAuthorized(Permissions.MobileWeb)) {
+				MsgBox.Show(this,"Currently logged in user doesn't have the Mobile Web permission.");
+				return;
+			}
+			Sheet sheetSelected=gridMain.SelectedTag<Sheet>();
+			MobileDataByte funcInsertDataForUnlockCode(string unlockCode) {
+				SheetDrawingJob sheetDrawingJob=new SheetDrawingJob();
+				using PdfDocument pdfDocument=isSendingAll?new PdfDocument():sheetDrawingJob.CreatePdf(sheetSelected);
+				if(isSendingAll) {
+					pdfDocument.AddPage();//Can't have blank pages, but we don't care about the bytes when sending all
+				}
+				List<string> listTags=new List<string>() { 
+					POut.Bool(ClinicPrefs.GetBool(PrefName.EClipClinicalAutoLogin,Clinics.ClinicNum)),
+					POut.Long(Security.CurUser.UserNum),
+					POut.Long(isSendingAll?0:sheetSelected.SheetNum) //If sending all, then this just means to open the exam sheets feature on the device
+				};
+				if(MobileDataBytes.TryInsertPDF(pdfDocument,PatNum,unlockCode,eActionType.ExamSheet,out long mobileDataByteNum,out string errorMsg,listTags)){ 
+					return MobileDataBytes.GetOne(mobileDataByteNum);
+				}
+				MsgBox.Show(errorMsg);
+				return null;
+			}
+			using FormMobileCode formMobileCode=new FormMobileCode(funcInsertDataForUnlockCode);
+			formMobileCode.ShowDialog();
+		}
+
 
 	}
 }

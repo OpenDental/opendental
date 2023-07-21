@@ -102,17 +102,6 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}
 
-		/// <summary> Returns true if a display field with the provided InternalName is set to show in the provided DisplayFieldCategory. </summary>
-		public static bool IsInUse(DisplayFieldCategory displayFieldCategory, string internalName) {
-			//No need to check MiddleTierRole; no call to db.
-			if(string.IsNullOrEmpty(internalName)) {
-				return false;
-			}
-			List<DisplayField> listDisplayFields=GetForCategory(displayFieldCategory);
-			bool isVisibleCategory=listDisplayFields.Find(x=>x.InternalName==internalName)!=null;
-			return isVisibleCategory;
-		}
-
 		///<Summary>Returns an ordered list for just one category.  Do not use with None, or it will malfunction.  These are display fields that the user has entered, which are stored in the db, and then are pulled into the cache.  Categories with no display fields will return the default list.</Summary>
 		public static List<DisplayField> GetForCategory(DisplayFieldCategory category){
 			//No need to check MiddleTierRole; no call to db.
@@ -626,12 +615,6 @@ namespace OpenDentBusiness {
 					//list.Add(new DisplayField("Abbr",110,category));
 					break;
 				#endregion Statement Limited Custom SuperFamily
-				#region SuperFamily Grid Columns
-				case DisplayFieldCategory.SuperFamilyGridCols:
-					list.Add(new DisplayField("Name",280,category));
-					list.Add(new DisplayField("Stmt",50,category));
-					break;
-				#endregion SuperFamily Grid Columns
 				default:
 					break;
 			}
@@ -704,9 +687,6 @@ namespace OpenDentBusiness {
 					list.Add(new DisplayField("NextVisit",70,category));
 					list.Add(new DisplayField("Invoice Number",90,category));
 					list.Add(new DisplayField("Specialty",90,category));
-					list.Add(new DisplayField("Ward",90,category));
-					list.Add(new DisplayField("AdmitDate",90,category));
-					list.Add(new DisplayField("DischargeDate",100,category));
 					break;
 				#endregion PatientSelect
 				#region PatientInformation
@@ -1134,18 +1114,6 @@ namespace OpenDentBusiness {
 					list.Add(new DisplayField("Abbr",110,category));
 					break;
 				#endregion Statement Limited Custom SuperFamily
-				#region SuperFamily Grid Columns
-				case DisplayFieldCategory.SuperFamilyGridCols:
-					list.Add(new DisplayField("Name",280,category));
-					list.Add(new DisplayField("Stmt",50,category));
-					List<PatFieldDef> listPatFieldDefs=PatFieldDefs.GetDeepCopy().FindAll(x=>!x.IsHidden);
-					for(int j=0;j<listPatFieldDefs.Count;j++) {
-						DisplayField displayField=new DisplayField("",100,DisplayFieldCategory.SuperFamilyGridCols);
-						displayField.Description=listPatFieldDefs[j].FieldName;
-						list.Add(displayField);
-					}
-					break;
-				#endregion SuperFamily Grid Columns
 				default:
 					break;
 			}
@@ -1203,7 +1171,7 @@ namespace OpenDentBusiness {
 				Insert(ListShowing[i]);
 			}
 		}
-
+		
 		///<summary>This class can be used to have a strongly-typed reference to display field internal names.</summary>
 		public class InternalNames {
 			public class ChartView {

@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using CodeBase;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenDentBusiness;
 using UnitTestsCore;
@@ -24,11 +23,6 @@ namespace UnitTests.Benefits_Test {
 		///<summary>Creates a general deductible of $50, a deductible of $50 on D0220, sets a $30 D0220 complete and creates a claim, 
 		///creates a $100 D2750, that is TP'ed, and then creates a $30 D0220 that is TP'ed.</summary>
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_GetDeductibleByCode_DeductLessThanGeneral)]
-		[Documentation.VersionAdded("17.2.34")]
-		[Documentation.Description("A customer has an insurance plan with 100% coverage for Diagnostic work and 50% coverage for crowns. " +
-			"They also have a $50 general deductible and a $50 deductible on D0220. They undergo a D0220 with a $30 fee, and a D2750 with a $100 fee. " +
-			"Their deductible should cover the D0220, and the remaining deductible estimate for the D2750 should be $20.")]
 		public void Benefits_GetDeductibleByCode_DeductLessThanGeneral() {
 			string suffix=MethodBase.GetCurrentMethod().Name;
 			Patient pat=PatientT.CreatePatient(suffix);
@@ -56,10 +50,6 @@ namespace UnitTests.Benefits_Test {
 
 		///<summary>Creates an ortho procedure with an age limitation and a lifetime max and calculates the insurance estimate.</summary>
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_UnderAgeWithLifetimeMax)]
-		[Documentation.VersionAdded("17.3.67")]
-		[Documentation.Description("A patient is 13 years old. Their insurance covers 50% of Ortho fees within the age limit of 18. " +
-			"They also have an ortho lifetime max of $1000. They undergo a D8090 with a $3000 fee. Their insurance estimate should be $1000.")]
 		public void Benefits_UnderAgeWithLifetimeMax() {
 			string suffix=MethodBase.GetCurrentMethod().Name;
 			Patient pat=PatientT.CreatePatient(suffix,birthDate: DateTime.Now.AddYears(-13));
@@ -75,10 +65,6 @@ namespace UnitTests.Benefits_Test {
 
 		///<summary>Creates an ortho procedure with an age limitation and a lifetime max and calculates the insurance estimate.</summary>
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_OverAgeWithLifetimeMax)]
-		[Documentation.VersionAdded("17.3.67")]
-		[Documentation.Description("A patient is 20 years old. Their insurance covers 50% of Ortho fees within the age limit of 18. " +
-			"They also have an ortho lifetime max of $1000. They undergo a D8090 with a $3000 fee. Their insurance estimate should be $0.")]
 		public void Benefits_OverAgeWithLifetimeMax() {
 			string suffix=MethodBase.GetCurrentMethod().Name;
 			Patient pat=PatientT.CreatePatient(suffix,birthDate: DateTime.Now.AddYears(-20));
@@ -93,13 +79,6 @@ namespace UnitTests.Benefits_Test {
 		}
 
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_BitewingFrequency)]
-		[Documentation.VersionAdded("18.2")]
-		[Documentation.Description("A patient's insurance covers 100% of diagnostic fees, and have a frequency limitation of 1 D0274 procedure per calendar year. " +
-			"Within the same year, they undergo two D0274 procedures, each with a $100 fee. Their insurance estimate for the first procedure should be $100. " +
-			"The insurance estimate for the second procedure should be $0. " +
-			"\r\nWithin that same year, they undergo a D0272 procedure with a $100 fee. No limit has been established for this code, so the procedure's " +
-			"insurance estimate should be $100.")]
 		public void Benefits_BitewingFrequency() {
 			PrefT.UpdateBool(PrefName.InsChecksFrequency,true);
 			ProcedureCodeT.AddIfNotPresent("D0272");
@@ -130,12 +109,7 @@ namespace UnitTests.Benefits_Test {
 		}
 
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_CancerScreeningFrequency)]
-		[Documentation.VersionAdded("18.2")]
-		[Documentation.Description("A patient's insurance covers 100% of diagnostic fees, and has a limits the frequency of D0431 procedures to 1 per calendar year. " +
-			"They undergo a D0431 procedure with a $100 fee. The insurance estimate for this procedure should be $100. " +
-			"\r\nWithin the same year, they undergo a D0431 again with the same $100 fee. This time, the insurance estimate for the procedure should be $0.")]
-		public void Benefits_CancerScreeningFrequency() {
+		public void Benefits_CancelScreeningFrequency() {
 			PrefT.UpdateBool(PrefName.InsChecksFrequency,true);
 			string suffix=MethodBase.GetCurrentMethod().Name;
 			Patient pat=PatientT.CreatePatient(suffix);
@@ -149,7 +123,7 @@ namespace UnitTests.Benefits_Test {
 			Claim claim=ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
 			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			Assert.AreEqual(100,listClaimProcs.First().InsPayEst);
-			ClaimT.ReceiveClaim(claim,listClaimProcs,doSetInsPayAmt:true);
+			ClaimT.ReceiveClaim(claim,listClaimProcs);
 			Procedure proc2=ProcedureT.CreateProcedure(pat,"D0431",ProcStat.C,"",100);
 			listProcs=new List<Procedure> { proc2 };
 			ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
@@ -158,11 +132,6 @@ namespace UnitTests.Benefits_Test {
 		}
 
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_CrownsFrequency)]
-		[Documentation.VersionAdded("18.2")]
-		[Documentation.Description("A patient's insurance covers 100% of Crown procedure fees, with a frequency limitation of 1 D2740 per calendar year. " +
-			"They undergo two D2740 procedures, each with a $100 fee. The insurance estimate for the first procedure should be $100. The insurance estimate " +
-			"for the second procedure should be $0.")]
 		public void Benefits_CrownsFrequency() {
 			PrefT.UpdateBool(PrefName.InsChecksFrequency,true);
 			string suffix=MethodBase.GetCurrentMethod().Name;
@@ -188,11 +157,6 @@ namespace UnitTests.Benefits_Test {
 		}
 
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_SRPFrequency)]
-		[Documentation.VersionAdded("18.2")]
-		[Documentation.Description("A patient's insurance covers 100% of Periodontic fees, with a limit of one D4341 procedure per year. " +
-			"They undergo a D4341 procedure with a $100 fee. The insurance estimate for this procedure should be $100." +
-			"\r\nWithin the same year, the patient undergoes another D4341 procedure. This time, the procedure's insurance estimate should be $0.")]
 		public void Benefits_SRPFrequency() {
 			PrefT.UpdateBool(PrefName.InsChecksFrequency,true);
 			string suffix=MethodBase.GetCurrentMethod().Name;
@@ -207,7 +171,7 @@ namespace UnitTests.Benefits_Test {
 			Claim claim=ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
 			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			Assert.AreEqual(100,listClaimProcs.First().InsPayEst);
-			ClaimT.ReceiveClaim(claim,listClaimProcs,doSetInsPayAmt:true);
+			ClaimT.ReceiveClaim(claim,listClaimProcs);
 			Procedure proc2=ProcedureT.CreateProcedure(pat,"D4341",ProcStat.C,"11",100);
 			listProcs=new List<Procedure> { proc2 };
 			ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
@@ -216,22 +180,17 @@ namespace UnitTests.Benefits_Test {
 		}
 
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_SealantAgeLimit)]
-		[Documentation.VersionAdded("18.2")]
-		[Documentation.Description("A clinic's Sealant codegroup contains codes D1351 and D1206. Their patient is 13 years old. The patient's insurance covers " +
-			"100% of their routine preventative procedure costs with an Age Limit of 12 years for procedures under the Sealant codegroup. " +
-			"The patient undergoes a D1206 procedure, with a $100 fee. Their insurance estimate for the procedure should be $0.")]
 		public void Benefits_SealantAgeLimit() {
 			PrefT.UpdateBool(PrefName.InsChecksFrequency,true);
 			ProcedureCodeT.AddIfNotPresent("D1351");
 			ProcedureCodeT.AddIfNotPresent("D1206");
-			CodeGroup codeGroup=CodeGroupT.Upsert("SealantAgeLimit","D1351,D1206",EnumCodeGroupFixed.Sealant,showInAgeLimit:true);
+			CodeGroupT.Upsert("SealantAgeLimit","D1351,D1206",EnumCodeGroupFixed.Sealant);
 			string suffix=MethodBase.GetCurrentMethod().Name;
 			Patient pat=PatientT.CreatePatient(suffix,birthDate:DateTime.Today.AddYears(-13));
 			InsuranceInfo ins=InsuranceT.AddInsurance(pat,suffix);
 			ins.ListBenefits.Add(BenefitT.CreateCategoryPercent(ins.PriInsPlan.PlanNum,EbenefitCategory.RoutinePreventive,100));
 			ins.ListBenefits.Add(BenefitT.CreateAgeLimitation(ins.PriInsPlan.PlanNum,EbenefitCategory.None,12,
-				codeGroupNum:codeGroup.CodeGroupNum));//Sealant Age Limit 12 years old
+				codeNum:ProcedureCodeT.GetCodeNum("D1351")));//Sealant Age Limit 12 years old
 			Procedure proc=ProcedureT.CreateProcedure(pat,"D1206",ProcStat.C,"11",100);//Different procedure in the sealant code group
 			List<Procedure> listProcs=new List<Procedure> { proc };
 			List<ClaimProc> listClaimProcs=new List<ClaimProc> { };
@@ -241,37 +200,6 @@ namespace UnitTests.Benefits_Test {
 		}
 
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_SealantAgeLimit_PatInAgeRangeHasCoverage)]
-		[Documentation.VersionAdded("24.1")]
-		[Documentation.Description("A clinic's Sealant codegroup contains codes D1351 and D1206. Their patient is 10 years old. The patient's insurance covers " +
-			"100% of their routine preventative procedure costs with an Age Limit of 12 years for procedures under the Sealant codegroup. " +
-			"The patient undergoes a D1351 procedure, with a $100 fee. Their insurance estimate for the procedure should be $100.")]
-		public void Benefits_SealantAgeLimit_PatInAgeRangeHasCoverage() {
-			PrefT.UpdateBool(PrefName.InsChecksFrequency,true);
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			Patient pat=PatientT.CreatePatient(suffix,birthDate:DateTime.Today.AddYears(-10));
-			ProcedureCodeT.AddIfNotPresent("D1351"); // Sealant Code Group
-			InsuranceInfo ins=InsuranceT.AddInsurance(pat,suffix);
-			CodeGroup codeGroup=CodeGroupT.Upsert("SealantAgeLimit","D1351,D1206",EnumCodeGroupFixed.Sealant,showInAgeLimit:true);
-			Benefit benefitSealAgeLim = Benefits.CreateAgeLimitationBenefit(codeGroup.CodeGroupNum,12,ins.PriInsPlan.PlanNum); //Sealant Age Limit 12 years old
-			ins.ListBenefits.Add(benefitSealAgeLim);
-			ins.ListBenefits.Add(BenefitT.CreateCategoryPercent(ins.PriInsPlan.PlanNum,EbenefitCategory.RoutinePreventive,100));
-			Procedure proc=ProcedureT.CreateProcedure(pat,"D1351",ProcStat.C,"11",100);
-			List<Procedure> listProcs=new List<Procedure> { proc };
-			List<ClaimProc> listClaimProcs=new List<ClaimProc> { };
-			Claim claim=ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
-			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
-			Assert.AreEqual(100,listClaimProcs.First().InsPayEst);
-		}
-
-		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_BitewingFrequencyCanada)]
-		[Documentation.VersionAdded("18.2")]
-		[Documentation.Description("A Canadian clinic has a patient whose insurance covers 100% of their diagnostic fees, with frequency limit of one 02144 " +
-			"procedure per calendar year. The patient undergoes two 02144 procedures within the same year, each with a fee of $100. The insurance estimate for the " +
-			"first procedure should be $100. The insurance estimate for the second procedure should be $0. " +
-			"\r\nWithin the same year, the patient undergoes a 02143 procedure with a $100 fee. Because no limit was established for this procedure, " +
-			"their insurance estimate should be $100.")]
 		public void Benefits_BitewingFrequencyCanada() {
 			CultureInfo curCulture=CultureInfo.CurrentCulture;
 			Thread.CurrentThread.CurrentCulture=new CultureInfo("en-CA");//Canada
@@ -317,11 +245,6 @@ namespace UnitTests.Benefits_Test {
 		///<summary>A Bitewing procedure is charted that is not the Bitewing procedure code used to designate frequency limitations. The next calendar 
 		///year another Bitewing procedure is charted and verifies the frequency limitation applies to it.</summary>
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_BitewingFrequencyPastYear)]
-		[Documentation.VersionAdded("18.3.52")]
-		[Documentation.Description("A patient's insurance covers 100% of their diagnostic fees with a frequency limit of one D0272 procedure every 12 months. " +
-			"On 07/15/2018, the patient undergoes a D0272 procedure with a $100 fee. Their insurance estimate for this procedure should be $100. " +
-			"\r\nSeven months later, on 02/15/2019, the patient undergoes another D0272 procedure. The insurance estimate for this procedure should be $0.")]
 		public void Benefits_BitewingFrequencyPastYear() {
 			PrefT.UpdateBool(PrefName.InsChecksFrequency,true);
 			ProcedureCodeT.AddIfNotPresent("D0272");
@@ -338,7 +261,7 @@ namespace UnitTests.Benefits_Test {
 			Claim claim=ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
 			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			Assert.AreEqual(100,listClaimProcs.First().InsPayEst);
-			ClaimT.ReceiveClaim(claim,listClaimProcs,doSetInsPayAmt:true);
+			ClaimT.ReceiveClaim(claim,listClaimProcs);
 			Procedure proc2=ProcedureT.CreateProcedure(pat,"D0272",ProcStat.TP,"",100,new DateTime(2019,02,15));//Another BW procedure
 			listClaimProcs=ProcedureT.ComputeEstimates(pat,ins,new DateTime(2019,02,15));
 			Assert.AreEqual(0,listClaimProcs.First(x => x.ProcNum==proc2.ProcNum).InsPayEst);//Reached frequency limitation
@@ -350,13 +273,6 @@ namespace UnitTests.Benefits_Test {
 		///procedure is charted on October 31st, the insurance estimate should be for the full procedure cost. 
 		///While the insurance did pay twice for the first procedure, it only counts as one towards the frequency limit regardless of status.</summary>
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_TwoReceivedClaimProcsForSameClaim_FrequencyNotMet)]
-		[Documentation.VersionAdded("18.3.52")]
-		[Documentation.Description("A patient's insurance covers 100% of diagnostic fees, with a limit of two D0274 procedures per calendar year. " +
-			"On October 1st, 2018 the patient undergoes a D0274 procedure with a $100 fee. The insurance makes payments in two checks. The first check is received " +
-			"and entered properly. For the second check, a user error occurs and the payment is entered as a second received claimproc. " +
-			"\r\nOn October 31st, 2018 the patient returns for another D0274 procedure with a fee of $100. The insurance estimate should still be $100. " +
-			"Entering a payment as a second claimproc should not count against frequency limitations.")]
 		public void Benefits_TwoReceivedClaimProcsForSameClaim_FrequencyNotMet() {
 			string suffix=MethodBase.GetCurrentMethod().Name;
 			Patient pat=PatientT.CreatePatient(suffix);
@@ -373,7 +289,7 @@ namespace UnitTests.Benefits_Test {
 			ClaimProcT.AddInsPaid(pat.PatNum,ins.ListInsPlans.FirstOrDefault().PlanNum,proc1.ProcNum,50,
 				ins.ListInsSubs.FirstOrDefault().InsSubNum,0,0,new DateTime(2018,10,2));
 			//Create second procedure
-			Procedure proc2=ProcedureT.CreateProcedure(pat,"D0274",ProcStat.EC,"",100,new DateTime(2018,10,31));
+			Procedure proc2=ProcedureT.CreateProcedure(pat,"D0274",ProcStat.EC,"",100,new DateTime(2018,10,3));
 			List<ClaimProc> listClaimProcs=new List<ClaimProc> { };
 			List<Procedure> listProcs=new List<Procedure> { proc2 };
 			//Create claim for the third procedure.
@@ -387,14 +303,6 @@ namespace UnitTests.Benefits_Test {
 		///Two procedures are completed in June and July which the insurance pays for. When another procedure is created in January of the following year
 		///the insurance estimate should be 0 as they already met their two for the service year.</summary>
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_ServiceYear_FrequencyMet)]
-		[Documentation.VersionAdded("18.3.43")]
-		[Documentation.Description("A patient's insurance covers 100% of their diagnostic fees. They have a limit of two D0274 procedures every service year, " +
-			"with the service year starting in April. On June 1st, the patient undergoes a D0274 procedure with a $100 fee. " +
-			"The insurance estimate for this procedure should be $100. On July 1st, the patient undergoes another D0274 procedure with a $100 fee. " +
-			"The insurance estimate for this procedure should also be $100. " +
-			"\r\nIn January of the next year, the patient undergoes a third D0274 procedure with a $100 fee. " +
-			"The insurance estimate for this final procedure should be $0.")]
 		public void Benefits_ServiceYear_FrequencyMet() {
 			string suffix=MethodBase.GetCurrentMethod().Name;
 			Patient pat=PatientT.CreatePatient(suffix);
@@ -428,11 +336,6 @@ namespace UnitTests.Benefits_Test {
 		///One procedure is completed in June which the insurance pays for. When two more procedures are created in January of the following year
 		///the insurance estimate should only cover one of the two procedures on the claim.</summary>
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_ServiceYear_FrequencyMet_SameClaim)]
-		[Documentation.VersionAdded("21.3.39")]
-		[Documentation.Description("A patient's insurance covers 100% of their diagnostic fees. They have a limit of two D0274 procedures per service year, with the service year starting in April. On June 1st, the patient undergoes a D0274 procedure with a fee of $100. The insurance estimate for this procedure should be $100." +
-			"\r\nThe following January, the patient undergoes two more D0274 procedures, each having a $100 fee. These procedures end up on the same claim. " +
-			"The first procedure on the claim should have an insurance estimate of $100. The second procedure on the claim should have an insurance estimate of $0.")]
 		public void Benefits_ServiceYear_FrequencyMet_SameClaim() {
 			string suffix=MethodBase.GetCurrentMethod().Name;
 			Patient pat=PatientT.CreatePatient(suffix);
@@ -463,12 +366,6 @@ namespace UnitTests.Benefits_Test {
 		///following service year. This will test when someone changes the date to the next service year and clicks Refresh to re-compute estimates similar
 		///to how users have that option in the TreatPlan module.</summary>
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_ServiceYear_FrequencyMet_RefreshAsOfDate)]
-		[Documentation.VersionAdded("18.4.48")]
-		[Documentation.Description("A patient's insurance covers 100% of diagnostic fees. They are limited to one D0274 procedure every service year, " +
-			"with the service year starting in June. The patient undergoes a D0274 procedure on July 1st, with a fee of $100. The insurance estimate for this " +
-			"procedure should be $100. The patient then undergoes another D0274 on July 25th, with a fee of $100. The insurance estimate for this procedure " +
-			"should be $0. A user changes the second procedure's date to be within the next service year. The procedure's insurance estimate should update to $100.")]
 		public void Benefits_ServiceYear_FrequencyMet_RefreshAsOfDate() {
 			string suffix=MethodBase.GetCurrentMethod().Name;
 			Patient pat=PatientT.CreatePatient(suffix);
@@ -549,11 +446,6 @@ namespace UnitTests.Benefits_Test {
 
 		///<summary>Validates that insurance plan deductible work for ExclusionRule.</summary>
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_GetDeductibleByCode_ExcludedDeductible)]
-		[Documentation.VersionAdded("19.1.24")]
-		[Documentation.Description("A patient's insurance covers 60% of crown fees and has a $50 general deductible. The patient undergoes " +
-			"a D2740 procedure with a $1000 fee. The deductible for this procedure should be $50. " +
-			"A user adds an exclusion for crowns. Now the deductible for this procedure should be $0.")]
 		public void Benefits_GetDeductibleByCode_ExcludedDeductible() {
 			string suffix=MethodBase.GetCurrentMethod().Name;
 			Patient pat=PatientT.CreatePatient(suffix);
@@ -591,13 +483,8 @@ namespace UnitTests.Benefits_Test {
 
 		///<summary>Validates that insurance plan deductible adjustments apply to all types of deductibles (even code specific).</summary>
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_GetDeductibleByCode_InsuranceAdjustmentDeductibleApplyToCodeSpecificDeductibles)]
-		[Documentation.VersionAdded("19.1.21")]
-		[Documentation.Description("A patient's insurance includes a $50 general deductible, a $0 diagnostic deductible, and a $50 " +
-			"diagnostic x ray deductible. The patient undergoes a D1110 procedure with a fee of $100, and a D0270 procedure with a fee of $1100. " +
-			"An adjustment is added to cover the $50 general deductible. The general deductible and the x ray deductible should both be $0.")]
-		public void Benefits_GetDeductibleByCode_InsuranceAdjustmentDeductibleApplyToCodeSpecificDeductibles() {
-			string suffix=MethodBase.GetCurrentMethod().Name;
+        public void Benefits_GetDeductibleByCode_InsuranceAdjustmentDeductibleApplyToCodeSpecificDeductibles() {
+            string suffix=MethodBase.GetCurrentMethod().Name;
 			Patient pat=PatientT.CreatePatient(suffix);
 			string procStr1="D1110";
 			string procStr2="D0270";
@@ -665,12 +552,6 @@ namespace UnitTests.Benefits_Test {
 		///<summary>Limitation frequency for BW. Frequency set to 2 in the Last 12 months. In this scenario, two procedures are completed in
 		///October and December. When the third is charted in May of the following year, the insurance estimate will be 0.</summary>
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_InLast12Months_FrequencyMetBasic)]
-		[Documentation.VersionAdded("19.1")]
-		[Documentation.Description("A patient's insurance covers 100% of their diagnostic fees. The patient is limited to two D0274 " +
-			"procedures every 12 months. The patient undergoes a D0274 procedure on October 28th and December 28th of 2018. These procedures " +
-			"each had a fee of $100. Then, on May 1st of 2019, the patient comes back for another D0274 procedure. The insurance estimate " +
-			"for this third procedure should be $0.")]
 		public void Benefits_InLast12Months_FrequencyMetBasic() {
 			string suffix=MethodBase.GetCurrentMethod().Name;
 			Patient pat=PatientT.CreatePatient(suffix);
@@ -699,11 +580,6 @@ namespace UnitTests.Benefits_Test {
 		///<summary>Limitation frequency for BW. Frequency set to 2 in the Last 12 months. In this scenario, two procedures are completed on
 		///October 1st and 2nd. When the third is charted in October 1st of the following year, the insurance estimate will be non-0.</summary>
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_InLast12Months_FrequencyNotMetBasic)]
-		[Documentation.VersionAdded("19.1")]
-		[Documentation.Description("A patient's insurance covers 100% of diagnostic fees. The patient is limited to two D0274 procedures " +
-			"every 12 months. The patient undergoes a D0274 procedure on October 1st and October 2nd of 2018. A year later, on October 1st 2019, " +
-			"the patient undergoes another D0274 procedure with a $100 fee. The insurance estimate for this procedure should be $100. ")]
 		public void Benefits_InLast12Months_FrequencyNotMetBasic() {
 			string suffix=MethodBase.GetCurrentMethod().Name;
 			Patient pat=PatientT.CreatePatient(suffix);
@@ -730,20 +606,14 @@ namespace UnitTests.Benefits_Test {
 			Assert.AreEqual(100,listClaimProcs.First(x => x.ProcNum==proc3.ProcNum).InsPayEst);
 		}
 
-		///<summary>This method specifically shows that $0 procedures do not count against the frequency limit.
+		///<summary>This method specifically tests that $0 procedures count against the frequency limit.
 		///Frequency set to 2 in the Last 12 months. In this scenario, two procedures are completed on
 		///October 1st and 2nd. When the third is charted on October 3rd of the same year, the insurance estimate will be 0 as the frequency
-		///has been met. When the fourth procedure is charted on October 1st of the following year, the insurance estimate will be non-0 because
-		///the insurance was not billed for proc3. Meaning, even though the patient has received 3 of these procedures in the past 12 months, the 
-		///10/01/19 procedure will be paid for because the 10/03/2018 visit did not count towards the limit.</summary>
+		///has been met. When the fourth procedure is charted on October 1st of the following year, the insurance estimate will be 0 because
+		///our frequency limitation logic counts $0 procedures against the frequency limit. Meaning, even though the October 1st procedure
+		///has fallen out of the date range we still have 2 procedures counting against the limit (proc2,proc3). Thus when we chart a 4th
+		///procedure it's InsPayEst should be 0 as we have already met our limit.</summary>
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_InLast12Months_FrequencyMetWithTwoProcsInLast12Months)]
-		[Documentation.VersionAdded("19.1")]
-		[Documentation.Description("A patient's insurance covers 100% of diagnostic fees. The patient is limited to two D0274 procedures every 12 months. " +
-			"The patient goes in for a D0274 procedure on October 1st and 2nd of 2018, each procedure having a fee of $100. They go in for a third D0274 " +
-			"procedure on October 3rd 2018, with a $100 fee. The insurance estimate for the third procedure should be $0. On October 1st 2019, the patient " +
-			"goes back in for another D0274 procedure with a $100 fee. The insurance estimate for this procedure should be $100. A procedure that was not " +
-			"covered by insurance should not count against a limit.")]
 		public void Benefits_InLast12Months_FrequencyMetWithTwoProcsInLast12Months() {
 			string suffix=MethodBase.GetCurrentMethod().Name;
 			Patient pat=PatientT.CreatePatient(suffix);
@@ -767,14 +637,14 @@ namespace UnitTests.Benefits_Test {
 			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			//Should be 0 as the first two were paid for by the insurance
 			Assert.AreEqual(0,listClaimProcs.First(x => x.ProcNum==proc3.ProcNum).InsPayEst);
-			ClaimT.ReceiveClaim(claim3,listClaimProcs.Where(x => x.ProcNum==proc3.ProcNum).ToList(),doSetInsPayAmt:true);
+			ClaimT.ReceiveClaim(claim3,listClaimProcs.Where(x => x.ProcNum==proc3.ProcNum).ToList());
 			Procedure proc4=ProcedureT.CreateProcedure(pat,"D0274",ProcStat.EC,"",100,new DateTime(2019,10,1));
 			listClaimProcs=new List<ClaimProc> { };
 			listProcs=new List<Procedure> { proc4 };
 			ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
 			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
-			//proc4 is covered because proc1 is too old to matter and proc3 was not paid, so only proc2 counts against the limit.
-			Assert.AreEqual(100,listClaimProcs.First(x => x.ProcNum==proc4.ProcNum).InsPayEst);
+			//proc4 should not be covered as we have already hit our frequency limit from proc2 and proc3.
+			Assert.AreEqual(0,listClaimProcs.First(x => x.ProcNum==proc4.ProcNum).InsPayEst);
 		}
 
 		#endregion
@@ -783,11 +653,6 @@ namespace UnitTests.Benefits_Test {
 		///<summary>Limitation frequency for the BW category has been met with an EO(InsHist claimproc). Test that a new completed procedure does not 
 		///calculate insurance estimates. </summary>
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_InsHistBitewingFrequency)]
-		[Documentation.VersionAdded("18.4")]
-		[Documentation.Description("A patient's insurance covers 100% of diagnostic fees. The patient is limited to one D0272 procedure per calendar year. " +
-			"The patient underwent a D0272 procedure at an outside clinic. Within the same year, the patient undergoes a D0272 at the user's clinic," +
-			" with a fee of $100. The insurance estimate for this procedure should be $0. Outside visits should count towards limits.")]
 		public void Benefits_InsHistBitewingFrequency() {
 			PrefT.UpdateBool(PrefName.InsChecksFrequency,true);
 			ProcedureCodeT.AddIfNotPresent("D0272");
@@ -932,12 +797,6 @@ namespace UnitTests.Benefits_Test {
 
 		/// <summary>validates that procedure specific waiting periods are not overwritten by category specific wait periods</summary>
 		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Benefits_ProcedureCodeWaitingPerdiodOverride)]
-		[Documentation.VersionAdded("21.2.25")]
-		[Documentation.Description("A patient has waiting periods on their insurance. There is a category-specific waiting period of two months for " +
-			"Routine Preventative procedures, and a code-specific waiting period of 0 months for D1351 procedures. The patient undergoes a D1351 " +
-			"procedure, which is within the category-specific waiting period but outside the code-specific waiting period. The category-specific " +
-			"waiting period should not take precedent over the code-specific waiting period. The patient should not be considered in a waiting period. ")]
 		public void Benefits_ProcedureCodeWaitingPerdiodOverride() {
 			Patient pat=PatientT.CreatePatient();
 			Carrier carrier=CarrierT.CreateCarrier("Delta");
@@ -1062,7 +921,7 @@ namespace UnitTests.Benefits_Test {
 			Claim claim=ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
 			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			Assert.AreEqual(100,listClaimProcs.First().InsPayEst);
-			ClaimT.ReceiveClaim(claim,listClaimProcs,doSetInsPayAmt:true);
+			ClaimT.ReceiveClaim(claim,listClaimProcs);
 			Procedure proc2=ProcedureT.CreateProcedure(pat,"PCNCG",ProcStat.C,"",100);
 			listProcs=new List<Procedure> { proc2 };
 			ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
@@ -1092,13 +951,13 @@ namespace UnitTests.Benefits_Test {
 			Claim claim=ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
 			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			Assert.AreEqual(100,listClaimProcs.First().InsPayEst);
-			ClaimT.ReceiveClaim(claim,listClaimProcs,doSetInsPayAmt:true);
+			ClaimT.ReceiveClaim(claim,listClaimProcs);
 			Procedure proc2=ProcedureT.CreateProcedure(pat,"MCGWSPC",ProcStat.C,"",100);
 			listProcs=new List<Procedure> { proc2 };
 			Claim claim2=ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
 			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			Assert.AreEqual(0,listClaimProcs.First(x => x.ProcNum==proc2.ProcNum).InsPayEst);//Reached frequency limitation
-			ClaimT.ReceiveClaim(claim2,listClaimProcs,doSetInsPayAmt:true);
+			ClaimT.ReceiveClaim(claim2,listClaimProcs);
 			Procedure proc3=ProcedureT.CreateProcedure(pat,"MCGWSPC",ProcStat.C,"",100);
 			listProcs=new List<Procedure> { proc3 };
 			Claim claim3=ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
@@ -1132,29 +991,24 @@ namespace UnitTests.Benefits_Test {
 			Claim claim=ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
 			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			Assert.AreEqual(100,listClaimProcs.First().InsPayEst);
-			ClaimT.ReceiveClaim(claim,listClaimProcs,doSetInsPayAmt:true);
+			ClaimT.ReceiveClaim(claim,listClaimProcs);
 			Procedure proc2=ProcedureT.CreateProcedure(pat,"PCACG1",ProcStat.C,"",100);
 			listProcs=new List<Procedure> { proc2 };
 			Claim claim2=ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
 			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			Assert.AreEqual(0,listClaimProcs.First(x => x.ProcNum==proc2.ProcNum).InsPayEst);//Reached frequency limitation
-			ClaimT.ReceiveClaim(claim2,listClaimProcs,doSetInsPayAmt:true);
+			ClaimT.ReceiveClaim(claim2,listClaimProcs);
 			Procedure proc3=ProcedureT.CreateProcedure(pat,"PCACG2",ProcStat.C,"",100);
 			listProcs=new List<Procedure> { proc3 };
 			Claim claim3=ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
 			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			Assert.AreEqual(100,listClaimProcs.First(x => x.ProcNum==proc3.ProcNum).InsPayEst);//However, we haven't reached frequency limitation for the code group yet.
-			ClaimT.ReceiveClaim(claim3,listClaimProcs,doSetInsPayAmt:true);
+			ClaimT.ReceiveClaim(claim3,listClaimProcs);
 			Procedure proc4=ProcedureT.CreateProcedure(pat,"PCACG3",ProcStat.C,"",100);
 			listProcs=new List<Procedure> { proc4 };
 			Claim claim4=ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
 			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
-			Assert.AreEqual(100,listClaimProcs.First(x => x.ProcNum==proc4.ProcNum).InsPayEst);//However, we haven't reached frequency limitation for the code group yet.
-			Procedure proc5=ProcedureT.CreateProcedure(pat,"PCACG3",ProcStat.C,"",100);
-			listProcs=new List<Procedure> { proc5 };
-			Claim claim5=ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
-			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
-			Assert.AreEqual(0,listClaimProcs.First(x => x.ProcNum==proc5.ProcNum).InsPayEst);//Reached frequency limitation for the code group now.
+			Assert.AreEqual(0,listClaimProcs.First(x => x.ProcNum==proc4.ProcNum).InsPayEst);//Reached frequency limitation for the code group now.
 		}
 
 		[TestMethod]
@@ -1181,7 +1035,7 @@ namespace UnitTests.Benefits_Test {
 			Claim claim=ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
 			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			Assert.AreEqual(100,listClaimProcs.First().InsPayEst);
-			ClaimT.ReceiveClaim(claim,listClaimProcs,doSetInsPayAmt:true);
+			ClaimT.ReceiveClaim(claim,listClaimProcs);
 			Procedure proc2=ProcedureT.CreateProcedure(pat,"PCSWCG.1",ProcStat.C,"",100);
 			listProcs=new List<Procedure> { proc2 };
 			ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
@@ -1211,219 +1065,12 @@ namespace UnitTests.Benefits_Test {
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(pat.PatNum);
 			Assert.AreEqual(100,ins.ListAllClaimProcs.First(x => x.ProcNum==proc.ProcNum).InsPayEst);
 			Assert.AreEqual(0,ins.ListAllClaimProcs.First(x => x.ProcNum==proc2.ProcNum).InsPayEst);//Reached frequency limitation
-			//Hide the code group and assert that frequency limitation is still reached for an additional procedure.
+			//Hide the code group and assert that no frequency limitation is reached for an additional procedure.
 			codeGroup=CodeGroupT.Upsert(codeGroup.GroupName,codeGroup.ProcCodes,isHidden:true);
 			Procedure proc3=ProcedureT.CreateProcedure(pat,"HCG01",ProcStat.C,"",100);
 			ClaimT.CreateClaim(new List<Procedure> { proc3 },ins);
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(pat.PatNum);
-			Assert.AreEqual(0,ins.ListAllClaimProcs.First(x => x.ProcNum==proc3.ProcNum).InsPayEst);
-		}
-
-		[TestMethod]
-		public void Benefits_AgeLimit_CodeGroupNotShownInAgeLimit() {
-			PrefT.UpdateBool(PrefName.InsChecksFrequency,true);
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			Patient pat=PatientT.CreatePatient(suffix,birthDate:DateTime.Today.AddYears(-13)); // 13 year old patient
-			ProcedureCodeT.AddIfNotPresent("D1351");
-			InsuranceInfo ins=InsuranceT.AddInsurance(pat,suffix);
-			CodeGroup codeGroup=CodeGroupT.Upsert("SealantAgeLimit","D1351,D1206",EnumCodeGroupFixed.Sealant,showInAgeLimit:false); // CodeGroup not showing in Age Limit grid
-			Benefit benefitSealAgeLim = Benefits.CreateAgeLimitationBenefit(codeGroup.CodeGroupNum,12,ins.PriInsPlan.PlanNum); //Sealant Age Limit 12 years old
-			ins.ListBenefits.Add(benefitSealAgeLim);
-			ins.ListBenefits.Add(BenefitT.CreateCategoryPercent(ins.PriInsPlan.PlanNum,EbenefitCategory.RoutinePreventive,100));
-			Procedure proc=ProcedureT.CreateProcedure(pat,"D1351",ProcStat.C,"11",100);
-			List<Procedure> listProcs=new List<Procedure> { proc };
-			List<ClaimProc> listClaimProcs=new List<ClaimProc> { };
-			Claim claim=ClaimT.CreateClaim("P",ins.ListPatPlans,ins.ListInsPlans,listClaimProcs,listProcs,pat,listProcs,ins.ListBenefits,ins.ListInsSubs);
-			listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
-			Assert.AreEqual(0,listClaimProcs.First().InsPayEst); // Should be aged out.
-		}
-
-		/// <summary>Asserts that GetLimitationByCode returns accurate estimates when there is a family annual max and no individual annual max.</summary>
-		[TestMethod]
-		public void Benefits_GetLimitationByCode_FamilyMaxSet_IndividualMaxNotSet_InsEstOverrideNotSet() {
-			PrefT.UpdateBool(PrefName.InsChecksFrequency,true);
-			string name="Test";
-			Patient patient=PatientT.CreatePatient(name);
-			Carrier carrier=CarrierT.CreateCarrier(name);
-			InsPlan insPlan=InsPlanT.CreateInsPlan(carrier.CarrierNum);
-			InsSub insSub=InsSubT.CreateInsSub(patient.PatNum,insPlan.PlanNum);
-			PatPlan patPlan=PatPlanT.CreatePatPlan(1,patient.PriProv,insSub.InsSubNum);
-			string procCodePartCovered="D1111";
-			string procCodeNotCovered="D2222";
-			double insEstTotal=60;
-			double insEstTotal2=25;
-			int patientAge=19;
-			//Family Annual Max.
-			Benefit benefitFamilyMax=BenefitT.CreateAnnualMax(insPlan.PlanNum,BenefitCoverageLevel.Family,50);
-			//Individual Annual Max is not set.
-			Benefit benefitIndividualMax=BenefitT.CreateAnnualMax(insPlan.PlanNum,BenefitCoverageLevel.Individual,-1);
-			//Age Limitation Fluoride
-			Benefit benefitFluoride=BenefitT.CreateAgeLimitation(insPlan.PlanNum,EbenefitCategory.RoutinePreventive,19,BenefitCoverageLevel.Individual);
-			List<Benefit> listBenefits=new List<Benefit>{ benefitIndividualMax,benefitFluoride,benefitFamilyMax };
-			//Create 1 procedure that will only be partially covered
-			Procedure procedurePartCovered=ProcedureT.CreateProcedure(patient,procCodePartCovered,ProcStat.TP,"",100,DateTime.Now);
-			//Create 1 procedure that will be over family max
-			Procedure procedureNotCovered=ProcedureT.CreateProcedure(patient,procCodeNotCovered,ProcStat.TP,"",50,DateTime.Now);
-			string note="";
-			LimitationTypeMet limitationTypeMet;
-			double coveredAmt=Benefits.GetLimitationByCode(listBenefits,insPlan.PlanNum,patPlan.PatPlanNum,DateTime.Now,procCodePartCovered,new List<ClaimProcHist>(),new List<ClaimProcHist>(),insPlan,patient.PatNum,out note,insEstTotal,patientAge,insSub.InsSubNum,-1,out limitationTypeMet);
-			//Only $50 of the $100 procedure will be covered since $50 is our family max
-			Assert.AreEqual(50,coveredAmt);
-			//Create a dummy claimproc for the procCodePartCovered procedure we already processed
-			ClaimProcHist claimProcHist=new ClaimProcHist();
-			claimProcHist.ProcDate=DateTime.Now;
-			claimProcHist.Status=ClaimProcStatus.Estimate;
-			claimProcHist.PatNum=patient.PatNum;
-			claimProcHist.ProcNum=procedurePartCovered.ProcNum;
-			claimProcHist.Amount=insEstTotal;
-			claimProcHist.InsSubNum=insSub.InsSubNum;
-			claimProcHist.PlanNum=insPlan.PlanNum;
-			claimProcHist.StrProcCode=procCodePartCovered;
-			coveredAmt=Benefits.GetLimitationByCode(listBenefits,insPlan.PlanNum,patPlan.PatPlanNum,DateTime.Now,procCodeNotCovered,ListTools.FromSingle(claimProcHist),new List<ClaimProcHist>(),insPlan,patient.PatNum,out note,insEstTotal2,patientAge,insSub.InsSubNum,-1,out limitationTypeMet);
-			//$0 will be covered since we have already exceeded our annual max.
-			Assert.AreEqual(0,coveredAmt);
-		}
-		
-		/// <summary>Asserts that GetLimitationByCode returns accurate estimates when there is a family annual max and no individual annual max, even when there is an InsEstOverride that is greater than the InsEstTotal.</summary>
-		[TestMethod]
-		public void Benefits_GetLimitationByCode_FamilyMaxSet_IndividualMaxNotSet_InsEstOverrideGreaterThanInsEstTotal() {
-			PrefT.UpdateBool(PrefName.InsChecksFrequency,true);
-			string name="Test";
-			Patient patient=PatientT.CreatePatient(name);
-			Carrier carrier=CarrierT.CreateCarrier(name);
-			InsPlan insPlan=InsPlanT.CreateInsPlan(carrier.CarrierNum);
-			InsSub insSub=InsSubT.CreateInsSub(patient.PatNum,insPlan.PlanNum);
-			PatPlan patPlan=PatPlanT.CreatePatPlan(1,patient.PriProv,insSub.InsSubNum);
-			string procCodePartCovered="D1111";
-			string procCodeNotCovered="D2222";
-			double insEstTotal=60;
-			double insEstTotal2=25;
-			double insEstOverride=100;
-			double insEstOverride2=50;
-			int patientAge=19;
-			//Family Annual Max.
-			Benefit benefitFamilyMax=BenefitT.CreateAnnualMax(insPlan.PlanNum,BenefitCoverageLevel.Family,50);
-			//Individual Annual Max is not set.
-			Benefit benefitIndividualMax=BenefitT.CreateAnnualMax(insPlan.PlanNum,BenefitCoverageLevel.Individual,-1);
-			//Age Limitation Fluoride
-			Benefit benefitFluoride=BenefitT.CreateAgeLimitation(insPlan.PlanNum,EbenefitCategory.RoutinePreventive,19,BenefitCoverageLevel.Individual);
-			List<Benefit> listBenefits=new List<Benefit>{ benefitIndividualMax,benefitFluoride,benefitFamilyMax };
-			//Create 1 procedure that will only be partially covered
-			Procedure procedurePartCovered=ProcedureT.CreateProcedure(patient,procCodePartCovered,ProcStat.TP,"",100,DateTime.Now);
-			//Create 1 procedure that will be over family max
-			Procedure procedureNotCovered=ProcedureT.CreateProcedure(patient,procCodeNotCovered,ProcStat.TP,"",50,DateTime.Now);
-			string note="";
-			LimitationTypeMet limitationTypeMet;
-			double coveredAmt=Benefits.GetLimitationByCode(listBenefits,insPlan.PlanNum,patPlan.PatPlanNum,DateTime.Now,procCodePartCovered,new List<ClaimProcHist>(),new List<ClaimProcHist>(),insPlan,patient.PatNum,out note,insEstTotal,patientAge,insSub.InsSubNum,insEstOverride,out limitationTypeMet);
-			//Only $50 of the $100 procedure will be covered since $50 is our family max
-			Assert.AreEqual(50,coveredAmt);
-			//Create a dummy claimproc for the procCodePartCovered procedure we already processed
-			ClaimProcHist claimProcHist=new ClaimProcHist();
-			claimProcHist.ProcDate=DateTime.Now;
-			claimProcHist.Status=ClaimProcStatus.Estimate;
-			claimProcHist.PatNum=patient.PatNum;
-			claimProcHist.ProcNum=procedurePartCovered.ProcNum;
-			claimProcHist.Amount=insEstTotal;
-			claimProcHist.InsSubNum=insSub.InsSubNum;
-			claimProcHist.PlanNum=insPlan.PlanNum;
-			claimProcHist.StrProcCode=procCodePartCovered;
-			coveredAmt=Benefits.GetLimitationByCode(listBenefits,insPlan.PlanNum,patPlan.PatPlanNum,DateTime.Now,procCodeNotCovered,ListTools.FromSingle(claimProcHist),new List<ClaimProcHist>(),insPlan,patient.PatNum,out note,insEstTotal2,patientAge,insSub.InsSubNum,insEstOverride2,out limitationTypeMet);
-			//$0 will be covered since we have already exceeded our annual max.
-			Assert.AreEqual(0,coveredAmt);
-		}
-		
-		/// <summary>Asserts that GetLimitationByCode returns accurate estimates when there is a family annual max and no individual annual max, even when there is an InsEstOverride that is less than the InsEstTotal.</summary>
-		[TestMethod]
-		public void Benefits_GetLimitationByCode_FamilyMaxSet_IndividualMaxNotSet_InsEstOverrideLessThanInsEstTotal() {
-			PrefT.UpdateBool(PrefName.InsChecksFrequency,true);
-			string name="Test";
-			Patient patient=PatientT.CreatePatient(name);
-			Carrier carrier=CarrierT.CreateCarrier(name);
-			InsPlan insPlan=InsPlanT.CreateInsPlan(carrier.CarrierNum);
-			InsSub insSub=InsSubT.CreateInsSub(patient.PatNum,insPlan.PlanNum);
-			PatPlan patPlan=PatPlanT.CreatePatPlan(1,patient.PriProv,insSub.InsSubNum);
-			string procCodePartCovered="D1111";
-			string procCodeNotCovered="D2222";
-			double insEstTotal=60;
-			double insEstTotal2=25;
-			double insEstOverride=30;
-			double insEstOverride2=15;
-			int patientAge=19;
-			//Family Annual Max.
-			Benefit benefitFamilyMax=BenefitT.CreateAnnualMax(insPlan.PlanNum,BenefitCoverageLevel.Family,50);
-			//Individual Annual Max is not set.
-			Benefit benefitIndividualMax=BenefitT.CreateAnnualMax(insPlan.PlanNum,BenefitCoverageLevel.Individual,-1);
-			//Age Limitation Fluoride
-			Benefit benefitFluoride=BenefitT.CreateAgeLimitation(insPlan.PlanNum,EbenefitCategory.RoutinePreventive,19,BenefitCoverageLevel.Individual);
-			List<Benefit> listBenefits=new List<Benefit>{ benefitIndividualMax,benefitFluoride,benefitFamilyMax };
-			//Create 1 procedure that will only be partially covered
-			Procedure procedurePartCovered=ProcedureT.CreateProcedure(patient,procCodePartCovered,ProcStat.TP,"",100,DateTime.Now);
-			//Create 1 procedure that will be over family max
-			Procedure procedureNotCovered=ProcedureT.CreateProcedure(patient,procCodeNotCovered,ProcStat.TP,"",50,DateTime.Now);
-			string note="";
-			LimitationTypeMet limitationTypeMet;
-			double coveredAmt=Benefits.GetLimitationByCode(listBenefits,insPlan.PlanNum,patPlan.PatPlanNum,DateTime.Now,procCodePartCovered,new List<ClaimProcHist>(),new List<ClaimProcHist>(),insPlan,patient.PatNum,out note,insEstTotal,patientAge,insSub.InsSubNum,insEstOverride,out limitationTypeMet);
-			//Only $50 of the $100 procedure will be covered since $50 is our family max
-			Assert.AreEqual(50,coveredAmt);
-			//Create a dummy claimproc for the procCodePartCovered procedure we already processed
-			ClaimProcHist claimProcHist=new ClaimProcHist();
-			claimProcHist.ProcDate=DateTime.Now;
-			claimProcHist.Status=ClaimProcStatus.Estimate;
-			claimProcHist.PatNum=patient.PatNum;
-			claimProcHist.ProcNum=procedurePartCovered.ProcNum;
-			claimProcHist.Amount=insEstTotal;
-			claimProcHist.InsSubNum=insSub.InsSubNum;
-			claimProcHist.PlanNum=insPlan.PlanNum;
-			claimProcHist.StrProcCode=procCodePartCovered;
-			coveredAmt=Benefits.GetLimitationByCode(listBenefits,insPlan.PlanNum,patPlan.PatPlanNum,DateTime.Now,procCodeNotCovered,ListTools.FromSingle(claimProcHist),new List<ClaimProcHist>(),insPlan,patient.PatNum,out note,insEstTotal2,patientAge,insSub.InsSubNum,insEstOverride2,out limitationTypeMet);
-			//$0 will be covered since we have already exceeded our annual max.
-			Assert.AreEqual(0,coveredAmt);
-		}
-		
-		/// <summary>Asserts that the InsEstTotal is returned by GetLimitationsByCode when there are no benefits present to reduce it by (no Annual Maxes).</summary>
-		[TestMethod]
-		public void Benefits_GetLimitationByCode_FamilyMaxNotSet_IndividualMaxNotSet_InsEstOverrideNotSet() {
-			PrefT.UpdateBool(PrefName.InsChecksFrequency,true);
-			string name="Test";
-			Patient patient=PatientT.CreatePatient(name);
-			Carrier carrier=CarrierT.CreateCarrier(name);
-			InsPlan insPlan=InsPlanT.CreateInsPlan(carrier.CarrierNum);
-			InsSub insSub=InsSubT.CreateInsSub(patient.PatNum,insPlan.PlanNum);
-			PatPlan patPlan=PatPlanT.CreatePatPlan(1,patient.PriProv,insSub.InsSubNum);
-			string procCodePartCovered="D1111";
-			string procCodeNotCovered="D2222";
-			double insEstTotal=60;
-			double insEstTotal2=25;
-			int patientAge=19;
-			//Family Annual Max.
-			Benefit benefitFamilyMax=BenefitT.CreateAnnualMax(insPlan.PlanNum,BenefitCoverageLevel.Family,-1);
-			//Individual Annual Max is not set.
-			Benefit benefitIndividualMax=BenefitT.CreateAnnualMax(insPlan.PlanNum,BenefitCoverageLevel.Individual,-1);
-			//Age Limitation Fluoride
-			Benefit benefitFluoride=BenefitT.CreateAgeLimitation(insPlan.PlanNum,EbenefitCategory.RoutinePreventive,19,BenefitCoverageLevel.Individual);
-			List<Benefit> listBenefits=new List<Benefit>{ benefitIndividualMax,benefitFluoride,benefitFamilyMax };
-			//Create 1 procedure that will only be partially covered
-			Procedure procedurePartCovered=ProcedureT.CreateProcedure(patient,procCodePartCovered,ProcStat.TP,"",100,DateTime.Now);
-			//Create 1 procedure that will be over family max
-			Procedure procedureNotCovered=ProcedureT.CreateProcedure(patient,procCodeNotCovered,ProcStat.TP,"",50,DateTime.Now);
-			string note="";
-			LimitationTypeMet limitationTypeMet;
-			double coveredAmt=Benefits.GetLimitationByCode(listBenefits,insPlan.PlanNum,patPlan.PatPlanNum,DateTime.Now,procCodePartCovered,new List<ClaimProcHist>(),new List<ClaimProcHist>(),insPlan,patient.PatNum,out note,insEstTotal,patientAge,insSub.InsSubNum,-1,out limitationTypeMet);
-			//Only $60 of the $100 procedure will be covered since $60 is the InsEstTotal and it should not have been reduced at all
-			Assert.AreEqual(60,coveredAmt);
-			//Create a dummy claimproc for the procCodePartCovered procedure we already processed
-			ClaimProcHist claimProcHist=new ClaimProcHist();
-			claimProcHist.ProcDate=DateTime.Now;
-			claimProcHist.Status=ClaimProcStatus.Estimate;
-			claimProcHist.PatNum=patient.PatNum;
-			claimProcHist.ProcNum=procedurePartCovered.ProcNum;
-			claimProcHist.Amount=insEstTotal;
-			claimProcHist.InsSubNum=insSub.InsSubNum;
-			claimProcHist.PlanNum=insPlan.PlanNum;
-			claimProcHist.StrProcCode=procCodePartCovered;
-			coveredAmt=Benefits.GetLimitationByCode(listBenefits,insPlan.PlanNum,patPlan.PatPlanNum,DateTime.Now,procCodeNotCovered,ListTools.FromSingle(claimProcHist),new List<ClaimProcHist>(),insPlan,patient.PatNum,out note,insEstTotal2,patientAge,insSub.InsSubNum,-1,out limitationTypeMet);
-			//$25 will be covered since $25 is the InsEstTotal and it should not have been reduced at all.
-			Assert.AreEqual(25,coveredAmt);
+			Assert.AreEqual(100,ins.ListAllClaimProcs.First(x => x.ProcNum==proc3.ProcNum).InsPayEst);
 		}
 	}
 }

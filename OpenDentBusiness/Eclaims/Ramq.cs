@@ -24,8 +24,7 @@ namespace OpenDentBusiness.Eclaims {
 			List <ProcedureCode> listProcCodes=ProcedureCodes.GetAllCodes();
 			List <Etrans> listEtrans=new List<Etrans>();
 			foreach(ClaimSendQueueItem queueItem in queueItems) {
-				Etrans etrans=Etranss.SetClaimSentOrPrinted(queueItem.ClaimNum,queueItem.ClaimStatus,queueItem.PatNum,
-					clearinghouseClin.HqClearinghouseNum,EtransType.Claim_Ramq,batchNum,Security.CurUser.UserNum);
+				Etrans etrans=Etranss.SetClaimSentOrPrinted(queueItem.ClaimNum,queueItem.PatNum,clearinghouseClin.HqClearinghouseNum,EtransType.Claim_Ramq,batchNum,Security.CurUser.UserNum);
 				listEtrans.Add(etrans);
 				//Now we need to update our cache of claims to reflect the change that took place in the database above in Etranss.SetClaimSentOrPrinted()
 				queueItem.ClaimStatus="S";

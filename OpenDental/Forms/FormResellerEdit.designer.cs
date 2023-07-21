@@ -39,8 +39,9 @@ namespace OpenDental{
 			this.labelTotal = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.butAdd = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.labelBundleRequired = new System.Windows.Forms.Label();
 			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.comboBillingType = new OpenDental.UI.ComboBox();
@@ -49,7 +50,6 @@ namespace OpenDental{
 			this.label2 = new System.Windows.Forms.Label();
 			this.textNote = new System.Windows.Forms.TextBox();
 			this.textVotesAllotted = new System.Windows.Forms.TextBox();
-			this.checkAllowSignupPortal = new OpenDental.UI.CheckBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
@@ -97,7 +97,6 @@ namespace OpenDental{
 			// 
 			// groupBox1
 			// 
-			this.groupBox1.Controls.Add(this.checkAllowSignupPortal);
 			this.groupBox1.Controls.Add(this.labelCredentials);
 			this.groupBox1.Controls.Add(this.label4);
 			this.groupBox1.Controls.Add(this.label5);
@@ -196,15 +195,15 @@ namespace OpenDental{
 			this.butAdd.Text = "&Add Service";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(707, 523);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 251;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(612, 525);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 251;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butDelete
 			// 
@@ -217,6 +216,16 @@ namespace OpenDental{
 			this.butDelete.TabIndex = 41;
 			this.butDelete.Text = "&Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(707, 525);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 3;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// labelBundleRequired
 			// 
@@ -303,14 +312,6 @@ namespace OpenDental{
 			this.textVotesAllotted.TabIndex = 247;
 			this.textVotesAllotted.Text = "0";
 			// 
-			// checkAllowSignupPortal
-			// 
-			this.checkAllowSignupPortal.Location = new System.Drawing.Point(104, 96);
-			this.checkAllowSignupPortal.Name = "checkAllowSignupPortal";
-			this.checkAllowSignupPortal.Size = new System.Drawing.Size(290, 33);
-			this.checkAllowSignupPortal.TabIndex = 250;
-			this.checkAllowSignupPortal.Text = "Allow Reseller Customers to use signup portal";
-			// 
 			// FormResellerEdit
 			// 
 			this.ClientSize = new System.Drawing.Size(804, 561);
@@ -321,11 +322,12 @@ namespace OpenDental{
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.gridServices);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.label6);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormResellerEdit";
 			this.Text = "Reseller Edit";
@@ -339,6 +341,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.Label label6;
 		private UI.Button butDelete;
@@ -348,7 +352,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label5;
 		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label labelCredentials;
-		private UI.Button butSave;
+		private UI.Button butOK;
 		private System.Windows.Forms.ContextMenu menuRightClick;
 		private System.Windows.Forms.MenuItem menuItemAccount;
 		private UI.GridOD gridServices;
@@ -364,6 +368,5 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textNote;
 		private System.Windows.Forms.TextBox textVotesAllotted;
 		private UI.ComboBox comboBillingType;
-		private UI.CheckBox checkAllowSignupPortal;
 	}
 }

@@ -22,7 +22,7 @@ namespace WpfControls.UI{
 /*
 Jordan is the only one allowed to edit this file.
 This listBox is written from scratch in a way that should exactly duplicate the OpenDental.UI.ListBox.
-Compared to ComboBox, this is optimized for smaller lists that can all fit inside a form without scrolling. Enums are the typical example.
+It's optimized for smaller lists that can all fit inside a form without scrolling. Enums are the typical example.
 (todo: implement arrow up/down keys)
 
 Code Examples:
@@ -56,8 +56,6 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		private int _hoverIndex=-1;
 		///<summary>When we capture mouse, it causes a mouse move event that messes up our logic. This allows us to ignore that event for that one line.</summary>
 		private bool _ignoreMouseMove;
-		///<summary>We must combine this class level field with Mouse.LeftButton==MouseButtonState.Pressed to avoid two different edge case bugs. Using _isMouseDown prevents bug in following scenario: a combobox above the listbox has a dropdown that user clicks on. This causes the dropdown to close, triggering a mouse move in the listbox while mouse is stilldown. Using _isMouseDown lets us ignore this because we didn't actually mouse down in the listbox.</summary>
-		private bool _isMouseDown;
 		///<summary>This is the only internal storage for tracking selected indices.  All properties refer to this same list. Don't change this list from outside of the three big properties unless you also refresh the UI.</summary>
 		private List<int> _listSelectedIndices=new List<int>();
 		///<summary>On mouse down, this copy is made.  Use as needed for logic.  No need to clear when done.</summary>
@@ -67,20 +65,19 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		private string _overrideText="";
 		///<summary>If selected index is -1, this can be used to store and retrieve the primary key. _overrideText is what shows to the user.</summary>
 		private long _selectedKey=0;
-		private SelectionMode _selectionMode=SelectionMode.One;
-		private Color _colorSelectedBack=Color.FromRgb(186,199,219);//#BAC7DB, grid default was Silver: C0C0C0 (192 gray)
-		private Color _colorBack=Colors.White;
 		#endregion Fields
 
 		#region Constructor
 		public ListBox(){
 			InitializeComponent();
-			//Width=150;
-			//Height=200;
 			scrollViewer.CanContentScroll=false;//results in physical(pixel) scrolling instead of logical(Item) scrolling.
 			Items=new ListBoxItemCollection(this);
+			//Width=150;
+			//Height=200;
+			//HorizontalAlignment=HorizontalAlignment.Left;
+			//VerticalAlignment=VerticalAlignment.Top;
+			//Margin=new Thickness(10,10,0,0);
 			IsEnabledChanged+=ListBox_IsEnabledChanged;
-			PreviewKeyDown+=ListBox_PreviewKeyDown;
 		}
 		
 		#endregion Constructor
@@ -98,34 +95,6 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		#endregion Events - Public Raise
 
 		#region Properties
-		[Category("OD")]
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		///Sets the background color for the entire listbox.
-		public Color ColorBack {
-			get{
-				return _colorBack;
-			}
-			set{
-				_colorBack=value;
-				SetColors();
-			}
-		}
-
-		[Category("OD")]
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		///Sets the highlight color for the selected item in that listbox.
-		public Color ColorSelectedBack {
-			get{
-				return _colorSelectedBack;
-			}
-			set{
-				_colorSelectedBack=value;
-				SetColors();
-			}
-		}
-
 		[Category("OD")]
 		[DefaultValue(true)]
 		public new bool IsEnabled{
@@ -164,9 +133,6 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 				if(SelectionMode==SelectionMode.MultiExtended){
 					throw new Exception("SelectedIndex.Get is ambiguous when SelectionMode.MultiExtended.");
 				}
-				if(SelectionMode==SelectionMode.CheckBoxes){
-					throw new Exception("SelectedIndex.Get is ambiguous when SelectionMode.CheckBoxes.");
-				}
 				if(_listSelectedIndices.Count==0){
 					return -1;
 				}
@@ -175,9 +141,6 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			set{
 				if(SelectionMode==SelectionMode.None) {
 					throw new Exception("SelectedIndex is not allowed when SelectionMode.None.");
-				}
-				if(SelectionMode==SelectionMode.CheckBoxes) {
-					throw new Exception("SelectedIndex is not implemented for SelectionMode.CheckBoxes.");
 				}
 				if(value<-1 || value>Items.Count-1){
 					return;//ignore out of range
@@ -201,9 +164,6 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 				if(!DesignerProperties.GetIsInDesignMode(this) && SelectionMode==SelectionMode.MultiExtended){
 					throw new Exception("SelectedItem.Get is ambiguous when SelectionMode.MultiExtended.");
 				}
-				if(!DesignerProperties.GetIsInDesignMode(this) && SelectionMode==SelectionMode.CheckBoxes){
-					throw new Exception("SelectedItem.Get is ambiguous when SelectionMode.CheckBoxes.");
-				}
 				if(_listSelectedIndices.Count==0){
 					return default;
 				}
@@ -216,9 +176,6 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			set{
 				if(!DesignerProperties.GetIsInDesignMode(this) && SelectionMode==SelectionMode.None) {
 					throw new Exception("SelectedItem is not allowed when SelectionMode.None.");
-				}
-				if(!DesignerProperties.GetIsInDesignMode(this) && SelectionMode==SelectionMode.CheckBoxes) {
-					throw new Exception("SelectedItem is not implemented for SelectionMode.CheckBoxes.");
 				}
 				if(value==null) {
 					//deselect, just like MS behavior
@@ -271,9 +228,6 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 				if(SelectionMode==SelectionMode.None) {
 					throw new Exception("SelectedIndices is not allowed when SelectionMode.None.");
 				}
-				if(SelectionMode==SelectionMode.CheckBoxes) {
-					throw new Exception("SelectedIndices is not implemented for SelectionMode.CheckBoxes.");//because not needed
-				}
 				if(SelectionMode!=SelectionMode.MultiExtended){
 					throw new Exception("Cannot set SelectedIndices when not SelectionMode.MultiExtended. Use SelectedIndex, SetSelected, etc.");
 				}
@@ -290,29 +244,9 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		} 
 
 		[Category("OD")]
-		[Description("Set to allow none, single, multiple, or checkboxes.")]
+		[Description("Set to allow none, single, or multiple selections.")]
 		[DefaultValue(SelectionMode.One)]
-		public SelectionMode SelectionMode { 
-			get{
-				return _selectionMode;
-			}
-			set{
-				_selectionMode=value;
-				if(_selectionMode==SelectionMode.CheckBoxes){
-					scrollViewer.HorizontalScrollBarVisibility=ScrollBarVisibility.Auto;
-				}
-				else{
-					scrollViewer.HorizontalScrollBarVisibility=ScrollBarVisibility.Disabled;
-				}
-			} 
-		}
-
-		//[Category("OD")]
-		//[DefaultValue(int.MaxValue)]
-		//[Description("Use this instead of TabIndex.")]
-		//public int TabIndexOD{
-			 //TabIndex is just for textboxes for now.
-		//}
+		public SelectionMode SelectionMode { get; set; } = SelectionMode.One;
 
 		///<summary>This property is for convenience. It toggles the Visibility property between Visible and Collapsed.</summary>
 		[Browsable(false)]
@@ -334,11 +268,6 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		#endregion Properties
 
 		#region Methods - event handlers, mouse
-		private void CheckBox_Click(object sender,EventArgs e) {
-			//checkbox value already changed.
-			FillSelectedIndicesFromCheckBoxes();
-		}
-
 		private void Item_MouseLeave(object sender,MouseEventArgs e) {
 			_hoverIndex=-1;
 			SetColors();
@@ -346,12 +275,10 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 
 		private void Item_MouseLeftButtonDown(object sender,MouseButtonEventArgs e) {
 			//Focus();
-			if(SelectionMode==SelectionMode.None
-				|| SelectionMode==SelectionMode.CheckBoxes) //handled instead with checkbox_click event
-			{
+			if(SelectionMode==SelectionMode.None) {
 				return;
 			}
-			_isMouseDown=true;
+			bool isMouseDown=Mouse.LeftButton==MouseButtonState.Pressed;
 			_ignoreMouseMove=true;
 			((IInputElement)sender).CaptureMouse();
 			_ignoreMouseMove=false;
@@ -373,26 +300,21 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 				SelectedIndexChanged?.Invoke(this,new EventArgs());
 			}
 			SetColors();
-			MouseButtonEventArgs mouseButtonEventArgs=new MouseButtonEventArgs(e.MouseDevice,e.Timestamp,MouseButton.Left);
-			mouseButtonEventArgs.RoutedEvent=MouseDownEvent;
-			RaiseEvent(mouseButtonEventArgs);
-			//because OnMouseDown(e) wasn't working.
-			//At end so that index will be selected before mouse down fires somewhere else (e.g. FormApptEdit).  Matches MS.
-			//But, sometimes, if an event from above resulted in a dialog, then there will be no mouse up event.  Handle that below.
-			bool isMouseDown=Mouse.LeftButton==MouseButtonState.Pressed;//introducing variable for debugging because this state is not preserved at break points.
-			if(!isMouseDown) {
-				_isMouseDown=false;
-			}
+//todo: test this issue
+			//base.OnMouseDown(e);//at end so that index will be selected before mouse down fires somewhere else (e.g. FormApptEdit).  Matches MS.
+			//but, sometimes, if an event from above resulted in a dialog, then there will be no mouse up event.  Handle that below.
+			//MouseButtons mouseButtons=Control.MouseButtons;//introducing variable for debugging because this state is not preserved at break points.
+			//if(mouseButtons==MouseButtons.None){
+			//	_isMouseDown=false;
+			//}
 		}
 
 		private void Item_MouseLeftButtonUp(object sender,MouseButtonEventArgs e) {
 			((IInputElement)sender).ReleaseMouseCapture();
-			if(SelectionMode==SelectionMode.None
-				|| SelectionMode==SelectionMode.CheckBoxes) 
-			{
+			if(SelectionMode==SelectionMode.None) {
 				return;
 			}
-			_isMouseDown=false;
+			//_isMouseDown=false;
 			SetColors();
 		}
 
@@ -400,14 +322,10 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			if(_ignoreMouseMove){
 				return;
 			}
-			if(SelectionMode==SelectionMode.CheckBoxes) {
-				//we don't want any hover effect other than what the checkboxes supply
-				return;
-			}
 			Point point=e.GetPosition(this);
 			_hoverIndex=IndexFromPoint(point);
 			bool isMouseDown=Mouse.LeftButton==MouseButtonState.Pressed;
-			if(!isMouseDown || !_isMouseDown) {
+			if(!isMouseDown) {
 				SetColors();
 				return;
 			}
@@ -447,78 +365,6 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			}
 			SetColors();
 		}
-
-		///<summary>Used by autonotes for SelectionMode.CheckBoxes and SelectionMode.One</summary>
-		private void ListBox_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(SelectionMode!=SelectionMode.CheckBoxes && SelectionMode!=SelectionMode.One){
-				return;
-			}
-			if(e.Key==Key.Escape){//Closing the form
-				return;
-			}
-			List<string> listItems=new List<string>();
-			for(int i=0;i<Items.Count;i++){
-				listItems.Add(Items.GetTextShowingAt(i));
-			}
-			if(listItems==null || listItems.Count==0){
-				return;
-			}
-			int index=0;
-			if(SelectionMode==SelectionMode.One && SelectedIndex!=-1){
-				index=SelectedIndex+1;
-			}
-			if(index>=Items.Count){
-				index=0;
-			}
-			string key=e.Key.ToString().ToLower();
-			if(key.Length>2){//For keys that aren't letters or numbers, such as alt. Alt will have "system" as the key.
-				return;
-			}
-			if(key.Length>1 && key[0]=='d'){//EX:Keyboard presses like 1,2,3 will result in D1, D2, ect so we remove the D part from it. Also need to check D so we don't trim key presses like f1.
-				key=key.Substring(1,1);
-			}
-			//From the index to the end of the list
-			for(int i=index;i<listItems.Count;i++){
-				if(key[0]!=listItems[i].ToLower()[0]){//If the key does not match, skip it.
-					continue;
-				}
-				//We found a match
-				if(SelectionMode==SelectionMode.One){
-					SelectedIndex=i;
-					return;
-				}
-				//Otherwise SelectionMode.CheckBoxes
-				Border border=(Border)stackPanel.Children[i];
-				CheckBox checkBox=(CheckBox)border.Child;
-				if(checkBox.Checked==true){
-					continue;
-				}
-				_listSelectedIndices.Add(i);
-				FillCheckBoxesFromSelectedIndices();
-				return;
-			}
-			//From the start of the list to the index
-			for(int i=0;i<index;i++){
-				if(key[0]!=listItems[i].ToLower()[0]){//If the key does not match, skip it.
-					continue;
-				}
-				//We found a match
-				if(SelectionMode==SelectionMode.One){
-					SelectedIndex=i;
-					return;
-				}
-				//Otherwise SelectionMode.CheckBoxes
-				Border border=(Border)stackPanel.Children[i];
-				CheckBox checkBox=(CheckBox)border.Child;
-				if(checkBox.Checked==true){
-					continue;
-				}
-				_listSelectedIndices.Add(i);
-				FillCheckBoxesFromSelectedIndices();
-				return;
-			}
-		}
-
 		#endregion Methods - event handlers, mouse
 
 		#region Methods - Public
@@ -543,9 +389,6 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			if(SelectionMode==SelectionMode.MultiExtended){
 				throw new Exception("GetSelected is ambiguous when SelectionMode.MultiExtended.");
 			}
-			if(SelectionMode==SelectionMode.CheckBoxes){
-				throw new Exception("GetSelected is ambiguous when SelectionMode.CheckBoxes.");
-			}
 			if(_listSelectedIndices.Count==0){
 				return default;//usually null. For an enum, this will be item 0.
 			}
@@ -562,9 +405,6 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			if(SelectionMode==SelectionMode.MultiExtended){
 				throw new Exception("GetSelected is ambiguous when SelectionMode.MultiExtended.");
 			}
-			if(SelectionMode==SelectionMode.CheckBoxes){
-				throw new Exception("GetSelected is ambiguous when SelectionMode.CheckBoxes.");
-			}
 			if(_listSelectedIndices.Count==0){
 				return _selectedKey;//could be zero
 			}
@@ -574,7 +414,7 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			return funcSelectKey((T)Items.GetObjectAt(_listSelectedIndices[0]));
 		}
 
-		///<summary>Gets a string of all selected items, separated by commas and spaces. Example: item1, item2, ...</summary>
+		///<summary>Gets a string of all selected items, separated by commas.</summary>
 		public string GetStringSelectedItems(bool useAbbr=false) {
 			//works the same for SelectionMode.MultiExtended or not
 			string retVal="";
@@ -623,12 +463,12 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			}
 			_listSelectedIndices.Clear();
 			if(setToValue){//if setting all true
+				if(SelectionMode!=SelectionMode.MultiExtended){
+					throw new Exception("SetAll is not allowed when not SelectionMode.MultiExtended.");
+				}
 				for(int i=0;i<Items.Count;i++){
 					_listSelectedIndices.Add(i);
 				}
-			}
-			if(SelectionMode==SelectionMode.CheckBoxes) {
-				FillCheckBoxesFromSelectedIndices();
 			}
 			SelectedIndexChanged?.Invoke(this,new EventArgs());
 			SetColors();
@@ -643,7 +483,7 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 				if(_listSelectedIndices.Contains(index)){
 					return;//nothing to do
 				}
-				if(SelectionMode==SelectionMode.One){
+				if(SelectionMode!=SelectionMode.MultiExtended){
 					_listSelectedIndices.Clear();
 				}
 				_listSelectedIndices.Add(index);
@@ -654,9 +494,6 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 				}
 				_listSelectedIndices.Remove(index);
 			}
-			if(SelectionMode==SelectionMode.CheckBoxes) {
-				FillCheckBoxesFromSelectedIndices();
-			}
 			//SetVScrollValue();//overkill. These don't often scroll or get set externally
 			SelectedIndexChanged?.Invoke(this,new EventArgs());
 			SetColors();
@@ -666,9 +503,6 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		public void SetSelectedEnum<T>(T enumVal){
 			if(SelectionMode==SelectionMode.None) {
 				throw new Exception("SetSelectedEnum is not allowed when SelectionMode.None.");
-			}
-			if(SelectionMode==SelectionMode.CheckBoxes) {
-				throw new Exception("SetSelected is not implemented for SelectionMode.CheckBoxes.");
 			}
 			int idx=-1;
 			for(int i=0;i<Items.Count;i++){
@@ -690,9 +524,6 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		public void SetSelectedKey<T>(long key,Func<T,long> funcSelectKey,Func<long,string> funcOverrideText=null){
 			if(SelectionMode==SelectionMode.None) {
 				throw new Exception("SetSelectedKey is not allowed when SelectionMode.None.");
-			}
-			if(SelectionMode==SelectionMode.CheckBoxes) {
-				throw new Exception("SetSelectedKey is not implemented for SelectionMode.CheckBoxes.");
 			}
 			_listSelectedIndices.Clear();
 			_overrideText="";
@@ -812,30 +643,6 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			return idx;
 		}*/
 
-		private void FillCheckBoxesFromSelectedIndices(){
-			for(int i=0;i<stackPanel.Children.Count;i++){
-				Border border=(Border)stackPanel.Children[i];
-				CheckBox checkBox=(CheckBox)border.Child;
-				if(_listSelectedIndices.Contains(i)){
-					checkBox.Checked=true;
-				}
-				else{
-					checkBox.Checked=false;
-				}
-			}
-		}
-
-		private void FillSelectedIndicesFromCheckBoxes(){
-			_listSelectedIndices=new List<int>();
-			for(int i=0;i<stackPanel.Children.Count;i++){
-				Border border=(Border)stackPanel.Children[i];
-				CheckBox checkBox=(CheckBox)border.Child;
-				if(checkBox.Checked==true){
-					_listSelectedIndices.Add(i);
-				}
-			}
-		}
-
 		private void ListBox_IsEnabledChanged(object sender,DependencyPropertyChangedEventArgs e) {
 			//This is nice because it gets hit when changing the property in the designer.
 			SetColors();
@@ -843,16 +650,13 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 
 		///<summary>Sets background colors for all rows, based on selected indices and hover.</summary>
 		private void SetColors(){
-			if(SelectionMode==SelectionMode.CheckBoxes){
-				return;
-			}
 			//I'm really not sure how the textBlocks get greyed out for IsEnabled.
 			//Seems to work automatically, so I won't complain.
 			for(int i=0;i<stackPanel.Children.Count;i++){
-				Color colorBack=_colorBack;
+				Color colorBack=Colors.White;
 				if(_listSelectedIndices.Contains(i)){
 					if(IsEnabled){
-						colorBack=_colorSelectedBack;
+						colorBack=Color.FromRgb(186,199,219);//#BAC7DB,   grid default was Silver: C0C0C0 (192 gray)
 					}
 					else{
 						colorBack=Color.FromRgb(230,230,230);
@@ -869,7 +673,7 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		#endregion Methods - private
 
 		#region Class - ListBoxItemCollection
-		///<summary>Nested class for the collection of items.  Each item must be a ListBoxItem, not null.  Each field of a ListBoxItem may be null.</summary>
+		///<summary>Nested class for the collection of items.  Each items must be a ListBoxItem, not null.  Each field of a ListBoxItem may be null.</summary>
 		public class ListBoxItemCollection{
 			///<summary>The listBox that this collection is attached to.</summary>
 			private ListBox _listBoxParent;
@@ -1073,35 +877,10 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 
 			private void AddItemToUI(string text){
 				Border border=new Border();
-				if(_listBoxParent.SelectionMode==SelectionMode.CheckBoxes){
-					CheckBox checkBox=new CheckBox();
-					checkBox.Text=text;
-					//checkBox.Width=5000;//to prevent wrapping
-					checkBox.Margin=new Thickness(left:2,0,0,0);
-					checkBox.Click+=_listBoxParent.CheckBox_Click;
-					border.Child=checkBox;
-				}
-				else{
-					TextBlock textBlock=new TextBlock();
-					textBlock.Text=text;
-					textBlock.Margin=new Thickness(2,0,0,0);
-					border.Child=textBlock;
-				}
-				/*System.Windows.Controls.Grid grid=new System.Windows.Controls.Grid();
-				border.Child=grid;
-				ColumnDefinition columnDefinition1=new ColumnDefinition();
-				GridLength gridLength1=new GridLength(1,GridUnitType.Auto);//checkbox might be present or absent.
-				columnDefinition1.Width=gridLength1;
-				grid.ColumnDefinitions.Add(columnDefinition1);
-				ColumnDefinition columnDefinition2=new ColumnDefinition();
-				GridLength gridLength2=new GridLength(1,GridUnitType.Star);//text is remainder
-				columnDefinition2.Width=gridLength2;
-				grid.ColumnDefinitions.Add(columnDefinition2);
-				if(_listBoxParent.SelectionMode==SelectionMode.CheckBoxes){
-					CheckBox checkBox=new CheckBox();
-					//System.Windows.Controls.Grid.SetColumn(checkBox,0);
-					grid.Children.Add(checkBox);
-				}*/
+				TextBlock textBlock=new TextBlock();
+				border.Child=textBlock;
+				textBlock.Text=text;
+				textBlock.Margin=new Thickness(2,0,0,0);
 				border.MouseLeave+=_listBoxParent.Item_MouseLeave;
 				border.MouseLeftButtonDown+=_listBoxParent.Item_MouseLeftButtonDown;
 				border.MouseLeftButtonUp+=_listBoxParent.Item_MouseLeftButtonUp;
@@ -1142,8 +921,7 @@ adjustment.ObjNum=listObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 	public enum SelectionMode {
 		None,
 		One,
-		MultiExtended,
-		CheckBoxes
+		MultiExtended
 	}
 	#endregion
 }

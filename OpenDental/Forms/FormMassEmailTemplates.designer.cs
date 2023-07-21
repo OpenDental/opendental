@@ -29,6 +29,7 @@ namespace OpenDental{
 			this.butImport = new OpenDental.UI.Button();
 			this.butNewTemplate = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.butSendEmails = new OpenDental.UI.Button();
 			this.butCopy = new OpenDental.UI.Button();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
@@ -89,6 +90,16 @@ namespace OpenDental{
 			this.gridMain.TranslationName = "TableSavedTemplates";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
 			this.gridMain.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellClick);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(1085, 627);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(80, 24);
+			this.butClose.TabIndex = 133;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butSendEmails
 			// 
@@ -153,6 +164,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butImport);
 			this.Controls.Add(this.butNewTemplate);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butSendEmails);
 			this.Controls.Add(this.butCopy);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -169,6 +181,7 @@ namespace OpenDental{
 		private UI.Button butImport;
 		private UI.Button butNewTemplate;
 		private UI.GridOD gridMain;
+		private UI.Button butClose;
 		private UI.Button butSendEmails;
 		private UI.Button butCopy;
 		private UI.ComboBoxClinicPicker comboClinic;

@@ -178,13 +178,13 @@ namespace OpenDental{
 		private void checkBox_Click(object sender, System.EventArgs e) {
 			switch(((UI.CheckBox)sender).CheckState){
 				case CheckState.Indeterminate:
-					((UI.CheckBox)sender).CheckState=CheckState.Unchecked;
+					((UI.CheckBox)sender).CheckState=CheckState.Checked;
 					break;
 				case CheckState.Checked:
-					((UI.CheckBox)sender).CheckState=CheckState.Indeterminate;
+					((UI.CheckBox)sender).CheckState=CheckState.Unchecked;
 					break;
 				case CheckState.Unchecked:
-					((UI.CheckBox)sender).CheckState=CheckState.Checked;
+					((UI.CheckBox)sender).CheckState=CheckState.Indeterminate;
 					break;
 			}
 		}
@@ -222,7 +222,7 @@ namespace OpenDental{
 			DialogResult=DialogResult.Cancel;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			//the first 6 fields are handled when the ScreenGroup is saved.
 			if(!_isValid) {//If validation failed and they still want to continue, do Cancel instead.
 				DialogResult=DialogResult.Cancel;
@@ -268,5 +268,33 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+		
+		
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

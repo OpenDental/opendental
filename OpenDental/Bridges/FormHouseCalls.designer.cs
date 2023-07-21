@@ -35,6 +35,7 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormHouseCalls));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.butAll = new OpenDental.UI.Button();
@@ -47,10 +48,21 @@ namespace OpenDental {
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(359,267);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75,26);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(399,198);
+			this.butOK.Location = new System.Drawing.Point(359,226);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75,26);
 			this.butOK.TabIndex = 1;
@@ -134,11 +146,12 @@ namespace OpenDental {
 			// 
 			// FormHouseCalls
 			// 
-			this.ClientSize = new System.Drawing.Size(486,236);
 			this.AutoScaleBaseSize = new System.Drawing.Size(5,13);
+			this.ClientSize = new System.Drawing.Size(486,318);
 			this.Controls.Add(this.radioConfirm);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -154,6 +167,7 @@ namespace OpenDental {
 		}
 		#endregion
 
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.GroupBox groupBox2;
 		private OpenDental.ValidDate textDateFrom;

@@ -44,20 +44,20 @@ namespace OpenDentBusiness{
 		}
 		
 		///<summary>Gets all the entries for the customer.</summary>
-		public static List<CustRefEntry> GetEntryListForCustomer(long patNumCust) {
+		public static List<CustRefEntry> GetEntryListForCustomer(long patNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				return Meth.GetObject<List<CustRefEntry>>(MethodBase.GetCurrentMethod(),patNumCust);
+				return Meth.GetObject<List<CustRefEntry>>(MethodBase.GetCurrentMethod(),patNum);
 			}
-			string command="SELECT * FROM custrefentry WHERE PatNumCust="+POut.Long(patNumCust)+" OR PatNumRef="+POut.Long(patNumCust);
+			string command="SELECT * FROM custrefentry WHERE PatNumCust="+POut.Long(patNum)+" OR PatNumRef="+POut.Long(patNum);
 			return Crud.CustRefEntryCrud.SelectMany(command);
 		}
 
 		///<summary>Gets all the entries for the reference.</summary>
-		public static List<CustRefEntry> GetEntryListForReference(long patNumRef) {
+		public static List<CustRefEntry> GetEntryListForReference(long patNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				return Meth.GetObject<List<CustRefEntry>>(MethodBase.GetCurrentMethod(),patNumRef);
+				return Meth.GetObject<List<CustRefEntry>>(MethodBase.GetCurrentMethod(),patNum);
 			}
-			string command="SELECT * FROM custrefentry WHERE PatNumRef="+POut.Long(patNumRef);
+			string command="SELECT * FROM custrefentry WHERE PatNumRef="+POut.Long(patNum);
 			return Crud.CustRefEntryCrud.SelectMany(command);
 		}
 	}

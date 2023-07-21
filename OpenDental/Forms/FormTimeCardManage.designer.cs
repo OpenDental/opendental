@@ -37,6 +37,7 @@ namespace OpenDental{
 			this.butDaily = new OpenDental.UI.Button();
 			this.butCompute = new OpenDental.UI.Button();
 			this.butPrintAll = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.butClearAuto = new OpenDental.UI.Button();
 			this.butClearManual = new OpenDental.UI.Button();
 			this.butPrintSelected = new OpenDental.UI.Button();
@@ -183,6 +184,17 @@ namespace OpenDental{
 			this.butPrintAll.Text = "&Print All";
 			this.butPrintAll.Click += new System.EventHandler(this.butPrintAll_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(962, 655);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butClearAuto
 			// 
 			this.butClearAuto.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -253,7 +265,7 @@ namespace OpenDental{
 			// 
 			this.butTimeCardBenefits.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butTimeCardBenefits.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butTimeCardBenefits.Location = new System.Drawing.Point(967, 655);
+			this.butTimeCardBenefits.Location = new System.Drawing.Point(860, 655);
 			this.butTimeCardBenefits.Name = "butTimeCardBenefits";
 			this.butTimeCardBenefits.Size = new System.Drawing.Size(70, 24);
 			this.butTimeCardBenefits.TabIndex = 119;
@@ -271,7 +283,9 @@ namespace OpenDental{
 			// 
 			// FormTimeCardManage
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(1049, 696);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butTimeCardBenefits);
 			this.Controls.Add(this.comboClinic);
 			this.Controls.Add(this.groupBox3);
@@ -295,6 +309,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.TextBox textDatePaycheck;
 		private System.Windows.Forms.TextBox textDateStop;

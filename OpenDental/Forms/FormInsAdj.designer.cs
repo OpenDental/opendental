@@ -33,7 +33,8 @@ namespace OpenDental {
 			this.textDate = new OpenDental.ValidDate();
 			this.textInsUsed = new OpenDental.ValidDouble();
 			this.textDedUsed = new OpenDental.ValidDouble();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.label4 = new System.Windows.Forms.Label();
 			this.butDelete = new OpenDental.UI.Button();
 			this.SuspendLayout();
@@ -90,21 +91,32 @@ namespace OpenDental {
 			this.textDedUsed.Size = new System.Drawing.Size(69, 20);
 			this.textDedUsed.TabIndex = 2;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(161, 181);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(260, 148);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(260, 180);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 4;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// label4
 			// 
 			this.label4.Location = new System.Drawing.Point(32, 12);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(195, 41);
+			this.label4.Size = new System.Drawing.Size(259, 41);
 			this.label4.TabIndex = 5;
 			this.label4.Text = "Make sure the date you use falls within the correct benefit year.";
 			// 
@@ -122,11 +134,13 @@ namespace OpenDental {
 			// 
 			// FormInsAdj
 			// 
-			this.AcceptButton = this.butSave;
-			this.ClientSize = new System.Drawing.Size(248, 217);
+			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(354, 217);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.label4);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.textDedUsed);
 			this.Controls.Add(this.textInsUsed);
 			this.Controls.Add(this.textDate);
@@ -151,7 +165,8 @@ namespace OpenDental {
 		private OpenDental.ValidDate textDate;
 		private OpenDental.ValidDouble textInsUsed;
 		private OpenDental.ValidDouble textDedUsed;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label4;
 		private OpenDental.UI.Button butDelete;
 	}

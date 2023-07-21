@@ -28,25 +28,15 @@ namespace WpfControls.UI {
 		#region Properties
 		///<summary>Bold all cells in the row.  Each cell also has a bold override.</summary>
 		public bool Bold { get; set; } = false;
-
 		public ListGridCells Cells { get; } = new ListGridCells();
-
 		///<summary>Color of Background of row.  Default is White.  Each gridCell also has a colorBackG property that will override this if set.</summary>
 		public Color ColorBackG {get;set; } = Colors.White;
-
 		///<summary>Color of the lower border of a row. Default is Transparent, which will result in Gray220.</summary>
 		public Color ColorLborder { get; set; } = Colors.Transparent;
-
 			///<summary>Color of all text in row.  Default is Black. Each gridCell also has a colorText property that will override this if set.</summary>
 		public Color ColorText { get; set; } = Colors.Black;
-
-		///<summary>This is a very special field.  Since most of the tables in OD require the ability to attach long notes to each row, this field makes it possible.  Any note set here will be drawn as a sort of subrow below this row.  The note can span multiple columns, as defined in grid.NoteSpanStart and grid.NoteSpanStop.</summary>
-		[Obsolete("Not Implemented yet")]
-		public string Note { get; set; } = "";
-
 		///<summary>These fields can only be changed internally by ODGrid, never from outside ODGrid.  Includes size and position of this row, visiblity, and dropdown state.</summary>
 		public GridRowState State { get; set; } = new GridRowState();
-
 		///<summary>Used to store any kind of object that is associated with the row.</summary>
 		public object Tag {get;set;} = null;
 		#endregion Properties

@@ -51,13 +51,13 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Always refreshes the ClientWeb's cache.</summary>
-		public static DataTable GetTableFromCache(bool refreshCache) {
+		public static DataTable GetTableFromCache(bool doRefreshCache) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),refreshCache);
+				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),doRefreshCache);
 				_userClinicCache.FillCacheFromTable(table);
 				return table;
 			}
-			return _userClinicCache.GetTableFromCache(refreshCache);
+			return _userClinicCache.GetTableFromCache(doRefreshCache);
 		}
 
 		public static void ClearCache() {
@@ -110,12 +110,12 @@ namespace OpenDentBusiness{
 			Crud.UserClinicCrud.Delete(userClinicNum);
 		}
 
-		public static bool Sync(List<UserClinic> listUserClinicsNew,long userNum) {
+		public static bool Sync(List<UserClinic> listNew,long userNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),listUserClinicsNew,userNum);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),listNew,userNum);
 			}
-			List<UserClinic> listUserClinicsOld=UserClinics.GetForUser(userNum);
-			return Crud.UserClinicCrud.Sync(listUserClinicsNew,listUserClinicsOld);
+			List<UserClinic> listOld=UserClinics.GetForUser(userNum);
+			return Crud.UserClinicCrud.Sync(listNew,listOld);
 		}
 
 		///<summary>Deletes all User to Clinic associations for a specific user.</summary>

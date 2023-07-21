@@ -45,7 +45,7 @@ namespace OpenDental {
 				labelWarning.Visible=true;
 				_isEditable=false;
 				butAdd.Enabled=false;
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 				textDescription.ReadOnly=true;
 			}
@@ -76,9 +76,6 @@ namespace OpenDental {
 
 		private void gridMain_DoubleClick(object sender,EventArgs e) {
 			if(!_isEditable) {
-				return;
-			}
-			if(gridMain.GetSelectedIndex()==-1){
 				return;
 			}
 			FrmGradingScaleItemEdit frmGradingScaleItemEdit=new FrmGradingScaleItemEdit(_listGradingScaleItems[gridMain.GetSelectedIndex()]);
@@ -136,7 +133,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textDescription.Text=="") {
 				MsgBox.Show(this,"Please input a description.");
 				return;
@@ -156,10 +153,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void FormGradingScaleEdit_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult!=DialogResult.Cancel) {
-				return;
-			}
+		private void butCancel_Click(object sender,EventArgs e) {
 			if(_gradingScale.IsNew) {
 				try {
 					GradingScales.Delete(_gradingScale.GradingScaleNum);
@@ -169,7 +163,10 @@ namespace OpenDental {
 					return;
 				}
 			}
+			DialogResult=DialogResult.Cancel;
 		}
+
+
 
 	}
 }

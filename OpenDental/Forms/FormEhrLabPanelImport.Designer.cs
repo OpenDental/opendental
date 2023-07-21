@@ -32,7 +32,8 @@
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
-			this.butOK = new System.Windows.Forms.Button();
+			this.butCancel = new System.Windows.Forms.Button();
+			this.butOk = new System.Windows.Forms.Button();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.textDateTimeTest = new System.Windows.Forms.TextBox();
@@ -126,16 +127,27 @@
 			this.label4.Text = "Patient Account";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// butOK
+			// butCancel
 			// 
-			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(807, 501);
-			this.butOK.Name = "butOK";
-			this.butOK.Size = new System.Drawing.Size(75, 23);
-			this.butOK.TabIndex = 0;
-			this.butOK.Text = "&OK";
-			this.butOK.UseVisualStyleBackColor = true;
-			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(807, 501);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 23);
+			this.butCancel.TabIndex = 8;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOk
+			// 
+			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOk.Location = new System.Drawing.Point(726, 501);
+			this.butOk.Name = "butOk";
+			this.butOk.Size = new System.Drawing.Size(75, 23);
+			this.butOk.TabIndex = 0;
+			this.butOk.Text = "Ok";
+			this.butOk.UseVisualStyleBackColor = true;
+			this.butOk.Click += new System.EventHandler(this.butOk_Click);
 			// 
 			// groupBox1
 			// 
@@ -277,7 +289,8 @@
 			this.Controls.Add(this.label6);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.gridMain);
-			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butOk);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textHL7Raw);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -303,7 +316,8 @@
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.Button butOK;
+		private System.Windows.Forms.Button butCancel;
+		private System.Windows.Forms.Button butOk;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label6;

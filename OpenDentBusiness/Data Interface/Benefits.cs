@@ -19,21 +19,21 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Gets a list of all benefits for a given list of patplans for one patient.</summary>
-		public static List<Benefit> Refresh(List<PatPlan> listPatPlans,List<InsSub> listInsSubs) {
+		public static List <Benefit> Refresh(List<PatPlan> listForPat,List<InsSub> subList) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Benefit>>(MethodBase.GetCurrentMethod(),listPatPlans,listInsSubs);
+				return Meth.GetObject<List<Benefit>>(MethodBase.GetCurrentMethod(),listForPat,subList);
 			}
-			//Only need to check listPatPlans for null / empty because InsSubs.GetSub() handles a null / empty subList.
-			if(listPatPlans==null || listPatPlans.Count==0) {
+			//Only need to check listForPat for null / empty because InsSubs.GetSub() handles a null / empty subList.
+			if(listForPat==null || listForPat.Count==0) {
 				return new List<Benefit>();
 			}
 			string command="SELECT * FROM benefit "
 				//null safe, returns new InsSub with PlanNum 0 if GetSub doesn't find a match in neither subList nor the db
-				+"WHERE PlanNum IN ("+string.Join(",",listPatPlans.Select(x => POut.Long(InsSubs.GetSub(x.InsSubNum,listInsSubs).PlanNum)))+") "
-				+"OR PatPlanNum IN ("+string.Join(",",listPatPlans.Select(x => POut.Long(x.PatPlanNum)))+")";
-			List<Benefit> listBenefits=Crud.BenefitCrud.SelectMany(command);
-			listBenefits.Sort();
-			return listBenefits;
+				+"WHERE PlanNum IN ("+string.Join(",",listForPat.Select(x => POut.Long(InsSubs.GetSub(x.InsSubNum,subList).PlanNum)))+") "
+				+"OR PatPlanNum IN ("+string.Join(",",listForPat.Select(x => POut.Long(x.PatPlanNum)))+")";
+			List<Benefit> list=Crud.BenefitCrud.SelectMany(command);
+			list.Sort();
+			return list;
 		}
 
 		///<summary>Gets a list of all benefits for a given list of patplans where the benefit has a PatPlanNum that matches a PatPlan.PatPlanNum in
@@ -45,9 +45,9 @@ namespace OpenDentBusiness {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<Benefit>>(MethodBase.GetCurrentMethod(),listPatPlans,listInsSubs);
 			}
-			Dictionary<long,long> dictionaryInsSubNumsPlanNums=listInsSubs.GroupBy(x => x.InsSubNum).ToDictionary(x => x.Key,x => x.Last().PlanNum);
+			Dictionary<long,long> dictInsSubPlanNum=listInsSubs.GroupBy(x => x.InsSubNum).ToDictionary(x => x.Key,x => x.Last().PlanNum);
 			List<long> listPlanNums=listPatPlans.Select(x => x.InsSubNum).Distinct()
-				.Select(x => dictionaryInsSubNumsPlanNums.TryGetValue(x,out long planNum)?planNum:(InsSubs.GetOne(x)?.PlanNum??0)).Distinct().ToList();
+				.Select(x => dictInsSubPlanNum.TryGetValue(x,out long planNum)?planNum:(InsSubs.GetOne(x)?.PlanNum??0)).Distinct().ToList();
 			string command="SELECT * FROM benefit "
 				//null safe, returns new InsSub with PlanNum 0 if GetSub doesn't find a match in neither subList nor the db
 				+"WHERE PlanNum IN ("+string.Join(",",listPlanNums.Select(x => POut.Long(x)))+") "
@@ -70,128 +70,128 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary></summary>
-		public static void Update(Benefit benefit,Benefit benefitOld) {
+		public static void Update(Benefit ben,Benefit benOld) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),benefit,benefitOld);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),ben,benOld);
 				return;
 			}
-			Crud.BenefitCrud.Update(benefit,benefitOld);
+			Crud.BenefitCrud.Update(ben,benOld);
 			//Security.CurUser.UserNum gets set on MT by the DtoProcessor so it matches the user from the client WS.
-			InsEditLogs.MakeLogEntry(benefit,benefitOld,InsEditLogType.Benefit,Security.CurUser.UserNum);
+			InsEditLogs.MakeLogEntry(ben,benOld,InsEditLogType.Benefit,Security.CurUser.UserNum);
 		}
 
 		///<summary></summary>
-		public static long Insert(Benefit benefit) {
+		public static long Insert(Benefit ben) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				benefit.BenefitNum=Meth.GetLong(MethodBase.GetCurrentMethod(),benefit);
-				return benefit.BenefitNum;
+				ben.BenefitNum=Meth.GetLong(MethodBase.GetCurrentMethod(),ben);
+				return ben.BenefitNum;
 			}
-			long benefitNum=Crud.BenefitCrud.Insert(benefit);
-			if(benefit.PlanNum != 0) {//Does not log PatPlan benefits
+			long benNum=Crud.BenefitCrud.Insert(ben);
+			if(ben.PlanNum != 0) {//Does not log PatPlan benefits
 				//Security.CurUser.UserNum gets set on MT by the DtoProcessor so it matches the user from the client WS.
-				InsEditLogs.MakeLogEntry(benefit,null,InsEditLogType.Benefit,Security.CurUser.UserNum);
+				InsEditLogs.MakeLogEntry(ben,null,InsEditLogType.Benefit,Security.CurUser.UserNum);
 			}
-			return benefitNum;
+			return benNum;
 		}
 
 		///<summary></summary>
-		public static void Delete(Benefit benefit) {
+		public static void Delete(Benefit ben) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),benefit);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),ben);
 				return;
 			}
-			string command="DELETE FROM benefit WHERE BenefitNum ="+POut.Long(benefit.BenefitNum);
+			string command="DELETE FROM benefit WHERE BenefitNum ="+POut.Long(ben.BenefitNum);
 			Db.NonQ(command);
 			//Security.CurUser.UserNum gets set on MT by the DtoProcessor so it matches the user from the client WS.
-			InsEditLogs.MakeLogEntry(null,benefit,InsEditLogType.Benefit,Security.CurUser.UserNum);
+			InsEditLogs.MakeLogEntry(null,ben,InsEditLogType.Benefit,Security.CurUser.UserNum);
 		}
 
 		///<summary>Only for display purposes rather than any calculations.  Gets an annual max from the supplied list of benefits.  Ignores benefits that do not match either the planNum or the patPlanNum.  Because it starts at the top of the benefit list, it will get the most general limitation first.  Returns -1 if none found.  Usually, set isFam to false unless we are specifically interested in that value.</summary>
-		public static double GetAnnualMaxDisplay(List<Benefit> listBenefits,long planNum,long patPlanNum,bool isFam) {
+		public static double GetAnnualMaxDisplay(List<Benefit> benList,long planNum,long patPlanNum,bool isFam) {
 			//No need to check MiddleTierRole; no call to db.
-			List<Benefit> listBenefitsMatching=new List<Benefit>();
-			for(int i=0;i<listBenefits.Count;i++) {
-				if(listBenefits[i].PlanNum==0 && listBenefits[i].PatPlanNum!=patPlanNum) {
+			List<Benefit> matchingBens=new List<Benefit>();
+			for(int i=0;i<benList.Count;i++) {
+				if(benList[i].PlanNum==0 && benList[i].PatPlanNum!=patPlanNum) {
 					continue;
 				}
-				if(listBenefits[i].PatPlanNum==0 && listBenefits[i].PlanNum!=planNum) {
+				if(benList[i].PatPlanNum==0 && benList[i].PlanNum!=planNum) {
 					continue;
 				}
-				if(listBenefits[i].BenefitType!=InsBenefitType.Limitations) {
+				if(benList[i].BenefitType!=InsBenefitType.Limitations) {
 					continue;
 				}
-				if(listBenefits[i].QuantityQualifier!=BenefitQuantity.None) {
+				if(benList[i].QuantityQualifier!=BenefitQuantity.None) {
 					continue;
 				}
-				if(listBenefits[i].TimePeriod!=BenefitTimePeriod.CalendarYear && listBenefits[i].TimePeriod!=BenefitTimePeriod.ServiceYear) {
+				if(benList[i].TimePeriod!=BenefitTimePeriod.CalendarYear && benList[i].TimePeriod!=BenefitTimePeriod.ServiceYear) {
 					continue;
 				}
 				if(isFam){
-					if(listBenefits[i].CoverageLevel!=BenefitCoverageLevel.Family){//individ or none
+					if(benList[i].CoverageLevel!=BenefitCoverageLevel.Family){//individ or none
 						continue;
 					}
 				}
 				else{
-					if(listBenefits[i].CoverageLevel!=BenefitCoverageLevel.Individual) {//Family or None
+					if(benList[i].CoverageLevel!=BenefitCoverageLevel.Individual) {//Family or None
 						continue;
 					}
 				}
 				//coverage level?
-				if(listBenefits[i].CodeNum != 0) {
+				if(benList[i].CodeNum != 0) {
 					continue;
 				}
-				if(listBenefits[i].CovCatNum != 0) {
-					EbenefitCategory eBenefitCategory=CovCats.GetEbenCat(listBenefits[i].CovCatNum);
-					if(eBenefitCategory != EbenefitCategory.General && eBenefitCategory != EbenefitCategory.None) {
+				if(benList[i].CovCatNum != 0) {
+					EbenefitCategory eben=CovCats.GetEbenCat(benList[i].CovCatNum);
+					if(eben != EbenefitCategory.General && eben != EbenefitCategory.None) {
 						continue;
 					}
 				}
-				listBenefitsMatching.Add(listBenefits[i]);
+				matchingBens.Add(benList[i]);
 			}
-			if(listBenefitsMatching.Count==0) {
+			if(matchingBens.Count==0) {
 				return -1;
 			}
 			//Get minimum benefit amount, preferring benefits with no catagory.
-			return listBenefitsMatching.OrderBy(x => x.CovCatNum!=0).ThenBy(x => x.MonetaryAmt).First().MonetaryAmt;
+			return matchingBens.OrderBy(x => x.CovCatNum!=0).ThenBy(x => x.MonetaryAmt).First().MonetaryAmt;
 		}
 
 		///<summary>Only for display purposes rather than any calculations.  Gets a general deductible from the supplied list of benefits.  Ignores benefits that do not match either the planNum or the patPlanNum.</summary>
-		public static double GetDeductGeneralDisplay(List<Benefit> listBenefits,long planNum,long patPlanNum,BenefitCoverageLevel benefitCoverageLevel) {
+		public static double GetDeductGeneralDisplay(List<Benefit> benList,long planNum,long patPlanNum,BenefitCoverageLevel level) {
 			//No need to check MiddleTierRole; no call to db.
-			List<Benefit> listBenefitsMatching=new List<Benefit>();
-			for(int i=0;i<listBenefits.Count;i++) {
-				if(listBenefits[i].PlanNum==0 && listBenefits[i].PatPlanNum!=patPlanNum) {
+			List<Benefit> matchingBens=new List<Benefit>();
+			for(int i=0;i<benList.Count;i++) {
+				if(benList[i].PlanNum==0 && benList[i].PatPlanNum!=patPlanNum) {
 					continue;
 				}
-				if(listBenefits[i].PatPlanNum==0 && listBenefits[i].PlanNum!=planNum) {
+				if(benList[i].PatPlanNum==0 && benList[i].PlanNum!=planNum) {
 					continue;
 				}
-				if(listBenefits[i].BenefitType!=InsBenefitType.Deductible) {
+				if(benList[i].BenefitType!=InsBenefitType.Deductible) {
 					continue;
 				}
-				if(listBenefits[i].QuantityQualifier!=BenefitQuantity.None) {
+				if(benList[i].QuantityQualifier!=BenefitQuantity.None) {
 					continue;
 				}
-				if(listBenefits[i].TimePeriod!=BenefitTimePeriod.CalendarYear && listBenefits[i].TimePeriod!=BenefitTimePeriod.ServiceYear) {
+				if(benList[i].TimePeriod!=BenefitTimePeriod.CalendarYear && benList[i].TimePeriod!=BenefitTimePeriod.ServiceYear) {
 					continue;
 				}
-				if(listBenefits[i].CoverageLevel != benefitCoverageLevel) {
+				if(benList[i].CoverageLevel != level) {
 					continue;
 				}
-				if(listBenefits[i].CodeNum != 0) {
+				if(benList[i].CodeNum != 0) {
 					continue;
 				}
-				if(listBenefits[i].CovCatNum != 0) {
-					EbenefitCategory eBenefitCategory=CovCats.GetEbenCat(listBenefits[i].CovCatNum);
-					if(eBenefitCategory != EbenefitCategory.General && eBenefitCategory != EbenefitCategory.None) {
+				if(benList[i].CovCatNum != 0) {
+					EbenefitCategory eben=CovCats.GetEbenCat(benList[i].CovCatNum);
+					if(eben != EbenefitCategory.General && eben != EbenefitCategory.None) {
 						continue;
 					}
 				}
-				listBenefitsMatching.Add(listBenefits[i]);
+				matchingBens.Add(benList[i]);
 			}
-			if(listBenefitsMatching.Count > 0) {
+			if(matchingBens.Count > 0) {
 				//Get the largest benefit amount from the matching benefits with no catagory or of the General / None category.
-				return listBenefitsMatching.Max(x => x.MonetaryAmt);
+				return matchingBens.Max(x => x.MonetaryAmt);
 			}
 			return -1;
 		}
@@ -199,72 +199,72 @@ namespace OpenDentBusiness {
 		///<summary>Used only in ClaimProcs.ComputeBaseEst.  Gets a deductible amount from the supplied list of benefits.  Ignores benefits that do not 
 		///match either the planNum or the patPlanNum.  It figures out how much was already used and reduces the returned value by that amount.  
 		///Both individual and family deductibles will reduce the returned value independently.  Works for individual procs, categories, and general.</summary>
-		public static double GetDeductibleByCode(List<Benefit> listBenefits,long planNum,long patPlanNum,DateTime dateProc,string procCode,
-			List<ClaimProcHist> listClaimProcHists,List<ClaimProcHist> listClaimProcHistsLoop,InsPlan insPlan,long patNum) 
+		public static double GetDeductibleByCode(List<Benefit> benList,long planNum,long patPlanNum,DateTime procDate,string procCode,
+			List<ClaimProcHist> histList,List<ClaimProcHist> loopList,InsPlan plan,long patNum) 
 		{
 			//No need to check MiddleTierRole; no call to db.
-			if(IsExcluded(procCode,listBenefits,planNum,patPlanNum)) {
+			if(IsExcluded(procCode,benList,planNum,patPlanNum)) {
 				return 0;
 			}
 			#region filter benList for deductibles
 			//first, create a much shorter list with only relevant benefits in it.
-			List<Benefit> listBenefitsShort=new List<Benefit>();
-			for(int i=0;i<listBenefits.Count;i++) {
-				if(listBenefits[i].PlanNum==0 && listBenefits[i].PatPlanNum!=patPlanNum) {
+			List<Benefit> listShort=new List<Benefit>();
+			for(int i=0;i<benList.Count;i++) {
+				if(benList[i].PlanNum==0 && benList[i].PatPlanNum!=patPlanNum) {
 					continue;
 				}
-				if(listBenefits[i].PatPlanNum==0 && listBenefits[i].PlanNum!=planNum) {
+				if(benList[i].PatPlanNum==0 && benList[i].PlanNum!=planNum) {
 					continue;
 				}
-				if(listBenefits[i].BenefitType!=InsBenefitType.Deductible) {
+				if(benList[i].BenefitType!=InsBenefitType.Deductible) {
 					continue;
 				}
 				//if(benList[i].QuantityQualifier!=BenefitQuantity.None) {
 				//	continue;
 				//}
-				if(listBenefits[i].TimePeriod!=BenefitTimePeriod.CalendarYear 
-					&& listBenefits[i].TimePeriod!=BenefitTimePeriod.ServiceYear
-					&& listBenefits[i].TimePeriod!=BenefitTimePeriod.Lifetime)//this is probably only going to be used in annual max, though
+				if(benList[i].TimePeriod!=BenefitTimePeriod.CalendarYear 
+					&& benList[i].TimePeriod!=BenefitTimePeriod.ServiceYear
+					&& benList[i].TimePeriod!=BenefitTimePeriod.Lifetime)//this is probably only going to be used in annual max, though
 				{
 					continue;
 				}
-				listBenefitsShort.Add(listBenefits[i]);
+				listShort.Add(benList[i]);
 			}
 			#endregion
 			#region get individual deductibles
 			//look for the best matching individual deduct----------------------------------------------------------------
-			Benefit benefitIndGeneral=null;
-			Benefit benefitInd=null;
+			Benefit benIndGeneral=null;
+			Benefit benInd=null;
 			#region no category
-			for(int i=0;i<listBenefitsShort.Count;i++){
-				if(listBenefitsShort[i].CoverageLevel == BenefitCoverageLevel.Family){
+			for(int i=0;i<listShort.Count;i++){
+				if(listShort[i].CoverageLevel == BenefitCoverageLevel.Family){
 					continue;
 				}
-				if(listBenefitsShort[i].CodeNum>0){
+				if(listShort[i].CodeNum>0){
 					continue;
 				}
-				if(listBenefitsShort[i].CovCatNum==0){
-					benefitInd=listBenefitsShort[i];
+				if(listShort[i].CovCatNum==0){
+					benInd=listShort[i];
 					//This deductible must be a general deductible since it has no associated category
-					benefitIndGeneral=listBenefitsShort[i];//sum of deductibles should not exceed this amount, even if benInd is less.
+					benIndGeneral=listShort[i];//sum of deductibles should not exceed this amount, even if benInd is less.
 				}
 			}
 			#endregion
 			#region specific category.
-			List<CovSpan> listCovSpansForCat;
-			for(int i=0;i<listBenefitsShort.Count;i++){
-				if(listBenefitsShort[i].CoverageLevel == BenefitCoverageLevel.Family){
+			CovSpan[] spansForCat;
+			for(int i=0;i<listShort.Count;i++){
+				if(listShort[i].CoverageLevel == BenefitCoverageLevel.Family){
 					continue;
 				}
-				if(listBenefitsShort[i].CodeNum>0){
+				if(listShort[i].CodeNum>0){
 					continue;
 				}
-				if(listBenefitsShort[i].CovCatNum!=0){
+				if(listShort[i].CovCatNum!=0){
 					//see if the span matches
-					listCovSpansForCat=CovSpans.GetForCat(listBenefitsShort[i].CovCatNum);
+					spansForCat=CovSpans.GetForCat(listShort[i].CovCatNum);
 					bool isMatch=false;
-					for(int j=0;j<listCovSpansForCat.Count;j++){
-						if(String.Compare(procCode,listCovSpansForCat[j].FromCode)>=0 && String.Compare(procCode,listCovSpansForCat[j].ToCode)<=0){
+					for(int j=0;j<spansForCat.Length;j++){
+						if(String.Compare(procCode,spansForCat[j].FromCode)>=0 && String.Compare(procCode,spansForCat[j].ToCode)<=0){
 							isMatch=true;
 							break;
 						}
@@ -272,64 +272,64 @@ namespace OpenDentBusiness {
 					if(!isMatch) {
 						continue;//no match
 					}
-					if(benefitInd != null && benefitInd.CovCatNum!=0){//must compare
+					if(benInd != null && benInd.CovCatNum!=0){//must compare
 						//only use the new one if the item order is larger
-						if(CovCats.GetOrderShort(listBenefitsShort[i].CovCatNum) > CovCats.GetOrderShort(benefitInd.CovCatNum)){
-							benefitInd=listBenefitsShort[i];
+						if(CovCats.GetOrderShort(listShort[i].CovCatNum) > CovCats.GetOrderShort(benInd.CovCatNum)){
+							benInd=listShort[i];
 						}
 					}
 					else{//first one encountered for a category
-						benefitInd=listBenefitsShort[i];
+						benInd=listShort[i];
 					}
 				}
 			}
 			#endregion
 			#region specific code
-			for(int i=0;i<listBenefitsShort.Count;i++){
-				if(listBenefitsShort[i].CoverageLevel == BenefitCoverageLevel.Family){
+			for(int i=0;i<listShort.Count;i++){
+				if(listShort[i].CoverageLevel == BenefitCoverageLevel.Family){
 					continue;
 				}
-				if(listBenefitsShort[i].CodeNum==0){
+				if(listShort[i].CodeNum==0){
 					continue;
 				}
-				if(procCode==ProcedureCodes.GetStringProcCode(listBenefitsShort[i].CodeNum)){
-					benefitInd=listBenefitsShort[i];
+				if(procCode==ProcedureCodes.GetStringProcCode(listShort[i].CodeNum)){
+					benInd=listShort[i];
 				}
 			}
 			#endregion
 			#endregion
 			#region get family deductibles
 			//look for the best matching family deduct----------------------------------------------------------------
-			Benefit benefitFamGeneral=null;
-			Benefit benefitFam=null;
+			Benefit benFamGeneral=null;
+			Benefit benFam=null;
 			#region no category
-			for(int i=0;i<listBenefitsShort.Count;i++) {
-				if(listBenefitsShort[i].CoverageLevel != BenefitCoverageLevel.Family) {
+			for(int i=0;i<listShort.Count;i++) {
+				if(listShort[i].CoverageLevel != BenefitCoverageLevel.Family) {
 					continue;
 				}
-				if(listBenefitsShort[i].CodeNum>0) {
+				if(listShort[i].CodeNum>0) {
 					continue;
 				}
-				if(listBenefitsShort[i].CovCatNum==0) {
-					benefitFam=listBenefitsShort[i];
-					benefitFamGeneral=listBenefitsShort[i];
+				if(listShort[i].CovCatNum==0) {
+					benFam=listShort[i];
+					benFamGeneral=listShort[i];
 				}
 			}
 			#endregion
 			#region specific category.
-			for(int i=0;i<listBenefitsShort.Count;i++) {
-				if(listBenefitsShort[i].CoverageLevel != BenefitCoverageLevel.Family) {
+			for(int i=0;i<listShort.Count;i++) {
+				if(listShort[i].CoverageLevel != BenefitCoverageLevel.Family) {
 					continue;
 				}
-				if(listBenefitsShort[i].CodeNum>0) {
+				if(listShort[i].CodeNum>0) {
 					continue;
 				}
-				if(listBenefitsShort[i].CovCatNum!=0) {
+				if(listShort[i].CovCatNum!=0) {
 					//see if the span matches
-					listCovSpansForCat=CovSpans.GetForCat(listBenefitsShort[i].CovCatNum);
+					spansForCat=CovSpans.GetForCat(listShort[i].CovCatNum);
 					bool isMatch=false;
-					for(int j=0;j<listCovSpansForCat.Count;j++) {
-						if(String.Compare(procCode,listCovSpansForCat[j].FromCode)>=0 && String.Compare(procCode,listCovSpansForCat[j].ToCode)<=0) {
+					for(int j=0;j<spansForCat.Length;j++) {
+						if(String.Compare(procCode,spansForCat[j].FromCode)>=0 && String.Compare(procCode,spansForCat[j].ToCode)<=0) {
 							isMatch=true;
 							break;
 						}
@@ -337,28 +337,28 @@ namespace OpenDentBusiness {
 					if(!isMatch) {
 						continue;//no match
 					}
-					if(benefitFam != null && benefitFam.CovCatNum!=0) {//must compare
+					if(benFam != null && benFam.CovCatNum!=0) {//must compare
 						//only use the new one if the item order is larger
-						if(CovCats.GetOrderShort(listBenefitsShort[i].CovCatNum) > CovCats.GetOrderShort(benefitFam.CovCatNum)) {
-							benefitFam=listBenefitsShort[i];
+						if(CovCats.GetOrderShort(listShort[i].CovCatNum) > CovCats.GetOrderShort(benFam.CovCatNum)) {
+							benFam=listShort[i];
 						}
 					}
 					else {//first one encountered for a category
-						benefitFam=listBenefitsShort[i];
+						benFam=listShort[i];
 					}
 				}
 			}
 			#endregion
 			#region specific code
-			for(int i=0;i<listBenefitsShort.Count;i++) {
-				if(listBenefitsShort[i].CoverageLevel != BenefitCoverageLevel.Family) {
+			for(int i=0;i<listShort.Count;i++) {
+				if(listShort[i].CoverageLevel != BenefitCoverageLevel.Family) {
 					continue;
 				}
-				if(listBenefitsShort[i].CodeNum==0) {
+				if(listShort[i].CodeNum==0) {
 					continue;
 				}
-				if(procCode==ProcedureCodes.GetStringProcCode(listBenefitsShort[i].CodeNum)) {
-					benefitFam=listBenefitsShort[i];
+				if(procCode==ProcedureCodes.GetStringProcCode(listShort[i].CodeNum)) {
+					benFam=listShort[i];
 				}
 			}
 			#endregion
@@ -367,13 +367,13 @@ namespace OpenDentBusiness {
 			//Only individual deductibles make sense as the starting point.
 			//Family deductible just limits the sum of individual deductibles.
 			//If there is no individual deductible that matches, then return 0.
-			if(benefitInd==null || benefitInd.MonetaryAmt==-1 || benefitInd.MonetaryAmt==0) {
+			if(benInd==null || benInd.MonetaryAmt==-1 || benInd.MonetaryAmt==0) {
 				return 0;
 			}
 			//Reduce by the sum of the deductibles on claim procs associated with claims in the benefit period for individual or family as appropriate
 			#region calculate individual already paid this year
-			List<ClaimProcHist> listClaimProcHistsPat=listClaimProcHists.FindAll(x => x.PatNum==patNum);
-			double retVal=GetDeductibleRemainingHelper(insPlan,dateProc,benefitInd,benefitIndGeneral,listClaimProcHistsPat);
+			List<ClaimProcHist> listPatClaimProcHists=histList.FindAll(x => x.PatNum==patNum);
+			double retVal=GetDeductibleRemainingHelper(plan,procDate,benInd,benIndGeneral,listPatClaimProcHists);
 			#endregion
 			#region reduce by amount individual already paid in loopList
 			//now, do a similar thing with loopList, individ-----------------------------------------------------------------------
@@ -383,59 +383,59 @@ namespace OpenDentBusiness {
 			//The better solution will be benefits with multiple categories or spans.
 			//This workaround is only applied if there are both a diagnostic and a preventive deductible for the same amount.
 			//If the benefit is diagnostic, then also check the spans of the preventive category
-			List<CovSpan> listCovSpansOther=new List<CovSpan>();
-			if(CovCats.GetEbenCat(benefitInd.CovCatNum)==EbenefitCategory.Diagnostic){
-				for(int i=0;i<listBenefitsShort.Count;i++){//look through the benefits again
-					if(listBenefitsShort[i].CoverageLevel!=BenefitCoverageLevel.Individual){
+			CovSpan[] otherSpans=null;
+			if(CovCats.GetEbenCat(benInd.CovCatNum)==EbenefitCategory.Diagnostic){
+				for(int i=0;i<listShort.Count;i++){//look through the benefits again
+					if(listShort[i].CoverageLevel!=BenefitCoverageLevel.Individual){
 						continue;
 					}
-					if(CovCats.GetEbenCat(listBenefitsShort[i].CovCatNum)!=EbenefitCategory.RoutinePreventive){
+					if(CovCats.GetEbenCat(listShort[i].CovCatNum)!=EbenefitCategory.RoutinePreventive){
 						continue;
 					}
-					listCovSpansOther=CovSpans.GetForCat(listBenefitsShort[i].CovCatNum);
+					otherSpans=CovSpans.GetForCat(listShort[i].CovCatNum);
 				}
 			}
 			//if the benefit is preventive, then also check the spans of the diagnostic category
-			if(CovCats.GetEbenCat(benefitInd.CovCatNum)==EbenefitCategory.RoutinePreventive){
-				for(int i=0;i<listBenefitsShort.Count;i++){//look through the benefits again
-					if(listBenefitsShort[i].CoverageLevel!=BenefitCoverageLevel.Individual){
+			if(CovCats.GetEbenCat(benInd.CovCatNum)==EbenefitCategory.RoutinePreventive){
+				for(int i=0;i<listShort.Count;i++){//look through the benefits again
+					if(listShort[i].CoverageLevel!=BenefitCoverageLevel.Individual){
 						continue;
 					}
-					if(CovCats.GetEbenCat(listBenefitsShort[i].CovCatNum)!=EbenefitCategory.Diagnostic){
+					if(CovCats.GetEbenCat(listShort[i].CovCatNum)!=EbenefitCategory.Diagnostic){
 						continue;
 					}
-					listCovSpansOther=CovSpans.GetForCat(listBenefitsShort[i].CovCatNum);
+					otherSpans=CovSpans.GetForCat(listShort[i].CovCatNum);
 				}
 			}
 			#endregion
-			for(int i=0;i<listClaimProcHistsLoop.Count;i++) {
+			for(int i=0;i<loopList.Count;i++) {
 				#region filter loopList
-				if(listClaimProcHistsLoop[i].PlanNum != planNum) {
+				if(loopList[i].PlanNum != planNum) {
 					continue;//different plan.  Even the loop list can contain info for multiple plans.
 				}
-				if(listClaimProcHistsLoop[i].PatNum != patNum) {
+				if(loopList[i].PatNum != patNum) {
 					continue;//this is for someone else in the family
 				}
 				//Loop list needs to consider procedure specific codes so that deductibles apply to other procedures within a TP if necessary.  E.g. Unit Test 16
-				if(benefitInd.CodeNum!=0) {//specific code
-					if(ProcedureCodes.GetStringProcCode(benefitInd.CodeNum)!=listClaimProcHistsLoop[i].StrProcCode) {
+				if(benInd.CodeNum!=0) {//specific code
+					if(ProcedureCodes.GetStringProcCode(benInd.CodeNum)!=loopList[i].StrProcCode) {
 						continue;
 					}
 				}
-				else if(benefitInd.CovCatNum!=0) {//specific category
-					listCovSpansForCat=CovSpans.GetForCat(benefitInd.CovCatNum);
+				else if(benInd.CovCatNum!=0) {//specific category
+					spansForCat=CovSpans.GetForCat(benInd.CovCatNum);
 					bool isMatch=false;
-					for(int j=0;j<listCovSpansForCat.Count;j++) {
-						if(String.Compare(listClaimProcHistsLoop[i].StrProcCode,listCovSpansForCat[j].FromCode)>=0 
-							&& String.Compare(listClaimProcHistsLoop[i].StrProcCode,listCovSpansForCat[j].ToCode)<=0) {
+					for(int j=0;j<spansForCat.Length;j++) {
+						if(String.Compare(loopList[i].StrProcCode,spansForCat[j].FromCode)>=0 
+							&& String.Compare(loopList[i].StrProcCode,spansForCat[j].ToCode)<=0) {
 							isMatch=true;
 							break;
 						}
 					}
-					if(listCovSpansOther!=null){
-						for(int j=0;j<listCovSpansOther.Count;j++) {
-							if(String.Compare(listClaimProcHistsLoop[i].StrProcCode,listCovSpansOther[j].FromCode)>=0 
-								&& String.Compare(listClaimProcHistsLoop[i].StrProcCode,listCovSpansOther[j].ToCode)<=0) {
+					if(otherSpans!=null){
+						for(int j=0;j<otherSpans.Length;j++) {
+							if(String.Compare(loopList[i].StrProcCode,otherSpans[j].FromCode)>=0 
+								&& String.Compare(loopList[i].StrProcCode,otherSpans[j].ToCode)<=0) {
 								isMatch=true;
 								break;
 							}
@@ -446,55 +446,55 @@ namespace OpenDentBusiness {
 					}
 				}
 				//if no category, then benefits are not restricted by proc code.
-				if(listClaimProcHistsLoop[i].Deduct==-1) {
+				if(loopList[i].Deduct==-1) {
 					continue;
 				}
 				#endregion
-				retVal-=listClaimProcHistsLoop[i].Deduct;
+				retVal-=loopList[i].Deduct;
 			}
 			#endregion
 			if(retVal<=0) {
 				return 0;
 			}
 			double deductUsedInLoopList=0;//sum up the deductibles in looplist for the current plan
-			List<ClaimProcHist> listClaimProcHistsLoopInsPlan=listClaimProcHistsLoop.FindAll(x => x.PlanNum==planNum && x.PatNum==patNum);
-			for(int i=0;i<listClaimProcHistsLoopInsPlan.Count;i++) {
-				deductUsedInLoopList+=Math.Max(listClaimProcHistsLoopInsPlan[i].Deduct,0);
+			List<ClaimProcHist> loopListInsPlan=loopList.FindAll(x => x.PlanNum==planNum && x.PatNum==patNum);
+			foreach(ClaimProcHist loopListItem in loopListInsPlan) {
+				deductUsedInLoopList+=Math.Max(loopListItem.Deduct,0);
 			}
-			if(benefitIndGeneral!=null) {//if there exists a general deductible
-				if((retVal + deductUsedInLoopList) > benefitIndGeneral.MonetaryAmt) {
+			if(benIndGeneral!=null) {//if there exists a general deductible
+				if((retVal + deductUsedInLoopList) > benIndGeneral.MonetaryAmt) {
 					//If the potential deductible amount plus the deductible amount that has been allocated to other TP procedures is greater than the general 
 					//deductible amount, reduce the potential deductible by the amount that the potential deductible plus the deductible amount for other TP 
 					//procedures exceeds the general deductible. Example: if (25+45) > 50, then return 50-45=5. Where 25 is the potential deductible amount, 
 					//45 is the amount that has been allocated to other TP procedures, and 50 is the general deductible amount.
-					retVal=benefitIndGeneral.MonetaryAmt - deductUsedInLoopList;// (fix for Unit Test 16)
+					retVal=benIndGeneral.MonetaryAmt - deductUsedInLoopList;// (fix for Unit Test 16)
 				}
 			}
 			//if there is still a deductible, we might still reduce it based on family ded used.
-			if((benefitFam==null && benefitFamGeneral==null) || (benefitFam?.MonetaryAmt==-1 && benefitFamGeneral?.MonetaryAmt==-1)) {
+			if((benFam==null && benFamGeneral==null) || (benFam?.MonetaryAmt==-1 && benFamGeneral?.MonetaryAmt==-1)) {
 				return retVal;
 			}
 			#region calculate the amount family already paid this year
-			double dedFam=GetDeductibleRemainingHelper(insPlan,dateProc,benefitFam,benefitFamGeneral,listClaimProcHists);
+			double famded=GetDeductibleRemainingHelper(plan,procDate,benFam,benFamGeneral,histList);
 			#endregion
 			#region reduce by amount family already paid in loopList
 			//reduce family ded by amounts already used in loop---------------------------------------------------------------
-			for(int i=0;i<listClaimProcHistsLoop.Count;i++) {
-				if(listClaimProcHistsLoop[i].PlanNum != planNum) {
+			for(int i=0;i<loopList.Count;i++) {
+				if(loopList[i].PlanNum != planNum) {
 					continue;//different plan
 				}
 				//Loop list needs to consider procedure specific codes so that deductibles apply to other procedures within a TP if necessary.
-				if(benefitFam.CodeNum!=0) {//specific code
-					if(ProcedureCodes.GetStringProcCode(benefitFam.CodeNum)!=listClaimProcHistsLoop[i].StrProcCode) {
+				if(benFam.CodeNum!=0) {//specific code
+					if(ProcedureCodes.GetStringProcCode(benFam.CodeNum)!=loopList[i].StrProcCode) {
 						continue;
 					}
 				}
-				else if(benefitFam.CovCatNum!=0) {//specific category
-					listCovSpansForCat=CovSpans.GetForCat(benefitFam.CovCatNum);
+				else if(benFam.CovCatNum!=0) {//specific category
+					spansForCat=CovSpans.GetForCat(benFam.CovCatNum);
 					bool isMatch=false;
-					for(int j=0;j<listCovSpansForCat.Count;j++) {
-						if(String.Compare(listClaimProcHistsLoop[i].StrProcCode,listCovSpansForCat[j].FromCode)>=0 
-							&& String.Compare(listClaimProcHistsLoop[i].StrProcCode,listCovSpansForCat[j].ToCode)<=0) {
+					for(int j=0;j<spansForCat.Length;j++) {
+						if(String.Compare(loopList[i].StrProcCode,spansForCat[j].FromCode)>=0 
+							&& String.Compare(loopList[i].StrProcCode,spansForCat[j].ToCode)<=0) {
 							isMatch=true;
 							break;
 						}
@@ -504,73 +504,73 @@ namespace OpenDentBusiness {
 					}
 				}
 				//if no category, then benefits are not restricted by proc code.
-				if(listClaimProcHistsLoop[i].Deduct==-1) {
+				if(loopList[i].Deduct==-1) {
 					continue;
 				}
-				dedFam-=listClaimProcHistsLoop[i].Deduct;
+				famded-=loopList[i].Deduct;
 			}
 			#endregion
 			//if the family deductible has all been used up on other procs
-			if(dedFam<=0) {
+			if(famded<=0) {
 				return 0;//then no deductible, regardless of what we computed for individual
 			}
-			if(retVal > dedFam) {//example; retInd=$50, but 120 of 150 family ded has been used.  famded=30.  We need to return 30.
-				return dedFam;
+			if(retVal > famded) {//example; retInd=$50, but 120 of 150 family ded has been used.  famded=30.  We need to return 30.
+				return famded;
 			}
 			return retVal;
 		}
 
 		///<summary>Figures out the total amount of deductibles used based on the claim proc history and returns how much is left to pay.</summary>
-		private static double GetDeductibleRemainingHelper(InsPlan insPlan,DateTime procDate,Benefit benefitInd,Benefit benefitIndGeneral,
-			List<ClaimProcHist> listClaimProcHists)
+		private static double GetDeductibleRemainingHelper(InsPlan plan,DateTime procDate,Benefit benInd,Benefit benIndGeneral,
+			List<ClaimProcHist> histList)
 		{
 			//Before we call this method, we return 0 if benInd is null. If this is ever called outside of that context, we want to maintain that logic.
-			if(benefitInd==null) {
+			if(benInd==null) {
 				return 0;
 			}
 			//establish date range for procedures to consider
-			DateTime dateStart=BenefitLogic.ComputeRenewDate(procDate,insPlan.MonthRenew);
+			DateTime dateStart=BenefitLogic.ComputeRenewDate(procDate,plan.MonthRenew);
 			DateTime dateEnd=dateStart.AddYears(1).AddDays(-1);//Consider all claim procs with a ProcDate within one year of the renew date
 			double generalUsed=0;
 			double categoryUsed=0;
-			for(int i=0;i<listClaimProcHists.Count;i++) {
-				if(listClaimProcHists[i].PlanNum != insPlan.PlanNum) {
+			for(int i=0;i<histList.Count;i++) {
+				if(histList[i].PlanNum != plan.PlanNum) {
 					continue;//different plan
 				}
-				if(listClaimProcHists[i].ProcDate<dateStart || listClaimProcHists[i].ProcDate>dateEnd) {
+				if(histList[i].ProcDate<dateStart || histList[i].ProcDate>dateEnd) {
 					continue;
 				}
-				if(listClaimProcHists[i].Deduct==-1) {
+				if(histList[i].Deduct==-1) {
 					continue;
 				}
 				//Keep track of historic deductibles that have already been used and match benInd's category.
 				//All historical deductibles (including category specific ones) count towards the general deductible category so that they are accounted for.
-				if(benefitInd.CovCatNum > 0) {
-					List<CovSpan> listCovSpansForCat=CovSpans.GetForCat(benefitInd.CovCatNum);
-					for(int j=0;j<listCovSpansForCat.Count;j++) {
-						if(String.Compare(listClaimProcHists[i].StrProcCode,listCovSpansForCat[j].FromCode)>=0 
-							&& String.Compare(listClaimProcHists[i].StrProcCode,listCovSpansForCat[j].ToCode)<=0) 
+				if(benInd.CovCatNum > 0) {
+					CovSpan[] spansForCat=CovSpans.GetForCat(benInd.CovCatNum);
+					for(int j=0;j<spansForCat.Length;j++) {
+						if(String.Compare(histList[i].StrProcCode,spansForCat[j].FromCode)>=0 
+							&& String.Compare(histList[i].StrProcCode,spansForCat[j].ToCode)<=0) 
 						{
-							categoryUsed+=listClaimProcHists[i].Deduct;
+							categoryUsed+=histList[i].Deduct;
 							break;
 						}
 					}
 				}
 				//Every single historical deductible will be attributed to the general deductible (regardless of type or category).
-				generalUsed+=listClaimProcHists[i].Deduct;
+				generalUsed+=histList[i].Deduct;
 			}
 			double retVal;
 			//Calculate how much remains in each deductible 'bucket'.
 			//Start each variable off as -1 to indicate that the deductible 'bucket' is not present.
 			double generalRemain=-1;
 			double categoryRemain=-1;
-			if(benefitIndGeneral!=null) {
+			if(benIndGeneral!=null) {
 				//A general deductible is present, calculate how much remains and don't let the result go negative.
-				generalRemain=Math.Max(benefitIndGeneral.MonetaryAmt-generalUsed,0);
+				generalRemain=Math.Max(benIndGeneral.MonetaryAmt-generalUsed,0);
 			}
-			if(benefitInd.CovCatNum > 0 || benefitInd.CodeNum > 0) {
+			if(benInd.CovCatNum > 0 || benInd.CodeNum > 0) {
 				//A category or code specific specific deductible is present, calculate how much remains and don't let the result go negative.
-				categoryRemain=Math.Max(benefitInd.MonetaryAmt-categoryUsed,0);
+				categoryRemain=Math.Max(benInd.MonetaryAmt-categoryUsed,0);
 			}
 			if(generalRemain > -1) {
 				//A general deductible is present.
@@ -609,22 +609,22 @@ namespace OpenDentBusiness {
 		///There don't seem to be any situations where multiple limitations would each partially reduce coverage for a single code, other than ind/fam.  
 		///The returned value will be the original insEstTotal passed in unless there was some limitation that reduced it.
 		///Considers InsEstTotalOverride when dynamically writing the EstimateNote.</summary>
-		public static double GetLimitationByCode(List<Benefit> listBenefits,long planNum,long patPlanNum,DateTime procDate,
-			string procCodeStr,List<ClaimProcHist> listClaimProcHists,List<ClaimProcHist> listClaimProcHistsLoop,InsPlan insPlan,long patNum,out string note,
+		public static double GetLimitationByCode(List<Benefit> benList,long planNum,long patPlanNum,DateTime procDate,
+			string procCodeStr,List<ClaimProcHist> histList,List<ClaimProcHist> loopList,InsPlan plan,long patNum,out string note,
 			double insEstTotal,int patientAge,long insSubNum,double insEstTotalOverride,out LimitationTypeMet limitationTypeMet) {
-			//No need to check MiddleTierRole; no call to db.
+			//No need to check MiddleTierRole;no call to db.
 			note ="";
 			limitationTypeMet=LimitationTypeMet.None;
 			//first, create a much shorter list with only relevant benefits in it.
-			List<Benefit> listBenefitsShort=new List<Benefit>();
-			for(int i=0;i<listBenefits.Count;i++) {
-				if(listBenefits[i].PlanNum==0 && listBenefits[i].PatPlanNum!=patPlanNum) {
+			List<Benefit> listShort=new List<Benefit>();
+			for(int i=0;i<benList.Count;i++) {
+				if(benList[i].PlanNum==0 && benList[i].PatPlanNum!=patPlanNum) {
 					continue;
 				}
-				if(listBenefits[i].PatPlanNum==0 && listBenefits[i].PlanNum!=planNum) {
+				if(benList[i].PatPlanNum==0 && benList[i].PlanNum!=planNum) {
 					continue;
 				}
-				if(listBenefits[i].BenefitType!=InsBenefitType.Limitations) {
+				if(benList[i].BenefitType!=InsBenefitType.Limitations) {
 					continue;
 				}
 				//if(benList[i].TimePeriod!=BenefitTimePeriod.CalendarYear 
@@ -633,41 +633,41 @@ namespace OpenDentBusiness {
 				//{
 				//	continue;
 				//}
-				listBenefitsShort.Add(listBenefits[i]);
+				listShort.Add(benList[i]);
 			}
 			//look for the best matching individual limitation----------------------------------------------------------------
-			Benefit benefitInd=null;
+			Benefit benInd=null;
 			//start with no category
-			for(int i=0;i<listBenefitsShort.Count;i++) {
-				if(listBenefitsShort[i].CoverageLevel == BenefitCoverageLevel.Family) {
+			for(int i=0;i<listShort.Count;i++) {
+				if(listShort[i].CoverageLevel == BenefitCoverageLevel.Family) {
 					continue;
 				}
-				if(listBenefitsShort[i].CodeNum>0) {
+				if(listShort[i].CodeNum>0) {
 					continue;
 				}
-				if(listBenefitsShort[i].CovCatNum==0) {
+				if(listShort[i].CovCatNum==0) {
 					if(!IsCodeInGeneralSpan(procCodeStr)) {
 						continue;
 					}
 					//Leave this outside of the isOutsideGeneralSpan check incase there is no general category.
-					benefitInd=listBenefitsShort[i];
+					benInd=listShort[i];
 				}
 			}
 			//then, specific category.
-			List<CovSpan> listCovSpansForCat;
-			for(int i=0;i<listBenefitsShort.Count;i++) {
-				if(listBenefitsShort[i].CoverageLevel == BenefitCoverageLevel.Family) {
+			CovSpan[] spansForCat;
+			for(int i=0;i<listShort.Count;i++) {
+				if(listShort[i].CoverageLevel == BenefitCoverageLevel.Family) {
 					continue;
 				}
-				if(listBenefitsShort[i].CodeNum>0) {
+				if(listShort[i].CodeNum>0) {
 					continue;
 				}
-				if(listBenefitsShort[i].CovCatNum!=0) {
+				if(listShort[i].CovCatNum!=0) {
 					//see if the span matches
-					listCovSpansForCat=CovSpans.GetForCat(listBenefitsShort[i].CovCatNum);
+					spansForCat=CovSpans.GetForCat(listShort[i].CovCatNum);
 					bool isMatch=false;
-					for(int j=0;j<listCovSpansForCat.Count;j++) {
-						if(String.Compare(procCodeStr,listCovSpansForCat[j].FromCode)>=0 && String.Compare(procCodeStr,listCovSpansForCat[j].ToCode)<=0) {
+					for(int j=0;j<spansForCat.Length;j++) {
+						if(String.Compare(procCodeStr,spansForCat[j].FromCode)>=0 && String.Compare(procCodeStr,spansForCat[j].ToCode)<=0) {
 							isMatch=true;
 							break;
 						}
@@ -675,109 +675,112 @@ namespace OpenDentBusiness {
 					if(!isMatch) {
 						continue;//no match
 					}
-					if(listBenefitsShort[i].QuantityQualifier==BenefitQuantity.NumberOfServices
-						|| listBenefitsShort[i].QuantityQualifier==BenefitQuantity.Months
-						|| listBenefitsShort[i].QuantityQualifier==BenefitQuantity.Years) 
+					if(listShort[i].QuantityQualifier==BenefitQuantity.NumberOfServices
+						|| listShort[i].QuantityQualifier==BenefitQuantity.Months
+						|| listShort[i].QuantityQualifier==BenefitQuantity.Years) 
 					{
 						continue;//exclude frequencies
 					}
 					//If it's an age based limitation, then make sure the patient age matches.
 					//If we have an age match, then we exit the method right here.
-					if(listBenefitsShort[i].QuantityQualifier==BenefitQuantity.AgeLimit && listBenefitsShort[i].Quantity > 0) {
-						if(patientAge > listBenefitsShort[i].Quantity) {
-							note=Lans.g("Benefits","Age limitation:")+" "+listBenefitsShort[i].Quantity.ToString();
+					if(listShort[i].QuantityQualifier==BenefitQuantity.AgeLimit && listShort[i].Quantity > 0) {
+						if(patientAge > listShort[i].Quantity) {
+							note=Lans.g("Benefits","Age limitation:")+" "+listShort[i].Quantity.ToString();
 							limitationTypeMet=LimitationTypeMet.Aging;
 							return 0;//not covered if too old.
 						}
 						continue;//don't use an age limitation for the match if the patient has not reached the age limit
 					}
-					if(benefitInd != null && benefitInd.CovCatNum!=0) {//must compare
+					if(benInd != null && benInd.CovCatNum!=0) {//must compare
 						//only use the new one if the item order is larger
-						if(CovCats.GetOrderShort(listBenefitsShort[i].CovCatNum) > CovCats.GetOrderShort(benefitInd.CovCatNum)) {
-							benefitInd=listBenefitsShort[i];
+						if(CovCats.GetOrderShort(listShort[i].CovCatNum) > CovCats.GetOrderShort(benInd.CovCatNum)) {
+							benInd=listShort[i];
 						}
 					}
 					else {//first one encountered for a category
-						benefitInd=listBenefitsShort[i];
+						benInd=listShort[i];
 					}
 				}
 			}
 			//then, specific code
-			for(int i=0;i<listBenefitsShort.Count;i++) {
-				if(listBenefitsShort[i].CoverageLevel == BenefitCoverageLevel.Family) {
+			for(int i=0;i<listShort.Count;i++) {
+				if(listShort[i].CoverageLevel == BenefitCoverageLevel.Family) {
 					continue;
 				}
-				if(listBenefitsShort[i].CodeNum==0) {
+				if(listShort[i].CodeNum==0) {
 					continue;
 				}
-				if(procCodeStr!=ProcedureCodes.GetStringProcCode(listBenefitsShort[i].CodeNum)) {
+				if(procCodeStr!=ProcedureCodes.GetStringProcCode(listShort[i].CodeNum)) {
 					continue;
 				}
-				if(listBenefitsShort[i].QuantityQualifier==BenefitQuantity.NumberOfServices
-					|| listBenefitsShort[i].QuantityQualifier==BenefitQuantity.Months
-					|| listBenefitsShort[i].QuantityQualifier==BenefitQuantity.Years) 
+				if(listShort[i].QuantityQualifier==BenefitQuantity.NumberOfServices
+					|| listShort[i].QuantityQualifier==BenefitQuantity.Months
+					|| listShort[i].QuantityQualifier==BenefitQuantity.Years) 
 				{
 					continue;//exclude frequencies
 				}
 				//if it's an age based limitation, then make sure the patient age matches.
 				//If we have an age match, then we exit the method right here.
-				if(listBenefitsShort[i].QuantityQualifier==BenefitQuantity.AgeLimit && listBenefitsShort[i].Quantity > 0){
-					if(patientAge > listBenefitsShort[i].Quantity){
-						note=Lans.g("Benefits","Age limitation:")+" "+listBenefitsShort[i].Quantity.ToString();
+				if(listShort[i].QuantityQualifier==BenefitQuantity.AgeLimit && listShort[i].Quantity > 0){
+					if(patientAge > listShort[i].Quantity){
+						note=Lans.g("Benefits","Age limitation:")+" "+listShort[i].Quantity.ToString();
 						limitationTypeMet=LimitationTypeMet.Aging;
 						return 0;//not covered if too old.
 					}
 				}
 				else{//anything but an age limit
-					benefitInd=listBenefitsShort[i];
+					benInd=listShort[i];
 				}
 			}
 			//Age limit for code group------------------------------------------------------------------------------------
-			List<CodeGroup> listCodeGroups=CodeGroups.GetDeepCopy(isShort:false);
-			for(int i=0;i<listCodeGroups.Count;i++) {
-				string procCodes = listCodeGroups[i].ProcCodes;
-				if(!procCodes.Contains(procCodeStr)) {
-					continue;
+			if(ProcedureCodes.GetCodeNumsForCodeGroupFixed(EnumCodeGroupFixed.Fluoride).Contains(ProcedureCodes.GetCodeNum(procCodeStr))) {
+				Benefit benAgeLimit=listShort.FirstOrDefault(x => IsFluorideAgeLimit(x));
+				if(benAgeLimit!=null && benAgeLimit.Quantity > 0 && patientAge > benAgeLimit.Quantity) {
+					note=Lans.g("Benefits","Age limitation:")+" "+benAgeLimit.Quantity.ToString();
+					limitationTypeMet=LimitationTypeMet.Aging;
+					return 0;//not covered if too old.
 				}
-				Benefit benefitAgeLimit=listBenefitsShort.Find(x=>x.CodeGroupNum==listCodeGroups[i].CodeGroupNum && IsAgeLimit(x));
-				if(benefitAgeLimit!=null && benefitAgeLimit.Quantity > 0 && patientAge > benefitAgeLimit.Quantity) {
-					note=Lans.g("Benefits","Age limitation:")+" "+benefitAgeLimit.Quantity.ToString();
+			}
+			if(ProcedureCodes.GetCodeNumsForCodeGroupFixed(EnumCodeGroupFixed.Sealant).Contains(ProcedureCodes.GetCodeNum(procCodeStr))) {
+				Benefit benAgeLimit=listShort.FirstOrDefault(x => IsSealantAgeLimit(x));
+				if(benAgeLimit!=null && benAgeLimit.Quantity > 0 && patientAge > benAgeLimit.Quantity) {
+					note=Lans.g("Benefits","Age limitation:")+" "+benAgeLimit.Quantity.ToString();
 					limitationTypeMet=LimitationTypeMet.Aging;
 					return 0;//not covered if too old.
 				}
 			}
 			//look for the best matching family limitation----------------------------------------------------------------
-			Benefit benefitFam=null;
+			Benefit benFam=null;
 			//start with no category
-			for(int i=0;i<listBenefitsShort.Count;i++) {
-				if(listBenefitsShort[i].CoverageLevel != BenefitCoverageLevel.Family) {
+			for(int i=0;i<listShort.Count;i++) {
+				if(listShort[i].CoverageLevel != BenefitCoverageLevel.Family) {
 					continue;
 				}
-				if(listBenefitsShort[i].CodeNum>0) {
+				if(listShort[i].CodeNum>0) {
 					continue;
 				}
-				if(listBenefitsShort[i].CovCatNum==0) {
+				if(listShort[i].CovCatNum==0) {
 					if(!IsCodeInGeneralSpan(procCodeStr)) {
 						continue;
 					}
 					//Leave this outside of the IsCodeInGeneralSpan check incase there is no general category.
-					benefitFam=listBenefitsShort[i];
+					benFam=listShort[i];
 				}
 			}
 			//then, specific category.
-			for(int i=0;i<listBenefitsShort.Count;i++) {
-				if(listBenefitsShort[i].CoverageLevel != BenefitCoverageLevel.Family) {
+			for(int i=0;i<listShort.Count;i++) {
+				if(listShort[i].CoverageLevel != BenefitCoverageLevel.Family) {
 					continue;
 				}
-				if(listBenefitsShort[i].CodeNum>0) {
+				if(listShort[i].CodeNum>0) {
 					continue;
 				}
-				if(listBenefitsShort[i].CovCatNum!=0) {
+				if(listShort[i].CovCatNum!=0) {
 					//see if the span matches
-					listCovSpansForCat=CovSpans.GetForCat(listBenefitsShort[i].CovCatNum);
+					spansForCat=CovSpans.GetForCat(listShort[i].CovCatNum);
 					bool isMatch=false;
-					for(int j=0;j<listCovSpansForCat.Count;j++) {
-						if(String.Compare(procCodeStr,listCovSpansForCat[j].FromCode)>=0 && String.Compare(procCodeStr,listCovSpansForCat[j].ToCode)<=0) {
+					for(int j=0;j<spansForCat.Length;j++) {
+						if(String.Compare(procCodeStr,spansForCat[j].FromCode)>=0 && String.Compare(procCodeStr,spansForCat[j].ToCode)<=0) {
 							isMatch=true;
 							break;
 						}
@@ -785,27 +788,27 @@ namespace OpenDentBusiness {
 					if(!isMatch) {
 						continue;//no match
 					}
-					if(benefitFam != null && benefitFam.CovCatNum!=0) {//must compare
+					if(benFam != null && benFam.CovCatNum!=0) {//must compare
 						//only use the new one if the item order is larger
-						if(CovCats.GetOrderShort(listBenefitsShort[i].CovCatNum) > CovCats.GetOrderShort(benefitFam.CovCatNum)) {
-							benefitFam=listBenefitsShort[i];
+						if(CovCats.GetOrderShort(listShort[i].CovCatNum) > CovCats.GetOrderShort(benFam.CovCatNum)) {
+							benFam=listShort[i];
 						}
 					}
 					else {//first one encountered for a category
-						benefitFam=listBenefitsShort[i];
+						benFam=listShort[i];
 					}
 				}
 			}
 			//then, specific code
-			for(int i=0;i<listBenefitsShort.Count;i++) {
-				if(listBenefitsShort[i].CoverageLevel != BenefitCoverageLevel.Family) {
+			for(int i=0;i<listShort.Count;i++) {
+				if(listShort[i].CoverageLevel != BenefitCoverageLevel.Family) {
 					continue;
 				}
-				if(listBenefitsShort[i].CodeNum==0) {
+				if(listShort[i].CodeNum==0) {
 					continue;
 				}
-				if(procCodeStr==ProcedureCodes.GetStringProcCode(listBenefitsShort[i].CodeNum)) {
-					benefitFam=listBenefitsShort[i];
+				if(procCodeStr==ProcedureCodes.GetStringProcCode(listShort[i].CodeNum)) {
+					benFam=listShort[i];
 				}
 			}
 			//example. $1000 individual max, $3000 family max.
@@ -813,52 +816,52 @@ namespace OpenDentBusiness {
 			//Family max just limits the sum of individual maxes.										Family max may be the only cap being used.
 			//If there is no individual limitation that matches, then return 0.     No longer valid. Return amount covered by ins, whether individual or family max.
 			//fluoride age limit already handled, so all that's left is maximums.   ...
-			if((benefitInd==null || benefitInd.MonetaryAmt==-1 || benefitInd.MonetaryAmt==0) && (benefitFam==null || benefitFam.MonetaryAmt==-1 || benefitFam.MonetaryAmt==0)){ 
+			if((benInd==null || benInd.MonetaryAmt==-1 || benInd.MonetaryAmt==0) && (benFam==null || benFam.MonetaryAmt==-1 || benFam.MonetaryAmt==0)){ 
 			//if(benInd==null || benInd.MonetaryAmt==-1 || benInd.MonetaryAmt==0) {
 				return insEstTotal;//no max found for this code.
 			}
 			double maxInd=0;
-			if(benefitInd!=null) {
-				maxInd=benefitInd.MonetaryAmt;
+			if(benInd!=null) {
+				maxInd=benInd.MonetaryAmt;
 			}
 			//reduce individual max by amount already paid this year/lifetime---------------------------------------------------
 			//establish date range for procedures to consider
-			DateTime dateStart=BenefitLogic.ComputeRenewDate(procDate,insPlan.MonthRenew);
+			DateTime dateStart=BenefitLogic.ComputeRenewDate(procDate,plan.MonthRenew);
 			DateTime dateEnd=dateStart.AddYears(1).AddDays(-1);//Consider all claim procs with a ProcDate within one year of the renew date
 			//Get deep copies of some cache classes so that we do not waste time in loops down below.
-			if(benefitInd!=null) {
-				if(benefitInd.TimePeriod==BenefitTimePeriod.Lifetime) {
+			if(benInd!=null) {
+				if(benInd.TimePeriod==BenefitTimePeriod.Lifetime) {
 					dateStart=DateTime.MinValue;
 				}
-				for(int i=0;i<listClaimProcHists.Count;i++) {
-					if(listClaimProcHists[i].InsSubNum != insSubNum) {
+				for(int i=0;i<histList.Count;i++) {
+					if(histList[i].InsSubNum != insSubNum) {
 						continue;//different plan
 					}
-					if(listClaimProcHists[i].ProcDate<dateStart || listClaimProcHists[i].ProcDate>dateEnd) {
+					if(histList[i].ProcDate<dateStart || histList[i].ProcDate>dateEnd) {
 						continue;
 					}
-					if(listClaimProcHists[i].PatNum != patNum) {
+					if(histList[i].PatNum != patNum) {
 						continue;//this is for someone else in the family //SHOULD PROBABLY NOT SKIP THIS IN THE CASE OF FAM BUT NO IND MAX. :(
 					}
-					if(benefitInd.CodeNum!=0) {//specific code
+					if(benInd.CodeNum!=0) {//specific code
 						//Enhance this later when code spans are supported.
-						if(ProcedureCodes.GetStringProcCode(benefitInd.CodeNum)!=listClaimProcHists[i].StrProcCode) {
+						if(ProcedureCodes.GetStringProcCode(benInd.CodeNum)!=histList[i].StrProcCode) {
 							continue;
 						}
 					}
-					else if(benefitInd.CovCatNum!=0) {//specific category
-						listCovSpansForCat=CovSpans.GetForCat(benefitInd.CovCatNum);
+					else if(benInd.CovCatNum!=0) {//specific category
+						spansForCat=CovSpans.GetForCat(benInd.CovCatNum);
 						bool isMatch=false;
-						if(listClaimProcHists[i].StrProcCode=="") {//If this was a 'total' payment that was not attached to a procedure
-							if(CovCats.GetEbenCat(benefitInd.CovCatNum)==EbenefitCategory.General) {//And if this is the general category
+						if(histList[i].StrProcCode=="") {//If this was a 'total' payment that was not attached to a procedure
+							if(CovCats.GetEbenCat(benInd.CovCatNum)==EbenefitCategory.General) {//And if this is the general category
 								//Then it should affect this max.
 								isMatch=true;
 							}
 						}
 						else {//If the payment was attached to a proc, then the proc must be in the coderange of this annual max benefit
-							for(int j=0;j<listCovSpansForCat.Count;j++) {
-								if(String.Compare(listClaimProcHists[i].StrProcCode,listCovSpansForCat[j].FromCode)>=0 
-								&& String.Compare(listClaimProcHists[i].StrProcCode,listCovSpansForCat[j].ToCode)<=0) {
+							for(int j=0;j<spansForCat.Length;j++) {
+								if(String.Compare(histList[i].StrProcCode,spansForCat[j].FromCode)>=0 
+								&& String.Compare(histList[i].StrProcCode,spansForCat[j].ToCode)<=0) {
 									isMatch=true;
 									break;
 								}
@@ -872,44 +875,44 @@ namespace OpenDentBusiness {
 					//In other words, the benefit applies to all codes.
 					//At this point, we know that the proc in the loopList falls within this max benefit.
 					//But it may also fall within a more restrictive benefit which would take precedence over this one.
-					if(TighterLimitExists(listBenefitsShort,benefitInd,listClaimProcHists[i])) {
+					if(TighterLimitExists(listShort,benInd,histList[i])) {
 						continue;
 					}
-					maxInd-=listClaimProcHists[i].Amount;
+					maxInd-=histList[i].Amount;
 				}
 			}
 			//reduce individual max by amount in loop ------------------------------------------------------------------
-			if(benefitInd!=null) {
-				for(int i=0;i<listClaimProcHistsLoop.Count;i++) {
+			if(benInd!=null) {
+				for(int i=0;i<loopList.Count;i++) {
 					//no date restriction, since all TP or part of current claim
 					//if(histList[i].ProcDate<dateStart || histList[i].ProcDate>dateEnd) {
 					//	continue;
 					//}
-					if(listClaimProcHistsLoop[i].InsSubNum != insSubNum) {
+					if(loopList[i].InsSubNum != insSubNum) {
 						continue;//different plan.  Even the loop list can contain info for multiple plans.
 					}
-					if(listClaimProcHistsLoop[i].PatNum != patNum) {
+					if(loopList[i].PatNum != patNum) {
 						continue;//this is for someone else in the family
 					}
-					if(benefitInd.CodeNum!=0) {//specific code
+					if(benInd.CodeNum!=0) {//specific code
 						//Enhance this later when code spans are supported.
-						if(ProcedureCodes.GetStringProcCode(benefitInd.CodeNum)!=listClaimProcHistsLoop[i].StrProcCode) {
+						if(ProcedureCodes.GetStringProcCode(benInd.CodeNum)!=loopList[i].StrProcCode) {
 							continue;
 						}
 					}
-					else if(benefitInd.CovCatNum!=0) {//specific category
-						listCovSpansForCat=CovSpans.GetForCat(benefitInd.CovCatNum);
+					else if(benInd.CovCatNum!=0) {//specific category
+						spansForCat=CovSpans.GetForCat(benInd.CovCatNum);
 						bool isMatch=false;
-						if(listClaimProcHistsLoop[i].StrProcCode=="") {//If this was a 'total' payment that was not attached to a procedure
-							if(CovCats.GetEbenCat(benefitInd.CovCatNum)==EbenefitCategory.General) {//And if this is the general category
+						if(loopList[i].StrProcCode=="") {//If this was a 'total' payment that was not attached to a procedure
+							if(CovCats.GetEbenCat(benInd.CovCatNum)==EbenefitCategory.General) {//And if this is the general category
 								//Then it should affect this max.
 								isMatch=true;
 							}
 						}
 						else {//If the payment was attached to a proc, then the proc must be in the coderange of this annual max benefit
-							for(int j=0;j<listCovSpansForCat.Count;j++) {
-								if(String.Compare(listClaimProcHistsLoop[i].StrProcCode,listCovSpansForCat[j].FromCode)>=0 
-								&& String.Compare(listClaimProcHistsLoop[i].StrProcCode,listCovSpansForCat[j].ToCode)<=0) {
+							for(int j=0;j<spansForCat.Length;j++) {
+								if(String.Compare(loopList[i].StrProcCode,spansForCat[j].FromCode)>=0 
+								&& String.Compare(loopList[i].StrProcCode,spansForCat[j].ToCode)<=0) {
 									isMatch=true;
 									break;
 								}
@@ -922,29 +925,29 @@ namespace OpenDentBusiness {
 					else {//if no category, then benefits are not normally restricted by proc code.
 						//The problem is that if the amount in the loop is from an ortho proc, then the general category will exclude ortho.
 						//But sometimes, the annual max is in the system as no category instead of general category.
-						CovCat covCatGeneral=CovCats.GetForEbenCat(EbenefitCategory.General);
-						if(covCatGeneral!=null) {//If there is a general category, then we only consider codes within it.  This is how we exclude ortho.
-							List<CovSpan> listCovSpans=CovSpans.GetForCat(covCatGeneral.CovCatNum);
-							if(listClaimProcHistsLoop[i].StrProcCode!="" && !CovSpans.IsCodeInSpans(listClaimProcHistsLoop[i].StrProcCode,listCovSpans)) {//for example, ortho
+						CovCat generalCat=CovCats.GetForEbenCat(EbenefitCategory.General);
+						if(generalCat!=null) {//If there is a general category, then we only consider codes within it.  This is how we exclude ortho.
+							CovSpan[] covSpanArray=CovSpans.GetForCat(generalCat.CovCatNum);
+							if(loopList[i].StrProcCode!="" && !CovSpans.IsCodeInSpans(loopList[i].StrProcCode,covSpanArray)) {//for example, ortho
 								continue;
 							}
 						}
 					}
 					//At this point, we know that the proc in the loopList falls within this max benefit.
 					//But it may also fall within a more restrictive benefit which would take precedence over this one.
-					if(TighterLimitExists(listBenefitsShort,benefitInd,listClaimProcHistsLoop[i])) {
+					if(TighterLimitExists(listShort,benInd,loopList[i])) {
 						continue;
 					}
-					maxInd-=listClaimProcHistsLoop[i].Amount;
+					maxInd-=loopList[i].Amount;
 				}
 			}
-			if(benefitInd!=null) {
-				if(benefitInd.MonetaryAmt != -1 && maxInd <= 0) {//then patient has used up all of their annual max, so no coverage.
-					if(benefitInd.TimePeriod==BenefitTimePeriod.Lifetime) {
+			if(benInd!=null) {
+				if(maxInd <= 0) {//then patient has used up all of their annual max, so no coverage.
+					if(benInd.TimePeriod==BenefitTimePeriod.Lifetime) {
 						note+=Lans.g("Benefits","Over lifetime max");
 					}
-					else if(benefitInd.TimePeriod==BenefitTimePeriod.CalendarYear
-						|| benefitInd.TimePeriod==BenefitTimePeriod.ServiceYear) {
+					else if(benInd.TimePeriod==BenefitTimePeriod.CalendarYear
+						|| benInd.TimePeriod==BenefitTimePeriod.ServiceYear) {
 						note+=Lans.g("Benefits","Over annual max");
 					}
 					limitationTypeMet=LimitationTypeMet.PeriodMax;
@@ -952,13 +955,13 @@ namespace OpenDentBusiness {
 				}
 			}
 			double retVal=insEstTotal;
-			if(benefitInd!=null && benefitInd.MonetaryAmt != -1){
+			if(benInd!=null){
 				if(maxInd < insEstTotal) {//if there's not enough left in the individual annual max to cover this proc.
 					retVal=maxInd;//insurance will only cover up to the remaining annual max
 				}
 			}
 			double insRemainingOverride=insEstTotalOverride;  //insEstTotalOverride or the amount ind remaining.  Same concept as retVal but never returned.
-			if(benefitInd!=null && benefitInd.MonetaryAmt != -1) {
+			if(benInd!=null) {
 				if(maxInd < insEstTotalOverride) {//if there's not enough left in the individual annual max to cover this proc.
 					insRemainingOverride=maxInd;//insurance will only cover up to the remaining annual max
 				}
@@ -974,27 +977,27 @@ namespace OpenDentBusiness {
 			//3. Fam only.  We don't know how much is left.
 			//maxInd=-1
 			//benInd=null
-			if(benefitFam==null || benefitFam.MonetaryAmt==-1) {//if no family max.  Ind only.
+			if(benFam==null || benFam.MonetaryAmt==-1) {//if no family max.  Ind only.
 				//If there is an override, calculate annual max note from it instead
 				if(insEstTotalOverride==-1 && retVal != insEstTotal){//and procedure is not fully covered by ind max
-					if(benefitInd!=null) {//redundant
-						if(benefitInd.TimePeriod==BenefitTimePeriod.Lifetime) {
+					if(benInd!=null) {//redundant
+						if(benInd.TimePeriod==BenefitTimePeriod.Lifetime) {
 							note+=Lans.g("Benefits","Over lifetime max");
 						}
-						else if(benefitInd.TimePeriod==BenefitTimePeriod.CalendarYear
-							|| benefitInd.TimePeriod==BenefitTimePeriod.ServiceYear) {
+						else if(benInd.TimePeriod==BenefitTimePeriod.CalendarYear
+							|| benInd.TimePeriod==BenefitTimePeriod.ServiceYear) {
 							note+=Lans.g("Benefits","Over annual max");
 						}
 					}
 					limitationTypeMet=LimitationTypeMet.PeriodMax;
 				}
 				else if(insEstTotalOverride!=-1 && insRemainingOverride != insEstTotalOverride) {
-					if(benefitInd!=null) {//redundant
-						if(benefitInd.TimePeriod==BenefitTimePeriod.Lifetime) {
+					if(benInd!=null) {//redundant
+						if(benInd.TimePeriod==BenefitTimePeriod.Lifetime) {
 							note+=Lans.g("Benefits","Over lifetime max");
 						}
-						else if(benefitInd.TimePeriod==BenefitTimePeriod.CalendarYear
-								|| benefitInd.TimePeriod==BenefitTimePeriod.ServiceYear) {
+						else if(benInd.TimePeriod==BenefitTimePeriod.CalendarYear
+								|| benInd.TimePeriod==BenefitTimePeriod.ServiceYear) {
 							note+=Lans.g("Benefits","Over annual max");
 						}
 					}
@@ -1002,37 +1005,37 @@ namespace OpenDentBusiness {
 				}
 				return retVal;//no family max anyway, so no need to go further.
 			}
-			double maxFam=benefitFam.MonetaryAmt;
+			double maxFam=benFam.MonetaryAmt;
 			//reduce the family max by amounts already used----------------------------------------------------------
-			for(int i=0;i<listClaimProcHists.Count;i++) {
-				if(listClaimProcHists[i].ProcDate<dateStart || listClaimProcHists[i].ProcDate>dateEnd) {
+			for(int i=0;i<histList.Count;i++) {
+				if(histList[i].ProcDate<dateStart || histList[i].ProcDate>dateEnd) {
 					continue;
 				}
-				if(listClaimProcHists[i].PlanNum != planNum) {
+				if(histList[i].PlanNum != planNum) {
 					continue;//different plan
 				}
 				//now, we do want to see all family members.
 				//if(histList[i].PatNum != patNum) {
 				//	continue;//this is for someone else in the family
 				//}
-				if(benefitFam.CodeNum!=0) {//specific code
-					if(ProcedureCodes.GetStringProcCode(benefitFam.CodeNum)!=listClaimProcHists[i].StrProcCode) {
+				if(benFam.CodeNum!=0) {//specific code
+					if(ProcedureCodes.GetStringProcCode(benFam.CodeNum)!=histList[i].StrProcCode) {
 						continue;
 					}
 				}
-				else if(benefitFam.CovCatNum!=0) {//specific category
-					listCovSpansForCat=CovSpans.GetForCat(benefitFam.CovCatNum);
+				else if(benFam.CovCatNum!=0) {//specific category
+					spansForCat=CovSpans.GetForCat(benFam.CovCatNum);
 					bool isMatch=false;
-					if(listClaimProcHists[i].StrProcCode=="") {//If this was a 'total' payment that was not attached to a procedure
-						if(CovCats.GetEbenCat(benefitFam.CovCatNum)==EbenefitCategory.General) {//And if this is the general category
+					if(histList[i].StrProcCode=="") {//If this was a 'total' payment that was not attached to a procedure
+						if(CovCats.GetEbenCat(benFam.CovCatNum)==EbenefitCategory.General) {//And if this is the general category
 							//Then it should affect this max.
 							isMatch=true;
 						}
 					}
 					else {
-						for(int j=0;j<listCovSpansForCat.Count;j++) {
-							if(String.Compare(listClaimProcHists[i].StrProcCode,listCovSpansForCat[j].FromCode)>=0 
-							&& String.Compare(listClaimProcHists[i].StrProcCode,listCovSpansForCat[j].ToCode)<=0) {
+						for(int j=0;j<spansForCat.Length;j++) {
+							if(String.Compare(histList[i].StrProcCode,spansForCat[j].FromCode)>=0 
+							&& String.Compare(histList[i].StrProcCode,spansForCat[j].ToCode)<=0) {
 								isMatch=true;
 								break;
 							}
@@ -1042,38 +1045,32 @@ namespace OpenDentBusiness {
 						continue;
 					}
 				}
-				//If the used family max is an umbrella max, 
-				//don't subtract the estimates from procedures that are outside of the general coverage category 
-				//StrProcCode can be blank for claimprocs with Status Adjustment
-				if(benefitFam.CovCatNum==0 && !IsCodeInGeneralSpan(listClaimProcHists[i].StrProcCode) && listClaimProcHists[i].StrProcCode!="") {
-					continue;
-				}
 				//if no category, then benefits are not restricted by proc code.
-				maxFam-=listClaimProcHists[i].Amount;
+				maxFam-=histList[i].Amount;
 			}
 			//reduce family max by amounts already used in loop---------------------------------------------------------------
-			for(int i=0;i<listClaimProcHistsLoop.Count;i++) {
-				if(listClaimProcHistsLoop[i].PlanNum != planNum) {
+			for(int i=0;i<loopList.Count;i++) {
+				if(loopList[i].PlanNum != planNum) {
 					continue;//different plan
 				}
-				if(benefitFam.CodeNum!=0) {//specific code
-					if(ProcedureCodes.GetStringProcCode(benefitFam.CodeNum)!=listClaimProcHistsLoop[i].StrProcCode) {
+				if(benFam.CodeNum!=0) {//specific code
+					if(ProcedureCodes.GetStringProcCode(benFam.CodeNum)!=loopList[i].StrProcCode) {
 						continue;
 					}
 				}
-				else if(benefitFam.CovCatNum!=0) {//specific category
-					listCovSpansForCat=CovSpans.GetForCat(benefitFam.CovCatNum);
+				else if(benFam.CovCatNum!=0) {//specific category
+					spansForCat=CovSpans.GetForCat(benFam.CovCatNum);
 					bool isMatch=false;
-					if(listClaimProcHistsLoop[i].StrProcCode=="") {//If this was a 'total' payment that was not attached to a procedure
-						if(CovCats.GetEbenCat(benefitFam.CovCatNum)==EbenefitCategory.General) {//And if this is the general category
+					if(loopList[i].StrProcCode=="") {//If this was a 'total' payment that was not attached to a procedure
+						if(CovCats.GetEbenCat(benFam.CovCatNum)==EbenefitCategory.General) {//And if this is the general category
 							//Then it should affect this max.
 							isMatch=true;
 						}
 					}
 					else {
-						for(int j=0;j<listCovSpansForCat.Count;j++) {
-							if(String.Compare(listClaimProcHistsLoop[i].StrProcCode,listCovSpansForCat[j].FromCode)>=0 
-							&& String.Compare(listClaimProcHistsLoop[i].StrProcCode,listCovSpansForCat[j].ToCode)<=0) {
+						for(int j=0;j<spansForCat.Length;j++) {
+							if(String.Compare(loopList[i].StrProcCode,spansForCat[j].FromCode)>=0 
+							&& String.Compare(loopList[i].StrProcCode,spansForCat[j].ToCode)<=0) {
 								isMatch=true;
 								break;
 							}
@@ -1085,24 +1082,23 @@ namespace OpenDentBusiness {
 				}
 				//If the used family max is an umbrella max, 
 				//don't subtract the estimates from procedures that are outside of the general coverage category 
-				//StrProcCode can be blank for claimprocs with Status Adjustment
-				if(benefitFam.CovCatNum==0 && !IsCodeInGeneralSpan(listClaimProcHistsLoop[i].StrProcCode) && listClaimProcHistsLoop[i].StrProcCode!="") {
+				if(benFam.CovCatNum==0 && !IsCodeInGeneralSpan(loopList[i].StrProcCode)) {
 					continue;
 				}
 				//if no category, then benefits are not restricted by proc code.
-				maxFam-=listClaimProcHistsLoop[i].Amount;
+				maxFam-=loopList[i].Amount;
 			}
 			//if the family max has all been used up on other procs 
 			if(maxFam<=0) {
-				if(benefitInd==null || benefitInd.MonetaryAmt == -1) {
+				if(benInd==null) {
 					note+=Lans.g("Benefits","Over family max");
 				}
 				else{//and there is an individual max.
-					if(benefitInd.TimePeriod==BenefitTimePeriod.Lifetime) {
+					if(benInd.TimePeriod==BenefitTimePeriod.Lifetime) {
 						note+=Lans.g("Benefits","Over family lifetime max");
 					}
-					else if(benefitInd.TimePeriod==BenefitTimePeriod.CalendarYear
-					|| benefitInd.TimePeriod==BenefitTimePeriod.ServiceYear) {
+					else if(benInd.TimePeriod==BenefitTimePeriod.CalendarYear
+					|| benInd.TimePeriod==BenefitTimePeriod.ServiceYear) {
 						note+=Lans.g("Benefits","Over family annual max");
 					}
 				}
@@ -1121,19 +1117,19 @@ namespace OpenDentBusiness {
 				}
 				return retVal;
 			}*/
-			if((benefitInd==null) || (benefitInd.MonetaryAmt==-1) || (maxFam < maxInd)) {//restrict by maxFam
+			if((benInd==null) || (maxFam < maxInd)) {//restrict by maxFam
 				if(insEstTotalOverride==-1) {//No insEstTotalOverride used, use normal insEstTotal
 					if(maxFam < retVal) {//if there's not enough left in the annual max to cover this proc.
 						//example. retVal=$70.  But 2970 of 3000 family max has been used.  maxFam=30.  We need to return 30.
-						if(benefitInd==null || benefitInd.MonetaryAmt==-1) {
+						if(benInd==null) {
 							note+=Lans.g("Benefits","Over family max");
 						}
 						else {//both ind and fam
-							if(benefitInd.TimePeriod==BenefitTimePeriod.Lifetime) {
+							if(benInd.TimePeriod==BenefitTimePeriod.Lifetime) {
 								note+=Lans.g("Benefits","Over family lifetime max");
 							}
-							else if(benefitInd.TimePeriod==BenefitTimePeriod.CalendarYear
-								|| benefitInd.TimePeriod==BenefitTimePeriod.ServiceYear) {
+							else if(benInd.TimePeriod==BenefitTimePeriod.CalendarYear
+								|| benInd.TimePeriod==BenefitTimePeriod.ServiceYear) {
 								note+=Lans.g("Benefits","Over family annual max");
 							}
 						}
@@ -1145,15 +1141,15 @@ namespace OpenDentBusiness {
 					//First calculate the note using override
 					if(maxFam < insRemainingOverride) {//if there's not enough left in the annual max to cover this proc.
 						//example. insRemainingOverride=$70.  But 2970 of 3000 family max has been used.  maxFam=30.
-						if(benefitInd==null || benefitInd.MonetaryAmt==-1) {
+						if(benInd==null) {
 							note+=Lans.g("Benefits","Over family max");
 						}
 						else {//both ind and fam
-							if(benefitInd.TimePeriod==BenefitTimePeriod.Lifetime) {
+							if(benInd.TimePeriod==BenefitTimePeriod.Lifetime) {
 								note+=Lans.g("Benefits","Over family lifetime max");
 							}
-							else if(benefitInd.TimePeriod==BenefitTimePeriod.CalendarYear
-								|| benefitInd.TimePeriod==BenefitTimePeriod.ServiceYear) {
+							else if(benInd.TimePeriod==BenefitTimePeriod.CalendarYear
+								|| benInd.TimePeriod==BenefitTimePeriod.ServiceYear) {
 								note+=Lans.g("Benefits","Over family annual max");
 							}
 						}
@@ -1167,15 +1163,15 @@ namespace OpenDentBusiness {
 			}
 			if(insEstTotalOverride==-1) {//No insEstTotalOverride used, use normal insEstTotal
 				if(retVal < insEstTotal) {//must have been an individual restriction
-					if(benefitInd==null || benefitInd.MonetaryAmt == -1) {//js I don't understand this situation. It will probably not happen, but this is safe.
+					if(benInd==null) {//js I don't understand this situation. It will probably not happen, but this is safe.
 						note+=Lans.g("Benefits","Over annual max");
 					}
 					else {
-						if(benefitInd.TimePeriod==BenefitTimePeriod.Lifetime) {
+						if(benInd.TimePeriod==BenefitTimePeriod.Lifetime) {
 							note+=Lans.g("Benefits","Over lifetime max");
 						}
-						else if(benefitInd.TimePeriod==BenefitTimePeriod.CalendarYear
-							|| benefitInd.TimePeriod==BenefitTimePeriod.ServiceYear) {
+						else if(benInd.TimePeriod==BenefitTimePeriod.CalendarYear
+							|| benInd.TimePeriod==BenefitTimePeriod.ServiceYear) {
 							note+=Lans.g("Benefits","Over annual max");
 						}
 					}
@@ -1184,15 +1180,15 @@ namespace OpenDentBusiness {
 			}
 			//If there is an override, calculate max note from it instead.  Must have been an individual restriction.
 			else if(insRemainingOverride < insEstTotalOverride) {
-				if(benefitInd==null || benefitInd.MonetaryAmt==-1) {//js I don't understand this situation. It will probably not happen, but this is safe.
+				if(benInd==null) {//js I don't understand this situation. It will probably not happen, but this is safe.
 					note+=Lans.g("Benefits","Over annual max");
 				}
 				else {
-					if(benefitInd.TimePeriod==BenefitTimePeriod.Lifetime) {
+					if(benInd.TimePeriod==BenefitTimePeriod.Lifetime) {
 						note+=Lans.g("Benefits","Over lifetime max");
 					}
-					else if(benefitInd.TimePeriod==BenefitTimePeriod.CalendarYear
-						|| benefitInd.TimePeriod==BenefitTimePeriod.ServiceYear) {
+					else if(benInd.TimePeriod==BenefitTimePeriod.CalendarYear
+						|| benInd.TimePeriod==BenefitTimePeriod.ServiceYear) {
 						note+=Lans.g("Benefits","Over annual max");
 					}
 				}
@@ -1203,14 +1199,13 @@ namespace OpenDentBusiness {
 		
 		///<summary>Returns true if the passed in code is within the "General" insurance coverage category.</summary>
 		private static bool IsCodeInGeneralSpan(string procCodeStr) {
-			//No need to check MiddleTierRole; no call to db.
 			bool retVal=true;
-			CovCat covCatGen=CovCats.GetForEbenCat(EbenefitCategory.General);
-			if(covCatGen!=null) {//Should always happen.  This would mean they are missing the General Coverage Category.
-				List<CovSpan> listCovSpansForGeneral=CovSpans.GetForCat(covCatGen.CovCatNum);
+			CovCat genCat=CovCats.GetForEbenCat(EbenefitCategory.General);
+			if(genCat!=null) {//Should always happen.  This would mean they are missing the General Coverage Category.
+				CovSpan[] spansForGeneral=CovSpans.GetForCat(genCat.CovCatNum);
 				bool isMatch=false;
-				for(int i=0;i<listCovSpansForGeneral.Count;i++) {
-					if(String.Compare(procCodeStr,listCovSpansForGeneral[i].FromCode)>=0 && String.Compare(procCodeStr,listCovSpansForGeneral[i].ToCode)<=0) {
+				for(int i=0;i<spansForGeneral.Length;i++) {
+					if(String.Compare(procCodeStr,spansForGeneral[i].FromCode)>=0 && String.Compare(procCodeStr,spansForGeneral[i].ToCode)<=0) {
 						isMatch=true;
 						break;
 					}
@@ -1227,9 +1222,8 @@ namespace OpenDentBusiness {
 			return retVal;
 		}
 
-		private static bool TighterLimitExists(List<Benefit> listBenefitsShort,Benefit benefit,ClaimProcHist claimProcHist) 
+		private static bool TighterLimitExists(List<Benefit> listShort,Benefit benefit,ClaimProcHist claimProcHist) 
 		{
-			//No need to check MiddleTierRole; no call to db.
 			if(claimProcHist.StrProcCode=="") {//If this was a 'total' payment that was not attached to a procedure
 				//there won't be anything more restrictive.
 				return false;
@@ -1238,51 +1232,48 @@ namespace OpenDentBusiness {
 			if(benefit.CodeNum!=0) {//The benefit is already restrictive.  There isn't currently a way to have a more restrictive benefit, although in the future when code ranges are supported, a tighter code range would be more restrictive.
 				return false;
 			}
-			for(int b=0;b<listBenefitsShort.Count;b++) {
-				if(listBenefitsShort[b].BenefitNum==benefit.BenefitNum) {
+			for(int b=0;b<listShort.Count;b++) {
+				if(listShort[b].BenefitNum==benefit.BenefitNum) {
 					continue;//skip self.
 				}
-				if(listBenefitsShort[b].QuantityQualifier!=BenefitQuantity.None) {
+				if(listShort[b].QuantityQualifier!=BenefitQuantity.None) {
 					continue;//it must be some other kind of limitation other than an amount limit.  For example, BW frequency.
 				}
-				if(listBenefitsShort[b].CodeNum != 0) {
+				if(listShort[b].CodeNum != 0) {
 					long codeNum=0;
 					if(ProcedureCodes.GetContainsKey(claimProcHist.StrProcCode)) {
 						codeNum=ProcedureCodes.GetOne(claimProcHist.StrProcCode).CodeNum;
 					}
-					if(listBenefitsShort[b].CodeNum==codeNum) {//Enhance later for code ranges when supported by program
+					if(listShort[b].CodeNum==codeNum) {//Enhance later for code ranges when supported by program
 						return true;//a tighter limitation benefit exists for this specific procedure code.
 					}
-					continue;
 				}
-				if(listBenefitsShort[b].CovCatNum==0) {
-					continue;
-				}
-				//specific category
-				if(benefit.CovCatNum!=0) {//If benefit is a category limitation,
-					//then we can only consider categories that are more restrictive (further down on list).
-					//either of these could be -1 if isHidden
-					int orderBenefit=CovCats.GetOrderShort(benefit.CovCatNum);
-					int orderTest=CovCats.GetOrderShort(listBenefitsShort[b].CovCatNum);
-					if(orderBenefit==-1) {
-						//nothing to do here.  Treat it like a general limitation 
+				else if(listShort[b].CovCatNum!=0) {//specific category
+					if(benefit.CovCatNum!=0) {//If benefit is a category limitation,
+						//then we can only consider categories that are more restrictive (further down on list).
+						//either of these could be -1 if isHidden
+						int orderBenefit=CovCats.GetOrderShort(benefit.CovCatNum);
+						int orderTest=CovCats.GetOrderShort(listShort[b].CovCatNum);
+						if(orderBenefit==-1) {
+							//nothing to do here.  Treat it like a general limitation 
+						}
+						else if(orderTest<orderBenefit) {//the CovCat of listShort is further up in the list and less restrictive, so should not be considered.
+							//this handles orderTest=-1, skipping the hidden category
+							continue;
+						}
 					}
-					else if(orderTest<orderBenefit) {//the CovCat of listShort is further up in the list and less restrictive, so should not be considered.
-						//this handles orderTest=-1, skipping the hidden category
-						continue;
+					else {//But if this is a general limitation,
+						//then we don't need to do the above check because any match can be considered more restrictive.
 					}
-				}
-				else {//But if this is a general limitation,
-					//then we don't need to do the above check because any match can be considered more restrictive.
-				}
-				//see if the claimProcHist is in this more restrictive category
-				List<CovSpan> listCovSpansForCat=CovSpans.GetForCat(listBenefitsShort[b].CovCatNum);//get the spans ;
-				//This must be a payment that was attached to a proc, so test the proc to be in the coderange of this annual max benefit
-				for(int j=0;j<listCovSpansForCat.Count;j++) {
-					if(String.Compare(claimProcHist.StrProcCode,listCovSpansForCat[j].FromCode)>=0 
-						&& String.Compare(claimProcHist.StrProcCode,listCovSpansForCat[j].ToCode)<=0) 
-					{
-						return true;
+					//see if the claimProcHist is in this more restrictive category
+					CovSpan[] spansForCat=CovSpans.GetForCat(listShort[b].CovCatNum);//get the spans 
+					//This must be a payment that was attached to a proc, so test the proc to be in the coderange of this annual max benefit
+					for(int j=0;j<spansForCat.Length;j++) {
+						if(String.Compare(claimProcHist.StrProcCode,spansForCat[j].FromCode)>=0 
+							&& String.Compare(claimProcHist.StrProcCode,spansForCat[j].ToCode)<=0) 
+						{
+							return true;
+						}
 					}
 				}
 			}
@@ -1290,42 +1281,42 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Only used from InsPlans.GetInsUsedDisplay.  If a procedure is handled by some limitation other than a general annual max, then we don't want it to count towards the annual max.</summary>
-		public static bool LimitationExistsNotGeneral(List<Benefit> listBenefits,long planNum,long patPlanNum,string strProcCode) {
-			EbenefitCategory ebenefitCategory;
-			List<CovSpan> listCovSpans;
+		public static bool LimitationExistsNotGeneral(List<Benefit> benList,long planNum,long patPlanNum,string strProcCode) {
+			EbenefitCategory eben;
+			CovSpan[] covSpanArray;
 			//No need to check MiddleTierRole; no call to db.
-			for(int i=0;i<listBenefits.Count;i++) {
-				if(listBenefits[i].PlanNum==0 && listBenefits[i].PatPlanNum!=patPlanNum) {
+			for(int i=0;i<benList.Count;i++) {
+				if(benList[i].PlanNum==0 && benList[i].PatPlanNum!=patPlanNum) {
 					continue;
 				}
-				if(listBenefits[i].PatPlanNum==0 && listBenefits[i].PlanNum!=planNum) {
+				if(benList[i].PatPlanNum==0 && benList[i].PlanNum!=planNum) {
 					continue;
 				}
-				if(listBenefits[i].BenefitType!=InsBenefitType.Limitations) {
+				if(benList[i].BenefitType!=InsBenefitType.Limitations) {
 					continue;
 				}
-				if(listBenefits[i].QuantityQualifier!=BenefitQuantity.None) {
+				if(benList[i].QuantityQualifier!=BenefitQuantity.None) {
 					continue;
 				}
-				if(listBenefits[i].TimePeriod!=BenefitTimePeriod.CalendarYear 
-					&& listBenefits[i].TimePeriod!=BenefitTimePeriod.ServiceYear
-					&& listBenefits[i].TimePeriod!=BenefitTimePeriod.Lifetime)//allows ortho max to be caught further down 
+				if(benList[i].TimePeriod!=BenefitTimePeriod.CalendarYear 
+					&& benList[i].TimePeriod!=BenefitTimePeriod.ServiceYear
+					&& benList[i].TimePeriod!=BenefitTimePeriod.Lifetime)//allows ortho max to be caught further down 
 				{
 					continue;
 				}
 				//coverage level?
-				if(listBenefits[i].CodeNum != 0) {
-					if(listBenefits[i].CodeNum==ProcedureCodes.GetCodeNum(strProcCode)) {//Enhance later for code ranges when supported by program
+				if(benList[i].CodeNum != 0) {
+					if(benList[i].CodeNum==ProcedureCodes.GetCodeNum(strProcCode)) {//Enhance later for code ranges when supported by program
 						return true;//a limitation benefit exists for this specific procedure code.
 					}
 				}
-				if(listBenefits[i].CovCatNum != 0) {
-					ebenefitCategory=CovCats.GetEbenCat(listBenefits[i].CovCatNum);
-					if(ebenefitCategory==EbenefitCategory.General || ebenefitCategory==EbenefitCategory.None) {
+				if(benList[i].CovCatNum != 0) {
+					eben=CovCats.GetEbenCat(benList[i].CovCatNum);
+					if(eben==EbenefitCategory.General || eben==EbenefitCategory.None) {
 						continue;//ignore this general benefit
 					}
-					listCovSpans=CovSpans.GetForCat(listBenefits[i].CovCatNum);
-					if(CovSpans.IsCodeInSpans(strProcCode,listCovSpans)) {
+					covSpanArray=CovSpans.GetForCat(benList[i].CovCatNum);
+					if(CovSpans.IsCodeInSpans(strProcCode,covSpanArray)) {
 						return true;//a limitation benefit exists for a category that contains this procedure code.
 					}
 				}
@@ -1334,61 +1325,61 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Used from ClaimProc.ComputeBaseEst and in sheet output. This is a low level function to get the percent to store in a claimproc.  It does not consider any percentOverride.  Always returns a number between 0 and 100.  Handles general, category, or procedure level.  Does not handle pat vs family coveragelevel.  Does handle patient override by using patplan.  Does not need to be aware of procedure history or loop history.</summary>
-		public static int GetPercent(string procCodeStr,string planType,long planNum,long patPlanNum,List<Benefit> listBenefits) {
+		public static int GetPercent(string procCodeStr,string planType,long planNum,long patPlanNum,List<Benefit> benList) {
 			//No need to check MiddleTierRole; no call to db.
 			if(planType=="f" || planType=="c"){
 				return 100;//flat and cap are always covered 100%
 			}
 			//first, create a much shorter list with only relevant benefits in it.
-			List<Benefit> listBenefitsShort=new List<Benefit>();
-			for(int i=0;i<listBenefits.Count;i++) {
-				if(listBenefits[i].PlanNum==0 && listBenefits[i].PatPlanNum!=patPlanNum) {
+			List<Benefit> listShort=new List<Benefit>();
+			for(int i=0;i<benList.Count;i++) {
+				if(benList[i].PlanNum==0 && benList[i].PatPlanNum!=patPlanNum) {
 					continue;
 				}
-				if(listBenefits[i].PatPlanNum==0 && listBenefits[i].PlanNum!=planNum) {
+				if(benList[i].PatPlanNum==0 && benList[i].PlanNum!=planNum) {
 					continue;
 				}
-				if(listBenefits[i].BenefitType!=InsBenefitType.CoInsurance) {
+				if(benList[i].BenefitType!=InsBenefitType.CoInsurance) {
 					continue;
 				}
-				if(listBenefits[i].Percent == -1) {
+				if(benList[i].Percent == -1) {
 					continue;
 				}
-				listBenefitsShort.Add(listBenefits[i]);
+				listShort.Add(benList[i]);
 			}
 			//Find the best benefit matches.
 			//Plan and Pat here indicate patplan override and have nothing to do with pat vs family coverage level.
-			Benefit benefitPlan=null;
-			Benefit benefitPat=null;
+			Benefit benPlan=null;
+			Benefit benPat=null;
 			//start with no category
-			for(int i=0;i<listBenefitsShort.Count;i++) {
-				if(listBenefitsShort[i].CodeNum > 0) {
+			for(int i=0;i<listShort.Count;i++) {
+				if(listShort[i].CodeNum > 0) {
 					continue;
 				}
-				if(listBenefitsShort[i].CovCatNum != 0) {
+				if(listShort[i].CovCatNum != 0) {
 					continue;
 				}
-				if(listBenefitsShort[i].PatPlanNum !=0) {
-					benefitPat=listBenefitsShort[i];
+				if(listShort[i].PatPlanNum !=0) {
+					benPat=listShort[i];
 				}
 				else {
-					benefitPlan=listBenefitsShort[i];
+					benPlan=listShort[i];
 				}
 			}
 			//then, specific category.
-			List<CovSpan> listCovSpansForCat;
-			for(int i=0;i<listBenefitsShort.Count;i++) {
-				if(listBenefitsShort[i].CodeNum>0) {
+			CovSpan[] spansForCat;
+			for(int i=0;i<listShort.Count;i++) {
+				if(listShort[i].CodeNum>0) {
 					continue;
 				}
-				if(listBenefitsShort[i].CovCatNum==0) {
+				if(listShort[i].CovCatNum==0) {
 					continue;
 				}
 				//see if the span matches
-				listCovSpansForCat=CovSpans.GetForCat(listBenefitsShort[i].CovCatNum);
+				spansForCat=CovSpans.GetForCat(listShort[i].CovCatNum);
 				bool isMatch=false;
-				for(int j=0;j<listCovSpansForCat.Count;j++) {
-					if(String.Compare(procCodeStr,listCovSpansForCat[j].FromCode)>=0 && String.Compare(procCodeStr,listCovSpansForCat[j].ToCode)<=0) {
+				for(int j=0;j<spansForCat.Length;j++) {
+					if(String.Compare(procCodeStr,spansForCat[j].FromCode)>=0 && String.Compare(procCodeStr,spansForCat[j].ToCode)<=0) {
 						isMatch=true;
 						break;
 					}
@@ -1396,48 +1387,49 @@ namespace OpenDentBusiness {
 				if(!isMatch) {
 					continue;//no match
 				}
-				if(listBenefitsShort[i].PatPlanNum ==0) {
-					if(benefitPlan != null && benefitPlan.CovCatNum!=0) {//must compare
+				if(listShort[i].PatPlanNum !=0) {
+					if(benPat != null && benPat.CovCatNum!=0) {//must compare
 						//only use the new one if the item order is larger
-						if(CovCats.GetOrderShort(listBenefitsShort[i].CovCatNum) > CovCats.GetOrderShort(benefitPlan.CovCatNum)) {
-							benefitPlan=listBenefitsShort[i];
+						if(CovCats.GetOrderShort(listShort[i].CovCatNum) > CovCats.GetOrderShort(benPat.CovCatNum)) {
+							benPat=listShort[i];
 						}
 					}
 					else {//first one encountered for a category
-						benefitPlan=listBenefitsShort[i];
-					}
-					continue;
-				}
-				if(benefitPat != null && benefitPat.CovCatNum!=0) {//must compare
-					//only use the new one if the item order is larger
-					if(CovCats.GetOrderShort(listBenefitsShort[i].CovCatNum) > CovCats.GetOrderShort(benefitPat.CovCatNum)) {
-						benefitPat=listBenefitsShort[i];
+						benPat=listShort[i];
 					}
 				}
-				else {//first one encountered for a category
-					benefitPat=listBenefitsShort[i];
+				else {
+					if(benPlan != null && benPlan.CovCatNum!=0) {//must compare
+						//only use the new one if the item order is larger
+						if(CovCats.GetOrderShort(listShort[i].CovCatNum) > CovCats.GetOrderShort(benPlan.CovCatNum)) {
+							benPlan=listShort[i];
+						}
+					}
+					else {//first one encountered for a category
+						benPlan=listShort[i];
+					}
 				}
 			}
 			//then, specific code
-			for(int i=0;i<listBenefitsShort.Count;i++) {
-				if(listBenefitsShort[i].CodeNum==0) {
+			for(int i=0;i<listShort.Count;i++) {
+				if(listShort[i].CodeNum==0) {
 					continue;
 				}
-				if(procCodeStr!=ProcedureCodes.GetStringProcCode(listBenefitsShort[i].CodeNum)) {
+				if(procCodeStr!=ProcedureCodes.GetStringProcCode(listShort[i].CodeNum)) {
 					continue;
 				}
-				if(listBenefits[i].PatPlanNum !=0) {
-					benefitPat=listBenefitsShort[i];
+				if(benList[i].PatPlanNum !=0) {
+					benPat=listShort[i];
 				}
 				else {
-					benefitPlan=listBenefitsShort[i];
+					benPlan=listShort[i];
 				}				
 			}
-			if(benefitPat != null) {
-				return benefitPat.Percent;
+			if(benPat != null) {
+				return benPat.Percent;
 			}
-			if(benefitPlan != null) {
-				return benefitPlan.Percent;
+			if(benPlan != null) {
+				return benPlan.Percent;
 			}
 			return 0;
 		}
@@ -1454,34 +1446,34 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Only used from ClaimProc.ComputeBaseEst. This is a low level function to determine if a given procedure is completely excluded from coverage.  It does not consider any dates of service or history.</summary>
-		public static bool IsExcluded(string strProcCode,List<Benefit> listBenefits,long planNum,long patPlanNum) {
+		public static bool IsExcluded(string strProcCode,List<Benefit> benList,long planNum,long patPlanNum) {
 			//No need to check MiddleTierRole; no call to db.
-			for(int i=0;i<listBenefits.Count;i++) {
-				if(listBenefits[i].PlanNum==0 && listBenefits[i].PatPlanNum!=patPlanNum) {
+			for(int i=0;i<benList.Count;i++) {
+				if(benList[i].PlanNum==0 && benList[i].PatPlanNum!=patPlanNum) {
 					continue;
 				}
-				if(listBenefits[i].PatPlanNum==0 && listBenefits[i].PlanNum!=planNum) {
+				if(benList[i].PatPlanNum==0 && benList[i].PlanNum!=planNum) {
 					continue;
 				}
-				if(listBenefits[i].BenefitType!=InsBenefitType.Exclusions) {
+				if(benList[i].BenefitType!=InsBenefitType.Exclusions) {
 					continue;
 				}
-				if(listBenefits[i].CodeNum > 0) {
-					if(strProcCode==ProcedureCodes.GetStringProcCode(listBenefits[i].CodeNum)) {
+				if(benList[i].CodeNum > 0) {
+					if(strProcCode==ProcedureCodes.GetStringProcCode(benList[i].CodeNum)) {
 						return true;//specific procedure code excluded
 					}
 					continue;
 				}
-				if(listBenefits[i].CovCatNum==0) {
+				if(benList[i].CovCatNum==0) {
 					continue;
 					//General exclusion with no category.  This is considered an unsupported type of benefit.
 					//Nobody should be able to exclude everything with one benefit entry.
 				}
 				//see if the span matches
-				List<CovSpan> listCovSpansForCat=CovSpans.GetForCat(listBenefits[i].CovCatNum);
+				CovSpan[] spansForCat=CovSpans.GetForCat(benList[i].CovCatNum);
 				//bool isMatch=false;
-				for(int j=0;j<listCovSpansForCat.Count;j++) {
-					if(String.Compare(strProcCode,listCovSpansForCat[j].FromCode)>=0 && String.Compare(strProcCode,listCovSpansForCat[j].ToCode)<=0) {
+				for(int j=0;j<spansForCat.Length;j++) {
+					if(String.Compare(strProcCode,spansForCat[j].FromCode)>=0 && String.Compare(strProcCode,spansForCat[j].ToCode)<=0) {
 						return true;//span matches
 					}
 				}
@@ -1491,105 +1483,104 @@ namespace OpenDentBusiness {
 
 		///<summary>Used in FormInsPlan to sych database with changes user made to the benefit list for a plan.  
 		///Must supply an old list for comparison.  Only the differences are saved.</summary>
-		public static void UpdateList(List<Benefit> listBenefitsOld,List<Benefit> listBenefitsNew){
+		public static void UpdateList(List<Benefit> oldBenefitList,List<Benefit> newBenefitList){
 			//No need to check MiddleTierRole; no call to db.
-			Benefit benefitNew;
-			for(int i=0;i<listBenefitsOld.Count;i++){//loop through the old list
-				benefitNew=null;
-				for(int j=0;j<listBenefitsNew.Count;j++){
-					if(listBenefitsNew[j]==null || listBenefitsNew[j].BenefitNum==0){
+			Benefit newBenefit;
+			for(int i=0;i<oldBenefitList.Count;i++){//loop through the old list
+				newBenefit=null;
+				for(int j=0;j<newBenefitList.Count;j++){
+					if(newBenefitList[j]==null || newBenefitList[j].BenefitNum==0){
 						continue;
 					}
-					if(listBenefitsOld[i].BenefitNum==listBenefitsNew[j].BenefitNum){
-						benefitNew=listBenefitsNew[j];
+					if(oldBenefitList[i].BenefitNum==newBenefitList[j].BenefitNum){
+						newBenefit=newBenefitList[j];
 						break;
 					}
 				}
-				if(benefitNew==null){
+				if(newBenefit==null){
 					//benefit with matching benefitNum was not found, so it must have been deleted
-					Delete(listBenefitsOld[i]);
+					Delete(oldBenefitList[i]);
 					continue;
 				}
 				//benefit was found with matching benefitNum, so check for changes
-				if(benefitNew.PlanNum != listBenefitsOld[i].PlanNum
-					|| benefitNew.PatPlanNum != listBenefitsOld[i].PatPlanNum
-					|| benefitNew.CovCatNum != listBenefitsOld[i].CovCatNum
-					|| benefitNew.BenefitType != listBenefitsOld[i].BenefitType
-					|| benefitNew.Percent != listBenefitsOld[i].Percent
-					|| benefitNew.MonetaryAmt != listBenefitsOld[i].MonetaryAmt
-					|| benefitNew.TimePeriod != listBenefitsOld[i].TimePeriod
-					|| benefitNew.QuantityQualifier != listBenefitsOld[i].QuantityQualifier
-					|| benefitNew.Quantity != listBenefitsOld[i].Quantity
-					|| benefitNew.CodeNum != listBenefitsOld[i].CodeNum
-					|| benefitNew.CoverageLevel != listBenefitsOld[i].CoverageLevel
-					|| benefitNew.CodeGroupNum != listBenefitsOld[i].CodeGroupNum
-					|| benefitNew.TreatArea != listBenefitsOld[i].TreatArea)
+				if(newBenefit.PlanNum != oldBenefitList[i].PlanNum
+					|| newBenefit.PatPlanNum != oldBenefitList[i].PatPlanNum
+					|| newBenefit.CovCatNum != oldBenefitList[i].CovCatNum
+					|| newBenefit.BenefitType != oldBenefitList[i].BenefitType
+					|| newBenefit.Percent != oldBenefitList[i].Percent
+					|| newBenefit.MonetaryAmt != oldBenefitList[i].MonetaryAmt
+					|| newBenefit.TimePeriod != oldBenefitList[i].TimePeriod
+					|| newBenefit.QuantityQualifier != oldBenefitList[i].QuantityQualifier
+					|| newBenefit.Quantity != oldBenefitList[i].Quantity
+					|| newBenefit.CodeNum != oldBenefitList[i].CodeNum
+					|| newBenefit.CoverageLevel != oldBenefitList[i].CoverageLevel)
 				{
-					Benefits.Update(benefitNew,listBenefitsOld[i]); //logging taken care of in update
+					Benefits.Update(newBenefit,oldBenefitList[i]); //logging taken care of in update
 				}
 			}
-			for(int i=0;i<listBenefitsNew.Count;i++){//loop through the new list
-				if(listBenefitsNew[i]==null){
+			for(int i=0;i<newBenefitList.Count;i++){//loop through the new list
+				if(newBenefitList[i]==null){
 					continue;	
 				}
-				if(listBenefitsNew[i].BenefitNum!=0){
+				if(newBenefitList[i].BenefitNum!=0){
 					continue;
 				}
 				//benefit with benefitNum=0, so it's new
-				Benefits.Insert(listBenefitsNew[i]); //logging taken care of in Insert method.
+				Benefits.Insert(newBenefitList[i]); //logging taken care of in Insert method.
 			}
 		}
 
 		///<summary>Used in family module display to get a list of benefits.  
 		///The main purpose of this function is to group similar benefits for each plan on the same row, making it easier to display in a simple grid.  
 		///Supply a list of all benefits for the patient, and the patPlans for the patient.</summary>
-		public static Benefit[,] GetDisplayMatrix(List<Benefit> listBenefitsForPat,List<PatPlan> listPatPlans,List<InsSub> listInsSubs){
+		public static Benefit[,] GetDisplayMatrix(List<Benefit> bensForPat,List<PatPlan> patPlanList,List<InsSub> subList){
 			//No need to check MiddleTierRole; no call to db.
-			Benefit[] benefitArrayRow;//Closely related benefits, one column for each pat plan. Entries can be null.
+			Benefit[] row;//Closely related benefits, one entry for each pat plan. Entries can be null.
 			//Dictionary's value is a list of arrays of benefits that are closely related. The key is a benefit representative of the ones in the value.
-			//Jordan-This dict is terrible. When it gets refactored some day, we will also
-			//be able to improve the BenefitArraySorter and remove the ArrayList.
-			Dictionary<Benefit,List<Benefit[]>> dictionaryBenefits=new Dictionary<Benefit,List<Benefit[]>>();
-			InsSub insSub;
-			for(int i=0;i<listBenefitsForPat.Count;i++) {
-				for(int j=0;j<listPatPlans.Count;j++) {//loop through columns
-					insSub=InsSubs.GetSub(listPatPlans[j].InsSubNum,listInsSubs);
-					if(listPatPlans[j].PatPlanNum!=listBenefitsForPat[i].PatPlanNum
-						&& insSub.PlanNum!=listBenefitsForPat[i].PlanNum) 
+			Dictionary<Benefit,List<Benefit[]>> dictBens=new Dictionary<Benefit,List<Benefit[]>>();
+			InsSub sub;
+			for(int i=0;i<bensForPat.Count;i++) {
+				if(CodeGroups.IsHidden(bensForPat[i].CodeGroupNum)) {
+					continue;
+				}
+				for(int j=0;j<patPlanList.Count;j++) {//loop through columns
+					sub=InsSubs.GetSub(patPlanList[j].InsSubNum,subList);
+					if(patPlanList[j].PatPlanNum!=bensForPat[i].PatPlanNum
+						&& sub.PlanNum!=bensForPat[i].PlanNum) 
 					{
 						continue;//Benefit doesn't apply to this column
 					}
-					List<Benefit[]>  listBenefitArrayRows=null;
-					dictionaryBenefits.TryGetValue(listBenefitsForPat[i],out listBenefitArrayRows);
+					List<Benefit[]>  listBenRows=null;
+					dictBens.TryGetValue(bensForPat[i],out listBenRows);
 					//if no matching type found, add a row
-					if(listBenefitArrayRows==null || listBenefitArrayRows.Count==0) {
-						benefitArrayRow=new Benefit[listPatPlans.Count];
-						benefitArrayRow[j]=listBenefitsForPat[i].Copy();
-						dictionaryBenefits.Add(listBenefitsForPat[i].Copy(),new List<Benefit[]> { benefitArrayRow });
+					if(listBenRows==null || listBenRows.Count==0) {
+						row=new Benefit[patPlanList.Count];
+						row[j]=bensForPat[i].Copy();
+						dictBens.Add(bensForPat[i].Copy(),new List<Benefit[]> { row });
 						continue;
 					}
 					//if the column for the matching row is null, then use that row
-					if(listBenefitArrayRows[0][j]==null) {
-						listBenefitArrayRows[0][j]=listBenefitsForPat[i].Copy();
+					if(listBenRows[0][j]==null) {
+						listBenRows[0][j]=bensForPat[i].Copy();
 						continue;
 					}
 					//if not null, then add another row.
-					benefitArrayRow=new Benefit[listPatPlans.Count];
-					benefitArrayRow[j]=listBenefitsForPat[i].Copy();
-					dictionaryBenefits[listBenefitsForPat[i]].Add(benefitArrayRow);
+					row=new Benefit[patPlanList.Count];
+					row[j]=bensForPat[i].Copy();
+					dictBens[bensForPat[i]].Add(row);
 				}
 			}
-			ArrayList arrayList=new ArrayList();//each object is a Benefit[]
-			foreach(Benefit[] arrBen in dictionaryBenefits.SelectMany(x => x.Value)) {
-				arrayList.Add(arrBen);
+			ArrayList AL=new ArrayList();//each object is a Benefit[]
+			foreach(Benefit[] arrBen in dictBens.SelectMany(x => x.Value)) {
+				AL.Add(arrBen);
 			}
-			IComparer iComparer = new BenefitArraySorter();
-			arrayList.Sort(iComparer);
-			Benefit[,] retVal=new Benefit[listPatPlans.Count,arrayList.Count];
-			for(int y=0;y<arrayList.Count;y++){
-				for(int x=0;x<listPatPlans.Count;x++){
-					if(((Benefit[])arrayList[y])[x]!=null){
-						retVal[x,y]=((Benefit[])arrayList[y])[x].Copy();
+			IComparer myComparer = new BenefitArraySorter();
+			AL.Sort(myComparer);
+			Benefit[,] retVal=new Benefit[patPlanList.Count,AL.Count];
+			for(int y=0;y<AL.Count;y++){
+				for(int x=0;x<patPlanList.Count;x++){
+					if(((Benefit[])AL[y])[x]!=null){
+						retVal[x,y]=((Benefit[])AL[y])[x].Copy();
 					}
 				}
 			}
@@ -1608,32 +1599,32 @@ namespace OpenDentBusiness {
 			command ="DELETE FROM benefit WHERE PlanNum="+POut.Long(planNum);
 			Db.NonQ(command);
 			//Security.CurUser.UserNum gets set on MT by the DtoProcessor so it matches the user from the client WS.
-			for(int i=0;0<listBenefits.Count;i++){
-				InsEditLogs.MakeLogEntry(null,listBenefits[i],InsEditLogType.Benefit,Security.CurUser.UserNum);
-			}
+			listBenefits.ForEach(x => {
+				InsEditLogs.MakeLogEntry(null,x,InsEditLogType.Benefit,Security.CurUser.UserNum);
+			});
 		}
 
 		///<summary>Get the string for displaying the frequency for the specified type for the specified plan (primary, secondary).</summary>
-		public static string GetFrequencyDisplay(FrequencyType frequencyType,List<Benefit> listBenefits, long planNum) {
+		public static string GetFrequencyDisplay(FrequencyType freqType,List<Benefit> benList, long planNum) {
 			//No need to check MiddleTierRole; no call to db.
-			for(int i=0;i<listBenefits.Count;i++){
-				if(listBenefits[i].PlanNum!=planNum) {
+			foreach(Benefit ben in benList) {
+				if(ben.PlanNum!=planNum) {
 					continue;
 				}
-				switch(frequencyType) {
+				switch(freqType) {
 					case FrequencyType.BW:
-						if(IsBitewingFrequency(listBenefits[i])) {
-							return GetFrequencyString(listBenefits[i]);
+						if(IsBitewingFrequency(ben)) {
+							return GetFrequencyString(ben);
 						}
 						continue;
 					case FrequencyType.PanoFMX:
-						if(IsPanoFrequency(listBenefits[i])) {
-							return GetFrequencyString(listBenefits[i]);
+						if(IsPanoFrequency(ben)) {
+							return GetFrequencyString(ben);
 						}
 						continue;
 					case FrequencyType.Exam:
-						if(IsExamFrequency(listBenefits[i])) {
-							return GetFrequencyString(listBenefits[i]);
+						if(IsExamFrequency(ben)) {
+							return GetFrequencyString(ben);
 						}
 						continue;
 				}//end switch
@@ -1642,41 +1633,41 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Gets the a string like "Once every 6 months" for the frequency benefit.</summary>
-		private static string GetFrequencyString(Benefit benefit) {
+		private static string GetFrequencyString(Benefit ben) {
 			//No need to check MiddleTierRole; no call to db.
 			string retVal="";
-			if(benefit.QuantityQualifier==BenefitQuantity.Months) {
-				if(benefit.Quantity==1) {
+			if(ben.QuantityQualifier==BenefitQuantity.Months) {
+				if(ben.Quantity==1) {
 					retVal+=Lans.g("Benefits","Once every month.")+"\r\n";
 				}
 				else {
-					retVal+=Lans.g("Benefits","Once every")+" "+benefit.Quantity+" "+Lans.g("Benefits","months.")+"\r\n";
+					retVal+=Lans.g("Benefits","Once every")+" "+ben.Quantity+" "+Lans.g("Benefits","months.")+"\r\n";
 				}
 			}
-			else if(benefit.QuantityQualifier==BenefitQuantity.Years) {
-				if(benefit.Quantity==1) {
+			else if(ben.QuantityQualifier==BenefitQuantity.Years) {
+				if(ben.Quantity==1) {
 					retVal+=Lans.g("Benefits","Once every year.")+"\r\n";
 				}
 				else {
-					retVal+=Lans.g("Benefits","Once every")+" "+benefit.Quantity+" "+Lans.g("Benefits","years.")+"\r\n";
+					retVal+=Lans.g("Benefits","Once every")+" "+ben.Quantity+" "+Lans.g("Benefits","years.")+"\r\n";
 				}
 			}
-			else if(benefit.QuantityQualifier==BenefitQuantity.NumberOfServices
-				&& benefit.TimePeriod==BenefitTimePeriod.NumberInLast12Months)
+			else if(ben.QuantityQualifier==BenefitQuantity.NumberOfServices
+				&& ben.TimePeriod==BenefitTimePeriod.NumberInLast12Months)
 			{
-				if(benefit.Quantity==1) {
+				if(ben.Quantity==1) {
 					retVal+=Lans.g("Benefits","Once in the last 12 months.")+"\r\n";
 				}
 				else {
-					retVal+=benefit.Quantity+" "+Lans.g("Benefits","times in the last 12 months.")+"\r\n";
+					retVal+=ben.Quantity+" "+Lans.g("Benefits","times in the last 12 months.")+"\r\n";
 				}
 			}
 			else {//number of services
-				if(benefit.Quantity==1) {
+				if(ben.Quantity==1) {
 					retVal+=Lans.g("Benefits","Once per year.")+"\r\n";
 				}
 				else {
-					retVal+=benefit.Quantity+" "+Lans.g("Benefits","times per year.")+"\r\n";
+					retVal+=ben.Quantity+" "+Lans.g("Benefits","times per year.")+"\r\n";
 				}
 			}
 			return retVal;
@@ -1687,16 +1678,14 @@ namespace OpenDentBusiness {
 		public static string GetCategoryString(Benefit benefit) {
 			//No need to check MiddleTierRole; no call to db.
 			string retVal = "";
-			// Determine if "(hidden)" should be appended to category name.
-			bool isHidden=false;
-			if(IsAgeLimit(benefit) && !CodeGroups.IsShownInAgeLimit(benefit.CodeGroupNum)) {
-				isHidden=true;
+			if(IsFluorideAgeLimit(benefit)) {
+				retVal=Lans.g("benefitCategory","Fluoride");
 			}
-			if(IsFrequencyLimitation(benefit) && CodeGroups.IsHidden(benefit.CodeGroupNum)) {
-				isHidden=true;
+			else if(IsSealantAgeLimit(benefit)) {
+				retVal=Lans.g("benefitCategory","Sealants");
 			}
-			if(benefit.CodeGroupNum!=0) {
-				retVal=CodeGroups.GetGroupName(benefit.CodeGroupNum,isHidden:isHidden);
+			else if(benefit.CodeGroupNum!=0) {
+				retVal=CodeGroups.GetGroupName(benefit.CodeGroupNum);
 			}
 			else if(benefit.CovCatNum!=0) {
 				retVal=CovCats.GetDesc(benefit.CovCatNum);
@@ -1708,9 +1697,9 @@ namespace OpenDentBusiness {
 			return retVal;
 		}
 
-		public static bool IsFrequencyLimitationForCodeGroupFixed(Benefit benefit,EnumCodeGroupFixed enumCodeGroupFixed,long patPlanNum=0,bool isQuantityRequired=true) {
+		public static bool IsFrequencyLimitationForCodeGroupFixed(Benefit benefit,EnumCodeGroupFixed codeGroupFixed,long patPlanNum=0,bool isQuantityRequired=true) {
 			//No need to check MiddleTierRole; no call to db.
-			CodeGroup codeGroup=CodeGroups.GetOneForCodeGroupFixed(enumCodeGroupFixed);
+			CodeGroup codeGroup=CodeGroups.GetOneForCodeGroupFixed(codeGroupFixed);
 			//If there is no valid code group then the benefit is not a frequency limitation.
 			if(codeGroup==null) {
 				return false;
@@ -1741,12 +1730,6 @@ namespace OpenDentBusiness {
 			//   QuantityQualifier is NumberOfServices while TimePeriod is ServiceYear, or CalendarYear, or NumberInLast12Months
 			//5. CoverageLevel is None
 			//6. (optional) Require that Quantity is not 0
-			//Note that we do not test whether it's using a CodeGroup rather than a CodeNum or CovCatNum.
-			//This is because frequency limitations will allow those other two.
-			//We strongly discourage this in the UI by hiding those, but users could manually add them, or there could be old clutter.
-			//Also, we're not really sure if they would even work and function properly as frequency limitations.
-			//But they will show in FormBenefitFrequencies instead of FormInsBenefits.
-			//If they show in FormBenefitFrequencies, we will do additional testing to treat CodeNum and CovCatNum differently.
 			if(benefit==null) {
 				return false;
 			}
@@ -1782,23 +1765,44 @@ namespace OpenDentBusiness {
 			return true;
 		}
 
-		///<summary>Returns true if this benefit is a codegroup age limitation.</summary>
-		public static bool IsAgeLimit(Benefit benefit) {
+		///<summary>Returns true if this benefit is for fluoride age limitation.</summary>
+		public static bool IsFluorideAgeLimit(Benefit ben) {
 			//No need to check MiddleTierRole; no call to db.
-			if(benefit==null) {
+			CodeGroup codeGroup=CodeGroups.GetOneForCodeGroupFixed(EnumCodeGroupFixed.Fluoride);
+			if(codeGroup==null) {
 				return false;
 			}
-			if(benefit.CodeGroupNum==0) {
-				return false;
-			}
-			if(benefit.BenefitType==InsBenefitType.Limitations
+			List<long> listCodeNums=ProcedureCodes.GetCodeNumsForProcCodes(codeGroup.ProcCodes);
+			if((ben.CodeGroupNum==codeGroup.CodeGroupNum || listCodeNums.Contains(ben.CodeNum))
+				&& ben.BenefitType==InsBenefitType.Limitations
 				//&& ben.CovCatNum==CovCats.GetForEbenCat(EbenefitCategory.Db).CovCatNum//ignored
-				&& benefit.MonetaryAmt==-1
-				&& benefit.PatPlanNum==0
-				&& benefit.Percent==-1
-				&& benefit.QuantityQualifier==BenefitQuantity.AgeLimit
-				&& benefit.CoverageLevel==BenefitCoverageLevel.None)
+				&& ben.MonetaryAmt==-1
+				&& ben.PatPlanNum==0
+				&& ben.Percent==-1
+				&& ben.QuantityQualifier==BenefitQuantity.AgeLimit
+				&& ben.CoverageLevel==BenefitCoverageLevel.None)
 				//&& ben.TimePeriod might be none or calYear, or ServiceYear.
+			{
+				return true;
+			}
+			return false;
+		}
+
+		///<summary>Returns true if this benefit is for sealant age limitation.</summary>
+		public static bool IsSealantAgeLimit(Benefit ben) {
+			//No need to check MiddleTierRole; no call to db.
+			CodeGroup codeGroup=CodeGroups.GetOneForCodeGroupFixed(EnumCodeGroupFixed.Sealant);
+			if(codeGroup==null) {
+				return false;
+			}
+			List<long> listCodeNums=ProcedureCodes.GetCodeNumsForProcCodes(codeGroup.ProcCodes);
+			if((ben.CodeGroupNum==codeGroup.CodeGroupNum || listCodeNums.Contains(ben.CodeNum))
+				&& ben.BenefitType==InsBenefitType.Limitations
+				&& ben.MonetaryAmt==-1
+				&& ben.PatPlanNum==0
+				&& ben.Percent==-1
+				&& ben.QuantityQualifier==BenefitQuantity.AgeLimit
+				&& ben.CoverageLevel==BenefitCoverageLevel.None)
 			{
 				return true;
 			}
@@ -1887,17 +1891,16 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Returns true if the given benefit represents an annual max benefit. Can be either family or individual based on coverageLevel passed in.</summary>
-		public static bool IsAnnualMax(Benefit benefit,BenefitCoverageLevel benefitCoverageLevel) {
-			//No need to check MiddleTierRole; no call to db.
-			if(benefit.CodeNum==0
-				&& benefit.BenefitType==InsBenefitType.Limitations
-				&& (benefit.CovCatNum==0
-				|| benefit.CovCatNum==CovCats.GetForEbenCat(EbenefitCategory.General).CovCatNum)
-				&& benefit.PatPlanNum==0
-				&& benefit.Quantity==0
-				&& benefit.QuantityQualifier==BenefitQuantity.None
-				&& (benefit.TimePeriod==BenefitTimePeriod.CalendarYear || benefit.TimePeriod==BenefitTimePeriod.ServiceYear)
-				&& benefit.CoverageLevel==benefitCoverageLevel) 
+		public static bool IsAnnualMax(Benefit ben,BenefitCoverageLevel coverageLevel) {
+			if(ben.CodeNum==0
+				&& ben.BenefitType==InsBenefitType.Limitations
+				&& (ben.CovCatNum==0
+				|| ben.CovCatNum==CovCats.GetForEbenCat(EbenefitCategory.General).CovCatNum)
+				&& ben.PatPlanNum==0
+				&& ben.Quantity==0
+				&& ben.QuantityQualifier==BenefitQuantity.None
+				&& (ben.TimePeriod==BenefitTimePeriod.CalendarYear || ben.TimePeriod==BenefitTimePeriod.ServiceYear)
+				&& ben.CoverageLevel==coverageLevel) 
 			{
 				return true;
 			}
@@ -1905,81 +1908,70 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Returns true if the given benefit represents a general deductible benefit. Can be either family or individual based on coverageLevel passed in.</summary>
-		public static bool IsGeneralDeductible(Benefit benefit,BenefitCoverageLevel benefitCoverageLevel) {
-			//No need to check MiddleTierRole; no call to db.
-			if(benefit.CodeNum==0
-				&& benefit.BenefitType==InsBenefitType.Deductible
-				&& (benefit.CovCatNum==0
-				|| benefit.CovCatNum==CovCats.GetForEbenCat(EbenefitCategory.General).CovCatNum)
-				&& benefit.PatPlanNum==0
-				&& benefit.Quantity==0
-				&& benefit.QuantityQualifier==BenefitQuantity.None
-				&& (benefit.TimePeriod==BenefitTimePeriod.CalendarYear || benefit.TimePeriod==BenefitTimePeriod.ServiceYear)
-				&& benefit.CoverageLevel==benefitCoverageLevel) 
+		public static bool IsGeneralDeductible(Benefit ben,BenefitCoverageLevel coverageLevel) {
+			if(ben.CodeNum==0
+				&& ben.BenefitType==InsBenefitType.Deductible
+				&& (ben.CovCatNum==0
+				|| ben.CovCatNum==CovCats.GetForEbenCat(EbenefitCategory.General).CovCatNum)
+				&& ben.PatPlanNum==0
+				&& ben.Quantity==0
+				&& ben.QuantityQualifier==BenefitQuantity.None
+				&& (ben.TimePeriod==BenefitTimePeriod.CalendarYear || ben.TimePeriod==BenefitTimePeriod.ServiceYear)
+				&& ben.CoverageLevel==coverageLevel) 
 			{
 				return true;
 			}
 			return false;
 		}
 
-		public static Benefit CreateFrequencyBenefit(EbenefitCategory ebenefitCategory,byte byteQty,BenefitQuantity benefitQuantityQualifier,long planNum,
-			BenefitTimePeriod benefitTimePeriod) 
+		public static Benefit CreateFrequencyBenefit(EbenefitCategory benefitCategory,byte quantity,BenefitQuantity quantityQualifier,long planNum,
+			BenefitTimePeriod timePeriod) 
 		{
-			//No need to check MiddleTierRole; no call to db.
-			Benefit benefit = new Benefit();
-			benefit.BenefitType=InsBenefitType.Limitations;
-			benefit.CodeNum=0;
-			benefit.CovCatNum=CovCats.GetForEbenCat(ebenefitCategory)?.CovCatNum??0;
-			benefit.MonetaryAmt=-1;
-			benefit.Percent=-1;
-			benefit.PlanNum=planNum;
-			benefit.Quantity=byteQty;
-			benefit.QuantityQualifier=benefitQuantityQualifier;
-			//Only NumberOfServices uses serviceyear, calendaryear, or NumberInLast12Months time periods.  The others use None.
-			benefit.TimePeriod=BenefitTimePeriod.None;
-			if(benefitQuantityQualifier==BenefitQuantity.NumberOfServices){
-				benefit.TimePeriod=benefitTimePeriod;
-			}
-			return benefit;
+			return new Benefit {
+				BenefitType=InsBenefitType.Limitations,
+				CodeNum=0,
+				CovCatNum=CovCats.GetForEbenCat(benefitCategory)?.CovCatNum??0,
+				MonetaryAmt=-1,
+				Percent=-1,
+				PlanNum=planNum,
+				Quantity=quantity,
+				QuantityQualifier=quantityQualifier,
+				//Only NumberOfServices uses serviceyear, calendaryear, or NumberInLast12Months time periods.  The others use None.
+				TimePeriod=quantityQualifier==BenefitQuantity.NumberOfServices ? timePeriod : BenefitTimePeriod.None,
+			};
 		}
 
 		///<summary>Creates a Limitation benefit for the given quantity.</summary>
-		public static Benefit CreateFrequencyBenefit(long codeNum,byte quantity,BenefitQuantity benefitQuantityQualifier,long planNum,
-			BenefitTimePeriod benefitTimePeriod,TreatmentArea treatArea=TreatmentArea.None) 
+		public static Benefit CreateFrequencyBenefit(long codeNum,byte quantity,BenefitQuantity quantityQualifier,long planNum,
+			BenefitTimePeriod timePeriod) 
 		{
-			//No need to check MiddleTierRole; no call to db.
-			Benefit benefit = new Benefit();
-			benefit.BenefitType=InsBenefitType.Limitations;
-			benefit.CodeNum=codeNum;
-			benefit.CovCatNum=0;
-			benefit.MonetaryAmt=-1;
-			benefit.Percent=-1;
-			benefit.PlanNum=planNum;
-			benefit.Quantity=quantity;
-			benefit.QuantityQualifier=benefitQuantityQualifier;
-			//Only NumberOfServices uses serviceyear, calendaryear, or NumberInLast12Months time periods.  The others use None.
-			benefit.TimePeriod=BenefitTimePeriod.None;
-			if(benefitQuantityQualifier==BenefitQuantity.NumberOfServices){
-				benefit.TimePeriod=benefitTimePeriod;
-			}
-			benefit.TreatArea=treatArea;
-			return benefit;
+			return new Benefit {
+				BenefitType=InsBenefitType.Limitations,
+				CodeNum=codeNum,
+				CovCatNum=0,
+				MonetaryAmt=-1,
+				Percent=-1,
+				PlanNum=planNum,
+				Quantity=quantity,
+				QuantityQualifier=quantityQualifier,
+				//Only NumberOfServices uses serviceyear, calendaryear, or NumberInLast12Months time periods.  The others use None.
+				TimePeriod=quantityQualifier==BenefitQuantity.NumberOfServices ? timePeriod : BenefitTimePeriod.None,
+			};
 		}
 
 		///<summary>Creates an AgeLimit benefit for the given quantity.</summary>
 		public static Benefit CreateAgeLimitationBenefit(long codeGroupNum,byte quantity,long planNum) {
-			//No need to check MiddleTierRole; no call to db.
-			Benefit benefit = new Benefit();
-			benefit.BenefitType=InsBenefitType.Limitations;
-			benefit.CodeGroupNum=codeGroupNum;
-			benefit.CovCatNum=0;
-			benefit.MonetaryAmt=-1;
-			benefit.Percent=-1;
-			benefit.PlanNum=planNum;
-			benefit.Quantity=quantity;
-			benefit.QuantityQualifier=BenefitQuantity.AgeLimit;
-			benefit.TimePeriod=BenefitTimePeriod.None;
-			return benefit;
+			return new Benefit {
+				BenefitType=InsBenefitType.Limitations,
+				CodeGroupNum=codeGroupNum,
+				CovCatNum=0,
+				MonetaryAmt=-1,
+				Percent=-1,
+				PlanNum=planNum,
+				Quantity=quantity,
+				QuantityQualifier=BenefitQuantity.AgeLimit,
+				TimePeriod=BenefitTimePeriod.None,
+			};
 		}
 
 		///<summary>Gets all Benefits for a passed in InsPlan or PatPlan from the database. Returns empty list if not found.</summary>
@@ -2017,15 +2009,16 @@ namespace OpenDentBusiness {
 	}
 
 
+		
 
 
 
+		
+	
 
+	
 
-
-
-
-
+	
 
 
 }

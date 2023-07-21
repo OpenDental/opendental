@@ -47,17 +47,15 @@ namespace OpenDentBusiness.Crud{
 			ImageDraw imageDraw;
 			foreach(DataRow row in table.Rows) {
 				imageDraw=new ImageDraw();
-				imageDraw.ImageDrawNum    = PIn.Long  (row["ImageDrawNum"].ToString());
-				imageDraw.DocNum          = PIn.Long  (row["DocNum"].ToString());
-				imageDraw.MountNum        = PIn.Long  (row["MountNum"].ToString());
-				imageDraw.ColorDraw       = Color.FromArgb(PIn.Int(row["ColorDraw"].ToString()));
-				imageDraw.ColorBack       = Color.FromArgb(PIn.Int(row["ColorBack"].ToString()));
-				imageDraw.DrawingSegment  = PIn.String(row["DrawingSegment"].ToString());
-				imageDraw.DrawText        = PIn.String(row["DrawText"].ToString());
-				imageDraw.FontSize        = PIn.Float (row["FontSize"].ToString());
-				imageDraw.DrawType        = (OpenDentBusiness.ImageDrawType)PIn.Int(row["DrawType"].ToString());
-				imageDraw.ImageAnnotVendor= (OpenDentBusiness.EnumImageAnnotVendor)PIn.Int(row["ImageAnnotVendor"].ToString());
-				imageDraw.Details         = PIn.String(row["Details"].ToString());
+				imageDraw.ImageDrawNum  = PIn.Long  (row["ImageDrawNum"].ToString());
+				imageDraw.DocNum        = PIn.Long  (row["DocNum"].ToString());
+				imageDraw.MountNum      = PIn.Long  (row["MountNum"].ToString());
+				imageDraw.ColorDraw     = Color.FromArgb(PIn.Int(row["ColorDraw"].ToString()));
+				imageDraw.ColorBack     = Color.FromArgb(PIn.Int(row["ColorBack"].ToString()));
+				imageDraw.DrawingSegment= PIn.String(row["DrawingSegment"].ToString());
+				imageDraw.DrawText      = PIn.String(row["DrawText"].ToString());
+				imageDraw.FontSize      = PIn.Float (row["FontSize"].ToString());
+				imageDraw.DrawType      = (OpenDentBusiness.ImageDrawType)PIn.Int(row["DrawType"].ToString());
 				retVal.Add(imageDraw);
 			}
 			return retVal;
@@ -78,8 +76,6 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("DrawText");
 			table.Columns.Add("FontSize");
 			table.Columns.Add("DrawType");
-			table.Columns.Add("ImageAnnotVendor");
-			table.Columns.Add("Details");
 			foreach(ImageDraw imageDraw in listImageDraws) {
 				table.Rows.Add(new object[] {
 					POut.Long  (imageDraw.ImageDrawNum),
@@ -91,8 +87,6 @@ namespace OpenDentBusiness.Crud{
 					            imageDraw.DrawText,
 					POut.Float (imageDraw.FontSize),
 					POut.Int   ((int)imageDraw.DrawType),
-					POut.Int   ((int)imageDraw.ImageAnnotVendor),
-					            imageDraw.Details,
 				});
 			}
 			return table;
@@ -112,7 +106,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="ImageDrawNum,";
 			}
-			command+="DocNum,MountNum,ColorDraw,ColorBack,DrawingSegment,DrawText,FontSize,DrawType,ImageAnnotVendor,Details) VALUES(";
+			command+="DocNum,MountNum,ColorDraw,ColorBack,DrawingSegment,DrawText,FontSize,DrawType) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(imageDraw.ImageDrawNum)+",";
 			}
@@ -124,22 +118,16 @@ namespace OpenDentBusiness.Crud{
 				+    DbHelper.ParamChar+"paramDrawingSegment,"
 				+"'"+POut.String(imageDraw.DrawText)+"',"
 				+    POut.Float (imageDraw.FontSize)+","
-				+    POut.Int   ((int)imageDraw.DrawType)+","
-				+    POut.Int   ((int)imageDraw.ImageAnnotVendor)+","
-				+    DbHelper.ParamChar+"paramDetails)";
+				+    POut.Int   ((int)imageDraw.DrawType)+")";
 			if(imageDraw.DrawingSegment==null) {
 				imageDraw.DrawingSegment="";
 			}
 			OdSqlParameter paramDrawingSegment=new OdSqlParameter("paramDrawingSegment",OdDbType.Text,POut.StringParam(imageDraw.DrawingSegment));
-			if(imageDraw.Details==null) {
-				imageDraw.Details="";
-			}
-			OdSqlParameter paramDetails=new OdSqlParameter("paramDetails",OdDbType.Text,POut.StringParam(imageDraw.Details));
 			if(useExistingPK || PrefC.RandomKeys) {
-				Db.NonQ(command,paramDrawingSegment,paramDetails);
+				Db.NonQ(command,paramDrawingSegment);
 			}
 			else {
-				imageDraw.ImageDrawNum=Db.NonQ(command,true,"ImageDrawNum","imageDraw",paramDrawingSegment,paramDetails);
+				imageDraw.ImageDrawNum=Db.NonQ(command,true,"ImageDrawNum","imageDraw",paramDrawingSegment);
 			}
 			return imageDraw.ImageDrawNum;
 		}
@@ -159,7 +147,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="ImageDrawNum,";
 			}
-			command+="DocNum,MountNum,ColorDraw,ColorBack,DrawingSegment,DrawText,FontSize,DrawType,ImageAnnotVendor,Details) VALUES(";
+			command+="DocNum,MountNum,ColorDraw,ColorBack,DrawingSegment,DrawText,FontSize,DrawType) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(imageDraw.ImageDrawNum)+",";
 			}
@@ -171,22 +159,16 @@ namespace OpenDentBusiness.Crud{
 				+    DbHelper.ParamChar+"paramDrawingSegment,"
 				+"'"+POut.String(imageDraw.DrawText)+"',"
 				+    POut.Float (imageDraw.FontSize)+","
-				+    POut.Int   ((int)imageDraw.DrawType)+","
-				+    POut.Int   ((int)imageDraw.ImageAnnotVendor)+","
-				+    DbHelper.ParamChar+"paramDetails)";
+				+    POut.Int   ((int)imageDraw.DrawType)+")";
 			if(imageDraw.DrawingSegment==null) {
 				imageDraw.DrawingSegment="";
 			}
 			OdSqlParameter paramDrawingSegment=new OdSqlParameter("paramDrawingSegment",OdDbType.Text,POut.StringParam(imageDraw.DrawingSegment));
-			if(imageDraw.Details==null) {
-				imageDraw.Details="";
-			}
-			OdSqlParameter paramDetails=new OdSqlParameter("paramDetails",OdDbType.Text,POut.StringParam(imageDraw.Details));
 			if(useExistingPK || isRandomKeys) {
-				Db.NonQ(command,paramDrawingSegment,paramDetails);
+				Db.NonQ(command,paramDrawingSegment);
 			}
 			else {
-				imageDraw.ImageDrawNum=Db.NonQ(command,true,"ImageDrawNum","imageDraw",paramDrawingSegment,paramDetails);
+				imageDraw.ImageDrawNum=Db.NonQ(command,true,"ImageDrawNum","imageDraw",paramDrawingSegment);
 			}
 			return imageDraw.ImageDrawNum;
 		}
@@ -194,26 +176,20 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Updates one ImageDraw in the database.</summary>
 		public static void Update(ImageDraw imageDraw) {
 			string command="UPDATE imagedraw SET "
-				+"DocNum          =  "+POut.Long  (imageDraw.DocNum)+", "
-				+"MountNum        =  "+POut.Long  (imageDraw.MountNum)+", "
-				+"ColorDraw       =  "+POut.Int   (imageDraw.ColorDraw.ToArgb())+", "
-				+"ColorBack       =  "+POut.Int   (imageDraw.ColorBack.ToArgb())+", "
-				+"DrawingSegment  =  "+DbHelper.ParamChar+"paramDrawingSegment, "
-				+"DrawText        = '"+POut.String(imageDraw.DrawText)+"', "
-				+"FontSize        =  "+POut.Float (imageDraw.FontSize)+", "
-				+"DrawType        =  "+POut.Int   ((int)imageDraw.DrawType)+", "
-				+"ImageAnnotVendor=  "+POut.Int   ((int)imageDraw.ImageAnnotVendor)+", "
-				+"Details         =  "+DbHelper.ParamChar+"paramDetails "
+				+"DocNum        =  "+POut.Long  (imageDraw.DocNum)+", "
+				+"MountNum      =  "+POut.Long  (imageDraw.MountNum)+", "
+				+"ColorDraw     =  "+POut.Int   (imageDraw.ColorDraw.ToArgb())+", "
+				+"ColorBack     =  "+POut.Int   (imageDraw.ColorBack.ToArgb())+", "
+				+"DrawingSegment=  "+DbHelper.ParamChar+"paramDrawingSegment, "
+				+"DrawText      = '"+POut.String(imageDraw.DrawText)+"', "
+				+"FontSize      =  "+POut.Float (imageDraw.FontSize)+", "
+				+"DrawType      =  "+POut.Int   ((int)imageDraw.DrawType)+" "
 				+"WHERE ImageDrawNum = "+POut.Long(imageDraw.ImageDrawNum);
 			if(imageDraw.DrawingSegment==null) {
 				imageDraw.DrawingSegment="";
 			}
 			OdSqlParameter paramDrawingSegment=new OdSqlParameter("paramDrawingSegment",OdDbType.Text,POut.StringParam(imageDraw.DrawingSegment));
-			if(imageDraw.Details==null) {
-				imageDraw.Details="";
-			}
-			OdSqlParameter paramDetails=new OdSqlParameter("paramDetails",OdDbType.Text,POut.StringParam(imageDraw.Details));
-			Db.NonQ(command,paramDrawingSegment,paramDetails);
+			Db.NonQ(command,paramDrawingSegment);
 		}
 
 		///<summary>Updates one ImageDraw in the database.  Uses an old object to compare to, and only alters changed fields.  This prevents collisions and concurrency problems in heavily used tables.  Returns true if an update occurred.</summary>
@@ -251,14 +227,6 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="DrawType = "+POut.Int   ((int)imageDraw.DrawType)+"";
 			}
-			if(imageDraw.ImageAnnotVendor != oldImageDraw.ImageAnnotVendor) {
-				if(command!="") { command+=",";}
-				command+="ImageAnnotVendor = "+POut.Int   ((int)imageDraw.ImageAnnotVendor)+"";
-			}
-			if(imageDraw.Details != oldImageDraw.Details) {
-				if(command!="") { command+=",";}
-				command+="Details = "+DbHelper.ParamChar+"paramDetails";
-			}
 			if(command=="") {
 				return false;
 			}
@@ -266,13 +234,9 @@ namespace OpenDentBusiness.Crud{
 				imageDraw.DrawingSegment="";
 			}
 			OdSqlParameter paramDrawingSegment=new OdSqlParameter("paramDrawingSegment",OdDbType.Text,POut.StringParam(imageDraw.DrawingSegment));
-			if(imageDraw.Details==null) {
-				imageDraw.Details="";
-			}
-			OdSqlParameter paramDetails=new OdSqlParameter("paramDetails",OdDbType.Text,POut.StringParam(imageDraw.Details));
 			command="UPDATE imagedraw SET "+command
 				+" WHERE ImageDrawNum = "+POut.Long(imageDraw.ImageDrawNum);
-			Db.NonQ(command,paramDrawingSegment,paramDetails);
+			Db.NonQ(command,paramDrawingSegment);
 			return true;
 		}
 
@@ -301,12 +265,6 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(imageDraw.DrawType != oldImageDraw.DrawType) {
-				return true;
-			}
-			if(imageDraw.ImageAnnotVendor != oldImageDraw.ImageAnnotVendor) {
-				return true;
-			}
-			if(imageDraw.Details != oldImageDraw.Details) {
 				return true;
 			}
 			return false;

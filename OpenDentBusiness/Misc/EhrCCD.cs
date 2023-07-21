@@ -492,7 +492,7 @@ Body
 				End("ClinicalDocument");
 				#endregion ClinicalDocument
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.Copy,pat.PatNum,"CCD generated");			//Create audit log entry.
+			SecurityLogs.MakeLogEntry(Permissions.Copy,pat.PatNum,"CCD generated");			//Create audit log entry.
 			return strBuilder.ToString();
 		}
 
@@ -2518,27 +2518,20 @@ Vital Signs
 		///The listWarnings cannot be null. Adds warnings to listWarnings. Warnings can be duplicated.</summary>
 		private static string ValidateAll(Patient pat,DateTime date,List<string> listWarnings) {
 			string err="";
-			err=err+NewLineHelper(ValidateSettings());
-			err=err+NewLineHelper(ValidatePatient(pat));
-			err=err+NewLineHelper(ValidateAllergy(pat));
-			err=err+NewLineHelper(ValidateEncounter(pat,date));
-			err=err+NewLineHelper(ValidateFunctionalStatus(pat));
-			err=err+NewLineHelper(ValidateImmunization(pat));
-			err=err+NewLineHelper(ValidateLabResults(pat));
-			err=err+NewLineHelper(ValidateMedication(pat));
-			err=err+NewLineHelper(ValidatePlanOfCare(pat,date));
-			err=err+NewLineHelper(ValidateProblem(pat,listWarnings));
-			err=err+NewLineHelper(ValidateProcedure(pat,date));
-			err=err+NewLineHelper(ValidateSocialHistory(pat));
+			err=err+ValidateSettings();
+			err=err+ValidatePatient(pat);
+			err=err+ValidateAllergy(pat);
+			err=err+ValidateEncounter(pat,date);
+			err=err+ValidateFunctionalStatus(pat);
+			err=err+ValidateImmunization(pat);
+			err=err+ValidateLabResults(pat);
+			err=err+ValidateMedication(pat);
+			err=err+ValidatePlanOfCare(pat,date);
+			err=err+ValidateProblem(pat,listWarnings);
+			err=err+ValidateProcedure(pat,date);
+			err=err+ValidateSocialHistory(pat);
 			err=err+ValidateVitalsSign(pat,date);
 			return err;
-		}
-
-		private static string NewLineHelper(string error) {
-			if(error!="") {
-				return error+="\r\n";
-			}
-			return error;
 		}
 
 		///<summary>Checks data values for preferences and provider information to ensure required data is available for CCD creation.

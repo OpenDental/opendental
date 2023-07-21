@@ -1,6 +1,7 @@
 ﻿namespace OpenDental {
 	public partial class FormProcSelect {
 		#region Designer Variables
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		/// <summary>
 		/// Required designer variable.
@@ -62,6 +63,7 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormProcSelect));
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.groupCreditLogic = new OpenDental.UI.GroupBox();
 			this.radioExcludeAllCredits = new System.Windows.Forms.RadioButton();
 			this.radioOnlyAllocatedCredits = new System.Windows.Forms.RadioButton();
@@ -112,12 +114,23 @@
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(786, 553);
+			this.butOK.Location = new System.Drawing.Point(705, 553);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 1;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(786, 553);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// groupCreditLogic
 			// 
@@ -423,6 +436,7 @@
 			// FormProcSelect
 			// 
 			this.ClientSize = new System.Drawing.Size(873, 586);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.labelUnallocated);
 			this.Controls.Add(this.groupBreakdown);

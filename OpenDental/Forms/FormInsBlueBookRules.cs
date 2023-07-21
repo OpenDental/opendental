@@ -211,7 +211,7 @@ namespace OpenDental {
 			DataValid.SetInvalid(InvalidType.FeeScheds);
 		}
 
-		private void ButSave_Click(object sender,EventArgs e) {
+		private void ButOK_Click(object sender,EventArgs e) {
 			if(!textUcrFeePercent.IsValid() || textUcrFeePercent.Text=="") {
 				MsgBox.Show(this,"Please enter a UCR Fee Percent between 0 and 100.");
 				return;
@@ -231,5 +231,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void ButCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

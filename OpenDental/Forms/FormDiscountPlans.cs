@@ -87,7 +87,7 @@ namespace OpenDental {
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit)) {
+			if(!Security.IsAuthorized(Permissions.InsPlanEdit)) {
 				return;
 			}
 			DiscountPlan discountPlan=new DiscountPlan();
@@ -101,7 +101,7 @@ namespace OpenDental {
 		}
 
 		private void butMerge_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit)) {
+			if(!Security.IsAuthorized(Permissions.InsPlanEdit)) {
 				return;
 			}
 			using FormDiscountPlanMerge formDiscountPlanMerge=new FormDiscountPlanMerge();
@@ -125,6 +125,10 @@ namespace OpenDental {
 			}
 			DiscountPlanSelected=(DiscountPlan)gridMain.ListGridRows[gridMain.GetSelectedIndex()].Tag;
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private static int DiscountPlanComparer(DiscountPlan discountPlan1,DiscountPlan discountPlan2) {

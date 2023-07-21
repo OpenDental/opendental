@@ -57,7 +57,7 @@ namespace OpenDental{
 		private void FormSchedule_Load(object sender,EventArgs e) {
 			radioButtonWorkWeek.Checked=true;
 			_formScheduleMode=FormScheduleMode.ViewSchedule;
-			if(Security.IsAuthorized(EnumPermType.Schedules,DateTime.MinValue,true)){
+			if(Security.IsAuthorized(Permissions.Schedules,DateTime.MinValue,true)){
 				_formScheduleMode=FormScheduleMode.SetupSchedule;
 			};
 			switch(_formScheduleMode) {
@@ -103,8 +103,8 @@ namespace OpenDental{
 			_listProviders=new List<Provider>() { new Provider() { ProvNum=0,Abbr="none" } };
 			if(PrefC.HasClinicsEnabled) {
 				//clinicNum will be 0 for unrestricted users with HQ selected in which case this will get only emps/provs not assigned to a clinic
-				_listEmployees.AddRange(Employees.GetEmpsForClinic(comboClinic.ClinicNumSelected));
-				_listProviders.AddRange(Providers.GetProvsForClinic(comboClinic.ClinicNumSelected));
+				_listEmployees.AddRange(Employees.GetEmpsForClinic(comboClinic.SelectedClinicNum));
+				_listProviders.AddRange(Providers.GetProvsForClinic(comboClinic.SelectedClinicNum));
 			}
 			else {//Not using clinics
 				_listEmployees.AddRange(Employees.GetDeepCopy(true));
@@ -221,13 +221,13 @@ namespace OpenDental{
 			if(doRefreshData || this._tableScheds==null) {
 				bool canViewNotes=true;
 				if(PrefC.IsODHQ) {
-					canViewNotes=Security.IsAuthorized(EnumPermType.Schedules,true);
+					canViewNotes=Security.IsAuthorized(Permissions.Schedules,true);
 				}
 				_dateFromDate=PIn.Date(textDateFrom.Text);
 				_dateToDate=PIn.Date(textDateTo.Text);
 				Logger.LogToPath("Schedules.GetPeriod",LogPath.Signals,LogPhase.Start);
 				_tableScheds=Schedules.GetPeriod(_dateFromDate,_dateToDate,listProvNums,listEmpNums,checkPracticeNotes.Checked,
-					checkClinicNotes.Checked,comboClinic.ClinicNumSelected,checkShowClinicSchedules.Checked,canViewNotes);
+					checkClinicNotes.Checked,comboClinic.SelectedClinicNum,checkShowClinicSchedules.Checked,canViewNotes);
 				Logger.LogToPath("Schedules.GetPeriod",LogPath.Signals,LogPhase.End);
 			}
 			gridMain.BeginUpdate();
@@ -358,11 +358,10 @@ namespace OpenDental{
 		}
 
 		private void comboClinic_SelectionChangeCommitted(object sender,EventArgs e) {
-			//this code was doing nothing. Not sure what the intent was:
-			//comboClinic.Text=Lan.g(this,"Show Practice Notes");
-			//if(comboClinic.ClinicNumSelected>0) {
-			//	comboClinic.Text=Lan.g(this,"Show Practice and Clinic Notes");
-			//}
+			comboClinic.Text=Lan.g(this,"Show Practice Notes");
+			if(comboClinic.SelectedClinicNum>0) {
+				comboClinic.Text=Lan.g(this,"Show Practice and Clinic Notes");
+			}
 			FillEmployeesAndProviders();
 			if(checkShowClinicSchedules.Checked) {
 				SelectAllProvsAndEmps();
@@ -391,7 +390,7 @@ namespace OpenDental{
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Schedules,DateTime.MinValue)) {
+			if(!Security.IsAuthorized(Permissions.Schedules,DateTime.MinValue)) {
 				return;
 			}
 			if(!ValidateInputs()) {
@@ -415,7 +414,7 @@ namespace OpenDental{
 			}
 			//MessageBox.Show(selectedDate.ToShortDateString());
 			if(PrefC.HasClinicsEnabled) {
-				if(comboClinic.ClinicNumSelected==-1) {
+				if(comboClinic.SelectedClinicNum==-1) {
 					MsgBox.Show(this,"Please select a clinic.");
 					return;
 				}
@@ -440,7 +439,7 @@ namespace OpenDental{
 					empFName=listEmployeesSelected[0].FName;
 				}
 			}
-			using FormScheduleDayEdit formScheduleDayEdit=new FormScheduleDayEdit(dateSelected,comboClinic.ClinicNumSelected,provAbbr,empFName,true);
+			using FormScheduleDayEdit formScheduleDayEdit=new FormScheduleDayEdit(dateSelected,comboClinic.SelectedClinicNum,provAbbr,empFName,true);
 			formScheduleDayEdit.ShowDialog();
 			if(formScheduleDayEdit.DialogResult!=DialogResult.OK){
 				return;
@@ -536,14 +535,14 @@ namespace OpenDental{
 			}
 			if(_scheduleWeekendFilter==ScheduleWeekendFilter.Weekend) {
 				//Clear sunday and saturday individually
-				Schedules.Clear(dateSelectedStart,dateSelectedStart,listProvNums,listEmployeeNums,checkPracticeNotes.Checked,checkClinicNotes.Checked,excludeHolidays:true,comboClinic.ClinicNumSelected);
-				Schedules.Clear(dateSelectedEnd,dateSelectedEnd,listProvNums,listEmployeeNums,checkPracticeNotes.Checked,checkClinicNotes.Checked,excludeHolidays:true,comboClinic.ClinicNumSelected);
+				Schedules.Clear(dateSelectedStart,dateSelectedStart,listProvNums,listEmployeeNums,checkPracticeNotes.Checked,checkClinicNotes.Checked,excludeHolidays:true,comboClinic.SelectedClinicNum);
+				Schedules.Clear(dateSelectedEnd,dateSelectedEnd,listProvNums,listEmployeeNums,checkPracticeNotes.Checked,checkClinicNotes.Checked,excludeHolidays:true,comboClinic.SelectedClinicNum);
 				FillGrid();
 				_changed=true;
 				return;
 			}
 			//not weekend
-			Schedules.Clear(dateSelectedStart,dateSelectedEnd,listProvNums,listEmployeeNums,checkPracticeNotes.Checked,checkClinicNotes.Checked,excludeHolidays:true,comboClinic.ClinicNumSelected);
+			Schedules.Clear(dateSelectedStart,dateSelectedEnd,listProvNums,listEmployeeNums,checkPracticeNotes.Checked,checkClinicNotes.Checked,excludeHolidays:true,comboClinic.SelectedClinicNum);
 			FillGrid();
 			_changed=true;
 		}
@@ -578,7 +577,6 @@ namespace OpenDental{
 			_dateCopyStart=Schedules.GetDateCal(_dateFromDate,gridMain.SelectedCell.Y,selectedCol);
 			_dateCopyEnd=_dateCopyStart;
 			textClipboard.Text=_dateCopyStart.ToShortDateString();
-			SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,textClipboard.Text+" was copied.");
 		}
 
 		private void butCopyWeek_Click(object sender,EventArgs e) {
@@ -622,7 +620,6 @@ namespace OpenDental{
 			_dateCopyStart=Schedules.GetDateCal(_dateFromDate,gridMain.SelectedCell.Y,startI);
 			_dateCopyEnd=_dateCopyStart.AddDays(dateSpan);
 			textClipboard.Text=_dateCopyStart.ToShortDateString()+seperator+_dateCopyEnd.ToShortDateString();
-			SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,textClipboard.Text+" was copied.");
 		}
 
 		private void butPaste_Click(object sender,EventArgs e) {
@@ -685,13 +682,13 @@ namespace OpenDental{
 				MsgBox.Show(this,"Not allowed to paste back onto the same date as is on the clipboard.");
 				return;
 			}
-			Action actionCloseScheduleProgress=ODProgress.Show();
+			Action actionCloseScheduleProgress=ODProgress.Show(ODEventType.Schedule,typeof(ScheduleEvent));
 			List<long> listProvNums;
 			List<long> listEmployeeNums;
 			GetSelectedProvidersEmployeesAndClinic(out listProvNums,out listEmployeeNums);
 			//Get the official list of schedules that are going to be copied over.
 			List<Schedule> listSchedulesToCopy=Schedules.RefreshPeriod(_dateCopyStart,_dateCopyEnd,listProvNums,listEmployeeNums,checkPracticeNotes.Checked,
-				checkClinicNotes.Checked,comboClinic.ClinicNumSelected);
+				checkClinicNotes.Checked,comboClinic.SelectedClinicNum);
 			listSchedulesToCopy=FilterScheduleList(listSchedulesToCopy,true);
 			if(checkReplace.Checked) {
 				if(listProvNums.Count > 0) {
@@ -709,7 +706,7 @@ namespace OpenDental{
 						return;
 					}
 					//user chose to continue.
-					actionCloseScheduleProgress=ODProgress.Show();
+					actionCloseScheduleProgress=ODProgress.Show(ODEventType.Schedule,typeof(ScheduleEvent));
 				}
 			}
 			//Flag every schedule that we are copying as new (because conflict detection requires schedules marked as new)
@@ -728,17 +725,17 @@ namespace OpenDental{
 					{
 						return;
 					}
-					actionCloseScheduleProgress=ODProgress.Show();
+					actionCloseScheduleProgress=ODProgress.Show(ODEventType.Schedule,typeof(ScheduleEvent));
 				}
 			}
 			List<Schedule> listSchedulesHolidays=GetHolidaySchedules(dateSelectedStart,dateSelectedEnd);
 			if(checkReplace.Checked) {
 				List<Schedule> listSchedulesToDelete=Schedules.GetSchedulesToDelete(dateSelectedStart,dateSelectedEnd,listProvNums,listEmployeeNums,
-					checkPracticeNotes.Checked,checkClinicNotes.Checked,comboClinic.ClinicNumSelected);
+					checkPracticeNotes.Checked,checkClinicNotes.Checked,comboClinic.SelectedClinicNum);
 				listSchedulesToDelete=FilterScheduleList(listSchedulesToDelete,true);
 				Schedules.DeleteMany(listSchedulesToDelete.Select(x => x.ScheduleNum).ToList());
 			}
-			Schedule schedule=new Schedule();
+			Schedule schedule;
 			int weekDelta=0;
 			if(isWeekCopied){
 				TimeSpan span=dateSelectedStart-_dateCopyStart;
@@ -759,9 +756,9 @@ namespace OpenDental{
 				listSchedulesToInsert.Add(schedule);
 			}
 			if(listSchedulesHolidays.Count>0){
-				MessageBox.Show(Lan.g(this,listSchedulesHolidays.Count+" holidays exist in the destination date range. Holidays will not be replaced and must be done manually."));
+				MsgBox.Show(this,listSchedulesHolidays.Count+" holidays exist in the destination date range. Holidays will not be replaced and must be done manually.");
 			}
-			Schedules.Insert(false,true,listSchedulesToInsert);
+			Schedules.Insert(false,true,listSchedulesToInsert.ToArray());
 			DateTime rememberDateStart=_dateCopyStart;
 			DateTime rememberDateEnd=_dateCopyEnd;
 			_pointClickedCell=gridMain.SelectedCell;
@@ -775,7 +772,6 @@ namespace OpenDental{
 				textClipboard.Text=_dateCopyStart.ToShortDateString();
 			}
 			_changed=true;
-			SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Pasted schedule from "+textClipboard.Text+" to "+schedule.SchedDate.ToShortDateString());
 			actionCloseScheduleProgress?.Invoke();
 		}
 
@@ -816,7 +812,7 @@ namespace OpenDental{
 				MsgBox.Show(this,"Please enter a repeat number greater than 0.");
 				return;
 			}
-			Action actionCloseScheduleProgress=ODProgress.Show();
+			Action actionCloseScheduleProgress=ODProgress.Show(ODEventType.Schedule,typeof(ScheduleEvent));
 			Logger.LogToPath("",LogPath.Signals,LogPhase.Start);
 			//calculate which day or week is currently selected.
 			DateTime dateSelectedStart;
@@ -850,7 +846,7 @@ namespace OpenDental{
 			GetSelectedProvidersEmployeesAndClinic(out listProvNums,out listEmployeeNums);
 			Logger.LogToPath("RefreshPeriod",LogPath.Signals,LogPhase.Start);
 			List<Schedule> listSchedulesToCopy=Schedules.RefreshPeriod(_dateCopyStart,_dateCopyEnd,listProvNums,listEmployeeNums,checkPracticeNotes.Checked,
-				checkClinicNotes.Checked,comboClinic.ClinicNumSelected);
+				checkClinicNotes.Checked,comboClinic.SelectedClinicNum);
 			listSchedulesToCopy=FilterScheduleList(listSchedulesToCopy,true);
 			if(checkReplace.Checked) {
 				if(listProvNums.Count > 0) {
@@ -868,13 +864,13 @@ namespace OpenDental{
 						return;
 					}
 					//user chose to continue.
-					actionCloseScheduleProgress=ODProgress.Show();
+					actionCloseScheduleProgress=ODProgress.Show(ODEventType.Schedule,typeof(ScheduleEvent));
 				}
 			}
 			//Flag every schedule that we are copying as new (because conflict detection requires schedules marked as new)
 			listSchedulesToCopy.ForEach(x => x.IsNew=true);
 			Logger.LogToPath("RefreshPeriod",LogPath.Signals,LogPhase.End);
-			Schedule schedule=new Schedule();
+			Schedule schedule;
 			int weekDelta=0;
 			TimeSpan timeSpan;
 			if(isWeekCopied) {
@@ -915,7 +911,7 @@ namespace OpenDental{
 				{
 					return;
 				}
-				actionCloseScheduleProgress=ODProgress.Show();
+				actionCloseScheduleProgress=ODProgress.Show(ODEventType.Schedule,typeof(ScheduleEvent));
 			}
 			Logger.LogToPath("ScheduleUpsert",LogPath.Signals,LogPhase.Start,"repeatCount: "+repeatCount.ToString());
 			List<Schedule> listSchedulesToInsert=new List<Schedule>();
@@ -928,13 +924,13 @@ namespace OpenDental{
 					if(isWeekCopied){
 						Logger.LogToPath("isWeek.Schedules.Clear",LogPath.Signals,LogPhase.Start);
 						listSchedulesToDelete=Schedules.GetSchedulesToDelete(dateSelectedStart.AddDays(r*7),dateSelectedEnd.AddDays(r*7),listProvNums,
-							listEmployeeNums,checkPracticeNotes.Checked,checkClinicNotes.Checked,comboClinic.ClinicNumSelected);
+							listEmployeeNums,checkPracticeNotes.Checked,checkClinicNotes.Checked,comboClinic.SelectedClinicNum);
 						Logger.LogToPath("isWeek.Schedules.Clear",LogPath.Signals,LogPhase.End);
 					}
 					else{
 						Logger.LogToPath("!isWeek.Schedules.Clear",LogPath.Signals,LogPhase.Start);
 					  listSchedulesToDelete=Schedules.GetSchedulesToDelete(dateSelectedStart.AddDays(dayCount),dateSelectedEnd.AddDays(dayCount),
-							listProvNums,listEmployeeNums,checkPracticeNotes.Checked,checkClinicNotes.Checked,comboClinic.ClinicNumSelected);
+							listProvNums,listEmployeeNums,checkPracticeNotes.Checked,checkClinicNotes.Checked,comboClinic.SelectedClinicNum);
 						Logger.LogToPath("!isWeek.Schedules.Clear",LogPath.Signals,LogPhase.End);
 					}
 					listSchedulesToDelete=FilterScheduleList(listSchedulesToDelete,true);
@@ -958,10 +954,10 @@ namespace OpenDental{
 				dayCount+=CalculateNextDay(dateSelectedStart.AddDays(dayCount));
 			}
 			if(listSchedulesHoliday.Count>0) {
-				MessageBox.Show(Lan.g(this,listSchedulesHoliday.Count+" holidays exist in the destination date range. Holidays will not be replaced and must be done manually."));
+				MsgBox.Show(this,listSchedulesHoliday.Count+" holidays exist in the destination date range. Holidays will not be replaced and must be done manually.");
 			}
 			Schedules.DeleteMany(listSchedNumsToDelete);
-			Schedules.Insert(false,true,listSchedulesToInsert);
+			Schedules.Insert(false,true,listSchedulesToInsert.ToArray());
 			Logger.LogToPath("ScheduleUpsert",LogPath.Signals,LogPhase.End);
 			DateTime rememberDateStart=_dateCopyStart;
 			DateTime rememberDateEnd=_dateCopyEnd;
@@ -976,8 +972,6 @@ namespace OpenDental{
 				textClipboard.Text=_dateCopyStart.ToShortDateString();
 			}
 			_changed=true;
-			SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Repeated schedule "+repeatCount+" time(s) from "+textClipboard.Text+
-				" to "+schedule.SchedDate.ToShortDateString());
 			actionCloseScheduleProgress?.Invoke();
 			Logger.LogToPath("",LogPath.Signals,LogPhase.End);
 		}
@@ -1042,7 +1036,7 @@ namespace OpenDental{
 
 		private void FormSchedule_FormClosing(object sender,FormClosingEventArgs e) {
 			if(_changed){
-				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"");
+				SecurityLogs.MakeLogEntry(Permissions.Schedules,0,"");
 			}
 		}
 
@@ -1070,8 +1064,8 @@ namespace OpenDental{
 			if(!checkClinicNotes.Checked) {
 				listClinicNums.RemoveAll(x => x!=0);
 			}
-			else if(comboClinic.ClinicNumSelected!=0) {//A clinic is selected
-				listClinicNums.RemoveAll(x => x!=0 && x!=comboClinic.ClinicNumSelected);
+			else if(comboClinic.SelectedClinicNum!=0) {//A clinic is selected
+				listClinicNums.RemoveAll(x => x!=0 && x!=comboClinic.SelectedClinicNum);
 			}
 			List<Schedule> listSchedulesHoliday=Schedules.GetAllHolidaysForDateRange(dateTimeStart,dateTimeEnd,listClinicNums);
 			listSchedulesHoliday=FilterScheduleList(listSchedulesHoliday,false);

@@ -24,7 +24,8 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWikiListHeaders));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.gridPickList = new OpenDental.UI.GridOD();
 			this.butAdd = new OpenDental.UI.Button();
@@ -35,15 +36,25 @@ namespace OpenDental{
 			this.butHideColumn = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(675, 438);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 21;
-			this.butSave.Text = "Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(594, 468);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 21;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(675, 468);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 20;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// gridMain
 			// 
@@ -52,7 +63,7 @@ namespace OpenDental{
 			this.gridMain.Location = new System.Drawing.Point(12, 70);
 			this.gridMain.Name = "gridMain";
 			this.gridMain.SelectionMode = OpenDental.UI.GridSelectionMode.OneCell;
-			this.gridMain.Size = new System.Drawing.Size(388, 358);
+			this.gridMain.Size = new System.Drawing.Size(388, 364);
 			this.gridMain.TabIndex = 26;
 			this.gridMain.Title = "Wiki List Headers";
 			this.gridMain.TranslationName = "TableWikiListHeaders";
@@ -132,7 +143,7 @@ namespace OpenDental{
 			// 
 			this.butHideColumn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butHideColumn.Enabled = false;
-			this.butHideColumn.Location = new System.Drawing.Point(12, 438);
+			this.butHideColumn.Location = new System.Drawing.Point(12, 440);
 			this.butHideColumn.Name = "butHideColumn";
 			this.butHideColumn.Size = new System.Drawing.Size(75, 24);
 			this.butHideColumn.TabIndex = 34;
@@ -142,9 +153,10 @@ namespace OpenDental{
 			// 
 			// FormWikiListHeaders
 			// 
-			this.ClientSize = new System.Drawing.Size(764, 470);
+			this.ClientSize = new System.Drawing.Size(764, 504);
 			this.Controls.Add(this.butHideColumn);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
@@ -162,7 +174,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private UI.Button butSave;
+		private UI.Button butOK;
+		private UI.Button butCancel;
 		private UI.GridOD gridMain;
 		private UI.GridOD gridPickList;
 		private UI.Button butAdd;

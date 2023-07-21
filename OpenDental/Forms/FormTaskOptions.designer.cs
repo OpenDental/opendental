@@ -24,25 +24,26 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTaskOptions));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.checkShowFinished = new OpenDental.UI.CheckBox();
 			this.textStartDate = new OpenDental.ValidDate();
 			this.labelStartDate = new System.Windows.Forms.Label();
 			this.checkTaskSortApptDateTime = new OpenDental.UI.CheckBox();
 			this.checkCollapsed = new OpenDental.UI.CheckBox();
 			this.checkShowArchivedTaskLists = new OpenDental.UI.CheckBox();
+			this.butCancel = new OpenDental.UI.Button();
 			this.checkBlockedTaskPlaySound = new OpenDental.UI.CheckBox();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(237, 151);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(204, 155);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// checkShowFinished
 			// 
@@ -97,6 +98,16 @@ namespace OpenDental{
 			this.checkShowArchivedTaskLists.TabIndex = 17;
 			this.checkShowArchivedTaskLists.Text = "Show Archived Task Lists";
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(285, 155);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 18;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// checkBlockedTaskPlaySound
 			// 
 			this.checkBlockedTaskPlaySound.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
@@ -109,15 +120,16 @@ namespace OpenDental{
 			// FormTaskOptions
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
-			this.ClientSize = new System.Drawing.Size(331, 191);
+			this.ClientSize = new System.Drawing.Size(368, 191);
 			this.Controls.Add(this.checkBlockedTaskPlaySound);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.checkShowArchivedTaskLists);
 			this.Controls.Add(this.checkCollapsed);
 			this.Controls.Add(this.checkTaskSortApptDateTime);
 			this.Controls.Add(this.textStartDate);
 			this.Controls.Add(this.labelStartDate);
 			this.Controls.Add(this.checkShowFinished);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormTaskOptions";
@@ -130,13 +142,14 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.CheckBox checkShowFinished;
 		private ValidDate textStartDate;
 		private System.Windows.Forms.Label labelStartDate;
 		private OpenDental.UI.CheckBox checkTaskSortApptDateTime;
 		private OpenDental.UI.CheckBox checkCollapsed;
 		private OpenDental.UI.CheckBox checkShowArchivedTaskLists;
+		private UI.Button butCancel;
 		private OpenDental.UI.CheckBox checkBlockedTaskPlaySound;
 	}
 }

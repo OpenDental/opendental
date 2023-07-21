@@ -51,6 +51,8 @@ namespace CodeBase {
 		///The progress window that is shown to the user is owned by a separate thread so that the main thread can continue to execute.
 		///This type of progress window is good for showing progress when manipulating UI elements on the main thread (filling grids).
 		///It is up to the calling method to let notify this progress window when it should close by invoking the action returned.</summary>
+		///<param name="odEventType">Causes the progress window to only process ODEvents of this ODEventType.  Undefined will process all types.</param>
+		///<param name="typeEvent">Causes the progress window to only process ODEvents of this Type.  Null defaults to typeof(ODEvent).</param>
 		///<param name="startingMessage">Sets the label of the progress window to the value passed in.  Defaults to "Please Wait..."
 		///It is always up to the calling method to translate this message before passing it in.  This is to avoid translating multiple times.</param>
 		///<param name="hasHistory">Set to true if the progress window should show a history of events that it has processed.
@@ -59,12 +61,12 @@ namespace CodeBase {
 		///<param name="progStyle">Sets the style of the progress bar within the progress window that is going to be shown to the user.</param>
 		///<returns>An action that will close the progress window.  Invoke this action whenever long computations are finished.</returns>
 		[Obsolete("Deprecated.  Use ProgressOD instead.")]
-		public static Action Show(string startingMessage="Please Wait...",
+		public static Action Show(ODEventType odEventType=ODEventType.Undefined,Type typeEvent=null,string startingMessage="Please Wait...",
 			bool hasHistory=false,bool hasMinimize=false,ProgressBarStyle progStyle=ProgressBarStyle.Marquee)
 		{
 			return ShowProgressBase(
 				() => {
-					return new FormProgressStatus(hasHistory,hasMinimize,startingMessage,progStyle) {
+					return new FormProgressStatus(odEventType,typeEvent,hasHistory,hasMinimize,startingMessage,progStyle) {
 						TopMost=true,//Make this window show on top of ALL other windows.
 					};
 				},"Thread_ODProgress_Show_"+DateTime.Now.Ticks);
@@ -74,18 +76,20 @@ namespace CodeBase {
 		///It is a progress window that can have multiple progress bars showing at the same time with pause and cancel functionality.
 		///This "extended" progress window is exactly like the "Show()" progress window in that the close action that is returned must be invoked
 		///by the calling method in order to programmatically close.</summary>
+		///<param name="odEventType">Causes the progress window to only process ODEvents of this ODEventType.  Undefined will process all types.</param>
+		///<param name="typeEvent">Causes the progress window to only process ODEvents of this Type.  Null defaults to typeof(ODEvent).</param>
 		///<param name="currentForm">The form to activate once the progress is done. If you cannot possibly pass in a form, it is okay to pass in null.</param>
 		///<param name="tag">Optionally set tag to an object that should be sent as the first "event arg" to the new progress window.
 		///This will typically be a ProgressBarHelper or a string.</param>
 		///<param name="progCanceled">Optionally pass in a delegate that will get invoked when the user clicks Cancel.</param>
 		///<param name="progPaused">Optionally pass in a delegate that will get invoked when the user clicks Pause.</param>
 		///<returns>An action that will close the progress window.  Invoke this action whenever long computations are finished.</returns>
-		public static Action ShowExtended(Form currentForm,object tag=null,
+		public static Action ShowExtended(ODEventType odEventType,Type typeEvent,Form currentForm,object tag=null,
 			ProgressCanceledHandler progCanceled=null,ProgressPausedHandler progPaused=null,string cancelButtonText=null)
 		{
 			Action actionCloseProgressWindow=ShowProgressBase(
 				() => {
-					FormProgressExtended FormPE=new FormProgressExtended(cancelButtonText:cancelButtonText);
+					FormProgressExtended FormPE=new FormProgressExtended(odEventType,typeEvent,cancelButtonText:cancelButtonText);
 					if(progCanceled!=null) {
 						FormPE.ProgressCanceled+=progCanceled;
 					}
@@ -95,7 +99,7 @@ namespace CodeBase {
 					//FormProgressExtended should NOT be the top most form.  Other windows might be popping up requiring attention from the user.
 					//FormPE.TopMost=true;//Make this window show on top of ALL other windows.
 					if(tag!=null) {
-						FormPE.ODEvent_Fired(new ODEventArgs(ODEventType.ProgressBar,tag));
+						FormPE.ODEvent_Fired(new ODEventArgs(odEventType,tag));
 					}
 					return FormPE;
 				},"Thread_ODProgress_ShowExtended_"+DateTime.Now.Ticks);
@@ -115,19 +119,21 @@ namespace CodeBase {
 		///<param name="startingMessage">Sets the label of the progress window to the value passed in.  Defaults to "Please Wait..."
 		///It is always up to the calling method to translate this message before passing it in.  This is to avoid translating multiple times.</param>
 		///<param name="actionException">A custom UE handler for the worker thread.  Null will cause this method to rethrow any exceptions.</param>
+		///<param name="typeEvent">Causes the progress window to only process ODEvents of this Type.  Null defaults to typeof(ODEvent).</param>
+		///<param name="odEventType">Causes the progress window to only process ODEvents of this ODEventType.  Undefined will process all types.</param>
 		///<param name="progStyle">Sets the style of the progress bar within the progress window that is going to be shown to the user.</param>
 		///<param name="hasMinimize">Set to true if the progress window should allow minimizing.  False by default.</param>
 		///<param name="hasHistory">Set to true if the progress window should show a history of events that it has processed.
 		///This will cause the UI of the progress window to change slightly and will also make it so the user has to click a Close button.</param>
 		[Obsolete("Deprecated.  Use ProgressOD instead.")]
 		public static void ShowAction(Action actionComputation,string startingMessage="Please Wait...",
-			Action<Exception> actionException=null,
+			Action<Exception> actionException=null,Type typeEvent=null,ODEventType odEventType=ODEventType.Undefined,
 			ProgressBarStyle progStyle=ProgressBarStyle.Marquee,bool hasMinimize=true,bool hasHistory=false)
 		{
 			if(actionComputation==null) {
 				return;//No work to be done.  Simply return.
 			}
-			Action actionCloseProgressWindow=Show(startingMessage,hasHistory,hasMinimize,progStyle);
+			Action actionCloseProgressWindow=Show(odEventType,typeEvent,startingMessage,hasHistory,hasMinimize,progStyle);
 			//Invoke the action on the main thread that was passed in.
 			try {
 				actionComputation();
@@ -152,7 +158,7 @@ namespace CodeBase {
 		///Finally returning a close action for the calling method to invoke whenever long computations are finished.
 		///Two critical portions of the closing method are 1 - it closes progress gracefully and 2 - FormProgressCurS gets set to null.</summary>
 		public static Action ShowProgressBase(Func<FormProgressBase> funcGetNewProgress,string threadName="Thread_ODProgress_ShowProgressBase") {
-			if(ODEnvironment.IsWindows7(false) || ODBuild.IsUnitTest) {
+			if(ODEnvironment.IsWindows7(false) || ODInitialize.IsRunningInUnitTest) {
 				return new Action(() => {
 					//Do nothing.
 				});

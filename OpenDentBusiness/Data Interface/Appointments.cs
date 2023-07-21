@@ -19,6 +19,9 @@ namespace OpenDentBusiness{
 		public const string PROMPT_ListAptsToDelete = "One or more procedures are attached to another appointment.\r\n"
 					+ "All selected procedures will be detached from the other appointment which will result in its deletion.\r\n"
 					+ "Continue?";
+		public const string PROMPT_PlannedProcsConcurrent = "One or more procedures are attached to another planned appointment.\r\n"
+					+ "All selected procedures will be detached from the other planned appointment.\r\n"
+					+ "Continue?";
 		public const string PROMPT_NotPlannedProcsConcurrent = "One or more procedures are attached to another appointment.\r\n"
 					+ "All selected procedures will be detached from the other appointment.\r\n"
 					+ "Continue?";
@@ -152,9 +155,9 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static List<AppointmentWithServerDT> GetAppointmentsForApi(int limit,int offset,DateTime dateTStart,DateTime dateTEnd,DateTime dateTStamp,long clinicNum,long patNum,int aptStatus,long operatoryNum){
+		public static List<AppointmentWithServerDT> GetAppointmentsForApi(int limit,int offset,DateTime dateTStart,DateTime dateTEnd,DateTime dateTStamp,long clinicNum,long patNum,int aptStatus){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<AppointmentWithServerDT>>(MethodBase.GetCurrentMethod(),limit,offset,dateTStart,dateTEnd,dateTStamp,clinicNum,patNum,aptStatus,operatoryNum);
+				return Meth.GetObject<List<AppointmentWithServerDT>>(MethodBase.GetCurrentMethod(),limit,offset,dateTStart,dateTEnd,dateTStamp,clinicNum,patNum,aptStatus);
 			}
 			string command="SELECT * FROM appointment "
 				+"WHERE AptDateTime >= "+POut.DateT(dateTStart)+" "
@@ -168,9 +171,6 @@ namespace OpenDentBusiness{
 			}
 			if(aptStatus>-1) {
 				command+="AND AptStatus="+POut.Int(aptStatus)+" ";
-			}
-			if(operatoryNum>-1) {
-				command+="AND Op="+POut.Long(operatoryNum)+" ";
 			}
 			command+="ORDER BY AptDateTime,AptNum "//same fixed order each time
 				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
@@ -194,7 +194,7 @@ namespace OpenDentBusiness{
 			}
 			DataTable tableReturn=new DataTable("AppointmentsListForApi");
 			DataTable tableAppointments;
-			DataRow dataRow;
+			DataRow row;
 			//Define columns for tableReturn
 			tableReturn.Columns.Add("AptNum",typeof(long));
 			tableReturn.Columns.Add("PatNum",typeof(long));
@@ -240,33 +240,33 @@ namespace OpenDentBusiness{
 			tableAppointments=Db.GetTable(command);
 			//Organize results
 			for(int i=0;i<tableAppointments.Rows.Count;i++) {//Paging handled in query.
-				dataRow=tableReturn.NewRow();
-				dataRow["AptNum"]=PIn.Long(tableAppointments.Rows[i]["AptNum"].ToString());
-				dataRow["PatNum"]=PIn.Long(tableAppointments.Rows[i]["PatNum"].ToString());
-				dataRow["AptStatus"]=(ApptStatus)PIn.Int(tableAppointments.Rows[i]["AptStatus"].ToString());
-				dataRow["Pattern"]=tableAppointments.Rows[i]["Pattern"].ToString();
-				dataRow["Confirmed"]=PIn.Long(tableAppointments.Rows[i]["Confirmed"].ToString());
-				dataRow["confirmed"]=OpenDentBusiness.Defs.GetName(OpenDentBusiness.DefCat.ApptConfirmed,PIn.Long(tableAppointments.Rows[i]["Confirmed"].ToString()));
-				dataRow["Op"]=PIn.Long(tableAppointments.Rows[i]["Op"].ToString());
-				dataRow["Note"]=tableAppointments.Rows[i]["Note"].ToString();
-				dataRow["ProvNum"]=PIn.Long(tableAppointments.Rows[i]["ProvNum"].ToString());
-				dataRow["provAbbr"]=Providers.GetAbbr(PIn.Long(tableAppointments.Rows[i]["ProvNum"].ToString()));
-				dataRow["ProvHyg"]=tableAppointments.Rows[i]["ProvHyg"].ToString();
-				dataRow["AptDateTime"]=PIn.DateT(tableAppointments.Rows[i]["AptDateTime"].ToString()).ToString(dateTimeFormatString);
-				dataRow["NextAptNum"]=PIn.Long(tableAppointments.Rows[i]["NextAptNum"].ToString());
-				dataRow["UnschedStatus"]=PIn.Long(tableAppointments.Rows[i]["UnschedStatus"].ToString());
-				dataRow["unschedStatus"]=OpenDentBusiness.Defs.GetName(OpenDentBusiness.DefCat.RecallUnschedStatus,PIn.Long(tableAppointments.Rows[i]["UnschedStatus"].ToString()));
-				dataRow["ProcDescript"]=tableAppointments.Rows[i]["ProcDescript"].ToString();
-				dataRow["ClinicNum"]=PIn.Long(tableAppointments.Rows[i]["ClinicNum"].ToString());
-				dataRow["IsHygiene"]=PIn.Bool(tableAppointments.Rows[i]["IsHygiene"].ToString()).ToString();
-				dataRow["DateTStamp"]=PIn.DateT(tableAppointments.Rows[i]["DateTStamp"].ToString()).ToString(dateTimeFormatString);
-				dataRow["DateTimeArrived"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeArrived"].ToString()).ToString(dateTimeFormatString);
-				dataRow["DateTimeSeated"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeSeated"].ToString()).ToString(dateTimeFormatString);
-				dataRow["DateTimeDismissed"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeDismissed"].ToString()).ToString(dateTimeFormatString);
-				dataRow["AppointmentTypeNum"]=PIn.Long(tableAppointments.Rows[i]["AppointmentTypeNum"].ToString());
-				dataRow["eServiceLogType"]=(ApiEServiceLogType)PIn.Int(tableAppointments.Rows[i]["EServiceType"].ToString());
-				dataRow["serverDateTime"]=dateTimeServer.ToString(dateTimeFormatString);
-				tableReturn.Rows.Add(dataRow);
+				row=tableReturn.NewRow();
+				row["AptNum"]=PIn.Long(tableAppointments.Rows[i]["AptNum"].ToString());
+				row["PatNum"]=PIn.Long(tableAppointments.Rows[i]["PatNum"].ToString());
+				row["AptStatus"]=(ApptStatus)PIn.Int(tableAppointments.Rows[i]["AptStatus"].ToString());
+				row["Pattern"]=tableAppointments.Rows[i]["Pattern"].ToString();
+				row["Confirmed"]=PIn.Long(tableAppointments.Rows[i]["Confirmed"].ToString());
+				row["confirmed"]=OpenDentBusiness.Defs.GetName(OpenDentBusiness.DefCat.ApptConfirmed,PIn.Long(tableAppointments.Rows[i]["Confirmed"].ToString()));
+				row["Op"]=PIn.Long(tableAppointments.Rows[i]["Op"].ToString());
+				row["Note"]=tableAppointments.Rows[i]["Note"].ToString();
+				row["ProvNum"]=PIn.Long(tableAppointments.Rows[i]["ProvNum"].ToString());
+				row["provAbbr"]=Providers.GetAbbr(PIn.Long(tableAppointments.Rows[i]["ProvNum"].ToString()));
+				row["ProvHyg"]=tableAppointments.Rows[i]["ProvHyg"].ToString();
+				row["AptDateTime"]=PIn.DateT(tableAppointments.Rows[i]["AptDateTime"].ToString()).ToString(dateTimeFormatString);
+				row["NextAptNum"]=PIn.Long(tableAppointments.Rows[i]["NextAptNum"].ToString());
+				row["UnschedStatus"]=PIn.Long(tableAppointments.Rows[i]["UnschedStatus"].ToString());
+				row["unschedStatus"]=OpenDentBusiness.Defs.GetName(OpenDentBusiness.DefCat.RecallUnschedStatus,PIn.Long(tableAppointments.Rows[i]["UnschedStatus"].ToString()));
+				row["ProcDescript"]=tableAppointments.Rows[i]["ProcDescript"].ToString();
+				row["ClinicNum"]=PIn.Long(tableAppointments.Rows[i]["ClinicNum"].ToString());
+				row["IsHygiene"]=PIn.Bool(tableAppointments.Rows[i]["IsHygiene"].ToString()).ToString();
+				row["DateTStamp"]=PIn.DateT(tableAppointments.Rows[i]["DateTStamp"].ToString()).ToString(dateTimeFormatString);
+				row["DateTimeArrived"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeArrived"].ToString()).ToString(dateTimeFormatString);
+				row["DateTimeSeated"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeSeated"].ToString()).ToString(dateTimeFormatString);
+				row["DateTimeDismissed"]=PIn.DateT(tableAppointments.Rows[i]["DateTimeDismissed"].ToString()).ToString(dateTimeFormatString);
+				row["AppointmentTypeNum"]=PIn.Long(tableAppointments.Rows[i]["AppointmentTypeNum"].ToString());
+				row["eServiceLogType"]=(ApiEServiceLogType)PIn.Int(tableAppointments.Rows[i]["EServiceType"].ToString());
+				row["serverDateTime"]=dateTimeServer.ToString(dateTimeFormatString);
+				tableReturn.Rows.Add(row);
 			}
 			return tableReturn;
 		}
@@ -342,23 +342,17 @@ namespace OpenDentBusiness{
 		}
 		
 		///<summary>Gets the appointments for the dates and operatories passed in.</summary>
-		public static List<Appointment> GetApptsForDatesOps(List<AsapComms.DateTOpNum> listDateTOpNums) {
+		///<param name="listDateOps">DateTime is the AptDate, long is the OperatoryNum.</param>
+		public static List<Appointment> GetApptsForDatesOps(List<ODTuple<DateTime,long>> listDateOps) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Appointment>>(MethodBase.GetCurrentMethod(),listDateTOpNums);
+				return Meth.GetObject<List<Appointment>>(MethodBase.GetCurrentMethod(),listDateOps);
 			}
-			if(listDateTOpNums.Count==0) {
+			if(listDateOps.Count==0) {
 				return new List<Appointment>();
 			}
 			string command="SELECT * FROM appointment WHERE AptStatus NOT IN("+POut.Int((int)ApptStatus.UnschedList)+","
-				+POut.Int((int)ApptStatus.Planned)+") AND (";
-			for(int i=0;i<listDateTOpNums.Count();i++){
-				if(i>0){
-					command+=" OR";
-				}
-				command+=" ("+DbHelper.BetweenDates("AptDateTime",listDateTOpNums[i].DateTAppt,listDateTOpNums[i].DateTAppt)
-					+" AND Op=" + POut.Long(listDateTOpNums[i].OpNum)+")";
-			}
-			command+=")";
+				+POut.Int((int)ApptStatus.Planned)+") AND "
+				+string.Join(" OR ",listDateOps.Select(x => DbHelper.BetweenDates("AptDateTime",x.Item1,x.Item1)+" AND Op="+POut.Long(x.Item2)));
 			return Crud.AppointmentCrud.SelectMany(command);
 		}
 
@@ -379,8 +373,6 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetSerializableDictionary<long,DateTime>(MethodBase.GetCurrentMethod());
 			}
-			//==Jordan dictionaries are not allowed, especially ones that get ALL pats.
-			//But since this is only used by DemandForce bridge we won't bother fixing it right now.
 			SerializableDictionary<long,DateTime> retVal=new SerializableDictionary<long,DateTime>();
 			string command="SELECT PatNum,MAX(AptDateTime) DateLastAppt "
 					+"FROM appointment "
@@ -400,8 +392,6 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetSerializableDictionary<long,List<Appointment>>(MethodBase.GetCurrentMethod(),dateFrom,dateTo);
 			}
-			//==Jordan dictionaries are not allowed, especially ones that get ALL pats.
-			//But since this is only used by DemandForce bridge we won't bother fixing it right now.
 			SerializableDictionary<long,List<Appointment>> retVal=new SerializableDictionary<long,List<Appointment>>();
 			string command="SELECT * "
 					+"FROM appointment "
@@ -424,8 +414,6 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetSerializableDictionary<long,List<long>>(MethodBase.GetCurrentMethod());
 			}
-			//==Jordan dictionaries are not allowed, especially ones that get ALL appointments.
-			//But since this is only used by DemandForce bridge we won't bother fixing it right now.
 			SerializableDictionary<long,List<long>> retVal=new SerializableDictionary<long,List<long>>();
 			string command="SELECT appointment.AptNum,procedurelog.CodeNum "
 				+"FROM appointment "
@@ -484,8 +472,6 @@ namespace OpenDentBusiness{
 			,DateTime dateScheduleStart,DateTime dateScheduleStop,List<Schedule> listSchedules,List<Appointment> listAppointments)
 		{//Not working properly when scheduled but no ops are set.
 			//No need to check MiddleTierRole; no call to db.
-			//==Jordan Dicts are not allowed. I do want to fix this one, but it has a lot of tentacles and will require test environment.
-			//Strategy for refactor is to return a flat list of ApptSearchProviderSchedules, and use linq at the last minute to get a group by date.
 			Dictionary<DateTime,List<ApptSearchProviderSchedule>> dictProviderSchedulesByDate=new Dictionary<DateTime,List<ApptSearchProviderSchedule>>();
 			List<ApptSearchProviderSchedule> listApptSearchProviderSchedules=new List<ApptSearchProviderSchedule>();
 			if(dateScheduleStart.Date>=dateScheduleStop.Date) {
@@ -521,9 +507,9 @@ namespace OpenDentBusiness{
 			List<ApptSearchProviderSchedule> listApptSearchProviderSchedules=new List<ApptSearchProviderSchedule>();
 			List<Def> listDefsBlockouts=Defs.GetDefsForCategory(DefCat.BlockoutTypes,true);
 			List<long> listDefNumsBlockoutDoNotSchedule=new List<long>();
-			for(int i=0;i<listDefsBlockouts.Count();i++){
-				if(listDefsBlockouts[i].ItemValue.Contains(BlockoutType.NoSchedule.GetDescription())) {
-					listDefNumsBlockoutDoNotSchedule.Add(listDefsBlockouts[i].DefNum);//do not return results for blockouts set to 'Do Not Schedule'
+			foreach(Def blockout in listDefsBlockouts) {
+				if(blockout.ItemValue.Contains(BlockoutType.NoSchedule.GetDescription())) {
+					listDefNumsBlockoutDoNotSchedule.Add(blockout.DefNum);//do not return results for blockouts set to 'Do Not Schedule'
 					continue;
 				}
 			}
@@ -535,16 +521,16 @@ namespace OpenDentBusiness{
 				listApptSearchProviderSchedules[i].ProviderNum=listProvNums[i];
 				listApptSearchProviderSchedules[i].SchedDate=dateForSchedule;
 			}
-			for(int s=0;s<listSchedulesOrdered.Count();s++){
-				if(listSchedulesOrdered[s].SchedDate.Date!=dateForSchedule) {//ignore schedules for different dates.
+			foreach(Schedule schedule in listSchedulesOrdered) {
+				if(schedule.SchedDate.Date!=dateForSchedule) {//ignore schedules for different dates.
 					continue;
 				}
-				if(listProvNums.Contains(listSchedulesOrdered[s].ProvNum)) {//schedule applies to one of the selected providers
-					int indexOfProvider = listProvNums.IndexOf(listSchedulesOrdered[s].ProvNum);//cache the provider index
-					int scheduleStartBlock = (int)listSchedulesOrdered[s].StartTime.TotalMinutes/5;//cache the start time of the schedule
-					int scheduleLengthInBlocks = (int)(listSchedulesOrdered[s].StopTime-listSchedulesOrdered[s].StartTime).TotalMinutes/5;//cache the length of the schedule
+				if(listProvNums.Contains(schedule.ProvNum)) {//schedule applies to one of the selected providers
+					int indexOfProvider = listProvNums.IndexOf(schedule.ProvNum);//cache the provider index
+					int scheduleStartBlock = (int)schedule.StartTime.TotalMinutes/5;//cache the start time of the schedule
+					int scheduleLengthInBlocks = (int)(schedule.StopTime-schedule.StartTime).TotalMinutes/5;//cache the length of the schedule
 					for(int i=0;i<scheduleLengthInBlocks;i++) {
-						if(listSchedulesOrdered[s].BlockoutType > 0 && listDefNumsBlockoutDoNotSchedule.Contains(listSchedulesOrdered[s].BlockoutType)) {
+						if(schedule.BlockoutType > 0 && listDefNumsBlockoutDoNotSchedule.Contains(schedule.BlockoutType)) {
 							listApptSearchProviderSchedules[indexOfProvider].IsProvAvailable[scheduleStartBlock+i]=false;
 							listApptSearchProviderSchedules[indexOfProvider].IsProvScheduled[scheduleStartBlock+i]=false;
 						}
@@ -556,15 +542,15 @@ namespace OpenDentBusiness{
 				}
 			}
 			int numBlocksInDay=60*24/5;//Number of five minute increments in a day. Matches the length of the IsProvAvailableArray
-			for(int a=0;a<listAppointments.Count();a++){
-				if(listAppointments[a].AptDateTime.Date!=dateForSchedule) {
+			foreach(Appointment appointment in listAppointments) {
+				if(appointment.AptDateTime.Date!=dateForSchedule) {
 					continue;
 				}
-				if(!listAppointments[a].IsHygiene && listProvNums.Contains(listAppointments[a].ProvNum)) {//Not hygiene Modify provider bar based on ProvNum
-					int indexOfProvider = listProvNums.IndexOf(listAppointments[a].ProvNum);
-					int appointmentStartBlock = (int)listAppointments[a].AptDateTime.TimeOfDay.TotalMinutes/5;
-					for(int i=0;i<listAppointments[a].Pattern.Length;i++) {
-						if(listAppointments[a].Pattern[i]=='X') {
+				if(!appointment.IsHygiene && listProvNums.Contains(appointment.ProvNum)) {//Not hygiene Modify provider bar based on ProvNum
+					int indexOfProvider = listProvNums.IndexOf(appointment.ProvNum);
+					int appointmentStartBlock = (int)appointment.AptDateTime.TimeOfDay.TotalMinutes/5;
+					for(int i=0;i<appointment.Pattern.Length;i++) {
+						if(appointment.Pattern[i]=='X') {
 							if(appointmentStartBlock+i>=numBlocksInDay) {//if the appointment is scheduled over a day, prevents the search from breaking
 								break;
 							}
@@ -572,11 +558,11 @@ namespace OpenDentBusiness{
 						}
 					}
 				}
-				else if(listAppointments[a].IsHygiene && listProvNums.Contains(listAppointments[a].ProvHyg)) {//Modify provider bar based on ProvHyg
-					int indexOfProvider = listProvNums.IndexOf(listAppointments[a].ProvHyg);
-					int appointmentStartBlock = (int)listAppointments[a].AptDateTime.TimeOfDay.TotalMinutes/5;
-					for(int i=0;i<listAppointments[a].Pattern.Length;i++) {
-						if(listAppointments[a].Pattern[i]=='X') {
+				else if(appointment.IsHygiene && listProvNums.Contains(appointment.ProvHyg)) {//Modify provider bar based on ProvHyg
+					int indexOfProvider = listProvNums.IndexOf(appointment.ProvHyg);
+					int appointmentStartBlock = (int)appointment.AptDateTime.TimeOfDay.TotalMinutes/5;
+					for(int i=0;i<appointment.Pattern.Length;i++) {
+						if(appointment.Pattern[i]=='X') {
 							if(appointmentStartBlock+i>=numBlocksInDay) {//if the appointment is scheduled over a day, prevents the search from breaking
 								break;
 							}
@@ -755,10 +741,11 @@ namespace OpenDentBusiness{
 				+"patient.BillingType patBillingType,patient.BirthDate patBirthDate,patient.DateTimeDeceased patDateTimeDeceased,"
 				+"appointment.InsPlan1,appointment.InsPlan2,appointment.ClinicNum,"
 				+"patient.ChartNumber patChartNumber,patient.City patCity,appointment.ColorOverride apptColorOverride,appointment.Confirmed apptConfirmed,"
-				+"patient.CreditType patCreditType,appointment.DateTimeAskedToArrive apptDateTimeAskedToArrive,"
+				+"patient.CreditType patCreditType,labcase.DateTimeChecked labcaseDateTimeChecked,"
+				+"labcase.DateTimeDue labcaseDateTimeDue,labcase.DateTimeRecd labcaseDateTimeRecd,labcase.DateTimeSent labcaseDateTimeSent,appointment.DateTimeAskedToArrive apptDateTimeAskedToArrive,"
 				+"patient.Email patEmail,guar.FamFinUrgNote guarFamFinUrgNote,patient.FName patFName,patient.Guarantor patGuarantor,"
 				+"patient.HmPhone patHmPhone,patient.ImageFolder patImageFolder,appointment.IsHygiene apptIsHygiene,appointment.IsNewPatient apptIsNewPatient,"
-				+"patient.Language patLanguage,patient.LName patLName,patient.MedUrgNote patMedUrgNote,"
+				+"labcase.LabCaseNum labcaseLabCaseNum,patient.Language patLanguage,patient.LName patLName,patient.MedUrgNote patMedUrgNote,"
 				+"patient.MiddleI patMiddleI,appointment.Note apptNote,appointment.Op apptOp,appointment.PatNum apptPatNum,"
 				+"appointment.Pattern apptPattern, appointment.PatternSecondary apptPatternSecondary," 
 				+"(CASE WHEN patplan.InsSubNum IS NULL THEN 0 ELSE 1 END) hasIns,patient.PreferConfirmMethod patPreferConfirmMethod,"
@@ -772,6 +759,12 @@ namespace OpenDentBusiness{
 				+"IF(guar.BalTotal > 0,'$','') hasFamilyBalance "
 				+"FROM appointment "
 				+"LEFT JOIN patient ON patient.PatNum=appointment.PatNum ";
+			if(isPlanned){
+				command+="LEFT JOIN labcase ON labcase.PlannedAptNum=appointment.AptNum AND labcase.PlannedAptNum!=0 ";
+			}
+			else{
+				command+="LEFT JOIN labcase ON labcase.AptNum=appointment.AptNum AND labcase.AptNum!=0 ";
+			}
 			command+="LEFT JOIN patient guar ON guar.PatNum=patient.Guarantor "
 				+"LEFT JOIN patplan ON patplan.PatNum=patient.PatNum AND patplan.Ordinal=1 "
 				+"LEFT JOIN discountplansub ON discountplansub.PatNum=patient.PatNum ";
@@ -903,12 +896,12 @@ namespace OpenDentBusiness{
 			List<long> listPatNums=new List<long>();
 			List<long> listPlanNums=new List<long>();
 			List<long> listGuarantorsWithIns=new List<long>();
-			for(int i=0;i<tableRaw.Rows.Count;i++){
-				listPatNums.Add(PIn.Long(tableRaw.Rows[i]["apptPatNum"].ToString()));
-				listPlanNums.Add(PIn.Long(tableRaw.Rows[i]["InsPlan1"].ToString()));
-				listPlanNums.Add(PIn.Long(tableRaw.Rows[i]["InsPlan2"].ToString()));
-				if(tableRaw.Rows[i]["hasIns"].ToString()!="0") {
-					listGuarantorsWithIns.Add(PIn.Long(tableRaw.Rows[i]["patGuarantor"].ToString()));
+			foreach(DataRow rowRaw in tableRaw.Rows) {
+				listPatNums.Add(PIn.Long(rowRaw["apptPatNum"].ToString()));
+				listPlanNums.Add(PIn.Long(rowRaw["InsPlan1"].ToString()));
+				listPlanNums.Add(PIn.Long(rowRaw["InsPlan2"].ToString()));
+				if(rowRaw["hasIns"].ToString()!="0") {
+					listGuarantorsWithIns.Add(PIn.Long(rowRaw["patGuarantor"].ToString()));
 				}
 			}
 			listPatNums=listPatNums.Distinct().ToList();
@@ -951,23 +944,19 @@ namespace OpenDentBusiness{
 			}
 			command+=") ORDER BY Relationship";
 			DataTable tableRawGuardians=dcon.GetTable(command);
-			//QUERY 5: listInsPlans: insplan (Carriers is cached)=====================================================================================================
-			List<InsPlan> listInsPlans=InsPlans.GetPlans(listPlanNums);
-			//QUERY 6: listDiscountPlans: discountplan=================================================================================================================
-			//DiscountPlan is a small table not linked to patient, but it's still better to only get the ones we need.
-			List<long> listDiscountPlanNums=new List<long>();
-			for(int i=0;i<tableRaw.Rows.Count;i++){
-				if(PIn.Long(tableRaw.Rows[i]["DiscountPlan"].ToString())>0){
-					listDiscountPlanNums.Add(PIn.Long(tableRaw.Rows[i]["DiscountPlan"].ToString()));
-				}
-			}
-			List<DiscountPlan> listDiscountPlans=DiscountPlans.GetDiscountPlansByPlanNum(listDiscountPlanNums);
+			//QUERY 5: tableCarriers: insplan (Carriers is cached)=====================================================================================================
+			DataTable tableCarriers=InsPlans.GetCarrierNames(listPlanNums);
+			Dictionary<long,string> dictCarriers=tableCarriers.Select().ToDictionary(x => PIn.Long(x["PlanNum"].ToString()),x => PIn.String(x["CarrierName"].ToString()));
+			Dictionary<long,string> dictCarrierColors=tableCarriers.Select().ToDictionary(x => PIn.Long(x["PlanNum"].ToString()),x => x["CarrierColor"].ToString());
+			//QUERY 6: dictDiscountPlans: discountplan=================================================================================================================
+			Dictionary<long,DiscountPlan> dictDiscountPlans=DiscountPlans.GetAll(true).ToDictionary(x => x.DiscountPlanNum);
 			//QUERY 7: listPatsWithDisease: disease=================================================================================================================
 			List<long> listPatNumsWithDisease=Diseases.GetPatientsWithDisease(listPatNums);
 			//QUERY 8: listPatsWithAllergy: allergy=================================================================================================================
 			List<long> listPatNumsWithAllergy=Allergies.GetPatientsWithAllergy(listPatNums);
-			//QUERY 9: listRefAttaches: refattach=================================================================================================================
+			Dictionary<long,List<ApptBubbleReferralInfo>> dictPatientRefInfos=new Dictionary<long,List<ApptBubbleReferralInfo>>();
 			List<long> listRefNums=new List<long>();
+			//QUERY 9: listRefAttaches: refattach=================================================================================================================
 			List<RefAttach> listRefAttaches=RefAttaches.GetRefAttaches(listPatNums);
 			for(int i=0;i<listRefAttaches.Count;i++) {
 				if(!listRefNums.Contains(listRefAttaches[i].ReferralNum)) {
@@ -975,6 +964,24 @@ namespace OpenDentBusiness{
 				}
 			}
 			List<Referral> listReferrals=Referrals.GetReferrals(listRefNums);//cached
+			for(int j=0;j<listRefAttaches.Count;j++) {
+				string nameLF="";
+				string phoneNum="";
+				for(int k=0;k<listReferrals.Count;k++) {
+					if(listRefAttaches[j].ReferralNum==listReferrals[k].ReferralNum) {
+						nameLF=listReferrals[k].LName+", "+listReferrals[k].FName;
+						phoneNum=TelephoneNumbers.AutoFormat(listReferrals[k].Telephone);
+						if(phoneNum=="") {
+							phoneNum=Lans.g("Appointments","(No Phone Number)");
+						}
+					}
+				}
+				if(!dictPatientRefInfos.ContainsKey(listRefAttaches[j].PatNum)) {//New entry
+					dictPatientRefInfos.Add(listRefAttaches[j].PatNum,new List<ApptBubbleReferralInfo>());
+				}
+				//Add all referrals nameLF's to the refFrom dict
+				dictPatientRefInfos[listRefAttaches[j].PatNum].Add(new ApptBubbleReferralInfo(listRefAttaches[j].RefType,nameLF,phoneNum));
+			}
 			//QUERY 10: listRecallsPastDue: recall=================================================================================================================
 			List<Recall> listRecallsPastDue=Recalls.GetPastDueForPats(dateTStart,listPatNums);
 			//QUERY 11: listAdjustments: adjustment, appointment union adjustment=====================================================================================
@@ -995,534 +1002,498 @@ namespace OpenDentBusiness{
 			if(includeVerifyIns){
 				string insPlanNums=string.Join(",",listPlanNums);
 				string patNums=string.Join(",",listPatNums);//always valid
-				command="SELECT FKey,MAX(DateLastVerified) AS DateLastVerified,VerifyType,patplan.PatNum,NULL HideFromVerifyList,inssub.PlanNum "
-					+"FROM insverify "
-					+"LEFT JOIN patplan ON patplan.PatPlanNum=insverify.FKey AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.PatientEnrollment)+" "
-					+"LEFT JOIN inssub ON inssub.InsSubNum=patplan.InsSubNum "
-					+"WHERE patplan.PatNum IN("+patNums+") "
-					+"AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.PatientEnrollment)+" "
-					+"GROUP BY patplan.PatPlanNum "//Grouping to ensure we get latest DateLastVerified if there are multiple rows for one patnum (JobNum:50382)
-					+"UNION ALL "
-					+"SELECT FKey,MAX(DateLastVerified) AS DateLastVerified,VerifyType,NULL PatNum,insplan.HideFromVerifyList,NULL PlanNum "
-					+"FROM insverify "
-					+"LEFT JOIN insplan ON insplan.PlanNum=insverify.FKey AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.InsuranceBenefit)+" "
-					+"WHERE insverify.FKey IN("+insPlanNums+") "
-					+"AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.InsuranceBenefit)+" "
-					+"GROUP BY insverify.FKey";//Grouping here as well per JobNum:50382
+				command="SELECT FKey, DateLastVerified, VerifyType, patplan.PatNum, insplan.HideFromVerifyList, inssub.PlanNum FROM insverify"
+					+" LEFT JOIN patplan ON patplan.PatPlanNum=insverify.FKey AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.PatientEnrollment)
+					+" LEFT JOIN insplan ON insplan.PlanNum=insverify.FKey AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.InsuranceBenefit)
+					+" LEFT JOIN inssub ON inssub.InsSubNum=patplan.InsSubNum"
+					+" WHERE (insverify.FKey IN("+insPlanNums+") AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.InsuranceBenefit)+")"
+					+" OR (patplan.PatNum IN("+patNums+") AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.PatientEnrollment)+")";
 				if(insPlanNums!="") {//if no insPlans, then there can't be any patPlans.
 					tableInsVerify=dcon.GetTable(command);
 				}
 			}
-			//Query 13: labcases associated to appointments================================================================================================
-			List<LabCase> listLabCases=new List<LabCase>();
-			if(aptNum>0 || tableRaw.Rows.Count>0) {
-				command="SELECT * FROM labcase WHERE ";
-				if(isPlanned) {
-					command+="PlannedAptNum!=0 AND PlannedAptNum ";
-				} 
-				else {
-					command+="AptNum!=0 AND AptNum ";
-				}
-				command+="IN(";//this was far too slow:SELECT a.AptNum FROM appointment a WHERE ";
-				if(aptNum==0) {
-					for(int i=0;i<tableRaw.Rows.Count;i++){
-						if(i>0){
-							command+=",";
-						}
-						command+=tableRaw.Rows[i]["apptAptNum"].ToString();
-					}
-				}
-				else {
-					command+=POut.Long(aptNum);
-				}
-				command+=")";
-				listLabCases=Crud.LabCaseCrud.SelectMany(command);
+			List<Action> listActions=new List<Action>();
+			List<InsPlan> listInsPlans=new List<InsPlan>();
+			if(tableInsVerify!=null && tableInsVerify.Rows.Count>0) {
+				listInsPlans=InsPlans.GetPlans(listPlanNums);
 			}
-			List<Laboratory> listLaboratories=Laboratories.GetMany(listLabCases.Select(x => x.LaboratoryNum).ToList());
-			List<LabCase> listLabCasesAptNum;//This will get used in the for loop below.
-			for(int d=0;d<tableRaw.Rows.Count;d++){
-				DataRow dataRow=table.NewRow();
-				DateTime dateTApt;
-				TimeSpan timeSpan;
-				int hours;
-				int minutes;
-				DateTime dateTLab;
-				DateTime dateTLabDue;
-				DateTime birthdate;
-				DateTime timeAskedToArrive;
-				decimal productionAmt;
-				decimal writeoffPPOAmt;
-				decimal insAmt;
-				#region Make Row
-				dataRow["address"]=Patients.GetAddressFull(tableRaw.Rows[d]["patAddress1"].ToString(),tableRaw.Rows[d]["patAddress2"].ToString(),
-				tableRaw.Rows[d]["patCity"].ToString(),tableRaw.Rows[d]["patState"].ToString(),tableRaw.Rows[d]["patZip"].ToString());
-				dataRow["addrNote"]="";
-				if(tableRaw.Rows[d]["patAddrNote"].ToString()!="") {
-					dataRow["addrNote"]=Lans.g("Appointments","AddrNote: ")+tableRaw.Rows[d]["patAddrNote"].ToString();
-				}
-				dateTApt=PIn.DateT(tableRaw.Rows[d]["apptAptDateTime"].ToString());
-				dataRow["AptDateTime"]=dateTApt;
-				dataRow["AptDateTimeArrived"]=PIn.DateT(tableRaw.Rows[d]["apptAptDateTimeArrived"].ToString());
-				birthdate=PIn.Date(tableRaw.Rows[d]["patBirthdate"].ToString());
-				DateTime dateTimeDeceased=PIn.Date(tableRaw.Rows[d]["patDateTimeDeceased"].ToString());
-				DateTime dateTimeTo=DateTime.Now;
-				if(dateTimeDeceased.Year>1880) {
-					dateTimeTo=dateTimeDeceased;
-				}
-				dataRow["age"]="";
-				if(birthdate.AddYears(18)<dateTimeTo) {
-					dataRow["age"]=Lans.g("Appointments","Age: ");//only show if older than 18
-				}
-				if(birthdate.Year>1880) {
-					dataRow["age"]+=PatientLogic.DateToAgeString(birthdate,dateTimeTo);
-				}
-				else {
-					dataRow["age"]+="?";
-				}
-				dataRow["apptModNote"]="";
-				if(tableRaw.Rows[d]["patApptModNote"].ToString()!="") {
-					dataRow["apptModNote"]=Lans.g("Appointments","ApptModNote: ")+tableRaw.Rows[d]["patApptModNote"].ToString();
-				}
-				dataRow["aptDate"]=dateTApt.ToShortDateString();
-				dataRow["aptDay"]=dateTApt.ToString("dddd");
-				timeSpan=TimeSpan.FromMinutes(tableRaw.Rows[d]["apptPattern"].ToString().Length*5);
-				hours=timeSpan.Hours;
-				minutes=timeSpan.Minutes;
-				if(hours==0) {
-					dataRow["aptLength"]=minutes.ToString()+Lans.g("Appointments"," Min");
-				}
-				else if(hours==1) {
-					dataRow["aptLength"]=hours.ToString()+Lans.g("Appointments"," Hr, ")
-						+minutes.ToString()+Lans.g("Appointments"," Min");
-				}
-				else {
-					dataRow["aptLength"]=hours.ToString()+Lans.g("Appointments"," Hrs, ")
-						+minutes.ToString()+Lans.g("Appointments"," Min");
-				}
-				dataRow["aptTime"]=dateTApt.ToShortTimeString();
-				dataRow["AptNum"]=tableRaw.Rows[d]["apptAptNum"].ToString();
-				dataRow["AptStatus"]=tableRaw.Rows[d]["apptAptStatus"].ToString();
-				dataRow["Assistant"]=tableRaw.Rows[d]["apptAssistant"].ToString();
-				dataRow["assistantAbbr"]="";
-				if(dataRow["Assistant"].ToString()!="0") {
-					dataRow["assistantAbbr"]=Employees.GetAbbr(PIn.Long(tableRaw.Rows[d]["apptAssistant"].ToString()));
-				}
-				dataRow["AppointmentTypeNum"]=tableRaw.Rows[d]["AppointmentTypeNum"].ToString();
-				dataRow["billingType"]=Defs.GetName(DefCat.BillingTypes,PIn.Long(tableRaw.Rows[d]["patBillingType"].ToString()));
-				dataRow["Birthdate"]=birthdate.ToShortDateString();
-				dataRow["chartNumber"]=tableRaw.Rows[d]["patChartNumber"].ToString();
-				dataRow["chartNumAndName"]="";
-				if(tableRaw.Rows[d]["apptIsNewPatient"].ToString()=="1") {
-					dataRow["chartNumAndName"]="NP-";
-				}
-				dataRow["chartNumAndName"]+=tableRaw.Rows[d]["patChartNumber"].ToString()+" "
-					+PatientLogic.GetNameLF(tableRaw.Rows[d]["patLName"].ToString(),tableRaw.Rows[d]["patFName"].ToString(),
-					tableRaw.Rows[d]["patPreferred"].ToString(),tableRaw.Rows[d]["patMiddleI"].ToString());
-				dataRow["ClinicNum"]=tableRaw.Rows[d]["ClinicNum"].ToString();
-				dataRow["ColorOverride"]=tableRaw.Rows[d]["apptColorOverride"].ToString();
-				dataRow["confirmed"]=Defs.GetName(DefCat.ApptConfirmed,PIn.Long(tableRaw.Rows[d]["apptConfirmed"].ToString()));
-				dataRow["Confirmed"]=tableRaw.Rows[d]["apptConfirmed"].ToString();
-				dataRow["contactMethods"]="";
-				if(tableRaw.Rows[d]["patPreferConfirmMethod"].ToString()!="0") {
-					dataRow["contactMethods"]+=Lans.g("Appointments","Confirm Method: ")
-						+((ContactMethod)PIn.Long(tableRaw.Rows[d]["patPreferConfirmMethod"].ToString())).ToString();
-				}
-				if(tableRaw.Rows[d]["patPreferContactMethod"].ToString()!="0") {
-					if(dataRow["contactMethods"].ToString()!="") {
-						dataRow["contactMethods"]+="\r\n";
+			//DataTable is not thread-safe so protect it with a local lock.
+			object locker=new object();
+			foreach(DataRow rowRaw in tableRaw.Rows) {
+				//Each of these actions will be stored a executed in parallel below via ODThread.ThreadPool().
+				listActions.Add(new Action(() => {
+					DataRow dataRow;
+					DateTime dateTApt;
+					DateTime dateTAptArrived;
+					TimeSpan span;
+					int hours;
+					int minutes;
+					DateTime dateTLab;
+					DateTime dateTLabDue;
+					DateTime birthdate;
+					DateTime timeAskedToArrive;
+					decimal productionAmt;
+					decimal writeoffPPOAmt;
+					decimal insAmt;
+					lock (locker) {
+						dataRow=table.NewRow();
 					}
-					dataRow["contactMethods"]+=Lans.g("Appointments","Contact Method: ")
-						+((ContactMethod)PIn.Long(tableRaw.Rows[d]["patPreferContactMethod"].ToString())).ToString();
-				}
-				if(tableRaw.Rows[d]["patPreferRecallMethod"].ToString()!="0") {
-					if(dataRow["contactMethods"].ToString()!="") {
-						dataRow["contactMethods"]+="\r\n";
+					#region Make Row
+					dataRow["address"]=Patients.GetAddressFull(rowRaw["patAddress1"].ToString(),rowRaw["patAddress2"].ToString(),
+					rowRaw["patCity"].ToString(),rowRaw["patState"].ToString(),rowRaw["patZip"].ToString());
+					dataRow["addrNote"]="";
+					if(rowRaw["patAddrNote"].ToString()!="") {
+						dataRow["addrNote"]=Lans.g("Appointments","AddrNote: ")+rowRaw["patAddrNote"].ToString();
 					}
-					dataRow["contactMethods"]+=Lans.g("Appointments","Recall Method: ")
-						+((ContactMethod)PIn.Long(tableRaw.Rows[d]["patPreferRecallMethod"].ToString())).ToString();
-				}
-				bool hasInsToSend=false;
-				if(tableRawInsProc!=null) {
-					//figure out if pt's family has ins claims that need to be created
-					for(int j = 0;j<tableRawInsProc.Rows.Count;j++) {
-						if(tableRaw.Rows[d]["hasIns"].ToString()!="0") {
-							if(tableRaw.Rows[d]["patGuarantor"].ToString()==tableRawInsProc.Rows[j]["Guarantor"].ToString()
-								||tableRaw.Rows[d]["patGuarantor"].ToString()==tableRawInsProc.Rows[j]["PatNum"].ToString()) {
-								hasInsToSend=true;
+					dateTApt=PIn.DateT(rowRaw["apptAptDateTime"].ToString());
+					dateTAptArrived=PIn.DateT(rowRaw["apptAptDateTimeArrived"].ToString());
+					void trySetDateTime(string field,DateTime dateTime,int attemptLimit=10) {
+						int countAttempts=1;
+						dataRow[field]=dateTime;
+						while(PIn.DateT(dataRow[field].ToString())!=dateTime && countAttempts<=attemptLimit) {
+							//In the event of an asynchronous collision that caused this field to not be set correctly, re-attempt a limited number of times.
+							dataRow[field]=dateTime;
+							countAttempts++;
+						}
+					}
+					trySetDateTime("AptDateTime",dateTApt);
+					trySetDateTime("AptDateTimeArrived",dateTAptArrived);
+					birthdate=PIn.Date(rowRaw["patBirthdate"].ToString());
+					DateTime dateTimeDeceased=PIn.Date(rowRaw["patDateTimeDeceased"].ToString());
+					DateTime dateTimeTo=DateTime.Now;
+					if(dateTimeDeceased.Year>1880) {
+						dateTimeTo=dateTimeDeceased;
+					}
+					dataRow["age"]="";
+					if(birthdate.AddYears(18)<dateTimeTo) {
+						dataRow["age"]=Lans.g("Appointments","Age: ");//only show if older than 18
+					}
+					if(birthdate.Year>1880) {
+						dataRow["age"]+=PatientLogic.DateToAgeString(birthdate,dateTimeTo);
+					}
+					else {
+						dataRow["age"]+="?";
+					}
+					dataRow["apptModNote"]="";
+					if(rowRaw["patApptModNote"].ToString()!="") {
+						dataRow["apptModNote"]=Lans.g("Appointments","ApptModNote: ")+rowRaw["patApptModNote"].ToString();
+					}
+					dataRow["aptDate"]=dateTApt.ToShortDateString();
+					dataRow["aptDay"]=dateTApt.ToString("dddd");
+					span=TimeSpan.FromMinutes(rowRaw["apptPattern"].ToString().Length*5);
+					hours=span.Hours;
+					minutes=span.Minutes;
+					if(hours==0) {
+						dataRow["aptLength"]=minutes.ToString()+Lans.g("Appointments"," Min");
+					}
+					else if(hours==1) {
+						dataRow["aptLength"]=hours.ToString()+Lans.g("Appointments"," Hr, ")
+							+minutes.ToString()+Lans.g("Appointments"," Min");
+					}
+					else {
+						dataRow["aptLength"]=hours.ToString()+Lans.g("Appointments"," Hrs, ")
+							+minutes.ToString()+Lans.g("Appointments"," Min");
+					}
+					dataRow["aptTime"]=dateTApt.ToShortTimeString();
+					dataRow["AptNum"]=rowRaw["apptAptNum"].ToString();
+					dataRow["AptStatus"]=rowRaw["apptAptStatus"].ToString();
+					dataRow["Assistant"]=rowRaw["apptAssistant"].ToString();
+					dataRow["assistantAbbr"]="";
+					if(dataRow["Assistant"].ToString()!="0") {
+						dataRow["assistantAbbr"]=Employees.GetAbbr(PIn.Long(rowRaw["apptAssistant"].ToString()));
+					}
+					dataRow["AppointmentTypeNum"]=rowRaw["AppointmentTypeNum"].ToString();
+					dataRow["billingType"]=Defs.GetName(DefCat.BillingTypes,PIn.Long(rowRaw["patBillingType"].ToString()));
+					dataRow["Birthdate"]=birthdate.ToShortDateString();
+					dataRow["chartNumber"]=rowRaw["patChartNumber"].ToString();
+					dataRow["chartNumAndName"]="";
+					if(rowRaw["apptIsNewPatient"].ToString()=="1") {
+						dataRow["chartNumAndName"]="NP-";
+					}
+					dataRow["chartNumAndName"]+=rowRaw["patChartNumber"].ToString()+" "
+						+PatientLogic.GetNameLF(rowRaw["patLName"].ToString(),rowRaw["patFName"].ToString(),
+						rowRaw["patPreferred"].ToString(),rowRaw["patMiddleI"].ToString());
+					dataRow["ClinicNum"]=rowRaw["ClinicNum"].ToString();
+					dataRow["ColorOverride"]=rowRaw["apptColorOverride"].ToString();
+					dataRow["confirmed"]=Defs.GetName(DefCat.ApptConfirmed,PIn.Long(rowRaw["apptConfirmed"].ToString()));
+					dataRow["Confirmed"]=rowRaw["apptConfirmed"].ToString();
+					dataRow["contactMethods"]="";
+					if(rowRaw["patPreferConfirmMethod"].ToString()!="0") {
+						dataRow["contactMethods"]+=Lans.g("Appointments","Confirm Method: ")
+							+((ContactMethod)PIn.Long(rowRaw["patPreferConfirmMethod"].ToString())).ToString();
+					}
+					if(rowRaw["patPreferContactMethod"].ToString()!="0") {
+						if(dataRow["contactMethods"].ToString()!="") {
+							dataRow["contactMethods"]+="\r\n";
+						}
+						dataRow["contactMethods"]+=Lans.g("Appointments","Contact Method: ")
+							+((ContactMethod)PIn.Long(rowRaw["patPreferContactMethod"].ToString())).ToString();
+					}
+					if(rowRaw["patPreferRecallMethod"].ToString()!="0") {
+						if(dataRow["contactMethods"].ToString()!="") {
+							dataRow["contactMethods"]+="\r\n";
+						}
+						dataRow["contactMethods"]+=Lans.g("Appointments","Recall Method: ")
+							+((ContactMethod)PIn.Long(rowRaw["patPreferRecallMethod"].ToString())).ToString();
+					}
+					bool hasInsToSend=false;
+					if(tableRawInsProc!=null) {
+						//figure out if pt's family has ins claims that need to be created
+						for(int j = 0;j<tableRawInsProc.Rows.Count;j++) {
+							if(rowRaw["hasIns"].ToString()!="0") {
+								if(rowRaw["patGuarantor"].ToString()==tableRawInsProc.Rows[j]["Guarantor"].ToString()
+									||rowRaw["patGuarantor"].ToString()==tableRawInsProc.Rows[j]["PatNum"].ToString()) {
+									hasInsToSend=true;
+								}
 							}
 						}
 					}
-				}
-				dataRow["CreditType"]=tableRaw.Rows[d]["patCreditType"].ToString();
-				dataRow["discountPlan"]="";
-				long discountPlanNum=PIn.Long(tableRaw.Rows[d]["DiscountPlan"].ToString());
-				DiscountPlan discountPlan=null;
-				if(discountPlanNum>0) {
-					discountPlan=listDiscountPlans.Find(x => x.DiscountPlanNum==discountPlanNum);
-					if(discountPlan!=null){
-						dataRow["discountPlan"]+=Lans.g("Appointments","DiscountPlan")+": "+discountPlan.Description;
+					dataRow["CreditType"]=rowRaw["patCreditType"].ToString();
+					dataRow["discountPlan"]="";
+					long discountPlanNum=PIn.Long(rowRaw["DiscountPlan"].ToString());
+					DiscountPlan discountPlan=null;
+					if(discountPlanNum>0 && dictDiscountPlans.TryGetValue(discountPlanNum,out discountPlan)) {
+						dataRow["discountPlan"]+=Lans.g("Appointments","DiscountPlan")+": "+dictDiscountPlans[discountPlanNum].Description;
 					}
-				}
-				dataRow["Email"]=tableRaw.Rows[d]["patEmail"].ToString();
-				dataRow["famFinUrgNote"]="";
-				if(tableRaw.Rows[d]["guarFamFinUrgNote"].ToString()!="") {
-					dataRow["famFinUrgNote"]=Lans.g("Appointments","FamFinUrgNote: ")+tableRaw.Rows[d]["guarFamFinUrgNote"].ToString();
-				}
-				dataRow["guardians"]="";
-				GuardianRelationship guardianRelationship;
-				for(int g = 0;g<tableRawGuardians.Rows.Count;g++) {
-					if(tableRaw.Rows[d]["apptPatNum"].ToString()==tableRawGuardians.Rows[g]["PatNumChild"].ToString()) {
-						if(dataRow["guardians"].ToString()!="") {
-							dataRow["guardians"]+=",";
-						}
-						guardianRelationship=(GuardianRelationship)PIn.Int(tableRawGuardians.Rows[g]["Relationship"].ToString());
-						dataRow["guardians"]+=Patients.GetNameFirstOrPreferred(tableRawGuardians.Rows[g]["FName"].ToString(),tableRawGuardians.Rows[g]["Preferred"].ToString())
-							+Guardians.GetGuardianRelationshipStr(guardianRelationship);
+					dataRow["Email"]=rowRaw["patEmail"].ToString();
+					dataRow["famFinUrgNote"]="";
+					if(rowRaw["guarFamFinUrgNote"].ToString()!="") {
+						dataRow["famFinUrgNote"]=Lans.g("Appointments","FamFinUrgNote: ")+rowRaw["guarFamFinUrgNote"].ToString();
 					}
-				}
-				dataRow["hasDiscount[D]"]="";
-				if(tableRaw.Rows[d]["hasDiscount"].ToString()!="0") {
-					dataRow["hasDiscount[D]"]+="D";
-				}
-				dataRow["hasFamilyBalance"]=tableRaw.Rows[d]["hasFamilyBalance"].ToString();
-				dataRow["hasIns[I]"]="";
-				if(tableRaw.Rows[d]["hasIns"].ToString()!="0") {
-					dataRow["hasIns[I]"]+="I";
-				}
-				dataRow["hmPhone"]=Lans.g("Appointments","Hm: ")+tableRaw.Rows[d]["patHmPhone"].ToString();
-				dataRow["ImageFolder"]=tableRaw.Rows[d]["patImageFolder"].ToString();
-				dataRow["insurance"]="";
-				long planNum1=PIn.Long(tableRaw.Rows[d]["InsPlan1"].ToString());
-				long planNum2=PIn.Long(tableRaw.Rows[d]["InsPlan2"].ToString());
-				InsPlan insPlan1=listInsPlans.Find(x=>x.PlanNum==planNum1);
-				if(planNum1>0 && insPlan1!=null) {
-					Carrier carrier=Carriers.GetCarrier(insPlan1.CarrierNum);
-					dataRow["insurance"]+=Lans.g("Appointments","Ins1")+": "+carrier.CarrierName;
-					dataRow["insColor1"]=carrier.ApptTextBackColor.ToArgb();
-				}
-				InsPlan insPlan2=listInsPlans.Find(x=>x.PlanNum==planNum2);
-				if(planNum2>0 && insPlan2!=null) {
-					Carrier carrier=Carriers.GetCarrier(insPlan2.CarrierNum);
-					if(dataRow["insurance"].ToString()!="") {
-						dataRow["insurance"]+="\r\n";
+					dataRow["guardians"]="";
+					GuardianRelationship guardianRelationship;
+					for(int g = 0;g<tableRawGuardians.Rows.Count;g++) {
+						if(rowRaw["apptPatNum"].ToString()==tableRawGuardians.Rows[g]["PatNumChild"].ToString()) {
+							if(dataRow["guardians"].ToString()!="") {
+								dataRow["guardians"]+=",";
+							}
+							guardianRelationship=(GuardianRelationship)PIn.Int(tableRawGuardians.Rows[g]["Relationship"].ToString());
+							dataRow["guardians"]+=Patients.GetNameFirstOrPreferred(tableRawGuardians.Rows[g]["FName"].ToString(),tableRawGuardians.Rows[g]["Preferred"].ToString())
+								+Guardians.GetGuardianRelationshipStr(guardianRelationship);
+						}
 					}
-					dataRow["insurance"]+=Lans.g("Appointments","Ins2")+": "+carrier.CarrierName;
-					dataRow["insColor2"]=carrier.ApptTextBackColor.ToArgb();
-				}
-				if(tableRaw.Rows[d]["hasIns"].ToString()!="0"&&dataRow["insurance"].ToString()=="") {
-					dataRow["insurance"]=Lans.g("Appointments","Insured");
-				}
-				dataRow["insToSend[!]"]="";
-				if(hasInsToSend) {
-					dataRow["insToSend[!]"]="!";
-				}
-				dataRow["Priority"]=tableRaw.Rows[d]["Priority"].ToString();
-				dataRow["IsHygiene"]=tableRaw.Rows[d]["apptIsHygiene"].ToString();
-				dataRow["lab"]="";
-				long apptAptNum=PIn.Long(tableRaw.Rows[d]["apptAptNum"].ToString());
-				if(isPlanned) {
-					listLabCasesAptNum=listLabCases.FindAll(x => x.PlannedAptNum==apptAptNum);
-				}
-				else {
-					listLabCasesAptNum=listLabCases.FindAll(x => x.AptNum==apptAptNum);
-				}
-				if(!listLabCasesAptNum.IsNullOrEmpty()) {
-					string labText="";
-					foreach(LabCase labCaseCur in listLabCasesAptNum) {
-						Laboratory laboratoryCur=listLaboratories.Find(x => x.LaboratoryNum==labCaseCur.LaboratoryNum);
-						if(!string.IsNullOrEmpty(labText)) {
-							labText+=Environment.NewLine;
+					dataRow["hasDiscount[D]"]="";
+					if(rowRaw["hasDiscount"].ToString()!="0") {
+						dataRow["hasDiscount[D]"]+="D";
+					}
+					dataRow["hasFamilyBalance"]=rowRaw["hasFamilyBalance"].ToString();
+					dataRow["hasIns[I]"]="";
+					if(rowRaw["hasIns"].ToString()!="0") {
+						dataRow["hasIns[I]"]+="I";
+					}
+					dataRow["hmPhone"]=Lans.g("Appointments","Hm: ")+rowRaw["patHmPhone"].ToString();
+					dataRow["ImageFolder"]=rowRaw["patImageFolder"].ToString();
+					dataRow["insurance"]="";
+					long planNum1=PIn.Long(rowRaw["InsPlan1"].ToString());
+					long planNum2=PIn.Long(rowRaw["InsPlan2"].ToString());
+					if(planNum1>0 && dictCarriers.ContainsKey(planNum1)) {
+						dataRow["insurance"]+=Lans.g("Appointments","Ins1")+": "+dictCarriers[planNum1];
+						dataRow["insColor1"]=dictCarrierColors[planNum1];
+					}
+					if(planNum2>0 && dictCarriers.ContainsKey(planNum2)) {
+						if(dataRow["insurance"].ToString()!="") {
+							dataRow["insurance"]+="\r\n";
 						}
-						if(laboratoryCur!=null && listLabCasesAptNum.Count>1) {
-							//Only add the laboratory description if more than 1 labcase per appointment.
-							labText+=laboratoryCur.Description+": ";
-						}
-						dateTLab=labCaseCur.DateTimeChecked;
+						dataRow["insurance"]+=Lans.g("Appointments","Ins2")+": "+dictCarriers[planNum2];
+						dataRow["insColor2"]=dictCarrierColors[planNum2];
+					}
+					if(rowRaw["hasIns"].ToString()!="0"&&dataRow["insurance"].ToString()=="") {
+						dataRow["insurance"]=Lans.g("Appointments","Insured");
+					}
+					dataRow["insToSend[!]"]="";
+					if(hasInsToSend) {
+						dataRow["insToSend[!]"]="!";
+					}
+					dataRow["Priority"]=rowRaw["Priority"].ToString();
+					dataRow["IsHygiene"]=rowRaw["apptIsHygiene"].ToString();
+					dataRow["lab"]="";
+					if(rowRaw["labcaseLabCaseNum"].ToString()!="") {
+						dateTLab=PIn.DateT(rowRaw["labcaseDateTimeChecked"].ToString());
 						if(dateTLab.Year>1880) {
-							labText+=Lans.g("Appointments","Lab Quality Checked");
+							dataRow["lab"]=Lans.g("Appointments","Lab Quality Checked");
 						}
 						else {
-							dateTLab=labCaseCur.DateTimeRecd;
+							dateTLab=PIn.DateT(rowRaw["labcaseDateTimeRecd"].ToString());
 							if(dateTLab.Year>1880) {
-								labText+=Lans.g("Appointments","Lab Received");
+								dataRow["lab"]=Lans.g("Appointments","Lab Received");
 							}
 							else {
-								dateTLab=labCaseCur.DateTimeSent;
+								dateTLab=PIn.DateT(rowRaw["labcaseDateTimeSent"].ToString());
 								if(dateTLab.Year>1880) {
-									labText+=Lans.g("Appointments","Lab Sent");//sent but not received
+									dataRow["lab"]=Lans.g("Appointments","Lab Sent");//sent but not received
 								}
 								else {
-									labText+=Lans.g("Appointments","Lab Not Sent");
+									dataRow["lab"]=Lans.g("Appointments","Lab Not Sent");
 								}
-								dateTLabDue=labCaseCur.DateTimeDue;
+								dateTLabDue=PIn.DateT(rowRaw["labcaseDateTimeDue"].ToString());
 								if(dateTLabDue.Year>1880) {
-									labText+=", "+Lans.g("Appointments","Due: ")//+dateDue.ToString("ddd")+" "
+									dataRow["lab"]+=", "+Lans.g("Appointments","Due: ")//+dateDue.ToString("ddd")+" "
 										+dateTLabDue.ToShortDateString();//+" "+dateDue.ToShortTimeString();
 								}
 							}
 						}
 					}
-					dataRow["lab"]=labText;
-				}
-				CultureInfo cultureInfo=CodeBase.MiscUtils.GetCultureFromThreeLetter(tableRaw.Rows[d]["patLanguage"].ToString());
-				if(cultureInfo==null) {//custom language
-					dataRow["language"]=tableRaw.Rows[d]["patLanguage"].ToString();
-				}
-				else {
-					dataRow["language"]=cultureInfo.DisplayName;
-				}
-				dataRow["medOrPremed[+]"]="";
-				long apptPatNum=PIn.Long(tableRaw.Rows[d]["apptPatNum"].ToString());
-				if(tableRaw.Rows[d]["patMedUrgNote"].ToString()!=""||tableRaw.Rows[d]["patPremed"].ToString()=="1"
-					||listPatNumsWithDisease.Contains(apptPatNum)||listPatNumsWithAllergy.Contains(apptPatNum)) {
-					dataRow["medOrPremed[+]"]="+";
-				}
-				dataRow["MedUrgNote"]=tableRaw.Rows[d]["patMedUrgNote"].ToString();
-				dataRow["Note"]=tableRaw.Rows[d]["apptNote"].ToString();
-				dataRow["Op"]=tableRaw.Rows[d]["apptOp"].ToString();
-				if(tableRaw.Rows[d]["apptIsNewPatient"].ToString()=="1") {
-					dataRow["patientName"]="NP-";
-				}
-				dataRow["patientName"]+=PatientLogic.GetNameLF(tableRaw.Rows[d]["patLName"].ToString(),tableRaw.Rows[d]["patFName"].ToString(),
-					tableRaw.Rows[d]["patPreferred"].ToString(),tableRaw.Rows[d]["patMiddleI"].ToString());
-				if(tableRaw.Rows[d]["apptIsNewPatient"].ToString()=="1") {
-					dataRow["patientNameF"]="NP-";
-				}
-				dataRow["patientNameF"]+=tableRaw.Rows[d]["patFName"].ToString();
-				dataRow["patientNamePref"]+=tableRaw.Rows[d]["patPreferred"].ToString();
-				dataRow["PatNum"]=tableRaw.Rows[d]["apptPatNum"].ToString();
-				dataRow["patNum"]="PatNum: "+tableRaw.Rows[d]["apptPatNum"].ToString();
-				dataRow["GuarNum"]=tableRaw.Rows[d]["patGuarantor"].ToString();
-				dataRow["patNumAndName"]="";
-				if(tableRaw.Rows[d]["apptIsNewPatient"].ToString()=="1") {
-					dataRow["patNumAndName"]="NP-";
-				}
-				dataRow["patNumAndName"]+=tableRaw.Rows[d]["apptPatNum"].ToString()+" "
-					+PatientLogic.GetNameLF(tableRaw.Rows[d]["patLName"].ToString(),tableRaw.Rows[d]["patFName"].ToString(),
-					tableRaw.Rows[d]["patPreferred"].ToString(),tableRaw.Rows[d]["patMiddleI"].ToString());
-				dataRow["Pattern"]=tableRaw.Rows[d]["apptPattern"].ToString();
-				dataRow["PatternSecondary"]=tableRaw.Rows[d]["apptPatternSecondary"].ToString();
-				dataRow["preMedFlag"]="";
-				if(tableRaw.Rows[d]["patPremed"].ToString()=="1") {
-					dataRow["preMedFlag"]=Lans.g("Appointments","Premedicate");
-				}
-				dataRow["procs"]=tableRaw.Rows[d]["apptProcDescript"].ToString();
-				dataRow["procsColored"]+=tableRaw.Rows[d]["apptProcsColored"].ToString();
-				productionAmt=0;
-				writeoffPPOAmt=0;
-				insAmt=0;
-				decimal adjAmtForAppt=0;
-				decimal discountPlanAmt=0;
-				decimal procDiscountAmt=0;
-				if(tableRawProc!=null) {
-					for(int p = 0;p<tableRawProc.Rows.Count;p++) {
-						ProcStat procStat=PIn.Enum<ProcStat>(PIn.Int(tableRawProc.Rows[p]["ProcStatus"].ToString()));
-						if(isPlanned && tableRaw.Rows[d]["apptAptNum"].ToString()!=tableRawProc.Rows[p]["PlannedAptNum"].ToString()) {
-							continue;
-						}
-						else if(!isPlanned && tableRaw.Rows[d]["apptAptNum"].ToString()!=tableRawProc.Rows[p]["AptNum"].ToString()) {
-							continue;
-						}
-						//We only want to include C, TP, and TPi procedures in the production calculation.
-						if(!procStat.In(ProcStat.C,ProcStat.TP,ProcStat.TPi)) {
-							continue;
-						}
-						decimal procFee=PIn.Decimal(tableRawProc.Rows[p]["ProcFee"].ToString());
-						productionAmt+=procFee;
-						productionAmt-=PIn.Decimal(tableRawProc.Rows[p]["writeoffCap"].ToString());
-						//WriteOffEst -1 and WriteOffEstOverride -1 already excluded
-						//production-=
-						writeoffPPOAmt+=PIn.Decimal(tableRawProc.Rows[p]["writeoffPPO"].ToString());//frequently zero
-						insAmt+=PIn.Decimal(tableRawProc.Rows[p]["insAmt"].ToString());
-						adjAmtForAppt+=listAdjustments.Where(x => x.ProcNum==PIn.Long(tableRawProc.Rows[p]["ProcNum"].ToString())).Sum(x => (decimal)x.AdjAmt);
-						if(tableRawProcLab!=null) { //Will be null if not Canada.
-							for(int a = 0;a<tableRawProcLab.Rows.Count;a++) {
-								if(tableRawProcLab.Rows[a]["ProcNumLab"].ToString()==tableRawProc.Rows[p]["ProcNum"].ToString()) {
-									productionAmt+=PIn.Decimal(tableRawProcLab.Rows[a]["ProcFee"].ToString());
-									productionAmt-=PIn.Decimal(tableRawProcLab.Rows[a]["writeoffCap"].ToString());
-									writeoffPPOAmt+=PIn.Decimal(tableRawProcLab.Rows[a]["writeoffPPO"].ToString());//frequently zero
-									insAmt+=PIn.Decimal(tableRawProc.Rows[p]["insAmt"].ToString());
-									adjAmtForAppt+=listAdjustments.Where(x => x.ProcNum==PIn.Long(tableRawProcLab.Rows[a]["ProcNum"].ToString())).Sum(x => (decimal)x.AdjAmt);
-								}
-							}
-						}
-						if(procStat!=ProcStat.C) {
-							procDiscountAmt+=PIn.Decimal(tableRawProc.Rows[p]["Discount"].ToString());//procedurelog.Discount
-							decimal procDiscountPlanAmount=PIn.Decimal(tableRawProc.Rows[p]["DiscountPlanAmt"].ToString());//procedurelog.DiscountPlanAmt
-							if(discountPlan!=null && CompareDecimal.IsGreaterThanOrEqualToZero(procDiscountPlanAmount)) {
-								discountPlanAmt+=procDiscountPlanAmount;
-							}
-						}
+					CultureInfo cultureInfo=CodeBase.MiscUtils.GetCultureFromThreeLetter(rowRaw["patLanguage"].ToString());
+					if(cultureInfo==null) {//custom language
+						dataRow["language"]=rowRaw["patLanguage"].ToString();
 					}
-				}
-				dataRow["prophy/PerioPastDue[P]"]=(Recalls.IsPatientPastDue(PIn.Long(tableRaw.Rows[d]["apptPatNum"].ToString()),dateTApt,true,listRecallsPastDue)? "P":"");
-				dataRow["production"]=productionAmt.ToString("c");//PIn.Double(tableRaw.Rows[r]["Production"].ToString()).ToString("c");
-				dataRow["productionVal"]=productionAmt.ToString();//tableRaw.Rows[r]["Production"].ToString();
-				decimal netProductionAmt=(productionAmt-writeoffPPOAmt-discountPlanAmt);
-				if(PrefC.GetBool(PrefName.ApptModuleAdjustmentsInProd)) {
-					netProductionAmt+=adjAmtForAppt-procDiscountAmt;
-				}
-				dataRow["netProduction"]=netProductionAmt.ToString("c");
-				dataRow["netProductionVal"]=netProductionAmt.ToString();
-				decimal feePatientPortion=Math.Max(productionAmt-writeoffPPOAmt+adjAmtForAppt-insAmt-discountPlanAmt-procDiscountAmt,0);
-				dataRow["estPatientPortion"]=feePatientPortion.ToString("c");
-				dataRow["estPatientPortionRaw"]=feePatientPortion;
-				dataRow["adjustmentTotal"]=adjustmentAmt.ToString();
-				dataRow["ProvBarText"]=tableRaw.Rows[d]["ProvBarText"].ToString();
-				long apptProvNum=PIn.Long(tableRaw.Rows[d]["apptProvNum"].ToString());
-				long apptProvHyg=PIn.Long(tableRaw.Rows[d]["apptProvHyg"].ToString());
-				if(tableRaw.Rows[d]["apptIsHygiene"].ToString()=="1") {
-					dataRow["provider"]=Providers.GetAbbr(apptProvHyg);
-					if(apptProvNum!=0) {
-						dataRow["provider"]+=" ("+Providers.GetAbbr(apptProvNum)+")";
+					else {
+						dataRow["language"]=cultureInfo.DisplayName;
 					}
-				}
-				else {
-					dataRow["provider"]=Providers.GetAbbr(apptProvNum);
-					if(apptProvHyg!=0) {
-						dataRow["provider"]+=" ("+Providers.GetAbbr(apptProvHyg)+")";
+					dataRow["medOrPremed[+]"]="";
+					long apptPatNum=PIn.Long(rowRaw["apptPatNum"].ToString());
+					if(rowRaw["patMedUrgNote"].ToString()!=""||rowRaw["patPremed"].ToString()=="1"
+						||listPatNumsWithDisease.Contains(apptPatNum)||listPatNumsWithAllergy.Contains(apptPatNum)) {
+						dataRow["medOrPremed[+]"]="+";
 					}
-				}
-				dataRow["ProvNum"]=tableRaw.Rows[d]["apptProvNum"].ToString();
-				dataRow["ProvHyg"]=tableRaw.Rows[d]["apptProvHyg"].ToString();
-				dataRow["recallPastDue[R]"]=(Recalls.IsPatientPastDue(PIn.Long(tableRaw.Rows[d]["apptPatNum"].ToString()),dateTApt,false,listRecallsPastDue) ? "R" : "");
-				string referralFrom="";
-				string referralFromWithPhone="";
-				string referralTo="";
-				string referralToWithPhone="";
-				List<RefAttach> listRefAttachesFrom=listRefAttaches.FindAll(x=>x.RefType==ReferralType.RefFrom && x.PatNum==apptPatNum);
-				if(listRefAttachesFrom.Count>0) {
-					List<long> listReferralNums=listRefAttachesFrom.Select(x=>x.ReferralNum).ToList();
-					List<Referral> listReferralsFrom=listReferrals.FindAll(x=>listReferralNums.Contains(x.ReferralNum));
-					referralFrom=Lans.g("Appointment",$"Referred From:")+"\r\n"
-						+string.Join("\r\n",listReferralsFrom.Select(x=>x.LName+", "+x.FName));
-					referralFromWithPhone=Lans.g("Appointment",$"Referred From With Phone:")+"\r\n";
-					for(int f=0;f<listReferralsFrom.Count;f++) {
-						if(f>0){
-							referralFromWithPhone+="\r\n";
-						}
-						referralFromWithPhone+=listReferralsFrom[f].LName+", "+listReferralsFrom[f].FName+" ";
-						string phoneNum=TelephoneNumbers.AutoFormat(listReferralsFrom[f].Telephone);
-						if(phoneNum=="") {
-							phoneNum=Lans.g("Appointments","(No Phone Number)");
-						}
-						referralFromWithPhone+=phoneNum;
+					dataRow["MedUrgNote"]=rowRaw["patMedUrgNote"].ToString();
+					dataRow["Note"]=rowRaw["apptNote"].ToString();
+					dataRow["Op"]=rowRaw["apptOp"].ToString();
+					if(rowRaw["apptIsNewPatient"].ToString()=="1") {
+						dataRow["patientName"]="NP-";
 					}
-				}
-				List<RefAttach> listRefAttachesTo=listRefAttaches.FindAll(x=>x.RefType==ReferralType.RefTo && x.PatNum==apptPatNum);
-				if(listRefAttachesTo.Count>0) {
-					List<long> listReferralNums=listRefAttachesTo.Select(x=>x.ReferralNum).ToList();
-					List<Referral> listReferralsTo=listReferrals.FindAll(x=>listReferralNums.Contains(x.ReferralNum));
-					referralTo=Lans.g("Appointment",$"Referred To:")+"\r\n"
-						+string.Join("\r\n",listReferralsTo.Select(x=>x.LName+", "+x.FName));
-					referralToWithPhone=Lans.g("Appointment",$"Referred To With Phone:")+"\r\n";
-					for(int t = 0;t<listReferralsTo.Count;t++) {
-						if(t>0) {
-							referralToWithPhone+="\r\n";
-						}
-						referralToWithPhone+=listReferralsTo[t].LName+", "+listReferralsTo[t].FName+" ";
-						string phoneNum = TelephoneNumbers.AutoFormat(listReferralsTo[t].Telephone);
-						if(phoneNum=="") {
-							phoneNum=Lans.g("Appointments","(No Phone Number)");
-						}
-						referralToWithPhone+=phoneNum;
+					dataRow["patientName"]+=PatientLogic.GetNameLF(rowRaw["patLName"].ToString(),rowRaw["patFName"].ToString(),
+						rowRaw["patPreferred"].ToString(),rowRaw["patMiddleI"].ToString());
+					if(rowRaw["apptIsNewPatient"].ToString()=="1") {
+						dataRow["patientNameF"]="NP-";
 					}
-				}
-				dataRow["referralFrom"]=referralFrom;
-				dataRow["referralFromWithPhone"]=referralFromWithPhone;
-				dataRow["referralTo"]=referralTo;
-				dataRow["referralToWithPhone"]=referralToWithPhone;
-				dataRow["timeAskedToArrive"]="";
-				timeAskedToArrive=PIn.DateT(tableRaw.Rows[d]["apptDateTimeAskedToArrive"].ToString());
-				if(timeAskedToArrive.Year>1880) {
-					dataRow["timeAskedToArrive"]=timeAskedToArrive.ToString("H:mm");
-				}
-				if(includeVerifyIns){
-					DateTime dateTimeLastPlanBenefitsStandard=DateTime.Today.AddDays(-PrefC.GetInt(PrefName.InsVerifyBenefitEligibilityDays));
-					DateTime dateTimeLastPatEligibilityStandard=DateTime.Today.AddDays(-PrefC.GetInt(PrefName.InsVerifyPatientEnrollmentDays));
-					DateTime dateTimeLastPlanBenefitsMedicaid=DateTime.Today.AddDays(-PrefC.GetInt(PrefName.InsVerifyBenefitEligibilityDaysMedicaid));
-					DateTime dateTimeLastPatEligibilityMedicaid=DateTime.Today.AddDays(-PrefC.GetInt(PrefName.InsVerifyPatientEnrollmentDaysMedicaid));
-					bool excludePatVerify=PrefC.GetBool(PrefName.InsVerifyExcludePatVerify);
-					List<string> listInsVerifyMedicaidFilingCodes=PrefC.GetString(PrefName.InsVerifyMedicaidFilingCodes).Split(",",StringSplitOptions.RemoveEmptyEntries).ToList();
-					//Convert InsVerifyMedicaidFilingCodes pref into a list of longs
-					List<long> listInsVerifyMedicaidFilingCodeNums=listInsVerifyMedicaidFilingCodes.Select(x => PIn.Long(x,hasExceptions:false)).ToList();
-					if(tableInsVerify!=null && tableInsVerify.Rows.Count!=0) {
-						for(int v=0; v<tableInsVerify.Rows.Count; v++) {
-							//Here we're dealing with InsPlans, so the PlanNum is the FKey.
-							long insVerifyRowPlanNum=PIn.Long(tableInsVerify.Rows[v]["FKey"].ToString());
-							InsPlan insPlan=listInsPlans.Find(x=>x.PlanNum==insVerifyRowPlanNum);
-							if(PIn.Long(tableRaw.Rows[d]["InsPlan1"].ToString())==insVerifyRowPlanNum) {
-								if(VerifyTypes.InsuranceBenefit!=PIn.Enum<VerifyTypes>(tableInsVerify.Rows[v]["VerifyType"].ToString())) {
-									continue;
-								}
-								if(PIn.Bool(tableInsVerify.Rows[v]["HideFromVerifyList"].ToString())) {
-									continue;//Specifically marked as don't verify, so skip it
-								}
-								DateTime dateLastPlanBenefits=dateTimeLastPlanBenefitsStandard;
-								if(insPlan!=null && listInsVerifyMedicaidFilingCodeNums.Contains(insPlan.FilingCode)){ //If this filing code is for Medicaid, use Medicaid timing.
-									dateLastPlanBenefits=dateTimeLastPlanBenefitsMedicaid;
-								}
-								if(PIn.Date(tableInsVerify.Rows[v]["DateLastVerified"].ToString())<dateLastPlanBenefits) {
-									dataRow["verifyIns[V]"]="V";
-									break;
-								}
-							}
-							if(PIn.Long(tableRaw.Rows[d]["InsPlan2"].ToString())==insVerifyRowPlanNum) {
-								if(VerifyTypes.InsuranceBenefit!=PIn.Enum<VerifyTypes>(tableInsVerify.Rows[v]["VerifyType"].ToString())) {
-									continue;
-								}
-								if(PIn.Bool(tableInsVerify.Rows[v]["HideFromVerifyList"].ToString())) {
-									continue;
-								}
-								DateTime dateLastPlanBenefits=dateTimeLastPlanBenefitsStandard;
-								if(insPlan!=null && listInsVerifyMedicaidFilingCodeNums.Contains(insPlan.FilingCode)){ //If this filing code is for Medicaid, use Medicaid timing.
-									dateLastPlanBenefits=dateTimeLastPlanBenefitsMedicaid;
-								}
-								if(PIn.Date(tableInsVerify.Rows[v]["DateLastVerified"].ToString())<dateLastPlanBenefits) {
-									dataRow["verifyIns[V]"]="V";
-									break;
-								}
-							}
-							if(VerifyTypes.PatientEnrollment!=PIn.Enum<VerifyTypes>(tableInsVerify.Rows[v]["VerifyType"].ToString())) {
+					dataRow["patientNameF"]+=rowRaw["patFName"].ToString();
+					dataRow["patientNamePref"]+=rowRaw["patPreferred"].ToString();
+					dataRow["PatNum"]=rowRaw["apptPatNum"].ToString();
+					dataRow["patNum"]="PatNum: "+rowRaw["apptPatNum"].ToString();
+					dataRow["GuarNum"]=rowRaw["patGuarantor"].ToString();
+					dataRow["patNumAndName"]="";
+					if(rowRaw["apptIsNewPatient"].ToString()=="1") {
+						dataRow["patNumAndName"]="NP-";
+					}
+					dataRow["patNumAndName"]+=rowRaw["apptPatNum"].ToString()+" "
+						+PatientLogic.GetNameLF(rowRaw["patLName"].ToString(),rowRaw["patFName"].ToString(),
+						rowRaw["patPreferred"].ToString(),rowRaw["patMiddleI"].ToString());
+					dataRow["Pattern"]=rowRaw["apptPattern"].ToString();
+					dataRow["PatternSecondary"]=rowRaw["apptPatternSecondary"].ToString();
+					dataRow["preMedFlag"]="";
+					if(rowRaw["patPremed"].ToString()=="1") {
+						dataRow["preMedFlag"]=Lans.g("Appointments","Premedicate");
+					}
+					dataRow["procs"]=rowRaw["apptProcDescript"].ToString();
+					dataRow["procsColored"]+=rowRaw["apptProcsColored"].ToString();
+					productionAmt=0;
+					writeoffPPOAmt=0;
+					insAmt=0;
+					decimal adjAmtForAppt=0;
+					decimal discountPlanAmt=0;
+					decimal procDiscountAmt=0;
+					if(tableRawProc!=null) {
+						for(int p = 0;p<tableRawProc.Rows.Count;p++) {
+							ProcStat procStat=PIn.Enum<ProcStat>(PIn.Int(tableRawProc.Rows[p]["ProcStatus"].ToString()));
+							if(isPlanned && rowRaw["apptAptNum"].ToString()!=tableRawProc.Rows[p]["PlannedAptNum"].ToString()) {
 								continue;
 							}
-							if(apptPatNum!=PIn.Long(tableInsVerify.Rows[v]["PatNum"].ToString())) {
+							else if(!isPlanned && rowRaw["apptAptNum"].ToString()!=tableRawProc.Rows[p]["AptNum"].ToString()) {
 								continue;
 							}
-							if(excludePatVerify) {
-								bool isExcluded=false;
-								//On a PatPlan row, we do not have any info about the plan except the PlanNum.
-								//That info is guaranteed to be on another row. If this assumption is wrong, the loop is harmless.
-								for(int i=0; i<tableInsVerify.Rows.Count;i++) {
-									if(PIn.Long(tableInsVerify.Rows[i]["FKey"].ToString())==PIn.Long(tableInsVerify.Rows[v]["PlanNum"].ToString())) {
-										if(PIn.Bool(tableInsVerify.Rows[i]["HideFromVerifyList"].ToString())) {
-											isExcluded=true;
-											break;
-										}
+							//We only want to include C, TP, and TPi procedures in the production calculation.
+							if(!procStat.In(ProcStat.C,ProcStat.TP,ProcStat.TPi)) {
+								continue;
+							}
+							decimal procFee=PIn.Decimal(tableRawProc.Rows[p]["ProcFee"].ToString());
+							productionAmt+=procFee;
+							productionAmt-=PIn.Decimal(tableRawProc.Rows[p]["writeoffCap"].ToString());
+							//WriteOffEst -1 and WriteOffEstOverride -1 already excluded
+							//production-=
+							writeoffPPOAmt+=PIn.Decimal(tableRawProc.Rows[p]["writeoffPPO"].ToString());//frequently zero
+							insAmt+=PIn.Decimal(tableRawProc.Rows[p]["insAmt"].ToString());
+							adjAmtForAppt+=listAdjustments.Where(x => x.ProcNum==PIn.Long(tableRawProc.Rows[p]["ProcNum"].ToString())).Sum(x => (decimal)x.AdjAmt);
+							if(tableRawProcLab!=null) { //Will be null if not Canada.
+								for(int a = 0;a<tableRawProcLab.Rows.Count;a++) {
+									if(tableRawProcLab.Rows[a]["ProcNumLab"].ToString()==tableRawProc.Rows[p]["ProcNum"].ToString()) {
+										productionAmt+=PIn.Decimal(tableRawProcLab.Rows[a]["ProcFee"].ToString());
+										productionAmt-=PIn.Decimal(tableRawProcLab.Rows[a]["writeoffCap"].ToString());
+										writeoffPPOAmt+=PIn.Decimal(tableRawProcLab.Rows[a]["writeoffPPO"].ToString());//frequently zero
+										insAmt+=PIn.Decimal(tableRawProc.Rows[p]["insAmt"].ToString());
+										adjAmtForAppt+=listAdjustments.Where(x => x.ProcNum==PIn.Long(tableRawProcLab.Rows[a]["ProcNum"].ToString())).Sum(x => (decimal)x.AdjAmt);
 									}
 								}
-								if(isExcluded) {
-									continue; //Skip any patplan that is a part of an insplan that is marked as "Don't Verify"
+							}
+							if(procStat!=ProcStat.C) {
+								procDiscountAmt+=PIn.Decimal(tableRawProc.Rows[p]["Discount"].ToString());//procedurelog.Discount
+								decimal procDiscountPlanAmount=PIn.Decimal(tableRawProc.Rows[p]["DiscountPlanAmt"].ToString());//procedurelog.DiscountPlanAmt
+								if(discountPlan!=null && CompareDecimal.IsGreaterThanOrEqualToZero(procDiscountPlanAmount)) {
+									discountPlanAmt+=procDiscountPlanAmount;
 								}
-							}
-							//At this point, we're dealing with a PatPlan, so the FKey is the PatPlanNum. We need the PlanNum instead.
-							insPlan=listInsPlans.Find(x=>x.PlanNum==PIn.Long(tableInsVerify.Rows[v]["PlanNum"].ToString()));
-							DateTime dateLastPatEligibility=dateTimeLastPatEligibilityStandard;
-							if(insPlan!=null && listInsVerifyMedicaidFilingCodeNums.Contains(insPlan.FilingCode)){ //If this filing code is for Medicaid, use Medicaid timing.
-								dateLastPatEligibility=dateTimeLastPatEligibilityMedicaid;
-							}
-							if(PIn.Date(tableInsVerify.Rows[v]["DateLastVerified"].ToString())<dateLastPatEligibility) {
-								dataRow["verifyIns[V]"]="V";
-								break;
 							}
 						}
 					}
-				}
-				dataRow["wirelessPhone"]=Lans.g("Appointments","Cell: ")+tableRaw.Rows[d]["patWirelessPhone"].ToString();
-				dataRow["wkPhone"]=Lans.g("Appointments","Wk: ")+tableRaw.Rows[d]["patWkPhone"].ToString();
-				dataRow["writeoffPPO"]=writeoffPPOAmt.ToString();
-				#endregion Make Row
-				table.Rows.Add(dataRow);
+					dataRow["prophy/PerioPastDue[P]"]=(Recalls.IsPatientPastDue(PIn.Long(rowRaw["apptPatNum"].ToString()),dateTApt,true,listRecallsPastDue)? "P":"");
+					dataRow["production"]=productionAmt.ToString("c");//PIn.Double(rowRaw["Production"].ToString()).ToString("c");
+					dataRow["productionVal"]=productionAmt.ToString();//rowRaw["Production"].ToString();
+					decimal netProductionAmt=(productionAmt-writeoffPPOAmt-discountPlanAmt);
+					if(PrefC.GetBool(PrefName.ApptModuleAdjustmentsInProd)) {
+						netProductionAmt+=adjAmtForAppt-procDiscountAmt;
+					}
+					dataRow["netProduction"]=netProductionAmt.ToString("c");
+					dataRow["netProductionVal"]=netProductionAmt.ToString();
+					decimal feePatientPortion=Math.Max(productionAmt-writeoffPPOAmt+adjAmtForAppt-insAmt-discountPlanAmt-procDiscountAmt,0);
+					dataRow["estPatientPortion"]=feePatientPortion.ToString("c");
+					dataRow["estPatientPortionRaw"]=feePatientPortion;
+					dataRow["adjustmentTotal"]=adjustmentAmt.ToString();
+					dataRow["ProvBarText"]=rowRaw["ProvBarText"].ToString();
+					long apptProvNum=PIn.Long(rowRaw["apptProvNum"].ToString());
+					long apptProvHyg=PIn.Long(rowRaw["apptProvHyg"].ToString());
+					if(rowRaw["apptIsHygiene"].ToString()=="1") {
+						dataRow["provider"]=Providers.GetAbbr(apptProvHyg);
+						if(apptProvNum!=0) {
+							dataRow["provider"]+=" ("+Providers.GetAbbr(apptProvNum)+")";
+						}
+					}
+					else {
+						dataRow["provider"]=Providers.GetAbbr(apptProvNum);
+						if(apptProvHyg!=0) {
+							dataRow["provider"]+=" ("+Providers.GetAbbr(apptProvHyg)+")";
+						}
+					}
+					dataRow["ProvNum"]=rowRaw["apptProvNum"].ToString();
+					dataRow["ProvHyg"]=rowRaw["apptProvHyg"].ToString();
+					dataRow["recallPastDue[R]"]=(Recalls.IsPatientPastDue(PIn.Long(rowRaw["apptPatNum"].ToString()),dateTApt,false,listRecallsPastDue) ? "R" : "");
+					string referralFrom="";
+					string referralFromWithPhone="";
+					string referralTo="";
+					string referralToWithPhone="";
+					if(dictPatientRefInfos.ContainsKey(apptPatNum)) {//Add this patient's referrals
+						List<ApptBubbleReferralInfo> listApptBubbleReferralInfosFrom=dictPatientRefInfos[apptPatNum].FindAll(x => x.RefType==ReferralType.RefFrom);
+						if(!listApptBubbleReferralInfosFrom.IsNullOrEmpty()) {
+							if(listApptBubbleReferralInfosFrom.Any(x => !string.IsNullOrEmpty(x.Name))) {
+								referralFrom=Lans.g("Appointment",$"Referred From:")+"\r\n"
+									+string.Join("\r\n",listApptBubbleReferralInfosFrom.Select(x => x.Name));
+								referralFromWithPhone=Lans.g("Appointment",$"Referred From With Phone:")+"\r\n"
+									+string.Join("\r\n",listApptBubbleReferralInfosFrom.Select(x => x.Name+" "+x.PhoneNumber));
+							}
+						}
+						List<ApptBubbleReferralInfo> listApptBubbleReferralInfosTo=dictPatientRefInfos[apptPatNum].FindAll(x => x.RefType==ReferralType.RefTo);
+						if(!listApptBubbleReferralInfosTo.IsNullOrEmpty()) {
+							if(listApptBubbleReferralInfosTo.Any(x => !string.IsNullOrEmpty(x.Name))) {
+								referralTo=Lans.g("Appointment",$"Referred To:")+"\r\n"
+									+string.Join("\r\n",listApptBubbleReferralInfosTo.Select(x => x.Name));
+								referralToWithPhone=Lans.g("Appointment",$"Referred To With Phone:")+"\r\n"
+									+string.Join("\r\n",listApptBubbleReferralInfosTo.Select(x => x.Name+" "+x.PhoneNumber));
+							}
+						}
+					}
+					dataRow["referralFrom"]=referralFrom;
+					dataRow["referralFromWithPhone"]=referralFromWithPhone;
+					dataRow["referralTo"]=referralTo;
+					dataRow["referralToWithPhone"]=referralToWithPhone;
+					dataRow["timeAskedToArrive"]="";
+					timeAskedToArrive=PIn.DateT(rowRaw["apptDateTimeAskedToArrive"].ToString());
+					if(timeAskedToArrive.Year>1880) {
+						dataRow["timeAskedToArrive"]=timeAskedToArrive.ToString("H:mm");
+					}
+					if(includeVerifyIns){
+						DateTime dateTimeLastPlanBenefitsStandard=DateTime.Today.AddDays(-PrefC.GetInt(PrefName.InsVerifyBenefitEligibilityDays));
+						DateTime dateTimeLastPatEligibilityStandard=DateTime.Today.AddDays(-PrefC.GetInt(PrefName.InsVerifyPatientEnrollmentDays));
+						DateTime dateTimeLastPlanBenefitsMedicaid=DateTime.Today.AddDays(-PrefC.GetInt(PrefName.InsVerifyBenefitEligibilityDaysMedicaid));
+						DateTime dateTimeLastPatEligibilityMedicaid=DateTime.Today.AddDays(-PrefC.GetInt(PrefName.InsVerifyPatientEnrollmentDaysMedicaid));
+						bool excludePatVerify=PrefC.GetBool(PrefName.InsVerifyExcludePatVerify);
+						List<string> listInsVerifyMedicaidFilingCodes=PrefC.GetString(PrefName.InsVerifyMedicaidFilingCodes).Split(",",StringSplitOptions.RemoveEmptyEntries).ToList();
+						//Convert InsVerifyMedicaidFilingCodes pref into a list of longs
+						List<long> listInsVerifyMedicaidFilingCodeNums=listInsVerifyMedicaidFilingCodes.Select(x => PIn.Long(x,hasExceptions:false)).ToList();
+						if(tableInsVerify!=null && tableInsVerify.Rows.Count!=0) {
+							for(int v=0; v<tableInsVerify.Rows.Count; v++) {
+								//Here we're dealing with InsPlans, so the PlanNum is the FKey.
+								long insVerifyRowPlanNum=PIn.Long(tableInsVerify.Rows[v]["FKey"].ToString());
+								InsPlan insPlan=listInsPlans.Find(x=>x.PlanNum==insVerifyRowPlanNum);
+								if(PIn.Long(rowRaw["InsPlan1"].ToString())==insVerifyRowPlanNum) {
+									if(VerifyTypes.InsuranceBenefit!=PIn.Enum<VerifyTypes>(tableInsVerify.Rows[v]["VerifyType"].ToString())) {
+										continue;
+									}
+									if(PIn.Bool(tableInsVerify.Rows[v]["HideFromVerifyList"].ToString())) {
+										continue;//Specifically marked as don't verify, so skip it
+									}
+									DateTime dateLastPlanBenefits=dateTimeLastPlanBenefitsStandard;
+									if(insPlan!=null && listInsVerifyMedicaidFilingCodeNums.Contains(insPlan.FilingCode)){ //If this filing code is for Medicaid, use Medicaid timing.
+										dateLastPlanBenefits=dateTimeLastPlanBenefitsMedicaid;
+									}
+									if(PIn.Date(tableInsVerify.Rows[v]["DateLastVerified"].ToString())<dateLastPlanBenefits) {
+										dataRow["verifyIns[V]"]="V";
+										break;
+									}
+								}
+								if(PIn.Long(rowRaw["InsPlan2"].ToString())==insVerifyRowPlanNum) {
+									if(VerifyTypes.InsuranceBenefit!=PIn.Enum<VerifyTypes>(tableInsVerify.Rows[v]["VerifyType"].ToString())) {
+										continue;
+									}
+									if(PIn.Bool(tableInsVerify.Rows[v]["HideFromVerifyList"].ToString())) {
+										continue;
+									}
+									DateTime dateLastPlanBenefits=dateTimeLastPlanBenefitsStandard;
+									if(insPlan!=null && listInsVerifyMedicaidFilingCodeNums.Contains(insPlan.FilingCode)){ //If this filing code is for Medicaid, use Medicaid timing.
+										dateLastPlanBenefits=dateTimeLastPlanBenefitsMedicaid;
+									}
+									if(PIn.Date(tableInsVerify.Rows[v]["DateLastVerified"].ToString())<dateLastPlanBenefits) {
+										dataRow["verifyIns[V]"]="V";
+										break;
+									}
+								}
+								if(VerifyTypes.PatientEnrollment!=PIn.Enum<VerifyTypes>(tableInsVerify.Rows[v]["VerifyType"].ToString())) {
+									continue;
+								}
+								if(apptPatNum!=PIn.Long(tableInsVerify.Rows[v]["PatNum"].ToString())) {
+									continue;
+								}
+								if(excludePatVerify) {
+									bool isExcluded=false;
+									//On a PatPlan row, we do not have any info about the plan except the PlanNum.
+									//That info is guaranteed to be on another row. If this assumption is wrong, the loop is harmless.
+									for(int i=0; i<tableInsVerify.Rows.Count;i++) {
+										if(PIn.Long(tableInsVerify.Rows[i]["FKey"].ToString())==PIn.Long(tableInsVerify.Rows[v]["PlanNum"].ToString())) {
+											if(PIn.Bool(tableInsVerify.Rows[i]["HideFromVerifyList"].ToString())) {
+												isExcluded=true;
+												break;
+											}
+										}
+									}
+									if(isExcluded) {
+										continue; //Skip any patplan that is a part of an insplan that is marked as "Don't Verify"
+									}
+								}
+								//At this point, we're dealing with a PatPlan, so the FKey is the PatPlanNum. We need the PlanNum instead.
+								insPlan=listInsPlans.Find(x=>x.PlanNum==PIn.Long(tableInsVerify.Rows[v]["PlanNum"].ToString()));
+								DateTime dateLastPatEligibility=dateTimeLastPatEligibilityStandard;
+								if(insPlan!=null && listInsVerifyMedicaidFilingCodeNums.Contains(insPlan.FilingCode)){ //If this filing code is for Medicaid, use Medicaid timing.
+									dateLastPatEligibility=dateTimeLastPatEligibilityMedicaid;
+								}
+								if(PIn.Date(tableInsVerify.Rows[v]["DateLastVerified"].ToString())<dateLastPatEligibility) {
+									dataRow["verifyIns[V]"]="V";
+									break;
+								}
+							}
+						}
+					}
+					dataRow["wirelessPhone"]=Lans.g("Appointments","Cell: ")+rowRaw["patWirelessPhone"].ToString();
+					dataRow["wkPhone"]=Lans.g("Appointments","Wk: ")+rowRaw["patWkPhone"].ToString();
+					dataRow["writeoffPPO"]=writeoffPPOAmt.ToString();
+					#endregion Make Row
+					lock (locker) {
+						table.Rows.Add(dataRow);
+					}
+				}));
+			}
+			if(listActions.Count<=500) {
+				//Per https://docs.microsoft.com/en-us/dotnet/api/system.data.datatable?view=netframework-4.8, DataTable is not thread-safe for write 
+				//operations.  Even with locking the creation/addition of the DataRow, simply writing to various fields has been shown to occasionally drop
+				//data.  In the case of B16298, this resulted in appointments disappearing from view due to AptDateTime field not being set.  Building each 
+				//DataRow synchronously avoids the issue with DataTable thread safety.  Additionally, testing has shown that for fewer than 500 rows, it is 
+				//faster to run synchronously.  Most ApptViews are expected to result in this DataTable containing fewer than 500 rows, which correlates to 
+				//an ApptView with 20 operatories with 25 appointments per operatory.
+				listActions.ForEach(x => x());
+			}
+			else {
+				//However, there are valid scenarios where a large customer may have a very large DataTable being built here.  Synchronously building each
+				//row results in unacceptable slowness in this method, and was the original reason these actions were threaded.  Setting the type on the 
+				//AptDateTime and AptDateTimeArrived fields has been shown to dramatically, but not fully, reduce the occurrence of dropped data.  Logic has
+				//been added in the individual actions to attempt to validate/reset AptDateTime and AtpDateTimeArrived when these fields are not set 
+				//correctly.
+				ODThread.RunParallel(listActions,TimeSpan.FromMinutes(1));
 			}
 			return table;
 		}
@@ -1945,7 +1916,6 @@ namespace OpenDentBusiness{
 			table.Columns.Add("AptNum");
 			table.Columns.Add("age");
 			table.Columns.Add("AptDateTime",typeof(DateTime));
-			table.Columns.Add("clinicNumApt");
 			table.Columns.Add("ClinicNum");//patient.ClinicNum
 			table.Columns.Add("confirmed");
 			table.Columns.Add("contactMethod");
@@ -1966,21 +1936,20 @@ namespace OpenDentBusiness{
 			table.Columns.Add("PatNum");
 			table.Columns.Add("PreferConfirmMethod");
 			table.Columns.Add("Preferred");
-			table.Columns.Add("PriProv");
 			table.Columns.Add("ProcDescript");
 			table.Columns.Add("TxtMsgOk");
 			table.Columns.Add("WirelessPhone");
 			List<DataRow> listDataRows=new List<DataRow>();
 			string command="SELECT patient.PatNum,patient.LName,patient.FName,patient.Preferred,patient.LName,patient.Guarantor,"
-				+"AptDateTime,patient.Birthdate,patient.ClinicNum,patient.HmPhone,patient.TxtMsgOk,patient.WkPhone,patient.PriProv,"
+				+"AptDateTime,patient.Birthdate,patient.ClinicNum,patient.HmPhone,patient.TxtMsgOk,patient.WkPhone,"
 				+"patient.WirelessPhone,appointment.ProcDescript,appointment.Confirmed,appointment.Note,patient.AddrNote,appointment.AptNum,patient.MedUrgNote,"
 				+"patient.PreferConfirmMethod,guar.Email guarEmail,guar.WirelessPhone guarWirelessPhone,guar.TxtMsgOK guarTxtMsgOK,guar.ClinicNum guarClinicNum,"
 				+"guar.PreferConfirmMethod guarPreferConfirmMethod,patient.Email,patient.Premed,appointment.DateTimeAskedToArrive,securitylog.LogDateTime,"
-				+"guar.FName AS guarNameF,appointment.ClinicNum clinicNumApt "
+				+"guar.FName AS guarNameF "
 				+"FROM patient "
 				+"INNER JOIN appointment ON appointment.PatNum=patient.PatNum "
 				+"INNER JOIN patient guar ON guar.PatNum=patient.Guarantor "
-				+"LEFT JOIN securitylog ON securitylog.PatNum=appointment.PatNum AND securitylog.PermType="+POut.Int((int)EnumPermType.AppointmentCreate)+" "
+				+"LEFT JOIN securitylog ON securitylog.PatNum=appointment.PatNum AND securitylog.PermType="+POut.Int((int)Permissions.AppointmentCreate)+" "
 					+"AND securitylog.FKey=appointment.AptNum ";
 			if(groupFamilies) {
 				command+="INNER JOIN ("
@@ -2053,7 +2022,6 @@ namespace OpenDentBusiness{
 				dataRow["AptNum"]=tableRaw.Rows[i]["AptNum"].ToString();
 				dataRow["age"]=Patients.DateToAge(PIn.Date(tableRaw.Rows[i]["Birthdate"].ToString())).ToString();//we don't care about m/y.
 				dataRow["AptDateTime"]=PIn.DateT(tableRaw.Rows[i]["AptDateTime"].ToString());
-				dataRow["clinicNumApt"]=tableRaw.Rows[i]["clinicNumApt"].ToString();
 				dataRow["DateTimeAskedToArrive"]=PIn.DateT(tableRaw.Rows[i]["DateTimeAskedToArrive"].ToString());
 				dataRow["ClinicNum"]=tableRaw.Rows[i]["ClinicNum"].ToString();
 				dataRow["confirmed"]=Defs.GetName(DefCat.ApptConfirmed,PIn.Long(tableRaw.Rows[i]["Confirmed"].ToString()));
@@ -2124,7 +2092,6 @@ namespace OpenDentBusiness{
 				dataRow["PatNum"]=tableRaw.Rows[i]["PatNum"].ToString();
 				dataRow["PreferConfirmMethod"]=tableRaw.Rows[i]["PreferConfirmMethod"].ToString();
 				dataRow["Preferred"]=tableRaw.Rows[i]["Preferred"].ToString();
-				dataRow["PriProv"]=tableRaw.Rows[i]["PriProv"].ToString();
 				dataRow["ProcDescript"]=tableRaw.Rows[i]["ProcDescript"].ToString();
 				dataRow["TxtMsgOk"]=tableRaw.Rows[i]["TxtMsgOk"].ToString();
 				dataRow["WirelessPhone"]=tableRaw.Rows[i]["WirelessPhone"].ToString();
@@ -2141,7 +2108,6 @@ namespace OpenDentBusiness{
 			table.Columns.Add("Address");//Can be guar.
 			table.Columns.Add("Address2");//Can be guar.
 			table.Columns.Add("AptDateTime");
-			table.Columns.Add("clinicNumApt");
 			table.Columns.Add("City");//Can be guar.
 			table.Columns.Add("clinicNum");//will be the guar clinicNum if grouped.
 			table.Columns.Add("DateTimeAskedToArrive");
@@ -2169,7 +2135,7 @@ namespace OpenDentBusiness{
 				return table;
 			}
 			string command = "SELECT patient.LName,patient.FName,patient.MiddleI,patient.Preferred, patient.Address,patient.Address2,patient.City,"
-				+"patient.State,patient.Zip,patient.Guarantor,patient.Email,appointment.AptDateTime,appointment.ClinicNum clinicNumApt,patient.PatNum,patient.ClinicNum,"
+				+"patient.State,patient.Zip,patient.Guarantor,patient.Email,appointment.AptDateTime,appointment.ClinicNum,patient.PatNum,"
 				+"appointment.DateTimeAskedToArrive,guar.Address AS guarAddress,guar.Address2 AS guarAddress2,"
 				+"guar.ClinicNum AS guarClinicNum,guar.FName AS guarFName,guar.LName AS guarLName,guar.State AS guarState,"
 				+"guar.Zip AS guarZip, guar.City AS guarCity, guar.Email as guarEmail "
@@ -2193,7 +2159,6 @@ namespace OpenDentBusiness{
 				};
 				DateTime dateTimeApt=PIn.Date(tableRaw.Rows[i]["AptDateTime"].ToString());
 				DateTime dateTimeAskedToArrive=PIn.Date(tableRaw.Rows[i]["DateTimeAskedToArrive"].ToString());
-				long clinicNumApt=PIn.Long(tableRaw.Rows[i]["clinicNumApt"].ToString());
 				if(!groupByFamily) {
 					dataRow=table.NewRow();
 					dataRow["Address"]=tableRaw.Rows[i]["Address"].ToString();
@@ -2202,7 +2167,6 @@ namespace OpenDentBusiness{
 					}
 					dataRow["City"]=tableRaw.Rows[i]["City"].ToString();
 					dataRow["clinicNum"]=tableRaw.Rows[i]["ClinicNum"].ToString();
-					dataRow["clinicNumApt"]=clinicNumApt;
 					dataRow["AptDateTime"]=dateTimeApt;
 					dataRow["DateTimeAskedToArrive"]=dateTimeAskedToArrive;
 					//since not grouping by family, this is always just the patient email
@@ -2235,7 +2199,6 @@ namespace OpenDentBusiness{
 						dataRow["State"]=tableRaw.Rows[i]["State"].ToString();
 						dataRow["Zip"]=tableRaw.Rows[i]["Zip"].ToString();
 						dataRow["clinicNum"]=tableRaw.Rows[i]["ClinicNum"].ToString();
-						dataRow["clinicNumApt"]=clinicNumApt;
 						dataRow["AptDateTime"]=dateTimeApt;
 						dataRow["DateTimeAskedToArrive"]=dateTimeAskedToArrive;
 						//this will always be the guarantor email
@@ -2252,13 +2215,13 @@ namespace OpenDentBusiness{
 						continue;
 					}
 					else{//this is the first patient of a family with multiple family members
-						strFamilyAptList=PatComm.BuildAppointmentMessage(patient,dateTimeAskedToArrive,dateTimeApt,clinicNumApt:clinicNumApt);
+						strFamilyAptList=PatComm.BuildAppointmentMessage(patient,dateTimeAskedToArrive,dateTimeApt);
 						patNumStr=tableRaw.Rows[i]["PatNum"].ToString();
 						continue;
 					}
 				}
 				else{//not the first patient
-					strFamilyAptList+="\r\n"+PatComm.BuildAppointmentMessage(patient,dateTimeAskedToArrive,dateTimeApt,clinicNumApt:clinicNumApt);
+					strFamilyAptList+="\r\n"+PatComm.BuildAppointmentMessage(patient,dateTimeAskedToArrive,dateTimeApt);
 					patNumStr+=","+tableRaw.Rows[i]["PatNum"].ToString();
 				}
 				if(i==tableRaw.Rows.Count-1//if this is the last row
@@ -2274,7 +2237,6 @@ namespace OpenDentBusiness{
 					dataRow["State"]=tableRaw.Rows[i]["guarState"].ToString();
 					dataRow["Zip"]=tableRaw.Rows[i]["guarZip"].ToString();
 					dataRow["clinicNum"]=tableRaw.Rows[i]["guarClinicNum"].ToString();
-					dataRow["clinicNumApt"]=clinicNumApt;
 					dataRow["AptDateTime"]=dateTimeApt;
 					dataRow["DateTimeAskedToArrive"]=dateTimeAskedToArrive;
 					dataRow["email"]=tableRaw.Rows[i]["guarEmail"].ToString();
@@ -2405,14 +2367,14 @@ namespace OpenDentBusiness{
 
 		///<summary>Gets one appointment from db.  Returns null if not found.</summary>
 		public static Appointment GetOneApt(long aptNum) {
-			if(aptNum==0) {
-				return null;
-			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<Appointment>(MethodBase.GetCurrentMethod(),aptNum);
 			}
+			if(aptNum==0) {
+				return null;
+			}
 			string command="SELECT * FROM appointment "
-				+"WHERE AptNum = "+POut.Long(aptNum);
+				+"WHERE AptNum = '"+POut.Long(aptNum)+"'";
 			return Crud.AppointmentCrud.SelectOne(command);
 		}
 
@@ -2504,15 +2466,16 @@ namespace OpenDentBusiness{
 			return aptnums;
 		}
 
-		///<summary>Gets a list of appointments for the AptNums passed in.</summary>
-		public static List<Appointment> GetMultApts(List<long> listAptNums) {
-			if(listAptNums.IsNullOrEmpty()) {
+		///<summary>Used along with GetChangedSinceAptNums</summary>
+		public static List<Appointment> GetMultApts(List<long> aptNums) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Appointment>>(MethodBase.GetCurrentMethod(),aptNums);
+			}
+			if(aptNums.Count < 1) {
 				return new List<Appointment>();
 			}
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Appointment>>(MethodBase.GetCurrentMethod(),listAptNums);
-			}
-			string command="SELECT * FROM appointment WHERE AptNum IN ("+string.Join(",",listAptNums)+")";
+			string command="";
+			command="SELECT * FROM appointment WHERE AptNum IN ("+string.Join(",",aptNums)+")";
 			return Crud.AppointmentCrud.SelectMany(command);
 		}
 
@@ -2692,23 +2655,20 @@ namespace OpenDentBusiness{
 			DateTime dateTimeServer=PIn.DateT(OpenDentBusiness.Db.GetScalar(commandDatetime));//run before appts for rigorous inclusion of appts
 			List<Appointment> listAppointments=Crud.AppointmentCrud.SelectMany(command);
 			if(listCodeNums.Count>0 && listAppointments.Count>0) {
-				//Get every procedure's CodeNum and it's corresponding AptNum/PlannedAptNum for all appointments in listAppts.
-				command="SELECT procedurelog.AptNum,procedurelog.PlannedAptNum,procedurelog.CodeNum "
+				//Get every procedure's CodeNum and it's corresponding AptNum for all appointments in listAppts.
+				command="SELECT procedurelog.AptNum,procedurelog.CodeNum "
 					+"FROM procedurelog "
 					+"WHERE procedurelog.AptNum IN("+string.Join(",",listAppointments.Select(x => POut.Long(x.AptNum)))+") "
-					+"OR procedurelog.PlannedAptNum IN("+string.Join(",",listAppointments.Select(x => POut.Long(x.AptNum)))+") "
-					+"GROUP BY procedurelog.AptNum,procedurelog.PlannedAptNum,procedurelog.CodeNum";
+					+"GROUP BY procedurelog.AptNum,procedurelog.CodeNum";
 				//Sam and Saul tried to speed this up many different ways. This was the best way to make sure we always use indexes on procedurelog.
 				var listFilteredAptNum=Db.GetTable(command).AsEnumerable()
 					.Select(x => new {
 						AptNum=PIn.Long(x["AptNum"].ToString()),
-						PlannedApptNum=PIn.Long(x["PlannedAptNum"].ToString()),
 						CodeNum=PIn.Long(x["CodeNum"].ToString()),
 					})
 					//We only care about code nums that were included in the range provided.
 					.Where(x => listCodeNums.Any(y => y==x.CodeNum))
-					//If the appointment is Unscheduled and Planned, the AptNum will be 0.
-					.Select(x => x.AptNum>0?x.AptNum:x.PlannedApptNum).ToList();
+					.Select(x => x.AptNum).ToList();
 				//Remove the appointments that are not in the list of filtered AptNums.
 				listAppointments.RemoveAll(x => !listFilteredAptNum.Contains(x.AptNum));
 			}
@@ -2770,23 +2730,20 @@ namespace OpenDentBusiness{
 			+"ORDER BY appointment.AptDateTime";
 			List<Appointment> listAppointments=Crud.AppointmentCrud.SelectMany(command);
 			if(listCodeNums.Count>0 && listAppointments.Count>0) {
-				//Get every procedure's CodeNum and it's corresponding AptNum/PlannedAptNum for all appointments in listAppts.
-				command="SELECT procedurelog.AptNum,procedurelog.PlannedAptNum,procedurelog.CodeNum "
+				//Get every procedure's CodeNum and it's corresponding AptNum for all appointments in listAppts.
+				command="SELECT procedurelog.AptNum,procedurelog.CodeNum "
 					+"FROM procedurelog "
 					+"WHERE procedurelog.AptNum IN("+string.Join(",",listAppointments.Select(x => POut.Long(x.AptNum)))+") "
-					+"OR procedurelog.PlannedAptNum IN("+string.Join(",",listAppointments.Select(x => POut.Long(x.AptNum)))+") "
-					+"GROUP BY procedurelog.AptNum,procedurelog.PlannedAptNum,procedurelog.CodeNum";
+					+"GROUP BY procedurelog.AptNum,procedurelog.CodeNum";
 				//Sam and Saul tried to speed this up many different ways. This was the best way to make sure we always use indexes on procedurelog.
 				var listFilteredAptNum=Db.GetTable(command).AsEnumerable()
 					.Select(x => new {
 						AptNum=PIn.Long(x["AptNum"].ToString()),
-						PlannedApptNum=PIn.Long(x["PlannedAptNum"].ToString()),
 						CodeNum=PIn.Long(x["CodeNum"].ToString()),
 					})
 					//We only care about code nums that were included in the range provided.
 					.Where(x => listCodeNums.Any(y => y==x.CodeNum))
-					//If the appointment is Unscheduled and Planned, the AptNum will be 0.
-					.Select(x => x.AptNum>0?x.AptNum:x.PlannedApptNum).ToList();
+					.Select(x => x.AptNum).ToList();
 				//Remove the appointments that are not in the list of filtered AptNums.
 				listAppointments.RemoveAll(x => !listFilteredAptNum.Contains(x.AptNum));
 			}
@@ -2990,7 +2947,7 @@ namespace OpenDentBusiness{
 			}
 			//Now, loop through all the other appointments for the day, and see if any would overlap this one
 			bool overlaps;
-			List<Procedure> listProcedures;
+			Procedure[] procedureArray;
 			bool isDoubleBooked=false;//applies to all appts, not just one at a time.
 			DateTime dateTimeApt;
 			for(int i=0;i<tableDay.Rows.Count;i++){
@@ -3031,9 +2988,9 @@ namespace OpenDentBusiness{
 				}
 				if(overlaps){
 					//we need to add all codes for this appt to retVal
-					listProcedures=Procedures.GetProcsOneApt(PIn.Long(tableDay.Rows[i]["AptNum"].ToString()),listProceduresMultApts);
-					for(int j=0;j<listProcedures.Count;j++){
-						listProcCodes.Add(ProcedureCodes.GetStringProcCode(listProcedures[j].CodeNum));
+					procedureArray=Procedures.GetProcsOneApt(PIn.Long(tableDay.Rows[i]["AptNum"].ToString()),listProceduresMultApts);
+					for(int j=0;j<procedureArray.Length;j++){
+						listProcCodes.Add(ProcedureCodes.GetStringProcCode(procedureArray[j].CodeNum));
 					}
 				}
 			}
@@ -3192,7 +3149,7 @@ namespace OpenDentBusiness{
 				//claimnum
 				//nextaptnum
 				procedure.BaseUnits=procedureCode.BaseUnits;
-				Procedures.SetDiagnosticCodesToDefault(procedure,procedureCode);
+				procedure.DiagnosticCode=PrefC.GetString(PrefName.ICD9DefaultForNewProcs);
 				procedure.PlaceService=Clinics.GetPlaceService(procedure.ClinicNum);
 				if(Userods.IsUserCpoe(Security.CurUser)) {
 					//This procedure is considered CPOE because the provider is the one that has added it.
@@ -3342,7 +3299,7 @@ namespace OpenDentBusiness{
 			if(PrefC.GetLong(PrefName.AppointmentTimeArrivedTrigger)==defNumApptConfirmed) {
 				command+=",DateTimeArrived="+POut.DateT(DateTime.Now);
 				if(createSheetsForCheckin) {
-				   Sheets.CreateSheetsForCheckIn(appointment);
+					Sheets.CreateSheetsForCheckIn(appointment);
 				}
 			}
 			else if(PrefC.GetLong(PrefName.AppointmentTimeSeatedTrigger)==defNumApptConfirmed){
@@ -3413,13 +3370,13 @@ namespace OpenDentBusiness{
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),patNum);
 				return;
 			}
-			Family family=Patients.GetFamily(patNum);
+			Family fam=Patients.GetFamily(patNum);
 			List<PatPlan> listPatPlans=PatPlans.Refresh(patNum);
-			List<InsSub> listInsSubs=InsSubs.RefreshForFam(family);
+			List<InsSub> listInsSubs=InsSubs.RefreshForFam(fam);
 			List<InsPlan> listInsPlans=InsPlans.RefreshForSubList(listInsSubs);
-			InsSub insSub1=InsSubs.GetSub(PatPlans.GetInsSubNum(listPatPlans,PatPlans.GetOrdinal(PriSecMed.Primary,listPatPlans,listInsPlans,listInsSubs)),listInsSubs);
-			InsSub insSub2=InsSubs.GetSub(PatPlans.GetInsSubNum(listPatPlans,PatPlans.GetOrdinal(PriSecMed.Secondary,listPatPlans,listInsPlans,listInsSubs)),listInsSubs);
-			Appointments.UpdateInsPlansForPatHelper(patNum,insSub1.PlanNum,insSub2.PlanNum);
+			InsSub sub1=InsSubs.GetSub(PatPlans.GetInsSubNum(listPatPlans,PatPlans.GetOrdinal(PriSecMed.Primary,listPatPlans,listInsPlans,listInsSubs)),listInsSubs);
+			InsSub sub2=InsSubs.GetSub(PatPlans.GetInsSubNum(listPatPlans,PatPlans.GetOrdinal(PriSecMed.Secondary,listPatPlans,listInsPlans,listInsSubs)),listInsSubs);
+			Appointments.UpdateInsPlansForPatHelper(patNum,sub1.PlanNum,sub2.PlanNum);
 		}
 
 		///<summary>Updates InsPlan1 and InsPlan2 for every appointment that isn't completed, broken, or a patient note for the patient passed in. Do not
@@ -3447,23 +3404,23 @@ namespace OpenDentBusiness{
 			}
 		}
 
-		public static void UpdateProcDescriptionForAppt(Procedure procedureNew,Procedure procedureOld) {
-			if(procedureNew.AptNum==0 && procedureNew.PlannedAptNum==0 && procedureOld.AptNum==0 && procedureOld.PlannedAptNum==0) {
+		public static void UpdateProcDescriptionForAppt(Procedure procNew,Procedure procOld) {
+			if(procNew.AptNum==0 && procNew.PlannedAptNum==0 && procOld.AptNum==0 && procOld.PlannedAptNum==0) {
 				return;//Nothing to update.
 			}
-			long aptNum=procedureNew.AptNum>0 ? procedureNew.AptNum : procedureNew.PlannedAptNum;
-			Appointment appointment;
-			if(procedureNew.AptNum==0 && procedureOld.AptNum>0) {
-				aptNum=procedureOld.AptNum;
+			long aptNum=procNew.AptNum>0 ? procNew.AptNum : procNew.PlannedAptNum;
+			Appointment apt;
+			if(procNew.AptNum==0 && procOld.AptNum>0) {
+				aptNum=procOld.AptNum;
 			}
-			else if(procedureNew.PlannedAptNum==0 && procedureOld.PlannedAptNum>0) {
-				aptNum=procedureOld.PlannedAptNum;
+			else if(procNew.PlannedAptNum==0 && procOld.PlannedAptNum>0) {
+				aptNum=procOld.PlannedAptNum;
 			}
-			appointment=GetOneApt(aptNum);
-			if(appointment==null) {
+			apt=GetOneApt(aptNum);
+			if(apt==null) {
 				return;//Apt not found in db, most likely deleted.
 			}
-			UpdateProcDescriptForAppts(new List<Appointment>() { appointment });
+			UpdateProcDescriptForAppts(new List<Appointment>() { apt });
 		}
 
 		///<summary>Updates the ProcDesript and ProcsColored to be current for every appointment passed in.
@@ -3478,106 +3435,87 @@ namespace OpenDentBusiness{
 				if(apt==null) {
 					continue;
 				}
-				Appointment appointmentOld = apt.Copy();
+				Appointment aptOld = apt.Copy();
 				SetProcDescript(apt);
-				if(Appointments.Update(apt,appointmentOld)) {
-					Signalods.SetInvalidAppt(apt,appointmentOld);
+				if(Appointments.Update(apt,aptOld)) {
+					Signalods.SetInvalidAppt(apt,aptOld);
 				}
 			}
 		}
 
 		///<summary>Updates the ColorOverride for all future appointments of the specified AppointmentType (including all made for today). </summary>
-		public static void UpdateFutureApptColorForApptType(AppointmentType appointmentType) {
+		public static void UpdateFutureApptColorForApptType(AppointmentType apptType) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),appointmentType);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),apptType);
 				return;
 			}
 			string command="SELECT * FROM appointment "
 				+"WHERE AptDateTime >= "+POut.Date(DateTime.Today)
-				+"AND AppointmentTypeNum = "+POut.Long(appointmentType.AppointmentTypeNum);
+				+"AND AppointmentTypeNum = "+POut.Long(apptType.AppointmentTypeNum);
 			List<Appointment> listAppointments=Crud.AppointmentCrud.SelectMany(command);
 			for(int i = 0;i<listAppointments.Count;i++) {
 				Appointment appointmentNew=listAppointments[i].Copy();
-				appointmentNew.ColorOverride=appointmentType.AppointmentTypeColor;
+				appointmentNew.ColorOverride=apptType.AppointmentTypeColor;
 				Update(appointmentNew,listAppointments[i]);
 			}
 		}
 
 		///<summary>Inserts or updates the appointment and makes any other related updates to the database.</summary>
 		///<exception cref="ApplicationException" />
-		public static ApptSaveHelperResult ApptSaveHelper(Appointment appointment,Appointment appointmentOld,bool isInsertRequired,List<Procedure> listProceduresForAppt,
+		public static ApptSaveHelperResult ApptSaveHelper(Appointment aptCur,Appointment aptOld,bool isInsertRequired,List<Procedure> listProcsForAppt,
 			List<Appointment> listAppointments,List<int> listSelectedIndices,List<long> listProcNumsAttachedStart,bool isPlanned,
-			List<InsPlan> listInsPlans,List<InsSub> listInsSubs,long selectedProvNum,long selectedProvHygNum,List<Procedure> listProceduresSelected,bool isNew,
-			Patient patient,Family family,bool updateProcFees,bool removeCompleteProcs,bool createSecLog,bool insertHL7) 
+			List<InsPlan> listInsPlans,List<InsSub> listInsSubs,long selectedProvNum,long selectedProvHygNum,List<Procedure> listProcsSelected,bool isNew,
+			Patient pat,Family fam,bool doUpdateProcFees,bool doRemoveCompleteProcs,bool doCreateSecLog,bool doInsertHL7) 
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<ApptSaveHelperResult>(MethodBase.GetCurrentMethod(),appointment,appointmentOld,isInsertRequired,listProceduresForAppt,listAppointments,
-					listSelectedIndices,listProcNumsAttachedStart,isPlanned,listInsPlans,listInsSubs,selectedProvNum,selectedProvHygNum,listProceduresSelected,isNew,
-					patient,family,updateProcFees,removeCompleteProcs,createSecLog,insertHL7);
+				return Meth.GetObject<ApptSaveHelperResult>(MethodBase.GetCurrentMethod(),aptCur,aptOld,isInsertRequired,listProcsForAppt,listAppointments,
+					listSelectedIndices,listProcNumsAttachedStart,isPlanned,listInsPlans,listInsSubs,selectedProvNum,selectedProvHygNum,listProcsSelected,isNew,
+					pat,fam,doUpdateProcFees,doRemoveCompleteProcs,doCreateSecLog,doInsertHL7);
 			}
-			ApptSaveHelperResult apptSaveHelperResult=new ApptSaveHelperResult();
-			DateTime dateTPrevious=appointment.DateTStamp;
+			ApptSaveHelperResult retVal=new ApptSaveHelperResult();
+			DateTime datePrevious=aptCur.DateTStamp;
 			if(isInsertRequired) {
-				Appointments.Insert(appointment);
-				//If we are on middle tier, the reference to appointment will not be in the listAppointments anymore.
-				//If not on middle tier, the reference to appointment will be the same as what's in the list, so we don't need to add again.
+				Appointments.Insert(aptCur);
+				//If we are on middle tier, the reference to aptCur will not be in the listAppointments anymore.
+				//If not on middle tier, the reference to aptCur will be the same as what's in the list, so we don't need to add again.
 				if(listAppointments.RemoveAll(x => x.AptNum==0) > 0) {
-					listAppointments.Add(appointment);
+					listAppointments.Add(aptCur);
 				}
 			}
 			else {
-				Appointments.Update(appointment,appointmentOld);
-				//If we are on middle tier, the reference to appointment will not be in the listAppointments anymore.
-				//If not on middle tier, the reference to appointment will be the same as what's in the list, so we don't need to add again.
-				if(listAppointments.RemoveAll(x => x.AptNum==appointment.AptNum)>0) {
-					listAppointments.Add(appointment);
+				Appointments.Update(aptCur,aptOld);
+				//If we are on middle tier, the reference to aptCur will not be in the listAppointments anymore.
+				//If not on middle tier, the reference to aptCur will be the same as what's in the list, so we don't need to add again.
+				if(listAppointments.RemoveAll(x => x.AptNum==aptCur.AptNum)>0) {
+					listAppointments.Add(aptCur);
 				}
 			}
-			if(appointment.AptStatus==ApptStatus.Planned) {
-				List<Appointment> listAppointmentsChecks=listAppointments;
-				for(int i = 0; i<listAppointments.Count;i++) {
-					if(listAppointments[i].AptNum==appointment.AptNum || listAppointments[i].AptStatus==ApptStatus.Planned) {
-						continue;
-					}
-					//We must go to db to get these procedures because AptNum is wrong.
-					if(!listProceduresSelected.Any(x=>Procedures.GetOneProc(x.ProcNum,false).AptNum==listAppointments[i].AptNum)) {
-						continue;
-					}
-					//We now know that the scheduled appt in this loop has one of our procs attached.
-					//Mark this appointment as being derived from the planned appointment we are saving.
-					//It's harmless if we set this field on multiple scheduled appts.
-					//In that case, when putting a planned appt on the pinboard, it will just use the first one it finds.
-					Appointment appointmentScheduled=listAppointments[i].Copy();
-					appointmentScheduled.NextAptNum=appointment.AptNum;//planned AptNum
-					Appointments.Update(appointmentScheduled,listAppointments[i]);
-				}
-			}
-			Procedures.ProcsAptNumHelper(listProceduresForAppt,appointment,listAppointments,listSelectedIndices,listProcNumsAttachedStart,isPlanned);			
-			apptSaveHelperResult.DoRunAutomation=Procedures.UpdateProcsInApptHelper(listProceduresForAppt,patient,appointment,appointmentOld,listInsPlans,listInsSubs,listSelectedIndices,
-				removeCompleteProcs,updateProcFees);
+			Procedures.ProcsAptNumHelper(listProcsForAppt,aptCur,listAppointments,listSelectedIndices,listProcNumsAttachedStart,isPlanned);			
+			retVal.DoRunAutomation=Procedures.UpdateProcsInApptHelper(listProcsForAppt,pat,aptCur,aptOld,listInsPlans,listInsSubs,listSelectedIndices,
+				doRemoveCompleteProcs,doUpdateProcFees);
 			if(isInsertRequired) {
-				listProceduresForAppt.AddRange(TryAddPerVisitProcCodesToAppt(appointment,ApptStatus.None));
+				listProcsForAppt.AddRange(TryAddPerVisitProcCodesToAppt(aptCur,ApptStatus.None));
 			}
 			else {
-				listProceduresForAppt.AddRange(TryAddPerVisitProcCodesToAppt(appointment,appointmentOld.AptStatus));
+				listProcsForAppt.AddRange(TryAddPerVisitProcCodesToAppt(aptCur,aptOld.AptStatus));
 			}
-			if(!isNew && appointment.Confirmed!=appointmentOld.Confirmed) {
+			if(!isNew && aptCur.Confirmed!=aptOld.Confirmed) {
 				//Log confirmation status changes.
-				SecurityLogs.MakeLogEntry(EnumPermType.ApptConfirmStatusEdit,patient.PatNum,"Appointment confirmation status changed from"+" "
-					+Defs.GetName(DefCat.ApptConfirmed,appointmentOld.Confirmed)+" to "+Defs.GetName(DefCat.ApptConfirmed,appointment.Confirmed)
-					+" from the appointment edit window.",appointment.AptNum,dateTPrevious);
+				SecurityLogs.MakeLogEntry(Permissions.ApptConfirmStatusEdit,pat.PatNum,"Appointment confirmation status changed from"+" "
+					+Defs.GetName(DefCat.ApptConfirmed,aptOld.Confirmed)+" to "+Defs.GetName(DefCat.ApptConfirmed,aptCur.Confirmed)
+					+" from the appointment edit window.",aptCur.AptNum,datePrevious);
 			}
 			bool isCreateAppt=false;
 			bool isAptCreatedOrEdited=false;
 			if(isNew) {
-				if(appointment.AptStatus==ApptStatus.UnschedList && appointment.AptDateTime==DateTime.MinValue) { //If new appt is being added directly to pinboard
+				if(aptCur.AptStatus==ApptStatus.UnschedList && aptCur.AptDateTime==DateTime.MinValue) { //If new appt is being added directly to pinboard
 					//Do nothing.  Log will be created when appointment is dragged off the pinboard.
 				}
 				else {
-					if(createSecLog) {
-						SecurityLogs.MakeLogEntry(EnumPermType.AppointmentCreate,patient.PatNum,
-							appointment.AptDateTime.ToString()+", "+appointment.ProcDescript,
-							appointment.AptNum,dateTPrevious);
+					if(doCreateSecLog) {
+						SecurityLogs.MakeLogEntry(Permissions.AppointmentCreate,pat.PatNum,
+							aptCur.AptDateTime.ToString()+", "+aptCur.ProcDescript,
+							aptCur.AptNum,datePrevious);
 					}
 					isAptCreatedOrEdited=true;
 					isCreateAppt=true;
@@ -3585,27 +3523,27 @@ namespace OpenDentBusiness{
 			}
 			else {
 				string logEntryMessage="";
-				if(appointment.AptStatus==ApptStatus.Complete) {
-					string newCarrierName1=InsPlans.GetCarrierName(appointment.InsPlan1,listInsPlans);
-					string newCarrierName2=InsPlans.GetCarrierName(appointment.InsPlan2,listInsPlans);
-					string oldCarrierName1=InsPlans.GetCarrierName(appointmentOld.InsPlan1,listInsPlans);
-					string oldCarrierName2=InsPlans.GetCarrierName(appointmentOld.InsPlan2,listInsPlans);
-					if(appointmentOld.InsPlan1!=appointment.InsPlan1) {
-						if(appointment.InsPlan1==0) {
+				if(aptCur.AptStatus==ApptStatus.Complete) {
+					string newCarrierName1=InsPlans.GetCarrierName(aptCur.InsPlan1,listInsPlans);
+					string newCarrierName2=InsPlans.GetCarrierName(aptCur.InsPlan2,listInsPlans);
+					string oldCarrierName1=InsPlans.GetCarrierName(aptOld.InsPlan1,listInsPlans);
+					string oldCarrierName2=InsPlans.GetCarrierName(aptOld.InsPlan2,listInsPlans);
+					if(aptOld.InsPlan1!=aptCur.InsPlan1) {
+						if(aptCur.InsPlan1==0) {
 							logEntryMessage+="\r\nRemoved "+oldCarrierName1+" for InsPlan1";
 						}
-						else if(appointmentOld.InsPlan1==0) {
+						else if(aptOld.InsPlan1==0) {
 							logEntryMessage+="\r\nAdded "+newCarrierName1+" for InsPlan1";
 						}
 						else {
 							logEntryMessage+="\r\nChanged "+oldCarrierName1+" to "+newCarrierName1+" for InsPlan1";
 						}
 					}
-					if(appointmentOld.InsPlan2!=appointment.InsPlan2) {
-						if(appointment.InsPlan2==0) {
+					if(aptOld.InsPlan2!=aptCur.InsPlan2) {
+						if(aptCur.InsPlan2==0) {
 							logEntryMessage+="\r\nRemoved "+oldCarrierName2+" for InsPlan2";
 						}
-						else if(appointmentOld.InsPlan2==0) {
+						else if(aptOld.InsPlan2==0) {
 							logEntryMessage+="\r\nAdded "+newCarrierName2+" for InsPlan2";
 						}
 						else {
@@ -3613,52 +3551,52 @@ namespace OpenDentBusiness{
 						}
 					}
 				}
-				if(createSecLog) {
-					if(appointmentOld.AptStatus==ApptStatus.Complete) {//seperate log entry for completed appointments
-						SecurityLogs.MakeLogEntry(EnumPermType.AppointmentCompleteEdit,patient.PatNum,
-							appointment.AptDateTime.ToShortDateString()+", "+appointment.ProcDescript+logEntryMessage,appointment.AptNum,dateTPrevious);
+				if(doCreateSecLog) {
+					if(aptOld.AptStatus==ApptStatus.Complete) {//seperate log entry for completed appointments
+						SecurityLogs.MakeLogEntry(Permissions.AppointmentCompleteEdit,pat.PatNum,
+							aptCur.AptDateTime.ToShortDateString()+", "+aptCur.ProcDescript+logEntryMessage,aptCur.AptNum,datePrevious);
 					}
 					else {
-						string logText=appointment.AptDateTime.ToShortDateString()+", "+appointment.ProcDescript;
-						if(appointment.AptStatus==ApptStatus.Complete) {
+						string logText=aptCur.AptDateTime.ToShortDateString()+", "+aptCur.ProcDescript;
+						if(aptCur.AptStatus==ApptStatus.Complete) {
 							logText+=", Set Complete";//Podium expects this exact text in the security log when the appointment was set complete.
 						}
 						logText+=logEntryMessage;
-						SecurityLogs.MakeLogEntry(EnumPermType.AppointmentEdit,patient.PatNum,logText,appointment.AptNum,dateTPrevious);
+						SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,pat.PatNum,logText,aptCur.AptNum,datePrevious);
 					}
 				}
 				isAptCreatedOrEdited=true;
 			}
 			//If there is an existing HL7 def enabled, send a SIU message if there is an outbound SIU message defined
-			if(isAptCreatedOrEdited && insertHL7 && HL7Defs.IsExistingHL7Enabled()) {
+			if(isAptCreatedOrEdited && doInsertHL7 && HL7Defs.IsExistingHL7Enabled()) {
 				//S14 - Appt Modification event, S12 - New Appt Booking event
 				MessageHL7 messageHL7=null;
 				if(isCreateAppt) {
-					messageHL7=MessageConstructor.GenerateSIU(patient,family.GetPatient(patient.Guarantor),EventTypeHL7.S12,appointment);
+					messageHL7=MessageConstructor.GenerateSIU(pat,fam.GetPatient(pat.Guarantor),EventTypeHL7.S12,aptCur);
 				}
 				else {
-					messageHL7=MessageConstructor.GenerateSIU(patient,family.GetPatient(patient.Guarantor),EventTypeHL7.S14,appointment);
+					messageHL7=MessageConstructor.GenerateSIU(pat,fam.GetPatient(pat.Guarantor),EventTypeHL7.S14,aptCur);
 				}
 				//Will be null if there is no outbound SIU message defined, so do nothing
 				if(messageHL7!=null) {
 					HL7Msg hl7Msg=new HL7Msg();
-					hl7Msg.AptNum=appointment.AptNum;
+					hl7Msg.AptNum=aptCur.AptNum;
 					hl7Msg.HL7Status=HL7MessageStatus.OutPending;//it will be marked outSent by the HL7 service.
 					hl7Msg.MsgText=messageHL7.ToString();
-					hl7Msg.PatNum=patient.PatNum;
+					hl7Msg.PatNum=pat.PatNum;
 					HL7Msgs.Insert(hl7Msg);
 					if(ODBuild.IsDebug()) {
 						System.Windows.Forms.MessageBox.Show(messageHL7.ToString());
 					}
 				}
 			}
-			if(isAptCreatedOrEdited && insertHL7 && HieClinics.IsEnabled()) {
-				HieQueues.Insert(new HieQueue(patient.PatNum));
+			if(isAptCreatedOrEdited && doInsertHL7 && HieClinics.IsEnabled()) {
+				HieQueues.Insert(new HieQueue(pat.PatNum));
 			}
-			apptSaveHelperResult.ListProcsForAppt=listProceduresForAppt;
-			apptSaveHelperResult.AptCur=appointment;
-			apptSaveHelperResult.ListAppts=listAppointments;
-			return apptSaveHelperResult;
+			retVal.ListProcsForAppt=listProcsForAppt;
+			retVal.AptCur=aptCur;
+			retVal.ListAppts=listAppointments;
+			return retVal;
 		}
 
 		///<summary>The fields that are returned from AptSaveHelper.</summary>
@@ -3694,8 +3632,8 @@ namespace OpenDentBusiness{
 				return;//Already deleted or did not exist.
 			}
 			if(table.Rows[0]["IsNewPatient"].ToString()=="1") {
-				Patient patient=Patients.GetPat(PIn.Long(table.Rows[0]["PatNum"].ToString()));
-				Procedures.SetDateFirstVisit(DateTime.MinValue,3,patient);
+				Patient pat=Patients.GetPat(PIn.Long(table.Rows[0]["PatNum"].ToString()));
+				Procedures.SetDateFirstVisit(DateTime.MinValue,3,pat);
 			}
 			//procs
 			command="UPDATE procedurelog SET ProcDate="+DbHelper.Curdate()
@@ -3735,8 +3673,8 @@ namespace OpenDentBusiness{
 			command="DELETE FROM apptfield WHERE AptNum = "+POut.Long(aptNum);
 			Db.NonQ(command);
 			command="SELECT * FROM appointment WHERE AptNum = "+POut.Long(aptNum);
-			Appointment appointment=Crud.AppointmentCrud.SelectOne(command);
-			HistAppointments.CreateHistoryEntry(appointment,HistAppointmentAction.Deleted);
+			Appointment apt=Crud.AppointmentCrud.SelectOne(command);
+			HistAppointments.CreateHistoryEntry(apt,HistAppointmentAction.Deleted);
 			AlertItems.DeleteFor(AlertType.CallbackRequested,new List<long> { aptNum });
 			Appointments.ClearFkey(aptNum);//Zero securitylog FKey column for row to be deleted.
 			//we will not reset item orders here
@@ -3744,7 +3682,7 @@ namespace OpenDentBusiness{
 			//ApptComms.DeleteForAppt(aptNum);
 			Db.NonQ(command);
 			if(hasSignal) {
-				Signalods.SetInvalidAppt(null,appointment);//pass in the old appointment that we are deleting
+				Signalods.SetInvalidAppt(null,apt);//pass in the old appointment that we are deleting
 			}
 		}
 
@@ -3770,65 +3708,65 @@ namespace OpenDentBusiness{
 			if(table.Rows.Count<1) {
 				return;//All entries were already deleted or did not exist.
 			}
-			List<long> listAptNumsPlanned = new List<long>();  //List of AptNums for planned appointments only
-			List<long> listAptNumsNotPlanned = new List<long>();  //List of AptNums for all appointments that are not planned
-			List<long> listAptNumsAll = new List<long>();  //List of AptNums for all appointments
+			List<long> listPlannedAptNums = new List<long>();  //List of AptNums for planned appointments only
+			List<long> listNotPlannedAptNums = new List<long>();  //List of AptNums for all appointments that are not planned
+			List<long> listAllAptNums = new List<long>();  //List of AptNums for all appointments
 			foreach(DataRow row in table.Rows) {
 				if(row["IsNewPatient"].ToString()=="1") {
 					//Potentially improve this to not run one at a time
-					Patient patient = Patients.GetPat(PIn.Long(row["PatNum"].ToString()));
-					Procedures.SetDateFirstVisit(DateTime.MinValue,3,patient);
+					Patient pat = Patients.GetPat(PIn.Long(row["PatNum"].ToString()));
+					Procedures.SetDateFirstVisit(DateTime.MinValue,3,pat);
 				}
 				if(row["AptStatus"].ToString()=="6") {//planned
-					listAptNumsPlanned.Add(PIn.Long(row["AptNum"].ToString()));
+					listPlannedAptNums.Add(PIn.Long(row["AptNum"].ToString()));
 				}
 				else {//Everything else
-					listAptNumsNotPlanned.Add(PIn.Long(row["AptNum"].ToString()));
+					listNotPlannedAptNums.Add(PIn.Long(row["AptNum"].ToString()));
 				}
-				listAptNumsAll.Add(PIn.Long(row["AptNum"].ToString()));
+				listAllAptNums.Add(PIn.Long(row["AptNum"].ToString()));
 			}
 			//procs
 			command="UPDATE procedurelog SET ProcDate="+DbHelper.Curdate()
 				+" WHERE ProcDate<"+POut.Date(new DateTime(1880,1,1))
-				+" AND (AptNum IN("+String.Join(",",listAptNumsAll)+") OR PlannedAptNum IN("+String.Join(",",listAptNumsAll)+"))"
+				+" AND (AptNum IN("+String.Join(",",listAllAptNums)+") OR PlannedAptNum IN("+String.Join(",",listAllAptNums)+"))"
 				+" AND procedurelog.ProcStatus="+POut.Int((int)ProcStat.TP);//Only change procdate for TP procedures
 			Db.NonQ(command);
-			if(listAptNumsPlanned.Count!=0) {
-				command="UPDATE procedurelog SET PlannedAptNum=0 WHERE PlannedAptNum IN("+String.Join(",",listAptNumsPlanned)+")";
+			if(listPlannedAptNums.Count!=0) {
+				command="UPDATE procedurelog SET PlannedAptNum=0 WHERE PlannedAptNum IN("+String.Join(",",listPlannedAptNums)+")";
 				Db.NonQ(command);
 			}
-			if(listAptNumsNotPlanned.Count!=0) {
-				command="UPDATE procedurelog SET AptNum=0 WHERE AptNum IN("+String.Join(",",listAptNumsNotPlanned)+")";
+			if(listNotPlannedAptNums.Count!=0) {
+				command="UPDATE procedurelog SET AptNum=0 WHERE AptNum IN("+String.Join(",",listNotPlannedAptNums)+")";
 				Db.NonQ(command);
 			}
 			//labcases
-			if(listAptNumsPlanned.Count!=0) {
-				command="UPDATE labcase SET PlannedAptNum=0 WHERE PlannedAptNum IN("+String.Join(",",listAptNumsPlanned)+")";
+			if(listPlannedAptNums.Count!=0) {
+				command="UPDATE labcase SET PlannedAptNum=0 WHERE PlannedAptNum IN("+String.Join(",",listPlannedAptNums)+")";
 				Db.NonQ(command);
 			}
-			if(listAptNumsNotPlanned.Count!=0) {
-				command="UPDATE labcase SET AptNum=0 WHERE AptNum IN("+String.Join(",",listAptNumsNotPlanned)+")";
+			if(listNotPlannedAptNums.Count!=0) {
+				command="UPDATE labcase SET AptNum=0 WHERE AptNum IN("+String.Join(",",listNotPlannedAptNums)+")";
 				Db.NonQ(command);
 			}
 			//plannedappt
-			command="DELETE FROM plannedappt WHERE AptNum IN("+String.Join(",",listAptNumsAll)+")";
+			command="DELETE FROM plannedappt WHERE AptNum IN("+String.Join(",",listAllAptNums)+")";
 			Db.NonQ(command);
 			//if deleting a planned appt, make sure there are no appts with NextAptNum (which should be named PlannedAptNum) pointing to this appt
-			if(listAptNumsPlanned.Count!=0 && listAptNumsNotPlanned.Count!=0) {
-				command="UPDATE appointment SET NextAptNum=0 WHERE NextAptNum IN("+String.Join(",",listAptNumsNotPlanned)+")";
+			if(listPlannedAptNums.Count!=0) {
+				command="UPDATE appointment SET NextAptNum=0 WHERE NextAptNum IN("+String.Join(",",listNotPlannedAptNums)+")";
 				Db.NonQ(command);
 			}
 			//apptfield
-			command="DELETE FROM apptfield WHERE AptNum IN("+String.Join(",",listAptNumsAll)+")";
+			command="DELETE FROM apptfield WHERE AptNum IN("+String.Join(",",listAllAptNums)+")";
 			Db.NonQ(command);
-			Appointments.ClearFkey(listAptNumsAll);//Zero securitylog FKey column for row to be deleted.
+			Appointments.ClearFkey(listAllAptNums);//Zero securitylog FKey column for row to be deleted.
 			//we will not reset item orders here
 			//ApptComms.DeleteForAppts(listAllAptNums);
-			command="SELECT * FROM appointment WHERE AptNum IN("+String.Join(",",listAptNumsAll)+")";
-			List<Appointment> listAppointments=Crud.AppointmentCrud.SelectMany(command);
-			listAppointments.ForEach(x => HistAppointments.CreateHistoryEntry(x,HistAppointmentAction.Deleted));
-			AlertItems.DeleteFor(AlertType.CallbackRequested,listAppointments.Select(x => x.AptNum).ToList());
-			command="DELETE FROM appointment WHERE AptNum IN("+String.Join(",",listAptNumsAll)+")";
+			command="SELECT * FROM appointment WHERE AptNum IN("+String.Join(",",listAllAptNums)+")";
+			List<Appointment> listApts=Crud.AppointmentCrud.SelectMany(command);
+			listApts.ForEach(x => HistAppointments.CreateHistoryEntry(x,HistAppointmentAction.Deleted));
+			AlertItems.DeleteFor(AlertType.CallbackRequested,listApts.Select(x => x.AptNum).ToList());
+			command="DELETE FROM appointment WHERE AptNum IN("+String.Join(",",listAllAptNums)+")";
 			Db.NonQ(command);
 			Signalods.SetInvalid(InvalidType.Appointment);
 		}
@@ -3838,24 +3776,24 @@ namespace OpenDentBusiness{
 		///<summary>Inserts, updates, or deletes db rows to match listNew.  No need to pass in userNum, it's set before remoting role check and passed to
 		///the server if necessary.  Doesn't create ApptComm items, but will delete them.  If you use Sync, you must create new Apptcomm items.
 		///Returns true if a change was made, otherwise false.</summary>
-		public static bool Sync(List<Appointment> listAppointmentsNew,List<Appointment> listAppointmentsOld,long patNum,long userNum=0,bool isOpMerge=false) {
+		public static bool Sync(List<Appointment> listNew,List<Appointment> listOld,long patNum,long userNum=0,bool isOpMerge=false) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),listAppointmentsNew,listAppointmentsOld,patNum,userNum,isOpMerge);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),listNew,listOld,patNum,userNum,isOpMerge);
 			}
 			//Security.CurUser.UserNum gets set on MT by the DtoProcessor so it matches the user from the client WS.
 			userNum=Security.CurUser.UserNum;
-			bool isChanged=Crud.AppointmentCrud.Sync(listAppointmentsNew,listAppointmentsOld,userNum);
+			bool isChanged=Crud.AppointmentCrud.Sync(listNew,listOld,userNum);
 			bool isHashNeeded=true;
-			for(int i = 0;i<listAppointmentsNew.Count;i++) {
+			for(int i = 0;i<listNew.Count;i++) {
 				isHashNeeded=true;
 				//Only rehash existing splits that are already valid
-				Appointment appointmentOld=listAppointmentsOld.FirstOrDefault(x => listAppointmentsNew[i].AptNum==x.AptNum);
+				Appointment appointmentOld=listOld.FirstOrDefault(x => listNew[i].AptNum==x.AptNum);
 				if(appointmentOld!=null) {
 					isHashNeeded=IsAppointmentHashValid(appointmentOld);
 				}
 				//Hash appointments that are either new, or rehash existing appointments that are valid
 				if(isHashNeeded) {
-					listAppointmentsNew[i].SecurityHash=HashFields(listAppointmentsNew[i]);
+					listNew[i].SecurityHash=HashFields(listNew[i]);
 				}
 			}
 			if(isChanged) {
@@ -3863,7 +3801,7 @@ namespace OpenDentBusiness{
 					Signalods.SetInvalid(InvalidType.Appointment);
 				}
 				else {
-					foreach(Appointment appt in listAppointmentsNew.Union(listAppointmentsOld).DistinctBy(x => x.AptNum)) { //insert a new signal for each unique appt
+					foreach(Appointment appt in listNew.Union(listOld).DistinctBy(x => x.AptNum)) { //insert a new signal for each unique appt
 						Signalods.SetInvalidAppt(appt);
 					}
 				}
@@ -3890,7 +3828,7 @@ namespace OpenDentBusiness{
 			if(appointment==null) {
 				return true;
 			}
-			DateTime dateHashStart=Misc.SecurityHash.GetHashingDate();
+			DateTime dateHashStart=Misc.SecurityHash.DateStart;
 			if(appointment.AptDateTime < dateHashStart) { //old
 				//See notes in CDT.Class1 on how to pick which column to use for comparison
 				return true;
@@ -3905,7 +3843,7 @@ namespace OpenDentBusiness{
 		#region Misc Methods
 		///<summary>Returns the time pattern after combining all codes together for the providers passed in.
 		///If make5minute is false, then result will be in 10 or 15 minute blocks and will need a later conversion step before going to db.</summary>
-		public static string CalculatePattern(long provNum,long provHyg,List<long> codeNums,bool make5minute) {
+		public static string CalculatePattern(long provDent,long provHyg,List<long> codeNums,bool make5minute) {
 			//No need to check MiddleTierRole; no call to db.
 			List<ProcedureCode> listProcedureCodes=ProcedureCodes.GetListDeep();
 			List<string> listProcPatterns=new List<string>();
@@ -3914,13 +3852,13 @@ namespace OpenDentBusiness{
 					listProcPatterns.Add(ProcCodeNotes.GetTimePattern(provHyg,codeNum));
 				}
 				else {//dentist proc
-					listProcPatterns.Add(ProcCodeNotes.GetTimePattern(provNum,codeNum));
+					listProcPatterns.Add(ProcCodeNotes.GetTimePattern(provDent,codeNum));
 				}
 			}
 			//Tack all time portions together to make an end result.
 			string pattern=GetApptTimePatternFromProcPatterns(listProcPatterns);
 			//Creating a new StringBuilder to preserve old hook parameter object Types.
-			Plugins.HookAddCode(null,"Appointments.CalculatePattern_end",new StringBuilder(pattern),provNum,provHyg,codeNums);
+			Plugins.HookAddCode(null,"Appointments.CalculatePattern_end",new StringBuilder(pattern),provDent,provHyg,codeNums);
 			if(make5minute) {
 				return ConvertPatternTo5(pattern);
 			}
@@ -3929,26 +3867,26 @@ namespace OpenDentBusiness{
 
 		///<summary>Returns an appointment pattern in a 5 minute increment format.
 		///If listProcs is empty or null will return default appt length based on PrefName.AppointmentWithoutProcsDefaultLength or '/' (5 mins) if not defined.</summary>
-		public static string CalculatePattern(Patient patient,long provNumApt,long provHygApt,List<Procedure> listProcedures,bool isTimeLocked=false,bool ignoreTimeLocked=false) {
+		public static string CalculatePattern(Patient pat,long aptProvNum,long aptProvHygNum,List<Procedure> listProcs,bool isTimeLocked=false,bool ignoreTimeLocked=false) {
 			if(!ignoreTimeLocked && isTimeLocked) {
 				return null;
 			}
 			//We are using the providers selected for the appt rather than the providers for the procs.
 			//Providers for the procs get reset when closing this form.
-			long provNum=Patients.GetProvNum(patient);
-			long provHyg=Patients.GetProvNum(patient);
-			if(provNumApt!=0){
-				provNum=provNumApt;
-				provHyg=provNumApt;
+			long provDent=Patients.GetProvNum(pat);
+			long provHyg=Patients.GetProvNum(pat);
+			if(aptProvNum!=0){
+				provDent=aptProvNum;
+				provHyg=aptProvNum;
 			}
-			if(provHygApt!=0) {
-				provHyg=provHygApt;
+			if(aptProvHygNum!=0) {
+				provHyg=aptProvHygNum;
 			}
-			List<long> listCodeNums=new List<long>();
-			foreach(Procedure proc in listProcedures) {
-				listCodeNums.Add(proc.CodeNum);
+			List<long> codeNums=new List<long>();
+			foreach(Procedure proc in listProcs) {
+				codeNums.Add(proc.CodeNum);
 			}
-			return CalculatePattern(provNum,provHyg,listCodeNums,listProcedures.Count>0);
+			return CalculatePattern(provDent,provHyg,codeNums,listProcs.Count>0);
 			//Plugins.HookAddCode(this,"FormApptEdit.CalculateTime_end",strBTime,provDent,provHyg,codeNums);//set strBTime, but without using the 'new' keyword.--Hook removed.
 		}
 
@@ -3974,23 +3912,23 @@ namespace OpenDentBusiness{
 
 		///<summary>Returns true if no appointments are scheduled in the time slot for that operatory unless the appointment scheduled is the 
 		///appointment under consideration.</summary>
-		public static bool IsSlotAvailable(DateTime dateTimeSlotStart,DateTime dateTimeSlotEnd,long operatory,Appointment appointment) {
+		public static bool IsSlotAvailable(DateTime slotStart,DateTime slotEnd,long operatory,Appointment appt) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),dateTimeSlotStart,dateTimeSlotEnd,operatory,appointment);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),slotStart,slotEnd,operatory,appt);
 			}
 			string command="SELECT COUNT(appointment.AptNum) "
 				+"FROM appointment "
 				+"WHERE appointment.Op="+POut.Long(operatory)+" "
-				+"AND appointment.AptDateTime < "+POut.DateT(dateTimeSlotEnd)+" "
-				+"AND appointment.AptDateTime+INTERVAL LENGTH(appointment.Pattern)*5 MINUTE > "+POut.DateT(dateTimeSlotStart)+" "
+				+"AND appointment.AptDateTime < "+POut.DateT(slotEnd)+" "
+				+"AND appointment.AptDateTime+INTERVAL LENGTH(appointment.Pattern)*5 MINUTE > "+POut.DateT(slotStart)+" "
 				+"AND appointment.AptStatus IN("+string.Join(",",Appointments.ListScheduledApptStatuses.Select(x => POut.Int((int)x)))+") ";
-			if(appointment.AptNum != 0) {//If we are checking for an already existing appointment, then we don't count this appointment as filling the slot.
-				command+="AND appointment.AptNum!="+POut.Long(appointment.AptNum);
+			if(appt.AptNum != 0) {//If we are checking for an already existing appointment, then we don't count this appointment as filling the slot.
+				command+="AND appointment.AptNum!="+POut.Long(appt.AptNum);
 			}
 			if(Db.GetCount(command)!="0") {
 				return false;
 			}
-			return !Appointments.CheckForBlockoutOverlap(appointment);
+			return !Appointments.CheckForBlockoutOverlap(appt);
 		}
 
 		///<summary>The supplied DataRows must include the following columns: attached,Priority,ToothRange,ToothNum,ProcCode. This sorts all objects in Chart module based on their dates, times, priority, and toothnum.  For time comparisons, procs are not included.  But if other types such as comm have a time component in ProcDate, then they will be sorted by time as well.</summary>
@@ -4010,23 +3948,23 @@ namespace OpenDentBusiness{
 		///<summary>Modifies apt.Op with closest OpNum which has an opening at the specified apt.AptDateTime. 
 		///First tries apt.OpNum, then tries remaining ops from left-to-right. Then tries remaining ops from right-to-left.
 		///Returns true if overlap is found. Returns false if no overlap is found.</summary>
-		public static bool TryAdjustAppointment(Appointment appointment,List<Operatory> listOperatoriesVis,bool canChangeOp,bool canShortenPattern,
-			bool hasEndTimeCheck,bool hasBlockoutCheck,out bool isPatternChanged) 
+		public static bool TryAdjustAppointment(Appointment apt,List<Operatory> visOps,bool canChangeOp,bool canShortenPattern,bool hasEndTimeCheck
+			,bool hasBlockoutCheck,out bool isPatternChanged) 
 		{
 			isPatternChanged=false;
 			//First check the Op we are in for overlap.
-			if(!TryAdjustAppointment_HasOverlap(appointment,hasEndTimeCheck,hasBlockoutCheck,appointment.Op)) { //No overlap on our original op so we are good.
+			if(!TryAdjustAppointment_HasOverlap(apt,hasEndTimeCheck,hasBlockoutCheck,apt.Op)) { //No overlap on our original op so we are good.
 				return false;
 			}
 			if(canShortenPattern) { //If we are allowed to shorten the pattern then we will not change ops, we will shorten the pattern down to no less than 1 and return it.
 				isPatternChanged=true;
 				do {
-					if(appointment.Pattern.Length==1) { //Pattern has been reduced to smallest allowed size.
-						return TryAdjustAppointment_HasOverlap(appointment,hasEndTimeCheck,hasBlockoutCheck,appointment.Op);
+					if(apt.Pattern.Length==1) { //Pattern has been reduced to smallest allowed size.
+						return TryAdjustAppointment_HasOverlap(apt,hasEndTimeCheck,hasBlockoutCheck,apt.Op);
 					}
 					//Reduce the pattern by 1.
-					appointment.Pattern=appointment.Pattern.Substring(0,appointment.Pattern.Length-1);
-				} while(TryAdjustAppointment_HasOverlap(appointment,hasEndTimeCheck,hasBlockoutCheck,appointment.Op));
+					apt.Pattern=apt.Pattern.Substring(0,apt.Pattern.Length-1);
+				} while(TryAdjustAppointment_HasOverlap(apt,hasEndTimeCheck,hasBlockoutCheck,apt.Op));
 				//If canShortenPattern==true then caller is always expecting false.
 				return false;
 			}
@@ -4034,20 +3972,20 @@ namespace OpenDentBusiness{
 				return true;
 			}
 			//Our op has an overlap but we are allowed to change so let's try all other ops.
-			int startingOp=listOperatoriesVis.Select(x => x.OperatoryNum).ToList().IndexOf(appointment.Op);
+			int startingOp=visOps.Select(x => x.OperatoryNum).ToList().IndexOf(apt.Op);
 			//Left-to-right start at op directly to the right of this one.
-			for(int i=startingOp+1;i<listOperatoriesVis.Count;i++) {
-				long opNum=listOperatoriesVis[i].OperatoryNum;
-				if(!TryAdjustAppointment_HasOverlap(appointment,hasEndTimeCheck,hasBlockoutCheck,appointment.Op)) { //We found an open op. Set it and return.
-					appointment.Op=opNum;
+			for(int i=startingOp+1;i<visOps.Count;i++) {
+				long opNum=visOps[i].OperatoryNum;
+				if(!TryAdjustAppointment_HasOverlap(apt,hasEndTimeCheck,hasBlockoutCheck,apt.Op)) { //We found an open op. Set it and return.
+					apt.Op=opNum;
 					return false;
 				}
 			}
 			//Right-to-left starting at op directly to left of this one.
 			for(int i=startingOp;i>=0;i--) {
-				long opNum=listOperatoriesVis[i].OperatoryNum;
-				if(!TryAdjustAppointment_HasOverlap(appointment,hasEndTimeCheck,hasBlockoutCheck,appointment.Op)) { //We found an open op. Set it and return.
-					appointment.Op=opNum;
+				long opNum=visOps[i].OperatoryNum;
+				if(!TryAdjustAppointment_HasOverlap(apt,hasEndTimeCheck,hasBlockoutCheck,apt.Op)) { //We found an open op. Set it and return.
+					apt.Op=opNum;
 					return false;
 				}
 			}
@@ -4055,43 +3993,43 @@ namespace OpenDentBusiness{
 			return true;
 		}
 
-		private static bool TryAdjustAppointment_HasOverlap(Appointment appointment,bool hasEndTimeCheck,bool hasBlockoutCheck,long opNum) {
+		private static bool TryAdjustAppointment_HasOverlap(Appointment apt,bool hasEndTimeCheck,bool hasBlockoutCheck,long opNum) {
 			//Key=OpNum, value=list of appointments in that op
 			Dictionary<long,List<Appointment>> dictLocalCache=new Dictionary<long, List<Appointment>>();
 			//We may be coming back here several times for the same opNum so store our query results for each opNum for re-use.
-			List<Appointment> listAppointments;
-			if(!dictLocalCache.TryGetValue(opNum,out listAppointments)) {
-				listAppointments=Appointments.GetAppointmentsForOpsByPeriod(new List<long>() { opNum },appointment.AptDateTime,appointment.AptDateTime).FindAll(x => x.AptNum!=appointment.AptNum);
-				dictLocalCache[opNum]=listAppointments;
+			List<Appointment> listAppts;
+			if(!dictLocalCache.TryGetValue(opNum,out listAppts)) {
+				listAppts=Appointments.GetAppointmentsForOpsByPeriod(new List<long>() { opNum },apt.AptDateTime,apt.AptDateTime).FindAll(x => x.AptNum!=apt.AptNum);
+				dictLocalCache[opNum]=listAppts;
 			}
 			//Start and end time of the apt we are validating.
-			DateTime dateTimeMovedAptStart=appointment.AptDateTime;
-			DateTime dateTimeMovedAptEnd=appointment.AptDateTime.Add(TimeSpan.FromMinutes(appointment.Pattern.Length*5));
+			DateTime movedAptStartTime=apt.AptDateTime;
+			DateTime movedAptEndTime=apt.AptDateTime.Add(TimeSpan.FromMinutes(apt.Pattern.Length*5));
 			//Check for collisions with blockouts if specified, return true if there is one.
 			if(hasBlockoutCheck) {
-				List<Schedule> listSchedulesBlockoutsOverlapping=GetBlockoutsOverlappingNoSchedule(appointment);
-				if(CheckForBlockoutOverlap(appointment,listSchedulesBlockoutsOverlapping)) {
+				List<Schedule> listOverlappingBlockouts=GetBlockoutsOverlappingNoSchedule(apt);
+				if(CheckForBlockoutOverlap(apt,listOverlappingBlockouts)) {
 					return true;
 				}
 			}
 			if(PrefC.GetBool(PrefName.ApptsAllowOverlap)) {//Only check for another appointment overlap when the preference is turned off
 				return false;
 			}
-			foreach(Appointment curApt in listAppointments) {
+			foreach(Appointment curApt in listAppts) {
 				//Start and end time of another apt in this op.
-				DateTime dateTimeAptScheduledStart=curApt.AptDateTime;
-				DateTime dateTimeAptScheduledEnd=curApt.AptDateTime.Add(TimeSpan.FromMinutes(curApt.Pattern.Length*5));
+				DateTime curAptScheduledStartTime=curApt.AptDateTime;
+				DateTime curAptScheduledEndTime=curApt.AptDateTime.Add(TimeSpan.FromMinutes(curApt.Pattern.Length*5));
 				//Check start time.
-				if(dateTimeMovedAptStart>=dateTimeAptScheduledStart && dateTimeMovedAptStart<dateTimeAptScheduledEnd){//Starts during curApt's blockout time.
+				if(movedAptStartTime>=curAptScheduledStartTime && movedAptStartTime<curAptScheduledEndTime){//Starts during curApt's blockout time.
 					return true;
 				}
 				if(!hasEndTimeCheck) { //We only care about start time so move on to the next apt in this op.
 					continue;
 				}
-				if(dateTimeMovedAptEnd<=dateTimeAptScheduledStart) { //moved appt ends before the current one starts
+				if(movedAptEndTime<=curAptScheduledStartTime) { //moved appt ends before the current one starts
 					continue;
 				}
-				if(dateTimeMovedAptStart>=dateTimeAptScheduledEnd) { //moved appt starts after the current one ends
+				if(movedAptStartTime>=curAptScheduledEndTime) { //moved appt starts after the current one ends
 					continue;
 				}
 				//The moved appointment completely engulfs the scheduled appointment, return true for a collision.
@@ -4143,7 +4081,7 @@ namespace OpenDentBusiness{
 					procedure=ConstructPerVisitProcForAppt(codeNumPat,appointment,patient,insPlan.PerVisitPatAmount);//Construct Per visit patient procedure.
 					Procedures.Insert(procedure);
 					Procedures.ComputeEstimates(procedure,appointment.PatNum,new List<ClaimProc>(),true,listInsPlans,listPatPlans,listBenefits,patient.Age,listInsSubs);
-					SecurityLogs.MakeLogEntry(EnumPermType.ProcEdit,procedure.PatNum,perVisitPatAmountProcCode+" "+Lans.g("Appointments","treatment planned via per visit automation."));
+					SecurityLogs.MakeLogEntry(Permissions.ProcEdit,procedure.PatNum,perVisitPatAmountProcCode+" "+Lans.g("Appointments","treatment planned via per visit automation."));
 					listProcedures.Add(procedure);
 				}
 			}
@@ -4154,7 +4092,7 @@ namespace OpenDentBusiness{
 					procedure=ConstructPerVisitProcForAppt(codeNumIns,appointment,patient,insPlan.PerVisitInsAmount);//Construct Per visit insurance procedure.
 					Procedures.Insert(procedure);
 					Procedures.ComputeEstimates(procedure,appointment.PatNum,new List<ClaimProc>(),true,listInsPlans,listPatPlans,listBenefits,patient.Age,listInsSubs);
-					SecurityLogs.MakeLogEntry(EnumPermType.ProcEdit,procedure.PatNum,perVisitInsAmountProcCode+" "+Lans.g("Appointments","treatment planned via per visit automation."));
+					SecurityLogs.MakeLogEntry(Permissions.ProcEdit,procedure.PatNum,perVisitInsAmountProcCode+" "+Lans.g("Appointments","treatment planned via per visit automation."));
 					listProcedures.Add(procedure);
 				}
 			}
@@ -4198,7 +4136,7 @@ namespace OpenDentBusiness{
 			procedure.ClinicNum=appointment.ClinicNum;
 			procedure.PlaceService=Clinics.GetPlaceService(procedure.ClinicNum);
 			procedure.MedicalCode=procedureCode.MedicalCode;
-			Procedures.SetDiagnosticCodesToDefault(procedure,procedureCode);
+			procedure.DiagnosticCode=PrefC.GetString(PrefName.ICD9DefaultForNewProcs);
 			procedure.RevCode=procedureCode.RevenueCodeDefault;
 			procedure.BaseUnits=procedureCode.BaseUnits;
 			procedure.SiteNum=patient.SiteNum;
@@ -4218,106 +4156,106 @@ namespace OpenDentBusiness{
 		///<summary>Checks if the appointment passed in overlaps any appointment in the same operatory.
 		///Returns true if overlap found.
 		///Will modify the appointment.Pattern if canShortenPattern is true.</summary>
-		public static bool TryAdjustAppointmentInCurrentOp(Appointment appointment,bool canShortenPattern,bool hasEndTimeCheck,out bool isPatternChanged) 
+		public static bool TryAdjustAppointmentInCurrentOp(Appointment apt,bool canShortenPattern,bool hasEndTimeCheck,out bool isPatternChanged) 
 		{
-			return TryAdjustAppointment(appointment,null,false,canShortenPattern,hasEndTimeCheck,true,out isPatternChanged);
+			return TryAdjustAppointment(apt,null,false,canShortenPattern,hasEndTimeCheck,true,out isPatternChanged);
 		}
 
 		///<summary>Returns true if there is an overlap with a blockout with the the flag "NS", or if apts AppointmentType is associated to different blockouts.</summary>
-		public static bool CheckForBlockoutOverlap(Appointment appointment,List<Schedule> listSchedulesBlockouts=null) {
-			return GetBlockoutsOverlappingNoSchedule(appointment,listSchedulesBlockouts).Count > 0;
+		public static bool CheckForBlockoutOverlap(Appointment apt,List<Schedule> listBlockouts=null) {
+			return GetBlockoutsOverlappingNoSchedule(apt,listBlockouts).Count > 0;
 		}
 
 		///<summary>Returns true if there is an overlap with a blockout with the the flag "NS" based on a given time point.
 		///If operatoryNum=0 then all operatories will be checked.</summary>
-		public static bool CheckTimeForBlockoutOverlap(DateTime aptDateTime, long operatoryNum) {
+		public static bool CheckTimeForBlockoutOverlap(DateTime aptTime, long operatoryNum) {
 			return GetBlockoutsOverlappingNoSchedule(new Appointment {
-				AptDateTime=aptDateTime,
+				AptDateTime=aptTime,
 				Op=operatoryNum,
 				Pattern="/",//Pretend this appointment is 5 minutes long since that's the minimum it could be.
 			}).Count > 0;
 		}
 
 		///<summary>Gets all groups of overlapping appointments.</summary>
-		public static List<List<long>> GetOverlappingAppts(DataTable tableAppointments) {
+		public static List<List<long>> GetOverlappingAppts(DataTable dtAppointments) {
 			//No need to check MiddleTierRole; no call to db.
-			if(tableAppointments==null || tableAppointments.Rows.Count==0) {
+			if(dtAppointments==null || dtAppointments.Rows.Count==0) {
 				return new List<List<long>>();
 			}
 			//Group appointments by operatory
-			var groupsApptsPerOp=tableAppointments.Select().Select(x => new Appointment {
+			var groupsApptsPerOp=dtAppointments.Select().Select(x => new Appointment {
 				AptNum=PIn.Long(x["aptNum"].ToString()),
 				Op=PIn.Long(x["Op"].ToString()),
 				AptDateTime=PIn.DateT(x["AptDateTime"].ToString()),
 				Pattern=(x["Pattern"].ToString())
 			}).GroupBy(x => x.Op);
 			//Set the type of the list
-			List<Appointment> listAppointmentsOverlap=new List<Appointment>();
+			List<Appointment> listOverlapAppts=new List<Appointment>();
 			foreach(var opGroup in groupsApptsPerOp) {
 				//order grouped appointments by start time. This increases efficiency as we do not need to search through the entire list, only
 				//until we find an appoinment outside of the date time.
-				List<Appointment> listAppointments=opGroup.OrderBy(x => x.AptDateTime).ToList();
-				for(int i=0;i<listAppointments.Count;i++) {
+				List<Appointment> listAppts=opGroup.OrderBy(x => x.AptDateTime).ToList();
+				for(int i=0;i<listAppts.Count;i++) {
 					int j=i+1;
-					Appointment appointment=listAppointments[i];
-					for(j=i+1;j<listAppointments.Count;j++) {
-						Appointment appointmentNext =listAppointments[j];
-						if(appointment.EndTime<=appointmentNext.AptDateTime) {
+					Appointment curAppt=listAppts[i];
+					for(j=i+1;j<listAppts.Count;j++) {
+						Appointment nextAppt =listAppts[j];
+						if(curAppt.EndTime<=nextAppt.AptDateTime) {
 							break;
 						}
-						if(MiscUtils.DoSlotsOverlap(appointment.AptDateTime,appointment.EndTime,appointmentNext.AptDateTime,appointmentNext.EndTime)) {
-							listAppointmentsOverlap.Add(appointment);
-							listAppointmentsOverlap.Add(appointmentNext);
+						if(MiscUtils.DoSlotsOverlap(curAppt.AptDateTime,curAppt.EndTime,nextAppt.AptDateTime,nextAppt.EndTime)) {
+							listOverlapAppts.Add(curAppt);
+							listOverlapAppts.Add(nextAppt);
 						}
 					}
 				}
 			}
 			//Unsorted AptNums
-			listAppointmentsOverlap=listAppointmentsOverlap.Distinct().OrderBy(x => x.AptDateTime).ToList();
+			listOverlapAppts=listOverlapAppts.Distinct().OrderBy(x => x.AptDateTime).ToList();
 			//Break the AptNums into groups. These should be appointments that are overlapping and chained together. 
 			//e.g. 10am-11am, 10:30am-11:30am, and 11am-12pm should all be in one group even though the first and second don't directly overlap
-			List<List<long>> listListsAptNumsOverlapGroups=new List<List<long>>();
+			List<List<long>> listApptOverlapGroups=new List<List<long>>();
 			//Set Type
-			while(listAppointmentsOverlap.Count > 0) {
-				List<Appointment> listAppointmentsInGroup=new List<Appointment>{ listAppointmentsOverlap[0] };
-				for(int i=1;i<listAppointmentsOverlap.Count;i++) {
+			while(listOverlapAppts.Count > 0) {
+				List<Appointment> listApptsInGroup=new List<Appointment>{ listOverlapAppts[0] };
+				for(int i=1;i<listOverlapAppts.Count;i++) {
 					//start at 1 as we already have the first one
 					//appointments are still in order by datetime so none will be missed
-					if(listAppointmentsInGroup.Any(x => MiscUtils.DoSlotsOverlap(x.AptDateTime,x.EndTime,
-						listAppointmentsOverlap[i].AptDateTime,listAppointmentsOverlap[i].EndTime)
-						&& x.Op==listAppointmentsOverlap[i].Op)) 
+					if(listApptsInGroup.Any(x => MiscUtils.DoSlotsOverlap(x.AptDateTime,x.EndTime,
+						listOverlapAppts[i].AptDateTime,listOverlapAppts[i].EndTime)
+						&& x.Op==listOverlapAppts[i].Op)) 
 					{
-						listAppointmentsInGroup.Add(listAppointmentsOverlap[i]);
+						listApptsInGroup.Add(listOverlapAppts[i]);
 					}
 				}
-				listAppointmentsOverlap=listAppointmentsOverlap.Except(listAppointmentsInGroup).ToList();//remove the ones found
-				listListsAptNumsOverlapGroups.Add(listAppointmentsInGroup.Select(x => x.AptNum).ToList());
+				listOverlapAppts=listOverlapAppts.Except(listApptsInGroup).ToList();//remove the ones found
+				listApptOverlapGroups.Add(listApptsInGroup.Select(x => x.AptNum).ToList());
 			}
-			return listListsAptNumsOverlapGroups;
+			return listApptOverlapGroups;
 		}
 		
 		///<summary>Returns overlapping blockouts with the the flag "NS", or with a BlockoutType not present in the current apt's AppointmentType.BlockoutTypes.</summary>
-		public static List<Schedule> GetBlockoutsOverlappingNoSchedule(Appointment appointment,List<Schedule> listSchedulesBlockouts=null) {
+		public static List<Schedule> GetBlockoutsOverlappingNoSchedule(Appointment apt,List<Schedule> listSchedulesBlockouts=null) {
 			//No need to check MiddleTierRole; no call to db.
 			List<Def> listDefs=Defs.GetDefsForCategory(DefCat.BlockoutTypes);
 			if(listSchedulesBlockouts is null) { //Get all of today's blockouts that exist in the same operatory as the appointment
-				listSchedulesBlockouts=Schedules.GetAllForDateAndType(appointment.AptDateTime,ScheduleType.Blockout,listOpNums:new List<long> { appointment.Op });
+				listSchedulesBlockouts=Schedules.GetAllForDateAndType(apt.AptDateTime,ScheduleType.Blockout,listOpNums:new List<long> { apt.Op });
 			}
 			//Get all of today's blockouts that overlap the appointment, and that are of type "NoSchedule"
 			List<Schedule> listSchedulesOverlappingBlockouts=listSchedulesBlockouts
-				.FindAll(x => MiscUtils.DoSlotsOverlap(x.SchedDate.Add(x.StartTime),x.SchedDate.Add(x.StopTime),appointment.AptDateTime,appointment.AptDateTime.AddMinutes(appointment.Length)));
+				.FindAll(x => MiscUtils.DoSlotsOverlap(x.SchedDate.Add(x.StartTime),x.SchedDate.Add(x.StopTime),apt.AptDateTime,apt.AptDateTime.AddMinutes(apt.Length)));
 			List<Schedule> listSchedulesOverlappingBlockoutsNoSchedule=listSchedulesOverlappingBlockouts
 				.FindAll(x => Defs.GetDef(DefCat.BlockoutTypes,x.BlockoutType,listDefs).ItemValue.Contains(BlockoutType.NoSchedule.GetDescription()));
 			//See if apt has an AppointmentType associated to it. Also see if the AppointmentType is associated to any blockout types in the first place.
-			AppointmentType appointmentType=AppointmentTypes.GetOne(appointment.AppointmentTypeNum);
+			AppointmentType appointmentType=AppointmentTypes.GetOne(apt.AppointmentTypeNum);
 			if(appointmentType!=null && !appointmentType.BlockoutTypes.IsNullOrEmpty()) {
 				//Get all BlockoutTypes associated to this AppointmentType
 				List<string> listBlockoutTypes=appointmentType.BlockoutTypes.Split(",",StringSplitOptions.RemoveEmptyEntries).ToList();
 				//Convert the BlockoutTypes into a list of longs
-				List<long> listDefNumsBlockoutTypeForApptType=listBlockoutTypes.Select(x => PIn.Long(x,hasExceptions:false)).ToList();
+				List<long> listBlockoutTypeDefNumsForApptType=listBlockoutTypes.Select(x => PIn.Long(x,hasExceptions:false)).ToList();
 				//Add any non-associated BlockoutTypes to our return list.
 				listSchedulesOverlappingBlockoutsNoSchedule.AddRange(listSchedulesOverlappingBlockouts
-					.FindAll(x => !listDefNumsBlockoutTypeForApptType.Contains(x.BlockoutType)));
+					.FindAll(x => !listBlockoutTypeDefNumsForApptType.Contains(x.BlockoutType)));
 			}
 			return listSchedulesOverlappingBlockoutsNoSchedule;
 		}
@@ -4325,109 +4263,109 @@ namespace OpenDentBusiness{
 		//private static FilterBlockouts(Appointment )
 		/// <summary>Called to move existing appointments from the web.
 		/// Will only attempt to move to given operatory.</summary>
-		public static void TryMoveApptWebHelper(Appointment appointment,DateTime dateTimeApptNew,long opNumNew,LogSources secLogSource=LogSources.MobileWeb, long userNum=0) {
-			Appointment appointmentOld=GetOneApt(appointment.AptNum);//Will always exist since you can not move a non inserted appointment.
-			Patient patient=Patients.GetPat(appointment.PatNum);
-			Operatory operatory=Operatories.GetOperatory(opNumNew);
-			List<Schedule> listSchedules=Schedules.ConvertTableToList(Schedules.GetPeriodSchedule(dateTimeApptNew.Date,dateTimeApptNew.Date));
-			List<Operatory> listOperatories=new List<Operatory> { operatory };//List of ops to attempt to move appt to, only consider 1.
-			bool skipProvChanged=false;//Since we are not skipping validation, let function identify prov change itself.
-			bool skipHygChanged=false;//Since we are not skipping validation, let function identify hyg change itself.
-			TryMoveAppointment(appointment,appointmentOld,patient,operatory,listSchedules,listOperatories,dateTimeApptNew,
-				doValidation:true,setArriveEarly:true,changeProv:true,updatePattern:false,allowFreqConflicts:true,resetConfirmationStatus:true,updatePatStatus:true,
-				provChanged:skipProvChanged,hygChanged:skipHygChanged,timeWasMoved:(appointment.AptDateTime!=dateTimeApptNew),isOpChanged:(appointment.Op!=opNumNew),secLogSource:secLogSource, userNum:userNum);
+		public static void TryMoveApptWebHelper(Appointment appt,DateTime apptDateTimeNew,long opNumNew,LogSources secLogSource=LogSources.MobileWeb, long userNum=0) {
+			Appointment apptOld=GetOneApt(appt.AptNum);//Will always exist since you can not move a non inserted appointment.
+			Patient pat=Patients.GetPat(appt.PatNum);
+			Operatory op=Operatories.GetOperatory(opNumNew);
+			List<Schedule> listSchedules=Schedules.ConvertTableToList(Schedules.GetPeriodSchedule(apptDateTimeNew.Date,apptDateTimeNew.Date));
+			List<Operatory> listOps=new List<Operatory> { op };//List of ops to attempt to move appt to, only consider 1.
+			bool provChangedNotUsed=false;//Since we are not skipping validation, let function identify prov change itself.
+			bool hygChangedNotUsed=false;//Since we are not skipping validation, let function identify hyg change itself.
+			TryMoveAppointment(appt,apptOld,pat,op,listSchedules,listOps,apptDateTimeNew,
+				doValidation:true,doSetArriveEarly:true,doProvChange:true,doUpdatePattern:false,doAllowFreqConflicts:true,doResetConfirmationStatus:true,doUpdatePatStatus:true,
+				provChanged:provChangedNotUsed,hygChanged:hygChangedNotUsed,timeWasMoved:(appt.AptDateTime!=apptDateTimeNew),isOpChanged:(appt.Op!=opNumNew),secLogSource:secLogSource, userNum:userNum);
 		}
 		
 		///<summary>Throws exception. Called when moving an appt in the appt module on mouse up after validation and user input.</summary>
-		public static void MoveValidatedAppointment(Appointment appointment,Appointment appointmentOld,Patient patient,Operatory operatory,
-			List<Schedule> listSchedulesPeriod,List<Operatory> listOperatories,bool isProvChanged,bool isHygChanged,bool isTimeMoved,bool isOpChanged,bool isOpUpdate=false)
+		public static void MoveValidatedAppointment(Appointment apt,Appointment aptOld,Patient patCur,Operatory curOp,
+			List<Schedule> schedListPeriod,List<Operatory> listOps,bool provChanged,bool hygChanged,bool timeWasMoved,bool isOpChanged,bool isOpUpdate=false)
 		{
 			//Skipping validation so all bools that mimic prompt inputs are set to false since they have already ran in ContrApt.MoveAppointments(...)s validation.
-			TryMoveAppointment(appointment,appointmentOld,patient,operatory,listSchedulesPeriod,listOperatories,DateTime.MinValue,
-				doValidation:false,setArriveEarly:false,changeProv:false,updatePattern:false,allowFreqConflicts:false,resetConfirmationStatus:false,updatePatStatus:false,
-				provChanged:isProvChanged,hygChanged:isHygChanged,timeWasMoved:isTimeMoved,isOpChanged:isOpChanged,isOpUpdate:isOpUpdate);
+			TryMoveAppointment(apt,aptOld,patCur,curOp,schedListPeriod,listOps,DateTime.MinValue,
+				doValidation:false,doSetArriveEarly:false,doProvChange:false,doUpdatePattern:false,doAllowFreqConflicts:false,doResetConfirmationStatus:false,doUpdatePatStatus:false,
+				provChanged:provChanged,hygChanged:hygChanged,timeWasMoved:timeWasMoved,isOpChanged:isOpChanged,isOpUpdate:isOpUpdate);
 		}
 
-		///<summary>Throws exception. When doSkipValidation is false all bools need to be set and considered.</summary>
-		public static void TryMoveAppointment(Appointment appointment,Appointment appointmentOld,Patient patient,Operatory operatory,List<Schedule> listSchedulesPeriod,
-			List<Operatory> listOperatories,DateTime aptDateTimeNew,bool doValidation,bool setArriveEarly,bool changeProv,bool updatePattern,
-			bool allowFreqConflicts,bool resetConfirmationStatus,bool updatePatStatus,bool provChanged,bool hygChanged,bool timeWasMoved,bool isOpChanged,bool isOpUpdate=false,LogSources secLogSource=LogSources.None, long userNum=0) 
+		///<summary>Throws exception. When doSkipValidation is false all 'do' bools need to be set and considered.</summary>
+		public static void TryMoveAppointment(Appointment apt,Appointment aptOld,Patient patCur,Operatory curOp,List<Schedule> schedListPeriod,
+			List<Operatory> listOps,DateTime newAptDateTime,bool doValidation,bool doSetArriveEarly,bool doProvChange,bool doUpdatePattern,
+			bool doAllowFreqConflicts,bool doResetConfirmationStatus,bool doUpdatePatStatus,bool provChanged,bool hygChanged,bool timeWasMoved,bool isOpChanged,bool isOpUpdate=false,LogSources secLogSource=LogSources.None, long userNum=0) 
 		{
-			if(aptDateTimeNew!=DateTime.MinValue) {
-				appointment.AptDateTime=aptDateTimeNew;//The time we are attempting to move the appt to.
-				timeWasMoved=(appointment.AptDateTime!=appointmentOld.AptDateTime);
+			if(newAptDateTime!=DateTime.MinValue) {
+				apt.AptDateTime=newAptDateTime;//The time we are attempting to move the appt to.
+				timeWasMoved=(apt.AptDateTime!=aptOld.AptDateTime);
 			}
-			List<Procedure> listProceduresSingleAppt=null;
-			if(doValidation) {//ContrAppt.MoveAppointments(...) has identical validation but allows for YesNo input, mimicked here as booleans.
+			List<Procedure> procsForSingleApt=null;
+			if(doValidation) {//ContrAppt.MoveAppointments(...) has identical validation but allows for YesNo input, mimiced here as booleans.
 				#region Appointment validation and modifications
-				appointment.Op=operatory.OperatoryNum;
+				apt.Op=curOp.OperatoryNum;
 				provChanged=false;
 				hygChanged=false;
-				long provNumDentAssigned=Schedules.GetAssignedProvNumForSpot(listSchedulesPeriod,operatory,false,appointment.AptDateTime);
-				long provNumHygAssigned=Schedules.GetAssignedProvNumForSpot(listSchedulesPeriod,operatory,true,appointment.AptDateTime);
-				if(appointment.AptStatus!=ApptStatus.PtNote && appointment.AptStatus!=ApptStatus.PtNoteCompleted) {
+				long assignedDent=Schedules.GetAssignedProvNumForSpot(schedListPeriod,curOp,false,apt.AptDateTime);
+				long assignedHyg=Schedules.GetAssignedProvNumForSpot(schedListPeriod,curOp,true,apt.AptDateTime);
+				if(apt.AptStatus!=ApptStatus.PtNote && apt.AptStatus!=ApptStatus.PtNoteCompleted) {
 					if(timeWasMoved) {
 						#region Update Appt's DateTimeAskedToArrive
-						if(patient.AskToArriveEarly>0) {
-							appointment.DateTimeAskedToArrive=appointment.AptDateTime.AddMinutes(-patient.AskToArriveEarly);
+						if(patCur.AskToArriveEarly>0) {
+							apt.DateTimeAskedToArrive=apt.AptDateTime.AddMinutes(-patCur.AskToArriveEarly);
 						}
 						else {
-							if(appointment.DateTimeAskedToArrive.Year>1880 && (appointmentOld.AptDateTime-appointmentOld.DateTimeAskedToArrive).TotalMinutes>0) {
-								appointment.DateTimeAskedToArrive=appointment.AptDateTime-(appointmentOld.AptDateTime-appointmentOld.DateTimeAskedToArrive);
-								if(!setArriveEarly) {
-									appointment.DateTimeAskedToArrive=appointmentOld.DateTimeAskedToArrive;
+							if(apt.DateTimeAskedToArrive.Year>1880 && (aptOld.AptDateTime-aptOld.DateTimeAskedToArrive).TotalMinutes>0) {
+								apt.DateTimeAskedToArrive=apt.AptDateTime-(aptOld.AptDateTime-aptOld.DateTimeAskedToArrive);
+								if(!doSetArriveEarly) {
+									apt.DateTimeAskedToArrive=aptOld.DateTimeAskedToArrive;
 								}
 							}
 							else {
-								appointment.DateTimeAskedToArrive=DateTime.MinValue;
+								apt.DateTimeAskedToArrive=DateTime.MinValue;
 							}
 						}
 						#endregion Update Appt's DateTimeAskedToArrive
 					}
 					#region Update Appt's Update Appt's ProvNum, ProvHyg, IsHygiene, Pattern
 					//if no dentist/hygenist is assigned to spot, then keep the original dentist/hygenist without prompt.  All appts must have prov.
-					if((provNumDentAssigned!=0 && provNumDentAssigned!=appointment.ProvNum) || (provNumHygAssigned!=0 && provNumHygAssigned!=appointment.ProvHyg)) {
-						if(isOpUpdate || changeProv) {//Short circuit logic.  If we're updating op through right click, never ask.
-							if(provNumDentAssigned!=0) {//the dentist will only be changed if the spot has a dentist.
-								appointment.ProvNum=provNumDentAssigned;
+					if((assignedDent!=0 && assignedDent!=apt.ProvNum) || (assignedHyg!=0 && assignedHyg!=apt.ProvHyg)) {
+						if(isOpUpdate || doProvChange) {//Short circuit logic.  If we're updating op through right click, never ask.
+							if(assignedDent!=0) {//the dentist will only be changed if the spot has a dentist.
+								apt.ProvNum=assignedDent;
 								provChanged=true;
 							}
-							if(provNumHygAssigned!=0 || PrefC.GetBool(PrefName.ApptSecondaryProviderConsiderOpOnly)) {//the hygienist will only be changed if the spot has a hygienist.
-								appointment.ProvHyg=provNumHygAssigned;
+							if(assignedHyg!=0 || PrefC.GetBool(PrefName.ApptSecondaryProviderConsiderOpOnly)) {//the hygienist will only be changed if the spot has a hygienist.
+								apt.ProvHyg=assignedHyg;
 								hygChanged=true;
 							}
-							if(operatory.IsHygiene) {
-								appointment.IsHygiene=true;
+							if(curOp.IsHygiene) {
+								apt.IsHygiene=true;
 							}
 							else {//op not marked as hygiene op
-								if(provNumDentAssigned==0) {//no dentist assigned
-									if(provNumHygAssigned!=0) {//hyg is assigned (we don't really have to test for this)
-										appointment.IsHygiene=true;
+								if(assignedDent==0) {//no dentist assigned
+									if(assignedHyg!=0) {//hyg is assigned (we don't really have to test for this)
+										apt.IsHygiene=true;
 									}
 								}
 								else {//dentist is assigned
-									if(provNumHygAssigned==0) {//hyg is not assigned
-										appointment.IsHygiene=false;
+									if(assignedHyg==0) {//hyg is not assigned
+										apt.IsHygiene=false;
 									}
 									//if both dentist and hyg are assigned, it's tricky
 									//only explicitly set it if user has a dentist assigned to the op
-									if(operatory.ProvDentist!=0) {
-										appointment.IsHygiene=false;
+									if(curOp.ProvDentist!=0) {
+										apt.IsHygiene=false;
 									}
 								}
 							}
-							listProceduresSingleAppt=Procedures.GetProcsForSingle(appointment.AptNum,false);
-							List<long> listCodeNums=new List<long>();
-							for(int p = 0;p<listProceduresSingleAppt.Count;p++) {
-								listCodeNums.Add(listProceduresSingleAppt[p].CodeNum);
+							procsForSingleApt=Procedures.GetProcsForSingle(apt.AptNum,false);
+							List<long> codeNums=new List<long>();
+							for(int p = 0;p<procsForSingleApt.Count;p++) {
+								codeNums.Add(procsForSingleApt[p].CodeNum);
 							}
-							if(!isOpUpdate && updatePattern) {
-								string calcPattern=Appointments.CalculatePattern(appointment.ProvNum,appointment.ProvHyg,listCodeNums,true);
-								if(appointment.Pattern!=calcPattern
-									&& Security.IsAuthorized(EnumPermType.AppointmentResize,suppressMessage:true)
+							if(!isOpUpdate && doUpdatePattern) {
+								string calcPattern=Appointments.CalculatePattern(apt.ProvNum,apt.ProvHyg,codeNums,true);
+								if(apt.Pattern!=calcPattern
+									&& Security.IsAuthorized(Permissions.AppointmentResize,suppressMessage:true)
 									&& !PrefC.GetBool(PrefName.AppointmentTimeIsLocked))//Updating op provs will not change apt lengths.
 								{
-									appointment.Pattern=calcPattern;
+									apt.Pattern=calcPattern;
 								}
 							}
 						}
@@ -4437,66 +4375,66 @@ namespace OpenDentBusiness{
 				#region Prevent overlap
 				//JS Overlap is no longer prevented when moving from ContrAppt, and this code won't be hit because doValidation is false.
 				//It is still prevented with TryMoveApptWebHelper, but only because I'm not overhauling that part of the code right now.
-				if(!isOpUpdate && !TryAdjustAppointmentOp(appointment,listOperatories)) {
+				if(!isOpUpdate && !TryAdjustAppointmentOp(apt,listOps)) {
 					throw new ODException(Lans.g("MoveAppointment","Appointment overlaps existing appointment or blockout."));
 				}
 				#endregion Prevent overlap
 				#region Detect Frequency Conflicts
 				//Detect frequency conflicts with procedures in the appointment
 				if(!isOpUpdate && PrefC.GetBool(PrefName.InsChecksFrequency)) {
-					listProceduresSingleAppt=Procedures.GetProcsForSingle(appointment.AptNum,false);
+					procsForSingleApt=Procedures.GetProcsForSingle(apt.AptNum,false);
 					string frequencyConflicts="";
 					try {
-						frequencyConflicts=Procedures.CheckFrequency(listProceduresSingleAppt,appointment.PatNum,appointment.AptDateTime);
+						frequencyConflicts=Procedures.CheckFrequency(procsForSingleApt,apt.PatNum,apt.AptDateTime);
 					}
 					catch(Exception e) {
 						throw new Exception(Lans.g("MoveAppointment","There was an error checking frequencies."
 								+"  Disable the Insurance Frequency Checking feature or try to fix the following error:")
 								+"\r\n"+e.Message);
 					}
-					if(frequencyConflicts!="" && !allowFreqConflicts) {
+					if(frequencyConflicts!="" && !doAllowFreqConflicts) {
 						return;
 					}
 				}
 				#endregion Detect Frequency Conflicts
 				#region Patient status
-				if(!isOpUpdate && updatePatStatus) {
-					Operatory operatoryNow=Operatories.GetOperatory(appointment.Op);
-					Operatory operatoryOld=Operatories.GetOperatory(appointmentOld.Op);
-					if(operatoryOld==null || operatoryNow.SetProspective!=operatoryOld.SetProspective) {
-						Patient patientOld=patient.Copy();
-						if(operatoryNow.SetProspective && patient.PatStatus!=PatientStatus.Prospective) { //Don't need to prompt if patient is already prospective.
-							patient.PatStatus=PatientStatus.Prospective;
+				if(!isOpUpdate && doUpdatePatStatus) {
+					Operatory opCur=Operatories.GetOperatory(apt.Op);
+					Operatory opOld=Operatories.GetOperatory(aptOld.Op);
+					if(opOld==null || opCur.SetProspective!=opOld.SetProspective) {
+						Patient patOld=patCur.Copy();
+						if(opCur.SetProspective && patCur.PatStatus!=PatientStatus.Prospective) { //Don't need to prompt if patient is already prospective.
+							patCur.PatStatus=PatientStatus.Prospective;
 						}
-						else if(!operatoryNow.SetProspective && patient.PatStatus==PatientStatus.Prospective) {
+						else if(!opCur.SetProspective && patCur.PatStatus==PatientStatus.Prospective) {
 							//Do we need to warn about changing FROM prospective? Assume so for now.
-							patient.PatStatus=PatientStatus.Patient;
+							patCur.PatStatus=PatientStatus.Patient;
 						}
-						if(patient.PatStatus!=patientOld.PatStatus) {
-							SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,patient.PatNum,"Patient's status changed from "
-								+patientOld.PatStatus.GetDescription()+" to "+patient.PatStatus.GetDescription()+".");
+						if(patCur.PatStatus!=patOld.PatStatus) {
+							SecurityLogs.MakeLogEntry(Permissions.PatientEdit,patCur.PatNum,"Patient's status changed from "
+								+patOld.PatStatus.GetDescription()+" to "+patCur.PatStatus.GetDescription()+".");
 						}
-						Patients.Update(patient,patientOld);
+						Patients.Update(patCur,patOld);
 					}
 				}
 				#endregion Patient status
 				#region Update Appt's AptStatus, ClinicNum, Confirmed
-				if(appointment.AptStatus==ApptStatus.Broken && (timeWasMoved||isOpChanged)) {
-					appointment.AptStatus=ApptStatus.Scheduled;
+				if(apt.AptStatus==ApptStatus.Broken && (timeWasMoved||isOpChanged)) {
+					apt.AptStatus=ApptStatus.Scheduled;
 				}
 				//original location of provider code
-				if(operatory.ClinicNum==0) {
-					appointment.ClinicNum=patient.ClinicNum;
+				if(curOp.ClinicNum==0) {
+					apt.ClinicNum=patCur.ClinicNum;
 				}
 				else {
-					appointment.ClinicNum=operatory.ClinicNum;
+					apt.ClinicNum=curOp.ClinicNum;
 				}
-				if(appointment.AptDateTime!=appointmentOld.AptDateTime
-					&& appointment.Confirmed!=Defs.GetFirstForCategory(DefCat.ApptConfirmed,true).DefNum
-					&& appointment.AptDateTime.Date!=DateTime.Today
-					&& resetConfirmationStatus)
+				if(apt.AptDateTime!=aptOld.AptDateTime
+					&& apt.Confirmed!=Defs.GetFirstForCategory(DefCat.ApptConfirmed,true).DefNum
+					&& apt.AptDateTime.Date!=DateTime.Today
+					&& doResetConfirmationStatus)
 				{
-					appointment.Confirmed=Defs.GetFirstForCategory(DefCat.ApptConfirmed,true).DefNum;//Causes the confirmation status to be reset.
+					apt.Confirmed=Defs.GetFirstForCategory(DefCat.ApptConfirmed,true).DefNum;//Causes the confirmation status to be reset.
 				}
 				#endregion Update Appt's AptStatus, ClinicNum, Confirmed
 				#endregion
@@ -4504,41 +4442,41 @@ namespace OpenDentBusiness{
 			}
 			#region Update Appt in db
 			try {
-				Appointments.Update(appointment,appointmentOld);
+				Appointments.Update(apt,aptOld);
 			}
 			catch(ApplicationException ex) {
 				ex.DoNothing();
 				throw;
 			}
-			TryAddPerVisitProcCodesToAppt(appointment,appointmentOld.AptStatus);
+			TryAddPerVisitProcCodesToAppt(apt,aptOld.AptStatus);
 			#endregion Update Appt in db
 			#region apt.Confirmed securitylog
-			if(appointment.Confirmed!=appointmentOld.Confirmed) {
+			if(apt.Confirmed!=aptOld.Confirmed) {
 				//Log confirmation status changes.
-				SecurityLogs.MakeLogEntry(EnumPermType.ApptConfirmStatusEdit,appointment.PatNum,
+				SecurityLogs.MakeLogEntry(Permissions.ApptConfirmStatusEdit,apt.PatNum,
 					Lans.g("MoveAppointment","Appointment confirmation status changed from")+" "
-					+Defs.GetName(DefCat.ApptConfirmed,appointmentOld.Confirmed)+" "+Lans.g("MoveAppointment","to")+" "+Defs.GetName(DefCat.ApptConfirmed,appointment.Confirmed)
-					+Lans.g("MoveAppointment","from the appointment module")+".",appointment.AptNum,secLogSource,appointmentOld.DateTStamp);
+					+Defs.GetName(DefCat.ApptConfirmed,aptOld.Confirmed)+" "+Lans.g("MoveAppointment","to")+" "+Defs.GetName(DefCat.ApptConfirmed,apt.Confirmed)
+					+Lans.g("MoveAppointment","from the appointment module")+".",apt.AptNum,secLogSource,aptOld.DateTStamp);
 			}
 			#endregion
 			#region Set prov in apt
-			if(appointment.AptStatus!=ApptStatus.Complete) {
-				if(listProceduresSingleAppt==null) {
-					listProceduresSingleAppt=Procedures.GetProcsForSingle(appointment.AptNum,false);
+			if(apt.AptStatus!=ApptStatus.Complete) {
+				if(procsForSingleApt==null) {
+					procsForSingleApt=Procedures.GetProcsForSingle(apt.AptNum,false);
 				}
-				ProcFeeHelper procFeeHelper=new ProcFeeHelper(appointment.PatNum);
+				ProcFeeHelper procFeeHelper=new ProcFeeHelper(apt.PatNum);
 				bool isUpdatingFees=false;
-				List<Procedure> listProceduresNew=listProceduresSingleAppt.Select(x => Procedures.ChangeProcInAppointment(appointment,x.Copy())).ToList();
-				if(listProceduresSingleAppt.Exists(x => x.ProvNum!=listProceduresNew.FirstOrDefault(y => y.ProcNum==x.ProcNum).ProvNum)) {//Either the primary or hygienist changed.
+				List<Procedure> listProcsNew=procsForSingleApt.Select(x => Procedures.ChangeProcInAppointment(apt,x.Copy())).ToList();
+				if(procsForSingleApt.Exists(x => x.ProvNum!=listProcsNew.FirstOrDefault(y => y.ProcNum==x.ProcNum).ProvNum)) {//Either the primary or hygienist changed.
 					string promptText="";
-					isUpdatingFees=Procedures.ShouldFeesChange(listProceduresNew,listProceduresSingleAppt,ref promptText,procFeeHelper);
+					isUpdatingFees=Procedures.ShouldFeesChange(listProcsNew,procsForSingleApt,ref promptText,procFeeHelper);
 					if(isUpdatingFees) {//Made it pass the pref check.
 						if(promptText!=""){
 								isUpdatingFees=false;
 						}
 					}
 				}
-				Procedures.SetProvidersInAppointment(appointment,listProceduresSingleAppt,isUpdatingFees,procFeeHelper);
+				Procedures.SetProvidersInAppointment(apt,procsForSingleApt,isUpdatingFees,procFeeHelper);
 			}
 			#endregion
 			#region SecurityLog
@@ -4554,20 +4492,20 @@ namespace OpenDentBusiness{
 					logtext+=" "+Lans.g("MoveAppointment","hygienist changed");
 				}
 				if(logtext!="") {
-					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentEdit,appointment.PatNum,
-						Lans.g("MoveAppointment","Appointment on")+" "+appointment.AptDateTime.ToString()+logtext,appointment.AptNum,secLogSource,appointment.DateTStamp, userNum);
+					SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,apt.PatNum,
+						Lans.g("MoveAppointment","Appointment on")+" "+apt.AptDateTime.ToString()+logtext,apt.AptNum,secLogSource,apt.DateTStamp, userNum);
 				}
 			}
 			else { 
-				if(appointment.AptStatus==ApptStatus.Complete) { //separate log entry for editing completed appointments
-					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentCompleteEdit,appointment.PatNum,
-						Lans.g("MoveAppointment","moved")+" "+appointment.ProcDescript+" "+Lans.g("MoveAppointment","from")+" "+appointmentOld.AptDateTime.ToString()+", "+Lans.g("MoveAppointment","to")+" "+appointment.AptDateTime.ToString(),
-						appointment.AptNum,secLogSource,appointmentOld.DateTStamp, userNum);
+				if(apt.AptStatus==ApptStatus.Complete) { //separate log entry for editing completed appointments
+					SecurityLogs.MakeLogEntry(Permissions.AppointmentCompleteEdit,apt.PatNum,
+						Lans.g("MoveAppointment","moved")+" "+apt.ProcDescript+" "+Lans.g("MoveAppointment","from")+" "+aptOld.AptDateTime.ToString()+", "+Lans.g("MoveAppointment","to")+" "+apt.AptDateTime.ToString(),
+						apt.AptNum,secLogSource,aptOld.DateTStamp, userNum);
 				}
 				else {
-					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentMove,appointment.PatNum,
-						appointment.ProcDescript+" "+Lans.g("MoveAppointment","from")+" "+appointmentOld.AptDateTime.ToString()+", "+Lans.g("MoveAppointment","to")+" "+appointment.AptDateTime.ToString(),
-						appointment.AptNum,secLogSource,appointmentOld.DateTStamp,userNum);
+					SecurityLogs.MakeLogEntry(Permissions.AppointmentMove,apt.PatNum,
+						apt.ProcDescript+" "+Lans.g("MoveAppointment","from")+" "+aptOld.AptDateTime.ToString()+", "+Lans.g("MoveAppointment","to")+" "+apt.AptDateTime.ToString(),
+						apt.AptNum,secLogSource,aptOld.DateTStamp,userNum);
 				}
 			}
 			#endregion SecurityLog
@@ -4575,14 +4513,14 @@ namespace OpenDentBusiness{
 			//If there is an existing HL7 def enabled, send a SIU message if there is an outbound SIU message defined
 			if(HL7Defs.IsExistingHL7Enabled()) {
 				//S13 - Appt Rescheduling
-				MessageHL7 messageHL7=MessageConstructor.GenerateSIU(patient,Patients.GetPat(patient.Guarantor),EventTypeHL7.S13,appointment);
+				MessageHL7 messageHL7=MessageConstructor.GenerateSIU(patCur,Patients.GetPat(patCur.Guarantor),EventTypeHL7.S13,apt);
 				//Will be null if there is no outbound SIU message defined, so do nothing
 				if(messageHL7!=null) {
 					HL7Msg hl7Msg=new HL7Msg();
-					hl7Msg.AptNum=appointment.AptNum;
+					hl7Msg.AptNum=apt.AptNum;
 					hl7Msg.HL7Status=HL7MessageStatus.OutPending;//it will be marked outSent by the HL7 service.
 					hl7Msg.MsgText=messageHL7.ToString();
-					hl7Msg.PatNum=patient.PatNum;
+					hl7Msg.PatNum=patCur.PatNum;
 					HL7Msgs.Insert(hl7Msg);
 					if(ODBuild.IsDebug()) {
 						throw new Exception(messageHL7.ToString());
@@ -4592,7 +4530,7 @@ namespace OpenDentBusiness{
 			#endregion HL7
 			#region HieQueue
 			if(HieClinics.IsEnabled()) {
-				HieQueues.Insert(new HieQueue(patient.PatNum));
+				HieQueues.Insert(new HieQueue(patCur.PatNum));
 			}
 			#endregion
 		}
@@ -4649,9 +4587,9 @@ namespace OpenDentBusiness{
 				}
 			}
 			TryAddPerVisitProcCodesToAppt(appointmentNew,appointmentPlanned.AptStatus);
-			List<LabCase> listLabCases=LabCases.GetForPlanned(appointmentPlanned.AptNum);
-			if(!listLabCases.IsNullOrEmpty()) {
-				LabCases.AttachToAppt(listLabCases.Select(x => x.LabCaseNum).ToList(),appointmentNew.AptNum);
+			LabCase labCase=LabCases.GetForPlanned(appointmentPlanned.AptNum);
+			if(labCase!=null) {
+				LabCases.AttachToAppt(labCase.LabCaseNum,appointmentNew.AptNum);
 			}
 			return appointmentNew;
 		}
@@ -4670,9 +4608,9 @@ namespace OpenDentBusiness{
 		///First tries apt.OpNum, then tries remaining ops from left-to-right. Then tries remaining ops from right-to-left.
 		///Calling RefreshPeriod() is not necessary before calling this method. It goes to the db only as much as is necessary.
 		///Returns true if adjustment was successful or no adjustment was necessary. Returns false if all potential adjustments still caused overlap.</summary>
-		public static bool TryAdjustAppointmentOp(Appointment appointment,List<Operatory> listOperatories) {
-			bool isNotUsed;
-			return !TryAdjustAppointment(appointment,listOperatories,true,false,true,true,out isNotUsed);
+		public static bool TryAdjustAppointmentOp(Appointment apt,List<Operatory> listOps) {
+			bool notUsed;
+			return !Appointments.TryAdjustAppointment(apt,listOps,true,false,true,true,out notUsed);
 		}
 
 		///<summary>Creates a new appointment for the given patient.
@@ -4680,43 +4618,43 @@ namespace OpenDentBusiness{
 		///Set useApptDrawingSettings to true if the user double clicked on the appointment schedule in order to make a new appointment.
 		///It will utilize the global static properties to help set required fields for "Scheduled" appointments.
 		///Otherwise, simply sets the corresponding PatNum and then the status to "Unscheduled".</summary>
-		public static Appointment MakeNewAppointment(Patient patient,DateTime aptDateTime,long opNum,bool useApptDrawingSettings) {
-			Appointment appointment=new Appointment();
-			if(patient!=null) {
+		public static Appointment MakeNewAppointment(Patient PatCur,DateTime apptDateTime,long opNum,bool useApptDrawingSettings) {
+			Appointment AptCur=new Appointment();
+			if(PatCur!=null) {
 				//Anything referencing PatCur must be in here.
-				appointment.PatNum=patient.PatNum;
-				if(patient.DateFirstVisit.Year<1880
-					&& !Procedures.AreAnyComplete(patient.PatNum))//this only runs if firstVisit blank
+				AptCur.PatNum=PatCur.PatNum;
+				if(PatCur.DateFirstVisit.Year<1880
+					&& !Procedures.AreAnyComplete(PatCur.PatNum))//this only runs if firstVisit blank
 				{
-					appointment.IsNewPatient=true;
+					AptCur.IsNewPatient=true;
 				}
-				if(patient.PriProv==0) {
-					appointment.ProvNum=PrefC.GetLong(PrefName.PracticeDefaultProv);
+				if(PatCur.PriProv==0) {
+					AptCur.ProvNum=PrefC.GetLong(PrefName.PracticeDefaultProv);
 				}
 				else {
-					appointment.ProvNum=patient.PriProv;
+					AptCur.ProvNum=PatCur.PriProv;
 				}
-				appointment.ProvHyg=patient.SecProv;
-				appointment.ClinicNum=patient.ClinicNum;
+				AptCur.ProvHyg=PatCur.SecProv;
+				AptCur.ClinicNum=PatCur.ClinicNum;
 			}
 			if(useApptDrawingSettings) {//initially double clicked on appt module
-				appointment.AptDateTime=aptDateTime;
-				if(patient!=null && patient.AskToArriveEarly>0) {
-					appointment.DateTimeAskedToArrive=appointment.AptDateTime.AddMinutes(-patient.AskToArriveEarly);
+				AptCur.AptDateTime=apptDateTime;
+				if(PatCur!=null && PatCur.AskToArriveEarly>0) {
+					AptCur.DateTimeAskedToArrive=AptCur.AptDateTime.AddMinutes(-PatCur.AskToArriveEarly);
 				}
-				appointment.Op=opNum;
-				appointment=AssignFieldsForOperatory(appointment);
-				appointment.AptStatus=ApptStatus.Scheduled;
+				AptCur.Op=opNum;
+				AptCur=AssignFieldsForOperatory(AptCur);
+				AptCur.AptStatus=ApptStatus.Scheduled;
 			}
 			else {
 				//new appt will be placed on pinboard instead of specific time
-				appointment.AptStatus=ApptStatus.UnschedList;//This is so that if it's on the pinboard when use shuts down OD, no db inconsistency.
+				AptCur.AptStatus=ApptStatus.UnschedList;//This is so that if it's on the pinboard when use shuts down OD, no db inconsistency.
 			}
-			appointment.TimeLocked=PrefC.GetBool(PrefName.AppointmentTimeIsLocked);
-			appointment.ColorOverride=System.Drawing.Color.FromArgb(0);
-			appointment.Pattern="/X/";
-			appointment.SecurityHash=HashFields(appointment);
-			return appointment;
+			AptCur.TimeLocked=PrefC.GetBool(PrefName.AppointmentTimeIsLocked);
+			AptCur.ColorOverride=System.Drawing.Color.FromArgb(0);
+			AptCur.Pattern="/X/";
+			AptCur.SecurityHash=HashFields(AptCur);
+			return AptCur;
 		}
 
 		///<summary>Converts the pattern passed in to be 5 minute increments based on the AppointmentTimeIncrement preference.
@@ -4758,15 +4696,15 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns a new Appointment with various field values copied into it from the supplied Appointment.</summary>
-		public static Appointment CopyStructure(Appointment appointment) {
-			Appointment appointmentNew=new Appointment();
-			appointmentNew.PatNum=appointment.PatNum;
-			appointmentNew.ProvNum=appointment.ProvNum;
-			appointmentNew.Pattern=appointment.Pattern;//Cannot copy length directly.
-			appointmentNew.Note=appointment.Note;
-			appointmentNew.AptStatus=ApptStatus.UnschedList;//Set to unscheduled. Dragging and dropping this appointment from the pinboard to the operatory will change the status to 'Scheduled'
-			appointmentNew.AppointmentTypeNum=appointment.AppointmentTypeNum;
-			return appointmentNew;
+		public static Appointment CopyStructure(Appointment appt) {
+			Appointment apptNew=new Appointment();
+			apptNew.PatNum=appt.PatNum;
+			apptNew.ProvNum=appt.ProvNum;
+			apptNew.Pattern=appt.Pattern;//Cannot copy length directly.
+			apptNew.Note=appt.Note;
+			apptNew.AptStatus=ApptStatus.UnschedList;//Set to unscheduled. Dragging and dropping this appointment from the pinboard to the operatory will change the status to 'Scheduled'
+			apptNew.AppointmentTypeNum=appt.AppointmentTypeNum;
+			return apptNew;
 		}
 
 		///<summary>Takes all time patterns passed in and fuses them into one final time pattern that should be used on appointments.
@@ -4794,19 +4732,19 @@ namespace OpenDentBusiness{
 					continue;//No proc pattern to add to total time pattern.
 				}
 				string procPattern=procPatternRaw.ToUpper();
-				string hygTimeStartNow=procPattern.Substring(0,procPattern.Length-procPattern.TrimStart('/').Length);
+				string hygTimeStartCur=procPattern.Substring(0,procPattern.Length-procPattern.TrimStart('/').Length);
 				//Keep track of the max leading hyg time (/'s)
-				if(hygTimeStartNow.Length > hygTimeStart.Length) {
-					hygTimeStart=hygTimeStartNow;
+				if(hygTimeStartCur.Length > hygTimeStart.Length) {
+					hygTimeStart=hygTimeStartCur;
 				}
 				//Trim away the hyg start time and then trim off any /'s on the end and this will be the provider time.
 				//Always retain the middle of the procedure time.  E.g. "/XXX///XX///" should retain "XXX///XX" for the provider time portion.
 				provTimeTotal+=procPattern.Trim('/');
 				//Keep track of the max ending hyg time (/'s) as long as there is at least one prov time (X's) present.
 				if(procPattern.Contains('X')) {
-					string hygTimeEndNow=procPattern.Substring(procPattern.TrimEnd('/').Length);
-					if(hygTimeEndNow.Length > hygTimeEnd.Length) {
-						hygTimeEnd=hygTimeEndNow;
+					string hygTimeEndCur=procPattern.Substring(procPattern.TrimEnd('/').Length);
+					if(hygTimeEndCur.Length > hygTimeEnd.Length) {
+						hygTimeEnd=hygTimeEndCur;
 					}
 				}
 			}
@@ -4866,12 +4804,12 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns true if appt has at least 1 completed proc attached.</summary>
-		public static bool HasCompletedProcsAttached(long aptNum,List<Procedure> listProceduresAttachToApt=null) {
-			if(listProceduresAttachToApt!=null) { 
-				return listProceduresAttachToApt.Any(x => x.AptNum==aptNum && x.ProcStatus==ProcStat.C);
+		public static bool HasCompletedProcsAttached(long aptNum,List<Procedure> listProcsAttachToApt=null) {
+			if(listProcsAttachToApt!=null) { 
+				return listProcsAttachToApt.Any(x => x.AptNum==aptNum && x.ProcStatus==ProcStat.C);
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),aptNum,listProceduresAttachToApt);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),aptNum,listProcsAttachToApt);
 			}
 			string command=$"SELECT COUNT(*) FROM procedurelog " +
 					$"WHERE AptNum={POut.Long(aptNum)} AND ProcStatus={POut.Int((int)ProcStat.C)}";
@@ -4928,14 +4866,14 @@ namespace OpenDentBusiness{
 		}		
 
 		///<summary>Used in Chart module to test whether a procedure is attached to an appointment with today's date. The procedure might have a different date if still TP status.  ApptList should include all appointments for this patient. Does not make a call to db.</summary>
-		public static bool ProcIsToday(Appointment[] appointmentArray,Procedure procedure){
+		public static bool ProcIsToday(Appointment[] apptList,Procedure proc){
 			//No need to check MiddleTierRole; no call to db.
-			for(int i=0;i<appointmentArray.Length;i++){
-				if(appointmentArray[i].AptDateTime.Date==DateTime.Today
-					&& appointmentArray[i].AptNum==procedure.AptNum
-					&& (appointmentArray[i].AptStatus==ApptStatus.Scheduled
-					|| appointmentArray[i].AptStatus==ApptStatus.Broken
-					|| appointmentArray[i].AptStatus==ApptStatus.Complete))
+			for(int i=0;i<apptList.Length;i++){
+				if(apptList[i].AptDateTime.Date==DateTime.Today
+					&& apptList[i].AptNum==proc.AptNum
+					&& (apptList[i].AptStatus==ApptStatus.Scheduled
+					|| apptList[i].AptStatus==ApptStatus.Broken
+					|| apptList[i].AptStatus==ApptStatus.Complete))
 				{
 					return true;
 				}
@@ -4956,119 +4894,119 @@ namespace OpenDentBusiness{
 		///This logic is attempting to mimic FormApptEdit when interacting with a new or existing appointment.
 		///Set listProcsForApptEditOverride to override Procedures.GetProcsForApptEdit(...) . This should only be done if you already retrieved the list.
 		///When listAttachedProcNums is set and not empty, we use this list as the predetermined list of proc nums that should be associated to given appt.</summary>
-		public static void UpsertApptFromWeb(Appointment appointment,bool canUpdateApptPattern=false,LogSources secLogSource=LogSources.MobileWeb,
-			List<Procedure> listProceduresForApptEditOverride=null, List<long> listProcNumsAttached=null)
+		public static void UpsertApptFromWeb(Appointment appt,bool canUpdateApptPattern=false,LogSources secLogSource=LogSources.MobileWeb,
+			List<Procedure> listProcsForApptEditOverride=null, List<long> listAttachedProcNums=null)
 		{
-			Patient patient=Patients.GetPat(appointment.PatNum);
-			List<Procedure> listProceduresForApptEdit=listProceduresForApptEditOverride ?? Procedures.GetProcsForApptEdit(appointment);//List of all procedures that would show in FormApptEdit.cs
-			List<PatPlan> listPatPlans=PatPlans.GetPatPlansForPat(patient.PatNum);
+			Patient pat=Patients.GetPat(appt.PatNum);
+			List<Procedure> listProcsForApptEdit=listProcsForApptEditOverride ?? Procedures.GetProcsForApptEdit(appt);//List of all procedures that would show in FormApptEdit.cs
+			List<PatPlan> listPatPlans=PatPlans.GetPatPlansForPat(pat.PatNum);
 			List<InsSub> listInsSubs=new List<InsSub>();
 			List<InsPlan> listInsPlans=new List<InsPlan>();
 			if(listPatPlans.Count>0) {
 				listInsSubs=InsSubs.GetMany(listPatPlans.Select(x => x.InsSubNum).ToList());
 				listInsPlans=InsPlans.GetByInsSubs(listInsSubs.Select(x => x.InsSubNum).ToList());
 			}
-			AppointmentType appointmentType=AppointmentTypes.GetOne(appointment.AppointmentTypeNum);//When AppointmentTypeNum=0 this will be null.
-			Appointment appointmentOld=GetOneApt(appointment.AptNum);//When inserting a new appt this will be null.
-			appointment.IsNew=(appointmentOld==null);
-			long appointmentTypeNumOld=(appointmentOld==null ? 0:appointmentOld.AppointmentTypeNum);
-			List<Procedure> listProceduresOnAppt;//Subset of listProcsForApptEdit. All procs associated to the given appt. Some aptNums may not be set yet.
-			if(appointmentType!=null && appointmentType.AppointmentTypeNum!=appointmentTypeNumOld) {//Appointment type set and changed.
+			AppointmentType apptTypeCur=AppointmentTypes.GetOne(appt.AppointmentTypeNum);//When AppointmentTypeNum=0 this will be null.
+			Appointment apptOld=GetOneApt(appt.AptNum);//When inserting a new appt this will be null.
+			appt.IsNew=(apptOld==null);
+			long apptTypeNumOld=(apptOld==null ? 0:apptOld.AppointmentTypeNum);
+			List<Procedure> listProcsOnAppt;//Subset of listProcsForApptEdit. All procs associated to the given appt. Some aptNums may not be set yet.
+			if(apptTypeCur!=null && apptTypeCur.AppointmentTypeNum!=apptTypeNumOld) {//Appointment type set and changed.
 				//Dynamically added procs will exist in listProcsForApptEdit.
-				listProceduresOnAppt=ApptTypeMissingProcHelper(appointment,appointmentType,listProceduresForApptEdit,patient,canUpdateApptPattern,listPatPlans,listInsSubs,listInsPlans);
-				appointment.ColorOverride=appointmentType.AppointmentTypeColor;
+				listProcsOnAppt=ApptTypeMissingProcHelper(appt,apptTypeCur,listProcsForApptEdit,pat,canUpdateApptPattern,listPatPlans,listInsSubs,listInsPlans);
+				appt.ColorOverride=apptTypeCur.AppointmentTypeColor;
 			}
 			else {
-				listProceduresOnAppt=listProceduresForApptEdit.FindAll(x => x.AptNum!=0 && x.AptNum==appointment.AptNum).Select(x => x.Copy()).ToList();
+				listProcsOnAppt=listProcsForApptEdit.FindAll(x => x.AptNum!=0 && x.AptNum==appt.AptNum).Select(x => x.Copy()).ToList();
 			}
-			if(!listProcNumsAttached.IsNullOrEmpty()) {
+			if(!listAttachedProcNums.IsNullOrEmpty()) {
 				//When listAttachedProcNums is set then we must verify that only the given procnums are going to be associated to this appt.
-				List<long> listProcNumsOnAppt = listProceduresOnAppt.Select(x => x.ProcNum).ToList();
-				if(listProcNumsAttached.Any(procNum => !listProcNumsOnAppt.Contains(procNum))) {
+				List<long> listProcNumsOnAppt = listProcsOnAppt.Select(x => x.ProcNum).ToList();
+				if(listAttachedProcNums.Any(procNum => !listProcNumsOnAppt.Contains(procNum))) {
 					//There are procnums that are suppose to be associated to this apt, but are not present in the list of procs for this apt.
-					listProceduresForApptEdit.Where(x => listProcNumsAttached.Contains(x.ProcNum) && !listProceduresOnAppt.Any(y => y.ProcNum==x.ProcNum)).ForEach(x => listProceduresOnAppt.Add(x));
+					listProcsForApptEdit.Where(x => listAttachedProcNums.Contains(x.ProcNum) && !listProcsOnAppt.Any(y => y.ProcNum==x.ProcNum)).ForEach(x => listProcsOnAppt.Add(x));
 				}
 				//Remove procs that are not suppose to be attached to appt.
-				listProceduresOnAppt.RemoveAll(proc => !listProcNumsAttached.Contains(proc.ProcNum));
+				listProcsOnAppt.RemoveAll(proc => !listAttachedProcNums.Contains(proc.ProcNum));
 			}
-			ProcedureLogic.SortProcedures(listProceduresOnAppt);//Mimic FormApptEdit
-			if(appointmentOld!=null && appointment.Confirmed!=appointmentOld.Confirmed) {
-				if(PrefC.GetLong(PrefName.AppointmentTimeArrivedTrigger)==appointment.Confirmed) {
-					appointment.DateTimeArrived=DateTime.Now;
+			ProcedureLogic.SortProcedures(ref listProcsOnAppt);//Mimic FormApptEdit
+			if(apptOld!=null && appt.Confirmed!=apptOld.Confirmed) {
+				if(PrefC.GetLong(PrefName.AppointmentTimeArrivedTrigger)==appt.Confirmed) {
+					appt.DateTimeArrived=DateTime.Now;
 				}
-				else if(PrefC.GetLong(PrefName.AppointmentTimeSeatedTrigger)==appointment.Confirmed) {
-					appointment.DateTimeSeated=DateTime.Now;
+				else if(PrefC.GetLong(PrefName.AppointmentTimeSeatedTrigger)==appt.Confirmed) {
+					appt.DateTimeSeated=DateTime.Now;
 				}
-				else if(PrefC.GetLong(PrefName.AppointmentTimeDismissedTrigger)==appointment.Confirmed) {
-					appointment.DateTimeDismissed=DateTime.Now;
+				else if(PrefC.GetLong(PrefName.AppointmentTimeDismissedTrigger)==appt.Confirmed) {
+					appt.DateTimeDismissed=DateTime.Now;
 				}
 			}
 			#region Appointment insert or update
 			#region Appt.ProcDescript
 			//Mimics FormApptEdit.UpdateListAndDB(...)
-			List<Procedure> listProceduresForDescript=listProceduresOnAppt.Select(x => x.Copy()).ToList();
-			foreach(Procedure proc in listProceduresForDescript) {
+			List<Procedure> listProcsForDescript=listProcsOnAppt.Select(x => x.Copy()).ToList();
+			foreach(Procedure proc in listProcsForDescript) {
 				//This allows Appointments.SetProcDescript(...) to associate all the passed in procs into AptCur.ProcDescript
-				proc.AptNum=appointment.AptNum;
-				proc.PlannedAptNum=appointment.AptNum;
+				proc.AptNum=appt.AptNum;
+				proc.PlannedAptNum=appt.AptNum;
 			}
-			Appointments.SetProcDescript(appointment,listProceduresForDescript);
+			Appointments.SetProcDescript(appt,listProcsForDescript);
 			#endregion
 			List<Procedure> listProcedures=new List<Procedure>();
-			if(appointment.IsNew) {
+			if(appt.IsNew) {
 				#region Set Appt fields
-				appointment.InsPlan1=(listInsPlans.Count>=1 ? listInsPlans[0].PlanNum:0);
-				appointment.InsPlan2=(listInsPlans.Count>=2 ? listInsPlans[1].PlanNum:0);
-				appointment.DateTimeArrived=appointment.AptDateTime.Date;
-				appointment.DateTimeSeated=appointment.AptDateTime.Date;
-				appointment.DateTimeDismissed=appointment.AptDateTime.Date;
+				appt.InsPlan1=(listInsPlans.Count>=1 ? listInsPlans[0].PlanNum:0);
+				appt.InsPlan2=(listInsPlans.Count>=2 ? listInsPlans[1].PlanNum:0);
+				appt.DateTimeArrived=appt.AptDateTime.Date;
+				appt.DateTimeSeated=appt.AptDateTime.Date;
+				appt.DateTimeDismissed=appt.AptDateTime.Date;
 				#endregion
-				Insert(appointment,appointment.SecUserNumEntry);//Inserts the invalid signal
-				listProcedures.AddRange(TryAddPerVisitProcCodesToAppt(appointment,ApptStatus.None));
-				listProceduresForApptEdit.AddRange(listProcedures);
-				listProceduresOnAppt.AddRange(listProcedures);
+				Insert(appt,appt.SecUserNumEntry);//Inserts the invalid signal
+				listProcedures.AddRange(TryAddPerVisitProcCodesToAppt(appt,ApptStatus.None));
+				listProcsForApptEdit.AddRange(listProcedures);
+				listProcsOnAppt.AddRange(listProcedures);
 				SecurityLogs.MakeLogEntry(new SecurityLog()
 				{
-					PermType=EnumPermType.AppointmentCreate,
-					UserNum=appointment.SecUserNumEntry,
+					PermType=Permissions.AppointmentCreate,
+					UserNum=appt.SecUserNumEntry,
 					LogDateTime=DateTime.Now,
-					LogText=$"New appointment created from {secLogSource.GetDescription()} by "+Userods.GetUser(appointment.SecUserNumEntry)?.UserName,
-					PatNum=appointment.PatNum,
-					FKey=appointment.AptNum,
+					LogText=$"New appointment created from {secLogSource.GetDescription()} by "+Userods.GetUser(appt.SecUserNumEntry)?.UserName,
+					PatNum=appt.PatNum,
+					FKey=appt.AptNum,
 					LogSource=secLogSource,
-					DateTPrevious=appointment.SecDateTEntry,
+					DateTPrevious=appt.SecDateTEntry,
 					CompName=Security.GetComplexComputerName()
 				});
 			}
 			else {
-				Update(appointment,appointmentOld);//Inserts the invalid signal
-				listProcedures.AddRange(TryAddPerVisitProcCodesToAppt(appointment,appointmentOld.AptStatus));
-				listProceduresForApptEdit.AddRange(listProcedures);
-				listProceduresOnAppt.AddRange(listProcedures);
+				Update(appt,apptOld);//Inserts the invalid signal
+				listProcedures.AddRange(TryAddPerVisitProcCodesToAppt(appt,apptOld.AptStatus));
+				listProcsForApptEdit.AddRange(listProcedures);
+				listProcsOnAppt.AddRange(listProcedures);
 				SecurityLogs.MakeLogEntry(new SecurityLog()
 				{
-					PermType=EnumPermType.AppointmentEdit,
-					UserNum=appointment.SecUserNumEntry,
+					PermType=Permissions.AppointmentEdit,
+					UserNum=appt.SecUserNumEntry,
 					LogDateTime=DateTime.Now,
-					LogText=$"Appointment updated from {secLogSource.GetDescription()} by "+Userods.GetUser(appointment.SecUserNumEntry)?.UserName,
-					PatNum=appointment.PatNum,
-					FKey=appointment.AptNum,
+					LogText=$"Appointment updated from {secLogSource.GetDescription()} by "+Userods.GetUser(appt.SecUserNumEntry)?.UserName,
+					PatNum=appt.PatNum,
+					FKey=appt.AptNum,
 					LogSource= secLogSource,
-					DateTPrevious=appointment.SecDateTEntry,
+					DateTPrevious=appt.SecDateTEntry,
 					CompName=Security.GetComplexComputerName(),
 				});
 			}
-			Appointments.SetProcDescript(appointment,listProceduresForDescript);
+			Appointments.SetProcDescript(appt,listProcsForDescript);
 			#endregion
 			#region Mimic FormApptEdit proc selection logic
 			//At this point all pertinent procs have been charted or existed as a TPed proc already.
 			//The below logic is attempting to mimic how FormApptEdit would make proc selections.
-			List<int> listIndicesSelectedProcs=new List<int>();//Equivalent to current proc selections in FormApptEdit.
+			List<int> listProcSelectedIndices=new List<int>();//Equivalent to current proc selections in FormApptEdit.
 			List<long> listProcNumsAttachedStart=new List<long>();//Equivalent to OnLoad proc selections in FormApptEdit.
-			foreach(Procedure proc in listProceduresOnAppt){
+			foreach(Procedure proc in listProcsOnAppt){
 				//All procs in listProcsOnAppt are treated like the user selected them in FormApptEdit.
-				listIndicesSelectedProcs.Add(listProceduresForApptEdit.FindIndex(x => x.ProcNum==proc.ProcNum));
-				if(!appointment.IsNew && proc.AptNum==appointment.AptNum) {
+				listProcSelectedIndices.Add(listProcsForApptEdit.FindIndex(x => x.ProcNum==proc.ProcNum));
+				if(!appt.IsNew && proc.AptNum==appt.AptNum) {
 					//When updating an existing appt some procs might have already been associated to the given appt.
 					//Procs that have an AptNum=appt.AptNum were already set prior to this function.
 					//This is equivalent to FormApptEdit loading and some procs being pre selected, used to identify attaching and detaching logic in below method calls.
@@ -5076,32 +5014,32 @@ namespace OpenDentBusiness{
 				}
 			}
 			#endregion
-			List<Appointment> listAppointments=Appointments.GetForPat(appointment.PatNum).ToList();
-			Procedures.ProcsAptNumHelper(listProceduresForApptEdit,appointment,listAppointments,listIndicesSelectedProcs,listProcNumsAttachedStart,(appointment.AptStatus==ApptStatus.Planned),secLogSource);
-			Procedures.UpdateProcsInApptHelper(listProceduresForApptEdit,patient,appointment,appointmentOld,listInsPlans,listInsSubs,listIndicesSelectedProcs,true,false,secLogSource);
+			List<Appointment> listAppointments=Appointments.GetForPat(appt.PatNum).ToList();
+			Procedures.ProcsAptNumHelper(listProcsForApptEdit,appt,listAppointments,listProcSelectedIndices,listProcNumsAttachedStart,(appt.AptStatus==ApptStatus.Planned),secLogSource);
+			Procedures.UpdateProcsInApptHelper(listProcsForApptEdit,pat,appt,apptOld,listInsPlans,listInsSubs,listProcSelectedIndices,true,false,secLogSource);
 			//No need to create an invalid appt signal, the call to either Insert or Update will have already done so.
 		}
 
 		///<summary>If this method doesn't throw, then the appointment is considered valid.</summary>
-		public static void ValidateApptForWeb(Appointment appointment) {
+		public static void ValidateApptForWeb(Appointment appt) {
 			bool isPatternChanged;
 			bool allowDoubleBooking=PrefC.GetBool(PrefName.ApptsAllowOverlap);
-			if(Patients.GetPat(appointment.PatNum)==null) {
+			if(Patients.GetPat(appt.PatNum)==null) {
 				//I don't suggest selecting a patient here because you can only change a patient for new appointments.
 				throw new ODException("Patient selected is not valid.");
 			}
-			if(Providers.GetProv(appointment.ProvNum)==null) {
+			if(Providers.GetProv(appt.ProvNum)==null) {
 				throw new ODException("Provider selected is not valid.  Please select a new provider.");
 			}
-			if(Providers.GetProv(appointment.ProvNum).IsHidden) {
+			if(Providers.GetProv(appt.ProvNum).IsHidden) {
 				throw new ODException("Provider selected is marked hidden.  Please select a new provider.");
 			}
-			if(Appointments.CheckForBlockoutOverlap(appointment) || (!allowDoubleBooking && Appointments.TryAdjustAppointmentInCurrentOp(appointment,false,true,out isPatternChanged))) {
+			if(Appointments.CheckForBlockoutOverlap(appt) || (!allowDoubleBooking && Appointments.TryAdjustAppointmentInCurrentOp(appt,false,true,out isPatternChanged))) {
 				throw new ODException("Appointment overlaps existing appointment or blockout. Please change the appointment length.");
 			}
 			//Throws Exception if Warn/Block, returns false if DontEnforce or no conflict.
 			try {
-				Appointments.HasSpecialtyConflict(appointment.PatNum,appointment.ClinicNum);//"Don't Enforce" does nothing.
+				Appointments.HasSpecialtyConflict(appt.PatNum,appt.ClinicNum);//"Don't Enforce" does nothing.
 			}
 			catch(ODException odex) {//Warn
 				switch((ApptSchedEnforceSpecialty)odex.ErrorCode) {
@@ -5116,20 +5054,20 @@ namespace OpenDentBusiness{
 		///<summary>Charts missing procedures for given appt and apptType.
 		///Added procedures are reflected in listProcsForAppt, also returns subset procedures that will need to be associated to the given appt.
 		///Dynamically charted procs do not have their aptNum set.</summary>
-		public static List<Procedure> ApptTypeMissingProcHelper(Appointment appointment,AppointmentType appointmentType,List<Procedure> listProceduresForAppt,Patient patient=null,bool canUpdateApptPattern=true,
+		public static List<Procedure> ApptTypeMissingProcHelper(Appointment appt,AppointmentType apptType,List<Procedure> listProcsForAppt,Patient pat=null,bool canUpdateApptPattern=true,
 			List<PatPlan> listPatPlans=null,List<InsSub> listInsSubs=null,List<InsPlan> listInsPlans=null,List<Benefit>listBenefits=null)
 		{
-			List<Procedure> listProcedures=new List<Procedure>();
-			if(appointment.AptStatus.In(ApptStatus.PtNote,ApptStatus.PtNoteCompleted)) {
-				return listProcedures;//Patient notes can't have procedures associated to them.
+			List<Procedure> retList=new List<Procedure>();
+			if(appt.AptStatus.In(ApptStatus.PtNote,ApptStatus.PtNoteCompleted)) {
+				return retList;//Patient notes can't have procedures associated to them.
 			}
-			List<ProcedureCode> listProcedureCodesAptType=ProcedureCodes.GetFromCommaDelimitedList(appointmentType.CodeStr);
-			if(listProcedureCodesAptType.Count>0) {//AppointmentType is associated to procs.
-				if(patient==null) {
-					patient=Patients.GetPat(appointment.PatNum);
+			List<ProcedureCode> listAptTypeProcs=ProcedureCodes.GetFromCommaDelimitedList(apptType.CodeStr);
+			if(listAptTypeProcs.Count>0) {//AppointmentType is associated to procs.
+				if(pat==null) {
+					pat=Patients.GetPat(appt.PatNum);
 				}
 				if(listPatPlans==null) {
-					listPatPlans=PatPlans.GetPatPlansForPat(patient.PatNum);
+					listPatPlans=PatPlans.GetPatPlansForPat(pat.PatNum);
 				}
 				if(listInsSubs==null) {
 					listInsSubs=InsSubs.GetMany(listPatPlans.Select(x => x.InsSubNum).ToList());
@@ -5140,103 +5078,103 @@ namespace OpenDentBusiness{
 				if(listBenefits==null) {
 					listBenefits=Benefits.Refresh(listPatPlans,listInsSubs);
 				}
-				List<SubstitutionLink> listSubstitutionLinks=SubstitutionLinks.GetAllForPlans(listInsPlans);
-				long discountPlanNum=DiscountPlanSubs.GetDiscountPlanNumForPat(patient.PatNum,appointment.AptDateTime); //Use the appointments date
-				List<Fee> listFees=Fees.GetListFromObjects(listProcedureCodesAptType,null,null,//no existing procs to pull medCodes and provNums out of
-					patient.PriProv,patient.SecProv,patient.FeeSched,listInsPlans,new List<long>(){appointment.ClinicNum },new List<Appointment>(){appointment},listSubstitutionLinks,discountPlanNum);
+				List<SubstitutionLink> listSubstLinks=SubstitutionLinks.GetAllForPlans(listInsPlans);
+				long discountPlanNum=DiscountPlanSubs.GetDiscountPlanNumForPat(pat.PatNum,appt.AptDateTime); //Use the appointments date
+				List<Fee> listFees=Fees.GetListFromObjects(listAptTypeProcs,null,null,//no existing procs to pull medCodes and provNums out of
+					pat.PriProv,pat.SecProv,pat.FeeSched,listInsPlans,new List<long>(){appt.ClinicNum },new List<Appointment>(){appt},listSubstLinks,discountPlanNum);
 				//possible (unlikely) issue: if a proc.ProvNumDefault is used, provider might be from different clinic, and a clinic fee override might, therefore, be missing. 
-				bool isApptPlanned=(appointment.AptStatus==ApptStatus.Planned);
-				List<Procedure> listProceduresNewlyAdded=new List<Procedure>();
-				foreach(ProcedureCode procCodeCur in listProcedureCodesAptType) {
+				bool isApptPlanned=(appt.AptStatus==ApptStatus.Planned);
+				List<Procedure> listNewlyAddedProcs=new List<Procedure>();
+				foreach(ProcedureCode procCodeCur in listAptTypeProcs) {
 					bool existsInAppt=false;
-					foreach(Procedure proc in listProceduresForAppt) {
+					foreach(Procedure proc in listProcsForAppt) {
 						if(proc.CodeNum==procCodeCur.CodeNum
 							//The procedure has not already been added to the return list. 
-							&& !listProcedures.Any(x => x.ProcNum==proc.ProcNum)) 
+							&& !retList.Any(x => x.ProcNum==proc.ProcNum)) 
 						{
 							//appt.AptNum can be 0.
-							if(proc.PlannedAptNum!=0 && proc.PlannedAptNum!=appointment.AptNum) {//procedure is attached to planned appointment
+							if(proc.PlannedAptNum!=0 && proc.PlannedAptNum!=appt.AptNum) {//procedure is attached to planned appointment
 								continue;
 							}
-							if((isApptPlanned && proc.AptNum==0 && (proc.PlannedAptNum==0 || proc.PlannedAptNum == appointment.AptNum))
-								|| (!isApptPlanned && (proc.AptNum==0 || proc.AptNum == appointment.AptNum)))
+							if((isApptPlanned && proc.AptNum==0 && (proc.PlannedAptNum==0 || proc.PlannedAptNum == appt.AptNum))
+								|| (!isApptPlanned && (proc.AptNum==0 || proc.AptNum == appt.AptNum)))
 							{
-								listProcedures.Add(proc.Copy());
+								retList.Add(proc.Copy());
 								existsInAppt=true;
 								break;
 							}
 						}
 					}
 					if(!existsInAppt) { //if the procedure doesn't already exist in the appointment
-						Procedure procedure=Procedures.ConstructProcedureForAppt(procCodeCur.CodeNum,appointment,patient,listPatPlans,listInsPlans,listInsSubs,listFees);
-						Procedures.Insert(procedure);
+						Procedure proc=Procedures.ConstructProcedureForAppt(procCodeCur.CodeNum,appt,pat,listPatPlans,listInsPlans,listInsSubs,listFees);
+						Procedures.Insert(proc);
 						List<ClaimProc> listClaimProcs=new List<ClaimProc>();
-						Procedures.ComputeEstimates(procedure,patient.PatNum,ref listClaimProcs,true,listInsPlans,listPatPlans,listBenefits,
+						Procedures.ComputeEstimates(proc,pat.PatNum,ref listClaimProcs,true,listInsPlans,listPatPlans,listBenefits,
 							null,null,true,
-							patient.Age,listInsSubs,null,false,false,listSubstitutionLinks,false,listFees);
-						listProcedures.Add(procedure.Copy());
-						listProceduresNewlyAdded.Add(procedure);
+							pat.Age,listInsSubs,null,false,false,listSubstLinks,false,listFees);
+						retList.Add(proc.Copy());
+						listNewlyAddedProcs.Add(proc);
 					}
 				}
-				listProceduresForAppt.AddRange(listProceduresNewlyAdded);
-				if(!isApptPlanned && listProcedureCodesAptType.Count > 0) {
-					Procedures.SetDateFirstVisit(appointment.AptDateTime.Date,1,patient);
+				listProcsForAppt.AddRange(listNewlyAddedProcs);
+				if(!isApptPlanned && listAptTypeProcs.Count > 0) {
+					Procedures.SetDateFirstVisit(appt.AptDateTime.Date,1,pat);
 				}
 			}
-			if(canUpdateApptPattern && appointmentType.Pattern!=null && appointmentType.Pattern!="") {
-				appointment.Pattern=appointmentType.Pattern;
+			if(canUpdateApptPattern && apptType.Pattern!=null && apptType.Pattern!="") {
+				appt.Pattern=apptType.Pattern;
 			}
-			return listProcedures;
+			return retList;
 		}
 
 		///<summary>Sends verification texts and e-mails after a patient confirms any type of appointment via WebSched.</summary>
-		public static void SendWebSchedNotify(Appointment appointment,PrefName prefNameType,PrefName prefNameText,PrefName prefNameEmailSubj,PrefName prefNameEmailBody
-			,PrefName prefNameEmailType,bool logErrors=true) 
+		public static void SendWebSchedNotify(Appointment appt,PrefName typePref,PrefName textPref,PrefName emailSubjPref,PrefName emailBodyPref
+			,PrefName emailType,bool logErrors=true) 
 		{
 			try {
-				Patient patient=Patients.GetPat(appointment.PatNum);
-				Clinic clinic=Clinics.GetClinic(appointment.ClinicNum);
-				WebSchedVerifyType webSchedVerifyType=(WebSchedVerifyType)PIn.Int(ClinicPrefs.GetPrefValue(prefNameType,appointment.ClinicNum));
-				if(webSchedVerifyType==WebSchedVerifyType.None) {
+				Patient patient=Patients.GetPat(appt.PatNum);
+				Clinic clinic=Clinics.GetClinic(appt.ClinicNum);
+				WebSchedVerifyType verificationType=(WebSchedVerifyType)PIn.Int(ClinicPrefs.GetPrefValue(typePref,appt.ClinicNum));
+				if(verificationType==WebSchedVerifyType.None) {
 					return;
 				}
 				CommOptOut commOptOut=CommOptOuts.Refresh(patient.PatNum);
 				//Load in the templates and insert replacement fields
-				string textTemplate=ClinicPrefs.GetPrefValue(prefNameText,appointment.ClinicNum);
+				string textTemplate=ClinicPrefs.GetPrefValue(textPref,appt.ClinicNum);
 				textTemplate=Patients.ReplacePatient(textTemplate,patient);
-				textTemplate=Appointments.ReplaceAppointment(textTemplate,appointment);
+				textTemplate=Appointments.ReplaceAppointment(textTemplate,appt);
 				textTemplate=Clinics.ReplaceOffice(textTemplate,clinic);
-				string emailSubj=OpenDentBusiness.EmailMessages.SubjectTidy(ClinicPrefs.GetPrefValue(prefNameEmailSubj,appointment.ClinicNum));
+				string emailSubj=OpenDentBusiness.EmailMessages.SubjectTidy(ClinicPrefs.GetPrefValue(emailSubjPref,appt.ClinicNum));
 				emailSubj=Patients.ReplacePatient(emailSubj,patient);
-				emailSubj=Appointments.ReplaceAppointment(emailSubj,appointment);
+				emailSubj=Appointments.ReplaceAppointment(emailSubj,appt);
 				emailSubj=Clinics.ReplaceOffice(emailSubj,clinic);
-				string emailBody=OpenDentBusiness.EmailMessages.BodyTidy(ClinicPrefs.GetPrefValue(prefNameEmailBody,appointment.ClinicNum));
+				string emailBody=OpenDentBusiness.EmailMessages.BodyTidy(ClinicPrefs.GetPrefValue(emailBodyPref,appt.ClinicNum));
 				emailBody=Patients.ReplacePatient(emailBody,patient,isHtmlEmail:true);
-				emailBody=Appointments.ReplaceAppointment(emailBody,appointment,isHtmlEmail:true);
+				emailBody=Appointments.ReplaceAppointment(emailBody,appt,isHtmlEmail:true);
 				emailBody=Clinics.ReplaceOffice(emailBody,clinic,isHtmlEmail:true,doReplaceDisclaimer:true);
 				//send text
-				if(webSchedVerifyType==WebSchedVerifyType.Text || webSchedVerifyType==WebSchedVerifyType.TextAndEmail) {					
+				if(verificationType==WebSchedVerifyType.Text || verificationType==WebSchedVerifyType.TextAndEmail) {					
 					try {
 						if(commOptOut.IsOptedOut(CommOptOutMode.Text,CommOptOutType.Verify)) {
 							throw new ODException("Patient has opted out of text automated messaging.");
 						}
 						else {
-							SmsToMobiles.SendSmsSingle(patient.PatNum,patient.WirelessPhone,textTemplate,appointment.ClinicNum,SmsMessageSource.Verify,true,canCheckBal:false);
+							SmsToMobiles.SendSmsSingle(patient.PatNum,patient.WirelessPhone,textTemplate,appt.ClinicNum,SmsMessageSource.Verify,true,canCheckBal:false);
 						}
 					}
 					catch(ODException odex) {
-						if(webSchedVerifyType==WebSchedVerifyType.TextAndEmail && logErrors) {
+						if(verificationType==WebSchedVerifyType.TextAndEmail && logErrors) {
 							//SMS failed, so log, but continue so that we also try to send the email.
 							Logger.WriteException(odex,"SendFollowUpErrors");
 						}
-						else if(webSchedVerifyType==WebSchedVerifyType.Text) {
+						else if(verificationType==WebSchedVerifyType.Text) {
 							throw odex;
 						}
 					}
 				}
 				//send e-mail
-				if(webSchedVerifyType==WebSchedVerifyType.Email || webSchedVerifyType==WebSchedVerifyType.TextAndEmail) {
-					EmailAddress emailAddress=EmailAddresses.GetByClinic(appointment.ClinicNum,true);
+				if(verificationType==WebSchedVerifyType.Email || verificationType==WebSchedVerifyType.TextAndEmail) {
+					EmailAddress emailAddress=EmailAddresses.GetByClinic(appt.ClinicNum,true);
 					if(emailAddress==null) { //If clinic is not setup for email then don't bother trying to send.
 						return;
 					}
@@ -5251,7 +5189,7 @@ namespace OpenDentBusiness{
 						FromAddress=emailAddress.GetFrom(),
 						Subject=emailSubj,
 						BodyText=emailBody,
-						HtmlType=PIn.Enum<EmailType>(ClinicPrefs.GetPrefValue(prefNameEmailType,appointment.ClinicNum)),
+						HtmlType=PIn.Enum<EmailType>(ClinicPrefs.GetPrefValue(emailType,appt.ClinicNum)),
 						MsgDateTime=DateTime_.Now,
 						SentOrReceived=EmailSentOrReceived.Sent,
 						MsgType=EmailMessageSource.Verification
@@ -5273,9 +5211,9 @@ namespace OpenDentBusiness{
 		///<summary>Replaces all appointment fields in the given message with the given appointment's information.  Returns the resulting string.
 		///If apt is null, replaces fields with blanks.
 		///Replaces: [ApptDate], [ApptTime], [ApptDayOfWeek], [ApptProcList], [date], [time]. </summary>
-		public static string ReplaceAppointment(string message,Appointment appointment,bool isHtmlEmail=false) {
+		public static string ReplaceAppointment(string message,Appointment apt,bool isHtmlEmail=false) {
 			StringBuilder template=new StringBuilder(message);
-			if(appointment==null) {
+			if(apt==null) {
 				ReplaceTags.ReplaceOneTag(template,"[ApptDate]","",isHtmlEmail);
 				ReplaceTags.ReplaceOneTag(template,"[date]","",isHtmlEmail);
 				ReplaceTags.ReplaceOneTag(template,"[ApptTime]","",isHtmlEmail);
@@ -5287,38 +5225,38 @@ namespace OpenDentBusiness{
 				ReplaceTags.ReplaceOneTag(template,"[ApptTimeAskedArrive]","",isHtmlEmail);
 				return template.ToString();
 			}
-			ReplaceTags.ReplaceOneTag(template,"[ApptDate]",appointment.AptDateTime.ToString(PrefC.PatientCommunicationDateFormat),isHtmlEmail);
-			ReplaceTags.ReplaceOneTag(template,"[date]",appointment.AptDateTime.ToString(PrefC.PatientCommunicationDateFormat),isHtmlEmail);
-			ReplaceTags.ReplaceOneTag(template,"[ApptTime]",appointment.AptDateTime.ToShortTimeString(),isHtmlEmail);
-			ReplaceTags.ReplaceOneTag(template,"[time]",appointment.AptDateTime.ToShortTimeString(),isHtmlEmail);
-			ReplaceTags.ReplaceOneTag(template,"[ApptDayOfWeek]",appointment.AptDateTime.DayOfWeek.ToString(),isHtmlEmail);
-			ReplaceTags.ReplaceOneTag(template,"[ProvName]",Providers.GetFormalName(appointment.ProvNum),isHtmlEmail);
-			ReplaceTags.ReplaceOneTag(template,"[ProvAbbr]",Providers.GetAbbr(appointment.ProvNum),isHtmlEmail);
+			ReplaceTags.ReplaceOneTag(template,"[ApptDate]",apt.AptDateTime.ToString(PrefC.PatientCommunicationDateFormat),isHtmlEmail);
+			ReplaceTags.ReplaceOneTag(template,"[date]",apt.AptDateTime.ToString(PrefC.PatientCommunicationDateFormat),isHtmlEmail);
+			ReplaceTags.ReplaceOneTag(template,"[ApptTime]",apt.AptDateTime.ToShortTimeString(),isHtmlEmail);
+			ReplaceTags.ReplaceOneTag(template,"[time]",apt.AptDateTime.ToShortTimeString(),isHtmlEmail);
+			ReplaceTags.ReplaceOneTag(template,"[ApptDayOfWeek]",apt.AptDateTime.DayOfWeek.ToString(),isHtmlEmail);
+			ReplaceTags.ReplaceOneTag(template,"[ProvName]",Providers.GetFormalName(apt.ProvNum),isHtmlEmail);
+			ReplaceTags.ReplaceOneTag(template,"[ProvAbbr]",Providers.GetAbbr(apt.ProvNum),isHtmlEmail);
 			ReplaceTags.ReplaceOneTag(template,"[ApptTimeAskedArrive]",
-				appointment.DateTimeAskedToArrive.Year>1880?appointment.DateTimeAskedToArrive.ToShortTimeString():appointment.AptDateTime.ToShortTimeString(),
+				apt.DateTimeAskedToArrive.Year>1880?apt.DateTimeAskedToArrive.ToShortTimeString():apt.AptDateTime.ToShortTimeString(),
 				isHtmlEmail);
 			if(message.Contains("[ApptProcsList]")) {
 				bool isPlanned=false;
-				if(appointment.AptStatus==ApptStatus.Planned) {
+				if(apt.AptStatus==ApptStatus.Planned) {
 					isPlanned=true;
 				}
-				List<Procedure> listProcedures=Procedures.GetProcsForSingle(appointment.AptNum,isPlanned);
-				List<ProcedureCode> listProcedureCodes=new List<ProcedureCode>();
-				ProcedureCode procedureCode=new ProcedureCode();
+				List<Procedure> listProcs=Procedures.GetProcsForSingle(apt.AptNum,isPlanned);
+				List<ProcedureCode> listProcCodes=new List<ProcedureCode>();
+				ProcedureCode procCode=new ProcedureCode();
 				StringBuilder strProcs=new StringBuilder();
 				string procDescript="";
-				for(int i=0;i<listProcedures.Count;i++) {
-					procedureCode=ProcedureCodes.GetProcCode(listProcedures[i].CodeNum);
-					if(procedureCode.LaymanTerm=="") {
-						procDescript=procedureCode.Descript;
+				for(int i=0;i<listProcs.Count;i++) {
+					procCode=ProcedureCodes.GetProcCode(listProcs[i].CodeNum);
+					if(procCode.LaymanTerm=="") {
+						procDescript=procCode.Descript;
 					}
 					else {
-						procDescript=procedureCode.LaymanTerm;
+						procDescript=procCode.LaymanTerm;
 					}
 					if(i>0) {
 						strProcs.Append("\n");
 					}
-					strProcs.Append(listProcedures[i].ProcDate.ToShortDateString()+" "+procedureCode.ProcCode+" "+procDescript);
+					strProcs.Append(listProcs[i].ProcDate.ToShortDateString()+" "+procCode.ProcCode+" "+procDescript);
 				}
 				ReplaceTags.ReplaceOneTag(template,"[ApptProcsList]",strProcs.ToString(),isHtmlEmail);
 			}
@@ -5327,90 +5265,90 @@ namespace OpenDentBusiness{
 
 		///<summary>Assigns the ProvNum, ProvHyg, IsHygiene, and ClinicNum to the appointment based on the appointment's operatory.
 		///Returns the updated appointment.</summary>
-		public static Appointment AssignFieldsForOperatory(Appointment appointmentNow) {
-			Appointment appointment=appointmentNow.Copy();
-			Operatory operatory=Operatories.GetOperatory(appointment.Op);
-			List<Schedule> listSchedulesPeriod=Schedules.RefreshDayEdit(appointment.AptDateTime);
-			long provNumDentAssigned=Schedules.GetAssignedProvNumForSpot(listSchedulesPeriod,operatory,false,appointment.AptDateTime);
-			long provNumHygAssigned=Schedules.GetAssignedProvNumForSpot(listSchedulesPeriod,operatory,true,appointment.AptDateTime);
+		public static Appointment AssignFieldsForOperatory(Appointment aptCur) {
+			Appointment apt=aptCur.Copy();
+			Operatory curOp=Operatories.GetOperatory(apt.Op);
+			List<Schedule> schedListPeriod=Schedules.RefreshDayEdit(apt.AptDateTime);
+			long assignedDent=Schedules.GetAssignedProvNumForSpot(schedListPeriod,curOp,false,apt.AptDateTime);
+			long assignedHyg=Schedules.GetAssignedProvNumForSpot(schedListPeriod,curOp,true,apt.AptDateTime);
 			//the section below regarding providers is overly wordy because it's copied from ContrAppt.pinBoard_MouseUp to make maint easier.
-			if(provNumDentAssigned!=0) {
-				appointment.ProvNum=provNumDentAssigned;
+			if(assignedDent!=0) {
+				apt.ProvNum=assignedDent;
 			}
-			if(provNumHygAssigned!=0 || PrefC.GetBool(PrefName.ApptSecondaryProviderConsiderOpOnly)) {
-				appointment.ProvHyg=provNumHygAssigned;
+			if(assignedHyg!=0 || PrefC.GetBool(PrefName.ApptSecondaryProviderConsiderOpOnly)) {
+				apt.ProvHyg=assignedHyg;
 			}
-			if(operatory.IsHygiene) {
-				appointment.IsHygiene=true;
+			if(curOp.IsHygiene) {
+				apt.IsHygiene=true;
 			}
 			else {//op not marked as hygiene op
-				if(provNumDentAssigned==0) {//no dentist assigned
-					if(provNumHygAssigned!=0) {//hyg is assigned (we don't really have to test for this)
-						appointment.IsHygiene=true;
+				if(assignedDent==0) {//no dentist assigned
+					if(assignedHyg!=0) {//hyg is assigned (we don't really have to test for this)
+						apt.IsHygiene=true;
 					}
 				}
 				else {//dentist is assigned
-					if(provNumHygAssigned==0) {//hyg is not assigned
-						appointment.IsHygiene=false;
+					if(assignedHyg==0) {//hyg is not assigned
+						apt.IsHygiene=false;
 					}
 					//if both dentist and hyg are assigned, it's tricky
 					//only explicitly set it if user has a dentist assigned to the op
-					if(operatory.ProvDentist!=0) {
-						appointment.IsHygiene=false;
+					if(curOp.ProvDentist!=0) {
+						apt.IsHygiene=false;
 					}
 				}
 			}
-			if(operatory.ClinicNum!=0) {
-				appointment.ClinicNum=operatory.ClinicNum;
+			if(curOp.ClinicNum!=0) {
+				apt.ClinicNum=curOp.ClinicNum;
 			}
-			return appointment;
+			return apt;
 		}
 
 		///<summary>Used to set an appointment complete when it is right-clicked set complete.  Insert an invalid appointment signalod.</summary>
-		public static ODTuple<Appointment,List<Procedure>> CompleteClick(Appointment appointment,List<Procedure> listProceduresForAppt,bool removeCompletedProcs) {
+		public static ODTuple<Appointment,List<Procedure>> CompleteClick(Appointment apt,List<Procedure> listProcsForAppt,bool removeCompletedProcs) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<ODTuple<Appointment,List<Procedure>>>(MethodBase.GetCurrentMethod(),appointment,listProceduresForAppt,removeCompletedProcs);
+				return Meth.GetObject<ODTuple<Appointment,List<Procedure>>>(MethodBase.GetCurrentMethod(),apt,listProcsForAppt,removeCompletedProcs);
 			}
-			Family family=Patients.GetFamily(appointment.PatNum);
-			Patient patient=family.GetPatient(appointment.PatNum);
-			List<InsSub> listInsSubs=InsSubs.RefreshForFam(family);
-			List<InsPlan> listInsPlans=InsPlans.RefreshForSubList(listInsSubs);
-			List<PatPlan> listPatPlans=PatPlans.Refresh(appointment.PatNum);
-			DateTime datePrevious=appointment.DateTStamp;
-			if(appointment.AptStatus==ApptStatus.PtNote) {
-				Appointments.SetAptStatus(appointment,ApptStatus.PtNoteCompleted);//Sets the invalid signal
-				SecurityLogs.MakeLogEntry(EnumPermType.AppointmentEdit,appointment.PatNum,
-					appointment.AptDateTime.ToString()+", Patient NOTE Set Complete",
-					appointment.AptNum,datePrevious);//shouldn't ever happen, but don't allow procedures to be completed from notes
+			Family fam=Patients.GetFamily(apt.PatNum);
+			Patient pat=fam.GetPatient(apt.PatNum);
+			List<InsSub> SubList=InsSubs.RefreshForFam(fam);
+			List<InsPlan> PlanList=InsPlans.RefreshForSubList(SubList);
+			List<PatPlan> PatPlanList=PatPlans.Refresh(apt.PatNum);
+			DateTime datePrevious=apt.DateTStamp;
+			if(apt.AptStatus==ApptStatus.PtNote) {
+				Appointments.SetAptStatus(apt,ApptStatus.PtNoteCompleted);//Sets the invalid signal
+				SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,apt.PatNum,
+					apt.AptDateTime.ToString()+", Patient NOTE Set Complete",
+					apt.AptNum,datePrevious);//shouldn't ever happen, but don't allow procedures to be completed from notes
 			}
 			else {
-				InsSub insSub1=InsSubs.GetSub(PatPlans.GetInsSubNum(listPatPlans,PatPlans.GetOrdinal(PriSecMed.Primary,listPatPlans,listInsPlans,listInsSubs)),listInsSubs);
-				InsSub insSub2=InsSubs.GetSub(PatPlans.GetInsSubNum(listPatPlans,PatPlans.GetOrdinal(PriSecMed.Secondary,listPatPlans,listInsPlans,listInsSubs)),listInsSubs);
-				ApptStatus apptStatusOld=appointment.AptStatus;
-				Appointments.SetAptStatusComplete(appointment,insSub1.PlanNum,insSub2.PlanNum);//Sets the invalid signal
-				TryAddPerVisitProcCodesToAppt(appointment,apptStatusOld);
-				Procedures.SetCompleteInAppt(appointment,listInsPlans,listPatPlans,patient,listInsSubs,removeCompletedProcs);//loops through each proc
-				if(apptStatusOld==ApptStatus.Complete) { // seperate log entry for editing completed appointments.
-					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentCompleteEdit,appointment.PatNum,
-						appointment.ProcDescript+", "+ appointment.AptDateTime.ToString()+", Set Complete",
-						appointment.AptNum,datePrevious);//Log showing the appt. is set complete
+				InsSub sub1=InsSubs.GetSub(PatPlans.GetInsSubNum(PatPlanList,PatPlans.GetOrdinal(PriSecMed.Primary,PatPlanList,PlanList,SubList)),SubList);
+				InsSub sub2=InsSubs.GetSub(PatPlans.GetInsSubNum(PatPlanList,PatPlans.GetOrdinal(PriSecMed.Secondary,PatPlanList,PlanList,SubList)),SubList);
+				ApptStatus apptStatusOld=apt.AptStatus;
+				Appointments.SetAptStatusComplete(apt,sub1.PlanNum,sub2.PlanNum);//Sets the invalid signal
+				TryAddPerVisitProcCodesToAppt(apt,apptStatusOld);
+				Procedures.SetCompleteInAppt(apt,PlanList,PatPlanList,pat,SubList,removeCompletedProcs);//loops through each proc
+				if(apt.AptStatus==ApptStatus.Complete) { // seperate log entry for editing completed appointments.
+					SecurityLogs.MakeLogEntry(Permissions.AppointmentCompleteEdit,apt.PatNum,
+						apt.ProcDescript+", "+ apt.AptDateTime.ToString()+", Set Complete",
+						apt.AptNum,datePrevious);//Log showing the appt. is set complete
 				}
 				else {
-					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentEdit,appointment.PatNum,
-						appointment.ProcDescript+", "+ appointment.AptDateTime.ToString()+", Set Complete",
-						appointment.AptNum,datePrevious);//Log showing the appt. is set complete
+					SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,apt.PatNum,
+						apt.ProcDescript+", "+ apt.AptDateTime.ToString()+", Set Complete",
+						apt.AptNum,datePrevious);//Log showing the appt. is set complete
 				}
 				//If there is an existing HL7 def enabled, send a SIU message if there is an outbound SIU message defined
 				if(HL7Defs.IsExistingHL7Enabled()) {
 					//S14 - Appt Modification event
-					MessageHL7 messageHL7=MessageConstructor.GenerateSIU(patient,family.GetPatient(patient.Guarantor),EventTypeHL7.S14,appointment);
+					MessageHL7 messageHL7=MessageConstructor.GenerateSIU(pat,fam.GetPatient(pat.Guarantor),EventTypeHL7.S14,apt);
 					//Will be null if there is no outbound SIU message defined, so do nothing
 					if(messageHL7!=null) {
 						HL7Msg hl7Msg=new HL7Msg();
-						hl7Msg.AptNum=appointment.AptNum;
+						hl7Msg.AptNum=apt.AptNum;
 						hl7Msg.HL7Status=HL7MessageStatus.OutPending;//it will be marked outSent by the HL7 service.
 						hl7Msg.MsgText=messageHL7.ToString();
-						hl7Msg.PatNum=patient.PatNum;
+						hl7Msg.PatNum=pat.PatNum;
 						HL7Msgs.Insert(hl7Msg);
 						if(ODBuild.IsDebug()) {
 							Console.WriteLine(messageHL7.ToString());
@@ -5418,12 +5356,12 @@ namespace OpenDentBusiness{
 					}
 				}
 				if(HieClinics.IsEnabled()) {
-					HieQueues.Insert(new HieQueue(patient.PatNum));
+					HieQueues.Insert(new HieQueue(pat.PatNum));
 				}
 			}
-			Recalls.SynchScheduledApptFull(appointment.PatNum);
+			Recalls.SynchScheduledApptFull(apt.PatNum);
 			//No need to enter an invalid signal here, the SetAptStatus and SetAptStatusComplete calls will have already done so
-			return new ODTuple<Appointment,List<Procedure>>(appointment,listProceduresForAppt);
+			return new ODTuple<Appointment,List<Procedure>>(apt,listProcsForAppt);
 		}
 				
 		///<summary>Determines if a specified Appointment is a recall Appointment.  
@@ -5435,20 +5373,20 @@ namespace OpenDentBusiness{
 		///4) Appointment.AptDateTime matches the DateScheduled on a Recall for the corresponding Patient and Appointment has at least one attached 
 		///Procedure that matches that Recall's RecallType's corresponding Procedure Code triggers.
 		///</summary>
-		public static bool IsRecallAppointment(Appointment appointment,List<Procedure> listProceduresAppt=null) {
-			if(appointment==null) {
+		public static bool IsRecallAppointment(Appointment appt,List<Procedure> listApptProcs=null) {
+			if(appt==null) {
 				return false;
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),appointment,listProceduresAppt);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),appt,listApptProcs);
 			}
-			if(listProceduresAppt==null) {
-				listProceduresAppt=Procedures.GetProcsForSingle(appointment.AptNum,appointment.AptStatus==ApptStatus.Planned);//Get this appt's selected procs if not specified.
+			if(listApptProcs==null) {
+				listApptProcs=Procedures.GetProcsForSingle(appt.AptNum,appt.AptStatus==ApptStatus.Planned);//Get this appt's selected procs if not specified.
 			}
-			if(listProceduresAppt.Count==0) {
+			if(listApptProcs.Count==0) {
 				return false;
 			}
-			List<Recall> listRecalls=Recalls.GetList(appointment.PatNum);//Get the recalls for this patient only.
+			List<Recall> listRecalls=Recalls.GetList(appt.PatNum);//Get the recalls for this patient only.
 			string strRecallTypesShowingInList=PrefC.GetString(PrefName.RecallTypesShowingInList);
 			if(!string.IsNullOrEmpty(strRecallTypesShowingInList)) {//Limit RecallTypes to check against if RecallTypesShowingInList preference is set.
 				List<long> listRecallTypeNums=strRecallTypesShowingInList.Split(new char[] {',' },StringSplitOptions.RemoveEmptyEntries)
@@ -5459,52 +5397,33 @@ namespace OpenDentBusiness{
 				if(recall.IsDisabled) {
 					continue;//Skip disabled recalls.
 				}
-				List<long> listCodeNumsRecallTrigger=RecallTriggers.GetForType(recall.RecallTypeNum).Select(x => x.CodeNum).ToList();
-				if(recall.DateScheduled.Date==appointment.AptDateTime.Date && listProceduresAppt.Exists(x => listCodeNumsRecallTrigger.Contains(x.CodeNum))) {
+				List<long> listTriggerCodeNums=RecallTriggers.GetForType(recall.RecallTypeNum).Select(x => x.CodeNum).ToList();
+				if(recall.DateScheduled.Date==appt.AptDateTime.Date && listApptProcs.Exists(x => listTriggerCodeNums.Contains(x.CodeNum))) {
 					return true;//Appt is scheduled on the day of the recall, and appt includes a corresponding recall trigger proc.
 				}
 			}
 			return false;
 		}
 
-		///<summary>Returns list of appointments going to be empty if the procedures passed in were deleted. Pass in a list of AptNums to explicitly consider. Leave the list of AptNums null to check all appointments associated with the procedures passed in.</summary>
-		public static List<Appointment> GetApptsGoingToBeEmpty(List<Procedure> listProcedures,List<long> listApptNums=null,PatientData pd=null,bool isForPlanned=false) {
-			//No need to check MiddleTierRole; no call to db
+		///<summary>Returns true if there is an appointment that would be empty if the associated procedures in listProcs were deleted. Otherwise false. Pass in a list of AptNums to avoid grabbing from DB.</summary>
+		public static bool AreApptsGoingToBeEmpty(List<Procedure> listProcs, List<long> listApptNums=null) {
 			if(listApptNums.IsNullOrEmpty()) {
-				listApptNums=new List<long>();
-				listApptNums.AddRange(listProcedures.Select(x => x.PlannedAptNum).ToList().FindAll(x => x>0).Distinct());
-				listApptNums.AddRange(listProcedures.Select(x => x.AptNum).ToList().FindAll(x => x>0).Distinct());
+				listApptNums=listProcs.Select(x => x.AptNum).Where(x => x>0).Distinct().ToList();
 			}
-			List<Appointment> listAppointments=new List<Appointment>();
-			List<Procedure> listProcsAllForAppts;
-			if(pd==null) {
-				listProcsAllForAppts=Procedures.GetProcsMultApts(listApptNums);
-			}
-			else {
-				pd.FillIfNeeded(EnumPdTable.Procedure);
-				listProcsAllForAppts=pd.ListProcedures.FindAll(x => listApptNums.Contains(x.AptNum) || listApptNums.Contains(x.PlannedAptNum));
-			}
-			for(int i=0;i<listApptNums.Count;i++) {
-				int countProcsForAppt=Procedures.GetProcsOneApt(listApptNums[i],listProcedures,isForPlanned).Count;
-				int countProcsAllForAppt=Procedures.GetProcsOneApt(listApptNums[i],listProcsAllForAppts,isForPlanned).Count;
-				if(countProcsForAppt>=countProcsAllForAppt&&countProcsForAppt!=0) {
-					Appointment appointment;
-					if(pd==null) {
-						appointment=Appointments.GetOneApt(listApptNums[i]);
-					}
-					else {
-						pd.FillIfNeeded(EnumPdTable.Appointment);
-						appointment=pd.ListAppointments.Find(x => x.AptNum==listApptNums[i]);
-					}
-					listAppointments.Add(appointment);
+			List<Procedure> listProcsAllForAppts=Procedures.GetProcsMultApts(listApptNums);
+			for(int i=0;i < listApptNums.Count;i++) {
+				long countProcsForApptCur=Procedures.GetProcsOneApt(listApptNums[i],listProcs).Length;
+				long countProcsAllForApptCur=Procedures.GetProcsOneApt(listApptNums[i],listProcsAllForAppts).Length;
+				if(countProcsForApptCur>=countProcsAllForApptCur) {
+					return true;
 				}
 			}
-			return listAppointments;
+			return false;
 		}
 
 		///<summary>Verifies various appointment procedure states. Calls given funcs as validation from the user is needed.</summary>
 		public static bool ProcsAttachedToOtherAptsHelper(List<Procedure> listProceduresInGrid,Appointment appointment, 
-			List<long> listProcNumsCurrentlySelected,List<long> listProcNumsOriginallyAttached,Func<List<long>,bool> funcListAptsToDelete,
+			List<long> listProcNumsCurrentlySelected,List<long> listProcNumsOriginallyAttached,Func<List<long>,bool> funcListAptsToDelete,Func<bool> funcProcsConcurrentAndPlanned,
 			Func<bool> funcProcsConcurrentAndNotPlanned,List<Procedure> listProceduresAll,Action actionCompletedProceduresBeingMoved)
 		{
 			bool isPlanned=appointment.AptStatus == ApptStatus.Planned;
@@ -5516,6 +5435,10 @@ namespace OpenDentBusiness{
 				bool isAttachedStart=listProcNumsOriginallyAttached.Contains(listProceduresInGrid[i].ProcNum);
 				if(!isAttachedStart && isAttaching && isPlanned) {//Attaching to this planned appointment.
 					if(listProceduresInGrid[i].PlannedAptNum != 0 && listProceduresInGrid[i].PlannedAptNum != appointment.AptNum) {//However, the procedure is attached to another planned appointment.
+						hasProcsConcurrent=true;
+						listProceduresBeingMoved.Add(listProceduresInGrid[i]);
+					}
+					else if(listProceduresInGrid[i].AptNum != 0 && listProceduresInGrid[i].AptNum != appointment.AptNum) {//However, the procedure is attached to another appointment.
 						hasProcsConcurrent=true;
 						listProceduresBeingMoved.Add(listProceduresInGrid[i]);
 					}
@@ -5534,23 +5457,19 @@ namespace OpenDentBusiness{
 				for(int i=0;i<listProceduresBeingMoved.Count;i++) {
 					int countProceduresBeingMoved=listProceduresBeingMoved.Count(x=>x.AptNum==listProceduresBeingMoved[i].AptNum);
 					int countProceduresTotal=listProceduresAll.Count(x=>x.AptNum==listProceduresBeingMoved[i].AptNum);
-					if(isPlanned) {
-						countProceduresBeingMoved=listProceduresBeingMoved.Count(x => x.PlannedAptNum==listProceduresBeingMoved[i].PlannedAptNum);
-						countProceduresTotal=listProceduresAll.Count(x => x.PlannedAptNum==listProceduresBeingMoved[i].PlannedAptNum);
-					}
 					//All the procedures are being moved off appointment, so mark old AptNum for deletion
 					if(countProceduresBeingMoved>0 && countProceduresTotal>0 && countProceduresBeingMoved==countProceduresTotal) {
-						if(isPlanned) {
-							listAptNumsToDelete.Add(listProceduresBeingMoved[i].PlannedAptNum);
-						}
-						else {
-							listAptNumsToDelete.Add(listProceduresBeingMoved[i].AptNum);
-						}
+						listAptNumsToDelete.Add(listProceduresBeingMoved[i].AptNum);
 					}
 				}
 			}
 			if(listAptNumsToDelete.Count>0) {
 				if(!funcListAptsToDelete(listAptNumsToDelete)) {
+					return false;
+				}
+			}
+			else if(hasProcsConcurrent && isPlanned) {
+				if(!funcProcsConcurrentAndPlanned()) {
 					return false;
 				}
 			}
@@ -5579,104 +5498,20 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Helper method that deletes appointments and inserts a security log.
-		///This method is called when PrefName.ApptsRequireProc is enabled and a user moves all procs off of appt(s) to another appt.
+		///This method is called when PrefName.ApptsRequireProc is enabled and a user moves all procs off of planned appt(s) to another appt.
 		///This method does not verify the preference state or the appointment types.</summary>
-		public static void DeleteEmptyAppts(List<long> listAptNumsToDelete,long patNum) {
+		public static void DeleteEmptyPlannedAppts(List<long> listAptNumsToDelete,long patNum) {
 			//We have finished saving this appointment. We can now safely delete the unscheduled appointments marked for deletion.
 			if(listAptNumsToDelete.Count > 0) {
-				List<Appointment> listAppointmentsToDelete=Appointments.GetMultApts(listAptNumsToDelete); //Get appointments to use procedure and date info.
+				Delete(listAptNumsToDelete);
 				//Nathan asked for a specific log entry message explaining why each apt was deleted.
 				List<long> listAptNumsToDeleteDistinct=listAptNumsToDelete.Distinct().ToList();
 				for(int i=0;i<listAptNumsToDeleteDistinct.Count;i++) {
-					Appointment appointment=listAppointmentsToDelete.FirstOrDefault(x=>x.AptNum==listAptNumsToDeleteDistinct[i]);
-					if(appointment==null){
-						continue;
-					}
-					string message="All procedures (" + appointment.ProcDescript + ") were moved off of";
-					if(appointment.AptStatus==ApptStatus.Planned){
-						message+=" a planned appointment";
-					}
-					else{
-						string strAptDate=appointment.AptDateTime.ToShortDateString();
-						message+=" the appointment on " + strAptDate;
-					}
-					message+=", resulting in its deletion.";
-					//"All procedures ([proc abbreviations]) were moved off of [a planned appointment|the appointment on [appt date]], resulting in its deletion."
-					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentEdit, patNum, message, listAptNumsToDeleteDistinct[i], DateTime.MinValue);
-				}
-				Delete(listAptNumsToDelete);
-			}
-		}
-
-		///<summary>Checks if the procedures being deleted are required for the appointment type of an attached appointment. Returns an error message; Otherwise, an empty string.
-		///Moved from AppointmentL.cs so that it can be used on the WebApps side.</summary>
-		public static string CheckRequiredProcForApptType(List<Procedure> listProceduresToDelete,PatientData pd=null) {
-			List<Appointment> listAppointments;//Create a list of appointments to iterate through.
-			List<Procedure> listProceduresMultAppt;//Will be needed for Procedures.GetProcsOneApt(...)
-			List<AppointmentType> listAppointmentTypes=AppointmentTypes.GetDeepCopy();
-			List<long> listApptNums=listProceduresToDelete.Select(x => x.AptNum).Distinct().ToList();
-			listApptNums.AddRange(listProceduresToDelete.Select(x => x.PlannedAptNum).Distinct().ToList());
-			listApptNums.RemoveAll(x => x<=0);
-			if(pd==null) {
-				listAppointments=GetMultApts(listApptNums);
-				listProceduresMultAppt=Procedures.GetProcsMultApts(listApptNums);
-			}
-			else {
-				pd.FillIfNeeded(EnumPdTable.Appointment,EnumPdTable.Procedure);
-				listAppointments=pd.ListAppointments.FindAll(x => listApptNums.Contains(x.AptNum));
-				listProceduresMultAppt=pd.ListProcedures.FindAll(x => listApptNums.Contains(x.AptNum) || listApptNums.Contains(x.PlannedAptNum));
-			}
-			List<string> listAppointmentTypeNames=new List<string>();
-			List<string> listRequiredProcs=new List<string>();
-			string allOrSome=""; //Will be used for the warning message.
-			for(int a=0;a<listAppointments.Count();a++){
-				AppointmentType appointmentType=listAppointmentTypes.Find(x => x.AppointmentTypeNum==listAppointments[a].AppointmentTypeNum);
-				if(appointmentType==null || appointmentType.RequiredProcCodesNeeded==EnumRequiredProcCodesNeeded.None){//If the appt does not have an appttype, or appttype does not need any of the required proc codes to be attached.
-					continue;	
-				}
-				List<long> listProcNumsToDelete=listProceduresToDelete.FindAll(x => x.AptNum==listAppointments[a].AptNum || x.PlannedAptNum==listAppointments[a].AptNum).Select(y => y.ProcNum).ToList();
-				List<Procedure> listProceduresForAppt=Procedures.GetProcsOneApt(listAppointments[a].AptNum, listProceduresMultAppt);
-				listProceduresForAppt.RemoveAll(x => listProcNumsToDelete.Contains(x.ProcNum));//Remove the procs we intend to delete from the Procedures on Appointment grid to simulate if the procs are successfully deleted.
-				List<long> listCodeNumsRemaining=listProceduresForAppt.Select(x => x.CodeNum).ToList();
-				List<string> listStrProcCodesRemaining = new List<string>();
-				for(int p=0;p<listCodeNumsRemaining.Count();p++){
-					listStrProcCodesRemaining.Add(ProcedureCodes.GetProcCode(listCodeNumsRemaining[p]).ProcCode);
-				}
-				//All procs in grid, minus for other appts, minus selected is simulated result. Verify simulated result meets appointment type requirements and if not then show message.
-				bool isMissingRequiredProcs=false;
-				int requiredCodesAttached=0;
-				List<string> listProcCodesRequiredForApptType=appointmentType.CodeStrRequired.Split(",",StringSplitOptions.RemoveEmptyEntries).ToList();//Includes duplicates.
-				for(int t=0;t<listProcCodesRequiredForApptType.Count;t++) {
-					if(listStrProcCodesRemaining.Contains(listProcCodesRequiredForApptType[t])) {
-						requiredCodesAttached++;
-						listStrProcCodesRemaining.Remove(listProcCodesRequiredForApptType[t]);
-					}
-				}
-				if(appointmentType.RequiredProcCodesNeeded==EnumRequiredProcCodesNeeded.All &&  requiredCodesAttached!=listProcCodesRequiredForApptType.Count) {
-					isMissingRequiredProcs=true;
-				}
-				if(appointmentType.RequiredProcCodesNeeded==EnumRequiredProcCodesNeeded.AtLeastOne && requiredCodesAttached==0) {
-					isMissingRequiredProcs=true;
-				}
-				//Gather Appointment Type Name(s) and Required Procedure(s) to use on message.
-				if(isMissingRequiredProcs && !listAppointmentTypeNames.Any(x => x==appointmentType.AppointmentTypeName)){
-					listAppointmentTypeNames.Add(appointmentType.AppointmentTypeName);
-					listRequiredProcs.AddRange(listProcCodesRequiredForApptType);
-					//Update allOrSome with the string that corresponds with its EnumRequiredProcCodesNeeded. It will be used on the warning message if there is just one appointment in the list.
-					allOrSome=(appointmentType.RequiredProcCodesNeeded==EnumRequiredProcCodesNeeded.All)?"all":"at least one";
+					SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit, patNum
+						, "All procedures were moved off of the appointment, resulting in its deletion."
+						, listAptNumsToDeleteDistinct[i], DateTime.MinValue);
 				}
 			}
-			if(listAppointmentTypeNames.Count==0){
-				return "";
-			}
-			//The Appointment Type(s) [name(s)] require(s) [at least one | all] of the following procedures to be attached: proc1, proc2.
-			if(listAppointmentTypeNames.Count>1){
-				allOrSome="all or some"; //Default to this general string if there is more than one appointment in the list as there could be a mix of appointment types.
-			}
-			string errorMessage=("Appointment Type(s)"+" \""+String.Join("\", \"",listAppointmentTypeNames)+"\" "+"requires "+allOrSome+" of the following procedures:"
-				+"\r\n"+String.Join(", ",listRequiredProcs)
-				+"\r\n\n"+"To delete these procedures change the Appointment Type to None.");
-			return errorMessage;
 		}
 		#endregion
 		
@@ -5697,8 +5532,8 @@ namespace OpenDentBusiness{
 			public string Name;
 			public string PhoneNumber;
 
-			public ApptBubbleReferralInfo(ReferralType referralType,string name,string phoneNumber) {
-				RefType=referralType;
+			public ApptBubbleReferralInfo(ReferralType refType,string name,string phoneNumber) {
+				RefType=refType;
 				Name=name;
 				PhoneNumber=phoneNumber;
 			}
@@ -5743,17 +5578,17 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Only preserves information from the appointment passed in that is necessary to fill the OtherAppts window.</summary>
-		public ApptOther(Appointment appointment) {
-			AptNum=appointment.AptNum;
-			AptStatus=appointment.AptStatus;
-			NextAptNum=appointment.NextAptNum;
-			ProvNum=appointment.ProvNum;
-			ClinicNum=appointment.ClinicNum;
-			AptDateTime=appointment.AptDateTime;
-			Pattern=appointment.Pattern;
-			ProcDescript=appointment.ProcDescript;
-			Note=appointment.Note;
-			Op=appointment.Op;
+		public ApptOther(Appointment appt) {
+			AptNum=appt.AptNum;
+			AptStatus=appt.AptStatus;
+			NextAptNum=appt.NextAptNum;
+			ProvNum=appt.ProvNum;
+			ClinicNum=appt.ClinicNum;
+			AptDateTime=appt.AptDateTime;
+			Pattern=appt.Pattern;
+			ProcDescript=appt.ProcDescript;
+			Note=appt.Note;
+			Op=appt.Op;
 		}
 	}
 

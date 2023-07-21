@@ -122,11 +122,11 @@ namespace OpenDental{
 			gridMain.ListGridRows.Clear();
 			GridRow row;
 			List<Patient> listPatients=null;
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				listPatients=Patients.GetLimForPats(_listAppointmentsPlanned.Select(x => x.PatNum).ToList());
 				};
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			for(int i = 0;i<_listAppointmentsPlanned.Count;i++) {
 				row=new GridRow();
 				string patName=Lan.g(this,"UNKNOWN");
@@ -178,7 +178,7 @@ namespace OpenDental{
 			if(!PrefC.GetBool(PrefName.EasyHidePublicHealth) && comboSite.SelectedIndex!=0) {
 				siteNum=_listSites[comboSite.SelectedIndex-1].SiteNum;
 			}
-			long clinicNum=PrefC.HasClinicsEnabled ? comboClinic.ClinicNumSelected : -1;
+			long clinicNum=PrefC.HasClinicsEnabled ? comboClinic.SelectedClinicNum : -1;
 			_listAppointmentsPlanned=Appointments.RefreshPlannedTracker(order,provNum,siteNum,clinicNum,codeRangeFilter.StartRange,
 				codeRangeFilter.EndRange,dateRangePicker.GetDateTimeFrom(),dateRangePicker.GetDateTimeTo());
 		}
@@ -194,7 +194,7 @@ namespace OpenDental{
 			//If multiple selected, just take the last one to remain consistent with SendPinboard_Click.
 			long patNum=_listAppointmentsPlanned[gridMain.SelectedIndices[gridMain.SelectedIndices.Length-1]].PatNum;
 			Patient patient=Patients.GetPat(patNum);
-			GlobalFormOpenDental.PatientSelected(patient,true);
+			FormOpenDental.S_Contr_PatientSelected(patient,true);
 		}
 
 		private void SeeChart_Click() {
@@ -204,8 +204,8 @@ namespace OpenDental{
 			}
 			//Only one can be selected at a time in this grid, but just in case we change it in the future it will select the last one in the list to be consistent with other patient selections.
 			Patient patient=Patients.GetPat(_listAppointmentsPlanned[gridMain.SelectedIndices[gridMain.SelectedIndices.Length-1]].PatNum);
-			GlobalFormOpenDental.PatientSelected(patient,false);
-			GlobalFormOpenDental.GotoChart(patient.PatNum);
+			FormOpenDental.S_Contr_PatientSelected(patient,false);
+			GotoModule.GotoChart(patient.PatNum);
 		}
 
 		private void SendPinboard_Click() {
@@ -218,7 +218,7 @@ namespace OpenDental{
 				listAptNum.Add(_listAppointmentsPlanned[gridMain.SelectedIndices[i]].AptNum);//Will only be one unless multiselect is enabled in the future
 				_listAppointmentsPlanned.RemoveAt(gridMain.SelectedIndices[i]);
 			}
-			GlobalFormOpenDental.PinToAppt(listAptNum,0);//This will send all appointments in _listAptSelected to the pinboard, and will select the patient attached to the last appointment in _listAptSelected.
+			GotoModule.PinToAppt(listAptNum,0);//This will send all appointments in _listAptSelected to the pinboard, and will select the patient attached to the last appointment in _listAptSelected.
 			FillGrid();
 		}
 
@@ -226,7 +226,7 @@ namespace OpenDental{
 			int currentSelection=gridMain.GetSelectedIndex();
 			int currentScroll=gridMain.ScrollValue;
 			Patient patient=Patients.GetPat(_listAppointmentsPlanned[e.Row].PatNum);//Only one can be selected at a time in this grid.
-			GlobalFormOpenDental.PatientSelected(patient,true);
+			FormOpenDental.S_Contr_PatientSelected(patient,true);
 			using FormApptEdit formApptEdit=new FormApptEdit(_listAppointmentsPlanned[e.Row].AptNum);
 			formApptEdit.PinIsVisible=true;
 			formApptEdit.ShowDialog();
@@ -287,5 +287,8 @@ namespace OpenDental{
 			g.Dispose();
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
 	}
 }

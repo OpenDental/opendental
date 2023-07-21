@@ -50,26 +50,24 @@ namespace OpenDental {
 			FillGrid();
 		}
 
-		private DateTime GetDateStart() {
-			if(textDateStart.Text=="") {
-				return DateTime.MinValue.AddDays(1);//because we don't want to include 010101
-			}
-			return PIn.Date(textDateStart.Text);
-		}
-
-		private DateTime GetDateEnd() {
-			if(textDateEnd.Text=="") {
-				return DateTime.MaxValue;
-			}
-			return PIn.Date(textDateEnd.Text);
-		}
-
 		private void FillGrid(){
 			if(!textDateStart.IsValid() || !textDateEnd.IsValid()) {
 				return;
 			}
-			DateTime dateFrom=GetDateStart();
-			DateTime dateTo=GetDateEnd();
+			DateTime dateFrom;
+			DateTime dateTo;
+			if(textDateStart.Text=="") {
+				dateFrom=DateTime.MinValue.AddDays(1);//because we don't want to include 010101
+			}
+			else {
+				dateFrom=PIn.Date(textDateStart.Text);
+			}
+			if(textDateEnd.Text=="") {
+				dateTo=DateTime.MaxValue;
+			}
+			else {
+				dateTo=PIn.Date(textDateEnd.Text);
+			}
 			EnumEquipmentDisplayMode equipmentDisplayMode=EnumEquipmentDisplayMode.All;
 			if(radioPurchased.Checked){
 				equipmentDisplayMode=EnumEquipmentDisplayMode.Purchased;
@@ -160,7 +158,7 @@ namespace OpenDental {
 		private void butPrint_Click(object sender,EventArgs e) {
 			_pagesPrinted=0;
 			_isHeadingPrinted=false;
-			PrinterL.TryPrintOrDebugRpPreview(pd_PrintPage,Lan.g(this,"Equipment list printed"),CodeBase.PrintoutOrientation.Landscape);
+			PrinterL.TryPrintOrDebugRpPreview(pd_PrintPage,Lan.g(this,"Equipment list printed"));
 		}
 
 		private void pd_PrintPage(object sender,System.Drawing.Printing.PrintPageEventArgs e) {
@@ -186,9 +184,7 @@ namespace OpenDental {
 				}
 				g.DrawString(text,fontHeading,Brushes.Black,center-g.MeasureString(text,fontHeading).Width/2,yPos);
 				yPos+=(int)g.MeasureString(text,fontHeading).Height;
-				DateTime dateStart=GetDateStart();
-				DateTime dateEnd=GetDateEnd();
-				text=dateStart.ToShortDateString()+" "+Lan.g(this,"to")+" "+dateEnd.ToShortDateString();
+				text=textDateStart.Text+" "+Lan.g(this,"to")+" "+textDateEnd.Text;
 				g.DrawString(text,fontSubHeading,Brushes.Black,center-g.MeasureString(text,fontSubHeading).Width/2,yPos);
 				yPos+=20;
 				_isHeadingPrinted=true;
@@ -211,5 +207,20 @@ namespace OpenDental {
 			g.Dispose();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
+		
+
+		
+
+	
+
+		
+
+		
+
+		
 	}
 }

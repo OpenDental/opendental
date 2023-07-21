@@ -157,44 +157,41 @@ namespace OpenDentBusiness{
 			return strProcCode;
 		}
 
-		public class EServiceCodeProcCode {
-			public eServiceCode EServiceCode;
-			public string ProcCode;
-		}
-
 		///<summary>Hard-coded dictionary of eService codes and their corresponding ProcCode within the database at HQ.</summary>
-		public static readonly List<EServiceCodeProcCode> ListEServiceProcCodes=new List<EServiceCodeProcCode> {
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.Bundle,ProcCode="042", },
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.ConfirmationOwn,ProcCode = "045" },
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.ConfirmationRequest,ProcCode = "040" },
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.EClipboard,ProcCode = "047" },
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.MobileWeb,ProcCode = "027" },
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.PatientPortal,ProcCode = "033" },
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.ResellerSoftwareOnly,ProcCode = "043" },
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.SoftwareOnly,ProcCode = "030" },
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.IntegratedTexting,ProcCode =		"038" },
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.IntegratedTextingOwn,ProcCode = "046" },
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.IntegratedTextingUsage,ProcCode="039" },
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.WebForms,ProcCode = "036" },
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.WebSched,ProcCode = "037" },
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.WebSchedNewPatAppt,ProcCode = "041" },
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.WebSchedASAP,ProcCode = "044" },
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.EmailMassUsage,ProcCode = "050" },
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.EmailSecureUsage,ProcCode = "051" },
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.EmailSecureAccess,ProcCode = "052" },
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.ODTouch,ProcCode = "055"},
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.ODTSurplus,ProcCode = "056"},
-			new EServiceCodeProcCode() { EServiceCode=eServiceCode.FHIR,ProcCode = "048"},
+		private static readonly Dictionary<eServiceCode,string> _dictEServiceProcCodes=new Dictionary<eServiceCode,string>() {
+			{ eServiceCode.Bundle,"042" },
+			{ eServiceCode.ConfirmationOwn,"045" },
+			{ eServiceCode.ConfirmationRequest,"040" },
+			{ eServiceCode.EClipboard,"047" },
+			{ eServiceCode.MobileWeb,"027" },
+			{ eServiceCode.PatientPortal,"033" },
+			{ eServiceCode.ResellerSoftwareOnly,"043" },
+			{ eServiceCode.SoftwareOnly,"030" },
+			{ eServiceCode.IntegratedTexting,"038" },
+			{ eServiceCode.IntegratedTextingOwn,"046" },
+			{ eServiceCode.IntegratedTextingUsage,"039" },
+			{ eServiceCode.WebForms,"036" },
+			{ eServiceCode.WebSched,"037" },
+			{ eServiceCode.WebSchedNewPatAppt,"041" },
+			{ eServiceCode.WebSchedASAP,"044" },
+			{ eServiceCode.EmailMassUsage,"050" },
+			{ eServiceCode.EmailSecureUsage,"051" },
+			{ eServiceCode.EmailSecureAccess,"052" },
 		};
 
 		public static string GetProcCodeForEService(eServiceCode eService) {
 			//No need to check MiddleTierRole; no call to db.
-			return ListEServiceProcCodes.FirstOrDefault(x => x.EServiceCode==eService).ProcCode;
+			return _dictEServiceProcCodes[eService];
 		}
 
 		public static eServiceCode GetEServiceForProcCode(string procCode) {
 			//No need to check MiddleTierRole; no call to db.
-			return ListEServiceProcCodes.FirstOrDefault(x => x.ProcCode==procCode).EServiceCode;
+			foreach(eServiceCode eService in _dictEServiceProcCodes.Keys) {
+				if(_dictEServiceProcCodes[eService]==procCode) {
+					return eService;
+				}
+			}
+			throw new ODException("No corresponding eService found for the ProcCode provided.");
 		}
 
 		///<summary>Combine ProcedureCode and Fee into single class using HQ's DoNotEditFeeSchedNum. Used by signup portal.</summary>
@@ -211,14 +208,9 @@ namespace OpenDentBusiness{
 			}).ToList();
 		}
 
-		public static EServiceFee GetEServiceFeeByEService(eServiceCode eService) {
-			string procCode=GetProcCodeForEService(eService);
-			return GetAllEServiceFees().FirstOrDefault(x => x.ESvcProcCode.ProcCode==procCode);
-		}
-
 		public static List<string> GetAllEServiceProcCodes() {
 			//No need to check MiddleTierRole; no call to db.
-			return ListEServiceProcCodes.Select(x => x.ProcCode).ToList();
+			return _dictEServiceProcCodes.Values.ToList();
 		}
 
 		public static List<ProcedureCode> GetChangedSince(DateTime dateTimeChangedSince) {
@@ -226,19 +218,6 @@ namespace OpenDentBusiness{
 				return Meth.GetObject<List<ProcedureCode>>(MethodBase.GetCurrentMethod(),dateTimeChangedSince);
 			}
 			string command="SELECT * FROM procedurecode WHERE DateTStamp > "+POut.DateT(dateTimeChangedSince);
-			return Crud.ProcedureCodeCrud.SelectMany(command);
-		}
-
-		/// <summary>Returns a list of procedurecodes attached to the given claim. Currently only used by the EDS attachment bridge to fill in data required by the EDS API.</summary>
-		public static List<ProcedureCode> GetForClaim(long claimNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ProcedureCode>>(MethodBase.GetCurrentMethod(),claimNum);
-			}
-			string command="SELECT pc.* " +
-				"FROM claimproc c " +
-				"INNER JOIN procedurelog p ON c.ProcNum=p.ProcNum " +
-				"INNER JOIN procedurecode pc ON p.CodeNum=pc.CodeNum " +
-				"WHERE c.ClaimNum="+POut.Long(claimNum);
 			return Crud.ProcedureCodeCrud.SelectMany(command);
 		}
 
@@ -825,7 +804,7 @@ namespace OpenDentBusiness{
 					Defs.RefreshCache();
 					string logText=Lans.g("Defintions","Definition edited:")+" "+def.ItemName+" "
 						+Lans.g("Defintions","with category:")+" "+def.Category.GetDescription();
-					SecurityLogs.MakeLogEntry(EnumPermType.DefEdit,0,logText);
+					SecurityLogs.MakeLogEntry(Permissions.DefEdit,0,logText);
 				}
 			}
 			if(catNum==0) {
@@ -839,7 +818,7 @@ namespace OpenDentBusiness{
 				Defs.RefreshCache();
 				string logText=Lans.g("Defintions","Definition created:")+" "+def.ItemName+" "
 					+Lans.g("Defintions","with category:")+" "+def.Category.GetDescription();
-				SecurityLogs.MakeLogEntry(EnumPermType.DefEdit,0,logText);
+				SecurityLogs.MakeLogEntry(Permissions.DefEdit,0,logText);
 				catNum=def.DefNum;
 			}
 			for(int i=0;i<table.Rows.Count;i++) {
@@ -859,7 +838,7 @@ namespace OpenDentBusiness{
 					Defs.RefreshCache();
 					string logText=Lans.g("Defintions","Definition edited:")+" "+def.ItemName+" "
 						+Lans.g("Defintions","with category:")+" "+def.Category.GetDescription();
-					SecurityLogs.MakeLogEntry(EnumPermType.DefEdit,0,logText);
+					SecurityLogs.MakeLogEntry(Permissions.DefEdit,0,logText);
 				}
 			}
 		}
@@ -916,7 +895,7 @@ namespace OpenDentBusiness{
 				Defs.Insert(def);
 				string logText=Lans.g("Defintions","Definition created:")+" "+def.ItemName+" "
 					+Lans.g("Defintions","with category:")+" "+def.Category.GetDescription();
-				SecurityLogs.MakeLogEntry(EnumPermType.DefEdit,0,logText);
+				SecurityLogs.MakeLogEntry(Permissions.DefEdit,0,logText);
 				itemorder++;
 			}
 		}
@@ -975,7 +954,7 @@ namespace OpenDentBusiness{
 				Defs.Insert(def);
 				string logText=Lans.g("Defintions","Definition created:")+" "+def.ItemName+" "
 					+Lans.g("Defintions","with category:")+" "+def.Category.GetDescription();
-				SecurityLogs.MakeLogEntry(EnumPermType.DefEdit,0,logText);
+				SecurityLogs.MakeLogEntry(Permissions.DefEdit,0,logText);
 			}
 		}
 
@@ -1063,14 +1042,14 @@ namespace OpenDentBusiness{
 					string oldDescript=procedureCode.Descript;
 					procedureCode.Descript=listProcedureCodes[i].Descript;
 					ProcedureCodes.Update(procedureCode);		
-					SecurityLogs.MakeLogEntry(EnumPermType.ProcCodeEdit,0,"Code "+procedureCode.ProcCode+" changed from '"+oldDescript+"' to '"+procedureCode.Descript+"' by D-Codes Tool."
+					SecurityLogs.MakeLogEntry(Permissions.ProcCodeEdit,0,"Code "+procedureCode.ProcCode+" changed from '"+oldDescript+"' to '"+procedureCode.Descript+"' by D-Codes Tool."
 						,procedureCode.CodeNum,datePrevious);
 				}
 				if(isDbProcAbbrDescBlank) {//Update abbreviation if current code.AbbrDesc in db is blank.
 					string oldAbbrDesc=procedureCode.AbbrDesc;
 					procedureCode.AbbrDesc=listProcedureCodes[i].AbbrDesc;
 					ProcedureCodes.Update(procedureCode);
-					SecurityLogs.MakeLogEntry(EnumPermType.ProcCodeEdit,0,$"Code {procedureCode.ProcCode} changed from '{oldAbbrDesc}' to '{procedureCode.AbbrDesc}' by D-Codes Tool."
+					SecurityLogs.MakeLogEntry(Permissions.ProcCodeEdit,0,$"Code {procedureCode.ProcCode} changed from '{oldAbbrDesc}' to '{procedureCode.AbbrDesc}' by D-Codes Tool."
 						,procedureCode.CodeNum,datePrevious);
 				}
 			}
@@ -1121,26 +1100,14 @@ namespace OpenDentBusiness{
 			return Crud.ProcedureCodeCrud.SelectMany(command);
 		}
 
-		///<summary>Gets one procedurecode from db. Returns null if not found.</summary>
-		public static ProcedureCode GetOneProcCodeForApi(long codeNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<ProcedureCode>(MethodBase.GetCurrentMethod(),codeNum);
-			}
-			string command="SELECT * FROM procedurecode "
-				+"WHERE CodeNum = '"+POut.Long(codeNum)+"'";
-			return Crud.ProcedureCodeCrud.SelectOne(command);
-		}
-
-		///<summary>Gets procedurecodes from the database optionally filtered by DateTStamp.</summary>
+		///<summary>Gets procedurecodes from the database after a supplied DateTStamp, ordered by ProcCode. Used in the API.</summary>
 		public static List<ProcedureCode> GetProcCodesForApi(int limit,int offset,DateTime dateTStamp) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<ProcedureCode>>(MethodBase.GetCurrentMethod(),limit,offset,dateTStamp);
 			}
-			string command="SELECT * FROM procedurecode ";
-			if(dateTStamp>DateTime.MinValue) {
-				command+="WHERE DateTStamp >= "+POut.DateT(dateTStamp)+" ";
-			}
-			command+="ORDER BY CodeNum "//Ensure order for limit and offset. Ordered by ProcCode in 23.3.24 and older.
+			string command="SELECT * FROM procedurecode "
+				+"WHERE DateTStamp >= "+POut.DateT(dateTStamp)+" "
+				+"ORDER BY ProcCode "
 				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
 			return Crud.ProcedureCodeCrud.SelectMany(command);
 		}

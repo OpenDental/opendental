@@ -124,7 +124,7 @@ namespace OpenDental{
 				return;
 			}
 			if(RecallCur.DatePrevious.Year>1880){
-				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"This recall should not normally be deleted because the Previous Date has a value.  You should use the Disabled check box instead.  But if you are just deleting a duplicate, it's ok to continue.  Recalls cannot be deleted unless all recall procedures have been deleted for this patient.  Continue?")) {
+				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"This recall should not normally be deleted because the Previous Date has a value.  You should use the Disabled checkBox instead.  But if you are just deleting a duplicate, it's ok to continue.  Continue?")) {
 					return;
 				}
 			}
@@ -132,12 +132,12 @@ namespace OpenDental{
 				return;
 			}
 			Recalls.Delete(RecallCur);
-			SecurityLogs.MakeLogEntry(EnumPermType.RecallEdit,RecallCur.PatNum
+			SecurityLogs.MakeLogEntry(Permissions.RecallEdit,RecallCur.PatNum
 				,"Recall deleted with type '"+RecallTypes.GetSpecialTypeStr(RecallCur.RecallTypeNum)+"' and interval '"+RecallCur.RecallInterval+"'");
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(comboType.SelectedIndex==-1){
 				MsgBox.Show(this,"Please pick a type first.");
 				return;
@@ -191,7 +191,7 @@ namespace OpenDental{
 				//	return;
 				//}
 				Recalls.Insert(RecallCur);
-				SecurityLogs.MakeLogEntry(EnumPermType.RecallEdit,RecallCur.PatNum,"Recall added from the Edit Recall window.");
+				SecurityLogs.MakeLogEntry(Permissions.RecallEdit,RecallCur.PatNum,"Recall added from the Edit Recall window.");
 				DialogResult=DialogResult.OK;
 				return;
 			}
@@ -205,11 +205,35 @@ namespace OpenDental{
 			}
 			else{*/
 			Recalls.Update(RecallCur);
-			SecurityLogs.MakeLogEntry(EnumPermType.RecallEdit,RecallCur.PatNum,"Recall edited from the Edit Recall window.");
+			SecurityLogs.MakeLogEntry(Permissions.RecallEdit,RecallCur.PatNum,"Recall edited from the Edit Recall window.");
 			//}
 			//Recalls.Synch(PatCur.PatNum,RecallCur);//This was moved up into FormRecallsPat.FillGrid.  This is the only way to access a recall.
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

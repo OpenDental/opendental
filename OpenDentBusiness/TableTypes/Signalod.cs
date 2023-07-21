@@ -77,36 +77,36 @@ namespace OpenDentBusiness {
 
 	///<summary>Do not combine with SignalType, they must be seperate. Stored as string, safe to reorder enum values.</summary>
 	public enum KeyType {
-		///<summary>Probably represented by empty string, but possibly by "Undefined".</summary>
-		Undefined,
-		///<summary></summary>
+		///<summary>0</summary>
+		Undefined = 0,
+		///<summary>1</summary>
 		FeeSched,
-		///<summary></summary>
+		///<summary>2</summary>
 		Job,
-		///<summary></summary>
+		///<summary>3</summary>
 		Operatory,
-		///<summary>HQ only.  FKey will be the extension of the corresponding phone that is invalid.
+		///<summary>4 - HQ only.  FKey will be the extension of the corresponding phone that is invalid.
 		///Specifically used to talk to the PhoneTrackingServer in order to let it know that an extension has changed (e.g. queue change).</summary>
 		PhoneExtension,
-		///<summary></summary>
+		///<summary>5</summary>
 		Provider,
-		///<summary></summary>
+		///<summary>6</summary>
 		SigMessage,
-		///<summary>Special KeyType that does not use a FK but instead will set FKey to a count of unread messages.
+		///<summary>7 - Special KeyType that does not use a FK but instead will set FKey to a count of unread messages.
 		///Used along side the SmsTextMsgReceivedUnreadCount InvalidType.</summary>
 		SmsMsgUnreadCount,
-		///<summary></summary>
+		///<summary>8</summary>
 		Task,
-		///<summary>Used to identify which signals a form can ignore.  If the FKey==Process.GetCurrentProcess().Id then this process sent it so ignore
+		///<summary>9 - Used to identify which signals a form can ignore.  If the FKey==Process.GetCurrentProcess().Id then this process sent it so ignore
 		///it.  Used in FormTerminal, FormTerminalManager, and FormSheetFillEdit (for forms being filled at a kiosk).</summary>
 		ProcessId,
-		///<summary>Used to notify the phone tracking server to kick all users out of a conference room.</summary>
+		///<summary>10 - Used to notify the phone tracking server to kick all users out of a conference room.</summary>
 		ConfKick,
-		///<summary>Used in AccModule, TPModule, and PerioExams.</summary>
+		///<summary></summary>
 		PatNum,
-		///<summary>Indicates Signalod pertains to a specific UserOd.</summary>
+		///<summary>12 - Indicates Signalod pertains to a specific UserOd.</summary>
 		UserOd,
-		///<summary>Used to indicate that this specific email address is what this signal is for</summary>
+		///<summary>13 - Used to indicate that this specific email address is what this signal is for</summary>
 		EmailAddress,
 	}
 

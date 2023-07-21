@@ -38,12 +38,14 @@ namespace OpenDental {
 		}
 
 		private void FormInsBenefits_Load(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit,true)) {
-				butSave.Enabled=false;
-				butAddBenefit.Enabled=false;
-				butAddFrequency.Enabled=false;
+			if(!Security.IsAuthorized(Permissions.InsPlanEdit,true)) {
+				butOK.Enabled=false;
+				butAdd.Enabled=false;
 				butDelete.Enabled=false;
 			}
+			comboBW.Items.AddEnums<FrequencyOptions>();
+			comboPano.Items.AddEnums<FrequencyOptions>();
+			comboExams.Items.AddEnums<FrequencyOptions>();
 			_listBenefitsAll=new List<Benefit>(ListBenefits);
 			if(CovCats.GetForEbenCat(EbenefitCategory.Accident)==null
 				|| CovCats.GetForEbenCat(EbenefitCategory.Crowns)==null
@@ -63,21 +65,13 @@ namespace OpenDental {
 			{
 				_dontAllowSimplified=true;
 				checkSimplified.Checked=false;
-				gridBenefits.Title=Lan.g(this,"Benefits");
-				gridFrequencies.Visible=false;
-				checkShowProcCodes.Visible=false;
-				butAddFrequency.Visible=false;
 				panelSimple.Visible=false;
-				groupCategories.Visible=false;
 				LayoutManager.MoveLocation(gridBenefits,new Point(gridBenefits.Left,groupYear.Bottom+3));
-				LayoutManager.MoveHeight(gridBenefits,butAddBenefit.Top-gridBenefits.Top-5);
-				Width=LayoutManager.Scale(796);
+				LayoutManager.MoveHeight(gridBenefits,butAdd.Top-gridBenefits.Top-5);
 			}
 			FillCalendarYear();
 			FillSimple();
-			FillGridAgeLimits();
-			FillGridBenefits();
-			FillGridFrequencies();
+			FillGrid();
 			textSubscNote.Text=Note;
 			if(InsSub_==null) {
 				textSubscNote.Visible=false;
@@ -97,21 +91,15 @@ namespace OpenDental {
 					return;
 				}
 				gridBenefits.Title=Lan.g(this,"Other Benefits");
-				gridFrequencies.Visible=true;
-				checkShowProcCodes.Visible=true;
-				butAddFrequency.Visible=true;
 				panelSimple.Visible=true;
 				groupCategories.Visible=true;
 				LayoutManager.MoveLocation(gridBenefits,new Point(gridBenefits.Left,panelSimple.Bottom+4));
 				LayoutManager.MoveHeight(gridBenefits,textSubscNote.Top-gridBenefits.Top-5);
-				//LayoutManager.MoveLocation(butAddBenefit,new Point(gridBenefits.Right-78,gridBenefits.Bottom+6));
-				//LayoutManager.MoveLocation(butDelete,new Point(butAddBenefit.Left,butAddBenefit.Bottom+6));
-				Width=LayoutManager.Scale(1175);
+				LayoutManager.MoveLocation(butAdd,new Point(gridBenefits.Right+5,gridBenefits.Top));
+				LayoutManager.MoveLocation(butDelete,new Point(butAdd.Left,butAdd.Bottom+6));
 				//FillSimple handles all further logic.
 				FillSimple();
-				FillGridAgeLimits();
-				FillGridBenefits();
-				FillGridFrequencies();
+				FillGrid();
 				return;
 			}
 			//Not checked
@@ -120,21 +108,17 @@ namespace OpenDental {
 				return;
 			}
 			gridBenefits.Title=Lan.g(this,"Benefits");
-			gridFrequencies.Visible=false;
-			checkShowProcCodes.Visible=false;
-			butAddFrequency.Visible=false;
 			panelSimple.Visible=false;
 			groupCategories.Visible=false;
 			LayoutManager.MoveLocation(gridBenefits,new Point(gridBenefits.Left,groupYear.Bottom+3));
 			LayoutManager.MoveHeight(gridBenefits,textSubscNote.Top-gridBenefits.Top-5);
-			//LayoutManager.MoveLocation(butAddBenefit,new Point(gridBenefits.Right-78,gridBenefits.Bottom+6));
-			//LayoutManager.MoveLocation(butDelete,new Point(butAddBenefit.Left,butAddBenefit.Bottom+6));
-			Width=LayoutManager.Scale(796);
+			LayoutManager.MoveLocation(butAdd,new Point(gridBenefits.Right+5,gridBenefits.Top));
+			LayoutManager.MoveLocation(butDelete,new Point(butAdd.Left,butAdd.Bottom+6));
 			FillSimple();
-			FillGridBenefits();
+			FillGrid();
 		}
 
-		///<summary>This will only be run when the form first opens or if user switches to simple view.  FillGridBenefits should always be run after this.</summary>
+		///<summary>This will only be run when the form first opens or if user switches to simple view.  FillGrid should always be run after this.</summary>
 		private void FillSimple() {
 			if(!panelSimple.Visible) {
 				//Show all of the benefits when the simple view is not showing to the user.
@@ -146,6 +130,13 @@ namespace OpenDental {
 			textDeductible.Text="";
 			textAnnualMaxFam.Text="";
 			textDeductibleFam.Text="";
+			textFlo.Text="";
+			textBW.Text="";
+			textPano.Text="";
+			textExams.Text="";
+			comboBW.SetSelectedEnum(FrequencyOptions.Every_Years);
+			comboPano.SetSelectedEnum(FrequencyOptions.Every_Years);
+			comboExams.SetSelectedEnum(FrequencyOptions.Every_Years);
 			textOrthoAge.Text="";
 			textOrthoMax.Text="";
 			textOrthoPercent.Text="";
@@ -180,6 +171,16 @@ namespace OpenDental {
 			Benefit benefit;
 			for(int i=0;i<_listBenefitsAll.Count;i++) {
 				benefit=_listBenefitsAll[i];
+				FrequencyOptions frequencyOption=FrequencyOptions._PerBenefitYear;
+				if(benefit.QuantityQualifier==BenefitQuantity.Months) {
+					frequencyOption=FrequencyOptions.Every_Months;
+				}
+				else if(benefit.QuantityQualifier==BenefitQuantity.Years) {
+					frequencyOption=FrequencyOptions.Every_Years;
+				}
+				else if(benefit.TimePeriod==BenefitTimePeriod.NumberInLast12Months) {
+					frequencyOption=FrequencyOptions._InLast12Months;
+				}
 				#region Annual Max
 				//annual max individual
 				if(Benefits.IsAnnualMax(benefit,BenefitCoverageLevel.Individual)) {
@@ -201,13 +202,29 @@ namespace OpenDental {
 				}
 				#endregion
 				#region Age Limitations
-				else if(Benefits.IsAgeLimit(benefit)) {
-					// Will be seen in Age Limits grid.
+				//Flo
+				else if(Benefits.IsFluorideAgeLimit(benefit)) {
+					textFlo.Text=benefit.Quantity.ToString();
+				}
+				else if(Benefits.IsSealantAgeLimit(benefit)) {
+					textSealantAge.Text=benefit.Quantity.ToString();
 				}
 				#endregion
 				#region Frequencies
-				else if(checkSimplified.Checked && Benefits.IsFrequencyLimitation(benefit) && benefit.CodeGroupNum!=0) {
-					// Will be shown in Frequencies grid
+				//BWs group
+				else if(textBW.Text=="" && Benefits.IsBitewingFrequency(benefit)) {
+					textBW.Text=benefit.Quantity.ToString();
+					comboBW.SetSelectedEnum(frequencyOption);
+				}
+				//Pano
+				else if(textPano.Text=="" && Benefits.IsPanoFrequency(benefit)) {
+					textPano.Text=benefit.Quantity.ToString();
+					comboPano.SetSelectedEnum(frequencyOption);
+				}
+				//Exam group
+				else if(textExams.Text=="" && Benefits.IsExamFrequency(benefit)) {
+					textExams.Text=benefit.Quantity.ToString();
+					comboExams.SetSelectedEnum(frequencyOption);
 				}
 				#endregion
 				#region Ortho
@@ -649,156 +666,8 @@ namespace OpenDental {
 			}
 		}
 
-		/// <summary> Should be called any time a change to an age limit needs made visible. </summary>
-		private void FillGridAgeLimits() {
-			gridAgeLimits.BeginUpdate();
-			gridAgeLimits.Columns.Clear();
-			GridColumn gridColumn = new GridColumn("Code Group",140);
-			gridAgeLimits.Columns.Add(gridColumn);
-			gridColumn = new GridColumn("Codes", 80);
-			gridAgeLimits.Columns.Add(gridColumn);
-			gridColumn = new GridColumn("Age",30,HorizontalAlignment.Center);
-			gridColumn.IsEditable=true;
-			gridAgeLimits.Columns.Add(gridColumn);
-			gridAgeLimits.ListGridRows.Clear();
-			GridRow gridRow;
-			List<CodeGroup> listCodeGroups = CodeGroups.GetDeepCopy();
-			for(int i=0;i<listCodeGroups.Count;i++) {
-				//There will not be duplicates like with frequencies.
-				Benefit benefit=_listBenefitsAll.Find(x=>x.CodeGroupNum==listCodeGroups[i].CodeGroupNum && Benefits.IsAgeLimit(x));
-				if(benefit==null) {
-					if(!listCodeGroups[i].ShowInAgeLimit) {
-						//Do not provide an age limit row for this codegroup.
-						continue;
-					}
-					benefit = new Benefit();
-					benefit.CodeGroupNum=listCodeGroups[i].CodeGroupNum;
-					benefit = MakeAgeLimitBenefit(benefit,0);
-				}
-				gridRow=new GridRow();
-				gridRow.Cells.Add(Benefits.GetCategoryString(benefit));// Code Group
-				gridRow.Cells.Add(listCodeGroups[i].ProcCodes);
-				if(benefit.Quantity > 0) { // Age
-					gridRow.Cells.Add(benefit.Quantity.ToString());
-				}
-				else {
-					gridRow.Cells.Add("");
-				}
-				gridRow.Tag=benefit;
-				gridAgeLimits.ListGridRows.Add(gridRow);
-			}
-			gridAgeLimits.EndUpdate();
-		}
-
-		/// <summary> Should be called any time a change to a Frequency needs made visible. </summary>
-		private void FillGridFrequencies() {
-			List<CodeGroup> listCodeGroups=CodeGroups.GetDeepCopy();//including hidden
-			List<Benefit> listBenefits=_listBenefitsAll.FindAll(x=>Benefits.IsFrequencyLimitation(x) && x.CodeGroupNum!=0);
-			listBenefits.Sort();
-			gridFrequencies.BeginUpdate();
-			gridFrequencies.Columns.Clear();
-			GridColumn gridColumn=new GridColumn("Pat",35,HorizontalAlignment.Center);
-			gridFrequencies.Columns.Add(gridColumn);
-			gridColumn=new GridColumn("Code Group",140);
-			if(checkShowProcCodes.Checked) {
-				gridColumn=new GridColumn("Codes",140);
-			}
-			gridFrequencies.Columns.Add(gridColumn);
-			gridColumn=new GridColumn("#",25,HorizontalAlignment.Center);
-			gridColumn.IsEditable=true;
-			gridFrequencies.Columns.Add(gridColumn);
-			gridColumn=new GridColumn("Frequency",110);
-			List<string> listStringsFrequencyOptions = new List<string>() {
-				FrequencyOptions.Every_Years.GetDescription(),
-				FrequencyOptions._PerBenefitYear.GetDescription(),
-				FrequencyOptions.Every_Months.GetDescription(),
-				FrequencyOptions._InLast12Months.GetDescription(),
-			};
-			gridColumn.ListDisplayStrings=listStringsFrequencyOptions;
-			gridFrequencies.Columns.Add(gridColumn);
-			gridColumn=new GridColumn("Treat Area",100);
-			List<string> listStringsTreatmentArea=new List<string>() {
-				"Default",
-				TreatmentArea.Surf.ToString(),
-				TreatmentArea.Tooth.ToString(),
-				TreatmentArea.Mouth.ToString(),
-				TreatmentArea.Quad.ToString(),
-				TreatmentArea.Sextant.ToString(),
-				TreatmentArea.Arch.ToString(),
-				TreatmentArea.ToothRange.ToString()
-			};
-			gridColumn.ListDisplayStrings=listStringsTreatmentArea;
-			gridFrequencies.Columns.Add(gridColumn);
-			gridFrequencies.ListGridRows.Clear();
-			GridRow gridRow;
-			for(int i=0;i<listCodeGroups.Count;i++) {
-				List<Benefit> listBenefitsGroup=listBenefits.FindAll(x=>x.CodeGroupNum==listCodeGroups[i].CodeGroupNum);
-				if(listBenefitsGroup.Count==0) {
-					if(listCodeGroups[i].IsHidden) {
-						continue;
-					}
-					gridRow=new GridRow();
-					Benefit benefit=new Benefit();
-					benefit.CodeGroupNum=listCodeGroups[i].CodeGroupNum; // Give benefit a CodeGroupNum so the 'Save' button knows how to handle it.
-					gridRow.Cells.Add("");
-					string textForCell=listCodeGroups[i].GroupName;// Code Group or Proc Codes
-					if(checkShowProcCodes.Checked) {
-						List<ProcedureCode> listProcedureCodes=ProcedureCodes.GetFromCommaDelimitedList(listCodeGroups[i].ProcCodes);
-						textForCell="";
-						for(int c=0;c<listProcedureCodes.Count;c++) {
-							if(c!=0) {
-								textForCell+="\r\n";
-							}
-							textForCell+=listProcedureCodes[c].ProcCode + " - " + listProcedureCodes[c].AbbrDesc;
-						}
-					}
-					gridRow.Cells.Add(textForCell);
-					gridRow.Cells.Add("");//#
-					GridCell gridCell=new GridCell(listStringsFrequencyOptions[0]);//Frequency
-					gridCell.ComboSelectedIndex=0;
-					gridRow.Cells.Add(gridCell);
-					gridCell=new GridCell(listStringsTreatmentArea[0]);//Treatment Area
-					gridCell.ComboSelectedIndex=0;
-					gridRow.Cells.Add(gridCell);
-					gridRow.Tag=benefit;
-					gridFrequencies.ListGridRows.Add(gridRow);
-					continue;
-				}
-				for(int k=0;k<listBenefitsGroup.Count;k++){//one or more
-					//There could be duplicates for a codegroup for various reasons.
-					//For example, patient overrides or different treatment areas.
-					gridRow=new GridRow();
-					gridRow.Cells.Add(listBenefitsGroup[k].PatPlanNum==0?"":"X");
-					string textForCell=Benefits.GetCategoryString(listBenefitsGroup[k]);// Code Group or Proc Codes
-					if(checkShowProcCodes.Checked) {
-						List<ProcedureCode> listProcedureCodes=ProcedureCodes.GetFromCommaDelimitedList(listCodeGroups[i].ProcCodes);
-						textForCell="";
-						for(int c=0;c<listProcedureCodes.Count;c++) {
-							if(c!=0) {
-								textForCell+="\r\n";
-							}
-							textForCell+=listProcedureCodes[c].ProcCode + " - " + listProcedureCodes[c].AbbrDesc;
-						}
-					}
-					gridRow.Cells.Add(textForCell);
-					gridRow.Cells.Add(listBenefitsGroup[k].Quantity.ToString()); //#
-					FrequencyOptions frequencyOptions=listBenefitsGroup[k].GetFrequencyOption();
-					GridCell gridCell=new GridCell(listStringsFrequencyOptions[(int)frequencyOptions]); //Frequency
-					gridCell.ComboSelectedIndex=(int)frequencyOptions;
-					gridRow.Cells.Add(gridCell);
-					TreatmentArea treatmentArea=listBenefitsGroup[k].TreatArea;
-					gridCell=new GridCell(listStringsTreatmentArea[(int)treatmentArea]);//Treatment Area
-					gridCell.ComboSelectedIndex=(int)treatmentArea;
-					gridRow.Cells.Add(gridCell);
-					gridRow.Tag=listBenefitsGroup[k];
-					gridFrequencies.ListGridRows.Add(gridRow);
-				}
-			}
-			gridFrequencies.EndUpdate();
-		}
-
-		///<summary>This only fills the grid labeled 'Other Benefits'. It does not get any data from the database.</summary>
-		private void FillGridBenefits() {
+		///<summary>This only fills the grid on the screen.  It does not get any data from the database.</summary>
+		private void FillGrid() {
 			_listBenefitsGrid.Sort();
 			gridBenefits.BeginUpdate();
 			gridBenefits.Columns.Clear();
@@ -814,11 +683,9 @@ namespace OpenDental {
 			gridBenefits.Columns.Add(col);
 			col=new GridColumn("Amt",50);
 			gridBenefits.Columns.Add(col);
-			col=new GridColumn("Time Period",90);
+			col=new GridColumn("Time Period",80);
 			gridBenefits.Columns.Add(col);
-			col=new GridColumn("Quantity",125);
-			gridBenefits.Columns.Add(col);
-			col=new GridColumn("Treat Area",100);
+			col=new GridColumn("Quantity",115);
 			gridBenefits.Columns.Add(col);
 			gridBenefits.ListGridRows.Clear();
 			GridRow row;
@@ -866,29 +733,9 @@ namespace OpenDental {
 				else {
 					row.Cells.Add("");
 				}
-				if(_listBenefitsGrid[i].TreatArea==TreatmentArea.None) {
-					row.Cells.Add("");
-				}
-				else {
-					row.Cells.Add(_listBenefitsGrid[i].TreatArea.ToString());
-				}
 				gridBenefits.ListGridRows.Add(row);
 			}
 			gridBenefits.EndUpdate();
-		}
-
-		private void gridFrequencies_CellClick(object sender,ODGridClickEventArgs e) {
-			// Nothing to do if they click an editable column.
-			if(e.Col!=0) {
-				return;
-			}
-			string cellText=gridFrequencies.ListGridRows[e.Row].Cells[0].Text;
-			if(String.IsNullOrEmpty(cellText)) {
-				gridFrequencies.ListGridRows[e.Row].Cells[0]=new GridCell("X");
-			}
-			else {
-				gridFrequencies.ListGridRows[e.Row].Cells[0]=new GridCell("");
-			}
 		}
 
 		private void gridBenefits_CellDoubleClick(object sender,OpenDental.UI.ODGridClickEventArgs e) {
@@ -901,13 +748,7 @@ namespace OpenDental {
 				_listBenefitsGrid.RemoveAt(benefitListI);
 				_listBenefitsAll.RemoveAt(benefitListAllI);
 			}
-			if(Benefits.IsAgeLimit(formBenefitEdit.BenefitCur)) {
-				FillGridAgeLimits();
-			}
-			if(Benefits.IsFrequencyLimitation(formBenefitEdit.BenefitCur)) {
-				FillGridFrequencies();
-			}
-			FillGridBenefits();
+			FillGrid();
 		}
 
 		///<summary>Returns true if there are a mixture of benefits with calendar and service year time periods.</summary>
@@ -942,45 +783,29 @@ namespace OpenDental {
 			if(checkCalendarYear.CheckState==CheckState.Checked) {//change all to calendarYear
 				textMonth.Text="";
 				textMonth.Enabled=false;
-				for(int i=0;i<_listBenefitsAll.Count;i++) {
-					if(_listBenefitsAll[i].TimePeriod==BenefitTimePeriod.ServiceYear) {
-						_listBenefitsAll[i].TimePeriod=BenefitTimePeriod.CalendarYear;
+				for(int i=0;i<_listBenefitsGrid.Count;i++) {
+					if(_listBenefitsGrid[i].TimePeriod==BenefitTimePeriod.ServiceYear) {
+						_listBenefitsGrid[i].TimePeriod=BenefitTimePeriod.CalendarYear;
 					}
 				}
-				FillGridBenefits();
+				FillGrid();
 				return;
 			}
 			if(checkCalendarYear.CheckState!=CheckState.Unchecked) {
-				FillGridBenefits();
+				FillGrid();
 				return;
 			}
 			//change all to serviceYear
 			textMonth.Enabled=true;
-			for(int i=0;i<_listBenefitsAll.Count;i++) {
-				if(_listBenefitsAll[i].TimePeriod==BenefitTimePeriod.CalendarYear) {
-					_listBenefitsAll[i].TimePeriod=BenefitTimePeriod.ServiceYear;
+			for(int i=0;i<_listBenefitsGrid.Count;i++) {
+				if(_listBenefitsGrid[i].TimePeriod==BenefitTimePeriod.CalendarYear) {
+					_listBenefitsGrid[i].TimePeriod=BenefitTimePeriod.ServiceYear;
 				}
 			}
-			FillGridBenefits();
+			FillGrid();
 		}
 
-		private void checkShowProcCodes_Click(object sender,EventArgs e) {
-			_listBenefitsAll.RemoveAll(x=>Benefits.IsFrequencyLimitation(x) && x.CodeGroupNum!=0);
-			List<Benefit> listBenefitsFreq=gridFrequencies.ListGridRows.Select(x=>(Benefit)x.Tag).ToList();
-			for(int i=0;i<listBenefitsFreq.Count;i++) {
-				int indexFrequencySelected=gridFrequencies.ListGridRows[i].Cells[3].ComboSelectedIndex;
-				int indexTreatAreaSelected=gridFrequencies.ListGridRows[i].Cells[4].ComboSelectedIndex;
-				Byte byteProvided=PIn.Byte(gridFrequencies.ListGridRows[i].Cells[2].Text, hasExceptions:false);
-				bool isPatOverride=gridFrequencies.ListGridRows[i].Cells[0].Text=="X";
-				if(byteProvided>0) {
-					Benefit benefit=MakeFrequencyBenefit(listBenefitsFreq[i],indexFrequencySelected,indexTreatAreaSelected,byteProvided,isPatOverride);
-					_listBenefitsAll.Add(benefit);
-				}
-			}
-			FillGridFrequencies();
-		}
-
-		private void butAddBenefit_Click(object sender,EventArgs e) {
+		private void butAdd_Click(object sender,EventArgs e) {
 			Benefit benefit=new Benefit();
 			benefit.IsNew=true;
 			benefit.PlanNum=_planNum;
@@ -998,7 +823,7 @@ namespace OpenDental {
 			formBenefitEdit.BenefitCur=benefit;
 			formBenefitEdit.ShowDialog();
 			if(formBenefitEdit.DialogResult!=DialogResult.OK) {
-				FillGridBenefits();
+				FillGrid();
 				return;
 			}
 			_listBenefitsGrid.Add(formBenefitEdit.BenefitCur);
@@ -1006,7 +831,7 @@ namespace OpenDental {
 			if(panelSimple.Visible && ConvertFormToBenefits(isSilent:true)) {
 				FillSimple();
 			}
-			FillGridBenefits();
+			FillGrid();
 		}
 
 		private void butClear_Click(object sender,EventArgs e) {
@@ -1024,27 +849,7 @@ namespace OpenDental {
 				_listBenefitsGrid.Remove(listBenefits[i]);
 				_listBenefitsAll.Remove(listBenefits[i]);
 			}
-			FillGridBenefits();
-		}
-
-		private void butAddFrequency_Click(object sender,EventArgs e) {
-			if(!ConvertFormToBenefits()) {
-				MsgBox.Show("Error generating benefits from the form.");
-				return;
-			}
-			FormBenefitFrequencyEdit formBenefitFrequencyEdit = new FormBenefitFrequencyEdit();
-			formBenefitFrequencyEdit.BenefitCur = MakeFrequencyBenefit(new Benefit(),0,0,1,false);
-			formBenefitFrequencyEdit.PatPlanNum = _patPlanNum;
-			formBenefitFrequencyEdit.BenefitCur.PlanNum=_planNum;//used in next window to determine calendar yr.
-			Benefit benefit=gridFrequencies.SelectedTag<Benefit>();
-			if(benefit!=null) {
-				formBenefitFrequencyEdit.BenefitCur.CodeGroupNum=benefit.CodeGroupNum;
-			}
-			formBenefitFrequencyEdit.ShowDialog();
-			if(formBenefitFrequencyEdit.DialogResult==DialogResult.OK) {
-				_listBenefitsAll.Add(formBenefitFrequencyEdit.BenefitCur);
-				FillGridFrequencies();
-			}
+			FillGrid();
 		}
 
 		///<summary>Only called if in simple view.  This takes all the data on the form and converts it to benefit items.  A new benefitListAll is created based on a combination of benefitList and the new items from the form.  This is used when clicking OK from simple view, or when switching from simple view to complex view, or when getting ready to view more frequencies, or when adding a new benefit.</summary>
@@ -1052,6 +857,14 @@ namespace OpenDental {
 			#region Validation
 			string messageText=Lan.g(this,"field is invalid.\r\n"
 				+"Leave the field blank or enter an age to denote coverage through that year before clicking OK.");
+			if(!textFlo.IsValid()) { 
+				MessageBox.Show(this,label4.Text+" "+messageText);
+				return false;
+			}
+			if(!textSealantAge.IsValid()) {
+				MessageBox.Show(this,label24.Text+" "+messageText);
+				return false;
+			}
 			if(!textOrthoAge.IsValid()) {
 				MessageBox.Show(this,labelOrthoThroughAge.Text+" "+messageText);
 				return false;
@@ -1060,6 +873,10 @@ namespace OpenDental {
 				|| !textDeductible.IsValid()
 				|| !textAnnualMaxFam.IsValid()
 				|| !textDeductibleFam.IsValid()
+				|| !textFlo.IsValid()
+				|| !textBW.IsValid()
+				|| !textPano.IsValid()
+				|| !textExams.IsValid()
 				|| !textOrthoAge.IsValid()
 				|| !textOrthoMax.IsValid()
 				|| !textOrthoPercent.IsValid()
@@ -1103,9 +920,8 @@ namespace OpenDental {
 				return false;
 			}
 			#endregion Validation
-			//We need to pull from the benefits grid, from the frequencies grid, and from textboxes.
 			_listBenefitsAll=new List<Benefit>(_listBenefitsGrid);
-			Benefit benefit; 
+			Benefit benefit;
 			#region Annual Max
 			//annual max individual
 			if(textAnnualMax.Text !="") {
@@ -1118,7 +934,7 @@ namespace OpenDental {
 					benefit.TimePeriod=BenefitTimePeriod.CalendarYear;
 				}
 				else{
-					benefit.TimePeriod=BenefitTimePeriod.ServiceYear;
+					benefit.TimePeriod=BenefitTimePeriod.ServiceYear;					
 				}
 				benefit.MonetaryAmt=PIn.Double(textAnnualMax.Text);
 				benefit.CoverageLevel=BenefitCoverageLevel.Individual;
@@ -1179,27 +995,35 @@ namespace OpenDental {
 			}
 			#endregion
 			#region Age Limitation
-			List<Benefit> listBenefitsAgeLim=gridAgeLimits.ListGridRows.Select(x=>(Benefit)x.Tag).ToList();
-			for(int i=0;i<listBenefitsAgeLim.Count;i++) {
-				byte age=PIn.Byte(gridAgeLimits.ListGridRows[i].Cells[2].Text, hasExceptions:false);
-				if(age > 0) {
-					benefit=MakeAgeLimitBenefit(listBenefitsAgeLim[i],age);
-					_listBenefitsAll.Add(benefit);
-				}
+			//Flo
+			if(textFlo.Text!="") {
+				//Old code would assume a valid fluoride procedure code was present within PrefName.InsBenFlourideCodes so assume there is a valid fluoride code group.
+				long codeGroupNum=CodeGroups.GetCodeGroupNumForCodeGroupFixed(EnumCodeGroupFixed.Fluoride);
+				benefit=Benefits.CreateAgeLimitationBenefit(codeGroupNum,PIn.Byte(textFlo.Text),_planNum);
+				_listBenefitsAll.Add(benefit);
+			}
+			if(textSealantAge.Text!="") {
+				//Old code would assume a valid sealant procedure code was present within PrefName.InsBenSealantCodes so assume there is a valid sealant code group.
+				long codeGroupNum=CodeGroups.GetCodeGroupNumForCodeGroupFixed(EnumCodeGroupFixed.Sealant);
+				benefit=Benefits.CreateAgeLimitationBenefit(codeGroupNum,PIn.Byte(textSealantAge.Text),_planNum);
+				_listBenefitsAll.Add(benefit);
 			}
 			#endregion Age Limitation
-			#region Frequencies
-			// Go through each of the entries in the grid and add the non-zero frequencies to the list of benefits.
-			List<Benefit> listBenefitsFreq=gridFrequencies.ListGridRows.Select(x=>(Benefit)x.Tag).ToList();
-			for(int i=0;i<listBenefitsFreq.Count;i++) {
-				int indexFrequencySelected=gridFrequencies.ListGridRows[i].Cells[3].ComboSelectedIndex;
-				int indexTreatAreaSelected=gridFrequencies.ListGridRows[i].Cells[4].ComboSelectedIndex;
-				Byte byteProvided=PIn.Byte(gridFrequencies.ListGridRows[i].Cells[2].Text, hasExceptions:false);
-				bool isPatOverride=!String.IsNullOrEmpty(gridFrequencies.ListGridRows[i].Cells[0].Text);
-				if(byteProvided>0) {
-					benefit=MakeFrequencyBenefit(listBenefitsFreq[i],indexFrequencySelected,indexTreatAreaSelected,byteProvided,isPatOverride);
-					_listBenefitsAll.Add(benefit);
-				}
+			#region Frequency
+			//Frequency BW group
+			if(textBW.Text!="") {
+				benefit=MakeFrequencyBenefitForCodeGroupFixed(EnumCodeGroupFixed.BW,comboBW.GetSelected<FrequencyOptions>(),PIn.Byte(textBW.Text));
+				_listBenefitsAll.Add(benefit);
+			}
+			//Frequency pano/FMX group
+			if(textPano.Text !="") {
+				benefit=MakeFrequencyBenefitForCodeGroupFixed(EnumCodeGroupFixed.PanoFMX,comboPano.GetSelected<FrequencyOptions>(),PIn.Byte(textPano.Text));
+				_listBenefitsAll.Add(benefit);
+			}
+			//Frequency in Exams group
+			if(textExams.Text !="") {
+				benefit=MakeFrequencyBenefitForCodeGroupFixed(EnumCodeGroupFixed.Exam,comboExams.GetSelected<FrequencyOptions>(),PIn.Byte(textExams.Text));
+				_listBenefitsAll.Add(benefit);
 			}
 			#endregion Frequencies
 			#region Ortho
@@ -1540,44 +1364,35 @@ namespace OpenDental {
 			return true;
 		}
 
-		private Benefit MakeAgeLimitBenefit(Benefit benefit, byte quantity) {
-			Benefit benefitNew=benefit.Copy();
-			benefitNew.BenefitType=InsBenefitType.Limitations;
-			benefitNew.MonetaryAmt=-1;
-			benefitNew.PatPlanNum=0;
-			benefitNew.Percent=-1;
-			benefitNew.QuantityQualifier=BenefitQuantity.AgeLimit;
-			benefitNew.CoverageLevel=BenefitCoverageLevel.None;
-			benefitNew.CodeNum=0;
-			benefitNew.CovCatNum=0;
-			benefitNew.IsNew=true;
-			benefitNew.PlanNum=_planNum;
-			benefitNew.Quantity=quantity;
-			benefitNew.IsNew=false;
-			return benefitNew;
+		private Benefit MakeFrequencyBenefitForCodeGroupFixed(EnumCodeGroupFixed codeGroupFixed,FrequencyOptions frequencyOption,byte quantity) {
+			Benefit benefit=new Benefit();
+			benefit.CodeNum=0;
+			benefit.CodeGroupNum=CodeGroups.GetCodeGroupNumForCodeGroupFixed(codeGroupFixed);
+			benefit.BenefitType=InsBenefitType.Limitations;
+			benefit.CovCatNum=0;
+			benefit.PlanNum=_planNum;
+			if(frequencyOption==FrequencyOptions.Every_Years) {
+				benefit.QuantityQualifier=BenefitQuantity.Years;
+			}
+			else if(frequencyOption==FrequencyOptions._PerBenefitYear) {
+				benefit.QuantityQualifier=BenefitQuantity.NumberOfServices;
+				if(checkCalendarYear.Checked) {
+					benefit.TimePeriod=BenefitTimePeriod.CalendarYear;
+				}
+				else {
+					benefit.TimePeriod=BenefitTimePeriod.ServiceYear;
+				}
+			}
+			else if(frequencyOption==FrequencyOptions.Every_Months) {
+				benefit.QuantityQualifier=BenefitQuantity.Months;
+			}
+			else if(frequencyOption==FrequencyOptions._InLast12Months) {
+				benefit.QuantityQualifier=BenefitQuantity.NumberOfServices;
+				benefit.TimePeriod=BenefitTimePeriod.NumberInLast12Months;
+			}
+			benefit.Quantity=quantity;
+			return benefit;
 		}
-
-		private Benefit MakeFrequencyBenefit(Benefit benefit, int indexComboFrequency, int indexComboTreatArea, byte quantity, bool isPatOverride) {
-			Benefit benefitNew=benefit.Copy();
-			benefitNew.BenefitType=InsBenefitType.Limitations;
-			benefitNew.MonetaryAmt=-1;
-			benefitNew.Percent=-1;
-			benefitNew.CodeNum=0;
-			benefitNew.CovCatNum=0;
-			benefitNew.IsNew=true;
-			benefitNew.PlanNum=_planNum;
-			benefitNew.PatPlanNum=0;
-			if(isPatOverride) {
-				benefitNew.PatPlanNum=_patPlanNum;
-				benefitNew.PlanNum=0;
-			} 
-			benefitNew.SetFrequencyOption((FrequencyOptions)indexComboFrequency,checkCalendarYear.Checked);
-			benefitNew.TreatArea=(TreatmentArea)indexComboTreatArea;
-			benefitNew.Quantity=quantity;
-			benefitNew.IsNew=false;
-			return benefitNew;
-		}
-
 
 		private void MakeWaitingPeriodBenefitIfNeeded(ValidNum validNum,EbenefitCategory ebenefitCategory,List<Benefit> listBenefits) {
 			if(string.IsNullOrWhiteSpace(validNum.Text)) {
@@ -1599,13 +1414,28 @@ namespace OpenDental {
 			listBenefits.Add(benefit);
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!checkCalendarYear.Checked && textMonth.Text=="") {
 				MsgBox.Show(this,"Please enter a starting month for the benefit year.");
 				return;
 			}
 			if(panelSimple.Visible) {
 				List<string> listCodeGroupErrors=new List<string>();
+				if(!string.IsNullOrWhiteSpace(textFlo.Text) && !CodeGroups.HasValidCodeGroupFixed(EnumCodeGroupFixed.Fluoride)) {
+					listCodeGroupErrors.Add(Lan.g(this,$"'Fluoride Through Age' requires the '{EnumCodeGroupFixed.Fluoride.GetDescription()}' Fixed Group."));
+				}
+				if(!string.IsNullOrWhiteSpace(textSealantAge.Text) && !CodeGroups.HasValidCodeGroupFixed(EnumCodeGroupFixed.Sealant)) {
+					listCodeGroupErrors.Add(Lan.g(this,$"'Sealants Through Age' requires the '{EnumCodeGroupFixed.Sealant.GetDescription()}' Fixed Group."));
+				}
+				if(!string.IsNullOrWhiteSpace(textBW.Text) && !CodeGroups.HasValidCodeGroupFixed(EnumCodeGroupFixed.BW)) {
+					listCodeGroupErrors.Add(Lan.g(this,$"'BWs' Frequencies requires the '{EnumCodeGroupFixed.BW.GetDescription()}' Fixed Group."));
+				}
+				if(!string.IsNullOrWhiteSpace(textPano.Text) && !CodeGroups.HasValidCodeGroupFixed(EnumCodeGroupFixed.PanoFMX)) {
+					listCodeGroupErrors.Add(Lan.g(this,$"'Pano/FMX' Frequencies requires the '{EnumCodeGroupFixed.PanoFMX.GetDescription()}' Fixed Group."));
+				}
+				if(!string.IsNullOrWhiteSpace(textExams.Text) && !CodeGroups.HasValidCodeGroupFixed(EnumCodeGroupFixed.Exam)) {
+					listCodeGroupErrors.Add(Lan.g(this,$"'Exams' Frequencies requires the '{EnumCodeGroupFixed.Exam.GetDescription()}' Fixed Group."));
+				}
 				if(listCodeGroupErrors.Count > 0) {
 					string error=Lan.g(this,"The following fields have invalid or missing Fixed Code Group(s):")
 						+"\r\n  "+string.Join("\r\n  ",listCodeGroupErrors)
@@ -1670,5 +1500,46 @@ namespace OpenDental {
 			Note=textSubscNote.Text;
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		///<summary>Frequency limitation benefits use this enum to help describe what the Quantity, QuantityQualifier, and TimePeriod combination will yield.</summary>
+		public enum FrequencyOptions {
+			///<summary>0 - Every # Years</summary>
+			[Description("Every # Years")]
+			Every_Years,
+			///<summary>1 - # Per Benefit Year</summary>
+			[Description("# Per Benefit Year")]
+			_PerBenefitYear,
+			///<summary>2 - Every # Months</summary>
+			[Description("Every # Months")]
+			Every_Months,
+			///<summary>3 - # in Last 12 Months</summary>
+			[Description("# in Last 12 Months")]
+			_InLast12Months,
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

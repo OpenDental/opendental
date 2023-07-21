@@ -81,12 +81,12 @@ namespace OpenDentBusiness {
 		#endregion Cache Pattern
 
 		///<summary></summary>
-		public static long Insert(AutoNote autoNote) {
+		public static long Insert(AutoNote autonote) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				autoNote.AutoNoteNum=Meth.GetLong(MethodBase.GetCurrentMethod(),autoNote);
-				return autoNote.AutoNoteNum;
+				autonote.AutoNoteNum=Meth.GetLong(MethodBase.GetCurrentMethod(),autonote);
+				return autonote.AutoNoteNum;
 			}
-			return Crud.AutoNoteCrud.Insert(autoNote);
+			return Crud.AutoNoteCrud.Insert(autonote);
 		}
 
 		public static void InsertBatch(List<SerializableAutoNote> listSerializableAutoNotes) {
@@ -98,23 +98,23 @@ namespace OpenDentBusiness {
 				return;
 			}
 			List<AutoNote> listAutoNotes=new List<AutoNote>();
-			for(int i=0;i<listSerializableAutoNotes.Count;i++) {
+			foreach(SerializableAutoNote autoNote in listSerializableAutoNotes) {
 				AutoNote newNote=new AutoNote();
-				newNote.AutoNoteName=listSerializableAutoNotes[i].AutoNoteName;
+				newNote.AutoNoteName=autoNote.AutoNoteName;
 				newNote.Category=0;//It would be too error-prone trying to select the category, so we'll just leave it as 0.
-				newNote.MainText=listSerializableAutoNotes[i].MainText;
+				newNote.MainText=autoNote.MainText;
 				listAutoNotes.Add(newNote);
 			}
 			Crud.AutoNoteCrud.InsertMany(listAutoNotes);
 		}
 
 		///<summary></summary>
-		public static void Update(AutoNote autoNote) {
+		public static void Update(AutoNote autonote) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),autoNote);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),autonote);
 				return;
 			}
-			Crud.AutoNoteCrud.Update(autoNote);
+			Crud.AutoNoteCrud.Update(autonote);
 		}
 
 		///<summary></summary>
@@ -131,17 +131,14 @@ namespace OpenDentBusiness {
 		public static string GetByTitle(string autoNoteTitle) {
 			//No need to check MiddleTierRole; no call to db.
 			AutoNote autoNote=GetFirstOrDefault(x => x.AutoNoteName==autoNoteTitle);
-			if(autoNote==null) {
-				return "";
-			}
-			return autoNote.MainText;
+			return (autoNote==null ? "" : autoNote.MainText);
 		}
 
 		/// <summary>Receives a list of AutoNotes and returns a list of AutoNotes ready for JSON serialization
 		/// (currently only used for exporting AutoNotes).</summary>
-		public static List<SerializableAutoNote> GetSerializableAutoNotes(List<AutoNote> listAutoNotes) {
+		public static List<SerializableAutoNote> GetSerializableAutoNotes(List<AutoNote> listExportAutoNotes) {
 			//No need to check MiddleTierRole; no call to db.
-			return listAutoNotes.Select(x => new SerializableAutoNote(x)).ToList();
+			return listExportAutoNotes.Select(x => new SerializableAutoNote(x)).ToList();
 		}
 
 		///<summary>Gets an AutoNote by primary key from the database for the API. Returns null if not found.</summary>
@@ -152,44 +149,10 @@ namespace OpenDentBusiness {
 			return Crud.AutoNoteCrud.SelectOne(autoNoteNum);
 		}
 
-		///<summary>Returns the AutoNoteName from the passed in promptRepsonse. Returns empty string if no valid AutoNote is found.</summary>
-		public static string GetAutoNoteName(string promptResponse) {
-			string retVal="";
-			Stack<int> stackBrackets=new Stack<int>();
-			//The AutoNoteResponseText should be in format "Auto Note Response Text : {AutoNoteName}". Go through each of the charactors in promptResponse
-			//and find each of the possible AutoNote names. We need to do this in case the AutoNote name has brackets("{,}") in the name. 
-			for(int posCur=0;posCur<promptResponse.Length;posCur++) {
-				if(promptResponse[posCur]=='{') {
-					stackBrackets.Push(posCur);//add the position of the '{' to the stack.
-					continue;
-				}
-				if(promptResponse[posCur]!='}' || stackBrackets.Count()==0) {//continue if the the stack does not have an open '{', or this is not a '}'
-					continue;
-				}
-				//The posOpenBracket will include the '{'. We will have to remove it.
-				int posOpenBracket=stackBrackets.Peek();
-				//Get the length of the possible autonote. The length will include the closing '}'. We will also need to remove it.
-				int length=posCur-posOpenBracket;
-				if(length<1) {
-					stackBrackets.Pop();
-					continue;
-				}
-				//Get string of possible AutoNoteName. Remove the bracket from the beginning and end. 
-				string autoNoteName=promptResponse.Substring(posOpenBracket+1,length-1);
-				if(!string.IsNullOrEmpty(autoNoteName) && AutoNotes.IsValidAutoNote(autoNoteName)) {
-					retVal=autoNoteName;
-					break;
-				}
-				//no match found. Remove position from stack and continue.
-				stackBrackets.Pop();
-			}
-			return retVal;//could be empty string if no valid autonote name is found
-		}
-
 		///<summary>Returns true if there is a valid AutoNote for the passed in AutoNoteName.</summary>
-		public static bool IsValidAutoNote(string autoNoteName) {
+		public static bool IsValidAutoNote(string autoNoteTitle) {
 			//No need to check MiddleTierRole; no call to db.
-			AutoNote autoNote=GetFirstOrDefault(x => x.AutoNoteName==autoNoteName);
+			AutoNote autoNote=GetFirstOrDefault(x => x.AutoNoteName==autoNoteTitle);
 			return autoNote!=null;
 		}
 
@@ -203,18 +166,14 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Writes a set of serialized AutoNotes and AutoNoteControls in JSON format to the specified path.</summary>
-		public static void WriteAutoNotesToJson(List<SerializableAutoNote> listSerializableAutoNotes,List<SerializableAutoNoteControl> listSerializableAutoNoteControls,
+		public static void WriteAutoNotesToJson(List<SerializableAutoNote> listAutoNotes,List<SerializableAutoNoteControl> listAutoNoteControls,
 			string path) 
 		{
 			//No need to check MiddleTierRole; no call to db.
-			TransferableAutoNotes transferableAutoNotes=new TransferableAutoNotes(listSerializableAutoNotes,listSerializableAutoNoteControls);
-			string json=JsonConvert.SerializeObject(transferableAutoNotes);
-			if(ODBuild.IsThinfinity()) {
-			ThinfinityUtils.ExportForDownload(path,json);
-			}
-			else if(ODCloudClient.IsAppStream) {
-				File.WriteAllText(path,json);
-				ODCloudClient.ExportForAppStream(path,Path.GetFileName(path));
+			TransferableAutoNotes export=new TransferableAutoNotes(listAutoNotes,listAutoNoteControls);
+			string json=JsonConvert.SerializeObject(export);
+			if(ODBuild.IsWeb()) {
+				ThinfinityUtils.ExportForDownload(path,json);
 			}
 			else {
 				File.WriteAllText(path,json);

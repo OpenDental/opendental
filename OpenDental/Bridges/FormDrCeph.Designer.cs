@@ -1,5 +1,5 @@
 ﻿
-namespace OpenDental {
+namespace OpenDental.Bridges {
 	partial class FormDrCeph {
 		/// <summary>
 		/// Required designer variable.
@@ -31,7 +31,8 @@ namespace OpenDental {
 			this.labelTxPhase = new System.Windows.Forms.Label();
 			this.dateXRay = new System.Windows.Forms.DateTimePicker();
 			this.labelPhotoPath = new System.Windows.Forms.Label();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOk = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butCephBrowse = new OpenDental.UI.Button();
 			this.butPhotoBrowse = new OpenDental.UI.Button();
 			this.textCephLocation = new System.Windows.Forms.TextBox();
@@ -96,16 +97,28 @@ namespace OpenDental {
 			this.labelPhotoPath.Text = "Lateral Photo Location";
 			this.labelPhotoPath.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// butSave
+			// butOk
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(494, 292);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 11;
-			this.butSave.Text = "&Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOk.Location = new System.Drawing.Point(490, 288);
+			this.butOk.Name = "butOk";
+			this.butOk.Size = new System.Drawing.Size(75, 24);
+			this.butOk.TabIndex = 11;
+			this.butOk.Text = "&OK";
+			this.butOk.UseVisualStyleBackColor = true;
+			this.butOk.Click += new System.EventHandler(this.butOk_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(571, 288);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 12;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butCephBrowse
 			// 
@@ -157,15 +170,16 @@ namespace OpenDental {
 			// 
 			// FormDrCeph
 			// 
-			this.ClientSize = new System.Drawing.Size(581, 328);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(667, 328);
 			this.Controls.Add(this.listBoxTxPhase);
 			this.Controls.Add(this.listBoxRace);
 			this.Controls.Add(this.textPhotoLocation);
 			this.Controls.Add(this.textCephLocation);
 			this.Controls.Add(this.butPhotoBrowse);
 			this.Controls.Add(this.butCephBrowse);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOk);
 			this.Controls.Add(this.labelPhotoPath);
 			this.Controls.Add(this.dateXRay);
 			this.Controls.Add(this.labelTxPhase);
@@ -188,7 +202,8 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelTxPhase;
 		private System.Windows.Forms.DateTimePicker dateXRay;
 		private System.Windows.Forms.Label labelPhotoPath;
-		private UI.Button butSave;
+		private UI.Button butOk;
+		private UI.Button butCancel;
 		private UI.Button butCephBrowse;
 		private UI.Button butPhotoBrowse;
 		private System.Windows.Forms.TextBox textCephLocation;

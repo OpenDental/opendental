@@ -78,8 +78,6 @@ namespace OpenDentBusiness {//Jordan is the only one allowed to edit this file.
 		EhrMeasureEvent,
 		MedicationPat,
 		Mount,
-		///<summary>Includes both OrthoCase and OrthoProcLink.</summary>
-		OrthoCase,
 		///<summary>Includes both OrthoChart and OrthoChartRow.</summary>
 		OrthoChart,
 		OrthoHardware,

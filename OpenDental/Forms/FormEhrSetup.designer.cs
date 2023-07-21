@@ -44,6 +44,7 @@ namespace OpenDental{
 			this.butDrugManufacturer = new OpenDental.UI.Button();
 			this.butVaccineDef = new OpenDental.UI.Button();
 			this.butAllergies = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.menuMain = new OpenDental.UI.MenuOD();
 			this.groupCodeSystems.SuspendLayout();
 			this.SuspendLayout();
@@ -234,6 +235,16 @@ namespace OpenDental{
 			this.butAllergies.Text = "Allergies";
 			this.butAllergies.Click += new System.EventHandler(this.butAllergies_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(453, 353);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 16;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// menuMain
 			// 
 			this.menuMain.Dock = System.Windows.Forms.DockStyle.Top;
@@ -261,6 +272,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butDrugManufacturer);
 			this.Controls.Add(this.butVaccineDef);
 			this.Controls.Add(this.butAllergies);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.menuMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrSetup";
@@ -272,6 +284,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.Button butICD9s;
 		private UI.Button butAllergies;
 		private UI.Button butVaccineDef;

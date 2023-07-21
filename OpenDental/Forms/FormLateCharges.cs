@@ -86,26 +86,27 @@ namespace OpenDental {
 				return true;//this is prior to inserting/deleting charges and aging has already been run for this date
 			}
 			Prefs.RefreshCache();
-			if(!PrefC.IsAgingAllowedToStart()) {
+			DateTime dateTAgingBeganPref=PrefC.GetDateT(PrefName.AgingBeginDateTime);
+			if(dateTAgingBeganPref>DateTime.MinValue) {
 				if(isOnLoad) {
 					MessageBox.Show(this,Lan.g(this,"In order to add late charges, aging must be calculated, but you cannot run aging until it has finished "
-						+"the current calculations which began on")+" "+PrefC.GetDateT(PrefName.AgingBeginDateTime).ToString()+".\r\n"+Lans.g(this,"If you believe the current aging "
+						+"the current calculations which began on")+" "+dateTAgingBeganPref.ToString()+".\r\n"+Lans.g(this,"If you believe the current aging "
 						+"process has finished, a user with SecurityAdmin permission can manually clear the date and time by going to Setup | Preferences | Account - General and "
 						+"pressing the 'Clear' button."));
 				}
 				return false;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.AgingRan,0,"Starting Aging - Late Charges window");
+			SecurityLogs.MakeLogEntry(Permissions.AgingRan,0,"Starting Aging - Late Charges window");
 			Prefs.UpdateString(PrefName.AgingBeginDateTime,POut.DateT(dateTimeNow,false));//get lock on pref to block others
 			Signalods.SetInvalid(InvalidType.Prefs);//signal a cache refresh so other computers will have the updated pref as quickly as possible
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				Ledgers.ComputeAging(0,dateTimeToday);
 				Prefs.UpdateString(PrefName.DateLastAging,POut.Date(dateTimeToday,false));
 			};
 			progressOD.StartingMessage=Lan.g(this,"Calculating enterprise aging for all patients as of")+" "+dateTimeToday.ToShortDateString()+"...";
 			try {
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex) {
 				Ledgers.AgingExceptionHandler(ex,this);
@@ -115,7 +116,7 @@ namespace OpenDental {
 			if(!progressOD.IsSuccess) {
 				return false;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.AgingRan,0,"Aging complete - Late Charges window");
+			SecurityLogs.MakeLogEntry(Permissions.AgingRan,0,"Aging complete - Late Charges window");
 			return true;
 		}
 
@@ -243,7 +244,7 @@ namespace OpenDental {
 		///<summary>Iterates over statement data, making a late charge for each statement that has a remaining balance. Avoids double charging for production items that are on multiple statements.</summary>
 		private List<long> CreateLateCharges(List<StatementData> listStatementDatas,DateTime dateForCharges,DateTime dateRangeEnd)	{
 			//Holds the balances of all account entries that represent procs, adjustments, or payplancharges for each family.
-			List<long> listGuarantorNums=listStatementDatas.SelectMany(x => x.ListPatNumsGuarantor).Distinct().ToList();
+			List<long> listGuarantorNums=listStatementDatas.SelectMany(x => x.ListGuarantorPatNums).Distinct().ToList();
 			List<FamilyProdBalances> listFamilyProdBalances=new List<FamilyProdBalances>();
 			for(int i=0;i<listGuarantorNums.Count;i++){
 				listFamilyProdBalances.Add(new FamilyProdBalances(listGuarantorNums[i]));
@@ -261,9 +262,9 @@ namespace OpenDental {
 				if(CompareDecimal.IsLessThanOrEqualToZero(lateChargeAmount)) {
 					continue;//Only create an adjustment if the late charge amount is greater than zero.
 				}
-				long provNum=GetProvNumForLateCharge(listStatementDatas[i].ProvNumPriGuarantor);
+				long provNum=GetProvNumForLateCharge(listStatementDatas[i].GuarantorPriProvNum);
 				long adjNum=Adjustments.CreateLateChargeAdjustment((double)lateChargeAmount,dateForCharges
-					,provNum,listStatementDatas[i].PatNumGuarantor,listStatementDatas[i].DateSent,
+					,provNum,listStatementDatas[i].GuarantorPatNum,listStatementDatas[i].DateSent,
 					dateRangeEnd,listProcNumsOnLateCharge,listAdjNumsOnLateCharge,listPayPlanChargeNumsOnLateCharge);
 				listLateChargeAdjNums.Add(adjNum);
 			}
@@ -280,7 +281,7 @@ namespace OpenDental {
 			decimal statementBalanceRemaining=0;
 			for(int i=0;i<statementData.ListStatementProds.Count;i++) {
 				StatementProd statementProd=statementData.ListStatementProds[i];
-				decimal prodItemBalance=FindAndRemoveStatementProdBalance(statementProd,statementData.ListPatNumsGuarantor,listFamilyProdBalances);
+				decimal prodItemBalance=FindAndRemoveStatementProdBalance(statementProd,statementData.ListGuarantorPatNums,listFamilyProdBalances);
 				if(CompareDecimal.IsLessThanOrEqualToZero(prodItemBalance)) {
 					continue;//Production item doesn't have a positive balance, we removed it, or it wasn't found, so no late charge can be assessed.
 				}
@@ -339,12 +340,12 @@ namespace OpenDental {
 			}
 			Adjustments.ChargeUndoData chargeUndoDataLate=new Adjustments.ChargeUndoData();
 			DateTime dateUndo=PIn.Date(textDateUndo.Text);
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				chargeUndoDataLate=Adjustments.UndoLateCharges(dateUndo);
 			};
 			progressOD.StartingMessage=Lan.g(this,"Deleting Late Charge Adjustments...");
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled) {
 				MsgBox.Show(this,"Some Late Charges may have been deleted before you cancelled. " +
 					"Search for Audit Trail entries under the AdjustmentEdit permission to see any Late Charges that were deleted.");
@@ -354,7 +355,7 @@ namespace OpenDental {
 			}
 			MessageBox.Show(Lan.g(this,$"Late charge adjustments deleted:")+$" {chargeUndoDataLate.CountDeletedAdjustments.ToString()}");
 			if(!chargeUndoDataLate.ListSkippedPatNums.IsNullOrEmpty()
-				&& MsgBox.Show(this,MsgBoxButtons.YesNo,"Some late charges could not be deleted because they have pay splits or a payment plans attached. "
+				&& MsgBox.Show(this,MsgBoxButtons.YesNo,"Some late charges could not be deleted because they have pay splits or a dynamic payment plans attached. "
 				+"Would you like to see a list of the patients for whom we could not delete late charges?"))
 			{
 				string message="";
@@ -396,23 +397,23 @@ namespace OpenDental {
 				dateRangeStart=dateRangeEnd;
 				dateRangeEnd=dateTemp;
 			}
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				listStatementDatas=StatementData.GetListStatementDataForLateCharges(checkExcludeAccountNoTil.Checked,checkExcludeExistingLateCharges.Checked,
 					PIn.Decimal(textExcludeLessThan.Text),dateRangeStart,dateRangeEnd,listSelectedBillingTypes);
 			};
 			progressOD.StartingMessage=Lans.g(this,"Getting statements...");
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled) {
 				return;//No Edits to DB to worry about.
 			}
 			List<long> listLateChargeAdjNums=new List<long>();
-			progressOD=new ProgressWin();
+			progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				listLateChargeAdjNums=CreateLateCharges(listStatementDatas,dateNewCharges,dateRangeEnd);
 			};
 			progressOD.StartingMessage=Lans.g(this,"Creating Late Charges...");
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled) {
 				MsgBox.Show(this,"Some Late Charges may have been made before you cancelled. " +
 					"Search for Audit Trail entries under the AdjustmentCreate permission to find any Late Charges tha were created.");
@@ -424,7 +425,6 @@ namespace OpenDental {
 			if(Prefs.UpdateDateT(PrefName.LateChargeLastRunDate,dateNewCharges)) {
 				DataValid.SetInvalid(InvalidType.Prefs);
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
 			if(listLateChargeAdjNums.IsNullOrEmpty()) {//No adjustments were made so we don't want to run aging.
 				DialogResult=DialogResult.OK;
 				return;
@@ -435,6 +435,11 @@ namespace OpenDental {
 			}
 			MsgBox.Show(this,"There was an problem calculating aging. You should run aging later to update affected accounts.");
 			DialogResult=DialogResult.OK;
+		}
+
+		///<summary></summary>
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

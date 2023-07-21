@@ -88,12 +88,7 @@ namespace OpenDental {
 			textEobClaimFee.Text=claimFee.ToString("F");
 			textEobDedApplied.Text=_listHx835_ClaimsAll.Sum(x => x.PatientDeductAmt).ToString("F");
 			textEobInsPayAllowed.Text=_listHx835_ClaimsAll.Sum(x => x.AllowedAmt).ToString("F");
-			if(_hx835_Claim.IsPreauth) {
-				textEobInsPayAmt.Text=_listHx835_ClaimsAll.Sum(x => x.PreAuthInsEst).ToString("F");
-			}
-			else {
-				textEobInsPayAmt.Text=_listHx835_ClaimsAll.Sum(x => x.InsPaid).ToString("F");
-			}
+			textEobInsPayAmt.Text=_listHx835_ClaimsAll.Sum(x => x.InsPaid).ToString("F");
 			_insPlan=InsPlans.RefreshOne(_claim.PlanNum);
 			if(_insPlan!=null && _insPlan.PlanType.In("","f")) {
 				checkIncludeWOPercCoPay.Checked=PrefC.GetBool(PrefName.EraIncludeWOPercCoPay);
@@ -140,11 +135,7 @@ namespace OpenDental {
 			gridClaimAdjustments.Columns.Clear();
 			gridClaimAdjustments.Columns.Add(new UI.GridColumn("Reason",445,HorizontalAlignment.Left));
 			gridClaimAdjustments.Columns.Add(new UI.GridColumn("Allowed",62,HorizontalAlignment.Right));
-			string insTitle="InsPay";
-			if(_hx835_Claim.IsPreauth) {
-				insTitle="InsEst";
-			}
-			gridClaimAdjustments.Columns.Add(new UI.GridColumn(insTitle,62,HorizontalAlignment.Right));
+			gridClaimAdjustments.Columns.Add(new UI.GridColumn("Ins Pay",62,HorizontalAlignment.Right));
 			GridColumn col=new UI.GridColumn("Remarks",62,HorizontalAlignment.Left);
 			col.IsWidthDynamic=true;
 			gridClaimAdjustments.Columns.Add(col);
@@ -155,7 +146,7 @@ namespace OpenDental {
 				row.Tag=listHx835_Adjs[i];
 				row.Cells.Add(new GridCell(listHx835_Adjs[i].ReasonDescript));//Reason
 				row.Cells.Add(new GridCell((-listHx835_Adjs[i].AdjAmt).ToString("f2")));//Allowed
-				row.Cells.Add(new GridCell((-listHx835_Adjs[i].AdjAmt).ToString("f2")));//Ins Pay or Ins Est
+				row.Cells.Add(new GridCell((-listHx835_Adjs[i].AdjAmt).ToString("f2")));//Ins Pay
 				row.Cells.Add(new GridCell(listHx835_Adjs[i].AdjustRemarks));//Remarks
 				gridClaimAdjustments.ListGridRows.Add(row);
 			}
@@ -214,12 +205,7 @@ namespace OpenDental {
 				row.Cells.Add(new GridCell(procFee.ToString("f2")));//Fee Billed
 				row.Cells.Add(new GridCell(listHx835_Procs[i].DeductibleAmt.ToString("f2")));//Deduct
 				row.Cells.Add(new GridCell(listHx835_Procs[i].AllowedAmt.ToString("f2")));//Allowed
-				if(_hx835_Claim.IsPreauth) {
-					row.Cells.Add(new GridCell(listHx835_Procs[i].PreAuthInsEst.ToString("f2")));//InsPay or InsEst
-				}
-				else {
-					row.Cells.Add(new GridCell(listHx835_Procs[i].InsPaid.ToString("f2")));//InsPay or InsEst
-				}
+				row.Cells.Add(new GridCell(listHx835_Procs[i].InsPaid.ToString("f2")));//InsPay or InsEst
 				row.Cells.Add(new GridCell(listHx835_Procs[i].GetRemarks()));//Remarks
 				gridProcedureBreakdown.ListGridRows.Add(row);
 			}
@@ -778,7 +764,7 @@ namespace OpenDental {
 			MsgBox.Show(this,"Done.");
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			if(ClaimL.AreCreditsGreaterThanProcFee(GetListClaimProcHypothetical())) {
 				return;
 			}
@@ -813,7 +799,7 @@ namespace OpenDental {
 			List<ClaimProc> listClaimProcs=gridPayments.GetTags<ClaimProc>();
 			FeeL.SaveAllowedFeesFromClaimPayment(listClaimProcs,_listInsPlans);
 			Etranss.ReceiveEraPayment(_claim,_hx835_Claim,ListClaimProcs,checkIncludeWOPercCoPay.Checked,_isSupplementalPay,_insPlan);
-			if(PrefC.GetBool(PrefName.PromptForSecondaryClaim) && Security.IsAuthorized(EnumPermType.ClaimSend,suppressMessage:true)) {
+			if(PrefC.GetBool(PrefName.PromptForSecondaryClaim) && Security.IsAuthorized(Permissions.ClaimSend,suppressMessage:true)) {
 				ClaimL.PromptForSecondaryClaim(ListClaimProcs);
 			}
 			if(PrefC.GetBool(PrefName.ClaimSnapshotEnabled)) {
@@ -827,6 +813,10 @@ namespace OpenDental {
 				ClaimProcs.CreateAuditTrailEntryForClaimProcPayment(listClaimProcs[i],claimProcOld,isInsPayCreate:true,isPaymentFromERA:true);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

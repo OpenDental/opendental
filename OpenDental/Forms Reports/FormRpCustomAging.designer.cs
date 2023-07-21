@@ -25,6 +25,7 @@ namespace OpenDental {
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpCustomAging));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butRefresh = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -79,6 +80,17 @@ namespace OpenDental {
 			this.groupBox3.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(966, 710);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butRefresh
 			// 
@@ -264,9 +276,9 @@ namespace OpenDental {
 			// 
 			this.radioWriteoffClaimDate.Location = new System.Drawing.Point(5, 61);
 			this.radioWriteoffClaimDate.Name = "radioWriteoffClaimDate";
-			this.radioWriteoffClaimDate.Size = new System.Drawing.Size(149, 32);
+			this.radioWriteoffClaimDate.Size = new System.Drawing.Size(146, 30);
 			this.radioWriteoffClaimDate.TabIndex = 2;
-			this.radioWriteoffClaimDate.Text = "Initial claim date for est\r\nIns pay date for adj";
+			this.radioWriteoffClaimDate.Text = "Initial claim date for est.\r\nIns pay date for adj.";
 			this.radioWriteoffClaimDate.UseVisualStyleBackColor = true;
 			// 
 			// radioWriteoffInsPayDate
@@ -557,6 +569,7 @@ namespace OpenDental {
 			// 
 			// FormRpCustomAging
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(1059, 742);
 			this.Controls.Add(this.checkExcludeArchive);
 			this.Controls.Add(this.checkExcludeBadAddresses);
@@ -582,6 +595,7 @@ namespace OpenDental {
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butRefresh);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormRpCustomAging";
 			this.Text = "Custom Aging Report";
@@ -598,6 +612,7 @@ namespace OpenDental {
 		}
 
 		#endregion
+		private OpenDental.UI.Button butCancel;
 		private UI.Button butRefresh;
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.ContextMenuStrip contextMenuStrip;

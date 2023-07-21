@@ -26,48 +26,48 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static long Insert(Supplier supplier) {
+		public static long Insert(Supplier supp) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				supplier.SupplierNum=Meth.GetLong(MethodBase.GetCurrentMethod(),supplier);
-				return supplier.SupplierNum;
+				supp.SupplierNum=Meth.GetLong(MethodBase.GetCurrentMethod(),supp);
+				return supp.SupplierNum;
 			}
-			return Crud.SupplierCrud.Insert(supplier);
+			return Crud.SupplierCrud.Insert(supp);
 		}
 
 		///<summary></summary>
-		public static void Update(Supplier supplier) {
+		public static void Update(Supplier supp) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),supplier);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),supp);
 				return;
 			}
-			Crud.SupplierCrud.Update(supplier);
+			Crud.SupplierCrud.Update(supp);
 		}
 
 		///<summary>Surround with try-catch.</summary>
-		public static void DeleteObject(Supplier supplier){
+		public static void DeleteObject(Supplier supp){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),supplier);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),supp);
 				return;
 			}
 			//validate that not already in use.
-			string command="SELECT COUNT(*) FROM supplyorder WHERE SupplierNum="+POut.Long(supplier.SupplierNum);
+			string command="SELECT COUNT(*) FROM supplyorder WHERE SupplierNum="+POut.Long(supp.SupplierNum);
 			int count=PIn.Int(Db.GetCount(command));
 			if(count>0) {
 				throw new ApplicationException(Lans.g("Supplies","Supplier is already in use on an order. Not allowed to delete."));
 			}
-			command="SELECT COUNT(*) FROM supply WHERE SupplierNum="+POut.Long(supplier.SupplierNum);
+			command="SELECT COUNT(*) FROM supply WHERE SupplierNum="+POut.Long(supp.SupplierNum);
 			count=PIn.Int(Db.GetCount(command));
 			if(count>0) {
 				throw new ApplicationException(Lans.g("Supplies","Supplier is already in use on a supply. Not allowed to delete."));
 			}
-			Crud.SupplierCrud.Delete(supplier.SupplierNum);
+			Crud.SupplierCrud.Delete(supp.SupplierNum);
 		}
 
-		public static string GetName(List<Supplier> listSuppliers,long supplierNum) {
+		public static string GetName(List<Supplier> listSupplier,long supplierNum) {
 			//No need to check MiddleTierRole; no call to db.
-			for(int i=0;i<listSuppliers.Count;i++){
-				if(listSuppliers[i].SupplierNum==supplierNum){
-					return listSuppliers[i].Name;
+			for(int i=0;i<listSupplier.Count;i++){
+				if(listSupplier[i].SupplierNum==supplierNum){
+					return listSupplier[i].Name;
 				}
 			}
 			return "";
@@ -81,3 +81,12 @@ namespace OpenDentBusiness{
 
 
 }
+
+
+
+
+
+
+
+
+

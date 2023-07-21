@@ -41,8 +41,8 @@ namespace OpenDental {
 		}
 
 		private void FormEServicesMobileSynch_Load(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.EServicesSetup,suppressMessage:true)) {
-				this.DisableAllExcept();
+			if(!Security.IsAuthorized(Permissions.EServicesSetup,suppressMessage:true)) {
+				this.DisableAllExcept(new Control[]{butClose});
 			}
 			textMobileSyncServerURL.Text=PrefC.GetString(PrefName.MobileSyncServerURL);
 			textSynchMinutes.Text=PrefC.GetInt(PrefName.MobileSyncIntervalMinutes).ToString();
@@ -163,7 +163,7 @@ namespace OpenDental {
 			if(!SavePrefs()) {
 				return;
 			}
-			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete all your data from our server?  This happens automatically before a full sync.")) {
+			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete all your data from our server?  This happens automatically before a full synch.")) {
 				return;
 			}
 			_mobile.DeleteAllRecords(PrefC.GetString(PrefName.RegistrationKey));
@@ -175,7 +175,7 @@ namespace OpenDental {
 				return;
 			}
 			if(_isSynching) {
-				MsgBox.Show(this,"A sync is in progress at the moment. Please try again later.");
+				MsgBox.Show(this,"A Synch is in progress at the moment. Please try again later.");
 				return;
 			}
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"This will be time consuming. Continue anyway?")) {
@@ -191,11 +191,11 @@ namespace OpenDental {
 				return;
 			}
 			if(_isSynching) {
-				MsgBox.Show(this,"A sync is in progress at the moment. Please try again later.");
+				MsgBox.Show(this,"A Synch is in progress at the moment. Please try again later.");
 				return;
 			}
 			if(PrefC.GetDate(PrefName.MobileExcludeApptsBeforeDate).Year<1880) {
-				MsgBox.Show(this,"Full sync has never been run before.");
+				MsgBox.Show(this,"Full synch has never been run before.");
 				return;
 			}
 			DateTime dateTLastRun=PrefC.GetDateT(PrefName.MobileSyncDateTimeLastRun);
@@ -210,11 +210,11 @@ namespace OpenDental {
 				_isTroubleshootMode=false;
 			}
 			DateTime dateTSynchStarted=MiscData.GetNowDateTime();
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => UploadWorker(dateLastRun,dateTSynchStarted);
 			progressOD.StartingMessage=Lan.g(this,"Preparing records for upload.");
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
 				_isSynching=false;// this will ensure that the synch can start again. If this variable remains true due to an exception then a synch will never take place automatically.
@@ -421,14 +421,14 @@ namespace OpenDental {
 					}
 					//progressIndicator.CurrentVal+=LocalBatchSize;//not allowed
 					currentVal+=localBatchSize;
-					if(Application.OpenForms["FormProgress"]!=null) {// without this line the following error is thrown: "Invoke or BeginInvoke cannot be called on a control until the window handle has been created." or a null pointer exception is thrown when an automatic sync is done by the system.
+					if(Application.OpenForms["FormProgress"]!=null) {// without this line the following error is thrown: "Invoke or BeginInvoke cannot be called on a control until the window handle has been created." or a null pointer exception is thrown when an automatic synch is done by the system.
 						FormP.Invoke(new PassProgressDelegate(PassProgressToDialog),
 							new object[] { currentVal,"?currentVal of ?maxVal records uploaded",totalCount,"" });
 					}
 				}
 				catch(Exception e) {
 					if(_isTroubleshootMode) {
-						string errorMessage=entity+ " with Primary Key = "+listBlockPKNums[0].ToString()+" failed to sync. "+"\n"+e.Message;
+						string errorMessage=entity+ " with Primary Key = "+listBlockPKNums[0].ToString()+" failed to synch. "+"\n"+e.Message;
 						throw new Exception(errorMessage);
 					}
 					else {
@@ -452,14 +452,14 @@ namespace OpenDental {
 					LocalBatchSize=dO.Count-start;
 				}
 				currentVal+=BatchSize;
-				if(Application.OpenForms["FormProgress"]!=null) {// without this line the following error is thrown: "Invoke or BeginInvoke cannot be called on a control until the window handle has been created." or a null pointer exception is thrown when an automatic sync is done by the system.
+				if(Application.OpenForms["FormProgress"]!=null) {// without this line the following error is thrown: "Invoke or BeginInvoke cannot be called on a control until the window handle has been created." or a null pointer exception is thrown when an automatic synch is done by the system.
 					FormP.Invoke(new PassProgressDelegate(PassProgressToDialog),
 						new object[] {currentVal,"?currentVal of ?maxVal records uploaded",totalCount,"" });
 				}
 								}
 				catch(Exception e) {
 					if(IsTroubleshootMode) {
-						//string errorMessage="DeleteObjects with Primary Key = "+BlockPKNumList.First() + " failed to sync. " +  "\n" + e.Message;
+						//string errorMessage="DeleteObjects with Primary Key = "+BlockPKNumList.First() + " failed to synch. " +  "\n" + e.Message;
 						//throw new Exception(errorMessage);
 					}
 					else {
@@ -521,7 +521,7 @@ namespace OpenDental {
 				if(!doForce) {//if being used from FormOpenDental as part of timer
 					if(_isServerAvail) {//this will only happen the first time to prevent multiple windows.
 						_isServerAvail=false;
-						DialogResult dialogResult=MessageBox.Show("Mobile sync server not available.  Sync failed.  Turn off sync?","",MessageBoxButtons.YesNo);
+						DialogResult dialogResult=MessageBox.Show("Mobile synch server not available.  Synch failed.  Turn off synch?","",MessageBoxButtons.YesNo);
 						if(dialogResult==DialogResult.Yes) {
 							Prefs.UpdateInt(PrefName.MobileSyncIntervalMinutes,0);
 						}
@@ -533,17 +533,21 @@ namespace OpenDental {
 				_isServerAvail=true;
 			}
 			DateTime dateTLastRun=PrefC.GetDateT(PrefName.MobileSyncDateTimeLastRun);
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => UploadWorker(dateTLastRun,dateTSynchStarted);
 			progressOD.StartingMessage="Preparing records for upload.";
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
 				MsgBox.Show(ex.Message);
 				//return;
 			}
 			//if(progressOD.IsCancelled){
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 
 		#region Testing
@@ -670,5 +674,4 @@ namespace OpenDental {
 			patientdel
 		}
 	}
-
 }

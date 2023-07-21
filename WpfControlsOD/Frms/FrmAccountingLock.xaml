@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="473" Height="249" 
-             Text="Lock Accounting" MinMaxBoxes="False">
+             Text="Lock Accounting" Loaded="FrmAccountingLock_Loaded" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:TextVDate x:Name="textVDate" Width="100" Height="20" Margin="14,121,0,0" />
 		<ui:Label x:Name="label1" Width="440" Height="101" Margin="12,9,0,0" Text="This locks all accounting entries on or before the date entered below, regardless of security level.  The lock would have to be turned off by a security admin before anyone could change history.  Typically used to lock previous years from accidental or intentional alteration.  But any complex database may develop flaws, so the lock is not perfect.  It is strongly recommended to print a hard copy of the General Ledger at the same time as the lock is set." />

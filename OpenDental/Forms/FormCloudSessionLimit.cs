@@ -14,8 +14,8 @@ namespace OpenDental {
 		}
 
 		private void FormCloudSessionLimit_Load(object sender,EventArgs e) {
-			if(Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
-				butSave.Enabled=true;
+			if(Security.IsAuthorized(Permissions.SecurityAdmin)) {
+				butOK.Enabled=true;
 			}
 			string officeData=PayloadHelper.CreatePayload("",eServiceCode.Undefined);
 			string thinfinityLicenseUsers="";
@@ -35,7 +35,7 @@ namespace OpenDental {
 			validNumNewSessions.Text=PrefC.GetString(PrefName.CloudSessionLimit);
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!validNumNewSessions.IsValid()) {
 				MsgBox.Show(Lan.g(this,"Please input a valid number."));
 				return;
@@ -75,7 +75,7 @@ namespace OpenDental {
 			}
 			Cursor=Cursors.Default;
 			MsgBox.Show(this,WebSerializer.DeserializeTag<string>(result,"Response"));
-			SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,"Maximum number of allowed Cloud sessions has been updated to "+validNumNewSessions.Text);
+			SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,"Maximum number of allowed Cloud sessions has been updated to "+validNumNewSessions.Text);
 			if(Prefs.UpdateString(PrefName.CloudSessionLimit,validNumNewSessions.Text)) {
 				Signalods.SetInvalid(InvalidType.Prefs);
 			}
@@ -95,5 +95,8 @@ namespace OpenDental {
 			return prefHidden.ValueString;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

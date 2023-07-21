@@ -21,14 +21,21 @@ namespace OpenDental{
 		private List<Pharmacy> _listPharmacies;
 
 		///<summary></summary>
-		public FormPharmacies() {
+		public FormPharmacies()
+		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
 		}
 
 		private void FormPharmacies_Load(object sender, System.EventArgs e) {
-			if(!IsSelectionMode){
+			if(IsSelectionMode){
+				butClose.Text=Lan.g(this,"Cancel");
+			}
+			else{
 				butOK.Visible=false;
 				butNone.Visible=false;
 			}
@@ -148,11 +155,47 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 		private void FormPharmacies_FormClosing(object sender,FormClosingEventArgs e) {
 			if(_isChanged){
 				DataValid.SetInvalid(InvalidType.Pharmacies);
 			}
 		}
 
+	
+
+		
+
+		
+
+		
+
+
+
+		
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

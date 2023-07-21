@@ -195,14 +195,14 @@ namespace OpenDental {
 			List<ApptStatus> listAppStatuses=comboAptStatus.GetListSelected<ApptStatus>();
 			long clinicNum=-1;
 			if(PrefC.HasClinicsEnabled) {
-				clinicNum=comboClinic.ClinicNumSelected;
+				clinicNum=comboClinic.SelectedClinicNum;
 			}
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => { 
 				_listAppointmentsASAP=Appointments.RefreshASAP(comboProv.GetSelectedProvNum(),siteNum,clinicNum,listAppStatuses,codeRangeFilter.StartRange,
 					codeRangeFilter.EndRange);
 				};
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			int scrollVal=gridAppts.ScrollValue;
 			List<long> listAptNumsSelected=gridAppts.SelectedTags<Appointment>().Select(x => x.AptNum).ToList();
 			if(_maxApptLengthFilter>0) {
@@ -280,7 +280,7 @@ namespace OpenDental {
 			int currentSelection=e.Row;
 			int currentScroll=gridAppts.ScrollValue;
 			Patient patient=Patients.GetPat(((Appointment)gridAppts.ListGridRows[e.Row].Tag).PatNum); //check against grid
-			GlobalFormOpenDental.PatientSelected(patient,isRefreshCurModule: true);
+			FormOpenDental.S_Contr_PatientSelected(patient,isRefreshCurModule: true);
 			using FormApptEdit formApptEdit=new FormApptEdit(((Appointment)gridAppts.ListGridRows[e.Row].Tag).AptNum);
 			formApptEdit.PinIsVisible=true;
 			formApptEdit.ShowDialog();
@@ -305,7 +305,7 @@ namespace OpenDental {
 		}
 
 		private void RemoveAppts_Click() {
-			if(!Security.IsAuthorized(EnumPermType.AppointmentEdit)) {
+			if(!Security.IsAuthorized(Permissions.AppointmentEdit)) {
 				return;
 			}
 			if(gridAppts.SelectedIndices.Length>0 && !MsgBox.Show(this,MsgBoxButtons.OKCancel,"Change priority to normal for all selected appointments?")) {
@@ -315,7 +315,7 @@ namespace OpenDental {
 				Appointment appointment=(Appointment)gridAppts.SelectedGridRows[i].Tag;
 				DateTime datePrevious=appointment.DateTStamp;
 				Appointments.SetPriority(appointment,ApptPriority.Normal);
-				SecurityLogs.MakeLogEntry(EnumPermType.AppointmentEdit,appointment.PatNum,"Appointment priority set from ASAP to normal from ASAP list.",appointment.AptNum,
+				SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,appointment.PatNum,"Appointment priority set from ASAP to normal from ASAP list.",appointment.AptNum,
 					datePrevious);
 			}
 			FillGridAppts();
@@ -373,7 +373,7 @@ namespace OpenDental {
 					return;
 				}
 			}
-			GlobalFormOpenDental.PinToAppt(listAptNums,0); //Pins all appointments to the pinboard that were in listAptNums.
+			GotoModule.PinToAppt(listAptNums,0); //Pins all appointments to the pinboard that were in listAptNums.
 		}
 		#endregion Appointments Tab
 
@@ -400,19 +400,19 @@ namespace OpenDental {
 			}
 			long clinicNum=-1;
 			if(PrefC.HasClinicsEnabled) {
-				clinicNum=comboClinic.ClinicNumSelected;
+				clinicNum=comboClinic.SelectedClinicNum;
 			}
 			RecallListShowNumberReminders recallListShowNumberReminders=(RecallListShowNumberReminders)comboNumberReminders.SelectedIndex;
 			DataTable tableRecalls=null;
 			List<Recall> listRecalls=null;
 			long maxReminders=PrefC.GetLong(PrefName.RecallMaxNumberReminders);
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => { 
 				tableRecalls=Recalls.GetRecallList(dateFrom,dateTo,checkGroupFamilies.Checked,comboProv.GetSelectedProvNum(),clinicNum,
 					siteNum,RecallListSort.DueDate,recallListShowNumberReminders,maxReminders,isAsap: true,codeRangeFilter.StartRange,codeRangeFilter.EndRange);
 				listRecalls=Recalls.GetMultRecalls(tableRecalls.Rows.OfType<DataRow>().Select(x => PIn.Long(x["RecallNum"].ToString())).ToList());
 			};
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled){
 				return;
 			}
@@ -499,7 +499,7 @@ namespace OpenDental {
 		private void gridRecalls_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			Recall recall=(Recall)gridRecalls.ListGridRows[e.Row].Tag;
 			Patient patient=Patients.GetPat(recall.PatNum);
-			GlobalFormOpenDental.PatientSelected(patient,isRefreshCurModule: true);
+			FormOpenDental.S_Contr_PatientSelected(patient,isRefreshCurModule: true);
 			using FormRecallEdit formRecallEdit=new FormRecallEdit();
 			formRecallEdit.RecallCur=recall;
 			formRecallEdit.ShowDialog();
@@ -519,13 +519,13 @@ namespace OpenDental {
 			for(int i=0;i<listRecallsSelected.Count;i++) {
 				listRecallsSelected[i].Priority=RecallPriority.Normal;
 				Recalls.Update(listRecallsSelected[i]);
-				SecurityLogs.MakeLogEntry(EnumPermType.RecallEdit,listRecallsSelected[i].PatNum,"Recall priority set to Normal from the ASAP List.");
+				SecurityLogs.MakeLogEntry(Permissions.RecallEdit,listRecallsSelected[i].PatNum,"Recall priority set to Normal from the ASAP List.");
 			}
 			FillGridRecalls();
 		}
 
 		private void MakeAppointment_Click() {
-			if(!Security.IsAuthorized(EnumPermType.AppointmentCreate) || gridRecalls.SelectedIndices.Length==0) {
+			if(!Security.IsAuthorized(Permissions.AppointmentCreate) || gridRecalls.SelectedIndices.Length==0) {
 				return;
 			}
 			List<Recall> listRecallsSelected=gridRecalls.SelectedIndices.Select(x => (Recall)gridRecalls.ListGridRows[x].Tag).ToList();
@@ -543,7 +543,7 @@ namespace OpenDental {
 				List<InsSub> listInsSubs=InsSubs.RefreshForFam(family);
 				List<InsPlan> listInsPlans=InsPlans.RefreshForSubList(listInsSubs);
 				Appointment appointment=AppointmentL.CreateRecallApt(patient,listInsPlans,listRecallsSelected[i].RecallNum,listInsSubs);
-				GlobalFormOpenDental.PinToAppt(new List<long>() { appointment.AptNum },patient.PatNum);
+				GotoModule.PinToAppt(new List<long>() { appointment.AptNum },patient.PatNum);
 			}
 			FillGridRecalls();
 		}
@@ -602,18 +602,18 @@ namespace OpenDental {
 
 		private void SelectPatient_Click(long patnum) {
 			Patient patient=Patients.GetPat(patnum);//If multiple selected, just take the last one to remain consistent with SendPinboard_Click.
-			GlobalFormOpenDental.PatientSelected(patient,isRefreshCurModule: true);
+			FormOpenDental.S_Contr_PatientSelected(patient,isRefreshCurModule: true);
 		}
 
 		///<summary>If multiple patients are selected in the list, it will use the last patient to show the chart for.</summary>
 		private void SeeChart_Click(long patnum) {
 			Patient patient=Patients.GetPat(patnum); //If multiple selected, just use the last one.
-			GlobalFormOpenDental.PatientSelected(patient,isRefreshCurModule: false); //Selects the patient in OpenDental.
-			GlobalFormOpenDental.GotoChart(patient.PatNum);
+			FormOpenDental.S_Contr_PatientSelected(patient,isRefreshCurModule: false); //Selects the patient in OpenDental.
+			GotoModule.GotoChart(patient.PatNum);
 		}
 
 		private void butText_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.TextMessageSend)) {
+			if(!Security.IsAuthorized(Permissions.TextMessageSend)) {
 				return;
 			}
 			Clinic clinic=Clinics.GetClinic(Clinics.ClinicNum)??Clinics.GetDefaultForTexting()??Clinics.GetPracticeAsClinicZero();
@@ -700,28 +700,21 @@ namespace OpenDental {
 				textTemplate=textTemplate.Replace("[Time]",DateTimeChosen.ToShortTimeString());
 				return textTemplate;
 			}
+			//Need to use an input box to specify the date and time.
 			List<InputBoxParam> listInputBoxParams=new List<InputBoxParam>();
 			if(textTemplate.Contains("[Date]")) {
-				InputBoxParam inputBoxParam=new InputBoxParam();
-				inputBoxParam.InputBoxType_=InputBoxType.ValidDate;
-				inputBoxParam.LabelText="Enter date for available time";
-				listInputBoxParams.Add(inputBoxParam);
+				listInputBoxParams.Add(new InputBoxParam(InputBoxType.ValidDate,"Enter date for available time"));
 			}
 			if(textTemplate.Contains("[Time]")) {
-				InputBoxParam inputBoxParam=new InputBoxParam();
-				inputBoxParam.InputBoxType_=InputBoxType.ValidTime;
-				inputBoxParam.LabelText="Enter time for available time";
-				listInputBoxParams.Add(inputBoxParam);
+				listInputBoxParams.Add(new InputBoxParam(InputBoxType.ValidTime,"Enter time for available time"));
 			}
-			InputBox inputBox=new InputBox(listInputBoxParams);
-			inputBox.ShowDialog();
-			if(listInputBoxParams.Count > 0 && inputBox.IsDialogOK) {
-				if(inputBox.DateResult.Year > 1880) {
-					textTemplate=textTemplate.Replace("[Date]",inputBox.DateResult.ToString(PrefC.PatientCommunicationDateFormat));
+			using InputBox inputBox=new InputBox(listInputBoxParams);
+			if(listInputBoxParams.Count > 0 && inputBox.ShowDialog()==DialogResult.OK) {
+				if(inputBox.DateEntered.Year > 1880) {
+					textTemplate=textTemplate.Replace("[Date]",inputBox.DateEntered.ToString(PrefC.PatientCommunicationDateFormat));
 				}
-				TimeSpan timeSpan=inputBox.TimeSpanResult;
-				if(textTemplate.Contains("[Time]") && timeSpan!=TimeSpan.Zero){//A time was entered.
-					textTemplate=textTemplate.Replace("[Time]",timeSpan.ToShortTimeString());
+				if(textTemplate.Contains("[Time]") && inputBox.ListTextEntered[listInputBoxParams.Count-1]!="") {//A time was entered.
+					textTemplate=textTemplate.Replace("[Time]",inputBox.TimeEntered.ToShortTimeString());
 				}
 			}
 			return textTemplate;
@@ -742,7 +735,7 @@ namespace OpenDental {
 				WindowState=FormWindowState.Normal;
 			}
 			BringToFront();
-			comboClinic.ClinicNumSelected=ODMethodsT.Coalesce(Operatories.GetOperatory(_opNum)).ClinicNum;
+			comboClinic.SelectedClinicNum=ODMethodsT.Coalesce(Operatories.GetOperatory(_opNum)).ClinicNum;
 			FillGridAppts();
 			FillTimeCombos();
 			SetSelectedAppts();
@@ -758,7 +751,7 @@ namespace OpenDental {
 				}
 				return;
 			}
-			comboClinic.ClinicNumSelected=ODMethodsT.Coalesce(Operatories.GetOperatory(_opNum)).ClinicNum;
+			comboClinic.SelectedClinicNum=ODMethodsT.Coalesce(Operatories.GetOperatory(_opNum)).ClinicNum;
 			comboClinic.Enabled=false;//We only want them to choose appointments from the clinic of the operatory selected.
 			labelOperatory.Text=Lan.g(this,"Operatory:")+" "+Operatories.GetOperatory(_opNum).Abbrev;
 			splitContainer.Panel2Collapsed=false;
@@ -1059,12 +1052,12 @@ namespace OpenDental {
 		}
 
 		private void menuItemSettings_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			using FormAsapSetup formAsapSetup=new FormAsapSetup();
 			formAsapSetup.ShowDialog();
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"ASAP List Setup");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"ASAP List Setup");
 		}
 
 		private void butPrint_Click(object sender,EventArgs e) {
@@ -1118,6 +1111,11 @@ namespace OpenDental {
 		private void comboShowHygiene_SelectionChangeCommitted(object sender,EventArgs e) {
 			FillGridAppts();
 		}
+
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 	
 	}
 }

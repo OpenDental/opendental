@@ -90,10 +90,10 @@ namespace OpenDentBusiness {
 			return GetDef(myCat,GetByExactName(myCat,itemName));
 		}
 
-		///<summary>Set isShort to true to exclude hidden defs. Returns 0 if it can't find the named def.  If the name is blank, then it returns the first def in the category.</summary>
-		public static long GetByExactName(DefCat myCat,string itemName,bool isShort=false){
+		///<summary>Returns 0 if it can't find the named def.  If the name is blank, then it returns the first def in the category.</summary>
+		public static long GetByExactName(DefCat myCat,string itemName) {
 			//No need to check MiddleTierRole; no call to db.
-			List<Def> listDefs=Defs.GetDefsForCategory(myCat,isShort);
+			List<Def> listDefs=Defs.GetDefsForCategory(myCat);
 			if(itemName=="" && listDefs.Count>0) {
 				return listDefs[0].DefNum;//return the first one in the list
 			}
@@ -121,7 +121,7 @@ namespace OpenDentBusiness {
 				Defs.RefreshCache();
 				string logText=Lans.g("Defintions","Definition created:")+" "+def.ItemName+" "
 					+Lans.g("Defintions","with category:")+" "+def.Category.GetDescription();
-				SecurityLogs.MakeLogEntry(EnumPermType.DefEdit,0,logText);
+				SecurityLogs.MakeLogEntry(Permissions.DefEdit,0,logText);
 				return def.DefNum;
 			}
 			//From this point on, we know our list of definitions contains at least one def.
@@ -490,14 +490,6 @@ namespace OpenDentBusiness {
 					listStrCommands.Add("SELECT COUNT(*) FROM payment WHERE PayType="+POut.Long(def.DefNum));
 					break;
 				case DefCat.InsurancePaymentType:
-					if(new[]{
-						PrefName.EraChkPaymentType,
-						PrefName.EraAchPaymentType,
-						PrefName.EraFwtPaymentType,
-						PrefName.EraDefaultPaymentType,
-					}.Any(x=>PrefC.GetLong(x)==def.DefNum)){
-						return true;
-					}
 					listStrCommands.Add("SELECT COUNT(*) FROM claimpayment WHERE PayType="+POut.Long(def.DefNum));
 					break;
 				case DefCat.PaySplitUnearnedType:
@@ -583,12 +575,10 @@ namespace OpenDentBusiness {
 				SET BillingTypeTwo={strDefNumTo} 
 				WHERE BillingTypeTwo={strDefNumFrom}";
 			Db.NonQ(command);
-			if(PrefC.IsODHQ){
-				command=$@"UPDATE reseller 
-					SET BillingType={strDefNumTo} 
-					WHERE BillingType={strDefNumFrom}";
-				Db.NonQ(command);
-			}
+			command=$@"UPDATE reseller 
+				SET BillingType={strDefNumTo} 
+				WHERE BillingType={strDefNumFrom}";
+			Db.NonQ(command);
 			#endregion
 			#region Prefs
 			command=$@"UPDATE preference 

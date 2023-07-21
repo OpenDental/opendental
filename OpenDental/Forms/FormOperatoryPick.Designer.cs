@@ -25,6 +25,7 @@
 		private void InitializeComponent() {
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// gridMain
@@ -43,12 +44,23 @@
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(793, 473);
+			this.butOK.Location = new System.Drawing.Point(712, 473);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 6;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(793, 473);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 5;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// FormOperatoryPick
 			// 
@@ -56,6 +68,7 @@
 			this.ClientSize = new System.Drawing.Size(880, 511);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Name = "FormOperatoryPick";
 			this.Text = "Operatory Pick";
 			this.Load += new System.EventHandler(this.FormOperatoryPick_Load);
@@ -67,5 +80,6 @@
 
 		private UI.GridOD gridMain;
 		private UI.Button butOK;
+		private UI.Button butCancel;
 	}
 }

@@ -81,12 +81,18 @@ namespace OpenDental{
 			FormQuery2=new FormQuery(report);
 			FormQuery2.textTitle.Text="RawPopulationData"+DateTime.Today.ToString("MMddyyyy");
 			//FormQuery2.IsReport=true;
-			//FormQuery2.SubmitReportQuery();
+			//FormQuery2.SubmitReportQuery();			
 			FormQuery2.SubmitQuery();
 			FormQuery2.ShowDialog();
 			FormQuery2.Dispose();
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+
 
 	}
 }

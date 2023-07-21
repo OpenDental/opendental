@@ -351,7 +351,7 @@ namespace OpenDentBusiness {
 			}
 			catch(ODException ex) {
 				//GetObject does not invoke IsCredentailFailRetry() because it is used by Userods.CheckUserAndPassword() which is invoked when the user re-enters their credentials.
-				if(ex.ErrorCode==(int)ODException.ErrorCodes.CheckUserAndPasswordFailed && ODEvent.IsCredentialsFailedAfterLogin_EventSubscribed) {
+				if(ex.ErrorCode==(int)ODException.ErrorCodes.CheckUserAndPasswordFailed && !CredentialsFailedAfterLoginEvent.IsFiredNull()) {
 					if(RemotingClient.HasLoginFailed) {
 						//Login has already failed and we got another CheckUserAndPasswordFailed error, just throw.
 						//This can happen when the user re-enters invalid credentials. They need to be made aware of this failure and we should NOT keep the thread waiting here.
@@ -466,7 +466,7 @@ namespace OpenDentBusiness {
 
 		private static bool IsCredentailFailRetry(ODException ex) {
 			//Pause the application here in the main thread and wait for user input if the credentials failed and this application is registered for CredentialsFailedAfterLoginEvents.
-			if(ex.ErrorCode==(int)ODException.ErrorCodes.CheckUserAndPasswordFailed && ODEvent.IsCredentialsFailedAfterLogin_EventSubscribed) {
+			if(ex.ErrorCode==(int)ODException.ErrorCodes.CheckUserAndPasswordFailed && !CredentialsFailedAfterLoginEvent.IsFiredNull()) {
 				CredentialsFailed();
 				return true;
 			}
@@ -477,7 +477,7 @@ namespace OpenDentBusiness {
 		///<summary>Fires a CredentialsFailedAfterLoginEvent to notify the main thread that the user needs to log in again.
 		///This method will then force any threads that called it to wait here indefinitely or until the user has logged in successfully.</summary>
 		private static void CredentialsFailed() {
-			ODEvent.Fire(ODEventType.ServiceCredentials,
+			CredentialsFailedAfterLoginEvent.Fire(ODEventType.ServiceCredentials,
 				"Invalid username or password.  You must login again or exit the program.");
 			while(RemotingClient.HasLoginFailed) {
 				Thread.Sleep(100);//wait for flag to be cleared before returning and allowing the method to continue

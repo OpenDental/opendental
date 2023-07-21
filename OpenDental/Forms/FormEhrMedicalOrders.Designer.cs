@@ -24,10 +24,22 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrMedicalOrders));
+			this.butClose = new System.Windows.Forms.Button();
 			this.checkBoxShowDiscontinued = new OpenDental.UI.CheckBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.gridMedOrders = new OpenDental.UI.GridOD();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(634, 285);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 23);
+			this.butClose.TabIndex = 9;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// checkBoxShowDiscontinued
 			// 
@@ -70,6 +82,7 @@
 			this.ClientSize = new System.Drawing.Size(721, 320);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.checkBoxShowDiscontinued);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.gridMedOrders);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrMedicalOrders";
@@ -82,6 +95,7 @@
 		#endregion
 
 		private OpenDental.UI.GridOD gridMedOrders;
+		private System.Windows.Forms.Button butClose;
 		private OpenDental.UI.CheckBox checkBoxShowDiscontinued;
 		private System.Windows.Forms.Label label1;
 	}

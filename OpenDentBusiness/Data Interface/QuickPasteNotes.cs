@@ -21,9 +21,6 @@ namespace OpenDentBusiness{
 		public static List<QuickPasteNote> GetForCats(List<QuickPasteCat> listCats) {
 			//No need to check MiddleTierRole; no call to db.
 			List<QuickPasteNote> listQuickNotes=new List<QuickPasteNote>();
-			if(listCats.Count==0){
-				return listQuickNotes;
-			}
 			//Add all quick notes to listQuickNotes from the categories passed in.  Preserve the order of the categories by looping one at a time.
 			foreach(QuickPasteCat cat in listCats) {
 				listQuickNotes.AddRange(GetWhere(y => cat.QuickPasteCatNum==y.QuickPasteCatNum));
@@ -89,7 +86,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Called on KeyUp from various textBoxes in the program to look for a ?abbrev and attempt to substitute.  Substitutes the text if found.</summary>
-		public static string Substitute(string text,EnumQuickPasteType type) {
+		public static string Substitute(string text,QuickPasteType type) {
 			//No need to check MiddleTierRole; no call to db.
 			List<QuickPasteCat> listQuickPasteCatsForType=QuickPasteCats.GetCategoriesForType(type);
 			if(listQuickPasteCatsForType.Count==0) {

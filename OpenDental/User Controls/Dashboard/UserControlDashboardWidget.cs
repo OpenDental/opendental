@@ -95,11 +95,7 @@ namespace OpenDental {
 		}
 
 		private void RefreshPatient() {
-			Patient patient=Patients.GetPat(FormOpenDental.PatNumCur);
-			if(patient!=null && patient.PatStatus==PatientStatus.Archived && !Security.IsAuthorized(EnumPermType.ArchivedPatientSelect,suppressMessage:true)) {
-				patient=null; //Message suppressed, since FormOpenDental will already show a security notification.
-			}
-			_pat=patient;
+			_pat=Patients.GetPat(FormOpenDental.PatNumCur);
 		}
 
 		private bool RefreshDefAndFields() {

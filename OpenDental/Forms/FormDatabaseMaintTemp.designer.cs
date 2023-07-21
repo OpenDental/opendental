@@ -42,6 +42,7 @@ namespace OpenDental{
 			this.label5 = new System.Windows.Forms.Label();
 			this.butPrint = new OpenDental.UI.Button();
 			this.butRun = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -234,10 +235,21 @@ namespace OpenDental{
 			this.butRun.Text = "Run";
 			this.butRun.Click += new System.EventHandler(this.butRun_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(646, 658);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// FormDatabaseMaintTemp
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(733, 694);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.textResults);
@@ -262,6 +274,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butRun;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.LinkLabel linkLabel1;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.ComboBox comboDbs;

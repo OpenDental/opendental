@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -320,14 +320,15 @@ namespace OpenDental {
 			byte[] byteArray;
 			if(CloudStorage.IsCloudStorage) {
 				//WebBrowser needs to have a local file to open, so we download the images to temp files.	
-				byteArray=CloudStorage.Download(Path.GetDirectoryName(fullPath),Path.GetFileName(fullPath));
+				OpenDentalCloud.Core.TaskStateDownload taskStateDownload=CloudStorage.Download(Path.GetDirectoryName(fullPath),Path.GetFileName(fullPath));
+				byteArray=taskStateDownload.FileContent;
 			}
 			else {
 				byteArray=File.ReadAllBytes(fullPath);
 			}
 			IAccountApi iAccountApi=EmailHostingTemplates.GetAccountApi(Clinics.ClinicNum);
 			UploadS3ObjectResponse uploadS3ObjectResponse=null;
-			ProgressWin progress=new ProgressWin();
+			ProgressOD progress=new ProgressOD();
 			UploadS3ObjectRequest uploadS3ObjectRequest=new UploadS3ObjectRequest { 
 				FileName=Path.GetFileNameWithoutExtension(fullPath),
 				Extension=Path.GetExtension(fullPath),
@@ -336,7 +337,7 @@ namespace OpenDental {
 				ObjectType=S3ObjectType.Image,
 			};
 			progress.ActionMain=() => uploadS3ObjectResponse=iAccountApi.UploadS3Object(uploadS3ObjectRequest);
-			progress.ShowDialog();
+			progress.ShowDialogProgress();
 			if(progress.IsCancelled) {
 				return "";
 			}
@@ -380,15 +381,15 @@ namespace OpenDental {
 			listMessageReplaceTypes.Add(MessageReplaceType.Patient);
 			listMessageReplaceTypes.Add(MessageReplaceType.User);
 			listMessageReplaceTypes.Add(MessageReplaceType.Misc);
-			FrmMessageReplacements frmMessageReplacements=new FrmMessageReplacements(listMessageReplaceTypes);
-			frmMessageReplacements.IsSelectionMode=true;
+			using FormMessageReplacements formMessageReplacements=new FormMessageReplacements(listMessageReplaceTypes);
+			formMessageReplacements.IsSelectionMode=true;
 			if(IsMassEmail) {
-				frmMessageReplacements.MessageReplacementSystemType=MessageReplacementSystemType.MassEmail;
+				formMessageReplacements.MessageReplacementSystemType=MessageReplacementSystemType.MassEmail;
 			}
-			frmMessageReplacements.ShowDialog();
-			if(frmMessageReplacements.IsDialogOK) {
+			formMessageReplacements.ShowDialog();
+			if(formMessageReplacements.DialogResult==DialogResult.OK) {
 				//assumed this is used for the email hosting project which requires this special replacement tag. 
-				textContentEmail.SelectedText=frmMessageReplacements.ReplacementTextSelected.Replace("[","[{[{ ").Replace("]"," }]}]");
+				textContentEmail.SelectedText=formMessageReplacements.Replacement.Replace("[","[{[{ ").Replace("]"," }]}]");
 			}
 		}
 
@@ -527,11 +528,11 @@ namespace OpenDental {
 			toolBarBottom.Refresh();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOk_Click(object sender,EventArgs e) {
 			IsRaw=checkIsRaw.Checked;
 			if(!IsRaw) {//do not validate for Raw emails. User is responsible for all validation themselves. 
 				if(!MarkupL.ValidateMarkup(textContentEmail,isForSaving:true,showMsgBox:true,isEmail:true)) {
-					_isInvalidPreview=true;
+					_isInvalidPreview=true;				
 					return;
 				}
 				if(_isInvalidPreview) {
@@ -551,10 +552,13 @@ namespace OpenDental {
 				MsgBox.Show(this,"Email must contain the \"[EmailDisclaimer]\" tag.");
 				return;
 			}
-			string errorText=PrefC.GetFirstShortURL(textContentEmail.Text);
-			if(!string.IsNullOrWhiteSpace(errorText)) {
-				MsgBox.Show(this,Lan.g(this,"Message cannot contain the URL")+" "+errorText+" "+Lan.g(this,"as this is only allowed for eServices."));
-				return;
+			List<string> listRedirectShortURLs=PrefC.GetString(PrefName.RedirectShortURLsFromHQ).Split(',').ToList();
+			for(int i=0;i<listRedirectShortURLs.Count;i++) {
+				string url=listRedirectShortURLs[i];
+				if(textContentEmail.Text.Contains(url)) {
+					MsgBox.Show(this,"Email message cannot contain the URL "+url+" as this is only allowed for eServices.");
+					return;
+				}
 			}
 			HtmlText=webBrowserEmail.DocumentText;
 			MarkupText=textContentEmail.Text;
@@ -562,12 +566,14 @@ namespace OpenDental {
 			Close();
 		}
 
-		 private void FormEmailEdit_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult==DialogResult.Cancel) {
-				return;
-			}
+		private void butCancel_Click(object sender,EventArgs e) {
+			_isInvalidPreview=false;//we don't care if it's invalid if they are cancelling. 
+			Close();
+		}
+
+		private void FormEmailEdit_FormClosing(object sender,FormClosingEventArgs e) {
 			if(_isInvalidPreview) {
-				e.Cancel=true;//don't close the form if there are errors (prevents OK click)
+				e.Cancel=true;//don't close the form if there are errors (prevents OK click and the top right X)
 			}
 		}
 
@@ -575,6 +581,9 @@ namespace OpenDental {
 			public string FileName;
 			public string Url;
 		}
+
+
+
 
 	}
 }

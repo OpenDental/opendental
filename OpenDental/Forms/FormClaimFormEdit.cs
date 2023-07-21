@@ -66,7 +66,8 @@ namespace OpenDental{
 				butPrint.Visible=false;
 				textFormWidth.Enabled=false;
 				textFormHeight.Enabled=false;
-				butSave.Visible=false;
+				butOK.Visible=false;
+				butCancel.Text=Lan.g(this,"Close");
 				pictureBoxClaimForm.Enabled=false;
 				labelInternal.Visible=true;
 			}
@@ -266,10 +267,6 @@ namespace OpenDental{
 				image=CDT.Class1.GetADA2019_J430();
 				extension=".gif";
 			}
-			else if(claimFormItem.ImageFileName=="ADA2024_J430.gif") {
-				image=CDT.Class1.GetADA2024_J430();
-				extension=".gif";
-			}
 			else if(claimFormItem.ImageFileName=="1500_02_12.gif") {
 				image=Properties.Resources._1500_02_12;
 				extension=".gif";
@@ -288,18 +285,22 @@ namespace OpenDental{
 					extension=Path.GetExtension(fileName);
 				}
 				else if(CloudStorage.IsCloudStorage) {
-					UI.ProgressWin progressWin=new UI.ProgressWin();
-					progressWin.StartingMessage="Downloading...";
-					byte[] byteArray=null;
-					progressWin.ActionMain=() => {
-						byteArray=CloudStorage.Download(ImageStore.GetPreferredAtoZpath(),claimFormItem.ImageFileName);
-					};
-					progressWin.ShowDialog();
-					if(byteArray==null || byteArray.Length==0){
+					using FormProgress formProgress=new FormProgress();
+					formProgress.DisplayText="Downloading...";
+					formProgress.NumberFormat="F";
+					formProgress.NumberMultiplication=1;
+					formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+					formProgress.TickMS=1000;
+					OpenDentalCloud.Core.TaskStateDownload taskStateDownload=CloudStorage.DownloadAsync(ImageStore.GetPreferredAtoZpath()
+								,claimFormItem.ImageFileName
+								,new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
+					formProgress.ShowDialog();
+					if(formProgress.DialogResult==DialogResult.Cancel) {
+						taskStateDownload.DoCancel=true;
 						return null;
 					}
 					//Download was successful
-					using(MemoryStream memoryStream=new MemoryStream(byteArray)) {
+					using(MemoryStream memoryStream=new MemoryStream(taskStateDownload.FileContent)) {
 						image=Image.FromStream(memoryStream);
 						extension=Path.GetExtension(fileName);
 					}
@@ -920,9 +921,6 @@ namespace OpenDental{
 						case "ADA2019_J430.gif":
 							image=CDT.Class1.GetADA2019_J430();
 							break;
-						case "ADA2024_J430.gif":
-							image=CDT.Class1.GetADA2024_J430();
-							break;
 						case "1500_02_12.gif":
 							image=Properties.Resources._1500_02_12;
 							break;
@@ -980,12 +978,16 @@ namespace OpenDental{
 			return true;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!ValidateFields()) {
 				return;
 			}
 			ClaimForms.Update(_claimForm);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void FormClaimFormEdit_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -1000,5 +1002,58 @@ namespace OpenDental{
 			}
 		}
 
+		
+
+		
+
+		
+
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

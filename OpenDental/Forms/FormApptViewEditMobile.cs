@@ -350,7 +350,7 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(_listApptViewItemsDisplayedMain.Count==0){
 				MessageBox.Show(Lan.g(this,"At least one row type must be displayed."));
 				return;
@@ -359,5 +359,29 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

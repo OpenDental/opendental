@@ -403,7 +403,7 @@ namespace OpenDentBusiness {
 					GraphicsState graphicsState=g.Save();
 					Point point=listImageDraws[i].GetTextPoint();
 					g.TranslateTransform(point.X,point.Y);
-					using Font font=new Font(FontFamily.GenericSansSerif,listImageDraws[i].GetFontSize());
+					using Font font=new Font(FontFamily.GenericSansSerif,listImageDraws[i].FontSize);
 					string str=listImageDraws[i].GetTextString();
 					Size size= g.MeasureString(str,font).ToSize();
 					Rectangle rectangle=new Rectangle(new Point(0,0),size);
@@ -429,25 +429,12 @@ namespace OpenDentBusiness {
 						g.FillEllipse(solidBrush,rectangleF);
 					}
 				}
-				if(listImageDraws[i].DrawType==ImageDrawType.Polygon){
-					g.SmoothingMode=SmoothingMode.HighQuality;
-					List<PointF> listPointFs=listImageDraws[i].GetPoints();
-					using SolidBrush solidBrush=new SolidBrush(listImageDraws[i].ColorDraw);
-					g.FillPolygon(solidBrush,listPointFs.ToArray());
-				}
 			}
 		}
 
-		///<summary>Applies cropping, flip, and rotation to the bitmap and returns the resulting bitmap.</summary>
 		public static Bitmap GetBitmapOfDocument(Document document,Bitmap bitmapShowing,List<ImageDraw> listImageDraws){
-			Bitmap bitmap;
-			if(document.CropW > 0 && document.CropH > 0) {
-				bitmap=new Bitmap(document.CropW,document.CropH);
-			}
-			else {
-				Size size=CalcSizeFit(bitmapShowing.Width,bitmapShowing.Height,document.DegreesRotated);
-				bitmap=new Bitmap(size.Width,size.Height);
-			}
+			Size size=CalcSizeFit(bitmapShowing.Width,bitmapShowing.Height,document.DegreesRotated);
+			Bitmap bitmap=new Bitmap(size.Width,size.Height);
 			Graphics g=Graphics.FromImage(bitmap);
 			g.TranslateTransform(bitmap.Width/2,bitmap.Height/2);//Center of image
 			DrawDocument(g,document,bitmapShowing,listImageDraws);
@@ -455,7 +442,6 @@ namespace OpenDentBusiness {
 			return bitmap;
 		}
 
-		///<summary>Applies cropping, flip, and rotation to the bitmap and returns the resulting bitmap.</summary>
 		public static Bitmap GetBitmapOfDocumentFromDb(long docNum){
 			Document document=Documents.GetByNum(docNum);
 			Patient patient=Patients.GetPat(document.PatNum);
@@ -516,9 +502,9 @@ namespace OpenDentBusiness {
 				bitmapRaw=new Bitmap(fileNameFull);
 			}
 			else {//Cloud
-				Byte[] byteArray=CloudStorage.GetThumbnail(patientFolder,shortFileName);
-				if(byteArray!=null) {
-					using(MemoryStream stream=new MemoryStream(byteArray)) {
+				OpenDentalCloud.Core.TaskStateThumbnail state=CloudStorage.GetThumbnail(patientFolder,shortFileName);
+				if(state.FileContent!=null) {
+					using(MemoryStream stream=new MemoryStream(state.FileContent)) {
 						bitmapRaw=new Bitmap(Image.FromStream(stream));
 					}
 				}

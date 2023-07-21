@@ -70,7 +70,6 @@ namespace OpenDentBusiness.Crud{
 				userod.MobileWebPinFailedAttempts= PIn.Byte  (row["MobileWebPinFailedAttempts"].ToString());
 				userod.DateTLastLogin            = PIn.DateT (row["DateTLastLogin"].ToString());
 				userod.EClipboardClinicalPin     = PIn.String(row["EClipboardClinicalPin"].ToString());
-				userod.BadgeId                   = PIn.String(row["BadgeId"].ToString());
 				retVal.Add(userod);
 			}
 			return retVal;
@@ -105,7 +104,6 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("MobileWebPinFailedAttempts");
 			table.Columns.Add("DateTLastLogin");
 			table.Columns.Add("EClipboardClinicalPin");
-			table.Columns.Add("BadgeId");
 			foreach(Userod userod in listUserods) {
 				table.Rows.Add(new object[] {
 					POut.Long  (userod.UserNum),
@@ -131,7 +129,6 @@ namespace OpenDentBusiness.Crud{
 					POut.Byte  (userod.MobileWebPinFailedAttempts),
 					POut.DateT (userod.DateTLastLogin,false),
 					            userod.EClipboardClinicalPin,
-					            userod.BadgeId,
 				});
 			}
 			return table;
@@ -151,7 +148,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="UserNum,";
 			}
-			command+="UserName,Password,UserGroupNum,EmployeeNum,ClinicNum,ProvNum,IsHidden,TaskListInBox,AnesthProvType,DefaultHidePopups,PasswordIsStrong,ClinicIsRestricted,InboxHidePopups,UserNumCEMT,DateTFail,FailedAttempts,DomainUser,IsPasswordResetRequired,MobileWebPin,MobileWebPinFailedAttempts,DateTLastLogin,EClipboardClinicalPin,BadgeId) VALUES(";
+			command+="UserName,Password,UserGroupNum,EmployeeNum,ClinicNum,ProvNum,IsHidden,TaskListInBox,AnesthProvType,DefaultHidePopups,PasswordIsStrong,ClinicIsRestricted,InboxHidePopups,UserNumCEMT,DateTFail,FailedAttempts,DomainUser,IsPasswordResetRequired,MobileWebPin,MobileWebPinFailedAttempts,DateTLastLogin,EClipboardClinicalPin) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(userod.UserNum)+",";
 			}
@@ -177,8 +174,7 @@ namespace OpenDentBusiness.Crud{
 				+"'"+POut.String(userod.MobileWebPin)+"',"
 				+    POut.Byte  (userod.MobileWebPinFailedAttempts)+","
 				+    POut.DateT (userod.DateTLastLogin)+","
-				+"'"+POut.String(userod.EClipboardClinicalPin)+"',"
-				+"'"+POut.String(userod.BadgeId)+"')";
+				+"'"+POut.String(userod.EClipboardClinicalPin)+"')";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -203,7 +199,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="UserNum,";
 			}
-			command+="UserName,Password,UserGroupNum,EmployeeNum,ClinicNum,ProvNum,IsHidden,TaskListInBox,AnesthProvType,DefaultHidePopups,PasswordIsStrong,ClinicIsRestricted,InboxHidePopups,UserNumCEMT,DateTFail,FailedAttempts,DomainUser,IsPasswordResetRequired,MobileWebPin,MobileWebPinFailedAttempts,DateTLastLogin,EClipboardClinicalPin,BadgeId) VALUES(";
+			command+="UserName,Password,UserGroupNum,EmployeeNum,ClinicNum,ProvNum,IsHidden,TaskListInBox,AnesthProvType,DefaultHidePopups,PasswordIsStrong,ClinicIsRestricted,InboxHidePopups,UserNumCEMT,DateTFail,FailedAttempts,DomainUser,IsPasswordResetRequired,MobileWebPin,MobileWebPinFailedAttempts,DateTLastLogin,EClipboardClinicalPin) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(userod.UserNum)+",";
 			}
@@ -229,8 +225,7 @@ namespace OpenDentBusiness.Crud{
 				+"'"+POut.String(userod.MobileWebPin)+"',"
 				+    POut.Byte  (userod.MobileWebPinFailedAttempts)+","
 				+    POut.DateT (userod.DateTLastLogin)+","
-				+"'"+POut.String(userod.EClipboardClinicalPin)+"',"
-				+"'"+POut.String(userod.BadgeId)+"')";
+				+"'"+POut.String(userod.EClipboardClinicalPin)+"')";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -264,8 +259,7 @@ namespace OpenDentBusiness.Crud{
 				+"MobileWebPin              = '"+POut.String(userod.MobileWebPin)+"', "
 				+"MobileWebPinFailedAttempts=  "+POut.Byte  (userod.MobileWebPinFailedAttempts)+", "
 				+"DateTLastLogin            =  "+POut.DateT (userod.DateTLastLogin)+", "
-				+"EClipboardClinicalPin     = '"+POut.String(userod.EClipboardClinicalPin)+"', "
-				+"BadgeId                   = '"+POut.String(userod.BadgeId)+"' "
+				+"EClipboardClinicalPin     = '"+POut.String(userod.EClipboardClinicalPin)+"' "
 				+"WHERE UserNum = "+POut.Long(userod.UserNum);
 			Db.NonQ(command);
 		}
@@ -361,10 +355,6 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="EClipboardClinicalPin = '"+POut.String(userod.EClipboardClinicalPin)+"'";
 			}
-			if(userod.BadgeId != oldUserod.BadgeId) {
-				if(command!="") { command+=",";}
-				command+="BadgeId = '"+POut.String(userod.BadgeId)+"'";
-			}
 			if(command=="") {
 				return false;
 			}
@@ -443,9 +433,6 @@ namespace OpenDentBusiness.Crud{
 			if(userod.EClipboardClinicalPin != oldUserod.EClipboardClinicalPin) {
 				return true;
 			}
-			if(userod.BadgeId != oldUserod.BadgeId) {
-				return true;
-			}
 			return false;
 		}
 
@@ -464,8 +451,7 @@ namespace OpenDentBusiness.Crud{
 				+"InboxHidePopups      =  "+POut.Bool  (userod.InboxHidePopups)+", "
 				+"DomainUser           = '"+POut.String(userod.DomainUser)+"', "
 				+"DateTLastLogin       =  "+POut.DateT (userod.DateTLastLogin)+", "
-				+"EClipboardClinicalPin= '"+POut.String(userod.EClipboardClinicalPin)+"', "
-				+"BadgeId              = '"+POut.String(userod.BadgeId)+"' "
+				+"EClipboardClinicalPin= '"+POut.String(userod.EClipboardClinicalPin)+"' "
 				+"WHERE UserNumCEMT = "+POut.Long(userod.UserNumCEMT);
 			Db.NonQ(command);
 		}

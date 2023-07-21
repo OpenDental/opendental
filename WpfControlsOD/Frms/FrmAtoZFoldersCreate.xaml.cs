@@ -21,19 +21,15 @@ namespace OpenDental {
 		///<summary></summary>
 		public FrmAtoZFoldersCreate()
 		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
-			Load+=FrmAtoZFoldersCreate_Load;
-			PreviewKeyDown+=FrmAtoZFoldersCreate_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmAtoZFoldersCreate_Load(object sender,EventArgs e) {
-			Lang.F(this);
-		}
+		private void FrmAtoZFoldersCreate_Loaded(object sender,RoutedEventArgs e) {
 
-		private void FrmAtoZFoldersCreate_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
 		}
 
 		private void butSave_Click(object sender, System.EventArgs e) {
@@ -84,9 +80,30 @@ namespace OpenDental {
 			catch(Exception ex) {
 				Logger.openlog.LogMB("Failed to create A to Z folders: "+ex.ToString(),Logger.Severity.ERROR);
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Created AtoZ Folder");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Created AtoZ Folder");
 			IsDialogOK=true;
 		}
 
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

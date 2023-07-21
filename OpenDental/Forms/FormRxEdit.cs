@@ -11,6 +11,8 @@ namespace OpenDental{
 	public partial class FormRxEdit : FormODBase {
 		///<summary></summary>
 		public bool IsNew;
+		///<summary></summary>
+		public FormRpPrintPreview FormRpPrintPreview_ = new FormRpPrintPreview();
 		private Patient _patient;
 		//private User user;
 		private RxPat _rxPat;
@@ -39,9 +41,9 @@ namespace OpenDental{
 				labelView.Visible=false;
 				_sheet=null;
 				_userProvider=Providers.GetProv(Security.CurUser.ProvNum);
-				comboClinic.ClinicNumSelected=_patient.ClinicNum;
+				comboClinic.SelectedClinicNum=_patient.ClinicNum;
 				if(PrefC.GetBool(PrefName.ElectronicRxClinicUseSelected)){
-					comboClinic.ClinicNumSelected=Clinics.ClinicNum;
+					comboClinic.SelectedClinicNum=Clinics.ClinicNum;
 				}
 				if(_userProvider!=null && !_userProvider.IsSecondary) {//Only set the provider on the Rx if the provider is not a hygienist.
 					if(PrefC.GetBool(PrefName.ShowFeatureEhr)) {//Is CPOE
@@ -53,7 +55,7 @@ namespace OpenDental{
 			}
 			else {
 				_sheet=Sheets.GetRx(_rxPat.PatNum,_rxPat.RxNum);
-				comboClinic.ClinicNumSelected=_rxPat.ClinicNum;
+				comboClinic.SelectedClinicNum=_rxPat.ClinicNum;
 				if(_sheet==null){
 					butView.Visible=false;
 					labelView.Visible=false;
@@ -61,7 +63,7 @@ namespace OpenDental{
 				else{
 					butPrint.Visible=false;
 				}
-				if(!Security.IsAuthorized(EnumPermType.RxEdit)) {
+				if(!Security.IsAuthorized(Permissions.RxEdit)) {
 					textDate.Enabled=false;
 					checkControlled.Enabled=false;
 					checkProcRequired.Enabled=false;
@@ -80,7 +82,7 @@ namespace OpenDental{
 					comboSendStatus.Enabled=false;
 					butDelete.Enabled=false;
 					comboClinic.Enabled=false;
-					butSave.Enabled=false;
+					butOK.Enabled=false;
 				}
 			}
 			//security is handled on the Rx button click in the Chart module
@@ -161,13 +163,13 @@ namespace OpenDental{
 		///<summary>Fill the provider combobox with items depending on the clinic selected</summary>
 		private void FillComboProvNum() { 
 			comboProv.Items.Clear();
-			List<Provider> listProviders = Providers.GetProvsForClinicList(new List<long>{0, comboClinic.ClinicNumSelected}).Where(x => !x.IsNotPerson).ToList();
+			List<Provider> listProviders = Providers.GetProvsForClinicList(new List<long>{0, comboClinic.SelectedClinicNum}).Where(x => !x.IsNotPerson).ToList();
 			if(_userProvider!=null && !listProviders.Any(x => x.ProvNum==_userProvider.ProvNum) && !_userProvider.IsNotPerson) {
 				listProviders.Add(_userProvider);
 			}
 			if(PrefC.GetBool(PrefName.RxHideProvsWithoutDEA)) {
 				List<long> listProvNums=listProviders.Select(x => x.ProvNum).ToList();
-				List<long> listProviderNumsToKeep = ProviderClinics.GetByProvNumsAndClinicNum(listProvNums,comboClinic.ClinicNumSelected,includeUnsassigned:true)
+				List<long> listProviderNumsToKeep = ProviderClinics.GetByProvNumsAndClinicNum(listProvNums,comboClinic.SelectedClinicNum,includeUnsassigned:true)
 				.Where(x => !x.DEANum.IsNullOrEmpty())
 				.Select(x => x.ProvNum)
 				.ToList();
@@ -200,13 +202,13 @@ namespace OpenDental{
 		}
 
 		private void butPickProv_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick = new FrmProviderPick(comboProv.Items.GetAll<Provider>());
-			frmProviderPick.ProvNumSelected=comboProv.GetSelectedProvNum();
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick = new FormProviderPick(comboProv.Items.GetAll<Provider>());
+			formProviderPick.ProvNumSelected=comboProv.GetSelectedProvNum();
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboProv.SetSelectedProvNum(frmProviderPick.ProvNumSelected);
+			comboProv.SetSelectedProvNum(formProviderPick.ProvNumSelected);
 		}
 
 		private void butPick_Click(object sender,EventArgs e) {
@@ -222,11 +224,11 @@ namespace OpenDental{
 		}
 
 		private void butAudit_Click(object sender,EventArgs e) {
-			List<EnumPermType> listPermissionss=new List<EnumPermType>();
-			listPermissionss.Add(EnumPermType.RxCreate);
-			listPermissionss.Add(EnumPermType.RxEdit);
-			FrmAuditOneType frmAuditOneType=new FrmAuditOneType(_rxPat.PatNum,listPermissionss,Lan.g(this,"Audit Trail for Rx"),_rxPat.RxNum);
-			frmAuditOneType.ShowDialog();
+			List<Permissions> listPermissionss=new List<Permissions>();
+			listPermissionss.Add(Permissions.RxCreate);
+			listPermissionss.Add(Permissions.RxEdit);
+			using FormAuditOneType formAuditOneType=new FormAuditOneType(_rxPat.PatNum,listPermissionss,Lan.g(this,"Audit Trail for Rx"),_rxPat.RxNum);
+			formAuditOneType.ShowDialog();
 		}
 
 		///<summary>Attempts to save, returning true if successful.</summary>
@@ -269,7 +271,7 @@ namespace OpenDental{
 			_rxPat.Notes=textNotes.Text;
 			_rxPat.SendStatus=(RxSendStatus)comboSendStatus.SelectedIndex;
 			_rxPat.PatientInstruction=textPatInstructions.Text;
-			_rxPat.ClinicNum=(comboClinic.ClinicNumSelected==-1 ? _rxPat.ClinicNum : comboClinic.ClinicNumSelected);//If no selection, don't change the ClinicNum
+			_rxPat.ClinicNum=(comboClinic.SelectedClinicNum==-1 ? _rxPat.ClinicNum : comboClinic.SelectedClinicNum);//If no selection, don't change the ClinicNum
 			// hook for additional authorization before prescription is saved
 			bool[] boolArrayAuthorized=new bool[1] { false };
 			if(Plugins.HookMethod(this,"FormRxEdit.SaveRx_Authorize",boolArrayAuthorized,Providers.GetProv(selectedProvNum),_rxPat,_rxPatOld)) {
@@ -280,7 +282,7 @@ namespace OpenDental{
 			//pharmacy is set when using pick button.
 			if(IsNew){
 				_rxPat.RxNum=RxPats.Insert(_rxPat);
-				SecurityLogs.MakeLogEntry(EnumPermType.RxCreate,_rxPat.PatNum,"CREATED("+_rxPat.RxDate.ToShortDateString()+","+_rxPat.Drug+",ProvNum:"
+				SecurityLogs.MakeLogEntry(Permissions.RxCreate,_rxPat.PatNum,"CREATED("+_rxPat.RxDate.ToShortDateString()+","+_rxPat.Drug+",ProvNum:"
 					+_rxPat.ProvNum+",Disp:"+_rxPat.Disp+",Refills:"+_rxPat.Refills+")",_rxPat.RxNum,DateTime.MinValue);//No date previous needed, new Rx Pat
 				if(FormProcGroup.IsOpen){
 					FormProcGroup.RxNum=_rxPat.RxNum;
@@ -289,13 +291,9 @@ namespace OpenDental{
 			else{
 				if(RxPats.Update(_rxPat,_rxPatOld)) {
 					//The rx has changed, make an edit entry.
-					SecurityLogs.MakeLogEntry(EnumPermType.RxEdit,_rxPat.PatNum,"FROM("+_rxPatOld.RxDate.ToShortDateString()+","+_rxPatOld.Drug+","
+					SecurityLogs.MakeLogEntry(Permissions.RxEdit,_rxPat.PatNum,"FROM("+_rxPatOld.RxDate.ToShortDateString()+","+_rxPatOld.Drug+","
 						+_rxPatOld.ProvNum+","+_rxPatOld.Disp+","+_rxPatOld.Refills+")"+"\r\nTO("+_rxPat.RxDate.ToShortDateString()+","+_rxPat.Drug+","
 						+_rxPat.ProvNum+","+_rxPat.Disp+","+_rxPat.Refills+")",_rxPat.RxNum,_rxPatOld.DateTStamp);
-					if(_rxPat.SendStatus!=_rxPatOld.SendStatus) {//Make an additional log entry only if the send status changed
-						SecurityLogs.MakeLogEntry(EnumPermType.RxEdit,_rxPat.PatNum,"Send Status of Rx "+_rxPat.Drug+" changed from "+_rxPatOld.SendStatus+" to "+_rxPat.SendStatus,
-							_rxPat.RxNum,_rxPatOld.DateTStamp);
-					}
 				}
 			}
 			//If there is not a link for the current PharmClinic combo, make one.
@@ -314,7 +312,7 @@ namespace OpenDental{
 			if(MessageBox.Show(Lan.g(this,"Delete Prescription?"),"",MessageBoxButtons.OKCancel)!=DialogResult.OK) {
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.RxEdit,_rxPat.PatNum,"FROM("+_rxPatOld.RxDate.ToShortDateString()+","+_rxPatOld.Drug+","+_rxPatOld.ProvNum+","+_rxPatOld.Disp+","+_rxPatOld.Refills+")"+"\r\nTO('deleted')",_rxPat.RxNum,_rxPatOld.DateTStamp);
+			SecurityLogs.MakeLogEntry(Permissions.RxEdit,_rxPat.PatNum,"FROM("+_rxPatOld.RxDate.ToShortDateString()+","+_rxPatOld.Drug+","+_rxPatOld.ProvNum+","+_rxPatOld.Disp+","+_rxPatOld.Refills+")"+"\r\nTO('deleted')",_rxPat.RxNum,_rxPatOld.DateTStamp);
 			RxPats.Delete(_rxPat.RxNum);
 			DialogResult=DialogResult.OK;	
 		}
@@ -327,9 +325,9 @@ namespace OpenDental{
 			if(!PrintRx(false)) {
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.RxEdit,_rxPat.PatNum,"Printed as: "+_rxPat.RxDate.ToShortDateString()+","+_rxPat.Drug+",ProvNum:"+_rxPat.ProvNum+",Disp:"+_rxPat.Disp+",Refills:"+_rxPat.Refills,_rxPat.RxNum, _rxPat.DateTStamp);
+			SecurityLogs.MakeLogEntry(Permissions.RxEdit,_rxPat.PatNum,"Printed as: "+_rxPat.RxDate.ToShortDateString()+","+_rxPat.Drug+",ProvNum:"+_rxPat.ProvNum+",Disp:"+_rxPat.Disp+",Refills:"+_rxPat.Refills+")",_rxPat.RxNum, _rxPat.DateTStamp);
 			if(_rxPat.IsNew) {
-				AutomationL.Trigger(EnumAutomationTrigger.RxCreate,new List<string>(),_patient.PatNum,0,new List<RxPat>() { _rxPat });
+				AutomationL.Trigger(AutomationTrigger.RxCreate,new List<string>(),_patient.PatNum,0,new List<RxPat>() { _rxPat });
 			}
 			DialogResult=DialogResult.OK;
 		}
@@ -395,15 +393,20 @@ namespace OpenDental{
 			}
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!SaveRx()){
 				return;
 			}
 			if(_rxPat.IsNew) {
-				AutomationL.Trigger(EnumAutomationTrigger.RxCreate,new List<string>(),_patient.PatNum,0,new List<RxPat>() { _rxPat });
+				AutomationL.Trigger(AutomationTrigger.RxCreate,new List<string>(),_patient.PatNum,0,new List<RxPat>() { _rxPat });
 			}
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 
 	}
 }

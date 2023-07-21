@@ -11,7 +11,6 @@ using OpenDentBusiness.Crud;
 namespace OpenDental {
 	public partial class FormWebChatSessionNoteEdit:FormODBase {
 		private WebChatNote _webChatNote;
-		public bool IsDeleted=false;
 
 		public FormWebChatSessionNoteEdit(WebChatNote webChatNote) {
 			_webChatNote=webChatNote;
@@ -40,15 +39,15 @@ namespace OpenDental {
 			}
 			textNote.ReadOnly=true;
 			butAutoNote.Enabled=false;
-			butSave.Enabled=false;
+			butOK.Enabled=false;
 			textDateTime.ReadOnly=true;
 		}
 
 		private void butAutoNote_Click(object sender,EventArgs e) {
-			FrmAutoNoteCompose frmAutoNoteCompose=new FrmAutoNoteCompose();
-			frmAutoNoteCompose.ShowDialog();
-			if(frmAutoNoteCompose.IsDialogOK){
-				textNote.Text+=frmAutoNoteCompose.StrCompletedNote;
+			using FormAutoNoteCompose formAutoNoteCompose=new FormAutoNoteCompose();
+			formAutoNoteCompose.ShowDialog();
+			if(formAutoNoteCompose.DialogResult==DialogResult.OK){
+				textNote.Text+=formAutoNoteCompose.StrCompletedNote;
 			}
 		}
 
@@ -61,7 +60,6 @@ namespace OpenDental {
 				return;
 			}
 			WebChatNotes.Delete(_webChatNote.WebChatNoteNum);
-			IsDeleted=true;
 			DialogResult=DialogResult.OK;
 			Close();
 		}
@@ -76,7 +74,7 @@ namespace OpenDental {
 			handleCancel();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textNote.Text=="") {
 				MsgBox.Show(this,"Please enter a note, or delete this entry.");
 				return;
@@ -110,6 +108,5 @@ namespace OpenDental {
 			//This is effectively equivilent to a Cancel click
 			handleCancel();		
 		}
-
 	}
 }

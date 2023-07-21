@@ -24,12 +24,23 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEvaluationDefs));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butDuplicate = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.comboCourse = new OpenDental.UI.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(375, 453);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 5;
+			this.butCancel.Text = "Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butDuplicate
 			// 
@@ -89,6 +100,7 @@ namespace OpenDental{
 			// FormEvaluationDefs
 			// 
 			this.ClientSize = new System.Drawing.Size(461, 489);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.comboCourse);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.gridMain);
@@ -103,6 +115,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private UI.Button butDuplicate;
 		private UI.Button butAdd;
 		private UI.GridOD gridMain;

@@ -22,9 +22,6 @@ namespace WpfControls.UI {
 	public class GridColumn{
 		///<summary>Property backer.</summary>
 		private float _dynamicWeight=1;
-
-		///<summary>Set this to an event method and it will be used when the column header is clicked.</summary>
-		public EventHandler HeaderClick;
 	
 		#region Constructors
 		///<summary>Creates a new WpfControls.UI.GridColumn.</summary>
@@ -78,10 +75,6 @@ namespace WpfControls.UI {
 		[DefaultValue(false)]
 		public bool IsWidthDynamic{ get; set; } = false;
 		
-		///<summary>Default StringCompare</summary>
-		[DefaultValue(GridSortingStrategy.StringCompare)]
-		public GridSortingStrategy SortingStrategy { get; set; } = GridSortingStrategy.StringCompare;
-
 		///<summary>These fields can only be changed internally by ODGrid, never from outside ODGrid.  Includes Pos, Width, and Right of this column.</summary>
 		public GridColState State { get; set; } = new GridColState();
 
@@ -115,15 +108,5 @@ namespace WpfControls.UI {
 				return "Pos "+XPos.ToString()+", Width: "+Width.ToString();
 			}
 		}
-	}
-
-	public enum GridSortingStrategy {
-		///<summary>0- Default</summary>
-		StringCompare,
-		DateParse,
-		ToothNumberParse,
-		AmountParse,
-		TimeParse,
-		VersionNumber,
 	}
 }

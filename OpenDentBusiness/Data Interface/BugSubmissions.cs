@@ -25,47 +25,47 @@ namespace OpenDentBusiness {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<BugSubmission>>(MethodBase.GetCurrentMethod(),useConnectionStore);
 			}
-			List<BugSubmission> listBugSubmissions=new List<BugSubmission>();
+			List<BugSubmission> listBugSubs=new List<BugSubmission>();
 			DataAction.RunBugsHQ(() => { 
 				string command="SELECT * FROM bugsubmission";
-				listBugSubmissions=Crud.BugSubmissionCrud.SelectMany(command);
+				listBugSubs=Crud.BugSubmissionCrud.SelectMany(command);
 			},useConnectionStore);
-			return listBugSubmissions;
+			return listBugSubs;
 		}
 
 		///<summary>Returns a list of BugSubmissions for the given arrayHashNums.</summary>
-		public static List<BugSubmission> GetForHashNums(bool useConnectionStore,params long[] hashNumArray){
-			List<BugSubmission> listBugSubmissions=new List<BugSubmission>();
-			if(hashNumArray.IsNullOrEmpty()){
-				return listBugSubmissions;
+		public static List<BugSubmission> GetForHashNums(bool useConnectionStore,params long[] arrayHashNums){
+			List<BugSubmission> listBugSubs=new List<BugSubmission>();
+			if(arrayHashNums.IsNullOrEmpty()){
+				return listBugSubs;
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<BugSubmission>>(MethodBase.GetCurrentMethod(),useConnectionStore,hashNumArray);
+				return Meth.GetObject<List<BugSubmission>>(MethodBase.GetCurrentMethod(),useConnectionStore,arrayHashNums);
 			}
 			DataAction.RunBugsHQ(() => { 
-				string command=$@"SELECT * FROM bugsubmission WHERE BugSubmissionHashNum IN ({string.Join(",",hashNumArray.Select(x => POut.Long(x)))})";
-				listBugSubmissions=Crud.BugSubmissionCrud.SelectMany(command);
+				string command=$@"SELECT * FROM bugsubmission WHERE BugSubmissionHashNum IN ({string.Join(",",arrayHashNums.Select(x => POut.Long(x)))})";
+				listBugSubs=Crud.BugSubmissionCrud.SelectMany(command);
 			},useConnectionStore);
-			return listBugSubmissions;
+			return listBugSubs;
+			
 		}
 
 		///<summary>Returns BugSubmissions for the hash nums provided.  Key: BugSubmissionHashNum  Value: bugsubmissions.</summary>
 		public static SerializableDictionary<long,List<BugSubmission>> GetForHashNums(List<long> listHashNums,bool useConnectionStore=false) {
-			//Jordan-We would like to remove this dict, but too hard to test, so leaving for now.
-			SerializableDictionary<long,List<BugSubmission>> dictionaryHashBugSubs=new SerializableDictionary<long,List<BugSubmission>>();
+			SerializableDictionary<long,List<BugSubmission>> dictHashBugSubs=new SerializableDictionary<long,List<BugSubmission>>();
 			if(listHashNums.IsNullOrEmpty()) {
-				return dictionaryHashBugSubs;
+				return dictHashBugSubs;
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<SerializableDictionary<long,List<BugSubmission>>>(MethodBase.GetCurrentMethod(),listHashNums,useConnectionStore);
 			}
 			DataAction.RunBugsHQ(() => { 
-				List<BugSubmission> listBugSubmissions=GetForHashNums(useConnectionStore,listHashNums.ToArray());
+				List<BugSubmission> listBugSubs=GetForHashNums(useConnectionStore,listHashNums.ToArray());
 				listHashNums.ForEach(x => 
-					dictionaryHashBugSubs.Add(x,listBugSubmissions.FindAll(y => y.BugSubmissionHashNum==x))
+					dictHashBugSubs.Add(x,listBugSubs.FindAll(y => y.BugSubmissionHashNum==x))
 				);
 			},useConnectionStore);
-			return dictionaryHashBugSubs;
+			return dictHashBugSubs;
 		}
 
 		///<summary>Returns a list of bug submissions and their corresponding bugs.
@@ -78,7 +78,7 @@ namespace OpenDentBusiness {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<BugSubmission>>(MethodBase.GetCurrentMethod(),listRegKeys,dateFrom,dateTo);
 			}
-			List<BugSubmission> listBugSubmissionsRetVals=new List<BugSubmission>();
+			List<BugSubmission> listRetVals=new List<BugSubmission>();
 			DataAction.RunBugsHQ(() => { 
 				string command="SELECT * FROM bugsubmission "
 					+"LEFT JOIN bug ON bug.BugId=bugsubmission.BugId "
@@ -89,26 +89,23 @@ namespace OpenDentBusiness {
 				DataTable table=Db.GetTable(command);
 				//Make a clone of the table structure for the bug objects and only fill it with entries where the BugId row is valid.
 				DataTable tableBugs=table.Clone();
-				List<DataRow> listDataRows = table.Select().Where(x => PIn.Long(x["BugId"].ToString(),false)!=0).ToList();
-				for(int i=0;i<listDataRows.Count;i++){
-					tableBugs.ImportRow(listDataRows[i]);
+				foreach(DataRow row in table.Select().Where(x => PIn.Long(x["BugId"].ToString(),false)!=0)) {
+					tableBugs.ImportRow(row);
 				}
 				//Extract all of the bug objects from the subset table.
 				List<Bug> listBugs=Crud.BugCrud.TableToList(tableBugs);
 				//Extract all of the bugsubmission objects from the results.
-				List<BugSubmission> listBugSubmissions = Crud.BugSubmissionCrud.TableToList(table);
+				List<BugSubmission> listBugSubs = Crud.BugSubmissionCrud.TableToList(table);
 				//Associate any bug object with its corresponding bugsubmission object.
-				for(int i=0;i<listBugSubmissions.Count;i++){
-					listBugSubmissions[i].BugObj=listBugs.Find(y => y.BugId==listBugSubmissions[i].BugId);
-				}
+				listBugSubs.ForEach(x => x.BugObj=listBugs.FirstOrDefault(y => y.BugId==x.BugId));
 				//Group the bug submissions by RegKey, ExceptionStackTrace, and BugId.
-				listBugSubmissions.GroupBy(x => new { x.RegKey,x.ExceptionStackTrace,x.BugId })
+				listBugSubs.GroupBy(x => new { x.RegKey,x.ExceptionStackTrace,x.BugId })
 					//Each grouping will be ordered by ProgramVersion individually.
 					.ToDictionary(x => x.Key,x => x.OrderByDescending(x => new Version(x.TryGetPrefValue(PrefName.ProgramVersion,"0.0.0.0"))))
 					//Add the first and most pertinent bug submission in the grouping to the return value.
-					.ForEach(x => listBugSubmissionsRetVals.Add(x.Value.First()));
+					.ForEach(x => listRetVals.Add(x.Value.First()));
 			},false);
-			return listBugSubmissionsRetVals;
+			return listRetVals;
 		}
 
 		///<summary></summary>
@@ -117,67 +114,63 @@ namespace OpenDentBusiness {
 				return Meth.GetObject<List<BugSubmission>>(MethodBase.GetCurrentMethod(),dateFrom,dateTo,listVersionFilters,useConnectionStore);
 			}
 			bool hasSelections=(!listVersionFilters.IsNullOrEmpty());
-			List<BugSubmission> listBugSubmissions=new List<BugSubmission>();
+			List<BugSubmission> listBugSubs=new List<BugSubmission>();
 			DataAction.RunBugsHQ(() => { 
-				string command="SELECT * FROM bugsubmission WHERE " + DbHelper.BetweenDates("SubmissionDateTime",dateFrom,dateTo);
-				if(hasSelections){
-					command += " AND (";
-					for(int i=0;i<listVersionFilters.Count;i++){
-						if(i>0){
-							command += " OR ";
-						}
-						if(listVersionFilters[i] == "Mobile"){
-							command += "DbInfoJson LIKE '%\"DeviceId\":%' AND DbInfoJson NOT LIKE '%\"DeviceId\":null%'";
-							continue;
-						}
-						command += "DbVersion LIKE '"+POut.String(listVersionFilters[i])+"%'";
-					}
-					command += " ) ";
-				}
-				listBugSubmissions=Crud.BugSubmissionCrud.SelectMany(command);
+				string command=$@"SELECT * FROM bugsubmission WHERE {DbHelper.BetweenDates("SubmissionDateTime",dateFrom,dateTo)} 
+					{(hasSelections 
+						? $@" AND ({string.Join(" OR ",listVersionFilters.Select(x => 
+								(x=="Mobile"
+									? "DbInfoJson like '%\"DeviceId\":%' and DbInfoJson NOT LIKE '%\"DeviceId\":null%'" 
+									: "DbVersion LIKE '"+POut.String(x)+"%'"
+								)))
+							})" 
+						: ""
+					)}
+				";
+				listBugSubs=Crud.BugSubmissionCrud.SelectMany(command);
 			},useConnectionStore);
-			return listBugSubmissions;
+			return listBugSubs;
 		}
 
 		///<summary>Returns list of BugSubmissions for given arrayBugIds.</summary>
 		public static List<BugSubmission> GetForBugId(params long[] arrayBugIds) {
-			List<BugSubmission> listBugSubmissions=new List<BugSubmission>();
+			List<BugSubmission> listBugSubs=new List<BugSubmission>();
 			if(arrayBugIds.IsNullOrEmpty()){
-				return listBugSubmissions;
+				return listBugSubs;
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<BugSubmission>>(MethodBase.GetCurrentMethod(),arrayBugIds);
 			}
 			DataAction.RunBugsHQ(() => { 
-				listBugSubmissions=Crud.BugSubmissionCrud.SelectMany(
+				listBugSubs=Crud.BugSubmissionCrud.SelectMany(
 					"SELECT * FROM bugsubmission WHERE BugId IN ("+string.Join(",",arrayBugIds.Select(x => POut.Long(x)))+")"
 				);
 			},false);
-			return listBugSubmissions;
+			return listBugSubs;
 		}
 
 		public static List<BugSubmission> GetAllAttached() {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<BugSubmission>>(MethodBase.GetCurrentMethod());
 			}
-			List<BugSubmission> listBugSubmissions=new List<BugSubmission>();
+			List<BugSubmission> listBugSubs=new List<BugSubmission>();
 			DataAction.RunBugsHQ(() => { 
 				string command="SELECT * FROM bugsubmission WHERE BugId!=0";
-				listBugSubmissions=Crud.BugSubmissionCrud.SelectMany(command);
+				listBugSubs=Crud.BugSubmissionCrud.SelectMany(command);
 			},false);
-			return listBugSubmissions;
+			return listBugSubs;
 		}
 
 		///<summary>Gets one BugSubmission from the db.</summary>
-		public static BugSubmission GetOne(long bugSubmissionNum) {
+		public static BugSubmission GetOne(long bugSubmissionId) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<BugSubmission>(MethodBase.GetCurrentMethod(),bugSubmissionNum);
+				return Meth.GetObject<BugSubmission>(MethodBase.GetCurrentMethod(),bugSubmissionId);
 			}
-			BugSubmission bugSubmission=null;
+			BugSubmission bugSub=null;
 			DataAction.RunBugsHQ(() => { 
-				bugSubmission=Crud.BugSubmissionCrud.SelectOne(bugSubmissionNum);
+				bugSub=Crud.BugSubmissionCrud.SelectOne(bugSubmissionId);
 			},false);
-			return bugSubmission;
+			return bugSub;
 		}
 
 		/// <summary>
@@ -204,41 +197,36 @@ namespace OpenDentBusiness {
 			//Servername, database name, msq user and password
 			List<FieldInfo> listFieldInfos = submissionInfo.GetType().GetFields().ToList();
 			for(int i = 0; i < listFieldInfos.Count; i++) {
-				object objectValue = listFieldInfos[i].GetValue(submissionInfo);
-				if(objectValue.In(null, "")) {
+				object value = listFieldInfos[i].GetValue(submissionInfo);
+				if(value.In(null, "")) {
 					continue;
 				}
-				if(objectValue is Dictionary<PrefName, string>) {//DictPrefValues
-					Dictionary<PrefName, string> dictionaryPrefValues = objectValue as Dictionary<PrefName, string>;
+				if(value is Dictionary<PrefName, string>) {//DictPrefValues
+					Dictionary<PrefName, string> dictionaryPrefValues = value as Dictionary<PrefName, string>;
 					if(dictionaryPrefValues.Keys.Count > 0) {
 						stringBuilder.AppendLine(listFieldInfos[i].Name + ":");
-						List<KeyValuePair<PrefName, string>> listKeyValuePairsPrefVals = dictionaryPrefValues.ToList();
-						for(int j=0;j<listKeyValuePairsPrefVals.Count;j++){
-							stringBuilder.AppendLine(" " + listKeyValuePairsPrefVals[j].Key.ToString() + " " + listKeyValuePairsPrefVals[j].Value);
-						}
+						dictionaryPrefValues.ToList().ForEach(x => stringBuilder.AppendLine("  " + x.Key.ToString() + ": " + x.Value));
 						stringBuilder.AppendLine("-------------");
 					}
 				}
-				else if(objectValue is List<string>) {//EnabledPlugins
-					List<string> listEnabledPlugins = objectValue as List<string>;
+				else if(value is List<string>) {//EnabledPlugins
+					List<string> listEnabledPlugins = value as List<string>;
 					if(listEnabledPlugins.Count > 0) {
 						stringBuilder.AppendLine(listFieldInfos[i].Name + ":");
-						for(int j=0;j<listEnabledPlugins.Count;j++){
-							stringBuilder.AppendLine(" " + listEnabledPlugins[j]);
-						}
+						listEnabledPlugins.ForEach(x => stringBuilder.AppendLine("  " + x));
 						stringBuilder.AppendLine("-------------");
 					}
 				}
-				else if(objectValue is bool) {
-					stringBuilder.AppendLine(listFieldInfos[i].Name + ": " + (((bool)objectValue) == true ? "true" : "false"));
+				else if(value is bool) {
+					stringBuilder.AppendLine(listFieldInfos[i].Name + ": " + (((bool)value) == true ? "true" : "false"));
 				}
 				else if(listFieldInfos[i].Name == "CountClinics") {
-					int countTotalClinics = (int)objectValue;
+					int countTotalClinics = (int)value;
 					int countHiddenClinics = countTotalClinics - Clinics.GetCount(true);
 					stringBuilder.AppendLine($"{listFieldInfos[i].Name}: {countTotalClinics} ({countHiddenClinics} hidden)");
 				}
 				else {
-					stringBuilder.AppendLine(listFieldInfos[i].Name + ": " + objectValue);
+					stringBuilder.AppendLine(listFieldInfos[i].Name + ": " + value);
 				}
 			}
 			//Display the current HQ connection information.
@@ -280,102 +268,103 @@ namespace OpenDentBusiness {
 		}
 		
 		///<summary>Attempts to insert the given BugSubmission.</summary>
-		public static BugSubmissionResult TryInsertBugSubmission(BugSubmission bugSubmission,out string matchedFixedVersion,Func<BugSubmission,bool> funcFilterValidation,bool doFilterValidation=true) {
+		public static BugSubmissionResult TryInsertBugSubmission(BugSubmission sub,out string matchedFixedVersion,Func<BugSubmission,bool> funcFilterValidation,bool doFilterValidation=true) {
 			//No need to check MiddleTierRole; out parameter.
-			BugSubmissionResult bugSubmissionResult=BugSubmissionResult.None;
+			BugSubmissionResult result=BugSubmissionResult.None;
 			matchedFixedVersion=null;
-			if(doFilterValidation && !funcFilterValidation(bugSubmission)) {
-				bugSubmissionResult=BugSubmissionResult.UpdateRequired;
-				return bugSubmissionResult;
+			if(!doFilterValidation || funcFilterValidation(sub)) {
+				result=BugSubmissionHashes.ProcessSubmission(sub,out long matchedBugId,out matchedFixedVersion,out long matchedBugSubmissionHashNum);
+				switch(result){
+					default:
+					case BugSubmissionResult.SuccessMatched://Hash found and points to valid bugId, but associated bug not flagged as fixed.
+					case BugSubmissionResult.SuccessMatchedFixed://Same as above but bug is flagged as fixed, matchedVersionsFixed is set also.
+						sub.BugId=matchedBugId;
+						sub.BugSubmissionHashNum=matchedBugSubmissionHashNum;
+						break;
+					case BugSubmissionResult.SuccessHashFound://Seen this submission before but no attached bug found. BugId=0.
+						sub.BugSubmissionHashNum=matchedBugSubmissionHashNum;
+						break;
+					case BugSubmissionResult.SuccessHashNeeded://New submission we do not have a hash for. BugId=0.
+						long bugSubmissionHashNum=BugSubmissionHashes.Insert(new BugSubmissionHash() {
+							FullHash=sub.HashedStackTrace,
+							PartialHash=sub.HashedSimpleStackTrace
+						});
+						sub.BugSubmissionHashNum=bugSubmissionHashNum;
+						break;
+					case BugSubmissionResult.Failed:
+						break;
+				}
+				Insert(sub);
 			}
-			bugSubmissionResult=BugSubmissionHashes.ProcessSubmission(bugSubmission,out long matchedBugId,out matchedFixedVersion,out long matchedBugSubmissionHashNum);
-			switch(bugSubmissionResult){
-				default:
-				case BugSubmissionResult.SuccessMatched://Hash found and points to valid bugId, but associated bug not flagged as fixed.
-				case BugSubmissionResult.SuccessMatchedFixed://Same as above but bug is flagged as fixed, matchedVersionsFixed is set also.
-					bugSubmission.BugId=matchedBugId;
-					bugSubmission.BugSubmissionHashNum=matchedBugSubmissionHashNum;
-					break;
-				case BugSubmissionResult.SuccessHashFound://Seen this submission before but no attached bug found. BugId=0.
-					bugSubmission.BugSubmissionHashNum=matchedBugSubmissionHashNum;
-					break;
-				case BugSubmissionResult.SuccessHashNeeded://New submission we do not have a hash for. BugId=0.
-					long bugSubmissionHashNum=BugSubmissionHashes.Insert(new BugSubmissionHash() {
-						FullHash=bugSubmission.HashedStackTrace,
-						PartialHash=bugSubmission.HashedSimpleStackTrace
-					});
-					bugSubmission.BugSubmissionHashNum=bugSubmissionHashNum;
-					break;
-				case BugSubmissionResult.Failed:
-					break;
+			else{
+				result=BugSubmissionResult.UpdateRequired;
 			}
-			Insert(bugSubmission);
-			return bugSubmissionResult;
+			return result;
 		}
 		#endregion
 
 		#region Update
 		///<summary></summary>
-		public static void Update(BugSubmission bugSubmissionNew, BugSubmission bugSubmissionOld,bool useConnectionStore=false) {
+		public static void Update(BugSubmission subNew, BugSubmission subOld,bool useConnectionStore=false) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),bugSubmissionNew,bugSubmissionOld,useConnectionStore);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),subNew,subOld,useConnectionStore);
 				return;
 			}
 			DataAction.RunBugsHQ(() => { 
-				Crud.BugSubmissionCrud.Update(bugSubmissionNew,bugSubmissionOld);
+				Crud.BugSubmissionCrud.Update(subNew,subOld);
 			},useConnectionStore);
 		}
 		
 		///<summary>Updates all bugIds for given bugSubmissionNums.</summary>
-		public static void UpdateBugIds(long bugId,List<BugSubmission> listBugSubmissions) {
-			if(listBugSubmissions.IsNullOrEmpty()) {
+		public static void UpdateBugIds(long bugId,List<BugSubmission> listBugSubs) {
+			if(listBugSubs.IsNullOrEmpty()) {
 				return;
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),bugId,listBugSubmissions);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),bugId,listBugSubs);
 				return;
 			}
 			DataAction.RunBugsHQ(() => { 
 				Db.NonQ("UPDATE bugsubmission SET BugId="+POut.Long(bugId)
-					+" WHERE BugSubmissionNum IN ("+string.Join(",",listBugSubmissions.Select(x => POut.Long(x.BugSubmissionNum)))+")");
+					+" WHERE BugSubmissionNum IN ("+string.Join(",",listBugSubs.Select(x => POut.Long(x.BugSubmissionNum)))+")");
 			},false);
-			BugSubmissionHashes.UpdateBugIds(listBugSubmissions,bugId);
+			BugSubmissionHashes.UpdateBugIds(listBugSubs,bugId);
 		}
 
 		///<summary>Updates various columns based on in memory changes in listSubs.</summary>
-		public static void UpdateMany(List<BugSubmission> listBugSubmissions,params string[] strArrayColumns) {
-			if(listBugSubmissions.Count==0 || strArrayColumns.Count()==0) {
+		public static void UpdateMany(List<BugSubmission> listSubs,params string[] listColumns) {
+			if(listSubs.Count==0 || listColumns.Count()==0) {
 				return;
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listBugSubmissions,strArrayColumns);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),listSubs,listColumns);
 				return;
 			}
 			List<string> listColumnUpdates=new List<string>();
-			for(int i=0;i<strArrayColumns.Length;i++){
+			foreach(string column in listColumns) {
 				List<string> listCases=new List<string>();
-				switch(strArrayColumns[i]) {
+				switch(column) {
 					#region IsHidden
 					case "IsHidden":
-						for(int j=0;j<listBugSubmissions.Count;j++){
-							listCases.Add("WHEN "+POut.Long(listBugSubmissions[j].BugSubmissionNum)+" THEN "+POut.Bool(listBugSubmissions[j].IsHidden));
+						foreach(BugSubmission sub in listSubs) {
+							listCases.Add("WHEN "+POut.Long(sub.BugSubmissionNum)+" THEN "+POut.Bool(sub.IsHidden));
 						}
 						break;
 					#endregion
 					#region BugId
 					case "BugId":
-						for(int j=0;j<listBugSubmissions.Count;j++){
-							listCases.Add("WHEN "+POut.Long(listBugSubmissions[j].BugSubmissionNum)+" THEN "+POut.Long(listBugSubmissions[j].BugId));
+						foreach(BugSubmission sub in listSubs) {
+							listCases.Add("WHEN "+POut.Long(sub.BugSubmissionNum)+" THEN "+POut.Long(sub.BugId));
 						}
 						break;
 					#endregion
 				}
-				listColumnUpdates.Add(strArrayColumns[i]+"=(CASE BugSubmissionNum "+string.Join(" ",listCases)+" END)");
+				listColumnUpdates.Add(column+"=(CASE BugSubmissionNum "+string.Join(" ",listCases)+" END)");
 			}
 			DataAction.RunBugsHQ(() => { 
 				Db.NonQ("UPDATE bugsubmission SET "
 					+string.Join(",",listColumnUpdates)+" "
-					+"WHERE BugSubmissionNum IN ("+string.Join(",",listBugSubmissions.Select(x => x.BugSubmissionNum))+")");
+					+"WHERE BugSubmissionNum IN ("+string.Join(",",listSubs.Select(x => x.BugSubmissionNum))+")");
 			},false);
 		}
 		#endregion
@@ -443,18 +432,18 @@ namespace OpenDentBusiness {
 		public static BugSubmissionResult ParseBugSubmissionResult(string result,out string displayMsg) {
 			//No remoting role check; out parameter
 			displayMsg=null;
-			XmlDocument xmlDocument=new XmlDocument();
-			xmlDocument.LoadXml(result);
-			if(xmlDocument.SelectSingleNode("//Error")!=null) {
+			XmlDocument doc=new XmlDocument();
+			doc.LoadXml(result);
+			if(doc.SelectSingleNode("//Error")!=null) {
 				return BugSubmissionResult.Failed;
 			}
 			//A BugSubmission.Response object will get returned.
-			XmlNode xmlNodeResponse=xmlDocument.SelectSingleNode("//SubmissionResult");
-			if(xmlNodeResponse!=null) {
-				BugSubmissionResult bugSubmissionResult;
-				if(Enum.TryParse(xmlNodeResponse.InnerText,out bugSubmissionResult)) {
-					displayMsg=xmlDocument.SelectSingleNode("//DisplayString")?.InnerText;
-					return bugSubmissionResult;
+			XmlNode responseNode=doc.SelectSingleNode("//SubmissionResult");
+			if(responseNode!=null) {
+				BugSubmissionResult resultSub;
+				if(Enum.TryParse(responseNode.InnerText,out resultSub)) {
+					displayMsg=doc.SelectSingleNode("//DisplayString")?.InnerText;
+					return resultSub;
 				}
 			}
 			return BugSubmissionResult.None;//Just in case;
@@ -464,15 +453,14 @@ namespace OpenDentBusiness {
 		/// Returns true if currentVersion has a pertinent update version in listFixedVersions.
 		/// When true pertinentFixedVersion is set to the specific version that can be used.
 		/// </summary>
-		public static bool TryMatchPertinentFixedVersion(Version currentVersion,List<Version> listVersionsFixed,out Version versionPertinentFixed) {
-			//No need to check MiddleTierRole; no call to db.
-			versionPertinentFixed=null;
+		public static bool TryMatchPertinentFixedVersion(Version currentVersion,List<Version> listFixedVersions,out Version pertinentFixedVersion) {
+			pertinentFixedVersion=null;
 			//Make sure that the current bug submission is at a version that is lower than all fixed versions.  Rare but it has happened.
-			if(listVersionsFixed.All(x => x<currentVersion)) {
+			if(listFixedVersions.All(x => x<currentVersion)) {
 				//Not a single fixed version is higher than the bug submission that just came in.  Guaranteed to be a new bug.
 			}
 			//Only versions of the same Major and Minor matter.
-			else if(listVersionsFixed.Any(x => x.Major==currentVersion.Major && x.Minor==currentVersion.Minor && x.Build<=currentVersion.Build)) {
+			else if(listFixedVersions.Any(x => x.Major==currentVersion.Major && x.Minor==currentVersion.Minor && x.Build<=currentVersion.Build)) {
 				//There are fixed versions, they may or may not be pertinent to the bug submission version.
 				//Only care about fixed versions that share the same Major version.  
 				//E.g. a fixed version with a higher Major version doesn't necessarily mean this bug is fixed.  
@@ -483,26 +471,25 @@ namespace OpenDentBusiness {
 			}
 			else {
 				//Fix is on more recent major version than what user is on.
-				versionPertinentFixed=listVersionsFixed.Find(x => x>currentVersion);
+				pertinentFixedVersion=listFixedVersions.FirstOrDefault(x => x>currentVersion);
 			}
-			return (versionPertinentFixed!=null);
+			return (pertinentFixedVersion!=null);
 		}
 		
-		public static string GetSubmissionDescription(Patient patient,BugSubmission bugSubmission) {
-			//No need to check MiddleTierRole; no call to db.
+		public static string GetSubmissionDescription(Patient patCur,BugSubmission sub) {
 			string retVal="";
 			ODException.SwallowAnyException(() => { 
-				retVal="Caller Name and #: "+patient.GetNameLF() +" (work) "+patient.WkPhone+"\r\n"
-					+"Quick desc: "+bugSubmission.ExceptionMessageText+"\r\n"
-					+"OD version: "+bugSubmission.TryGetPrefValue(PrefName.ProgramVersion,"0.0.0.0")+"\r\n"
-					+"Windows version: "+bugSubmission.Info.WindowsVersion+"\r\n"
-					+"Comps affected: "+bugSubmission.Info.CompName+"\r\n"
-					+"Database name: "+bugSubmission.Info.DatabaseName+"\r\n"
-					+"Example PatNum: " +bugSubmission.Info.PatientNumCur+"\r\n"
+				retVal="Caller Name and #: "+patCur.GetNameLF() +" (work) "+patCur.WkPhone+"\r\n"
+					+"Quick desc: "+sub.ExceptionMessageText+"\r\n"
+					+"OD version: "+sub.TryGetPrefValue(PrefName.ProgramVersion,"0.0.0.0")+"\r\n"
+					+"Windows version: "+sub.Info.WindowsVersion+"\r\n"
+					+"Comps affected: "+sub.Info.CompName+"\r\n"
+					+"Database name: "+sub.Info.DatabaseName+"\r\n"
+					+"Example PatNum: " +sub.Info.PatientNumCur+"\r\n"
 					+"Details: "+"\r\n"
 					+"Duplicable?: "+"\r\n"
 					+"Steps to duplicate: "+"\r\n"
-					+"Exception:  "+bugSubmission.ExceptionStackTrace;
+					+"Exception:  "+sub.ExceptionStackTrace;
 			});
 			return retVal;
 		}

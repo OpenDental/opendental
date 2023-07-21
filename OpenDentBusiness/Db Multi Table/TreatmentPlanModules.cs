@@ -39,7 +39,7 @@ namespace OpenDentBusiness {
 			tpData.ListTreatPlans=TreatPlans.GetAllForPat(patNum);
 			tpData.ListProcTPs=ProcTPs.Refresh(patNum);
 			if(doMakeSecLog) {
-				SecurityLogs.MakeLogEntry(EnumPermType.TPModule,patNum,"");
+				SecurityLogs.MakeLogEntry(Permissions.TPModule,patNum,"");
 			}
 			return tpData;
 		}
@@ -291,11 +291,7 @@ namespace OpenDentBusiness {
 						_loadActiveTPData.ListFees,lookupFees,
 						orthoProcLink,orthoCase,orthoSchedule,listOrthoProcLinksForOrthoCase,_loadActiveTPData.BlueBookEstimateData);
 					//then, add this information to loopList so that the next procedure is aware of it.
-					List<ClaimProcHist> listClaimProcHistsToAdd = ClaimProcs.GetHistForProc(_listClaimProcs,listProceduresForTPs[i],listProceduresForTPs[i].CodeNum);
-					for(int c=0;c<listClaimProcHistsToAdd.Count;c++) {
-						listClaimProcHistsToAdd[c].ProcDate=dateTimeTP;
-					}
-					listClaimProcHistsLoops.AddRange(listClaimProcHistsToAdd);
+					listClaimProcHistsLoops.AddRange(ClaimProcs.GetHistForProc(_listClaimProcs,listProceduresForTPs[i],listProceduresForTPs[i].CodeNum));
 				}
 				SyncCanadianLabs(_listClaimProcs,listProceduresForTPs);
 				//We don't want to save the claimprocs if it's a date other than DateTime.Today, since they are calculated using modified date information.
@@ -326,9 +322,8 @@ namespace OpenDentBusiness {
 					listClaimProcHistsLoops.AddRange(ClaimProcs.GetHistForProc(_listClaimProcs,listProceduresForTPs[i],listProceduresForTPs[i].CodeNum));
 				}
 				SyncCanadianLabs(_listClaimProcs,listProceduresForTPs);
-				//We don't want to save the claimprocs if it's a date other than DateTime.Today, since they are calculated using modified date information.
 				//Only save to db if this is the active TP.  Inactive TPs should not change what is stored in the db, only what is displayed in the grid.
-				if(dateTimeTP==DateTime.Today && treatPlan.TPStatus==TreatPlanStatus.Active) {
+				if(treatPlan.TPStatus==TreatPlanStatus.Active) {
 					ClaimProcs.Synch(ref _listClaimProcs,listClaimProcsOld);
 				}
 			}

@@ -83,6 +83,10 @@ namespace OpenDentalImaging {
 			FillGrid();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 		private void butUp_Click(object sender, EventArgs e){
 			int idxSelected=gridMain.GetSelectedIndex();
 			if(idxSelected==-1) {
@@ -130,6 +134,8 @@ namespace OpenDentalImaging {
 				DataValid.SetInvalid(InvalidType.ToolButsAndMounts);
 			}
 		}
+
+
 
 	}
 }

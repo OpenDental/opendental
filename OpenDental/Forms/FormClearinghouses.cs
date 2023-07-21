@@ -40,7 +40,7 @@ namespace OpenDental{
 			_listClearinghousesHq=Clearinghouses.GetDeepCopy(true);
 			_listClearinghousesClinicsAll=Clearinghouses.GetAllNonHq();
 			_listClearinghousesClinics=new List<Clearinghouse>();
-			comboClinic.ClinicNumSelected=Clinics.ClinicNum;
+			comboClinic.SelectedClinicNum=Clinics.ClinicNum;
 			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
 				butEligibility.Visible=false;
 			}
@@ -59,7 +59,7 @@ namespace OpenDental{
 		private void FillGrid(){
 			_listClearinghousesClinics.Clear();
 			for(int i=0;i<_listClearinghousesClinicsAll.Count;i++) {
-				if(_listClearinghousesClinicsAll[i].ClinicNum==comboClinic.ClinicNumSelected) {
+				if(_listClearinghousesClinicsAll[i].ClinicNum==comboClinic.SelectedClinicNum) {
 					_listClearinghousesClinics.Add(_listClearinghousesClinicsAll[i]);
 				}
 			}
@@ -124,7 +124,7 @@ namespace OpenDental{
 			using FormClearinghouseEdit formClearinghouseEdit=new FormClearinghouseEdit();
 			formClearinghouseEdit.ClearinghouseHq=clearinghouseHq;
 			formClearinghouseEdit.ClearinghouseHqOld=clearinghouseHq.Copy(); //cannot be null
-			formClearinghouseEdit.ClinicNum=comboClinic.ClinicNumSelected;//_selectedClinicNum;
+			formClearinghouseEdit.ClinicNum=comboClinic.SelectedClinicNum;//_selectedClinicNum;
 			formClearinghouseEdit.ListClearinghousesClin=new List<Clearinghouse>();
 			formClearinghouseEdit.ListClearinghousesClinOld=new List<Clearinghouse>();
 			for(int i=0;i<_listClearinghousesClinicsAll.Count;i++) {
@@ -265,7 +265,7 @@ namespace OpenDental{
 			textReportComputerName.Text=Dns.GetHostName();
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butClose_Click(object sender, System.EventArgs e) {
 			if(textReportComputerName.Text.Trim().ToLower()=="localhost" || textReportComputerName.Text.Trim()=="127.0.0.1") {
 				MsgBox.Show(this,"Computer name to fetch new reports from cannot be localhost or 127.0.0.1 or any other loopback address.");
 				return;
@@ -359,3 +359,24 @@ namespace OpenDental{
 
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

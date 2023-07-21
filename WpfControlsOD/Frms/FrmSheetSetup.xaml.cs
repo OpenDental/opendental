@@ -18,19 +18,11 @@ namespace OpenDental {
 
 		public FrmSheetSetup() {
 			InitializeComponent();
-			Load+=FrmSheetSetup_Load;
-			PreviewKeyDown+=FrmSheetSetup_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmSheetSetup_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmSheetSetup_Loaded(object sender,RoutedEventArgs e) {
 			checkPatientFormsShowConsent.Checked=PrefC.GetBool(PrefName.PatientFormsShowConsent);
-		}
-
-		private void FrmSheetSetup_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
 		}
 		
 		private void butSave_Click(object sender,EventArgs e) {
@@ -42,6 +34,7 @@ namespace OpenDental {
 			}
 			IsDialogOK=true;
 		}
+
 
 	}
 }

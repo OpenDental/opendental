@@ -160,7 +160,7 @@ namespace OpenDental {
 		}
 
 		private void menuItemSetup_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			using FormEmailAddresses formEmailAddresses=new FormEmailAddresses();
@@ -226,8 +226,8 @@ namespace OpenDental {
 				EmailMessage emailMessage=(EmailMessage)gridInbox.ListGridRows[gridInbox.SelectedIndices[i]].Tag;
 				listEmailMessageNumsSelected.Add(emailMessage.EmailMessageNum);
 			}
-			int sortByColIdx=gridInbox.GetSortedByColumnIdx();
-			bool isSortAsc=gridInbox.IsSortedAscending();
+			int sortByColIdx=gridInbox.SortedByColumnIdx;
+			bool isSortAsc=gridInbox.SortedIsAscending;
 			if(sortByColIdx==-1) {
 				//Default to sorting by Date Received descending.
 				sortByColIdx=2;
@@ -339,8 +339,8 @@ namespace OpenDental {
 				listEmailMessageNumsSelected.Add(emailMessage.EmailMessageNum);
 			}
 			//sorting
-			int sortByColIdx=gridSent.GetSortedByColumnIdx();
-			bool isSortAsc=gridSent.IsSortedAscending();
+			int sortByColIdx=gridSent.SortedByColumnIdx;
+			bool isSortAsc=gridSent.SortedIsAscending;
 			if(sortByColIdx==-1) {
 				//Default to sorting by Date Received descending.
 				sortByColIdx=3;
@@ -397,7 +397,7 @@ namespace OpenDental {
 			EmailAddress emailAddressSelected=GetSelectedAddress();
 			string[] arrayAddresses={ emailAddressSelected.EmailUsername.ToLower() };
 			if(!string.IsNullOrEmpty(emailAddressSelected.SenderAddress)) {
-				arrayAddresses=arrayAddresses.Append(emailAddressSelected.SenderAddress.ToLower()).ToArray();
+				arrayAddresses.Append(emailAddressSelected.SenderAddress.ToLower());
 			}
 			if(_isSearching) { //if searching, use the search list. Should be prefilled.
 				listEmailsFiltered=_listEmailMessagesSentSearched.FindAll(x => EmailMessages.GetAddressSimple(x.FromAddress).ToLower().In(arrayAddresses));
@@ -476,12 +476,7 @@ namespace OpenDental {
 				gridSent.ListGridRows.Add(row);
 			}
 			gridSent.EndUpdate();
-			//sorting/reselecting previously selected rows
-			if(sortByColIdx>=gridSent.Columns.Count) {//Prevents UE on grid refresh if the user hid the FailReason column by unchecking the "Show Failed Emails" checkbox
-				//Default to sorting by Date Received descending.
-				sortByColIdx=3;
-				isSortAsc=false;
-			}
+			//sorting/reselcting previously selected rows
 			gridSent.SortForced(sortByColIdx,isSortAsc);
 			//Select the previously selected emails
 			for(int i=0;i<gridSent.ListGridRows.Count;i++) {
@@ -500,9 +495,7 @@ namespace OpenDental {
 
 		///<summary>Loads HideInFlags into listEmailHideInFlags and adds them listHideInFlags.</summary>
 		private void InitEmailHideInFlags() {
-			_listHideInFlags=Enum.GetValues(typeof(HideInFlags)).Cast<HideInFlags>().ToList();
-			_listHideInFlags.Remove(HideInFlags.None);
-			_listHideInFlags.Remove(HideInFlags.AccountProgNotes);
+			_listHideInFlags=Enum.GetValues(typeof(HideInFlags)).Cast<HideInFlags>().Where(x => x!=HideInFlags.None).ToList();
 			for(int i=0;i<_listHideInFlags.Count;i++) {
 				listShowIn.Items.Add(Lan.g("enumHideInFlags",(_listHideInFlags[i]).GetDescription()));
 			}
@@ -950,7 +943,7 @@ namespace OpenDental {
 		}
 
 		private void butCompose_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.EmailSend)){
+			if(!Security.IsAuthorized(Permissions.EmailSend)){
 				return;
 			}
 			EmailMessage emailMessage=new EmailMessage();
@@ -971,7 +964,7 @@ namespace OpenDental {
 		}
 
 		private void ReplyClickHelper(bool isReplyAll=false) {
-			if(!Security.IsAuthorized(EnumPermType.EmailSend)) {
+			if(!Security.IsAuthorized(Permissions.EmailSend)) {
 				return;
 			}
 			if(gridInbox.GetSelectedIndex()==-1) {
@@ -990,7 +983,7 @@ namespace OpenDental {
 		}
 
 		private void butForward_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.EmailSend)) {
+			if(!Security.IsAuthorized(Permissions.EmailSend)) {
 				return;
 			}
 			if(gridInbox.GetSelectedIndex()==-1) {
@@ -1202,7 +1195,7 @@ namespace OpenDental {
 					if(emailMessage.MsgDateTime != DateTime.MinValue) {
 						logText+="\r\n"+Lan.g(this,"Date")+": "+emailMessage.MsgDateTime.ToShortDateString()+". ";
 					}
-					SecurityLogs.MakeLogEntry(EnumPermType.WebMailDelete,emailMessage.PatNum,Lan.g(this,"Webmail deleted.")+" "+logText);
+					SecurityLogs.MakeLogEntry(Permissions.WebMailDelete,emailMessage.PatNum,Lan.g(this,"Webmail deleted.")+" "+logText);
 				}
 				else {//Not a web mail message.
 					EmailMessages.Delete(emailMessage);
@@ -1234,9 +1227,12 @@ namespace OpenDental {
 			Cursor=Cursors.Default;
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 		private void FormEmailInbox_FormClosing(object sender,FormClosingEventArgs e) {
 			_hasClosed=true;
 		}
-
 	}
 }

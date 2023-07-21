@@ -35,7 +35,8 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormClaimFormEdit));
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.pictureBoxClaimForm = new System.Windows.Forms.PictureBox();
 			this.textDescription = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -71,15 +72,26 @@ namespace OpenDental {
 			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(64, 715);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(59, 26);
-			this.butSave.TabIndex = 1;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(25, 716);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(25, 686);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 1;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// pictureBoxClaimForm
 			// 
@@ -136,7 +148,7 @@ namespace OpenDental {
 			this.listItems.Location = new System.Drawing.Point(3, 223);
 			this.listItems.Name = "listItems";
 			this.listItems.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
-			this.listItems.Size = new System.Drawing.Size(119, 369);
+			this.listItems.Size = new System.Drawing.Size(119, 329);
 			this.listItems.TabIndex = 8;
 			this.listItems.DoubleClick += new System.EventHandler(this.listItems_DoubleClick);
 			this.listItems.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listItems_MouseUp);
@@ -154,7 +166,7 @@ namespace OpenDental {
 			// label4
 			// 
 			this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label4.Location = new System.Drawing.Point(3, 596);
+			this.label4.Location = new System.Drawing.Point(3, 556);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(52, 17);
 			this.label4.TabIndex = 10;
@@ -164,7 +176,7 @@ namespace OpenDental {
 			// label5
 			// 
 			this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label5.Location = new System.Drawing.Point(3, 618);
+			this.label5.Location = new System.Drawing.Point(3, 578);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(52, 17);
 			this.label5.TabIndex = 11;
@@ -174,7 +186,7 @@ namespace OpenDental {
 			// label6
 			// 
 			this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label6.Location = new System.Drawing.Point(3, 640);
+			this.label6.Location = new System.Drawing.Point(3, 600);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(52, 17);
 			this.label6.TabIndex = 12;
@@ -184,7 +196,7 @@ namespace OpenDental {
 			// label7
 			// 
 			this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label7.Location = new System.Drawing.Point(3, 662);
+			this.label7.Location = new System.Drawing.Point(3, 622);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(52, 17);
 			this.label7.TabIndex = 13;
@@ -194,7 +206,7 @@ namespace OpenDental {
 			// textXPos
 			// 
 			this.textXPos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textXPos.Location = new System.Drawing.Point(56, 594);
+			this.textXPos.Location = new System.Drawing.Point(56, 554);
 			this.textXPos.Name = "textXPos";
 			this.textXPos.Size = new System.Drawing.Size(66, 20);
 			this.textXPos.TabIndex = 14;
@@ -203,7 +215,7 @@ namespace OpenDental {
 			// textYPos
 			// 
 			this.textYPos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textYPos.Location = new System.Drawing.Point(56, 616);
+			this.textYPos.Location = new System.Drawing.Point(56, 576);
 			this.textYPos.Name = "textYPos";
 			this.textYPos.Size = new System.Drawing.Size(66, 20);
 			this.textYPos.TabIndex = 15;
@@ -212,7 +224,7 @@ namespace OpenDental {
 			// textWidth
 			// 
 			this.textWidth.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textWidth.Location = new System.Drawing.Point(56, 638);
+			this.textWidth.Location = new System.Drawing.Point(56, 598);
 			this.textWidth.Name = "textWidth";
 			this.textWidth.Size = new System.Drawing.Size(66, 20);
 			this.textWidth.TabIndex = 16;
@@ -221,7 +233,7 @@ namespace OpenDental {
 			// textHeight
 			// 
 			this.textHeight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textHeight.Location = new System.Drawing.Point(56, 660);
+			this.textHeight.Location = new System.Drawing.Point(56, 620);
 			this.textHeight.Name = "textHeight";
 			this.textHeight.Size = new System.Drawing.Size(66, 20);
 			this.textHeight.TabIndex = 17;
@@ -245,9 +257,9 @@ namespace OpenDental {
 			// butPrint
 			// 
 			this.butPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butPrint.Location = new System.Drawing.Point(2, 715);
+			this.butPrint.Location = new System.Drawing.Point(25, 656);
 			this.butPrint.Name = "butPrint";
-			this.butPrint.Size = new System.Drawing.Size(59, 26);
+			this.butPrint.Size = new System.Drawing.Size(75, 26);
 			this.butPrint.TabIndex = 22;
 			this.butPrint.Text = "&Print";
 			this.butPrint.Click += new System.EventHandler(this.butPrint_Click);
@@ -298,9 +310,9 @@ namespace OpenDental {
 			// 
 			this.labelInternal.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelInternal.Location = new System.Drawing.Point(3, 685);
+			this.labelInternal.Location = new System.Drawing.Point(3, 645);
 			this.labelInternal.Name = "labelInternal";
-			this.labelInternal.Size = new System.Drawing.Size(119, 55);
+			this.labelInternal.Size = new System.Drawing.Size(119, 66);
 			this.labelInternal.TabIndex = 32;
 			this.labelInternal.Text = "This is an internal form. \r\nTo make changes, copy it over to a custom form.";
 			this.labelInternal.Visible = false;
@@ -372,7 +384,8 @@ namespace OpenDental {
 			this.panelControls.Controls.Add(this.label3);
 			this.panelControls.Controls.Add(this.butFont);
 			this.panelControls.Controls.Add(this.label8);
-			this.panelControls.Controls.Add(this.butSave);
+			this.panelControls.Controls.Add(this.butCancel);
+			this.panelControls.Controls.Add(this.butOK);
 			this.panelControls.Controls.Add(this.labelInternal);
 			this.panelControls.Controls.Add(this.label10);
 			this.panelControls.Controls.Add(this.label9);
@@ -396,12 +409,12 @@ namespace OpenDental {
 			// 
 			// FormClaimFormEdit
 			// 
-			this.AcceptButton = this.butSave;
+			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(992, 745);
 			this.Controls.Add(this.panel1);
 			this.Controls.Add(this.panelControls);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.MinimizeBox = false;
 			this.Name = "FormClaimFormEdit";
 			this.ShowInTaskbar = false;
 			this.Text = "Claim Form Edit";
@@ -418,7 +431,9 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.PictureBox pictureBoxClaimForm;
 		private System.Windows.Forms.TextBox textDescription;
 		private System.Windows.Forms.Label label1;

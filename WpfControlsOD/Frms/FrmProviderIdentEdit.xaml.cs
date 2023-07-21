@@ -11,6 +11,9 @@ using OpenDentBusiness;
 using WpfControls.UI;
 
 namespace OpenDental {
+	/// <summary>
+	/// Summary description for FormBasicTemplate.
+	/// </summary>
 	public partial class FrmProviderIdentEdit : FrmODBase {
 		///<summary>Set this field externally before using this window.</summary>
 		public ProviderIdent ProviderIdentCur;
@@ -20,23 +23,18 @@ namespace OpenDental {
 		///<summary></summary>
 		public FrmProviderIdentEdit()
 		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
-			Load+=FrmProviderIdentEdit_Load;
-			PreviewKeyDown+=FrmProviderIdentEdit_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmProviderIdentEdit_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmProviderIdentEdit_Loaded(object sender,RoutedEventArgs e) {
 			textPayorID.Text=ProviderIdentCur.PayorID;
 			listType.Items.AddEnums<ProviderSupplementalID>();
 			listType.SetSelectedEnum(ProviderIdentCur.SuppIDType);
 			textIDNumber.Text=ProviderIdentCur.IDNumber;
-		}
-
-		private void FrmProviderIdentEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
 		}
 
 		private void butSave_Click(object sender, System.EventArgs e) {
@@ -52,5 +50,29 @@ namespace OpenDental {
 			IsDialogOK=true;
 		}
 
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

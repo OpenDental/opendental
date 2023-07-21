@@ -27,20 +27,20 @@ namespace OpenDental {
 		}
 
 		private void FillGrid() {
-			CodeGroup codeGroupSelected=gridMain.SelectedTag<CodeGroup>();
-			UpdateItemOrder();
 			string trans=gridMain.TranslationName;
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			gridMain.Columns.Add(new GridColumn(Lan.g(trans,"Group Name"),0) { IsWidthDynamic=true,DynamicWeight=1 });
 			gridMain.Columns.Add(new GridColumn(Lan.g(trans,"Fixed Group"),110));
 			gridMain.Columns.Add(new GridColumn(Lan.g(trans,"Proc Codes"),0) { IsWidthDynamic=true,DynamicWeight=2 });
-			gridMain.Columns.Add(new GridColumn(Lan.g(trans,"Freq"),35,HorizontalAlignment.Center));
-			gridMain.Columns.Add(new GridColumn(Lan.g(trans,"Age"),35,HorizontalAlignment.Center));
+			if(checkShowHidden.Checked) {
+				gridMain.Columns.Add(new GridColumn(Lan.g(trans,"Hidden"),50,HorizontalAlignment.Center));
+			}
+			CodeGroup codeGroupSelected=gridMain.SelectedTag<CodeGroup>();
 			gridMain.ListGridRows.Clear();
 			int index=-1;
 			for(int i=0;i<_listCodeGroups.Count;i++) {
-				if(!checkShowHidden.Checked && _listCodeGroups[i].IsHidden && !_listCodeGroups[i].ShowInAgeLimit) {
+				if(!checkShowHidden.Checked && _listCodeGroups[i].IsHidden) {
 					continue;
 				}
 				GridRow gridRow=new GridRow();
@@ -51,8 +51,9 @@ namespace OpenDental {
 				}
 				gridRow.Cells.Add(strCodeGroupFixed);
 				gridRow.Cells.Add(_listCodeGroups[i].ProcCodes);
-				gridRow.Cells.Add(_listCodeGroups[i].IsHidden?"":"X");//column is for show in freq
-				gridRow.Cells.Add(_listCodeGroups[i].ShowInAgeLimit?"X":"");
+				if(checkShowHidden.Checked) {
+					gridRow.Cells.Add(_listCodeGroups[i].IsHidden?"X":"");
+				}
 				gridRow.Tag=_listCodeGroups[i];
 				if(_listCodeGroups[i].Equals(codeGroupSelected)) {
 					//Use the count before adding this row to the list because index is 0 based.
@@ -62,22 +63,6 @@ namespace OpenDental {
 			}
 			gridMain.EndUpdate();
 			gridMain.SetSelected(index);
-		}
-
-		private void UpdateItemOrder() {
-			int itemOrder=0;
-			// First the visible code groups are ordered.
-			List<CodeGroup> listCodeGroupsShown=_listCodeGroups.FindAll(x=>!x.IsHidden || x.ShowInAgeLimit);
-			for(itemOrder=0;itemOrder<listCodeGroupsShown.Count;itemOrder++) {
-				listCodeGroupsShown[itemOrder].ItemOrder=itemOrder;
-			}
-			// Then the hidden code groups are ordered.
-			List<CodeGroup> listCodeGroupsHidden=_listCodeGroups.FindAll(x=>x.IsHidden && !x.ShowInAgeLimit);
-			for(int h=0;h<listCodeGroupsHidden.Count;h++) {
-				listCodeGroupsHidden[h].ItemOrder=itemOrder;
-				itemOrder++;
-			}
-			_listCodeGroups=_listCodeGroups.OrderBy(x=>x.ItemOrder).ToList();
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
@@ -107,10 +92,6 @@ namespace OpenDental {
 			if(index<=0) {
 				return;//Not found or first in the grid.
 			}
-			if(!codeGroupSelected.IsVisible() && listCodeGroups[index-1].IsVisible()) {
-				MsgBox.Show("Hidden CodeGroups cannot be ordered above visible codegroups.");
-				return;
-			}
 			//Swap the ItemOrder with the code group directly above the selected code group.
 			CodeGroup codeGroupSwap=listCodeGroups[index - 1];
 			//Swap places with the swappable code group found.
@@ -133,10 +114,6 @@ namespace OpenDental {
 			int index=listCodeGroups.IndexOf(codeGroupSelected);
 			if(index==-1 || index>=(listCodeGroups.Count - 1)) {
 				return;//Not found or last in the grid.
-			}
-			if(codeGroupSelected.IsVisible() && !listCodeGroups[index+1].IsVisible()) {
-				MsgBox.Show("Hidden CodeGroups cannot be ordered above visible codegroups.");
-				return;
 			}
 			//Swap the ItemOrder with the code group directly below the selected code group.
 			CodeGroup codeGroupSwap=listCodeGroups[index + 1];

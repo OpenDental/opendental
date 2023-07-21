@@ -112,7 +112,7 @@ namespace OpenDental{
 			FillGrid();
 		}  
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 		  if(textDescript.Text==""){
         MessageBox.Show(Lan.g(this,"The Description cannot be blank"));
         return;
@@ -127,6 +127,10 @@ namespace OpenDental{
 			AutoCodeCur.LessIntrusive=checkLessIntrusive.Checked;
 			AutoCodes.Update(AutoCodeCur);
       DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {	
+      DialogResult=DialogResult.Cancel;
 		}
 
 		private void FormAutoCodeEdit_FormClosing(object sender,FormClosingEventArgs e) {
@@ -327,6 +331,5 @@ namespace OpenDental{
 				return;
 			}
 		}
-
 	}
 }

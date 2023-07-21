@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
-using CodeBase;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenDentBusiness;
 using UnitTestsCore;
@@ -295,101 +294,6 @@ namespace UnitTests.TimeCardRules_Tests {
 			TimeAdjust result=resultList[0];
 			Assert.AreEqual(TimeSpan.FromHours(-4),result.RegHours);
 			Assert.AreEqual(TimeSpan.FromHours(4),result.OTimeHours);
-		}
-
-		[TestMethod]
-		public void TimeCardRules_CalculateWeeklyOvertime_AdjustmentsOverTwoPayPeriods() {
-			Prefs.UpdateInt(PrefName.TimeCardOvertimeFirstDayOfWeek,0);//Sunday
-			string suffix=MethodInfo.GetCurrentMethod().Name;
-			DateTime dateStart=new DateTime(2023,05,08);
-			Employee employee=EmployeeT.CreateEmployee(suffix);
-			PayPeriod payPeriod1=PayPeriodT.CreateTwoWeekPayPeriodIfNotExists(dateStart);
-			PayPeriod payPeriod2=PayPeriodT.CreateTwoWeekPayPeriodIfNotExists(dateStart.AddDays(14));
-			PayPeriods.RefreshCache();
-			TimeCardRules.RefreshCache();
-			/***********************************************
-			Scenario provided via Tasknum #5489382
-				5/21 - Adjustment of 8.5 hours
-				5/22 - Adjustment of 9.5 hours
-				5/23 - Clock event of 7:30am - 3:30pm
-				5/24 - Clock event of 7:30am - 3:30pm
-				5/25 - Clock event of 7:30am - 4:30pm
-				5/26 - Clock event of 7:30am - 4:30pm
-			**********************************************/
-			DateTime dateTime21=dateStart.AddDays(13);
-			TimeAdjust timeAdjust85=TimeAdjustT.CreateTimeAdjust(employee.EmployeeNum,dateTime21,regHours:TimeSpan.FromHours(8.5));
-			DateTime dateTime22=dateStart.AddDays(14);
-			TimeAdjust timeAdjust95=TimeAdjustT.CreateTimeAdjust(employee.EmployeeNum,dateTime22,regHours:TimeSpan.FromHours(9.5));
-			DateTime dateTime23=dateStart.AddDays(15);
-			long clockEvent1=ClockEventT.InsertWorkPeriod(employee.EmployeeNum,dateTime23.AddHours(7.5),dateTime23.AddHours(15.5));
-			DateTime dateTime24=dateStart.AddDays(16);
-			long clockEvent2=ClockEventT.InsertWorkPeriod(employee.EmployeeNum,dateTime24.AddHours(7.5),dateTime24.AddHours(15.5));
-			DateTime dateTime25=dateStart.AddDays(17);
-			long clockEvent3=ClockEventT.InsertWorkPeriod(employee.EmployeeNum,dateTime25.AddHours(7.5),dateTime25.AddHours(16.5));
-			DateTime dateTime26=dateStart.AddDays(18);
-			long clockEvent4=ClockEventT.InsertWorkPeriod(employee.EmployeeNum,dateTime26.AddHours(7.5),dateTime26.AddHours(16.5));
-			//Calculate weekly overtime for the first payperiod.
-			TimeCardRules.CalculateWeeklyOvertime(employee,payPeriod1.DateStart,payPeriod1.DateStop);
-			//There should be no overtime for the first payperiod.
-			//Only the two manual adjustments should be returned.
-			List<TimeAdjust> listTimeAdjusts=TimeAdjusts.Refresh(employee.EmployeeNum,dateStart,dateStart.AddDays(28));
-			Assert.AreEqual(2,listTimeAdjusts.Count);
-			//Calculate weekly overtime for the second payperiod.
-			TimeCardRules.CalculateWeeklyOvertime(employee,payPeriod2.DateStart,payPeriod2.DateStop);
-			//There should be weekly overtime detected (the week of 5/21 - 5/26 has 12 hours of overtime).
-			listTimeAdjusts=TimeAdjusts.Refresh(employee.EmployeeNum,dateStart,dateStart.AddDays(28));
-			Assert.AreEqual(3,listTimeAdjusts.Count);
-			TimeAdjust timeAdjustOT=listTimeAdjusts.First(x => !x.TimeAdjustNum.In(timeAdjust85.TimeAdjustNum,timeAdjust95.TimeAdjustNum));
-			Assert.AreEqual(TimeSpan.FromHours(-12),timeAdjustOT.RegHours);
-			Assert.AreEqual(TimeSpan.FromHours(12),timeAdjustOT.OTimeHours);
-		}
-
-		[TestMethod]
-		public void TimeCardRules_CalculateWeeklyOvertime_AdjustmentEndOfWeekAndStartOfPayPeriod() {
-			Prefs.UpdateInt(PrefName.TimeCardOvertimeFirstDayOfWeek,0);//Sunday
-			string suffix=MethodInfo.GetCurrentMethod().Name;
-			DateTime dateStart=new DateTime(2023,08,18);
-			Employee employee=EmployeeT.CreateEmployee(suffix);
-			PayPeriod payPeriod1=PayPeriodT.CreateTwoWeekPayPeriodIfNotExists(dateStart);
-			PayPeriod payPeriod2=PayPeriodT.CreateTwoWeekPayPeriodIfNotExists(dateStart.AddDays(14));
-			PayPeriods.RefreshCache();
-			TimeCardRules.RefreshCache();
-			/***********************************************
-			Scenario provided by customer on TaskNum #5759387
-				8/29 - ClockEvent of 9:00 AM - 5:00 PM
-				8/30 - ClockEvent of 9:00 AM - 5:00 PM
-				8/31 - ClockEvent of 9:00 AM - 5:00 PM
-				9/01 - TimeAdjust with note and 0 hours (RegHours, OTimeHours, and PtoHours are all 0)
-				9/04 - ClockEvent of 9:00 AM - 5:00 PM
-				9/05 - ClockEvent of 9:00 AM - 5:00 PM
-				9/06 - ClockEvent of 9:00 AM - 5:00 PM
-			**********************************************/
-			DateTime dateTime29=dateStart.AddDays(11);
-			long clockEvent1=ClockEventT.InsertWorkPeriod(employee.EmployeeNum,dateTime29.AddHours(9),dateTime29.AddHours(17));
-			DateTime dateTime30=dateStart.AddDays(12);
-			long clockEvent2=ClockEventT.InsertWorkPeriod(employee.EmployeeNum,dateTime30.AddHours(9),dateTime30.AddHours(17));
-			DateTime dateTime31=dateStart.AddDays(13);
-			long clockEvent3=ClockEventT.InsertWorkPeriod(employee.EmployeeNum,dateTime31.AddHours(9),dateTime31.AddHours(17));
-			DateTime dateTime1=dateStart.AddDays(14);
-			TimeAdjust timeAdjust1=TimeAdjustT.CreateTimeAdjust(employee.EmployeeNum,dateTime1);
-			DateTime dateTime4=dateStart.AddDays(17);
-			long clockEvent4=ClockEventT.InsertWorkPeriod(employee.EmployeeNum,dateTime4.AddHours(9),dateTime4.AddHours(17));
-			DateTime dateTime5=dateStart.AddDays(18);
-			long clockEvent5=ClockEventT.InsertWorkPeriod(employee.EmployeeNum,dateTime5.AddHours(9),dateTime5.AddHours(17));
-			DateTime dateTime6=dateStart.AddDays(19);
-			long clockEvent6=ClockEventT.InsertWorkPeriod(employee.EmployeeNum,dateTime6.AddHours(9),dateTime6.AddHours(17));
-			//Calculate weekly overtime for the first payperiod.
-			TimeCardRules.CalculateWeeklyOvertime(employee,payPeriod1.DateStart,payPeriod1.DateStop);
-			//Calculate weekly overtime for the second payperiod.
-			TimeCardRules.CalculateWeeklyOvertime(employee,payPeriod2.DateStart,payPeriod2.DateStop);
-			//There should be no overtime for the either payperiod
-			//Only the 1 manual TimeAdjust should exist
-			List<TimeAdjust> listTimeAdjusts=TimeAdjusts.Refresh(employee.EmployeeNum,dateStart,dateStart.AddDays(28));
-			Assert.AreEqual(1,listTimeAdjusts.Count);
-			TimeAdjust timeAdjustOT=listTimeAdjusts[0];
-			Assert.AreEqual(TimeSpan.FromHours(0),timeAdjustOT.RegHours);
-			Assert.AreEqual(TimeSpan.FromHours(0),timeAdjustOT.OTimeHours);
-			Assert.AreEqual(TimeSpan.FromHours(0),timeAdjustOT.PtoHours);
 		}
 
 		///<summary>This employee works six days, Mon-Sat, for 11 hours each day. The work week starts on Wednesday. When calculating OT,

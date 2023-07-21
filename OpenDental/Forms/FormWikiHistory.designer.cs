@@ -29,6 +29,7 @@ namespace OpenDental{
 			this.textContent = new OpenDental.ODcodeBox();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butCompare = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.webBrowserWiki = new System.Windows.Forms.WebBrowser();
 			this.SuspendLayout();
 			// 
@@ -56,7 +57,7 @@ namespace OpenDental{
 			this.textContent.Location = new System.Drawing.Point(266, 42);
 			this.textContent.Name = "textContent";
 			this.textContent.ReadOnly = true;
-			this.textContent.Size = new System.Drawing.Size(435, 584);
+			this.textContent.Size = new System.Drawing.Size(435, 554);
 			this.textContent.TabIndex = 7;
 			this.textContent.Text = "";
 			// 
@@ -67,7 +68,7 @@ namespace OpenDental{
 			this.gridMain.Location = new System.Drawing.Point(12, 42);
 			this.gridMain.Name = "gridMain";
 			this.gridMain.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridMain.Size = new System.Drawing.Size(248, 584);
+			this.gridMain.Size = new System.Drawing.Size(248, 554);
 			this.gridMain.TabIndex = 5;
 			this.gridMain.Title = "Page History";
 			this.gridMain.TranslationName = "TableWikiHistory";
@@ -84,6 +85,16 @@ namespace OpenDental{
 			this.butCompare.UseVisualStyleBackColor = false;
 			this.butCompare.Click += new System.EventHandler(this.butCompare_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(1067, 602);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// webBrowserWiki
 			// 
 			this.webBrowserWiki.AllowWebBrowserDrop = false;
@@ -93,7 +104,7 @@ namespace OpenDental{
 			this.webBrowserWiki.IsWebBrowserContextMenuEnabled = false;
 			this.webBrowserWiki.Location = new System.Drawing.Point(707, 42);
 			this.webBrowserWiki.Name = "webBrowserWiki";
-			this.webBrowserWiki.Size = new System.Drawing.Size(435, 584);
+			this.webBrowserWiki.Size = new System.Drawing.Size(435, 554);
 			this.webBrowserWiki.TabIndex = 87;
 			this.webBrowserWiki.WebBrowserShortcutsEnabled = false;
 			// 
@@ -106,6 +117,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butRevert);
 			this.Controls.Add(this.textContent);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormWikiHistory";
 			this.Text = "Wiki History";
@@ -122,6 +134,7 @@ namespace OpenDental{
 		private UI.Button butRevert;
 		private System.Windows.Forms.Label labelNotAuthorized;
 		private UI.Button butCompare;
+		private UI.Button butClose;
 		private System.Windows.Forms.WebBrowser webBrowserWiki;
 	}
 }

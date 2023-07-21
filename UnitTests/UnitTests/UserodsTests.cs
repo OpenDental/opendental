@@ -15,8 +15,7 @@ namespace UnitTests.Userods_Tests {
 		///<summary>This method will get invoked after every single test.</summary>
 		[TestCleanup]
 		public void Cleanup() {
-			ODEvent.Fired-=CredentialsFailedAfterLoginEvent_Fired1;
-			ODEvent.IsCredentialsFailedAfterLogin_EventSubscribed=false;
+			CredentialsFailedAfterLoginEvent.Fired-=CredentialsFailedAfterLoginEvent_Fired1;
 			RemotingClient.HasLoginFailed=false;
 			RevertMiddleTierSettingsIfNeeded();
 			Security.CurUser=Userods.GetFirstOrDefault(x => x.UserName==UnitTestUserName);
@@ -32,8 +31,7 @@ namespace UnitTests.Userods_Tests {
 			RunTestsAgainstMiddleTier(new OpenDentBusiness.WebServices.OpenDentalServerMockIIS(user:myUser.UserName,password:myUser.Password));
 			Security.CurUser=myUser;
 			Security.PasswordTyped="passwordguess#1";
-			ODEvent.Fired+=CredentialsFailedAfterLoginEvent_Fired1;
-			ODEvent.IsCredentialsFailedAfterLogin_EventSubscribed=true;
+			CredentialsFailedAfterLoginEvent.Fired+=CredentialsFailedAfterLoginEvent_Fired1;
 			//make a single bad password attempt.
 			ODException.SwallowAnyException(() => {
 				Userods.CheckUserAndPassword(myUser.UserName,"passwordguess#1",false);
@@ -89,8 +87,7 @@ namespace UnitTests.Userods_Tests {
 			Userod myUser=UserodT.CreateUser(MethodBase.GetCurrentMethod().Name+DateTime.Now.Ticks,"reallystrongpassword",userGroupNumbers:new List<long>() {group1 });
 			Security.CurUser=myUser;
 			Security.PasswordTyped="passwordguess#1";
-			ODEvent.Fired+=CredentialsFailedAfterLoginEvent_Fired1;
-			ODEvent.IsCredentialsFailedAfterLogin_EventSubscribed=true;
+			CredentialsFailedAfterLoginEvent.Fired+=CredentialsFailedAfterLoginEvent_Fired1;
 			RunTestsAgainstMiddleTier(new OpenDentBusiness.WebServices.OpenDentalServerMockIIS(user:myUser.UserName,password:myUser.Password));
 			//try once with the wrong password. Failed attempt should get incremented to 1. 
 			ODException.SwallowAnyException(() => {
@@ -119,10 +116,9 @@ namespace UnitTests.Userods_Tests {
 			//First, setup the test scenario.
 			long group1=UserGroupT.CreateUserGroup("usergroup1");
 			Userod myUser=UserodT.CreateUser(MethodBase.GetCurrentMethod().Name+DateTime.Now.Ticks,"reallystrongpassword",userGroupNumbers:new List<long>() {group1 });
+			CredentialsFailedAfterLoginEvent.Fired+=CredentialsFailedAfterLoginEvent_Fired1;
 			Security.CurUser=myUser;
 			Security.PasswordTyped="passwordguess#1";
-			ODEvent.Fired+=CredentialsFailedAfterLoginEvent_Fired1;
-			ODEvent.IsCredentialsFailedAfterLogin_EventSubscribed=true;
 			RunTestsAgainstMiddleTier();
 			//try with 5 incorrect passwords. Failed attempt should get incremented to 5. 
 			for(int i = 1 ;i < 6;i++) {
@@ -132,7 +128,8 @@ namespace UnitTests.Userods_Tests {
 					}
 					catch(Exception e) {
 
-					}					
+					}
+					
 				});
 			}
 			//Get our updated user from the DB. 

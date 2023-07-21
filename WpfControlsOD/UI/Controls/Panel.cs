@@ -17,40 +17,54 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace WpfControls.UI{
-/*
-Jordan is the only one allowed to edit this file.
-How to use panel control:
-
-
-*/
 	///<summary></summary>
 	public class Panel : ItemsControl{	
+		private bool _autoScroll=false;
 		private Color _colorBack=Colors.White;
 		private Color _colorBorder=Colors.Transparent;
 
 		static Panel(){
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(Panel), new FrameworkPropertyMetadata(typeof(Panel)));
-			//WidthProperty.OverrideMetadata(typeof(Panel), new FrameworkPropertyMetadata(200.0));
-			//HeightProperty.OverrideMetadata(typeof(Panel), new FrameworkPropertyMetadata(200.0));
 		}
 
 		public Panel(){
-			//Panels should not have default sizes because they frequently need to stretch to fill a SplitContainer, TabControl, etc.
-			//Width=200;
-			//Height=200;
 			PreviewMouseDown+=panel_PreviewMouseDown;
 			//I tried lots of other things to make click work, but unsuccessful. 
 			//Tried border.MouseDown, scrollViewer.MouseDown, grid.MouseDown, and preview versions of some.
 			//I tried adding backgrounds to things so that click would register, but that didn't work either.
 			//The way it's currently designed, it also fires when you click on any child in the panel.
 			//This is probably ok because the only time we use click event is when we have a small panel with no controls.
-			KeyboardNavigation.SetTabNavigation(this,KeyboardNavigationMode.Local);
-			Focusable=false;
 		}
 
 		public event EventHandler Click;
 
 		#region Properties
+		[Category("OD")]
+		[Description("Used very rarely. So far, only at the bottom of InsPlanEdit window.")]
+		[DefaultValue(false)]
+		public bool AutoScroll {
+			get{
+				return _autoScroll;
+			}
+			set{
+				_autoScroll=value;
+				if(Template==null){
+					return;
+				}
+				ScrollViewer scrollViewer = Template.FindName("scrollViewer",this) as ScrollViewer;
+				if(scrollViewer!=null){
+					if(value){
+						scrollViewer.VerticalScrollBarVisibility=ScrollBarVisibility.Auto;
+						scrollViewer.HorizontalScrollBarVisibility=ScrollBarVisibility.Auto;
+					}
+					else{
+						scrollViewer.VerticalScrollBarVisibility=ScrollBarVisibility.Hidden;
+						scrollViewer.HorizontalScrollBarVisibility=ScrollBarVisibility.Hidden;
+					}
+				}
+			}
+		}
+
 		[Category("OD")]
 		[DefaultValue(typeof(Color),"#FFFFFFFF")]//white
 		[Description("Default is White.")]
@@ -86,22 +100,6 @@ How to use panel control:
 				if(border!=null){
 					border.BorderBrush=new SolidColorBrush(value);
 				}
-			}
-		}
-
-		[Category("OD")]
-		[DefaultValue(int.MaxValue)]
-		[Description("Use this instead of TabIndex.")]
-		public int TabIndexOD{
-			//For now, this is just to move it down into the OD category,
-			//but later, there are plans to enhance it.
-			//Because TabIndex is an Advanced Property, we had to give it a new name to keep it out of Advanced Property area.
-			get{
-				return TabIndex;
-			}
-			set{
-				TabIndex=value;
-				//InvalidateVisual();//if we want the new TabIndex value to show immediately. But there's a performance hit, so no.
 			}
 		}
 
@@ -145,6 +143,7 @@ How to use panel control:
 			//border.BorderBrush=new SolidColorBrush(_colorBorder);
 			ColorBack=_colorBack;
 			ColorBorder=_colorBorder;
+			AutoScroll=_autoScroll;
 			//ScrollViewer scrollViewer = Template.FindName("scrollViewer",this) as ScrollViewer;
 			//if(scrollViewer!=null) {
 			//	scrollViewer.MouseDown+=scrollViewer_MouseDown;
@@ -154,82 +153,6 @@ How to use panel control:
 		protected override Visual GetVisualChild(int index) {
 			return base.GetVisualChild(index);
 		}
-
-		/*
-		protected override Size MeasureOverride(Size sizeAvailable) {
-			Size desiredSize = new Size();
-			for(int i=0;i<base.VisualChildrenCount;i++){
-				Visual visualChild=base.GetVisualChild(i);
-				UIElement uIElement=(UIElement)visualChild;
-				uIElement.Measure(sizeAvailable);
-			}
-			desiredSize=new Size(ActualWidth,ActualHeight);
-			return desiredSize;
-		}
-
-		protected override Size ArrangeOverride(Size sizeFinal) {
-			Border border=VisualTreeHelper.GetChild(this, 0) as Border;
-			if(border is null){
-				return sizeFinal;
-			}
-			ScrollViewer scrollViewer=VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
-			if(scrollViewer is null){
-				return sizeFinal;
-			}
-			ItemsPresenter itemsPresenter = VisualTreeHelper.GetChild(scrollViewer, 0) as ItemsPresenter;
-			if(itemsPresenter is null){
-				return sizeFinal;
-			}
-			//ItemsPanelTemplate:
-			System.Windows.Controls.Panel itemsPanel = VisualTreeHelper.GetChild(itemsPresenter, 0) as System.Windows.Controls.Panel;
-			if(itemsPanel is null){
-				return sizeFinal;
-			}
-			System.Windows.Controls.Panel itemsPanel = VisualTreeHelper.GetChild(itemsPresenter, 0) as System.Windows.Controls.Panel;
-			if(itemsPanel is null){
-				return sizeFinal;
-			}
-
-			foreach (UIElement child in itemsPanel.Children)
-			{
-
-
-
-			for(int i=0;i<base.VisualChildrenCount;i++){
-				Visual visualChild=base.GetVisualChild(i);
-				FrameworkElement frameworkElement=(FrameworkElement)visualChild;
-				Thickness thicknessMargin=frameworkElement.Margin;
-				double x=20;//thicknessMargin.Left;
-				double y=thicknessMargin.Top;
-				double width=frameworkElement.Width;
-				if(double.IsNaN(width)){
-					width=frameworkElement.DesiredSize.Width;
-				}
-				double height=frameworkElement.Height;
-				if(double.IsNaN(height)){
-					height=frameworkElement.DesiredSize.Height;
-				}
-				if(frameworkElement.HorizontalAlignment==HorizontalAlignment.Right){
-					x=//sizeFinal.Width
-						20;
-						//-width-thicknessMargin.Right;
-				}
-				if(frameworkElement.HorizontalAlignment==HorizontalAlignment.Stretch){
-					width=sizeFinal.Width-thicknessMargin.Left-thicknessMargin.Right;
-				}
-				if(frameworkElement.VerticalAlignment==VerticalAlignment.Bottom){
-					y=sizeFinal.Height-height-thicknessMargin.Bottom;
-				}
-				if(frameworkElement.VerticalAlignment==VerticalAlignment.Stretch){
-					height=sizeFinal.Height-thicknessMargin.Top-thicknessMargin.Bottom;
-				}
-				width = Math.Max(0, width);//ensure not negative
-				height = Math.Max(0, height);
-				Rect rectFinal=new Rect(x,y,width,height);
-				frameworkElement.Arrange(rectFinal);
-			}
-			return sizeFinal;
-		}*/
 	}
 
 /*	

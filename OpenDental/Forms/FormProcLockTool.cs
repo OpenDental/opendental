@@ -21,7 +21,7 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			if(!textDate1.IsValid() || !textDate2.IsValid()) {
@@ -35,20 +35,25 @@ namespace OpenDental {
 				return;
 			}
 			if(date1.AddDays(7) < date2) {
-				if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,true)) {
+				if(!Security.IsAuthorized(Permissions.SecurityAdmin,true)) {
 					MsgBox.Show(this,"Admin permission is required for date spans greater than 7 days.");
 					return;
 				}
 			}
 			Procedures.Lock(date1,date2);
 			if(date1.AddDays(7) < date2) {
-				SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,"Proc Lock Tool "+date1.ToShortDateString()+" - "+date2.ToShortDateString());
+				SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,"Proc Lock Tool "+date1.ToShortDateString()+" - "+date2.ToShortDateString());
 			}
 			else {
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Proc Lock Tool "+date1.ToShortDateString()+" - "+date2.ToShortDateString());
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Proc Lock Tool "+date1.ToShortDateString()+" - "+date2.ToShortDateString());
 			}
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+	
 	}
 }

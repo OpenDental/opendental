@@ -23,7 +23,8 @@ namespace OpenDental {
 
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormProvEdit));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.colorDialog1 = new System.Windows.Forms.ColorDialog();
 			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.gridProvIdent = new OpenDental.UI.GridOD();
@@ -142,15 +143,26 @@ namespace OpenDental {
 			this.tabClinics.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(808, 629);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 35;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(726, 629);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 35;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(807, 629);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 36;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// colorDialog1
 			// 
@@ -889,7 +901,7 @@ namespace OpenDental {
 			// 
 			this.radioTIN.Location = new System.Drawing.Point(13, 35);
 			this.radioTIN.Name = "radioTIN";
-			this.radioTIN.Size = new System.Drawing.Size(104, 18);
+			this.radioTIN.Size = new System.Drawing.Size(104, 15);
 			this.radioTIN.TabIndex = 1;
 			this.radioTIN.Text = "TIN";
 			this.radioTIN.Click += new System.EventHandler(this.radioTIN_Click);
@@ -897,9 +909,9 @@ namespace OpenDental {
 			// radioSSN
 			// 
 			this.radioSSN.Checked = true;
-			this.radioSSN.Location = new System.Drawing.Point(13, 15);
+			this.radioSSN.Location = new System.Drawing.Point(13, 17);
 			this.radioSSN.Name = "radioSSN";
-			this.radioSSN.Size = new System.Drawing.Size(104, 18);
+			this.radioSSN.Size = new System.Drawing.Size(104, 15);
 			this.radioSSN.TabIndex = 0;
 			this.radioSSN.TabStop = true;
 			this.radioSSN.Text = "SSN";
@@ -1031,7 +1043,7 @@ namespace OpenDental {
 			// 
 			// dateTerm
 			// 
-			this.dateTerm.BackColor = System.Drawing.SystemColors.Window;
+			this.dateTerm.BackColor = System.Drawing.SystemColors.Control;
 			this.dateTerm.CalendarLocation = OpenDental.UI.ODDatePicker.EnumCalendarLocation.ToTheRight;
 			this.dateTerm.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.dateTerm.Location = new System.Drawing.Point(139, 453);
@@ -1198,10 +1210,12 @@ namespace OpenDental {
 			// 
 			// FormProvEdit
 			// 
-			this.AcceptButton = this.butSave;
+			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(895, 665);
 			this.Controls.Add(this.tabControlProvider);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -1234,7 +1248,8 @@ namespace OpenDental {
 		#endregion
 
 		#region UI Elements
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.ColorDialog colorDialog1;
 		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.Label label2;

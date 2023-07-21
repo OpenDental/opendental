@@ -736,18 +736,12 @@ namespace UnitTests.RecurringCharges_Tests {
 		///<summary>Tests that sending recurring charges updates the preference which tracks last run datetime.</summary>
 		[TestMethod]
 		public void RecurringCharges_SendCharges_SetsRecurringChargesBeginDateTime() {
-			PrefT.UpdateBool(PrefName.EasyNoClinics,true);
 			string suffix=MethodBase.GetCurrentMethod().Name;
-			Patient pat=PatientT.CreatePatient(suffix);
-			CreditCard cc=CreditCardT.CreateCard(pat.PatNum,50,DateTime.Today,0);
-			ProcedureT.CreateProcedure(pat,"D0120",ProcStat.C,"0",100);
-			Ledgers.ComputeAging(pat.Guarantor,DateTime.Today);
-			RecurringChargerator charger=new RecurringChargerator(_log,false);
-			List<RecurringChargeData> listCharges=charger.FillCharges(new List<Clinic> { });
 			string strRecurringChargesBeginDateTimeExpected="";//Should be blank after recurring charges completes.
 			string strRecurringChargesBeginDateTimeStarting="RecurringChargesBeginDateTime should be blank after running "+suffix;
 			PrefT.UpdateString(PrefName.RecurringChargesBeginDateTime,strRecurringChargesBeginDateTimeStarting);
-			charger.SendCharges(listCharges,false);
+			RecurringChargerator charger=new RecurringChargerator(_log,false);
+			charger.SendCharges(new List<RecurringChargeData>(),false);//Passing an empty list won't actually send anything.  Just updates pref.
 			Assert.AreEqual(strRecurringChargesBeginDateTimeExpected,PrefC.GetString(PrefName.RecurringChargesBeginDateTime));
 		}
 

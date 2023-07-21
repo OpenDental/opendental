@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace CodeBase {
 	public class ODInitialize {
+
+		///<summary>Indicates that the program is running unit tests.  Should only be set to true from TestBase.Initialize().
+		///Useful for methods that should behave differently in unit tests, such as FriendlyException.Show().</summary>
+		public static bool IsRunningInUnitTest;
 		///<summary>Indicates that Initialize has been invoked at least once and has successfully executed.</summary>
 		public static bool HasInitialized;
 		///<summary>Indicates the list of packages that have already been custom loaded.</summary>

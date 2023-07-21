@@ -134,22 +134,23 @@ namespace OpenDental {
 			PatNumSelected=listPats[e.Row].PatNum;
 			//Security log for patient select.
 			Patient patient=Patients.GetPat(PatNumSelected);
-			SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,PatNumSelected,"In the 'Pick Patient for Web Form', this user double clicked a name in the suggested list.  "
+			SecurityLogs.MakeLogEntry(Permissions.SheetEdit,PatNumSelected,"In the 'Pick Patient for Web Form', this user double clicked a name in the suggested list.  "
 				+"This caused the web form for this patient: "+LnameEntered+", "+FnameEntered+" "+DateBirthEntered.ToShortDateString()+"  "
 				+"to be manually attached to this other patient: "+patient.LName+", "+patient.FName+" "+patient.Birthdate.ToShortDateString());
 			DialogResult=DialogResult.OK;
 		}
 
 		private void butSelect_Click(object sender,EventArgs e) {
-			FrmPatientSelect frmPatientSelect=new FrmPatientSelect();
-			frmPatientSelect.ShowDialog();
-			if(frmPatientSelect.IsDialogCancel) {
+			using FormPatientSelect formPatientSelect=new FormPatientSelect();
+			formPatientSelect.IsSelectionModeOnly=true;
+			formPatientSelect.ShowDialog();
+			if(formPatientSelect.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			PatNumSelected=frmPatientSelect.PatNumSelected;
+			PatNumSelected=formPatientSelect.PatNumSelected;
 			//Security log for patient select.
 			Patient patient=Patients.GetPat(PatNumSelected);
-			SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,PatNumSelected,"In the 'Pick Patient for Web Form', this user clicked the 'Select' button.  "
+			SecurityLogs.MakeLogEntry(Permissions.SheetEdit,PatNumSelected,"In the 'Pick Patient for Web Form', this user clicked the 'Select' button.  "
 				+"By clicking the 'Select' button, the web form for this patient: "+LnameEntered+", "+FnameEntered+" "+DateBirthEntered.ToShortDateString()+"  "
 				+"was manually attached to this other patient: "+patient.LName+", "+patient.FName+" "+patient.Birthdate.ToShortDateString());
 			DialogResult=DialogResult.OK;
@@ -162,6 +163,10 @@ namespace OpenDental {
 
 		private void butSkip_Click(object sender,EventArgs e) {
 			DialogResult=DialogResult.Ignore;
+		}		
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void butDiscard_Click(object sender,EventArgs e) {
@@ -179,6 +184,5 @@ namespace OpenDental {
 				DialogResult=DialogResult.Ignore;
 			}
 		}
-
 	}
 }

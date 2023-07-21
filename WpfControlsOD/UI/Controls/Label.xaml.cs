@@ -24,8 +24,6 @@ How to use the Label control:
 -If your Text is long, it's easier to edit in XAML. You can drop the whole Text attibute down to the next line to help.
 -Newlines in Text in code are handled just like normal: "\r\n"
 -Newlines in Text in XAML require &#10;
--Do not use the WPF VerticalContentAlignment or HorizontalContentAlignment. They will be ignored completely.
--Instead, use our HAlign and VAlign.
 
 */
 	///<summary></summary>
@@ -39,8 +37,6 @@ How to use the Label control:
 
 		public Label(){
 			InitializeComponent();
-			//Width=75;
-			//Height=18;
 		}
 
 		#region Properties
@@ -141,6 +137,7 @@ How to use the Label control:
 		}
 
 		[Category("OD")]
+		[Editor(typeof(UITypeEditorLongString), typeof(System.Drawing.Design.UITypeEditor))]//doesn't work
 		public string Text {
 			get{
 				return textBlock.Text;

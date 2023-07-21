@@ -22,7 +22,10 @@ namespace OpenDental {
 		}
 
 		private void FormUcums_Load(object sender,EventArgs e) {
-			if(!IsSelectionMode) {
+			if(IsSelectionMode) {
+				butClose.Text=Lan.g(this,"Cancel");
+			}
+			else {
 				butOK.Visible=false;
 			}
 			ActiveControl=textCode;
@@ -71,5 +74,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

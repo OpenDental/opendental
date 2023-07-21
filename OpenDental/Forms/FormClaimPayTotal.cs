@@ -56,7 +56,7 @@ namespace OpenDental {
 			}
 			_listProcedures=Procedures.Refresh(_patient.PatNum);
 			DateTime dateTClaimProcMin=_listProcedures.FindAll(x => ClaimProcArray.Any(y => y.ProcNum==x.ProcNum)).Select(x => x.DateEntryC).Min();
-			_isWriteOffEditable=Security.IsAuthorized(EnumPermType.InsWriteOffEdit, dateTClaimProcMin);
+			_isWriteOffEditable=Security.IsAuthorized(Permissions.InsWriteOffEdit, dateTClaimProcMin);
 			butWriteOff.Enabled=_isWriteOffEditable;
 			_doShowPatResp=PrefC.GetBool(PrefName.ClaimEditShowPatResponsibility);
 			textPatResp.Visible=_doShowPatResp;
@@ -526,7 +526,7 @@ namespace OpenDental {
 			FillGrid();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!SaveGridChanges()) {
 				return;
 			}
@@ -555,5 +555,17 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+	
 	}
 }
+
+
+
+
+
+
+

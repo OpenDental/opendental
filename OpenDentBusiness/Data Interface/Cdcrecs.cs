@@ -118,13 +118,13 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<string>>(MethodBase.GetCurrentMethod());
 			}
-			List<string> listStrings=new List<string>();
+			List<string> retVal=new List<string>();
 			string command="SELECT CdcRecCode FROM cdcrec";
 			DataTable table=DataCore.GetTable(command);
 			for(int i=0;i<table.Rows.Count;i++){
-				listStrings.Add(table.Rows[i].ItemArray[0].ToString());
+				retVal.Add(table.Rows[i].ItemArray[0].ToString());
 			}
-			return listStrings;
+			return retVal;
 		}		
 
 		///<summary>Returns the total count of CDCREC codes.  CDCREC codes cannot be hidden.</summary>

@@ -24,9 +24,21 @@ namespace OpenDental {
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMultiVisitGroup));
+			this.butCancel = new OpenDental.UI.Button();
 			this.gridGroupedProcs = new OpenDental.UI.GridOD();
 			this.butUngroup = new OpenDental.UI.Button();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(647, 525);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridGroupedProcs
 			// 
@@ -55,9 +67,11 @@ namespace OpenDental {
 			// 
 			// FormMultiVisitGroup
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(734, 561);
 			this.Controls.Add(this.butUngroup);
 			this.Controls.Add(this.gridGroupedProcs);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMultiVisitGroup";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
@@ -68,6 +82,7 @@ namespace OpenDental {
 		}
 
 		#endregion
+		private OpenDental.UI.Button butCancel;
 		private UI.GridOD gridGroupedProcs;
 		private UI.Button butUngroup;
 	}

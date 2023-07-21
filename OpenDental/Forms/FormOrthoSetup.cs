@@ -35,7 +35,6 @@ namespace OpenDental {
 			textOrthoAutoProc.Text=ProcedureCodes.GetStringProcCode(_orthoAutoProcCodeNum);
 			checkConsolidateInsPayment.Checked=PrefC.GetBool(PrefName.OrthoInsPayConsolidated);
 			checkDebondOverridesMonthsTreat.Checked=PrefC.GetBool(PrefName.OrthoDebondProcCompletedSetsMonthsTreat);
-			checkOrthoChartLoggingOn.Checked=PrefC.GetBool(PrefName.OrthoChartLoggingOn);
 			string strListOrthoNums = PrefC.GetString(PrefName.OrthoPlacementProcsList);
 			if(strListOrthoNums!="") {
 				_listOrthoPlacementCodeNums.AddRange(strListOrthoNums.Split(new char[] { ',' }).ToList().Select(x => PIn.Long(x)));
@@ -104,7 +103,7 @@ namespace OpenDental {
 			RefreshListBoxProcs();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textOrthoMonthsTreat.IsValid()) {
 				MsgBox.Show(this,"Default months treatment must be between 0 and 255 months.");
 				return;
@@ -119,7 +118,6 @@ namespace OpenDental {
 			_hasChanges|=Prefs.UpdateBool(PrefName.OrthoCaseInfoInOrthoChart,checkOrthoFinancialInfoInChart.Checked);
 			_hasChanges|=Prefs.UpdateBool(PrefName.OrthoClaimMarkAsOrtho,checkOrthoClaimMarkAsOrtho.Checked);
 			_hasChanges|=Prefs.UpdateBool(PrefName.OrthoClaimUseDatePlacement,checkOrthoClaimUseDatePlacement.Checked);
-			_hasChanges|=Prefs.UpdateBool(PrefName.OrthoChartLoggingOn,checkOrthoChartLoggingOn.Checked);
 			_hasChanges|=Prefs.UpdateByte(PrefName.OrthoDefaultMonthsTreat,PIn.Byte(textOrthoMonthsTreat.Text));
 			_hasChanges|=Prefs.UpdateBool(PrefName.OrthoInsPayConsolidated,checkConsolidateInsPayment.Checked);
 			_hasChanges|=Prefs.UpdateBool(PrefName.OrthoDebondProcCompletedSetsMonthsTreat,checkDebondOverridesMonthsTreat.Checked);
@@ -131,14 +129,17 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			_hasChanges=false;
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormOrthoSetup_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult==DialogResult.Cancel) {
-				return;
-			}
 			if(_hasChanges) {
 				DataValid.SetInvalid(InvalidType.Prefs);
 			}
 		}
 
+		
 	}
 }

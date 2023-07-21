@@ -7,9 +7,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-#if !DOT_NET_STANDARD
 using System.Windows.Forms;
-#endif
 using Microsoft.Win32;
 
 namespace CodeBase {
@@ -65,28 +63,11 @@ namespace CodeBase {
 			}
 		}
 
-		private static DateTime _dateTimeLastCloudCheck= DateTime.MinValue;
-		private static bool _isCloudServerFileValid=false;
-		///<summary>Indicates if we are running on an OD Cloud server (Thinfinity or AppStream).</summary>
+		///<summary>Indicates if we are running on an OD Cloud server.</summary>
 		public static bool IsCloudServer {
 			get {
-				if(IsCloudInstance) {
-					return true;
-				}
-				//Sometimes we connect to an OD Cloud db with a normal build to do things like updates or from the ODService or ODEConnector services.
-				//Only check every 1 minute to prevent spamming the file system.
-				if(DateTime.Now.Subtract(_dateTimeLastCloudCheck).TotalMinutes>1) {
-					FileInfo fileInfo=new FileInfo(@"C:\Scripts\RegKeyNum.txt");
-					_isCloudServerFileValid=(fileInfo.Exists&&fileInfo.Length>0);
-					_dateTimeLastCloudCheck=DateTime.Now;
-				}
-				return _isCloudServerFileValid;				
-			}
-		}
-
-		public static bool IsCloudInstance {
-			get {
-				return ODBuild.IsThinfinity() || ODCloudClient.IsAppStream;
+				//Sometimes we connect to an OD Cloud db with a normal build to do things like updates.
+				return ODBuild.IsWeb() || Directory.Exists(@"C:\Program Files\Thinfinity\VirtualUI");
 			}
 		}
 
@@ -102,15 +83,12 @@ namespace CodeBase {
 		}
 		#endregion
 
-		///<summary>Always client name.  If on RDP, gets client name, never server name. If Thinfinity or AppStream, sends a request to the CloudClient to get the computer name.</summary>
+		///<summary>Always client name.  If on RDP, gets client name, never server name. If Web mode, sends a request to the browser to get the computer name.</summary>
 		public static string MachineName {
 			get {
-				if(IsCloudInstance) {
+				if(ODBuild.IsWeb()) {
 					return _machineName;
 				}
-#if DOT_NET_STANDARD
-				return Environment.MachineName;
-#else
 				if(typeof(SystemInformation).GetProperty("TerminalServerSession").GetValue(null).ToString()!="True"){
 					return Environment.MachineName;
 				}
@@ -131,26 +109,25 @@ namespace CodeBase {
 				}
 				//if client name is missing, treat it as local server
 				return Environment.MachineName;
-#endif
 			}
 			set {
 				_machineName=value;
 			}
 		}
 
-		///<summary>Only called from FormOpenDentalThreads.ODCloudMachineName thread once per minute. Does nothing for regular (not Thinfinity or AppStream) instances. For Thinfinity
-		///and AppStream, this will attempt to get the local computer name from the ODCloudClient.  If ODCloudClient isn't running or we get an error, machine name will be "UNKNOWN"
-		///and this will try again the next time it's called by the ODCloudMachineName thread.  Once the machine name is retrieved from ODCloudClient successfully
-		///(_machineName!="UNKNOWN") this will not attempt to retrieve the local computer name again while this instance is running.</summary>
+		///<summary>Only called from FormOpenDentalThreads.ODCloudMachineName thread once per minute. Does nothing for regular (!ODBuild.IsWeb) instances. For IsWeb, this will
+		///attempt to get the local computer name from the ODCloudClient.  If ODCloudClient isn't running or we get an error, machine name will be "UNKNOWN" and this will try again
+		///the next time it's called by the ODCloudMachineName thread.  Once the machine name is retrieved from ODCloudClient successfully (_machineName!="UNKNOWN") this will not
+		///attempt to retrieve the local computer name again while this instance is running.</summary>
 		public static void SetMachineName() {
-			if(!IsCloudInstance) {//only for Thinfinity and AppStream
+			if(!ODBuild.IsWeb()) {//only for IsWeb
 				return;
 			}
 			if(!_machineName.IsNullOrEmpty() && _machineName.ToUpper()!=UNKNOWN_NAME.ToUpper()) {//_machineName is already set, no need to get from ODCloudClient
 				return;
 			}
 			try {
-				_machineName=ODCloudClient.GetComputerName();
+				_machineName=ODCloudClient.SendToBrowserSynchronously("",ODCloudClient.BrowserAction.GetComputerName,doShowProgressBar:false);
 			}
 			catch(Exception ex) {
 				ex.DoNothing();
@@ -226,14 +203,10 @@ namespace CodeBase {
 
 		///<summary>Returns true if the current application is running as an administrator.  Otherwise; false.  Throws exceptions.</summary>
 		public static bool IsRunningAsAdministrator() {
-#if DOT_NET_STANDARD
-			return false;
-#else
 			using(WindowsIdentity identity=WindowsIdentity.GetCurrent()) {
 				WindowsPrincipal principal=new WindowsPrincipal(identity);
 				return principal.IsInRole(WindowsBuiltInRole.Administrator);
 			}
-#endif
 		}
 
 		///<summary>Returns an IPv4 address for the local machine. Returns an empty string if one cannot be found.</summary>

@@ -40,6 +40,7 @@ namespace OpenDental {
 			}
 			else{
 				butOK.Visible=false;
+				butCancel.Text=Lan.g(this,"Close");
 			}
 		}
 
@@ -67,8 +68,8 @@ namespace OpenDental {
 				medicationSelected=(Medication)gridAllMedications.ListGridRows[gridAllMedications.GetSelectedIndex()].Tag;
 			}
 			List <long> listInUseMedicationNums=Medications.GetAllInUseMedicationNums();
-			int sortColIndex=gridAllMedications.GetSortedByColumnIdx();
-			bool isSortAscending=gridAllMedications.IsSortedAscending();
+			int sortColIndex=gridAllMedications.SortedByColumnIdx;
+			bool isSortAscending=gridAllMedications.SortedIsAscending;
 			gridAllMedications.BeginUpdate();
 			gridAllMedications.Columns.Clear();
 			//The order of these columns is important.  See gridAllMedications_CellClick()
@@ -129,8 +130,8 @@ namespace OpenDental {
 		}
 
 		private void FillGridMissing() {
-			int sortColIndex=gridMissing.GetSortedByColumnIdx();
-			bool isSortAscending=gridMissing.IsSortedAscending();
+			int sortColIndex=gridMissing.SortedByColumnIdx;
+			bool isSortAscending=gridMissing.SortedIsAscending;
 			gridMissing.BeginUpdate();
 			gridMissing.Columns.Clear();
 			GridColumn col=new GridColumn(Lan.g(this,"RxNorm"),70,GridSortingStrategy.StringCompare);
@@ -173,7 +174,7 @@ namespace OpenDental {
 		}
 
 		private void butAddGeneric_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.MedicationDefEdit)) {
+			if(!Security.IsAuthorized(Permissions.MedicationDefEdit)) {
 				return;
 			}
 			Medication medication=new Medication();
@@ -187,7 +188,7 @@ namespace OpenDental {
 		}
 
 		private void butAddBrand_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.MedicationDefEdit)) {
+			if(!Security.IsAuthorized(Permissions.MedicationDefEdit)) {
 				return;
 			}
 			if(gridAllMedications.GetSelectedIndex()==-1){
@@ -210,7 +211,7 @@ namespace OpenDental {
 		}
 		
 		private void butImportMedications_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.MedicationDefEdit)) {
+			if(!Security.IsAuthorized(Permissions.MedicationDefEdit)) {
 				return;
 			}
 			List<Medication> listMedicationImports=new List<Medication>();
@@ -220,14 +221,8 @@ namespace OpenDental {
 			//	listMedicationImports=DownloadDefaultMedications();//Import from OpenDental.com
 			//}
 			//else {//Prompt for file.
-			string fileName;
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				fileName=ODCloudClient.ImportFileForCloud();
-			}
-			else {
-				fileName=GetFilenameFromUser(true);
-			}
-			if(fileName.IsNullOrEmpty()) {
+			string fileName=GetFilenameFromUser(true);
+			if(string.IsNullOrEmpty(fileName)) {
 				return;
 			}
 			Cursor=Cursors.WaitCursor;
@@ -264,12 +259,12 @@ namespace OpenDental {
 		}
 
 		private void butExportMedications_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.MedicationDefEdit)) {
+			if(!Security.IsAuthorized(Permissions.MedicationDefEdit)) {
 				return;
 			}
 			int countExportedMeds=0;
 			string fileName;
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				fileName="ExportedMedications.txt";
 			}
 			else {
@@ -377,7 +372,7 @@ namespace OpenDental {
 		}
 
 		private void butConvertGeneric_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.MedicationDefEdit)) {
+			if(!Security.IsAuthorized(Permissions.MedicationDefEdit)) {
 				return;
 			}
 			if(gridMissing.SelectedIndices.Length==0) {
@@ -425,7 +420,7 @@ namespace OpenDental {
 		}
 
 		private void butConvertBrand_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.MedicationDefEdit)) {
+			if(!Security.IsAuthorized(Permissions.MedicationDefEdit)) {
 				return;
 			}
 			if(gridMissing.SelectedIndices.Length==0) {
@@ -493,5 +488,30 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

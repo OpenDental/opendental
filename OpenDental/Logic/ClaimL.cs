@@ -60,40 +60,6 @@ namespace OpenDental {
 			}).ToList();
 		}
 
-		/// <summary> Block users from creating claims when a selected procedure is associated with duplicate claimprocs. A 
-		/// 'duplicate claimproc' does not mean that all of the information has been duplicated but instead means that there are two claimprocs for the same insurance plan.
-		/// Specifically, a duplicate claimproc for primary insurance, or secondary insurance, or tertiary insurance, etc.
-		/// Create a list of ProcNums that have duplicate claimprocs associated with them so that we can let the user know which procedures need manual intervention.
-		/// </summary>
-		public static bool WarnUsersForDuplicateClaimProcs(CreateClaimDataWrapper createClaimDataWrapper,bool isVerbose=true) {
-			List<long> listProcNums=new List<long>();
-			//Do not count 'Preauth' claimprocs as duplicates since these are expected to be present for the same insurance plan.
-			List<ClaimProc> listClaimProcsAvailable=createClaimDataWrapper.CreateClaimData_.ListClaimProcs
-				.FindAll(x => x.Status!=ClaimProcStatus.Preauth && x.Status!=ClaimProcStatus.Supplemental && x.IsOverpay==false);
-			//Only consider the claimprocs associated with the selected procedures (even if there are other procedures on the account with this problem).
-			List<CreateClaimItem> listCreateClaimItemsSelected=createClaimDataWrapper.ListCreateClaimItems.FindAll(x => x.IsSelected);
-			for(int i=0;i<listCreateClaimItemsSelected.Count;i++) {
-				List<ClaimProc> listClaimProcs=ClaimProcs.GetForProc(listClaimProcsAvailable,listCreateClaimItemsSelected[i].ProcNum);
-				//Group all of the claimprocs for this procedure by InsSubNum (e.g. by primary insurance).
-				//Keep track of any procedures that have multiple claimprocs for the same InsSubNum.
-				if(listClaimProcs.GroupBy(x => x.InsSubNum).Any(x => x.Count() > 1)) {
-					listProcNums.Add(listCreateClaimItemsSelected[i].ProcNum);
-				}
-			}
-			if(listProcNums.Count>0) {
-				string message=Lan.g("ContrAccount","Procedures with multiple claimprocs for the same insurance found:")+" "+listProcNums.Count;
-				for(int i=0;i<listProcNums.Count;i++) {
-					Procedure procedure=Procedures.GetProcFromList(createClaimDataWrapper.CreateClaimData_.ListProcs,listProcNums[i]);
-					message+="\r\n  "+Procedures.ConvertProcToString(procedure.CodeNum,procedure.Surf,procedure.ToothNum,true);
-				}
-				message+="\r\n\r\n"+Lan.g("ContrAccount","The above procedures need to have the duplicate claimprocs deleted before creating a claim.");
-				LogClaimError(createClaimDataWrapper,message,isVerbose);
-				createClaimDataWrapper.ShouldRefresh=false;
-				return true;
-			}
-			return false;
-		}
-
 		///<summary>Returns a CreateClaimDataWrapper object that is specifically designed for the claim creation process from within the UI.
 		///It contains strongly typed variables which help indicate to the claim creation method how to correctly create the claim.
 		///It also contains variables that indicate to consuming methods what happened during the claim creation process.
@@ -108,8 +74,8 @@ namespace OpenDental {
 				throw new ArgumentException("Invalid argument passed in.",nameof(listCreateClaimItems));
 			}
 			createClaimDataWrapper.ListCreateClaimItems=listCreateClaimItems;
-			if(!Security.IsAuthorized(EnumPermType.ClaimView,true)) {
-				LogClaimError(createClaimDataWrapper,Lans.g("Security","Not authorized for")+"\r\n"+GroupPermissions.GetDesc(EnumPermType.ClaimView),isVerbose);
+			if(!Security.IsAuthorized(Permissions.ClaimView,true)) {
+				LogClaimError(createClaimDataWrapper,Lans.g("Security","Not authorized for")+"\r\n"+GroupPermissions.GetDesc(Permissions.ClaimView),isVerbose);
 				createClaimDataWrapper.ShouldRefresh=false;
 				return createClaimDataWrapper;
 			}
@@ -199,8 +165,6 @@ namespace OpenDental {
 				createClaimDataWrapper.ShouldRefresh=false;
 				return createClaimDataWrapper;
 			}
-			List<CreateClaimItem> listCreateClaimItemsSelected=createClaimDataWrapper.ListCreateClaimItems.FindAll(x => x.IsSelected);
-			WarnUsersForDuplicateClaimProcs(createClaimDataWrapper);
 			return createClaimDataWrapper;
 		}
 
@@ -214,8 +178,8 @@ namespace OpenDental {
 			,bool hasPrimaryClaim=false,bool hasSecondaryClaim=false)
 		{
 			createClaimDataWrapper.ErrorMessage="";
-			if(!Security.IsAuthorized(EnumPermType.ClaimView,true)) {
-				LogClaimError(createClaimDataWrapper,Lans.g("Security","Not authorized for")+"\r\n"+GroupPermissions.GetDesc(EnumPermType.ClaimView),isVerbose);
+			if(!Security.IsAuthorized(Permissions.ClaimView,true)) {
+				LogClaimError(createClaimDataWrapper,Lans.g("Security","Not authorized for")+"\r\n"+GroupPermissions.GetDesc(Permissions.ClaimView),isVerbose);
 				createClaimDataWrapper.ShouldRefresh=false;
 				return createClaimDataWrapper;
 			}
@@ -266,7 +230,7 @@ namespace OpenDental {
 				}
 				else if(claimPrimary.ClaimNum!=0) {//isVerbose is false, still need to log.
 					Patient patient=createClaimDataWrapper.Patient_;
-					SecurityLogs.MakeLogEntry(EnumPermType.ClaimEdit,patient.PatNum,"New claim created for "+patient.LName+","+patient.FName,
+					SecurityLogs.MakeLogEntry(Permissions.ClaimEdit,patient.PatNum,"New claim created for "+patient.LName+","+patient.FName,
 						claimPrimary.ClaimNum,claimPrimary.SecDateTEdit);
 				}
 			}
@@ -283,13 +247,13 @@ namespace OpenDental {
 					return createClaimDataWrapper;
 				}
 				Patient patient=createClaimDataWrapper.Patient_;
-				SecurityLogs.MakeLogEntry(EnumPermType.ClaimEdit,patient.PatNum,"New claim created for "+patient.LName+","+patient.FName,
+				SecurityLogs.MakeLogEntry(Permissions.ClaimEdit,patient.PatNum,"New claim created for "+patient.LName+","+patient.FName,
 					claimSecondary.ClaimNum,claimSecondary.SecDateTEdit);
 			}
 			if(claimPrimary!=null) {
 				claimPrimary=Claims.GetClaim(claimPrimary.ClaimNum);
 				if(claimSecondary!=null && claimSecondary.ClaimStatus.In("H","U") && claimPrimary.ClaimStatus=="R") {
-					if(PrefC.GetBool(PrefName.PromptForSecondaryClaim) && Security.IsAuthorized(EnumPermType.ClaimSend,suppressMessage:true)) {
+					if(PrefC.GetBool(PrefName.PromptForSecondaryClaim) && Security.IsAuthorized(Permissions.ClaimSend,suppressMessage:true)) {
 						List<ClaimProc> listClaimProcs=createClaimDataWrapper.CreateClaimData_.ListClaimProcs.FindAll(x=>x.ClaimNum==claimPrimary.ClaimNum);
 						PromptForSecondaryClaim(listClaimProcs);
 					}
@@ -479,37 +443,23 @@ namespace OpenDental {
 			msg+=Lan.g("ContrAccount","Would you like to:");
 			string strChangeStatus=Lan.g("ContrAccount","Change the claim status to 'Waiting to send'");
 			string strSendClaims=Lan.g("ContrAccount","Send secondary claim(s) now");
-			string strPrintClaims=Lan.g("ContrAccount","Print secondary claim(s) now");
+			string strPrintClaims=Lan.g("ContrAccount","Print secondary claims(s) now");
 			string strDoNothing=Lan.g("ContrAccount","Do nothing");
 			List<InputBoxParam> listInputBoxParams=new List<InputBoxParam>();
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.RadioButton;
-			inputBoxParam.LabelText=msg;
-			inputBoxParam.Text=strChangeStatus;
-			listInputBoxParams.Add(inputBoxParam);
-			inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.RadioButton;
-			inputBoxParam.Text=strSendClaims;
-			listInputBoxParams.Add(inputBoxParam);
-			inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.RadioButton;
-			inputBoxParam.Text=strPrintClaims;
-			listInputBoxParams.Add(inputBoxParam);
+			listInputBoxParams.Add(new InputBoxParam(InputBoxType.RadioButton,msg,strChangeStatus,Size.Empty));
+			listInputBoxParams.Add(new InputBoxParam(InputBoxType.RadioButton,"",strSendClaims,Size.Empty));
+			listInputBoxParams.Add(new InputBoxParam(InputBoxType.RadioButton,"",strPrintClaims,Size.Empty));
 			if(!PrefC.GetBool(PrefName.ClaimPrimaryRecievedForceSecondaryStatus)) {
-				inputBoxParam=new InputBoxParam();
-				inputBoxParam.InputBoxType_=InputBoxType.RadioButton;
-				inputBoxParam.Text=strDoNothing;
-				listInputBoxParams.Add(inputBoxParam);
+				listInputBoxParams.Add(new InputBoxParam(InputBoxType.RadioButton,"",strDoNothing,Size.Empty));
 			}
-			InputBox inputBox=new InputBox(listInputBoxParams);
-			inputBox.SetTitle(Lan.g("ContrAccount","Outstanding secondary claims"));
-			inputBox.SizeInitial=new System.Windows.Size(450,220);
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			using InputBox inputBox=new InputBox(listInputBoxParams);
+			inputBox.setTitle(Lan.g("ContrAccount","Outstanding secondary claims"));
+			inputBox.SizeInitial=new Size(450,200);
+			if(inputBox.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
-			string radioButtonSelected=inputBox.RadioButtonResult;
-			if(radioButtonSelected==strDoNothing) {
+			RadioButton radioButtonSelected=inputBox.PanelClient.Controls.OfType<RadioButton>().Where(x=>x.Checked).First();
+			if(radioButtonSelected.Text==strDoNothing) {
 				return;
 			}
 			//Update status of claims to 'Waiting to Send'.
@@ -517,14 +467,9 @@ namespace OpenDental {
 			//See Claims.GetQueueList(...) below.
 			for(int i=0;i<listClaimsSecondary.Count;i++){
 				listClaimsSecondary[i].ClaimStatus="W";
-				if(!PrefC.GetBool(PrefName.ClaimPrimaryReceivedRecalcSecondary)) {
-					Claims.Update(listClaimsSecondary[i]);
-				}
+				Claims.Update(listClaimsSecondary[i]);
 			}
-			if(PrefC.GetBool(PrefName.ClaimPrimaryReceivedRecalcSecondary)) {
-				Claims.CalculateAndUpdateSecondaries(listClaimsSecondary);
-			}
-			if(radioButtonSelected==strSendClaims) {
+			if(radioButtonSelected.Text==strSendClaims) {
 				//Most likely all of the procedures on the primary claim will have all of the procedures on 1 secondary claim. Expecially since most of time the 
 				//claim will be created automatically. The only time they don't get created automatically is when the patient doesn't have a secondary claim 
 				//at the time the primary claim gets created. Even if the user created the claim manually, the chances that the procedures on the primary have more than
@@ -539,7 +484,7 @@ namespace OpenDental {
 				}
 				return;
 			}
-			if(radioButtonSelected!=strPrintClaims){
+			if(radioButtonSelected.Text!=strPrintClaims){
 				return;
 			}
 			bool doUsePrinterSettingsForAll=false;
@@ -564,7 +509,7 @@ namespace OpenDental {
 					}
 					break;
 				}
-				Etranss.SetClaimSentOrPrinted(claim.ClaimNum,claim.ClaimStatus,claim.PatNum,0,EtransType.ClaimPrinted,0,Security.CurUser.UserNum);
+				Etranss.SetClaimSentOrPrinted(claim.ClaimNum,claim.PatNum,0,EtransType.ClaimPrinted,0,Security.CurUser.UserNum);
 				//This call may receive the claim, but we don't want to prompt for secondary claims because we are already in the process of doing that.
 				Claims.ReceiveAsNoPaymentIfNeeded(claim.ClaimNum);
 			}
@@ -620,7 +565,7 @@ namespace OpenDental {
 				}
 				//This is done for PromptForSecondaryClaim(...).
 				//SendEclaimsToClearinghouse(...) already validates items in listClaimSendQueueItems, SetClaimItemIsValid(...) will just return in this case.
-				listClaimSendQueueItems[i]=SetClaimItemIsValid(listClaimSendQueueItems[i],clearinghouse);
+				SetClaimItemIsValid(listClaimSendQueueItems[i],clearinghouse);
 				if(!listClaimSendQueueItems[i].IsValid && listClaimSendQueueItems[i].CanSendElect) {
 					MsgBox.Show("ContrAccount","Not allowed to send e-claims with missing information.");
 					return listClaimSendQueueItemsRetVal;
@@ -658,15 +603,14 @@ namespace OpenDental {
 		}
 
 		///<summary>Sets the ClaimSendQueueItem.IsValid flag. Checks if the ClaimSendQueueItem passed in has any missing data.</summary>
-		public static ClaimSendQueueItem SetClaimItemIsValid(ClaimSendQueueItem claimSendQueueItem,Clearinghouse clearinghouseClin) {
+		public static void SetClaimItemIsValid(ClaimSendQueueItem claimSendQueueItem,Clearinghouse clearinghouseClin) {
 			if(claimSendQueueItem.IsValid) {
-				return claimSendQueueItem;//no need to check. ClaimItem is valid already.
+				return;//no need to check. ClaimItem is valid already.
 			}
 			claimSendQueueItem=Eclaims.GetMissingData(clearinghouseClin,claimSendQueueItem);
 			if(claimSendQueueItem.MissingData=="") {
 				claimSendQueueItem.IsValid=true;
 			}
-			return claimSendQueueItem;
 		}
 
 		///<summary>Returns ClaimIsValidState.True if given claim is valid.

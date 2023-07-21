@@ -26,9 +26,10 @@ namespace OpenDental {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPayPlanCredits));
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.groupCreditInfo = new OpenDental.UI.GroupBox();
-			this.textCode = new System.Windows.Forms.TextBox();
+			this.textCode = new OpenDental.ODtextBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.butAddOrUpdate = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
@@ -64,15 +65,25 @@ namespace OpenDental {
 			this.gridMain.TranslationName = "TablePaymentPlanProcsAndCreds";
 			this.gridMain.MouseUp += new System.Windows.Forms.MouseEventHandler(this.gridMain_MouseUp);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(850, 477);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 2;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(769, 474);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 2;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(850, 474);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 3;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// groupCreditInfo
 			// 
@@ -98,10 +109,15 @@ namespace OpenDental {
 			// 
 			this.textCode.AcceptsTab = true;
 			this.textCode.BackColor = System.Drawing.SystemColors.Control;
+			this.textCode.DetectLinksEnabled = false;
+			this.textCode.DetectUrls = false;
 			this.textCode.Location = new System.Drawing.Point(65, 22);
 			this.textCode.Name = "textCode";
+			this.textCode.QuickPasteType = OpenDentBusiness.QuickPasteType.ReadOnly;
 			this.textCode.ReadOnly = true;
+			this.textCode.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textCode.Size = new System.Drawing.Size(96, 20);
+			this.textCode.SpellCheckIsEnabled = false;
 			this.textCode.TabIndex = 0;
 			this.textCode.Text = "";
 			// 
@@ -147,7 +163,7 @@ namespace OpenDental {
 			this.textNote.DetectUrls = false;
 			this.textNote.Location = new System.Drawing.Point(8, 110);
 			this.textNote.Name = "textNote";
-			this.textNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.PayPlan;
+			this.textNote.QuickPasteType = OpenDentBusiness.QuickPasteType.PayPlan;
 			this.textNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNote.Size = new System.Drawing.Size(153, 83);
 			this.textNote.SpellCheckIsEnabled = false;
@@ -277,9 +293,10 @@ namespace OpenDental {
 			// 
 			// FormPayPlanCredits
 			// 
-			this.AcceptButton = this.butSave;
+			this.AcceptButton = this.butOK;
 			this.ClientSize = new System.Drawing.Size(937, 510);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.checkShowImplicit);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.butPrint);
@@ -296,7 +313,6 @@ namespace OpenDental {
 			this.Name = "FormPayPlanCredits";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Payment Plan Procedures and Credits";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormPayPlanCredits_FormClosing);
 			this.Load += new System.EventHandler(this.FormPayPlanCredits_Load);
 			this.groupCreditInfo.ResumeLayout(false);
 			this.groupCreditInfo.PerformLayout();
@@ -307,7 +323,8 @@ namespace OpenDental {
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private UI.GridOD gridMain;
 		private OpenDental.UI.GroupBox groupCreditInfo;
 		private System.Windows.Forms.Label label2;
@@ -319,7 +336,7 @@ namespace OpenDental {
 		private UI.Button butDelete;
 		private System.Windows.Forms.ToolTip toolTip1;
 		private UI.Button butAddOrUpdate;
-		private System.Windows.Forms.TextBox textCode;
+		private ODtextBox textCode;
 		private System.Windows.Forms.Label label6;
 		private UI.Button butClear;
 		private System.Windows.Forms.Label label7;

@@ -25,12 +25,12 @@ namespace OpenDental {
 			this.Top+=150;
 			if(TaskNoteCur.IsNew) {
 				textDateTime.ReadOnly=true;
-				butSave.Enabled=true;
+				butOK.Enabled=true;
 			}
-			else if(!Security.IsAuthorized(EnumPermType.TaskNoteEdit)) {//Tasknotes are not editable unless user has TaskNoteEdit permission.
-				butSave.Enabled=false;
+			else if(!Security.IsAuthorized(Permissions.TaskNoteEdit)) {//Tasknotes are not editable unless user has TaskNoteEdit permission.
+				butOK.Enabled=false;
 			}
-			if(!Security.IsAuthorized(EnumPermType.TaskDelete,true)) {//Tasknotes are not deletable unless user has TaskDelete  permission.
+			if(!Security.IsAuthorized(Permissions.TaskDelete,true)) {//Tasknotes are not deletable unless user has TaskDelete  permission.
 				butDelete.Enabled=false;
 			}
 		}
@@ -46,20 +46,20 @@ namespace OpenDental {
 			}
 			TaskNotes.Delete(TaskNoteCur.TaskNoteNum);
 			DialogResult=DialogResult.OK;
-			Tasks.TaskEditCreateLog(EnumPermType.TaskDelete,Lan.g(this,"Deleted note from task"),Tasks.GetOne(TaskNoteCur.TaskNum));
+			Tasks.TaskEditCreateLog(Permissions.TaskDelete,Lan.g(this,"Deleted note from task"),Tasks.GetOne(TaskNoteCur.TaskNum));
 			Close();//Needed because the window is called as a non-modal window.
 		}
 
 		private void butAutoNote_Click(object sender,EventArgs e) {
-			FrmAutoNoteCompose frmAutoNoteCompose=new FrmAutoNoteCompose();
-			frmAutoNoteCompose.ShowDialog();
-			if(frmAutoNoteCompose.IsDialogOK){
-				textNote.Text+=frmAutoNoteCompose.StrCompletedNote;
+			using FormAutoNoteCompose formAutoNoteCompose=new FormAutoNoteCompose();
+			formAutoNoteCompose.ShowDialog();
+			if(formAutoNoteCompose.DialogResult==DialogResult.OK){
+				textNote.Text+=formAutoNoteCompose.StrCompletedNote;
 			}
 		}
 
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textNote.Text=="") {
 				MsgBox.Show(this,"Please enter a note, or delete this entry.");
 				return;
@@ -80,7 +80,7 @@ namespace OpenDental {
 			if(TaskNoteCur.IsNew) {
 				TaskNoteCur.Note=textNote.Text;
 				TaskNotes.Insert(TaskNoteCur);
-				Tasks.TaskEditCreateLog(EnumPermType.TaskNoteEdit,Lan.g(this,"Added task note"),Tasks.GetOne(TaskNoteCur.TaskNum));
+				Tasks.TaskEditCreateLog(Permissions.TaskNoteEdit,Lan.g(this,"Added task note"),Tasks.GetOne(TaskNoteCur.TaskNum));
 				DialogResult=DialogResult.OK;
 				Close();//Needed because the window is called as a non-modal window.
 				return;
@@ -88,13 +88,18 @@ namespace OpenDental {
 			if(TaskNoteCur.Note!=textNote.Text || dateTimeNoteOld!=TaskNoteCur.DateTimeNote) {
 				TaskNoteCur.Note=textNote.Text;
 				TaskNotes.Update(TaskNoteCur);
-				Tasks.TaskEditCreateLog(EnumPermType.TaskNoteEdit,Lan.g(this,"Task note changed"),Tasks.GetOne(TaskNoteCur.TaskNum));
+				Tasks.TaskEditCreateLog(Permissions.TaskNoteEdit,Lan.g(this,"Task note changed"),Tasks.GetOne(TaskNoteCur.TaskNum));
 				DialogResult=DialogResult.OK;
 				Close();//Needed because the window is called as a non-modal window.
 				return;
 			}
 			//Intentionally blank, user opened an existing task note and did not change the note but clicked OK.
 			//This is effectively equivilent to a Cancel click
+			DialogResult=DialogResult.Cancel;
+			Close();//Needed because the window is called as a non-modal window.
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
 			DialogResult=DialogResult.Cancel;
 			Close();//Needed because the window is called as a non-modal window.
 		}

@@ -47,17 +47,6 @@ namespace OpenDental{
 			clinicPref.ValueString=newVal;
 		}
 
-		/// <summary>If there is no val for this clinic, then it uses the default pref, which is also in the available list.</summary>
-		public int GetIntVal(PrefName prefName,long clinicNum){
-			if(clinicNum<0) { //Shouldn't happen
-				return -1;
-			}
-			if(_listClinicPrefs.Any(x => x.ClinicNum==clinicNum && x.PrefName==prefName)) { //we've already loaded this item, just load it's checked value
-				return PIn.Int(_listClinicPrefs.FirstOrDefault(x => x.ClinicNum==clinicNum && x.PrefName==prefName).ValueString);
-			}
-			return PIn.Int(_listClinicPrefs.FirstOrDefault(x => x.ClinicNum==0 && x.PrefName==prefName).ValueString);
-		}
-
 		///<summary>If there is no val for this clinic, then it uses the default pref, which is also in the available list.</summary>
 		public bool GetBoolVal(PrefName prefName,long clinicNum){
 			if(clinicNum<0) { //Shouldn't happen

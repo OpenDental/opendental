@@ -28,6 +28,7 @@ namespace OpenDental{
 			this.imageListInfoButton = new System.Windows.Forms.ImageList(this.components);
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// imageListInfoButton
@@ -52,12 +53,22 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(836, 251);
+			this.butOK.Location = new System.Drawing.Point(703, 251);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(784, 251);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(127, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel Current Action";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// FormCDSIntervention
 			// 
@@ -65,6 +76,7 @@ namespace OpenDental{
 			this.ClientSize = new System.Drawing.Size(923, 287);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormCDSIntervention";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -77,6 +89,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.ImageList imageListInfoButton;
 	}

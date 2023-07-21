@@ -39,5 +39,25 @@ namespace UnitTestsCore {
 				return new Tuple<Reseller,Patient>(reseller,pat);
 			});
 		}
+
+		public static void SetResellerServiceFeeForEService(long resellerNum,eServiceCode eServiceCode,double amount) {
+			DataAction.RunCustomers(() => {
+				ProcedureCodes.RefreshCache();
+				string procCode=ProcedureCodes.GetProcCodeForEService(eServiceCode);
+				ProcedureCode procedureCode=ProcedureCodes.GetFirstOrDefault(x => x.ProcCode==procCode);
+				ResellerService resellerService=ResellerServices.GetServicesForReseller(resellerNum).FirstOrDefault(x => x.CodeNum==procedureCode.CodeNum);
+				if(resellerService!=null) {
+					resellerService.Fee=amount;
+					ResellerServices.Update(resellerService);
+					return;
+				}
+				resellerService=new ResellerService() {
+					ResellerNum=resellerNum,
+					CodeNum=procedureCode.CodeNum,
+					Fee=amount,
+				};
+				ResellerServices.Insert(resellerService);
+			});
+		}
 	}
 }

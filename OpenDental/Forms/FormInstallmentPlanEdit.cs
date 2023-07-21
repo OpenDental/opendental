@@ -38,7 +38,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.Cancel;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textDateAgreement.IsValid() || !textDateFirstPay.IsValid()) {
 				MsgBox.Show(this,"Please enter valid dates.");
 				return;
@@ -65,5 +65,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

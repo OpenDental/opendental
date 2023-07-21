@@ -27,7 +27,7 @@ namespace OpenDental {
 		}
 
 		private void FormEmailHostingSignatures_Load(object sender,EventArgs e) {
-			_isAuthorized=Security.IsAuthorized(EnumPermType.EServicesSetup);
+			_isAuthorized=Security.IsAuthorized(Permissions.EServicesSetup);
 			_clinicPrev=GetClinicSelected();
 			FillSignature();
 		}
@@ -70,11 +70,11 @@ namespace OpenDental {
 				AccountDescription=Clinics.GetAbbr(clinicNum), 
 			};
 			//Call API to update signature
-			ProgressWin progress=new ProgressWin();
+			ProgressOD progress=new ProgressOD();
 			progress.ActionMain=() => updateSignatureResponse=iAccountApi.UpdateSignature(updateSignatureRequest);
 			progress.StartingMessage="Saving email signatures...";
 			try {
-				progress.ShowDialog();
+				progress.ShowDialogProgress();
 			}
 			catch(Exception ex) {
 				FriendlyException.Show("An error occurred while saving the email signatures.",ex);
@@ -117,24 +117,23 @@ namespace OpenDental {
 			//Don't let them continue if enabled and signatures are not set correctly.
 			if(!TrySaveEmailSignatures(_clinicPrev.ClinicNum)) {
 				//Switch back to previous clinic.
-				comboClinicMassEmail.ClinicNumSelected=_clinicPrev.ClinicNum;
+				comboClinicMassEmail.SelectedClinicNum=_clinicPrev.ClinicNum;
 				return;
 			}
 			_clinicPrev=GetClinicSelected();
 			FillSignature();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			//Don't let them continue if enabled and signatures are not set correctly.
 			if(!TrySaveEmailSignatures(_clinicPrev.ClinicNum)) {
 				//Switch back to previous clinic.
-				comboClinicMassEmail.ClinicNumSelected=_clinicPrev.ClinicNum;
+				comboClinicMassEmail.SelectedClinicNum=_clinicPrev.ClinicNum;
 				if(!MsgBox.Show(MsgBoxButtons.YesNo,"Exit without saving?")) {
 					return;
 				}
 			}
 			DialogResult=DialogResult.OK;
 		}
-
 	}
 }

@@ -24,8 +24,6 @@ namespace OpenDental {
 		#region Fields - Public
 		///<summary>Set to true to use traditional MS borders for all forms.</summary>
 		public static bool AreBordersMS;
-		///<summary>This can be set to false to stop the client area for the window from re-calculating multiple times on windows that need to load a large amount of controls. Currently only used for FormClaimEdit which was calculating client area 20 times. Most other windows, even complex ones, only calculate 2-3 times.</summary>
-		public bool DoCalculateClientArea=true;
 		///<summary>This gets set to true when the NoDpi.txt file is found. It only applies to UIManager, not LayoutManager.</summary>
 		public static bool IsDpiSystem;
 		///<summary>This will be true for PDF. This prevents dragging away from docked position.</summary>
@@ -91,7 +89,7 @@ namespace OpenDental {
 		///<summary>All controls are placed into this container panel.  This represents the "client area" of the form.  This is used for all combinations of IsLayoutMS and AreBordersMS. If UsingUIManager, then this is not used and remains null.</summary>
 		public Panel PanelClient=null;//Panel is not double buffered, so it can't support drawing directly on it. Better to add a ControlDoubleBuffered or PanelOD for those situations.
 		///<summary>This panel is the same size as the form.  This is where all painting and mouse events happen.  The only reason we need to do this instead of painting directly on the form is because of a MS bug. The bug treats large portions of the window as the LowerR drag handle when the window is moved over to a high dpi screen.  This is very easy to duplicate on any simple new project, and it misbehaves across all situations, the only reqirements being high dpi with a dialog. We also use this panel with UIManager, but we cover up the L,R, and B.</summary>
-		public PanelSubclassBorder PanelBorders;
+		public PanelOD PanelBorders;
 		///<summary>In screen coordinates.  Prevents drawing events unless mouse moves.</summary>
 		protected Point _pointMouseScreenPrevious;
 		///<summary>In screen coordinates.  For dragging.</summary>
@@ -160,12 +158,16 @@ namespace OpenDental {
 		///<summary></summary>
 		protected void OnCloseXClicked() {
 			CancelEventArgs cancelEventArgs=new CancelEventArgs();
+			CloseXClicked?.Invoke(this,cancelEventArgs);
 			if(cancelEventArgs.Cancel){
 				return;
 			}
 			DialogResult=DialogResult.Cancel;
 			Close();//closes even if it's not a dialog
 		}
+		[Category("OD")]
+		[Description("Occurs when the X is clicked at the upper right of the form. In the event handler, set e.Cancel=true to cancel the close.")]
+		public event CancelEventHandler CloseXClicked=null;
 
 		[Category("OD")]
 		[Description("Fires when IsImageFloatDocked changes.")]
@@ -215,12 +217,6 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>Default true.</summary>
-		[Category("OD")]
-		[Description("Default true.")]
-		[DefaultValue(true)]
-		public bool EscClosesWindow{get;set; }=true;
-
 		/*This is probably a bad idea because it hides too much from the programmers.
 		public new Control.ControlCollection Controls{
 			get{
@@ -244,13 +240,9 @@ namespace OpenDental {
 		[DefaultValue(true)]
 		public bool HasHelpButton {get;set;}=true;
 
-		///<summary>True when form has been shown by the system. Used for filter controls and for closing open forms. Number of references is incorrect because called by reflection in FormOpenDental.</summary>
+		///<summary>True when form has been shown by the system. Used for filter controls and for closing open forms.</summary>
 		[Browsable(false)]
 		public bool HasShown {
-			//Jordan This will not be duplicated in WPF. 
-			//This was a hack for the problem of windows not showing if progress was open.
-			//But the root cause of that was using multiple threads for the UI, which is never allowed.
-			//We will instead purge all of those old progress bars asap.
 			get {
 				return _hasShown;
 			}
@@ -284,7 +276,7 @@ namespace OpenDental {
 					ShowInTaskbar=false;
 				}
 				else{//false
-					if(!ODBuild.IsThinfinity()) {
+					if(!ODBuild.IsWeb()) {
 						//This causes the form to refresh and in cloud the attached iframe loses the image and you have to reselect the image to make it show again.
 						//Also, there is no need to show in taskbar for cloud
 						ShowInTaskbar=true;
@@ -409,9 +401,6 @@ namespace OpenDental {
 			PanelBorders.MouseDown+=PanelBorders_MouseDown;
 			PanelBorders.MouseMove+=PanelBorders_MouseMove;
 			PanelBorders.MouseUp+=PanelBorders_MouseUp;
-			PanelBorders.EventMaxClick+=PanelBorders_EventMaxClick;
-			PanelBorders.EventMouseMoveMax+=PanelBorders_EventMouseMoveMax;
-			PanelBorders.EventMouseLeave+=PanelBorders_EventMouseLeave;
 			//Fix dpi:
 			System.Windows.Forms.Screen screen=System.Windows.Forms.Screen.FromControl(this);//automatically returns screen that contains largest portion of this form
 			int dpiScreen=Dpi.GetScreenDpi(screen);//extern DllImport
@@ -427,7 +416,6 @@ namespace OpenDental {
 				int widthNew = LayoutManager.Scale(LayoutManager.SizeClientOriginal.Width)+widthBorder*2;//includes Zoom
 				int heightNew = LayoutManager.Scale(LayoutManager.SizeClientOriginal.Height)+widthBorder+LayoutManager.GetHeightTitleBar();
 				Rectangle boundsNew = Bounds;
-				//if(StartPosition!=FormStartPosition.Manual){//this sort of helped, but size was still wrong. Better to just set size/pos in load event handler.
 				boundsNew.X-=(widthNew-Width)/2;
 				boundsNew.Y-=(heightNew-Height)/2;
 				boundsNew.Width=widthNew;
@@ -436,16 +424,6 @@ namespace OpenDental {
 			}
 			LayoutManager.LayoutFormBoundsAndFonts(this);//This is needed to lay out hidden tab controls
 			base.OnLoad(e);
-		}
-
-		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
-			//PreviewKeyDown didn't work for some reason even though KeyPreview is true.
-			if(keyData==Keys.Escape){
-				if(EscClosesWindow){
-					Close();
-				}
-			}
-			return base.ProcessCmdKey(ref msg,keyData);
 		}
 
 		private void ODForm_Shown(object sender,EventArgs e) {
@@ -533,7 +511,7 @@ namespace OpenDental {
 				);
 		}
 
-		///<summary>Sets the entire form into "read only" mode by disabling all controls on the form. Pass in any controls that should stay enabled. This can be used to stop users from clicking items they do not have permission for.</summary>
+		///<summary>Sets the entire form into "read only" mode by disabling all controls on the form. Pass in any controls that should say enabled (e.g. Cancel button). This can be used to stop users from clicking items they do not have permission for.</summary>
 		public void DisableAllExcept(params Control[] enabledControls) {
 			foreach(Control ctrl in PanelClient.Controls) {
 				if(enabledControls.Contains(ctrl)) {
@@ -572,13 +550,13 @@ namespace OpenDental {
 		}
 
 		///<summary>Before minimizing or maximizing a window, we need to reduce width and height by 16 and 39 pixels.  This allows the subsequent restore to be the correct size.  Otherwise, window gets slightly bigger with each restore.</summary>
-		//public void ShrinkWindowBeforeMinMax() {
-		//	if(AreBordersMS){// || UsingUIManager) {
-		//		return;//No need to shrink when we don't control the layout
-		//	}
-		//	//Size=new Size(Width-16,Height-39);//these numbers are the MS border widths.
-		//	Size=new Size(Width,Height-31);
-		//}
+		public void ShrinkWindowBeforeMinMax() {
+			if(AreBordersMS){// || UsingUIManager) {
+				return;//No need to shrink when we don't control the layout
+			}
+			//Size=new Size(Width-16,Height-39);//these numbers are the MS border widths.
+			Size=new Size(Width,Height-31);
+		}
 		#endregion Methods - Public
 
 		#region Border Drawing
@@ -693,8 +671,7 @@ namespace OpenDental {
 			Color colorBorder=_colorBorder;
 			Color colorBorderText=_colorBorderText;
 			Color colorButtonHot=_colorButtonHot;
-			string formName=this.GetType().ToString();
-			if(formName=="OpenDental.FormImageFloat"){
+			if(this.GetType().ToString() == "FormImageFloat"){
 				//They don't get a choice on these colors because that's too hard
 				Color colorFloatBase=Color.FromArgb(65, 94, 154);//This is the default dark blue-gray, same as grid titles
 				if(IsImageFloatSelected){
@@ -739,7 +716,6 @@ namespace OpenDental {
 			if(ControlBox && MaximizeBox){
 				xPos-=wEdge;
 				_rectangleButMax=new Rectangle(xPos,yPos,wEdge,hEdge);
-				PanelBorders.RectangleButMax=_rectangleButMax;
 			}
 			if(ControlBox && MinimizeBox){
 				xPos-=wEdge;
@@ -816,11 +792,6 @@ namespace OpenDental {
 					fontSize=fontSize*scaleRatio;
 					fontSizeMainWindow=fontSizeMainWindow*scaleRatio;
 				}
-			}
-			//Rarely seems to be 0, neg, or infinity. Not sure which or why.
-			//Blind fix:
-			if(fontSize<=0 || float.IsInfinity(fontSize)){
-				return;
 			}
 			using Font font=new Font("Microsoft Sans Serif",fontSize);
 			using Font fontMainWindow=new Font("Microsoft Sans Serif",fontSizeMainWindow);
@@ -911,6 +882,9 @@ namespace OpenDental {
 				MsgBox.Show(this,"PDFs cannot be undocked.  Double click to open in PDF viewer.");
 				return;
 			}
+			//Windows will not reliably restore the size after maximize.  It gets bigger each time.  We need to trick it by resizing the window before maximizing.
+			//This does not cause any flicker
+			ShrinkWindowBeforeMinMax();
 			WindowState=FormWindowState.Maximized;
 		}
 
@@ -928,41 +902,6 @@ namespace OpenDental {
 			UR,
 			LL,
 			LR
-		}
-
-		private void PanelBorders_EventMaxClick(object sender,EventArgs e) {
-			System.Windows.Forms.Screen screen=System.Windows.Forms.Screen.FromHandle(this.Handle);
-			if(WindowState==FormWindowState.Maximized){ //restore down
-				WindowState=FormWindowState.Normal;
-				if(Location==new Point(0,0)){
-					Location=new Point(screen.WorkingArea.X+screen.WorkingArea.Width/2-Width/2,screen.WorkingArea.Y+screen.WorkingArea.Height/2-Height/2);
-				}
-				if(Location.Y<screen.Bounds.Y){
-					Location=new Point(Location.X,screen.WorkingArea.Y);
-				}
-			}
-			else{//maximize
-				if(this.GetType().ToString()=="FormImageFloat" && IsImageFloatLocked){
-					MsgBox.Show(this,"PDFs cannot be undocked.  Double click to open in PDF viewer.");
-					return;
-				}
-				if(this.GetType().ToString()=="FormImageFloat"){
-					IsImageFloatDocked=false;
-					IsImageFloatLocked=false;
-				}
-				WindowState=FormWindowState.Maximized;
-			}
-			OnResizeEnd(new EventArgs());
-		}
-
-		private void PanelBorders_EventMouseMoveMax(object sender,EventArgs e) {
-			_isHotMax=true;
-			PanelBorders.Invalidate();
-		}
-
-		private void PanelBorders_EventMouseLeave(object sender,EventArgs e) {
-			_isHotMax=false;
-			PanelBorders.Invalidate();
 		}
 
 		private void PanelBorders_MouseDown(object sender, MouseEventArgs e){
@@ -1152,14 +1091,7 @@ namespace OpenDental {
 			//But putting PanelBorders.Invalidate() after SetDesktopBounds below does not cause flicker
 			#endregion Button Hover Effects
 			#region Taskbar
-			if(WindowState==FormWindowState.Maximized && e.Y>=Height-16){
-				//Check if e.y is at 1080 pixels, or the bottom of the screen
-				//Jordan-I don't understand this math, but the comments are here for future use.
-				//Example: FormODBase's height=1096, which is 1080 + 8 on top and 8 on bottom for boarders, and FormODBase.Bounds.Y's starting location is -8 which means it's bottom location is 1088.
-				//PanelBorders.Height=1081, starting location is 7 therefore the bottom location is 1088 as well
-				//MouseMove will fire at e.y=1080 inside of PanelBorders as this is technically 1088 inside of FormODBase
-				//Equation=e.Y picked up at 1080 and must be greater than or equal to FormODBase.Height 1096-16 pixels (-8 for top and bottom)
-				//Over in LayoutManagerForms.LayoutFormBoundsAndFonts, PanelClient and PanelBorders get set to allow this section to be hit.
+			if(WindowState==FormWindowState.Maximized && e.Y>Height-MaxInset()-2){
 				IntPtr hWnd=FindWindow("Shell_TrayWnd", "");
 				if(hWnd!=IntPtr.Zero){
 					APPBARDATA appBarData = new APPBARDATA();
@@ -1318,6 +1250,9 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				Point pointDelta =new Point(Control.MousePosition.X-_pointMouseDownScreen.X,Control.MousePosition.Y-_pointMouseDownScreen.Y);
 				if(Bounds.Top<screen.Bounds.Top+1 && MaximizeBox && (Math.Abs(pointDelta.X)>3 || Math.Abs(pointDelta.Y)>3)){
 					//snap to top to maximize. Only allow if there's a Maximize button.
+					//Windows will not reliably restore the size after maximize.  It gets bigger each time.  We need to trick it by resizing the window before maximizing.
+					//This does not cause any flicker
+					ShrinkWindowBeforeMinMax();
 					WindowState=FormWindowState.Maximized;
 				}
 				else if(screen.Primary && pointMouse.X==screen.WorkingArea.Right-1){
@@ -1342,7 +1277,6 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				return;
 			}
 			if(_rectangleButMax.Contains(e.Location) && MaximizeBox){
-				/*This won't happen because of PanelBorders WndProc
 				if(WindowState==FormWindowState.Maximized){ //restore down
 					WindowState=FormWindowState.Normal;
 					if(Location==new Point(0,0)){
@@ -1366,7 +1300,7 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 					}
 					WindowState=FormWindowState.Maximized;
 				}
-				OnResizeEnd(new EventArgs());*/
+				OnResizeEnd(new EventArgs());
 				return;
 			}
 			if(_rectangleButMin.Contains(e.Location) && MinimizeBox){
@@ -1374,8 +1308,13 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 					MsgBox.Show(this,"PDFs cannot be undocked.  Double click to open in PDF viewer.");
 					return;
 				}
+				if(WindowState!=FormWindowState.Maximized){//not an issue if starting maximized
+					//Windows will not reliably restore the size after minimize.  It gets bigger each time.  We need to trick it by resizing the window before minimizing.
+					//This does not cause any flicker
+					ShrinkWindowBeforeMinMax();
+				}
 				WindowState=FormWindowState.Minimized;
-				if(this.GetType().ToString()=="OpenDental.FormImageFloat"){
+				if(this.GetType().ToString()=="FormImageFloat"){
 					IsImageFloatDocked=false;
 					IsImageFloatLocked=false;
 				}
@@ -1393,18 +1332,14 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				try{
 					bool isKeyValid=ODHelp.IsEncryptedKeyValid();//always true in debug
 					string manualPageURL=OpenDentalHelp.ODHelp.GetManualPage(formName,PrefC.GetString(PrefName.ProgramVersion),isKeyValid);
-					if(ODBuild.IsThinfinity()) {
+					if(!ODBuild.IsWeb()) {
+						FormHelpBrowser formHelpBrowser=FormHelpBrowser.GetFormHelpBrowser(enableUI:isKeyValid);//If false, then just the Help Feature page shows
+						formHelpBrowser.GoToPage(manualPageURL);
+						formHelpBrowser.Show();
+						UIHelper.ForceBringToFront(formHelpBrowser);
+					}
+					else {
 						Process.Start(manualPageURL);
-					}
-					else if(ODCloudClient.IsAppStream){
-						ODCloudClient.LaunchFileWithODCloudClient(manualPageURL);
-					}
-					else{
-						FrmHelpBrowser frmHelpBrowser=new FrmHelpBrowser();
-						frmHelpBrowser.EnableUI(enableUI:isKeyValid);//If false, then just the Help Feature page shows
-						frmHelpBrowser.GoToPage(manualPageURL);
-						frmHelpBrowser.Show();
-						//UIHelper.ForceBringToFront(frmHelpBrowser);
 					}
 					if(!isKeyValid) {
 						//comes up on top of locked browser.
@@ -1489,7 +1424,6 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 
 		private const int WM_DPICHANGED=0x02E0;
 		private const int WM_NCCALCSIZE = 0x83;
-		private const int WM_WINDOWPOSCHANGED=0x0047;
 
 		[StructLayout(LayoutKind.Sequential)]
 		private struct NCCALCSIZE_PARAMS{
@@ -1631,16 +1565,14 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 					//Marshal.StructureToPtr(new RECT(rectangle), m.LParam, true);//return screen coords of new window client area
 					//m.Result = IntPtr.Zero;//always for wParam false
 				}
-				//wParam true, so we're supposed to indicate valid client area
+				//wParam true
 				//Copied from the UsingUIManager section above
-				if(DoCalculateClientArea) {
-					NCCALCSIZE_PARAMS ncCalcSizeParams2 = (NCCALCSIZE_PARAMS)m.GetLParam(typeof(NCCALCSIZE_PARAMS));
-					Rectangle rectangle2 = ncCalcSizeParams2.rgrc0.ToRectangle();//Starts as new coords of window after move or resize.
-					int widthBorder2=(int)Math.Round(8+(5*(LayoutManager.GetScaleMS()-1)),MidpointRounding.AwayFromZero);
-					rectangle2=new Rectangle(rectangle2.X+widthBorder2,rectangle2.Y,rectangle2.Width-widthBorder2*2,rectangle2.Height-widthBorder2);
-					ncCalcSizeParams2.rgrc0 = new RECT(rectangle2);
-					Marshal.StructureToPtr(ncCalcSizeParams2,m.LParam,true);//return screen coords of new window client area
-				}
+				NCCALCSIZE_PARAMS ncCalcSizeParams2 = (NCCALCSIZE_PARAMS)m.GetLParam(typeof(NCCALCSIZE_PARAMS));
+				Rectangle rectangle2 = ncCalcSizeParams2.rgrc0.ToRectangle();//Starts as new coords of window after move or resize.
+				int widthBorder2=(int)Math.Round(8+(5*(LayoutManager.GetScaleMS()-1)),MidpointRounding.AwayFromZero);
+				rectangle2=new Rectangle(rectangle2.X+widthBorder2,rectangle2.Y,rectangle2.Width-widthBorder2*2,rectangle2.Height-widthBorder2);
+				ncCalcSizeParams2.rgrc0 = new RECT(rectangle2);
+				Marshal.StructureToPtr(ncCalcSizeParams2,m.LParam,true);//return screen coords of new window client area
 				return;
 				//else{//wParam true, so we're supposed to indicate valid client area
 					/*
@@ -1674,15 +1606,6 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				//https://stackoverflow.com/questions/2135068/how-to-set-the-size-of-the-non-client-area-of-a-win32-window-native
 			}
 			#endregion WM_NCCALCSIZE
-			#region WM_WINDOWPOSCHANGED
-			if(m.Msg==WM_WINDOWPOSCHANGED) {
-				//This is a workaround needed to make Windows 11 Snap Layout function properly when the window was maximized because of a Microsoft bug that wasn't fixed until .Net 7 https://github.com/dotnet/winforms/issues/6153.
-				System.Reflection.FieldInfo restoredBoundsSpecified = typeof(Form).GetField("restoredWindowBoundsSpecified",System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-				if(restoredBoundsSpecified!=null) {
-					restoredBoundsSpecified.SetValue(this,BoundsSpecified.None);
-				}
-			}
-			#endregion WM_WINDOWPOSCHANGED
 			base.WndProc(ref m);
 		}
 
@@ -1728,26 +1651,26 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				//Get new signals from DB.
 				Logger.LogToPath("RefreshTimed",LogPath.Signals,LogPhase.Start);
 				if(isAllInvalidTypes) {
-					listSignals=Signalods.RefreshTimed(Signalods.DateTSignalLastRefreshed);
+					listSignals=Signalods.RefreshTimed(Signalods.SignalLastRefreshed);
 				}
 				else {
 					//We MUST ALWAYS process and ShutDownNow and ActiveInstance signals that occurred since SignalLastRefreshed
 					List<InvalidType> listInvalidTypesHighPriority=new List<InvalidType>();
 					listInvalidTypesHighPriority.Add(InvalidType.ShutDownNow);
 					listInvalidTypesHighPriority.Add(InvalidType.ActiveInstance);
-					listSignals=Signalods.RefreshTimed(Signalods.DateTSignalLastRefreshed,listInvalidTypes:listInvalidTypesHighPriority);
+					listSignals=Signalods.RefreshTimed(Signalods.SignalLastRefreshed,listITypes:listInvalidTypesHighPriority);
 				}
 				Logger.LogToPath("RefreshTimed",LogPath.Signals,LogPhase.End);
 				//Only update the time stamp with signals retreived from the DB. Do NOT use listLocalSignals to set timestamp.
 				if(listSignals.Count>0) {
 					if(isAllInvalidTypes) {
-						Signalods.DateTSignalLastRefreshed=listSignals.Max(x => x.SigDateTime);
+						Signalods.SignalLastRefreshed=listSignals.Max(x => x.SigDateTime);
 					}
 					else {
 						//If isAllInvalidTypes is false, listSignals won't contain the most recent signal necessarily, so get the most recent signal time from the DB instead.
-						Signalods.DateTSignalLastRefreshed=Signalods.GetLatestSignalTime();
+						Signalods.SignalLastRefreshed=Signalods.GetLatestSignalTime();
 					}
-					Signalods.DateTApptSignalLastRefreshed=Signalods.DateTSignalLastRefreshed;
+					Signalods.ApptSignalLastRefreshed=Signalods.SignalLastRefreshed;
 				}
 				Logger.LogToPath("Found "+listSignals.Count.ToString()+" signals",LogPath.Signals,LogPhase.Unspecified);
 				if(listSignals.Count==0) {
@@ -1773,10 +1696,6 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				if(listInvalidTypes.Remove(InvalidType.Prefs)) {
 					Cache.Refresh(InvalidType.Prefs);
 				}
-				//The PhoneEmpDefaults cache is unique in that it is heavily used and should never be cleared out. It should be refreshed immediately instead.
-				if(listInvalidTypes.Remove(InvalidType.PhoneEmpDefaults)) {
-					Cache.Refresh(InvalidType.PhoneEmpDefaults);
-				}
 				//The remaining caches should be cleared out and will be refilled when needed.
 				Cache.ClearCaches(listInvalidTypes.ToArray());
 				onProcess(_listODFormsSubscribed,listSignals);
@@ -1787,14 +1706,12 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 					//Signal processing should always use the server's time.
 					dateTimeRefreshed=MiscData.GetNowDateTime();
 				}
-				catch(Exception ex) {
+				catch {
 					//If the server cannot be reached, we still need to move the signal processing forward so use local time as a fail-safe.
 					dateTimeRefreshed=DateTime.Now;
-					Logger.LogToPath("Failed getting the server time: "+ex.Message,LogPath.Signals,LogPhase.Unspecified);
 				}
-				Signalods.DateTSignalLastRefreshed=dateTimeRefreshed;
-				Signalods.DateTApptSignalLastRefreshed=dateTimeRefreshed;
-				Logger.LogToPath(MiscUtils.GetExceptionText(e),LogPath.Signals,LogPhase.Unspecified);
+				Signalods.SignalLastRefreshed=dateTimeRefreshed;
+				Signalods.ApptSignalLastRefreshed=dateTimeRefreshed;
 			});
 			threadRefreshSignals.AddExitHandler((o) => {
 				Logger.LogToPath("",LogPath.Signals,LogPhase.End);
@@ -1862,8 +1779,7 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 					((UI.ComboBox)control).SelectionChangeCommitted+=Control_FilterCommitImmediate;
 				}
 				else if(control.GetType().IsSubclassOf(typeof(UI.ListBox)) || control.GetType()==typeof(UI.ListBox)) {
-					//if we make any changes here, we should also consider the same code in Wpf FilterControlsAndAction
-					((UI.ListBox)control).MouseUp+=Control_FilterCommitImmediate;
+					((UI.ListBox)control).SelectionChangeCommitted+=Control_FilterCommitImmediate;
 				}
 				else {
 					throw new NotImplementedException("Filter control of type "+control.GetType().Name+" is undefined.  Define it in ODForm.AddFilterControl().");
@@ -1908,6 +1824,7 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				return;
 			}
 			_dateTimeLastModified=DateTime.Now;
+//todo: This all needs to be rewritten to use timer instead of a thread.
 			if(_threadFilter==null) {//Ignore if we are already running the thread to perform a refresh.
 				//The thread does not ever run in a form where the user has not modified the filters.
 				#region Init _threadFilter      
@@ -1978,6 +1895,7 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 
 		}
 	}
+
 }
 
 

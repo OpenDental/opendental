@@ -17,7 +17,7 @@ namespace OpenDental {
 		}
 
 		private void FormChangeCloudPassword_Load(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				DialogResult=DialogResult.Cancel;
 			}
 		}
@@ -63,7 +63,7 @@ namespace OpenDental {
 			finally {
 				Cursor=Cursors.Default;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,"Changed Cloud office password.");
+			SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,"Changed Cloud office password.");
 			Prefs.UpdateInt(PrefName.CloudPasswordNeedsReset,(int)YN.No);//No refresh needed because this is only checked on startup.
 			MsgBox.Show(this,"Password changed.");
 		}
@@ -91,6 +91,10 @@ namespace OpenDental {
 				FriendlyException.Show(process.StandardError.ReadLine(),new Exception(process.StandardError.ReadToEnd()));
 			}
 			return;
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 
 	}

@@ -228,26 +228,6 @@ namespace OpenDentBusiness{
 			return retVal;
 		}
 
-		///<summary>Gets one RecallType from the DB. Returns null if not found.</summary>
-		public static RecallType GetOne(long recallTypeNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<RecallType>(MethodBase.GetCurrentMethod(),recallTypeNum);
-			}
-			string command="SELECT * FROM recalltype WHERE RecallTypeNum="+POut.Long(recallTypeNum);
-			return Crud.RecallTypeCrud.SelectOne(command);
-		}
-
-		///<summary>Gets a list of RecallTypes from database. Returns null if not found.</summary>
-		public static List<RecallType> GetRecallTypesForApi(int limit,int offset) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<RecallType>>(MethodBase.GetCurrentMethod(),limit,offset);
-			}
-			string command="SELECT * FROM recalltype ";
-			command+="ORDER BY RecallTypeNum "//Ensure order for limit and offset.
-			+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
-			return Crud.RecallTypeCrud.SelectMany(command);
-		}
-
 		/*
 		///<summary>Gets a list of all inactive recall types.  Only those without triggers are included.</summary>
 		public static List<RecallType> GetInactive(){

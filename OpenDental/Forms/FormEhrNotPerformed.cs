@@ -130,12 +130,11 @@ namespace OpenDental {
 			for(int i=0;i<Enum.GetNames(typeof(EhrNotPerformedItem)).Length;i++) {
 				listItems.Add(Enum.GetNames(typeof(EhrNotPerformedItem))[i]);
 			}
-			InputBox inputBox=new InputBox(Lan.g(this,"Select the item not being performed from the list below."),listItems);
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			using InputBox chooseItem=new InputBox(Lan.g(this,"Select the item not being performed from the list below."),listItems);
+			if(chooseItem.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
-			if(inputBox.SelectedIndex==-1) {
+			if(chooseItem.comboSelection.SelectedIndex==-1) {
 				MsgBox.Show(this,"You must select an item that is not being performed from the list of available items.");
 				return;
 			}
@@ -145,10 +144,13 @@ namespace OpenDental {
 			FormEE.EhrNotPerfCur.PatNum=PatCur.PatNum;
 			FormEE.EhrNotPerfCur.ProvNum=PatCur.PriProv;
 			FormEE.EhrNotPerfCur.DateEntry=DateTime.Now;
-			FormEE.SelectedItemIndex=inputBox.SelectedIndex;//Send in the int of index of selected item
+			FormEE.SelectedItemIndex=chooseItem.comboSelection.SelectedIndex;//Send in the int of index of selected item
 			FormEE.ShowDialog();
 			FillGrid();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			this.Close();
+		}
 	}
 }

@@ -40,31 +40,30 @@ namespace OpenDentBusiness{
 
 		#region Delete
 		///<summary></summary>
-		public static void Delete(params long[] apptThankYouSentNumsArray) {
+		public static void Delete(params long[] arrApptThankYouSentNums) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),apptThankYouSentNumsArray);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),arrApptThankYouSentNums);
 				return;
 			}
-			if(apptThankYouSentNumsArray.IsNullOrEmpty()) {
+			if(arrApptThankYouSentNums.IsNullOrEmpty()) {
 				return;
 			}
 			string command="DELETE FROM apptthankyousent WHERE ApptThankYouSentNum IN ("
-				+string.Join(",",apptThankYouSentNumsArray.Select(x => POut.Long(x)))+")";
+				+string.Join(",",arrApptThankYouSentNums.Select(x => POut.Long(x)))+")";
 			Db.NonQ(command);
 		}
 		#endregion Delete
 
 		public static void HandleApptChanged(Logger.IWriteLine log) {
-			//No need to check MiddleTierRole; no call to db.
 			//Delete the ApptThankYouSent entries for rescheduled/cancelled appointments.  AutoComm will resend these automatically where the appointment 
 			//still and HQ will increment the Sequence number of the .ics file such that the calendar entry on the patient's device is updated.
 			//Remove those that the user specifically said to not resend
-			List<ApptThankYouSent> listApptThankYouSentsChanged=GetForApptChanged();
-			log.WriteLine($"Deleting {listApptThankYouSentsChanged.Count} ApptThankYouSent entries.",LogLevel.Information);
-			string verboseLog=string.Join("\r\n\t\t",listApptThankYouSentsChanged
+			List<ApptThankYouSent> listThanksChanged=GetForApptChanged();
+			log.WriteLine($"Deleting {listThanksChanged.Count} ApptThankYouSent entries.",LogLevel.Information);
+			string verboseLog=string.Join("\r\n\t\t",listThanksChanged
 				.Select(x => $"ApptThankYouSentNum: {x.ApptThankYouSentNum}, PatNum: {x.PatNum}, ApptDateTime: {x.ApptDateTime}"));
 			log.WriteLine($"Deleting \r\n\t\t{verboseLog}",LogLevel.Verbose);
-			Delete(listApptThankYouSentsChanged.Select(x => x.ApptThankYouSentNum).ToArray());
+			Delete(listThanksChanged.Select(x => x.ApptThankYouSentNum).ToArray());
 		}
 
 		//<summary>Get the list of ApptThankYouSents where the appointment was rescheduled or cancelled after sending the thank you.</summary>
@@ -73,12 +72,12 @@ namespace OpenDentBusiness{
 				return Meth.GetObject<List<ApptThankYouSent>>(MethodBase.GetCurrentMethod());
 			}
 			//Do not include UnscheduledList or Broken appointments
-			List<ApptStatus> listApptStatuses=new List<ApptStatus>() { ApptStatus.UnschedList, ApptStatus.Broken };
+			List<ApptStatus> listStatus=new List<ApptStatus>() { ApptStatus.UnschedList, ApptStatus.Broken };
 			string command=@"SELECT apptthankyousent.* 
 				FROM apptthankyousent
 				LEFT JOIN appointment ON apptthankyousent.ApptNum=appointment.AptNum
 				WHERE apptthankyousent.DoNotResend=0 AND (appointment.AptNum IS NULL OR appointment.AptDateTime!=apptthankyousent.ApptDateTime
-				OR appointment.AptStatus IN ("+string.Join(",",listApptStatuses.Select(x => POut.Int((int)x)))+"))";
+				OR appointment.AptStatus IN ("+string.Join(",",listStatus.Select(x => POut.Int((int)x)))+"))";
 			return Crud.ApptThankYouSentCrud.SelectMany(command);
 		}
 

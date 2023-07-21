@@ -11,7 +11,7 @@
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing) {
 			if(disposing) {
-				pictureBox.Image?.Dispose();
+				odPictureBoxEmployee.Image?.Dispose();
 				components?.Dispose();
 			}
 			base.Dispose(disposing);
@@ -28,8 +28,7 @@
 			this.labelExtensionDesc = new System.Windows.Forms.Label();
 			this.labelStatusTime = new System.Windows.Forms.Label();
 			this.labelCustomer = new System.Windows.Forms.Label();
-			this.pictureBox = new System.Windows.Forms.PictureBox();
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
+			this.odPictureBoxEmployee = new OpenDental.UI.ODPictureBox();
 			this.SuspendLayout();
 			// 
 			// labelUserName
@@ -74,13 +73,14 @@
 			// 
 			// odPictureBoxEmployee
 			// 
-			this.pictureBox.Location = new System.Drawing.Point(-2, -1);
-			this.pictureBox.Margin = new System.Windows.Forms.Padding(0);
-			this.pictureBox.Name = "odPictureBoxEmployee";
-			this.pictureBox.Size = new System.Drawing.Size(175, 129);
-			this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-			this.pictureBox.TabIndex = 0;
-			this.pictureBox.Text = "Employee Picture";
+			this.odPictureBoxEmployee.HasBorder = false;
+			this.odPictureBoxEmployee.Location = new System.Drawing.Point(-2, -1);
+			this.odPictureBoxEmployee.Margin = new System.Windows.Forms.Padding(0);
+			this.odPictureBoxEmployee.Name = "odPictureBoxEmployee";
+			this.odPictureBoxEmployee.Size = new System.Drawing.Size(175, 129);
+			this.odPictureBoxEmployee.TabIndex = 0;
+			this.odPictureBoxEmployee.Text = "Employee Picture";
+			this.odPictureBoxEmployee.TextNullImage = "No Image Available";
 			// 
 			// UserControlMapDetails
 			// 
@@ -89,17 +89,16 @@
 			this.Controls.Add(this.labelStatusTime);
 			this.Controls.Add(this.labelExtensionDesc);
 			this.Controls.Add(this.labelUserName);
-			this.Controls.Add(this.pictureBox);
+			this.Controls.Add(this.odPictureBoxEmployee);
 			this.Name = "UserControlMapDetails";
 			this.Size = new System.Drawing.Size(358, 130);
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
 
-		private System.Windows.Forms.PictureBox pictureBox;
+		private UI.ODPictureBox odPictureBoxEmployee;
 		private System.Windows.Forms.Label labelUserName;
 		private System.Windows.Forms.Label labelExtensionDesc;
 		private System.Windows.Forms.Label labelStatusTime;

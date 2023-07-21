@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -16,23 +15,14 @@ namespace OpenDental {
 	public partial class FrmBackupReminder:FrmODBase {
 		public FrmBackupReminder() {
 			InitializeComponent();
-			Load+=FrmBackupReminder_Load;
-			FormClosing+=FrmBackupReminder_FormClosing;
-			PreviewKeyDown+=FrmBackupReminder_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmBackupReminder_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmBackupReminder_Loaded(object sender,RoutedEventArgs e) {
 			labelSupplementalBackupDisabled.Visible=false;
 			labelSupplementalBackupPath.Visible=false;
 			labelSupplementalBackupDisabled.Visible=!PrefC.GetBool(PrefName.SupplementalBackupEnabled);
 			labelSupplementalBackupPath.Visible=string.IsNullOrEmpty(PrefC.GetString(PrefName.SupplementalBackupNetworkPath));
-		}
-
-		private void FrmBackupReminder_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {
@@ -59,9 +49,9 @@ namespace OpenDental {
 			IsDialogOK=true;
 		}
 
-		private void FrmBackupReminder_FormClosing(object sender,CancelEventArgs e) {
+		private void FrmBackupReminder_FormClosing(object sender,FormClosingEventArgs e) {
 			if(!IsDialogOK){//clicked on X at upper right
-				MsgBox.Show(this,"Please answer the questions, then click Save.");
+				MsgBox.Show(this,"Please answer the questions, then click OK.");
 				e.Cancel=true;
 			}
 		}

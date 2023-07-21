@@ -38,6 +38,7 @@ namespace OpenDental{
 			this.textNistTime = new OpenDental.ODtextBox();
 			this.butRefreshTime = new OpenDental.UI.Button();
 			this.textNistUrl = new OpenDental.ODtextBox();
+			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// label2
@@ -104,12 +105,11 @@ namespace OpenDental{
 			this.textMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textMessage.BackColor = System.Drawing.SystemColors.Control;
 			this.textMessage.DetectUrls = false;
 			this.textMessage.ForeColor = System.Drawing.Color.DarkRed;
 			this.textMessage.Location = new System.Drawing.Point(137, 182);
 			this.textMessage.Name = "textMessage";
-			this.textMessage.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.MedicationEdit;
+			this.textMessage.QuickPasteType = OpenDentBusiness.QuickPasteType.MedicationEdit;
 			this.textMessage.ReadOnly = true;
 			this.textMessage.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textMessage.Size = new System.Drawing.Size(255, 84);
@@ -119,12 +119,11 @@ namespace OpenDental{
 			// textLocalTime
 			// 
 			this.textLocalTime.AcceptsTab = true;
-			this.textLocalTime.BackColor = System.Drawing.SystemColors.Control;
 			this.textLocalTime.DetectUrls = false;
 			this.textLocalTime.Location = new System.Drawing.Point(137, 156);
 			this.textLocalTime.Multiline = false;
 			this.textLocalTime.Name = "textLocalTime";
-			this.textLocalTime.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.MedicationEdit;
+			this.textLocalTime.QuickPasteType = OpenDentBusiness.QuickPasteType.MedicationEdit;
 			this.textLocalTime.ReadOnly = true;
 			this.textLocalTime.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textLocalTime.Size = new System.Drawing.Size(111, 20);
@@ -134,12 +133,11 @@ namespace OpenDental{
 			// textServerTime
 			// 
 			this.textServerTime.AcceptsTab = true;
-			this.textServerTime.BackColor = System.Drawing.SystemColors.Control;
 			this.textServerTime.DetectUrls = false;
 			this.textServerTime.Location = new System.Drawing.Point(137, 130);
 			this.textServerTime.Multiline = false;
 			this.textServerTime.Name = "textServerTime";
-			this.textServerTime.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.MedicationEdit;
+			this.textServerTime.QuickPasteType = OpenDentBusiness.QuickPasteType.MedicationEdit;
 			this.textServerTime.ReadOnly = true;
 			this.textServerTime.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textServerTime.Size = new System.Drawing.Size(111, 20);
@@ -149,12 +147,11 @@ namespace OpenDental{
 			// textNistTime
 			// 
 			this.textNistTime.AcceptsTab = true;
-			this.textNistTime.BackColor = System.Drawing.SystemColors.Control;
 			this.textNistTime.DetectUrls = false;
 			this.textNistTime.Location = new System.Drawing.Point(137, 104);
 			this.textNistTime.Multiline = false;
 			this.textNistTime.Name = "textNistTime";
-			this.textNistTime.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.MedicationEdit;
+			this.textNistTime.QuickPasteType = OpenDentBusiness.QuickPasteType.MedicationEdit;
 			this.textNistTime.ReadOnly = true;
 			this.textNistTime.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNistTime.Size = new System.Drawing.Size(111, 20);
@@ -167,25 +164,35 @@ namespace OpenDental{
 			this.butRefreshTime.Name = "butRefreshTime";
 			this.butRefreshTime.Size = new System.Drawing.Size(83, 24);
 			this.butRefreshTime.TabIndex = 76;
-			this.butRefreshTime.Text = "Sync Time";
+			this.butRefreshTime.Text = "Synch Time";
 			this.butRefreshTime.Click += new System.EventHandler(this.butRefreshTime_Click);
 			// 
 			// textNistUrl
 			// 
 			this.textNistUrl.AcceptsTab = true;
-			this.textNistUrl.BackColor = System.Drawing.SystemColors.Window;
 			this.textNistUrl.DetectUrls = false;
 			this.textNistUrl.Location = new System.Drawing.Point(137, 78);
 			this.textNistUrl.Multiline = false;
 			this.textNistUrl.Name = "textNistUrl";
-			this.textNistUrl.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.MedicationEdit;
+			this.textNistUrl.QuickPasteType = OpenDentBusiness.QuickPasteType.MedicationEdit;
 			this.textNistUrl.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNistUrl.Size = new System.Drawing.Size(255, 20);
 			this.textNistUrl.TabIndex = 75;
 			this.textNistUrl.Text = "";
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(438, 242);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormEhrTimeSynch
 			// 
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(538, 293);
 			this.Controls.Add(this.label7);
 			this.Controls.Add(this.textMessage);
@@ -199,8 +206,10 @@ namespace OpenDental{
 			this.Controls.Add(this.textNistTime);
 			this.Controls.Add(this.butRefreshTime);
 			this.Controls.Add(this.textNistUrl);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrTimeSynch";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Time Synchronization";
 			this.Load += new System.EventHandler(this.FormEhrTime_Load);
 			this.ResumeLayout(false);
@@ -208,6 +217,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private ODtextBox textNistUrl;
 		private UI.Button butRefreshTime;
 		private ODtextBox textNistTime;

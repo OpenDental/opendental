@@ -131,12 +131,12 @@ namespace OpenDental {
 			listMessageReplaceTypes.Add(MessageReplaceType.Office);
 			listMessageReplaceTypes.Add(MessageReplaceType.Patient);
 			listMessageReplaceTypes.Add(MessageReplaceType.Misc);
-			FrmMessageReplacements frmMessageReplacements=new FrmMessageReplacements(listMessageReplaceTypes,false);
-			frmMessageReplacements.MessageReplacementSystemType=MessageReplacementSystemType.SMS;
-			frmMessageReplacements.IsSelectionMode=true;
-			frmMessageReplacements.ShowDialog();
-			if(frmMessageReplacements.IsDialogOK) {
-				textBox.SelectedText=frmMessageReplacements.ReplacementTextSelected;
+			using FormMessageReplacements formMessageReplacements=new FormMessageReplacements(listMessageReplaceTypes,false);
+			formMessageReplacements.MessageReplacementSystemType=MessageReplacementSystemType.SMS;
+			formMessageReplacements.IsSelectionMode=true;
+			formMessageReplacements.ShowDialog();
+			if(formMessageReplacements.DialogResult==DialogResult.OK) {
+				textBox.SelectedText=formMessageReplacements.Replacement;
 			}
 		}
 
@@ -154,7 +154,7 @@ namespace OpenDental {
 			((System.Windows.Forms.TextBox)contextMenuStrip.SourceControl).Undo();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			long clinicNumSelected=comboBoxClinicPicker.GetSelectedClinic()?.ClinicNum??0;
 			if(checkUseDefaults.Checked==true) {
 				_clinicPrefHelper.DeleteClinicPref(comboBoxTemplates.GetSelected<PrefName>(),clinicNumSelected);
@@ -162,14 +162,13 @@ namespace OpenDental {
 			else {
 				saveTemplate(comboBoxTemplates.GetSelected<PrefName>(),clinicNumSelected,textMessageTemplate.Text);
 			}
+			Prefs.RefreshCache();
 			DialogResult=DialogResult.OK;
 		}
 
-		private void FormTextPaySetup_FormClosing(object sender,FormClosingEventArgs e) {
+		private void butCancel_Click(object sender,EventArgs e) {
 			Prefs.RefreshCache();
-			//Jordan 2023-12-12- I notice that the above line does not use the normal boolean to keep track of _isChanged.
-			//I also notice that it is only refreshing cache on the local computer rather than sending out an invalid event via signals.
+			DialogResult=DialogResult.Cancel;
 		}
-
 	}
 }

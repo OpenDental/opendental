@@ -67,9 +67,9 @@ namespace OpenDentBusiness {
 		///Must specify a time because you only want to ack sigmessages earlier than the last time this workstation was refreshed.
 		///A newer sigmessage would not get acked. If this seems slow, then I will need to check to make sure all these tables are properly indexed.
 		///Inserts a signal for every SigMessageNum that was updated.</summary>
-		public static void AckButton(int buttonIndex,DateTime dateTime) {
+		public static void AckButton(int buttonIndex,DateTime time) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),buttonIndex,dateTime);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),buttonIndex,time);
 				return;
 			}
 			List<long> listSigMessageNums=new List<long>();
@@ -78,7 +78,7 @@ namespace OpenDentBusiness {
 					+"OR sigmessage.SigElementDefNumExtra=sigelementdef.SigElementDefNum "
 					+"OR sigmessage.SigElementDefNumMsg=sigelementdef.SigElementDefNum) "
 				+"WHERE sigmessage.AckDateTime < "+POut.Date(new DateTime(1880,1,1),true)+" "
-				+"AND MessageDateTime <= "+POut.DateT(dateTime)+" "
+				+"AND MessageDateTime <= "+POut.DateT(time)+" "
 				+"AND sigelementdef.LightRow="+POut.Long(buttonIndex);
 			DataTable table=Db.GetTable(command);
 			if(table.Rows.Count==0) {
@@ -120,25 +120,37 @@ namespace OpenDentBusiness {
 			Crud.SigMessageCrud.Update(sigMessage);
 		}
 
-		///<summary>Deletes all sigmessages older than 2 days.</summary>
+		///<summary>Deletes all sigmessages older than 2 days.  Will fail silently if anything goes wrong.</summary>
 		public static void ClearOldSigMessages() {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				Meth.GetVoid(MethodBase.GetCurrentMethod());
 				return;
 			}
-			//Get all ack'd messages older than two days.
-			string command="";
-			//easier to read than using the DbHelper Functions
-			command="SELECT SigMessageNum FROM sigmessage WHERE AckDateTime > "+POut.DateT(new DateTime(1880,1,1))+" "
-				+"AND AckDateTime < DATE_ADD(NOW(),INTERVAL -2 DAY)";
-			DataTable table=Db.GetTable(command);
-			if(table.Rows.Count < 1) {
-				return;//Nothing to delete.
+			try {
+				//Get all ack'd messages older than two days.
+				string command="";
+				DataTable table;
+				if(DataConnection.DBtype==DatabaseType.MySql) {//easier to read that using the DbHelper Functions
+					command="SELECT SigMessageNum FROM sigmessage WHERE AckDateTime > "+POut.DateT(new DateTime(1880,1,1))+" "
+						+"AND AckDateTime < DATE_ADD(NOW(),INTERVAL -2 DAY)";
+					table=Db.GetTable(command);
+				}
+				else {//oracle
+					command="SELECT SigMessageNum FROM sigmessage WHERE AckDateTime > "+POut.DateT(new DateTime(1880,1,1))+" "
+						+"AND AckDateTime < CURRENT_TIMESTAMP -2";
+					table=Db.GetTable(command);
+				}
+				if(table.Rows.Count < 1) {
+					return;//Nothing to delete.
+				}
+				//Delete all of the acks.
+				command="DELETE FROM sigmessage "
+					+"WHERE SigMessageNum IN ("+String.Join(",",table.Select().Select(x => PIn.Long(x["SigMessageNum"].ToString())))+")";
+				Db.NonQ(command);
 			}
-			//Delete all of the acks.
-			command="DELETE FROM sigmessage "
-				+"WHERE SigMessageNum IN ("+String.Join(",",table.Select().Select(x => PIn.Long(x["SigMessageNum"].ToString())))+")";
-			Db.NonQ(command);
+			catch(Exception) {
+				//fail silently
+			}
 		}
 	}
 }

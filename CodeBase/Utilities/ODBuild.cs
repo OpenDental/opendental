@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace CodeBase {
 	public class ODBuild {
-		public static bool IsUnitTest=false;
 
 		///<summary>Returns true if current build is for Windows OS.</summary>
 		public static bool IsWindows() {
@@ -32,9 +31,9 @@ namespace CodeBase {
 #endif
 		}
 
-		///<summary>Returns true if current build is using Thinfinity Virtual UI, aka ODCloud.</summary>
-		public static bool IsThinfinity() {
-#if THINFINITY
+		///<summary>Returns true if current build is using Virtual UI.</summary>
+		public static bool IsWeb() {
+#if WEB
 			return true;
 #else
 			return false;

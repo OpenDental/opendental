@@ -18,8 +18,7 @@ namespace OpenDental {
 		///<summary>Pass in values that will override the title of the form or the label text next to the corresponding text boxes.</summary>
 		public FrmExternalLink(string title="",string url="",string displayText="") {
 			InitializeComponent();
-			PreviewKeyDown+=FrmExternalLink_PreviewKeyDown;
-			Lang.F(this);
+			//Lan.F(this);
 			if(!string.IsNullOrEmpty(title)) {
 				this.Text=title;
 			}
@@ -28,12 +27,6 @@ namespace OpenDental {
 			}
 			if(!string.IsNullOrEmpty(displayText)) {
 				labelDisplayText.Text=displayText;
-			}
-		}
-
-		private void FrmExternalLink_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
 			}
 		}
 
@@ -48,6 +41,5 @@ namespace OpenDental {
 			DisplayText="";
 			IsDialogOK=true;
 		}
-
 	}
 }

@@ -32,11 +32,22 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPhoneEmpDefaults));
+			this.butClose = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butPhoneComps = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(879, 546);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 11;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butAdd
 			// 
@@ -75,17 +86,18 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(879, 546);
+			this.butOK.Location = new System.Drawing.Point(798, 546);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 14;
-			this.butOK.Text = "&OK";
+			this.butOK.Text = "OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// FormPhoneEmpDefaults
 			// 
 			this.ClientSize = new System.Drawing.Size(966, 582);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butPhoneComps);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.gridMain);
@@ -101,6 +113,7 @@ namespace OpenDental {
 		#endregion
 
 		private OpenDental.UI.GridOD gridMain;
+		private OpenDental.UI.Button butClose;
 		private UI.Button butAdd;
 		private UI.Button butPhoneComps;
 		private UI.Button butOK;

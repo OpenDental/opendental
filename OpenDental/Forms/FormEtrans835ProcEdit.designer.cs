@@ -55,6 +55,7 @@ namespace OpenDental{
 			this.gridSupplementalInfo = new OpenDental.UI.GridOD();
 			this.gridProcedureAdjustments = new OpenDental.UI.GridOD();
 			this.gridRemarks = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.butPrint = new OpenDental.UI.Button();
 			this.groupBalancing.SuspendLayout();
 			this.SuspendLayout();
@@ -360,6 +361,16 @@ namespace OpenDental{
 			this.gridRemarks.TranslationName = "FormEtrans835Edit";
 			this.gridRemarks.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridRemarks_CellDoubleClick);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(890, 490);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butPrint
 			// 
 			this.butPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -391,6 +402,7 @@ namespace OpenDental{
 			this.Controls.Add(this.label9);
 			this.Controls.Add(this.textProcSubmitted);
 			this.Controls.Add(this.label8);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEtrans835ProcEdit";
 			this.Text = "Procedure Paid";
@@ -404,6 +416,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.TextBox textProcSubmitted;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.TextBox textProcAdjudicated;

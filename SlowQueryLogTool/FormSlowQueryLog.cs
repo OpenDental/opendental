@@ -4,14 +4,12 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
 using SlowQueryLogTool.UI;
-using System.Threading;
 
 namespace SlowQueryTool {
 	public partial class FormSlowQueryLog:Form {
 
 		private QueryLog _queryLog;
 		private ODThread _thread=null;
-		private ProgressFillQueries _progressFillQueries=null;
 
 		public FormSlowQueryLog() {
 			InitializeComponent();
@@ -45,11 +43,11 @@ namespace SlowQueryTool {
 			gridQueries.Columns.Add(col);
 			col=new GridColumn("Rows Examined",100,GridSortingStrategy.AmountParse);
 			gridQueries.Columns.Add(col);
-			col=new GridColumn("Third Party",75,HorizontalAlignment.Center,GridSortingStrategy.StringCompare);
+			col=new GridColumn("Third Party",75,GridSortingStrategy.StringCompare);
 			gridQueries.Columns.Add(col);
-			col=new GridColumn("User Query",75,HorizontalAlignment.Center,GridSortingStrategy.StringCompare);
+			col=new GridColumn("User Query",75,GridSortingStrategy.StringCompare);
 			gridQueries.Columns.Add(col);
-			col=new GridColumn("Victim",50,HorizontalAlignment.Center,GridSortingStrategy.StringCompare);
+			col=new GridColumn("Victim",50,GridSortingStrategy.StringCompare);
 			gridQueries.Columns.Add(col);
 			col=new GridColumn("Query",75,GridSortingStrategy.StringCompare);
 			gridQueries.Columns.Add(col);
@@ -104,43 +102,17 @@ namespace SlowQueryTool {
 			_thread.AddExitHandler((eh) => {
 				//Null the thread out as a flag for next time.
 				_thread=null;
-				this.BeginInvoke(() => {
-					butAnalyze.Text="Analyze";
-					timerProgress.Stop();
-				});
+				this.BeginInvoke(() => { butAnalyze.Text="Analyze"; });
 			});
 			_thread.AddExceptionHandler((eh) => {
-				this.BeginInvoke(() => {
-					textResults.Text=eh.Message;
-					timerProgress.Stop();
-				});
+				this.BeginInvoke(() => { textResults.Text=eh.Message; });
 			});
 			butAnalyze.Text="Stop";
 			_thread.Start();
+			textResults.Clear();
 			textResults.SelectionFont=new Font(textResults.Font.FontFamily,12,FontStyle.Bold);
-			_progressFillQueries=null;
-			timerProgress.Start();
+			textResults.AppendText("Parsing Queries...");
 			FillGridColumnsAndClear();
-		}
-
-		private void timerProgress_Tick(object sender,EventArgs e) {
-			if(_progressFillQueries==null) {
-				return;
-			}
-			string results=$"Parsing Queries...\r\nProgress: {_progressFillQueries.PercentParsing.ToString("0")}%";
-			if(_progressFillQueries.PercentVictim > 0) {
-				results+=$"\r\nSearching for Victim Queries...\r\nProgress: {_progressFillQueries.PercentVictim.ToString("0")}%";
-			}
-			if(_progressFillQueries.PercentFormatting> 0) {
-				results+=$"\r\nFormatting Queries...\r\nProgress: {_progressFillQueries.PercentFormatting.ToString("0")}%";
-			}
-			if(_progressFillQueries.PercentThirdPartyScoring > 0) {
-				results+=$"\r\nScoring Queries...\r\nProgress: {_progressFillQueries.PercentThirdPartyScoring.ToString("0")}%";
-			}
-			if(_progressFillQueries.PercentGrouping > 0) {
-				results+=$"\r\nGrouping Queries...\r\nProgress: {_progressFillQueries.PercentGrouping.ToString("0")}%";
-			}
-			textResults.Text=results;
 		}
 
 		private void GetData(int hourOpen,int hourClose) {
@@ -150,8 +122,10 @@ namespace SlowQueryTool {
 				DateFrom=datePicker.GetDateTimeFrom(),
 				DateTo=datePicker.GetDateTimeTo(),
 				FilePath=textLogURL.Text,
-				OnProgress=(progressFillQueries) => {
-					_progressFillQueries=progressFillQueries;
+				OnProgress=(percent) => {
+					this.BeginInvoke(() => {
+						textResults.Text=$"Parsing Queries...\r\nProgress: {percent.ToString("0")}%";
+					});
 				},
 			};
 			_queryLog.FillQueries();
@@ -164,35 +138,15 @@ namespace SlowQueryTool {
 					_queryLog.LastQueryDate.Date.AddDays(-14) : _queryLog.FirstQueryDate.Date);
 					datePicker.SetDateTimeTo(_queryLog.LastQueryDate.Date);
 				}
+				FillGridQueries();
+				textResults.Clear();
+				textResults.SelectionFont=new Font(textResults.Font.FontFamily,12,FontStyle.Bold);
+				textResults.AppendText("Analyzing...");
 			});
 			if(_queryLog.ListQueries.Count > 0) {
-				bool hadException=false;
-				//Spawn some threads to do the heavy lifting at the same time.
-				ODThread threadFormatQueries=new ODThread((o) => _queryLog.FormatQueries());
-				threadFormatQueries.Name="SlowQueryLogFormatQueries";
-				threadFormatQueries.GroupName="SlowQueryLogHeavyLiftingThreads";
-				threadFormatQueries.AddExceptionHandler((ex) => hadException=true);
-				threadFormatQueries.Start();
-				ODThread threadCalculateThirdParyScore=new ODThread((o) => _queryLog.CalculateThirdParyScores());
-				threadCalculateThirdParyScore.Name="SlowQueryLogCalculateThirdParyScores";
-				threadCalculateThirdParyScore.GroupName="SlowQueryLogHeavyLiftingThreads";
-				threadCalculateThirdParyScore.AddExceptionHandler((ex) => hadException=true);
-				threadCalculateThirdParyScore.Start();
-				ODThread threadVictims=new ODThread((o) => _queryLog.CalculateIsVictim());
-				threadVictims.Name="SlowQueryLogCalculateIsVictimThread";
-				threadVictims.GroupName="SlowQueryLogHeavyLiftingThreads";
-				threadVictims.AddExceptionHandler((ex) => hadException=true);
-				threadVictims.Start();
-				ODThread.JoinThreadsByGroupName(Timeout.Infinite,"SlowQueryLogHeavyLiftingThreads",doRemoveThreads:true);
-				if(hadException) {
-					throw new Exception("Analyzer stopped prematurely!");
-				}
-				_queryLog.CreateQueryGroups();
 				_queryLog.AnalyzeGroups();
 			}
 			this.Invoke(() => {
-				timerProgress.Stop();
-				FillGridQueries();
 				RefreshGroupsAndSummary();
 			});
 		}

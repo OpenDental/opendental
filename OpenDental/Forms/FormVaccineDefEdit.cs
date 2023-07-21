@@ -60,7 +60,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textCVXCode.Text=="" || textVaccineName.Text=="") {
 				MsgBox.Show(this,"Blank fields are not allowed.");
 				return;
@@ -85,6 +85,10 @@ namespace OpenDental {
 				VaccineDefs.Update(VaccineDefCur);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 	}
 }

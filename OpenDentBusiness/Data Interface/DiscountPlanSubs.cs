@@ -39,54 +39,60 @@ namespace OpenDentBusiness {
 			return Crud.DiscountPlanSubCrud.SelectMany(command);
 		}
 
-		/// <summary>Returns the startDate for the passed in effective date, with a modified year to the current year.</summary>
-		public static DateTime GetAnnualMaxDateEffective(DateTime dateEffective) {
+		/// <summary>Returns the startDate for the passed in discountPlanSub, with a modified year to the current year.</summary>
+		public static DateTime GetAnnualMaxDateEffective(DiscountPlanSub discountPlanSub) {
 			//No remoting role check; No call to db.
-			DateTime effectiveStartDate=dateEffective;
+			DateTime effectiveStartDate=discountPlanSub.DateEffective;
 			if(effectiveStartDate.Year < 1880) {
 				effectiveStartDate=effectiveStartDate.AddYears(DateTime.Now.Year-effectiveStartDate.Year);
 			}
 			return effectiveStartDate;
 		}
 
-		public static DateTime GetAnnualMaxDateTerm(DateTime dateTerm) {
+		public static DateTime GetAnnualMaxDateTerm(DiscountPlanSub discountPlanSub) {
 			//No remoting role check; No call to db.
-			DateTime effectiveEndDate=dateTerm;
+			DateTime effectiveEndDate=discountPlanSub.DateTerm;
 			if(effectiveEndDate.Year < 1880) {
 				effectiveEndDate=DateTime.MaxValue;
 			}
 			return effectiveEndDate;
 		}
 
-		///<summary>Returns a bool. True if the reference point is within a date range. False otherwise. Sets dateEffectiveFinal/dateTermFinal.Year to the closest year of referencePoint.
-		/// dateEffectiveFinal and dateTermFinal will be set to the date range if false is returned.</summary>
-		public static bool GetAnnualDateRangeSegmentForGivenDate(DateTime referencePoint,DateTime dateEffective,DateTime dateTerm,out DateTime dateEffectiveFinal,out DateTime dateTermFinal) {
+		///<summary>Returns a bool. True if the reference point is within a DiscountPlans date range. False otherwise. Sets startDate/stopDate.Year to the closest year of referencePoint.
+		/// startDate and stopDate will be set to the DiscountPlanSub date range if false is returned.</summary>
+		public static bool GetAnnualDateRangeSegmentForGivenDate(DiscountPlanSub discountPlanSub,DateTime referencePoint,out DateTime startDate, out DateTime stopDate) {
 			//No remoting role check; No call to db.
-			dateEffective=GetAnnualMaxDateEffective(dateEffective);
-			dateTerm=GetAnnualMaxDateTerm(dateTerm);
-			bool isValid=GetAnnualStartStopDates(referencePoint,ref dateEffective,ref dateTerm);
-			dateEffectiveFinal=dateEffective;
-			dateTermFinal=dateTerm;
-			return isValid;
+			startDate=GetAnnualMaxDateEffective(discountPlanSub);
+			stopDate=GetAnnualMaxDateTerm(discountPlanSub);
+			return GetAnnualStartStopDates(referencePoint,ref startDate,ref stopDate);
 		}
 
-		///<summary>Returns true if the reference point is within a date range. False otherwise. Sets startDate/stopDate.Year to the closest year of the referencePoint within the date range.</summary>
 		public static bool GetAnnualStartStopDates(DateTime referencePoint, ref DateTime startDate, ref DateTime stopDate) {
 			//No remoting role check; No call to db. Uses refs.
-			if(referencePoint<startDate || referencePoint>stopDate) {//Outside of date range
+			if(referencePoint < startDate || referencePoint > stopDate) {
 				return false;
 			}
-			if(startDate.AddYears(1)<=referencePoint) {
-				int yearsLimit=referencePoint.Year-startDate.Year;
-				for(int years=0;years<yearsLimit;years++) {
-					if(startDate>referencePoint) {
-						startDate=startDate.AddYears(-1);
-						break;
+			if(startDate.Month < referencePoint.Month) {
+				startDate=startDate.AddYears(referencePoint.Year-startDate.Year);
+			}
+			else if(startDate.Month > referencePoint.Month) {
+				startDate=startDate.AddYears((referencePoint.Year-startDate.Year)-1);
+			}
+			else {
+				//compare days
+				if(startDate.Day < referencePoint.Day) {
+					startDate=startDate.AddYears(referencePoint.Year-startDate.Year);
+				}
+				else if(startDate.Day > referencePoint.Day && (startDate.Day!=29 && startDate.Month!=2)) {
+					startDate=startDate.AddYears((referencePoint.Year-startDate.Year)-1);
+				}
+				else {
+					if(startDate.Year < referencePoint.Year) {
+						startDate=startDate.AddYears(referencePoint.Year-startDate.Year);
 					}
-					startDate=startDate.AddYears(1);
 				}
 			}
-			if(stopDate>startDate.AddYears(1)) {
+			if(stopDate > startDate.AddYears(1)) {
 				stopDate=startDate.AddYears(1).AddDays(-1);
 			}
 			return true;

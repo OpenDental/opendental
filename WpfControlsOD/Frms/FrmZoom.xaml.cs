@@ -30,17 +30,14 @@ namespace OpenDental {
 
 		public FrmZoom() {
 			InitializeComponent();
-			Load+=FrmODBase_Load;
-			textZoom.TextChanged+=textZoom_TextChanged;
-			PreviewKeyDown+=FrmZoom_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
 		//from our wiki: For now, all screens are assumed to have available 1246x735.  That would be a screen resolution of 1280x768 with a single width taskbar docked to any one of the four sides of the screen. The 7 main controls are slightly smaller due to menu bar on left of 51 and the toolbars on the top of 29. Subtracting the 10w and 31h for the form border, each module max size is 1185x675
 		//Minor detail: MS borders are not exactly the same as our borders.  Theirs are 8 around 3 sides, and 39 on top, while ours are 5 around 3 sides and 26 on top.
 		//So all forms will actually display 6x16 smaller than they were in the designer.  We are ignoring this small discrepancy in order to keep it simple.
 		
-		private void FrmODBase_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmODBase_Loaded(object sender,RoutedEventArgs e) {
 			CalcScreens();
 			textResolution1.Text=SizeToString(new Size(_screen1.Bounds.Width,_screen1.Bounds.Height));
 			textWorkingArea1.Text=SizeToString(new Size(_screen1.WorkingArea.Width,_screen1.WorkingArea.Height));
@@ -56,7 +53,6 @@ namespace OpenDental {
 			}
 			textZoom.Text=zoom.ToString();
 			//always triggers textZoom_TextChanged
-			textZoom.SelectAll();
 		}
 
 		private static void CalcScreens(){
@@ -80,14 +76,14 @@ namespace OpenDental {
 			}
 		}
 
-		private void textZoom_TextChanged(object sender, EventArgs e) {
-			_fits=false;
+		private void textZoom_TextChanged(object sender, EventArgs e){
+			_fits=true;
 			int zoom=100;
 			try{
 				zoom=PIn.Int(textZoom.Text);//blank=0
 			}
 			catch{}
-			if(zoom<=0 || zoom>=300){
+			if(zoom==0){
 				zoom=100;
 			}
 			Size sizeMax1;
@@ -99,11 +95,11 @@ namespace OpenDental {
 			if(sizeMax1.Width<=_screen1.WorkingArea.Width && sizeMax1.Height<=_screen1.WorkingArea.Height){
 				textFit1.Text="YES";
 				textFit1.ColorText=ColorOD.ToWpf(System.Drawing.Color.DarkGreen);
-				_fits=true;
 			}
 			else{
 				textFit1.Text="NO";
 				textFit1.ColorText=ColorOD.ToWpf(System.Drawing.Color.Red);
+				_fits=false;
 			}
 			if(_screen2==null){
 				return;
@@ -116,12 +112,11 @@ namespace OpenDental {
 			if(sizeMax2.Width<=_screen2.WorkingArea.Width && sizeMax2.Height<=_screen2.WorkingArea.Height){
 				textFit2.Text="YES";
 				textFit2.ColorText=ColorOD.ToWpf(System.Drawing.Color.DarkGreen);
-				_fits=true;
+				return;
 			}
-			else{
-				textFit2.Text="NO";
-				textFit2.ColorText=ColorOD.ToWpf(System.Drawing.Color.Red);
-			}
+			textFit2.Text="NO";
+			textFit2.ColorText=ColorOD.ToWpf(System.Drawing.Color.Red);
+			_fits=false;
 		}
 
 		private void butReset_Click(object sender, EventArgs e){
@@ -171,13 +166,7 @@ namespace OpenDental {
 			return true;
 		}*/
 
-		private void FrmZoom_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
-		}
-
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			int zoom=0;
 			try{
 				zoom=PIn.Int(textZoom.Text);//blank=0
@@ -193,9 +182,9 @@ namespace OpenDental {
 				MsgBox.Show("Zoom cannot be negative.");
 				return;
 			}
-			else if(zoom<60){//Anything less than this seems to have overlapping control issues, and < 10 can cause out of memory errors.
-				string msg=Lans.g(this,"Zoom number should be greater than or equal to 60. Maybe you meant")
-					+" "+(100+zoom).ToString()+".";//untranslated
+			else if(zoom<50){//Anything less than this seems to have overlapping control issues, and < 10 can cause out of memory errors.
+				string msg=Lans.g(this,"Zoom number should be greater than 50. Maybe you meant")
+					+" 1"+zoom.ToString()+".";//untranslated
 				MsgBox.Show(msg);
 				return;
 			}
@@ -219,12 +208,6 @@ namespace OpenDental {
 					return;
 				}
 			}
-			if(zoom<100){
-				string msg=Lans.g(this,"Zoom levels below 100 are not recommended. Some text could be slightly cut off. Continue anyway?");
-				if(!MsgBox.Show(MsgBoxButtons.OKCancel,msg)){
-					return;
-				}
-			}
 			ComputerPrefs.LocalComputer.Zoom=zoom;
 			ComputerPrefs.Update(ComputerPrefs.LocalComputer);
 			IsDialogOK=true;
@@ -243,5 +226,6 @@ namespace OpenDental {
 			}
 		}
 
+		
 	}
 }

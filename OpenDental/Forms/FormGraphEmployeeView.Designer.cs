@@ -23,9 +23,10 @@
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.listBoxEmployees = new OpenDental.UI.ListBox();
+			this.listBoxEmployees = new UI.ListBox();
 			this.label14 = new System.Windows.Forms.Label();
 			this.label13 = new System.Windows.Forms.Label();
+			this.butClose = new OpenDental.UI.Button();
 			this.butPaste = new OpenDental.UI.Button();
 			this.butCopy = new OpenDental.UI.Button();
 			this.odDatePickerTo = new OpenDental.UI.ODDatePicker();
@@ -43,6 +44,7 @@
 			this.listBoxEmployees.Name = "listBoxEmployees";
 			this.listBoxEmployees.Size = new System.Drawing.Size(142, 862);
 			this.listBoxEmployees.TabIndex = 4;
+			this.listBoxEmployees.SelectedIndexChanged += new System.EventHandler(this.ListBoxEmployees_SelectedIndexChanged);
 			// 
 			// label14
 			// 
@@ -61,6 +63,17 @@
 			this.label13.TabIndex = 7;
 			this.label13.Text = "From";
 			this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(1124, 931);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 11;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.ButClose_Click);
 			// 
 			// butPaste
 			// 
@@ -92,6 +105,7 @@
 			this.odDatePickerTo.Name = "odDatePickerTo";
 			this.odDatePickerTo.Size = new System.Drawing.Size(169, 23);
 			this.odDatePickerTo.TabIndex = 6;
+			this.odDatePickerTo.DateTextChanged += new System.EventHandler(this.OdDatePickerTo_DateTextChanged);
 			// 
 			// odDatePickerFrom
 			// 
@@ -101,6 +115,7 @@
 			this.odDatePickerFrom.Name = "odDatePickerFrom";
 			this.odDatePickerFrom.Size = new System.Drawing.Size(169, 23);
 			this.odDatePickerFrom.TabIndex = 5;
+			this.odDatePickerFrom.DateTextChanged += new System.EventHandler(this.OdDatePickerFrom_DateTextChanged);
 			// 
 			// gridMain
 			// 
@@ -141,6 +156,7 @@
 			this.ClientSize = new System.Drawing.Size(1213, 963);
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.labelCopyPaste);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butPaste);
 			this.Controls.Add(this.butCopy);
 			this.Controls.Add(this.listBoxEmployees);
@@ -165,6 +181,7 @@
 		private System.Windows.Forms.Label label14;
 		private UI.Button butCopy;
 		private UI.Button butPaste;
+		private UI.Button butClose;
 		private System.Windows.Forms.Label labelCopyPaste;
 		private UI.Button butPrint;
 	}

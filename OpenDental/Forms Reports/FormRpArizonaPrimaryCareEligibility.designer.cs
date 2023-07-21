@@ -40,6 +40,7 @@ namespace OpenDental{
 			this.butCopy=new OpenDental.UI.Button();
 			this.butBrowse=new OpenDental.UI.Button();
 			this.butFinished=new OpenDental.UI.Button();
+			this.butCancel=new OpenDental.UI.Button();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -189,10 +190,21 @@ namespace OpenDental{
 			this.butFinished.Text="&Finished";
 			this.butFinished.Click+=new System.EventHandler(this.butFinished_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor=((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom|System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location=new System.Drawing.Point(625,454);
+			this.butCancel.Name="butCancel";
+			this.butCancel.Size=new System.Drawing.Size(75,24);
+			this.butCancel.TabIndex=2;
+			this.butCancel.Text="&Cancel";
+			this.butCancel.Click+=new System.EventHandler(this.butCancel_Click);
+			// 
 			// FormRpArizonaPrimaryCareEligibility
 			// 
 			this.AutoScaleMode=System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize=new System.Drawing.Size(725,505);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.butRun);
 			this.Controls.Add(this.butCopy);
@@ -219,6 +231,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butFinished;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.TextBox textEligibilityFolder;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.Button butBrowse;

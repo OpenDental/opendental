@@ -35,6 +35,7 @@ namespace OpenDentBusiness {
 				_ => false,
 			};
 		}
+		
 	}
 
 	[Flags]
@@ -64,8 +65,6 @@ namespace OpenDentBusiness {
 		Birthdays=						0b10000000000,
 		///<summary></summary>
 		GeneralMessages=			0b100000000000,
-		///<summary></summary>
-		MsgToPay=						0b1000000000000,
 	}
 
 	public enum CommOptOutMode {
@@ -75,3 +74,7 @@ namespace OpenDentBusiness {
 		Email,
 	}
 }
+
+
+
+

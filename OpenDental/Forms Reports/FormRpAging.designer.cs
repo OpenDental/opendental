@@ -23,6 +23,7 @@ namespace OpenDental {
 
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpAging));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.groupAgeOfAccount = new OpenDental.UI.GroupBox();
 			this.radio30 = new System.Windows.Forms.RadioButton();
@@ -67,10 +68,20 @@ namespace OpenDental {
 			this.groupExcludePats.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(895, 325);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 19;
+			this.butCancel.Text = "&Cancel";
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(895, 325);
+			this.butOK.Location = new System.Drawing.Point(814, 325);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 18;
@@ -395,7 +406,7 @@ namespace OpenDental {
 			// 
 			this.labelFutureTrans.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.labelFutureTrans.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-			this.labelFutureTrans.Location = new System.Drawing.Point(610, 329);
+			this.labelFutureTrans.Location = new System.Drawing.Point(541, 329);
 			this.labelFutureTrans.Name = "labelFutureTrans";
 			this.labelFutureTrans.Size = new System.Drawing.Size(267, 18);
 			this.labelFutureTrans.TabIndex = 0;
@@ -426,6 +437,7 @@ namespace OpenDental {
 			// FormRpAging
 			// 
 			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(982, 363);
 			this.Controls.Add(this.labelAgingExcludeTransfers);
 			this.Controls.Add(this.checkBoxExcludeIncomeTransfers);
@@ -446,6 +458,7 @@ namespace OpenDental {
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.groupIncludePats);
 			this.Controls.Add(this.textDate);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.listBillType);
@@ -468,6 +481,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.GroupBox groupAgeOfAccount;
 		private System.Windows.Forms.Label label1;

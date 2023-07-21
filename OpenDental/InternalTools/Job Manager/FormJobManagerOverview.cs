@@ -77,21 +77,12 @@ namespace OpenDental {
 		#region Menu Clicks
 		private void butSprintManager_Click(object sender,EventArgs e) {
 			panelJobsReport.Visible=false;
-			panelJobTeamReport.Visible=false;
 			panelSprintManager.Visible=true;
 		}
 
 		private void butJobsReport_Click(object sender,EventArgs e) {
 			panelJobsReport.Visible=true;
-			panelJobTeamReport.Visible=false;
 			panelSprintManager.Visible=false;
-
-		}
-
-		private void butJobTeamReport_Click(object sender,EventArgs e) {
-			panelJobsReport.Visible=false;
-			panelSprintManager.Visible=false;
-			panelJobTeamReport.Visible=true;
 		}
 		#endregion
 
@@ -507,12 +498,13 @@ namespace OpenDental {
 		}
 
 		private void butPatSelect_Click(object sender,EventArgs e) {
-			FrmPatientSelect frmPatientSelect=new FrmPatientSelect();
-			frmPatientSelect.ShowDialog();
-			if(frmPatientSelect.IsDialogCancel) {
+			using FormPatientSelect FormPS=new FormPatientSelect();
+			FormPS.IsSelectionModeOnly=true;
+			FormPS.ShowDialog();
+			if(FormPS.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			textPatNum.Text=frmPatientSelect.PatNumSelected.ToString();
+			textPatNum.Text=FormPS.PatNumSelected.ToString();
 		}
 
 		private void butPrint_Click(object sender,EventArgs e) {
@@ -655,13 +647,13 @@ namespace OpenDental {
 		}
 
 		private void butSchedules_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Schedules)) {
+			if(!Security.IsAuthorized(Permissions.Schedules)) {
 				return;
 			}
 			using FormScheduleDayEdit FormSDE=new FormScheduleDayEdit(DateTime.Now,Clinics.ClinicNum);
 			FormSDE.ShowOkSchedule=true;
 			FormSDE.ShowDialog();
-			SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"");
+			SecurityLogs.MakeLogEntry(Permissions.Schedules,0,"");
 			if(FormSDE.GotoScheduleOnClose) {
 				using FormSchedule FormS = new FormSchedule();
 				FormS.ShowDialog();

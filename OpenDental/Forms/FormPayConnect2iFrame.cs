@@ -31,7 +31,7 @@ namespace OpenDental {
 		}
 
 		private async void FormPayConnect2iFrame_Load(object sender,EventArgs e) {
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				//Unable to support PayConnect 2 on OD Cloud for the following reasons: OD Cloud uses Thinfinity, which does not allow for using WebView2 controls, meaning cloud would need to use the
 				//old WebBrowser control. This issue with this is we currently do not know of a way to retrieve the iFrame response from a WebBrowser control. Maybe when Payment Portal is finished
 				//we could try using a modified version of that to send the transaction data to the office's eConnector. We could also try making a "dummy" html page that contains the iFrame that is
@@ -52,7 +52,7 @@ namespace OpenDental {
 				return;
 			}
 			//Cloud requires using the old web browser control due to constraints from thinfinity.
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				webViewMain.Visible=false;
 				webBrowserMain.Visible=true;
 				//webBrowserMain.Navigate();
@@ -81,7 +81,6 @@ namespace OpenDental {
 		///<summary>Throws exceptions.</summary>
 		private string GetiFrameUrl() {
 			EmbedSessionRequest embedSessionRequest=new EmbedSessionRequest();
-			embedSessionRequest.Swiper=true;
 			if(_isAddingCard) { 
 				embedSessionRequest.Type=PayConnect2.IframeType.Tokenizer;
 			}
@@ -101,9 +100,9 @@ namespace OpenDental {
 
 		///<summary>Throws exceptions.</summary>
 		private void GetTransactionResult(object sender,CoreWebView2WebMessageReceivedEventArgs args) {
-			iFrameResponse response=null;
 			try {
-				response=JsonConvert.DeserializeObject<iFrameResponse>(args.WebMessageAsJson);
+				_response.iFrameResponse=JsonConvert.DeserializeObject<iFrameResponse>(args.WebMessageAsJson);
+				_response.ResponseType=ResponseType.IFrame;
 			}
 			catch(JsonException jEx) {
 				//failed to deserialize, we probably did not recieve a success response from the iFrame.
@@ -111,22 +110,6 @@ namespace OpenDental {
 			}
 			catch (Exception ex) {
 				throw new ODException("Error retrieving response from PayConnect.",ex);
-			}
-			//Immediately call the GetStatus endpoint  for easier processing.
-			if(response!=null && response.IFrameStatus.ToLower()=="success") {
-				//When adding a card the transaction status and reference ID fields will return null from PayConnect, therefore we cannot run GetStatus.
-				if(_isAddingCard) {
-					//When attempting to add a new card, PayConnect sometimes sends back data fromatted like track 2 of a magstrip. Example: ;1234123412341234=0305101193010877?. If this is the case we need to parse out the card number.
-					if(response.Response.CardToken.StartsWith(";") && response.Response.CardToken.EndsWith("?")) {
-						MagstripCardParser magstripCardParser=new MagstripCardParser(response.Response.CardToken,EnumMagstripCardParseTrack.TrackTwo);
-						response.Response.CardToken=magstripCardParser.AccountNumber;
-					}
-					_response.iFrameResponse=response;
-					_response.ResponseType=ResponseType.IFrame;
-				}
-				else {
-					_response=GetTransactionStatus(_clinicNum,response.Response.ReferenceId);
-				}
 			}
 		}
 
@@ -141,6 +124,12 @@ namespace OpenDental {
 		private void webBrowserMain_DocumentCompleted(object sender,WebBrowserDocumentCompletedEventArgs e) {
 			webBrowserMain.Document.AttachEventHandler("message",GetTransactionResultCloud);
 		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+			Close();
+		}
+
 
 	}
 }

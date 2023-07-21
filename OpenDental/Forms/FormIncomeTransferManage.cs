@@ -25,7 +25,7 @@ namespace OpenDental {
 
 		private void FormIncomeTransferManage_Load(object sender,EventArgs e) {
 			//Intentionally check by the payment create permission even though it is claim supplementals (InsPayCreate).
-			if(Security.IsAuthorized(EnumPermType.PaymentCreate,DateTime.Today,true)) {
+			if(Security.IsAuthorized(Permissions.PaymentCreate,DateTime.Today,true)) {
 				try {
 					PaymentEdit.TransferClaimsPayAsTotal(_patient.PatNum,_family.GetPatNums(),"Automatic transfer of claims pay as total from income transfer.");
 				}
@@ -205,7 +205,7 @@ namespace OpenDental {
 		}
 
 		private bool IsValid() {
-			if(!Security.IsAuthorized(EnumPermType.PaymentCreate,datePickerAsOf.Value)) {
+			if(!Security.IsAuthorized(Permissions.PaymentCreate,datePickerAsOf.Value)) {
 				return false;
 			}
 			string dbmLog=DatabaseMaintenances.ProcedurelogDeletedWithAttachedIncome(false,DbmMode.Breakdown,_patient.PatNum);
@@ -242,13 +242,12 @@ namespace OpenDental {
 			payment.PayAmt=0;
 			payment.PayType=0;
 			Payments.Insert(payment,listPaySplits);
-			Signalods.SetInvalid(InvalidType.BillingList);
 			string strLogic="FIFO logic";
 			if(isRigorous) {
 				strLogic="Rigorous logic";
 			}
 			string logText=Payments.GetSecuritylogEntryText(payment,payment,isNew:true)+", "+Lans.g(this,$"from Income Transfer Manager using {strLogic}.");
-			SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,payment.PatNum,logText);
+			SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,payment.PatNum,logText);
 			string strErrorMsg=Ledgers.ComputeAgingForPaysplitsAllocatedToDiffPats(_patient.PatNum,listPaySplits);
 			if(!string.IsNullOrEmpty(strErrorMsg)) {
 				MessageBox.Show(strErrorMsg);
@@ -314,5 +313,11 @@ namespace OpenDental {
 			}
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+			this.Close();
+		}
+
+	
 	}
 }

@@ -229,7 +229,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBoxStatements);
 			this.Controls.Add(this.groupBoxBilling);
 			this.Name = "UserControlManageBillingStatements";
-			this.Size = new System.Drawing.Size(494, 660);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxBilling.ResumeLayout(false);
 			this.groupBoxBilling.PerformLayout();
 			this.groupBoxStatements.ResumeLayout(false);

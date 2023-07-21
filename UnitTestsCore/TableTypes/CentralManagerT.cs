@@ -18,7 +18,7 @@ namespace UnitTestsCore {
 		}
 
 		///<summary>Returns a GroupPermission with the parameters passed in. GroupPermNum is omitted because CEMT sync should not care.</summary>
-		public static GroupPermission CreateGroupPermission(long fKey,EnumPermType permType,long userGroupNum,DateTime newerDate=default(DateTime),int newerDays=0) {
+		public static GroupPermission CreateGroupPermission(long fKey,Permissions permType,long userGroupNum,DateTime newerDate=default(DateTime),int newerDays=0) {
 			return new GroupPermission() {
 				FKey=fKey,
 				PermType=permType,
@@ -29,7 +29,7 @@ namespace UnitTestsCore {
 		}
 
 		///<summary>Returns the inserted GroupPermission. Currently only requires FKey, PermType, and UserGroupNum.</summary>
-		public static GroupPermission InsertGroupPermissionNoCache(long FKey,EnumPermType permType,long userGroupNum) {
+		public static GroupPermission InsertGroupPermissionNoCache(long FKey,Permissions permType,long userGroupNum) {
 			GroupPermission groupPermission=CreateGroupPermission(FKey,permType,userGroupNum);
 			GroupPermissions.InsertNoCache(groupPermission);
 			return groupPermission;

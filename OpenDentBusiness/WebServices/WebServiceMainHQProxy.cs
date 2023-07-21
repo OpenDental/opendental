@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using WebServiceSerializer;
 using CodeBase;
+using System.IO;
+using System.Windows.Forms;
 using OpenDentBusiness.WebTypes;
 using ODCrypt;
 using Newtonsoft.Json;
 using Bridges;
 
 namespace OpenDentBusiness {
-	/// <summary>Per Sam - This class is usually used for web service calls dealing with billing, account management, and synch.</summary>
 	public static class WebServiceMainHQProxy {
 
 		public static IWebServiceMainHQ MockWebServiceMainHQ {
@@ -45,7 +47,7 @@ namespace OpenDentBusiness {
 			else { //URL was provided so use that.
 				service.Url=webServiceHqUrl;
 			}
-			if(webServiceHqUrl.IsNullOrEmpty() && ODBuild.IsDebug()) {
+			if(ODBuild.IsDebug()) {
 				//Change arguments for debug only.
 				service.Url="http://localhost/OpenDentalWebServiceHQ/WebServiceMainHQ.asmx";//localhost
 				//service.Url="https://patientviewer.com:49997/OpenDentalWebServiceHQ/WebServiceMainHQ.asmx";//Live server
@@ -110,45 +112,6 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		///<summary>Returns a serialized list of ClinicProgramPropertyContainer objects to pass from the office to HQ. Public for unit testing</summary>
-		public static string GetSerializedProgramProperties(List<Clinic> listClinics) {
-			List<Provider> listProviders=new List<Provider>();
-			List<EServiceSetup.SignupIn.ClinicProgramPropertyContainer> listToSerialize=new List<EServiceSetup.SignupIn.ClinicProgramPropertyContainer>();
-			if(Programs.IsEnabled(ProgramName.CareCredit)) {
-				//small helper method to check for blanks, remove any unwanted chars, and make sure we're not adding duplicates
-				bool tryAdd(string merchID,List<string> curMerchIds) {
-					if(!string.IsNullOrWhiteSpace(merchID) && !curMerchIds.Contains(merchID)) {
-						//This means that the merchant number is technically inactive but that doesn't mean that web responses might not come in for older merch numbers
-						//Offices can also remove the x themselves at any point so we might as well update our records with it
-						if(merchID.StartsWith("x")) {
-							merchID=merchID.Substring(1);
-						}
-						curMerchIds.Add(merchID);
-						return true;
-					}
-					return false;
-				}
-				List<ProviderClinic> listMerchantIdProviderClinics=ProviderClinics.GetCareCreditRows();
-				//Loop through this list and add any clinic and provider merch numbers. Whether or not they're in use doesn't feel that important but we should strip any leading x's so that we only have clean data
-				for(int i=0;i<listClinics.Count();i++) {
-					List<string> clinicMerchIds=new List<string>();
-					Clinic clinic = listClinics[i];
-					string merchIdForClinic=CareCredit.GetMerchantNumberByClinic(clinic.ClinicNum);
-					string merchIdForProvider=listMerchantIdProviderClinics.FirstOrDefault(x=>x.ClinicNum==clinic.ClinicNum)?.CareCreditMerchantId??"";
-					if(!tryAdd(merchIdForClinic,clinicMerchIds) && !tryAdd(merchIdForProvider,clinicMerchIds)) {
-						continue;
-					}
-					listToSerialize.Add(new EServiceSetup.SignupIn.ClinicProgramPropertyContainer() {
-						ClinicNum=clinic.ClinicNum,
-						ProgramName=ProgramName.CareCredit.ToString(),
-						ProgramProperty=CareCreditWebResponses.MERCHANT_ID_PROG_PROPERTY,
-						ProgramValue=JsonConvert.SerializeObject(clinicMerchIds)
-					});
-				}
-			}
-			return JsonConvert.SerializeObject(listToSerialize);
-		}
-
 		#region EService setup
 		///<summary>Called by local practice db to query HQ for EService setup info. Must remain very lite and versionless. Will be used by signup portal.
 		///If HasClinics==true then any SignupOut.EServices entries where ClinicNum==0 are invalid and should be ignored.
@@ -158,16 +121,12 @@ namespace OpenDentBusiness {
 		///However, these items are only used for validation and billing in the case where HasClinics==true.</summary>
 		public static EServiceSetup.SignupOut GetEServiceSetupFull(SignupPortalPermission permission,bool isSwitchClinicPref=false,EServiceSetup.SignupOut oldSignupOut=null) {
 			//Clinics will be stored in this order at HQ to allow signup portal to display them in proper order.
-			List<Clinic> clinics=new List<Clinic>() { Clinics.GetPracticeAsClinicZero("HQ") };
-			clinics.AddRange(Clinics.GetDeepCopy().OrderBy(x => x.ItemOrder));
+			List<Clinic> clinics=Clinics.GetDeepCopy().OrderBy(x => x.ItemOrder).ToList();
 			if(PrefC.GetBool(PrefName.ClinicListIsAlphabetical)) {
 				clinics=clinics.OrderBy(x => x.Abbr).ToList();
 			}
-			List<MobileAppDevice> listMobileAppDevices=MobileAppDevices.GetAll();
 			string shortCodePracticeTitle=string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.ShortCodeOptInClinicTitle))
-				? PrefC.GetString(PrefName.PracticeTitle) : PrefC.GetString(PrefName.ShortCodeOptInClinicTitle);
-			//Get all program property info we might want for HQ
-			string serializedProperties=GetSerializedProgramProperties(clinics);
+				? PrefC.GetString(PrefName.PracticeTitle) : PrefC.GetString(PrefName.ShortCodeOptInClinicTitle);			
 			IWebServiceMainHQ webServiceMainHq=GetWebServiceMainHQInstance();
 			EServiceSetup.SignupOut signupOut=WebSerializer.ReadXml<EServiceSetup.SignupOut>
 				(
@@ -192,7 +151,6 @@ namespace OpenDentBusiness {
 											//Use the ClinicPref as an override, otherwise, Clinic.Abbr is used, if blank, finally use practice title.
 											ShortCodeOptInYourDentist=ClinicPrefs.GetPref(PrefName.ShortCodeOptInClinicTitle,x.ClinicNum)?.ValueString
 												?? (string.IsNullOrWhiteSpace(x.Description) ? shortCodePracticeTitle : x.Description),
-											AddressInfo=EServiceSetup.SignupIn.ClinicLiteIn.AddressInfoLite.SerializeAddress(x),
 										}).ToList(),
 									IsSwitchClinicPref=isSwitchClinicPref,
 									//Use the ClinicNum=0 ClinicPref as an override, otherwise, PracticeTitle.
@@ -202,20 +160,6 @@ namespace OpenDentBusiness {
 										AutomaticCommunicationTimeEnd=PrefC.GetDateT(PrefName.AutomaticCommunicationTimeEnd),
 										AutomaticCommunicationTimeStart=PrefC.GetDateT(PrefName.AutomaticCommunicationTimeStart)
 									},
-									MobileAppDeviceLites=listMobileAppDevices.Select(x => new EServiceSetup.SignupIn.MobileAppDeviceLite {
-										ClinicNum=x.ClinicNum,
-										DeviceName=x.DeviceName,
-										UniqueID=x.UniqueID,
-										IsEClipboardEnabled=x.IsEclipboardEnabled,
-										IsODTouchEnabled=x.IsODTouchEnabled,
-										IsBYODDevice=x.IsBYODDevice,
-										LastCheckInActivity=x.LastCheckInActivity,
-										EclipboardLastAttempt=x.EclipboardLastAttempt,
-										EclipboardLastLogin=x.EclipboardLastLogin,
-										ODTouchLastLogin=x.ODTouchLastLogin,
-										ODTouchLastAttempt=x.ODTouchLastAttempt,
-									}).ToList(),
-									SerializedProperties=serializedProperties
 								}),eServiceCode.Undefined
 							)
 						)
@@ -285,7 +229,7 @@ namespace OpenDentBusiness {
 			if(Prefs.UpdateBool(PrefName.ApptConfirmAutoSignedUp,IsEServiceActive(signupOut,eServiceCode.ConfirmationRequest))) {
 				//HQ does not match the local pref. Make it match with HQ.
 				isCacheInvalid=true;
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Automated appointment eConfirmations automatically changed by HQ.  Local pref set to "
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Automated appointment eConfirmations automatically changed by HQ.  Local pref set to "
 					+IsEServiceActive(signupOut,eServiceCode.ConfirmationRequest).ToString()+".");
 			}
 			#endregion
@@ -296,8 +240,8 @@ namespace OpenDentBusiness {
 			if(Prefs.UpdateString(PrefName.EClipboardClinicsSignedUp,clinicNumsEClipboard)) {
 				//HQ didn't match the local pref.
 				isCacheInvalid=true;
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,$"eClipboard clinics signed up changed. Local pref set to {clinicNumsEClipboard}");
-				MobileAppDevices.UpdateIsEClipboardAllowed(listEClipboardClinicNums);
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,$"eClipboard clinics signed up changed. Local pref set to {clinicNumsEClipboard}");
+				MobileAppDevices.UpdateIsAllowed(listEClipboardClinicNums);
 			}
 			#endregion
 			#region MobileWeb/ODMobile
@@ -308,17 +252,17 @@ namespace OpenDentBusiness {
 				.Select(x => x.ClinicNum).ToList();
 			//Shut down any existing ODMobile session for clinics which were just unsubscribed.
 			//NOTE: It is very important that this run BEFORE we update the pref below. 
-			//The mobile notification handler will check the pref we are about the change below and block unsubscribed clinics.
+			//The push handler will check the pref we are about the change below and block unsubscribed clinics.
 			listMobileWebClinicNumsBefore
 				//All ClinicNums which were included before the sync but not included after the sync (no longer subscribed to ODMobile).
 				.Where(x => !listMobileWebClinicNumsAfter.Contains(x)).Distinct()
 				//Logout all these clinics' users.
-				.ForEach(x => { MobileNotifications.ODM_LogoutClinic(x); });
+				.ForEach(x => { PushNotificationUtils.ODM_LogoutClinic(x); });
 			string clinicNumsMobileWeb=string.Join(",",listMobileWebClinicNumsAfter);
 			if(Prefs.UpdateString(PrefName.MobileWebClinicsSignedUp,clinicNumsMobileWeb)) {
 				//HQ didn't match the local pref.
 				isCacheInvalid=true;
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,$"MobileWeb clinics signed up changed. Local pref set to {clinicNumsMobileWeb}");
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,$"MobileWeb clinics signed up changed. Local pref set to {clinicNumsMobileWeb}");
 			}
 			#endregion
 			#region HostedEmail
@@ -327,7 +271,7 @@ namespace OpenDentBusiness {
 			#region WebSchedASAP
 			if(Prefs.UpdateBool(PrefName.WebSchedAsapEnabled,IsEServiceActive(signupOut,eServiceCode.WebSchedASAP))) {
 				isCacheInvalid=true;
-				SecurityLogs.MakeLogEntry(EnumPermType.EServicesSetup,0,"Web Sched ASAP automatically changed by HQ. Local pref set to "
+				SecurityLogs.MakeLogEntry(Permissions.EServicesSetup,0,"Web Sched ASAP automatically changed by HQ. Local pref set to "
 					+IsEServiceActive(signupOut,eServiceCode.WebSchedASAP).ToString()+".");
 			}
 			#endregion WebSchedASAP
@@ -345,7 +289,6 @@ namespace OpenDentBusiness {
 			#endregion PatientPortalURL
 			#region Preferences
 			isCacheInvalid|=UpdatePreferences(signupOut.PushablePrefs);
-			isCacheInvalid|=Prefs.UpdateDateT(PrefName.EserviceLogUploadTimeNext,signupOut.DateTimeEServiceLogUploadNext);
 			#endregion
 			#region Limited Beta
 			LimitedBetaFeatures.SyncFromHQ(signupOut.ListLimitedBetaFeatures);
@@ -361,7 +304,9 @@ namespace OpenDentBusiness {
 				Signalods.Insert(new Signalod() { IType=InvalidType.ClinicPrefs });
 				ClinicPrefs.RefreshCache();
 			}
-			LogEServiceSetup(signupOut,oldSignupOut);			
+			LogEServiceSetup(signupOut,oldSignupOut);
+			//Overwrite local pref with HQ value
+			Prefs.UpdateDateT(PrefName.EserviceLogUploadTimeNext,signupOut.DateTimeEServiceLogUploadNext);
 			return signupOut;
 		}
 
@@ -663,7 +608,7 @@ namespace OpenDentBusiness {
 				SigDateTime=DateTime.Now,
 			});
 			if(includeSecurityLogEntry) {
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,patNum:0,logText:
+				SecurityLogs.MakeLogEntry(Permissions.Setup,patNum:0,logText:
 					$"Changes were made to EServiceSetup. See EServiceSignalNum {eServiceSignalNum} for more details.");
 			}
 		}
@@ -808,10 +753,6 @@ namespace OpenDentBusiness {
 				public DateTime DateTimeDentalOfficeDb;
 				///<summary>Settings used at HQ for texting purposes</summary>
 				public SmsSettings SmsSettings;
-				//All mobile app devices belonging to the local db. Required for lite version? NO.
-				public List<MobileAppDeviceLite> MobileAppDeviceLites;
-				///<summary>Serialized list of program properties we might need on a clinic level</summary>
-				public string SerializedProperties;
 
 				[XmlIgnore]
 				public SetupMethod MethodName {
@@ -850,98 +791,6 @@ namespace OpenDentBusiness {
 					public string ClinicTitle;
 					public bool IsHidden;
 					public string ShortCodeOptInYourDentist;
-					public string AddressInfo;
-
-					///<summary>Lite version of Practice Clinic table's Address info</summary>
-					public class AddressInfoLite {
-						public string Address;
-						public string Address2;
-						public string City;
-						public string State;
-						public string Zip;
-						public string BillingAddress;
-						public string BillingAddress2;
-						public string BillingCity;
-						public string BillingState;
-						public string BillingZip;
-						public string PayToAddress;
-						public string PayToAddress2;
-						public string PayToCity;
-						public string PayToState;
-						public string PayToZip;
-
-						///<summary>Convert a versioned OD Clinic to a version-less json representation of a AddressInfoLite, to be stored at HQ.</summary>
-						public static string SerializeAddress(Clinic clinic) {
-							AddressInfoLite addressInfo=new AddressInfoLite();
-							addressInfo.Address=clinic.Address;
-							addressInfo.Address2=clinic.Address2;
-							addressInfo.City=clinic.City;
-							addressInfo.State=clinic.State;
-							addressInfo.Zip=clinic.Zip;
-							addressInfo.BillingAddress=clinic.BillingAddress;
-							addressInfo.BillingAddress2=clinic.BillingAddress2;
-							addressInfo.BillingCity=clinic.BillingCity;
-							addressInfo.BillingState=clinic.BillingState;
-							addressInfo.BillingZip=clinic.BillingZip;
-							addressInfo.PayToAddress=clinic.PayToAddress;
-							addressInfo.PayToAddress2=clinic.PayToAddress2;
-							addressInfo.PayToCity=clinic.PayToCity;
-							addressInfo.PayToState=clinic.PayToState;
-							addressInfo.PayToZip=clinic.PayToZip;
-							return JsonConvert.SerializeObject(addressInfo);
-						}
-
-						///<summary>Takes the JSON value in the "AddressInfo" column of EServiceClinic and parses it into an AddressInfoLite</summary>
-						public static AddressInfoLite DeserializeAddress(string addressInfoString) {
-							try {
-								AddressInfoLite addressInfoLite;
-								addressInfoLite=JsonConvert.DeserializeObject<AddressInfoLite>(addressInfoString);
-								return addressInfoLite;
-							}
-							catch(Exception ex) {
-								return new AddressInfoLite();
-							}
-						}
-					}
-				}
-
-				/// <summary>Lite version of the HQ Mobile App Device table. Versionless so keep simple and do not remove or rename fields.</summary>
-				public class MobileAppDeviceLite {
-					///<summary>FK to EServiceClinic.ClinicNum.</summary>
-					public long ClinicNum;
-					///<summary>The name of the device.</summary>
-					public string DeviceName;
-					///<summary>The unique identifier of the device. Platform specific.</summary>
-					public string UniqueID;
-					///<summary>Indicates whether the device is allowed to operate the checkin app. 
-					///For BYOD sessions will always be true because BYOD is authenticated by a unique URL link in a text message.</summary>
-					public bool IsEClipboardEnabled;
-					///<summary>Indicates whether a device is a BYOD device, defaults to false.</summary>
-					public bool IsBYODDevice;
-					///<summary>The date and time when we last updated the PatNum field for this device (indication the current use-state of the device).</summary>
-					[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
-					public DateTime LastCheckInActivity;
-					///<summary>The date and time of the last attempted login.</summary>
-					[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
-					public DateTime EclipboardLastAttempt;
-					///<summary>The date and time of the last succesful login.</summary>
-					[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
-					public DateTime EclipboardLastLogin;
-					///<summary>The date and time of the last attempted login.</summary>
-					[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
-					public DateTime ODTouchLastAttempt;
-					///<summary>The date and time of the last succesful login.</summary>
-					[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
-					public DateTime ODTouchLastLogin;
-					/// <summary>Indicates whether this device is being used for ODTouch or not.</summary>
-					public bool IsODTouchEnabled;
-				}
-
-				public class ClinicProgramPropertyContainer {
-					public long ClinicNum;
-					public string ProgramName;
-					public string ProgramProperty;
-					public string ProgramValue;
 				}
 			}
 
@@ -1067,7 +916,6 @@ namespace OpenDentBusiness {
 					public string InactiveCode;
 					public bool IsActivated;
 					public bool IsPrimary;
-					public bool IsProvisioned;
 
 					public static List<SmsPhone> ToSmsPhones(List<SignupOutPhone> listSignupPhones) {
 						return listSignupPhones.Select(x => new SmsPhone() {
@@ -1218,17 +1066,6 @@ namespace OpenDentBusiness {
 			};
 			string officeData=PayloadHelper.CreatePayload(listPayloadItems,eServiceCode.Undefined);
 			return WebSerializer.DeserializeTag<string>(GetWebServiceMainHQInstance().UpsertMobileSettings(officeData),"Success");
-		}
-
-		/// <summary> Builds a OCRIID request, and sends it off to azure. </summary>
-		public static string ProcessOCRIIDRequest(byte[] imgRequest) {
-			string payload=PayloadHelper.CreatePayload(
-				new List<PayloadItem> {
-					new PayloadItem(imgRequest,"ocrIIDRequest"),
-				},
-				eServiceCode.EClipboard
-			);
-			return GetWebServiceMainHQInstance().ProcessOCRIIDRequest(payload);
 		}
 
 		///<summary>Proxy class that interfaces with OpenDentalWebCore.EClipboard2FactorAuthFP</summary>

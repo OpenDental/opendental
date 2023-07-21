@@ -55,7 +55,7 @@ namespace OpenDental {
 				InsertNewMed(listImportMeds[i],listMedicationsExisting);
 				countImportedMedications++;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0
 				,Lans.g("Medications","Imported")+" "+POut.Int(countImportedMedications)+" "+Lans.g("Medications","medications.")
 			);
 			return countImportedMedications;
@@ -115,13 +115,13 @@ namespace OpenDental {
 				listMedicationExports.Add(new MedicationExport(listMedications[i]));
 			}
 			string json=JsonConvert.SerializeObject(listMedicationExports,Formatting.Indented);
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.ExportForDownload(filename,json);
 			}
 			else {
 				File.WriteAllText(filename,json);//Allow Exception to trickle up.
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,
 				Lans.g("Medications","Exported")+" "+POut.Int(listMedications.Count)+" "+Lans.g("Medications","medications to:")+" "+filename
 			);
 			return listMedications.Count;

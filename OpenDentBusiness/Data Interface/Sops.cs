@@ -94,10 +94,7 @@ namespace OpenDentBusiness{
 		///<summary>Returns the description for the specified SopCode.  Returns an empty string if no code is found.</summary>
 		public static string GetDescriptionFromCode(string sopCode) {
 			Sop sop=GetFirstOrDefault(x => x.SopCode==sopCode);
-			if(sop==null) {
-				return "";
-			}
-			return sop.Description;
+			return (sop==null ? "" : sop.Description);
 		}
 
 		/*

@@ -80,7 +80,7 @@ namespace OpenDental {
 			FillBlockoutTypeValues();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(string.IsNullOrEmpty(textName.Text.Trim())) {
 				MsgBox.Show(this,"Reason required.");
 				return;
@@ -103,6 +103,10 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void butDelete_Click(object sender,EventArgs e) {
 			string msgText="Are you sure you want to delete this definition? References to it will be deleted as well.";
 			if(!MsgBox.Show(this,MsgBoxButtons.YesNo,msgText)){
@@ -119,6 +123,5 @@ namespace OpenDental {
 			IsDeleted=true;
 			DialogResult=DialogResult.OK;
 		}
-
 	}
 }

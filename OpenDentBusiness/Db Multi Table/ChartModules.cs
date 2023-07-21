@@ -1400,12 +1400,7 @@ namespace OpenDentBusiness {
 				#endregion sheet
 			}
 			#region Sorting
-			if(componentsToLoad.UseMobileOrder) {
-				rows.Sort(CompareChartRowsMobile);
-			}
-			else {
-				rows.Sort(CompareChartRowsProper);
-			}
+			rows.Sort(CompareChartRows);
 			//Canadian lab procedures need to come immediately after their corresponding proc---------------------------------
 			for(int i=0;i<labRows.Count;i++) {
 				for(int r=0;r<rows.Count;r++) {
@@ -1445,23 +1440,29 @@ namespace OpenDentBusiness {
 			List<DataRow> rows=new List<DataRow>();
 			//The query below was causing a max join error for big offices.  It's fixed now, 
 			//but a better option for next time would be to put SET SQL_BIG_SELECTS=1; before the query.
-			string command="SELECT plannedappt.AptNum,ItemOrder,PlannedApptNum,"
-				+"COUNT(DISTINCT procedurelog.ProcNum) someAreComplete "
+			string command="SELECT plannedappt.AptNum,ItemOrder,PlannedApptNum,appointment.AptDateTime,"
+				+"appointment.Pattern,appointment.AptStatus,"
+				+"COUNT(DISTINCT procedurelog.ProcNum) someAreComplete, "
+				+"appointment.AptNum AS schedAptNum "
 				+"FROM plannedappt "
+				+"LEFT JOIN appointment ON appointment.NextAptNum=plannedappt.AptNum AND appointment.NextAptNum!=0 "
 				+"LEFT JOIN procedurelog ON procedurelog.PlannedAptNum=plannedappt.AptNum AND procedurelog.ProcStatus="+POut.Int((int)ProcStat.C)+" AND procedurelog.PatNum = plannedappt.patnum "
-				+"WHERE plannedappt.PatNum="+POut.Long(patNum)+" "
-				+"GROUP BY plannedappt.AptNum "
-				+"ORDER BY ItemOrder";
+				+"WHERE plannedappt.PatNum="+POut.Long(patNum)+" ";
+			if(DataConnection.DBtype==DatabaseType.MySql) {
+				command+="GROUP BY plannedappt.AptNum ";
+			}
+			else {
+				command+="GROUP BY plannedappt.AptNum,ItemOrder,PlannedApptNum,appointment.AptDateTime,"
+				+"appointment.Pattern,appointment.AptStatus,appointment.AptNum ";
+			}
+			command+="ORDER BY ItemOrder";
 			//plannedappt.AptNum does refer to the planned appt, but the other fields in the result are for the linked scheduled appt.
 			DataTable rawPlannedAppts=dcon.GetTable(command);
-			command="SELECT * FROM appointment WHERE PatNum="+POut.Long(patNum)+" AND NextAptNum!=0 ORDER BY AptStatus";
-			List<Appointment> listAppointmentsLinkedToPlanned=Crud.AppointmentCrud.SelectMany(command);
 			DataRow aptRow;
 			int itemOrder=1;
 			DateTime dateSched;
 			ApptStatus aptStatus;
 			List<Def> listDefs=Defs.GetDefsForCategory(DefCat.ProgNoteColors);
-			Appointment appointmentLinkToPlanned;
 			for(int i=0;i<rawPlannedAppts.Rows.Count;i++) {
 				aptRow=null;
 				for(int a=0;a<rawApt.Rows.Count;a++) {
@@ -1481,40 +1482,12 @@ namespace OpenDentBusiness {
 				}
 				//end of repair
 				row=table.NewRow();
-				//PlannedAppt----------------------------------------------------------------------------
-				long aptNum=PIn.Long(aptRow["AptNum"].ToString());
-				row["AptNum"]=aptNum; 
-				row["PlannedApptNum"]=rawPlannedAppts.Rows[i]["PlannedApptNum"].ToString();
-				row["minutes"]=(aptRow["Pattern"].ToString().Length*5).ToString();
-				row["Note"]=aptRow["Note"].ToString();
-				row["ProcDescript"]=aptRow["ProcDescript"].ToString();
-				row["ItemOrder"]=itemOrder.ToString();
-				//Appointment Linked to PlannedAppt----------------------------------------------------------------------------
-				row["AptStatus"]="";
-				row["SchedAptNum"]="";
-				row["dateSched"]="";
-				appointmentLinkToPlanned=listAppointmentsLinkedToPlanned.FirstOrDefault(x => x.NextAptNum==aptNum);
-				dateSched=DateTime.MinValue;
-				aptStatus=ApptStatus.None;
-				if(appointmentLinkToPlanned!=null) {
-					dateSched=appointmentLinkToPlanned.AptDateTime;
-					aptStatus=appointmentLinkToPlanned.AptStatus;
-					row["AptStatus"]=(int)aptStatus;
-					row["SchedAptNum"]=appointmentLinkToPlanned.AptNum;
-					if(aptStatus==ApptStatus.Complete) {
-						row["ProcDescript"]=Lans.g("ContrChart","(Completed) ")+ row["ProcDescript"];
-					}
-					else if(dateSched.Date==DateTime.Today.Date) {
-						row["ProcDescript"]=Lans.g("ContrChart","(Today's) ")+ row["ProcDescript"];
-					}
-					else if(rawPlannedAppts.Rows[i]["someAreComplete"].ToString()!="0") {
-						row["ProcDescript"]=Lans.g("ContrChart","(Some procs complete) ")+ row["ProcDescript"];
-					}
-					if(dateSched.Year>1880) {
-						row["dateSched"]=dateSched.ToShortDateString();
-					}
-				}
+				row["AptNum"]=aptRow["AptNum"].ToString();
+				dateSched=PIn.Date(rawPlannedAppts.Rows[i]["AptDateTime"].ToString());
+				row["AptStatus"]=PIn.Long(rawPlannedAppts.Rows[i]["AptStatus"].ToString());
+				row["SchedAptNum"]=PIn.Long(rawPlannedAppts.Rows[i]["schedAptNum"].ToString());
 				//Colors----------------------------------------------------------------------------
+				aptStatus=(ApptStatus)PIn.Long(rawPlannedAppts.Rows[i]["AptStatus"].ToString());
 				//change color if completed, broken, or unscheduled no matter the date
 				if(aptStatus==ApptStatus.Broken || aptStatus==ApptStatus.UnschedList) {
 					row["colorBackG"]=listDefs[15].ItemColor.ToArgb().ToString();
@@ -1545,6 +1518,26 @@ namespace OpenDentBusiness {
 					row["colorText"]=Color.Black.ToArgb().ToString();
 				}
 				//end of colors------------------------------------------------------------------------------
+				if(dateSched.Year<1880) {
+					row["dateSched"]="";
+				}
+				else {
+					row["dateSched"]=dateSched.ToShortDateString();
+				}
+				row["ItemOrder"]=itemOrder.ToString();
+				row["minutes"]=(aptRow["Pattern"].ToString().Length*5).ToString();
+				row["Note"]=aptRow["Note"].ToString();
+				row["PlannedApptNum"]=rawPlannedAppts.Rows[i]["PlannedApptNum"].ToString();
+				row["ProcDescript"]=aptRow["ProcDescript"].ToString();
+				if(aptStatus==ApptStatus.Complete) {
+					row["ProcDescript"]=Lans.g("ContrChart","(Completed) ")+ row["ProcDescript"];
+				}
+				else if(dateSched == DateTime.Today.Date) {
+					row["ProcDescript"]=Lans.g("ContrChart","(Today's) ")+ row["ProcDescript"];
+				}
+				else if(rawPlannedAppts.Rows[i]["someAreComplete"].ToString()!="0"){
+					row["ProcDescript"]=Lans.g("ContrChart","(Some procs complete) ")+ row["ProcDescript"];
+				}
 				rows.Add(row);
 				itemOrder++;
 			}
@@ -1929,25 +1922,13 @@ namespace OpenDentBusiness {
 			}
 			return table;
 		}
-		public static int CompareChartRowsProper(DataRow x,DataRow y) {
+
+		///<summary>The supplied DataRows must include the following columns: ProcNum,ProcDate,Priority,ToothRange,ToothNum,ProcCode. This sorts all objects in Chart module based on their dates, times, priority, and toothnum.  For time comparisons, procs are not included.  But if other types such as comm have a time component in ProcDate, then they will be sorted by time as well.</summary>
+		public static int CompareChartRows(DataRow x,DataRow y) {
 			//if dates are different, then sort by date
 			if(((DateTime)x["ProcDate"]).Date!=((DateTime)y["ProcDate"]).Date){
 				return ((DateTime)x["ProcDate"]).Date.CompareTo(((DateTime)y["ProcDate"]).Date);
 			}
-			return CompareChartRows(x,y);
-		}
-
-		/// <summary> Reverse date ordering for mobile so that most recent comes first. </summary>
-		public static int CompareChartRowsMobile(DataRow x,DataRow y) {
-			//if dates are different, then sort by date
-			if(((DateTime)x["ProcDate"]).Date!=((DateTime)y["ProcDate"]).Date){
-				return ((DateTime)y["ProcDate"]).Date.CompareTo(((DateTime)x["ProcDate"]).Date);
-			}
-			return CompareChartRows(x,y);
-		}
-
-		///<summary>The supplied DataRows must include the following columns: ProcNum,ProcDate,Priority,ToothRange,ToothNum,ProcCode. This sorts all objects in Chart module based on their dates, times, priority, and toothnum.  For time comparisons, procs are not included.  But if other types such as comm have a time component in ProcDate, then they will be sorted by time as well.</summary>
-		public static int CompareChartRows(DataRow x,DataRow y) {
 			//Sort by Type. Types are: Appointments, Procedures, CommLog, Tasks, Email, Lab Cases, Rx, Sheets.----------------------------------------------------
 			int xInd=0;
 			if(x["AptNum"].ToString()!="0") {
@@ -2078,10 +2059,8 @@ namespace OpenDentBusiness {
 		public static List<EnumPdTable> FillPatientDataList(bool panelImagesVisible,bool checkShowOrthoChecked) 
 		{
 			List<EnumPdTable> listPatDataTypes=new List<EnumPdTable>();
-			listPatDataTypes.Add(EnumPdTable.Adjustment);
 			listPatDataTypes.Add(EnumPdTable.Appointment);
 			listPatDataTypes.Add(EnumPdTable.Benefit);
-			listPatDataTypes.Add(EnumPdTable.ClaimProc);
 			listPatDataTypes.Add(EnumPdTable.ClaimProcHist);
 			if(panelImagesVisible){
 				listPatDataTypes.Add(EnumPdTable.Document);
@@ -2089,7 +2068,6 @@ namespace OpenDentBusiness {
 			}
 			listPatDataTypes.Add(EnumPdTable.InsPlan);
 			listPatDataTypes.Add(EnumPdTable.InsSub);
-			listPatDataTypes.Add(EnumPdTable.OrthoCase);
 			if(checkShowOrthoChecked){
 				listPatDataTypes.Add(EnumPdTable.OrthoChart);
 			}
@@ -2097,8 +2075,6 @@ namespace OpenDentBusiness {
 			listPatDataTypes.Add(EnumPdTable.Patient);
 			listPatDataTypes.Add(EnumPdTable.PatientNote);
 			listPatDataTypes.Add(EnumPdTable.PatPlan);
-			listPatDataTypes.Add(EnumPdTable.PaySplit);
-			listPatDataTypes.Add(EnumPdTable.Procedure);
 			listPatDataTypes.Add(EnumPdTable.ProcGroupItem);
 			listPatDataTypes.Add(EnumPdTable.ProcMultiVisit);
 			listPatDataTypes.Add(EnumPdTable.TableProgNotes);
@@ -2218,7 +2194,7 @@ namespace OpenDentBusiness {
 					procedure.MedicalCode,listFees:listFees);
 			}
 			if(procStatNew==ProcStat.C 
-				&& !Security.IsAuthorized(EnumPermType.ProcComplCreate,procedure.ProcDate,procedure.CodeNum,procedure.ProcFee)) 
+				&& !Security.IsAuthorized(Permissions.ProcComplCreate,procedure.ProcDate,procedure.CodeNum,procedure.ProcFee)) 
 			{			
 				return false;
 			}
@@ -2228,7 +2204,7 @@ namespace OpenDentBusiness {
 			procedure.BaseUnits=procedureCode.BaseUnits;
 			procedure.SiteNum=patientData.Patient.SiteNum;
 			procedure.RevCode=procedureCode.RevenueCodeDefault;
-			Procedures.SetDiagnosticCodesToDefault(procedure,procedureCode);
+			procedure.DiagnosticCode=PrefC.GetString(PrefName.ICD9DefaultForNewProcs);
 			procedure.PlaceService=Clinics.GetPlaceService(procedure.ClinicNum);
 			if(Userods.IsUserCpoe(Security.CurUser)) {
 				//This procedure is considered CPOE because the provider is the one that has added it.
@@ -2299,7 +2275,6 @@ namespace OpenDentBusiness {
 			public bool ShowSheets;
 			public bool ShowTasks;
 			public bool ShowTreatPlan;
-			public bool UseMobileOrder=false;
 
 		///<summary>Serialization requires a parameterless constructor.</summary>
 		public ChartModuleFilters() : this(true) { }

@@ -51,8 +51,8 @@ namespace OpenDental{
 					comboProv.SelectedIndex=i;
 				}
 			}
-			List<string> listStringCountyNames=Counties.GetListNames();
-			comboCounty.Items.AddList(listStringCountyNames);
+			string[] stringArrayCountyNames=Counties.GetListNames();
+			comboCounty.Items.AddList(stringArrayCountyNames);
 			if(_screenGroup.County==null) {
 				_screenGroup.County="";//prevents the next line from crashing
 			}
@@ -74,9 +74,6 @@ namespace OpenDental{
 					comboGradeSchool.SelectedIndex=i;
 					break;
 				}
-			}
-			if(comboGradeSchool.SelectedIndex<0 && _screenGroup.GradeSchool!="") {//if GradeSchool is not in list, just display the GradeSchool upon load
-				comboGradeSchool.SetSelectedKey<long>(-1,x=>x,x=>_screenGroup.GradeSchool);
 			}
 			//comboGradeSchool.SelectedIndex=comboGradeSchool.Items.IndexOf(_screenGroup.GradeSchool);//"" etc OK
 			comboPlaceService.Items.AddList(Enum.GetNames(typeof(PlaceOfService)));
@@ -279,8 +276,7 @@ namespace OpenDental{
 							break;
 					}
 				}
-				using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit();
-				formSheetFillEdit.SheetCur=sheet;
+				using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit(sheet);
 				formSheetFillEdit.ShowDialog();
 				if(formSheetFillEdit.DialogResult!=DialogResult.OK) {
 					return;
@@ -445,8 +441,7 @@ namespace OpenDental{
 				}
 				List<SheetField> listSheetFieldsProcs=sheet.SheetFields.FindAll(x => x.FieldName.StartsWith("Proc") && x.FieldType==SheetFieldType.CheckBox);
 				listSheetFieldsProcs.ForEach(x => listSheetFieldProcOrigVals.Add(x.Copy()));//Adds other proc checkbox fields.
-				using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit();
-				formSheetFillEdit.SheetCur=sheet;
+				using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit(sheet);
 				formSheetFillEdit.ShowDialog();
 				if(formSheetFillEdit.DialogResult!=DialogResult.OK) {
 					break;
@@ -516,8 +511,7 @@ namespace OpenDental{
 			}
 			List<SheetField> listSheetFieldProcs=sheet.SheetFields.FindAll(x => x.FieldName.StartsWith("Proc") && x.FieldType==SheetFieldType.CheckBox);
 			listSheetFieldProcs.ForEach(x => listSheetFieldsProcOrigVals.Add(x.Copy()));//Adds other proc checkbox fields.
-			using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit();
-			formSheetFillEdit.SheetCur=sheet;
+			using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit(sheet);
 			if(formSheetFillEdit.ShowDialog()==DialogResult.OK) {
 				//Now try and process the screening chart for completed sealants.
 				if(formSheetFillEdit.SheetCur==null) {
@@ -608,7 +602,7 @@ namespace OpenDental{
 		}
 		
 		private void gridScreenPats_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.PatientEdit)) {
+			if(!Security.IsAuthorized(Permissions.PatientEdit)) {
 				return;
 			}
 			Family family=Patients.GetFamily(_listScreenPats[gridScreenPats.GetSelectedIndex()].PatNum);
@@ -702,7 +696,7 @@ namespace OpenDental{
 			}
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			if(textDescription.Text=="") {
 				MsgBox.Show(this,"Description field cannot be blank.");
 				textDescription.Focus();
@@ -741,11 +735,40 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormScreenGroupEdit_FormClosing(object sender,FormClosingEventArgs e) {
 			if(_screenGroup.IsNew && DialogResult==DialogResult.Cancel) {
 				ScreenGroups.Delete(_screenGroup);//Also deletes screens.
 			}
 		}
 
+
+
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

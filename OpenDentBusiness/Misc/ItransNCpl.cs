@@ -134,7 +134,7 @@ namespace OpenDentBusiness {
 					carrierNew.CarrierName=jsonCarrier.Name.En;
 					try {
 						Carriers.Insert(carrierNew);
-						SecurityLogs.MakeLogEntry(EnumPermType.CarrierCreate,0,"Carrier "+carrierNew.CarrierName+" imported automatically.");
+						SecurityLogs.MakeLogEntry(Permissions.CarrierCreate,0,"Carrier "+carrierNew.CarrierName+" imported automatically.");
 					}
 					catch(Exception ex) {
 						ex.DoNothing();
@@ -167,7 +167,7 @@ namespace OpenDentBusiness {
 			if(!string.IsNullOrWhiteSpace(jsonCarrierPhone)) {
 				string jsonCarrierPhoneFormatted=TelephoneNumbers.FormatNumbersExactTen(jsonCarrierPhone);//strip 1 if present
 				//If the telephone in the Telephone[0].Name.En field is improper, then use Telephone[0].Value instead.
-				if(string.IsNullOrWhiteSpace(jsonCarrierPhoneFormatted) || !TelephoneNumbers.IsNumberValidTenDigit(jsonCarrierPhoneFormatted)) {
+				if(string.IsNullOrWhiteSpace(jsonCarrierPhoneFormatted) || !TelephoneNumbers.IsNumberValidTenDigit(ref jsonCarrierPhoneFormatted)) {
 					jsonCarrierPhone=jsonCarrier.Telephone?.FirstOrDefault()?.Value??"";//Will be empty string if not found
 				}
 			}

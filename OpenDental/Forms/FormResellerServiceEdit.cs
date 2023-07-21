@@ -20,12 +20,6 @@ namespace OpenDental {
 				textCode.Text=ProcedureCodes.GetStringProcCode(_resellerService.CodeNum);
 				textDesc.Text=ProcedureCodes.GetLaymanTerm(_resellerService.CodeNum);
 				textFee.Text=_resellerService.Fee.ToString(Currency.GetCurrencyFormat());
-				if(_resellerService.FeeRetail==-1) {
-					textFeeRetail.Text="";
-				}
-				else {
-					textFeeRetail.Text=_resellerService.FeeRetail.ToString(Currency.GetCurrencyFormat());
-				}
 				ShowHostedUrl(_resellerService.CodeNum);
 			}
 			else {
@@ -61,7 +55,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(_resellerService.CodeNum==0) {
 				MsgBox.Show(this,"Please pick a service from the list of procedure codes.");
 				return;
@@ -70,16 +64,6 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please fix the service fee first.");
 				return;
 			}
-			if(!textFeeRetail.IsValid()) {
-				MsgBox.Show(this,"Please fix the retail service fee first.");
-				return;
-			}
-			//Consider -1 as the valid default value, 
-			double feeRetail=-1;
-			if(!string.IsNullOrWhiteSpace(textFeeRetail.Text)) {
-				feeRetail=Currency.Round(PIn.Double(textFeeRetail.Text));
-			}
-			_resellerService.FeeRetail=feeRetail;
 			_resellerService.Fee=Currency.Round(PIn.Double(textFee.Text));
 			_resellerService.HostedUrl=textHostedUrl.Text;
 			if(IsNew) {
@@ -90,6 +74,11 @@ namespace OpenDental {
 			}
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 
 	}
 }

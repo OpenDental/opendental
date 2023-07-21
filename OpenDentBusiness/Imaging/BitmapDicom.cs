@@ -19,12 +19,10 @@ namespace OpenDentBusiness {
 		public int Width;
 		public int Height;
 		public ushort BitsAllocated;
-		public ushort BitsStored;
 		///<summary>Usually empty. Only used to temporarily store on import.</summary>
 		public int WindowingMin;
 		///<summary>Usually empty. Only used to temporarily store on import.</summary>
 		public int WindowingMax;
-		public EnumDicomPhotometricInterp PhotometricInterp;
 	}
 
 	public class DicomHelper{
@@ -41,7 +39,7 @@ namespace OpenDentBusiness {
 				for(int i=0;i<bitmapDicom.ArrayDataRaw.Length;i++) {
 					byte byteVal=0;
 					float floatDataRaw=bitmapDicom.ArrayDataRaw[i];
-					if(bitmapDicom.BitsAllocated==16) {//12 or 16 bits stored
+					if(bitmapDicom.BitsAllocated==16) {//12 bits stored
 						floatDataRaw=floatDataRaw/16f;
 					}
 					if(floatDataRaw<windowingMin) {
@@ -73,17 +71,35 @@ namespace OpenDentBusiness {
 			return bitmap;
 		}
 
-		///<summary>Returns null if something goes wrong.</summary>
-		public static BitmapDicom GetFromBase64(string rawBase64){
-			byte[] bytesRaw=Convert.FromBase64String(rawBase64);
-			using MemoryStream memoryStream=new MemoryStream(bytesRaw);
-			return GetFromStream(memoryStream);
-		}
-
-		///<summary>Returns null if something goes wrong.</summary>
-		public static BitmapDicom GetFromStream(Stream stream){
-			DicomFile dicomFile=DicomFile.Open(stream);
-			return GetFromDicomFile(dicomFile);
+		public static void CalculateWindowingOnImport(BitmapDicom bitmapDicom){
+			if(bitmapDicom.BitsAllocated==8) {
+				bitmapDicom.WindowingMax=255;
+				return;
+			}
+			int[] histogram=new int[4096];
+			for(int i=0;i<bitmapDicom.ArrayDataRaw.Length;i++){
+				histogram[bitmapDicom.ArrayDataRaw[i]]++;
+			}
+			int idxBlackPixels=GetIndexForValue(histogram,histogram.Max());//max value will hopefully be the black pixels.
+			if(idxBlackPixels < 100) { //it's at the left, so it's almost certainly black
+				histogram[idxBlackPixels]=0;//throw out the large number of black pixels
+			}
+			int idxPeak=GetIndexForValue(histogram,histogram.Max());
+			int threshold=150;
+			bitmapDicom.WindowingMin=0;
+			for(int i=idxPeak;i>=0;i--){//hunt down
+				if(histogram[i]<threshold){
+					bitmapDicom.WindowingMin=i/16;//converting from 12 bit to 8 bit
+					break;
+				}
+			}
+			bitmapDicom.WindowingMax=4095;
+			for(int i=idxPeak;i<histogram.Length;i++){//hunt up
+				if(histogram[i]<threshold){
+					bitmapDicom.WindowingMax=i/16;
+					break;
+				}
+			}
 		}
 
 		///<summary>Returns null if something goes wrong.</summary>
@@ -100,33 +116,32 @@ namespace OpenDentBusiness {
 			}
 		}
 
+		///<summary>Returns null if something goes wrong.</summary>
+		public static BitmapDicom GetFromBase64(string rawBase64){
+			byte[] bytesRaw=Convert.FromBase64String(rawBase64);
+			using MemoryStream memoryStream=new MemoryStream(bytesRaw);
+			return GetFromStream(memoryStream);
+		}
+
+		///<summary>Returns null if something goes wrong.</summary>
+		public static BitmapDicom GetFromStream(Stream stream){
+			DicomFile dicomFile=DicomFile.Open(stream);
+			return GetFromDicomFile(dicomFile);
+		}
+
 		private static BitmapDicom GetFromDicomFile(DicomFile dicomFile){
-			/*
-			When this method was created, we used example dicom images to figure out how to display them in Open Dental. Since then, we have received additional
-			examples of different dicom images that were causing errors when viewing. This method has since been modified to support the new formats each time.
-			The example images that were used can be found \\opendental.od\serverfiles\Engineering\dicom_image_examples
-			
-			Supporting a new format: Typically, when a new format is detected, an error from this method will occur. We should get an example image so we 
-			can change our code to handle the new format. Changes to our code will most like happen to this method(DicomHelper.GetFromDicomFile())
-			and/or the DicomHelper.CalculateWindowingOnImport().
-
-			After a new format has been added: After the code change for the newly supported format, make sure to add the example dicom image to the network 
-			\\opendental.od\serverfiles\Engineering\dicom_image_examples. Follow the existing pattern when creating the new directory.
-			*/
-
 			BitmapDicom bitmapDicom=new BitmapDicom();
 			DicomDataset dicomDataset=dicomFile.Dataset;
-			EnumDicomPhotometricInterp enumPhotometricInterp=PIn.Enum<EnumDicomPhotometricInterp>(dicomDataset.GetSingleValueOrDefault(new DicomTag(0x0028,0x0004),""),isEnumAsString:true,defaultEnumOption:EnumDicomPhotometricInterp.None);
-			if(enumPhotometricInterp==EnumDicomPhotometricInterp.None){
+			string stringPhotometricInterp=dicomDataset.GetSingleValueOrDefault(new DicomTag(0x0028,0x0004),"");
+			if(stringPhotometricInterp!="MONOCHROME2" && stringPhotometricInterp!="RGB"){
 				return null;
 			}
-			bitmapDicom.PhotometricInterp=enumPhotometricInterp;
 			bitmapDicom.BitsAllocated=dicomDataset.GetSingleValueOrDefault<ushort>(new DicomTag(0x0028,0x0100),0);
 			if(bitmapDicom.BitsAllocated!=16 && bitmapDicom.BitsAllocated!=8) {
 				return null;
 			}
-			bitmapDicom.BitsStored=dicomDataset.GetSingleValueOrDefault<ushort>(new DicomTag(0x0028,0x0101),0);
-			if(bitmapDicom.BitsStored!=12 && bitmapDicom.BitsStored!=8 && bitmapDicom.BitsStored!=16){
+			ushort bitsStored=dicomDataset.GetSingleValueOrDefault<ushort>(new DicomTag(0x0028,0x0101),0);
+			if(bitsStored!=12 && bitsStored!=8){
 				return null;
 			}
 			bitmapDicom.Height=dicomDataset.GetSingleValueOrDefault(new DicomTag(0x0028,0x0010),0);//rows
@@ -162,66 +177,8 @@ namespace OpenDentBusiness {
 			return bitmapDicom;
 		}
 
-		public static void CalculateWindowingOnImport(BitmapDicom bitmapDicom){
-			if(bitmapDicom.BitsAllocated==8) {
-				bitmapDicom.WindowingMax=255;
-				return;
-			}
-			if(bitmapDicom.BitsStored==16) {
-				bitmapDicom.WindowingMax=4095;//2^12
-				return;
-			}
-			int[] histogram=new int[4096];
-			for(int i=0;i<bitmapDicom.ArrayDataRaw.Length;i++){
-				histogram[bitmapDicom.ArrayDataRaw[i]]++;
-			}
-			int idxBlackPixels=GetIndexForValue(histogram,histogram.Max());//max value will hopefully be the black pixels.
-			if(idxBlackPixels < 100) { //it's at the left, so it's almost certainly black
-				histogram[idxBlackPixels]=0;//throw out the large number of black pixels
-			}
-			int idxPeak=GetIndexForValue(histogram,histogram.Max());
-			if(bitmapDicom.PhotometricInterp==EnumDicomPhotometricInterp.MONOCHROME1) {
-				//MONOCHROME1 Grayscale ranges from bright to dark. Our logic below expects the grayscale to go from dark to bright.
-				//Because of that, we need to hunt up(GetWindowingMax) to find the min, and hunt down(GetWindowingMin) to find the max.
-				bitmapDicom.WindowingMin=GetWindowingMax(histogram,idxPeak);
-				if(bitmapDicom.WindowingMin==4095) {
-					//Default value of max. Change to default value of min
-					bitmapDicom.WindowingMin=0;
-				}
-				bitmapDicom.WindowingMax=GetWindowingMin(histogram,idxPeak);
-				if(bitmapDicom.WindowingMax==0) {
-					//Default value. Set to the actual max default value of 4095
-					bitmapDicom.WindowingMax=4095;
-				}
-			}
-			else {
-				bitmapDicom.WindowingMin=GetWindowingMin(histogram,idxPeak);
-				bitmapDicom.WindowingMax=GetWindowingMax(histogram,idxPeak);
-			}
-		}
-
-		private static int GetWindowingMin(int[] histogram,int idxPeak) {
-			int threshold=150;
-			for(int i=idxPeak;i>=0;i--){//hunt down
-				if(histogram[i]<threshold){
-					return i/16;//converting from 12 bit to 8 bit
-				}
-			}
-			return 0;
-		}
-
-		private static int GetWindowingMax(int[] histogram,int idxPeak) {
-			int threshold=150;
-			for(int i=idxPeak;i<histogram.Length;i++){//hunt up
-				if(histogram[i]<threshold){
-					return i/16;//converting from 12 bit to 8 bit
-				}
-			}
-			return 4095;
-		}
-
 		///<summary>Returns the index of the value passed in. Return 0 if it cannot find the value.</summary>
-		private static int GetIndexForValue(int[] histogram,int value) {
+		public static int GetIndexForValue(int[] histogram,int value) {
 			if(histogram==null) {
 				return 0;
 			}
@@ -250,12 +207,12 @@ namespace OpenDentBusiness {
 			}
 			return new Size(width,height);
 		}*/
+
+
 	}
 
-	public enum EnumDicomPhotometricInterp {
-		None=0,
-		MONOCHROME1,
-		MONOCHROME2,
-		RGB
-	}
+
+
+
+
 }

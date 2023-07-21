@@ -91,7 +91,7 @@ namespace OpenDental {
 			FillList();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(listBoxTransType.GetSelected<EdgeExpressTransType>()==EdgeExpressTransType.DebitSale) {
 				if(!textCashBackAmt.IsValid()) {
 					MsgBox.Show(this,"Please fix data entry errors first.");

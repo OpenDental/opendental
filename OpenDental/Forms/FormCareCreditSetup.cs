@@ -21,7 +21,7 @@ namespace OpenDental {
 		public bool DoShowApptViewWindow=false;
 
 		///<summary>Used for comboboxDaysOut. The number of days a user can set.</summary>
-		public List<int> ListDaysOut => new List<int>() { 2,3,4 };
+		public List<int> ListDaysOut => new List<int>() { 1,2,3 };
 
 		public FormCareCreditSetup() {
 			InitializeComponent();
@@ -42,7 +42,7 @@ namespace OpenDental {
 						checkEnabled.Enabled=false;
 					}
 				}
-				_previouslySelectedClinicNum=comboClinics.ClinicNumSelected;
+				_previouslySelectedClinicNum=comboClinics.SelectedClinicNum;
 				textMerchantNumberPractice.Visible=false;
 				labelMerchantNumberPractice.Visible=false;
 			}
@@ -62,29 +62,19 @@ namespace OpenDental {
 					AddNeededProgramProperties(clinic.ClinicNum);
 				}
 			}
-			List<PatFieldDef> listPatFieldDefs=PatFieldDefs.GetDeepCopy();
+			List<PatFieldDef> listPatFieldDefs=PatFieldDefs.GetDeepCopy().FindAll(x => x.FieldType==PatFieldType.CareCreditStatus);
 			long patFieldDefNum=PIn.Long(ProgramProperties.GetPropValFromList(_listProgramProperties,ProgramProperties.PropertyDescs.CareCredit.CareCreditPatField));
-			long patFieldDefNumPreApprvAmt=PIn.Long(ProgramProperties.GetPropValFromList(_listProgramProperties,ProgramProperties.PropertyDescs.CareCredit.CareCreditPatFieldPreApprovalAmt));
-			long patFieldDefNumAvailableCredit=PIn.Long(ProgramProperties.GetPropValFromList(_listProgramProperties,ProgramProperties.PropertyDescs.CareCredit.CareCreditPatFieldAvailableCredit));
 			comboPatFieldDef.Items.Clear();
-			comboPatFieldDef.Items.AddList(listPatFieldDefs.FindAll(x=>x.FieldType==PatFieldType.CareCreditStatus),x=>x.FieldName);
-			comboPatFieldDef.SetSelectedKey<PatFieldDef>(patFieldDefNum,x => x.PatFieldDefNum,x => Lan.g(this,"None"));
-			comboPatFieldPreApprvAmt.Items.Clear();
-			comboPatFieldPreApprvAmt.Items.AddList(listPatFieldDefs.FindAll(x=>x.FieldType==PatFieldType.CareCreditPreApprovalAmt),x=>x.FieldName);
-			comboPatFieldPreApprvAmt.SetSelectedKey<PatFieldDef>(patFieldDefNumPreApprvAmt,x => x.PatFieldDefNum,x => Lan.g(this,"None"));
-			comboPatFieldAvailableCredit.Items.Clear();
-			comboPatFieldAvailableCredit.Items.AddList(listPatFieldDefs.FindAll(x=>x.FieldType==PatFieldType.CareCreditAvailableCredit),x=>x.FieldName);
-			comboPatFieldAvailableCredit.SetSelectedKey<PatFieldDef>(patFieldDefNumAvailableCredit,x => x.PatFieldDefNum,x => Lan.g(this,"None"));
+			comboPatFieldDef.Items.AddList(listPatFieldDefs,x => x.FieldName);
+			if(patFieldDefNum==0) {
+				if(comboPatFieldDef.Items.Count!=0) {
+					comboPatFieldDef.SetSelected(0);
+				}
+			}
+			else {
+				comboPatFieldDef.SetSelectedKey<PatFieldDef>(patFieldDefNum,x => x.PatFieldDefNum,x => Lan.g(this,"None"));
+			}
 			_hasCareCreditPatFieldDefNum=ApptViewItems.GetWhere(x => listPatFieldDefs.Select(y => y.PatFieldDefNum).ToList().Contains(x.PatFieldDefNum)).Count>0;
-			//EnumCareCreditBatch is stored in db. Manually order to preserve enum order but improve readability.
-			EnumCareCreditBatch enumCareCreditBatch=EnumCareCreditBatch.Off;
-			listBoxQSOptions.Items.Add(Lan.g("enumQSBatch",enumCareCreditBatch.GetDescription()),enumCareCreditBatch);
-			enumCareCreditBatch=EnumCareCreditBatch.On;
-			listBoxQSOptions.Items.Add(Lan.g("enumQSBatch",enumCareCreditBatch.GetDescription()),enumCareCreditBatch);
-			enumCareCreditBatch=EnumCareCreditBatch.NoBalance;
-			listBoxQSOptions.Items.Add(Lan.g("enumQSBatch",enumCareCreditBatch.GetDescription()),enumCareCreditBatch);
-			enumCareCreditBatch=EnumCareCreditBatch.LookupOnly;
-			listBoxQSOptions.Items.Add(Lan.g("enumQSBatch",enumCareCreditBatch.GetDescription()),enumCareCreditBatch);
 			FillFields(isLoad:true);
 			DisableControlsForMerchantClosed();
 		}
@@ -97,16 +87,13 @@ namespace OpenDental {
 			checkHideAdvertising.Checked=PIn.Bool(ProgramProperties.GetPropValFromList(_listProgramProperties,
 				ProgramProperties.PropertyDescs.CareCredit.CareCreditDoDisableAdvertising));
 			string payTypeDefNum=ProgramProperties.GetPropValFromList(_listProgramProperties,ProgramProperties.PropertyDescs.CareCredit.CareCreditPaymentType,
-				comboClinics.ClinicNumSelected);
+				comboClinics.SelectedClinicNum);
 			comboPaymentType.SetSelectedDefNum(PIn.Long(payTypeDefNum));
-			listBoxQSOptions.SetSelectedEnum(PIn.Enum<EnumCareCreditBatch>(ProgramProperties.GetPropValFromList(_listProgramProperties,ProgramProperties.PropertyDescs.CareCredit.CareCreditQSBatchEnabled,comboClinics.ClinicNumSelected)));
-			groupQSBatch.Visible=true;
-			if(listBoxQSOptions.GetSelected<EnumCareCreditBatch>()==EnumCareCreditBatch.Off){
-				groupQSBatch.Visible=false;
-			}
-			SetLabelQSDaysText(listBoxQSOptions.GetSelected<EnumCareCreditBatch>());
+			checkQSBatch.Checked=PIn.Bool(ProgramProperties.GetPropValFromList(_listProgramProperties,ProgramProperties.PropertyDescs.CareCredit.CareCreditQSBatchEnabled,
+				comboClinics.SelectedClinicNum));
+			groupQSBatch.Visible=checkQSBatch.Checked;
 			int daysOut=PIn.Int(ProgramProperties.GetPropValFromList(_listProgramProperties,ProgramProperties.PropertyDescs.CareCredit.CareCreditQSBatchDays,
-				comboClinics.ClinicNumSelected));
+				comboClinics.SelectedClinicNum));
 			if(daysOut<=0) {
 				daysOut=DEFAULT_DAYS;
 			}
@@ -122,7 +109,7 @@ namespace OpenDental {
 				textMerchantNumberClinic.Visible=!checkMerchantNumByProv.Checked;
 				labelMerchantNumberClinic.Visible=!checkMerchantNumByProv.Checked;
 				textMerchantNumberClinic.Text=PIn.String(ProgramProperties.GetPropValFromList(_listProgramProperties,
-					ProgramProperties.PropertyDescs.CareCredit.CareCreditMerchantNumber,comboClinics.ClinicNumSelected));
+					ProgramProperties.PropertyDescs.CareCredit.CareCreditMerchantNumber,comboClinics.SelectedClinicNum));
 			}
 			else {
 				textMerchantNumberPractice.Visible=!checkMerchantNumByProv.Checked;
@@ -160,7 +147,7 @@ namespace OpenDental {
 					ClinicNum=clinicNum,
 					PropertyDesc=ProgramProperties.PropertyDescs.CareCredit.CareCreditQSBatchEnabled,
 					ProgramNum=_program.ProgramNum,
-					PropertyValue=_listProgramProperties.Find(x => x.PropertyDesc==ProgramProperties.PropertyDescs.CareCredit.CareCreditQSBatchEnabled && x.ClinicNum==0)?.PropertyValue??"1",//"On"
+					PropertyValue=_listProgramProperties.FirstOrDefault(x => x.PropertyDesc==ProgramProperties.PropertyDescs.CareCredit.CareCreditQSBatchEnabled && x.ClinicNum==0)?.PropertyValue??"0",
 				});
 			}
 			if(!_listProgramProperties.Any(x => x.ClinicNum==clinicNum && x.PropertyDesc==ProgramProperties.PropertyDescs.CareCredit.CareCreditPaymentType)) {
@@ -168,7 +155,7 @@ namespace OpenDental {
 					ClinicNum=clinicNum,
 					PropertyDesc=ProgramProperties.PropertyDescs.CareCredit.CareCreditPaymentType,
 					ProgramNum=_program.ProgramNum,
-					PropertyValue=_listProgramProperties.Find(x => x.PropertyDesc==ProgramProperties.PropertyDescs.CareCredit.CareCreditPaymentType && x.ClinicNum==0)?.PropertyValue??"0",
+					PropertyValue=_listProgramProperties.FirstOrDefault(x => x.PropertyDesc==ProgramProperties.PropertyDescs.CareCredit.CareCreditPaymentType && x.ClinicNum==0)?.PropertyValue??"0",
 				});
 			}
 			if(!_listProgramProperties.Any(x => x.ClinicNum==clinicNum && x.PropertyDesc==ProgramProperties.PropertyDescs.CareCredit.CareCreditQSBatchDays)) {
@@ -195,26 +182,6 @@ namespace OpenDental {
 				_listProgramProperties.Add(new ProgramProperty() {
 					ClinicNum=0,
 					PropertyDesc=ProgramProperties.PropertyDescs.CareCredit.CareCreditPatField,
-					ProgramNum=_program.ProgramNum,
-					PropertyValue=POut.String(progPropValue.ToString()),
-				});
-			}
-			if(!_listProgramProperties.Any(x => x.PropertyDesc==ProgramProperties.PropertyDescs.CareCredit.CareCreditPatFieldPreApprovalAmt)) {
-				PatFieldDef patFieldDef=PatFieldDefs.GetDeepCopy().FindAll(x => x.FieldType==PatFieldType.CareCreditPreApprovalAmt).FirstOrDefault();
-				long progPropValue=patFieldDef?.PatFieldDefNum??0;
-				_listProgramProperties.Add(new ProgramProperty() {
-					ClinicNum=0,
-					PropertyDesc=ProgramProperties.PropertyDescs.CareCredit.CareCreditPatFieldPreApprovalAmt,
-					ProgramNum=_program.ProgramNum,
-					PropertyValue=POut.String(progPropValue.ToString()),
-				});
-			}
-			if(!_listProgramProperties.Any(x => x.PropertyDesc==ProgramProperties.PropertyDescs.CareCredit.CareCreditPatFieldAvailableCredit)) {
-				PatFieldDef patFieldDef=PatFieldDefs.GetDeepCopy().FindAll(x => x.FieldType==PatFieldType.CareCreditAvailableCredit).FirstOrDefault();
-				long progPropValue=patFieldDef?.PatFieldDefNum??0;
-				_listProgramProperties.Add(new ProgramProperty() {
-					ClinicNum=0,
-					PropertyDesc=ProgramProperties.PropertyDescs.CareCredit.CareCreditPatFieldAvailableCredit,
 					ProgramNum=_program.ProgramNum,
 					PropertyValue=POut.String(progPropValue.ToString()),
 				});
@@ -268,14 +235,6 @@ namespace OpenDental {
 			comboPaymentType.SetSelectedDefNum(defCareCredit.DefNum);
 		}
 
-		private void SetLabelQSDaysText(EnumCareCreditBatch enumCareCreditBatch){
-			string labelText="Number of days out to check for pre-approvals for future appointments.";
-			if(enumCareCreditBatch==EnumCareCreditBatch.LookupOnly){
-				labelText="Number of days out to check for lookups for future appointments.";
-			}
-			labelQSDays.Text=labelText;
-		}
-
 		///<summary>Updates each clinic's property values with the values on the form. Validation should happen before calling this method.</summary>
 		private void UpdatePropertiesInMemory(long clinicNum) {
 			string payTypeSelected="0";
@@ -288,7 +247,7 @@ namespace OpenDental {
 			}
 			_listProgramProperties.FindAll(x => x.ClinicNum==clinicNum
 				&& x.PropertyDesc==ProgramProperties.PropertyDescs.CareCredit.CareCreditQSBatchEnabled)
-				.ForEach(x => x.PropertyValue=POut.String(((int)listBoxQSOptions.GetSelected<EnumCareCreditBatch>()).ToString()));
+				.ForEach(x => x.PropertyValue=POut.Bool(checkQSBatch.Checked));
 			_listProgramProperties.FindAll(x => x.ClinicNum==clinicNum && x.PropertyDesc==ProgramProperties.PropertyDescs.CareCredit.CareCreditPaymentType)
 				.ForEach(x => x.PropertyValue=POut.String(payTypeSelected));
 			_listProgramProperties.FindAll(x => x.ClinicNum==clinicNum && x.PropertyDesc==ProgramProperties.PropertyDescs.CareCredit.CareCreditQSBatchDays)
@@ -304,14 +263,6 @@ namespace OpenDental {
 				_listProgramProperties.FindAll(x => x.PropertyDesc==ProgramProperties.PropertyDescs.CareCredit.CareCreditPatField)
 				.ForEach(x => x.PropertyValue=POut.String(comboPatFieldDef.GetSelected<PatFieldDef>().PatFieldDefNum.ToString()));
 			}
-			if(comboPatFieldPreApprvAmt.SelectedIndex>-1) {
-				_listProgramProperties.FindAll(x => x.PropertyDesc==ProgramProperties.PropertyDescs.CareCredit.CareCreditPatFieldPreApprovalAmt)
-				.ForEach(x => x.PropertyValue=POut.String(comboPatFieldPreApprvAmt.GetSelected<PatFieldDef>().PatFieldDefNum.ToString()));
-			}
-			if(comboPatFieldAvailableCredit.SelectedIndex>-1) {
-				_listProgramProperties.FindAll(x => x.PropertyDesc==ProgramProperties.PropertyDescs.CareCredit.CareCreditPatFieldAvailableCredit)
-				.ForEach(x => x.PropertyValue=POut.String(comboPatFieldAvailableCredit.GetSelected<PatFieldDef>().PatFieldDefNum.ToString()));
-			}
 			_listProgramProperties.FindAll(x => x.PropertyDesc==ProgramProperties.PropertyDescs.CareCredit.CareCreditIsMerchantNumberByProv)
 				.ForEach(x => x.PropertyValue=POut.Bool(checkMerchantNumByProv.Checked));
 			_listProgramProperties.FindAll(x => x.PropertyDesc==ProgramProperties.PropertyDescs.CareCredit.CareCreditDoDisableAdvertising)
@@ -323,18 +274,18 @@ namespace OpenDental {
 		}
 
 		private void comboClinics_SelectionChangeCommitted(object sender,EventArgs e) {
-			if(comboClinics.ClinicNumSelected==_previouslySelectedClinicNum) {//didn't change the selected clinic
+			if(comboClinics.SelectedClinicNum==_previouslySelectedClinicNum) {//didn't change the selected clinic
 				return;
 			}
 			//if CareCredit is enabled and the username and key are set for the current clinic,
 			//make the user select a payment type before switching clinics
 			if(checkEnabled.Checked && !IsValid(_previouslySelectedClinicNum)) {
-				comboClinics.ClinicNumSelected=_previouslySelectedClinicNum;
+				comboClinics.SelectedClinicNum=_previouslySelectedClinicNum;
 				return;
 			}
 			UpdatePropertiesInMemory(_previouslySelectedClinicNum);
 			//Update previously selected clinic num since we have updated the values for the clinic.
-			_previouslySelectedClinicNum=comboClinics.ClinicNumSelected;
+			_previouslySelectedClinicNum=comboClinics.SelectedClinicNum;
 			FillFields();
 			DisableControlsForMerchantClosed();
 		}
@@ -343,12 +294,8 @@ namespace OpenDental {
 			DisableControlsForMerchantClosed();
 		}
 
-		private void listQSBatch_SelectionChanged(object sender,EventArgs e) {
-			groupQSBatch.Visible=true;
-			if(listBoxQSOptions.GetSelected<EnumCareCreditBatch>()==EnumCareCreditBatch.Off){
-				groupQSBatch.Visible=false;
-			}
-			SetLabelQSDaysText(listBoxQSOptions.GetSelected<EnumCareCreditBatch>());
+		private void checkQSBatch_CheckedChanged(object sender,EventArgs e) {
+			groupQSBatch.Visible=checkQSBatch.Checked;
 		}
 
 		private void checkMerchantNumByProv_CheckedChanged(object sender,EventArgs e) {
@@ -372,7 +319,7 @@ namespace OpenDental {
 				//Set a default CareCredit payment type. 
 				SetDefaultCareCreditPaymentType();
 			}
-			if(listBoxQSOptions.GetSelected<EnumCareCreditBatch>()!=EnumCareCreditBatch.Off && comboBoxDaysOut.SelectedIndex<0) {
+			if(checkQSBatch.Checked && comboBoxDaysOut.SelectedIndex<0) {
 				MsgBox.Show(this,"Number of days out Batch Quickscreen Setting required.");
 				return false;
 			}
@@ -412,17 +359,16 @@ namespace OpenDental {
 					return;
 				}
 				List<Provider> listProviderOverrides=Providers.GetAll();
-				FrmProviderPick frmProviderPick=new FrmProviderPick(listProviderOverrides);
-				frmProviderPick.ProvNumSelected=Security.CurUser.ProvNum;
-				frmProviderPick.ShowDialog();
-				if(!frmProviderPick.IsDialogOK) {
+				using FormProviderPick formProviderPick=new FormProviderPick(listProviderOverrides);
+				formProviderPick.ProvNumSelected=Security.CurUser.ProvNum;
+				if(formProviderPick.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
-				if(frmProviderPick.ProvNumSelected==0) {
+				if(formProviderPick.ProvNumSelected==0) {
 					MsgBox.Show(this,"No provider selected. Choose a provider and try again.");
 					return;
 				}
-				CareCreditL.LaunchAdminPage(frmProviderPick.ProvNumSelected,comboClinics.GetSelectedClinic().ClinicNum,isProvOverride:true);
+				CareCreditL.LaunchAdminPage(formProviderPick.ProvNumSelected,comboClinics.GetSelectedClinic().ClinicNum,isProvOverride:true);
 			}
 			else {
 				string merchantNumber=textMerchantNumberPractice.Text;
@@ -433,16 +379,16 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(checkEnabled.Checked && !Programs.IsEnabledByHq(ProgramName.CareCredit,out string err)) {
 				MessageBox.Show(err);
 				return;
 			}
-			if(checkEnabled.Checked && !IsValid(comboClinics.ClinicNumSelected)) {
+			if(checkEnabled.Checked && !IsValid(comboClinics.SelectedClinicNum)) {
 				return;
 			}
 			//Set the program property value before saving.
-			UpdatePropertiesInMemory(comboClinics.ClinicNumSelected);
+			UpdatePropertiesInMemory(comboClinics.SelectedClinicNum);
 			#region Save
 			//Only update the program if the IsEnabled flag has changed
 			if(_program.Enabled!=checkEnabled.Checked) {
@@ -453,12 +399,15 @@ namespace OpenDental {
 			#endregion
 			DataValid.SetInvalid(InvalidType.Programs);
 			bool hasCareCreditQSBatchEnabled=_listProgramProperties.Any(x => x.PropertyDesc==ProgramProperties.PropertyDescs.CareCredit.CareCreditQSBatchEnabled
-				&& PIn.Enum<EnumCareCreditBatch>(x.PropertyValue)!=EnumCareCreditBatch.Off);
+				&& x.PropertyValue=="1");
 			if(checkEnabled.Checked && hasCareCreditQSBatchEnabled && !_hasCareCreditPatFieldDefNum) {
 				DoShowApptViewWindow=MsgBox.Show(this,MsgBoxButtons.YesNo,$"Add the {PatFieldType.CareCreditStatus.GetDescription()} to appointment views?");
 			}
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

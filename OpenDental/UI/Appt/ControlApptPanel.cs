@@ -185,8 +185,6 @@ namespace OpenDental.UI{
 		private int _dayClicked;
 		///<summary>When resizing, we need to know the original height.</summary>
 		private int _heightResizingOriginal;
-		///<summary>Keeps track of status of left mouse button.</summary>
-		private bool _isLeftMouseDown;
 		///<summary></summary>
 		private bool _isResizingAppt;
 		///<summary>Appt origin.  If moving an appointment, this is the location where the appointment was at the beginning of the drag, in coordinates of the parent control.</summary>
@@ -829,7 +827,7 @@ namespace OpenDental.UI{
 			}
 			//not on apt, so trying to schedule an appointment---------------------------------------------------------------------
 			else {
-				if(!Security.IsAuthorized(EnumPermType.AppointmentCreate)) {
+				if(!Security.IsAuthorized(Permissions.AppointmentCreate)) {
 					return;
 				}
 				if(ListOpsVisible.Count==0) {//no ops visible.
@@ -859,14 +857,12 @@ namespace OpenDental.UI{
 			if(ListOpsVisible.Count==0) {//no ops visible.
 				return;
 			}
+			//if(_isMouseDown) {
 			if(((Control.MouseButtons & MouseButtons.Left)>0 && (Control.MouseButtons & MouseButtons.Right)>0)) {
 				return;
 			}
 			if(((Control.MouseButtons & MouseButtons.Left)>0 && (Control.MouseButtons & MouseButtons.Middle)>0)) {
 				return;
-			}
-			if((Control.MouseButtons & MouseButtons.Left)>0) {
-				_isLeftMouseDown=true;
 			}
 			if(e.Y<_heightProvOpHeaders
 				&& e.X>_widthTime 
@@ -1040,9 +1036,7 @@ namespace OpenDental.UI{
 				}
 				return;
 			}
-			if(Control.MouseButtons!=MouseButtons.Left || !_isLeftMouseDown) { 
-				//Prevents a bug where another window is open, user clicks a button that closes that window,
-				//before releasing their click, if they were to drag here, a phantom appt would show.
+			if(Control.MouseButtons!=MouseButtons.Left) { 
 				return;
 			}
 			//from here down, left mouse button is down
@@ -1083,19 +1077,19 @@ namespace OpenDental.UI{
 
 		protected override void OnMouseUp(MouseEventArgs e) {
 			base.OnMouseUp(e);
+			//If both buttons are used in some combination, we only get a mouse up event on the first button released.
+			//So we treat either of them as the mouse up event.
+			//if(!_isMouseDown) {
+			//	return;
+			//}
 			//try/finally only. No catch. We probably want a handy exception to popup if there is a real bug.
 			//Any return from this point forward will cause HideDraggableContrApptSingle() and ResizingAppt=false.
 			try {
-				if(!_isLeftMouseDown) {
-					//This is important to prevent a bug where another window is open, user clicks a button that closes that window,
-					//and then the mouse up fires here. That kind of mouse up must be ignored.
-					return;
-				}
 				//int thisIndex=GetIndex(ContrApptSingle.SelectedAptNum);
 				Appointment apptOld;
 				if(_isResizingAppt) {
 					#region Resizing, not moving.
-					if(!Security.IsAuthorized(EnumPermType.AppointmentResize)) {
+					if(!Security.IsAuthorized(Permissions.AppointmentResize)) {
 						return;
 					}
 					//if(!TempApptSingle.Visible) {//click with no drag?
@@ -1179,7 +1173,7 @@ namespace OpenDental.UI{
 						pattern="///";
 					}
 					Appointments.SetPattern(curApt,pattern); //Appointments S-Class handles Signalods
-					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentEdit,curApt.PatNum,Lan.g(this,"Appointment resized from the appointment module."), curApt.AptNum,datePrevious);//Generate FKey to the appointment to show the audit entry in the ApptEdit window.
+					SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,curApt.PatNum,Lan.g(this,"Appointment resized from the appointment module."), curApt.AptNum,datePrevious);//Generate FKey to the appointment to show the audit entry in the ApptEdit window.
 					OnApptResized(curApt);
 					#endregion Resizing, not moving.
 					return;					
@@ -1193,7 +1187,7 @@ namespace OpenDental.UI{
 				if(contrTempAppt.Location.X>this.Right) { //Dragging to pinboard, so place a copy there.
 					#region Dragging to pinboard
 					long patNum=PIn.Long(_dataRowTempAppt["PatNum"].ToString());
-					if(!Security.IsAuthorized(EnumPermType.AppointmentMove) || PatRestrictionL.IsRestricted(patNum,PatRestrict.ApptSchedule)){
+					if(!Security.IsAuthorized(Permissions.AppointmentMove) || PatRestrictionL.IsRestricted(patNum,PatRestrict.ApptSchedule)){
 						return;
 					}
 					if((ApptStatus)PIn.Int(_dataRowTempAppt["AptStatus"].ToString())==ApptStatus.Complete) {//could cause completed procs to change date
@@ -1238,13 +1232,13 @@ namespace OpenDental.UI{
 					#region Prompt or block
 					if(appt.AptStatus==ApptStatus.PtNote || appt.AptStatus==ApptStatus.PtNoteCompleted) {
 						//no question for notes
-						if(!Security.IsAuthorized(EnumPermType.AppointmentMove) || PatRestrictionL.IsRestricted(appt.PatNum,PatRestrict.ApptSchedule)) {
+						if(!Security.IsAuthorized(Permissions.AppointmentMove) || PatRestrictionL.IsRestricted(appt.PatNum,PatRestrict.ApptSchedule)) {
 							return;
 						}
 					}
 					else {
-						if(!Security.IsAuthorized(EnumPermType.AppointmentMove)
-							|| (appt.AptStatus==ApptStatus.Complete && (!Security.IsAuthorized(EnumPermType.AppointmentCompleteEdit)))
+						if(!Security.IsAuthorized(Permissions.AppointmentMove)
+							|| (appt.AptStatus==ApptStatus.Complete && (!Security.IsAuthorized(Permissions.AppointmentCompleteEdit)))
 							|| PatRestrictionL.IsRestricted(appt.PatNum,PatRestrict.ApptSchedule))
 						{
 							return;
@@ -1276,7 +1270,6 @@ namespace OpenDental.UI{
 				//MoveAppointment(new List<Appointment>() { appt },new List<Appointment>() { apptOld },curOp,timeWasMoved,isOpChanged);//Apt's time has already been changed at this point.  Internally calls Appointments S-class to insert invalid signal.				
 			}
 			finally { //Cleanup. We are done with mouse up so we can't possibly be resizing or moving an appt.
-				_isLeftMouseDown=false;
 				_isResizingAppt=false;
 				HideDraggableTempApptSingle();//sets mouseup
 			}
@@ -2202,8 +2195,8 @@ namespace OpenDental.UI{
 				listAptNums.Add(PIn.Long(TableAppointments.Rows[i]["AptNum"].ToString()));
 			}
 			List<Procedure> procsMultApts=Procedures.GetProcsMultApts(listAptNums);
-			List<Procedure> listProceduresForOne=Procedures.GetProcsOneApt(appt.AptNum,procsMultApts);
-			List<string> listProcCodesDoubleBooked=Appointments.GetDoubleBookedCodes(appt,TableAppointments.Copy(),procsMultApts,listProceduresForOne.ToArray());
+			Procedure[] procsForOne=Procedures.GetProcsOneApt(appt.AptNum,procsMultApts);
+			List<string> listProcCodesDoubleBooked=Appointments.GetDoubleBookedCodes(appt,TableAppointments.Copy(),procsMultApts,procsForOne);
 			if(listProcCodesDoubleBooked.Count==0) {
 				return false;
 			}
@@ -2288,7 +2281,6 @@ namespace OpenDental.UI{
 				CareCreditWebStatus.AccountFound.GetDescription().ToLower(),
 				CareCreditWebStatus.CallForAuth.GetDescription().ToLower(),
 				CareCreditWebStatus.Declined.GetDescription().ToLower(),
-				CareCreditWebStatus.AccountNotFoundQS.GetDescription().ToLower(),
 				CareCreditWebStatus.PreApproved.GetDescription().ToLower()
 			}.Contains(careCreditStatusLower);
 		}
@@ -2551,19 +2543,19 @@ namespace OpenDental.UI{
 
 		private void DrawBlockouts(Graphics g){
 			//if(_listSchedules==null){
-			List<Schedule> listSchedulesForType=Schedules.GetListForType(ListSchedules,ScheduleType.Blockout,0);
+			Schedule[] schedForType=Schedules.GetForType(ListSchedules,ScheduleType.Blockout,0);
 			string blockText;
 			RectangleF rect;
-			for(int i=0;i<listSchedulesForType.Count;i++) {
-				using SolidBrush brushBlockBackg=new SolidBrush(Defs.GetColor(DefCat.BlockoutTypes,listSchedulesForType[i].BlockoutType));
-				using Pen penOutline=new Pen(Defs.GetColor(DefCat.BlockoutTypes,listSchedulesForType[i].BlockoutType),2);
-				blockText=Defs.GetName(DefCat.BlockoutTypes,listSchedulesForType[i].BlockoutType)+"\r\n"+listSchedulesForType[i].Note;
-				for(int o=0;o<listSchedulesForType[i].Ops.Count;o++) {
+			for(int i=0;i<schedForType.Length;i++) {
+				using SolidBrush brushBlockBackg=new SolidBrush(Defs.GetColor(DefCat.BlockoutTypes,schedForType[i].BlockoutType));
+				using Pen penOutline=new Pen(Defs.GetColor(DefCat.BlockoutTypes,schedForType[i].BlockoutType),2);
+				blockText=Defs.GetName(DefCat.BlockoutTypes,schedForType[i].BlockoutType)+"\r\n"+schedForType[i].Note;
+				for(int o=0;o<schedForType[i].Ops.Count;o++) {
 					if(IsWeeklyView) {
-						if(GetIndexOp(listSchedulesForType[i].Ops[o])==-1) {
+						if(GetIndexOp(schedForType[i].Ops[o])==-1) {
 							continue;//don't display if op not visible
 						}
-						int dayofweek=(int)listSchedulesForType[i].SchedDate.DayOfWeek;
+						int dayofweek=(int)schedForType[i].SchedDate.DayOfWeek;
 						if(PrefC.GetInt(PrefName.ApptWeekViewStartDay)==1){//monday
 							dayofweek--;
 						}
@@ -2572,25 +2564,25 @@ namespace OpenDental.UI{
 						}
 						rect=new RectangleF(
 							(dayofweek)*_widthWeekDay
-							+_widthWeekAppt*(GetIndexOp(listSchedulesForType[i].Ops[o],ListOpsVisible))
-							,listSchedulesForType[i].StartTime.Hours*_heightLine*_rowsPerHr
-							+listSchedulesForType[i].StartTime.Minutes*_heightLine/_minPerRow
+							+_widthWeekAppt*(GetIndexOp(schedForType[i].Ops[o],ListOpsVisible))
+							,schedForType[i].StartTime.Hours*_heightLine*_rowsPerHr
+							+schedForType[i].StartTime.Minutes*_heightLine/_minPerRow
 							,_widthWeekAppt-1
-							,(listSchedulesForType[i].StopTime-listSchedulesForType[i].StartTime).Hours*_heightLine*_rowsPerHr
-							+(listSchedulesForType[i].StopTime-listSchedulesForType[i].StartTime).Minutes*_heightLine/_minPerRow);
+							,(schedForType[i].StopTime-schedForType[i].StartTime).Hours*_heightLine*_rowsPerHr
+							+(schedForType[i].StopTime-schedForType[i].StartTime).Minutes*_heightLine/_minPerRow);
 					}
 					else {
-						if(GetIndexOp(listSchedulesForType[i].Ops[o])==-1) {
+						if(GetIndexOp(schedForType[i].Ops[o])==-1) {
 							continue;//don't display if op not visible
 						}
 						rect=new RectangleF(
-							_widthOpCol*(GetIndexOp(listSchedulesForType[i].Ops[o],ListOpsVisible))
+							_widthOpCol*(GetIndexOp(schedForType[i].Ops[o],ListOpsVisible))
 							+WidthProvOnAppt*2//so they don't overlap prov bars
-							,listSchedulesForType[i].StartTime.Hours*_heightLine*_rowsPerHr
-							+listSchedulesForType[i].StartTime.Minutes*_heightLine/_minPerRow
+							,schedForType[i].StartTime.Hours*_heightLine*_rowsPerHr
+							+schedForType[i].StartTime.Minutes*_heightLine/_minPerRow
 							,_widthOpCol-1-WidthProvOnAppt*2
-							,(listSchedulesForType[i].StopTime-listSchedulesForType[i].StartTime).Hours*_heightLine*_rowsPerHr
-							+(listSchedulesForType[i].StopTime-listSchedulesForType[i].StartTime).Minutes*_heightLine/_minPerRow);
+							,(schedForType[i].StopTime-schedForType[i].StartTime).Hours*_heightLine*_rowsPerHr
+							+(schedForType[i].StopTime-schedForType[i].StartTime).Minutes*_heightLine/_minPerRow);
 					}
 					//paint either solid block or outline
 					if(PrefC.GetBool(PrefName.SolidBlockouts)) {
@@ -2793,9 +2785,6 @@ namespace OpenDental.UI{
 			string strRemaining=str;
 			while(true){
 				SizeF sizeOneRow=new SizeF(rectangleLayout.Width,heightLine);
-				if(strRemaining.Length>32000) {//GDI+ only allows 32,000 characters at a time
-					strRemaining=strRemaining.Substring(0,32000);//so it doesn't crash MeasureString()
-				}
 				//we don't care about the size returned here, just the outs
 				g.MeasureString(strRemaining,font,sizeOneRow,stringFormatLeft,out int charactersFitted,out int linesFilled);
 				if(linesFilled==0 || charactersFitted==0){//can happen when half height rows can't draw			
@@ -2815,20 +2804,20 @@ namespace OpenDental.UI{
 		}
 
 		private void DrawWebSchedASAPSlots(Graphics g){
-			List<Schedule> listSchedulesWebSchedASAP=Schedules.GetListForType(ListSchedules,ScheduleType.WebSchedASAP,0);
+			Schedule[] schedulesForWebSchedASAP=Schedules.GetForType(ListSchedules,ScheduleType.WebSchedASAP,0);
 			Pen penOutline=new Pen(Color.LightYellow,2);
 			string txtBlock;
 			RectangleF rectF;
-			for(int i=0;i<listSchedulesWebSchedASAP.Count;i++) {
-				txtBlock=Lan.g(this,"Web Sched ASAP Slot")+"\r\n"+listSchedulesWebSchedASAP[i].Note;
-				for(int o=0;o<listSchedulesWebSchedASAP[i].Ops.Count;o++) {
-					TimeSpan timeSpan=listSchedulesWebSchedASAP[i].StopTime-listSchedulesWebSchedASAP[i].StartTime;
+			for(int i=0;i<schedulesForWebSchedASAP.Length;i++) {
+				txtBlock=Lan.g(this,"Web Sched ASAP Slot")+"\r\n"+schedulesForWebSchedASAP[i].Note;
+				for(int o=0;o<schedulesForWebSchedASAP[i].Ops.Count;o++) {
+					TimeSpan timeSpan=schedulesForWebSchedASAP[i].StopTime-schedulesForWebSchedASAP[i].StartTime;
 					if(IsWeeklyView) {
-						if(GetIndexOp(listSchedulesWebSchedASAP[i].Ops[o])==-1) {
+						if(GetIndexOp(schedulesForWebSchedASAP[i].Ops[o])==-1) {
 							continue;//don't display if op not visible
 						}
 						//this is a workaround because we start on Monday:
-						int dayofweek=(int)listSchedulesWebSchedASAP[i].SchedDate.DayOfWeek;
+						int dayofweek=(int)schedulesForWebSchedASAP[i].SchedDate.DayOfWeek;
 						if(PrefC.GetInt(PrefName.ApptWeekViewStartDay)==1){//Monday
 							dayofweek--;
 						}
@@ -2837,22 +2826,22 @@ namespace OpenDental.UI{
 						}
 						rectF=new RectangleF(
 							(dayofweek)*_widthWeekDay
-							+_widthWeekAppt*(GetIndexOp(listSchedulesWebSchedASAP[i].Ops[o],ListOpsVisible))//-(PrintingColsPerPage*PrintingPageColumn))
-							,listSchedulesWebSchedASAP[i].StartTime.Hours*_heightLine*_rowsPerHr
-							+listSchedulesWebSchedASAP[i].StartTime.Minutes*_heightLine/_minPerRow
+							+_widthWeekAppt*(GetIndexOp(schedulesForWebSchedASAP[i].Ops[o],ListOpsVisible))//-(PrintingColsPerPage*PrintingPageColumn))
+							,schedulesForWebSchedASAP[i].StartTime.Hours*_heightLine*_rowsPerHr
+							+schedulesForWebSchedASAP[i].StartTime.Minutes*_heightLine/_minPerRow
 							,_widthWeekAppt-5 //Narrowed so that blockouts will be visible underneath
 							,timeSpan.Hours*_heightLine*_rowsPerHr
 							+timeSpan.Minutes*_heightLine/_minPerRow);
 					}
 					else {//Daily view
-						if(GetIndexOp(listSchedulesWebSchedASAP[i].Ops[o])==-1) {
+						if(GetIndexOp(schedulesForWebSchedASAP[i].Ops[o])==-1) {
 							continue;//don't display if op not visible
 						}
 						rectF=new RectangleF(
-							_widthOpCol*(GetIndexOp(listSchedulesWebSchedASAP[i].Ops[o],ListOpsVisible))//-(PrintingColsPerPage*PrintingPageColumn))
+							_widthOpCol*(GetIndexOp(schedulesForWebSchedASAP[i].Ops[o],ListOpsVisible))//-(PrintingColsPerPage*PrintingPageColumn))
 							+WidthProvOnAppt*2//so they don't overlap prov bars
-							,listSchedulesWebSchedASAP[i].StartTime.Hours*_heightLine*_rowsPerHr
-							+listSchedulesWebSchedASAP[i].StartTime.Minutes*_heightLine/_minPerRow
+							,schedulesForWebSchedASAP[i].StartTime.Hours*_heightLine*_rowsPerHr
+							+schedulesForWebSchedASAP[i].StartTime.Minutes*_heightLine/_minPerRow
 							,_widthOpCol-8-WidthProvOnAppt*2 //Shortened so that blockouts will be visible underneath
 							,timeSpan.Hours*_heightLine*_rowsPerHr
 							+timeSpan.Minutes*_heightLine/_minPerRow);
@@ -2987,21 +2976,21 @@ namespace OpenDental.UI{
 		
 		///<summary>This is just for schedules in the prov bars area.</summary>
 		private void DrawProvScheds(Graphics g){
-			List<Schedule> listSchedulesForProv;
+			Schedule[] schedulesForProv;
 			for(int j=0;j<ListProvsVisible.Count;j++) {
-				listSchedulesForProv=Schedules.GetListForType(ListSchedules,ScheduleType.Provider,ListProvsVisible[j].ProvNum);
-				for(int i=0;i<listSchedulesForProv.Count;i++) {
+				schedulesForProv=Schedules.GetForType(ListSchedules,ScheduleType.Provider,ListProvsVisible[j].ProvNum);
+				for(int i=0;i<schedulesForProv.Length;i++) {
 					Brush brush=_brushOpen;
 					if(_isPrinting && PrintColorBehavior.In(ApptPrintColorBehavior.LessColor,ApptPrintColorBehavior.Grayscale)) {
 						brush=_brushWhite;
 					}
 					g.FillRectangle(brush
 						,_widthProv*j
-						,listSchedulesForProv[i].StartTime.Hours*_heightLine*_rowsPerHr//6
-						+listSchedulesForProv[i].StartTime.Minutes*_heightLine/_minPerRow//10
+						,schedulesForProv[i].StartTime.Hours*_heightLine*_rowsPerHr//6
+						+schedulesForProv[i].StartTime.Minutes*_heightLine/_minPerRow//10
 						,_widthProv
-						,(listSchedulesForProv[i].StopTime-listSchedulesForProv[i].StartTime).Hours*_heightLine*_rowsPerHr//6
-						+(listSchedulesForProv[i].StopTime-listSchedulesForProv[i].StartTime).Minutes*_heightLine/_minPerRow);//10
+						,(schedulesForProv[i].StopTime-schedulesForProv[i].StartTime).Hours*_heightLine*_rowsPerHr//6
+						+(schedulesForProv[i].StopTime-schedulesForProv[i].StartTime).Minutes*_heightLine/_minPerRow);//10
 				}
 			}
 		}
@@ -3710,6 +3699,7 @@ namespace OpenDental.UI{
 							if(!proc.IsNullOrEmpty()) {
 								procSize=g.MeasureString(proc,_font,(int)widthAppt-(int)WidthProvOnAppt-1,new StringFormat(StringFormatFlags.MeasureTrailingSpaces));
 							}
+							procSize.Width=(float)Math.Ceiling(procSize.Width);
 							if(tempPt.X+procSize.Width>widthAppt) {
 								tempPt.X=pointDraw.X;
 								tempPt.Y+=lastH;
@@ -3722,7 +3712,7 @@ namespace OpenDental.UI{
 							using SolidBrush solidBrush=new SolidBrush(c);
 							g.DrawString(proc,_font,solidBrush,procRect);
 							if(!proc.IsNullOrEmpty()) { 
-								tempPt.X+=procRect.Width;
+								tempPt.X+=(int)procRect.Width+3;//+3 is room for spaces
 							}
 							lastH=(int)procSize.Height;
 							if(tempPt.Y+lastH > heightAppt || i==lines.Length-1) {
@@ -4141,20 +4131,19 @@ namespace OpenDental.UI{
 			//The default color is the color of the confirmed icon, because that will always be drawn if present
 			Color color=Defs.GetColor(DefCat.ApptConfirmed,PIn.Long(dataRow["Confirmed"].ToString()));
 			Pen penOutline=new Pen(Color.FromArgb(00,00,00));//Black
-			string careCreditStatusLower=careCreditStatus.ToLower();
-			if(careCreditStatusLower.ToLower().In(CareCreditWebStatus.PreApproved.GetDescription().ToLower())) 
+			string careCreditStatesLower=careCreditStatus.ToLower();
+			if(careCreditStatesLower.ToLower().In(CareCreditWebStatus.PreApproved.GetDescription().ToLower())) 
 			{ //example value: "Pre-Approved"
 				color=Color.FromArgb(00,170,00);
 				penOutline=new Pen(Color.FromArgb(00,24,00));//Dark Green;
 			}
-			else if(careCreditStatusLower==CareCreditWebStatus.Declined.GetDescription().ToLower()
-				|| careCreditStatusLower==CareCreditWebStatus.CallForAuth.GetDescription().ToLower()
-				|| careCreditStatusLower==CareCreditWebStatus.AccountNotFoundQS.GetDescription().ToLower())
+			else if(careCreditStatesLower==CareCreditWebStatus.Declined.GetDescription().ToLower()
+				|| careCreditStatesLower==CareCreditWebStatus.CallForAuth.GetDescription().ToLower()) 
 			{
 				color=Color.Orange;
 				penOutline=new Pen(Color.FromArgb(80,40,00));//Dark Brown
 			}
-			else if(careCreditStatusLower==CareCreditWebStatus.AccountFound.GetDescription().ToLower()) {
+			else if(careCreditStatesLower==CareCreditWebStatus.AccountFound.GetDescription().ToLower()) {
 				color=Color.RoyalBlue;
 				penOutline=new Pen(Color.FromArgb(255,27,43,92));//Dark Blue
 			}
@@ -4166,15 +4155,14 @@ namespace OpenDental.UI{
 			Bitmap bitmapIcon=new Bitmap(sizeDesired.Width+1,sizeDesired.Height+1);//Make the bitmap 1 pixel larger so that the ellipse isn't being cut off
 			using(Graphics g=Graphics.FromImage(bitmapIcon)) {
 				g.SmoothingMode=SmoothingMode.AntiAlias;
-				if(careCreditStatusLower==CareCreditWebStatus.Declined.GetDescription().ToLower()
-					|| careCreditStatusLower==CareCreditWebStatus.CallForAuth.GetDescription().ToLower()
-					|| careCreditStatusLower==CareCreditWebStatus.AccountNotFoundQS.GetDescription().ToLower()) {
+				if(careCreditStatesLower==CareCreditWebStatus.Declined.GetDescription().ToLower()
+					|| careCreditStatesLower==CareCreditWebStatus.CallForAuth.GetDescription().ToLower()) {
 					PointF[] arrayPoints=new PointF[]{new PointF(sizeDesired.Width/2f,0), new PointF(0,sizeDesired.Height),
 						new PointF(sizeDesired.Width,sizeDesired.Height), new PointF(sizeDesired.Width/2f,0)};
-					g.FillPolygon(brushIcon,arrayPoints);//CareCreditWebStatus declined, call for auth, and account not found will display a triangle icon
+					g.FillPolygon(brushIcon,arrayPoints);//CareCreditWebStatus declined and call for auth will display a triangle icon
 					g.DrawPolygon(penOutline,arrayPoints);
 				}
-				else if(careCreditStatusLower==CareCreditWebStatus.AccountFound.GetDescription().ToLower()) {
+				else if(careCreditStatesLower==CareCreditWebStatus.AccountFound.GetDescription().ToLower()) {
 					Rectangle rect=new Rectangle(new Point(0,0),sizeDesired);
 					g.FillRectangle(brushIcon,rect);
 					g.DrawRectangle(penOutline,rect);
@@ -4414,11 +4402,6 @@ namespace OpenDental.UI{
 							ODFileUtils.CombinePaths(ImageStore.GetPreferredAtoZpath(),
 								imageFolder.Substring(0,1).ToUpper(),
 								imageFolder,""));
-						object[] objectArray = { patNum, bitmapPatPict?.Clone() };
-						if(Plugins.HookMethod(null,"ControlApptPanel.BubbleDraw_bitmapPatPict",objectArray)){
-							bitmapPatPict?.Dispose();
-							bitmapPatPict=(Bitmap)objectArray[1];
-						}
 					}
 					catch(Exception ex) { 
 						ex.DoNothing();
@@ -5175,7 +5158,7 @@ namespace OpenDental.UI{
 				panelHeaderTip.Visible=false;
 				return;
 			}
-			panelHeaderTip.Width=TextRenderer.MeasureText(txt,_font).Width+10;//Add in extra pixels to help with zoom font changes
+			panelHeaderTip.Width=TextRenderer.MeasureText(txt,_font).Width+2;
 			panelHeaderTip.Height=TextRenderer.MeasureText(txt,_font).Height+3;
 			labelHeaderTip.Height=panelHeaderTip.Height;
 			labelHeaderTip.Text=txt;

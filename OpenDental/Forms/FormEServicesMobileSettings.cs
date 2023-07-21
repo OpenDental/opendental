@@ -25,10 +25,10 @@ namespace OpenDental {
 
 		private void comboBoxClinicPicker1_SelectionChangeCommitted(object sender,EventArgs e) {
 			if(!CanDiscardChanges()) {
-				comboBoxClinicPicker1.ClinicNumSelected=_clinicNum;
+				comboBoxClinicPicker1.SelectedClinicNum=_clinicNum;
 				return;
 			}
-			_clinicNum=comboBoxClinicPicker1.ClinicNumSelected;
+			_clinicNum=comboBoxClinicPicker1.SelectedClinicNum;
 			FillForm();
 		}
 
@@ -64,7 +64,7 @@ namespace OpenDental {
 			}
 			//If there isn't a clinic selector, just close the form since they're done.
 			if(!PrefC.HasClinicsEnabled) {
-				DialogResult=DialogResult.OK;//see FormClosing
+				DialogResult=DialogResult.OK;
 				return;
 			}
 			_isNew=false;
@@ -83,7 +83,7 @@ namespace OpenDental {
 			}
 			catch (Exception e) {
 				MessageBox.Show(Lan.g(this,"There was an issue updating your account:")+" "+e.Message);
-				DialogResult=DialogResult.OK;//see FormClosing
+				DialogResult=DialogResult.Cancel;
 				return;
 			}
 			_mobileSettingsAuthOut.RegKeyNum=_mobileSettingsAuthIn.RegKeyNum;
@@ -104,7 +104,7 @@ namespace OpenDental {
 		}
 
 		private void SetElementsVisible() {
-			if(!Security.IsAuthorized(EnumPermType.EServicesSetup,suppressMessage:true)) {
+			if(!Security.IsAuthorized(Permissions.EServicesSetup,suppressMessage:true)) {
 				//If no permissions, don't let them modify anything.
 				butVerifyAndSave.Enabled=false;
 				textUserName.Enabled=false;
@@ -194,16 +194,9 @@ namespace OpenDental {
 		}
 		#endregion
 
-		private void FormEServicesMobileSettings_FormClosing(object sender,FormClosingEventArgs e) {
-			//There are two places above where DialogResult is set to OK.
-			//In both cases, the original code was written to kick out here instead of checking CanDiscardChanges.
-			//So we are doing the same thing.
-			if(DialogResult!=DialogResult.Cancel) {
-				return;
-			}
-			//Click X or Esc:
-			if(!CanDiscardChanges()) {
-				e.Cancel=true;
+		private void butCancel_Click(object sender,EventArgs e) {
+			if(CanDiscardChanges()) {
+				DialogResult=DialogResult.Cancel;
 			}
 		}
 	}

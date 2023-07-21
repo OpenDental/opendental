@@ -81,8 +81,7 @@ namespace OpenDentBusiness {
 					catch(Exception ex) {
 						//This catch will prevent the situation where the Read-Only server was set up incorrectly.
 						//Do not crash the program here so that the user is given a chance to fix the problem within the UI.
-						string message = "CacheAbs failed to fill cache from read-only server: " + MiscUtils.GetExceptionText(ex);
-						Logger.LogToPath(message,LogPath.Threads,LogPhase.Unspecified);
+						ex.DoNothing();
 					}
 				}
 				//Either no Read-Only server is set up or there was a problem making a connecting to the Read-Only database.

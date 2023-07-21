@@ -21,11 +21,6 @@ namespace OpenDental {
 		
 		private void FormSecurityEdit_Load(object sender,EventArgs e) {
 			LayoutMenu();
-			//userControlSecurityUserGroup must start out shorter to exactly match its designer.
-			//This is because the UI.TabPage does not properly layout in designer.
-			//This control is also used in FormCentralSecurity, where vertical space is less, so we initially match it here.
-			//In addition, we had to properly anchor to all 4 sides to the TabPage.
-			LayoutManager.MoveHeight(userControlSecurityUserGroup,ClientSize.Height-userControlSecurityUserGroup.Top-5);
 		}
 
 		private void LayoutMenu() {
@@ -145,7 +140,7 @@ namespace OpenDental {
 			if(listDefsSelected.Count==listDefsAll.Count) {//Selected all individual permissions.
 				groupPermission=new GroupPermission();
 				groupPermission.UserGroupNum=e.Perm.UserGroupNum;
-				groupPermission.PermType=EnumPermType.AdjustmentTypeDeny;
+				groupPermission.PermType=Permissions.AdjustmentTypeDeny;
 				groupPermission.FKey=0;
 				listGroupPermissionsNew.Add(groupPermission);
 				GroupPermissions.Sync(listGroupPermissionsNew,listGroupPermissionsOld);
@@ -157,7 +152,7 @@ namespace OpenDental {
 				if(groupPermission==null) { 
 					groupPermission=new GroupPermission();
 					groupPermission.UserGroupNum=e.Perm.UserGroupNum;
-					groupPermission.PermType=EnumPermType.AdjustmentTypeDeny;
+					groupPermission.PermType=Permissions.AdjustmentTypeDeny;
 					groupPermission.FKey=listDefsSelected[i].DefNum;
 				}
 				listGroupPermissionsNew.Add(groupPermission);
@@ -166,9 +161,12 @@ namespace OpenDental {
 			return DialogResult.OK;
 		}
 
+		private void butOK_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 		private void FormSecurityEdit_FormClosing(object sender,FormClosingEventArgs e) {
 			DataValid.SetInvalid(InvalidType.Security);
 		}
-
 	}
 }

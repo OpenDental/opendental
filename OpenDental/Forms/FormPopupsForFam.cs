@@ -173,10 +173,10 @@ namespace OpenDental {
 				MsgBox.Show(this,"To edit automations go to Setup | Automation");
 				return;
 			}
-			FrmPopupEdit frmPopupEdit=new FrmPopupEdit();
-			frmPopupEdit.PopupCur=(Popup)gridMain.ListGridRows[e.Row].Tag;
-			frmPopupEdit.ShowDialog();
-			if(frmPopupEdit.IsDialogOK) {
+			using FormPopupEdit formPopupEdit=new FormPopupEdit();
+			formPopupEdit.PopupCur=(Popup)gridMain.ListGridRows[e.Row].Tag;
+			formPopupEdit.ShowDialog();
+			if(formPopupEdit.DialogResult==DialogResult.OK) {
 				FillGrid();
 			}
 		}
@@ -186,17 +186,20 @@ namespace OpenDental {
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
-			FrmPopupEdit frmPopupEdit=new FrmPopupEdit();
+			using FormPopupEdit formPopupEdit=new FormPopupEdit();
 			Popup popup=new Popup();
 			popup.PatNum=PatientCur.PatNum;
 			popup.PopupLevel=EnumPopupLevel.Patient;
 			popup.IsNew=true;
-			frmPopupEdit.PopupCur=popup;
-			frmPopupEdit.ShowDialog();
-			if(frmPopupEdit.IsDialogOK) {
+			formPopupEdit.PopupCur=popup;
+			formPopupEdit.ShowDialog();
+			if(formPopupEdit.DialogResult==DialogResult.OK) {
 				FillGrid();
 			}
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+		}
 	}
 }

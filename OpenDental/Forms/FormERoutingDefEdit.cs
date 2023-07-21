@@ -16,7 +16,6 @@ namespace OpenDental {
 
 		private ERoutingDef _eRoutingDef;
 		private List<ERoutingActionDef> _listERoutingActionDefs;
-		private List<ERoutingActionDef> _listERoutingActionDefsOld;
 		private List<ERoutingDefLink> _listERoutingDefLinks;
 		private bool _hasChanged=false;
 		private string _descriptionOrig;
@@ -29,7 +28,6 @@ namespace OpenDental {
 			_eRoutingDef=new ERoutingDef() { IsNew=true };
 			_eRoutingDef.ClinicNum=clinicNum;
 			_listERoutingActionDefs=new List<ERoutingActionDef>();
-			_listERoutingActionDefsOld=new List<ERoutingActionDef>();
 			_listERoutingDefLinks=new List<ERoutingDefLink>();
 		}
 
@@ -39,7 +37,6 @@ namespace OpenDental {
 			Lan.F(this);
 			_eRoutingDef=patientFlowDef;
 			_listERoutingActionDefs=ERoutingActionDefs.GetAllByERoutingDef(_eRoutingDef.ERoutingDefNum);
-			_listERoutingActionDefsOld=_listERoutingActionDefs.ToList();
 			_listERoutingDefLinks=ERoutingDefLinks.GetWhere(x => x.ERoutingDefNum==_eRoutingDef.ERoutingDefNum);
 			_descriptionOrig=patientFlowDef.Description;
 		}
@@ -48,11 +45,7 @@ namespace OpenDental {
 		public void FormPatientFlowEdit_Load(object sender,EventArgs e) {
 			textBoxDescription.Text=_eRoutingDef.Description;
 			labelGenAppts.Visible=false;
-			List<EnumERoutingActionType> listEnumERoutingActionType=typeof(EnumERoutingActionType).GetEnumValues()
-				.AsEnumerable<EnumERoutingActionType>()
-				.Where(x => x!=EnumERoutingActionType.None)
-				.ToList();
-			comboActionType.Items.AddListEnum(listEnumERoutingActionType);
+			comboActionType.Items.AddEnums<EnumERoutingActionType>();
 			comboLinkType.Items.AddListEnum<EnumERoutingType>(new List<EnumERoutingType>() { EnumERoutingType.General, EnumERoutingType.Appointment, EnumERoutingType.BillingType } );
 			FillActionsGrid();
 			FillLinkTypesGrid();
@@ -123,12 +116,6 @@ namespace OpenDental {
 					x.ERoutingDefNum=_eRoutingDef.ERoutingDefNum;
 					ERoutingActionDefs.Upsert(x);
 				});
-				for(int i=0;i<_listERoutingActionDefsOld.Count;i++) {
-					ERoutingActionDef eRoutingActionDef=_listERoutingActionDefs.Find(x => x.ERoutingActionDefNum==_listERoutingActionDefsOld[i].ERoutingActionDefNum);
-					if(eRoutingActionDef==null) {
-						ERoutingActionDefs.Delete(_listERoutingActionDefsOld[i].ERoutingActionDefNum);
-					}
-				}
 			}
 			//We blindly delete here because we only want to have what is currently selected, and only then if they have the appropriate link type selected.
 			ERoutingDefLinks.DeleteAll(_eRoutingDef.ERoutingDefNum);
@@ -178,7 +165,7 @@ namespace OpenDental {
 
 		private void butDown_Click(object sender,EventArgs e) {
 			ERoutingActionDef eRoutingActionDef = gridERoutingActions.SelectedTag<ERoutingActionDef>();
-			if(eRoutingActionDef==null || eRoutingActionDef.ItemOrder==_listERoutingActionDefs.Count-1) {
+			if(eRoutingActionDef==null || eRoutingActionDef.ItemOrder==_listERoutingActionDefs.Count) {
 				return;
 			}
 			_listERoutingActionDefs.Reverse(_listERoutingActionDefs.IndexOf(eRoutingActionDef),2);
@@ -273,7 +260,7 @@ namespace OpenDental {
 			FillLinkTypesGrid();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textBoxDescription.Text.Trim().IsNullOrEmpty()) {
 				MsgBox.Show(this,"Description cannot be blank. Please enter a description.");
 				return;
@@ -286,7 +273,12 @@ namespace OpenDental {
 			Cache.Refresh(InvalidType.ERoutingDef);
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 		#endregion
 
+		
 	}
 }

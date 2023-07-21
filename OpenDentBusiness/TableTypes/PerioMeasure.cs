@@ -40,26 +40,15 @@ namespace OpenDentBusiness{
 		public PerioMeasure Copy(){
 			return (PerioMeasure)this.MemberwiseClone();
 		}
-	}
 
-	///<summary>In perio, the type of measurements for a given row.</summary>
-	public enum PerioSequenceType{
-		///<summary>0</summary>
-		Mobility,
-		///<summary>1</summary>
-		Furcation,
-		///<summary>2-AKA recession.</summary>
-		GingMargin,
-		///<summary>3-MucoGingivalJunction- the division between attached and unattached mucosa.</summary>
-		MGJ,
-		///<summary>4</summary>
-		Probing,
-		///<summary>5-For the skiptooth type, set surf to none, and ToothValue to 1.</summary>
-		SkipTooth,
-		///<summary>6. Sum of flags for bleeding(1), suppuration(2), plaque(4), and calculus(8).</summary>
-		BleedSupPlaqCalc,
-		///<summary>7. But this type is never saved to the db. It is always calculated on the fly.</summary>
-		CAL
+		//public PerioMeasure AdjustGMVals() {
+		//  PerioMeasure pm=this.Copy();
+		//  PerioMeasures.AdjustGMVals(pm);
+		//  return pm;
+		//}
+
+
+
 	}
 
 	///<summary>Blood,pus,plaque,and calculus. Used in ContrPerio.PerioCell</summary>

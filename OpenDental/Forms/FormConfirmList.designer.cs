@@ -25,6 +25,7 @@ namespace OpenDental {
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormConfirmList));
+			this.butClose = new OpenDental.UI.Button();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.checkGroupFamilies = new OpenDental.UI.CheckBox();
 			this.labelConfirmList = new System.Windows.Forms.Label();
@@ -59,6 +60,17 @@ namespace OpenDental {
 			this.menuRightClick.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(1019, 651);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// groupBox1
 			// 
@@ -345,7 +357,9 @@ namespace OpenDental {
 			// 
 			// FormConfirmList
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(1099, 688);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butRefresh);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.butText);
@@ -372,6 +386,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label2;
 		private OpenDental.UI.Button butReport;

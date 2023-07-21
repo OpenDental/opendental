@@ -6,8 +6,7 @@ namespace CodeBase {
 		///<summary>Invoke an action on a control.</summary>
 		public static void Invoke(this Control control,Action action) {
 			//jordan OK
-			//This allows anonymous methods to be used as the delegate.
-			control.Invoke(action);
+			control.Invoke((Delegate)action);
 		}
 
 		///<summary>Invoke an action on a control if InvokeRequired is true.</summary>
@@ -15,9 +14,10 @@ namespace CodeBase {
 			//jordan OK
 			if(control.InvokeRequired) {
 				control.Invoke(action);
-				return;
 			}
-			action();
+			else {
+				action();
+			}
 		}
 
 		///<summary>Invoke an action on a control. If the control is disposing or disposed, will return without performing the action.</summary>
@@ -47,7 +47,7 @@ namespace CodeBase {
 		///<summary>BeginInvoke an action on a control.</summary>
 		public static void BeginInvoke(this Control control,Action action) {
 			//jordan OK
-			control.BeginInvoke(action);
+			control.BeginInvoke((Delegate)action);
 		}
 	}
 }

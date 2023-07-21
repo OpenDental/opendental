@@ -50,15 +50,15 @@ namespace UnitTests.CentralManager_Tests {
 			#region Add GroupPermissions to listGroupPermissionsCEMT
 			//Make a group permission for the non-internal report and a random non-reports permission.
 			List<GroupPermission> listGroupPermissionsCEMT=new List<GroupPermission>() {
-				CentralManagerT.CreateGroupPermission(fKey:1,permType:EnumPermType.Reports,userGroupNum:1),//Non-internal report
-				CentralManagerT.CreateGroupPermission(fKey:2,permType:EnumPermType.AdjustmentTypeDeny,userGroupNum:1),//Unknown report
+				CentralManagerT.CreateGroupPermission(fKey:1,permType:Permissions.Reports,userGroupNum:1),//Non-internal report
+				CentralManagerT.CreateGroupPermission(fKey:2,permType:Permissions.AdjustmentTypeDeny,userGroupNum:1),//Unknown report
 			};
 			#endregion
 			listGroupPermissionsCEMT=CentralSyncHelper.SyncDisplayReportFKeysCEMT(listGroupPermissionsCEMT,listDisplayReportsRemote,listDisplayReportsCEMT);
 			//Assert that the non-internal report was removed so that it will not be synchronized with the remote database.
 			//This is because the remote database may not know about the non-internal report and we cannot trust the FKey value.
 			Assert.AreEqual(1,listGroupPermissionsCEMT.Count);
-			Assert.IsNotNull(listGroupPermissionsCEMT.FirstOrDefault(x => x.PermType==EnumPermType.AdjustmentTypeDeny));
+			Assert.IsNotNull(listGroupPermissionsCEMT.FirstOrDefault(x => x.PermType==Permissions.AdjustmentTypeDeny));
 		}
 
 		[TestMethod]
@@ -76,15 +76,15 @@ namespace UnitTests.CentralManager_Tests {
 			#region Add GroupPermissions to listGroupPermissionsCEMT
 			//Make several report group permissions and make sure at least one FKey has a value of 0.
 			List<GroupPermission> listGroupPermissionsCEMT=new List<GroupPermission>() {
-				CentralManagerT.CreateGroupPermission(fKey:0,permType:EnumPermType.Reports,userGroupNum:1),//All report permissions granted
-				CentralManagerT.CreateGroupPermission(fKey:1,permType:EnumPermType.Reports,userGroupNum:1),//Non-internal report
-				CentralManagerT.CreateGroupPermission(fKey:2,permType:EnumPermType.Reports,userGroupNum:1),//Unknown report
+				CentralManagerT.CreateGroupPermission(fKey:0,permType:Permissions.Reports,userGroupNum:1),//All report permissions granted
+				CentralManagerT.CreateGroupPermission(fKey:1,permType:Permissions.Reports,userGroupNum:1),//Non-internal report
+				CentralManagerT.CreateGroupPermission(fKey:2,permType:Permissions.Reports,userGroupNum:1),//Unknown report
 			};
 			#endregion
 			listGroupPermissionsCEMT=CentralSyncHelper.SyncDisplayReportFKeysCEMT(listGroupPermissionsCEMT,listDisplayReportsRemote,listDisplayReportsCEMT);
 			//Assert that the zero FKey report is honored since it grants the user group permission to all reports.
 			Assert.AreEqual(1,listGroupPermissionsCEMT.Count);
-			Assert.AreEqual(0,listGroupPermissionsCEMT.FirstOrDefault(x => x.PermType==EnumPermType.Reports).FKey);
+			Assert.AreEqual(0,listGroupPermissionsCEMT.FirstOrDefault(x => x.PermType==Permissions.Reports).FKey);
 		}
 
 		[TestMethod]
@@ -106,9 +106,9 @@ namespace UnitTests.CentralManager_Tests {
 			#region Add GroupPermissions to listGroupPermissionsCEMT
 			//Make several report group permissions and make sure at least one permission exists for both display reports in the CEMT database.
 			List<GroupPermission> listGroupPermissionsCEMT=new List<GroupPermission>() {
-				CentralManagerT.CreateGroupPermission(fKey:1,permType:EnumPermType.Reports,userGroupNum:1),//Non-internal report
-				CentralManagerT.CreateGroupPermission(fKey:2,permType:EnumPermType.Reports,userGroupNum:1),//Valid report that is not linked to a remote report.
-				CentralManagerT.CreateGroupPermission(fKey:3,permType:EnumPermType.Reports,userGroupNum:1) //Unknown report
+				CentralManagerT.CreateGroupPermission(fKey:1,permType:Permissions.Reports,userGroupNum:1),//Non-internal report
+				CentralManagerT.CreateGroupPermission(fKey:2,permType:Permissions.Reports,userGroupNum:1),//Valid report that is not linked to a remote report.
+				CentralManagerT.CreateGroupPermission(fKey:3,permType:Permissions.Reports,userGroupNum:1) //Unknown report
 			};
 			#endregion
 			listGroupPermissionsCEMT=CentralSyncHelper.SyncDisplayReportFKeysCEMT(listGroupPermissionsCEMT,listDisplayReportsRemote,listDisplayReportsCEMT);
@@ -133,38 +133,38 @@ namespace UnitTests.CentralManager_Tests {
 			#region Add GroupPermissions to listGroupPermissionsCEMT
 			//Make a report group permission for the internal display report.
 			List<GroupPermission> listGroupPermissionsCEMT=new List<GroupPermission>() {
-				CentralManagerT.CreateGroupPermission(fKey:1,permType:EnumPermType.Reports,userGroupNum:1),//Internal report
+				CentralManagerT.CreateGroupPermission(fKey:1,permType:Permissions.Reports,userGroupNum:1),//Internal report
 			};
 			#endregion
 			listGroupPermissionsCEMT=CentralSyncHelper.SyncDisplayReportFKeysCEMT(listGroupPermissionsCEMT,listDisplayReportsRemote,listDisplayReportsCEMT);
 			//Assert that the permission was preserved and that the FKey was synchronized with the remote database.
 			Assert.AreEqual(1,listGroupPermissionsCEMT.Count);
-			Assert.AreEqual(listDisplayReportsRemote.First().DisplayReportNum,listGroupPermissionsCEMT.FirstOrDefault(x => x.PermType==EnumPermType.Reports).FKey);
+			Assert.AreEqual(listDisplayReportsRemote.First().DisplayReportNum,listGroupPermissionsCEMT.FirstOrDefault(x => x.PermType==Permissions.Reports).FKey);
 		}
 
 		[TestMethod]
 		public void CentralSyncHelper_RemoveFKeysForPermissions_CorrectIfAll() {
 			#region Add GroupPermissions to listGroupPermissionsCEMT
 			List<GroupPermission> listGroupPermissionsCEMT=new List<GroupPermission>() {
-				CentralManagerT.CreateGroupPermission(fKey:1,permType:EnumPermType.AdjustmentTypeDeny,userGroupNum:1),
-				CentralManagerT.CreateGroupPermission(fKey:2,permType:EnumPermType.AdjustmentTypeDeny,userGroupNum:1),
-				CentralManagerT.CreateGroupPermission(fKey:0,permType:EnumPermType.AdjustmentTypeDeny,userGroupNum:1),
+				CentralManagerT.CreateGroupPermission(fKey:1,permType:Permissions.AdjustmentTypeDeny,userGroupNum:1),
+				CentralManagerT.CreateGroupPermission(fKey:2,permType:Permissions.AdjustmentTypeDeny,userGroupNum:1),
+				CentralManagerT.CreateGroupPermission(fKey:0,permType:Permissions.AdjustmentTypeDeny,userGroupNum:1),
 			};
 			#endregion
-			listGroupPermissionsCEMT=CentralSyncHelper.RemoveFKeysForPermissions(listGroupPermissionsCEMT,EnumPermType.AdjustmentTypeDeny);
-			Assert.AreEqual(1,listGroupPermissionsCEMT.Count(x => x.PermType==EnumPermType.AdjustmentTypeDeny));
-			Assert.IsNotNull(listGroupPermissionsCEMT.FirstOrDefault(x => x.PermType==EnumPermType.AdjustmentTypeDeny && x.FKey==0));
+			listGroupPermissionsCEMT=CentralSyncHelper.RemoveFKeysForPermissions(listGroupPermissionsCEMT,Permissions.AdjustmentTypeDeny);
+			Assert.AreEqual(1,listGroupPermissionsCEMT.Count(x => x.PermType==Permissions.AdjustmentTypeDeny));
+			Assert.IsNotNull(listGroupPermissionsCEMT.FirstOrDefault(x => x.PermType==Permissions.AdjustmentTypeDeny && x.FKey==0));
 		}
 
 		[TestMethod]
 		public void CentralSyncHelper_RemoveFKeysForPermissions_EmptyForPermTypeIfNoFKeyOfZero() {
 			#region Add GroupPermissions to listGroupPermissionsCEMT
 			List<GroupPermission> listGroupPermissionsCEMT=new List<GroupPermission>() {
-				CentralManagerT.CreateGroupPermission(fKey:1,permType:EnumPermType.AdjustmentTypeDeny,userGroupNum:1),
-				CentralManagerT.CreateGroupPermission(fKey:2,permType:EnumPermType.AdjustmentTypeDeny,userGroupNum:1),
+				CentralManagerT.CreateGroupPermission(fKey:1,permType:Permissions.AdjustmentTypeDeny,userGroupNum:1),
+				CentralManagerT.CreateGroupPermission(fKey:2,permType:Permissions.AdjustmentTypeDeny,userGroupNum:1),
 			};
 			#endregion
-			listGroupPermissionsCEMT=CentralSyncHelper.RemoveFKeysForPermissions(listGroupPermissionsCEMT,EnumPermType.AdjustmentTypeDeny);
+			listGroupPermissionsCEMT=CentralSyncHelper.RemoveFKeysForPermissions(listGroupPermissionsCEMT,Permissions.AdjustmentTypeDeny);
 			Assert.AreEqual(0,listGroupPermissionsCEMT.Count);
 		}
 
@@ -172,13 +172,13 @@ namespace UnitTests.CentralManager_Tests {
 		public void CentralSyncHelper_RemoveFKeysForPermissions_DoesNotRemoveForUnspecifiedPermType() {
 			#region Add GroupPermissions to listGroupPermissionsCEMT
 			List<GroupPermission> listGroupPermissionsCEMT=new List<GroupPermission>() {
-				CentralManagerT.CreateGroupPermission(fKey:1,permType:EnumPermType.AdjustmentTypeDeny,userGroupNum:1),
-				CentralManagerT.CreateGroupPermission(fKey:1,permType:EnumPermType.Reports,userGroupNum:1),
+				CentralManagerT.CreateGroupPermission(fKey:1,permType:Permissions.AdjustmentTypeDeny,userGroupNum:1),
+				CentralManagerT.CreateGroupPermission(fKey:1,permType:Permissions.Reports,userGroupNum:1),
 			};
 			#endregion
-			listGroupPermissionsCEMT=CentralSyncHelper.RemoveFKeysForPermissions(listGroupPermissionsCEMT,EnumPermType.AdjustmentTypeDeny);
-			Assert.IsTrue(listGroupPermissionsCEMT.Count(x => x.PermType==EnumPermType.Reports)==1);//Did not remove anything from the permission we didn't specify.
-			Assert.IsTrue(listGroupPermissionsCEMT.Count(x => x.PermType==EnumPermType.AdjustmentTypeDeny)==0);
+			listGroupPermissionsCEMT=CentralSyncHelper.RemoveFKeysForPermissions(listGroupPermissionsCEMT,Permissions.AdjustmentTypeDeny);
+			Assert.IsTrue(listGroupPermissionsCEMT.Count(x => x.PermType==Permissions.Reports)==1);//Did not remove anything from the permission we didn't specify.
+			Assert.IsTrue(listGroupPermissionsCEMT.Count(x => x.PermType==Permissions.AdjustmentTypeDeny)==0);
 		}
 
 		[TestMethod]
@@ -189,18 +189,18 @@ namespace UnitTests.CentralManager_Tests {
 			#region Add to listGroupPermissionsCEMT
 			//Make group permissions for two non-internal reports in the CEMT database.
 			List<GroupPermission> listGroupPermissionsCEMT=new List<GroupPermission>() {
-				CentralManagerT.CreateGroupPermission(fKey:1,permType:EnumPermType.Reports,userGroupNum:userGroupNum1),
-				CentralManagerT.CreateGroupPermission(fKey:3,permType:EnumPermType.Reports,userGroupNum:userGroupNum1),
+				CentralManagerT.CreateGroupPermission(fKey:1,permType:Permissions.Reports,userGroupNum:userGroupNum1),
+				CentralManagerT.CreateGroupPermission(fKey:3,permType:Permissions.Reports,userGroupNum:userGroupNum1),
 			};
 			#endregion
 			#region Add to listGroupPermissionsRemote and insert into DB
 			//Make group permissions for three non-internal reports spread between two user groups along with a random group permission in the remote database.
 			//Actually insert these group permissions into the unit test database so that we can treat the unit test database as the remote database.
 			List<GroupPermission> listGroupPermissionsRemote=new List<GroupPermission>() {
-				CentralManagerT.InsertGroupPermissionNoCache(FKey:2,EnumPermType.Reports,userGroupNum:userGroupNum1),
-				CentralManagerT.InsertGroupPermissionNoCache(FKey:3,EnumPermType.Reports,userGroupNum:userGroupNum1),
-				CentralManagerT.InsertGroupPermissionNoCache(FKey:3,EnumPermType.AdjustmentTypeDeny,userGroupNum:userGroupNum1),
-				CentralManagerT.InsertGroupPermissionNoCache(FKey:1,EnumPermType.Reports,userGroupNum:userGroupNum2),
+				CentralManagerT.InsertGroupPermissionNoCache(FKey:2,Permissions.Reports,userGroupNum:userGroupNum1),
+				CentralManagerT.InsertGroupPermissionNoCache(FKey:3,Permissions.Reports,userGroupNum:userGroupNum1),
+				CentralManagerT.InsertGroupPermissionNoCache(FKey:3,Permissions.AdjustmentTypeDeny,userGroupNum:userGroupNum1),
+				CentralManagerT.InsertGroupPermissionNoCache(FKey:1,Permissions.Reports,userGroupNum:userGroupNum2),
 			};
 			#endregion
 			#region Assert remote GroupPermissions prior to syncing
@@ -219,10 +219,10 @@ namespace UnitTests.CentralManager_Tests {
 			List<GroupPermission> listGroupPermissionsUserGroup1=GroupPermissions.GetPermsNoCache(userGroupNum1);
 			Assert.AreEqual(listGroupPermissionsUserGroup1.Count,2);
 			Assert.AreEqual(listGroupPermissionsUserGroup1.Count(x => x.FKey==1
-			 && x.PermType==EnumPermType.Reports
+			 && x.PermType==Permissions.Reports
 			 && x.UserGroupNum==userGroupNum1),1);
 			Assert.AreEqual(listGroupPermissionsUserGroup1.Count(x => x.FKey==3
-			 && x.PermType==EnumPermType.Reports
+			 && x.PermType==Permissions.Reports
 			 && x.UserGroupNum==userGroupNum1),1);
 			#endregion
 			#region Assert UserGroup2

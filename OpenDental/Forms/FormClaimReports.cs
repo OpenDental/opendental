@@ -13,7 +13,9 @@ using System.Collections.Generic;
 using System.Globalization;
 
 namespace OpenDental{
-	/// <summary></summary>
+	/// <summary>
+	/// Summary description for FormBasicTemplate.
+	/// </summary>
 	public partial class FormClaimReports : FormODBase {
 		///<summary>If true, then reports will be automatically retrieved for default clearinghouse.  Then this form will close.</summary>
 		public bool IsAutomaticMode;
@@ -29,6 +31,9 @@ namespace OpenDental{
 		///<summary></summary>
 		public FormClaimReports()
 		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
@@ -74,10 +79,10 @@ namespace OpenDental{
 			Clearinghouse clearhouseHq=_listClearinghousesHq[comboClearhouse.SelectedIndex];
 			Clearinghouse clearinghouseClin=Clearinghouses.OverrideFields(clearhouseHq,Clinics.ClinicNum);
 			if(!Directory.Exists(clearinghouseClin.ResponsePath)) {
-				MsgBox.Show(this,"Clearinghouse report path is invalid. Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path.");
+				MsgBox.Show(this,"Clearinghouse export path is invalid. Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path.");
 				return;
 			}
-			ODProgressExtended progressExtended=new ODProgressExtended(this
+			ODProgressExtended progressExtended=new ODProgressExtended(ODEventType.Clearinghouse,new ClearinghouseEvent(),this
 				,new ProgressBarHelper((Lans.g(this,"Clearinghouse Progress")),progressBarEventType:ProgBarEventType.Header),lanThis: this.Name);
 			//For Tesia, user wouldn't normally manually retrieve.
 			if(clearhouseHq.ISA08=="113504607") {
@@ -131,6 +136,7 @@ namespace OpenDental{
 				progressExtended.Close();
 			}
 		}
+
 
 		/*private void listMain_DoubleClick(object sender, System.EventArgs e) {
 			if(listMain.SelectedIndices.Count==0){
@@ -187,5 +193,41 @@ namespace OpenDental{
 			//FillGrid();
 		}*/
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
+	
+
+		
+
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

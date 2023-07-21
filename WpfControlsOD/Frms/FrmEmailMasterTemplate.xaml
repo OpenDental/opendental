@@ -7,9 +7,9 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="944" Height="753" 
-             Text="Email Master Template" >
+             Text="Email Master Template" Loaded="FrmEmailMasterTemplate_Loaded" >
 	<Grid Background="#FFFCFDFE" >
-		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="_Save" Click="butSave_Click" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="Save" Click="butSave_Click" />
 		<ui:Label x:Name="label1" Width="154" Height="16" Margin="12,16,0,0" Text="Master Page:" VAlign="Bottom" />
 		<ui:TextBox x:Name="textMaster" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,35,12,51" IsMultiline="True" />
 	</Grid>

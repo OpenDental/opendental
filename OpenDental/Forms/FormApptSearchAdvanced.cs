@@ -82,7 +82,7 @@ namespace OpenDental {
 		}
 
 		private List<Provider> GetProvidersForSelectedClinic(ProvMode provMode=ProvMode.All) {
-			List<Provider> listProviders=Providers.GetProvsForClinic(comboBoxClinic.ClinicNumSelected);//returns all for no clinics
+			List<Provider> listProviders=Providers.GetProvsForClinic(comboBoxClinic.SelectedClinicNum);//returns all for no clinics
 			switch(provMode) {
 				case ProvMode.Dent:
 					listProviders.RemoveAll(x => x.IsSecondary);
@@ -103,7 +103,7 @@ namespace OpenDental {
 				return;
 			}
 			if(comboBoxClinic.IsNothingSelected) {
-				comboBoxClinic.ClinicNumSelected=0;//unsassigned
+				comboBoxClinic.SelectedClinicNum=0;//unsassigned
 			}
 			if(comboBoxClinic.IsUnassignedSelected) {
 				comboApptView.Visible=true;
@@ -113,10 +113,10 @@ namespace OpenDental {
 
 		///<summary>Only fill appt views when clinic is HQ. </summary>
 		private void FillApptViews() {
-			if(!PrefC.HasClinicsEnabled || comboBoxClinic.ClinicNumSelected > 0) {
+			if(!PrefC.HasClinicsEnabled || comboBoxClinic.SelectedClinicNum > 0) {
 				return;//Either clinics are enabled and we're on a sepecific clinic OR clinics are not enabled. In either case don't fill appt views. 
 			}
-			List<ApptView> listApptViews=ApptViews.GetForClinic(comboBoxClinic.ClinicNumSelected);
+			List<ApptView> listApptViews=ApptViews.GetForClinic(comboBoxClinic.SelectedClinicNum);
 			comboApptView.Items.Clear();
 			for(int i=0;i<listApptViews.Count;i++) {
 				comboApptView.Items.Add(listApptViews[i].Description,listApptViews[i]);
@@ -223,7 +223,7 @@ namespace OpenDental {
 				}
 			}
 			if(PrefC.HasClinicsEnabled) {
-				if(comboBoxClinic.ClinicNumSelected==0) {//HQ //and unassigned (which is clinic num 0)
+				if(comboBoxClinic.SelectedClinicNum==0) {//HQ //and unassigned (which is clinic num 0)
 					long apptViewNum=comboApptView.GetSelected<ApptView>().ApptViewNum;
 					//get the disctinct clinic nums for the operatories in the current appointment view
 					List<long> listOpsForView=ApptViewItems.GetOpsForView(apptViewNum);
@@ -232,8 +232,8 @@ namespace OpenDental {
 					listOpNums=listOperatories.Select(x => x.OperatoryNum).ToList();
 				}
 				else {
-					listClinicNums.Add(comboBoxClinic.ClinicNumSelected);
-					listOpNums=Operatories.GetOpsForClinic(comboBoxClinic.ClinicNumSelected).Select(x => x.OperatoryNum).ToList();
+					listClinicNums.Add(comboBoxClinic.SelectedClinicNum);
+					listOpNums=Operatories.GetOpsForClinic(comboBoxClinic.SelectedClinicNum).Select(x => x.OperatoryNum).ToList();
 				}
 			}
 			else {//no clinics
@@ -294,7 +294,7 @@ namespace OpenDental {
 		}
 
 		private void comboBoxClinic_SelectionChangeCommitted(object sender,EventArgs e) {
-			if(comboBoxClinic.ClinicNumSelected==0) {
+			if(comboBoxClinic.SelectedClinicNum==0) {
 				comboApptView.Visible=true;
 				labelAptViews.Visible=true;
 				FillApptViews();
@@ -312,7 +312,7 @@ namespace OpenDental {
 			//get the day for the row that was clicked on.
 			DateTime rowDate=((ScheduleOpening)gridMain.ListGridRows[e.Row].Tag).DateTimeAvail;
 			//move the calendar day on the appt module to the day that was clicked on. 
-			GlobalFormOpenDental.GotoAppointment(rowDate.Date,_appointment.AptNum);
+			GotoModule.GotoAppointment(rowDate.Date,_appointment.AptNum);
 			//if clinics, move to the clinic as well? 
 		}
 
@@ -345,6 +345,11 @@ namespace OpenDental {
 			}
 			DoSearch();
 			butMore.Enabled=true;
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+			Close();
 		}
 
 		private enum ProvMode {

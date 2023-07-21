@@ -183,12 +183,9 @@ namespace OpenDentBusiness {
 		[Description("New Patient Web Form Thank You")]
 		[AutoCommSms(typeof(ApptNewPatThankYouSent))]
 		ApptNewPatThankYou,
-		///<summary>26. Used when sending verification codes for the Payment Portal web app.
-		///Short Code Supported: NO</summary>
+		///<summary>26. Used when sending verification codes for the Payment Portal web app.</summary>
+		///Short Code SUpported: NO
 		VerifyPaymentPortal,
-		///<summary>27. Used for Payment Portal Msg-To-Pay messages.
-		///Short Code Supported: NO</summary>
-		MsgToPay,
 	}
 
 	///<summary>None should never be used, the code should be re-written to not use it.</summary>

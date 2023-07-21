@@ -23,6 +23,7 @@ namespace OpenDental {
 
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormBillingOptions));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butCreate = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butSaveDefault = new OpenDental.UI.Button();
@@ -75,10 +76,21 @@ namespace OpenDental {
 			this.groupDateRange.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(826, 664);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(79, 24);
+			this.butCancel.TabIndex = 12;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butCreate
 			// 
 			this.butCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCreate.Location = new System.Drawing.Point(800, 664);
+			this.butCreate.Location = new System.Drawing.Point(713, 664);
 			this.butCreate.Name = "butCreate";
 			this.butCreate.Size = new System.Drawing.Size(92, 24);
 			this.butCreate.TabIndex = 11;
@@ -199,7 +211,7 @@ namespace OpenDental {
 			this.comboClinic.IncludeUnassigned = true;
 			this.comboClinic.Location = new System.Drawing.Point(70, 532);
 			this.comboClinic.Name = "comboClinic";
-			this.comboClinic.IsMultiSelect = true;
+			this.comboClinic.SelectionModeMulti = true;
 			this.comboClinic.Size = new System.Drawing.Size(206, 21);
 			this.comboClinic.TabIndex = 12;
 			this.comboClinic.SelectionChangeCommitted += new System.EventHandler(this.ComboClinic_SelectionChangeCommitted);
@@ -376,7 +388,8 @@ namespace OpenDental {
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(564, 16);
 			this.label3.TabIndex = 25;
-			this.label3.Text = "Items higher in the list are more general. Items lower in the list take precedence.";
+			this.label3.Text = "Items higher in the list are more general.  Items lower in the list take preceden" +
+    "ce .";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// label4
@@ -397,7 +410,7 @@ namespace OpenDental {
 			this.textNote.DetectUrls = false;
 			this.textNote.Location = new System.Drawing.Point(331, 564);
 			this.textNote.Name = "textNote";
-			this.textNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Statement;
+			this.textNote.QuickPasteType = OpenDentBusiness.QuickPasteType.Statement;
 			this.textNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNote.Size = new System.Drawing.Size(561, 90);
 			this.textNote.TabIndex = 9;
@@ -570,6 +583,7 @@ namespace OpenDental {
 			// FormBillingOptions
 			// 
 			this.AcceptButton = this.butCreate;
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(918, 696);
 			this.Controls.Add(this.labelMultiClinicGenMsg);
 			this.Controls.Add(this.listModeToText);
@@ -584,6 +598,7 @@ namespace OpenDental {
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.groupBox2);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butCreate);
 			this.Controls.Add(this.butDunningSetup);
 			this.Controls.Add(this.gridDunning);
@@ -602,6 +617,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.Button butSaveDefault;
 		private OpenDental.ValidDouble textExcludeLessThan;

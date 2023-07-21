@@ -56,7 +56,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			ProcButtonQuickCur.Description=textDescript.Text;
 			ProcButtonQuickCur.CodeValue=textProcedureCode.Text;
 			ProcButtonQuickCur.Surf=textSurfaces.Text;
@@ -69,6 +69,10 @@ namespace OpenDental {
 				ProcButtonQuicks.Update(ProcButtonQuickCur);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

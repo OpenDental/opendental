@@ -48,7 +48,7 @@ namespace OpenDental {
 		///<summary>This is a list that is 1:1 with what's showing in current tab.</summary>
 		private List<ImageInfo> _listImageInfos;
 		///<summary>a list of the hidden teeth as strings. Includes "1"-"32", and "A"-"Z"</summary>
-		private List<string> _listHiddenTeeth;
+		private ArrayList _arrayListHiddenTeeth;
 		///<summary>A list of the DefNums that is 1:1 with the image tabs that are showing.</summary>
 		private List<long> _listDefNumsVisImageCats;
 		private ProcButton[] _procButtonArray;
@@ -59,11 +59,10 @@ namespace OpenDental {
 		private int _chartScrollValue;
 		///<summary>Can be null if user has not set up any views.  Defaults to first in list when starting up.</summary>
 		private ChartView _chartViewDisplay;
-		/// <summary>The default 96 dpi width of the columnHeader stored within the listViewButtons control prior to applying any zoom adjustments.</summary>
-		private int _columnHeaderDefaultSize;
 		///<summary>The time that we started our last prog note search.</summary>
 		private DateTime _dateTimeLastSearch;
 		//private Family _family;
+		private FormImageViewer _formImageViewer;
 		///<summary>Store the default max value since we adjust this when sorting the grid after clicking on a column header.</summary>
 		private int _maxPageRowsDefaultGridProg;
 		private int _heightHeadingPrint;
@@ -182,8 +181,6 @@ namespace OpenDental {
 			//no need to remove event handler... ContrChart always exists 1:1 per instance of the program.
 			ODEvent.Fired+=ErxBrowserClosed;
 			Logger.LogToPath("Ctor",LogPath.Startup,LogPhase.End);
-			_columnHeaderDefaultSize=listViewButtons.Width-10;//10 pixels leaves a buffer to prevent text from being cutoff on the right-hand side of the listView
-			columnHeader1.Width=LayoutManager.Scale(_columnHeaderDefaultSize);
 		}
 		#endregion Constructor
 
@@ -244,7 +241,7 @@ namespace OpenDental {
 			registrationKey.IsForeign=false;
 			registrationKey.VotesAllotted=100;
 			RegistrationKeys.Insert(registrationKey);
-			SecurityLogs.MakeLogEntry(EnumPermType.RegistrationKeyCreate,registrationKey.PatNum,"A USA registration key was created.");
+			SecurityLogs.MakeLogEntry(Permissions.RegistrationKeyCreate,registrationKey.PatNum,"A USA registration key was created.");
 			FillPtInfo();//Refresh registration key list in patient info grid.
 		}
 
@@ -252,7 +249,7 @@ namespace OpenDental {
 		}
 
 		private void butChartViewAdd_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			int selectedIndex=gridChartViews.GetSelectedIndex();
@@ -341,7 +338,7 @@ namespace OpenDental {
 		}
 
 		private void MoveChartView(Direction direction) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			if(gridChartViews.SelectedIndices.Length==0) {
@@ -397,7 +394,7 @@ namespace OpenDental {
 			registrationKey.IsForeign=true;
 			registrationKey.VotesAllotted=100;
 			RegistrationKeys.Insert(registrationKey);
-			SecurityLogs.MakeLogEntry(EnumPermType.RegistrationKeyCreate,registrationKey.PatNum,"A Foreign registration key was created.");
+			SecurityLogs.MakeLogEntry(Permissions.RegistrationKeyCreate,registrationKey.PatNum,"A Foreign registration key was created.");
 			FillPtInfo();
 		}
 
@@ -467,7 +464,7 @@ namespace OpenDental {
 		}
 
 		private void ChartViewsDoubleClicked(ODGridClickEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			using FormChartView formChartView=new FormChartView();
@@ -662,14 +659,14 @@ namespace OpenDental {
 				return;
 			}
 			if(gridPtInfo.ListGridRows[e.Row].Tag==null || gridPtInfo.ListGridRows[e.Row].Tag.ToString()=="DOB") {
-				if(!Security.IsAuthorized(EnumPermType.PatientEdit)) {
+				if(!Security.IsAuthorized(Permissions.PatientEdit)) {
 					return;
 				}
 				using FormPatientEdit formPatientEdit=new FormPatientEdit(Pd.Patient,Pd.Family);
 				formPatientEdit.IsNew=false;
 				formPatientEdit.ShowDialog();
 				if(formPatientEdit.DialogResult==DialogResult.OK) {
-					GlobalFormOpenDental.PatientSelected(Pd.Patient,false);
+					FormOpenDental.S_Contr_PatientSelected(Pd.Patient,false);
 				}
 				ModuleSelected(Pd.PatNum);
 				return;
@@ -696,9 +693,9 @@ namespace OpenDental {
 			}
 			if(gridPtInfo.ListGridRows[e.Row].Tag.ToString()=="Referral") {
 				//RefAttach refattach=(RefAttach)gridPat.Rows[e.Row].Tag;
-				FrmReferralsPatient frmReferralsPatient=new FrmReferralsPatient();
-				frmReferralsPatient.PatNum=Pd.PatNum;
-				frmReferralsPatient.ShowDialog();
+				using FormReferralsPatient formReferralsPatient=new FormReferralsPatient();
+				formReferralsPatient.PatNum=Pd.PatNum;
+				formReferralsPatient.ShowDialog();
 				ModuleSelected(Pd.PatNum);
 				return;
 			}
@@ -707,8 +704,8 @@ namespace OpenDental {
 				formReference.ShowDialog();
 				if(formReference.PatNumGoto!=0) {
 					Patient patient=Patients.GetPat(formReference.PatNumGoto);
-					GlobalFormOpenDental.PatientSelected(patient,false);
-					GlobalFormOpenDental.GotoFamily(formReference.PatNumGoto);
+					FormOpenDental.S_Contr_PatientSelected(patient,false);
+					GotoModule.GotoFamily(formReference.PatNumGoto);
 					return;
 				}
 				if(formReference.DialogResult!=DialogResult.OK) {
@@ -1122,7 +1119,7 @@ namespace OpenDental {
 				bitmapChart=_toothChartRelay.GetBitmap();
 			}
 			try {
-				ImageStore.Import(bitmapChart,defNum,ImageType.Photo,Pd.Patient,doPrintHeading:true);
+				ImageStore.Import(bitmapChart,defNum,ImageType.Photo,Pd.Patient);
 			}
 			catch(SharpDXException sharpDXException) {
 				using MsgBoxCopyPaste errorMsg=new MsgBoxCopyPaste(Lan.g(this,"Failed to capture tooth chart image from graphics card. \r\n"
@@ -1219,7 +1216,7 @@ namespace OpenDental {
 
 		private void menuItemGroupSelected_Click(object sender,EventArgs e) {
 			List<Procedure> listProcedures=new List<Procedure>();
-			if(!CanAddGroupNote(doGetProcNote:true,isSilent:false,listProcedures,isCheckDb:true)) {
+			if(!CanAddGroupNote(doGetProcNote:true,isSilent:false,listProcedures)) {
 				return;
 			}
 			DateTime dateProc=listProcedures[0].ProcDate;
@@ -1351,7 +1348,7 @@ namespace OpenDental {
 				&& gridPtInfo.ListGridRows[idxRowClick].Tag is string
 				&& ((string)gridPtInfo.ListGridRows[idxRowClick].Tag=="DOB")) 
 			{
-				if(Security.IsAuthorized(EnumPermType.PatientDOBView,true) 
+				if(Security.IsAuthorized(Permissions.PatientDOBView,true) 
 					&& gridPtInfo.ListGridRows[idxRowClick].Cells[gridPtInfo.ListGridRows[idxRowClick].Cells.Count-1].Text!="") 
 				{
 					menuItemDOB.Visible=true;
@@ -1424,16 +1421,7 @@ namespace OpenDental {
 			checkNotes.Checked=true;
 			chartCustViewChanged=true;//custom view will not reset the check boxes so we force it true.
 			//Fill progress notes with only desired rows to be printed, then print.
-			object[] objectArray={checkComm.Checked,checkAppt.Checked};
-			Plugins.HookAddCode(this,"ControlChart.menuItemPrintDay_Click_update",objectArray);
-			checkComm.Checked=(bool)objectArray[0];
-			checkAppt.Checked=(bool)objectArray[1];
-			if(Plugins.HookMethod(this,"ControlChart.menuItemPrintDay_Click_fillProgNotes")) {
-				//We're not really sure why this hook was requested. Perhaps they are running FillProgNotes in a slightly different way.
-				goto HookSkipFillProgressNotes;
-			}
 			FillProgNotes();
-			HookSkipFillProgressNotes:
 			if(gridProg.ListGridRows.Count==0) {
 				MsgBox.Show(this,"No completed procedures or notes to print");
 			}
@@ -1525,13 +1513,12 @@ namespace OpenDental {
 				InsSub insSub2=InsSubs.GetSub(PatPlans.GetInsSubNum(Pd.ListPatPlans,PatPlans.GetOrdinal(PriSecMed.Secondary,Pd.ListPatPlans,Pd.ListInsPlans,Pd.ListInsSubs)),Pd.ListInsSubs);
 				ApptStatus apptStatusOld=appointment.AptStatus;
 				Appointments.SetAptStatusComplete(appointment,insSub1.PlanNum,insSub2.PlanNum);
-				AutomationL.Trigger(EnumAutomationTrigger.ApptComplete,null,appointment.PatNum);
 				Appointments.TryAddPerVisitProcCodesToAppt(appointment,apptStatusOld);
-				ODEvent.Fire(ODEventType.AppointmentEdited,appointment);
+				AppointmentEvent.Fire(ODEventType.AppointmentEdited,appointment);
 				List<Procedure> listProceduresForAppt=Procedures.GetProcsForSingle(appointment.AptNum,false);
 				bool removeCompletedProcs=ProcedureL.DoRemoveCompletedProcs(appointment,listProceduresForAppt.FindAll(x => x.AptNum==appointment.AptNum && x.ProcStatus==ProcStat.C));
 				ProcedureL.SetCompleteInAppt(appointment,Pd.ListInsPlans,Pd.ListPatPlans,Pd.Patient,Pd.ListInsSubs,removeCompletedProcs);//loops through each proc, also makes completed security logs
-				SecurityLogs.MakeLogEntry(EnumPermType.AppointmentEdit, appointment.PatNum,
+				SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit, appointment.PatNum,
 					appointment.ProcDescript+", "+appointment.AptDateTime.ToString()+", Set Complete",
 					appointment.AptNum,datePrevious);
 				//If there is an existing HL7 def enabled, send a SIU message if there is an outbound SIU message defined
@@ -1558,7 +1545,7 @@ namespace OpenDental {
 				Recalls.SynchScheduledApptFull(Pd.PatNum);
 				ModuleSelected(Pd.PatNum);
 				//If necessary, prompt the user to ask the patient to opt in to using Short Codes.
-				FrmShortCodeOptIn.PromptIfNecessary(Pd.Patient,appointment.ClinicNum);
+				FormShortCodeOptIn.PromptIfNecessary(Pd.Patient,appointment.ClinicNum);
 				return;
 			}
 			#endregion One Appointment
@@ -1664,7 +1651,7 @@ namespace OpenDental {
 			row.Cells[row.Cells.Count-1].Text=Patients.DOBFormatHelper(Pd.Patient.Birthdate,false);
 			gridPtInfo.EndUpdate();
 			string logText="Date of birth unmasked in Chart Module";
-			SecurityLogs.MakeLogEntry(EnumPermType.PatientDOBView,Pd.PatNum,logText);
+			SecurityLogs.MakeLogEntry(Permissions.PatientDOBView,Pd.PatNum,logText);
 		}
 		#endregion Methods - Event Handlers - Menu Items
 
@@ -1683,10 +1670,11 @@ namespace OpenDental {
 				}
 			}
 			//Displays FormApptsOther if the user needs to select an appointment or procedures to show on this sheet.
-			SheetUtilL.SetApptProcParamsForSheet(sheet,sheetDef,Pd.PatNum);
-			SheetFiller.FillFields(sheet);
-			SheetUtil.CalculateHeights(sheet);
-			FormSheetFillEdit.ShowForm(sheet,FormSheetFillEdit_FormClosing);
+			if(SheetUtilL.SetApptProcParamsForSheet(sheet,sheetDef,Pd.PatNum)) {
+				SheetFiller.FillFields(sheet);
+				SheetUtil.CalculateHeights(sheet);
+				FormSheetFillEdit.ShowForm(sheet,FormSheetFillEdit_FormClosing);
+			}
 		}
 
 		private void menuConsent_Popup(object sender,EventArgs e) {
@@ -1722,12 +1710,12 @@ namespace OpenDental {
 		///<summary>The menu will display all items that are relevant to at least one selected row. If there is at least one selected row that is not relevant, the menu item will be disabled but visible.</summary>
 		private void menuProgRight_Popup(object sender,EventArgs e) {
 			//Permissions on some menu items will not get checked until clicking on the menu item which will then stop the user if not allowed.
-			ShowMenuItemHelper(menuItemDelete,x => CanDeleteRow(x.DataRow,isCheckDb:false,isSilent:true)==EnumSkippedRow.None);
+			ShowMenuItemHelper(menuItemDelete,x => CanDeleteRow(x.DataRow)==EnumSkippedRow.None);
 			ShowMenuItemHelper(menuItemSetEO,x => CanChangeProcsStatus(ProcStat.EO,x.DataRow,isCheckDb:false,isSilent:true));
 			ShowMenuItemHelper(menuItemSetEC,x => CanChangeProcsStatus(ProcStat.EC,x.DataRow,isCheckDb:false,isSilent:true));
 			ShowMenuItemHelper(menuItemSetComplete,x => CanChangeProcsStatus(ProcStat.C,x.DataRow,isCheckDb:false,isSilent:true));
 			ShowMenuItemHelper(menuItemEditSelected,x => CanEditRow(x.DataRow,isCheckDb:false,isSilent:true,new List<Procedure> { }));
-			ShowMenuItemHelper(menuItemGroupSelected,x => CanGroupRow(x.DataRow,isGetProcNote:false,isSilent:true,new List<Procedure> { },isCheckDb:false));
+			ShowMenuItemHelper(menuItemGroupSelected,x => CanGroupRow(x.DataRow,isGetProcNote:false,isSilent:true,new List<Procedure> { }));
 			ShowMenuItemHelper(menuItemPrintDay,x => CanPrintDay(x.DataRow,x.Index));
 			ShowMenuItemHelper(menuItemLabFeeDetach,x => CanDetachLabFee(x.DataRow,isSilent:true));
 			ShowMenuItemHelper(menuItemLabFee,x => CanAttachLabFee(isSilent:true,new List<long> { },new List<long> { }));
@@ -1738,7 +1726,7 @@ namespace OpenDental {
 			else {
 				menuItemPrintRouteSlip.Visible=false;
 			}
-			menuItemGroupSelected.Enabled=CanAddGroupNote(doGetProcNote:false,isSilent:true,new List<Procedure>(),isCheckDb:false);
+			menuItemGroupSelected.Enabled=CanAddGroupNote(doGetProcNote:false,isSilent:true,new List<Procedure>());
 			if(CanDisplayAppointment() || CanDisplayTask()) {
 				menuItemSetComplete.Visible=true;
 				menuItemSetComplete.Enabled=(CanCompleteAppointment(isCheckDb:false,isSilent:true) || CanCompleteTask(isCheckDb:false,isSilent:true));
@@ -1893,9 +1881,6 @@ namespace OpenDental {
 		}
 
 		private void pd2_PrintPageDay(object sender,PrintPageEventArgs e) {
-			if(Plugins.HookMethod(this,"ControlChart.PrintPageDay_begin",Pd,e,gridProg)) {
-				return;
-			}
 			Rectangle rectangleBounds=new Rectangle(25,40,800,1000);//Some printers can handle up to 1042
 			Graphics g=e.Graphics;
 			string text;
@@ -1905,9 +1890,6 @@ namespace OpenDental {
 			int center=rectangleBounds.X+rectangleBounds.Width/2;
 			#region printHeading
 			if(!_isHeadingPrinted) {
-				if(Plugins.HookMethod(this,"ControlChart.pd2_PrintPageDay_heading")) {
-					goto HookSkipHeadingText;
-				}
 				text="Chart Progress Notes";
 				g.DrawString(text,fontHeading,Brushes.Black,center-g.MeasureString(text,fontHeading).Width/2,yPos);
 				yPos+=(int)g.MeasureString(text,fontHeading).Height;
@@ -1946,12 +1928,8 @@ namespace OpenDental {
 				text="Ward: "+Pd.Patient.Ward;
 				g.DrawString(text,fontSubHeading,Brushes.Black,center-g.MeasureString(text,fontSubHeading).Width/2,yPos);
 				yPos+=20;
-				HookSkipHeadingText:
 				//Patient images are not shown when the A to Z folders are disabled.
 				if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ || CloudStorage.IsCloudStorage) {
-					if(Plugins.HookMethod(this,"ControlChart.pd2_PrintPageDay_patImages")) {
-						goto HookSkipHeadingImage;
-					}
 					Bitmap bitmapPatPic=Documents.GetPatPict(Pd.PatNum,ImageStore.GetPatientFolder(Pd.Patient,ImageStore.GetPreferredAtoZpath()));
 					if(bitmapPatPic!=null) {
 						Bitmap bitmap80=ImageHelper.GetBitmapSquare(bitmapPatPic,80);
@@ -1960,11 +1938,7 @@ namespace OpenDental {
 						bitmapPatPic.Dispose();
 						yPos+=80;
 					}
-					HookSkipHeadingImage:
 					yPos+=30;
-					object[] objectArray={ Pd,e,gridProg,yPos };
-					Plugins.HookAddCode(null,"ControlChart.pd2_PrintPageDay_afterSkipImage",objectArray);
-					yPos=(int)objectArray[3];
 					_isHeadingPrinted=true;
 					_heightHeadingPrint=yPos;
 				}
@@ -1976,24 +1950,11 @@ namespace OpenDental {
 				e.HasMorePages=true;
 				return;
 			}
-			if(Plugins.HookMethod(this,"ControlChart.pd2_PrintPageDay_signature")) {
-				goto HookSkipSignature;
-			}
 			g.DrawString("Signature_________________________________________________________",
-				fontSubHeading,Brushes.Black,160,yPos+20);
-			HookSkipSignature: 
-			Plugins.HookAddCode(null,"ControlChart.pd2_PrintPageDay_afterSkipSignature",g,yPos);
+							fontSubHeading,Brushes.Black,160,yPos+20);
 			e.HasMorePages=false;
 		}
 		#endregion Methods - Event Handlers - Printing
-
-		#region Methods - Event Handlers - Resizing
-		private void tabControlProc_Resize(object sender,EventArgs e) {
-			//Couldn't get this to work if used listViewButtons_Resize.
-			//Hscroll was visible until clicked.
-			columnHeader1.Width=LayoutManager.Scale(_columnHeaderDefaultSize);
-		}
-		#endregion
 
 		#region Methods - Event Handlers - Tabs General
 		private void tabControlImages_Selecting(object sender,int e) {
@@ -2103,7 +2064,7 @@ namespace OpenDental {
 					return;
 				}
 				//We will call Security.IsAuthorized again once we know the ProcCode and the ProcFee.
-				if(!ProcedureCodes.DoAnyBypassLockDate() && !Security.IsAuthorized(EnumPermType.ProcComplCreate,PIn.Date(textDate.Text))) {
+				if(!ProcedureCodes.DoAnyBypassLockDate() && !Security.IsAuthorized(Permissions.ProcComplCreate,PIn.Date(textDate.Text))) {
 					return;
 				}
 			}
@@ -2239,7 +2200,7 @@ namespace OpenDental {
 			ClearButtons();
 			FillProgNotes();
 			if(_procStatNew==ProcStat.C) {
-				AutomationL.Trigger(EnumAutomationTrigger.ProcedureComplete,listProcCodes,Pd.PatNum);
+				AutomationL.Trigger(AutomationTrigger.CompleteProcedure,listProcCodes,Pd.PatNum);
 			}
 		}
 
@@ -2414,9 +2375,8 @@ namespace OpenDental {
 						MsgBox.Show(this,"This commlog has been deleted by another user.");
 					}
 					else {
-						FrmCommItem frmCommItem=new FrmCommItem(commlog);
-						frmCommItem.ShowDialog();
-						if(!frmCommItem.IsDialogOK) {
+						using FormCommItem formCommItem=new FormCommItem(commlog);
+						if(formCommItem.ShowDialog()!=DialogResult.OK) {
 							return;
 						}
 					}
@@ -2552,7 +2512,7 @@ namespace OpenDental {
 						+"If you want to be able to set procedures complete, you must turn on that option in Setup | Preferences | Chart - Procedures.");
 					return;
 				}
-				if(!Security.IsAuthorized(EnumPermType.ProcComplCreate,PIn.Date(textDate.Text))) {
+				if(!Security.IsAuthorized(Permissions.ProcComplCreate,PIn.Date(textDate.Text))) {
 					return;
 				}
 			}
@@ -2601,7 +2561,7 @@ namespace OpenDental {
 			if(taskObjectType==TaskObjectType.Patient) {
 				if(keyNum!=0) {
 					Patient patient=Patients.GetPat(keyNum);
-					GlobalFormOpenDental.PatientSelected(patient,false);
+					FormOpenDental.S_Contr_PatientSelected(patient,false);
 					ModuleSelected(patient.PatNum);
 					return;
 				}
@@ -2687,7 +2647,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please select an item from the list first.");
 				return;
 			}
-			ToothInitials.ClearValue(Pd.PatNum,(string)_listHiddenTeeth[listHidden.SelectedIndex],ToothInitialType.Hidden);
+			ToothInitials.ClearValue(Pd.PatNum,(string)_arrayListHiddenTeeth[listHidden.SelectedIndex],ToothInitialType.Hidden);
 			Pd.ClearAndFill(EnumPdTable.ToothInitial);
 			FillToothChart(false);
 		}		
@@ -3066,7 +3026,7 @@ namespace OpenDental {
 					listAptNums.Add(aptNum);
 				}
 			}
-			GlobalFormOpenDental.PinToAppt(listAptNums,0);
+			GotoModule.PinToAppt(listAptNums,0);
 		}
 
 		private void butUp_Click(object sender,EventArgs e) {
@@ -3414,17 +3374,17 @@ namespace OpenDental {
 
 		#region Methods - Event Handlers - Tab Draw
 		private void butAddText_Click(object sender,EventArgs e) {
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				MsgBox.Show(this,"The text feature is not available in Open Dental Cloud.");
 				return;
 			}
-			InputBox inputBox=new InputBox("Text");
+			using InputBox inputBox=new InputBox("Text");
 			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel){
+			if(inputBox.DialogResult!=DialogResult.OK){
 				return;
 			}
 			ToothInitial toothInitial=new ToothInitial();
-			toothInitial.SetText(new PointF(),inputBox.StringResult);
+			toothInitial.SetText(new PointF(),inputBox.textResult.Text);
 			toothInitial.InitialType=ToothInitialType.Text;
 			toothInitial.PatNum=Pd.PatNum;
 			toothInitial.ColorDraw=panelDrawColor.BackColor;
@@ -3446,7 +3406,7 @@ namespace OpenDental {
 		}
 
 		private void butDeleteText_Click(object sender,EventArgs e) {
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				MsgBox.Show(this,"The text feature is not available in Open Dental Cloud.");
 				return;
 			}
@@ -3464,12 +3424,12 @@ namespace OpenDental {
 				return;
 			}
 			ToothInitial toothInitial=listBoxText.GetSelected<ToothInitial>();
-			InputBox inputBox=new InputBox("Text",toothInitial.GetTextString());
+			using InputBox inputBox=new InputBox("Text",toothInitial.GetTextString());
 			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel){
+			if(inputBox.DialogResult!=DialogResult.OK){
 				return;
 			}
-			toothInitial.SetText(toothInitial.GetTextPoint(),inputBox.StringResult);
+			toothInitial.SetText(toothInitial.GetTextPoint(),inputBox.textResult.Text);
 			ToothInitials.Update(toothInitial);
 			Pd.ClearAndFill(EnumPdTable.ToothInitial);
 			FillToothChart(true);
@@ -3543,7 +3503,7 @@ namespace OpenDental {
 		}
 
 		private void radioMoveText_Click(object sender,EventArgs e) {
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				MsgBox.Show(this,"The text feature is not available in Open Dental Cloud.");
 				radioPointer.Checked=true;
 				return;
@@ -3578,7 +3538,7 @@ namespace OpenDental {
 		private void ToolBarMain_ButtonClick(object sender,ODToolBarButtonClickEventArgs e) {
 			if(e.Button.Tag.GetType()!=typeof(string)) {
 				if(e.Button.Tag.GetType()==typeof(Program)) {
-					WpfControls.ProgramL.Execute(((Program)e.Button.Tag).ProgramNum,Pd.Patient);
+					ProgramL.Execute(((Program)e.Button.Tag).ProgramNum,Pd.Patient);
 				}
 				return;
 			}
@@ -3892,9 +3852,7 @@ namespace OpenDental {
 			}
 			else {
 				table=Pd.TableProgNotes;
-				if(textSearch.Text!="") {
-					textSearch.Text="";
-				}
+				textSearch.Text="";
 			}
 			if(isRefreshData || Pd.ListProcGroupItems==null) {
 				if(_isModuleSelected) {
@@ -3994,7 +3952,6 @@ namespace OpenDental {
 				gridPtInfo.BeginUpdate();
 				gridPtInfo.ListGridRows.Clear();
 				gridPtInfo.Columns.Clear();
-				Plugins.HookAddCode(this, "ContrChart.FillPtInfo_BeforeEndUpdate", Pd.Patient);
 				gridPtInfo.EndUpdate();
 				IsTreatmentNoteChanged=false;
 				return;
@@ -4122,7 +4079,7 @@ namespace OpenDental {
 					#endregion Billing Type
 					#region Birthdate
 					case "Birthdate":
-						if(PrefC.GetBool(PrefName.PatientDOBMasked) || !Security.IsAuthorized(EnumPermType.PatientDOBView,true)) {
+						if(PrefC.GetBool(PrefName.PatientDOBMasked) || !Security.IsAuthorized(Permissions.PatientDOBView,true)) {
 							row.Cells.Add(Patients.DOBFormatHelper(Pd.Patient.Birthdate,true));
 							row.Tag="DOB";//Used later to tell if we're right clicking on the DOB row
 							break;
@@ -4632,14 +4589,10 @@ namespace OpenDental {
 				}
 				gridPtInfo.ListGridRows.Add(row);
 			}
-			Plugins.HookAddCode(this, "ContrChart.FillPtInfo_BeforeEndUpdate", Pd.Patient);
 			gridPtInfo.EndUpdate();
 		}
 
 		public void FunctionKeyPressContrChart(Keys keys) {
-			if(IsPatientNull()) {
-				return;
-			}
 			List<ChartView> listChartViews=ChartViews.GetDeepCopy();
 			switch(keys) {
 				case Keys.F1: 
@@ -5036,7 +4989,7 @@ namespace OpenDental {
 				button.DropDownMenu=new ContextMenu(listMenuItems.ToArray());
 				ToolBarMain.Buttons.Add(button);
 			}
-			ProgramL.LoadToolBar(ToolBarMain,EnumToolBar.ChartModule);
+			ProgramL.LoadToolbar(ToolBarMain,ToolBarsAvail.ChartModule);
 			ToolBarMain.Invalidate();
 			Plugins.HookAddCode(this,"ContrChart.LayoutToolBar_end",Pd.Patient);
 		}
@@ -5068,11 +5021,7 @@ namespace OpenDental {
 			if(!IsPatientNull() && Pd.Patient.PatStatus==PatientStatus.Deleted) {
 				MsgBox.Show("Selected patient has been deleted by another workstation.");
 				PatientL.RemoveFromMenu(Pd.PatNum);
-				GlobalFormOpenDental.PatientSelected(new Patient(),false);
-				RefreshModuleData(0,isFullRefresh);
-			}
-			if(Pd.Patient!=null && Pd.Patient.PatStatus==PatientStatus.Archived && !Security.IsAuthorized(EnumPermType.ArchivedPatientSelect,suppressMessage:true)) {
-				GlobalFormOpenDental.PatientSelected(new Patient(),false);
+				FormOpenDental.S_Contr_PatientSelected(new Patient(),false);
 				RefreshModuleData(0,isFullRefresh);
 			}
 			if(PrefC.IsODHQ) {
@@ -5091,20 +5040,6 @@ namespace OpenDental {
 			LayoutControls();
 			if(patNumPrevious!=patNum && gridProg.VScrollVisible) {
 				gridProg.ScrollToEnd();
-			}
-			if(Pd.Patient!=null && DatabaseIntegrities.DoShowPopup(Pd.PatNum,EnumModuleType.Chart)) {
-				List<Appointment> listAppointments=Appointments.GetAppointmentsForPat(Pd.PatNum);
-				List<Claim> listClaims=Claims.GetForPat(Pd.PatNum);
-				List<ClaimProc> listClaimProcs=new List<ClaimProc>(Pd.ListClaimProcs); //Pd.ListClaimProcs gets refreshed whenever the chart module is refreshed.
-				bool areHashesValid=Patients.AreAllHashesValid(Pd.Patient,listAppointments,new List<PayPlan>(),new List<PaySplit>(),listClaims,listClaimProcs);
-				if(!areHashesValid) {
-					DatabaseIntegrities.AddPatientModuleToCache(Pd.PatNum,EnumModuleType.Chart); //Add to cached list for next time
-					//show popup
-					DatabaseIntegrity databaseIntegrity=DatabaseIntegrities.GetModule();
-					FrmDatabaseIntegrity frmDatabaseIntegrity=new FrmDatabaseIntegrity();
-					frmDatabaseIntegrity.MessageToShow=databaseIntegrity.Message;
-					frmDatabaseIntegrity.ShowDialog();
-				}
 			}
 			Plugins.HookAddCode(this,"ContrChart.ModuleSelected_end",patNum);
 		}
@@ -5195,9 +5130,7 @@ namespace OpenDental {
 				butErxAccess.Enabled=false;
 				trackToothProcDates.Enabled=false;
 				textToothProcDate.Enabled=false;
-				if(textSearch.Text!="") {
-					textSearch.Text="";
-				}
+				textSearch.Text="";
 			}
 			else {
 				textTreatmentNotes.Enabled=true;
@@ -5344,9 +5277,7 @@ namespace OpenDental {
 					if(PrefC.GetBool(PrefName.AutoResetTPEntryStatus)) {
 						radioEntryTP.Select();
 					}
-					if(textSearch.Text!="") {
-						textSearch.Text="";
-					}
+					textSearch.Text="";
 					_patNumPrevious=Pd.PatNum;
 				}
 				if(PrefC.GetBool(PrefName.PatientDOBMasked)) {
@@ -5418,10 +5349,6 @@ namespace OpenDental {
 			if(_isDistributorKey) {
 				FillCustomerTab();
 			}
-			ChartView chartViewDisplayOld=null;
-			if(_chartViewDisplay!=null) {
-				chartViewDisplayOld=_chartViewDisplay.Copy();
-			}
 			if(textSearch.Text!="") {
 				_listDataRowsSearchResults?.Clear();
 				_listDataRowsSearchResults=null;
@@ -5429,14 +5356,6 @@ namespace OpenDental {
 			}
 			else {
 				Logger.LogAction("FillProgNotes",LogPath.ChartModule,() => FillProgNotes(isRefreshData: false));
-			}
-			int selectedIndex=-1;
-			if(chartViewDisplayOld!=null) {
-				selectedIndex=_listChartViews.FindIndex(x=> x.ChartViewNum==chartViewDisplayOld.ChartViewNum);
-			}
-			gridChartViews.SetSelected(selectedIndex,true);
-			if(_isDistributorKey) {
-				gridCustomerViews.SetSelected(selectedIndex,true);
 			}
 			Logger.LogAction("FillPlanned",LogPath.ChartModule,() => FillPlanned());
 			Logger.LogAction("FillPtInfo",LogPath.ChartModule,() => FillPtInfo(false));
@@ -5483,7 +5402,7 @@ namespace OpenDental {
 			Procedures.ComputeEstimates(procedureParent,Pd.PatNum,ClaimProcs.RefreshForProc(procedureParent.ProcNum),false,Pd.ListInsPlans,Pd.ListPatPlans,Pd.ListBenefits,Pd.Patient.Age,Pd.ListInsSubs);
 		}
 
-		private bool CanAddGroupNote(bool doGetProcNote,bool isSilent,List<Procedure> listProcedures,bool isCheckDb) {
+		private bool CanAddGroupNote(bool doGetProcNote,bool isSilent,List<Procedure> listProcedures) {
 			DataRow dataRow;
 			if(gridProg.SelectedIndices.Length==0) {
 				if(!isSilent) {
@@ -5493,7 +5412,7 @@ namespace OpenDental {
 			}
 			for(int i=0;i<gridProg.SelectedIndices.Length;i++) {
 				dataRow=(DataRow)gridProg.ListGridRows[gridProg.SelectedIndices[i]].Tag;
-				if(!CanGroupRow(dataRow,doGetProcNote,isSilent,listProcedures,isCheckDb)) {
+				if(!CanGroupRow(dataRow,isGetProcNote:doGetProcNote,isSilent:isSilent,listProcedures)) {
 					return false;
 				}
 			}
@@ -5607,18 +5526,17 @@ namespace OpenDental {
 			}
 			//Check for procedures in hidden categories.
 			List<string> listProcCodesHidden=ProcedureCodes.GetProcCodesInHiddenCats(PIn.Long(dataRow["CodeNum"].ToString()));
-			if(procStatNew==ProcStat.C && listProcCodesHidden.Count > 0) {
-				if(!isSilent) {
-					MsgBox.Show(Lan.g(this,"Procedure is in a hidden category:")+" "+listProcCodesHidden[0]);
-				}
+			if(!isSilent && procStatNew==ProcStat.C && listProcCodesHidden.Count > 0) {
+				MsgBox.Show(Lan.g(this,"Procedure is in a hidden category:")+" "+listProcCodesHidden[0]);
 				return false;
 			}
 			if(isCheckDb){
-				Pd.Clear(EnumPdTable.Adjustment,EnumPdTable.Appointment,EnumPdTable.ClaimProc,EnumPdTable.OrthoCase,EnumPdTable.PaySplit,EnumPdTable.Procedure);
+				Pd.Clear(EnumPdTable.ClaimProc,EnumPdTable.PaySplit,EnumPdTable.Adjustment,EnumPdTable.Procedure);
 			}
-			Pd.FillIfNeeded(EnumPdTable.Procedure);
+			Pd.FillIfNeeded(EnumPdTable.ClaimProc,EnumPdTable.PaySplit,EnumPdTable.Adjustment,EnumPdTable.Procedure);
 			long procNum=PIn.Long(dataRow["ProcNum"].ToString());
 			Procedure procedureOld=Pd.ListProcedures.FirstOrDefault(x => x.ProcNum==procNum);
+			OrthoProcLink orthoProcLink=OrthoProcLinks.GetByProcNum(procNum);
 			if(procedureOld==null) {
 				if(!isSilent) {
 					MsgBox.Show(this,"Procedure has been deleted.");
@@ -5653,6 +5571,9 @@ namespace OpenDental {
 			//Currently all 'appt' and 'procdate' references below are OK with using a new Appointment() obj.
 			Appointment appointment=null;
 			if(procedure.AptNum!=0) {//if attached to an appointment
+				if(isCheckDb){//doCheckDb is only false when creating right-click menu.  MenuItem click will use doCheckDb=true.
+					Pd.Clear(EnumPdTable.Appointment);
+				}
 				Pd.FillIfNeeded(EnumPdTable.Appointment);
 				appointment=Pd.ListAppointments.Find(x => x.AptNum==procedure.AptNum);
 				if(appointment is null){
@@ -5679,14 +5600,13 @@ namespace OpenDental {
 				//dateProc=isCheckDb ? MiscData.GetNowDateTime() : DateTime.Now;
 			}
 			if(procedureOld.ProcStatus.In(ProcStat.C,ProcStat.EO,ProcStat.EC)) {
-				if(!ProcedureL.CheckPermissionsAndGlobalLockDate(procedureOld,procedure,dateProc,suppressMessage:isSilent)) {
+				if(isCheckDb && !ProcedureL.CheckPermissionsAndGlobalLockDate(procedureOld,procedure,dateProc)) {
 					return false;
 				}
 			}
 			//At this point we do not need to check if a procedure status is changing. FormProcEdit.EntriesAreValid() does however.
 			if(procedureOld.ProcStatus==ProcStat.C) {
 				#region Changing from completed to something else.
-				Pd.FillIfNeeded(EnumPdTable.Adjustment);
 				List<Adjustment> listAdjustments=Pd.ListAdjustments.FindAll(x=>x.ProcNum==procedure.ProcNum);
 				if(listAdjustments.Count>0 && !isSilent
 					&& !MsgBox.Show(this,MsgBoxButtons.YesNo,"This procedure has adjustments attached to it. Changing the status from completed will delete any "
@@ -5694,7 +5614,6 @@ namespace OpenDental {
 				{
 					return false;
 				}
-				Pd.FillIfNeeded(EnumPdTable.PaySplit);
 				List<PaySplit> listPaySplits=Pd.ListPaySplits.FindAll(x=>x.ProcNum==procedure.ProcNum);
 				double sumPaySplits=listPaySplits.Sum(x => x.SplitAmt);
 				if(sumPaySplits!=0) {
@@ -5704,12 +5623,10 @@ namespace OpenDental {
 					return false;
 				}
 				//Cannot set EC or EO on completed procs on a claim.
-				Pd.FillIfNeeded(EnumPdTable.ClaimProc);
 				if(ProcedureL.IsProcCompleteAttachedToClaim(procedureOld,Pd.ListClaimProcs,isSilent)) {
 					return false;
 				}
-				Pd.FillIfNeeded(EnumPdTable.OrthoCase);
-				if(Pd.ListOrthoProcLinks.Any(x => x.ProcNum==procNum)) {
+				if(orthoProcLink!=null) {
 					if(!isSilent) {
 						MsgBox.Show(this,"Cannot change the status of completed procedures that are linked to an ortho cases. Detach the procedure from the ortho case first.");
 					}
@@ -5719,21 +5636,19 @@ namespace OpenDental {
 			}
 			if(procedure.ProcStatus==ProcStat.C) {//User is trying to change status to complete.
 				#region Setting proc to complete
-				Pd.FillIfNeeded(EnumPdTable.ClaimProc);
 				if(ProcedureL.IsProcCompleteAttachedToClaim(procedure,Pd.ListClaimProcs,isSilent)) {
 					return false;
 				}
-				DateTime date=dateProc;
 				if(appointment!=null) {
-					date=appointment.AptDateTime;
+					if(isCheckDb && !Security.IsAuthorized(Permissions.ProcComplCreate,appointment.AptDateTime,procedure.CodeNum,procedure.ProcFee)) {
+						return false;
+					}
 				}
-				if(!Security.IsAuthorized(EnumPermType.ProcComplCreate,date,procedure.CodeNum,procedure.ProcFee,isSilent)) {
+				else if(isCheckDb && !Security.IsAuthorized(Permissions.ProcComplCreate,dateProc,procedure.CodeNum,procedure.ProcFee)) {
 					return false;
 				}
 				if(dateProc.Date > DateTime.Today.Date && !PrefC.GetBool(PrefName.FutureTransDatesAllowed)) {
-					if(!isSilent) {
-						MsgBox.Show(this,"Completed procedures cannot be set for future dates.");
-					}
+					MsgBox.Show(this,"Completed procedures cannot be set for future dates.");
 					return false;
 				}
 				#endregion
@@ -5755,12 +5670,12 @@ namespace OpenDental {
 			}
 			//Only one appointment row selected at this point.
 			DataRow dataRowApt=listDataRowsSelected.First();
-			if(!Security.IsAuthorized(EnumPermType.AppointmentEdit,isSilent)) {
+			if(isCheckDb && !Security.IsAuthorized(Permissions.AppointmentEdit)) {
 				return false;
 			}
 			long aptNum=PIn.Long(dataRowApt["AptNum"].ToString());
 			if(isCheckDb){
-				Pd.Clear(EnumPdTable.Appointment,EnumPdTable.Procedure);
+				Pd.Clear(EnumPdTable.Appointment);
 			}
 			Pd.FillIfNeeded(EnumPdTable.Appointment);
 			Appointment appointment=Pd.ListAppointments.Find(x => x.AptNum==aptNum);
@@ -5786,24 +5701,23 @@ namespace OpenDental {
 				}
 				return false;
 			}
-			Pd.FillIfNeeded(EnumPdTable.Procedure);
-			List<Procedure> listProcedures=Pd.ListProcedures.FindAll(x => x.AptNum==appointment.AptNum || x.PlannedAptNum==appointment.AptNum);
-			List<string> listHiddenProcCodes=ProcedureCodes.GetProcCodesInHiddenCats(listProcedures.Select(x => x.CodeNum).ToArray());
-			if(listHiddenProcCodes.Count > 0) {
-				if(!isSilent) {
+			if(isCheckDb) { 
+				List<Procedure> listProcedures=Procedures.GetProcsMultApts(new List<long> { appointment.AptNum });
+				List<string> listHiddenProcCodes=ProcedureCodes.GetProcCodesInHiddenCats(listProcedures.Select(x => x.CodeNum).ToArray());
+				if(listHiddenProcCodes.Count > 0) {
 					MsgBox.Show(Lan.g(this,"Cannot complete appointment because the following procedures are in a hidden category:")+" "+string.Join(", ",listHiddenProcCodes));
+					return false;
 				}
-				return false;
-			}
-			if(ProcedureCodes.DoAnyBypassLockDate()) {
-				for(int i=0;i<listProcedures.Count();i++) {
-					if(!Security.IsAuthorized(EnumPermType.ProcComplCreate,appointment.AptDateTime,listProcedures[i].CodeNum,listProcedures[i].ProcFee,isSilent)) {
-						return false;
+				if(ProcedureCodes.DoAnyBypassLockDate()) {
+					for(int i=0;i<listProcedures.Count();i++) {
+						if(!Security.IsAuthorized(Permissions.ProcComplCreate,appointment.AptDateTime,listProcedures[i].CodeNum,listProcedures[i].ProcFee)) {
+							return false;
+						}
 					}
 				}
-			}
-			else if(!Security.IsAuthorized(EnumPermType.ProcComplCreate,appointment.AptDateTime,isSilent)) {
-				return false;
+				else if(!Security.IsAuthorized(Permissions.ProcComplCreate,appointment.AptDateTime)) {
+					return false;
+				}
 			}
 			if(appointment.AptDateTime.Date>DateTime.Today.Date) {
 				if(!PrefC.GetBool(PrefName.ApptAllowFutureComplete)) {
@@ -5818,6 +5732,9 @@ namespace OpenDental {
 					}
 					return false;
 				}
+			}
+			if(isCheckDb){
+				Pd.Clear(EnumPdTable.Procedure);
 			}
 			Pd.FillIfNeeded(EnumPdTable.Procedure);
 			bool hasProcsAttached=Pd.ListProcedures.Any(x => x.AptNum==appointment.AptNum);
@@ -5869,13 +5786,8 @@ namespace OpenDental {
 		}
 
 		///<summary>Returns true if the row can be deleted.</summary>
-		private EnumSkippedRow CanDeleteRow(DataRow dataRow,bool isCheckDb=true,OrthoProcLink orthoProcLink=null,bool isSilent=false) {
+		private EnumSkippedRow CanDeleteRow(DataRow dataRow, bool isCheckDb=true, OrthoProcLink orthoProcLink=null) {
 			long procNum=PIn.Long(dataRow["ProcNum"].ToString(),false);
-			long sheetNum=PIn.Long(dataRow["SheetNum"].ToString(),false);
-			Sheet sheet=null;
-			if(sheetNum!=0) {
-				sheet=Sheets.GetSheet(sheetNum);
-			}
 			if(procNum!=0) {
 				ProcStat procStat=PIn.Enum<ProcStat>(PIn.Int(dataRow["ProcStatus"].ToString()));
 				if(procStat.In(ProcStat.C,ProcStat.EC,ProcStat.EO)
@@ -5886,52 +5798,53 @@ namespace OpenDental {
 				if(orthoProcLink!=null) {
 					return EnumSkippedRow.LinkedToOrthoCase;
 				}
-				if(isCheckDb) {
-					Pd.Clear(EnumPdTable.ClaimProc,EnumPdTable.PaySplit,EnumPdTable.Procedure,EnumPdTable.ProcGroupItem);
-				}
 				DateTime dateProc=PIn.DateT(dataRow["ProcDate"].ToString());
 				if(procStat.In(ProcStat.TP,ProcStat.TPi)) {
 					dateProc=PIn.DateT(dataRow["DateEntryC"].ToString());
 				}
 				long codeNum=PIn.Long(dataRow["CodeNum"].ToString());
-				//If a group note
-				if(ProcedureCodes.GetStringProcCode(codeNum)==ProcedureCodes.GroupProcCode) {
-					//2023-12-11-Jordan/Jason We don't think it's possible to hit this code
-					//because GroupNotes have status of EC or "IsLocked", both of which kick out above.
-					//But leaving it in place during refactor, just in case.
-					Pd.FillIfNeeded(EnumPdTable.Procedure,EnumPdTable.ProcGroupItem);
-					//Block the user from deleting this group note if it is associated with completed procedures.
-					List<long> listProcNums=Pd.ListProcGroupItems.FindAll(x => x.GroupNum==procNum).Select(x => x.ProcNum).ToList();
-					if(Pd.ListProcedures.Any(x => x.ProcStatus.In(ProcStat.C,ProcStat.EO,ProcStat.EC) && listProcNums.Contains(x.ProcNum))) {
-						return EnumSkippedRow.Complete;
-					}
-				}
-				//Block the user from deleting this procedure if they don't have the ProcDelete permission.
-				if(!Security.IsAuthorized(EnumPermType.ProcDelete,dateProc,isSilent)) {
-					return EnumSkippedRow.Security;
-				}
-				//Check if there is an allocated payment to the TP proc or if the proc is attached to a preauth.
-				if(procStat.In(ProcStat.TP,ProcStat.TPi)) {
-					//Block the user from deleting this procedure if it is associated with a preauth claim and the user is trying to delete all procedures on the claim.
-					Pd.FillIfNeeded(EnumPdTable.ClaimProc);
-					//Get the ProcNums for all of the selected rows in the grid.
-					List<long> listProcNumsSelected=gridProg.SelectedTags<DataRow>().Select(x => PIn.Long(x["ProcNum"].ToString())).Where(x => x!=0).Distinct().ToList();
-					//Get all ClaimNums that have a preauth claimproc for the procedure in question.
-					List<long> listClaimNums=Pd.ListClaimProcs.FindAll(x => x.ProcNum==procNum && x.ClaimNum!=0 && x.Status==ClaimProcStatus.Preauth).Select(x => x.ClaimNum).Distinct().ToList();
-					//Loop through each preauth claim associated with the procedure in question.
-					for(int i=0;i<listClaimNums.Count;i++) {
-						//Get a list of all ProcNums that are associated with the claim in question.
-						List<long> listProcNumsForClaim=Pd.ListClaimProcs.FindAll(x => x.ClaimNum==listClaimNums[i] && x.ProcNum!=0).Select(x => x.ProcNum).Distinct().ToList();
-						//Block the user if they are trying to delete all of the procedures associated with this claim.
-						if(listProcNumsForClaim.Except(listProcNumsSelected).Count()==0) {
-							return EnumSkippedRow.NoneButCannotDelete;
+				if(ProcedureCodes.GetStringProcCode(codeNum)==ProcedureCodes.GroupProcCode) {//If a group note
+					//Check DB to see if attached to any completed procedures. This isn't pulled from datasetmain because we want to be 100% up to date.
+					//Note that if multiple rows were selected it might have already deleted some procedures, but we do not delete completed
+					//procedures in this loop.
+					if(isCheckDb) {
+						if(ProcGroupItems.GetCountCompletedProcsForGroup(procNum)==0) { //If not attached to completed procs
+							if(!Security.IsAuthorized(Permissions.ProcDelete,dateProc)) {
+								return EnumSkippedRow.Security;
+							}
+						}
+						else {
+							return EnumSkippedRow.Complete;
 						}
 					}
 				}
-				//Block the user from deleting this procedure if it is associated with a paysplit.
-				Pd.FillIfNeeded(EnumPdTable.PaySplit);
-				if(Pd.ListPaySplits.Any(x => x.ProcNum==procNum)) {
-					return EnumSkippedRow.Attached;
+				else {//Not a group note
+					if(isCheckDb && !Security.IsAuthorized(Permissions.ProcDelete,dateProc)) {
+						return EnumSkippedRow.Security;
+					}
+				}
+				//Check if there is an allocated payment to the TP proc or if the proc is attached to a preauth.
+				if(PIn.Enum<ProcStat>(PIn.Int(dataRow["ProcStatus"].ToString()))==ProcStat.TP || PIn.Enum<ProcStat>(PIn.Int(dataRow["ProcStatus"].ToString()))==ProcStat.TPi) {
+					if(isCheckDb) {
+						List<long> listProcNumsSelected=gridProg.SelectedTags<DataRow>().Select(x => PIn.Long(x["ProcNum"].ToString())).ToList();
+						List<ClaimProc> listClaimProcsForProc=ClaimProcs.GetForProcs(new List<long>() { procNum }).Where(x => x.ClaimNum!=0 && x.Status==ClaimProcStatus.Preauth).DistinctBy(x=>x.ClaimNum).ToList();
+						for(int i=0;i<listClaimProcsForProc.Count();i++) {
+							List<long> listProcNumsForClaim=ClaimProcs.RefreshForClaim(listClaimProcsForProc[i].ClaimNum).Select(x => x.ProcNum).ToList();
+							//If you're trying to delete all the procedures on a preauth, we will block you. We do some thing from the claim edit window (as a preauth).
+							if(listProcNumsForClaim.Except(listProcNumsSelected).Count()==0) {
+								return EnumSkippedRow.NoneButCannotDelete;
+							}
+						}
+					}
+					Pd.FillIfNeeded(EnumPdTable.PaySplit);
+					List<PaySplit> listPaySplits=Pd.ListPaySplits.FindAll(x=>x.ProcNum==procNum);
+					double totForProc=listPaySplits.Sum(x => x.SplitAmt);
+					if(isCheckDb){
+						totForProc=PIn.Double(PaySplits.GetTotForProc(procNum));
+					}
+					if(!CompareDouble.IsEqual(totForProc,0)) {
+						return EnumSkippedRow.Attached;
+					}
 				}
 				return EnumSkippedRow.None;
 			}
@@ -5940,12 +5853,9 @@ namespace OpenDental {
 					//Users cannot delete rxpat where RxType is not an pdmp access log.
 					return EnumSkippedRow.NoneButCannotDelete;
 				}
-				if(!Security.IsAuthorized(EnumPermType.RxEdit,isSilent)) {
+				if(isCheckDb && !Security.IsAuthorized(Permissions.RxEdit)) {
 					return EnumSkippedRow.RxSecurity;
 				}
-				return EnumSkippedRow.None;
-			}
-			if(sheet!=null && sheet.SheetType==SheetTypeEnum.ReferralLetter && sheet.DocNum!=0) {
 				return EnumSkippedRow.None;
 			}
 			//Not a proc or a prescription
@@ -6061,9 +5971,8 @@ namespace OpenDental {
 				return false;
 			}
 			if(isCheckDb){
-				Pd.Clear(EnumPdTable.ProcMultiVisit);
+				Pd.ClearAndFill(EnumPdTable.ProcMultiVisit);
 			}
-			Pd.FillIfNeeded(EnumPdTable.ProcMultiVisit);
 			List<ProcMultiVisit> listProcMultiVisits=Pd.ListProcMultiVisits.FindAll(x => x.ProcNum==procNum);
 			if(listProcMultiVisits.Count>0) {
 				if(!isSilent) {
@@ -6077,7 +5986,7 @@ namespace OpenDental {
 		}		
 		
 		///<summary>Returns true if the row can be put into a group note. Adds procedure to listProcsToGroup if it can be.</summary>
-		private bool CanGroupRow(DataRow dataRow,bool isGetProcNote,bool isSilent,List<Procedure> listProceduresToGroup,bool isCheckDb) {
+		private bool CanGroupRow(DataRow dataRow,bool isGetProcNote,bool isSilent,List<Procedure> listProceduresToGroup) {
 			long procNum=PIn.Long(dataRow["ProcNum"].ToString());
 			if(procNum==0) { //This is not a procedure.
 				if(!isSilent) {
@@ -6090,9 +5999,7 @@ namespace OpenDental {
 				procedure=Procedures.GetOneProc(procNum,true);
 			}
 			else {
-				if(isCheckDb) {
-					Pd.Clear(EnumPdTable.Procedure);
-				}
+				Pd.Clear(EnumPdTable.Procedure);
 				Pd.FillIfNeeded(EnumPdTable.Procedure);
 				procedure=Pd.ListProcedures.Find(x => x.ProcNum==procNum);
 			}
@@ -6129,9 +6036,6 @@ namespace OpenDental {
 
 		///<summary>Returns true if the 'Print Day for Hospital' menu item is applicable. This method returns true if there is at least one completed procedure with the same date as the row.</summary>
 		private bool CanPrintDay(DataRow dataRow,int rowIdx) {
-			if(Plugins.HookMethod(this,"ControlChart.CanPrintDay_begin")) {
-				return true;
-			}
 			if(PrefC.GetBool(PrefName.EasyHideHospitals)) {
 				return false;
 			}
@@ -6202,16 +6106,14 @@ namespace OpenDental {
 				}
 				return false;
 			}
-			if(isCheckDb) {
-				Pd.Clear(EnumPdTable.ProcMultiVisit);
-			}
-			Pd.FillIfNeeded(EnumPdTable.ProcMultiVisit);
-			List<ProcMultiVisit> listProcMultiVisits=Pd.ListProcMultiVisits.FindAll(x => x.ProcNum==procNum);
-			if(listProcMultiVisits.Count==0) {
-				if(!isSilent) {
-					MsgBox.Show(this,"Selected procedures are not part of multi visit group.");
+			if(!isCheckDb) {//We'll check the db later before ungrouping.
+				List<ProcMultiVisit> listProcMultiVisits=Pd.ListProcMultiVisits.FindAll(x => x.ProcNum==procNum);
+				if(listProcMultiVisits.Count==0) {
+					if(!isSilent) {
+						MsgBox.Show(this,"Selected procedures are not part of multi visit group.");
+					}
+					return false;
 				}
-				return false;
 			}
 			return true;
 		}
@@ -6631,11 +6533,11 @@ namespace OpenDental {
 			gridChartViews.ListGridRows.Clear();
 			GridRow row;
 			if(refreshViews) {
-				DataValid.SetInvalid(InvalidType.DisplayFields);
+				ChartViews.RefreshCache();//Ideally this would use signals to refresh
 			}
 			_listChartViews=ChartViews.GetDeepCopy();
 			if(SyncChartViewItemOrders()) {
-				DataValid.SetInvalid(InvalidType.DisplayFields);
+				ChartViews.RefreshCache();
 				_listChartViews=ChartViews.GetDeepCopy();
 			}
 			for(int i=0;i<_listChartViews.Count;i++) {
@@ -7215,7 +7117,7 @@ namespace OpenDental {
 			patientDashboardDataEventArgs.PatNote=Pd.PatientNote;
 			patientDashboardDataEventArgs.SuperFamHead=Pd.PatientSuperFamHead;
 			patientDashboardDataEventArgs.TableProgNotes=Pd.TableProgNotes;
-			ODEvent.Fire(ODEventType.ModuleSelected,patientDashboardDataEventArgs);
+			PatientDashboardDataEvent.Fire(ODEventType.ModuleSelected,patientDashboardDataEventArgs);
 			//Cursor=Cursors.Default;
 		}
 
@@ -7717,9 +7619,8 @@ namespace OpenDental {
 					}
 					#endregion
 					procedureNew.DateEntryC=DateTime.Now;//Should this be server date?
-					ProcedureCode procedureCodeNew=ProcedureCodes.GetProcCode(procedureNew.CodeNum);
 					if(procedureNew.DiagnosticCode=="") {
-						Procedures.SetDiagnosticCodesToDefault(procedureNew,procedureCodeNew);
+						procedureNew.DiagnosticCode=PrefC.GetString(PrefName.ICD9DefaultForNewProcs);
 						procedureNew.IcdVersion=PrefC.GetByte(PrefName.DxIcdVersion);
 					}
 					//broken appointment procedure codes shouldn't trigger DateFirstVisit update.
@@ -7777,7 +7678,7 @@ namespace OpenDental {
 			//Mimics FormProcEdit.SaveAndClose()
 			Recalls.Synch(Pd.PatNum);
 			if(listProcCodes.Count>0) {//Only do if we are completing the procedures. 
-				AutomationL.Trigger(EnumAutomationTrigger.ProcedureComplete,listProcCodes,Pd.PatNum);
+				AutomationL.Trigger(AutomationTrigger.CompleteProcedure,listProcCodes,Pd.PatNum);
 				Procedures.AfterProcsSetComplete(listProceduresSetComplete);
 			}
 			ModuleSelected(Pd.PatNum);
@@ -7826,7 +7727,7 @@ namespace OpenDental {
 				return false;
 			}
 			if(listRxPatsNew.Count>0) {
-				AutomationL.Trigger(EnumAutomationTrigger.RxCreate,new List<string>(),Pd.PatNum,0,listRxPatsNew);
+				AutomationL.Trigger(AutomationTrigger.RxCreate,new List<string>(),Pd.PatNum,0,listRxPatsNew);
 			}
 			return true;
 		}
@@ -7888,9 +7789,6 @@ namespace OpenDental {
 
 		/// <summary> Checks ProcStat passed to see if one of the check boxes on the form contains a check for the ps passed. For example if ps is TP and the checkShowTP.Checked is true it will return true.</summary>
 		private bool ProcStatDesired(ProcStat procStat,bool isLocked) {
-			if(Plugins.HookMethod(this,"ControlChart.ProcStatDesired_begin")) {
-				return true;
-			}
 			switch(procStat) {
 				case ProcStat.TP:
 					if(checkShowTP.Checked) {
@@ -7989,7 +7887,7 @@ namespace OpenDental {
 				}
 				try {
 					Action<List<RxPat>> actionRxAdd=new Action<List<RxPat>>((listRxPats) => {
-						AutomationL.Trigger(EnumAutomationTrigger.RxCreate,new List<string>(),Pd.PatNum,0,listRxPats);
+						AutomationL.Trigger(AutomationTrigger.RxCreate,new List<string>(),Pd.PatNum,0,listRxPats);
 					});
 					//Consent for DoseSpot to share medication history must be renewed every 24 hours. Once we have patient's consent stored in DB, we renew
 					//consent each time we refresh notifications.
@@ -8031,7 +7929,7 @@ namespace OpenDental {
 			List<EnumPdTable> listEnumPdTablesType=ChartModules.FillPatientDataList(panelImages.Visible,checkShowOrtho.Checked);
 			Pd.FillIfNeededChart(checkAudit.Checked,GetChartModuleComponents(),listEnumPdTablesType.ToArray());
 			if(makeSecLog){
-				SecurityLogs.MakeLogEntry(EnumPermType.ChartModule,patNum,"");
+				SecurityLogs.MakeLogEntry(Permissions.ChartModule,patNum,"");
 			}
 			//_listSubstitutionLinks not filled here.
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ || CloudStorage.IsCloudStorage) {
@@ -8221,6 +8119,11 @@ namespace OpenDental {
 			if(procStat==ProcStat.C && dateLimit<dateComplete && dateLimit>=dateTP) {//Procedure is C and the slider date is after or equal to the TP date, but before the completion date
 				dataRow["ProcStatus"]=POut.Int((int)ProcStat.TP);//Pretend the row is TP for the tooth chart
 			}
+			else if(procStat==ProcStat.TP && dateLimit>=dateScheduled.Date //Procedure is TP and the slider date is after or equal to the Scheduled date
+				&& dateScheduled.Year>1880 && dateLimit!=DateTime.Today) //If the slider is at today, then we want to show what things are like at the current time.
+			{
+				dataRow["ProcStatus"]=POut.Int((int)ProcStat.C);//Pretend the row is C for the tooth chart
+			}
 			return true;
 		}
 
@@ -8308,9 +8211,8 @@ namespace OpenDental {
 			commlog.SentOrReceived=CommSentOrReceived.Received;
 			commlog.UserNum=Security.CurUser.UserNum;
 			commlog.IsNew=true;
-			FrmCommItem frmCommItem=new FrmCommItem(commlog);
-			frmCommItem.ShowDialog();
-			if(frmCommItem.IsDialogOK) {
+			using FormCommItem formCommItem=new FormCommItem(commlog);
+			if(formCommItem.ShowDialog()==DialogResult.OK) {
 				ModuleSelected(Pd.PatNum);
 			}
 		}
@@ -8353,13 +8255,13 @@ namespace OpenDental {
 				return;
 			}
 			if(formEHR.EhrFormResultOnClose==EhrFormResult.PatientSelect) {
-				GlobalFormOpenDental.PatientSelected(Patients.GetPat(formEHR.PatNum),false);
+				FormOpenDental.S_Contr_PatientSelected(Patients.GetPat(formEHR.PatNum),false);
 				ModuleSelected(formEHR.PatNum);
 			}
 		}
 
 		private void Tool_eRx_Click(bool isShowRefillsAndErrors=false) {
-			if(!Security.IsAuthorized(EnumPermType.RxCreate)) {
+			if(!Security.IsAuthorized(Permissions.RxCreate)) {
 				return;
 			}
 			FormErx formErx=_listFormErxs.Find(x=>x.PatientCur.PatNum==Pd.PatNum);
@@ -8388,11 +8290,10 @@ namespace OpenDental {
 			}
 			if(erxOption==ErxOption.DoseSpotWithNewCrop) {
 				//ODCloud does not support NewCrop eRx so just use DoseSpot if in web mode.
-				if(!ODBuild.IsThinfinity() && provider.IsErxEnabled==ErxEnabledStatus.EnabledWithLegacy) {
-					InputBox inputBoxPickErxOption=
-						new InputBox(Lan.g(this,"Which eRx option would you like to use?"),new List<string>() { "NewCrop","DoseSpot"});
-					inputBoxPickErxOption.ShowDialog();
-					if(inputBoxPickErxOption.IsDialogCancel) {
+				if(!ODBuild.IsWeb() && provider.IsErxEnabled==ErxEnabledStatus.EnabledWithLegacy) {
+					using InputBox inputBoxPickErxOption=
+						new InputBox(Lan.g(this,"Which eRx option would you like to use?"),new List<string>() { "NewCrop","DoseSpot"},false);
+					if(inputBoxPickErxOption.ShowDialog()==DialogResult.Cancel) {
 						return;
 					}
 					if(inputBoxPickErxOption.SelectedIndex==0) {//NewCrop
@@ -8432,9 +8333,9 @@ namespace OpenDental {
 				return;
 			}
 			if(erxOption==ErxOption.NewCrop) {
-				if(ODEnvironment.IsCloudServer) {
+				if(ODBuild.IsWeb()) {
 					//ODCloud does not support NewCrop eRx.
-					MsgBox.Show(this,"NewCrop is not available while using Open Dental Cloud.");
+					MsgBox.Show(this,"NewCrop is not available while viewing through the web.");
 					return;
 				}
 				string newCropAccountId=PrefC.GetString(PrefName.NewCropAccountId);
@@ -8473,8 +8374,8 @@ namespace OpenDental {
 						xmlDocument.LoadXml(result);
 					}
 					catch(Exception ex) {
-						FrmFriendlyException frmFriendlyException=new FrmFriendlyException(ex.Message,ex,false);
-						frmFriendlyException.Show();
+						FormFriendlyException formFriendlyException=new FormFriendlyException(ex.Message,ex,false);
+						formFriendlyException.Show();
 						return;
 					}
 					XmlNode xmlNode=xmlDocument.SelectSingleNode("//CustomerIdResponse");
@@ -8540,8 +8441,8 @@ namespace OpenDental {
 					DoseSpot.GetClinicIdAndKey(clinicNum,doseSpotUserID,programErx,listProgramPropertiesDoseSpot,out doseSpotClinicID,out doseSpotClinicKey);
 				}
 				catch(Exception ex) {
-					FrmFriendlyException frmFriendlyException=new FrmFriendlyException("Error: "+ex.Message,ex,false);
-					frmFriendlyException.Show();
+					FormFriendlyException formFriendlyException=new FormFriendlyException("Error: "+ex.Message,ex,false);
+					formFriendlyException.Show();
 					return;
 				}
 				if(!isShowRefillsAndErrors) {
@@ -8552,8 +8453,8 @@ namespace OpenDental {
 						DoseSpot.ValidatePatientData(Pd.Patient);
 					}
 					catch(Exception ex) {
-						FrmFriendlyException frmFriendlyException=new FrmFriendlyException("Error: "+ex.Message,ex,false);
-						frmFriendlyException.Show();
+						FormFriendlyException formFriendlyException=new FormFriendlyException("Error: "+ex.Message,ex,false);
+						formFriendlyException.Show();
 						return;
 					}
 					OIDExternal oIdExternal=DoseSpot.GetDoseSpotPatID(Pd.PatNum);
@@ -8566,8 +8467,8 @@ namespace OpenDental {
 						}
 					}
 					catch(Exception ex) {
-						FrmFriendlyException frmFriendlyException=new FrmFriendlyException("Error: "+ex.Message,ex,false);
-						frmFriendlyException.Show();
+						FormFriendlyException formFriendlyException=new FormFriendlyException("Error: "+ex.Message,ex,false);
+						formFriendlyException.Show();
 						return;
 					}
 				}
@@ -8576,8 +8477,8 @@ namespace OpenDental {
 						byteArrayPostData=ErxXml.BuildDoseSpotPostDataBytesRefillsErrors(doseSpotClinicID,doseSpotClinicKey,doseSpotUserID,out queryString);
 					}
 					catch(Exception ex) {
-						FrmFriendlyException frmFriendlyException=new FrmFriendlyException("Error: "+ex.Message,ex,false);
-						frmFriendlyException.Show();
+						FormFriendlyException formFriendlyException=new FormFriendlyException("Error: "+ex.Message,ex,false);
+						formFriendlyException.Show();
 						return;
 					}
 				}
@@ -8588,15 +8489,15 @@ namespace OpenDental {
 						if(!listProviders.Any(x => x.ProvNum==provider.ProvNum)) {
 							listProviders.Add(provider);
 						}
-						FrmProviderPick frmProviderPick=new FrmProviderPick(listProviders.FindAll(x =>!x.IsHidden));
-						frmProviderPick.ProvNumSelected=provider.ProvNum;
-						frmProviderPick.IsNoneAvailable=false;
-						frmProviderPick.IsShowAllAvailable=true;
-						frmProviderPick.ShowDialog();
-						if(!frmProviderPick.IsDialogOK) {
+						using FormProviderPick formProviderPick=new FormProviderPick(listProviders.FindAll(x =>!x.IsHidden));
+						formProviderPick.ProvNumSelected=provider.ProvNum;
+						formProviderPick.IsNoneAvailable=false;
+						formProviderPick.IsShowAllAvailable=true;
+						formProviderPick.ShowDialog();
+						if(formProviderPick.DialogResult==DialogResult.Cancel) {
 							return;
 						}
-						List<Userod> listUserodsDose=Userods.GetWhere(x => x.ProvNum==frmProviderPick.ProvNumSelected,true);//Only consider non-hidden users.
+						List<Userod> listUserodsDose=Userods.GetWhere(x => x.ProvNum==formProviderPick.ProvNumSelected,true);//Only consider non-hidden users.
 						listUserodsDose=listUserodsDose.FindAll(x => {//Finds users that have a DoseSpot ID
 							try {
 								return !string.IsNullOrWhiteSpace(DoseSpot.GetUserID(x,clinicNum));
@@ -8617,7 +8518,7 @@ namespace OpenDental {
 							MsgBox.Show(this,"There are too many Open Dental users associated to the selected provider.");
 							return;
 						}
-						provider=Providers.GetProv(frmProviderPick.ProvNumSelected);
+						provider=Providers.GetProv(formProviderPick.ProvNumSelected);
 						if(provider.IsHidden) {
 							MsgBox.Show(this,"The primary provider for this patient is hidden. Please select another provider.");
 							return;
@@ -8635,8 +8536,8 @@ namespace OpenDental {
 							onBehalfOfUserId=(DoseSpot.GetUserID(userodOnBehalfOf,clinicNum));
 						}
 						catch(Exception ex) {
-							FrmFriendlyException frmFriendlyException=new FrmFriendlyException("Error: "+ex.Message,ex,false);
-							frmFriendlyException.Show();
+							FormFriendlyException formFriendlyException=new FormFriendlyException("Error: "+ex.Message,ex,false);
+							formFriendlyException.Show();
 							return;
 						}
 					}
@@ -8644,8 +8545,8 @@ namespace OpenDental {
 						byteArrayPostData=ErxXml.BuildDoseSpotPostDataBytes(doseSpotClinicID,doseSpotClinicKey,doseSpotUserID,onBehalfOfUserId,Pd.Patient,out queryString);
 					}
 					catch(Exception ex) {
-						FrmFriendlyException frmFriendlyException=new FrmFriendlyException("Error: "+ex.Message,ex,false);
-						frmFriendlyException.Show();
+						FormFriendlyException formFriendlyException=new FormFriendlyException("Error: "+ex.Message,ex,false);
+						formFriendlyException.Show();
 						return;
 					}
 				}
@@ -8656,8 +8557,8 @@ namespace OpenDental {
 							DoseSpot.ValidateProvider(provider,clinicNum);
 						}
 						catch(Exception ex) {
-							FrmFriendlyException frmFriendlyException=new FrmFriendlyException("Error: "+ex.Message,ex,false);
-							frmFriendlyException.Show();
+							FormFriendlyException formFriendlyException=new FormFriendlyException("Error: "+ex.Message,ex,false);
+							formFriendlyException.Show();
 							return;
 						}
 						//hook for additional authorization before prescription is saved
@@ -8703,26 +8604,37 @@ namespace OpenDental {
 					DoseSpot.SyncPrescriptionsToDoseSpot(doseSpotClinicID,doseSpotClinicKey,doseSpotUserID,Pd.PatNum);
 				}
 				catch(Exception ex) {
-					FrmFriendlyException frmFriendlyException=new FrmFriendlyException("Error: "+ex.Message,ex,false);
-					frmFriendlyException.Show();
+					FormFriendlyException formFriendlyException=new FormFriendlyException("Error: "+ex.Message,ex,false);
+					formFriendlyException.Show();
 					return;
 				}
 				if(isDoseSpotAccessAllowed) {
-					//The user is either a provider with granted access, or a proxy clinician
-					FormErx formErxNew=new FormErx();
-					formErxNew.PatientCur=Pd.Patient;
-					formErxNew.ByteArray=byteArrayPostData;
-					formErxNew.StringSSOQuery=queryString;
-					formErxNew.ErxOptionCur=erxOption;
-					_listFormErxs.Add(formErxNew);//already checked that no forms for this pat.
-					formErxNew.Show();//Non-modal so user can browse OD while writing prescription.  When form is closed, ErxBrowserClosed() is called below.
+					//Enforce Latest IE Version Available.
+					if(MiscUtils.TryUpdateIeEmulation()) {
+						MsgBox.Show(this,"Browser emulation version updated.\r\nYou must restart this application before using eRx.");
+						return;
+					}
+					if(ODBuild.IsWeb()) {
+						//If ODCloud, open a new browser tab instead of using FormErx because the WebView2 control does not work with VirtualUI.
+						Process.Start(Erx.GetRxDoseSpotUrl(queryString));
+					}
+					else {
+						//The user is either a provider with granted access, or a proxy clinician
+						FormErx formErxNew=new FormErx();
+						formErxNew.PatientCur=Pd.Patient;
+						formErxNew.ByteArray=byteArrayPostData;
+						formErxNew.StringSSOQuery=queryString;
+						formErxNew.ErxOptionCur=erxOption;
+						_listFormErxs.Add(formErxNew);//already checked that no forms for this pat.
+						formErxNew.Show();//Non-modal so user can browse OD while writing prescription.  When form is closed, ErxBrowserClosed() is called below.
+					}
 				}
 				ErxLog erxLogDoseSpot=new ErxLog();
 				erxLogDoseSpot.PatNum=Pd.PatNum;
 				erxLogDoseSpot.MsgText=queryString;
 				erxLogDoseSpot.ProvNum=provider.ProvNum;
 				erxLogDoseSpot.UserNum=Security.CurUser.UserNum;
-				SecurityLogs.MakeLogEntry(EnumPermType.RxCreate,erxLogDoseSpot.PatNum,Lan.g(this,"eRx DoseSpot entry made for provider")+" "+Providers.GetAbbr(erxLogDoseSpot.ProvNum));
+				SecurityLogs.MakeLogEntry(Permissions.RxCreate,erxLogDoseSpot.PatNum,Lan.g(this,"eRx DoseSpot entry made for provider")+" "+Providers.GetAbbr(erxLogDoseSpot.ProvNum));
 				ErxLogs.Insert(erxLogDoseSpot);
 				return;
 			}
@@ -8800,7 +8712,7 @@ namespace OpenDental {
 			bool isAccessAllowed=true;
 			UpdateErxAccess(npi,"",0,"","",erxOption);//0/blank/blank for clinicNum/clinicid/clinickey is fine because we don't enable/disable the clinic for NewCrop.
 			ProviderErx providerErx=ProviderErxs.GetOneForNpiAndOption(npi,erxOption);
-			if(!providerErx.IsIdentifyProofed) {
+			if(!PrefC.GetBool(PrefName.NewCropIsLegacy) && !providerErx.IsIdentifyProofed) {
 				if(PrefC.GetString(PrefName.NewCropPartnerName)!="" || PrefC.GetString(PrefName.NewCropPassword)!="") {//Customer of a distributor
 					MessageBox.Show(Lan.g(this,"Provider")+" "+provider.Abbr+" "
 						+Lan.g(this,"must complete Identity Proofing (IDP) before using eRx.  Call support for details."));
@@ -8846,6 +8758,11 @@ namespace OpenDental {
 //			}
 //			IE.Navigate(newCropUrl,null,null,PostDataBytes,additionalHeaders);
 			#endregion Launch eRx in external browser window.
+			//Enforce Latest IE Version Available.
+			if(MiscUtils.TryUpdateIeEmulation()) {
+				MsgBox.Show(this,"Browser emulation version updated.\r\nYou must restart this application before using eRx.");
+				return;
+			}
 			FormErx formErxNew1=new FormErx();
 			formErxNew1.PatientCur=Pd.Patient;
 			formErxNew1.ByteArray=byteArrayPostDataBytes;
@@ -8861,8 +8778,8 @@ namespace OpenDental {
 					Erx.ComposeNewRxNewCropWebRequest(byteArrayPostDataBytes);
 				}
 				catch(Exception ex) {
-					FrmFriendlyException frmFriendlyException=new FrmFriendlyException(Lan.g(this,"Error launching browser window.  Internet Explorer might not be installed.")+" "+ex.Message,ex,false);
-					frmFriendlyException.Show();
+					FormFriendlyException formFriendlyException=new FormFriendlyException(Lan.g(this,"Error launching browser window.  Internet Explorer might not be installed.")+" "+ex.Message,ex,false);
+					formFriendlyException.Show();
 					return;
 				}
 			}
@@ -8871,7 +8788,7 @@ namespace OpenDental {
 			erxLog.MsgText=clickThroughXml;
 			erxLog.ProvNum=provider.ProvNum;
 			erxLog.UserNum=Security.CurUser.UserNum;
-			SecurityLogs.MakeLogEntry(EnumPermType.RxCreate,erxLog.PatNum,Lan.g(this,"eRx entry made for provider")+" "+Providers.GetAbbr(erxLog.ProvNum));
+			SecurityLogs.MakeLogEntry(Permissions.RxCreate,erxLog.PatNum,Lan.g(this,"eRx entry made for provider")+" "+Providers.GetAbbr(erxLog.ProvNum));
 			ErxLogs.Insert(erxLog);
 		}
 
@@ -8980,12 +8897,12 @@ namespace OpenDental {
 		}
 
 		private void Tool_Layout_Click() {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			using FormSheetDefs formSheetDefs=new FormSheetDefs(SheetTypeEnum.ChartModule);
 			formSheetDefs.ShowDialog();
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Sheets");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Sheets");
 			RefreshModuleScreen(false);//Update UI to reflect any changed dynamic SheetDefs.
 			LayoutControls();
 		}
@@ -9060,7 +8977,7 @@ namespace OpenDental {
 
 		private void Tool_Rx_Click() {
 			//This code is a copy of FormRxManage.butRxNew_Click().  Any changes to this code need to be changed there too.
-			if(!Security.IsAuthorized(EnumPermType.RxCreate)) {
+			if(!Security.IsAuthorized(Permissions.RxCreate)) {
 				return;
 			}
 			if(UsingEcwTightOrFull() && Bridges.ECW.UserId!=0) {
@@ -9088,7 +9005,7 @@ namespace OpenDental {
 				return;
 			}
 			ModuleSelected(Pd.PatNum);
-			SecurityLogs.MakeLogEntry(EnumPermType.RxCreate,Pd.PatNum,"Created prescription.");
+			SecurityLogs.MakeLogEntry(Permissions.RxCreate,Pd.PatNum,"Created prescription.");
 		}
 		
 		private void Tool_ToothChart_Click() {
@@ -9111,6 +9028,9 @@ namespace OpenDental {
 				providerErx.NationalProviderID=npi;
 				if(erxOption==ErxOption.NewCrop) {
 					providerErx.IsEnabled=ErxStatus.Disabled;
+					if(PrefC.GetBool(PrefName.NewCropIsLegacy)) {
+						providerErx.IsEnabled=ErxStatus.Enabled;
+					}
 				}
 				else {//DoseSpot
 					providerErx.IsEnabled=ErxStatus.PendingAccountId;
@@ -9157,7 +9077,7 @@ namespace OpenDental {
 				return;
 			}
 			if(providerErx.IsEnabled==ErxStatus.Enabled) { //If prov is enabled, don't check with OD HQ to see if the prov has been enabled yet.
-				if(erxOption!=ErxOption.NewCrop ||providerErx.IsIdentifyProofed) {//If new prov is identity proofed.
+				if(erxOption!=ErxOption.NewCrop || PrefC.GetBool(PrefName.NewCropIsLegacy) || providerErx.IsIdentifyProofed) {//If new prov is identity proofed.
 					if(providerErx.IsSentToHq) {//If prov has not been sent to OD HQ yet, always send to OD HQ so we can track our providers using eRx.
 						if(dateLastAccessMonth>=new DateTime(DateTime.Today.Year,DateTime.Today.Month,1)) {//If it's been less than a month since sent to OD HQ.
 							return;
@@ -9430,7 +9350,6 @@ namespace OpenDental {
 			}
 			//float fontSize=gridProg.Font.Size;
 			if(checkShowOrtho.Checked){
-				//The panelGridProg will be visible only if it is in the SheetDef and checkTreatPlans.Checked==false and checkShowOrtho.Checked==false
 				panelGridProg.Visible=false;
 				tabControlOrthoCategories.Visible=true;
 				LayoutManager.MoveLocation(tabControlOrthoCategories,new Point(panelGridProg.Left,panelGridProg.Top));
@@ -9458,6 +9377,7 @@ namespace OpenDental {
 				LayoutManager.MoveSize(panelTPpriority,new Size(LayoutManager.Scale(77),panelGridProg.Bottom-gridTpProcs.Top));
 				return;
 			}
+			panelGridProg.Visible=true;
 			gridTreatPlans.Visible=false;
 			butNewTP.Visible=false;
 			gridTpProcs.Visible=false;
@@ -9501,16 +9421,6 @@ namespace OpenDental {
 				}
 				return;//cancelled insert
 			}
-			if(procedure.ProcStatus==ProcStat.TP || procedure.ProcStatus==ProcStat.TPi) {//Now that a procedure is selected, attach it to the correct TP or TPi
-				long priorityNum=0;
-				if(comboPriority.SelectedIndex!=0) {
-					priorityNum=comboPriority.GetSelectedDefNum();
-				}
-				if(gridTreatPlans.GetSelectedIndex()>=0) {
-					List<long> listTpNums=gridTreatPlans.SelectedIndices.Select(x => _listTreatPlans[x].TreatPlanNum).ToList();
-					ChartModules.AttachProcToTPs(procedure,_listTreatPlans,listTpNums,Pd,priorityNum);
-				}
-			}
 			//The status may have been edited in formProcEdit, should rely on ProcCur.ProcStatus
 			ChartModules.AddProcSetCompleteHelper(procedure);
 			logComplCreate(procedure);
@@ -9529,11 +9439,13 @@ namespace OpenDental {
 			else {
 				procedure.DateTP=PIn.Date(textDate.Text);
 			}
+			ProcedureCode procedureCode=ProcedureCodes.GetProcCode(procedure.CodeNum);
 			if(_procStatNew==ProcStat.C) {
 				if(procedure.ProcDate.Date>DateTime.Today.Date && !PrefC.GetBool(PrefName.FutureTransDatesAllowed)) {
 					MsgBox.Show(this,"Completed procedures cannot be set for future dates.");
 					return false;
 				}
+				Procedures.SetOrthoProcComplete(procedure,procedureCode); //does nothing if not an ortho proc
 			}
 			long priorityNum=0;
 			if(comboPriority.SelectedIndex!=0) {
@@ -9554,7 +9466,7 @@ namespace OpenDental {
 			List<ClaimProc> listClaimProcs=new List<ClaimProc>();
 			List<ClaimProcHist> listClaimProcHistsLoop=new List<ClaimProcHist>();
 			//If proc has selected teeth, we wont be showing the edit form, so set status back to what the user picked. 
-			if(IsToothSelectionValidForTxArea(procedure) || _procStatNew==ProcStat.EO) {//EO procs can't be added to an appointment in Appointment Edit Window, so skip this check
+			if(IsToothSelectionValidForTxArea(procedure)) { 
 				//If the edit form is to be shown, use Deleted as the procStatus when inserting. Otherwise insert with the users chosen value.
 				procedure.ProcStatus=_procStatNew;
 			}
@@ -9566,19 +9478,16 @@ namespace OpenDental {
 			{
 				return false;
 			}
-			ProcedureCode procedureCode=ProcedureCodes.GetProcCode(procedure.CodeNum);
-			if(procedure.ProcStatus==ProcStat.C) {
-				Procedures.SetOrthoProcComplete(procedure,procedureCode); //does nothing if not an ortho proc
-			}
+			long codeNumVerify;
 			bool isMandibular=false;
 			if(!string.IsNullOrEmpty(procedure.ToothRange)) {
 				isMandibular=procedure.ToothRange.Split(',').Any(x => !Tooth.IsMaxillary(x));
 			}
-			long codeNumRecommended=AutoCodeItems.GetRecommendedCodeNum(procedure,procedureCode,Pd.Patient,isMandibular,listClaimProcs);
-			if(procedure.CodeNum==codeNumRecommended) {
+			bool shouldPromptForCodeChange=AutoCodeItems.ShouldPromptForCodeChange(procedure,procedureCode,Pd.Patient,isMandibular,listClaimProcs,out codeNumVerify);
+			if(!shouldPromptForCodeChange) {
 				return true;
 			}
-			FrmAutoCodeLessIntrusive frmAutoCodeLessIntrusive=new FrmAutoCodeLessIntrusive(Pd.Patient,procedure,procedureCode,codeNumRecommended,Pd.ListPatPlans,Pd.ListInsSubs,Pd.ListInsPlans,
+			FrmAutoCodeLessIntrusive frmAutoCodeLessIntrusive=new FrmAutoCodeLessIntrusive(Pd.Patient,procedure,procedureCode,codeNumVerify,Pd.ListPatPlans,Pd.ListInsSubs,Pd.ListInsPlans,
 				Pd.ListBenefits,listClaimProcs);
 
 			if(frmAutoCodeLessIntrusive.ShowDialog() || !PrefC.GetBool(PrefName.ProcEditRequireAutoCodes)) {
@@ -9602,14 +9511,13 @@ namespace OpenDental {
 			return false;
 		}
 
-		/// <summary>Determines whether or not the procedure is pre-inserted as deleted by checking if treatment areas selections are valid.</summary>
 		private bool IsToothSelectionValidForTxArea(Procedure proc) {
 			ProcedureCode code=ProcedureCodes.GetProcCode(proc.CodeNum);
 			switch(code.TreatArea) {
 				case TreatmentArea.None:
 					return true;
 				case TreatmentArea.Surf:
-					return !(proc.Surf.IsNullOrEmpty()||proc.ToothNum.IsNullOrEmpty());
+					return !(proc.Surf.IsNullOrEmpty()||proc.ToothRange.IsNullOrEmpty());
 				case TreatmentArea.Tooth:
 					return !proc.ToothNum.IsNullOrEmpty();
 				case TreatmentArea.Mouth:
@@ -9619,8 +9527,11 @@ namespace OpenDental {
 				case TreatmentArea.Sextant:
 					return !proc.Surf.IsNullOrEmpty(); 
 				case TreatmentArea.Arch:
-					//Consider all arch selections invalid. FormProcEdit will always show.
-					return !proc.Surf.IsNullOrEmpty(); 
+					//no arch proc added from chart module can meet this requirement, but if it ever becomes possible this should work.
+					if(code.AreaAlsoToothRange) {
+						return !(proc.Surf.IsNullOrEmpty()&&proc.ToothRange.IsNullOrEmpty());
+					}
+					return !proc.Surf.IsNullOrEmpty();
 				case TreatmentArea.ToothRange:
 					return !proc.ToothRange.IsNullOrEmpty();
 				default: return false;
@@ -9741,8 +9652,7 @@ namespace OpenDental {
 		}
 
 		private void DeleteRows() {
-			List<DataRow> listDataRowsSelected=gridProg.SelectedTags<DataRow>();
-			if(listDataRowsSelected.IsNullOrEmpty()) {
+			if(gridProg.SelectedIndices.Length==0) {
 				MessageBox.Show(Lan.g(this,"Please select an item first."));
 				return;
 			}
@@ -9756,34 +9666,27 @@ namespace OpenDental {
 			int countSkippedAttached=0;
 			int countSkippedLinkedToOrthoCase=0;
 			int countSkippedAttachedToPreauth=0;
+			List<DataRow> listDataRowsSelected=gridProg.SelectedIndices.Where(x => x>-1 && x<gridProg.ListGridRows.Count)
+				.Select(x => (DataRow)gridProg.ListGridRows[x].Tag).ToList();
 			List<long> listProcNumsSelected=listDataRowsSelected
 				.Where(x => PIn.Long(x["ProcNum"].ToString())!=0)
 				.Select(x => PIn.Long(x["ProcNum"].ToString())).ToList();
-			Pd.ClearAndFill(EnumPdTable.Procedure,EnumPdTable.Appointment);
-			List<Procedure> listProceduresSelected=Pd.ListProcedures.FindAll(x => listProcNumsSelected.Contains(x.ProcNum));
-			string message=Appointments.CheckRequiredProcForApptType(listProceduresSelected,pd:Pd);
-			if(message!=""){
-				MsgBox.Show(message);
-				return;
-			}
 			if(PrefC.GetBool(PrefName.ApptsRequireProc)) {
-				List<Appointment> listAppointmentsEmpty=Appointments.GetApptsGoingToBeEmpty(listProceduresSelected,pd:Pd);
-				if(listAppointmentsEmpty.Count>0) {
+				List<Procedure> listProceduresSelected=Procedures.GetManyProc(listProcNumsSelected,false);
+				bool areApptsGoingToBeEmpty=Appointments.AreApptsGoingToBeEmpty(listProceduresSelected);
+				if(areApptsGoingToBeEmpty) {
 					MsgBox.Show("At least one procedure must be attached to the appointment.");
 					return;
 				}
 			}
-			Pd.Clear(EnumPdTable.ClaimProc,EnumPdTable.OrthoCase,EnumPdTable.PaySplit,EnumPdTable.ProcGroupItem);
-			for(int i=0;i<listDataRowsSelected.Count;i++) {
+			OrthoProcLink orthoProcLink=null;
+			List<OrthoProcLink> listOrthoProcLinks=OrthoProcLinks.GetManyForProcs(listProcNumsSelected);
+			for(int i=0;i<listDataRowsSelected.Count();i++) {
 				long procNum=PIn.Long(listDataRowsSelected[i]["ProcNum"].ToString());
-				long rxNum=PIn.Long(listDataRowsSelected[i]["RxNum"].ToString());
-				long sheetNum=PIn.Long(listDataRowsSelected[i]["SheetNum"].ToString(),false);
-				OrthoProcLink orthoProcLink=null;
 				if(procNum!=0) {
-					Pd.FillIfNeeded(EnumPdTable.OrthoCase);
-					orthoProcLink=Pd.ListOrthoProcLinks.Find(x=>x.ProcNum==procNum);
+					orthoProcLink=listOrthoProcLinks.Find(x=>x.ProcNum==procNum);
 				}
-				EnumSkippedRow enumSkippedRow=CanDeleteRow(listDataRowsSelected[i],isCheckDb:false,orthoProcLink);
+				EnumSkippedRow enumSkippedRow=CanDeleteRow(listDataRowsSelected[i],isCheckDb:true,orthoProcLink);
 				switch(enumSkippedRow) {
 					case EnumSkippedRow.Security:
 						countSkippedSecurity++;
@@ -9807,49 +9710,24 @@ namespace OpenDental {
 					case EnumSkippedRow.None:
 						break;
 				}
-				Sheet sheet=null;
-				if(sheetNum!=0) {
-					sheet=Sheets.GetSheet(sheetNum);
-				}
-				//This specific sheet was saved as a document due to it having a procedure grid and cannot be deleted through FormSheetFillEdit
-				if(sheet!=null) {
-					Sheets.Delete(sheet.SheetNum);
-					SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,sheet.PatNum,sheet.Description
-						+" "+Lan.g(this,"deleted from")+" "+sheet.DateTimeSheet.ToShortDateString());
-					Document document=new Document();
-					document=Documents.GetByNum(sheet.DocNum,true);
-					if(document!=null) {
-						try {
-							ImageStore.DeleteDocuments(new List<Document> {document},_patFolder);
-						}
-						catch(Exception ex) {//Image could not be deleted, in use.
-							MsgBox.Show(this,ex.Message);
-						}
-					}
-					continue;
-				}
-				if(procNum!=0) {
+				if(listDataRowsSelected[i]["ProcNum"].ToString()!="0") {
 					try {
-						Procedures.Delete(procNum);//also deletes the claimprocs
+						Procedures.Delete(PIn.Long(listDataRowsSelected[i]["ProcNum"].ToString()));//also deletes the claimprocs
 					}
 					catch(Exception ex) {
 						MessageBox.Show(ex.Message);
 						continue;
 					}
-					Pd.FillIfNeeded(EnumPdTable.Procedure);
-					Procedure procedure=Pd.ListProcedures.Find(x => x.ProcNum==procNum);
-					if(procedure!=null) {
-						CanadianLabFeeHelper(procedure.ProcNumLab);
-					}
-					SecurityLogs.MakeLogEntry(EnumPermType.ProcDelete,Pd.PatNum,listDataRowsSelected[i]["ProcCode"].ToString()+" ("+listDataRowsSelected[i]["procStatus"]+"), "
+					CanadianLabFeeHelper(Procedures.GetOneProc(PIn.Long(listDataRowsSelected[i]["ProcNum"].ToString()),false).ProcNumLab);
+					SecurityLogs.MakeLogEntry(Permissions.ProcDelete,Pd.PatNum,listDataRowsSelected[i]["ProcCode"].ToString()+" ("+listDataRowsSelected[i]["procStatus"]+"), "
 						+PIn.Double(listDataRowsSelected[i]["procFee"].ToString()).ToString("c"));
 					continue;
 				}
-				if(rxNum!=0) {
-					RxPat rxPat=RxPats.GetRx(rxNum);
-					SecurityLogs.MakeLogEntry(EnumPermType.RxEdit,Pd.PatNum,"FROM("+rxPat.RxDate.ToShortDateString()+","+rxPat.Drug+","+rxPat.ProvNum+","
+				if(listDataRowsSelected[i]["RxNum"].ToString()!="0") {
+					RxPat rxPat=RxPats.GetRx(PIn.Long(listDataRowsSelected[i]["RxNum"].ToString()));
+					SecurityLogs.MakeLogEntry(Permissions.RxEdit,Pd.PatNum,"FROM("+rxPat.RxDate.ToShortDateString()+","+rxPat.Drug+","+rxPat.ProvNum+","
 						+rxPat.Disp+","+rxPat.Refills+")"+"\r\nTO('deleted')",rxPat.RxNum,rxPat.DateTStamp);
-					RxPats.Delete(rxNum);
+					RxPats.Delete(PIn.Long(listDataRowsSelected[i]["RxNum"].ToString()));
 				}
 			}
 			Recalls.Synch(Pd.PatNum);
@@ -9888,7 +9766,7 @@ namespace OpenDental {
 					return;
 				}
 				//We will call this method again with the real ProcFee once we know it.
-				if(!Security.IsAuthorized(EnumPermType.ProcComplCreate,PIn.Date(textDate.Text),ProcedureCodes.GetCodeNum(textProcCode.Text),0)) {
+				if(!Security.IsAuthorized(Permissions.ProcComplCreate,PIn.Date(textDate.Text),ProcedureCodes.GetCodeNum(textProcCode.Text),0)) {
 					return;
 				}
 			}
@@ -9903,7 +9781,7 @@ namespace OpenDental {
 					}
 				}
 			}
-			if(!ProcedureCodes.IsValidCode(textProcCode.Text)) {
+			if(!ProcedureCodes.GetContainsKey(textProcCode.Text)) {
 				MessageBox.Show(Lan.g(this,"Invalid code."));
 				//textProcCode.Text="";
 				textProcCode.SelectionStart=textProcCode.Text.Length;
@@ -10050,9 +9928,8 @@ namespace OpenDental {
 			textProcCode.Text="";
 			textProcCode.Select();
 			if(_procStatNew==ProcStat.C) {
-				AutomationL.Trigger(EnumAutomationTrigger.ProcedureComplete,listProcCodes,Pd.PatNum);
+				AutomationL.Trigger(AutomationTrigger.CompleteProcedure,listProcCodes,Pd.PatNum);
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
 		}
 
 		///<summary>If quickbutton, then pass in procButtonQuick and set procButton to null.</summary>
@@ -10063,7 +9940,7 @@ namespace OpenDental {
 						+"If you want to be able to set procedures complete, you must turn on that option in Setup | Preferences | Chart - Procedures.");
 					return;
 				}
-				if(!Security.IsAuthorized(EnumPermType.ProcComplCreate,PIn.Date(textDate.Text))) {
+				if(!Security.IsAuthorized(Permissions.ProcComplCreate,PIn.Date(textDate.Text))) {
 					return;
 				}
 			}
@@ -10460,15 +10337,6 @@ namespace OpenDental {
 						List<Procedure> listProceduresTooth=_listProceduresCharted.FindAll(x => x.ToothNum==_toothChartRelay.SelectedTeeth[i] && x.ToothRange=="");
 						ProcMultiVisits.CreateGroup(listProceduresTooth);
 					}
-					if(_toothChartRelay.SelectedTeeth.Count==0){
-						List<Procedure> listProceduresTeeth=_listProceduresCharted.FindAll(x => !string.IsNullOrEmpty(x.ToothNum) && x.ToothRange=="");
-						List<string> listDistinctToothNumbers=listProceduresTeeth.Select(x => x.ToothNum).ToList();
-						listDistinctToothNumbers=listDistinctToothNumbers.Distinct().ToList();
-						for(int i=0;i<listDistinctToothNumbers.Count;i++) {
-							List<Procedure> listProceduresTeethMatches=listProceduresTeeth.FindAll(x => x.ToothNum==listDistinctToothNumbers[i]).ToList();
-							ProcMultiVisits.CreateGroup(listProceduresTeethMatches);
-						}
-					}
 					//Add any leftover procedures to it's own group
 					List<Procedure> listProceduresRanged=_listProceduresCharted.FindAll(x => x.ToothNum=="");
 					ProcMultiVisits.CreateGroup(listProceduresRanged);
@@ -10478,10 +10346,9 @@ namespace OpenDental {
 			ClearButtons();
 			FillProgNotes();
 			if(_procStatNew==ProcStat.C) {
-				AutomationL.Trigger(EnumAutomationTrigger.ProcedureComplete,listProcCodes,Pd.PatNum);
+				AutomationL.Trigger(AutomationTrigger.CompleteProcedure,listProcCodes,Pd.PatNum);
 				Pd.FillIfNeeded(EnumPdTable.Procedure);
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
 			ModuleSelected(Pd.PatNum);
 		}
 
@@ -10594,9 +10461,9 @@ namespace OpenDental {
 			#endregion Movement
 			#region Hidden
 			listHidden.Items.Clear();
-			_listHiddenTeeth=ToothInitials.GetHiddenTeeth(Pd.ListToothInitials);
-			for(int i=0;i<_listHiddenTeeth.Count;i++) {
-				listHidden.Items.Add(Tooth.Display(_listHiddenTeeth[i]));
+			_arrayListHiddenTeeth=ToothInitials.GetHiddenTeeth(Pd.ListToothInitials);
+			for(int i=0;i<_arrayListHiddenTeeth.Count;i++) {
+				listHidden.Items.Add(Tooth.Display((string)_arrayListHiddenTeeth[i]));
 			}
 			#endregion Hidden
 			#region TextDraw
@@ -10608,7 +10475,7 @@ namespace OpenDental {
 			for(int i=0;i<_listToothInitialsText.Count;i++) {
 				listBoxText.Items.Add(_listToothInitialsText[i].GetTextString(),_listToothInitialsText[i]);
 			}
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				listBoxText.Enabled=false;
 			}
 			#endregion TextDraw
@@ -11326,13 +11193,6 @@ namespace OpenDental {
 		}
 
 		private void FillGridOrthoHardware(){
-			if(IsPatientNull()) {
-				gridOrtho.BeginUpdate();
-				gridOrtho.ListGridRows.Clear();
-				gridOrtho.Columns.Clear();
-				gridOrtho.EndUpdate();
-				return;
-			}
 			Cursor=Cursors.WaitCursor;
 			gridOrtho.SelectionMode=GridSelectionMode.MultiExtended;
 			ContextMenu contextMenu=new ContextMenu();
@@ -11397,13 +11257,6 @@ namespace OpenDental {
 		}
 
 		private void FillGridOrthoChart(){
-			if(IsPatientNull()) {
-				gridOrtho.BeginUpdate();
-				gridOrtho.ListGridRows.Clear();
-				gridOrtho.Columns.Clear();
-				gridOrtho.EndUpdate();
-				return;
-			}
 			Cursor=Cursors.WaitCursor;
 			gridOrtho.SelectionMode=GridSelectionMode.None;
 			//Get all the corresponding fields from the OrthoChartTabLink table that are associated with the currently selected ortho tab.
@@ -11466,7 +11319,6 @@ namespace OpenDental {
 			}
 			SignatureBoxWrapper signatureBoxWrapper=new SignatureBoxWrapper();
 			signatureBoxWrapper.SignatureMode=SignatureBoxWrapper.SigMode.OrthoChart;
-			Pd.ListOrthoChartRows=Pd.ListOrthoChartRows.OrderBy(x=>x.DateTimeService).ToList();
 			for(int r=0;r<Pd.ListOrthoChartRows.Count;r++){
 				if(!Pd.ListOrthoChartRows[r].DateTimeService.Date.Between(dateTimeFrom,dateTimeTo) ){
 					continue;
@@ -11556,10 +11408,6 @@ namespace OpenDental {
 		}
 
 		private void gridOrtho_DoubleClick(object sender,EventArgs e) {
-			//Patient was nulled.
-			if(IsPatientNull()) {
-				return;
-			}
 			//this is not a CellDoubleClick. They can click in the area below the rows.
 			int idx=tabControlOrthoCategories.SelectedIndex;
 			if(idx==0){

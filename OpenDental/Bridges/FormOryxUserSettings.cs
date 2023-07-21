@@ -35,7 +35,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			_userNamePref=_userNamePref??new UserOdPref {
 				Fkey=_progOryx.ProgramNum,
 				FkeyType=UserOdFkeyType.ProgramUserName,
@@ -52,6 +52,11 @@ namespace OpenDental {
 			UserOdPrefs.Upsert(_passwordPref);
 			DataValid.SetInvalid(InvalidType.UserOdPrefs);
 			DialogResult=DialogResult.OK;
+			Close();
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 			Close();
 		}
 

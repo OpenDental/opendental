@@ -146,7 +146,7 @@ namespace OpenDental {
 				}
 			}
 			if(_isPaySimpleEnabled) {
-				textAccountType.Text=CreditCardCur.IsPaySimpleACH() ? Lans.g(this,"ACH") : Lans.g(this,"Credit Card");
+				textAccountType.Text=(CreditCardCur.CCSource==CreditCardSource.PaySimpleACH ? Lans.g(this,"ACH") : Lans.g(this,"Credit Card"));
 			}
 			textPreviousStartDate.Text=_creditCard.DateStart.ToShortDateString();
 		}
@@ -176,11 +176,11 @@ namespace OpenDental {
 			try {
 				if(Regex.IsMatch(textExpDate.Text,@"^\d\d[/\- ]\d\d$")) {//08/07 or 08-07 or 08 07
 					CreditCardCur.CCExpiration=new DateTime(Convert.ToInt32("20"+textExpDate.Text.Substring(3,2)),Convert.ToInt32(textExpDate.Text.Substring(0,2)),1);
-					}
+				}
 				else if(Regex.IsMatch(textExpDate.Text,@"^\d{4}$")) {//0807
 					CreditCardCur.CCExpiration=new DateTime(Convert.ToInt32("20"+textExpDate.Text.Substring(2,2)),Convert.ToInt32(textExpDate.Text.Substring(0,2)),1);
 				}
-				else if(!CreditCardCur.IsPaySimpleACH()) {
+				else if(CreditCardCur.CCSource!=CreditCardSource.PaySimpleACH) {
 					MsgBox.Show(this,"Expiration format invalid.");
 					return false;
 				}
@@ -393,15 +393,16 @@ namespace OpenDental {
 			for(int i=1;i<=31;i++) {
 				listDaysOfMonth.Add(i.ToString());
 			}
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.ComboSelect;
-			inputBoxParam.LabelText=Lans.g(this,"Day of month");
-			inputBoxParam.ListSelections=listDaysOfMonth;
-			inputBoxParam.SizeParam=new System.Windows.Size(75,21);
-			InputBox inputBox=new InputBox(inputBoxParam);
+			using InputBox inputBox=new InputBox(new List<InputBoxParam> { new InputBoxParam {
+				InputBoxType_=InputBoxType.ComboSelect,
+				LabelText=Lans.g(this,"Day of month"),
+				ListSelections=listDaysOfMonth,
+				SizeParam=new Size(75,21),
+				HorizontalAlign=HorizontalAlignment.Center,
+			}});
 			inputBox.Text=Lans.g(this,"Select Day");
 			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			if(inputBox.DialogResult!=DialogResult.OK) {
 				return;
 			}
 			int selectedDay=inputBox.SelectedIndex+1;
@@ -530,7 +531,7 @@ namespace OpenDental {
 				if(CreditCardCur.IsXWeb()) {
 					OpenDentBusiness.WebTypes.Shared.XWeb.XWebs.DeleteCreditCard(_patient.PatNum,CreditCardCur.CreditCardNum);//Also deletes cc from db
 				}
-				else if(CreditCardCur.CCSource==CreditCardSource.EdgeExpressRCM || CreditCardCur.CCSource==CreditCardSource.EdgeExpressCNP || CreditCardCur.CCSource==CreditCardSource.EdgeExpressPaymentPortal) {
+				else if(CreditCardCur.CCSource==CreditCardSource.EdgeExpressRCM || CreditCardCur.CCSource==CreditCardSource.EdgeExpressCNP) {
 					Cursor=Cursors.WaitCursor;
 					try {
 						EdgeExpress.RcmResponse rcmResponse=EdgeExpress.RCM.DeleteAlias(_patient,Clinics.ClinicNum,CreditCardCur.XChargeToken,isWebPayment:false);
@@ -564,7 +565,12 @@ namespace OpenDental {
 			if(!hasDuplicatePaySimple && !DeletePaySimpleToken()) {
 				return;
 			}
-			CreditCards.DeleteAndRefresh(CreditCardCur);
+			CreditCards.Delete(CreditCardCur.CreditCardNum);
+			List<CreditCard> listCreditCards=CreditCards.Refresh(_patient.PatNum);
+			for(int i=0;i<listCreditCards.Count;i++) {
+				listCreditCards[i].ItemOrder=listCreditCards.Count-(i+1);
+				CreditCards.Update(listCreditCards[i]);//Resets ItemOrder.
+			}
 			DialogResult=DialogResult.OK;
 		}
 		
@@ -576,7 +582,7 @@ namespace OpenDental {
 				return;
 			}
 			if(!program.Enabled) {
-				if(Security.IsAuthorized(EnumPermType.Setup)) {
+				if(Security.IsAuthorized(Permissions.Setup)) {
 					using FormXchargeSetup formXchargeSetup=new FormXchargeSetup();
 					formXchargeSetup.ShowDialog();
 				}
@@ -584,7 +590,7 @@ namespace OpenDental {
 			}
 			if(!File.Exists(path)) {
 				MsgBox.Show(this,"Path is not valid.");
-				if(Security.IsAuthorized(EnumPermType.Setup)) {
+				if(Security.IsAuthorized(Permissions.Setup)) {
 					using FormXchargeSetup formXchargeSetup=new FormXchargeSetup();
 					formXchargeSetup.ShowDialog();
 				}
@@ -646,7 +652,7 @@ namespace OpenDental {
 			}
 			Cursor=Cursors.WaitCursor;
 			try {
-				if(CreditCardCur.IsPaySimpleACH()) {
+				if(CreditCardCur.CCSource==CreditCardSource.PaySimpleACH) {
 					PaySimple.DeleteACHAccount(CreditCardCur);
 				}
 				else if(CreditCardCur.CCSource==CreditCardSource.PaySimple) {//Credit card
@@ -656,7 +662,7 @@ namespace OpenDental {
 			catch(PaySimpleException ex) {
 				MessageBox.Show(ex.Message);
 				if(ex.ErrorType==PaySimpleError.CustomerDoesNotExist && MsgBox.Show(this,MsgBoxButtons.OKCancel,
-					"Delete the link to the customer id for this patient?"))
+					"Delete the link to the customer id for this patient?")) 
 				{
 					PatientLinks.DeletePatNumTos(ex.CustomerId,PatientLinkType.PaySimple);
 				}
@@ -676,7 +682,7 @@ namespace OpenDental {
 			return true;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!IsUpdatedFrequencyValid()) {
 				return;
 			}
@@ -705,12 +711,11 @@ namespace OpenDental {
 				CreditCardCur.ChargeFrequency=GetFormattedChargeFrequency();
 			}
 			if(CreditCardCur.IsNew) {
-				List<CreditCard> listCreditCards=CreditCards.RefreshAll(_patient.PatNum);
+				List<CreditCard> listCreditCards=CreditCards.Refresh(_patient.PatNum);
 				CreditCardCur.ItemOrder=listCreditCards.Count;
 				CreditCardCur.CCSource=CreditCardSource.None;
 				CreditCardCur.ClinicNum=Clinics.ClinicNum;
 				CreditCards.Insert(CreditCardCur);
-				SecurityLogs.MakeLogEntry(EnumPermType.CreditCardEdit,_patient.PatNum,"Credit Card Added");
 			}
 			else {
 				#region EdgeExpress
@@ -756,7 +761,7 @@ namespace OpenDental {
 						return;
 					}
 					if(!program.Enabled){
-						if(Security.IsAuthorized(EnumPermType.Setup)){
+						if(Security.IsAuthorized(Permissions.Setup)){
 							using FormXchargeSetup formXchargeSetup=new FormXchargeSetup();
 							formXchargeSetup.ShowDialog();
 						}
@@ -764,7 +769,7 @@ namespace OpenDental {
 					}
 					if(!File.Exists(path)){
 						MsgBox.Show(this,"Path is not valid.");
-						if(Security.IsAuthorized(EnumPermType.Setup)){
+						if(Security.IsAuthorized(Permissions.Setup)){
 							using FormXchargeSetup formXchargeSetup=new FormXchargeSetup();
 							formXchargeSetup.ShowDialog();
 						}
@@ -860,7 +865,6 @@ namespace OpenDental {
 				#endregion
 				if(_isDuplicate) {
 					CreditCards.Insert(CreditCardCur);
-					SecurityLogs.MakeLogEntry(EnumPermType.CreditCardEdit,_patient.PatNum,"Credit Card Added");
 				} 
 				else {
 					CreditCards.Update(CreditCardCur);
@@ -870,5 +874,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

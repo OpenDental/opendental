@@ -18,6 +18,7 @@ namespace OpenDental.UI {
 		private Bitmap _bitmapTempPinAppt;
 		///<summary>This user control is how we drag appts over to the main appt area.  In the beginning, it gets added to parent, where it stays and gets reused repeatedly.  We control it from here to hide the complexity.</summary>
 		private ControlDoubleBuffered contrTempPinAppt;
+		private bool _isMouseDown;
 		private List<PinBoardItem> _listPinBoardItems;
 		///<summary>Initial position of the appointment being dragged, in coordinates of ContrAppt.</summary>
 		private Point	_pointApptOrigin;
@@ -65,7 +66,7 @@ namespace OpenDental.UI {
 						logText+=appt.AptDateTime.ToString()+", ";
 					}
 					logText+=appt.ProcDescript;
-					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentEdit,appt.PatNum,logText);
+					SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,appt.PatNum,logText);
 				}
 			}
 			base.Dispose(disposing);
@@ -168,7 +169,7 @@ namespace OpenDental.UI {
 		#region Events - Mouse
 		
 		protected override void OnMouseDown(MouseEventArgs e) {
-			if(contrTempPinAppt?.Visible==true && e.Button==MouseButtons.Right) {//User right clicked while dragging appt around.
+			if(_isMouseDown) {//User right clicked while dragging appt around.
 				return;
 			}
 			//set selected index before firing the mouse down event.
@@ -203,6 +204,7 @@ namespace OpenDental.UI {
 				contextMenu.Show(this,e.Location);
 				return;
 			}
+			_isMouseDown=true;
 			OnPreparingToDragFromPinboard(ListPinBoardItems[SelectedIndex].DataRowAppt);//this event goes to ContrAppt, 
 			//which then sends new bitmap here via SetBitmapTempPinAppt before the code below continues.
 			//So, we have now set the size of contrTempPinAppt.
@@ -219,13 +221,11 @@ namespace OpenDental.UI {
 
 		protected override void OnMouseMove(MouseEventArgs e) {
 			base.OnMouseMove(e);
-			if(e.Button==MouseButtons.None || SelectedIndex==-1) { //Not clicking or no appt to drag
-				if(contrTempPinAppt?.Visible==true) {
-					contrTempPinAppt.Visible=false;
-				}
+			if(!_isMouseDown) {
 				return;
 			}
 			if(_bitmapTempPinAppt==null){//For example, if no ops visible
+				_isMouseDown=false;
 				return;
 			}
 			if((Math.Abs(e.X-_pointMouseOrigin.X)<3)//we don't want it to be visible until user has actually started moving significantly
@@ -241,9 +241,10 @@ namespace OpenDental.UI {
 
 		protected override void OnMouseUp(MouseEventArgs e) {
 			base.OnMouseUp(e);
-			if(SelectedIndex==-1 || contrTempPinAppt==null){ //Pinboard appt was not clicked
+			if(!_isMouseDown) {
 				return;
 			}
+			_isMouseDown=false;
 			if((Math.Abs(e.X-_pointMouseOrigin.X)<7) && (Math.Abs(e.Y-_pointMouseOrigin.Y)<7)) { //Mouse has not moved enough to be considered an appt move.
 				contrTempPinAppt.Visible=false;
 				return;
@@ -271,20 +272,20 @@ namespace OpenDental.UI {
 			if(apt.IsHygiene) {
 				provNum=apt.ProvHyg;
 			}
-			FrmProviderPick frmProviderPick=new FrmProviderPick();
-			frmProviderPick.ProvNumSelected=provNum;
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formPick=new FormProviderPick();
+			formPick.ProvNumSelected=provNum;
+			formPick.ShowDialog();
+			if(formPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			if(frmProviderPick.ProvNumSelected==provNum) {
+			if(formPick.ProvNumSelected==provNum) {
 				return;//provider not changed.
 			}
 			if(apt.IsHygiene) {
-				apt.ProvHyg=frmProviderPick.ProvNumSelected;
+				apt.ProvHyg=formPick.ProvNumSelected;
 			}
 			else {
-				apt.ProvNum=frmProviderPick.ProvNumSelected;
+				apt.ProvNum=formPick.ProvNumSelected;
 			}
 			#region Provider Term Date Check
 			//Prevents appointments with providers that are past their term end date from being scheduled
@@ -298,7 +299,7 @@ namespace OpenDental.UI {
 			}
 			#endregion Provider Term Date Check
 			List<Procedure> procsForSingleApt=Procedures.GetProcsForSingle(apt.AptNum,false);
-			if(Security.IsAuthorized(EnumPermType.AppointmentResize,suppressMessage:true) && MsgBox.Show(this,MsgBoxButtons.YesNo,"Change length for new provider?")){
+			if(Security.IsAuthorized(Permissions.AppointmentResize,suppressMessage:true) && MsgBox.Show(this,MsgBoxButtons.YesNo,"Change length for new provider?")){
 				List<long> codeNums=new List<long>();
 				for(int p=0;p<procsForSingleApt.Count;p++) {
 					codeNums.Add(procsForSingleApt[p].CodeNum);
@@ -414,6 +415,7 @@ namespace OpenDental.UI {
 			if(contrTempPinAppt!=null) {
 				contrTempPinAppt.Visible=false;
 			}
+			_isMouseDown=false;
 		}
 
 		///<summary></summary>

@@ -54,7 +54,7 @@ namespace OpenDentBusiness{
 				}
 				_curUserT=value;
 				curUser=value;
-				ODEvent.Fire(ODEventType.Userod,_curUserT?.UserNum??curUser?.UserNum??0);
+				UserodChangedEvent.Fire(ODEventType.Userod,_curUserT?.UserNum??curUser?.UserNum??0);
 			}
 		}
 
@@ -72,7 +72,7 @@ namespace OpenDentBusiness{
 				return _curComputerName;
 			}
 			set {
-				if(!ODBuild.IsThinfinity()) { 
+				if(!ODBuild.IsWeb()) { 
 					_curComputerNameT=value; 
 				}
 				_curComputerName=value;
@@ -104,63 +104,59 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Checks to see if current user is authorized.  It also checks any date restrictions.  If not authorized, it gives a Message box saying so and returns false.</summary>
-		public static bool IsAuthorized(EnumPermType perm){
+		public static bool IsAuthorized(Permissions perm){
 			//No need to check MiddleTierRole; no call to db.
 			return IsAuthorized(perm,DateTime.MinValue,false);
 		}
 
 		///<summary>Checks to see if current user is authorized for the permission and corresponding FKey.  If not authorized, it gives a Message box 
 		///saying so and returns false.</summary>
-		public static bool IsAuthorized(EnumPermType perm,long fKey,bool suppressMessage) {
+		public static bool IsAuthorized(Permissions perm,long fKey,bool suppressMessage) {
 			//No need to check MiddleTierRole; no call to db.
 			return IsAuthorized(perm,DateTime.MinValue,suppressMessage,true,0,-1,0,fKey);
 		}
 
 		///<summary>Checks to see if current user is authorized.  It also checks any date restrictions.  If not authorized, it gives a Message box saying so and returns false.</summary>
-		public static bool IsAuthorized(EnumPermType perm,DateTime date){
+		public static bool IsAuthorized(Permissions perm,DateTime date){
 			//No need to check MiddleTierRole; no call to db.
 			return IsAuthorized(perm,date,false);
 		}
 
 		///<summary>Checks to see if current user is authorized.  It also checks any date restrictions.  If not authorized, it gives a Message box saying so and returns false.</summary>
-		public static bool IsAuthorized(EnumPermType perm,bool suppressMessage){
+		public static bool IsAuthorized(Permissions perm,bool suppressMessage){
 			//No need to check MiddleTierRole; no call to db.
 			return IsAuthorized(perm,DateTime.MinValue,suppressMessage);
 		}
 
 		///<summary>Checks to see if current user is authorized.  It also checks any date restrictions.  If not authorized, it gives a Message box saying so and returns false.</summary>
-		public static bool IsAuthorized(EnumPermType perm,DateTime date,bool suppressMessage){
+		public static bool IsAuthorized(Permissions perm,DateTime date,bool suppressMessage){
 			//No need to check MiddleTierRole; no call to db.
 			return IsAuthorized(perm,date,suppressMessage,false);
 		}
 
 		///<summary>Checks to see if current user is authorized.  It also checks any date restrictions.  If not authorized, it gives a Message box saying so and returns false.</summary>
-		public static bool IsAuthorized(EnumPermType perm,DateTime date,bool suppressMessage,bool suppressLockDateMessage) {
+		public static bool IsAuthorized(Permissions perm,DateTime date,bool suppressMessage,bool suppressLockDateMessage) {
 			return IsAuthorized(perm,date,suppressMessage,suppressLockDateMessage,0,-1,0,0);
 		}
 
-		public static bool IsAuthorized(EnumPermType perm,DateTime date,long procCodeNum,double procCodeFee) {
+		public static bool IsAuthorized(Permissions perm,DateTime date,long procCodeNum,double procCodeFee) {
 			return IsAuthorized(perm,date,false,false,procCodeNum,procCodeFee,0,0);
 		}
 
-		public static bool IsAuthorized(EnumPermType perm,DateTime date,long procCodeNum,double procCodeFee,bool suppressMessage) {
-			return IsAuthorized(perm,date,suppressMessage,suppressMessage,procCodeNum,procCodeFee,0,0);
-		}
-
-		public static bool IsAuthorized(EnumPermType perm,DateTime date,bool suppressMessage,bool suppressLockDateMessage,Userod curUser) {
+		public static bool IsAuthorized(Permissions perm,DateTime date,bool suppressMessage,bool suppressLockDateMessage,Userod curUser) {
 			return IsAuthorized(perm,date,suppressMessage,suppressLockDateMessage,curUser,0,-1,0,0);
 		}
 
 		///<summary>Checks to see if current user is authorized.  It also checks any date restrictions.
 		///If not authorized, actionOnUnauthorized is invoked with a pre-translated messaged and method returns false.</summary>
-		public static bool IsAuthorized(EnumPermType perm,DateTime date,long procCodeNum=0,double procCodeFee=-1,Action<string> actionNotAuthorized=null) {
+		public static bool IsAuthorized(Permissions perm,DateTime date,long procCodeNum=0,double procCodeFee=-1,Action<string> actionNotAuthorized=null) {
 			//No need to check MiddleTierRole; no call to db.
 			return IsAuthorized(perm,date,suppressMsgBox:true,suppressLockDateMessage:true,procCodeNum,procCodeFee,sheetDefNum:0,fKey:0,actionNotAuthorized);
 		}
 
 		///<summary>Checks to see if current user is authorized.  It also checks any date restrictions.  If not authorized, it gives a Message box saying so and returns false.
 		///actionOfUnauthorized provides a translated not authorized message when set.</summary>
-		public static bool IsAuthorized(EnumPermType perm,DateTime date,bool suppressMsgBox,bool suppressLockDateMessage,long procCodeNum,
+		public static bool IsAuthorized(Permissions perm,DateTime date,bool suppressMsgBox,bool suppressLockDateMessage,long procCodeNum,
 			double procCodeFee,long sheetDefNum,long fKey,Action<string> actionNotAuthorized=null) 
 		{
 			//No need to check MiddleTierRole; no call to db.
@@ -173,7 +169,7 @@ namespace OpenDentBusiness{
 				return false;
 			}
 			try {
-				return IsAuthorized(perm,date,suppressMsgBox,suppressLockDateMessage,CurUser,procCodeNum,procCodeFee,sheetDefNum,fKey,actionNotAuthorized);
+				return IsAuthorized(perm,date,suppressMsgBox,suppressLockDateMessage,curUser,procCodeNum,procCodeFee,sheetDefNum,fKey,actionNotAuthorized);
 			}
 			catch(Exception ex) {
 				if(!suppressMsgBox) {
@@ -185,7 +181,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Will throw an error if not authorized and message not suppressed.</summary>
-		public static bool IsAuthorized(EnumPermType perm,DateTime date,bool suppressException,bool suppressLockDateMessage,Userod curUser,
+		public static bool IsAuthorized(Permissions perm,DateTime date,bool suppressException,bool suppressLockDateMessage,Userod curUser,
 			long procCodeNum,double procFee,long sheetDefNum,long fKey,Action<string> actionNotAuthorized=null) 
 		{
 			//No need to check MiddleTierRole; no call to db.
@@ -205,7 +201,7 @@ namespace OpenDentBusiness{
 				actionNotAuthorized?.Invoke(errorMsg);
 				return false;
 			}
-			if(perm==EnumPermType.AccountingCreate || perm==EnumPermType.AccountingEdit){
+			if(perm==Permissions.AccountingCreate || perm==Permissions.AccountingEdit){
 				if(date <= PrefC.GetDate(PrefName.AccountingLockDate)){
 					errorMsg=Lans.g("Security","Locked by Administrator.");
 					if(!suppressException && !suppressLockDateMessage) {
@@ -230,30 +226,30 @@ namespace OpenDentBusiness{
 			}
 			//Prevents certain bugs when 1/1/1 dates are passed in and compared----------------------------------------------
 			//Handling of min dates.  There might be others, but we have to handle them individually to avoid introduction of bugs.
-			if(perm==EnumPermType.ClaimDelete//older versions did not have SecDateEntry
-				|| perm==EnumPermType.ClaimSentEdit//no date sent was entered before setting claim received	
-				|| perm==EnumPermType.ProcComplCreate
-				|| perm==EnumPermType.ProcCompleteEdit
-				|| perm==EnumPermType.ProcCompleteStatusEdit
-				|| perm==EnumPermType.ProcCompleteNote
-				|| perm==EnumPermType.ProcCompleteAddAdj
-				|| perm==EnumPermType.ProcCompleteEditMisc
-				|| perm==EnumPermType.ProcExistingEdit//a completed EO or EC procedure with a min date.
-				|| perm==EnumPermType.InsPayEdit//a claim payment with no date.
-				|| perm==EnumPermType.InsWriteOffEdit//older versions did not have SecDateEntry or DateEntryC
-				|| perm==EnumPermType.TreatPlanEdit
-				|| perm==EnumPermType.AdjustmentCreate
-				|| perm==EnumPermType.AdjustmentEdit
-				|| perm==EnumPermType.CommlogEdit//usually from a conversion
-				|| perm==EnumPermType.ProcDelete//because older versions did not set the DateEntryC.
-				|| perm==EnumPermType.ImageDelete//In case an image has a document.DateCreated date of DateTime.MinVal.
-				|| perm==EnumPermType.PerioEdit//In case perio chart exam has a creation date of DateTime.MinValue.
-				|| perm==EnumPermType.PreAuthSentEdit//older versions did not have SecDateEntry
-				|| perm==EnumPermType.ClaimProcReceivedEdit//
-				|| perm==EnumPermType.PaymentCreate//Older versions did not have a date limitation to PaymentCreate
-				|| perm==EnumPermType.ImageEdit//In case an image has a document.DateCreated date of DateTime.MinVal.
-				|| perm==EnumPermType.ImageExport//In case an image has a document.DateCreated date of DateTime.MinVal.
-				|| perm==EnumPermType.SheetEdit)//In case a sheet has a sheet.DateTimeSheet date of DateTime.MinVal, will still allow the office to edit the sheet.
+			if(perm==Permissions.ClaimDelete//older versions did not have SecDateEntry
+				|| perm==Permissions.ClaimSentEdit//no date sent was entered before setting claim received	
+				|| perm==Permissions.ProcComplCreate
+				|| perm==Permissions.ProcCompleteEdit
+				|| perm==Permissions.ProcCompleteStatusEdit
+				|| perm==Permissions.ProcCompleteNote
+				|| perm==Permissions.ProcCompleteAddAdj
+				|| perm==Permissions.ProcCompleteEditMisc
+				|| perm==Permissions.ProcExistingEdit//a completed EO or EC procedure with a min date.
+				|| perm==Permissions.InsPayEdit//a claim payment with no date.
+				|| perm==Permissions.InsWriteOffEdit//older versions did not have SecDateEntry or DateEntryC
+				|| perm==Permissions.TreatPlanEdit
+				|| perm==Permissions.AdjustmentCreate
+				|| perm==Permissions.AdjustmentEdit
+				|| perm==Permissions.CommlogEdit//usually from a conversion
+				|| perm==Permissions.ProcDelete//because older versions did not set the DateEntryC.
+				|| perm==Permissions.ImageDelete//In case an image has a document.DateCreated date of DateTime.MinVal.
+				|| perm==Permissions.PerioEdit//In case perio chart exam has a creation date of DateTime.MinValue.
+				|| perm==Permissions.PreAuthSentEdit//older versions did not have SecDateEntry
+				|| perm==Permissions.ClaimProcReceivedEdit//
+				|| perm==Permissions.PaymentCreate//Older versions did not have a date limitation to PaymentCreate
+				|| perm==Permissions.ImageEdit//In case an image has a document.DateCreated date of DateTime.MinVal.
+				|| perm==Permissions.ImageExport//In case an image has a document.DateCreated date of DateTime.MinVal.
+				|| perm==Permissions.SheetEdit)//In case a sheet has a sheet.DateTimeSheet date of DateTime.MinVal, will still allow the office to edit the sheet.
 			{
 				if(date.Year<1880	&& dateLimit.Year<1880) {
 					return true;
@@ -269,28 +265,28 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Surround with Try/Catch. Error messages will be thrown to caller.</summary>
-		public static bool IsGlobalDateLock(EnumPermType perm,DateTime date,bool suppressMsgBox=false,long codeNum=0,double procFee=-1,long sheetDefNum=0,Action<string> actionNotAuthorized=null) {
+		public static bool IsGlobalDateLock(Permissions perm,DateTime date,bool suppressMsgBox=false,long codeNum=0,double procFee=-1,long sheetDefNum=0,Action<string> actionNotAuthorized=null) {
 			if(!(new[] {
-				 EnumPermType.AdjustmentCreate
-				,EnumPermType.AdjustmentEdit
-				,EnumPermType.PaymentCreate
-				,EnumPermType.PaymentEdit
-				,EnumPermType.ProcComplCreate
-				,EnumPermType.ProcCompleteEdit
-				,EnumPermType.ProcCompleteStatusEdit
+				 Permissions.AdjustmentCreate
+				,Permissions.AdjustmentEdit
+				,Permissions.PaymentCreate
+				,Permissions.PaymentEdit
+				,Permissions.ProcComplCreate
+				,Permissions.ProcCompleteEdit
+				,Permissions.ProcCompleteStatusEdit
 				//,Permissions.ProcComplNote (corresponds to obsolete ProcComplEditLimited)
 				//,Permissions.ProcComplAddAdj (corresponds to obsolete ProcComplEditLimited)
 				//,Permissions.ProcComplEditMisc (corresponds to obsolete ProcComplEditLimited)
 				//,Permissions.ProcExistingEdit//per Allen 6/26/2020 this should not be affected by the global date lock
 			//,Permissions.ImageDelete
-				,EnumPermType.InsPayCreate
-				,EnumPermType.InsPayEdit
+				,Permissions.InsPayCreate
+				,Permissions.InsPayEdit
 			//,Permissions.InsWriteOffEdit//per Nathan 7/5/2016 this should not be affected by the global date lock
-				,EnumPermType.SheetEdit
-				,EnumPermType.SheetDelete
-				,EnumPermType.CommlogEdit
+				,Permissions.SheetEdit
+				,Permissions.SheetDelete
+				,Permissions.CommlogEdit
 			//,Permissions.ClaimDelete //per Nathan 01/18/2018 this should not be affected by the global date lock
-				,EnumPermType.PayPlanEdit
+				,Permissions.PayPlanEdit
 			//,Permissions.ClaimHistoryEdit //per Nathan & Mark 03/01/2018 this should not be affected by the global lock date, not financial data.
 			}).Contains(perm)) {
 				return false;//permission being checked is not affected by global lock date.
@@ -298,17 +294,17 @@ namespace OpenDentBusiness{
 			if(date.Year==1) {
 				return false;//Invalid or MinDate passed in.
 			}
-			if(!PrefC.GetBool(PrefName.SecurityLockIncludesAdmin) && GroupPermissions.HasPermission(Security.CurUser,EnumPermType.SecurityAdmin,0)) {
+			if(!PrefC.GetBool(PrefName.SecurityLockIncludesAdmin) && GroupPermissions.HasPermission(Security.CurUser,Permissions.SecurityAdmin,0)) {
 				return false;//admins are never affected by global date limitation when preference is false.
 			}
-			List<EnumPermType> listPermissionsCanBypassLockDate=new List<EnumPermType>() {
-				EnumPermType.ProcCompleteEdit,EnumPermType.ProcCompleteAddAdj,EnumPermType.ProcCompleteEditMisc,EnumPermType.ProcCompleteStatusEdit,EnumPermType.ProcCompleteNote,
-				EnumPermType.ProcComplCreate,EnumPermType.ProcExistingEdit
+			List<Permissions> listPermissionsCanBypassLockDate=new List<Permissions>() {
+				Permissions.ProcCompleteEdit,Permissions.ProcCompleteAddAdj,Permissions.ProcCompleteEditMisc,Permissions.ProcCompleteStatusEdit,Permissions.ProcCompleteNote,
+				Permissions.ProcComplCreate,Permissions.ProcExistingEdit
 			};
 			if(listPermissionsCanBypassLockDate.Contains(perm) && ProcedureCodes.CanBypassLockDate(codeNum,procFee)) {
 				return false;
 			}
-			if(perm.In(EnumPermType.SheetEdit,EnumPermType.SheetDelete) && sheetDefNum > 0	&& SheetDefs.CanBypassLockDate(sheetDefNum)) {
+			if(perm.In(Permissions.SheetEdit,Permissions.SheetDelete) && sheetDefNum > 0	&& SheetDefs.CanBypassLockDate(sheetDefNum)) {
 				return false;
 			}
 			//If global lock is Date based.
@@ -345,7 +341,7 @@ namespace OpenDentBusiness{
 		
 		///<summary>Returns the Date that the user is restricted to for the passed-in PermType. 
 		///Returns MinVal if the user is not restricted or does not have the permission.</summary>
-		private static DateTime GetDateLimit(EnumPermType permType,List<long> listUserGroupNums){
+		private static DateTime GetDateLimit(Permissions permType,List<long> listUserGroupNums){
 			//No need to check MiddleTierRole; no call to db.
 			return GroupPermissions.GetDateRestrictedForPermission(permType,listUserGroupNums);
 		}
@@ -364,25 +360,25 @@ namespace OpenDentBusiness{
 			return -1;
 		}
 
-		private static EnumPermType PermofModule(int i){
+		private static Permissions PermofModule(int i){
 			//No need to check MiddleTierRole; no call to db.
 			switch(i){
 				case 0:
-					return EnumPermType.AppointmentsModule;
+					return Permissions.AppointmentsModule;
 				case 1:
-					return EnumPermType.FamilyModule;
+					return Permissions.FamilyModule;
 				case 2:
-					return EnumPermType.AccountModule;
+					return Permissions.AccountModule;
 				case 3:
-					return EnumPermType.TPModule;
+					return Permissions.TPModule;
 				case 4:
-					return EnumPermType.ChartModule;
+					return Permissions.ChartModule;
 				case 5:
-					return EnumPermType.ImagingModule;
+					return Permissions.ImagingModule;
 				case 6:
-					return EnumPermType.ManageModule;
+					return Permissions.ManageModule;
 			}
-			return EnumPermType.None;
+			return Permissions.None;
 		}
 
 		///<summary>Synchronizes CurUser with the corresponding userod object from the user cache.  Used to update CurUser with any changes from cache refreshes.
@@ -394,7 +390,7 @@ namespace OpenDentBusiness{
 			//Update CurUser with the user from the cache synchronizing any fields that could have been updated.  E.g. TaskListInBox
 			CurUser=Userods.GetFirstOrDefault(x => x.UserNum==CurUser.UserNum);
 			//The user could have been deleted and/or data loss could have occurred and the CurUser is no longer in the db.
-			if(CurUser==null && !ODBuild.IsUnitTest) {
+			if(CurUser==null && !ODInitialize.IsRunningInUnitTest) {
 				throw new ODException("The current user has been removed from the cache.");
 			}
 		}
@@ -438,23 +434,16 @@ namespace OpenDentBusiness{
 			}
 		}
 
-		///<summary>This sets the private _curUserT field using the passed in Userod object. This can be used to change the thread static object. Does nothing if the user object that is passed in is null.</summary>
-		public static void SetUserCurT(Userod userT) {
-			if(userT!=null) {
-				_curUserT=userT;
-			}
-		}
-
 		#region eServices
 
 		///<summary>Returns false if the currently logged in user is not designated for the eConnector or if the user does not have permission.</summary>
-		private static bool IsValidEServicePermission(EnumPermType perm) {
+		private static bool IsValidEServicePermission(Permissions perm) {
 			//No need to check MiddleTierRole; no call to db.
-			if(CurUser==null) {
+			if(curUser==null) {
 				return false;
 			}
 			//Run specific checks against certain types of eServices.
-			switch(CurUser.EServiceType) {
+			switch(curUser.EServiceType) {
 				case EServiceTypes.Broadcaster:
 				case EServiceTypes.BroadcastMonitor:
 				case EServiceTypes.ServiceMainHQ:
@@ -470,14 +459,14 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns true if the eConnector should be allowed to run methods with the passed in permission.</summary>
-		private static bool IsPermAllowedEConnector(EnumPermType perm) {
+		private static bool IsPermAllowedEConnector(Permissions perm) {
 			//We are typically on the customers eConnector and need to be careful when giving access to certain permission types.
 			//Engineers must EXCPLICITLY add permissions to this switch statement as they need them.
 			//Be very cautious when adding permissions because the flood gates for that permission will be opened once added.
 			//E.g. we should never add a permission like Setup or SecurityAdmin.  If there is a need for such a thing, we need to rethink this paradigm.
 			switch(perm) {
 				//Add additional permissions to this case as needed to grant access.
-				case EnumPermType.EmailSend:
+				case Permissions.EmailSend:
 					return true;
 				default:
 					return false;
@@ -485,14 +474,14 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns true if the OpenDentalService should be allowed to run methods with the passed in permission.</summary>
-		private static bool IsPermAllowedOpenDentalService(EnumPermType perm) {
+		private static bool IsPermAllowedOpenDentalService(Permissions perm) {
 			//We need to be careful when giving access to certain permission types.
 			//Engineers must EXCPLICITLY add permissions to this switch statement as they need them.
 			//Be very cautious when adding permissions because the flood gates for that permission will be opened once added.
 			//E.g. we should never add a permission like Setup or SecurityAdmin.  If there is a need for such a thing, we need to rethink this paradigm.
 			switch(perm) {
 				//Add additional permissions to this case as needed to grant access.
-				case EnumPermType.EmailSend:
+				case Permissions.EmailSend:
 					return true;
 				default:
 					return false;

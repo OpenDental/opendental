@@ -36,7 +36,8 @@
 			this.butDelete = new OpenDental.UI.Button();
 			this.textAmount = new OpenDental.ValidDouble();
 			this.butRemainder = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.ButCancel = new OpenDental.UI.Button();
 			this.comboUnearnedTypes = new OpenDental.UI.ComboBox();
 			this.comboProvider = new OpenDental.UI.ComboBox();
 			this.butPickProv = new OpenDental.UI.Button();
@@ -130,7 +131,7 @@
 			// checkPayPlan
 			// 
 			this.checkPayPlan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.checkPayPlan.Location = new System.Drawing.Point(257, 449);
+			this.checkPayPlan.Location = new System.Drawing.Point(257, 466);
 			this.checkPayPlan.Name = "checkPayPlan";
 			this.checkPayPlan.Size = new System.Drawing.Size(198, 18);
 			this.checkPayPlan.TabIndex = 20;
@@ -213,7 +214,7 @@
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(15, 455);
+			this.butDelete.Location = new System.Drawing.Point(15, 472);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(85, 24);
 			this.butDelete.TabIndex = 21;
@@ -240,15 +241,25 @@
 			this.butRemainder.Visible = false;
 			this.butRemainder.Click += new System.EventHandler(this.butRemainder_Click);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(704, 455);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 5;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(589, 472);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 5;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// ButCancel
+			// 
+			this.ButCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.ButCancel.Location = new System.Drawing.Point(670, 472);
+			this.ButCancel.Name = "ButCancel";
+			this.ButCancel.Size = new System.Drawing.Size(75, 24);
+			this.ButCancel.TabIndex = 6;
+			this.ButCancel.Text = "&Cancel";
+			this.ButCancel.Click += new System.EventHandler(this.ButCancel_Click);
 			// 
 			// comboUnearnedTypes
 			// 
@@ -733,7 +744,7 @@
 			// 
 			// FormPaySplitEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(791, 492);
+			this.ClientSize = new System.Drawing.Size(801, 509);
 			this.Controls.Add(this.tabControl);
 			this.Controls.Add(this.butEditAnyway);
 			this.Controls.Add(this.labelEditAnyway);
@@ -748,7 +759,8 @@
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.textAmount);
 			this.Controls.Add(this.butRemainder);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.ButCancel);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.checkPayPlan);
 			this.Controls.Add(this.labelAmount);
@@ -776,7 +788,9 @@
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button ButCancel;
+		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butRemainder;
 		private OpenDental.UI.Button butDelete;
 		private OpenDental.UI.Button butPickProv;

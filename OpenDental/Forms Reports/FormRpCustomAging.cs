@@ -257,14 +257,14 @@ namespace OpenDental {
 		}
 
 		private void goToAccountToolStripMenuItem_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.AccountModule)) {
+			if(!Security.IsAuthorized(Permissions.AccountModule)) {
 				return;
 			}
 			if(gridMain.SelectedGridRows.Count==0) {
 				MsgBox.Show(this,"Please select a patient first.");
 				return;
 			}
-			GlobalFormOpenDental.GotoAccount(((AgingPat)gridMain.SelectedGridRows[0].Tag).Pat.PatNum);
+			GotoModule.GotoAccount(((AgingPat)gridMain.SelectedGridRows[0].Tag).Pat.PatNum);
 		}
 
 		private void butPrint_Click(object sender,EventArgs e) {
@@ -356,5 +356,9 @@ namespace OpenDental {
 			FormR.ShowDialog();
 		}
 		
+		private void butCancel_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
+
 }

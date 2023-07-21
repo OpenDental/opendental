@@ -25,25 +25,14 @@ namespace OpenDental {
 			//
 			_appointmentRule=appointmentRule.Clone();
 			InitializeComponent();
-			Load+=FrmApptRuleEdit_Load;
-			PreviewKeyDown+=FrmApptRuleEdit_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmApptRuleEdit_Load(object sender, EventArgs e) {
-			Lang.F(this);
+		private void FrmApptRuleEdit_Loaded(object sender, RoutedEventArgs e) {
 			textRuleDesc.Text=_appointmentRule.RuleDesc;
 			textCodeStart.Text=_appointmentRule.CodeStart;
 			textCodeEnd.Text=_appointmentRule.CodeEnd;
 			checkIsEnabled.Checked=_appointmentRule.IsEnabled;
-		}
-
-		private void FrmApptRuleEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butDelete.IsAltKey(Key.D,e)) {
-				butDelete_Click(this,new EventArgs());
-			}
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
@@ -55,7 +44,7 @@ namespace OpenDental {
 			IsDialogOK=true;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(textRuleDesc.Text==""){
 				MsgBox.Show(this,"Description not allowed to be blank.");
 				return;
@@ -81,3 +70,24 @@ namespace OpenDental {
 
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

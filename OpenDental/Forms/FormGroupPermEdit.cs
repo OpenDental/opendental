@@ -64,7 +64,7 @@ namespace OpenDental{
 			textDate.Validate();
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textDate.IsValid() || !textDays.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
@@ -83,7 +83,7 @@ namespace OpenDental{
 				else {
 					GroupPermissions.Update(_groupPermission);
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,$"Permission '{_groupPermission.PermType}' granted to " +
+				SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,$"Permission '{_groupPermission.PermType}' granted to " +
 					$"'{UserGroups.GetGroup(_groupPermission.UserGroupNum).Description}'");
 			}
 			catch(Exception ex){
@@ -93,5 +93,16 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }
+
+
+
+
+
+
+
+

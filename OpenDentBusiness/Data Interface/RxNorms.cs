@@ -119,13 +119,12 @@ namespace OpenDentBusiness{
 				command+="AND (RxCui = '"+POut.String(codeOrDesc)+"' OR Description = '"+POut.String(codeOrDesc)+"')";
 			}
 			else {//Similar matches
-				char[] charArraySeparators=new char[] { ' ','\t','\r','\n' };
-				List<string> listSearchWords=codeOrDesc.Split(charArraySeparators,StringSplitOptions.RemoveEmptyEntries).ToList();
-				if(listSearchWords.Count > 0) {
+				string[] arraySearchWords=codeOrDesc.Split(new char[] { ' ','\t','\r','\n' },StringSplitOptions.RemoveEmptyEntries);
+				if(arraySearchWords.Length > 0) {
 					command+="AND ("
 						+"RxCui LIKE '%"+POut.String(codeOrDesc)+"%' "
 						+" OR "
-						+"("+String.Join(" AND ",listSearchWords.Select(x => "Description LIKE '%"+POut.String(x)+"%'"))+") "
+						+"("+String.Join(" AND ",arraySearchWords.Select(x => "Description LIKE '%"+POut.String(x)+"%'"))+") "
 						+")";
 				}
 			}
@@ -194,13 +193,13 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<string>>(MethodBase.GetCurrentMethod());
 			}
-			List<string> listCodes=new List<string>();
+			List<string> retVal=new List<string>();
 			string command="SELECT RxCui FROM rxnorm";//will return some duplicates due to the nature of the data in the table. This is acceptable.
 			DataTable table=DataCore.GetTable(command);
 			for(int i=0;i<table.Rows.Count;i++) {
-				listCodes.Add(table.Rows[i].ItemArray[0].ToString());
+				retVal.Add(table.Rows[i].ItemArray[0].ToString());
 			}
-			return listCodes;
+			return retVal;
 		}
 
 		///<summary>Returns the count of all RxNorm codes in the database.  RxNorms cannot be hidden.</summary>

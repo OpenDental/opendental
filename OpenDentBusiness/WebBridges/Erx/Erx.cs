@@ -45,7 +45,7 @@ namespace OpenDentBusiness {
 				if(canInsertRx) {
 					rxPat.IsNew=true;//Might not be necessary, but does not hurt.
 					rxPat.IsErxOld=false;
-					SecurityLogs.MakeLogEntry(EnumPermType.RxCreate,rxPat.PatNum,"eRx automatically created: "+rxPat.Drug);
+					SecurityLogs.MakeLogEntry(Permissions.RxCreate,rxPat.PatNum,"eRx automatically created: "+rxPat.Drug);
 					RxPats.Insert(rxPat);
 				}
 			}
@@ -58,9 +58,6 @@ namespace OpenDentBusiness {
 				if(rxPatOld.IsErxOld) {
 					rxPat.IsErxOld=true;
 					rxPat.SendStatus=RxSendStatus.SentElect;//To maintain backward compatibility.
-				}
-				if(rxPat.SendStatus!=rxPatOld.SendStatus) {
-					SecurityLogs.MakeLogEntry(EnumPermType.None,rxPat.PatNum,"ERX changed Send Status of Rx "+rxPat.Drug+" from "+rxPatOld.SendStatus+" to "+rxPat.SendStatus,rxPat.RxNum,rxPatOld.DateTStamp);
 				}
 				RxPats.Update(rxPat);
 			}

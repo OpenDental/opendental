@@ -20,7 +20,7 @@ namespace OpenDental {
 		}
 
 		private void FormAllocationsSetup_Load(object sender,EventArgs e) {
-			if(Security.IsAuthorized(EnumPermType.Setup)) {
+			if(Security.IsAuthorized(Permissions.Setup)) {
 				labelPermission.Visible=false;
 			}
 			else{
@@ -148,7 +148,7 @@ namespace OpenDental {
 			SetIncomeTransfersMadeUponClaimReceivedDesc();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			RigorousAccounting rigorousAccounting=RigorousAccounting.EnforceFully;
 			if(radioPayAuto.Checked){
 				rigorousAccounting=RigorousAccounting.AutoSplitOnly;
@@ -159,7 +159,7 @@ namespace OpenDental {
 			int prefRigorousAccounting=PrefC.GetInt(PrefName.RigorousAccounting);
 			if(Prefs.UpdateInt(PrefName.RigorousAccounting,(int)rigorousAccounting)) {
 				_didChange=true;
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Rigorous accounting changed from "+
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Rigorous accounting changed from "+
 					((RigorousAccounting)prefRigorousAccounting).GetDescription()+" to "
 					+rigorousAccounting.GetDescription()+".");
 			}
@@ -173,7 +173,7 @@ namespace OpenDental {
 			int prefRigorousAdjustments=PrefC.GetInt(PrefName.RigorousAdjustments);
 			if(Prefs.UpdateInt(PrefName.RigorousAdjustments,(int)rigorousAdjustments)) {
 				_didChange=true;
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Rigorous adjustments changed from "+
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Rigorous adjustments changed from "+
 					((RigorousAdjustments)prefRigorousAdjustments).GetDescription()+" to "
 					+rigorousAdjustments.GetDescription()+".");
 			}
@@ -187,10 +187,13 @@ namespace OpenDental {
 			_didChange|=Prefs.UpdateBool(PrefName.AdjustmentsOffsetEachOther,checkAdjustmentsOffset.Checked);
 			if(_didChange){
 				DataValid.SetInvalid(InvalidType.Prefs);
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Auto Codes");
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Auto Codes");
 			}
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

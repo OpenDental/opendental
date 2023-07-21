@@ -35,19 +35,16 @@ namespace OpenDentBusiness{
 		private static SheetFieldDefCache _sheetFieldDefCache=new SheetFieldDefCache();
 
 		public static List<SheetFieldDef> GetWhere(Predicate<SheetFieldDef> match,bool isShort=false) {
-			//No need to check MiddleTierRole; no call to db.
 			return _sheetFieldDefCache.GetWhere(match,isShort);
 		}
 
 		///<summary>Refreshes the cache and returns it as a DataTable. This will refresh the ClientWeb's cache and the ServerWeb's cache.</summary>
 		public static DataTable RefreshCache() {
-			//No need to check MiddleTierRole; no call to db.
 			return GetTableFromCache(true);
 		}
 
 		///<summary>Fills the local cache with the passed in DataTable.</summary>
 		public static void FillCacheFromTable(DataTable table) {
-			//No need to check MiddleTierRole; no call to db.
 			_sheetFieldDefCache.FillCacheFromTable(table);
 		}
 
@@ -62,7 +59,6 @@ namespace OpenDentBusiness{
 		}
 
 		public static void ClearCache() {
-			//No need to check MiddleTierRole; no call to db.
 			_sheetFieldDefCache.ClearCache();
 		}
 		#endregion
@@ -90,136 +86,93 @@ namespace OpenDentBusiness{
 		///<summary>Evaluates input fields an determines if this is a SheetField (or SheetFieldDef) that would be shown in mobile layout.
 		///Returns true if criteria is met to show this field in mobile layout. Otherwise returns false.</summary>
 		public static bool IsMobileFieldType(SheetFieldType sheetFieldType,int tabOrderMobile,string fieldName) {
-			//No need to check MiddleTierRole; no call to db.
+			//No remoting role needed.
 			//Always include these FieldTypes
-			if(sheetFieldType.In(
+			return sheetFieldType.In(
 				SheetFieldType.ComboBox,
 				SheetFieldType.InputField,
 				SheetFieldType.MobileHeader,
 				SheetFieldType.SigBox,
-				SheetFieldType.OutputText))
-			{
-				return true;
-			}
+				SheetFieldType.OutputText
+			)
 			//Only include StaticText if it has a valid TabOrderMobile.  Treat OutputText fields as a StaticText
-			if(tabOrderMobile>=1) {
-				if(sheetFieldType==SheetFieldType.StaticText || sheetFieldType==SheetFieldType.OutputText){
-					return true;
-				}
-			}
+			||(sheetFieldType.In(SheetFieldType.StaticText,SheetFieldType.OutputText) && tabOrderMobile>=1)
 			//All other checkboxes are included. CheckMeds are acceptable in eClipboard, but function a little different than checkboxes. CheckMeds are explicitly looked for when importing.
-			if (sheetFieldType==SheetFieldType.CheckBox) {
-				return true;
-			}
-			return false;
+			||(sheetFieldType==SheetFieldType.CheckBox);
 		}
 
 		/// <summary>
-		/// Returns a group of checkboxes from listSheetFieldDefs which are grouped with the passed in checkbox.
+		/// Returns a group of checkboxes from listSheetFields which are grouped with the passed in checkbox.
 		/// Returns a single checkbox if no group members found, or an empty list if no checkboxes are found from group.
 		/// </summary>
-		public static List<SheetFieldDef> GetRadioGroupForSheetFieldDef(SheetFieldDef sheetFieldDef,List<SheetFieldDef> listSheetFieldDefs){
-			//No need to check MiddleTierRole; no call to db.
-			List<SheetFieldDef> listSheetFieldDefsRetVal=new List<SheetFieldDef>();
+		public static List<SheetFieldDef> GetRadioGroupForSheetFieldDef(SheetFieldDef sheetFieldDef,List<SheetFieldDef> listSheetFields){
+			List<SheetFieldDef> retVal=new List<SheetFieldDef>();
 			//Each SheetFieldDef item goes into the panel of available fields.
 			//Only mobile-friendly fields.
-			List<SheetFieldDef> listSheetFieldDefsMobile=listSheetFieldDefs.FindAll(x => SheetFieldDefs.IsMobileFieldType(x.FieldType,x.TabOrderMobile,x.FieldName));
+			List<SheetFieldDef> mobileFields=listSheetFields.Where(x => SheetFieldDefs.IsMobileFieldType(x.FieldType,x.TabOrderMobile,x.FieldName)).ToList();
 			//2 different ways that fields can be grouped for radio groups so make a super-set of both styles.
-			Func<SheetFieldDef,bool> funcCriteria1=new Func<SheetFieldDef, bool>((x) => {
+			Func<SheetFieldDef,bool> criteria1=new Func<SheetFieldDef, bool>((x) => {
 				//Misc and it has a RadioButtonGroup.						
 				return x.FieldName=="misc" && !string.IsNullOrEmpty(x.RadioButtonGroup);
 			});
-			Func<SheetFieldDef,bool> funcCriteria2=new Func<SheetFieldDef, bool>((x) => {
+			Func<SheetFieldDef,bool> criteria2=new Func<SheetFieldDef, bool>((x) => {
 				//Not misc but it has a RadioButtonValue.						
 				return x.FieldName!="misc" && !x.FieldName.Contains("checkMed") && !string.IsNullOrEmpty(x.RadioButtonValue);
 			});
-			List<SheetFieldDef> listSheetFieldDefsRadioSuper=listSheetFieldDefsMobile
-				.FindAll(x => x.FieldType==SheetFieldType.CheckBox && (funcCriteria1(x) || funcCriteria2(x)));
-			//The first way.
-			List<SheetFieldDef> listSheetFieldDefsRadio1=listSheetFieldDefsRadioSuper
-				.FindAll(x => funcCriteria1(x));
-			//The second way.
-			List<SheetFieldDef> listSheetFieldDefsRadio2=listSheetFieldDefsRadioSuper
-				//Don't include any fields that have already been handled above.
-				.FindAll(x => funcCriteria2(x));
-			List<SheetFieldDef> listSheetFieldDefsCheckboxGroups=listSheetFieldDefsMobile
-				.FindAll(x=> x.FieldName=="misc" 
-					&& x.FieldType==SheetFieldType.CheckBox 
-					&& !string.IsNullOrEmpty(x.UiLabelMobile) 
-					&& string.IsNullOrEmpty(x.RadioButtonGroup))
-				.Except(listSheetFieldDefsRadio1.Union(listSheetFieldDefsRadio2))
+			List<SheetFieldDef> radioGroupsSuperSet=mobileFields
+				.Where(x => x.FieldType==SheetFieldType.CheckBox)
+				.Where(x => criteria1(x) || criteria2(x))
 				.ToList();
-			if(listSheetFieldDefsRadio1.Any(x => CompareSheetFieldDefsByValueForMobileLayout(x,sheetFieldDef))) {
-				listSheetFieldDefsRetVal=listSheetFieldDefsRadio1.GroupBy(x => x.RadioButtonGroup).Where(x=>x.Key==sheetFieldDef.RadioButtonGroup).SelectMany(x=>x).ToList();
+			//The first way.
+			List<SheetFieldDef> radioFields1=radioGroupsSuperSet
+				.Where(x => criteria1(x))
+				.ToList();
+			//The second way.
+			List<SheetFieldDef> radioFields2=radioGroupsSuperSet
+				//Don't include any fields that have already been handled above.
+				.Where(x => criteria2(x))
+				.ToList();
+			List<SheetFieldDef> checkboxGroups=mobileFields
+				.Except(radioFields1.Union(radioFields2))
+				.Where(x=> x.FieldName=="misc" && x.FieldType==SheetFieldType.CheckBox && !string.IsNullOrEmpty(x.UiLabelMobile) && string.IsNullOrEmpty(x.RadioButtonGroup))
+				.ToList();
+			if(radioFields1.Any(x => CompareSheetFieldDefsByValueForMobileLayout(x,sheetFieldDef))) {
+				retVal=radioFields1.GroupBy(x => x.RadioButtonGroup).Where(x=>x.Key==sheetFieldDef.RadioButtonGroup).SelectMany(x=>x).ToList();
 			}
-			else if(listSheetFieldDefsRadio2.Any(x => CompareSheetFieldDefsByValueForMobileLayout(x,sheetFieldDef))) {
-				listSheetFieldDefsRetVal=listSheetFieldDefsRadio2.GroupBy(x => x.FieldName).Where(x=>x.Key==sheetFieldDef.FieldName).SelectMany(x=>x).ToList();
+			else if(radioFields2.Any(x => CompareSheetFieldDefsByValueForMobileLayout(x,sheetFieldDef))) {
+				retVal=radioFields2.GroupBy(x => x.FieldName).Where(x=>x.Key==sheetFieldDef.FieldName).SelectMany(x=>x).ToList();
 			}
-			else if(listSheetFieldDefsCheckboxGroups.Any(x => CompareSheetFieldDefsByValueForMobileLayout(x,sheetFieldDef))) {
-				listSheetFieldDefsRetVal=listSheetFieldDefsCheckboxGroups.GroupBy(x => x.UiLabelMobile).Where(x=>x.Key==sheetFieldDef.UiLabelMobile).SelectMany(x=>x).ToList();
+			else if(checkboxGroups.Any(x => CompareSheetFieldDefsByValueForMobileLayout(x,sheetFieldDef))) {
+				retVal=checkboxGroups.GroupBy(x => x.UiLabelMobile).Where(x=>x.Key==sheetFieldDef.UiLabelMobile).SelectMany(x=>x).ToList();
 			}
 			else {
-				listSheetFieldDefsRetVal.AddRange(listSheetFieldDefs.FindAll(x=>CompareSheetFieldDefsByValueForMobileLayout(x,sheetFieldDef)));
+				retVal.AddRange(listSheetFields.FindAll(x=>CompareSheetFieldDefsByValueForMobileLayout(x,sheetFieldDef)));
 			}
-			return listSheetFieldDefsRetVal;
+			return retVal;
 		}
 
 		///<summary>Returns the UI Label text for a radiobutton. Misc will use UiLabelMobileRadioButton text, pre-defined will use RadioButtonValue</summary>
 		public static string GetUiLabelMobileRadioButton(SheetFieldDef sheetFieldDef) {
-			//No need to check MiddleTierRole; no call to db.
 			if(sheetFieldDef==null || sheetFieldDef.FieldType!=SheetFieldType.CheckBox) {
 				return "";
 			}
-			if(string.IsNullOrEmpty(sheetFieldDef.UiLabelMobileRadioButton)) {
-				return sheetFieldDef.RadioButtonValue;
-			}
-			return sheetFieldDef.UiLabelMobileRadioButton;
+			return string.IsNullOrEmpty(sheetFieldDef.UiLabelMobileRadioButton) ? sheetFieldDef.RadioButtonValue : sheetFieldDef.UiLabelMobileRadioButton;
 		}
 
 		/// <summary>Compares sheet fields by value. Returns true if properties are the same, false otherwise. Omits compairing tab ordering, and location.</summary>
 		public static bool CompareSheetFieldDefsByValueForMobileLayout(SheetFieldDef sheetFieldDefA, SheetFieldDef sheetFieldDefB,bool ignoreLanguage=false) {
-			//No need to check MiddleTierRole; no call to db.
-			if(!ignoreLanguage) { 
-				if(sheetFieldDefA.SheetDefNum!=sheetFieldDefB.SheetDefNum) {
-					return false;
-				}
-				if(sheetFieldDefA.Language!=sheetFieldDefB.Language) {
-					return false;
-				}
-				if(sheetFieldDefA.SheetFieldDefNum!=sheetFieldDefB.SheetFieldDefNum) {
-					//For new sheet fields this will be 0, hence needing to compare all other fields.
-					return false;
-				}
-			}
-			if(sheetFieldDefA.FieldName!=sheetFieldDefB.FieldName) {
-				return false;
-			}
-			if(sheetFieldDefA.FieldType!=sheetFieldDefB.FieldType) {
-				return false;
-			}
-			if(sheetFieldDefA.FieldValue!=sheetFieldDefB.FieldValue) {
-				return false;
-			}
-			if(sheetFieldDefA.RadioButtonGroup!=sheetFieldDefB.RadioButtonGroup) {
-				return false;
-			}
-			if(sheetFieldDefA.RadioButtonValue!=sheetFieldDefB.RadioButtonValue) {
-				return false;
-			}
-			if(sheetFieldDefA.UiLabelMobile!=sheetFieldDefB.UiLabelMobile) {
-				return false;
-			}
-			if(GetUiLabelMobileRadioButton(sheetFieldDefA)!=GetUiLabelMobileRadioButton(sheetFieldDefB)) {
-				if(sheetFieldDefA.SheetFieldDefNum!=sheetFieldDefB.SheetFieldDefNum) {
-					return false;
-				}
-			}
-			if(sheetFieldDefA.XPos!=sheetFieldDefB.XPos || sheetFieldDefA.YPos!=sheetFieldDefB.YPos) {
-				if(sheetFieldDefA.SheetFieldDefNum!=sheetFieldDefB.SheetFieldDefNum) {
-					return false;
-				}
-			}
-			return true;
+			return (ignoreLanguage || sheetFieldDefA.SheetDefNum==sheetFieldDefB.SheetDefNum)
+				&& (ignoreLanguage || sheetFieldDefA.SheetFieldDefNum==sheetFieldDefB.SheetFieldDefNum) //For new sheet fields this will be 0, hence needing to compare all other fields.
+				&& (ignoreLanguage || sheetFieldDefA.Language==sheetFieldDefB.Language)
+				&& sheetFieldDefA.FieldName==sheetFieldDefB.FieldName
+				&& sheetFieldDefA.FieldType==sheetFieldDefB.FieldType
+				&& sheetFieldDefA.FieldValue==sheetFieldDefB.FieldValue
+				&& sheetFieldDefA.RadioButtonGroup==sheetFieldDefB.RadioButtonGroup
+				&& sheetFieldDefA.RadioButtonValue==sheetFieldDefB.RadioButtonValue
+				&& sheetFieldDefA.UiLabelMobile==sheetFieldDefB.UiLabelMobile
+				&& (GetUiLabelMobileRadioButton(sheetFieldDefA)==GetUiLabelMobileRadioButton(sheetFieldDefB) || sheetFieldDefA.SheetFieldDefNum==sheetFieldDefB.SheetFieldDefNum)
+				&& ((sheetFieldDefA.XPos==sheetFieldDefB.XPos && sheetFieldDefA.YPos==sheetFieldDefB.YPos)
+				||sheetFieldDefA.SheetFieldDefNum==sheetFieldDefB.SheetFieldDefNum);
 		}
 
 		///<Summary>Gets one SheetFieldDef from the database.</Summary>
@@ -260,23 +213,22 @@ namespace OpenDentBusiness{
 		///<summary>Inserts, updates, or deletes database rows to match supplied list. Must always pass in sheetDefNum.
 		///This function uses a DB comparison rather than a stale list because we are not worried about concurrency of a single sheet and enhancing the
 		///functions that call this would take a lot of restructuring.</summary>
-		public static void Sync(List<SheetFieldDef> listSheetFieldDefs,long sheetDefNum) {
+		public static void Sync(List<SheetFieldDef> listNew,long sheetDefNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listSheetFieldDefs,sheetDefNum);//never pass DB list through the web service
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),listNew,sheetDefNum);//never pass DB list through the web service
 				return;
 			}
-			List<SheetFieldDef> listSheetFieldDefsDB=SheetFieldDefs.GetForSheetDef(sheetDefNum);
-			Crud.SheetFieldDefCrud.Sync(listSheetFieldDefs,listSheetFieldDefsDB);
+			List<SheetFieldDef> listDB=SheetFieldDefs.GetForSheetDef(sheetDefNum);
+			Crud.SheetFieldDefCrud.Sync(listNew,listDB);
 		}
 
 
 		///<summary>Sorts fields in the order that they shoudl be drawn on top of eachother. First Images, then Drawings, Lines, Rectangles, Text, Check Boxes, and SigBoxes. In that order.</summary>
-		public static int SortDrawingOrderLayers(SheetFieldDef sheetFieldDef1,SheetFieldDef sheetFieldDef2) {
-			//No need to check MiddleTierRole; no call to db.
-			if(sheetFieldDef1.FieldType!=sheetFieldDef2.FieldType) {
-				return SheetFields.FieldTypeSortOrder(sheetFieldDef1.FieldType).CompareTo(SheetFields.FieldTypeSortOrder(sheetFieldDef2.FieldType));
+		public static int SortDrawingOrderLayers(SheetFieldDef f1,SheetFieldDef f2) {
+			if(f1.FieldType!=f2.FieldType) {
+				return SheetFields.FieldTypeSortOrder(f1.FieldType).CompareTo(SheetFields.FieldTypeSortOrder(f2.FieldType));
 			}
-			return sheetFieldDef1.YPos.CompareTo(sheetFieldDef2.YPos);
+			return f1.YPos.CompareTo(f2.YPos);
 			//return f1.SheetFieldNum.CompareTo(f2.SheetFieldNum);
 		}
 
@@ -285,57 +237,56 @@ namespace OpenDentBusiness{
 		///Does not handle null values, but there should never be any instances of null being passed in. 
 		///Must always return 0 when compairing item to itself.
 		///This function should probably be moved to SheetFieldDefs.</summary>
-		public static int CompareTabOrder(SheetFieldDef sheetFieldDef1,SheetFieldDef sheetFieldDef2) {
-			//No need to check MiddleTierRole; no call to db.
-			if(sheetFieldDef1.FieldType==sheetFieldDef2.FieldType) {
+		public static int CompareTabOrder(SheetFieldDef def1,SheetFieldDef def2) {
+			if(def1.FieldType==def2.FieldType) {
 				//do nothing
 			}
-			else if(sheetFieldDef1.FieldType==SheetFieldType.Image) { //Always move images to the top of the list. This is because of the way the sheet is drawn.
+			else if(def1.FieldType==SheetFieldType.Image) { //Always move images to the top of the list. This is because of the way the sheet is drawn.
 				return -1;
 			}
-			else if(sheetFieldDef2.FieldType==SheetFieldType.Image) { //Always move images to the top of the list. This is because of the way the sheet is drawn.
+			else if(def2.FieldType==SheetFieldType.Image) { //Always move images to the top of the list. This is because of the way the sheet is drawn.
 				return 1;
 			}
-			else if(sheetFieldDef1.FieldType==SheetFieldType.PatImage) { //Move PatImage to the top of the list under images.
+			else if(def1.FieldType==SheetFieldType.PatImage) { //Move PatImage to the top of the list under images.
 				return -1;
 			}
-			else if(sheetFieldDef2.FieldType==SheetFieldType.PatImage) { //Move PatImage to the top of the list under images.
+			else if(def2.FieldType==SheetFieldType.PatImage) { //Move PatImage to the top of the list under images.
 				return 1;
 			}
-			else if(sheetFieldDef1.FieldType==SheetFieldType.Special) { //Move Special to the top of the list under PatImages.
+			else if(def1.FieldType==SheetFieldType.Special) { //Move Special to the top of the list under PatImages.
 				return -1;
 			}
-			else if(sheetFieldDef2.FieldType==SheetFieldType.Special) { //Move Special to the top of the list under PatImages.
+			else if(def2.FieldType==SheetFieldType.Special) { //Move Special to the top of the list under PatImages.
 				return 1;
 			}
-			else if(sheetFieldDef1.FieldType==SheetFieldType.OutputText) { //Move Output text to the top of the list under Special.
+			else if(def1.FieldType==SheetFieldType.OutputText) { //Move Output text to the top of the list under Special.
 				return -1;
 			}
-			else if(sheetFieldDef2.FieldType==SheetFieldType.OutputText) { //Move Output text to the top of the list under Special.
+			else if(def2.FieldType==SheetFieldType.OutputText) { //Move Output text to the top of the list under Special.
 				return 1;
 			}
-			else if(sheetFieldDef1.FieldType==SheetFieldType.MobileHeader) { //Move MobileHeader to bottom
+			else if(def1.FieldType==SheetFieldType.MobileHeader) { //Move MobileHeader to bottom
 				return 1;
 			}
-			else if(sheetFieldDef2.FieldType==SheetFieldType.MobileHeader) { //Move MobileHeader to bottom
+			else if(def2.FieldType==SheetFieldType.MobileHeader) { //Move MobileHeader to bottom
 				return -1;
 			}
-			if(sheetFieldDef1.TabOrder!=sheetFieldDef2.TabOrder) {
-				return sheetFieldDef1.TabOrder-sheetFieldDef2.TabOrder;
+			if(def1.TabOrder!=def2.TabOrder) {
+				return def1.TabOrder-def2.TabOrder;
 			}
-			int intComp=(sheetFieldDef1.FieldName+sheetFieldDef1.RadioButtonValue).CompareTo(sheetFieldDef2.FieldName+sheetFieldDef2.RadioButtonValue); //RadioButtionValuecan be filled or ""
-			if(intComp!=0) {
-				return intComp;
+			int comp=(def1.FieldName+def1.RadioButtonValue).CompareTo(def2.FieldName+def2.RadioButtonValue); //RadioButtionValuecan be filled or ""
+			if(comp!=0) {
+				return comp;
 			}
-			intComp=sheetFieldDef1.YPos-sheetFieldDef2.YPos; //arbitrarily order by YPos if both controls have the same tab orer and name. This will only happen if both fields are either identical or if they are both misc fields.
-			if(intComp!=0) {
-				return intComp;
+			comp=def1.YPos-def2.YPos; //arbitrarily order by YPos if both controls have the same tab orer and name. This will only happen if both fields are either identical or if they are both misc fields.
+			if(comp!=0) {
+				return comp;
 			}
-			intComp=sheetFieldDef1.XPos-sheetFieldDef2.XPos; //If tabOrder, Name, and YPos are equal then compare based on X coordinate. 
-			if(intComp!=0) {
-				return intComp;
+			comp=def1.XPos-def2.XPos; //If tabOrder, Name, and YPos are equal then compare based on X coordinate. 
+			if(comp!=0) {
+				return comp;
 			}
-			return sheetFieldDef1.TabOrderMobile-sheetFieldDef2.TabOrderMobile;
+			return def1.TabOrderMobile-def2.TabOrderMobile;
 		}
 	}
 }

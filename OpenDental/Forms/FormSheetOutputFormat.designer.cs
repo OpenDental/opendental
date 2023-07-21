@@ -31,6 +31,7 @@ namespace OpenDental{
 			this.checkEmail2 = new OpenDental.UI.CheckBox();
 			this.textPaperCopies = new OpenDental.ValidNum();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -86,17 +87,27 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(346, 195);
+			this.butOK.Location = new System.Drawing.Point(231, 196);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(343, 196);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// FormSheetOutputFormat
 			// 
-			this.ClientSize = new System.Drawing.Size(433, 231);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(443, 243);
 			this.Controls.Add(this.textEmail2);
 			this.Controls.Add(this.checkEmail2);
 			this.Controls.Add(this.textEmailPat);
@@ -104,6 +115,7 @@ namespace OpenDental{
 			this.Controls.Add(this.textPaperCopies);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label1);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormSheetOutputFormat";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -117,6 +129,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label1;
 		private ValidNum textPaperCopies;
 		private OpenDental.UI.CheckBox checkEmailPat;

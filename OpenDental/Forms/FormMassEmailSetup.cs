@@ -128,7 +128,7 @@ namespace OpenDental {
 
 		private void UpdateControlVisibility() {
 			bool hasClinicsEnabled=PrefC.HasClinicsEnabled;
-			bool allowEdit=Security.IsAuthorized(EnumPermType.EServicesSetup,true);
+			bool allowEdit=Security.IsAuthorized(Permissions.EServicesSetup,true);
 			bool isSignedUpClinic0=Clinics.IsMassEmailSignedUp(0);
 			bool areAnyClinicsSignedUp=GetClinicNums().Any(x => Clinics.IsMassEmailSignedUp(x));
 			gridClinics.Visible=hasClinicsEnabled;
@@ -201,12 +201,12 @@ namespace OpenDental {
 			if(!MsgBox.Show(this,MsgBoxButtons.YesNo,_activateMassEmailMessage))	{
 				return;
 			}
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			//Creates credentials (if necessary) and adds the signup.
 			progressOD.ActionMain=() => WebServiceMainHQProxy.CreateHostedEmailCredentials(clinicNum,true,false);
 			progressOD.StartingMessage="Signing up for Mass Email...";
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception e){
 				FriendlyException.Show("An error occurred while signing up for Mass Email: "+e.Message,e);

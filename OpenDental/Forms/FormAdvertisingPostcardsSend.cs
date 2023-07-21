@@ -30,12 +30,12 @@ namespace OpenDental {
 		private void FillData() {
 			_postcardManiaMetaData=new PostcardManiaMetaData();
 			try {
-				UI.ProgressWin progressOD=new UI.ProgressWin();
+				UI.ProgressOD progressOD=new UI.ProgressOD();
 				progressOD.ActionMain=() => {
 					_postcardManiaMetaData=AdvertisingPostcards.GetPostcardManiaMetaData();
 				};
 				progressOD.StartingMessage=Lan.g(this,"Getting Account Data")+"...";
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 				if(progressOD.IsCancelled){
 					return;
 				}
@@ -46,7 +46,7 @@ namespace OpenDental {
 		}
 
 		private void FillUI() {
-			butSave.Enabled=!_postcardManiaMetaData.Accounts.IsNullOrEmpty();
+			butUploadPatients.Enabled=!_postcardManiaMetaData.Accounts.IsNullOrEmpty();
 			butViewAccount.Enabled=!_postcardManiaMetaData.Accounts.IsNullOrEmpty();
 			comboPostcardAccount.Items.Clear();
 			comboPostcardAccount.Items.AddList(_postcardManiaMetaData.Accounts,x=>x.AccountTitle);
@@ -65,14 +65,14 @@ namespace OpenDental {
 		private void ViewAccount_Click(object sender,EventArgs e) {
 			string url="";
 			try {
-				UI.ProgressWin progressOD=new UI.ProgressWin();
+				UI.ProgressOD progressOD=new UI.ProgressOD();
 				progressOD.ActionMain=() => {
 					url=AdvertisingPostcards.GetSSO(
 						((PostcardManiaAccountData)comboPostcardAccount.SelectedItem).Guid,
 						((PostcardManiaAccountData)comboPostcardAccount.SelectedItem).Email);
 				};
 				progressOD.StartingMessage=Lan.g(this,"Getting Account Data")+"...";
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 				if(progressOD.IsCancelled){
 					return;
 				}
@@ -81,8 +81,7 @@ namespace OpenDental {
 				FriendlyException.Show(ex.Message,ex);
 				return;
 			}
-			using FormWebView fweb=new FormWebView();
-			fweb.UrlBrowseTo=url;
+			using FormWebView fweb=new FormWebView(url);
 			fweb.IsUrlSingleUse=true;
 			fweb.ShowDialog();
 		}
@@ -90,14 +89,14 @@ namespace OpenDental {
 		private void ViewAccount() {
 			string url="";
 			try {
-				UI.ProgressWin progressOD=new UI.ProgressWin();
+				UI.ProgressOD progressOD=new UI.ProgressOD();
 				progressOD.ActionMain=() => {
 					url=AdvertisingPostcards.GetSSO(
 						((PostcardManiaAccountData)comboPostcardAccount.SelectedItem).Guid,
 						((PostcardManiaAccountData)comboPostcardAccount.SelectedItem).Email);
 				};
 				progressOD.StartingMessage=Lan.g(this,"Getting Account Data")+"...";
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 				if(progressOD.IsCancelled){
 					return;
 				}
@@ -106,8 +105,7 @@ namespace OpenDental {
 				FriendlyException.Show(ex.Message,ex);
 				return;
 			}
-			using FormWebView fweb=new FormWebView();
-			fweb.UrlBrowseTo=url;
+			using FormWebView fweb=new FormWebView(url);
 			fweb.Title=Lan.g(this,"Advertising - Postcards");
 			fweb.IsUrlSingleUse=true;
 			fweb.ShowDialog();
@@ -132,12 +130,12 @@ namespace OpenDental {
 
 		private void butViewAccount_Click(object sender,EventArgs e) {
 			if(((PostcardManiaAccountData)comboPostcardAccount.SelectedItem)!=null) {
-				SecurityLogs.MakeLogEntry(EnumPermType.Advertising,0,$"Navigated to Advertising - Postcards web framework for {((PostcardManiaAccountData)comboPostcardAccount.SelectedItem).AccountTitle}");
+				SecurityLogs.MakeLogEntry(Permissions.Advertising,0,$"Navigated to Advertising - Postcards web framework for {((PostcardManiaAccountData)comboPostcardAccount.SelectedItem).AccountTitle}");
 			}	
 			ViewAccount();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butUploadPatients_Click(object sender,EventArgs e) {
 			if(textListName.Text=="") {
 				MsgBox.Show("Empty 'List name' not allowed.");
 				return;
@@ -146,10 +144,10 @@ namespace OpenDental {
 				return;
 			}
 			if(((PostcardManiaAccountData)comboPostcardAccount.SelectedItem)!=null) {
-				SecurityLogs.MakeLogEntry(EnumPermType.Advertising,0,$"Uploaded list to Advertising - Postcards web framework for {((PostcardManiaAccountData)comboPostcardAccount.SelectedItem).AccountTitle}");
+				SecurityLogs.MakeLogEntry(Permissions.Advertising,0,$"Uploaded list to Advertising - Postcards web framework for {((PostcardManiaAccountData)comboPostcardAccount.SelectedItem).AccountTitle}");
 			}	
 			try {
-				UI.ProgressWin progressOD=new UI.ProgressWin();
+				UI.ProgressOD progressOD=new UI.ProgressOD();
 				progressOD.ActionMain=() => {
 					AdvertisingPostcards.UploadPatients(
 						((PostcardManiaAccountData)comboPostcardAccount.SelectedItem).Guid,
@@ -157,7 +155,7 @@ namespace OpenDental {
 						textListName.Text,_listPatientInfo);
 				};
 				progressOD.StartingMessage=Lan.g(this,"Uploading Patient Data")+"...";
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 				if(progressOD.IsCancelled){
 					return;
 				}
@@ -170,5 +168,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

@@ -35,6 +35,7 @@ namespace OpenDental{
 			this.gridMeds = new OpenDental.UI.GridOD();
 			this.butPickRxListImage = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.label3 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.pictBox)).BeginInit();
 			this.SuspendLayout();
@@ -154,6 +155,16 @@ namespace OpenDental{
 			this.butAdd.Text = "&Add Medication";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(838, 640);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// label3
 			// 
 			this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -179,6 +190,7 @@ namespace OpenDental{
 			this.Controls.Add(this.textDocDateDesc);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.checkDiscontinued);
+			this.Controls.Add(this.butClose);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMedicationReconcile";
@@ -192,6 +204,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.TextBox textDocDateDesc;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.CheckBox checkDiscontinued;

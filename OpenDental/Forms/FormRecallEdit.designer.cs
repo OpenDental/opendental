@@ -63,8 +63,9 @@ namespace OpenDental {
 			this.textScheduledDate = new System.Windows.Forms.TextBox();
 			this.label13 = new System.Windows.Forms.Label();
 			this.butDelete = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.textDateDue = new OpenDental.ValidDate();
+			this.butCancel = new OpenDental.UI.Button();
 			this.checkASAP = new OpenDental.UI.CheckBox();
 			this.textNote = new OpenDental.ODtextBox();
 			this.labelPattern = new System.Windows.Forms.Label();
@@ -337,15 +338,15 @@ namespace OpenDental {
 			this.butDelete.Text = "&Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(627, 440);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 13;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(640, 398);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 13;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// textDateDue
 			// 
@@ -353,6 +354,16 @@ namespace OpenDental {
 			this.textDateDue.Name = "textDateDue";
 			this.textDateDue.Size = new System.Drawing.Size(85, 20);
 			this.textDateDue.TabIndex = 6;
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(640, 440);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// checkASAP
 			// 
@@ -371,7 +382,7 @@ namespace OpenDental {
 			this.textNote.DetectUrls = false;
 			this.textNote.Location = new System.Drawing.Point(183, 351);
 			this.textNote.Name = "textNote";
-			this.textNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Recall;
+			this.textNote.QuickPasteType = OpenDentBusiness.QuickPasteType.Recall;
 			this.textNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNote.Size = new System.Drawing.Size(350, 112);
 			this.textNote.TabIndex = 15;
@@ -404,7 +415,7 @@ namespace OpenDental {
 			// 
 			// FormRecallEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(723, 489);
+			this.ClientSize = new System.Drawing.Size(736, 489);
 			this.Controls.Add(this.labelPatternDesc);
 			this.Controls.Add(this.textPattern);
 			this.Controls.Add(this.labelPattern);
@@ -416,10 +427,11 @@ namespace OpenDental {
 			this.Controls.Add(this.label10);
 			this.Controls.Add(this.textNote);
 			this.Controls.Add(this.butDelete);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.textDateDue);
 			this.Controls.Add(this.textDateDueCalc);
 			this.Controls.Add(this.textDatePrevious);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.label9);
 			this.Controls.Add(this.comboStatus);
 			this.Controls.Add(this.label8);
@@ -443,6 +455,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
@@ -460,7 +474,7 @@ namespace OpenDental {
 		private OpenDental.ValidNum textDays;
 		private OpenDental.ValidNum textWeeks;
 		private OpenDental.UI.CheckBox checkIsDisabled;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butDelete;
 		private System.Windows.Forms.TextBox textDateDueCalc;
 		private OpenDental.ValidDate textDateDue;

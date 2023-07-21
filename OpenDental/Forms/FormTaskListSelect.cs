@@ -188,7 +188,7 @@ namespace OpenDental {
 					|| x.TagOD.ToString().ToUpper().Trim().Contains(textFilter.Text.ToUpper().Trim()))//or the path to the tasklist contains search text
 				.OrderByDescending(x => x.Descript.ToUpper().Trim().StartsWith(textFilter.Text.ToUpper().Trim()))
 				.ThenByDescending(x => x.Descript.ToUpper().Trim().Contains(textFilter.Text.ToUpper().Trim()))
-				.ThenBy(x => x.TagOD.ToString().ToUpper().Trim().StartsWith(textFilter.Text.ToUpper().Trim()))
+				.ThenByDescending(x => x.TagOD.ToString().ToUpper().Trim().StartsWith(textFilter.Text.ToUpper().Trim()))
 				.ThenBy(x => x.Descript).ToList();
 			//if no search text entered, list is already sorted by description
 			return listTaskListsFiltered;
@@ -282,5 +282,9 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }
+

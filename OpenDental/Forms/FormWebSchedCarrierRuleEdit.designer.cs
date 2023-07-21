@@ -24,7 +24,8 @@ namespace OpenDental {
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWebSchedCarrierRuleEdit));
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.labelCarrierName = new System.Windows.Forms.Label();
 			this.textCarrierName = new System.Windows.Forms.TextBox();
 			this.labelDisplayName = new System.Windows.Forms.Label();
@@ -40,15 +41,26 @@ namespace OpenDental {
 			this.groupRuleType.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(212, 350);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 8;
-			this.butSave.Text = "Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(212, 350);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 9;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(131, 350);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 8;
+			this.butOK.Text = "OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// labelCarrierName
 			// 
@@ -165,12 +177,14 @@ namespace OpenDental {
 			// 
 			// FormWebSchedCarrierRuleEdit
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(306, 386);
 			this.Controls.Add(this.labelCount);
 			this.Controls.Add(this.groupRuleType);
 			this.Controls.Add(this.textMessage);
 			this.Controls.Add(this.labelMessage);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.labelCarrierName);
 			this.Controls.Add(this.textCarrierName);
 			this.Controls.Add(this.labelDisplayName);
@@ -186,7 +200,8 @@ namespace OpenDental {
 		}
 
 		#endregion
-		private UI.Button butSave;
+		private OpenDental.UI.Button butCancel;
+		private UI.Button butOK;
 		private System.Windows.Forms.Label labelCarrierName;
 		private System.Windows.Forms.TextBox textCarrierName;
 		private System.Windows.Forms.Label labelDisplayName;

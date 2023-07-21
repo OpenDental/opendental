@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="495" Height="426" 
-             Text="Edit Problem" MinMaxBoxes="False" >
+             Text="Edit Problem" Loaded="FrmDiseaseEdit_Loaded" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:TextBox x:Name="textIcd10" Width="321" Height="20" Margin="118,64,0,0" ColorBack="#FFF0F0F0" />
 		<ui:Label x:Name="label9" Width="100" Height="19" Margin="14,65,0,0" Text="ICD10" HAlign="Right" VAlign="Center" />
@@ -34,6 +34,6 @@
 		<ui:Label x:Name="label2" Width="100" Height="19" Margin="14,13,0,0" Text="Problem" HAlign="Right" VAlign="Center" />
 		<ui:Label x:Name="label1" Width="100" Height="17" Margin="12,195,0,0" Text="Note" HAlign="Right" VAlign="Center" />
 		<ui:TextBox x:Name="textNote" Width="322" Height="120" Margin="118,195,0,0" IsMultiline="True" />
-		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,12,12" Text="_Save" Click="butSave_Click" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,12,12" Text="Save" Click="butSave_Click" />
 	</Grid>
 </local:FrmODBase>

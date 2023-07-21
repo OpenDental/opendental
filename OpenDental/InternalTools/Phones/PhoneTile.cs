@@ -4,14 +4,13 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Data;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using OpenDentBusiness;
 using CodeBase;
+using System.Linq;
 
 namespace OpenDental {
-	///<summary>Was more heavily used, but now it's just used at the lower left of main module. Needs an overhaul.</summary>
 	public partial class PhoneTile:UserControl {
 		private Phone _phoneCur;
 		///<summary>Passed in.  The amount of time it has taken for all the code to execute.</summary>
@@ -81,18 +80,14 @@ namespace OpenDental {
 				//Phone status was changed to WrapUp for the first time.  Subsequent invocations will be ignored.
 				if(_phoneCur.ClockStatus==ClockStatusEnum.WrapUp && labelStatusAndNote.Text!=_phoneCur.ClockStatus.GetDescription()) {
 					//Get all of the Communication Item windows that are not persistent and are not historic.
-					List<Form> listForms=Application.OpenForms.Cast<Form>().Where(x=>x.Name=="FormCommItem").ToList();
-					if(listForms.Count==1) {
-						Form form=listForms[0];
-						FormFrame formFrame=(FormFrame)form;
-						FrmCommItem frmCommItem=(FrmCommItem)formFrame.UIManager_.FrmODBaseHosted;
-						if(!frmCommItem.IsPersistent && !frmCommItem.IsHistoric){
-							//The Communication Item window is shown via .ShowDialog() so there should only be one open at a time.
-							//If there is somehow more than one instance then don't do anything.
-							//if(listFrmCommItems.Count==1) {
-								//If the Commlog for the given form is still "new" a CommlogHist entry will not be created.
-							ODException.SwallowAnyException(() => frmCommItem.SaveCommlogHist(_phoneCur.CustomerNumberRaw,CommlogHistSource.WrapUp));
-						}
+					List<FormCommItem> listFormCommItems=Application.OpenForms.OfType<FormCommItem>()
+						.Where(x => !x.IsPersistent && !x.IsHistoric)
+						.ToList();
+					//The Communication Item window is shown via .ShowDialog() so there should only be one open at a time.
+					//If there is somehow more than one instance then don't do anything.
+					if(listFormCommItems.Count==1) {
+						//If the Commlog for the given form is still "new" a CommlogHist entry will not be created.
+						ODException.SwallowAnyException(() => listFormCommItems[0].SaveCommlogHist(_phoneCur.CustomerNumberRaw,CommlogHistSource.WrapUp));
 					}
 				}
 				labelStatusAndNote.Text=_phoneCur.ClockStatus.GetDescription();

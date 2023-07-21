@@ -107,7 +107,7 @@ namespace OpenDentBusiness {
 						listLogMsgs.Add($"HIE clinic '{Clinics.GetDesc(hieClinicForPat.ClinicNum)}' was skipped because time of day not between {hieClinicForPat.TimeOfDayExportCCD.ToShortTimeString()} and {hieClinicForPat.TimeOfDayExportCCDEnd.ToShortTimeString()}.");
 						continue;
 					}
-					if(!Directory.Exists(hieClinicForPat.PathExportCCD) && !ODBuild.IsUnitTest) {
+					if(!Directory.Exists(hieClinicForPat.PathExportCCD) && !ODInitialize.IsRunningInUnitTest) {
 						listLogMsgs.Add($"Export directory does not exist '{hieClinicForPat.PathExportCCD}' for HIE clinic number '{hieClinicForPat.HieClinicNum}'.");
 						continue;
 					}
@@ -134,7 +134,7 @@ namespace OpenDentBusiness {
 							continue;
 						}
 					}
-					if(!ODBuild.IsUnitTest) {//Don't create ccd export if running Unit Tests
+					if(!ODInitialize.IsRunningInUnitTest) {//Don't create ccd export if running Unit Tests
 						//Process summary of care for the patient to the export path specified.
 						string ccdTextForPat=EhrCCD.GenerateSummaryOfCare(patCur,out string _,canValidate:false);
 						string pathCcdExportWOExt=ODFileUtils.CombinePaths(hieClinicForPat.PathExportCCD,$"ccd_{DateTime_.Now.ToString("yyyyMMdd")}_{patCur.PatNum}");

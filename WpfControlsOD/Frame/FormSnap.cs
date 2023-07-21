@@ -8,7 +8,6 @@ using System.Windows.Forms;
 using OpenDentBusiness;
 
 namespace OpenDental {
-	///<summary>This is a small window that will come up when hovering over the maximize button to duplicate the funcationality found in Win11 for snapping a window to some screen position.</summary>
 	public partial class FormSnap:Form {
 		public float ScaleMy=1;
 		///<summary>This is the lower middle of the button that launched this window, in screen coordinates.  This window will center itself on the anchor point.</summary>

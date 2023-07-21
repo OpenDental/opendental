@@ -44,13 +44,13 @@ namespace UnitTests.TaskLists_Tests {
 		[TestInitialize]
 		public void SetupTest() {
 			PrefT.UpdateBool(PrefName.EasyNoClinics,false);
-			PrefT.UpdateInt(PrefName.TasksGlobalFilterType,(int)EnumTaskFilterType.None);
+			PrefT.UpdateInt(PrefName.TasksGlobalFilterType,(int)GlobalTaskFilterType.None);
 			TaskListT.ClearTaskListTable();
 			TaskT.ClearTaskTable();
 			TaskSubscriptionT.ClearTaskSubscriptionTable();
-			_taskListMainNoFilter=TaskListT.CreateTaskList(descript:"No Filter",parent:0,globalTaskFilterType:EnumTaskFilterType.None);
-			_taskListClinic=TaskListT.CreateTaskList(descript:"Clinic Filter",parent:_taskListMainNoFilter.TaskListNum,globalTaskFilterType:EnumTaskFilterType.Clinic);
-			_taskListRegion=TaskListT.CreateTaskList(descript:"Region Filter",parent:_taskListMainNoFilter.TaskListNum,globalTaskFilterType:EnumTaskFilterType.Region);
+			_taskListMainNoFilter=TaskListT.CreateTaskList(descript:"No Filter",parent:0,globalTaskFilterType:GlobalTaskFilterType.None);
+			_taskListClinic=TaskListT.CreateTaskList(descript:"Clinic Filter",parent:_taskListMainNoFilter.TaskListNum,globalTaskFilterType:GlobalTaskFilterType.Clinic);
+			_taskListRegion=TaskListT.CreateTaskList(descript:"Region Filter",parent:_taskListMainNoFilter.TaskListNum,globalTaskFilterType:GlobalTaskFilterType.Region);
 			_taskListRepeating=TaskListT.CreateTaskList("Repeating",isRepeating:true);
 			TaskSubscriptions.TrySubscList(_taskListMainNoFilter.TaskListNum,_userA.UserNum);
 			TaskSubscriptions.TrySubscList(_taskListClinic.TaskListNum,_userA.UserNum);
@@ -86,7 +86,7 @@ namespace UnitTests.TaskLists_Tests {
 		[TestMethod]
 		public void TaskLists_RefreshMainTrunk_ClinicFilter() {
 			string suffix = MethodBase.GetCurrentMethod().Name;
-			TaskList taskListMainClinicFilter=TaskListT.CreateTaskList(descript:"Main Clinic Filter",parent:0,globalTaskFilterType:EnumTaskFilterType.Clinic);
+			TaskList taskListMainClinicFilter=TaskListT.CreateTaskList(descript:"Main Clinic Filter",parent:0,globalTaskFilterType:GlobalTaskFilterType.Clinic);
 			TaskSubscriptions.TrySubscList(taskListMainClinicFilter.TaskListNum,_userA.UserNum);
 			//Add clinicS appointment and patient Tasks.
 			CreateTasks(suffix,_patS,_userA,taskListMainClinicFilter.TaskListNum);
@@ -99,7 +99,7 @@ namespace UnitTests.TaskLists_Tests {
 		[TestMethod]
 		public void TaskLists_RefreshMainTrunk_RegionFilter() {
 			string suffix = MethodBase.GetCurrentMethod().Name;
-			TaskList taskListMainRegionFilter=TaskListT.CreateTaskList(descript:"Main Region Filter",parent:0,globalTaskFilterType:EnumTaskFilterType.Region);
+			TaskList taskListMainRegionFilter=TaskListT.CreateTaskList(descript:"Main Region Filter",parent:0,globalTaskFilterType:GlobalTaskFilterType.Region);
 			TaskSubscriptions.TrySubscList(taskListMainRegionFilter.TaskListNum,_userA.UserNum);
 			//Add clinicS appointment and patient Tasks.
 			CreateTasks(suffix,_patS,_userA,taskListMainRegionFilter.TaskListNum);
@@ -112,7 +112,7 @@ namespace UnitTests.TaskLists_Tests {
 		[TestMethod]
 		public void TaskLists_RefreshMainTrunk_RegionFilterClinicRestriction() {
 			string suffix = MethodBase.GetCurrentMethod().Name;
-			TaskList taskListMainRegionFilter=TaskListT.CreateTaskList(descript:"Main Region Filter",parent:0,globalTaskFilterType:EnumTaskFilterType.Region);
+			TaskList taskListMainRegionFilter=TaskListT.CreateTaskList(descript:"Main Region Filter",parent:0,globalTaskFilterType:GlobalTaskFilterType.Region);
 			TaskSubscriptions.TrySubscList(taskListMainRegionFilter.TaskListNum,_userNW.UserNum);
 			//Add clinicS appointment and patient Tasks.
 			CreateTasks(suffix,_patN,_userA,taskListMainRegionFilter.TaskListNum);
@@ -184,7 +184,7 @@ namespace UnitTests.TaskLists_Tests {
 		[TestMethod]
 		public void TaskLists_RefreshRepeatingTrunk_ClinicFilter() {
 			string suffix = MethodBase.GetCurrentMethod().Name;
-			TaskList taskListClinic=TaskListT.CreateTaskList(descript:"Clinic Filter",parent:0,globalTaskFilterType:EnumTaskFilterType.Clinic
+			TaskList taskListClinic=TaskListT.CreateTaskList(descript:"Clinic Filter",parent:0,globalTaskFilterType:GlobalTaskFilterType.Clinic
 				,isRepeating:true);
 			//Add clinicS appointment and patient Tasks.
 			CreateTasks(suffix,_patS,_userA,taskListClinic.TaskListNum);
@@ -197,7 +197,7 @@ namespace UnitTests.TaskLists_Tests {
 		[TestMethod]
 		public void TaskLists_RefreshRepeatingTrunk_RegionFilter() {
 			string suffix = MethodBase.GetCurrentMethod().Name;
-			TaskList taskListRegion=TaskListT.CreateTaskList(descript:"Region Filter",parent:0,globalTaskFilterType:EnumTaskFilterType.Region
+			TaskList taskListRegion=TaskListT.CreateTaskList(descript:"Region Filter",parent:0,globalTaskFilterType:GlobalTaskFilterType.Region
 				,isRepeating:true);
 			//Add clinicS appointment and patient Tasks.
 			CreateTasks(suffix,_patS,_userA,taskListRegion.TaskListNum);
@@ -210,7 +210,7 @@ namespace UnitTests.TaskLists_Tests {
 		[TestMethod]
 		public void TaskLists_RefreshRepeatingTrunk_RegionFilterClinicRestriction() {
 			string suffix = MethodBase.GetCurrentMethod().Name;
-			TaskList taskListRegion=TaskListT.CreateTaskList(descript:"Region Filter",parent:0,globalTaskFilterType:EnumTaskFilterType.Region
+			TaskList taskListRegion=TaskListT.CreateTaskList(descript:"Region Filter",parent:0,globalTaskFilterType:GlobalTaskFilterType.Region
 				,isRepeating:true);
 			//Add clinicS appointment and patient Tasks.
 			CreateTasks(suffix,_patN,_userA,taskListRegion.TaskListNum);
@@ -225,7 +225,7 @@ namespace UnitTests.TaskLists_Tests {
 		[TestMethod]
 		public void TaskLists_RefreshChildren_NoFilter() {
 			string suffix = MethodBase.GetCurrentMethod().Name;
-			TaskList taskListNoFilter=TaskListT.CreateTaskList(descript:"No Filter",parent:_taskListMainNoFilter.TaskListNum,globalTaskFilterType:EnumTaskFilterType.None);
+			TaskList taskListNoFilter=TaskListT.CreateTaskList(descript:"No Filter",parent:_taskListMainNoFilter.TaskListNum,globalTaskFilterType:GlobalTaskFilterType.None);
 			long userInbox=TaskLists.GetMailboxUserNum(_taskListMainNoFilter.TaskListNum);
 			//Add clinicS appointment and patient Tasks.
 			CreateTasks(suffix,_patN,_userA,taskListNoFilter.TaskListNum);
@@ -291,7 +291,7 @@ namespace UnitTests.TaskLists_Tests {
 		[TestMethod]
 		public void TaskLists_RefreshRepeating_ClinicFilter() {
 			string suffix = MethodBase.GetCurrentMethod().Name;
-			TaskList taskListClinic=TaskListT.CreateTaskList(descript:"Clinic Filter",parent:_taskListMainNoFilter.TaskListNum,globalTaskFilterType:EnumTaskFilterType.Clinic
+			TaskList taskListClinic=TaskListT.CreateTaskList(descript:"Clinic Filter",parent:_taskListMainNoFilter.TaskListNum,globalTaskFilterType:GlobalTaskFilterType.Clinic
 				,isRepeating:true);
 			//Add clinicS appointment and patient Tasks.
 			CreateTasks(suffix,_patS,_userA,taskListClinic.TaskListNum);
@@ -304,7 +304,7 @@ namespace UnitTests.TaskLists_Tests {
 		[TestMethod]
 		public void TaskLists_RefreshRepeating_RegionFilter() {
 			string suffix = MethodBase.GetCurrentMethod().Name;
-			TaskList taskListRegion=TaskListT.CreateTaskList(descript:"Region Filter",parent:_taskListMainNoFilter.TaskListNum,globalTaskFilterType:EnumTaskFilterType.Region
+			TaskList taskListRegion=TaskListT.CreateTaskList(descript:"Region Filter",parent:_taskListMainNoFilter.TaskListNum,globalTaskFilterType:GlobalTaskFilterType.Region
 				,isRepeating:true);
 			//Add clinicS appointment and patient Tasks.
 			CreateTasks(suffix,_patS,_userA,taskListRegion.TaskListNum);
@@ -317,7 +317,7 @@ namespace UnitTests.TaskLists_Tests {
 		[TestMethod]
 		public void TaskLists_RefreshRepeating_RegionFilterClinicRestriction() {
 			string suffix = MethodBase.GetCurrentMethod().Name;
-			TaskList taskListRegion=TaskListT.CreateTaskList(descript:"Region Filter",parent:_taskListMainNoFilter.TaskListNum,globalTaskFilterType:EnumTaskFilterType.Region
+			TaskList taskListRegion=TaskListT.CreateTaskList(descript:"Region Filter",parent:_taskListMainNoFilter.TaskListNum,globalTaskFilterType:GlobalTaskFilterType.Region
 				,isRepeating:true);
 			//Add clinicS appointment and patient Tasks.
 			CreateTasks(suffix,_patN,_userA,taskListRegion.TaskListNum);
@@ -332,7 +332,7 @@ namespace UnitTests.TaskLists_Tests {
 		[TestMethod]
 		public void TaskLists_RefreshDatedTrunk_NoFilter() {
 			string suffix = MethodBase.GetCurrentMethod().Name;
-			TaskList taskListNoFilter=TaskListT.CreateTaskList(descript:"No Filter",parent:_taskListMainNoFilter.TaskListNum,globalTaskFilterType:EnumTaskFilterType.None);
+			TaskList taskListNoFilter=TaskListT.CreateTaskList(descript:"No Filter",parent:_taskListMainNoFilter.TaskListNum,globalTaskFilterType:GlobalTaskFilterType.None);
 			//Add clinicS appointment and patient Tasks.
 			CreateTasks(suffix,_patN,_userA,taskListNoFilter.TaskListNum);
 			//Hashtag No filter

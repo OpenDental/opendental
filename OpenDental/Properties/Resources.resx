@@ -208,6 +208,9 @@
   <data name="deleteX10" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\deleteX10.gif;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="en_US_aff" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\en_US_aff;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="Text" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Text.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -478,6 +481,9 @@
   <data name="notify" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\notify.wav;System.IO.MemoryStream, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="en_US_dic" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\en_US_dic;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="WebChatIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\webChatIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -558,8 +564,5 @@
   </data>
   <data name="Practice_Booster_Icon_22x22" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\PRB icon_OD.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="payconnect-btn-26" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\payconnect-btn-26.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

@@ -26,8 +26,9 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormResellerServiceEdit));
 			this.menuRightClick = new System.Windows.Forms.ContextMenu();
 			this.menuItemAccount = new System.Windows.Forms.MenuItem();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.textDesc = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.textCode = new System.Windows.Forms.TextBox();
@@ -37,9 +38,6 @@ namespace OpenDental{
 			this.textFee = new OpenDental.ValidDouble();
 			this.labelHostedUrl = new System.Windows.Forms.Label();
 			this.textHostedUrl = new System.Windows.Forms.TextBox();
-			this.textFeeRetail = new OpenDental.ValidDouble();
-			this.label3 = new System.Windows.Forms.Label();
-			this.label4 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// menuRightClick
@@ -52,27 +50,37 @@ namespace OpenDental{
 			this.menuItemAccount.Index = 0;
 			this.menuItemAccount.Text = "Go to Account";
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(359, 216);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 251;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(254, 175);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 251;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butDelete
 			// 
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(12, 216);
+			this.butDelete.Location = new System.Drawing.Point(12, 175);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(84, 24);
 			this.butDelete.TabIndex = 41;
 			this.butDelete.Text = "&Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(349, 175);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 3;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// textDesc
 			// 
@@ -138,7 +146,7 @@ namespace OpenDental{
 			// 
 			// labelHostedUrl
 			// 
-			this.labelHostedUrl.Location = new System.Drawing.Point(82, 184);
+			this.labelHostedUrl.Location = new System.Drawing.Point(82, 137);
 			this.labelHostedUrl.Name = "labelHostedUrl";
 			this.labelHostedUrl.Size = new System.Drawing.Size(67, 16);
 			this.labelHostedUrl.TabIndex = 260;
@@ -148,47 +156,18 @@ namespace OpenDental{
 			// textHostedUrl
 			// 
 			this.textHostedUrl.BackColor = System.Drawing.SystemColors.Window;
-			this.textHostedUrl.Location = new System.Drawing.Point(155, 184);
+			this.textHostedUrl.Location = new System.Drawing.Point(155, 137);
 			this.textHostedUrl.Name = "textHostedUrl";
 			this.textHostedUrl.Size = new System.Drawing.Size(261, 20);
 			this.textHostedUrl.TabIndex = 261;
 			// 
-			// textFeeRetail
-			// 
-			this.textFeeRetail.Location = new System.Drawing.Point(155, 158);
-			this.textFeeRetail.MaxVal = 100000000D;
-			this.textFeeRetail.MinVal = 0D;
-			this.textFeeRetail.Name = "textFeeRetail";
-			this.textFeeRetail.Size = new System.Drawing.Size(100, 20);
-			this.textFeeRetail.TabIndex = 263;
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(29, 159);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(120, 16);
-			this.label3.TabIndex = 262;
-			this.label3.Text = "Retail Fee";
-			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// label4
-			// 
-			this.label4.Location = new System.Drawing.Point(58, 130);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(358, 25);
-			this.label4.TabIndex = 264;
-			this.label4.Text = "Setting Retail Fee blank will hide the service on the signup portal.";
-			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
 			// FormResellerServiceEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(446, 252);
-			this.Controls.Add(this.label4);
-			this.Controls.Add(this.textFeeRetail);
-			this.Controls.Add(this.label3);
+			this.ClientSize = new System.Drawing.Size(446, 211);
 			this.Controls.Add(this.textHostedUrl);
 			this.Controls.Add(this.labelHostedUrl);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.textFee);
 			this.Controls.Add(this.butPick);
 			this.Controls.Add(this.label2);
@@ -207,8 +186,10 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private UI.Button butDelete;
-		private UI.Button butSave;
+		private UI.Button butOK;
 		private System.Windows.Forms.ContextMenu menuRightClick;
 		private System.Windows.Forms.MenuItem menuItemAccount;
 		private System.Windows.Forms.TextBox textDesc;
@@ -220,8 +201,5 @@ namespace OpenDental{
 		private ValidDouble textFee;
 		private System.Windows.Forms.Label labelHostedUrl;
 		private System.Windows.Forms.TextBox textHostedUrl;
-		private ValidDouble textFeeRetail;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label4;
 	}
 }

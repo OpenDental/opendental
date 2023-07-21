@@ -16,11 +16,8 @@ namespace OpenDental {
 
 		private void FormDropboxAuthorize_Load(object sender,EventArgs e) {
 			try {
-				string regKey=PrefC.GetString(PrefName.RegistrationKey);
-				IWebServiceMainHQ iWebServiceMainHQ=WebServiceMainHQProxy.GetWebServiceMainHQInstance();
-				string urlPrimitive=iWebServiceMainHQ.BuildOAuthUrl(regKey,OAuthApplicationNames.Dropbox.ToString());
-				//In OpenDentalWebApps, see WebServiceMainHQ.asmx.cs, BuildOAuthUrl().
-				string url=WebSerializer.DeserializePrimitiveOrThrow<string>(urlPrimitive);
+				string url=WebSerializer.DeserializePrimitiveOrThrow<string>(
+						WebServiceMainHQProxy.GetWebServiceMainHQInstance().BuildOAuthUrl(PrefC.GetString(PrefName.RegistrationKey),OAuthApplicationNames.Dropbox.ToString()));
 				System.Diagnostics.Process.Start(url);
 			}
 			catch(Exception ex) {
@@ -28,8 +25,8 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
-			try {
+		private void butOK_Click(object sender,EventArgs e) {
+			try {				
 				string accessTokenFinal=WebSerializer.DeserializePrimitiveOrThrow<string>(
 					WebServiceMainHQProxy.GetWebServiceMainHQInstance().GetDropboxAccessToken(WebSerializer.SerializePrimitive<string>(textAccessToken.Text)));
 				ProgramPropertyAccessToken.PropertyValue=accessTokenFinal;
@@ -43,5 +40,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

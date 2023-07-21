@@ -30,6 +30,7 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpClaimNotSent));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butRunReport = new OpenDental.UI.Button();
 			this.butRefresh = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
@@ -40,6 +41,17 @@ namespace OpenDental {
 			this.labelClaimFilter = new System.Windows.Forms.Label();
 			this.groupBoxFilters.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(1049, 591);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 4;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butRunReport
 			// 
@@ -94,7 +106,7 @@ namespace OpenDental {
 			this.comboClinicMulti.IncludeAll = true;
 			this.comboClinicMulti.IncludeHiddenInAll = true;
 			this.comboClinicMulti.IncludeUnassigned = true;
-			this.comboClinicMulti.IsMultiSelect = true;
+			this.comboClinicMulti.SelectionModeMulti = true;
 			this.comboClinicMulti.Location = new System.Drawing.Point(446, 15);
 			this.comboClinicMulti.Name = "comboClinicMulti";
 			this.comboClinicMulti.Size = new System.Drawing.Size(176, 21);
@@ -130,9 +142,11 @@ namespace OpenDental {
 			// FormRpClaimNotSent
 			// 
 			this.AcceptButton = this.butRunReport;
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(1136, 626);
 			this.Controls.Add(this.groupBoxFilters);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butRunReport);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormRpClaimNotSent";
@@ -143,6 +157,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butRunReport;
 		private UI.Button butRefresh;
 		private UI.GridOD gridMain;

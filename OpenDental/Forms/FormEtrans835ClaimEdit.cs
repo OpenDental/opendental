@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using OpenDentBusiness;
 using OpenDental.UI;
 using CodeBase;
-using System.Linq;
 
 namespace OpenDental {
 	public partial class FormEtrans835ClaimEdit:FormODBase {
@@ -149,7 +148,6 @@ namespace OpenDental {
 				row.Cells.Add(new GridCell(hx835_Proc.DeductibleAmt.ToString("f2")));//Deduct
 				row.Cells.Add(new GridCell(hx835_Proc.WriteoffAmt.ToString("f2")));//Writeoff
 				gridProcedureBreakdown.ListGridRows.Add(row);
-				_sumProcAdjAmt+=hx835_Proc.ListProcAdjustments.Sum(x => x.AdjAmt);
 			}
 			gridProcedureBreakdown.EndUpdate();
 			textProcAdjAmtSum.Text=_sumProcAdjAmt.ToString("f2");
@@ -236,6 +234,11 @@ namespace OpenDental {
 			SheetParameter.GetParamByName(sheet.Parameters,"IsSingleClaimPaid").ParamValue=true;//Value is null if not set
 			SheetFiller.FillFields(sheet);
 			SheetPrinting.Print(sheet,isPreviewMode:true);
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+			Close();
 		}
 		
 	}

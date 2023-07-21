@@ -54,14 +54,6 @@ namespace OpenDentBusiness{
 			Crud.TreatPlanAttachCrud.Delete(treatPlanAttachNum);
 		}
 
-		///<summary>Gets one TreatPlanAttach from the db.</summary>
-		public static TreatPlanAttach GetOne(long treatPlanAttachNum){
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				return Meth.GetObject<TreatPlanAttach>(MethodBase.GetCurrentMethod(),treatPlanAttachNum);
-			}
-			return Crud.TreatPlanAttachCrud.SelectOne(treatPlanAttachNum);
-		}
-
 		///<summary></summary>
 		public static List<TreatPlanAttach> GetAllForPatNum(long patNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -75,14 +67,14 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Gets all treatplanattaches with TreatPlanNum in listTpNums.</summary>
-		public static List<TreatPlanAttach> GetAllForTPs(List<long> listTreatPlanNums) {
-			if(listTreatPlanNums.Count==0) {
+		public static List<TreatPlanAttach> GetAllForTPs(List<long> listTpNums) {
+			if(listTpNums.Count==0) {
 				return new List<TreatPlanAttach>();
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<TreatPlanAttach>>(MethodBase.GetCurrentMethod(),listTreatPlanNums);
+				return Meth.GetObject<List<TreatPlanAttach>>(MethodBase.GetCurrentMethod(),listTpNums);
 			}
-			string command="SELECT * FROM treatplanattach WHERE TreatPlanNum IN ("+string.Join(",",listTreatPlanNums)+")";
+			string command="SELECT * FROM treatplanattach WHERE TreatPlanNum IN ("+string.Join(",",listTpNums)+")";
 			return Crud.TreatPlanAttachCrud.SelectMany(command);
 		}
 
@@ -111,13 +103,13 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static void Sync(List<TreatPlanAttach> listTreatPlanAttachesNew,long treatPlanNum) {
+		public static void Sync(List<TreatPlanAttach> listTreatPlanAttachNew,long treatPlanNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listTreatPlanAttachesNew,treatPlanNum);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),listTreatPlanAttachNew,treatPlanNum);
 				return;
 			}
-			List<TreatPlanAttach> listTreatPlanAttachesDB=TreatPlanAttaches.GetAllForTreatPlan(treatPlanNum);
-			Crud.TreatPlanAttachCrud.Sync(listTreatPlanAttachesNew,listTreatPlanAttachesDB);
+			List<TreatPlanAttach> listTreatPlanAttachDB=TreatPlanAttaches.GetAllForTreatPlan(treatPlanNum);
+			Crud.TreatPlanAttachCrud.Sync(listTreatPlanAttachNew,listTreatPlanAttachDB);
 		}
 
 		///<summary></summary>
@@ -126,8 +118,8 @@ namespace OpenDentBusiness{
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),listTreatPlanAttaches);
 				return;
 			}
-			for(int i=0;i<listTreatPlanAttaches.Count;i++) {
-				Crud.TreatPlanAttachCrud.Delete(listTreatPlanAttaches[i].TreatPlanAttachNum);
+			foreach(TreatPlanAttach treatPlanAttach in listTreatPlanAttaches) {
+				Crud.TreatPlanAttachCrud.Delete(treatPlanAttach.TreatPlanAttachNum);
 			}
 		}
 
@@ -142,6 +134,15 @@ namespace OpenDentBusiness{
 			string command="SELECT * FROM treatplanattach WHERE PatNum = "+POut.Long(patNum);
 			return Crud.TreatPlanAttachCrud.SelectMany(command);
 		}
+
+		///<summary>Gets one TreatPlanAttach from the db.</summary>
+		public static TreatPlanAttach GetOne(long treatPlanAttachNum){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				return Meth.GetObject<TreatPlanAttach>(MethodBase.GetCurrentMethod(),treatPlanAttachNum);
+			}
+			return Crud.TreatPlanAttachCrud.SelectOne(treatPlanAttachNum);
+		}
+
 		
 		*/
 	}

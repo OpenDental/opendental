@@ -158,9 +158,12 @@ namespace OpenDental {
 				return;
 			}
 			long patNum=((Payment)gridMain.ListGridRows[gridMain.SelectedIndices[0]].Tag).PatNum;
-			GlobalFormOpenDental.PatientSelected(Patients.GetPat(patNum),false);
-			GlobalFormOpenDental.GotoAccount(0);
+			FormOpenDental.S_Contr_PatientSelected(Patients.GetPat(patNum),false);
+			GotoModule.GotoAccount(0);
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }

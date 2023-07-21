@@ -64,37 +64,41 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		public static void Upload(string folder,string fileName,byte[] byteArray,bool hasExceptions=false){
-			/*
-			//How to use:
-			//Exceptions are never thrown. They always get caught inside of Execute except in one spot where hasExceptions is set to true.
-			//1. Example with no progress window. 
-							CloudStorage.Upload(folder,fileName,byteArray);
-			//2. Example with a progress window. 
-							UI.ProgressWin progressWin=new UI.ProgressWin();
-							progressWin.StartingMessage="Uploading...";
-							progressWin.ActionMain=() => CloudStorage.Upload(folder,fileName,byteArray);
-							progressWin.ShowDialog();
-							if(progressWin.IsCancelled){
-								return;
-							}
-			*/
-			TaskStateUpload taskStateUpload=null;
+		#region Upload
+		///<summary>Asynchronous.  Uploads the passed in file to Dropbox.  Will overwrite the passed in file if it already exists.
+		///Pass in onProgress to hook up to a progress bar.  If onProgress is null, this method will break.</summary>
+		public static TaskStateUpload UploadAsync(string folder,string fileName,byte[] fileContent,ProgressHandler progressHandler,bool hasExceptions=false) {
+			//No need to check MiddleTierRole; no call to db.
+			return UploadExecute(folder,fileName,fileContent,progressHandler,hasExceptions);
+		}
+
+		///<summary>Synchronous.</summary>
+		public static TaskStateUpload Upload(string folder,string fileName,byte[] fileContent,bool hasExceptions=false) {
+			//No need to check MiddleTierRole; no call to db.
+			return UploadExecute(folder,fileName,fileContent,null,hasExceptions);
+		}
+
+		///<summary>Runs the upload logic for the cloud storage type used.  
+		///Will be Asynchronous or Synchronous depending on if progressHandler is null</summary>
+		private static TaskStateUpload UploadExecute(string folder,string fileName,byte[] fileContent,ProgressHandler progressHandler,bool hasExceptions) {
+			TaskStateUpload state=null;
 			switch(PrefC.AtoZfolderUsed) {					
 				case DataStorageType.DropboxAtoZ:
 					//Dropbox will always overwrite conflicting files.  This can be changed in the future by implementing an optional "Dropbox.WriteMode" param.
-					taskStateUpload=new OpenDentalCloud.Dropbox.Upload(Dropbox.AccessToken) {
+					state=new OpenDentalCloud.Dropbox.Upload(Dropbox.AccessToken) {
 						Folder=PathTidy(folder),
 						FileName=fileName,
-						ByteArray=byteArray,
+						FileContent=fileContent,
+						ProgressHandler=progressHandler,
 						HasExceptions=hasExceptions
 					};
 					break;
 				case DataStorageType.SftpAtoZ:
-					taskStateUpload=new OpenDentalCloud.Sftp.Upload(ODSftp.Hostname,ODSftp.UserName,ODSftp.Password) {
+					state=new OpenDentalCloud.Sftp.Upload(ODSftp.Hostname,ODSftp.UserName,ODSftp.Password) {
 						Folder=PathTidy(folder),
 						FileName=fileName,
-						ByteArray=byteArray,
+						FileContent=fileContent,
+						ProgressHandler=progressHandler,
 						HasExceptions=hasExceptions
 					};
 					break;
@@ -106,45 +110,45 @@ namespace OpenDentBusiness {
 				default:
 					throw new Exception("DataStorageType: "+PrefC.AtoZfolderUsed.ToString()+" not implemented.");
 			}
-			taskStateUpload.Execute();
+			state.Execute(progressHandler!=null);
+			return state;
+		}
+		#endregion
+
+		#region Download
+		///<summary>Asynchronous.  Downloads the file from the cloud with the passed in folder path and file name.
+		///Pass in updateProgress to hook up to a progress bar.  If onProgress is null, this method will break.</summary>
+		public static TaskStateDownload DownloadAsync(string folder,string fileName,ProgressHandler progressHandler,bool hasExceptions=false) {
+			//No need to check MiddleTierRole; no call to db.
+			return DownloadExecute(folder,fileName,progressHandler,hasExceptions);
 		}
 
-		///<summary></summary>
-		public static byte[] Download(string folder,string fileName) {
-			/*
-			//How to use:
-			//Exceptions are never thrown. They always get caught inside of Execute
-			//1. Example with no progress window. 
-							byte[] byteArray=CloudStorage.Download(folder,fileName);
-			//2. Example with a progress window. 
-							UI.ProgressWin progressWin=new UI.ProgressWin();
-							progressWin.StartingMessage="Downloading...";
-							byte[] byteArray=null;
-							progressWin.ActionMain=() => byteArray=CloudStorage.Download(folder,fileName);
-							progressWin.ShowDialog();
-							if(progressWin.IsCancelled){//user clicked cancel. Not usually needed because you can just test the byte array below.
-								return;
-							}
-							if(byteArray==null || byteArray.Length==0){
-								//show error msg, etc.
-							}
-			//In both cases, once you have the bytes, the two general approaches are:
-							File.WriteAllBytes(tempFile,byteArray);
-			//or
-							using MemoryStream memoryStream=new MemoryStream(byteArray);
-			*/
-			TaskStateDownload taskStateDownload=null;
+		///<summary>Synchronous.  Downloads the file from the cloud with the passed in folder path and file name.</summary>
+		public static TaskStateDownload Download(string folder,string fileName,bool hasExceptions=false) {
+			//No need to check MiddleTierRole; no call to db.
+			return DownloadExecute(folder,fileName,null,hasExceptions);
+		}
+		
+		///<summary>Runs the download logic for the cloud storage type used.
+		///Will be Asynchronous or Synchronous depending on if progressHandler is null</summary>
+		private static TaskStateDownload DownloadExecute(string folder,string fileName,ProgressHandler progressHandler,bool hasExceptions) {
+			TaskStateDownload state=null;
 			switch(PrefC.AtoZfolderUsed) {
 				case DataStorageType.DropboxAtoZ:
-					taskStateDownload=new OpenDentalCloud.Dropbox.Download(Dropbox.AccessToken);
-					taskStateDownload.Folder=PathTidy(folder);
-					taskStateDownload.FileName=fileName;
-					//The purpose of this complex wrapper is to handle the fact that the Dropbox API is async.
+					state=new OpenDentalCloud.Dropbox.Download(Dropbox.AccessToken) {
+						Folder=PathTidy(folder),
+						FileName=fileName,
+						ProgressHandler=progressHandler,
+						HasExceptions=hasExceptions
+					};
 					break;
 				case DataStorageType.SftpAtoZ:
-					taskStateDownload=new OpenDentalCloud.Sftp.Download(ODSftp.Hostname,ODSftp.UserName,ODSftp.Password);
-					taskStateDownload.Folder=PathTidy(folder);
-					taskStateDownload.FileName=fileName;
+					state=new OpenDentalCloud.Sftp.Download(ODSftp.Hostname,ODSftp.UserName,ODSftp.Password) {
+						Folder=PathTidy(folder),
+						FileName=fileName,
+						ProgressHandler=progressHandler,
+						HasExceptions=hasExceptions
+					};
 					break;
 				case DataStorageType.InDatabase:
 				case DataStorageType.LocalAtoZ:
@@ -154,82 +158,43 @@ namespace OpenDentBusiness {
 				default:
 					throw new Exception("DataStorageType: "+PrefC.AtoZfolderUsed.ToString()+" not implemented.");
 			}
-			taskStateDownload.Execute();
-			return taskStateDownload.ByteArray;
+			state.Execute(progressHandler!=null, fileName);
+			return state;
+		}
+		#endregion
+
+		#region Delete
+		///<summary>Asynchronous.  TaskStateDelete holds the Ids for the deleted file(s).</summary>
+		public static TaskStateDelete DeleteAsync(string path,ProgressHandler progressHandler,bool hasExceptions=false) {
+			//No need to check MiddleTierRole; no call to db.
+			return DeleteExecute(path,progressHandler,hasExceptions);
 		}
 
-		public static void Delete(string path){
-			TaskStateDelete taskStateDelete=null;
+		///<summary>Synchronous.  TaskStateDelete holds the Ids for the deleted file(s).</summary>
+		public static TaskStateDelete Delete(string path,bool hasExceptions=false) {
+			//No need to check MiddleTierRole; no call to db.
+			return DeleteExecute(path,null,hasExceptions);
+		}
+		
+		///<summary>Runs the delete logic for the cloud storage type used.
+		///Will be Asynchronous or Synchronous depending on if progressHandler is null</summary>
+		private static TaskStateDelete DeleteExecute(string path,ProgressHandler progressHandler,bool hasExceptions) {
+			TaskStateDelete state=null;
 			switch(PrefC.AtoZfolderUsed) {
 				case DataStorageType.DropboxAtoZ:
-					taskStateDelete=new OpenDentalCloud.Dropbox.Delete(Dropbox.AccessToken) {
-						Path=PathTidy(path)
+					state=new OpenDentalCloud.Dropbox.Delete(Dropbox.AccessToken) {
+						Path=PathTidy(path),
+						ProgressHandler=progressHandler,
+						HasExceptions=hasExceptions
 					};
 					break;
 				case DataStorageType.SftpAtoZ:
 					if(!FileExists(path)) {
-						return;
+						return null;
 					}
-					taskStateDelete=new OpenDentalCloud.Sftp.Delete(ODSftp.Hostname,ODSftp.UserName,ODSftp.Password) {
-						Path=PathTidy(path)
-					};
-					break;
-				case DataStorageType.InDatabase:
-				case DataStorageType.LocalAtoZ:
-					//Local storage methods should never be calling this method, throw an exception so it's more obvious that this was the issue,
-					//rather than returning null and having the method throw a null exception later.
-					throw new Exception("Unknown cloud storage type: "+PrefC.AtoZfolderUsed.ToString());
-				default:
-					throw new Exception("DataStorageType: "+PrefC.AtoZfolderUsed.ToString()+" not implemented.");
-			}
-			taskStateDelete.Execute();
-		}
-
-		///<summary></summary>
-		public static byte[] GetThumbnail(string folder,string fileName) {
-			//No need to check MiddleTierRole; no call to db.
-			TaskStateThumbnail taskStateThumbnail=null;
-			switch(PrefC.AtoZfolderUsed) {
-				case DataStorageType.DropboxAtoZ:
-					taskStateThumbnail=new OpenDentalCloud.Dropbox.Thumbnail(Dropbox.AccessToken) {
-						Folder=PathTidy(folder),
-						FileName=fileName
-					};
-					break;
-				case DataStorageType.SftpAtoZ:
-					taskStateThumbnail=new OpenDentalCloud.Sftp.Thumbnail(ODSftp.Hostname,ODSftp.UserName,ODSftp.Password) {
-						Folder=PathTidy(folder),
-						FileName=fileName
-					};
-					break;
-				case DataStorageType.InDatabase:
-				case DataStorageType.LocalAtoZ:
-					//Local storage methods should never be calling this method, throw an exception so it's more obvious that this was the issue,
-					//rather than returning null and having the method throw a null exception later.
-					throw new Exception("Unknown cloud storage type: "+PrefC.AtoZfolderUsed.ToString());
-				default:
-					throw new Exception("DataStorageType: "+PrefC.AtoZfolderUsed.ToString()+" not implemented.");
-			}
-			taskStateThumbnail.Execute();
-			return taskStateThumbnail.ByteArray;
-		}
-
-		///<summary>Returns true if successful</summary>
-		public static bool Move(string fromPath,string toPath,bool hasExceptions=false) {
-			//No need to check MiddleTierRole; no call to db.
-			TaskStateMove taskStateMove=null;
-			switch(PrefC.AtoZfolderUsed) {
-				case DataStorageType.DropboxAtoZ:
-					taskStateMove=new OpenDentalCloud.Dropbox.Move(Dropbox.AccessToken) {
-						FromPath=PathTidy(fromPath),
-						ToPath=PathTidy(toPath),
-						HasExceptions=hasExceptions
-					};
-					break;
-				case DataStorageType.SftpAtoZ:
-					taskStateMove=new OpenDentalCloud.Sftp.Move(ODSftp.Hostname,ODSftp.UserName,ODSftp.Password) {
-						FromPath=PathTidy(fromPath),
-						ToPath=PathTidy(toPath),
+					state=new OpenDentalCloud.Sftp.Delete(ODSftp.Hostname,ODSftp.UserName,ODSftp.Password) {
+						Path=PathTidy(path),
+						ProgressHandler=progressHandler,
 						HasExceptions=hasExceptions
 					};
 					break;
@@ -241,28 +206,133 @@ namespace OpenDentBusiness {
 				default:
 					throw new Exception("DataStorageType: "+PrefC.AtoZfolderUsed.ToString()+" not implemented.");
 			}
-			taskStateMove.Execute();
-			if(taskStateMove.CountFailed==0){
-				return true;
-			}
-			return false;
+			state.Execute(progressHandler!=null);
+			return state;
+		}
+		#endregion
+
+		#region Get Thumbnail
+		///<summary>Asynchronous.  TaskStateThumbnail holds the thumbnail in bytes after the task thread is finished.</summary>
+		public static TaskStateThumbnail GetThumbnailAsync(string folder,string fileName,ProgressHandler progressHandler,bool hasExceptions=false) {
+			//No need to check MiddleTierRole; no call to db.
+			return GetThumbnailExecute(folder,fileName,progressHandler,hasExceptions);
+		}
+
+		///<summary>Synchronous.  TaskStateThumbnail holds the thumbnail in bytes after the task thread is finished.</summary>
+		public static TaskStateThumbnail GetThumbnail(string folder,string fileName,bool hasExceptions=false) {
+			//No need to check MiddleTierRole; no call to db.
+			return GetThumbnailExecute(folder,fileName,null,hasExceptions);
 		}
 		
-		///<summary></summary>
-		public static void Copy(string fromPath,string toPath) {
+		///<summary>Runs the thumbnail logic for the cloud storage type used.
+		///Will be Asynchronous or Synchronous depending on if progressHandler is null</summary>
+		private static TaskStateThumbnail GetThumbnailExecute(string folder,string fileName,ProgressHandler progressHandler,bool hasExceptions) {
+			TaskStateThumbnail state=null;
+			switch(PrefC.AtoZfolderUsed) {
+				case DataStorageType.DropboxAtoZ:
+					state=new OpenDentalCloud.Dropbox.Thumbnail(Dropbox.AccessToken) {
+						Folder=PathTidy(folder),
+						FileName=fileName,
+						ProgressHandler=progressHandler,
+						HasExceptions=hasExceptions
+					};
+					break;
+				case DataStorageType.SftpAtoZ:
+					state=new OpenDentalCloud.Sftp.Thumbnail(ODSftp.Hostname,ODSftp.UserName,ODSftp.Password) {
+						Folder=PathTidy(folder),
+						FileName=fileName,
+						ProgressHandler=progressHandler,
+						HasExceptions=hasExceptions
+					};
+					break;
+				case DataStorageType.InDatabase:
+				case DataStorageType.LocalAtoZ:
+					//Local storage methods should never be calling this method, throw an exception so it's more obvious that this was the issue,
+					//rather than returning null and having the method throw a null exception later.
+					throw new Exception("Unknown cloud storage type: "+PrefC.AtoZfolderUsed.ToString());
+				default:
+					throw new Exception("DataStorageType: "+PrefC.AtoZfolderUsed.ToString()+" not implemented.");
+			}
+			state.Execute(progressHandler!=null);
+			return state;
+		}
+		#endregion
+
+		#region Move
+		///<summary>Asynchronous.  Use TaskStateMove to get the end result information from running Move.</summary>
+		public static TaskStateMove MoveAsync(string fromPath,string toPath,ProgressHandler progressHandler,bool hasExceptions=false) {
 			//No need to check MiddleTierRole; no call to db.
+			return MoveExecute(fromPath,toPath,progressHandler,hasExceptions);
+		}
+
+		///<summary>Synchronous.  Use TaskStateMove to get the end result information from running Move.</summary>
+		public static TaskStateMove Move(string fromPath,string toPath,bool hasExceptions=false) {
+			//No need to check MiddleTierRole; no call to db.
+			return MoveExecute(fromPath,toPath,null,hasExceptions);
+		}
+
+		private static TaskStateMove MoveExecute(string fromPath,string toPath,ProgressHandler progressHandler,bool hasExceptions) {
+			TaskStateMove state=null;
+			switch(PrefC.AtoZfolderUsed) {
+				case DataStorageType.DropboxAtoZ:
+					state=new OpenDentalCloud.Dropbox.Move(Dropbox.AccessToken) {
+						FromPath=PathTidy(fromPath),
+						ToPath=PathTidy(toPath),
+						ProgressHandler=progressHandler,
+						HasExceptions=hasExceptions
+					};
+					break;
+				case DataStorageType.SftpAtoZ:
+					state=new OpenDentalCloud.Sftp.Move(ODSftp.Hostname,ODSftp.UserName,ODSftp.Password) {
+						FromPath=PathTidy(fromPath),
+						ToPath=PathTidy(toPath),
+						ProgressHandler=progressHandler,
+						HasExceptions=hasExceptions
+					};
+					break;
+				case DataStorageType.InDatabase:
+				case DataStorageType.LocalAtoZ:
+					//Local storage methods should never be calling this method, throw an exception so it's more obvious that this was the issue,
+					//rather than returning null and having the method throw a null exception later.
+					throw new Exception("Unknown cloud storage type: "+PrefC.AtoZfolderUsed.ToString());
+				default:
+					throw new Exception("DataStorageType: "+PrefC.AtoZfolderUsed.ToString()+" not implemented.");
+			}
+			state.Execute(progressHandler!=null);
+			return state;
+		}
+		#endregion
+
+		#region Copy
+		///<summary>Asynchronous.  Use TaskStateCopy to get the end result information from running Copy.</summary>
+		public static TaskStateMove CopyAsync(string fromPath,string toPath,ProgressHandler progressHandler,bool hasExceptions = false) {
+			//No need to check MiddleTierRole; no call to db.
+			return CopyExecute(fromPath,toPath,progressHandler,hasExceptions);
+		}
+
+		///<summary>Synchronous.  Use TaskStateCopy to get the end result information from running Copy.</summary>
+		public static TaskStateMove Copy(string fromPath,string toPath,bool hasExceptions=false) {
+			//No need to check MiddleTierRole; no call to db.
+			return CopyExecute(fromPath,toPath,null,hasExceptions);
+		}
+
+		private static TaskStateMove CopyExecute(string fromPath,string toPath,ProgressHandler progressHandler,bool hasExceptions) {
 			TaskStateMove state=null;
 			switch(PrefC.AtoZfolderUsed) {
 				case DataStorageType.DropboxAtoZ:
 					state=new OpenDentalCloud.Dropbox.Copy(Dropbox.AccessToken) {
 						FromPath=PathTidy(fromPath),
-						ToPath=PathTidy(toPath)
+						ToPath=PathTidy(toPath),
+						ProgressHandler=progressHandler,
+						HasExceptions=hasExceptions
 					};
 					break;
 				case DataStorageType.SftpAtoZ:
 					state=new OpenDentalCloud.Sftp.Copy(ODSftp.Hostname,ODSftp.UserName,ODSftp.Password) {
 						FromPath=PathTidy(fromPath),
-						ToPath=PathTidy(toPath)
+						ToPath=PathTidy(toPath),
+						ProgressHandler=progressHandler,
+						HasExceptions=hasExceptions
 					};
 					break;
 				case DataStorageType.InDatabase:
@@ -273,23 +343,40 @@ namespace OpenDentBusiness {
 				default:
 					throw new Exception("DataStorageType: "+PrefC.AtoZfolderUsed.ToString()+" not implemented.");
 			}
-			state.Execute();
+			state.Execute(progressHandler!=null);
+			return state;
+		}
+		#endregion
+
+		#region ListFolderContents
+		///<summary>Asynchronous.  TaskStateListFolders will hold the result from the passed in path.  Throws exceptions.</summary>
+		public static TaskStateListFolders ListFolderContentsAsync(string folderPath,ProgressHandler progressHandler,bool hasExceptions=false) {
+			//No need to check MiddleTierRole; no call to db.
+			return ListFolderContentsExecute(folderPath,progressHandler,hasExceptions);
 		}
 
-		///<summary></summary>
-		public static List<string> ListFolderContents(string folderPath) {
+		///<summary>Synchronous.  TaskStateListFolders will hold the result from the passed in path.  Throws exceptions.</summary>
+		public static TaskStateListFolders ListFolderContents(string folderPath,bool hasExceptions=false) {
 			//No need to check MiddleTierRole; no call to db.
-			TaskStateListFolders taskStateListFolders=null;
+			return ListFolderContentsExecute(folderPath,null,hasExceptions);
+		}
+
+		private static TaskStateListFolders ListFolderContentsExecute(string folderPath,ProgressHandler progressHandler,bool hasExceptions) {
+			TaskStateListFolders state=null;
 			switch(PrefC.AtoZfolderUsed) {
 				case DataStorageType.DropboxAtoZ:
-					taskStateListFolders=new OpenDentalCloud.Dropbox.ListFolders(Dropbox.AccessToken) {
-						FolderPath=PathTidy(folderPath)
+					state=new OpenDentalCloud.Dropbox.ListFolders(Dropbox.AccessToken) {
+						FolderPath=PathTidy(folderPath),
+						ProgressHandler=progressHandler,
+						HasExceptions=hasExceptions
 					};
 					break;
 				case DataStorageType.SftpAtoZ:
 					try {
-						taskStateListFolders=new OpenDentalCloud.Sftp.ListFolders(ODSftp.Hostname,ODSftp.UserName,ODSftp.Password) {
-							FolderPath=PathTidy(folderPath)
+						state=new OpenDentalCloud.Sftp.ListFolders(ODSftp.Hostname,ODSftp.UserName,ODSftp.Password) {
+							FolderPath=PathTidy(folderPath),
+							ProgressHandler=progressHandler,
+							HasExceptions=hasExceptions
 						};
 					}
 					catch(ArgumentException ae) {
@@ -304,9 +391,10 @@ namespace OpenDentBusiness {
 				default:
 					throw new Exception("DataStorageType: "+PrefC.AtoZfolderUsed.ToString()+" not implemented.");
 			}
-			taskStateListFolders.Execute();
-			return taskStateListFolders.ListFolderPathsDisplay;
+			state.Execute(progressHandler!=null);
+			return state;
 		}
+		#endregion
 
 		///<summary>Synchronous.  Returns true if the file for the given path exists.</summary>
 		public static bool FileExists(string path) {
@@ -350,6 +438,10 @@ namespace OpenDentBusiness {
 		}
 	}
 
-	
+	public interface IProgressHandler {
+		void UpdateBytesRead(long numBytes);
+		void DisplayError(string error);
+		void CloseProgress();
+	}
 
 }

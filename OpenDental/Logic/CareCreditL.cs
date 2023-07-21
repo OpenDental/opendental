@@ -10,12 +10,12 @@ namespace OpenDental {
 
 		///<summary>Opens the CareCredit Admin page.</summary>
 		public static void LaunchAdminPage(string merchantNum,string userName=null) {
-			TryLaunchCareCreditPage(CareCreditLandingPage.HM,null,0,0,CareCredit.IsMerchantNumberByProv,serviceType:EnumCareCreditPrefillServiceType.A,userName:userName,merchantNum:merchantNum);
+			TryLaunchCareCreditPage(CareCreditLandingPage.HM,null,0,0,CareCredit.IsMerchantNumberByProv,serviceType:"A",userName:userName,merchantNum:merchantNum);
 		}
 
 		///<summary>Opens the CareCredit Admin page.</summary>
 		public static void LaunchAdminPage(long provNum,long clinicNum,bool isProvOverride,string userName=null) {
-			TryLaunchCareCreditPage(CareCreditLandingPage.HM,null,provNum,clinicNum,isProvOverride:isProvOverride,serviceType:EnumCareCreditPrefillServiceType.A,userName:userName);
+			TryLaunchCareCreditPage(CareCreditLandingPage.HM,null,provNum,clinicNum,isProvOverride:isProvOverride,serviceType:"A",userName:userName);
 		}
 
 		///<summary>Opens the CareCredit Credit Application request page.</summary>
@@ -28,7 +28,7 @@ namespace OpenDental {
 
 		///<summary>Opens the CareCredit Lookup request page.</summary>
 		public static void LaunchLookupPage(Patient patient,long provNum,long clinicNum,string userName=null,string oldRefId=null) {
-			TryLaunchCareCreditPage(CareCreditLandingPage.LU,patient,provNum,clinicNum,CareCredit.IsMerchantNumberByProv,userName:userName,oldRefId:oldRefId,serviceType:EnumCareCreditPrefillServiceType.L);
+			TryLaunchCareCreditPage(CareCreditLandingPage.LU,patient,provNum,clinicNum,CareCredit.IsMerchantNumberByProv,userName:userName,oldRefId:oldRefId);
 		}
 
 		///<summary>Returns the Purchase request webpage url.</summary>
@@ -79,13 +79,13 @@ namespace OpenDental {
 
 		///<summary>Opens the CareCredit Reports page.</summary>
 		public static void LaunchReportsPage(long provNum,long clinicNum,string userName=null) {
-			TryLaunchCareCreditPage(CareCreditLandingPage.HM,null,provNum,clinicNum,CareCredit.IsMerchantNumberByProv,userName:userName,serviceType:EnumCareCreditPrefillServiceType.R);
+			TryLaunchCareCreditPage(CareCreditLandingPage.HM,null,provNum,clinicNum,CareCredit.IsMerchantNumberByProv,userName:userName,serviceType:"R");
 		}
 
 		///<summary>Tries to send prefill request with the specified landing page and launches the CareCredit portal. Set doShowPage to false if you don't want the page to be displayed. Displays error messages to user.</summary>
 		private static string TryLaunchCareCreditPage(CareCreditLandingPage careCreditLandingPage,Patient patient,long provNum,long clinicNum,bool isProvOverride,
 			string invoiceNumber=null,double purchaseAmt=0,double refundAmt=0,string noteMemo=null,string promoCode=null,string userName=null,
-			double estimatedFeeAmt=0,string oldRefId=null,EnumCareCreditPrefillServiceType serviceType=EnumCareCreditPrefillServiceType.C,long payNum=0,string merchantNum=null,bool doShowPage=true) 
+			double estimatedFeeAmt=0,string oldRefId=null,string serviceType="C",long payNum=0,string merchantNum=null,bool doShowPage=true) 
 		{
 			if(string.IsNullOrEmpty(merchantNum)) {//No merchant number passed in
 				try {
@@ -159,10 +159,9 @@ namespace OpenDental {
 				};
 			string msg=$"{Lan.g("CareCreditL","Provider")} '{Providers.GetAbbr(provNum)}' "
 					+Lan.g("CareCreditL","does not have a Merchant Number.\r\nPlease select from the following options or click Cancel.");
-			InputBox inputBox=new InputBox(msg,listOptions);
+			using InputBox inputBox=new InputBox(msg,listOptions);
 			inputBox.Text="CareCredit";//Don't translate.
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			if(inputBox.ShowDialog()!=DialogResult.OK) {
 				return provNumNew;
 			}
 			if(inputBox.SelectedIndex==0) {
@@ -171,12 +170,11 @@ namespace OpenDental {
 					MsgBox.Show("CareCreditL","No providers with CareCredit Merchant Numbers found.");
 					return provNumNew;
 				}
-				FrmProviderPick frmProvPick=new FrmProviderPick(listProvsWithOverrides);
-				frmProvPick.ShowDialog();
-				if(!frmProvPick.IsDialogOK) {
+				using FormProviderPick FormProvPick=new FormProviderPick(listProvsWithOverrides);
+				if(FormProvPick.ShowDialog()!=DialogResult.OK) {
 					return provNumNew;
 				}
-				provNumNew=frmProvPick.ProvNumSelected;
+				provNumNew=FormProvPick.ProvNumSelected;
 			}
 			else if(inputBox.SelectedIndex==1) {
 				CareCredit.ShowPage(CareCredit.ProviderSignupURL);

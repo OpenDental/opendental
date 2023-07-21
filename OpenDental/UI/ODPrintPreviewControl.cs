@@ -7,9 +7,9 @@ using System.Windows.Forms;
 using CodeBase;
 
 namespace OpenDental.UI {
-	///<summary>Almost identical to base PrintPreviewControl but when using THINFINITY this control will not show a print progress dialog.
+	///<summary>Almost identical to base PrintPreviewControl but when using WEB this control will not show a print progress dialog.
 	///Code copied from MSDN and modified.</summary>
-	public class ODPrintPreviewControl: PrintPreviewControl {
+	class ODPrintPreviewControl: PrintPreviewControl {
 		#region Defaults
 		private const double _defaultZoom=.3;
 		///<summary>null if needs refreshing</summary>
@@ -83,7 +83,7 @@ namespace OpenDental.UI {
 				return base.Zoom;
 			}
 			set {
-				if(ODBuild.IsThinfinity()) {
+				if(ODBuild.IsWeb()) {
 					autoZoom = false;
 					zoom = value;
 					_isLayoutOk = false;
@@ -103,7 +103,7 @@ namespace OpenDental.UI {
 		}
 
 		protected override void OnPaint(PaintEventArgs pevent) {
-			if(!ODBuild.IsThinfinity()){//Always use base methods when not using web.
+			if(!ODBuild.IsWeb()){//Always use base methods when not using web.
 				base.OnPaint(pevent);
 				return;
 			}
@@ -334,13 +334,13 @@ namespace OpenDental.UI {
 				PrintController oldController=Document.PrintController;
 				PreviewPrintController previewController=new PreviewPrintController();
 				previewController.UseAntiAlias=UseAntiAlias;
-				if(ODBuild.IsThinfinity()) {
+				if(ODBuild.IsWeb()) {
 					Document.PrintController=previewController;
 				}
 				else {
 					//.Net uses PrintControllerWithStatusDialog which breaks the web.
 					//Document.PrintController=new PrintControllerWithStatusDialog(previewController,"DIALOG TEXT");
-					throw new ODException("You can not use the ODWebPrintPreviewControl when not using THINFINITY");
+					throw new ODException("You can not use the ODWebPrintPreviewControl when not using WEB");
 				}
 				// Want to make sure we've reverted any security asserts before we call Print -- that calls into user code
 				Document.Print();
@@ -423,7 +423,7 @@ namespace OpenDental.UI {
 
 		//Overrides the WndProc event handler for OD Cloud only
     protected override void WndProc(ref Message m) {
-			if(!ODBuild.IsThinfinity()) {
+			if(!ODBuild.IsWeb()) {
 				base.WndProc(ref m);
 				return;
 			}

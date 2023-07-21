@@ -59,6 +59,7 @@ namespace OpenDental{
 			this.butRefresh = new OpenDental.UI.Button();
 			this.gridSent = new OpenDental.UI.GridOD();
 			this.emailPreviewControlSent = new OpenDental.EmailPreviewControl();
+			this.butClose = new OpenDental.UI.Button();
 			this.butReplyAll = new OpenDental.UI.Button();
 			this.butForward = new OpenDental.UI.Button();
 			this.menuMain = new OpenDental.UI.MenuOD();
@@ -110,7 +111,7 @@ namespace OpenDental{
 			this.gridInbox.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridInboxSent_CellDoubleClick);
 			this.gridInbox.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridInboxSent_CellClick);
 			// 
-			// emailPreviewControlInbox
+			// emailPreview
 			// 
 			this.emailPreviewControlInbox.BackColor = System.Drawing.SystemColors.Control;
 			this.emailPreviewControlInbox.BccAddress = "";
@@ -119,7 +120,7 @@ namespace OpenDental{
 			this.emailPreviewControlInbox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.emailPreviewControlInbox.IsPreview = true;
 			this.emailPreviewControlInbox.Location = new System.Drawing.Point(0, 0);
-			this.emailPreviewControlInbox.Name = "emailPreviewControlInbox";
+			this.emailPreviewControlInbox.Name = "emailPreview";
 			this.emailPreviewControlInbox.Size = new System.Drawing.Size(1126, 262);
 			this.emailPreviewControlInbox.Subject = "";
 			this.emailPreviewControlInbox.TabIndex = 0;
@@ -279,7 +280,7 @@ namespace OpenDental{
 			// 
 			// textDateTo
 			// 
-			this.textDateTo.Location = new System.Drawing.Point(80, 73);
+			this.textDateTo.Location = new System.Drawing.Point(80, 67);
 			this.textDateTo.Name = "textDateTo";
 			this.textDateTo.Size = new System.Drawing.Size(70, 20);
 			this.textDateTo.TabIndex = 5;
@@ -287,7 +288,7 @@ namespace OpenDental{
 			// label2
 			// 
 			this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label2.Location = new System.Drawing.Point(80, 56);
+			this.label2.Location = new System.Drawing.Point(80, 50);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(80, 16);
 			this.label2.TabIndex = 166;
@@ -298,7 +299,7 @@ namespace OpenDental{
 			// 
 			this.butClear.Enabled = false;
 			this.butClear.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butClear.Location = new System.Drawing.Point(359, 98);
+			this.butClear.Location = new System.Drawing.Point(359, 92);
 			this.butClear.Name = "butClear";
 			this.butClear.Size = new System.Drawing.Size(45, 20);
 			this.butClear.TabIndex = 8;
@@ -310,7 +311,7 @@ namespace OpenDental{
 			this.butSearch.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.butSearch.ImageKey = "Email_Search.png";
 			this.butSearch.ImageList = this.imageListButtonSmall;
-			this.butSearch.Location = new System.Drawing.Point(283, 98);
+			this.butSearch.Location = new System.Drawing.Point(283, 92);
 			this.butSearch.Name = "butSearch";
 			this.butSearch.Size = new System.Drawing.Size(73, 20);
 			this.butSearch.TabIndex = 7;
@@ -319,7 +320,7 @@ namespace OpenDental{
 			// 
 			// checkSearchAttach
 			// 
-			this.checkSearchAttach.Location = new System.Drawing.Point(6, 98);
+			this.checkSearchAttach.Location = new System.Drawing.Point(6, 92);
 			this.checkSearchAttach.Name = "checkSearchAttach";
 			this.checkSearchAttach.Size = new System.Drawing.Size(258, 20);
 			this.checkSearchAttach.TabIndex = 3;
@@ -328,7 +329,7 @@ namespace OpenDental{
 			// label6
 			// 
 			this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label6.Location = new System.Drawing.Point(181, 56);
+			this.label6.Location = new System.Drawing.Point(181, 50);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(147, 16);
 			this.label6.TabIndex = 163;
@@ -337,7 +338,7 @@ namespace OpenDental{
 			// 
 			// textSearchBody
 			// 
-			this.textSearchBody.Location = new System.Drawing.Point(181, 73);
+			this.textSearchBody.Location = new System.Drawing.Point(181, 67);
 			this.textSearchBody.Name = "textSearchBody";
 			this.textSearchBody.Size = new System.Drawing.Size(223, 20);
 			this.textSearchBody.TabIndex = 6;
@@ -345,7 +346,7 @@ namespace OpenDental{
 			// label5
 			// 
 			this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label5.Location = new System.Drawing.Point(181, 18);
+			this.label5.Location = new System.Drawing.Point(181, 12);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(173, 16);
 			this.label5.TabIndex = 161;
@@ -354,14 +355,14 @@ namespace OpenDental{
 			// 
 			// textSearchEmail
 			// 
-			this.textSearchEmail.Location = new System.Drawing.Point(181, 35);
+			this.textSearchEmail.Location = new System.Drawing.Point(181, 29);
 			this.textSearchEmail.Name = "textSearchEmail";
 			this.textSearchEmail.Size = new System.Drawing.Size(223, 20);
 			this.textSearchEmail.TabIndex = 2;
 			// 
 			// textDateFrom
 			// 
-			this.textDateFrom.Location = new System.Drawing.Point(6, 73);
+			this.textDateFrom.Location = new System.Drawing.Point(6, 67);
 			this.textDateFrom.Name = "textDateFrom";
 			this.textDateFrom.Size = new System.Drawing.Size(70, 20);
 			this.textDateFrom.TabIndex = 4;
@@ -369,7 +370,7 @@ namespace OpenDental{
 			// label4
 			// 
 			this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label4.Location = new System.Drawing.Point(6, 56);
+			this.label4.Location = new System.Drawing.Point(6, 50);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(71, 16);
 			this.label4.TabIndex = 158;
@@ -379,7 +380,7 @@ namespace OpenDental{
 			// butPickPat
 			// 
 			this.butPickPat.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPickPat.Location = new System.Drawing.Point(151, 35);
+			this.butPickPat.Location = new System.Drawing.Point(151, 29);
 			this.butPickPat.Name = "butPickPat";
 			this.butPickPat.Size = new System.Drawing.Size(20, 20);
 			this.butPickPat.TabIndex = 1;
@@ -389,7 +390,7 @@ namespace OpenDental{
 			// label1
 			// 
 			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label1.Location = new System.Drawing.Point(1, 18);
+			this.label1.Location = new System.Drawing.Point(1, 12);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(173, 16);
 			this.label1.TabIndex = 156;
@@ -398,7 +399,7 @@ namespace OpenDental{
 			// 
 			// textSearchPat
 			// 
-			this.textSearchPat.Location = new System.Drawing.Point(6, 35);
+			this.textSearchPat.Location = new System.Drawing.Point(6, 29);
 			this.textSearchPat.Name = "textSearchPat";
 			this.textSearchPat.ReadOnly = true;
 			this.textSearchPat.Size = new System.Drawing.Size(144, 20);
@@ -432,7 +433,7 @@ namespace OpenDental{
 			this.gridSent.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridInboxSent_CellDoubleClick);
 			this.gridSent.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridInboxSent_CellClick);
 			// 
-			// emailPreviewControlSent
+			// emailPreviewControl1
 			// 
 			this.emailPreviewControlSent.BackColor = System.Drawing.SystemColors.Control;
 			this.emailPreviewControlSent.BccAddress = "";
@@ -442,11 +443,21 @@ namespace OpenDental{
 			this.emailPreviewControlSent.IsPreview = true;
 			this.emailPreviewControlSent.Location = new System.Drawing.Point(0, 0);
 			this.emailPreviewControlSent.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-			this.emailPreviewControlSent.Name = "emailPreviewControlSent";
+			this.emailPreviewControlSent.Name = "emailPreviewControl1";
 			this.emailPreviewControlSent.Size = new System.Drawing.Size(1126, 262);
 			this.emailPreviewControlSent.Subject = "";
 			this.emailPreviewControlSent.TabIndex = 0;
 			this.emailPreviewControlSent.ToAddress = "";
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(1141, 767);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 10;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butReplyAll
 			// 
@@ -700,6 +711,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butReply);
 			this.Controls.Add(this.groupSearch);
 			this.Controls.Add(this.butRefresh);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.menuMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEmailInbox";
@@ -754,6 +766,7 @@ namespace OpenDental{
     private UI.GridOD gridSent;
     private EmailPreviewControl emailPreviewControlSent;
     private System.Windows.Forms.ImageList imageListMailboxesLarge;
+    private UI.Button butClose;
     private System.Windows.Forms.ToolTip toolTip1;
     private ValidDate textDateTo;
     private System.Windows.Forms.Label label2;

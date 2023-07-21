@@ -38,7 +38,7 @@ namespace OpenDental {
 			textNistUrl.Text=PrefC.GetString(PrefName.NistTimeServerUrl);
 			double nistOffset=GetNistOffset();
 			if(nistOffset==double.MaxValue) { //Timed out
-				MsgBox.Show(this,"No response received from NIST time server.  Click sync time after four seconds.");
+				MsgBox.Show(this,"No response received from NIST time server.  Click synch time after four seconds.");
 				this.Cursor=Cursors.Default;
 				return false;
 			}
@@ -79,7 +79,7 @@ namespace OpenDental {
 			//Get NistTime Offset
 			double nistOffset=GetNistOffset();
 			if(nistOffset==double.MaxValue) { //Timed out
-				MsgBox.Show(this,"No response received from NIST time server.  Click sync time after four seconds.");
+				MsgBox.Show(this,"No response received from NIST time server.  Click synch time after four seconds.");
 				this.Cursor=Cursors.Default;
 				return;
 			}
@@ -172,10 +172,10 @@ namespace OpenDental {
 			Prefs.UpdateString(PrefName.NistTimeServerUrl,textNistUrl.Text);
 			//Update message textbox
 			if(!LocalInSynch()) { //This should not happen, time is updated automatically. If you get to this point, you should have already had a message box pop up saying there was an error updating your local time.
-				textMessage.Text="Your local machine time is out of sync.  Please ensure Open Dental is running with Administrator Windows privileges.  If you have done this and you still see this message, please call Open Dental support.";
+				textMessage.Text="Your local machine time is out of synch.  Please ensure Open Dental is running with Administrator Windows privileges.  If you have done this and you still see this message, please call Open Dental support.";
 			}
 			else if(!ServerInSynch()) {
-				textMessage.Text="Your database time is out of sync with your local machine.  Please start the Open Dental application on your database server and leave it running to keep times synchronized as required for EHR compliance.  If you have done this and you still see this message, please call Open Dental support.";
+				textMessage.Text="Your database time is out of synch with your local machine.  Please start the Open Dental application on your database server and leave it running to keep times synchronized as required for EHR compliance.  If you have done this and you still see this message, please call Open Dental support.";
 			}
 			else {//All times in synch
 				textMessage.Text="All times synchronized within one second.  You may close this window.";
@@ -185,6 +185,10 @@ namespace OpenDental {
 		///<summary>Do not allow user to send another request until timer has ticked.</summary>
 		private void timerSendingLimit_Tick(object sender,EventArgs e) {
 			timerSendingLimit.Enabled=false;
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
 		}
 
 	}

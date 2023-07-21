@@ -19,7 +19,7 @@ namespace OpenDentBusiness{
 		public string UniqueID;
 		///<summary>Indicates whether the device is allowed to operate the checkin app. 
 		///For BYOD sessions will always be true because BYOD is authenticated by a unique URL link in a text message.</summary>
-		public bool IsEclipboardEnabled;
+		public bool IsAllowed;
 		///<summary>FK to patient.PatNum. Indicates which patient is currently using the device. 0 indicates the device is not in use. -1 indicates
 		///that the device is in use but we do not yet know which patient is using the device.</summary>
 		public long PatNum;
@@ -28,24 +28,16 @@ namespace OpenDentBusiness{
 		///<summary>The date and time when we last updated the PatNum field for this device (indication the current use-state of the device).</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
 		public DateTime LastCheckInActivity;
-		///<summary>The date and time of the last attempted login for Eclipboard.</summary>
+		///<summary>The date and time of the last attempted login.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
-		public DateTime EclipboardLastAttempt;
-		///<summary>The date and time of the last successful login for Eclipboard.</summary>
+		public DateTime LastAttempt;
+		///<summary>The date and time of the last succesful login.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
-		public DateTime EclipboardLastLogin;
+		public DateTime LastLogin;
 		///<summary>Current page of the device.</summary>
 		public MADPage DevicePage;
 		///<summary>FK to userod.UserNum. Indicates which user is currently logged into the device. 0 indicates this device is not logged into.</summary>
 		public long UserNum;
-		///<summary>The date and time of the last successful login for ODTouch.</summary>
-		[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
-		public DateTime ODTouchLastLogin;
-		///<summary>The date and time of the last attempted login for ODTouch.</summary>
-		[CrudColumn(SpecialType=CrudSpecialColType.DateT)]
-		public DateTime ODTouchLastAttempt;
-		/// <summary>Indicates whether this device is being used for ODTouch or not.</summary>
-		public bool IsODTouchEnabled;
 
 		///<summary>Returns a copy of this MobileAppDevice.</summary>
 		public MobileAppDevice Copy() {

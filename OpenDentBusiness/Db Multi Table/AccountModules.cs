@@ -186,7 +186,7 @@ namespace OpenDentBusiness {
 				getDiscountPlan();
 				getDiscountPlanSub();
 				if(doMakeSecLog) {
-					SecurityLogs.MakeLogEntry(EnumPermType.AccountModule,patNum,"");
+					SecurityLogs.MakeLogEntry(Permissions.AccountModule,patNum,"");
 				}
 			};
 			//Limiting to 4 threads so we don't get a "Too many connections" error from the Db.
@@ -720,17 +720,14 @@ namespace OpenDentBusiness {
 				return Meth.GetDS(MethodBase.GetCurrentMethod(),statementCur,isComputeAging,doIncludePatLName,doShowHiddenPaySplits,doExcludeTxfrs,listPatients);
 			}
 			DataSet dataSetRetVal=new DataSet();
-			bool includeApptsForFamily=false;
+			//The calling method did not provide an explicitly list of patients to get account information for.
 			if(listPatients==null) {
-				//The calling method did not provide an explicit list of patients to get account information for.
 				listPatients=new List<Patient>();
 				//Limited custom statements have patients associated via the stmtlink table.
 				if(statementCur.StatementNum > 0 && statementCur.LimitedCustomFamily!=EnumLimitedCustomFamily.None) {
 					listPatients=Patients.GetMultPats(statementCur.ListPatNums).ToList();
 				}
 				else {//Not a limited custom statement so execute old behavior.
-					//Old behavior was to add super family guarantors to the list of patients and then get all appointments for family members.
-					includeApptsForFamily=true;
 					if(statementCur.IsInvoice) {
 						//Just add the super family head to the list of patients to include for the super statement.
 						listPatients.Add(Patients.GetPat(statementCur.SuperFamily));
@@ -768,7 +765,7 @@ namespace OpenDentBusiness {
 				}
 				//Setting the PatNum for all rows to the guarantor so that each family will be interminged in one grid. 
 				dataSetAccount.Tables["account"].Rows.Cast<DataRow>().ToList().ForEach(x => x["PatNum"]=patient.PatNum);
-				dataSetAccount.Tables.Add(GetApptTable(family,!includeApptsForFamily,patient.PatNum));
+				dataSetAccount.Tables.Add(GetApptTable(family,false,patient.PatNum));
 				dataSetAccount.Tables.Add(GetMisc(family,patient.PatNum,patientPayPlanDue,dynamicPayPlanDue,balanceForward,statementCur.StatementType,dataSetAccount));
 				listPayPlanNums=listPayPlanNums.Union(dataSetAccount.Tables["payplan"].Select().Select(x => PIn.Long(x["PayPlanNum"].ToString()))
 					.Where(x => x > 0)).ToList();
@@ -932,7 +929,7 @@ namespace OpenDentBusiness {
 				+"IsOverpay, "
 				+"SUM(InsEstTotalOverride) InsEstTotalOverride_ "
 				+"FROM claimproc "
-				+$"WHERE (claimproc.IsOverpay=1 OR (Status IN ({POut.Int((int)ClaimProcStatus.Received)},{POut.Int((int)ClaimProcStatus.Supplemental)},{POut.Int((int)ClaimProcStatus.CapClaim)})) "
+				+$"WHERE claimproc.IsOverpay=1 OR (Status IN ({POut.Int((int)ClaimProcStatus.Received)},{POut.Int((int)ClaimProcStatus.Supplemental)},{POut.Int((int)ClaimProcStatus.CapClaim)}) "
 				+"AND (WriteOff!=0 OR InsPayAmt!=0)) ";
 			if(familyPatNums!="") {
 				command+="AND PatNum IN ("+familyPatNums+") ";
@@ -2185,7 +2182,7 @@ namespace OpenDentBusiness {
 				command=$@"
 					SELECT payplanlink.AmountOverride,payplanlink.FKey,payplanlink.LinkType,payplanlink.SecDateTEntry,
 						payplan.PatNum,payplan.dynamicPayPlanTPOption,payplan.PayPlanNum,
-						prodlink.Fee,prodlink.Num,prodlink.ClinicNum,prodlink.ProvNum,prodlink.ProcStatus,prodlink.DiscountPlanAmt,prodlink.Discount 
+						prodlink.Fee,prodlink.Num,prodlink.ClinicNum,prodlink.ProvNum,prodlink.ProcStatus,prodlink.DiscountPlanAmt 
 					FROM payplanlink
 					INNER JOIN payplan ON payplan.PayPlanNum = payplanlink.PayPlanNum 
 					LEFT JOIN (
@@ -2196,7 +2193,7 @@ namespace OpenDentBusiness {
 									+COALESCE(procSplit.SplitAmt,0)
 								) Fee, 
 								procedurelog.ProcNum Num,payplanlink.LinkType,payplanlink.PayPlanLinkNum,procedurelog.ClinicNum,procedurelog.ProvNum,
-								procedurelog.ProcStatus,procedurelog.DiscountPlanAmt,procedurelog.Discount
+								procedurelog.ProcStatus,procedurelog.DiscountPlanAmt 
 						FROM payplanlink 
 						INNER JOIN procedurelog ON procedurelog.ProcNum=payplanlink.FKey AND payplanlink.LinkType={POut.Int((int)PayPlanLinkType.Procedure)} 
 						LEFT JOIN (
@@ -2233,7 +2230,7 @@ namespace OpenDentBusiness {
 						)procSplit ON procSplit.ProcNum=procedurelog.ProcNum
 						UNION ALL
 						SELECT adjustment.PatNum,adjustment.AdjAmt + COALESCE(adjSplit.SplitAmt,0) Fee,adjustment.AdjNum Num,payplanlink.LinkType
-							,payplanlink.PayPlanLinkNum,adjustment.ClinicNum,adjustment.ProvNum,'0','0','0'
+							,payplanlink.PayPlanLinkNum,adjustment.ClinicNum,adjustment.ProvNum,'0','0'
 							FROM payplanlink 
 							INNER JOIN adjustment ON adjustment.AdjNum=payplanlink.FKey 
 								AND payplanlink.LinkType={POut.Int((int)PayPlanLinkType.Adjustment)}
@@ -2261,7 +2258,6 @@ namespace OpenDentBusiness {
 					}
 					if(PIn.Enum<ProcStat>(payplanLinks.Rows[i]["ProcStatus"].ToString())!=ProcStat.C) {
 						amt-=PIn.Decimal(payplanLinks.Rows[i]["DiscountPlanAmt"].ToString());
-						amt-=PIn.Decimal(payplanLinks.Rows[i]["Discount"].ToString());
 					}
 					if(PIn.Int(payplanLinks.Rows[i]["LinkType"].ToString())==(int)PayPlanLinkType.Adjustment) {
 						adjNum=num;
@@ -2713,7 +2709,7 @@ namespace OpenDentBusiness {
 			string descriptionPlannedPrincipal="";
 			if(isForDynamic) {
 				tableName="dynamicPayPlan";
-				descriptionPayPlanType="Payment Plan.";
+				descriptionPayPlanType="Dynamic Payment Plan.";
 				descriptionPrincipal="Total Estimated Principal:";
 				if(!decimal.Equals(totalPlannedFee,decimal.Zero)) { 
 					descriptionPlannedPrincipal="Treatment Planned Remaining:";
@@ -3590,7 +3586,7 @@ namespace OpenDentBusiness {
 				if(!claim.IsOrtho && PrefC.GetBool(PrefName.OrthoClaimMarkAsOrtho)) {//if it's already marked as Ortho (from a previous procedure), just skip this logic.
 					CovCat orthoCategory=CovCats.GetFirstOrDefault(x => x.EbenefitCat == EbenefitCategory.Orthodontics,true);
 					if(orthoCategory!=null) {
-						if(CovSpans.IsCodeInSpans(procCodeCur.ProcCode,CovSpans.GetWhere(x => x.CovCatNum==orthoCategory.CovCatNum)))	{
+						if(CovSpans.IsCodeInSpans(procCodeCur.ProcCode,CovSpans.GetWhere(x => x.CovCatNum==orthoCategory.CovCatNum).ToArray()))	{
 							claim.IsOrtho=true;
 							//ClaimCur.OrthoTotalM is a byte and patNote.OrthoMonthsTreatOverride is an integer so make sure it can fit.
 							if(patNote.OrthoMonthsTreatOverride > 255) {

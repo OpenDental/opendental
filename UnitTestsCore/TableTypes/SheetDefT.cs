@@ -18,18 +18,6 @@ namespace UnitTestsCore {
 			DataCore.NonQ(command);
 		}
 
-		///<summary>Creates a simple SheetDef and inserts it into the database.</summary>
-		public static SheetDef CreateSheetDef(SheetTypeEnum sheetType,string description="") {
-			SheetDef sheetDef=new SheetDef();
-			sheetDef.IsNew=true;
-			sheetDef.SheetType=sheetType;
-			sheetDef.Description=description;
-			sheetDef.SheetFieldDefs=new List<SheetFieldDef>();
-			SheetDefs.InsertOrUpdate(sheetDef);
-			SheetDefs.RefreshCache();
-			return sheetDef;
-		}
-
 		///<summary>ClinicNum of 0 creates a default rule for all clinics.</summary>
 		public static SheetDef CreateCustomSheet(SheetInternalType sheetInternalType,bool createEClipboardRule = true,long clinicNum = 0,int days = 30,
 			int minAge = -1,int maxAge = -1) 

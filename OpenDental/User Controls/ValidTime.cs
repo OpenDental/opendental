@@ -11,24 +11,25 @@ using CodeBase;
 namespace OpenDental{
 ///<summary></summary>
 	public class ValidTime:System.Windows.Forms.TextBox {
-		private ErrorProvider _errorProvider=new ErrorProvider();
+		private ErrorProvider _errorProv=new ErrorProvider();
 		private System.ComponentModel.Container components = null;
 
 		///<summary>Returns true if a valid time has been entered.</summary>
 		public bool IsValid() {
-			return _errorProvider.GetError(this)=="";
+			return _errorProv.GetError(this)=="";
 		}
 
-		/// <summary>Default is false, meaning the format should look like '10:05:30 PM' for en-us. If short true, format should look like '10:05 PM'.</summary>
-		[Category("OD")]
-		[Description("Default is false, meaning the format should look like '10:05:30 PM' for en-us. If short true, format should look like '10:05 PM'.")]
+		/// <summary>Defines the IsShortTimeString property for ValidTime component. Defaults to false. During validation this will be called and a true
+		/// value will result in a string formatted as '10:05 PM' for en-us. A false value will result in a string formatted as '10:05:30 PM' 
+		/// for en-us</summary>
+		[Category("Behavior"),Description("Formats validated Time in ValidTime textbox to ShortTimeString for true and LongTimeString for false.")]
 		[DefaultValue(false)]
 		public bool IsShortTimeString { get; set; }
 
 		///<summary></summary>
 		public ValidTime(){
 			InitializeComponent();
-			_errorProvider.BlinkStyle=ErrorBlinkStyle.NeverBlink;
+			_errorProv.BlinkStyle=ErrorBlinkStyle.NeverBlink;
 			Size=new Size(120,20);
 		}
 
@@ -59,7 +60,7 @@ namespace OpenDental{
 			string myMessage="";
 			try{
 				if(Text==""){
-					_errorProvider.SetError(this,"");
+					_errorProv.SetError(this,"");
 					return;
 				}
 				if(IsShortTimeString) {
@@ -68,7 +69,7 @@ namespace OpenDental{
 				else {
 					Text=DateTime.Parse(Text).ToLongTimeString();//Formats string as '10:05:30 PM'. Will throw exception if invalid.
 				}
-				_errorProvider.SetError(this,"");
+				_errorProv.SetError(this,"");
 			}
 			catch(Exception ex){
 				//Cancel the event and select the text to be corrected by the user
@@ -78,13 +79,13 @@ namespace OpenDental{
 				else{
 					myMessage=ex.Message;
 				}
-				_errorProvider.SetError(this,Lan.g("ValidTime",myMessage));
+				_errorProv.SetError(this,Lan.g("ValidTime",myMessage));
 			}
 		}
 
 		///<summary>Gets rid of the orange exlamation circle.</summary>
 		public void ClearError() {
-			_errorProvider.SetError(this,"");
+			_errorProv.SetError(this,"");
 		}
 
 

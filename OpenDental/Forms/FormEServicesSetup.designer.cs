@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEServicesSetup));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butTextingServices = new OpenDental.UI.Button();
 			this.butPatPortal = new OpenDental.UI.Button();
 			this.butMobileWeb = new OpenDental.UI.Button();
@@ -45,14 +46,23 @@ namespace OpenDental{
 			this.label2 = new System.Windows.Forms.Label();
 			this.butSecureEmail = new OpenDental.UI.Button();
 			this.butPayPortal = new OpenDental.UI.Button();
-			this.butODTouch = new OpenDental.UI.Button();
-			this.butMobileAppDevice = new OpenDental.UI.Button();
 			this.groupboxWebSched.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(407, 551);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 12;
+			this.butCancel.Text = "Close";
+			this.butCancel.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butTextingServices
 			// 
-			this.butTextingServices.Location = new System.Drawing.Point(26, 296);
+			this.butTextingServices.Location = new System.Drawing.Point(26, 243);
 			this.butTextingServices.Name = "butTextingServices";
 			this.butTextingServices.Size = new System.Drawing.Size(120, 24);
 			this.butTextingServices.TabIndex = 6;
@@ -62,7 +72,7 @@ namespace OpenDental{
 			// 
 			// butPatPortal
 			// 
-			this.butPatPortal.Location = new System.Drawing.Point(26, 203);
+			this.butPatPortal.Location = new System.Drawing.Point(26, 153);
 			this.butPatPortal.Name = "butPatPortal";
 			this.butPatPortal.Size = new System.Drawing.Size(120, 24);
 			this.butPatPortal.TabIndex = 4;
@@ -72,7 +82,7 @@ namespace OpenDental{
 			// 
 			// butMobileWeb
 			// 
-			this.butMobileWeb.Location = new System.Drawing.Point(26, 141);
+			this.butMobileWeb.Location = new System.Drawing.Point(26, 122);
 			this.butMobileWeb.Name = "butMobileWeb";
 			this.butMobileWeb.Size = new System.Drawing.Size(120, 24);
 			this.butMobileWeb.TabIndex = 3;
@@ -82,7 +92,7 @@ namespace OpenDental{
 			// 
 			// butMisc
 			// 
-			this.butMisc.Location = new System.Drawing.Point(26, 388);
+			this.butMisc.Location = new System.Drawing.Point(26, 336);
 			this.butMisc.Name = "butMisc";
 			this.butMisc.Size = new System.Drawing.Size(120, 24);
 			this.butMisc.TabIndex = 9;
@@ -92,7 +102,7 @@ namespace OpenDental{
 			// 
 			// butEConnector
 			// 
-			this.butEConnector.Location = new System.Drawing.Point(26, 79);
+			this.butEConnector.Location = new System.Drawing.Point(26, 91);
 			this.butEConnector.Name = "butEConnector";
 			this.butEConnector.Size = new System.Drawing.Size(120, 24);
 			this.butEConnector.TabIndex = 2;
@@ -102,7 +112,7 @@ namespace OpenDental{
 			// 
 			// butEClipboard
 			// 
-			this.butEClipboard.Location = new System.Drawing.Point(26, 358);
+			this.butEClipboard.Location = new System.Drawing.Point(26, 305);
 			this.butEClipboard.Name = "butEClipboard";
 			this.butEClipboard.Size = new System.Drawing.Size(120, 24);
 			this.butEClipboard.TabIndex = 8;
@@ -112,7 +122,7 @@ namespace OpenDental{
 			// 
 			// butECR
 			// 
-			this.butECR.Location = new System.Drawing.Point(26, 327);
+			this.butECR.Location = new System.Drawing.Point(26, 274);
 			this.butECR.Name = "butECR";
 			this.butECR.Size = new System.Drawing.Size(120, 24);
 			this.butECR.TabIndex = 7;
@@ -122,7 +132,7 @@ namespace OpenDental{
 			// 
 			// butSignup
 			// 
-			this.butSignup.Location = new System.Drawing.Point(26, 48);
+			this.butSignup.Location = new System.Drawing.Point(26, 60);
 			this.butSignup.Name = "butSignup";
 			this.butSignup.Size = new System.Drawing.Size(120, 24);
 			this.butSignup.TabIndex = 1;
@@ -134,9 +144,9 @@ namespace OpenDental{
 			// 
 			this.label23.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.label23.Location = new System.Drawing.Point(18, 1);
+			this.label23.Location = new System.Drawing.Point(18, 15);
 			this.label23.Name = "label23";
-			this.label23.Size = new System.Drawing.Size(483, 46);
+			this.label23.Size = new System.Drawing.Size(414, 26);
 			this.label23.TabIndex = 245;
 			this.label23.Text = "eServices are Open Dental features that can be delivered electronically via the i" +
     "nternet.  \r\nAll eServices hosted by Open Dental use the eConnector Service.";
@@ -144,18 +154,18 @@ namespace OpenDental{
 			// 
 			// labelECR
 			// 
-			this.labelECR.Location = new System.Drawing.Point(150, 331);
+			this.labelECR.Location = new System.Drawing.Point(150, 278);
 			this.labelECR.Name = "labelECR";
-			this.labelECR.Size = new System.Drawing.Size(352, 16);
+			this.labelECR.Size = new System.Drawing.Size(339, 16);
 			this.labelECR.TabIndex = 247;
 			this.labelECR.Text = "Automated eReminders, eConfirmations, Thank-Yous, && Arrivals";
 			this.labelECR.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelSignup
 			// 
-			this.labelSignup.Location = new System.Drawing.Point(150, 52);
+			this.labelSignup.Location = new System.Drawing.Point(150, 64);
 			this.labelSignup.Name = "labelSignup";
-			this.labelSignup.Size = new System.Drawing.Size(100, 16);
+			this.labelSignup.Size = new System.Drawing.Size(87, 16);
 			this.labelSignup.TabIndex = 246;
 			this.labelSignup.Text = "Get Started Here";
 			this.labelSignup.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -166,7 +176,7 @@ namespace OpenDental{
 			this.groupboxWebSched.Controls.Add(this.butAdvanced);
 			this.groupboxWebSched.Controls.Add(this.butNewPatient);
 			this.groupboxWebSched.Controls.Add(this.butRecall);
-			this.groupboxWebSched.Location = new System.Drawing.Point(19, 481);
+			this.groupboxWebSched.Location = new System.Drawing.Point(19, 429);
 			this.groupboxWebSched.Name = "groupboxWebSched";
 			this.groupboxWebSched.Size = new System.Drawing.Size(134, 147);
 			this.groupboxWebSched.TabIndex = 248;
@@ -214,7 +224,7 @@ namespace OpenDental{
 			// 
 			// butMobileSettings
 			// 
-			this.butMobileSettings.Location = new System.Drawing.Point(26, 450);
+			this.butMobileSettings.Location = new System.Drawing.Point(26, 398);
 			this.butMobileSettings.Name = "butMobileSettings";
 			this.butMobileSettings.Size = new System.Drawing.Size(120, 24);
 			this.butMobileSettings.TabIndex = 250;
@@ -224,7 +234,7 @@ namespace OpenDental{
 			// 
 			// butSMSTemplateSetup
 			// 
-			this.butSMSTemplateSetup.Location = new System.Drawing.Point(26, 265);
+			this.butSMSTemplateSetup.Location = new System.Drawing.Point(26, 213);
 			this.butSMSTemplateSetup.Name = "butSMSTemplateSetup";
 			this.butSMSTemplateSetup.Size = new System.Drawing.Size(120, 24);
 			this.butSMSTemplateSetup.TabIndex = 251;
@@ -235,7 +245,7 @@ namespace OpenDental{
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(152, 269);
+			this.label2.Location = new System.Drawing.Point(152, 217);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(339, 16);
 			this.label2.TabIndex = 252;
@@ -245,7 +255,7 @@ namespace OpenDental{
 			// 
 			// butSecureEmail
 			// 
-			this.butSecureEmail.Location = new System.Drawing.Point(26, 419);
+			this.butSecureEmail.Location = new System.Drawing.Point(26, 367);
 			this.butSecureEmail.Name = "butSecureEmail";
 			this.butSecureEmail.Size = new System.Drawing.Size(120, 24);
 			this.butSecureEmail.TabIndex = 253;
@@ -255,7 +265,7 @@ namespace OpenDental{
 			// 
 			// butPayPortal
 			// 
-			this.butPayPortal.Location = new System.Drawing.Point(26, 233);
+			this.butPayPortal.Location = new System.Drawing.Point(26, 183);
 			this.butPayPortal.Name = "butPayPortal";
 			this.butPayPortal.Size = new System.Drawing.Size(120, 24);
 			this.butPayPortal.TabIndex = 254;
@@ -263,31 +273,10 @@ namespace OpenDental{
 			this.butPayPortal.UseVisualStyleBackColor = true;
 			this.butPayPortal.Click += new System.EventHandler(this.butPayPortal_Click);
 			// 
-			// butODTouch
-			// 
-			this.butODTouch.Location = new System.Drawing.Point(26, 172);
-			this.butODTouch.Name = "butODTouch";
-			this.butODTouch.Size = new System.Drawing.Size(120, 24);
-			this.butODTouch.TabIndex = 257;
-			this.butODTouch.Text = "ODTouch";
-			this.butODTouch.UseVisualStyleBackColor = true;
-			this.butODTouch.Click += new System.EventHandler(this.butODTouch_Click);
-			// 
-			// butMobileAppDevice
-			// 
-			this.butMobileAppDevice.Location = new System.Drawing.Point(26, 110);
-			this.butMobileAppDevice.Name = "butMobileAppDevice";
-			this.butMobileAppDevice.Size = new System.Drawing.Size(120, 24);
-			this.butMobileAppDevice.TabIndex = 258;
-			this.butMobileAppDevice.Text = "Manage Devices";
-			this.butMobileAppDevice.UseVisualStyleBackColor = true;
-			this.butMobileAppDevice.Click += new System.EventHandler(this.butMobileAppDevice_Click);
-			// 
 			// FormEServicesSetup
 			// 
-			this.ClientSize = new System.Drawing.Size(504, 635);
-			this.Controls.Add(this.butMobileAppDevice);
-			this.Controls.Add(this.butODTouch);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(494, 587);
 			this.Controls.Add(this.butPayPortal);
 			this.Controls.Add(this.butSecureEmail);
 			this.Controls.Add(this.label2);
@@ -299,6 +288,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butSignup);
 			this.Controls.Add(this.label23);
 			this.Controls.Add(this.butTextingServices);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butPatPortal);
 			this.Controls.Add(this.butEConnector);
 			this.Controls.Add(this.butMobileWeb);
@@ -316,6 +306,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butCancel;
 		private UI.Button butTextingServices;
 		private UI.Button butPatPortal;
 		private UI.Button butMobileWeb;
@@ -337,7 +328,5 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label2;
 		private UI.Button butSecureEmail;
 		private UI.Button butPayPortal;
-		private UI.Button butODTouch;
-		private UI.Button butMobileAppDevice;
 	}
 }

@@ -43,7 +43,7 @@ namespace OpenDental{
 			ProgramPopertyCur.TagOD=textValue.Text;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			string progName=Programs.GetProgram(ProgramPopertyCur.ProgramNum).ProgName;
 			ProgramPopertyCur.PropertyValue=textValue.Text;
 			if(_isPassword) {
@@ -52,15 +52,39 @@ namespace OpenDental{
 				ProgramPopertyCur.PropertyValue=encryptedText;
 			}
 			if(ProgramPopertyCur.IsHighSecurity!=checkIsHighSecurity.Checked) {
-				SecurityLogs.MakeLogEntry(EnumPermType.ManageHighSecurityProgProperties,0,$"Security level for {progName}'s {ProgramPopertyCur.PropertyDesc} was altered.",ProgramPopertyCur.ProgramNum,DateTime.Now);
+				SecurityLogs.MakeLogEntry(Permissions.ManageHighSecurityProgProperties,0,$"Security level for {progName}'s {ProgramPopertyCur.PropertyDesc} was altered.",ProgramPopertyCur.ProgramNum,DateTime.Now);
 			}
 			if(checkIsHighSecurity.Checked && ProgramPopertyCur.TagOD.ToString()!=textValue.Text) {
-				SecurityLogs.MakeLogEntry(EnumPermType.ManageHighSecurityProgProperties,0,$"Value for {progName}'s {ProgramPopertyCur.PropertyDesc} was altered.",ProgramPopertyCur.ProgramNum,DateTime.Now);
+				SecurityLogs.MakeLogEntry(Permissions.ManageHighSecurityProgProperties,0,$"Value for {progName}'s {ProgramPopertyCur.PropertyDesc} was altered.",ProgramPopertyCur.ProgramNum,DateTime.Now);
 			}
 			ProgramPopertyCur.IsHighSecurity=checkIsHighSecurity.Checked;
 			ProgramProperties.Update(ProgramPopertyCur);
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

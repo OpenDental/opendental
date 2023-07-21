@@ -41,7 +41,7 @@ namespace OpenDental{
 				//if clinics are enabled and this is a holiday or practice note, set visible and fill the clinic combobox and private list of clinics
 				if(_isHolidayOrNote && ScheduleCur.SchedType==ScheduleType.Practice) {
 					comboClinic.Visible=true;//only visible for holidays and practice notes and only if clinics are enabled
-					comboClinic.ClinicNumSelected=Clinics.ClinicNum;
+					comboClinic.SelectedClinicNum=Clinics.ClinicNum;
 				}
 				else {
 					comboClinic.Visible=false;
@@ -83,7 +83,7 @@ namespace OpenDental{
 			comboStart.Select();
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			#region Validation
 			DateTime dateTStart=DateTime.MinValue;
 			DateTime dateTStop=DateTime.MinValue;
@@ -141,7 +141,7 @@ namespace OpenDental{
 			}
 			long clinicNum=0;
 			if(_isHolidayOrNote && ScheduleCur.SchedType==ScheduleType.Practice && PrefC.HasClinicsEnabled) {//prov notes do not have a clinic
-				clinicNum=comboClinic.ClinicNumSelected;
+				clinicNum=comboClinic.SelectedClinicNum;
 				if(ScheduleCur.Status==SchedStatus.Holiday) {//duplicate holiday check
 					List<Schedule> listSchedules=ListSchedules.FindAll(x => x.SchedType==ScheduleType.Practice && x.Status==SchedStatus.Holiday);//scheds in local list
 					listSchedules.AddRange(Schedules.GetAllForDateAndType(ScheduleCur.SchedDate,ScheduleType.Practice)
@@ -158,7 +158,7 @@ namespace OpenDental{
 			}
 			#endregion Validation
 			#region Set Schedule Fields
-			ScheduleCur.Note=textNote.Text;
+      ScheduleCur.Note=textNote.Text;
 			ScheduleCur.Ops=new List<long>();
 			if(listBoxOps.SelectedIndices.Count>0 && !listBoxOps.SelectedIndices.Contains(0)) {
 				for(int i=0;i<listBoxOps.SelectedIndices.Count;i++) {
@@ -167,8 +167,18 @@ namespace OpenDental{
 			}
 			ScheduleCur.ClinicNum=clinicNum;//0 if HQ selected or clinics not enabled or not a holiday or practice note
 			#endregion Set Schedule Fields
-			DialogResult=DialogResult.OK;
+			DialogResult=DialogResult.OK;		  
+    }
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}
 }
+
+
+
+
+
+

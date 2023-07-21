@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="666" Height="494" 
-             Text="Appointment Lists" MinMaxBoxes="False">
+             Text="Appointment Lists" Loaded="FrmApptLists_Loaded" >
     <Grid Background="#FFFCFDFE" >
         <ui:Button x:Name="butInsVerify" Width="100" Height="26" Margin="28,386,0,0" Text="Ins Verify" Click="butInsVerify_Click" />
         <ui:Label x:Name="label8" Width="479" Height="47" Margin="130,391,0,0" Text="A list of insurance verifications for upcoming appointments." />

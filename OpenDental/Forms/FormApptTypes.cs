@@ -41,6 +41,7 @@ namespace OpenDental {
 
 		private void FormApptTypes_Load(object sender,EventArgs e) {
 			if(IsSelectionMode) {
+				butOK.Visible=true;
 				butAdd.Visible=false;
 				butDown.Visible=false;
 				butUp.Visible=false;
@@ -55,9 +56,6 @@ namespace OpenDental {
 				}
 				gridMain.Location=new Point(8,6);
 				gridMain.Size=new Size(320,447);
-			}
-			else{
-				butOK.Visible=false;
 			}
 			checkPrompt.Checked=PrefC.GetBool(PrefName.AppointmentTypeShowPrompt);
 			checkWarn.Checked=PrefC.GetBool(PrefName.AppointmentTypeShowWarning);
@@ -278,10 +276,16 @@ namespace OpenDental {
 		*/
 
 		private void butOK_Click(object sender,EventArgs e) {
-			//Only visible in Selection mode
 			ListAppointmentTypesSelected=gridMain.SelectedTags<AppointmentType>();
 			AppointmentTypeSelected=ListAppointmentTypesSelected.FirstOrDefault();
 			this.DialogResult=DialogResult.OK;
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			if(IsSelectionMode) {
+				DialogResult=DialogResult.Cancel;
+			}
+			Close();
 		}
 
 		private void FormApptTypes_FormClosing(object sender,FormClosingEventArgs e) {
@@ -309,7 +313,7 @@ namespace OpenDental {
 							logEntry+="CodeStrRequired changed from '"+appointmentTypeOld.CodeStrRequired+"' to '"+appointmentType.CodeStrRequired+"'\r\n";
 						}
 						if(!String.IsNullOrEmpty(logEntry)) {
-							SecurityLogs.MakeLogEntry(EnumPermType.AppointmentTypeEdit,0,"Appointment Type \""+appointmentType.AppointmentTypeName+"\" edited.\r\n"+logEntry.Trim());
+							SecurityLogs.MakeLogEntry(Permissions.AppointmentTypeEdit,0,"Appointment Type \""+appointmentType.AppointmentTypeName+"\" edited.\r\n"+logEntry.Trim());
 						}
 					}
 					//LogEntry(_listApptTypes,_listApptTypesOld);//no longer needed, originally used to diagnose a bugin the middle teir.

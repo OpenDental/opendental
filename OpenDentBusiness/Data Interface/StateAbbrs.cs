@@ -105,10 +105,7 @@ namespace OpenDentBusiness{
 		public static int GetMedicaidIDLength(string abbr) {
 			//No need to check MiddleTierRole; no call to db.
 			StateAbbr stateAbbr=GetFirstOrDefault(x => x.Abbr.ToLower()==abbr.ToLower());
-			if(stateAbbr==null) {
-				return 0;
-			}
-			return stateAbbr.MedicaidIDLength;
+			return (stateAbbr==null ? 0 : stateAbbr.MedicaidIDLength);
 		}
 
 		///<summary>Returns true if the abbreviation exists in the stateabbr table.</summary>

@@ -396,7 +396,7 @@ namespace OpenDental {
 			// textICD9DefaultForNewProcs
 			// 
 			this.textICD9DefaultForNewProcs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.textICD9DefaultForNewProcs.Location = new System.Drawing.Point(332, 52);
+			this.textICD9DefaultForNewProcs.Location = new System.Drawing.Point(326, 52);
 			this.textICD9DefaultForNewProcs.Name = "textICD9DefaultForNewProcs";
 			this.textICD9DefaultForNewProcs.Size = new System.Drawing.Size(85, 20);
 			this.textICD9DefaultForNewProcs.TabIndex = 229;
@@ -406,14 +406,14 @@ namespace OpenDental {
 			this.labelIcdCodeDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.labelIcdCodeDefault.Location = new System.Drawing.Point(3, 55);
 			this.labelIcdCodeDefault.Name = "labelIcdCodeDefault";
-			this.labelIcdCodeDefault.Size = new System.Drawing.Size(330, 17);
+			this.labelIcdCodeDefault.Size = new System.Drawing.Size(320, 17);
 			this.labelIcdCodeDefault.TabIndex = 224;
 			this.labelIcdCodeDefault.Text = "Default ICD-10 code for new procedures and when set complete";
 			this.labelIcdCodeDefault.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// butDiagnosisCode
 			// 
-			this.butDiagnosisCode.Location = new System.Drawing.Point(420, 52);
+			this.butDiagnosisCode.Location = new System.Drawing.Point(419, 52);
 			this.butDiagnosisCode.Name = "butDiagnosisCode";
 			this.butDiagnosisCode.Size = new System.Drawing.Size(21, 21);
 			this.butDiagnosisCode.TabIndex = 233;
@@ -432,7 +432,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBoxMedicalCodes);
 			this.Controls.Add(this.checkBoxRxClinicUseSelected);
 			this.Name = "UserControlChartGeneral";
-			this.Size = new System.Drawing.Size(494, 660);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxFunctionality.ResumeLayout(false);
 			this.groupBoxFunctionality.PerformLayout();
 			this.groupBoxPerio.ResumeLayout(false);

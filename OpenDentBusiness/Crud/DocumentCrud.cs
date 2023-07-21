@@ -47,30 +47,30 @@ namespace OpenDentBusiness.Crud{
 			Document document;
 			foreach(DataRow row in table.Rows) {
 				document=new Document();
-				document.DocNum          = PIn.Long  (row["DocNum"].ToString());
-				document.Description     = PIn.String(row["Description"].ToString());
-				document.DateCreated     = PIn.DateT (row["DateCreated"].ToString());
-				document.DocCategory     = PIn.Long  (row["DocCategory"].ToString());
-				document.PatNum          = PIn.Long  (row["PatNum"].ToString());
-				document.FileName        = PIn.String(row["FileName"].ToString());
-				document.ImgType         = (OpenDentBusiness.ImageType)PIn.Int(row["ImgType"].ToString());
-				document.IsFlipped       = PIn.Bool  (row["IsFlipped"].ToString());
-				document.DegreesRotated  = PIn.Float (row["DegreesRotated"].ToString());
-				document.ToothNumbers    = PIn.String(row["ToothNumbers"].ToString());
-				document.Note            = PIn.String(row["Note"].ToString());
-				document.SigIsTopaz      = PIn.Bool  (row["SigIsTopaz"].ToString());
-				document.Signature       = PIn.String(row["Signature"].ToString());
-				document.CropX           = PIn.Int   (row["CropX"].ToString());
-				document.CropY           = PIn.Int   (row["CropY"].ToString());
-				document.CropW           = PIn.Int   (row["CropW"].ToString());
-				document.CropH           = PIn.Int   (row["CropH"].ToString());
-				document.WindowingMin    = PIn.Int   (row["WindowingMin"].ToString());
-				document.WindowingMax    = PIn.Int   (row["WindowingMax"].ToString());
-				document.MountItemNum    = PIn.Long  (row["MountItemNum"].ToString());
-				document.DateTStamp      = PIn.DateT (row["DateTStamp"].ToString());
-				document.RawBase64       = PIn.String(row["RawBase64"].ToString());
-				document.Thumbnail       = PIn.String(row["Thumbnail"].ToString());
-				document.ExternalGUID    = PIn.String(row["ExternalGUID"].ToString());
+				document.DocNum        = PIn.Long  (row["DocNum"].ToString());
+				document.Description   = PIn.String(row["Description"].ToString());
+				document.DateCreated   = PIn.DateT (row["DateCreated"].ToString());
+				document.DocCategory   = PIn.Long  (row["DocCategory"].ToString());
+				document.PatNum        = PIn.Long  (row["PatNum"].ToString());
+				document.FileName      = PIn.String(row["FileName"].ToString());
+				document.ImgType       = (OpenDentBusiness.ImageType)PIn.Int(row["ImgType"].ToString());
+				document.IsFlipped     = PIn.Bool  (row["IsFlipped"].ToString());
+				document.DegreesRotated= PIn.Float (row["DegreesRotated"].ToString());
+				document.ToothNumbers  = PIn.String(row["ToothNumbers"].ToString());
+				document.Note          = PIn.String(row["Note"].ToString());
+				document.SigIsTopaz    = PIn.Bool  (row["SigIsTopaz"].ToString());
+				document.Signature     = PIn.String(row["Signature"].ToString());
+				document.CropX         = PIn.Int   (row["CropX"].ToString());
+				document.CropY         = PIn.Int   (row["CropY"].ToString());
+				document.CropW         = PIn.Int   (row["CropW"].ToString());
+				document.CropH         = PIn.Int   (row["CropH"].ToString());
+				document.WindowingMin  = PIn.Int   (row["WindowingMin"].ToString());
+				document.WindowingMax  = PIn.Int   (row["WindowingMax"].ToString());
+				document.MountItemNum  = PIn.Long  (row["MountItemNum"].ToString());
+				document.DateTStamp    = PIn.DateT (row["DateTStamp"].ToString());
+				document.RawBase64     = PIn.String(row["RawBase64"].ToString());
+				document.Thumbnail     = PIn.String(row["Thumbnail"].ToString());
+				document.ExternalGUID  = PIn.String(row["ExternalGUID"].ToString());
 				string externalSource=row["ExternalSource"].ToString();
 				if(externalSource=="") {
 					document.ExternalSource=(OpenDentBusiness.ExternalSourceType)0;
@@ -81,11 +81,8 @@ namespace OpenDentBusiness.Crud{
 				catch{
 					document.ExternalSource=(OpenDentBusiness.ExternalSourceType)0;
 				}
-				document.ProvNum         = PIn.Long  (row["ProvNum"].ToString());
-				document.IsCropOld       = PIn.Bool  (row["IsCropOld"].ToString());
-				document.OcrResponseData = PIn.String(row["OcrResponseData"].ToString());
-				document.ImageCaptureType= (OpenDentBusiness.EnumOcrCaptureType)PIn.Int(row["ImageCaptureType"].ToString());
-				document.PrintHeading    = PIn.Bool  (row["PrintHeading"].ToString());
+				document.ProvNum       = PIn.Long  (row["ProvNum"].ToString());
+				document.IsCropOld     = PIn.Bool  (row["IsCropOld"].ToString());
 				retVal.Add(document);
 			}
 			return retVal;
@@ -124,9 +121,6 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("ExternalSource");
 			table.Columns.Add("ProvNum");
 			table.Columns.Add("IsCropOld");
-			table.Columns.Add("OcrResponseData");
-			table.Columns.Add("ImageCaptureType");
-			table.Columns.Add("PrintHeading");
 			foreach(Document document in listDocuments) {
 				table.Rows.Add(new object[] {
 					POut.Long  (document.DocNum),
@@ -156,9 +150,6 @@ namespace OpenDentBusiness.Crud{
 					POut.Int   ((int)document.ExternalSource),
 					POut.Long  (document.ProvNum),
 					POut.Bool  (document.IsCropOld),
-					            document.OcrResponseData,
-					POut.Int   ((int)document.ImageCaptureType),
-					POut.Bool  (document.PrintHeading),
 				});
 			}
 			return table;
@@ -178,7 +169,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="DocNum,";
 			}
-			command+="Description,DateCreated,DocCategory,PatNum,FileName,ImgType,IsFlipped,DegreesRotated,ToothNumbers,Note,SigIsTopaz,Signature,CropX,CropY,CropW,CropH,WindowingMin,WindowingMax,MountItemNum,RawBase64,Thumbnail,ExternalGUID,ExternalSource,ProvNum,IsCropOld,OcrResponseData,ImageCaptureType,PrintHeading) VALUES(";
+			command+="Description,DateCreated,DocCategory,PatNum,FileName,ImgType,IsFlipped,DegreesRotated,ToothNumbers,Note,SigIsTopaz,Signature,CropX,CropY,CropW,CropH,WindowingMin,WindowingMax,MountItemNum,RawBase64,Thumbnail,ExternalGUID,ExternalSource,ProvNum,IsCropOld) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(document.DocNum)+",";
 			}
@@ -208,10 +199,7 @@ namespace OpenDentBusiness.Crud{
 				+"'"+POut.String(document.ExternalGUID)+"',"
 				+"'"+POut.String(document.ExternalSource.ToString())+"',"
 				+    POut.Long  (document.ProvNum)+","
-				+    POut.Bool  (document.IsCropOld)+","
-				+    DbHelper.ParamChar+"paramOcrResponseData,"
-				+    POut.Int   ((int)document.ImageCaptureType)+","
-				+    POut.Bool  (document.PrintHeading)+")";
+				+    POut.Bool  (document.IsCropOld)+")";
 			if(document.Note==null) {
 				document.Note="";
 			}
@@ -228,15 +216,11 @@ namespace OpenDentBusiness.Crud{
 				document.Thumbnail="";
 			}
 			OdSqlParameter paramThumbnail=new OdSqlParameter("paramThumbnail",OdDbType.Text,POut.StringParam(document.Thumbnail));
-			if(document.OcrResponseData==null) {
-				document.OcrResponseData="";
-			}
-			OdSqlParameter paramOcrResponseData=new OdSqlParameter("paramOcrResponseData",OdDbType.Text,POut.StringParam(document.OcrResponseData));
 			if(useExistingPK || PrefC.RandomKeys) {
-				Db.NonQ(command,paramNote,paramSignature,paramRawBase64,paramThumbnail,paramOcrResponseData);
+				Db.NonQ(command,paramNote,paramSignature,paramRawBase64,paramThumbnail);
 			}
 			else {
-				document.DocNum=Db.NonQ(command,true,"DocNum","document",paramNote,paramSignature,paramRawBase64,paramThumbnail,paramOcrResponseData);
+				document.DocNum=Db.NonQ(command,true,"DocNum","document",paramNote,paramSignature,paramRawBase64,paramThumbnail);
 			}
 			return document.DocNum;
 		}
@@ -256,7 +240,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="DocNum,";
 			}
-			command+="Description,DateCreated,DocCategory,PatNum,FileName,ImgType,IsFlipped,DegreesRotated,ToothNumbers,Note,SigIsTopaz,Signature,CropX,CropY,CropW,CropH,WindowingMin,WindowingMax,MountItemNum,RawBase64,Thumbnail,ExternalGUID,ExternalSource,ProvNum,IsCropOld,OcrResponseData,ImageCaptureType,PrintHeading) VALUES(";
+			command+="Description,DateCreated,DocCategory,PatNum,FileName,ImgType,IsFlipped,DegreesRotated,ToothNumbers,Note,SigIsTopaz,Signature,CropX,CropY,CropW,CropH,WindowingMin,WindowingMax,MountItemNum,RawBase64,Thumbnail,ExternalGUID,ExternalSource,ProvNum,IsCropOld) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(document.DocNum)+",";
 			}
@@ -286,10 +270,7 @@ namespace OpenDentBusiness.Crud{
 				+"'"+POut.String(document.ExternalGUID)+"',"
 				+"'"+POut.String(document.ExternalSource.ToString())+"',"
 				+    POut.Long  (document.ProvNum)+","
-				+    POut.Bool  (document.IsCropOld)+","
-				+    DbHelper.ParamChar+"paramOcrResponseData,"
-				+    POut.Int   ((int)document.ImageCaptureType)+","
-				+    POut.Bool  (document.PrintHeading)+")";
+				+    POut.Bool  (document.IsCropOld)+")";
 			if(document.Note==null) {
 				document.Note="";
 			}
@@ -306,15 +287,11 @@ namespace OpenDentBusiness.Crud{
 				document.Thumbnail="";
 			}
 			OdSqlParameter paramThumbnail=new OdSqlParameter("paramThumbnail",OdDbType.Text,POut.StringParam(document.Thumbnail));
-			if(document.OcrResponseData==null) {
-				document.OcrResponseData="";
-			}
-			OdSqlParameter paramOcrResponseData=new OdSqlParameter("paramOcrResponseData",OdDbType.Text,POut.StringParam(document.OcrResponseData));
 			if(useExistingPK || isRandomKeys) {
-				Db.NonQ(command,paramNote,paramSignature,paramRawBase64,paramThumbnail,paramOcrResponseData);
+				Db.NonQ(command,paramNote,paramSignature,paramRawBase64,paramThumbnail);
 			}
 			else {
-				document.DocNum=Db.NonQ(command,true,"DocNum","document",paramNote,paramSignature,paramRawBase64,paramThumbnail,paramOcrResponseData);
+				document.DocNum=Db.NonQ(command,true,"DocNum","document",paramNote,paramSignature,paramRawBase64,paramThumbnail);
 			}
 			return document.DocNum;
 		}
@@ -322,35 +299,32 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Updates one Document in the database.</summary>
 		public static void Update(Document document) {
 			string command="UPDATE document SET "
-				+"Description     = '"+POut.String(document.Description)+"', "
-				+"DateCreated     =  "+POut.DateT (document.DateCreated)+", "
-				+"DocCategory     =  "+POut.Long  (document.DocCategory)+", "
-				+"PatNum          =  "+POut.Long  (document.PatNum)+", "
-				+"FileName        = '"+POut.String(document.FileName)+"', "
-				+"ImgType         =  "+POut.Int   ((int)document.ImgType)+", "
-				+"IsFlipped       =  "+POut.Bool  (document.IsFlipped)+", "
-				+"DegreesRotated  =  "+POut.Float (document.DegreesRotated)+", "
-				+"ToothNumbers    = '"+POut.String(document.ToothNumbers)+"', "
-				+"Note            =  "+DbHelper.ParamChar+"paramNote, "
-				+"SigIsTopaz      =  "+POut.Bool  (document.SigIsTopaz)+", "
-				+"Signature       =  "+DbHelper.ParamChar+"paramSignature, "
-				+"CropX           =  "+POut.Int   (document.CropX)+", "
-				+"CropY           =  "+POut.Int   (document.CropY)+", "
-				+"CropW           =  "+POut.Int   (document.CropW)+", "
-				+"CropH           =  "+POut.Int   (document.CropH)+", "
-				+"WindowingMin    =  "+POut.Int   (document.WindowingMin)+", "
-				+"WindowingMax    =  "+POut.Int   (document.WindowingMax)+", "
-				+"MountItemNum    =  "+POut.Long  (document.MountItemNum)+", "
+				+"Description   = '"+POut.String(document.Description)+"', "
+				+"DateCreated   =  "+POut.DateT (document.DateCreated)+", "
+				+"DocCategory   =  "+POut.Long  (document.DocCategory)+", "
+				+"PatNum        =  "+POut.Long  (document.PatNum)+", "
+				+"FileName      = '"+POut.String(document.FileName)+"', "
+				+"ImgType       =  "+POut.Int   ((int)document.ImgType)+", "
+				+"IsFlipped     =  "+POut.Bool  (document.IsFlipped)+", "
+				+"DegreesRotated=  "+POut.Float (document.DegreesRotated)+", "
+				+"ToothNumbers  = '"+POut.String(document.ToothNumbers)+"', "
+				+"Note          =  "+DbHelper.ParamChar+"paramNote, "
+				+"SigIsTopaz    =  "+POut.Bool  (document.SigIsTopaz)+", "
+				+"Signature     =  "+DbHelper.ParamChar+"paramSignature, "
+				+"CropX         =  "+POut.Int   (document.CropX)+", "
+				+"CropY         =  "+POut.Int   (document.CropY)+", "
+				+"CropW         =  "+POut.Int   (document.CropW)+", "
+				+"CropH         =  "+POut.Int   (document.CropH)+", "
+				+"WindowingMin  =  "+POut.Int   (document.WindowingMin)+", "
+				+"WindowingMax  =  "+POut.Int   (document.WindowingMax)+", "
+				+"MountItemNum  =  "+POut.Long  (document.MountItemNum)+", "
 				//DateTStamp can only be set by MySQL
-				+"RawBase64       =  "+DbHelper.ParamChar+"paramRawBase64, "
-				+"Thumbnail       =  "+DbHelper.ParamChar+"paramThumbnail, "
-				+"ExternalGUID    = '"+POut.String(document.ExternalGUID)+"', "
-				+"ExternalSource  = '"+POut.String(document.ExternalSource.ToString())+"', "
-				+"ProvNum         =  "+POut.Long  (document.ProvNum)+", "
-				+"IsCropOld       =  "+POut.Bool  (document.IsCropOld)+", "
-				+"OcrResponseData =  "+DbHelper.ParamChar+"paramOcrResponseData, "
-				+"ImageCaptureType=  "+POut.Int   ((int)document.ImageCaptureType)+", "
-				+"PrintHeading    =  "+POut.Bool  (document.PrintHeading)+" "
+				+"RawBase64     =  "+DbHelper.ParamChar+"paramRawBase64, "
+				+"Thumbnail     =  "+DbHelper.ParamChar+"paramThumbnail, "
+				+"ExternalGUID  = '"+POut.String(document.ExternalGUID)+"', "
+				+"ExternalSource= '"+POut.String(document.ExternalSource.ToString())+"', "
+				+"ProvNum       =  "+POut.Long  (document.ProvNum)+", "
+				+"IsCropOld     =  "+POut.Bool  (document.IsCropOld)+" "
 				+"WHERE DocNum = "+POut.Long(document.DocNum);
 			if(document.Note==null) {
 				document.Note="";
@@ -368,11 +342,7 @@ namespace OpenDentBusiness.Crud{
 				document.Thumbnail="";
 			}
 			OdSqlParameter paramThumbnail=new OdSqlParameter("paramThumbnail",OdDbType.Text,POut.StringParam(document.Thumbnail));
-			if(document.OcrResponseData==null) {
-				document.OcrResponseData="";
-			}
-			OdSqlParameter paramOcrResponseData=new OdSqlParameter("paramOcrResponseData",OdDbType.Text,POut.StringParam(document.OcrResponseData));
-			Db.NonQ(command,paramNote,paramSignature,paramRawBase64,paramThumbnail,paramOcrResponseData);
+			Db.NonQ(command,paramNote,paramSignature,paramRawBase64,paramThumbnail);
 		}
 
 		///<summary>Updates one Document in the database.  Uses an old object to compare to, and only alters changed fields.  This prevents collisions and concurrency problems in heavily used tables.  Returns true if an update occurred.</summary>
@@ -479,18 +449,6 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="IsCropOld = "+POut.Bool(document.IsCropOld)+"";
 			}
-			if(document.OcrResponseData != oldDocument.OcrResponseData) {
-				if(command!="") { command+=",";}
-				command+="OcrResponseData = "+DbHelper.ParamChar+"paramOcrResponseData";
-			}
-			if(document.ImageCaptureType != oldDocument.ImageCaptureType) {
-				if(command!="") { command+=",";}
-				command+="ImageCaptureType = "+POut.Int   ((int)document.ImageCaptureType)+"";
-			}
-			if(document.PrintHeading != oldDocument.PrintHeading) {
-				if(command!="") { command+=",";}
-				command+="PrintHeading = "+POut.Bool(document.PrintHeading)+"";
-			}
 			if(command=="") {
 				return false;
 			}
@@ -510,13 +468,9 @@ namespace OpenDentBusiness.Crud{
 				document.Thumbnail="";
 			}
 			OdSqlParameter paramThumbnail=new OdSqlParameter("paramThumbnail",OdDbType.Text,POut.StringParam(document.Thumbnail));
-			if(document.OcrResponseData==null) {
-				document.OcrResponseData="";
-			}
-			OdSqlParameter paramOcrResponseData=new OdSqlParameter("paramOcrResponseData",OdDbType.Text,POut.StringParam(document.OcrResponseData));
 			command="UPDATE document SET "+command
 				+" WHERE DocNum = "+POut.Long(document.DocNum);
-			Db.NonQ(command,paramNote,paramSignature,paramRawBase64,paramThumbnail,paramOcrResponseData);
+			Db.NonQ(command,paramNote,paramSignature,paramRawBase64,paramThumbnail);
 			return true;
 		}
 
@@ -597,15 +551,6 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(document.IsCropOld != oldDocument.IsCropOld) {
-				return true;
-			}
-			if(document.OcrResponseData != oldDocument.OcrResponseData) {
-				return true;
-			}
-			if(document.ImageCaptureType != oldDocument.ImageCaptureType) {
-				return true;
-			}
-			if(document.PrintHeading != oldDocument.PrintHeading) {
 				return true;
 			}
 			return false;

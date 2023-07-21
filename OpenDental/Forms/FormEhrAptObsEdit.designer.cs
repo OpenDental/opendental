@@ -36,7 +36,8 @@ namespace OpenDental{
 			this.butPickValueSnomedct = new OpenDental.UI.Button();
 			this.butPickValueLoinc = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.comboObservationQuestion = new System.Windows.Forms.ComboBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
@@ -54,7 +55,7 @@ namespace OpenDental{
 			// 
 			this.labelValueUnitsNote.Location = new System.Drawing.Point(262, 165);
 			this.labelValueUnitsNote.Name = "labelValueUnitsNote";
-			this.labelValueUnitsNote.Size = new System.Drawing.Size(214, 17);
+			this.labelValueUnitsNote.Size = new System.Drawing.Size(260, 17);
 			this.labelValueUnitsNote.TabIndex = 298;
 			this.labelValueUnitsNote.Text = "(Only needed if Value Type is Numeric)";
 			this.labelValueUnitsNote.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -149,15 +150,25 @@ namespace OpenDental{
 			this.butDelete.Text = "&Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(391, 236);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 285;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(362, 234);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 285;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(443, 234);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 284;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// comboObservationQuestion
 			// 
@@ -179,8 +190,8 @@ namespace OpenDental{
 			// 
 			// FormEhrAptObsEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(478, 272);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(526, 272);
 			this.Controls.Add(this.comboObservationQuestion);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.butPickValueIcd10);
@@ -195,7 +206,8 @@ namespace OpenDental{
 			this.Controls.Add(this.labelValue);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.listValueType);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrAptObsEdit";
@@ -217,7 +229,8 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelValue;
 		private System.Windows.Forms.Label label1;
 		private UI.ListBox listValueType;
-		private UI.Button butSave;
+		private UI.Button butOK;
+		private UI.Button butCancel;
 		private UI.Button butPickValueLoinc;
 		private UI.Button butPickValueSnomedct;
 		private UI.Button butPickValueIcd9;

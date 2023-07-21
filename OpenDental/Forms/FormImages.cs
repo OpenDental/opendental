@@ -18,6 +18,7 @@ namespace OpenDental {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
+			contrImagesMain.CloseClick+=new EventHandler(contrImagesMain_CloseClick);
 		}
 
 		private void FormImages_Load(object sender,EventArgs e) {
@@ -27,11 +28,10 @@ namespace OpenDental {
 			else if(EhrAmendmentCur!=null) {
 				contrImagesMain.ModuleSelectedAmendment(EhrAmendmentCur);
 			}
-			contrImagesMain.CloseClick+=ContrImagesMain_CloseClick;
 		}
 
-		private void ContrImagesMain_CloseClick(object sender,EventArgs e) {
-			DialogResult=DialogResult.OK;
+		void contrImagesMain_CloseClick(object sender,EventArgs e) {
+			Close();
 		}
 	}
 }

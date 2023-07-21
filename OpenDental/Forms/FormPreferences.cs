@@ -17,9 +17,6 @@ namespace OpenDental {
 	public partial class FormPreferences:FormODBase {
 
 		#region Fields - Private
-		//Main Window
-		private UserControlMainWindow userControlMainWindow=new UserControlMainWindow();
-		private UserControlMainWindowMisc userControlMainWindowMisc=new UserControlMainWindowMisc();
 		//Appointment 
 		private UserControlApptGeneral userControlApptGeneral=new UserControlApptGeneral();
 		private UserControlApptAppearance userControlApptAppearance=new UserControlApptAppearance();
@@ -43,7 +40,6 @@ namespace OpenDental {
 		//Manage
 		private UserControlManageGeneral userControlManageGeneral=new UserControlManageGeneral();
 		private UserControlManageBillingStatements userControlManageBillingStatements=new UserControlManageBillingStatements();
-		//Ortho
 		//Server Connections 
 		private UserControlServerConnections userControlServerConnections=new UserControlServerConnections();
 		//Experimental
@@ -252,8 +248,8 @@ namespace OpenDental {
 			}
 			formWebBrowserPrefs=new FormWebBrowserPrefs();
 			formWebBrowserPrefs.HtmlContent=html;
-			Point pointWindowR=panelMain.PointToScreen(new Point(LayoutManager.Scale(476),0));//we only care about x (# of pixels moved to the right from left of panelMain)
-			Point pointControlUR=control.PointToScreen(new Point(0,panelMain.Top-LayoutManager.Scale(50)));//we only care about y (# of pixels moved upwards from top of control)
+			Point pointWindowR=panelMain.PointToScreen(new Point(LayoutManager.Scale(476),0));//we only care about x
+			Point pointControlUR=control.PointToScreen(new Point(0,control.Top-LayoutManager.Scale(50)));//we only care about y
 			Point pointShow=new Point(pointWindowR.X,pointControlUR.Y);
 			formWebBrowserPrefs.PointStart=pointShow;
 			if(prefInf.WidthWindow>0 && prefInf.HeightWindow>0){
@@ -323,17 +319,11 @@ namespace OpenDental {
 				//labels
 				for(int c=0;c<listControls.Count;c++){
 					if(listControls[c] is Label label){
-						if(listControls[c].Visible==false){
-							continue;
-						}
 						if(textSearch.Text==""){
 							label.BackColor=Color.White;
 							continue;
 						}
-						PrefInf prefInf=GetPrefInf(label);
-						if(label.Text.ToLower().Contains(textSearch.Text.ToLower())
-							|| (prefInf!=null && !prefInf.Details.IsNullOrEmpty() && prefInf.Details.ToLower().Contains(textSearch.Text.ToLower())))
-						{
+						if(label.Text.ToLower().Contains(textSearch.Text.ToLower())){
 							isCategoryYellow=true;
 							label.BackColor=Color.FromArgb(255, 255, 192);
 						}
@@ -345,17 +335,11 @@ namespace OpenDental {
 				//checkboxes
 				for(int c=0;c<listControls.Count;c++){
 					if(listControls[c] is UI.CheckBox checkBox){
-						if(listControls[c].Visible==false){
-							continue;
-						}
 						if(textSearch.Text==""){
 							checkBox.BackColor=Color.White;
 							continue;
 						}
-						PrefInf prefInf=GetPrefInf(checkBox);
-						if(checkBox.Text.ToLower().Contains(textSearch.Text.ToLower()) 
-							|| (prefInf!=null && !prefInf.Details.IsNullOrEmpty() && prefInf.Details.ToLower().Contains(textSearch.Text.ToLower())))
-						{
+						if(checkBox.Text.ToLower().Contains(textSearch.Text.ToLower())){
 							isCategoryYellow=true;
 							checkBox.BackColor=Color.FromArgb(255, 255, 192);
 						}
@@ -367,9 +351,6 @@ namespace OpenDental {
 				//groupboxes
 				for(int c=0;c<listControls.Count;c++){
 					if(listControls[c] is UI.GroupBox groupBox){
-						if(listControls[c].Visible==false){
-							continue;
-						}
 						if(textSearch.Text==""){
 							groupBox.ColorBackLabel=Color.Empty;
 							continue;
@@ -434,12 +415,10 @@ namespace OpenDental {
 			e.Cancel=true;//Never allow the tree to collapse
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			//validation is done within each save.
-			//One save to db might succeed, and then a subsequent save can fail to validate. That's ok.
-			if(!userControlMainWindow.SaveMainWindow()
-				||!userControlMainWindowMisc.SaveMainWindowMisc()
-				||!userControlApptGeneral.SaveApptGeneral()
+			//One save to db might succeed, and then a subsequent save can fail to validate.  That's ok.
+			if(!userControlApptGeneral.SaveApptGeneral()
 				|| !userControlApptAppearance.SaveApptAppearance()
 				|| !userControlFamilyGeneral.SaveFamilyGeneral()
 				|| !userControlFamilyInsurance.SaveFamilyInsurance()
@@ -462,8 +441,8 @@ namespace OpenDental {
 			}
 			//Special case. If server connection settings were updated, clear the dictionary of connections so it reinitializes all connections the next time it is accessed.
 			if(userControlServerConnections.DoClearConnectionDictionary) {
-				DataValid.SetInvalid(InvalidType.ConnectionStoreClear);
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Read-Only Server settings have been changed.");
+				ConnectionStoreBase.ClearConnectionDictionary();
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Read-Only Server settings have been changed.");
 			}
 			//Special case. If image module needs to be swapped, force close the program.
 			if(userControlImagingGeneral.DoSwapImagingModule) {
@@ -473,10 +452,12 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormPreferences_FormClosing(object sender,FormClosingEventArgs e) {
-			if(userControlMainWindow.Changed
-				|| userControlMainWindowMisc.Changed
-				|| userControlApptGeneral.Changed
+			if(userControlApptGeneral.Changed
 				|| userControlApptAppearance.Changed
 				|| userControlFamilyGeneral.Changed
 				|| userControlFamilyInsurance.Changed
@@ -504,8 +485,6 @@ namespace OpenDental {
 		///<summary>Create one control per menu item using the LayoutManager.</summary>
 		private void FillUserControls() {
 			List<UserControl> listUserControls=new List<UserControl>();
-			listUserControls.Add(userControlMainWindow);
-			listUserControls.Add(userControlMainWindowMisc);
 			listUserControls.Add(userControlApptGeneral);
 			listUserControls.Add(userControlApptAppearance);	
 			listUserControls.Add(userControlFamilyGeneral);
@@ -536,13 +515,6 @@ namespace OpenDental {
 		private void FillTree() {
 			TreeNode treeNodeParent;
 			TreeNode treeNodeChild;
-			//MainWindow
-			treeNodeParent=new TreeNode("Main Window - General");
-			treeNodeParent.Tag=userControlMainWindow;
-			treeMain.Nodes.Add(treeNodeParent);
-			treeNodeChild=new TreeNode("Miscellaneous");
-			treeNodeChild.Tag=userControlMainWindowMisc;
-			treeNodeParent.Nodes.Add(treeNodeChild);
 			//Appointment
 			treeNodeParent=new TreeNode("Appointment - General");
 			treeNodeParent.Tag=userControlApptGeneral;
@@ -611,8 +583,6 @@ namespace OpenDental {
 
 		///<summary>Load all of the preferences of each control.</summary>
 		private void LoadUserControls() {
-			userControlMainWindow.FillWindowMain();
-			userControlMainWindowMisc.FillMainWindowMisc();
 			userControlApptGeneral.FillApptGeneral();
 			userControlApptAppearance.FillApptAppearance();
 			userControlFamilyGeneral.FillFamilyGeneral();

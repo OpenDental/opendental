@@ -41,6 +41,7 @@ namespace OpenDental {
 			this.listConditions = new OpenDental.UI.ListBox();
 			this.textBox = new System.Windows.Forms.TextBox();
 			this.DropListFilter = new OpenDental.UI.ComboBox();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.textSQL = new System.Windows.Forms.TextBox();
 			this.tabReferrals.SuspendLayout();
@@ -197,11 +198,21 @@ namespace OpenDental {
 			this.DropListFilter.Text = "WHERE";
 			this.DropListFilter.SelectionChangeCommitted += new System.EventHandler(this.DropListFilter_SelectedIndexChanged);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(750, 640);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 41;
+			this.butCancel.Text = "&Cancel";
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butOK.Enabled = false;
-			this.butOK.Location = new System.Drawing.Point(751, 640);
+			this.butOK.Location = new System.Drawing.Point(750, 602);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 40;
@@ -223,7 +234,9 @@ namespace OpenDental {
 			// FormRpReferrals
 			// 
 			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(842, 683);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.tabReferrals);
 			this.Controls.Add(this.textSQL);
@@ -253,6 +266,7 @@ namespace OpenDental {
 		private OpenDental.UI.ListBox listConditions;
 		private System.Windows.Forms.TextBox textBox;
 		private OpenDental.UI.ComboBox DropListFilter;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.TextBox textSQL;
 		private OpenDental.UI.TabControl tabReferrals;

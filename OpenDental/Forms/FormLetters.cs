@@ -194,5 +194,60 @@ namespace OpenDental{
 			return true;
 		}
 
+		private void textBody_TextChanged(object sender, System.EventArgs e) {
+			//bodyChanged=true;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void FormLetters_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+			//if(localChanged){
+			//	DataValid.SetInvalid(InvalidType.Letters);
+			//}
+		}
+
+		
+
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

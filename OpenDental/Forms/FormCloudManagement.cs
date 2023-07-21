@@ -31,7 +31,7 @@ namespace OpenDental {
 			_listComputers=Computers.GetDeepCopy();
 			_listUserods=Userods.GetDeepCopy();
 			_listActiveInstances=ActiveInstances.GetAllResponsiveActiveInstances()
-				.Where(x => x.ConnectionType==ConnectionTypes.Thinfinity)
+				.Where(x => x.ConnectionType==ConnectionTypes.ODCloud)
 				.ToList();
 			_listCloudAddresses=CloudAddresses.GetAll();
 			string officeData=PayloadHelper.CreatePayload("",eServiceCode.Undefined);
@@ -107,7 +107,7 @@ namespace OpenDental {
 		}
 
 		private void butAddSessions_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
 			using FormCloudSessionLimit formCloudSessionLimit=new FormCloudSessionLimit();
@@ -117,7 +117,7 @@ namespace OpenDental {
 		}
 
 		private void butCloseSession_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.CloseOtherSessions)){
+			if(!Security.IsAuthorized(Permissions.CloseOtherSessions)){
 				return;
 			}
 			ActiveInstance activeInstance=gridActiveInstances.SelectedTag<ActiveInstance>();
@@ -128,7 +128,7 @@ namespace OpenDental {
 			if(!MsgBox.Show(MsgBoxButtons.OKCancel,Lan.g(this,"Are you sure you want to close the selected session?"))) {
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.CloseOtherSessions,0,"Session for "+_listUserods.Find(x => x.UserNum==activeInstance.UserNum).UserName
+			SecurityLogs.MakeLogEntry(Permissions.CloseOtherSessions,0,"Session for "+_listUserods.Find(x => x.UserNum==activeInstance.UserNum).UserName
 				+" on Computer "+_listComputers.Find(x => x.ComputerNum==activeInstance.ComputerNum)?.CompName??"UNKNOWN"
 				+" was ended via Cloud Management.");
 			Signalods.SetInvalid(InvalidType.ActiveInstance,KeyType.Undefined,activeInstance.ActiveInstanceNum);
@@ -144,7 +144,7 @@ namespace OpenDental {
 		///<summary>Deletes all selected IP addresses from the list of allowed addresses.</summary>
 		private void butDeleteAddress_Click(object sender,EventArgs e) {
 			//Remove the selected rows from the grid
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
 			CloudAddresses.DeleteMany(_listCloudAddresses
@@ -156,7 +156,7 @@ namespace OpenDental {
 
 		///<summary>Adds the current IP address to the list, sets the last user to the current user, and sets the time to the current time.</summary>
 		private void butAddCurrent_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
 			string address=Browser.GetComputerIpAddress();
@@ -176,7 +176,7 @@ namespace OpenDental {
 
 		///<summary>Adds the current IP address to the list with UserNumLastConnect=0 and DateTimeLastConnect=DateTime.Min.</summary>
 		private void butAllowAddress_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
 			string address=textAddress.Text.Trim();

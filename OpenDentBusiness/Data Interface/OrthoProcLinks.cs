@@ -38,11 +38,6 @@ namespace OpenDentBusiness{
 			return Crud.OrthoProcLinkCrud.SelectOne(command);
 		}
 
-		public static List<OrthoProcLink> GetPatientData(List<OrthoCase> listOrthoCases) {
-			//No remoting role check; no call to db
-			return GetManyByOrthoCases(listOrthoCases.Select(x => x.OrthoCaseNum).ToList());
-		}
-
 		///<summary>Returns a list of OrthoProcLinks from db of the specified type that are associated to any OrthoCaseNum from the list passed in.</summary>
 		public static List<OrthoProcLink> GetManyByOrthoCases(List<long> listOrthoCaseNums) {
 			if(listOrthoCaseNums.Count<=0) {

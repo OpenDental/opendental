@@ -24,6 +24,7 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormCDSILabResult));
+			this.butCancel = new System.Windows.Forms.Button();
 			this.butOk = new System.Windows.Forms.Button();
 			this.butDelete = new System.Windows.Forms.Button();
 			this.textLoinc = new System.Windows.Forms.TextBox();
@@ -49,14 +50,25 @@
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(328, 323);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 6;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOk
 			// 
 			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOk.Location = new System.Drawing.Point(328, 324);
+			this.butOk.Location = new System.Drawing.Point(247, 323);
 			this.butOk.Name = "butOk";
 			this.butOk.Size = new System.Drawing.Size(75, 24);
 			this.butOk.TabIndex = 5;
-			this.butOk.Text = "&OK";
+			this.butOk.Text = "Ok";
 			this.butOk.UseVisualStyleBackColor = true;
 			this.butOk.Click += new System.EventHandler(this.butOk_Click);
 			// 
@@ -249,6 +261,7 @@
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.butOk);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormCDSILabResult";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -265,6 +278,8 @@
 		}
 
 		#endregion
+
+		private System.Windows.Forms.Button butCancel;
 		private System.Windows.Forms.Button butOk;
 		private System.Windows.Forms.Button butDelete;
 		private System.Windows.Forms.TextBox textLoinc;

@@ -25,7 +25,10 @@ namespace OpenDental {
 		}
 
 		private void FormInsFilingCodes_Load(object sender,EventArgs e) {
-			if(!IsSelectionMode) {
+			if(IsSelectionMode) {
+				butClose.Text=Lan.g(this,"Cancel");
+			} 
+			else {
 				butOK.Visible=false;
 				butNone.Visible=false;
 			}
@@ -158,6 +161,10 @@ namespace OpenDental {
 			gridMain.SetSelected(idx+1,true);
 		}
 
+		private void butClose_Click(object sender,System.EventArgs e) {
+			Close();
+		}
+
 		private void FormInsFilingCodes_FormClosing(object sender,FormClosingEventArgs e) {
 			if(changed) {
 				DataValid.SetInvalid(InvalidType.InsFilingCodes);
@@ -166,3 +173,24 @@ namespace OpenDental {
 		
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

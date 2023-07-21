@@ -33,61 +33,61 @@ namespace UnitTests.TelephoneNumbers_Tests {
 		[TestMethod]
 		public void TelephoneNumbers_IsNumberValidTenDigit_TenNumbers() {
 			string phoneNumber="8003334444";
-			Assert.IsTrue(TelephoneNumbers.IsNumberValidTenDigit(phoneNumber));
+			Assert.IsTrue(TelephoneNumbers.IsNumberValidTenDigit(ref phoneNumber));
 		}
 
 		[TestMethod]
 		public void TelephoneNumbers_IsNumberValidTenDigit_OneAndTenNumbers() {
 			string phoneNumber="18003334444";
-			Assert.IsFalse(TelephoneNumbers.IsNumberValidTenDigit(phoneNumber));
+			Assert.IsFalse(TelephoneNumbers.IsNumberValidTenDigit(ref phoneNumber));
 		}
 
 		[TestMethod]
 		public void TelephoneNumbers_IsNumberValidTenDigit_TenNumbersFormatted() {
 			string phoneNumber="(800)333-4444";
-			Assert.IsTrue(TelephoneNumbers.IsNumberValidTenDigit(phoneNumber));
+			Assert.IsTrue(TelephoneNumbers.IsNumberValidTenDigit(ref phoneNumber));
 		}
 
 		[TestMethod]
 		public void TelephoneNumbers_IsNumberValidTenDigit_OneAndTenNumbersFormatted() {
 			string phoneNumber="1(800)333-4444";
-			Assert.IsFalse(TelephoneNumbers.IsNumberValidTenDigit(phoneNumber));
+			Assert.IsFalse(TelephoneNumbers.IsNumberValidTenDigit(ref phoneNumber));
 		}
 
 		[TestMethod]
 		public void TelephoneNumbers_IsNumberValidTenDigit_TwelveNumbers() {
 			string phoneNumber="800333444455";
-			Assert.IsFalse(TelephoneNumbers.IsNumberValidTenDigit(phoneNumber));
+			Assert.IsFalse(TelephoneNumbers.IsNumberValidTenDigit(ref phoneNumber));
 		}
 
 		[TestMethod]
 		public void TelephoneNumbers_IsNumberValidTenDigit_OneAndElevenNumbers() {
 			string phoneNumber="180033344445";
-			Assert.IsFalse(TelephoneNumbers.IsNumberValidTenDigit(phoneNumber));
+			Assert.IsFalse(TelephoneNumbers.IsNumberValidTenDigit(ref phoneNumber));
 		}
 
 		[TestMethod]
 		public void TelephoneNumbers_IsNumberValidTenDigit_TwelveNumbersFormatted() {
 			string phoneNumber="(800)333-444455";
-			Assert.IsFalse(TelephoneNumbers.IsNumberValidTenDigit(phoneNumber));
+			Assert.IsFalse(TelephoneNumbers.IsNumberValidTenDigit(ref phoneNumber));
 		}
 
 		[TestMethod]
 		public void TelephoneNumbers_IsNumberValidTenDigit_TwelveNumbersFormattedWithSpace() {
 			string phoneNumber="(800)333-4444 55";
-			Assert.IsFalse(TelephoneNumbers.IsNumberValidTenDigit(phoneNumber));
+			Assert.IsFalse(TelephoneNumbers.IsNumberValidTenDigit(ref phoneNumber));
 		}
 
 		[TestMethod]
 		public void TelephoneNumbers_IsNumberValidTenDigit_OneAndTwelveNumbersFormatted() {
 			string phoneNumber="1(800)333-444455";
-			Assert.IsFalse(TelephoneNumbers.IsNumberValidTenDigit(phoneNumber));
+			Assert.IsFalse(TelephoneNumbers.IsNumberValidTenDigit(ref phoneNumber));
 		}
 
 		[TestMethod]
 		public void TelephoneNumbers_IsNumberValidTenDigit_OneAndTwelveNumbersFormattedWithSpace() {
 			string phoneNumber="1(800)333-4444 55";
-			Assert.IsFalse(TelephoneNumbers.IsNumberValidTenDigit(phoneNumber));
+			Assert.IsFalse(TelephoneNumbers.IsNumberValidTenDigit(ref phoneNumber));
 		}
 
 	}

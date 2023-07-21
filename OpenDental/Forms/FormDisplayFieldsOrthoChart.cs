@@ -328,9 +328,9 @@ namespace OpenDental{
 					}
 				}
 				if(listStringsInUse.Count>0){
-					string msg="You should not remove the following fields because they are already in use by patients:\r\n";
+					string msg="You should not remove these fields because they are already in use by patients:\r\n";
 					for(int i=0;i<listStringsInUse.Count;i++){
-						msg+=listStringsInUse[i]+"\r\n";
+						msg+=listStringsInUse+"\r\n";
 					}
 					msg+="Remove anyway?";
 					if(!MsgBox.Show(MsgBoxButtons.OKCancel,msg)){
@@ -434,7 +434,7 @@ namespace OpenDental{
 			listAvailable.SelectedIndex=-1;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			OrthoChartTabFields orthoChartTabFieldsOrphaned=_listOrthoChartTabDisplayFields.Find(x => x.OrthoChartTab==null);
 			//No need to do anything if nothing changed and there are no 'orphaned' display fields to delete.
 			if(!_changed 
@@ -516,6 +516,10 @@ namespace OpenDental{
 			DataValid.SetInvalid(InvalidType.OrthoChartTabs);
 			DataValid.SetInvalid(InvalidType.DisplayFields);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

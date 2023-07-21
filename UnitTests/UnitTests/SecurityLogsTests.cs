@@ -41,7 +41,7 @@ namespace UnitTests.SecurityLogs_Tests {
 			//Loop as fast as we can and insert 200 security logs trying to get a duplicate entry exception.
 			for(int i=0;i<200;i++) {
 				try {
-					SecurityLogs.MakeLogEntry(EnumPermType.Accounting,patient.PatNum,"",0,DateTime.Now.AddDays(-7));
+					SecurityLogs.MakeLogEntry(Permissions.Accounting,patient.PatNum,"",0,DateTime.Now.AddDays(-7));
 				}
 				catch(Exception ex) {
 					Assert.Fail(ex.Message);
@@ -60,7 +60,7 @@ namespace UnitTests.SecurityLogs_Tests {
 			//Loop as fast as we can and insert 200 security logs trying to get a duplicate entry exception.
 			for(int i=0;i<200;i++) {
 				try {
-					SecurityLogs.MakeLogEntry(EnumPermType.Accounting,patient.PatNum,"",0,DateTime.Now.AddDays(-7));
+					SecurityLogs.MakeLogEntry(Permissions.Accounting,patient.PatNum,"",0,DateTime.Now.AddDays(-7));
 				}
 				catch(Exception ex) {
 					PrefT.UpdateBool(PrefName.RandomPrimaryKeys,false);
@@ -79,7 +79,7 @@ namespace UnitTests.SecurityLogs_Tests {
 			//Spawn parallel threads to insert 200 security logs trying to get a duplicate entry exception.
 			List<Action> listActions=new List<Action>();
 			for(int i=0;i<200;i++) {
-				listActions.Add(() => SecurityLogs.MakeLogEntry(EnumPermType.Accounting,patient.PatNum,"",0,DateTime.Now.AddDays(-7)));
+				listActions.Add(() => SecurityLogs.MakeLogEntry(Permissions.Accounting,patient.PatNum,"",0,DateTime.Now.AddDays(-7)));
 			}
 			//Parallel threads do not support Middle Tier mode when unit testing due to how we have to fake being both the client and the server.
 			MiddleTierRole remotingRoleOld=RemotingClient.MiddleTierRole;
@@ -103,7 +103,7 @@ namespace UnitTests.SecurityLogs_Tests {
 			//Spawn parallel threads to insert 200 security logs trying to get a duplicate entry exception.
 			List<Action> listActions=new List<Action>();
 			for(int i=0;i<200;i++) {
-				listActions.Add(() => SecurityLogs.MakeLogEntry(EnumPermType.Accounting,patient.PatNum,"",0,DateTime.Now.AddDays(-7)));
+				listActions.Add(() => SecurityLogs.MakeLogEntry(Permissions.Accounting,patient.PatNum,"",0,DateTime.Now.AddDays(-7)));
 			}
 			//Parallel threads do not support Middle Tier mode when unit testing due to how we have to fake being both the client and the server.
 			MiddleTierRole remotingRoleOld=RemotingClient.MiddleTierRole;

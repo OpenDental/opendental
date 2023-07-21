@@ -27,6 +27,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTaskAttachments));
 			this.gridMain = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
@@ -37,11 +38,22 @@ namespace OpenDental{
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridMain.Location = new System.Drawing.Point(12, 37);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(650, 401);
+			this.gridMain.Size = new System.Drawing.Size(650, 363);
 			this.gridMain.TabIndex = 4;
 			this.gridMain.Title = "Attachments";
 			this.gridMain.TranslationName = "TableTaskAttachments";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(587, 414);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butAdd
 			// 
@@ -56,19 +68,21 @@ namespace OpenDental{
 			// 
 			// FormTaskAttachments
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(674, 450);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormTaskAttachments";
 			this.Text = "Task Attachments";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormTaskAttachments_FormClosing);
 			this.Load += new System.EventHandler(this.FormTaskAttachments_Load);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private UI.Button butAdd;
 	}

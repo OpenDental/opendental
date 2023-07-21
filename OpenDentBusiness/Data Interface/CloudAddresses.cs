@@ -66,12 +66,12 @@ namespace OpenDentBusiness {
 			Crud.CloudAddressCrud.Update(cloudAddress);
 		}
 
-		public static void DeleteMany(List<long> listCloudAddressNums) {
+		public static void DeleteMany(List<long> cloudAddressNums) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listCloudAddressNums);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),cloudAddressNums);
 				return;
 			}
-			Crud.CloudAddressCrud.DeleteMany(listCloudAddressNums);
+			Crud.CloudAddressCrud.DeleteMany(cloudAddressNums);
 		}
 
 		/*

@@ -25,7 +25,8 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormClaimOverpay));
 			this.label1 = new System.Windows.Forms.Label();
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.textOverpayTotal = new OpenDental.ValidDouble();
 			this.textUnderpayTotal = new OpenDental.ValidDouble();
@@ -43,15 +44,26 @@ namespace OpenDental{
 			this.label1.Text = "Totals";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(1058, 324);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 25);
-			this.butSave.TabIndex = 1;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(1075, 324);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 25);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(986, 324);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 25);
+			this.butOK.TabIndex = 1;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// gridMain
 			// 
@@ -111,7 +123,8 @@ namespace OpenDental{
 			this.Controls.Add(this.textOverpayTotal);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.label1);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -125,7 +138,8 @@ namespace OpenDental{
 		}
 		#endregion
 		private System.Windows.Forms.Label label1;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.GridOD gridMain;
 		private ValidDouble textOverpayTotal;
 		private ValidDouble textUnderpayTotal;

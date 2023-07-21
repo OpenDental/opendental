@@ -341,7 +341,7 @@ namespace OpenDental{
 			procedureCode.ProcCat=_listDefsProcCodeCat[comboCategory.SelectedIndex].DefNum;
 			ProcedureCodes.Insert(procedureCode);
 			IsChanged=true;
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Added Procedure Code: "+procedureCode.ProcCode);
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Added Procedure Code: "+procedureCode.ProcCode);
 			return true;
 		}
 
@@ -375,5 +375,19 @@ namespace OpenDental{
 			}
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
+		
+
+		
+
+		
+
+		
+
+		
+		
 	}
 }

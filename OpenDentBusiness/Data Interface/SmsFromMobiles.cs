@@ -61,15 +61,14 @@ namespace OpenDentBusiness{
 			[JsonProperty(PropertyName = "B")]
 			public int Count { get; set; }
 
-			public static string GetJsonFromList(List<SmsNotification> listSmsNotifications) {
-				return JsonConvert.SerializeObject(listSmsNotifications);
+			public static string GetJsonFromList(List<SmsNotification> listNotifications) {
+				return JsonConvert.SerializeObject(listNotifications);
 			}
 
 			public static List<SmsNotification> GetListFromJson(string json) {
-				//No need to check MiddleTierRole; no call to db.
-				List<SmsNotification> listSmsNotifications=null;
-				ODException.SwallowAnyException(() => listSmsNotifications=JsonConvert.DeserializeObject<List<SmsNotification>>(json));
-				return listSmsNotifications;
+				List<SmsNotification> ret=null;
+				ODException.SwallowAnyException(() => ret=JsonConvert.DeserializeObject<List<SmsNotification>>(json));
+				return ret;
 			}
 		}
 
@@ -156,23 +155,22 @@ namespace OpenDentBusiness{
 
 		///<summary>Attempts to find exact match for patient. If found, creates commlog, associates Patnum, and inserts into DB.
 		///Otherwise, it simply inserts SmsFromMobiles into the DB. ClinicNum should have already been set before calling this function.</summary>
-		public static void ProcessInboundSms(List<SmsFromMobile> listSmsFromMobilesMessages) {
-			//No need to check MiddleTierRole; no call to db.
-			if(listSmsFromMobilesMessages==null || listSmsFromMobilesMessages.Count==0) {
+		public static void ProcessInboundSms(List<SmsFromMobile> listMessages) {
+			if(listMessages==null || listMessages.Count==0) {
 				return;
 			}
-			List<SmsBlockPhone> listSmsBlockPhones=SmsBlockPhones.GetDeepCopy();
-			for(int i=0;i<listSmsFromMobilesMessages.Count;i++) {
-				SmsFromMobile smsFromMobile=listSmsFromMobilesMessages[i];
-				if(listSmsBlockPhones.Any(x => TelephoneNumbers.AreNumbersEqual(x.BlockWirelessNumber,smsFromMobile.MobilePhoneNumber))) {
+			List<SmsBlockPhone> listBlockedPhones=SmsBlockPhones.GetDeepCopy();
+			for(int i=0;i<listMessages.Count;i++) {
+				SmsFromMobile sms=listMessages[i];
+				if(listBlockedPhones.Any(x => TelephoneNumbers.AreNumbersEqual(x.BlockWirelessNumber,sms.MobilePhoneNumber))) {
 					continue;//The office has blocked this number.
 				}
-				smsFromMobile.DateTimeReceived=DateTime.Now;
+				sms.DateTimeReceived=DateTime.Now;
 				string countryCode=CultureInfo.CurrentCulture.Name.Substring(CultureInfo.CurrentCulture.Name.Length-2);
-				if(smsFromMobile.SmsPhoneNumber!=SmsPhones.SHORTCODE) {
-					SmsPhone smsPhone=SmsPhones.GetByPhone(smsFromMobile.SmsPhoneNumber);
+				if(sms.SmsPhoneNumber!=SmsPhones.SHORTCODE) {
+					SmsPhone smsPhone=SmsPhones.GetByPhone(sms.SmsPhoneNumber);
 					if(smsPhone!=null) {
-						smsFromMobile.ClinicNum=smsPhone.ClinicNum;
+						sms.ClinicNum=smsPhone.ClinicNum;
 						countryCode=smsPhone.CountryCode;
 					}
 				}
@@ -185,43 +183,44 @@ namespace OpenDentBusiness{
 					//turned clinics on->off, we will specifically check if the customer has disabled clinics and only then change the sms.ClinicNum.  
 					//Otherwise, trust HQ sent the correct ClinicNum.  Since we expect to only use Short Codes in the US/Canada, we will trust the server we 
 					//are processing inbound sms will have the correct country code, which will be used here.
-					smsFromMobile.ClinicNum=0;
+					sms.ClinicNum=0;
 				}
-				List<Patient> listPatientsAll=Patients.GetPatientsByPhone(smsFromMobile.MobilePhoneNumber,countryCode);
+				List<Patient> listPatsAll=Patients.GetPatientsByPhone(sms.MobilePhoneNumber,countryCode);
 				//First look only for patients that match sms.ClinicNum.
-				List<Patient> listPatients=listPatientsAll.FindAll(x => x.ClinicNum==smsFromMobile.ClinicNum);
-				if(listPatients.Count==0) {
+				List<Patient> listPats=listPatsAll.Where(x => x.ClinicNum==sms.ClinicNum).ToList();
+				if(listPats.Count==0) {
 					//Couldn't find any patients that exactly match sms.ClinicNum.
-					listPatients=listPatientsAll;
+					listPats=listPatsAll;
 				}
-				smsFromMobile.MatchCount=listPatients.Count;
+				sms.MatchCount=listPats.Count;
 				long patNum=0;
-				if(listPatients.Count==1) {
-					patNum=listPatients.First().PatNum;
-				}
-				else if(listPatients.Count==0) {
+				if(listPats.Count==1) {
+					patNum=listPats.First().PatNum;
+				}				
+				else if(listPats.Count==0) {
 					patNum=0;//We could not find definitive match, 0 matches found.
 				}
-				else if(listPatients.DistinctBy(x => x.Guarantor).ToList().Count!=1) {
+				else if(listPats.DistinctBy(x => x.Guarantor).ToList().Count!=1) {
 					patNum=0;//We could not find definitive match, more than one match found with different guarantors
 				}
-				else {
-					patNum=listPatients.First().Guarantor;//More than one match, but all have the same guarantor.
+				else {					
+					patNum=listPats.First().Guarantor;//More than one match, but all have the same guarantor.
 				}
 				if(patNum!=0) {
-					smsFromMobile.PatNum=patNum;
-					Commlog commlog=new Commlog();
-					commlog.CommDateTime=smsFromMobile.DateTimeReceived;
-					commlog.Mode_= CommItemMode.Text;
-					commlog.Note=smsFromMobile.MsgText;
-					commlog.PatNum=patNum;
-					commlog.CommType=Commlogs.GetTypeAuto(CommItemTypeAuto.TEXT);
-					commlog.SentOrReceived= CommSentOrReceived.Received;
-					smsFromMobile.CommlogNum=Commlogs.Insert(commlog);
+					sms.PatNum=patNum;
+					Commlog comm=new Commlog() {
+						CommDateTime=sms.DateTimeReceived,
+						Mode_= CommItemMode.Text,
+						Note=sms.MsgText,
+						PatNum=patNum,
+						CommType=Commlogs.GetTypeAuto(CommItemTypeAuto.TEXT),
+						SentOrReceived= CommSentOrReceived.Received
+					};
+					sms.CommlogNum=Commlogs.Insert(comm);
 				}
-				Insert(smsFromMobile);
+				Insert(sms);
 				//Alert ODMobile where applicable.
-				PushNotificationUtils.ODM_NewTextMessage(smsFromMobile,smsFromMobile.PatNum);
+				PushNotificationUtils.ODM_NewTextMessage(sms,sms.PatNum);
 			}
 			//We used to update the SmsNotification indicator via a queries and a signal here.  Now managed by the eConnector.
 		}
@@ -231,18 +230,18 @@ namespace OpenDentBusiness{
 			if(smsFromStatus==SmsFromStatus.ReceivedUnread) {
 				return "Unread";
 			}
-			if(smsFromStatus==SmsFromStatus.ReceivedRead) {
+			else if(smsFromStatus==SmsFromStatus.ReceivedRead) {
 				return "Read";
 			}
 			return "";
 		}
 
 		///<summary>Updates only the changed fields of the SMS text message (if any).</summary>
-		public static bool Update(SmsFromMobile smsFromMobile,SmsFromMobile smsFromMobileOld) {
+		public static bool Update(SmsFromMobile smsFromMobile,SmsFromMobile oldSmsFromMobile) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),smsFromMobile,smsFromMobileOld);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),smsFromMobile,oldSmsFromMobile);
 			}
-			return Crud.SmsFromMobileCrud.Update(smsFromMobile,smsFromMobileOld);
+			return Crud.SmsFromMobileCrud.Update(smsFromMobile,oldSmsFromMobile);
 		}
 	}
 }

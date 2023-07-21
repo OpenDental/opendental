@@ -49,7 +49,7 @@ namespace OpenDental{
 		}
 
 		private void FormPath_Load(object sender, System.EventArgs e){
-			if(!IsStartingUp && !Security.IsAuthorized(EnumPermType.Setup)) {//Verify user has Setup permission to change paths, after user has logged in.
+			if(!IsStartingUp && !Security.IsAuthorized(Permissions.Setup)) {//Verify user has Setup permission to change paths, after user has logged in.
 				butOK.Enabled=false;
 			}
 			textDocPath.Text=PrefC.GetString(PrefName.DocPath);
@@ -60,7 +60,7 @@ namespace OpenDental{
 				butBrowseServer.Visible=false;
 			}
 			else {
-				labelServerPath.Text="Path override for this server.  Server id = "+ReplicationServers.GetServerId().ToString();
+				labelServerPath.Text="Path override for this server.  Server id = "+ReplicationServers.Server_id.ToString();
 				textServerPath.Text=ReplicationServers.GetAtoZpath();
 			}
 			textLocalPath.Text=OpenDentBusiness.FileIO.FileAtoZ.LocalAtoZpath;//This was set on startup.  //compPref.AtoZpath;
@@ -72,7 +72,7 @@ namespace OpenDental{
 			//Also set the "multiple paths" checkbox at startup based on the current image folder list format. No need to store this info in the db.
 			if(IsStartingUp) {//and failed to find path
 				MsgBox.Show(this,"Could not find the path for the AtoZ folder.");
-				if(Security.CurUser==null || !Security.IsAuthorized(EnumPermType.Setup)) {
+				if(Security.CurUser==null || !Security.IsAuthorized(Permissions.Setup)) {
 					//The user is still allowed to set the "Path override for this computer", thus the user has a way to temporariliy get into OD in worst case.
 					//For example, if the primary folder path is wrong or has changed, the user can set the path override for this computer to get into OD, then
 					//can to to Setup | Data Paths to fix the primary path.
@@ -82,7 +82,7 @@ namespace OpenDental{
 					ActiveControl=textLocalPath;//Focus on textLocalPath, since this is the only textbox the user can edit in this case.
 				}
 			}
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				textSftpUsername.UseSystemPasswordChar=true;
 				butOK.Enabled=false;
 				DisableMostControls();
@@ -283,13 +283,13 @@ namespace OpenDental{
 
 		private void radioDatabaseStorage_Click(object sender,EventArgs e) {
 			if(radioDatabaseStorage.Checked && PrefC.AtoZfolderUsed!=DataStorageType.InDatabase){//user attempting to use db to store images
-				InputBox inputbox=new InputBox("Please enter password");
+				using InputBox inputbox=new InputBox("Please enter password");
 				inputbox.ShowDialog();
-				if(inputbox.IsDialogCancel){
+				if(inputbox.DialogResult!=DialogResult.OK){
 					SetRadioButtonChecked(_dataStorageType);
 					return;
 				}
-				if(inputbox.StringResult!="abracadabra"){//to keep ignorant people from clicking this box.
+				if(inputbox.textResult.Text!="abracadabra"){//to keep ignorant people from clicking this box.
 					SetRadioButtonChecked(_dataStorageType);
 					MsgBox.Show(this,"Wrong password");
 					return;
@@ -403,7 +403,7 @@ namespace OpenDental{
 
 		#endregion
 
-		private void butSave_Click(object sender, System.EventArgs e){
+		private void butOK_Click(object sender, System.EventArgs e){
 			//remember that user might be using a website or a linux box to store images, therefore must allow forward slashes.
 			if(radioUseFolder.Checked){
 				if(textLocalPath.Text!="") {
@@ -502,8 +502,12 @@ namespace OpenDental{
 				ReplicationServers.Update(replicationServer);
 				DataValid.SetInvalid(InvalidType.ReplicationServers);
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Data Path");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Data Path");
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void FormPath_Closing(object sender,System.ComponentModel.CancelEventArgs e) {
@@ -524,6 +528,5 @@ namespace OpenDental{
 				Application.Exit();
 			}*/
 		}
-
 	}
 }

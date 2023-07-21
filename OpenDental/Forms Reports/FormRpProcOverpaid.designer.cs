@@ -31,6 +31,7 @@ namespace OpenDental {
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpProcOverpaid));
+			this.butClose = new OpenDental.UI.Button();
 			this.butPrint = new OpenDental.UI.Button();
 			this.imageListCalendar = new System.Windows.Forms.ImageList(this.components);
 			this.gridMain = new OpenDental.UI.GridOD();
@@ -50,6 +51,17 @@ namespace OpenDental {
 			this.dateRangePicker = new OpenDental.UI.ODDateRangePicker();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(928, 658);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 4;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butPrint
 			// 
@@ -200,7 +212,7 @@ namespace OpenDental {
 			this.comboBoxMultiClinics.IncludeUnassigned = true;
 			this.comboBoxMultiClinics.Location = new System.Drawing.Point(432, 34);
 			this.comboBoxMultiClinics.Name = "comboBoxMultiClinics";
-			this.comboBoxMultiClinics.IsMultiSelect = true;
+			this.comboBoxMultiClinics.SelectionModeMulti = true;
 			this.comboBoxMultiClinics.Size = new System.Drawing.Size(197, 21);
 			this.comboBoxMultiClinics.TabIndex = 71;
 			// 
@@ -220,6 +232,7 @@ namespace OpenDental {
 			this.AcceptButton = this.butPrint;
 			this.ClientSize = new System.Drawing.Size(1015, 696);
 			this.Controls.Add(this.butRefresh);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.groupBox2);
@@ -238,6 +251,7 @@ namespace OpenDental {
 		private MenuItem menuItemGoToAccount;
 		private ImageList imageListCalendar;
 		private UI.Button butRefresh;
+		private UI.Button butClose;
 		private UI.Button butPrint;
 		private UI.GridOD gridMain;
 		private OpenDental.UI.GroupBox groupBox2;

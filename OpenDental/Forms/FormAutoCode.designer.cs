@@ -27,6 +27,7 @@ namespace OpenDental {
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAutoCode));
 			this.listAutoCodes = new OpenDental.UI.ListBox();
+			this.butClose = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.SuspendLayout();
@@ -38,6 +39,17 @@ namespace OpenDental {
 			this.listAutoCodes.Size = new System.Drawing.Size(178, 316);
 			this.listAutoCodes.TabIndex = 0;
 			this.listAutoCodes.DoubleClick += new System.EventHandler(this.listAutoCodes_DoubleClick);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(230, 390);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(80, 26);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butAdd
 			// 
@@ -63,9 +75,11 @@ namespace OpenDental {
 			// 
 			// FormAutoCode
 			// 
-			this.ClientSize = new System.Drawing.Size(235, 403);
+			this.CancelButton = this.butClose;
+			this.ClientSize = new System.Drawing.Size(338, 430);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.butAdd);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.listAutoCodes);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -82,6 +96,7 @@ namespace OpenDental {
 		#endregion
 
 		private OpenDental.UI.ListBox listAutoCodes;
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.Button butDelete;
 	}

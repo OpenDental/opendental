@@ -26,11 +26,11 @@ namespace OpenDental {
 		}
 
 		private void FormWikiSearch_Load(object sender,EventArgs e) {
-			Rectangle rectangleWorkingArea=System.Windows.Forms.Screen.FromPoint(MousePosition).WorkingArea;
+			Rectangle rectangleWorkingArea=System.Windows.Forms.Screen.GetWorkingArea(this);
+			Top=0;
+			Left=Math.Max(0,((rectangleWorkingArea.Width-LayoutManager.Scale(1200))/2)+rectangleWorkingArea.Left);
 			Width=Math.Min(rectangleWorkingArea.Width,LayoutManager.Scale(1200));
 			Height=rectangleWorkingArea.Height;
-			Location=new Point(rectangleWorkingArea.Left+rectangleWorkingArea.Width/2-Width/2,
-				y:rectangleWorkingArea.Top);
 			WikiPageTitleSelected="";
 			UserOdPref userOdPref=UserOdPrefs.GetByUserAndFkeyType(Security.CurUser.UserNum,UserOdFkeyType.WikiSearchIncludeContent).FirstOrDefault();
 			bool doIncludeContent=DO_INCLUDE_CONTENT_DEFAULT;
@@ -189,6 +189,10 @@ namespace OpenDental {
 				WikiPageTitleSelected=_listWikiPageTitles[gridMain.SelectedIndices[0]];
 			}
 			NavToPageDeligate_(WikiPageTitleSelected);
+			Close();
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
 			Close();
 		}
 

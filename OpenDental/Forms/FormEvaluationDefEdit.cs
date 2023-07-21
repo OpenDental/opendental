@@ -221,11 +221,11 @@ namespace OpenDental {
 		private void butDelete_Click(object sender,EventArgs e) {
 			if(_evaluationDef.IsNew || MsgBox.Show(this,MsgBoxButtons.YesNo,"This will delete the evaluation def.  Continue?")) {
 				EvaluationDefs.Delete(_evaluationDef.EvaluationDefNum);
-				DialogResult=DialogResult.OK;
+				DialogResult=DialogResult.Cancel;
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(_evaluationDef.SchoolCourseNum==0) {
 				MsgBox.Show(this,"A school course must be selected for this evaluation def before it can be saved.");
 				return;
@@ -249,14 +249,15 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void FormEvaluationDefEdit_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult!=DialogResult.Cancel) {
-				return;
-			}
+		private void butCancel_Click(object sender,EventArgs e) {
 			if(_evaluationDef.IsNew) {
 				EvaluationDefs.Delete(_evaluationDef.EvaluationDefNum);
 			}
+			DialogResult=DialogResult.Cancel;
 		}
+
+		
+
 
 	}
 }

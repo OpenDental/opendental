@@ -580,7 +580,7 @@ Do you want to remove the pregnancy diagnosis?"))
 
 		private void butChangeDefault_Click(object sender,EventArgs e) {
 			if(butChangeDefault.Text!="Go to Problem") {
-				if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,false)) {
+				if(!Security.IsAuthorized(Permissions.SecurityAdmin,false)) {
 					return;
 				}
 				using FormEhrSettings formEhrSettings=new FormEhrSettings();
@@ -721,7 +721,7 @@ Do you want to remove the pregnancy diagnosis?"))
 			DialogResult=DialogResult.Cancel;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			#region Validate
 			DateTime date;
 			if(textDateTaken.Text=="") {
@@ -856,11 +856,21 @@ Do you want to remove the pregnancy diagnosis?"))
 			if(CDSPermissions.GetForUser(Security.CurUser.UserNum).ShowCDS && CDSPermissions.GetForUser(Security.CurUser.UserNum).VitalCDS) {
 				using FormCDSIntervention formCDSIntervention=new FormCDSIntervention();
 				formCDSIntervention.ListCDSInterventions=EhrTriggers.TriggerMatch(VitalsignCur,Patients.GetPat(VitalsignCur.PatNum));
-				formCDSIntervention.ShowIfRequired();
+				formCDSIntervention.ShowIfRequired(false);
 			}
 			#endregion
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+		
+
+	
+
+	
+
 
 	}
 }

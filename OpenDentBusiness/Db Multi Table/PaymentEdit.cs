@@ -200,7 +200,7 @@ namespace OpenDentBusiness {
 		///<summary>Gets the charges and links credits for the patient. Includes family account entries if listPatNums left null.</summary>
 		public static ConstructResults ConstructAndLinkChargeCredits(long patNum,List<long> listPatNums=null,bool isIncomeTxfr=false,LoadData loadData=null,
 			bool doIncludeTreatmentPlanned=false,bool doIncludeExplicitCreditsOnly=false,Payment payment=null,List<AccountEntry> listAccountEntriesPayFirst=null,
-			DateTime dateAsOf=default,bool hasInsOverpay=false,bool hasOffsettingAdjustmets=true)
+			DateTime dateAsOf=default,bool hasInsOverpay=false)
 		{
 			//No remoting role check; no call to db
 			return ConstructAndLinkChargeCredits(listPatNums,
@@ -213,14 +213,13 @@ namespace OpenDentBusiness {
 				doIncludeExplicitCreditsOnly:doIncludeExplicitCreditsOnly,
 				dateAsOf:dateAsOf,
 				doIncludeTreatmentPlanned:doIncludeTreatmentPlanned,
-				hasInsOverpay:hasInsOverpay,
-				hasOffsettingAdjustmets:hasOffsettingAdjustmets);
+				hasInsOverpay:hasInsOverpay);
 		}
 
 		///<summary>Gets the charges and links credits for the patient. Includes family account entries if listPatNums left null.</summary>
 		public static ConstructResults ConstructAndLinkChargeCredits(List<long> listPatNums,long patNum,List<PaySplit> listPaySplitsForPayment,Payment payment,
 			List<AccountEntry> listAccountEntriesPayFirst,bool isIncomeTxfr=false,bool isPreferCurPat=false,LoadData loadData=null,bool doIncludeExplicitCreditsOnly=false,
-			bool isAllocateUnearned=false,DateTime dateAsOf=default,bool doIncludeTreatmentPlanned=false,bool hasInsOverpay=false,bool hasOffsettingAdjustmets=true)
+			bool isAllocateUnearned=false,DateTime dateAsOf=default,bool doIncludeTreatmentPlanned=false,bool hasInsOverpay=false)
 		{
 			return ConstructAndLinkChargeCredits(patNum,
 				listPatNums,
@@ -237,14 +236,13 @@ namespace OpenDentBusiness {
 				payment?.ClinicNum??0,
 				payment?.PayAmt??0,
 				payment?.PayDate??DateTime.MinValue,
-				hasInsOverpay,
-				hasOffsettingAdjustmets);
+				hasInsOverpay:hasInsOverpay);
 		}
 
 		///<summary>Gets the charges and links credits for the patient. Includes family account entries if listPatNums left null.</summary>
 		public static ConstructResults ConstructAndLinkChargeCredits(long patNum,List<long> listPatNums,List<PaySplit> listPaySplitsForPayment,long payNum,
 			List<AccountEntry> listAccountEntriesPayFirst,bool isIncomeTxfr,bool isPreferCurPat,ConstructChargesData constructChargesData,bool doIncludeExplicitCreditsOnly,
-			bool isAllocateUnearned,DateTime dateAsOf,bool doIncludeTreatmentPlanned,long clinicNum,double payAmt,DateTime payDate,bool hasInsOverpay,bool hasOffsettingAdjustmets)
+			bool isAllocateUnearned,DateTime dateAsOf,bool doIncludeTreatmentPlanned,long clinicNum,double payAmt,DateTime payDate,bool hasInsOverpay)
 		{
 			//No remoting role check; no call to db
 			if(listPatNums==null) {
@@ -259,7 +257,7 @@ namespace OpenDentBusiness {
 			}
 			ConstructResults constructResults=GetConstructResults(constructChargesData,patNum,listPatNums,payNum,isIncomeTxfr,clinicNum,payAmt,payDate,dateAsOf);
 			ExplicitAndImplicitLinkingForConstructResults(ref constructResults,isIncomeTxfr,listPaySplitsForPayment,constructChargesData,doIncludeExplicitCreditsOnly,isAllocateUnearned,
-				listAccountEntriesPayFirst,patNum,isPreferCurPat,payNum,hasInsOverpay,hasOffsettingAdjustmets);
+				listAccountEntriesPayFirst,patNum,isPreferCurPat,payNum,hasInsOverpay);
 			return constructResults;
 		}
 
@@ -472,7 +470,7 @@ namespace OpenDentBusiness {
 		///The ListPaySplits field on the ConstructResults passed in can be manipulated when account entries to be 'paid first' are passed in.</summary>
 		public static void ExplicitAndImplicitLinkingForConstructResults(ref ConstructResults constructResults,bool isIncomeTxfr,List<PaySplit> listPaySplitsForPayment,
 			ConstructChargesData constructChargesData,bool doIncludeExplicitCreditsOnly,bool isAllocateUnearned,List<AccountEntry> listAccountEntriesPayFirst,long patNum,
-			bool isPreferCurPat,long payNum,bool hasInsOverpay,bool hasOffsettingAdjustmets)
+			bool isPreferCurPat,long payNum,bool hasInsOverpay)
 		{
 			#region Explicit Linking
 			//When executing an income transfer from within the payment window listSplitsCur can be filled with new splits.
@@ -492,7 +490,7 @@ namespace OpenDentBusiness {
 				.ThenBy(x => x.DatePay)
 				.ToList();
 			constructResults.ListAccountEntries=ExplicitlyLinkCredits(constructResults.ListAccountEntries,
-				listSplitsCurrentAndHistoric,hasInsOverpay:hasInsOverpay,hasOffsettingAdjustmets:hasOffsettingAdjustmets);
+				listSplitsCurrentAndHistoric,hasInsOverpay:hasInsOverpay);
 			#endregion
 			//If this payment is an income transfer, do NOT use unallocated income to pay off charges.
 			//However, allow partial implicit linking when running AllocateUnearned logic.
@@ -932,15 +930,17 @@ namespace OpenDentBusiness {
 			//This is so that procedures do not look like they have 'outstanding' value when associated with a payment plan.
 			List<FauxAccountEntry> listFauxAccountEntryProcCredits=listFauxAccountEntriesCredits.FindAll(x => x.AccountEntryProc!=null && !x.IsAdjustment && CompareDecimal.IsGreaterThanZero(x.AmountEnd));
 			for(int i=0;i<listFauxAccountEntryProcCredits.Count;i++) {
-				//Figure out how much value can be removed from the associated procedure.
-				//Ignore anything that insurance is going to pay in order to allow payment plans to 'overpay' the procedure before insurance does.
-				decimal amountForProcedure=listFauxAccountEntryProcCredits[i].AccountEntryProc.AmountEnd + listFauxAccountEntryProcCredits[i].AccountEntryProc.InsPayAmt;
-				decimal amountToRemove=Math.Min(amountForProcedure,listFauxAccountEntryProcCredits[i].AmountEnd);
-				listFauxAccountEntryProcCredits[i].AmountEnd-=amountToRemove;
-				listFauxAccountEntryProcCredits[i].AccountEntryProc.AmountEnd-=amountToRemove;
-				listFauxAccountEntryProcCredits[i].AccountEntryProc.ListPayPlanPrincipalApplieds.Add(
-					new PayPlanPrincipalApplied(listFauxAccountEntryProcCredits[i].PayPlanNum,amountToRemove)
-				);
+				if(CompareDecimal.IsGreaterThanZero(listFauxAccountEntryProcCredits[i].AccountEntryProc.AmountEnd)) {
+					//Figure out how much value can be removed from the associated procedure.
+					//Ignore anything that insurance is going to pay in order to allow payment plans to 'overpay' the procedure before insurance does.
+					decimal amountForProcedure=listFauxAccountEntryProcCredits[i].AccountEntryProc.AmountEnd + listFauxAccountEntryProcCredits[i].AccountEntryProc.InsPayAmt;
+					decimal amountToRemove=Math.Min(amountForProcedure,listFauxAccountEntryProcCredits[i].AmountEnd);
+					listFauxAccountEntryProcCredits[i].AmountEnd-=amountToRemove;
+					listFauxAccountEntryProcCredits[i].AccountEntryProc.AmountEnd-=amountToRemove;
+					listFauxAccountEntryProcCredits[i].AccountEntryProc.ListPayPlanPrincipalApplieds.Add(
+						new PayPlanPrincipalApplied(listFauxAccountEntryProcCredits[i].PayPlanNum,amountToRemove)
+					);
+				}
 			}
 			#endregion
 			#region Adjustment Credits (associated with procedures)
@@ -1111,7 +1111,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns a list of AccountEntries with manipulated amounts due to entities that are explicitly linked to them.
 		///An explicit link is a match between an entity itself (procedure, adjustment, etc) along with matching patient, provider, and clinic.</summary>
-		private static List<AccountEntry> ExplicitlyLinkCredits(List<AccountEntry> listAccountEntries,List<PaySplit> listSplitsCurrentAndHistoric,bool hasInsOverpay=false,bool hasOffsettingAdjustmets=true) {
+		private static List<AccountEntry> ExplicitlyLinkCredits(List<AccountEntry> listAccountEntries,List<PaySplit> listSplitsCurrentAndHistoric,bool hasInsOverpay=false) {
 			//No remoting role check; no call to db and private method
 			List<AccountEntry> listExplicitAccountCharges=listAccountEntries
 				.FindAll(x => x.GetType().In(typeof(Procedure),typeof(FauxAccountEntry),typeof(Adjustment)));
@@ -1374,7 +1374,7 @@ namespace OpenDentBusiness {
 			#endregion
 			#region Adjustments - Offset Unattached
 			//Positive and negative unattached adjustments should offset each other if the 'AdjustmentsOffsetEachOther' preference says so.
-			if(hasOffsettingAdjustmets && PrefC.GetBool(PrefName.AdjustmentsOffsetEachOther)) {
+			if(PrefC.GetBool(PrefName.AdjustmentsOffsetEachOther)) {
 				List<AccountEntry> listUnattachedAdjustmentEntries=listExplicitAccountCharges.FindAll(x => x.AdjNum > 0
 					&& x.PayPlanNum==0
 					&& x.ProcNum==0
@@ -1656,11 +1656,11 @@ namespace OpenDentBusiness {
 			//No remoting role check; no call to db
 			#region PayAsTotal
 			foreach(PayAsTotal payAsTotal in bucket.ListInsPayAsTotal) {//Use claim payments by total to pay off procedures for that specific patient.
-				if(payAsTotal.SummedInsPayAmt==0) {
+				if(payAsTotal.SummedInsPayAmt==0 && payAsTotal.SummedWriteOff==0) {
 					continue;
 				}
 				foreach(AccountEntry accountEntry in bucket.ListAccountEntries) {
-					if(payAsTotal.SummedInsPayAmt==0) {
+					if(payAsTotal.SummedInsPayAmt==0 && payAsTotal.SummedWriteOff==0) {
 						break;
 					}
 					if(accountEntry.AmountEnd==0) {
@@ -1672,6 +1672,9 @@ namespace OpenDentBusiness {
 					double amt=Math.Min((double)accountEntry.AmountEnd,payAsTotal.SummedInsPayAmt);
 					accountEntry.AmountEnd-=(decimal)amt;
 					payAsTotal.SummedInsPayAmt-=amt;
+					double amtWriteOff=Math.Min((double)accountEntry.AmountEnd,payAsTotal.SummedWriteOff);
+					accountEntry.AmountEnd-=(decimal)amtWriteOff;
+					payAsTotal.SummedWriteOff-=amtWriteOff;
 				}
 			}
 			#endregion
@@ -2036,7 +2039,7 @@ namespace OpenDentBusiness {
 		{
 			ConstructResults constructResults=ConstructAndLinkChargeCredits(patCurNum,listPatNums,listPaySplitsForPayment,payment?.PayNum??0,listAccountEntriesPayFirst,isIncomeTxfr:isIncomeTxfr,
 				isPreferCurPat:isPatPrefer,constructChargesData:constructChargesData,doIncludeExplicitCreditsOnly:doIncludeExplicitCreditsOnly,false,DateTime.MinValue,false,
-				payment?.ClinicNum??0,payment?.PayAmt??0,payment?.PayDate??DateTime.MinValue,false,true);
+				payment?.ClinicNum??0,payment?.PayAmt??0,payment?.PayDate??DateTime.MinValue,false);
 			AutoSplit autoSplit=AutoSplitForPayment(constructResults,doAutoSplit,payPlanNum:payPlanNum,listAccountEntriesPayFirst:listAccountEntriesPayFirst);
 			return autoSplit;
 		}
@@ -2234,7 +2237,7 @@ namespace OpenDentBusiness {
 					listPayNumPaySplitsGroups[i].Payment.ClinicNum,listPayNumPaySplitsGroups[i].PayAmount,listPayNumPaySplitsGroups[i].Payment.PayDate,dateAsOf);
 				//Execute explicit and implicit linking logic so that the Account Entries have correct AmountEnd values.
 				ExplicitAndImplicitLinkingForConstructResults(ref constructResults,false,new List<PaySplit>(),constructChargesData,false,false,new List<AccountEntry>(),patNum,false,
-					listPayNumPaySplitsGroups[i].PayNum,false,true);
+					listPayNumPaySplitsGroups[i].PayNum,false);
 				//Execute auto-split logic for the amount of the current payment and act like the office has EnforceFully mode enabled so that everything is perfectly linked.
 				AutoSplit autoSplit=AutoSplitForPayment(constructResults,rigorousAccounting:(int)RigorousAccounting.EnforceFully);
 				if(autoSplit.ListPaySplitsSuggested.IsNullOrEmpty()) {
@@ -2275,7 +2278,7 @@ namespace OpenDentBusiness {
 			//Insert all of the new explicitly linked payment splits.
 			PaySplits.InsertMany(listPaySplitsSuggested);
 			//Make a single security log that indicates every single payment for the entire family has been rectreated.
-			SecurityLogs.MakeLogEntry(EnumPermType.PaymentEdit,patNum,Lans.g("FormFamilyBalancer","Every single payment split was recreated for this family by the Family Balancer."));
+			SecurityLogs.MakeLogEntry(Permissions.PaymentEdit,patNum,Lans.g("FormFamilyBalancer","Every single payment split was recreated for this family by the Family Balancer."));
 			#endregion
 		}
 		#endregion
@@ -2382,8 +2385,8 @@ namespace OpenDentBusiness {
 				Cache.Refresh(InvalidType.ProcCodes);//Refresh local cache only because middle tier has already inserted the signal.
 			}
 			ClaimTransferResult claimTransferResult=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamPatNums);
-			if(claimTransferResult!=null && claimTransferResult.ListClaimProcsInserted.Count > 0) {//valid and items were created
-				SecurityLogs.MakeLogEntry(EnumPermType.ClaimProcReceivedEdit,patNum,logText);
+			if(claimTransferResult!=null && claimTransferResult.ListInsertedClaimProcs.Count > 0) {//valid and items were created
+				SecurityLogs.MakeLogEntry(Permissions.ClaimProcReceivedEdit,patNum,logText);
 			}
 			return claimTransferResult;
 		}
@@ -2442,12 +2445,12 @@ namespace OpenDentBusiness {
 					List<PayPlanProductionEntry> listPayPlanProductionEntries=PayPlanProductionEntry.GetProductionForLinks(listPayPlanLinksForPlan);
 					if(listPayPlanLinksForPlan.IsNullOrEmpty() || listPayPlanProductionEntries.IsNullOrEmpty()) {
 						incomeTransferData.StringBuilderErrors.AppendLine(
-							Lans.g("PaymentEdit","Transfers cannot be made for this family due to a payment plan with no production attached."));
+							Lans.g("PaymentEdit","Transfers cannot be made for this family due to a dynamic payment plan with no production attached."));
 						return false;
 					}
 					if(listPayPlanProductionEntries.Any(x => CompareDecimal.IsLessThanZero(x.AmountOriginal))) {
 						incomeTransferData.StringBuilderErrors.AppendLine(
-							Lans.g("PaymentEdit","Transfers cannot be made for this family due to a payment plan with negative production attached."));
+							Lans.g("PaymentEdit","Transfers cannot be made for this family due to a dynamic payment plan with negative production attached."));
 						return false;
 					}
 					List<PayPlanCharge> listPayPlanCharges=PayPlanCharges.GetForPayPlan(listPayPlansDynamic[i].PayPlanNum);
@@ -2457,12 +2460,12 @@ namespace OpenDentBusiness {
 						PayPlanProductionEntry payPlanProductionEntry=listPayPlanProductionEntries.FirstOrDefault(x => x.LinkType==kvp.Key.LinkType && x.PriKey==kvp.Key.FKey);
 						if(payPlanProductionEntry==null) {
 							incomeTransferData.StringBuilderErrors.AppendLine(
-								Lans.g("PaymentEdit","Transfers cannot be made for this family due to a payment plan with a charge for production no longer linked to the plan."));
+								Lans.g("PaymentEdit","Transfers cannot be made for this family due to a dynamic payment plan with a charge for production no longer linked to the plan."));
 							return false;
 						}
 						if(CompareDouble.IsGreaterThan(kvp.Value.Sum(x => x.Principal),(double)payPlanProductionEntry.AmountOriginal)) {
 							incomeTransferData.StringBuilderErrors.AppendLine(
-								Lans.g("PaymentEdit","Transfers cannot be made for this family due to a payment plan with overcharged production."));
+								Lans.g("PaymentEdit","Transfers cannot be made for this family due to a dynamic payment plan with overcharged production."));
 							return false;
 						}
 					}
@@ -3447,7 +3450,7 @@ namespace OpenDentBusiness {
 			payment.PayAmt=0;
 			payment.PayType=0;
 			Payments.Insert(payment,incomeTransferData.ListSplitsCur);
-			SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,patient.PatNum,$"Income transfer automatically created upon claim received.");
+			SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,patient.PatNum,$"Income transfer automatically created upon claim received.");
 			Ledgers.ComputeAgingForPaysplitsAllocatedToDiffPats(patient.PatNum,incomeTransferData.ListSplitsCur);
 			return new PayNumPaySplitsGroup(payment,incomeTransferData.ListSplitsCur);
 		}
@@ -3851,7 +3854,7 @@ namespace OpenDentBusiness {
 			//Insert the unearned payments.
 			for(int i=0;i<insOverpayResult.ListPayNumPaySplitsGroups.Count;i++) {
 				Payments.Insert(insOverpayResult.ListPayNumPaySplitsGroups[i].Payment,insOverpayResult.ListPayNumPaySplitsGroups[i].ListPaySplits);
-				SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,insOverpayResult.ListPayNumPaySplitsGroups[i].Payment.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,insOverpayResult.ListPayNumPaySplitsGroups[i].Payment.PatNum,logText);
 			}
 		}
 

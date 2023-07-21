@@ -84,7 +84,6 @@ namespace OpenDentBusiness.Crud{
 				procedureCode.TaxCode           = PIn.String(row["TaxCode"].ToString());
 				procedureCode.PaintText         = PIn.String(row["PaintText"].ToString());
 				procedureCode.AreaAlsoToothRange= PIn.Bool  (row["AreaAlsoToothRange"].ToString());
-				procedureCode.DiagnosticCodes   = PIn.String(row["DiagnosticCodes"].ToString());
 				retVal.Add(procedureCode);
 			}
 			return retVal;
@@ -132,7 +131,6 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("TaxCode");
 			table.Columns.Add("PaintText");
 			table.Columns.Add("AreaAlsoToothRange");
-			table.Columns.Add("DiagnosticCodes");
 			foreach(ProcedureCode procedureCode in listProcedureCodes) {
 				table.Rows.Add(new object[] {
 					POut.Long  (procedureCode.CodeNum),
@@ -171,7 +169,6 @@ namespace OpenDentBusiness.Crud{
 					            procedureCode.TaxCode,
 					            procedureCode.PaintText,
 					POut.Bool  (procedureCode.AreaAlsoToothRange),
-					            procedureCode.DiagnosticCodes,
 				});
 			}
 			return table;
@@ -191,7 +188,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="CodeNum,";
 			}
-			command+="ProcCode,Descript,AbbrDesc,ProcTime,ProcCat,TreatArea,NoBillIns,IsProsth,DefaultNote,IsHygiene,GTypeNum,AlternateCode1,MedicalCode,IsTaxed,PaintType,GraphicColor,LaymanTerm,IsCanadianLab,PreExisting,BaseUnits,SubstitutionCode,SubstOnlyIf,IsMultiVisit,DrugNDC,RevenueCodeDefault,ProvNumDefault,CanadaTimeUnits,IsRadiology,DefaultClaimNote,DefaultTPNote,BypassGlobalLock,TaxCode,PaintText,AreaAlsoToothRange,DiagnosticCodes) VALUES(";
+			command+="ProcCode,Descript,AbbrDesc,ProcTime,ProcCat,TreatArea,NoBillIns,IsProsth,DefaultNote,IsHygiene,GTypeNum,AlternateCode1,MedicalCode,IsTaxed,PaintType,GraphicColor,LaymanTerm,IsCanadianLab,PreExisting,BaseUnits,SubstitutionCode,SubstOnlyIf,IsMultiVisit,DrugNDC,RevenueCodeDefault,ProvNumDefault,CanadaTimeUnits,IsRadiology,DefaultClaimNote,DefaultTPNote,BypassGlobalLock,TaxCode,PaintText,AreaAlsoToothRange) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(procedureCode.CodeNum)+",";
 			}
@@ -230,8 +227,7 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Int   ((int)procedureCode.BypassGlobalLock)+","
 				+"'"+POut.String(procedureCode.TaxCode)+"',"
 				+"'"+POut.String(procedureCode.PaintText)+"',"
-				+    POut.Bool  (procedureCode.AreaAlsoToothRange)+","
-				+"'"+POut.String(procedureCode.DiagnosticCodes)+"')";
+				+    POut.Bool  (procedureCode.AreaAlsoToothRange)+")";
 			if(procedureCode.DefaultNote==null) {
 				procedureCode.DefaultNote="";
 			}
@@ -279,7 +275,7 @@ namespace OpenDentBusiness.Crud{
 						if(useExistingPK) {
 							sbCommands.Append("CodeNum,");
 						}
-						sbCommands.Append("ProcCode,Descript,AbbrDesc,ProcTime,ProcCat,TreatArea,NoBillIns,IsProsth,DefaultNote,IsHygiene,GTypeNum,AlternateCode1,MedicalCode,IsTaxed,PaintType,GraphicColor,LaymanTerm,IsCanadianLab,PreExisting,BaseUnits,SubstitutionCode,SubstOnlyIf,IsMultiVisit,DrugNDC,RevenueCodeDefault,ProvNumDefault,CanadaTimeUnits,IsRadiology,DefaultClaimNote,DefaultTPNote,BypassGlobalLock,TaxCode,PaintText,AreaAlsoToothRange,DiagnosticCodes) VALUES ");
+						sbCommands.Append("ProcCode,Descript,AbbrDesc,ProcTime,ProcCat,TreatArea,NoBillIns,IsProsth,DefaultNote,IsHygiene,GTypeNum,AlternateCode1,MedicalCode,IsTaxed,PaintType,GraphicColor,LaymanTerm,IsCanadianLab,PreExisting,BaseUnits,SubstitutionCode,SubstOnlyIf,IsMultiVisit,DrugNDC,RevenueCodeDefault,ProvNumDefault,CanadaTimeUnits,IsRadiology,DefaultClaimNote,DefaultTPNote,BypassGlobalLock,TaxCode,PaintText,AreaAlsoToothRange) VALUES ");
 						countRows=0;
 					}
 					else {
@@ -322,8 +318,7 @@ namespace OpenDentBusiness.Crud{
 					sbRow.Append(POut.Int((int)procedureCode.BypassGlobalLock)); sbRow.Append(",");
 					sbRow.Append("'"+POut.String(procedureCode.TaxCode)+"'"); sbRow.Append(",");
 					sbRow.Append("'"+POut.String(procedureCode.PaintText)+"'"); sbRow.Append(",");
-					sbRow.Append(POut.Bool(procedureCode.AreaAlsoToothRange)); sbRow.Append(",");
-					sbRow.Append("'"+POut.String(procedureCode.DiagnosticCodes)+"'"); sbRow.Append(")");
+					sbRow.Append(POut.Bool(procedureCode.AreaAlsoToothRange)); sbRow.Append(")");
 					if(sbCommands.Length+sbRow.Length+1 > TableBase.MaxAllowedPacketCount && countRows > 0) {
 						Db.NonQ(sbCommands.ToString());
 						sbCommands=null;
@@ -358,7 +353,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="CodeNum,";
 			}
-			command+="ProcCode,Descript,AbbrDesc,ProcTime,ProcCat,TreatArea,NoBillIns,IsProsth,DefaultNote,IsHygiene,GTypeNum,AlternateCode1,MedicalCode,IsTaxed,PaintType,GraphicColor,LaymanTerm,IsCanadianLab,PreExisting,BaseUnits,SubstitutionCode,SubstOnlyIf,IsMultiVisit,DrugNDC,RevenueCodeDefault,ProvNumDefault,CanadaTimeUnits,IsRadiology,DefaultClaimNote,DefaultTPNote,BypassGlobalLock,TaxCode,PaintText,AreaAlsoToothRange,DiagnosticCodes) VALUES(";
+			command+="ProcCode,Descript,AbbrDesc,ProcTime,ProcCat,TreatArea,NoBillIns,IsProsth,DefaultNote,IsHygiene,GTypeNum,AlternateCode1,MedicalCode,IsTaxed,PaintType,GraphicColor,LaymanTerm,IsCanadianLab,PreExisting,BaseUnits,SubstitutionCode,SubstOnlyIf,IsMultiVisit,DrugNDC,RevenueCodeDefault,ProvNumDefault,CanadaTimeUnits,IsRadiology,DefaultClaimNote,DefaultTPNote,BypassGlobalLock,TaxCode,PaintText,AreaAlsoToothRange) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(procedureCode.CodeNum)+",";
 			}
@@ -397,8 +392,7 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Int   ((int)procedureCode.BypassGlobalLock)+","
 				+"'"+POut.String(procedureCode.TaxCode)+"',"
 				+"'"+POut.String(procedureCode.PaintText)+"',"
-				+    POut.Bool  (procedureCode.AreaAlsoToothRange)+","
-				+"'"+POut.String(procedureCode.DiagnosticCodes)+"')";
+				+    POut.Bool  (procedureCode.AreaAlsoToothRange)+")";
 			if(procedureCode.DefaultNote==null) {
 				procedureCode.DefaultNote="";
 			}
@@ -457,8 +451,7 @@ namespace OpenDentBusiness.Crud{
 				+"BypassGlobalLock  =  "+POut.Int   ((int)procedureCode.BypassGlobalLock)+", "
 				+"TaxCode           = '"+POut.String(procedureCode.TaxCode)+"', "
 				+"PaintText         = '"+POut.String(procedureCode.PaintText)+"', "
-				+"AreaAlsoToothRange=  "+POut.Bool  (procedureCode.AreaAlsoToothRange)+", "
-				+"DiagnosticCodes   = '"+POut.String(procedureCode.DiagnosticCodes)+"' "
+				+"AreaAlsoToothRange=  "+POut.Bool  (procedureCode.AreaAlsoToothRange)+" "
 				+"WHERE CodeNum = "+POut.Long(procedureCode.CodeNum);
 			if(procedureCode.DefaultNote==null) {
 				procedureCode.DefaultNote="";
@@ -612,10 +605,6 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="AreaAlsoToothRange = "+POut.Bool(procedureCode.AreaAlsoToothRange)+"";
 			}
-			if(procedureCode.DiagnosticCodes != oldProcedureCode.DiagnosticCodes) {
-				if(command!="") { command+=",";}
-				command+="DiagnosticCodes = '"+POut.String(procedureCode.DiagnosticCodes)+"'";
-			}
 			if(command=="") {
 				return false;
 			}
@@ -739,9 +728,6 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(procedureCode.AreaAlsoToothRange != oldProcedureCode.AreaAlsoToothRange) {
-				return true;
-			}
-			if(procedureCode.DiagnosticCodes != oldProcedureCode.DiagnosticCodes) {
 				return true;
 			}
 			return false;

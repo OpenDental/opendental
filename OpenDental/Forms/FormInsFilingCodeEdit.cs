@@ -121,6 +121,19 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butOK_Click(object sender, System.EventArgs e) {
+			if(this.textDescription.Text==""){
+				MessageBox.Show(Lan.g(this,"Please enter a description."));
+				return;
+			}
+			if(this.textEclaimCode.Text==""){
+				MessageBox.Show(Lan.g(this,"Please enter an electronic claim code."));
+				return;
+			}
+			SaveFilingCode();
+			DialogResult=DialogResult.OK;
+		}
+
 		private void SaveFilingCode(){
 			InsFilingCodeCur.Descript=textDescription.Text;
 			InsFilingCodeCur.EclaimCode=textEclaimCode.Text;
@@ -145,28 +158,33 @@ namespace OpenDental {
 			CheckSubtypeButtonEnabled();
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
-			if(this.textDescription.Text==""){
-				MessageBox.Show(Lan.g(this,"Please enter a description."));
-				return;
-			}
-			if(this.textEclaimCode.Text==""){
-				MessageBox.Show(Lan.g(this,"Please enter an electronic claim code."));
-				return;
-			}
-			SaveFilingCode();
-			DialogResult=DialogResult.OK;
-		}
-
-		private void FormInsFilingCodeEdit_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult!=DialogResult.Cancel) {
-				return;
-			}
-			//if X or Esc is clicked
+		private void butCancel_Click(object sender, System.EventArgs e) {
 			if(InsFilingCodeCur.IsNew) {//Set outside this form.
 				DeleteInsFilingCodeAndSubTypes();
 			}
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

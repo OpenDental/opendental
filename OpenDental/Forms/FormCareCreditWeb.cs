@@ -26,7 +26,7 @@ namespace OpenDental {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				cloudIframe.Initialize(url);
 			}
 			_urlBrowseTo=url;
@@ -39,7 +39,7 @@ namespace OpenDental {
 				DialogResult=DialogResult.Cancel;
 				return;
 			}
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				return;//Don't use WebView2 or the toolbar in cloud
 			}
 			try {
@@ -124,7 +124,6 @@ namespace OpenDental {
 		}
 
 		protected override void OnClosed(EventArgs e) {
-			webViewMain.Dispose();
 			base.OnClosed(e);
 		}
 	}

@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAsapSetup));
+			this.butClose = new OpenDental.UI.Button();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.checkUseDefaults = new OpenDental.UI.CheckBox();
@@ -35,6 +36,16 @@ namespace OpenDental{
 			this.labelNoteASAP = new System.Windows.Forms.Label();
 			this.groupBoxASAPPrompt.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(597, 463);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// comboClinic
 			// 
@@ -74,7 +85,7 @@ namespace OpenDental{
 			this.textWebSchedPerDay.Name = "textWebSchedPerDay";
 			this.textWebSchedPerDay.Size = new System.Drawing.Size(39, 20);
 			this.textWebSchedPerDay.TabIndex = 265;
-			this.textWebSchedPerDay.Validating += new System.ComponentModel.CancelEventHandler(this.textWebSchedPerDay_Validating);
+			this.textWebSchedPerDay.Leave += new System.EventHandler(this.textWebSchedPerDay_Leave);
 			this.textWebSchedPerDay.ShowZero = false;
 			// 
 			// labelMaxWebSched
@@ -134,10 +145,10 @@ namespace OpenDental{
 			this.Controls.Add(this.comboClinic);
 			this.Controls.Add(this.labelLeaveBlank);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormAsapSetup";
 			this.Text = "ASAP List Setup";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormAsapSetup_FormClosing);
 			this.Load += new System.EventHandler(this.FormAsapSetup_Load);
 			this.groupBoxASAPPrompt.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -146,6 +157,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.ComboBoxClinicPicker comboClinic;
 		private UI.GridOD gridMain;
 		private OpenDental.UI.CheckBox checkUseDefaults;

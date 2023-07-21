@@ -35,6 +35,7 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormApptViews));
+			this.butCancel = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.listViews = new OpenDental.UI.ListBox();
 			this.butDown = new OpenDental.UI.Button();
@@ -49,6 +50,17 @@ namespace OpenDental {
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(447, 433);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// label1
 			// 
@@ -165,7 +177,8 @@ namespace OpenDental {
 			// 
 			// FormApptViews
 			// 
-			this.ClientSize = new System.Drawing.Size(476,485);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(546, 485);
 			this.Controls.Add(this.comboClinic);
 			this.Controls.Add(this.butProcColors);
 			this.Controls.Add(this.groupBox1);
@@ -174,6 +187,7 @@ namespace OpenDental {
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.listViews);
 			this.Controls.Add(this.label1);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -197,6 +211,7 @@ namespace OpenDental {
 		private System.Windows.Forms.RadioButton radioTen;
 		private System.Windows.Forms.RadioButton radioFifteen;
 		private OpenDental.UI.CheckBox checkTwoRows;
+		private OpenDental.UI.Button butCancel;
 		private RadioButton radioFive;
 		private OpenDental.UI.Button butProcColors;
 		private OpenDental.UI.ComboBoxClinicPicker comboClinic;

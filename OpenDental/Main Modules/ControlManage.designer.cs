@@ -55,7 +55,7 @@ namespace OpenDental {
 			this.textDays = new System.Windows.Forms.TextBox();
 			this.labelDays = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
-			this.comboBoxViewUser = new OpenDental.UI.ComboBox();
+			this.comboBoxViewUser = new UI.ComboBox();
 			this.gridMessages = new OpenDental.UI.GridOD();
 			this.checkIncludeAck = new OpenDental.UI.CheckBox();
 			this.label7 = new System.Windows.Forms.Label();
@@ -80,7 +80,6 @@ namespace OpenDental {
 			this.butTimeCard = new OpenDental.UI.Button();
 			this.labelTime = new System.Windows.Forms.Label();
 			this.butClockIn = new OpenDental.UI.Button();
-			this.butDaycare = new OpenDental.UI.Button();
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -121,6 +120,7 @@ namespace OpenDental {
 			this.groupBox3.Name = "groupBox3";
 			this.groupBox3.Size = new System.Drawing.Size(272, 181);
 			this.groupBox3.TabIndex = 23;
+			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Daily";
 			// 
 			// butEras
@@ -278,6 +278,7 @@ namespace OpenDental {
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(902, 422);
 			this.groupBox2.TabIndex = 19;
+			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Messaging";
 			// 
 			// listBoxMessages
@@ -394,7 +395,7 @@ namespace OpenDental {
 			// 
 			this.label5.Location = new System.Drawing.Point(250, 16);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(124, 16);
+			this.label5.Size = new System.Drawing.Size(100, 16);
 			this.label5.TabIndex = 9;
 			this.label5.Text = "Message (&& Send)";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
@@ -480,6 +481,7 @@ namespace OpenDental {
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(458, 272);
 			this.groupBox1.TabIndex = 18;
+			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Time Clock";
 			// 
 			// textFilterName
@@ -591,20 +593,9 @@ namespace OpenDental {
 			this.butClockIn.Text = "Clock In";
 			this.butClockIn.Click += new System.EventHandler(this.butClockIn_Click);
 			// 
-			// butDaycare
-			// 
-			this.butDaycare.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDaycare.Location = new System.Drawing.Point(801, 130);
-			this.butDaycare.Name = "butDaycare";
-			this.butDaycare.Size = new System.Drawing.Size(79, 25);
-			this.butDaycare.TabIndex = 33;
-			this.butDaycare.Text = "Daycare";
-			this.butDaycare.Click += new System.EventHandler(this.butDaycare_Click);
-			// 
 			// ControlManage
 			// 
 			this.BackColor = System.Drawing.Color.White;
-			this.Controls.Add(this.butDaycare);
 			this.Controls.Add(this.butSchedule);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox2);
@@ -673,6 +664,6 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textFilterName;
 		private System.Windows.Forms.Timer timerUpdateTime;
 		#endregion Fields - Private - Windows Forms
-		private UI.Button butDaycare;
+
 	}
 }

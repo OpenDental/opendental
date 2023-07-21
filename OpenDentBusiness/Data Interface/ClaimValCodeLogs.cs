@@ -29,17 +29,18 @@ namespace OpenDentBusiness {
 			return Crud.ClaimValCodeLogCrud.SelectMany(command);
 		}
 
-		public static void UpdateList(List<ClaimValCodeLog> listClaimValCodeLogs) {
+		public static void UpdateList(List<ClaimValCodeLog> vCodes) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listClaimValCodeLogs);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),vCodes);
 				return;
 			}
-			for(int i=0;i<listClaimValCodeLogs.Count;i++){
-				if(listClaimValCodeLogs[i].ClaimValCodeLogNum==0){
-					Crud.ClaimValCodeLogCrud.Insert(listClaimValCodeLogs[i]);
+			for(int i=0;i<vCodes.Count;i++){
+				ClaimValCodeLog vc = vCodes[i];
+				if(vc.ClaimValCodeLogNum==0){
+					Crud.ClaimValCodeLogCrud.Insert(vc);
 				} 
 				else {
-					Crud.ClaimValCodeLogCrud.Update(listClaimValCodeLogs[i]);
+					Crud.ClaimValCodeLogCrud.Update(vc);
 				}
 			}
 		}

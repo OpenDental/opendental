@@ -181,20 +181,14 @@ namespace OpenDental{
 				return;
 			}
 			ClaimForm claimForm=(ClaimForm)gridCustom.ListGridRows[gridCustom.GetSelectedIndex()].Tag;
-			string fileName = "ClaimForm"+claimForm.Description+".xml";
-			if(ODEnvironment.IsCloudServer) {
+			string filename = "ClaimForm"+claimForm.Description+".xml";
+			if(ODBuild.IsWeb()) {
 				StringBuilder stringBuilder=new StringBuilder();
 				XmlWriter xmlWriter=XmlWriter.Create(stringBuilder);
 				XmlSerializer xmlSerializerWeb=new XmlSerializer(typeof(ClaimForm));
 				xmlSerializerWeb.Serialize(xmlWriter,claimForm);
 				xmlWriter.Close();
-				if(ODBuild.IsThinfinity()) {
-					ThinfinityUtils.ExportForDownload(fileName,stringBuilder.ToString());
-				}
-				else if(ODCloudClient.IsAppStream) {
-					File.WriteAllText(fileName,stringBuilder.ToString());
-					CloudClientL.ExportForCloud(fileName,doPromptForName:false);
-				}
+				ThinfinityUtils.ExportForDownload(filename,stringBuilder.ToString());
 				return;
 			}
 			using SaveFileDialog saveFileDialog=new SaveFileDialog();
@@ -206,7 +200,7 @@ namespace OpenDental{
 				MsgBox.Show(this,"Export failed.  This could be due to lack of permissions in the designated folder.");
 				return;
 			}
-			saveFileDialog.FileName=fileName;
+			saveFileDialog.FileName=filename;
 			if(saveFileDialog.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
@@ -218,24 +212,14 @@ namespace OpenDental{
 
 		///<summary>Import an XML file into the custom claim forms list.</summary>
 		private void butImport_Click(object sender, System.EventArgs e) {
-			string importFilePath;
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				importFilePath=ODCloudClient.ImportFileForCloud();
-				if(importFilePath.IsNullOrEmpty()) {
-					return; //User cancelled out of OpenFileDialog
-				}
-			}
-			else {
-				OpenFileDialog openFileDialog=new OpenFileDialog();
-				openFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
-				if(openFileDialog.ShowDialog()!=DialogResult.OK){
-					return;
-				}
-				importFilePath=openFileDialog.FileName;
-			}
+			OpenFileDialog openFileDialog=new OpenFileDialog();
+			openFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
 			ClaimForm claimForm;
+			if(openFileDialog.ShowDialog()!=DialogResult.OK){
+				return;
+			}
 			try{
-				claimForm=ClaimForms.DeserializeClaimForm(importFilePath,"");
+				claimForm=ClaimForms.DeserializeClaimForm(openFileDialog.FileName,"");
 			}
 			catch(ApplicationException ex){
 				MessageBox.Show(ex.Message);
@@ -276,6 +260,10 @@ namespace OpenDental{
 			MessageBox.Show(result.ToString()+Lan.g(this," plans changed."));
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 		private void FormClaimForms_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
 			if(changed){
 				DataValid.SetInvalid(InvalidType.ClaimForms);
@@ -283,3 +271,24 @@ namespace OpenDental{
 		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

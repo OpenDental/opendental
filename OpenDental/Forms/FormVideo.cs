@@ -19,7 +19,7 @@ namespace OpenDental {
 
 		[Category("OD")]
 		[Description("Fires when user clicks the Capture button.")]
-		public event EventHandler<Bitmap> BitmapCaptured;
+		public event EventHandler<VideoEventArgs> BitmapCaptured;
 
 		public FormVideo() {
 			InitializeComponent();
@@ -30,7 +30,12 @@ namespace OpenDental {
 		#region Methods - Event Handlers
 		private void butCapture_Click(object sender,EventArgs e) {
 			//tabstop had to be set to false to prevent duplicates when using the space bar.
-			BitmapCaptured?.Invoke(this,(Bitmap)pictureBoxCamera.Image);
+			BitmapCaptured?.Invoke(this,new VideoEventArgs(){Bitmap=(Bitmap)pictureBoxCamera.Image });
+		}
+
+		private void butClose_Click(object sender, EventArgs e){
+			//tabStop had to be set to false to prevent false triggers when using space bar.
+			Close();
 		}
 
 		private void CameraFrameSource_NewFrame(IFrameSource iFrameSource, byte[] byteArrayData, Size size){
@@ -101,7 +106,7 @@ namespace OpenDental {
 
 		private void FormVideo_KeyDown(object sender,KeyEventArgs e){
 			if(e.KeyCode==Keys.Space && !butCapture.Focused) {//if focus is on butCapture, pressing space will be the same as clicking
-				BitmapCaptured?.Invoke(this,(Bitmap)pictureBoxCamera.Image);
+				BitmapCaptured?.Invoke(this,new VideoEventArgs() { Bitmap=(Bitmap)pictureBoxCamera.Image });
 			}
 		}
 
@@ -147,7 +152,7 @@ namespace OpenDental {
 		public void Parent_KeyDown(Keys keys){
 			//because FormVideo_KeyDown would not be reliable enough on its own. This form might not have focus.
 			if(keys==Keys.Space){
-				BitmapCaptured?.Invoke(this,(Bitmap)pictureBoxCamera.Image);
+				BitmapCaptured?.Invoke(this,new VideoEventArgs(){Bitmap=(Bitmap)pictureBoxCamera.Image });
 			}
 		}
 
@@ -204,5 +209,9 @@ namespace OpenDental {
 		#endregion Methods
 
 
+	}
+
+	public class VideoEventArgs{
+		public Bitmap Bitmap;
 	}
 }

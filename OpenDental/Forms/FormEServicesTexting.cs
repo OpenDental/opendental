@@ -25,7 +25,7 @@ using OpenDentBusiness.WebTypes.WebSched.TimeSlot;
 namespace OpenDental {
 
 	public partial class FormEServicesTexting:FormODBase {
-		public WebServiceMainHQProxy.EServiceSetup.SignupOut SignupOut;
+		private WebServiceMainHQProxy.EServiceSetup.SignupOut _signupOut;
 
 		private Clinic GetSmsClinicSelected() {
 			if(gridSmsSummary.GetSelectedIndex()<0) {
@@ -37,19 +37,20 @@ namespace OpenDental {
 			return (Clinic)gridSmsSummary.ListGridRows[gridSmsSummary.GetSelectedIndex()].Tag;
 		}
 
-		public FormEServicesTexting() {
+		public FormEServicesTexting(WebServiceMainHQProxy.EServiceSetup.SignupOut signupOut=null) {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
+			_signupOut=signupOut;
 		}
 
 		private void FormEServicesTexting_Load(object sender,EventArgs e) {
-			if(SignupOut==null){
-				SignupOut=FormEServicesSetup.GetSignupOut();
+			if(_signupOut==null){
+				_signupOut=FormEServicesSetup.GetSignupOut();
 			}
 			butDefaultClinic.Visible=PrefC.HasClinicsEnabled;
 			butDefaultClinicClear.Visible=PrefC.HasClinicsEnabled;
-			bool allowEdit=Security.IsAuthorized(EnumPermType.EServicesSetup,suppressMessage:true);
+			bool allowEdit=Security.IsAuthorized(Permissions.EServicesSetup,suppressMessage:true);
 			butDefaultClinic.Enabled=allowEdit;
 			butDefaultClinicClear.Enabled=allowEdit;
 			FillGridSmsUsage();
@@ -58,14 +59,26 @@ namespace OpenDental {
 
 		private void FillOptInSettings() {
 			labelUnsavedShortCodeChanges.Visible=false;
-			checkOptInPrompt.Checked=ClinicPrefs.GetBool(PrefName.ShortCodeOptInOnApptComplete,comboShortCodeClinic.ClinicNumSelected);
+			checkOptInPrompt.Checked=ClinicPrefs.GetBool(PrefName.ShortCodeOptInOnApptComplete,comboShortCodeClinic.SelectedClinicNum);
 			textShortCodeOptInClinicTitle.Text=GetShortCodeOptInClinicTitle();
 		}
 
 		///<summary></summary>
 		private string GetShortCodeOptInClinicTitle() {			
 			//Clinic 0 will be saved as a ClinicPref, not a practice wide Pref, so do not includeDefault here.
-			return ClinicPrefs.GetPrefValue(PrefName.ShortCodeOptInClinicTitle,comboShortCodeClinic.ClinicNumSelected);
+			string title=ClinicPrefs.GetPrefValue(PrefName.ShortCodeOptInClinicTitle,comboShortCodeClinic.SelectedClinicNum);
+			if(!string.IsNullOrWhiteSpace(title)) {
+				return title;
+			}
+			title=Clinics.GetDesc(comboShortCodeClinic.SelectedClinicNum);
+			if(comboShortCodeClinic.SelectedClinicNum==0) {
+				title=PrefC.GetString(PrefName.PracticeTitle);
+			}
+			if(!string.IsNullOrWhiteSpace(title)) {
+				return title;
+			}
+			//In case a clinic had an empty Description
+			return PrefC.GetString(PrefName.PracticeTitle);
 		}
 
 		private void comboShortCodeClinic_SelectionChangeCommitted(object sender,EventArgs e) {
@@ -90,7 +103,7 @@ namespace OpenDental {
 
 		private bool AreShortCodeSettingsUnsaved() {
 			return textShortCodeOptInClinicTitle.Text!=GetShortCodeOptInClinicTitle() 
-				|| checkOptInPrompt.Checked!=ClinicPrefs.GetBool(PrefName.ShortCodeOptInOnApptComplete,comboShortCodeClinic.ClinicNumSelected);
+				|| checkOptInPrompt.Checked!=ClinicPrefs.GetBool(PrefName.ShortCodeOptInOnApptComplete,comboShortCodeClinic.SelectedClinicNum);
 		}
 
 		private void butSaveShortCodes_Click(object sender,EventArgs e) {
@@ -103,19 +116,19 @@ namespace OpenDental {
 			bool doSetInvalidPrefs=false;
 			//Only Update/Upsert if the textbox doesn't match the current setting.
 			if(textShortCodeOptInClinicTitle.Text!=GetShortCodeOptInClinicTitle()) {
-				if(comboShortCodeClinic.ClinicNumSelected==0) {
+				if(comboShortCodeClinic.SelectedClinicNum==0) {
 					doSetInvalidPrefs=Prefs.UpdateString(PrefName.ShortCodeOptInClinicTitle,textShortCodeOptInClinicTitle.Text);
 				}
 				else {
-					doSetInvalidClinicPrefs=ClinicPrefs.Upsert(PrefName.ShortCodeOptInClinicTitle,comboShortCodeClinic.ClinicNumSelected,
+					doSetInvalidClinicPrefs=ClinicPrefs.Upsert(PrefName.ShortCodeOptInClinicTitle,comboShortCodeClinic.SelectedClinicNum,
 						textShortCodeOptInClinicTitle.Text);
 				}
 			}
-			if(comboShortCodeClinic.ClinicNumSelected==0) {
+			if(comboShortCodeClinic.SelectedClinicNum==0) {
 					doSetInvalidPrefs|=Prefs.UpdateBool(PrefName.ShortCodeOptInOnApptComplete,checkOptInPrompt.Checked);
 				}
 			else {
-				doSetInvalidClinicPrefs|=ClinicPrefs.Upsert(PrefName.ShortCodeOptInOnApptComplete,comboShortCodeClinic.ClinicNumSelected
+				doSetInvalidClinicPrefs|=ClinicPrefs.Upsert(PrefName.ShortCodeOptInOnApptComplete,comboShortCodeClinic.SelectedClinicNum
 					,POut.Bool(checkOptInPrompt.Checked));
 			}
 			if(doSetInvalidPrefs) {
@@ -162,7 +175,7 @@ namespace OpenDental {
 				listClinics.Add(Clinics.GetPracticeAsClinicZero());
 			}
 			DataTable tablePhones=SmsPhones.GetSmsUsageLocal(listClinics.Select(x => x.ClinicNum).ToList(),dateTimePickerSms.Value,
-				WebServiceMainHQProxy.EServiceSetup.SignupOut.SignupOutPhone.ToSmsPhones(SignupOut.Phones));
+				WebServiceMainHQProxy.EServiceSetup.SignupOut.SignupOutPhone.ToSmsPhones(_signupOut.Phones));
 			List<EServicesSmsPhone> listEServicesSmsPhones=tablePhones.Rows.Cast<DataRow>().Select(x => new EServicesSmsPhone {
 					ClinicNum=PIn.Long(x["ClinicNum"].ToString()),
 					PhoneNumber=x["PhoneNumber"].ToString(),
@@ -270,5 +283,8 @@ namespace OpenDental {
 			FillGridSmsUsage();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }

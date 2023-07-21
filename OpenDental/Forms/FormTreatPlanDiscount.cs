@@ -27,7 +27,7 @@ namespace OpenDental {
 			textPercentage.Text=PrefC.GetString(PrefName.TreatPlanDiscountPercent);
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			int countProcsLinkedToOrthoCase=0;
 			float percent=0;//Placeholder
 			if(!float.TryParse(textPercentage.Text,out percent)) {
@@ -62,7 +62,7 @@ namespace OpenDental {
 						+": "+ProcedureCodes.GetProcCode(_listProcedures[j].CodeNum).ProcCode+"  "+Lan.g(this,"Dated")
 						+": "+_listProcedures[j].ProcDate.ToShortDateString()+"  "+Lan.g(this,"With a Fee of")+": "+_listProcedures[j].ProcFee.ToString("c")+".  "+Lan.g(this,"Attributed a")+" "+percent
 					+" "+Lan.g(this,"percent discount, changing the discount value from")+" "+_listProceduresOld[j].Discount.ToString("c")+" "+Lan.g(this,"to")+" "+_listProcedures[j].Discount.ToString("c");
-					SecurityLogs.MakeLogEntry(EnumPermType.TreatPlanDiscountEdit,_listProcedures[j].PatNum,message);
+					SecurityLogs.MakeLogEntry(Permissions.TreatPlanDiscountEdit,_listProcedures[j].PatNum,message);
 				}
 				Procedures.Update(_listProcedures[j],_listProceduresOld[j]);
 			}
@@ -73,5 +73,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

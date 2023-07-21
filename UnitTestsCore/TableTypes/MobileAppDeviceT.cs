@@ -22,10 +22,10 @@ namespace UnitTestsCore {
 			return MobileAppDeviceUniqueIdPrefix+clinicNum.ToString();
 		}
 		///<summary></summary>
-		public static MobileAppDevice CreateMobileAppDevice(string deviceName,string uniqueID,long clinicNum,bool isAllowed,bool isODTouchEnabled=false) {
+		public static MobileAppDevice CreateMobileAppDevice(string deviceName,string uniqueID,long clinicNum,bool isAllowed) {
 			return DataAction.GetPractice(() => {
 				MobileAppDevice ret=new MobileAppDevice {
-					DeviceName=deviceName,UniqueID=uniqueID,ClinicNum=clinicNum,IsEclipboardEnabled=isAllowed,EclipboardLastAttempt=DateTime.Now,IsODTouchEnabled=isODTouchEnabled
+					DeviceName=deviceName,UniqueID=uniqueID,ClinicNum=clinicNum,IsAllowed=isAllowed,LastAttempt=DateTime.Now
 				};
 				OpenDentBusiness.Crud.MobileAppDeviceCrud.Insert(ret);
 				return ret;

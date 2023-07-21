@@ -241,7 +241,7 @@
 			this.comboBoxClinicPicker4.IncludeUnassigned = true;
 			this.comboBoxClinicPicker4.Location = new System.Drawing.Point(3, 114);
 			this.comboBoxClinicPicker4.Name = "comboBoxClinicPicker4";
-			this.comboBoxClinicPicker4.IsMultiSelect = true;
+			this.comboBoxClinicPicker4.SelectionModeMulti = true;
 			this.comboBoxClinicPicker4.Size = new System.Drawing.Size(158, 21);
 			this.comboBoxClinicPicker4.TabIndex = 45;
 			// 
@@ -249,7 +249,7 @@
 			// 
 			this.comboBoxClinicPicker3.Location = new System.Drawing.Point(40, 91);
 			this.comboBoxClinicPicker3.Name = "comboBoxClinicPicker3";
-			this.comboBoxClinicPicker3.IsMultiSelect = true;
+			this.comboBoxClinicPicker3.SelectionModeMulti = true;
 			this.comboBoxClinicPicker3.ShowLabel = false;
 			this.comboBoxClinicPicker3.Size = new System.Drawing.Size(121, 21);
 			this.comboBoxClinicPicker3.TabIndex = 45;
@@ -412,7 +412,7 @@
 			this.cClinicMultiL2.IncludeUnassigned = true;
 			this.cClinicMultiL2.Location = new System.Drawing.Point(697, 127);
 			this.cClinicMultiL2.Name = "cClinicMultiL2";
-			this.cClinicMultiL2.IsMultiSelect = true;
+			this.cClinicMultiL2.SelectionModeMulti = true;
 			this.cClinicMultiL2.Size = new System.Drawing.Size(158, 21);
 			this.cClinicMultiL2.TabIndex = 32;
 			// 
@@ -420,7 +420,7 @@
 			// 
 			this.cClinicMulti2.Location = new System.Drawing.Point(734, 104);
 			this.cClinicMulti2.Name = "cClinicMulti2";
-			this.cClinicMulti2.IsMultiSelect = true;
+			this.cClinicMulti2.SelectionModeMulti = true;
 			this.cClinicMulti2.ShowLabel = false;
 			this.cClinicMulti2.Size = new System.Drawing.Size(121, 21);
 			this.cClinicMulti2.TabIndex = 31;
@@ -448,7 +448,7 @@
 			this.cClinicMultiL.IncludeUnassigned = true;
 			this.cClinicMultiL.Location = new System.Drawing.Point(501, 127);
 			this.cClinicMultiL.Name = "cClinicMultiL";
-			this.cClinicMultiL.IsMultiSelect = true;
+			this.cClinicMultiL.SelectionModeMulti = true;
 			this.cClinicMultiL.Size = new System.Drawing.Size(158, 21);
 			this.cClinicMultiL.TabIndex = 23;
 			// 
@@ -479,7 +479,7 @@
 			// 
 			this.cClinicMulti.Location = new System.Drawing.Point(538, 104);
 			this.cClinicMulti.Name = "cClinicMulti";
-			this.cClinicMulti.IsMultiSelect = true;
+			this.cClinicMulti.SelectionModeMulti = true;
 			this.cClinicMulti.ShowLabel = false;
 			this.cClinicMulti.Size = new System.Drawing.Size(121, 21);
 			this.cClinicMulti.TabIndex = 12;

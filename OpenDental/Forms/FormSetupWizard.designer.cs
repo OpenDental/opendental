@@ -30,6 +30,7 @@ namespace OpenDental{
 			this.label1 = new System.Windows.Forms.Label();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butAll = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// imageList1
@@ -75,10 +76,21 @@ namespace OpenDental{
 			this.butAll.Text = "Set Up All";
 			this.butAll.Click += new System.EventHandler(this.butAll_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(325, 364);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// FormSetupWizard
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(411, 400);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butAll);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.gridMain);
@@ -91,6 +103,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butCancel;
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.ImageList imageList1;
 		private System.Windows.Forms.ToolTip toolTip1;

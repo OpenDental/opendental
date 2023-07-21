@@ -15,7 +15,7 @@ namespace OpenDental {
 		private List<Def> _listDefsAllEClipboardImages;
 		///<summary>The corresponding EClipboardImageCaptureDef objects for the list of EClipboard Images patients are allowed to take. Must be
 		///set before opening this form.</summary>
-		public List<EClipboardImageCaptureDef> ListEClipboardImageCaptureDefs;
+		public List<EClipboardImageCaptureDef> ListEClipboardImageCaptureDefs;	
 		
 		
 		public FormEClipboardImageCaptureDefs(long clinicNum) {
@@ -145,21 +145,52 @@ namespace OpenDental {
 			FillGrids();
 		}
 
-		///<summary>Opens formEClipboardImageCaptureDefEdit for the given EClipboardImageCaptureDef.</summary>
+		///<summary>Opens an input box with a textbox for the user to set the frequency at which patients will be prompted to submit the selected image.</summary>
 		private void gridEClipboardImagesInUse_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			EClipboardImageCaptureDef eClipboardImageCaptureDefSelected=gridEClipboardImagesInUse.SelectedTag<EClipboardImageCaptureDef>();
 			if(eClipboardImageCaptureDefSelected==null) {
 				return;
 			}
-			using FormEClipboardImageCaptureDefEdit formeClipboardImageCaptureDefEdit=new FormEClipboardImageCaptureDefEdit(eClipboardImageCaptureDefSelected, ListEClipboardImageCaptureDefs);
-			if(formeClipboardImageCaptureDefEdit.ShowDialog()==DialogResult.OK) {
-				FillGrids();
+			//Label for the single textbox on our inputbox
+			string inputBoxMessage=Lan.g(this,"How often should the patient be prompted to resubmit this image (In days, where 0 or blank indicates at each checkin)?");
+			//Single textbox for the user to input their desired frequency 
+			InputBoxParam inputBoxParam=new InputBoxParam(InputBoxType.TextBox,inputBoxMessage,text:eClipboardImageCaptureDefSelected.FrequencyDays.ToString());
+			//Func that will be called when the user clicks 'Ok' on our inputbux. Verifies the inputted text can be converted to int and the int is >= 0. Blank is converted to 0.
+			Func<string,bool> funcOkClick=new Func<string,bool>((text) => {
+				int frequency;
+				try {
+					frequency=PIn.Int(text);
+				}
+				catch {
+					MsgBox.Show(this, "Frequency (days) must be a valid whole number, 0 or greater.");
+					return false;
+				}
+				if(frequency<0) {
+					MsgBox.Show(this,"Frequency (days) must be a valid whole number, 0 or greater.");
+					return false;
+				}
+				return true;
+			});
+			using InputBox inputBox=new InputBox(funcOkClick,inputBoxParam);
+			inputBox.setTitle(Lan.g(this,"Image Capture Frequency (Days)"));
+			inputBox.SizeInitial=new Size(500,170);
+			if(inputBox.ShowDialog()!=DialogResult.OK) {
+				return;
 			}
+			//Update the frequency for the EClipboardImageCaptureDef the user selected.
+			EClipboardImageCaptureDef eClipboardImageCaptureDef=ListEClipboardImageCaptureDefs.Find(x => x.ClinicNum==_clinicNum && x.DefNum==eClipboardImageCaptureDefSelected.DefNum);
+			if(eClipboardImageCaptureDef!=null) { 
+				eClipboardImageCaptureDef.FrequencyDays=PIn.Int(inputBox.textResult.Text);
+			}
+			FillGrids();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

@@ -86,13 +86,13 @@ namespace OpenDentBusiness {
 				return;
 			}
 			List<AutoNoteControl> listAutoNoteControls=new List<AutoNoteControl>();
-			for(int i=0;i<listSerializableAutoNoteControls.Count;i++) {
-				AutoNoteControl autoNoteControl=new AutoNoteControl();
-				autoNoteControl.ControlLabel=listSerializableAutoNoteControls[i].ControlLabel;
-				autoNoteControl.ControlOptions=listSerializableAutoNoteControls[i].ControlOptions;
-				autoNoteControl.ControlType=listSerializableAutoNoteControls[i].ControlType;
-				autoNoteControl.Descript=listSerializableAutoNoteControls[i].Descript;
-				listAutoNoteControls.Add(autoNoteControl);
+			foreach(SerializableAutoNoteControl control in listSerializableAutoNoteControls) {
+				AutoNoteControl newControl=new AutoNoteControl();
+				newControl.ControlLabel=control.ControlLabel;
+				newControl.ControlOptions=control.ControlOptions;
+				newControl.ControlType=control.ControlType;
+				newControl.Descript=control.Descript;
+				listAutoNoteControls.Add(newControl);
 			}
 			Crud.AutoNoteControlCrud.InsertMany(listAutoNoteControls);
 		}
@@ -140,20 +140,20 @@ namespace OpenDentBusiness {
 		public static List<AutoNoteControl> GetListByParsingAutoNoteText(List<SerializableAutoNote> listSerializableAutoNotes) {
 			//No need to check MiddleTierRole; no call to db.
 			List<AutoNoteControl> listAutoNoteControls=new List<AutoNoteControl>();
-			List<Match> listMatches=new List<Match>();
+			List<Match> listPrompts=new List<Match>();
 			//Find all prompts in all the provided AutoNotes
-			for(int i=0;i<listSerializableAutoNotes.Count;i++) {
-				listMatches.AddRange(GetPrompts(listSerializableAutoNotes[i].MainText));
+			foreach(SerializableAutoNote autoNote in listSerializableAutoNotes) {
+				listPrompts.AddRange(GetPrompts(autoNote.MainText));
 			}
 			//Clean up the text for every discovered prompt to retrieve the appropriate AutoNoteControl if it exists
-			for(int i=0;i<listMatches.Count;i++) {
-				string descript=listMatches[i].ToString();
+			foreach(Match control in listPrompts) {
+				string descript=control.ToString();
 				//Trimming down the match to just the Descript of the prompt text
 				descript=descript.Replace("[Prompt:\"","");
 				descript=descript.Replace("\"]","");
-				AutoNoteControl autoNoteControl=GetByDescript(descript);
-				if(autoNoteControl!=null) {
-					listAutoNoteControls.Add(autoNoteControl); 
+				AutoNoteControl newControl=GetByDescript(descript);
+				if(newControl!=null) {
+					listAutoNoteControls.Add(newControl); 
 				}
 			}
 			return listAutoNoteControls.DistinctBy(x => x.Descript).ToList();
@@ -171,32 +171,27 @@ namespace OpenDentBusiness {
 		///that case, changes the prompt name in the associated AutoNote.MainText. This operates on the objects passed in so there is no return
 		///value.</summary>
 		public static void RemoveDuplicatesFromList(List<SerializableAutoNoteControl> listSerializableAutoNoteControls,List<SerializableAutoNote> listSerializableAutoNotes) {
-			//No need to check MiddleTierRole; no call to db.
 			List<string> listTrueDuplicates=new List<string>();
-			for(int i=0;i<listSerializableAutoNoteControls.Count;i++) {
+			foreach(SerializableAutoNoteControl curControl in listSerializableAutoNoteControls) {
 				bool wasNameChanged=false;
-				AutoNoteControl autoNoteControl=GetByDescript(listSerializableAutoNoteControls[i].Descript);
+				AutoNoteControl dbControl=GetByDescript(curControl.Descript);
 				int dupNum=0;
-				string name=listSerializableAutoNoteControls[i].Descript; //Used to hold the current name so we can safely change the name while we check for duplicates
-				while(true) { 
-					//While the control name is not unique
-					if(autoNoteControl==null) {
-						break;
-					}
-					if(autoNoteControl.ControlOptions==listSerializableAutoNoteControls[i].ControlOptions 
-						&& autoNoteControl.ControlType==listSerializableAutoNoteControls[i].ControlType)  //ControlLabel is omitted because it serves no functional purpose in a duplication check
+				string name=curControl.Descript; //Used to hold the current name so we can safely change the name while we check for duplicates
+				while(dbControl!=null) { //While the control name is not unique
+					if(dbControl.ControlOptions==curControl.ControlOptions 
+						&& dbControl.ControlType==curControl.ControlType)  //ControlLabel is omitted because it serves no functional purpose in a duplication check
 					{
-						listTrueDuplicates.Add(listSerializableAutoNoteControls[i].Descript); //Add this to a list of true duplicates so it doesn't get reimported
+						listTrueDuplicates.Add(curControl.Descript); //Add this to a list of true duplicates so it doesn't get reimported
 						break;
 					}
 					dupNum++;
-					listSerializableAutoNoteControls[i].Descript=string.Join("_",name,dupNum.ToString());
+					curControl.Descript=string.Join("_",name,dupNum.ToString());
 					wasNameChanged=true;
-					autoNoteControl=GetByDescript(listSerializableAutoNoteControls[i].Descript);
+					dbControl=GetByDescript(curControl.Descript);
 				}
 				if(wasNameChanged) { //If the name changed, replace all instances of it across the new AutoNotes
-					for(int j=0;j<listSerializableAutoNotes.Count;j++) {
-						listSerializableAutoNotes[j].MainText=listSerializableAutoNotes[j].MainText.Replace("[Prompt:\""+name+"\"]","[Prompt:\""+listSerializableAutoNoteControls[i].Descript+"\"]");
+					foreach(SerializableAutoNote note in listSerializableAutoNotes) {
+						note.MainText=note.MainText.Replace("[Prompt:\""+name+"\"]","[Prompt:\""+curControl.Descript+"\"]");
 					}
 				}
 			}
@@ -219,11 +214,11 @@ namespace OpenDentBusiness {
 		public SerializableAutoNoteControl() {
 		}
 
-		public SerializableAutoNoteControl(AutoNoteControl autoNoteControl) {
-			ControlLabel=autoNoteControl.ControlLabel;
-			ControlOptions=autoNoteControl.ControlOptions;
-			ControlType=autoNoteControl.ControlType;
-			Descript=autoNoteControl.Descript;
+		public SerializableAutoNoteControl(AutoNoteControl control) {
+			ControlLabel=control.ControlLabel;
+			ControlOptions=control.ControlOptions;
+			ControlType=control.ControlType;
+			Descript=control.Descript;
 		}
 	}
 }

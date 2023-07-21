@@ -42,7 +42,7 @@ namespace OpenDental {
 		}
 
 		private void FormAutomatedConfirmationStatuses_Load(object sender,EventArgs e) {
-			bool allowEdit=Security.IsAuthorized(EnumPermType.EServicesSetup,suppressMessage:true);
+			bool allowEdit=Security.IsAuthorized(Permissions.EServicesSetup,suppressMessage:true);
 			#region Confirmation Settings
 			//Fill the comboboxes and radiobuttons
 			checkEnableNoClinic.Checked=PrefC.GetBool(PrefName.ApptConfirmEnableForClinicZero);
@@ -53,10 +53,9 @@ namespace OpenDental {
 			else {//NO CLINICS
 				checkEnableNoClinic.Visible=false;
 				groupAutomationStatuses.Text=Lan.g(this,"eConfirmation Settings");
-				checkUseDefault.Visible=false;
 			}
-			comboClinic.ClinicNumSelected=0;//To keep consistent with the previous form, start on clinic 0.
-			_clinicNumCur=comboClinic.ClinicNumSelected;
+			comboClinic.SelectedClinicNum=0;//To keep consistent with the previous form, start on clinic 0.
+			_clinicNumCur=comboClinic.SelectedClinicNum;
 			comboStatusESent.Items.Clear();
 			comboStatusEAccepted.Items.Clear();
 			comboStatusEDeclined.Items.Clear();
@@ -300,8 +299,6 @@ namespace OpenDental {
 			if(!_doEnableCalendarIcsTitle) {
 				textCalendarIcsTitle.Enabled=false;
 				labelThankYouTitle.Enabled=false;
-				checkUseDefault.Enabled=false;
-				comboClinic.Enabled=false;
 				return;
 			}
 			ClinicPref clinicPrefThankYouTitle=GetClinicPrefFromList(PrefName.ApptThankYouCalendarTitle,_clinicNumCur);
@@ -340,12 +337,12 @@ namespace OpenDental {
 			if(!checkUseDefault.Checked || !checkUseDefault.Visible) {
 				ParseThankYouTitle();
 			}
-			_clinicNumCur=comboClinic.ClinicNumSelected;
+			_clinicNumCur=comboClinic.SelectedClinicNum;
 			FillThankYouTitleAndUseDefault();
 		}
 
 		private void gridMain_CellClick(object sender,ODGridClickEventArgs e) {	
-			if(!Security.IsAuthorized(EnumPermType.EServicesSetup)){
+			if(!Security.IsAuthorized(Permissions.EServicesSetup)){
 				return;
 			}
 			if(e.Col==0){
@@ -356,7 +353,7 @@ namespace OpenDental {
 			if(cell.ColorBackG==_color) {
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.DefEdit)) {
+			if(!Security.IsAuthorized(Permissions.DefEdit)) {
 				return;
 			}
 			Def def=(Def)row.Tag;
@@ -402,7 +399,11 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void butOK_Click(object sender,EventArgs e) {
 			//check for duplicate selections:
 			List<int> listSelectedEConfirmationStatuses=new List<int>();
 			listSelectedEConfirmationStatuses.Add(comboStatusEAccepted.SelectedIndex);

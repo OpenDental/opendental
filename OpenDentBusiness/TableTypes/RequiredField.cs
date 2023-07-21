@@ -48,7 +48,7 @@ namespace OpenDentBusiness {
 
 	///<summary>The part of the program where this required field is used.</summary>
 	public enum RequiredFieldType {
-		///<summary>0 - Edit Patient Information window and Add Family (FormPatientAddAll) window.</summary>
+		///<summary>0 - Edit Patient Information window and Add Family window.</summary>
 		PatientInfo,
 		///<summary>1 - Edit Claim Payment window.</summary>
 		InsPayEdit

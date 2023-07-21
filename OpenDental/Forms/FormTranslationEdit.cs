@@ -46,7 +46,7 @@ namespace OpenDental{
 			_isNew=false;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e){
+		private void butOK_Click(object sender, System.EventArgs e){
 			if(textTranslation.Text=="" && textComments.Text==""){
 				//If only the translation is "", then the Lan.g routine will simply ignore it and use English.
 				if(!_isNew){
@@ -71,5 +71,8 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

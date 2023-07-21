@@ -165,9 +165,6 @@ namespace OpenDentBusiness{
 			//Get information we will need to do the query
 			List<long> listReactCommLogTypeDefNums=Defs.GetDefsForCategory(DefCat.CommLogTypes,isShort:true)
 				.FindAll(x => CommItemTypeAuto.REACT.GetDescription(useShortVersionIfAvailable:true).Equals(x.ItemValue)).Select(x => x.DefNum).ToList();
-			if(listReactCommLogTypeDefNums.Count==0) {
-				return new DataTable();
-			}
 			int contactInterval=PrefC.GetInt(PrefName.ReactivationContactInterval);
 			List<PatientStatus> listPatStatuses=new List<PatientStatus>() {PatientStatus.Patient,PatientStatus.Prospective};
 			if(isInactiveIncluded) {
@@ -291,31 +288,19 @@ namespace OpenDentBusiness{
 					//name of the guarantor.
 					patCur=listSelectedPatsInFam.First();
 				}
-				string famList="";//If famList is blank, the single patient reactivation email/postcard template will be used.
-				string strPatNums=patCur.PatNum.ToString();
-				string email=patCur.Email;
-				long emailPatNum=patCur.PatNum;
-				if(groupFamilies) {
-					if(listSelectedPatsInFam.Count>1) {
-						famList=string.Join(", ",listSelectedPatsInFam.Select(x => x.FName));//If famList is set, the family email/postcard template will be used.
-					}
-					strPatNums=string.Join(",",listSelectedPatsInFam.Select(x => x.PatNum));
-					email=guar.Email;//Use guarantor email for single selected patient when grouping by family.
-					emailPatNum=guar.PatNum;
-				}
 				DataRow row=table.NewRow();
 				row["address"]						=patCur.Address+(!string.IsNullOrWhiteSpace(patCur.Address2)?Environment.NewLine+patCur.Address2:"");
 				row["City"]								=patCur.City;
 				row["clinicNum"]					=patCur.ClinicNum;
 				row["dateDue"]						=DateTime.MinValue;//This isn't used for reactivations, but it's here keep the table the same as recall addrTable
-				row["email"]							=email;
-				row["emailPatNum"]				=emailPatNum;
-				row["famList"]						=famList;
+				row["email"]							=patCur.Email;
+				row["emailPatNum"]				=patCur.PatNum;
+				row["famList"]						=listSelectedPatsInFam.Count>1 ? string.Join(",",listSelectedPatsInFam.Select(x => x.FName)) : "";
 				row["guarLName"]					=guar.LName;
 				row["numberOfReminders"]	=Reactivations.GetNumReminders(patCur.PatNum);
 				row["patientNameF"]				=patCur.GetNameFirstOrPreferred();
 				row["patientNameFL"]			=patCur.GetNameFLnoPref();
-				row["patNums"]						=strPatNums;
+				row["patNums"]						=patCur.PatNum;
 				row["State"]							=patCur.State;
 				row["Zip"]								=patCur.Zip;
 				table.Rows.Add(row);

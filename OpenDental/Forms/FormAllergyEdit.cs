@@ -51,7 +51,7 @@ namespace OpenDental {
 			else {
 				comboAllergies.SelectedIndex=0;
 			}
-			if(!Security.IsAuthorized(EnumPermType.PatAllergyListEdit)) {
+			if(!Security.IsAuthorized(Permissions.PatAllergyListEdit)) {
 				butOK.Enabled=false;
 				butDelete.Enabled=false;
 			}
@@ -80,11 +80,11 @@ namespace OpenDental {
 				return;
 			}
 			Allergies.Delete(AllergyCur.AllergyNum);
-			SecurityLogs.MakeLogEntry(EnumPermType.PatAllergyListEdit,AllergyCur.PatNum,AllergyDefs.GetDescription(AllergyCur.AllergyDefNum)+" deleted");
+			SecurityLogs.MakeLogEntry(Permissions.PatAllergyListEdit,AllergyCur.PatNum,AllergyDefs.GetDescription(AllergyCur.AllergyDefNum)+" deleted");
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			//Validate
 			if(textDate.Text!="") {
 				try {
@@ -111,13 +111,17 @@ namespace OpenDental {
 			AllergyCur.StatusIsActive=checkActive.Checked;
 			if(AllergyCur.IsNew) {
 				Allergies.Insert(AllergyCur);
-				SecurityLogs.MakeLogEntry(EnumPermType.PatAllergyListEdit,AllergyCur.PatNum,AllergyDefs.GetDescription(AllergyCur.AllergyDefNum)+" added");
+				SecurityLogs.MakeLogEntry(Permissions.PatAllergyListEdit,AllergyCur.PatNum,AllergyDefs.GetDescription(AllergyCur.AllergyDefNum)+" added");
 			}
 			else {
 				Allergies.Update(AllergyCur);
-				SecurityLogs.MakeLogEntry(EnumPermType.PatAllergyListEdit,AllergyCur.PatNum,AllergyDefs.GetDescription(AllergyCur.AllergyDefNum)+" edited");
+				SecurityLogs.MakeLogEntry(Permissions.PatAllergyListEdit,AllergyCur.PatNum,AllergyDefs.GetDescription(AllergyCur.AllergyDefNum)+" edited");
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

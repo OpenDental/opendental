@@ -24,6 +24,7 @@ namespace OpenDental {
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEnterpriseSetup));
+			this.butCancel = new OpenDental.UI.Button();
 			this.tabControlMain = new OpenDental.UI.TabControl();
 			this.tabAccount = new OpenDental.UI.TabPage();
 			this.checkCaclAgingBatchClaims = new OpenDental.UI.CheckBox();
@@ -54,7 +55,6 @@ namespace OpenDental {
 			this.butReplacements = new OpenDental.UI.Button();
 			this.textClaimIdentifier = new System.Windows.Forms.TextBox();
 			this.tabAdvanced = new OpenDental.UI.TabPage();
-			this.checkDatabaseGlobalVariablesDontSet = new OpenDental.UI.CheckBox();
 			this.checkEnterpriseCommlogOmitDefaults = new OpenDental.UI.CheckBox();
 			this.checkEnableEmailAddressAutoComplete = new OpenDental.UI.CheckBox();
 			this.checkUpdateAlterLargeTablesDirectly = new OpenDental.UI.CheckBox();
@@ -132,7 +132,7 @@ namespace OpenDental {
 			this.checkEra835sStrictClaimMatching = new OpenDental.UI.CheckBox();
 			this.checkEra835sRefreshOnLoad = new OpenDental.UI.CheckBox();
 			this.checkEra835sShowStatusAndClinic = new OpenDental.UI.CheckBox();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.tabControlMain.SuspendLayout();
 			this.tabAccount.SuspendLayout();
 			this.groupBoxClaimIdPrefix.SuspendLayout();
@@ -148,6 +148,17 @@ namespace OpenDental {
 			this.tabManage.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(430, 652);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// tabControlMain
 			// 
 			this.tabControlMain.Controls.Add(this.tabAccount);
@@ -158,7 +169,7 @@ namespace OpenDental {
 			this.tabControlMain.Controls.Add(this.tabManage);
 			this.tabControlMain.Location = new System.Drawing.Point(6, 6);
 			this.tabControlMain.Name = "tabControlMain";
-			this.tabControlMain.Size = new System.Drawing.Size(502, 648);
+			this.tabControlMain.Size = new System.Drawing.Size(502, 636);
 			this.tabControlMain.TabIndex = 276;
 			// 
 			// tabAccount
@@ -192,7 +203,7 @@ namespace OpenDental {
 			this.tabAccount.Location = new System.Drawing.Point(2, 21);
 			this.tabAccount.Name = "tabAccount";
 			this.tabAccount.Padding = new System.Windows.Forms.Padding(3);
-			this.tabAccount.Size = new System.Drawing.Size(498, 625);
+			this.tabAccount.Size = new System.Drawing.Size(498, 613);
 			this.tabAccount.TabIndex = 2;
 			this.tabAccount.Text = "Account";
 			// 
@@ -298,7 +309,7 @@ namespace OpenDental {
 			this.label41.Name = "label41";
 			this.label41.Size = new System.Drawing.Size(234, 18);
 			this.label41.TabIndex = 251;
-			this.label41.Text = "Adjustments Allocation";
+			this.label41.Text = "Enforce Valid Adjustments";
 			this.label41.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// labelAgingServiceTimeDue
@@ -323,7 +334,7 @@ namespace OpenDental {
 			this.label39.Name = "label39";
 			this.label39.Size = new System.Drawing.Size(234, 18);
 			this.label39.TabIndex = 249;
-			this.label39.Text = "Paysplits Allocation";
+			this.label39.Text = "Enforce Valid Paysplits";
 			this.label39.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkBillShowTransSinceZero
@@ -442,7 +453,6 @@ namespace OpenDental {
 			// tabAdvanced
 			// 
 			this.tabAdvanced.BackColor = System.Drawing.SystemColors.Window;
-			this.tabAdvanced.Controls.Add(this.checkDatabaseGlobalVariablesDontSet);
 			this.tabAdvanced.Controls.Add(this.checkEnterpriseCommlogOmitDefaults);
 			this.tabAdvanced.Controls.Add(this.checkEnableEmailAddressAutoComplete);
 			this.tabAdvanced.Controls.Add(this.checkUpdateAlterLargeTablesDirectly);
@@ -466,18 +476,9 @@ namespace OpenDental {
 			this.tabAdvanced.Location = new System.Drawing.Point(2, 21);
 			this.tabAdvanced.Name = "tabAdvanced";
 			this.tabAdvanced.Padding = new System.Windows.Forms.Padding(3);
-			this.tabAdvanced.Size = new System.Drawing.Size(498, 625);
+			this.tabAdvanced.Size = new System.Drawing.Size(498, 613);
 			this.tabAdvanced.TabIndex = 4;
 			this.tabAdvanced.Text = "Advanced";
-			// 
-			// checkDisableSettingDatabaseGlobalVariables
-			// 
-			this.checkDatabaseGlobalVariablesDontSet.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkDatabaseGlobalVariablesDontSet.Location = new System.Drawing.Point(12, 605);
-			this.checkDatabaseGlobalVariablesDontSet.Name = "checkDisableSettingDatabaseGlobalVariables";
-			this.checkDatabaseGlobalVariablesDontSet.Size = new System.Drawing.Size(461, 17);
-			this.checkDatabaseGlobalVariablesDontSet.TabIndex = 293;
-			this.checkDatabaseGlobalVariablesDontSet.Text = "Disable setting SQL global variables (Used for hosted databases)";
 			// 
 			// checkEnterpriseCommlogOmitDefaults
 			// 
@@ -521,7 +522,7 @@ namespace OpenDental {
 			this.groupPatientSelect.Controls.Add(this.textPatSelectPauseMs);
 			this.groupPatientSelect.Controls.Add(this.labelPatSelectMinChars);
 			this.groupPatientSelect.Controls.Add(this.textPatSelectMinChars);
-			this.groupPatientSelect.Location = new System.Drawing.Point(6, 372);
+			this.groupPatientSelect.Location = new System.Drawing.Point(6, 370);
 			this.groupPatientSelect.Name = "groupPatientSelect";
 			this.groupPatientSelect.Size = new System.Drawing.Size(482, 191);
 			this.groupPatientSelect.TabIndex = 289;
@@ -529,16 +530,17 @@ namespace OpenDental {
 			// 
 			// checkEnterpriseAllowRefresh
 			// 
-			this.checkEnterpriseAllowRefresh.Location = new System.Drawing.Point(6, 170);
+			this.checkEnterpriseAllowRefresh.Location = new System.Drawing.Point(6, 166);
 			this.checkEnterpriseAllowRefresh.Name = "checkEnterpriseAllowRefresh";
 			this.checkEnterpriseAllowRefresh.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.checkEnterpriseAllowRefresh.Size = new System.Drawing.Size(461, 18);
 			this.checkEnterpriseAllowRefresh.TabIndex = 292;
 			this.checkEnterpriseAllowRefresh.Text = "Allow Refresh While Typing in Select Patient Window";
+			this.checkEnterpriseAllowRefresh.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(364, 146);
+			this.label2.Location = new System.Drawing.Point(364, 142);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(62, 18);
 			this.label2.TabIndex = 294;
@@ -548,7 +550,7 @@ namespace OpenDental {
 			// textPhoneNumDigits
 			// 
 			this.textPhoneNumDigits.Enabled = false;
-			this.textPhoneNumDigits.Location = new System.Drawing.Point(426, 145);
+			this.textPhoneNumDigits.Location = new System.Drawing.Point(426, 141);
 			this.textPhoneNumDigits.MaxVal = 25;
 			this.textPhoneNumDigits.MinVal = 1;
 			this.textPhoneNumDigits.Name = "textPhoneNumDigits";
@@ -558,18 +560,19 @@ namespace OpenDental {
 			// 
 			// checkMatchExactPhoneNum
 			// 
-			this.checkMatchExactPhoneNum.Location = new System.Drawing.Point(6, 150);
+			this.checkMatchExactPhoneNum.Location = new System.Drawing.Point(6, 142);
 			this.checkMatchExactPhoneNum.Name = "checkMatchExactPhoneNum";
 			this.checkMatchExactPhoneNum.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.checkMatchExactPhoneNum.Size = new System.Drawing.Size(353, 18);
 			this.checkMatchExactPhoneNum.TabIndex = 292;
 			this.checkMatchExactPhoneNum.Text = "Only match patients by exact phone number";
 			this.checkMatchExactPhoneNum.CheckedChanged += new System.EventHandler(this.checkExactMatchPhoneNum_CheckedChanged);
+			this.checkMatchExactPhoneNum.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkPatientSelectFilterRestrictedClinics
 			// 
 			this.checkPatientSelectFilterRestrictedClinics.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkPatientSelectFilterRestrictedClinics.Location = new System.Drawing.Point(6, 125);
+			this.checkPatientSelectFilterRestrictedClinics.Location = new System.Drawing.Point(6, 121);
 			this.checkPatientSelectFilterRestrictedClinics.Name = "checkPatientSelectFilterRestrictedClinics";
 			this.checkPatientSelectFilterRestrictedClinics.Size = new System.Drawing.Size(461, 18);
 			this.checkPatientSelectFilterRestrictedClinics.TabIndex = 290;
@@ -577,7 +580,7 @@ namespace OpenDental {
 			// 
 			// butSyncPhNums
 			// 
-			this.butSyncPhNums.Location = new System.Drawing.Point(418, 100);
+			this.butSyncPhNums.Location = new System.Drawing.Point(418, 95);
 			this.butSyncPhNums.Name = "butSyncPhNums";
 			this.butSyncPhNums.Size = new System.Drawing.Size(49, 21);
 			this.butSyncPhNums.TabIndex = 292;
@@ -587,7 +590,8 @@ namespace OpenDental {
 			// checkUsePhoneNumTable
 			// 
 			this.checkUsePhoneNumTable.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkUsePhoneNumTable.Location = new System.Drawing.Point(6, 102);
+			this.checkUsePhoneNumTable.Checked = false;
+			this.checkUsePhoneNumTable.Location = new System.Drawing.Point(6, 97);
 			this.checkUsePhoneNumTable.Name = "checkUsePhoneNumTable";
 			this.checkUsePhoneNumTable.Size = new System.Drawing.Size(406, 17);
 			this.checkUsePhoneNumTable.TabIndex = 291;
@@ -598,7 +602,7 @@ namespace OpenDental {
 			this.checkPatSearchEmptyParams.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkPatSearchEmptyParams.Checked = true;
 			this.checkPatSearchEmptyParams.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-			this.checkPatSearchEmptyParams.Location = new System.Drawing.Point(6, 79);
+			this.checkPatSearchEmptyParams.Location = new System.Drawing.Point(6, 74);
 			this.checkPatSearchEmptyParams.Name = "checkPatSearchEmptyParams";
 			this.checkPatSearchEmptyParams.Size = new System.Drawing.Size(461, 17);
 			this.checkPatSearchEmptyParams.TabIndex = 290;
@@ -606,17 +610,17 @@ namespace OpenDental {
 			// 
 			// labelPatSelectPauseMs
 			// 
-			this.labelPatSelectPauseMs.Location = new System.Drawing.Point(6, 47);
+			this.labelPatSelectPauseMs.Location = new System.Drawing.Point(6, 44);
 			this.labelPatSelectPauseMs.Name = "labelPatSelectPauseMs";
-			this.labelPatSelectPauseMs.Size = new System.Drawing.Size(420, 31);
+			this.labelPatSelectPauseMs.Size = new System.Drawing.Size(420, 26);
 			this.labelPatSelectPauseMs.TabIndex = 281;
-			this.labelPatSelectPauseMs.Text = "The number of milliseconds to wait after a character is entered \r\nbefore filling " +
-    "the grid, 1 to 10000 milliseconds, try starting with 1500";
+			this.labelPatSelectPauseMs.Text = "The number of milliseconds to wait after a character is entered before filling th" +
+    "e grid\r\n1 to 10000 milliseconds, try starting with 1500";
 			this.labelPatSelectPauseMs.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textPatSelectPauseMs
 			// 
-			this.textPatSelectPauseMs.Location = new System.Drawing.Point(427, 50);
+			this.textPatSelectPauseMs.Location = new System.Drawing.Point(427, 47);
 			this.textPatSelectPauseMs.MaxVal = 10000;
 			this.textPatSelectPauseMs.MinVal = 1;
 			this.textPatSelectPauseMs.Name = "textPatSelectPauseMs";
@@ -628,10 +632,10 @@ namespace OpenDental {
 			// 
 			this.labelPatSelectMinChars.Location = new System.Drawing.Point(6, 14);
 			this.labelPatSelectMinChars.Name = "labelPatSelectMinChars";
-			this.labelPatSelectMinChars.Size = new System.Drawing.Size(420, 31);
+			this.labelPatSelectMinChars.Size = new System.Drawing.Size(420, 26);
 			this.labelPatSelectMinChars.TabIndex = 279;
-			this.labelPatSelectMinChars.Text = "The number of characters entered into the search fields \r\nbefore filling the grid" +
-    ", 1 to 10 characters, try starting with 3";
+			this.labelPatSelectMinChars.Text = "The number of characters entered into the search fields before filling the grid\r\n" +
+    "1 to 10 characters, try starting with 3";
 			this.labelPatSelectMinChars.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textPatSelectMinChars
@@ -657,7 +661,7 @@ namespace OpenDental {
 			// 
 			this.label3.Location = new System.Drawing.Point(6, 341);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(392, 29);
+			this.label3.Size = new System.Drawing.Size(392, 25);
 			this.label3.TabIndex = 282;
 			this.label3.Text = "Process signal interval in seconds. Usually every 6 to 20 seconds\r\nLeave blank to" +
     " disable autorefresh";
@@ -714,9 +718,9 @@ namespace OpenDental {
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(182, 87);
+			this.label10.Location = new System.Drawing.Point(198, 87);
 			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(261, 18);
+			this.label10.Size = new System.Drawing.Size(245, 18);
 			this.label10.TabIndex = 287;
 			this.label10.Text = "Automatic logoff time in minutes (0 to disable)";
 			this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -745,7 +749,7 @@ namespace OpenDental {
 			// 
 			this.label12.Location = new System.Drawing.Point(6, 312);
 			this.label12.Name = "label12";
-			this.label12.Size = new System.Drawing.Size(392, 29);
+			this.label12.Size = new System.Drawing.Size(392, 25);
 			this.label12.TabIndex = 284;
 			this.label12.Text = "Disable signal interval after this many minutes of user inactivity\r\nLeave blank t" +
     "o disable";
@@ -867,7 +871,7 @@ namespace OpenDental {
 			this.tabAppts.Location = new System.Drawing.Point(2, 21);
 			this.tabAppts.Name = "tabAppts";
 			this.tabAppts.Padding = new System.Windows.Forms.Padding(3);
-			this.tabAppts.Size = new System.Drawing.Size(498, 625);
+			this.tabAppts.Size = new System.Drawing.Size(498, 613);
 			this.tabAppts.TabIndex = 0;
 			this.tabAppts.Text = "Appts";
 			// 
@@ -928,7 +932,7 @@ namespace OpenDental {
 			this.tabFamily.Location = new System.Drawing.Point(2, 21);
 			this.tabFamily.Name = "tabFamily";
 			this.tabFamily.Padding = new System.Windows.Forms.Padding(3);
-			this.tabFamily.Size = new System.Drawing.Size(498, 625);
+			this.tabFamily.Size = new System.Drawing.Size(498, 613);
 			this.tabFamily.TabIndex = 1;
 			this.tabFamily.Text = "Family";
 			// 
@@ -1032,7 +1036,7 @@ namespace OpenDental {
 			this.tabReport.Location = new System.Drawing.Point(2, 21);
 			this.tabReport.Name = "tabReport";
 			this.tabReport.Padding = new System.Windows.Forms.Padding(3);
-			this.tabReport.Size = new System.Drawing.Size(498, 625);
+			this.tabReport.Size = new System.Drawing.Size(498, 613);
 			this.tabReport.TabIndex = 7;
 			this.tabReport.Text = "Reports";
 			// 
@@ -1195,7 +1199,7 @@ namespace OpenDental {
 			this.tabManage.Location = new System.Drawing.Point(2, 21);
 			this.tabManage.Name = "tabManage";
 			this.tabManage.Padding = new System.Windows.Forms.Padding(3);
-			this.tabManage.Size = new System.Drawing.Size(498, 625);
+			this.tabManage.Size = new System.Drawing.Size(498, 613);
 			this.tabManage.TabIndex = 8;
 			this.tabManage.Text = "Manage";
 			// 
@@ -1235,21 +1239,23 @@ namespace OpenDental {
 			this.checkEra835sShowStatusAndClinic.TabIndex = 274;
 			this.checkEra835sShowStatusAndClinic.Text = "ERA 835s window show status and clinic information";
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(433, 664);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(349, 652);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// FormEnterpriseSetup
 			// 
-			this.ClientSize = new System.Drawing.Size(514, 696);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(514, 684);
 			this.Controls.Add(this.tabControlMain);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEnterpriseSetup";
 			this.Text = "Enterprise Setup";
@@ -1281,7 +1287,8 @@ namespace OpenDental {
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.CheckBox checkAgingShowPayplanPayments;
 		private System.Windows.Forms.Label labelAgingServiceTimeDue;
 		private ValidDate validDateAgingServiceTimeDue;
@@ -1389,6 +1396,5 @@ namespace OpenDental {
 		private OpenDental.UI.CheckBox checkEnterpriseCommlogOmitDefaults;
 		private OpenDental.UI.CheckBox checkHygProcUsePriProvFee;
 		private OpenDental.UI.CheckBox checkRefresh;
-		private UI.CheckBox checkDatabaseGlobalVariablesDontSet;
 	}
 }

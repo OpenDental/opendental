@@ -61,12 +61,12 @@ namespace OpenDentBusiness{
 			//so parameters will also be in the field list, but they will just be ignored from here on out.
 			//because we will have an explicit parameter list instead.
 			sheet.Parameters=new List<SheetParameter>();
-			SheetParameter sheetParameter;
+			SheetParameter param;
 			//int paramVal;
 			for(int i=0;i<sheet.SheetFields.Count;i++){
 				if(sheet.SheetFields[i].FieldType==SheetFieldType.Parameter){
-					sheetParameter=new SheetParameter(true,sheet.SheetFields[i].FieldName,sheet.SheetFields[i].FieldValue);
-					sheet.Parameters.Add(sheetParameter);
+					param=new SheetParameter(true,sheet.SheetFields[i].FieldName,sheet.SheetFields[i].FieldValue);
+					sheet.Parameters.Add(param);
 				}
 			}
 		}
@@ -114,32 +114,30 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Deletes all existing drawing fields for a sheet from the database and then adds back the list supplied.</summary>
-		public static void SetDrawings(List<SheetField> listSheetFields,long sheetNum) {
+		public static void SetDrawings(List<SheetField> drawingList,long sheetNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listSheetFields,sheetNum);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),drawingList,sheetNum);
 				return;
 			}
 			string command="DELETE FROM sheetfield WHERE SheetNum="+POut.Long(sheetNum)
 				+" AND FieldType="+POut.Long((int)SheetFieldType.Drawing);
 			Db.NonQ(command);
-			for(int i=0;i<listSheetFields.Count;i++) {
-				Insert(listSheetFields[i]);
+			foreach(SheetField field in drawingList){
+				Insert(field);
 			}
 		}
 
 		///<summary>Sorts fields in the order that they shoudl be drawn on top of eachother. First Images, then Drawings, Lines, Rectangles, Text, Check Boxes, and SigBoxes. In that order.</summary>
-		public static int SortDrawingOrderLayers(SheetField sheetField1,SheetField sheetField2) {
-			//No need to check MiddleTierRole; no call to db.
-			if(FieldTypeSortOrder(sheetField1.FieldType)!=FieldTypeSortOrder(sheetField2.FieldType)) {
-				return FieldTypeSortOrder(sheetField1.FieldType).CompareTo(FieldTypeSortOrder(sheetField2.FieldType));
+		public static int SortDrawingOrderLayers(SheetField f1,SheetField f2) {
+			if(FieldTypeSortOrder(f1.FieldType)!=FieldTypeSortOrder(f2.FieldType)) {
+				return FieldTypeSortOrder(f1.FieldType).CompareTo(FieldTypeSortOrder(f2.FieldType));
 			}
-			return sheetField1.YPos.CompareTo(sheetField2.YPos);
+			return f1.YPos.CompareTo(f2.YPos);
 			//return f1.SheetFieldNum.CompareTo(f2.SheetFieldNum);
 		}
 
 		///<summary></summary>
 		public static DateTime GetBirthDate(string strDate,bool isWebForm,bool isCemtTransfer,string cultureName="") {
-			//No need to check MiddleTierRole; no call to db.
 			DateTime dateTime;
 			//Parse the birthdate field using our websheet_preference for this practice if this sheet was a WebForm, otherwise, use the current 
 			//computer's region/language settings.
@@ -153,9 +151,8 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Re-orders the SheetFieldType enum to a drawing order. Images should be drawn first, then drawings, then lines, then rectangles, etc...</summary>
-		internal static int FieldTypeSortOrder(SheetFieldType sheetFieldType) {
-			//No need to check MiddleTierRole; no call to db.
-			switch(sheetFieldType) {
+		internal static int FieldTypeSortOrder(SheetFieldType t) {
+			switch(t) {
 				case SheetFieldType.Image:
 				case SheetFieldType.PatImage:
 					return 0;
@@ -183,9 +180,8 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Sorts the sheet fields by SheetFieldNum.  This is used when creating a signature key and is absolutely critical that it not change.</summary>
-		public static int SortPrimaryKey(SheetField sheetField1,SheetField sheetField2) {
-			//No need to check MiddleTierRole; no call to db.
-			return sheetField1.SheetFieldNum.CompareTo(sheetField2.SheetFieldNum);
+		public static int SortPrimaryKey(SheetField f1,SheetField f2) {
+			return f1.SheetFieldNum.CompareTo(f2.SheetFieldNum);
 		}
 
 		///<summary>SigBoxes must be synced after all other fields have been synced for the keyData to be in the right order.
@@ -199,24 +195,25 @@ namespace OpenDentBusiness{
 			}
 			List<SheetField> listSheetFieldsDB=SheetFields.GetListForSheet(sheetNum);
 			if(!isSigBoxOnly) {
-				List<SheetField> listSheetFieldsNoSigNew=listSheetFieldsNew.FindAll(x => x.FieldType!=SheetFieldType.Parameter 
+				List<SheetField> listNoSigNew=listSheetFieldsNew.FindAll(x => x.FieldType!=SheetFieldType.Parameter 
 					&& !x.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice));
-				List<SheetField> listSheetFieldsNoSigDB=listSheetFieldsDB.FindAll(x => x.FieldType!=SheetFieldType.Parameter 
+				List<SheetField> listNoSigDB=listSheetFieldsDB.FindAll(x => x.FieldType!=SheetFieldType.Parameter 
 					&& !x.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice));
-				Crud.SheetFieldCrud.Sync(listSheetFieldsNoSigNew,listSheetFieldsNoSigDB);
-				return;
+				Crud.SheetFieldCrud.Sync(listNoSigNew,listNoSigDB);
 			}
-			//SigBoxes must come after ALL other types in order for the keyData to be in the right order.
-			List<SheetField> listSheetFieldsSigOnlyNew=listSheetFieldsNew.FindAll(x => x.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice));
-			List<SheetField> listSheetFieldsSigOnlyDB=listSheetFieldsDB.FindAll(x => x.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice));
-			Crud.SheetFieldCrud.Sync(listSheetFieldsSigOnlyNew,listSheetFieldsSigOnlyDB);
+			else {
+				//SigBoxes must come after ALL other types in order for the keyData to be in the right order.
+				List<SheetField> listSigOnlyNew=listSheetFieldsNew.FindAll(x => x.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice));
+				List<SheetField> listSigOnlyDB=listSheetFieldsDB.FindAll(x => x.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice));
+				Crud.SheetFieldCrud.Sync(listSigOnlyNew,listSigOnlyDB);
+			}
 		}
 
 		public static string GetComboSelectedOption(SheetField sheetField){
 			//No need to check MiddleTierRole; no call to db.
-			List<string> listOptions=sheetField.FieldValue.Split(';').ToList();
-			if(listOptions.Count>1) {
-				string str=listOptions[0];//empty string when nothing selected
+			string[] stringArray=sheetField.FieldValue.Split(';');
+			if(stringArray.Length>1) {
+				string str=stringArray[0];//empty string when nothing selected
 				return str;
 			}
 			//Incorrect format.
@@ -226,15 +223,15 @@ namespace OpenDentBusiness{
 		public static List<string> GetComboMenuItems(SheetField sheetField){
 			//No need to check MiddleTierRole; no call to db.
 			List<string> listStringsReturn=new List<string>();
-			List<string> listOptions=sheetField.FieldValue.Split(';').ToList();
-			if(listOptions.Count>1) {
-				listStringsReturn=listOptions[1].Split('|').ToList();
+			string[] stringArray=sheetField.FieldValue.Split(';');
+			if(stringArray.Length>1) {
+				listStringsReturn=stringArray[1].Split('|').ToList();
 			}
 			else{//Incorrect format.
 				//Default to empty string when 'values' is in format 'A|B|C', indicating only combobox options, 
 				//rather than 'C;A|B|C' which indicates selection as well as options.
 				//Upon Ok click this will correct the fieldvalue format.
-				listStringsReturn=listOptions[0].Split('|').ToList();//Will be an empty string if no '|' is present.
+				listStringsReturn=stringArray[0].Split('|').ToList();//Will be an empty string if no '|' is present.
 			}
 			for(int i=0;i<listStringsReturn.Count;i++) {
 				//'&' is a special character in System.Windows.Forms.ContextMenu. We need to escapte all ampersands so that they are displayed correctly in the fill sheet window.
@@ -248,17 +245,15 @@ namespace OpenDentBusiness{
 		}
 
 		public static void SetComboFieldValue(SheetField sheetField,string selectedOption){
-			//No need to check MiddleTierRole; no call to db.
 			string stringAll="";
-			List<string> listOptions=sheetField.FieldValue.Split(';').ToList();
-			if(listOptions.Count>1) {
-				stringAll=listOptions[1];
+			string[] stringArray=sheetField.FieldValue.Split(';');
+			if(stringArray.Length>1) {
+				stringAll=stringArray[1];
 			}
 			else{//Incorrect format.
-				stringAll=listOptions[0];
+				stringAll=stringArray[0];
 			}
-			//If there are any double && signs, we need to set them back to single & symbols so that they display correctly after a user makes a selection
-			string fieldVal=selectedOption.Replace("&&","&")+";"+stringAll;
+			string fieldVal= selectedOption+";"+stringAll;
 			sheetField.FieldValue=fieldVal;
 		}
 	}

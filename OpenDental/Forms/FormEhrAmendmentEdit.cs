@@ -94,7 +94,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;//Causes grid to refresh in case this amendment is not new.
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			try {
 				if(textDateReq.Text!="") {
 					DateTime.Parse(textDateReq.Text);
@@ -168,6 +168,10 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormEhrAmendmentEdit_Closing(object sender,FormClosingEventArgs e) {
 			if(DialogResult==DialogResult.OK) {
 				return;
@@ -177,6 +181,7 @@ namespace OpenDental {
 				ImageStore.CleanAmdAttach(_ehrAmendment.FileName);
 			}
 		}
+
 
 	}
 }

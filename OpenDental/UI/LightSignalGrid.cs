@@ -276,7 +276,7 @@ namespace OpenDental.UI {
 		protected override void OnMouseDown(System.Windows.Forms.MouseEventArgs e) {
 			base.OnMouseDown(e);
 			if((e.Button & MouseButtons.Left)!=MouseButtons.Left) {
-				if(e.Button==MouseButtons.Right && PrefC.IsODHQ && Security.IsAuthorized(EnumPermType.Setup,true)) {
+				if(e.Button==MouseButtons.Right && PrefC.IsODHQ && Security.IsAuthorized(Permissions.Setup,true)) {
 					_mouseCoords=new Point(e.X,e.Y);
 					contextMenuConfKick.Show(this,_mouseCoords);
 				}

@@ -40,6 +40,7 @@ namespace OpenDental{
 			this.butSearch = new OpenDental.UI.Button();
 			this.butExport = new OpenDental.UI.Button();
 			this.butSelectAll = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// comboProv
@@ -194,6 +195,16 @@ namespace OpenDental{
 			this.butSelectAll.Text = "Select All";
 			this.butSelectAll.Click += new System.EventHandler(this.butSelectAll_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(531, 462);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormEhrPatientExport
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -213,6 +224,7 @@ namespace OpenDental{
 			this.Controls.Add(this.comboSite);
 			this.Controls.Add(this.labelClinic);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.comboProv);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrPatientExport";
@@ -224,6 +236,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.ComboBox comboProv;
 		private System.Windows.Forms.Label label4;

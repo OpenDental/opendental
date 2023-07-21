@@ -125,11 +125,14 @@ namespace OpenDental {
 			FillGrid(orthoHardwareSpecSelected.ItemOrder);
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 		private void FormOrthoHardwareSpecs_FormClosing(object sender,FormClosingEventArgs e) {
 			if(_isChanged){
 				DataValid.SetInvalid(InvalidType.OrthoChartTabs);
 			}
 		}
-
 	}
 }

@@ -69,18 +69,18 @@ namespace OpenDental {
 				}
 			}
 			if(string.IsNullOrWhiteSpace(clientName) || TerminalActives.IsCompClientNameInUse(ODEnvironment.MachineName,clientName)) {
-				InputBox inputBox=new InputBox("Please enter a unique name to identify this kiosk.");
-				inputBox.SetTitle(Lan.g(this,"Kiosk Session Name"));
+				using InputBox inputBox=new InputBox("Please enter a unique name to identify this kiosk.");
+				inputBox.setTitle(Lan.g(this,"Kiosk Session Name"));
 				inputBox.ShowDialog();
-				while(inputBox.IsDialogOK && TerminalActives.IsCompClientNameInUse(ODEnvironment.MachineName,inputBox.StringResult)) {
+				while(inputBox.DialogResult==DialogResult.OK && TerminalActives.IsCompClientNameInUse(ODEnvironment.MachineName,inputBox.textResult.Text)) {
 					MsgBox.Show(this,"The name entered is invalid or already in use.");
 					inputBox.ShowDialog();
 				}
-				if(inputBox.IsDialogCancel) {
+				if(inputBox.DialogResult!=DialogResult.OK) {
 					DialogResult=DialogResult.Cancel;
 					return;//not allowed to enter kiosk mode unless a unique human-readable name is entered for this computer session
 				}
-				clientName=inputBox.StringResult;
+				clientName=inputBox.textResult.Text;
 			}
 			//if we get here, we have a SessionId (which could be 0 if not in a remote session) and a unique client name for this kiosk
 			TerminalActive terminalActive=new TerminalActive();
@@ -217,8 +217,7 @@ namespace OpenDental {
 			long sheetNum=_listSheets?.FirstOrDefault()?.SheetNum??0;//defaults to 0, if 0 no sheet will display
 			while(patNum==PatNum && sheetNum>0) {//if patient is changed or no more sheets to display, break out of loop
 				Sheet sheet=Sheets.GetSheet(sheetNum);//we want the very freshest copy of the sheet, so we go straight to the database for it
-				_formSheetFillEdit=new FormSheetFillEdit();
-				_formSheetFillEdit.SheetCur=sheet;
+				_formSheetFillEdit=new FormSheetFillEdit(sheet);
 				_formSheetFillEdit.IsInTerminal=true;
 				_formSheetFillEdit.ShowDialog();
 				if(_formSheetFillEdit.DialogResult!=DialogResult.OK) {
@@ -237,8 +236,7 @@ namespace OpenDental {
 				return;
 			}
 			Sheet sheet=Sheets.GetSheet(_listSheets[listForms.SelectedIndex].SheetNum);
-			_formSheetFillEdit=new FormSheetFillEdit();
-			_formSheetFillEdit.SheetCur=sheet;
+			_formSheetFillEdit=new FormSheetFillEdit(sheet);
 			_formSheetFillEdit.IsInTerminal=true;
 			_formSheetFillEdit.ShowDialog();
 			_formSheetFillEdit?.Dispose();
@@ -293,16 +291,13 @@ namespace OpenDental {
 				if(count>0) {//we already passed through once, so the entered password must have been invalid. 
 					MsgBox.Show(this,"Invalid Password");
 				}
-				InputBoxParam inputBoxParam=new InputBoxParam();
-				inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-				inputBoxParam.LabelText="Enter password to exit kiosk.";
-				inputBoxParam.IsPassswordCharStar=true;
-				InputBox inputBox=new InputBox(inputBoxParam);
-				inputBox.SetTitle(Lan.g(this,"Kiosk Password"));
+				using InputBox inputBox=new InputBox("Enter password to exit kiosk.");
+				inputBox.textResult.PasswordChar='*';
+				inputBox.setTitle(Lan.g(this,"Kiosk Password"));
 				inputBox.ShowDialog();
-				resultText=inputBox.StringResult;
+				resultText=inputBox.textResult.Text;
 				count++;
-				if(inputBox.IsDialogCancel) {
+				if(inputBox.DialogResult==DialogResult.Cancel) {
 					return;
 				}
 			}

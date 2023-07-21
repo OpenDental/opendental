@@ -104,11 +104,43 @@ namespace OpenDental {
 			_isChanged=true;
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 		private void FormMounts_FormClosing(object sender,FormClosingEventArgs e) {
 			if(_isChanged) {
 				DataValid.SetInvalid(InvalidType.ToolButsAndMounts);
 			}
 		}
 
+		
+
+		
+
+
+
+		
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

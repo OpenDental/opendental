@@ -27,7 +27,7 @@ namespace OpenDental{
 			this.gridProbExisting = new OpenDental.UI.GridOD();
 			this.gridProbImport = new OpenDental.UI.GridOD();
 			this.butRemoveRec = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.butAddNew = new OpenDental.UI.Button();
 			this.butAddExist = new OpenDental.UI.Button();
 			this.gridProbReconcile = new OpenDental.UI.GridOD();
@@ -70,15 +70,15 @@ namespace OpenDental{
 			this.butRemoveRec.Text = "Remove Selected";
 			this.butRemoveRec.Click += new System.EventHandler(this.butRemoveRec_Click);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(902, 640);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 81;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(821, 640);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 81;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butAddNew
 			// 
@@ -118,14 +118,24 @@ namespace OpenDental{
 			this.gridProbReconcile.Title = "Reconciled Problem";
 			this.gridProbReconcile.TranslationName = "gridProbReconcile";
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(902, 640);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// labelBatch
 			// 
 			this.labelBatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelBatch.Location = new System.Drawing.Point(157, 640);
+			this.labelBatch.Location = new System.Drawing.Point(76, 640);
 			this.labelBatch.Name = "labelBatch";
 			this.labelBatch.Size = new System.Drawing.Size(739, 24);
 			this.labelBatch.TabIndex = 153;
-			this.labelBatch.Text = "Clicking Save updates the patient\'s problems to match the reconciled list.";
+			this.labelBatch.Text = "Clicking OK updates the patient\'s problems to match the reconciled list.";
 			this.labelBatch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// FormReconcileProblem
@@ -136,7 +146,7 @@ namespace OpenDental{
 			this.Controls.Add(this.gridProbExisting);
 			this.Controls.Add(this.gridProbImport);
 			this.Controls.Add(this.butRemoveRec);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.butAddNew);
 			this.Controls.Add(this.butAddExist);
 			this.Controls.Add(this.gridProbReconcile);
@@ -158,7 +168,7 @@ namespace OpenDental{
 		private UI.GridOD gridProbExisting;
 		private UI.Button butAddExist;
 		private UI.Button butAddNew;
-		private UI.Button butSave;
+		private UI.Button butOK;
 		private UI.Button butRemoveRec;
 		private System.Windows.Forms.Label labelBatch;
 	}

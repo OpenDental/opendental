@@ -15,36 +15,36 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<Contact>>(MethodBase.GetCurrentMethod(),category);
 			}
-			string command="SELECT * from contact WHERE category = '"+POut.Long(category)+"'"
+			string command="SELECT * from contact WHERE category = '"+category+"'"
 				+" ORDER BY LName";
 			return Crud.ContactCrud.SelectMany(command);
 		}
 
 		///<summary></summary>
-		public static long Insert(Contact contact) {
+		public static long Insert(Contact Cur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				contact.ContactNum=Meth.GetLong(MethodBase.GetCurrentMethod(),contact);
-				return contact.ContactNum;
+				Cur.ContactNum=Meth.GetLong(MethodBase.GetCurrentMethod(),Cur);
+				return Cur.ContactNum;
 			}
-			return Crud.ContactCrud.Insert(contact);
+			return Crud.ContactCrud.Insert(Cur);
 		}
 
 		///<summary></summary>
-		public static void Update(Contact contact){
+		public static void Update(Contact Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),contact);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),Cur);
 				return;
 			}
-			Crud.ContactCrud.Update(contact);
+			Crud.ContactCrud.Update(Cur);
 		}
 
 		///<summary></summary>
-		public static void Delete(Contact contact){
+		public static void Delete(Contact Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),contact);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),Cur);
 				return;
 			}
-			string command = "DELETE FROM contact WHERE contactnum = '"+POut.String(contact.ContactNum.ToString())+"'";
+			string command = "DELETE FROM contact WHERE contactnum = '"+Cur.ContactNum.ToString()+"'";
 			Db.NonQ(command);
 		}
 	}

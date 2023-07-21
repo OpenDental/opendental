@@ -30,6 +30,7 @@ namespace OpenDental{
 			this.textDateEnd = new OpenDental.ValidDate();
 			this.textDateStart = new OpenDental.ValidDate();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butNowStart = new OpenDental.UI.Button();
 			this.butNowEnd = new OpenDental.UI.Button();
 			this.SuspendLayout();
@@ -78,12 +79,22 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(224, 160);
+			this.butOK.Location = new System.Drawing.Point(125, 168);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(206, 168);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butNowStart
 			// 
@@ -105,7 +116,7 @@ namespace OpenDental{
 			// 
 			// FormChartViewDateFilter
 			// 
-			this.ClientSize = new System.Drawing.Size(317, 196);
+			this.ClientSize = new System.Drawing.Size(299, 206);
 			this.Controls.Add(this.butNowEnd);
 			this.Controls.Add(this.butNowStart);
 			this.Controls.Add(this.listPresetDateRanges);
@@ -114,6 +125,7 @@ namespace OpenDental{
 			this.Controls.Add(this.textDateEnd);
 			this.Controls.Add(this.textDateStart);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.HasHelpButton = false;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormChartViewDateFilter";
@@ -127,6 +139,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private ValidDate textDateStart;
 		private ValidDate textDateEnd;
 		private System.Windows.Forms.Label label1;

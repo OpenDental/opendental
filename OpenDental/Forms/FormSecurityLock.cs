@@ -59,7 +59,7 @@ namespace OpenDental{
 			return stringBuilder.ToString();
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textDate.IsValid()) {
 				MsgBox.Show(this,"Please fix error first.");
 				return;
@@ -95,10 +95,38 @@ namespace OpenDental{
 			{
 				DataValid.SetInvalid(InvalidType.Prefs);
 				string log=CreateSecurityLog(textDateOld,textDaysOld,days,includesAdminOld);
-				SecurityLogs.MakeLogEntry(EnumPermType.SecurityGlobal,0,log.ToString());
+				SecurityLogs.MakeLogEntry(Permissions.SecurityGlobal,0,log.ToString());
 			}
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

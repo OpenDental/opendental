@@ -28,7 +28,8 @@ namespace OpenDental {
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.textFileName = new System.Windows.Forms.TextBox();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.textQuery = new OpenDental.ODtextBox();
 			this.checkReleased = new OpenDental.UI.CheckBox();
 			this.checkIsPromptSetup = new OpenDental.UI.CheckBox();
@@ -77,15 +78,26 @@ namespace OpenDental {
 			this.textFileName.Size = new System.Drawing.Size(326, 20);
 			this.textFileName.TabIndex = 2;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(594, 631);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(509, 633);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(594, 633);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 4;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// textQuery
 			// 
@@ -98,7 +110,7 @@ namespace OpenDental {
 			this.textQuery.DetectUrls = false;
 			this.textQuery.Location = new System.Drawing.Point(16, 82);
 			this.textQuery.Name = "textQuery";
-			this.textQuery.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Query;
+			this.textQuery.QuickPasteType = OpenDentBusiness.QuickPasteType.Query;
 			this.textQuery.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textQuery.Size = new System.Drawing.Size(653, 536);
 			this.textQuery.SpellCheckIsEnabled = false;
@@ -123,9 +135,11 @@ namespace OpenDental {
 			// 
 			// FormQueryEdit
 			// 
-			this.AcceptButton = this.butSave;
+			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(682, 670);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.checkIsPromptSetup);
 			this.Controls.Add(this.checkReleased);
 			this.Controls.Add(this.textQuery);
@@ -152,7 +166,8 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textTitle;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox textFileName;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.ODtextBox textQuery;// Required designer variable.
 		private OpenDental.UI.CheckBox checkReleased;
 		private OpenDental.UI.CheckBox checkIsPromptSetup;

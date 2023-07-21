@@ -23,12 +23,12 @@ namespace OpenDentBusiness{
 		#endregion
 	
 		///<summary></summary>
-		public static long Insert(TaskSubscription taskSubscription){
+		public static long Insert(TaskSubscription subsc){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				taskSubscription.TaskSubscriptionNum=Meth.GetLong(MethodBase.GetCurrentMethod(),taskSubscription);
-				return taskSubscription.TaskSubscriptionNum;
+				subsc.TaskSubscriptionNum=Meth.GetLong(MethodBase.GetCurrentMethod(),subsc);
+				return subsc.TaskSubscriptionNum;
 			}
-			return Crud.TaskSubscriptionCrud.Insert(taskSubscription);
+			return Crud.TaskSubscriptionCrud.Insert(subsc);
 		}
 
 		/*
@@ -43,65 +43,63 @@ namespace OpenDentBusiness{
 
 		///<summary>Attempts to create a subscription to a TaskList with TaskListNum of subscribeToTaskListNum.
 		///The curUserNum must be the currently logged in user.</summary>
-		public static bool TrySubscList(long taskListNum,long userNum) {
+		public static bool TrySubscList(long subscribeToTaskListNum,long curUserNum) {
 			//No remoting role check; no call to db
 			//Get the list of directly subscribed TaskListNums.  This avoids the concurrency issue of the same user logged in via multiple WS and 
 			//subscribing to the same TaskList.  Additionally, this allows the user to directly subscribe to child TaskLists of subscribed parent Tasklists
 			//which was old behavior that was inadvertently removed.
-			List<long> listTaskSubscriptionNumsExisting=GetTaskSubscriptionsForUser(userNum).Select(x => x.TaskListNum).ToList();
-			if(listTaskSubscriptionNumsExisting.Contains(taskListNum)) {
+			List<long> listExistingSubscriptionNums=GetTaskSubscriptionsForUser(curUserNum).Select(x => x.TaskListNum).ToList();
+			if(listExistingSubscriptionNums.Contains(subscribeToTaskListNum)) {
 				return false;//Already subscribed.
 			}
 			//Get all currently subscribed unread Reminder tasks before adding new subscription.
-			List<long> listTaskNumsReminderOld=GetUnreadReminderTasks(userNum).Select(x => x.TaskNum).ToList();
-			TaskSubscription taskSubscription=new TaskSubscription();
-			taskSubscription.IsNew=true;
-			taskSubscription.UserNum=userNum;
-			taskSubscription.TaskListNum=taskListNum;
-			Insert(taskSubscription);
+			List<long> listReminderTaskNumsOld=GetUnreadReminderTasks(curUserNum).Select(x => x.TaskNum).ToList();
+			TaskSubscription subsc=new TaskSubscription();
+			subsc.IsNew=true;
+			subsc.UserNum=curUserNum;
+			subsc.TaskListNum=subscribeToTaskListNum;
+			Insert(subsc);
 			//Get newly subscribed unread Reminder tasks.
-			List<Task> listTasksNewReminder=GetUnreadReminderTasks(userNum).FindAll(x => !listTaskNumsReminderOld.Contains(x.TaskNum));
+			List<Task> listNewReminderTasks=GetUnreadReminderTasks(curUserNum).FindAll(x => !listReminderTaskNumsOld.Contains(x.TaskNum));
 			//Set any past unread Reminder tasks as read.
-			TaskUnreads.SetRead(userNum,listTasksNewReminder.FindAll(x => x.DateTimeEntry<DateTime.Now).ToArray());
+			TaskUnreads.SetRead(curUserNum,listNewReminderTasks.FindAll(x => x.DateTimeEntry<DateTime.Now).ToArray());
 			//Get all future reminders in the newly subscribed Tasklist (and sub Tasklists) that the user was not previously subscribed to.
-			List<Task> listTasksFutureReminders=GetNewReadReminders(listTaskSubscriptionNumsExisting,taskListNum,userNum)
+			List<Task> listFutureReminders=GetNewReadReminders(listExistingSubscriptionNums,subscribeToTaskListNum,curUserNum)
 				.Where(x => x.DateTimeEntry>=DateTime.Now).ToList();
 			//We already know these tasks do not have any TaskUnreads (due to GetNewReadReminders->Tasks.RefreshChildren()), safe to insert TaskUnreads.
-			TaskUnreads.InsertManyForTasks(listTasksFutureReminders,userNum);
+			TaskUnreads.InsertManyForTasks(listFutureReminders,curUserNum);
 			return true;
 		}
 
 		///<summary>Gets all Read Reminders in a TaskList/Task hierarchy that the user was not already subscribed to.</summary>
-		private static List<Task> GetNewReadReminders(List<long> listTaskSubscriptionNumsExisting,long taskListNum,long userNum) {
-			List<Task> listTasksReminders=new List<Task>();
-			if(listTaskSubscriptionNumsExisting.Contains(taskListNum)) {
+		private static List<Task> GetNewReadReminders(List<long> listExistingSubscriptions,long taskListNum,long curUserNum) {
+			List<Task> listReminders=new List<Task>();
+			if(listExistingSubscriptions.Contains(taskListNum)) {
 				//We are only looking for Reminders that we were not already subscribed to.
-				return listTasksReminders;
+				return listReminders;
 			}
 			long userNumInbox=TaskLists.GetMailboxUserNum(taskListNum);//Can be 0, not a user inbox.
-			List<TaskList> listTaskLists=TaskLists.RefreshChildren(taskListNum,userNum,userNumInbox,TaskType.Reminder);
-			for(int i=0;i<listTaskLists.Count;i++) {
-				listTasksReminders.AddRange(GetNewReadReminders(listTaskSubscriptionNumsExisting,listTaskLists[i].TaskListNum,userNum));
+			foreach(TaskList taskList in TaskLists.RefreshChildren(taskListNum,curUserNum,userNumInbox,TaskType.Reminder)) {
+				listReminders.AddRange(GetNewReadReminders(listExistingSubscriptions,taskList.TaskListNum,curUserNum));
 			}
-			listTasksReminders.AddRange(Tasks.RefreshChildren(taskListNum,false,DateTime.MinValue,userNum,userNumInbox,TaskType.Reminder,false
-				).Where(x => !x.IsUnread));//IsUnread field set accurately by Tasks.RefreshChildren(...)
-			return listTasksReminders;
+			listReminders.AddRange(Tasks.RefreshChildren(taskListNum,false,DateTime.MinValue,curUserNum,userNumInbox,TaskType.Reminder,false
+				,GlobalTaskFilterType.None).Where(x => !x.IsUnread));//IsUnread field set accurately by Tasks.RefreshChildren(...)
+			return listReminders;
 		}
 
 		///<summary>Gets all unread Reminder Tasks for curUserNum.  Mimics logic in FormOpenDental.SignalsTick.</summary>
-		private static List<Task> GetUnreadReminderTasks(long userNum) {
+		private static List<Task> GetUnreadReminderTasks(long curUserNum) {
 			//No remoting role check; no call to db
-			List<Task> listTasksReminders=new List<Task>();
+			List<Task> listReminderTasks=new List<Task>();
 			if(!PrefC.GetBool(PrefName.TasksUseRepeating)) {//Using Reminders (Reminders not allowed if using repeating tasks)
-				List<Task> listTasksRefreshed=Tasks.GetNewTasksThisUser(userNum,Clinics.ClinicNum);//Get all tasks pertaining to current user.
-				for(int i=0;i<listTasksRefreshed.Count;i++) {
-					if(!String.IsNullOrEmpty(listTasksRefreshed[i].ReminderGroupId) && listTasksRefreshed[i].ReminderType!=TaskReminderType.NoReminder) {
-						//Task is a Reminder.
-						listTasksReminders.Add(listTasksRefreshed[i]);
+				List<Task> listRefreshedTasks=Tasks.GetNewTasksThisUser(curUserNum,Clinics.ClinicNum);//Get all tasks pertaining to current user.
+				foreach(Task task in listRefreshedTasks) {
+					if(!String.IsNullOrEmpty(task.ReminderGroupId) && task.ReminderType!=TaskReminderType.NoReminder) {//Task is a Reminder.
+						listReminderTasks.Add(task);
 					}
 				}
 			}
-			return listTasksReminders;
+			return listReminderTasks;
 		}
 
 		/// <summary>Returns a list of userNums for users that are subscribed to the task list a passed in task is currently in./// </summary>
@@ -124,18 +122,18 @@ namespace OpenDentBusiness{
 				return;
 			}
 			//Get all future unread reminders
-			List<Task> listTasksFutureUnreadReminders=Tasks.GetNewTasksThisUser(userNum,0)//Use clinicnum=0 to get all tasks, no task clinic filtering.
+			List<Task> listFutureUnreadReminders=Tasks.GetNewTasksThisUser(userNum,0)//Use clinicnum=0 to get all tasks, no task clinic filtering.
 				.Where(x => Tasks.IsReminderTask(x) && x.DateTimeEntry>=DateTime.Now)
 				.ToList();
 			string command="DELETE FROM tasksubscription "
 				+"WHERE UserNum="+POut.Long(userNum)
 				+" AND TaskListNum="+POut.Long(taskListNum);
 			Db.NonQ(command);
-			List<Task> listTasksStillSubscribed=Tasks.GetNewTasksThisUser(userNum,0)//Use clinicnum=0 to get all tasks, no task clinic filtering.
+			List<Task> listStillSubscribed=Tasks.GetNewTasksThisUser(userNum,0)//Use clinicnum=0 to get all tasks, no task clinic filtering.
 				.Where(x => Tasks.IsReminderTask(x) && x.DateTimeEntry>=DateTime.Now).ToList();
-			List<Task> listTasksUnsubForUser=listTasksFutureUnreadReminders.Where(x => !listTasksStillSubscribed.Select(y => y.TaskNum).Contains(x.TaskNum)).ToList();
+			List<Task> listUnSubTasksForUser=listFutureUnreadReminders.Where(x => !listStillSubscribed.Select(y => y.TaskNum).Contains(x.TaskNum)).ToList();
 			//Set unsubbed reminders in the future to be read so reminders wont show in NewForUser tasklist.
-			TaskUnreads.SetRead(userNum,listTasksUnsubForUser.ToArray());
+			TaskUnreads.SetRead(userNum,listUnSubTasksForUser.ToArray());
 		}
 
 		///<summary>Removes all the subscribers from a given tasklist</summary>

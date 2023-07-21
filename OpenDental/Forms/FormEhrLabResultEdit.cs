@@ -47,7 +47,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOk_Click(object sender,EventArgs e) {
 			if(textDateTimeTest.Text=="") {
 				MessageBox.Show("Please input a valid date.");
 				return;
@@ -74,5 +74,14 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void comboAbnormalFlag_SelectedIndexChanged(object sender,EventArgs e) {
+
+		}
+
+		
 	}
 }

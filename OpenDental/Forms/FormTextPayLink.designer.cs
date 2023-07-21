@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTextPayLink));
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.textPreview = new OpenDental.ODtextBox();
 			this.labelFormattedPreview = new System.Windows.Forms.Label();
 			this.checkIncludeInsurance = new OpenDental.UI.CheckBox();
@@ -52,6 +53,17 @@ namespace OpenDental{
 			this.butOK.Text = "Prepare to Send";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(180, 385);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// textPreview
 			// 
 			this.textPreview.AcceptsTab = true;
@@ -63,7 +75,7 @@ namespace OpenDental{
 			this.textPreview.DetectUrls = false;
 			this.textPreview.Location = new System.Drawing.Point(167, 59);
 			this.textPreview.Name = "textPreview";
-			this.textPreview.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.TxtMsg;
+			this.textPreview.QuickPasteType = OpenDentBusiness.QuickPasteType.TxtMsg;
 			this.textPreview.ReadOnly = true;
 			this.textPreview.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textPreview.Size = new System.Drawing.Size(193, 322);
@@ -193,6 +205,7 @@ namespace OpenDental{
 			// 
 			// FormTextPayLink
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(392, 421);
 			this.Controls.Add(this.toolBarMain);
 			this.Controls.Add(this.comboBoxClinicPicker);
@@ -201,6 +214,7 @@ namespace OpenDental{
 			this.Controls.Add(this.labelFormattedPreview);
 			this.Controls.Add(this.textPreview);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormTextPayLink";
 			this.Text = "Payment Link Preview";
@@ -215,6 +229,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private ODtextBox textPreview;
 		private System.Windows.Forms.Label labelFormattedPreview;
 		private OpenDental.UI.CheckBox checkIncludeInsurance;

@@ -7,12 +7,12 @@ namespace UnitTestsCore {
 	public class TreatPlanT {
 
 		///<summary>Creates a TreatPlan (Saved, Active, or Inactive). Also creates TreatPlanAttaches for "Active" and "Inactive" TreatPlanStatus or ProcTPs for "Saved" TreatPlanStatus for each procedures in listProcedures. daysPrevious updates SecDateTEdit. Ex: daysPrevious=7 will be a week ago.</summary>
-		public static TreatPlan CreateTreatPlan(long patNum,string heading="Active Treatment Plan",List<Procedure> listProcedures=null,TreatPlanStatus treatPlanStatus=TreatPlanStatus.Active,int daysPrevious=0,string note=null) {
+		public static TreatPlan CreateTreatPlan(long patNum,string heading="Active Treatment Plan",List<Procedure> listProcedures=null,TreatPlanStatus treatPlanStatus=TreatPlanStatus.Active,int daysPrevious=0) {
 			TreatPlan treatplan=new TreatPlan() {
 				PatNum=patNum,
 				DateTP=DateTime.MinValue,
 				Heading=heading,
-				Note=note??PrefC.GetString(PrefName.TreatmentPlanNote),
+				Note=PrefC.GetString(PrefName.TreatmentPlanNote),
 				TPStatus=treatPlanStatus,
 				TPType=DiscountPlanSubs.HasDiscountPlan(patNum) ? TreatPlanType.Discount : TreatPlanType.Insurance
 			};

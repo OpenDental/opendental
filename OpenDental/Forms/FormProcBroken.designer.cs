@@ -35,7 +35,7 @@ namespace OpenDental{
 			this.label7 = new System.Windows.Forms.Label();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.butPickProv = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.button1 = new OpenDental.UI.Button();
 			this.butAutoNoteChart = new OpenDental.UI.Button();
 			this.butAutoNoteAccount = new OpenDental.UI.Button();
 			this.textChartNotes = new OpenDental.ODtextBox();
@@ -43,6 +43,7 @@ namespace OpenDental{
 			this.textProcDate = new OpenDental.ValidDate();
 			this.textAccountNotes = new OpenDental.ODtextBox();
 			this.textAmount = new OpenDental.ValidDouble();
+			this.butCancel = new OpenDental.UI.Button();
 			this.labelAmountDescription = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -147,15 +148,15 @@ namespace OpenDental{
 			this.butPickProv.Text = "...";
 			this.butPickProv.Click += new System.EventHandler(this.butPickProv_Click);
 			// 
-			// butSave
+			// button1
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(439, 472);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 9;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.button1.Location = new System.Drawing.Point(380, 472);
+			this.button1.Name = "button1";
+			this.button1.Size = new System.Drawing.Size(75, 24);
+			this.button1.TabIndex = 9;
+			this.button1.Text = "&OK";
+			this.button1.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butAutoNoteChart
 			// 
@@ -183,7 +184,7 @@ namespace OpenDental{
 			this.textChartNotes.DetectUrls = false;
 			this.textChartNotes.Location = new System.Drawing.Point(126, 155);
 			this.textChartNotes.Name = "textChartNotes";
-			this.textChartNotes.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Procedure;
+			this.textChartNotes.QuickPasteType = OpenDentBusiness.QuickPasteType.Procedure;
 			this.textChartNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textChartNotes.Size = new System.Drawing.Size(361, 140);
 			this.textChartNotes.TabIndex = 6;
@@ -214,7 +215,7 @@ namespace OpenDental{
 			this.textAccountNotes.DetectUrls = false;
 			this.textAccountNotes.Location = new System.Drawing.Point(126, 323);
 			this.textAccountNotes.Name = "textAccountNotes";
-			this.textAccountNotes.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Adjustment;
+			this.textAccountNotes.QuickPasteType = OpenDentBusiness.QuickPasteType.Adjustment;
 			this.textAccountNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textAccountNotes.Size = new System.Drawing.Size(361, 140);
 			this.textAccountNotes.TabIndex = 8;
@@ -230,6 +231,17 @@ namespace OpenDental{
 			this.textAmount.Size = new System.Drawing.Size(68, 20);
 			this.textAmount.TabIndex = 1;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(461, 472);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 10;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// labelAmountDescription
 			// 
 			this.labelAmountDescription.Location = new System.Drawing.Point(195, 53);
@@ -242,14 +254,14 @@ namespace OpenDental{
 			// 
 			// FormProcBroken
 			// 
-			this.ClientSize = new System.Drawing.Size(526, 508);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(548, 508);
 			this.Controls.Add(this.labelAmountDescription);
 			this.Controls.Add(this.comboClinic);
 			this.Controls.Add(this.comboProv);
 			this.Controls.Add(this.butPickProv);
 			this.Controls.Add(this.label7);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.button1);
 			this.Controls.Add(this.butAutoNoteChart);
 			this.Controls.Add(this.butAutoNoteAccount);
 			this.Controls.Add(this.textUser);
@@ -261,6 +273,7 @@ namespace OpenDental{
 			this.Controls.Add(this.textProcDate);
 			this.Controls.Add(this.textAccountNotes);
 			this.Controls.Add(this.textAmount);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.label5);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.label1);
@@ -288,10 +301,11 @@ namespace OpenDental{
 		private ValidDate textProcDate;
 		private ODtextBox textAccountNotes;
 		private ValidDouble textAmount;
+		private UI.Button butCancel;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label1;
-		private UI.Button butSave;
+		private UI.Button button1;
 		private UI.ComboBox comboProv;
 		private UI.Button butPickProv;
 		private System.Windows.Forms.Label label7;

@@ -81,7 +81,7 @@ namespace CodeBase {
 		{
 			//Unit tests are not designed to display message boxes.
 			//Throw an exception instead of displaying the message so that unit tests cannot get locked up.
-			if(ODBuild.IsUnitTest) {
+			if(ODInitialize.IsRunningInUnitTest) {
 				throw new ApplicationException("Message boxes are not allowed for unit tests.");
 			}
 			//Get the active form for the current application.  This property will return null if another application has focus (not our application).

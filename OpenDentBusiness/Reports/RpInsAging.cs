@@ -69,13 +69,13 @@ namespace OpenDentBusiness {
 			command+="GROUP BY "+patOrGuar+".PatNum"
 				+(rpo.GroupByCarrier ? ",carrier.CarrierName" : "")
 				+(rpo.GroupByGroupName ? ",insplan.GroupName" : "")+@") guarAging
-				WHERE (ABS(guarAging.InsPayEst_0_30) > 0.005
-					OR ABS(guarAging.InsPayEst_31_60) > 0.005
-					OR ABS(guarAging.InsPayEst_61_90) > 0.005
-					OR ABS(guarAging.InsPayEst_90) > 0.005
-					OR ABS(guarAging.InsPayEst_Total) > 0.005)
+				WHERE (guarAging.InsPayEst_0_30 > 0.005
+					OR guarAging.InsPayEst_31_60 > 0.005
+					OR guarAging.InsPayEst_61_90 > 0.005
+					OR guarAging.InsPayEst_90 > 0.005
+					OR guarAging.InsPayEst_Total > 0.005)
 				ORDER BY guarAging.LName,guarAging.FName";
-			ODEvent.Fire(ODEventType.ReportComplex,Lans.g("ReportComplex","Running Insurance Estimate Query..."));
+			ReportComplexEvent.Fire(ODEventType.ReportComplex,Lans.g("ReportComplex","Running Insurance Estimate Query..."));
 			DataTable insTable = ReportsComplex.RunFuncOnReportServer(() => Db.GetTable(command));
 			#endregion Insurance Aging
 			#region Regular Aging

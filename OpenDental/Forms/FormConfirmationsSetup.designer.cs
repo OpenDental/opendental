@@ -23,7 +23,8 @@ namespace OpenDental{
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.label7 = new System.Windows.Forms.Label();
 			this.butSetup = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
@@ -34,15 +35,26 @@ namespace OpenDental{
 			this.checkGroupFamilies = new OpenDental.UI.CheckBox();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(777, 511);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 27);
-			this.butSave.TabIndex = 97;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(696, 505);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 27);
+			this.butOK.TabIndex = 97;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(777, 505);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 27);
+			this.butCancel.TabIndex = 98;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// label7
 			// 
@@ -70,7 +82,7 @@ namespace OpenDental{
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridMain.Location = new System.Drawing.Point(12, 44);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(840, 435);
+			this.gridMain.Size = new System.Drawing.Size(840, 429);
 			this.gridMain.TabIndex = 87;
 			this.gridMain.Title = "Messages";
 			this.gridMain.TranslationName = "TableConfirmMsgs";
@@ -80,7 +92,7 @@ namespace OpenDental{
 			// 
 			this.comboStatusTextMessagedConfirm.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboStatusTextMessagedConfirm.Location = new System.Drawing.Point(291, 517);
+			this.comboStatusTextMessagedConfirm.Location = new System.Drawing.Point(291, 511);
 			this.comboStatusTextMessagedConfirm.Name = "comboStatusTextMessagedConfirm";
 			this.comboStatusTextMessagedConfirm.Size = new System.Drawing.Size(233, 21);
 			this.comboStatusTextMessagedConfirm.TabIndex = 91;
@@ -88,7 +100,7 @@ namespace OpenDental{
 			// label6
 			// 
 			this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label6.Location = new System.Drawing.Point(13, 521);
+			this.label6.Location = new System.Drawing.Point(13, 515);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(276, 19);
 			this.label6.TabIndex = 89;
@@ -99,7 +111,7 @@ namespace OpenDental{
 			// 
 			this.comboStatusEmailedConfirm.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboStatusEmailedConfirm.Location = new System.Drawing.Point(291, 495);
+			this.comboStatusEmailedConfirm.Location = new System.Drawing.Point(291, 489);
 			this.comboStatusEmailedConfirm.Name = "comboStatusEmailedConfirm";
 			this.comboStatusEmailedConfirm.Size = new System.Drawing.Size(233, 21);
 			this.comboStatusEmailedConfirm.TabIndex = 90;
@@ -107,7 +119,7 @@ namespace OpenDental{
 			// label5
 			// 
 			this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label5.Location = new System.Drawing.Point(13, 499);
+			this.label5.Location = new System.Drawing.Point(13, 493);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(276, 19);
 			this.label5.TabIndex = 88;
@@ -116,7 +128,7 @@ namespace OpenDental{
 			// 
 			// checkGroupFamilies
 			// 
-			this.checkGroupFamilies.Location = new System.Drawing.Point(696, 485);
+			this.checkGroupFamilies.Location = new System.Drawing.Point(696, 479);
 			this.checkGroupFamilies.Name = "checkGroupFamilies";
 			this.checkGroupFamilies.Size = new System.Drawing.Size(110, 20);
 			this.checkGroupFamilies.TabIndex = 99;
@@ -126,7 +138,8 @@ namespace OpenDental{
 			// 
 			this.ClientSize = new System.Drawing.Size(864, 563);
 			this.Controls.Add(this.checkGroupFamilies);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.label7);
 			this.Controls.Add(this.butSetup);
 			this.Controls.Add(this.gridMain);
@@ -150,7 +163,8 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label6;
 		private OpenDental.UI.ComboBox comboStatusEmailedConfirm;
 		private System.Windows.Forms.Label label5;
-		private UI.Button butSave;
+		private UI.Button butOK;
+		private UI.Button butCancel;
 		private OpenDental.UI.CheckBox checkGroupFamilies;
 	}
 }

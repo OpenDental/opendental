@@ -30,11 +30,12 @@ namespace OpenDental{
 			this.label2 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.gridClaims = new OpenDental.UI.GridOD();
-			this.textDateTo = new OpenDental.ValidDate();
-			this.textDateFrom = new OpenDental.ValidDate();
+			this.textDateTo = new ValidDate();
+			this.textDateFrom = new ValidDate();
 			this.textClaimFee = new OpenDental.ValidDouble();
 			this.butPatFind = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butRefresh = new OpenDental.UI.Button();
 			this.gridClaimDetails = new OpenDental.UI.GridOD();
 			this.labelSplitClaims = new System.Windows.Forms.Label();
@@ -133,12 +134,22 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(688, 526);
+			this.butOK.Location = new System.Drawing.Point(607, 528);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 7;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(688, 528);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 8;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butRefresh
 			// 
@@ -179,6 +190,7 @@ namespace OpenDental{
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(784, 562);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.labelSplitClaims);
 			this.Controls.Add(this.gridClaimDetails);
 			this.Controls.Add(this.butRefresh);
@@ -204,6 +216,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private UI.Button butPatFind;
 		private System.Windows.Forms.TextBox textPatient;
 		private System.Windows.Forms.Label label1;

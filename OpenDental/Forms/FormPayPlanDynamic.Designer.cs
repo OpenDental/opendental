@@ -46,13 +46,13 @@ namespace OpenDental {
 			this.textDate = new OpenDental.ValidDate();
 			this.butChangeGuar = new OpenDental.UI.Button();
 			this.textGuarantor = new System.Windows.Forms.TextBox();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.label10 = new System.Windows.Forms.Label();
 			this.label13 = new System.Windows.Forms.Label();
 			this.label12 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
 			this.groupTerms = new OpenDental.UI.GroupBox();
-			this.butTemplates = new OpenDental.UI.Button();
 			this.groupTreatmentPlanned = new OpenDental.UI.GroupBox();
 			this.radioTpTreatAsComplete = new System.Windows.Forms.RadioButton();
 			this.radioTpAwaitComplete = new System.Windows.Forms.RadioButton();
@@ -71,7 +71,7 @@ namespace OpenDental {
 			this.radioOrdinalWeekday = new System.Windows.Forms.RadioButton();
 			this.radioEveryOtherWeek = new System.Windows.Forms.RadioButton();
 			this.radioWeekly = new System.Windows.Forms.RadioButton();
-			this.butSaveTerms = new OpenDental.UI.Button();
+			this.butSave = new OpenDental.UI.Button();
 			this.butCancelTerms = new OpenDental.UI.Button();
 			this.label8 = new System.Windows.Forms.Label();
 			this.textAPR = new OpenDental.ValidDouble();
@@ -268,15 +268,26 @@ namespace OpenDental {
 			this.textGuarantor.TabIndex = 0;
 			this.textGuarantor.TabStop = false;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(956, 662);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 7;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(881, 661);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 7;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(959, 661);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 8;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// label10
 			// 
@@ -317,7 +328,6 @@ namespace OpenDental {
 			// 
 			// groupTerms
 			// 
-			this.groupTerms.Controls.Add(this.butTemplates);
 			this.groupTerms.Controls.Add(this.groupTreatmentPlanned);
 			this.groupTerms.Controls.Add(this.labelDateInterestStart);
 			this.groupTerms.Controls.Add(this.textDateInterestStart);
@@ -329,7 +339,7 @@ namespace OpenDental {
 			this.groupTerms.Controls.Add(this.textPaymentCount);
 			this.groupTerms.Controls.Add(this.textPeriodPayment);
 			this.groupTerms.Controls.Add(this.groupBoxFrequency);
-			this.groupTerms.Controls.Add(this.butSaveTerms);
+			this.groupTerms.Controls.Add(this.butSave);
 			this.groupTerms.Controls.Add(this.butCancelTerms);
 			this.groupTerms.Controls.Add(this.label8);
 			this.groupTerms.Controls.Add(this.textAPR);
@@ -348,16 +358,6 @@ namespace OpenDental {
 			this.groupTerms.Size = new System.Drawing.Size(360, 324);
 			this.groupTerms.TabIndex = 1;
 			this.groupTerms.Text = "Terms";
-			// 
-			// butTemplates
-			// 
-			this.butTemplates.Location = new System.Drawing.Point(251, 79);
-			this.butTemplates.Name = "butTemplates";
-			this.butTemplates.Size = new System.Drawing.Size(103, 24);
-			this.butTemplates.TabIndex = 203;
-			this.butTemplates.Text = "Templates";
-			this.butTemplates.UseVisualStyleBackColor = true;
-			this.butTemplates.Click += new System.EventHandler(this.butTemplates_Click);
 			// 
 			// groupTreatmentPlanned
 			// 
@@ -383,7 +383,7 @@ namespace OpenDental {
 			// 
 			this.radioTpAwaitComplete.Location = new System.Drawing.Point(7, 20);
 			this.radioTpAwaitComplete.Name = "radioTpAwaitComplete";
-			this.radioTpAwaitComplete.Size = new System.Drawing.Size(147, 35);
+			this.radioTpAwaitComplete.Size = new System.Drawing.Size(147, 32);
 			this.radioTpAwaitComplete.TabIndex = 0;
 			this.radioTpAwaitComplete.TabStop = true;
 			this.radioTpAwaitComplete.Text = "Await procedure completion";
@@ -443,7 +443,7 @@ namespace OpenDental {
 			// 
 			this.label16.Location = new System.Drawing.Point(190, 191);
 			this.label16.Name = "label16";
-			this.label16.Size = new System.Drawing.Size(168, 17);
+			this.label16.Size = new System.Drawing.Size(124, 17);
 			this.label16.TabIndex = 195;
 			this.label16.Text = "(sets payment amount)";
 			this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -494,7 +494,7 @@ namespace OpenDental {
 			// 
 			this.radioQuarterly.Location = new System.Drawing.Point(5, 87);
 			this.radioQuarterly.Name = "radioQuarterly";
-			this.radioQuarterly.Size = new System.Drawing.Size(104, 19);
+			this.radioQuarterly.Size = new System.Drawing.Size(104, 17);
 			this.radioQuarterly.TabIndex = 4;
 			this.radioQuarterly.TabStop = true;
 			this.radioQuarterly.Text = "Quarterly";
@@ -505,7 +505,7 @@ namespace OpenDental {
 			this.radioMonthly.Checked = true;
 			this.radioMonthly.Location = new System.Drawing.Point(5, 69);
 			this.radioMonthly.Name = "radioMonthly";
-			this.radioMonthly.Size = new System.Drawing.Size(104, 19);
+			this.radioMonthly.Size = new System.Drawing.Size(104, 17);
 			this.radioMonthly.TabIndex = 3;
 			this.radioMonthly.TabStop = true;
 			this.radioMonthly.Text = "Monthly";
@@ -515,7 +515,7 @@ namespace OpenDental {
 			// 
 			this.radioOrdinalWeekday.Location = new System.Drawing.Point(5, 51);
 			this.radioOrdinalWeekday.Name = "radioOrdinalWeekday";
-			this.radioOrdinalWeekday.Size = new System.Drawing.Size(174, 19);
+			this.radioOrdinalWeekday.Size = new System.Drawing.Size(174, 17);
 			this.radioOrdinalWeekday.TabIndex = 2;
 			this.radioOrdinalWeekday.TabStop = true;
 			this.radioOrdinalWeekday.Text = "Specific day of month";
@@ -525,7 +525,7 @@ namespace OpenDental {
 			// 
 			this.radioEveryOtherWeek.Location = new System.Drawing.Point(5, 33);
 			this.radioEveryOtherWeek.Name = "radioEveryOtherWeek";
-			this.radioEveryOtherWeek.Size = new System.Drawing.Size(156, 19);
+			this.radioEveryOtherWeek.Size = new System.Drawing.Size(156, 17);
 			this.radioEveryOtherWeek.TabIndex = 1;
 			this.radioEveryOtherWeek.TabStop = true;
 			this.radioEveryOtherWeek.Text = "Every other week";
@@ -535,20 +535,20 @@ namespace OpenDental {
 			// 
 			this.radioWeekly.Location = new System.Drawing.Point(5, 15);
 			this.radioWeekly.Name = "radioWeekly";
-			this.radioWeekly.Size = new System.Drawing.Size(104, 19);
+			this.radioWeekly.Size = new System.Drawing.Size(104, 17);
 			this.radioWeekly.TabIndex = 0;
 			this.radioWeekly.TabStop = true;
 			this.radioWeekly.Text = "Weekly";
 			this.radioWeekly.UseVisualStyleBackColor = true;
 			// 
-			// butSaveTerms
+			// butSave
 			// 
-			this.butSaveTerms.Location = new System.Drawing.Point(310, 36);
-			this.butSaveTerms.Name = "butSaveTerms";
-			this.butSaveTerms.Size = new System.Drawing.Size(44, 22);
-			this.butSaveTerms.TabIndex = 12;
-			this.butSaveTerms.Text = "Save";
-			this.butSaveTerms.Click += new System.EventHandler(this.ButSaveTerms_Click);
+			this.butSave.Location = new System.Drawing.Point(310, 36);
+			this.butSave.Name = "butSave";
+			this.butSave.Size = new System.Drawing.Size(44, 22);
+			this.butSave.TabIndex = 12;
+			this.butSave.Text = "Save";
+			this.butSave.Click += new System.EventHandler(this.ButSave_Click);
 			// 
 			// butCancelTerms
 			// 
@@ -598,11 +598,11 @@ namespace OpenDental {
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(2, 103);
+			this.label6.Location = new System.Drawing.Point(3, 103);
 			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(139, 17);
+			this.label6.Size = new System.Drawing.Size(138, 17);
 			this.label6.TabIndex = 0;
-			this.label6.Text = "APR (example 0 or 18)";
+			this.label6.Text = "APR (for example 0 or 18)";
 			this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textDateFirstPay
@@ -939,7 +939,7 @@ namespace OpenDental {
 			// 
 			this.checkShowAttachedPnI.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkShowAttachedPnI.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkShowAttachedPnI.Location = new System.Drawing.Point(150, 461);
+			this.checkShowAttachedPnI.Location = new System.Drawing.Point(150, 465);
 			this.checkShowAttachedPnI.Name = "checkShowAttachedPnI";
 			this.checkShowAttachedPnI.Size = new System.Drawing.Size(144, 17);
 			this.checkShowAttachedPnI.TabIndex = 201;
@@ -952,7 +952,7 @@ namespace OpenDental {
 			this.butAddProd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butAddProd.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAddProd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAddProd.Location = new System.Drawing.Point(593, 458);
+			this.butAddProd.Location = new System.Drawing.Point(593, 463);
 			this.butAddProd.Name = "butAddProd";
 			this.butAddProd.Size = new System.Drawing.Size(73, 22);
 			this.butAddProd.TabIndex = 36;
@@ -965,7 +965,7 @@ namespace OpenDental {
 			this.butDeleteProduction.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDeleteProduction.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDeleteProduction.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDeleteProduction.Location = new System.Drawing.Point(3, 458);
+			this.butDeleteProduction.Location = new System.Drawing.Point(3, 463);
 			this.butDeleteProduction.Name = "butDeleteProduction";
 			this.butDeleteProduction.Size = new System.Drawing.Size(84, 22);
 			this.butDeleteProduction.TabIndex = 35;
@@ -977,7 +977,7 @@ namespace OpenDental {
 			this.butPrintProduction.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butPrintProduction.Image = global::OpenDental.Properties.Resources.butPrintSmall;
 			this.butPrintProduction.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPrintProduction.Location = new System.Drawing.Point(300, 458);
+			this.butPrintProduction.Location = new System.Drawing.Point(300, 463);
 			this.butPrintProduction.Name = "butPrintProduction";
 			this.butPrintProduction.Size = new System.Drawing.Size(73, 22);
 			this.butPrintProduction.TabIndex = 31;
@@ -993,7 +993,7 @@ namespace OpenDental {
 			this.gridLinkedProduction.Location = new System.Drawing.Point(3, 3);
 			this.gridLinkedProduction.Name = "gridLinkedProduction";
 			this.gridLinkedProduction.SelectionMode = OpenDental.UI.GridSelectionMode.OneCell;
-			this.gridLinkedProduction.Size = new System.Drawing.Size(663, 447);
+			this.gridLinkedProduction.Size = new System.Drawing.Size(663, 455);
 			this.gridLinkedProduction.TabIndex = 0;
 			this.gridLinkedProduction.Title = "Attached Production  ";
 			this.gridLinkedProduction.TranslationName = "TablePaymentPlanCredits";
@@ -1032,7 +1032,8 @@ namespace OpenDental {
 			this.labelOverchargedWarning.Name = "labelOverchargedWarning";
 			this.labelOverchargedWarning.Size = new System.Drawing.Size(662, 14);
 			this.labelOverchargedWarning.TabIndex = 201;
-			this.labelOverchargedWarning.Text = "Run the Payment Plans Overcharged Report to see a breakdown of overcharged production";
+			this.labelOverchargedWarning.Text = "Run the Dynamic Payment Plans Overcharged Report to see a breakdown of overcharge" +
+    "d production";
 			this.labelOverchargedWarning.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			this.labelOverchargedWarning.Visible = false;
 			// 
@@ -1065,7 +1066,7 @@ namespace OpenDental {
 			this.textNote.DetectUrls = false;
 			this.textNote.Location = new System.Drawing.Point(373, 548);
 			this.textNote.Name = "textNote";
-			this.textNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.PayPlan;
+			this.textNote.QuickPasteType = OpenDentBusiness.QuickPasteType.PayPlan;
 			this.textNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNote.Size = new System.Drawing.Size(662, 94);
 			this.textNote.SpellCheckIsEnabled = false;
@@ -1079,7 +1080,8 @@ namespace OpenDental {
 			this.ClientSize = new System.Drawing.Size(1043, 696);
 			this.Controls.Add(this.warningIntegrity1);
 			this.Controls.Add(this.butSendToDevice);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.labelTotalTx);
 			this.Controls.Add(this.textTotalTxAmt);
 			this.Controls.Add(this.labelOverchargedWarning);
@@ -1120,7 +1122,7 @@ namespace OpenDental {
 			this.MinimizeBox = false;
 			this.Name = "FormPayPlanDynamic";
 			this.ShowInTaskbar = false;
-			this.Text = "Payment Plan";
+			this.Text = "Dynamic Payment Plan";
 			this.Closing += new System.ComponentModel.CancelEventHandler(this.FormPayPlanDynamic_Closing);
 			this.Load += new System.EventHandler(this.FormPayPlanDynamic_Load);
 			this.groupTerms.ResumeLayout(false);
@@ -1138,7 +1140,8 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label labelDateAgreement;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label5;
@@ -1186,7 +1189,7 @@ namespace OpenDental {
 		private UI.ComboBox comboCategory;
 		private System.Windows.Forms.Label label2;
 		private UI.Button butUnlock;
-		private UI.Button butSaveTerms;
+		private UI.Button butSave;
 		private UI.Button butCancelTerms;
 		private OpenDental.UI.TabControl tabControl1;
 		private OpenDental.UI.TabPage tabSchedule;
@@ -1226,6 +1229,5 @@ namespace OpenDental {
 		private UI.WarningIntegrity warningIntegrity1;
 		private UI.CheckBox checkUngrouped;
 		private UI.CheckBox checkShowAttachedPnI;
-		private UI.Button butTemplates;
 	}
 }

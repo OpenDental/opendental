@@ -50,11 +50,11 @@ namespace OpenDental {
 			}
 			FillProvs();
 			FillDateFilterBy();
-			_listClaimSentEditUsers=Userods.GetUsersByPermission(EnumPermType.ClaimSentEdit,false);
+			_listClaimSentEditUsers=Userods.GetUsersByPermission(Permissions.ClaimSentEdit,false);
 			FillUsers();
 			_listOldClaimTrackings=ClaimTrackings.RefreshForUsers(ClaimTrackingType.ClaimUser,_listClaimSentEditUsers.Select(x => x.UserNum).ToList());
 			_listNewClaimTrackings=_listOldClaimTrackings.Select(x => x.Copy()).ToList();
-			if(!Security.IsAuthorized(EnumPermType.UpdateCustomTracking,true)) {
+			if(!Security.IsAuthorized(Permissions.UpdateCustomTracking,true)) {
 				buttonUpdateCustomTrack.Enabled=false;
 			}
 			List<MenuItem> listMenuItems=new List<MenuItem>();
@@ -169,13 +169,13 @@ namespace OpenDental {
 			string carrier=textCarrier.Text;
 			RpOutstandingIns.DateFilterBy comboFilterBy=comboDateFilterBy.GetSelected<RpOutstandingIns.DateFilterBy>();
 			bool isIgnoreCustomChecked=checkIgnoreCustom.Checked;
-			List<long> listClinicNums=comboClinics.ListClinicNumsSelected;//Includes all clinics in combobox if 'All' is selected.
+			List<long> listClinicNums=comboClinics.ListSelectedClinicNums;//Includes all clinics in combobox if 'All' is selected.
 			List<long> listSelectedUserNums=new List<long>();
 			if(!comboUserAssigned.IsAllSelected) { //If we have all selected, we don't want to filter by UserNum at all.
 				listSelectedUserNums=comboUserAssigned.GetListSelected<Userod>().Select(x => x.UserNum).ToList();
 			}
 			List<GridRow> listRows=null;
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => { 
 				List<RpOutstandingIns.OutstandingInsClaim> listOustandingInsClaims=
 					RpOutstandingIns.GetOutInsClaims(comboBoxMultiProv.GetSelectedProvNums(),dateTimeFrom,dateTimeTo,
@@ -188,7 +188,7 @@ namespace OpenDental {
 				listRows=GetGridRows(listOustandingInsClaims,listDisplayFields,isIgnoreCustomChecked);
 			};
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception e){
 				FriendlyException.Show(Lan.g(this,"Error filling the Claims grid."),e);
@@ -376,7 +376,7 @@ namespace OpenDental {
 			int menuCode=(int)((MenuItem)sender).Tag;
 			switch(menuCode) {
 				case 0://Go to Account
-					GlobalFormOpenDental.GotoAccount(((RpOutstandingIns.OutstandingInsClaim)gridMain.ListGridRows[index].Tag).PatNum);
+					GotoModule.GotoAccount(((RpOutstandingIns.OutstandingInsClaim)gridMain.ListGridRows[index].Tag).PatNum);
 				break;
 				case 1://Assign to Me
 					AssignUserHelper(Security.CurUser.UserNum);
@@ -388,7 +388,7 @@ namespace OpenDental {
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ClaimView)) {
+			if(!Security.IsAuthorized(Permissions.ClaimView)) {
 				return;
 			}
 			Claim claim=Claims.GetClaim(((RpOutstandingIns.OutstandingInsClaim)gridMain.ListGridRows[e.Row].Tag).ClaimNum);
@@ -418,6 +418,10 @@ namespace OpenDental {
 			if(FormCT.ShowDialog()==DialogResult.OK) {
 				FillGrid();
 			}
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			Close();
 		}
 
 		private void butPrint_Click(object sender,EventArgs e) {
@@ -700,8 +704,8 @@ namespace OpenDental {
 		private void butExport_Click(object sender,System.EventArgs e) {			
 			string fileName=Lan.g(this,"Outstanding Insurance Claims");
 			string filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
-			if(ODEnvironment.IsCloudServer) {
-				//Thinfinity: file download dialog will come up later, after file is created. AppStream: File will be created in client's Downloads folder.
+			if(ODBuild.IsWeb()) {
+				//file download dialog will come up later, after file is created.
 				filePath+=".txt";//Provide the filepath an extension so that Thinfinity can offer as a download.
 			}
 			else {
@@ -752,11 +756,8 @@ namespace OpenDental {
 				MessageBox.Show(Lan.g(this,"File in use by another program.  Close and try again."));
 				return;
 			}
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.ExportForDownload(filePath);
-			}
-			else if(ODCloudClient.IsAppStream) {
-				CloudClientL.ExportForCloud(filePath);
 			}
 			else {
 				MessageBox.Show(Lan.g(this,"File created successfully"));
@@ -764,7 +765,7 @@ namespace OpenDental {
 		}
 
 		private void butZeroClaims_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
 			if(gridMain.SelectedIndices.Count()==0) {
@@ -783,9 +784,10 @@ namespace OpenDental {
 			if(!MsgBox.Show(MsgBoxButtons.OKCancel,"This clears out the selected claims with zero dollar payments. Changes can only be reverted manually. Continue?")) {
 				return;
 			}
-			RpOutstandingIns.ZeroClaims(listClaims);
+			for(int i=0;i<listClaims.Count;i++) {
+				RpOutstandingIns.ZeroClaim(listClaims[i]);
+			}
 			FillGrid();
 		}
-
 	}
 }

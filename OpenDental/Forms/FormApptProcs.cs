@@ -156,7 +156,7 @@ namespace OpenDental {
 			ProcCur.BaseUnits=procCodeCur.BaseUnits;
 			ProcCur.SiteNum=pat.SiteNum;
 			ProcCur.RevCode=procCodeCur.RevenueCodeDefault;
-			Procedures.SetDiagnosticCodesToDefault(ProcCur,procCodeCur);
+			ProcCur.DiagnosticCode=PrefC.GetString(PrefName.ICD9DefaultForNewProcs);
 			ProcCur.PlaceService=Clinics.GetPlaceService(ProcCur.ClinicNum); 
 			if(Userods.IsUserCpoe(Security.CurUser)) {
 				//This procedure is considered CPOE because the provider is the one that has added it.
@@ -214,5 +214,12 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
 	}
 }

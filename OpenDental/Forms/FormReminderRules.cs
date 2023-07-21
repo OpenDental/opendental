@@ -85,5 +85,10 @@ namespace OpenDental {
 			FillGrid();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
+		
 	}
 }

@@ -82,7 +82,7 @@ namespace OpenDental {
 			colorPicker?.Dispose();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			Prefs.UpdateLong(PrefName.PerioColorCAL,this.butColorCal.BackColor.ToArgb());
 			Prefs.UpdateLong(PrefName.PerioColorFurcations,this.butColorFurc.BackColor.ToArgb());
 			Prefs.UpdateLong(PrefName.PerioColorFurcationsRed,this.butColorFurcRed.BackColor.ToArgb());
@@ -91,6 +91,10 @@ namespace OpenDental {
 			Prefs.UpdateLong(PrefName.PerioColorProbing,this.butColorProbing.BackColor.ToArgb());
 			Prefs.UpdateLong(PrefName.PerioColorProbingRed,this.butColorProbingRed.BackColor.ToArgb());
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

@@ -102,5 +102,11 @@ namespace OpenDental {
 			MsgBox.Show(this,"Selected students have been updated.");
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+
+
 	}
 }

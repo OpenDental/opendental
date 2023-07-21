@@ -28,13 +28,11 @@ namespace CentralManager {
 			}
 			try {
 				UserGroups.Delete(_groupCur);
+				DialogResult=DialogResult.OK;
 			}
 			catch(Exception ex) {
 				MessageBox.Show(ex.Message);
-				return;
 			}
-			Cache.Refresh(InvalidType.Security);
-			DialogResult=DialogResult.OK;
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {

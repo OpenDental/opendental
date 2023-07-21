@@ -49,23 +49,23 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static long Insert(Transaction transaction) {
-			transaction.SecUserNumEdit=Security.CurUser.UserNum;//Before middle tier check to catch user at workstation
+		public static long Insert(Transaction trans) {
+			trans.SecUserNumEdit=Security.CurUser.UserNum;//Before middle tier check to catch user at workstation
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				transaction.TransactionNum=Meth.GetLong(MethodBase.GetCurrentMethod(),transaction);
-				return transaction.TransactionNum;
+				trans.TransactionNum=Meth.GetLong(MethodBase.GetCurrentMethod(),trans);
+				return trans.TransactionNum;
 			}
-			return Crud.TransactionCrud.Insert(transaction);
+			return Crud.TransactionCrud.Insert(trans);
 		}
 
 		///<summary></summary>
-		public static void Update(Transaction transaction) {
-			transaction.SecUserNumEdit=Security.CurUser.UserNum;//Before middle tier check to catch user at workstation
+		public static void Update(Transaction trans) {
+			trans.SecUserNumEdit=Security.CurUser.UserNum;//Before middle tier check to catch user at workstation
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),transaction);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),trans);
 				return;
 			}
-			Crud.TransactionCrud.Update(transaction);
+			Crud.TransactionCrud.Update(trans);
 		}
 
 		///<summary></summary>
@@ -80,21 +80,21 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Also deletes all journal entries for the transaction.  Will later throw an error if journal entries attached to any reconciles.  Be sure to surround with try-catch.</summary>
-		public static void Delete(Transaction transaction) {
+		public static void Delete(Transaction trans) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),transaction);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),trans);
 				return;
 			}
-			if(IsTransactionLocked(transaction.TransactionNum)) {
+			if(IsTransactionLocked(trans.TransactionNum)) {
 				throw new ApplicationException(Lans.g("Transactions","Not allowed to delete transactions because it is attached to a reconcile that is locked."));
 			}
-			string command="DELETE FROM journalentry WHERE TransactionNum="+POut.Long(transaction.TransactionNum);
+			string command="DELETE FROM journalentry WHERE TransactionNum="+POut.Long(trans.TransactionNum);
 			Db.NonQ(command);
-			if(transaction.TransactionInvoiceNum!=0) {
-				command="DELETE FROM transactioninvoice WHERE TransactionInvoiceNum="+POut.Long(transaction.TransactionInvoiceNum);
+			if(trans.TransactionInvoiceNum!=0) {
+				command="DELETE FROM transactioninvoice WHERE TransactionInvoiceNum="+POut.Long(trans.TransactionInvoiceNum);
 				Db.NonQ(command);
 			}
-			command= "DELETE FROM transaction WHERE TransactionNum="+POut.Long(transaction.TransactionNum);
+			command= "DELETE FROM transaction WHERE TransactionNum="+POut.Long(trans.TransactionNum);
 			Db.NonQ(command);
 		}
 
@@ -103,8 +103,10 @@ namespace OpenDentBusiness{
 			string command="SELECT IsLocked FROM journalentry j, reconcile r WHERE j.TransactionNum="+POut.Long(transactionNum)
 				+" AND j.ReconcileNum = r.ReconcileNum";
 			DataTable table=Db.GetTable(command);	
-			if(table.Rows.Count>0 && PIn.Int(table.Rows[0][0].ToString())==1) {
-				return true;
+			if(table.Rows.Count>0) {
+				if(PIn.Int(table.Rows[0][0].ToString())==1) {
+					return true;
+				}
 			}
 			return false;
 		}
@@ -117,12 +119,12 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static bool IsReconciled(Transaction transaction){
+		public static bool IsReconciled(Transaction trans){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),transaction);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),trans);
 			}
 			string command="SELECT COUNT(*) FROM journalentry WHERE ReconcileNum !=0"
-				+" AND TransactionNum="+POut.Long(transaction.TransactionNum);
+				+" AND TransactionNum="+POut.Long(trans.TransactionNum);
 			if(Db.GetCount(command)=="0") {
 				return false;
 			}

@@ -24,7 +24,8 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormOrthoCase));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.groupVisit = new OpenDental.UI.GroupBox();
 			this.textVisitPercent = new OpenDental.ValidDouble();
 			this.labelVisitsCompleted = new System.Windows.Forms.Label();
@@ -93,15 +94,26 @@ namespace OpenDental{
 			this.groupProcBreakdown.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(788, 384);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 9;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.ButSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(707, 384);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 9;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.ButOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(788, 384);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 10;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.ButCancel_Click);
 			// 
 			// groupVisit
 			// 
@@ -785,13 +797,15 @@ namespace OpenDental{
 			this.butPatPayPlan.Name = "butPatPayPlan";
 			this.butPatPayPlan.Size = new System.Drawing.Size(147, 24);
 			this.butPatPayPlan.TabIndex = 240;
-			this.butPatPayPlan.Text = "Payment Plan";
+			this.butPatPayPlan.Text = "Dynamic Payment Plan";
 			this.butPatPayPlan.Click += new System.EventHandler(this.ButPatPayPlan_Click);
 			// 
 			// FormOrthoCase
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(874, 418);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.butPatPayPlan);
 			this.Controls.Add(this.labelBandingProc);
 			this.Controls.Add(this.groupProcBreakdown);
@@ -808,7 +822,6 @@ namespace OpenDental{
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormOrthoCase";
 			this.Text = "Ortho Case";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormOrthoCase_FormClosing);
 			this.Load += new System.EventHandler(this.FormOrthoCase_Load);
 			this.groupVisit.ResumeLayout(false);
 			this.groupVisit.PerformLayout();
@@ -825,7 +838,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.GroupBox groupVisit;
 		private System.Windows.Forms.Label labelExpectedDebondDate;
 		private ValidDate textBandingDate;

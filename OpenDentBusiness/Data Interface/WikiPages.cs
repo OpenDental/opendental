@@ -221,6 +221,7 @@ namespace OpenDentBusiness{
 					continue;
 				}
 				listPageTitles.Add(pageTitle);
+				listWikiPageNumsPageTitle.Add(PIn.Long(tableResults.Rows[i]["WikiPageNum"].ToString()));
 				if(showMainPages && HasMainKeyword(tableResults.Rows[i]["KeyWords"].ToString())) {
 					listTitlesWithKeyMain.Add(pageTitle);
 				}
@@ -262,7 +263,7 @@ namespace OpenDentBusiness{
 					command+="PageContentPlainText LIKE '%"+POut.String(stringArraySearchTokens[i])+"%' ";
 				}
 				command+=") ";
-				if(!searchText.IsNullOrEmpty()) {
+				if(!listWikiPageNumsPageTitle.IsNullOrEmpty() && searchForLinks) {
 					for(int i=0;i<listWikiPageNumsPageTitle.Count;i++) {
 						if(i!=0) {
 							command+=" ";
@@ -610,15 +611,6 @@ namespace OpenDentBusiness{
 				return Meth.GetObject<WikiPage>(MethodBase.GetCurrentMethod(),wikiPageNum);
 			}
 			return Crud.WikiPageCrud.SelectOne(wikiPageNum);
-		}
-
-		///<summary>Only used in FormDatabaseMaintenance to fix wikipages whose PageContentPlainText got eaten by greedy regex.</summary>
-		public static List<WikiPage> GetAll() {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<WikiPage>>(MethodBase.GetCurrentMethod());
-			}
-			string command="SELECT * FROM wikipage";
-			return Crud.WikiPageCrud.SelectMany(command);
 		}
 
 		///<summary>Updates the links to wpOld to wpNew in the wikipage page wikiPageCur.</summary>

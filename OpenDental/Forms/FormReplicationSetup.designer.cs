@@ -42,6 +42,7 @@ namespace OpenDental{
 			this.butTest = new OpenDental.UI.Button();
 			this.butSetRanges = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupBoxReplicationFailure.SuspendLayout();
 			this.SuspendLayout();
@@ -95,9 +96,9 @@ namespace OpenDental{
 			this.groupBox1.Controls.Add(this.butSynch);
 			this.groupBox1.Location = new System.Drawing.Point(10, 556);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(863, 66);
+			this.groupBox1.Size = new System.Drawing.Size(771, 66);
 			this.groupBox1.TabIndex = 66;
-			this.groupBox1.Text = "Force Sync";
+			this.groupBox1.Text = "Force Synch";
 			// 
 			// textPassword
 			// 
@@ -139,7 +140,7 @@ namespace OpenDental{
 			this.butSynch.Name = "butSynch";
 			this.butSynch.Size = new System.Drawing.Size(90, 24);
 			this.butSynch.TabIndex = 64;
-			this.butSynch.Text = "Sync";
+			this.butSynch.Text = "Synch";
 			this.butSynch.Click += new System.EventHandler(this.butSynch_Click);
 			// 
 			// gridMain
@@ -233,6 +234,16 @@ namespace OpenDental{
 			this.butAdd.Text = "Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(798, 598);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormReplicationSetup
 			// 
 			this.ClientSize = new System.Drawing.Size(885, 636);
@@ -245,6 +256,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.checkRandomPrimaryKeys);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormReplicationSetup";
 			this.Text = "Replication Setup";
@@ -259,6 +271,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.CheckBox checkRandomPrimaryKeys;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.Button butAdd;

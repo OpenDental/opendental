@@ -76,7 +76,7 @@ namespace OpenDental {
 			if(!_isSetupAll) {
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.ClinicEdit,true)) {
+			if(!Security.IsAuthorized(Permissions.ClinicEdit,true)) {
 				return;
 			}
 			#region Clinic Show Feature
@@ -139,5 +139,8 @@ namespace OpenDental {
 			labelTitle.Text=Lan.g("FormSetupWizard",_listSetupWizClasses[indexSetupClasses].Name+" Setup");
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }

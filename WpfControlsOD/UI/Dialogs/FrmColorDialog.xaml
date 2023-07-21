@@ -6,34 +6,32 @@
         xmlns:local="clr-namespace:OpenDental"
         xmlns:ui="clr-namespace:WpfControls.UI"
         mc:Ignorable="d"
-        Height="370" Width="424">
+        Height="370" Width="424" Loaded="Window_Loaded">
 	<Grid Background="#FFFCFDFE">
-		<Grid Name="gridSquareGradient" HorizontalAlignment="Left" VerticalAlignment="Top" Width="258" Height="258" Margin="20,20,0,0" >
+		<Grid Name="gridSquareGradient" HorizontalAlignment="Left" VerticalAlignment="Top" Width="256" Height="256" Margin="20,20,0,0" MouseDown="gridSquareGradient_MouseDown">
+            <Canvas Name="canvas" x:FieldModifier="internal">
+				<Canvas.Background>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+						<GradientStop Color="White" Offset="0"/>
+						<GradientStop Color="Red" Offset="1"/>
+					</LinearGradientBrush>
+				</Canvas.Background>
+			</Canvas>
+			<Canvas>
+				<Canvas.Background>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#00000000" Offset="0"/>
+						<GradientStop Color="Black" Offset="1"/>
+					</LinearGradientBrush>
+				</Canvas.Background>
+			</Canvas>
 			<Border BorderBrush="DarkGray" BorderThickness="1">
-				<Grid MouseDown="gridSquareGradient_MouseDown">
-					<Canvas Name="canvas" x:FieldModifier="internal">
-						<Canvas.Background>
-							<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-								<GradientStop Color="White" Offset="0"/>
-								<GradientStop Color="Red" Offset="1"/>
-							</LinearGradientBrush>
-						</Canvas.Background>
+				<Canvas>
+					<Canvas Name="canvasEllipse" Canvas.Left="200" Canvas.Top="200">
+						<Ellipse Canvas.Left="-5" Canvas.Top="-5" Width="10" Height="10" Stroke="Black" StrokeThickness="2"/>
+						<Ellipse Canvas.Left="-4.5" Canvas.Top="-4.5" Width="9" Height="9" Stroke="White" StrokeThickness="1"/>
 					</Canvas>
-					<Canvas>
-						<Canvas.Background>
-							<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-								<GradientStop Color="#00000000" Offset="0"/>
-								<GradientStop Color="Black" Offset="1"/>
-							</LinearGradientBrush>
-						</Canvas.Background>
-					</Canvas>
-					<Canvas>
-						<Canvas Name="canvasEllipse" Canvas.Left="200" Canvas.Top="200">
-							<Ellipse Canvas.Left="-5" Canvas.Top="-5" Width="10" Height="10" Stroke="Black" StrokeThickness="2"/>
-							<Ellipse Canvas.Left="-4.5" Canvas.Top="-4.5" Width="9" Height="9" Stroke="White" StrokeThickness="1"/>
-						</Canvas>
-					</Canvas>
-				</Grid>
+				</Canvas>
 			</Border>
 		</Grid>
 		<Canvas HorizontalAlignment="Left" VerticalAlignment="Top" Width="360" Height="15" Margin="20,300,0,0">
@@ -41,8 +39,9 @@
 			<Canvas Name="canvasHue" MouseDown="canvasHue_MouseDown"/>
 			<Rectangle Name="rectangleHueSlider" Canvas.Top="-3" Canvas.Left="-3" Height="21" Width="7" Stroke="Black" StrokeThickness="1"/>
 		</Canvas>
-		<ui:Button x:Name="butOK" Width="75" Height="24" Margin="0,0,12,10" Text="OK" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="butOK_Click"/>
-        <ui:Label Margin="285,26,0,0" HorizontalContentAlignment="Right" Width="53" Text="Red" HAlign="Right" VAlign="Center"/>
+		<ui:Button x:Name="butOK" Width="75" Height="24" Margin="0,0,101,10" Text="OK" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="butOK_Click"/>
+		<ui:Button x:Name="butCancel" Width="75" Height="24" Margin="0,0,10,10" Text="Cancel" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="butCancel_Click"/>
+		<ui:Label Margin="285,26,0,0" HorizontalContentAlignment="Right" Width="53" Text="Red" HAlign="Right" VAlign="Center"/>
 		<ui:TextBox x:Name="textRed" Margin="339,25,0,0" Text="" Width="41" TextChanged="textRed_TextChanged" Height="20"/>
 		<ui:Label Margin="285,55,0,0" HorizontalContentAlignment="Right" Width="53" Text="Green" HAlign="Right" VAlign="Center"/>
 		<ui:TextBox x:Name="textGreen" Margin="339,54,0,0" Text="" Width="41" TextChanged="textGreen_TextChanged" Height="20"/>

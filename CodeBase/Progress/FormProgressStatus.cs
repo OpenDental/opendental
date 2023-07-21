@@ -15,8 +15,8 @@ namespace CodeBase {
 		///<summary>Do not instatiate this class.  It is not meant for public use.  Use ODProgress.ShowProgressStatus() instead.
 		///Launches a progress window that will constantly spin and display status updates for global ODEvents with corresponding name.
 		///eventType must be a Type that contains an event called Fired.</summary>
-		public FormProgressStatus(bool hasHistory=false,bool hasMinimize=true,
-			string startingMessage="",ProgressBarStyle progStyle=ProgressBarStyle.Marquee)
+		public FormProgressStatus(ODEventType odEventType=ODEventType.Undefined,Type typeEvent=null,bool hasHistory=false,bool hasMinimize=true,
+			string startingMessage="",ProgressBarStyle progStyle=ProgressBarStyle.Marquee) : base(odEventType,typeEvent)
 		{
 			InitializeComponent();
 			labelMsg.Text=startingMessage;
@@ -44,10 +44,10 @@ namespace CodeBase {
 			labelMsg.Text=status;
 			if(hasProgHelper) {
 				if(progHelper.BlockMax!=0) {
-					progressBar.Maximum=(int)progHelper.BlockMax;
+					progressBar.Maximum=progHelper.BlockMax;
 				}
 				if(progHelper.BlockValue!=0) {
-					progressBar.Value=(int)progHelper.BlockValue;
+					progressBar.Value=progHelper.BlockValue;
 				}
 				if(progHelper.ProgressStyle==ProgBarStyle.Marquee) {
 					progressBar.Style=ProgressBarStyle.Marquee;

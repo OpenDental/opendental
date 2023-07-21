@@ -112,7 +112,6 @@ namespace OpenDental{
 				textTimeUnits.Text=_procedureCode.CanadaTimeUnits.ToString();
 			}
 			checkBypassLockDate.Checked=(_procedureCode.BypassGlobalLock==BypassLockStatus.BypassIfZero);
-			textDiagnosticCodes.Text=_procedureCode.DiagnosticCodes;
 			_listFeeScheds=FeeScheds.GetDeepCopy(true);
 			FillTime();
 			FillFees();
@@ -248,28 +247,6 @@ namespace OpenDental{
 			}
 		}
 
-		/// <summary>Validates that textDiagnosticCodes does not have more than 4 codes and shows a warning if any of the codes are not found in the database. Removes whitespace, extra commas, and blank codes from textDiagnosticCodes.</summary>
-		private bool ValidateDiagnosticCodes() {
-			textDiagnosticCodes.Text=string.Concat(textDiagnosticCodes.Text.Where(x => !Char.IsWhiteSpace(x))); //Remove any whitespace
-			List<string> listCodes=textDiagnosticCodes.Text.Split(",",StringSplitOptions.RemoveEmptyEntries).ToList();
-			if(listCodes.Count>4) {
-				MsgBox.Show(this,"Cannot have more than 4 ICD-10 codes.");
-				return false;
-			}
-			List<string> listCodesNotInDb=new List<string>();
-			for(int i=0;i<listCodes.Count;i++) {
-				if(Icd10s.GetByCode(listCodes[i])==null) {
-					listCodesNotInDb.Add(listCodes[i]);
-				}
-			}
-			if(listCodesNotInDb.Count>0) {
-				string message=Lan.g(this,"Warning: ICD-10 code(s)")+" "+string.Join(", ", listCodesNotInDb)+" "+Lan.g(this,"not recognized in database.");
-				MsgBox.Show(message);//Allow unrecognized codes to be entered because the Icd10 table can be out of date.
-			}
-			textDiagnosticCodes.Text=string.Join(",",listCodes);
-			return true;
-		}
-
 		private void tbTime_CellClicked(object sender, CellEventArgs e){
 			if(e.Row<_stringBuilderTime.Length){
 				if(_stringBuilderTime[e.Row]=='/'){
@@ -365,10 +342,10 @@ namespace OpenDental{
 		}
 
 		private void butAuditTrail_Click(object sender,EventArgs e) {
-			List<EnumPermType> listPermissions=new List<EnumPermType>();
-			listPermissions.Add(EnumPermType.ProcFeeEdit);
-			FrmAuditOneType frmAuditOneType=new FrmAuditOneType(0,listPermissions,Lan.g(this,"All changes for")+" "+_procedureCode.AbbrDesc+" - "+_procedureCode.ProcCode,_procedureCode.CodeNum);
-			frmAuditOneType.ShowDialog();
+			List<Permissions> listPermissions=new List<Permissions>();
+			listPermissions.Add(Permissions.ProcFeeEdit);
+			using FormAuditOneType formAuditOneType=new FormAuditOneType(0,listPermissions,Lan.g(this,"All changes for")+" "+_procedureCode.AbbrDesc+" - "+_procedureCode.ProcCode,_procedureCode.CodeNum);
+			formAuditOneType.ShowDialog();
 		}
 
 		private void listPaintType_SelectedIndexChanged(object sender, EventArgs e){
@@ -400,21 +377,8 @@ namespace OpenDental{
 			}
 			return "";
 		}
-		
-		private void butAddDiagnosticCode_Click(object sender,EventArgs e) {
-			using FormIcd10s formIcd10s=new FormIcd10s();
-			formIcd10s.IsSelectionMode=true;
-			formIcd10s.ShowDialog();
-			if(formIcd10s.DialogResult!=DialogResult.OK) {
-				return;
-			}
-			if(textDiagnosticCodes.Text.Length>0 && textDiagnosticCodes.Text.Last()!=',') {
-				textDiagnosticCodes.Text+=",";
-			}
-			textDiagnosticCodes.Text+=formIcd10s.Icd10Selected.Icd10Code;
-		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(textMedicalCode.Text!="" && !ProcedureCodes.GetContainsKey(textMedicalCode.Text)){
 				MsgBox.Show(this,"Invalid medical code.  It must refer to an existing procedure code entered separately");
 				return;
@@ -438,9 +402,6 @@ namespace OpenDental{
 			if(!textBaseUnits.IsValid() || (CultureInfo.CurrentCulture.Name.EndsWith("CA") && !textTimeUnits.IsValid())) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
-			}
-			if(!ValidateDiagnosticCodes()) {
-				return; //ValidateDiagnosticCodes() will show relevant MsgBoxes before returning
 			}
 			_procedureCode.AlternateCode1=textAlternateCode1.Text;
 			_procedureCode.MedicalCode=textMedicalCode.Text;
@@ -479,7 +440,6 @@ namespace OpenDental{
 			else {
 				_procedureCode.BypassGlobalLock=BypassLockStatus.NeverBypass;
 			}
-			_procedureCode.DiagnosticCodes=textDiagnosticCodes.Text;
 			_procedureCode.AreaAlsoToothRange=checkToothRange.Checked;
 			if(ProcedureCodes.Update(_procedureCode,_procedureCodeOld)) {//whether new or not.
 				string secLog="";
@@ -508,12 +468,14 @@ namespace OpenDental{
 				secLog+=SecurityLogEntryHelper(_procedureCodeOld.BypassGlobalLock.ToString(),_procedureCode.BypassGlobalLock.ToString(),"bypass global lock box");
 				secLog+=SecurityLogEntryHelper(_procedureCodeOld.ProcCatDescript,_procedureCode.ProcCatDescript,"category");
 				secLog+=SecurityLogEntryHelper(_procedureCodeOld.AreaAlsoToothRange.ToString(),_procedureCode.AreaAlsoToothRange.ToString(),"AreaAlsoToothRange box");
-				secLog+=SecurityLogEntryHelper(_procedureCodeOld.DiagnosticCodes.ToString(),_procedureCode.DiagnosticCodes.ToString(),"diagnostic codes");
-				SecurityLogs.MakeLogEntry(EnumPermType.ProcCodeEdit,0,secLog,_procedureCode.CodeNum,_procedureCodeOld.DateTStamp);
+				SecurityLogs.MakeLogEntry(Permissions.ProcCodeEdit,0,secLog,_procedureCode.CodeNum,_procedureCodeOld.DateTStamp);
 				DataValid.SetInvalid(InvalidType.ProcCodes);
 			}
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

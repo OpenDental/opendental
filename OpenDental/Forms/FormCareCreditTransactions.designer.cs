@@ -33,6 +33,7 @@ namespace OpenDental{
 			this.viewErrorMessageMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butRefresh = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.dateRangePicker = new OpenDental.UI.ODDateRangePicker();
 			this.tabControl = new OpenDental.UI.TabControl();
@@ -113,7 +114,7 @@ namespace OpenDental{
 			this.gridMain.ContextMenuStrip = this.contextMenu;
 			this.gridMain.Location = new System.Drawing.Point(1, 1);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(946, 492);
+			this.gridMain.Size = new System.Drawing.Size(946, 462);
 			this.gridMain.TabIndex = 0;
 			this.gridMain.Title = "CareCredit Transactions";
 			this.gridMain.TranslationName = "TableCareCreditTrans";
@@ -128,6 +129,16 @@ namespace OpenDental{
 			this.butRefresh.TabIndex = 3;
 			this.butRefresh.Text = "Refresh";
 			this.butRefresh.Click += new System.EventHandler(this.butRefresh_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(889, 548);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 5;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// comboClinic
 			// 
@@ -157,7 +168,7 @@ namespace OpenDental{
 			this.tabControl.Controls.Add(this.tabErrors);
 			this.tabControl.Location = new System.Drawing.Point(12, 56);
 			this.tabControl.Name = "tabControl";
-			this.tabControl.Size = new System.Drawing.Size(952, 516);
+			this.tabControl.Size = new System.Drawing.Size(952, 486);
 			this.tabControl.TabIndex = 4;
 			this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
 			// 
@@ -167,7 +178,7 @@ namespace OpenDental{
 			this.tabTrans.Location = new System.Drawing.Point(2, 21);
 			this.tabTrans.Name = "tabTrans";
 			this.tabTrans.Padding = new System.Windows.Forms.Padding(3);
-			this.tabTrans.Size = new System.Drawing.Size(948, 493);
+			this.tabTrans.Size = new System.Drawing.Size(948, 463);
 			this.tabTrans.TabIndex = 0;
 			this.tabTrans.Text = "Transactions";
 			// 
@@ -182,14 +193,14 @@ namespace OpenDental{
 			this.tabQSBatchTrans.Location = new System.Drawing.Point(2, 21);
 			this.tabQSBatchTrans.Name = "tabQSBatchTrans";
 			this.tabQSBatchTrans.Padding = new System.Windows.Forms.Padding(3);
-			this.tabQSBatchTrans.Size = new System.Drawing.Size(948, 493);
+			this.tabQSBatchTrans.Size = new System.Drawing.Size(948, 463);
 			this.tabQSBatchTrans.TabIndex = 2;
-			this.tabQSBatchTrans.Text = "Quickscreen Transactions";
+			this.tabQSBatchTrans.Text = "Batch Transactions";
 			// 
 			// butNoneQSBatch
 			// 
 			this.butNoneQSBatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butNoneQSBatch.Location = new System.Drawing.Point(104, 461);
+			this.butNoneQSBatch.Location = new System.Drawing.Point(104, 431);
 			this.butNoneQSBatch.Name = "butNoneQSBatch";
 			this.butNoneQSBatch.Size = new System.Drawing.Size(82, 24);
 			this.butNoneQSBatch.TabIndex = 151;
@@ -199,7 +210,7 @@ namespace OpenDental{
 			// butButAllQSTrans
 			// 
 			this.butButAllQSTrans.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butButAllQSTrans.Location = new System.Drawing.Point(6, 461);
+			this.butButAllQSTrans.Location = new System.Drawing.Point(6, 431);
 			this.butButAllQSTrans.Name = "butButAllQSTrans";
 			this.butButAllQSTrans.Size = new System.Drawing.Size(82, 24);
 			this.butButAllQSTrans.TabIndex = 150;
@@ -208,10 +219,9 @@ namespace OpenDental{
 			// 
 			// labelProcessQSBatches
 			// 
-			this.labelProcessQSBatches.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.labelProcessQSBatches.Location = new System.Drawing.Point(462, 461);
+			this.labelProcessQSBatches.Location = new System.Drawing.Point(462, 431);
 			this.labelProcessQSBatches.Name = "labelProcessQSBatches";
-			this.labelProcessQSBatches.Size = new System.Drawing.Size(367, 24);
+			this.labelProcessQSBatches.Size = new System.Drawing.Size(367, 16);
 			this.labelProcessQSBatches.TabIndex = 149;
 			this.labelProcessQSBatches.Text = "Only reprocesses expired batches";
 			this.labelProcessQSBatches.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -219,7 +229,7 @@ namespace OpenDental{
 			// butProcessBatchQS
 			// 
 			this.butProcessBatchQS.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butProcessBatchQS.Location = new System.Drawing.Point(367, 461);
+			this.butProcessBatchQS.Location = new System.Drawing.Point(367, 431);
 			this.butProcessBatchQS.Name = "butProcessBatchQS";
 			this.butProcessBatchQS.Size = new System.Drawing.Size(91, 24);
 			this.butProcessBatchQS.TabIndex = 148;
@@ -235,10 +245,10 @@ namespace OpenDental{
 			this.gridQSBatchTrans.Location = new System.Drawing.Point(1, 1);
 			this.gridQSBatchTrans.Name = "gridQSBatchTrans";
 			this.gridQSBatchTrans.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridQSBatchTrans.Size = new System.Drawing.Size(945, 450);
+			this.gridQSBatchTrans.Size = new System.Drawing.Size(945, 420);
 			this.gridQSBatchTrans.TabIndex = 142;
-			this.gridQSBatchTrans.Title = "CareCredit Quickscreen Transactions";
-			this.gridQSBatchTrans.TranslationName = "TableCareCreditQS";
+			this.gridQSBatchTrans.Title = "CareCredit Batch Transactions";
+			this.gridQSBatchTrans.TranslationName = "TableCareCreditBatch";
 			// 
 			// tabErrors
 			// 
@@ -250,14 +260,14 @@ namespace OpenDental{
 			this.tabErrors.Location = new System.Drawing.Point(2, 21);
 			this.tabErrors.Name = "tabErrors";
 			this.tabErrors.Padding = new System.Windows.Forms.Padding(3);
-			this.tabErrors.Size = new System.Drawing.Size(948, 493);
+			this.tabErrors.Size = new System.Drawing.Size(948, 463);
 			this.tabErrors.TabIndex = 1;
 			this.tabErrors.Text = "Errors(0)";
 			// 
 			// butNone
 			// 
 			this.butNone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butNone.Location = new System.Drawing.Point(104, 461);
+			this.butNone.Location = new System.Drawing.Point(104, 431);
 			this.butNone.Name = "butNone";
 			this.butNone.Size = new System.Drawing.Size(82, 24);
 			this.butNone.TabIndex = 148;
@@ -267,7 +277,7 @@ namespace OpenDental{
 			// butAll
 			// 
 			this.butAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butAll.Location = new System.Drawing.Point(6, 461);
+			this.butAll.Location = new System.Drawing.Point(6, 431);
 			this.butAll.Name = "butAll";
 			this.butAll.Size = new System.Drawing.Size(82, 24);
 			this.butAll.TabIndex = 147;
@@ -277,7 +287,7 @@ namespace OpenDental{
 			// butAck
 			// 
 			this.butAck.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butAck.Location = new System.Drawing.Point(367, 461);
+			this.butAck.Location = new System.Drawing.Point(367, 431);
 			this.butAck.Name = "butAck";
 			this.butAck.Size = new System.Drawing.Size(91, 24);
 			this.butAck.TabIndex = 146;
@@ -293,9 +303,9 @@ namespace OpenDental{
 			this.gridError.Location = new System.Drawing.Point(1, 1);
 			this.gridError.Name = "gridError";
 			this.gridError.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridError.Size = new System.Drawing.Size(945, 450);
+			this.gridError.Size = new System.Drawing.Size(945, 420);
 			this.gridError.TabIndex = 141;
-			this.gridError.Title = "CareCredit Quickscreen Errors";
+			this.gridError.Title = "CareCredit Batch Errors";
 			this.gridError.TranslationName = "TableCareCreditErrors";
 			this.gridError.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridCur_CellDoubleClick);
 			// 
@@ -336,6 +346,7 @@ namespace OpenDental{
 			this.Controls.Add(this.dateRangePicker);
 			this.Controls.Add(this.comboClinic);
 			this.Controls.Add(this.butRefresh);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormCareCreditTransactions";
 			this.Text = "CareCredit Transactions";
@@ -350,6 +361,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private UI.Button butRefresh;
 		private System.Windows.Forms.ContextMenuStrip contextMenu;

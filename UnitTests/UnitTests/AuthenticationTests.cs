@@ -105,6 +105,43 @@ namespace UnitTests.Authentication_Tests {
 		}
 
 		[TestMethod]
+		public void Authentication_ConstantEqualsTiming() {
+			Stopwatch s=new Stopwatch();
+			string reallyLooong="CosaNostra Pizza doesn't have any competition. Competition goes against the Mafia ethic.";
+			//First character is incorrect, so usually string comparison would be fast, but we want constant.
+			string longNoMatch="%osaNostra Pizza doesn't have any competition. Competition goes against the Mafia ethic.";
+			long matchTotal=0;
+			long matchAvg;
+			long noMatchTotal=0;
+			long noMatchAvg;
+			//Call it once before we start testing, so the JIT compiler doesn't mess with timings.
+			Authentication.ConstantEquals("a","a");
+			for(int i=0; i<30;i++) {
+				s.Start();
+				for(int k=0; k<50;k++) {
+					Authentication.ConstantEquals(reallyLooong,reallyLooong);
+				}
+				s.Stop();
+				matchTotal+=s.ElapsedTicks;
+				s.Reset();
+			}
+			matchAvg=matchTotal/30;
+
+			for(int i=0; i<30;i++) {
+				s.Start();
+				for(int k=0; k<50;k++) {
+					Authentication.ConstantEquals(longNoMatch,reallyLooong);
+				}
+				s.Stop();
+				noMatchTotal+=s.ElapsedTicks;
+				s.Reset();
+			}
+			noMatchAvg=noMatchTotal/30;
+			long deltaV=Math.Abs(noMatchAvg-matchAvg);
+			Assert.IsTrue(deltaV<75);
+		}
+
+		[TestMethod]
 		public void Authentication_VerifyMD5Hashing() {
 			//Our regular MD5 encodes text as unicode, which makes it difficult to normal hashes
 			//MD5_ECW encodes as ascii, which makes it easier to test.  Same underlying algorithm is used for both.

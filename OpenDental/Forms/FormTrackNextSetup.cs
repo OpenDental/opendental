@@ -17,7 +17,7 @@ namespace OpenDental {
 			textDaysFuture.Text=PrefC.GetLong(PrefName.PlannedApptDaysFuture).ToString();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textDaysPast.IsValid() || !textDaysFuture.IsValid()) {
 				MsgBox.Show("Please fix data entry errors first.");
 				return;
@@ -33,5 +33,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

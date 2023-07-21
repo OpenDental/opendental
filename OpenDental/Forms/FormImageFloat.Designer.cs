@@ -13,6 +13,7 @@ namespace OpenDental{
 			if(disposing) {
 				components?.Dispose();
 				_bitmapRaw?.Dispose();
+				_formImageFloatWindows?.Dispose();
 				if(_bitmapArrayShowing!=null && _bitmapArrayShowing.Length>0){
 					for(int i=0;i<_bitmapArrayShowing.Length;i++){
 						_bitmapArrayShowing[i]?.Dispose();
@@ -56,7 +57,6 @@ namespace OpenDental{
 			this.panelMain.Paint += new System.Windows.Forms.PaintEventHandler(this.panelMain_Paint);
 			this.panelMain.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.panelMain_MouseDoubleClick);
 			this.panelMain.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelMain_MouseDown);
-			this.panelMain.MouseLeave += new System.EventHandler(this.panelMain_MouseLeave);
 			this.panelMain.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelMain_MouseMove);
 			this.panelMain.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelMain_MouseUp);
 			// 

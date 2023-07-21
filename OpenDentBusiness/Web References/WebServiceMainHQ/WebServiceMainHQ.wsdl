@@ -2,20 +2,6 @@
 <wsdl:definitions xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tns="https://www.opendental.com/OpenDentalWebServiceHQ/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
     <s:schema elementFormDefault="qualified" targetNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/">
-      <s:element name="UpdateFHIRKeyStatus">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="UpdateFHIRKeyStatusResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="UpdateFHIRKeyStatusResult" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
       <s:element name="UpdateFHIRAPIKeys">
         <s:complexType>
           <s:sequence>
@@ -345,34 +331,6 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="MsgToPaySend">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="MsgToPaySendResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="MsgToPaySendResult" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="BuildPaymentPortalRedirectUrl">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="shortGuid" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="BuildPaymentPortalRedirectUrlResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="BuildPaymentPortalRedirectUrlResult" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
       <s:element name="PerformRefreshCache">
         <s:complexType>
           <s:sequence>
@@ -384,20 +342,6 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="PerformRefreshCacheResult" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="ProcessOCRIIDRequest">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="ProcessOCRIIDRequestResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="ProcessOCRIIDRequestResult" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -955,7 +899,7 @@
       <s:element name="RetrieveWebFormURL">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="shortGuid" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -1303,15 +1247,37 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="UpdateFHIRKeyStatus">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateFHIRKeyStatusResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UpdateFHIRKeyStatusResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateFHIRAPIKeys">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="officeData" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateFHIRAPIKeysResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UpdateFHIRAPIKeysResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="string" nillable="true" type="s:string" />
     </s:schema>
   </wsdl:types>
-  <wsdl:message name="UpdateFHIRKeyStatusSoapIn">
-    <wsdl:part name="parameters" element="tns:UpdateFHIRKeyStatus" />
-  </wsdl:message>
-  <wsdl:message name="UpdateFHIRKeyStatusSoapOut">
-    <wsdl:part name="parameters" element="tns:UpdateFHIRKeyStatusResponse" />
-  </wsdl:message>
   <wsdl:message name="UpdateFHIRAPIKeysSoapIn">
     <wsdl:part name="parameters" element="tns:UpdateFHIRAPIKeys" />
   </wsdl:message>
@@ -1456,29 +1422,11 @@
   <wsdl:message name="UpsertMobileSettingsSoapOut">
     <wsdl:part name="parameters" element="tns:UpsertMobileSettingsResponse" />
   </wsdl:message>
-  <wsdl:message name="MsgToPaySendSoapIn">
-    <wsdl:part name="parameters" element="tns:MsgToPaySend" />
-  </wsdl:message>
-  <wsdl:message name="MsgToPaySendSoapOut">
-    <wsdl:part name="parameters" element="tns:MsgToPaySendResponse" />
-  </wsdl:message>
-  <wsdl:message name="BuildPaymentPortalRedirectUrlSoapIn">
-    <wsdl:part name="parameters" element="tns:BuildPaymentPortalRedirectUrl" />
-  </wsdl:message>
-  <wsdl:message name="BuildPaymentPortalRedirectUrlSoapOut">
-    <wsdl:part name="parameters" element="tns:BuildPaymentPortalRedirectUrlResponse" />
-  </wsdl:message>
   <wsdl:message name="PerformRefreshCacheSoapIn">
     <wsdl:part name="parameters" element="tns:PerformRefreshCache" />
   </wsdl:message>
   <wsdl:message name="PerformRefreshCacheSoapOut">
     <wsdl:part name="parameters" element="tns:PerformRefreshCacheResponse" />
-  </wsdl:message>
-  <wsdl:message name="ProcessOCRIIDRequestSoapIn">
-    <wsdl:part name="parameters" element="tns:ProcessOCRIIDRequest" />
-  </wsdl:message>
-  <wsdl:message name="ProcessOCRIIDRequestSoapOut">
-    <wsdl:part name="parameters" element="tns:ProcessOCRIIDRequestResponse" />
   </wsdl:message>
   <wsdl:message name="GenerateShortGUIDsSoapIn">
     <wsdl:part name="parameters" element="tns:GenerateShortGUIDs" />
@@ -1864,11 +1812,11 @@
   <wsdl:message name="GetFHIRAPIKeysForOfficeSoapOut">
     <wsdl:part name="parameters" element="tns:GetFHIRAPIKeysForOfficeResponse" />
   </wsdl:message>
-  <wsdl:message name="UpdateFHIRKeyStatusHttpPostIn">
-    <wsdl:part name="officeData" type="s:string" />
+  <wsdl:message name="UpdateFHIRKeyStatusSoapIn">
+    <wsdl:part name="parameters" element="tns:UpdateFHIRKeyStatus" />
   </wsdl:message>
-  <wsdl:message name="UpdateFHIRKeyStatusHttpPostOut">
-    <wsdl:part name="Body" element="tns:string" />
+  <wsdl:message name="UpdateFHIRKeyStatusSoapOut">
+    <wsdl:part name="parameters" element="tns:UpdateFHIRKeyStatusResponse" />
   </wsdl:message>
   <wsdl:message name="UpdateFHIRAPIKeysHttpPostIn">
     <wsdl:part name="officeData" type="s:string" />
@@ -2011,28 +1959,10 @@
   <wsdl:message name="UpsertMobileSettingsHttpPostOut">
     <wsdl:part name="Body" element="tns:string" />
   </wsdl:message>
-  <wsdl:message name="MsgToPaySendHttpPostIn">
-    <wsdl:part name="officeData" type="s:string" />
-  </wsdl:message>
-  <wsdl:message name="MsgToPaySendHttpPostOut">
-    <wsdl:part name="Body" element="tns:string" />
-  </wsdl:message>
-  <wsdl:message name="BuildPaymentPortalRedirectUrlHttpPostIn">
-    <wsdl:part name="shortGuid" type="s:string" />
-  </wsdl:message>
-  <wsdl:message name="BuildPaymentPortalRedirectUrlHttpPostOut">
-    <wsdl:part name="Body" element="tns:string" />
-  </wsdl:message>
   <wsdl:message name="PerformRefreshCacheHttpPostIn">
     <wsdl:part name="officeData" type="s:string" />
   </wsdl:message>
   <wsdl:message name="PerformRefreshCacheHttpPostOut">
-    <wsdl:part name="Body" element="tns:string" />
-  </wsdl:message>
-  <wsdl:message name="ProcessOCRIIDRequestHttpPostIn">
-    <wsdl:part name="officeData" type="s:string" />
-  </wsdl:message>
-  <wsdl:message name="ProcessOCRIIDRequestHttpPostOut">
     <wsdl:part name="Body" element="tns:string" />
   </wsdl:message>
   <wsdl:message name="GenerateShortGUIDsHttpPostIn">
@@ -2275,7 +2205,7 @@
     <wsdl:part name="Body" element="tns:string" />
   </wsdl:message>
   <wsdl:message name="RetrieveWebFormURLHttpPostIn">
-    <wsdl:part name="officeData" type="s:string" />
+    <wsdl:part name="shortGuid" type="s:string" />
   </wsdl:message>
   <wsdl:message name="RetrieveWebFormURLHttpPostOut">
     <wsdl:part name="Body" element="tns:string" />
@@ -2427,11 +2357,19 @@
   <wsdl:message name="GetFHIRAPIKeysForOfficeHttpPostOut">
     <wsdl:part name="Body" element="tns:string" />
   </wsdl:message>
+  <wsdl:message name="UpdateFHIRKeyStatusHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="UpdateFHIRKeyStatusHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="UpdateFHIRAPIKeysHttpPostIn">
+    <wsdl:part name="officeData" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="UpdateFHIRAPIKeysHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
   <wsdl:portType name="WebServiceMainHQSoap">
-    <wsdl:operation name="UpdateFHIRKeyStatus">
-      <wsdl:input message="tns:UpdateFHIRKeyStatusSoapIn" />
-      <wsdl:output message="tns:UpdateFHIRKeyStatusSoapOut" />
-    </wsdl:operation>
     <wsdl:operation name="UpdateFHIRAPIKeys">
       <wsdl:input message="tns:UpdateFHIRAPIKeysSoapIn" />
       <wsdl:output message="tns:UpdateFHIRAPIKeysSoapOut" />
@@ -2528,21 +2466,9 @@
       <wsdl:input message="tns:UpsertMobileSettingsSoapIn" />
       <wsdl:output message="tns:UpsertMobileSettingsSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="MsgToPaySend">
-      <wsdl:input message="tns:MsgToPaySendSoapIn" />
-      <wsdl:output message="tns:MsgToPaySendSoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="BuildPaymentPortalRedirectUrl">
-      <wsdl:input message="tns:BuildPaymentPortalRedirectUrlSoapIn" />
-      <wsdl:output message="tns:BuildPaymentPortalRedirectUrlSoapOut" />
-    </wsdl:operation>
     <wsdl:operation name="PerformRefreshCache">
       <wsdl:input message="tns:PerformRefreshCacheSoapIn" />
       <wsdl:output message="tns:PerformRefreshCacheSoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="ProcessOCRIIDRequest">
-      <wsdl:input message="tns:ProcessOCRIIDRequestSoapIn" />
-      <wsdl:output message="tns:ProcessOCRIIDRequestSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="GenerateShortGUIDs">
       <wsdl:input message="tns:GenerateShortGUIDsSoapIn" />
@@ -2800,16 +2726,18 @@
       <wsdl:input message="tns:GetFHIRAPIKeysForOfficeSoapIn" />
       <wsdl:output message="tns:GetFHIRAPIKeysForOfficeSoapOut" />
     </wsdl:operation>
+    <wsdl:operation name="UpdateFHIRKeyStatus">
+      <wsdl:input message="tns:UpdateFHIRKeyStatusSoapIn" />
+      <wsdl:output message="tns:UpdateFHIRKeyStatusSoapOut" />
+    </wsdl:operation>
   </wsdl:portType>
   <wsdl:portType name="WebServiceMainHQHttpPost">
-    <wsdl:operation name="UpdateFHIRKeyStatus">
-      <wsdl:input message="tns:UpdateFHIRKeyStatusHttpPostIn" />
-      <wsdl:output message="tns:UpdateFHIRKeyStatusHttpPostOut" />
-    </wsdl:operation>
     <wsdl:operation name="UpdateFHIRAPIKeys">
       <wsdl:input message="tns:UpdateFHIRAPIKeysHttpPostIn" />
       <wsdl:output message="tns:UpdateFHIRAPIKeysHttpPostOut" />
     </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="WebServiceMainHQHttpPost">
     <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
       <wsdl:input message="tns:UploadRedactedDataPatientPortalInvitesHttpPostIn" />
       <wsdl:output message="tns:UploadRedactedDataPatientPortalInvitesHttpPostOut" />
@@ -2902,21 +2830,9 @@
       <wsdl:input message="tns:UpsertMobileSettingsHttpPostIn" />
       <wsdl:output message="tns:UpsertMobileSettingsHttpPostOut" />
     </wsdl:operation>
-    <wsdl:operation name="MsgToPaySend">
-      <wsdl:input message="tns:MsgToPaySendHttpPostIn" />
-      <wsdl:output message="tns:MsgToPaySendHttpPostOut" />
-    </wsdl:operation>
-    <wsdl:operation name="BuildPaymentPortalRedirectUrl">
-      <wsdl:input message="tns:BuildPaymentPortalRedirectUrlHttpPostIn" />
-      <wsdl:output message="tns:BuildPaymentPortalRedirectUrlHttpPostOut" />
-    </wsdl:operation>
     <wsdl:operation name="PerformRefreshCache">
       <wsdl:input message="tns:PerformRefreshCacheHttpPostIn" />
       <wsdl:output message="tns:PerformRefreshCacheHttpPostOut" />
-    </wsdl:operation>
-    <wsdl:operation name="ProcessOCRIIDRequest">
-      <wsdl:input message="tns:ProcessOCRIIDRequestHttpPostIn" />
-      <wsdl:output message="tns:ProcessOCRIIDRequestHttpPostOut" />
     </wsdl:operation>
     <wsdl:operation name="GenerateShortGUIDs">
       <wsdl:input message="tns:GenerateShortGUIDsHttpPostIn" />
@@ -3174,18 +3090,13 @@
       <wsdl:input message="tns:GetFHIRAPIKeysForOfficeHttpPostIn" />
       <wsdl:output message="tns:GetFHIRAPIKeysForOfficeHttpPostOut" />
     </wsdl:operation>
+    <wsdl:operation name="UpdateFHIRKeyStatus">
+      <wsdl:input message="tns:UpdateFHIRKeyStatusHttpPostIn" />
+      <wsdl:output message="tns:UpdateFHIRKeyStatusHttpPostOut" />
+    </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="WebServiceMainHQSoap" type="tns:WebServiceMainHQSoap">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
-    <wsdl:operation name="UpdateFHIRKeyStatus">
-      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UpdateFHIRKeyStatus" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="UpdateFHIRAPIKeys">
       <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UpdateFHIRAPIKeys" style="document" />
       <wsdl:input>
@@ -3195,6 +3106,9 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WebServiceMainHQSoap" type="tns:WebServiceMainHQSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
     <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
       <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UploadRedactedDataPatientPortalInvites" style="document" />
       <wsdl:input>
@@ -3402,35 +3316,8 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="MsgToPaySend">
-      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/MsgToPaySend" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="BuildPaymentPortalRedirectUrl">
-      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildPaymentPortalRedirectUrl" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="PerformRefreshCache">
       <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/PerformRefreshCache" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="ProcessOCRIIDRequest">
-      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ProcessOCRIIDRequest" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -4014,18 +3901,18 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="UpdateFHIRKeyStatus">
+      <soap:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UpdateFHIRKeyStatus" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="WebServiceMainHQSoap12" type="tns:WebServiceMainHQSoap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
-    <wsdl:operation name="UpdateFHIRKeyStatus">
-      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UpdateFHIRKeyStatus" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="UpdateFHIRAPIKeys">
       <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UpdateFHIRAPIKeys" style="document" />
       <wsdl:input>
@@ -4035,6 +3922,9 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WebServiceMainHQSoap12" type="tns:WebServiceMainHQSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
     <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
       <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UploadRedactedDataPatientPortalInvites" style="document" />
       <wsdl:input>
@@ -4242,35 +4132,8 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="MsgToPaySend">
-      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/MsgToPaySend" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="BuildPaymentPortalRedirectUrl">
-      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/BuildPaymentPortalRedirectUrl" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="PerformRefreshCache">
       <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/PerformRefreshCache" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="ProcessOCRIIDRequest">
-      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/ProcessOCRIIDRequest" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -4854,18 +4717,18 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="UpdateFHIRKeyStatus">
+      <soap12:operation soapAction="https://www.opendental.com/OpenDentalWebServiceHQ/UpdateFHIRKeyStatus" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="WebServiceMainHQHttpPost" type="tns:WebServiceMainHQHttpPost">
     <http:binding verb="POST" />
-    <wsdl:operation name="UpdateFHIRKeyStatus">
-      <http:operation location="/UpdateFHIRKeyStatus" />
-      <wsdl:input>
-        <mime:content type="application/x-www-form-urlencoded" />
-      </wsdl:input>
-      <wsdl:output>
-        <mime:mimeXml part="Body" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="UpdateFHIRAPIKeys">
       <http:operation location="/UpdateFHIRAPIKeys" />
       <wsdl:input>
@@ -4875,6 +4738,9 @@
         <mime:mimeXml part="Body" />
       </wsdl:output>
     </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WebServiceMainHQHttpPost" type="tns:WebServiceMainHQHttpPost">
+    <http:binding verb="POST" />
     <wsdl:operation name="UploadRedactedDataPatientPortalInvites">
       <http:operation location="/UploadRedactedDataPatientPortalInvites" />
       <wsdl:input>
@@ -5082,35 +4948,8 @@
         <mime:mimeXml part="Body" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="MsgToPaySend">
-      <http:operation location="/MsgToPaySend" />
-      <wsdl:input>
-        <mime:content type="application/x-www-form-urlencoded" />
-      </wsdl:input>
-      <wsdl:output>
-        <mime:mimeXml part="Body" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="BuildPaymentPortalRedirectUrl">
-      <http:operation location="/BuildPaymentPortalRedirectUrl" />
-      <wsdl:input>
-        <mime:content type="application/x-www-form-urlencoded" />
-      </wsdl:input>
-      <wsdl:output>
-        <mime:mimeXml part="Body" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="PerformRefreshCache">
       <http:operation location="/PerformRefreshCache" />
-      <wsdl:input>
-        <mime:content type="application/x-www-form-urlencoded" />
-      </wsdl:input>
-      <wsdl:output>
-        <mime:mimeXml part="Body" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="ProcessOCRIIDRequest">
-      <http:operation location="/ProcessOCRIIDRequest" />
       <wsdl:input>
         <mime:content type="application/x-www-form-urlencoded" />
       </wsdl:input>
@@ -5694,16 +5533,34 @@
         <mime:mimeXml part="Body" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="UpdateFHIRKeyStatus">
+      <http:operation location="/UpdateFHIRKeyStatus" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateFHIRAPIKeys">
+      <http:operation location="/UpdateFHIRAPIKeys" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="WebServiceMainHQ">
     <wsdl:port name="WebServiceMainHQSoap" binding="tns:WebServiceMainHQSoap">
-      <soap:address location="http://localhost/OpenDentalWebServiceHQ/WebServiceMainHQ.asmx" />
+      <soap:address location="http://localhost/OpenDentalWebServiceHQ/webservicemainhq.asmx" />
     </wsdl:port>
     <wsdl:port name="WebServiceMainHQSoap12" binding="tns:WebServiceMainHQSoap12">
-      <soap12:address location="http://localhost/OpenDentalWebServiceHQ/WebServiceMainHQ.asmx" />
+      <soap12:address location="http://localhost/OpenDentalWebServiceHQ/webservicemainhq.asmx" />
     </wsdl:port>
     <wsdl:port name="WebServiceMainHQHttpPost" binding="tns:WebServiceMainHQHttpPost">
-      <http:address location="http://localhost/OpenDentalWebServiceHQ/WebServiceMainHQ.asmx" />
+      <http:address location="http://localhost/OpenDentalWebServiceHQ/webservicemainhq.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

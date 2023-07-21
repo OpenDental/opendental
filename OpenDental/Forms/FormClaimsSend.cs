@@ -238,7 +238,7 @@ namespace OpenDental{
 
 		private void MenuItemPopup(object sender,EventArgs e) {
 			MenuItem menuItemDeleteClaim=gridMain.ContextMenu.MenuItems.OfType<MenuItem>().FirstOrDefault(x => x.Name=="menuItemDeleteClaim");
-			menuItemDeleteClaim.Enabled=Security.IsAuthorized(EnumPermType.ClaimDelete,true);
+			menuItemDeleteClaim.Enabled=Security.IsAuthorized(Permissions.ClaimDelete,true);
 			if(gridMain.SelectedTags<ClaimSendQueueItem>().Count==1
 				&& gridMain.SelectedTag<ClaimSendQueueItem>().MissingData.Contains(Eclaims.GetNoProceduresOnClaimMessage()))
 			{
@@ -264,7 +264,7 @@ namespace OpenDental{
 				ClaimProcs.DeleteMany(listClaimProcs);
 				List<long> listEtrans835AttachNums=Etrans835Attaches.GetForClaimNums(claim.ClaimNum).Select(x => x.Etrans835AttachNum).ToList();
 				Claims.Delete(claim,listEtrans835AttachNums);
-				SecurityLogs.MakeLogEntry(EnumPermType.ClaimDelete,claim.PatNum,gridMain.SelectedTag<ClaimSendQueueItem>().PatName
+				SecurityLogs.MakeLogEntry(Permissions.ClaimDelete,claim.PatNum,gridMain.SelectedTag<ClaimSendQueueItem>().PatName
 					+", "+Lan.g(this,"Date Entry")+": "+claim.SecDateEntry.ToShortDateString()
 					+", "+Lan.g(this,"Date of Service")+": "+claim.DateService.ToShortDateString(),
 					claimSendQueueItem.ClaimNum,claim.SecDateTEdit);
@@ -530,8 +530,8 @@ namespace OpenDental{
 				return;
 			}
 			Patient patient=Patients.GetPat((long)e.Tag);
-			GlobalFormOpenDental.PatientSelected(patient,false);
-			GlobalFormOpenDental.GotoAccount((long)e.Tag);
+			FormOpenDental.S_Contr_PatientSelected(patient,false);
+			GotoModule.GotoAccount((long)e.Tag);
 		}
 
 		private void toolBarButPreview_Click(){
@@ -588,7 +588,7 @@ namespace OpenDental{
 				if(!formClaimPrint.PrintImmediate(Lan.g(this,"Multiple claims printed"),PrintSituation.Claim,0,(doUsePrinterSettingsForAll && !isFirstIteration))) {
 					return;
 				}
-				Etranss.SetClaimSentOrPrinted(claimSendQueueItem.ClaimNum,claimSendQueueItem.ClaimStatus,claimSendQueueItem.PatNum,0,EtransType.ClaimPrinted,0,Security.CurUser.UserNum);
+				Etranss.SetClaimSentOrPrinted(claimSendQueueItem.ClaimNum,claimSendQueueItem.PatNum,0,EtransType.ClaimPrinted,0,Security.CurUser.UserNum);
 				if(Claims.ReceiveAsNoPaymentIfNeeded(claimSendQueueItem.ClaimNum)) {
 					listClaimNums.Add(claimSendQueueItem.ClaimNum);
 				}
@@ -723,10 +723,9 @@ namespace OpenDental{
 						MsgBox.Show(this,"Please filter by clinic first.");
 						return;
 					}
-					//if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Send all e-claims through selected clearinghouse?")) {
-					//Redundant. Asks again 30 lines down.
-					//	return;
-					//}
+					if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Send all e-claims through selected clearinghouse?")) {
+						return;
+					}
 					for(int i=0;i<gridMain.ListGridRows.Count;i++) {//loop through all filtered rows
 						ClaimSendQueueItem queueItem=(ClaimSendQueueItem)gridMain.ListGridRows[i].Tag;
 						if(queueItem.CanSendElect) {
@@ -802,7 +801,7 @@ namespace OpenDental{
 					//(Find the index of listTempQueueItem c where c.ClaimNum is the same as the ClaimNum of the item just sent.)
 					listClaimSendQueueItemsTemps.RemoveAt(listClaimSendQueueItemsTemps.FindIndex(c => c.ClaimNum==listClaimSendQueueItems[i].ClaimNum));
 					//one securitylog entry for each sent claim
-					SecurityLogs.MakeLogEntry(EnumPermType.ClaimSend,listClaimSendQueueItems[i].PatNum,Lan.g(this,"Claim sent from Claims Send Window."),
+					SecurityLogs.MakeLogEntry(Permissions.ClaimSend,listClaimSendQueueItems[i].PatNum,Lan.g(this,"Claim sent from Claims Send Window."),
 						listClaimSendQueueItems[i].ClaimNum,listClaimSendQueueItems[i].SecDateTEdit);
 				}
 			}
@@ -1135,7 +1134,7 @@ namespace OpenDental{
 			_isHeadingPrinted=false;
 			PrinterL.TryPrintOrDebugRpPreview(pd2_PrintPage,
 				Lan.g(this,"Claim history list printed"),
-				margins:new Margins(0,0,0,100),
+				margins:new Margins(0,0,0,0),
 				printoutOrigin:PrintoutOrigin.AtMargin,
 				printoutOrientation:PrintoutOrientation.Landscape
 			);

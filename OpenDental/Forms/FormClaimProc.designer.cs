@@ -115,8 +115,8 @@
 			this.textProcDate = new OpenDental.ValidDate();
 			this.textDateCP = new OpenDental.ValidDate();
 			this.butDelete = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
-			this.warningIntegrity = new OpenDental.UI.WarningIntegrity();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.groupClaim.SuspendLayout();
 			this.panelClaimExtras.SuspendLayout();
 			this.panelEstimateInfo.SuspendLayout();
@@ -1046,27 +1046,30 @@
 			this.butDelete.Text = "&Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(848, 625);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 13;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(894, 625);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 14;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
-			// warningIntegrity
+			// butOK
 			// 
-			this.warningIntegrity.Location = new System.Drawing.Point(1, 1);
-			this.warningIntegrity.Name = "warningIntegrity";
-			this.warningIntegrity.Size = new System.Drawing.Size(18, 18);
-			this.warningIntegrity.TabIndex = 193;
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(806, 625);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 13;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// FormClaimProc
 			// 
-			this.ClientSize = new System.Drawing.Size(941, 658);
-			this.Controls.Add(this.warningIntegrity);
+			this.ClientSize = new System.Drawing.Size(981, 658);
 			this.Controls.Add(this.comboPayTracker);
 			this.Controls.Add(this.label12);
 			this.Controls.Add(this.checkPayPlan);
@@ -1091,7 +1094,8 @@
 			this.Controls.Add(this.checkNoBillIns);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butDelete);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label9);
 			this.Controls.Add(this.panelEstimateInfo);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -1101,6 +1105,7 @@
 			this.Name = "FormClaimProc";
 			this.ShowInTaskbar = false;
 			this.Text = "Edit Claim Procedure";
+			this.Closing += new System.ComponentModel.CancelEventHandler(this.FormClaimProc_Closing);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormClaimProc_FormClosing);
 			this.Load += new System.EventHandler(this.FormClaimProcEdit_Load);
 			this.groupClaim.ResumeLayout(false);
@@ -1118,7 +1123,8 @@
 		}
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butDelete;
 		private System.Windows.Forms.Label label9;
 		private OpenDental.ValidDouble textInsPayAmt;
@@ -1210,6 +1216,5 @@
 		private UI.Button butBlueBookLog;
 		private System.Windows.Forms.Label labelClaimAdjReasonCodes;
 		private System.Windows.Forms.TextBox textClaimAdjReasonCodes;
-		private UI.WarningIntegrity warningIntegrity;
 	}
 }

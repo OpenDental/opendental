@@ -27,6 +27,7 @@ namespace OpenDental{
 			this.gridActiveInstances = new OpenDental.UI.GridOD();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butCloseSessions = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butShutdown = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
@@ -51,7 +52,7 @@ namespace OpenDental{
 			// butCloseSessions
 			// 
 			this.butCloseSessions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCloseSessions.Location = new System.Drawing.Point(529, 401);
+			this.butCloseSessions.Location = new System.Drawing.Point(529, 351);
 			this.butCloseSessions.Name = "butCloseSessions";
 			this.butCloseSessions.Size = new System.Drawing.Size(107, 24);
 			this.butCloseSessions.TabIndex = 8;
@@ -59,10 +60,20 @@ namespace OpenDental{
 			this.butCloseSessions.UseVisualStyleBackColor = true;
 			this.butCloseSessions.Click += new System.EventHandler(this.butCloseSessions_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(529, 431);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(107, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butShutdown
 			// 
 			this.butShutdown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butShutdown.Location = new System.Drawing.Point(529, 431);
+			this.butShutdown.Location = new System.Drawing.Point(529, 391);
 			this.butShutdown.Name = "butShutdown";
 			this.butShutdown.Size = new System.Drawing.Size(107, 24);
 			this.butShutdown.TabIndex = 6;
@@ -74,6 +85,7 @@ namespace OpenDental{
 			this.ClientSize = new System.Drawing.Size(648, 467);
 			this.Controls.Add(this.butCloseSessions);
 			this.Controls.Add(this.gridActiveInstances);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butShutdown);
 			this.Controls.Add(this.label1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -85,6 +97,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.Button butShutdown;
 		private UI.GridOD gridActiveInstances;

@@ -18,7 +18,7 @@ namespace ServiceManager {
 			if(_serviceFile.Name!="OpenDentalReplicationService.exe") {
 				//The replication service controls are shwoing by default. 
 				//Don't show the replciation service controls.
-				Height=375;
+				Height=325;
 				checkIsOneWayReplication.Visible=false;
 				groupReplicationMaster.Visible=false;
 			}
@@ -40,7 +40,6 @@ namespace ServiceManager {
 				textDatabase.Text=nav.SelectSingleNode("Database").Value;
 				textUser.Text=nav.SelectSingleNode("User").Value;
 				textPassword.Text=nav.SelectSingleNode("Password").Value;
-				textPEM.Text=nav.SelectSingleNode("SslCa")?.Value??"";
 				XPathNavigator encryptedPwdNode=nav.SelectSingleNode("MySQLPassHash");
 				string decryptedPwd;
 				if(textPassword.Text==""
@@ -97,7 +96,6 @@ namespace ServiceManager {
 				string password=(isOneWayRepMaster ? textReplicationMasterPass.Text:textPassword.Text);
 				string userLow;
 				string passwordLow;
-				string sslCa=textPEM.Text;
 				if(isOneWayRepMaster) {//The replication service uses a direct connection. The low user is never used.
 					userLow="";
 					passwordLow="";
@@ -107,7 +105,7 @@ namespace ServiceManager {
 					passwordLow=textPasswordLow.Text;
 				}
 				DatabaseType dbType=(isOneWayRepMaster ? (DatabaseType)comboReplicationMasterDbType.SelectedIndex:(DatabaseType)comboDatabaseType.SelectedIndex);
-				con.SetDb(server,database,user,password,userLow,passwordLow,dbType,sslCa);
+				con.SetDb(server,database,user,password,userLow,passwordLow,dbType);
 				return true;
 			}
 			catch(Exception ex) {
@@ -146,7 +144,6 @@ namespace ServiceManager {
 			string strPassword=(isOneWayRepMaster ? textReplicationMasterPass.Text:textPassword.Text);
 			string strUserLow;
 			string strPasswordLow;
-			string sslCa=textPEM.Text;
 			if(isOneWayRepMaster) {//The replication service uses a direct connection. The low user is never used.
 				strUserLow="";
 				strPasswordLow="";
@@ -173,8 +170,6 @@ namespace ServiceManager {
 			userLow.InnerText=strUserLow;
 			XmlNode passwordLow=document.CreateNode(XmlNodeType.Element,"PasswordLow","");
 			passwordLow.InnerText=strPasswordLow;
-			XmlNode sslCertificate=document.CreateNode(XmlNodeType.Element,"SslCa","");
-			sslCertificate.InnerText=sslCa;
 			XmlNode dbType=document.CreateNode(XmlNodeType.Element,"DatabaseType","");
 			dbType.InnerText="MySql";//Not going to support Oracle until someone complains.
 			//Assigning Structure

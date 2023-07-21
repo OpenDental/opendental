@@ -26,6 +26,7 @@ namespace OpenDental{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWebSchedASAPSend));
 			this.butSend = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.groupSendMode = new OpenDental.UI.GroupBox();
 			this.radioEmail = new System.Windows.Forms.RadioButton();
 			this.radioTextEmail = new System.Windows.Forms.RadioButton();
@@ -47,12 +48,23 @@ namespace OpenDental{
 			// butSend
 			// 
 			this.butSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSend.Location = new System.Drawing.Point(587, 580);
+			this.butSend.Location = new System.Drawing.Point(506, 580);
 			this.butSend.Name = "butSend";
 			this.butSend.Size = new System.Drawing.Size(75, 24);
 			this.butSend.TabIndex = 3;
 			this.butSend.Text = "&Send";
-			this.butSend.Click += new System.EventHandler(this.butSend_Click);
+			this.butSend.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(587, 580);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// groupSendMode
 			// 
@@ -115,7 +127,7 @@ namespace OpenDental{
 			this.textTextTemplate.DetectUrls = false;
 			this.textTextTemplate.Location = new System.Drawing.Point(24, 143);
 			this.textTextTemplate.Name = "textTextTemplate";
-			this.textTextTemplate.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.TxtMsg;
+			this.textTextTemplate.QuickPasteType = OpenDentBusiness.QuickPasteType.TxtMsg;
 			this.textTextTemplate.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textTextTemplate.Size = new System.Drawing.Size(438, 67);
 			this.textTextTemplate.TabIndex = 75;
@@ -156,7 +168,7 @@ namespace OpenDental{
 			this.textEmailSubject.DetectUrls = false;
 			this.textEmailSubject.Location = new System.Drawing.Point(24, 358);
 			this.textEmailSubject.Name = "textEmailSubject";
-			this.textEmailSubject.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textEmailSubject.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textEmailSubject.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textEmailSubject.Size = new System.Drawing.Size(438, 20);
 			this.textEmailSubject.TabIndex = 79;
@@ -214,6 +226,7 @@ namespace OpenDental{
 			// FormWebSchedASAPSend
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(674, 616);
 			this.Controls.Add(this.butEditEmail);
 			this.Controls.Add(this.browserEmailText);
@@ -226,6 +239,7 @@ namespace OpenDental{
 			this.Controls.Add(this.textTextTemplate);
 			this.Controls.Add(this.groupSendMode);
 			this.Controls.Add(this.butSend);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormWebSchedASAPSend";
 			this.Text = "Send Web Sched ASAP Alerts";
@@ -239,6 +253,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butSend;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.GroupBox groupSendMode;
 		private System.Windows.Forms.RadioButton radioEmail;
 		private System.Windows.Forms.RadioButton radioTextEmail;

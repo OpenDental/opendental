@@ -11,14 +11,7 @@ namespace OpenDentBusiness{
 	public class CommOptOuts{
 		///<summary>Returns an entry from the db, or a new instance(not in db yet) if not found.</summary>
 		public static CommOptOut Refresh(long patNum) {
-			//No need to check MiddleTierRole; no call to db.
-			CommOptOut commOptOut=GetForPat(patNum);
-			if(commOptOut!=null){
-				return commOptOut;
-			}
-			commOptOut=new CommOptOut();
-			commOptOut.PatNum=patNum;
-			return commOptOut;
+			return GetForPat(patNum)??new CommOptOut() { PatNum=patNum };
 		}
 
 		///<summary>Returns an entry from the db for the given patNum.</summary>
@@ -77,16 +70,10 @@ namespace OpenDentBusiness{
 		}
 
 		public static void Upsert(CommOptOut commOptOut) {
-			//No need to check MiddleTierRole; no call to db.
 			//This assures one-to-one with patient table.  Also safe for concurrent editing.
-			CommOptOut commOptOutDb=null;
-			if(commOptOut.PatNum>0){
-				commOptOutDb=GetForPat(commOptOut.PatNum);
-			}
+			CommOptOut commOptOutDb=commOptOut.PatNum>0 ? GetForPat(commOptOut.PatNum) : null;
 			if(commOptOutDb is null) {
-				List<CommOptOut> listCommOptOuts=new List<CommOptOut>();
-				listCommOptOuts.Add(commOptOut);
-				InsertMany(listCommOptOuts);
+				InsertMany(new List<CommOptOut> { commOptOut });
 				return;
 			}
 			Update(commOptOut,commOptOutDb);

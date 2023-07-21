@@ -179,9 +179,10 @@ namespace OpenDentBusiness {
 			}
 			if(siteLink.SiteLinkNum > 0) {
 				Update(siteLink);
-				return;
 			}
-			Insert(siteLink);
+			else {
+				Insert(siteLink);
+			}
 		}
 
 		///<summary>Updates all sitelinks to have the same triage coordinator, due to working from home.</summary>

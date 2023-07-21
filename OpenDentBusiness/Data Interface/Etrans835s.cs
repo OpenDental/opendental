@@ -102,7 +102,7 @@ namespace OpenDentBusiness {
 			etrans835.TransRefNum=x835.TransRefNum;
 			etrans835.InsPaid=(double)x835.InsPaid;
 			etrans835.ControlId=x835.ControlId;
-			etrans835.PaymentMethodCode=x835.PaymentMethodCode;
+			etrans835.PaymentMethodCode=x835._paymentMethodCode;
 			List<string> listPatNames=x835.ListClaimsPaid.Select(x => x.PatientName.ToString()).Distinct().ToList();
 			etrans835.PatientName=(listPatNames.Count>0 ? listPatNames[0] : "");
 			if(listPatNames.Count>1) {

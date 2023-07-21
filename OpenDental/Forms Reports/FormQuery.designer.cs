@@ -9,6 +9,7 @@
 		private System.ComponentModel.Container components = null;// Required designer variable.
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.Button butBack;
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butCopy;
 		private OpenDental.UI.Button butExport;
 		private OpenDental.UI.Button butExportExcel;
@@ -40,6 +41,7 @@
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormQuery));
+			this.butClose = new OpenDental.UI.Button();
 			this.grid2 = new System.Windows.Forms.DataGrid();
 			this.textQuery = new OpenDental.ODtextBox();
 			this.butExportExcel = new OpenDental.UI.Button();
@@ -78,6 +80,17 @@
 			this.splitterPanel2.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(1151, 666);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(70, 24);
+			this.butClose.TabIndex = 5;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// grid2
 			// 
 			this.grid2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -104,7 +117,7 @@
 			this.textQuery.Location = new System.Drawing.Point(2, 1);
 			this.textQuery.Margin = new System.Windows.Forms.Padding(3, 3, 3, 25);
 			this.textQuery.Name = "textQuery";
-			this.textQuery.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Query;
+			this.textQuery.QuickPasteType = OpenDentBusiness.QuickPasteType.Query;
 			this.textQuery.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textQuery.Size = new System.Drawing.Size(557, 156);
 			this.textQuery.SpellCheckIsEnabled = false;
@@ -394,9 +407,11 @@
 			// 
 			// FormQuery
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(1230, 696);
 			this.Controls.Add(this.splitContainer);
 			this.Controls.Add(this.butQView);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butPrintPreview);
 			this.Controls.Add(this.printPreviewControl2);
 			this.Controls.Add(this.panelZoom);

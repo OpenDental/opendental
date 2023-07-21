@@ -26,7 +26,7 @@ namespace OpenDental {
 			catch(Exception ex) {
 				ex.DoNothing();//Suppress unhandled exceptions from hidden preferences, since they are read only.
 			}
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				tabControlMain.TabPages.Remove(tabReport);//Not supported in OD Cloud
 			}
 		}
@@ -97,7 +97,6 @@ namespace OpenDental {
 			checkUsePhoneNumTable.Checked=_doUsePhonenumTable;
 			checkEnableEmailAddressAutoComplete.Checked=PrefC.GetBool(PrefName.EnableEmailAddressAutoComplete);
 			checkEnterpriseCommlogOmitDefaults.Checked=PrefC.GetBool(PrefName.EnterpriseCommlogOmitDefaults);
-			checkDatabaseGlobalVariablesDontSet.Checked=PrefC.GetBool(PrefName.DatabaseGlobalVariablesDontSet);
 			#endregion Advanced Tab
 			#region Appts Tab
 			checkApptsRequireProcs.Checked=PrefC.GetBool(PrefName.ApptsRequireProc);
@@ -293,7 +292,6 @@ namespace OpenDental {
 				| Prefs.UpdateBool(PrefName.EraShowStatusAndClinic,checkEra835sShowStatusAndClinic.Checked)
 				| Prefs.UpdateBool(PrefName.EnterpriseCommlogOmitDefaults,checkEnterpriseCommlogOmitDefaults.Checked)
 				| Prefs.UpdateBool(PrefName.EnterpriseManualRefreshMainTaskLists,checkRefresh.Checked)
-				| Prefs.UpdateBool(PrefName.DatabaseGlobalVariablesDontSet,checkDatabaseGlobalVariablesDontSet.Checked)
 			)
 			{
 				hasChanges=true;
@@ -310,21 +308,18 @@ namespace OpenDental {
 			//Copied logging for RigorousAccounting and RigorousAdjustments from FormModuleSetup.
 			if(Prefs.UpdateInt(PrefName.RigorousAccounting,comboRigorousAccounting.SelectedIndex)) {
 				hasChanges=true;
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Rigorous accounting changed from "+
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Rigorous accounting changed from "+
 					((RigorousAccounting)prefRigorousAccounting).GetDescription()+" to "
 					+((RigorousAccounting)comboRigorousAccounting.SelectedIndex).GetDescription()+".");
 			}
 			int prefRigorousAdjustments=PrefC.GetInt(PrefName.RigorousAdjustments);
 			if(Prefs.UpdateInt(PrefName.RigorousAdjustments,comboRigorousAdjustments.SelectedIndex)) {
 				hasChanges=true;
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Rigorous adjustments changed from "+
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Rigorous adjustments changed from "+
 					((RigorousAdjustments)prefRigorousAdjustments).GetDescription()+" to "
 					+((RigorousAdjustments)comboRigorousAdjustments.SelectedIndex).GetDescription()+".");
 			}
-			if(UpdateReportingServer()) {
-				hasChanges=true;
-				DataValid.SetInvalid(InvalidType.ConnectionStoreClear);
-			}
+			hasChanges|=UpdateReportingServer();
 			hasChanges|=UpdateClaimSnapshotRuntime();
 			hasChanges|=UpdateClaimSnapshotTrigger();
 			if(hasChanges) {
@@ -383,8 +378,13 @@ namespace OpenDental {
 		}
 
 		private bool UpdateClaimSnapshotTrigger() {
-			ClaimSnapshotTrigger claimSnapshotTrigger=comboClaimSnapshotTrigger.GetSelected<ClaimSnapshotTrigger>();
-			return Prefs.UpdateString(PrefName.ClaimSnapshotTriggerType,claimSnapshotTrigger.ToString());
+			for(int i=0;i<Enum.GetValues(typeof(ClaimSnapshotTrigger)).Length;i++) {
+				ClaimSnapshotTrigger claimSnapshotTrigger=(ClaimSnapshotTrigger)i;
+				if(claimSnapshotTrigger.GetDescription()==comboClaimSnapshotTrigger.Text) {
+					return Prefs.UpdateString(PrefName.ClaimSnapshotTriggerType,claimSnapshotTrigger.ToString());
+				}
+			}
+			return false;
 		}
 
 		///<summary>Checks preferences that take user entry for errors, returns true if all entries are valid.</summary>
@@ -459,12 +459,12 @@ namespace OpenDental {
 		}
 
 		private bool SyncPhoneNums() {
-			UI.ProgressWin progressOD=new UI.ProgressWin();
+			UI.ProgressOD progressOD=new UI.ProgressOD();
 			progressOD.ShowCancelButton=false;
 			progressOD.ActionMain=PhoneNumbers.SyncAllPats;
 			progressOD.StartingMessage=Lan.g(this,"Syncing all patient phone numbers to the phonenumber table")+"...";
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
 				MsgBox.Show(Lan.g(this,"The patient phone number sync failed with the message")+":\r\n"+ex.Message+"\r\n"+Lan.g(this,"Please try again."));
@@ -516,16 +516,16 @@ namespace OpenDental {
 			//Copied from FormModuleSetup.
 			List<MessageReplaceType> listMessageReplaceTypes=new List<MessageReplaceType>();
 			listMessageReplaceTypes.Add(MessageReplaceType.Patient);
-			FrmMessageReplacements frmMessageReplcements=new FrmMessageReplacements(listMessageReplaceTypes);
-			frmMessageReplcements.IsSelectionMode=true;
-			frmMessageReplcements.ShowDialog();
-			if(frmMessageReplcements.IsDialogCancel) {
+			using FormMessageReplacements formMessageReplcements=new FormMessageReplacements(listMessageReplaceTypes);
+			formMessageReplcements.IsSelectionMode=true;
+			formMessageReplcements.ShowDialog();
+			if(formMessageReplcements.DialogResult!=DialogResult.OK) {
 				return;
 			}
 			textClaimIdentifier.Focus();
 			int cursorIndex=textClaimIdentifier.SelectionStart;
-			textClaimIdentifier.Text=textClaimIdentifier.Text.Insert(cursorIndex,frmMessageReplcements.ReplacementTextSelected);
-			textClaimIdentifier.SelectionStart=cursorIndex+frmMessageReplcements.ReplacementTextSelected.Length;
+			textClaimIdentifier.Text=textClaimIdentifier.Text.Insert(cursorIndex,formMessageReplcements.Replacement);
+			textClaimIdentifier.SelectionStart=cursorIndex+formMessageReplcements.Replacement.Length;
 		}
 
 		private void butChange_Click(object sender,EventArgs e) {
@@ -553,13 +553,18 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!ValidateEntries()) {
 				return;
 			}
 			UpdatePreferenceChanges();
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 
 	}
 }

@@ -98,7 +98,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textValue.Text.Trim()=="") {
 				MsgBox.Show(this,"Missing value.");
 				return;
@@ -163,6 +163,10 @@ namespace OpenDental {
 			}
 			_vaccineObsCur.MethodCode=textMethodCode.Text;
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

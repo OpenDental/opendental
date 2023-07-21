@@ -12,6 +12,7 @@ namespace OpenDental {
 	public partial class FormRxManage:FormODBase {
 		private UI.GridOD gridMain;
 		private OpenDental.UI.Button butPrintSelected;
+		private OpenDental.UI.Button butClose;
 		private UI.Button butNewRx;
 		private Label labelECWerror;
 		private Patient _patient;
@@ -125,35 +126,16 @@ namespace OpenDental {
 				SheetFiller.FillFields(sheet);
 				SheetUtil.CalculateHeights(sheet);
 				SheetPrinting.PrintRx(sheet,listRxPats[0]);
-				if(listRxPats[0].SendStatus!=RxSendStatus.InElectQueue && listRxPats[0].SendStatus!=RxSendStatus.SentElect) {
-					if(listRxPats[0].SendStatus!=RxSendStatus.Printed) {
-						SecurityLogs.MakeLogEntry(EnumPermType.RxEdit,listRxPats[0].PatNum,"Send Status of Rx "+listRxPats[0].Drug+" changed from "+listRxPats[0].SendStatus+" to Printed",listRxPats[0].RxNum,listRxPats[0].DateTStamp);
-					}
-					listRxPats[0].SendStatus=RxSendStatus.Printed;
-					RxPats.Update(listRxPats[0]);
-				}
-				SecurityLogs.MakeLogEntry(EnumPermType.RxEdit,listRxPats[0].PatNum,"Printed as: "+listRxPats[0].RxDate.ToShortDateString()+","+listRxPats[0].Drug+",ProvNum:"+listRxPats[0].ProvNum+",Disp:"+listRxPats[0].Disp+",Refills:"+listRxPats[0].Refills,listRxPats[0].RxNum,listRxPats[0].DateTStamp);
 			}
 			else { //multiple rx selected
 				//Print batch list of rx
 				SheetPrinting.PrintMultiRx(listRxPats);
-				for(int i=0;i<listRxPats.Count;i++) {
-					SecurityLogs.MakeLogEntry(EnumPermType.RxEdit,listRxPats[i].PatNum,"Printed as: "+listRxPats[i].RxDate.ToShortDateString()+","+listRxPats[i].Drug+",ProvNum:"+listRxPats[i].ProvNum+",Disp:"+listRxPats[i].Disp+",Refills:"+listRxPats[i].Refills,listRxPats[i].RxNum,listRxPats[i].DateTStamp);
-					if(listRxPats[i].SendStatus==RxSendStatus.InElectQueue || listRxPats[i].SendStatus==RxSendStatus.SentElect) {
-						continue;
-					}
-					if(listRxPats[i].SendStatus!=RxSendStatus.Printed) {
-						SecurityLogs.MakeLogEntry(EnumPermType.RxEdit,listRxPats[i].PatNum,"Send Status of Rx "+listRxPats[i].Drug+" changed from "+listRxPats[i].SendStatus+" to Printed",listRxPats[i].RxNum,listRxPats[i].DateTStamp);
-					}
-					listRxPats[i].SendStatus=RxSendStatus.Printed;
-					RxPats.Update(listRxPats[i]);
-				}
 			}
 		}
 
 		private void butNewRx_Click(object sender,EventArgs e) {
 			//This code is a copy of ContrChart.Tool_Rx_Click().  Any changes to this code need to be changed there too.
-			if(!Security.IsAuthorized(EnumPermType.RxCreate)) {
+			if(!Security.IsAuthorized(Permissions.RxCreate)) {
 				return;
 			}
 			if(Programs.UsingEcwTightOrFullMode() && Bridges.ECW.UserId!=0) {
@@ -175,8 +157,12 @@ namespace OpenDental {
 			if(formRxSelect.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.RxCreate,_patient.PatNum,"Created prescription.");
+			SecurityLogs.MakeLogEntry(Permissions.RxCreate,_patient.PatNum,"Created prescription.");
 			FillGrid();
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 
 	}

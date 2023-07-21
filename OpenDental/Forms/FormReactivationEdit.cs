@@ -57,7 +57,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.Abort;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			Def defSelectedStatus=comboStatus.GetSelected<Def>();//Null when 'None' is selected.
 			bool didStatusChange=(ReactivationCur.ReactivationStatus!=(defSelectedStatus?.DefNum??0));
 			ReactivationCur.ReactivationStatus=defSelectedStatus==null?0:defSelectedStatus.DefNum;
@@ -81,5 +81,30 @@ namespace OpenDental {
 		
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

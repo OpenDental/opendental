@@ -30,9 +30,10 @@
 			this.textPatientPortalURL = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
+			this.butCancel = new System.Windows.Forms.Button();
 			this.butGenerate = new System.Windows.Forms.Button();
 			this.textOnlinePassword = new System.Windows.Forms.TextBox();
-			this.butSave = new System.Windows.Forms.Button();
+			this.butOK = new System.Windows.Forms.Button();
 			this.butOpen = new System.Windows.Forms.Button();
 			this.butPrint = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
@@ -92,6 +93,17 @@
 			this.label4.Text = "Online Username";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(702, 211);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 23);
+			this.butCancel.TabIndex = 9;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butGenerate
 			// 
 			this.butGenerate.Location = new System.Drawing.Point(344, 132);
@@ -110,16 +122,16 @@
 			this.textOnlinePassword.Size = new System.Drawing.Size(198, 20);
 			this.textOnlinePassword.TabIndex = 5;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(700, 211);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 23);
-			this.butSave.TabIndex = 8;
-			this.butSave.Text = "&Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(621, 211);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 23);
+			this.butOK.TabIndex = 8;
+			this.butOK.Text = "OK";
+			this.butOK.UseVisualStyleBackColor = true;
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butOpen
 			// 
@@ -163,7 +175,8 @@
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(789, 246);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.butOpen);
@@ -179,7 +192,6 @@
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormPatientPortal";
 			this.Text = "Patient Portal";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormPatientPortal_FormClosing);
 			this.Load += new System.EventHandler(this.FormPatientPortal_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -194,9 +206,10 @@
 		private System.Windows.Forms.TextBox textPatientPortalURL;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.Button butCancel;
 		private System.Windows.Forms.Button butGenerate;
 		private System.Windows.Forms.TextBox textOnlinePassword;
-		private System.Windows.Forms.Button butSave;
+		private System.Windows.Forms.Button butOK;
 		private System.Windows.Forms.Button butOpen;
 		private System.Windows.Forms.Button butPrint;
 		private System.Windows.Forms.Label label1;

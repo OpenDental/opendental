@@ -16,27 +16,27 @@ namespace OpenDentBusiness{
 				"SELECT * from county "
 				+"WHERE CountyName LIKE '"+POut.String(name)+"%' "
 				+"ORDER BY CountyName";
-			List<County> listCounties=Crud.CountyCrud.SelectMany(command);
-			for(int i=0;i<listCounties.Count;i++) {
-				listCounties[i].CountyNameOld=listCounties[i].CountyName;
+			List<County> list=Crud.CountyCrud.SelectMany(command);
+			for(int i=0;i<list.Count;i++) {
+				list[i].OldCountyName=list[i].CountyName;
 			}
-			return listCounties;
+			return list;
 		}
 
 		///<summary>Gets an array of strings containing all the counties in alphabetical order.  Used for the screening interface which must be simpler than the usual interface.</summary>
-		public static List<string> GetListNames(){
+		public static string[] GetListNames(){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<string>>(MethodBase.GetCurrentMethod());
+				return Meth.GetObject<string[]>(MethodBase.GetCurrentMethod());
 			}
 			string command =
 				"SELECT CountyName from county "
 				+"ORDER BY CountyName";
 			DataTable table=Db.GetTable(command);
-			List<string> listStringNames=new List<string>();
-			for(int i=0;i<table.Rows.Count;i++){
-				listStringNames.Add(PIn.String(table.Rows[i]["CountyName"].ToString()));
+			string[] ListNames=new string[table.Rows.Count];
+			for(int i=0;i<ListNames.Length;i++){
+				ListNames[i]=PIn.String(table.Rows[i]["CountyName"].ToString());
 			}
-			return listStringNames;
+			return ListNames;
 		}
 
 		///<summary>Need to make sure Countyname not already in db.</summary>
@@ -58,22 +58,22 @@ namespace OpenDentBusiness{
 			string command = "UPDATE county SET "
 				+"CountyName ='"  +POut.String(county.CountyName)+"'"
 				+",CountyCode ='" +POut.String(county.CountyCode)+"'"
-				+" WHERE CountyName = '"+POut.String(county.CountyNameOld)+"'";
+				+" WHERE CountyName = '"+POut.String(county.OldCountyName)+"'";
 			Db.NonQ(command);
 			//then, update all patients using that County
 			command = "UPDATE patient SET "
 				+"County ='"  +POut.String(county.CountyName)+"'"
-				+" WHERE County = '"+POut.String(county.CountyNameOld)+"'";
+				+" WHERE County = '"+POut.String(county.OldCountyName)+"'";
 			Db.NonQ(command);
 		}
 
 		///<summary>Must run UsedBy before running this.</summary>
-		public static void Delete(County county){
+		public static void Delete(County Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),county);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),Cur);
 				return;
 			}
-			string command= "DELETE from county WHERE CountyName = '"+POut.String(county.CountyName)+"'";
+			string command= "DELETE from county WHERE CountyName = '"+POut.String(Cur.CountyName)+"'";
 			Db.NonQ(command);
 		}
 
@@ -105,14 +105,16 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetBool(MethodBase.GetCurrentMethod(),countyName);
 			}
-			string command=
+			string command =
 				"SELECT * FROM county "
 				+"WHERE CountyName = '"+POut.String(countyName)+"' ";
 			DataTable table=Db.GetTable(command);
 			if(table.Rows.Count==0) {
 				return false;
 			}
-			return true;
+			else {
+				return true;
+			}
 		}
 	}
 

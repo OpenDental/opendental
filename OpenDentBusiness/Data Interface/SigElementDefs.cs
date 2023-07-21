@@ -68,41 +68,41 @@ namespace OpenDentBusiness {
 		#endregion
 
 		///<summary></summary>
-		public static void Update(SigElementDef sigElementDef) {
+		public static void Update(SigElementDef def) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),sigElementDef);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),def);
 				return;
 			}
-			Crud.SigElementDefCrud.Update(sigElementDef);
+			Crud.SigElementDefCrud.Update(def);
 		}
 
 		///<summary></summary>
-		public static long Insert(SigElementDef sigElementDef) {
+		public static long Insert(SigElementDef def) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				sigElementDef.SigElementDefNum=Meth.GetLong(MethodBase.GetCurrentMethod(),sigElementDef);
-				return sigElementDef.SigElementDefNum;
+				def.SigElementDefNum=Meth.GetLong(MethodBase.GetCurrentMethod(),def);
+				return def.SigElementDefNum;
 			}
-			return Crud.SigElementDefCrud.Insert(sigElementDef);
+			return Crud.SigElementDefCrud.Insert(def);
 		}
 
 		///<summary></summary>
-		public static void Delete(SigElementDef sigElementDef) {
+		public static void Delete(SigElementDef def) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),sigElementDef);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),def);
 				return;
 			}
-			string command="DELETE FROM sigelementdef WHERE SigElementDefNum ="+POut.Long(sigElementDef.SigElementDefNum);
+			string command="DELETE FROM sigelementdef WHERE SigElementDefNum ="+POut.Long(def.SigElementDefNum);
 			Db.NonQ(command);
 		}
 
 		///<summary></summary>
-		public static SigElementDef[] GetSubList(SignalElementType signalElementType){
+		public static SigElementDef[] GetSubList(SignalElementType sigElementType){
 			//No need to check MiddleTierRole; no call to db.
-			return GetWhere(x => x.SigElementType==signalElementType).ToArray();
+			return GetWhere(x => x.SigElementType==sigElementType).ToArray();
 		}
 
 		///<summary>Moves the selected item up in the supplied sub list.</summary>
-		public static void MoveUp(int selected,List<SigElementDef> listSigElementDefsSub){
+		public static void MoveUp(int selected,SigElementDef[] subList){
 			//No need to check MiddleTierRole; no call to db.
 			if(selected<0) {
 				throw new ApplicationException(Lans.g("SigElementDefs","Please select an item first."));
@@ -110,37 +110,37 @@ namespace OpenDentBusiness {
 			if(selected==0) {//already at top
 				return;
 			}
-			if(selected>listSigElementDefsSub.Count-1){
+			if(selected>subList.Length-1){
 				throw new ApplicationException(Lans.g("SigElementDefs","Invalid selection."));
 			}
-			SetOrder(selected-1,listSigElementDefsSub[selected].ItemOrder,listSigElementDefsSub);
-			SetOrder(selected,listSigElementDefsSub[selected].ItemOrder-1,listSigElementDefsSub);
+			SetOrder(selected-1,subList[selected].ItemOrder,subList);
+			SetOrder(selected,subList[selected].ItemOrder-1,subList);
 			//Selected-=1;
 		}
 
 		///<summary></summary>
-		public static void MoveDown(int selected,List<SigElementDef> listSigElementDefsSub) {
+		public static void MoveDown(int selected,SigElementDef[] subList) {
 			//No need to check MiddleTierRole; no call to db.
 			if(selected<0) {
 				throw new ApplicationException(Lans.g("SigElementDefs","Please select an item first."));
 			}
-			if(selected==listSigElementDefsSub.Count-1){//already at bottom
+			if(selected==subList.Length-1){//already at bottom
 				return;
 			}
-			if(selected>listSigElementDefsSub.Count-1) {
+			if(selected>subList.Length-1) {
 				throw new ApplicationException(Lans.g("SigElementDefs","Invalid selection."));
 			}
-			SetOrder(selected+1,listSigElementDefsSub[selected].ItemOrder,listSigElementDefsSub);
-			SetOrder(selected,listSigElementDefsSub[selected].ItemOrder+1,listSigElementDefsSub);
+			SetOrder(selected+1,subList[selected].ItemOrder,subList);
+			SetOrder(selected,subList[selected].ItemOrder+1,subList);
 			//selected+=1;
 		}
 
 		///<summary>Used by MoveUp and MoveDown.</summary>
-		private static void SetOrder(int mySelNum,int myItemOrder,List<SigElementDef> listSigElementDefsSub) {
+		private static void SetOrder(int mySelNum,int myItemOrder,SigElementDef[] subList) {
 			//No need to check MiddleTierRole; no call to db.
-			SigElementDef sigElementDef=listSigElementDefsSub[mySelNum];
-			sigElementDef.ItemOrder=myItemOrder;
-			Update(sigElementDef);
+			SigElementDef temp=subList[mySelNum];
+			temp.ItemOrder=myItemOrder;
+			Update(temp);
 		}
 
 		///<summary>Returns the SigElementDef with the specified num from the cache.</summary>
@@ -170,16 +170,26 @@ namespace OpenDentBusiness {
 		}
 	}
 
+		
 
 
 
+		
+	
 
+	
 
-
-
-
-
-
+	
 
 
 }
+
+
+
+
+
+
+
+
+
+

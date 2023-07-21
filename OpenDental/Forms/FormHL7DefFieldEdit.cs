@@ -45,7 +45,7 @@ namespace OpenDental {
 				textTableId.Text=HL7DefFieldCur.TableId;
 			}
 			if(IsHL7DefInternal) {
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 				labelDelete.Visible=true;
 			}
@@ -74,7 +74,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			//This button is disabled if IsHL7DefInternal
 			if(!textItemOrder.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry error first.");
@@ -100,5 +100,11 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
+
+
+
 }

@@ -33,7 +33,7 @@ namespace OpenDental{
 			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.butAddReminder = new OpenDental.UI.Button();
 			this.butAddConfirmation = new OpenDental.UI.Button();
 			this.label54 = new System.Windows.Forms.Label();
@@ -47,6 +47,7 @@ namespace OpenDental{
 			this.textStatusConfirmations = new System.Windows.Forms.TextBox();
 			this.textStatusReminders = new System.Windows.Forms.TextBox();
 			this.textStatusThankYous = new System.Windows.Forms.TextBox();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butAddArrival = new OpenDental.UI.Button();
 			this.textStatusArrivals = new System.Windows.Forms.TextBox();
 			this.butActivateArrivals = new OpenDental.UI.Button();
@@ -136,16 +137,16 @@ namespace OpenDental{
 			this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
 			this.selectAllToolStripMenuItem.Text = "Select All";
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(1080, 627);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 23);
-			this.butSave.TabIndex = 500;
-			this.butSave.Text = "&Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.ButSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(999, 644);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 23);
+			this.butOK.TabIndex = 500;
+			this.butOK.Text = "OK";
+			this.butOK.UseVisualStyleBackColor = true;
+			this.butOK.Click += new System.EventHandler(this.ButOK_Click);
 			// 
 			// butAddReminder
 			// 
@@ -255,30 +256,41 @@ namespace OpenDental{
 			// 
 			// textStatusConfirmations
 			// 
-			this.textStatusConfirmations.Location = new System.Drawing.Point(4, 48);
+			this.textStatusConfirmations.Location = new System.Drawing.Point(6, 48);
 			this.textStatusConfirmations.Name = "textStatusConfirmations";
 			this.textStatusConfirmations.ReadOnly = true;
-			this.textStatusConfirmations.Size = new System.Drawing.Size(154, 20);
+			this.textStatusConfirmations.Size = new System.Drawing.Size(152, 20);
 			this.textStatusConfirmations.TabIndex = 260;
 			this.textStatusConfirmations.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// textStatusReminders
 			// 
-			this.textStatusReminders.Location = new System.Drawing.Point(4, 19);
+			this.textStatusReminders.Location = new System.Drawing.Point(6, 19);
 			this.textStatusReminders.Name = "textStatusReminders";
 			this.textStatusReminders.ReadOnly = true;
-			this.textStatusReminders.Size = new System.Drawing.Size(154, 20);
+			this.textStatusReminders.Size = new System.Drawing.Size(152, 20);
 			this.textStatusReminders.TabIndex = 262;
 			this.textStatusReminders.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// textStatusThankYous
 			// 
-			this.textStatusThankYous.Location = new System.Drawing.Point(4, 77);
+			this.textStatusThankYous.Location = new System.Drawing.Point(6, 77);
 			this.textStatusThankYous.Name = "textStatusThankYous";
 			this.textStatusThankYous.ReadOnly = true;
-			this.textStatusThankYous.Size = new System.Drawing.Size(154, 20);
+			this.textStatusThankYous.Size = new System.Drawing.Size(152, 20);
 			this.textStatusThankYous.TabIndex = 273;
 			this.textStatusThankYous.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(1080, 643);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 501;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.ButCancel_Click);
 			// 
 			// butAddArrival
 			// 
@@ -294,10 +306,10 @@ namespace OpenDental{
 			// 
 			// textStatusArrivals
 			// 
-			this.textStatusArrivals.Location = new System.Drawing.Point(4, 135);
+			this.textStatusArrivals.Location = new System.Drawing.Point(6, 135);
 			this.textStatusArrivals.Name = "textStatusArrivals";
 			this.textStatusArrivals.ReadOnly = true;
-			this.textStatusArrivals.Size = new System.Drawing.Size(154, 20);
+			this.textStatusArrivals.Size = new System.Drawing.Size(152, 20);
 			this.textStatusArrivals.TabIndex = 504;
 			this.textStatusArrivals.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
@@ -313,10 +325,10 @@ namespace OpenDental{
 			// 
 			// textStatusNotifications
 			// 
-			this.textStatusNotifications.Location = new System.Drawing.Point(4, 164);
+			this.textStatusNotifications.Location = new System.Drawing.Point(6, 164);
 			this.textStatusNotifications.Name = "textStatusNotifications";
 			this.textStatusNotifications.ReadOnly = true;
-			this.textStatusNotifications.Size = new System.Drawing.Size(154, 20);
+			this.textStatusNotifications.Size = new System.Drawing.Size(152, 20);
 			this.textStatusNotifications.TabIndex = 507;
 			this.textStatusNotifications.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
@@ -512,10 +524,10 @@ namespace OpenDental{
 			// 
 			// textStatusNewPatThanks
 			// 
-			this.textStatusNewPatThanks.Location = new System.Drawing.Point(4, 106);
+			this.textStatusNewPatThanks.Location = new System.Drawing.Point(6, 106);
 			this.textStatusNewPatThanks.Name = "textStatusNewPatThanks";
 			this.textStatusNewPatThanks.ReadOnly = true;
-			this.textStatusNewPatThanks.Size = new System.Drawing.Size(154, 20);
+			this.textStatusNewPatThanks.Size = new System.Drawing.Size(152, 20);
 			this.textStatusNewPatThanks.TabIndex = 517;
 			this.textStatusNewPatThanks.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
@@ -543,10 +555,10 @@ namespace OpenDental{
 			// 
 			// textStatusGeneralMessage
 			// 
-			this.textStatusGeneralMessage.Location = new System.Drawing.Point(4, 193);
+			this.textStatusGeneralMessage.Location = new System.Drawing.Point(6, 193);
 			this.textStatusGeneralMessage.Name = "textStatusGeneralMessage";
 			this.textStatusGeneralMessage.ReadOnly = true;
-			this.textStatusGeneralMessage.Size = new System.Drawing.Size(154, 20);
+			this.textStatusGeneralMessage.Size = new System.Drawing.Size(152, 20);
 			this.textStatusGeneralMessage.TabIndex = 509;
 			this.textStatusGeneralMessage.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
@@ -562,13 +574,14 @@ namespace OpenDental{
 			// 
 			// FormEServicesAutoMsging
 			// 
-			this.ClientSize = new System.Drawing.Size(1167, 662);
+			this.ClientSize = new System.Drawing.Size(1167, 679);
 			this.Controls.Add(this.groupBox4);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.menuMain);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.gridRemindersMain);
 			this.Controls.Add(this.label54);
 			this.Controls.Add(this.comboClinicEConfirm);
@@ -588,7 +601,7 @@ namespace OpenDental{
 		}
 
 		#endregion
-		private UI.Button butSave;
+		private UI.Button butOK;
 		private System.Windows.Forms.Label label37;
 		private System.Windows.Forms.ContextMenuStrip menuWebSchedVerifyTextTemplate;
 		private System.Windows.Forms.ToolStripMenuItem insertReplacementsToolStripMenuItem;
@@ -610,6 +623,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textStatusConfirmations;
 		private System.Windows.Forms.TextBox textStatusReminders;
 		private System.Windows.Forms.TextBox textStatusThankYous;
+		private UI.Button butCancel;
 		private UI.Button butAddArrival;
 		private System.Windows.Forms.TextBox textStatusArrivals;
 		private UI.Button butActivateArrivals;

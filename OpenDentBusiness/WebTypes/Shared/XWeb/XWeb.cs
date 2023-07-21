@@ -19,7 +19,5 @@ namespace OpenDentBusiness.WebTypes.Shared.XWeb {
 		public string AuthKey;
 		public string TerminalID;
 		public long PaymentTypeDefNum;
-		/// <summary>If this is false, the merchant service is EdgeExpress instead of XWeb.</summary>
-		public bool IsXWeb;
 	}
 }

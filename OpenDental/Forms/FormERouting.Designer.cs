@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormERouting));
+			this.butClose = new OpenDental.UI.Button();
 			this.gridActions = new OpenDental.UI.GridOD();
 			this.textDescription = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -33,6 +34,16 @@ namespace OpenDental{
 			this.textPatName = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(512, 355);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridActions
 			// 
@@ -100,7 +111,7 @@ namespace OpenDental{
 			this.label2.TabIndex = 13;
 			this.label2.Text = "Actions can only be marked complete from the app";
 			// 
-			// FormERouting
+			// FormFlow
 			// 
 			this.ClientSize = new System.Drawing.Size(599, 391);
 			this.Controls.Add(this.label2);
@@ -111,6 +122,7 @@ namespace OpenDental{
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textDescription);
 			this.Controls.Add(this.gridActions);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormERouting";
 			this.Text = "eRouting";
@@ -121,6 +133,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridActions;
 		private System.Windows.Forms.TextBox textDescription;
 		private System.Windows.Forms.Label label1;

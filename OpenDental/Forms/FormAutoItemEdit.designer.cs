@@ -30,7 +30,8 @@ namespace OpenDental {
 			this.label1 = new System.Windows.Forms.Label();
 			this.listConditions = new OpenDental.UI.ListBox();
 			this.butChange = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -53,10 +54,10 @@ namespace OpenDental {
 			// 
 			// listConditions
 			// 
-			this.listConditions.Location = new System.Drawing.Point(108,87);
+			this.listConditions.Location = new System.Drawing.Point(334,56);
 			this.listConditions.Name = "listConditions";
 			this.listConditions.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
-			this.listConditions.Size = new System.Drawing.Size(182,374);
+			this.listConditions.Size = new System.Drawing.Size(166,407);
 			this.listConditions.TabIndex = 2;
 			// 
 			// butChange
@@ -68,32 +69,45 @@ namespace OpenDental {
 			this.butChange.Text = "C&hange";
 			this.butChange.Click += new System.EventHandler(this.butChange_Click);
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(339,437);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75,26);
-			this.butSave.TabIndex = 22;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(540,442);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.RightToLeft = System.Windows.Forms.RightToLeft.No;
+			this.butCancel.Size = new System.Drawing.Size(75,26);
+			this.butCancel.TabIndex = 23;
+			this.butCancel.Text = "&Cancel";
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(540,408);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75,26);
+			this.butOK.TabIndex = 22;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(0,87);
+			this.label2.Location = new System.Drawing.Point(356,40);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(107,14);
+			this.label2.Size = new System.Drawing.Size(118,14);
 			this.label2.TabIndex = 25;
 			this.label2.Text = "Conditions";
-			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.label2.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
 			// 
 			// FormAutoItemEdit
 			// 
-			this.AcceptButton = this.butSave;
-			this.ClientSize = new System.Drawing.Size(437,490);
+			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(644,490);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.butChange);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.listConditions);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textADA);
@@ -112,7 +126,8 @@ namespace OpenDental {
 
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textADA;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label label2;
 		private OpenDental.UI.ListBox listConditions;
 		private OpenDental.UI.Button butChange;

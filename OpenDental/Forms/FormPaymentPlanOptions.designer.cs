@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPaymentPlanOptions));
+			this.butClose = new OpenDental.UI.Button();
 			this.label8 = new System.Windows.Forms.Label();
 			this.radioMonthly = new System.Windows.Forms.RadioButton();
 			this.radioQuarterly = new System.Windows.Forms.RadioButton();
@@ -32,6 +33,16 @@ namespace OpenDental{
 			this.radioOrdinalWeekday = new System.Windows.Forms.RadioButton();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(400, 274);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// label8
 			// 
@@ -106,8 +117,8 @@ namespace OpenDental{
 			// 
 			// FormPaymentPlanOptions
 			// 
-			this.ClientSize = new System.Drawing.Size(490, 275);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(490, 312);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.radioOrdinalWeekday);
 			this.Controls.Add(this.radioEveryOtherWeek);
@@ -115,6 +126,7 @@ namespace OpenDental{
 			this.Controls.Add(this.radioQuarterly);
 			this.Controls.Add(this.radioMonthly);
 			this.Controls.Add(this.label8);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormPaymentPlanOptions";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -124,6 +136,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label label8;
 		public System.Windows.Forms.RadioButton radioMonthly;
 		public System.Windows.Forms.RadioButton radioQuarterly;

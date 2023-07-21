@@ -21,18 +21,14 @@ Jordan is the only one allowed to edit this file.
 
 How to use the PictureBox control:
 -There are only 2 ways to add images:
-	1. Set the BitmapFileName property as follows:
+	1. Add the bitmap to WpfControlsOD/Resources as follows:
 		a. Do some research to find the file you need. It's probably in OpenDental/Resources, or Unversioned/Icons is also an option.
-		b. You'll be adding the bitmap to WpfControlsOD/Resources.
-		c. Right click WpfControlsOD, Properties, Resources.
-		d. On the Add Resource dropdown, Add Existing File. It will make a copy, which is what you want.
-		e. Name it well.
-		f. In Solution Explorer, Resources folder, find the new file. Right click, Properties, Build Action: Resource.
-		g. Set the BitmapFileName property. Example: EditPencil.gif
-	2. Set the BitmapImage property to any bitmap in memory.
-		This property does not yet exist.
-		This will be easy to implement.
-		But we have not done so yet because we need a scenario.
+		b. Right click WpfControlsOD, Properties, Resources.
+		c. On the Add Resource dropdown, Add Existing File. It will make a copy, which is what you want.
+		d. Name it well.
+		e. In Solution Explorer, Resources folder, find the new file. Right click, Properties, Build Action: Resource.
+		f. Set the button.BitmapFileName. Example: EditPencil.gif
+	2. Set it in code. This has not yet been implemented and we need a scenario in order to implement.
 -Click event handlers usually look like this:
 		private void pictureBox_Click(object sender,EventArgs e) { etc.
 
@@ -46,8 +42,6 @@ How to use the PictureBox control:
 
 		public PictureBox(){
 			InitializeComponent();
-			//Width=100;
-			//Height=100;
 		}
 
 		[Category("OD")]

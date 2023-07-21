@@ -24,9 +24,20 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormUpdateHistory));
+			this.butClose = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(241, 439);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// label1
 			// 
@@ -45,7 +56,7 @@ namespace OpenDental{
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridMain.Location = new System.Drawing.Point(17, 49);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(299, 414);
+			this.gridMain.Size = new System.Drawing.Size(299, 384);
 			this.gridMain.TabIndex = 4;
 			this.gridMain.Title = null;
 			this.gridMain.TranslationName = "TablePreviousVersions";
@@ -56,6 +67,7 @@ namespace OpenDental{
 			this.ClientSize = new System.Drawing.Size(329, 475);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.label1);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormUpdateHistory";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -66,6 +78,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label label1;
 		private UI.GridOD gridMain;
 	}

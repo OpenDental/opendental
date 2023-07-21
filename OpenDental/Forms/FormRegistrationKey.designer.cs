@@ -41,6 +41,7 @@ namespace OpenDental {
 			this.checkAgree = new OpenDental.UI.CheckBox();
 			this.richTextAgreement = new System.Windows.Forms.RichTextBox();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.listBoxRegistration = new OpenDental.UI.ListBox();
 			this.SuspendLayout();
 			// 
@@ -67,7 +68,7 @@ namespace OpenDental {
 			// 
 			this.labelLicenseAgree.Location = new System.Drawing.Point(12, 26);
 			this.labelLicenseAgree.Name = "labelLicenseAgree";
-			this.labelLicenseAgree.Size = new System.Drawing.Size(150, 13);
+			this.labelLicenseAgree.Size = new System.Drawing.Size(150,13);
 			this.labelLicenseAgree.TabIndex = 6;
 			this.labelLicenseAgree.Text = "License Agreement";
 			this.labelLicenseAgree.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
@@ -77,7 +78,7 @@ namespace OpenDental {
 			this.checkAgree.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.checkAgree.Location = new System.Drawing.Point(12, 373);
 			this.checkAgree.Name = "checkAgree";
-			this.checkAgree.Size = new System.Drawing.Size(489, 17);
+			this.checkAgree.Size = new System.Drawing.Size(489,17);
 			this.checkAgree.TabIndex = 7;
 			this.checkAgree.Text = "I agree to the terms of all of the above license agreements in their entirety.";
 			this.checkAgree.CheckedChanged += new System.EventHandler(this.checkAgree_CheckedChanged);
@@ -97,12 +98,22 @@ namespace OpenDental {
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butOK.Enabled = false;
-			this.butOK.Location = new System.Drawing.Point(676, 367);
+			this.butOK.Location = new System.Drawing.Point(597, 367);
 			this.butOK.Name = "butOK";
-			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.Size = new System.Drawing.Size(75,26);
 			this.butOK.TabIndex = 4;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(678, 367);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75,26);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// listBoxRegistration
 			// 
@@ -116,6 +127,7 @@ namespace OpenDental {
 			// 
 			this.ClientSize = new System.Drawing.Size(763, 399);
 			this.Controls.Add(this.listBoxRegistration);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.richTextAgreement);
 			this.Controls.Add(this.checkAgree);
@@ -135,6 +147,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private Label labelRegKey;
 		private TextBox textKey1;

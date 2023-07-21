@@ -18,12 +18,12 @@ namespace OpenDental {
 		}
 
 		private void butChangeProvInto_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick=new FrmProviderPick(_listProvidersActive);
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK){
+			using FormProviderPick FormProviderPick=new FormProviderPick(_listProvidersActive);
+			FormProviderPick.ShowDialog();
+			if(FormProviderPick.DialogResult!=DialogResult.OK){
 				return;
 			}
-			Provider providerSelected=Providers.GetProv(frmProviderPick.ProvNumSelected);
+			Provider providerSelected=Providers.GetProv(FormProviderPick.ProvNumSelected);
 			textAbbrInto.Text=providerSelected.Abbr;
 			textProvNumInto.Text=POut.Long(providerSelected.ProvNum);
 			textNpiInto.Text=providerSelected.NationalProvID;
@@ -32,12 +32,12 @@ namespace OpenDental {
 		}
 
 		private void butChangeProvFrom_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick=new FrmProviderPick(checkDeletedProvs.Checked ? Providers.GetDeepCopy() : _listProvidersActive);
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK){
+			using FormProviderPick FormProviderPick=new FormProviderPick(checkDeletedProvs.Checked ? Providers.GetDeepCopy() : _listProvidersActive);
+			FormProviderPick.ShowDialog();
+			if(FormProviderPick.DialogResult!=DialogResult.OK){
 				return;
 			}
-			Provider providerSelected=Providers.GetProv(frmProviderPick.ProvNumSelected);
+			Provider providerSelected=Providers.GetProv(FormProviderPick.ProvNumSelected);
 			textAbbrFrom.Text=providerSelected.Abbr;
 			textProvNumFrom.Text=POut.Long(providerSelected.ProvNum);
 			textNpiFrom.Text=providerSelected.NationalProvID;
@@ -80,7 +80,7 @@ namespace OpenDental {
 			long rowsChanged=Providers.Merge(PIn.Long(textProvNumFrom.Text),PIn.Long(textProvNumInto.Text));
 			string logText=Lan.g(this,"Providers merged")+": "+textAbbrFrom.Text+" "+Lan.g(this,"merged into")+" "+textAbbrInto.Text+".\r\n"
 			+Lan.g(this,"Rows changed")+": "+POut.Long(rowsChanged);
-			SecurityLogs.MakeLogEntry(EnumPermType.ProviderMerge,0,logText);
+			SecurityLogs.MakeLogEntry(Permissions.ProviderMerge,0,logText);
 			textAbbrFrom.Clear();
 			textProvNumFrom.Clear();
 			textNpiFrom.Clear();
@@ -89,6 +89,10 @@ namespace OpenDental {
 			MsgBox.Show(this,"Done.");
 			DataValid.SetInvalid(InvalidType.Providers);
 			_listProvidersActive=Providers.GetWhere(x => x.ProvStatus != ProviderStatus.Deleted,true);
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 
 	}

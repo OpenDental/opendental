@@ -29,7 +29,7 @@ namespace OpenDental{
 			List<long> listDefaultAddressNums=new List<long>();
 			listDefaultAddressNums.Add(PrefC.GetLong(PrefName.EmailNotifyAddressNum));
 			listDefaultAddressNums.Add(PrefC.GetLong(PrefName.EmailDefaultAddressNum));
-			if(isOpenedFromEmailSetup && Security.IsAuthorized(EnumPermType.SecurityAdmin,suppressMessage:true) 
+			if(isOpenedFromEmailSetup && Security.IsAuthorized(Permissions.SecurityAdmin,suppressMessage:true) 
 				&& (_isNew || !listDefaultAddressNums.Contains(_emailAddress.EmailAddressNum)))
 			{
 				butPickUserod.Visible=true;
@@ -136,12 +136,10 @@ namespace OpenDental{
 				textSMTPserver.Text="";
 				textPort.Text="";
 				if(textAccessTokenMicrosoft.Text.IsNullOrEmpty()) { //Not signed in
-					textUsername.ReadOnly=false;
 					checkDownloadMicrosoft.Enabled=false;
 					butClearTokensMicrosoft.Enabled=false;
 				}
 				else {
-					textUsername.ReadOnly=true;
 					checkDownloadMicrosoft.Enabled=true;
 					butClearTokensMicrosoft.Enabled=true;
 					textSMTPserver.Text="smtp.outlook.com";
@@ -166,7 +164,6 @@ namespace OpenDental{
 		}
 
 		private void ClearMicrosoftInfo() {
-			textUsername.ReadOnly=false;
 			textAccessTokenMicrosoft.Text="";
 			textRefreshTokenMicrosoft.Text="";
 			checkDownloadMicrosoft.Checked=false;
@@ -317,7 +314,7 @@ namespace OpenDental{
 				return;
 			}
 			MicrosoftTokenHelper microsoftTokenHelper;
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				if(!CloudClientL.IsCloudClientRunning()) {
 					return;
 				}
@@ -344,21 +341,21 @@ namespace OpenDental{
 		///<summary>Requests authorization for Open Dental to send emails and access the inbox for a gmail address.
 		///Google sends us access and refresh tokens that we store in the database.</summary>
 		private void butAuthGoogle_Click(object sender,EventArgs e) {
-			if(ODEnvironment.IsCloudServer && !CloudClientL.IsCloudClientRunning()) {
-				return;
+			if(ODBuild.IsWeb() && !CloudClientL.IsCloudClientRunning()) {
+			return;
 			}
 			Google.AuthorizationRequest authorizationRequest=new Google.AuthorizationRequest();
 			GoogleToken googleToken=null;
 			string emailAddress=textUsername.Text;
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.StartingMessage=Lan.g(this,"Searching for an available port")+"...";
 			progressOD.ActionMain=() => {
 				authorizationRequest.StartListener();
-				ODEvent.Fire(ODEventType.ProgressBar,Lan.g(this,"Requesting tokens and waiting for a response from Google")+"...");
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g(this,"Requesting tokens and waiting for a response from Google")+"...");
 				googleToken=authorizationRequest.MakeAccessTokenRequest(emailAddress);
 			};
 			try {
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex) {
 				FriendlyException.Show("Failed to get tokens from Google.",ex);
@@ -415,7 +412,7 @@ namespace OpenDental{
 
 		private void butAuthMicrosoft_Click(object sender,EventArgs e) {
 			MicrosoftTokenHelper microsoftToken=new MicrosoftTokenHelper();
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				if(!CloudClientL.IsCloudClientRunning()) {
 					return; 
 				}
@@ -498,7 +495,7 @@ namespace OpenDental{
 			RefreshEmailTextFields();
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			try {
 				PIn.Int(textPort.Text);
 			}
@@ -561,5 +558,8 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

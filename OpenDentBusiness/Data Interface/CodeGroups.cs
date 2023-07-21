@@ -29,7 +29,7 @@ namespace OpenDentBusiness {
 				CodeGroups.GetTableFromCache(false);
 			}
 			protected override bool IsInListShort(CodeGroup codeGroup) {
-				return codeGroup.IsVisible();
+				return !codeGroup.IsHidden;
 			}
 		}
 
@@ -102,7 +102,8 @@ namespace OpenDentBusiness {
 		#endregion Cache Pattern
 
 		#region Methods - Get
-		///<summary>If true, this codegroup is hidden from the frequency limitations grid. Control of showing in age limitations grid is done separately using ShowInAgeLimit. Returns true if the codeGroupNum passed in is invalid. Returns false if 0 is passed in.</summary>
+		///<summary>Returns true if the codeGroupNum passed in is invalid or associated to a hidden code group. 
+		///Returns false if 0 is passed in or the codeGroupNum is associated with a valid code group that is not hidden.</summary>
 		public static bool IsHidden(long codeGroupNum) {
 			//No need to check MiddleTierRole; no call to db.
 			if(codeGroupNum==0) {
@@ -115,22 +116,9 @@ namespace OpenDentBusiness {
 			return codeGroup.IsHidden;
 		}
 
-		///<summary>If true, this codegroup shows in Age Limitations grid. Control of showing in Freq Lim is done separately using IsHidden. Returns true if the codeGroupNum passed in is invalid. Returns false if 0 is passed in.</summary>
-		public static bool IsShownInAgeLimit(long codeGroupNum) {
+		public static long GetCodeGroupNumForCodeGroupFixed(EnumCodeGroupFixed codeGroupFixed,bool isShort=true) {
 			//No need to check MiddleTierRole; no call to db.
-			if(codeGroupNum==0) {
-				return false;
-			}
-			CodeGroup codeGroup=GetOne(codeGroupNum,isShort:false);
-			if(codeGroup==null) {
-				return true;//Invalid CodeGroupNum passed in or database corruption.
-			}
-			return codeGroup.ShowInAgeLimit;
-		}
-
-		public static long GetCodeGroupNumForCodeGroupFixed(EnumCodeGroupFixed enumCodeGroupFixed,bool isShort=true) {
-			//No need to check MiddleTierRole; no call to db.
-			CodeGroup codeGroup=GetFirstOrDefault(x => x.CodeGroupFixed==enumCodeGroupFixed,isShort);
+			CodeGroup codeGroup=GetFirstOrDefault(x => x.CodeGroupFixed==codeGroupFixed,isShort);
 			if(codeGroup==null) {
 				return 0;
 			}
@@ -147,22 +135,22 @@ namespace OpenDentBusiness {
 			return listCodeNums;
 		}
 
-		///<summary>Returns the GroupName, including '(hidden)' if isHidden is true, for the CodeGroup passed in.</summary>
-		public static string GetGroupName(long codeGroupNum,bool isShort=false,bool isHidden=false) {
+		///<summary>Returns the GroupName, including '(hidden)' if IsHidden is true, for the CodeGroup passed in.</summary>
+		public static string GetGroupName(long codeGroupNum,bool isShort=false) {
 			//No need to check MiddleTierRole; no call to db.
 			CodeGroup codeGroup=GetOne(codeGroupNum,isShort:isShort);
-			return GetGroupName(codeGroup,isHidden:isHidden);
+			return GetGroupName(codeGroup);
 		}
 
-		///<summary>Returns the GroupName, including '(hidden)' if isHidden is true, for the CodeGroup passed in.</summary>
-		public static string GetGroupName(CodeGroup codeGroup,bool isHidden=false) {
+		///<summary>Returns the GroupName, including '(hidden)' if IsHidden is true, for the CodeGroup passed in.</summary>
+		public static string GetGroupName(CodeGroup codeGroup) {
 			//No need to check MiddleTierRole; no call to db.
 			string groupName="";
 			if(codeGroup==null) {
 				return groupName;
 			}
 			groupName=codeGroup.GroupName;
-			if(isHidden) {
+			if(codeGroup.IsHidden) {
 				groupName+=" "+Lans.g("CodeGroups","(hidden)");
 			}
 			return groupName;
@@ -178,43 +166,10 @@ namespace OpenDentBusiness {
 			return GetFirstOrDefault(x => x.CodeGroupFixed==codeGroupFixed,isShort);
 		}
 
-		///<summary>Gets one CodeGroup from db. Returns null if not found. Used by the API.</summary>
-		public static CodeGroup GetOneFromDb(long codeGroupNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<CodeGroup>(MethodBase.GetCurrentMethod(),codeGroupNum);
-			}
-			if(codeGroupNum==0) {
-				return null;
-			}
-			string command="SELECT * FROM codegroup "
-				+"WHERE CodeGroupNum = '"+POut.Long(codeGroupNum)+"'";
-			return Crud.CodeGroupCrud.SelectOne(command);
-		}
-
-		///<summary>Gets a list of all codegroups from the db. Returns an empty list if none are found. Used by the API.</summary>
-		public static List<CodeGroup> GetManyFromDb() {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<CodeGroup>>(MethodBase.GetCurrentMethod());
-			}
-			string command="SELECT * FROM codegroup";
-			return Crud.CodeGroupCrud.SelectMany(command);
-		}
-
-		///<summary>Used by the API to get a list of codegroups. Returns an empty list if none are found.</summary>
-		public static List<CodeGroup> GetCodeGroupsForApi(int limit,int offset) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<CodeGroup>>(MethodBase.GetCurrentMethod(),limit,offset);
-			}
-			string command="SELECT * FROM codegroup ";
-			command+="ORDER BY CodeGroupNum " //Ensure order for limit and offset
-				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
-			return Crud.CodeGroupCrud.SelectMany(command);
-		}
-
 		///<summary>Returns true if there is a code group with at least one valid procedure code associated with each EnumCodeGroupFixed. Otherwise; false.</summary>
-		public static bool HasValidCodeGroupFixed(EnumCodeGroupFixed enumCodeGroupFixed) {
+		public static bool HasValidCodeGroupFixed(EnumCodeGroupFixed codeGroupFixeds) {
 			//No need to check MiddleTierRole; no call to db.
-			CodeGroup codeGroup=GetOneForCodeGroupFixed(enumCodeGroupFixed);
+			CodeGroup codeGroup=GetOneForCodeGroupFixed(codeGroupFixeds);
 			if(codeGroup==null) {
 				return false;
 			}

@@ -39,6 +39,7 @@ namespace OpenDental {
 			this.butSynch = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butAdd = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -57,7 +58,7 @@ namespace OpenDental {
 			this.butSynch.Name = "butSynch";
 			this.butSynch.Size = new System.Drawing.Size(75, 24);
 			this.butSynch.TabIndex = 16;
-			this.butSynch.Text = "Sync";
+			this.butSynch.Text = "Synch";
 			this.butSynch.Click += new System.EventHandler(this.butSynch_Click);
 			// 
 			// gridMain
@@ -85,9 +86,20 @@ namespace OpenDental {
 			this.butAdd.Text = "&Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(784, 292);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormRecallTypes
 			// 
 			this.ClientSize = new System.Drawing.Size(887, 332);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butSynch);
 			this.Controls.Add(this.gridMain);
@@ -106,6 +118,7 @@ namespace OpenDental {
 		#endregion
 
 		private OpenDental.UI.Button butAdd;
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.Button butSynch;
 		private Label label1;

@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Drawing.Printing;
-using System.Globalization;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Drawing.Printing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using OpenDental.UI;
 using OpenDentBusiness;
+using System.Globalization;
 
 namespace OpenDental {
 	public partial class FormPatientPortal:FormODBase {
@@ -75,8 +74,8 @@ namespace OpenDental {
 					MsgBox.Show(this,"Patient Facing URL is required to be set before granting online access.  Click Setup to set the Patient Facing URL.");
 					return;
 				}
-				string error=UserWebs.ValidatePatientAccess(_patient);
-				if(!String.IsNullOrEmpty(error)) { 
+				string error;
+				if(!UserWebs.ValidatePatientAccess(_patient,out error)) { 
 					MessageBox.Show(error);
 					return;
 				}
@@ -194,7 +193,7 @@ namespace OpenDental {
 			e.HasMorePages=false;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			bool shouldUpdateUserWeb=false;
 			bool shouldPrint=false;
 			if(textOnlineUsername.ReadOnly==false) {
@@ -247,14 +246,11 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void FormPatientPortal_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult!=DialogResult.Cancel) {
-				return;
-			}
+		private void butCancel_Click(object sender,EventArgs e) {
 			if(_isNew) {
 				UserWebs.Delete(_userWeb.UserWebNum);
 			}
+			DialogResult=DialogResult.Cancel;
 		}
-
 	}
 }

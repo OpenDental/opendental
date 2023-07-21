@@ -45,7 +45,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void ButSave_Click(object sender,EventArgs e) {
+		private void ButOK_Click(object sender,EventArgs e) {
 			if(!textLimitValue.ReadOnly && !textLimitValue.IsValid()) {
 				MsgBox.Show(this,"Limit value is invalid.");
 				return;
@@ -55,12 +55,9 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void FormInsBlueBookRuleEdit_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult!=DialogResult.Cancel) {
-				return;
-			}
+		private void ButCancel_Click(object sender,EventArgs e) {
 			_insBlueBookRule=_insBlueBookRuleOld;
+			DialogResult=DialogResult.Cancel;
 		}
-
 	}
 }

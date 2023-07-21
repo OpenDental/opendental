@@ -20,9 +20,6 @@ namespace OpenDental{
 		public bool IsSelectionModeOnly;
 		///<summary>When closing the form, this indicates whether a new patient was added from within this form.</summary>
 		public bool IsNewPatientAdded;
-		///<summary>This takes a partially built patient object and uses it to prefill textboxes to assist in searching.  
-		///Currently only implements FName, LName, and HmPhone.</summary>
-		public Patient PatientInitial;
 		///<summary>Only used when double clicking blank area in Appts. Sets this value to the currently selected pt.  That patient will come up on the screen already selected and user just has to click OK. Or they can select a different pt or add a new pt.  If 0, then no initial patient is selected.</summary>
 		public long PatNumInitial;
 		private DataTable _tablePats;
@@ -57,22 +54,22 @@ namespace OpenDental{
 		#endregion
 
 		///<summary></summary>
-		public FormPatientSelect() {
+		public FormPatientSelect():this(null) {
+		}
+
+		///<summary>This takes a partially built patient object and uses it to prefill textboxes to assist in searching.  
+		///Currently only implements FName, LName, and HmPhone.</summary>
+		public FormPatientSelect(Patient patient){
 			InitializeComponent();//required first
 			InitializeLayoutManager();
 			Lan.F(this);
-		}
-
-		///<summary>This overload is deprecated. Just set the public field instead.</summary>
-		public FormPatientSelect(Patient patient):this(){
-			PatientInitial=patient;
+			if(patient!=null) {
+				PreFillSearchBoxes(patient);
+			}
 		}
 
 		///<summary></summary>
 		public void FormSelectPatient_Load(object sender,System.EventArgs e) {
-			if(PatientInitial!=null) {
-				PreFillSearchBoxes(PatientInitial);
-			}
 			if(!PrefC.GetBool(PrefName.DockPhonePanelShow)) {
 				labelCountry.Visible=false;
 				textCountry.Visible=false;
@@ -121,7 +118,7 @@ namespace OpenDental{
 					comboClinic.IsAllSelected=true;
 				}
 				else {
-					comboClinic.ClinicNumSelected=Clinics.ClinicNum;
+					comboClinic.SelectedClinicNum=Clinics.ClinicNum;
 				}
 			}
 			if(PrefC.GetBool(PrefName.PatientSSNMasked)) {
@@ -163,8 +160,8 @@ namespace OpenDental{
 			//are guaranteed to get a valid number from these prefs.
 			timerFillGrid.Interval=PIn.Int(PrefC.GetString(PrefName.PatientSelectSearchPauseMs));
 			_patSearchMinChars=PIn.Int(PrefC.GetString(PrefName.PatientSelectSearchMinChars));
-      if(ODBuild.IsThinfinity()) {
-        //Keyboard does not currently work with THINFINITY users. 
+      if(ODBuild.IsWeb()) {
+        //Keyboard does not currently work with WEB users. 
         butOnScreenKeyboard.Visible=false;
       }
 			if(ListPatNumsExplicit!=null && ListPatNumsExplicit.Count>0) {
@@ -261,7 +258,7 @@ namespace OpenDental{
 			int idxColClick = gridMain.PointToCol(_pointLastClicked.X);
 			int idxRowClick = gridMain.PointToRow(_pointLastClicked.Y);
 			if(idxRowClick > -1 && idxColClick > -1 && idxGridPatSSNCol==idxColClick) {
-				if(Security.IsAuthorized(EnumPermType.PatientSSNView,true) && gridMain.ListGridRows[idxRowClick].Cells[idxColClick].Text!="") {
+				if(Security.IsAuthorized(Permissions.PatientSSNView,true) && gridMain.ListGridRows[idxRowClick].Cells[idxColClick].Text!="") {
 					menuItemSSN.Visible=true;
 					menuItemSSN.Enabled=true;
 				}
@@ -309,7 +306,7 @@ namespace OpenDental{
 				logtext="Social Security Number";
 			}
 			logtext+=" unmasked in Patient Select";
-			SecurityLogs.MakeLogEntry(EnumPermType.PatientSSNView,patNumClicked,logtext);
+			SecurityLogs.MakeLogEntry(Permissions.PatientSSNView,patNumClicked,logtext);
 		}
 
 		///<summary>Just prior to displaying the context menu, enable or disables the UnmaskDOB option</summary>
@@ -322,7 +319,7 @@ namespace OpenDental{
 			int idxColClick = gridMain.PointToCol(_pointLastClicked.X);
 			int idxRowClick = gridMain.PointToRow(_pointLastClicked.Y);
 			if(idxRowClick > -1 && idxColClick > -1 && idxGridPatDOBCol==idxColClick) {
-				if(Security.IsAuthorized(EnumPermType.PatientDOBView,true) && gridMain.ListGridRows[idxRowClick].Cells[idxColClick].Text!="") {
+				if(Security.IsAuthorized(Permissions.PatientDOBView,true) && gridMain.ListGridRows[idxRowClick].Cells[idxColClick].Text!="") {
 					menuItemDOB.Visible=true;
 					menuItemDOB.Enabled=true;
 				}
@@ -362,7 +359,7 @@ namespace OpenDental{
 			gridMain.ListGridRows[idxRowClick].Cells[idxColClick].Text=Patients.DOBFormatHelper(dateBirth,false);
 			gridMain.EndUpdate();
 			string logtext="Date of birth unmasked in Patient Select";
-			SecurityLogs.MakeLogEntry(EnumPermType.PatientDOBView,patNumClicked,logtext);
+			SecurityLogs.MakeLogEntry(Permissions.PatientDOBView,patNumClicked,logtext);
 		}
 
 		private void textbox_TextChanged(object sender,EventArgs e) {
@@ -452,7 +449,7 @@ namespace OpenDental{
 					}
 				}
 				else {
-					clinicNums=comboClinic.ClinicNumSelected.ToString();
+					clinicNums=comboClinic.SelectedClinicNum.ToString();
 					if(checkShowArchived.Checked) {
 						for(int i=0;i<comboClinic.ListClinics.Count;i++) {
 							if(comboClinic.ListClinics[i].IsHidden) {
@@ -515,56 +512,6 @@ namespace OpenDental{
 			GridRow row;
 			for(int i=0;i<_tablePats.Rows.Count;i++) {
 				row=new GridRow();
-				#region New York Mental Health
-				if(PrefC.GetBool(PrefName.OmhNy)) {
-					string description=_tablePats.Rows[i]["RecallPastDue"].ToString();
-					if(description=="ORANGE") {
-						row.ColorText=Color.Orange;
-					}
-					else if(description=="BLACK") {
-						row.ColorText=Color.Black;
-					}
-					else if(description=="PROPHY") {
-						row.ColorText=Color.Red;
-						row.Bold=true;
-					}
-					else if(description=="CHILD PROPHY") {
-						row.ColorText=Color.Red;
-						row.Bold=true;
-					}
-					else if(description=="ANNUAL EXAM") {
-						row.ColorText=Color.Green;
-						row.Bold=true;
-					}
-					else if(description=="6 MONTH EXAM") {
-						row.ColorText=Color.Blue;
-						row.Bold=true;
-					}
-					else if(description=="PANO X-RAY") {
-						row.ColorText=Color.Purple;
-						row.Bold=true;
-					}
-					else if(description=="PERIO SRP(UR)") {
-						row.ColorText=Color.Brown;
-						row.Bold=true;
-					}
-					else if(description=="PERIO SRP(UL)") {
-						row.ColorText=Color.Brown;
-						row.Bold=true;
-					}
-					else if(description=="PERIO SRP(LR)") {
-						row.ColorText=Color.Brown;
-						row.Bold=true;
-					}
-					else if(description=="PERIO SRP(LL)") {
-						row.ColorText=Color.Brown;
-						row.Bold=true;
-					}
-					else {
-						row.ColorText=Color.Black;
-					}
-				}
-				#endregion New York Mental Health
 				for(int f=0;f<_listDisplayFields.Count;f++) {
 					switch(_listDisplayFields[f].InternalName) {
 						case "LastName":
@@ -628,7 +575,7 @@ namespace OpenDental{
 							break;
 						case "Birthdate":
 							row.Cells.Add(Patients.DOBFormatHelper(PIn.Date(_tablePats.Rows[i]["Birthdate"].ToString())
-								,(PrefC.GetBool(PrefName.PatientDOBMasked) || !Security.IsAuthorized(EnumPermType.PatientDOBView,true)))
+								,(PrefC.GetBool(PrefName.PatientDOBMasked) || !Security.IsAuthorized(Permissions.PatientDOBView,true)))
 							);
 							break;
 						case "Site":
@@ -668,15 +615,6 @@ namespace OpenDental{
 						case "Specialty":
 							row.Cells.Add(_tablePats.Rows[i]["Specialty"].ToString());
 							break;
-						case "Ward":
-							row.Cells.Add(_tablePats.Rows[i]["Ward"].ToString());
-							break;
-						case "AdmitDate":
-							row.Cells.Add(_tablePats.Rows[i]["AdmitDate"].ToString());
-							break;
-						case "DischargeDate":
-							row.Cells.Add(_tablePats.Rows[i]["DischargeDate"].ToString());
-							break;
 					}
 				}
 				gridMain.ListGridRows.Add(row);
@@ -713,7 +651,7 @@ namespace OpenDental{
 
 		///<summary>Remember, this button is not even visible if SelectionModeOnly.</summary>
 		private void butAddPt_Click(object sender, System.EventArgs e){
-			if(!Security.IsAuthorized(EnumPermType.PatientEdit)) {
+			if(!Security.IsAuthorized(Permissions.PatientEdit)) {
 				return;
 			}
 			if(ODBuild.IsTrial()) { 
@@ -733,7 +671,7 @@ namespace OpenDental{
 				//Explicitly use the combo clinic instead of FormOpenDental.ClinicNum because the combo box should default to that clinic unless manually changed by the user.
 				if(PrefC.HasClinicsEnabled && !comboClinic.IsAllSelected) {//clinics enabled and all isn't selected
 					//Set the patients primary provider to the clinic default provider.
-					Provider provider=Providers.GetDefaultProvider(comboClinic.ClinicNumSelected);
+					Provider provider=Providers.GetDefaultProvider(comboClinic.SelectedClinicNum);
 					if(provider!=null) {
 						priProv=provider.ProvNum;
 					}
@@ -764,7 +702,7 @@ namespace OpenDental{
 		}
 
 		private void butAddAll_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.PatientEdit)) {
+			if(!Security.IsAuthorized(Permissions.PatientEdit)) {
 				return;
 			}
 			if(ODBuild.IsTrial()) { 
@@ -811,7 +749,7 @@ namespace OpenDental{
 				//If the user has security permissions to search all patients, or patient is assigned to one of the user's unrestricted clinics,
 				//or patient has an appointment in one of the user's unrestricted clincis, 
 				//allow them to select the patient
-				if(Security.IsAuthorized(EnumPermType.UnrestrictedSearch,true) 
+				if(Security.IsAuthorized(Permissions.UnrestrictedSearch,true) 
 					|| listClinicNumsUser.Contains(patClinicNum)
 					|| Appointments.GetAppointmentsForPat(patNumSelected).Select(x => x.ClinicNum).Any(x => listClinicNumsUser.Contains(x))) 
 				{
@@ -922,6 +860,10 @@ namespace OpenDental{
 				return;
 			}
 			PatSelected();
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void FormPatientSelect_FormClosing(object sender,FormClosingEventArgs e) {

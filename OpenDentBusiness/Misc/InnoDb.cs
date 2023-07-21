@@ -102,7 +102,6 @@ namespace OpenDentBusiness {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetInt(MethodBase.GetCurrentMethod(),fromEngine,toEngine);
 			}
-			DataConnection.CommandTimeout=43200;//12 hours, because altering a large table may take longer to run.
 			int numtables=0;
 			string command="SELECT DATABASE()";
 			string database=Db.GetScalar(command);
@@ -114,7 +113,6 @@ namespace OpenDentBusiness {
 			DataTable results=Db.GetTable(command);
 			command="";
 			if(results.Rows.Count==0) {
-				DataConnection.CommandTimeout=3600;//Set back to default of 1 hour.
 				return numtables;
 			}
 			for(int i=0;i<results.Rows.Count;i++) {
@@ -122,7 +120,6 @@ namespace OpenDentBusiness {
 				numtables++;
 			}
 			Db.NonQ(command);
-			DataConnection.CommandTimeout=3600;//Set back to default of 1 hour.
 			return numtables;
 		}
 	}

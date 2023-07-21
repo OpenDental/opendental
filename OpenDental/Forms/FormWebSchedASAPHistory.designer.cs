@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWebSchedASAPHistory));
+			this.butClose = new OpenDental.UI.Button();
 			this.gridHistory = new OpenDental.UI.GridOD();
 			this.datePicker = new OpenDental.UI.ODDateRangePicker();
 			this.textFilled = new System.Windows.Forms.TextBox();
@@ -32,6 +33,17 @@ namespace OpenDental{
 			this.textTextsSent = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(748, 460);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridHistory
 			// 
@@ -87,7 +99,7 @@ namespace OpenDental{
 			this.comboClinic.IncludeAll = true;
 			this.comboClinic.IncludeUnassigned = true;
 			this.comboClinic.HqDescription = "Headquarters";
-			this.comboClinic.IsMultiSelect = true;
+			this.comboClinic.SelectionModeMulti = true;
 			this.comboClinic.Location = new System.Drawing.Point(625, 12);
 			this.comboClinic.Name = "comboClinic";
 			this.comboClinic.Size = new System.Drawing.Size(198, 21);
@@ -117,7 +129,9 @@ namespace OpenDental{
 			// FormWebSchedASAPHistory
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(835, 496);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.textTextsSent);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.comboClinic);
@@ -135,6 +149,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridHistory;
 		private UI.ODDateRangePicker datePicker;
 		private System.Windows.Forms.TextBox textFilled;

@@ -98,12 +98,16 @@ namespace OpenDentBusiness.Crud{
 			command+=
 				 "'"+POut.String(quickPasteCat.Description)+"',"
 				+    POut.Int   (quickPasteCat.ItemOrder)+","
-				+"'"+POut.String(quickPasteCat.DefaultForTypes)+"')";
+				+    DbHelper.ParamChar+"paramDefaultForTypes)";
+			if(quickPasteCat.DefaultForTypes==null) {
+				quickPasteCat.DefaultForTypes="";
+			}
+			OdSqlParameter paramDefaultForTypes=new OdSqlParameter("paramDefaultForTypes",OdDbType.Text,POut.StringParam(quickPasteCat.DefaultForTypes));
 			if(useExistingPK || PrefC.RandomKeys) {
-				Db.NonQ(command);
+				Db.NonQ(command,paramDefaultForTypes);
 			}
 			else {
-				quickPasteCat.QuickPasteCatNum=Db.NonQ(command,true,"QuickPasteCatNum","quickPasteCat");
+				quickPasteCat.QuickPasteCatNum=Db.NonQ(command,true,"QuickPasteCatNum","quickPasteCat",paramDefaultForTypes);
 			}
 			return quickPasteCat.QuickPasteCatNum;
 		}
@@ -130,12 +134,16 @@ namespace OpenDentBusiness.Crud{
 			command+=
 				 "'"+POut.String(quickPasteCat.Description)+"',"
 				+    POut.Int   (quickPasteCat.ItemOrder)+","
-				+"'"+POut.String(quickPasteCat.DefaultForTypes)+"')";
+				+    DbHelper.ParamChar+"paramDefaultForTypes)";
+			if(quickPasteCat.DefaultForTypes==null) {
+				quickPasteCat.DefaultForTypes="";
+			}
+			OdSqlParameter paramDefaultForTypes=new OdSqlParameter("paramDefaultForTypes",OdDbType.Text,POut.StringParam(quickPasteCat.DefaultForTypes));
 			if(useExistingPK || isRandomKeys) {
-				Db.NonQ(command);
+				Db.NonQ(command,paramDefaultForTypes);
 			}
 			else {
-				quickPasteCat.QuickPasteCatNum=Db.NonQ(command,true,"QuickPasteCatNum","quickPasteCat");
+				quickPasteCat.QuickPasteCatNum=Db.NonQ(command,true,"QuickPasteCatNum","quickPasteCat",paramDefaultForTypes);
 			}
 			return quickPasteCat.QuickPasteCatNum;
 		}
@@ -145,9 +153,13 @@ namespace OpenDentBusiness.Crud{
 			string command="UPDATE quickpastecat SET "
 				+"Description     = '"+POut.String(quickPasteCat.Description)+"', "
 				+"ItemOrder       =  "+POut.Int   (quickPasteCat.ItemOrder)+", "
-				+"DefaultForTypes = '"+POut.String(quickPasteCat.DefaultForTypes)+"' "
+				+"DefaultForTypes =  "+DbHelper.ParamChar+"paramDefaultForTypes "
 				+"WHERE QuickPasteCatNum = "+POut.Long(quickPasteCat.QuickPasteCatNum);
-			Db.NonQ(command);
+			if(quickPasteCat.DefaultForTypes==null) {
+				quickPasteCat.DefaultForTypes="";
+			}
+			OdSqlParameter paramDefaultForTypes=new OdSqlParameter("paramDefaultForTypes",OdDbType.Text,POut.StringParam(quickPasteCat.DefaultForTypes));
+			Db.NonQ(command,paramDefaultForTypes);
 		}
 
 		///<summary>Updates one QuickPasteCat in the database.  Uses an old object to compare to, and only alters changed fields.  This prevents collisions and concurrency problems in heavily used tables.  Returns true if an update occurred.</summary>
@@ -163,14 +175,18 @@ namespace OpenDentBusiness.Crud{
 			}
 			if(quickPasteCat.DefaultForTypes != oldQuickPasteCat.DefaultForTypes) {
 				if(command!="") { command+=",";}
-				command+="DefaultForTypes = '"+POut.String(quickPasteCat.DefaultForTypes)+"'";
+				command+="DefaultForTypes = "+DbHelper.ParamChar+"paramDefaultForTypes";
 			}
 			if(command=="") {
 				return false;
 			}
+			if(quickPasteCat.DefaultForTypes==null) {
+				quickPasteCat.DefaultForTypes="";
+			}
+			OdSqlParameter paramDefaultForTypes=new OdSqlParameter("paramDefaultForTypes",OdDbType.Text,POut.StringParam(quickPasteCat.DefaultForTypes));
 			command="UPDATE quickpastecat SET "+command
 				+" WHERE QuickPasteCatNum = "+POut.Long(quickPasteCat.QuickPasteCatNum);
-			Db.NonQ(command);
+			Db.NonQ(command,paramDefaultForTypes);
 			return true;
 		}
 

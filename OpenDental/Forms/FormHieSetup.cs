@@ -21,8 +21,8 @@ namespace OpenDental {
 			_listHieClinics=HieClinics.Refresh();
 			AddNeededHieClinic(0);
 			if(PrefC.HasClinicsEnabled) {
-				comboClinic.ClinicNumSelected=0;
-				_clinicNumPreviouslySelected=comboClinic.ClinicNumSelected;
+				comboClinic.SelectedClinicNum=0;
+				_clinicNumPreviouslySelected=comboClinic.SelectedClinicNum;
 			}
 			FillUIFromFields();
 		}
@@ -41,7 +41,7 @@ namespace OpenDental {
 		}
 
 		private void FillUIFromFields() {
-			HieClinic hieClinic=_listHieClinics.FirstOrDefault(x => x.ClinicNum==comboClinic.ClinicNumSelected);
+			HieClinic hieClinic=_listHieClinics.FirstOrDefault(x => x.ClinicNum==comboClinic.SelectedClinicNum);
 			checkEnabled.Checked=hieClinic.IsEnabled;
 			checkMedicaidOnly.Checked=hieClinic.SupportedCarrierFlags.HasFlag(HieCarrierFlags.Medicaid);
 			textExportPath.Text=hieClinic.PathExportCCD;
@@ -97,27 +97,30 @@ namespace OpenDental {
 		}
 
 		private void comboClinic_SelectionChangeCommitted(object sender,EventArgs e) {
-			if(comboClinic.ClinicNumSelected==_clinicNumPreviouslySelected) {
+			if(comboClinic.SelectedClinicNum==_clinicNumPreviouslySelected) {
 				return;
 			}
 			if(!IsValid()) {
-				comboClinic.ClinicNumSelected=_clinicNumPreviouslySelected;
+				comboClinic.SelectedClinicNum=_clinicNumPreviouslySelected;
 				return;
 			}
 			FillFieldsFromUI(_clinicNumPreviouslySelected);
-			_clinicNumPreviouslySelected=comboClinic.ClinicNumSelected;
-			AddNeededHieClinic(comboClinic.ClinicNumSelected);
+			_clinicNumPreviouslySelected=comboClinic.SelectedClinicNum;
+			AddNeededHieClinic(comboClinic.SelectedClinicNum);
 			FillUIFromFields();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!IsValid()) {
 				return;
 			}
-			FillFieldsFromUI(comboClinic.ClinicNumSelected);
+			FillFieldsFromUI(comboClinic.SelectedClinicNum);
 			HieClinics.Sync(_listHieClinics);
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

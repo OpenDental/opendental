@@ -94,27 +94,26 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Deletes all apptviewitems for the current apptView. If isMobile, only deletes IsMobile apptviewitems and will not change basic appointment view items</summary>
-		public static void DeleteAllForView(ApptView apptView, bool isMobile=false){
+		public static void DeleteAllForView(ApptView view, bool isMobile=false){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),apptView,isMobile);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),view,isMobile);
 				return;
 			}
-			string command=$@"DELETE from apptviewitem WHERE ApptViewNum = {POut.Long(apptView.ApptViewNum)}
+			string command=$@"DELETE from apptviewitem WHERE ApptViewNum = {POut.Long(view.ApptViewNum)}
 			 AND {(isMobile? "":"!")}apptviewitem.IsMobile"; //only delete mobile items if isMobile, otherwise don't delete mobile items.
 			Db.NonQ(command);
 		}
 
 		///<summary>Returns a list of ApptViewItem for a given Provider.</summary>
-		public static List<ApptViewItem> GetForProvider(long provNum) {
-			//No need to check MiddleTierRole; no call to db.
-			return ApptViewItems.GetWhere(x => x.ProvNum==provNum);
+		public static List<ApptViewItem> GetForProvider(long ProvNum) {
+			return ApptViewItems.GetWhere(x => x.ProvNum==ProvNum);
 		}
 
 		///<summary>Gets all operatories for the appointment view passed in.  Pass 0 to get all ops associated with the 'none' view.
 		///Only returns operatories that are associated to the currently selected clinic.</summary>
 		public static List<long> GetOpsForView(long apptViewNum) {
 			//No need to check MiddleTierRole; no call to db.
-			List<long> listOpNums=new List<long>();
+			List<long> retVal=new List<long>();
 			if(apptViewNum==0) {
 				bool hasClinicsEnabled=PrefC.HasClinicsEnabled;
 				//Simply return all visible ops.  These are the ops that the 'none' appointment view currently displays.
@@ -128,9 +127,9 @@ namespace OpenDentBusiness{
 		///<summary>Gets all views that contain the operatory num that is passed in. Can return an empty list.</summary>
 		public static List<long> GetViewsByOp(long opNum) {
 			//No need to check MiddleTierRole; no call to db.
-			List<long> listApptViewNums=new List<long>();
-			listApptViewNums=GetWhere(x=>x.OpNum==opNum).Select(x=>x.ApptViewNum).ToList();
-			return listApptViewNums;
+			List<long> retVal=new List<long>();
+			retVal=GetWhere(x=>x.OpNum==opNum).Select(x=>x.ApptViewNum).ToList();
+			return retVal;
 		}
 
 		///<summary>Gets all providers for the appointment view passed in.  Pass 0 to get all provs associated with the 'none' view.</summary>
@@ -138,10 +137,10 @@ namespace OpenDentBusiness{
 			//No need to check MiddleTierRole; no call to db.
 			if(apptViewNum==0) {
 				//Simply return all visible ops.  These are the ops that the 'none' appointment view currently displays.
-				List<Operatory> listOperatoriesVis=Operatories.GetWhere(x => !PrefC.HasClinicsEnabled || Clinics.ClinicNum==0 || x.ClinicNum==Clinics.ClinicNum
+				List<Operatory> listVisibleOps=Operatories.GetWhere(x => !PrefC.HasClinicsEnabled || Clinics.ClinicNum==0 || x.ClinicNum==Clinics.ClinicNum
 					,true);
-				List<long> listProvNums=listOperatoriesVis.Where(x=>x.ProvDentist!=0).Select(x => x.ProvDentist).ToList();
-				listProvNums.AddRange(listOperatoriesVis.Where(x=>x.ProvHygienist!=0).Select(x => x.ProvHygienist));
+				List<long> listProvNums=listVisibleOps.Where(x=>x.ProvDentist!=0).Select(x => x.ProvDentist).ToList();
+				listProvNums.AddRange(listVisibleOps.Where(x=>x.ProvHygienist!=0).Select(x => x.ProvHygienist));
 				return listProvNums.Distinct().ToList();
 			}
 			return GetWhere(x => x.ApptViewNum==apptViewNum && x.ProvNum!=0)
@@ -149,5 +148,17 @@ namespace OpenDentBusiness{
 		}
 
 	}
+
 	
+
+
 }
+
+
+
+
+
+
+
+
+

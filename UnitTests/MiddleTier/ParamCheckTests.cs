@@ -204,7 +204,7 @@ namespace UnitTests.MiddleTier.ParamCheck_Tests {
 				if((method.DeclaringType.FullName==typeof(Fees).FullName
 						&& method.Name==SymbolExtensions.GetMethodInfo(() => Fees.GetByFeeSchedNumsClinicNums(null,null)).Name)
 					|| (method.DeclaringType.FullName==typeof(Schedules).FullName
-						&& method.Name==SymbolExtensions.GetMethodInfo(() => Schedules.Insert(false,false,null)).Name)
+						&& method.Name==SymbolExtensions.GetMethodInfo(() => Schedules.Insert(false,false)).Name)
 					|| (method.DeclaringType.FullName==typeof(Statements).FullName
 						&& method.Name==SymbolExtensions.GetMethodInfo(() => Statements.InsertMany(null)).Name)) 
 				{

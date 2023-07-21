@@ -35,7 +35,6 @@ namespace OpenDentBusiness{
 		public string FieldName; //note, the indenting in the summary above is a non-breaking space. Alt + 255.
 		///<summary>For StaticText, this text can include bracketed fields, like [nameLF].
 		///<para>For OutputText and InputField, this will be blank.  </para>
-		///<para>If an InputField has an AutoNote attached, then this field will be AutoNoteNum:'value'. Example AutoNoteNum:268.</para>
 		///<para>For CheckBoxes, either X or blank.  Even if the checkbox is set to behave like a radio button.  </para>
 		///<para>For Pat Images, this is blank.  The filename of a PatImage will later be stored in SheetField.FieldValue.</para>
 		///<para>For ComboBoxes, the chosen option, semicolon, then a pipe delimited list of options such as: March;January|February|March|April</para>

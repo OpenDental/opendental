@@ -46,20 +46,17 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Gets a list of PaymentForApi from db. Returns an empty list if not found.</summary>
-		public static List<PaymentForApi> GetPaymentsForApi(int limit,int offset,long patNum,long defNumPayType,DateTime dateEntry) {
+		public static List<PaymentForApi> GetPaymentsForApi(int limit,int offset,long patNum,DateTime dateEntry) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<PaymentForApi>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,defNumPayType,dateEntry);
+				return Meth.GetObject<List<PaymentForApi>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,dateEntry);
 			}
 			List<PaymentForApi> listPaymentForApi=new List<PaymentForApi>();
-			string command="SELECT * from payment WHERE DateEntry>="+POut.Date(dateEntry)+" ";
-				if(patNum>0) {
-					command+="AND PatNum="+POut.Long(patNum)+" ";
-				}
-				if(defNumPayType>-1) { //This will be 0 if this is an income transfer to another provider.
-					command+="AND PayType="+POut.Long(defNumPayType)+" ";
-				}
-				command+="ORDER BY PayNum "
-				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			string command=
+				"SELECT * from payment"
+				+" WHERE PatNum="+POut.Long(patNum)
+				+" AND DateEntry>="+POut.DateT(dateEntry)
+				+" ORDER BY PayNum"
+				+" LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
 			string commandDatetime="SELECT "+DbHelper.Now();
 			DateTime dateTimeServer=PIn.DateT(OpenDentBusiness.Db.GetScalar(commandDatetime)); //run before payments for rigorous inclusion of payments
 			List<Payment> listPayments=Crud.PaymentCrud.SelectMany(command);
@@ -318,7 +315,7 @@ namespace OpenDentBusiness{
 
 		///<summary>Insert Payment and PaySplit. Returns newly inserted Payment.PayNum.  Throws exceptions if XWeb Program Properties are invalid.</summary>
 		public static long InsertFromXWeb(long patNum,long provNum,long clinicNum,double amount,string payNote,string receipt,CreditCardSource ccSource,string logGuid="") {
-			//No need to check MiddleTierRole; no call to db.
+			//No need to check MiddleTierRole;no call to db.
 			WebTypes.Shared.XWeb.WebPaymentProperties xwebProperties;
 			ProgramProperties.GetXWebCreds(clinicNum,out xwebProperties);
 			Payment payment=new Payment() {
@@ -338,26 +335,19 @@ namespace OpenDentBusiness{
 				payment.ProcessStatus=ProcessStat.OnlineProcessed;
 			}
 			Patient patient=Patients.GetPat(patNum);
-			long retVal=ProcessPaymentForWeb(payment,patient,amount);
-			string ccSourceString="XWeb";
-			if (ccSource.In(CreditCardSource.EdgeExpressPaymentPortal, CreditCardSource.EdgeExpressPaymentPortalGuest, CreditCardSource.EdgeExpressCNP, CreditCardSource.EdgeExpressRCM)) {
-				ccSourceString = "EdgeExpress";
+			long ret=ProcessPaymentForWeb(payment,patient,amount);
+			SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,patNum,Lans.g("Payments.InsertFromXWeb","XWeb payment by")+" "
+				+Patients.GetLim(patNum).GetNameLF()+", "+amount.ToString("c"),LogSources.PatientPortal);
+			if(logGuid!="") {//There is no way to make an XWeb payment from the Patient Portal without making a log GUID.
+				EServiceLogs.MakeLogEntry(eServiceAction.PPPaymentCreatedByXWeb,eServiceType.PatientPortal,
+					FKeyType.PayNum,patNum:patNum,FKey:ret,clinicNum:clinicNum,logGuid:logGuid,note:amount.ToString("c"));
 			}
-			LogSources logSource=LogSources.None;
-			if((CreditCards.GetCreditCardSourcesForOnlinePayments().Contains(ccSource))) {
-				logSource=LogSources.PaymentPortal;
-			}
-			SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,patNum,ccSourceString+" "+Lans.g("Payments.InsertFromXWeb","payment by")+" "+Patients.GetLim(patNum).GetNameLF()+", "+amount.ToString("c"),logSource);
-			if(logGuid!="") {//There should be a log GUID for all Payment Portal payments.
-				EServiceLogs.MakeLogEntry(eServiceAction.PayPortalPaymentSucceeded,eServiceType.PaymentPortal,
-					FKeyType.PayNum,patNum:patNum,FKey:retVal,clinicNum:clinicNum,logGuid:logGuid,note:amount.ToString("c")+",EdgeExpress,Hosted form");
-			}
-			return retVal;
+			return ret;
 		}
 
 		///<summary>Insert Payment and PaySplit. Returns newly inserted Payment.PayNum.</summary>
 		public static long InsertFromPayConnect(long patNum,long provNum,long clinicNum,double amount,string payNote,string receipt,CreditCardSource ccSource,string logGuid="",double merchantFee=0) {
-			//No need to check MiddleTierRole; no call to db.
+			//No need to check MiddleTierRole;no call to db.
 			Payment payment=new Payment() {
 				ClinicNum=clinicNum,
 				IsRecurringCC=false,
@@ -377,40 +367,35 @@ namespace OpenDentBusiness{
 			}
 			Patient patient=Patients.GetPat(patNum);
 			long ret=ProcessPaymentForWeb(payment,patient,amount);
-			LogSources logSource=LogSources.None;
-			if((CreditCards.GetCreditCardSourcesForOnlinePayments().Contains(ccSource))) {
-				logSource=LogSources.PaymentPortal;
-			}
-			SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,patNum,Lans.g("Payments.InsertFromPayConnect","PayConnect payment by")+" "
-				+Patients.GetLim(patNum).GetNameLF()+", "+amount.ToString("c"),logSource);
-			if(logGuid!="") {//There should be a log GUID for all Payment Portal payments.
-				EServiceLogs.MakeLogEntry(eServiceAction.PayPortalPaymentSucceeded,eServiceType.PaymentPortal,
-					FKeyType.PayNum,patNum:patNum,clinicNum:clinicNum,FKey:ret,logGuid:logGuid,note:amount.ToString("c")+",PayConnect,Hosted form");
+			SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,patNum,Lans.g("Payments.InsertFromPayConnect","PayConnect payment by")+" "
+				+Patients.GetLim(patNum).GetNameLF()+", "+amount.ToString("c"),LogSources.PatientPortal);
+			if(logGuid!="") {//There is no way to make a PayConnect payment from the Patient Portal without making a log GUID.
+				EServiceLogs.MakeLogEntry(eServiceAction.PPPaymentCreatedByPayconnect,eServiceType.PatientPortal,
+					FKeyType.PayNum,patNum:patNum,clinicNum:clinicNum,FKey:ret,logGuid:logGuid,note:amount.ToString("c"));
 			}
 			return ret;
 		}
 
-		public static long InsertFromCareCredit(long patNum,long provNum,long clinicNum,double amount,string payNote,CreditCardSource ccSource,double merchantFee=0) {
-			Payment payment=new Payment();
-			payment.ClinicNum=clinicNum;
-			payment.IsRecurringCC=false;
-			payment.IsSplit=false;
-			payment.PatNum=patNum;
-			payment.PayAmt=amount;
-			payment.PayDate=MiscData.GetNowDateTime();
-			payment.PaymentSource=ccSource;
-			payment.PayType=PIn.Long(ProgramProperties.GetPropVal(Programs.GetCur(ProgramName.CareCredit).ProgramNum,
-				ProgramProperties.PropertyDescs.CareCredit.CareCreditPaymentType,clinicNum));
-			payment.ProcessStatus=ProcessStat.OnlinePending;
-			payment.PayNote=payNote;
-			payment.MerchantFee=merchantFee;
-			payment.IsCcCompleted=true;
+		public static long InsertFromCareCredit(long patNum,long provNum,long clinicNum,double amount,string payNote,CreditCardSource ccSource) {
+			Payment payment=new Payment() {
+				ClinicNum=clinicNum,
+				IsRecurringCC=false,
+				IsSplit=false,
+				PatNum=patNum,
+				PayAmt=amount,
+				PayDate=MiscData.GetNowDateTime(),
+				PaymentSource=ccSource,
+				PayType=PIn.Long(ProgramProperties.GetPropVal(Programs.GetCur(ProgramName.CareCredit).ProgramNum,
+					ProgramProperties.PropertyDescs.CareCredit.CareCreditPaymentType,clinicNum)),ProcessStatus=ProcessStat.OnlinePending,
+				PayNote=payNote,
+				IsCcCompleted=true,
+			};
 			if(PrefC.GetBool(PrefName.OnlinePaymentsMarkAsProcessed)) {
 				payment.ProcessStatus=ProcessStat.OnlineProcessed;
 			}
 			Patient patient=Patients.GetPat(patNum);
 			long payNum=ProcessPaymentForWeb(payment,patient,amount);
-			SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,patNum,Lans.g("Payments.InsertFromCareCredit","CareCredit payment by")+" "
+			SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,patNum,Lans.g("Payments.InsertFromCareCredit","CareCredit payment by")+" "
 				+patient.GetNameLF()+", "+amount.ToString("c"),LogSources.CareCredit);
 			return payNum;
 		}
@@ -440,12 +425,8 @@ namespace OpenDentBusiness{
 			}
 			Patient patient=Patients.GetPat(patNum);
 			long payNum=ProcessPaymentForWeb(payment,patient,amount);
-			LogSources logSource=LogSources.None;
-			if((CreditCards.GetCreditCardSourcesForOnlinePayments().Contains(creditCardSource))) {
-				logSource=LogSources.PaymentPortal;
-			}
-			SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,patNum,Lans.g("Payments.InsertFromPaySimple","PaySimple payment by") + " "
-				+ Patients.GetLim(patNum).GetNameLF() + ", " + amount.ToString("c"),logSource);
+			SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,patNum,Lans.g("Payments.InsertFromPaySimple","PaySimple payment by") + " "
+				+ Patients.GetLim(patNum).GetNameLF() + ", " + amount.ToString("c"),LogSources.PaymentPortal);
 			return payNum;
 		}
 
@@ -1082,12 +1063,12 @@ namespace OpenDentBusiness{
 				};
 				PaySplits.Insert(positiveSplit);
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,transferPayment.PatNum,"Automatic transfer of funds for treatment plan procedure pre-payments.");
+			SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,transferPayment.PatNum,"Automatic transfer of funds for treatment plan procedure pre-payments.");
 		}
 
 		///<summary>This method is a concise version of FormPayment.SavePaymentToDb() modified for the API, Patient Portal, and eClipboard. Only handles patient payments, not income transfers, insurance, or TSI payments. Also runs Aging for the patient's family. Returns Payment.PaymentNum.</summary>
-		public static long ProcessPaymentForWeb(Payment odbPayment,Patient odbPatient,double payAmt,bool isPatientPreferred=false,bool isPrepayment=false,List<AccountEntry> listAccountEntries=null,long payPlanNum=0) {
-			PaymentEdit.AutoSplit autoSplitData=PaymentEdit.AutoSplitForPayment(odbPayment.PatNum,odbPayment,isPatPrefer:isPatientPreferred,listAccountEntriesPayFirst:listAccountEntries,payPlanNum:payPlanNum);
+		public static long ProcessPaymentForWeb(Payment odbPayment,Patient odbPatient,double payAmt,bool isPatientPreferred=false,bool isPrepayment=false,List<AccountEntry> listAccountEntries=null,long payPlanNumDynamic=0) {
+			PaymentEdit.AutoSplit autoSplitData=PaymentEdit.AutoSplitForPayment(odbPayment.PatNum,odbPayment,isPatPrefer:isPatientPreferred,listAccountEntriesPayFirst:listAccountEntries);
 			odbPayment.PayAmt=payAmt; //AutoSplitForPayment empties PayAmt - Set it back to what it should be.
 			//Zero dollar splits are not valid. Remove.
 			autoSplitData.ListPaySplitsSuggested.RemoveAll(x => CompareDouble.IsZero(x.SplitAmt));
@@ -1106,12 +1087,9 @@ namespace OpenDentBusiness{
 			if(isPrepayment) {
 				autoSplitData.ListPaySplitsSuggested.Clear();
 				PaySplit odbPaySplit=CreateSinglePaySplitForWeb(odbPayment,odbPatient,odbPayment.PayAmt);
-				if(payPlanNum>0) {
-					PayPlan payPlan=PayPlans.GetOne(payPlanNum);
-					if(payPlan.IsDynamic) {
-						odbPaySplit.PayPlanNum=payPlanNum;
-						odbPaySplit.UnearnedType=PrefC.GetLong(PrefName.DynamicPayPlanPrepaymentUnearnedType);
-					}
+				if(payPlanNumDynamic>0) {
+					odbPaySplit.PayPlanNum=payPlanNumDynamic;
+					odbPaySplit.UnearnedType=PrefC.GetLong(PrefName.DynamicPayPlanPrepaymentUnearnedType);
 				}
 				autoSplitData.ListPaySplitsSuggested.Add(odbPaySplit);
 			}
@@ -1120,7 +1098,6 @@ namespace OpenDentBusiness{
 			Family odbFamily=Patients.GetFamily(odbPatient.PatNum);
 			Ledgers.ComputeAgingForPaysplitsAllocatedToDiffPats(odbPatient.PatNum,autoSplitData.ListPaySplitsSuggested);
 			Ledgers.ComputeAging(odbFamily.Guarantor.PatNum,DateTime.Now);
-			Signalods.SetInvalid(InvalidType.BillingList);
 			return ret;
 		}
 

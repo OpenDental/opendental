@@ -19,16 +19,5 @@ namespace OpenDentBusiness {
 		public StateAbbr Clone() {
 			return (StateAbbr)this.MemberwiseClone();
 		}
-
-		///<summary></summary>
-		public StateAbbr() {
-
-		}
-
-		///<summary>This overload is only used in ODB/Logic/USlocales.cs.</summary>
-		public StateAbbr(string description,string abbr) {
-			Description=description;
-			Abbr=abbr;
-		}
 	}
 }

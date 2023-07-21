@@ -27,6 +27,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormFamilyBalancer));
 			this.datePickerIncomeTransferDate = new System.Windows.Forms.DateTimePicker();
 			this.labelIncomeTransferDate = new System.Windows.Forms.Label();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butRigorous = new OpenDental.UI.Button();
 			this.labelIncomeTransferDateDesc = new System.Windows.Forms.Label();
 			this.progressBarTransfer = new System.Windows.Forms.ProgressBar();
@@ -44,7 +45,6 @@ namespace OpenDental{
 			this.datePickerAsOfDate = new System.Windows.Forms.DateTimePicker();
 			this.labelAsOfDate = new System.Windows.Forms.Label();
 			this.groupBoxIncomeTransfers = new OpenDental.UI.GroupBox();
-			this.butConfigureAuto = new OpenDental.UI.Button();
 			this.checkChangedSinceDate = new OpenDental.UI.CheckBox();
 			this.datePickerChangedSinceDate = new System.Windows.Forms.DateTimePicker();
 			this.labelChangedSinceDate = new System.Windows.Forms.Label();
@@ -57,19 +57,19 @@ namespace OpenDental{
 			this.labelDeleteTransfersRecreate = new System.Windows.Forms.Label();
 			this.label11 = new System.Windows.Forms.Label();
 			this.label15 = new System.Windows.Forms.Label();
-			this.textOutput = new System.Windows.Forms.TextBox();
+			this.textOutput = new OpenDental.ODtextBox();
 			this.checkOutputVerbose = new OpenDental.UI.CheckBox();
 			this.timerOutput = new System.Windows.Forms.Timer(this.components);
 			this.butLog = new OpenDental.UI.Button();
 			this.groupBoxInsuranceOverpayments = new OpenDental.UI.GroupBox();
-			this.label8 = new System.Windows.Forms.Label();
-			this.label56 = new System.Windows.Forms.Label();
-			this.comboOverpayPayType = new OpenDental.UI.ComboBox();
+			this.butOverpay = new OpenDental.UI.Button();
+			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.datePickerOverpayPayDate = new System.Windows.Forms.DateTimePicker();
 			this.label3 = new System.Windows.Forms.Label();
-			this.butOverpay = new OpenDental.UI.Button();
-			this.label1 = new System.Windows.Forms.Label();
+			this.label56 = new System.Windows.Forms.Label();
+			this.comboOverpayPayType = new OpenDental.UI.ComboBox();
+			this.label8 = new System.Windows.Forms.Label();
 			this.groupBoxIncomeTransfers.SuspendLayout();
 			this.groupBoxRecreateSplits.SuspendLayout();
 			this.groupBoxInsuranceOverpayments.SuspendLayout();
@@ -91,6 +91,16 @@ namespace OpenDental{
 			this.labelIncomeTransferDate.TabIndex = 134;
 			this.labelIncomeTransferDate.Text = "Income Transfer Date";
 			this.labelIncomeTransferDate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(1123, 623);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 5;
+			this.butCancel.Text = "Close";
+			this.butCancel.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butRigorous
 			// 
@@ -162,9 +172,9 @@ namespace OpenDental{
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(8, 21);
+			this.label4.Location = new System.Drawing.Point(8, 28);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(574, 69);
+			this.label4.Size = new System.Drawing.Size(574, 56);
 			this.label4.TabIndex = 158;
 			this.label4.Text = resources.GetString("label4.Text");
 			// 
@@ -209,7 +219,7 @@ namespace OpenDental{
 			// 
 			this.labelAsOfDateDesc.Location = new System.Drawing.Point(278, 163);
 			this.labelAsOfDateDesc.Name = "labelAsOfDateDesc";
-			this.labelAsOfDateDesc.Size = new System.Drawing.Size(310, 43);
+			this.labelAsOfDateDesc.Size = new System.Drawing.Size(304, 43);
 			this.labelAsOfDateDesc.TabIndex = 166;
 			this.labelAsOfDateDesc.Text = "Account entries after this date are ignored during transfers.\r\nFor conversions, s" +
     "et this to the date of the conversion.\r\nFor bi-weekly usage, use today\'s date.";
@@ -235,7 +245,6 @@ namespace OpenDental{
 			// groupBoxIncomeTransfers
 			// 
 			this.groupBoxIncomeTransfers.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.groupBoxIncomeTransfers.Controls.Add(this.butConfigureAuto);
 			this.groupBoxIncomeTransfers.Controls.Add(this.checkChangedSinceDate);
 			this.groupBoxIncomeTransfers.Controls.Add(this.datePickerChangedSinceDate);
 			this.groupBoxIncomeTransfers.Controls.Add(this.labelChangedSinceDate);
@@ -258,15 +267,6 @@ namespace OpenDental{
 			this.groupBoxIncomeTransfers.Size = new System.Drawing.Size(590, 393);
 			this.groupBoxIncomeTransfers.TabIndex = 0;
 			this.groupBoxIncomeTransfers.Text = "Income Transfers";
-			// 
-			// butConfigureAuto
-			// 
-			this.butConfigureAuto.Location = new System.Drawing.Point(457, 355);
-			this.butConfigureAuto.Name = "butConfigureAuto";
-			this.butConfigureAuto.Size = new System.Drawing.Size(125, 26);
-			this.butConfigureAuto.TabIndex = 173;
-			this.butConfigureAuto.Text = "Configure Automation";
-			this.butConfigureAuto.Click += new System.EventHandler(this.butConfigureAuto_Click);
 			// 
 			// checkChangedSinceDate
 			// 
@@ -317,9 +317,9 @@ namespace OpenDental{
 			// 
 			// labelAsOfDateDescRecreate
 			// 
-			this.labelAsOfDateDescRecreate.Location = new System.Drawing.Point(314, 88);
+			this.labelAsOfDateDescRecreate.Location = new System.Drawing.Point(314, 91);
 			this.labelAsOfDateDescRecreate.Name = "labelAsOfDateDescRecreate";
-			this.labelAsOfDateDescRecreate.Size = new System.Drawing.Size(274, 18);
+			this.labelAsOfDateDescRecreate.Size = new System.Drawing.Size(214, 13);
 			this.labelAsOfDateDescRecreate.TabIndex = 174;
 			this.labelAsOfDateDescRecreate.Text = "Account entries after this date are ignored.";
 			this.labelAsOfDateDescRecreate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -369,9 +369,9 @@ namespace OpenDental{
 			// 
 			// label11
 			// 
-			this.label11.Location = new System.Drawing.Point(8, 21);
+			this.label11.Location = new System.Drawing.Point(8, 28);
 			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(574, 63);
+			this.label11.Size = new System.Drawing.Size(574, 56);
 			this.label11.TabIndex = 159;
 			this.label11.Text = resources.GetString("label11.Text");
 			// 
@@ -391,13 +391,16 @@ namespace OpenDental{
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.textOutput.BackColor = System.Drawing.SystemColors.Control;
+			this.textOutput.DetectLinksEnabled = false;
+			this.textOutput.DetectUrls = false;
 			this.textOutput.Location = new System.Drawing.Point(12, 465);
-			this.textOutput.Multiline = true;
 			this.textOutput.Name = "textOutput";
+			this.textOutput.QuickPasteType = OpenDentBusiness.QuickPasteType.ReadOnly;
 			this.textOutput.ReadOnly = true;
-			this.textOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.textOutput.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textOutput.Size = new System.Drawing.Size(1186, 152);
 			this.textOutput.TabIndex = 170;
+			this.textOutput.Text = "";
 			// 
 			// checkOutputVerbose
 			// 
@@ -441,32 +444,22 @@ namespace OpenDental{
 			this.groupBoxInsuranceOverpayments.TabIndex = 2;
 			this.groupBoxInsuranceOverpayments.Text = "Insurance Overpayments";
 			// 
-			// label8
+			// butOverpay
 			// 
-			this.label8.Location = new System.Drawing.Point(314, 119);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(210, 13);
-			this.label8.TabIndex = 256;
-			this.label8.Text = "Type set on all new payments.";
-			this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.butOverpay.Location = new System.Drawing.Point(249, 151);
+			this.butOverpay.Name = "butOverpay";
+			this.butOverpay.Size = new System.Drawing.Size(93, 26);
+			this.butOverpay.TabIndex = 2;
+			this.butOverpay.Text = "Start Overpay";
+			this.butOverpay.Click += new System.EventHandler(this.butOverpay_Click);
 			// 
-			// label56
+			// label1
 			// 
-			this.label56.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.label56.Location = new System.Drawing.Point(53, 119);
-			this.label56.Name = "label56";
-			this.label56.Size = new System.Drawing.Size(117, 13);
-			this.label56.TabIndex = 255;
-			this.label56.Text = "Pay Type";
-			this.label56.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// comboOverpayPayType
-			// 
-			this.comboOverpayPayType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboOverpayPayType.Location = new System.Drawing.Point(176, 115);
-			this.comboOverpayPayType.Name = "comboOverpayPayType";
-			this.comboOverpayPayType.Size = new System.Drawing.Size(132, 21);
-			this.comboOverpayPayType.TabIndex = 1;
+			this.label1.Location = new System.Drawing.Point(8, 28);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(574, 56);
+			this.label1.TabIndex = 160;
+			this.label1.Text = resources.GetString("label1.Text");
 			// 
 			// label2
 			// 
@@ -487,29 +480,39 @@ namespace OpenDental{
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(314, 88);
+			this.label3.Location = new System.Drawing.Point(314, 90);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(273, 18);
+			this.label3.Size = new System.Drawing.Size(210, 13);
 			this.label3.TabIndex = 164;
 			this.label3.Text = "Date set on all new payments and splits.";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
-			// butOverpay
+			// label56
 			// 
-			this.butOverpay.Location = new System.Drawing.Point(249, 151);
-			this.butOverpay.Name = "butOverpay";
-			this.butOverpay.Size = new System.Drawing.Size(93, 26);
-			this.butOverpay.TabIndex = 2;
-			this.butOverpay.Text = "Start Overpay";
-			this.butOverpay.Click += new System.EventHandler(this.butOverpay_Click);
+			this.label56.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.label56.Location = new System.Drawing.Point(53, 119);
+			this.label56.Name = "label56";
+			this.label56.Size = new System.Drawing.Size(117, 13);
+			this.label56.TabIndex = 255;
+			this.label56.Text = "Pay Type";
+			this.label56.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// label1
+			// comboOverpayPayType
 			// 
-			this.label1.Location = new System.Drawing.Point(5, 21);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(582, 64);
-			this.label1.TabIndex = 160;
-			this.label1.Text = resources.GetString("label1.Text");
+			this.comboOverpayPayType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.comboOverpayPayType.Location = new System.Drawing.Point(176, 115);
+			this.comboOverpayPayType.Name = "comboOverpayPayType";
+			this.comboOverpayPayType.Size = new System.Drawing.Size(132, 21);
+			this.comboOverpayPayType.TabIndex = 1;
+			// 
+			// label8
+			// 
+			this.label8.Location = new System.Drawing.Point(314, 119);
+			this.label8.Name = "label8";
+			this.label8.Size = new System.Drawing.Size(210, 13);
+			this.label8.TabIndex = 256;
+			this.label8.Text = "Type set on all new payments.";
+			this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// FormFamilyBalancer
 			// 
@@ -521,6 +524,7 @@ namespace OpenDental{
 			this.Controls.Add(this.label15);
 			this.Controls.Add(this.groupBoxRecreateSplits);
 			this.Controls.Add(this.groupBoxIncomeTransfers);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.progressBarTransfer);
 			this.Controls.Add(this.labelPayments);
 			this.Controls.Add(this.labelProgress);
@@ -533,11 +537,11 @@ namespace OpenDental{
 			this.groupBoxRecreateSplits.ResumeLayout(false);
 			this.groupBoxInsuranceOverpayments.ResumeLayout(false);
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 
 		#endregion
+		private UI.Button butCancel;
 		private System.Windows.Forms.DateTimePicker datePickerIncomeTransferDate;
 		private System.Windows.Forms.Label labelIncomeTransferDate;
 		private UI.Button butRigorous;
@@ -566,7 +570,7 @@ namespace OpenDental{
 		private OpenDental.UI.CheckBox checkDeleteTransfersRecreate;
 		private System.Windows.Forms.Label labelDeleteTransfersRecreate;
 		private System.Windows.Forms.Label label15;
-		private System.Windows.Forms.TextBox textOutput;
+		private ODtextBox textOutput;
 		private OpenDental.UI.CheckBox checkOutputVerbose;
 		private System.Windows.Forms.Timer timerOutput;
 		private UI.Button butLog;
@@ -582,6 +586,5 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label56;
 		private UI.ComboBox comboOverpayPayType;
 		private System.Windows.Forms.Label label8;
-		private UI.Button butConfigureAuto;
 	}
 }

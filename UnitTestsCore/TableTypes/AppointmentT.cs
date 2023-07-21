@@ -142,12 +142,12 @@ namespace UnitTestsCore {
 			}
 			Appointments.SetAptStatus(appt,ApptStatus.Broken,suppressHistory); //Appointments S-Class handles Signalods
 			if(appt.AptStatus!=ApptStatus.Complete) { //seperate log entry for completed appointments.
-				SecurityLogs.MakeLogEntry(EnumPermType.AppointmentEdit,pat.PatNum,
+				SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,pat.PatNum,
 					appt.ProcDescript+", "+appt.AptDateTime.ToString()
 					+", Broken from the Appts module.",appt.AptNum,datePrevious);
 			}
 			else {
-				SecurityLogs.MakeLogEntry(EnumPermType.AppointmentCompleteEdit,pat.PatNum,
+				SecurityLogs.MakeLogEntry(Permissions.AppointmentCompleteEdit,pat.PatNum,
 					appt.ProcDescript+", "+appt.AptDateTime.ToString()
 					+", Broken from the Appts module.",appt.AptNum,datePrevious);
 			}

@@ -17,17 +17,7 @@ namespace OpenDental {
 
 		public FrmApptBreakRequired() {
 			InitializeComponent();
-			Lang.F(this);
-			PreviewKeyDown+=FrmApptBreakRequired_PreviewKeyDown;
-		}
-
-		private void FrmApptBreakRequired_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butMissed.IsAltKey(Key.M,e)) {
-				butMissed_Click(this,new EventArgs());
-			}
-			if(butCancelled.IsAltKey(Key.C,e)) {
-				butCancelled_Click(this,new EventArgs());
-			}
+			//Lan.F(this);;
 		}
 
 		private void butMissed_Click(object sender,EventArgs e) {

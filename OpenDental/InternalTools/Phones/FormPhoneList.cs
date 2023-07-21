@@ -558,5 +558,8 @@ namespace OpenDental {
 
 		#endregion Methods - Private
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }

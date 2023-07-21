@@ -36,6 +36,7 @@ namespace OpenDental{
 			this.butRefresh = new OpenDental.UI.Button();
 			this.textDateFrom = new OpenDental.ValidDate();
 			this.textDateTo = new OpenDental.ValidDate();
+			this.butClose = new OpenDental.UI.Button();
 			this.comboClinic = new OpenDental.UI.ComboBox();
 			this.labelClinic = new System.Windows.Forms.Label();
 			this.contextMenu.SuspendLayout();
@@ -106,7 +107,7 @@ namespace OpenDental{
 			this.gridMain.ContextMenuStrip = this.contextMenu;
 			this.gridMain.Location = new System.Drawing.Point(12, 40);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(789, 488);
+			this.gridMain.Size = new System.Drawing.Size(789, 454);
 			this.gridMain.TabIndex = 140;
 			this.gridMain.Title = "Patient Portal Transactions";
 			this.gridMain.TranslationName = "TableXWebTrans";
@@ -136,6 +137,16 @@ namespace OpenDental{
 			this.textDateTo.Name = "textDateTo";
 			this.textDateTo.Size = new System.Drawing.Size(90, 20);
 			this.textDateTo.TabIndex = 144;
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(726, 521);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// comboClinic
 			// 
@@ -167,6 +178,7 @@ namespace OpenDental{
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormXWebTransactions";
 			this.Text = "Patient Portal Transactions";
@@ -178,6 +190,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private ValidDate textDateFrom;
 		private ValidDate textDateTo;

@@ -68,7 +68,7 @@ namespace OpenDental {
 				}
 			}
 			for(int i = 0;i<Controls.Count;i++) {
-				if(Controls[i]==gridMain || Controls[i]==groupConstructURL || Controls[i]==butSave || Controls[i]==checkEnableAutoDownload) {
+				if(Controls[i]==gridMain || Controls[i]==groupConstructURL || Controls[i]==butOk || Controls[i]==butCancel || Controls[i]==checkEnableAutoDownload) {
 					continue;
 				}
 				Controls[i].Visible=false;
@@ -79,13 +79,13 @@ namespace OpenDental {
 	private void FormWebFormSetup_Load(object sender,EventArgs e) {
 			if(PrefC.HasClinicsEnabled) {
 				if(_isWebSchedSetup){
-					comboClinic.ClinicNumSelected=_clinicNumDefault;
+					comboClinic.SelectedClinicNum=_clinicNumDefault;
 				}
 				else{
-					comboClinic.ClinicNumSelected=Clinics.ClinicNum;
+					comboClinic.SelectedClinicNum=Clinics.ClinicNum;
 				}
 			}
-			butSavePrefs.Enabled=false;
+			butSave.Enabled=false;
 			checkAutoFillNameAndBirthdate.Checked=PrefC.GetBool(PrefName.WebFormsAutoFillNameAndBirthdate);
 			checkEnableAutoDownload.Checked=PrefC.GetBool(PrefName.WebFormsDownloadAutomcatically);
 		}
@@ -114,7 +114,7 @@ namespace OpenDental {
 		private void FetchValuesFromWebServer() {
 			string webHostSynchServerURL=PrefC.GetString(PrefName.WebHostSynchServerURL);
 			textboxWebHostAddress.Text=webHostSynchServerURL;
-			butSavePrefs.Enabled=false;
+			butSave.Enabled=false;
 			if((webHostSynchServerURL==WebFormL.SynchUrlStaging) || (webHostSynchServerURL==WebFormL.SynchUrlDev)) {
 				WebFormL.IgnoreCertificateErrors();
 			}
@@ -185,7 +185,7 @@ namespace OpenDental {
 
 		/// <summary>Returns true if any of the preferences/settings that get saved on a Save/OK click have changed from what they were when form was 
 		/// opened or last saved. Otherwise, false</summary>
-		private void ResetSavePrefsButton() {
+		private void ResetSaveButton() {
 			if(_webForms_PreferenceOld.ColorBorder.ToArgb()!=_webForms_Preference.ColorBorder.ToArgb()
 				|| _webForms_PreferenceOld.CultureName!=_webForms_Preference.CultureName
 				|| _webForms_PreferenceOld.DisableSignatures!=_webForms_Preference.DisableSignatures
@@ -193,20 +193,20 @@ namespace OpenDental {
 				|| checkAutoFillNameAndBirthdate.Checked!=PrefC.GetBool(PrefName.WebFormsAutoFillNameAndBirthdate)
 				|| checkEnableAutoDownload.Checked!=PrefC.GetBool(PrefName.WebFormsDownloadAutomcatically))
 			{
-				butSavePrefs.Enabled=true;
+				butSave.Enabled=true;
 				return;
 			}
-			butSavePrefs.Enabled=false;
+			butSave.Enabled=false;
 		}
 
 		private void textboxWebHostAddress_TextChanged(object sender,EventArgs e) {
-			ResetSavePrefsButton();
+			ResetSaveButton();
 		}
 
-		private void butSavePrefs_Click(object sender,EventArgs e) {
+		private void butSave_Click(object sender,EventArgs e) {
 			//disabled unless user changed url
 			if(SavePrefs()) {
-				butSavePrefs.Enabled=false;
+				butSave.Enabled=false;
 			}
 		}
 
@@ -249,7 +249,7 @@ namespace OpenDental {
 			}
 			butWebformBorderColor.BackColor=colorDialog1.Color;
 			_webForms_Preference.ColorBorder=butWebformBorderColor.BackColor;
-			ResetSavePrefsButton();
+			ResetSaveButton();
 			colorDialog1.Dispose();
 		}
 
@@ -297,8 +297,8 @@ namespace OpenDental {
 				if(_listNextFormIdsSelected.Count>0) {
 					url+="&NFID="+string.Join("&NFID=",_listNextFormIdsSelected.FindAll(x => x!=gridMain.SelectedTags<WebForms_SheetDef>()[i].WebSheetDefID));//Will remove ids that match the id of the sheet def we are currently constructing a url for.
 				}
-				if(comboClinic.ClinicNumSelected > 0) {//'None' is not selected
-					url+="&CID="+comboClinic.ClinicNumSelected.ToString(); 
+				if(comboClinic.SelectedClinicNum > 0) {//'None' is not selected
+					url+="&CID="+comboClinic.SelectedClinicNum.ToString(); 
 				}
 				if(!checkAutoFillNameAndBirthdate.Checked) {
 					url+="&AFNAB=N";
@@ -312,18 +312,18 @@ namespace OpenDental {
 				listURLs.Add(url);
 			}
 			textURLs.AppendText(string.Join("\r\n",listURLs));
-			ResetSavePrefsButton();
+			ResetSaveButton();
 		}
 		
 		private void checkDisableWebFormSignatures_CheckedChanged(object sender,EventArgs e) {
 			//Do not allow user to disable typed signatures if they have already disabled all signatures.
 			_webForms_Preference.DisableSignatures=checkDisableWebFormSignatures.Checked;
 			checkDisableTypedSig.Enabled=!checkDisableWebFormSignatures.Checked;
-			ResetSavePrefsButton();
+			ResetSaveButton();
 		}
 
 		private void checkDisableAutoDownload_CheckedChanged(object sender,EventArgs e) {
-			ResetSavePrefsButton();
+			ResetSaveButton();
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
@@ -448,7 +448,11 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void butOk_Click(object sender,EventArgs e) {
 			if(!string.IsNullOrWhiteSpace(textRedirectURL.Text) && !Uri.IsWellFormedUriString(textRedirectURL.Text,UriKind.Absolute)) {
 				string error=label3.Text+Lan.g(this," should use the following format: http://www.patientviewer.com or https://www.patientviewer.com");
 				MsgBox.Show(this,error);
@@ -459,5 +463,6 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		
 	}
 }

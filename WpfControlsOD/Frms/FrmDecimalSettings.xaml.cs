@@ -16,24 +16,12 @@ namespace OpenDental {
 
 		public FrmDecimalSettings() {
 			InitializeComponent();
-			Load+=FrmDecimalSettings_Load;
-			PreviewKeyDown+=FrmDecimalSettings_PreviewKeyDown;
+			//Lan.F(this);
 		}
 		
-		private void FrmDecimalSettings_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmDecimalSettings_Loaded(object sender,EventArgs e) {
 			checkNoShow.Checked=ComputerPrefs.LocalComputer.NoShowDecimal;
-			string decimalDigits=CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalDigits.ToString();
-			label2.Text+=": "+decimalDigits;
-			if(CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalDigits==2) {
-				label1.Visible=false;
-			}
-		}
-
-		private void FrmDecimalSettings_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
+			textDecimal.Text=CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalDigits.ToString();
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {

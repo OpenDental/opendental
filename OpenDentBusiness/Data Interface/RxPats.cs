@@ -89,17 +89,24 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<RxPat>>(MethodBase.GetCurrentMethod(),listRxNums);
 			}
-			if(listRxNums.Count==0) {
-				return new List<RxPat>();
-			}
-			string command="SELECT * FROM rxpat WHERE ";
-			for(int i=0;i<listRxNums.Count;i++) {
-				if(i>0) {
-					command+="OR ";
+			string strRxNums="";
+			DataTable tableRxPats;
+			if(listRxNums.Count>0) {
+				for(int i=0;i<listRxNums.Count;i++) {
+					if(i>0) {
+						strRxNums+="OR ";
+					}
+					strRxNums+="RxNum='"+listRxNums[i].ToString()+"' ";
 				}
-				command+="RxNum='"+listRxNums[i].ToString()+"' ";
+				string command="SELECT * FROM rxpat WHERE "+strRxNums;
+				tableRxPats=Db.GetTable(command);
 			}
-			return Crud.RxPatCrud.SelectMany(command);
+			else {
+				tableRxPats=new DataTable();
+			}
+			RxPat[] arrayRxPats=Crud.RxPatCrud.TableToList(tableRxPats).ToArray();
+			List<RxPat> listRxPats=new List<RxPat>(arrayRxPats);
+			return listRxPats;
 		}
 
 		///<summary>Used in FormRxSend to fill electronic queue.</summary>
@@ -153,10 +160,7 @@ namespace OpenDentBusiness{
 			rxPat.PatNum=patient.PatNum;
 			rxPat.UserNum=userod.UserNum;
 			rxPat.ProvNum=userod.ProvNum;
-			rxPat.ClinicNum=0;
-			if (PrefC.HasClinicsEnabled) {
-				rxPat.ClinicNum=patient.ClinicNum;
-			}
+			rxPat.ClinicNum=PrefC.HasClinicsEnabled ? patient.ClinicNum : 0;
 			rxPat.RxDate=DateTime.Today;
 			if(program.ProgName==ProgramName.PDMP.ToString()) {
 				rxPat.RxType=RxTypes.LogicoyAccess;

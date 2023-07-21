@@ -474,7 +474,6 @@ namespace OpenDentBusiness {
 					//}
 					//2010BA NM1: Subscriber Name
 					seg++;
-					string subsOrPatID=GetSubscriberIDorPatID(patPlans,sub);
 					sw.WriteLine("NM1*IL*"//NM101: IL=Insured or Subscriber
 						+"1*"//NM102: 1=Person
 						+Sout(subscriber.LName,35)+"*"//NM103: LName. Never blank, because validated in the patient edit window when a patient is added/edited.
@@ -483,7 +482,7 @@ namespace OpenDentBusiness {
 						+"*"//NM106: not used
 						+"*"//NM107: suffix. Not present in Open Dental yet.
 						+"MI*"//NM108: MI=MemberID
-						+Sout(subsOrPatID.Replace("-",""),80)+"~");//NM109: Subscriber ID
+						+Sout(sub.SubscriberID.Replace("-",""),80)+"~");//NM109: Subscriber ID
 					//At the request of WebMD, we are including N3,N4,and DMG even if patient is not subscriber.
 					//This does not make the transaction non-compliant, and they find it useful.
 					//if(claimAr[3,i].ToString()==claimAr[2,i].ToString()){//if patient is the subscriber
@@ -1063,7 +1062,6 @@ namespace OpenDentBusiness {
 					//2320 MOA: (medical) We don't support
 					//2330A NM1: Other subscriber name
 					seg++;
-					string subsOrPatID=GetSubscriberIDorPatID(patPlans,otherSub);
 					sw.WriteLine("NM1*IL*"//NM010: IL=insured
 						+"1*"//NM102: 1=person
 						+Sout(otherSubsc.LName,35)+"*"//NM103: LName. Never blank, because validated in the patient edit window when a patient is added/edited.
@@ -1072,7 +1070,7 @@ namespace OpenDentBusiness {
 						+"*"//NM106: not used
 						+"*"//NM107: suffix. No corresponding field in OD
 						+"MI*"//NM108: MI=Member ID
-						+Sout(subsOrPatID,80)+"~");//NM109: ID
+						+Sout(otherSub.SubscriberID,80)+"~");//NM109: ID
 					//2330A N3: Address
 					seg++;
 					sw.Write("N3*"
@@ -1628,18 +1626,6 @@ namespace OpenDentBusiness {
 			return "";
 		}
 
-		///<summary>When the EclaimsSubscIDUsesPatID preference is enabled, uses Optional Patient ID ("PatID") in place of SubscriberID if PatID is not whitespace.</summary>
-		public static string GetSubscriberIDorPatID(List<PatPlan> listPatPlans,InsSub insSub) {
-			if(!PrefC.GetBool(PrefName.EclaimsSubscIDUsesPatID)) {
-				return insSub.SubscriberID;
-			}
-			PatPlan patPlanMatching=listPatPlans.FirstOrDefault(x=>x.InsSubNum==insSub.InsSubNum);
-			if(patPlanMatching!=null && !string.IsNullOrWhiteSpace(patPlanMatching.PatID)) {
-				return patPlanMatching.PatID;
-			}
-			return insSub.SubscriberID;
-		}
-
 		///<summary>Converts any string to an acceptable format for X12. Converts to all caps and strips off all invalid characters. Optionally shortens the string to the specified length and/or makes sure the string is long enough by padding with spaces.</summary>
 		private static string Sout(string intputStr,int maxL,int minL) {
 			string retStr=intputStr.ToUpper();
@@ -1776,13 +1762,10 @@ namespace OpenDentBusiness {
 				strb.Append("BillProv Medicaid ID");
 			}
 			Patient patient=Patients.GetPat(claim.PatNum);
-			List<PatPlan> patPlans=PatPlans.Refresh(patient.PatNum);
-			string subsOrPatID;
 			if(claim.PlanNum2>0) {
 				InsPlan insPlan2=InsPlans.GetPlan(claim.PlanNum2,new List<InsPlan>());
 				InsSub sub2=InsSubs.GetSub(claim.InsSubNum2,null);
-				subsOrPatID=GetSubscriberIDorPatID(patPlans,sub2);
-				if(subsOrPatID.Length<2) {
+				if(sub2.SubscriberID.Length<2) {
 					if(strb.Length!=0) {
 						strb.Append(",");
 					}
@@ -1851,8 +1834,7 @@ namespace OpenDentBusiness {
 					strb.Append("Billing Prov Supplemental ID:"+providerIdents[i].ToString();
 				}
 			}*/
-			subsOrPatID=GetSubscriberIDorPatID(patPlans,sub);
-			if(subsOrPatID.Length<2) {
+			if(sub.SubscriberID.Length<2) {
 				if(strb.Length!=0) {
 					strb.Append(",");
 				}

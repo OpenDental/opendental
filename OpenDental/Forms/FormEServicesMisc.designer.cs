@@ -33,7 +33,7 @@ namespace OpenDental{
 			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.butSave = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupDateFormat = new OpenDental.UI.GroupBox();
 			this.label30 = new System.Windows.Forms.Label();
 			this.labelDateCustom = new System.Windows.Forms.Label();
@@ -52,6 +52,7 @@ namespace OpenDental{
 			this.dateRunStart = new System.Windows.Forms.DateTimePicker();
 			this.label47 = new System.Windows.Forms.Label();
 			this.label48 = new System.Windows.Forms.Label();
+			this.butCancel = new OpenDental.UI.Button();
 			this.menuWebSchedVerifyTextTemplate.SuspendLayout();
 			this.groupDateFormat.SuspendLayout();
 			this.groupNotUsed.SuspendLayout();
@@ -114,16 +115,16 @@ namespace OpenDental{
 			this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
 			this.selectAllToolStripMenuItem.Text = "Select All";
 			// 
-			// butSave
+			// butClose
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(789, 329);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 23);
-			this.butSave.TabIndex = 500;
-			this.butSave.Text = "&Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(708, 336);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 23);
+			this.butClose.TabIndex = 500;
+			this.butClose.Text = "OK";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// groupDateFormat
 			// 
@@ -242,7 +243,7 @@ namespace OpenDental{
 			this.butShowOldMobileSych.Name = "butShowOldMobileSych";
 			this.butShowOldMobileSych.Size = new System.Drawing.Size(225, 24);
 			this.butShowOldMobileSych.TabIndex = 249;
-			this.butShowOldMobileSych.Text = "Show Mobile Sync (old-style)";
+			this.butShowOldMobileSych.Text = "Show Mobile Synch (old-style)";
 			this.butShowOldMobileSych.Visible = false;
 			this.butShowOldMobileSych.Click += new System.EventHandler(this.butShowOldMobileSych_Click);
 			// 
@@ -309,13 +310,25 @@ namespace OpenDental{
 			this.label48.Text = "Start Time";
 			this.label48.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(789, 335);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 501;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// FormEServicesMisc
 			// 
-			this.ClientSize = new System.Drawing.Size(876, 362);
+			this.ClientSize = new System.Drawing.Size(876, 371);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.groupDateFormat);
 			this.Controls.Add(this.groupNotUsed);
 			this.Controls.Add(this.groupBox8);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEServicesMisc";
 			this.Text = "eServices Misc";
@@ -330,7 +343,7 @@ namespace OpenDental{
 		}
 
 		#endregion
-		private UI.Button butSave;
+		private UI.Button butClose;
 		private System.Windows.Forms.Label label37;
 		private OpenDental.UI.GroupBox groupBox8;
 		private System.Windows.Forms.Label label46;
@@ -357,5 +370,6 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textDateCustom;
 		private System.Windows.Forms.Label labelDateCustom;
 		private System.Windows.Forms.Label label30;
+		private UI.Button butCancel;
 	}
 }

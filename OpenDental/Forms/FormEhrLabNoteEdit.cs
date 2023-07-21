@@ -27,6 +27,8 @@ namespace OpenDental {
 				foreach(Control c in Controls) {
 					c.Enabled=false;
 				}
+				butCancel.Text="Close";
+				butCancel.Enabled=true;
 			}
 			FillGrid();
 		}
@@ -52,19 +54,19 @@ namespace OpenDental {
 		}
 
 		private void butAddComment_Click(object sender,EventArgs e) {
-			InputBox ipb=new InputBox("Add comment to note.");
+			using InputBox ipb=new InputBox("Add comment to note.");
 			ipb.ShowDialog();
-			if(ipb.IsDialogCancel) {
+			if(ipb.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			string result=ipb.StringResult;
+			string result=ipb.textResult.Text;
 			result=result.Replace("|","");//reserved character
 			result=result.Replace("^","");//reserved character
 			result=result.Replace("~","");//reserved character
 			result=result.Replace("&","");//reserved character
 			result=result.Replace("#","");//reserved character
 			result=result.Replace("\\","");//reserved character
-			if(result!=ipb.StringResult) {
+			if(result!=ipb.textResult.Text) {
 				MsgBox.Show(this, "Special characters were removed from comment. The characters |,^,~,\\,&, and # cannot be used in a comment.");
 			}
 			LabNoteCur.Comments+=(LabNoteCur.Comments==""?"":"^")+result;
@@ -74,6 +76,17 @@ namespace OpenDental {
 		private void butSave_Click(object sender,EventArgs e) {
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+
+
+
+
 
 	}
 }

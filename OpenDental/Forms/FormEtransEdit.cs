@@ -131,7 +131,7 @@ namespace OpenDental{
 			//Etranss.Delete(
 		//}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			//EtransCur.AckCode=textAckCode.Text;
 			EtransCur.Note=textNote.Text;
 			Etranss.Update(EtransCur);
@@ -142,5 +142,39 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+	
+
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

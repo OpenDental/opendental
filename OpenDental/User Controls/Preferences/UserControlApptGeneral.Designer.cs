@@ -349,7 +349,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBoxCalendarBehavior);
 			this.Controls.Add(this.groupBox2);
 			this.Name = "UserControlApptGeneral";
-			this.Size = new System.Drawing.Size(494, 660);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxProduction.ResumeLayout(false);
 			this.groupBoxOD2.ResumeLayout(false);
 			this.groupBoxOD2.PerformLayout();

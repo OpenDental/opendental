@@ -17,10 +17,8 @@ namespace OpenDental {
 		///<summary>List of all the procedures for a patient.</summary>
 		private List<Procedure> _listProcedures;
 		///<summary>List of some of the claimprocs attached to the claim we are editing. Includes overpayment/underpayment claimprocs (ClaimProc.IsOverpay=True).
-		///Does NOT include every claimproc such as claimprocs that are total payments.</summary>
+		///Does NOT include every claimproc such as claimprocs that are total payments or claimprocs attached to labs.</summary>
 		private List<ClaimProc> _listClaimProcs;
-		///<summary>Only one overpayment per ProcNum and it belongs to the NotReceived/Received claimproc.</summary>
-		private List<ClaimProc> _listPaymentClaimProcs;
 		/// <summary>Used to pre-select a row in the grid of claimprocs.</summary>
 		private long _selectedClaimProcNum;
 		/// <summary>Used to preselect a column in the grid of claimsprocs.</summary>
@@ -45,12 +43,6 @@ namespace OpenDental {
 		}
 
 		private void FormClaimOverpay_Load(object sender,EventArgs e) {
-			_listPaymentClaimProcs=_listClaimProcs.FindAll(x => !x.IsOverpay && x.Status!=ClaimProcStatus.Supplemental);//Only one overpayment per ProcNum and it belongs to the NotReceived/Received claimproc.
-			if(_listPaymentClaimProcs.Count==0){//Job 49660. Will prevent phone calls to our techs by preventing UE below.
-				MsgBox.Show(this,"No valid claim procedures attached. Please delete this claim and recreate it with the desired procedures attached or run database maintenance method "+nameof(DatabaseMaintenances.ClaimDeleteWithNoClaimProcs)+".","Error");
-				Close();
-				return;
-			}
 			FillGrid();
 		}
 
@@ -75,17 +67,18 @@ namespace OpenDental {
 			gridMain.Columns.Add(new GridColumn(Lan.g("TableClaimProc","Pmt"),30,HorizontalAlignment.Center));
 			gridMain.Columns.Add(new GridColumn(Lan.g("TableClaimProc","Remarks"),130){ IsWidthDynamic=true });
 			gridMain.ListGridRows.Clear();
+			List<ClaimProc> listPaymentClaimProcs=_listClaimProcs.FindAll(x => !x.IsOverpay);//Retrieve all the claimprocs that are not under/overrpayment claimprocs.
 			ClaimProc claimProcSelected=_listClaimProcs.Find(x => x.ClaimProcNum==_selectedClaimProcNum);//Retrieve the claimproc that should be pre-selected in the grid.
 			if(claimProcSelected!=null && claimProcSelected.IsOverpay) { //If the pre-selected claimproc is an under/overpayment claimproc, find its matching regular claimproc instead.
 				claimProcSelected=_listClaimProcs.Find(x => x.ClaimNum==claimProcSelected.ClaimNum && x.ProcNum==claimProcSelected.ProcNum && !x.IsOverpay);
 			}
 			GridRow row;
 			int selectedIndex=0;
-			for(int i=0;i<_listPaymentClaimProcs.Count;i++) {//Loop through the non-under/overpayment claimprocs to insert them into the grid.
+			for(int i=0;i<listPaymentClaimProcs.Count;i++) {//Loop through the non-under/overpayment claimprocs to insert them into the grid.
 				row=new GridRow();
-				row.Cells.Add(_listPaymentClaimProcs[i].ProcDate.ToShortDateString());
-				row.Cells.Add(Providers.GetAbbr(_listPaymentClaimProcs[i].ProvNum));
-				Procedure procedure=Procedures.GetProcFromList(_listProcedures,_listPaymentClaimProcs[i].ProcNum);//will return a new procedure if none found.
+				row.Cells.Add(listPaymentClaimProcs[i].ProcDate.ToShortDateString());
+				row.Cells.Add(Providers.GetAbbr(listPaymentClaimProcs[i].ProvNum));
+				Procedure procedure=Procedures.GetProcFromList(_listProcedures,listPaymentClaimProcs[i].ProcNum);//will return a new procedure if none found.
 				ProcedureCode procedureCode=ProcedureCodes.GetProcCode(procedure.CodeNum);
 				row.Cells.Add(procedureCode.ProcCode);
 				if(!Clinics.IsMedicalPracticeOrClinic(Clinics.ClinicNum)) {
@@ -93,10 +86,9 @@ namespace OpenDental {
 				}
 				row.Cells.Add(procedureCode.Descript);
 				row.Cells.Add(procedure.ProcFeeTotal.ToString("F"));
-				double insPayAmt=_listClaimProcs.FindAll(x => x.ProcNum==_listPaymentClaimProcs[i].ProcNum && !x.IsOverpay).Sum(x => x.InsPayAmt);
-				row.Cells.Add(insPayAmt.ToString("F"));
+				row.Cells.Add(listPaymentClaimProcs[i].InsPayAmt.ToString("F"));
 				ClaimProc claimProcOverpay=_listClaimProcs//Should be at-most one overpayment claimproc per regular claimproc
-					.Find(x => x.ClaimNum==_listPaymentClaimProcs[i].ClaimNum && x.ProcNum==_listPaymentClaimProcs[i].ProcNum && x.IsOverpay);
+					.Find(x => x.ClaimNum==listPaymentClaimProcs[i].ClaimNum && x.ProcNum==listPaymentClaimProcs[i].ProcNum && x.IsOverpay);
 				if(claimProcOverpay==null || claimProcOverpay.InsEstTotalOverride==0) {
 					row.Cells.Add("");
 					row.Cells.Add("");
@@ -109,7 +101,7 @@ namespace OpenDental {
 					row.Cells.Add("");
 					row.Cells.Add(claimProcOverpay.InsEstTotalOverride.ToString("F"));
 				}
-				switch(_listPaymentClaimProcs[i].Status){//Only statuses which can be attached to a claim.
+				switch(listPaymentClaimProcs[i].Status){//Only statuses which can be attached to a claim.
 					case ClaimProcStatus.Received:
 						row.Cells.Add(Lan.g("TableClaimProc","Recd"));
 						break;
@@ -126,7 +118,7 @@ namespace OpenDental {
 						row.Cells.Add("");
 						break;
 				}
-				if(_listPaymentClaimProcs[i].ClaimPaymentNum>0){
+				if(listPaymentClaimProcs[i].ClaimPaymentNum>0){
 					row.Cells.Add("X");
 				}
 				else{
@@ -138,9 +130,9 @@ namespace OpenDental {
 				else {
 					row.Cells.Add(claimProcOverpay.Remarks);
 				}
-				row.Tag=_listPaymentClaimProcs[i];//Tag the row with the payment claimproc.
+				row.Tag=listPaymentClaimProcs[i];//Tag the row with the payment claimproc.
 				gridMain.ListGridRows.Add(row);
-				if(_listPaymentClaimProcs[i].ClaimProcNum==claimProcSelected?.ClaimProcNum) {
+				if(listPaymentClaimProcs[i].ClaimProcNum==claimProcSelected?.ClaimProcNum) {
 					selectedIndex=i;
 				}
 			}
@@ -187,10 +179,9 @@ namespace OpenDental {
 		}
 
 		private void Save() {
-			List<ClaimProc> listDeleteClaimProcs=new List<ClaimProc>();
+			List<long> listDeleteClaimProcNums=new List<long>();
 			List<ClaimProc> listUpdateClaimProcs=new List<ClaimProc>();
 			List<ClaimProc> listInsertClaimProcs=new List<ClaimProc>();
-			List<long> listRequiredCanadaParentProcNums=new List<long>();
 			for(int i=0;i<gridMain.ListGridRows.Count;i++){
 				ClaimProc claimProc=(ClaimProc)gridMain.ListGridRows[i].Tag;
 				ClaimProc claimProcOverpay=_listClaimProcs.Find(x => x.ClaimNum==claimProc.ClaimNum && x.ProcNum==claimProc.ProcNum && x.IsOverpay);
@@ -198,7 +189,7 @@ namespace OpenDental {
 				double underpaidAmt=PIn.Double(gridMain.ListGridRows[i].Cells[_colInsUnderpaidIndex].Text);
 				if(overpaidAmt==0 && underpaidAmt==0) {
 					if(claimProcOverpay!=null) {
-						listDeleteClaimProcs.Add(claimProcOverpay);
+						listDeleteClaimProcNums.Add(claimProcOverpay.ClaimProcNum);
 					}
 				}
 				else {
@@ -211,10 +202,6 @@ namespace OpenDental {
 					else {
 						claimProcOverpay.Remarks="Ins Underpaid";
 					}
-					Procedure procOverpay=_listProcedures.FirstOrDefault(x => x.ProcNum==claimProcOverpay.ProcNum);
-					if(procOverpay.ProcNumLab!=0) {//Is a Canadian Lab Overpayment
-						listRequiredCanadaParentProcNums.Add(procOverpay.ProcNumLab);
-					}
 					if(claimProcOverpay.ClaimProcNum==0) {
 						listInsertClaimProcs.Add(claimProcOverpay);
 					}
@@ -223,24 +210,7 @@ namespace OpenDental {
 					}
 				}
 			}
-			listRequiredCanadaParentProcNums=listRequiredCanadaParentProcNums.Distinct().ToList();
-			//Canadian Lab Overpayments require the parent proc overpayment to display properly in FormClaimEdit, even if the parent overpayment is 0.
-			listDeleteClaimProcs.RemoveAll(x => listRequiredCanadaParentProcNums.Contains(x.ProcNum));//Do not allow Canadian Lab Overpayment parent to be deleted.
-			listRequiredCanadaParentProcNums.RemoveAll(x => listUpdateClaimProcs.Exists(y => y.ProcNum==x));//Canadian Lab Overpayments with existing parent procedure are good to go.
-			listRequiredCanadaParentProcNums.RemoveAll(x => listInsertClaimProcs.Exists(y => y.ProcNum==x));//Canadian Lab Overpayments with parents being inserted are good to go.
-			//Now listRequiredCanadaParentProcNums contains Canadian Lab Overpayment parent procedures which need to be inserted or updated.
-			for(int i=0;i<listRequiredCanadaParentProcNums.Count;i++) {
-				ClaimProc claimProc=_listPaymentClaimProcs.FirstOrDefault(x => x.ProcNum==listRequiredCanadaParentProcNums[i]);
-				ClaimProc claimProcOverpay=_listClaimProcs.Find(x => x.ClaimNum==claimProc.ClaimNum && x.ProcNum==claimProc.ProcNum && x.IsOverpay);
-				claimProcOverpay=ClaimProcs.CreateOverpay(claimProc,0,claimProcOverpay);//claimProcOverpay will not be null after returning from here.
-				if(claimProcOverpay.ClaimProcNum==0) {
-					listInsertClaimProcs.Add(claimProcOverpay);
-				}
-				else {
-					listUpdateClaimProcs.Add(claimProcOverpay);
-				}
-			}
-			ClaimProcs.DeleteMany(listDeleteClaimProcs);
+			ClaimProcs.DeleteMany(listDeleteClaimProcNums);
 			ClaimProcs.UpdateMany(listUpdateClaimProcs);
 			ClaimProcs.InsertMany(listInsertClaimProcs);
 		}
@@ -274,7 +244,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!IsValid()) {
 				return;
 			}
@@ -282,5 +252,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

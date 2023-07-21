@@ -36,6 +36,7 @@ namespace OpenDental {
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.label1 = new System.Windows.Forms.Label();
 			this.gridMain = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.butDown = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
@@ -54,7 +55,6 @@ namespace OpenDental {
 			// 
 			// gridMain
 			// 
-			this.gridMain.AllowSortingByColumn = true;
 			this.gridMain.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.gridMain.Location = new System.Drawing.Point(18, 98);
@@ -64,6 +64,16 @@ namespace OpenDental {
 			this.gridMain.Title = "Patient Field Defs";
 			this.gridMain.TranslationName = "TablePatientDefs";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(414, 377);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(79, 26);
+			this.butClose.TabIndex = 1;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butAdd
 			// 
@@ -125,6 +135,7 @@ namespace OpenDental {
 			this.Controls.Add(this.butUp);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.label1);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.menuMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -139,6 +150,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butAdd;
 		private Label label1;
 		private System.Windows.Forms.ToolTip toolTip1;

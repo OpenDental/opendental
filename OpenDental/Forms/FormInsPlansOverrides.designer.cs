@@ -41,6 +41,7 @@ namespace OpenDental {
 			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.radioOrderCarrier = new System.Windows.Forms.RadioButton();
 			this.radioOrderEmp = new System.Windows.Forms.RadioButton();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupBoxFilters = new OpenDental.UI.GroupBox();
 			this.groupOverrides = new OpenDental.UI.GroupBox();
 			this.groupNoBillInsOverrides = new OpenDental.UI.GroupBox();
@@ -76,7 +77,7 @@ namespace OpenDental {
 			// 
 			// butGetAll
 			// 
-			this.butGetAll.Location = new System.Drawing.Point(857, 12);
+			this.butGetAll.Location = new System.Drawing.Point(854, 12);
 			this.butGetAll.Name = "butGetAll";
 			this.butGetAll.Size = new System.Drawing.Size(75, 24);
 			this.butGetAll.TabIndex = 30;
@@ -86,7 +87,7 @@ namespace OpenDental {
 			// checkShowHidden
 			// 
 			this.checkShowHidden.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkShowHidden.Location = new System.Drawing.Point(840, 37);
+			this.checkShowHidden.Location = new System.Drawing.Point(837, 37);
 			this.checkShowHidden.Name = "checkShowHidden";
 			this.checkShowHidden.Size = new System.Drawing.Size(93, 20);
 			this.checkShowHidden.TabIndex = 27;
@@ -197,15 +198,15 @@ namespace OpenDental {
 			this.groupBox2.Controls.Add(this.radioOrderEmp);
 			this.groupBox2.Location = new System.Drawing.Point(688, 12);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(151, 40);
+			this.groupBox2.Size = new System.Drawing.Size(132, 40);
 			this.groupBox2.TabIndex = 2;
 			this.groupBox2.Text = "Order By";
 			// 
 			// radioOrderCarrier
 			// 
-			this.radioOrderCarrier.Location = new System.Drawing.Point(83, 15);
+			this.radioOrderCarrier.Location = new System.Drawing.Point(75, 13);
 			this.radioOrderCarrier.Name = "radioOrderCarrier";
-			this.radioOrderCarrier.Size = new System.Drawing.Size(66, 20);
+			this.radioOrderCarrier.Size = new System.Drawing.Size(48, 16);
 			this.radioOrderCarrier.TabIndex = 1;
 			this.radioOrderCarrier.Text = "Carrier";
 			this.radioOrderCarrier.Click += new System.EventHandler(this.radioOrderCarrier_Click);
@@ -213,13 +214,23 @@ namespace OpenDental {
 			// radioOrderEmp
 			// 
 			this.radioOrderEmp.Checked = true;
-			this.radioOrderEmp.Location = new System.Drawing.Point(6, 15);
+			this.radioOrderEmp.Location = new System.Drawing.Point(9, 13);
 			this.radioOrderEmp.Name = "radioOrderEmp";
-			this.radioOrderEmp.Size = new System.Drawing.Size(80, 20);
+			this.radioOrderEmp.Size = new System.Drawing.Size(69, 16);
 			this.radioOrderEmp.TabIndex = 0;
 			this.radioOrderEmp.TabStop = true;
 			this.radioOrderEmp.Text = "Employer";
 			this.radioOrderEmp.Click += new System.EventHandler(this.radioOrderEmp_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(894, 664);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(78, 24);
+			this.butClose.TabIndex = 4;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// groupBoxFilters
 			// 
@@ -344,6 +355,7 @@ namespace OpenDental {
 			this.Controls.Add(this.butSelectAll);
 			this.Controls.Add(this.groupBoxFilters);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.groupOverrides);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormInsPlansOverrides";
@@ -359,6 +371,7 @@ namespace OpenDental {
 
 		}
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.RadioButton radioOrderCarrier;
 		private System.Windows.Forms.RadioButton radioOrderEmp;

@@ -57,6 +57,10 @@ namespace OpenDental {
 			this.menuJobs = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.menuFilter = new System.Windows.Forms.ContextMenu();
+			this.menuItemFilterDefault = new System.Windows.Forms.MenuItem();
+			this.menuItemFilterNone = new System.Windows.Forms.MenuItem();
+			this.menuItemFilterClinic = new System.Windows.Forms.MenuItem();
+			this.menuItemFilterRegion = new System.Windows.Forms.MenuItem();
 			this.menuAttachments = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.textListFilter = new System.Windows.Forms.TextBox();
@@ -299,6 +303,38 @@ namespace OpenDental {
 			this.contextMenuStrip1.Name = "contextMenuStrip1";
 			this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
 			// 
+			// menuFilter
+			// 
+			this.menuFilter.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItemFilterDefault,
+            this.menuItemFilterNone,
+            this.menuItemFilterClinic,
+            this.menuItemFilterRegion});
+			// 
+			// menuItemFilterDefault
+			// 
+			this.menuItemFilterDefault.Index = 0;
+			this.menuItemFilterDefault.Text = "Default";
+			this.menuItemFilterDefault.Click += new System.EventHandler(this.menuItemFilterDefault_Click);
+			// 
+			// menuItemFilterNone
+			// 
+			this.menuItemFilterNone.Index = 1;
+			this.menuItemFilterNone.Text = "None";
+			this.menuItemFilterNone.Click += new System.EventHandler(this.menuItemFilterNone_Click);
+			// 
+			// menuItemFilterClinic
+			// 
+			this.menuItemFilterClinic.Index = 2;
+			this.menuItemFilterClinic.Text = "Clinic";
+			this.menuItemFilterClinic.Click += new System.EventHandler(this.menuItemFilterClinic_Click);
+			// 
+			// menuItemFilterRegion
+			// 
+			this.menuItemFilterRegion.Index = 3;
+			this.menuItemFilterRegion.Text = "Region";
+			this.menuItemFilterRegion.Click += new System.EventHandler(this.menuItemFilterRegion_Click);
+			// 
 			// menuAttachments
 			// 
 			this.menuAttachments.Name = "menuAttachments";
@@ -318,6 +354,7 @@ namespace OpenDental {
 			this.gridMain.TranslationName = "TableTasks";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
 			this.gridMain.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellClick);
+			this.gridMain.MouseDown += new System.Windows.Forms.MouseEventHandler(this.gridMain_MouseDown);
 			// 
 			// textListFilter
 			// 
@@ -541,6 +578,10 @@ namespace OpenDental {
 		private System.Windows.Forms.MenuItem menuDeleteTaken;
 		private System.Windows.Forms.MenuItem menuItemMarkRead;
 		private System.Windows.Forms.ContextMenu menuFilter;
+		private System.Windows.Forms.MenuItem menuItemFilterNone;
+		private System.Windows.Forms.MenuItem menuItemFilterClinic;
+		private System.Windows.Forms.MenuItem menuItemFilterRegion;
+		private System.Windows.Forms.MenuItem menuItemFilterDefault;
 		private System.Windows.Forms.MenuItem menuArchive;
 		private System.Windows.Forms.MenuItem menuUnarchive;
 		private System.Windows.Forms.ContextMenuStrip menuAttachments;

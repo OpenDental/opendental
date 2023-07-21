@@ -326,11 +326,11 @@ namespace OpenDental {
 		}
 
 		private void butStudentPicker_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick=new FrmProviderPick();
-			frmProviderPick.IsStudentPicker=true;
-			frmProviderPick.ShowDialog();
-			if(frmProviderPick.IsDialogOK) {
-				_providerStudent=Providers.GetProv(frmProviderPick.ProvNumSelected);
+			using FormProviderPick formProviderPick=new FormProviderPick();
+			formProviderPick.IsStudentPicker=true;
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult==DialogResult.OK) {
+				_providerStudent=Providers.GetProv(formProviderPick.ProvNumSelected);
 				_evaluation.StudentNum=_providerStudent.ProvNum;
 				textStudent.Text=_providerStudent.GetLongDesc();
 			}
@@ -343,7 +343,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textDate.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
@@ -380,6 +380,10 @@ namespace OpenDental {
 			}
 			Evaluations.Update(_evaluation);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

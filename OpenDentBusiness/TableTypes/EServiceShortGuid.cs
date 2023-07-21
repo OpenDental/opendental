@@ -48,7 +48,6 @@ namespace OpenDentBusiness {
 	public enum EServiceShortGuidKeyType {
 		Undefined=0,
 		eClipboardApptByod,
-		MsgToPayPatient,
 	}
 
 }

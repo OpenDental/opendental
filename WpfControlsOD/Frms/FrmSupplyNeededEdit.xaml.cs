@@ -17,13 +17,11 @@ namespace OpenDental {
 
 		public FrmSupplyNeededEdit() {
 			InitializeComponent();
+			//Lan.F(this);
 			KeyDown+=Frm_KeyDown;
-			Load+=FrmSupplyNeededEdit_Load;
-			PreviewKeyDown+=FrmSupplyNeededEdit_PreviewKeyDown;
 		}
 
-		private void FrmSupplyNeededEdit_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmSupplyNeededEdit_Loaded(object sender,RoutedEventArgs e) {
 			textVDate.Text=SupplyNeededCur.DateAdded.ToShortDateString();
 			textDescription.Text=SupplyNeededCur.Description;
 		}
@@ -38,14 +36,11 @@ namespace OpenDental {
 			if(SupplyNeededCur.IsNew){
 				IsDialogOK=false;
 			}
+			//if(!MsgBox.){
+			
+			//}
 			SupplyNeededs.DeleteObject(SupplyNeededCur);
 			IsDialogOK=true;
-		}
-
-		private void FrmSupplyNeededEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butsave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {
@@ -64,5 +59,6 @@ namespace OpenDental {
 			IsDialogOK=true;
 		}
 
+		
 	}
 }

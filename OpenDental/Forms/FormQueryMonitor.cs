@@ -235,8 +235,8 @@ namespace OpenDental {
 				MsgBox.Show(this,"No queries in the Query Feed to log.");
 				return;
 			}
-			if(ODEnvironment.IsCloudServer) {
-				MsgBox.Show(this,"Logging not supported while using Open Dental Cloud.");
+			if(ODBuild.IsWeb()) {
+				MsgBox.Show(this,"Logging not supported for the Web version at this time.");
 				return;
 			}
 			if(!MsgBox.Show(MsgBoxButtons.YesNo,Lan.g(this,"Log all queries to a file?  Total query count")+$": {_dictionaryQueries.Count.ToString("N0")}")) {
@@ -313,9 +313,13 @@ namespace OpenDental {
 			}
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+			Close();
+		}
+
 		private void FormQueryMonitor_FormClosing(object sender,FormClosingEventArgs e) {
 			ODException.SwallowAnyException(() => { QueryMonitorEvent.Fired-=DbMonitorEvent_Fired; });
 		}
-
 	}
 }

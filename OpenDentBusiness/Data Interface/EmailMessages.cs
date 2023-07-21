@@ -50,7 +50,7 @@ namespace OpenDentBusiness{
 		}
 		#endregion
 
-		#region Database Calls
+    #region Database Calls
 		///<summary>Gets one email message from the database.</summary>
 		public static EmailMessage GetOne(long msgNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -176,8 +176,6 @@ namespace OpenDentBusiness{
 			}
 			string fromAddress=POut.String(EmailMessages.GetAddressSimple(emailAddress.EmailUsername).Trim());
 			string recipientAddress=POut.String(emailAddress.EmailUsername.Trim());
-			string fromAddressSender=POut.String(EmailMessages.GetAddressSimple(emailAddress.SenderAddress).Trim());
-			string recipientAddressSender=POut.String(emailAddress.SenderAddress.Trim());
 			EmailPlatform emailTypesExcludeWebMail=EmailPlatform.All & ~EmailPlatform.WebMail;
 			List<EmailSentOrReceived> listReceivedTypes=GetReadTypes(emailTypesExcludeWebMail).Concat(GetUnreadTypes(emailTypesExcludeWebMail)).ToList();
 			string receivedTypesStr=string.Join(",",listReceivedTypes.Select(x => POut.Int((int)x)));
@@ -185,18 +183,9 @@ namespace OpenDentBusiness{
 			List<EmailSentOrReceived> listSentTypes=GetSentTypes(emailTypesExcludeAck);
 			string sentTypesStr=string.Join(",",listSentTypes.Select(x => POut.Int((int)x)));
 			string command=@"SELECT 
-				(CASE
-					WHEN address.ToAddress IN ('"+fromAddress+@"', '"+fromAddressSender+@"') THEN '' 
-					ELSE address.ToAddress 
-				END) ToAddress,
-				(CASE
-					WHEN address.FromAddress IN ('"+fromAddress+@"', '"+fromAddressSender+@"') THEN '' 
-					ELSE address.FromAddress 
-				END) FromAddress,
-				(CASE
-					WHEN address.RecipientAddress IN ('"+recipientAddress+@"', '"+recipientAddressSender+@"') THEN '' 
-					ELSE address.RecipientAddress 
-				END) RecipientAddress,
+				(CASE WHEN address.ToAddress='"+fromAddress+@"' THEN '' ELSE address.ToAddress END) ToAddress,
+				(CASE WHEN address.FromAddress='"+fromAddress+@"' THEN '' ELSE address.FromAddress END) FromAddress,
+				(CASE WHEN address.RecipientAddress='"+recipientAddress+@"' THEN '' ELSE address.RecipientAddress END) RecipientAddress,
 				address.CcAddress,
 				address.BccAddress
 				FROM (	
@@ -207,8 +196,8 @@ namespace OpenDentBusiness{
 					LEFT(emailmessage.CcAddress,500) CcAddress,
 					LEFT(emailmessage.BccAddress,500) BccAddress
 					FROM emailmessage
-					WHERE (SentOrReceived IN ("+receivedTypesStr+") AND (RecipientAddress LIKE '%"+recipientAddress+"%' OR RecipientAddress LIKE '%"+recipientAddressSender+"%')) "
-						+"OR (SentOrReceived IN("+sentTypesStr+") AND (FromAddress LIKE '%"+fromAddress+@"%' OR FromAddress LIKE '%"+fromAddressSender+@"%')) 
+					WHERE (SentOrReceived IN ("+receivedTypesStr+") AND RecipientAddress LIKE '%"+recipientAddress+"%') "
+						+"OR (SentOrReceived IN("+sentTypesStr+") AND FromAddress LIKE '%"+fromAddress+@"%') 
 			) address";
 			DataTable table=Db.GetTable(command);
 			List<EmailMessage> listMessages=new List<EmailMessage>();
@@ -316,7 +305,7 @@ namespace OpenDentBusiness{
 			//Convert datatable to list of longs and return it.
 			List<long> listProvNumWebMails=new List<long>();
 			for(int i=0;i<table.Rows.Count;i++){
-				listProvNumWebMails.Add(PIn.Long(table.Rows[i]["ProvNumWebMail"].ToString()));
+				listProvNumWebMails.Add(table.Rows[i].GetLong("ProvNumWebMail"));
 			}
 			return listProvNumWebMails;
 		}
@@ -424,12 +413,10 @@ namespace OpenDentBusiness{
 			}
 			Crud.EmailMessageCrud.Insert(message);
 			//now, insert all the attaches.
-			if(message.Attachments!=null) {
-				for(int i=0;i<message.Attachments.Count;i++) {
-					message.Attachments[i].EmailMessageNum=message.EmailMessageNum;
-				}
-				EmailAttaches.InsertMany(message.Attachments);
+			for(int i=0;i<message.Attachments.Count;i++) {
+				message.Attachments[i].EmailMessageNum=message.EmailMessageNum;
 			}
+			EmailAttaches.InsertMany(message.Attachments);
 			return message.EmailMessageNum;
 		}
 
@@ -743,7 +730,7 @@ namespace OpenDentBusiness{
 			//No need to check MiddleTierRole; no call to db.
 			//When batch email operations are performed, we sometimes do this check further up in the UI.  This check is here to as a catch-all.
             //Security.CurUser will be null if this is called from a third party application (like Patient Portal).  We want to continue if that is the case.
-			if(Security.CurUser!=null && !Security.IsAuthorized(EnumPermType.EmailSend,true)) {//we need to suppress the message
+			if(Security.CurUser!=null && !Security.IsAuthorized(Permissions.EmailSend,true)) {//we need to suppress the message
 				return;
 			}
 			if(emailAddress.IsImplicitSsl) {
@@ -823,7 +810,7 @@ namespace OpenDentBusiness{
 				message.AlternateViews.Add(alternateView);
 				client.Send(message);
 				msEmailContent.Dispose();
-				SecurityLogs.MakeLogEntry(EnumPermType.EmailSend,patNum,"Email Sent");
+				SecurityLogs.MakeLogEntry(Permissions.EmailSend,patNum,"Email Sent");
 			}
 			finally {
 				//Dispose of the client and messages here. For large customers, sending thousands of emails will start to fail until they restart the
@@ -840,15 +827,12 @@ namespace OpenDentBusiness{
 			//No need to check MiddleTierRole; no call to db.
 			//When batch email operations are performed, we sometimes do this check further up in the UI.  This check is here to as a catch-all.
 			if(RemotingClient.MiddleTierRole!=MiddleTierRole.ServerMT//server can send email without checking user
-				&& !Security.IsAuthorized(EnumPermType.EmailSend,true)) //we need to suppress the message
+				&& !Security.IsAuthorized(Permissions.EmailSend,true)) //we need to suppress the message
 			{
 				return;
 			}
 			//Verify that we can connect to Google using OAuth before moving on as we can't refresh tokens from OpenDentalEmail Processor.
-			if(emailAddress.AuthenticationType==OAuthType.Google) {
-				if(emailAddress.RefreshToken.IsNullOrEmpty()) {
-					throw new ODException(emailAddress.EmailUsername+" needs to be re-authenticated. Please sign out and back in to continue.");
-				}
+			if(!emailAddress.AccessToken.IsNullOrEmpty() && emailAddress.SMTPserver.ToLower()=="smtp.gmail.com") {
 				using GmailApi.GmailService gService=GoogleApiConnector.CreateGmailService(ODEmailAddressToBasic(emailAddress));
 				try {
 					//This call to Google is only to ensure that we have a valid OAuth token.  
@@ -871,10 +855,7 @@ namespace OpenDentBusiness{
 				}
 			}
 			//Refresh the token for Microsoft here because it won't be able to be updated in the db further.
-			else if(emailAddress.AuthenticationType==OAuthType.Microsoft) {
-				if(emailAddress.RefreshToken.IsNullOrEmpty()) {
-					throw new ODException(emailAddress.EmailUsername+" needs to be re-authenticated. Please sign out and back in to continue.");
-				}
+			else if(!emailAddress.AccessToken.IsNullOrEmpty() && emailAddress.AuthenticationType==OAuthType.Microsoft) {
 				try {
 					MicrosoftApiConnector.GetProfile(emailAddress.EmailUsername,emailAddress.AccessToken);
 				}
@@ -890,7 +871,7 @@ namespace OpenDentBusiness{
 			//Always send the email through this centralized method.  We cannot assume we have a database context inside SendEmail.
 			Email.SendEmail.WireEmailUnsecure(ODEmailAddressToBasic(emailAddress),ODEmailMessageToBasic(emailMessage),nameValueCollectionHeaders,arrayAlternateViews);
 			emailMessage.UserNum=Security.CurUser.UserNum;
-			SecurityLogs.MakeLogEntry(EnumPermType.EmailSend,emailMessage.PatNum,"Email Sent");
+			SecurityLogs.MakeLogEntry(Permissions.EmailSend,emailMessage.PatNum,"Email Sent");
 		}
 
 		///<summary>Throws exceptions.  Uses the Direct library to sign the message, so that our unencrypted/signed messages are built the same way as our encrypted/signed messages. The provided certificate must contain a private key, or else the signing will fail (exception) when computing the signature digest.</summary>
@@ -922,7 +903,9 @@ namespace OpenDentBusiness{
 		///<summary>Receives emails from the email server for the email address passed in. Returns the count of new emails that were downloaded.</summary>
 		public static int ReceiveFromInbox(EmailAddress emailAddress) {
 			//No need to check MiddleTierRole; no call to db.
-			if(emailAddress.DownloadInbox && emailAddress.AuthenticationType.In(OAuthType.Google,OAuthType.Microsoft)) {
+			if(!emailAddress.AccessToken.IsNullOrEmpty() 
+				&& ((emailAddress.AuthenticationType==OAuthType.Google && emailAddress.DownloadInbox) || emailAddress.AuthenticationType==OAuthType.Microsoft)) 
+			{
 				return RetrieveFromInboxOAuth(emailAddress);
 			}
 			int countNewEmails=0;
@@ -1045,9 +1028,6 @@ namespace OpenDentBusiness{
 
 		///<summary>Use token based authentication to retrieve emails. Returns the count of new emails that were downloaded.</summary>
 		private static int RetrieveFromInboxOAuth(EmailAddress emailAddressInbox,bool hasRetried=false) {
-			if(emailAddressInbox.RefreshToken.IsNullOrEmpty()) {
-					throw new ODException(emailAddressInbox.EmailUsername+" needs to be re-authenticated. Please sign out and back in to continue.");
-			}
 			if(emailAddressInbox.AuthenticationType==OAuthType.Google) {
 				return RetrieveFromGmailInbox(emailAddressInbox,hasRetried);
 			}
@@ -1144,8 +1124,9 @@ namespace OpenDentBusiness{
 			return countNewEmails;
 		}
 
-		///<summary>Throws Exceptions. Use Microsoft authentication to retrieve emails. Returns the count of new emails that were downloaded.</summary>
+		///<summary>Use Microsoft authentication to retrieve emails. Returns the count of new emails that were downloaded.</summary>
 		private static int RetrieveFromMicrosoftInbox(EmailAddress emailAddressInbox,bool hasRetried=false) {
+			int countNewEmails=0;
 			List<Microsoft.Graph.Message> listMessages=new List<Microsoft.Graph.Message>();
 			try {
 				listMessages=MicrosoftApiConnector.RetrieveMessages(emailAddressInbox.EmailUsername,emailAddressInbox.AccessToken);
@@ -1161,35 +1142,66 @@ namespace OpenDentBusiness{
 			List<string> listEmailMessageUids=EmailMessageUids.GetMsgIdsRecipientAddress(emailAddressInbox.EmailUsername)
 				.Select(x=>x.TrimStart("MicrosoftId".ToCharArray())).ToList();
 			listMessages=listMessages.Where(x => !listEmailMessageUids.Contains(x.Id)).ToList();
-			int countNewEmails=0;
 			for(int i=0;i<listMessages.Count;i++) {
-				EmailMessageUid uid=new EmailMessageUid();
-				uid.MsgId=listMessages[i].Id;
-				uid.RecipientAddress=emailAddressInbox.EmailUsername;
-				try {
-					//Check to see if the message has any inline attachments. If so then need to use MIME formatting.
+				EmailMessage emailMessage=new EmailMessage();
+				//Check to see if the message has any inline attachments. If so then need to use MIME formatting.
+				if(listMessages[i].Attachments.OfType<Microsoft.Graph.FileAttachment>().ToList().Any(x => (bool)x.IsInline)) {
 					MimeKit.MimeMessage mimeMsg=MicrosoftApiConnector.GetMIMEMessage(emailAddressInbox.EmailUsername,emailAddressInbox.AccessToken,listMessages[i].Id);
 					if(IsEmailFromInbox(emailAddressInbox.EmailUsername,mimeMsg.To.ToList(),mimeMsg.From.ToList(),mimeMsg.Cc.ToList(),mimeMsg.Bcc.ToList())) {
 						//Convert MIME to our Email format and store the ID in the database
-						EmailMessage emailMessageProcessed=ProcessRawEmailMessageIn(mimeMsg.ToString(),0,emailAddressInbox,true);
-						if(uid.RecipientAddress!=emailMessageProcessed.RecipientAddress) {
-							uid.RecipientAddress=emailMessageProcessed.RecipientAddress;
+						emailMessage=ProcessRawEmailMessageIn(mimeMsg.ToString(),0,emailAddressInbox,true);
+					}
+				}
+				else {
+					emailMessage=ConvertMicrosoftMessageToEmailMessage(emailAddressInbox.EmailUsername,listMessages[i]);
+					if(emailMessage.PatNum==0) {//If a patient match was not already found, try to locate patient based on the email address sent from.
+						string emailFromAddress=GetAddressSimple(emailMessage.FromAddress);
+						List<Patient> listMatchedPats=Patients.GetPatsByEmailAddress(emailFromAddress);
+						if(listMatchedPats.Count==1) {//If multiple matches, then we do not want to mislead the user by assigning a patient.
+							emailMessage.PatNum=listMatchedPats[0].PatNum;
 						}
 					}
-					countNewEmails++;
+					Insert(emailMessage);
 				}
-				catch(ThreadAbortException) {
-					//This can happen if the application is exiting. We need to leave right away so the program does not lock up.
-					//Otherwise, this loop could continue for a while if there are a lot of messages to download.
-					throw;
-				}
-				catch(Exception ex) {
-					//Something went wrong with processing this email. Still add the uid to not download again later.
-					ex.DoNothing();
-				}
+				countNewEmails++;
+				EmailMessageUid uid=new EmailMessageUid();
+				uid.MsgId=listMessages[i].Id;
+				uid.RecipientAddress=emailAddressInbox.EmailUsername;
 				EmailMessageUids.Insert(uid);
 			}
 			return countNewEmails;
+		}
+
+		private static EmailMessage ConvertMicrosoftMessageToEmailMessage(string emailAddress,Microsoft.Graph.Message message) {
+			OpenDentBusiness.EmailMessage emailMessageTemp=new OpenDentBusiness.EmailMessage();
+			emailMessageTemp.EmailMessageNum=0;
+			emailMessageTemp.Subject=message.Subject;
+			emailMessageTemp.RecipientAddress=emailAddress;
+			emailMessageTemp.ToAddress=string.Join(",",message.ToRecipients.Select(x => x.EmailAddress.Address));
+			emailMessageTemp.FromAddress=message.From.EmailAddress.Address;
+			emailMessageTemp.CcAddress=string.Join(",",message.CcRecipients.Select(x => x.EmailAddress.Address));
+			emailMessageTemp.BccAddress=string.Join(",",message.BccRecipients.Select(x => x.EmailAddress.Address));
+			emailMessageTemp.BodyText=message.Body.Content;
+			if(message.Attachments!=null) { //message.HasAttachments not entirely accurate so use this instead.
+				//This will only be getting file attachments to the email.
+				List<Microsoft.Graph.FileAttachment> listFileAttachments=message.Attachments.OfType<Microsoft.Graph.FileAttachment>().ToList();
+				for(int i=0;i<listFileAttachments.Count;i++) {
+					if(listFileAttachments[i]==null) {
+						continue;
+					}
+					try {
+						EmailAttach emailAttach=EmailAttaches.CreateAttach(listFileAttachments[i].Name,"",listFileAttachments[i].ContentBytes,false);
+						emailMessageTemp.Attachments.Add(emailAttach);
+					}
+					catch(Exception) {
+						continue; //unable to download the attachment so will just continue to the next one.
+					}
+				}
+			}
+			emailMessageTemp.RawEmailIn=message.Body.Content;
+			emailMessageTemp.SentOrReceived=EmailSentOrReceived.Received;
+			emailMessageTemp.MsgDateTime=((DateTimeOffset)message.SentDateTime).DateTime.ToLocalTime();
+			return emailMessageTemp;
 		}
 
 		///<summary>Parses a raw email into a usable object.</summary>
@@ -1593,7 +1605,7 @@ namespace OpenDentBusiness{
 		public static void RefreshGmailToken(EmailAddress emailAddress) {
 			//No need to check MiddleTierRole; no call to db.
 			string dbToken=EmailAddresses.GetOneFromDb(emailAddress.EmailAddressNum).AccessToken;
-			if(!dbToken.IsNullOrEmpty() && dbToken!=emailAddress.AccessToken) {
+			if(dbToken!=emailAddress.AccessToken) {
 				emailAddress.AccessToken=dbToken; //This means that another service has already updated the token in the db, so use that one
 			}
 			else {
@@ -1608,12 +1620,12 @@ namespace OpenDentBusiness{
 		public static void RefreshMicrosoftToken(EmailAddress emailAddress) {
 			//No need to check MiddleTierRole; no call to db.
 			string dbToken=EmailAddresses.GetOneFromDb(emailAddress.EmailAddressNum).AccessToken;
-			if(!dbToken.IsNullOrEmpty() && dbToken!=emailAddress.AccessToken) {
+			if(dbToken!=emailAddress.AccessToken) {
 				emailAddress.AccessToken=dbToken; //This means that another service has already updated the token in the db, so use that one
 				return;
 			}
 			MicrosoftTokenHelper microsoftTokenHelper=new MicrosoftTokenHelper();
-			if(ODEnvironment.IsCloudInstance) {
+			if(ODBuild.IsWeb()) {
 				string strMicrosoftAuthCodesJSON=ODCloudClient.GetMicrosoftAccessToken(emailAddress.EmailUsername,emailAddress.RefreshToken);
 				if(!strMicrosoftAuthCodesJSON.IsNullOrEmpty()) { 
 					microsoftTokenHelper=JsonConvert.DeserializeObject<MicrosoftTokenHelper>(strMicrosoftAuthCodesJSON);
@@ -1682,9 +1694,9 @@ namespace OpenDentBusiness{
 			foreach(EmailAttach attach in arrAttaches) {
 				string attachFullPath;
 				if(CloudStorage.IsCloudStorage) {
-					byte[] byteArray=CloudStorage.Download(attachPath,attach.ActualFileName);
+					OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.Download(attachPath,attach.ActualFileName);
 					attachFullPath=PrefC.GetRandomTempFile(Path.GetExtension(attach.ActualFileName));
-					File.WriteAllBytes(attachFullPath,byteArray);
+					File.WriteAllBytes(attachFullPath,state.FileContent);
 				}
 				else {
 					attachFullPath=ODFileUtils.CombinePaths(attachPath,attach.ActualFileName);
@@ -1702,18 +1714,6 @@ namespace OpenDentBusiness{
 			retVal=retVal.Replace("\r","\n");//After this step, all newlines are in the form \n.
 			retVal=retVal.Replace("\n","\r\n");//After this step, all newlines will be in form \r\n.
 			return retVal;
-		}
-
-		///<summary>Appends an autograph to the bottom of the email body text if the autograph is not already present and returns the modified body text. When the functionality to reply to emails is implemented, this will need to be modified so that it inserts the autograph text at the bottom of the new message being composed, but above the message history.</summary>
-		public static string InsertAutograph(string bodyText,EmailAutograph emailAutograph) {
-			if(
-				emailAutograph!=null && 
-				!string.IsNullOrEmpty(emailAutograph.AutographText) && 
-				!bodyText.TrimEnd().ToLower().EndsWith(emailAutograph.AutographText.ToLower().Trim())) 
-			{
-				bodyText+="\r\n\r\n"+emailAutograph.AutographText;
-			}
-			return bodyText;
 		}
 
 		///<summary>Throws an exception if there is a permission issue.  Creates all of the necessary certificate stores for email encryption (Direct and Standard) if they do not already exist.
@@ -2144,6 +2144,21 @@ namespace OpenDentBusiness{
 					listCertsDiscoveredActive.Add(collectionCerts[i]);
 				}
 			}
+		}
+
+		///<summary>Called by Broadcaster service to determine if the OD DNS certificate service is up and running.  Checks for a specific email address
+		///which we have registered.  May not be able to find the reference using the Find All Refrences tool.  Assume the head version of this function
+		///is always the live version.</summary>
+		public static bool ExistsActiveCertInDns(string ipAddressDnsServer,string emailAddress) {
+			IPAddress ipAddressGlobalDnsServer=IPAddress.Parse(ipAddressDnsServer);
+			MailAddress mailAddressQuery=new MailAddress(emailAddress);
+			List<X509Certificate2> listCertsDiscoveredActive=new List<X509Certificate2>();
+			List<X509Certificate2> listCertsDiscoveredInactive=new List<X509Certificate2>();
+			DnsQueryForCert(ipAddressGlobalDnsServer,mailAddressQuery,listCertsDiscoveredActive,listCertsDiscoveredInactive);
+			if(listCertsDiscoveredActive.Count >= 1) {
+				return true;
+			}
+			return false;
 		}
 
 		///<summary>Gets all mime parts in the message which do not have child mime parts.  Returns null on error.</summary>
@@ -2609,7 +2624,7 @@ namespace OpenDentBusiness{
 			}
 			if(IsUnsent(sentOrReceived)) {
 				return Lans.g("EmailMessages","Unsent");
-			}
+			}			
 			return "";
 		}
 
@@ -2737,57 +2752,57 @@ namespace OpenDentBusiness{
 		}
 
 
-		public static EmailMessage CreateReply(EmailMessage emailReceived,EmailAddress emailAddress,bool isReplyAll=false) {
+    public static EmailMessage CreateReply(EmailMessage emailReceived,EmailAddress emailAddress,bool isReplyAll=false) {
 			//No need to check MiddleTierRole; no call to db.
-			EmailMessage replyMessage=new EmailMessage();
+      EmailMessage replyMessage=new EmailMessage();
 			replyMessage.PatNum=emailReceived.PatNum;
 			bool isSecureEmail=EmailMessages.IsSecureEmail(emailReceived.SentOrReceived);
-			FillEmailAddressesForReply(replyMessage,emailReceived,emailAddress,isReplyAll);
+      FillEmailAddressesForReply(replyMessage,emailReceived,emailAddress,isReplyAll);
 			if(!isSecureEmail && isReplyAll) {
-				FillCCAddressesForReply(replyMessage,emailReceived,emailAddress);
+			  FillCCAddressesForReply(replyMessage,emailReceived,emailAddress);
 			}
 			string subject=ProcessInlineEncodedText(emailReceived.Subject);
-			if(subject.Trim().Length >=3 && subject.Trim().Substring(0,3).ToString().ToLower()=="re:") { //already contains a "re:"
+      if(subject.Trim().Length >=3 && subject.Trim().Substring(0,3).ToString().ToLower()=="re:") { //already contains a "re:"
 				replyMessage.Subject=subject;
 			}
-			else { //doesn't contain a "re:"
-				replyMessage.Subject="RE: " + subject;
-			}
-			string bodyTextString;
-			bodyTextString="\r\n\r\n\r\n" + "On " + emailReceived.MsgDateTime.ToString() + " " + ProcessInlineEncodedText(emailReceived.FromAddress) + " sent:\r\n>";
-			string receivedEmailBody;
-			List<List<Health.Direct.Common.Mime.MimeEntity>> listMimeParts =
-				EmailMessages.GetMimePartsForMimeTypes(emailReceived.RawEmailIn,emailAddress,"text/html","text/plain","image/");
-			List<Health.Direct.Common.Mime.MimeEntity> listHtmlParts=listMimeParts[0];//If RawEmailIn is blank, then this list will also be blank (ex Secure Web Mail messages).
-			List<Health.Direct.Common.Mime.MimeEntity> listTextParts=listMimeParts[1];//If RawEmailIn is blank, then this list will also be blank (ex Secure Web Mail messages).
-			if(listHtmlParts.Count>0) {//Html body found.
-				receivedEmailBody=HttpUtility.HtmlDecode(Regex.Replace(ProcessMimeTextPart(listHtmlParts[0]),@"<(.|\n)*?>","")); //remove most html tags.
-			}
-			else if(listTextParts.Count>0) {//No html body found, however one specific mime part is for viewing in text only.
-				receivedEmailBody=HttpUtility.HtmlDecode(ProcessMimeTextPart(listTextParts[0]));
-			}
-			else {//No html body found and no text body found.  Last resort.  Show all mime parts which are not attachments (ugly).
-				receivedEmailBody=emailReceived.BodyText;//This version of the body text includes all non-attachment mime parts.
-			}
-			receivedEmailBody=receivedEmailBody.Trim().Replace("\r\n",".!(-&>"); //replace with a string that would very very seldom happen.
-			receivedEmailBody=receivedEmailBody.Trim().Replace("\n",".!(-&>");
-			receivedEmailBody=receivedEmailBody.Trim().Replace("\r",".!(-&>");
-			bodyTextString+=receivedEmailBody.Trim().Replace(".!(-&>","\r\n>");
-			replyMessage.BodyText=bodyTextString;
+      else { //doesn't contain a "re:"
+        replyMessage.Subject="RE: " + subject;
+      }
+      string bodyTextString;
+      bodyTextString="\r\n\r\n\r\n" + "On " + emailReceived.MsgDateTime.ToString() + " " + ProcessInlineEncodedText(emailReceived.FromAddress) + " sent:\r\n>";
+      string receivedEmailBody;
+      List<List<Health.Direct.Common.Mime.MimeEntity>> listMimeParts =
+          EmailMessages.GetMimePartsForMimeTypes(emailReceived.RawEmailIn,emailAddress,"text/html","text/plain","image/");
+      List<Health.Direct.Common.Mime.MimeEntity> listHtmlParts=listMimeParts[0];//If RawEmailIn is blank, then this list will also be blank (ex Secure Web Mail messages).
+      List<Health.Direct.Common.Mime.MimeEntity> listTextParts=listMimeParts[1];//If RawEmailIn is blank, then this list will also be blank (ex Secure Web Mail messages).
+      if(listHtmlParts.Count>0) {//Html body found.
+        receivedEmailBody=HttpUtility.HtmlDecode(Regex.Replace(ProcessMimeTextPart(listHtmlParts[0]),@"<(.|\n)*?>","")); //remove most html tags.
+      }
+      else if(listTextParts.Count>0) {//No html body found, however one specific mime part is for viewing in text only.					
+        receivedEmailBody=HttpUtility.HtmlDecode(ProcessMimeTextPart(listTextParts[0]));
+      }
+      else {//No html body found and no text body found.  Last resort.  Show all mime parts which are not attachments (ugly).
+        receivedEmailBody=emailReceived.BodyText;//This version of the body text includes all non-attachment mime parts.
+      }
+      receivedEmailBody=receivedEmailBody.Trim().Replace("\r\n",".!(-&>"); //replace with a string that would very very seldom happen.
+      receivedEmailBody=receivedEmailBody.Trim().Replace("\n",".!(-&>");
+      receivedEmailBody=receivedEmailBody.Trim().Replace("\r",".!(-&>");
+      bodyTextString+=receivedEmailBody.Trim().Replace(".!(-&>","\r\n>");
+      replyMessage.BodyText=bodyTextString;
 			replyMessage.MsgType=EmailMessageSource.Reply;
-			return replyMessage;
+      return replyMessage;
 		}
 
 		///<summary>Sets emailReply.ToAddress and emailRepl.FromAddress such that emailReply is a reply email to emailReceived.</summary>
 		public static void FillEmailAddressesForReply(EmailMessage emailReply,EmailMessage emailReceived,EmailAddress emailAddressSender,bool isReplyAll) {
-			emailReply.ToAddress=ProcessInlineEncodedText(emailReceived.FromAddress);
+      emailReply.ToAddress=ProcessInlineEncodedText(emailReceived.FromAddress);
 			if(isReplyAll) {
 				emailReceived.ToAddress.Split(',')//email@od.com,email2@od.com,...
 					.Select(x => ProcessInlineEncodedText(x).Trim())//Decode any UTF-8 or otherwise
 					.Where(x => !x.ToLower().Contains(emailAddressSender.EmailUsername.ToLower()) && !x.ToLower().Contains(emailAddressSender.SenderAddress.ToLower()))//Since we are replying, remove our current email from list
 					.ForEach(x => emailReply.ToAddress+=","+x);
 			}
-			emailReply.FromAddress=ProcessInlineEncodedText(emailReceived.RecipientAddress);
+      emailReply.FromAddress=ProcessInlineEncodedText(emailReceived.RecipientAddress);
 		}
 
 		//Copies CC addresses from  received email into reply email, and removes the users email address from CC.
@@ -2816,48 +2831,48 @@ namespace OpenDentBusiness{
 		}
 
 		public static EmailMessage CreateForward(EmailMessage emailReceived,EmailAddress emailAddress) {
-			//No need to check MiddleTierRole; no call to db.
-			EmailMessage forwardMessage=new EmailMessage();
-			forwardMessage.PatNum=emailReceived.PatNum;
-			forwardMessage.FromAddress=emailAddress.EmailUsername;//We cannot use emailAddress.SenderAddress here in case the user wants to send a Direct message.
+      //No need to check MiddleTierRole; no call to db.
+      EmailMessage forwardMessage=new EmailMessage();
+      forwardMessage.PatNum=emailReceived.PatNum;
+      forwardMessage.FromAddress=emailAddress.EmailUsername;//We cannot use emailAddress.SenderAddress here in case the user wants to send a Direct message.
 			string subject=ProcessInlineEncodedText(emailReceived.Subject);
-			if(subject.Trim().ToLower().StartsWith("fwd:")) { //already contains a "fwd:"
-				forwardMessage.Subject=subject;
-			}
-			else { //doesn't contain a "fwd:"
-				forwardMessage.Subject="FWD: "+subject;
-			}
-			string bodyTextString;
-			bodyTextString="\r\n\r\n\r\nOn "+emailReceived.MsgDateTime.ToString()+" "+ProcessInlineEncodedText(emailReceived.FromAddress)+" sent:\r\n>";
-			string receivedEmailBody;
-			List<List<Health.Direct.Common.Mime.MimeEntity>> listMimeParts=
-				EmailMessages.GetMimePartsForMimeTypes(emailReceived.RawEmailIn,emailAddress,"text/html","text/plain","image/");
-			List<Health.Direct.Common.Mime.MimeEntity> listHtmlParts=listMimeParts[0];//If RawEmailIn is blank, then this list will also be blank (ex Secure Web Mail messages).
-			List<Health.Direct.Common.Mime.MimeEntity> listTextParts=listMimeParts[1];//If RawEmailIn is blank, then this list will also be blank (ex Secure Web Mail messages).
-			if(listHtmlParts.Count>0) {//Html body found.
-				receivedEmailBody=HttpUtility.HtmlDecode(Regex.Replace(EmailMessages.ProcessMimeTextPart(listHtmlParts[0]),@"<(.|\n)*?>","")); //remove most html tags.
-			}
-			else if(listTextParts.Count>0) {//No html body found, however one specific mime part is for viewing in text only.
-				receivedEmailBody=HttpUtility.HtmlDecode(EmailMessages.ProcessMimeTextPart(listTextParts[0]));
-			}
-			else {//No html body found and no text body found.  Last resort.  Show all mime parts which are not attachments (ugly).
-				receivedEmailBody=emailReceived.BodyText;//This version of the body text includes all non-attachment mime parts.
-			}
-			receivedEmailBody=receivedEmailBody.Trim().Replace("\r\n",".!(-&>"); //replace with a string that would very very seldom happen.
-			receivedEmailBody=receivedEmailBody.Trim().Replace("\n",".!(-&>");
-			receivedEmailBody=receivedEmailBody.Trim().Replace("\r",".!(-&>");
-			bodyTextString+=receivedEmailBody.Trim().Replace(".!(-&>","\r\n>");
-			forwardMessage.BodyText=bodyTextString;
+      if(subject.Trim().ToLower().StartsWith("fwd:")) { //already contains a "fwd:"
+        forwardMessage.Subject=subject;
+      }
+      else { //doesn't contain a "fwd:"
+        forwardMessage.Subject="FWD: "+subject;
+      }
+      string bodyTextString;
+      bodyTextString="\r\n\r\n\r\nOn "+emailReceived.MsgDateTime.ToString()+" "+ProcessInlineEncodedText(emailReceived.FromAddress)+" sent:\r\n>";
+      string receivedEmailBody;
+      List<List<Health.Direct.Common.Mime.MimeEntity>> listMimeParts=
+          EmailMessages.GetMimePartsForMimeTypes(emailReceived.RawEmailIn,emailAddress,"text/html","text/plain","image/");
+      List<Health.Direct.Common.Mime.MimeEntity> listHtmlParts=listMimeParts[0];//If RawEmailIn is blank, then this list will also be blank (ex Secure Web Mail messages).
+      List<Health.Direct.Common.Mime.MimeEntity> listTextParts=listMimeParts[1];//If RawEmailIn is blank, then this list will also be blank (ex Secure Web Mail messages).
+      if(listHtmlParts.Count>0) {//Html body found.
+        receivedEmailBody=HttpUtility.HtmlDecode(Regex.Replace(EmailMessages.ProcessMimeTextPart(listHtmlParts[0]),@"<(.|\n)*?>","")); //remove most html tags.
+      }
+      else if(listTextParts.Count>0) {//No html body found, however one specific mime part is for viewing in text only.					
+        receivedEmailBody=HttpUtility.HtmlDecode(EmailMessages.ProcessMimeTextPart(listTextParts[0]));
+      }
+      else {//No html body found and no text body found.  Last resort.  Show all mime parts which are not attachments (ugly).
+        receivedEmailBody=emailReceived.BodyText;//This version of the body text includes all non-attachment mime parts.
+      }
+      receivedEmailBody=receivedEmailBody.Trim().Replace("\r\n",".!(-&>"); //replace with a string that would very very seldom happen.
+      receivedEmailBody=receivedEmailBody.Trim().Replace("\n",".!(-&>");
+      receivedEmailBody=receivedEmailBody.Trim().Replace("\r",".!(-&>");
+      bodyTextString+=receivedEmailBody.Trim().Replace(".!(-&>","\r\n>");
+      forwardMessage.BodyText=bodyTextString;
 			forwardMessage.MsgType=EmailMessageSource.Forward;
 			return forwardMessage;
-		}
+    }
 
 		///<summary>This method sets message.HtmlText by putting the BodyText into an HTML body.  Will only set HtmlText,AreImagesDownloaded,HtmlType if
 		///the email contains HTML tags.  If HTML tags are not found, makes no changes.</summary>
 		///<exception cref="ApplicationException">For BodyText not properly formatted as HTML.</exception>
 		public static void PrepHtmlEmail(EmailMessage message) {
 			//No need to check MiddleTierRole; no call to db.
-			if(message.HtmlType!=EmailType.RawHtml && !MarkupEdit.ContainsOdHtmlTags(message.BodyText)) {
+			if(message.HtmlType!=EmailType.RawHtml && !ContainsOdHtmlTags(message.BodyText)) {
 				//OD will not allow the user to save the email edit window if they have included a '<' or '>' without prefixing '&'.
 				message.BodyText=message.BodyText.Replace("&<","<");
 				message.BodyText=message.BodyText.Replace("&>",">");
@@ -2872,23 +2887,13 @@ namespace OpenDentBusiness{
 				message.HtmlType=EmailType.Html;
 			}
 			message.AreImagesDownloaded=true;
-		}
+		}		
 
-		public static EmailMessage CreateEmailMessageForStatement(Statement statement,Patient patient,string patFolder,Document document=null) {
-			if(document==null) {
-				document=Documents.GetByNum(statement.DocNum);
-			}
-			string attachPath=EmailAttaches.GetAttachPath();
-			Random random=new Random();
-			string fileName=DateTime.Now.ToString("yyyyMMdd")+DateTime.Now.TimeOfDay.Ticks.ToString()+random.Next(1000).ToString()+".pdf";
-			string filePathAndName=FileAtoZ.CombinePaths(attachPath,fileName);
-			FileAtoZ.Copy(ImageStore.GetFilePath(document,patFolder),filePathAndName,FileAtoZSourceDestination.AtoZToAtoZ);
-			EmailMessage emailMessage=Statements.GetEmailMessageForStatement(statement,patient);
-			EmailAttach emailAttach=new EmailAttach();
-			emailAttach.DisplayedFileName="Statement.pdf";
-			emailAttach.ActualFileName=fileName;
-			emailMessage.Attachments.Add(emailAttach);
-			return emailMessage;
+		///<summary>Determines if the given text contains any HTML tags, ex <a href="opendental.com">opendental.com</a> or any Od wiki syntax tags that
+		///would result in HTML tags being added to the text when run through MarkupEdit.TranslateToXhtml()</summary>
+		public static bool ContainsOdHtmlTags(string text) {
+			Regex tagRegex=new Regex(@"<\s*([^ >]+)[^>]*>.*?<\s*/\s*\1\s*>");
+			return tagRegex.IsMatch(text??"") || MarkupEdit.ContainsOdMarkupForEmail(text??"");
 		}
 
 		#endregion Helpers
@@ -3599,7 +3604,7 @@ b21wb25lbnQ+DQogICA8L2NvbXBvbmVudD4NCjwvQ2xpbmljYWxEb2N1bWVudD4=
 			}
 			return "";
 		}
-
+	
 		///<summary>The RFC822 name is the fully quilified email address.</summary>
 		public static string GetCertRfc822Name(X509Certificate2 cert) {
 			foreach(X509Extension extension in cert.Extensions) {

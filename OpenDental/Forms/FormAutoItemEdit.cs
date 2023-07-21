@@ -52,7 +52,7 @@ namespace OpenDental{
 			}
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			if(textADA.Text=="") {
 				MessageBox.Show(Lan.g(this,"Code cannot be left blank."));
 				listConditions.SelectedIndex=-1;
@@ -104,3 +104,13 @@ namespace OpenDental{
 
 	}
 }
+
+
+
+
+
+
+
+
+
+

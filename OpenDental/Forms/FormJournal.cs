@@ -67,6 +67,7 @@ namespace OpenDental{
 			//ToolBarMain.Buttons.Add(new ODToolBarButton("",2,"Go Forward One Page","Fwd"));
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Export"),2,Lan.g(this,"Export the Account Grid"),"Export"));
 			ToolBarMain.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
+			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Close"),-1,"Close This Window","Close"));
 		}
 
 		private void ToolBarMain_ButtonClick(object sender,OpenDental.UI.ODToolBarButtonClickEventArgs e) {
@@ -86,6 +87,9 @@ namespace OpenDental{
 					break;
 				case "Export":
 					Export_Click();
+					break;
+				case "Close":
+					this.Close();
 					break;
 			}
 		}
@@ -185,7 +189,7 @@ namespace OpenDental{
 			Transaction transaction=new Transaction();
 			transaction.UserNum=Security.CurUser.UserNum;
 			Transactions.Insert(transaction);//we now have a TransactionNum, and datetimeEntry has been set
-			using FormTransactionEdit formTransactionEdit=new FormTransactionEdit(transaction,_account.AccountNum);
+			using FormTransactionEdit formTransactionEdit=new FormTransactionEdit(transaction.TransactionNum,_account.AccountNum);
 			formTransactionEdit.IsNew=true;
 			formTransactionEdit.ShowDialog();
 			if(formTransactionEdit.DialogResult==DialogResult.Cancel){
@@ -210,7 +214,7 @@ namespace OpenDental{
 			_isheadingPrinted=false;
 			_gridMainPrint=new GridOD() { Width=1050,TranslationName="tableJournal"};
 			FillGrid(isPrinting:true);
-			PrintoutOrientation orient=PrintoutOrientation.Portrait;
+			PrintoutOrientation orient=PrintoutOrientation.Default;
 			if(_gridMainPrint.Columns.WidthAll()>800) {
 				orient=PrintoutOrientation.Landscape;
 			}
@@ -272,13 +276,7 @@ namespace OpenDental{
 				MsgBox.Show(this,"Cannot edit auto entries.");
 				return;
 			}
-			Transaction transaction=Transactions.GetTrans(transactionNum);
-			if(transaction==null){
-				MsgBox.Show(this,"Cannot edit this transaction since it was removed by another user.");
-				FillGrid();
-				return;
-			}
-			using FormTransactionEdit formTransactionEdit=new FormTransactionEdit(transaction,_account.AccountNum);
+			using FormTransactionEdit formTransactionEdit=new FormTransactionEdit(transactionNum,_account.AccountNum);
 			formTransactionEdit.ShowDialog();
 			if(formTransactionEdit.DialogResult==DialogResult.Cancel) {
 				return;

@@ -397,11 +397,11 @@ namespace OpenDentBusiness.HL7 {
 			if(_isNewPat) {
 				if(pat.PatNum==0) {//Only eCWTight or eCWFull internal types will allow the HL7 message to dictate our PatNums.
 					pat.PatNum=Patients.Insert(pat,false);
-					SecurityLogs.MakeLogEntry(EnumPermType.PatientCreate,pat.PatNum,"Created from HL7.",LogSources.HL7);
+					SecurityLogs.MakeLogEntry(Permissions.PatientCreate,pat.PatNum,"Created from HL7.",LogSources.HL7);
 				}
 				else {
 					pat.PatNum=Patients.Insert(pat,true);
-					SecurityLogs.MakeLogEntry(EnumPermType.PatientCreate,pat.PatNum,"Created from HL7.",LogSources.HL7);
+					SecurityLogs.MakeLogEntry(Permissions.PatientCreate,pat.PatNum,"Created from HL7.",LogSources.HL7);
 				}
 				if(_isVerboseLogging) {
 					EventLog.WriteEntry("OpenDentHL7","Inserted patient with PatNum="+pat.PatNum,EventLogEntryType.Information);
@@ -652,7 +652,7 @@ namespace OpenDentBusiness.HL7 {
 				if(_isEcwHL7Def) {
 					if(pat.PriProv!=provNum) {
 						pat.PriProv=provNum;
-						SecurityLogs.MakeLogEntry(EnumPermType.PatPriProvEdit,pat.PatNum,
+						SecurityLogs.MakeLogEntry(Permissions.PatPriProvEdit,pat.PatNum,
 							"Primary provider changed automatically from "+(pat.PriProv==0?"'blank'":Providers.GetLongDesc(pat.PriProv))+" to "
 							+Providers.GetLongDesc(provNum)+" due to an indound HL7 message "+segDef.SegmentName.ToString()+" segment.");
 					}
@@ -661,7 +661,7 @@ namespace OpenDentBusiness.HL7 {
 			Appointments.Update(apt,aptOld);
 			if(apt.Confirmed!=aptOld.Confirmed) {
 				//Log confirmation status changes.
-				SecurityLogs.MakeLogEntry(EnumPermType.ApptConfirmStatusEdit,apt.PatNum,
+				SecurityLogs.MakeLogEntry(Permissions.ApptConfirmStatusEdit,apt.PatNum,
 					Lans.g("MessageParser","Appointment confirmation status automatically changed from")+" "
 					+Defs.GetName(DefCat.ApptConfirmed,aptOld.Confirmed)+" "+Lans.g("MessageParser","to")+" "+Defs.GetName(DefCat.ApptConfirmed,apt.Confirmed)
 					+" "+Lans.g("MessageParser","due to an indound HL7 message")+".",apt.AptNum,LogSources.HL7,aptOld.DateTStamp);
@@ -711,7 +711,7 @@ namespace OpenDentBusiness.HL7 {
 			Appointments.Update(apt,aptOld);
 			if(apt.Confirmed!=aptOld.Confirmed) {
 				//Log confirmation status changes.
-				SecurityLogs.MakeLogEntry(EnumPermType.ApptConfirmStatusEdit,apt.PatNum,
+				SecurityLogs.MakeLogEntry(Permissions.ApptConfirmStatusEdit,apt.PatNum,
 					Lans.g("MessageParser","Appointment confirmation status automatically changed from")+" "
 					+Defs.GetName(DefCat.ApptConfirmed,aptOld.Confirmed)+" "+Lans.g("MessageParser","to")+" "+Defs.GetName(DefCat.ApptConfirmed,apt.Confirmed)
 					+" "+Lans.g("MessageParser","due to an indound HL7 message")+".",apt.AptNum,LogSources.HL7,aptOld.DateTStamp);
@@ -1200,13 +1200,13 @@ namespace OpenDentBusiness.HL7 {
 				if(guar.PatNum==0) {
 					guarOld=guar.Copy();
 					guar.PatNum=Patients.Insert(guar,false);
-					SecurityLogs.MakeLogEntry(EnumPermType.PatientCreate,guar.PatNum,"Created from HL7.",LogSources.HL7);
+					SecurityLogs.MakeLogEntry(Permissions.PatientCreate,guar.PatNum,"Created from HL7.",LogSources.HL7);
 					guar.Guarantor=guar.PatNum;
 					Patients.Update(guar,guarOld);
 				}
 				else {
 					guar.PatNum=Patients.Insert(guar,true);
-					SecurityLogs.MakeLogEntry(EnumPermType.PatientCreate,guar.PatNum,"Created from HL7.",LogSources.HL7);
+					SecurityLogs.MakeLogEntry(Permissions.PatientCreate,guar.PatNum,"Created from HL7.",LogSources.HL7);
 				}
 				if(_isVerboseLogging) {
 					EventLog.WriteEntry("OpenDentHL7","Inserted patient "+guar.GetNameFLnoPref()+" when processing a GT1 segment.",EventLogEntryType.Information);
@@ -1853,7 +1853,7 @@ namespace OpenDentBusiness.HL7 {
 			procCur.BaseUnits=procCode.BaseUnits;
 			procCur.SiteNum=pat.SiteNum;
 			procCur.RevCode=procCode.RevenueCodeDefault;
-			Procedures.SetDiagnosticCodesToDefault(procCur,procCode);
+			procCur.DiagnosticCode=PrefC.GetString(PrefName.ICD9DefaultForNewProcs);
 			procCur.PlaceService=Clinics.GetPlaceService(procCur.ClinicNum);
 			List<PatPlan> listPatPlan=PatPlans.Refresh(pat.PatNum);
 			List<InsSub> listSubs=InsSubs.RefreshForFam(Patients.GetFamily(pat.PatNum));
@@ -1876,7 +1876,7 @@ namespace OpenDentBusiness.HL7 {
 					logText+=Lans.g("Procedures","Teeth")+": "+procCur.ToothNum+", ";
 				}
 				logText+=Lans.g("Procedures","Fee")+": "+procCur.ProcFee.ToString("F")+", "+procCode.Descript;
-				SecurityLogs.MakeLogEntry(EnumPermType.ProcComplCreate,procCur.PatNum,logText,LogSources.HL7);
+				SecurityLogs.MakeLogEntry(Permissions.ProcComplCreate,procCur.PatNum,logText,LogSources.HL7);
 			}
 			if(procStatus.In(ProcStat.C,ProcStat.EC,ProcStat.EO) && procCode.PaintType==ToothPaintingType.Extraction) {
 				ToothInitials.SetValue(procCur.PatNum,procCur.ToothNum,ToothInitialType.Missing);
@@ -2125,7 +2125,7 @@ namespace OpenDentBusiness.HL7 {
 			}
 			Patients.Update(pat,patOld);
 			if(!string.IsNullOrEmpty(securitylogText)) {
-				SecurityLogs.MakeLogEntry(EnumPermType.PatPriProvEdit,pat.PatNum,securitylogText);
+				SecurityLogs.MakeLogEntry(Permissions.PatPriProvEdit,pat.PatNum,securitylogText);
 			}
 			if(_isVerboseLogging) {
 				EventLog.WriteEntry("OpenDentHL7","Updated patient "+pat.GetNameFLnoPref()+" due to an incoming PV1 segment.",EventLogEntryType.Information);

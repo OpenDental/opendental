@@ -235,16 +235,14 @@ namespace OpenDentBusiness {
 			string comboChoice=field.FieldValue.Split(';')[0];
 			string fontName=(string.IsNullOrEmpty(sheet.FontName) ? FontFamily.GenericMonospace.ToString() : sheet.FontName);
 			if(gx==null){
-				//The 0.58 is to make it scale with height of the combobox.
-				//See discussion over in FormSheetFillEdit.Paint.
-				Font font=new Font(fontName,field.Height*0.58f,FontStyle.Regular);
+				Font font=new Font(fontName,field.Height-7,FontStyle.Regular);
 				Rectangle bounds=new Rectangle(field.XPos,field.YPos-_yPosPrint,field.Width,field.Height);
 				GraphicsHelper.DrawString(g,comboChoice,font,Brushes.Black,bounds,HorizontalAlignment.Left);
 				font.Dispose();
 				font=null;
 			}
 			else{
-				XFont xfont=new XFont(fontName,field.Height*0.58f,XFontStyle.Regular);
+				XFont xfont=new XFont(fontName,field.Height-10,XFontStyle.Regular);
 				RectangleF rect=new RectangleF(field.XPos,field.YPos-_yPosPrint,field.Width,field.Height);
 				GraphicsHelper.DrawStringX(gx,comboChoice,xfont,XBrushes.Black,rect,HorizontalAlignment.Left);
 				xfont=null;
@@ -427,15 +425,9 @@ namespace OpenDentBusiness {
 					case "StatementPayPlan.charges":
 					case "StatementPayPlan.credits":
 					case "StatementPayPlan.balance":
-					case "StatementPayPlanOld.charges":
-					case "StatementPayPlanOld.credits":
-					case "StatementPayPlanOld.balance":
 					case "StatementDynamicPayPlan.charges":
 					case "StatementDynamicPayPlan.credits":
 					case "StatementDynamicPayPlan.balance":
-					case "StatementPayPlanGrid.charges":
-					case "StatementPayPlanGrid.credits":
-					case "StatementPayPlanGrid.balance":
 					case "StatementInvoicePayment.amt":
 					case "TreatPlanMain.Allowed":
 					case "TreatPlanMain.Fee":
@@ -561,11 +553,12 @@ namespace OpenDentBusiness {
 								//gx.DrawString(patName,new XFont(_font.FontFamily.ToString(),_font.Size,XFontStyle.Bold),new SolidBrush(Color.Black),field.XPos-10,yPosGrid);
 							}
 							break;
-						case "StatementPayPlan":
-						case "StatementPayPlanOld":
 						case "StatementDynamicPayPlan":
-						case "StatementPayPlanGrid":
+						case "StatementPayPlan":
 							string text="Payment Plans";
+							if(sheetField.FieldName=="StatementDynamicPayPlan") {
+								text="Dynamic Payment Plans";
+							}
 							if(gx==null) {
 								SizeF sizeFString=g.MeasureString(text,font);
 								g.FillRectangle(Brushes.White,sheetField.XPos,gridSheetRow.YPos-_yPosPrint,odGrid.Width,heightGridTitle);
@@ -659,15 +652,13 @@ namespace OpenDentBusiness {
 				if(gridSheetRow.IsFooterRow) {
 					_yAdjCurRow+=2;
 					switch(sheetField.FieldName) {
-						case "StatementPayPlan":
-						case "StatementPayPlanOld":
 						case "StatementDynamicPayPlan":
-						case "StatementPayPlanGrid":
+						case "StatementPayPlan":
 							string descript="patientPayPlanDue";
 							string textAmountDue="Payment Plan Amount Due: ";
-							if(sheetField.FieldName=="StatementDynamicPayPlan" || sheetField.FieldName=="StatementPayPlanGrid") {
+							if(sheetField.FieldName=="StatementDynamicPayPlan") {
 								descript="dynamicPayPlanDue";
-								textAmountDue="Payment Plan Amount Due:";
+								textAmountDue="Dynamic Payment Plan Amount Due:";
 							}
 							DataTable tableMisc=dataSet.Tables["misc"];
 							if(tableMisc==null) {
@@ -776,19 +767,22 @@ namespace OpenDentBusiness {
 					bmpOriginalFormat=ImageFormat.Gif;
 				}
 				else if(CloudStorage.IsCloudStorage) {
-					string folder=SheetUtil.GetImagePath();
-					string fileName=field.FieldName;
-					if(!string.IsNullOrWhiteSpace(filePathAndName) && field.FieldType==SheetFieldType.PatImage) {
-						//Extract the file name and path out of the filePathAndName variable that was set above.
-						fileName=Path.GetFileName(filePathAndName);
-						folder=Path.GetDirectoryName(filePathAndName);
-					}
-					byte[] byteArray=CloudStorage.Download(folder,fileName);
-					if(byteArray==null || byteArray.Length<2) {
-						return;
+					//FormProgress FormP=new FormProgress();
+					//FormP.DisplayText=Lan.g(CloudStorage.LanThis,"Downloading...");
+					//FormP.NumberFormat="F";
+					//FormP.NumberMultiplication=1;
+					//FormP.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+					//FormP.TickMS=1000;
+					OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.Download(SheetUtil.GetImagePath(),field.FieldName);
+					//if(FormP.ShowDialog()==DialogResult.Cancel) {
+					//	state.DoCancel=true;
+					//	return;
+					//}
+					if(state==null || state.FileContent==null) {
+						return;//Unable to download the image
 					}
 					else {
-						using(MemoryStream stream=new MemoryStream(byteArray)) {
+						using(MemoryStream stream=new MemoryStream(state.FileContent)) {
 							try {
 								bmpOriginal=new Bitmap(Image.FromStream(stream));
 								bmpOriginalFormat=ImageFormat.Bmp;
@@ -1230,7 +1224,7 @@ namespace OpenDentBusiness {
 				g.FillRectangle(Brushes.White,0,sheet.HeightPage-_printMargin.Bottom,sheet.WidthPage,sheet.HeightPage);
 			}
 			else {
-				gx.DrawRectangle(XPens.White,Brushes.White,0,sheet.HeightPage-_printMargin.Bottom,sheet.WidthPage,sheet.HeightPage);
+				gx.DrawRectangle(XPens.White,Brushes.White,p(0),p(sheet.HeightPage-_printMargin.Bottom),p(sheet.WidthPage),p(sheet.HeightPage));
 			}
 			if(sheet.SheetType==SheetTypeEnum.MedLabResults) {
 				DrawMedLabFooter(sheet,g,gx,pagesPrinted,yPosPrint,medLab);
@@ -1668,10 +1662,10 @@ namespace OpenDentBusiness {
 			//Even though _printMargins and _yPosPrint are available in this context they are passed in so for future compatibility with webforms.
 			int pageCount=Sheets.CalculatePageCount(sheet,margins);
 			int bottomOfPrintableArea=topOfPrintableArea+sheet.HeightPage-margins.Bottom;
-			if(field.YPos>=bottomOfPrintableArea && pagesPrinted<pageCount-1){
+			if(field.YPos>bottomOfPrintableArea && pagesPrinted<pageCount-1){
 				return false;//field is entirely on one of the next pages. Unless we are on the first or last page, then it could be in the bottom margin.
 			}
-			if(field.Bounds.Bottom-margins.Top<=topOfPrintableArea && pagesPrinted>0) {
+			if(field.Bounds.Bottom<topOfPrintableArea && pagesPrinted>0) {
 				return false;//field is entirely on one of the previous pages. Unless we are on the first page, then it is in the top margin.
 			}
 			return true;//field is all or partially on current page.
@@ -1689,7 +1683,7 @@ namespace OpenDentBusiness {
 						checkShowFees=(bool)SheetParameter.GetParamByName(sheet.Parameters,"checkShowFees").ParamValue;
 						checkShowIns=(bool)SheetParameter.GetParamByName(sheet.Parameters,"checkShowIns").ParamValue;
 						//this is taken from HasSalesTax in the ContrTreat module
-						hasSalesTax=AvaTax.IsTaxable(sheet.PatNum) || Columns.Any(x => x.InternalName=="Tax Est");
+						hasSalesTax=AvaTax.IsTaxable(sheet.PatNum) && Columns.Any(x => x.InternalName=="Tax Est");
 					}
 					catch {
 						//if unable to find any assume default values of true

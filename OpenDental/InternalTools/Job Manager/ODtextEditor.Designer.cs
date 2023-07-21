@@ -402,12 +402,12 @@
 			this.textDescription.DetectLinksEnabled = false;
 			this.textDescription.DetectUrls = false;
 			this.textDescription.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.textDescription.FormattedTextAllowed = true;
+			this.textDescription.EditMode = true;
 			this.textDescription.HasAutoNotes = true;
 			this.textDescription.HideSelection = false;
 			this.textDescription.Location = new System.Drawing.Point(0, 27);
 			this.textDescription.Name = "textDescription";
-			this.textDescription.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.JobManager;
+			this.textDescription.QuickPasteType = OpenDentBusiness.QuickPasteType.JobManager;
 			this.textDescription.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textDescription.Size = new System.Drawing.Size(855, 496);
 			this.textDescription.SpellCheckIsEnabled = false;

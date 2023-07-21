@@ -39,6 +39,7 @@ namespace OpenDental {
 			this.butSearch = new OpenDental.UI.Button();
 			this.buttonAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.butEdit = new OpenDental.UI.Button();
 			this.checkMine = new OpenDental.UI.CheckBox();
@@ -115,10 +116,20 @@ namespace OpenDental {
 			this.gridMain.TranslationName = "TableRequests";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(798, 630);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 4;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(798, 631);
+			this.butOK.Location = new System.Drawing.Point(717, 630);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
@@ -179,15 +190,19 @@ namespace OpenDental {
 			this.Controls.Add(this.label5);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.labelVote);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormFeatureRequest";
 			this.Text = "Feature Requests";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormUpdate_FormClosing);
 			this.Load += new System.EventHandler(this.FormFeatureRequest_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label label1;
 		private Label labelVote;
 		private Label label5;

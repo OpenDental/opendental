@@ -174,9 +174,9 @@ namespace OpenDental {
 				//turn on combobox & label
 				comboBoxMonthSelect.Visible=true;
 				labelMonthSelect.Visible=true;
+				butOK.Visible=true;
 			}
 			else {
-				butOK.Visible=false;
 				labelNoDates.Visible=true;
 			}
 		}
@@ -207,6 +207,9 @@ namespace OpenDental {
 			DatePay=comboBoxMonthSelect.GetSelected<DateTime>();
 			DialogResult=DialogResult.OK;
 		}
-
+		
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

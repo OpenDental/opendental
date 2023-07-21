@@ -16,8 +16,6 @@ using System.Windows.Shapes;
 namespace WpfControls.UI {
 	/// <summary></summary>
 	public partial class FrmColorDialog:FrmODBase {
-		///<summary>Optionally set this before opening the form.  After closing, this will contain the new color.</summary>
-		public Color Color;
 		private Color _color;
 		///<summary>This is set to true during loading and whenever else we are programmatically changing input boxes.  This lets us ignore textChanged events because we know they are not from the user typing.</summary>
 		private bool _isInputLocked;
@@ -30,7 +28,16 @@ namespace WpfControls.UI {
 
 		public FrmColorDialog():base() {
 			InitializeComponent();
-			Loaded+=Window_Loaded;
+		}
+
+		///<summary>Optionally set this before opening the form.  After closing, this will contain the new color.</summary>
+		public Color Color{
+			get{
+				return _color;
+			}
+			set{
+				_color=value;
+			}
 		}
 
 		#region Methods - private
@@ -80,14 +87,11 @@ namespace WpfControls.UI {
 				temp1=light*(1+sat);
 			}
 			double temp2=2*light-temp1;
-			double temp_R=hue+1d/3d;
+			double temp_R=hue+0.333;
 			double temp_G=hue;
-			double temp_B=hue-1d/3d;
+			double temp_B=hue-0.333;
 			if(temp_R>1){
 				temp_R-=1;
-			}
-			if(temp_R<0 && temp_R>-0.00001){
-				temp_R=0;
 			}
 			if(temp_R<0){
 				temp_R+=1;
@@ -95,17 +99,11 @@ namespace WpfControls.UI {
 			if(temp_G>1){
 				temp_G-=1;
 			}
-			if(temp_G<0 && temp_G>-0.00001){
-				temp_G=0;
-			}
 			if(temp_G<0){
 				temp_G+=1;
 			}
 			if(temp_B>1){
 				temp_B-=1;
-			}
-			if(temp_B<0 && temp_B>-0.00001){
-				temp_B=0;
 			}
 			if(temp_B<0){
 				temp_B+=1;
@@ -121,12 +119,12 @@ namespace WpfControls.UI {
 						Red=temp2;
 						goto exitRed;
 					}
-					Red=temp2+(temp1-temp2)*(2d/3d-temp_R)*6;
+					Red=temp2+(temp1-temp2)*(0.666-temp_R)*6;
 					goto exitRed;
 				}
 				Red=temp1;
 			}
-		exitRed:
+			exitRed:
 			double Green=temp2+(temp1-temp2)*6*temp_G;
 			//First test
 			if((6*temp_G)>1){
@@ -137,12 +135,12 @@ namespace WpfControls.UI {
 						Green=temp2;
 						goto exitGreen;
 					}
-					Green=temp2+(temp1-temp2)*(2d/3d-temp_G)*6;
+					Green=temp2+(temp1-temp2)*(0.666-temp_G)*6;
 					goto exitGreen;
 				}
 				Green=temp1;
 			}
-		exitGreen:
+			exitGreen:
 			double Blue=temp2+(temp1-temp2)*6*temp_B;
 			//First test
 			if((6*temp_B)>1){
@@ -153,12 +151,12 @@ namespace WpfControls.UI {
 						Blue=temp2;
 						goto exitBlue;
 					}
-					Blue=temp2+(temp1-temp2)*(2d/3d-temp_B)*6;
+					Blue=temp2+(temp1-temp2)*(0.666-temp_B)*6;
 					goto exitBlue;
 				}
 				Blue=temp1;
 			}
-		exitBlue:
+			exitBlue:
 			#endregion
 			Red=Math.Round(Red*255);
 			Green=Math.Round(Green*255);
@@ -171,6 +169,7 @@ namespace WpfControls.UI {
 
 		///<summary>Sets _hue, _sat, and _light based off the current color</summary>
 		private void SetHslFromColor(bool skipHue=false){
+			//Light
 			float r=(float)_color.R/255;
 			float g=(float)_color.G/255;
 			float b=(float)_color.B/255;
@@ -221,19 +220,11 @@ namespace WpfControls.UI {
 
 		///<summary>Sets the box showing the final color.</summary>
 		private void SetColorFinal(){
-			if(panelColorFinal is null){
-				//Jordan this was null in certain scenarios, although we can't duplicate now.
-				return;
-			}
 			panelColorFinal.ColorBack=_color;
 		}
 
 		///<summary>//Sets hex box according to current color</summary>
 		private void SetHex(){
-			if(textHex is null){
-				//Jordan this was null in certain scenarios, although we can't duplicate now.
-				return;
-			}
 			_isInputLocked=true;
 			textHex.Text=_color.ToString();//includes #
 			_isInputLocked=false;
@@ -306,68 +297,23 @@ namespace WpfControls.UI {
 		private void SetPointersFromHSL(){
 			//_hue, _sat, and _light already set
 			Canvas.SetLeft(rectangleHueSlider,_hue-3);
-			byte r=_color.R;
-			byte g=_color.G;
-			byte b=_color.B;
-			Color colorH=CalcColorFromHSL(_hue,100,50);//Color of full saturation at upper right.
-			//colorH will always have an rgb value that is set to 255 and a value that is set to 0. This is used to determine what values are passed to the method.
-			Point point=new Point();
-			List<byte> listBytesColorValues=new List<byte>();
-			listBytesColorValues.Add(r);
-			listBytesColorValues.Add(g);
-			listBytesColorValues.Add(b);
-			byte max=listBytesColorValues.Max();
-			byte min=listBytesColorValues.Min();
-			if(colorH.R==255 && colorH.B==0 && r==max && b==min){
-				point=CalculatePoint(r,b);
-			}
-			else if(colorH.R==255 && colorH.G==0 && r==max && g==min){
-				point=CalculatePoint(r,g);
-			}
-			else if(colorH.G==255 && colorH.R==0 && g==max && r==min){
-				point=CalculatePoint(g,r);
-			}
-			else if(colorH.G==255 && colorH.B==0 && g==max && b==min){
-				point=CalculatePoint(g,b);
-			}
-			else if(colorH.B==255 && colorH.R==0 && b==max && r==min){
-				point=CalculatePoint(b,r);
-			}
-			else if(colorH.B==255 && colorH.G==0 && b==max && g==min){
-				point=CalculatePoint(b,g);
-			}
-			Canvas.SetLeft(canvasEllipse,point.X);
-			Canvas.SetTop(canvasEllipse,point.Y);
-		}
-
-		/// <summary>Helper method to calculate a point for the canvas based on two RGB values. The math below is the reverse of the math found in gridSquareGradient_MouseDown. Here we have the rgb values initially and instead need to find an x and y coordinate to go on the canvas.<summary>
-		private Point CalculatePoint(byte maxHueRGB,byte minHueRgb){
-			Point point=new Point();
-			point.Y=maxHueRGB/255.0;
-			if(point.Y==0) {//To avoid dividing by 0.
-				return new Point(0,255);
-			}
-			double quotient=(double)minHueRgb/point.Y;
-			point.X=(255.0-quotient)/255.0;
-			point.X=point.X*255.0;//Revert decimal values to x,y coordinate on canvas.
-			point.Y=255.0-(255.0*point.Y);
-			return point;
+			Canvas.SetLeft(canvasEllipse,_sat);
+			Canvas.SetTop(canvasEllipse,256-_light);
 		}
 
 		///<summary>Sets all 3 RGB textboxes according to the current color.</summary>
 		private void SetRgbText(){
 			_isInputLocked=true;
 			string s=_color.R.ToString();
-			textRed.textBox.Text=_color.R.ToString();
-			textGreen.textBox.Text=_color.G.ToString();
-			textBlue.textBox.Text=_color.B.ToString();
+			textRed.textBox.Text=Color.R.ToString();
+			textGreen.textBox.Text=Color.G.ToString();
+			textBlue.textBox.Text=Color.B.ToString();
 			_isInputLocked=false;
 		}
 		#endregion Methods - private
 
 		#region Methods - event handlers
 		private void Window_Loaded(object sender,RoutedEventArgs e) {
-			_color=Color;
 			SetHueBackground();
 			_isInputLocked=true;
 			SetRgbText();
@@ -383,11 +329,11 @@ namespace WpfControls.UI {
 		private void gridSquareGradient_MouseDown(object sender,MouseButtonEventArgs e) {
 			Point point=e.GetPosition(gridSquareGradient);
 			//Check to make sure the user stays within the canvas
-			if(point.X>255){//Example grid is 256 pixels wide: 0-255.
-				point.X=255;
+			if(point.X>256){
+				point.X=256;
 			}
-			if(point.Y>255){
-				point.Y=255;
+			if(point.Y>256){
+				point.Y=256;
 			}
 			if(point.X<0){
 				point.X=0;
@@ -398,8 +344,8 @@ namespace WpfControls.UI {
 			//move circle to that location
 			Canvas.SetLeft(canvasEllipse,point.X);
 			Canvas.SetTop(canvasEllipse,point.Y);
-			double x=point.X/255.0;
-			double y=(255.0-point.Y)/255.0; //from the bottom. 
+			double x=point.X/256;
+			double y=(256-point.Y)/256; //from the bottom
 			//x and y are now in 0 to 1 range.
 			//Examples:
 			//LL s,l =0,0    x,y=0,0
@@ -409,9 +355,9 @@ namespace WpfControls.UI {
 			//Mid s,l=33,38  x,y=.5,.5
 			Color colorH=CalcColorFromHSL(_hue,100,50);//color of full saturation at upper right
 			//Perform the calculations for RGB, taking the white/color gradient(x) * the black/white gradient(y)
-			byte r=(byte)Math.Round(((x*colorH.R+(1-x)*255)*y));
-			byte g=(byte)Math.Round(((x*colorH.G+(1-x)*255)*y));
-			byte b=(byte)Math.Round(((x*colorH.B+(1-x)*255)*y));
+			byte r=(byte)((x*colorH.R+(1-x)*255)*y);
+			byte g=(byte)((x*colorH.G+(1-x)*255)*y);
+			byte b=(byte)((x*colorH.B+(1-x)*255)*y);
 			_color=Color.FromRgb(r,g,b);
 			SetHslFromColor(skipHue:true);
 			SetRgbText();
@@ -480,29 +426,20 @@ namespace WpfControls.UI {
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
-			Color=_color;
+			//Color already set
 			IsDialogOK=true;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			IsDialogOK=false;
+		}
 		#endregion Methods - event handlers
-
-		//private class ColorD{
-		//	public double R;
-		//	public double G;
-		//	public double B;
-
-		//	public ColorD(){
-
-		//	}
-
-		//	public Color ToColor(){
-		//		return Color.FromRgb(0,0,0);//round these
-		//	}
-		//}
+		
 	}
 }
 
 /*
-Math:
+Math for hue:
 https://www.niwa.nu/2013/05/math-behind-colorspace-conversions-rgb-hsl/
 
 

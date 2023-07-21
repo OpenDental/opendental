@@ -30,6 +30,7 @@
 			this.labelExportSelect = new System.Windows.Forms.Label();
 			this.checkCollapse = new OpenDental.UI.CheckBox();
 			this.butExport = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butClear = new OpenDental.UI.Button();
 			this.butSelectAll = new OpenDental.UI.Button();
 			this.SuspendLayout();
@@ -87,6 +88,17 @@
 			this.butExport.UseVisualStyleBackColor = true;
 			this.butExport.Click += new System.EventHandler(this.butExport_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(292, 631);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(89, 26);
+			this.butCancel.TabIndex = 5;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butClear
 			// 
 			this.butClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -115,6 +127,7 @@
 			this.ClientSize = new System.Drawing.Size(393, 675);
 			this.Controls.Add(this.butSelectAll);
 			this.Controls.Add(this.butClear);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.checkCollapse);
 			this.Controls.Add(this.butExport);
 			this.Controls.Add(this.labelExportSelect);
@@ -134,6 +147,7 @@
 		private System.Windows.Forms.ImageList imageListTree;
 		private UI.Button butExport;
 		private OpenDental.UI.CheckBox checkCollapse;
+		private UI.Button butCancel;
 		private UI.Button butClear;
 		private UI.Button butSelectAll;
 	}

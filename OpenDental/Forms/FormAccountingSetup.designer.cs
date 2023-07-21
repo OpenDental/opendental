@@ -37,7 +37,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAccountingSetup));
 			this.label1 = new System.Windows.Forms.Label();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
-			this.listAccountsDep = new OpenDental.UI.ListBox();
+			this.listAccountsDep = new UI.ListBox();
 			this.butRemove = new OpenDental.UI.Button();
 			this.butChange = new OpenDental.UI.Button();
 			this.label3 = new System.Windows.Forms.Label();
@@ -52,6 +52,7 @@ namespace OpenDental {
 			this.label5 = new System.Windows.Forms.Label();
 			this.butAddPay = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupAutomaticPayment.SuspendLayout();
 			this.SuspendLayout();
@@ -79,6 +80,7 @@ namespace OpenDental {
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(519, 222);
 			this.groupBox1.TabIndex = 0;
+			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Automatic Deposit Entries";
 			// 
 			// listAccountsDep
@@ -153,6 +155,7 @@ namespace OpenDental {
 			this.groupAutomaticPayment.Name = "groupAutomaticPayment";
 			this.groupAutomaticPayment.Size = new System.Drawing.Size(519, 353);
 			this.groupAutomaticPayment.TabIndex = 1;
+			this.groupAutomaticPayment.TabStop = false;
 			this.groupAutomaticPayment.Text = "Automatic Payment Entries";
 			// 
 			// gridMain
@@ -211,12 +214,22 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(461, 633);
+			this.butOK.Location = new System.Drawing.Point(380, 633);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 2;
-			this.butOK.Text = "&Save";
-			this.butOK.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(461, 633);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 3;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// FormAccountingSetup
 			// 
@@ -224,6 +237,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.groupAutomaticPayment);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -239,6 +253,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private Label label1;
 		private OpenDental.UI.Button butAdd;

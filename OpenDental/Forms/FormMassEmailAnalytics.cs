@@ -32,7 +32,7 @@ namespace OpenDental {
 		}
 
 		private void UpdateClinicActivated() {
-			long clinicNum=comboClinicAnalytics.ClinicNumSelected;
+			long clinicNum=comboClinicAnalytics.SelectedClinicNum;
 			labelNotActivated.Visible=!Clinics.IsMassEmailSignedUp(clinicNum) && !Clinics.IsSecureEmailSignedUp(clinicNum);
 		}
 
@@ -68,7 +68,7 @@ namespace OpenDental {
 				gridAnalytics.Columns.Add(col);
 			}
 			gridAnalytics.ListGridRows.Clear();
-			long clinicNum=PrefC.HasClinicsEnabled ? comboClinicAnalytics.ClinicNumSelected : -1;
+			long clinicNum=PrefC.HasClinicsEnabled ? comboClinicAnalytics.SelectedClinicNum : -1;
 			DateTime dateTimeAnalyticsFrom=dateRangeAnalytics.GetDateTimeFrom();
 			DateTime dateTimeAnalyticsTo=dateRangeAnalytics.GetDateTimeTo();
 			List<PromotionAnalytic> listPromotionAnalytics=Promotions.GetAnalytics(dateTimeAnalyticsFrom,dateTimeAnalyticsTo,clinicNum)
@@ -113,5 +113,12 @@ namespace OpenDental {
 			FillGridAnalytics();
 		}
 
+		private void butOK_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

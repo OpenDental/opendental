@@ -59,7 +59,7 @@ namespace OpenDental{
 
 		#region Methods - Event Handlers - Buttons General
 		private void butAccounting_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Accounting)) {
+			if(!Security.IsAuthorized(Permissions.Accounting)) {
 				return;
 			}
 			if(FormAccounting==null || FormAccounting.IsDisposed) {
@@ -73,40 +73,40 @@ namespace OpenDental{
 		}
 
 		private void butBackup_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Backup)){
+			if(!Security.IsAuthorized(Permissions.Backup)){
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.Backup,0,"FormBackup was accessed");
+			SecurityLogs.MakeLogEntry(Permissions.Backup,0,"FormBackup was accessed");
 			using FormBackup formBackup=new FormBackup();
 			formBackup.ShowDialog();
 			if(formBackup.DialogResult==DialogResult.Cancel){
 				return;
 			}
 			//ok signifies that a database was restored
-			GlobalFormOpenDental.PatientSelected(new Patient(),false);//unload patient after restore.
+			FormOpenDental.S_Contr_PatientSelected(new Patient(),false);//unload patient after restore.
 			//ParentForm.Text=PrefC.GetString(PrefName.MainWindowTitle");
 			DataValid.SetInvalid(true);
 			ModuleSelected(_patNum);
 		}
 
 		private void butBilling_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Billing)) {
+			if(!Security.IsAuthorized(Permissions.Billing)) {
 				return;
 			}
 			bool unsentStatementsExist=Statements.UnsentStatementsExist();
 			if(unsentStatementsExist) {
 				if(PrefC.HasClinicsEnabled) {//Using clinics.
 					if(Statements.UnsentClinicStatementsExist(Clinics.ClinicNum)) {//Check if clinic has unsent bills.
-						ShowBilling(new List<long>() { Clinics.ClinicNum });//Clinic has unsent bills.  Simply show billing window.
+						ShowBilling(Clinics.ClinicNum);//Clinic has unsent bills.  Simply show billing window.
 					}
 					else {//No unsent bills for clinic.  Show billing options to generate a billing list.
 						ShowBillingOptions(Clinics.ClinicNum);
 					}
 				}
 				else {//Not using clinics and has unsent bills.  Simply show billing window.
-					ShowBilling(new List<long>() { 0 });
+					ShowBilling(0);
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.Billing,0,"");
+				SecurityLogs.MakeLogEntry(Permissions.Billing,0,"");
 				return;
 			}
 			//No unsent statements exist.  Have user create a billing list.
@@ -116,7 +116,7 @@ namespace OpenDental{
 			else {
 				ShowBillingOptions(0);
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.Billing,0,"");
+			SecurityLogs.MakeLogEntry(Permissions.Billing,0,"");
 		}
 
 		private void butBreaks_Click(object sender,EventArgs e) {
@@ -136,7 +136,7 @@ namespace OpenDental{
 		}
 
 		private void butClaimPay_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPayCreate,true) && !Security.IsAuthorized(EnumPermType.InsPayEdit,true)) {
+			if(!Security.IsAuthorized(Permissions.InsPayCreate,true) && !Security.IsAuthorized(Permissions.InsPayEdit,true)) {
 				//Custom message for multiple permissions.
 				MessageBox.Show(Lan.g(this,"Not authorized")+".\r\n"
 					+Lan.g(this,"A user with the SecurityAdmin permission must grant you access for")+":\r\n"
@@ -157,14 +157,14 @@ namespace OpenDental{
 				SelectEmpI(-1);
 				return;
 			}
-			if(PrefC.GetBool(PrefName.DockPhonePanelShow) && !Security.IsAuthorized(EnumPermType.TimecardsEditAll,true)) {
+			if(PrefC.GetBool(PrefName.DockPhonePanelShow) && !Security.IsAuthorized(Permissions.TimecardsEditAll,true)) {
 				//Check if the employee set their ext to 0 in the phoneempdefault table.
 				if(PhoneEmpDefaults.GetByExtAndEmp(0,_employee.EmployeeNum)==null) {
 					MessageBox.Show("Not allowed.  Use the small phone panel or the \"Big\" phone window to clock in.\r\nIf you are trying to clock in as a \"floater\", you need to set your extension to 0 first before using this Clock In button.");
 					return;
 				}
 			}
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ShowCancelButton=false;//safe because this is guaranteed to be only one second, more like a fancy wait cursor
 			progressOD.ActionMain=() => {
 				bool[] isAuthorized=new bool[1] { false };
@@ -178,7 +178,7 @@ namespace OpenDental{
 			};
 			progressOD.StartingMessage=Lan.g(this,"Processing clock event...");
 			try {
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
 				MessageBox.Show(ex.Message);
@@ -201,7 +201,7 @@ namespace OpenDental{
 				SelectEmpI(-1);
 				return;
 			}
-			if(PrefC.GetBool(PrefName.DockPhonePanelShow) && !Security.IsAuthorized(EnumPermType.TimecardsEditAll,true)) {
+			if(PrefC.GetBool(PrefName.DockPhonePanelShow) && !Security.IsAuthorized(Permissions.TimecardsEditAll,true)) {
 				//Check if the employee set their ext to 0 in the phoneempdefault table.
 				if(PhoneEmpDefaults.GetByExtAndEmp(0,_employee.EmployeeNum)==null) {
 					MessageBox.Show("Not allowed.  Use the small phone panel or the \"Big\" phone window to clock out.\r\nIf you are trying to clock out as a \"floater\", you need to set your extension to 0 first before using this Clock Out For: button.");
@@ -212,7 +212,7 @@ namespace OpenDental{
 				MsgBox.Show(this,"Please select a status first.");
 				return;
 			}
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ShowCancelButton=false;//safe because this is guaranteed to be only one second, more like a fancy wait cursor
 			progressOD.ActionMain=() => {
 				bool[] boolArrayAuth=new bool[1] { false };
@@ -226,7 +226,7 @@ namespace OpenDental{
 			};
 			progressOD.StartingMessage=Lan.g(this,"Processing clock event...");
 			try {
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex) {
 				MessageBox.Show(ex.Message);
@@ -243,7 +243,7 @@ namespace OpenDental{
 		}
 
 		private void butDeposit_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.DepositSlips,DateTime.Today)) {
+			if(!Security.IsAuthorized(Permissions.DepositSlips,DateTime.Today)) {
 				return;
 			}
 			using FormDeposits formDeposits=new FormDeposits();
@@ -264,7 +264,7 @@ namespace OpenDental{
 		}
 
 		private void butEras_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPayCreate)) {
+			if(!Security.IsAuthorized(Permissions.InsPayCreate)) {
 				return;
 			}
 			Cursor=Cursors.WaitCursor;
@@ -293,7 +293,7 @@ namespace OpenDental{
 		}
 
 		private void butManageAR_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Billing)) {
+			if(!Security.IsAuthorized(Permissions.Billing)) {
 				return;
 			}
 			if(!Programs.IsEnabled(ProgramName.Transworld)) {
@@ -345,13 +345,8 @@ namespace OpenDental{
 			_formGraphEmployeeTime.Show();
 		}
 
-		private void butDaycare_Click(object sender,EventArgs e) {
-			FrmChildCareMap frmChildCareMap=new FrmChildCareMap();
-			frmChildCareMap.Show();
-		}
-
 		private void butSendClaims_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ClaimSend)) {
+			if(!Security.IsAuthorized(Permissions.ClaimSend)) {
 				return;
 			}
 			if(_formClaimsSend!=null && !_formClaimsSend.IsDisposed) {//Form is open
@@ -570,7 +565,6 @@ namespace OpenDental{
 		private void ControlManage_Load(object sender,EventArgs e) {
 			if(!PrefC.IsODHQ) {
 				butSchedule.Visible=false;
-				butDaycare.Visible=false;
 			}
 		}
 
@@ -580,8 +574,8 @@ namespace OpenDental{
 			}
 			ClaimSendQueueItem claimSendQueueItem=(ClaimSendQueueItem)e.Tag;
 			Patient patient=Patients.GetPat(claimSendQueueItem.PatNum);
-			GlobalFormOpenDental.PatientSelected(patient,false);
-			GlobalFormOpenDental.GotoClaim(claimSendQueueItem.ClaimNum);
+			FormOpenDental.S_Contr_PatientSelected(patient,false);
+			GotoModule.GotoClaim(claimSendQueueItem.ClaimNum);
 		}
 
 		private void gridEmp_CellClick(object sender,ODGridClickEventArgs e) {
@@ -595,7 +589,7 @@ namespace OpenDental{
 				return;
 			}
 			if(Security.CurUser.EmployeeNum!=((Employee)gridEmp.ListGridRows[e.Row].Tag).EmployeeNum) {
-				if(!Security.IsAuthorized(EnumPermType.TimecardsEditAll,true)){
+				if(!Security.IsAuthorized(Permissions.TimecardsEditAll,true)){
 					SelectEmpI(-1,false);
 					return;
 				}
@@ -842,7 +836,7 @@ namespace OpenDental{
 			textFilterName.Text="";
 			FillEmps(true);
 			FillMessageDefs();
-			if(Security.IsAuthorized(EnumPermType.TimecardsEditAll,true)) {
+			if(Security.IsAuthorized(Permissions.TimecardsEditAll,true)) {
 				butManage.Enabled=true;
 			}
 			else {
@@ -923,33 +917,42 @@ namespace OpenDental{
 			listBoxStatus.Enabled=false;
 		}
 
-		///<summary>Shows FormBilling and displays warning message if needed.  Pass 0 to show all clinics.  Make sure to check for unsent bills before calling this method.  IsAllSelected is based upon
-		///the comboClinic selection from formBillingOptions</summary>
-		private void ShowBilling(List<long> listClinicNums,bool isHistStartMinDate=false,bool showBillTransSinceZero=false,bool isAllSelected=false) {
+		///<summary>Shows FormBilling and displays warning message if needed.  Pass 0 to show all clinics.  Make sure to check for unsent bills before calling this method.</summary>
+		private void ShowBilling(long clinicNum,bool isHistStartMinDate=false,bool showBillTransSinceZero=false) {
+			bool hadListShowing=false;
 			//Check to see if there is an instance of the billing list window already open that needs to be closed.
 			//This can happen if multiple people are trying to send bills at the same time.
 			if(_formBilling!=null && !_formBilling.IsDisposed) {
+				hadListShowing=true;
 				//It does not hurt to always close this window before loading a new instance, because the unsent bills are saved in the database and the entire purpose of FormBilling is the Go To feature.
 				//Any statements that were showing in the old billing list window that we are about to close could potentially be stale and are now invalid and should not be sent.
-				//Another good reason to close the window is when using clinics.  It was possible to show a different clinic billing list than the one chosen.			
+				//Another good reason to close the window is when using clinics.  It was possible to show a different clinic billing list than the one chosen.
+				for(int i=0;i<_formBilling.ListClinics.Count;i++) {
+					if(_formBilling.ListClinics[i].ClinicNum!=clinicNum) {//For most users clinic nums will always be 0.
+						//The old billing list was showing a different clinic.  No need to show the warning message in this scenario.
+						hadListShowing=false;
+					}
+				}
 				_formBilling.Close();
 			}
 			_formBilling=new FormBilling();
-			_formBilling.ClinicNumsSelectedInitial=listClinicNums;
-			_formBilling.IsAllSelected=isAllSelected;
+			_formBilling.ClinicNumInitial=clinicNum;
 			_formBilling.IsHistoryStartMinDate=isHistStartMinDate;
 			_formBilling.ShowBillTransSinceZero=showBillTransSinceZero;
 			_formBilling.Show();//FormBilling has a Go To option and is shown as a non-modal window so the user can view the patient account and the billing list at the same time.
 			_formBilling.BringToFront();
+			if(hadListShowing) {
+				MsgBox.Show(this,"These unsent bills must either be sent or deleted before a new list can be created.");
+			}
 		}
 
 		///<summary>Shows FormBillingOptions and FormBilling if needed.  Pass 0 to show all clinics.  Make sure to check for unsent bills before calling this method.</summary>
 		private void ShowBillingOptions(long clinicNum) {
 			using FormBillingOptions formBillingOptions=new FormBillingOptions();
-			formBillingOptions.ListClinicNumsSelected=new List<long>() { clinicNum };
+			formBillingOptions.ClinicNum=clinicNum;
 			formBillingOptions.ShowDialog();
 			if(formBillingOptions.DialogResult==DialogResult.OK) {
-				ShowBilling(formBillingOptions.ListClinicNumsSelected,formBillingOptions.IsHistoryStartMinDate,formBillingOptions.ShowBillTransSinceZero,formBillingOptions.IsAllSelected);
+				ShowBilling(clinicNum,formBillingOptions.IsHistoryStartMinDate,formBillingOptions.ShowBillTransSinceZero);
 			}
 		}
 

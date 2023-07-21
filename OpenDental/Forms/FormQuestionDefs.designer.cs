@@ -35,6 +35,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormQuestionDefs));
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.label1 = new System.Windows.Forms.Label();
+			this.butClose = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.butDown = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
@@ -50,6 +51,16 @@ namespace OpenDental {
 			this.label1.Text = "These are the questions that will show on the patient questionnaire.  You can saf" +
     "ely move or delete any questions without harming previously completed questionna" +
     "ires.";
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(740, 637);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(79, 26);
+			this.butClose.TabIndex = 1;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butAdd
 			// 
@@ -104,6 +115,7 @@ namespace OpenDental {
 			// FormQuestionDefs
 			// 
 			this.ClientSize = new System.Drawing.Size(838, 675);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butDown);
 			this.Controls.Add(this.butUp);
@@ -120,6 +132,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butAdd;
 		private Label label1;
 		private OpenDental.UI.Button butDown;

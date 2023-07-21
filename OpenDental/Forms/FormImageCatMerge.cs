@@ -53,7 +53,7 @@ namespace OpenDental {
 		}
 
 		private void butMerge_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.DefEdit)) {
+			if(!Security.IsAuthorized(Permissions.DefEdit)) {
 				return;
 			}
 			if(_defNumInto==_defNumFrom) { 
@@ -79,11 +79,14 @@ namespace OpenDental {
 			string logText=Lan.g(this,"Image Category Merge from")
 				+" "+Defs.GetName(DefCat.ImageCats,_defNumFrom)+" "+Lan.g(this,"to")+" "+Defs.GetName(DefCat.ImageCats,_defNumInto);
 			//Make log entry here.
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,logText);
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,logText);
 			textBoxFrom.Clear();
 			textBoxInto.Clear();
 			CheckUIState();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }

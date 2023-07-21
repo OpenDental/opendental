@@ -18,7 +18,7 @@ namespace OpenDental {
 		}
 
 		private void FormRedundantIndexes_Load(object sender,EventArgs e) {
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				checkLogAddStatements.CheckedChanged-=checkLogAddStatements_CheckedChanged;
 				checkLogAddStatements.Checked=false;
 				checkLogAddStatements.Enabled=false;
@@ -86,10 +86,10 @@ namespace OpenDental {
 				msgBoxCopyPaste.ShowDialog();
 			}
 			string logText="";
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => logText=DatabaseMaintenances.DropRedundantIndexes(gridMain.SelectedTags<DataRow>());
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
 				MsgBox.Show(Lan.g(this,"There was an error dropping redundant indexes")+":\r\n"+ex.Message);
@@ -149,6 +149,10 @@ namespace OpenDental {
 				throw new ODException(Lan.g(this,"Could not create or access the directory for saving the Drop Index Log file."),ex);
 			}
 			return ODFileUtils.CombinePaths(path,DateTime.Now.ToString("M_d_yyyy")+".txt");//One file per date
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

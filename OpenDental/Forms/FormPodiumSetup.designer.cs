@@ -49,7 +49,8 @@ namespace OpenDental{
 			this.label4 = new System.Windows.Forms.Label();
 			this.checkHideButtons = new OpenDental.UI.CheckBox();
 			this.checkEnabled = new OpenDental.UI.CheckBox();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.checkShowCommlogsInChart = new OpenDental.UI.CheckBox();
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
@@ -300,15 +301,25 @@ namespace OpenDental{
 			this.checkEnabled.TabIndex = 106;
 			this.checkEnabled.Text = "Enabled";
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(544, 360);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(540, 331);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(540, 363);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// checkShowCommlogsInChart
 			// 
@@ -321,8 +332,8 @@ namespace OpenDental{
 			// 
 			// FormPodiumSetup
 			// 
-			this.ClientSize = new System.Drawing.Size(631, 399);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(642, 399);
 			this.Controls.Add(this.checkShowCommlogsInChart);
 			this.Controls.Add(this.checkUseService);
 			this.Controls.Add(this.comboClinic);
@@ -337,7 +348,8 @@ namespace OpenDental{
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.checkHideButtons);
 			this.Controls.Add(this.checkEnabled);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormPodiumSetup";
 			this.Text = "Podium Setup";
@@ -353,7 +365,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.CheckBox checkEnabled;
 		private OpenDental.UI.CheckBox checkHideButtons;
 		private System.Windows.Forms.Label label4;

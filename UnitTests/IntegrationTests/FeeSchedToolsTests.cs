@@ -300,7 +300,7 @@ namespace UnitTests.FeeSchedTools_Tests {
 
 		private long GlobalUpdateWriteoffs(long clinicNum) {
 			List<long> listWriteoffClinics=new List<long>() { clinicNum };
-			ODProgressExtended progress=new ODProgressExtended(new System.Windows.Forms.Form(),
+			ODProgressExtended progress=new ODProgressExtended(ODEventType.FeeSched,new FeeSchedEvent(),new System.Windows.Forms.Form(),
 				tag:new ProgressBarHelper(Lans.g(this,"Write-off Update Progress"),progressBarEventType: ProgBarEventType.Header),
 				cancelButtonText:Lans.g(this,"Close"));
 			progress.Fire(ODEventType.FeeSched,new ProgressBarHelper("","0%"

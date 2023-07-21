@@ -22,8 +22,7 @@ namespace OpenDental {
 		}
 
 		private void FormCodeGroupEdit_Load(object sender,EventArgs e) {
-			checkShowInFreq.Checked=!CodeGroup.IsHidden;
-			checkShowInAgeLim.Checked=CodeGroup.ShowInAgeLimit;
+			checkIsHidden.Checked=CodeGroup.IsHidden;
 			textGroupName.Text=CodeGroup.GroupName;
 			textProcCodes.Text=CodeGroup.ProcCodes;
 			//Start by allowing the user to select any value from the EnumCodeGroupFixed enumeration.
@@ -59,8 +58,8 @@ namespace OpenDental {
 			//Also, users are allowed to enter values that are not currently present within the database.
 			//The following code is case sensitive on purpose.
 			List<string> listProcCodes=textProcCodes.Text.Split(",",StringSplitOptions.RemoveEmptyEntries)
-				.Select(x => x.Trim())
-				.Distinct()
+				.GroupBy(x => x)
+				.Select(x => x.Key.Trim())
 				.ToList();
 			listProcCodes.RemoveAll(x => string.IsNullOrWhiteSpace(x));
 			return listProcCodes;
@@ -73,8 +72,7 @@ namespace OpenDental {
 			}
 			CodeGroup.CodeGroupFixed=comboCodeGroupFixed.GetSelected<EnumCodeGroupFixed>();
 			CodeGroup.GroupName=textGroupName.Text;
-			CodeGroup.IsHidden=!checkShowInFreq.Checked;
-			CodeGroup.ShowInAgeLimit=checkShowInAgeLim.Checked;
+			CodeGroup.IsHidden=checkIsHidden.Checked;
 			CodeGroup.ProcCodes=string.Join(",",GetProcCodesFromUI());
 			DialogResult=DialogResult.OK;
 		}

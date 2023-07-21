@@ -27,6 +27,7 @@ namespace OpenDental {
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butNewRx = new OpenDental.UI.Button();
 			this.butPrintSelected = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.labelECWerror = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -64,6 +65,16 @@ namespace OpenDental {
 			this.butPrintSelected.Text = "&Print Selected";
 			this.butPrintSelected.Click += new System.EventHandler(this.butPrintSelect_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(937, 455);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// labelECWerror
 			// 
 			this.labelECWerror.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -80,6 +91,7 @@ namespace OpenDental {
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(1034, 491);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.labelECWerror);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butNewRx);

@@ -26,6 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSheetTools));
 			this.butExport = new OpenDental.UI.Button();
 			this.butImport = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
@@ -50,6 +51,16 @@ namespace OpenDental{
 			this.butImport.Text = "Import";
 			this.butImport.Click += new System.EventHandler(this.butImport_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(283, 165);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 3;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// label2
 			// 
 			this.label2.Location = new System.Drawing.Point(107, 28);
@@ -71,11 +82,12 @@ namespace OpenDental{
 			// FormSheetTools
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(370, 164);
+			this.ClientSize = new System.Drawing.Size(370, 201);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.butExport);
 			this.Controls.Add(this.butImport);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormSheetTools";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -85,6 +97,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private UI.Button butImport;
 		private UI.Button butExport;
 		private System.Windows.Forms.Label label2;

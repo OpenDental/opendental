@@ -177,7 +177,7 @@ namespace OpenDental{
 				_listUserOdPrefsDoseSpotNew.Add(_userOdPrefDoseSpotDefault);
 			}
 			textDoseSpotUserID.Text=_userOdPrefDoseSpotDefault.ValueString;
-			if(_isFromAddUser && !Security.IsAuthorized(EnumPermType.SecurityAdmin,true)) {
+			if(_isFromAddUser && !Security.IsAuthorized(Permissions.SecurityAdmin,true)) {
 				butPassword.Visible=false;
 				checkRequireReset.Checked=true;
 				checkRequireReset.Enabled=false;
@@ -201,7 +201,6 @@ namespace OpenDental{
 				butUnlock.Enabled=false;
 				butJobRoles.Enabled=false;
 			}
-			textBadgeId.Text=UserodCur.BadgeId;
 		}
 
 		///<summary>Refreshes the security tree in the "Users" tab.</summary>
@@ -334,7 +333,7 @@ namespace OpenDental{
 			return isCacheInvalid;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(textUserName.Text==""){
 				MsgBox.Show(this,"Please enter a username.");
 				return;
@@ -355,7 +354,45 @@ namespace OpenDental{
 				MsgBox.Show(this,"Users must have at least one user group associated. Please select a user group to continue.");
 				return;
 			}
-			if(_isFromAddUser && !Security.IsAuthorized(EnumPermType.SecurityAdmin,true)) {
+			List<UserOdPref> listUserOdPrefs=UserOdPrefs.GetByFkeyAndFkeyType(Programs.GetCur(ProgramName.eRx).ProgramNum,UserOdFkeyType.Program);
+			List<UserOdPref> listUserOdPrefsNotEmpty=listUserOdPrefs.FindAll(x => !x.ValueString.IsNullOrEmpty()
+				&& x.UserNum!=UserodCur.UserNum);//Allow user to reuse their ID at the different clinics
+			List<string> listValueStrings=listUserOdPrefsNotEmpty.Select(x => x.ValueString).ToList();
+			List<UserOdPref> listUserOdPrefsDuplicateIDs=_listUserOdPrefsDoseSpotNew.FindAll(x => listValueStrings.Contains(x.ValueString));
+			if((textDoseSpotUserID.Text!=_userOdPrefDoseSpotDefault.ValueString || _userOdPrefDoseSpotDefault.IsNew)
+				&& listValueStrings.Contains(textDoseSpotUserID.Text)
+				|| !listUserOdPrefsDuplicateIDs.IsNullOrEmpty())
+			{
+				string msg="One or more of your DoseSpot User IDs is already in use.\r\n" +
+					"The following list shows the users and the DoseSpot User ID aleady in use.\r\n\n";
+				msg +="DoseSpot User ID\tUser\r\n";
+				listUserOdPrefsNotEmpty=listUserOdPrefsNotEmpty.DistinctBy(x => x.UserNum).ToList();
+				for(int i=0;i<listUserOdPrefsNotEmpty.Count;i++) {
+					//Add the DoseSpotIDs and corresponding user name to the msg to be displayed in the msgBox.
+					//\t\t used for layout. \r\n used to create new line.
+					msg+=String.Format("{0}\t\t{1}\r\n",listUserOdPrefsNotEmpty[i].ValueString,Userods.GetName(listUserOdPrefsNotEmpty[i].UserNum));
+				}
+				MessageBox.Show(this,msg);
+				//reset the DoseSpotIDs back to what the values before a duplicate was entered
+				for(int i=0;i<_listUserOdPrefsDoseSpotNew.Count;i++) {
+					//new user set the DoseSpotIDs back to blank
+					if(_listUserOdPrefsDoseSpotNew[i].IsNew) {
+						_listUserOdPrefsDoseSpotNew[i].ValueString="";
+					}
+					//only changes the duplicate DoseSpotIDs that were entered back, but keeps the entered DoseSpotIDs that are not duplicates
+					if(listValueStrings.Contains(_listUserOdPrefsDoseSpotNew[i].ValueString) && !_listUserOdPrefsDoseSpotNew[i].IsNew) {
+						_listUserOdPrefsDoseSpotNew[i].ValueString=_listUserOdPrefsDoseSpotOld[i].ValueString;//change _listUserOdPrefsDoseSpotNew back to what it was previously
+					}
+				}
+				//if the default DoseSpotID is changed not from the FormUserPrefAdditional, check that textDoseSpotUserID.Text is not a duplicate
+				//and change the _userOdPrefDoseSpotDefault.ValueString
+				if(textDoseSpotUserID.Text!=_userOdPrefDoseSpotDefault.ValueString && !listValueStrings.Contains(textDoseSpotUserID.Text)) {
+					_userOdPrefDoseSpotDefault.ValueString=textDoseSpotUserID.Text;
+				}
+				textDoseSpotUserID.Text=_userOdPrefDoseSpotDefault.ValueString;
+				return;
+			}
+			if(_isFromAddUser && !Security.IsAuthorized(Permissions.SecurityAdmin,true)) {
 				if(listUserGroup.SelectedIndices.Count!=1
 					|| !listUserGroup.GetListSelected<UserGroup>().Select(x => x.UserGroupNum).Contains(PrefC.GetLong(PrefName.DefaultUserGroup))) 
 				{
@@ -422,7 +459,6 @@ namespace OpenDental{
 				}
 				UserodCur.ProvNum=_listProviders[listProv.SelectedIndex-1].ProvNum;
 			}
-			UserodCur.BadgeId=textBadgeId.Text;
 			if(IsNew) {
 				try {
 					Userods.Insert(UserodCur,listUserGroup.GetListSelected<UserGroup>().Select(x => x.UserGroupNum).ToList());
@@ -439,7 +475,7 @@ namespace OpenDental{
 					//Set the user clinic's UserNum to the one we just inserted.
 					listUserClinics[i].UserNum=UserodCur.UserNum;
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.AddNewUser,0,"New user '"+UserodCur.UserName+"' added");
+				SecurityLogs.MakeLogEntry(Permissions.AddNewUser,0,"New user '"+UserodCur.UserName+"' added");
 			}
 			else{
 				List<UserGroup> listUserGroupsNew=listUserGroup.GetListSelected<UserGroup>();
@@ -472,11 +508,11 @@ namespace OpenDental{
 				List<UserGroup> listUserGroupsRemoved=funcGetMissing(listUserGroupsOld,listUserGroupsNew);
 				List<UserGroup> listUserGroupsAdded=funcGetMissing(listUserGroupsNew,listUserGroupsOld);
 				if(listUserGroupsRemoved.Count>0) {//Only log if there are items in the list
-					SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,"User "+UserodCur.UserName+
+					SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,"User "+UserodCur.UserName+
 						" removed from User group(s): "+string.Join(", ",listUserGroupsRemoved.Select(x => x.Description).ToArray())+" by: "+Security.CurUser.UserName);
 				}
 				if(listUserGroupsAdded.Count>0) {//Only log if there are items in the list.
-					SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,"User "+UserodCur.UserName+
+					SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,"User "+UserodCur.UserName+
 						" added to User group(s): "+string.Join(", ",listUserGroupsAdded.Select(x => x.Description).ToArray())+" by: "+Security.CurUser.UserName);
 				}
 			}
@@ -484,34 +520,6 @@ namespace OpenDental{
 				DataValid.SetInvalid(InvalidType.UserClinics);
 			}
 			bool isUserOdPrefCacheInvalid=false;
-			//Get eRx prefs for all other users. The same user can use the same ID at multiple clinics so we don't want to compare against the prefs of the currently selected user.
-			List<UserOdPref> listOtherUserOdPrefs=UserOdPrefs.GetByFkeyAndFkeyType(Programs.GetCur(ProgramName.eRx).ProgramNum,UserOdFkeyType.Program).FindAll(x => x.UserNum!=UserodCur.UserNum);
-			//This list is filled on load with all of the prefs for the current user and contains any changes made in FormUserPrefAdditional.
-			List<string> listIDsForUser=_listUserOdPrefsDoseSpotNew.Select(x => x.ValueString).Distinct().ToList();
-			listIDsForUser.Add(textDoseSpotUserID.Text);
-			List<UserOdPref> listUserOdPrefsSameID=listOtherUserOdPrefs.FindAll(x => listIDsForUser.Contains(x.ValueString) && !x.ValueString.IsNullOrEmpty());
-			if(listUserOdPrefsSameID.Count>0) {
-				List<Userod> listUsers=Userods.GetUsers(listUserOdPrefsSameID.Select(x => x.UserNum).Distinct().ToList());
-				string message=$@"Duplicate DoseSpot ID(s) found on multiple users.
-DoseSpot ID(s):
-{string.Join(", ",listUserOdPrefsSameID.Select(x => x.ValueString).ToArray())}
-Affected users:
-{string.Join(", ",listUsers.Select(x => x.UserName))}
-Click OK to remove the DoseSpot ID(s) from all other users. Only the current user, {UserodCur.UserName}, will have the listed ID(s). Click Cancel to manually remove the listed ID(s) from the current user before continuing.";
-				if(!MsgBox.Show(MsgBoxButtons.OKCancel,message,"Duplicate DoseSpot IDs found")) {
-					return;
-				}
-				//Clear the IDs from other users
-				isUserOdPrefCacheInvalid=true;
-				List<UserOdPref> listOtherUsersCleared=listUserOdPrefsSameID.Select(x => x.Clone()).ToList();
-				listOtherUsersCleared.ForEach(x => x.ValueString="");
-				UserOdPrefs.Sync(listOtherUsersCleared,listUserOdPrefsSameID);
-				string logText="";
-				for(int i=0;i<listUserOdPrefsSameID.Count;i++) {
-					logText+=$"DoseSpot ID {listUserOdPrefsSameID[i].ValueString} removed from user {Userods.GetUser(listUserOdPrefsSameID[i].UserNum).UserName}\r\n";
-				}
-				SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,logText+$"The DoseSpot ID(s) have been added to {UserodCur.UserName}.");
-			}
 			//DoseSpot User ID Insert/Update/Delete
 			if(_userOdPrefDoseSpotDefault.ValueString!=textDoseSpotUserID.Text) {
 				if(string.IsNullOrWhiteSpace(textDoseSpotUserID.Text)) {
@@ -571,5 +579,8 @@ Click OK to remove the DoseSpot ID(s) from all other users. Only the current use
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

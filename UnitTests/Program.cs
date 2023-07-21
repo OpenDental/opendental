@@ -29,10 +29,10 @@ namespace UnitTests {
 			//Application.Run(new FormSplitContainerTests());
 			//Application.Run(new FormSplitter());
 			//Application.Run(new FormTabControlTests());
-			//Application.Run(new FormTestAllControls());
 			//Application.Run(new FormToothChartTests());
 			//Application.Run(new FormTextBoxTests());
 			//OpenDental.Dpi.SetUnaware();
+			//Application.Run(new FormUIManagerTests());
 			Application.Run(new FormWpfConverter());
 		}
 	}

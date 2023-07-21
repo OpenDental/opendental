@@ -136,7 +136,8 @@ namespace OpenDental {
 			this.textBirthdate3 = new OpenDental.ValidDate();
 			this.textBirthdate2 = new OpenDental.ValidDate();
 			this.textBirthdate1 = new OpenDental.ValidDate();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.textEmail1 = new System.Windows.Forms.TextBox();
 			this.textEmail2 = new System.Windows.Forms.TextBox();
 			this.textEmail3 = new System.Windows.Forms.TextBox();
@@ -276,7 +277,7 @@ namespace OpenDental {
 			this.listPosition1.Name = "listPosition1";
 			this.listPosition1.Size = new System.Drawing.Size(61, 30);
 			this.listPosition1.TabIndex = 17;
-			this.listPosition1.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectionChangeCommitted);
+			this.listPosition1.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
 			// 
 			// listGender1
 			// 
@@ -284,7 +285,7 @@ namespace OpenDental {
 			this.listGender1.Name = "listGender1";
 			this.listGender1.Size = new System.Drawing.Size(82, 43);
 			this.listGender1.TabIndex = 14;
-			this.listGender1.SelectionChangeCommitted += new System.EventHandler(this.ListBox_SelectionChangeCommitted);
+			this.listGender1.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
 			// 
 			// groupBox1
 			// 
@@ -543,7 +544,7 @@ namespace OpenDental {
 			this.listPosition2.Name = "listPosition2";
 			this.listPosition2.Size = new System.Drawing.Size(61, 30);
 			this.listPosition2.TabIndex = 37;
-			this.listPosition2.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectionChangeCommitted);
+			this.listPosition2.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
 			// 
 			// listGender2
 			// 
@@ -551,7 +552,7 @@ namespace OpenDental {
 			this.listGender2.Name = "listGender2";
 			this.listGender2.Size = new System.Drawing.Size(82, 43);
 			this.listGender2.TabIndex = 36;
-			this.listGender2.SelectionChangeCommitted += new System.EventHandler(this.ListBox_SelectionChangeCommitted);
+			this.listGender2.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
 			// 
 			// textFName2
 			// 
@@ -597,7 +598,7 @@ namespace OpenDental {
 			this.listGender3.Name = "listGender3";
 			this.listGender3.Size = new System.Drawing.Size(82, 43);
 			this.listGender3.TabIndex = 44;
-			this.listGender3.SelectionChangeCommitted += new System.EventHandler(this.ListBox_SelectionChangeCommitted);
+			this.listGender3.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
 			// 
 			// textFName3
 			// 
@@ -643,7 +644,7 @@ namespace OpenDental {
 			this.listGender4.Name = "listGender4";
 			this.listGender4.Size = new System.Drawing.Size(82, 43);
 			this.listGender4.TabIndex = 52;
-			this.listGender4.SelectionChangeCommitted += new System.EventHandler(this.ListBox_SelectionChangeCommitted);
+			this.listGender4.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
 			// 
 			// textFName4
 			// 
@@ -679,7 +680,7 @@ namespace OpenDental {
 			this.listGender5.Name = "listGender5";
 			this.listGender5.Size = new System.Drawing.Size(82, 43);
 			this.listGender5.TabIndex = 60;
-			this.listGender5.SelectionChangeCommitted += new System.EventHandler(this.ListBox_SelectionChangeCommitted);
+			this.listGender5.SelectedIndexChanged += new System.EventHandler(this.ListBox_SelectedIndexChanged);
 			// 
 			// textFName5
 			// 
@@ -852,7 +853,7 @@ namespace OpenDental {
 			this.comboSubscriber1.Name = "comboSubscriber1";
 			this.comboSubscriber1.Size = new System.Drawing.Size(198, 21);
 			this.comboSubscriber1.TabIndex = 0;
-			this.comboSubscriber1.SelectionChangeCommitted += new System.EventHandler(this.ComboBox_SelectionChangeCommitted);
+			this.comboSubscriber1.SelectionChangeCommitted += new System.EventHandler(this.ComboBox_SelectionChangeCommited);
 			// 
 			// labelSubscriber1
 			// 
@@ -1099,7 +1100,7 @@ namespace OpenDental {
 			this.comboSecProv2.Name = "comboSecProv2";
 			this.comboSecProv2.Size = new System.Drawing.Size(149, 21);
 			this.comboSecProv2.TabIndex = 171;
-			this.comboSecProv2.SelectionChangeCommitted += new System.EventHandler(this.ComboBox_SelectionChangeCommitted);
+			this.comboSecProv2.SelectionChangeCommitted += new System.EventHandler(this.ComboBox_SelectionChangeCommited);
 			// 
 			// comboPriProv2
 			// 
@@ -1107,7 +1108,7 @@ namespace OpenDental {
 			this.comboPriProv2.Name = "comboPriProv2";
 			this.comboPriProv2.Size = new System.Drawing.Size(149, 21);
 			this.comboPriProv2.TabIndex = 170;
-			this.comboPriProv2.SelectionChangeCommitted += new System.EventHandler(this.ComboBox_SelectionChangeCommitted);
+			this.comboPriProv2.SelectionChangeCommitted += new System.EventHandler(this.ComboBox_SelectionChangeCommited);
 			// 
 			// comboSecProv3
 			// 
@@ -1115,7 +1116,7 @@ namespace OpenDental {
 			this.comboSecProv3.Name = "comboSecProv3";
 			this.comboSecProv3.Size = new System.Drawing.Size(149, 21);
 			this.comboSecProv3.TabIndex = 173;
-			this.comboSecProv3.SelectionChangeCommitted += new System.EventHandler(this.ComboBox_SelectionChangeCommitted);
+			this.comboSecProv3.SelectionChangeCommitted += new System.EventHandler(this.ComboBox_SelectionChangeCommited);
 			// 
 			// comboPriProv3
 			// 
@@ -1123,7 +1124,7 @@ namespace OpenDental {
 			this.comboPriProv3.Name = "comboPriProv3";
 			this.comboPriProv3.Size = new System.Drawing.Size(149, 21);
 			this.comboPriProv3.TabIndex = 172;
-			this.comboPriProv3.SelectionChangeCommitted += new System.EventHandler(this.ComboBox_SelectionChangeCommitted);
+			this.comboPriProv3.SelectionChangeCommitted += new System.EventHandler(this.ComboBox_SelectionChangeCommited);
 			// 
 			// comboSecProv4
 			// 
@@ -1131,7 +1132,7 @@ namespace OpenDental {
 			this.comboSecProv4.Name = "comboSecProv4";
 			this.comboSecProv4.Size = new System.Drawing.Size(149, 21);
 			this.comboSecProv4.TabIndex = 175;
-			this.comboSecProv4.SelectionChangeCommitted += new System.EventHandler(this.ComboBox_SelectionChangeCommitted);
+			this.comboSecProv4.SelectionChangeCommitted += new System.EventHandler(this.ComboBox_SelectionChangeCommited);
 			// 
 			// comboPriProv4
 			// 
@@ -1139,7 +1140,7 @@ namespace OpenDental {
 			this.comboPriProv4.Name = "comboPriProv4";
 			this.comboPriProv4.Size = new System.Drawing.Size(149, 21);
 			this.comboPriProv4.TabIndex = 174;
-			this.comboPriProv4.SelectionChangeCommitted += new System.EventHandler(this.ComboBox_SelectionChangeCommitted);
+			this.comboPriProv4.SelectionChangeCommitted += new System.EventHandler(this.ComboBox_SelectionChangeCommited);
 			// 
 			// comboSecProv5
 			// 
@@ -1147,7 +1148,7 @@ namespace OpenDental {
 			this.comboSecProv5.Name = "comboSecProv5";
 			this.comboSecProv5.Size = new System.Drawing.Size(149, 21);
 			this.comboSecProv5.TabIndex = 177;
-			this.comboSecProv5.SelectionChangeCommitted += new System.EventHandler(this.ComboBox_SelectionChangeCommitted);
+			this.comboSecProv5.SelectionChangeCommitted += new System.EventHandler(this.ComboBox_SelectionChangeCommited);
 			// 
 			// comboPriProv5
 			// 
@@ -1155,7 +1156,7 @@ namespace OpenDental {
 			this.comboPriProv5.Name = "comboPriProv5";
 			this.comboPriProv5.Size = new System.Drawing.Size(149, 21);
 			this.comboPriProv5.TabIndex = 176;
-			this.comboPriProv5.SelectionChangeCommitted += new System.EventHandler(this.ComboBox_SelectionChangeCommitted);
+			this.comboPriProv5.SelectionChangeCommitted += new System.EventHandler(this.ComboBox_SelectionChangeCommited);
 			// 
 			// labelReferred
 			// 
@@ -1181,7 +1182,7 @@ namespace OpenDental {
 			// labelRequiredFields
 			// 
 			this.labelRequiredFields.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.labelRequiredFields.Location = new System.Drawing.Point(611, 729);
+			this.labelRequiredFields.Location = new System.Drawing.Point(511, 729);
 			this.labelRequiredFields.Name = "labelRequiredFields";
 			this.labelRequiredFields.Size = new System.Drawing.Size(180, 14);
 			this.labelRequiredFields.TabIndex = 51;
@@ -1217,7 +1218,7 @@ namespace OpenDental {
 			this.textAddrNotes.DetectUrls = false;
 			this.textAddrNotes.Location = new System.Drawing.Point(157, 552);
 			this.textAddrNotes.Name = "textAddrNotes";
-			this.textAddrNotes.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.PatAddressNote;
+			this.textAddrNotes.QuickPasteType = OpenDentBusiness.QuickPasteType.PatAddressNote;
 			this.textAddrNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textAddrNotes.Size = new System.Drawing.Size(275, 59);
 			this.textAddrNotes.TabIndex = 12;
@@ -1270,15 +1271,25 @@ namespace OpenDental {
 			this.textBirthdate1.Leave += new System.EventHandler(this.textBox_Leave);
 			this.textBirthdate1.Validated += new System.EventHandler(this.textBirthdate1_Validated);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(807, 723);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 16;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(719, 723);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 16;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(811, 723);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 17;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// textEmail1
 			// 
@@ -1288,7 +1299,6 @@ namespace OpenDental {
 			this.textEmail1.Size = new System.Drawing.Size(149, 20);
 			this.textEmail1.TabIndex = 185;
 			this.textEmail1.TextChanged += new System.EventHandler(this.textEmail1_TextChanged);
-			this.textEmail1.Leave += new System.EventHandler(this.textBox_Leave);
 			// 
 			// textEmail2
 			// 
@@ -1297,7 +1307,6 @@ namespace OpenDental {
 			this.textEmail2.Name = "textEmail2";
 			this.textEmail2.Size = new System.Drawing.Size(149, 20);
 			this.textEmail2.TabIndex = 186;
-			this.textEmail2.Leave += new System.EventHandler(this.textBox_Leave);
 			// 
 			// textEmail3
 			// 
@@ -1306,7 +1315,6 @@ namespace OpenDental {
 			this.textEmail3.Name = "textEmail3";
 			this.textEmail3.Size = new System.Drawing.Size(149, 20);
 			this.textEmail3.TabIndex = 187;
-			this.textEmail3.Leave += new System.EventHandler(this.textBox_Leave);
 			// 
 			// textEmail4
 			// 
@@ -1315,7 +1323,6 @@ namespace OpenDental {
 			this.textEmail4.Name = "textEmail4";
 			this.textEmail4.Size = new System.Drawing.Size(149, 20);
 			this.textEmail4.TabIndex = 188;
-			this.textEmail4.Leave += new System.EventHandler(this.textBox_Leave);
 			// 
 			// textEmail5
 			// 
@@ -1324,7 +1331,6 @@ namespace OpenDental {
 			this.textEmail5.Name = "textEmail5";
 			this.textEmail5.Size = new System.Drawing.Size(149, 20);
 			this.textEmail5.TabIndex = 189;
-			this.textEmail5.Leave += new System.EventHandler(this.textBox_Leave);
 			// 
 			// textSSN1
 			// 
@@ -1333,7 +1339,6 @@ namespace OpenDental {
 			this.textSSN1.Name = "textSSN1";
 			this.textSSN1.Size = new System.Drawing.Size(149, 20);
 			this.textSSN1.TabIndex = 200;
-			this.textSSN1.Leave += new System.EventHandler(this.textBox_Leave);
 			this.textSSN1.Validating += new System.ComponentModel.CancelEventHandler(this.textSSN_Validating);
 			// 
 			// textSSN2
@@ -1343,7 +1348,6 @@ namespace OpenDental {
 			this.textSSN2.Name = "textSSN2";
 			this.textSSN2.Size = new System.Drawing.Size(149, 20);
 			this.textSSN2.TabIndex = 201;
-			this.textSSN2.Leave += new System.EventHandler(this.textBox_Leave);
 			this.textSSN2.Validating += new System.ComponentModel.CancelEventHandler(this.textSSN_Validating);
 			// 
 			// textSSN3
@@ -1353,7 +1357,6 @@ namespace OpenDental {
 			this.textSSN3.Name = "textSSN3";
 			this.textSSN3.Size = new System.Drawing.Size(149, 20);
 			this.textSSN3.TabIndex = 202;
-			this.textSSN3.Leave += new System.EventHandler(this.textBox_Leave);
 			this.textSSN3.Validating += new System.ComponentModel.CancelEventHandler(this.textSSN_Validating);
 			// 
 			// textSSN4
@@ -1363,7 +1366,6 @@ namespace OpenDental {
 			this.textSSN4.Name = "textSSN4";
 			this.textSSN4.Size = new System.Drawing.Size(149, 20);
 			this.textSSN4.TabIndex = 203;
-			this.textSSN4.Leave += new System.EventHandler(this.textBox_Leave);
 			this.textSSN4.Validating += new System.ComponentModel.CancelEventHandler(this.textSSN_Validating);
 			// 
 			// textSSN5
@@ -1373,7 +1375,6 @@ namespace OpenDental {
 			this.textSSN5.Name = "textSSN5";
 			this.textSSN5.Size = new System.Drawing.Size(149, 20);
 			this.textSSN5.TabIndex = 204;
-			this.textSSN5.Leave += new System.EventHandler(this.textBox_Leave);
 			this.textSSN5.Validating += new System.ComponentModel.CancelEventHandler(this.textSSN_Validating);
 			// 
 			// listStatus1
@@ -1556,7 +1557,6 @@ namespace OpenDental {
 			this.textWirelessPhone1.Size = new System.Drawing.Size(149, 20);
 			this.textWirelessPhone1.TabIndex = 190;
 			this.textWirelessPhone1.TextChanged += new System.EventHandler(this.textWirelessPhone1_TextChanged);
-			this.textWirelessPhone1.Leave += new System.EventHandler(this.textBox_Leave);
 			// 
 			// textWirelessPhone2
 			// 
@@ -1565,7 +1565,6 @@ namespace OpenDental {
 			this.textWirelessPhone2.Name = "textWirelessPhone2";
 			this.textWirelessPhone2.Size = new System.Drawing.Size(149, 20);
 			this.textWirelessPhone2.TabIndex = 191;
-			this.textWirelessPhone2.Leave += new System.EventHandler(this.textBox_Leave);
 			// 
 			// textWirelessPhone3
 			// 
@@ -1574,7 +1573,6 @@ namespace OpenDental {
 			this.textWirelessPhone3.Name = "textWirelessPhone3";
 			this.textWirelessPhone3.Size = new System.Drawing.Size(149, 20);
 			this.textWirelessPhone3.TabIndex = 192;
-			this.textWirelessPhone3.Leave += new System.EventHandler(this.textBox_Leave);
 			// 
 			// textWirelessPhone4
 			// 
@@ -1583,7 +1581,6 @@ namespace OpenDental {
 			this.textWirelessPhone4.Name = "textWirelessPhone4";
 			this.textWirelessPhone4.Size = new System.Drawing.Size(149, 20);
 			this.textWirelessPhone4.TabIndex = 193;
-			this.textWirelessPhone4.Leave += new System.EventHandler(this.textBox_Leave);
 			// 
 			// textWirelessPhone5
 			// 
@@ -1592,7 +1589,6 @@ namespace OpenDental {
 			this.textWirelessPhone5.Name = "textWirelessPhone5";
 			this.textWirelessPhone5.Size = new System.Drawing.Size(149, 20);
 			this.textWirelessPhone5.TabIndex = 194;
-			this.textWirelessPhone5.Leave += new System.EventHandler(this.textBox_Leave);
 			// 
 			// labelTextOk
 			// 
@@ -1725,7 +1721,8 @@ namespace OpenDental {
 			this.Controls.Add(this.checkTextingY2);
 			this.Controls.Add(this.checkTextingN1);
 			this.Controls.Add(this.checkTextingY1);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.labelClinic);
 			this.Controls.Add(this.comboClinic5);
 			this.Controls.Add(this.comboClinic4);
@@ -1851,7 +1848,8 @@ namespace OpenDental {
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.TextBox textLName1;
 		private System.Windows.Forms.Label labelLName;
 		private System.Windows.Forms.TextBox textFName1;

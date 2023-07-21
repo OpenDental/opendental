@@ -24,7 +24,8 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrLabPanelEdit));
-			this.butSave = new System.Windows.Forms.Button();
+			this.butCancel = new System.Windows.Forms.Button();
+			this.butOk = new System.Windows.Forms.Button();
 			this.butDelete = new System.Windows.Forms.Button();
 			this.textRawMsg = new System.Windows.Forms.TextBox();
 			this.textLabName = new System.Windows.Forms.TextBox();
@@ -51,16 +52,27 @@
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(485, 560);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 2;
-			this.butSave.Text = "&Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(485, 560);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 1;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOk
+			// 
+			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOk.Location = new System.Drawing.Point(404, 560);
+			this.butOk.Name = "butOk";
+			this.butOk.Size = new System.Drawing.Size(75, 24);
+			this.butOk.TabIndex = 2;
+			this.butOk.Text = "OK";
+			this.butOk.UseVisualStyleBackColor = true;
+			this.butOk.Click += new System.EventHandler(this.butOk_Click);
 			// 
 			// butDelete
 			// 
@@ -291,7 +303,8 @@
 			this.Controls.Add(this.textLabName);
 			this.Controls.Add(this.textRawMsg);
 			this.Controls.Add(this.butDelete);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOk);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.gridMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrLabPanelEdit";
@@ -309,7 +322,8 @@
 		#endregion
 
 		private OpenDental.UI.GridOD gridMain;
-		private System.Windows.Forms.Button butSave;
+		private System.Windows.Forms.Button butCancel;
+		private System.Windows.Forms.Button butOk;
 		private System.Windows.Forms.Button butDelete;
 		private System.Windows.Forms.TextBox textRawMsg;
 		private System.Windows.Forms.TextBox textLabName;

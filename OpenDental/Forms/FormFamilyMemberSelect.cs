@@ -44,12 +44,13 @@ namespace OpenDental{
 		}
 
 		private void butOther_Click(object sender, System.EventArgs e) {
-			FrmPatientSelect frmPatientSelect=new FrmPatientSelect();
-			frmPatientSelect.ShowDialog();
-			if(frmPatientSelect.IsDialogCancel) {
+			using FormPatientSelect formPatientSelect=new FormPatientSelect();
+			formPatientSelect.IsSelectionModeOnly=true;
+			formPatientSelect.ShowDialog();
+			if(formPatientSelect.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			SelectedPatNum=frmPatientSelect.PatNumSelected;
+			SelectedPatNum=formPatientSelect.PatNumSelected;
 			DialogResult=DialogResult.OK;
 		}
 
@@ -62,5 +63,37 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

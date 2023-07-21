@@ -7,16 +7,16 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="448" Height="202" 
-             Text="Edit Appointment Rule" MinMaxBoxes="False">
+             Text="Edit Appointment Rule" Loaded="FrmApptRuleEdit_Loaded" >
     <Grid Background="#FFFCFDFE" >
-        <ui:TextBox x:Name="textRuleDesc" Width="297" Height="20" Margin="125,25,0,0" />
-        <ui:TextBox x:Name="textCodeStart" Width="113" Height="20" Margin="125,51,0,0" />
+        <ui:CheckBox x:Name="checkIsEnabled" Width="130" Height="21" Margin="11,103,0,0" Text="Is Enabled" CheckAlign="MiddleRight" />
         <ui:TextBox x:Name="textCodeEnd" Width="113" Height="20" Margin="125,77,0,0" />
-        <ui:CheckBox x:Name="checkIsEnabled" Width="130" Height="21" Margin="8,103,0,0" Text="Is Enabled" CheckAlign="MiddleRight" />
         <ui:Label x:Name="label3" Width="111" Height="20" Margin="12,76,0,0" Text="Code End" HAlign="Right" VAlign="Center" />
+        <ui:TextBox x:Name="textCodeStart" Width="113" Height="20" Margin="125,51,0,0" />
         <ui:Label x:Name="label2" Width="111" Height="20" Margin="12,50,0,0" Text="Code Start" HAlign="Right" VAlign="Center" />
+        <ui:TextBox x:Name="textRuleDesc" Width="297" Height="20" Margin="125,25,0,0" />
         <ui:Button x:Name="butDelete" Width="75" VerticalAlignment="Bottom" Height="26" Margin="23,0,0,18" Text="_Delete" Icon="DeleteX" Click="butDelete_Click" />
         <ui:Label x:Name="label1" Width="111" Height="20" Margin="12,24,0,0" Text="Description" HAlign="Right" VAlign="Center" />
-        <ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,26,18" Text="_Save" Click="butSave_Click"/>
+        <ui:Button x:Name="butOK" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,26,18" Text="_OK" Click="butOK_Click" />
     </Grid>
 </local:FrmODBase>

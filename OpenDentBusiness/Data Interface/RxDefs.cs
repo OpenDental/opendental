@@ -24,21 +24,21 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static void Update(RxDef rxDef) {
+		public static void Update(RxDef def) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),rxDef);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),def);
 				return;
 			}
-			Crud.RxDefCrud.Update(rxDef);
+			Crud.RxDefCrud.Update(def);
 		}
 
 		///<summary></summary>
-		public static long Insert(RxDef rxDef) {
+		public static long Insert(RxDef def) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				rxDef.RxDefNum=Meth.GetLong(MethodBase.GetCurrentMethod(),rxDef);
-				return rxDef.RxDefNum;
+				def.RxDefNum=Meth.GetLong(MethodBase.GetCurrentMethod(),def);
+				return def.RxDefNum;
 			}
-			return Crud.RxDefCrud.Insert(rxDef);
+			return Crud.RxDefCrud.Insert(def);
 		}
 
 		///<summary></summary>
@@ -48,35 +48,35 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Also deletes all RxAlerts that were attached.</summary>
-		public static void Delete(RxDef rxDef) {
+		public static void Delete(RxDef def) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),rxDef);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),def);
 				return;
 			}
-			string command="DELETE FROM rxalert WHERE RxDefNum="+POut.Long(rxDef.RxDefNum);
+			string command="DELETE FROM rxalert WHERE RxDefNum="+POut.Long(def.RxDefNum);
 			Db.NonQ(command);
-			command= "DELETE FROM rxdef WHERE RxDefNum = "+POut.Long(rxDef.RxDefNum);
+			command= "DELETE FROM rxdef WHERE RxDefNum = "+POut.Long(def.RxDefNum);
 			Db.NonQ(command);
 		}
 		
 		///<summary>Used to combine prescriptions by first adjusting the FKs on any necessary tables, then removing the prescription from the rxDef table.</summary>
-		public static void Combine(List<long> listRxDefNums,long rxDefNumPicked) {
-			if(listRxDefNums.Count<=1) {
+		public static void Combine(List<long> listRxNums,long pickedRxNum) {
+			if(listRxNums.Count<=1) {
 				return;//nothing to do
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listRxDefNums,rxDefNumPicked);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),listRxNums,pickedRxNum);
 				return;
 			}
-			for(int i=0;i<listRxDefNums.Count;i++) {
-				if(listRxDefNums[i]==rxDefNumPicked) {
+			for(int i=0;i<listRxNums.Count;i++) {
+				if(listRxNums[i]==pickedRxNum) {
 					continue;
 				}
-				string command="UPDATE rxalert SET RxDefNum="+POut.Long(rxDefNumPicked)+" "
-					+"WHERE RxDefNum="+POut.Long(listRxDefNums[i]);
+				string command="UPDATE rxalert SET RxDefNum="+POut.Long(pickedRxNum)+" "
+					+"WHERE RxDefNum="+POut.Long(listRxNums[i]);
 				Db.NonQ(command);
 				command="DELETE FROM rxdef "
-					+"WHERE RxDefNum="+POut.Long(listRxDefNums[i]);
+					+"WHERE RxDefNum="+POut.Long(listRxNums[i]);
 				Db.NonQ(command);
 			}
 		}

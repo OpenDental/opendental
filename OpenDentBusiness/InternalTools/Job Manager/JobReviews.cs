@@ -1,8 +1,6 @@
-using CodeBase;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -53,26 +51,6 @@ namespace OpenDentBusiness{
 			List<JobReview> listReviews=Crud.JobReviewCrud.SelectMany(command);
 			return listReviews;
 		}
-
-		public static List<JobReview> GetListForTeamReport(List<Job> listCachedReportJobs,List<Userod> listTeamMembers,DateTime dateFrom,DateTime dateTo) {
-			if(listTeamMembers.IsNullOrEmpty()) {
-				return new List<JobReview>();
-			}
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<JobReview>>(MethodBase.GetCurrentMethod(),listCachedReportJobs,listTeamMembers,dateFrom,dateTo);
-			}
-			string command=@$"
-				SELECT * FROM jobreview 
-				WHERE JobNum IN (
-					SELECT JobNum
-					FROM jobreview
-					WHERE ReviewerNum IN({POut.String(string.Join(",",listTeamMembers.Select(x => x.UserNum).ToList()))})
-					AND DateTStamp BETWEEN {POut.DateT(dateFrom)} AND {POut.DateT(dateTo)}
-				)
-				OR JobNum IN({POut.String(string.Join(",",listCachedReportJobs.Select(x => x.JobNum).ToList()))})";
-			return Crud.JobReviewCrud.SelectMany(command);
-		}
-
 
 		public static DataTable GetOutstandingForUser(long userNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

@@ -62,22 +62,21 @@ namespace OpenDental {
 					for(int i=0;i<listEhrCodes.Count;i++) {
 						listCodeDescripts.Add(listEhrCodes[i].CodeValue+" - "+listEhrCodes[i].Description);
 					}
-					InputBox inputBox=new InputBox(Lan.g(this,"Select the "+Enum.GetNames(typeof(EhrNotPerformedItem))[SelectedItemIndex]+" not being performed from the list below."),listCodeDescripts);
+					using InputBox chooseItem=new InputBox(Lan.g(this,"Select the "+Enum.GetNames(typeof(EhrNotPerformedItem))[SelectedItemIndex]+" not being performed from the list below."),listCodeDescripts);
 					if(SelectedItemIndex==(int)EhrNotPerformedItem.InfluenzaVaccination) {
 						//chooseItem.comboSelection.DropDownWidth=730;
 					}
-					inputBox.ShowDialog();
-					if(inputBox.IsDialogCancel) {
+					if(chooseItem.ShowDialog()!=DialogResult.OK) {
 						DialogResult=DialogResult.Cancel;
 						return;
 					}
-					if(inputBox.SelectedIndex==-1) {
+					if(chooseItem.comboSelection.SelectedIndex==-1) {
 						MsgBox.Show(this,"You must select the "+Enum.GetNames(typeof(EhrNotPerformedItem))[SelectedItemIndex]+" not being performed.");
 						DialogResult=DialogResult.Cancel;
 						return;
 					}
-					EhrNotPerfCur.CodeValue=listEhrCodes[inputBox.SelectedIndex].CodeValue;
-					EhrNotPerfCur.CodeSystem=listEhrCodes[inputBox.SelectedIndex].CodeSystem;
+					EhrNotPerfCur.CodeValue=listEhrCodes[chooseItem.comboSelection.SelectedIndex].CodeValue;
+					EhrNotPerfCur.CodeSystem=listEhrCodes[chooseItem.comboSelection.SelectedIndex].CodeSystem;
 				}
 			}
 			for(int i=0;i<listEhrCodes.Count;i++) {
@@ -246,7 +245,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.Cancel;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			//validate--------------------------------------
 			DateTime date;
 			if(textDate.Text=="") {
@@ -288,5 +287,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

@@ -13,7 +13,7 @@ namespace OpenDental {
 		}
 
 		private void FormAsapSetup_Load(object sender,EventArgs e) {
-			comboClinic.ClinicNumSelected=Clinics.ClinicNum;
+			comboClinic.SelectedClinicNum=Clinics.ClinicNum;
 			FillPrefs();
 		}
 
@@ -40,13 +40,13 @@ namespace OpenDental {
 			row=BuildRowForTemplate(PrefName.WebSchedAsapEmailSubj,"Web Sched Email Subject",baseVars);
 			gridMain.ListGridRows.Add(row);
 			gridMain.EndUpdate();
-			if(comboClinic.ClinicNumSelected==0) {//Default Clinic selected
+			if(comboClinic.SelectedClinicNum==0) {//Default Clinic selected
 				textWebSchedPerDay.Text=PrefC.GetString(PrefName.WebSchedAsapTextLimit);
 				checkAsapPromptEnabled.Checked=PrefC.GetBool(PrefName.AsapPromptEnabled);
 				checkUseDefaults.Checked=false;
 				return;
 			}
-			ClinicPref clinicPref=ClinicPrefs.GetPref(PrefName.WebSchedAsapTextLimit,comboClinic.ClinicNumSelected);
+			ClinicPref clinicPref=ClinicPrefs.GetPref(PrefName.WebSchedAsapTextLimit,comboClinic.SelectedClinicNum);
 			if(clinicPref==null || clinicPref.ValueString==null) {
 				textWebSchedPerDay.Text=PrefC.GetString(PrefName.WebSchedAsapTextLimit);
 			}
@@ -54,7 +54,7 @@ namespace OpenDental {
 				textWebSchedPerDay.Text=clinicPref.ValueString;
 				checkUseDefaults.Checked=false;
 			}
-			clinicPref=ClinicPrefs.GetPref(PrefName.AsapPromptEnabled,comboClinic.ClinicNumSelected);
+			clinicPref=ClinicPrefs.GetPref(PrefName.AsapPromptEnabled,comboClinic.SelectedClinicNum);
 			if(clinicPref==null || clinicPref.ValueString==null) {
 				checkAsapPromptEnabled.Checked=PrefC.GetBool(PrefName.AsapPromptEnabled);
 			}
@@ -68,12 +68,12 @@ namespace OpenDental {
 		private GridRow BuildRowForTemplate(PrefName prefName,string templateName,string availableVars) {
 			string templateText;
 			bool doShowDefault=false;
-			if(comboClinic.ClinicNumSelected==0) {
+			if(comboClinic.SelectedClinicNum==0) {
 				templateText=PrefC.GetString(prefName);
 				checkUseDefaults.Checked=false;
 			}
 			else {
-				ClinicPref clinicPref=ClinicPrefs.GetPref(prefName,comboClinic.ClinicNumSelected);
+				ClinicPref clinicPref=ClinicPrefs.GetPref(prefName,comboClinic.SelectedClinicNum);
 				if(clinicPref==null || clinicPref.ValueString==null) {
 					templateText=PrefC.GetString(prefName);
 					doShowDefault=true;
@@ -92,7 +92,7 @@ namespace OpenDental {
 		}
 
 		private void comboClinic_SelectedIndexChanged(object sender,EventArgs e) {
-			if(comboClinic.ClinicNumSelected==0) {
+			if(comboClinic.SelectedClinicNum==0) {
 				checkUseDefaults.Visible=false;
 			}
 			else {
@@ -112,7 +112,7 @@ namespace OpenDental {
 			};
 			if(checkUseDefaults.Checked) {
 				if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Delete custom templates for this clinic and switch to using defaults? This cannot be undone.")) {
-					ClinicPrefs.DeletePrefs(comboClinic.ClinicNumSelected,listPrefNames);
+					ClinicPrefs.DeletePrefs(comboClinic.SelectedClinicNum,listPrefNames);
 					DataValid.SetInvalid(InvalidType.ClinicPrefs);
 				}
 				else {
@@ -122,7 +122,7 @@ namespace OpenDental {
 			else {//Was checked, now user is unchecking it.
 				bool wasChanged=false;
 				for(int i=0;i<listPrefNames.Count;i++) {
-					if(ClinicPrefs.Upsert(listPrefNames[i],comboClinic.ClinicNumSelected,PrefC.GetString(listPrefNames[i]))) {
+					if(ClinicPrefs.Upsert(listPrefNames[i],comboClinic.SelectedClinicNum,PrefC.GetString(listPrefNames[i]))) {
 						wasChanged=true;
 					}
 				}
@@ -165,14 +165,14 @@ namespace OpenDental {
 				}
 				newPrefValue=frmRecallMessageEdit.MessageVal;
 			}
-			if(comboClinic.ClinicNumSelected==0) {
+			if(comboClinic.SelectedClinicNum==0) {
 				if(Prefs.UpdateString(prefName,newPrefValue) | Prefs.UpdateInt(PrefName.WebSchedAsapEmailTemplateType,(int)emailType)) {
 					DataValid.SetInvalid(InvalidType.Prefs);
 				}
 			}
 			else {
-				if(ClinicPrefs.Upsert(prefName,comboClinic.ClinicNumSelected,newPrefValue) 
-					| ClinicPrefs.Upsert(PrefName.WebSchedAsapEmailTemplate,comboClinic.ClinicNumSelected,((int)emailType).ToString())) 
+				if(ClinicPrefs.Upsert(prefName,comboClinic.SelectedClinicNum,newPrefValue) 
+					| ClinicPrefs.Upsert(PrefName.WebSchedAsapEmailTemplate,comboClinic.SelectedClinicNum,((int)emailType).ToString())) 
 				{
 					DataValid.SetInvalid(InvalidType.ClinicPrefs);
 				}
@@ -181,52 +181,48 @@ namespace OpenDental {
 		}
 
 		private string GetClinicPrefValue(PrefName prefName) {
-			if(comboClinic.ClinicNumSelected==0) {
+			if(comboClinic.SelectedClinicNum==0) {
 				return PrefC.GetString(prefName);
 			}
-			ClinicPref clinicPref=ClinicPrefs.GetPref(prefName,comboClinic.ClinicNumSelected);
+			ClinicPref clinicPref=ClinicPrefs.GetPref(prefName,comboClinic.SelectedClinicNum);
 			if(clinicPref==null || string.IsNullOrEmpty(clinicPref.ValueString)) {
 				return PrefC.GetString(prefName);
 			}
 			return clinicPref.ValueString;
 		}
 
-		private void textWebSchedPerDaySave() {
+		private void textWebSchedPerDay_Leave(object sender,EventArgs e) {
 			if(!textWebSchedPerDay.IsValid()) {
 				return;
 			}
-			if(comboClinic.ClinicNumSelected==0) {
+			if(comboClinic.SelectedClinicNum==0) {
 				if(Prefs.UpdateString(PrefName.WebSchedAsapTextLimit,textWebSchedPerDay.Text)) {
 					DataValid.SetInvalid(InvalidType.Prefs);
 				}
 			}
 			else {
-				if(ClinicPrefs.Upsert(PrefName.WebSchedAsapTextLimit,comboClinic.ClinicNumSelected,textWebSchedPerDay.Text)) {
+				if(ClinicPrefs.Upsert(PrefName.WebSchedAsapTextLimit,comboClinic.SelectedClinicNum,textWebSchedPerDay.Text)) {
 					DataValid.SetInvalid(InvalidType.ClinicPrefs);
 				}
 			}
 		}
+
 		private void checkAsapPromptEnabled_Click(object sender,EventArgs e) {
-			if(comboClinic.ClinicNumSelected==0) {
+			if(comboClinic.SelectedClinicNum==0) {
 				if(Prefs.UpdateBool(PrefName.AsapPromptEnabled,checkAsapPromptEnabled.Checked)) {
 					DataValid.SetInvalid(InvalidType.Prefs);
 				}
 			}
 			else {
-				if(ClinicPrefs.Upsert(PrefName.AsapPromptEnabled,comboClinic.ClinicNumSelected,POut.Bool(checkAsapPromptEnabled.Checked))) {
+				if(ClinicPrefs.Upsert(PrefName.AsapPromptEnabled,comboClinic.SelectedClinicNum,POut.Bool(checkAsapPromptEnabled.Checked))) {
 					DataValid.SetInvalid(InvalidType.ClinicPrefs);
 				}
 			}
 		}
 
-		private void textWebSchedPerDay_Validating(object sender,System.ComponentModel.CancelEventArgs e) {
-			//For when switching clinics
-			textWebSchedPerDaySave();
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 
-		private void FormAsapSetup_FormClosing(object sender,FormClosingEventArgs e) {
-			//Validating event doesn't fire when closing form
-			textWebSchedPerDaySave();
-		}
 	}
 }

@@ -105,18 +105,19 @@ namespace OpenDentBusiness{
 			string command="UPDATE supply SET ItemOrder=(ItemOrder+"+countMove.ToString()+") WHERE SupplyNum IN("
 				+String.Join(",",listSupplyNums.ConvertAll(x=>x.ToString()))+")";
 			Db.NonQ(command);
+
 		}
 
 		///<summary>Uses single query to add one to each supply.ItemOrder that has an itemOrder >= than specified.</summary>
-		public static void OrderAddOneGreater(int itemOrder,long category,long supplyNumExclude){
+		public static void OrderAddOneGreater(int itemOrder,long category,long excludeSupplyNum){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),itemOrder,category,supplyNumExclude);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),itemOrder,category,excludeSupplyNum);
 				return;
 			}
 			string command="UPDATE supply SET ItemOrder=(ItemOrder+1) "
 				+"WHERE ItemOrder >= "+POut.Int(itemOrder)
 				+" AND Category="+POut.Long(category)
-				+" AND SupplyNum !="+POut.Long(supplyNumExclude);
+				+" AND SupplyNum !="+POut.Long(excludeSupplyNum);
 			Db.NonQ(command);
 		}
 
@@ -135,3 +136,12 @@ namespace OpenDentBusiness{
 		}
 	}
 }
+
+
+
+
+
+
+
+
+

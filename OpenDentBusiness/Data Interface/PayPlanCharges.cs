@@ -20,15 +20,11 @@ namespace OpenDentBusiness{
 			//E.g. there are several procedures attached to the payment plan and the down payment only covers one and a half (partial proc).
 			terms.PeriodPayment=(decimal)terms.DownPayment;
 			terms.APR=0;//downpayments should pay on principal only
-			DateTime downPaymentChargeDate=DateTime.Today;//The chargeDate for the downpayment.
-			if(terms.DateFirstPayment<downPaymentChargeDate) {//If Date of First Payment was backdated, we need to use that date for the Down Payment.
-				downPaymentChargeDate=terms.DateFirstPayment;
-			}
 			List<PayPlanCharge> listDownPayments=PayPlanEdit.GetListExpectedCharges(new List<PayPlanCharge>(),terms,family,listPayPlanLinks,payplan,true
 				,true,new List<PaySplit>());
 			listDownPayments.ForEach(x => {
 				x.Note="Down Payment";
-				x.ChargeDate=downPaymentChargeDate;
+				x.ChargeDate=DateTime.Today.Date;
 				x.Interest=0;
 			});
 			//Put the PeriodPayment back to the way it was upon entry.
@@ -46,19 +42,6 @@ namespace OpenDentBusiness{
 				"SELECT * FROM payplancharge "
 				+"WHERE PayPlanNum="+POut.Long(payPlanNum)
 				+" ORDER BY ChargeDate";
-			return Crud.PayPlanChargeCrud.SelectMany(command);
-		}
-
-		///<summary>Gets all payplancharges for a specific payment plan for the API.</summary>
-		public static List<PayPlanCharge> GetPayPlanChargesForApi(int limit,int offset,long payPlanNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<PayPlanCharge>>(MethodBase.GetCurrentMethod(),limit,offset,payPlanNum);
-			}
-			string command=
-				"SELECT * FROM payplancharge "
-				+"WHERE PayPlanNum="+POut.Long(payPlanNum)+" "
-				+"ORDER BY PayPlanChargeNum "
-				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
 			return Crud.PayPlanChargeCrud.SelectMany(command);
 		}
 
@@ -301,20 +284,6 @@ namespace OpenDentBusiness{
 			#endregion
 		}
 
-		///<summary>Takes an insurance payplan and updates all payplancharge credits associated to it to match the completed amount on the payplan. Every insurance payplan should only have 1 PayPlanCharge of type Credit. The payplan passed in should have the correct CompletedAmt.</summary>
-		public static void UpdateInsPlanPayPlanCharges(PayPlan payplan) {
-			if(payplan==null || payplan.PayPlanNum==0 || payplan.InsSubNum==0) { 
-				return; 
-			}
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),payplan);
-				return;
-			}
-			string command=$"UPDATE payplancharge SET Principal={POut.Double(payplan.CompletedAmt)} " +
-				$"WHERE PayPlanNum={POut.Long(payplan.PayPlanNum)} AND ChargeType={POut.Enum(PayPlanChargeType.Credit)}";
-			Db.NonQ(command);
-		}
-
 		///<summary></summary>
 		public static void Update(PayPlanCharge charge){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -322,15 +291,6 @@ namespace OpenDentBusiness{
 				return;
 			}
 			Crud.PayPlanChargeCrud.Update(charge);
-		}
-
-		///<summary></summary>
-		public static void Update(PayPlanCharge payPlanCharge,PayPlanCharge payPlanChargeOld){
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),payPlanCharge,payPlanChargeOld);
-				return;
-			}
-			Crud.PayPlanChargeCrud.Update(payPlanCharge,payPlanChargeOld);
 		}
 
 		///<summary>Inserts, updates, or deletes database rows to match supplied list.  Must always pass in payPlanNum.</summary>
@@ -374,8 +334,6 @@ namespace OpenDentBusiness{
 			//Do not allow deleting debits.
 			List<PayPlanCharge> lisPayPlanChargesCredits=listCharges.FindAll(x => x.ChargeType==PayPlanChargeType.Credit);
 			listPayPlanChargeNumsPreserve.AddRange(lisPayPlanChargesCredits.Select(x => x.PayPlanChargeNum));
-			//Block deleting down payments.
-			listPayPlanChargeNumsPreserve.AddRange(listCharges.FindAll(x=>x.Note.ToLower().Contains("down payment")).Select(x=>x.PayPlanChargeNum));
 			//Actually delete the charges from the database if calling method requests it.
 			if(doDelete) {
 				List<PayPlanCharge> listPayPlanChargesToDelete=listCharges.FindAll(x => !listPayPlanChargeNumsPreserve.Contains(x.PayPlanChargeNum));

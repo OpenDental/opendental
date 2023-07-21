@@ -57,6 +57,7 @@ namespace OpenDental {
 			}
 			else{
 				butOK.Visible=false;
+				butCancel.Text="Close";
 			}
 			comboCategories.IncludeAll=true;
 			comboCategories.Items.AddDefs(Defs.GetDefsForCategory(DefCat.SupplyCats,true));//not showing hidden categories
@@ -508,7 +509,7 @@ namespace OpenDental {
 					supplyOrder.DatePlaced=new DateTime(2500,1,1); //date used for new 'pending' orders. 
 					supplyOrder.Note="";
 					supplyOrder.UserNum=Security.CurUser.UserNum;
-					SecurityLogs.MakeLogEntry(EnumPermType.SupplyPurchases,patNum:0,"New Order Added.");
+					SecurityLogs.MakeLogEntry(Permissions.SupplyPurchases,patNum:0,"New Order Added.");
 					supplyOrder.SupplyOrderNum=SupplyOrders.Insert(supplyOrder);
 					listSupplyOrders.Add(supplyOrder);
 				}
@@ -543,7 +544,7 @@ namespace OpenDental {
 					supplyOrder.DatePlaced=new DateTime(2500,1,1); //date used for new 'pending' orders. 
 					supplyOrder.Note="";
 					supplyOrder.UserNum=Security.CurUser.UserNum;
-					SecurityLogs.MakeLogEntry(EnumPermType.SupplyPurchases,patNum:0,"New Order Added.");
+					SecurityLogs.MakeLogEntry(Permissions.SupplyPurchases,patNum:0,"New Order Added.");
 					supplyOrder.SupplyOrderNum=SupplyOrders.Insert(supplyOrder);
 					listSupplyOrders.Add(supplyOrder);
 				}
@@ -612,10 +613,16 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 
 		private void FormSupplies_FormClosing(object sender,FormClosingEventArgs e) {
 			timerFillGrid?.Dispose();//Dispose of the timer if it is not null.
 		}
+
+
+
 
 	}
 }

@@ -57,6 +57,10 @@ namespace OpenDental {
 				;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void butRunCheck_Click(object sender,EventArgs e) {
 			Cursor=Cursors.WaitCursor;
 			Application.DoEvents();

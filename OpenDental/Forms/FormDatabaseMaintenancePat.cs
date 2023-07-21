@@ -58,7 +58,7 @@ namespace OpenDental {
 			FillGridOld();
 			FillGridHidden();
 			try {
-				_isUsingReplication=PrefC.GetBool(PrefName.DatabaseGlobalVariablesDontSet) || ReplicationServers.IsUsingReplication();
+				_isUsingReplication=ReplicationServers.IsUsingReplication();
 			}
 			catch {
 				_hasReplicationPermission=false;
@@ -229,40 +229,19 @@ namespace OpenDental {
 					" At least one dbm method is not safe to run when replication is enabled. Unsafe methods will be skipped.");
 				return;
 			}
-			if(PrefC.GetBool(PrefName.DatabaseGlobalVariablesDontSet)) {
-				InputBoxParam inputBoxParam=new InputBoxParam();
-				inputBoxParam.InputBoxType_=InputBoxType.CheckBox;
-				inputBoxParam.LabelText="Replication might be enabled. Running unsafe replication methods may cause database damage. Additional steps must be taken before running unsafe database methods.";
-				inputBoxParam.Text="I have taken the special published process provided by the software support team.";
-				inputBoxParam.SizeParam=new System.Windows.Size(400,40);
-				InputBox inputBox=new InputBox(inputBoxParam);
-				inputBox.SetTitle("Replication Warning");
-				inputBox.ShowDialog();
-				if(inputBox.IsDialogCancel){
-					return;
-				}
-				if(!inputBox.BoolResult) {
-					return;
-				}
+			if(!MsgBox.Show(MsgBoxButtons.YesNo,"At least one dbm method is not safe to run when replication is enabled. Would you like to continue?")) {
+				return;
 			}
-			else {
-				if(!MsgBox.Show(MsgBoxButtons.YesNo,"At least one dbm method is not safe to run when replication is enabled. Would you like to continue?")) {
-					return;
-				}
-				InputBoxParam inputBoxParam=new InputBoxParam();
-				inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-				inputBoxParam.LabelText="Please enter password";
-				//inputBoxParam.IsPassswordCharStar=true;//silly to hide this password
-				InputBox inputBox=new InputBox(inputBoxParam);
-				inputBox.SetTitle("Run Replication Unsafe DBMs");
-				inputBox.ShowDialog();
-				if(inputBox.IsDialogCancel) {
-					return;
-				}
-				if(inputBox.StringResult!="abracadabra") {
-					MsgBox.Show(this,"Wrong password");
-					return;
-				}
+			using InputBox inputBox=new InputBox("Please enter password");
+			inputBox.setTitle("Run Replication Unsafe DBMs");
+			inputBox.textResult.PasswordChar='*';
+			inputBox.ShowDialog();
+			if(inputBox.DialogResult!=DialogResult.OK) {
+				return;
+			}
+			if(inputBox.textResult.Text!="abracadabra") {
+				MsgBox.Show(this,"Wrong password");
+				return;
 			}
 			_isReplicationPasswordEntered=true;
 		}
@@ -334,7 +313,6 @@ namespace OpenDental {
 		///<summary>Tries to log the text passed in to a centralized DBM log.  Displays an error message to the user if anything goes wrong.
 		///Always sets the current Cursor state back to Cursors.Default once finished.</summary>
 		private void SaveLogToFile(string logText) {
-			logText="Database Maintenance for Patient - Results: \r\n"+logText;
 			try {
 				DatabaseMaintenances.SaveLogToFile(logText);
 			}
@@ -346,12 +324,13 @@ namespace OpenDental {
 		}
 
 		private void butPatientSelect_Click(object sender,EventArgs e) {
-			FrmPatientSelect frmPatientSelect=new FrmPatientSelect();
-			frmPatientSelect.ShowDialog();
-			if(frmPatientSelect.IsDialogCancel) {
+			using FormPatientSelect formPatientSelect=new FormPatientSelect();
+			formPatientSelect.IsSelectionModeOnly=true;
+			formPatientSelect.ShowDialog();
+			if(formPatientSelect.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			_patNum=frmPatientSelect.PatNumSelected;
+			_patNum=formPatientSelect.PatNumSelected;
 			UpdateTextPatient();
 		}
 
@@ -408,6 +387,11 @@ namespace OpenDental {
 			MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(strResult);
 			Cursor=Cursors.Default;
 			msgBoxCopyPaste.Show();//Let this window be non-modal so that they can keep it open while they fix their problems.
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+			Close();
 		}
 
 		private void FormDatabaseMaintenancePat_FormClosing(object sender,FormClosingEventArgs e) {

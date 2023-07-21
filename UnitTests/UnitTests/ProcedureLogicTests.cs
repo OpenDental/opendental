@@ -38,7 +38,7 @@ namespace UnitTests.ProcedureLogic_Test {
 			Procedure labProc2B=ProcedureT.CreateProcedure(pat,"99111",ProcStat.TP,"",15.00,parentProc2.ProcDate,procNumLab:parentProc2.ProcNum);
 			listProcs.Add(labProc2B);
 			Procedure randomProcedure=ProcedureT.CreateProcedure(pat,"01101",ProcStat.TP,"",105.00);
-			ProcedureLogic.SortProcedures(listProcs);
+			ProcedureLogic.SortProcedures(ref listProcs);
 			//Get the indexes of all of the parent procedures and their corresponding labs.
 			int parentProcIndex=listProcs.FindIndex(x => x==parentProc);
 			int labProcIndex=listProcs.FindIndex(x => x==labProc);
@@ -69,7 +69,7 @@ namespace UnitTests.ProcedureLogic_Test {
 			listProcs.Add(labProc);
 			Procedure labProc2=ProcedureT.CreateProcedure(pat,"99222",ProcStat.TP,"6", 120.00,parentProc2.ProcDate,priority:0,0,0,0,0,"",parentProc2.ProcNum);
 			listProcs.Add(labProc2);
-			ProcedureLogic.SortProcedures(listProcs);
+			ProcedureLogic.SortProcedures(ref listProcs);
 
 			int parentProcIndex=listProcs.FindIndex(x => x==parentProc);
 			int labProcIndex=listProcs.FindIndex(x => x==labProc);
@@ -93,7 +93,7 @@ namespace UnitTests.ProcedureLogic_Test {
 			listProcs.Add(parentProc);
 			Procedure labProc=ProcedureT.CreateProcedure(pat,"99333",ProcStat.C,"4", 200.00,parentProc.ProcDate,priority:2,0,0,0,0,"",parentProc.ProcNum);
 			listProcs.Add(labProc);
-			ProcedureLogic.SortProcedures(listProcs);
+			ProcedureLogic.SortProcedures(ref listProcs);
 
 			int parentProcIndex=listProcs.FindIndex(x => x==parentProc);
 			int labProcIndex=listProcs.FindIndex(x => x==labProc);
@@ -115,7 +115,7 @@ namespace UnitTests.ProcedureLogic_Test {
 			listProcs.Add(parentProc);
 			Procedure labProc=ProcedureT.CreateProcedure(pat,"99333",ProcStat.C,"4", 200.00,parentProc.ProcDate,priority:0,0,0,0,0,"",parentProc.ProcNum);
 			listProcs.Add(labProc);
-			ProcedureLogic.SortProcedures(listProcs);
+			ProcedureLogic.SortProcedures(ref listProcs);
 
 			int parentProcIndex=listProcs.FindIndex(x => x==parentProc);
 			int labProcIndex=listProcs.FindIndex(x => x==labProc);
@@ -137,7 +137,7 @@ namespace UnitTests.ProcedureLogic_Test {
 			listProcs.Add(parentProc);
 			Procedure labProc=ProcedureT.CreateProcedure(pat,"99333",ProcStat.C,"4", 200.00,DateTime.Now.AddDays(5),priority:0,0,0,0,0,"",parentProc.ProcNum);
 			listProcs.Add(labProc);
-			ProcedureLogic.SortProcedures(listProcs);
+			ProcedureLogic.SortProcedures(ref listProcs);
 
 			int parentProcIndex=listProcs.FindIndex(x => x==parentProc);
 			int labProcIndex=listProcs.FindIndex(x => x==labProc);

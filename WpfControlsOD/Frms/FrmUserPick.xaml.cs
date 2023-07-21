@@ -31,13 +31,10 @@ namespace OpenDental {
 
 		public FrmUserPick() {
 			InitializeComponent();
-			Load+=FrmUserPick_Load;
-			listUser.MouseDoubleClick+=listUser_DoubleClick;
-			PreviewKeyDown+=FrmUserPick_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmUserPick_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmUserPick_Loaded(object sender,RoutedEventArgs e) {
 			if(!IsShowAllAllowed || ListUserodsFiltered==null || ListUserodsFiltered.Count<=0) {
 				butShow.Visible=false;
 			}
@@ -65,11 +62,11 @@ namespace OpenDental {
 			listUser.SelectedIndex=listUserods.FindIndex(x => x.UserNum==UserNumSuggested);
 		}
 
-		private void listUser_DoubleClick(object sender,MouseButtonEventArgs e) {
+		private void listUser_DoubleClick(object sender,EventArgs e) {
 			if(listUser.SelectedIndex==-1) {
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.TaskEdit,true) && Userods.GetInbox(listUser.GetSelected<Userod>().UserNum)!=0 && !IsSelectionMode) {
+			if(!Security.IsAuthorized(Permissions.TaskEdit,true) && Userods.GetInbox(listUser.GetSelected<Userod>().UserNum)!=0 && !IsSelectionMode) {
 				MsgBox.Show(this,"Please select a user that does not have an inbox.");
 				return;
 			}
@@ -77,18 +74,12 @@ namespace OpenDental {
 			IsDialogOK=true;
 		}
 
-		private void FrmUserPick_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butOK.IsAltKey(Key.O,e)) {
-				butOK_Click(this,new EventArgs());
-			}
-		}
-
 		private void butOK_Click(object sender,EventArgs e) {
 			if(listUser.SelectedIndex==-1) {
 				MsgBox.Show(this,"Please pick a user first.");
 				return;
 			}
-			if(!IsSelectionMode && !Security.IsAuthorized(EnumPermType.TaskEdit,true) && Userods.GetInbox(listUser.GetSelected<Userod>().UserNum)!=0) {
+			if(!IsSelectionMode && !Security.IsAuthorized(Permissions.TaskEdit,true) && Userods.GetInbox(listUser.GetSelected<Userod>().UserNum)!=0) {
 				MsgBox.Show(this,"Please select a user that does not have an inbox.");
 				return;
 			}
@@ -121,6 +112,5 @@ namespace OpenDental {
 			Text="Show All";
 			FillList(ListUserodsFiltered);
 		}
-
 	}
 }

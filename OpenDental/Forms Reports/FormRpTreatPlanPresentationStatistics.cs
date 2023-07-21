@@ -37,6 +37,10 @@ namespace OpenDental {
 				listClin.Visible=false;
 				checkAllClinics.Visible=false;
 				labelClin.Visible=false;
+				groupGrossNet.Location=new Point(185,225);
+				groupOrder.Location=new Point(185,295);
+				groupUser.Location=new Point(185,365);
+				listUser.Width+=30;
 			}
 		}
 
@@ -157,6 +161,11 @@ namespace OpenDental {
 			}
 			RunReport();
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 
 	}
 }

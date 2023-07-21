@@ -1063,7 +1063,7 @@ namespace SparksToothChart {
 				if(ListPerioMeasure[i].IntTooth!=intTooth) {
 					continue;
 				}
-				if(ListPerioMeasure[i].SequenceType!=PerioSequenceType.BleedSupPlaqCalc) {
+				if(ListPerioMeasure[i].SequenceType!=PerioSequenceType.Bleeding) {
 					continue;
 				}
 				switch(surf) {

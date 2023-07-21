@@ -24,30 +24,30 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary></summary>
-		public static void Update(RxAlert rxAlert) {
+		public static void Update(RxAlert alert) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),rxAlert);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),alert);
 				return;
 			}
-			Crud.RxAlertCrud.Update(rxAlert);
+			Crud.RxAlertCrud.Update(alert);
 		}
 
 		///<summary></summary>
-		public static long Insert(RxAlert rxAlert) {
+		public static long Insert(RxAlert alert) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				rxAlert.RxAlertNum=Meth.GetLong(MethodBase.GetCurrentMethod(),rxAlert);
-				return rxAlert.RxAlertNum;
+				alert.RxAlertNum=Meth.GetLong(MethodBase.GetCurrentMethod(),alert);
+				return alert.RxAlertNum;
 			}
-			return Crud.RxAlertCrud.Insert(rxAlert);
+			return Crud.RxAlertCrud.Insert(alert);
 		}
 
 		///<summary></summary>
-		public static void Delete(RxAlert rxAlert) {
+		public static void Delete(RxAlert alert) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),rxAlert);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),alert);
 				return;
 			}
-			string command="DELETE FROM rxalert WHERE RxAlertNum ="+POut.Long(rxAlert.RxAlertNum);
+			string command="DELETE FROM rxalert WHERE RxAlertNum ="+POut.Long(alert.RxAlertNum);
 			Db.NonQ(command);
 		}
 	}

@@ -884,7 +884,7 @@ namespace OpenDental {
 		}
 
 		private void ButPatPayPlan_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.PayPlanEdit)) {
+			if(!Security.IsAuthorized(Permissions.PayPlanEdit)) {
 				return;
 			}
 			if(_payPlanPatient!=null) {
@@ -1001,7 +1001,7 @@ namespace OpenDental {
 			OrthoPlanLinks.Update(_orthoPlanLinkSchedule,_orthoPlanLinkScheduleOld);
 		}
 
-		private void ButSave_Click(object sender,EventArgs e) {
+		private void ButOK_Click(object sender,EventArgs e) {
 			if(HasErrors()) {
 				return;
 			}
@@ -1065,10 +1065,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void FormOrthoCase_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult!=DialogResult.Cancel) {
-				return;
-			}
+		private void ButCancel_Click(object sender,EventArgs e) {
 			if(_isNew && _payPlanPatient!=null) {
 				try {
 					if(MsgBox.Show(this,MsgBoxButtons.YesNo,"You are canceling a new ortho case. Do you want to delete the payment plan associated to it?")) {
@@ -1080,6 +1077,7 @@ namespace OpenDental {
 					return;
 				}
 			}
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

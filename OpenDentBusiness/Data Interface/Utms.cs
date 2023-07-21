@@ -27,29 +27,31 @@ namespace OpenDentBusiness{
 		//}
 
 		///<summary>Gets one Utm from the db or inserts a row if it doesn't exist.</summary>
-		public static long GetOrInsert(string campaignName="",string mediumInfo="",string sourceInfo="") {
+		public static long GetOrInsert(string CampaignName="",string MediumInfo="",string SourceInfo="") {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetLong(MethodBase.GetCurrentMethod(),campaignName,mediumInfo,sourceInfo);
+				return Meth.GetLong(MethodBase.GetCurrentMethod(),CampaignName,MediumInfo,SourceInfo);
 			}
-			if(string.IsNullOrEmpty(campaignName) 
-				&& string.IsNullOrEmpty(mediumInfo)
-				&& string.IsNullOrEmpty(sourceInfo))
+			if(string.IsNullOrEmpty(CampaignName) 
+				&& string.IsNullOrEmpty(MediumInfo)
+				&& string.IsNullOrEmpty(SourceInfo))
 			{
 				throw new ODException(Lans.g("Utm","Must have at least one string parameter that is not empty."));
 			}
 			string command="SELECT UtmNum FROM utm" +
-				" WHERE CampaignName='"+POut.String(campaignName)+"'"+
-				" AND MediumInfo='"+POut.String(mediumInfo)+"'"+
-				" AND SourceInfo='"+POut.String(sourceInfo)+"'";
-			long utmNum=Db.GetLong(command);
-			if(utmNum!=0) {
-				return utmNum;
+				" WHERE CampaignName='"+POut.String(CampaignName)+"'"+
+				" AND MediumInfo='"+POut.String(MediumInfo)+"'"+
+				" AND SourceInfo='"+POut.String(SourceInfo)+"'";
+			long primaryKey=Db.GetLong(command);
+			if(primaryKey==0) {
+				Utm utm=new Utm();
+				utm.CampaignName=CampaignName;
+				utm.MediumInfo=MediumInfo;
+				utm.SourceInfo=SourceInfo;
+				return Crud.UtmCrud.Insert(utm);
 			}
-			Utm utm=new Utm();
-			utm.CampaignName=campaignName;
-			utm.MediumInfo=mediumInfo;
-			utm.SourceInfo=sourceInfo;
-			return Crud.UtmCrud.Insert(utm);
+			else {
+				return primaryKey;
+			}
 		}
 		#endregion Methods - Get
 		#region Methods - Modify

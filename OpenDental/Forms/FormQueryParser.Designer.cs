@@ -29,6 +29,7 @@ namespace OpenDental{
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.splitContainer = new OpenDental.UI.SplitContainer();
 			this.splitterPanel1 = new OpenDental.UI.SplitterPanel();
 			this.splitterPanel2 = new OpenDental.UI.SplitterPanel();
@@ -49,7 +50,7 @@ namespace OpenDental{
 			this.textQuery.HideSelection = false;
 			this.textQuery.Location = new System.Drawing.Point(3, 19);
 			this.textQuery.Name = "textQuery";
-			this.textQuery.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Query;
+			this.textQuery.QuickPasteType = OpenDentBusiness.QuickPasteType.Query;
 			this.textQuery.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textQuery.Size = new System.Drawing.Size(787, 388);
 			this.textQuery.TabIndex = 1;
@@ -97,13 +98,24 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(730, 646);
+			this.butOK.Location = new System.Drawing.Point(649, 646);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 23);
 			this.butOK.TabIndex = 4;
 			this.butOK.Text = "&OK";
 			this.butOK.UseVisualStyleBackColor = true;
 			this.butOK.Click += new System.EventHandler(this.butOk_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(730, 646);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 23);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// splitContainer
 			// 
@@ -145,6 +157,7 @@ namespace OpenDental{
 			this.ClientSize = new System.Drawing.Size(817, 681);
 			this.Controls.Add(this.splitContainer);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormQueryParser";
 			this.Text = "Query Variables";
@@ -161,6 +174,7 @@ namespace OpenDental{
 
 		private UI.GridOD gridMain;
 		private OpenDental.ODtextBox textQuery;
+		private UI.Button butCancel;
 		private System.Windows.Forms.Label label1;
 		private UI.Button butOK;
 		private UI.Button butShowHide;

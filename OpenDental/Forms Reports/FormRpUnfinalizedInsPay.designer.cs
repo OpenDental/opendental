@@ -25,6 +25,7 @@ namespace OpenDental {
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpUnfinalizedInsPay));
+			this.butClose = new OpenDental.UI.Button();
 			this.labelType = new System.Windows.Forms.Label();
 			this.comboBoxMultiType = new OpenDental.UI.ComboBox();
 			this.gridMain = new OpenDental.UI.GridOD();
@@ -44,6 +45,16 @@ namespace OpenDental {
 			this.contextMenuStrip1.SuspendLayout();
 			this.groupBoxFilter.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(894, 463);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// labelType
 			// 
@@ -198,7 +209,7 @@ namespace OpenDental {
 			this.comboClinics.IncludeUnassigned = true;
 			this.comboClinics.Location = new System.Drawing.Point(240, 18);
 			this.comboClinics.Name = "comboClinics";
-			this.comboClinics.IsMultiSelect = true;
+			this.comboClinics.SelectionModeMulti = true;
 			this.comboClinics.Size = new System.Drawing.Size(200, 21);
 			this.comboClinics.TabIndex = 110;
 			this.comboClinics.SelectionChangeCommitted += new System.EventHandler(this.ComboClinics_SelectionChangeCommitted);
@@ -211,6 +222,7 @@ namespace OpenDental {
 			this.Controls.Add(this.butExport);
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormRpUnfinalizedInsPay";
 			this.Text = "Unfinalized Insurance Payment";
@@ -223,6 +235,7 @@ namespace OpenDental {
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label labelType;
 		private UI.ComboBox comboBoxMultiType;
 		private UI.GridOD gridMain;

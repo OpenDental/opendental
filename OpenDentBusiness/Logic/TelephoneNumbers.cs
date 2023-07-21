@@ -8,23 +8,24 @@ using System.Text.RegularExpressions;
 namespace OpenDentBusiness {
 	public class TelephoneNumbers {
 		///<summary>Formatting is only allowed when computer is set to en-US, en-CA, or fr-CA.</summary>
-		public static bool IsFormattingAllowed() {
-			return (CultureInfo.CurrentCulture.Name=="en-US" || CultureInfo.CurrentCulture.Name.EndsWith("CA"));
+		public static bool IsFormattingAllowed {
+			get {
+				return (CultureInfo.CurrentCulture.Name=="en-US" || CultureInfo.CurrentCulture.Name.EndsWith("CA"));
+			}
 		}
 
 		///<summary>Returns true if the phone number is a valid format.  The number passed in can contain formating.  Will strip out formatting of the passed in phone number.  Phone number will be considered invalid if a '1' is found at the beginning.</summary>
-		public static bool IsNumberValidTenDigit(string phoneNum) {
-			if(!IsFormattingAllowed()) {
-				return true;
+		public static bool IsNumberValidTenDigit(ref string phoneNum) {
+			if(IsFormattingAllowed) {
+				phoneNum=phoneNum.Replace("(","");
+				phoneNum=phoneNum.Replace(")","");
+				phoneNum=phoneNum.Replace(" ","");
+				phoneNum=phoneNum.Replace("-","");
+				if(phoneNum.Length!=0 && phoneNum.Length!=10) {
+					return false;
+				}
 			}
-			phoneNum=phoneNum.Replace("(","");
-			phoneNum=phoneNum.Replace(")","");
-			phoneNum=phoneNum.Replace(" ","");
-			phoneNum=phoneNum.Replace("-","");
-			if(phoneNum.Length==0 || phoneNum.Length==10) {
-				return true;
-			}
-			return false;
+			return true;
 		}
 
 		///<summary>Used in the tool that loops through the database fixing telephone numbers.  Also used in the patient import from XML tool, carrier edit window, and PT Dental bridge.</summary>
@@ -32,7 +33,7 @@ namespace OpenDentBusiness {
 			if(string.IsNullOrEmpty(phoneNum)) {
 				return "";
 			}
-			if(!IsFormattingAllowed()) {
+			if(!IsFormattingAllowed) {
 				return phoneNum;
 			}
 			Regex regex;
@@ -89,7 +90,7 @@ namespace OpenDentBusiness {
 
 		///<summary>reformats initial entry with each keystroke</summary>
 		public static string AutoFormat(string phoneNum) {
-			if(!IsFormattingAllowed()) {
+			if(!IsFormattingAllowed) {
 				return phoneNum;
 			}
 			if(Regex.IsMatch(phoneNum,@"^[2-9]$")) {
@@ -124,36 +125,36 @@ namespace OpenDentBusiness {
 		}
 
 		///<Summary>Also truncates if more than two non-numbers in a row.  This is to avoid the notes that can follow phone numbers.</Summary>
-		public static string FormatNumbersOnly(string phoneNum) {
-			string phoneRetVal="";
-			int countNonNums=0;
-			for(int i=0;i<phoneNum.Length;i++) {
-				if(countNonNums==2) {
-					return phoneRetVal;
+		public static string FormatNumbersOnly(string phoneStr) {
+			string retVal="";
+			int nonnumcount=0;
+			for(int i=0;i<phoneStr.Length;i++) {
+				if(nonnumcount==2) {
+					return retVal;
 				}
-				if(Char.IsNumber(phoneNum,i)) {
-					phoneRetVal+=phoneNum.Substring(i,1);
-					countNonNums=0;
+				if(Char.IsNumber(phoneStr,i)) {
+					retVal+=phoneStr.Substring(i,1);
+					nonnumcount=0;
 				}
 				else {
-					countNonNums++;
+					nonnumcount++;
 				}
 			}
-			return phoneRetVal;
+			return retVal;
 		}
 
 		///<summary></summary>
 		public static string FormatNumbersExactTen(string phoneNum) {
-			string phoneRetVal="";
+			string retVal="";
 			for(int i=0;i<phoneNum.Length;i++) {
 				if(Char.IsNumber(phoneNum,i)) {
-					if(phoneRetVal=="" && phoneNum.Substring(i,1)=="1") {
+					if(retVal=="" && phoneNum.Substring(i,1)=="1") {
 						continue;//skip leading 1.
 					}
-					phoneRetVal+=phoneNum.Substring(i,1);
+					retVal+=phoneNum.Substring(i,1);
 				}
-				if(phoneRetVal.Length==10) {
-					return phoneRetVal;
+				if(retVal.Length==10) {
+					return retVal;
 				}
 			}
 			//never made it to 10
@@ -175,8 +176,8 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Only for US numbers. Returns the area code of the phone number. Returns an empty string if unable to extract an area code.</summary>
-		public static string GetAreaCode(string phoneNum) {
-			string tenDigits=FormatNumbersExactTen(phoneNum);
+		public static string GetAreaCode(string phoneNumber) {
+			string tenDigits=FormatNumbersExactTen(phoneNumber);
 			if(tenDigits.Length!=10) {
 				return "";
 			}

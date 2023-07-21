@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 
 namespace OpenDentBusiness{
   ///<summary>Used to set rules for how often a patient should submit an image when checking in for their appointment via eClipboard. This is the grid on the right in eClipboard Images window.</summary>
@@ -17,31 +16,10 @@ namespace OpenDentBusiness{
     public int FrequencyDays;
     ///<summary>FK to clinic.ClinicNum. Clinic the rule pertains to.</summary>
     public long ClinicNum;
-    ///<summary>Enum:EnumOcrCaptureType 0=Miscellaneous, 1=PrimaryInsFront, 2=PrimaryInsBack, 3=SecondaryInsFront, 4=SecondaryInsBack </summary>
-    public EnumOcrCaptureType OcrCaptureType;
 
     ///<summary></summary>
     public EClipboardImageCaptureDef Copy() {
         return (EClipboardImageCaptureDef)this.MemberwiseClone();
     }
   }
-
-    /// <summary> The type of image. Miscelllaneuous is for all images without special behavior. </summary>
-    public enum EnumOcrCaptureType {
-        /// <summary>0- Catch-All type for imageCaptures without unique behavior </summary>
-        [Description("Miscellaneous")]
-        Miscellaneous,
-        /// <summary>1</summary>
-        [Description("Primary Insurance Card Front")]
-        PrimaryInsFront,
-        /// <summary>2</summary>
-        [Description("Primary Insurance Card Back")]
-        PrimaryInsBack,
-        /// <summary>3</summary>
-        [Description("Secondary Insurance Card Front")]
-        SecondaryInsFront,
-        /// <summary>4</summary>
-        [Description("Secondary Insurance Card Back")]
-        SecondaryInsBack
-    }
 }

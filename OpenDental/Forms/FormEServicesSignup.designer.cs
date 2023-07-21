@@ -33,6 +33,7 @@ namespace OpenDental{
 			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.butClose = new OpenDental.UI.Button();
 			this.webViewMain = new CodeBase.Controls.ODWebView2();
 			this.menuMain = new OpenDental.UI.MenuOD();
 			this.menuWebSchedVerifyTextTemplate.SuspendLayout();
@@ -95,6 +96,17 @@ namespace OpenDental{
 			this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
 			this.selectAllToolStripMenuItem.Text = "Select All";
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(1122, 660);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 501;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// webViewMain
 			// 
 			this.webViewMain.CreationProperties = null;
@@ -116,13 +128,13 @@ namespace OpenDental{
 			// 
 			// FormEServicesSignup
 			// 
-			this.ClientSize = new System.Drawing.Size(1209, 643);
+			this.ClientSize = new System.Drawing.Size(1209, 692);
 			this.Controls.Add(this.menuMain);
 			this.Controls.Add(this.webViewMain);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEServicesSignup";
 			this.Text = "eServices Signup";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormEServicesSignup_FormClosing);
 			this.Load += new System.EventHandler(this.FormEServicesSignup_Load);
 			this.menuWebSchedVerifyTextTemplate.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.webViewMain)).EndInit();
@@ -139,6 +151,7 @@ namespace OpenDental{
 		private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
+		private UI.Button butClose;
 		private CodeBase.Controls.ODWebView2 webViewMain;
 		private UI.MenuOD menuMain;
 	}

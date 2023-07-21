@@ -22,14 +22,14 @@ namespace OpenDental {
 		///<summary></summary>
 		public FrmCountyEdit()
 		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
-			Load+=FrmCountyEdit_Load;
-			textCountyName.TextChanged+=textCountyName_TextChanged;
-			PreviewKeyDown+=FrmCountyEdit_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmCountyEdit_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmCountyEdit_Loaded(object sender,RoutedEventArgs e) {
 			textCountyName.Text=CountyCur.CountyName;
 			textCountyCode.Text=CountyCur.CountyCode;
 		}
@@ -38,12 +38,6 @@ namespace OpenDental {
 			if(textCountyName.Text.Length==1){
 				textCountyName.Text=textCountyName.Text.ToUpper();
 				textCountyName.SelectionStart=1;
-			}
-		}
-
-		private void FrmCountyEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
 			}
 		}
 
@@ -58,7 +52,7 @@ namespace OpenDental {
 				Counties.Insert(CountyCur);
 			}
 			else{//existing County
-				if(CountyCur.CountyName!=CountyCur.CountyNameOld){//County name was changed
+				if(CountyCur.CountyName!=CountyCur.OldCountyName){//County name was changed
 					if(Counties.DoesExist(CountyCur.CountyName)){//changed to a name that already exists.
 						MsgBox.Show(this,"County name already exists. Duplicate not allowed.");
 						return;
@@ -69,5 +63,31 @@ namespace OpenDental {
 			IsDialogOK=true;
 		}
 
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

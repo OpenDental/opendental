@@ -87,7 +87,7 @@ namespace OpenDental {
 				|| _emailAddressSender.EmailUsername=="") 
 			{
 				//No valid "Notify" email setup for this practice yet.
-				error+="Invalid Web Mail Notify email. Configure a Web Mail Notify email address in Email Addresses window. ";
+				error+="Invalid Web Mail Notify email.  Configure a Web Mail Notify email address in E-mail Setup. ";
 			}
 			if(_emailAddressSender!=null) {
 				_emailAddressSender=EmailAddresses.OverrideSenderAddressClinical(_emailAddressSender,_patient.ClinicNum);
@@ -298,16 +298,13 @@ namespace OpenDental {
 			List<Userod> listUserods=Userods.GetUsersByProvNum(_provider.ProvNum);//Get all potential users for this provider.
 			while(true) {
 				//Get the password for a user that is associated to the provider chosen.
-				InputBoxParam inputBoxParam=new InputBoxParam();
-				inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-				inputBoxParam.LabelText=Lan.g(this,"Input a password for a User that is associated to provider:")+"\r\n"+_provider.GetFormalName();
-				inputBoxParam.IsPassswordCharStar=true;
-				InputBox inputBox=new InputBox(inputBoxParam);
+				using InputBox inputBox=new InputBox(Lan.g(this,"Input a password for a User that is associated to provider:")+"\r\n"+_provider.GetFormalName());
+				inputBox.textResult.PasswordChar='*';
 				inputBox.ShowDialog();
-				if(inputBox.IsDialogOK) {
+				if(inputBox.DialogResult==DialogResult.OK) {
 					//Validate the password typed in against all the users associated to the selected provider.
 					for(int i=0;i<listUserods.Count();i++) {
-						if(Authentication.CheckPassword(listUserods[i],inputBox.StringResult)) {
+						if(Authentication.CheckPassword(listUserods[i],inputBox.textResult.Text)) {
 							return true;
 						}
 					}
@@ -371,10 +368,10 @@ namespace OpenDental {
 		}
 
 		private void butProvPick_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick=new FrmProviderPick(_listProviders);
-			frmProviderPick.ShowDialog();
-			if(frmProviderPick.IsDialogOK) {
-				_provider=_listProviders.First(x => x.ProvNum==frmProviderPick.ProvNumSelected);
+			using FormProviderPick formProviderPick=new FormProviderPick(_listProviders);
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult==DialogResult.OK) {
+				_provider=_listProviders.First(x => x.ProvNum==formProviderPick.ProvNumSelected);
 				textFrom.Text=Providers.GetFormalName(_provider.ProvNum);
 			}
 		}
@@ -433,7 +430,7 @@ namespace OpenDental {
 			if(_emailMessage.MsgDateTime != DateTime.MinValue) {
 				logText+="\r\n"+Lan.g(this,"Date")+": "+_emailMessage.MsgDateTime.ToShortDateString()+". ";
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.WebMailDelete,_emailMessage.PatNum,Lan.g(this,"Web Mail deleted.")+" "+logText);
+			SecurityLogs.MakeLogEntry(Permissions.WebMailDelete,_emailMessage.PatNum,Lan.g(this,"Web Mail deleted.")+" "+logText);
 			DialogResult=DialogResult.Abort;//We want to abort here to avoid using the email in parent windows when it's been deleted.
 		}
 
@@ -447,7 +444,7 @@ namespace OpenDental {
 				FillFields();
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.WebMailSend)) {
+			if(!Security.IsAuthorized(Permissions.WebMailSend)) {
 				return;
 			}
 			VerifyInputs();
@@ -505,16 +502,20 @@ namespace OpenDental {
 			}
 			_emailMessageSecure.Attachments=_listEmailAttaches;
 			EmailMessages.Insert(_emailMessageSecure);
-			SecurityLogs.MakeLogEntry(EnumPermType.WebMailSend,0,Lan.g(this,"Web Mail sent"));
+			SecurityLogs.MakeLogEntry(Permissions.WebMailSend,0,Lan.g(this,"Web Mail sent"));
 			MsgBox.Show(this,"Message Sent");
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 
 		private enum WebMailMode {
 			Compose,
 			View,
 			Reply
 		}
-
 	}
 }

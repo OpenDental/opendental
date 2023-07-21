@@ -366,5 +366,9 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click_1(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 	}
 }

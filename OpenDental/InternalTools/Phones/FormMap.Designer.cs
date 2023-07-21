@@ -23,6 +23,7 @@ namespace OpenDental.InternalTools.Phones{
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMap));
 			this.menuMain = new OpenDental.UI.MenuOD();
 			this.labelTriageCoordinator = new System.Windows.Forms.Label();
@@ -63,6 +64,7 @@ namespace OpenDental.InternalTools.Phones{
 			this.mapNumberCustDownCount = new OpenDental.InternalTools.Phones.MapNumber();
 			this.mapNumberCustDownTime = new OpenDental.InternalTools.Phones.MapNumber();
 			this.mapPanel = new OpenDental.InternalTools.Phones.MapPanel();
+			this.timerWebCam = new System.Windows.Forms.Timer(this.components);
 			this.label8 = new System.Windows.Forms.Label();
 			this.butZoomFit = new OpenDental.UI.Button();
 			this.groupPhoneMetrics.SuspendLayout();
@@ -451,6 +453,11 @@ namespace OpenDental.InternalTools.Phones{
 			this.mapPanel.Size = new System.Drawing.Size(1516, 970);
 			this.mapPanel.TabIndex = 106;
 			// 
+			// timerWebCam
+			// 
+			this.timerWebCam.Interval = 250;
+			this.timerWebCam.Tick += new System.EventHandler(this.timerWebCam_Tick);
+			// 
 			// label8
 			// 
 			this.label8.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -549,6 +556,7 @@ namespace OpenDental.InternalTools.Phones{
 		private MapNumber mapNumberCustDownCount;
 		private MapNumber mapNumberCustDownTime;
 		private OpenDental.InternalTools.Phones.MapPanel mapPanel;
+		private System.Windows.Forms.Timer timerWebCam;
 		private System.Windows.Forms.Label label8;
 		private UI.Button butZoomFit;
 	}

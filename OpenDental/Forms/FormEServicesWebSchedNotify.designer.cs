@@ -32,7 +32,8 @@ namespace OpenDental{
 			this.toolStripMenuItemCopy = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItemPaste = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItemSelectAll = new System.Windows.Forms.ToolStripMenuItem();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butRestoreWebSchedVerify = new OpenDental.UI.Button();
 			this.label28 = new System.Windows.Forms.Label();
 			this.checkUseDefaultsVerify = new OpenDental.UI.CheckBox();
@@ -59,66 +60,77 @@ namespace OpenDental{
 			// contextMenuStripTextTemplate
 			// 
 			this.contextMenuStripTextTemplate.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItemInsertReplacements,
-            this.toolStripMenuItemUndo,
-            this.toolStripMenuItemCut,
-            this.toolStripMenuItemCopy,
-            this.toolStripMenuItemPaste,
-            this.toolStripMenuItemSelectAll});
+				this.toolStripMenuItemInsertReplacements,
+				this.toolStripMenuItemUndo,
+				this.toolStripMenuItemCut,
+				this.toolStripMenuItemCopy,
+				this.toolStripMenuItemPaste,
+				this.toolStripMenuItemSelectAll});
 			this.contextMenuStripTextTemplate.Name = "contextMenuStripTextTemplate";
 			this.contextMenuStripTextTemplate.Size = new System.Drawing.Size(137,136);
 			// 
 			// toolStripMenuItemInsertReplacements
 			// 
-			this.toolStripMenuItemInsertReplacements.Name = "toolStripMenuItemInsertReplacements";
+			this.toolStripMenuItemInsertReplacements.Name = "insertReplacementsToolStripMenuItem";
 			this.toolStripMenuItemInsertReplacements.Size = new System.Drawing.Size(136,22);
 			this.toolStripMenuItemInsertReplacements.Text = "Insert Fields";
 			this.toolStripMenuItemInsertReplacements.Click += new System.EventHandler(this.toolStripMenuItemInsertReplacements_Click);
 			// 
 			// toolStripMenuItemUndo
 			// 
-			this.toolStripMenuItemUndo.Name = "toolStripMenuItemUndo";
+			this.toolStripMenuItemUndo.Name = "undoToolStripMenuItem";
 			this.toolStripMenuItemUndo.Size = new System.Drawing.Size(136,22);
 			this.toolStripMenuItemUndo.Text = "Undo";
 			this.toolStripMenuItemUndo.Click += new System.EventHandler(this.toolStripMenuItemUndo_Click);
 			// 
 			// toolStripMenuItemCut
 			// 
-			this.toolStripMenuItemCut.Name = "toolStripMenuItemCut";
+			this.toolStripMenuItemCut.Name = "cutToolStripMenuItem";
 			this.toolStripMenuItemCut.Size = new System.Drawing.Size(136,22);
 			this.toolStripMenuItemCut.Text = "Cut";
 			this.toolStripMenuItemCut.Click += new System.EventHandler(this.toolStripMenuItemCut_Click);
 			// 
 			// toolStripMenuItemCopy
 			// 
-			this.toolStripMenuItemCopy.Name = "toolStripMenuItemCopy";
+			this.toolStripMenuItemCopy.Name = "copyToolStripMenuItem";
 			this.toolStripMenuItemCopy.Size = new System.Drawing.Size(136,22);
 			this.toolStripMenuItemCopy.Text = "Copy";
 			this.toolStripMenuItemCopy.Click += new System.EventHandler(this.toolStripMenuItemCopy_Click);
 			// 
 			// toolStripMenuItemPaste
 			// 
-			this.toolStripMenuItemPaste.Name = "toolStripMenuItemPaste";
+			this.toolStripMenuItemPaste.Name = "pasteToolStripMenuItem";
 			this.toolStripMenuItemPaste.Size = new System.Drawing.Size(136,22);
 			this.toolStripMenuItemPaste.Text = "Paste";
 			this.toolStripMenuItemPaste.Click += new System.EventHandler(this.toolStripMenuItemPaste_Click);
 			// 
 			// toolStripMenuItemSelectAll
 			// 
-			this.toolStripMenuItemSelectAll.Name = "toolStripMenuItemSelectAll";
+			this.toolStripMenuItemSelectAll.Name = "selectAllToolStripMenuItem";
 			this.toolStripMenuItemSelectAll.Size = new System.Drawing.Size(136,22);
 			this.toolStripMenuItemSelectAll.Text = "Select All";
 			this.toolStripMenuItemSelectAll.Click += new System.EventHandler(this.toolStripMenuItemSelectAll_Click);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(358, 602);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(277, 601);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(358, 601);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butRestoreWebSchedVerify
 			// 
@@ -135,10 +147,10 @@ namespace OpenDental{
 			// 
 			this.label28.Location = new System.Drawing.Point(15, 41);
 			this.label28.Name = "label28";
-			this.label28.Size = new System.Drawing.Size(415, 28);
+			this.label28.Size = new System.Drawing.Size(343, 28);
 			this.label28.TabIndex = 310;
 			this.label28.Text = "Right-click on any text box to choose from a list of valid template fields.";
-			this.label28.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.label28.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// checkUseDefaultsVerify
 			// 
@@ -313,13 +325,15 @@ namespace OpenDental{
 			// 
 			// FormEServicesWebSchedNotify
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(445, 637);
 			this.Controls.Add(this.butRestoreWebSchedVerify);
 			this.Controls.Add(this.label28);
 			this.Controls.Add(this.checkUseDefaultsVerify);
 			this.Controls.Add(this.groupBox);
 			this.Controls.Add(this.comboClinicVerify);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEServicesWebSchedNotify";
 			this.Text = "eServices Web Sched Notify";
@@ -337,7 +351,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.ContextMenuStrip contextMenuStripTextTemplate;
 		private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemInsertReplacements;
 		private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemUndo;

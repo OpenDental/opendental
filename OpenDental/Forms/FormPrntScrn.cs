@@ -241,5 +241,8 @@ namespace OpenDental{
 */		
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

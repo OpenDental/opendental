@@ -39,8 +39,6 @@ namespace OpenDental {
 		private Userod _userodCurUser=Security.CurUser;
 		///<summary>UserNum that has locked this form. Should match database.</summary>
 		private long _userNumLocked;
-		///<summary>The userNum pulled from the db so that we only take action if it changes.</summary>
-		private long _userNumLogging;
 		///<summary>This instance of OD has an ortho lock.  _userNumLocked might still be current user on a different instance of OD.</summary>
 		private bool _isLockedByMe;
 		///<summary>True if user has been changed locally on this form. Used for signature box.</summary>
@@ -70,18 +68,16 @@ namespace OpenDental {
 			//Days = Changes are allowed from ortho entry date + specified days.
 			//Neither = Date is MinValue. (Clicked OK and didn't specify either Date or Days.) Permission is enabled and user group can edit any date.
 			//We are only checking if these preference are enabled or not, not a date range. If these preferences are not enabled, this form is in read only mode.
-			OrthoChartLogs.Log("FormOrthoChart_Load()",Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
 			DateTime dateTime=DateTime.Today.AddDays(GroupPermissions.NewerDaysMax);
-			if(!Security.IsAuthorized(EnumPermType.OrthoChartEditFull,date:dateTime,suppressMessage:true)
-				&& !Security.IsAuthorized(EnumPermType.OrthoChartEditUser,date:dateTime,suppressMessage:true)){
-				OrthoChartLogs.Log("FormOrthoChart_Load(), security not authorized.",Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
+			if(!Security.IsAuthorized(Permissions.OrthoChartEditFull,date:dateTime,suppressMessage:true)
+				&& !Security.IsAuthorized(Permissions.OrthoChartEditUser,date:dateTime,suppressMessage:true)){
 				butChangeUser.Enabled=false;
 				butAdd.Enabled=false;
 				butUseAutoNote.Enabled=false;
 				butDelete.Enabled=false;
 				labelLocked.Visible=false;
 				buttonTakeControl.Visible=false;
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				gridPat.Enabled=false;
 				gridOrtho.Enabled=false;
 				gridMain.AllowSelection=false;
@@ -94,8 +90,7 @@ namespace OpenDental {
 			FillTabs();
 			FillDisplayFields();
 			_listOrthoChartRows=OrthoChartRows.GetAllForPatient(_patient.PatNum);
-			LogRefreshOrthoChartRowsInMemory();
-			if(_isLockedByMe){//we will usually have control
+			if(_userNumLocked==_userodCurUser.UserNum){//we will usually have control
 				OrthoChartRow orthoChartRowToday=_listOrthoChartRows.FirstOrDefault(x=>x.DateTimeService.Date==DateTime.Today.Date);
 				if(orthoChartRowToday==null
 					|| !orthoChartRowToday.ListOrthoCharts.Any(x => _listDisplayFieldNames.Contains(x.FieldName)))//Orthocharts fieldnames are not showing
@@ -109,20 +104,17 @@ namespace OpenDental {
 					orthoChartRow.IsNew=true;
 					OrthoChartRows.Insert(orthoChartRow);
 					_listOrthoChartRows.Add(orthoChartRow);
-					OrthoChartLogs.Log("FormOrthoChart_Load(), orthoChartRow added",Environment.MachineName,orthoChartRow);
 				}
 			}
 			_listOrthoChartRows=_listOrthoChartRows.OrderBy(x=>x.DateTimeService).ToList();
 			FillDateRange();
 			if(_indexInitialTab!=tabControl.SelectedIndex) {
 				tabControl.SelectedIndex=_indexInitialTab;//triggers FillGrid()
-				OrthoChartLogs.Log("FormOrthoChart_Load(), tab index not changed",Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
 			}
 			else {//Tab index hasn't changed, fill the grid.
 				Logger.LogAction("FormOrthoChart_Load",LogPath.OrthoChart,() => {
 					FillGrid();
 				},"FillGrid");
-				OrthoChartLogs.Log("FormOrthoChart_Load(), tab index changed, so FillGrid.",Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
 			}
 			FillGridPat();
 			if(PrefC.GetBool(PrefName.OrthoCaseInfoInOrthoChart)) {
@@ -130,7 +122,6 @@ namespace OpenDental {
 				FillOrtho();
 			}
 			textUser.Text="";//User text box should be blank until an orthochart is selected.
-			OrthoChartLogs.Log("End of FormOrthoChart_Load()",Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
 		}
 
 		private void LayoutMenu() {
@@ -146,7 +137,6 @@ namespace OpenDental {
 			}
 			_userNumLocked=PatientNotes.GetUserNumOrthoLocked(_patient.PatNum);
 			if(_userNumLocked==0){
-				OrthoChartLogs.Log("FillLockedInitial(), _userNumLocked=0 indicating not locked by anyone else and I will take control.",Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
 				//Nobody else has control, so we will take control.
 				_isLockedByMe=true;//Set _isLockedByMe to true in case another instance of OD with the same userNum tries to take control.
 				_userNumLocked=_userodCurUser.UserNum;
@@ -155,7 +145,6 @@ namespace OpenDental {
 				PatientNotes.SetUserNumOrthoLocked(_patient.PatNum,_userodCurUser.UserNum);
 			}
 			else{
-				OrthoChartLogs.Log("FillLockedInitial(), _userNumLocked="+_userNumLocked.ToString()+" so I am locked out.",Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
 				//The lock could be by any user, including the current user on a different instance of OD.
 				LockControls();
 				labelLocked.Text="Locked by: "+Userods.GetName(_userNumLocked);
@@ -175,19 +164,12 @@ namespace OpenDental {
 			}
 			long userNum=PatientNotes.GetUserNumOrthoLocked(_patient.PatNum);
 			if(userNum==-5){//-5 indicates that an instance of OD changed users locally to that form.
-				if(_userNumLogging!=userNum) {
-					OrthoChartLogs.Log($"timerLocked_Tick(), _userNum=-5, indicating that an instance of OD changed from '{_userNumLogging}' to '{userNum}' user locally.",Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
-					_userNumLogging=userNum;
-				}
 				return;
 			}
 			if(userNum==_userNumLocked){//There's been no change.
-				_userNumLogging=userNum;
 				return;
 			}
 			if(userNum==0){//Someone else just closed their ortho chart for this patient.
-				OrthoChartLogs.Log($"timerLocked_Tick(), _userNum=0, indicating that someone else just closed their ortho chart for this patient.It changed from '{_userNumLogging}' to '{userNum}'",Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
-				_userNumLogging=userNum;
 				LockControls();//Allows ability to take control when the same user is logged in multiple instances of OD and one closes the form.
 				//We don't want to automatically take control because if we are one of multiple waiters,
 				//we would all grab control at the same time.  User will need to click button to take control.
@@ -197,14 +179,11 @@ namespace OpenDental {
 				//Refresh this form with the changed data from the other user
 				_listOrthoChartRows=OrthoChartRows.GetAllForPatient(_patient.PatNum);
 				_listOrthoChartRows=_listOrthoChartRows.OrderBy(x=>x.DateTimeService).ToList();
-				LogRefreshOrthoChartRowsInMemory();
 				FillGrid();
 				FillGridPat();
 				//Ortho grid is just read only.
 				return;
 			}
-			OrthoChartLogs.Log("timerLocked_Tick(), _userNum="+userNum.ToString()+", indicating that that user just took control.",Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
-			_userNumLogging=userNum;
 			//Someone just took control.
 			//Programmatically force the ActiveControl to null just in case the user was in the middle of typing into the grid.
 			//This will cause event handlers to be invoked (e.g. gridMain_CellLeave) which will save the work that the user was just in the middle of doing.
@@ -215,7 +194,6 @@ namespace OpenDental {
 			//Remember that the above changes can happen up to 4 seconds after the other user took control
 			_listOrthoChartRows=OrthoChartRows.GetAllForPatient(_patient.PatNum);
 			_listOrthoChartRows=_listOrthoChartRows.OrderBy(x=>x.DateTimeService).ToList();
-			LogRefreshOrthoChartRowsInMemory();
 			FillGrid();//This will show us true db state, including deleting any empty row.
 			LockControls();
 			labelLocked.Text="Locked by: "+Userods.GetName(userNum);
@@ -229,11 +207,6 @@ namespace OpenDental {
 			}
 		}
 
-		private void LogRefreshOrthoChartRowsInMemory() {
-			string logMsg=$"Refreshed orthochartrow/orthocharts in memory. OrthoChartRows Count:{_listOrthoChartRows.Count} values: {string.Join(",",_listOrthoChartRows.Select(x => $"orthochartrownum={x.OrthoChartRowNum} sig: {x.Signature}{Environment.NewLine} OrthoCharts Count: {x.ListOrthoCharts.Count} values: {string.Join(",",x.ListOrthoCharts.Select(y => $"FieldName={y.FieldName} FieldValue={y.FieldValue}"))}"))}";
-			OrthoChartLogs.Log(logMsg,Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
-		}
-
 		private void LockControls(){
 			gridMain.AllowSelection=false;
 			gridPat.Enabled=false;
@@ -241,7 +214,7 @@ namespace OpenDental {
 			butAdd.Visible=false;
 			butUseAutoNote.Visible=false;
 			butDelete.Visible=false;
-			butSave.Enabled=false;
+			butOK.Enabled=false;
 			buttonTakeControl.Visible=true;
 		}
 
@@ -252,7 +225,7 @@ namespace OpenDental {
 			butAdd.Visible=true;
 			butUseAutoNote.Visible=true;
 			butDelete.Visible=true;
-			butSave.Enabled=true;
+			butOK.Enabled=true;
 			buttonTakeControl.Visible=false;
 		}
 
@@ -260,13 +233,9 @@ namespace OpenDental {
 			//It's been a few seconds since we looked at the db, so check again
 			long userNum=PatientNotes.GetUserNumOrthoLocked(_patient.PatNum);
 			if(userNum==-5) {//We are taking control from a workstation that changed users to sign an orthochartrow.
-				OrthoChartLogs.Log("buttonTakeControl_Click(), userNum=-5, so we are taking control from a workstation that changed users to sign an orthochartrow. Changing userNum to "+_userNumLocked.ToString(),
-					Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
 				userNum=_userNumLocked;//Change the userNum back to the user that was in control prior to changing users on other instance of OD.
 			}
 			if(userNum!=_userNumLocked){
-				OrthoChartLogs.Log("buttonTakeControl_Click(), userNum!=_userNumLocked, so someone else (usernum "+userNum.ToString()+") grabbed control in the last few seconds, so we don't want to immediately grab it.",
-					Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
 				//Someone else grabbed control in the last few seconds, so we don't want to immediately grab it.
 				//Controls are already still locked.
 				//If User8 still has control on different instance, and if User8 is trying to take control on this instance, 
@@ -279,7 +248,6 @@ namespace OpenDental {
 				return;
 			}
 			if(userNum==_userodCurUser.UserNum) {//Current user already has lock on different workstation.
-				OrthoChartLogs.Log("buttonTakeControl_Click(), Current user already has lock on different workstation.",Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
 				PatientNotes.SetUserNumOrthoLocked(_patient.PatNum,-1);//Set lock to -1 momentarily.
 				Cursor=Cursors.WaitCursor;
 				System.Threading.Thread.Sleep(5500);
@@ -288,7 +256,6 @@ namespace OpenDental {
 			_isLockedByMe=true;
 			//take control
 			PatientNotes.SetUserNumOrthoLocked(_patient.PatNum,_userodCurUser.UserNum);
-			OrthoChartLogs.Log("buttonTakeControl_Click(), Took control from userNum "+_userNumLocked.ToString(),Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
 			_userNumLocked=_userodCurUser.UserNum;			
 			labelLocked.Text="Locked by: "+Userods.GetName(_userodCurUser.UserNum);
 			//Refresh this form with the changed data from the other user
@@ -299,7 +266,6 @@ namespace OpenDental {
 			//We already sent the message, so if we allow cancel, we would still need to wait to refresh.
 			_listOrthoChartRows=OrthoChartRows.GetAllForPatient(_patient.PatNum);
 			_listOrthoChartRows=_listOrthoChartRows.OrderBy(x=>x.DateTimeService).ToList();
-			LogRefreshOrthoChartRowsInMemory();
 			FillGrid();
 			FillGridPat();
 			//User can add their own new row if they want.
@@ -498,15 +464,9 @@ namespace OpenDental {
 			gridOrtho.ListGridRows.Clear();
 			GridRow row = new GridRow();
 			DateTime dateFirstOrthoProc = Procedures.GetFirstOrthoProcDate(_patientNote);
-			DateSpan dateSpan=new DateSpan(dateFirstOrthoProc,DateTime.Today);
-			int txMonthsTotal=(_patientNote.OrthoMonthsTreatOverride==-1?PrefC.GetByte(PrefName.OrthoDefaultMonthsTreat):_patientNote.OrthoMonthsTreatOverride);
-			int txTimeInMonths=(dateSpan.YearsDiff*12)+dateSpan.MonthsDiff+(dateSpan.DaysDiff<15?0:1);
-			if(txTimeInMonths>txMonthsTotal && PrefC.GetBool(PrefName.OrthoDebondProcCompletedSetsMonthsTreat)) { //Capping if preference is set
-				dateSpan=new DateSpan(dateFirstOrthoProc,dateFirstOrthoProc.AddMonths(txMonthsTotal));
-				txTimeInMonths=(dateSpan.YearsDiff*12)+dateSpan.MonthsDiff+(dateSpan.DaysDiff<15?0:1);
-			}
 			if(dateFirstOrthoProc!=DateTime.MinValue) {
 				row.Cells.Add(Lan.g(this,"Total Tx Time")+": "); //Number of Years/Months/Days since the first ortho procedure on this account
+				DateSpan dateSpan=new DateSpan(dateFirstOrthoProc,DateTime.Today);
 				string strDateDiff="";
 				if(dateSpan.YearsDiff!=0) {
 					strDateDiff+=dateSpan.YearsDiff+" "+Lan.g(this,"year"+(dateSpan.YearsDiff==1 ? "" : "s"));
@@ -532,10 +492,12 @@ namespace OpenDental {
 
 				row = new GridRow();
 				row.Cells.Add(Lan.g(this,"Tx Months Total")+": "); //this patient's OrthoClaimMonthsTreatment, or the practice default if 0.
+				int txMonthsTotal=(_patientNote.OrthoMonthsTreatOverride==-1?PrefC.GetByte(PrefName.OrthoDefaultMonthsTreat):_patientNote.OrthoMonthsTreatOverride);
 				row.Cells.Add(txMonthsTotal.ToString());
 				gridOrtho.ListGridRows.Add(row);
 
 				row = new GridRow();
+				int txTimeInMonths=dateSpan.YearsDiff * 12 + dateSpan.MonthsDiff + (dateSpan.DaysDiff < 15? 0: 1);
 				row.Cells.Add(Lan.g(this,"Months in Treatment")+": "); //idk what the difference between this and 'Total Tx Time' is.
 				row.Cells.Add(txTimeInMonths.ToString());
 				gridOrtho.ListGridRows.Add(row);
@@ -574,7 +536,7 @@ namespace OpenDental {
 
 
 		private void menuItemSetup_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			using FormDisplayFieldsOrthoChart formDisplayFieldsOrthoChart=new FormDisplayFieldsOrthoChart();
@@ -603,7 +565,6 @@ namespace OpenDental {
 
 		private void ClearSignature(int idxRow) {
 			OrthoChartRow orthoChartRow=(OrthoChartRow)gridMain.ListGridRows[idxRow].Tag;
-			OrthoChartLogs.Log("ClearSignature()",Environment.MachineName,orthoChartRow,_userodCurUser.UserNum);
 			if(OrthoSignature.GetSigString(orthoChartRow.Signature)!="") {
 				_hasChanged=true;
 			}
@@ -658,13 +619,13 @@ namespace OpenDental {
 		}
 
 		private void gridMain_CellLeave(object sender,ODGridClickEventArgs e) {
-			OrthoChartRow orthoChartRow=(OrthoChartRow)gridMain.ListGridRows[e.Row].Tag;
-			//Get the date for the ortho chart that was just edited.
-			DateTime dateTime=orthoChartRow.DateTimeService;
-			long provNum=orthoChartRow.ProvNum;
-			string oldText=GetValueFromList(orthoChartRow,(string)gridMain.Columns[e.Col].Tag);
-			string newText=gridMain.ListGridRows[e.Row].Cells[e.Col].Text;
 			Logger.LogAction("gridMain_CellLeave",LogPath.OrthoChart,() => {
+				OrthoChartRow orthoChartRow=(OrthoChartRow)gridMain.ListGridRows[e.Row].Tag;
+				//Get the date for the ortho chart that was just edited.
+				DateTime dateTime=orthoChartRow.DateTimeService;
+				long provNum=orthoChartRow.ProvNum;
+				string oldText=GetValueFromList(orthoChartRow,(string)gridMain.Columns[e.Col].Tag);
+				string newText=gridMain.ListGridRows[e.Row].Cells[e.Col].Text;
 				if(CanEditRow(dateTime)) {
 					if(newText != oldText) {
 						SetValueInList(orthoChartRow,newText,(string)gridMain.Columns[e.Col].Tag);
@@ -674,7 +635,6 @@ namespace OpenDental {
 							Logger.LogAction("gridMain_CellLeave",LogPath.OrthoChart,() => { signatureBoxWrapper.ClearSignature(false); },"signature.ClearSignature");
 						}
 						_hasChanged=true;//They had permission and they made a change.
-						OrthoChartLogs.Log("gridMain_CellLeave(), old: "+oldText+", new:"+newText,Environment.MachineName,orthoChartRow);
 					}
 					if(_showSigBox) {
 						SaveSignatureToDict(e.Row);
@@ -691,11 +651,6 @@ namespace OpenDental {
 					}
 				}
 			});
-		}
-
-		private void LogOrthoChartsUsedForSigHash(List<OrthoChart> listOrthoCharts,bool isValidating,bool isForPatNum) {
-			string logMsg=$"OrthoCharts used for sig has.  OrthoCharts Count: {listOrthoCharts.Count} values: {string.Join(",",listOrthoCharts.Select(y => $"FieldName={y.FieldName} FieldValue={y.FieldValue}"))}{Environment.NewLine}IsValidating: {isValidating} IsForPatNum: {isForPatNum}";
-			OrthoChartLogs.Log(logMsg,Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
 		}
 		
 		///<summary>Displays the signature that is saved in the dictionary in the signature box. Colors the grid row green if the signature is valid, 
@@ -728,23 +683,20 @@ namespace OpenDental {
 				if(displayFieldSig!=null){
 					sigColumnName=displayFieldSig.Description;
 				}
-				List<OrthoChart> listOrthoChartsForSigHash=listOrthoCharts.FindAll(x => x.FieldValue!="" && x.FieldName!=sigColumnName);
-				LogOrthoChartsUsedForSigHash(listOrthoChartsForSigHash,isValidating:true, isForPatNum:false);
-				string keyData=OrthoCharts.GetKeyDataForSignatureHash(_patient,listOrthoChartsForSigHash,dateTime);
+				string keyData=OrthoCharts.GetKeyDataForSignatureHash(_patient,listOrthoCharts
+				.FindAll(x => x.FieldValue!="" && x.FieldName!=sigColumnName),dateTime);
 				Logger.LogAction("DisplaySignature",LogPath.OrthoChart,() => {
 					signatureBoxWrapper.FillSignature(orthoSignature.IsTopaz,keyData,orthoSignature.SigString);
 				},"signature.FillSignature1 IsTopaz="+(orthoSignature.IsTopaz ? "true" : "false"));
 				if(!signatureBoxWrapper.IsValid) {
 					//This ortho chart may have been signed when we were using the patient name in the hash. Try hashing the signature with the patient name.
-					listOrthoChartsForSigHash=listOrthoCharts.FindAll(x => x.DateService==dateTime && x.FieldValue!="" && x.FieldName!=sigColumnName);
-					LogOrthoChartsUsedForSigHash(listOrthoChartsForSigHash,isValidating:true,isForPatNum:true);
-					keyData=OrthoCharts.GetKeyDataForSignatureHash(_patient,listOrthoChartsForSigHash,dateTime,doUsePatName:true);
+					keyData=OrthoCharts.GetKeyDataForSignatureHash(_patient,listOrthoCharts
+						.FindAll(x => x.DateService==dateTime && x.FieldValue!="" && x.FieldName!=sigColumnName),dateTime,doUsePatName:true);
 					Logger.LogAction("DisplaySignature",LogPath.OrthoChart,() => {
 						signatureBoxWrapper.FillSignature(orthoSignature.IsTopaz,keyData,orthoSignature.SigString);
 					},"signature.FillSignature2 IsTopaz="+(orthoSignature.IsTopaz ? "true" : "false"));
 				}
 				if(signatureBoxWrapper.IsValid) {
-					OrthoChartLogs.Log("DisplaySignature(), valid green",Environment.MachineName,orthoChartRow);
 					gridMain.ListGridRows[idxRow].ColorBackG=Color.FromArgb(220,255,225);//pale green
 					if(_sigColIdx > 0) {//User might be viewing a tab that does not have the signature column.  Greater than 0 because index 0 is a Date column.
 						gridMain.ListGridRows[idxRow].Cells[_sigColIdx].Text=Lan.g(this,"Signed");
@@ -758,7 +710,6 @@ namespace OpenDental {
 					}
 				}
 				else {
-					OrthoChartLogs.Log("DisplaySignature(), invalid red",Environment.MachineName,orthoChartRow);
 					gridMain.ListGridRows[idxRow].ColorBackG=Color.FromArgb(255,220,220);//pale pink
 					if(_sigColIdx > 0) {//User might be viewing a tab that does not have the signature column.  Greater than 0 because index 0 is a Date column.
 						gridMain.ListGridRows[idxRow].Cells[_sigColIdx].Text=Lan.g(this,"Invalid");
@@ -782,7 +733,6 @@ namespace OpenDental {
 				return;
 			}
 			OrthoChartRow orthoChartRow=(OrthoChartRow)gridMain.ListGridRows[idxRow].Tag;
-			OrthoChartLogs.Log("SaveSignatureToDict()",Environment.MachineName,orthoChartRow,_userodCurUser.UserNum);
 			DateTime dateTime=orthoChartRow.DateTimeService;
 			if(_changedUser) {//Changed user to sign signature box, so update the selected orthochart row to the changed user's UserNum.
 				orthoChartRow.UserNum=_userNumLocked;
@@ -799,7 +749,6 @@ namespace OpenDental {
 			//Get the "translated" name for the signature column.
 			string sigColumnName=_listDisplayFieldsOrth.FirstOrDefault(x => x.InternalName=="Signature")?.Description??"";
 			List<OrthoChart> listOrthoCharts=orthoChartRow.ListOrthoCharts.FindAll(x => x.FieldName!=sigColumnName && x.FieldValue!="");
-			LogOrthoChartsUsedForSigHash(listOrthoCharts,isValidating:false,isForPatNum:false);
 			keyData=OrthoCharts.GetKeyDataForSignatureSaving(listOrthoCharts,dateTime);
 			OrthoSignature orthoSignature=new OrthoSignature();
 			orthoSignature.IsTopaz=signatureBoxWrapper.GetSigIsTopaz();
@@ -810,7 +759,6 @@ namespace OpenDental {
 			if(OrthoSignature.GetSigString(orthoChartRow.Signature)!=orthoSignature.SigString) {
 				_hasChanged=true;
 				orthoChartRow.Signature=orthoSignature.ToString();
-				orthoChartRow.UserNum=_userodCurUser.UserNum;
 			}
 		}
 
@@ -820,13 +768,13 @@ namespace OpenDental {
 				return _listDateTime_CanEdits.Find(x => x.DateTime_==dateTime).CanEdit;
 			}
 			DateTime_CanEdit dateTime_CanEdit=new DateTime_CanEdit();
-			if(Security.IsAuthorized(EnumPermType.OrthoChartEditFull,dateTime,true)) {
+			if(Security.IsAuthorized(Permissions.OrthoChartEditFull,dateTime,true)) {
 				dateTime_CanEdit.DateTime_=dateTime;
 				dateTime_CanEdit.CanEdit=true;
 				_listDateTime_CanEdits.Add(dateTime_CanEdit);
 				return true;
 			} 
-			if(!Security.IsAuthorized(EnumPermType.OrthoChartEditUser,dateTime,true)) {
+			if(!Security.IsAuthorized(Permissions.OrthoChartEditUser,dateTime,true)) {
 				dateTime_CanEdit.DateTime_=dateTime;
 				dateTime_CanEdit.CanEdit=false;
 				_listDateTime_CanEdits.Add(dateTime_CanEdit);
@@ -987,7 +935,6 @@ namespace OpenDental {
 			OrthoChartRows.Insert(orthoChartRow);
 			_listOrthoChartRows.Add(orthoChartRow);
 			_listOrthoChartRows=_listOrthoChartRows.OrderBy(x => x.DateTimeService).ToList();
-			OrthoChartLogs.Log($"butAdd_click() New OrthoChartRow was added to the in memory list with OrthoChartNum: {orthoChartRow.OrthoChartRowNum}",Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
 			_hasChanged=true;
 			//Reset date range to show new row.
 			_dateTimeFrom=DateTime.MinValue;
@@ -1012,15 +959,15 @@ namespace OpenDental {
 				MsgBox.Show(this,"Cannot add auto notes to a field with a provider.");
 				return;
 			}
-			FrmAutoNoteCompose frmAutoNoteCompose=new FrmAutoNoteCompose();
-			frmAutoNoteCompose.ShowDialog();
-			if(frmAutoNoteCompose.IsDialogOK) {
+			using FormAutoNoteCompose formAutoNoteCompose=new FormAutoNoteCompose();
+			formAutoNoteCompose.ShowDialog();
+			if(formAutoNoteCompose.DialogResult==DialogResult.OK) {
 				Point pointSelectedCell=new Point(gridMain.SelectedCell.X,gridMain.SelectedCell.Y);
 				//Add text to current focused cell				
-				gridMain.ListGridRows[gridMain.SelectedCell.Y].Cells[gridMain.SelectedCell.X].Text+=frmAutoNoteCompose.StrCompletedNote;
+				gridMain.ListGridRows[gridMain.SelectedCell.Y].Cells[gridMain.SelectedCell.X].Text+=formAutoNoteCompose.StrCompletedNote;
 				//Since the redrawing of the row height is dependent on the edit text box built into the ODGrid, we have to manually tell the grid to redraw.
 				//This will essentially "refresh" the grid.  We do not want to call FillGrid() because that will lose data in other cells that have not been saved to datatable.
-				if(_showSigBox && frmAutoNoteCompose.StrCompletedNote != "") {
+				if(_showSigBox && formAutoNoteCompose.StrCompletedNote != "") {
 					signatureBoxWrapper.ClearSignature(false);
 					SaveSignatureToDict(gridMain.SelectedCell.Y);
 					DisplaySignature(gridMain.SelectedCell.Y);
@@ -1083,8 +1030,8 @@ namespace OpenDental {
 			SecurityLog[] securityLogArrayOrthoChartLogs;
 			SecurityLog[] securityLogArrayPatientFieldLogs;
 			try {
-				securityLogArrayOrthoChartLogs=SecurityLogs.Refresh(_patient.PatNum,new List<EnumPermType> { EnumPermType.OrthoChartEditFull },null);
-				securityLogArrayPatientFieldLogs=SecurityLogs.Refresh(new DateTime(1,1,1),DateTime.Today,EnumPermType.PatientFieldEdit,_patient.PatNum,
+				securityLogArrayOrthoChartLogs=SecurityLogs.Refresh(_patient.PatNum,new List<Permissions> { Permissions.OrthoChartEditFull },null);
+				securityLogArrayPatientFieldLogs=SecurityLogs.Refresh(new DateTime(1,1,1),DateTime.Today,Permissions.PatientFieldEdit,_patient.PatNum,
 					DateTime.MinValue,DateTime.Today);
 			}
 			catch(Exception ex) {
@@ -1120,7 +1067,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please select an Ortho Chart row first.");
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.OrthoChartEditFull,orthoChartRowSelected.DateTimeService,false)) {
+			if(!Security.IsAuthorized(Permissions.OrthoChartEditFull,orthoChartRowSelected.DateTimeService,false)) {
 				return;
 			}
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete entire row?")) {
@@ -1128,7 +1075,6 @@ namespace OpenDental {
 			}
 			List<DisplayField> listDisplayFields=GetDisplayFieldsForCurrentTab();
 			List<string> listFieldNamesToDelete=listDisplayFields.Select(x => x.Description).ToList();
-			OrthoChartLogs.Log("butDelete_Click() we have deleted OrthoChartRows",Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
 			orthoChartRowSelected.ListOrthoCharts.RemoveAll(x => listFieldNamesToDelete.Contains(x.FieldName));
 			if(orthoChartRowSelected.ListOrthoCharts.IsNullOrEmpty()) {
 				_listOrthoChartRows.RemoveAll(x => x.OrthoChartRowNum==orthoChartRowSelected.OrthoChartRowNum);
@@ -1236,7 +1182,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			//The only way you can click ok is if you have a lock control.
 			PatientNotes.SetUserNumOrthoLocked(_patient.PatNum,0);//Unlock
 			if(!_hasChanged && !signatureBoxWrapper.SigChanged) {
@@ -1264,7 +1210,6 @@ namespace OpenDental {
 				listOrthoChartsNew.AddRange(_listOrthoChartRows[i].ListOrthoCharts);//add cells
 			}
 			List<OrthoChartRow> listOrthoChartRowsFiltered=_listOrthoChartRows.FindAll(x => !listOrthChartRowNumsToDelete.Contains(x.OrthoChartRowNum));
-			OrthoChartLogs.Log("SaveToDb(), Individual Insert, Update, and Delete entries will be logged separately.",Environment.MachineName,_patient.PatNum,_userodCurUser.UserNum);
 			OrthoCharts.Sync(_patient,_listOrthoChartRows,listOrthoChartsNew,_listDisplayFieldsOrth);
 			OrthoChartRows.Sync(listOrthoChartRowsFiltered,_patient.PatNum);//This sync will delete rows not present in the list.
 		}
@@ -1284,22 +1229,33 @@ namespace OpenDental {
 			}
 		}
 
-		private void FormOrthoChart_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult==DialogResult.Cancel) {
-				if(_isReadOnly){//Form was opened in read only mode so don't warn about unsaved changes.
+		private void butCancel_Click(object sender,EventArgs e) {
+			if(_isLockedByMe) {
+				PatientNotes.SetUserNumOrthoLocked(_patient.PatNum,0);//Unlock
+				DeleteRowsIfEmpty();
+			}
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void FormOrthoChart_CloseXClicked(object sender, CancelEventArgs e){
+			if(_isReadOnly){//Form was opened in read only mode so don't warn about unsaved changes.
+				DialogResult=DialogResult.Cancel;
+				return;
+			}
+			if(_hasChanged || signatureBoxWrapper.SigChanged){
+				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Unsaved changes will be lost.")) {
+					e.Cancel=true;
 					return;
 				}
-				if(_hasChanged || signatureBoxWrapper.SigChanged){
-					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Unsaved changes will be lost.")) {
-						e.Cancel=true;
-						return;
-					}
-				}
-				if(_isLockedByMe) {
-					PatientNotes.SetUserNumOrthoLocked(_patient.PatNum,0);//Unlock
-					DeleteRowsIfEmpty();
-				}
 			}
+			if(_isLockedByMe) {
+				PatientNotes.SetUserNumOrthoLocked(_patient.PatNum,0);//Unlock
+				DeleteRowsIfEmpty();
+			}
+			DialogResult=DialogResult.Cancel;//to signal to FormClosing that this was a user action
+		}
+
+		private void FormOrthoChart_FormClosing(object sender,FormClosingEventArgs e) {
 			signatureBoxWrapper?.SetTabletState(0);
 			if(DialogResult!=DialogResult.None){
 				return;

@@ -129,5 +129,9 @@ namespace OpenDental {
 			MessageBox.Show("Saved");
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 	}
 }

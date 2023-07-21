@@ -24,9 +24,21 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormInsEditPatLog));
+			this.butCancel = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.dateRangePicker = new OpenDental.UI.ODDateRangePicker();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(928, 570);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridMain
 			// 
@@ -36,7 +48,7 @@ namespace OpenDental{
 			this.gridMain.HasDropDowns = true;
 			this.gridMain.Location = new System.Drawing.Point(8, 34);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(995, 556);
+			this.gridMain.Size = new System.Drawing.Size(995, 524);
 			this.gridMain.TabIndex = 4;
 			this.gridMain.Title = "Logs";
 			this.gridMain.TranslationName = "TableLogs";
@@ -54,8 +66,10 @@ namespace OpenDental{
 			// FormInsEditPatLog
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(1011, 602);
 			this.Controls.Add(this.dateRangePicker);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.gridMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormInsEditPatLog";
@@ -66,6 +80,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butCancel;
 		private UI.GridOD gridMain;
 		private UI.ODDateRangePicker dateRangePicker;
 	}

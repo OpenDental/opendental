@@ -5,12 +5,11 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 		xmlns:local="clr-namespace:WpfControls.UI"
 		mc:Ignorable="d" 
-		d:DesignHeight="25" d:DesignWidth="90">
-	<Grid x:Name="grid" x:FieldModifier="internal">
+		d:DesignHeight="20" d:DesignWidth="75">
+	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/><!--Image. if no image in first column, its width will be 0.-->
 			<ColumnDefinition Width="*"/><!--Text-->
-			<ColumnDefinition Width="14"/><!--Dropdown. if not a dropdown button, then its width will be 0.-->
 			<ColumnDefinition Width="1"/><!--Line on right-->
 		</Grid.ColumnDefinitions>
 		<Grid.Background>
@@ -19,13 +18,9 @@
 				<GradientStop Color="#ABB5D1" Offset="1.0" />
 			</LinearGradientBrush>
 		</Grid.Background>
-		<Border x:Name="borderOverlay" x:FieldModifier="internal" Grid.ColumnSpan="3" BorderBrush="Transparent" BorderThickness="1"/><!--No content because it overlays without shifting anything under it.-->
-		<Grid x:Name="gridImage" x:FieldModifier="internal"/>
-		<TextBlock Grid.Column="1" x:Name="textBlock" x:FieldModifier="internal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="4,0,4,0"/>
-		<Border x:Name="borderDropDown" x:FieldModifier="internal" Grid.Column="2" BorderBrush="Transparent" BorderThickness="1,0,0,0"/><!--border on left and overlay when hover.-->
-		<Canvas Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" >
-			<Polygon x:Name="polygonTriangle" x:FieldModifier="internal" Fill="	#141414" Points="-4,-2 0,2 4,-2" IsHitTestVisible="False"/>
-		</Canvas>
-		<Line Grid.Column="3" Stroke="DarkGray" Stretch="Fill" Y2="1"/>
+		<Border x:Name="border" Grid.ColumnSpan="2" BorderBrush="Transparent" BorderThickness="1"/><!--No content because it overlays without shifting anything under it.-->
+		<Image x:Name="image" Margin="3,0,3,0"></Image><!--left and right-->
+		<TextBlock Grid.Column="1" x:Name="textBlock" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3,0,4,0"/>
+		<Line Grid.Column="2" Stroke="DarkGray" Stretch="Fill" Y2="1"/>
 	</Grid>
 </UserControl>

@@ -23,7 +23,10 @@ namespace OpenDental {
 		private void FormSnomeds_Load(object sender,EventArgs e) {
 			_showingInfoButton=CDSPermissions.GetForUser(Security.CurUser.UserNum).ShowInfobutton;
 			_showingInfobuttonShift=(_showingInfoButton?1:0);
-			if(!IsSelectionMode && !IsMultiSelectMode) {
+			if(IsSelectionMode || IsMultiSelectMode) {
+				butClose.Text=Lan.g(this,"Cancel");
+			}
+			else {
 				butOK.Visible=false;
 			}
 			if(IsMultiSelectMode) {
@@ -176,6 +179,12 @@ namespace OpenDental {
 			}
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+	
 
 	}
 }

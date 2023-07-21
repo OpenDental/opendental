@@ -35,7 +35,6 @@
 			this.butException = new OpenDental.UI.Button();
 			this.butHideCancel = new OpenDental.UI.Button();
 			this.butInnerException = new OpenDental.UI.Button();
-			this.butBlocks = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// butOld
@@ -70,7 +69,7 @@
 			// 
 			// butChain
 			// 
-			this.butChain.Location = new System.Drawing.Point(212, 130);
+			this.butChain.Location = new System.Drawing.Point(293, 86);
 			this.butChain.Name = "butChain";
 			this.butChain.Size = new System.Drawing.Size(75, 24);
 			this.butChain.TabIndex = 79;
@@ -80,7 +79,7 @@
 			// 
 			// butException
 			// 
-			this.butException.Location = new System.Drawing.Point(212, 170);
+			this.butException.Location = new System.Drawing.Point(374, 56);
 			this.butException.Name = "butException";
 			this.butException.Size = new System.Drawing.Size(75, 24);
 			this.butException.TabIndex = 80;
@@ -90,7 +89,7 @@
 			// 
 			// butHideCancel
 			// 
-			this.butHideCancel.Location = new System.Drawing.Point(293, 130);
+			this.butHideCancel.Location = new System.Drawing.Point(455, 56);
 			this.butHideCancel.Name = "butHideCancel";
 			this.butHideCancel.Size = new System.Drawing.Size(90, 24);
 			this.butHideCancel.TabIndex = 81;
@@ -100,7 +99,7 @@
 			// 
 			// butInnerException
 			// 
-			this.butInnerException.Location = new System.Drawing.Point(293, 170);
+			this.butInnerException.Location = new System.Drawing.Point(374, 86);
 			this.butInnerException.Name = "butInnerException";
 			this.butInnerException.Size = new System.Drawing.Size(75, 24);
 			this.butInnerException.TabIndex = 82;
@@ -108,22 +107,11 @@
 			this.butInnerException.UseVisualStyleBackColor = true;
 			this.butInnerException.Click += new System.EventHandler(this.butInnerException_Click);
 			// 
-			// butBlocks
-			// 
-			this.butBlocks.Location = new System.Drawing.Point(212, 94);
-			this.butBlocks.Name = "butBlocks";
-			this.butBlocks.Size = new System.Drawing.Size(75, 24);
-			this.butBlocks.TabIndex = 83;
-			this.butBlocks.Text = "Blocks";
-			this.butBlocks.UseVisualStyleBackColor = true;
-			this.butBlocks.Click += new System.EventHandler(this.butBlocks_Click);
-			// 
 			// FormProgressTests
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(603, 286);
-			this.Controls.Add(this.butBlocks);
+			this.ClientSize = new System.Drawing.Size(596, 192);
 			this.Controls.Add(this.butInnerException);
 			this.Controls.Add(this.butHideCancel);
 			this.Controls.Add(this.butException);
@@ -146,6 +134,5 @@
 		private OpenDental.UI.Button butException;
 		private OpenDental.UI.Button butHideCancel;
 		private OpenDental.UI.Button butInnerException;
-		private OpenDental.UI.Button butBlocks;
 	}
 }

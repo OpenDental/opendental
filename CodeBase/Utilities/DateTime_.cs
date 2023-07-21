@@ -6,8 +6,6 @@ namespace CodeBase {
 	public static class DateTime_ {
 		///<summary>Set this func to return a custom value for DateTime_.Now. If not overridden, will return the real DateTime.Now.</summary>
 		private static Func<DateTime> _getNow=() => DateTime.Now;
-		///<summary>Unit tests may need to offset time by milliseconds. Usually used to avoid identical timestamps from being entered in db.</summary>
-		private static int _offsetMs=0;
 		///<summary>True if DateTime_.Now will return a custom value.</summary>
 		public static bool IsNowModified {
 			get; private set;
@@ -30,26 +28,6 @@ namespace CodeBase {
 		public static void ResetNow() {
 			IsNowModified=false;
 			_getNow=() => DateTime.Now;
-		}
-
-		///<summary>Call this method to make Offset() add milliseconds.</summary>
-		public static void SetOffset(int offsetMs) {
-			_offsetMs=offsetMs;
-		}
-
-		///<summary>Returns current offset milliseconds.</summary>
-		public static int GetOffset() {
-			return _offsetMs;
-		}
-
-		///<summary>Call this method to make Offset() do nothing.</summary>
-		public static void ResetOffset() {
-			_offsetMs=0;
-		}
-		
-		///<summary>Call this to use the offset that had been previously set by unit test.</summary>
-		public static void Offset(ref DateTime dt) {
-			dt=dt.AddMilliseconds(_offsetMs);
 		}
 	}
 }

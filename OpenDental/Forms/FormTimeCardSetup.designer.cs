@@ -39,6 +39,7 @@ namespace OpenDental {
 			this.gridRules = new OpenDental.UI.GridOD();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butAdd = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textADPCompanyCode = new System.Windows.Forms.TextBox();
 			this.butGenerate = new OpenDental.UI.Button();
@@ -144,6 +145,16 @@ namespace OpenDental {
 			this.butAdd.Text = "&Add One";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(917, 664);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// label2
 			// 
 			this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -244,6 +255,7 @@ namespace OpenDental {
 			this.Controls.Add(this.gridRules);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butAdd);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -260,6 +272,7 @@ namespace OpenDental {
 		#endregion
 
 		private OpenDental.UI.Button butAdd;
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.CheckBox checkUseDecimal;
 		private UI.GridOD gridRules;

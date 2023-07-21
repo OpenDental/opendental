@@ -27,6 +27,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPopupFade));
 			this.timer2 = new System.Windows.Forms.Timer(this.components);
 			this.labelInfo = new System.Windows.Forms.Label();
+			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// timer2
@@ -35,30 +36,41 @@ namespace OpenDental {
 			// 
 			// labelInfo
 			// 
-			this.labelInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelInfo.AutoSize = true;
 			this.labelInfo.Location = new System.Drawing.Point(0, 0);
+			this.labelInfo.MaximumSize = new System.Drawing.Size(320, 100);
 			this.labelInfo.Name = "labelInfo";
-			this.labelInfo.Size = new System.Drawing.Size(326, 100);
+			this.labelInfo.Size = new System.Drawing.Size(47, 13);
 			this.labelInfo.TabIndex = 0;
 			this.labelInfo.Text = "labelInfo";
-			this.labelInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.labelInfo.Visible = false;
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(240, 67);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 23);
+			this.butClose.TabIndex = 1;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// FormPopupFade
 			// 
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.ClientSize = new System.Drawing.Size(326, 100);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.labelInfo);
-			this.HasHelpButton = false;
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
-			this.MinimizeBox = false;
 			this.Name = "FormPopupFade";
 			this.ShowIcon = false;
-			this.ShowInTaskbar = false;
-			this.TopMost = true;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -66,5 +78,6 @@ namespace OpenDental {
 
 		private System.Windows.Forms.Timer timer2;
 		private System.Windows.Forms.Label labelInfo;
+		private UI.Button butClose;
 	}
 }

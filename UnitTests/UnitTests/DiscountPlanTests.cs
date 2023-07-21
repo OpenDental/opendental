@@ -67,7 +67,7 @@ namespace UnitTests.DiscountPlanTests {
 				Procedures.Update(procHist[i],procOld);
 			}
 			procHist.Add(proc4);
-			Assert.AreEqual($"",DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(new List<Procedure>{ proc4 },pat.PatNum,DateTime.Now,discountPlanSub));
+			Assert.AreEqual($"",DiscountPlans.CheckDiscountFrequency(new List<Procedure>{ proc4 },pat.PatNum,DateTime.Now,discountPlanSub));
 			DiscountPlanT.ClearDiscountPlanPrefs();
 		}
 
@@ -124,7 +124,7 @@ namespace UnitTests.DiscountPlanTests {
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
 			}
-			Assert.AreEqual($"{procCode5.ProcCode}\r\n",DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(new List<Procedure>{ proc5 },pat.PatNum,DateTime.Now,discountPlanSub));
+			Assert.AreEqual($"{procCode5.ProcCode}\r\n",DiscountPlans.CheckDiscountFrequency(new List<Procedure>{ proc5 },pat.PatNum,DateTime.Now,discountPlanSub));
 			Assert.AreEqual(procHistExceedsLimit.Count,procHist.Where(x=>x.DiscountPlanAmt<5).ToList().Count);
 			DiscountPlanT.ClearDiscountPlanPrefs();
 		}
@@ -182,13 +182,13 @@ namespace UnitTests.DiscountPlanTests {
 			feeSchedNums.Add(feeNum3);
 			feeSchedNums.Add(feeNum4);
 			feeSchedNums.Add(feeNum5);
-			Assert.AreEqual($"{procCode5.ProcCode}\r\n",DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(procHist,pat.PatNum,DateTime.Now,discountPlanSub));
+			Assert.AreEqual($"{procCode5.ProcCode}\r\n",DiscountPlans.CheckDiscountFrequency(procHist,pat.PatNum,DateTime.Now,discountPlanSub));
 			for(int i=0;i<procHist.Count;i++) {
 				Procedure procOld=procHist[i].Copy();
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
 			}
-			string discountfreqMessage=DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
+			string discountfreqMessage=DiscountPlans.CheckDiscountFrequency(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
 			Assert.AreEqual(true,procHistExceedsLimit.All(x=>discountfreqMessage.Contains(ProcedureCodes.GetStringProcCode(x.CodeNum))));
 			Assert.AreEqual(procHistExceedsLimit.Count,procHist.Where(x=>x.DiscountPlanAmt==0).ToList().Count);
 			DiscountPlanT.ClearDiscountPlanPrefs();
@@ -237,7 +237,7 @@ namespace UnitTests.DiscountPlanTests {
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
 			}
-			string discountfreqMessage=DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
+			string discountfreqMessage=DiscountPlans.CheckDiscountFrequency(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
 			Assert.AreEqual(true,procHistExceedsLimit.All(x=>discountfreqMessage.Contains(ProcedureCodes.GetStringProcCode(x.CodeNum))));
 			Assert.AreEqual(procHistPartiallyExceedsLimits.Count,procHist.Count(x=>x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
 			Assert.AreEqual(procHistExceedsLimit.Count,procHist.Count(x=>x.DiscountPlanAmt==0));
@@ -281,7 +281,7 @@ namespace UnitTests.DiscountPlanTests {
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
 			}
-			string discountfreqMessage=DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
+			string discountfreqMessage=DiscountPlans.CheckDiscountFrequency(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
 			Assert.AreEqual(true,procHistExceedsLimit.All(x=>discountfreqMessage.Contains(ProcedureCodes.GetStringProcCode(x.CodeNum))));
 			Assert.AreEqual(procHistPartiallyExceedsLimits.Count,procHist.Count(x=>x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
 			Assert.AreEqual(procHistExceedsLimit.Count,procHist.Count(x=>x.DiscountPlanAmt==0));
@@ -337,8 +337,8 @@ namespace UnitTests.DiscountPlanTests {
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
 			}
-			List<double> listAnnualMaxTots=Adjustments.GetAnnualTotalsForPatByDiscountPlan(discountPlanSub.PatNum,discountPlanSub.DateEffective,discountPlanSub.DateTerm,discountPlan,procHist.Max(x=>x.ProcDate));
-			int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub.DateEffective,discountPlanSub.DateTerm,procHist.Max(x=>x.ProcDate));
+			List<double> listAnnualMaxTots=Adjustments.GetAnnualTotalsForPatByDiscountPlanSub(discountPlanSub,discountPlan,procHist.Max(x=>x.ProcDate));
+			int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub,procHist.Max(x=>x.ProcDate));
 			Assert.AreEqual(discountPlan.AnnualMax,listAnnualMaxTots[index]);
 			DiscountPlanT.ClearDiscountPlanPrefs();
 		}
@@ -383,8 +383,8 @@ namespace UnitTests.DiscountPlanTests {
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
 			}
-			List<double> listAnnualMaxTots=Adjustments.GetAnnualTotalsForPatByDiscountPlan(discountPlanSub.PatNum,discountPlanSub.DateEffective,discountPlanSub.DateTerm,discountPlan,procHist.Max(x=>x.ProcDate));
-			int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub.DateEffective,discountPlanSub.DateTerm,procHist.Max(x=>x.ProcDate));
+			List<double> listAnnualMaxTots=Adjustments.GetAnnualTotalsForPatByDiscountPlanSub(discountPlanSub,discountPlan,procHist.Max(x=>x.ProcDate));
+			int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub,procHist.Max(x=>x.ProcDate));
 			Assert.AreEqual(discountPlan.AnnualMax,listAnnualMaxTots[index]);
 			Assert.AreEqual(procHistExceedsLimit.Count,procHist.Count(x=>x.DiscountPlanAmt==0));
 			DiscountPlanT.ClearDiscountPlanPrefs();
@@ -432,8 +432,8 @@ namespace UnitTests.DiscountPlanTests {
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
 			}
-			List<double> listAnnualMaxTots=Adjustments.GetAnnualTotalsForPatByDiscountPlan(discountPlanSub.PatNum,discountPlanSub.DateEffective,discountPlanSub.DateTerm,discountPlan,procHist.Max(x=>x.ProcDate));
-			int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub.DateEffective,discountPlanSub.DateTerm,procHist.Max(x=>x.ProcDate));
+			List<double> listAnnualMaxTots=Adjustments.GetAnnualTotalsForPatByDiscountPlanSub(discountPlanSub,discountPlan,procHist.Max(x=>x.ProcDate));
+			int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub,procHist.Max(x=>x.ProcDate));
 			Assert.AreEqual(discountPlan.AnnualMax,listAnnualMaxTots[index]);
 			Assert.AreEqual(procHistPartiallyExceedsLimits.Count,procHist.Count(x=>x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
 			Assert.AreEqual(procHistExceedsLimit.Count,procHist.Count(x=>x.DiscountPlanAmt==0));
@@ -482,9 +482,9 @@ namespace UnitTests.DiscountPlanTests {
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
 			}
-			List<double> listAnnualMaxTots=Adjustments.GetAnnualTotalsForPatByDiscountPlan(discountPlanSub.PatNum,discountPlanSub.DateEffective,discountPlanSub.DateTerm,discountPlan,procHist.Max(x=>x.ProcDate));
+			List<double> listAnnualMaxTots=Adjustments.GetAnnualTotalsForPatByDiscountPlanSub(discountPlanSub,discountPlan,procHist.Max(x=>x.ProcDate));
 			for(int i = 0;i<procHist.Count;i++) {
-				int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub.DateEffective,discountPlanSub.DateTerm,procHist[i].ProcDate);
+				int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub,procHist[i].ProcDate);
 				Assert.AreEqual(true,discountPlan.AnnualMax>=listAnnualMaxTots[index]);
 			}
 			Assert.AreEqual(procHistPartiallyExceedsLimits.Count,procHist.Count(x=>x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
@@ -534,9 +534,9 @@ namespace UnitTests.DiscountPlanTests {
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
 			}
-			List<double> listAnnualMaxTots=Adjustments.GetAnnualTotalsForPatByDiscountPlan(discountPlanSub.PatNum,discountPlanSub.DateEffective,discountPlanSub.DateTerm,discountPlan,procHist.Max(x=>x.ProcDate));
+			List<double> listAnnualMaxTots=Adjustments.GetAnnualTotalsForPatByDiscountPlanSub(discountPlanSub,discountPlan,procHist.Max(x=>x.ProcDate));
 			for(int i = 0;i<procHist.Count;i++) {
-				int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub.DateEffective,discountPlanSub.DateTerm,procHist[i].ProcDate);
+				int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub,procHist[i].ProcDate);
 				Assert.AreEqual(true,discountPlan.AnnualMax>=listAnnualMaxTots[index]);
 			}
 			Assert.AreEqual(procHistPartiallyExceedsLimits.Count,procHist.Count(x=>x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
@@ -585,9 +585,9 @@ namespace UnitTests.DiscountPlanTests {
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
 			}
-			List<double> listAnnualMaxTots=Adjustments.GetAnnualTotalsForPatByDiscountPlan(discountPlanSub.PatNum,discountPlanSub.DateEffective,discountPlanSub.DateTerm,discountPlan,procHist.Max(x=>x.ProcDate));
+			List<double> listAnnualMaxTots=Adjustments.GetAnnualTotalsForPatByDiscountPlanSub(discountPlanSub,discountPlan,procHist.Max(x=>x.ProcDate));
 			for(int i = 0;i<procHist.Count;i++) {
-				int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub.DateEffective,discountPlanSub.DateTerm,procHist[i].ProcDate);
+				int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub,procHist[i].ProcDate);
 				Assert.AreEqual(true,discountPlan.AnnualMax>=listAnnualMaxTots[index]);
 			}
 			Assert.AreEqual(procHistExceedsLimit.Count,procHist.Count(x=>x.DiscountPlanAmt==0));
@@ -636,9 +636,9 @@ namespace UnitTests.DiscountPlanTests {
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
 			}
-			List<double> listAnnualMaxTots=Adjustments.GetAnnualTotalsForPatByDiscountPlan(discountPlanSub.PatNum,discountPlanSub.DateEffective,discountPlanSub.DateTerm,discountPlan,procHist.Max(x=>x.ProcDate));
+			List<double> listAnnualMaxTots=Adjustments.GetAnnualTotalsForPatByDiscountPlanSub(discountPlanSub,discountPlan,procHist.Max(x=>x.ProcDate));
 			for(int i = 0;i<procHist.Count;i++) {
-				int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub.DateEffective,discountPlanSub.DateTerm,procHist[i].ProcDate);
+				int index=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub,procHist[i].ProcDate);
 				Assert.AreEqual(true,discountPlan.AnnualMax>=listAnnualMaxTots[index]);
 			}
 			Assert.AreEqual(procHistPartiallyExceedsLimits.Count,procHist.Count(x=>x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
@@ -694,7 +694,7 @@ namespace UnitTests.DiscountPlanTests {
 			procOld=proc5.Copy();
 			proc5.ProcStatus=ProcStat.C;
 			Procedures.Update(proc5,procOld);
-			string discountfreqMessage=DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
+			string discountfreqMessage=DiscountPlans.CheckDiscountFrequency(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
 			Assert.AreEqual(true,discountfreqMessage=="");
 			Assert.AreEqual(procHistPartiallyExceedsLimits.Count,procHist.Count(x=>x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
 			Assert.AreEqual(procHistExceedsLimit.Count,procHist.Count(x=>x.DiscountPlanAmt==0));
@@ -748,7 +748,7 @@ namespace UnitTests.DiscountPlanTests {
 			procOld=proc5.Copy();
 			proc5.ProcStatus=ProcStat.C;
 			Procedures.Update(proc5,procOld);
-			string discountfreqMessage=DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
+			string discountfreqMessage=DiscountPlans.CheckDiscountFrequency(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
 			Assert.AreEqual(true,discountfreqMessage=="");
 			Assert.AreEqual(procHistPartiallyExceedsLimits.Count,procHist.Count(x=>x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
 			Assert.AreEqual(procHistExceedsLimit.Count,procHist.Count(x=>x.DiscountPlanAmt==0));
@@ -799,7 +799,7 @@ namespace UnitTests.DiscountPlanTests {
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
 			}
-			string discountfreqMessage=DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
+			string discountfreqMessage=DiscountPlans.CheckDiscountFrequency(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
 			Assert.AreEqual(true,discountfreqMessage=="");
 			Assert.AreEqual(procHistPartiallyExceedsLimits.Count,procHist.Count(x=>x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
 			Assert.AreEqual(procHistExceedsLimit.Count,procHist.Count(x=>x.DiscountPlanAmt==0));
@@ -853,7 +853,7 @@ namespace UnitTests.DiscountPlanTests {
 			procOld=proc5.Copy();
 			proc5.ProcStatus=ProcStat.C;
 			Procedures.Update(proc5,procOld);
-			string discountfreqMessage=DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
+			string discountfreqMessage=DiscountPlans.CheckDiscountFrequency(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
 			Assert.AreEqual(true,procHistExceedsLimit.All(x=>discountfreqMessage.Contains(ProcedureCodes.GetStringProcCode(x.CodeNum))));
 			Assert.AreEqual(procHistPartiallyExceedsLimits.Count,procHist.Count(x=>x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
 			Assert.AreEqual(procHistExceedsLimit.Count,procHist.Count(x=>x.DiscountPlanAmt==0));
@@ -904,9 +904,9 @@ namespace UnitTests.DiscountPlanTests {
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
 			}
-			int annualIndex=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub.DateEffective,discountPlanSub.DateTerm,proc1.ProcDate);
-			List<double> listAdjustmentTotals=Adjustments.GetAnnualTotalsForPatByDiscountPlan(discountPlanSub.PatNum,discountPlanSub.DateEffective,discountPlanSub.DateTerm,discountPlan,proc5.ProcDate.AddDays(1));
-			string discountfreqMessage=DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
+			int annualIndex=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub,proc1.ProcDate);
+			List<double> listAdjustmentTotals=Adjustments.GetAnnualTotalsForPatByDiscountPlanSub(discountPlanSub,discountPlan,proc5.ProcDate.AddDays(1));
+			string discountfreqMessage=DiscountPlans.CheckDiscountFrequency(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
 			Assert.AreEqual(true,discountfreqMessage=="");
 			Assert.AreEqual(procHistPartiallyExceedsLimits.Count,procHist.Count(x=>x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
 			Assert.AreEqual(procHistExceedsLimit.Count,procHist.Count(x=>x.DiscountPlanAmt==0));
@@ -953,13 +953,13 @@ namespace UnitTests.DiscountPlanTests {
 			feeSchedNums.Add(feeNum4);
 			feeSchedNums.Add(feeNum5);
 			Procedure procOld;
-			Assert.AreEqual($"{ProcedureCodes.GetStringProcCode(proc3.CodeNum)}\r\n",DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(procHist,pat.PatNum,procHist[0].ProcDate,discountPlanSub));
+			Assert.AreEqual($"{ProcedureCodes.GetStringProcCode(proc3.CodeNum)}\r\n",DiscountPlans.CheckDiscountFrequency(procHist,pat.PatNum,procHist[0].ProcDate,discountPlanSub));
 			for(int i=0;i<procHist.Count;i++) {
 				procOld=procHist[i].Copy();
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
 			}
-			string discountfreqMessage=DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
+			string discountfreqMessage=DiscountPlans.CheckDiscountFrequency(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
 			Assert.AreEqual(true,discountfreqMessage.Contains(ProcedureCodes.GetStringProcCode(proc3.CodeNum)));
 			Assert.AreEqual(procHistPartiallyExceedsLimits.Count,procHist.Count(x=>x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
 			Assert.AreEqual(procHistExceedsLimit.Count,procHist.Count(x=>x.DiscountPlanAmt==0));
@@ -1082,7 +1082,7 @@ namespace UnitTests.DiscountPlanTests {
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
 			}
-			string discountfreqMessage=DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
+			string discountfreqMessage=DiscountPlans.CheckDiscountFrequency(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
 			Assert.AreEqual(discountfreqMessage,"");
 			Assert.AreEqual(procHist.Count-procHistPartiallyExceedsLimits.Count-procHistExceedsLimit.Count,procHist.Count(x=>x.DiscountPlanAmt==5));
 			Assert.AreEqual(procHistPartiallyExceedsLimits.Count,procHist.Count(x=>x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
@@ -1154,7 +1154,7 @@ namespace UnitTests.DiscountPlanTests {
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
 			}
-			string discountfreqMessage=DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
+			string discountfreqMessage=DiscountPlans.CheckDiscountFrequency(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
 			Assert.AreEqual(discountfreqMessage,"");
 			Assert.AreEqual(procHist.Count-procHistPartiallyExceedsLimits.Count-procHistExceedsLimit.Count,procHist.Count(x=>x.DiscountPlanAmt==5));
 			Assert.AreEqual(procHistPartiallyExceedsLimits.Count,procHist.Count(x=>x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
@@ -1226,7 +1226,7 @@ namespace UnitTests.DiscountPlanTests {
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
 			}
-			string discountfreqMessage=DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
+			string discountfreqMessage=DiscountPlans.CheckDiscountFrequency(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
 			Assert.AreEqual(discountfreqMessage,"");
 			Assert.AreEqual(procHist.Count-procHistPartiallyExceedsLimits.Count-procHistExceedsLimit.Count,procHist.Count(x=>x.DiscountPlanAmt==5));
 			Assert.AreEqual(procHistPartiallyExceedsLimits.Count,procHist.Count(x=>x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
@@ -1298,7 +1298,7 @@ namespace UnitTests.DiscountPlanTests {
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
 			}
-			string discountfreqMessage=DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
+			string discountfreqMessage=DiscountPlans.CheckDiscountFrequency(procHist,pat.PatNum,DateTime.Now,discountPlanSub);
 			Assert.AreEqual(discountfreqMessage,"");
 			Assert.AreEqual(procHist.Count-procHistPartiallyExceedsLimits.Count-procHistExceedsLimit.Count,procHist.Count(x=>x.DiscountPlanAmt==5));
 			Assert.AreEqual(procHistPartiallyExceedsLimits.Count,procHist.Count(x=>x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
@@ -1312,291 +1312,6 @@ namespace UnitTests.DiscountPlanTests {
 				.Select(x=>x.ProcNum).ToList()
 				.Count(x=>procHistExceedsLimit.Select(y=>y.ProcNum).ToList().Contains(x)));
 			DiscountPlanT.ClearDiscountPlanPrefs();
-		}
-
-		[TestMethod]
-		///<summary>Patient has one Discount plan, subscriber self. The Discount Plan has an exam frequency limit of 3 and annual max of $35. The patient's Discount Plan Sub has a start date of 1/1/0001 and date term of 5 years from the present date. None of the procedures exceed the frequency limit or annual max. Estimate matches actual results.</summary>
-		public void DiscountPlan_GetDiscountPlanProcEstimate_DifferentYearSegments_AnnualMaxDoesntExceed() {
-			DiscountPlanT.ClearDiscountPlanPrefs();
-			Patient patient=PatientT.CreatePatient();
-			long feeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"DPFS");
-			DiscountPlan discountPlan=DiscountPlanT.CreateDiscountPlan("DPT",feeSchedNum:feeSchedNum,examFreqLimit:3,annualMax:35);
-			DiscountPlanSub discountPlanSub=DiscountPlanSubT.CreateDiscountPlanSub(patient.PatNum,discountPlan.DiscountPlanNum,dateEffective:DateTime.MinValue,dateTerm:DateTime.Now.AddYears(5));
-			ProcedureCode procedureCode1=ProcedureCodeT.CreateProcCode("DPTPC1");
-			long feeNum1=FeeT.CreateFee(feeSchedNum,procedureCode1.CodeNum,amount:95);
-			Procedure procedure1=ProcedureT.CreateProcedure(patient,procedureCode1.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(1));
-			procedure1.UnitQty=5;
-			ProcedureCode procedureCode2=ProcedureCodeT.CreateProcCode("DPTPC2");
-			long feeNum2=FeeT.CreateFee(feeSchedNum,procedureCode2.CodeNum,amount:95);
-			Procedure procedure2=ProcedureT.CreateProcedure(patient,procedureCode2.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(1));
-			ProcedureCode procedureCode3=ProcedureCodeT.CreateProcCode("DPTPC3");
-			long feeNum3=FeeT.CreateFee(feeSchedNum,procedureCode3.CodeNum,amount:95);
-			Procedure procedure3=ProcedureT.CreateProcedure(patient,procedureCode3.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(1));
-			ProcedureCode procedureCode4=ProcedureCodeT.CreateProcCode("DPTPC4");
-			long feeNum4=FeeT.CreateFee(feeSchedNum,procedureCode4.CodeNum,amount:95);
-			Procedure procedure4=ProcedureT.CreateProcedure(patient,procedureCode4.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(3));
-			ProcedureCode procedureCode5=ProcedureCodeT.CreateProcCode("DPTPC5");
-			long feeNum5=FeeT.CreateFee(feeSchedNum,procedureCode5.CodeNum,amount:95);
-			Procedure procedure5=ProcedureT.CreateProcedure(patient,procedureCode5.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(0));
-			ProcedureCode procedureCode6=ProcedureCodeT.CreateProcCode("DPTPC6");
-			long feeNum6=FeeT.CreateFee(feeSchedNum,procedureCode6.CodeNum,amount:95);
-			Procedure procedure6=ProcedureT.CreateProcedure(patient,procedureCode6.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(0));
-			ProcedureCode procedureCode7=ProcedureCodeT.CreateProcCode("DPTPC7");
-			long feeNum7=FeeT.CreateFee(feeSchedNum,procedureCode7.CodeNum,amount:95);
-			Procedure procedure7=ProcedureT.CreateProcedure(patient,procedureCode7.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(0));
-			PrefT.UpdateString(PrefName.DiscountPlanExamCodes,procedureCode1.ProcCode+","+procedureCode2.ProcCode+","+procedureCode3.ProcCode+","+procedureCode4.ProcCode+","+procedureCode5.ProcCode+","+procedureCode6.ProcCode+","+procedureCode7.ProcCode);
-			List<Procedure> listProcedures=new List<Procedure>();
-			listProcedures.Add(procedure1);
-			listProcedures.Add(procedure2);
-			listProcedures.Add(procedure3);
-			listProcedures.Add(procedure4);
-			listProcedures.Add(procedure5);
-			listProcedures.Add(procedure6);
-			listProcedures.Add(procedure7);
-			List<Procedure> listProceduresHistPartiallyExceedsAnnualMaxLimit=new List<Procedure> {  };
-			List<Procedure> listProceduresHistExceedsAnnualMaxLimit=new List<Procedure> {  };
-			List<Procedure> listProceduresHistExceedsFreqLimit=new List<Procedure> {  };
-			List<DiscountPlanProc> listDiscountPlanProcsWithSub=DiscountPlans.GetDiscountPlanProc(listProcedures,discountPlanSub,discountPlan);
-			List<DiscountPlanProc> listDiscountPlanProcs=DiscountPlans.GetDiscountPlanProcEstimate(listProcedures,patient.PatNum,DateTime.MinValue,DateTime.Now.AddYears(5),discountPlan);
-			DiscountPlanT.ClearDiscountPlanPrefs();
-			Assert.AreEqual(listDiscountPlanProcsWithSub.Count,listDiscountPlanProcs.Count);
-			for(int i=0;i<listDiscountPlanProcs.Count;i++) {
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].DiscountPlanAmt,listDiscountPlanProcs[i].DiscountPlanAmt);
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].ProcNum,listDiscountPlanProcs[i].ProcNum);
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].doesExceedAnnualMax,listDiscountPlanProcs[i].doesExceedAnnualMax);
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].doesExceedFreqLimit,listDiscountPlanProcs[i].doesExceedFreqLimit);
-			}
-			Assert.AreEqual(listProceduresHistPartiallyExceedsAnnualMaxLimit.Count,listDiscountPlanProcs.Count(x=>x.doesExceedAnnualMax && x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
-			Assert.AreEqual(listProceduresHistExceedsAnnualMaxLimit.Count,listDiscountPlanProcs.Count(x=>x.DiscountPlanAmt==0 && x.doesExceedAnnualMax));
-			Assert.AreEqual(listProceduresHistExceedsFreqLimit.Count,listDiscountPlanProcs.Count(x=>x.DiscountPlanAmt==0 && x.doesExceedFreqLimit));
-		}
-
-		[TestMethod]
-		///<summary>Patient has one Discount plan, subscriber self. The Discount Plan has an exam frequency limit of 3 and annual max of $20. The patient's Discount Plan Sub has a start date of 1/1/0001 and date term of 5 years from the present date. None of the procedures exceed the frequency limit. Three procedures exceed the annual max. Estimate matches actual results.</summary>
-		public void DiscountPlan_GetDiscountPlanProcEstimate_DifferentYearSegments_AnnualMaxDoesExceed() {
-			DiscountPlanT.ClearDiscountPlanPrefs();
-			Patient patient=PatientT.CreatePatient();
-			long feeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"DPFS");
-			DiscountPlan discountPlan=DiscountPlanT.CreateDiscountPlan("DPT",feeSchedNum:feeSchedNum,examFreqLimit:3,annualMax:20);
-			DiscountPlanSub discountPlanSub=DiscountPlanSubT.CreateDiscountPlanSub(patient.PatNum,discountPlan.DiscountPlanNum,dateEffective:DateTime.MinValue,dateTerm:DateTime.Now.AddYears(5));
-			ProcedureCode procedureCode1=ProcedureCodeT.CreateProcCode("DPTPC1");
-			long feeNum1=FeeT.CreateFee(feeSchedNum,procedureCode1.CodeNum,amount:95);
-			Procedure procedure1=ProcedureT.CreateProcedure(patient,procedureCode1.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(1));
-			procedure1.UnitQty=5;
-			ProcedureCode procedureCode2=ProcedureCodeT.CreateProcCode("DPTPC2");
-			long feeNum2=FeeT.CreateFee(feeSchedNum,procedureCode2.CodeNum,amount:95);
-			Procedure procedure2=ProcedureT.CreateProcedure(patient,procedureCode2.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(1));
-			ProcedureCode procedureCode3=ProcedureCodeT.CreateProcCode("DPTPC3");
-			long feeNum3=FeeT.CreateFee(feeSchedNum,procedureCode3.CodeNum,amount:95);
-			Procedure procedure3=ProcedureT.CreateProcedure(patient,procedureCode3.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(1));
-			ProcedureCode procedureCode4=ProcedureCodeT.CreateProcCode("DPTPC4");
-			long feeNum4=FeeT.CreateFee(feeSchedNum,procedureCode4.CodeNum,amount:95);
-			Procedure procedure4=ProcedureT.CreateProcedure(patient,procedureCode4.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(3));
-			ProcedureCode procedureCode5=ProcedureCodeT.CreateProcCode("DPTPC5");
-			long feeNum5=FeeT.CreateFee(feeSchedNum,procedureCode5.CodeNum,amount:95);
-			Procedure procedure5=ProcedureT.CreateProcedure(patient,procedureCode5.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(0));
-			ProcedureCode procedureCode6=ProcedureCodeT.CreateProcCode("DPTPC6");
-			long feeNum6=FeeT.CreateFee(feeSchedNum,procedureCode6.CodeNum,amount:95);
-			Procedure procedure6=ProcedureT.CreateProcedure(patient,procedureCode6.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(0));
-			ProcedureCode procedureCode7=ProcedureCodeT.CreateProcCode("DPTPC7");
-			long feeNum7=FeeT.CreateFee(feeSchedNum,procedureCode7.CodeNum,amount:95);
-			Procedure procedure7=ProcedureT.CreateProcedure(patient,procedureCode7.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(0));
-			PrefT.UpdateString(PrefName.DiscountPlanExamCodes,procedureCode1.ProcCode+","+procedureCode2.ProcCode+","+procedureCode3.ProcCode+","+procedureCode4.ProcCode+","+procedureCode5.ProcCode+","+procedureCode6.ProcCode+","+procedureCode7.ProcCode);
-			List<Procedure> listProcedures=new List<Procedure>();
-			listProcedures.Add(procedure1);
-			listProcedures.Add(procedure2);
-			listProcedures.Add(procedure3);
-			listProcedures.Add(procedure4);
-			listProcedures.Add(procedure5);
-			listProcedures.Add(procedure6);
-			listProcedures.Add(procedure7);
-			List<Procedure> listProceduresHistPartiallyExceedsAnnualMaxLimit=new List<Procedure> { procedure1 };
-			List<Procedure> listProceduresHistExceedsAnnualMaxLimit=new List<Procedure> { procedure2,procedure3 };
-			List<Procedure> listProceduresHistExceedsFreqLimit=new List<Procedure> {  };
-			List<DiscountPlanProc> listDiscountPlanProcsWithSub=DiscountPlans.GetDiscountPlanProc(listProcedures,discountPlanSub,discountPlan);
-			List<DiscountPlanProc> listDiscountPlanProcs=DiscountPlans.GetDiscountPlanProcEstimate(listProcedures,patient.PatNum,DateTime.MinValue,DateTime.Now.AddYears(5),discountPlan);
-			DiscountPlanT.ClearDiscountPlanPrefs();
-			Assert.AreEqual(listDiscountPlanProcsWithSub.Count,listDiscountPlanProcs.Count);
-			for(int i=0;i<listDiscountPlanProcs.Count;i++) {
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].DiscountPlanAmt,listDiscountPlanProcs[i].DiscountPlanAmt);
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].ProcNum,listDiscountPlanProcs[i].ProcNum);
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].doesExceedAnnualMax,listDiscountPlanProcs[i].doesExceedAnnualMax);
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].doesExceedFreqLimit,listDiscountPlanProcs[i].doesExceedFreqLimit);
-			}
-			Assert.AreEqual(listProceduresHistPartiallyExceedsAnnualMaxLimit.Count,listDiscountPlanProcs.Count(x=>x.doesExceedAnnualMax && x.DiscountPlanAmt<25 && x.DiscountPlanAmt>0));
-			Assert.AreEqual(listProceduresHistExceedsAnnualMaxLimit.Count,listDiscountPlanProcs.Count(x=>x.DiscountPlanAmt==0 && x.doesExceedAnnualMax));
-			Assert.AreEqual(listProceduresHistExceedsFreqLimit.Count,listDiscountPlanProcs.Count(x=>x.DiscountPlanAmt==0 && x.doesExceedFreqLimit));
-		}
-
-		[TestMethod]
-		///<summary>Patient has one Discount plan, subscriber self. The Discount Plan has an exam frequency limit of 3 and annual max of $50. The patient's Discount Plan Sub has a start date of 1/1/0001 and date term of 5 years from the present date. None of the procedures exceed the frequency limit or annual max. Estimate matches actual results.</summary>
-		public void DiscountPlan_GetDiscountPlanProcEstimate_DifferentYearSegments_FrequencyLimitDoesntExceed() {
-			DiscountPlanT.ClearDiscountPlanPrefs();
-			Patient patient=PatientT.CreatePatient();
-			long feeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"DPFS");
-			DiscountPlan discountPlan=DiscountPlanT.CreateDiscountPlan("DPT",feeSchedNum:feeSchedNum,examFreqLimit:3,annualMax:50);
-			DiscountPlanSub discountPlanSub=DiscountPlanSubT.CreateDiscountPlanSub(patient.PatNum,discountPlan.DiscountPlanNum,dateEffective:DateTime.MinValue,dateTerm:DateTime.Now.AddYears(5));
-			ProcedureCode procedureCode1=ProcedureCodeT.CreateProcCode("DPTPC1");
-			long feeNum1=FeeT.CreateFee(feeSchedNum,procedureCode1.CodeNum,amount:95);
-			Procedure procedure1=ProcedureT.CreateProcedure(patient,procedureCode1.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(1));
-			procedure1.UnitQty=5;
-			ProcedureCode procedureCode2=ProcedureCodeT.CreateProcCode("DPTPC2");
-			long feeNum2=FeeT.CreateFee(feeSchedNum,procedureCode2.CodeNum,amount:95);
-			Procedure procedure2=ProcedureT.CreateProcedure(patient,procedureCode2.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(1));
-			ProcedureCode procedureCode3=ProcedureCodeT.CreateProcCode("DPTPC3");
-			long feeNum3=FeeT.CreateFee(feeSchedNum,procedureCode3.CodeNum,amount:95);
-			Procedure procedure3=ProcedureT.CreateProcedure(patient,procedureCode3.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(1));
-			ProcedureCode procedureCode4=ProcedureCodeT.CreateProcCode("DPTPC4");
-			long feeNum4=FeeT.CreateFee(feeSchedNum,procedureCode4.CodeNum,amount:95);
-			Procedure procedure4=ProcedureT.CreateProcedure(patient,procedureCode4.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(3));
-			ProcedureCode procedureCode5=ProcedureCodeT.CreateProcCode("DPTPC5");
-			long feeNum5=FeeT.CreateFee(feeSchedNum,procedureCode5.CodeNum,amount:95);
-			Procedure procedure5=ProcedureT.CreateProcedure(patient,procedureCode5.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(0));
-			ProcedureCode procedureCode6=ProcedureCodeT.CreateProcCode("DPTPC6");
-			long feeNum6=FeeT.CreateFee(feeSchedNum,procedureCode6.CodeNum,amount:95);
-			Procedure procedure6=ProcedureT.CreateProcedure(patient,procedureCode6.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(0));
-			ProcedureCode procedureCode7=ProcedureCodeT.CreateProcCode("DPTPC7");
-			long feeNum7=FeeT.CreateFee(feeSchedNum,procedureCode7.CodeNum,amount:95);
-			Procedure procedure7=ProcedureT.CreateProcedure(patient,procedureCode7.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(0));
-			PrefT.UpdateString(PrefName.DiscountPlanExamCodes,procedureCode1.ProcCode+","+procedureCode2.ProcCode+","+procedureCode3.ProcCode+","+procedureCode4.ProcCode+","+procedureCode5.ProcCode+","+procedureCode6.ProcCode+","+procedureCode7.ProcCode);
-			List<Procedure> listProcedures=new List<Procedure>();
-			listProcedures.Add(procedure1);
-			listProcedures.Add(procedure2);
-			listProcedures.Add(procedure3);
-			listProcedures.Add(procedure4);
-			listProcedures.Add(procedure5);
-			listProcedures.Add(procedure6);
-			listProcedures.Add(procedure7);
-			List<Procedure> listProceduresHistPartiallyExceedsAnnualMaxLimit=new List<Procedure> { };
-			List<Procedure> listProceduresHistExceedsAnnualMaxLimit=new List<Procedure> { };
-			List<Procedure> listProceduresHistExceedsFreqLimit=new List<Procedure> {  };
-			List<DiscountPlanProc> listDiscountPlanProcsWithSub=DiscountPlans.GetDiscountPlanProc(listProcedures,discountPlanSub,discountPlan);
-			List<DiscountPlanProc> listDiscountPlanProcs=DiscountPlans.GetDiscountPlanProcEstimate(listProcedures,patient.PatNum,DateTime.MinValue,DateTime.Now.AddYears(5),discountPlan);
-			DiscountPlanT.ClearDiscountPlanPrefs();
-			Assert.AreEqual(listDiscountPlanProcsWithSub.Count,listDiscountPlanProcs.Count);
-			for(int i=0;i<listDiscountPlanProcs.Count;i++) {
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].DiscountPlanAmt,listDiscountPlanProcs[i].DiscountPlanAmt);
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].ProcNum,listDiscountPlanProcs[i].ProcNum);
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].doesExceedAnnualMax,listDiscountPlanProcs[i].doesExceedAnnualMax);
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].doesExceedFreqLimit,listDiscountPlanProcs[i].doesExceedFreqLimit);
-			}
-			Assert.AreEqual(listProceduresHistPartiallyExceedsAnnualMaxLimit.Count,listDiscountPlanProcs.Count(x=>x.doesExceedAnnualMax && x.DiscountPlanAmt<25 && x.DiscountPlanAmt>0));
-			Assert.AreEqual(listProceduresHistExceedsAnnualMaxLimit.Count,listDiscountPlanProcs.Count(x=>x.DiscountPlanAmt==0 && x.doesExceedAnnualMax));
-			Assert.AreEqual(listProceduresHistExceedsFreqLimit.Count,listDiscountPlanProcs.Count(x=>x.DiscountPlanAmt==0 && x.doesExceedFreqLimit));
-		}
-
-		[TestMethod]
-		///<summary>Patient has one Discount plan, subscriber self. The Discount Plan has an exam frequency limit of 2 and no annual max. The patient's Discount Plan Sub has a start date of 1/1/0001 and date term of 5 years from the present date. Two procedures exceed the frequency limit. No procedures exceed the annual max. Estimate matches actual results.</summary>
-		public void DiscountPlan_GetDiscountPlanProcEstimate_DifferentYearSegments_FrequencyLimitDoesExceed() {
-			DiscountPlanT.ClearDiscountPlanPrefs();
-			Patient patient=PatientT.CreatePatient();
-			long feeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"DPFS");
-			DiscountPlan discountPlan=DiscountPlanT.CreateDiscountPlan("DPT",feeSchedNum:feeSchedNum,examFreqLimit:2);
-			DiscountPlanSub discountPlanSub=DiscountPlanSubT.CreateDiscountPlanSub(patient.PatNum,discountPlan.DiscountPlanNum,dateEffective:DateTime.MinValue,dateTerm:DateTime.Now.AddYears(5));
-			ProcedureCode procedureCode1=ProcedureCodeT.CreateProcCode("DPTPC1");
-			long feeNum1=FeeT.CreateFee(feeSchedNum,procedureCode1.CodeNum,amount:95);
-			Procedure procedure1=ProcedureT.CreateProcedure(patient,procedureCode1.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(1));
-			procedure1.UnitQty=5;
-			ProcedureCode procedureCode2=ProcedureCodeT.CreateProcCode("DPTPC2");
-			long feeNum2=FeeT.CreateFee(feeSchedNum,procedureCode2.CodeNum,amount:95);
-			Procedure procedure2=ProcedureT.CreateProcedure(patient,procedureCode2.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(1));
-			ProcedureCode procedureCode3=ProcedureCodeT.CreateProcCode("DPTPC3");
-			long feeNum3=FeeT.CreateFee(feeSchedNum,procedureCode3.CodeNum,amount:95);
-			Procedure procedure3=ProcedureT.CreateProcedure(patient,procedureCode3.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(1));
-			ProcedureCode procedureCode4=ProcedureCodeT.CreateProcCode("DPTPC4");
-			long feeNum4=FeeT.CreateFee(feeSchedNum,procedureCode4.CodeNum,amount:95);
-			Procedure procedure4=ProcedureT.CreateProcedure(patient,procedureCode4.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(3));
-			ProcedureCode procedureCode5=ProcedureCodeT.CreateProcCode("DPTPC5");
-			long feeNum5=FeeT.CreateFee(feeSchedNum,procedureCode5.CodeNum,amount:95);
-			Procedure procedure5=ProcedureT.CreateProcedure(patient,procedureCode5.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(0));
-			ProcedureCode procedureCode6=ProcedureCodeT.CreateProcCode("DPTPC6");
-			long feeNum6=FeeT.CreateFee(feeSchedNum,procedureCode6.CodeNum,amount:95);
-			Procedure procedure6=ProcedureT.CreateProcedure(patient,procedureCode6.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(0));
-			ProcedureCode procedureCode7=ProcedureCodeT.CreateProcCode("DPTPC7");
-			long feeNum7=FeeT.CreateFee(feeSchedNum,procedureCode7.CodeNum,amount:95);
-			Procedure procedure7=ProcedureT.CreateProcedure(patient,procedureCode7.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(0));
-			PrefT.UpdateString(PrefName.DiscountPlanExamCodes,procedureCode1.ProcCode+","+procedureCode2.ProcCode+","+procedureCode3.ProcCode+","+procedureCode4.ProcCode+","+procedureCode5.ProcCode+","+procedureCode6.ProcCode+","+procedureCode7.ProcCode);
-			List<Procedure> listProcedures=new List<Procedure>();
-			listProcedures.Add(procedure1);
-			listProcedures.Add(procedure2);
-			listProcedures.Add(procedure3);
-			listProcedures.Add(procedure4);
-			listProcedures.Add(procedure5);
-			listProcedures.Add(procedure6);
-			listProcedures.Add(procedure7);
-			List<Procedure> listProceduresHistPartiallyExceedsAnnualMaxLimit=new List<Procedure> {  };
-			List<Procedure> listProceduresHistExceedsAnnualMaxLimit=new List<Procedure> {  };
-			List<Procedure> listProceduresHistExceedsFreqLimit=new List<Procedure> { procedure3,procedure7 };
-			List<DiscountPlanProc> listDiscountPlanProcsWithSub=DiscountPlans.GetDiscountPlanProc(listProcedures,discountPlanSub,discountPlan);
-			List<DiscountPlanProc> listDiscountPlanProcs=DiscountPlans.GetDiscountPlanProcEstimate(listProcedures,patient.PatNum,DateTime.MinValue,DateTime.Now.AddYears(5),discountPlan);
-			DiscountPlanT.ClearDiscountPlanPrefs();
-			Assert.AreEqual(listDiscountPlanProcsWithSub.Count,listDiscountPlanProcs.Count);
-			for(int i=0;i<listDiscountPlanProcs.Count;i++) {
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].DiscountPlanAmt,listDiscountPlanProcs[i].DiscountPlanAmt);
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].ProcNum,listDiscountPlanProcs[i].ProcNum);
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].doesExceedAnnualMax,listDiscountPlanProcs[i].doesExceedAnnualMax);
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].doesExceedFreqLimit,listDiscountPlanProcs[i].doesExceedFreqLimit);
-			}
-			Assert.AreEqual(listProceduresHistPartiallyExceedsAnnualMaxLimit.Count,listDiscountPlanProcs.Count(x=>x.doesExceedAnnualMax && x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
-			Assert.AreEqual(listProceduresHistExceedsAnnualMaxLimit.Count,listDiscountPlanProcs.Count(x=>x.DiscountPlanAmt==0 && x.doesExceedAnnualMax));
-			Assert.AreEqual(listProceduresHistExceedsFreqLimit.Count,listDiscountPlanProcs.Count(x=>x.DiscountPlanAmt==0 && x.doesExceedFreqLimit));
-		}
-
-		[TestMethod]
-		///<summary>Patient has one Discount plan, subscriber self. The Discount Plan has an exam frequency limit of 3 and no annual max. The patient's Discount Plan Sub has a start date of 1/1/0001 and date term of 5 years from the present date. None of the procedures exceed the frequency limit or annual max. Estimate matches actual results.</summary>
-		public void DiscountPlan_GetDiscountPlanProcEstimate_DifferentYearSegments_FrequencyLimitAndAnnualMaxDontExceed() {
-			DiscountPlanT.ClearDiscountPlanPrefs();
-			Patient patient=PatientT.CreatePatient();
-			long feeSchedNum=FeeSchedT.CreateFeeSched(FeeScheduleType.Normal,"DPFS");
-			DiscountPlan discountPlan=DiscountPlanT.CreateDiscountPlan("DPT",feeSchedNum:feeSchedNum,examFreqLimit:3);
-			DiscountPlanSub discountPlanSub=DiscountPlanSubT.CreateDiscountPlanSub(patient.PatNum,discountPlan.DiscountPlanNum,dateEffective:DateTime.MinValue,dateTerm:DateTime.Now.AddYears(5));
-			ProcedureCode procedureCode1=ProcedureCodeT.CreateProcCode("DPTPC1");
-			long feeNum1=FeeT.CreateFee(feeSchedNum,procedureCode1.CodeNum,amount:95);
-			Procedure procedure1=ProcedureT.CreateProcedure(patient,procedureCode1.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(1));
-			procedure1.UnitQty=5;
-			ProcedureCode procedureCode2=ProcedureCodeT.CreateProcCode("DPTPC2");
-			long feeNum2=FeeT.CreateFee(feeSchedNum,procedureCode2.CodeNum,amount:95);
-			Procedure procedure2=ProcedureT.CreateProcedure(patient,procedureCode2.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(1));
-			ProcedureCode procedureCode3=ProcedureCodeT.CreateProcCode("DPTPC3");
-			long feeNum3=FeeT.CreateFee(feeSchedNum,procedureCode3.CodeNum,amount:95);
-			Procedure procedure3=ProcedureT.CreateProcedure(patient,procedureCode3.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(1));
-			ProcedureCode procedureCode4=ProcedureCodeT.CreateProcCode("DPTPC4");
-			long feeNum4=FeeT.CreateFee(feeSchedNum,procedureCode4.CodeNum,amount:95);
-			Procedure procedure4=ProcedureT.CreateProcedure(patient,procedureCode4.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(3));
-			ProcedureCode procedureCode5=ProcedureCodeT.CreateProcCode("DPTPC5");
-			long feeNum5=FeeT.CreateFee(feeSchedNum,procedureCode5.CodeNum,amount:95);
-			Procedure procedure5=ProcedureT.CreateProcedure(patient,procedureCode5.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(0));
-			ProcedureCode procedureCode6=ProcedureCodeT.CreateProcCode("DPTPC6");
-			long feeNum6=FeeT.CreateFee(feeSchedNum,procedureCode6.CodeNum,amount:95);
-			Procedure procedure6=ProcedureT.CreateProcedure(patient,procedureCode6.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(0));
-			ProcedureCode procedureCode7=ProcedureCodeT.CreateProcCode("DPTPC7");
-			long feeNum7=FeeT.CreateFee(feeSchedNum,procedureCode7.CodeNum,amount:95);
-			Procedure procedure7=ProcedureT.CreateProcedure(patient,procedureCode7.ProcCode,ProcStat.TP,"",100,procDate:DateTime.Now.AddYears(0));
-			PrefT.UpdateString(PrefName.DiscountPlanExamCodes,procedureCode1.ProcCode+","+procedureCode2.ProcCode+","+procedureCode3.ProcCode+","+procedureCode4.ProcCode+","+procedureCode5.ProcCode+","+procedureCode6.ProcCode+","+procedureCode7.ProcCode);
-			List<Procedure> listProceduresHist=new List<Procedure>();
-			listProceduresHist.Add(procedure1);
-			listProceduresHist.Add(procedure2);
-			listProceduresHist.Add(procedure3);
-			listProceduresHist.Add(procedure4);
-			listProceduresHist.Add(procedure5);
-			listProceduresHist.Add(procedure6);
-			listProceduresHist.Add(procedure7);
-			List<Procedure> listProceduresHistPartiallyExceedsAnnualMaxLimit=new List<Procedure> {  };
-			List<Procedure> listProceduresHistExceedsAnnualMaxLimit=new List<Procedure> {  };
-			List<Procedure> listProceduresHistExceedsFreqLimit=new List<Procedure> {  };
-			List<DiscountPlanProc> listDiscountPlanProcsWithSub=DiscountPlans.GetDiscountPlanProc(listProceduresHist,discountPlanSub,discountPlan);
-			List<DiscountPlanProc> listDiscountPlanProcs=DiscountPlans.GetDiscountPlanProcEstimate(listProceduresHist,patient.PatNum,DateTime.MinValue,DateTime.Now.AddYears(5),discountPlan);
-			DiscountPlanT.ClearDiscountPlanPrefs();
-			Assert.AreEqual(listDiscountPlanProcsWithSub.Count,listDiscountPlanProcs.Count);
-			for(int i=0;i<listDiscountPlanProcs.Count;i++) {
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].DiscountPlanAmt,listDiscountPlanProcs[i].DiscountPlanAmt);
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].ProcNum,listDiscountPlanProcs[i].ProcNum);
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].doesExceedAnnualMax,listDiscountPlanProcs[i].doesExceedAnnualMax);
-				Assert.AreEqual(listDiscountPlanProcsWithSub[i].doesExceedFreqLimit,listDiscountPlanProcs[i].doesExceedFreqLimit);
-			}
-			Assert.AreEqual(listProceduresHistPartiallyExceedsAnnualMaxLimit.Count,listDiscountPlanProcs.Count(x=>x.doesExceedAnnualMax && x.DiscountPlanAmt<5 && x.DiscountPlanAmt>0));
-			Assert.AreEqual(listProceduresHistExceedsAnnualMaxLimit.Count,listDiscountPlanProcs.Count(x=>x.DiscountPlanAmt==0 && x.doesExceedAnnualMax));
-			Assert.AreEqual(listProceduresHistExceedsFreqLimit.Count,listDiscountPlanProcs.Count(x=>x.DiscountPlanAmt==0 && x.doesExceedFreqLimit));
 		}
 	}
 }

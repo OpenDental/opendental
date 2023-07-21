@@ -236,10 +236,19 @@ namespace OpenDental {
 			gridEscalation.SetSelected(curSelectedIndex,true);
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			PhoneEmpSubGroups.Sync(_dictSubGroupsNew.SelectMany(x=>x.Value).ToList(),_dictSubGroupsOld.SelectMany(x=>x.Value).ToList());
 				DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			this.DialogResult=DialogResult.Cancel;
+		}
+
+		private void gridEmployees_CellDoubleClick(object sender,ODGridClickEventArgs e) {
+
+		}
+
+		
 	}
 }

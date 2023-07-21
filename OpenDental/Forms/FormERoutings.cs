@@ -23,8 +23,6 @@ namespace OpenDental {
 
 		private void FormPatientFlows_Load(object sender,EventArgs e) {
 			_clinicNum = Clinics.ClinicNum;
-			datePicker.SetDateTimeFrom(DateTime.Now.AddDays(-7));
-			datePicker.SetDateTimeTo(DateTime.Now);
 			LayoutMenu();
 			FillGrid();
 		}
@@ -66,20 +64,19 @@ namespace OpenDental {
 		}
 
 		private void comboClinic_SelectionChangeCommitted(object sender, EventArgs e) {
-			_clinicNum=comboClinic.ClinicNumSelected;
+			_clinicNum=comboClinic.SelectedClinicNum;
 			FillGrid();
 		}
 
 		private void butSelectPatient_Click(object sender, EventArgs e) {
-			FrmPatientSelect frmPatientSelect=new FrmPatientSelect();
-			frmPatientSelect.ShowDialog();
-			if (frmPatientSelect.IsDialogCancel)
+			using FormPatientSelect formPatientSelect=new FormPatientSelect();
+			formPatientSelect.IsSelectionModeOnly=true;
+			if (formPatientSelect.ShowDialog() == DialogResult.OK)
 			{
-				return;
+				_patient=Patients.GetPat(formPatientSelect.PatNumSelected);
+				textBoxPatName.Text=_patient.GetNameFL();
+				FillGrid();
 			}
-			_patient=Patients.GetPat(frmPatientSelect.PatNumSelected);
-			textBoxPatName.Text=_patient.GetNameFL();
-			FillGrid();
 		}
 
 
@@ -96,6 +93,10 @@ namespace OpenDental {
 
 		private void butRefresh_Click(object sender,EventArgs e) {
 			FillGrid();
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
 		}
 
 	}

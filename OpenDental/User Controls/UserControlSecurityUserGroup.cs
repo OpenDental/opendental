@@ -106,6 +106,12 @@ namespace OpenDental {
 				gridUsers.ContextMenu=contextMenuUsers;
 				butCopyUser.Visible=true;//False by default
 			}
+			if(IsForCEMT) {
+				groupBox2.Visible=false;
+				LayoutManager.Move(gridUsers,new Rectangle(gridUsers.Bounds.X,securityTreeUser.Bounds.Y,gridUsers.Bounds.Width,securityTreeUser.Bounds.Height));
+				int gridUsersRight=gridUsers.Right;
+				LayoutManager.Move(panelUserGroups,new Rectangle(gridUsersRight,gridUsers.Bounds.Y,securityTreeUser.Bounds.X-gridUsersRight,gridUsers.Bounds.Height));
+			}
 			//securityTreeUser was not laying itself out properly.  It's because right anchored items have problems inside of tabs. So we lay it out manually.
 			//LayoutManager.Move(securityTreeUser,new Rectangle(LayoutManager.Scale(605),LayoutManager.Scale(23),
 			//	tabPageUsers.Width-LayoutManager.Scale(605+3),tabPageUsers.Height-LayoutManager.Scale(23+3)));
@@ -158,17 +164,18 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>Returns a filtered list of userods that should be displayed. Includes CEMT users when IsCEMT is true.</summary>
+		///<summary>Returns a filtered list of userods that should be displayed. Returns all users when IsCEMT is true.</summary>
 		private List<Userod> GetFilteredUsersHelper() {
-			List<Userod> listUserOds = Userods.GetDeepCopy();
+			List<Userod> retVal = Userods.GetDeepCopy();
+			if(IsForCEMT) {
+				return retVal;
+			}
 			if(_dictProvNumProvs == null) { //fill the dictionary if needed
 				_dictProvNumProvs=Providers.GetMultProviders(Userods.GetDeepCopy().Select(x => x.ProvNum).ToList()).ToDictionary(x => x.ProvNum,x => x);
 			}
-			if(!IsForCEMT){
-				listUserOds.RemoveAll(x => x.UserNumCEMT>0);//NEVER show CEMT users when not in the CEMT tool.
-			}
+			retVal.RemoveAll(x => x.UserNumCEMT>0);//NEVER show CEMT users when not in the CEMT tool.
 			if(!checkShowHidden.Checked) {
-				listUserOds.RemoveAll(x => x.IsHidden);
+				retVal.RemoveAll(x => x.IsHidden);
 			}
 			long classNum = 0;
 			if(comboSchoolClass.Visible && comboSchoolClass.SelectedIndex>0) {
@@ -176,55 +183,55 @@ namespace OpenDental {
 			}
 			switch(comboShowOnly.GetSelected<UserFilters>()) {
 				case UserFilters.Employees:
-					listUserOds.RemoveAll(x => x.EmployeeNum==0);
+					retVal.RemoveAll(x => x.EmployeeNum==0);
 					break;
 				case UserFilters.Providers:
-					listUserOds.RemoveAll(x => x.ProvNum==0);
+					retVal.RemoveAll(x => x.ProvNum==0);
 					break;
 				case UserFilters.Students:
 					//might not count user as student if attached to invalid providers.
-					listUserOds.RemoveAll(x => !_dictProvNumProvs.ContainsKey(x.ProvNum) || _dictProvNumProvs[x.ProvNum].IsInstructor);
+					retVal.RemoveAll(x => !_dictProvNumProvs.ContainsKey(x.ProvNum) || _dictProvNumProvs[x.ProvNum].IsInstructor);
 					if(classNum>0) {
-						listUserOds.RemoveAll(x => _dictProvNumProvs[x.ProvNum].SchoolClassNum!=classNum);
+						retVal.RemoveAll(x => _dictProvNumProvs[x.ProvNum].SchoolClassNum!=classNum);
 					}
 					break;
 				case UserFilters.Instructors:
-					listUserOds.RemoveAll(x => !_dictProvNumProvs.ContainsKey(x.ProvNum) || !_dictProvNumProvs[x.ProvNum].IsInstructor);
+					retVal.RemoveAll(x => !_dictProvNumProvs.ContainsKey(x.ProvNum) || !_dictProvNumProvs[x.ProvNum].IsInstructor);
 					if(classNum>0) {
-						listUserOds.RemoveAll(x => _dictProvNumProvs[x.ProvNum].SchoolClassNum!=classNum);
+						retVal.RemoveAll(x => _dictProvNumProvs[x.ProvNum].SchoolClassNum!=classNum);
 					}
 					break;
 				case UserFilters.Other:
-					listUserOds.RemoveAll(x => x.EmployeeNum!=0 || x.ProvNum!=0);
+					retVal.RemoveAll(x => x.EmployeeNum!=0 || x.ProvNum!=0);
 					break;
 				case UserFilters.AllUsers:
 				default:
 					break;
 			}
 			if(comboClinic.SelectedIndex>0) {
-				listUserOds.RemoveAll(x => x.ClinicNum!=comboClinic.GetSelected<Clinic>().ClinicNum);
+				retVal.RemoveAll(x => x.ClinicNum!=comboClinic.GetSelected<Clinic>().ClinicNum);
 			}
 			if(comboGroups.SelectedIndex>0) {
-				listUserOds.RemoveAll(x => !x.IsInUserGroup(comboGroups.GetSelected<UserGroup>().UserGroupNum));
+				retVal.RemoveAll(x => !x.IsInUserGroup(comboGroups.GetSelected<UserGroup>().UserGroupNum));
 			}
 			if(!string.IsNullOrWhiteSpace(textPowerSearch.Text)) {
 				switch(comboShowOnly.GetSelected<UserFilters>()) {
 					case UserFilters.Employees:
-						listUserOds.RemoveAll(x => !Employees.GetNameFL(x.EmployeeNum).ToLower().Contains(textPowerSearch.Text.ToLower()));
+						retVal.RemoveAll(x => !Employees.GetNameFL(x.EmployeeNum).ToLower().Contains(textPowerSearch.Text.ToLower()));
 						break;
 					case UserFilters.Providers:
 					case UserFilters.Students:
 					case UserFilters.Instructors:
-						listUserOds.RemoveAll(x => !_dictProvNumProvs[x.ProvNum].GetLongDesc().ToLower().Contains(textPowerSearch.Text.ToLower()));
+						retVal.RemoveAll(x => !_dictProvNumProvs[x.ProvNum].GetLongDesc().ToLower().Contains(textPowerSearch.Text.ToLower()));
 						break;
 					case UserFilters.AllUsers:
 					case UserFilters.Other:
 					default:
-						listUserOds.RemoveAll(x => !x.UserName.ToLower().Contains(textPowerSearch.Text.ToLower()));
+						retVal.RemoveAll(x => !x.UserName.ToLower().Contains(textPowerSearch.Text.ToLower()));
 						break;
 				}
 			}
-			return listUserOds;
+			return retVal;
 		}
 
 		///<summary>Refreshes the security tree in the "Users" tab.</summary>

@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWebChatTools));
+			this.butClose = new OpenDental.UI.Button();
 			this.gridWebChatSessions = new OpenDental.UI.GridOD();
 			this.checkShowEndedSessions = new OpenDental.UI.CheckBox();
 			this.dateRangeWebChat = new OpenDental.UI.ODDateRangePicker();
@@ -43,6 +44,17 @@ namespace OpenDental{
 			this.butPrint = new OpenDental.UI.Button();
 			this.groupFilters.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(1143, 660);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// gridWebChatSessions
 			// 
@@ -111,7 +123,7 @@ namespace OpenDental{
 			this.textChatTextContains.Location = new System.Drawing.Point(557, 18);
 			this.textChatTextContains.Multiline = false;
 			this.textChatTextContains.Name = "textChatTextContains";
-			this.textChatTextContains.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textChatTextContains.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textChatTextContains.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textChatTextContains.Size = new System.Drawing.Size(159, 20);
 			this.textChatTextContains.TabIndex = 12;
@@ -126,7 +138,7 @@ namespace OpenDental{
 			this.textSessionNum.Location = new System.Drawing.Point(319, 18);
 			this.textSessionNum.Multiline = false;
 			this.textSessionNum.Name = "textSessionNum";
-			this.textSessionNum.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textSessionNum.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textSessionNum.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textSessionNum.Size = new System.Drawing.Size(93, 20);
 			this.textSessionNum.TabIndex = 14;
@@ -211,7 +223,7 @@ namespace OpenDental{
 			// butExport
 			// 
 			this.butExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butExport.Location = new System.Drawing.Point(1143, 666);
+			this.butExport.Location = new System.Drawing.Point(995, 661);
 			this.butExport.Name = "butExport";
 			this.butExport.Size = new System.Drawing.Size(75, 24);
 			this.butExport.TabIndex = 18;
@@ -221,7 +233,7 @@ namespace OpenDental{
 			// butPrint
 			// 
 			this.butPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butPrint.Location = new System.Drawing.Point(1050, 666);
+			this.butPrint.Location = new System.Drawing.Point(899, 661);
 			this.butPrint.Name = "butPrint";
 			this.butPrint.Size = new System.Drawing.Size(75, 24);
 			this.butPrint.TabIndex = 19;
@@ -230,6 +242,7 @@ namespace OpenDental{
 			// 
 			// FormWebChatTools
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(1230, 696);
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.butExport);
@@ -237,6 +250,7 @@ namespace OpenDental{
 			this.Controls.Add(this.labelCount);
 			this.Controls.Add(this.groupFilters);
 			this.Controls.Add(this.gridWebChatSessions);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormWebChatTools";
 			this.Text = "Web Chat Tools";
@@ -247,6 +261,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridWebChatSessions;
 		private OpenDental.UI.CheckBox checkShowEndedSessions;
 		private UI.ODDateRangePicker dateRangeWebChat;

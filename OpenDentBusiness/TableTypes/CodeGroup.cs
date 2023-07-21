@@ -2,7 +2,21 @@ using System;
 using System.ComponentModel;
 
 namespace OpenDentBusiness {
-	/// <summary>These groups of procedure codes are used in Benefit Frequencies (and Insurance History?). We can't use CovCats because those spans are frequently far too broad.  We often need specific codes. Cached.</summary>
+	//
+	//Job F42790
+	//Also need to add benefit.CodeGroupNum
+	//A very complex converion script will need to replace benefit CodeNums with CodeGroupNums for all the benefits that are "frequencies".
+	//No conversion script needed for InsHist because we are not touching those prefs.
+	//This is just for benefit Frequency limitations.
+	//Proposed conversion script:
+	//If any prefs are empty, fill them with codes. This covers the "default fallback" hard coded codes that are seen in many places.
+	//Use a query to get a table of all benefits that meet the specific criteria for frequency limitation.
+	//  Loop:
+	//     Match up the procCode that's acting as a "group" and match it to an actual group.
+	//     Convert the CodeNum to a CodeGroupNum
+	//
+	//
+	/// <summary>These groups of procedure codes are used in Benefit Frequencies and Insurance History. We can't use CovCats because those spans are frequently far too broad.  We often need specific codes. Cached.</summary>
 	[Serializable()]
 	[CrudTable(IsSynchable=true)]
 	public class CodeGroup:TableBase {
@@ -14,28 +28,15 @@ namespace OpenDentBusiness {
 		///<summary>list of D codes. Comma delimited, no spaces.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
 		public string ProcCodes;//We could later add support for ranges with hyphens, intermingled with commas.
-		///<summary>Zero-based. CodeGroups that don't show in either list (IsHidden=true and ShowInAgeLimit=false) get higher ItemOrders so that then are at the bottom of the setup list.</summary>
+		///<summary>0-based.</summary>
 		public int ItemOrder;
-		///<summary>Enum:EnumCodeGroupFixed 0=None,BW,PanoFMX,Exam,Perio,Prophy,SRP,FMDebride,Fluoride,Sealant. Six are used in sheet static text fields (example StaticTextField.dateLastBW), and seven are used in Ins History Window.</summary>
+		///<summary>Enum:EnumCodeGroupFixed 0=None,BW,PanoFMX,Exam,Perio,Prophy,SRP,FMDebride,Fluoride,Sealant. This allows five groups to be shown in the Simplified View of Edit Benefits Window, six are used in sheet static text fields (example StaticTextField.dateLastBW), and seven are used in Ins History Window.</summary>
 		public EnumCodeGroupFixed CodeGroupFixed;//this could be improved later, but it meets our current needs.
-		///<summary>If true, this codegroup will be hidden from the frequency limitations grid. Control of showing in age limitations grid is done separately using ShowInAgeLimit.</summary>
+		///<summary>.</summary>
 		public bool IsHidden;
-		///<summary> If true, this codegroup will show in Age Limitations grid. Control of showing in Freq Lim is done separately using IsHidden.</summary>
-		public bool ShowInAgeLimit;
 
 		public CodeGroup Copy() {
 			return (CodeGroup)this.MemberwiseClone();
-		}
-
-		/// <summary> Will return true if it shows in either list.</summary>
-		public bool IsVisible() {
-			if(ShowInAgeLimit){
-				return true;
-			}
-			if(!IsHidden){
-				return true;
-			}
-			return false;
 		}
 	}
 
@@ -74,6 +75,27 @@ namespace OpenDentBusiness {
 }
 
 
+/*
+Child job:
+The following column was originally proposed, but won't work anymore, given the new requirements.
+I think it now belongs in the Benefit table.
+public TreatmentArea TreatArea;
+Enum:TreatmentArea. Entered here as defined by each insurance co. 
+Example 1: Ins specifies one denture or partial per [arch] every 5 years.  Patient had a partial with teeth 7,8,9,10 three years ago.  Estimate for new upper denture should be $0. Est for new lower denture: $1000.
+Example 2: Ins specifies one crown per [tooth] each 5 years. Patient had a crown on #14 three years ago.  Estimate for new crown on #14 should be $0. Estimate for new crown on #15 should be $800.
+Example 3. Ins specifies one composite filling per [tooth] every 5 years. Pt had a comp filling on #29 three years ago. Estimate for comp filling on #29 should be $0. For #30, it should be $300.
+Example 4. Ins specifies limit of three fillings per year [mouth].  Patient had two fillings three months ago, Estimate for two or more fillings should cover one but no more in the year.
+Example 5. Both 3 and 4 are true for the same insurance.
+Example 6. One plan groups exams with limited exams.  Another plan lists them separately.
+
+So it looks like we do need this field, but it belongs in the Benefit table to allow example 5. 
+The TreatArea would default can be automated by looking at the first procedurecode in the codegroup.
+They could then change it, of course.
+To allow example 6, we will allow the office to create an unlimited number of named CodeGroups,
+and then they would add them to plans by picking from the list and only using the ones appropriate to that plan.
+So you might have one code group for periodic exams, one code group for limited exams, and one code group with both exams in it.
+
+*/
 
 
 

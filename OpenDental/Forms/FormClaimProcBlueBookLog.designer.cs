@@ -24,9 +24,21 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormClaimProcBlueBookLog));
+			this.butCancel = new OpenDental.UI.Button();
 			this.gridInsBlueBookLog = new OpenDental.UI.GridOD();
 			this.labelBlueBookOff = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(977, 588);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.ButCancel_Click);
 			// 
 			// gridInsBlueBookLog
 			// 
@@ -58,9 +70,11 @@ namespace OpenDental{
 			// FormClaimProcBlueBookLog
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(1064, 624);
 			this.Controls.Add(this.labelBlueBookOff);
 			this.Controls.Add(this.gridInsBlueBookLog);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormClaimProcBlueBookLog";
 			this.Text = "Insurance Blue Book Log";
@@ -70,6 +84,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butCancel;
 		private UI.GridOD gridInsBlueBookLog;
 		private System.Windows.Forms.Label labelBlueBookOff;
 	}

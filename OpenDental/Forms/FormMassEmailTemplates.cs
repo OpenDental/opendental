@@ -29,7 +29,7 @@ namespace OpenDental {
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			_listEmailHostingTemplates=EmailHostingTemplates.Refresh().FindAll(x => x.TemplateType==PromotionType.Manual
-				&& x.ClinicNum==comboClinic.ClinicNumSelected);
+				&& x.ClinicNum==comboClinic.SelectedClinicNum);
 			GridColumn col=new GridColumn(Lans.g(gridMain.TranslationName,"Saved Templates"),240);
 			gridMain.Columns.Add(col);
 			col=new GridColumn(Lans.g(gridMain.TranslationName,"Email Type"),35);
@@ -73,7 +73,7 @@ namespace OpenDental {
 		private void butNewTemplate_Click(object sender,EventArgs e) {
 			EmailHostingTemplate emailHostingTemplate=new EmailHostingTemplate();
 			emailHostingTemplate.IsNew=true;
-			emailHostingTemplate.ClinicNum=comboClinic.ClinicNumSelected;
+			emailHostingTemplate.ClinicNum=comboClinic.SelectedClinicNum;
 			using FormMassEmailTemplate formMassEmailTemplate=new FormMassEmailTemplate(emailHostingTemplate);
 			if(formMassEmailTemplate.ShowDialog()!=DialogResult.OK) {
 				SelectAndLoadFirstTemplate();
@@ -91,29 +91,19 @@ namespace OpenDental {
 
 		private void butImport_Click(object sender,EventArgs e) {
 			#region Get Imported HTML 
-			string importFilePath;
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				importFilePath=ODCloudClient.ImportFileForCloud();
-				if(importFilePath.IsNullOrEmpty()) {
-					return; //User cancelled out of OpenFileDialog
-				}
+			using OpenFileDialog openFileDialog=new OpenFileDialog();
+			openFileDialog.Multiselect=false;
+			if(Directory.Exists(PrefC.GetString(PrefName.ExportPath))) {
+				openFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
 			}
-			else {
-				using OpenFileDialog openFileDialog=new OpenFileDialog();
-				openFileDialog.Multiselect=false;
-				if(Directory.Exists(PrefC.GetString(PrefName.ExportPath))) {
-					openFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
-				}
-				else if(Directory.Exists("C:\\")) {
-					openFileDialog.InitialDirectory="C:\\";
-				}
-				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-					return;
-				}
-				importFilePath=openFileDialog.FileName;
+			else if(Directory.Exists("C:\\")) {
+				openFileDialog.InitialDirectory="C:\\";
 			}
-			string fileName=Path.GetFileName(importFilePath);
-			string path=importFilePath;
+			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+				return;
+			}
+			string fileName=Path.GetFileName(openFileDialog.FileName);
+			string path=openFileDialog.FileName;
 			if(!File.Exists(path)) {
 				MsgBox.Show(this,"File does not exist or cannot be read.");
 				return;
@@ -134,7 +124,7 @@ namespace OpenDental {
 			//note, users could uncheck 'raw' and turn this into a regular html email in this window, so we need to do some extra checking.
 			EmailHostingTemplate emailHostingTemplate=new EmailHostingTemplate();
 			emailHostingTemplate.IsNew=true;
-			emailHostingTemplate.ClinicNum=comboClinic.ClinicNumSelected;
+			emailHostingTemplate.ClinicNum=comboClinic.SelectedClinicNum;
 			using FormEmailEdit formEmailEdit=new FormEmailEdit();
 			formEmailEdit.IsMassEmail=true;
 			formEmailEdit.MarkupText=documentText;
@@ -190,12 +180,12 @@ namespace OpenDental {
 		}
 
 		private void butExamples_Click(object sender,EventArgs e) {
-			if(comboClinic.ClinicNumSelected==-1) {
+			if(comboClinic.SelectedClinicNum==-1) {
 				MsgBox.Show("Please select a clinic.");
 				return;
 			}
 			using FormMassEmailExamples formMassEmailExamples=new FormMassEmailExamples();
-			formMassEmailExamples.ClinicNum=comboClinic.ClinicNumSelected;
+			formMassEmailExamples.ClinicNum=comboClinic.SelectedClinicNum;
 			formMassEmailExamples.ShowDialog();
 			if(formMassEmailExamples.DialogResult==DialogResult.OK) {
 				FillGrid();
@@ -210,8 +200,8 @@ namespace OpenDental {
 		}
 
 		private void UpdateClinicIsSignedUp() {
-			bool isAllowed=Security.IsAuthorized(EnumPermType.EServicesSetup,true);
-			bool isClinicSignedUp=Clinics.IsMassEmailSignedUp(comboClinic.ClinicNumSelected);
+			bool isAllowed=Security.IsAuthorized(Permissions.EServicesSetup,true);
+			bool isClinicSignedUp=Clinics.IsMassEmailSignedUp(comboClinic.SelectedClinicNum);
 			labelNotSignedUp.Visible=!isClinicSignedUp;
 			butNewTemplate.Enabled=isAllowed && isClinicSignedUp;
 			butImport.Enabled=isAllowed && isClinicSignedUp;
@@ -230,7 +220,7 @@ namespace OpenDental {
 			EmailHostingTemplate emailHostingTemplateCopy=GenericTools.DeepCopy<EmailHostingTemplate,EmailHostingTemplate>(emailHostingTemplateSelected);
 			emailHostingTemplateCopy.TemplateName.Append('1');
 			emailHostingTemplateCopy.IsNew=true;
-			emailHostingTemplateCopy.ClinicNum=comboClinic.ClinicNumSelected;
+			emailHostingTemplateCopy.ClinicNum=comboClinic.SelectedClinicNum;
 			using FormMassEmailTemplate formMassEmailTemplate=new FormMassEmailTemplate(emailHostingTemplateCopy);
 			if(formMassEmailTemplate.ShowDialog()!=DialogResult.OK) {
 				SelectAndLoadFirstTemplate();
@@ -244,6 +234,10 @@ namespace OpenDental {
 				return;
 			}
 			SelectAndLoadFirstTemplate();
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 
 	}

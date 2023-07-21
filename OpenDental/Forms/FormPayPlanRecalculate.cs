@@ -24,11 +24,16 @@ namespace OpenDental {
 			checkRecalculateInterest.Checked=IsRecalculateInterest;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			IsPrepay=radioPrepay.Checked;
 			IsRecalculateInterest=checkRecalculateInterest.Checked;
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 
 	}
 }

@@ -123,6 +123,10 @@ namespace OpenDental {
 			Close();
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 	
 	}
 }

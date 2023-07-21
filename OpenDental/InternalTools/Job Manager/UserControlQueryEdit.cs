@@ -28,7 +28,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 		private bool _isLoading;
 		///<summary>Passed in to LoadJob from job manager, used to display job family.</summary>
 		private TreeNode _treeNode;
-		private List<Def> _listPriorities;
 
 		///<summary>Occurs whenever this control saves changes to DB, after the control has redrawn itself. 
 		/// Usually connected to either a form close or refresh.</summary>
@@ -145,10 +144,9 @@ namespace OpenDental.InternalTools.Job_Manager {
 			textDateEntry.Text=_jobCur.DateTimeEntry.Year>1880?_jobCur.DateTimeEntry.ToShortDateString():"";
 			textTitle.Text=_jobCur.Title.ToString();
 			textCustomer.Text=quotePatient.PatNum.ToString()+" - "+quotePatient.GetNameLF();
-			_listPriorities=Defs.GetDefsForCategory(DefCat.JobPriorities,true).OrderBy(x => x.ItemOrder).ToList();
 			comboPriority.Items.Clear();
-			_listPriorities.ForEach(x => comboPriority.Items.Add(x.ItemName));
-			comboPriority.SelectedIndex=_listPriorities.FirstOrDefault(x => x.DefNum==_jobCur.Priority)?.ItemOrder??0;
+			comboPriority.Items.AddDefs(Defs.GetDefsForCategory(DefCat.JobPriorities,true));
+			comboPriority.SetSelectedDefNum(job.Priority); 
 			comboPhase.Items.Clear();
 			foreach(JobPhase phase in Enum.GetValues(typeof(JobPhase)).Cast<JobPhase>()) {
 				comboPhase.Items.Add(phase.GetDescription(),phase);
@@ -255,7 +253,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 			if(_jobCur.Priority!=jobMerge.Priority) {
 				_jobCur.Priority=jobMerge.Priority;
 				_jobOld.Priority=jobMerge.Priority;
-				comboPriority.SelectedIndex=_listPriorities.FirstOrDefault(x => x.DefNum==_jobCur.Priority)?.ItemOrder??0;  
+				comboPriority.SetSelectedDefNum(_jobCur.Priority);  
 			}
 			//STATUS
 			if(_jobCur.PhaseCur!=jobMerge.PhaseCur) {
@@ -403,16 +401,13 @@ namespace OpenDental.InternalTools.Job_Manager {
 			}
 			JobLink link = _jobCur.ListJobLinks.FirstOrDefault(x => x.JobLinkNum==((JobLink)gridFiles.ListGridRows[gridFiles.SelectedIndices[0]].Tag).JobLinkNum);
 			menu.MenuItems.Add("Override display name",(o,arg) => {
-				InputBoxParam inputBoxParam=new InputBoxParam();
-				inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-				inputBoxParam.LabelText="Give a name override for the file";
-				inputBoxParam.Text=link.DisplayOverride;
-				InputBox inputBox=new InputBox(inputBoxParam);
-				inputBox.ShowDialog();
-				if(inputBox.IsDialogCancel) {
+				using InputBox inputBox = new InputBox("Give a name override for the file");
+				inputBox.textResult.Text=link.DisplayOverride;
+				inputBox.textResult.SelectAll();
+				if(inputBox.ShowDialog()==DialogResult.Cancel) {
 					return;
 				}
-				link.DisplayOverride=inputBox.StringResult;
+				link.DisplayOverride=inputBox.textResult.Text;
 				JobLinks.Update(link);
 				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 				FillGridFiles();
@@ -657,11 +652,10 @@ namespace OpenDental.InternalTools.Job_Manager {
 			}
 			else {
 				Job jobCur = Jobs.GetOne(_jobCur.JobNum);
-				Job jobOld=jobCur.Copy();
 				long topParentNumOld = jobCur.TopParentNum;
 				jobCur.ParentNum=0;
 				jobCur.TopParentNum=jobCur.JobNum;
-				Jobs.Update(jobCur,jobOld);
+				Jobs.Update(jobCur);
 				List<Job> listJobsUpdated = new List<Job>();
 				listJobsUpdated.Add(jobCur);
 				if(jobCur.TopParentNum!=topParentNumOld) {
@@ -681,13 +675,13 @@ namespace OpenDental.InternalTools.Job_Manager {
 		}
 
 		private void butParentPick_Click(object sender,EventArgs e) {
-			InputBox inBox=new InputBox("Input parent job number.");
+			using InputBox inBox=new InputBox("Input parent job number.");
 			inBox.ShowDialog();
-			if(inBox.IsDialogCancel) {
+			if(inBox.DialogResult!=DialogResult.OK) {
 				return;
 			}
 			long parentNum=0;
-			long.TryParse(new string(inBox.StringResult.Where(char.IsDigit).ToArray()),out parentNum);
+			long.TryParse(new string(inBox.textResult.Text.Where(char.IsDigit).ToArray()),out parentNum);
 			Job job=Jobs.GetOne(parentNum);
 			if(job==null) {
 				return;
@@ -704,11 +698,10 @@ namespace OpenDental.InternalTools.Job_Manager {
 			}
 			else {
 				Job jobCur=Jobs.GetOne(_jobCur.JobNum);
-				Job jobOld=jobCur.Copy();
 				long topParentNumOld=jobCur.TopParentNum;
 				jobCur.ParentNum=parentNum;
 				jobCur.TopParentNum=job.TopParentNum;
-				Jobs.Update(jobCur,jobOld);
+				Jobs.Update(jobCur);
 				List<Job> listJobsUpdated = new List<Job> { jobCur };
 				if(jobCur.TopParentNum!=topParentNumOld) {
 					List<Job> listTopParentJobs = Jobs.GetAllByTopParentNum(topParentNumOld);
@@ -935,11 +928,9 @@ namespace OpenDental.InternalTools.Job_Manager {
 			if(_isLoading || IsNew) {
 				return;
 			}
-			Job jobOld=_jobCur.Copy();
 			_jobCur.Title=textTitle.Text;
-			if(Jobs.Update(_jobCur,jobOld)) {
-				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
-			}
+			Jobs.Update(_jobCur);
+			Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 		}
 
 		private void textCustomer_Click(object sender,EventArgs e) {
@@ -1012,16 +1003,14 @@ namespace OpenDental.InternalTools.Job_Manager {
 			}
 			textEstHours.Text=_jobCur.HoursEstimateSingleReviewTime.ToString();
 			Job jobFromDB = Jobs.GetOne(_jobCur.JobNum);//Get from DB to ensure freshest copy (Lists not filled)
-			Job jobOld=jobFromDB.Copy();
 			jobFromDB.HoursEstimateConcept=_jobCur.HoursEstimateConcept;
 			jobFromDB.HoursEstimateWriteup=_jobCur.HoursEstimateWriteup;
 			jobFromDB.HoursEstimateDevelopment=_jobCur.HoursEstimateDevelopment;
 			jobFromDB.HoursEstimateReview=_jobCur.HoursEstimateReview;
-			if(Jobs.Update(jobFromDB,jobOld)) {//update the checkout num.
-				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);//send signal that the job has been checked out.
-			}
+			Jobs.Update(jobFromDB);//update the checkout num.
+			Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);//send signal that the job has been checked out.
 			SetHoursLeft();
-		}
+		}		
 		
 		private bool AddTime() {
 			if(_isLoading) {
@@ -1069,38 +1058,15 @@ namespace OpenDental.InternalTools.Job_Manager {
 			if(_isLoading) {
 				return;
 			}
-			SaveComboPriorityHelper(_listPriorities[comboPriority.SelectedIndex].DefNum);
-		}
-
-		private void comboPriority_Leave(object sender,EventArgs e) {
-			if(_isLoading) {
-				return;
-			}
-			Def defPriorityFromText=_listPriorities.Find(x => x.ItemName==comboPriority.Text);
-			if(defPriorityFromText==null) {
-				MsgBox.Show("Invalid Job Priority. Priority not saved.");
-				comboPriority.SelectedIndex=_listPriorities.Find(x => x.DefNum==_jobCur.Priority)?.ItemOrder??0;//Revert to saved priority
-				return;
-			}
-			if(defPriorityFromText.DefNum==_jobCur.Priority) {
-				return;
-			}
-			//Synchronize the SelectedIndex property of the combo box with the matching definition.
-			comboPriority.SelectedIndex=defPriorityFromText.ItemOrder;
-			SaveComboPriorityHelper(defPriorityFromText.DefNum);
-		}
-
-		private void SaveComboPriorityHelper(long priorityNum) {
+			long priorityNum=comboPriority.GetSelectedDefNum();
 			_jobCur.Priority=priorityNum;
 			JobLogs.MakeLogEntryForPriority(_jobCur,_jobOld);
 			_jobOld.Priority=priorityNum;
 			if(!IsNew) {
-				Job job=Jobs.GetOne(_jobCur.JobNum);
-				Job jobOld=job.Copy();
+				Job job = Jobs.GetOne(_jobCur.JobNum);
 				job.Priority=priorityNum;
-				if(Jobs.Update(job,jobOld)) {
-					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
-				}
+				Jobs.Update(job);
+				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 			}
 		}
 
@@ -1113,11 +1079,9 @@ namespace OpenDental.InternalTools.Job_Manager {
 			_jobOld.PhaseCur=_jobCur.PhaseCur;
 			if(!IsNew) {
 				Job job = Jobs.GetOne(_jobCur.JobNum);
-				Job jobOld=job.Copy();
 				job.PhaseCur=comboPhase.GetSelected<JobPhase>();
-				if(Jobs.Update(job,jobOld)) {
-					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
-				}
+				Jobs.Update(job);
+				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 			}
 		}
 
@@ -1128,6 +1092,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 			JobQuote jobQuote = _jobCur.ListJobQuotes.FirstOrDefault();
 			jobQuote.Hours=textQuoteHours.Text;
 			JobQuotes.Update(jobQuote);
+			Jobs.Update(_jobCur);
 			Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 		}
 
@@ -1138,6 +1103,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 			JobQuote jobQuote = _jobCur.ListJobQuotes.FirstOrDefault();
 			jobQuote.Amount=textQuoteAmount.Text;
 			JobQuotes.Update(jobQuote);
+			Jobs.Update(_jobCur);
 			Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 		}
 
@@ -1147,7 +1113,6 @@ namespace OpenDental.InternalTools.Job_Manager {
 			}
 			JobQuote jobQuote = _jobCur.ListJobQuotes.FirstOrDefault();
 			jobQuote.IsCustomerApproved=checkApproved.Checked;
-			Job jobOld=_jobCur.Copy();
 			if(checkApproved.Checked) {
 				_jobCur.DateTimeCustContact=DateTime.Now;
 			}
@@ -1156,7 +1121,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 			}
 			textQuoteDate.Text=_jobCur.DateTimeCustContact.Year<1880?"":_jobCur.DateTimeCustContact.ToShortDateString();
 			JobQuotes.Update(jobQuote);
-			Jobs.Update(_jobCur,jobOld);
+			Jobs.Update(_jobCur);
 			Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 		}
 
@@ -1164,51 +1129,48 @@ namespace OpenDental.InternalTools.Job_Manager {
 			if(_isLoading || IsNew) {
 				return;
 			}
-			if(DateTime.TryParse(textQuoteDate.Text,out DateTime date)) {
-				Job jobOld=_jobCur.Copy();
-				_jobCur.DateTimeCustContact=date;
-				if(Jobs.Update(_jobCur,jobOld)) {
-					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
-				}
-			}
-			else {
+			DateTime date;
+			if(!DateTime.TryParse(textQuoteDate.Text,out date)) {
 				MsgBox.Show(this,"Not a valid date");
 			}
+			else {
+				_jobCur.DateTimeCustContact=date;
+			}
 			textQuoteDate.Text=_jobCur.DateTimeCustContact.Year<1880?"":_jobCur.DateTimeCustContact.ToShortDateString();
+			Jobs.Update(_jobCur);
+			Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 		}
 
 		private void textSchedDate_Leave(object sender,EventArgs e) {
 			if(_isLoading || IsNew) {
 				return;
 			}
-			if(DateTime.TryParse(textSchedDate.Text,out DateTime date)) {
-				Job jobOld=_jobCur.Copy();
-				_jobCur.AckDateTime=date;
-				if(Jobs.Update(_jobCur,jobOld)) {
-					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
-				}
-			}
-			else {
+			DateTime date;
+			if(!DateTime.TryParse(textSchedDate.Text,out date)) {
 				MsgBox.Show(this,"Not a valid date");
 			}
+			else {
+				_jobCur.AckDateTime=date;
+			}
 			textSchedDate.Text=_jobCur.AckDateTime.Year<1880?"":_jobCur.AckDateTime.ToString();
+			Jobs.Update(_jobCur);
+			Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 		}
 
 		private void textDeadlineDate_Leave(object sender,EventArgs e) {
 			if(_isLoading || IsNew) {
 				return;
 			}
-			if(DateTime.TryParse(textDeadlineDate.Text,out DateTime date)) {
-				Job jobOld=_jobCur.Copy();
-				_jobCur.DateTimeTested=date;
-				if(Jobs.Update(_jobCur,jobOld)) {
-					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
-				}
-			}
-			else {
+			DateTime date;
+			if(!DateTime.TryParse(textDeadlineDate.Text,out date)) {
 				MsgBox.Show(this,"Not a valid date");
 			}
+			else {
+				_jobCur.DateTimeTested=date;
+			}
 			textDeadlineDate.Text=_jobCur.DateTimeTested.Year<1880?"":_jobCur.DateTimeTested.ToString();
+			Jobs.Update(_jobCur);
+			Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 		}
 
 		private void gridTasks_TitleAddClick(object sender,EventArgs e) {
@@ -1620,18 +1582,16 @@ namespace OpenDental.InternalTools.Job_Manager {
 				if(!_isLoading && _jobCur.UserNumCheckout==0) {
 					_jobCur.UserNumCheckout=Security.CurUser.UserNum;
 					Job jobFromDB = Jobs.GetOne(_jobCur.JobNum);//Get from DB to ensure freshest copy (Lists not filled)
-					Job jobOld=jobFromDB.Copy();
 					jobFromDB.UserNumCheckout=Security.CurUser.UserNum;//change only the userNumCheckout.
-					if(Jobs.Update(jobFromDB,jobOld)) {//update the checkout num.
-						Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);//send signal that the job has been checked out.
-					}
+					Jobs.Update(jobFromDB);//update the checkout num.
+					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);//send signal that the job has been checked out.
 				}
 			}
 		}
 
 		private void butCommlog_Click(object sender,EventArgs e) {
-			FrmCommItem frmCommItem=new FrmCommItem(GetNewCommlog());
-			frmCommItem.ShowDialog();
+			using FormCommItem formCommItem=new FormCommItem(GetNewCommlog());
+			formCommItem.ShowDialog();
 		}
 
 		///<summary>This is a helper method to get a new commlog object for the commlog tool bar buttons.</summary>

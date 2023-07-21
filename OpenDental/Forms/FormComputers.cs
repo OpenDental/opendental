@@ -22,7 +22,7 @@ namespace OpenDental{
 
 		private void FormComputers_Load(object sender, System.EventArgs e) {
 			FillList();
-			if(!Security.IsAuthorized(EnumPermType.GraphicsEdit,suppressMessage:true)) {
+			if(!Security.IsAuthorized(Permissions.GraphicsEdit,suppressMessage:true)) {
 				butSetSimpleGraphics.Enabled=false;
 			}
 		}
@@ -42,7 +42,7 @@ namespace OpenDental{
 		}
 
 		private void listComputer_MouseDoubleClick(object sender,MouseEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.GraphicsEdit)) {
+			if(!Security.IsAuthorized(Permissions.GraphicsEdit)) {
 				return;
 			}
 			using FormGraphics formGraphics=new FormGraphics();
@@ -58,7 +58,7 @@ namespace OpenDental{
 			}
 			ComputerPrefs.SetToSimpleGraphics(listComputer.GetSelected<Computer>().CompName);
 			MsgBox.Show(this,"Done.");
-			SecurityLogs.MakeLogEntry(EnumPermType.GraphicsEdit,0,"Set the graphics for computer "+listComputer.GetSelected<Computer>().CompName+" to simple");
+			SecurityLogs.MakeLogEntry(Permissions.GraphicsEdit,0,"Set the graphics for computer "+listComputer.GetSelected<Computer>().CompName+" to simple");
 		}
 
 		///<summary>Reset zoom for selected computer. Makes audit log entry.</summary>
@@ -69,7 +69,7 @@ namespace OpenDental{
 			}
 			ComputerPrefs.ResetZoom(listComputer.GetSelected<Computer>().CompName);
 			MsgBox.Show(this,"Done.");
-			SecurityLogs.MakeLogEntry(EnumPermType.GraphicsEdit,0,"Reset zoom for computer "+listComputer.GetSelected<Computer>().CompName+" to 0.");
+			SecurityLogs.MakeLogEntry(Permissions.GraphicsEdit,0,"Reset zoom for computer "+listComputer.GetSelected<Computer>().CompName+" to 0.");
 		}
 
 		private void butDelete_Click(object sender, System.EventArgs e) {
@@ -81,11 +81,14 @@ namespace OpenDental{
 			FillList();
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 		private void FormComputers_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
 			if(_changed){
 				DataValid.SetInvalid(InvalidType.Computers);
 			}
 		}
-
 	}
 }

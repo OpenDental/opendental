@@ -10,7 +10,11 @@ namespace OpenDental{
 	public partial class FormLicense : FormODBase {
 
 		///<summary></summary>
-		public FormLicense() {
+		public FormLicense()
+		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
@@ -58,5 +62,29 @@ namespace OpenDental{
 			textLicense.Text=listBoxLicense.GetSelected<string>();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

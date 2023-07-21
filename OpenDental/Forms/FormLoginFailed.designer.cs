@@ -29,6 +29,7 @@ namespace OpenDental{
 			this.textUser = new System.Windows.Forms.TextBox();
 			this.butLogin = new OpenDental.UI.Button();
 			this.textPassword = new System.Windows.Forms.TextBox();
+			this.butExit = new OpenDental.UI.Button();
 			this.labelPassword = new System.Windows.Forms.Label();
 			this.labelUser = new System.Windows.Forms.Label();
 			this.panel1.SuspendLayout();
@@ -52,6 +53,7 @@ namespace OpenDental{
 			this.panel1.Controls.Add(this.textUser);
 			this.panel1.Controls.Add(this.butLogin);
 			this.panel1.Controls.Add(this.textPassword);
+			this.panel1.Controls.Add(this.butExit);
 			this.panel1.Controls.Add(this.labelPassword);
 			this.panel1.Controls.Add(this.labelUser);
 			this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -70,7 +72,7 @@ namespace OpenDental{
 			// butLogin
 			// 
 			this.butLogin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butLogin.Location = new System.Drawing.Point(312, 113);
+			this.butLogin.Location = new System.Drawing.Point(232, 114);
 			this.butLogin.Name = "butLogin";
 			this.butLogin.Size = new System.Drawing.Size(75, 24);
 			this.butLogin.TabIndex = 3;
@@ -84,6 +86,16 @@ namespace OpenDental{
 			this.textPassword.PasswordChar = '*';
 			this.textPassword.Size = new System.Drawing.Size(215, 20);
 			this.textPassword.TabIndex = 2;
+			// 
+			// butExit
+			// 
+			this.butExit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butExit.Location = new System.Drawing.Point(313, 114);
+			this.butExit.Name = "butExit";
+			this.butExit.Size = new System.Drawing.Size(75, 24);
+			this.butExit.TabIndex = 4;
+			this.butExit.Text = "Exit Program";
+			this.butExit.Click += new System.EventHandler(this.butExit_Click);
 			// 
 			// labelPassword
 			// 
@@ -127,6 +139,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butLogin;
+		private OpenDental.UI.Button butExit;
 		private System.Windows.Forms.Label labelErrMsg;
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.TextBox textUser;

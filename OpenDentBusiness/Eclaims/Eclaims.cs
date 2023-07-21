@@ -35,8 +35,8 @@ namespace OpenDentBusiness.Eclaims
 				MessageBox.Show(Lans.g("Eclaims","Cannot send Canadian claims as part of Eclaims.SendBatch."));
 				return;
 			}
-			if(ODEnvironment.IsCloudServer && Clearinghouses.IsDisabledForWeb(clearinghouseClin)) {
-				MessageBox.Show(Lans.g("Eclaims","This clearinghouse is not available while using Open Dental Cloud."));
+			if(ODBuild.IsWeb() && Clearinghouses.IsDisabledForWeb(clearinghouseClin)) {
+				MessageBox.Show(Lans.g("Eclaims","This clearinghouse is not available while viewing through the web."));
 				return;
 			}
 			//get next batch number for this clearinghouse
@@ -192,13 +192,13 @@ namespace OpenDentBusiness.Eclaims
 				etransMsgText.MessageText=messageText;
 				EtransMessageTexts.Insert(etransMsgText);
 				for(int j=0;j<queueItems.Count;j++) {
-					Etrans etrans=Etranss.SetClaimSentOrPrinted(queueItems[j].ClaimNum,queueItems[j].ClaimStatus,queueItems[j].PatNum,
+					Etrans etrans=Etranss.SetClaimSentOrPrinted(queueItems[j].ClaimNum,queueItems[j].PatNum,
 						clearinghouseClin.HqClearinghouseNum,etype,batchNum,Security.CurUser.UserNum);
 					//Attempted fix for problems with Eclaims SendBatch attempts throwing null reference UEs. Job #41284
 					//If SetClaimSentOrPrinted() returns null, then we try again.
 					if(etrans==null) {
 						System.Threading.Thread.Sleep(100);
-						etrans=Etranss.SetClaimSentOrPrinted(queueItems[j].ClaimNum,queueItems[j].ClaimStatus,queueItems[j].PatNum,
+						etrans=Etranss.SetClaimSentOrPrinted(queueItems[j].ClaimNum,queueItems[j].PatNum,
 							clearinghouseClin.HqClearinghouseNum,etype,batchNum,Security.CurUser.UserNum);
 					}
 					if(etrans==null) {
@@ -220,7 +220,7 @@ namespace OpenDentBusiness.Eclaims
 			if(clearinghouseClin.ClientProgram==""){
 				return;
 			}
-			if(!ODEnvironment.IsCloudServer && !File.Exists(clearinghouseClin.ClientProgram)){
+			if(!ODBuild.IsWeb() && !File.Exists(clearinghouseClin.ClientProgram)){
 				MessageBox.Show(clearinghouseClin.ClientProgram+" "+Lans.g("Eclaims","does not exist."));
 				return;
 			}
@@ -238,7 +238,6 @@ namespace OpenDentBusiness.Eclaims
 
 		///<summary>Fills the missing data field on the queueItem that was passed in.  This contains all missing data on this claim.  Claim will not be allowed to be sent electronically unless this string comes back empty.</summary>
 		public static ClaimSendQueueItem GetMissingData(Clearinghouse clearinghouseClin,ClaimSendQueueItem queueItem) {
-			//Middle Tier check is a necessary part of speed enhancements implemented in job E3915. 
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<ClaimSendQueueItem>(MethodBase.GetCurrentMethod(),clearinghouseClin,queueItem);
 			}

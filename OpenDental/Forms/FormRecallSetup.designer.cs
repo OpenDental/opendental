@@ -60,7 +60,8 @@ namespace OpenDental {
 			this.listTypes = new OpenDental.UI.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.checkReturnAdd = new OpenDental.UI.CheckBox();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.comboStatusEmailTextRecall = new OpenDental.UI.ComboBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.comboStatusTextedRecall = new OpenDental.UI.ComboBox();
@@ -402,15 +403,26 @@ namespace OpenDental {
 			this.checkReturnAdd.TabIndex = 43;
 			this.checkReturnAdd.Text = "Show return address";
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(813, 662);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(732, 659);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(813, 659);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 4;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// comboStatusEmailTextRecall
 			// 
@@ -484,8 +496,9 @@ namespace OpenDental {
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.radioExcludeFutureYes);
 			this.Controls.Add(this.label8);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.radioExcludeFutureNo);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.textPostcardsPerSheet);
 			this.Controls.Add(this.checkReturnAdd);
 			this.Controls.Add(this.groupBox4);
@@ -517,7 +530,10 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		//Designer Variables
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.TextBox textPostcardsPerSheet;
 		private OpenDental.UI.CheckBox checkReturnAdd;

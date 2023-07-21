@@ -37,6 +37,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpAppointments));
 			this.listProvs = new OpenDental.UI.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.checkWebSchedRecall = new OpenDental.UI.CheckBox();
 			this.label2 = new System.Windows.Forms.Label();
@@ -79,10 +80,20 @@ namespace OpenDental {
 			this.label1.Text = "Providers";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(518, 345);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 44;
+			this.butCancel.Text = "&Cancel";
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(511, 315);
+			this.butOK.Location = new System.Drawing.Point(437, 345);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 43;
@@ -271,13 +282,15 @@ namespace OpenDental {
 			// FormRpAppointments
 			// 
 			this.AcceptButton = this.butOK;
-			this.ClientSize = new System.Drawing.Size(602, 353);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(617, 383);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.checkAllProvs);
 			this.Controls.Add(this.checkAllClinics);
 			this.Controls.Add(this.listClinics);
 			this.Controls.Add(this.labelClinics);
 			this.Controls.Add(this.groupBox1);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.listProvs);
 			this.Controls.Add(this.label1);
@@ -295,6 +308,7 @@ namespace OpenDental {
 
 		private OpenDental.UI.ListBox listProvs;
 		private System.Windows.Forms.Label label1;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.CheckBox checkWebSchedRecall;
 		private Label label2;

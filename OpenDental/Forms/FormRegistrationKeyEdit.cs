@@ -41,7 +41,7 @@ namespace OpenDental {
 			checkFree.Checked=RegistrationKeyCur.IsFreeVersion;
 			checkTesting.Checked=RegistrationKeyCur.IsOnlyForTesting;
 			checkResellerCustomer.Checked=RegistrationKeyCur.IsResellerCustomer;
-			if(Security.IsAuthorized(EnumPermType.SecurityAdmin,true)) {
+			if(Security.IsAuthorized(Permissions.SecurityAdmin,true)) {
 				checkResellerCustomer.Enabled=true;
 				label13.Enabled=true;
 			}
@@ -119,7 +119,7 @@ namespace OpenDental {
 			Close();
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textDateStarted.IsValid()
 				|| !textDateDisabled.IsValid()
 				|| !textDateEnded.IsValid()) 
@@ -166,9 +166,13 @@ namespace OpenDental {
 				if(RegistrationKeyCur.Note!=registrationKeyCopy.Note) {
 					logText+=" The Note field was changed.";
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.RegistrationKeyEdit,RegistrationKeyCur.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.RegistrationKeyEdit,RegistrationKeyCur.PatNum,logText);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		/// <summary>Inserts RegistrationKey with blank PracticeTitle into bugs database so next time cusotmer hits the update service it will reset their PracticeTitle.</summary>

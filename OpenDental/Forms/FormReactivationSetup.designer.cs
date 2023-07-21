@@ -38,7 +38,8 @@ namespace OpenDental {
 			this.textMaxReminders = new OpenDental.ValidNum();
 			this.label4 = new System.Windows.Forms.Label();
 			this.comboStatusEmailedReactivation = new OpenDental.UI.ComboBox();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.labelContactInterval = new System.Windows.Forms.Label();
 			this.textDaysContactInterval = new OpenDental.ValidNum();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
@@ -174,15 +175,26 @@ namespace OpenDental {
 			this.comboStatusEmailedReactivation.Size = new System.Drawing.Size(261, 21);
 			this.comboStatusEmailedReactivation.TabIndex = 60;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(876, 552);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(795, 549);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(876, 549);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 4;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// labelContactInterval
 			// 
@@ -218,7 +230,8 @@ namespace OpenDental {
 			// FormReactivationSetup
 			// 
 			this.ClientSize = new System.Drawing.Size(963, 585);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.label8);
 			this.Controls.Add(this.textPostcardsPerSheet);
@@ -244,7 +257,9 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.TextBox textPostcardsPerSheet;
 		private OpenDental.UI.CheckBox checkGroupFamilies;

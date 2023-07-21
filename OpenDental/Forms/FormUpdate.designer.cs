@@ -53,6 +53,7 @@
 			this.butInstallStable = new OpenDental.UI.Button();
 			this.label11 = new System.Windows.Forms.Label();
 			this.butCheck2 = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.butShowUpdateHistory = new OpenDental.UI.Button();
 			this.groupAlpha = new OpenDental.UI.GroupBox();
 			this.butDownloadMsiAlpha = new OpenDental.UI.Button();
@@ -155,7 +156,7 @@
 			this.panelClassic.Controls.Add(this.label6);
 			this.panelClassic.Controls.Add(this.textResult2);
 			this.panelClassic.Controls.Add(this.butDownload);
-			this.panelClassic.Location = new System.Drawing.Point(605, 35);
+			this.panelClassic.Location = new System.Drawing.Point(618, 35);
 			this.panelClassic.Name = "panelClassic";
 			this.panelClassic.Size = new System.Drawing.Size(568, 494);
 			this.panelClassic.TabIndex = 48;
@@ -364,6 +365,16 @@
 			this.butCheck2.Visible = false;
 			this.butCheck2.Click += new System.EventHandler(this.butCheckForUpdates_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(560, 546);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 25);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butShowUpdateHistory
 			// 
 			this.butShowUpdateHistory.Location = new System.Drawing.Point(422, 57);
@@ -435,6 +446,7 @@
 			// FormUpdate
 			// 
 			this.ClientSize = new System.Drawing.Size(647, 586);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.groupAlpha);
 			this.Controls.Add(this.butShowUpdateHistory);
 			this.Controls.Add(this.panelClassic);
@@ -468,6 +480,8 @@
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label labelVersion;
 		private OpenDental.UI.Button butDownload;
 		private OpenDental.UI.Button butCheck;

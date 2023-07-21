@@ -80,9 +80,5 @@
 		DentalOfficeReadOnlyServer,
 		///<summary>The centralized connection information at HQ that all workstations will use when taking/owning triage tasks.</summary>
 		TriageHQ,
-		///<summary>Logger database for ServicesHQ</summary>
-		ServicesHQLog,
-		///<summary>Database that stores the upload schedule and metadata regarding supplemental backups from each dental office.</summary>
-		SupplementalBackups,
 	}
 }

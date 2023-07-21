@@ -103,7 +103,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOk_Click(object sender,EventArgs e) {
 			if(textSpecimenSourceCode.Text!="" && textSpecimenLocation.Text=="") {
 				MessageBox.Show("If specimen code is entered, then specimen location must be entered."); 
 				return;
@@ -130,6 +130,14 @@ namespace OpenDental {
 			}
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
 
 	}
 }

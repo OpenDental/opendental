@@ -29,6 +29,7 @@ namespace OpenDental{
 			this.menuRightClick = new System.Windows.Forms.ContextMenu();
 			this.menuItemAccount = new System.Windows.Forms.MenuItem();
 			this.labelResellerParagraph = new System.Windows.Forms.Label();
+			this.butClose = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
@@ -40,7 +41,7 @@ namespace OpenDental{
 			this.gridMain.HScrollVisible = true;
 			this.gridMain.Location = new System.Drawing.Point(12, 165);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(780, 406);
+			this.gridMain.Size = new System.Drawing.Size(780, 372);
 			this.gridMain.TabIndex = 38;
 			this.gridMain.Title = "Resellers";
 			this.gridMain.TranslationName = "FormMedications";
@@ -75,6 +76,16 @@ namespace OpenDental{
 			this.labelResellerParagraph.TabIndex = 41;
 			this.labelResellerParagraph.Text = resources.GetString("labelResellerParagraph.Text");
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(717, 550);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butAdd
 			// 
 			this.butAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -90,6 +101,7 @@ namespace OpenDental{
 			// FormResellers
 			// 
 			this.ClientSize = new System.Drawing.Size(808, 583);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.labelResellerParagraph);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.gridMain);
@@ -103,6 +115,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.Button butAdd;
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.Label label2;

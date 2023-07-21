@@ -125,7 +125,7 @@ namespace OpenDental{
 			if(PrefC.GetBool(PrefName.ShowFeatureEhr) && rxDef.RxCui==0) {
 				string strMsgText=Lan.g(this,"The selected prescription is missing an RxNorm")+".\r\n"
 					+Lan.g(this,"Prescriptions without RxNorms cannot be exported in EHR documents")+".\r\n";
-				if(!Security.IsAuthorized(EnumPermType.RxEdit,true)) {
+				if(!Security.IsAuthorized(Permissions.RxEdit,true)) {
 					//Show the message but don't allow to edit. Continue creating rx
 					MessageBox.Show(strMsgText);
 				}
@@ -207,6 +207,10 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void butOK_Click(object sender, System.EventArgs e) {
 			if(gridMain.GetSelectedIndex()!=-1){ 
 				RxSelected();
@@ -219,6 +223,5 @@ namespace OpenDental{
 			MsgBox.Show(this,"Please select Rx first or click Blank");
 			return;
 		}
-
 	}
 }

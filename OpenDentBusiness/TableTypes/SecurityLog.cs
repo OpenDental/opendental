@@ -11,8 +11,8 @@ namespace OpenDentBusiness{
 		///<summary>Primary key.</summary>
 		[CrudColumn(IsPriKey=true)]
 		public long SecurityLogNum;
-		///<summary>Enum:EnumPermType</summary>
-		public EnumPermType PermType;
+		///<summary>Enum:Permissions</summary>
+		public Permissions PermType;
 		///<summary>FK to userod.UserNum</summary>
 		public long UserNum;
 		///<summary>The date and time of the entry.  It's value is set when inserting and can never change.  Even if a user changes the date on their computer, this remains accurate because it uses server time.</summary>

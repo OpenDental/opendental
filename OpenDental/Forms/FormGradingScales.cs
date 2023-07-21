@@ -23,7 +23,8 @@ namespace OpenDental {
 
 		private void FormGradingScales_Load(object sender,EventArgs e) {
 			if(IsSelectionMode) {
-				butOK.Visible=false;
+				butOK.Visible=true;
+				butCancel.Text="&Cancel";
 			}
 			FillGrid();
 		}
@@ -50,9 +51,6 @@ namespace OpenDental {
 				DialogResult=DialogResult.OK;
 				return;
 			}
-			if(gridMain.GetSelectedIndex()==-1){
-				return;
-			}
 			using FormGradingScaleEdit formGradingScaleEdit=new FormGradingScaleEdit(_listGradingScales[gridMain.GetSelectedIndex()]);
 			formGradingScaleEdit.ShowDialog();
 			FillGrid();
@@ -76,5 +74,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

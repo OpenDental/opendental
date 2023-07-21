@@ -155,7 +155,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if((AutoCondField)listCompareField.SelectedIndex==AutoCondField.InsuranceNotEffective
 				|| (AutoCondField)listCompareField.SelectedIndex==AutoCondField.IsProcRequired
 				|| (AutoCondField)listCompareField.SelectedIndex==AutoCondField.IsControlled
@@ -206,6 +206,10 @@ namespace OpenDental {
 				AutomationConditions.Update(AutomationConditionCur);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

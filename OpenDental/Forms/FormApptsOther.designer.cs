@@ -21,6 +21,7 @@
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormApptsOther));
 			this.checkDone = new OpenDental.UI.CheckBox();
+			this.butCancel = new OpenDental.UI.Button();
 			this.textApptModNote = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butGoTo = new OpenDental.UI.Button();
@@ -53,6 +54,18 @@
 			this.checkDone.TabIndex = 1;
 			this.checkDone.TabStop = false;
 			this.checkDone.Text = "Planned Appt Done";
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.butCancel.Location = new System.Drawing.Point(837, 620);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 3;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// textApptModNote
 			// 
@@ -174,7 +187,7 @@
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butOK.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.butOK.Location = new System.Drawing.Point(834, 620);
+			this.butOK.Location = new System.Drawing.Point(751, 620);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 59;
@@ -267,6 +280,7 @@
 			// 
 			// FormApptsOther
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(924, 658);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.checkShowCompletePlanned);
@@ -282,6 +296,7 @@
 			this.Controls.Add(this.butPin);
 			this.Controls.Add(this.butGoTo);
 			this.Controls.Add(this.textApptModNote);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.checkDone);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -299,6 +314,7 @@
 		#endregion
 
 		private OpenDental.UI.CheckBox checkDone;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.TextBox textApptModNote;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.Button butGoTo;

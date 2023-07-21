@@ -45,12 +45,12 @@ namespace OpenDental {
 				SQLWhere.CreateBetween(nameof(RecurringCharge.DateTimeCharge),datePicker.GetDateTimeFrom(),datePicker.GetDateTimeTo(),true)
 			};
 			if(PrefC.HasClinicsEnabled) {
-				listSQLWheres.Add(SQLWhere.CreateIn(nameof(RecurringCharge.ClinicNum),comboClinics.ListClinicNumsSelected));
+				listSQLWheres.Add(SQLWhere.CreateIn(nameof(RecurringCharge.ClinicNum),comboClinics.ListSelectedClinicNums));
 			}
 			_listRecurringCharges=RecurringCharges.GetMany(listSQLWheres);
 			_listPatients=Patients.GetLimForPats(_listRecurringCharges.Select(x => x.PatNum).ToList());
 			_dateRangePrevious=new DateRange(datePicker.GetDateTimeFrom(),datePicker.GetDateTimeTo());
-			_listClinicNumsPrevious=comboClinics.ListClinicNumsSelected;
+			_listClinicNumsPrevious=comboClinics.ListSelectedClinicNums;
 			Cursor=Cursors.Default;
 		}
 
@@ -62,7 +62,7 @@ namespace OpenDental {
 			else if(!_dateRangePrevious.IsInRange(datePicker.GetDateTimeTo())) {
 				RefreshRecurringCharges();
 			}
-			else if(comboClinics.ListClinicNumsSelected.Any(x => !_listClinicNumsPrevious.Contains(x))) {
+			else if(comboClinics.ListSelectedClinicNums.Any(x => !_listClinicNumsPrevious.Contains(x))) {
 				RefreshRecurringCharges();
 			}
 			gridMain.BeginUpdate();
@@ -107,7 +107,7 @@ namespace OpenDental {
 				if(!datePicker.IsInDateRange(listRecurringCharges[i].DateTimeCharge)) {
 					continue;
 				}
-				if(PrefC.HasClinicsEnabled && !comboClinics.ListClinicNumsSelected.Contains(listRecurringCharges[i].ClinicNum)){
+				if(PrefC.HasClinicsEnabled && !comboClinics.ListSelectedClinicNums.Contains(listRecurringCharges[i].ClinicNum)){
 					continue;
 				}
 				if(!comboStatuses.GetListSelected<RecurringChargeStatus>().Contains(listRecurringCharges[i].ChargeStatus)) {
@@ -126,7 +126,7 @@ namespace OpenDental {
 					row.Cells.Add(Lans.g(this,"UNKNOWN"));
 				}
 				else{
-					row.Cells.Add(patient.GetNameLF());
+					row.Cells.Add(patient.GetNameFL());
 				}
 				if(PrefC.HasClinicsEnabled) {
 					row.Cells.Add(Clinics.GetFirstOrDefault(x => x.ClinicNum==listRecurringCharges[i].ClinicNum)?.Description??"");
@@ -172,10 +172,10 @@ namespace OpenDental {
 			if(recurringCharge==null) {
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.AccountModule)) {
+			if(!Security.IsAuthorized(Permissions.AccountModule)) {
 				return;
 			}
-			GlobalFormOpenDental.GotoAccount(recurringCharge.PatNum);
+			GotoModule.GotoAccount(recurringCharge.PatNum);
 		}
 
 		private void menuItemOpenPayment_Click(object sender,EventArgs e) {
@@ -223,6 +223,10 @@ namespace OpenDental {
 			RecurringCharges.Delete(recurringCharge.RecurringChargeNum);
 			RefreshRecurringCharges();
 			FillGrid();
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 
 	}

@@ -36,7 +36,7 @@ namespace OpenDental {
 		}
 
 		private async void FormEServicesSignup_Load(object sender,EventArgs e) {
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				if(_signupOut==null){
 					_signupOut=FormEServicesSetup.GetSignupOut();
 				}
@@ -88,12 +88,8 @@ namespace OpenDental {
 			webViewMain.ClearCache();
 		}
 
-		private void FormEServicesSignup_FormClosing(object sender,FormClosingEventArgs e) {
-			//WebView2 objects need to be disposed of before closing parent form.
-			//This prevents visual hangups when closing parent form.
-			if(webViewMain!=null) {
-				webViewMain.Dispose();
-			}
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 	}
 }

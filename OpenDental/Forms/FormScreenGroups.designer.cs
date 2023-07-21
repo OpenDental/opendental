@@ -37,6 +37,7 @@ namespace OpenDental {
 			this.textDateTo = new System.Windows.Forms.TextBox();
 			this.butRefresh = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butLeft = new OpenDental.UI.Button();
 			this.butRight = new OpenDental.UI.Button();
@@ -90,6 +91,17 @@ namespace OpenDental {
 			this.butAdd.Text = "Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.butClose.Location = new System.Drawing.Point(442, 540);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(70, 24);
+			this.butClose.TabIndex = 79;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// gridMain
 			// 
 			this.gridMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -97,7 +109,7 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridMain.Location = new System.Drawing.Point(13, 82);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(499, 482);
+			this.gridMain.Size = new System.Drawing.Size(499, 444);
 			this.gridMain.TabIndex = 80;
 			this.gridMain.Title = "Screening Groups";
 			this.gridMain.TranslationName = "TableGroups";
@@ -143,6 +155,7 @@ namespace OpenDental {
 			// 
 			this.ClientSize = new System.Drawing.Size(524, 576);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.textDateFrom);
 			this.Controls.Add(this.textDateTo);
@@ -169,6 +182,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butRefresh;
 		private System.Windows.Forms.TextBox textDateTo;
 		private OpenDental.UI.Button butAdd;
+		private UI.Button butClose;
 		private UI.GridOD gridMain;
 		private UI.Button butLeft;
 		private UI.Button butRight;

@@ -127,7 +127,7 @@ namespace OpenDental {
 				return;
 			}
 			//User is trying to drag and drop a definition entity. Make sure they have permission to edit definitions before continuing.
-			if(treeNodeSource.Tag is Def && !Security.IsAuthorized(EnumPermType.DefEdit)) {
+			if(treeNodeSource.Tag is Def && !Security.IsAuthorized(Permissions.DefEdit)) {
 				return;
 			}
 			TreeNode treeNodeTop=treeNotes.TopNode;
@@ -189,7 +189,7 @@ namespace OpenDental {
 		}
 
 		private void butAdd_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.AutoNoteQuickNoteEdit)) {
+			if(!Security.IsAuthorized(Permissions.AutoNoteQuickNoteEdit)) {
 				return;
 			}
 			long defNum=0;
@@ -216,29 +216,23 @@ namespace OpenDental {
 			}
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 		private void butExport_Click(object sender,System.EventArgs e) {
 			using FormAutoNoteExport formAutoNoteExport=new FormAutoNoteExport();
 			formAutoNoteExport.ShowDialog();
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			string importFilePath;
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				importFilePath=ODCloudClient.ImportFileForCloud();
-				if(importFilePath.IsNullOrEmpty()) {
-					return; //User cancelled out of OpenFileDialog
-				}
-			}
-			else {
-				using OpenFileDialog openFileDialog=ImportDialogSetup();
-				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-					return; //User cancelled out of OpenFileDialog
-				}
-				importFilePath=openFileDialog.FileName;
+			using OpenFileDialog openFileDialog=ImportDialogSetup();
+			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+				return; //User cancelled out of OpenFileDialog
 			}
 			string fileContents;
 			try {
-				fileContents=File.ReadAllText(importFilePath);
+				fileContents=File.ReadAllText(openFileDialog.FileName);
 			}
 			catch(Exception err) {
 				FriendlyException.Show(Lans.g(this,"Auto Note(s) failed to import."),err);
@@ -250,7 +244,7 @@ namespace OpenDental {
 			AutoNotes.InsertBatch(transferableAutoNotesImport.AutoNotes);
 			DataValid.SetInvalid(InvalidType.AutoNotes);
 			AutoNoteL.FillListTree(treeNotes,_userOdPref);
-			SecurityLogs.MakeLogEntry(EnumPermType.AutoNoteQuickNoteEdit,0,
+			SecurityLogs.MakeLogEntry(Permissions.AutoNoteQuickNoteEdit,0,
 				$"Auto Note Import. {transferableAutoNotesImport.AutoNotes.Count} new Auto Notes, {transferableAutoNotesImport.AutoNoteControls.Count} new Prompts");
 			MsgBox.Show(Lans.g(this,"Auto Notes successfully imported!")+"\r\n"+transferableAutoNotesImport.AutoNotes.Count+" "+Lans.g(this,"new Auto Notes")
 				+"\r\n"+transferableAutoNotesImport.AutoNoteControls.Count+" "+Lans.g(this,"new Prompts"));

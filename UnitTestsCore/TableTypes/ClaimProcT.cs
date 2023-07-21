@@ -55,7 +55,7 @@ namespace UnitTestsCore {
 		}
 
 		public static ClaimProc CreateClaimProc(long patNum,long procNum,long planNum,long insSubNum,DateTime procDate=default,double copayOverride=-1,
-			double allowedOverride=-1,int percentOverride=-1,ClaimProcStatus cps=ClaimProcStatus.NotReceived,double insPayAmt=0,bool isTransfer=false,
+			double allowedOverride=-1,int percentOverride=-1,ClaimProcStatus cps=ClaimProcStatus.NotReceived,int insPayAmt=0,bool isTransfer=false,
 			long claimNum=0,double writeOffEstOverride=-1,double feeBilled=0,double insPayEst=0)
 		{
 			ClaimProc cp=new ClaimProc();

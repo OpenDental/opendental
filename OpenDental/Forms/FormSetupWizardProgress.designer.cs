@@ -29,6 +29,7 @@ namespace OpenDental{
 			this.labelTitle = new System.Windows.Forms.Label();
 			this.butNext = new OpenDental.UI.Button();
 			this.butBack = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.butSkip = new OpenDental.UI.Button();
 			this.panelContent = new System.Windows.Forms.Panel();
 			this.SuspendLayout();
@@ -79,6 +80,17 @@ namespace OpenDental{
 			this.butBack.UseVisualStyleBackColor = true;
 			this.butBack.Click += new System.EventHandler(this.butBack_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(843, 555);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 23);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butSkip
 			// 
 			this.butSkip.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -109,6 +121,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butNext);
 			this.Controls.Add(this.panelContent);
 			this.Controls.Add(this.butSkip);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butBack);
 			this.Controls.Add(this.labelTitle);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -122,6 +135,7 @@ namespace OpenDental{
 
 		#endregion
 		private System.Windows.Forms.ImageList imageList1;
+		private UI.Button butClose;
 		private UI.Button butSkip;
 		private UI.Button butBack;
 		private UI.Button butNext;

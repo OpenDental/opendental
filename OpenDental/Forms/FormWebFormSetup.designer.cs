@@ -38,7 +38,7 @@ namespace OpenDental{
 			this.label1 = new System.Windows.Forms.Label();
 			this.textRedirectURL = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
-			this.butSavePrefs = new OpenDental.UI.Button();
+			this.butSave = new OpenDental.UI.Button();
 			this.butChange = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.butWebformBorderColor = new System.Windows.Forms.Button();
@@ -47,8 +47,9 @@ namespace OpenDental{
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.textboxWebHostAddress = new System.Windows.Forms.TextBox();
 			this.labelWebhostURL = new System.Windows.Forms.Label();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butUpdate = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOk = new OpenDental.UI.Button();
 			this.checkDisableWebFormSignatures = new OpenDental.UI.CheckBox();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.checkEnableAutoDownload = new OpenDental.UI.CheckBox();
@@ -187,14 +188,14 @@ namespace OpenDental{
 			this.label3.Text = "Redirect URL";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// butSavePrefs
+			// butSave
 			// 
-			this.butSavePrefs.Location = new System.Drawing.Point(511, 87);
-			this.butSavePrefs.Name = "butSavePrefs";
-			this.butSavePrefs.Size = new System.Drawing.Size(75, 24);
-			this.butSavePrefs.TabIndex = 74;
-			this.butSavePrefs.Text = "Save";
-			this.butSavePrefs.Click += new System.EventHandler(this.butSavePrefs_Click);
+			this.butSave.Location = new System.Drawing.Point(511, 87);
+			this.butSave.Name = "butSave";
+			this.butSave.Size = new System.Drawing.Size(75, 24);
+			this.butSave.TabIndex = 74;
+			this.butSave.Text = "Save";
+			this.butSave.Click += new System.EventHandler(this.butSave_Click);
 			// 
 			// butChange
 			// 
@@ -276,6 +277,16 @@ namespace OpenDental{
 			this.labelWebhostURL.Text = "Host Server Address";
 			this.labelWebhostURL.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(847, 498);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butUpdate
 			// 
 			this.butUpdate.Location = new System.Drawing.Point(218, 246);
@@ -285,15 +296,15 @@ namespace OpenDental{
 			this.butUpdate.Text = "Update";
 			this.butUpdate.Click += new System.EventHandler(this.butUpdate_Click);
 			// 
-			// butSave
+			// butOk
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(848, 496);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 77;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOk.Location = new System.Drawing.Point(766, 498);
+			this.butOk.Name = "butOk";
+			this.butOk.Size = new System.Drawing.Size(75, 24);
+			this.butOk.TabIndex = 77;
+			this.butOk.Text = "&OK";
+			this.butOk.Click += new System.EventHandler(this.butOk_Click);
 			// 
 			// checkDisableWebFormSignatures
 			// 
@@ -308,7 +319,7 @@ namespace OpenDental{
 			// 
 			this.groupBox1.Controls.Add(this.checkEnableAutoDownload);
 			this.groupBox1.Controls.Add(this.textboxWebHostAddress);
-			this.groupBox1.Controls.Add(this.butSavePrefs);
+			this.groupBox1.Controls.Add(this.butSave);
 			this.groupBox1.Controls.Add(this.labelBorderColor);
 			this.groupBox1.Controls.Add(this.checkDisableWebFormSignatures);
 			this.groupBox1.Controls.Add(this.butWebformBorderColor);
@@ -333,12 +344,13 @@ namespace OpenDental{
 			// 
 			this.ClientSize = new System.Drawing.Size(934, 532);
 			this.Controls.Add(this.groupBox1);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOk);
 			this.Controls.Add(this.butUpdate);
 			this.Controls.Add(this.groupConstructURL);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormWebFormSetup";
 			this.Text = "Web Form Setup";
@@ -353,6 +365,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.TextBox textboxWebHostAddress;
 		private System.Windows.Forms.Label labelWebhostURL;
 		private System.Windows.Forms.Label labelBorderColor;
@@ -362,7 +376,7 @@ namespace OpenDental{
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.Button butDelete;
 		private OpenDental.UI.Button butAdd;
-		private UI.Button butSavePrefs;
+		private UI.Button butSave;
 		private OpenDental.UI.GroupBox groupConstructURL;
 		private System.Windows.Forms.TextBox textRedirectURL;
 		private System.Windows.Forms.Label label3;
@@ -374,7 +388,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textURLs;
 		private UI.Button butUpdate;
 		private OpenDental.UI.CheckBox checkAutoFillNameAndBirthdate;
-		private UI.Button butSave;
+		private UI.Button butOk;
 		private OpenDental.UI.CheckBox checkDisableTypedSig;
 		private UI.Button butCopyToClipboard;
 		private UI.Button butNavigateTo;

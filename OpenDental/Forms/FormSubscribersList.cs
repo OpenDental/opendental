@@ -29,16 +29,15 @@ namespace OpenDental {
 			gridSubscribers.Columns.Clear();
 			gridSubscribers.Columns.Add(new GridColumn(Lan.g(this,"Name"),200));
 			gridSubscribers.ListGridRows.Clear();
-			long excludeSub=-1;
-			if(InsSubCur!=null){
-				excludeSub=InsSubCur.InsSubNum;
-			}
-			List<string> listSubs=InsSubs.GetSubscribersForPlan(InsPlanCur.PlanNum,excludeSub);
+			List<string> listSubs=InsSubs.GetSubscribersForPlan(InsPlanCur.PlanNum,excludeSub:InsSubCur.InsSubNum);
 			for(int i=0;i<listSubs.Count;i++) {
 				gridSubscribers.ListGridRows.Add(new GridRow(listSubs[i]));
 			}
 			gridSubscribers.EndUpdate();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+		}
 	}
 }

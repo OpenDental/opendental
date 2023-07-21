@@ -14,7 +14,6 @@ using CodeBase;
 using System.IO;
 using OpenDental.Thinfinity;
 using Bridges;
-using System.Text.RegularExpressions;
 
 namespace OpenDental{
 	/// <summary>
@@ -99,7 +98,7 @@ namespace OpenDental{
 				_realmIdPlainText=decryptedRealmID;
 			}
 			if(IsNew) {
-				if(!Security.IsAuthorized(EnumPermType.DepositSlips,DateTime.Today)) {
+				if(!Security.IsAuthorized(Permissions.DepositSlips,DateTime.Today)) {
 					//we will check the date again when saving
 					DialogResult=DialogResult.Cancel;
 					return;
@@ -107,8 +106,8 @@ namespace OpenDental{
 			}
 			else {
 				//We enforce security here based on date displayed, not date entered
-				if(!Security.IsAuthorized(EnumPermType.DepositSlips,_depositCur.DateDeposit)) {
-					butSave.Enabled=false;
+				if(!Security.IsAuthorized(Permissions.DepositSlips,_depositCur.DateDeposit)) {
+					butOK.Enabled=false;
 					butDelete.Enabled=false;
 				}
 			}
@@ -129,7 +128,7 @@ namespace OpenDental{
 					comboClinic.IsAllSelected=true;
 				}
 				else {
-					comboClinic.ClinicNumSelected=Clinics.ClinicNum;
+					comboClinic.SelectedClinicNum=Clinics.ClinicNum;
 				}
 				
 				List<Def> listDefsPaymentTypes=Defs.GetDefsForCategory(DefCat.PaymentTypes,true);
@@ -261,7 +260,7 @@ namespace OpenDental{
 				DateTime dateTimeStart=PIn.Date(textDateStart.Text);
 				long clinicNum=0;
 				if(!comboClinic.IsAllSelected){
-					clinicNum=comboClinic.ClinicNumSelected;
+					clinicNum=comboClinic.SelectedClinicNum;
 				}
 				List<long> listPayTypes=new List<long>();//[listPayType.SelectedIndices.Count];
 				for(int i=0;i<listPayType.SelectedIndices.Count;i++) {
@@ -472,7 +471,7 @@ namespace OpenDental{
 				return false;//Did not want to continue creating regular deposit or failed creating QuickBooks Deposit with no option to continue.
 			}
 			//Everything below only happens when QuickBooks deposit was successful.
-			SecurityLogs.MakeLogEntry(EnumPermType.DepositSlips,0,Lan.g(this,"Deposit slip sent to QuickBooks.")+"\r\n"
+			SecurityLogs.MakeLogEntry(Permissions.DepositSlips,0,Lan.g(this,"Deposit slip sent to QuickBooks.")+"\r\n"
 				+Lan.g(this,"Deposit date")+": "+_depositCur.DateDeposit.ToShortDateString()+" "+Lan.g(this,"for")+" "+_depositCur.Amount.ToString("c"));
 			Cursor.Current=Cursors.Default;
 			MsgBox.Show(this,"Deposit successfully sent to QuickBooks.");
@@ -548,7 +547,7 @@ namespace OpenDental{
 				return false;//Did not want to continue creating regular deposit or failed creating QuickBooks Online deposit with no option to continue.
 			}
 			//Everything below only happens when QuickBooks Online deposit was successful.
-			SecurityLogs.MakeLogEntry(EnumPermType.DepositSlips,0,Lan.g(this,"Deposit slip sent to QuickBooks Online.")+"\r\n"
+			SecurityLogs.MakeLogEntry(Permissions.DepositSlips,0,Lan.g(this,"Deposit slip sent to QuickBooks Online.")+"\r\n"
 				+Lan.g(this,"Deposit date")+": "+_depositCur.DateDeposit.ToShortDateString()+" "+Lan.g(this,"for")+" "+_depositCur.Amount.ToString("c"));
 			Cursor.Current=Cursors.Default;
 			if(quickBooksOnlineClassRef!=null && quickBooksOnlineDepositResponse.IsClassRefNull()) {
@@ -615,7 +614,7 @@ namespace OpenDental{
 			//Prevent backdating----------------------------------------------------------------------------------------
 			DateTime dateTime=PIn.Date(textDate.Text);
 			//We enforce security here based on date displayed, not date entered
-			if(!Security.IsAuthorized(EnumPermType.DepositSlips,dateTime)) {
+			if(!Security.IsAuthorized(Permissions.DepositSlips,dateTime)) {
 				return false;
 			}
 			_depositCur.DateDeposit=dateTime;
@@ -661,7 +660,7 @@ namespace OpenDental{
 			if(IsNew && !_hasBeenSavedToDB){
 				//Create a deposit in QuickBooks or QuickBooks Online
 				bool hasDepositInfo=Accounts.DepositsLinked();
-				bool isQbOrQbo=(IsQuickBooks() && !ODBuild.IsThinfinity()) || IsQuickBooksOnline();
+				bool isQbOrQbo=(IsQuickBooks() && !ODBuild.IsWeb()) || IsQuickBooksOnline();
 				//Short circuit so that CreateDepositQbOrQbo() is only called if hasDepositInfo and isQbOrQbo are both true.
 				if(hasDepositInfo && isQbOrQbo && !CreateDepositQbOrQbo(true)) {
 					return false;
@@ -762,12 +761,12 @@ namespace OpenDental{
 		}
 
 		private void butSendQB_Click(object sender,EventArgs e) {
-			if(ODBuild.IsThinfinity() && IsQuickBooks()) {
+			if(ODBuild.IsWeb() && IsQuickBooks()) {
 				MsgBox.Show(this,"QuickBooks is not available while viewing through the web.");
 				return;
 			}
 			DateTime dateTime=PIn.Date(textDate.Text);//We use security on the date showing.
-			if(!Security.IsAuthorized(EnumPermType.DepositSlips,dateTime)) {
+			if(!Security.IsAuthorized(Permissions.DepositSlips,dateTime)) {
 				return;
 			}
 			_depositCur.DateDeposit=dateTime;
@@ -797,7 +796,7 @@ namespace OpenDental{
 			//We enforce security here based on date displayed, not date entered.
 			//If user is trying to change date without permission:
 			DateTime dateTime=PIn.Date(textDate.Text);
-			if(Security.IsAuthorized(EnumPermType.DepositSlips,dateTime,true)){
+			if(Security.IsAuthorized(Permissions.DepositSlips,dateTime,true)){
 				if(!SaveToDB()) {
 					return false;
 				}
@@ -840,7 +839,7 @@ namespace OpenDental{
 			Sheet sheet=CreateAndFillSheet();
 			string filePathAndName=PrefC.GetRandomTempFile(".pdf");
 			SheetPrinting.CreatePdf(sheet,filePathAndName,null);
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.HandleFile(filePathAndName);
 			}
 			else {
@@ -853,8 +852,7 @@ namespace OpenDental{
 				return;
 			}
 			Sheet sheet=CreateAndFillSheet();
-			string sheetDescForName=Regex.Replace(sheet.Description, @"[^\w'@-_()&]", "");
-			string sheetName=sheetDescForName+"_"+DateTime.Now.ToString("yyyyMMdd_hhmmssfff")+".pdf";
+			string sheetName=sheet.Description+"_"+DateTime.Now.ToString("yyyyMMdd_hhmmssfff")+".pdf";
 			string tempFile=ODFileUtils.CombinePaths(PrefC.GetTempFolderPath(),sheetName);
 			string filePathAndName=FileAtoZ.CombinePaths(EmailAttaches.GetAttachPath(),sheetName);
 			SheetPrinting.CreatePdf(sheet,tempFile,null);
@@ -895,7 +893,7 @@ namespace OpenDental{
 				textBankAccountInfo.Text=PrefC.GetString(PrefName.PracticeBankNumber);
 			}
 			else{
-				textBankAccountInfo.Text=Clinics.GetClinic(comboClinic.ClinicNumSelected).BankNumber;
+				textBankAccountInfo.Text=Clinics.GetClinic(comboClinic.SelectedClinicNum).BankNumber;
 			}
 			_isChanged |= Prefs.UpdateString(PrefName.DateDepositsStarted,POut.Date(PIn.Date(textDateStart.Text),false));
 		}
@@ -938,7 +936,7 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			_isOnOKClick=true;
 			if(!SaveToDB()){
 				_isOnOKClick=false;
@@ -947,7 +945,7 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 			//Existing deposit, no need to create a new transaction, deposit and income entry.
 			if(!IsNew) {
-				SecurityLogs.MakeLogEntry(EnumPermType.DepositSlips,0,_depositCur.DateDeposit.ToShortDateString()+" "+_depositCur.Amount.ToString("c"));
+				SecurityLogs.MakeLogEntry(Permissions.DepositSlips,0,_depositCur.DateDeposit.ToShortDateString()+" "+_depositCur.Amount.ToString("c"));
 				return;
 			}
 			//New deposit, but has faulty deposit criteria or is Quickbooks/Quickbooks Online, can't make transaction, deposit and income entry.
@@ -982,8 +980,12 @@ namespace OpenDental{
 			journalEntry.Splits=Accounts.GetDescript(_listDepositAccounts[comboDepositAccount.SelectedIndex]);
 			journalEntry.TransactionNum=transaction.TransactionNum;
 			JournalEntries.Insert(journalEntry);
-			SecurityLogs.MakeLogEntry(EnumPermType.DepositSlips,0,_depositCur.DateDeposit.ToShortDateString()+" New "+_depositCur.Amount.ToString("c"));
-			Signalods.SetInvalid(InvalidType.BillingList);
+			SecurityLogs.MakeLogEntry(Permissions.DepositSlips,0,_depositCur.DateDeposit.ToShortDateString()+" New "+_depositCur.Amount.ToString("c"));
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			//Deletion and detaching payments is done on Closing.
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void FormDepositEdit_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -995,6 +997,26 @@ namespace OpenDental{
 				DataValid.SetInvalid(InvalidType.Prefs);
 			}
 		}
-
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

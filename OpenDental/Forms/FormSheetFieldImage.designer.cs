@@ -44,7 +44,8 @@ namespace OpenDental{
 			this.textWidth = new OpenDental.ValidNum();
 			this.textYPos = new OpenDental.ValidNum();
 			this.textXPos = new OpenDental.ValidNum();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
@@ -192,7 +193,7 @@ namespace OpenDental{
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Image = global::OpenDental.Properties.Resources.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(15, 453);
+			this.butDelete.Location = new System.Drawing.Point(15, 525);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(77, 24);
 			this.butDelete.TabIndex = 100;
@@ -237,19 +238,29 @@ namespace OpenDental{
 			this.textXPos.Size = new System.Drawing.Size(51, 20);
 			this.textXPos.TabIndex = 91;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(514, 453);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(514, 495);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(514, 525);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// FormSheetFieldImage
 			// 
-			this.ClientSize = new System.Drawing.Size(601, 489);
+			this.ClientSize = new System.Drawing.Size(601, 561);
 			this.Controls.Add(this.checkRatio);
 			this.Controls.Add(this.butShrink);
 			this.Controls.Add(this.groupBox1);
@@ -268,7 +279,8 @@ namespace OpenDental{
 			this.Controls.Add(this.label6);
 			this.Controls.Add(this.textXPos);
 			this.Controls.Add(this.label5);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormSheetFieldImage";
 			this.Text = "Edit Image Field";
@@ -284,7 +296,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label5;
 		private ValidNum textXPos;
 		private ValidNum textYPos;

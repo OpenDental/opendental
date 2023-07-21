@@ -51,7 +51,8 @@
 			this.textDateDisabled = new OpenDental.ValidDate();
 			this.textDateStarted = new OpenDental.ValidDate();
 			this.butPracticeTitleReset = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.label15 = new System.Windows.Forms.Label();
 			this.checkEarlyAccess = new OpenDental.UI.CheckBox();
 			this.gridMain = new OpenDental.UI.GridOD();
@@ -297,7 +298,7 @@
 			// 
 			this.butPracticeTitleReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butPracticeTitleReset.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPracticeTitleReset.Location = new System.Drawing.Point(134, 498);
+			this.butPracticeTitleReset.Location = new System.Drawing.Point(134, 485);
 			this.butPracticeTitleReset.Name = "butPracticeTitleReset";
 			this.butPracticeTitleReset.Size = new System.Drawing.Size(131, 26);
 			this.butPracticeTitleReset.TabIndex = 6;
@@ -305,15 +306,25 @@
 			this.butPracticeTitleReset.Visible = false;
 			this.butPracticeTitleReset.Click += new System.EventHandler(this.butPracticeTitleReset_Click);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(1118, 498);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 1;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(1037, 485);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 1;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(1118, 485);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// label15
 			// 
@@ -340,7 +351,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridMain.Location = new System.Drawing.Point(760, 10);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(433, 470);
+			this.gridMain.Size = new System.Drawing.Size(433, 457);
 			this.gridMain.TabIndex = 33;
 			// 
 			// FormRegistrationKeyEdit
@@ -377,7 +388,8 @@
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textNote);
 			this.Controls.Add(this.textKey);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -390,7 +402,9 @@
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.TextBox textKey;
 		private System.Windows.Forms.TextBox textNote;
 		private System.Windows.Forms.Label label1;

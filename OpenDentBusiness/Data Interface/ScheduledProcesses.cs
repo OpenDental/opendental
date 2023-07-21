@@ -33,12 +33,12 @@ namespace OpenDentBusiness{
 		
 		#region Update
 		///<summary></summary>
-		public static void Update(ScheduledProcess scheduledProcess,ScheduledProcess scheduledProcessOld){
+		public static void Update(ScheduledProcess scheduledProcess,ScheduledProcess oldScheduledProcess){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),scheduledProcess,scheduledProcessOld);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),scheduledProcess,oldScheduledProcess);
 				return;
 			}
-			Crud.ScheduledProcessCrud.Update(scheduledProcess,scheduledProcessOld);
+			Crud.ScheduledProcessCrud.Update(scheduledProcess,oldScheduledProcess);
 		}
 		#endregion Update
 		
@@ -55,16 +55,16 @@ namespace OpenDentBusiness{
 	
 		#region Misc Methods
 		/// <summary>Returns a list of all scheduled actions with a matching Action type, Frequency to run, and TimeToRun as those passed in.</summary>
-		public static List<ScheduledProcess> CheckAlreadyScheduled(ScheduledActionEnum scheduledActionEnum, FrequencyToRunEnum frequencyToRunEnum, 
-			DateTime dateTimeToRun) 
+		public static List<ScheduledProcess> CheckAlreadyScheduled(ScheduledActionEnum schedActionEnum, FrequencyToRunEnum freqToRunEnum, 
+			DateTime timeToRun) 
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ScheduledProcess>>(MethodBase.GetCurrentMethod(),scheduledActionEnum,frequencyToRunEnum,dateTimeToRun);
+				return Meth.GetObject<List<ScheduledProcess>>(MethodBase.GetCurrentMethod(),schedActionEnum,freqToRunEnum,timeToRun);				
 			}
 			string command=$@"SELECT * FROM scheduledprocess 
-				WHERE ScheduledAction='{POut.String(scheduledActionEnum.ToString())}' AND 
-				FrequencyToRun='{POut.String(frequencyToRunEnum.ToString())}' AND 
-				TIME(TimeToRun)=TIME({POut.DateT(dateTimeToRun)}) ";
+				WHERE ScheduledAction='{POut.String(schedActionEnum.ToString())}' AND 
+				FrequencyToRun='{POut.String(freqToRunEnum.ToString())}' AND 
+				TIME(TimeToRun)=TIME({POut.DateT(timeToRun)}) ";
 			return Crud.ScheduledProcessCrud.SelectMany(command);
 		}
 

@@ -8,14 +8,13 @@ using OpenDental;
 using OpenDentBusiness;
 
 namespace CentralManager {
-	public partial class FormCentralSecurity:FormODBase {
+	public partial class FormCentralSecurity:Form {
 		public List<CentralConnection> ListConns;
 		private string _domainObjectGuid;
 
 		public FormCentralSecurity() {
 			ListConns=new List<CentralConnection>();
 			InitializeComponent();
-			InitializeLayoutManager();
 		}
 
 		private void FormCentralSecurity_Load(object sender,EventArgs e) {
@@ -207,7 +206,7 @@ namespace CentralManager {
 			if(listGroupPermissionsOld.IsNullOrEmpty()) {//Does not have any permissions, give them the all permission. Otherwise, grant them no permission.
 				GroupPermission groupPermission=new GroupPermission();
 				groupPermission.UserGroupNum=e.Perm.UserGroupNum;
-				groupPermission.PermType=EnumPermType.AdjustmentTypeDeny;
+				groupPermission.PermType=Permissions.AdjustmentTypeDeny;
 				groupPermission.FKey=0;
 				listGroupPermissionsNew.Add(groupPermission);
 			}

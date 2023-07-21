@@ -45,6 +45,7 @@ namespace OpenDental {
 			this.textReferralNameInto = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.butMerge = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
@@ -252,12 +253,21 @@ namespace OpenDental {
 			// butMerge
 			// 
 			this.butMerge.Enabled = false;
-			this.butMerge.Location = new System.Drawing.Point(575, 213);
+			this.butMerge.Location = new System.Drawing.Point(478, 211);
 			this.butMerge.Name = "butMerge";
 			this.butMerge.Size = new System.Drawing.Size(75, 24);
 			this.butMerge.TabIndex = 7;
 			this.butMerge.Text = "Merge";
 			this.butMerge.Click += new System.EventHandler(this.butMerge_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Location = new System.Drawing.Point(562, 211);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 6;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// FormReferralMerge
 			// 
@@ -266,6 +276,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.butMerge);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormReferralMerge";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -289,6 +300,7 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textReferralNameInto;
 		private System.Windows.Forms.Label label2;
 		private UI.Button butMerge;
+		private UI.Button butClose;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.CheckBox checkIsDoctorInto;

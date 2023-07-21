@@ -25,6 +25,7 @@
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMedLabResultHist));
 			this.gridResultHist = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// gridResultHist
@@ -34,15 +35,26 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridResultHist.Location = new System.Drawing.Point(12, 12);
 			this.gridResultHist.Name = "gridResultHist";
-			this.gridResultHist.Size = new System.Drawing.Size(950, 385);
+			this.gridResultHist.Size = new System.Drawing.Size(950, 352);
 			this.gridResultHist.TabIndex = 5;
 			this.gridResultHist.Title = "Result History";
 			this.gridResultHist.TranslationName = "TableResult";
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(887, 374);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 335;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// FormMedLabResultHist
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(974, 409);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.gridResultHist);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMedLabResultHist";
@@ -55,5 +67,6 @@
 		#endregion
 
 		private OpenDental.UI.GridOD gridResultHist;
+		private UI.Button butClose;
 	}
 }

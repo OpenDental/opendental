@@ -7,9 +7,9 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="349" Height="158" 
-             Text="Edit Employer" MinMaxBoxes="False" >
+             Text="Edit Employer" Loaded="FrmEmployerEdit_Loaded" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:TextBox x:Name="textEmp" Width="308" Height="20" Margin="20,51,0,0" />
-		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="25" Margin="0,0,21,26" Text="_Save" Click="butSave_Click" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="25" Margin="0,0,21,26" Text="Save" Click="butSave_Click" />
 	</Grid>
 </local:FrmODBase>

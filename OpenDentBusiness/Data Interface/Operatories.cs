@@ -85,31 +85,6 @@ namespace OpenDentBusiness{
 				.ToList();
 			return GetWhere(x => listOperatoryNums.Contains(x.OperatoryNum),isShort);
 		}
-
-		///<summary>Gets multiple Operatories from the database. Returns empty list if not found.</summary>
-		public static List<Operatory> GetOperatoriesForApi(int limit,int offset,long clinicNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Operatory>>(MethodBase.GetCurrentMethod(),limit,offset,clinicNum);
-			}
-			string command="SELECT * FROM operatory ";
-			if(clinicNum>-1) {
-				command+="WHERE ClinicNum = '"+POut.Long(clinicNum)+"'";
-			}
-			command+="ORDER BY OperatoryNum "//Ensure order for limit and offset
-				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
-			List<Operatory> listOperatories=Crud.OperatoryCrud.SelectMany(command);
-			return listOperatories;
-		}
-
-		///<summary>Gets a single Operatory from the database. Returns null if not found.</summary>
-		public static Operatory GetOperatoryForApi(long operatoryNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<Operatory>(MethodBase.GetCurrentMethod(),operatoryNum);
-			}
-			string command="SELECT * FROM operatory "
-				+"WHERE OperatoryNum = '"+POut.Long(operatoryNum)+"'";
-			return Crud.OperatoryCrud.SelectOne(command);
-		}
 		#endregion
 
 		#region CachePattern
@@ -366,7 +341,7 @@ namespace OpenDentBusiness{
 			listOpsToMerge.FindAll(x => x.OperatoryNum!=masterOpNum && listOpNumsToMerge.Contains(x.OperatoryNum))
 				.ForEach(x => x.IsHidden=true);
 			Operatories.Sync(listOpsToMerge,listOps);
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0
 				,Lans.g("Operatories","The following operatories and all of their appointments were merged into the")
 					+" "+masterOp.Abbrev+" "+Lans.g("Operatories","operatory;")+" "
 					+string.Join(", ",listOpsToMerge.FindAll(x => x.OperatoryNum!=masterOpNum && listOpNumsToMerge.Contains(x.OperatoryNum)).Select(x => x.Abbrev)));

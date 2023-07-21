@@ -11,20 +11,19 @@ namespace OpenDental.UI {
 	[DefaultEvent("Scroll")]
 	public partial class WindowingSlider:Control {
 		public LayoutManagerForms LayoutManager=new LayoutManagerForms();
-		private int _minVal=0;
-		private int _maxVal=255;
-		private float _widthBut=7;//the width of the end sliders.
-		///<summary>The width, in pixels, of one increment within the allowed 0-255 range.</summary>
-		private float _tick;
+		private int minVal=64;
+		private int maxVal=192;
+		private float endW=7;//the width of the end sliders.
+		private float tick;
 		private Timer _timerDelay;
-		private EnumSliderButState _enumSliderButStateM = EnumSliderButState.Normal;
-		private EnumSliderButState _enumSliderButStateL = EnumSliderButState.Normal;
-		private EnumSliderButState _enumSliderButStateR = EnumSliderButState.Normal;
-		private bool _isMouseDown;
-		private int _xMouseDown;
+		private ODButtonState butStateM = ODButtonState.Normal;
+		private ODButtonState butStateL = ODButtonState.Normal;
+		private ODButtonState butStateR = ODButtonState.Normal;
+		private bool mouseIsDown;
+		private int mouseDownX;
 		///<summary>The original pixel position of the button in question. The pointy part.</summary>
-		private float _pixLeftStart;
-		private float _pixRightStart;
+		private float originalPixL;
+		private float originalPixR;
 
 		[Category("OD"),Description("Occurs when the slider moves.  UI is typically updated here.  Also see ScrollComplete")]
 		public event EventHandler Scroll=null;
@@ -38,87 +37,86 @@ namespace OpenDental.UI {
 			_timerDelay.Interval=300;//this is optimized for 1700x1300 BW.  Feels very nice. 
 			//For a 1.3MB pano, it's a little short, because the locking every .3 sec makes it feel slightly sluggish.  But certainly tolerable.
 			//An improvement would be to use the file size to tweak larger images to have a longer delay.
-			_timerDelay.Tick += timerDelay_Tick;
+			_timerDelay.Tick += _timerDelay_Tick;
 		}
 
-		///<summary>The value of the left slider.</summary>
-		[Browsable(false)]
+		///<summary></summary>
+		[Category("OD"),Description("The value of the left slider.")]
+		[DefaultValue(64)]
 		public int MinVal{
 			get{
 				if(!Enabled){
 					return 0;
 				}
-				return _minVal;
+				return minVal;
 			}
 			set{
-				_minVal=value;
+				minVal=value;
 				Invalidate();
 			}
 		}
 
-		///<summary>The value of the right slider, max 255.</summary>
-		[Browsable(false)]
+		///<summary></summary>
+		[Category("OD"),Description("The value of the right slider, max 255.")]
+		[DefaultValue(192)]
 		public int MaxVal {
 			get {
 				if(!Enabled){
 					return 255;
 				}
-				return _maxVal;
+				return maxVal;
 			}
 			set {
-				_maxVal=value;
+				maxVal=value;
 				Invalidate();
 			}
 		}
 
 		protected override Size DefaultSize {
 			get {
-				return new Size(154,20);
+				return new Size(194,14);
 			}
 		}
 
 		protected override void OnPaint(PaintEventArgs pe) {
 			Graphics g=pe.Graphics;
 			g.SmoothingMode=SmoothingMode.HighQuality;
-			SolidBrush brush=new SolidBrush(SystemColors.Control);//gray 240=#F0F0F0
+			SolidBrush brush=new SolidBrush(SystemColors.Control);
 			g.FillRectangle(brush,0,0,Width,Height);
-			_tick=(float)(Width-_widthBut-1)/255f;//gets set in mousemove also
+			tick=(float)(Width-endW-1)/255f;//gets set in mousemove also
 			Rectangle rectangleMiddle=GetRectMiddle();
-			if(_enumSliderButStateM==EnumSliderButState.Hover) {
+			if(butStateM==ODButtonState.Hover) {
 				g.FillRectangle(Brushes.White,rectangleMiddle);
 			}
 			g.DrawRectangle(new Pen(Color.FromArgb(28,81,128)),rectangleMiddle);
-			//Black left
-			Rectangle rect=new Rectangle((int)(_widthBut/2),2,rectangleMiddle.Left-(int)(_widthBut/2),Height-5);
+			//gradient bars
+			Rectangle rect=new Rectangle((int)(endW/2),2,rectangleMiddle.Left-(int)(endW/2),Height-5);
 			g.FillRectangle(Brushes.Black,rect);
-			//Middle gradient
 			if(Enabled){
 				rect=new Rectangle(rectangleMiddle.Left,2,rectangleMiddle.Width,Height-5);
-				if(rectangleMiddle.Width>_widthBut){
+				if(rectangleMiddle.Width>endW){
 					LinearGradientBrush gradientBrush=new LinearGradientBrush(
-						new Point(rectangleMiddle.X+(int)(_widthBut/2),0),
-						new Point(rectangleMiddle.Right-(int)(_widthBut/2)+1,0),
+						new Point(rectangleMiddle.X+(int)(endW/2),0),
+						new Point(rectangleMiddle.Right-(int)(endW/2)+1,0),
 						Color.Black,Color.White);
 						//new Point(0,0),new Point(rect.Right+1,0),
 					g.FillRectangle(gradientBrush,rect);
 				}
 			}
-			//else it just all stays gray 240
 			//this one is just to eliminate a rounding artifact
-			rect=new Rectangle(rectangleMiddle.Right-(int)(_widthBut/2)+1,2,2,Height-5);
+			rect=new Rectangle(rectangleMiddle.Right-(int)(endW/2)+1,2,2,Height-5);
 			g.FillRectangle(Brushes.White,rect);
-
-			rect=new Rectangle(rectangleMiddle.Right,2,Width-(int)(_widthBut/2)-rectangleMiddle.Right,Height-5);
+			rect=new Rectangle(rectangleMiddle.Right,2,Width-(int)(endW/2)-rectangleMiddle.Right,Height-5);
 			g.FillRectangle(Brushes.White,rect);
-			DrawButton(g,GetPathLeft(),_enumSliderButStateL);
-			DrawButton(g,GetPathRight(),_enumSliderButStateR);
+			DrawButton(g,GetPathLeft(),butStateL);
+			DrawButton(g,GetPathRight(),butStateR);
 			base.OnPaint(pe);
 		}
 
 		///<summary>Gets the outline path of the middle button that connects the two ends. But it's partly tucked under the end buttons.</summary>
 		private Rectangle GetRectMiddle(){
 			//GraphicsPath path=new GraphicsPath();
-			return new Rectangle((int)(_widthBut/2f+MinVal*_tick),0,(int)((MaxVal-MinVal)*_tick),Height-1);
+			return new Rectangle((int)(endW/2f+MinVal*tick),0,(int)((MaxVal-MinVal)*tick),Height-1);
 			//path.AddRectangle(rect);
 			//return path;
 		}
@@ -127,42 +125,38 @@ namespace OpenDental.UI {
 		private GraphicsPath GetPathLeft() {
 			GraphicsPath path=new GraphicsPath();
 			path.AddLines(new PointF[] {
-				new PointF(MinVal*_tick,Height-4),//start at lower left, work clockwise
-				new PointF(MinVal*_tick,3),
-				new PointF(MinVal*_tick+_widthBut/2f,0),
-				new PointF(MinVal*_tick+_widthBut,3),
-				new PointF(MinVal*_tick+_widthBut,Height-4),
-				new PointF(MinVal*_tick+_widthBut/2f,Height-1),
-				new PointF(MinVal*_tick,Height-4)
+				new PointF(MinVal*tick,Height-4),//start at lower left, work clockwise
+				new PointF(MinVal*tick,3),
+				new PointF(MinVal*tick+endW/2f,0),
+				new PointF(MinVal*tick+endW,3),
+				new PointF(MinVal*tick+endW,Height-4),
+				new PointF(MinVal*tick+endW/2f,Height-1),
+				new PointF(MinVal*tick,Height-4)
 			});
 			return path;
 		}
-		/*
-		Assumes height of 20
-		-3.5,16 -3.5,3 0,0 3.5,3 3.5,16 0,19 
-		*/
 
 		///<summary>Gets the outline path of the right end button.</summary>
 		private GraphicsPath GetPathRight() {
 			GraphicsPath path=new GraphicsPath();
 			path.AddLines(new PointF[] {
-				new PointF(MaxVal*_tick,Height-4),//start at lower left, work clockwise
-				new PointF(MaxVal*_tick,3),
-				new PointF(MaxVal*_tick+_widthBut/2f,0),
-				new PointF(MaxVal*_tick+_widthBut,3),
-				new PointF(MaxVal*_tick+_widthBut,Height-4),
-				new PointF(MaxVal*_tick+_widthBut/2f,Height-1),
-				new PointF(MaxVal*_tick,Height-4)
+				new PointF(MaxVal*tick,Height-4),//start at lower left, work clockwise
+				new PointF(MaxVal*tick,3),
+				new PointF(MaxVal*tick+endW/2f,0),
+				new PointF(MaxVal*tick+endW,3),
+				new PointF(MaxVal*tick+endW,Height-4),
+				new PointF(MaxVal*tick+endW/2f,Height-1),
+				new PointF(MaxVal*tick,Height-4)
 			});
 			return path;
 		}
 
-		private void DrawButton(Graphics g,GraphicsPath pathmain,EnumSliderButState state){
-			Color clrMain=Color.FromArgb(200,202,220);//#C8CADC
-			if(state==EnumSliderButState.Hover){
+		private void DrawButton(Graphics g,GraphicsPath pathmain,ODButtonState state){
+			Color clrMain=Color.FromArgb(200,202,220);
+			if(state==ODButtonState.Hover){
 				clrMain=Color.FromArgb(240,240,255);
 			}
-			else if(state==EnumSliderButState.Pressed) {
+			else if(state==ODButtonState.Pressed) {
 				clrMain=Color.FromArgb(150,150,160);
 			}
 			GraphicsPath pathsub=new GraphicsPath();
@@ -178,7 +172,7 @@ namespace OpenDental.UI {
 				new PointF(rect.Left,rect.Top+rect.Height/2),Color.FromArgb(0,0,0,0),
 				Color.FromArgb(50,0,0,0));
 			g.FillPath(brush,pathmain);
-			Pen outline=new Pen(Color.FromArgb(28,81,128));//#1C5180
+			Pen outline=new Pen(Color.FromArgb(28,81,128));
 			g.DrawPath(outline,pathmain);
 		}
 
@@ -188,16 +182,16 @@ namespace OpenDental.UI {
 				return;
 			}
 			base.OnMouseMove(e);
-			_tick=(float)(Width-_widthBut-1)/255f;
-			if(_isMouseDown) {
+			tick=(float)(Width-endW-1)/255f;
+			if(mouseIsDown) {
 				int minAllowedL=0;
 				int maxAllowedL;
 				int minAllowedR;
 				int maxAllowedR=255;
-				float deltaPix=_xMouseDown-e.X;
-				if(_enumSliderButStateL==EnumSliderButState.Pressed){
-					MinVal=(int)((_pixLeftStart-deltaPix-_widthBut/2f)/_tick);
-					maxAllowedL=MaxVal-(int)(_widthBut/_tick);
+				float deltaPix=mouseDownX-e.X;
+				if(butStateL==ODButtonState.Pressed){
+					MinVal=(int)((originalPixL-deltaPix-endW/2f)/tick);
+					maxAllowedL=MaxVal-(int)(endW/tick);
 					if(MinVal<minAllowedL){
 						MinVal=minAllowedL;
 					}
@@ -206,9 +200,9 @@ namespace OpenDental.UI {
 					}
 					OnScroll();
 				}
-				else if(_enumSliderButStateR==EnumSliderButState.Pressed){
-					MaxVal=(int)((_pixRightStart-deltaPix-_widthBut/2f)/_tick);
-					minAllowedR=MinVal+(int)(_widthBut/_tick);
+				else if(butStateR==ODButtonState.Pressed){
+					MaxVal=(int)((originalPixR-deltaPix-endW/2f)/tick);
+					minAllowedR=MinVal+(int)(endW/tick);
 					if(MaxVal<minAllowedR){
 						MaxVal=minAllowedR;
 					}
@@ -217,10 +211,10 @@ namespace OpenDental.UI {
 					}
 					OnScroll();
 				}
-				else if(_enumSliderButStateM==EnumSliderButState.Pressed) {
-					MinVal=(int)((_pixLeftStart-deltaPix-_widthBut/2f)/_tick);
-					MaxVal=(int)((_pixRightStart-deltaPix-_widthBut/2f)/_tick);
-					int originalValSpan=(int)((_pixRightStart-_pixLeftStart)/_tick);
+				else if(butStateM==ODButtonState.Pressed) {
+					MinVal=(int)((originalPixL-deltaPix-endW/2f)/tick);
+					MaxVal=(int)((originalPixR-deltaPix-endW/2f)/tick);
+					int originalValSpan=(int)((originalPixR-originalPixL)/tick);
 					maxAllowedL=maxAllowedR-originalValSpan;
 					minAllowedR=minAllowedL+originalValSpan;
 					if(MinVal<minAllowedL) {
@@ -239,17 +233,17 @@ namespace OpenDental.UI {
 				}
 			}
 			else {//mouse is not down
-				_enumSliderButStateL=EnumSliderButState.Normal;
-				_enumSliderButStateR=EnumSliderButState.Normal;
-				_enumSliderButStateM=EnumSliderButState.Normal;
+				butStateL=ODButtonState.Normal;
+				butStateR=ODButtonState.Normal;
+				butStateM=ODButtonState.Normal;
 				if(GetPathLeft().IsVisible(e.Location)){
-					_enumSliderButStateL=EnumSliderButState.Hover;
+					butStateL=ODButtonState.Hover;
 				}
 				else if(GetPathRight().IsVisible(e.Location)) {
-					_enumSliderButStateR=EnumSliderButState.Hover;
+					butStateR=ODButtonState.Hover;
 				}
 				else if(GetRectMiddle().Contains(e.Location)){
-					_enumSliderButStateM=EnumSliderButState.Hover;
+					butStateM=ODButtonState.Hover;
 				}
 			}
 			Invalidate();
@@ -261,16 +255,16 @@ namespace OpenDental.UI {
 				return;
 			}
 			base.OnMouseLeave(e);
-			if(_isMouseDown) {//mouse is down
+			if(mouseIsDown) {//mouse is down
 				//if a button is pressed, it will remain so, even if leave.  As long as mouse is down.
 				//,so do nothing.
 				//Also, if a button is not pressed, nothing will happen when leave
 				//,so do nothing.
 			}
 			else {//mouse is not down
-				_enumSliderButStateL=EnumSliderButState.Normal;
-				_enumSliderButStateR=EnumSliderButState.Normal;
-				_enumSliderButStateM=EnumSliderButState.Normal;
+				butStateL=ODButtonState.Normal;
+				butStateR=ODButtonState.Normal;
+				butStateM=ODButtonState.Normal;
 				Invalidate();
 			}
 		}
@@ -284,23 +278,23 @@ namespace OpenDental.UI {
 			if((e.Button & MouseButtons.Left)!=MouseButtons.Left) {
 				return;
 			}
-			_isMouseDown=true;
-			_xMouseDown=e.X;
-			_enumSliderButStateL=EnumSliderButState.Normal;
-			_enumSliderButStateR=EnumSliderButState.Normal;
-			_enumSliderButStateM=EnumSliderButState.Normal;
+			mouseIsDown=true;
+			mouseDownX=e.X;
+			butStateL=ODButtonState.Normal;
+			butStateR=ODButtonState.Normal;
+			butStateM=ODButtonState.Normal;
 			if(GetPathLeft().IsVisible(e.Location)){//if mouse pressed within the left button
-				_enumSliderButStateL=EnumSliderButState.Pressed;
-				_pixLeftStart=(float)MinVal*_tick+_widthBut/2f;
+				butStateL=ODButtonState.Pressed;
+				originalPixL=(float)MinVal*tick+endW/2f;
 			}
 			else if(GetPathRight().IsVisible(e.Location)) {
-				_enumSliderButStateR=EnumSliderButState.Pressed;
-				_pixRightStart=(float)MaxVal*_tick+_widthBut/2f;
+				butStateR=ODButtonState.Pressed;
+				originalPixR=(float)MaxVal*tick+endW/2f;
 			}
 			else if(GetRectMiddle().Contains(e.Location)) {
-				_enumSliderButStateM=EnumSliderButState.Pressed;
-				_pixLeftStart=(float)MinVal*_tick+_widthBut/2f;
-				_pixRightStart=(float)MaxVal*_tick+_widthBut/2f;
+				butStateM=ODButtonState.Pressed;
+				originalPixL=(float)MinVal*tick+endW/2f;
+				originalPixR=(float)MaxVal*tick+endW/2f;
 			}
 			Invalidate();
 		}
@@ -314,31 +308,31 @@ namespace OpenDental.UI {
 			if((e.Button & MouseButtons.Left)!=MouseButtons.Left) {
 				return;
 			}
-			_isMouseDown=false;
-			if(_enumSliderButStateL==EnumSliderButState.Pressed
-				|| _enumSliderButStateR==EnumSliderButState.Pressed
-				|| _enumSliderButStateM==EnumSliderButState.Pressed)
+			mouseIsDown=false;
+			if(butStateL==ODButtonState.Pressed
+				|| butStateR==ODButtonState.Pressed
+				|| butStateM==ODButtonState.Pressed)
 			{
 				OnScrollComplete();
 			}
-			_enumSliderButStateL=EnumSliderButState.Normal;
-			_enumSliderButStateR=EnumSliderButState.Normal;
-			_enumSliderButStateM=EnumSliderButState.Normal;
+			butStateL=ODButtonState.Normal;
+			butStateR=ODButtonState.Normal;
+			butStateM=ODButtonState.Normal;
 			if(GetPathLeft().IsVisible(e.Location)) {
-				_enumSliderButStateL=EnumSliderButState.Hover;
+				butStateL=ODButtonState.Hover;
 			}
 			else if(GetPathRight().IsVisible(e.Location)) {
-				_enumSliderButStateR=EnumSliderButState.Hover;
+				butStateR=ODButtonState.Hover;
 			}
 			else if(GetRectMiddle().Contains(e.Location)) {
-				_enumSliderButStateM=EnumSliderButState.Hover;
+				butStateM=ODButtonState.Hover;
 			}
 			Invalidate();
 		}
 
 		protected override void OnResize(EventArgs e){
 			base.OnResize(e);
-			_widthBut=LayoutManager.Scale(7);
+			endW=LayoutManager.Scale(7);
 		}
 
 		///<summary></summary>
@@ -366,7 +360,7 @@ namespace OpenDental.UI {
 			}
 		}
 
-		private void timerDelay_Tick(object sender, EventArgs e){
+		private void _timerDelay_Tick(object sender, EventArgs e){
 			EventArgs ea=new EventArgs();
 			if(Scroll!=null){
 				Scroll(this,ea);
@@ -375,7 +369,7 @@ namespace OpenDental.UI {
 		}
 
 		///<summary></summary>
-		private enum EnumSliderButState {
+		private enum ODButtonState {
 			///<summary></summary>
 			Normal,
 			///<summary></summary>

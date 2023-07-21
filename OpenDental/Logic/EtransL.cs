@@ -86,7 +86,7 @@ namespace OpenDental {
 			string amountMin,string amountMax,DateTime dateFrom,DateTime dateTo,string carrierName,string checkTraceNum,string controlId,bool includeAutomatableCarriersOnly,
 			bool areAllClinicsSelected,List<X835AutoProcessed> listX835AutoProcessedsStatuses=null,bool includeAcknowledged=true) 
 		{
-			ODEvent.Fire(ODEventType.ProgressBar,Lan.g("FormEtrans835s","Refreshing history."));
+			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g("FormEtrans835s","Refreshing history."));
 			decimal insPaidMin=-1;
 			if(amountMin!="") {
 				insPaidMin=PIn.Decimal(amountMin);
@@ -101,7 +101,7 @@ namespace OpenDental {
 			eraData.ListEtrans=Etranss.GetMany(eraData.ListEtrans835s.Select(x => x.EtransNum).ToArray());
 			eraData.ListAttached=Etrans835Attaches.GetForEtrans(false,eraData.ListEtrans.Select(x => x.EtransNum).ToArray());//Gets non-db columns also.
 			if(showStatusAndClinics && PrefC.HasClinicsEnabled && !areAllClinicsSelected) {//Filter by selected clinics if applicable.
-				ODEvent.Fire(ODEventType.ProgressBar,Lan.g("FormEtrans835s","Filtering by clinic."));
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g("FormEtrans835s","Filtering by clinic."));
 				eraData.ListAttached=eraData.ListAttached.FindAll(x => listClinicNumsSelected.Contains(x.ClinicNum));
 				List<long> listEtransNums=eraData.ListAttached.Select(x => x.EtransNum).Distinct().ToList();
 				eraData.ListEtrans=eraData.ListEtrans.FindAll(x => listEtransNums.Contains(x.EtransNum));
@@ -109,7 +109,7 @@ namespace OpenDental {
 			//Ensure listFilteredEtrans835s are listed in same order and with same total count as the listEtransFiltered.
 			eraData.ListEtrans835s=eraData.ListEtrans.Select(x => eraData.ListEtrans835s.FirstOrDefault(y => y.EtransNum==x.EtransNum)).ToList();
 			if(includeAutomatableCarriersOnly) {
-				ODEvent.Fire(ODEventType.ProgressBar,Lan.g("FormEtrans835s","Filtering by automatable carriers."));
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g("FormEtrans835s","Filtering by automatable carriers."));
 				FilterAutomatableERAs(eraData.ListEtrans,eraData.ListEtrans835s,eraData.ListAttached);
 			}
 			return eraData;
@@ -138,7 +138,7 @@ namespace OpenDental {
 			List<Etrans> listEtransMissingEtrans835s=Etranss.GetMany(listEtransNumsMissingEtrans835s.ToArray());
 			//Running a set of queries/commands here for each ERA is fine because this will only happen once for each ERA and we have a progress bar.
 			for(int i=0;i<listEtransMissingEtrans835s.Count;i++) {
-				ODEvent.Fire(ODEventType.ProgressBar,Lan.g("FormEtrans835s","Creating Etrans835 records")+" "+(i+1)+"/"+listEtransMissingEtrans835s.Count);
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g("FormEtrans835s","Creating Etrans835 records")+" "+(i+1)+"/"+listEtransMissingEtrans835s.Count);
 				string messageText835=EtransMessageTexts.GetMessageText(listEtransMissingEtrans835s[i].EtransMessageTextNum);
 				List<Etrans835Attach> listEtrans835Attaches=Etrans835Attaches.GetForEtrans(listEtransMissingEtrans835s[i].EtransNum);
 				X835 x835=new X835(listEtransMissingEtrans835s[i],messageText835,listEtransMissingEtrans835s[i].TranSetId835,listEtrans835Attaches);
@@ -153,7 +153,7 @@ namespace OpenDental {
 			if(hx835_ClaimPaid.ClaimNum!=0) {
 				Claim claim=Claims.GetClaim(hx835_ClaimPaid.ClaimNum);
 				if(claim!=null) {
-					GlobalFormOpenDental.GotoAccount(claim.PatNum);
+					GotoModule.GotoAccount(claim.PatNum);
 					return;
 				}
 			}
@@ -165,7 +165,7 @@ namespace OpenDental {
 				return;
 			}
 			if(tablePt.Rows.Count==1) {
-				GlobalFormOpenDental.GotoAccount(PIn.Long(tablePt.Rows[0]["PatNum"].ToString()));
+				GotoModule.GotoAccount(PIn.Long(tablePt.Rows[0]["PatNum"].ToString()));
 				return;
 			}
 			MsgBox.Show("X835","Multiple patients with same name found.  Please manually attach to a claim and try again.");
@@ -174,7 +174,7 @@ namespace OpenDental {
 		///<summary>Attempts to delete all etrans data for the given x835, returns true if successful otherwise false.
 		///Prompts user in either case.</summary>
 		public static bool TryDeleteEra(X835 x835,List<Hx835_ShortClaim> listHx835_ShortClaims,List<Hx835_ShortClaimProc> listHx835_ShortClaimProcs, List<Etrans835Attach> listEtrans835Attaches) {
-			X835Status x835Status=x835.GetStatus(x835.GetClaimDataList(listHx835_ShortClaims),listHx835_ShortClaimProcs,listEtrans835Attaches);
+			X835Status x835Status=x835.GetStatus(listHx835_ShortClaims,listHx835_ShortClaimProcs,listEtrans835Attaches);
 			switch(x835Status) {
 				case X835Status.FinalizedAllDetached:
 				case X835Status.Unprocessed:
@@ -468,7 +468,7 @@ namespace OpenDental {
 						int patIdx=listPatientsFor834ImportsLimited.BinarySearch(patientFor834ImportLimited);//Preserve sort order by locating the index in which to insert the newly added patient.
 						int insertIdx=~patIdx;//According to MSDN, the index returned by BinarySearch() is a "bitwise compliment", since not currently in list.
 						listPatientsFor834ImportsLimited.Insert(insertIdx,patientFor834ImportLimited);
-						SecurityLogs.MakeLogEntry(EnumPermType.PatientCreate,hx834_Member.Pat.PatNum,"Created from Import Ins Plans 834.",LogSources.InsPlanImport834);
+						SecurityLogs.MakeLogEntry(Permissions.PatientCreate,hx834_Member.Pat.PatNum,"Created from Import Ins Plans 834.",LogSources.InsPlanImport834);
 						isMemberImported=true;
 						importInsurancePlansReturnData.createdPatsCount++;
 					}
@@ -513,7 +513,7 @@ namespace OpenDental {
 								Carriers.Insert(carrier);
 								DataValid.SetInvalid(InvalidType.Carriers);
 								listCarriers.Add(carrier);
-								SecurityLogs.MakeLogEntry(EnumPermType.CarrierCreate,0,"Carrier '"+carrier.CarrierName
+								SecurityLogs.MakeLogEntry(Permissions.CarrierCreate,0,"Carrier '"+carrier.CarrierName
 									+"' created from Import Ins Plans 834.",LogSources.InsPlanImport834);
 								importInsurancePlansReturnData.createdCarrierCount++;
 							}
@@ -648,7 +648,7 @@ namespace OpenDental {
 			//Testing for claims on today's date does not seem that useful anyway, or at least not as useful as checking for any claims
 			//associated to the plan, instead of just today's date.
 			PatPlans.Delete(patPlan.PatPlanNum);//Estimates recomputed within Delete()
-			SecurityLogs.MakeLogEntry(EnumPermType.InsPlanDropPat,patPlan.PatNum,
+			SecurityLogs.MakeLogEntry(Permissions.InsPlanDropPat,patPlan.PatNum,
 				"Insurance plan dropped from patient for carrier '"+carrier+"' and groupnum "
 				+"'"+insPlan.GroupNum+"' and subscriber ID '"+insSub.SubscriberID+"' "
 				+"from Import Ins Plans 834.",insPlan.PlanNum,LogSources.InsPlanImport834,insPlan.SecDateTEdit);
@@ -663,7 +663,7 @@ namespace OpenDental {
 					Directory.CreateDirectory(dirArchive);
 				}
 				catch(Exception ex){
-					if(!ODBuild.IsUnitTest) {
+					if(!ODInitialize.IsRunningInUnitTest) {
 						MessageBox.Show(Lan.g("FormEtrans834Preview","Failed to move file")+" '"+x834.FilePath+"' "
 							+Lan.g("FormEtrans834Preview","to archive, probably due to a permission issue.")+"  "+ex.Message);
 					}
@@ -683,7 +683,7 @@ namespace OpenDental {
 				File.Move(x834.FilePath,destPath);
 			}
 			catch(Exception ex) {
-				if(!ODBuild.IsUnitTest) {
+				if(!ODInitialize.IsRunningInUnitTest) {
 					MessageBox.Show(Lan.g("FormEtrans834Preview","Failed to move file")+" '"+x834.FilePath+"' "
 						+Lan.g("FormEtrans834Preview","to archive, probably due to a permission issue.")+"  "+ex.Message);
 				}
@@ -708,7 +708,7 @@ namespace OpenDental {
 				if(OpenDentBusiness.Crud.InsPlanCrud.UpdateComparison(insPlan,insPlanOld)) {
 					InsPlans.Update(insPlan,insPlanOld);
 					InsBlueBooks.UpdateByInsPlan(insPlan);//Update insbluebook entries for insplan because GroupNum has changed.
-					SecurityLogs.MakeLogEntry(EnumPermType.InsPlanEdit,0,"Insurance plan for carrier '"+carrier.CarrierName+"' and groupnum "
+					SecurityLogs.MakeLogEntry(Permissions.InsPlanEdit,0,"Insurance plan for carrier '"+carrier.CarrierName+"' and groupnum "
 						+"'"+insPlan.GroupNum+"' edited from Import Ins Plans 834.",insPlan.PlanNum,LogSources.InsPlanImport834,insPlanOld.SecDateTEdit);
 				}
 				return insPlan;
@@ -747,7 +747,7 @@ namespace OpenDental {
 			insPlan.HideFromVerifyList=false;
 			if(isInsertAllowed) {
 				InsPlans.Insert(insPlan);
-				SecurityLogs.MakeLogEntry(EnumPermType.InsPlanCreate,0,"Insurance plan for carrier '"+carrier.CarrierName+"' and groupnum "
+				SecurityLogs.MakeLogEntry(Permissions.InsPlanCreate,0,"Insurance plan for carrier '"+carrier.CarrierName+"' and groupnum "
 					+"'"+insPlan.GroupNum+"' created from Import Ins Plans 834.",insPlan.PlanNum,LogSources.InsPlanImport834,
 					DateTime.MinValue); //new insplan, no date needed
 			}
@@ -771,7 +771,7 @@ namespace OpenDental {
 				insSub.DateEffective=hx834_HealthCoverage.DateEffective;
 				insSub.DateTerm=hx834_HealthCoverage.DateTerm;
 				InsSubs.Insert(insSub);
-				SecurityLogs.MakeLogEntry(EnumPermType.InsPlanCreateSub,insSub.Subscriber,
+				SecurityLogs.MakeLogEntry(Permissions.InsPlanCreateSub,insSub.Subscriber,
 					"Insurance subscriber created for carrier '"+carrier.CarrierName+"' and groupnum "
 					+"'"+insPlan.GroupNum+"' and subscriber ID '"+insSub.SubscriberID+"' "
 					+"from Import Ins Plans 834.",insPlan.PlanNum,LogSources.InsPlanImport834,DateTime.MinValue);
@@ -783,7 +783,7 @@ namespace OpenDental {
 			insSub.ReleaseInfo=hx834_Member.IsReleaseInfo;
 			if(OpenDentBusiness.Crud.InsSubCrud.UpdateComparison(insSub,insSubOld)) {
 				InsSubs.Update(insSub);
-				SecurityLogs.MakeLogEntry(EnumPermType.InsPlanEditSub,insSub.Subscriber,
+				SecurityLogs.MakeLogEntry(Permissions.InsPlanEditSub,insSub.Subscriber,
 					"Insurance subscriber edited for carrier '"+carrier.CarrierName+"' and groupnum "
 					+"'"+insPlan.GroupNum+"' and subscriber ID '"+insSub.SubscriberID+"' "
 					+"from Import Ins Plans 834.",insPlan.PlanNum,LogSources.InsPlanImport834,insSubOld.SecDateTEdit);
@@ -800,7 +800,7 @@ namespace OpenDental {
 				PatPlan patPlanOld=patPlan.Copy();
 				patPlan.Relationship=hx834_Member.PlanRelat;
 				if(OpenDentBusiness.Crud.PatPlanCrud.UpdateComparison(patPlan,patPlanOld)) {
-					SecurityLogs.MakeLogEntry(EnumPermType.InsPlanEdit,patPlan.PatNum,"Insurance plan relationship changed from "
+					SecurityLogs.MakeLogEntry(Permissions.InsPlanEdit,patPlan.PatNum,"Insurance plan relationship changed from "
 						+hx834_Member.PlanRelat+" to "+patPlan.Relationship+" for carrier '"+carrier.CarrierName+"' and groupnum "
 						+"'"+insPlan.GroupNum+"' from Import Ins Plans 834.",insPlan.PlanNum,LogSources.InsPlanImport834,insPlan.SecDateTEdit);
 					PatPlans.Update(patPlan);
@@ -825,7 +825,7 @@ namespace OpenDental {
 				//Patients.Update(member.Pat,memberPatOld);
 			}
 			PatPlans.Insert(patPlan);
-			SecurityLogs.MakeLogEntry(EnumPermType.InsPlanAddPat,patPlan.PatNum,
+			SecurityLogs.MakeLogEntry(Permissions.InsPlanAddPat,patPlan.PatNum,
 				"Insurance plan added to patient for carrier '"+carrier.CarrierName+"' and groupnum "
 				+"'"+insPlan.GroupNum+"' and subscriber ID '"+insSub.SubscriberID+"' "
 				+"from Import Ins Plans 834.",insPlan.PlanNum,LogSources.InsPlanImport834,insPlan.SecDateTEdit);

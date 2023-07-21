@@ -38,7 +38,6 @@ namespace OpenDental{
 			this.butLogin = new OpenDental.UI.Button();
 			this.labelReviewTime = new System.Windows.Forms.Label();
 			this.textReviewTime = new OpenDental.ValidNum();
-			this.butAutoNote = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -103,10 +102,9 @@ namespace OpenDental{
 			this.textDescription.BackColor = System.Drawing.SystemColors.Window;
 			this.textDescription.DetectLinksEnabled = false;
 			this.textDescription.DetectUrls = false;
-			this.textDescription.HasAutoNotes = true;
 			this.textDescription.Location = new System.Drawing.Point(12, 221);
 			this.textDescription.Name = "textDescription";
-			this.textDescription.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.CommLog;
+			this.textDescription.QuickPasteType = OpenDentBusiness.QuickPasteType.CommLog;
 			this.textDescription.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textDescription.Size = new System.Drawing.Size(389, 199);
 			this.textDescription.TabIndex = 11;
@@ -176,25 +174,15 @@ namespace OpenDental{
 			// 
 			this.textReviewTime.Location = new System.Drawing.Point(141, 171);
 			this.textReviewTime.MaxVal = 1000000;
+			this.textReviewTime.MinVal = 0;
 			this.textReviewTime.Name = "textReviewTime";
-			this.textReviewTime.ShowZero = false;
 			this.textReviewTime.Size = new System.Drawing.Size(61, 20);
 			this.textReviewTime.TabIndex = 21;
-			// 
-			// butAutoNote
-			// 
-			this.butAutoNote.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.butAutoNote.Location = new System.Drawing.Point(245, 191);
-			this.butAutoNote.Name = "butAutoNote";
-			this.butAutoNote.Size = new System.Drawing.Size(75, 24);
-			this.butAutoNote.TabIndex = 22;
-			this.butAutoNote.Text = "Auto Note";
-			this.butAutoNote.Click += new System.EventHandler(this.butAutoNote_Click);
+			this.textReviewTime.ShowZero = false;
 			// 
 			// FormJobReviewEdit
 			// 
 			this.ClientSize = new System.Drawing.Size(413, 462);
-			this.Controls.Add(this.butAutoNote);
 			this.Controls.Add(this.textReviewTime);
 			this.Controls.Add(this.labelReviewTime);
 			this.Controls.Add(this.butLogin);
@@ -234,6 +222,5 @@ namespace OpenDental{
 		private UI.Button butLogin;
 		private System.Windows.Forms.Label labelReviewTime;
 		private ValidNum textReviewTime;
-		private UI.Button butAutoNote;
 	}
 }

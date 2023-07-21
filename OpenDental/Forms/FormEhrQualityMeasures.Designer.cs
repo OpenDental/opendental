@@ -24,6 +24,7 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrQualityMeasures));
+			this.butClose = new System.Windows.Forms.Button();
 			this.butRefresh = new System.Windows.Forms.Button();
 			this.textDateEnd = new System.Windows.Forms.TextBox();
 			this.textDateStart = new System.Windows.Forms.TextBox();
@@ -35,6 +36,17 @@
 			this.label2 = new System.Windows.Forms.Label();
 			this.butShow = new System.Windows.Forms.Button();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(633, 635);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 23);
+			this.butClose.TabIndex = 1;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butRefresh
 			// 
@@ -144,6 +156,7 @@
 			this.Controls.Add(this.textDateStart);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.label5);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.gridMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrQualityMeasures";
@@ -157,6 +170,7 @@
 		#endregion
 
 		private OpenDental.UI.GridOD gridMain;
+		private System.Windows.Forms.Button butClose;
 		private System.Windows.Forms.Button butRefresh;
 		private System.Windows.Forms.TextBox textDateEnd;
 		private System.Windows.Forms.TextBox textDateStart;

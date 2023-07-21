@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormBugSubmissions));
 			this.butAddJob = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.gridSubs = new OpenDental.UI.GridOD();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
@@ -60,16 +61,28 @@ namespace OpenDental{
 			// butAddJob
 			// 
 			this.butAddJob.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butAddJob.Location = new System.Drawing.Point(1135, 724);
+			this.butAddJob.Location = new System.Drawing.Point(1043, 723);
 			this.butAddJob.Name = "butAddJob";
 			this.butAddJob.Size = new System.Drawing.Size(85, 24);
 			this.butAddJob.TabIndex = 3;
 			this.butAddJob.Text = "&Add Job";
 			this.butAddJob.Click += new System.EventHandler(this.butAdd_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(1134, 723);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(85, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// gridSubs
 			// 
-			this.gridSubs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.gridSubs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
 			this.gridSubs.Location = new System.Drawing.Point(12, 127);
 			this.gridSubs.Name = "gridSubs";
 			this.gridSubs.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
@@ -116,7 +129,7 @@ namespace OpenDental{
 			this.textMsgText.Location = new System.Drawing.Point(261, 13);
 			this.textMsgText.Multiline = false;
 			this.textMsgText.Name = "textMsgText";
-			this.textMsgText.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.JobManager;
+			this.textMsgText.QuickPasteType = OpenDentBusiness.QuickPasteType.JobManager;
 			this.textMsgText.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textMsgText.Size = new System.Drawing.Size(174, 21);
 			this.textMsgText.TabIndex = 10;
@@ -131,7 +144,7 @@ namespace OpenDental{
 			this.textStackFilter.Location = new System.Drawing.Point(544, 48);
 			this.textStackFilter.Multiline = false;
 			this.textStackFilter.Name = "textStackFilter";
-			this.textStackFilter.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.JobManager;
+			this.textStackFilter.QuickPasteType = OpenDentBusiness.QuickPasteType.JobManager;
 			this.textStackFilter.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textStackFilter.Size = new System.Drawing.Size(177, 21);
 			this.textStackFilter.TabIndex = 11;
@@ -201,7 +214,7 @@ namespace OpenDental{
 			this.textCategoryFilters.Location = new System.Drawing.Point(544, 13);
 			this.textCategoryFilters.Multiline = false;
 			this.textCategoryFilters.Name = "textCategoryFilters";
-			this.textCategoryFilters.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.JobManager;
+			this.textCategoryFilters.QuickPasteType = OpenDentBusiness.QuickPasteType.JobManager;
 			this.textCategoryFilters.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textCategoryFilters.Size = new System.Drawing.Size(177, 21);
 			this.textCategoryFilters.TabIndex = 44;
@@ -230,7 +243,7 @@ namespace OpenDental{
 			this.textDevNoteFilter.Location = new System.Drawing.Point(781, 47);
 			this.textDevNoteFilter.Multiline = false;
 			this.textDevNoteFilter.Name = "textDevNoteFilter";
-			this.textDevNoteFilter.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.JobManager;
+			this.textDevNoteFilter.QuickPasteType = OpenDentBusiness.QuickPasteType.JobManager;
 			this.textDevNoteFilter.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textDevNoteFilter.Size = new System.Drawing.Size(102, 22);
 			this.textDevNoteFilter.TabIndex = 31;
@@ -254,7 +267,7 @@ namespace OpenDental{
 			this.textPatNums.Location = new System.Drawing.Point(781, 12);
 			this.textPatNums.Multiline = false;
 			this.textPatNums.Name = "textPatNums";
-			this.textPatNums.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.JobManager;
+			this.textPatNums.QuickPasteType = OpenDentBusiness.QuickPasteType.JobManager;
 			this.textPatNums.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textPatNums.Size = new System.Drawing.Size(102, 22);
 			this.textPatNums.TabIndex = 29;
@@ -339,7 +352,8 @@ namespace OpenDental{
 			// 
 			// bugSubmissionControl
 			// 
-			this.bugSubmissionControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+			this.bugSubmissionControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.bugSubmissionControl.ControlMode = BugSubmissionControlMode.General;
 			this.bugSubmissionControl.Location = new System.Drawing.Point(550, 124);
@@ -396,6 +410,7 @@ namespace OpenDental{
 			// 
 			// FormBugSubmissions
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(1232, 760);
 			this.Controls.Add(this.labelHashNum);
 			this.Controls.Add(this.label6);
@@ -408,6 +423,7 @@ namespace OpenDental{
 			this.Controls.Add(this.groupFilters);
 			this.Controls.Add(this.gridSubs);
 			this.Controls.Add(this.butAddJob);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.bugSubmissionControl);
 			this.Controls.Add(this.menuMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -424,6 +440,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butAddJob;
+		private OpenDental.UI.Button butCancel;
 		private UI.GridOD gridSubs;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;

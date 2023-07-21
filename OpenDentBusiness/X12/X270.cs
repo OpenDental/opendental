@@ -396,6 +396,14 @@ IEA*1*000012145~";
 					strb.Append("Group Number");
 				}
 			}
+			//Darien at Dentalxchange helped us resolve one issue where the Group Number included a dash and was failing.
+			//The fix suggested by Darien was to only include the numbers before the dash...  See task #705773
+			if(IsClaimConnect(clearinghouseClin) && insPlan.GroupNum.Contains("-")) {
+				if(strb.Length!=0) {
+					strb.Append(",");
+				}
+				strb.Append("Group Number: Only include the group number prior to the '-'");
+			}
 			return strb.ToString();
 		}
 

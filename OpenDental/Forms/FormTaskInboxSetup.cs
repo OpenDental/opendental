@@ -85,7 +85,7 @@ namespace OpenDental {
 			public List<Userod> ListUserods;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			bool hasChanged=false;
 			List<FailedUpdates> listFailedUserUpdates=new List<FailedUpdates>();
 			for(int i=0;i<listUserods.Count;i++) {
@@ -121,5 +121,12 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
 	}
 }

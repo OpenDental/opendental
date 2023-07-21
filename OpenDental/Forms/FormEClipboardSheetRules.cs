@@ -109,7 +109,11 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void butOK_Click(object sender,EventArgs e) {
 			int days;
 			if(!int.TryParse(textFrequency.Text,out days)) {
 				MsgBox.Show(this,"Frequency (days) must be a valid whole number.");

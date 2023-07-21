@@ -83,7 +83,7 @@ namespace OpenDental {
 			Appointment appointment=(Appointment)gridConflicts.ListGridRows[e.Row].Tag;
 			long selectedPatNum=appointment.PatNum;
 			Patient patient=_listPatients.First(x => x.PatNum==selectedPatNum);
-			GlobalFormOpenDental.PatientSelected(patient,true);
+			FormOpenDental.S_Contr_PatientSelected(patient,true);
 			using FormApptEdit formApptEdit=new FormApptEdit(appointment.AptNum);
 			formApptEdit.PinIsVisible=true;
 			formApptEdit.ShowDialog();
@@ -114,7 +114,7 @@ namespace OpenDental {
 			}
 			_listAppointments.RemoveAll(x => listSelectedAptNums.Contains(x.AptNum));
 			FillGrid();
-			GlobalFormOpenDental.PinToAppt(listSelectedAptNums,0); //Pins all appointments to the pinboard that were in listAptSelected.
+			GotoModule.PinToAppt(listSelectedAptNums,0); //Pins all appointments to the pinboard that were in listAptSelected.
 		}
 
 		private void menuItemSelectPatient_Click(object sender,EventArgs e) {
@@ -128,7 +128,7 @@ namespace OpenDental {
 			}
 			//If multiple selected, just take the last one to remain consistent with SendPinboard_Click.
 			Patient patient=_listPatients.First(x => x.PatNum==_listAppointments[gridConflicts.SelectedIndices[gridConflicts.SelectedIndices.Length-1]].PatNum);
-			GlobalFormOpenDental.PatientSelected(patient,true);
+			FormOpenDental.S_Contr_PatientSelected(patient,true);
 		}
 
 		private void butPrint_Click(object sender,EventArgs e) {
@@ -163,6 +163,11 @@ namespace OpenDental {
 			else {
 				e.HasMorePages=false;
 			}
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+			Close();
 		}
 
 	}

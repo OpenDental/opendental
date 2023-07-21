@@ -28,31 +28,31 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>A list of notes for many tasks.</summary>
-		public static List<TaskNote> GetForTasks(List<long> listTaskNums) {
+		public static List<TaskNote> GetForTasks(List<long> taskNums) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<TaskNote>>(MethodBase.GetCurrentMethod(),listTaskNums);
+				return Meth.GetObject<List<TaskNote>>(MethodBase.GetCurrentMethod(),taskNums);
 			}
-			if(listTaskNums==null || listTaskNums.Count==0) {
+			if(taskNums==null || taskNums.Count==0) {
 				return new List<TaskNote>();
 			}
-			string command = "SELECT * FROM tasknote WHERE TaskNum IN ("+string.Join(",",listTaskNums)+")";
+			string command = "SELECT * FROM tasknote WHERE TaskNum IN ("+string.Join(",",taskNums)+")";
 			return Crud.TaskNoteCrud.SelectMany(command);
 		}
 		
 		///<summary>A list of notes for multiple tasks, ordered by date time.</summary>
-		public static List<TaskNote> RefreshForTasks(List<long> listTaskNums) {
+		public static List<TaskNote> RefreshForTasks(List<long> taskNums) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<TaskNote>>(MethodBase.GetCurrentMethod(),listTaskNums);
+				return Meth.GetObject<List<TaskNote>>(MethodBase.GetCurrentMethod(),taskNums);
 			}
-			if(listTaskNums.Count==0){
+			if(taskNums.Count==0){
 				return new List<TaskNote>();
 			}
 			string command="SELECT * FROM tasknote WHERE TaskNum IN (";
-			for(int i=0;i<listTaskNums.Count;i++){
+			for(int i=0;i<taskNums.Count;i++){
 				if(i>0) {
 					command+=",";
 				}
-				command+=POut.Long(listTaskNums[i]);
+				command+=POut.Long(taskNums[i]);
 			}
 			command+=") ORDER BY DateTimeNote";
 			return Crud.TaskNoteCrud.SelectMany(command);

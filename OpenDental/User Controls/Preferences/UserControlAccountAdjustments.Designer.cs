@@ -312,7 +312,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBox4);
 			this.Controls.Add(this.groupBoxOD3);
 			this.Name = "UserControlAccountAdjustments";
-			this.Size = new System.Drawing.Size(494, 660);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxAdjustments.ResumeLayout(false);
 			this.groupBox4.ResumeLayout(false);
 			this.groupBoxOD3.ResumeLayout(false);

@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormFHIRAPIKeyEdit));
+			this.butClose = new OpenDental.UI.Button();
 			this.textKey = new System.Windows.Forms.TextBox();
 			this.textPhone = new OpenDental.ValidPhone();
 			this.textEmail = new System.Windows.Forms.TextBox();
@@ -38,6 +39,16 @@ namespace OpenDental{
 			this.label2 = new System.Windows.Forms.Label();
 			this.butDisable = new OpenDental.UI.Button();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(433, 237);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// textKey
 			// 
@@ -176,6 +187,7 @@ namespace OpenDental{
 			this.Controls.Add(this.labelMiddleI);
 			this.Controls.Add(this.labelFName);
 			this.Controls.Add(this.labelLName);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormFHIRAPIKeyEdit";
 			this.Text = "API Key Edit";
@@ -186,6 +198,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.TextBox textKey;
 		private ValidPhone textPhone;
 		private System.Windows.Forms.TextBox textEmail;

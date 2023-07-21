@@ -103,8 +103,6 @@ namespace OpenDentBusiness{
 		public string PaintText;
 		///<summary>This is an adjunct to TreatArea. If Quad or Arch, then this allows users to also specify a tooth or tooth range.  Required by some insurance.</summary>
 		public bool AreaAlsoToothRange;
-		///<summary>Text to store up to 4 ICD-10 codes. Codes are comma-separated with no whitespace. Used to set the default DiagnosticCode, DiagnosticCode2, DiagnosticCode3, and DiagnosticCode4 fields for new procedures linked to the procedure code. When this field is not empty or null, it will override the ICD9DefaultForNewProcs preference. Example: M26.31,K08.401,K02.51</summary>
-		public string DiagnosticCodes;
 
 		public ProcedureCode(){
 			ProcTime="/X/";

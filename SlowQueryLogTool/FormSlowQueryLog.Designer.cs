@@ -54,7 +54,6 @@ namespace SlowQueryTool {
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
 			this.gridQueryGroups = new SlowQueryLogTool.UI.GridOD();
 			this.gridQueries = new SlowQueryLogTool.UI.GridOD();
-			this.timerProgress = new System.Windows.Forms.Timer(this.components);
 			this.contextMenuQuery.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
@@ -391,11 +390,6 @@ namespace SlowQueryTool {
 			this.gridQueries.CellDoubleClick += new SlowQueryLogTool.UI.ODGridClickEventHandler(this.gridQueries_CellDoubleClick);
 			this.gridQueries.CellClick += new SlowQueryLogTool.UI.ODGridClickEventHandler(this.gridQueries_CellClick);
 			// 
-			// timerProgress
-			// 
-			this.timerProgress.Interval = 500;
-			this.timerProgress.Tick += new System.EventHandler(this.timerProgress_Tick);
-			// 
 			// FormSlowQueryLog
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -460,7 +454,6 @@ namespace SlowQueryTool {
 		private System.Windows.Forms.Label labelFirstQuery;
 		private System.Windows.Forms.Label labelLastQuery;
 		private System.Windows.Forms.GroupBox groupBox3;
-		private System.Windows.Forms.Timer timerProgress;
 	}
 }
 

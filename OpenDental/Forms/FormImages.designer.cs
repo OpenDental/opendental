@@ -24,7 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormImages));
-			this.contrImagesMain = new OpenDental.ControlImagesOld();
+			this.contrImagesMain = new OpenDental.ControlImages();
 			this.SuspendLayout();
 			// 
 			// contrImagesMain
@@ -51,7 +51,7 @@ namespace OpenDental{
 
 		#endregion
 
-		private ControlImagesOld contrImagesMain;
+		private ControlImages contrImagesMain;
 
 	}
 }

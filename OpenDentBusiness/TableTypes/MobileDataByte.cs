@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace OpenDentBusiness {
-	///<summary>Table used to send various types of objects as bytes to ODXam applications. Example is a PDF for TxPlan or PaymentPlan. Row gets added here, sent to mobile device, and then consumed. Old rows are ignored.</summary>
+	///<summary>Table used to send various types of objects as bytes to ODXam applications.</summary>
 	[Serializable()]
 	public class MobileDataByte:TableBase {
 		///<summary>Primary key.</summary>
@@ -20,7 +20,7 @@ namespace OpenDentBusiness {
 		///<summary>Misc data in Base64</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
 		public string RawBase64Tag;
-		///<summary>Can start out as 0.</summary>
+		///<summary>Can be 0.</summary>
 		public long PatNum;
 		///<summary>Enum:eActionType Stores the intended action associated to this rows data.</summary>
 		public eActionType ActionType;

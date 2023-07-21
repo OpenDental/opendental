@@ -21,6 +21,7 @@ namespace OpenDental{
 		private void FormStateAbbrs_Load(object sender, System.EventArgs e) {
 			if(IsSelectionMode) {
 				butAdd.Visible=false;
+				butClose.Text="Cancel";
 			}
 			if(PrefC.GetBool(PrefName.EnforceMedicaidIDLength)) {
 				this.Width+=100;//Also increases grid width due to anchoring.
@@ -70,10 +71,10 @@ namespace OpenDental{
 		}
 
 		private void butAdd_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"StateAbbrs");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"StateAbbrs");
 			StateAbbr stateAbbr=new StateAbbr();
 			stateAbbr.IsNew=true;
 			using FormStateAbbrEdit formStateAbbrEdit=new FormStateAbbrEdit(stateAbbr);
@@ -90,10 +91,10 @@ namespace OpenDental{
 			if(gridMain.GetSelectedIndex()==-1) {
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"StateAbbrs");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"StateAbbrs");
 			if(IsSelectionMode) {
 				StateAbbrSelected=(StateAbbr)gridMain.ListGridRows[gridMain.GetSelectedIndex()].Tag;
 				DialogResult=DialogResult.OK;
@@ -120,6 +121,10 @@ namespace OpenDental{
 			}
 			StateAbbrSelected=(StateAbbr)gridMain.ListGridRows[gridMain.GetSelectedIndex()].Tag;
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butClose_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void FormStateAbbrs_Closing(object sender, System.ComponentModel.CancelEventArgs e) {

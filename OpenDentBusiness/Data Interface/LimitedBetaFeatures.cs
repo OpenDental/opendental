@@ -111,11 +111,7 @@ namespace OpenDentBusiness{
 			return Crud.LimitedBetaFeatureCrud.SelectOne(limitedBetaFeatureNum);
 		}
 
-		///<summary>Returns true if the clinic is signed up for limited beta feature, or the feature is marked finished at hq. 
-		///This does not guarantee that the clinic should have access to the feature. Only that the limited beta restriction is met for this clinic.
-		///If a given feature typically requires further validation (usually via prefs or HQ validation) then you must perform that validation after this check.
-		/// clinicNum of -1 indicates a clinic independent feature. 
-		/// The 'feature' parameter is the long value of the EServiceFeatureInfoEnum. 
+		///<summary>Returns true if the clinic is signed up for limited beta feature, or the feature is marked finished at hq. clinicNum of -1 indicates a clinic independat feature. The 'feature' parameter is the long value of the EServiceFeatureInfoEnum.</summary>
 		public static bool IsAllowed(EServiceFeatureInfoEnum feature,long clinicNum=-1) {
 			//No need to check MiddleTierRole; no call to db.
 			#region Completed Override

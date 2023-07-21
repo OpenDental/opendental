@@ -44,7 +44,7 @@ namespace OpenDental{
 			//If pat is null, this can trickle down and allow the user to create a lab sheet with a FK to an invalid Patient. Only allow user to delete or view lab case.
 			if(patient==null) {
 				MsgBox.Show(this,"There is no valid Patient attached to this Labcase. Labcase can only be viewed or deleted.");
-				DisableAllExcept(butDelete,textInstructions);
+				DisableAllExcept(butDelete,butCancel,textInstructions);
 				textInstructions.ReadOnly=true;//Allows user to scroll and see entire instructions instead of disabling the control which doesn't allow user to scroll.
 			}
 			else {
@@ -210,14 +210,12 @@ namespace OpenDental{
 					SheetFiller.FillFields(_sheet);
 				}
 				SheetUtil.CalculateHeights(_sheet);
-				using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit();
-				formSheetFillEdit.SheetCur=_sheet;
+				using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit(_sheet);
 				formSheetFillEdit.ShowDialog();
 			}
 			else {//edit existing
 				SheetFields.GetFieldsAndParameters(_sheet);
-				using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit();
-				formSheetFillEdit.SheetCur=_sheet;
+				using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit(_sheet);
 				formSheetFillEdit.ShowDialog();
 			}
 			//refresh
@@ -227,6 +225,7 @@ namespace OpenDental{
 				return;
 			}
 			butSlip.Text=Lan.g(this,"Edit Slip");
+			butCancel.Enabled=false;//user can still click X to close window, but we do handle that as well.
 		}
 
 		private void butDelete_Click(object sender, System.EventArgs e) {
@@ -355,11 +354,15 @@ namespace OpenDental{
 			return true;
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			if(!SaveToDb()) {
 				return;
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void FormLabCaseEdit_FormClosing(object sender,FormClosingEventArgs e) {
@@ -375,7 +378,32 @@ namespace OpenDental{
 			else {//user created and possibly printed a lab slip.  We can't let them delete this lab case
 				//lab cases are always created ahead of time, so no need to save here
 			}
-		}
 
+		
+
+
+
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

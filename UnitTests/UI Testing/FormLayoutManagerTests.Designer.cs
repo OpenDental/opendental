@@ -370,8 +370,8 @@
 			this.Controls.Add(this.button2);
 			this.Name = "FormLayoutManagerTests";
 			this.Text = "Layout Manager Tests";
-			this.Load += new System.EventHandler(this.FormLayoutManagerTests_Load);
-			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormLayoutManagerTests_KeyDown);
+			this.Load += new System.EventHandler(this.FormUIManagerTests_Load);
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormUIManagerTests_KeyDown);
 			this.groupBox3.ResumeLayout(false);
 			this.tabControl.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);

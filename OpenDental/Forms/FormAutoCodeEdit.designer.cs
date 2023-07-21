@@ -27,7 +27,8 @@ namespace OpenDental {
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAutoCodeEdit));
 			this.checkHidden = new OpenDental.UI.CheckBox();
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.textDescript = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
@@ -46,15 +47,27 @@ namespace OpenDental {
 			this.checkHidden.TabIndex = 1;
 			this.checkHidden.Text = "Hidden";
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(680, 486);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 19;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(682, 528);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.RightToLeft = System.Windows.Forms.RightToLeft.No;
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 20;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(682, 494);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 19;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// textDescript
 			// 
@@ -75,12 +88,11 @@ namespace OpenDental {
 			// label2
 			// 
 			this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.label2.Location = new System.Drawing.Point(421, 475);
+			this.label2.Location = new System.Drawing.Point(402, 496);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(246, 37);
+			this.label2.Size = new System.Drawing.Size(246, 56);
 			this.label2.TabIndex = 26;
-			this.label2.Text = "Items are saved as they are changed.\r\nThe Save button is for the 3 fields at the " +
-    "top.";
+			this.label2.Text = "Clicking Cancel does not undo changes already made to items.";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.BottomRight;
 			// 
 			// label3
@@ -96,7 +108,7 @@ namespace OpenDental {
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(163, 486);
+			this.butDelete.Location = new System.Drawing.Point(158, 478);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(88, 26);
 			this.butDelete.TabIndex = 29;
@@ -108,7 +120,7 @@ namespace OpenDental {
 			this.butAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butAdd.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAdd.Location = new System.Drawing.Point(36, 486);
+			this.butAdd.Location = new System.Drawing.Point(36, 478);
 			this.butAdd.Name = "butAdd";
 			this.butAdd.Size = new System.Drawing.Size(84, 26);
 			this.butAdd.TabIndex = 28;
@@ -131,16 +143,18 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridMain.Location = new System.Drawing.Point(36, 94);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(719, 378);
+			this.gridMain.Size = new System.Drawing.Size(719, 356);
 			this.gridMain.TabIndex = 31;
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
 			// 
 			// FormAutoCodeEdit
 			// 
-			this.AcceptButton = this.butSave;
-			this.ClientSize = new System.Drawing.Size(794, 524);
+			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(794, 582);
 			this.Controls.Add(this.gridMain);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.checkLessIntrusive);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.butAdd);
@@ -165,7 +179,8 @@ namespace OpenDental {
 		#endregion
 
 		private OpenDental.UI.CheckBox checkHidden;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.TextBox textDescript;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;

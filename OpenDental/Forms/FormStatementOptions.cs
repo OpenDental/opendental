@@ -24,8 +24,6 @@ namespace OpenDental{
 		public bool ShowBillTransSinceZero;
 		///<summary>This is true if on load the single statement IsNew.</summary>
 		private bool _isStatementNew;
-		///<summary>This is true if the Delete button is clicked.  Used to determine FormClosing action.</summary>
-		private bool _isDeleteClick=false;
 		public Statement StatementCur;
 		///<summary>This will be null for ordinary edits.  But sometimes this window is used to edit bulk statements.  In that case, this list contains the statements being edited.  Must contain at least one item.</summary>
 		public List<Statement> ListStatements;
@@ -149,7 +147,6 @@ namespace OpenDental{
 			}
 			#region Bulk Edit
 			else{
-				groupInvoice.Visible=false;
 				//DateSent-------------------------------------------------------------------------------------
 				textDate.Text="?";
 				bool allSame=true;
@@ -174,12 +171,6 @@ namespace OpenDental{
 					checkIsSent.ThreeState=false;
 					checkIsSent.CheckState=CheckState.Unchecked;
 					checkIsSent.Checked=ListStatements[0].IsSent;
-					if(ListStatements[0].IsSent){
-						SetEnabled(false);//Disable controls if all selected statements are sent
-						//User will still be able to uncheck the Sent box, which is the only way to mark a statement unsent so it will show again in list.
-						//Unlike with single edit, this wll not delete the existing pdfs. 
-						//It's always been like that and is no big deal.
-					}
 				}
 				//Mode------------------------------------------------------------------------------------------
 				allSame=true;
@@ -300,9 +291,6 @@ namespace OpenDental{
 				butPrint.Enabled=false;
 				butPreview.Enabled=false;
 				butPatPortal.Enabled=false;
-				checkExportCSV.Enabled=false;
-				//Consider enhancing the checkIsSent Click event handler to delete archived statements (aka PDFs).
-				//checkIsSent.Enabled=false; NO this is the only way to unsend in bulk and must stay enabled
 				//Send Text Message-------------------------------------------------------------------------------
 				checkSendSms.ThreeState=true;
 				checkSendSms.CheckState=CheckState.Indeterminate;
@@ -322,7 +310,7 @@ namespace OpenDental{
 			#endregion Bulk Edit
 			_listDefsImageCat=Defs.GetDefsForCategory(DefCat.ImageCats,true);
 			Plugins.HookAddCode(this,"FormStatementOptions_Load_end");
-			if(Security.IsAuthorized(EnumPermType.StatementCSV,true)) {
+			if(Security.IsAuthorized(Permissions.StatementCSV,true)) {
 				checkExportCSV.Visible=true;
 			}
 		}
@@ -421,7 +409,6 @@ namespace OpenDental{
 			}
 		}
 
-		///<summary>This does not currently affect the Sent checkbox because users need to be able to mark statements unsent.</summary>
 		private void SetEnabled(bool boolval){
 			textDate.Enabled=boolval;
 			listMode.Enabled=boolval;
@@ -434,7 +421,6 @@ namespace OpenDental{
 			textNoteBold.ReadOnly=!boolval;
 			groupInvoice.Enabled=boolval;
 			checkSuperStatement.Enabled=boolval;
-			checkSendSms.Enabled=boolval;
 			//These checkboxes don't store their state in the DB. Therefore, they are only helpful for unsent statements and would be misleading if left visible and disabled.
 			//E.g. Editing a limited statement that was generated with last names showing would display checkShowLName as unchecked and disabled (which is misleading).
 			checkShowLName.Visible=boolval;
@@ -455,7 +441,6 @@ namespace OpenDental{
 			if(checkExportCSV.Checked) {
 				Statements.SaveStatementAsCSV(StatementCur);
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
 		}
 
 		private void butPrintSheets() {
@@ -518,28 +503,78 @@ namespace OpenDental{
 		///<param name="pdfFileName">If this is blank, a PDF will be created.</param>
 		///<param name="sheet">This sheet will be used to create the PDF. If it is null, the default Statement sheet will be used instead.</param>
 		private bool SaveAsDocument(bool doPrintSheet=false,string pdfFileName="",Sheet sheet=null,DataSet dataSet=null) {
-			string description="";
-			if(StatementCur.IsInvoice) {
-				description=Lan.g(this,"Invoice");
-			}
-			else {
-				if(StatementCur.IsReceipt) {
-					description=Lan.g(this,"Receipt");
+			SheetDef sheetDef=SheetUtil.GetStatementSheetDef(StatementCur);
+			string tempPath;
+			if(dataSet==null) {
+				if(checkSuperStatement.Checked || IsLimitedCustomStatement()) {
+					dataSet=AccountModules.GetSuperFamAccount(StatementCur,doIncludePatLName: checkShowLName.Checked,doShowHiddenPaySplits: StatementCur.IsReceipt,doExcludeTxfrs: checkExcludeTxfr.Checked);
 				}
 				else {
-					description=Lan.g(this,"Statement");
+					dataSet=AccountModules.GetAccount(StatementCur.PatNum,StatementCur,doIncludePatLName: checkShowLName.Checked,doShowHiddenPaySplits: StatementCur.IsReceipt,doExcludeTxfrs: checkExcludeTxfr.Checked);
 				}
 			}
-			bool isLimitedCustom=checkSuperStatement.Checked || IsLimitedCustomStatement();
-			SheetDef sheetDef=SheetUtil.GetStatementSheetDef(StatementCur);
+			if(pdfFileName=="") {
+				if(sheet==null) {
+					sheet=SheetUtil.CreateSheet(sheetDef,StatementCur.PatNum,StatementCur.HidePayment);
+					sheet.Parameters.Add(new SheetParameter(true,"Statement") { ParamValue=StatementCur });
+					SheetFiller.FillFields(sheet,dataSet,StatementCur);
+					SheetUtil.CalculateHeights(sheet,dataSet,StatementCur);
+				}
+				tempPath=ODFileUtils.CombinePaths(PrefC.GetTempFolderPath(),StatementCur.PatNum.ToString()+".pdf");
+				SheetPrinting.CreatePdf(sheet,tempPath,StatementCur,dataSet:dataSet);
+			}
+			else {
+				tempPath=pdfFileName;
+			}
+			long category=0;
+			for(int i=0;i<_listDefsImageCat.Count;i++) {
+				if(Regex.IsMatch(_listDefsImageCat[i].ItemValue,@"S")) {
+					category=_listDefsImageCat[i].DefNum;
+					break;
+				}
+			}
+			if(category==0) {
+				category=_listDefsImageCat[0].DefNum;//put it in the first category.
+			}
+			//create doc--------------------------------------------------------------------------------------
+			Document document=null;
 			try {
-				dataSet=Documents.CreateAndSaveStatementPDF(StatementCur,sheetDef,isLimitedCustom,checkShowLName.Checked,checkExcludeTxfr.Checked,_listDefsImageCat,pdfFileName,sheet,dataSet,description);
+				document=ImageStore.Import(tempPath,category,Patients.GetPat(StatementCur.PatNum));
 			}
 			catch {
 				MsgBox.Show(this,"Error saving document.");
 				//this.Cursor=Cursors.Default;
 				return false;
 			}
+			finally {
+				//Delete the temp file since we don't need it anymore.
+				try {
+					if(pdfFileName=="") {//If they're passing in a PDF file name, they probably have it open somewhere else.
+						File.Delete(tempPath);
+					}
+				}
+				catch {
+					//Do nothing.  This file will likely get cleaned up later.
+				}
+			}
+			document.ImgType=ImageType.Document;
+			if(StatementCur.IsInvoice) {
+				document.Description=Lan.g(this,"Invoice");
+			}
+			else {
+				if(StatementCur.IsReceipt==true) {
+					document.Description=Lan.g(this,"Receipt");
+				}
+				else {
+					document.Description=Lan.g(this,"Statement");
+				}
+			}
+			//Some customers have wanted to sort their statements in the images module by date and time.  
+			//We would need to enhance DateSent to include the time portion.
+			StatementCur.DateSent=document.DateCreated;
+			StatementCur.DocNum=document.DocNum;//this signals the calling class that the pdf was created successfully.
+			Statements.AttachDoc(StatementCur.StatementNum,document);
+			Statements.SyncStatementProdsForStatement(dataSet,StatementCur.StatementNum,StatementCur.DocNum);
 			if(doPrintSheet) {
 				//Actually print the statement.
 				//NOTE: This is printing a "fresh" GDI+ version of the statment which is ever so slightly different than the PDFSharp statment that was saved to disk.
@@ -557,7 +592,7 @@ namespace OpenDental{
 		}
 
 		private void butEmail_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.EmailSend)) {
+			if(!Security.IsAuthorized(Permissions.EmailSend)) {
 				return;
 			}
 			_isStatementNew=false;//At this point, the statment will no longer be new. 
@@ -589,7 +624,6 @@ namespace OpenDental{
 			StatementCur.IsSent=checkIsSent.Checked;
 			Statements.Update(StatementCur);
 			Cursor=Cursors.Default;
-			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 		}
 
@@ -631,8 +665,7 @@ namespace OpenDental{
 				dataSet=AccountModules.GetSuperFamAccount(StatementCur,doIncludePatLName:checkShowLName.Checked,doShowHiddenPaySplits:StatementCur.IsReceipt,doExcludeTxfrs:checkExcludeTxfr.Checked);
 			}
 			else {
-				long patNum=Statements.GetPatNumForGetAccount(StatementCur);
-				dataSet=AccountModules.GetAccount(patNum,StatementCur,doIncludePatLName:checkShowLName.Checked,doShowHiddenPaySplits:StatementCur.IsReceipt,doExcludeTxfrs:checkExcludeTxfr.Checked);
+				dataSet=AccountModules.GetAccount(StatementCur.PatNum,StatementCur,doIncludePatLName:checkShowLName.Checked,doShowHiddenPaySplits:StatementCur.IsReceipt,doExcludeTxfrs:checkExcludeTxfr.Checked);
 			}
 			Sheet sheet=SheetUtil.CreateSheet(sheetDef,StatementCur.PatNum,StatementCur.HidePayment);
 			sheet.Parameters.Add(new SheetParameter(true,"Statement") { ParamValue=StatementCur });
@@ -697,26 +730,39 @@ namespace OpenDental{
 				File.Copy(oldPath,filePathAndName);
 			}
 			else {//Cloud
-				UI.ProgressWin progressWin=new UI.ProgressWin();
-				progressWin.StartingMessage="Downloading patient statement...";
-				byte[] byteArray=null;
-				progressWin.ActionMain=() => {
-					byteArray=CloudStorage.Download(ImageStore.GetPatientFolder(patient,ImageStore.GetPreferredAtoZpath()),Documents.GetByNum(StatementCur.DocNum).FileName);
-				};
-				progressWin.ShowDialog();
-				if(byteArray==null || byteArray.Length==0){
-					//File wasn't downloaded, do nothing
+				using FormProgress formProgress=new FormProgress();
+				formProgress.DisplayText="Downloading patient statement...";
+				formProgress.NumberFormat="F";
+				formProgress.NumberMultiplication=1;
+				formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+				formProgress.TickMS=1000;
+				OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.DownloadAsync(ImageStore.GetPatientFolder(patient,ImageStore.GetPreferredAtoZpath())
+					,Documents.GetByNum(StatementCur.DocNum).FileName
+					,new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
+				if(formProgress.ShowDialog()==DialogResult.Cancel) {
+					state.DoCancel=true;
 					return false;
 				}
-				//Do stuff with byte array
-				progressWin=new UI.ProgressWin();
-				progressWin.StartingMessage="Uploading patient email...";
-				progressWin.ActionMain=() => CloudStorage.Upload(attachPath,fileName,byteArray);
-				progressWin.ShowDialog();
-				if(progressWin.IsCancelled){
-					return false;
+				else {
+					//Do stuff with state.FileContent
+					using FormProgress formProgress2=new FormProgress();
+					formProgress2.DisplayText="Uploading patient email...";
+					formProgress2.NumberFormat="F";
+					formProgress2.NumberMultiplication=1;
+					formProgress2.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+					formProgress2.TickMS=1000;
+					OpenDentalCloud.Core.TaskStateUpload state2=CloudStorage.UploadAsync(attachPath
+						,fileName
+						,state.FileContent
+						,new OpenDentalCloud.ProgressHandler(formProgress2.UpdateProgress));
+					if(formProgress2.ShowDialog()==DialogResult.Cancel) {
+						state2.DoCancel=true;
+						return false;
+					}
+					else {
+						//Upload was successful
+					}
 				}
-				//Upload was successful
 			}
 			//Process.Start(filePathAndName);
 			EmailMessage emailMessage=Statements.GetEmailMessageForStatement(StatementCur,patient);
@@ -812,8 +858,7 @@ namespace OpenDental{
 				dataSet=AccountModules.GetSuperFamAccount(StatementCur,doIncludePatLName:checkShowLName.Checked,doShowHiddenPaySplits:StatementCur.IsReceipt,doExcludeTxfrs:checkExcludeTxfr.Checked);
 			}
 			else {
-				long patNum=Statements.GetPatNumForGetAccount(StatementCur);
-				dataSet=AccountModules.GetAccount(patNum,StatementCur,doIncludePatLName:checkShowLName.Checked,doShowHiddenPaySplits:StatementCur.IsReceipt,doExcludeTxfrs:checkExcludeTxfr.Checked);
+				dataSet=AccountModules.GetAccount(StatementCur.PatNum,StatementCur,doIncludePatLName:checkShowLName.Checked,doShowHiddenPaySplits:StatementCur.IsReceipt,doExcludeTxfrs:checkExcludeTxfr.Checked);
 			}
 			Sheet sheet=SheetUtil.CreateSheet(sheetDef,StatementCur.PatNum,StatementCur.HidePayment);
 			sheet.Parameters.Add(new SheetParameter(true,"Statement") { ParamValue=StatementCur });
@@ -821,10 +866,7 @@ namespace OpenDental{
 			SheetUtil.CalculateHeights(sheet,dataSet,StatementCur,true);
 			Cursor=Cursors.Default;
 			//print directly to PDF here, and save it.
-			using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit();
-			formSheetFillEdit.SheetCur=sheet;
-			formSheetFillEdit.DataSet_=dataSet;
-			formSheetFillEdit.DoExportCSV=checkExportCSV.Checked;
+			using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit(sheet,dataSet,checkExportCSV.Checked);
 			formSheetFillEdit.StatementCur=StatementCur;
 			formSheetFillEdit.IsStatement=true;
 			formSheetFillEdit.SaveStatementToDocDelegate=SaveStatementAsDocument;
@@ -861,11 +903,11 @@ namespace OpenDental{
 		}
 
 		private void LimitedCustomStatementLayoutHelper() {
-			this.DisableAllExcept(butDelete,butPreview,butSave,checkIsSent,checkIntermingled,checkExportCSV,checkShowLName,checkExcludeTxfr, checkHidePayment,butPrint,butEmail,butPatPortal,textNote,textNoteBold,listMode,label1,label2,label3,label4,textDate);
-			if(StatementCur.LimitedCustomFamily==EnumLimitedCustomFamily.SuperFamily) {
-				//We always want these to be unchecked if its or a SuperFamily statement, otherwise we continue using what was already generated on the statement.
-				checkSuperStatement.Checked=false;
-				checkSinglePatient.Checked=false;
+			this.DisableAllExcept(butDelete,butPreview,butCancel,butOK,checkIsSent,checkIntermingled,checkExportCSV,checkShowLName,checkExcludeTxfr, checkHidePayment,butPrint,butEmail,butPatPortal,textNote,textNoteBold,listMode,label1,label2,label3,label4,textDate);
+			checkSuperStatement.Checked=false;
+			checkSinglePatient.Checked=false;
+			if(StatementCur.LimitedCustomFamily==EnumLimitedCustomFamily.Patient) {
+				checkSinglePatient.Checked=true;
 			}
 		}
 
@@ -897,7 +939,6 @@ namespace OpenDental{
 			}
 			StatementCur.IsSent=checkIsSent.Checked;
 			Statements.Update(StatementCur);
-			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 		}
 
@@ -1174,7 +1215,6 @@ namespace OpenDental{
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
-			_isDeleteClick=true;
 			if(ListStatements==null && StatementCur.IsNew){
 				DialogResult=DialogResult.Cancel;
 				return;
@@ -1201,7 +1241,7 @@ namespace OpenDental{
 				for(int i=0; i<listStatements.Count; i++) {
 					MobileAppDevice mobileAppDevice=listMobileAppDevices.FirstOrDefault(x => x.PatNum==listStatements[i].PatNum);
 					if(mobileAppDevice!=null && mobileAppDevice.LastCheckInActivity>DateTime.Now.AddHours(-1)) {
-						MobileNotifications.CI_RefreshPayment(mobileAppDevice.MobileAppDeviceNum,listStatements[i].PatNum, out string errorMsg);
+						PushNotificationUtils.CI_RefreshPayment(mobileAppDevice.MobileAppDeviceNum,listStatements[i].PatNum, out string errorMsg);
 					}
 				}
 			}
@@ -1209,23 +1249,21 @@ namespace OpenDental{
 				FriendlyException.Show(Lan.g(this,"Error retrieving patient folder."),ex);
 				return;
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			//Do not set IsBalValid, BalTotal, or InsEst here. This would edit old statments.
 			if(!SaveToDb()){
 				return;
 			}
 			//If saving a statement that doesn't yet have an image/doc, create one so we can view this in patient portal
-			if(ListStatements==null && StatementCur.DocNum==0 && !_isFromBilling) {
+			if(ListStatements==null && StatementCur.DocNum==0) {
 				SaveAsDocument(false);//needs to be called after the statement is inserted for the payment plan grid (if present)
 			}
 			if(checkExportCSV.Checked) {
-				Statements.SaveStatementAsCSV(StatementCur);
+				Statements.SaveStatementAsCSV(StatementCur); 
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 		}
 
@@ -1411,10 +1449,7 @@ namespace OpenDental{
 				}
 				if(checkBoxBillShowTransSinceZero.Checked) {
 					DateTime dateFrom=DateTime.MinValue;
-					DataRow[] dataRowArray=tablePatsDates.Select("PatNum='"+ListStatements[i].PatNum.ToString()+"'");
-					if(dataRowArray.Length>0){
-						dateFrom=PIn.DateT(dataRowArray[0]["DateZeroBal"].ToString());
-					}
+					dateFrom=PIn.DateT(tablePatsDates.Select("PatNum="+ListStatements[i].PatNum.ToString())[0]["DateZeroBal"].ToString());
 					ListStatements[i].DateRangeFrom=DateTime.Now;
 					if(dateFrom!=DateTime.MinValue) {//patient does not have a zero or credit balance.
 						ListStatements[i].DateRangeFrom=dateFrom;
@@ -1435,14 +1470,7 @@ namespace OpenDental{
 			return true;
 		}
 
-		private void FormStatementOptions_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult!=DialogResult.Cancel) {
-				return;
-			}
-			if(_isDeleteClick) {//there is a DialogResult.Cancel in butDelete_Click that is already addressed
-				return;
-			}
-			//Form is closed by X click
+		private void butCancel_Click(object sender, System.EventArgs e) {
 			if(ListStatements==null && _isStatementNew && StatementCur.IsInvoice) {
 				try {
 					//Since the user just created this, we will let them delete the image.
@@ -1452,8 +1480,11 @@ namespace OpenDental{
 					FriendlyException.Show(Lan.g(this,"Error retrieving patient folder."),ex);
 				}
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
+			DialogResult=DialogResult.Cancel;
 		}
+
+
+
 
 	}
 }

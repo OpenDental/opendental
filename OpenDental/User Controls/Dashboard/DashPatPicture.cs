@@ -56,13 +56,16 @@ namespace OpenDental {
 			if(pat==null || 
 				PrefC.AtoZfolderUsed==DataStorageType.InDatabase)//Do not use patient image when A to Z folders are disabled.
 			{
-				Clear();
 				return;
+			}
+			void clear() {							
+				_patPicture?.Dispose();
+				_patPicture=null;
 			}
 			try{
 				_docPatPicture=Documents.GetByNum(PIn.Long(sheetField.FieldValue),true);
 				if(_docPatPicture is null) {
-					Clear();
+					clear();
 					return;
 				}
 				//GetFullImage applies cropping/transposing/etc...
@@ -72,7 +75,7 @@ namespace OpenDental {
 			}
 			catch(Exception e){
 				e.DoNothing();//Something went wrong retrieving the image.  Default to "Patient Picture Unavailable".
-				Clear();
+				clear();
 			}
 		}
 
@@ -88,11 +91,5 @@ namespace OpenDental {
 			imgOld?.Dispose();
 			imgOld=null;
 		}
-
-		private void Clear() {
-			_patPicture?.Dispose();
-			_patPicture=null;
-		}
-
 	}
 }

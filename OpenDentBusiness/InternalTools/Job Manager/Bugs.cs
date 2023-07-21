@@ -343,24 +343,6 @@ namespace OpenDentBusiness{
 				case "BRAYLONS":
 					bugUser=120;
 					break;
-				case "SETHW":
-					bugUser=122;
-					break;
-				case "IRENED":
-					bugUser=124;
-					break;
-				case "NICKC":
-					bugUser=126;
-					break;
-				case "JOSEPHT":
-					bugUser=128;
-					break;
-				case "BLAKEF":
-					bugUser=130;
-					break;
-				case "JONATHANM":
-					bugUser=132;
-					break;
 				default:
 					bugUser=2;//Tech Support
 					break;

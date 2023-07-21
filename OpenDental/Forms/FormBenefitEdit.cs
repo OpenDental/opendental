@@ -25,18 +25,14 @@ namespace OpenDental {
 				DialogResult=DialogResult.Cancel;
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit)) {
-				butSave.Enabled=false;
+			if(!Security.IsAuthorized(Permissions.InsPlanEdit)) {
+				butOK.Enabled=false;
 			}
 			if(BenefitCur.PatPlanNum==0) {//attached to insplan
 				checkPat.Checked=false;
 			}
 			else{
 				checkPat.Checked=true;
-			}
-			if(!Benefits.IsFrequencyLimitation(BenefitCur) || BenefitCur.CodeGroupNum==0) {
-				labelCodeGroup.Visible=false;
-				comboCodeGroup.Visible=false;
 			}
 			List<CovCat> listCovCats=CovCats.GetDeepCopy(true);
 			listCategory.Items.Clear();
@@ -75,14 +71,9 @@ namespace OpenDental {
 			listCoverageLevel.Items.Clear();
 			listCoverageLevel.Items.AddEnums<BenefitCoverageLevel>();
 			listCoverageLevel.SetSelectedEnum(BenefitCur.CoverageLevel);
-			listTreatArea.Items.Clear();
-			listTreatArea.Items.Add("Default",TreatmentArea.None);
-			listTreatArea.Items.AddEnums<TreatmentArea>();
-			listTreatArea.Items.RemoveAt(1); // There are now two instances of TreatmentArea.None, remove the one that will display as "None"
-			listTreatArea.SetSelectedEnum(BenefitCur.TreatArea);
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(BenefitCur.QuantityQualifier==BenefitQuantity.AgeLimit && PIn.Int(textQuantity.Text,false)==0)  {
 				string messageText=Lan.g(this,"field is invalid.\r\n"
 					+"Enter an age greater than 0 to denote coverage through that year, or click delete to remove this benefit.");
@@ -116,7 +107,6 @@ namespace OpenDental {
 			byte quantity=PIn.Byte(textQuantity.Text);
 			BenefitTimePeriod timePeriod=listTimePeriod.GetSelected<BenefitTimePeriod>();
 			BenefitCoverageLevel coverageLevel=listCoverageLevel.GetSelected<BenefitCoverageLevel>();
-			TreatmentArea treatArea=(TreatmentArea)listTreatArea.SelectedIndex;
 			int countCatProcCodeGroup=0;
 			if(covCatNum!=0) {
 				countCatProcCodeGroup++;
@@ -136,8 +126,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Not allowed to check the Pat box because no patient is available.");
 				return;
 			}
-			if(benefitType!=InsBenefitType.CoInsurance && percent > 0) {//-1 or 0 is allowed for other types
-				//We must allow Exclusion with 0 (this "if" must fail) to remain backward compatible for NADG
+			if(benefitType!=InsBenefitType.CoInsurance && percent>=0) {
 				MsgBox.Show(this,"Not allowed to enter a percentage unless type is CoInsurance.");
 				return;
 			}
@@ -159,18 +148,8 @@ namespace OpenDental {
 				MsgBox.Show(this,"Waiting period must have a category or a procedure code.");
 				return;
 			}
-			long patPlanNum;
-			long planNum;
-			if(checkPat.Checked) {
-				patPlanNum=_patPlanNum;
-				planNum=0;
-			}
-			else {
-				patPlanNum=0;
-				planNum=_planNum;
-			}
+			//Validate seven extremely specific fields from the UI for limitation benefits.
 			//Create a new benefit object out of the fields from the UI in order to invoke helper methods.
-			//Validate seven extremely specific fields from the UI for limitation benefits in general.
 			Benefit benefit=new Benefit();
 			benefit.BenefitType=benefitType;
 			benefit.MonetaryAmt=monetaryAmt;
@@ -178,21 +157,13 @@ namespace OpenDental {
 			benefit.QuantityQualifier=quantityQualifier;
 			benefit.TimePeriod=timePeriod;
 			benefit.CoverageLevel=coverageLevel;
-			benefit.TreatArea=treatArea;
 			benefit.Quantity=quantity;
-			//Fluoride and sealant age limitations need to validate the code, code group, and patPlanNum.
-			benefit.CodeGroupNum=codeGroupNum;
-			benefit.CodeNum=codeNum;
-			benefit.PatPlanNum=patPlanNum;
-			if(Benefits.IsFrequencyLimitation(benefit) || Benefits.IsAgeLimit(benefit))
+			if(Benefits.IsFrequencyLimitation(benefit)
+				|| Benefits.IsFluorideAgeLimit(benefit)
+				|| Benefits.IsSealantAgeLimit(benefit))
 			{
 				if(covCatNum > 0) {
 					MsgBox.Show(this,"Category cannot be used for this limitation benefit.\r\nUse Proc Code or Code Group instead.");
-					return;
-				}
-				//We check for an age limit above in if statement but there will never be a case where IsAgeLimit() is true and quantity is less than/equal to zero.
-				if(quantity<=0) {
-					MsgBox.Show(this,"Frequency Limitations cannot have a quantity of zero.");
 					return;
 				}
 			}
@@ -203,13 +174,15 @@ namespace OpenDental {
 					return;
 				}
 			}
-			if(!Benefits.IsFrequencyLimitation(benefit) && treatArea!=TreatmentArea.None) {
-				MsgBox.Show(this,"Treatment Area can only be used for limitation benefits.");
-				return;
-			}
 			//End of validation. Manipulate BenefitCur with the values from the UI.
-			BenefitCur.PatPlanNum=patPlanNum;
-			BenefitCur.PlanNum=planNum;
+			if(checkPat.Checked) {
+				BenefitCur.PatPlanNum=_patPlanNum;
+				BenefitCur.PlanNum=0;
+			}
+			else{
+				BenefitCur.PatPlanNum=0;
+				BenefitCur.PlanNum=_planNum;
+			}
 			BenefitCur.CovCatNum=covCatNum;
 			BenefitCur.CodeNum=codeNum;
 			BenefitCur.CodeGroupNum=codeGroupNum;
@@ -220,7 +193,6 @@ namespace OpenDental {
 			BenefitCur.Quantity=quantity;
 			BenefitCur.QuantityQualifier=quantityQualifier;
 			BenefitCur.CoverageLevel=coverageLevel;
-			BenefitCur.TreatArea=treatArea;
 			DialogResult=DialogResult.OK;
 		}
 
@@ -232,6 +204,13 @@ namespace OpenDental {
 				DialogResult=DialogResult.OK;
 			}
 			BenefitCur=null;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			if(BenefitCur.IsNew) {
+				BenefitCur=null;
+			}
+			DialogResult=DialogResult.Cancel;
 		}
 	}
 }

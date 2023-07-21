@@ -1603,8 +1603,8 @@ namespace OpenDental.UI {
 			}
 			if(e.Y < 1+OriginY()) {//mouse down was on a column header
 				_isMouseDownInHeader=true;
-				if(_mouseDownCol!=-1 && Columns[_mouseDownCol].HeaderClick!=null) {
-					Columns[_mouseDownCol].HeaderClick(null,null);
+				if(_mouseDownCol!=-1 && Columns[_mouseDownCol].CustomClickEvent!=null) {
+					Columns[_mouseDownCol].CustomClickEvent(null,null);
 					return;
 				}
 				else if(AllowSortingByColumn) {
@@ -3127,13 +3127,13 @@ namespace OpenDental.UI {
 			Action actionCloseProgress=null;
 			//It might take a while to navigate more than 3 pages away (depending on filtering, row construction, etc).
 			if(Math.Abs(page-_pageCur)>3) {
-				actionCloseProgress=ODProgress.Show();//can't replace this with ProgressOD because it's in business layer.
+				actionCloseProgress=ODProgress.Show(ODEventType.ODGrid,typeof(ODGridEvent));//can't replace this with ProgressOD because it's in business layer.
 			}
 			//Only need to run if moving forward, previous pages are always handled by pages prior.
 			//Look ahead 3 pages so that we can determine if links are needed.
 			//No harm starting at first page, TryInitDataForPage(...) will instantly return for pages we've already seen.
 			for(int pageTemp=1; pageTemp<=(page+2); pageTemp++) {
-				ODEvent.Fire(ODEventType.ProgressBar,"Processing page: "+pageTemp.ToString());
+				ODGridEvent.Fire(ODEventType.ODGrid,"Processing page: "+pageTemp.ToString());
 				if(!TryInitDataForPage(pageTemp) || _hasLoadedAllPages) {//Returns false if index is past cout of data we have available or everything has been filtered already.
 					break;
 				}
@@ -3297,7 +3297,7 @@ namespace OpenDental.UI {
 		///<summary>Exports the grid to a text or Excel file. The user will have the opportunity to choose the location of the export file.</summary>
 		public void Export(string fileName) {
 			string selectedFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				//file download dialog will come up later, after file is created.
 				//If extension is missing, add .txt extension. VirtualUI won't download if missing extension.
 				if(string.IsNullOrEmpty(Path.GetExtension(selectedFilePath))) {
@@ -3353,7 +3353,7 @@ namespace OpenDental.UI {
 				MessageBox.Show(Lans.g(this,"File in use by another program.  Close and try again."));
 				return;
 			}
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.ExportForDownload(selectedFilePath);
 			}
 			else {
@@ -4128,10 +4128,8 @@ namespace OpenDental.UI {
 				if(i==0
 					&& (_title.StartsWith("TreatPlanBenefitsFamily") 
 					|| _title.StartsWith("TreatPlanBenefitsIndividual")
-					|| _title.StartsWith("StatementPayPlanOld")
 					|| _title.StartsWith("StatementPayPlan")
 					|| _title.StartsWith("StatementDynamicPayPlan")
-					|| _title.StartsWith("StatementPayPlanGrid")
 					|| _title.StartsWith("StatementInvoicePayment")
 					|| _title.StartsWith("StatementMain.NotIntermingled")))
 				{
@@ -4148,13 +4146,7 @@ namespace OpenDental.UI {
 				}
 				#endregion
 				#region Page break logic
-				if(i==ListGridRows.Count-1 
-					&& (_title.StartsWith("StatementPayPlanOld") 
-					|| _title.StartsWith("StatementPayPlan")
-					|| _title.StartsWith("StatementDynamicPayPlan") 
-					|| _title.StartsWith("StatementPayPlanGrid")
-					|| _title.StartsWith("StatementInvoicePayment"))) 
-				{
+				if(i==ListGridRows.Count-1 && (_title.StartsWith("StatementPayPlan") || _title.StartsWith("StatementDynamicPayPlan") || _title.StartsWith("StatementInvoicePayment"))) {
 					drawFooter=true;
 				}
 				if(yPosCur //start position of row

@@ -41,15 +41,15 @@ namespace OpenDental {
 		}
 
 		private void FormFeeSchedTools_Load(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.FeeSchedEdit)) {
+			if(!Security.IsAuthorized(Permissions.FeeSchedEdit)) {
 				DialogResult=DialogResult.Cancel;
 				Close();
 				return;
 			}
 			//Only unrestricted users should be using fee tools with feeschedgroups.
 			checkShowGroups.Visible=(PrefC.GetBool(PrefName.ShowFeeSchedGroups) && !Security.CurUser.ClinicIsRestricted);
-			LayoutManager.MoveLocation(comboGroup,new Point(LayoutManager.Scale(100),LayoutManager.Scale(46)));
-			LayoutManager.MoveLocation(comboGroupTo,new Point(LayoutManager.Scale(100),LayoutManager.Scale(45)));
+			LayoutManager.MoveLocation(comboGroup,new Point(100,46));
+			LayoutManager.MoveLocation(comboGroupTo,new Point(100,45));
 			FillComboBoxes();
 			if(!CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
 				butImportCanada.Visible=false;
@@ -208,11 +208,11 @@ namespace OpenDental {
 			}
 			List<long> listClinicNums=new List<long>();
 			if(PrefC.HasClinicsEnabled && !comboClinic.IsUnassignedSelected){
-				listClinicNums.Add(comboClinic.ClinicNumSelected);
+				listClinicNums.Add(comboClinic.SelectedClinicNum);
 			}
 			long feeSchedNum=_listFeeScheds[comboFeeSched.SelectedIndex].FeeSchedNum;
 			if(PrefC.GetBool(PrefName.ShowFeeSchedGroups) && !checkShowGroups.Checked) {
-				FeeSchedGroup feeSchedGroup=FeeSchedGroups.GetOneForFeeSchedAndClinic(feeSchedNum,comboClinic.ClinicNumSelected);//get the selected clinic num
+				FeeSchedGroup feeSchedGroup=FeeSchedGroups.GetOneForFeeSchedAndClinic(feeSchedNum,comboClinic.SelectedClinicNum);//get the selected clinic num
 				if(feeSchedGroup!=null) {
 					MsgBox.Show(Lans.g(this,"Selected clinic is a member of Fee Schedule Group: ")+feeSchedGroup.Description
 						+Lans.g(this," and must be cleared at the group level."));
@@ -249,13 +249,13 @@ namespace OpenDental {
 				}
 				logText+=" "+Lan.g(this,"were all cleared.")+"\r\n";
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.ProcFeeEdit,0,logText);
+			SecurityLogs.MakeLogEntry(Permissions.ProcFeeEdit,0,logText);
 			//	});
 			MsgBox.Show(this,"Done");
 		}
 
 		private void butCopy_Click(object sender, System.EventArgs e) {
-			List<long> listClinicNumsTo=comboClinicTo.ListClinicNumsSelected;
+			List<long> listClinicNumsTo=comboClinicTo.ListSelectedClinicNums;
 			if(checkShowGroups.Checked) {
 				if(comboGroup.SelectedIndex<0 || comboGroupTo.SelectedIndex<0) {
 					MsgBox.Show(this,"Please select a Fee Schedule group.");
@@ -274,7 +274,7 @@ namespace OpenDental {
 			FeeSched feeSchedTo=_listFeeScheds[comboFeeSchedTo.SelectedIndex];
 			long fromClinicNum=0;
 			if(PrefC.HasClinicsEnabled && !comboClinic.IsUnassignedSelected){
-				fromClinicNum=comboClinic.ClinicNumSelected;//get the current clinic num if it is not unassigned
+				fromClinicNum=comboClinic.SelectedClinicNum;//get the current clinic num if it is not unassigned
 			}
 			long fromProvNum=0;
 			if(comboProvider.SelectedIndex!=0) {
@@ -311,11 +311,11 @@ namespace OpenDental {
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"All fees that exactly match the \"Copy To\" fee schedule/clinic/provider combination will be deleted.  Then new fees will be copied in.  Are you sure you want to continue?")){
 				return;
 			}
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => FeeScheds.CopyFeeSchedule(feeSched,fromClinicNum,fromProvNum,feeSchedTo,listClinicNumsTo,toProvNum);
 			progressOD.StartingMessage="Preparing to copy fees...";
-			progressOD.IsBlocks=true;
-			progressOD.ShowDialog();
+			progressOD.ProgStyle=ProgressBarStyle.Blocks;
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled){
 				return;
 			}
@@ -357,7 +357,7 @@ namespace OpenDental {
 			}
 			long clinicNum=0;
 			if(PrefC.HasClinicsEnabled && !comboClinic.IsUnassignedSelected){
-				clinicNum=comboClinic.ClinicNumSelected;
+				clinicNum=comboClinic.SelectedClinicNum;
 			}
 			long feeSchedNum=_listFeeScheds[comboFeeSched.SelectedIndex].FeeSchedNum;
 			if(PrefC.GetBool(PrefName.ShowFeeSchedGroups) && !checkShowGroups.Checked) {
@@ -392,7 +392,7 @@ namespace OpenDental {
 			if(radioPenny.Checked){
 				round=2;
 			}
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				listFees=Fees.IncreaseNew(feeSchedNum,percent,round,listFees,clinicNum,provNum);
 				if(PrefC.GetBool(PrefName.ShowFeeSchedGroups)) {
@@ -426,13 +426,13 @@ namespace OpenDental {
 					}
 					logText+=". Fee increased by "+((float)percent/100.0f).ToString("p")+" using the increase "
 						+"button in the Fee Tools window.";
-					SecurityLogs.MakeLogEntry(EnumPermType.ProcFeeEdit,0,logText,listFees[i].CodeNum,DateTime.MinValue);
-					SecurityLogs.MakeLogEntry(EnumPermType.LogFeeEdit,0,"Fee Updated",listFees[i].FeeNum,listFees[i].SecDateTEdit);
-					ODEvent.Fire(ODEventType.ProgressBar,"Modifying fees, please wait...");
+					SecurityLogs.MakeLogEntry(Permissions.ProcFeeEdit,0,logText,listFees[i].CodeNum,DateTime.MinValue);
+					SecurityLogs.MakeLogEntry(Permissions.LogFeeEdit,0,"Fee Updated",listFees[i].FeeNum,listFees[i].SecDateTEdit);
+					ProgressBarEvent.Fire(ODEventType.ProgressBar,"Modifying fees, please wait...");
 				}
 			};
 			progressOD.StartingMessage=Lan.g(this,"Preparing to modify fees")+"...";
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled){
 				return;
 			}
@@ -526,7 +526,7 @@ namespace OpenDental {
 			FeeSched feeSched=_listFeeScheds[comboFeeSched.SelectedIndex];
 			long clinicNum=0;
 			if(!comboClinic.IsUnassignedSelected) {
-				clinicNum=comboClinic.ClinicNumSelected;
+				clinicNum=comboClinic.SelectedClinicNum;
 			}
 			if(checkShowGroups.Checked) {
 				if(comboGroup.SelectedIndex==-1) {
@@ -541,8 +541,8 @@ namespace OpenDental {
 			}
 			string fileName="Fees"+feeSchedDesc+".txt";
 			string filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
-			if(ODEnvironment.IsCloudServer) {
-				//Thinfinity: file download dialog will come up later, after file is created. AppStream: File will be created in client's Downloads folder.
+			if(ODBuild.IsWeb()) {
+				//file download dialog will come up later, after file is created.
 			}
 			else {
 				Cursor=Cursors.WaitCursor;
@@ -554,27 +554,22 @@ namespace OpenDental {
 					saveFileDialog.InitialDirectory="C:\\";
 				}
 				saveFileDialog.FileName=fileName;
-				saveFileDialog.Filter="Text files(*.txt)|*.txt|Excel Files(*.xls)|*.xls|All files(*.*)|*.*";
-				saveFileDialog.FilterIndex=0;
 				if(saveFileDialog.ShowDialog()!=DialogResult.OK) {
 					Cursor=Cursors.Default;
 					return;
 				}
 				filePath=saveFileDialog.FileName;
 			}
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => FeeScheds.ExportFeeSchedule(feeSched.FeeSchedNum,clinicNum,provNum,filePath);
 			progressOD.StartingMessage=Lan.g(this,"Preparing to export fees")+"...";
-			progressOD.IsBlocks=true;
-			progressOD.ShowDialog();
+			progressOD.ProgStyle=ProgressBarStyle.Blocks;
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled){
 				return;
 			}
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.ExportForDownload(filePath);
-			}
-			else if(ODCloudClient.IsAppStream) {
-				CloudClientL.ExportForCloud(filePath);
 			}
 			else {
 				Cursor=Cursors.Default;
@@ -587,34 +582,24 @@ namespace OpenDental {
 			{
 				return;
 			}
-			string importFilePath;
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				importFilePath=ODCloudClient.ImportFileForCloud();
-				if(importFilePath.IsNullOrEmpty()) {
-					return; //User cancelled out of OpenFileDialog
-				}
+			using OpenFileDialog openFileDialog=new OpenFileDialog();
+			if(Directory.Exists(PrefC.GetString(PrefName.ExportPath))) {
+				openFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
 			}
-			else {
-				using OpenFileDialog openFileDialog=new OpenFileDialog();
-				if(Directory.Exists(PrefC.GetString(PrefName.ExportPath))) {
-					openFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
-				}
-				else if(Directory.Exists("C:\\")) {
-					openFileDialog.InitialDirectory="C:\\";
-				}
-				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-					return;
-				}
-				if(!File.Exists(openFileDialog.FileName)){
-					MsgBox.Show(this,"File not found");
-					return;
-				}
-				importFilePath=openFileDialog.FileName;
+			else if(Directory.Exists("C:\\")) {
+				openFileDialog.InitialDirectory="C:\\";
+			}
+			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+				return;
+			}
+			if(!File.Exists(openFileDialog.FileName)){
+				MsgBox.Show(this,"File not found");
+				return;
 			}
 			//Import deletes fee if it exists and inserts new fees based on fee settings.
 			long clinicNum=0;
 			if(!comboClinic.IsUnassignedSelected) {
-				clinicNum=comboClinic.ClinicNumSelected;
+				clinicNum=comboClinic.SelectedClinicNum;
 			}
 			FeeSched feeSched=_listFeeScheds[comboFeeSched.SelectedIndex];
 			if(PrefC.GetBool(PrefName.ShowFeeSchedGroups) && !checkShowGroups.Checked) {
@@ -637,12 +622,12 @@ namespace OpenDental {
 			if(comboProvider.SelectedIndex!=0) {
 				provNum=_listProviders[comboProvider.SelectedIndex-1].ProvNum;
 			}
-			ProgressWin progressOD=new ProgressWin();
-			progressOD.ActionMain=() => FeeL.ImportFees(importFilePath,feeSched.FeeSchedNum,clinicNum,provNum);
+			ProgressOD progressOD=new ProgressOD();
+			progressOD.ActionMain=() => FeeL.ImportFees(openFileDialog.FileName,feeSched.FeeSchedNum,clinicNum,provNum);
 			progressOD.StartingMessage="Importing fees...";
-			progressOD.IsBlocks=true;
+			progressOD.ProgStyle=ProgressBarStyle.Blocks;
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex) {
 				FriendlyException.Show("Error importing fees.",ex);
@@ -668,7 +653,7 @@ namespace OpenDental {
 			Cursor=Cursors.WaitCursor;//original wait cursor seems to go away for some reason.
 			Application.DoEvents();
 			string feeData="";
-			Action actionCloseFeeSchedImportCanadaProgress=ODProgress.Show();
+			Action actionCloseFeeSchedImportCanadaProgress=ODProgress.Show(ODEventType.FeeSched,typeof(FeeSchedEvent));
 			if(formFeeSchedPickRemote.IsFileChosenProtected()) {
 				actionCloseFeeSchedImportCanadaProgress?.Invoke();//Hide the progress window so it does not cover up the authorization form.
 				using FormFeeSchedPickAuthOntario formFeeSchedPickAuthOntario=new FormFeeSchedPickAuthOntario(formFeeSchedPickRemote.GetSelectedFeeDA());
@@ -676,7 +661,7 @@ namespace OpenDental {
 					Cursor=Cursors.Default;
 					return;
 				}
-				actionCloseFeeSchedImportCanadaProgress=ODProgress.Show();
+				actionCloseFeeSchedImportCanadaProgress=ODProgress.Show(ODEventType.FeeSched,typeof(FeeSchedEvent));
 				string memberNumberODA=formFeeSchedPickAuthOntario.getODAMemberNumber();
 				string memberPasswordODA=formFeeSchedPickAuthOntario.getODAMemberPassword(); 
 				//prepare the xml document to send--------------------------------------------------------------------------------------
@@ -712,7 +697,7 @@ namespace OpenDental {
 				//Send the message and get the result-------------------------------------------------------------------------------------
 				string result="";
 				try {
-					ODEvent.Fire(ODEventType.FeeSched,Lan.g(this,"Retrieving fee schedule")+"...");
+					FeeSchedEvent.Fire(ODEventType.FeeSched,Lan.g(this,"Retrieving fee schedule")+"...");
 					result=updateService.RequestFeeSched(stringBuilder.ToString());
 				}
 				catch(Exception ex) {
@@ -753,7 +738,7 @@ namespace OpenDental {
 				feeData=Encoding.UTF8.GetString(byteArrayFeeData);
 			}
 			else {
-				ODEvent.Fire(ODEventType.FeeSched,Lan.g(this,"Downloading fee schedule")+"...");
+				FeeSchedEvent.Fire(ODEventType.FeeSched,Lan.g(this,"Downloading fee schedule")+"...");
 				string tempFile=PrefC.GetRandomTempFile(".tmp");
 				WebClient webClient=new WebClient();
 				try {
@@ -772,7 +757,7 @@ namespace OpenDental {
 			int numSkipped;
 			long clinicNum=0;
 			if(!comboClinic.IsUnassignedSelected) {
-				clinicNum=comboClinic.ClinicNumSelected;
+				clinicNum=comboClinic.SelectedClinicNum;
 			}
 			FeeSched feeSched=_listFeeScheds[comboFeeSched.SelectedIndex];
 			if(PrefC.GetBool(PrefName.ShowFeeSchedGroups) && !checkShowGroups.Checked) {
@@ -813,11 +798,11 @@ namespace OpenDental {
 				return;
 			}
 			ProgressBarHelper progressBarHelper=new ProgressBarHelper("Fee Schedule Update Progress",progressBarEventType:ProgBarEventType.Header);
-			ODProgressExtended progressExtended=new ODProgressExtended(this,tag:progressBarHelper,cancelButtonText:Lan.g(this,"Close"));
+			ODProgressExtended progressExtended=new ODProgressExtended(ODEventType.FeeSched,new FeeSchedEvent(),this,tag:progressBarHelper,cancelButtonText:Lan.g(this,"Close"));
 			Cursor=Cursors.WaitCursor;
 			List<Fee> listFeesHQ=Fees.GetByClinicNum(0);//All HQ fees
 			if(PrefC.HasClinicsEnabled) {
-				List<long> listFeeClinics=comboGlobalUpdateClinics.ListClinicNumsSelected;
+				List<long> listFeeClinics=comboGlobalUpdateClinics.ListSelectedClinicNums;
 				for(int i=0;i<listFeeClinics.Count;i++) {
 					//Clinic clinicCur=listFeeClinics[i];
 					while(progressExtended.IsPaused) {
@@ -891,7 +876,7 @@ namespace OpenDental {
 			{
 				return;
 			}
-			List<long> listWriteoffClinics=comboGlobalUpdateClinics.ListClinicNumsSelected;
+			List<long> listWriteoffClinics=comboGlobalUpdateClinics.ListSelectedClinicNums;
 			bool doUpdatePrevClinicPref=comboGlobalUpdateClinics.IsAllSelected;//keeps track of current ClinicNum in db to resume if interrupted
 			//MUST be in primary key order so that we will resume on the correct clinic and update the remaining clinics in the list
 			if(doUpdatePrevClinicPref){
@@ -933,7 +918,7 @@ namespace OpenDental {
 				}
 			}
 			ProgressBarHelper progressBarHelper=new ProgressBarHelper(Lan.g(this,"Write-off Update Progress"),progressBarEventType:ProgBarEventType.Header);
-			ODProgressExtended progressExtended=new ODProgressExtended(this,tag:progressBarHelper
+			ODProgressExtended progressExtended=new ODProgressExtended(ODEventType.FeeSched,new FeeSchedEvent(),this,tag:progressBarHelper
 				,cancelButtonText:Lan.g(this,"Close"));
 			progressBarHelper=new ProgressBarHelper("","0%",0,100,ProgBarStyle.Blocks,"WriteoffProgress");
 			progressExtended.Fire(ODEventType.FeeSched,progressBarHelper);
@@ -1026,12 +1011,12 @@ namespace OpenDental {
 
 		private void butPickProvider_Click(object sender,EventArgs e){
 			//int selectedIndex=-1;//GetProviderIndexFromPicker()+1;//All provider combo boxes have a none option, so always add 1.
-			FrmProviderPick frmProviderPick=new FrmProviderPick();
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick=new FormProviderPick();
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;// -1;
 			}
-			int selectedIndex= Providers.GetIndex(frmProviderPick.ProvNumSelected)+1;//All provider combo boxes have a none option, so always add 1.
+			int selectedIndex= Providers.GetIndex(formProviderPick.ProvNumSelected)+1;//All provider combo boxes have a none option, so always add 1.
 			//If the selectedIndex is 0, simply return and do not do anything.  There is no such thing as picking 'None' from the picker window.
 			if(selectedIndex==0) {
 				return;
@@ -1077,6 +1062,10 @@ namespace OpenDental {
 			FillComboBoxes();
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 		/*private void FormFeeSchedTools_FormClosing(object sender,FormClosingEventArgs e) {
 			if(DialogResult==DialogResult.OK && _changed) {
 				Cursor=Cursors.WaitCursor;
@@ -1085,6 +1074,5 @@ namespace OpenDental {
 				Cursor=Cursors.Default;
 			}
 		}*/
-
 	}
 }

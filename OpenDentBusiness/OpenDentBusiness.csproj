@@ -15,7 +15,7 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <ResGenToolArchitecture>Managed32Bit</ResGenToolArchitecture>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -46,8 +46,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
+    <DocumentationFile>bin\Release\OpenDentBusiness.xml</DocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputType>Library</OutputType>
     <AssemblyName>OpenDentBusiness</AssemblyName>
@@ -56,7 +55,6 @@
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <Prefer32Bit>false</Prefer32Bit>
     <LangVersion>8.0</LangVersion>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -178,7 +176,7 @@
     <Reference Include="MimeKit">
       <HintPath>..\Required dlls\MimeKit.dll</HintPath>
     </Reference>
-    <Reference Include="MySql.Data, Version=8.0.32.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Required dlls\MySql.Data.dll</HintPath>
     </Reference>
@@ -202,8 +200,7 @@
     <Reference Include="RS232">
       <HintPath>..\Required dlls\RS232.dll</HintPath>
     </Reference>
-    <Reference Include="SigPlusNET, Version=2.0.0.0, Culture=neutral, PublicKeyToken=6aef07010bb0624f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="SigPlusNET">
       <HintPath>..\Required dlls\SigPlusNET.dll</HintPath>
     </Reference>
     <Reference Include="Sparks3D">
@@ -246,7 +243,6 @@
     <Compile Include="Bridges\ClaimX_Statements.cs" />
     <Compile Include="Bridges\EDS_Statements.cs" />
     <Compile Include="Bridges\EHG_statements.cs" />
-    <Compile Include="Bridges\Pearl.cs" />
     <Compile Include="Bridges\POS_statements.cs" />
     <Compile Include="Cache\CacheAbs.cs" />
     <Compile Include="Cache\CacheDictAbs.cs" />
@@ -268,11 +264,6 @@
     <Compile Include="Crud\BugSubmissionHashCrud.cs" />
     <Compile Include="Crud\CertCrud.cs" />
     <Compile Include="Crud\CertEmployeeCrud.cs" />
-    <Compile Include="Crud\ChildCrud.cs" />
-    <Compile Include="Crud\ChildParentCrud.cs" />
-    <Compile Include="Crud\ChildRoomCrud.cs" />
-    <Compile Include="Crud\ChildRoomLogCrud.cs" />
-    <Compile Include="Crud\ChildTeacherCrud.cs" />
     <Compile Include="Crud\CloudAddressCrud.cs" />
     <Compile Include="Crud\CodeGroupCrud.cs" />
     <Compile Include="Crud\CommlogHistCrud.cs" />
@@ -310,9 +301,7 @@
     <Compile Include="Crud\MobileAppDeviceCrud.cs" />
     <Compile Include="Crud\MobileBrandingProfileCrud.cs" />
     <Compile Include="Crud\MobileDataByteCrud.cs" />
-    <Compile Include="Crud\MobileNotificationCrud.cs" />
     <Compile Include="Crud\OrthoCaseCrud.cs" />
-    <Compile Include="Crud\OrthoChartLogCrud.cs" />
     <Compile Include="Crud\OrthoChartRowCrud.cs" />
     <Compile Include="Crud\OrthoHardwareCrud.cs" />
     <Compile Include="Crud\OrthoHardwareSpecCrud.cs" />
@@ -325,10 +314,8 @@
     <Compile Include="Crud\ERoutingCrud.cs" />
     <Compile Include="Crud\ERoutingDefCrud.cs" />
     <Compile Include="Crud\ERoutingDefLinkCrud.cs" />
-    <Compile Include="Crud\PatFieldPickItemCrud.cs" />
     <Compile Include="Crud\PayConnectResponseWebCrud.cs" />
     <Compile Include="Crud\PayPlanLinkCrud.cs" />
-    <Compile Include="Crud\PayPlanTemplateCrud.cs" />
     <Compile Include="Crud\PayTerminalCrud.cs" />
     <Compile Include="Crud\PharmClinicCrud.cs" />
     <Compile Include="Crud\ProcMultiVisitCrud.cs" />
@@ -341,7 +328,6 @@
     <Compile Include="Crud\SessionTokenCrud.cs" />
     <Compile Include="Crud\StatementProdCrud.cs" />
     <Compile Include="Crud\TaskAttachmentCrud.cs" />
-    <Compile Include="Crud\MsgToPaySentCrud.cs" />
     <Compile Include="Crud\TransactionInvoiceCrud.cs" />
     <Compile Include="Crud\TreatPlanParamCrud.cs" />
     <Compile Include="Crud\UtmCrud.cs" />
@@ -388,11 +374,6 @@
     <Compile Include="Data Interface\CareCreditWebResponses.cs" />
     <Compile Include="Data Interface\AdvertisingPostcards.cs" />
     <Compile Include="Data Interface\AutoCommActives.cs" />
-    <Compile Include="Data Interface\ChildParents.cs" />
-    <Compile Include="Data Interface\ChildRoomLogs.cs" />
-    <Compile Include="Data Interface\ChildRooms.cs" />
-    <Compile Include="Data Interface\Children.cs" />
-    <Compile Include="Data Interface\ChildTeachers.cs" />
     <Compile Include="Data Interface\CodeGroups.cs" />
     <Compile Include="Data Interface\MobileBrandingProfiles.cs" />
     <Compile Include="Data Interface\CloudAddresses.cs" />
@@ -405,9 +386,7 @@
     <Compile Include="Data Interface\JobTeams.cs" />
     <Compile Include="Data Interface\JobTeamUsers.cs" />
     <Compile Include="Data Interface\LimitedBetaFeatures.cs" />
-    <Compile Include="Data Interface\MobileNotifications.cs" />
     <Compile Include="Data Interface\OrthoChartRows.cs" />
-    <Compile Include="Data Interface\OrthoChartLogs.cs" />
     <Compile Include="Data Interface\OrthoHardwares.cs" />
     <Compile Include="Data Interface\OrthoHardwareSpecs.cs" />
     <Compile Include="Data Interface\OrthoRxs.cs" />
@@ -416,14 +395,11 @@
     <Compile Include="Data Interface\ERoutingDefLinks.cs" />
     <Compile Include="Data Interface\ERoutingDefs.cs" />
     <Compile Include="Data Interface\ERoutings.cs" />
-    <Compile Include="Data Interface\PatFieldPickItems.cs" />
-    <Compile Include="Data Interface\PayPlanTemplates.cs" />
     <Compile Include="Data Interface\PayTerminals.cs" />
     <Compile Include="Data Interface\ReferralClinicLinks.cs" />
     <Compile Include="Data Interface\HieClinics.cs" />
     <Compile Include="Data Interface\HieQueues.cs" />
     <Compile Include="Data Interface\TaskAttachments.cs" />
-    <Compile Include="Data Interface\MsgToPaySents.cs" />
     <Compile Include="Data Interface\TransactionInvoices.cs" />
     <Compile Include="Data Interface\TreatPlanParams.cs" />
     <Compile Include="Data Interface\Utms.cs" />
@@ -578,8 +554,6 @@
     <Compile Include="InternalTools\Job Manager\Crud\MobileBugCrud.cs" />
     <Compile Include="InternalTools\Job Manager\Crud\MobileReleaseBuildCrud.cs" />
     <Compile Include="InternalTools\Job Manager\Crud\MobileReleaseCrud.cs" />
-    <Compile Include="InternalTools\Job Manager\HelperClasses\TeamReportJob.cs" />
-    <Compile Include="InternalTools\Job Manager\HelperClasses\TeamReportUser.cs" />
     <Compile Include="InternalTools\Job Manager\JobActiveLinks.cs" />
     <Compile Include="Data Interface\LoginAttempts.cs" />
     <Compile Include="Data Interface\OrthoCases.cs" />
@@ -590,6 +564,7 @@
     <Compile Include="Data Interface\ScheduledProcesses.cs" />
     <Compile Include="Db Multi Table\PayPlanProductionEntry.cs" />
     <Compile Include="Db Multi Table\ProcFeeHelper.cs" />
+    <Compile Include="Db\DataExtensions.cs" />
     <Compile Include="InternalTools\Faq\Faqs.cs" />
     <Compile Include="Data Interface\MobileAppDevices.cs" />
     <Compile Include="Data Interface\PayConnectResponseWebs.cs" />
@@ -656,12 +631,11 @@
     <Compile Include="Misc\ConvertDatabases7.cs" />
     <Compile Include="Misc\ConvertDatabases8.cs" />
     <Compile Include="Misc\Currency.cs" />
-    <Compile Include="Misc\FamilyBalancer.cs" />
     <Compile Include="Misc\FHIRUtils.cs" />
     <Compile Include="Misc\Introspection.cs" />
     <Compile Include="Misc\ReplaceTags.cs" />
-    <Compile Include="Misc\Result.cs" />
     <Compile Include="Misc\SecurityHash.cs" />
+    <Compile Include="ODEvents\ODEvents.cs" />
     <Compile Include="ODEvents\MiddleTierConnectionEvent.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -689,11 +663,6 @@
     <Compile Include="TableTypes\ApptGeneralMessageSent.cs" />
     <Compile Include="TableTypes\ApptNewPatThankYouSent.cs" />
     <Compile Include="TableTypes\AutoCommExcludeDate.cs" />
-    <Compile Include="TableTypes\ChildTeacher.cs" />
-    <Compile Include="TableTypes\ChildRoomLog.cs" />
-    <Compile Include="TableTypes\Child.cs" />
-    <Compile Include="TableTypes\ChildParent.cs" />
-    <Compile Include="TableTypes\ChildRoom.cs" />
     <Compile Include="TableTypes\CodeGroup.cs" />
     <Compile Include="TableTypes\CertEmployee.cs" />
     <Compile Include="TableTypes\Cert.cs" />
@@ -728,9 +697,7 @@
     <Compile Include="TableTypes\MobileAppDevice.cs" />
     <Compile Include="TableTypes\MobileDataByte.cs" />
     <Compile Include="TableTypes\ImagingDevice.cs" />
-    <Compile Include="TableTypes\MobileNotification.cs" />
     <Compile Include="TableTypes\OrthoCase.cs" />
-    <Compile Include="TableTypes\OrthoChartLog.cs" />
     <Compile Include="TableTypes\OrthoRx.cs" />
     <Compile Include="TableTypes\OrthoHardwareSpec.cs" />
     <Compile Include="TableTypes\OrthoHardware.cs" />
@@ -743,9 +710,7 @@
     <Compile Include="TableTypes\ERoutingActionDef.cs" />
     <Compile Include="TableTypes\ERoutingDef.cs" />
     <Compile Include="TableTypes\ERoutingDefLink.cs" />
-    <Compile Include="TableTypes\PatFieldPickItem.cs" />
     <Compile Include="TableTypes\PayConnectResponseWeb.cs" />
-    <Compile Include="TableTypes\PayPlanTemplate.cs" />
     <Compile Include="TableTypes\PayPlanLink.cs" />
     <Compile Include="TableTypes\PayTerminal.cs" />
     <Compile Include="TableTypes\PharmClinic.cs" />
@@ -760,13 +725,11 @@
     <Compile Include="TableTypes\StatementProd.cs" />
     <Compile Include="TableTypes\ImageDraw.cs" />
     <Compile Include="TableTypes\TaskAttachment.cs" />
-    <Compile Include="TableTypes\MsgToPaySent.cs" />
     <Compile Include="TableTypes\TransactionInvoice.cs" />
     <Compile Include="TableTypes\TreatPlanParam.cs" />
     <Compile Include="TableTypes\Utm.cs" />
     <Compile Include="TableTypes\WebSchedCarrierRule.cs" />
     <Compile Include="UI\DpiScale.cs" />
-    <Compile Include="UI\GlobalFormOpenDental.cs" />
     <Compile Include="UI\GridCell.cs" />
     <Compile Include="UI\GridColumn.cs" />
     <Compile Include="UI\GridOld.cs">
@@ -803,18 +766,12 @@
     <Compile Include="WebBridges\Google\GoogleApiConnector.cs" />
     <Compile Include="WebBridges\HqProgram.cs" />
     <Compile Include="WebBridges\IApiRequest.cs" />
-    <Compile Include="WebBridges\OcrInsScan\OcrInsScanRequest.cs" />
-    <Compile Include="WebBridges\OcrInsScan\OcrInsScanResponse.cs" />
     <Compile Include="WebBridges\PayConnect2.cs" />
-    <Compile Include="WebServices\PatientviewerServer.cs" />
     <Compile Include="WebTypes\AutoComm\AutoCommObj\AutoCommRule.cs" />
-    <Compile Include="WebTypes\AutoComm\AutoCommObj\MsgToPayLite.cs" />
     <Compile Include="WebTypes\AutoComm\IAutoCommSent.cs" />
     <Compile Include="WebTypes\AutoComm\AutoCommSents.cs" />
     <Compile Include="WebTypes\AutoComm\AutoCommUtil\AutoCommWebSerializerUtil.cs" />
-    <Compile Include="WebTypes\AutoComm\TagReplacementPhiSafe\ConfirmationTagReplacer.cs" />
     <Compile Include="WebTypes\AutoComm\TagReplacementPhiSafe\NewPatientThankYouTagReplacer.cs" />
-    <Compile Include="WebTypes\AutoComm\TagReplacementPhiSafe\MsgToPayTagReplacer.cs" />
     <Compile Include="WebTypes\Shared\PatientInfo.cs" />
     <Compile Include="WebBridges\PDMP\ApprissScript.cs" />
     <Compile Include="WebBridges\PDMP\PDMPAppriss.cs" />
@@ -1414,6 +1371,7 @@
     <Compile Include="Data Interface\Signalods.cs" />
     <Compile Include="Data Interface\TaskNotes.cs" />
     <Compile Include="Data Interface\TaskUnreads.cs" />
+    <Compile Include="Cache\aaCache.cs" />
     <Compile Include="Cache\Cache.cs" />
     <Compile Include="Cache\EnumMiddleTierRole.cs" />
     <Compile Include="Cache\PrefC.cs" />
@@ -2755,10 +2713,10 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>OpenDentBusiness_OpenDentalServer_ServiceMain</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="http://localhost/OpenDentalWebServiceHQ/WebServiceMainHQ.asmx">
+    <WebReferenceUrl Include="http://localhost/OpenDentalWebServiceHQ/webservicemainhq.asmx">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\WebServiceMainHQ\</RelPath>
-      <UpdateFromURL>http://localhost/OpenDentalWebServiceHQ/WebServiceMainHQ.asmx</UpdateFromURL>
+      <UpdateFromURL>http://localhost/OpenDentalWebServiceHQ/webservicemainhq.asmx</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
@@ -2914,7 +2872,6 @@
   <ItemGroup>
     <None Include="Web References\NewCropWebService\Update1.disco" />
     <None Include="Resources\COVID19.xml" />
-    <None Include="Resources\ClaimForms\ClaimFormADA 2024.xml" />
     <Content Include="Shared\README.txt" />
     <Resource Include="Resources\topazPen10.gif" />
     <None Include="Resources\RecallPastDue_R.png" />
@@ -2943,7 +2900,9 @@
     <None Include="Resources\LabelReferral.xml" />
     <None Include="Resources\LabelText.xml" />
     <None Include="Resources\LabSlip.xml" />
-    <None Include="Resources\MedicalHist.xml" />
+    <None Include="Resources\MedicalHistNewPat.xml" />
+    <None Include="Resources\MedicalHistSimple.xml" />
+    <None Include="Resources\MedicalHistUpdate.xml" />
     <None Include="Resources\PatientLetter.xml" />
     <None Include="Resources\PatientLetterTxFinder.xml" />
     <None Include="Resources\PatientRegistration.xml" />

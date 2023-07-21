@@ -43,14 +43,6 @@ namespace OpenDentBusiness {
 		[Description("Take Payment")]
 		TakePayment,
 		[Description("Schedule Follow up")]
-		ScheduleFollowup,
-		[Description("ERX")]
-		eRx,
-		[Description("Exam Sheet")]
-		ExamSheet,
-		[Description("Consent Form")]
-		ConsentForm,
-		[Description("Medical")]
-		Medical
+		ScheduleFollowup
 	}
 }

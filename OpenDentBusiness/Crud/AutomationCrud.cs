@@ -49,7 +49,7 @@ namespace OpenDentBusiness.Crud{
 				automation=new Automation();
 				automation.AutomationNum     = PIn.Long  (row["AutomationNum"].ToString());
 				automation.Description       = PIn.String(row["Description"].ToString());
-				automation.Autotrigger       = (OpenDentBusiness.EnumAutomationTrigger)PIn.Int(row["Autotrigger"].ToString());
+				automation.Autotrigger       = (OpenDentBusiness.AutomationTrigger)PIn.Int(row["Autotrigger"].ToString());
 				automation.ProcCodes         = PIn.String(row["ProcCodes"].ToString());
 				automation.AutoAction        = (OpenDentBusiness.AutomationAction)PIn.Int(row["AutoAction"].ToString());
 				automation.SheetDefNum       = PIn.Long  (row["SheetDefNum"].ToString());

@@ -405,9 +405,7 @@ namespace OpenDental {
 			if(listShowIn.Items.Count!=0) {//Already initialized
 				return;
 			}
-			_listHideInFlags=Enum.GetValues(typeof(HideInFlags)).Cast<HideInFlags>().ToList();
-			_listHideInFlags.Remove(HideInFlags.None);
-			_listHideInFlags.Remove(HideInFlags.AccountProgNotes);
+			_listHideInFlags=Enum.GetValues(typeof(HideInFlags)).Cast<HideInFlags>().Where(x => x!=HideInFlags.None).ToList();
 			for(int i=0;i<_listHideInFlags.Count;i++) {
 				listShowIn.Items.Add(Lan.g("enumHideInFlags",_listHideInFlags[i].GetDescription()));
 			}
@@ -488,17 +486,14 @@ namespace OpenDental {
 		}
 
 		private void menuItemRename_Click(object sender,EventArgs e) {
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-			inputBoxParam.LabelText=Lan.g(this,"Filename");
+			using InputBox input=new InputBox(Lan.g(this,"Filename"));
 			EmailAttach emailAttach=_listEmailAttachDisplayed[gridAttachments.SelectedIndices[0]];
-			inputBoxParam.Text=emailAttach.DisplayedFileName;
-			InputBox inputBox=new InputBox(inputBoxParam);
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			input.textResult.Text=emailAttach.DisplayedFileName;
+			input.ShowDialog();
+			if(input.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			emailAttach.DisplayedFileName=inputBox.StringResult;
+			emailAttach.DisplayedFileName=input.textResult.Text;
 			FillAttachments();
 		}
 
@@ -677,9 +672,7 @@ namespace OpenDental {
 						hasDangerousAttachment=true;
 						continue;
 					}
-					if(entity.ContentDisposition.ToLower().Contains("inline")) {
-						html=html.Replace("cid:"+contentId,fileName);
-					}
+					html=html.Replace("cid:"+contentId,fileName);
 					EmailAttach attachment=_listEmailAttachDisplayed.FirstOrDefault(x => x.DisplayedFileName.ToLower().Trim()==fileName.ToLower().Trim());
 					//The path and filename must be directly accessed from the EmailAttach object in question, otherwise subsequent code would have accessed
 					//an empty bodied message and never shown an image.
@@ -762,7 +755,6 @@ namespace OpenDental {
 		public EmailAddress PickEmailAccount() {
 			using FormEmailAddresses formEA=new FormEmailAddresses();
 			formEA.IsSelectionMode=true;
-			formEA.DoAllowSelectingAddressWithUsers=true;
 			formEA.ShowDialog();
 			if(formEA.DialogResult==DialogResult.OK) {
 				EmailAddress emailAccountSelected=EmailAddresses.GetFirstOrDefault(x => x.EmailAddressNum==formEA.EmailAddressNum);

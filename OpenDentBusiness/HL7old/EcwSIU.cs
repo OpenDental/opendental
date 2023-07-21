@@ -88,7 +88,7 @@ namespace OpenDentBusiness.HL7 {
 						,EventLogEntryType.Information);
 				}
 				Patients.Insert(pat,true);
-				SecurityLogs.MakeLogEntry(EnumPermType.PatientCreate,pat.PatNum,"Created from HL7 for eCW.",LogSources.HL7);
+				SecurityLogs.MakeLogEntry(Permissions.PatientCreate,pat.PatNum,"Created from HL7 for eCW.",LogSources.HL7);
 			}
 			else {
 				if(isVerboseLogging) {

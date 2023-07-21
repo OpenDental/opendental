@@ -28,6 +28,7 @@ namespace OpenDental{
 			this.labelTimer = new System.Windows.Forms.Label();
 			this.timerRecord = new System.Windows.Forms.Timer(this.components);
 			this.imageListMain = new System.Windows.Forms.ImageList(this.components);
+			this.butCancel = new OpenDental.UI.Button();
 			this.butPlay = new OpenDental.UI.Button();
 			this.butStart = new OpenDental.UI.Button();
 			this.butSave = new OpenDental.UI.Button();
@@ -54,6 +55,16 @@ namespace OpenDental{
 			this.imageListMain.TransparentColor = System.Drawing.Color.Transparent;
 			this.imageListMain.Images.SetKeyName(0, "record.gif");
 			this.imageListMain.Images.SetKeyName(1, "stop.gif");
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(216, 85);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 8;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butPlay
 			// 
@@ -88,7 +99,7 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(216, 85);
+			this.butOK.Location = new System.Drawing.Point(216, 52);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
@@ -99,6 +110,7 @@ namespace OpenDental{
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(303, 121);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.labelTimer);
 			this.Controls.Add(this.butPlay);
@@ -124,6 +136,7 @@ namespace OpenDental{
 		private UI.Button butPlay;
 		private System.Windows.Forms.Label labelTimer;
 		private System.Windows.Forms.Timer timerRecord;
+		private UI.Button butCancel;
 		private System.Windows.Forms.ImageList imageListMain;
 	}
 }

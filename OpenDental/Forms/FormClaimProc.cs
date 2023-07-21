@@ -52,7 +52,7 @@ namespace OpenDental {
 		public bool IsInClaim;
 		///<summary>Set this to true if user does not have permission to edit procedure.</summary>
 		public bool NoPermissionProc;
-		//public bool IsSaved;
+		public bool IsSaved;
 		///<summary>Is only set when called from FormClaimEdit and to signify the recieving of a claim.</summary>
 		public bool IsCalledFromClaimEdit=false;
 
@@ -113,7 +113,8 @@ namespace OpenDental {
 					//this.butRecalc
 			});
 			Lan.C("All", new System.Windows.Forms.Control[] {
-				butSave,
+				butOK,
+				butCancel,
 				butDelete,
 			});
 		}
@@ -126,9 +127,8 @@ namespace OpenDental {
 		public void Initialize() {
 			//Check to see if the Claim is a transfer, if TRUE disable all but Cancel and Delete buttons
 			if(_claimProc.IsTransfer) {
-				this.DisableAllExcept(new Control[]{butDelete});
+				this.DisableAllExcept(new Control[]{butCancel,butDelete});
 			}
-			warningIntegrity.SetTypeAndVisibility(EnumWarningIntegrityType.ClaimProc,ClaimProcs.IsClaimProcHashValid(_claimProc));
 			if(_claimProc.IsOverpay) {
 				if(Claims.GetClaim(_claimProc.ClaimNum)==null) {
 					MsgBox.Show(this,"Claim has been deleted by another user.");
@@ -152,7 +152,7 @@ namespace OpenDental {
 				if(_claimProc.ClaimNum>0 && (_claimProc.Status==ClaimProcStatus.Received || _claimProc.Status==ClaimProcStatus.Supplemental)
 					//Prior to version 16.3.7 this perm check used claim.DateReceived but users with ClaimSentEdit perm but not ClaimProcReceivedEdit perm could
 					//edit the claim Date Received field and subvert the security perm intended to prevent them from editing the claimproc
-					&& !Security.IsAuthorized(EnumPermType.ClaimProcReceivedEdit,_claimProc.DateEntry,false))
+					&& !Security.IsAuthorized(Permissions.ClaimProcReceivedEdit,_claimProc.DateEntry,false))
 				{
 					//Don't allow user to change anything.
 					//We could have used .ReadOnly for textboxes but some of them have events on them and I dont want them to fire for no reason.
@@ -183,18 +183,18 @@ namespace OpenDental {
 					textInsPayAmt.Enabled=false;
 					textWriteOff.Enabled=false;
 					checkPayPlan.Enabled=false;
-					butSave.Enabled=false;
+					butOK.Enabled=false;
 					butDelete.Enabled=false;
 				}
 				else if((claim.ClaimStatus=="S" || claim.ClaimStatus=="R")) {//sent or received 
-					if(!Security.IsAuthorized(EnumPermType.ClaimSentEdit,claim.DateSent,true)) { //attached to claim, no permission for claims.
-						butSave.Enabled=false;
+					if(!Security.IsAuthorized(Permissions.ClaimSentEdit,claim.DateSent,true)) { //attached to claim, no permission for claims.
+						butOK.Enabled=false;
 						butDelete.Enabled=false; 
 					}
 				}
 			}
-			if((butSave.Enabled || butDelete.Enabled) && NoPermissionProc) {//blocks users with no permission to edit procedure
-				butSave.Enabled=false;
+			if((butOK.Enabled || butDelete.Enabled) && NoPermissionProc) {//blocks users with no permission to edit procedure
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 			}
 			InsSub insSub=InsSubs.GetSub(_claimProc.InsSubNum,_listInsSub);
@@ -209,8 +209,8 @@ namespace OpenDental {
 			checkNoBillIns.Checked=_claimProc.NoBillIns;
 			if(_claimProc.ClaimPaymentNum>0) {//attached to ins check
 				textDateCP.ReadOnly=true;//DateCP always the same as the payment date and can't be changed here
-				if(!Security.IsAuthorized(EnumPermType.InsPayEdit,_claimProc.DateCP)) {
-					butSave.Enabled=false;
+				if(!Security.IsAuthorized(Permissions.InsPayEdit,_claimProc.DateCP)) {
+					butOK.Enabled=false;
 					if(_claimProc.Status==ClaimProcStatus.Received) {
 						comboStatus.Enabled=false;
 					}
@@ -223,10 +223,10 @@ namespace OpenDental {
 			//For example, a zero payment with a writeoff amount.  Must prevent changing that date.
 			else if((_claimProc.Status.In(ClaimProcStatus.CapComplete,ClaimProcStatus.Received,ClaimProcStatus.Supplemental,ClaimProcStatus.InsHist))
 				&& (IsProc || !_claimProc.IsNew)
-				&& !Security.IsAuthorized(EnumPermType.InsPayEdit,_claimProc.DateCP))//
+				&& !Security.IsAuthorized(Permissions.InsPayEdit,_claimProc.DateCP))//
 			{
 				textDateCP.ReadOnly=true;
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				textInsPayAmt.ReadOnly=true;
 				labelAttachedToCheck.Visible=false;
 				//listStatus.Enabled=false;//this is handled in the mousedown event
@@ -264,16 +264,16 @@ namespace OpenDental {
 				dateWriteoffSec=_procedure.DateEntryC;
 			}
 			if(CompareDouble.IsZero(_claimProc.InsPayAmt)) { 
-				if(!Security.IsAuthorized(EnumPermType.InsPayCreate,true)) { //user not allowed to create an insurance payment
+				if(!Security.IsAuthorized(Permissions.InsPayCreate,true)) { //user not allowed to create an insurance payment
 					textInsPayAmt.ReadOnly=true;
 				}
 			}
 			else {
-				if(!Security.IsAuthorized(EnumPermType.InsPayEdit,_claimProc.DateCP,true)) { //user not allowed to edit an insurance payment
+				if(!Security.IsAuthorized(Permissions.InsPayEdit,_claimProc.DateCP,true)) { //user not allowed to edit an insurance payment
 					textInsPayAmt.ReadOnly=true;
 				}
 			}
-			if(!Security.IsAuthorized(EnumPermType.InsWriteOffEdit,dateWriteoffSec,true)) {//user not allowed to edit/create a writeoff
+			if(!Security.IsAuthorized(Permissions.InsWriteOffEdit,dateWriteoffSec,true)) {//user not allowed to edit/create a writeoff
 				textWriteOff.ReadOnly=true;
 				textWriteOffEstOverride.ReadOnly=true;
 				//cannot edit the writeoff, so block deleting the claimproc, otherwise they could delete and recreate to bypass the date/days restriction
@@ -311,7 +311,7 @@ namespace OpenDental {
 					labelInsPayAmt.Font=new Font(labelInsPayAmt.Font,FontStyle.Bold);
 				}
 				if(_claimProc.Status.In(ClaimProcStatus.Received,ClaimProcStatus.NotReceived,ClaimProcStatus.CapClaim) 
-					&& !Security.IsAuthorized(EnumPermType.ClaimProcClaimAttachedProvEdit,true))
+					&& !Security.IsAuthorized(Permissions.ClaimProcClaimAttachedProvEdit,true))
 				{
 					comboProvider.Enabled=false;
 					butPickProv.Enabled=false;
@@ -559,7 +559,8 @@ namespace OpenDental {
 				if(insPlan.PlanType=="p") {//if ppo
 					double insFee=Fees.GetAmount0(_procedure.CodeNum,insFeeSchedNum,_procedure.ClinicNum,_procedure.ProvNum);
 					long standFeeSchedNum=Providers.GetProv(Patients.GetProvNum(_patient)).FeeSched;
-					if(_procedure.ProcFee!=insFee) {
+					double standardFee=Fees.GetAmount0(_procedure.CodeNum,standFeeSchedNum,_procedure.ClinicNum,_procedure.ProvNum);
+					if(standardFee>insFee) {//if standard fee is greater than ins fee for a PPO plan, show standard fee sched
 						textFeeSched.Text=FeeScheds.GetDescription(standFeeSchedNum);
 					}
 				}
@@ -682,7 +683,7 @@ namespace OpenDental {
 			else if(insPlan.PlanType=="p") {
 				//The only other way to manually edit allowed fee schedule amounts is blocked via the Setup permission.
 				//We only want to block PPO patients so that we don't partially break Blue Book users.
-				if(!Security.IsAuthorized(EnumPermType.Setup)) {
+				if(!Security.IsAuthorized(Permissions.Setup)) {
 					return;
 				}
 				feeSchedNum=insPlan.FeeSched;
@@ -706,10 +707,10 @@ namespace OpenDental {
 			}
 			DateTime datePrevious=fee.SecDateTEdit;
 			//Make an audit entry that the user manually launched the Fee Edit window from this location.
-			SecurityLogs.MakeLogEntry(EnumPermType.ProcFeeEdit,0,Lan.g(this,"Procedure")+": "+ProcedureCodes.GetStringProcCode(fee.CodeNum)
+			SecurityLogs.MakeLogEntry(Permissions.ProcFeeEdit,0,Lan.g(this,"Procedure")+": "+ProcedureCodes.GetStringProcCode(fee.CodeNum)
 				+", "+Lan.g(this,"Fee")+": "+fee.Amount.ToString("c")+", "+Lan.g(this,"Fee Schedule")+": "+FeeScheds.GetDescription(fee.FeeSched)
 				+". "+Lan.g(this,"Manually launched Edit Fee window via Edit Claim Procedure window."),fee.CodeNum,DateTime.MinValue);
-			SecurityLogs.MakeLogEntry(EnumPermType.LogFeeEdit,0,Lan.g(this,"Fee Inserted"),fee.FeeNum,datePrevious);
+			SecurityLogs.MakeLogEntry(Permissions.LogFeeEdit,0,Lan.g(this,"Fee Inserted"),fee.FeeNum,datePrevious);
 			formFeeEdit.FeeCur=fee;
 			formFeeEdit.ShowDialog();
 			//The Fees cache is updated in the closing of FormFeeEdit if there were any changes made.  Simply refresh our window.
@@ -853,17 +854,17 @@ namespace OpenDental {
 		}
 
 		private void butPickProv_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick=new FrmProviderPick(_listProviders);
+			using FormProviderPick formProviderPick=new FormProviderPick(_listProviders);
 			if(comboProvider.SelectedIndex > -1) {
-				frmProviderPick.ProvNumSelected=_listProviders[comboProvider.SelectedIndex].ProvNum;
+				formProviderPick.ProvNumSelected=_listProviders[comboProvider.SelectedIndex].ProvNum;
 			}
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
 			//Set the combo box to the ODBoxItem that contains the provider that was just selected.
 			//If we can't find it, reselect the same item that was already selected.
-			comboProvider.SetSelectedKey<Provider>(frmProviderPick.ProvNumSelected, x => x.ProvNum);
+			comboProvider.SetSelectedKey<Provider>(formProviderPick.ProvNumSelected, x => x.ProvNum);
 		}
 
 		private void comboStatus_SelectionChangeCommitted(object sender,EventArgs e) {
@@ -1097,12 +1098,12 @@ namespace OpenDental {
 				return;
 			}
 			if(CompareDouble.IsZero(_claimProc.InsPayAmt)) { 
-				if(!Security.IsAuthorized(EnumPermType.InsPayCreate)) { //user not allowed to create an insurance payment
+				if(!Security.IsAuthorized(Permissions.InsPayCreate)) { //user not allowed to create an insurance payment
 					return;
 				}
 			}
 			else {
-				if(!Security.IsAuthorized(EnumPermType.InsPayEdit,_claimProc.DateCP)) { //user not allowed to edit an insurance payment
+				if(!Security.IsAuthorized(Permissions.InsPayEdit,_claimProc.DateCP)) { //user not allowed to edit an insurance payment
 					return;
 				}
 			}
@@ -1120,7 +1121,7 @@ namespace OpenDental {
 			if(IsProc && _procedure.ProcDate!=DateTime.MinValue) {
 				dateWriteoffSec=_procedure.DateEntryC;
 			}
-			if(!Security.IsAuthorized(EnumPermType.InsWriteOffEdit,dateWriteoffSec)) {
+			if(!Security.IsAuthorized(Permissions.InsWriteOffEdit,dateWriteoffSec)) {
 				return;
 			}
 		}
@@ -1133,7 +1134,7 @@ namespace OpenDental {
 			if(IsProc && _procedure.ProcDate!=DateTime.MinValue) {
 				dateWriteoffSec=_procedure.DateEntryC;
 			}
-			if(!Security.IsAuthorized(EnumPermType.InsWriteOffEdit,dateWriteoffSec)) {
+			if(!Security.IsAuthorized(Permissions.InsWriteOffEdit,dateWriteoffSec)) {
 				return;
 			}
 		}
@@ -1199,7 +1200,7 @@ namespace OpenDental {
 			}
 			ClaimProcs.RemoveSupplementalTransfersForClaims(_claimProc.ClaimNum);
 			_claimProc.DoDelete=true;
-			//IsSaved=false;
+			IsSaved=false;
 			DialogResult=DialogResult.OK;
 		}
 
@@ -1249,7 +1250,7 @@ namespace OpenDental {
 			formClaimProcBlueBookLog.ShowDialog();
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			//no security check here because if attached to a payment, nobody is allowed to change the date or amount anyway.
 			if(!AllAreValid()){
 				MessageBox.Show(Lan.g(this,"Please fix data entry errors first."));
@@ -1276,7 +1277,7 @@ namespace OpenDental {
 				return;
 			}
 			if(_claimProc.Status.In(ClaimProcStatus.Received,ClaimProcStatus.Supplemental)
-				&& !Security.IsAuthorized(EnumPermType.InsPayEdit,PIn.Date(textDateCP.Text))) {
+				&& !Security.IsAuthorized(Permissions.InsPayEdit,PIn.Date(textDateCP.Text))) {
 				return;
 			}
 			if(OrthoProcLinks.IsProcLinked(_claimProc.ProcNum) && 
@@ -1308,7 +1309,7 @@ namespace OpenDental {
 			_claimProc.Remarks=textRemarks.Text;
 			//if status was changed to received, then set DateEntry
 			if(_claimProcOld.Status!=ClaimProcStatus.Received && _claimProcOld.Status!=ClaimProcStatus.Supplemental){
-				if(_claimProc.Status==ClaimProcStatus.Received || _claimProc.Status==ClaimProcStatus.Supplemental){
+				if(_claimProc.Status==ClaimProcStatus.Received || _claimProcOld.Status==ClaimProcStatus.Supplemental){
 					_claimProc.DateEntry=DateTime.Now;
 				}
 			}
@@ -1339,7 +1340,7 @@ namespace OpenDental {
 			//created before editing.
 			if(_claimProc.ClaimPaymentNum>0){//attached to ins check
 				//note: the amount and the date will not have been changed.
-				SecurityLogs.MakeLogEntry(EnumPermType.InsPayEdit,_claimProc.PatNum,
+				SecurityLogs.MakeLogEntry(Permissions.InsPayEdit,_claimProc.PatNum,
 					Patients.GetLim(_claimProc.PatNum).GetNameLF()+", "
 					+Lan.g(this,"Date and amount not changed."));//I'm really not sure what they would have changed.
 			}
@@ -1355,9 +1356,9 @@ namespace OpenDental {
 					strSecLog = ProcedureCodes.GetProcCode(_procedure.CodeNum).ProcCode+" - "+textInsPlan.Text+". "+Lan.g(this,"Provider changed from")+" "
 					+Providers.GetAbbr(_claimProcOld.ProvNum)+" "+Lan.g(this,"to")+" "+Providers.GetAbbr(_claimProc.ProvNum);
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.ClaimProcClaimAttachedProvEdit,_claimProc.PatNum,strSecLog);
+				SecurityLogs.MakeLogEntry(Permissions.ClaimProcClaimAttachedProvEdit,_claimProc.PatNum,strSecLog);
 			}
-			//IsSaved=true;
+			IsSaved=true;
 			MakeAuditTrailEntries();
 			DialogResult=DialogResult.OK;
 		}
@@ -1382,7 +1383,7 @@ namespace OpenDental {
 				needsEditLog=true;
 			}
 			if(needsEditLog) {
-				SecurityLogs.MakeLogEntry(EnumPermType.InsWriteOffEdit,_claimProc.PatNum,insWriteoffEditLog);
+				SecurityLogs.MakeLogEntry(Permissions.InsWriteOffEdit,_claimProc.PatNum,insWriteoffEditLog);
 			}
 			needsEditLog=false;
 			if(_claimProcOld.InsPayAmt!=_claimProc.InsPayAmt) {
@@ -1402,14 +1403,23 @@ namespace OpenDental {
 				}
 				insPayCreateLog+=$"Insurance payment amount {_claimProc.InsPayAmt.ToString("C")}. ";
 				insPayCreateLog+=$"Insurance estimate amount {_claimProc.InsPayEst.ToString("C")}. ";
-				SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,_claimProc.PatNum,insPayCreateLog);
+				SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,_claimProc.PatNum,insPayCreateLog);
 			} 
 			else if(needsEditLog && IsCalledFromClaimEdit) {
-				SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,_claimProc.PatNum,insPayEditLog);
+				SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,_claimProc.PatNum,insPayEditLog);
 			}
 			else if(needsEditLog && !IsCalledFromClaimEdit){
-				SecurityLogs.MakeLogEntry(EnumPermType.InsPayEdit,_claimProc.PatNum,insPayEditLog);
+				SecurityLogs.MakeLogEntry(Permissions.InsPayEdit,_claimProc.PatNum,insPayEditLog);
 			}
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			IsSaved=false;
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void FormClaimProc_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+			
 		}
 
 		private void FormClaimProc_FormClosing(object sender,FormClosingEventArgs e) {
@@ -1419,6 +1429,22 @@ namespace OpenDental {
 			}
 			_claimProc=_claimProcOld.Copy();//revert back to the old ClaimProc.  Only important if not SaveToDb
 		}
-
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

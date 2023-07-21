@@ -362,20 +362,6 @@ namespace OpenDentBusiness{
 			return listEmpsWithClinic.GroupBy(x => x.EmployeeNum).Select(x => x.First()).ToList();//select distinct emps
 		}
 
-		///<summary>Gets employees from database. Returns an empty list if none found.</summary>
-		public static List<Employee> GetEmployeesForApi(int limit,int offset,long reportsTo) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Employee>>(MethodBase.GetCurrentMethod(),limit,offset,reportsTo);
-			}
-			string command="SELECT * FROM employee ";
-			if(reportsTo>-1) {
-				command+="WHERE ReportsTo="+POut.Long(reportsTo)+" ";
-			}
-			command+="ORDER BY employeenum "//Ensure order for limit and offset
-				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
-			return Crud.EmployeeCrud.SelectMany(command);
-		}
-
 		/// <summary> Returns -1 if employeeNum is not found.  0 if not hidden and 1 if hidden.</summary>		
 		public static int IsHidden(long employeeNum) {
 			//No need to check MiddleTierRole; no call to db.
@@ -397,7 +383,7 @@ namespace OpenDentBusiness{
 		public static int SortByFirstName(Employee x,Employee y) {
 			return x.FName.CompareTo(y.FName);
 		}
-
+		
 		/// <summary>sorting class used to sort Employee in various ways</summary>
 		public class EmployeeComparer:IComparer<Employee> {
 		

@@ -351,18 +351,19 @@ namespace OpenDental {
 				return true;
 			}
 			Prefs.RefreshCache();
-			if(!PrefC.IsAgingAllowedToStart()) {
+			DateTime dateTAgingBeganPref=PrefC.GetDateT(PrefName.AgingBeginDateTime);
+			if(dateTAgingBeganPref>DateTime.MinValue) {
 				msgText=Lan.g(this,"In order to manage accounts receivable, aging must be calculated, but you cannot run aging until it has finished the current "
-					+"calculations which began on")+" "+PrefC.GetDateT(PrefName.AgingBeginDateTime).ToString()+".\r\n"+Lans.g(this,"If you believe the current aging process has finished, "
+					+"calculations which began on")+" "+dateTAgingBeganPref.ToString()+".\r\n"+Lans.g(this,"If you believe the current aging process has finished, "
 					+"a user with SecurityAdmin permission can manually clear the date and time by going to Setup | Preferences | Account - General and pressing the 'Clear' button.");
 				MessageBox.Show(this,msgText);
 				return false;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.AgingRan,0,"Starting Aging - AR Manager");
+			SecurityLogs.MakeLogEntry(Permissions.AgingRan,0,"Starting Aging - AR Manager");
 			Prefs.UpdateString(PrefName.AgingBeginDateTime,POut.DateT(dtNow,false));//get lock on pref to block others
 			Signalods.SetInvalid(InvalidType.Prefs);//signal a cache refresh so other computers will have the updated pref as quickly as possible
 			msgText=Lan.g(this,"Calculating enterprise aging for all patients as of")+" "+dtToday.ToShortDateString()+"...";
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => { 
 				Ledgers.ComputeAging(0,dtToday);
 				Prefs.UpdateString(PrefName.DateLastAging,POut.Date(dtToday,false));
@@ -370,12 +371,12 @@ namespace OpenDental {
 			progressOD.StartingMessage=msgText;
 			progressOD.TestSleep=true;
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
 				Ledgers.AgingExceptionHandler(ex,this);
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.AgingRan,0,"Aging Complete - AR Manager");
+			SecurityLogs.MakeLogEntry(Permissions.AgingRan,0,"Aging Complete - AR Manager");
 			Prefs.UpdateString(PrefName.AgingBeginDateTime,"");//clear lock on pref whether aging was successful or not
 			Signalods.SetInvalid(InvalidType.Prefs);
 			AgingRanAuditHelper(isAutomatic);
@@ -385,10 +386,10 @@ namespace OpenDental {
 		///<summary>Creates "Aging Ran" audit trail entries.</summary>
 		private void AgingRanAuditHelper(bool isAutomatic) {
 			if(isAutomatic) {
-				SecurityLogs.MakeLogEntry(EnumPermType.AgingRan,0,"Aging Ran Automatically - AR Manager");
+				SecurityLogs.MakeLogEntry(Permissions.AgingRan,0,"Aging Ran Automatically - AR Manager");
 			}
 			else {
-				SecurityLogs.MakeLogEntry(EnumPermType.AgingRan,0,"Aging Ran - AR Manager");
+				SecurityLogs.MakeLogEntry(Permissions.AgingRan,0,"Aging Ran - AR Manager");
 			}
 		}
 
@@ -397,8 +398,8 @@ namespace OpenDental {
 			//aging list again so we don't have an out of memory error for large db's
 			//Also preservers sorting by column and vertical scroll position
 			int vScrollValue=gridSent.ScrollValue;
-			int sortedByColumnIndexOld=gridSent.GetSortedByColumnIdx();
-			bool isAscendingOld=gridSent.IsSortedAscending();
+			int sortedByColumnIndexOld=gridSent.SortedByColumnIdx;
+			bool isAscendingOld=gridSent.SortedIsAscending;
 			gridSent.BeginUpdate();//Clears selected indices.
 			gridSent.ListGridRows.Clear();
 			gridSent.EndUpdate();
@@ -407,8 +408,8 @@ namespace OpenDental {
 				gridSent.SortForced(sortedByColumnIndexOld,isAscendingOld);
 			}
 			vScrollValue=gridUnsent.ScrollValue;
-			sortedByColumnIndexOld=gridUnsent.GetSortedByColumnIdx();
-			isAscendingOld=gridUnsent.IsSortedAscending();
+			sortedByColumnIndexOld=gridUnsent.SortedByColumnIdx;
+			isAscendingOld=gridUnsent.SortedIsAscending;
 			gridUnsent.BeginUpdate();//Clears selected indices.
 			gridUnsent.ListGridRows.Clear();
 			gridUnsent.EndUpdate();
@@ -417,8 +418,8 @@ namespace OpenDental {
 				gridUnsent.SortForced(sortedByColumnIndexOld,isAscendingOld);
 			}
 			vScrollValue=gridExcluded.ScrollValue;
-			sortedByColumnIndexOld=gridExcluded.GetSortedByColumnIdx();
-			isAscendingOld=gridExcluded.IsSortedAscending();
+			sortedByColumnIndexOld=gridExcluded.SortedByColumnIdx;
+			isAscendingOld=gridExcluded.SortedIsAscending;
 			gridExcluded.BeginUpdate();//Clears selected indices.
 			gridExcluded.ListGridRows.Clear();
 			gridExcluded.EndUpdate();
@@ -427,7 +428,7 @@ namespace OpenDental {
 				gridExcluded.SortForced(sortedByColumnIndexOld,isAscendingOld);
 			}
 			string msgText=Lan.g(this,"Retrieving aging list as of")+" "+MiscData.GetNowDateTime().ToShortDateString()+"...";
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => { 
 				_listPatAgingSentAll=new List<PatAging>();
 				_listPatAgingUnsentAll=new List<PatAging>();
@@ -449,7 +450,7 @@ namespace OpenDental {
 				}
 			};
 			progressOD.StartingMessage=msgText;
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 		}
 		
 		private void FillGrids(bool retainSelection=true) {
@@ -499,23 +500,23 @@ namespace OpenDental {
 					}
 					if(colInternalName=="Guarantor") {
 						//+1 so label doesn't cover right side of textbox if it happens to follow a totals textbox
-						LayoutManager.MoveLocation(labelTotalNumAccounts,new Point(colLocWidthCur.Item1+1,gridCur.Bottom+LayoutManager.Scale(6)));
+						LayoutManager.MoveLocation(labelTotalNumAccounts,new Point(colLocWidthCur.Item1+1,gridCur.Bottom+6));
 						labelTotalNumAccounts.Visible=true;
 						//+2 to account for +1 above and a 1 pixel space between label and textbox
-						LayoutManager.MoveLocation(textBoxCur,new Point(colLocWidthCur.Item1+labelTotalNumAccounts.Width+2,gridCur.Bottom+LayoutManager.Scale(4)));
+						LayoutManager.MoveLocation(textBoxCur,new Point(colLocWidthCur.Item1+labelTotalNumAccounts.Width+2,gridCur.Bottom+4));
 						//width of label+width of textbox+2 will be width of Guarantor column up to a max textbox width of 65, which will hold at least 10 digits,
 						//so works for all numbers of accounts up to 9,999,999,999.  It is highly unlikely that any customer will ever have 10 billion guarantors
 						//in their aging list.  (That's more than the number of people on the planet, as of 6/27/2018 anyway.)
-						LayoutManager.MoveWidth(textBoxCur,Math.Max(Math.Min(colLocWidthCur.Item2-labelTotalNumAccounts.Width-1,LayoutManager.Scale(65)),1));
+						LayoutManager.MoveWidth(textBoxCur,Math.Max(Math.Min(colLocWidthCur.Item2-labelTotalNumAccounts.Width-1,65),1));
 						continue;
 					}
 					if(firstCol) {
 						//left of the first textbox label width+1 for a space between label and textbox
-						LayoutManager.MoveLocation(labelTotals,new Point(colLocWidthCur.Item1-labelTotals.Width-1,gridCur.Bottom+LayoutManager.Scale(6)));
+						LayoutManager.MoveLocation(labelTotals,new Point(colLocWidthCur.Item1-labelTotals.Width-1,gridCur.Bottom+6));
 						labelTotals.Visible=true;
 						firstCol=false;
 					}
-					LayoutManager.MoveLocation(textBoxCur,new Point(colLocWidthCur.Item1,gridCur.Bottom+LayoutManager.Scale(4)));//set location and width to the column's x-pos and width
+					LayoutManager.MoveLocation(textBoxCur,new Point(colLocWidthCur.Item1,gridCur.Bottom+4));//set location and width to the column's x-pos and width
 					LayoutManager.MoveWidth(textBoxCur,colLocWidthCur.Item2);
 				}
 			}
@@ -546,8 +547,8 @@ namespace OpenDental {
 			if(!(pAgeIndex is int) || (int)pAgeIndex<0 || (int)pAgeIndex>=listPatAgingsAll.Count) {
 				return;
 			}
-			GlobalFormOpenDental.PatientSelected(Patients.GetPat(listPatAgingsAll[(int)pAgeIndex].PatNum),false);
-			GlobalFormOpenDental.GotoAccount(0);
+			FormOpenDental.S_Contr_PatientSelected(Patients.GetPat(listPatAgingsAll[(int)pAgeIndex].PatNum),false);
+			GotoModule.GotoAccount(0);
 			SendToBack();
 		}
 
@@ -822,7 +823,7 @@ namespace OpenDental {
 				string logTxt="Patient billing type changed from '"+Defs.GetName(DefCat.BillingTypes,pat.BillingType)+"' to '"
 					+Defs.GetName(DefCat.BillingTypes,aging.BillingType)+"' due to the account being marked as "+strNot+"excluded from being sent to "
 					+"Transworld from the A/R Manager.";
-				SecurityLogs.MakeLogEntry(EnumPermType.PatientBillingEdit,pat.PatNum,logTxt);
+				SecurityLogs.MakeLogEntry(Permissions.PatientBillingEdit,pat.PatNum,logTxt);
 			}
 			FillGridExcluded(false);
 			FillGridUnsent(false);
@@ -837,8 +838,8 @@ namespace OpenDental {
 			Dictionary<string,Tuple<int,int>> retval=new Dictionary<string,Tuple<int,int>>();
 			int xPos=grid.Location.X-hScrollValue;
 			foreach(GridColumn column in grid.Columns) {
-				retval[column.Heading]=Tuple.Create(xPos+1,LayoutManager.Scale(column.ColWidth)+1);//+1 because the textbox lines seem to be slightly thinner than the grid column lines
-				xPos+=LayoutManager.Scale(column.ColWidth);
+				retval[column.Heading]=Tuple.Create(xPos+1,column.ColWidth+1);//+1 because the textbox lines seem to be slightly thinner than the grid column lines
+				xPos+=column.ColWidth;
 			}
 			return retval;
 		}
@@ -852,8 +853,8 @@ namespace OpenDental {
 			List<int> listPatAgingIndexFiltered=GetPatAgingIndexUnsentFiltered();
 			#region Set Grid Title and Columns
 			int vScrollValue=gridUnsent.ScrollValue;
-			int sortedByColumnIndexOld=gridUnsent.GetSortedByColumnIdx();
-			bool isAscendingOld=gridUnsent.IsSortedAscending();
+			int sortedByColumnIndexOld=gridUnsent.SortedByColumnIdx;
+			bool isAscendingOld=gridUnsent.SortedIsAscending;
 			gridUnsent.BeginUpdate();
 			gridUnsent.Columns.Clear();
 			List<DisplayField> listDisplayFields=DisplayFields.GetForCategory(DisplayFieldCategory.ArManagerUnsentGrid);
@@ -1277,7 +1278,7 @@ namespace OpenDental {
 
 		private void butSend_Click(object sender,EventArgs e) {
 			#region Get and Validate Data
-			if(!Security.IsAuthorized(EnumPermType.Billing)) {
+			if(!Security.IsAuthorized(Permissions.Billing)) {
 				return;
 			}
 			GridOD gridCur=(tabControlMain.SelectedTab==tabUnsent ? gridUnsent : gridExcluded);
@@ -1286,7 +1287,7 @@ namespace OpenDental {
 				return;
 			}
 			if(_collectionBillType==null) {
-				if(Security.IsAuthorized(EnumPermType.DefEdit)
+				if(Security.IsAuthorized(Permissions.DefEdit)
 					&& MsgBox.Show(this,MsgBoxButtons.YesNo,"There must be a collections billing type defined in order to send accounts to TSI.  Would you like "
 						+"to open the definitions window now to create a collections billing type?"))
 				{
@@ -1577,10 +1578,10 @@ namespace OpenDental {
 					TaskStateUpload state=new Sftp.Upload(sftpAddress,userName,userPassword,sftpPort) {
 						Folder="/xfer/incoming",
 						FileName="TsiPlacements_"+DateTime.Now.ToString("yyyyMMddhhmmss")+".txt",
-						ByteArray=fileContents,
+						FileContent=fileContents,
 						HasExceptions=true
 					};
-					state.Execute();
+					state.Execute(false);
 				}
 				catch(Exception ex) {
 					ex.DoNothing();
@@ -1603,7 +1604,7 @@ namespace OpenDental {
 					}
 					string logTxt="Patient billing type changed from '"+Defs.GetName(DefCat.BillingTypes,pat.BillingType)+"' to '"+_collectionBillType.ItemName
 						+"' due to the account being sent to Transworld from the A/R Manager.";
-					SecurityLogs.MakeLogEntry(EnumPermType.PatientBillingEdit,pat.PatNum,logTxt);
+					SecurityLogs.MakeLogEntry(Permissions.PatientBillingEdit,pat.PatNum,logTxt);
 				}
 			}
 			#endregion Send Clinic Batch Placement Files, Insert TsiTransLogs, and Update Patient Billing Types
@@ -1630,10 +1631,10 @@ namespace OpenDental {
 					TaskStateUpload state=new Sftp.Upload(sftpAddress,userName,userPassword,sftpPort) {
 						Folder="/xfer/incoming",
 						FileName="TsiUpdates_"+DateTime.Now.ToString("yyyyMMddhhmmss")+".txt",
-						ByteArray=fileContents,
+						FileContent=fileContents,
 						HasExceptions=true
 					};
-					state.Execute();
+					state.Execute(false);
 				}
 				catch(Exception ex) {
 					ex.DoNothing();
@@ -1656,7 +1657,7 @@ namespace OpenDental {
 					}
 					string logTxt="Patient billing type changed from '"+Defs.GetName(DefCat.BillingTypes,pat.BillingType)+"' to '"+_collectionBillType.ItemName
 						+"' due to a status update message being sent to Transworld from the A/R manager.";
-					SecurityLogs.MakeLogEntry(EnumPermType.PatientBillingEdit,pat.PatNum,logTxt);
+					SecurityLogs.MakeLogEntry(Permissions.PatientBillingEdit,pat.PatNum,logTxt);
 				}
 			}
 			#endregion Send Clinic Batch Update Files, Insert TsiTransLogs, and Update Patient Billing Types
@@ -1696,8 +1697,8 @@ namespace OpenDental {
 			List<int> listPatAgingIndexFiltered=GetPatAgingIndexSentFiltered();
 			#region Set Grid Title and Columns
 			int vScrollValue=gridSent.ScrollValue;
-			int sortedByColumnIndexOld=gridSent.GetSortedByColumnIdx();
-			bool isAscendingOld=gridSent.IsSortedAscending();
+			int sortedByColumnIndexOld=gridSent.SortedByColumnIdx;
+			bool isAscendingOld=gridSent.SortedIsAscending;
 			gridSent.BeginUpdate();
 			gridSent.Columns.Clear();
 			List<DisplayField> listDisplayFields=DisplayFields.GetForCategory(DisplayFieldCategory.ArManagerSentGrid);
@@ -1984,7 +1985,7 @@ namespace OpenDental {
 
 		private void butUpdateStatus_Click(object sender,EventArgs e) {
 			#region Get and Validate Data
-			if(!Security.IsAuthorized(EnumPermType.Billing)) {
+			if(!Security.IsAuthorized(Permissions.Billing)) {
 				return;
 			}
 			if(comboNewStatus.SelectedIndex<0 || comboNewStatus.SelectedIndex>=_listNewStatuses.Count) {
@@ -2122,10 +2123,10 @@ namespace OpenDental {
 					TaskStateUpload state=new Sftp.Upload(sftpAddress,userName,userPassword,sftpPort) {
 						Folder="/xfer/incoming",
 						FileName="TsiUpdates_"+DateTime.Now.ToString("yyyyMMddhhmmss")+".txt",
-						ByteArray=fileContents,
+						FileContent=fileContents,
 						HasExceptions=true
 					};
-					state.Execute();
+					state.Execute(false);
 				}
 				catch(Exception ex) {
 					ex.DoNothing();
@@ -2149,7 +2150,7 @@ namespace OpenDental {
 					}
 					string logTxt="Patient billing type changed from '"+Defs.GetName(DefCat.BillingTypes,pat.BillingType)+"' to '"+billTypeUpdate.ItemName
 						+"' due to a status update message being sent to Transworld from the A/R manager.";
-					SecurityLogs.MakeLogEntry(EnumPermType.PatientBillingEdit,pat.PatNum,logTxt);
+					SecurityLogs.MakeLogEntry(Permissions.PatientBillingEdit,pat.PatNum,logTxt);
 				}
 			}
 			#endregion Send Clinic Batch Files, Insert TsiTransLogs, and Update Patient Billing Types
@@ -2174,8 +2175,8 @@ namespace OpenDental {
 			List<int> listPatAgingIndexFiltered=GetPatAgingIndexExcludedFiltered();
 			#region Set Grid Title and Columns
 			int vScrollValue=gridExcluded.ScrollValue;
-			int sortedByColumnIndexOld=gridExcluded.GetSortedByColumnIdx();
-			bool isAscendingOld=gridExcluded.IsSortedAscending();
+			int sortedByColumnIndexOld=gridExcluded.SortedByColumnIdx;
+			bool isAscendingOld=gridExcluded.SortedIsAscending;
 			gridExcluded.BeginUpdate();
 			gridExcluded.Columns.Clear();
 			List<DisplayField> listDisplayFields=DisplayFields.GetForCategory(DisplayFieldCategory.ArManagerExcludedGrid);
@@ -2463,6 +2464,10 @@ namespace OpenDental {
 			}
 		}
 		#endregion Excluded Tab Methods
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 
 		private void FormArManager_FormClosing(object sender,FormClosingEventArgs e) {
 			timerFillGrid?.Dispose();

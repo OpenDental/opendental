@@ -93,7 +93,7 @@ namespace OpenDental {
 				groupNotUsed.Visible=true;
 				butShowOldMobileSych.Visible=true;
 			}
-			bool allowEdit=Security.IsAuthorized(EnumPermType.EServicesSetup,suppressMessage:true);
+			bool allowEdit=Security.IsAuthorized(Permissions.EServicesSetup,suppressMessage:true);
 			dateRunStart.Enabled=allowEdit;
 			dateRunEnd.Enabled=allowEdit;
 			groupDateFormat.Enabled=allowEdit;
@@ -155,7 +155,7 @@ namespace OpenDental {
 			formEServicesMobileSynch.ShowDialog();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(radioDateCustom.Checked) {
 				bool isValidFormat=true;
 				if(textDateCustom.Text.Trim()=="") {

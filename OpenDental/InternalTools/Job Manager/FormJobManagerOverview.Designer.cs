@@ -70,7 +70,7 @@ namespace OpenDental{
 			this.toolMainLeft = new System.Windows.Forms.ToolStrip();
 			this.butJobsReport = new System.Windows.Forms.ToolStripButton();
 			this.butSprintManager = new System.Windows.Forms.ToolStripButton();
-			this.butJobTeamReport = new System.Windows.Forms.ToolStripButton();
+			this.toolStripReporting = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
 			this.butHomePage = new System.Windows.Forms.ToolStripButton();
@@ -80,8 +80,6 @@ namespace OpenDental{
 			this.butPreviousVersions = new System.Windows.Forms.ToolStripButton();
 			this.butUserGroup = new System.Windows.Forms.ToolStripButton();
 			this.butSchedules = new System.Windows.Forms.ToolStripButton();
-			this.panelJobTeamReport = new System.Windows.Forms.Panel();
-			this.userControlJobTeamReport = new OpenDental.InternalTools.Job_Manager.UserControlTeamReport();
 			this.panelSprintManager.SuspendLayout();
 			this.tablePanelSprintManager.SuspendLayout();
 			this.panel3.SuspendLayout();
@@ -96,7 +94,6 @@ namespace OpenDental{
 			this.groupCompletedDateRange.SuspendLayout();
 			this.groupPresetFilters.SuspendLayout();
 			this.toolMainLeft.SuspendLayout();
-			this.panelJobTeamReport.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// panelSprintManager
@@ -552,7 +549,7 @@ namespace OpenDental{
 			this.toolMainLeft.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.butJobsReport,
             this.butSprintManager,
-            this.butJobTeamReport,
+            this.toolStripReporting,
             this.toolStripSeparator1,
             this.toolStripLabel1,
             this.butHomePage,
@@ -589,14 +586,15 @@ namespace OpenDental{
 			this.butSprintManager.Text = "Sprint Manager";
 			this.butSprintManager.Click += new System.EventHandler(this.butSprintManager_Click);
 			// 
-			// butJobTeamReport
+			// toolStripReporting
 			// 
-			this.butJobTeamReport.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.butJobTeamReport.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.butJobTeamReport.Name = "butJobTeamReport";
-			this.butJobTeamReport.Size = new System.Drawing.Size(102, 19);
-			this.butJobTeamReport.Text = "Team Report";
-			this.butJobTeamReport.Click += new System.EventHandler(this.butJobTeamReport_Click);
+			this.toolStripReporting.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.toolStripReporting.Enabled = false;
+			this.toolStripReporting.Image = ((System.Drawing.Image)(resources.GetObject("toolStripReporting.Image")));
+			this.toolStripReporting.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripReporting.Name = "toolStripReporting";
+			this.toolStripReporting.Size = new System.Drawing.Size(102, 19);
+			this.toolStripReporting.Text = "Reporting";
 			// 
 			// toolStripSeparator1
 			// 
@@ -680,29 +678,11 @@ namespace OpenDental{
 			this.butSchedules.Text = "Schedules";
 			this.butSchedules.Click += new System.EventHandler(this.butSchedules_Click);
 			// 
-			// panelJobTeamReport
-			// 
-			this.panelJobTeamReport.Controls.Add(this.userControlJobTeamReport);
-			this.panelJobTeamReport.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panelJobTeamReport.Location = new System.Drawing.Point(105, 0);
-			this.panelJobTeamReport.Name = "panelJobTeamReport";
-			this.panelJobTeamReport.Size = new System.Drawing.Size(1403, 778);
-			this.panelJobTeamReport.TabIndex = 17;
-			// 
-			// userControlJobTeamReport
-			// 
-			this.userControlJobTeamReport.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.userControlJobTeamReport.Location = new System.Drawing.Point(0, 0);
-			this.userControlJobTeamReport.Name = "userControlJobTeamReport";
-			this.userControlJobTeamReport.Size = new System.Drawing.Size(1403, 778);
-			this.userControlJobTeamReport.TabIndex = 0;
-			// 
 			// FormJobManagerOverview
 			// 
 			this.ClientSize = new System.Drawing.Size(1508, 778);
 			this.Controls.Add(this.panelJobsReport);
 			this.Controls.Add(this.panelSprintManager);
-			this.Controls.Add(this.panelJobTeamReport);
 			this.Controls.Add(this.toolMainLeft);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormJobManagerOverview";
@@ -726,7 +706,6 @@ namespace OpenDental{
 			this.groupPresetFilters.PerformLayout();
 			this.toolMainLeft.ResumeLayout(false);
 			this.toolMainLeft.PerformLayout();
-			this.panelJobTeamReport.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -759,7 +738,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Panel panelSprintManager;
 		private System.Windows.Forms.ToolStripButton butSprintManager;
 		private System.Windows.Forms.ToolStripButton butJobsReport;
-		private System.Windows.Forms.ToolStripButton butJobTeamReport;
+		private System.Windows.Forms.ToolStripButton toolStripReporting;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 		private System.Windows.Forms.ToolStripLabel toolStripLabel1;
 		private System.Windows.Forms.ToolStripButton butHomePage;
@@ -789,7 +768,5 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelWithinLastXDays;
 		private UI.GridOD gridEngineerHours;
 		private UI.Button butFixTopParents;
-		private System.Windows.Forms.Panel panelJobTeamReport;
-		private InternalTools.Job_Manager.UserControlTeamReport userControlJobTeamReport;
 	}
 }

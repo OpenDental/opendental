@@ -1789,7 +1789,7 @@ namespace OpenDentBusiness {
 			}
 			if(Crud.PatientCrud.UpdateComparison(patDb,patDbOld)) {
 				Patients.Update(patDb,patDbOld);
-				SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,patDb.PatNum,"Demographics edited from Import Ins Plans 834.",LogSources.InsPlanImport834);
+				SecurityLogs.MakeLogEntry(Permissions.PatientEdit,patDb.PatNum,"Demographics edited from Import Ins Plans 834.",LogSources.InsPlanImport834);
 			}
 			return patDb;
 		}

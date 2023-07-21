@@ -66,7 +66,7 @@ namespace OpenDental {
 			if(_hasPrintPreviewOnLoad) {
 				//This way the form will fully load visually before showing the print preview.
 				EtransL.PrintPreview835(_x835,_preLoadedPrintPreviewClaimNum);
-				SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,0,"ERA EOB window opened for eTrans number: "+EtransCur.EtransNum+", Carrier: "+_x835.PayerName+", Amount: "+_x835.InsPaid+", Date: "+EtransCur.DateTimeTrans+".");
+				SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,0,"ERA EOB window opened for eTrans number: "+EtransCur.EtransNum+", Carrier: "+_x835.PayerName+", Amount: "+_x835.InsPaid+", Date: "+EtransCur.DateTimeTrans+".");
 			}
 		}
 
@@ -79,7 +79,7 @@ namespace OpenDental {
 			if(_x835==null) {
 				return;
 			}
-			gridProviderAdjustments.Width=butSave.Right-gridProviderAdjustments.Left;
+			gridProviderAdjustments.Width=butOK.Right-gridProviderAdjustments.Left;
 			FillProviderAdjustmentDetails();//Because the grid columns change size depending on the form size.
 			gridClaimDetails.Width=gridProviderAdjustments.Width;
 			gridClaimDetails.Height=labelPaymentAmount.Top-5-gridClaimDetails.Top;
@@ -308,8 +308,7 @@ namespace OpenDental {
 			}
 			//From this point on claim is not null.
 			Patient patient=Patients.GetPat(claim.PatNum);
-			bool doesPatientNameMatch=hx835_Claim.DoesPatientNameMatch(patient);
-			if(!doesPatientNameMatch) {
+			if(hx835_Claim.IsPatientNameMisMatched(patient)) {
 				MsgBox.Show(this,"A matching claim was found, but the patient name the carrier sent does not match the patient on the claim.");
 			}
 			bool isReadOnly=true;
@@ -324,14 +323,14 @@ namespace OpenDental {
 			if(hx835_Claim.IsProcessed(_listHx835_ShortClaimProcs,_listEtrans835Attaches)) {
 				//If the claim is already received, then we do not allow the user to enter payments.
 				//The user can edit the claim to change the status from received if they wish to enter the payments again.
-				if(Security.IsAuthorized(EnumPermType.ClaimView)) {
+				if(Security.IsAuthorized(Permissions.ClaimView)) {
 					Family family=Patients.GetFamily(claim.PatNum);
 					using FormClaimEdit formClaimEdit=new FormClaimEdit(claim,patient,family);
 					formClaimEdit.ShowDialog();//Modal, because the user could edit information in this window.
 				}
 				isReadOnly=false;
 			}
-			else if(Security.IsAuthorized(EnumPermType.InsPayCreate)) {//Claim found and is not received.  Date not checked here, but it will be checked when actually creating the check.
+			else if(Security.IsAuthorized(Permissions.InsPayCreate)) {//Claim found and is not received.  Date not checked here, but it will be checked when actually creating the check.
 				List<ClaimProc> listClaimProcsForClaim=ClaimProcs.RefreshForClaim(claim.ClaimNum);
 				EtransL.ImportEraClaimData(_x835,hx835_Claim,claim,patient,listClaimProcsForClaim);
 				RefreshFromDb();//ClaimProcs could have been split, need to refresh both claimProc list and attaches.
@@ -520,20 +519,20 @@ namespace OpenDental {
 
 		///<summary>Attempt to automatically process all claims on the ERA and finalize the payment.</summary>
 		private void butAutoProcess_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPayCreate,MiscData.GetNowDateTime().Date)) {
+			if(!Security.IsAuthorized(Permissions.InsPayCreate,MiscData.GetNowDateTime().Date)) {
 				return;//The user does not have permission to create an insurance payment for today's date.
 			}
 			bool doAutoDeposit=PrefC.GetBool(PrefName.ShowAutoDeposit);
-			if(doAutoDeposit && !Security.IsAuthorized(EnumPermType.DepositSlips,MiscData.GetNowDateTime().Date)) {
+			if(doAutoDeposit && !Security.IsAuthorized(Permissions.DepositSlips,MiscData.GetNowDateTime().Date)) {
 				return;//An auto deposit would be created and the user does not have permission to create deposits.
 			}
 			List<Hx835_ShortClaim> listHx835_ShortClaims=_x835.RefreshClaims().Select(x => new Hx835_ShortClaim(x)).ToList();
-			X835Status x835Status=_x835.GetStatus(_x835.GetClaimDataList(listHx835_ShortClaims),_listHx835_ShortClaimProcs,_listEtrans835Attaches);
+			X835Status x835Status=_x835.GetStatus(listHx835_ShortClaims,_listHx835_ShortClaimProcs,_listEtrans835Attaches);
 			if(!x835Status.In(X835Status.Unprocessed,X835Status.Partial,X835Status.NotFinalized)) {
 				MsgBox.Show(this,"Only ERAs with a status of Unprocessed, Partial, or NotFinalized can be processed automatically.");
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,0,"ERA auto-process button clicked.");
+			SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,0,"ERA auto-process button clicked.");
 			Cursor=Cursors.WaitCursor;
 			EraAutomationResult eraAutomationResult=eraAutomationResult=Etranss.TryAutoProcessEraEob(_x835,_listEtrans835Attaches,isFullyAutomatic:false);
 			RefreshFromDb();
@@ -541,7 +540,7 @@ namespace OpenDental {
 			List<EraAutomationResult> listEraAutomationResults=new List<EraAutomationResult>();
 			listEraAutomationResults.Add(eraAutomationResult);
 			string automationResultMessage=EraAutomationResult.CreateMessage(listEraAutomationResults,isForSingleEra:true);
-			textNote.Text=EraAutomationResult.CreateEtransNote(eraAutomationResult.Status,textNote.Text,eraAutomationResult.CountProcessedClaimsWithNameMismatch);
+			textNote.Text=EraAutomationResult.CreateEtransNote(eraAutomationResult.Status,textNote.Text);
 			EtransCur.Note=textNote.Text;
 			Etrans835 etrans835=Etrans835s.GetByEtransNums(EtransCur.EtransNum).FirstOrDefault();
 			if(etrans835==null) {
@@ -588,12 +587,17 @@ namespace OpenDental {
 			Close();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			EtransCur.Note=textNote.Text;//update happens in FormClosing
 			DialogResult=DialogResult.OK;
 			if(PrefC.GetBool(PrefName.AgingCalculateOnBatchClaimReceipt)) {
 				RunAgingForClaims();
 			}
+			Close();
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 			Close();
 		}
 
@@ -620,7 +624,7 @@ namespace OpenDental {
 			}
 			Etrans835s.Upsert(etrans835,_x835);
 			_formEtrans835Edit=null;
-			SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,0,"ERA edit window closed for eTrans number: "+EtransCur.EtransNum+", Carrier: "+_x835.PayerName+", Amount: "+_x835.InsPaid+", Date: "+EtransCur.DateTimeTrans+".");
+			SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,0,"ERA edit window closed for eTrans number: "+EtransCur.EtransNum+", Carrier: "+_x835.PayerName+", Amount: "+_x835.InsPaid+", Date: "+EtransCur.DateTimeTrans+".");
 		}
 		
 	}

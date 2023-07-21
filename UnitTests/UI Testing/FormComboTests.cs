@@ -83,10 +83,10 @@ namespace UnitTests{
 			cPlusMulti2.SetSelected(2);
 			cPlus2.SetSelected(2);
 			comboBoxMS.SelectedIndex=2;
-			cClinic.ClinicNumSelected=2;
-			cClinicMulti.ClinicNumSelected=2;
-			cClinic2.ClinicNumSelected=2;
-			cClinicMulti2.ClinicNumSelected=2;
+			cClinic.SelectedClinicNum=2;
+			cClinicMulti.SelectedClinicNum=2;
+			cClinic2.SelectedClinicNum=2;
+			cClinicMulti2.SelectedClinicNum=2;
 			//listboxes------------------------------------------
 			if(_useStringsForListBox) {
 				for(int i=0;i<20;i++){
@@ -159,7 +159,7 @@ namespace UnitTests{
 		}
 
 		private void ButTest_Click(object sender, EventArgs e){
-			List<long> listLong=cClinicMultiL.ListClinicNumsSelected;
+			List<long> listLong=cClinicMultiL.ListSelectedClinicNums;
 		}
 
 		// Generate a random string with a given size  

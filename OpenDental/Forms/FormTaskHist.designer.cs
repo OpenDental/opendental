@@ -24,8 +24,19 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTaskHist));
+			this.butOK = new OpenDental.UI.Button();
 			this.gridTaskHist = new OpenDental.UI.GridOD();
 			this.SuspendLayout();
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(749, 365);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "Close";
+			this.butOK.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridTaskHist
 			// 
@@ -35,7 +46,7 @@ namespace OpenDental{
 			this.gridTaskHist.Location = new System.Drawing.Point(12, 12);
 			this.gridTaskHist.Name = "gridTaskHist";
 			this.gridTaskHist.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridTaskHist.Size = new System.Drawing.Size(741, 392);
+			this.gridTaskHist.Size = new System.Drawing.Size(731, 377);
 			this.gridTaskHist.TabIndex = 5;
 			this.gridTaskHist.Title = "History";
 			this.gridTaskHist.TranslationName = "TableHist";
@@ -43,7 +54,8 @@ namespace OpenDental{
 			// FormTaskHist
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(765, 416);
+			this.ClientSize = new System.Drawing.Size(836, 416);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.gridTaskHist);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormTaskHist";
@@ -55,6 +67,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butOK;
 		private UI.GridOD gridTaskHist;
 	}
 }

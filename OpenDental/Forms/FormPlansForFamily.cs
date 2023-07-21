@@ -19,7 +19,11 @@ namespace OpenDental{
 		private List<InsSub> _listInsSubs;
 
 		///<summary></summary>
-		public FormPlansForFamily() {
+		public FormPlansForFamily()
+		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
@@ -82,6 +86,39 @@ namespace OpenDental{
 			formInsPlan.ShowDialog();
 			FillGrid();
 		}
+		
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
+		
+
+		
+
+
+		
+
 
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

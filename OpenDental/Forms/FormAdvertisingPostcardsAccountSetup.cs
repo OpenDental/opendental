@@ -35,6 +35,7 @@ namespace OpenDental {
 				labelMobile.Visible=false;
 				textPhone.Visible=false;
 				labelPhone.Visible=false;
+				butAdd.Text="Update";
 				butViewAccount.Visible=true;
 				labelRequiredFields.Visible=false;
 			}
@@ -72,12 +73,12 @@ namespace OpenDental {
 				guid=AccountDataEditing.Guid;
 			}
 			try {
-				UI.ProgressWin progressOD=new UI.ProgressWin();
+				UI.ProgressOD progressOD=new UI.ProgressOD();
 				progressOD.ActionMain=() => {
 					AdvertisingPostcards.ManageAccount(textAccountTitle.Text,guid,textEmail.Text,textFirstName.Text,textLastName.Text,phone:textPhone.Text,mobile:textMobile.Text);
 				};
 				progressOD.StartingMessage=Lan.g(this,"Uploading Account Data")+"...";
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 				if(progressOD.IsCancelled){
 					return false;
 				}
@@ -91,14 +92,14 @@ namespace OpenDental {
 
 		private void butViewAccount_Click(object sender,EventArgs e) {
 			string url="";
-			SecurityLogs.MakeLogEntry(EnumPermType.Advertising,0,$"Navigated to Advertising - Postcards web framework for {AccountDataEditing.AccountTitle}");	
+			SecurityLogs.MakeLogEntry(Permissions.Advertising,0,$"Navigated to Advertising - Postcards web framework for {AccountDataEditing.AccountTitle}");	
 			try {
-				UI.ProgressWin progressOD=new UI.ProgressWin();
+				UI.ProgressOD progressOD=new UI.ProgressOD();
 				progressOD.ActionMain=() => {
 					url=AdvertisingPostcards.GetSSO(AccountDataEditing.Guid,AccountDataEditing.Email);
 				};
 				progressOD.StartingMessage=Lan.g(this,"Getting Account Data")+"...";
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 				if(progressOD.IsCancelled){
 					return;
 				}
@@ -107,14 +108,13 @@ namespace OpenDental {
 				FriendlyException.Show(ex.Message,ex);
 				return;
 			}
-			using FormWebView fweb=new FormWebView();
-			fweb.UrlBrowseTo=url;
+			using FormWebView fweb=new FormWebView(url);
 			fweb.Title=Lan.g(this,"Advertising - Postcards");
 			fweb.IsUrlSingleUse=true;
 			fweb.ShowDialog();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!ValidateFields()) {
 				return;
 			}
@@ -125,5 +125,9 @@ namespace OpenDental {
 			Close();
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+			Close();
+		}
 	}
 }

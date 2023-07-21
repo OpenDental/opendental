@@ -25,7 +25,11 @@ namespace OpenDentBusiness {
 				return;
 			}
 			Dictionary<ConnectionNames,CentralConnection> dictHqCentralConnections=null;
-			if(ODBuild.IsDebug() && !ODBuild.IsUnitTest) {
+			//This is temporary and should be removed:
+			//if(ODBuild.IsDebug() && Environment.MachineName.ToLower()=="jordancryo"){
+			//	ODInitialize.IsRunningInUnitTest=true;
+			//}
+			if(ODBuild.IsDebug() && !ODInitialize.IsRunningInUnitTest) {
 				//The database will typically have connection settings to live databases that should not be used in debug mode.
 				//Use the hard coded connection settings which developers can change as needed.
 				dictHqCentralConnections=new Dictionary<ConnectionNames,CentralConnection>() {
@@ -164,19 +168,9 @@ namespace OpenDentBusiness {
 			Run(a,ConnectionNames.ServicesHQ);
 		}
 
-		///<summary>HQ only. Perform the given action in the context of the eServices logger db.</summary>
-		public static void RunEServicesLogger(Action a) {
-			Run(a,ConnectionNames.ServicesHQLog);
-		}
-
 		///<summary>HQ only. Perform the given action in the context of the headmaster db.</summary>
 		public static void RunHeadmaster(Action a) {
 			Run(a,ConnectionNames.Headmaster);
-		}
-
-		///<summary>HQ only. Perform the given action in the context of the headmaster db.</summary>
-		public static void RunHosting(Action a) {
-			Run(a,ConnectionNames.Hosting);
 		}
 
 		///<summary>Perform the given action in the context of the manual publisher db (jordans_mp)
@@ -234,11 +228,6 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		///<summary>Perform the given action in the context of the supplementalbackups db.</summary>
-		public static void RunSupplementalBackups(Action a) {
-			Run(a,ConnectionNames.SupplementalBackups);
-		}
-
 		///<summary>HQ only. Perform the given action in the context of the designated 'triage tasks taken' database.
 		///The connection information for this context will come from the implimentation of ConnectionStoreBase.GetTriageHQ() so make sure to instantiate that correctly prior to invoking this.</summary>
 		public static void RunTriageHQ(Action a) {
@@ -280,14 +269,6 @@ namespace OpenDentBusiness {
 			return GetT(fn,ConnectionNames.ServicesHQ);
 		}
 
-		public static T GetEServicesLogger<T>(Func<T> fn) {
-			return GetT(fn,ConnectionNames.ServicesHQLog);
-		}
-
-		public static T GetHeadmaster<T>(Func<T> fn) {
-			return GetT(fn,ConnectionNames.Headmaster);
-		}
-
 		///<summary>Perform the given function in the context of the hosting db.</summary>
 		public static T GetHosting<T>(Func<T> fn) {
 			return GetT(fn,ConnectionNames.Hosting);
@@ -312,11 +293,6 @@ namespace OpenDentBusiness {
 		///<summary>Perform the given function in the context of the webforms db.</summary>
 		public static T GetWebForms<T>(Func<T> fn) {
 			return GetT(fn,ConnectionNames.WebForms);
-		}
-
-		///<summary>Perform the given function in the context of the supplementalbackups db.</summary>
-		public static T GetSupplementalBackups<T>(Func<T> fn) {
-			return GetT(fn,ConnectionNames.SupplementalBackups);
 		}
 		#endregion
 		#endregion

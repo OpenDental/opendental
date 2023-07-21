@@ -53,7 +53,7 @@ namespace OpenDental {
 			labelCount.Text=textMessage.Text.Length.ToString()+"/100";
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(radioAllowWithMessage.Checked || radioBlock.Checked) {
 				if(string.IsNullOrEmpty(textMessage.Text.Trim())) {
 					MsgBox.Show(this,"Rules that have the Rule Type of \"Allow With Message\" or \"Block With Message\" must contain a message.");
@@ -82,5 +82,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

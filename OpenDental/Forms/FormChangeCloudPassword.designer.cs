@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormChangeCloudPassword));
 			this.butChange = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.label3 = new System.Windows.Forms.Label();
 			this.textOldPass = new System.Windows.Forms.TextBox();
 			this.textNewPass = new System.Windows.Forms.TextBox();
@@ -41,6 +42,17 @@ namespace OpenDental{
 			this.butChange.TabIndex = 9;
 			this.butChange.Text = "Change";
 			this.butChange.Click += new System.EventHandler(this.butChange_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(423, 170);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 12;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// label3
 			// 
@@ -98,8 +110,9 @@ namespace OpenDental{
 			// 
 			// FormChangeCloudPassword
 			// 
-			this.ClientSize = new System.Drawing.Size(476, 185);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.CancelButton = this.butClose;
+			this.ClientSize = new System.Drawing.Size(510, 206);
 			this.Controls.Add(this.checkShow);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.label1);
@@ -107,6 +120,7 @@ namespace OpenDental{
 			this.Controls.Add(this.textOldPass);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.butChange);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormChangeCloudPassword";
 			this.Text = "Change Office Password";
@@ -119,6 +133,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butChange;
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label label3;
 		public System.Windows.Forms.TextBox textOldPass;
 		public System.Windows.Forms.TextBox textNewPass;

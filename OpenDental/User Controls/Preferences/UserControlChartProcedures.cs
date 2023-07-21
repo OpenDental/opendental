@@ -24,13 +24,13 @@ namespace OpenDental {
 		#region Methods - Event Handlers
 		private void checkClaimProcsAllowEstimatesOnCompl_Click(object sender,EventArgs e) {
 			if(checkClaimProcsAllowEstimatesOnCompl.Checked) {//user is attempting to Allow Estimates to be created for backdated complete procedures
-				InputBox inputBox=new InputBox("Please enter password");
+				using InputBox inputBox=new InputBox("Please enter password");
 				inputBox.ShowDialog();
-				if(inputBox.IsDialogCancel) {
+				if(inputBox.DialogResult!=DialogResult.OK) {
 					checkClaimProcsAllowEstimatesOnCompl.Checked=false;
 					return;
 				}
-				if(inputBox.StringResult!="abracadabra") {//To prevent unaware users from clicking this box
+				if(inputBox.textResult.Text!="abracadabra") {//To prevent unaware users from clicking this box
 					checkClaimProcsAllowEstimatesOnCompl.Checked=false;
 					MsgBox.Show(this,"Wrong password");
 					return;

@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormERoutingDefs));
+			this.butClose = new OpenDental.UI.Button();
 			this.gridERouting = new OpenDental.UI.GridOD();
 			this.butAdd = new OpenDental.UI.Button();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
@@ -31,6 +32,16 @@ namespace OpenDental{
 			this.butDuplicate = new OpenDental.UI.Button();
 			this.labelUseDefaults = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(401, 540);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridERouting
 			// 
@@ -104,16 +115,18 @@ namespace OpenDental{
 			this.Controls.Add(this.comboClinic);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.gridERouting);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormERoutingDefs";
 			this.Text = "eRouting Defs";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormERoutingDefs_FormClosing);
 			this.Load += new System.EventHandler(this.FormPatientFlow_Load);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridERouting;
 		private UI.Button butAdd;
 		private UI.ComboBoxClinicPicker comboClinic;

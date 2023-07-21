@@ -371,11 +371,10 @@ namespace OpenDental {
 						radioItem.Text=sheetFieldRadioItem.UiLabelMobileRadioButton;
 						if(SheetFieldDefEdit==null) {
 							radioItem.TextClick+=new EventHandler((sender,e) => {
-								InputBox input=new InputBox(GetTranslation("Edit label for radio item"),sheetFieldRadioItem.UiLabelMobileRadioButton);
-								input.ShowDialog();
-								if(input.IsDialogOK && !string.IsNullOrEmpty(input.StringResult)) {
-									sheetFieldRadioItem.UiLabelMobileRadioButton=input.StringResult;
-									radioItem.Text=input.StringResult;
+								using InputBox input=new InputBox(GetTranslation("Edit label for radio item"),sheetFieldRadioItem.UiLabelMobileRadioButton);
+								if(input.ShowDialog()==DialogResult.OK && !string.IsNullOrEmpty(input.textResult.Text)) {
+									sheetFieldRadioItem.UiLabelMobileRadioButton=input.textResult.Text;
+									radioItem.Text=input.textResult.Text;
 								}
 							});
 						}							
@@ -496,14 +495,13 @@ namespace OpenDental {
 						return;
 					}
 					//Owner is not handling editing so handle it here.
-					InputBox input=new InputBox(GetTranslation("Edit label for")+" "+
+					using InputBox input=new InputBox(GetTranslation("Edit label for")+" "+
 						(sheetField.FieldType==SheetFieldType.StaticText ? GetTranslation(SheetFieldType.StaticText.ToString()) : sheetField.FieldName),
 						sheetField.FieldType==SheetFieldType.StaticText ? sheetField.FieldValue : sheetField.UiLabelMobile);
-					input.ShowDialog();
-					if(input.IsDialogCancel||string.IsNullOrEmpty(input.StringResult)) {
+					if(input.ShowDialog()!=DialogResult.OK||string.IsNullOrEmpty(input.textResult.Text)) {
 						return;
 					}
-					string newLabel=input.StringResult;
+					string newLabel=input.textResult.Text;
 					sheetFields.ForEach(x => x.UiLabelMobile=newLabel);
 					panel.Header=newLabel;
 					panel.IsHeaderValid=!string.IsNullOrEmpty(newLabel);
@@ -738,10 +736,6 @@ namespace OpenDental {
 					//We need to ensure any new SFD checkboxs in a group have the mobile tab order set. Even if they are 'new'.
 					if(sheetField.FieldType==SheetFieldType.CheckBox) {
 						List<SheetFieldDef> listSheetFieldDefNew=OpenDentBusiness.SheetFieldDefs.GetRadioGroupForSheetFieldDef(sheetField,sheetDef.SheetFieldDefs.FindAll(x=>string.IsNullOrWhiteSpace(x.Language)));
-						//Ensure that ordering is preserved from how the mobile layout displayed it. New fields will get placed at the bottom of the order unless moved.
-						listSheetFieldDefNew=listSheetFieldDefNew.OrderByDescending(x => listMobileSheetDefs.Any(y => x.SheetFieldDefNum==y.SheetFieldDefNum))
-							.ThenBy(x => listMobileSheetDefs.FindIndex(y => x.SheetFieldDefNum==y.SheetFieldDefNum))
-							.ToList();
 						foreach(SheetFieldDef newSFDCheckboxInGroup in listSheetFieldDefNew ) {
 							//Checks for the first element
 							if(OpenDentBusiness.SheetFieldDefs.CompareSheetFieldDefsByValueForMobileLayout(newSFDCheckboxInGroup,sheetField)) {
@@ -777,10 +771,6 @@ namespace OpenDental {
 							//We need to ensure any new SFD checkboxs in a group have the mobile tab order set. Even if they are 'new'.
 							if(sheetFieldDef.FieldType==SheetFieldType.CheckBox) {
 								List<SheetFieldDef> listSheetFieldDefNew=OpenDentBusiness.SheetFieldDefs.GetRadioGroupForSheetFieldDef(sheetFieldDef,sheetDef.SheetFieldDefs.FindAll(x=>sheetFieldDef.Language==x.Language));
-								//Ensure that ordering is preserved from how the mobile layout displayed it, on a per-language basis. New fields will get placed at the bottom of the order unless moved.
-								listSheetFieldDefNew=listSheetFieldDefNew.OrderByDescending(x => sheetFieldDefLanguageGrouping.Any(y => x.SheetFieldDefNum==y.SheetFieldDefNum))
-									.ThenBy(x => sheetFieldDefLanguageGrouping.FindIndex(y => x.SheetFieldDefNum==y.SheetFieldDefNum))
-									.ToList();
 								foreach(SheetFieldDef newSFDCheckboxInGroup in listSheetFieldDefNew ) {
 									//Checks for the first element
 									if(OpenDentBusiness.SheetFieldDefs.CompareSheetFieldDefsByValueForMobileLayout(newSFDCheckboxInGroup,sheetFieldDef)) {

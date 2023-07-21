@@ -107,7 +107,7 @@ namespace OpenDentBusiness {
 			if(dateStart.Date <= dateUpdateToVersion21_1.Date) {
 				if(listSources.Count>0) {
 					innerJoinWebSchedBoth=" INNER JOIN securitylog ON appointment.AptNum=securitylog.FKey"
-						+" AND securitylog.PermType="+POut.Int((int)EnumPermType.AppointmentCreate)
+						+" AND securitylog.PermType="+POut.Int((int)Permissions.AppointmentCreate)
 						+" AND securitylog.LogSource IN ("+string.Join(",",listSources.Select(x => (int)x))+") ";
 				}
 			}

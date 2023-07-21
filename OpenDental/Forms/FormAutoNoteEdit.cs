@@ -23,13 +23,13 @@ namespace OpenDental {
 		}
 
 		private void FormAutoNoteEdit_Load(object sender, EventArgs e) {
-			if(Security.IsAuthorized(EnumPermType.AutoNoteQuickNoteEdit,true)) {//user has permission to edit auto notes
+			if(Security.IsAuthorized(Permissions.AutoNoteQuickNoteEdit,true)) {//user has permission to edit auto notes
 				gridMain.CellDoubleClick+=new ODGridClickEventHandler(gridMain_CellDoubleClick);
 			}
 			else {
 				butAdd.Enabled=false;
 				butDelete.Enabled=false;
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				textMain.ReadOnly=true;
 				textMain.BackColor=SystemColors.Window;
 				textBoxAutoNoteName.ReadOnly=true;
@@ -104,16 +104,7 @@ namespace OpenDental {
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
-			List<SheetFieldDef> listSheetFieldDefs=SheetFieldDefs.GetWhere(x => x.FieldType==SheetFieldType.InputField && x.FieldValue.Contains("AutoNoteNum:"+AutoNoteCur.AutoNoteNum.ToString()));
-			if(listSheetFieldDefs.Count>0) {
-				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"There are sheet field definitions associated with this autonote. Delete this autonote and the associated fields?")) {
-					return;
-				}
-				for(int i=0;i<listSheetFieldDefs.Count;i++) {
-					SheetFieldDefs.Delete(listSheetFieldDefs[i].SheetFieldDefNum);
-				}
-			}
-			else if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete this autonote?")){
+			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete this autonote?")){
 				return;
 			}
 			if(IsNew){
@@ -125,7 +116,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			AutoNoteCur.AutoNoteName=textBoxAutoNoteName.Text;
 			AutoNoteCur.MainText=textMain.Text;
 			if(IsNew) {
@@ -138,5 +129,21 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
 	}
 }

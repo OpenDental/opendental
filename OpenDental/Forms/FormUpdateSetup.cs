@@ -28,9 +28,9 @@ namespace OpenDental{
 		}
 
 		private void FormUpdateSetup_Load(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,true)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin,true)) {
 				butChangeRegKey.Enabled=false;
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 			}
 			textUpdateServerAddress.Text=PrefC.GetString(PrefName.UpdateServerAddress);
 			textWebsitePath.Text=PrefC.GetString(PrefName.UpdateWebsitePath);
@@ -130,7 +130,7 @@ namespace OpenDental{
 			Cursor=Cursors.Default;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(textRegKey.Text!="" 
 				&& !Regex.IsMatch(textRegKey.Text,@"^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$")
 				&& !Regex.IsMatch(textRegKey.Text,@"^[A-Z0-9]{16}$"))
@@ -170,8 +170,12 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormUpdateSetup_FormClosing(object sender,FormClosingEventArgs e) {
-			EnumPermType perm=(DialogResult==DialogResult.OK ? EnumPermType.SecurityAdmin : EnumPermType.Setup);
+			Permissions perm=(DialogResult==DialogResult.OK ? Permissions.SecurityAdmin : Permissions.Setup);
 			SecurityLogs.MakeLogEntry(perm,0,"Update Setup window accesssed.");
 		}
 	}

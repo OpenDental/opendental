@@ -31,6 +31,7 @@ namespace OpenDental{
 			this.labelImageSize = new System.Windows.Forms.Label();
 			this.butImport = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			((System.ComponentModel.ISupportInitialize)(this.picturePreview)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -98,25 +99,37 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(719, 458);
+			this.butOK.Location = new System.Drawing.Point(719, 428);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 19;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
-			// FormImagePicker
+			// butCancel
 			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(719, 458);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 18;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// FormWikiImages
+			// 
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(806, 494);
 			this.Controls.Add(this.labelImageSize);
 			this.Controls.Add(this.butImport);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.picturePreview);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textSearch);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.Name = "FormImagePicker";
+			this.Name = "FormWikiImages";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Insert Image";
 			this.Load += new System.EventHandler(this.FormImagePicker_Load);
@@ -134,6 +147,7 @@ namespace OpenDental{
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.PictureBox picturePreview;
 		private UI.Button butOK;
+		private UI.Button butCancel;
 		private UI.Button butImport;
 		private System.Windows.Forms.Label labelImageSize;
 

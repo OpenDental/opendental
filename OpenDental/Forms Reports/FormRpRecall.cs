@@ -150,11 +150,13 @@ namespace OpenDental {
 			report.Query=SQLstatement;
 			using FormQuery FormQuery2=new FormQuery(report);
 			FormQuery2.IsReport=false;
-			FormQuery2.SubmitQuery();
+			FormQuery2.SubmitQuery();	
 			FormQuery2.textQuery.Text=report.Query;
 			FormQuery2.ShowDialog();
-			DialogResult=DialogResult.OK;
+			DialogResult=DialogResult.OK; 
 		}
+
+		
 
 	}
 }

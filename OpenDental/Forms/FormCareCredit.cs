@@ -7,17 +7,20 @@ using System.Windows.Forms;
 
 namespace OpenDental {
 	public partial class FormCareCredit:FormODBase {
-		public Patient PatientCur;
+		#region Private Variables
+		private Patient _patient;
 		private List<ProgramProperty> _listProgramProperties;
+		#endregion
 
-		public FormCareCredit() {
+		public FormCareCredit(long patNum) {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
+			_patient=Patients.GetPat(patNum);
 		}
 
 		private void FormCareCredit_Load(object sender,EventArgs e) {
-			Text=$"CareCredit - {PatientCur.GetNameFL()}";
+			Text=$"CareCredit - {_patient.GetNameFL()}";
 			comboClinics.Visible=PrefC.HasClinicsEnabled;
 			comboClinics.Enabled=CareCredit.IsMerchantNumberByProv;
 			labelMerchantClosedDescription.Visible=false;
@@ -26,19 +29,19 @@ namespace OpenDental {
 				labelProviders.Visible=false;
 			}
 			comboProviders.Items.Clear();
-			comboProviders.Items.AddProvsAbbr(Providers.GetProvsForClinic(comboClinics.ClinicNumSelected));
+			comboProviders.Items.AddProvsAbbr(Providers.GetProvsForClinic(comboClinics.SelectedClinicNum));
 			comboProviders.SetSelected(0);
 			_listProgramProperties=ProgramProperties.GetForProgram(Programs.GetProgramNum(ProgramName.CareCredit));
 			string careCreditMerchantNum=PIn.String(ProgramProperties.GetPropValFromList(_listProgramProperties,
-				ProgramProperties.PropertyDescs.CareCredit.CareCreditMerchantNumber,comboClinics.ClinicNumSelected));
+				ProgramProperties.PropertyDescs.CareCredit.CareCreditMerchantNumber,comboClinics.SelectedClinicNum));
 			if(CareCredit.IsMerchantNumberByProv) {
-				careCreditMerchantNum=ProviderClinics.GetOneOrDefault(comboProviders.GetSelected<Provider>().ProvNum,comboClinics.ClinicNumSelected).CareCreditMerchantId??"";
+				careCreditMerchantNum=ProviderClinics.GetOneOrDefault(comboProviders.GetSelected<Provider>().ProvNum,comboClinics.SelectedClinicNum).CareCreditMerchantId??"";
 			}
 			DisableControlsForMerchantClosed(careCreditMerchantNum);
 		}
 
 		private bool IsValid() {
-			if(comboClinics.ClinicNumSelected<0) {
+			if(comboClinics.SelectedClinicNum<0) {
 				MsgBox.Show(this,"No clinic selected");
 				return false;
 			}
@@ -51,9 +54,7 @@ namespace OpenDental {
 
 		private double GetAmountInput() {
 			List<InputBoxParam> listInputBoxParams=new List<InputBoxParam>();
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.ValidDouble;
-			inputBoxParam.LabelText=Lan.g(this,"Please enter an estimated fee amount: ");
+			InputBoxParam inputBoxParam=new InputBoxParam(InputBoxType.ValidDouble,Lan.g(this,"Please enter an estimated fee amount: "));
 			listInputBoxParams.Add(inputBoxParam);
 			Func<string,bool> funcOkClick = new Func<string,bool>((text) => {
 				if(text=="" || !double.TryParse(text,out double res) || res<1) {
@@ -62,13 +63,11 @@ namespace OpenDental {
 				}
 				return true;//Allow user to the payment window.
 			});
-			InputBox inputBox=new InputBox(listInputBoxParams);
-			inputBox.FuncOkClick=funcOkClick;
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			using InputBox inputBox=new InputBox(listInputBoxParams,funcOkClick);
+			if(inputBox.ShowDialog()!=DialogResult.OK) {
 				return -1; // use as cancel/close click signifier
 			}
-			return PIn.Double(inputBox.StringResult);
+			return PIn.Double(inputBox.textResult.Text);
 		}
 
 		///<summary>Update pullback status and PatFieldDef one more time. Remove once CareCredit fixes non-null QuickScreen details object.</summary>
@@ -81,7 +80,7 @@ namespace OpenDental {
 			}
 			CareCredit.UpdateWebResponse(careCreditWebResponse);
 			if(careCreditWebResponse.ProcessingStatus!=CareCreditWebStatus.Pending) {
-				CareCreditWebResponses.UpdateCareCreditPatField(careCreditWebResponse.ProcessingStatus.GetDescription(),careCreditWebResponse.PatNum,isBatch:false);
+				CareCredit.UpdateCareCreditPatField(careCreditWebResponse.ProcessingStatus.GetDescription(),careCreditWebResponse.PatNum,isBatch:false);
 			}
 		}
 
@@ -99,15 +98,15 @@ namespace OpenDental {
 
 		private void comboClinics_SelectionChangeCommitted(object sender,EventArgs e) {
 			string careCreditMerchantNum=PIn.String(ProgramProperties.GetPropValFromList(_listProgramProperties,
-				ProgramProperties.PropertyDescs.CareCredit.CareCreditMerchantNumber,comboClinics.ClinicNumSelected));
+				ProgramProperties.PropertyDescs.CareCredit.CareCreditMerchantNumber,comboClinics.SelectedClinicNum));
 			if(CareCredit.IsMerchantNumberByProv) {
-				careCreditMerchantNum=ProviderClinics.GetOneOrDefault(comboProviders.GetSelected<Provider>().ProvNum,comboClinics.ClinicNumSelected).CareCreditMerchantId??"";
+				careCreditMerchantNum=ProviderClinics.GetOneOrDefault(comboProviders.GetSelected<Provider>().ProvNum,comboClinics.SelectedClinicNum).CareCreditMerchantId??"";
 			}
 			DisableControlsForMerchantClosed(careCreditMerchantNum);
 		}
 
 		private void comboProviders_SelectionChangedCommitted(object sender,EventArgs e) {
-			string careCreditMerchantNum=ProviderClinics.GetOneOrDefault(comboProviders.GetSelected<Provider>().ProvNum,comboClinics.ClinicNumSelected).CareCreditMerchantId??"";
+			string careCreditMerchantNum=ProviderClinics.GetOneOrDefault(comboProviders.GetSelected<Provider>().ProvNum,comboClinics.SelectedClinicNum).CareCreditMerchantId??"";
 			DisableControlsForMerchantClosed(careCreditMerchantNum);
 		}
 
@@ -115,28 +114,7 @@ namespace OpenDental {
 			if(!IsValid()) {
 				return;
 			}
-			PatFieldDef patFieldDef=PatFieldDefs.GetPatFieldCareCredit();
-			string careCreditFieldName="";
-			if(patFieldDef!=null) {
-				careCreditFieldName=patFieldDef.FieldName;
-			}
-			string careCreditStatus="";
-			List<PatField> listPatFields=PatFields.GetPatientData(PatientCur.PatNum);
-			for(int i=0;i<listPatFields.Count;i++) {
-				if(listPatFields[i].FieldName!=careCreditFieldName) {
-					continue;
-				}
-				if(listPatFields[i].FieldName==careCreditFieldName) {
-					careCreditStatus=listPatFields[i].FieldValue;
-					break;
-				}
-			}
-			if(careCreditStatus.ToLower().In(CareCreditWebStatus.PreApproved.GetDescription().ToLower())) {
-				CareCreditL.LaunchQuickScreenIndividualPage(PatientCur,comboProviders.GetSelectedProvNum(),comboClinics.ClinicNumSelected,1);
-			}
-			else {
-				CareCreditL.LaunchCreditApplicationPage(PatientCur,comboProviders.GetSelectedProvNum(),comboClinics.ClinicNumSelected,0,1);
-			}
+			CareCreditL.LaunchCreditApplicationPage(_patient,comboProviders.GetSelectedProvNum(),comboClinics.SelectedClinicNum,0,1);
 			DialogResult=DialogResult.None;//Don't close the form yet.
 		}
 
@@ -144,18 +122,18 @@ namespace OpenDental {
 			if(!IsValid()) {
 				return;
 			}
-			CareCreditL.LaunchLookupPage(PatientCur,comboProviders.GetSelectedProvNum(),comboClinics.ClinicNumSelected);
+			CareCreditL.LaunchLookupPage(_patient,comboProviders.GetSelectedProvNum(),comboClinics.SelectedClinicNum);
 			DialogResult=DialogResult.None;//Don't close the form yet.
 		}
 
 		private void butPromotions_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			if(!IsValid()) {
 				return;
 			}
-			CareCreditL.LaunchAdminPage(comboProviders.GetSelectedProvNum(),comboClinics.ClinicNumSelected,CareCredit.IsMerchantNumberByProv);
+			CareCreditL.LaunchAdminPage(comboProviders.GetSelectedProvNum(),comboClinics.SelectedClinicNum,CareCredit.IsMerchantNumberByProv);
 			DialogResult=DialogResult.None;//Don't close the form yet.
 		}
 
@@ -163,14 +141,18 @@ namespace OpenDental {
 			if(!IsValid()) {
 				return;
 			}
-			CareCreditL.LaunchReportsPage(comboProviders.GetSelectedProvNum(),comboClinics.ClinicNumSelected);
+			CareCreditL.LaunchReportsPage(comboProviders.GetSelectedProvNum(),comboClinics.SelectedClinicNum);
 			DialogResult=DialogResult.None;//Don't close the form yet.
 		}
 
 		private void butTransactions_Click(object sender,EventArgs e) {
-			using FormCareCreditTransactions formCareCreditTransactions=new FormCareCreditTransactions(PatientCur);
+			using FormCareCreditTransactions formCareCreditTransactions=new FormCareCreditTransactions(_patient);
 			formCareCreditTransactions.ShowDialog();
 			DialogResult=DialogResult.None;//Don't close the form yet.
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
 		}
 
 	}

@@ -30,7 +30,8 @@ namespace OpenDental {
 			this.label8 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.checkIsHidden = new OpenDental.UI.CheckBox();
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.textPhoneExt = new System.Windows.Forms.TextBox();
 			this.labelPhoneExt = new System.Windows.Forms.Label();
@@ -108,15 +109,26 @@ namespace OpenDental {
 			this.checkIsHidden.TabIndex = 14;
 			this.checkIsHidden.Text = "Hidden";
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(361, 389);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 25);
-			this.butSave.TabIndex = 11;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(406, 389);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 25);
+			this.butCancel.TabIndex = 12;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(325, 389);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 25);
+			this.butOK.TabIndex = 11;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butDelete
 			// 
@@ -252,11 +264,13 @@ namespace OpenDental {
 			// 
 			// FormEmployeeEdit
 			// 
-			this.AcceptButton = this.butSave;
-			this.ClientSize = new System.Drawing.Size(458, 431);
+			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(500, 431);
 			this.Controls.Add(this.comboReportsTo);
 			this.Controls.Add(this.label5);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.checkIsWorkingHome);
 			this.Controls.Add(this.checkIsFurloughed);
 			this.Controls.Add(this.textEmailPersonal);
@@ -284,6 +298,7 @@ namespace OpenDental {
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.Text = "Employee Edit";
+			this.Closing += new System.ComponentModel.CancelEventHandler(this.FormEmployeeEdit_Closing);
 			this.Load += new System.EventHandler(this.FormEmployeeEdit_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -297,7 +312,8 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Label label7;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.CheckBox checkIsHidden;
 		private OpenDental.UI.Button butDelete;
 		private TextBox textPhoneExt;

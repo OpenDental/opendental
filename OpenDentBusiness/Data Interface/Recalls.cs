@@ -920,7 +920,7 @@ namespace OpenDentBusiness {
 							//Only fire a few progress events so that the program doesn't slow down due to the UI updating.
 							//Updating too infrequently will cause the main thread to spin too fast.  Mod 5 is a good throttle.
 							if(++curBatchCount%5==0 || curBatchCount==dictPatBatchData.Count) {
-								ODEvent.Fire(ODEventType.RecallSync,new ProgressBarHelper(
+								RecallSyncEvent.Fire(ODEventType.RecallSync,new ProgressBarHelper(
 									Lans.g("Recalls","Recalls Completed")+" "+patProcessedCount+"/"+_totalPatCount+" - "
 										+Math.Floor(((double)patProcessedCount/_totalPatCount)*100).ToString()+"%",
 									Math.Floor(((double)patProcessedCount/_totalPatCount)*100)+"%",
@@ -1041,12 +1041,12 @@ namespace OpenDentBusiness {
 					}
 					#endregion Create List of Actions to Update Patient Recalls
 					ODThread.RunParallel(listActions,TimeSpan.FromMinutes(10));//each group of actions gets X minutes.
-					SecurityLogs.MakeLogEntry(EnumPermType.RecallEdit,listSecurityLogPatNums,"Recall updated by Recall Sync for all patients.");
+					SecurityLogs.MakeLogEntry(Permissions.RecallEdit,listSecurityLogPatNums,"Recall updated by Recall Synch for all patients.");
 					#region Insert New Recalls
 					if(listRecallsForInsert.Count==0) {
 						continue;
 					}
-					ODEvent.Fire(ODEventType.RecallSync,new ProgressBarHelper(
+					RecallSyncEvent.Fire(ODEventType.RecallSync,new ProgressBarHelper(
 						Lans.g("Recalls","Recalls Completed")+" "+patProcessedCount+"/"+_totalPatCount+" - "
 							+Math.Floor(((double)patProcessedCount/_totalPatCount)*100).ToString()+"% - "
 							+Lans.g("Recalls","Inserting Recalls")+": "+listRecallsForInsert.Count,
@@ -1183,7 +1183,7 @@ namespace OpenDentBusiness {
 				return;
 			}
 			Patient pat=Patients.GetPat(patNum);
-			if(pat.PatStatus!=PatientStatus.Patient) {//do not calculate recall if patient is not an active patient.
+			if(pat.PatStatus==PatientStatus.Archived) {//do not calculate recall if patient is archived.
 				return;
 			}
 			List<RecallType> typeListActive=RecallTypes.GetActive();
@@ -1236,9 +1236,6 @@ namespace OpenDentBusiness {
 				+"OR ProcStatus = "+POut.Long((int)ProcStat.EO)+") "
 				+"GROUP BY RecallTypeNum";
 			DataTable tableDates=Db.GetTable(command);
-			if(tableDates.Rows.Count==0) {//This patient has no trigger procedures, so do not add/update their recalls.
-				return;
-			}
 			//Go through the type list and either update recalls, or create new recalls.
 			//Recalls that are no longer active because their type has no triggers will be ignored.
 			//It is assumed that there are no duplicate recall types for a patient.
@@ -1312,7 +1309,7 @@ namespace OpenDentBusiness {
 						}
 						recallNew.DateDue=recallNew.DateDueCalc;
 						Recalls.Insert(recallNew);
-						SecurityLogs.MakeLogEntry(EnumPermType.RecallEdit,recallNew.PatNum,"Recall added by Recall Sync.");
+						SecurityLogs.MakeLogEntry(Permissions.RecallEdit,recallNew.PatNum,"Recall added by Recall Synch.");
 					}
 				}
 				else{//alter the existing recall
@@ -1334,7 +1331,7 @@ namespace OpenDentBusiness {
 						}
 						matchingRecall.DateDueCalc=DateTime.MinValue;
 						if(Recalls.Update(matchingRecall,recallOld)) {
-							SecurityLogs.MakeLogEntry(EnumPermType.RecallEdit,matchingRecall.PatNum,"Recall updated by Recall Sync.");
+							SecurityLogs.MakeLogEntry(Permissions.RecallEdit,matchingRecall.PatNum,"Recall updated by Recall Synch.");
 						}
 					}
 					else{//if previous date is a valid date
@@ -1351,7 +1348,7 @@ namespace OpenDentBusiness {
 						}
 						matchingRecall.DateDueCalc=matchingRecall.DatePrevious+matchingRecall.RecallInterval;
 						if(Recalls.Update(matchingRecall,recallOld)) {
-							SecurityLogs.MakeLogEntry(EnumPermType.RecallEdit,matchingRecall.PatNum,"Recall updated by Recall Sync.");
+							SecurityLogs.MakeLogEntry(Permissions.RecallEdit,matchingRecall.PatNum,"Recall updated by Recall Synch.");
 						}
 					}
 				}
@@ -1455,7 +1452,7 @@ namespace OpenDentBusiness {
 				recallList[i].DateDueCalc=recallList[i].DatePrevious+defaultIntervalNew;
 				recallList[i].RecallInterval=defaultIntervalNew;
 				Update(recallList[i]);
-				SecurityLogs.MakeLogEntry(EnumPermType.RecallEdit,recallList[i].PatNum,"Recall interval updated to Recall Type default interval.");
+				SecurityLogs.MakeLogEntry(Permissions.RecallEdit,recallList[i].PatNum,"Recall interval updated to Recall Type default interval.");
 			}
 		}
 
@@ -1959,12 +1956,12 @@ namespace OpenDentBusiness {
 						Recall recallOld=recallCur.Copy();
 						recallCur.Priority=RecallPriority.Normal;
 						if(Recalls.Update(recallCur,recallOld)) {
-							SecurityLogs.MakeLogEntry(EnumPermType.RecallEdit,recallCur.PatNum,"Recall priority changed to Normal by Web Sched.");
+							SecurityLogs.MakeLogEntry(Permissions.RecallEdit,recallCur.PatNum,"Recall priority changed to Normal by Web Sched.");
 							EServiceLogs.MakeLogEntry(eServiceAction.WSMovedAppt,eServiceType.WSAsap,FKeyType.ApptNum,patNum:aptCur.PatNum,FKey:aptCur.AptNum,clinicNum:aptCur.ClinicNum,logGuid:logGuid);
 						}
 					}
 					//Create a security log so that the office knows where this appointment came from.
-					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentCreate,aptCur.PatNum,
+					SecurityLogs.MakeLogEntry(Permissions.AppointmentCreate,aptCur.PatNum,
 						aptCur.AptDateTime.ToString()+", "+aptCur.ProcDescript+"  -  Created via Web Sched",
 						aptCur.AptNum,source,aptOld.DateTStamp);
 					EServiceLogs.MakeLogEntry(eServiceAction.WSAppointmentScheduledFromServer,eServiceType.WSRecall,FKeyType.ApptNum,patNum:aptCur.PatNum,

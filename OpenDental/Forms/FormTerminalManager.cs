@@ -27,8 +27,8 @@ namespace OpenDental {
 		}
 
 		private void FormTerminalManager_Load(object sender,EventArgs e) {
-			ODEvent.Fired+=PatientChangedEvent_Fired;
-			ODEvent.Fired+=eClipboardChangedEvent_Fired;
+			PatientChangedEvent.Fired+=PatientChangedEvent_Fired;
+			EClipboardEvent.Fired+=eClipboardChangedEvent_Fired;
 			textPassword.Text=PrefC.GetString(PrefName.TerminalClosePassword);
 			FillGrid();
 			contrClinicPicker.SelectionChangeCommitted+=contrClinicPick_SelectionChangeCommitted;
@@ -60,16 +60,16 @@ namespace OpenDental {
 			if(PrefC.HasClinicsEnabled) {
 				//Option "All" is selected and at least one clinic is signed up for the eClipboard feature
 				if(contrClinicPicker.IsAllSelected && PrefC.GetString(PrefName.EClipboardClinicsSignedUp)!="") {
-					listMobileAppDevices=MobileAppDevices.GetForUser(Security.CurUser).FindAll(x => x.IsEclipboardEnabled);
+					listMobileAppDevices=MobileAppDevices.GetForUser(Security.CurUser).FindAll(x => x.IsAllowed);
 				}
 				//A specific clinic is selected and that is signed up for the eClipboard feature
-				else if(MobileAppDevices.IsClinicSignedUpForEClipboard(contrClinicPicker.ClinicNumSelected)) {
-					listMobileAppDevices=MobileAppDevices.GetForUser(Security.CurUser).FindAll(x => x.IsEclipboardEnabled && x.ClinicNum==contrClinicPicker.ClinicNumSelected);
+				else if(MobileAppDevices.IsClinicSignedUpForEClipboard(contrClinicPicker.SelectedClinicNum)) {
+					listMobileAppDevices=MobileAppDevices.GetForUser(Security.CurUser).FindAll(x => x.IsAllowed && x.ClinicNum==contrClinicPicker.SelectedClinicNum);
 				}
 			}
 			//We aren't using clinics and the zero clinic is signed up
 			else if(MobileAppDevices.IsClinicSignedUpForEClipboard(0)) {
-				listMobileAppDevices=MobileAppDevices.GetForUser(Security.CurUser).FindAll(x => x.IsEclipboardEnabled);
+				listMobileAppDevices=MobileAppDevices.GetForUser(Security.CurUser).FindAll(x => x.IsAllowed);
 			}
 			//Add the clinics we decided on the the d
 			for(int i=0;i<listMobileAppDevices.Count();i++){
@@ -332,7 +332,7 @@ namespace OpenDental {
 		private void butRemoveTreatPlan_Click(object sender,EventArgs e) {
 			TreatPlan treatPlan=(TreatPlan)listTreatPlans.SelectedItem;
 			SheetDevice sheetDevice=(SheetDevice)gridMain.ListGridRows[gridMain.GetSelectedIndex()].Tag;
-			MobileNotifications.CI_RemoveTreatmentPlan(sheetDevice.MobileAppDevice.MobileAppDeviceNum,treatPlan);
+			PushNotificationUtils.CI_RemoveTreatmentPlan(sheetDevice.MobileAppDevice.MobileAppDeviceNum,treatPlan);
 			FillPat();
 		}
 
@@ -355,9 +355,13 @@ namespace OpenDental {
 			MsgBox.Show(this,"Done.");
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 		private void FormTerminalManager_FormClosing(object sender,FormClosingEventArgs e) {
-			ODEvent.Fired-=PatientChangedEvent_Fired;
-			ODEvent.Fired-=eClipboardChangedEvent_Fired;
+			PatientChangedEvent.Fired-=PatientChangedEvent_Fired;
+			EClipboardEvent.Fired-=eClipboardChangedEvent_Fired;
 			if(Prefs.UpdateString(PrefName.TerminalClosePassword,textPassword.Text)){
 				Signalods.SetInvalid(InvalidType.Prefs);
 			}
@@ -468,7 +472,7 @@ namespace OpenDental {
 					TerminalActives.DeleteForCmptrSessionAndId(TerminalActiveComputerKiosk.ComputerName,TerminalActiveComputerKiosk.SessionId,processId:TerminalActiveComputerKiosk.ProcessId);
 				}
 				else {
-					MobileAppDevices.Delete(MobileAppDevice);
+					MobileAppDevices.Delete(MobileAppDevice.MobileAppDeviceNum);
 				}
 			}
 
@@ -481,13 +485,17 @@ namespace OpenDental {
 				}
 				MobileAppDevices.SetPatNum(MobileAppDevice.MobileAppDeviceNum,patNum);
 				if(patNum>0) {
-					MobileNotifications.CI_CheckinPatient(patNum,MobileAppDevice.MobileAppDeviceNum);
+					OpenDentBusiness.WebTypes.PushNotificationUtils.CI_CheckinPatient(patNum,MobileAppDevice.MobileAppDeviceNum);
 				}
 				else {
-					MobileNotifications.CI_GoToCheckin(MobileAppDevice.MobileAppDeviceNum);
+					OpenDentBusiness.WebTypes.PushNotificationUtils.CI_GoToCheckin(MobileAppDevice.MobileAppDeviceNum);
 				}
 			}
 		}
+
+
+
+
 
 	}
 }

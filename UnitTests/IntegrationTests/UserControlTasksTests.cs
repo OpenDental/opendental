@@ -64,7 +64,7 @@ namespace UnitTests.IntegrationTests.UserControlTasks_Tests {
 		[TestMethod]
 		///<summary>Context menu right-click and select the "Done" option.</summary>
 		public void UserControlTasks_Done_Clicked() {
-			_userControlTasksAccessor.SetField("_taskClicked",_task);//Directly set which task is clicked.
+			_userControlTasksAccessor.SetField("_clickedTask",_task);//Directly set which task is clicked.
 			_userControlTasksAccessor.Invoke("Done_Clicked");//Context menu "Done" option click.
 			List<Signalod> listSignals=SignalodT.GetAllSignalods();
 			OpenDentBusiness.Task taskDb=Tasks.GetOne(_task.TaskNum);
@@ -78,7 +78,7 @@ namespace UnitTests.IntegrationTests.UserControlTasks_Tests {
 		public void UserControlTasks_Paste_Clicked_TaskList() {
 			_userControlTasksAccessor.SetField("_wasCut",true);//taskList is cut, not copied.
 			//Destination task list is the root node (item 0) from _listTaskListTreeHistory which was initialized in SetupTest().
-			_userControlTasksAccessor.SetField("_taskListClip",_taskListGrandchild);//Directly set which taskList is cut.
+			_userControlTasksAccessor.SetField("_clipTaskList",_taskListGrandchild);//Directly set which taskList is cut.
 			_userControlTasksAccessor.Invoke("Paste_Clicked");//Context menu "Paste" option click.
 			List<Signalod> listSignals=SignalodT.GetAllSignalods();
 			Assert.AreEqual(2,listSignals.Count);
@@ -95,7 +95,7 @@ namespace UnitTests.IntegrationTests.UserControlTasks_Tests {
 		public void UserControlTasks_Paste_Clicked_Task_Cut() {
 			_userControlTasksAccessor.SetField("_wasCut",true);//task is cut, not copied.
 			//Destination task list is the root node (item 0) from _listTaskListTreeHistory which was initialized in SetupTest().
-			_userControlTasksAccessor.SetField("_taskClip",_task);//Directly set which task is cut.
+			_userControlTasksAccessor.SetField("_clipTask",_task);//Directly set which task is cut.
 			_userControlTasksAccessor.Invoke("Paste_Clicked");//Context menu "Paste" option click.
 			List<Signalod> listSignals=SignalodT.GetAllSignalods();
 			Assert.AreEqual(4,listSignals.Count);
@@ -114,7 +114,7 @@ namespace UnitTests.IntegrationTests.UserControlTasks_Tests {
 		public void UserControlTasks_Paste_Clicked_Task_Copied() {
 			_userControlTasksAccessor.SetField("_wasCut",false);//task is copied.
 			//Destination task list is the root node (item 0) from _listTaskListTreeHistory which was initialized in SetupTest().
-			_userControlTasksAccessor.SetField("_taskClip",_task);//Directly set which task is cut.
+			_userControlTasksAccessor.SetField("_clipTask",_task);//Directly set which task is cut.
 			_userControlTasksAccessor.Invoke("Paste_Clicked");//Context menu "Paste" option click.
 			List<Signalod> listSignals=SignalodT.GetAllSignalods();
 			Assert.AreEqual(3,listSignals.Count);
@@ -134,7 +134,7 @@ namespace UnitTests.IntegrationTests.UserControlTasks_Tests {
 		[TestMethod]
 		///<summary>Context menu right-click and select the "Send to Me" option.</summary>
 		public void UserControlTasks_SendToMe_Clicked() {
-			_userControlTasksAccessor.SetField("_taskClicked",_task);
+			_userControlTasksAccessor.SetField("_clickedTask",_task);
 			_userControlTasksAccessor.Invoke("SendToMe_Clicked",false);
 			List<Signalod> listSignals=SignalodT.GetAllSignalods();
 			Assert.AreEqual(3,listSignals.Count);
@@ -206,12 +206,12 @@ namespace UnitTests.IntegrationTests.UserControlTasks_Tests {
 			List<long> listSentSignalNums=new List<long>() { signalNum };
 			//Adds a signalNum to the list of sent signalNums.
 			UserControlTasks.RefillLocalTaskGrids(_task,new List<TaskNote>(),listSentSignalNums,true);
-			List<long> listTrackedSignalNums=(List<long>)_userControlTasksAccessor.GetField("_listSignalNumsSentTask");
+			List<long> listTrackedSignalNums=(List<long>)_userControlTasksAccessor.GetField("_listSentTaskSignalNums");
 			//Assert.AreEqual(listSentSignalNums.Count,listTrackedSignalNums.Count); Add back when local memory refresh has been re-implemented.
 			//Assert.AreEqual(signalNum,listTrackedSignalNums[0]); Add back when local memory refresh has been re-implemented.
 			long parent=0;
 			_userControlTasksAccessor.Invoke("RefreshMainLists",parent,DateTime.Today,true);//A full refresh should clear the list of sent signalNums.
-			listTrackedSignalNums=(List<long>)_userControlTasksAccessor.GetField("_listSignalNumsSentTask");
+			listTrackedSignalNums=(List<long>)_userControlTasksAccessor.GetField("_listSentTaskSignalNums");
 			Assert.AreEqual(0,listTrackedSignalNums.Count);
 		}
 	}

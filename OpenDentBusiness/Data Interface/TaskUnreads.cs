@@ -21,46 +21,46 @@ namespace OpenDentBusiness{
 		///<summary>Batch inserts one TaskUnread for every entry in listTasks.
 		///Does not validate if the tasks were previously unread or not.  Do not use this method if caller has not already validated that inserting many
 		///TaskUnreads will not create duplicates.  All values in listTask will have IsUnread set true.</summary>
-		public static void InsertManyForTasks(List<Task> listTasks,long userNum) {
-			if(listTasks.IsNullOrEmpty() || userNum==0) {
+		public static void InsertManyForTasks(List<Task> listTasks,long currUserNum) {
+			if(listTasks.IsNullOrEmpty() || currUserNum==0) {
 				//Do not insert any TaskUnreads if none given or invalid usernum.
 				return;
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listTasks,userNum);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),listTasks,currUserNum);
 				return;
 			}
-			List<TaskUnread> listTaskUnreads=new List<TaskUnread>();
-			for(int i=0;i<listTasks.Count;i++) {
-				TaskUnread taskUnread=new TaskUnread();
-				taskUnread.TaskNum=listTasks[i].TaskNum;
-				taskUnread.UserNum=userNum;
-				listTaskUnreads.Add(taskUnread);
-				listTasks[i].IsUnread=true;
+			List<TaskUnread> listUnreads=new List<TaskUnread>();
+			foreach(Task task in listTasks) {
+				listUnreads.Add(new TaskUnread(){ 
+					TaskNum=task.TaskNum,
+					UserNum=currUserNum
+				});
+				task.IsUnread=true;
 			}
-			Crud.TaskUnreadCrud.InsertMany(listTaskUnreads);
+			Crud.TaskUnreadCrud.InsertMany(listUnreads);
 		}
 
 		///<summary>Sets a task read by a user by deleting all the matching taskunreads.  Quick and efficient to run any time.</summary>
-		public static void SetRead(long userNum,params Task[] taskArray) {
-			if(taskArray==null || taskArray.Length==0) {
+		public static void SetRead(long userNum,params Task[] arrayTasks) {
+			if(arrayTasks==null || arrayTasks.Length==0) {
 				return;
 			}
-			for(int i=0;i<taskArray.Length;i++) {
-				taskArray[i].IsUnread=false;
+			foreach(Task task in arrayTasks) {
+				task.IsUnread=false;
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),userNum,taskArray);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),userNum,arrayTasks);
 				return;
 			}
 			string command="DELETE FROM taskunread WHERE UserNum = "+POut.Long(userNum)+" "
-				+"AND TaskNum IN ("+string.Join(",",taskArray.Select(x => POut.Long(x.TaskNum)))+")";
+				+"AND TaskNum IN ("+string.Join(",",arrayTasks.Select(x => POut.Long(x.TaskNum)))+")";
 			Db.NonQ(command);
 		}
 
-		public static bool AddUnreads(Task task,long userNumOrig) {
+		public static bool AddUnreads(Task task,long curUserNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				task.IsUnread=Meth.GetBool(MethodBase.GetCurrentMethod(),task,userNumOrig);
+				task.IsUnread=Meth.GetBool(MethodBase.GetCurrentMethod(),task,curUserNum);
 				return task.IsUnread;
 			}
 			//if the task is done, don't add unreads
@@ -70,13 +70,13 @@ namespace OpenDentBusiness{
 			if(table.Rows.Count==0) {
 				return task.IsUnread;//only happens when a task was deleted by one user but left open on another user's computer.
 			}
-			TaskStatusEnum taskStatusEnum=(TaskStatusEnum)PIn.Int(table.Rows[0]["TaskStatus"].ToString());
+			TaskStatusEnum taskStatus=(TaskStatusEnum)PIn.Int(table.Rows[0]["TaskStatus"].ToString());
 			long userNumOwner=PIn.Long(table.Rows[0]["UserNum"].ToString());
-			if(taskStatusEnum==TaskStatusEnum.Done) {
+			if(taskStatus==TaskStatusEnum.Done) {
 				return task.IsUnread;
 			}
 			//Set it unread for the original owner of the task.
-			if(userNumOwner!=userNumOrig) {//but only if it's some other user
+			if(userNumOwner!=curUserNum) {//but only if it's some other user
 				SetUnread(userNumOwner,task);
 			}
 			//Set it for this user if a future repeating task, so it will be new when "due".  Doing this here so we don't check every row below.
@@ -84,27 +84,28 @@ namespace OpenDentBusiness{
 			if((PIn.String(table.Rows[0]["ReminderGroupId"].ToString())!="")//Is a reminder
 				&& (PIn.DateT(table.Rows[0]["DateTimeEntry"].ToString())>PIn.DateT(table.Rows[0]["DbTime"].ToString())))//Is "due" in the future by DbTime 
 			{
-				SetUnread(userNumOrig,task);//Set unread for current user only, other users dealt with below.
+				SetUnread(curUserNum,task);//Set unread for current user only, other users dealt with below.
 			}
 			//Then, for anyone subscribed
+			long userNum;
 			bool isUnread;
 			//task subscriptions are not cached yet, so we use a query.
 			//Get a list of all subscribers to this task
 			command=@"SELECT 
-				tasksubscription.UserNum,
-				(CASE WHEN taskunread.UserNum IS NULL THEN 0 ELSE 1 END) IsUnread
-				FROM tasksubscription
-				INNER JOIN tasklist ON tasksubscription.TaskListNum = tasklist.TaskListNum 
-				INNER JOIN taskancestor ON taskancestor.TaskListNum = tasklist.TaskListNum 
-				AND taskancestor.TaskNum = "+POut.Long(task.TaskNum)+" ";
+									tasksubscription.UserNum,
+									(CASE WHEN taskunread.UserNum IS NULL THEN 0 ELSE 1 END) IsUnread
+								FROM tasksubscription
+								INNER JOIN tasklist ON tasksubscription.TaskListNum = tasklist.TaskListNum 
+								INNER JOIN taskancestor ON taskancestor.TaskListNum = tasklist.TaskListNum 
+									AND taskancestor.TaskNum = "+POut.Long(task.TaskNum)+" ";
 			command+="LEFT JOIN taskunread ON taskunread.UserNum = tasksubscription.UserNum AND taskunread.TaskNum=taskancestor.TaskNum";
 			table=Db.GetTable(command);
 			List<long> listUserNums=new List<long>();
 			for(int i=0;i<table.Rows.Count;i++) {
-				long userNum=PIn.Long(table.Rows[i]["UserNum"].ToString());
+				userNum=PIn.Long(table.Rows[i]["UserNum"].ToString());
 				isUnread=PIn.Bool(table.Rows[i]["IsUnread"].ToString());
 				if(userNum==userNumOwner//already set
-					|| userNum==userNumOrig//If the current user is subscribed to this task. User has obviously already read it.
+					|| userNum==curUserNum//If the current user is subscribed to this task. User has obviously already read it.
 					|| listUserNums.Contains(userNum)
 					|| isUnread) //Unread currently exists
 				{
@@ -130,26 +131,16 @@ namespace OpenDentBusiness{
 			return task.IsUnread;
 		}
 
-		public static DataTable GetForTask(long taskNum) {
+		public static List<TaskUnread> GetForTask(long taskNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetTable(MethodBase.GetCurrentMethod(),taskNum);
+				return Meth.GetObject<List<TaskUnread>>(MethodBase.GetCurrentMethod(),taskNum);
 			}
-			string command=@"SELECT
-				DISTINCT userod.UserName AS 'User',
-				(CASE WHEN !ISNULL(taskunread.TaskNum) THEN 'Unread' ELSE 'Read' END) AS 'Unread' "+
-				"FROM tasksubscription "+
-				"INNER JOIN tasklist ON tasksubscription.TaskListNum=tasklist.TaskListNum "+
-				$"INNER JOIN taskancestor ON taskancestor.TaskListNum=tasklist.TaskListNum AND taskancestor.TaskNum={POut.Long(taskNum)} "+
-				"INNER JOIN userod ON userod.UserNum=tasksubscription.UserNum "+
-				$"LEFT JOIN taskunread ON taskunread.UserNum=tasksubscription.UserNum AND taskunread.TaskNum={POut.Long(taskNum)} "+
-				"WHERE userod.IsHidden=FALSE "+ //Don't include hidden users
-				"ORDER BY Unread,userod.UserName";
-			return Db.GetTable(command);
+			string command="SELECT * FROM taskunread WHERE TaskNum="+POut.Long(taskNum);
+			return Crud.TaskUnreadCrud.SelectMany(command);
 		}
 
 		///<summary>Sets unread for a single user.  Works well without duplicates, whether it's already set to Unread(new) or not.</summary>
 		public static void SetUnread(long userNum,Task task) {
-			//No need to check MiddleTierRole; no call to db.
 			if(IsUnread(userNum,task)) {
 				return;//Already set to unread, so nothing else to do
 			}
@@ -166,14 +157,14 @@ namespace OpenDentBusiness{
 				task.IsUnread=Meth.GetBool(MethodBase.GetCurrentMethod(),listUserNums,task);
 				return task.IsUnread;
 			}
-			List<TaskUnread> listTaskUnreadsToInsert=new List<TaskUnread>();
-			for(int i=0;i<listUserNums.Count;i++) {
+			List<TaskUnread> listUnreadsToInsert=new List<TaskUnread>();
+			foreach(long userNum in listUserNums) {
 				TaskUnread taskUnread=new TaskUnread();
 				taskUnread.TaskNum=task.TaskNum;
-				taskUnread.UserNum=listUserNums[i];
-				listTaskUnreadsToInsert.Add(taskUnread);
+				taskUnread.UserNum=userNum;
+				listUnreadsToInsert.Add(taskUnread);
 			}
-			Crud.TaskUnreadCrud.InsertMany(listTaskUnreadsToInsert);
+			Crud.TaskUnreadCrud.InsertMany(listUnreadsToInsert);
 			if(listUserNums.Contains(Security.CurUser.UserNum)) {//The IsUnread flag is only used for local refreshes.
 				task.IsUnread=true;
 			}

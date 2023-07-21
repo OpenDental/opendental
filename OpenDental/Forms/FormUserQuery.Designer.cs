@@ -9,6 +9,7 @@ namespace OpenDental {
 		public System.Windows.Forms.TextBox textTitle;
 		private System.ComponentModel.Container components = null;// Required designer variable.
 		private OpenDental.UI.Button butAdd;
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butCopy;
 		private OpenDental.UI.Button butExport;
 		private OpenDental.UI.Button butFavorite;
@@ -31,6 +32,7 @@ namespace OpenDental {
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormUserQuery));
+			this.butClose = new OpenDental.UI.Button();
 			this.butPaste = new OpenDental.UI.Button();
 			this.butCopy = new OpenDental.UI.Button();
 			this.textTitle = new System.Windows.Forms.TextBox();
@@ -52,9 +54,6 @@ namespace OpenDental {
 			this.butPrintPreview = new OpenDental.UI.Button();
 			this.textQuery = new OpenDental.ODcodeBox();
 			this.panel1 = new System.Windows.Forms.Panel();
-			this.radioLandscape = new System.Windows.Forms.RadioButton();
-			this.radioPortrait = new System.Windows.Forms.RadioButton();
-			this.labelPrintOrientation = new System.Windows.Forms.Label();
 			this.checkReportServer = new OpenDental.UI.CheckBox();
 			this.labelRowCount = new System.Windows.Forms.Label();
 			this._gridResults = new OpenDental.UI.GridOD();
@@ -67,6 +66,17 @@ namespace OpenDental {
 			this.splitterPanel1.SuspendLayout();
 			this.splitterPanel2.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(1197, 690);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(70, 24);
+			this.butClose.TabIndex = 5;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butPaste
 			// 
@@ -140,7 +150,7 @@ namespace OpenDental {
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(132, 16);
+			this.label2.Location = new System.Drawing.Point(127, 16);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(113, 18);
 			this.label2.TabIndex = 18;
@@ -149,7 +159,7 @@ namespace OpenDental {
 			// 
 			// comboAlignment
 			// 
-			this.comboAlignment.Location = new System.Drawing.Point(248, 14);
+			this.comboAlignment.Location = new System.Drawing.Point(243, 14);
 			this.comboAlignment.Name = "comboAlignment";
 			this.comboAlignment.Size = new System.Drawing.Size(121, 21);
 			this.comboAlignment.TabIndex = 18;
@@ -161,7 +171,7 @@ namespace OpenDental {
 			this.radioHuman.Checked = true;
 			this.radioHuman.Location = new System.Drawing.Point(6, 20);
 			this.radioHuman.Name = "radioHuman";
-			this.radioHuman.Size = new System.Drawing.Size(125, 18);
+			this.radioHuman.Size = new System.Drawing.Size(108, 16);
 			this.radioHuman.TabIndex = 0;
 			this.radioHuman.TabStop = true;
 			this.radioHuman.Text = "Human-readable";
@@ -170,7 +180,7 @@ namespace OpenDental {
 			// checkNumberedRows
 			// 
 			this.checkNumberedRows.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkNumberedRows.Location = new System.Drawing.Point(125, 39);
+			this.checkNumberedRows.Location = new System.Drawing.Point(120, 39);
 			this.checkNumberedRows.Name = "checkNumberedRows";
 			this.checkNumberedRows.Size = new System.Drawing.Size(138, 18);
 			this.checkNumberedRows.TabIndex = 21;
@@ -181,7 +191,7 @@ namespace OpenDental {
 			// 
 			this.radioRaw.Location = new System.Drawing.Point(6, 43);
 			this.radioRaw.Name = "radioRaw";
-			this.radioRaw.Size = new System.Drawing.Size(104, 18);
+			this.radioRaw.Size = new System.Drawing.Size(104, 16);
 			this.radioRaw.TabIndex = 1;
 			this.radioRaw.Text = "Raw";
 			this.radioRaw.Click += new System.EventHandler(this.radioRaw_Click);
@@ -189,7 +199,7 @@ namespace OpenDental {
 			// checkWordWrap
 			// 
 			this.checkWordWrap.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkWordWrap.Location = new System.Drawing.Point(125, 59);
+			this.checkWordWrap.Location = new System.Drawing.Point(120, 59);
 			this.checkWordWrap.Name = "checkWordWrap";
 			this.checkWordWrap.Size = new System.Drawing.Size(138, 18);
 			this.checkWordWrap.TabIndex = 20;
@@ -221,7 +231,7 @@ namespace OpenDental {
 			this.butPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butPrint.Image = global::OpenDental.Properties.Resources.butPrintSmall;
 			this.butPrint.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPrint.Location = new System.Drawing.Point(1203, 690);
+			this.butPrint.Location = new System.Drawing.Point(1121, 690);
 			this.butPrint.Name = "butPrint";
 			this.butPrint.Size = new System.Drawing.Size(70, 24);
 			this.butPrint.TabIndex = 13;
@@ -233,7 +243,7 @@ namespace OpenDental {
 			this.butExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butExport.Image = global::OpenDental.Properties.Resources.butExport;
 			this.butExport.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butExport.Location = new System.Drawing.Point(1118, 689);
+			this.butExport.Location = new System.Drawing.Point(1036, 690);
 			this.butExport.Name = "butExport";
 			this.butExport.Size = new System.Drawing.Size(79, 24);
 			this.butExport.TabIndex = 14;
@@ -245,7 +255,7 @@ namespace OpenDental {
 			this.butPrintPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butPrintPreview.Image = global::OpenDental.Properties.Resources.butPreview;
 			this.butPrintPreview.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPrintPreview.Location = new System.Drawing.Point(1018, 690);
+			this.butPrintPreview.Location = new System.Drawing.Point(936, 690);
 			this.butPrintPreview.Name = "butPrintPreview";
 			this.butPrintPreview.Size = new System.Drawing.Size(94, 24);
 			this.butPrintPreview.TabIndex = 16;
@@ -255,9 +265,8 @@ namespace OpenDental {
 			// textQuery
 			// 
 			this.textQuery.AcceptsTab = true;
-			this.textQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.textQuery.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
 			this.textQuery.DetectUrls = false;
 			this.textQuery.Font = new System.Drawing.Font("Courier New", 9F);
 			this.textQuery.Location = new System.Drawing.Point(3, 7);
@@ -269,10 +278,6 @@ namespace OpenDental {
 			// 
 			// panel1
 			// 
-			this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.panel1.Controls.Add(this.radioLandscape);
-			this.panel1.Controls.Add(this.radioPortrait);
-			this.panel1.Controls.Add(this.labelPrintOrientation);
 			this.panel1.Controls.Add(this.checkReportServer);
 			this.panel1.Controls.Add(this.butFavorite);
 			this.panel1.Controls.Add(this.butAdd);
@@ -284,35 +289,6 @@ namespace OpenDental {
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(591, 162);
 			this.panel1.TabIndex = 17;
-			// 
-			// radioLandscape
-			// 
-			this.radioLandscape.Location = new System.Drawing.Point(273, 108);
-			this.radioLandscape.Name = "radioLandscape";
-			this.radioLandscape.Size = new System.Drawing.Size(90, 20);
-			this.radioLandscape.TabIndex = 21;
-			this.radioLandscape.Text = "Landscape";
-			this.radioLandscape.UseVisualStyleBackColor = true;
-			// 
-			// radioPortrait
-			// 
-			this.radioPortrait.Checked = true;
-			this.radioPortrait.Location = new System.Drawing.Point(200, 108);
-			this.radioPortrait.Name = "radioPortrait";
-			this.radioPortrait.Size = new System.Drawing.Size(67, 20);
-			this.radioPortrait.TabIndex = 20;
-			this.radioPortrait.TabStop = true;
-			this.radioPortrait.Text = "Portrait";
-			this.radioPortrait.UseVisualStyleBackColor = true;
-			// 
-			// labelPrintOrientation
-			// 
-			this.labelPrintOrientation.Location = new System.Drawing.Point(197, 89);
-			this.labelPrintOrientation.Name = "labelPrintOrientation";
-			this.labelPrintOrientation.Size = new System.Drawing.Size(113, 18);
-			this.labelPrintOrientation.TabIndex = 19;
-			this.labelPrintOrientation.Text = "Print Orientation";
-			this.labelPrintOrientation.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// checkReportServer
 			// 
@@ -389,8 +365,10 @@ namespace OpenDental {
 			// 
 			// FormUserQuery
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(1276, 720);
 			this.Controls.Add(this.splitContainer);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butPrintPreview);
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.butExport);
@@ -431,8 +409,5 @@ namespace OpenDental {
 		private UI.SplitContainer splitContainer;
 		private UI.SplitterPanel splitterPanel1;
 		private UI.SplitterPanel splitterPanel2;
-		private System.Windows.Forms.Label labelPrintOrientation;
-		private System.Windows.Forms.RadioButton radioPortrait;
-		private System.Windows.Forms.RadioButton radioLandscape;
 	}
 }

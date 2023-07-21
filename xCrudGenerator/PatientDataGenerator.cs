@@ -28,9 +28,6 @@ namespace OpenDentBusiness {
 		#region Fields - Public"+"\r\n";
 			_listPdTablesAll=((EnumPdTable[])Enum.GetValues(typeof(EnumPdTable))).ToList();
 			for(int i=0;i<_listPdTablesAll.Count;i++){
-				if(_listPdTablesAll[i]==EnumPdTable.OrthoCase) {
-					str+="		public List<OrthoProcLink> ListOrthoProcLinks;\r\n";
-				}
 				if(_listPdTablesAll[i]==EnumPdTable.OrthoChart){
 					str+="		public List<OrthoChartRow> ListOrthoChartRows;\r\n";
 				}
@@ -98,9 +95,6 @@ namespace OpenDentBusiness {
 					continue;
 				}
 				str+="			if(pdTableArray.Contains(EnumPdTable."+_listPdTablesAll[i].ToString()+")){\r\n";
-				if(_listPdTablesAll[i]==EnumPdTable.OrthoCase) {
-					str+="				ListOrthoProcLinks=null;\r\n";
-				}
 				if(_listPdTablesAll[i]==EnumPdTable.OrthoChart){
 					str+="				ListOrthoChartRows=null;\r\n";
 				}
@@ -213,9 +207,6 @@ namespace OpenDentBusiness {
 ";
 			for(int i=0;i<_listPdTablesAll.Count;i++){
 				str+="			if(listPdTables.Contains(EnumPdTable."+_listPdTablesAll[i].ToString()+")){\r\n";
-				if(_listPdTablesAll[i]==EnumPdTable.OrthoCase) {
-					str+="				ListOrthoProcLinks=new List<OrthoProcLink>(patientData.ListOrthoProcLinks);\r\n";
-				}
 				if(_listPdTablesAll[i]==EnumPdTable.OrthoChart){
 					str+="				ListOrthoChartRows=new List<OrthoChartRow>(patientData.ListOrthoChartRows);\r\n";
 				}
@@ -245,10 +236,7 @@ namespace OpenDentBusiness {
 			if(complexGetter==EnumPdComplexGetter.None){
 				str+=@"		///<summary>The PatientData that comes back here is a totally different one than the main PatientData. It will only have a few lists in it, and those lists will get copied over to the main PatientData. This just gets simpler data that doesn't need additional parameters.</summary>
 		public static PatientData GetFromDb(long patNum,List<EnumPdTable> listPdTables){
-			if(listPdTables.Count==0){
-				return new PatientData();
-			}
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<PatientData>(MethodBase.GetCurrentMethod(),patNum,listPdTables);
 			}
 ";
@@ -328,14 +316,6 @@ namespace OpenDentBusiness {
 				}
 				else{//list
 					str+="				patientData.List"+plural+"="+plural+".GetPatientData("+parameters+");\r\n";
-				}
-				//This is only temporary.
-				//Normally, it would go halfway up this method.
-				//But OrthoProcLinks table lacks a PatNum, so we fill it using a list of keys,
-				//and we need the list of keys from the rows above.
-				//We plan to add PatNum to OrthoProcLinks.
-				if(_listPdTablesAll[i]==EnumPdTable.OrthoCase) {
-					str+="				patientData.ListOrthoProcLinks=OrthoProcLinks.GetPatientData(patientData.ListOrthoCases);\r\n";
 				}
 				str+="			}\r\n";
 			}

@@ -66,12 +66,61 @@ namespace OpenDental{
 			return true;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!SaveToDb()){
 				return;
 			}
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void FormProgramLinkEdit_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+			
+		}
+
+		
+
+	
+
+	
+
+		
+
+		
+
+	
+
+		
+
+		
+
+		
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

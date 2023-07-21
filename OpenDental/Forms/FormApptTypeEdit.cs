@@ -250,7 +250,7 @@ namespace OpenDental {
 			RefreshListBoxProcCodesRequired();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			AppointmentTypeCur.AppointmentTypeName=textName.Text;
 			if(AppointmentTypeCur.AppointmentTypeColor!=butColor.BackColor) {
 				AppointmentTypeCur.AppointmentTypeColor=butColor.BackColor;
@@ -284,5 +284,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

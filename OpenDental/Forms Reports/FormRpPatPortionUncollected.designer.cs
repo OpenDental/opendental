@@ -28,6 +28,7 @@ namespace OpenDental {
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpPatPortionUncollected));
+			this.butClose = new OpenDental.UI.Button();
 			this.butRefresh = new OpenDental.UI.Button();
 			this.comboBoxClinicPicker = new OpenDental.UI.ComboBoxClinicPicker();
 			this.gridOD = new OpenDental.UI.GridOD();
@@ -37,6 +38,17 @@ namespace OpenDental {
 			this.butPrint = new OpenDental.UI.Button();
 			this.contextMenuStrip1.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(702, 438);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 4;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butRefresh
 			// 
@@ -55,7 +67,7 @@ namespace OpenDental {
 			this.comboBoxClinicPicker.IncludeUnassigned = true;
 			this.comboBoxClinicPicker.Location = new System.Drawing.Point(471, 12);
 			this.comboBoxClinicPicker.Name = "comboBoxClinicPicker";
-			this.comboBoxClinicPicker.IsMultiSelect = true;
+			this.comboBoxClinicPicker.SelectionModeMulti = true;
 			this.comboBoxClinicPicker.Size = new System.Drawing.Size(200, 21);
 			this.comboBoxClinicPicker.TabIndex = 56;
 			// 
@@ -113,6 +125,7 @@ namespace OpenDental {
 			this.Controls.Add(this.odDateRangePicker);
 			this.Controls.Add(this.gridOD);
 			this.Controls.Add(this.comboBoxClinicPicker);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butRefresh);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -124,6 +137,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butRefresh;
 		private UI.ComboBoxClinicPicker comboBoxClinicPicker;
 		private UI.GridOD gridOD;

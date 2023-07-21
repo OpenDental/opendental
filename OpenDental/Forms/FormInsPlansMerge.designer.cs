@@ -26,6 +26,7 @@ namespace OpenDental {
 			this.label1 = new System.Windows.Forms.Label();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -54,17 +55,28 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(869,636);
+			this.butOK.Location = new System.Drawing.Point(776,636);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(78,26);
 			this.butOK.TabIndex = 4;
-			this.butOK.Text = "&OK";
+			this.butOK.Text = "OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(871,636);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(77,26);
+			this.butCancel.TabIndex = 5;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// FormInsPlansMerge
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5,13);
 			this.ClientSize = new System.Drawing.Size(962,669);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.gridMain);
@@ -78,6 +90,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.GridOD gridMain;
 		private Label label1;

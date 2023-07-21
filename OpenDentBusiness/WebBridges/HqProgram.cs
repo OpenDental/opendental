@@ -86,7 +86,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Unit test methods need to clear out the HqProgram cache between tests.</summary>
 		public static void ClearCaches() {
-			if(!ODBuild.IsUnitTest) {
+			if(!ODInitialize.IsRunningInUnitTest) {
 				return;
 			}
 			lock(_lock) {

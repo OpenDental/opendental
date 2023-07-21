@@ -83,8 +83,7 @@ namespace OpenDental{
 				Preview2.InvalidatePreview();
 			}
 			else {
-				//User was already notified about the failure in CreateODprintout
-				DialogResult=DialogResult.Cancel;
+				butPrint.Enabled=false;
 			}
 		}
 
@@ -118,6 +117,7 @@ namespace OpenDental{
 
 		///<summary>Constructs a new ODprintout and sets it to ODprintout.CurPrintout.</summary>
 		private void CreateODprintout(string auditDescription,PrintSituation printSituation,long auditPatNum) {
+			//TODO: Implement ODprintout pattern - print or debug preview control
 			_pagesPrinted=0;
 			ODprintout.InvalidMinDefaultPageHeight=400;//some printers report page size of 0.
 			ODprintout.InvalidMinDefaultPageWidth=0;
@@ -133,7 +133,6 @@ namespace OpenDental{
 		private void pd2_PrintPage(object sender, PrintPageEventArgs ev){//raised for each page to be printed.
 			if(!TryFillDisplayStrings(false)) {//if failed
 				ev.HasMorePages=false;
-				Close();
 				return;
 			}
 			int procLimit=ProcLimitForFormat();
@@ -206,10 +205,6 @@ namespace OpenDental{
 							break;
 						case "ADA2019_J430.gif":
 							image=CDT.Class1.GetADA2019_J430();
-							extension=".gif";
-							break;
-						case "ADA2024_J430.gif":
-							image=CDT.Class1.GetADA2024_J430();
 							extension=".gif";
 							break;
 						case "1500_02_12.gif":
@@ -293,12 +288,8 @@ namespace OpenDental{
 		private string[][] FillRenaissance() { 
 			//IsRenaissance=true;
 			int procLimit=10;
-			bool displayStringsFilled=TryFillDisplayStrings(true);//claimprocs is filled in FillDisplayStrings
+			TryFillDisplayStrings(true);//claimprocs is filled in FillDisplayStrings
 														//, so this is just a little extra work
-			if(!displayStringsFilled) {
-				Close();
-				return new string[0][];
-			}
 			_totalPages=(int)Math.Ceiling((double)_listClaimProcs.Count/(double)procLimit);
 			string[][] stringDoubleArrayRetVals=new string[_totalPages][];
 			for(int i=0;i<_totalPages;i++){
@@ -320,13 +311,18 @@ namespace OpenDental{
 			}
 			Family family=Patients.GetFamily(PatNum);
 			Patient patient=family.GetPatient(PatNum);
-			//if(patient==null) {//impossible, you can't delete patients
-			//	MsgBox.Show(this,"Unable to find patient.");
-			//	butPrint.Enabled=false;
-			//	return false;
-			//}
+			if(patient==null) {
+				MsgBox.Show(this,"Unable to find patient.");
+				butPrint.Enabled=false;
+				return false;
+			}
 			List<Claim> listClaims=Claims.Refresh(patient.PatNum);
 			_claim=Claims.GetFromList(listClaims,ClaimNum);
+			if(_claim==null) {
+				MsgBox.Show(this,"Claim has been deleted by another user.");
+				butPrint.Enabled=false;
+				return false;
+			}
 				//((Claim)Claims.HList[ThisClaimNum]).Clone();
 			_listInsSubs=InsSubs.RefreshForFam(family);
 			_listInsPlans=InsPlans.RefreshForSubList(_listInsSubs);
@@ -357,11 +353,11 @@ namespace OpenDental{
 			else{
 				patientSubscriber=family.ListPats[family.GetIndex(_insSub.Subscriber)];
 			}
-			//if(patientSubscriber==null) {//Patient for this InsSub could not be found.  Likely db corruption.
-			//	MsgBox.Show(this,"Insurance Plan attached to Claim does not have a valid Subscriber.  Run Database Maintenance (Tools): InsSubInvalidSubscriber.");
-			//	butPrint.Enabled=false;
-			//	return false;
-			//}
+			if(patientSubscriber==null) {//Patient for this InsSub could not be found.  Likely db corruption.
+				MsgBox.Show(this,"Insurance Plan attached to Claim does not have a valid Subscriber.  Run Database Maintenance (Tools): InsSubInvalidSubscriber.");
+				butPrint.Enabled=false;
+				return false;
+			}
 			Patient patientOtherSubscriber=new Patient();
 			if(insPlan2.PlanNum!=0){//if secondary insurance exists
 				if(family.GetIndex(insSub2.Subscriber)==-1) {//from another family
@@ -458,7 +454,7 @@ namespace OpenDental{
 			//If we aren't able to find a claimform, or it has no items there's nothing we can do.
 			if(ClaimFormCur==null || ClaimFormCur.Items==null) {
 				if(!isRenaissance) {
-					MsgBox.Show("Could not retrieve claim form.\r\nClosing form.  Reopen and try again.");
+					MsgBox.Show("Could not retrieve claim form.\r\nClose form and try again.");
 				}
 				return false;
 			}
@@ -529,9 +525,6 @@ namespace OpenDental{
 						break;
 					case "PriInsCity":
 						_stringArrayDisplay[i]=_carrier.City;
-						break;
-					case "PriInsElectID":
-						_stringArrayDisplay[i]=_carrier.ElectID;
 						break;
 					case "PriInsST":
 						_stringArrayDisplay[i]=_carrier.State;
@@ -663,11 +656,6 @@ namespace OpenDental{
 					case "OtherInsCity":
 						if(insPlan2.PlanNum!=0) {
 							_stringArrayDisplay[i]=carrier2.City;
-						}
-						break;
-					case "OtherInsElectID":
-						if(insPlan2.PlanNum!=0) {
-							_stringArrayDisplay[i]=carrier2.ElectID;
 						}
 						break;
 					case "OtherInsST":
@@ -1434,12 +1422,8 @@ namespace OpenDental{
 						}
 						break;
 					case "IsEnclosuresAttached":
-						if(_claim.Radiographs>0 || _claim.AttachedImages>0 || _claim.AttachedModels>0 || _claim.AttachedFlags.Contains("EoB") 
-							|| _claim.AttachedFlags.Contains("Note") || _claim.AttachedFlags.Contains("Perio") || _claim.AttachedFlags.Contains("Misc")) {
-							_stringArrayDisplay[i]="Y";
-						}
-						else {
-							_stringArrayDisplay[i]="N";
+						if(_claim.Radiographs>0 || _claim.AttachedImages>0 || _claim.AttachedModels>0) {
+							_stringArrayDisplay[i]="X";
 						}
 						break;
 					case "AttachedImagesNum":
@@ -2138,12 +2122,6 @@ namespace OpenDental{
 					case "DateIllnessInjuryPregQualifier":
 						_stringArrayDisplay[i]=_claim.DateIllnessInjuryPregQualifier==DateIllnessInjuryPregQualifier.None?"":((int)_claim.DateIllnessInjuryPregQualifier).ToString("000");
 						break;
-					case "DateLastSRP":
-						procedure=Procedures.GetMostRecentSRP(_listProcedures);
-						if(procedure!=null) {
-							_stringArrayDisplay[i]=procedure.ProcDate.ToShortDateString();
-						}
-						break;
 					case "DateOther":
 						if(_claim.DateOther.Year>1880){
 							_stringArrayDisplay[i]=string.IsNullOrEmpty(ClaimFormCur.Items[i].FormatString)?_claim.DateOther.ToShortDateString():
@@ -2260,9 +2238,6 @@ namespace OpenDental{
 					case "P1TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",1+startProc);
 						break;
-					case "P1TreatProvSpecialty":
-						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",1+startProc);
-						break;
 					case "P1RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",1+startProc);
 						break;
@@ -2375,9 +2350,6 @@ namespace OpenDental{
 						break;
 					case "P2TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",2+startProc);
-						break;
-					case "P2TreatProvSpecialty":
-						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",2+startProc);
 						break;
 					case "P2RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",2+startProc);
@@ -2496,9 +2468,6 @@ namespace OpenDental{
 					case "P3TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",3+startProc);
 						break;
-					case "P3TreatProvSpecialty":
-						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",3+startProc);
-						break;
 					case "P3RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",3+startProc);
 						break;
@@ -2615,9 +2584,6 @@ namespace OpenDental{
 						break;
 					case "P4TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",4+startProc);
-						break;
-					case "P4TreatProvSpecialty":
-						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",4+startProc);
 						break;
 					case "P4RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",4+startProc);
@@ -2736,9 +2702,6 @@ namespace OpenDental{
 					case "P5TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",5+startProc);
 						break;
-					case "P5TreatProvSpecialty":
-						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",5+startProc);
-						break;
 					case "P5RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",5+startProc);
 						break;
@@ -2855,9 +2818,6 @@ namespace OpenDental{
 						break;
 					case "P6TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",6+startProc);
-						break;
-					case "P6TreatProvSpecialty":
-						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",6+startProc);
 						break;
 					case "P6RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",6+startProc);
@@ -2976,9 +2936,6 @@ namespace OpenDental{
 					case "P7TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",7+startProc);
 						break;
-					case "P7TreatProvSpecialty":
-						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",7+startProc);
-						break;
 					case "P7RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",7+startProc);
 						break;
@@ -3095,9 +3052,6 @@ namespace OpenDental{
 						break;
 					case "P8TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",8+startProc);
-						break;
-					case "P8TreatProvSpecialty":
-						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",8+startProc);
 						break;
 					case "P8RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",8+startProc);
@@ -3216,9 +3170,6 @@ namespace OpenDental{
 					case "P9TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",9+startProc);
 						break;
-					case "P9TreatProvSpecialty":
-						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",9+startProc);
-						break;
 					case "P9RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",9+startProc);
 						break;
@@ -3335,9 +3286,6 @@ namespace OpenDental{
 						break;
 					case "P10TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",10+startProc);
-						break;
-					case "P10TreatProvSpecialty":
-						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",10+startProc);
 						break;
 					case "P10RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",10+startProc);
@@ -3456,9 +3404,6 @@ namespace OpenDental{
 					case "P11TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",11+startProc);
 						break;
-					case "P11TreatProvSpecialty":
-						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",11+startProc);
-						break;
 					case "P11RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",11+startProc);
 						break;
@@ -3575,9 +3520,6 @@ namespace OpenDental{
 						break;
 					case "P12TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",12+startProc);
-						break;
-					case "P12TreatProvSpecialty":
-						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",12+startProc);
 						break;
 					case "P12RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",12+startProc);
@@ -3696,9 +3638,6 @@ namespace OpenDental{
 					case "P13TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",13+startProc);
 						break;
-					case "P13TreatProvSpecialty":
-						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",13+startProc);
-						break;
 					case "P13RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",13+startProc);
 						break;
@@ -3816,9 +3755,6 @@ namespace OpenDental{
 					case "P14TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",14+startProc);
 						break;
-					case "P14TreatProvSpecialty":
-						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",14+startProc);
-						break;
 					case "P14RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",14+startProc);
 						break;
@@ -3935,9 +3871,6 @@ namespace OpenDental{
 						break;
 					case "P15TreatProvNPI":
 						_stringArrayDisplay[i]=GetProcInfo("TreatProvNPI",15+startProc);
-						break;
-					case "P15TreatProvSpecialty":
-						_stringArrayDisplay[i]=GetProcInfo("TreatProvSpecialty",15+startProc);
 						break;
 					case "P15RevCode":
 						_stringArrayDisplay[i]=GetProcInfo("RevCode",15+startProc);
@@ -4614,15 +4547,6 @@ namespace OpenDental{
 						Provider providerClaimProc=Providers.GetFirstOrDefault(x => x.ProvNum==_listClaimProcs[procIndex].ProvNum)??providerFirst;
 						return providerClaimProc.NationalProvID;
 					}
-				case "TreatProvSpecialty":
-					if(_listClaimProcs[procIndex].ProvNum==0) {
-						return "";
-					}
-					else {
-						Provider providerFirst=Providers.GetFirst();//Used in order to preserve old behavior...  If this fails, then old code would have failed.
-						Provider providerClaimProc=Providers.GetFirstOrDefault(x => x.ProvNum==_listClaimProcs[procIndex].ProvNum)??providerFirst;
-						return X12Generator.GetTaxonomy(providerClaimProc);
-					}
 				case "PlaceNumericCode":
 					return X12object.GetPlaceService(_claim.PlaceService);
 				case "Diagnosis":
@@ -4811,7 +4735,7 @@ namespace OpenDental{
 				formClaimPrint.ClaimNum=claim.ClaimNum;
 				formClaimPrint.ClaimFormCur=null;//so that it will pull from the individual claim or plan.
 				if(formClaimPrint.PrintImmediate(Lan.g(nameof(PrinterL),"CDA claim form printed"),PrintSituation.Claim,claim.PatNum)) {
-					Etranss.SetClaimSentOrPrinted(claim.ClaimNum,claim.ClaimStatus,claim.PatNum,0,EtransType.ClaimPrinted,0,Security.CurUser.UserNum);
+					Etranss.SetClaimSentOrPrinted(claim.ClaimNum,claim.PatNum,0,EtransType.ClaimPrinted,0,Security.CurUser.UserNum);
 				}
 			}
 			catch {
@@ -4941,10 +4865,10 @@ namespace OpenDental{
 
 		private void butPrint_Click(object sender, System.EventArgs e){
 			if(PrintClaim()) {
-				Etranss.SetClaimSentOrPrinted(ClaimNum,_claim.ClaimStatus,_claim.PatNum,0,EtransType.ClaimPrinted,0,Security.CurUser.UserNum);
+				Etranss.SetClaimSentOrPrinted(ClaimNum,_claim.PatNum,0,EtransType.ClaimPrinted,0,Security.CurUser.UserNum);
 				WasSent=true;
 				//Claims.UpdateStatus(ThisClaimNum,"P");
-				SecurityLogs.MakeLogEntry(EnumPermType.ClaimSend,_claim.PatNum,Lan.g(this,"Claim printed from Claim Preview window."),
+				SecurityLogs.MakeLogEntry(Permissions.ClaimSend,_claim.PatNum,Lan.g(this,"Claim printed from Claim Preview window."),
 					_claim.ClaimNum,_claim.SecDateTEdit);
 				DialogResult=DialogResult.OK;
 			}
@@ -4954,5 +4878,31 @@ namespace OpenDental{
 			//Close();
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.OK;
+		}
+
+		private void FormClaimPrint_FormClosing(object sender,FormClosingEventArgs e) {
+			if(!butPrint.Enabled) {//if the claim has been deleted and the print button has been disabled.
+				DialogResult=DialogResult.Abort;
+			}
+		}
 	}
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

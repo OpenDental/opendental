@@ -169,6 +169,5 @@ namespace OpenDental{
 			formComplex.ShowDialog();
 			DialogResult=DialogResult.OK;
 		}
-
 	}
 }

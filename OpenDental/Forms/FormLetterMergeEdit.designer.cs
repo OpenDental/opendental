@@ -33,7 +33,8 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormLetterMergeEdit));
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textDescription = new System.Windows.Forms.TextBox();
 			this.textTemplateName = new System.Windows.Forms.TextBox();
@@ -60,15 +61,26 @@ namespace OpenDental {
 			this.comboImageFolder = new OpenDental.UI.ComboBox();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(722, 641);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 2;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(799, 649);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 3;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(799, 608);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 2;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// label2
 			// 
@@ -166,7 +178,7 @@ namespace OpenDental {
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(12, 645);
+			this.butDelete.Location = new System.Drawing.Point(12, 649);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(87, 26);
 			this.butDelete.TabIndex = 26;
@@ -186,7 +198,7 @@ namespace OpenDental {
 			// 
 			this.listPatSelect.Location = new System.Drawing.Point(12, 160);
 			this.listPatSelect.Name = "listPatSelect";
-			this.listPatSelect.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
+			this.listPatSelect.SelectionMode = UI.SelectionMode.MultiExtended;
 			this.listPatSelect.Size = new System.Drawing.Size(170, 472);
 			this.listPatSelect.TabIndex = 27;
 			// 
@@ -197,7 +209,7 @@ namespace OpenDental {
 			this.textBox1.Location = new System.Drawing.Point(190, 158);
 			this.textBox1.Multiline = true;
 			this.textBox1.Name = "textBox1";
-			this.textBox1.Size = new System.Drawing.Size(530, 23);
+			this.textBox1.Size = new System.Drawing.Size(622, 23);
 			this.textBox1.TabIndex = 29;
 			this.textBox1.Text = "Hint: Use the Ctrl key when clicking.  Also you can simply drag the pointer acros" +
     "s muliple rows to select quickly.";
@@ -225,7 +237,7 @@ namespace OpenDental {
 			// 
 			this.listReferral.Location = new System.Drawing.Point(206, 199);
 			this.listReferral.Name = "listReferral";
-			this.listReferral.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
+			this.listReferral.SelectionMode = UI.SelectionMode.MultiExtended;
 			this.listReferral.Size = new System.Drawing.Size(170, 433);
 			this.listReferral.TabIndex = 31;
 			// 
@@ -252,7 +264,7 @@ namespace OpenDental {
 			// 
 			this.listOther.Location = new System.Drawing.Point(400, 199);
 			this.listOther.Name = "listOther";
-			this.listOther.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
+			this.listOther.SelectionMode = UI.SelectionMode.MultiExtended;
 			this.listOther.Size = new System.Drawing.Size(170, 433);
 			this.listOther.TabIndex = 34;
 			// 
@@ -274,7 +286,7 @@ namespace OpenDental {
 			// 
 			// FormLetterMergeEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(809, 679);
+			this.ClientSize = new System.Drawing.Size(894, 683);
 			this.Controls.Add(this.labelImageCategory);
 			this.Controls.Add(this.comboImageFolder);
 			this.Controls.Add(this.label6);
@@ -295,7 +307,8 @@ namespace OpenDental {
 			this.Controls.Add(this.textDataFileName);
 			this.Controls.Add(this.textTemplateName);
 			this.Controls.Add(this.textDescription);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.label2);
@@ -311,7 +324,9 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox textDescription;
 		private System.Windows.Forms.Label label1;

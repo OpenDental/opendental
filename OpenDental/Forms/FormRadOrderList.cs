@@ -88,7 +88,7 @@ namespace OpenDental {
 		}
 
 		private void butGotoFamily_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.FamilyModule)) {
+			if(!Security.IsAuthorized(Permissions.FamilyModule)) {
 				return;
 			}
 			if(gridMain.SelectedIndices.Length==0) {
@@ -96,11 +96,11 @@ namespace OpenDental {
 				return;
 			}
 			Procedure procedure=(Procedure)gridMain.ListGridRows[gridMain.GetSelectedIndex()].Tag;
-			GlobalFormOpenDental.GotoFamily(procedure.PatNum);
+			GotoModule.GotoFamily(procedure.PatNum);
 		}
 
 		private void butGotoChart_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ChartModule)) {
+			if(!Security.IsAuthorized(Permissions.ChartModule)) {
 				return;
 			}
 			if(gridMain.SelectedIndices.Length==0) {
@@ -108,7 +108,7 @@ namespace OpenDental {
 				return;
 			}
 			Procedure procedure=(Procedure)gridMain.ListGridRows[gridMain.GetSelectedIndex()].Tag;
-			GlobalFormOpenDental.GotoChart(procedure.PatNum);
+			GotoModule.GotoChart(procedure.PatNum);
 		}
 
 		private void butSelected_Click(object sender,EventArgs e) {
@@ -132,6 +132,11 @@ namespace OpenDental {
 			}
 			Procedures.UpdateCpoeForProcs(_listProceduresNonCpoe.Select(x => x.ProcNum).Distinct().ToList(),true);
 			DialogResult=DialogResult.OK;
+			this.Close();
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 			this.Close();
 		}
 

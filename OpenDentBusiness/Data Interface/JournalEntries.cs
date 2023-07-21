@@ -76,7 +76,7 @@ namespace OpenDentBusiness{
 					journalEntry.DebitAmt=balStart;
 				}
 				else{
-					journalEntry.CreditAmt=-balStart;
+					journalEntry.CreditAmt=balStart;
 				}
 			}
 			else{
@@ -84,7 +84,7 @@ namespace OpenDentBusiness{
 					journalEntry.CreditAmt=balStart;
 				}
 				else{
-					journalEntry.DebitAmt=-balStart;
+					journalEntry.DebitAmt=balStart;
 				}
 			}
 			//The debit or credit will be used later to arrive at a starting bal to show

@@ -32,7 +32,7 @@ namespace OpenDental{
 		private void FormRpProcNote_Load(object sender,System.EventArgs e) {
 			checkNoNotes.Checked=PrefC.GetBool(PrefName.ReportsIncompleteProcsNoNotes);
 			checkUnsignedNote.Checked=PrefC.GetBool(PrefName.ReportsIncompleteProcsUnsigned);
-			List<Provider> listProviders=Providers.GetListProvidersForClinic(comboClinics.ClinicNumSelected);
+			List<Provider> listProviders=Providers.GetListProvidersForClinic(comboClinics.SelectedClinicNum);
 			FillProvs(listProviders);
 			dateRangePicker.SetDateTimeFrom(DateTime.Today);
 			dateRangePicker.SetDateTimeTo(DateTime.Today);
@@ -128,7 +128,7 @@ namespace OpenDental{
 			else {
 				groupBy=RpProcNote.ProcNoteGroupBy.Procedure;
 			}
-			return RpProcNote.GetData(GetListSelectedProvNums(),comboClinics.ListClinicNumsSelected,dateRangePicker.GetDateTimeFrom(),
+			return RpProcNote.GetData(GetListSelectedProvNums(),comboClinics.ListSelectedClinicNums,dateRangePicker.GetDateTimeFrom(),
 				dateRangePicker.GetDateTimeTo(),checkNoNotes.Checked,checkUnsignedNote.Checked,
 				(ToothNumberingNomenclature)PrefC.GetInt(PrefName.UseInternationalToothNumbers),groupBy,showExcludedCodes:checkShowExcludedCodes.Checked);
 		}
@@ -146,7 +146,7 @@ namespace OpenDental{
 			if(gridMain.SelectedIndices.Length!=1) {
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.ChartModule)) {
+			if(!Security.IsAuthorized(Permissions.ChartModule)) {
 				return;
 			}
 			long goToPatNum=PIn.Long(gridMain.ListGridRows[e.Row].Tag.ToString());
@@ -154,7 +154,7 @@ namespace OpenDental{
 			if(screenCurrent.DeviceName==_screenParent.DeviceName) {//If on same screen as main OD
 				this.WindowState=FormWindowState.Minimized;//Minimize
 			}
-			GlobalFormOpenDental.GotoChart(goToPatNum);
+			GotoModule.GotoChart(goToPatNum);
 		}
 
 		private void goToChartToolStripMenuItem_Click(object sender,EventArgs e) {
@@ -162,17 +162,17 @@ namespace OpenDental{
 				MsgBox.Show(this,"Please select a patient first.");
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.ChartModule)) {
+			if(!Security.IsAuthorized(Permissions.ChartModule)) {
 				return;
 			}
 			long patNum=PIn.Long(gridMain.ListGridRows[gridMain.SelectedIndices[0]].Tag.ToString());
 			Patient pat=Patients.GetPat(patNum);
-			GlobalFormOpenDental.PatientSelected(pat,false);
+			FormOpenDental.S_Contr_PatientSelected(pat,false);
 			System.Windows.Forms.Screen screenCurrent=System.Windows.Forms.Screen.FromHandle(this.Handle);
 			if(screenCurrent.DeviceName==_screenParent.DeviceName) {//If on same screen as main OD
 				this.WindowState=FormWindowState.Minimized;//Minimize
 			}
-			GlobalFormOpenDental.GotoChart(pat.PatNum);
+			GotoModule.GotoChart(pat.PatNum);
 		}
 
 		private void radioProc_MouseCaptureChanged(object sender,EventArgs e) {
@@ -217,7 +217,7 @@ namespace OpenDental{
 				}
 				g.DrawString(text,subHeadingFont,Brushes.Black,center-g.MeasureString(text,subHeadingFont).Width/2,yPos);
 				yPos+=(int)g.MeasureString(text,headingFont).Height;
-				if(comboClinics.ListClinicNumsSelected.Count==0 || comboClinics.IsAllSelected) {//No clinics selected or 'All' selected
+				if(comboClinics.ListSelectedClinicNums.Count==0 || comboClinics.IsAllSelected) {//No clinics selected or 'All' selected
 					text=Lan.g(this,"All Clinics");
 				}
 				else {
@@ -245,7 +245,7 @@ namespace OpenDental{
 				FillProvs(Providers.GetListReports());
 			}
 			else { //return providers associated with the selected clinics.
-				List<Provider> listProvs=comboClinics.ListClinicNumsSelected.SelectMany(x => Providers.GetListProvidersForClinic(x)).ToList();
+				List<Provider> listProvs=comboClinics.ListSelectedClinicNums.SelectMany(x => Providers.GetListProvidersForClinic(x)).ToList();
 				FillProvs(listProvs);
 			}
 		}
@@ -254,5 +254,28 @@ namespace OpenDental{
 			gridMain.Export("Incomplete Procedure Notes");
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -156,7 +156,7 @@ namespace OpenDental {
 			this.textVersions.Location = new System.Drawing.Point(857, 529);
 			this.textVersions.Multiline = false;
 			this.textVersions.Name = "textVersions";
-			this.textVersions.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textVersions.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textVersions.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
 			this.textVersions.Size = new System.Drawing.Size(147, 22);
 			this.textVersions.SpellCheckIsEnabled = false;
@@ -174,7 +174,7 @@ namespace OpenDental {
 			this.textDescriptions.DetectUrls = false;
 			this.textDescriptions.Location = new System.Drawing.Point(98, 557);
 			this.textDescriptions.Name = "textDescriptions";
-			this.textDescriptions.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textDescriptions.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textDescriptions.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textDescriptions.Size = new System.Drawing.Size(667, 127);
 			this.textDescriptions.SpellCheckIsEnabled = false;
@@ -191,7 +191,7 @@ namespace OpenDental {
 			this.textPledgeTemplate.DetectUrls = false;
 			this.textPledgeTemplate.Location = new System.Drawing.Point(98, 526);
 			this.textPledgeTemplate.Name = "textPledgeTemplate";
-			this.textPledgeTemplate.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textPledgeTemplate.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textPledgeTemplate.ReadOnly = true;
 			this.textPledgeTemplate.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textPledgeTemplate.Size = new System.Drawing.Size(667, 25);
@@ -210,7 +210,7 @@ namespace OpenDental {
 			this.textSubject.Location = new System.Drawing.Point(98, 304);
 			this.textSubject.Multiline = false;
 			this.textSubject.Name = "textSubject";
-			this.textSubject.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textSubject.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textSubject.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
 			this.textSubject.Size = new System.Drawing.Size(906, 22);
 			this.textSubject.SpellCheckIsEnabled = false;
@@ -229,7 +229,7 @@ namespace OpenDental {
 			this.textFromAddress.Location = new System.Drawing.Point(98, 281);
 			this.textFromAddress.Multiline = false;
 			this.textFromAddress.Name = "textFromAddress";
-			this.textFromAddress.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textFromAddress.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textFromAddress.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
 			this.textFromAddress.Size = new System.Drawing.Size(544, 22);
 			this.textFromAddress.SpellCheckIsEnabled = false;
@@ -247,7 +247,7 @@ namespace OpenDental {
 			this.textBodyTextTemplate.DetectUrls = false;
 			this.textBodyTextTemplate.Location = new System.Drawing.Point(98, 327);
 			this.textBodyTextTemplate.Name = "textBodyTextTemplate";
-			this.textBodyTextTemplate.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textBodyTextTemplate.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textBodyTextTemplate.ReadOnly = true;
 			this.textBodyTextTemplate.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textBodyTextTemplate.Size = new System.Drawing.Size(906, 193);

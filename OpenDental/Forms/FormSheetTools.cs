@@ -30,38 +30,28 @@ namespace OpenDental {
 
 		private void butImport_Click(object sender,EventArgs e) {
 			Cursor=Cursors.WaitCursor;
-			string importFilePath="";
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				importFilePath=ODCloudClient.ImportFileForCloud();
-				if(importFilePath.IsNullOrEmpty()) {
-					return; //User cancelled out of OpenFileDialog
-				}
+			using OpenFileDialog openFileDialog=new OpenFileDialog();
+			string initDir=PrefC.GetString(PrefName.ExportPath);
+			if(Directory.Exists(initDir)) {
+				openFileDialog.InitialDirectory=initDir;
 			}
-			else {
-				using OpenFileDialog openFileDialog=new OpenFileDialog();
-				string initDir=PrefC.GetString(PrefName.ExportPath);
-				if(Directory.Exists(initDir)) {
-					openFileDialog.InitialDirectory=initDir;
-				}
-				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-					Cursor=Cursors.Default;
-					return;
-				}
-				importFilePath=openFileDialog.FileName;
-			}
-			SheetDef sheetDef=new SheetDef();
-			XmlSerializer serializer=new XmlSerializer(typeof(SheetDef));
-			if(importFilePath=="") {
+			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
 				Cursor=Cursors.Default;
 				return;
 			}
-			if(!File.Exists(importFilePath)){
+			SheetDef sheetDef=new SheetDef();
+			XmlSerializer serializer=new XmlSerializer(typeof(SheetDef));
+			if(openFileDialog.FileName=="") {
+				Cursor=Cursors.Default;
+				return;
+			}
+			if(!File.Exists(openFileDialog.FileName)){
 				Cursor=Cursors.Default;
 				MsgBox.Show(this,"File not found");
 				return;
 			}
 			try {
-				using TextReader reader=new StreamReader(importFilePath);
+				using TextReader reader=new StreamReader(openFileDialog.FileName);
 				sheetDef=(SheetDef)serializer.Deserialize(reader);
 			}
 			catch {
@@ -130,6 +120,10 @@ namespace OpenDental {
 		private void butExport_Click(object sender,EventArgs e) {
 			using FormSheetExport formSheetExport=new FormSheetExport(_isOpenedFromDashboardSetup);
 			formSheetExport.ShowDialog();
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
 		}
 
 	}

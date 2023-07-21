@@ -76,5 +76,9 @@ namespace OpenDental {
 			webBrowserWiki.AllowNavigation=false;//to disable links in pages.
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 	}
 }

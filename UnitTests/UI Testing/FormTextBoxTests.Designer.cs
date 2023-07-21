@@ -32,22 +32,31 @@
 			this.label3 = new System.Windows.Forms.Label();
 			this.textBox2 = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
+			this.textBox3 = new OpenDental.UI.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
+			this.textBoxOD = new OpenDental.UI.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
 			this.textBox4 = new System.Windows.Forms.TextBox();
 			this.label9 = new System.Windows.Forms.Label();
+			this.textBox5 = new OpenDental.UI.TextBox();
+			this.textBox6 = new OpenDental.UI.TextBox();
 			this.label10 = new System.Windows.Forms.Label();
 			this.textBox7 = new System.Windows.Forms.TextBox();
+			this.textBox8 = new OpenDental.UI.TextBox();
 			this.label11 = new System.Windows.Forms.Label();
 			this.textBox9 = new System.Windows.Forms.TextBox();
+			this.textBox10 = new OpenDental.UI.TextBox();
 			this.label12 = new System.Windows.Forms.Label();
 			this.textBox11 = new System.Windows.Forms.TextBox();
+			this.label13 = new System.Windows.Forms.Label();
 			this.label14 = new System.Windows.Forms.Label();
 			this.label15 = new System.Windows.Forms.Label();
+			this.textBox12 = new OpenDental.UI.TextBox();
 			this.label16 = new System.Windows.Forms.Label();
 			this.textBox13 = new System.Windows.Forms.TextBox();
+			this.textBox14 = new OpenDental.UI.TextBox();
 			this.label17 = new System.Windows.Forms.Label();
 			this.textBox15 = new System.Windows.Forms.TextBox();
 			this.panel1 = new System.Windows.Forms.Panel();
@@ -137,6 +146,16 @@
 			this.label4.Text = "MS Multi";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
+			// textBox3
+			// 
+			this.textBox3.Location = new System.Drawing.Point(274, 181);
+			this.textBox3.Multiline = true;
+			this.textBox3.Name = "textBox3";
+			this.textBox3.Size = new System.Drawing.Size(139, 67);
+			this.textBox3.TabIndex = 82;
+			this.textBox3.Text = "This is a test, but I\'m unclear when the scrollbars happen and why I\'m only getti" +
+    "ng vertical";
+			// 
 			// label5
 			// 
 			this.label5.Location = new System.Drawing.Point(200, 181);
@@ -145,6 +164,15 @@
 			this.label5.TabIndex = 84;
 			this.label5.Text = "OD Multi";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// textBoxOD
+			// 
+			this.textBoxOD.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+			this.textBoxOD.Location = new System.Drawing.Point(78, 121);
+			this.textBoxOD.Name = "textBoxOD";
+			this.textBoxOD.Size = new System.Drawing.Size(100, 20);
+			this.textBoxOD.TabIndex = 85;
+			this.textBoxOD.Text = "This is a test that spills over long";
 			// 
 			// label6
 			// 
@@ -191,6 +219,24 @@
 			this.label9.Text = "10";
 			this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
+			// textBox5
+			// 
+			this.textBox5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+			this.textBox5.Location = new System.Drawing.Point(668, 89);
+			this.textBox5.Name = "textBox5";
+			this.textBox5.Size = new System.Drawing.Size(100, 23);
+			this.textBox5.TabIndex = 91;
+			this.textBox5.Text = "This is a test";
+			// 
+			// textBox6
+			// 
+			this.textBox6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+			this.textBox6.Location = new System.Drawing.Point(668, 121);
+			this.textBox6.Name = "textBox6";
+			this.textBox6.Size = new System.Drawing.Size(100, 26);
+			this.textBox6.TabIndex = 94;
+			this.textBox6.Text = "This is a test";
+			// 
 			// label10
 			// 
 			this.label10.Location = new System.Drawing.Point(606, 125);
@@ -208,6 +254,16 @@
 			this.textBox7.Size = new System.Drawing.Size(100, 26);
 			this.textBox7.TabIndex = 92;
 			this.textBox7.Text = "This is a test";
+			// 
+			// textBox8
+			// 
+			this.textBox8.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+			this.textBox8.Location = new System.Drawing.Point(668, 307);
+			this.textBox8.Name = "textBox8";
+			this.textBox8.Size = new System.Drawing.Size(100, 26);
+			this.textBox8.TabIndex = 103;
+			this.textBox8.Text = "This is a test";
+			this.textBox8.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// label11
 			// 
@@ -228,6 +284,16 @@
 			this.textBox9.Text = "This is a test";
 			this.textBox9.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
+			// textBox10
+			// 
+			this.textBox10.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+			this.textBox10.Location = new System.Drawing.Point(668, 275);
+			this.textBox10.Name = "textBox10";
+			this.textBox10.Size = new System.Drawing.Size(100, 23);
+			this.textBox10.TabIndex = 100;
+			this.textBox10.Text = "This is a test";
+			this.textBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			// 
 			// label12
 			// 
 			this.label12.Location = new System.Drawing.Point(606, 277);
@@ -247,6 +313,15 @@
 			this.textBox11.Text = "This is a test";
 			this.textBox11.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
+			// label13
+			// 
+			this.label13.Location = new System.Drawing.Point(683, 199);
+			this.label13.Name = "label13";
+			this.label13.Size = new System.Drawing.Size(68, 18);
+			this.label13.TabIndex = 97;
+			this.label13.Text = "OD";
+			this.label13.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+			// 
 			// label14
 			// 
 			this.label14.Location = new System.Drawing.Point(509, 199);
@@ -264,6 +339,16 @@
 			this.label15.TabIndex = 95;
 			this.label15.Text = "Right";
 			this.label15.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+			// 
+			// textBox12
+			// 
+			this.textBox12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+			this.textBox12.Location = new System.Drawing.Point(668, 220);
+			this.textBox12.Name = "textBox12";
+			this.textBox12.Size = new System.Drawing.Size(100, 20);
+			this.textBox12.TabIndex = 106;
+			this.textBox12.Text = "This is a test";
+			this.textBox12.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// label16
 			// 
@@ -283,6 +368,16 @@
 			this.textBox13.TabIndex = 104;
 			this.textBox13.Text = "This is a test";
 			this.textBox13.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			// 
+			// textBox14
+			// 
+			this.textBox14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+			this.textBox14.Location = new System.Drawing.Point(668, 247);
+			this.textBox14.Name = "textBox14";
+			this.textBox14.Size = new System.Drawing.Size(100, 20);
+			this.textBox14.TabIndex = 109;
+			this.textBox14.Text = "This is a test that spills over long";
+			this.textBox14.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// label17
 			// 
@@ -316,24 +411,33 @@
 			// 
 			this.ClientSize = new System.Drawing.Size(889, 888);
 			this.Controls.Add(this.panel1);
+			this.Controls.Add(this.textBox14);
 			this.Controls.Add(this.label17);
 			this.Controls.Add(this.textBox15);
+			this.Controls.Add(this.textBox12);
 			this.Controls.Add(this.label16);
 			this.Controls.Add(this.textBox13);
+			this.Controls.Add(this.textBox8);
 			this.Controls.Add(this.label11);
 			this.Controls.Add(this.textBox9);
+			this.Controls.Add(this.textBox10);
 			this.Controls.Add(this.label12);
 			this.Controls.Add(this.textBox11);
+			this.Controls.Add(this.label13);
 			this.Controls.Add(this.label14);
 			this.Controls.Add(this.label15);
+			this.Controls.Add(this.textBox6);
 			this.Controls.Add(this.label10);
 			this.Controls.Add(this.textBox7);
+			this.Controls.Add(this.textBox5);
 			this.Controls.Add(this.label9);
 			this.Controls.Add(this.textBox4);
 			this.Controls.Add(this.label8);
 			this.Controls.Add(this.label7);
 			this.Controls.Add(this.label6);
+			this.Controls.Add(this.textBoxOD);
 			this.Controls.Add(this.label5);
+			this.Controls.Add(this.textBox3);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.textBox2);
 			this.Controls.Add(this.label3);
@@ -362,22 +466,31 @@
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox textBox2;
 		private System.Windows.Forms.Label label4;
+		private OpenDental.UI.TextBox textBox3;
 		private System.Windows.Forms.Label label5;
+		private OpenDental.UI.TextBox textBoxOD;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.TextBox textBox4;
 		private System.Windows.Forms.Label label9;
+		private OpenDental.UI.TextBox textBox5;
+		private OpenDental.UI.TextBox textBox6;
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.TextBox textBox7;
+		private OpenDental.UI.TextBox textBox8;
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.TextBox textBox9;
+		private OpenDental.UI.TextBox textBox10;
 		private System.Windows.Forms.Label label12;
 		private System.Windows.Forms.TextBox textBox11;
+		private System.Windows.Forms.Label label13;
 		private System.Windows.Forms.Label label14;
 		private System.Windows.Forms.Label label15;
+		private OpenDental.UI.TextBox textBox12;
 		private System.Windows.Forms.Label label16;
 		private System.Windows.Forms.TextBox textBox13;
+		private OpenDental.UI.TextBox textBox14;
 		private System.Windows.Forms.Label label17;
 		private System.Windows.Forms.TextBox textBox15;
 		private System.Windows.Forms.Panel panel1;

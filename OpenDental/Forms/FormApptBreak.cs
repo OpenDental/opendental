@@ -100,6 +100,11 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			ApptBreakSelection_=ApptBreakSelection.None;
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormApptBreak_FormClosing(object sender,FormClosingEventArgs e) {
 			if(DialogResult!=DialogResult.OK) {
 				return;

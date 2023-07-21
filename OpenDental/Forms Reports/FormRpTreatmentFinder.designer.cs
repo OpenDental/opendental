@@ -56,6 +56,7 @@ namespace OpenDental {
 			this.butGotoAccount = new OpenDental.UI.Button();
 			this.butGotoFamily = new OpenDental.UI.Button();
 			this.butPrint = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.checkIncludeHiddenBillingTypes = new OpenDental.UI.CheckBox();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
@@ -409,7 +410,17 @@ namespace OpenDental {
 			this.butPrint.Text = "Print List";
 			this.butPrint.Click += new System.EventHandler(this.butPrint_Click);
 			// 
-
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(970, 653);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 9;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// checkIncludeHiddenBillingTypes
 			// 
 			this.checkIncludeHiddenBillingTypes.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -432,6 +443,7 @@ namespace OpenDental {
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.label1);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.gridMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormRpTreatmentFinder";
@@ -443,6 +455,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private Label label1;
 		private OpenDental.UI.CheckBox checkIncludeNoIns;
 		private UI.GridOD gridMain;

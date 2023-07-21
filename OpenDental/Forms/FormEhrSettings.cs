@@ -97,7 +97,7 @@ namespace OpenDental {
 		}
 
 		private void checkAlertHighSeverity_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,false)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin,false)) {
 				checkAlertHighSeverity.Checked=PrefC.GetBool(PrefName.EhrRxAlertHighSeverity);
 			}
 		}
@@ -195,13 +195,13 @@ namespace OpenDental {
 		}
 		
 		private void checkMU2_SelectionChangeCommitted(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,false)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin,false)) {
 				comboMU2.SelectedIndex=PrefC.GetInt(PrefName.MeaningfulUseTwo);
 			}
 		}
 
 		private void comboEncCodes_SelectionChangeCommitted(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,false)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin,false)) {
 				comboEncCodes.SelectedIndex=OldEncListSelectedIdx;
 				return;
 			}
@@ -224,7 +224,7 @@ namespace OpenDental {
 		}
 
 		private void comboPregCodes_SelectionChangeCommitted(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,false)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin,false)) {
 				comboPregCodes.SelectedIndex=OldPregListSelectedIdx;
 				return;
 			}
@@ -248,7 +248,7 @@ namespace OpenDental {
 
 		private void butEncSnomed_Click(object sender,EventArgs e) {
 			using FormSnomeds FormS=new FormSnomeds();
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,false)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin,false)) {
 				FormS.IsSelectionMode=false;
 			}
 			else {
@@ -275,7 +275,7 @@ namespace OpenDental {
 
 		private void butEncHcpcs_Click(object sender,EventArgs e) {
 			using FormHcpcs FormH=new FormHcpcs();
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,false)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin,false)) {
 				FormH.IsSelectionMode=false;
 			}
 			else {
@@ -293,7 +293,7 @@ namespace OpenDental {
 
 		private void butEncCdt_Click(object sender,EventArgs e) {
 			using FormProcCodes FormP=new FormProcCodes();
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,false)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin,false)) {
 				FormP.IsSelectionMode=false;
 			}
 			else {
@@ -314,7 +314,7 @@ namespace OpenDental {
 
 		private void butEncCpt_Click(object sender,EventArgs e) {
 			using FormCpts FormC=new FormCpts();
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,false)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin,false)) {
 				FormC.IsSelectionMode=false;
 			}
 			else {
@@ -331,7 +331,7 @@ namespace OpenDental {
 		}
 
 		private void butEncounterTool_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,false)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin,false)) {
 				return;
 			}
 			using FormEncounterTool FormE=new FormEncounterTool();
@@ -350,7 +350,7 @@ namespace OpenDental {
 
 		private void butPregSnomed_Click(object sender,EventArgs e) {
 			using FormSnomeds FormS=new FormSnomeds();
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,false)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin,false)) {
 				FormS.IsSelectionMode=false;
 			}
 			else {
@@ -377,7 +377,7 @@ namespace OpenDental {
 
 		private void butPregIcd9_Click(object sender,EventArgs e) {
 			using FormIcd9s FormI9=new FormIcd9s();
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,false)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin,false)) {
 				FormI9.IsSelectionMode=false;
 			}
 			else {
@@ -395,7 +395,7 @@ namespace OpenDental {
 
 		private void butPregIcd10_Click(object sender,EventArgs e) {
 			using FormIcd10s FormI10=new FormIcd10s();
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,false)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin,false)) {
 				FormI10.IsSelectionMode=false;
 			}
 			else {
@@ -411,7 +411,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			Prefs.UpdateBool(PrefName.EhrRxAlertHighSeverity,checkAlertHighSeverity.Checked);
 			Prefs.UpdateInt(PrefName.MeaningfulUseTwo,comboMU2.SelectedIndex);
 			Prefs.UpdateString(PrefName.CQMDefaultEncounterCodeSystem,NewEncCodeSystem);
@@ -431,6 +431,10 @@ namespace OpenDental {
 			}
 			//A diseasedef with this default pregnancy code will be inserted if needed the first time they check the pregnant box on a vitalsign.  The DiseaseName will be "Pregnant" with the correct codevalue/system.
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

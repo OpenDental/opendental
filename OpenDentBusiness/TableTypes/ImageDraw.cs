@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace OpenDentBusiness{
 
-	/// <summary>Image text, lines. drawings, and scales. Attached to either a document or a mount. Drawings are in pixel coordinates of original image prior to any cropping or rotating. For a mount, coordinates are relative to the entire mount. Drawings do not get changed when cropping or rotating are changed. The result is that drawings always stay on the image in exactly the original location, and they move with the image.</summary>
+	/// <summary>Image text, lines. drawings, and scales. Attached to either a document or a mount.</summary>
 	[Serializable]
 	public class ImageDraw:TableBase {
 		///<summary>Primary key.</summary>
@@ -17,7 +17,7 @@ namespace OpenDentBusiness{
 		public long DocNum;
 		///<summary>FK to mount.MountNum</summary>
 		public long MountNum;
-		///<summary>For text, this is the foreground color. For lines, this is the color, and ColorBack is not used. For polygons, this is the fill color. No transparency component.</summary>
+		///<summary>For text, this is the foreground color. For lines, this is the color, and ColorBack is not used.</summary>
 		[XmlIgnore]
 		public Color ColorDraw;
 		///<summary>Background color for text. Can be Transparent (0,255,255,255)=16777215.</summary>
@@ -28,15 +28,10 @@ namespace OpenDentBusiness{
 		public string DrawingSegment;
 		///<summary>The location of the text in pixels is incorporated into this string.  Example: 25,123;This shows.  Carriage returns etc are not supported.  ColorDraw and FontSize are also used.  Unlike tooth initial, this does not support floats.</summary>
 		public string DrawText;
-		///<summary>This could vary significantly based on the size of the image.  It's always relative to orginal image or mount pixels. Always 0 for Pearl.</summary>
+		///<summary>This could vary significantly based on the size of the image.  It's always relative to orginal image or mount pixels.</summary>
 		public float FontSize;
 		///<summary>Enum:ImageDrawType</summary>
 		public ImageDrawType DrawType;
-		///<summary>Enum:EnumImageAnnotVendor 0: Open Dental drawings and text, 1:Pearl AI annotations.</summary>
-		public EnumImageAnnotVendor ImageAnnotVendor;
-		///<summary>Extra space for any text. Currently only used for Pearl annotation categories, relationship properties, and relationship values, which are all stored as a single chunk of user readable text drawn straight to screen when hovering.</summary>
-		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
-		public string Details;
 
 		///<summary>Used only for serialization purposes</summary>
 		[XmlElement("ColorDraw",typeof(int))]
@@ -63,26 +58,6 @@ namespace OpenDentBusiness{
 		///<summary></summary>
 		public ImageDraw Copy(){
 			return (ImageDraw)this.MemberwiseClone();
-		}
-
-		///<summary>This centralizes handling of our global font size for Pearl.</summary>
-		public float GetFontSize(){
-			float fontSize=FontSize;
-			if(Programs.IsEnabled(ProgramName.Pearl)){
-				string strFontHeight=ProgramProperties.GetPropVal(ProgramName.Pearl,Bridges.Pearl.StrTextFont);
-				try{
-					fontSize=float.Parse(strFontHeight);
-				}
-				catch{
-				}
-			}
-			if(fontSize<1){
-				return 1;//pt size really shouldn't be smaller than one, which is only 1.3 pixels.
-			}
-			if(fontSize>100){
-				return 100;//That's getting absurd at 133 pixels.
-			}
-			return fontSize;
 		}
 
 		///<summary>imagedraw.DrawText is two components: point;string.  This gets the string.</summary>
@@ -208,17 +183,7 @@ namespace OpenDentBusiness{
 		///<summary>2 - One continuous segment of a drawing.</summary>
 		Pen,
 		///<summary>3 - Stores a float, decimals, and units in the drawing segement. Only one of this type is allowed per image or mount.</summary>
-		ScaleValue,
-		///<summary>4 - A series of connected points forming the outline of a closed polygon. Stored same as pen drawing. Polygons only have a fill color, not any outline color.</summary>
-		Polygon
-	}
-
-	///<summary></summary>
-	public enum EnumImageAnnotVendor{
-		///<summary>0 - Open Dental drawings and text.</summary>
-		OpenDental,
-		///<summary>1 - Pearl AI annotations.</summary>
-		Pearl
+		ScaleValue
 	}
 }
 

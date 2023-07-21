@@ -163,6 +163,9 @@
   <data name="Rx" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Rx.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="MedicalHistSimple" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MedicalHistSimple.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="ClaimFormADA_2000" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ClaimForms\ClaimFormADA 2000.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
@@ -172,8 +175,8 @@
   <data name="ReferralSlip" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ReferralSlip.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="MedicalHist" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\MedicalHist.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="MedicalHistNewPat" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MedicalHistNewPat.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="LabelPatientLFPatNum" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\LabelPatientLFPatNum.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
@@ -267,6 +270,9 @@
   </data>
   <data name="Screening" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Screening.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="MedicalHistUpdate" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MedicalHistUpdate.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Statement" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Statement.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
@@ -643,8 +649,5 @@
         &lt;/table&gt;
     &lt;/body&gt;
 &lt;/html&gt;</value>
-  </data>
-  <data name="ClaimFormADA_2024" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ClaimForms\ClaimFormADA 2024.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>

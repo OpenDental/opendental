@@ -68,7 +68,7 @@ namespace OpenDental {
 		}
 
 		private void FormMedical_Load(object sender, EventArgs e){
-			SecurityLogs.MakeLogEntry(EnumPermType.MedicalInfoViewed,_patient.PatNum,"Patient medical information viewed");
+			SecurityLogs.MakeLogEntry(Permissions.MedicalInfoViewed,_patient.PatNum,"Patient medical information viewed");
 			_patOld=_patient.Copy();
 			checkPremed.Checked=_patient.Premed;
 			textMedUrgNote.Text=_patient.MedUrgNote;
@@ -175,7 +175,7 @@ namespace OpenDental {
 				}
 				if(!isForPrinting) {
 					if(Erx.IsFromNewCrop(_listMedicationPats[i].ErxGuid)) {
-						row.Cells.Add("NewCrop");
+						row.Cells.Add("Legacy");
 					}
 					else if(Erx.IsFromDoseSpot(_listMedicationPats[i].ErxGuid) || Erx.IsDoseSpotPatReported(_listMedicationPats[i].ErxGuid)) {
 						row.Cells.Add("DoseSpot");
@@ -231,14 +231,14 @@ namespace OpenDental {
 					Medication medication=Medications.GetMedication(formMedPat.MedicationPatCur.MedicationNum);
 					if(medication!=null) {
 						formCDSIntervention.ListCDSInterventions=EhrTriggers.TriggerMatch(medication,_patient);
-						formCDSIntervention.ShowIfRequired();
+						formCDSIntervention.ShowIfRequired(false);
 					}
 				}
 				else if(formMedPat.MedicationPatCur.RxCui > 0) {//Meds from NewCrop might have a valid RxNorm.
 					RxNorm rxNorm=RxNorms.GetByRxCUI(formMedPat.MedicationPatCur.RxCui.ToString());
 					if(rxNorm!=null) {
 						formCDSIntervention.ListCDSInterventions=EhrTriggers.TriggerMatch(rxNorm,_patient);
-						formCDSIntervention.ShowIfRequired();
+						formCDSIntervention.ShowIfRequired(false);
 					}
 				}
 			}
@@ -246,7 +246,7 @@ namespace OpenDental {
 		}
 
 		private void butAdd_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.PatMedicationListEdit)) {
+			if(!Security.IsAuthorized(Permissions.PatMedicationListEdit)) {
 				return;
 			}
 			//select medication from list.  Additional meds can be added to the list from within that dlg
@@ -259,11 +259,9 @@ namespace OpenDental {
 			if(CDSPermissions.GetForUser(Security.CurUser.UserNum).ShowCDS && CDSPermissions.GetForUser(Security.CurUser.UserNum).MedicationCDS) {
 				using FormCDSIntervention formCDSIntervention=new FormCDSIntervention();
 				formCDSIntervention.ListCDSInterventions=EhrTriggers.TriggerMatch(Medications.GetMedication(formMedications.SelectedMedicationNum),_patient);
-				if(formCDSIntervention.ListCDSInterventions!=null && formCDSIntervention.ListCDSInterventions.Count>0) {
-					formCDSIntervention.ShowIfRequired();
-					if(formCDSIntervention.DialogResult==DialogResult.Cancel) {
-						return;//do not add medication
-					}
+				formCDSIntervention.ShowIfRequired();
+				if(formCDSIntervention.DialogResult==DialogResult.Abort) {
+					return;//do not add medication
 				}
 			}
 			MedicationPat medicationPat=new MedicationPat();
@@ -497,7 +495,7 @@ namespace OpenDental {
 		}
 
 		private void butAddProblem_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.PatProblemListEdit)) {
+			if(!Security.IsAuthorized(Permissions.PatProblemListEdit)) {
 				return;
 			}
 			//get the list of disease def nums that should be highlighted in FormDiseaseDefs.
@@ -518,15 +516,13 @@ namespace OpenDental {
 				if(CDSPermissions.GetForUser(Security.CurUser.UserNum).ShowCDS && CDSPermissions.GetForUser(Security.CurUser.UserNum).ProblemCDS){
 					using FormCDSIntervention formCDSIntervention=new FormCDSIntervention();
 					formCDSIntervention.ListCDSInterventions=EhrTriggers.TriggerMatch(formDiseaseDefs.ListDiseaseDefsSelected[i],_patient);
-					if(formCDSIntervention.ListCDSInterventions!=null && formCDSIntervention.ListCDSInterventions.Count>0) {
-						formCDSIntervention.ShowIfRequired();
-						if(formCDSIntervention.DialogResult==DialogResult.Cancel) {
-							Diseases.Delete(disease);
-							continue;//cancel 
-						}
+					formCDSIntervention.ShowIfRequired();
+					if(formCDSIntervention.DialogResult==DialogResult.Abort) {
+						Diseases.Delete(disease);
+						continue;//cancel 
 					}
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.PatProblemListEdit,_patient.PatNum,formDiseaseDefs.ListDiseaseDefsSelected[i].DiseaseName+" added"); //Audit log made outside form because the form is just a list of problems and is called from many places.
+				SecurityLogs.MakeLogEntry(Permissions.PatProblemListEdit,_patient.PatNum,formDiseaseDefs.ListDiseaseDefsSelected[i].DiseaseName+" added"); //Audit log made outside form because the form is just a list of problems and is called from many places.
 			}
 			FillProblems();
 		}
@@ -573,7 +569,7 @@ namespace OpenDental {
 			{
 				using FormCDSIntervention formCDSIntervention=new FormCDSIntervention();
 				formCDSIntervention.ListCDSInterventions=EhrTriggers.TriggerMatch(DiseaseDefs.GetItem(_listDiseases[e.Row].DiseaseDefNum),_patient);
-				formCDSIntervention.ShowIfRequired();
+				formCDSIntervention.ShowIfRequired(false);
 			}
 			FillProblems();
 		}
@@ -654,7 +650,7 @@ namespace OpenDental {
 			{
 				using FormCDSIntervention formCDSIntervetion=new FormCDSIntervention();
 				formCDSIntervetion.ListCDSInterventions=EhrTriggers.TriggerMatch(AllergyDefs.GetOne(formAllergyEdit.AllergyCur.AllergyDefNum),_patient);
-				formCDSIntervetion.ShowIfRequired();
+				formCDSIntervetion.ShowIfRequired(false);
 			}
 			FillAllergies();
 		}
@@ -664,7 +660,7 @@ namespace OpenDental {
 		}
 
 		private void butAddAllergy_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.PatAllergyListEdit)) {
+			if(!Security.IsAuthorized(Permissions.PatAllergyListEdit)) {
 				return;
 			}
 			using FormAllergyEdit formAllergyEdit=new FormAllergyEdit();
@@ -679,7 +675,7 @@ namespace OpenDental {
 			if(CDSPermissions.GetForUser(Security.CurUser.UserNum).ShowCDS && CDSPermissions.GetForUser(Security.CurUser.UserNum).AllergyCDS) {
 				using FormCDSIntervention formCDSIntervention=new FormCDSIntervention();
 				formCDSIntervention.ListCDSInterventions=EhrTriggers.TriggerMatch(AllergyDefs.GetOne(formAllergyEdit.AllergyCur.AllergyDefNum),_patient);
-				formCDSIntervention.ShowIfRequired();
+				formCDSIntervention.ShowIfRequired(false);
 			}
 			FillAllergies();
 		}
@@ -1268,7 +1264,7 @@ namespace OpenDental {
 			FillMeds();
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(comboSmokeStatus.SelectedIndex==0) {//None
 				_patient.SmokingSnoMed="";
 			}
@@ -1313,6 +1309,10 @@ namespace OpenDental {
 				}
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

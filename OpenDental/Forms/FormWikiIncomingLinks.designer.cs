@@ -26,6 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWikiIncomingLinks));
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.webBrowserWiki = new System.Windows.Forms.WebBrowser();
+			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// gridMain
@@ -51,14 +52,25 @@ namespace OpenDental{
 			this.webBrowserWiki.Location = new System.Drawing.Point(266, 12);
 			this.webBrowserWiki.MinimumSize = new System.Drawing.Size(20, 20);
 			this.webBrowserWiki.Name = "webBrowserWiki";
-			this.webBrowserWiki.Size = new System.Drawing.Size(634, 621);
+			this.webBrowserWiki.Size = new System.Drawing.Size(592, 621);
 			this.webBrowserWiki.TabIndex = 0;
 			this.webBrowserWiki.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.webBrowserWiki_Navigated);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(864, 609);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 7;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// FormWikiIncomingLinks
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(951, 645);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.webBrowserWiki);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -74,6 +86,7 @@ namespace OpenDental{
 
 		private System.Windows.Forms.WebBrowser webBrowserWiki;
 		private UI.GridOD gridMain;
+		private UI.Button butClose;
 
 	}
 }

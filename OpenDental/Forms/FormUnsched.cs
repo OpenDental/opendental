@@ -134,7 +134,7 @@ namespace OpenDental{
 			//If multiple selected, just take the last one to remain consistent with SendPinboard_Click.
 			long patNum=_listAppointmentsUnsched[grid.SelectedIndices[grid.SelectedIndices.Length-1]].PatNum;
 			Patient patient=Patients.GetPat(patNum);
-			GlobalFormOpenDental.PatientSelected(patient,true);
+			FormOpenDental.S_Contr_PatientSelected(patient,true);
 		}
 
 		///<summary>If multiple patients are selected in UnchedList, will select the last patient to remain consistent with sending to pinboard behavior.</summary>
@@ -144,8 +144,8 @@ namespace OpenDental{
 				return;
 			}
 			Patient patient=Patients.GetPat(_listAppointmentsUnsched[grid.SelectedIndices[grid.SelectedIndices.Length-1]].PatNum);//If multiple selected, just take the last one to remain consistent with SendPinboard_Click.
-			GlobalFormOpenDental.PatientSelected(patient,false);
-			GlobalFormOpenDental.GotoChart(patient.PatNum);
+			FormOpenDental.S_Contr_PatientSelected(patient,false);
+			GotoModule.GotoChart(patient.PatNum);
 		}
 
 		private void SendPinboard_Click() {
@@ -171,11 +171,11 @@ namespace OpenDental{
 				MessageBox.Show("Appointments skipped due to patient restriction "+PatRestrictions.GetPatRestrictDesc(PatRestrict.ApptSchedule)
 					+": "+patsRestricted+".");
 			}
-			GlobalFormOpenDental.PinToAppt(_listAptNumsSelected,0);//This will send all appointments in _listAptSelected to the pinboard, and will select the patient attached to the last appointment in _listAptSelected.
+			GotoModule.PinToAppt(_listAptNumsSelected,0);//This will send all appointments in _listAptSelected to the pinboard, and will select the patient attached to the last appointment in _listAptSelected.
 		}
 
 		private void Delete_Click() {
-			if(!Security.IsAuthorized(EnumPermType.AppointmentEdit)) {
+			if(!Security.IsAuthorized(Permissions.AppointmentEdit)) {
 				return;
 			}
 			if(grid.SelectedIndices.Length>1) {
@@ -222,7 +222,7 @@ namespace OpenDental{
 			}
 			Appointments.Delete(listAptNumsSelected);
 			for(int i = 0;i<grid.SelectedIndices.Length;i++) {
-				SecurityLogs.MakeLogEntry(EnumPermType.AppointmentEdit,_listAppointmentsUnsched[grid.SelectedIndices[i]].PatNum,
+				SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,_listAppointmentsUnsched[grid.SelectedIndices[i]].PatNum,
 					Lan.g(this,"Appointment deleted from the Unscheduled list."),_listAppointmentsUnsched[grid.SelectedIndices[i]].AptNum,_listAppointmentsUnsched[grid.SelectedIndices[i]].DateTStamp);
 			}
 			FillGrid();
@@ -251,15 +251,15 @@ namespace OpenDental{
 			}
 			bool showBrokenAppts;
 			showBrokenAppts=checkBrokenAppts.Checked;
-			long clinicNum=PrefC.HasClinicsEnabled ? comboClinic.ClinicNumSelected : -1;
+			long clinicNum=PrefC.HasClinicsEnabled ? comboClinic.SelectedClinicNum : -1;
 			Dictionary<long,string> dictPatNames=null;
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				_listAppointmentsUnsched=Appointments.RefreshUnsched(order,provNum,siteNum,showBrokenAppts,clinicNum,
 					codeRangeFilter.StartRange,codeRangeFilter.EndRange,dateRangePicker.GetDateTimeFrom(),dateRangePicker.GetDateTimeTo());
 				dictPatNames=Patients.GetPatientNames(_listAppointmentsUnsched.Select(x => x.PatNum).ToList());
 			};
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			int scrollVal=grid.ScrollValue;
 			grid.BeginUpdate();
 			grid.Columns.Clear();
@@ -310,7 +310,7 @@ namespace OpenDental{
 			int currentSelection=e.Row;//tbApts.SelectedRow;
 			int currentScroll=grid.ScrollValue;//tbApts.ScrollValue;
 			Patient patient=Patients.GetPat(_listAppointmentsUnsched[e.Row].PatNum);//If multiple selected, just take the one that was clicked on.
-			GlobalFormOpenDental.PatientSelected(patient,true);
+			FormOpenDental.S_Contr_PatientSelected(patient,true);
 			using FormApptEdit formApptEdit=new FormApptEdit(_listAppointmentsUnsched[e.Row].AptNum);
 			formApptEdit.PinIsVisible=true;
 			formApptEdit.ShowDialog();
@@ -369,5 +369,8 @@ namespace OpenDental{
 			g.Dispose();
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
 	}
 }

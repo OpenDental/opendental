@@ -79,8 +79,6 @@ namespace OpenDentBusiness{
 		public bool IsClaimExportAllowed;
 		///<summary>Currently only used for DentalXChange's attachment service. This indicates that the user has set up the attachment service and would like to use it in Open Dental.</summary>
 		public bool IsAttachmentSendAllowed;
-		/// <summary>A unique identifier provided by the clearinghouse to identify the practice in their system. This is separate from the issue of clinics, where we already enforce only one clinic per clearinghouse.</summary>
-		public string LocationID;
 
 		public Clearinghouse() {
 

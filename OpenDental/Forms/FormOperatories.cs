@@ -78,7 +78,7 @@ namespace OpenDental{
 			for(int i=0;i<_listOperatories.Count;i++){
 				if(PrefC.HasClinicsEnabled 
 					&& !comboClinic.IsAllSelected
-					&& _listOperatories[i].ClinicNum!=comboClinic.ClinicNumSelected) 
+					&& _listOperatories[i].ClinicNum!=comboClinic.SelectedClinicNum) 
 				{
 					continue;
 				}
@@ -137,7 +137,7 @@ namespace OpenDental{
 			if(formClinics.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboClinic.ClinicNumSelected=formClinics.ClinicNumSelected;
+			comboClinic.SelectedClinicNum=formClinics.ClinicNumSelected;
 			FillGrid();
 		}
 
@@ -145,8 +145,7 @@ namespace OpenDental{
 			Operatory operatory=new Operatory();
 			operatory.IsNew=true;
 			if(PrefC.HasClinicsEnabled && !comboClinic.IsAllSelected && !comboClinic.IsNothingSelected) {
-				operatory.ClinicNum=comboClinic.ClinicNumSelected;
-				operatory.IsInHQView=false;
+				operatory.ClinicNum=comboClinic.SelectedClinicNum;
 			}
 			if(gridMain.SelectedIndices.Length>0){//a row is selected
 				operatory.ItemOrder=gridMain.SelectedIndices[0];
@@ -165,7 +164,7 @@ namespace OpenDental{
 		}
 		
 		private void butCombine_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			if(gridMain.SelectedIndices.Length<2) {
@@ -340,10 +339,34 @@ namespace OpenDental{
 			Operatories.Sync(_listOperatories,_listOperatoriesOld);
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 		private void FormOperatories_Closing(object sender,System.ComponentModel.CancelEventArgs e) {
 			ReorderAndSync();
 			DataValid.SetInvalid(InvalidType.Operatories);//With sync we don't know if anything changed.
 		}
-
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

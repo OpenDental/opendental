@@ -10,8 +10,8 @@ namespace OpenDentBusiness{
 		public long ToolButItemNum;
 		///<summary>FK to program.ProgramNum.</summary>
 		public long ProgramNum;
-		///<summary>Enum:EnumToolBar The toolbar to show the button on.</summary>
-		public EnumToolBar ToolBar;
+		///<summary>Enum:ToolBarsAvail The toolbar to show the button on.</summary>
+		public ToolBarsAvail ToolBar;
 		///<summary>The text to show on the toolbar button.</summary>
 		public string ButtonText;
 		//later include ComputerName.  If blank, then show on all computers.
@@ -26,27 +26,7 @@ namespace OpenDentBusiness{
 		}
 	}
 
-	///<summary></summary>
-	public enum EnumToolBar{
-		///<summary>0</summary>
-		AccountModule,
-		///<summary>1</summary>
-		ApptModule,
-		///<summary>2</summary>
-		ChartModule,
-		///<summary>3</summary>
-		ImagingModule,
-		///<summary>4</summary>
-		FamilyModule,
-		///<summary>5</summary>
-		TreatmentPlanModule,
-		///<summary>6</summary>
-		ClaimsSend,
-		///<summary>7 Shows in the toolbar at the top that is common to all modules.</summary>
-		MainToolbar,
-		///<summary>8 Shows in the main menu Reports submenu.</summary>
-		ReportsMenu,
-	}
+	
 
 }
 

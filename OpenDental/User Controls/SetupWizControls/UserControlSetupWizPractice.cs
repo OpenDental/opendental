@@ -57,12 +57,12 @@ namespace OpenDental.User_Controls.SetupWizard {
 			IsDone=true;
 			StrIncomplete = Lan.g("FormSetupWizard","The following fields need to be corrected: ");
 			string phone = textPhone.Text;//Auto formatting turned off on purpose.
-			if(!TelephoneNumbers.IsNumberValidTenDigit(phone)) {
+			if(!TelephoneNumbers.IsNumberValidTenDigit(ref phone)) {
 				IsDone=false;
 				StrIncomplete+="\r\n "+Lan.g("FormSetupWizard","-Practice Phone is invalid.  Must contain exactly ten digits.");
 			}
 			string fax = textFax.Text;//Auto formatting turned off on purpose.
-			if(!TelephoneNumbers.IsNumberValidTenDigit(fax)) {
+			if(!TelephoneNumbers.IsNumberValidTenDigit(ref fax)) {
 				IsDone=false;
 				StrIncomplete+="\r\n "+Lan.g("FormSetupWizard","-Practice Fax is invalid.  Must contain exactly ten digits.");
 			}

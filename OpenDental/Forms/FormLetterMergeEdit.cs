@@ -24,6 +24,9 @@ namespace OpenDental{
 		///<summary></summary>
 		public FormLetterMergeEdit(LetterMerge letterMerge)
 		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
 			InitializeLayoutManager();
 			_letterMerge=letterMerge;
@@ -211,10 +214,8 @@ namespace OpenDental{
 			Object objectFalse=false;
 			//Create an instance of Word.
 			Word.Application word_Application;
-			try {
-				word_Application=LetterMerges.WordApp;
-			}
-			catch {
+			word_Application=LetterMerges.WordApp;
+			if(word_Application==null){
 				MsgBox.Show(this,"Error. Is MS Word installed?");
 				return;
 			}
@@ -241,7 +242,7 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(textDescription.Text==""){
 				MsgBox.Show(this,"Please enter a description");
 				return;
@@ -298,5 +299,41 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

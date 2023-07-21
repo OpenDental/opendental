@@ -42,7 +42,7 @@ namespace OpenDental {
 			DateTime dateTo=PIn.Date(textDateTo.Text);
 			long clinicNum=0;
 			if(!comboClinic.IsAllSelected) {
-				clinicNum=comboClinic.ClinicNumSelected;
+				clinicNum=comboClinic.SelectedClinicNum;
 			}
 			long defNum=0;
 			if(comboPayGroup.SelectedIndex!=0) {
@@ -99,7 +99,7 @@ namespace OpenDental {
 		}
 		
 		private void butAdd_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPayCreate)) {//date not checked here, but it will be checked when saving the check to prevent backdating
+			if(!Security.IsAuthorized(Permissions.InsPayCreate)) {//date not checked here, but it will be checked when saving the check to prevent backdating
 				return;
 			}
 			ClaimPayment claimPayment=new ClaimPayment();
@@ -125,7 +125,7 @@ namespace OpenDental {
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPayCreate)) {
+			if(!Security.IsAuthorized(Permissions.InsPayCreate)) {
 				return;
 			}
 			FormClaimPayBatch formClaimPayBatch=new FormClaimPayBatch(_listClaimPayments[gridMain.GetSelectedIndex()]);
@@ -150,6 +150,10 @@ namespace OpenDental {
 
 		private void butRefresh_Click(object sender,EventArgs e) {
 			FillGrid();
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 
 		private void FillComboPaymentGroup(long selectedDefNum=0) {
@@ -177,6 +181,5 @@ namespace OpenDental {
 				}
 			}
 		}
-
 	}
 }

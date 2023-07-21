@@ -34,7 +34,7 @@ namespace OpenDental{
 			textFieldDate.Text=_patField.FieldValue;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textFieldDate.IsValid()) {
 				MsgBox.Show(this,"Invalid date");
 				return;
@@ -62,5 +62,39 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void FormPatFieldDefEdit_FormClosing(object sender,FormClosingEventArgs e) {
+			
+		}
+
+	
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

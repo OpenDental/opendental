@@ -170,11 +170,14 @@ namespace OpenDental {
 			gridProviders.EndUpdate();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			List<ProviderErx> listProviderErxes=ProviderErxs.Refresh(_patient.PatNum).FindAll(x => x.ErxType==ErxOption.NewCrop);
 			ProviderErxs.Sync(_listProviderErxs,listProviderErxes);//No cache refresh because this is an HQ only form.
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

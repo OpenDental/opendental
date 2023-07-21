@@ -62,7 +62,7 @@ namespace OpenDental {
 					else {
 						row.Cells.Add("");//shouldn't happen, but since we're not sure...
 					}
-					row.Cells.Add($"{ProcedureCodes.GetStringProcCode(procedure.CodeNum)}: {Procedures.GetDescription(procedure)}");
+					row.Cells.Add($"{ProcedureCodes.GetStringProcCode(procedure.CodeNum)} - {ProcedureCodes.GetLaymanTerm(procedure.CodeNum)}");
 				}
 				else if(_listAccountEntries[i].GetType()==typeof(Adjustment)) {
 					Adjustment adjustment=(Adjustment)_listAccountEntries[i].Tag;
@@ -91,5 +91,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

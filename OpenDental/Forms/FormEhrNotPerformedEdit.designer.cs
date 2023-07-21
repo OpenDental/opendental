@@ -43,7 +43,8 @@ namespace OpenDental{
 			this.comboCodeReason = new System.Windows.Forms.ComboBox();
 			this.textCodeSystemReason = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
-			this.butSave = new System.Windows.Forms.Button();
+			this.butOK = new System.Windows.Forms.Button();
+			this.butCancel = new System.Windows.Forms.Button();
 			this.butDelete = new System.Windows.Forms.Button();
 			this.textDescriptionReason = new System.Windows.Forms.TextBox();
 			this.textNote = new System.Windows.Forms.TextBox();
@@ -242,16 +243,27 @@ namespace OpenDental{
 			this.label6.Text = "Note";
 			this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(280, 379);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 23);
-			this.butSave.TabIndex = 153;
-			this.butSave.Text = "&Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(209, 379);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 23);
+			this.butOK.TabIndex = 153;
+			this.butOK.Text = "&OK";
+			this.butOK.UseVisualStyleBackColor = true;
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(290, 379);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 23);
+			this.butCancel.TabIndex = 154;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butDelete
 			// 
@@ -294,7 +306,8 @@ namespace OpenDental{
 			this.ClientSize = new System.Drawing.Size(377, 414);
 			this.Controls.Add(this.textNote);
 			this.Controls.Add(this.butDelete);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.label6);
 			this.Controls.Add(this.groupReason);
 			this.Controls.Add(this.groupItem);
@@ -331,7 +344,8 @@ namespace OpenDental{
 		private System.Windows.Forms.ComboBox comboCodeReason;
 		private System.Windows.Forms.TextBox textCodeSystemReason;
 		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.Button butSave;
+		private System.Windows.Forms.Button butOK;
+		private System.Windows.Forms.Button butCancel;
 		private System.Windows.Forms.Button butDelete;
 		private System.Windows.Forms.RadioButton radioMedReason;
 		private System.Windows.Forms.RadioButton radioSysReason;

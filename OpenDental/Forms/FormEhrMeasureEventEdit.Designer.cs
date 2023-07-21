@@ -33,7 +33,8 @@
 			this.label3 = new System.Windows.Forms.Label();
 			this.textPatient = new System.Windows.Forms.TextBox();
 			this.labelPatient = new System.Windows.Forms.Label();
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.textDateTime = new System.Windows.Forms.TextBox();
 			this.labelTobaccoStartDate = new System.Windows.Forms.Label();
@@ -121,15 +122,26 @@
 			this.labelPatient.Text = "Patient";
 			this.labelPatient.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(460, 225);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(76, 24);
-			this.butSave.TabIndex = 8;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(475, 226);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(76, 24);
+			this.butCancel.TabIndex = 9;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(394, 226);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(76, 24);
+			this.butOK.TabIndex = 8;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butDelete
 			// 
@@ -209,8 +221,8 @@
 			// 
 			// FormEhrMeasureEventEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(548, 261);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(564, 261);
 			this.Controls.Add(this.textTobaccoStartDate);
 			this.Controls.Add(this.labelTobaccoDesireScale);
 			this.Controls.Add(this.labelTobaccoDesireToQuit);
@@ -219,7 +231,8 @@
 			this.Controls.Add(this.labelTobaccoStartDate);
 			this.Controls.Add(this.textDateTime);
 			this.Controls.Add(this.butDelete);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.labelPatient);
 			this.Controls.Add(this.textPatient);
 			this.Controls.Add(this.textResult);
@@ -249,7 +262,8 @@
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox textPatient;
 		private System.Windows.Forms.Label labelPatient;
-		private UI.Button butSave;
+		private UI.Button butCancel;
+		private UI.Button butOK;
 		private UI.Button butDelete;
 		private System.Windows.Forms.TextBox textDateTime;
 		private System.Windows.Forms.Label labelTobaccoStartDate;

@@ -55,7 +55,7 @@ namespace OpenDental{
 			checkBenefitAssumeGeneral.Checked=PrefC.GetBool(PrefName.TreatFinderProcsAllGeneral);
 			if(RemotingClient.MiddleTierRole!=MiddleTierRole.ClientMT) {//for middle tier, don't allow mutiple clinics
 				comboClinics.IncludeAll=true;
-				comboClinics.IsMultiSelect=true;
+				comboClinics.SelectionModeMulti=true;
 			}
 			FillGrid();
 		}
@@ -95,7 +95,7 @@ namespace OpenDental{
 			using(DataTable table=RpTreatmentFinder.GetTreatmentFinderList(checkIncludeNoIns.Checked,checkIncludePatsWithApts.Checked,monthStart,dateFrom,dateTo,
 				aboveAmount,comboBoxMultiProv.GetSelectedProvNums(),
 				comboBoxMultiBilling.GetListSelected<Def>().Select(x => x.DefNum).ToList(),codeRangeFilter.StartRange,codeRangeFilter.EndRange,
-				comboClinics.ListClinicNumsSelected,checkBenefitAssumeGeneral.Checked,checkUseTreatingProvider.Checked))
+				comboClinics.ListSelectedClinicNums,checkBenefitAssumeGeneral.Checked,checkUseTreatingProvider.Checked))
 			{
 				if(PrefC.HasClinicsEnabled) {
 					_listHeaders=table.Columns.AsEnumerable<DataColumn>().Select(x=>x.ColumnName).ToList();
@@ -140,7 +140,7 @@ namespace OpenDental{
 			if(gridMain.SelectedGridRows.Count==0) {//When deselecting with CTR+Click.
 				return;
 			}
-			GlobalFormOpenDental.GotoChart(PIn.Long(gridMain.SelectedTag<DataRow>()["PatNum"].ToString()));
+			GotoModule.GotoChart(PIn.Long(gridMain.SelectedTag<DataRow>()["PatNum"].ToString()));
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
@@ -202,7 +202,7 @@ namespace OpenDental{
 				}
 				filePathAndName=PrefC.GetRandomTempFile(".pdf");
 				document.Save(filePathAndName);
-				if(ODBuild.IsThinfinity()) {
+				if(ODBuild.IsWeb()) {
 					ThinfinityUtils.HandleFile(filePathAndName);
 				}
 				else {
@@ -263,7 +263,7 @@ namespace OpenDental{
 				text+=curRow["address"].ToString()+"\r\n";
 				text+=curRow["City"].ToString()+", "+curRow["State"].ToString()+" "+curRow["Zip"].ToString()+"\r\n";
 				Rectangle rect=new Rectangle((int)xPos,(int)yPos,275,100);
-				OpenDental.InternalTools.Phones.MapPanel.FitTextOld(text,new Font(FontFamily.GenericSansSerif,11),Brushes.Black,rect,new StringFormat(),g);
+				MapCubicle.FitText(text,new Font(FontFamily.GenericSansSerif,11),Brushes.Black,rect,new StringFormat(),g);
 				//reposition for next label
 				xPos+=275;
 				if(xPos>850){//drop a line
@@ -285,7 +285,7 @@ namespace OpenDental{
 		}
 
 		private void menuItemFamily_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.FamilyModule)) {
+			if(!Security.IsAuthorized(Permissions.FamilyModule)) {
 				return;
 			}
 			if(gridMain.SelectedIndices.Length==0) {
@@ -293,11 +293,11 @@ namespace OpenDental{
 				return;
 			}
 			long patNum=PIn.Long(gridMain.SelectedTag<DataRow>()["PatNum"].ToString());
-			GlobalFormOpenDental.GotoFamily(patNum);
+			GotoModule.GotoFamily(patNum);
 		}
 
 		private void menuItemAccount_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.AccountModule)) {
+			if(!Security.IsAuthorized(Permissions.AccountModule)) {
 				return;
 			}
 			if(gridMain.SelectedIndices.Length==0) {
@@ -305,76 +305,67 @@ namespace OpenDental{
 				return;
 			}
 			long patNum=PIn.Long(gridMain.SelectedTag<DataRow>()["PatNum"].ToString());
-			GlobalFormOpenDental.GotoAccount(patNum);
+			GotoModule.GotoAccount(patNum);
 		}
 
 		private void butGotoFamily_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.FamilyModule)) {
+			if(!Security.IsAuthorized(Permissions.FamilyModule)) {
 				return;
 			}
 			if(gridMain.SelectedIndices.Length==0) {
 				MsgBox.Show(this,"Please select a patient first.");
 				return;
 			}
+			ShrinkWindowBeforeMinMax();
 			WindowState=FormWindowState.Minimized;
 			long patNum=PIn.Long(gridMain.SelectedTag<DataRow>()["PatNum"].ToString());
-			GlobalFormOpenDental.GotoFamily(patNum);
+			GotoModule.GotoFamily(patNum);
 		}
 
 		private void butGotoAccount_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.AccountModule)) {
+			if(!Security.IsAuthorized(Permissions.AccountModule)) {
 				return;
 			}
 			if(gridMain.SelectedIndices.Length==0) {
 				MsgBox.Show(this,"Please select a patient first.");
 				return;
 			}
+			ShrinkWindowBeforeMinMax();
 			WindowState=FormWindowState.Minimized;
 			long patNum=PIn.Long(gridMain.SelectedTag<DataRow>()["PatNum"].ToString());
-			GlobalFormOpenDental.GotoAccount(patNum);
+			GotoModule.GotoAccount(patNum);
 		}
 
 		private void buttonExport_Click(object sender,EventArgs e) {
 			string fileName=Lan.g(this,"Treatment Finder");
 			string filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
-			SaveFileDialog saveFileDialog=new SaveFileDialog {
-				AddExtension=true,
-				Title=Lan.g(this,"Treatment Finder"),
-				FileName=Lan.g(this,"Treatment Finder"),
-				Filter="Text files(*.txt)|*.txt|Excel Files(*.xls)|*.xls|All files(*.*)|*.*",
-				FilterIndex=0
-			};
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				//file download dialog will come up later, after file is created.
-				if(saveFileDialog.ShowDialog()!=DialogResult.OK) { 
-					return;
-				}
-				if(saveFileDialog.FileName.IsNullOrEmpty()) {
-					MsgBox.Show("Failed to save the file.");
-					return;
-				}
-				filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),saveFileDialog.FileName.Split('\\').Last());
-			}
-			else if(ODCloudClient.IsAppStream) {
-				//Do not show save dialog or export locally. File will be exported later.
+				filePath+=".txt";//Provide the filepath an extension so that Thinfinity can offer as a download.
 			}
 			else {
+				using SaveFileDialog saveFileDialog2=new SaveFileDialog();
+				saveFileDialog2.AddExtension=true;
+				saveFileDialog2.Title=Lan.g(this,"Treatment Finder");
+				saveFileDialog2.FileName=Lan.g(this,"Treatment Finder");
 				if(!Directory.Exists(PrefC.GetString(PrefName.ExportPath))) {
 					try {
 						Directory.CreateDirectory(PrefC.GetString(PrefName.ExportPath));
-						saveFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
+						saveFileDialog2.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
 					}
 					catch {
 						//initialDirectory will be blank
 					}
 				}
 				else {
-					saveFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
+					saveFileDialog2.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
 				}
-				if(saveFileDialog.ShowDialog()!=DialogResult.OK) {
+				saveFileDialog2.Filter="Text files(*.txt)|*.txt|Excel Files(*.xls)|*.xls|All files(*.*)|*.*";
+				saveFileDialog2.FilterIndex=0;
+				if(saveFileDialog2.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
-				filePath=saveFileDialog.FileName;
+				filePath=saveFileDialog2.FileName;
 			}
 			try{
 			  using(StreamWriter sw=new StreamWriter(filePath,false))
@@ -395,11 +386,8 @@ namespace OpenDental{
         MessageBox.Show(Lan.g(this,"File in use by another program.  Close and try again."));
 				return;
 			}
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.ExportForDownload(filePath);
-			}
-			else if(ODCloudClient.IsAppStream) {
-				CloudClientL.ExportForCloud(filePath);
 			}
 			else {
 				MessageBox.Show(Lan.g(this,"File created successfully"));
@@ -457,6 +445,10 @@ namespace OpenDental{
 
 		private void butRefresh_Click(object sender,EventArgs e) {
 			FillGrid();
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			Close();
 		}
 
 	}

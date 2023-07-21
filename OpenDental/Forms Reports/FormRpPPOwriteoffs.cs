@@ -30,6 +30,7 @@ namespace OpenDental{
 			InitializeLayoutManager();
 			Lan.C("All", new System.Windows.Forms.Control[] {
 				butOK,
+				butCancel,
 			});
 		}
 
@@ -158,7 +159,34 @@ namespace OpenDental{
 			else {//radioWriteoffClaim.Checked is checked
 				return PPOWriteoffDateCalc.ClaimPayDate;
 			}
+		} 
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
+		private void radioWriteoffClaimDate_CheckedChanged(object sender,EventArgs e) {
+
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

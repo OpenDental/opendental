@@ -121,7 +121,7 @@ namespace OpenDental {
 			_listClinicPrefsWebSchedVerify_Old=_listClinicPrefsWebSchedVerify.Select(x => x.Clone()).ToList();
 			//Fill in the UI
 			checkUseDefaultsVerify.Visible=false;
-			if(PrefC.HasClinicsEnabled && comboClinicVerify.ClinicNumSelected!=0) {
+			if(PrefC.HasClinicsEnabled && comboClinicVerify.SelectedClinicNum!=0) {
 				checkUseDefaultsVerify.Visible=true;
 			}
 			FillTemplate();
@@ -184,12 +184,12 @@ namespace OpenDental {
 		private void checkUseDefaults_CheckChanged(object sender,EventArgs e) {
 			if(checkUseDefaultsVerify.Checked) {
 				groupBox.Enabled=false;
-				_listClinicPrefsWebSchedVerify.RemoveAll(x => x.ClinicNum==comboClinicVerify.ClinicNumSelected);
+				_listClinicPrefsWebSchedVerify.RemoveAll(x => x.ClinicNum==comboClinicVerify.SelectedClinicNum);
 			}
 			else {
 				groupBox.Enabled=true;
 				//Only do this logic if the check change result from the user manually checking the box, not from changing clinics
-				if(!_listClinicPrefsWebSchedVerify.Any(x => x.ClinicNum==comboClinicVerify.ClinicNumSelected)) {
+				if(!_listClinicPrefsWebSchedVerify.Any(x => x.ClinicNum==comboClinicVerify.SelectedClinicNum)) {
 					for(int i=0;i<_listPrefNamesWebSchedVerify.Count;i++) {
 						TryRestoreClinicPrefOld(_listPrefNamesWebSchedVerify[i]);
 					}
@@ -200,13 +200,13 @@ namespace OpenDental {
 
 		///<summary>Event handler for ComboClinics index changed.</summary>
 		private void comboClinicVerify_SelectionChangeCommitted(object sender,EventArgs e) {
-			if(comboClinicVerify.ClinicNumSelected==_clinicNumDefault) {//'Default' is selected.
+			if(comboClinicVerify.SelectedClinicNum==_clinicNumDefault) {//'Default' is selected.
 				checkUseDefaultsVerify.Visible=false;
 				checkUseDefaultsVerify.Checked=false;
 			}
 			else {
 				checkUseDefaultsVerify.Visible=true;
-				if(!_listClinicPrefsWebSchedVerify.Exists(x => x.ClinicNum==comboClinicVerify.ClinicNumSelected)) {
+				if(!_listClinicPrefsWebSchedVerify.Exists(x => x.ClinicNum==comboClinicVerify.SelectedClinicNum)) {
 					checkUseDefaultsVerify.Checked=true;
 				}
 				else {
@@ -258,11 +258,11 @@ namespace OpenDental {
 			listMessageReplaceTypes.Add(MessageReplaceType.Appointment);
 			listMessageReplaceTypes.Add(MessageReplaceType.Office);
 			listMessageReplaceTypes.Add(MessageReplaceType.Patient);
-			FrmMessageReplacements frmMessageReplacements=new FrmMessageReplacements(listMessageReplaceTypes,allowPHI);
-			frmMessageReplacements.IsSelectionMode=true;
-			frmMessageReplacements.ShowDialog();
-			if(frmMessageReplacements.IsDialogOK) {
-				textBox.SelectedText=frmMessageReplacements.ReplacementTextSelected;
+			using FormMessageReplacements formMessageReplacements=new FormMessageReplacements(listMessageReplaceTypes,allowPHI);
+			formMessageReplacements.IsSelectionMode=true;
+			formMessageReplacements.ShowDialog();
+			if(formMessageReplacements.DialogResult==DialogResult.OK) {
+				textBox.SelectedText=formMessageReplacements.Replacement;
 			}
 		}
 
@@ -287,7 +287,7 @@ namespace OpenDental {
 				return;
 			}
 			WebSchedVerifyType webSchedVerifyType=(WebSchedVerifyType)radioChanged.Tag;
-			if(!_listClinicPrefsWebSchedVerify.Any(x => x.ClinicNum==comboClinicVerify.ClinicNumSelected)) {
+			if(!_listClinicPrefsWebSchedVerify.Any(x => x.ClinicNum==comboClinicVerify.SelectedClinicNum)) {
 				return;
 			}
 			//We only want to do this part when the user manually checked this, not when the check-defaults forced it to change
@@ -302,7 +302,7 @@ namespace OpenDental {
 
 		///<summary>Returns the clinic pref value for the currently selected clinic and provided PrefName, or the default pref if there is none.</summary>
 		private string GetTemplateVal(PrefName prefName) {
-			ClinicPref clinicPref=_listClinicPrefsWebSchedVerify.FirstOrDefault(x => x.ClinicNum==comboClinicVerify.ClinicNumSelected && x.PrefName==prefName);
+			ClinicPref clinicPref=_listClinicPrefsWebSchedVerify.FirstOrDefault(x => x.ClinicNum==comboClinicVerify.SelectedClinicNum && x.PrefName==prefName);
 			ClinicPref clinicPrefDefault=_listClinicPrefsWebSchedVerify.FirstOrDefault(x => x.ClinicNum==_clinicNumDefault && x.PrefName==prefName);
 			//ClinicPref won't be available if it has not been created previously.
 			string valueStringClinicPref=clinicPrefDefault.ValueString;
@@ -322,7 +322,7 @@ namespace OpenDental {
 		///<summary>Tries to get the original clinic pref that was loaded in when the form first opened, and reload it into the in-memory clinic pref 
 		///list. If there is no old pref, this loads the default pref value for that clinic into the in-memory list.</summary>
 		private void TryRestoreClinicPrefOld(PrefName prefName) {
-			ClinicPref clinicPref=_listClinicPrefsWebSchedVerify_Old.FindAll(x => x.ClinicNum==comboClinicVerify.ClinicNumSelected && x.PrefName==prefName).FirstOrDefault();
+			ClinicPref clinicPref=_listClinicPrefsWebSchedVerify_Old.FindAll(x => x.ClinicNum==comboClinicVerify.SelectedClinicNum && x.PrefName==prefName).FirstOrDefault();
 			if(clinicPref==null) {
 				clinicPref=_listClinicPrefsWebSchedVerify.FindAll(x => x.ClinicNum==_clinicNumDefault && x.PrefName==prefName).First();
 			}
@@ -331,11 +331,11 @@ namespace OpenDental {
 
 		///<summary>Updates the in-memory clinic pref list with the given valueString for the provided prefName and currently selected clinic.</summary>
 		private void UpdateClinicPref(PrefName prefName,string valueString) {
-			ClinicPref clinicPref=_listClinicPrefsWebSchedVerify.FirstOrDefault(x => x.ClinicNum==comboClinicVerify.ClinicNumSelected && x.PrefName==prefName);
+			ClinicPref clinicPref=_listClinicPrefsWebSchedVerify.FirstOrDefault(x => x.ClinicNum==comboClinicVerify.SelectedClinicNum && x.PrefName==prefName);
 			if(clinicPref==null) {
 				clinicPref=new ClinicPref();
 				clinicPref.PrefName=prefName;
-				clinicPref.ClinicNum=comboClinicVerify.ClinicNumSelected;
+				clinicPref.ClinicNum=comboClinicVerify.SelectedClinicNum;
 				clinicPref.ValueString=valueString;
 				_listClinicPrefsWebSchedVerify.Add(clinicPref);
 			}
@@ -372,7 +372,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(Patients.DoesContainPHIField(textMessageTemplate.Text)) {
 				MsgBox.Show(this,"Text Message template is not allowed to contain Protected Health Information.");
 				return;
@@ -381,5 +381,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

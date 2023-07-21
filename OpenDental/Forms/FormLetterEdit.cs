@@ -29,7 +29,7 @@ namespace OpenDental{
 			textBody.Text=LetterCur.BodyText;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			LetterCur.Description=textDescription.Text;
 			LetterCur.BodyText=textBody.Text;
 			if(IsNew){
@@ -41,5 +41,33 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

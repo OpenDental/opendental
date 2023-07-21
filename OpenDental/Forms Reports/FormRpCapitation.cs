@@ -22,6 +22,7 @@ namespace OpenDental{
 			InitializeLayoutManager();
 			Lan.C("All", new System.Windows.Forms.Control[] {
 				butOK,
+				butCancel,
 			});
 		}
 
@@ -100,5 +101,32 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

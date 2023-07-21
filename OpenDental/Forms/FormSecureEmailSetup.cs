@@ -158,7 +158,7 @@ namespace OpenDental {
 
 		private void UpdateControlVisibility() {
 			bool hasClinicsEnabled=PrefC.HasClinicsEnabled;
-			bool allowEdit=Security.IsAuthorized(EnumPermType.EServicesSetup,true);
+			bool allowEdit=Security.IsAuthorized(Permissions.EServicesSetup,true);
 			bool isSignedUpClinic0=Clinics.IsSecureEmailSignedUp(0);
 			bool areAnyClinicsSignedUp=GetClinicNums().Any(x => Clinics.IsSecureEmailSignedUp(x));
 			gridClinics.Visible=hasClinicsEnabled;

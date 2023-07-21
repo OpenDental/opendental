@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSheetExport));
 			this.butExport = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.gridCustomSheet = new OpenDental.UI.GridOD();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
@@ -38,6 +39,16 @@ namespace OpenDental{
 			this.butExport.TabIndex = 2;
 			this.butExport.Text = "Export";
 			this.butExport.Click += new System.EventHandler(this.butExport_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(405, 602);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridCustomSheet
 			// 
@@ -63,6 +74,7 @@ namespace OpenDental{
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(492, 638);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.gridCustomSheet);
 			this.Controls.Add(this.butExport);
@@ -77,6 +89,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butExport;
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridCustomSheet;
 		private System.Windows.Forms.Label label1;
 	}

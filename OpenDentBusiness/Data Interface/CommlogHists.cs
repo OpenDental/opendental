@@ -26,7 +26,6 @@ namespace OpenDentBusiness {
 			return Crud.CommlogHistCrud.SelectOne(commlogHistNum);
 		}
 		#endregion Methods - Get
-
 		#region Methods - Modify
 		///<summary></summary>
 		public static long Insert(CommlogHist commlogHist) {
@@ -55,28 +54,27 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}
 		#endregion Methods - Modify
-
 		#region Methods - Misc
 		///<summary>Returns a CommlogHist object for the commlog passed in. Does not validate the commlog provided.</summary>
 		public static CommlogHist CreateFromCommlog(Commlog commlog) {
 			//No need for remoting role check, no call to Db.
-			CommlogHist commlogHist=new CommlogHist();
-			commlogHist.CommlogNum=commlog.CommlogNum;
-			commlogHist.PatNum=commlog.PatNum;
-			commlogHist.CommDateTime=commlog.CommDateTime;
-			commlogHist.CommType=commlog.CommType;
-			commlogHist.Note=commlog.Note;
-			commlogHist.Mode_=commlog.Mode_;
-			commlogHist.SentOrReceived=commlog.SentOrReceived;
-			commlogHist.UserNum=commlog.UserNum;
-			commlogHist.Signature=commlog.Signature;
-			commlogHist.SigIsTopaz=commlog.SigIsTopaz;
-			//DateTStamp=commlog.DateTStamp, DB timestamp, set automatically when this CommlogHist row is inserted into the db. Use cast operators if you want this pulled from the commlog.
-			commlogHist.DateTimeEnd=commlog.DateTimeEnd;
-			commlogHist.CommSource=commlog.CommSource;
-			commlogHist.ProgramNum=commlog.ProgramNum;
-			//DateTEntry=commlog.DateTEntry, DB entry date, set automatically when this CommlogHist row is inserted into the db. Use cast operators if you want this pulled from the commlog.
-			return commlogHist;
+			return new CommlogHist() {
+				CommlogNum=commlog.CommlogNum,
+				PatNum=commlog.PatNum,
+				CommDateTime=commlog.CommDateTime,
+				CommType=commlog.CommType,
+				Note=commlog.Note,
+				Mode_=commlog.Mode_,
+				SentOrReceived=commlog.SentOrReceived,
+				UserNum=commlog.UserNum,
+				Signature=commlog.Signature,
+				SigIsTopaz=commlog.SigIsTopaz,
+				//DateTStamp=commlog.DateTStamp, DB timestamp, set automatically when this CommlogHist row is inserted into the db. Use cast operators if you want this pulled from the commlog.
+				DateTimeEnd=commlog.DateTimeEnd,
+				CommSource=commlog.CommSource,
+				ProgramNum=commlog.ProgramNum,
+				//DateTEntry=commlog.DateTEntry, DB entry date, set automatically when this CommlogHist row is inserted into the db. Use cast operators if you want this pulled from the commlog.
+			};
 		}
 		#endregion Methods - Misc
 	}

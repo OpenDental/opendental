@@ -37,8 +37,9 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormLabCaseSelect));
 			this.butAdd = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.labelInfo = new System.Windows.Forms.Label();
+			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// butAdd
@@ -46,7 +47,7 @@ namespace OpenDental {
 			this.butAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butAdd.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAdd.Location = new System.Drawing.Point(12, 202);
+			this.butAdd.Location = new System.Drawing.Point(12, 213);
 			this.butAdd.Name = "butAdd";
 			this.butAdd.Size = new System.Drawing.Size(81, 26);
 			this.butAdd.TabIndex = 127;
@@ -56,12 +57,22 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(512, 202);
+			this.butOK.Location = new System.Drawing.Point(407, 213);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 8;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(498, 213);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 9;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// gridMain
 			// 
@@ -70,27 +81,27 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridMain.Location = new System.Drawing.Point(12, 46);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridMain.Size = new System.Drawing.Size(561, 150);
+			this.gridMain.Size = new System.Drawing.Size(561, 145);
 			this.gridMain.TabIndex = 128;
 			this.gridMain.Title = "Lab Cases";
 			this.gridMain.TranslationName = "TableLabCaseSelect";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
 			// 
-			// labelInfo
+			// label1
 			// 
-			this.labelInfo.Location = new System.Drawing.Point(11, 9);
-			this.labelInfo.Name = "labelInfo";
-			this.labelInfo.Size = new System.Drawing.Size(562, 34);
-			this.labelInfo.TabIndex = 130;
-			this.labelInfo.Text = "Select a lab case from the list below or create a new one.  This list will not sh" +
+			this.label1.Location = new System.Drawing.Point(11, 9);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(562, 34);
+			this.label1.TabIndex = 130;
+			this.label1.Text = "Select a lab case from the list below or create a new one.  This list will not sh" +
     "ow lab cases that are already attached to other appointments.";
 			// 
 			// FormLabCaseSelect
 			// 
-			this.ClientSize = new System.Drawing.Size(599, 240);
+			this.ClientSize = new System.Drawing.Size(599, 257);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
-			this.Controls.Add(this.labelInfo);
+			this.Controls.Add(this.label1);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butAdd);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -104,9 +115,11 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.GridOD gridMain;
-		private Label labelInfo;
+		private Label label1;
 	}
 }

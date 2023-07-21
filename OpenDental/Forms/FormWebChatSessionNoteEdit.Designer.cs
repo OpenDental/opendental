@@ -24,7 +24,8 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWebChatSessionNoteEdit));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butAutoNote = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.textDateTime = new System.Windows.Forms.TextBox();
@@ -35,15 +36,26 @@ namespace OpenDental{
 			this.label2 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(565, 330);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 1;
-			this.butSave.Text = "Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(468, 317);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 1;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(565, 317);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butAutoNote
 			// 
@@ -59,7 +71,7 @@ namespace OpenDental{
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(12, 330);
+			this.butDelete.Location = new System.Drawing.Point(34, 317);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(80, 24);
 			this.butDelete.TabIndex = 3;
@@ -104,9 +116,9 @@ namespace OpenDental{
 			this.textNote.HasAutoNotes = true;
 			this.textNote.Location = new System.Drawing.Point(99, 65);
 			this.textNote.Name = "textNote";
-			this.textNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Task;
+			this.textNote.QuickPasteType = OpenDentBusiness.QuickPasteType.Task;
 			this.textNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this.textNote.Size = new System.Drawing.Size(541, 248);
+			this.textNote.Size = new System.Drawing.Size(541, 218);
 			this.textNote.TabIndex = 0;
 			this.textNote.Text = "";
 			// 
@@ -130,6 +142,7 @@ namespace OpenDental{
 			// 
 			// FormWebChatSessionNoteEdit
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(664, 366);
 			this.Controls.Add(this.butAutoNote);
 			this.Controls.Add(this.butDelete);
@@ -139,7 +152,8 @@ namespace OpenDental{
 			this.Controls.Add(this.textNote);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.label2);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormWebChatSessionNoteEdit";
 			this.Text = "Web Chat Session Note Edit";
@@ -151,7 +165,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private UI.Button butAutoNote;
 		private UI.Button butDelete;
 		private System.Windows.Forms.TextBox textDateTime;

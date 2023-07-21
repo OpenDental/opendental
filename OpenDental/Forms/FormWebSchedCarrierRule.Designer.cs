@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWebSchedCarrierRule));
+			this.butClose = new OpenDental.UI.Button();
 			this.gridWebSchedCarrierRules = new OpenDental.UI.GridOD();
 			this.labelCarriers = new System.Windows.Forms.Label();
 			this.listBoxCarriers = new OpenDental.UI.ListBox();
@@ -36,6 +37,17 @@ namespace OpenDental{
 			this.labelTitle = new System.Windows.Forms.Label();
 			this.butSuggest = new OpenDental.UI.Button();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(957, 473);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 9;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridWebSchedCarrierRules
 			// 
@@ -134,7 +146,7 @@ namespace OpenDental{
 			// 
 			this.labelTitle.Location = new System.Drawing.Point(9, 5);
 			this.labelTitle.Name = "labelTitle";
-			this.labelTitle.Size = new System.Drawing.Size(821, 21);
+			this.labelTitle.Size = new System.Drawing.Size(778, 21);
 			this.labelTitle.TabIndex = 413;
 			this.labelTitle.Text = "Set up a list of insurance carriers for patients to choose from when scheduling o" +
     "nline appointments. Rules can be set up to allow or block specific carriers.";
@@ -152,6 +164,7 @@ namespace OpenDental{
 			// 
 			// FormWebSchedCarrierRule
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(1044, 509);
 			this.Controls.Add(this.butSuggest);
 			this.Controls.Add(this.labelTitle);
@@ -164,6 +177,7 @@ namespace OpenDental{
 			this.Controls.Add(this.listBoxCarriers);
 			this.Controls.Add(this.checkNewPatRequestIns);
 			this.Controls.Add(this.checkExistingPatRequestIns);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormWebSchedCarrierRule";
 			this.Text = "Web Sched Carrier Rule";
@@ -173,6 +187,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridWebSchedCarrierRules;
 		private System.Windows.Forms.Label labelCarriers;
 		private UI.ListBox listBoxCarriers;

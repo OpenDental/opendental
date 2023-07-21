@@ -29,7 +29,7 @@ namespace UnitTests {
 
 		private void splitContainer1_SplitterMoved(object sender,SplitterEventArgs e) {
 			LayoutManager.LayoutControlBoundsAndFonts(splitContainer1);
-			//MsgBox.Show("Moved");
+			MsgBox.Show("Moved");
 		}
 
 		private void button2_Click(object sender,EventArgs e) {

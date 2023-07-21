@@ -26,6 +26,9 @@ namespace OpenDental{
 			//tbLan.Fields[2]=CultureInfo.CurrentCulture.Parent.DisplayName;
 			//tbLan.Fields[3]=CultureInfo.CurrentCulture.Parent.DisplayName + " Comments";
 			//no need to translate much here
+			Lan.C("All", new System.Windows.Forms.Control[] {
+				butClose,
+			});
 			_classType=classType;
 		}
 
@@ -127,5 +130,29 @@ namespace OpenDental{
 			FillGrid();
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

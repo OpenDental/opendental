@@ -73,6 +73,10 @@ namespace OpenDental{
 			FillList();
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.OK;
+		}
+
 		private void butDelete_Click(object sender,System.EventArgs e) {
 			if(listAutoCodes.SelectedIndex < 0) {
 				MessageBox.Show(Lan.g(this,"You must first select a row"));

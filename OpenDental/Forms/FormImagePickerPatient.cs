@@ -17,7 +17,6 @@ namespace OpenDental {
 		public Patient PatientCur;
 		///<summary>Handles both incoming and outgoing selections</summary>
 		public long DocNumSelected;
-		private WpfControls.UI.ImageSelector imageSelector;
 		///<summary>Handles both incoming and outgoing selections</summary>
 		public long MountNumSelected;
 		private string _patFolder;
@@ -27,12 +26,6 @@ namespace OpenDental {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
-			imageSelector=new WpfControls.UI.ImageSelector();
-			elementHostImageSelector.Child=imageSelector;
-			imageSelector.ItemDoubleClick+=imageSelector_ItemDoubleClick;
-			imageSelector.SelectionChangeCommitted+=imageSelector_SelectionChangeCommitted;
-			float scaleZoom=LayoutManager.ScaleMyFont();
-			imageSelector.LayoutTransform=new System.Windows.Media.ScaleTransform(scaleZoom,scaleZoom);
 		}
 
 		private void FormImagePickerPatient_Load(object sender,EventArgs e) {
@@ -82,11 +75,9 @@ namespace OpenDental {
 			long priKey=imageSelector.GetSelectedKey();
 			if(nodeType==EnumImageNodeType.Document){
 				DocNumSelected=priKey;
-				MountNumSelected=0;
 			}
 			else if(nodeType==EnumImageNodeType.Mount){
 				MountNumSelected=priKey;
-				DocNumSelected=0;
 			}
 			else{
 				return;
@@ -99,11 +90,9 @@ namespace OpenDental {
 			long priKey=imageSelector.GetSelectedKey();
 			if(nodeType==EnumImageNodeType.Document){
 				DocNumSelected=priKey;
-				MountNumSelected=0;
 			}
 			else if(nodeType==EnumImageNodeType.Mount){
 				MountNumSelected=priKey;
-				DocNumSelected=0;
 			}
 			else{
 				return;
@@ -111,5 +100,10 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
 	}
 }

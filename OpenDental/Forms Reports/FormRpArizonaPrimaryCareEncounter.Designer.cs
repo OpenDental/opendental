@@ -34,6 +34,7 @@ namespace OpenDental{
 			this.label1=new System.Windows.Forms.Label();
 			this.textEncounterFolder=new System.Windows.Forms.TextBox();
 			this.butFinished=new OpenDental.UI.Button();
+			this.butCancel=new OpenDental.UI.Button();
 			this.folderEncounter=new OpenDental.FolderBrowserDialog();
 			this.groupBox1=new OpenDental.UI.GroupBox();
 			this.label5=new System.Windows.Forms.Label();
@@ -100,7 +101,7 @@ namespace OpenDental{
 			this.textLog.Name="textLog";
 			this.textLog.ReadOnly=true;
 			this.textLog.ScrollBars=System.Windows.Forms.ScrollBars.Vertical;
-			this.textLog.Size=new System.Drawing.Size(607,290);
+			this.textLog.Size=new System.Drawing.Size(607,284);
 			this.textLog.TabIndex=21;
 			// 
 			// butBrowse
@@ -135,12 +136,22 @@ namespace OpenDental{
 			// butFinished
 			// 
 			this.butFinished.Anchor=((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom|System.Windows.Forms.AnchorStyles.Right)));
-			this.butFinished.Location=new System.Drawing.Point(625,422);
+			this.butFinished.Location=new System.Drawing.Point(625,415);
 			this.butFinished.Name="butFinished";
 			this.butFinished.Size=new System.Drawing.Size(75,24);
 			this.butFinished.TabIndex=17;
 			this.butFinished.Text="&Finished";
 			this.butFinished.Click+=new System.EventHandler(this.butFinished_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor=((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom|System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location=new System.Drawing.Point(625,456);
+			this.butCancel.Name="butCancel";
+			this.butCancel.Size=new System.Drawing.Size(75,24);
+			this.butCancel.TabIndex=16;
+			this.butCancel.Text="&Cancel";
+			this.butCancel.Click+=new System.EventHandler(this.butCancel_Click_1);
 			// 
 			// groupBox1
 			// 
@@ -192,7 +203,8 @@ namespace OpenDental{
 			// FormRpArizonaPrimaryCareEncounter
 			// 
 			this.AutoScaleMode=System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize=new System.Drawing.Size(725,498);
+			this.ClientSize=new System.Drawing.Size(725,534);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.butRun);
 			this.Controls.Add(this.butCopy);
@@ -227,6 +239,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textEncounterFolder;
 		private OpenDental.UI.Button butFinished;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.FolderBrowserDialog folderEncounter;
 		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label5;

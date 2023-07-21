@@ -50,7 +50,7 @@ namespace OpenDental{
 			for(int i=0;i<_listAutomations.Count;i++){
 				row=new OpenDental.UI.GridRow();
 				row.Cells.Add(_listAutomations[i].Description);
-				if(_listAutomations[i].Autotrigger==EnumAutomationTrigger.ProcedureComplete) {
+				if(_listAutomations[i].Autotrigger==AutomationTrigger.CompleteProcedure) {
 					row.Cells.Add(_listAutomations[i].ProcCodes);
 				}
 				else {
@@ -98,11 +98,45 @@ namespace OpenDental{
 			_isChanged=true;
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 		private void FormAutomation_FormClosing(object sender,FormClosingEventArgs e) {
 			if(_isChanged) {
 				DataValid.SetInvalid(InvalidType.Automation);
 			}
 		}
 
+		
+
+		
+
+		
+
+
+
+		
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

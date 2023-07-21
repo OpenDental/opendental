@@ -47,57 +47,53 @@ namespace OpenDentBusiness{
 				CreateClaimSnapShotService();
 				return;
 			}
-			Dictionary<long,double> dictionaryCompletedProcFees=Procedures.GetProcsFromClaimProcs(listClaimProcs).ToDictionary(x => x.ProcNum,x => x.ProcFee);
+			Dictionary<long,double> dictCompletedProcFees=Procedures.GetProcsFromClaimProcs(listClaimProcs).ToDictionary(x => x.ProcNum,x => x.ProcFee);
 			//This list will be used to check for existing claimsnapshots for the claimprocs passed in. We will update exisiting snapshots. 
 			List<ClaimSnapshot> listClaimSnapshotsOld=GetByClaimProcNums(listClaimProcs.Select(x => x.ClaimProcNum).ToList());
 			//Loop through all the claimprocs and create a claimsnapshot entry for each.
-			for(int i=0;i<listClaimProcs.Count;i++){
+			foreach(ClaimProc cp in listClaimProcs) {
 				//only create snapshots for 0=NotReceived, 1=Received, 4=Supplemental, 5=CapClaim, 6=Estimate (only if triggerType=Service), 
 				//7=CapComplete, and 8=CapEstimate (only if triggerType=Service)
-				if(listClaimProcs[i].Status.In(ClaimProcStatus.Preauth,ClaimProcStatus.Adjustment,ClaimProcStatus.Estimate,ClaimProcStatus.CapEstimate)) {
+				if(cp.Status.In(ClaimProcStatus.Preauth,ClaimProcStatus.Adjustment,ClaimProcStatus.Estimate,ClaimProcStatus.CapEstimate)) {
 					continue;
 				}
 				//get the procfee
 				double procFee;
-				if(!dictionaryCompletedProcFees.TryGetValue(listClaimProcs[i].ProcNum,out procFee)) {
+				if(!dictCompletedProcFees.TryGetValue(cp.ProcNum,out procFee)) {
 					procFee=0;
 				}
-				//If there is an existing claimsnapshot created Today for the current listClaimProcs[i].ProcNum, listClaimProcs[i].ClaimProcNum, claimType, and the ClaimSnapshotTrigger 
+				//If there is an existing claimsnapshot created Today for the current cp.ProcNum, cp.ClaimProcNum, claimType, and the ClaimSnapshotTrigger 
 				//is not Service, then update it. Otherwise, create a new one. 
 				//This fixes an issue with reports not showing the correct writeoffs. Ex. A procedure was completed, a claim was created, the claim was deleted, 
 				//the writeoff was modified on the claimproc, then a new claim was created.
-				ClaimSnapshot claimSnapshotExisting=listClaimSnapshotsOld.Find(x => x.DateTEntry.Date==DateTime.Today.Date 
-					&& x.ProcNum==listClaimProcs[i].ProcNum 
-					&& x.ClaimProcNum==listClaimProcs[i].ClaimProcNum 
-					&& x.ClaimType==claimType 
-					&& x.SnapshotTrigger!=ClaimSnapshotTrigger.Service);
-				if(claimSnapshotExisting!=null) {
-					SetSnapshotFields(claimSnapshotExisting,listClaimProcs[i],procFee,triggerType,claimType);
-					ClaimSnapshots.Update(claimSnapshotExisting);
+				ClaimSnapshot existingSnapshot=listClaimSnapshotsOld.FirstOrDefault(x => x.DateTEntry.Date==DateTime.Today.Date && x.ProcNum==cp.ProcNum 
+					&& x.ClaimProcNum==cp.ClaimProcNum && x.ClaimType==claimType && x.SnapshotTrigger!=ClaimSnapshotTrigger.Service);
+				if(existingSnapshot!=null) {
+					SetSnapshotFields(existingSnapshot,cp,procFee,triggerType,claimType);
+					ClaimSnapshots.Update(existingSnapshot);
 					continue;
 				}
-				ClaimSnapshot claimSnapshot=new ClaimSnapshot();
-				SetSnapshotFields(claimSnapshot,listClaimProcs[i],procFee,triggerType,claimType);
-				ClaimSnapshots.Insert(claimSnapshot);
+				ClaimSnapshot snapshot=new ClaimSnapshot();
+				SetSnapshotFields(snapshot,cp,procFee,triggerType,claimType);
+				ClaimSnapshots.Insert(snapshot);
 			}
 		}
 
-		private static void SetSnapshotFields(ClaimSnapshot claimSnapshot,ClaimProc claimProc,double procFee,ClaimSnapshotTrigger claimSnapshotTrigger,string claimType) {
-			claimSnapshot.ProcNum=claimProc.ProcNum;
-			claimSnapshot.Writeoff=claimProc.WriteOff;
-			claimSnapshot.InsPayEst=claimProc.InsEstTotal;
-			claimSnapshot.Fee=procFee;
-			claimSnapshot.ClaimProcNum=claimProc.ClaimProcNum;
-			claimSnapshot.SnapshotTrigger=claimSnapshotTrigger;
-			claimSnapshot.ClaimType=claimType;
+		private static void SetSnapshotFields(ClaimSnapshot snapshot,ClaimProc cp,double procFee,ClaimSnapshotTrigger triggerType,string claimType) {
+			snapshot.ProcNum=cp.ProcNum;
+			snapshot.Writeoff=cp.WriteOff;
+			snapshot.InsPayEst=cp.InsEstTotal;
+			snapshot.Fee=procFee;
+			snapshot.ClaimProcNum=cp.ClaimProcNum;
+			snapshot.SnapshotTrigger=triggerType;
+			snapshot.ClaimType=claimType;
 		}
 
 		///<summary>Users using the OpenDentalService to create claim snapshots only get primary claim snap shots created.</summary>
 		private static void CreateClaimSnapShotService() {
 			//No need to check MiddleTierRole; no call to db.
-			List<Procedure> listProceduresCompleted = Procedures.GetCompletedByDateCompleteForDateRange(DateTime.Today,DateTime.Today);
-			List<ClaimProc> listClaimProcs = ClaimProcs.GetForProcsWithOrdinal(listProceduresCompleted.Select(x => x.ProcNum).ToList(),1)
-				.FindAll(x => !x.Status.In(ClaimProcStatus.Preauth,ClaimProcStatus.Adjustment));
+			List<Procedure> listCompletedProcs = Procedures.GetCompletedByDateCompleteForDateRange(DateTime.Today,DateTime.Today);
+			List<ClaimProc> listClaimProcs = ClaimProcs.GetForProcsWithOrdinal(listCompletedProcs.Select(x => x.ProcNum).ToList(),1).Where(x => !x.Status.In(ClaimProcStatus.Preauth,ClaimProcStatus.Adjustment)).ToList();
 			List<PatPlan> listPatPlans = PatPlans.GetListByInsSubNums(listClaimProcs.Select(x => x.InsSubNum).ToList());
 			listClaimProcs=listClaimProcs
 				.OrderByDescending(x => x.ClaimNum)//order by claim num
@@ -108,43 +104,43 @@ namespace OpenDentBusiness{
 				.ToList();
 			//Loop through all the claimprocs and create a claimsnapshot entry for each.
 			for(int i = 0;i<listClaimProcs.Count;i++) {
-				ClaimProc claimProc=listClaimProcs[i];
-				if(claimProc.Status==ClaimProcStatus.CapClaim
-					|| claimProc.Status==ClaimProcStatus.CapComplete
-					|| claimProc.Status==ClaimProcStatus.CapEstimate
-					|| claimProc.Status==ClaimProcStatus.Preauth
-					|| claimProc.Status==ClaimProcStatus.Supplemental
-					|| claimProc.Status==ClaimProcStatus.InsHist) 
+				ClaimProc cpCur=listClaimProcs[i];
+				if(cpCur.Status==ClaimProcStatus.CapClaim
+					|| cpCur.Status==ClaimProcStatus.CapComplete
+					|| cpCur.Status==ClaimProcStatus.CapEstimate
+					|| cpCur.Status==ClaimProcStatus.Preauth
+					|| cpCur.Status==ClaimProcStatus.Supplemental
+					|| cpCur.Status==ClaimProcStatus.InsHist) 
 				{
 					continue;
 				}
 				//get the procfee
 				double procFee = 0;
-				Procedure procedure = listProceduresCompleted.Find(x => x.ProcNum==claimProc.ProcNum);
-				if(procedure != null) {
-					procFee=procedure.ProcFee;
+				Procedure procCur = listCompletedProcs.Find(x => x.ProcNum==cpCur.ProcNum);
+				if(procCur != null) {
+					procFee=procCur.ProcFee;
 				}
 				//get the writeoff
-				double writeoffAmt = claimProc.WriteOff;
+				double writeoffAmt = cpCur.WriteOff;
 				//For the Service, only use the WriteOff amount on the claimproc if the claimproc is associated to a claim, 
 				//as this means that value has been set.
-				if(claimProc.Status!=ClaimProcStatus.NotReceived && claimProc.Status!=ClaimProcStatus.Received) {
-					if(claimProc.WriteOffEstOverride!=-1) {
-						writeoffAmt=claimProc.WriteOffEstOverride;
+				if(cpCur.Status!=ClaimProcStatus.NotReceived && cpCur.Status!=ClaimProcStatus.Received) {
+					if(cpCur.WriteOffEstOverride!=-1) {
+						writeoffAmt=cpCur.WriteOffEstOverride;
 					}
 					else {
-						writeoffAmt=claimProc.WriteOffEst;
+						writeoffAmt=cpCur.WriteOffEst;
 					}
 				}
 				//create the snapshot
-				ClaimSnapshot claimSnapshot = new ClaimSnapshot();
-				claimSnapshot.ProcNum=claimProc.ProcNum;
-				claimSnapshot.Writeoff=writeoffAmt;
-				claimSnapshot.InsPayEst=claimProc.InsEstTotal;
-				claimSnapshot.Fee=procFee;
-				claimSnapshot.ClaimProcNum=claimProc.ClaimProcNum;
-				claimSnapshot.SnapshotTrigger=ClaimSnapshotTrigger.Service;
-				ClaimSnapshots.Insert(claimSnapshot);
+				ClaimSnapshot snapshot = new ClaimSnapshot();
+				snapshot.ProcNum=cpCur.ProcNum;
+				snapshot.Writeoff=writeoffAmt;
+				snapshot.InsPayEst=cpCur.InsEstTotal;
+				snapshot.Fee=procFee;
+				snapshot.ClaimProcNum=cpCur.ClaimProcNum;
+				snapshot.SnapshotTrigger=ClaimSnapshotTrigger.Service;
+				ClaimSnapshots.Insert(snapshot);
 			}
 		}
 

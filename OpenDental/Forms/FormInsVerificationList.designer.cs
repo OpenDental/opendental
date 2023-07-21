@@ -26,6 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormInsVerificationList));
 			this.tabControl1 = new OpenDental.UI.TabControl();
 			this.tabVerify = new OpenDental.UI.TabPage();
+			this.butClose = new OpenDental.UI.Button();
 			this.tabControlVerificationList = new OpenDental.UI.TabControl();
 			this.tabCurrent = new OpenDental.UI.TabPage();
 			this.gridMain = new OpenDental.UI.GridOD();
@@ -62,6 +63,7 @@ namespace OpenDental{
 			this.labelEmployerName = new System.Windows.Forms.Label();
 			this.labelCarrierName = new System.Windows.Forms.Label();
 			this.tabAssignStandard = new OpenDental.UI.TabPage();
+			this.butCloseStandard = new OpenDental.UI.Button();
 			this.gridAssignStandard = new OpenDental.UI.GridOD();
 			this.groupAssignVerificationStandard = new OpenDental.UI.GroupBox();
 			this.textInsVerifyNoteStandard = new System.Windows.Forms.TextBox();
@@ -71,6 +73,7 @@ namespace OpenDental{
 			this.butAssignUserPickStandard = new OpenDental.UI.Button();
 			this.butAssignUserStandard = new OpenDental.UI.Button();
 			this.tabAssignMedicaid = new OpenDental.UI.TabPage();
+			this.butCloseMedicaid = new OpenDental.UI.Button();
 			this.butAssignUserMedicaid = new OpenDental.UI.Button();
 			this.groupAssignVerificationMedicaid = new OpenDental.UI.GroupBox();
 			this.textInsVerifyNoteMedicaid = new System.Windows.Forms.TextBox();
@@ -122,16 +125,16 @@ namespace OpenDental{
 			this.tabControl1.Controls.Add(this.tabVerify);
 			this.tabControl1.Controls.Add(this.tabAssignStandard);
 			this.tabControl1.Controls.Add(this.tabAssignMedicaid);
-			this.tabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.tabControl1.Location = new System.Drawing.Point(3, 125);
 			this.tabControl1.Name = "tabControl1";
-			this.tabControl1.Size = new System.Drawing.Size(969, 532);
+			this.tabControl1.Size = new System.Drawing.Size(971, 533);
 			this.tabControl1.TabIndex = 101;
 			this.tabControl1.Selected += new System.EventHandler(this.tabControl1_Selected);
 			// 
 			// tabVerify
 			// 
 			this.tabVerify.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
+			this.tabVerify.Controls.Add(this.butClose);
 			this.tabVerify.Controls.Add(this.tabControlVerificationList);
 			this.tabVerify.Controls.Add(this.butVerifyPat);
 			this.tabVerify.Controls.Add(this.textPatBirthdate);
@@ -146,16 +149,25 @@ namespace OpenDental{
 			this.tabVerify.Location = new System.Drawing.Point(2, 21);
 			this.tabVerify.Name = "tabVerify";
 			this.tabVerify.Padding = new System.Windows.Forms.Padding(3);
-			this.tabVerify.Size = new System.Drawing.Size(965, 509);
+			this.tabVerify.Size = new System.Drawing.Size(967, 510);
 			this.tabVerify.TabIndex = 0;
 			this.tabVerify.Text = "Verification List";
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(882, 480);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// tabControlVerificationList
 			// 
 			this.tabControlVerificationList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
 			this.tabControlVerificationList.Controls.Add(this.tabCurrent);
 			this.tabControlVerificationList.Controls.Add(this.tabPastDue);
-			this.tabControlVerificationList.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.tabControlVerificationList.Location = new System.Drawing.Point(3, 3);
 			this.tabControlVerificationList.Name = "tabControlVerificationList";
 			this.tabControlVerificationList.Size = new System.Drawing.Size(957, 340);
@@ -209,7 +221,7 @@ namespace OpenDental{
 			// 
 			// butVerifyPat
 			// 
-			this.butVerifyPat.Location = new System.Drawing.Point(294, 483);
+			this.butVerifyPat.Location = new System.Drawing.Point(294, 485);
 			this.butVerifyPat.Name = "butVerifyPat";
 			this.butVerifyPat.Size = new System.Drawing.Size(174, 24);
 			this.butVerifyPat.TabIndex = 230;
@@ -227,7 +239,7 @@ namespace OpenDental{
 			// 
 			// labelPatBirthdate
 			// 
-			this.labelPatBirthdate.Location = new System.Drawing.Point(494, 458);
+			this.labelPatBirthdate.Location = new System.Drawing.Point(489, 458);
 			this.labelPatBirthdate.Name = "labelPatBirthdate";
 			this.labelPatBirthdate.Size = new System.Drawing.Size(99, 20);
 			this.labelPatBirthdate.TabIndex = 228;
@@ -244,7 +256,7 @@ namespace OpenDental{
 			// 
 			// butVerifyPlan
 			// 
-			this.butVerifyPlan.Location = new System.Drawing.Point(515, 483);
+			this.butVerifyPlan.Location = new System.Drawing.Point(515, 485);
 			this.butVerifyPlan.Name = "butVerifyPlan";
 			this.butVerifyPlan.Size = new System.Drawing.Size(153, 24);
 			this.butVerifyPlan.TabIndex = 100;
@@ -330,7 +342,7 @@ namespace OpenDental{
 			// 
 			// labelSubscriberID
 			// 
-			this.labelSubscriberID.Location = new System.Drawing.Point(11, 79);
+			this.labelSubscriberID.Location = new System.Drawing.Point(6, 79);
 			this.labelSubscriberID.Name = "labelSubscriberID";
 			this.labelSubscriberID.Size = new System.Drawing.Size(99, 20);
 			this.labelSubscriberID.TabIndex = 98;
@@ -339,7 +351,7 @@ namespace OpenDental{
 			// 
 			// labelSSN
 			// 
-			this.labelSSN.Location = new System.Drawing.Point(11, 57);
+			this.labelSSN.Location = new System.Drawing.Point(6, 57);
 			this.labelSSN.Name = "labelSSN";
 			this.labelSSN.Size = new System.Drawing.Size(99, 20);
 			this.labelSSN.TabIndex = 97;
@@ -348,7 +360,7 @@ namespace OpenDental{
 			// 
 			// labelBirthdate
 			// 
-			this.labelBirthdate.Location = new System.Drawing.Point(11, 35);
+			this.labelBirthdate.Location = new System.Drawing.Point(6, 35);
 			this.labelBirthdate.Name = "labelBirthdate";
 			this.labelBirthdate.Size = new System.Drawing.Size(99, 20);
 			this.labelBirthdate.TabIndex = 96;
@@ -357,7 +369,7 @@ namespace OpenDental{
 			// 
 			// labelName
 			// 
-			this.labelName.Location = new System.Drawing.Point(11, 13);
+			this.labelName.Location = new System.Drawing.Point(6, 13);
 			this.labelName.Name = "labelName";
 			this.labelName.Size = new System.Drawing.Size(99, 20);
 			this.labelName.TabIndex = 87;
@@ -386,7 +398,7 @@ namespace OpenDental{
 			// 
 			// textInsPlanNote
 			// 
-			this.textInsPlanNote.Location = new System.Drawing.Point(249, 37);
+			this.textInsPlanNote.Location = new System.Drawing.Point(249, 33);
 			this.textInsPlanNote.Multiline = true;
 			this.textInsPlanNote.Name = "textInsPlanNote";
 			this.textInsPlanNote.ReadOnly = true;
@@ -396,7 +408,7 @@ namespace OpenDental{
 			// 
 			// textCarrierPhoneNumber
 			// 
-			this.textCarrierPhoneNumber.Location = new System.Drawing.Point(127, 37);
+			this.textCarrierPhoneNumber.Location = new System.Drawing.Point(127, 33);
 			this.textCarrierPhoneNumber.Name = "textCarrierPhoneNumber";
 			this.textCarrierPhoneNumber.ReadOnly = true;
 			this.textCarrierPhoneNumber.Size = new System.Drawing.Size(116, 20);
@@ -404,7 +416,7 @@ namespace OpenDental{
 			// 
 			// textInsPlanGroupNumber
 			// 
-			this.textInsPlanGroupNumber.Location = new System.Drawing.Point(127, 103);
+			this.textInsPlanGroupNumber.Location = new System.Drawing.Point(127, 99);
 			this.textInsPlanGroupNumber.Name = "textInsPlanGroupNumber";
 			this.textInsPlanGroupNumber.ReadOnly = true;
 			this.textInsPlanGroupNumber.Size = new System.Drawing.Size(116, 20);
@@ -412,7 +424,7 @@ namespace OpenDental{
 			// 
 			// textInsPlanGroupName
 			// 
-			this.textInsPlanGroupName.Location = new System.Drawing.Point(127, 81);
+			this.textInsPlanGroupName.Location = new System.Drawing.Point(127, 77);
 			this.textInsPlanGroupName.Name = "textInsPlanGroupName";
 			this.textInsPlanGroupName.ReadOnly = true;
 			this.textInsPlanGroupName.Size = new System.Drawing.Size(116, 20);
@@ -420,7 +432,7 @@ namespace OpenDental{
 			// 
 			// textInsPlanEmployer
 			// 
-			this.textInsPlanEmployer.Location = new System.Drawing.Point(127, 59);
+			this.textInsPlanEmployer.Location = new System.Drawing.Point(127, 55);
 			this.textInsPlanEmployer.Name = "textInsPlanEmployer";
 			this.textInsPlanEmployer.ReadOnly = true;
 			this.textInsPlanEmployer.Size = new System.Drawing.Size(116, 20);
@@ -428,7 +440,7 @@ namespace OpenDental{
 			// 
 			// textCarrierName
 			// 
-			this.textCarrierName.Location = new System.Drawing.Point(127, 15);
+			this.textCarrierName.Location = new System.Drawing.Point(127, 11);
 			this.textCarrierName.Name = "textCarrierName";
 			this.textCarrierName.ReadOnly = true;
 			this.textCarrierName.Size = new System.Drawing.Size(116, 20);
@@ -436,7 +448,7 @@ namespace OpenDental{
 			// 
 			// labelPlanNote
 			// 
-			this.labelPlanNote.Location = new System.Drawing.Point(249, 15);
+			this.labelPlanNote.Location = new System.Drawing.Point(249, 11);
 			this.labelPlanNote.Name = "labelPlanNote";
 			this.labelPlanNote.Size = new System.Drawing.Size(225, 20);
 			this.labelPlanNote.TabIndex = 104;
@@ -445,7 +457,7 @@ namespace OpenDental{
 			// 
 			// labelCarrierPhone
 			// 
-			this.labelCarrierPhone.Location = new System.Drawing.Point(13, 37);
+			this.labelCarrierPhone.Location = new System.Drawing.Point(8, 33);
 			this.labelCarrierPhone.Name = "labelCarrierPhone";
 			this.labelCarrierPhone.Size = new System.Drawing.Size(113, 20);
 			this.labelCarrierPhone.TabIndex = 99;
@@ -454,7 +466,7 @@ namespace OpenDental{
 			// 
 			// labelGroupNumber
 			// 
-			this.labelGroupNumber.Location = new System.Drawing.Point(13, 103);
+			this.labelGroupNumber.Location = new System.Drawing.Point(8, 99);
 			this.labelGroupNumber.Name = "labelGroupNumber";
 			this.labelGroupNumber.Size = new System.Drawing.Size(113, 20);
 			this.labelGroupNumber.TabIndex = 98;
@@ -463,7 +475,7 @@ namespace OpenDental{
 			// 
 			// labelGroupName
 			// 
-			this.labelGroupName.Location = new System.Drawing.Point(13, 81);
+			this.labelGroupName.Location = new System.Drawing.Point(8, 77);
 			this.labelGroupName.Name = "labelGroupName";
 			this.labelGroupName.Size = new System.Drawing.Size(113, 20);
 			this.labelGroupName.TabIndex = 97;
@@ -472,7 +484,7 @@ namespace OpenDental{
 			// 
 			// labelEmployerName
 			// 
-			this.labelEmployerName.Location = new System.Drawing.Point(13, 59);
+			this.labelEmployerName.Location = new System.Drawing.Point(8, 55);
 			this.labelEmployerName.Name = "labelEmployerName";
 			this.labelEmployerName.Size = new System.Drawing.Size(113, 20);
 			this.labelEmployerName.TabIndex = 96;
@@ -481,7 +493,7 @@ namespace OpenDental{
 			// 
 			// labelCarrierName
 			// 
-			this.labelCarrierName.Location = new System.Drawing.Point(13, 16);
+			this.labelCarrierName.Location = new System.Drawing.Point(8, 12);
 			this.labelCarrierName.Name = "labelCarrierName";
 			this.labelCarrierName.Size = new System.Drawing.Size(113, 16);
 			this.labelCarrierName.TabIndex = 87;
@@ -491,15 +503,26 @@ namespace OpenDental{
 			// tabAssignStandard
 			// 
 			this.tabAssignStandard.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
+			this.tabAssignStandard.Controls.Add(this.butCloseStandard);
 			this.tabAssignStandard.Controls.Add(this.gridAssignStandard);
 			this.tabAssignStandard.Controls.Add(this.groupAssignVerificationStandard);
 			this.tabAssignStandard.Controls.Add(this.butAssignUserStandard);
 			this.tabAssignStandard.Location = new System.Drawing.Point(2, 21);
 			this.tabAssignStandard.Name = "tabAssignStandard";
 			this.tabAssignStandard.Padding = new System.Windows.Forms.Padding(3);
-			this.tabAssignStandard.Size = new System.Drawing.Size(965, 509);
+			this.tabAssignStandard.Size = new System.Drawing.Size(967, 510);
 			this.tabAssignStandard.TabIndex = 1;
 			this.tabAssignStandard.Text = "Assign Standard Verification";
+			// 
+			// butCloseStandard
+			// 
+			this.butCloseStandard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCloseStandard.Location = new System.Drawing.Point(882, 485);
+			this.butCloseStandard.Name = "butCloseStandard";
+			this.butCloseStandard.Size = new System.Drawing.Size(75, 24);
+			this.butCloseStandard.TabIndex = 83;
+			this.butCloseStandard.Text = "&Close";
+			this.butCloseStandard.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridAssignStandard
 			// 
@@ -570,7 +593,7 @@ namespace OpenDental{
 			// 
 			// butAssignUserStandard
 			// 
-			this.butAssignUserStandard.Location = new System.Drawing.Point(441, 485);
+			this.butAssignUserStandard.Location = new System.Drawing.Point(441, 486);
 			this.butAssignUserStandard.Name = "butAssignUserStandard";
 			this.butAssignUserStandard.Size = new System.Drawing.Size(75, 24);
 			this.butAssignUserStandard.TabIndex = 81;
@@ -580,18 +603,29 @@ namespace OpenDental{
 			// 
 			// tabAssignMedicaid
 			// 
+			this.tabAssignMedicaid.Controls.Add(this.butCloseMedicaid);
 			this.tabAssignMedicaid.Controls.Add(this.butAssignUserMedicaid);
 			this.tabAssignMedicaid.Controls.Add(this.groupAssignVerificationMedicaid);
 			this.tabAssignMedicaid.Controls.Add(this.gridAssignMedicaid);
 			this.tabAssignMedicaid.Location = new System.Drawing.Point(2, 21);
 			this.tabAssignMedicaid.Name = "tabAssignMedicaid";
-			this.tabAssignMedicaid.Size = new System.Drawing.Size(965, 509);
+			this.tabAssignMedicaid.Size = new System.Drawing.Size(967, 510);
 			this.tabAssignMedicaid.TabIndex = 2;
 			this.tabAssignMedicaid.Text = "Assign Medicaid Verification";
 			// 
+			// butCloseMedicaid
+			// 
+			this.butCloseMedicaid.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCloseMedicaid.Location = new System.Drawing.Point(882, 485);
+			this.butCloseMedicaid.Name = "butCloseMedicaid";
+			this.butCloseMedicaid.Size = new System.Drawing.Size(75, 24);
+			this.butCloseMedicaid.TabIndex = 85;
+			this.butCloseMedicaid.Text = "&Close";
+			this.butCloseMedicaid.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butAssignUserMedicaid
 			// 
-			this.butAssignUserMedicaid.Location = new System.Drawing.Point(441, 485);
+			this.butAssignUserMedicaid.Location = new System.Drawing.Point(441, 486);
 			this.butAssignUserMedicaid.Name = "butAssignUserMedicaid";
 			this.butAssignUserMedicaid.Size = new System.Drawing.Size(75, 24);
 			this.butAssignUserMedicaid.TabIndex = 84;
@@ -911,7 +945,7 @@ namespace OpenDental{
 			// 
 			// FormInsVerificationList
 			// 
-			this.ClientSize = new System.Drawing.Size(974, 661);
+			this.ClientSize = new System.Drawing.Size(974, 658);
 			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.groupVerificationFilters);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -942,6 +976,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.Label labelDaysUntilSchedAppt;
 		private ValidNum textAppointmentScheduledDaysStandard;
@@ -1007,6 +1042,7 @@ namespace OpenDental{
 		private UI.GridOD gridPastDue;
 		private UI.ListBox listBoxVerifyClinics;
 		private UI.ListBox listBoxVerifyRegions;
+		private UI.Button butCloseStandard;
 		private OpenDental.UI.TabPage tabAssignMedicaid;
 		private UI.GroupBox groupAssignVerificationMedicaid;
 		private System.Windows.Forms.TextBox textInsVerifyNoteMedicaid;
@@ -1015,6 +1051,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelToUserMedicaid;
 		private UI.Button butAssignUserPickMedicaid;
 		private UI.GridOD gridAssignMedicaid;
+		private UI.Button butCloseMedicaid;
 		private UI.Button butAssignUserMedicaid;
 		private System.Windows.Forms.Label labelMedicaid;
 		private System.Windows.Forms.Label labelStandard;

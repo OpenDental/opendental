@@ -240,29 +240,33 @@ namespace OpenDental {
 			//Check permissions for each SetUpWizClass and remove from list if permissions are missing
 			string message = Lans.g("Security","Not authorized for")+"\r\n";
 			bool didRemove = false;
-			if(!Security.IsAuthorized(EnumPermType.ShowFeatures,true) && listSetupClasses.Any(x => x.Name =="Basic Features")) {
+			if(!Security.IsAuthorized(Permissions.ShowFeatures,true) && listSetupClasses.Any(x => x.Name =="Basic Features")) {
 				listSetupClasses.RemoveAll(x => x.Name == "Basic Features");
-				message += "\r\n" + GroupPermissions.GetDesc(EnumPermType.ShowFeatures);
+				message += "\r\n" + GroupPermissions.GetDesc(Permissions.ShowFeatures);
 				didRemove=true;
 			}
-			if(!Security.IsAuthorized(EnumPermType.ProviderEdit,true) && listSetupClasses.Any(x => x.Name =="Providers")) {
+			if(!Security.IsAuthorized(Permissions.ProviderEdit,true) && listSetupClasses.Any(x => x.Name =="Providers")) {
 				listSetupClasses.RemoveAll(x => x.Name == "Providers");
-				message += "\r\n" + GroupPermissions.GetDesc(EnumPermType.ProviderEdit);
+				message += "\r\n" + GroupPermissions.GetDesc(Permissions.ProviderEdit);
 				didRemove=true;
 			}
-			if(!Security.IsAuthorized(EnumPermType.ClinicEdit,true) && listSetupClasses.Any(x => x.Name =="Clinics")) {
+			if(!Security.IsAuthorized(Permissions.ClinicEdit,true) && listSetupClasses.Any(x => x.Name =="Clinics")) {
 				listSetupClasses.RemoveAll(x => x.Name == "Clinics");
-				message += "\r\n" + GroupPermissions.GetDesc(EnumPermType.ClinicEdit);
+				message += "\r\n" + GroupPermissions.GetDesc(Permissions.ClinicEdit);
 				didRemove=true;
 			}
-			if(!Security.IsAuthorized(EnumPermType.PrinterSetup,true) && listSetupClasses.Any(x => x.Name =="Printer/Scanner")) {
+			if(!Security.IsAuthorized(Permissions.PrinterSetup,true) && listSetupClasses.Any(x => x.Name =="Printer/Scanner")) {
 				listSetupClasses.RemoveAll(x => x.Name == "Printer/Scanner");
-				message += "\r\n" + GroupPermissions.GetDesc(EnumPermType.PrinterSetup);
+				message += "\r\n" + GroupPermissions.GetDesc(Permissions.PrinterSetup);
 				didRemove=true;
 			}
 			if(didRemove) {
 				MessageBox.Show(message);
 			}
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

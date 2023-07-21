@@ -208,10 +208,26 @@ namespace OpenDental{
 			FillGrid();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOk_Click(object sender,EventArgs e) {
 			ReqNeededs.Sync(_listReqNeededs,_listReqNeededsOld);
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butClose_Click(object sender,System.EventArgs e) {
+			Close();
+		}
+
+		
+
+
+
+		
+
+		
+
+		
+
+	
 
 	}
 }

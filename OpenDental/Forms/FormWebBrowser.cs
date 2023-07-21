@@ -13,11 +13,11 @@ namespace OpenDental {
 	///When links are clicked inside this browser, the link is followed directly inside the browser instead of opening a new window.</summary>
 	public partial class FormWebBrowser:FormODBase {
 		///<summary>Set to the value passed into the constructor if one was passed in.  Navigates the browser control to this url on load.</summary>
-		public string UrlBrowseTo="";
+		private string _urlBrowseTo="";
 		///<summary>Set to the post data to be sent to the browser.</summary>
-		public string PostData=null;
+		private string _postData=null;
 		///<summary>Any additional headers will be sent to the browser. Will only be sent if postData is set as well.</summary>
-		public string AdditionalHeaders="";
+		private string _additionalHeaders="";
 		///<summary>Decides whether or not to wrap new windows in FormWebBrowser controls, or just open them in their regular browser instance.</summary>
 		private bool _canWrapNewWindow;
 		///<summary>Default to false. Determines if url is single use or not. When this is set to true, then the refresh button is not added. See LayoutToolBar() 
@@ -28,7 +28,7 @@ namespace OpenDental {
 		///<summary> DO NOT USE. Use FormWebView.cs instead. Used when opening a new browser window via a link or to display html content.
 		///If html content and url specified, url will be used and given content ignored. postData and additionalHeaders will only be used if url is 
 		///passed in.</summary>
-		public FormWebBrowser(){
+		public FormWebBrowser(string url="",string htmlContent="",string postData=null,string additionalHeaders="",bool canWrapNewWindow=true) {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
@@ -37,45 +37,38 @@ namespace OpenDental {
 				webBrowser.NewWindow2+=axBrowser_NewWindow2;
 				webBrowser.NewWindow3+=axBrowser_NewWindow3;
 			}
+			_postData=postData;
+			_additionalHeaders=additionalHeaders;
 			browser.DocumentTitleChanged+=browser_DocumentTitleChanged;
-		}
-
-		///<summary> DO NOT USE. Use FormWebView.cs instead. Used when opening a new browser window via a link or to display html content.
-		///If html content and url specified, url will be used and given content ignored. postData and additionalHeaders will only be used if url is 
-		///passed in.</summary>
-		public FormWebBrowser(string url="",string htmlContent="",string postData=null,string additionalHeaders="",bool canWrapNewWindow=true):base() {
-			InitializeComponent();
-			InitializeLayoutManager();
-			Lan.F(this);
 			if(string.IsNullOrEmpty(url)) {
-				//this needs to be moved to load, and make htmlContent a public field.
 				if(!string.IsNullOrEmpty(htmlContent)) {
 					browser.DocumentText=htmlContent;
 				}
 			}
 			else {
-				UrlBrowseTo=url;
+				_urlBrowseTo=url;
 			}
-			PostData=postData;
-			AdditionalHeaders=additionalHeaders;
 			_canWrapNewWindow=canWrapNewWindow;
 		}
+
+		[Obsolete("Designer Only",true)]
+		private FormWebBrowser() { }
 
 		private void FormWebBrowser_Load(object sender,EventArgs e) {
 			Cursor=Cursors.WaitCursor;//Is set back to default cursor after the document loads inside the browser.
 			Application.DoEvents();//To show cursor change.
 			Text=Lan.g(this,"Loading")+"...";
 			LayoutToolBars();
-			if(UrlBrowseTo=="") {
+			if(_urlBrowseTo=="") {
 				Text="";//Since we are not browsing, we need to clear the title stored within the Text.
 			}
 			else { //Use the window as a simple web browswer when a URL is passed in.
 				//This will also change the Text to the title of the URL page browsed to.
-				if(PostData==null) {
-					browser.Navigate(UrlBrowseTo);
+				if(_postData==null) {
+					browser.Navigate(_urlBrowseTo);
 				}
 				else {
-					browser.Navigate(UrlBrowseTo,"",Encoding.ASCII.GetBytes(PostData),AdditionalHeaders);
+					browser.Navigate(_urlBrowseTo,"",Encoding.ASCII.GetBytes(_postData),_additionalHeaders);
 				}
 			}
 			Cursor=Cursors.Default;
@@ -90,6 +83,7 @@ namespace OpenDental {
 				ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Refresh"),-1,"","Refresh"));
 			}
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Print"),-1,"","Print"));
+			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Close"),-1,"","Close"));
 			ToolBarMain.Invalidate();
 		}
 
@@ -181,6 +175,10 @@ namespace OpenDental {
 					break;
 				case "Print":
 					browser.ShowPrintDialog();
+					break;
+				case "Close":
+					DialogResult=DialogResult.Cancel;
+					Close();//For when we launch the window in a non-modal manner.
 					break;
 			}
 		}

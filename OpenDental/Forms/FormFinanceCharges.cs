@@ -95,26 +95,27 @@ namespace OpenDental{
 				return true;//this is prior to inserting/deleting charges and aging has already been run for this date
 			}
 			Prefs.RefreshCache();
-			if(!PrefC.IsAgingAllowedToStart()) {
+			DateTime dateTAgingBeganPref=PrefC.GetDateT(PrefName.AgingBeginDateTime);
+			if(dateTAgingBeganPref>DateTime.MinValue) {
 				if(isOnLoad) {
 					MessageBox.Show(this,Lan.g(this,"In order to add finance charges, aging must be calculated, but you cannot run aging until it has finished "
-						+"the current calculations which began on")+" "+PrefC.GetDateT(PrefName.AgingBeginDateTime).ToString()+".\r\n"+Lans.g(this,"If you believe the current aging "
+						+"the current calculations which began on")+" "+dateTAgingBeganPref.ToString()+".\r\n"+Lans.g(this,"If you believe the current aging "
 						+"process has finished, a user with SecurityAdmin permission can manually clear the date and time by going to Setup | Preferences | Account - General and "
 						+"pressing the 'Clear' button."));
 				}
 				return false;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.AgingRan,0,"Starting Aging - Finance Charges window");
+			SecurityLogs.MakeLogEntry(Permissions.AgingRan,0,"Starting Aging - Finance Charges window");
 			Prefs.UpdateString(PrefName.AgingBeginDateTime,POut.DateT(dateTNow,false));//get lock on pref to block others
 			Signalods.SetInvalid(InvalidType.Prefs);//signal a cache refresh so other computers will have the updated pref as quickly as possible
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=()=>{
 				Ledgers.ComputeAging(0,dateToday);
 				Prefs.UpdateString(PrefName.DateLastAging,POut.Date(dateToday,false));
 			};
 			progressOD.StartingMessage=Lan.g(this,"Calculating enterprise aging for all patients as of")+" "+dateToday.ToShortDateString()+"...";
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
 				Ledgers.AgingExceptionHandler(ex,this);
@@ -124,7 +125,7 @@ namespace OpenDental{
 			if(!progressOD.IsSuccess){
 				return false;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.AgingRan,0,"Aging complete - Finance Charges window");
+			SecurityLogs.MakeLogEntry(Permissions.AgingRan,0,"Aging complete - Finance Charges window");
 			return true;
 		}
 
@@ -243,16 +244,16 @@ namespace OpenDental{
 			}
 			bool isBillingCharge=radioBillingCharge.Checked;
 			Adjustments.ChargeUndoData chargeUndoData=new Adjustments.ChargeUndoData();
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => chargeUndoData=Adjustments.UndoFinanceOrBillingCharges(dateUndo,isBillingCharge);
 			progressOD.StartingMessage=Lan.g(this,"Deleting "+chargeType.ToLower()+" charge adjustments")+"...";
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled){
 				return;
 			}
 			MessageBox.Show(Lan.g(this,chargeType+" charge adjustments deleted")+": "+chargeUndoData.CountDeletedAdjustments);
 			if(!chargeUndoData.ListSkippedPatNums.IsNullOrEmpty()
-				&& MessageBox.Show($"Some "+chargeType.ToLower()+" charges could not be deleted because they have pay splits or a payment plans attached. "
+				&& MessageBox.Show($"Some "+chargeType.ToLower()+" charges could not be deleted because they have pay splits or a dynamic payment plans attached. "
 				+"Would you like to see a list of the patients for whom we could not delete "
 				+chargeType.ToLower()+" charges?","",MessageBoxButtons.YesNo)==DialogResult.Yes)
 			{
@@ -273,11 +274,11 @@ namespace OpenDental{
 				MsgBox.Show(this,"There was an error calculating aging after the "+chargeType.ToLower()+" charge adjustments were deleted.\r\n"
 					+"You should run aging later to update affected accounts.");
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,chargeType+" Charges undo. Date "+textDateUndo.Text);
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,chargeType+" Charges undo. Date "+textDateUndo.Text);
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butRun_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			if(!textDate.IsValid()
 				|| !textAPR.IsValid()
 				|| !textAtLeast.IsValid()
@@ -338,13 +339,13 @@ namespace OpenDental{
 				PatAging patAging = listPatAgings[i];
 				listActions.Add(new Action(() => AddBillingOrFinanceCharge(patAging,listPatAgings.Count,listAdjustments,listInstallmentPlans)));
 			}
-			ProgressWin progressOD = new ProgressWin();
+			ProgressOD progressOD = new ProgressOD();
 			progressOD.ActionMain=() => {
 				//System.Threading.Thread.Sleep(5000);
 				ODThread.RunParallel(listActions,TimeSpan.FromMinutes(2));//each group of actions gets X minutes.
 			};
 			progressOD.StartingMessage=Lan.g(this,"Gathering patients with aged balances")+"...";
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled) {
 				MessageBox.Show(Lan.g(this,$"{_chargesAdded} {chargeType} charges added out of {listPatAgings.Count}"));
 				return;
@@ -392,7 +393,7 @@ namespace OpenDental{
 			DateTime date=PIn.Date(textDate.Text);
 			_chargesProcessed++;
 			if(_chargesProcessed%5==0) {
-				ODEvent.Fire(ODEventType.Billing,Lan.g(this,"Processing "+chargeType+" charges")+": "+_chargesProcessed+" out of "
+				BillingEvent.Fire(ODEventType.Billing,Lan.g(this,"Processing "+chargeType+" charges")+": "+_chargesProcessed+" out of "
 					+listPatAgingsCount);
 			}
 			//This WILL NOT be the same as the patient's total balance. Start with BalOver90 since all options include that bucket. Add others if needed.
@@ -459,7 +460,6 @@ namespace OpenDental{
 			adjustment.ProvNum = priProv;
 			Adjustments.Insert(adjustment);
 			TsiTransLogs.CheckAndInsertLogsIfAdjTypeExcluded(adjustment);
-			Signalods.SetInvalid(InvalidType.BillingList);
 			return true;
 		}
 
@@ -475,8 +475,10 @@ namespace OpenDental{
 			AdjustmentCur.ProvNum = priProv;
 			Adjustments.Insert(AdjustmentCur);
 			TsiTransLogs.CheckAndInsertLogsIfAdjTypeExcluded(AdjustmentCur);
-			Signalods.SetInvalid(InvalidType.BillingList);
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

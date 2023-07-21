@@ -85,14 +85,14 @@ namespace OpenDental {
 				if(_sumAttachedProduction!=0) {//New plan may have attached production if created from ortho case.
 					textTotalPrincipal.Text=_sumAttachedProduction.ToString("f");
 				}
-				butSaveTerms.Visible=false;
+				butSave.Visible=false;
 				butCancelTerms.Visible=false;
 			}
 			else {//already saved payment plan, user needs to unlock before they can edit anything.
 				FillUiForSavedPayPlan();
 			}
 			if(_dynamicPaymentPlanData.PayPlan.IsClosed) {
-				butSave.Text=Lan.g(this,"Reopen");
+				butOK.Text=Lan.g(this,"Reopen");
 				butDelete.Enabled=false;
 				butClosePlan.Enabled=false;
 				labelClosed.Visible=true;
@@ -111,7 +111,7 @@ namespace OpenDental {
 				for(int i = 0;i<sheet.SheetFields.Count;i++) {
 					if(sheet.SheetFields[i].FieldType==SheetFieldType.SigBox) {
 						butPrint.Visible=false;
-						butSignPrint.Visible=true;
+						butSignPrint.Visible=true;					
 					}
 				}
 			}
@@ -138,8 +138,8 @@ namespace OpenDental {
 				_isSigOldValid=true;
 			}
 			#endregion
-			if(!Security.IsAuthorized(EnumPermType.PayPlanEdit)) {
-				DisableAllExcept(butGoToGuar,butGoToPat,butPrint,checkExcludePast,gridCharges,gridLinkedProduction);
+			if(!Security.IsAuthorized(Permissions.PayPlanEdit)) {
+				DisableAllExcept(butGoToGuar,butGoToPat,butCancel,butPrint,checkExcludePast,gridCharges,gridLinkedProduction);
 				//allow grid so users can scroll, but de-register for event so charges cannot be modified. 
 				this.gridCharges.CellDoubleClick-=gridCharges_CellDoubleClick;
 				_isLoading=false;
@@ -177,12 +177,7 @@ namespace OpenDental {
 				MsgBox.Show(Lan.g(this,"The selected charge couldn't be deleted. Only a debit charge without a payment can be deleted."));
 				return;
 			}
-			if(listPayPlanCharges.Exists(x=>x.Note.ToLower().Contains("down payment"))){
-				MsgBox.Show(Lan.g(this,"The selected charge couldn't be deleted. Down payments cannot be deleted."));
-				return;
-			}
 			PayPlanCharges.DeleteDebitsWithoutPayments(listPayPlanCharges,doDelete:true);
-			SecurityLogs.MakeLogEntry(EnumPermType.PayPlanChargeEdit,listPayPlanCharges[0].PatNum,"Deleted.");
 			LoadPayDataFromDB();
 			FillCharges();
 			FillProduction();
@@ -194,10 +189,6 @@ namespace OpenDental {
 				return;
 			}
 			DynamicPayPlanRowData rowData = (DynamicPayPlanRowData)gridCharges.ListGridRows[index].Tag;
-			if(rowData.IsDownPayment) {
-				MsgBox.Show(Lan.g(this,"Down payment charges cannot be altered. To make changes to the down payment, the current payment plan will need to be deleted and a new payment plan created in its place."));
-				return;
-			}
 			//Only charge rows can be edited
 			if(!rowData.IsChargeRow()) {
 				return;
@@ -205,11 +196,6 @@ namespace OpenDental {
 			List<PayPlanCharge> listPayPlanCharges=_dynamicPaymentPlanData.ListPayPlanChargesDb.FindAll(x=>rowData.ListPayPlanChargeNums.Contains(x.PayPlanChargeNum));
 			if(listPayPlanCharges.Count==0) {
 				MsgBox.Show(Lan.g(this,"The selected charge hasn't been posted yet. Only posted charges can be edited."));
-				return;
-			}
-			List<PaySplit> listPaySplitsForPayPlanCharges=PaySplits.GetForPayPlanCharges(rowData.ListPayPlanChargeNums);
-			if(listPaySplitsForPayPlanCharges.Count!=0) {
-				MsgBox.Show(Lan.g(this,"Charges with payments attached cannot be edited."));
 				return;
 			}
 			//If listPayPlanCharges has more than one charge then we have to load this new form for the user to select a single charge to edit.
@@ -227,12 +213,11 @@ namespace OpenDental {
 				//FormPayPlanChargeEdit sets PayPlanChargeCur to null when the user clicks the delete button on the form.
 				if(formPayPlanChargeEdit.PayPlanChargeCur==null) {
 					PayPlanCharges.Delete(listPayPlanCharges[0]);
-					SecurityLogs.MakeLogEntry(EnumPermType.PayPlanChargeEdit,listPayPlanCharges[0].PatNum,"Deleted.");
 				}
 				else {
 					if(!formPayPlanChargeEdit.ListChangeLog.IsNullOrEmpty()) {
-						string log=PayPlans.GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
-						SecurityLogs.MakeLogEntry(EnumPermType.PayPlanChargeEdit,listPayPlanCharges[0].PatNum,log);
+						string log=GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
+						SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeEdit,listPayPlanCharges[0].PatNum,log);
 					}
 					PayPlanCharges.Update(listPayPlanCharges[0]);
 				}
@@ -240,6 +225,21 @@ namespace OpenDental {
 			LoadPayDataFromDB();
 			FillCharges();
 			FillProduction();
+		}
+
+		private string GetChangeLog(List<string> listChanges) {
+			string log="";
+			for(int i=0;i<listChanges.Count;i++) {
+				if(i > 0) {
+					log+=", ";
+				}
+				if(i==listChanges.Count-1) {
+					log+="and ";
+				}
+				log+=listChanges[i];
+			}
+			log+=" changed.";
+			return log;
 		}
 
 		private void FillUiForSavedPayPlan() {
@@ -367,8 +367,8 @@ namespace OpenDental {
 					}
 				}
 			}
-			//Show attached P&I checkbox only when we have one or more charges, otherwise it will do nothing.
-			checkShowAttachedPnI.Visible=_dynamicPaymentPlanData.ListPayPlanChargesExpected.Count>0;
+			//Show attached P&I checkbox only when we have one or more rows, otherwise it will do nothing.
+			checkShowAttachedPnI.Visible=gridCharges.ListGridRows.Count>0;
 			#endregion
 			_dynamicPaymentPlanData.TotalInterest=0;
 			for(int i=0;i<listPayPlanChargesExpected.Count;i++) {//combine with list expected.
@@ -388,6 +388,9 @@ namespace OpenDental {
 		///<summary>Helper to get and store the UI elements so we do not need to pass in more than what is necessary. Set from the UI, not DB.</summary>
 		private bool TryGetTermsFromUI(out PayPlanTerms payPlanTerms,bool isSilent=false,bool doValidateTerms=true) {
 			payPlanTerms=new PayPlanTerms();
+			if(!String.IsNullOrWhiteSpace(ValidateUI())) {
+				return false;
+			}
 			if(doValidateTerms && !ValidateTerms(isSilent)) {//saveData relies on this, if removed from this method, needs to be addded to SaveData()
 				return false;
 			}
@@ -396,7 +399,15 @@ namespace OpenDental {
 			payPlanTerms.Frequency=GetChargeFrequency();//verify this is just based on the ui, not the db.
 			payPlanTerms.DynamicPayPlanTPOption=GetSelectedTreatmentPlannedOption();
 			payPlanTerms.DateInterestStart=PIn.Date(textDateInterestStart.Text);//Will be DateTime.MinDate if field is blank.
-			payPlanTerms.PayCount=PIn.Int(textPaymentCount.Text, hasExceptions:false); //The world will not end if PayCount is interpreted as zero.
+			try {
+				payPlanTerms.PayCount=PIn.Int(textPaymentCount.Text);
+			}
+			catch{
+				if(!isSilent) {
+					MsgBox.Show(this,"Payment Count invalid.");
+				}
+				return false;
+			}
 			payPlanTerms.PeriodPayment=PIn.Decimal(textPeriodPayment.Text);
 			payPlanTerms.PrincipalAmount=PIn.Double(textTotalPrincipal.Text);
 			payPlanTerms.RoundDec=CultureInfo.CurrentCulture.NumberFormat.NumberDecimalDigits;
@@ -485,7 +496,7 @@ namespace OpenDental {
 			UnlockTerms();
 		}
 
-		private void ButSaveTerms_Click(object sender,EventArgs e) {
+		private void ButSave_Click(object sender,EventArgs e) {
 			LockTerms(true,FillCharges());
 		}
 
@@ -493,66 +504,6 @@ namespace OpenDental {
 		private void ButCancelTerms_Click(object sender,EventArgs e) {
 			SetTermsFromDb();
 			LockTerms(false,FillCharges());//re-lock. Nothing is getting saved though since nothing changed. 
-		}
-
-		private void butTemplates_Click(object sender,EventArgs e) {
-			using FormPayPlanTemplates formPayPlanTemplates=new FormPayPlanTemplates();
-			formPayPlanTemplates.IsSelectionMode=true;
-			formPayPlanTemplates.ShowDialog();
-			if(formPayPlanTemplates.DialogResult==DialogResult.Cancel || formPayPlanTemplates.PayPlanTemplateCur==null) {
-				return;
-			}
-			//Apply template to plan terms
-			PayPlanTemplate payPlanTemplate=formPayPlanTemplates.PayPlanTemplateCur;
-			if(PIn.Double(textDownPayment.Text)!=payPlanTemplate.DownPayment && textDownPayment.ReadOnly) { 
-				if(!MsgBox.Show(MsgBoxButtons.YesNo,"You cannot change the downpayment. Would you like to apply everything else from the template?")) {
-					return;
-				}
-			}
-			else {
-				textDownPayment.Text=payPlanTemplate.DownPayment.ToString();
-			}
-			textAPR.Text=payPlanTemplate.APR.ToString();
-			if(payPlanTemplate.APR>0) {
-				textDateInterestStart.Text=PayPlanEdit.CalcNextPeriodDate(PIn.Date(textDateFirstPay.Text),
-					payPlanTemplate.InterestDelay,GetChargeFrequency()).ToShortDateString();
-			}
-			if(payPlanTemplate.NumberOfPayments>0) {
-				textPaymentCount.Text=payPlanTemplate.NumberOfPayments.ToString();
-				textPeriodPayment.Text="";
-			}
-			else {
-				textPeriodPayment.Text=payPlanTemplate.PayAmt.ToString();
-			}
-			switch(payPlanTemplate.ChargeFrequency) {
-				case PayPlanFrequency.Weekly:
-					radioWeekly.Checked=true;
-					break;
-				case PayPlanFrequency.EveryOtherWeek:
-					radioEveryOtherWeek.Checked=true;
-					break;
-				case PayPlanFrequency.OrdinalWeekday:
-					radioOrdinalWeekday.Checked=true;
-					break;
-				case PayPlanFrequency.Monthly:
-					radioMonthly.Checked=true;
-					break;
-				case PayPlanFrequency.Quarterly:
-					radioQuarterly.Checked=true;
-					break;
-				default://default to monthly for new plans (should be 0 and do this regardless)
-					radioMonthly.Checked=true;
-					break;
-			}
-			switch(payPlanTemplate.DynamicPayPlanTPOption) {
-				case DynamicPayPlanTPOptions.TreatAsComplete:
-					radioTpTreatAsComplete.Checked=true;
-					break;
-				case DynamicPayPlanTPOptions.AwaitComplete:
-				default:
-					radioTpAwaitComplete.Checked=true;
-					break;
-			}
 		}
 
 		///<summary></summary>
@@ -670,7 +621,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please select an item from the grid to remove.");
 				return;
 			}
-			if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"The selected item will be permanently deleted from the Payment Plan.\r\n"
+			if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"The selected item will be permanently deleted from the Dynamic Payment Plan.\r\n"
 				+"This cannot be undone. Continue?"))
 			{
 				return;
@@ -768,8 +719,7 @@ namespace OpenDental {
 		///<summary>Goes through the logic to create a new schedule. Returns true if a terms were successfully validated and correct.</summary>
 		private bool CreateSchedule() {
 			if(ValidateTerms(doCheckAPR:false)) {//Don't need to validate APR and full lock because we will auto-lock when APR is set (only for creating schedule).
-				if(textAPR.IsValid() && !CompareDouble.IsZero(PIn.Double(textAPR.Text)) && checkProductionLock.Checked==false 
-				&& PrefC.GetBool(PrefName.PayPlanRequireLockForAPR)) {
+				if(textAPR.IsValid() && !CompareDouble.IsZero(PIn.Double(textAPR.Text)) && checkProductionLock.Checked==false) {
 					checkProductionLock.Checked=true;
 				}
 				CalculateDateInterestStartFromInterestDelay();
@@ -816,11 +766,10 @@ namespace OpenDental {
 				|| !textPaymentCount.IsValid()
 				|| !textCompletedAmt.IsValid()) 
 			{
-				stringBuilderErrors.AppendLine(Lan.g(this,"Please fix data entry errors."));
+				stringBuilderErrors.AppendLine(Lan.g(this,"Please fix data entry errors first."));
 			}
-			//If the prior case is true, this should not be added a second time.
-			else if(!textPeriodPayment.IsValid() && gridLinkedProduction.ListGridRows.Count!=0) {
-				stringBuilderErrors.AppendLine(Lan.g(this,"Please fix data entry errors."));
+			if(!textPeriodPayment.IsValid() && gridLinkedProduction.ListGridRows.Count!=0) {
+				stringBuilderErrors.AppendLine(Lan.g(this,"Please fix data entry errors first."));
 			}
 			return stringBuilderErrors.ToString();
 		}
@@ -839,19 +788,10 @@ namespace OpenDental {
 				return;
 			}
 			DynamicPayPlanRowData rowData=(DynamicPayPlanRowData)gridCharges.ListGridRows[e.Row].Tag;
-			if(rowData.IsDownPayment) {
-				MsgBox.Show(Lan.g(this,"Down payment charges cannot be altered. To make changes to the down payment, the current payment plan will need to be deleted and a new payment plan created in its place."));
-				return;
-			}
 			if(rowData.IsChargeRow()) {
 				List<PayPlanCharge> listPayPlanCharges=_dynamicPaymentPlanData.ListPayPlanChargesDb.FindAll(x=>rowData.ListPayPlanChargeNums.Contains(x.PayPlanChargeNum));
 				if(listPayPlanCharges.Count==0) {
 					MsgBox.Show(Lan.g(this,"The selected charge hasn't been posted yet. Only posted charges can be edited."));
-					return;
-				}
-				List<PaySplit> listPaySplitsForPayPlanCharges=PaySplits.GetForPayPlanCharges(rowData.ListPayPlanChargeNums);
-				if(listPaySplitsForPayPlanCharges.Count!=0) {
-					MsgBox.Show(Lan.g(this,"Charges with payments attached cannot be edited."));
 					return;
 				}
 				//If listPayPlanCharges has more than one charge then we have to load this new form for the user to select a single charge to edit.
@@ -869,12 +809,11 @@ namespace OpenDental {
 					//FormPayPlanChargeEdit sets PayPlanChargeCur to null when the user clicks the delete button on the form.
 					if(formPayPlanChargeEdit.PayPlanChargeCur==null) {
 						PayPlanCharges.Delete(listPayPlanCharges[0]);
-						SecurityLogs.MakeLogEntry(EnumPermType.PayPlanChargeEdit,listPayPlanCharges[0].PatNum,"Deleted.");
 					}
 					else {
 						if(!formPayPlanChargeEdit.ListChangeLog.IsNullOrEmpty()) {
-							string log=PayPlans.GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
-							SecurityLogs.MakeLogEntry(EnumPermType.PayPlanChargeEdit,listPayPlanCharges[0].PatNum,log);
+							string log=GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
+							SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeEdit,listPayPlanCharges[0].PatNum,log);
 						}
 						PayPlanCharges.Update(listPayPlanCharges[0]);
 					}
@@ -903,7 +842,7 @@ namespace OpenDental {
 					MsgBox.Show(this,"The claim has been deleted.");
 				}
 				else {
-					if(!Security.IsAuthorized(EnumPermType.ClaimView)) {
+					if(!Security.IsAuthorized(Permissions.ClaimView)) {
 						return;
 					}
 					//FormClaimEdit inserts and/or updates the claim and/or claimprocs, which could potentially change the bundle.
@@ -915,7 +854,6 @@ namespace OpenDental {
 			}
 			LoadPayDataFromDB();
 			FillCharges();
-			FillProduction();
 		}
 
 		private void gridLinkedProduction_CellLeave(object sender,ODGridClickEventArgs e) {
@@ -948,8 +886,7 @@ namespace OpenDental {
 			string keyData=PayPlans.GetKeyDataForSignature(_dynamicPaymentPlanData.PayPlan);
 			SheetParameter.SetParameter(sheet,"keyData",keyData);
 			SheetUtil.CalculateHeights(sheet);
-			using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit();
-			formSheetFillEdit.SheetCur=sheet;
+			using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit(sheet);
 			formSheetFillEdit.ShowDialog();
 			if(formSheetFillEdit.DialogResult!=DialogResult.OK) {
 				return;
@@ -1246,7 +1183,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"This Payment Plan has already been signed.");
 				return;
 			}
-			if(MobileAppDevices.ShouldCreateMobileNotification(_dynamicPaymentPlanData.Patient.PatNum, out MobileAppDevice device)) {
+			if(MobileAppDevices.ShouldSendPush(_dynamicPaymentPlanData.Patient.PatNum, out MobileAppDevice device)) {
 				PushSelectedPayPlanToEclipboard(device);
 			}
 			else {
@@ -1274,7 +1211,7 @@ namespace OpenDental {
 				return;//document wont be null below.
 			}
 			using PdfDocument pdfDocument=GetPayPlanPDF(_dynamicPaymentPlanData.PayPlan);//Can't be null due to above check.
-			if(MobileNotifications.CI_SendPaymentPlan(pdfDocument,_dynamicPaymentPlanData.PayPlan,mobileAppDevice.MobileAppDeviceNum
+			if(PushNotificationUtils.CI_SendPaymentPlan(pdfDocument,_dynamicPaymentPlanData.PayPlan,mobileAppDevice.MobileAppDeviceNum
 				,out string errorMsg,out long mobileDataByeNum)) 
 			{
 				//The payment plan's MobileAppDeviceNum needs to be updated so that we know it is on a device
@@ -1398,13 +1335,13 @@ namespace OpenDental {
 				MessageBox.Show(ex.Message);
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.PayPlanEdit,_dynamicPaymentPlanData.Patient.PatNum,"Payment Plan deleted.",_payPlanOld.PayPlanNum,DateTime.MinValue);
+			SecurityLogs.MakeLogEntry(Permissions.PayPlanEdit,_dynamicPaymentPlanData.Patient.PatNum,"Dynamic Payment Plan deleted.",_payPlanOld.PayPlanNum,DateTime.MinValue);
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			if(_dynamicPaymentPlanData.PayPlan.IsClosed) {
-				butSave.Text="OK";
+				butOK.Text="OK";
 				butDelete.Enabled=true;
 				butClosePlan.Enabled=true;
 				labelClosed.Visible=false;
@@ -1420,9 +1357,12 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormPayPlanDynamic_Closing(object sender,CancelEventArgs e) {
 			signatureBoxWrapper?.SetTabletState(0);
-			Signalods.SetInvalid(InvalidType.BillingList);
 			if(DialogResult==DialogResult.OK) {
 				return;
 			}
@@ -1438,6 +1378,5 @@ namespace OpenDental {
 				return;
 			}
 		}
-
 	}
 }

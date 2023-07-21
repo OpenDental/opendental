@@ -39,6 +39,7 @@ namespace OpenDental {
 			this.listMain = new OpenDental.UI.ListBox();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.label1 = new System.Windows.Forms.Label();
+			this.butClose = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.menuMain = new OpenDental.UI.MenuOD();
 			this.butDown = new OpenDental.UI.Button();
@@ -51,7 +52,7 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.listMain.Location = new System.Drawing.Point(18, 97);
 			this.listMain.Name = "listMain";
-			this.listMain.Size = new System.Drawing.Size(255, 173);
+			this.listMain.Size = new System.Drawing.Size(265, 173);
 			this.listMain.TabIndex = 1;
 			this.listMain.DoubleClick += new System.EventHandler(this.listMain_DoubleClick);
 			// 
@@ -65,12 +66,22 @@ namespace OpenDental {
     " up for appointments.  After adding fields to this list, you can set the values " +
     "in an appointment edit window.";
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(349, 291);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(79, 24);
+			this.butClose.TabIndex = 5;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butAdd
 			// 
 			this.butAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.butAdd.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAdd.Location = new System.Drawing.Point(292, 97);
+			this.butAdd.Location = new System.Drawing.Point(303, 97);
 			this.butAdd.Name = "butAdd";
 			this.butAdd.Size = new System.Drawing.Size(75, 24);
 			this.butAdd.TabIndex = 2;
@@ -82,7 +93,7 @@ namespace OpenDental {
 			this.menuMain.Dock = System.Windows.Forms.DockStyle.Top;
 			this.menuMain.Location = new System.Drawing.Point(0, 0);
 			this.menuMain.Name = "menuMain";
-			this.menuMain.Size = new System.Drawing.Size(383, 24);
+			this.menuMain.Size = new System.Drawing.Size(447, 24);
 			this.menuMain.TabIndex = 0;
 			this.menuMain.Text = "menuOD1";
 			// 
@@ -91,7 +102,7 @@ namespace OpenDental {
 			this.butDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.butDown.Image = global::OpenDental.Properties.Resources.down;
 			this.butDown.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDown.Location = new System.Drawing.Point(292, 186);
+			this.butDown.Location = new System.Drawing.Point(303, 186);
 			this.butDown.Name = "butDown";
 			this.butDown.Size = new System.Drawing.Size(75, 24);
 			this.butDown.TabIndex = 4;
@@ -104,7 +115,7 @@ namespace OpenDental {
 			this.butUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.butUp.Image = global::OpenDental.Properties.Resources.up;
 			this.butUp.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butUp.Location = new System.Drawing.Point(292, 154);
+			this.butUp.Location = new System.Drawing.Point(303, 154);
 			this.butUp.Name = "butUp";
 			this.butUp.Size = new System.Drawing.Size(75, 24);
 			this.butUp.TabIndex = 3;
@@ -113,11 +124,12 @@ namespace OpenDental {
 			// 
 			// FormApptFieldDefs
 			// 
-			this.ClientSize = new System.Drawing.Size(383, 287);
+			this.ClientSize = new System.Drawing.Size(447, 330);
 			this.Controls.Add(this.butDown);
 			this.Controls.Add(this.butUp);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.listMain);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.menuMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -132,6 +144,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.ListBox listMain;
 		private OpenDental.UI.Button butAdd;
 		private Label label1;

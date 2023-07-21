@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEvaluations));
+			this.butCancel = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.comboInstructor = new OpenDental.UI.ComboBox();
 			this.label2 = new System.Windows.Forms.Label();
@@ -36,8 +37,8 @@ namespace OpenDental{
 			this.label9 = new System.Windows.Forms.Label();
 			this.textLastName = new System.Windows.Forms.TextBox();
 			this.butAdd = new OpenDental.UI.Button();
-			this.textDateEnd = new OpenDental.ValidDate();
-			this.textDateStart = new OpenDental.ValidDate();
+			this.textDateEnd = new ValidDate();
+			this.textDateStart = new ValidDate();
 			this.label6 = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
 			this.groupAdmin = new OpenDental.UI.GroupBox();
@@ -48,6 +49,16 @@ namespace OpenDental{
 			this.groupAdmin.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(883, 564);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 8;
+			this.butCancel.Text = "Close";
+			this.butCancel.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// gridMain
 			// 
 			this.gridMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -57,7 +68,7 @@ namespace OpenDental{
 			this.gridMain.Location = new System.Drawing.Point(12, 36);
 			this.gridMain.Name = "gridMain";
 			this.gridMain.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridMain.Size = new System.Drawing.Size(673, 469);
+			this.gridMain.Size = new System.Drawing.Size(673, 522);
 			this.gridMain.TabIndex = 15;
 			this.gridMain.Title = "Evaluations";
 			this.gridMain.TranslationName = "TableEvaluationSetup";
@@ -251,7 +262,7 @@ namespace OpenDental{
 			// 
 			// FormEvaluations
 			// 
-			this.ClientSize = new System.Drawing.Size(974, 517);
+			this.ClientSize = new System.Drawing.Size(974, 600);
 			this.Controls.Add(this.butReport);
 			this.Controls.Add(this.comboCourse);
 			this.Controls.Add(this.label1);
@@ -263,6 +274,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.groupStudents);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEvaluations";
 			this.Text = "Evaluations";
@@ -276,6 +288,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private UI.GridOD gridMain;
 		private OpenDental.UI.ComboBox comboInstructor;
 		private System.Windows.Forms.Label label2;

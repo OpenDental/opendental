@@ -55,7 +55,7 @@ namespace OpenDental{
 			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
 				//Tcodes remain enabled
 				//Ncodes remain enabled
-				checkDcodes.Text="CDA Codes - Add any missing 2024 CDA Codes. This option does not work in the trial version.";
+				checkDcodes.Text="CDA Codes - Add any missing 2023 CDA Codes. This option does not work in the trial version.";
 				checkRecallTypes.Text="Recall Types - Resets the recall types and triggers to default. Replaces any T Codes with CDA Codes.";
 				_listProcedureCodes=null;//Is only filled when the code tool runs because the user might not need to download the codes.
 				return;
@@ -124,12 +124,12 @@ namespace OpenDental{
 			//The updating of CDT codes takes place towards the end of the year, while we typically do it in December, we have 
 			//done it as early as Novemeber before. This warning will inform users that using the new codes will cause rejection
 			//on their claims if they try to use them before the first of the new year.
-			DateTime datePromptStart=new DateTime(2023,10,20);
+			DateTime datePromptStart=new DateTime(2022,10,11);
 			DateTime datePromptEnd=new DateTime(datePromptStart.Year,12,31);
 			if(DateTime.Now.Between(datePromptStart,datePromptEnd) && checkDcodes.Checked) {//Only validate if attempting to update D Codes
 				if(MessageBox.Show(//Still between datePromptStart and the first of the next year, prompt that these codes may cause problems.
 						Lan.g(this,"Updating procedure codes at this time could result in acquiring codes which are not valid until ")
-						+datePromptEnd.AddDays(1).ToShortDateString()+Lan.g(this,". Using these codes and new claim form could cause claims to be rejected, continue?")
+						+datePromptEnd.AddDays(1).ToShortDateString()+Lan.g(this,". Using these codes could cause claims to be rejected, continue?")
 						,Lan.g(this,"Procedure Codes"),MessageBoxButtons.YesNo)==DialogResult.No) 
 				{
 					return;//Early return if the user is between datePromptStart and the first of the next year and they've said no to updating D Codes.
@@ -166,7 +166,6 @@ namespace OpenDental{
 					rowsInserted+=FormProcCodes.ImportProcCodes("",_listProcedureCodes,"");
 					Changed=true;
 					int procCodesFixed=ProcedureCodes.ResetADAdescriptionsAndAbbrs();
-					ClaimForms.SetDefaultClaimForm("ADA 2019","ADA 2024");
 					MessageBox.Show(Lan.g(this,"Procedure codes with descriptions or abbreviations updated:")+" "+procCodesFixed.ToString());
 				}
 				catch(ApplicationException ex) {
@@ -264,7 +263,7 @@ namespace OpenDental{
 					}
 					Changed=true;
 					DataValid.SetInvalid(InvalidType.RecallTypes,InvalidType.Prefs);				
-					SecurityLogs.MakeLogEntry(EnumPermType.RecallEdit,0,"Recall types set to default.");
+					SecurityLogs.MakeLogEntry(Permissions.RecallEdit,0,"Recall types set to default.");
 				}
 			}
 			#endregion
@@ -274,14 +273,38 @@ namespace OpenDental{
 				Changed=true;
 				//yes, this really does refresh before moving on.
 				DataValid.SetInvalid(InvalidType.Defs, InvalidType.ProcCodes);
-				SecurityLogs.MakeLogEntry(EnumPermType.ProcCodeEdit,0,"T Codes deleted.");
+				SecurityLogs.MakeLogEntry(Permissions.ProcCodeEdit,0,"T Codes deleted.");
 			}
 			#endregion
 			if(Changed) {
 				MessageBox.Show(Lan.g(this,"Done."));
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"New Customer Procedure codes tool was run.");
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,"New Customer Procedure codes tool was run.");
 			}
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

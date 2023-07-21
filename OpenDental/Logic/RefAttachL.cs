@@ -16,7 +16,7 @@ namespace OpenDental{
 			if(listRefAttaches[0].RefType!=ReferralType.RefFrom){
 				return "";
 			}
-			Referral referral=WpfControls.ReferralL.GetReferral(listRefAttaches[0].ReferralNum);
+			Referral referral=ReferralL.GetReferral(listRefAttaches[0].ReferralNum);
 			if(referral==null || referral.PatNum!=0){
 				return "";
 			}

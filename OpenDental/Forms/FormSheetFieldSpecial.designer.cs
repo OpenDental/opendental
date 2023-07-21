@@ -33,11 +33,12 @@ namespace OpenDental{
 			this.textWidth = new OpenDental.ValidNum();
 			this.textYPos = new OpenDental.ValidNum();
 			this.textXPos = new OpenDental.ValidNum();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.labelSpecialInfo = new System.Windows.Forms.Label();
 			this.listBoxAvailable = new OpenDental.UI.ListBox();
-			this.comboGrowthBehavior = new OpenDental.UI.ComboBox();
+			this.comboGrowthBehavior = new UI.ComboBox();
 			this.labelGrowth = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -121,15 +122,27 @@ namespace OpenDental{
 			this.textXPos.Size = new System.Drawing.Size(69, 20);
 			this.textXPos.TabIndex = 91;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(391, 235);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.AdjustImageLocation = new System.Drawing.Point(0, 0);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(391, 205);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.AdjustImageLocation = new System.Drawing.Point(0, 0);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(391, 235);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butDelete
 			// 
@@ -196,7 +209,8 @@ namespace OpenDental{
 			this.Controls.Add(this.textXPos);
 			this.Controls.Add(this.label5);
 			this.Controls.Add(this.label2);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormSheetFieldSpecial";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -209,7 +223,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label5;
 		private ValidNum textXPos;

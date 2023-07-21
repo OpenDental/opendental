@@ -11,76 +11,76 @@ namespace OpenDentBusiness{
 	public class TimeAdjusts {
 		#region Get Methods
 		///<summary>Attempts to get one TimeAdjust based on a time.  Returns null if not found. </summary>
-		public static TimeAdjust GetPayPeriodNote(long employeeNum,DateTime dateStart) {
+		public static TimeAdjust GetPayPeriodNote(long empNum,DateTime startDate) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<TimeAdjust>(MethodBase.GetCurrentMethod(),employeeNum,dateStart);
+				return Meth.GetObject<TimeAdjust>(MethodBase.GetCurrentMethod(),empNum,startDate);
 			}
-			string command="SELECT * FROM timeadjust WHERE EmployeeNum="+POut.Long(employeeNum)+" AND TimeEntry="+POut.DateT(dateStart)+" AND IsAuto=0 ";
+			string command="SELECT * FROM timeadjust WHERE EmployeeNum="+POut.Long(empNum)+" AND TimeEntry="+POut.DateT(startDate)+" AND IsAuto=0 ";
 			command+="AND RegHours='00:00:00' AND OTimeHours='00:00:00' AND PtoHours='00:00:00' ";
 			return Crud.TimeAdjustCrud.SelectOne(command);
 		}
 
 		///<summary>Gets a list of payperiod notes.  Start Date should be the start date of the pay period trying to get notes for.</summary>
-		public static List<TimeAdjust> GetNotesForPayPeriod(DateTime dateStart) {
+		public static List<TimeAdjust> GetNotesForPayPeriod(DateTime startDate) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<TimeAdjust>>(MethodBase.GetCurrentMethod(),dateStart);
+				return Meth.GetObject<List<TimeAdjust>>(MethodBase.GetCurrentMethod(),startDate);
 			}
-			string command="SELECT * FROM timeadjust WHERE TimeEntry="+POut.DateT(dateStart)+" AND isAuto=0 ";
+			string command="SELECT * FROM timeadjust WHERE TimeEntry="+POut.DateT(startDate)+" AND isAuto=0 ";
 			command+="AND RegHours='00:00:00' AND OTimeHours='00:00:00' AND PtoHours='00:00:00' ";
 			return Crud.TimeAdjustCrud.SelectMany(command);
 		}
 		#endregion
 
 		///<summary></summary>
-		public static List<TimeAdjust> Refresh(long employeeNum,DateTime dateFrom,DateTime dateTo) {
+		public static List<TimeAdjust> Refresh(long empNum,DateTime fromDate,DateTime toDate) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<TimeAdjust>>(MethodBase.GetCurrentMethod(),employeeNum,dateFrom,dateTo);
+				return Meth.GetObject<List<TimeAdjust>>(MethodBase.GetCurrentMethod(),empNum,fromDate,toDate);
 			}
 			string command=
 				"SELECT * FROM timeadjust WHERE "
-				+"EmployeeNum = "+POut.Long(employeeNum)+" "
-				+"AND "+DbHelper.DtimeToDate("TimeEntry")+" >= "+POut.Date(dateFrom)+" "
-				+"AND "+DbHelper.DtimeToDate("TimeEntry")+" <= "+POut.Date(dateTo)+" "
+				+"EmployeeNum = "+POut.Long(empNum)+" "
+				+"AND "+DbHelper.DtimeToDate("TimeEntry")+" >= "+POut.Date(fromDate)+" "
+				+"AND "+DbHelper.DtimeToDate("TimeEntry")+" <= "+POut.Date(toDate)+" "
 				+"ORDER BY TimeEntry";
 			return Crud.TimeAdjustCrud.SelectMany(command);
 		}
 
 		///<summary>Validates and throws exceptions. Gets all time adjusts between date range and time adjusts made during the current work week. </summary>
-		public static List<TimeAdjust> GetValidList(long employeeNum,DateTime dateFrom,DateTime dateTo) {
+		public static List<TimeAdjust> GetValidList(long empNum,DateTime fromDate,DateTime toDate) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<TimeAdjust>>(MethodBase.GetCurrentMethod(),employeeNum,dateFrom,dateTo);
+				return Meth.GetObject<List<TimeAdjust>>(MethodBase.GetCurrentMethod(),empNum,fromDate,toDate);
 			}
-			List<TimeAdjust> listTimeAdjusts=new List<TimeAdjust>();
+			List<TimeAdjust> retVal=new List<TimeAdjust>();
 			string command=
 				"SELECT * FROM timeadjust WHERE "
-				+"EmployeeNum = "+POut.Long(employeeNum)+" "
-				+"AND "+DbHelper.DtimeToDate("TimeEntry")+" >= "+POut.Date(dateFrom)+" "
-				+"AND "+DbHelper.DtimeToDate("TimeEntry")+" <= "+POut.Date(dateTo)+" "
+				+"EmployeeNum = "+POut.Long(empNum)+" "
+				+"AND "+DbHelper.DtimeToDate("TimeEntry")+" >= "+POut.Date(fromDate)+" "
+				+"AND "+DbHelper.DtimeToDate("TimeEntry")+" <= "+POut.Date(toDate)+" "
 				+"ORDER BY TimeEntry";
-			listTimeAdjusts=Crud.TimeAdjustCrud.SelectMany(command);
+			retVal=Crud.TimeAdjustCrud.SelectMany(command);
 			//Validate---------------------------------------------------------------------------------------------------------------
 			//none necessary at this time.
-			return listTimeAdjusts;
+			return retVal;
 		}
 
 		///<summary></summary>
-		public static List<TimeAdjust> GetListForTimeCardManage(long employeeNum,long clinicNum,DateTime dateFrom,DateTime dateTo,bool isAll) {
+		public static List<TimeAdjust> GetListForTimeCardManage(long empNum,long clinicNum,DateTime fromDate,DateTime toDate,bool isAll) {
 			//No need to check MiddleTierRole; no call to db.
-			return GetListForTimeCardManage(new List<long>() { employeeNum },clinicNum,dateFrom,dateTo,isAll);
+			return GetListForTimeCardManage(new List<long>() { empNum },clinicNum,fromDate,toDate,isAll);
 		}
 
 		///<summary></summary>
-		public static List<TimeAdjust> GetListForTimeCardManage(List<long> listEmployeeNums,long clinicNum,DateTime dateFrom,DateTime dateTo,bool isAll) {
-			if(listEmployeeNums.IsNullOrEmpty()) {
+		public static List<TimeAdjust> GetListForTimeCardManage(List<long> listEmpNums,long clinicNum,DateTime fromDate,DateTime toDate,bool isAll) {
+			if(listEmpNums.IsNullOrEmpty()) {
 				return new List<TimeAdjust>();
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<TimeAdjust>>(MethodBase.GetCurrentMethod(),listEmployeeNums,clinicNum,dateFrom,dateTo,isAll);
+				return Meth.GetObject<List<TimeAdjust>>(MethodBase.GetCurrentMethod(),listEmpNums,clinicNum,fromDate,toDate,isAll);
 			}
 			string command="SELECT * FROM timeadjust WHERE "
-				+"EmployeeNum IN ("+string.Join(",",listEmployeeNums.Select(x => POut.Long(x)))+") "
-				+"AND "+DbHelper.DtimeToDate("TimeEntry")+" >= "+POut.Date(dateFrom)+" "
-				+"AND "+DbHelper.DtimeToDate("TimeEntry")+" <= "+POut.Date(dateTo)+" ";
+				+"EmployeeNum IN ("+string.Join(",",listEmpNums.Select(x => POut.Long(x)))+") "
+				+"AND "+DbHelper.DtimeToDate("TimeEntry")+" >= "+POut.Date(fromDate)+" "
+				+"AND "+DbHelper.DtimeToDate("TimeEntry")+" <= "+POut.Date(toDate)+" ";
 			if(!isAll) {
 				command+="AND ClinicNum = "+POut.Long(clinicNum)+" ";
 			}
@@ -89,13 +89,13 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Dates are INCLUSIVE.</summary>
-		public static List<TimeAdjust> GetAllForPeriod(DateTime dateFrom,DateTime dateTo) {
+		public static List<TimeAdjust> GetAllForPeriod(DateTime fromDate,DateTime toDate) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<TimeAdjust>>(MethodBase.GetCurrentMethod(),dateFrom,dateTo);
+				return Meth.GetObject<List<TimeAdjust>>(MethodBase.GetCurrentMethod(),fromDate,toDate);
 			}
 			string command= "SELECT * FROM timeadjust "
-				+"WHERE TimeEntry >= "+POut.Date(dateFrom)+" "
-				+"AND TimeEntry < "+POut.Date(dateTo.AddDays(1))+" ";
+				+"WHERE TimeEntry >= "+POut.Date(fromDate)+" "
+				+"AND TimeEntry < "+POut.Date(toDate.AddDays(1))+" ";
 			return Crud.TimeAdjustCrud.SelectMany(command);
 		}
 
@@ -118,36 +118,36 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static void Update(TimeAdjust timeAdjust,TimeAdjust timeAdjustOld) {
+		public static void Update(TimeAdjust timeAdjust,TimeAdjust oldTimeAdjust) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),timeAdjust,timeAdjustOld);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),timeAdjust,oldTimeAdjust);
 				return;
 			}
-			Crud.TimeAdjustCrud.Update(timeAdjust,timeAdjustOld);
+			Crud.TimeAdjustCrud.Update(timeAdjust,oldTimeAdjust);
 		}
 
 		///<summary></summary>
-		public static void Delete(TimeAdjust timeAdjust) {
+		public static void Delete(TimeAdjust adj) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),timeAdjust);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),adj);
 				return;
 			}
-			string command= "DELETE FROM timeadjust WHERE TimeAdjustNum = "+POut.Long(timeAdjust.TimeAdjustNum);
+			string command= "DELETE FROM timeadjust WHERE TimeAdjustNum = "+POut.Long(adj.TimeAdjustNum);
 			Db.NonQ(command);
 		}
 
 		///<summary>Returns all automatically generated timeAdjusts for a given employee between the date range (inclusive).</summary>
-		public static List<TimeAdjust> GetSimpleListAuto(long employeeNum,DateTime dateStart,DateTime dateStop) {
+		public static List<TimeAdjust> GetSimpleListAuto(long employeeNum,DateTime startDate,DateTime stopDate) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<TimeAdjust>>(MethodBase.GetCurrentMethod(),employeeNum,dateStart,dateStop);
+				return Meth.GetObject<List<TimeAdjust>>(MethodBase.GetCurrentMethod(),employeeNum,startDate,stopDate);
 			}
-			List<TimeAdjust> listTimeAdjusts=new List<TimeAdjust>();
+			List<TimeAdjust> retVal=new List<TimeAdjust>();
 			//List<TimeAdjust> listTimeAdjusts=new List<TimeAdjust>();
 			string command=
 				"SELECT * FROM timeadjust WHERE "
 				+"EmployeeNum = "+POut.Long(employeeNum)+" "
-				+"AND "+DbHelper.DtimeToDate("TimeEntry")+" >= "+POut.Date(dateStart)+" "
-				+"AND "+DbHelper.DtimeToDate("TimeEntry")+" < "+POut.Date(dateStop.AddDays(1))+" "//add one day to go the end of the specified date.
+				+"AND "+DbHelper.DtimeToDate("TimeEntry")+" >= "+POut.Date(startDate)+" "
+				+"AND "+DbHelper.DtimeToDate("TimeEntry")+" < "+POut.Date(stopDate.AddDays(1))+" "//add one day to go the end of the specified date.
 				+"AND IsAuto=1";
 			//listTimeAdjusts=Crud.TimeAdjustCrud.SelectMany(command);
 			return Crud.TimeAdjustCrud.SelectMany(command);

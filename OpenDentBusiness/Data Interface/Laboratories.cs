@@ -1,9 +1,7 @@
 using System;
-using CodeBase;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Reflection;
 
 namespace OpenDentBusiness{
@@ -25,19 +23,6 @@ namespace OpenDentBusiness{
 			}
 			string command="SELECT * FROM laboratory WHERE LaboratoryNum="+POut.Long(laboratoryNum);
 			return Crud.LaboratoryCrud.SelectOne(command);
-		}
-
-		public static List<Laboratory> GetMany(List<long> listLaboratoryNums) {
-			if(listLaboratoryNums.IsNullOrEmpty()) {
-				return new List<Laboratory>();
-			}
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Laboratory>>(MethodBase.GetCurrentMethod(),listLaboratoryNums);
-			}
-			string command="SELECT * FROM laboratory "
-				+"WHERE LaboratoryNum IN("+string.Join(",",listLaboratoryNums.Select(x => POut.Long(x)).ToArray())+") "
-				+"ORDER BY Description";
-			return Crud.LaboratoryCrud.SelectMany(command);
 		}
 
 		///<summary></summary>

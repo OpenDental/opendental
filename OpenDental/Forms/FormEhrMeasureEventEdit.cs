@@ -101,12 +101,12 @@ namespace OpenDental {
 				+Lan.g(this,"Date")+": "+PIn.DateT(textDateTime.Text)+"  "
 				+Lan.g(this,"Type")+": "+_measureEventCur.EventType.ToString()+"  "
 				+Lan.g(this,"Patient")+": "+textPatient.Text;
-			SecurityLogs.MakeLogEntry(EnumPermType.EhrMeasureEventEdit,_measureEventCur.PatNum,logEntry);
+			SecurityLogs.MakeLogEntry(Permissions.EhrMeasureEventEdit,_measureEventCur.PatNum,logEntry);
 			EhrMeasureEvents.Delete(_measureEventCur.EhrMeasureEventNum);
 			DialogResult=DialogResult.Cancel;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			//inserts never happen here.  Only updates.
 			DateTime dateTEvent=PIn.DateT(textDateTime.Text);
 			if(dateTEvent==DateTime.MinValue) {
@@ -140,7 +140,7 @@ namespace OpenDental {
 			}
 			if(listLogEdits.Count>0) {
 				listLogEdits.Insert(0,Lan.g(this,"EHR Measure Event was edited."));
-				SecurityLogs.MakeLogEntry(EnumPermType.EhrMeasureEventEdit,_measureEventCur.PatNum,string.Join("  ",listLogEdits));
+				SecurityLogs.MakeLogEntry(Permissions.EhrMeasureEventEdit,_measureEventCur.PatNum,string.Join("  ",listLogEdits));
 			}
 			if(_measureEventCur.IsNew) {//should never happen, only updates happen here
 				EhrMeasureEvents.Insert(_measureEventCur);
@@ -149,6 +149,10 @@ namespace OpenDental {
 				EhrMeasureEvents.Update(_measureEventCur);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

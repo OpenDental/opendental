@@ -23,6 +23,7 @@ namespace OpenDental {
 
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormInsCatsSetup));
+			this.butOK = new OpenDental.UI.Button();
 			this.butAddSpan = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
 			this.butAddCat = new OpenDental.UI.Button();
@@ -34,6 +35,17 @@ namespace OpenDental {
 			this.label1 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butOK.Location = new System.Drawing.Point(613, 619);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(85, 24);
+			this.butOK.TabIndex = 6;
+			this.butOK.Text = "&Close";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butAddSpan
 			// 
@@ -139,7 +151,10 @@ namespace OpenDental {
 			// 
 			// FormInsCatsSetup
 			// 
+			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butOK;
 			this.ClientSize = new System.Drawing.Size(713, 660);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butDefaultsReset);
 			this.Controls.Add(this.textBox1);
@@ -160,6 +175,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butAddSpan;
 		private OpenDental.UI.Button butUp;
 		private OpenDental.UI.Button butAddCat;

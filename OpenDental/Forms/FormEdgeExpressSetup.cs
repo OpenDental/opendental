@@ -34,7 +34,7 @@ namespace OpenDental {
 					//if program link is enabled, disable the enable check box so the restricted user cannot disable for all clinics
 					checkEnabled.Enabled=!_program.Enabled;
 				}
-				comboClinic.ClinicNumSelected=Clinics.ClinicNum;
+				comboClinic.SelectedClinicNum=Clinics.ClinicNum;
 				_clinicNumRevert=Clinics.ClinicNum;
 			}
 			else {//clinics not enabled
@@ -50,8 +50,8 @@ namespace OpenDental {
 		///<summary>Fills all but comboClinic, checkEnabled which are filled on load.</summary>
 		private void FillFields() {
 			long clinicNum=0;
-			if(PrefC.HasClinicsEnabled && comboClinic.ClinicNumSelected>-1) {
-				clinicNum=comboClinic.ClinicNumSelected;
+			if(PrefC.HasClinicsEnabled && comboClinic.SelectedClinicNum>-1) {
+				clinicNum=comboClinic.SelectedClinicNum;
 			}
 			//AuthKey had previously been stored as obfuscated text (prior to 16.2). 
 			//The XWeb feature was not publicly available for any of these versions so it safe to remove that restriction.
@@ -74,7 +74,7 @@ namespace OpenDental {
 		}
 
 		private void comboClinic_SelectionChangeCommitted(object sender,EventArgs e) {
-			if(comboClinic.ClinicNumSelected==_clinicNumRevert) {//didn't change the selected clinic
+			if(comboClinic.SelectedClinicNum==_clinicNumRevert) {//didn't change the selected clinic
 				return;
 			}
 			//EdgeExpress will be enabled for the clinic if the enabled checkbox is checked and the 3 XWeb fields are not blank. Don't let them switch 
@@ -82,17 +82,17 @@ namespace OpenDental {
 			bool isXWebEnabled=checkEnabled.Checked && (textXWebID.Text.Trim().Length>0 || textAuthKey.Text.Trim().Length>0 
 				|| textTerminalID.Text.Trim().Length>0);
 			if(isXWebEnabled && !ValidateXWeb()) {//error message box displayed in ValidateXWeb()
-				comboClinic.ClinicNumSelected=_clinicNumRevert;//validation didn't pass, revert clinic choice so they have to fix it
+				comboClinic.SelectedClinicNum=_clinicNumRevert;//validation didn't pass, revert clinic choice so they have to fix it
 				return;//if any of the X-Web fields do not pass validation, return
 			}
 			//if the payment type currently set is not valid and X-Charge is enabled, revert the clinic and return, message box shown in ValidatePaymentTypes
 			if(!ValidatePaymentTypes(isAllClinics:false)) {
-				comboClinic.ClinicNumSelected=_clinicNumRevert;//revert clinic selection, X-Charge is enabled and the payment type is not valid
+				comboClinic.SelectedClinicNum=_clinicNumRevert;//revert clinic selection, X-Charge is enabled and the payment type is not valid
 				return;
 			}
 			SyncWithHQ();//if the user just modified the HQ credentials, change any credentials that were the same as HQ to keep them synched
 			UpdateAllProperties(_clinicNumRevert);
-			_clinicNumRevert=comboClinic.ClinicNumSelected;//now that we've updated the values for the clinic we're switching from, update _clinicNumRevert
+			_clinicNumRevert=comboClinic.SelectedClinicNum;//now that we've updated the values for the clinic we're switching from, update _clinicNumRevert
 			FillFields();
 		}
 
@@ -237,7 +237,7 @@ namespace OpenDental {
 			}
 			long clinicNum=0;
 			if(PrefC.HasClinicsEnabled) {
-				clinicNum=comboClinic.ClinicNumSelected;
+				clinicNum=comboClinic.SelectedClinicNum;
 			}
 			ProgramProperty programProperty=ProgramProperties.GetOnlinePaymentsEnabledForClinic(clinicNum,ProgramName.EdgeExpress);
 			string msg=Lan.g(this,"Online payments is already enabled for another processor and must be disabled in order to use EdgeExpress online payments. "
@@ -252,7 +252,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			if(_program==null) {//should never happen
 				MsgBox.Show(this,"EdgeExpress entry is missing from the database.");
 				return;
@@ -273,7 +273,7 @@ namespace OpenDental {
 			//get selected ClinicNum (if enabled), PaymentType, encrypted Password, and encrypted AuthKey
 			long clinicNum=0;
 			if(PrefC.HasClinicsEnabled) {
-				clinicNum=comboClinic.ClinicNumSelected;
+				clinicNum=comboClinic.SelectedClinicNum;
 			}
 			UpdateAllProperties(clinicNum);
 			//validate the payment type set for all clinics with EdgeExpress enabled
@@ -302,5 +302,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

@@ -35,7 +35,7 @@ namespace OpenDentBusiness {
 		}
 
 		private bool isMissingInGeneral;
-		///<summary>Set to true for tables that are part of internal tools and not found in the general release. In other words, HQ only.  The Crud generator will gracefully skip these tables if missing from the database that it's running against.  It also won't try to generate a dataInterface s class.</summary>
+		///<summary>Set to true for tables that are part of internal tools and not found in the general release.  The Crud generator will gracefully skip these tables if missing from the database that it's running against.  It also won't try to generate a dataInterface s class.</summary>
 		public bool IsMissingInGeneral {
 			get { return isMissingInGeneral; }
 			set { isMissingInGeneral=value; }

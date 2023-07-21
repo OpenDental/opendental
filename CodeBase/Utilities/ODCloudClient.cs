@@ -13,21 +13,11 @@ using CodeBase.Controls;
 using Newtonsoft.Json;
 
 namespace CodeBase {
-	///<summary>Aka Thinfinity.</summary>
 	public class ODCloudClient {
 		private static DateTime _dateVersionLastChecked;
 		private static string _latestCloudClientVersion;
-		private static bool _hasReceivedResponse;
-		private static string _response;
+
 		public static bool IsApiEnabled=false;
-		///<summary>Controlled by the CloudIsAppStream preference and is set when OpenDental is launched. Used to determine if communication with the CloudClient is done via HTTP or the FileWatcher.</summary>
-		public static bool IsAppStream=false;
-		///<summary>Used to completely shutdown attempts to use the CloudClient if we were unable to locate the FileWatcher Directory.</summary>
-		public static bool DidLocateFileWatcherDirectory=true;
-		///<summary>The directory the FileWatcher will monitor and raise events for </summary>
-		public static string FileWatcherDirectory="";
-		public static string FileWatcherDirectoryAPI="";
-		private static string _responseFilePath="";
 		///<summary>Used for OD Cloud. This delegate will be invoked to send data to the browser.</summary>
 		public static SendDataToBrowserDelegate SendDataToBrowser;
 		///<summary>Used to get the latest cloud client version number from HQ.</summary>
@@ -55,10 +45,8 @@ namespace CodeBase {
 			string extraFileType="",bool doWaitForResponse=false,string createDirIfNeeded="",bool tryLaunch=false,bool doStartWithoutExtraFile=false) 
 		{
 			if(exePath.StartsWith("http://") || exePath.StartsWith("https://")) {
-				if(!ODCloudClient.IsAppStream){
-					Process.Start(exePath);//If using Thinfinity, we can simply launch a browser tab.
-					return;
-				}
+				Process.Start(exePath);//No need to go to ODCloudClient if we can simply launch a browser tab.
+				return;
 			}
 			CloudClientAction action=CloudClientAction.LaunchFile;
 			string processName="";
@@ -135,41 +123,6 @@ namespace CodeBase {
 			Tuple<string,string>[] arrayFileData=JsonConvert.DeserializeObject<Tuple<string,string>[]>(resultData);
 			arrayFileData.ForEach(x => File.WriteAllBytes(ODFileUtils.CombinePaths(tempPathFT,x.Item2),Convert.FromBase64String(x.Item1)));
 			return arrayFileData.Select(x => ODFileUtils.CombinePaths(tempPathFT,x.Item2)).ToArray();
-		}
-
-		public static bool ClearClipboard() {
-			try {
-				return Convert.ToBoolean(SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.ClearClipboard));
-			}
-			catch(Exception) {
-				return false;
-			}
-		}
-
-		public static string GetClipboardImageFromODCloudClient(bool doShowProgressBar=false) {
-			string resultData=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.GetClipboardImage,doShowProgressBar:doShowProgressBar);
-			if(resultData.IsNullOrEmpty()) {
-				return null;
-			}
-			return resultData;
-		}
-
-		public static void SetClipboardText(string text) {
-			if(ODBuild.IsThinfinity()) {
-				SendDataToBrowser(text,(int)BrowserAction.SetClipboard);
-			}
-			else {
-				SendToODCloudClient(new ODCloudClientData() { OtherData=text },CloudClientAction.SetClipboardText);
-			}
-		}
-
-		public static string GetClipboardText() {
-			if(ODBuild.IsThinfinity()) {
-				return SendToBrowserSynchronously("",BrowserAction.GetClipboardText);
-			}
-			else {
-				return SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.GetClipboardText,doShowProgressBar:false);
-			}
 		}
 
 		///<summary>Returns '.../temp/opendental/ODCloudFileTransfer' temp path.</summary>
@@ -250,71 +203,6 @@ namespace CodeBase {
 			catch(Exception ex){
 				ODMessageBox.Show(ex.Message);
 			}
-		}
-
-		///<summary></summary>
-		public static void CopyToClipboard(Bitmap bitmapCopy=null,string fileName=null,int nodeType=-1, long imageKey=-1, string dbNameOrUri=null){
-			ODCloudClientData oDCloudClientData=new ODCloudClientData();
-			if(bitmapCopy!=null){
-				try{
-					using (MemoryStream memoryStream=new MemoryStream()){
-						bitmapCopy.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
-						byte[] byteArray=memoryStream.ToArray();
-						oDCloudClientData.BitmapCopy=Convert.ToBase64String(byteArray);
-					}
-				}
-				catch(Exception){
-					return;
-				}
-			}
-			if(!string.IsNullOrEmpty(fileName)){
-				oDCloudClientData.FilePath=fileName;
-			}
-			if(nodeType>-1 && imageKey>-1){
-				oDCloudClientData.NodeType=nodeType;
-				oDCloudClientData.ImageKey=imageKey;
-			}
-			if(!string.IsNullOrEmpty(dbNameOrUri)){
-				oDCloudClientData.OtherData=dbNameOrUri;
-			}
-			try{
-				SendToODCloudClientSynchronously(oDCloudClientData,CloudClientAction.CopyToClipboard);
-			}
-			catch(Exception ex){
-				ex.DoNothing();
-			}
-		}
-
-		///<summary></summary>
-		public static CloudNodeTypeAndKey GetNodeTypeAndKey(){
-			string strNodeTypeAndKey="";
-			CloudNodeTypeAndKey nodeTypeAndKey=null;
-			try{
-				strNodeTypeAndKey=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.GetNodeTypeAndKey);
-			}
-			catch(Exception ex) {
-				ODMessageBox.Show(ex.Message);
-			}
-			if(string.IsNullOrEmpty(strNodeTypeAndKey)){
-				return null;
-			}
-			nodeTypeAndKey=JsonConvert.DeserializeObject<CloudNodeTypeAndKey>(strNodeTypeAndKey);
-			return nodeTypeAndKey;
-		}
-
-		///<summary>Used for copy/paste in imaging module to prevent issues when copying across different databases</summary>
-		public static string GetDbNameOrUriFromClipboard(){
-			string dbNameOrUri="";
-			try{
-				dbNameOrUri=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.GetDbNameOrUriFromClipboard);
-			}
-			catch(Exception ex) {
-				ex.DoNothing();//Don't need to handle here. Will return null and paste action will proceed.
-			}
-			if(string.IsNullOrEmpty(dbNameOrUri)){
-				return null;
-			}
-			return dbNameOrUri;
 		}
 
 		///<summary>Asks ODCloudClient to process a PayConnect terminal payment. If successful, returns the contents of the PosResponse object. Otherwise, returns null.
@@ -411,10 +299,6 @@ namespace CodeBase {
 			SendToODCloudClient(new ODCloudClientData(),CloudClientAction.CheckIsRunning);
 		}
 
-		public static string CheckIsRunning() {
-			return SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.CheckIsRunning,doShowProgressBar:false);
-		}
-
 		///<summary>Process the api request. Parses the request data ot of requestString and sends it to the API service.</summary>
 		public static void ProcessApiRequest(string requestString) {
 			ODApiRequestData odApiRequestData=JsonConvert.DeserializeObject<ODApiRequestData>(requestString);
@@ -478,94 +362,31 @@ namespace CodeBase {
 			SendToODCloudClientSynchronously(ccData,CloudClientAction.SendToDrCeph);
 		}
 
-		///<summary>For Thinfinity only, sends the data to the browser.</summary>
+		///<summary>Sends the data to the browser.</summary>
 		public static void SendToBrowser(ODBrowserData odBrowserData,BrowserAction browserAction) {
 			string data=JsonConvert.SerializeObject(odBrowserData);
 			SendDataToBrowser(data,(int)browserAction);
 		}
 
-		public static string GetComputerName() {
-			if(ODBuild.IsThinfinity()) {
-				return SendToBrowserSynchronously("",BrowserAction.GetComputerName,doShowProgressBar:false);
-			}
-			return SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.GetComputerName,doShowProgressBar:false);
-		}
-
-		///<summary>For Thinfinity only, sends the data to the browser and waits for a response.</summary>
+		///<summary>Sends the data to the browser and waits for a response.</summary>
 		public static string SendToBrowserSynchronously(string data,BrowserAction browserAction,int timeoutSecs=5,bool doShowProgressBar=true) {
-				bool hasReceivedResponse=false;
-				string browserResponse="";
-				Exception exFromThread=null;
-				void onReceivedResponse(string response) {
-					hasReceivedResponse=true;
-					browserResponse=response;
-				}
-				ODThread thread=new ODThread(o => {
-					SendDataToBrowser(data,(int)browserAction,onReceivedResponse);
-				});
-				thread.Name="SendDataToBrowser";
-				thread.AddExceptionHandler(e => exFromThread=e);
-				thread.Start();
-				DateTime start=DateTime.Now;
-				void waitForResponse() {
-					while(!hasReceivedResponse && exFromThread==null && (DateTime.Now-start).TotalSeconds<timeoutSecs) {
-						Thread.Sleep(100);
-					}
-				}
-				if(doShowProgressBar) {
-					ODProgress.ShowAction(waitForResponse);
-				}
-				else {
-					waitForResponse();
-				}
-				if(exFromThread!=null) {
-					throw exFromThread;
-				}
-				if(!hasReceivedResponse) {
-					throw new ODException("Unable to communicate with the browser.",ODException.ErrorCodes.BrowserTimeout);
-				}
-				return browserResponse;
-		}
-
-		///<summary>For AppStream only, updates the data.txt file with the data string.</summary>
-		public static string SendToAppStreamSynchronously(string data,int timeoutSecs=5,bool doShowProgressBar=true) {
-			string retval="";
-			_hasReceivedResponse=false;
-			ODCloudClientArgs args=JsonConvert.DeserializeObject<ODCloudClientArgs>(data);
-			string fileName=@"data_"+args.FileIdentifier+".txt";
-			string watcherPath=ODFileUtils.CombinePaths(FileWatcherDirectory,@"response");
-			_responseFilePath=ODFileUtils.CombinePaths(watcherPath,fileName);
-			string tempRequestFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),"opendental","request_"+fileName);
-			try {
-				if(!Directory.Exists(watcherPath)) {
-					Directory.CreateDirectory(watcherPath);
-				}
-        File.WriteAllText(tempRequestFilePath,data);
-				File.Move(tempRequestFilePath,ODFileUtils.CombinePaths(FileWatcherDirectory,fileName));
+			bool hasReceivedResponse=false;
+			string browserResponse="";
+			Exception exFromThread=null;
+			void onReceivedResponse(string response) {
+				hasReceivedResponse=true;
+				browserResponse=response;
 			}
-			catch(Exception ex) {
-				ex.DoNothing();
-				throw new ODException($"Unable to access the folder {FileWatcherDirectory} for communicating with the OpenDentalCloudClient.",ODException.ErrorCodes.ODCloudClientTimeout);
-			}
+			ODThread thread=new ODThread(o => {
+				SendDataToBrowser(data,(int)browserAction,onReceivedResponse);
+			});
+			thread.Name="SendDataToBrowser";
+			thread.AddExceptionHandler(e => exFromThread=e);
+			thread.Start();
 			DateTime start=DateTime.Now;
-			string tempResponseFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),"opendental","response_"+fileName);
 			void waitForResponse() {
-				while(!_hasReceivedResponse && (DateTime.Now-start).TotalSeconds<timeoutSecs) {
-					try {
-						if(!File.Exists(_responseFilePath)) {
-							Thread.Sleep(100);
-							continue;
-						}
-						File.Move(_responseFilePath,tempResponseFilePath);//move file to local temp folder before reading it in
-						_response=File.ReadAllText(tempResponseFilePath);
-						_hasReceivedResponse=true;
-					}
-					catch(Exception ex) {
-						ex.DoNothing();
-					}
-					if(!_hasReceivedResponse) {
-						Thread.Sleep(100);
-					}
+				while(!hasReceivedResponse && exFromThread==null && (DateTime.Now-start).TotalSeconds<timeoutSecs) {
+					Thread.Sleep(100);
 				}
 			}
 			if(doShowProgressBar) {
@@ -573,33 +394,14 @@ namespace CodeBase {
 			}
 			else {
 				waitForResponse();
-      }
-      try {
-          File.Delete(_responseFilePath);
-      }
-      catch(Exception ex) {
-          ex.DoNothing();
-      }
-      try {
-				File.Delete(tempResponseFilePath);
-      }
-      catch(Exception ex) {
-				ex.DoNothing();
-      }
-      try {
-				File.Delete(tempRequestFilePath);
-      }
-      catch(Exception ex) {
-				ex.DoNothing();
-      }
-			if(!_hasReceivedResponse) {
-				throw new ODException("Unable to communicate with the OpenDentalCloudClient.",ODException.ErrorCodes.ODCloudClientTimeout);
 			}
-			retval=_response;
-			//These are static so they need to be reset for next time.
-			_hasReceivedResponse=false;
-			_response="";
-			return retval;
+			if(exFromThread!=null) {
+				throw exFromThread;
+			}
+			if(!hasReceivedResponse) {
+				throw new ODException("Unable to communicate with the browser.",ODException.ErrorCodes.BrowserTimeout);
+			}
+			return browserResponse;
 		}
 
 		///<summary>
@@ -671,23 +473,6 @@ namespace CodeBase {
 			return authCode;
 		}
 
-		//private static void FileWatcherOnChanged(object sender, FileSystemEventArgs e)	{
-  //          if (e.ChangeType!=WatcherChangeTypes.Changed)	{
-  //              return;
-  //          }
-		//	//We've had issues where the FileSystemWatcher attempts to read a file before the writer has closed it. Retry one time after waiting for a short amount of time.
-		//	for(int i = 0;i<2;i++) {
-		//		try {
-		//			_response=File.ReadAllText(e.FullPath);
-		//			_hasReceivedResponse=true;
-		//			break;
-		//		}
-		//		catch {
-		//			Thread.Sleep(50);
-		//		}
-		//	}
-  //      }
-
 		///<summary>Sends a request to the OpenDentalCloudClient to run the CloudClientAction GetRedirectUri to get our redirect URI</summary>
 		public static string GetRedirectUri() {
 			CloudClientAction action = CloudClientAction.GetRedirectUri;
@@ -730,20 +515,15 @@ namespace CodeBase {
 		private static string SendToODCloudClientSynchronously(ODCloudClientData cloudClientData,CloudClientAction cloudClientAction,int timeoutSecs=30
 			,bool doShowProgressBar=true) 
 		{
-			string odCloudClientResponse=null;
+			string odCloudClientResponse;
 			cloudClientData.DoCheckVersion=DoCheckLatestCloudClientVersion();
 			cloudClientData.LatestCloudClientVersion=_latestCloudClientVersion;
 			try {
 				string request=GetODCloudClientRequest(cloudClientData,cloudClientAction);
-				if(ODBuild.IsThinfinity()) {
-					odCloudClientResponse=SendToBrowserSynchronously(request,(int)BrowserAction.SendToODCloudClient,timeoutSecs,doShowProgressBar);
-				}
-				else if(IsAppStream) {
-					odCloudClientResponse=SendToAppStreamSynchronously(request,timeoutSecs,doShowProgressBar);
-				}
+				odCloudClientResponse=SendToBrowserSynchronously(request,(int)BrowserAction.SendToODCloudClient,timeoutSecs,doShowProgressBar);
 			}
 			catch(ODException odEx) {
-				if(odEx.ErrorCodeAsEnum==ODException.ErrorCodes.BrowserTimeout || odEx.ErrorCodeAsEnum==ODException.ErrorCodes.ODCloudClientTimeout) {
+				if(odEx.ErrorCodeAsEnum==ODException.ErrorCodes.BrowserTimeout) {
 					throw new ODException("Unable to communicate with OD Cloud Client.",ODException.ErrorCodes.ODCloudClientTimeout);
 				}
 				throw;
@@ -759,7 +539,7 @@ namespace CodeBase {
 			return result.ResultData;
 		}
 
-		private static string GetODCloudClientRequest(ODCloudClientData cloudClientData,CloudClientAction cloudClientAction,bool hasResponse=true) {
+		private static string GetODCloudClientRequest(ODCloudClientData cloudClientData,CloudClientAction cloudClientAction) {
 			string dataStr=JsonConvert.SerializeObject(cloudClientData);
 			//We will sign dataStr to prove this request came from an Open Dental server.
 			byte[] byteArray=Encoding.Unicode.GetBytes(dataStr);
@@ -777,47 +557,19 @@ namespace CodeBase {
 				PublicKey=publicKey,
 				isApiEnabled=IsApiEnabled,
 				ActionEnum=cloudClientAction,
-				FileIdentifier="",
-				hasResponse=hasResponse,
 			};
-			if(!ODBuild.IsThinfinity() && IsAppStream) {
-				jsonData.FileIdentifier=Guid.NewGuid().ToString();
-			}
 			return JsonConvert.SerializeObject(jsonData);
 		}
 
 		///<summary>Sends a request to ODCloudClient.</summary>
 		private static void SendToODCloudClient(ODCloudClientData cloudClientData,CloudClientAction cloudClientAction) {
-			if(ODBuild.IsThinfinity()) {
-				if(SendDataToBrowser==null) {
-					throw new ODException(nameof(SendDataToBrowser)+" has not been initialized.");
-				}
+			if(SendDataToBrowser==null) {
+				throw new ODException(nameof(SendDataToBrowser)+" has not been initialized.");
 			}
 			cloudClientData.DoCheckVersion=DoCheckLatestCloudClientVersion();
 			cloudClientData.LatestCloudClientVersion=_latestCloudClientVersion;
-			string request=GetODCloudClientRequest(cloudClientData,cloudClientAction,false);
-			if(ODBuild.IsThinfinity()) {
-				SendDataToBrowser(request,(int)BrowserAction.SendToODCloudClient);
-			}
-			else if(IsAppStream) {
-				ODCloudClientArgs args=JsonConvert.DeserializeObject<ODCloudClientArgs>(request);
-				string fileName=@"data_"+args.FileIdentifier+".txt";
-				string tempRequestFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),"opendental","request_"+fileName);
-				try {
-					File.WriteAllText(tempRequestFilePath,request);
-					File.Move(tempRequestFilePath,ODFileUtils.CombinePaths(FileWatcherDirectory,fileName));
-				}
-				catch(Exception ex) {
-					ex.DoNothing();
-					throw new ODException($"Unable to access the folder {FileWatcherDirectory} for communicating with the OpenDentalCloudClient.",ODException.ErrorCodes.ODCloudClientTimeout);
-				}
-				try {
-					File.Delete(tempRequestFilePath);
-				}
-				catch(Exception ex) {
-					ex.DoNothing();
-				}
-			}
+			string request=GetODCloudClientRequest(cloudClientData,cloudClientAction);
+			SendDataToBrowser(request,(int)BrowserAction.SendToODCloudClient);
 		}
 
 		public static string GetMicrosoftAccessToken(string textUsername,string textRefreshToken) {
@@ -868,120 +620,6 @@ namespace CodeBase {
 				return;
 			}
 			return;
-		}
-
-		public static bool StartSnipAndSketchOrSnippingTool(string _snipSketchURI) {
-			CloudClientAction action=CloudClientAction.StartSnipAndSketchOrSnippingTool;
-			ODCloudClientData oDCloudClientData=new ODCloudClientData() {
-				OtherData=_snipSketchURI
-			};
-			try {
-				return Convert.ToBoolean(SendToODCloudClientSynchronously(oDCloudClientData,action,doShowProgressBar:false));
-			}
-			catch(Exception) {
-				return false;
-			}
-		}
-
-		public static void KillProcesses() {
-			try {
-				SendToODCloudClient(new ODCloudClientData(),CloudClientAction.KillProcesses);
-			}
-			catch(Exception ex) {
-				ODMessageBox.Show(ex.Message);
-			}
-		}
-
-		public static bool GetProcessesSnipTool() {
-			try {
-				return Convert.ToBoolean(SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.GetProcessesSnipTool,doShowProgressBar:false));
-			}
-			catch(Exception ex) {
-				ODMessageBox.Show(ex.Message);
-			}
-			return false;
-		}
-
-		public static void TwainAcquireBitmapStart(string twainName,bool doThrowException,bool doShowProgressBar) {
-			ODCloudClientData cloudClientData=new ODCloudClientData(){
-				OtherData=twainName
-			};
-			SendToODCloudClient(cloudClientData,CloudClientAction.TwainAcquireBitmapStart);
-		}
-
-		public static string CheckBitmapIsAcquired(){
-			string bitmapStatus;
-			try{
-				bitmapStatus=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.CheckBitmapIsAcquired,timeoutSecs:30,doShowProgressBar:false);
-			}
-			catch(Exception){
-				bitmapStatus="";
-			}
-			return bitmapStatus;
-		}
-
-		public static Bitmap TwainGetAcquiredBitmap(bool doShowProgressBar=false){
-			string resultData;
-			try{
-				resultData=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.TwainGetAcquiredBitmap,timeoutSecs:2000,doShowProgressBar:doShowProgressBar);
-			}
-			catch(Exception ex){
-				if(!string.IsNullOrEmpty(ex.Message)){
-					//Message is empty if the user cancelled
-					ODMessageBox.Show(ex.Message);
-				}
-				return null;
-			}
-			if(resultData.IsNullOrEmpty()){
-				return null;
-			}
-			byte[] byteArray = Convert.FromBase64String(resultData);
-      using MemoryStream memoryStream = new MemoryStream();
-      memoryStream.Write(byteArray, 0, byteArray.Length);
-      Bitmap bitmap = (Bitmap)Bitmap.FromStream(memoryStream);
-      memoryStream.Flush();
-      byteArray = null;
-      resultData = null;
-			return bitmap;
-		}
-
-		public static void TwainCloseScanner(){
-			try{
-				SendToODCloudClient(new ODCloudClientData(),CloudClientAction.TwainCloseScanner);
-			}
-			catch(Exception ex){
-				ODMessageBox.Show(ex.Message);
-			}
-		}
-
-		public static void ExportForAppStream(string filePath,string fileName) {
-			Byte[] bytes=File.ReadAllBytes(filePath);
-			string fileDataString=Convert.ToBase64String(bytes);
-			ODCloudClientData oDCloudClientData=new ODCloudClientData();
-			oDCloudClientData.FileData=fileDataString;
-			oDCloudClientData.OtherData=fileName;
-			string response=SendToODCloudClientSynchronously(oDCloudClientData,CloudClientAction.ExportFile);
-			MessageBox.Show(response);
-		}
-
-		///<summary>Calls the ImportFile method on the CloudClient. Splits the response string received into file name and data. Writes a new file to the FileTransferTempPath and returns the path string of the newly written file.</summary>
-		public static string ImportFileForCloud() {
-			string importFile=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.ImportFile,timeoutSecs:120);
-			if(importFile.IsNullOrEmpty()){
-				return "";
-			}
-			List<string> listImportFileStrings=JsonConvert.DeserializeObject<List<string>>(importFile);
-			string fileName=listImportFileStrings[0];
-			byte[] byteArray=Convert.FromBase64String(listImportFileStrings[1]);
-			string importPath=ODFileUtils.CombinePaths(GetFileTransferTempPath(),fileName);
-			try{
-				File.WriteAllBytes(importPath,byteArray);
-			}
-			catch(Exception ex){
-				MessageBox.Show("Error importing file: "+ex.Message);
-				return "";
-			}
-			return importPath;
 		}
 
 		///<summary>Contains the data to be sent to the browser to perfrom a browser action. Will be serialized as JSON.</summary>
@@ -1052,17 +690,10 @@ namespace CodeBase {
 			///<summary>Indicates that the browser should prompt the user if their ODCloudClient is not the latest version.</summary>
 			public bool DoCheckVersion=false;
 			///<summary>A random 32 byte string, base64 encoded. Sent with the auth request. Google returns it with their response
-			///so we can confirm that their response is for our application's request.</summary>
+			///so we can confirm that thier response is for our application's request.</summary>
 			public string State;
 			///<summary>Any error thrown while trying to perform acquisition will be held here.</summary>
 			public string MicrosoftRefreshToken;
-			///<summary>String of bitmap data to be attached to Clipboard</summary>
-			public string BitmapCopy;
-			///<summary>Node Type int used with ImageKey for copying documents in the image module. Corresponds to EnumImageNodeType</summary>
-			public int NodeType;
-			///<summary>Used with NodeType for copying documents in the image module.</summary>
-			public long ImageKey;
-
 		}
 
 		///<summary>Contains the arguments to be sent to OD Cloud Client. Will be serialized as JSON.</summary>
@@ -1077,12 +708,8 @@ namespace CodeBase {
 			public bool isApiEnabled;
 			///<summary>The action that should be performed for this request.</summary>
 			public int Action;
-            ///<summary>The GUID key that corresponds to the request and response.</summary>
-            public string FileIdentifier;
-            ///<summary>True if OD is expecting a response from the ODCloudClient, otherwise false.</summary>
-            public bool hasResponse;
-            ///<summary>The enum version of the action that should be performed.</summary>
-            [JsonIgnore]
+			///<summary>The enum version of the action that should be performed.</summary>
+			[JsonIgnore]
 			public CloudClientAction ActionEnum {
 				get {
 					return (CloudClientAction)Action;
@@ -1113,12 +740,6 @@ namespace CodeBase {
 					ResultCode=(int)value;
 				}
 			}
-		}
-
-		///<summary></summary>
-		public class CloudNodeTypeAndKey{
-			public int nodeType;
-			public long imagekey;
 		}
 
 		///<summary>Different action types that can be sent to ODCloudClient.</summary>
@@ -1181,39 +802,7 @@ namespace CodeBase {
 			///<summary>Start HttpListener.GetContext on the cloudclient</summary>
 			HttpListenerGetContext,
 			///<summary>Close duplicate Cloud Client processes</summary>
-			TerminateDuplicateCloudClientProcesses,
-			///<summary>Close duplicate Cloud Client processes</summary>
-			GetProcessesSnipTool,
-			///<summary>Attempts to start Snip & Sketch, then Snipping Tool on the cloud users machine. If that failseturns true if either started, false if neither did.</summary>
-			StartSnipAndSketchOrSnippingTool,
-			///<summary> Kill all passed-in processes, ignoring any failures</summary>
-			KillProcesses,
-			///<summary> Get image from clipboard. Returns empty string if no image is found. </summary>
-			GetClipboardImage,
-			///<summary> Clear clipboard on cloud users machine</summary>
-			ClearClipboard,
-			///<summary> Sends a request to the OpenDentalCloudClient to copy the System.Windows.DataObject to the clients clipboard</summary>
-			CopyToClipboard,
-			///<summary> Used when copying to clipboard. Gets the NodeTypeAndKey for the image to be copied.</summary>
-			GetNodeTypeAndKey,
-			///<summary>Sends a request to the OpenDentalCloudClient to set the client's clipboard to a string value.  Used for AppStream, since there is no browser to use.</summary>
-			SetClipboardText,
-			///<summary>Gets the clipboard text from the OpenDentalCloudClient.  Used for AppStream, since there is no browser to get it from.</summary>
-			GetClipboardText,
-			///<summary>Open Scanner UI and start monitering for user input</summary>
-			TwainAcquireBitmapStart,
-			///<summary>Checked if bitmap is acquired or for error messages.</summary>
-			CheckBitmapIsAcquired,
-			///<summary>Bitmap is ready, retrieve the bitmap</summary>
-			TwainGetAcquiredBitmap,
-			///<summary>Close twain source</summary>
-			TwainCloseScanner,
-			///<summary>Receive file from Cloud session and place it in downloads folder.</summary>
-			ExportFile,
-			///<summary>Imports a file from the user's workstation</summary>
-			ImportFile,
-			///<summary>Used during copy/paste in Imaging Module to prevent issues when copying images across different databases</summary>
-			GetDbNameOrUriFromClipboard,
+			TerminateDuplicateCloudClientProcesses
 		}
 
 		///<summary>Tells the browser what action to take with the data passed to it.</summary>

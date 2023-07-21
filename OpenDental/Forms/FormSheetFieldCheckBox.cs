@@ -30,7 +30,7 @@ namespace OpenDental {
 				textTabOrder.Enabled=false;
 			}
 			if(IsReadOnly) {
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 			}
 			_listDiseaseDefs=DiseaseDefs.GetDeepCopy(true);
@@ -224,7 +224,7 @@ namespace OpenDental {
 						radioYes.Visible=true;
 						radioNo.Visible=true;
 						labelYesNo.Visible=true;
-						labelMedical.Text=Lans.g("FormSheetFieldCheckBox","Allergies");
+						labelMedical.Text="Allergies";
 						FillListMedical(MedicalListType.allergy);
 						butAddAllergy.Visible=true;
 						//Only show mobile override option if field name is an allergy and the form it's on is mobile allowed sheet
@@ -239,7 +239,7 @@ namespace OpenDental {
 						radioYes.Visible=true;
 						radioNo.Visible=true;
 						labelYesNo.Visible=true;
-						labelMedical.Text=Lans.g("FormSheetFieldCheckBox","Problems");
+						labelMedical.Text="Problems";
 						FillListMedical(MedicalListType.problem);
 						butAddProblem.Location=butAddAllergy.Location;
 						butAddProblem.Visible=true;
@@ -329,7 +329,7 @@ namespace OpenDental {
 		}
 
 		private void AddProblem(SheetFieldDef SheetFieldDefCur) {
-			if(!Security.IsAuthorized(EnumPermType.ProblemDefEdit)) {
+			if(!Security.IsAuthorized(Permissions.ProblemDefEdit)) {
 				return;
 			}
 			DiseaseDef diseaseDef=new DiseaseDef();
@@ -348,7 +348,7 @@ namespace OpenDental {
 			DiseaseDefs.Insert(formDiseaseDefEdit.DiseaseDefCur);
 			DataValid.SetInvalid(InvalidType.Diseases);
 			_listDiseaseDefs=DiseaseDefs.GetDeepCopy(true);
-			SecurityLogs.MakeLogEntry(EnumPermType.ProblemDefEdit,0,formDiseaseDefEdit.SecurityLogMsgText);
+			SecurityLogs.MakeLogEntry(Permissions.ProblemDefEdit,0,formDiseaseDefEdit.SecurityLogMsgText);
 			FillListMedical(MedicalListType.problem);
 		}
 
@@ -403,7 +403,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			SaveAndClose();
 		}
 
@@ -525,7 +525,7 @@ namespace OpenDental {
 					listSheetFieldDefs2[i].UiLabelMobile=SheetFieldDefCur.UiLabelMobile;
 				}
 			}
-			else if(SheetDefCur.SheetType==SheetTypeEnum.MedicalHistory && !fieldNameSelected.StartsWith("checkMed")) {
+			else if(SheetDefCur.SheetType==SheetTypeEnum.MedicalHistory) {
 				//All items with this group name get this UiLabelMobile.
 				string medicalItemNameSelected="";
 				if(listMedical.GetSelected<AllergyDef>()!=null && listMedical.GetSelected<AllergyDef>() is AllergyDef){
@@ -551,11 +551,22 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private enum MedicalListType {
 			allergy,
 			checkMed,
 			problem
 		}
+
+
+
+
+
+
+
 
 	}
 }

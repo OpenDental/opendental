@@ -28,6 +28,7 @@ namespace OpenDental {
 		private void InitializeComponent() {
 			this.butPrint = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.checkShowAll = new OpenDental.UI.CheckBox();
 			this.checkIgnore = new OpenDental.UI.CheckBox();
 			this.butExportGrid = new OpenDental.UI.Button();
@@ -38,7 +39,7 @@ namespace OpenDental {
 			this.butPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butPrint.Image = global::OpenDental.Properties.Resources.butPrint;
 			this.butPrint.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPrint.Location = new System.Drawing.Point(652, 660);
+			this.butPrint.Location = new System.Drawing.Point(519, 660);
 			this.butPrint.Name = "butPrint";
 			this.butPrint.Size = new System.Drawing.Size(86, 24);
 			this.butPrint.TabIndex = 22;
@@ -57,6 +58,16 @@ namespace OpenDental {
 			this.gridMain.TabIndex = 21;
 			this.gridMain.Title = "";
 			this.gridMain.TranslationName = "TableTimeCard";
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(663, 660);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 20;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// checkShowAll
 			// 
@@ -86,7 +97,7 @@ namespace OpenDental {
 			// 
 			this.butExportGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butExportGrid.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butExportGrid.Location = new System.Drawing.Point(560, 660);
+			this.butExportGrid.Location = new System.Drawing.Point(431, 660);
 			this.butExportGrid.Name = "butExportGrid";
 			this.butExportGrid.Size = new System.Drawing.Size(82, 24);
 			this.butExportGrid.TabIndex = 128;
@@ -96,6 +107,7 @@ namespace OpenDental {
 			// FormTimeCardBenefitRp
 			// 
 			this.ClientSize = new System.Drawing.Size(750, 696);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butExportGrid);
 			this.Controls.Add(this.checkIgnore);
 			this.Controls.Add(this.checkShowAll);
@@ -112,6 +124,7 @@ namespace OpenDental {
 
 		private UI.Button butPrint;
 		private UI.GridOD gridMain;
+		private UI.Button butClose;
 		private OpenDental.UI.CheckBox checkShowAll;
 		private OpenDental.UI.CheckBox checkIgnore;
 		private UI.Button butExportGrid;

@@ -9,14 +9,14 @@ namespace OpenDentBusiness{
 	public class CDSPermissions {
 		//TODO: implement caching;
 
-		public static CDSPermission GetForUser(long userNum) {
+		public static CDSPermission GetForUser(long usernum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				return Meth.GetObject<CDSPermission>(MethodBase.GetCurrentMethod(),userNum);
+				return Meth.GetObject<CDSPermission>(MethodBase.GetCurrentMethod(),usernum);
 			}
-			string command="SELECT * FROM cdspermission WHERE UserNum="+POut.Long(userNum);
-			CDSPermission cDSPermission=Crud.CDSPermissionCrud.SelectOne(command);
-			if(cDSPermission!=null) {
-				return cDSPermission;
+			string command="SELECT * FROM cdspermission WHERE UserNum="+POut.Long(usernum);
+			CDSPermission retval=Crud.CDSPermissionCrud.SelectOne(command);
+			if(retval!=null) {
+				return retval;
 			}
 			return new CDSPermission();//return new CDS permission that has no permissions granted.
 		}
@@ -35,12 +35,12 @@ namespace OpenDentBusiness{
 		private static void InsertMissingValues() {
 			//No need to check MiddleTierRole; private static.
 			string command="SELECT * FROM userod WHERE IsHidden=0 AND UserNum NOT IN (SELECT UserNum from cdsPermission)";
-			List<Userod> listUserods=Crud.UserodCrud.SelectMany(command);
-			CDSPermission cDSPermission;
-			for(int i=0;i<listUserods.Count;i++){
-				cDSPermission=new CDSPermission();
-				cDSPermission.UserNum=listUserods[i].UserNum;
-				CDSPermissions.Insert(cDSPermission);
+			List<Userod> uods=Crud.UserodCrud.SelectMany(command);
+			CDSPermission cdsp;
+			for(int i=0;i<uods.Count;i++){
+				cdsp=new CDSPermission();
+				cdsp.UserNum=uods[i].UserNum;
+				CDSPermissions.Insert(cdsp);
 			}
 			return;
 		}

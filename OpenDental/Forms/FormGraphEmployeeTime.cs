@@ -40,8 +40,8 @@ namespace OpenDental
 		}
 
 		private void FormGraphEmployeeTime_Load(object sender,EventArgs e) {
-			butPrefs.Enabled=Security.IsAuthorized(EnumPermType.Schedules,true);
-			butEditDaily.Enabled=Security.IsAuthorized(EnumPermType.Schedules,true);
+			butPrefs.Enabled=Security.IsAuthorized(Permissions.Schedules,true);
+			butEditDaily.Enabled=Security.IsAuthorized(Permissions.Schedules,true);
 			List<PhoneEmpDefault> listPhoneEmpDefaults=PhoneEmpDefaults.GetDeepCopy();
 			PhoneGraphs.AddMissingEntriesForToday(listPhoneEmpDefaults);
 			comboSupervisor.Items.Add("Any",new Employee());
@@ -751,7 +751,7 @@ namespace OpenDental
 		private void butPrintList_Click(object sender,EventArgs e) {
 			_pagesPrinted=0;
 			_headingPrinted=false;
-			PrinterL.TryPrintOrDebugRpPreview(pd_PrintPage,Lan.g(this,"Daily Graph List Printed"));
+			PrinterL.TryPrintOrDebugRpPreview(pd_PrintPage,Lan.g(this,"Daily Graph List Printed"),PrintoutOrientation.Portrait);
 		}
 
 		private void pd_PrintPage(object sender,System.Drawing.Printing.PrintPageEventArgs e) {

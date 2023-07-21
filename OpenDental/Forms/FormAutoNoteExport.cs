@@ -82,7 +82,7 @@ namespace OpenDental {
 				return;
 			}
 			string fileName;
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				//file download dialog will come up later, after file is created.
 				fileName="autonotes.json";
 			}
@@ -104,7 +104,7 @@ namespace OpenDental {
 				FriendlyException.Show("AutoNote(s) failed to export.",err);
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.AutoNoteQuickNoteEdit,0,"Auto Note Export");
+			SecurityLogs.MakeLogEntry(Permissions.AutoNoteQuickNoteEdit,0,"Auto Note Export");
 			MsgBox.Show(this,"Auto Note(s) successfully exported.");
 		}
 
@@ -121,6 +121,10 @@ namespace OpenDental {
 			if(e.Action!=TreeViewAction.Unknown) {
 				ToggleCheckboxes(e.Node,e.Node.Checked);
 			}
+		}
+
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			Close();
 		}
 
 	}

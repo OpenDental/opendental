@@ -32,7 +32,7 @@ namespace OpenDental.UI{
 		///<summary>Needs to be scaled each time.</summary>
 		private int _heightHeader96=34;
 		///<summary>Because we can go to different months without changing the selected date. We always use the first day of the month. Can't be changed externally.</summary>
-		private DateTime _dateMonthShowing;
+		private DateTime _monthShowing;
 		///<summary>Identifies the current hot hover cell as the mouse moves around.  Row 0 is never used because that's the days of week. 0,0 indicates no hot.</summary>
 		private Point _pointHotHover;
 		///<summary>26x33</summary>
@@ -53,7 +53,7 @@ namespace OpenDental.UI{
 			InitializeComponent();
 			DoubleBuffered=true;
 			_dateSelected=DateTime.Today;
-			_dateMonthShowing=new DateTime(DateTime.Today.Year,DateTime.Today.Month,1);
+			_monthShowing=new DateTime(DateTime.Today.Year,DateTime.Today.Month,1);
 			CalculateRectangles();
 		}
 		#endregion Constructor
@@ -84,48 +84,48 @@ namespace OpenDental.UI{
 			if(_pointHotHover!=new Point(0,0)){
 				_dateSelected=_arrayDates[_pointHotHover.X,_pointHotHover.Y-1];
 				DateChanged?.Invoke(this,new EventArgs());
-				if(_dateSelected.Month!=_dateMonthShowing.Month){
-					_dateMonthShowing=new DateTime(_dateSelected.Year,_dateSelected.Month,1);
+				if(_dateSelected.Month!=_monthShowing.Month){
+					_monthShowing=new DateTime(_dateSelected.Year,_dateSelected.Month,1);
 				}
 				Invalidate();
 			}
 			if(_rectangleTopText.Contains(e.Location) && AllowClickingTopText) {
-				FrmDatePicker frmDatePicker=new FrmDatePicker();
-				frmDatePicker.DateEntered=_dateSelected;
-				frmDatePicker.WidthForm=Width;
-				frmDatePicker.PointStartLocation=PointToScreen(
+				FormDatePicker formDatePicker=new FormDatePicker();
+				formDatePicker.DateEntered=_dateSelected;
+				formDatePicker.WidthForm=Width;
+				formDatePicker.PointStartLocation=PointToScreen(
 					new Point(0,_rectangleTopText.Bottom+LayoutManager.Scale(5)));
-				frmDatePicker.ShowDialog();
-				if(frmDatePicker.IsDialogOK) {
-					_dateSelected=frmDatePicker.DateEntered;
-					if(_dateSelected.Month!=_dateMonthShowing.Month || _dateSelected.Year!=_dateMonthShowing.Year){
-						_dateMonthShowing=new DateTime(_dateSelected.Year,_dateSelected.Month,1);
+				formDatePicker.ShowDialog();
+				if(formDatePicker.DialogResult==DialogResult.OK) {
+					_dateSelected=formDatePicker.DateEntered;
+					if(_dateSelected.Month!=_monthShowing.Month || _dateSelected.Year!=_monthShowing.Year){
+						_monthShowing=new DateTime(_dateSelected.Year,_dateSelected.Month,1);
 					}
 					DateChanged?.Invoke(this,new EventArgs());
 					Invalidate();
 				}
 			}
 			if(_rectangleMonthLeft.Contains(e.Location)){
-				_dateMonthShowing=_dateMonthShowing.AddMonths(-1);
+				_monthShowing=_monthShowing.AddMonths(-1);
 				Invalidate();
 			}
 			if(_rectangleMonthRight.Contains(e.Location)){
-				_dateMonthShowing=_dateMonthShowing.AddMonths(1);
+				_monthShowing=_monthShowing.AddMonths(1);
 				Invalidate();
 			}
 			if(_rectangleYearLeft.Contains(e.Location)){
-				_dateMonthShowing=_dateMonthShowing.AddYears(-1);
+				_monthShowing=_monthShowing.AddYears(-1);
 				Invalidate();
 			}
 			if(_rectangleYearRight.Contains(e.Location)){
-				_dateMonthShowing=_dateMonthShowing.AddYears(1);
+				_monthShowing=_monthShowing.AddYears(1);
 				Invalidate();
 			}
 			if(_rectangleTodayHover.Contains(e.Location)){
 				_dateSelected=DateTime.Today;
 				DateChanged?.Invoke(this,new EventArgs());
-				if(DateTime.Today.Month!=_dateMonthShowing.Month){
-					_dateMonthShowing=new DateTime(DateTime.Today.Year,DateTime.Today.Month,1);
+				if(DateTime.Today.Month!=_monthShowing.Month){
+					_monthShowing=new DateTime(DateTime.Today.Year,DateTime.Today.Month,1);
 				}
 				Invalidate();
 			}
@@ -204,8 +204,8 @@ namespace OpenDental.UI{
 			//First day of week is not Sunday in China, for example.  So:
 			DayOfWeek firstDayOfWeek=DateTimeFormatInfo.CurrentInfo.FirstDayOfWeek;
 			//Which day does the first fall on?
-			DayOfWeek dayOfFirst=(DayOfWeek)((int)_dateMonthShowing.DayOfWeek-(int)firstDayOfWeek);
-			DateTime dateFilling=_dateMonthShowing.AddDays(-(int)dayOfFirst);
+			DayOfWeek dayOfFirst=(DayOfWeek)((int)_monthShowing.DayOfWeek-(int)firstDayOfWeek);
+			DateTime dateFilling=_monthShowing.AddDays(-(int)dayOfFirst);
 			int row=0;
 			int col=0;
 			while(true){
@@ -281,7 +281,7 @@ namespace OpenDental.UI{
 			//alignment is centered, left right, but we need to tightly control vertical because we only have a few pixels to work with.
 			using StringFormat stringFormat=new StringFormat(){Alignment=StringAlignment.Center,LineAlignment=StringAlignment.Near };
 			int topCellBuffer=(int)((_heightCell-LayoutManager.ScaleMS(Font.Height))/2f);
-			string strMonth=_dateMonthShowing.ToString("MMMM yyyy");
+			string strMonth=_monthShowing.ToString("MMMM yyyy");
 			rectangle=new Rectangle(0,topCellBuffer+LayoutManager.Scale(11),Width,LayoutManager.Scale(_heightHeader96));
 			//Hover top text=======================================================================================
 			SizeF sizeFStrMonth=g.MeasureString(strMonth,Font);
@@ -372,7 +372,7 @@ namespace OpenDental.UI{
 					if(_arrayDates[c,r]==_dateSelected){
 						g.DrawString(_arrayDates[c,r].ToString("%d"),Font,Brushes.White,rectangleF,stringFormat);
 					}
-					else if(_arrayDates[c,r].Month==_dateMonthShowing.Month){
+					else if(_arrayDates[c,r].Month==_monthShowing.Month){
 						g.DrawString(_arrayDates[c,r].ToString("%d"),Font,Brushes.Black,rectangleF,stringFormat);
 					}
 					else{
@@ -417,7 +417,7 @@ namespace OpenDental.UI{
 		///<summary>Use this in place of MonthCalendar.SetDate().</summary>
 		public void SetDateSelected(DateTime date){
 			_dateSelected=date;
-			_dateMonthShowing=new DateTime(_dateSelected.Year,_dateSelected.Month,1);
+			_monthShowing=new DateTime(_dateSelected.Year,_dateSelected.Month,1);
 			Invalidate();
 		}
 		#endregion Methods - Public

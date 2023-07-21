@@ -42,7 +42,7 @@ namespace UnitTests.Permissions_Tests {
 		[TestMethod]
 		public void Permissions_Procedures_HasProcDeletePermission() {
 			GroupPermission gp=new GroupPermission();
-			gp.PermType=EnumPermType.ProcDelete;
+			gp.PermType=Permissions.ProcDelete;
 			gp.UserGroupNum=_userGroup.UserGroupNum;
 			gp.NewerDate=new DateTime(2020,11,11);
 			GroupPermissions.Insert(gp);
@@ -50,7 +50,7 @@ namespace UnitTests.Permissions_Tests {
 			Procedure proc=ProcedureT.CreateProcedure(pat,"D1234",ProcStat.TP,"",0,procDate:new DateTime(2019,1,1));
 			proc.DateEntryC=new DateTime(2020,11,12);
 			DateTime dateForPerm=Procedures.GetDateForPermCheck(proc);
-			Assert.IsTrue(Security.IsAuthorized(EnumPermType.ProcDelete,dateForPerm,true,true,_user,proc.CodeNum,proc.ProcFee,0,0));
+			Assert.IsTrue(Security.IsAuthorized(Permissions.ProcDelete,dateForPerm,true,true,_user,proc.CodeNum,proc.ProcFee,0,0));
 		}
 
 		///<summary>Verifies that a usergroup with an AdjustmentTypeDeny permission with an FKey of 0, does not have access to any adjtype.</summary>
@@ -58,7 +58,7 @@ namespace UnitTests.Permissions_Tests {
 		public void Permissions_Adjustment_HasZeroFKeyAdjustmentTypeDeny() {
 			GroupPermissionT.ClearGroupPermissionTable();
 			GroupPermission gp=new GroupPermission();
-			gp.PermType=EnumPermType.AdjustmentTypeDeny;
+			gp.PermType=Permissions.AdjustmentTypeDeny;
 			gp.UserGroupNum=_userGroup.UserGroupNum;
 			gp.FKey=0;
 			GroupPermissions.Insert(gp);
@@ -82,7 +82,7 @@ namespace UnitTests.Permissions_Tests {
 			Def defAdjSalesTax=DefT.CreateDefinition(DefCat.AdjTypes,"Sales Tax","+");
 			Def defAdjDiscount=DefT.CreateDefinition(DefCat.AdjTypes,"Discount","-");
 			GroupPermission gp=new GroupPermission();
-			gp.PermType=EnumPermType.AdjustmentTypeDeny;
+			gp.PermType=Permissions.AdjustmentTypeDeny;
 			gp.UserGroupNum=_userGroup.UserGroupNum;
 			gp.FKey=defAdjSalesTax.DefNum;
 			GroupPermissions.Insert(gp);

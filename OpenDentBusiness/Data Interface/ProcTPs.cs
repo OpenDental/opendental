@@ -116,17 +116,13 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns only three columns from all ProcTPs -- TreatPlanNum, PatNum, and ProcNumOrig.</summary>
-		public static List<ProcTP> GetAllLim(List<long> listTreatPlanNums) {
-			if(listTreatPlanNums.IsNullOrEmpty()) {//No need to go through middletier if we know listTreatPlanNums is empty. Return early.
-				return new List<ProcTP>();
-			}
+		public static List<ProcTP> GetAllLim() {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ProcTP>>(MethodBase.GetCurrentMethod(),listTreatPlanNums);
+				return Meth.GetObject<List<ProcTP>>(MethodBase.GetCurrentMethod());
 			}
-			string command = "SELECT TreatPlanNum,PatNum,ProcNumOrig FROM proctp "
-				+"WHERE proctp.TreatPlanNum IN ("+ string.Join(",",listTreatPlanNums) +")";
-			DataTable table=Db.GetTable(command);
-			List<ProcTP> listProcTpsLim=new List<ProcTP>();
+			string command = "SELECT TreatPlanNum,PatNum,ProcNumOrig FROM proctp";
+			DataTable table = Db.GetTable(command);
+			List<ProcTP> listProcTpsLim = new List<ProcTP>();
 			foreach(DataRow row in table.Rows) {
 				ProcTP procTp = new ProcTP();
 				procTp.TreatPlanNum=PIn.Long(row["TreatPlanNum"].ToString());
@@ -176,14 +172,6 @@ namespace OpenDentBusiness{
 				listTpRows[i].Tag=procTP;
 			}
 			return listProcTPs;
-		}
-
-		///<summary>Gets one ProcTP object from the database using the primary key. Returns null if not found.</summary>
-		public static ProcTP GetOneyByProcTPNum(long procTPNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<ProcTP>(MethodBase.GetCurrentMethod(),procTPNum);
-			}
-			return Crud.ProcTPCrud.SelectOne(procTPNum);
 		}
 	}
 

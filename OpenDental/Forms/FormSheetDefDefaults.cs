@@ -20,7 +20,7 @@ namespace OpenDental {
 
 		private void FormSheetDefDefaults_Load(object sender,EventArgs e) {
 			//Set the previously selected clinic to the clinic that is selected in the combo box upon load.
-			_clinicNumPrevSelected=comboClinicDefault.ClinicNumSelected;
+			_clinicNumPrevSelected=comboClinicDefault.SelectedClinicNum;
 			//Independent ComboBoxODs
 			FillSheetDefComboBox(comboInvoice,SheetTypeEnum.Statement,PrefName.SheetsDefaultInvoice);
 			FillSheetDefComboBox(comboReceipt,SheetTypeEnum.Statement,PrefName.SheetsDefaultReceipt);
@@ -80,17 +80,17 @@ namespace OpenDental {
 			if(comboBox.SelectedIndex==-1) {
 				return;
 			}
-			if(comboClinicDefault.ClinicNumSelected==0 || isIndependentOfClinic) {
+			if(comboClinicDefault.SelectedClinicNum==0 || isIndependentOfClinic) {
 				Pref defaultPref=Prefs.GetPref(prefName.GetDescription());
 				defaultPref.ValueString=comboBox.GetSelected<SheetDef>().SheetDefNum.ToString();
 				Prefs.Update(defaultPref);
 				Prefs.RefreshCache();
 				return;
 			}
-			ClinicPref clinicPref=ClinicPrefs.GetPref(prefName,comboClinicDefault.ClinicNumSelected);
+			ClinicPref clinicPref=ClinicPrefs.GetPref(prefName,comboClinicDefault.SelectedClinicNum);
 			if(clinicPref==null) {//If the clinic pref hasn't been created yet.
 				if(comboBox.GetSelected<SheetDef>().SheetDefNum!=PrefC.GetLong(prefName)) {//and the selected sheet def is the different from the default preference
-					ClinicPrefs.Insert(new ClinicPref(comboClinicDefault.ClinicNumSelected,prefName,comboBox.GetSelected<SheetDef>().SheetDefNum.ToString()));//insert the clinic pref
+					ClinicPrefs.Insert(new ClinicPref(comboClinicDefault.SelectedClinicNum,prefName,comboBox.GetSelected<SheetDef>().SheetDefNum.ToString()));//insert the clinic pref
 				}//No 'else' needed because the else would assume the default
 			}
 			else {//If the clinic pref has been created
@@ -107,8 +107,8 @@ namespace OpenDental {
 
 		///<summary>Helper to do selection on comboboxes, abstracted to work with any Combobox in the form and any SheetTypeEnum.</summary>
 		private void SelectComboBoxesDefault(UI.ComboBox comboBox,PrefName prefName) {
-			ClinicPref clinicPref=ClinicPrefs.GetPref(prefName,comboClinicDefault.ClinicNumSelected);
-			if(clinicPref==null || comboClinicDefault.ClinicNumSelected==0) {
+			ClinicPref clinicPref=ClinicPrefs.GetPref(prefName,comboClinicDefault.SelectedClinicNum);
+			if(clinicPref==null || comboClinicDefault.SelectedClinicNum==0) {
 				Pref pref=Prefs.GetPref(prefName.GetDescription());
 				comboBox.SetSelectedKey<SheetDef>(PIn.Long(pref.ValueString),x=>x.SheetDefNum);
 			}
@@ -118,11 +118,11 @@ namespace OpenDental {
 		}
 
 		private void comboClinicDefault_SelectionChangeCommitted(object sender,EventArgs e) {
-			if(comboClinicDefault.ClinicNumSelected==_clinicNumPrevSelected) {
+			if(comboClinicDefault.SelectedClinicNum==_clinicNumPrevSelected) {
 				return;
 			}
-			long tempClinicNum=comboClinicDefault.ClinicNumSelected;//Store the selected clinic while we make updates to the previous one
-			comboClinicDefault.ClinicNumSelected=_clinicNumPrevSelected;//Set the selected clinic to the previous one
+			long tempClinicNum=comboClinicDefault.SelectedClinicNum;//Store the selected clinic while we make updates to the previous one
+			comboClinicDefault.SelectedClinicNum=_clinicNumPrevSelected;//Set the selected clinic to the previous one
 			//Only Clinic dependent combBoxes
 			bool isStale=(ClinicDependentComboBoxes_Validate(comboBoxChartLayout,PrefName.SheetsDefaultChartModule)
 				| ClinicDependentComboBoxes_Validate(comboRx,PrefName.SheetsDefaultRx)
@@ -130,20 +130,18 @@ namespace OpenDental {
 			if(isStale && MsgBox.Show(this, MsgBoxButtons.YesNo, Lan.g(this,"Would you like to save your changes for the selected clinic?"))) {
 				UpdateDefaultSheets();
 			}
-			comboClinicDefault.ClinicNumSelected=tempClinicNum;//Set the selected clinic to the newly selected clinic
+			comboClinicDefault.SelectedClinicNum=tempClinicNum;//Set the selected clinic to the newly selected clinic
 			//Only Clinic Dependant comboBoxODs
 			SelectComboBoxesDefault(comboRx,PrefName.SheetsDefaultRx);
 			SelectComboBoxesDefault(comboBoxChartLayout,PrefName.SheetsDefaultChartModule);
 			SelectComboBoxesDefault(comboTreatmentPlan,PrefName.SheetsDefaultTreatmentPlan);
-			_clinicNumPrevSelected=comboClinicDefault.ClinicNumSelected;//Store the newly selected clinic for when we have to run this event again.
-			//Invalidate the clinicPref cache
-			DataValid.SetInvalid(InvalidType.ClinicPrefs);
+			_clinicNumPrevSelected=comboClinicDefault.SelectedClinicNum;//Store the newly selected clinic for when we have to run this event again.
 		}
 
 		///<summary>Returns true if the comboboxes selected key is different from the stored key in the db</summary>
 		private bool ClinicDependentComboBoxes_Validate(UI.ComboBox comboBox, PrefName prefName) {
-			ClinicPref clinicPref=ClinicPrefs.GetPref(prefName,comboClinicDefault.ClinicNumSelected);
-			if(clinicPref==null || comboClinicDefault.ClinicNumSelected==0) {
+			ClinicPref clinicPref=ClinicPrefs.GetPref(prefName,comboClinicDefault.SelectedClinicNum);
+			if(clinicPref==null || comboClinicDefault.SelectedClinicNum==0) {
 				Pref pref=Prefs.GetPref(prefName.GetDescription());
 				return comboBox.GetSelectedKey<SheetDef>(x=>x.SheetDefNum)!=PIn.Long(pref.ValueString);//Inverse to tell if there was a change
 			} 
@@ -152,15 +150,16 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			UpdateDefaultSheets();
 			long sheetDefNum=comboLabel.GetSelectedKey<SheetDef>(x => x.SheetDefNum);
 			Prefs.UpdateLong(PrefName.LabelPatientDefaultSheetDefNum,sheetDefNum);
 			DataValid.SetInvalid(InvalidType.Prefs);
-			//Invalidate the clinicPref cache
-			DataValid.SetInvalid(InvalidType.ClinicPrefs);
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

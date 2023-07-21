@@ -49,7 +49,8 @@ namespace OpenDental{
 			this.textHmPhone = new OpenDental.ValidPhone();
 			this.textWkPhone = new OpenDental.ValidPhone();
 			this.textWirelessPhone = new OpenDental.ValidPhone();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.label20 = new System.Windows.Forms.Label();
 			this.textAge = new System.Windows.Forms.TextBox();
 			this.textSalutation = new System.Windows.Forms.TextBox();
@@ -135,9 +136,7 @@ namespace OpenDental{
 			this.labelMotherMaidenLname = new System.Windows.Forms.Label();
 			this.labelDeceased = new System.Windows.Forms.Label();
 			this.groupBox3 = new OpenDental.UI.GroupBox();
-			this.textOptIn = new System.Windows.Forms.TextBox();
-			this.checkTextingN = new OpenDental.UI.CheckBox();
-			this.checkTextingY = new OpenDental.UI.CheckBox();
+			this.listBoxApptTexts = new System.Windows.Forms.ListBox();
 			this.butShortCodeOptIn = new OpenDental.UI.Button();
 			this.labelApptTexts = new System.Windows.Forms.Label();
 			this.labelABC = new System.Windows.Forms.Label();
@@ -195,9 +194,8 @@ namespace OpenDental{
 			this.textIceName = new System.Windows.Forms.TextBox();
 			this.labelEmergencyName = new System.Windows.Forms.Label();
 			this.tabEHR = new OpenDental.UI.TabPage();
-			this.butNow = new OpenDental.UI.Button();
 			this.butClearDateTimeDeceased = new OpenDental.UI.Button();
-			this.textDateTimeDeceased = new System.Windows.Forms.TextBox();
+			this.dateTimePickerDateDeceased = new System.Windows.Forms.DateTimePicker();
 			this.comboSpecialty = new OpenDental.UI.ComboBox();
 			this.labelSpecialty = new System.Windows.Forms.Label();
 			this.comboExcludeECR = new OpenDental.UI.ComboBox();
@@ -207,7 +205,8 @@ namespace OpenDental{
 			this.warningIntegrity1 = new OpenDental.UI.WarningIntegrity();
 			this.comboPreferredPronouns = new OpenDental.UI.ComboBox();
 			this.labelPreferredPronouns = new System.Windows.Forms.Label();
-			this.textBirthdateMask = new System.Windows.Forms.TextBox();
+			this.checkTextingY = new OpenDental.UI.CheckBox();
+			this.checkTextingN = new OpenDental.UI.CheckBox();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.groupNotes.SuspendLayout();
@@ -349,18 +348,18 @@ namespace OpenDental{
 			// 
 			// labelWkPhone
 			// 
-			this.labelWkPhone.Location = new System.Drawing.Point(2, 54);
+			this.labelWkPhone.Location = new System.Drawing.Point(6, 54);
 			this.labelWkPhone.Name = "labelWkPhone";
-			this.labelWkPhone.Size = new System.Drawing.Size(149, 14);
+			this.labelWkPhone.Size = new System.Drawing.Size(152, 14);
 			this.labelWkPhone.TabIndex = 0;
 			this.labelWkPhone.Text = "Work Phone";
 			this.labelWkPhone.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// labelWirelessPhone
 			// 
-			this.labelWirelessPhone.Location = new System.Drawing.Point(2, 34);
+			this.labelWirelessPhone.Location = new System.Drawing.Point(6, 34);
 			this.labelWirelessPhone.Name = "labelWirelessPhone";
-			this.labelWirelessPhone.Size = new System.Drawing.Size(149, 14);
+			this.labelWirelessPhone.Size = new System.Drawing.Size(152, 14);
 			this.labelWirelessPhone.TabIndex = 0;
 			this.labelWirelessPhone.Text = "Wireless Phone";
 			this.labelWirelessPhone.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -468,7 +467,7 @@ namespace OpenDental{
 			// 
 			// textWkPhone
 			// 
-			this.textWkPhone.Location = new System.Drawing.Point(152, 51);
+			this.textWkPhone.Location = new System.Drawing.Point(159, 51);
 			this.textWkPhone.MaxLength = 30;
 			this.textWkPhone.Name = "textWkPhone";
 			this.textWkPhone.Size = new System.Drawing.Size(135, 20);
@@ -478,7 +477,7 @@ namespace OpenDental{
 			// 
 			// textWirelessPhone
 			// 
-			this.textWirelessPhone.Location = new System.Drawing.Point(152, 31);
+			this.textWirelessPhone.Location = new System.Drawing.Point(159, 31);
 			this.textWirelessPhone.MaxLength = 30;
 			this.textWirelessPhone.Name = "textWirelessPhone";
 			this.textWirelessPhone.Size = new System.Drawing.Size(135, 20);
@@ -486,15 +485,26 @@ namespace OpenDental{
 			this.textWirelessPhone.TextChanged += new System.EventHandler(this.textAnyPhoneNumber_TextChanged);
 			this.textWirelessPhone.Leave += new System.EventHandler(this.textBox_Leave);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(878, 665);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 34;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(801, 665);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 34;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(887, 665);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 35;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// label20
 			// 
@@ -535,7 +545,7 @@ namespace OpenDental{
 			// 
 			// textEmail
 			// 
-			this.textEmail.Location = new System.Drawing.Point(152, 71);
+			this.textEmail.Location = new System.Drawing.Point(159, 71);
 			this.textEmail.MaxLength = 100;
 			this.textEmail.Name = "textEmail";
 			this.textEmail.Size = new System.Drawing.Size(249, 20);
@@ -706,7 +716,7 @@ namespace OpenDental{
 			this.textZip.Size = new System.Drawing.Size(184, 20);
 			this.textZip.TabIndex = 6;
 			this.textZip.TextChanged += new System.EventHandler(this.textZip_TextChanged);
-			this.textZip.Leave += new System.EventHandler(this.textZip_Leave);
+			this.textZip.Leave += new System.EventHandler(this.textBox_Leave);
 			this.textZip.Validating += new System.ComponentModel.CancelEventHandler(this.textZip_Validating);
 			// 
 			// comboZip
@@ -755,7 +765,7 @@ namespace OpenDental{
 			this.textAddrNotes.DetectUrls = false;
 			this.textAddrNotes.Location = new System.Drawing.Point(159, 31);
 			this.textAddrNotes.Name = "textAddrNotes";
-			this.textAddrNotes.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.PatAddressNote;
+			this.textAddrNotes.QuickPasteType = OpenDentBusiness.QuickPasteType.PatAddressNote;
 			this.textAddrNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textAddrNotes.Size = new System.Drawing.Size(229, 46);
 			this.textAddrNotes.TabIndex = 0;
@@ -1024,7 +1034,7 @@ namespace OpenDental{
 			// 
 			this.labelPutInInsPlan.Location = new System.Drawing.Point(354, 307);
 			this.labelPutInInsPlan.Name = "labelPutInInsPlan";
-			this.labelPutInInsPlan.Size = new System.Drawing.Size(115, 17);
+			this.labelPutInInsPlan.Size = new System.Drawing.Size(100, 17);
 			this.labelPutInInsPlan.TabIndex = 0;
 			this.labelPutInInsPlan.Text = "(put in InsPlan too)";
 			this.labelPutInInsPlan.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1247,7 +1257,7 @@ namespace OpenDental{
 			// 
 			// labelTextOk
 			// 
-			this.labelTextOk.Location = new System.Drawing.Point(288, 30);
+			this.labelTextOk.Location = new System.Drawing.Point(295, 30);
 			this.labelTextOk.Name = "labelTextOk";
 			this.labelTextOk.Size = new System.Drawing.Size(63, 14);
 			this.labelTextOk.TabIndex = 0;
@@ -1306,9 +1316,9 @@ namespace OpenDental{
 			// 
 			// groupBox3
 			// 
-			this.groupBox3.Controls.Add(this.textOptIn);
 			this.groupBox3.Controls.Add(this.checkTextingN);
 			this.groupBox3.Controls.Add(this.checkTextingY);
+			this.groupBox3.Controls.Add(this.listBoxApptTexts);
 			this.groupBox3.Controls.Add(this.butShortCodeOptIn);
 			this.groupBox3.Controls.Add(this.labelApptTexts);
 			this.groupBox3.Controls.Add(this.labelABC);
@@ -1327,38 +1337,19 @@ namespace OpenDental{
 			this.groupBox3.TabIndex = 13;
 			this.groupBox3.Text = "Email and Phone";
 			// 
-			// textOptIn
+			// listBoxApptTexts
 			// 
-			this.textOptIn.Location = new System.Drawing.Point(353, 47);
-			this.textOptIn.MaxLength = 100;
-			this.textOptIn.Name = "textOptIn";
-			this.textOptIn.ReadOnly = true;
-			this.textOptIn.Size = new System.Drawing.Size(43, 20);
-			this.textOptIn.TabIndex = 62;
-			// 
-			// checkTextingN
-			// 
-			this.checkTextingN.Location = new System.Drawing.Point(388, 30);
-			this.checkTextingN.Name = "checkTextingN";
-			this.checkTextingN.Size = new System.Drawing.Size(29, 17);
-			this.checkTextingN.TabIndex = 61;
-			this.checkTextingN.TabStop = false;
-			this.checkTextingN.Text = "N";
-			this.checkTextingN.Click += new System.EventHandler(this.checkTextingN_Click);
-			// 
-			// checkTextingY
-			// 
-			this.checkTextingY.Location = new System.Drawing.Point(353, 30);
-			this.checkTextingY.Name = "checkTextingY";
-			this.checkTextingY.Size = new System.Drawing.Size(29, 17);
-			this.checkTextingY.TabIndex = 60;
-			this.checkTextingY.TabStop = false;
-			this.checkTextingY.Text = "Y";
-			this.checkTextingY.Click += new System.EventHandler(this.checkTextingY_Click);
+			this.listBoxApptTexts.ColumnWidth = 30;
+			this.listBoxApptTexts.Location = new System.Drawing.Point(359, 49);
+			this.listBoxApptTexts.MultiColumn = true;
+			this.listBoxApptTexts.Name = "listBoxApptTexts";
+			this.listBoxApptTexts.Size = new System.Drawing.Size(49, 17);
+			this.listBoxApptTexts.TabIndex = 59;
+			this.listBoxApptTexts.TabStop = false;
 			// 
 			// butShortCodeOptIn
 			// 
-			this.butShortCodeOptIn.Location = new System.Drawing.Point(403, 47);
+			this.butShortCodeOptIn.Location = new System.Drawing.Point(410, 47);
 			this.butShortCodeOptIn.Name = "butShortCodeOptIn";
 			this.butShortCodeOptIn.Size = new System.Drawing.Size(23, 21);
 			this.butShortCodeOptIn.TabIndex = 58;
@@ -1368,7 +1359,7 @@ namespace OpenDental{
 			// 
 			// labelApptTexts
 			// 
-			this.labelApptTexts.Location = new System.Drawing.Point(288, 49);
+			this.labelApptTexts.Location = new System.Drawing.Point(295, 49);
 			this.labelApptTexts.Name = "labelApptTexts";
 			this.labelApptTexts.Size = new System.Drawing.Size(64, 14);
 			this.labelApptTexts.TabIndex = 57;
@@ -1377,15 +1368,15 @@ namespace OpenDental{
 			// 
 			// labelABC
 			// 
-			this.labelABC.Location = new System.Drawing.Point(427, 74);
+			this.labelABC.Location = new System.Drawing.Point(434, 74);
 			this.labelABC.Name = "labelABC";
-			this.labelABC.Size = new System.Drawing.Size(43, 19);
+			this.labelABC.Size = new System.Drawing.Size(37, 19);
 			this.labelABC.TabIndex = 56;
 			this.labelABC.Text = "(a,b,c)";
 			// 
 			// butEmailEdit
 			// 
-			this.butEmailEdit.Location = new System.Drawing.Point(403, 70);
+			this.butEmailEdit.Location = new System.Drawing.Point(410, 70);
 			this.butEmailEdit.Name = "butEmailEdit";
 			this.butEmailEdit.Size = new System.Drawing.Size(23, 21);
 			this.butEmailEdit.TabIndex = 56;
@@ -1395,7 +1386,7 @@ namespace OpenDental{
 			// 
 			// checkEmailPhoneSame
 			// 
-			this.checkEmailPhoneSame.Location = new System.Drawing.Point(152, 12);
+			this.checkEmailPhoneSame.Location = new System.Drawing.Point(159, 12);
 			this.checkEmailPhoneSame.Name = "checkEmailPhoneSame";
 			this.checkEmailPhoneSame.Size = new System.Drawing.Size(190, 17);
 			this.checkEmailPhoneSame.TabIndex = 0;
@@ -1404,9 +1395,9 @@ namespace OpenDental{
 			// 
 			// labelEmail
 			// 
-			this.labelEmail.Location = new System.Drawing.Point(5, 74);
+			this.labelEmail.Location = new System.Drawing.Point(6, 74);
 			this.labelEmail.Name = "labelEmail";
-			this.labelEmail.Size = new System.Drawing.Size(146, 14);
+			this.labelEmail.Size = new System.Drawing.Size(152, 14);
 			this.labelEmail.TabIndex = 0;
 			this.labelEmail.Text = "E-mail Addresses";
 			this.labelEmail.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -1601,7 +1592,7 @@ namespace OpenDental{
 			// 
 			// labelRequiredField
 			// 
-			this.labelRequiredField.Location = new System.Drawing.Point(682, 671);
+			this.labelRequiredField.Location = new System.Drawing.Point(604, 671);
 			this.labelRequiredField.Name = "labelRequiredField";
 			this.labelRequiredField.Size = new System.Drawing.Size(180, 14);
 			this.labelRequiredField.TabIndex = 9;
@@ -1625,7 +1616,6 @@ namespace OpenDental{
 			this.tabControlPatInfo.Controls.Add(this.tabOther);
 			this.tabControlPatInfo.Controls.Add(this.tabICE);
 			this.tabControlPatInfo.Controls.Add(this.tabEHR);
-			this.tabControlPatInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.tabControlPatInfo.Location = new System.Drawing.Point(488, 395);
 			this.tabControlPatInfo.Name = "tabControlPatInfo";
 			this.tabControlPatInfo.Size = new System.Drawing.Size(465, 264);
@@ -1818,7 +1808,6 @@ namespace OpenDental{
 			// odDatePickerDischargeDate
 			// 
 			this.odDatePickerDischargeDate.BackColor = System.Drawing.Color.Transparent;
-			this.odDatePickerDischargeDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.odDatePickerDischargeDate.Location = new System.Drawing.Point(223, 36);
 			this.odDatePickerDischargeDate.Name = "odDatePickerDischargeDate";
 			this.odDatePickerDischargeDate.Size = new System.Drawing.Size(227, 23);
@@ -1827,7 +1816,6 @@ namespace OpenDental{
 			// odDatePickerAdmitDate
 			// 
 			this.odDatePickerAdmitDate.BackColor = System.Drawing.Color.Transparent;
-			this.odDatePickerAdmitDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.odDatePickerAdmitDate.Location = new System.Drawing.Point(223, 6);
 			this.odDatePickerAdmitDate.Name = "odDatePickerAdmitDate";
 			this.odDatePickerAdmitDate.Size = new System.Drawing.Size(227, 23);
@@ -1885,7 +1873,6 @@ namespace OpenDental{
 			// odDatePickerDateFirstVisit
 			// 
 			this.odDatePickerDateFirstVisit.BackColor = System.Drawing.Color.Transparent;
-			this.odDatePickerDateFirstVisit.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.odDatePickerDateFirstVisit.Location = new System.Drawing.Point(92, 25);
 			this.odDatePickerDateFirstVisit.Name = "odDatePickerDateFirstVisit";
 			this.odDatePickerDateFirstVisit.Size = new System.Drawing.Size(227, 23);
@@ -1945,9 +1932,8 @@ namespace OpenDental{
 			// tabEHR
 			// 
 			this.tabEHR.BackColor = System.Drawing.SystemColors.Control;
-			this.tabEHR.Controls.Add(this.butNow);
 			this.tabEHR.Controls.Add(this.butClearDateTimeDeceased);
-			this.tabEHR.Controls.Add(this.textDateTimeDeceased);
+			this.tabEHR.Controls.Add(this.dateTimePickerDateDeceased);
 			this.tabEHR.Controls.Add(this.textMotherMaidenFname);
 			this.tabEHR.Controls.Add(this.labelMotherMaidenFname);
 			this.tabEHR.Controls.Add(this.labelMotherMaidenLname);
@@ -1960,35 +1946,27 @@ namespace OpenDental{
 			this.tabEHR.TabIndex = 3;
 			this.tabEHR.Text = "EHR Misc";
 			// 
-			// butNow
-			// 
-			this.butNow.Location = new System.Drawing.Point(340, 48);
-			this.butNow.Name = "butNow";
-			this.butNow.Size = new System.Drawing.Size(40, 20);
-			this.butNow.TabIndex = 11;
-			this.butNow.Text = "Now";
-			this.butNow.UseVisualStyleBackColor = true;
-			this.butNow.Click += new System.EventHandler(this.butNow_Click);
-			// 
 			// butClearDateTimeDeceased
 			// 
-			this.butClearDateTimeDeceased.Location = new System.Drawing.Point(386, 48);
+			this.butClearDateTimeDeceased.Location = new System.Drawing.Point(386, 47);
 			this.butClearDateTimeDeceased.Name = "butClearDateTimeDeceased";
 			this.butClearDateTimeDeceased.Size = new System.Drawing.Size(40, 20);
 			this.butClearDateTimeDeceased.TabIndex = 10;
-			this.butClearDateTimeDeceased.Text = "Clear";
+			this.butClearDateTimeDeceased.Text = "clear";
 			this.butClearDateTimeDeceased.UseVisualStyleBackColor = true;
 			this.butClearDateTimeDeceased.Click += new System.EventHandler(this.butClearDateTimeDeceased_Click);
 			// 
-			// textDateTimeDeceased
+			// dateTimePickerDateDeceased
 			// 
-			this.textDateTimeDeceased.AcceptsTab = true;
-			this.textDateTimeDeceased.BackColor = System.Drawing.SystemColors.Window;
-			this.textDateTimeDeceased.Location = new System.Drawing.Point(155, 48);
-			this.textDateTimeDeceased.Name = "textDateTimeDeceased";
-			this.textDateTimeDeceased.Size = new System.Drawing.Size(179, 20);
-			this.textDateTimeDeceased.TabIndex = 9;
-			this.textDateTimeDeceased.Validated += new System.EventHandler(this.textDateTimeDeceased_Validated);
+			this.dateTimePickerDateDeceased.Checked = false;
+			this.dateTimePickerDateDeceased.CustomFormat = "ddddMM/dd/yyyy hh:mm tt";
+			this.dateTimePickerDateDeceased.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+			this.dateTimePickerDateDeceased.Location = new System.Drawing.Point(155, 46);
+			this.dateTimePickerDateDeceased.Name = "dateTimePickerDateDeceased";
+			this.dateTimePickerDateDeceased.Size = new System.Drawing.Size(228, 20);
+			this.dateTimePickerDateDeceased.TabIndex = 9;
+			this.dateTimePickerDateDeceased.Value = new System.DateTime(2021, 4, 15, 12, 40, 0, 0);
+			this.dateTimePickerDateDeceased.ValueChanged += new System.EventHandler(this.dateTimePickerDateDeceased_ValueChanged);
 			// 
 			// comboSpecialty
 			// 
@@ -2036,11 +2014,10 @@ namespace OpenDental{
 			// odDatePickerBirthDate
 			// 
 			this.odDatePickerBirthDate.BackColor = System.Drawing.Color.Transparent;
-			this.odDatePickerBirthDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.odDatePickerBirthDate.Location = new System.Drawing.Point(97, 284);
 			this.odDatePickerBirthDate.Name = "odDatePickerBirthDate";
 			this.odDatePickerBirthDate.RightToLeft = System.Windows.Forms.RightToLeft.No;
-			this.odDatePickerBirthDate.Size = new System.Drawing.Size(182, 24);
+			this.odDatePickerBirthDate.Size = new System.Drawing.Size(167, 24);
 			this.odDatePickerBirthDate.TabIndex = 6;
 			this.odDatePickerBirthDate.Leave += new System.EventHandler(this.odDatePickerBirthDate_Validated);
 			// 
@@ -2067,20 +2044,29 @@ namespace OpenDental{
 			this.labelPreferredPronouns.Text = "Preferred Pronoun";
 			this.labelPreferredPronouns.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// textBirthdateMask
+			// checkTextingY
 			// 
-			this.textBirthdateMask.Enabled = false;
-			this.textBirthdateMask.Location = new System.Drawing.Point(160, 284);
-			this.textBirthdateMask.MaxLength = 20;
-			this.textBirthdateMask.Name = "textBirthdateMask";
-			this.textBirthdateMask.ReadOnly = true;
-			this.textBirthdateMask.Size = new System.Drawing.Size(102, 20);
-			this.textBirthdateMask.TabIndex = 60;
-			this.textBirthdateMask.Text = "xx/xx/xxxx";
-			this.textBirthdateMask.Visible = false;
+			this.checkTextingY.Location = new System.Drawing.Point(360, 30);
+			this.checkTextingY.Name = "checkTextingY";
+			this.checkTextingY.Size = new System.Drawing.Size(29, 17);
+			this.checkTextingY.TabIndex = 60;
+			this.checkTextingY.TabStop = false;
+			this.checkTextingY.Text = "Y";
+			this.checkTextingY.Click += new System.EventHandler(this.checkTextingY_Click);
+			// 
+			// checkTextingN
+			// 
+			this.checkTextingN.Location = new System.Drawing.Point(395, 30);
+			this.checkTextingN.Name = "checkTextingN";
+			this.checkTextingN.Size = new System.Drawing.Size(29, 17);
+			this.checkTextingN.TabIndex = 61;
+			this.checkTextingN.TabStop = false;
+			this.checkTextingN.Text = "N";
+			this.checkTextingN.Click += new System.EventHandler(this.checkTextingN_Click);
 			// 
 			// FormPatientEdit
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(974, 696);
 			this.Controls.Add(this.labelPreferredPronouns);
 			this.Controls.Add(this.comboPreferredPronouns);
@@ -2091,7 +2077,8 @@ namespace OpenDental{
 			this.Controls.Add(this.textMedicaidState);
 			this.Controls.Add(this.textMedicaidID);
 			this.Controls.Add(this.labelBirthdate);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.labelExcludeECR);
 			this.Controls.Add(this.comboExcludeECR);
 			this.Controls.Add(this.comboSpecialty);
@@ -2151,7 +2138,6 @@ namespace OpenDental{
 			this.Controls.Add(this.labelFName);
 			this.Controls.Add(this.labelLName);
 			this.Controls.Add(this.odDatePickerBirthDate);
-			this.Controls.Add(this.textBirthdateMask);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -2198,7 +2184,8 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelHmPhone;
 		private System.Windows.Forms.Label labelWkPhone;
 		private System.Windows.Forms.Label labelWirelessPhone;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.TextBox textLName;
 		private System.Windows.Forms.TextBox textFName;
 		private System.Windows.Forms.TextBox textMiddleI;
@@ -2362,10 +2349,11 @@ namespace OpenDental{
 		private Label labelABC;
 		private UI.Button butShortCodeOptIn;
 		private Label labelApptTexts;
+		private ListBox listBoxApptTexts;
 		private UI.ODDatePicker odDatePickerBirthDate;
 		private UI.ODDatePicker odDatePickerAdmitDate;
 		private UI.ODDatePicker odDatePickerDateFirstVisit;
-		private TextBox textDateTimeDeceased;
+		private DateTimePicker dateTimePickerDateDeceased;
 		private UI.Button butClearDateTimeDeceased;
 		private UI.WarningIntegrity warningIntegrity1;
 		private UI.ComboBox comboPreferredPronouns;
@@ -2374,8 +2362,5 @@ namespace OpenDental{
 		private Label labelDischargeDate;
 		private UI.CheckBox checkTextingN;
 		private UI.CheckBox checkTextingY;
-		private TextBox textOptIn;
-		private TextBox textBirthdateMask;
-		private UI.Button butNow;
 	}
 }

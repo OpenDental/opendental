@@ -58,6 +58,31 @@ namespace OpenDental {
 			#endif
 		}
 
+		///<summary>Loads a resource file from the EHR assembly and returns the file text as a string.
+		///Returns "" is the EHR assembly did not load. strResourceName can be either "CCD" or "CCR".
+		///This function performs a late binding to the EHR.dll, because resellers do not have EHR.dll necessarily.</summary>
+		public static string GetEhrResource(string strResourceName) {
+			if(AssemblyEHR==null) {
+				constructObjFormEhrMeasuresHelper();
+				if(AssemblyEHR==null) {
+					return "";
+				}
+			}
+			Stream stream=AssemblyEHR.GetManifestResourceStream("EHR.Properties.Resources.resources");
+			System.Resources.ResourceReader resourceReader=new System.Resources.ResourceReader(stream);
+			string strResourceType="";
+			byte[] byteArrayResource=null;
+			resourceReader.GetResourceData(strResourceName,out strResourceType,out byteArrayResource);
+			resourceReader.Dispose();
+			stream.Dispose();
+			MemoryStream memoryStream=new MemoryStream(byteArrayResource);
+			BinaryReader binaryReader=new BinaryReader(memoryStream);
+			string retVal=binaryReader.ReadString();//Removes the leading binary characters from the string.
+			memoryStream.Dispose();
+			binaryReader.Dispose();
+			return retVal;
+		}
+
 		private void FormEHR_Load(object sender,EventArgs e) {
 			//Can't really use this, because it's only loaded once at the very beginning of OD starting up.
 		}
@@ -185,7 +210,7 @@ namespace OpenDental {
 						}
 						break;
 					case EhrMeasureType.Demographics:
-						if(!Security.IsAuthorized(EnumPermType.PatientEdit)) {
+						if(!Security.IsAuthorized(Permissions.PatientEdit)) {
 							return;
 						}
 						using(FormPatientEdit formPatientEdit=new FormPatientEdit(_patient,FamilyCur)) {
@@ -267,20 +292,20 @@ namespace OpenDental {
 					case EhrMeasureType.MedReconcile:
 						int compare=EhrMeasures.CompareReferralsToReconciles(PatNum);
 						if(compare==1 || compare==0) {//Referral count is less than reconcile count or both are zero.
-							FrmReferralSelect frmReferralSelect=new FrmReferralSelect();
-							frmReferralSelect.IsDoctorSelectionMode=true;
-							frmReferralSelect.IsSelectionMode=true;
-							frmReferralSelect.ShowDialog();
-							if(frmReferralSelect.IsDialogCancel) {
+							using FormReferralSelect formReferralSelect=new FormReferralSelect();
+							formReferralSelect.IsDoctorSelectionMode=true;
+							formReferralSelect.IsSelectionMode=true;
+							formReferralSelect.ShowDialog();
+							if(formReferralSelect.DialogResult!=DialogResult.OK) {
 								return;
 							}
 							List<RefAttach> listRefAttaches=RefAttaches.RefreshFiltered(PatNum,false,0);
 							RefAttach refAttach=new RefAttach();
-							refAttach.ReferralNum=frmReferralSelect.ReferralSelected.ReferralNum;
+							refAttach.ReferralNum=formReferralSelect.ReferralSelected.ReferralNum;
 							refAttach.PatNum=PatNum;
 							refAttach.RefType=ReferralType.RefFrom;
 							refAttach.RefDate=DateTime.Today;
-							if(frmReferralSelect.ReferralSelected.IsDoctor) {//whether using ehr or not
+							if(formReferralSelect.ReferralSelected.IsDoctor) {//whether using ehr or not
 								refAttach.IsTransitionOfCare=true;
 							}
 							int order=0;
@@ -291,7 +316,7 @@ namespace OpenDental {
 							}
 							refAttach.ItemOrder=order+1;
 							RefAttaches.Insert(refAttach);
-							SecurityLogs.MakeLogEntry(EnumPermType.RefAttachAdd,PatNum,"Referred From "+Referrals.GetNameFL(refAttach.ReferralNum));
+							SecurityLogs.MakeLogEntry(Permissions.RefAttachAdd,PatNum,"Referred From "+Referrals.GetNameFL(refAttach.ReferralNum));
 						}
 						else if(compare==-1) {//The referral count is greater than the reconcile count.
 							//So we do not need to show the referral window, we just need to reconcile below.
@@ -444,18 +469,18 @@ namespace OpenDental {
 					case EhrMeasureType.MedReconcile:
 						int compare=EhrMeasures.CompareReferralsToReconciles(PatNum);
 						if(compare==1 || compare==0) {
-							FrmReferralSelect frmReferralSelect=new FrmReferralSelect();
-							frmReferralSelect.IsDoctorSelectionMode=true;
-							frmReferralSelect.IsSelectionMode=true;
-							frmReferralSelect.ShowDialog();
-							if(frmReferralSelect.IsDialogOK) {
+							using FormReferralSelect formReferralSelect=new FormReferralSelect();
+							formReferralSelect.IsDoctorSelectionMode=true;
+							formReferralSelect.IsSelectionMode=true;
+							formReferralSelect.ShowDialog();
+							if(formReferralSelect.DialogResult==DialogResult.OK) {
 								List<RefAttach> listRefAttaches=RefAttaches.RefreshFiltered(PatNum,false,0);
 								RefAttach refAttach=new RefAttach();
-								refAttach.ReferralNum=frmReferralSelect.ReferralSelected.ReferralNum;
+								refAttach.ReferralNum=formReferralSelect.ReferralSelected.ReferralNum;
 								refAttach.PatNum=PatNum;
 								refAttach.RefType=ReferralType.RefFrom;
 								refAttach.RefDate=DateTime.Today;
-								if(frmReferralSelect.ReferralSelected.IsDoctor) {//whether using ehr or not
+								if(formReferralSelect.ReferralSelected.IsDoctor) {//whether using ehr or not
 									//we're not going to ask.  That's stupid.
 									//if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Is this an incoming transition of care from another provider?")){
 									refAttach.IsTransitionOfCare=true;
@@ -468,7 +493,7 @@ namespace OpenDental {
 								}
 								refAttach.ItemOrder=order+1;
 								RefAttaches.Insert(refAttach);
-								SecurityLogs.MakeLogEntry(EnumPermType.RefAttachAdd,PatNum,"Referred From "+Referrals.GetNameFL(refAttach.ReferralNum));
+								SecurityLogs.MakeLogEntry(Permissions.RefAttachAdd,PatNum,"Referred From "+Referrals.GetNameFL(refAttach.ReferralNum));
 								using FormMedicationReconcile formMedicationReconcile=new FormMedicationReconcile();
 								formMedicationReconcile.PatientCur=_patient;
 								formMedicationReconcile.ShowDialog();
@@ -485,9 +510,10 @@ namespace OpenDental {
 						break;
 					case EhrMeasureType.SummaryOfCare:
 					case EhrMeasureType.SummaryOfCareElectronic:
-						FrmReferralsPatient frmReferralsPatient=new FrmReferralsPatient();
-						frmReferralsPatient.PatNum=_patient.PatNum;
-						frmReferralsPatient.ShowDialog();
+						using(FormReferralsPatient formReferralsPatient=new FormReferralsPatient()) {
+							formReferralsPatient.PatNum=_patient.PatNum;
+							formReferralsPatient.ShowDialog();
+						}
 						FillGridMu();
 						//ResultOnClosing=EhrFormResult.Referrals;
 						//Close();
@@ -670,7 +696,7 @@ namespace OpenDental {
 		}
 
 		private void butMeasureEvent_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.EhrMeasureEventEdit)) {
+			if(!Security.IsAuthorized(Permissions.EhrMeasureEventEdit)) {
 				return;
 			}
 			using FormEhrMeasureEvents formEhrMeasureEvents=new FormEhrMeasureEvents();
@@ -678,7 +704,6 @@ namespace OpenDental {
 		}
 
 		public static bool ProvKeyIsValid(string lName,string fName,int year,string provKey) {
-			//A similar method was moved over to EhrSummaryCcds so it could also be accessed from WpfControlsOD
 			try {
 				#if EHRTEST //This pattern allows the code to compile without having the EHR code available.
 				return FormEhrMeasures.ProvKeyIsValid(lName,fName,yearValue,provKey);
@@ -695,7 +720,6 @@ namespace OpenDental {
 		}
 
 		public static bool QuarterlyKeyIsValid(string year,string quarter,string practiceTitle,string qKey) {
-			//A similar method was moved over to EhrSummaryCcds so it could also be accessed from WpfControlsOD
 			try{
 				#if EHRTEST //This pattern allows the code to compile without having the EHR code available.
 					return FormEhrMeasures.QuarterlyKeyIsValid(year,quarter,practiceTitle,qkey);
@@ -711,5 +735,8 @@ namespace OpenDental {
 			}
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }

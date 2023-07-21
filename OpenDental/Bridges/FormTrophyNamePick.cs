@@ -6,9 +6,8 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using OpenDental.UI;
-using OpenDental.Bridges;
 
-namespace OpenDental {
+namespace OpenDental.Bridges {
 	public partial class FormTrophyNamePick:FormODBase {
 		public List<TrophyFolder> ListMatches;
 		///<summary>If dialogResult is OK, then this will contain the picked folder name.  If blank, then the calling class will need to generate a new folder name.</summary>
@@ -68,5 +67,14 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+
+		
 	}
 }

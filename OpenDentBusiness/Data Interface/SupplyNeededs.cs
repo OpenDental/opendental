@@ -18,30 +18,30 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static long Insert(SupplyNeeded supplyNeeded) {
+		public static long Insert(SupplyNeeded supp) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				supplyNeeded.SupplyNeededNum=Meth.GetLong(MethodBase.GetCurrentMethod(),supplyNeeded);
-				return supplyNeeded.SupplyNeededNum;
+				supp.SupplyNeededNum=Meth.GetLong(MethodBase.GetCurrentMethod(),supp);
+				return supp.SupplyNeededNum;
 			}
-			return Crud.SupplyNeededCrud.Insert(supplyNeeded);
+			return Crud.SupplyNeededCrud.Insert(supp);
 		}
 
 		///<summary></summary>
-		public static void Update(SupplyNeeded supplyNeeded) {
+		public static void Update(SupplyNeeded supp) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),supplyNeeded);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),supp);
 				return;
 			}
-			Crud.SupplyNeededCrud.Update(supplyNeeded);
+			Crud.SupplyNeededCrud.Update(supp);
 		}
 
 		///<summary></summary>
-		public static void DeleteObject(SupplyNeeded supplyNeeded){
+		public static void DeleteObject(SupplyNeeded supp){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),supplyNeeded);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),supp);
 				return;
 			}
-			Crud.SupplyNeededCrud.Delete(supplyNeeded.SupplyNeededNum);
+			Crud.SupplyNeededCrud.Delete(supp.SupplyNeededNum);
 		}
 	}
 
@@ -52,3 +52,12 @@ namespace OpenDentBusiness{
 
 
 }
+
+
+
+
+
+
+
+
+

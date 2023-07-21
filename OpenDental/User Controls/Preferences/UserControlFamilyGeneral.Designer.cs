@@ -334,7 +334,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBoxClaimSnapshot);
 			this.Controls.Add(this.groupBoxSuperFamily);
 			this.Name = "UserControlFamilyGeneral";
-			this.Size = new System.Drawing.Size(494, 660);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxHIPAA.ResumeLayout(false);
 			this.groupBoxPatientEdit.ResumeLayout(false);
 			this.groupBoxClaimSnapshot.ResumeLayout(false);

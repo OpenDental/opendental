@@ -27,12 +27,24 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRxSetup));
+			this.butClose = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.butAdd2 = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.checkProcCodeRequired = new OpenDental.UI.CheckBox();
 			this.butCombine = new OpenDental.UI.Button();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(850, 636);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 4;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butAdd
 			// 
@@ -93,8 +105,10 @@ namespace OpenDental {
 			// 
 			// FormRxSetup
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(942, 674);
 			this.Controls.Add(this.butCombine);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.checkProcCodeRequired);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butAdd2);
@@ -113,6 +127,7 @@ namespace OpenDental {
 
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.Button butAdd2;
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;// Required designer variable.
 		private OpenDental.UI.CheckBox checkProcCodeRequired;
 		private UI.Button butCombine;

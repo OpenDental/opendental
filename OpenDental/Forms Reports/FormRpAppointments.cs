@@ -253,6 +253,5 @@ namespace OpenDental
 			FormR.ShowDialog();
 			DialogResult=DialogResult.OK;
 		}
-
 	}
 }

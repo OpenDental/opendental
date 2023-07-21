@@ -31,12 +31,12 @@ namespace OpenDental {
 		private void RefreshData() {
 			_postcardManiaMetaData=new PostcardManiaMetaData();
 			try {
-				UI.ProgressWin progressOD=new UI.ProgressWin();
+				UI.ProgressOD progressOD=new UI.ProgressOD();
 				progressOD.ActionMain=() => {
 					_postcardManiaMetaData=AdvertisingPostcards.GetPostcardManiaMetaData();
 				};
 				progressOD.StartingMessage=Lan.g(this,"Getting Account Data")+"...";
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 				if(progressOD.IsCancelled){
 					return;
 				}

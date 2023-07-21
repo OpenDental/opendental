@@ -31,6 +31,7 @@ namespace OpenDental {
 			this.labelClinic = new System.Windows.Forms.Label();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butRefresh = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.comboPaymentSource = new OpenDental.UI.ComboBox();
 			this.labelPaymentSource = new System.Windows.Forms.Label();
 			this.comboProcessStatus = new OpenDental.UI.ComboBox();
@@ -47,12 +48,12 @@ namespace OpenDental {
 			this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuItemGoTo});
 			this.contextMenu.Name = "contextMenu";
-			this.contextMenu.Size = new System.Drawing.Size(153, 26);
+			this.contextMenu.Size = new System.Drawing.Size(181, 48);
 			// 
 			// menuItemGoTo
 			// 
 			this.menuItemGoTo.Name = "menuItemGoTo";
-			this.menuItemGoTo.Size = new System.Drawing.Size(152, 22);
+			this.menuItemGoTo.Size = new System.Drawing.Size(180, 22);
 			this.menuItemGoTo.Text = "Go To Account";
 			this.menuItemGoTo.Click += new System.EventHandler(this.menuItemGoTo_Click);
 			// 
@@ -80,7 +81,7 @@ namespace OpenDental {
 			this.gridMain.ContextMenuStrip = this.contextMenu;
 			this.gridMain.Location = new System.Drawing.Point(12, 93);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(657, 438);
+			this.gridMain.Size = new System.Drawing.Size(657, 446);
 			this.gridMain.TabIndex = 30;
 			this.gridMain.Title = "Payment Information";
 			this.gridMain.TranslationName = "TablePendingPayments";
@@ -95,6 +96,16 @@ namespace OpenDental {
 			this.butRefresh.TabIndex = 56;
 			this.butRefresh.Text = "&Refresh";
 			this.butRefresh.Click += new System.EventHandler(this.butRefresh_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(593, 552);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// comboPaymentSource
 			// 
@@ -164,7 +175,7 @@ namespace OpenDental {
 			// 
 			// FormOnlinePayments
 			// 
-			this.ClientSize = new System.Drawing.Size(682, 543);
+			this.ClientSize = new System.Drawing.Size(682, 588);
 			this.Controls.Add(this.label10);
 			this.Controls.Add(this.label9);
 			this.Controls.Add(this.dateEnd);
@@ -177,6 +188,7 @@ namespace OpenDental {
 			this.Controls.Add(this.comboClinic);
 			this.Controls.Add(this.labelClinic);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormOnlinePayments";
 			this.Text = "Online Payments";
@@ -187,6 +199,8 @@ namespace OpenDental {
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private OpenDental.UI.ComboBox comboClinic;
 		private System.Windows.Forms.Label labelClinic;

@@ -28,7 +28,7 @@ namespace UnitTestsCore {
 			};
 			Patient oldPat=Patients.GetPat(repeatCharge.PatNum);
 			repeatCharge.RepeatChargeNum=DataAction.GetCustomers(() => RepeatCharges.Insert(repeatCharge));
-			RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatCharge,EnumPermType.RepeatChargeCreate,oldPat,isAutomated:true);
+			RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatCharge,Permissions.RepeatChargeCreate,oldPat,isAutomated:true);
 			return repeatCharge;
 		}
 	}

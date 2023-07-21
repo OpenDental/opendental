@@ -37,6 +37,7 @@ namespace OpenDental {
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.butCombine = new OpenDental.UI.Button();
 			this.butItransUpdateCarriers = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.checkCDAnet = new OpenDental.UI.CheckBox();
 			this.checkShowHidden = new OpenDental.UI.CheckBox();
@@ -87,6 +88,16 @@ namespace OpenDental {
 			this.butItransUpdateCarriers.Text = "Update Carriers";
 			this.toolTip1.SetToolTip(this.butItransUpdateCarriers, "Updates carriers using iTrans 2.0");
 			this.butItransUpdateCarriers.Click += new System.EventHandler(this.butItransUpdateCarriers_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(820, 623);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(80, 24);
+			this.butCancel.TabIndex = 11;
+			this.butCancel.Text = "Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// gridMain
 			// 
@@ -142,11 +153,11 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(820, 625);
+			this.butOK.Location = new System.Drawing.Point(820, 587);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(80, 24);
 			this.butOK.TabIndex = 10;
-			this.butOK.Text = "&OK";
+			this.butOK.Text = "OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// textPhone
@@ -237,6 +248,7 @@ namespace OpenDental {
 			this.Controls.Add(this.textElectId);
 			this.Controls.Add(this.labelElectId);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.groupItrans);
 			this.Controls.Add(this.butRefresh);
 			this.Controls.Add(this.textPhone);
@@ -265,6 +277,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butAdd;
 		private System.Windows.Forms.ToolTip toolTip1;
 		private OpenDental.UI.Button butCombine;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.CheckBox checkCDAnet;
 		private OpenDental.UI.CheckBox checkShowHidden;

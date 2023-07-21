@@ -1,8 +1,6 @@
-using CodeBase;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
 using System.Reflection;
 
 namespace OpenDentBusiness{
@@ -11,10 +9,9 @@ namespace OpenDentBusiness{
 		#region Get Methods
 		/// <summary>Returns a hardcoded list. Needs to be updated whenever a new field or type is added.</summary>
 		/// If we are going to continue adding to the RequiredField class, we should consider refactoring to get rid of methods like this one.
-		public static List<RequiredFieldName> GetFieldNamesForType(RequiredFieldType requiredFieldType) {
-			//No need to check MiddleTierRole; no call to db.
+		public static List<RequiredFieldName> GetFieldNamesForType(RequiredFieldType type) {
 			List<RequiredFieldName> retVal=new List<RequiredFieldName>();
-			switch(requiredFieldType) {
+			switch(type) {
 				case RequiredFieldType.PatientInfo:
 					retVal=new List<RequiredFieldName>{RequiredFieldName.Address,RequiredFieldName.Address2,RequiredFieldName.AddressPhoneNotes,RequiredFieldName.AdmitDate,
 						RequiredFieldName.AskArriveEarly,RequiredFieldName.BillingType,RequiredFieldName.Birthdate,RequiredFieldName.Carrier,
@@ -41,6 +38,7 @@ namespace OpenDentBusiness{
 				default:
 					break;
 			}
+
 			return retVal;
 		}
 		#endregion
@@ -129,47 +127,6 @@ namespace OpenDentBusiness{
 			string command="DELETE FROM requiredfieldcondition WHERE RequiredFieldNum="+POut.Long(requiredFieldNum);
 			Db.NonQ(command);
 			Crud.RequiredFieldCrud.Delete(requiredFieldNum);
-		}
-
-		///<summary>Fills a list of RequiredFields from the cache with required fields that are visible on the PatientEdit form.</summary>
-		public static List<RequiredField> GetRequiredFields() {
-			List<RequiredField> listRequiredFields=RequiredFields.GetWhere(x => x.FieldType==RequiredFieldType.PatientInfo);
-			//Remove the RequiredFields that are only on the Add Family window
-			listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.InsuranceSubscriber);
-			listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.InsuranceSubscriberID);
-			listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.Carrier);
-			listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.InsurancePhone);
-			listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.GroupName);
-			listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.GroupNum);
-			//Remove RequiredFields where the text field is invisible.
-			if(!PrefC.GetBool(PrefName.ShowFeatureEhr)) {
-				listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.MothersMaidenFirstName);
-				listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.MothersMaidenLastName);
-				listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.DateTimeDeceased);
-			}
-			if(!Programs.IsEnabled(Programs.GetProgramNum(ProgramName.TrophyEnhanced))) {
-				listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.TrophyFolder);
-			}
-			if(PrefC.GetBool(PrefName.EasyHideHospitals)) {
-				listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.Ward);
-				listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.AdmitDate);
-				listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.DischargeDate);
-			}
-			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) { //Canadian. en-CA or fr-CA
-				listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.StudentStatus);
-			}
-			else {//Not Canadian
-				listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.EligibilityExceptCode);
-			}
-			//Remove Required Fields if the Public Health Tab(tabPublicHealth) is hidden
-			if(PrefC.GetBool(PrefName.EasyHidePublicHealth)) {
-				listRequiredFields.RemoveAll(x => x.FieldName.In(
-						RequiredFieldName.Race,RequiredFieldName.Ethnicity,RequiredFieldName.County,
-						RequiredFieldName.Site,RequiredFieldName.GradeLevel,RequiredFieldName.TreatmentUrgency,
-						RequiredFieldName.ResponsibleParty,RequiredFieldName.SexualOrientation,RequiredFieldName.GenderIdentity
-				));
-			}
-			return listRequiredFields;
 		}
 
 		/*

@@ -24,6 +24,7 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrLabSpecimenEdit));
+			this.butCancel = new System.Windows.Forms.Button();
 			this.butSave = new System.Windows.Forms.Button();
 			this.groupBox6 = new OpenDental.UI.GroupBox();
 			this.label44 = new System.Windows.Forms.Label();
@@ -51,14 +52,25 @@
 			this.groupBox8.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(512, 357);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 23);
+			this.butCancel.TabIndex = 9;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butSave
 			// 
 			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(512, 357);
+			this.butSave.Location = new System.Drawing.Point(431, 357);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(75, 23);
 			this.butSave.TabIndex = 10;
-			this.butSave.Text = "&Save";
+			this.butSave.Text = "Save";
 			this.butSave.UseVisualStyleBackColor = true;
 			this.butSave.Click += new System.EventHandler(this.butSave_Click);
 			// 
@@ -273,6 +285,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(599, 392);
 			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.groupBox8);
 			this.Controls.Add(this.groupBox6);
 			this.Controls.Add(this.gridReject);
@@ -292,6 +305,7 @@
 		#endregion
 
 		private OpenDental.UI.GridOD gridCondition;
+		private System.Windows.Forms.Button butCancel;
 		private System.Windows.Forms.Button butSave;
 		private UI.GridOD gridReject;
 		private OpenDental.UI.GroupBox groupBox6;

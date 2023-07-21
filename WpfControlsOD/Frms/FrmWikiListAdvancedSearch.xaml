@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="334" Height="461" 
-             Text="Wiki List Advanced Search" >
+             Text="Wiki List Advanced Search" Loaded="FrmWikiListAdvancedSearch_Loaded" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butOK" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="23" Margin="0,0,12,10" Text="_OK" Click="butOK_Click" />
 		<ui:Label x:Name="labelSummary" Width="310" Height="37" Margin="12,9,0,0" Text="Choose one or more columns to be used within the search of the Wiki List Edit window.

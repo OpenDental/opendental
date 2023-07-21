@@ -913,7 +913,7 @@ namespace OpenDentBusiness {
 					command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 				    +"VALUES ("
 				    +"'"+POut.Long(programNum)+"', "
-				    +"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+				    +"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 				    +"'DentalStudio')";
 					Db.NonQ(command);
 				}
@@ -953,7 +953,7 @@ namespace OpenDentBusiness {
 				    +"VALUES ("
 				    +"(SELECT MAX(ToolButItemNum)+1 FROM toolbutitem),"
 				    +"'"+POut.Long(programNum)+"', "
-				    +"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+				    +"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 				    +"'DentalStudio')";
 					Db.NonQ(command);
 				}//end DentalStudio bridge
@@ -4125,7 +4125,7 @@ namespace OpenDentBusiness {
 					command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 				    +"VALUES ("
 				    +"'"+POut.Long(programNum)+"', "
-				    +"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+				    +"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 				    +"'VistaDent')";
 					Db.NonQ(command);
 				}
@@ -4151,7 +4151,7 @@ namespace OpenDentBusiness {
 				    +"VALUES ("
 				    +"(SELECT MAX(ToolButItemNum)+1 FROM toolbutitem),"
 				    +"'"+POut.Long(programNum)+"', "
-				    +"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+				    +"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 				    +"'VistaDent')";
 					Db.NonQ(command);
 				}//end VistaDent bridge

@@ -99,6 +99,11 @@ namespace OpenDental{
 				+" / "+_totalPages.ToString();
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+			Close();
+		}
+
 		private void butCopy_Click(object sender, System.EventArgs e){
 			try {
 				ODClipboard.SetClipboard(textQuery.Text);
@@ -163,8 +168,8 @@ namespace OpenDental{
 				fileName="queryexport.txt";
 			}
 			string filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
-			if(ODEnvironment.IsCloudServer) {
-				//Thinfinity: file download dialog will come up later, after file is created. AppStream: File will be created in client's Downloads folder.
+			if(ODBuild.IsWeb()) {
+				//file download dialog will come up later, after file is created.
 			}
 			else {
 				saveFileDialog2=new SaveFileDialog();
@@ -244,11 +249,8 @@ namespace OpenDental{
         MessageBox.Show(Lan.g(this,"File in use by another program.  Close and try again."));
 				return;
 			}
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.ExportForDownload(filePath);
-			}
-			else if(ODCloudClient.IsAppStream) {
-				CloudClientL.ExportForCloud(filePath);
 			}
 			else {
 				MessageBox.Show(Lan.g(this,"File created successfully"));
@@ -278,7 +280,7 @@ namespace OpenDental{
 		private void butPaste_Click(object sender, System.EventArgs e){
 			IDataObject iData;
 			try {
-				if(ODEnvironment.IsCloudServer) {
+				if(ODBuild.IsWeb()) {
 					textQuery.Text=ODClipboard.GetText();
 					return;
 				}
@@ -314,7 +316,7 @@ namespace OpenDental{
 			this.Update();
 			PrintReport(true);
 			printPreviewControl2.Zoom=((double)printPreviewControl2.ClientSize.Height
-				/ODprintout.GetDefaultPaperSize().Height);
+				/ODprintout.DefaultPaperSize.Height);
 			UIHelper.ForceBringToFront(this);
 		}
 
@@ -333,7 +335,7 @@ namespace OpenDental{
 		}
 		
 		private void butQView_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.UserQuery)) {
+			if(!Security.IsAuthorized(Permissions.UserQuery)) {
 				return;
 			}
 			printPreviewControl2.Visible=false;
@@ -388,14 +390,14 @@ namespace OpenDental{
 				panelZoom.Visible=true;
 				PrintReport(true);
 				labelTotPages.Text="/ "+_totalPages.ToString();
-				printPreviewControl2.Zoom = (double)printPreviewControl2.ClientSize.Height / ODprintout.GetDefaultPaperSize().Height;
+				printPreviewControl2.Zoom = (double)printPreviewControl2.ClientSize.Height / ODprintout.DefaultPaperSize.Height;
       }
 			else {
 				printPreviewControl2.Visible=false;
 				splitContainer.Visible=true;
 				Text=Lan.g(this,"User Query");
 			}
-			if(!Security.IsAuthorized(EnumPermType.UserQueryAdmin,true)) { 
+			if(!Security.IsAuthorized(Permissions.UserQueryAdmin,true)) { 
 				//lock the query textbox, add button, and paste button for users without permissions.
 				textQuery.ReadOnly=true;
 				butAdd.Enabled=false;
@@ -1035,7 +1037,7 @@ namespace OpenDental{
 					myGridTS.GridColumnStyles[iCol].Alignment=_reportSimpleGrid.ColAlign[iCol];
 				}
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.UserQuery,0,textQuery.Text);
+			SecurityLogs.MakeLogEntry(Permissions.UserQuery,0,textQuery.Text);
 			LayoutHelperForState(QueryExecuteState.Idle);
 			Cursor=Cursors.Default;
 		}
@@ -1060,9 +1062,11 @@ namespace OpenDental{
 					panelZoom.Enabled=true;
 					butQView.Enabled=true;
 					textTitle.Enabled=true;
+					butClose.Enabled=true;
 					break;
 				case QueryExecuteState.Executing:
 					butSubmit.Text=Lan.g(this,"Stop Execution"); //the submit button and the close button should be enabled.
+					butClose.Enabled=true;
 					this.Text=Lans.g(this,"User Query - Executing Query...");
 					textQuery.Enabled=false;
 					butFavorite.Enabled=false;
@@ -1095,9 +1099,10 @@ namespace OpenDental{
 					panelZoom.Enabled=false;
 					butQView.Enabled=false;
 					textTitle.Enabled=false;
+					butClose.Enabled=false;
 					break;
 			}
-			if(!Security.IsAuthorized(EnumPermType.UserQueryAdmin,true)) {
+			if(!Security.IsAuthorized(Permissions.UserQueryAdmin,true)) {
 				//lock the query textbox, add button, and paste button for users without permissions.
 				textQuery.ReadOnly=true;
 				butAdd.Enabled=false;
@@ -1351,6 +1356,5 @@ namespace OpenDental{
 			}
 		}
 		#endregion Methods
-
 	}
 }

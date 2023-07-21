@@ -18,11 +18,6 @@ namespace UnitTestsCore {
 			return popup;
 		}
 
-		///<summary>Deletes everything from the popup table.  Does not truncate the table so that PKs are not reused on accident.</summary>
-		public static void ClearPopupTable() {
-			string command="DELETE FROM popup";
-			DataCore.NonQ(command);
-		}
 
 	}
 }

@@ -81,6 +81,7 @@ namespace OpenDental.ReportingComplex {
       butWrapText.IsTogglePushed=_isWrappingText;
       ToolBarMain.Buttons.Add(butWrapText);
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Export"),3,"","Export"));
+			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Close"),-1,Lan.g(this,"Close This Window"),"Close"));
 			//ToolBarMain.Invalidate();
 		}
 
@@ -102,7 +103,7 @@ namespace OpenDental.ReportingComplex {
 		}
 		
 		private bool ResetODprintout(){
-			ODEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Retrieving Printer Settings")+"...");
+			ReportComplexEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Retrieving Printer Settings")+"...");
 			_printout=PrinterL.CreateODprintout(
 				pd2_PrintPage,
 				auditDescription:Lan.g(this,"Report printed ")+_myReport.ReportName,
@@ -122,7 +123,7 @@ namespace OpenDental.ReportingComplex {
 			_rowsPrinted=0;
 			_totalRowsPrinted=0;
 			_pagesProcessed=0;
-			ODEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Calculating Row Heights")+"...");
+			ReportComplexEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Calculating Row Heights")+"...");
 			foreach(ReportObject reportObject in _myReport.ReportObjects) {
 				if(reportObject.ObjectType==ReportObjectType.QueryObject) {
 					QueryObject queryObject=(QueryObject)reportObject;
@@ -162,6 +163,9 @@ namespace OpenDental.ReportingComplex {
         case "WrapText":
 					OnWrapText_Click();
 					break;
+        case "Close":
+					Close();
+					break;
 				}
 		}
 
@@ -187,7 +191,7 @@ namespace OpenDental.ReportingComplex {
 			}
 			else {//If we reach the end of the document, OR the end of the specificed range, stop printed. Otherwise, continue.
 				ev.HasMorePages=true;
-				ODEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Printing Page")+" "+(_currentPage)+" - "
+				ReportComplexEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Printing Page")+" "+(_currentPage)+" - "
 					+Lan.g("ReportComplex","Page Printed. Preparing Next Page")+"...");
 			}
 			_totalNumberPagesPrinted+=1;
@@ -200,7 +204,7 @@ namespace OpenDental.ReportingComplex {
 			//Is a printable page if we're printing (or viewing) all pages, or only printing the pages between the FromPage and ToPage designated by the user.
 			bool isPrintablePage=ev.PageSettings.PrinterSettings.PrintRange==PrintRange.AllPages
 				|| (ev.PageSettings.PrinterSettings.FromPage<=_currentPage && ev.PageSettings.PrinterSettings.ToPage>=_currentPage);
-			ODEvent.Fire(ODEventType.ReportComplex,new ProgressBarHelper(Lan.g("ReportComplex","Printing Page")+" "+(_currentPage)+"..."
+			ReportComplexEvent.Fire(ODEventType.ReportComplex,new ProgressBarHelper(Lan.g("ReportComplex","Printing Page")+" "+(_currentPage)+"..."
 				,"",_totalRowsPrinted,_myReport.TotalRows,ProgBarStyle.Blocks));
 			//Note that the locations of the reportObjects are not absolute.  They depend entirely upon the margins.  When the report is initially created, it is pushed up against the upper and the left.
 			Graphics grfx=ev.Graphics;
@@ -250,7 +254,7 @@ namespace OpenDental.ReportingComplex {
 				//if no sections have been printed yet, print a report header.
 				if(_lastSectionPrinted==AreaSectionType.None) {
 					if(_myReport.Sections.Contains(AreaSectionType.ReportHeader)) {
-						ODEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Printing Page")+" "+(_currentPage)+" - "
+						ReportComplexEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Printing Page")+" "+(_currentPage)+" - "
 							+Lan.g("ReportComplex","Printing Report Header")+"...");
 						section=_myReport.Sections[AreaSectionType.ReportHeader];
 						PrintSection(grfx,section,xPos,yPos,isPrintablePage);
@@ -269,7 +273,7 @@ namespace OpenDental.ReportingComplex {
 				}
 				//always print a page header if it exists
 				if(_myReport.Sections.Contains(AreaSectionType.PageHeader)) {
-					ODEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Printing Page")+" "+(_currentPage)+" - "
+					ReportComplexEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Printing Page")+" "+(_currentPage)+" - "
 						+Lan.g("ReportComplex","Printing Page Header")+"...");
 					section=_myReport.Sections[AreaSectionType.PageHeader];
 					PrintSection(grfx,section,xPos,yPos,isPrintablePage);
@@ -286,7 +290,7 @@ namespace OpenDental.ReportingComplex {
 				//print the reportfooter section if there is room
 				if(isRoomForReportFooter){
 					if(_myReport.Sections.Contains(AreaSectionType.ReportFooter)) {
-						ODEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Printing Page")+" "+(_currentPage)+" - "
+						ReportComplexEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Printing Page")+" "+(_currentPage)+" - "
 							+Lan.g("ReportComplex","Printing Report Footer")+"...");
 						section=_myReport.Sections[AreaSectionType.ReportFooter];
 						PrintSection(grfx,section,xPos,yPos,isPrintablePage);
@@ -297,7 +301,7 @@ namespace OpenDental.ReportingComplex {
 				}
 				//print the pagefooter
 				if(_myReport.Sections.Contains(AreaSectionType.PageFooter)) {
-					ODEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Printing Page")+" "+(_currentPage)+" - "
+					ReportComplexEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Printing Page")+" "+(_currentPage)+" - "
 						+Lan.g("ReportComplex","Printing Page Footer")+"...");
 					section=_myReport.Sections[AreaSectionType.PageFooter];
 					yPos=yLimit-section.Height;
@@ -449,7 +453,7 @@ namespace OpenDental.ReportingComplex {
 		///done ahead of time.  The number of rows printed so far is kept global so that it can be used in calculating the layout of this section.
 		///Prints a blank section if isPrintablePage=false.</summary>
 		private void PrintQuerySection(Graphics g,Section section,int xPos,int yPos,bool isPrintablePage) {
-			ODEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Printing Page")+" "+(_currentPage)+" - "
+			ReportComplexEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Printing Page")+" "+(_currentPage)+" - "
 				+Lan.g("ReportComplex","Printing Query Section")+"...");
 			section.Height=0;
 			ReportObject textObject;
@@ -1027,8 +1031,8 @@ namespace OpenDental.ReportingComplex {
 			saveFileDialog.Filter="Text files(*.txt)|*.txt|Excel Files(*.xls)|*.xls|All files(*.*)|*.*";
 			saveFileDialog.DefaultExt="txt";
 			saveFileDialog.FileName=_myReport.ReportName;
-			if(ODBuild.IsThinfinity()) {
-				if(saveFileDialog.ShowDialog()!=DialogResult.OK) {
+			if(ODBuild.IsWeb()) {
+				if(saveFileDialog.ShowDialog()!=DialogResult.OK) { 
 					return;
 				}
 				if(saveFileDialog.FileName.IsNullOrEmpty()) {
@@ -1036,11 +1040,6 @@ namespace OpenDental.ReportingComplex {
 					return;
 				}
 				filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),saveFileDialog.FileName.Split('\\').Last());
-			}
-			else if(ODCloudClient.IsAppStream) {
-				//Don't show save file dialog in AppStream environment.
-				string fileName=_myReport.ReportName;
-				filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
 			}
 			else {
 				//saveFileDialog2.Title=Lan.g(this,"Select Folder to Save File To");
@@ -1139,11 +1138,8 @@ namespace OpenDental.ReportingComplex {
 				MessageBox.Show(Lan.g(this,"File in use by another program.  Close and try again."));
 				return;
 			}
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.ExportForDownload(filePath);
-			}
-			else if(ODCloudClient.IsAppStream) {
-				CloudClientL.ExportForCloud(filePath);
 			}
 			else {
 				MessageBox.Show(Lan.g(this,"File created successfully"));
@@ -1197,5 +1193,10 @@ namespace OpenDental.ReportingComplex {
 
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			this.Close();
+		}
+
+		
 	}
 }

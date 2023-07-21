@@ -25,146 +25,138 @@ namespace OpenDentBusiness{
 			"UPDATE",
 			"TRUNCATE",
 		};
-
 		///<summary>Returns the list of variables in the query contained within the passed-in SET statement.
 		///Pass in one SET statement. Used in conjunction with GetListVals.</summary>
 		public static List<QuerySetStmtObject> GetListQuerySetStmtObjs(string setStmt) {
-			//No need to check MiddleTierRole; no call to db.
-			List<string> listStrSplits=SplitQuery(setStmt,false,",");
-			for(int i=0;i < listStrSplits.Count;i++) {
-				Regex regex=new Regex(@"\s*set\s+",RegexOptions.IgnoreCase);
-				listStrSplits[i]=regex.Replace(listStrSplits[i],"");
+			List<string> strSplits=SplitQuery(setStmt,false,",");
+			for(int i=0;i < strSplits.Count;i++) {
+				Regex r=new Regex(@"\s*set\s+",RegexOptions.IgnoreCase);
+				strSplits[i]=r.Replace(strSplits[i],"");
 			}
-			TrimList(listStrSplits);
-			listStrSplits.RemoveAll(x => string.IsNullOrWhiteSpace(x) || !x.StartsWith("@") || x.StartsWith("@_"));
-			List<QuerySetStmtObject> listQuerySetStmtObjects = new List<QuerySetStmtObject>();
-			for(int i=0;i < listStrSplits.Count;i++) {
-				QuerySetStmtObject querySetStmtObject = new QuerySetStmtObject();
-				querySetStmtObject.Stmt=setStmt;
-				querySetStmtObject.Variable=listStrSplits[i].Split(new char[] { '=' },2).First();
-				querySetStmtObject.Value=listStrSplits[i].Split(new char[] { '=' },2).Last();
-				listQuerySetStmtObjects.Add(querySetStmtObject);
+			TrimList(strSplits);
+			strSplits.RemoveAll(x => string.IsNullOrWhiteSpace(x) || !x.StartsWith("@") || x.StartsWith("@_"));
+			List<QuerySetStmtObject> bufferList = new List<QuerySetStmtObject>();
+			for(int i=0;i < strSplits.Count;i++) {
+				QuerySetStmtObject qObj = new QuerySetStmtObject();
+				qObj.Stmt=setStmt;
+				qObj.Variable=strSplits[i].Split(new char[] { '=' },2).First();
+				qObj.Value=strSplits[i].Split(new char[] { '=' },2).Last();
+				bufferList.Add(qObj);
 			}
-			return listQuerySetStmtObjects;
+			return bufferList;
 		}
 
 		///<summary>Splits the given query string on the passed-in split string parameters. 
 		///DOES NOT split on the split strings when within single quotes, double quotes, parans, or case/if/concat statements.</summary>
-		public static List<string> SplitQuery(string strQuery,bool includeDelimeters=false,params string[] listSplitStrs) {
-			//No need to check MiddleTierRole; no call to db.
-			List<string> listStrSplits = new List<string>(); //returned list of strings.
-			string strTotal = "";
-			char charQuoteMode = '-'; //tracks whether we are currently within quotes.
+		public static List<string> SplitQuery(string queryStr,bool includeDelimeters=false,params string[] listSplitStrs) {
+			List<string> listStrSplit = new List<string>(); //returned list of strings.
+			string totalStr = "";
+			char quoteMode = '-'; //tracks whether we are currently within quotes.
 			Stack<string> stackFuncs = new Stack<string>(); //tracks whether we are currently within a CASE, IF, or CONCAT statement.
-			foreach(char c in strQuery) {//jordan ok to leave foreach
-				if(charQuoteMode != '-') {
-					if(c == charQuoteMode) {
-						charQuoteMode='-';
+			foreach(char c in queryStr) {
+				if(quoteMode != '-') {
+					if(c == quoteMode) {
+						quoteMode='-';
 					}
-					strTotal+=c;
+					totalStr+=c;
 				}
 				else if(stackFuncs.Count > 0) {
-					if((strTotal + c).ToLower().EndsWith("case")) {
+					if((totalStr + c).ToLower().EndsWith("case")) {
 						stackFuncs.Push("end");
 					}
-					else if((strTotal + c).ToLower().EndsWith("(")) {
+					else if((totalStr + c).ToLower().EndsWith("(")) {
 						stackFuncs.Push(")");
 					}
-					else if((strTotal + c).ToLower().EndsWith(stackFuncs.Peek())) {
+					else if((totalStr + c).ToLower().EndsWith(stackFuncs.Peek())) {
 						stackFuncs.Pop();
 					}
 					if(c.In('\'','"')) {
 						//Function has quotes. Set quote mode.
-						charQuoteMode=c;
+						quoteMode=c;
 					}
 					//Only split string if we are not in quote mode and not in a function.
-					if(charQuoteMode=='-' && stackFuncs.Count==0 && listSplitStrs.Contains(c.ToString())) {
-						AddTotalStrToList(c,includeDelimeters,ref strTotal,ref listStrSplits);
+					if(quoteMode=='-' && stackFuncs.Count==0 && listSplitStrs.Contains(c.ToString())) {
+						AddTotalStrToList(c,includeDelimeters,ref totalStr,ref listStrSplit);
 					}
 					else {
-						strTotal+=c;
+						totalStr+=c;
 					}
 				}
 				else {
-					if((strTotal + c).ToLower().EndsWith("case")) {
+					if((totalStr + c).ToLower().EndsWith("case")) {
 						stackFuncs.Push("end");
-						strTotal+=c;
+						totalStr+=c;
 					}
-					else if((strTotal + c).ToLower().EndsWith("(")) {
+					else if((totalStr + c).ToLower().EndsWith("(")) {
 						stackFuncs.Push(")");
-						strTotal+=c;
+						totalStr+=c;
 					}
 					else if(listSplitStrs.Contains(c.ToString())) {
-						AddTotalStrToList(c,includeDelimeters,ref strTotal,ref listStrSplits);
+						AddTotalStrToList(c,includeDelimeters,ref totalStr,ref listStrSplit);
 					}
 					else {
 						if(c == '\'' || c =='"') {
-							charQuoteMode = c;
+							quoteMode = c;
 						}
-						strTotal+=c;
+						totalStr+=c;
 					}
 				}
 			}
-			listStrSplits.Add(strTotal);
-			return listStrSplits;
+			listStrSplit.Add(totalStr);
+			return listStrSplit;
 		}
 
 		///<summary>Adds the totalStr to the listStrSplit passed in and then clears the totalStr.  Sets totalStr to the delimeter if includeDelimeters
 		///is true.</summary>
-		private static void AddTotalStrToList(char c,bool includeDelimeters,ref string strTotal,ref List<string> listStrSplits) {
+		private static void AddTotalStrToList(char c,bool includeDelimeters,ref string totalStr,ref List<string> listStrSplit) {
 			if(includeDelimeters) {
-				strTotal+=c;
+				totalStr+=c;
 			}
-			listStrSplits.Add(strTotal);
-			strTotal="";
+			listStrSplit.Add(totalStr);
+			totalStr="";
 		}
 
 		///<summary>Returns a string with SQL comments removed.
 		///E.g. removes /**/ and -- SQL comments from the query passed in.</summary>
 		public static string RemoveSQLComments(string queryText) {
-			//No need to check MiddleTierRole; no call to db.
-			Regex regexBlockComments = new Regex(@"/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/");
-			Regex regexLineComments = new Regex(@"--.*");
-			string queryNoComments = regexBlockComments.Replace(queryText,"");
-			queryNoComments = regexLineComments.Replace(queryNoComments,"");
-			return queryNoComments;
+			Regex blockComments = new Regex(@"/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/");
+			Regex lineComments = new Regex(@"--.*");
+			string retVal = blockComments.Replace(queryText,"");
+			retVal = lineComments.Replace(retVal,"");
+			return retVal;
 		}
 
 		///<summary>Helper method to remove leading and trailing spaces from every element in a list of strings.</summary>
-		public static void TrimList(List<string> listTrims) {
-			for(int i = 0;i < listTrims.Count;i++) {
-				listTrims[i]=listTrims[i].Trim();
+		public static void TrimList(List<string> trimList) {
+			for(int i = 0;i < trimList.Count;i++) {
+				trimList[i]=trimList[i].Trim();
 			}
 		}
 
 		///<summary>Takes the passed-in query text and returns a list of SET statements within the query. Pass in the entire query.</summary>
 		public static List<string> ParseSetStatements(string queryText) {
-			//No need to check MiddleTierRole; no call to db.
 			queryText=RemoveSQLComments(queryText);
-			List<string> listParsedSetStmts=new List<string>();//Returned list of set statements.
-			List<String> listSplitQueries=SplitQuery(queryText,true,";");
-			for(int i=0;i<listSplitQueries.Count;i++) {
+			List<string> listParsedSetStmt=new List<string>();//Returned list of set statements.
+			foreach(string smt in SplitQuery(queryText,true,";")) {
 				//The list of set statements returned from SplitQuery will include the delimiter(";"). Split each of the set statements using the c# splitter 
 				//with the delimiter ";" again incase the query's set statements have invalid apostrophes. We can do this because we don't allow users to enter
 				//";" inside a SET statement value.
-				listParsedSetStmts.AddRange(listSplitQueries[i].Split(";",StringSplitOptions.RemoveEmptyEntries));
-			}
-			TrimList(listParsedSetStmts);
-			listParsedSetStmts.RemoveAll(x => string.IsNullOrEmpty(x));
-			listParsedSetStmts=listParsedSetStmts.FindAll(x => x.ToLower().StartsWith("set "));
-			return listParsedSetStmts;
+				listParsedSetStmt.AddRange(smt.Split(";",StringSplitOptions.RemoveEmptyEntries));
+			};
+			TrimList(listParsedSetStmt);
+			listParsedSetStmt.RemoveAll(x => string.IsNullOrEmpty(x));
+			return listParsedSetStmt.Where(x => x.ToLower().StartsWith("set ")).ToList();
 		}
 
 		///<summary>Takes in a string and returns true if it is safe to run in mass email user queries.</summary>
 		public static bool ValidateQueryForMassEmail(string command) {
-			//No need to check MiddleTierRole; no call to db.
 			command=RemoveSQLComments(command);
-			Regex regexSchema=new Regex(@"SELECT.*[PatNum|\*].*FROM.*",RegexOptions.Singleline|RegexOptions.IgnoreCase);
-			Regex regexBlacklist=new Regex(@$"\b({string.Join("|",ListMassEmailBlacklistCmds.Select(x => POut.String(x)))})\b",RegexOptions.IgnoreCase);
-			if(!regexSchema.IsMatch(command)) {
+			Regex rgxSchema=new Regex(@"SELECT.*[PatNum|\*].*FROM.*",RegexOptions.Singleline|RegexOptions.IgnoreCase);
+			Regex rgxBlacklist=new Regex(@$"\b({string.Join("|",ListMassEmailBlacklistCmds.Select(x => POut.String(x)))})\b",RegexOptions.IgnoreCase);
+			if(!rgxSchema.IsMatch(command)) {
 				return false;
 			}
-			if(regexBlacklist.IsMatch(command)) {
+			if(rgxBlacklist.IsMatch(command)) {
 				return false;
 			}
 			return true;
@@ -221,13 +213,13 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Always refreshes the ClientWeb's cache.</summary>
-		public static DataTable GetTableFromCache(bool refreshCache) {
+		public static DataTable GetTableFromCache(bool doRefreshCache) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),refreshCache);
+				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),doRefreshCache);
 				_userQueryCache.FillCacheFromTable(table);
 				return table;
 			}
-			return _userQueryCache.GetTableFromCache(refreshCache);
+			return _userQueryCache.GetTableFromCache(doRefreshCache);
 		}
 
 		public static void ClearCache() {
@@ -236,31 +228,31 @@ namespace OpenDentBusiness{
 		#endregion
 
 		///<summary></summary>
-		public static long Insert(UserQuery userQuery){
+		public static long Insert(UserQuery Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				userQuery.QueryNum=Meth.GetLong(MethodBase.GetCurrentMethod(),userQuery);
-				return userQuery.QueryNum;
+				Cur.QueryNum=Meth.GetLong(MethodBase.GetCurrentMethod(),Cur);
+				return Cur.QueryNum;
 			}
-			return Crud.UserQueryCrud.Insert(userQuery);
+			return Crud.UserQueryCrud.Insert(Cur);
 		}
 		
 		///<summary></summary>
-		public static void Delete(UserQuery userQuery){
+		public static void Delete(UserQuery Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),userQuery);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),Cur);
 				return;
 			}
-			string command = "DELETE from userquery WHERE querynum = '"+POut.Long(userQuery.QueryNum)+"'";
+			string command = "DELETE from userquery WHERE querynum = '"+POut.Long(Cur.QueryNum)+"'";
 			Db.NonQ(command);
 		}
 
 		///<summary></summary>
-		public static void Update(UserQuery userQuery){
+		public static void Update(UserQuery Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),userQuery);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),Cur);
 				return;
 			}
-			Crud.UserQueryCrud.Update(userQuery);
+			Crud.UserQueryCrud.Update(Cur);
 		}
 	}
 
@@ -271,3 +263,16 @@ namespace OpenDentBusiness{
 		public string Stmt;
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

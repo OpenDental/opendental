@@ -41,7 +41,7 @@ namespace OpenDental {
 				textAdjustmentType.Text=Defs.GetDef(DefCat.AdjTypes,DiscountPlanCur.DefNum).ItemName;
 				textPlanNote.Text=DiscountPlanCur.PlanNote;
 				//FormDiscountPlanEdit.cs also uses InsPlanEdit permission for access, DiscountPlanEdit permission is marked as audit trail only.
-				if(!Security.IsAuthorized(EnumPermType.InsPlanEdit,true)) {
+				if(!Security.IsAuthorized(Permissions.InsPlanEdit,true)) {
 					textPlanNote.Enabled=false;
 				}
 				textPlanNum.Text=DiscountPlanCur.DiscountPlanNum.ToString();
@@ -97,12 +97,12 @@ namespace OpenDental {
 			DiscountPlanSubs.UpdateAssociatedDiscountPlanAmts(new List<DiscountPlanSub>{ DiscountPlanSubCur },true);
 			DiscountPlanSubs.Delete(DiscountPlanSubCur.DiscountSubNum);
 			string logText=Lan.g(this,"The discount plan")+" "+DiscountPlanCur.Description+" "+Lan.g(this,"was dropped.");
-			SecurityLogs.MakeLogEntry(EnumPermType.DiscountPlanAddDrop,DiscountPlanSubCur.PatNum,logText);
+			SecurityLogs.MakeLogEntry(Permissions.DiscountPlanAddDrop,DiscountPlanSubCur.PatNum,logText);
 			DiscountPlanSubCur=null;
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textDateEffective.IsValid() || !textDateTerm.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
@@ -120,24 +120,27 @@ namespace OpenDental {
 				DiscountPlanSubs.Update(DiscountPlanSubCur);
 				if(discountPlanSub.DiscountPlanNum!=DiscountPlanSubCur.DiscountPlanNum) {
 					string logText=Lan.g(this,"The discount plan changed to")+" "+DiscountPlanCur.Description+".";
-					SecurityLogs.MakeLogEntry(EnumPermType.DiscountPlanAddDrop,DiscountPlanSubCur.PatNum,logText);
+					SecurityLogs.MakeLogEntry(Permissions.DiscountPlanAddDrop,DiscountPlanSubCur.PatNum,logText);
 				}
 			}
 			else {
 				DiscountPlanSubs.Insert(DiscountPlanSubCur);
 				DiscountPlanSubCur.IsNew=false;//in memory object is used outside this form
 				string logText=Lan.g(this,"The discount plan")+" "+DiscountPlanCur.Description+" "+Lan.g(this,"was added.");
-				SecurityLogs.MakeLogEntry(EnumPermType.DiscountPlanAddDrop,DiscountPlanSubCur.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.DiscountPlanAddDrop,DiscountPlanSubCur.PatNum,logText);
 			}
 			DiscountPlanSubs.UpdateAssociatedDiscountPlanAmts(new List<DiscountPlanSub>{ DiscountPlanSubCur });
 			if(DiscountPlanCur!=null && DiscountPlanCur.PlanNote!=textPlanNote.Text) {
 				string logText=Lan.g(this, "Discount plan: ")+DiscountPlanCur.Description + Lan.g(this," plan note changed from \"") + DiscountPlanCur.PlanNote + Lan.g(this,"\" to \"") + textPlanNote.Text +"\"";
 				DiscountPlanCur.PlanNote=textPlanNote.Text;
 				DiscountPlans.Update(DiscountPlanCur);
-				SecurityLogs.MakeLogEntry(EnumPermType.DiscountPlanEdit,DiscountPlanSubCur.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.DiscountPlanEdit,DiscountPlanSubCur.PatNum,logText);
 			}
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

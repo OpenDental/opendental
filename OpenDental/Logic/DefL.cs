@@ -591,13 +591,10 @@ namespace OpenDental {
 					PrefC.GetLong(PrefName.PrepaymentUnearnedType),
 					PrefC.GetLong(PrefName.SalesTaxAdjustmentType),
 					PrefC.GetLong(PrefName.RecurringChargesPayTypeCC),
-					PrefC.GetLong(PrefName.EraChkPaymentType),
-					PrefC.GetLong(PrefName.EraAchPaymentType),
-					PrefC.GetLong(PrefName.EraFwtPaymentType),
-					PrefC.GetLong(PrefName.EraDefaultPaymentType)))
+					PrefC.GetLong(PrefName.RefundAdjustmentType)))
 					//PrefC.GetLong(PrefName.TpUnearnedType))) //We can hide this because of the combo box code which will still set a default
 				{
-					MsgBox.Show(_lanThis,"You cannot hide a definition if it is in use within Preferences.");
+					MsgBox.Show(_lanThis,"You cannot hide a definition if it is in use within Module Preferences.");
 					return false;
 				}
 				else if(def.DefNum.In(
@@ -696,7 +693,7 @@ namespace OpenDental {
 		public static long Insert(Def def) {
 			string logText=Lan.g("Defintions","Definition created:")+" "+def.ItemName+" "
 				+Lan.g("Defintions","with category:")+" "+def.Category.GetDescription();
-			SecurityLogs.MakeLogEntry(EnumPermType.DefEdit,0,logText);
+			SecurityLogs.MakeLogEntry(Permissions.DefEdit,0,logText);
 			return Defs.Insert(def);
 		}
 
@@ -704,7 +701,7 @@ namespace OpenDental {
 		public static void Update(Def def) {
 			string logText=Lan.g("Defintions","Definition edited:")+" "+def.ItemName+" "
 				+Lan.g("Defintions","with category:")+" "+def.Category.GetDescription();
-			SecurityLogs.MakeLogEntry(EnumPermType.DefEdit,0,logText);
+			SecurityLogs.MakeLogEntry(Permissions.DefEdit,0,logText);
 			Defs.Update(def);
 		}
 
@@ -712,7 +709,7 @@ namespace OpenDental {
 		public static void HideDef(Def def) {
 			string logText=Lan.g("Defintions","Definition hidden:")+" "+def.ItemName+" "
 				+Lan.g("Defintions","with category:")+" "+def.Category.GetDescription();
-			SecurityLogs.MakeLogEntry(EnumPermType.DefEdit,0,logText);
+			SecurityLogs.MakeLogEntry(Permissions.DefEdit,0,logText);
 			Defs.HideDef(def);
 		}
 	}

@@ -133,18 +133,9 @@ namespace OpenDental {
 				MessageBox.Show(ex.Message);
 				return;
 			}
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			if(listClasses.Count>=10){
-				inputBoxParam.InputBoxType_=InputBoxType.ComboMultiSelect;
-			}
-			else{
-				inputBoxParam.InputBoxType_=InputBoxType.ListBoxMulti;
-			}
-			inputBoxParam.LabelText=Lan.g(this,"Choose a class"); 
-			inputBoxParam.ListSelections=listClasses;
-			InputBox inputBoxFormChooseClasses=new InputBox(inputBoxParam);
-			inputBoxFormChooseClasses.ShowDialog();
-			if(inputBoxFormChooseClasses.IsDialogCancel) {
+			using InputBox inputBoxFormChooseClasses=new InputBox(Lan.g(this,"Choose a class"),listClasses,true);
+			inputBoxFormChooseClasses.TopLevel=true;
+			if(inputBoxFormChooseClasses.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
 			if(inputBoxFormChooseClasses.SelectedIndices.Count < 1) {
@@ -205,7 +196,7 @@ namespace OpenDental {
 			buttonRemoveClassRefQB.Visible=false;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			string depStr="";
 			for(int i=0;i<listBoxDepositAccountsQB.Items.Count;i++) {
 				if(i>0) {
@@ -237,5 +228,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

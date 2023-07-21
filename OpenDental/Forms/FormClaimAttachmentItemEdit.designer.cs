@@ -28,7 +28,8 @@ namespace OpenDental{
 			this.label1 = new System.Windows.Forms.Label();
 			this.textDateCreated = new OpenDental.ValidDate();
 			this.labelDateTimeCreate = new System.Windows.Forms.Label();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.textFileName = new System.Windows.Forms.TextBox();
 			this.listBoxImageType = new OpenDental.UI.ListBox();
 			this.checkIsXrayMirrored = new OpenDental.UI.CheckBox();
@@ -60,7 +61,7 @@ namespace OpenDental{
 			// 
 			this.textDateCreated.Location = new System.Drawing.Point(139, 68);
 			this.textDateCreated.Name = "textDateCreated";
-			this.textDateCreated.Size = new System.Drawing.Size(139, 20);
+			this.textDateCreated.Size = new System.Drawing.Size(121, 20);
 			this.textDateCreated.TabIndex = 1;
 			// 
 			// labelDateTimeCreate
@@ -72,22 +73,34 @@ namespace OpenDental{
 			this.labelDateTimeCreate.TabIndex = 6;
 			this.labelDateTimeCreate.Text = "Date Created";
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(390, 302);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 4;
-			this.butSave.Text = "&Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(390, 302);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 4;
+			this.butOK.Text = "OK";
+			this.butOK.UseVisualStyleBackColor = true;
+			this.butOK.Click += new System.EventHandler(this.buttonOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(471, 302);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 5;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.buttonCancel_Click);
 			// 
 			// textFileName
 			// 
 			this.textFileName.Location = new System.Drawing.Point(139, 41);
 			this.textFileName.Name = "textFileName";
-			this.textFileName.Size = new System.Drawing.Size(139, 20);
+			this.textFileName.Size = new System.Drawing.Size(121, 20);
 			this.textFileName.TabIndex = 0;
 			this.textFileName.Text = "Attachment";
 			// 
@@ -95,16 +108,16 @@ namespace OpenDental{
 			// 
 			this.listBoxImageType.Location = new System.Drawing.Point(139, 97);
 			this.listBoxImageType.Name = "listBoxImageType";
-			this.listBoxImageType.Size = new System.Drawing.Size(139, 134);
+			this.listBoxImageType.Size = new System.Drawing.Size(120, 134);
 			this.listBoxImageType.TabIndex = 2;
 			this.listBoxImageType.Text = "Image Type";
 			// 
 			// checkIsXrayMirrored
 			// 
 			this.checkIsXrayMirrored.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIsXrayMirrored.Location = new System.Drawing.Point(27, 237);
+			this.checkIsXrayMirrored.Location = new System.Drawing.Point(29, 238);
 			this.checkIsXrayMirrored.Name = "checkIsXrayMirrored";
-			this.checkIsXrayMirrored.Size = new System.Drawing.Size(126, 18);
+			this.checkIsXrayMirrored.Size = new System.Drawing.Size(124, 18);
 			this.checkIsXrayMirrored.TabIndex = 3;
 			this.checkIsXrayMirrored.Text = "Is xray mirror image";
 			// 
@@ -126,7 +139,7 @@ namespace OpenDental{
 			this.butNewSnip.Name = "butNewSnip";
 			this.butNewSnip.Size = new System.Drawing.Size(75, 24);
 			this.butNewSnip.TabIndex = 6;
-			this.butNewSnip.Text = "&Save";
+			this.butNewSnip.Text = "OK";
 			this.butNewSnip.UseVisualStyleBackColor = true;
 			this.butNewSnip.Click += new System.EventHandler(this.butNewSnip_Click);
 			// 
@@ -142,7 +155,8 @@ namespace OpenDental{
 			// 
 			// FormClaimAttachmentItemEdit
 			// 
-			this.AcceptButton = this.butSave;
+			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(584, 338);
 			this.Controls.Add(this.labelNewSnip);
 			this.Controls.Add(this.butNewSnip);
@@ -150,7 +164,8 @@ namespace OpenDental{
 			this.Controls.Add(this.checkIsXrayMirrored);
 			this.Controls.Add(this.listBoxImageType);
 			this.Controls.Add(this.textFileName);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.labelDateTimeCreate);
 			this.Controls.Add(this.textDateCreated);
 			this.Controls.Add(this.label1);
@@ -170,7 +185,8 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label1;
 		private ValidDate textDateCreated;
 		private System.Windows.Forms.Label labelDateTimeCreate;
-		private UI.Button butSave;
+		private UI.Button butOK;
+		private UI.Button butCancel;
 		private System.Windows.Forms.TextBox textFileName;
 		private UI.ListBox listBoxImageType;
 		private OpenDental.UI.CheckBox checkIsXrayMirrored;

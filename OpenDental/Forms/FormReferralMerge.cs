@@ -18,11 +18,10 @@ namespace OpenDental {
 		}
 
 		private void butChangeReferralInto_Click(object sender,EventArgs e) {
-			FrmReferralSelect frmReferralSelect=new FrmReferralSelect();
-			frmReferralSelect.IsSelectionMode=true;
-			frmReferralSelect.ShowDialog();
-			if(frmReferralSelect.IsDialogOK) {
-				Referral referral=frmReferralSelect.ReferralSelected;
+			using FormReferralSelect formReferralSelect=new FormReferralSelect();
+			formReferralSelect.IsSelectionMode=true;
+			if(formReferralSelect.ShowDialog()==DialogResult.OK) {
+				Referral referral=formReferralSelect.ReferralSelected;
 				_referralNumInto=referral.ReferralNum;
 				textReferralNameInto.Text=referral.LName+", "+referral.FName;
 				textTitleInto.Text=referral.Title;
@@ -33,11 +32,10 @@ namespace OpenDental {
 		}
 
 		private void butChangeReferralFrom_Click(object sender,EventArgs e) {
-			FrmReferralSelect frmReferralSelect=new FrmReferralSelect();
-			frmReferralSelect.IsSelectionMode=true;
-			frmReferralSelect.ShowDialog();
-			if(frmReferralSelect.IsDialogOK) {
-				Referral referral=frmReferralSelect.ReferralSelected;
+			using FormReferralSelect formReferralSelect=new FormReferralSelect();
+			formReferralSelect.IsSelectionMode=true;
+			if(formReferralSelect.ShowDialog()==DialogResult.OK) {
+				Referral referral=formReferralSelect.ReferralSelected;
 				_referralNumFrom=referral.ReferralNum;
 				textReferralNameFrom.Text=referral.LName+", "+referral.FName;
 				textTitleFrom.Text=referral.Title;
@@ -91,13 +89,18 @@ namespace OpenDental {
 				+" "+Referrals.GetNameLF(_referralNumFrom)+" "+Lan.g(this,"to")+" "+Referrals.GetNameLF(_referralNumInto)+"\r\n"
 				+Lan.g(this,"Patients attached to this referral")+": "+countPatAttach.ToString();
 			//Make log entry here not in parent form because we can merge multiple referrals at a time.
-			SecurityLogs.MakeLogEntry(EnumPermType.ReferralMerge,0,logText);
+			SecurityLogs.MakeLogEntry(Permissions.ReferralMerge,0,logText);
 			textReferralNameFrom.Text="";
 			textTitleFrom.Text="";
 			checkIsPersonFrom.Checked=false;
 			checkIsDoctorFrom.Checked=false;
 			CheckUIState();
 		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 
 	}
 }

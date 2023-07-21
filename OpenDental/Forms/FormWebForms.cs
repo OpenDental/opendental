@@ -78,7 +78,7 @@ namespace OpenDental {
 			col=new GridColumn(Lan.g(this,"Deleted"),40,HorizontalAlignment.Center){ IsWidthDynamic=true };
 			gridMain.Columns.Add(col);
 			gridMain.ListGridRows.Clear();
-			DataTable table=Sheets.GetWebFormSheetsTable(dateFrom,dateTo,comboClinics.ListClinicNumsSelected);
+			DataTable table=Sheets.GetWebFormSheetsTable(dateFrom,dateTo,comboClinics.ListSelectedClinicNums);
 			for(int i=0;i<table.Rows.Count;i++) {
 				long patNum=PIn.Long(table.Rows[i]["PatNum"].ToString());
 				long sheetNum=PIn.Long(table.Rows[i]["SheetNum"].ToString());
@@ -183,12 +183,26 @@ namespace OpenDental {
 			}
 			Cursor=Cursors.WaitCursor;
 			string strMessage=Lan.g(this,"Done");
-			Result result=RetrieveWebForms();
-			if(result.IsFailure()) {
+			List<string> listMsgsCEMT=new List<string>();
+			List<string> listMsgsWebForms=new List<string>();
+			List<string> listMsgsDownloadedWebForms=new List<string>();
+			if(WebFormL.TryRetrievePatientTransfersCEMT().IsFailure()) {
+				listMsgsCEMT=WebFormL.TryRetrievePatientTransfersCEMT().ListMsgs;
+				strMessage=Lan.g(this,"Retrieval process exited prematurely.");//User wants to cancel out of the CEMT patient transfer importing process.
+			}
+			else if(WebFormL.TryRetrieveWebForms(_webForms_Preference.CultureName,comboClinics.ListSelectedClinicNums,textBatchSize.Value).IsFailure()) {
+				listMsgsWebForms=WebFormL.TryRetrieveWebForms(_webForms_Preference.CultureName,comboClinics.ListSelectedClinicNums,textBatchSize.Value).ListMsgs;
+				strMessage=Lan.g(this,"Retrieval process exited prematurely.");//There was an error or the user wants to cancel out of the web forms retrieval process.
+			}
+			else if(WebFormL.TryRetrieveUnmatchedWebForms(comboClinics.ListSelectedClinicNums).IsFailure()) {
+				listMsgsDownloadedWebForms=WebFormL.TryRetrieveUnmatchedWebForms(comboClinics.ListSelectedClinicNums).ListMsgs;
 				strMessage=Lan.g(this,"Retrieval process exited prematurely.");
 			}
-			if(!result.ListMsgs.IsNullOrEmpty()) {
-				strMessage+="\r\n\r\n"+string.Join("\r\n",result.ListMsgs);
+			if(!listMsgsCEMT.IsNullOrEmpty()) {
+				strMessage+="\r\n\r\n"+string.Join("\r\n",listMsgsCEMT);
+			}
+			if(!listMsgsWebForms.IsNullOrEmpty()) {
+				strMessage+="\r\n\r\n"+string.Join("\r\n",listMsgsWebForms);
 			}
 			if(strMessage.Length <= 50) {
 				Cursor=Cursors.Default;
@@ -202,32 +216,6 @@ namespace OpenDental {
 			FillGrid();
 		}
 
-		///<summary>Returns failed result if the user wants to cancel out of the retrieval process. Returns success result if the retrieval process completed.
-		///The lists of messages will be filled with any messages during the retrieval process regardless if the entire process completed or not.</summary>
-		private Result RetrieveWebForms() {
-			Result resultRet=new Result();
-			Result result=WebFormL.TryRetrievePatientTransfersCEMT();
-			resultRet.ListMsgs.AddRange(result.ListMsgs);
-			if(result.IsFailure()) {
-				resultRet.IsSuccess=false;
-				return resultRet;
-			}
-			result=WebFormL.TryRetrieveWebForms(_webForms_Preference.CultureName,comboClinics.ListClinicNumsSelected,textBatchSize.Value);
-			resultRet.ListMsgs.AddRange(result.ListMsgs);
-			if(result.IsFailure()) {
-				resultRet.IsSuccess=false;
-				return resultRet;
-			}
-			result=WebFormL.TryRetrieveUnmatchedWebForms(comboClinics.ListClinicNumsSelected);
-			resultRet.ListMsgs.AddRange(result.ListMsgs);
-			if(result.IsFailure()) {
-				resultRet.IsSuccess=false;
-				return resultRet;
-			}
-			resultRet.IsSuccess=true;
-			return resultRet;
-		}
-
 		private void butToday_Click(object sender,EventArgs e) {
 			textDateStart.Text=DateTime.Today.ToShortDateString();
 			textDateEnd.Text=DateTime.Today.ToShortDateString();
@@ -239,7 +227,7 @@ namespace OpenDental {
 		}
 
 		private void menuItemSetup_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			using FormWebFormSetup formWebFormSetup=new FormWebFormSetup();
@@ -251,13 +239,13 @@ namespace OpenDental {
 			else {
 				label1.Text=Lan.g(this,"Retrieved forms are automatically attached to the correct patient if they are a match.");
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Web Forms Setup");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Web Forms Setup");
 		}
 
 		private void gridMain_CellClick(object sender,ODGridClickEventArgs e) {
 			long sheetNum=(long)gridMain.ListGridRows[e.Row].Tag;
 			Sheet sheet=Sheets.GetSheet(sheetNum);
-			GlobalFormOpenDental.GotoFamily(sheet.PatNum);
+			GotoModule.GotoFamily(sheet.PatNum);
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
@@ -302,5 +290,10 @@ namespace OpenDental {
 			FillGrid();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
+		
 	}
 }

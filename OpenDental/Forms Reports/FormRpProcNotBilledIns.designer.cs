@@ -24,6 +24,7 @@
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpProcNotBilledIns));
+			this.butClose = new OpenDental.UI.Button();
 			this.butPrint = new OpenDental.UI.Button();
 			this.checkMedical = new OpenDental.UI.CheckBox();
 			this.imageListCalendar = new System.Windows.Forms.ImageList(this.components);
@@ -46,6 +47,17 @@
 			this.dateRangePicker = new OpenDental.UI.ODDateRangePicker();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(936, 665);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 4;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butPrint
 			// 
@@ -222,7 +234,7 @@
 			this.comboClinics.IncludeUnassigned = true;
 			this.comboClinics.Location = new System.Drawing.Point(532, 12);
 			this.comboClinics.Name = "comboClinics";
-			this.comboClinics.IsMultiSelect = true;
+			this.comboClinics.SelectionModeMulti = true;
 			this.comboClinics.Size = new System.Drawing.Size(200, 21);
 			this.comboClinics.TabIndex = 77;
 			// 
@@ -253,6 +265,7 @@
 			this.ClientSize = new System.Drawing.Size(1019, 696);
 			this.Controls.Add(this.butSelectAll);
 			this.Controls.Add(this.butNewClaims);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.groupBox2);
@@ -267,6 +280,8 @@
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butPrint;
 		private UI.Button butNewClaims;
 		private OpenDental.UI.CheckBox checkMedical;

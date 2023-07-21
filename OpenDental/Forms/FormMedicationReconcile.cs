@@ -154,18 +154,24 @@ namespace OpenDental {
 				_bitmapOriginal=ImageStore.OpenImage(document,patFolder);
 			}
 			else {
-				UI.ProgressWin progressWin=new UI.ProgressWin();
-				progressWin.StartingMessage="Downloading Image...";
-				byte[] byteArray=null;
-				progressWin.ActionMain=() => {
-					byteArray=CloudStorage.Download(patFolder,document.FileName);
-				};
-				progressWin.ShowDialog();
-				if(byteArray==null || byteArray.Length==0){
+				using FormProgress formProgress=new FormProgress();
+				formProgress.DisplayText="Downloading Image...";
+				formProgress.NumberFormat="F";
+				formProgress.NumberMultiplication=1;
+				formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+				formProgress.TickMS=1000;
+				OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.DownloadAsync(patFolder
+					,document.FileName
+					,new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
+				formProgress.ShowDialog();
+				if(formProgress.DialogResult==DialogResult.Cancel) {
+					state.DoCancel=true;
 					return;
 				}
-				using MemoryStream memoryStream=new MemoryStream(byteArray);
+				else { 
+					using MemoryStream memoryStream=new MemoryStream(state.FileContent);
 					_bitmapOriginal=new Bitmap(memoryStream);
+				}
 			}
 			Bitmap bitmap=ImageHelper.ApplyDocumentSettingsToImage(document,_bitmapOriginal,ImageSettingFlags.ALL);
 			pictBox.BackgroundImage?.Dispose();
@@ -215,6 +221,15 @@ namespace OpenDental {
 			}
 			FillReconcilesGrid();
 		}
+
+		private void butOK_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+		
 
 	}
 }

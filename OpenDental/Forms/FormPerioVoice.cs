@@ -22,12 +22,12 @@ namespace OpenDental {
 			}
 			DateTime dateSecurity;
 			if(gridODExam.GetSelectedIndex() > -1) {
-				dateSecurity=contrPerio.ListPerioExams[gridODExam.GetSelectedIndex()].ExamDate;
+				dateSecurity=PerioExams.ListExams[gridODExam.GetSelectedIndex()].ExamDate;
 			}
 			else {
 				dateSecurity=MiscData.GetNowDateTime();
 			}
-			if(!Security.IsAuthorized(EnumPermType.PerioEdit,dateSecurity,true) 
+			if(!Security.IsAuthorized(Permissions.PerioEdit,dateSecurity,true) 
 				&& !e.Command.ActionToPerform.In(VoiceCommandAction.StartListening,
 					VoiceCommandAction.StopListening,
 					VoiceCommandAction.DidntGetThat)) 
@@ -38,7 +38,7 @@ namespace OpenDental {
 			}
 			contrPerio.Focus();
 			_perioCellCurLocation=contrPerio.GetCurrentCell();
-			bool isFacial=_perioCellCurLocation.IsFacial;
+			bool isFacial=_perioCellCurLocation.Surface==PerioSurface.Facial;
 			switch(e.Command.ActionToPerform) {
 				#region Initialization
 				case VoiceCommandAction.StartListening:
@@ -5536,61 +5536,58 @@ namespace OpenDental {
 				#endregion Probing Depths
 				#region Bleeding distal/facial/lingual/mesial
 				case VoiceCommandAction.BleedingDistal:
-					SetBleedingFlagForSurface(EnumPerioMMidD.Distal,BleedingFlags.Blood,isFacial);
+					SetBleedingFlagForSurface(PerioSurface.Distal,BleedingFlags.Blood);
 					break;
-				//If they are on the facial, they would never say "lingual".
-				//So they have access to 4 of 6 surfaces even though they would only use 3.
-				//But this logic is tolerable as is.
 				case VoiceCommandAction.BleedingFacial:
-					SetBleedingFlagForSurface(EnumPerioMMidD.Middle,BleedingFlags.Blood,isFacial:true);
+					SetBleedingFlagForSurface(PerioSurface.Facial,BleedingFlags.Blood);
 					break;
 				case VoiceCommandAction.BleedingLingual:
-					SetBleedingFlagForSurface(EnumPerioMMidD.Middle,BleedingFlags.Blood,isFacial:false);
+					SetBleedingFlagForSurface(PerioSurface.Lingual,BleedingFlags.Blood);
 					break;
 				case VoiceCommandAction.BleedingMesial:
-					SetBleedingFlagForSurface(EnumPerioMMidD.Mesial,BleedingFlags.Blood,isFacial);
+					SetBleedingFlagForSurface(PerioSurface.Mesial,BleedingFlags.Blood);
 					break;
 				#endregion
 				#region Plaque distal/facial/lingual/mesial
 				case VoiceCommandAction.PlaqueDistal:
-					SetBleedingFlagForSurface(EnumPerioMMidD.Distal,BleedingFlags.Plaque,isFacial);
+					SetBleedingFlagForSurface(PerioSurface.Distal,BleedingFlags.Plaque);
 					break;
 				case VoiceCommandAction.PlaqueFacial:
-					SetBleedingFlagForSurface(EnumPerioMMidD.Middle,BleedingFlags.Plaque,isFacial:true);
+					SetBleedingFlagForSurface(PerioSurface.Facial,BleedingFlags.Plaque);
 					break;
 				case VoiceCommandAction.PlaqueLingual:
-					SetBleedingFlagForSurface(EnumPerioMMidD.Middle,BleedingFlags.Plaque,isFacial:false);
+					SetBleedingFlagForSurface(PerioSurface.Lingual,BleedingFlags.Plaque);
 					break;
 				case VoiceCommandAction.PlaqueMesial:
-					SetBleedingFlagForSurface(EnumPerioMMidD.Mesial,BleedingFlags.Plaque,isFacial);
+					SetBleedingFlagForSurface(PerioSurface.Mesial,BleedingFlags.Plaque);
 					break;
 				#endregion
 				#region Calculus distal/facial/lingual/mesial
 				case VoiceCommandAction.CalculusDistal:
-					SetBleedingFlagForSurface(EnumPerioMMidD.Distal,BleedingFlags.Calculus,isFacial);
+					SetBleedingFlagForSurface(PerioSurface.Distal,BleedingFlags.Calculus);
 					break;
 				case VoiceCommandAction.CalculusFacial:
-					SetBleedingFlagForSurface(EnumPerioMMidD.Middle,BleedingFlags.Calculus,isFacial:true);
+					SetBleedingFlagForSurface(PerioSurface.Facial,BleedingFlags.Calculus);
 					break;
 				case VoiceCommandAction.CalculusLingual:
-					SetBleedingFlagForSurface(EnumPerioMMidD.Middle,BleedingFlags.Calculus,isFacial:false);
+					SetBleedingFlagForSurface(PerioSurface.Lingual,BleedingFlags.Calculus);
 					break;
 				case VoiceCommandAction.CalculusMesial:
-					SetBleedingFlagForSurface(EnumPerioMMidD.Mesial,BleedingFlags.Calculus,isFacial);
+					SetBleedingFlagForSurface(PerioSurface.Mesial,BleedingFlags.Calculus);
 					break;
 				#endregion
 				#region Suppuration distal/facial/lingual/mesial
 				case VoiceCommandAction.SuppurationDistal:
-					SetBleedingFlagForSurface(EnumPerioMMidD.Distal,BleedingFlags.Suppuration,isFacial);
+					SetBleedingFlagForSurface(PerioSurface.Distal,BleedingFlags.Suppuration);
 					break;
 				case VoiceCommandAction.SuppurationFacial:
-					SetBleedingFlagForSurface(EnumPerioMMidD.Middle,BleedingFlags.Suppuration,isFacial:true);
+					SetBleedingFlagForSurface(PerioSurface.Facial,BleedingFlags.Suppuration);
 					break;
 				case VoiceCommandAction.SuppurationLingual:
-					SetBleedingFlagForSurface(EnumPerioMMidD.Middle,BleedingFlags.Suppuration,isFacial:false);
+					SetBleedingFlagForSurface(PerioSurface.Lingual,BleedingFlags.Suppuration);
 					break;
 				case VoiceCommandAction.SuppurationMesial:
-					SetBleedingFlagForSurface(EnumPerioMMidD.Mesial,BleedingFlags.Suppuration,isFacial);
+					SetBleedingFlagForSurface(PerioSurface.Mesial,BleedingFlags.Suppuration);
 					break;
 				#endregion
 				#region Misc Buttons/Checkboxes
@@ -5733,774 +5730,774 @@ namespace OpenDental {
 				#endregion
 				#region Go To Tooth Facial/Lingual
 				case VoiceCommandAction.GoToToothOneFacial:
-					GoToToothSurface(1,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(1,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothTwoFacial:
-					GoToToothSurface(2,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(2,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothThreeFacial:
-					GoToToothSurface(3,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(3,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothFourFacial:
-					GoToToothSurface(4,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(4,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothFiveFacial:
-					GoToToothSurface(5,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(5,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothSixFacial:
-					GoToToothSurface(6,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(6,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothSevenFacial:
-					GoToToothSurface(7,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(7,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothEightFacial:
-					GoToToothSurface(8,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(8,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothNineFacial:
-					GoToToothSurface(9,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(9,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothTenFacial:
-					GoToToothSurface(10,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(10,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothElevenFacial:
-					GoToToothSurface(11,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(11,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothTwelveFacial:
-					GoToToothSurface(12,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(12,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothThirteenFacial:
-					GoToToothSurface(13,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(13,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothFourteenFacial:
-					GoToToothSurface(14,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(14,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothFifteenFacial:
-					GoToToothSurface(15,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(15,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothSixteenFacial:
-					GoToToothSurface(16,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(16,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothSeventeenFacial:
-					GoToToothSurface(17,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(17,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothEighteenFacial:
-					GoToToothSurface(18,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(18,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothNineteenFacial:
-					GoToToothSurface(19,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(19,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyFacial:
-					GoToToothSurface(20,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(20,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyOneFacial:
-					GoToToothSurface(21,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(21,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyTwoFacial:
-					GoToToothSurface(22,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(22,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyThreeFacial:
-					GoToToothSurface(23,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(23,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyFourFacial:
-					GoToToothSurface(24,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(24,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyFiveFacial:
-					GoToToothSurface(25,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(25,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothTwentySixFacial:
-					GoToToothSurface(26,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(26,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothTwentySevenFacial:
-					GoToToothSurface(27,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(27,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyEightFacial:
-					GoToToothSurface(28,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(28,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyNineFacial:
-					GoToToothSurface(29,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(29,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothThirtyFacial:
-					GoToToothSurface(30,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(30,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothThirtyOneFacial:
-					GoToToothSurface(31,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(31,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothThirtyTwoFacial:
-					GoToToothSurface(32,isFacial:true,EnumPerioMMidD.Middle);
+					GoToToothSurface(32,true,PerioSurface.Facial);
 					break;
 				case VoiceCommandAction.GoToToothOneLingual:
-					GoToToothSurface(1,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(1,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothTwoLingual:
-					GoToToothSurface(2,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(2,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothThreeLingual:
-					GoToToothSurface(3,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(3,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothFourLingual:
-					GoToToothSurface(4,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(4,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothFiveLingual:
-					GoToToothSurface(5,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(5,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothSixLingual:
-					GoToToothSurface(6,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(6,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothSevenLingual:
-					GoToToothSurface(7,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(7,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothEightLingual:
-					GoToToothSurface(8,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(8,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothNineLingual:
-					GoToToothSurface(9,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(9,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothTenLingual:
-					GoToToothSurface(10,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(10,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothElevenLingual:
-					GoToToothSurface(11,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(11,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothTwelveLingual:
-					GoToToothSurface(12,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(12,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothThirteenLingual:
-					GoToToothSurface(13,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(13,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothFourteenLingual:
-					GoToToothSurface(14,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(14,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothFifteenLingual:
-					GoToToothSurface(15,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(15,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothSixteenLingual:
-					GoToToothSurface(16,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(16,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothSeventeenLingual:
-					GoToToothSurface(17,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(17,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothEighteenLingual:
-					GoToToothSurface(18,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(18,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothNineteenLingual:
-					GoToToothSurface(19,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(19,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothTwentyLingual:
-					GoToToothSurface(20,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(20,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothTwentyOneLingual:
-					GoToToothSurface(21,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(21,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothTwentyTwoLingual:
-					GoToToothSurface(22,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(22,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothTwentyThreeLingual:
-					GoToToothSurface(23,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(23,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothTwentyFourLingual:
-					GoToToothSurface(24,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(24,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothTwentyFiveLingual:
-					GoToToothSurface(25,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(25,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothTwentySixLingual:
-					GoToToothSurface(26,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(26,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothTwentySevenLingual:
-					GoToToothSurface(27,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(27,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothTwentyEightLingual:
-					GoToToothSurface(28,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(28,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothTwentyNineLingual:
-					GoToToothSurface(29,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(29,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothThirtyLingual:
-					GoToToothSurface(30,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(30,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothThirtyOneLingual:
-					GoToToothSurface(31,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(31,false,PerioSurface.Lingual);
 					break;
 				case VoiceCommandAction.GoToToothThirtyTwoLingual:
-					GoToToothSurface(32,isFacial:false,EnumPerioMMidD.Middle);
+					GoToToothSurface(32,false,PerioSurface.Lingual);
 					break;
 				#endregion Go To Tooth
 				#region Go To Tooth Distal/Mesial
 				case VoiceCommandAction.GoToToothOneDistal:
-					GoToToothSurface(1,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(1,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwoDistal:
-					GoToToothSurface(2,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(2,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothThreeDistal:
-					GoToToothSurface(3,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(3,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothFourDistal:
-					GoToToothSurface(4,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(4,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothFiveDistal:
-					GoToToothSurface(5,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(5,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothSixDistal:
-					GoToToothSurface(6,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(6,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothSevenDistal:
-					GoToToothSurface(7,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(7,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothEightDistal:
-					GoToToothSurface(8,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(8,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothNineDistal:
-					GoToToothSurface(9,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(9,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTenDistal:
-					GoToToothSurface(10,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(10,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothElevenDistal:
-					GoToToothSurface(11,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(11,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwelveDistal:
-					GoToToothSurface(12,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(12,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothThirteenDistal:
-					GoToToothSurface(13,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(13,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothFourteenDistal:
-					GoToToothSurface(14,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(14,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothFifteenDistal:
-					GoToToothSurface(15,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(15,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothSixteenDistal:
-					GoToToothSurface(16,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(16,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothSeventeenDistal:
-					GoToToothSurface(17,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(17,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothEighteenDistal:
-					GoToToothSurface(18,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(18,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothNineteenDistal:
-					GoToToothSurface(19,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(19,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyDistal:
-					GoToToothSurface(20,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(20,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyOneDistal:
-					GoToToothSurface(21,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(21,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyTwoDistal:
-					GoToToothSurface(22,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(22,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyThreeDistal:
-					GoToToothSurface(23,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(23,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyFourDistal:
-					GoToToothSurface(24,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(24,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyFiveDistal:
-					GoToToothSurface(25,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(25,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentySixDistal:
-					GoToToothSurface(26,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(26,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentySevenDistal:
-					GoToToothSurface(27,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(27,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyEightDistal:
-					GoToToothSurface(28,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(28,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyNineDistal:
-					GoToToothSurface(29,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(29,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothThirtyDistal:
-					GoToToothSurface(30,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(30,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothThirtyOneDistal:
-					GoToToothSurface(31,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(31,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothThirtyTwoDistal:
-					GoToToothSurface(32,isFacial,EnumPerioMMidD.Distal);
+					GoToToothSurface(32,isFacial,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothOneDistalFacial:
-					GoToToothSurface(1,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(1,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwoDistalFacial:
-					GoToToothSurface(2,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(2,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothThreeDistalFacial:
-					GoToToothSurface(3,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(3,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothFourDistalFacial:
-					GoToToothSurface(4,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(4,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothFiveDistalFacial:
-					GoToToothSurface(5,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(5,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothSixDistalFacial:
-					GoToToothSurface(6,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(6,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothSevenDistalFacial:
-					GoToToothSurface(7,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(7,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothEightDistalFacial:
-					GoToToothSurface(8,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(8,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothNineDistalFacial:
-					GoToToothSurface(9,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(9,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTenDistalFacial:
-					GoToToothSurface(10,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(10,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothElevenDistalFacial:
-					GoToToothSurface(11,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(11,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwelveDistalFacial:
-					GoToToothSurface(12,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(12,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothThirteenDistalFacial:
-					GoToToothSurface(13,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(13,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothFourteenDistalFacial:
-					GoToToothSurface(14,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(14,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothFifteenDistalFacial:
-					GoToToothSurface(15,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(15,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothSixteenDistalFacial:
-					GoToToothSurface(16,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(16,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothSeventeenDistalFacial:
-					GoToToothSurface(17,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(17,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothEighteenDistalFacial:
-					GoToToothSurface(18,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(18,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothNineteenDistalFacial:
-					GoToToothSurface(19,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(19,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyDistalFacial:
-					GoToToothSurface(20,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(20,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyOneDistalFacial:
-					GoToToothSurface(21,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(21,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyTwoDistalFacial:
-					GoToToothSurface(22,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(22,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyThreeDistalFacial:
-					GoToToothSurface(23,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(23,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyFourDistalFacial:
-					GoToToothSurface(24,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(24,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyFiveDistalFacial:
-					GoToToothSurface(25,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(25,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentySixDistalFacial:
-					GoToToothSurface(26,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(26,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentySevenDistalFacial:
-					GoToToothSurface(27,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(27,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyEightDistalFacial:
-					GoToToothSurface(28,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(28,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyNineDistalFacial:
-					GoToToothSurface(29,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(29,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothThirtyDistalFacial:
-					GoToToothSurface(30,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(30,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothThirtyOneDistalFacial:
-					GoToToothSurface(31,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(31,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothThirtyTwoDistalFacial:
-					GoToToothSurface(32,isFacial:true,EnumPerioMMidD.Distal);
+					GoToToothSurface(32,true,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothOneDistalLingual:
-					GoToToothSurface(1,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(1,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwoDistalLingual:
-					GoToToothSurface(2,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(2,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothThreeDistalLingual:
-					GoToToothSurface(3,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(3,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothFourDistalLingual:
-					GoToToothSurface(4,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(4,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothFiveDistalLingual:
-					GoToToothSurface(5,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(5,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothSixDistalLingual:
-					GoToToothSurface(6,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(6,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothSevenDistalLingual:
-					GoToToothSurface(7,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(7,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothEightDistalLingual:
-					GoToToothSurface(8,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(8,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothNineDistalLingual:
-					GoToToothSurface(9,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(9,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTenDistalLingual:
-					GoToToothSurface(10,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(10,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothElevenDistalLingual:
-					GoToToothSurface(11,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(11,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwelveDistalLingual:
-					GoToToothSurface(12,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(12,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothThirteenDistalLingual:
-					GoToToothSurface(13,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(13,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothFourteenDistalLingual:
-					GoToToothSurface(14,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(14,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothFifteenDistalLingual:
-					GoToToothSurface(15,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(15,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothSixteenDistalLingual:
-					GoToToothSurface(16,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(16,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothSeventeenDistalLingual:
-					GoToToothSurface(17,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(17,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothEighteenDistalLingual:
-					GoToToothSurface(18,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(18,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothNineteenDistalLingual:
-					GoToToothSurface(19,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(19,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyDistalLingual:
-					GoToToothSurface(20,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(20,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyOneDistalLingual:
-					GoToToothSurface(21,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(21,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyTwoDistalLingual:
-					GoToToothSurface(22,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(22,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyThreeDistalLingual:
-					GoToToothSurface(23,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(23,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyFourDistalLingual:
-					GoToToothSurface(24,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(24,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyFiveDistalLingual:
-					GoToToothSurface(25,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(25,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentySixDistalLingual:
-					GoToToothSurface(26,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(26,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentySevenDistalLingual:
-					GoToToothSurface(27,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(27,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyEightDistalLingual:
-					GoToToothSurface(28,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(28,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothTwentyNineDistalLingual:
-					GoToToothSurface(29,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(29,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothThirtyDistalLingual:
-					GoToToothSurface(30,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(30,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothThirtyOneDistalLingual:
-					GoToToothSurface(31,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(31,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothThirtyTwoDistalLingual:
-					GoToToothSurface(32,isFacial:false,EnumPerioMMidD.Distal);
+					GoToToothSurface(32,false,PerioSurface.Distal);
 					break;
 				case VoiceCommandAction.GoToToothOneMesial:
-					GoToToothSurface(1,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(1,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwoMesial:
-					GoToToothSurface(2,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(2,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothThreeMesial:
-					GoToToothSurface(3,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(3,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothFourMesial:
-					GoToToothSurface(4,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(4,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothFiveMesial:
-					GoToToothSurface(5,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(5,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothSixMesial:
-					GoToToothSurface(6,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(6,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothSevenMesial:
-					GoToToothSurface(7,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(7,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothEightMesial:
-					GoToToothSurface(8,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(8,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothNineMesial:
-					GoToToothSurface(9,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(9,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTenMesial:
-					GoToToothSurface(10,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(10,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothElevenMesial:
-					GoToToothSurface(11,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(11,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwelveMesial:
-					GoToToothSurface(12,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(12,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothThirteenMesial:
-					GoToToothSurface(13,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(13,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothFourteenMesial:
-					GoToToothSurface(14,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(14,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothFifteenMesial:
-					GoToToothSurface(15,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(15,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothSixteenMesial:
-					GoToToothSurface(16,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(16,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothSeventeenMesial:
-					GoToToothSurface(17,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(17,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothEighteenMesial:
-					GoToToothSurface(18,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(18,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothNineteenMesial:
-					GoToToothSurface(19,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(19,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyMesial:
-					GoToToothSurface(20,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(20,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyOneMesial:
-					GoToToothSurface(21,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(21,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyTwoMesial:
-					GoToToothSurface(22,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(22,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyThreeMesial:
-					GoToToothSurface(23,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(23,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyFourMesial:
-					GoToToothSurface(24,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(24,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyFiveMesial:
-					GoToToothSurface(25,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(25,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentySixMesial:
-					GoToToothSurface(26,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(26,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentySevenMesial:
-					GoToToothSurface(27,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(27,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyEightMesial:
-					GoToToothSurface(28,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(28,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyNineMesial:
-					GoToToothSurface(29,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(29,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothThirtyMesial:
-					GoToToothSurface(30,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(30,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothThirtyOneMesial:
-					GoToToothSurface(31,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(31,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothThirtyTwoMesial:
-					GoToToothSurface(32,isFacial,EnumPerioMMidD.Mesial);
+					GoToToothSurface(32,isFacial,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothOneMesialFacial:
-					GoToToothSurface(1,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(1,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwoMesialFacial:
-					GoToToothSurface(2,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(2,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothThreeMesialFacial:
-					GoToToothSurface(3,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(3,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothFourMesialFacial:
-					GoToToothSurface(4,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(4,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothFiveMesialFacial:
-					GoToToothSurface(5,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(5,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothSixMesialFacial:
-					GoToToothSurface(6,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(6,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothSevenMesialFacial:
-					GoToToothSurface(7,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(7,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothEightMesialFacial:
-					GoToToothSurface(8,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(8,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothNineMesialFacial:
-					GoToToothSurface(9,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(9,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTenMesialFacial:
-					GoToToothSurface(10,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(10,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothElevenMesialFacial:
-					GoToToothSurface(11,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(11,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwelveMesialFacial:
-					GoToToothSurface(12,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(12,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothThirteenMesialFacial:
-					GoToToothSurface(13,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(13,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothFourteenMesialFacial:
-					GoToToothSurface(14,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(14,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothFifteenMesialFacial:
-					GoToToothSurface(15,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(15,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothSixteenMesialFacial:
-					GoToToothSurface(16,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(16,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothSeventeenMesialFacial:
-					GoToToothSurface(17,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(17,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothEighteenMesialFacial:
-					GoToToothSurface(18,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(18,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothNineteenMesialFacial:
-					GoToToothSurface(19,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(19,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyMesialFacial:
-					GoToToothSurface(20,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(20,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyOneMesialFacial:
-					GoToToothSurface(21,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(21,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyTwoMesialFacial:
-					GoToToothSurface(22,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(22,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyThreeMesialFacial:
-					GoToToothSurface(23,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(23,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyFourMesialFacial:
-					GoToToothSurface(24,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(24,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyFiveMesialFacial:
-					GoToToothSurface(25,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(25,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentySixMesialFacial:
-					GoToToothSurface(26,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(26,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentySevenMesialFacial:
-					GoToToothSurface(27,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(27,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyEightMesialFacial:
-					GoToToothSurface(28,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(28,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyNineMesialFacial:
-					GoToToothSurface(29,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(29,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothThirtyMesialFacial:
-					GoToToothSurface(30,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(30,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothThirtyOneMesialFacial:
-					GoToToothSurface(31,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(31,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothThirtyTwoMesialFacial:
-					GoToToothSurface(32,isFacial:true,EnumPerioMMidD.Mesial);
+					GoToToothSurface(32,true,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothOneMesialLingual:
-					GoToToothSurface(1,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(1,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwoMesialLingual:
-					GoToToothSurface(2,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(2,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothThreeMesialLingual:
-					GoToToothSurface(3,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(3,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothFourMesialLingual:
-					GoToToothSurface(4,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(4,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothFiveMesialLingual:
-					GoToToothSurface(5,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(5,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothSixMesialLingual:
-					GoToToothSurface(6,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(6,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothSevenMesialLingual:
-					GoToToothSurface(7,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(7,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothEightMesialLingual:
-					GoToToothSurface(8,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(8,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothNineMesialLingual:
-					GoToToothSurface(9,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(9,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTenMesialLingual:
-					GoToToothSurface(10,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(10,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothElevenMesialLingual:
-					GoToToothSurface(11,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(11,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwelveMesialLingual:
-					GoToToothSurface(12,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(12,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothThirteenMesialLingual:
-					GoToToothSurface(13,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(13,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothFourteenMesialLingual:
-					GoToToothSurface(14,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(14,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothFifteenMesialLingual:
-					GoToToothSurface(15,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(15,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothSixteenMesialLingual:
-					GoToToothSurface(16,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(16,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothSeventeenMesialLingual:
-					GoToToothSurface(17,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(17,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothEighteenMesialLingual:
-					GoToToothSurface(18,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(18,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothNineteenMesialLingual:
-					GoToToothSurface(19,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(19,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyMesialLingual:
-					GoToToothSurface(20,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(20,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyOneMesialLingual:
-					GoToToothSurface(21,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(21,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyTwoMesialLingual:
-					GoToToothSurface(22,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(22,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyThreeMesialLingual:
-					GoToToothSurface(23,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(23,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyFourMesialLingual:
-					GoToToothSurface(24,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(24,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyFiveMesialLingual:
-					GoToToothSurface(25,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(25,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentySixMesialLingual:
-					GoToToothSurface(26,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(26,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentySevenMesialLingual:
-					GoToToothSurface(27,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(27,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyEightMesialLingual:
-					GoToToothSurface(28,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(28,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothTwentyNineMesialLingual:
-					GoToToothSurface(29,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(29,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothThirtyMesialLingual:
-					GoToToothSurface(30,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(30,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothThirtyOneMesialLingual:
-					GoToToothSurface(31,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(31,false,PerioSurface.Mesial);
 					break;
 				case VoiceCommandAction.GoToToothThirtyTwoMesialLingual:
-					GoToToothSurface(32,isFacial:false,EnumPerioMMidD.Mesial);
+					GoToToothSurface(32,false,PerioSurface.Mesial);
 					break;
 				#endregion
 				#region Skip Tooth
@@ -6678,7 +6675,7 @@ namespace OpenDental {
 				_voiceController.SayResponseAsync(e.Command.Response);
 			}
 			_perioCellCurLocation=contrPerio.GetCurrentCell();
-			SetCurrentDirection();
+			SetAutoAdvance();
 			_perioCellPrevLocation=_perioCellCurLocation;
 		}
 	}

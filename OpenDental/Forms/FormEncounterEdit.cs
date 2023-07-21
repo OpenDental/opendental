@@ -81,16 +81,16 @@ namespace OpenDental {
 		}
 
 		private void butPickProv_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick=new FrmProviderPick();
+			using FormProviderPick formProviderPick=new FormProviderPick();
 			if(comboProv.SelectedIndex>-1) {
-				frmProviderPick.ProvNumSelected=_listProviders[comboProv.SelectedIndex].ProvNum;
+				formProviderPick.ProvNumSelected=_listProviders[comboProv.SelectedIndex].ProvNum;
 			}
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboProv.SelectedIndex=Providers.GetIndex(frmProviderPick.ProvNumSelected);
-			_provNum=frmProviderPick.ProvNumSelected;
+			comboProv.SelectedIndex=Providers.GetIndex(formProviderPick.ProvNumSelected);
+			_provNum=formProviderPick.ProvNumSelected;
 		}
 
 		private void butSnomed_Click(object sender,EventArgs e) {
@@ -154,7 +154,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			//TODO: valid date box, validation here.
 			if(!textDateEnc.IsValid()) {
 				MsgBox.Show(this,"You must enter a valid date");
@@ -179,6 +179,11 @@ namespace OpenDental {
 			}
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 
 	}
 }

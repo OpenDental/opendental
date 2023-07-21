@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRecurringChargesHistory));
+			this.butClose = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.contextMenu = new System.Windows.Forms.ContextMenu();
 			this.menuItemGoTo = new System.Windows.Forms.MenuItem();
@@ -41,6 +42,17 @@ namespace OpenDental{
 			this.groupView.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(950, 680);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// gridMain
 			// 
 			this.gridMain.AllowSortingByColumn = true;
@@ -50,7 +62,7 @@ namespace OpenDental{
 			this.gridMain.Location = new System.Drawing.Point(20, 88);
 			this.gridMain.Name = "gridMain";
 			this.gridMain.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridMain.Size = new System.Drawing.Size(1005, 604);
+			this.gridMain.Size = new System.Drawing.Size(1005, 584);
 			this.gridMain.TabIndex = 30;
 			this.gridMain.Title = "Recurring Charges";
 			this.gridMain.TranslationName = "TableRecurring";
@@ -170,16 +182,18 @@ namespace OpenDental{
 			this.comboClinics.IncludeUnassigned = true;
 			this.comboClinics.Location = new System.Drawing.Point(208, 43);
 			this.comboClinics.Name = "comboClinics";
-			this.comboClinics.IsMultiSelect = true;
+			this.comboClinics.SelectionModeMulti = true;
 			this.comboClinics.Size = new System.Drawing.Size(197, 21);
 			this.comboClinics.TabIndex = 34;
 			this.comboClinics.SelectionChangeCommitted += new System.EventHandler(this.FilterChanged);
 			// 
 			// FormRecurringChargesHistory
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(1044, 714);
 			this.Controls.Add(this.groupView);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormRecurringChargesHistory";
 			this.Text = "Recurring Charge History";
@@ -190,6 +204,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private UI.Button butRefresh;
 		private UI.ODDateRangePicker datePicker;

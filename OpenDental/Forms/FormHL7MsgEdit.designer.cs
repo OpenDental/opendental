@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormHL7MsgEdit));
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.labelPatient = new System.Windows.Forms.Label();
 			this.textMsgTxt = new System.Windows.Forms.TextBox();
 			this.labelMsgTxt = new System.Windows.Forms.Label();
@@ -44,12 +45,22 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(797,477);
+			this.butOK.Location = new System.Drawing.Point(707,471);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75,24);
 			this.butOK.TabIndex = 3;
-			this.butOK.Text = "&Save";
-			this.butOK.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(793,471);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75,24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// labelPatient
 			// 
@@ -70,7 +81,7 @@ namespace OpenDental{
 			this.textMsgTxt.Name = "textMsgTxt";
 			this.textMsgTxt.ReadOnly = true;
 			this.textMsgTxt.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.textMsgTxt.Size = new System.Drawing.Size(736,350);
+			this.textMsgTxt.Size = new System.Drawing.Size(736,334);
 			this.textMsgTxt.TabIndex = 15;
 			// 
 			// labelMsgTxt
@@ -183,6 +194,7 @@ namespace OpenDental{
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
 			this.ClientSize = new System.Drawing.Size(884,511);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.textHL7MsgNum);
 			this.Controls.Add(this.labelHL7MsgNum);
 			this.Controls.Add(this.textHL7Status);
@@ -212,6 +224,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label labelPatient;
 		private System.Windows.Forms.TextBox textMsgTxt;
 		private System.Windows.Forms.Label labelMsgTxt;

@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 using CodeBase;
 
 namespace OpenDentBusiness {
-	///<summary>This is called eServices Automated Messaging Rules in the UI. These are used to track the automated generation and sending of appointment reminders and confirmations. 
+	///<summary> Appointment Reminder Rules are used to track the automated generation and sending of appointment reminders and confirmations. 
 	/// Users are allowed to define up to two reminders and one confirmation (per clinic.) These can be sent out any number of Days, Hours, and/or 
 	/// Minutes before a scheduled appointment.
 	/// <para>PRACTICE - Appointment Reminder Rules will be saved and edited with clinicNum=0. This denotes the "Defaults" when using clinics, 
@@ -277,15 +277,6 @@ namespace OpenDentBusiness {
 		///<summary>9 - NewPatientThankYou, Thank you for New Patient which is able to send with a new patient web form URL.</summary>
 		[Description("New Patient Thank-You")]
 		NewPatientThankYou,
-		///<summary>10 - PaymentPortal Msg-To-Pay, used to send msg-to-pay messages to patients. Currently not an AutoComm feature but doing this now so functionality can be easier added in the future.</summary>
-		[ReminderRuleType(IsForAppointment=false)]
-		[Description("Payment Portal Msg-To-Pay")]
-		PayPortalMsgToPay,
-	}
-
-	public class ReminderRuleTypeAttribute : Attribute {
-		///<summary>When this is false, an appointment is not used for a given AutoComm (i.e. Text To Pay links do not need an appointment, only having a patient suffices).</summary>
-		public bool IsForAppointment=true;
 	}
 
 	[Flags]
@@ -330,7 +321,7 @@ namespace OpenDentBusiness {
 		[ShortCode(SmsMessageSource=new SmsMessageSource[] { SmsMessageSource.AsapManual }
 			//NotApplicable means only Texting is required for this eService 
 			,EServicePrefNames=new PrefName[] { PrefName.NotApplicable })]
-		ASAPManual=0b1000000000,
+		ASAPManual=0b1000000000,		
 		[ShortCode(SmsMessageSource=new SmsMessageSource[] { SmsMessageSource.Arrival }
 			,EServicePrefNames=new PrefName[] { PrefName.ApptConfirmAutoSignedUp,PrefName.ApptConfirmAutoEnabled })]
 		Arrivals=0b10000000000,
@@ -434,33 +425,19 @@ namespace OpenDentBusiness {
 		///<summary>0 - Use text OR email based on patient preference.</summary>
 		Preferred = 0,
 		///<summary>1 - Attempt to send text message, if successful do not send via email. (Unless, a SendAll bool is used, which usually negates the need for this enumeration.)</summary>
-		[CommType(ContactMethod=ContactMethod.TextMessage,Flag=CommTypeFlag.Text)]
+		[CommType(ContactMethod=ContactMethod.TextMessage)]
 		Text = 1,
 		///<summary>2 - Attempt to send email message, if successful do not send via text. (Unless, a SendAll bool is used, which usually negates the need for this enumeration.)</summary>
-		[CommType(ContactMethod=ContactMethod.Email,Flag=CommTypeFlag.Email)]
+		[CommType(ContactMethod=ContactMethod.Email)]
 		Email = 2,
 		///<summary>3 - Attempt to send secure email message. </summary>
-		[CommType(ContactMethod=ContactMethod.Email,Flag=CommTypeFlag.SecureEmail)]
+		[CommType(ContactMethod=ContactMethod.Email)]
 		[Description("Secure Email")]
 		SecureEmail = 3,
 	}
 
-	///<summary>Copy of CommType but as Flags instead. For preference WebSchedManualSendTriggered.</summary>
-	[Flags]
-	public enum CommTypeFlag {
-		///<summary>0 - Use text OR email based on patient preference.</summary>
-		None=0,
-		///<summary>1 - Attempt to send text message, if successful do not send via email. (Unless, a SendAll bool is used, which usually negates the need for this enumeration.)</summary>
-		Text=1,
-		///<summary>2 - Attempt to send email message, if successful do not send via text. (Unless, a SendAll bool is used, which usually negates the need for this enumeration.)</summary>
-		Email=2,
-		///<summary>4 - Attempt to send secure email message. </summary>
-		SecureEmail=4,
-	}
-
 	public class CommTypeAttribute : Attribute {
 		public ContactMethod ContactMethod;
-		public CommTypeFlag Flag=CommTypeFlag.None;
 	}
 
 	///<summary></summary>

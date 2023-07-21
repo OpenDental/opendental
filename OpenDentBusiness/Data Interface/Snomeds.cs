@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -106,13 +105,13 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<Snomed>>(MethodBase.GetCurrentMethod(),searchTxt);
 			}
-			List<string> listCodes=searchTxt.Split(',').ToList();
+			string[] codes=searchTxt.Split(',');
 			string command="SELECT * FROM snomed WHERE SnomedCode IN (";
-			for(int i=0;i<listCodes.Count;i++) {
+			for(int i=0;i<codes.Length;i++) {
 				if(i>0){
 					command+=",";
 				}
-				command+="'"+POut.String(listCodes[i])+"'";
+				command+="'"+POut.String(codes[i])+"'";
 			}
 			command+=") ";
 			command=DbHelper.LimitOrderBy(command,10000);//Adds " LIMIT 10000" or similarly handles the MySQL or Oracle command.
@@ -225,7 +224,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns dictionary&lt;ICD9Code,SNOMEDCode&gt; for crossmapping exact matches between ICD9 and SNOMED.</summary>
-		public static Dictionary<string,string> GetICD9toSNOMEDDictionary() {
+		public static Dictionary<string,string> GetICD9toSNOMEDDictionary() {	
 			//No need to check MiddleTierRole; no call to db.
 			return new Dictionary<string,string>{
 				{"001.1","81020007"},
@@ -3575,13 +3574,13 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<string>>(MethodBase.GetCurrentMethod());
 			}
-			List<string> listCodes=new List<string>();
+			List<string> retVal=new List<string>();
 			string command="SELECT SnomedCode FROM snomed";
 			DataTable table=DataCore.GetTable(command);
 			for(int i=0;i<table.Rows.Count;i++) {
-				listCodes.Add(table.Rows[i].ItemArray[0].ToString());
+				retVal.Add(table.Rows[i].ItemArray[0].ToString());
 			}
-			return listCodes;
+			return retVal;
 		}
 
 		public static long GetCodeCount() {

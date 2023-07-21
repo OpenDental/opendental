@@ -23,6 +23,7 @@ namespace OpenDental {
 
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormClaimCreate));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.labelRelat = new System.Windows.Forms.Label();
 			this.listRelat = new OpenDental.UI.ListBox();
@@ -30,10 +31,21 @@ namespace OpenDental {
 			this.checkShowPlansNotInUse = new OpenDental.UI.CheckBox();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(649, 275);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(76, 26);
+			this.butCancel.TabIndex = 6;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(667, 238);
+			this.butOK.Location = new System.Drawing.Point(556, 275);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(76, 26);
 			this.butOK.TabIndex = 5;
@@ -78,11 +90,13 @@ namespace OpenDental {
 			// FormClaimCreate
 			// 
 			this.AcceptButton = this.butOK;
-			this.ClientSize = new System.Drawing.Size(755, 276);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(755, 319);
 			this.Controls.Add(this.checkShowPlansNotInUse);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.listRelat);
 			this.Controls.Add(this.labelRelat);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -97,6 +111,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.ListBox listRelat;
 		private System.Windows.Forms.Label labelRelat;

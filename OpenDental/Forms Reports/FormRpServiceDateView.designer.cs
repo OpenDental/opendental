@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpServiceDateView));
+			this.butClose = new OpenDental.UI.Button();
 			this.butPrint = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butSavePDFToImages = new OpenDental.UI.Button();
@@ -32,6 +33,17 @@ namespace OpenDental{
 			this.butRefresh = new OpenDental.UI.Button();
 			this.groupFilter.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(900, 444);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butPrint
 			// 
@@ -105,7 +117,9 @@ namespace OpenDental{
 			// FormRpServiceDateView
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(987, 480);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butRefresh);
 			this.Controls.Add(this.groupFilter);
 			this.Controls.Add(this.butSavePDFToImages);
@@ -121,6 +135,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private UI.Button butPrint;
 		private UI.GridOD gridMain;
 		private UI.Button butSavePDFToImages;

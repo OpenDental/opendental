@@ -25,7 +25,7 @@ namespace OpenDental {
 		}
 		
 		private void FormPhoneGraphCreate_Load(object sender,System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Schedules,true)){
+			if(!Security.IsAuthorized(Permissions.Schedules,true)){
 				checkIsGraphed.Enabled=false;
 				checkPrescheduledOff.Enabled=false;
 				checkAbsent.Enabled=false;
@@ -36,7 +36,7 @@ namespace OpenDental {
 				butCopyEmp.Enabled=false;
 				butCopyOverride.Enabled=false;
 				butClear.Enabled=false;
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 			}
 			textDateEntry.Text=PhoneGraphCur.DateEntry.ToShortDateString();
@@ -175,7 +175,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			if(textStop1.Text!="" || textStart2.Text!="" || textStop2.Text!=""){
 				if(textStart1.Text==""){
 					MsgBox.Show(this,"If overriding any times, the first time must not be blank.");
@@ -248,34 +248,17 @@ namespace OpenDental {
 			}
 			//end of validation
 			//Date can't be changed
-			string employeeName=Employees.GetFirstOrDefault(x => x.EmployeeNum==PhoneGraphCur.EmployeeNum).FName;//Internal database includes the initial of the last name.
-			if(PhoneGraphCur.PreSchedOff!=checkPrescheduledOff.Checked) {
-				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Prescheduled off checkbox changed for "+employeeName);
-			}
-			if(PhoneGraphCur.Absent!=checkAbsent.Checked) {
-				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Absent, short notice checkbox changed for "+employeeName);
-			}
 			PhoneGraphCur.IsGraphed=checkIsGraphed.Checked;
 			PhoneGraphCur.PreSchedOff=checkPrescheduledOff.Checked;
 			PhoneGraphCur.Absent=checkAbsent.Checked;
-			EnumPresched enumPreschedSelectedOld=PhoneGraphCur.PreSchedTimes;
 			if(radioPrescheduled.Checked){
 				PhoneGraphCur.PreSchedTimes=EnumPresched.Presched;
 			}
-			else if(radioShortNotice.Checked){
+			if(radioShortNotice.Checked){
 				PhoneGraphCur.PreSchedTimes=EnumPresched.ShortNotice;
 			}
-			else if(radioNotTracked.Checked){
+			if(radioNotTracked.Checked){
 				PhoneGraphCur.PreSchedTimes=EnumPresched.NotTracked;
-			}
-			if(PhoneGraphCur.PreSchedTimes!=enumPreschedSelectedOld) {
-				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Updated "+employeeName+" Override Type to "+PhoneGraphCur.PreSchedTimes.ToString());
-			}
-			if(PhoneGraphCur.DateTimeStart1!=dateTimeStart1 || PhoneGraphCur.DateTimeStart2!=dateTimeStart2 || PhoneGraphCur.DateTimeStop1!=dateTimeStop1 
-				|| PhoneGraphCur.DateTimeStop2!=dateTimeStop2) 
-			{
-				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Updated "+employeeName+" Prescheduled Override Times to Start Time 1: "+dateTimeStart1.ToShortTimeString()+
-				". Stop Time 1: "+dateTimeStop1.ToShortTimeString()+". Start Time 2: "+dateTimeStart2.ToShortTimeString()+". Stop Time 2: "+dateTimeStop2.ToShortTimeString());
 			}
 			PhoneGraphCur.DateTimeStart1=dateTimeStart1;
 			PhoneGraphCur.DateTimeStop1=dateTimeStop1;
@@ -348,9 +331,14 @@ namespace OpenDental {
 				Schedules.Insert(schedule,validate:false,hasSignal:false);
 			}
 			DataValid.SetInvalid(InvalidType.Employees);
-			SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Updated schedule for provider "+Providers.GetFormalName(ProvNum));
+			SecurityLogs.MakeLogEntry(Permissions.Schedules,0,"");
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			this.DialogResult=DialogResult.Cancel;
+		}
+
+		
 	}
 }

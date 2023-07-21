@@ -178,16 +178,16 @@ namespace OpenDental {
 		}
 
 		private void butPickPrimary_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick=new FrmProviderPick(_listProviders);
+			using FormProviderPick formProviderPick=new FormProviderPick(_listProviders);
 			if(comboPriProv.SelectedIndex > -1) {//Initial FormP selection if selected prov is not hidden.
-				frmProviderPick.ProvNumSelected=_provNumSelected;
+				formProviderPick.ProvNumSelected=_provNumSelected;
 			}
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboPriProv.SelectedIndex=_listProviders.FindIndex(x => x.ProvNum==frmProviderPick.ProvNumSelected);
-			_provNumSelected=frmProviderPick.ProvNumSelected;
+			comboPriProv.SelectedIndex=_listProviders.FindIndex(x => x.ProvNum==formProviderPick.ProvNumSelected);
+			_provNumSelected=formProviderPick.ProvNumSelected;
 		}
 
 		private void comboPriProv_SelectionChangeCommitted(object sender,EventArgs e) {
@@ -246,6 +246,10 @@ namespace OpenDental {
 				}
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		///<summary>Class that contains a clinic specialty along with a list of clinics that are associated to the clinic specialty. A DefNumClinicSpecialty of value 0

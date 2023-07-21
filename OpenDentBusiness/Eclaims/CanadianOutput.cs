@@ -516,24 +516,14 @@ namespace OpenDentBusiness.Eclaims {
 		private static int GetOriginalOfficeSequenceNumber(Claim claim,out DateTime originalEtransDateTime) {
 			int officeSequenceNumber=0;//Clear the randomly generated office sequence number.
 			originalEtransDateTime=DateTime.MinValue;//So we can get the latest matching transaction.
-			List<Etrans> listEtrans=Etranss.GetAllForOneClaim(claim.ClaimNum).FindAll(x => x.Etype.In(EtransType.Claim_CA,EtransType.ClaimCOB_CA,EtransType.Predeterm_CA));
+			List<Etrans> listEtrans=Etranss.GetAllForOneClaim(claim.ClaimNum).FindAll(x => x.Etype.In(EtransType.Claim_CA,EtransType.ClaimCOB_CA));
 			for(int i=0;i<listEtrans.Count;i++) {
 				Etrans ack=Etranss.GetEtrans(listEtrans[i].AckEtransNum);
 				if(ack==null) {//For those claims sent that didn't receive a response (i.e. when there is an exception while sending a claim).
 					continue;
 				}
 				string messageText=EtransMessageTexts.GetMessageText(ack.EtransMessageTextNum);
-				if(messageText=="") {
-					continue;
-				}
-				CCDFieldInputter messageData=null;
-				try {
-					messageData=new CCDFieldInputter(messageText);
-				}
-				catch(Exception ex) {//Invalid message.
-					ex.DoNothing();
-					continue;
-				}
+				CCDFieldInputter messageData=new CCDFieldInputter(messageText);
 				CCDField transRefNum=messageData.GetFieldById("G01");
 				if(transRefNum!=null && transRefNum.valuestr==claim.CanadaTransRefNum && listEtrans[i].DateTimeTrans>originalEtransDateTime) {
 					officeSequenceNumber=PIn.Int(messageData.GetFieldById("A02").valuestr);
@@ -543,7 +533,7 @@ namespace OpenDentBusiness.Eclaims {
 			return officeSequenceNumber;
 		}
 
-		///<summary>Throws exceptions.</summary>
+		///<summary></summary>
 		public static long SendClaimReversal(Clearinghouse clearinghouseClin,Claim claim,InsPlan plan,InsSub insSub,bool isAutomatic,PrintCCD printCCD) {
 			StringBuilder strb=new StringBuilder();
 			Carrier carrier=Carriers.GetCarrier(plan.CarrierNum);
@@ -580,9 +570,6 @@ namespace OpenDentBusiness.Eclaims {
 			//A02 office sequence number 6 N
 			//We are required to use the same office sequence number as the original claim.
 			etrans.OfficeSequenceNumber=GetOriginalOfficeSequenceNumber(claim,out DateTime originalEtransDateTime);
-			if(etrans.OfficeSequenceNumber==0) {
-				throw new ApplicationException(Lans.g("CanadianOutput","Original OfficeSequenceNumber not found."));
-			}
 			DateTime serverDate=MiscData.GetNowDateTime().Date;
 			if(originalEtransDateTime.Date!=serverDate) {
 				throw new ApplicationException(Lans.g("CanadianOutput","Claims can only be reversed on the day that they were sent. The claim can only be manually reversed."));
@@ -742,9 +729,8 @@ namespace OpenDentBusiness.Eclaims {
 				}
 				string extension=Path.GetExtension(attachmentPath).ToLower();
 				Bitmap bitmap=null;
-				//The standard format requires one of these types JPG=JPG file, DIC=DICOM, TXT=ASCII text file, DOC=Microsoft Word, PDF=Portable Document Format. Images will be converted to JPG.
-				//Changes made ahead of upcoming update to CDAnet message formatting, see "CDAnet Note 2020-002 Attachment.pdf" on job F38436
-				if(extension.In(".txt",".doc",".docx",".pdf")) {
+				//The standard format requires one of these types JPG=JPG file, DIC=DICOM, TXT=ASCII text file, DOC=Microsoft Word. Images will be converted to JPG.
+				if(extension.In(".txt",".doc",".docx")) {
 					//Good to include raw bytes as base64 in outgoing format.
 				}
 				else {
@@ -1034,14 +1020,13 @@ namespace OpenDentBusiness.Eclaims {
 			if(carrier!=null && !carrier.CanadianSupportedTypes.HasFlag(CanSupTransTypes.RequestForOutstandingTrans_04)) {
 				throw new ApplicationException($"This carrier does not support request for outstanding transactions.");
 			}
-			List<Etrans> listEtransAcks=new List<Etrans>();
+			List<Etrans> etransAcks=new List<Etrans>();
 			bool isAutomatic=(printForm==null && printCCD==null);
 			bool exit=false;
 			do {
-				Etrans etransROT=Etranss.CreateCanadianOutput(0,(carrier==null)?0:carrier.CarrierNum,(network==null)?0:network.CanadianNetworkNum,
-					clearinghouseClin.HqClearinghouseNum,EtransType.RequestOutstand_CA,0,0,Security.CurUser.UserNum);
-				#region Request for Outstanding Transactions (ROT) Message
 				StringBuilder strb=new StringBuilder();
+				Etrans etrans=Etranss.CreateCanadianOutput(0,(carrier==null)?0:carrier.CarrierNum,(network==null)?0:network.CanadianNetworkNum,
+					clearinghouseClin.HqClearinghouseNum,EtransType.RequestOutstand_CA,0,0,Security.CurUser.UserNum);
 				//A01 transaction prefix 12 AN
 				if(network==null) {//iTrans will always hit this, or running for Version 2 or Version 4 for all carriers.
 					strb.Append("            ");
@@ -1050,7 +1035,7 @@ namespace OpenDentBusiness.Eclaims {
 					strb.Append(Canadian.TidyAN(network.CanadianTransactionPrefix,12));
 				}
 				//A02 office sequence number 6 N
-				strb.Append(Canadian.TidyN(etransROT.OfficeSequenceNumber,6));
+				strb.Append(Canadian.TidyN(etrans.OfficeSequenceNumber,6));
 				//A03 format version number 2 N
 				strb.Append(formatVersion);
 				//A04 transaction code 2 N
@@ -1074,7 +1059,7 @@ namespace OpenDentBusiness.Eclaims {
 				}
 				if(formatVersion=="04") {
 					//A09 carrier transaction counter 5 N
-					strb.Append(Canadian.TidyN(etransROT.CarrierTransCounter,5));
+					strb.Append(Canadian.TidyN(etrans.CarrierTransCounter,5));
 				}
 				//According to the documentation for the outstanding transactions ack format, B01 only has to be a valid provider for the practice,
 				//and that will trigger acknowledgements for all providers of the practice. I am assuming here that the same is true for the 
@@ -1088,21 +1073,20 @@ namespace OpenDentBusiness.Eclaims {
 					//might need to account for possible 5 digit prov id assigned by carrier
 					strb.Append(Canadian.TidyAN(prov.NationalProvID,9));//already validated
 				}
-				#endregion
-				string result=Canadian.PassToIca(strb.ToString(),clearinghouseClin,network,isAutomatic,out string errorMsg);
-				#region Outstanding Transactions Response
+				string errorMsg="";
+				string result=Canadian.PassToIca(strb.ToString(),clearinghouseClin,network,isAutomatic,out errorMsg);
 				//Attach an ack to the etrans
 				Etrans etransAck=new Etrans();
-				etransAck.PatNum=etransROT.PatNum;
-				etransAck.PlanNum=etransROT.PlanNum;
-				etransAck.InsSubNum=etransROT.InsSubNum;
-				etransAck.CarrierNum=etransROT.CarrierNum;
+				etransAck.PatNum=etrans.PatNum;
+				etransAck.PlanNum=etrans.PlanNum;
+				etransAck.InsSubNum=etrans.InsSubNum;
+				etransAck.CarrierNum=etrans.CarrierNum;
 				etransAck.DateTimeTrans=DateTime.Now;
 				CCDFieldInputter fieldInputter=null;
 				if(errorMsg!="") {
 					etransAck.Etype=EtransType.AckError;
 					etransAck.Note=errorMsg;
-					etransROT.Note="failed";
+					etrans.Note="failed";
 				}
 				else {
 					if(result.Substring(12).StartsWith("NO MORE ITEMS")) {
@@ -1120,11 +1104,11 @@ namespace OpenDentBusiness.Eclaims {
 							string invalidTypeMsg="Invalid outstanding transaction response type returned.";
 							etransAck.Etype=EtransType.AckError;
 							etransAck.Note=invalidTypeMsg;
-							etransROT.Note="failed";
+							etrans.Note="failed";
 							errorMsg=$"{invalidTypeMsg}"
 								+"\r\nThe only valid response types according to message standards are:"
-								+"\r\n  11 - A Claim Acknowledgement"
-								+"\r\n  13 - A Predetermination Acknowledgement"
+								+"\r\n  11 - A Claim Acknowledgment"
+								+"\r\n  13 - A Predetermination Acknowledgment"
 								+"\r\n  14 - An Outstanding Transaction Response"
 								+"\r\n  21 - Explanation of Benefit Response"
 								+"\r\n  23 - A Predetermination Explanation of Benefits"
@@ -1136,11 +1120,10 @@ namespace OpenDentBusiness.Eclaims {
 				Etranss.Insert(etransAck);
 				//Update etransAck and etrans here with EtransMessageTextNum as these objects are sometimes used again later to update the DB.
 				etransAck.EtransMessageTextNum=Etranss.SetMessage(etransAck.EtransNum,result);
-				etransROT.AckEtransNum=etransAck.EtransNum;
-				Etranss.Update(etransROT);
-				etransROT.EtransMessageTextNum=Etranss.SetMessage(etransROT.EtransNum,strb.ToString());
-				#endregion
-				listEtransAcks.Add(etransAck);
+				etrans.AckEtransNum=etransAck.EtransNum;
+				Etranss.Update(etrans);
+				etrans.EtransMessageTextNum=Etranss.SetMessage(etrans.EtransNum,strb.ToString());
+				etransAcks.Add(etransAck);
 				if(errorMsg!="") {
 					//A good amount of error messages from within Canadian.PassToIca() require manual intervention from the user.
 					//Throw an exception with the error message in order to notify the user of the specific error message and break out of the loop.
@@ -1150,10 +1133,8 @@ namespace OpenDentBusiness.Eclaims {
 				if(fieldInputter==null) {//happens in version 02 when a terminating message containing the text "NO MORE ITEMS" is received.
 					break;
 				}
-				#region Process Response
 				string responseFormatVersion=fieldInputter.GetFieldById("A03").valuestr;
 				CCDField fieldA04=fieldInputter.GetFieldById("A04");//message format
-				#region Exit Conditions
 				if(responseFormatVersion=="02") {
 					//In this case, there are only 4 possible responses:
 					//EOB, Claim Ack, Claim Ack with an error code, or Claim Ack with literal "NO MORE ITEMS" starting at character 13.
@@ -1182,65 +1163,32 @@ namespace OpenDentBusiness.Eclaims {
 						exit=true;
 					}
 				}
-				#endregion
 				//Field A02 exists in all of the possible formats (21,11,14,23,13,24).
 				CCDField fieldA02=fieldInputter.GetFieldById("A02");//office sequence number
 				//We use the Office Sequence Number to find the original etrans entry so that we can discover which patient the response is referring to.
-				Etrans etransOriginal=Etranss.GetForSequenceNumberCanada(fieldA02.valuestr);
-				if(etransOriginal!=null) {//Null will happen when testing, but should not happen in production.
-					#region Synchronize Etrans Entities
-					etransROT.PatNum=etransOriginal.PatNum;
-					etransROT.PlanNum=etransOriginal.PlanNum;
-					etransROT.InsSubNum=etransOriginal.InsSubNum;
-					etransROT.ClaimNum=etransOriginal.ClaimNum;
-					Etranss.Update(etransROT);
-					etransAck.PatNum=etransOriginal.PatNum;
-					etransAck.PlanNum=etransOriginal.PlanNum;
-					etransAck.InsSubNum=etransOriginal.InsSubNum;
-					etransAck.ClaimNum=etransOriginal.ClaimNum;
+				Etrans etranOriginal=Etranss.GetForSequenceNumberCanada(fieldA02.valuestr);
+				if(etranOriginal!=null) {//Null will happen when testing, but should not happen in production.
+					etrans.PatNum=etranOriginal.PatNum;
+					etrans.PlanNum=etranOriginal.PlanNum;
+					etrans.InsSubNum=etranOriginal.InsSubNum;
+					etrans.ClaimNum=etranOriginal.ClaimNum;
+					Etranss.Update(etrans);
+					etransAck.PatNum=etranOriginal.PatNum;
+					etransAck.PlanNum=etranOriginal.PlanNum;
+					etransAck.InsSubNum=etranOriginal.InsSubNum;
+					etransAck.ClaimNum=etranOriginal.ClaimNum;
 					CCDField fieldA05=fieldInputter.GetFieldById("A05");//CarrierID, exists in all formats but 24-Email, and 16-Payment Reconciliation Response
 					if(fieldA05!=null) {
 						Carrier carrierA05=Carriers.GetAllByElectId(fieldA05.valuestr).FirstOrDefault(x => x.IsCDA && !x.IsHidden);//Get Carrier from ElectID
 						etransAck.CarrierNum=carrierA05.CarrierNum;
 					}
 					Etranss.Update(etransAck);
-					#endregion
-					#region Transaction Type Not Supported
-					//Check to see if the response is a Claim Acknowledgement that indicates the ROT transaction type is not supported by the carrier.
-					//The 'original' etrans object should NOT be a Claim Acknowledgement transaction type associated with the ROT request we just sent.
-					//Claim Acknowledgement responses should be associated with the original claim that they are acknowledging.
-					//The carrier 'Canada Life' will always respond in this invalid fashion which causes the program to get stuck in an infinite loop.
-					CCDField[] ccdFieldsArrayErrorCodes=fieldInputter.GetFieldsById("G08");//Error Codes. Up to 10.
-					if(etransROT.OfficeSequenceNumber==etransOriginal.OfficeSequenceNumber
-						&& responseFormatVersion=="04"
-						&& fieldA04.valuestr=="11"//Claim Acknowledgement
-						&& fieldInputter.GetFieldById("G05").valuestr=="R"//Rejected
-						&& ccdFieldsArrayErrorCodes.Length > 0)
-					{
-						//For now, only exit out of the retrieval process when there is a specific error code.
-						if(ccdFieldsArrayErrorCodes.Any(x => x.valuestr=="124")) {//Transaction Type not supported by the carrier.
-							string invalidTypeMsg="Invalid outstanding transaction response type returned.";
-							etransAck.Etype=EtransType.AckError;
-							etransAck.Note=invalidTypeMsg;
-							errorMsg=$"{invalidTypeMsg}"
-								+"\r\nThe invalid response was a Claim Acknowledgement transaction type associated with the Request for Outstanding Transaction."
-								+"\r\n  Status: 'R' - Rejected"
-								+"\r\n  Error: '124' - Transaction Type not supported by the carrier.";
-							Etranss.Update(etransAck);
-							etransROT.Note="failed";
-							Etranss.Update(etransROT);
-							//Throw an application exception like we would for "Invalid outstanding transaction response type returned" above.
-							throw new ApplicationException(errorMsg);
-						}
-					}
-					#endregion
 					if(!exit) {
 						Claim claim=null;
 						if(etransAck.ClaimNum!=0) {
 							claim=Claims.GetClaim(etransAck.ClaimNum);
 						}
 						if(claim!=null) {
-							#region Update Claim Information
 							if(etransAck.AckCode=="A") {
 								claim.ClaimStatus="R";
 								claim.DateReceived=MiscData.GetNowDateTime();
@@ -1269,28 +1217,24 @@ namespace OpenDentBusiness.Eclaims {
 								//	patAge=pat.Age;
 								//}
 								Canadian.EOBImportHelper(fieldInputter,listClaimProcsForClaim,listAllProcs,listAllClaimProcs,claim,true,null,clearinghouseClin.IsEraDownloadAllowed,pat);
-								SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,claim.PatNum
+								SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,claim.PatNum
 									,"Claim for service date "+POut.Date(claim.DateService)+" amounts overwritten using received EOB amounts."
 									,LogSources.CanadaEobAutoImport);
 							}
-							#endregion
 						}
 					}
 				}
-				#endregion
-				#region Print Response
 				if(!exit && !isAutomatic) {
 					try {
-						printCCD(etransROT,result,true);//Physically print the form.
+						printCCD(etrans,result,true);//Physically print the form.
 					}
 					catch {
 						using MsgBoxCopyPaste msgbox=new MsgBoxCopyPaste(Lans.g("CanadianOutput","Failed to display one of the ROT responses, here is the raw message")+": "+Environment.NewLine+result);
 						msgbox.ShowDialog();
 					}
 				}
-				#endregion
 			} while(!exit);
-			return listEtransAcks;
+			return etransAcks;
 		}
 
 		///<summary>Returns the list of etrans requests for the default clearinghouse, or for a single carrier if specified.

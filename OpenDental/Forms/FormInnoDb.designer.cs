@@ -24,11 +24,33 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormInnoDb));
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butToMyIsam = new OpenDental.UI.Button();
 			this.butToInnoDb = new OpenDental.UI.Button();
 			this.SuspendLayout();
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(539,500);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75,24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(625,500);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75,24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// textBox1
 			// 
@@ -40,7 +62,7 @@ namespace OpenDental{
 			this.textBox1.Multiline = true;
 			this.textBox1.Name = "textBox1";
 			this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.textBox1.Size = new System.Drawing.Size(692, 456);
+			this.textBox1.Size = new System.Drawing.Size(679,456);
 			this.textBox1.TabIndex = 18;
 			// 
 			// label1
@@ -81,6 +103,8 @@ namespace OpenDental{
 			this.Controls.Add(this.butToMyIsam);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textBox1);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormInnoDb";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -92,6 +116,9 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.TextBox textBox1;
 		private System.Windows.Forms.Label label1;
 		private UI.Button butToMyIsam;

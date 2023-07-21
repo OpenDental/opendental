@@ -63,11 +63,9 @@ namespace OpenDental {
 			}
 			if(jobCur.UserNumCheckout==Security.CurUser.UserNum) {
 				jobCur=Jobs.GetOne(jobCur.JobNum);
-				Job jobOld=jobCur.Copy();
 				jobCur.UserNumCheckout=0;
-				if(Jobs.Update(jobCur,jobOld)) {
-					Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,jobCur.JobNum);
-				}
+				Jobs.Update(jobCur);
+				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,jobCur.JobNum);
 			}
 		}
 

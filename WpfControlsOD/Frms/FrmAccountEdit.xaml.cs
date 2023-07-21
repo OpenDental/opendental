@@ -22,13 +22,11 @@ namespace OpenDental {
 		public FrmAccountEdit(Account accountCur)
 		{
 			InitializeComponent();
+			//Lan.F(this);
 			_account=accountCur;
-			Load+=FrmAccountEdit_Load;
-			PreviewKeyDown+=FrmAccountEdit_PreviewKeyDown;
 		}
 
-		private void FrmAccountEdit_Load(object sender, EventArgs e) {
-			Lang.F(this);
+		private void FrmAccountEdit_Loaded(object sender, RoutedEventArgs e) {
 			_accountOld=_account.Clone();
 			textDescription.Text=_account.Description;
 			for(int i=0;i<Enum.GetNames(typeof(AccountType)).Length;i++){
@@ -43,6 +41,7 @@ namespace OpenDental {
 			if(_account.IsRetainedEarnings){
 				checkRetainedEarnings.Visible=true;
 				checkRetainedEarnings.Checked=true;
+//todo: IsEnabled not showing properly
 				checkRetainedEarnings.IsEnabled=false;
 				labelRetainedEarnings.Visible=true;
 				listAcctType.IsEnabled=false;
@@ -76,12 +75,6 @@ namespace OpenDental {
 			IsDialogOK=true;
 		}
 
-		private void FrmAccountEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
-		}
-
 		private void butSave_Click(object sender, EventArgs e) {
 			if(textDescription.Text==""){
 				MsgBox.Show(this,"Description is required.");
@@ -112,3 +105,24 @@ namespace OpenDental {
 		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

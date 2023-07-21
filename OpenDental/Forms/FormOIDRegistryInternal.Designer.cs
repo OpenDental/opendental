@@ -25,8 +25,9 @@
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormOIDRegistryInternal));
 			this.labelRetrieveStatus = new System.Windows.Forms.Label();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butRetrieveOIDs = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOk = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.SuspendLayout();
 			// 
@@ -39,6 +40,17 @@
 			this.labelRetrieveStatus.TabIndex = 10;
 			this.labelRetrieveStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(497, 326);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 8;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butRetrieveOIDs
 			// 
 			this.butRetrieveOIDs.Location = new System.Drawing.Point(12, 12);
@@ -49,16 +61,16 @@
 			this.butRetrieveOIDs.UseVisualStyleBackColor = true;
 			this.butRetrieveOIDs.Click += new System.EventHandler(this.butRetrieveOIDs_Click);
 			// 
-			// butSave
+			// butOk
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(497, 326);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 7;
-			this.butSave.Text = "&Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOk.Location = new System.Drawing.Point(416, 326);
+			this.butOk.Name = "butOk";
+			this.butOk.Size = new System.Drawing.Size(75, 24);
+			this.butOk.TabIndex = 7;
+			this.butOk.Text = "OK";
+			this.butOk.UseVisualStyleBackColor = true;
+			this.butOk.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// gridMain
 			// 
@@ -78,8 +90,9 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(584, 362);
 			this.Controls.Add(this.labelRetrieveStatus);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butRetrieveOIDs);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOk);
 			this.Controls.Add(this.gridMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormOIDRegistryInternal";
@@ -92,8 +105,9 @@
 		#endregion
 
 		private OpenDental.UI.GridOD gridMain;
-		private UI.Button butSave;
+		private UI.Button butOk;
 		private UI.Button butRetrieveOIDs;
+		private UI.Button butCancel;
 		private System.Windows.Forms.Label labelRetrieveStatus;
 	}
 }

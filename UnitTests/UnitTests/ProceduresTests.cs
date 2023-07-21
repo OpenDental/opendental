@@ -814,7 +814,7 @@ namespace UnitTests.Procedures_Test {
 			insInfo.ListBenefits.Add(
 				BenefitT.CreateFrequencyLimitation("D1110",1,BenefitQuantity.NumberOfServices,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.ServiceYear)
 			);
-			insInfo.PriInsPlan.MonthRenew=(byte)((DateTime.Today.Month+1) % 13); // Modulo of 13 instead of 12 because running this test in November would break it.
+			insInfo.PriInsPlan.MonthRenew=(byte)((DateTime.Today.Month+1) % 12);
 			DateTime proc1Date=new DateTime(DateTime.Today.Year,DateTime.Today.Month,1).AddYears(-1).AddMonths(1);//Last year.
 			Procedure proc1=ProcedureT.CreateProcedure(pat,"D1110",ProcStat.C,"",88,proc1Date);
 			insInfo.ListAllProcs.Add(proc1);
@@ -949,7 +949,6 @@ namespace UnitTests.Procedures_Test {
 			PrefT.UpdateBool(PrefName.ClaimProcsAllowedToBackdate,true);
 			Patient pat=PatientT.CreatePatient(suffix);
 			InsuranceInfo insInfo=InsuranceT.AddInsurance(pat,suffix);
-			insInfo.ListBenefits.Add(BenefitT.CreateCategoryPercent(insInfo.PriInsPlan.PlanNum,EbenefitCategory.DiagnosticXRay,100));
 			//add override frequency limit of 2 for procedure D0274
 			insInfo.ListBenefits.Add(
 				BenefitT.CreateFrequencyLimitation("D0274",2,BenefitQuantity.NumberOfServices,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.CalendarYear,insInfo.PriPatPlan.PatPlanNum)
@@ -959,7 +958,7 @@ namespace UnitTests.Procedures_Test {
 				BenefitT.CreateFrequencyLimitation("D0274",1,BenefitQuantity.NumberOfServices,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.CalendarYear)
 			);
 			insInfo.ListBenefits=Benefits.GetForPlanOrPatPlan(insInfo.PriInsPlan.PlanNum,insInfo.PriPatPlan.PatPlanNum);
-			Assert.AreNotEqual(0,insInfo.ListBenefits[1].PatPlanNum);//Ensure patient override is listed before the plan limit.
+			Assert.AreNotEqual(0,insInfo.ListBenefits[0].PatPlanNum);
 			DateTime proc1Date=new DateTime(2019,2,24);
 			Procedure proc1=ProcedureT.CreateProcedure(pat,"D0274",ProcStat.C,"",88,proc1Date);
 			insInfo.ListAllProcs.Add(proc1);
@@ -980,7 +979,7 @@ namespace UnitTests.Procedures_Test {
 				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc1.ProcNum),listHistList,insInfo.ListBenefits,proc1,
 				ProcedureCodes.GetProcCode(proc1.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans)
 			);
-			ClaimT.ReceiveClaim(claim,listClaimProcs,doSetInsPayAmt:true);
+			ClaimT.ReceiveClaim(claim,listClaimProcs);
 			//Treatment plan another D0274 code for insInfo.
 			DateTime proc2Date=new DateTime(2019,2,25);
 			Procedure proc2=ProcedureT.CreateProcedure(pat,"D0274",ProcStat.TP,"",77,proc2Date);
@@ -1002,7 +1001,7 @@ namespace UnitTests.Procedures_Test {
 				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc2.ProcNum),listHistList,insInfo.ListBenefits,proc2,
 				ProcedureCodes.GetProcCode(proc2.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans)
 			);
-			ClaimT.ReceiveClaim(claim2,listClaimProcs,doSetInsPayAmt:true);
+			ClaimT.ReceiveClaim(claim2,listClaimProcs);
 			//Treatment plan a third D0274 code for insInfo.
 			DateTime proc3Date=new DateTime(2019,2,26);
 			Procedure proc3=ProcedureT.CreateProcedure(pat,"D0274",ProcStat.TP,"",66,proc3Date);
@@ -1033,7 +1032,6 @@ namespace UnitTests.Procedures_Test {
 			PrefT.UpdateBool(PrefName.ClaimProcsAllowedToBackdate,true);
 			Patient pat=PatientT.CreatePatient(suffix);
 			InsuranceInfo insInfo=InsuranceT.AddInsurance(pat,suffix);
-			insInfo.ListBenefits.Add(BenefitT.CreateCategoryPercent(insInfo.PriInsPlan.PlanNum,EbenefitCategory.DiagnosticXRay,100));
 			//add a frequency limit of 1 for procedure D0274
 			insInfo.ListBenefits.Add(
 				BenefitT.CreateFrequencyLimitation("D0274",1,BenefitQuantity.NumberOfServices,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.CalendarYear)
@@ -1043,7 +1041,7 @@ namespace UnitTests.Procedures_Test {
 				BenefitT.CreateFrequencyLimitation("D0274",2,BenefitQuantity.NumberOfServices,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.CalendarYear,insInfo.PriPatPlan.PatPlanNum)
 			);
 			insInfo.ListBenefits=Benefits.GetForPlanOrPatPlan(insInfo.PriInsPlan.PlanNum,insInfo.PriPatPlan.PatPlanNum);
-			Assert.AreNotEqual(0,insInfo.ListBenefits[1].PatPlanNum);//Ensure patient override is listed before the plan limit.
+			Assert.AreNotEqual(0,insInfo.ListBenefits[0].PatPlanNum);
 			DateTime proc1Date=new DateTime(2019,2,24);
 			Procedure proc1=ProcedureT.CreateProcedure(pat,"D0274",ProcStat.C,"",88,proc1Date);
 			insInfo.ListAllProcs.Add(proc1);
@@ -1064,7 +1062,7 @@ namespace UnitTests.Procedures_Test {
 				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc1.ProcNum),listHistList,insInfo.ListBenefits,proc1,
 				ProcedureCodes.GetProcCode(proc1.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans)
 			);
-			ClaimT.ReceiveClaim(claim,listClaimProcs,doSetInsPayAmt:true);
+			ClaimT.ReceiveClaim(claim,listClaimProcs);
 			//Treatment plan another D0274 code for insInfo.
 			DateTime proc2Date=new DateTime(2019,2,25);
 			Procedure proc2=ProcedureT.CreateProcedure(pat,"D0274",ProcStat.TP,"",77,proc2Date);
@@ -1086,7 +1084,7 @@ namespace UnitTests.Procedures_Test {
 				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc2.ProcNum),listHistList,insInfo.ListBenefits,proc2,
 				ProcedureCodes.GetProcCode(proc2.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans)
 			);
-			ClaimT.ReceiveClaim(claim2,listClaimProcs,doSetInsPayAmt:true);
+			ClaimT.ReceiveClaim(claim2,listClaimProcs);
 			//Treatment plan a third D0274 code for insInfo.
 			DateTime proc3Date=new DateTime(2019,2,26);
 			Procedure proc3=ProcedureT.CreateProcedure(pat,"D0274",ProcStat.TP,"",66,proc3Date);
@@ -1109,437 +1107,6 @@ namespace UnitTests.Procedures_Test {
 				ProcedureCodes.GetProcCode(proc3.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans)
 			);
 		}
-
-		///<summary>Ins specifies one denture or partial per [arch] every 5 years. Patient had a partial with teeth 7,8,9,10 three years ago. Estimate for new upper denture should be $0. Est for new lower denture: $1000.</summary>
-		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Procedures_HasMetFrequencyLimitation_1DenturePerArchPer5Yrs)]
-		[Documentation.VersionAdded("23.3.1")]
-		[Documentation.Description(@"Ins specifies one denture or partial per [arch] every 5 years. Patient had a partial with teeth 7,8,9,10 three years ago. Estimate for new upper denture should be $0. Est for new lower denture: $1000.")]
-
-		public void Procedures_HasMetFrequencyLimitation_1DenturePerArchPer5Yrs() {
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			PrefT.UpdateBool(PrefName.ClaimProcsAllowedToBackdate,true);
-			CodeGroupT.ClearCodeGroupTable();
-			ProcedureCodeT.AddIfNotPresent("D5211");
-			ProcedureCodeT.AddIfNotPresent("D5120");
-			ProcedureCodeT.AddIfNotPresent("D5820");
-			CodeGroup codeGroup=CodeGroupT.Upsert("GroupDentures","D5211,D5120,D5820");
-			Patient pat=PatientT.CreatePatient(suffix);
-			InsuranceInfo insInfo=InsuranceT.AddInsurance(pat,suffix);
-			//Add Prothedonitics category at 100% to test that categories do not intefere with frequency limitations.
-			insInfo.ListBenefits.Add(BenefitT.CreateCategoryPercent(insInfo.PriInsPlan.PlanNum,EbenefitCategory.Prosthodontics,100));
-			insInfo.ListBenefits.Add(BenefitT.CreateCategoryPercent(insInfo.PriInsPlan.PlanNum,EbenefitCategory.Restorative,80));//Fillings to cover the extra D2140 below.
-			insInfo.ListBenefits.Add(
-				BenefitT.CreateFrequencyCodeGroup(insInfo.PriInsPlan.PlanNum,codeGroup.CodeGroupNum,BenefitQuantity.Years,5,BenefitTimePeriod.None,TreatmentArea.Arch)
-			);
-			insInfo.PriInsPlan.MonthRenew=(byte)((DateTime.Today.Month+1) % 12);
-			DateTime proc1Date=new DateTime(DateTime.Today.Year,DateTime.Today.Month,1).AddYears(-3);//Three years ago.
-			Procedure proc1=ProcedureT.CreateProcedure(pat,"D5211",ProcStat.C,"",900,proc1Date,toothRange:"7,8,9,10");//"maxillary partial denture - resin base (including any conventional clasps, rests and teeth)"
-			insInfo.ListAllProcs.Add(proc1);
-			//Creates a cp with status of NotReceived
-			Claim claim=ClaimT.CreateClaim(new List<Procedure> { proc1 },insInfo);
-			Procedure proc2=ProcedureT.CreateProcedure(pat,"D5120",ProcStat.TP,"",1000,DateTime.Today,surf:"L");//"complete denture - mandibular"
-			insInfo.ListAllProcs.Add(proc2);
-			//This will compute estimates.
-			List<ClaimProc> listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
-			List<ClaimProcHist> listHistList=ClaimProcs.GetHistList(
-				pat.PatNum,insInfo.ListBenefits,insInfo.ListPatPlans,insInfo.ListInsPlans,proc2.ProcDate,insInfo.ListInsSubs
-			);
-			//2nd proc has not reached frequency limitation.
-			Assert.IsFalse(Procedures.HasMetFrequencyLimitation(
-				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc2.ProcNum),listHistList,insInfo.ListBenefits,proc2,
-				ProcedureCodes.GetProcCode(proc2.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan)
-			);
-			Procedure proc3=ProcedureT.CreateProcedure(pat,"D5820",ProcStat.TP,"",800,DateTime.Today,toothRange:"1,2,3,4,5,6");//"interim partial denture (maxillary)"
-			insInfo.ListAllProcs.Add(proc3);
-			//This will compute estimates.
-			listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
-			listHistList=ClaimProcs.GetHistList(
-				pat.PatNum,insInfo.ListBenefits,insInfo.ListPatPlans,insInfo.ListInsPlans,proc3.ProcDate,insInfo.ListInsSubs
-			);
-			//3nd proc has reached frequency limitation.
-			Assert.IsTrue(Procedures.HasMetFrequencyLimitation(
-				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc3.ProcNum),listHistList,insInfo.ListBenefits,proc3,
-				ProcedureCodes.GetProcCode(proc3.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan)
-			);
-		}
-
-		///<summary>Ins specifies one denture or partial per [tooth range] every 5 years. Patient had a partial with teeth 7,8,9,10 three years ago. Estimate for new upper denture should be $0. Est for new lower denture: $1000.</summary>
-		[TestMethod]
-		public void Procedures_HasMetFrequencyLimitation_1DenturePerTthRangePer5Yrs() {
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			PrefT.UpdateBool(PrefName.ClaimProcsAllowedToBackdate,true);
-			CodeGroupT.ClearCodeGroupTable();
-			ProcedureCodeT.AddIfNotPresent("D5211");
-			ProcedureCodeT.AddIfNotPresent("D5120");
-			ProcedureCodeT.AddIfNotPresent("D5820");
-			CodeGroup codeGroup=CodeGroupT.Upsert("GroupDentures","D5211,D5120,D5110");
-			Patient pat=PatientT.CreatePatient(suffix);
-			InsuranceInfo insInfo=InsuranceT.AddInsurance(pat,suffix);
-			//Add Prothedonitics category at 100% to test that categories do not intefere with frequency limitations.
-			insInfo.ListBenefits.Add(BenefitT.CreateCategoryPercent(insInfo.PriInsPlan.PlanNum,EbenefitCategory.Prosthodontics,100));
-			insInfo.ListBenefits.Add(BenefitT.CreateCategoryPercent(insInfo.PriInsPlan.PlanNum,EbenefitCategory.Restorative,80));//Fillings to cover the extra D2140 below.
-			insInfo.ListBenefits.Add(
-				BenefitT.CreateFrequencyCodeGroup(insInfo.PriInsPlan.PlanNum,codeGroup.CodeGroupNum,BenefitQuantity.Years,5,BenefitTimePeriod.None,TreatmentArea.ToothRange)
-			);
-			insInfo.PriInsPlan.MonthRenew=(byte)((DateTime.Today.Month+1) % 12);
-			DateTime proc1Date=new DateTime(DateTime.Today.Year,DateTime.Today.Month,1).AddYears(-3);//Three years ago.
-			Procedure proc1=ProcedureT.CreateProcedure(pat,"D5211",ProcStat.C,"",900,proc1Date,toothRange:"7,8,9,10");//"maxillary partial denture - resin base (including any conventional clasps, rests and teeth)"
-			insInfo.ListAllProcs.Add(proc1);
-			//Creates a cp with status of NotReceived
-			Claim claim=ClaimT.CreateClaim(new List<Procedure> { proc1 },insInfo);
-			Procedure proc2=ProcedureT.CreateProcedure(pat,"D5120",ProcStat.TP,"",1000,DateTime.Today,surf:"L");//"complete denture - mandibular"
-			insInfo.ListAllProcs.Add(proc2);
-			//This will compute estimates.
-			List<ClaimProc> listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
-			List<ClaimProcHist> listHistList=ClaimProcs.GetHistList(
-				pat.PatNum,insInfo.ListBenefits,insInfo.ListPatPlans,insInfo.ListInsPlans,proc2.ProcDate,insInfo.ListInsSubs
-			);
-			//2nd proc has not reached frequency limitation.
-			Assert.IsFalse(Procedures.HasMetFrequencyLimitation(
-				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc2.ProcNum),listHistList,insInfo.ListBenefits,proc2,
-				ProcedureCodes.GetProcCode(proc2.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan)
-			);
-			Procedure proc3=ProcedureT.CreateProcedure(pat,"D5110",ProcStat.TP,"",1000,DateTime.Today,surf:"U");//"complete denture - maxillary"
-			insInfo.ListAllProcs.Add(proc3);
-			//This will compute estimates.
-			listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
-			listHistList=ClaimProcs.GetHistList(
-				pat.PatNum,insInfo.ListBenefits,insInfo.ListPatPlans,insInfo.ListInsPlans,proc3.ProcDate,insInfo.ListInsSubs
-			);
-			//3nd proc has reached frequency limitation.
-			Assert.IsTrue(Procedures.HasMetFrequencyLimitation(
-				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc3.ProcNum),listHistList,insInfo.ListBenefits,proc3,
-				ProcedureCodes.GetProcCode(proc3.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan)
-			);
-		}
-
-		///<summary>Ins specifies one crown per [tooth] each 5 years. Patient had a crown on #14 three years ago.  Estimate for new crown on #14 should be $0. Estimate for new crown on #15 should be $800.</summary>
-		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Procedures_HasMetFrequencyLimitation_1CrownPerTthPer5Yrs)]
-		[Documentation.VersionAdded("23.3.1")]
-		[Documentation.Description(@"Ins specifies one crown per [tooth] each 5 years. Patient had a crown on #14 three years ago.  Estimate for new crown on #14 should be $0. Estimate for new crown on #15 should be $800.")]
-		public void Procedures_HasMetFrequencyLimitation_1CrownPerTthPer5Yrs() {
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			PrefT.UpdateBool(PrefName.ClaimProcsAllowedToBackdate,true);
-			Patient pat=PatientT.CreatePatient(suffix);
-			InsuranceInfo insInfo=InsuranceT.AddInsurance(pat,suffix);
-			insInfo.ListBenefits.Add(BenefitT.CreateCategoryPercent(insInfo.PriInsPlan.PlanNum,EbenefitCategory.Crowns,100));
-			insInfo.ListBenefits.Add(
-				BenefitT.CreateFrequencyLimitation("D2740",5,BenefitQuantity.Years,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.None,treatArea:TreatmentArea.Tooth)
-			);
-			insInfo.PriInsPlan.MonthRenew=(byte)((DateTime.Today.Month+1) % 12);
-			DateTime proc1Date=new DateTime(DateTime.Today.Year,DateTime.Today.Month,1).AddYears(-3);//Three years ago.
-			Procedure proc1=ProcedureT.CreateProcedure(pat,"D2740",ProcStat.C,"14",800,proc1Date);//"crown - porcelain/ceramic substrate"
-			insInfo.ListAllProcs.Add(proc1);
-			//Creates a cp with status of NotReceived
-			Claim claim=ClaimT.CreateClaim(new List<Procedure> { proc1 },insInfo);
-			Procedure proc2=ProcedureT.CreateProcedure(pat,"D2740",ProcStat.TP,"14",800,DateTime.Today);//"crown - porcelain/ceramic substrate"
-			insInfo.ListAllProcs.Add(proc2);
-			//This will compute estimates.
-			List<ClaimProc> listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
-			List<ClaimProcHist> listHistList=ClaimProcs.GetHistList(
-				pat.PatNum,insInfo.ListBenefits,insInfo.ListPatPlans,insInfo.ListInsPlans,proc2.ProcDate,insInfo.ListInsSubs
-			);
-			//2nd proc has not reached frequency limitation.
-			Assert.IsTrue(Procedures.HasMetFrequencyLimitation(
-				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc2.ProcNum),listHistList,insInfo.ListBenefits,proc2,
-				ProcedureCodes.GetProcCode(proc2.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan)
-			);
-			//3rd proc has not reached frequency limitation.
-			Procedure proc3=ProcedureT.CreateProcedure(pat,"D2740",ProcStat.TP,"15",800,DateTime.Today);//"crown - porcelain/ceramic substrate"
-			insInfo.ListAllProcs.Add(proc3);
-			//This will compute estimates.
-			listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
-			listHistList=ClaimProcs.GetHistList(
-				pat.PatNum,insInfo.ListBenefits,insInfo.ListPatPlans,insInfo.ListInsPlans,proc3.ProcDate,insInfo.ListInsSubs
-			);
-			Assert.IsFalse(Procedures.HasMetFrequencyLimitation(
-				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc3.ProcNum),listHistList,insInfo.ListBenefits,proc3,
-				ProcedureCodes.GetProcCode(proc3.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan)
-			);
-		}
-
-		///<summary>Ins specifies one crown per [tooth] each 5 years. Patient had a crown on #14 six years ago.  Estimate for new crown on #14 should be $800.</summary>
-		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Procedures_HasNotMetFrequencyLimitation_1CrownPerTthPer5Yrs)]
-		[Documentation.VersionAdded("23.3.1")]
-		[Documentation.Description(@"Ins specifies one crown per [tooth] each 5 years. Patient had a crown on #14 six years ago.  Estimate for new crown on #14 should be $800.")]
-		public void Procedures_HasNotMetFrequencyLimitation_1CrownPerTthPer5Yrs() {
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			PrefT.UpdateBool(PrefName.ClaimProcsAllowedToBackdate,true);
-			Patient pat=PatientT.CreatePatient(suffix);
-			InsuranceInfo insInfo=InsuranceT.AddInsurance(pat,suffix);
-			//Add Restorative category at 100% to test that categories do not intefere with frequency limitations.
-			insInfo.ListBenefits.Add(BenefitT.CreateCategoryPercent(insInfo.PriInsPlan.PlanNum,EbenefitCategory.Restorative,100));
-			insInfo.ListBenefits.Add(
-				BenefitT.CreateFrequencyLimitation("D2740",5,BenefitQuantity.Years,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.None,treatArea:TreatmentArea.Tooth)
-			);
-			insInfo.PriInsPlan.MonthRenew=(byte)((DateTime.Today.Month+1) % 12);
-			DateTime proc1Date=new DateTime(DateTime.Today.Year,DateTime.Today.Month,1).AddYears(-6);//Six years ago.
-			Procedure proc1=ProcedureT.CreateProcedure(pat,"D2740",ProcStat.C,"14",800,proc1Date);//"crown - porcelain/ceramic substrate"
-			insInfo.ListAllProcs.Add(proc1);
-			//Creates a cp with status of NotReceived
-			Claim claim=ClaimT.CreateClaim(new List<Procedure> { proc1 },insInfo);
-			Procedure proc2=ProcedureT.CreateProcedure(pat,"D2740",ProcStat.TP,"14",800,DateTime.Today);//"crown - porcelain/ceramic substrate"
-			insInfo.ListAllProcs.Add(proc2);
-			//This will compute estimates.
-			List<ClaimProc> listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
-			List<ClaimProcHist> listHistList=ClaimProcs.GetHistList(
-				pat.PatNum,insInfo.ListBenefits,insInfo.ListPatPlans,insInfo.ListInsPlans,proc2.ProcDate,insInfo.ListInsSubs
-			);
-			//2nd proc has not reached frequency limitation.
-			Assert.IsFalse(Procedures.HasMetFrequencyLimitation(
-				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc2.ProcNum),listHistList,insInfo.ListBenefits,proc2,
-				ProcedureCodes.GetProcCode(proc2.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan)
-			);
-		}
-
-		///<summary>Ins specifies one composite filling per [tooth] every 5 years. Pt had a comp filling on #29 three years ago. Estimate for comp filling on #29 should be $0. For #30, it should be $300.</summary>
-		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Procedures_HasMetFrequencyLimitation_1CompPerTthPer5Yrs)]
-		[Documentation.VersionAdded("23.3.1")]
-		[Documentation.Description(@"Ins specifies one composite filling per [tooth] every 5 years. Pt had a comp filling on #29 three years ago. Estimate for comp filling on #29 should be $0. For #30, it should be $300.")]
-		public void Procedures_HasMetFrequencyLimitation_1CompPerTthPer5Yrs() {
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			PrefT.UpdateBool(PrefName.ClaimProcsAllowedToBackdate,true);
-			Patient pat=PatientT.CreatePatient(suffix);
-			InsuranceInfo insInfo=InsuranceT.AddInsurance(pat,suffix);
-			//Add Restorative category at 100% to test that categories do not intefere with frequency limitations.
-			insInfo.ListBenefits.Add(BenefitT.CreateCategoryPercent(insInfo.PriInsPlan.PlanNum,EbenefitCategory.Restorative,100));
-			insInfo.ListBenefits.Add(
-				BenefitT.CreateFrequencyLimitation("D2391",5,BenefitQuantity.Years,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.None,treatArea:TreatmentArea.Tooth)
-			);
-			insInfo.PriInsPlan.MonthRenew=(byte)((DateTime.Today.Month+1) % 12);
-			DateTime proc1Date=new DateTime(DateTime.Today.Year,DateTime.Today.Month,1).AddYears(-3);//Three years ago.
-			Procedure proc1=ProcedureT.CreateProcedure(pat,"D2391",ProcStat.C,"29",300,proc1Date,surf:"M");//"resin-based composite - one surface, posterior"
-			insInfo.ListAllProcs.Add(proc1);
-			//Creates a cp with status of NotReceived
-			Claim claim=ClaimT.CreateClaim(new List<Procedure> { proc1 },insInfo);
-			Procedure proc2=ProcedureT.CreateProcedure(pat,"D2391",ProcStat.TP,"29",300,DateTime.Today,surf:"O");//"resin-based composite - one surface, posterior"
-			insInfo.ListAllProcs.Add(proc2);
-			//This will compute estimates.
-			List<ClaimProc> listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
-			List<ClaimProcHist> listHistList=ClaimProcs.GetHistList(
-				pat.PatNum,insInfo.ListBenefits,insInfo.ListPatPlans,insInfo.ListInsPlans,proc2.ProcDate,insInfo.ListInsSubs
-			);
-			//2nd proc has reached frequency limitation.
-			Assert.IsTrue(Procedures.HasMetFrequencyLimitation(
-				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc2.ProcNum),listHistList,insInfo.ListBenefits,proc2,
-				ProcedureCodes.GetProcCode(proc2.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan)
-			);
-			//3rd proc has not reached frequency limitation.
-			Procedure proc3=ProcedureT.CreateProcedure(pat,"D2391",ProcStat.TP,"30",300,DateTime.Today,surf:"D");//"resin-based composite - one surface, posterior"
-			insInfo.ListAllProcs.Add(proc3);
-			//This will compute estimates.
-			listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
-			listHistList=ClaimProcs.GetHistList(
-				pat.PatNum,insInfo.ListBenefits,insInfo.ListPatPlans,insInfo.ListInsPlans,proc3.ProcDate,insInfo.ListInsSubs
-			);
-			Assert.IsFalse(Procedures.HasMetFrequencyLimitation(
-				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc3.ProcNum),listHistList,insInfo.ListBenefits,proc3,
-				ProcedureCodes.GetProcCode(proc3.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan)
-			);
-		}
-
-		///<summary>Ins specifies limit of three fillings per year [mouth].  Patient had two fillings three months ago, Estimate for two or more fillings should cover one but no more in the year.</summary>
-		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Procedures_HasMetFrequencyLimitation_3FillingsPerMouthPerYr)]
-		[Documentation.VersionAdded("23.3.1")]
-		[Documentation.Description(@"Ins specifies limit of three fillings per year [mouth].  Patient had two fillings three months ago, Estimate for two or more fillings should cover one but no more in the year.")]
-		public void Procedures_HasMetFrequencyLimitation_3FillingsPerMouthPerYr() {
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			PrefT.UpdateBool(PrefName.ClaimProcsAllowedToBackdate,true);
-			CodeGroupT.ClearCodeGroupTable();
-			ProcedureCodeT.AddIfNotPresent("D2391");//"resin-based composite - one surface, posterior"
-			ProcedureCodeT.AddIfNotPresent("D2392");//"resin-based composite - two surfaces, posterior"
-			CodeGroup codeGroup=CodeGroupT.Upsert("GroupFillings","D2391,D2392");
-			Patient pat=PatientT.CreatePatient(suffix);
-			InsuranceInfo insInfo=InsuranceT.AddInsurance(pat,suffix);
-			//Add Restorative category at 100% to test that categories do not intefere with frequency limitations.
-			insInfo.ListBenefits.Add(BenefitT.CreateCategoryPercent(insInfo.PriInsPlan.PlanNum,EbenefitCategory.Restorative,100));
-			insInfo.ListBenefits.Add(
-				BenefitT.CreateFrequencyCodeGroup(insInfo.PriInsPlan.PlanNum,codeGroup.CodeGroupNum,BenefitQuantity.NumberOfServices,3,BenefitTimePeriod.CalendarYear,TreatmentArea.Mouth)
-			);
-			insInfo.PriInsPlan.MonthRenew=(byte)((DateTime.Today.Month+1) % 12);
-			Procedure proc1=ProcedureT.CreateProcedure(pat,"D2391",ProcStat.C,"29",300,DateTime.Today.AddMonths(-3),surf:"M");//"resin-based composite - one surface, posterior"
-			insInfo.ListAllProcs.Add(proc1);
-			Procedure proc2=ProcedureT.CreateProcedure(pat,"D2392",ProcStat.C,"30",300,DateTime.Today.AddMonths(-3),surf:"OD");//"resin-based composite - two surfaces, posterior"
-			insInfo.ListAllProcs.Add(proc2);
-			//Creates a cp with status of NotReceived
-			Claim claim=ClaimT.CreateClaim(new List<Procedure> { proc1,proc2 },insInfo);
-			//3rd proc has not reached frequency limitation.
-			Procedure proc3=ProcedureT.CreateProcedure(pat,"D2391",ProcStat.TP,"2",300,DateTime.Today,surf:"OD");//"resin-based composite - two surfaces, posterior"
-			insInfo.ListAllProcs.Add(proc3);
-			//This will compute estimates.
-			List<ClaimProc> listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
-			List<ClaimProcHist> listHistList=ClaimProcs.GetHistList(
-				pat.PatNum,insInfo.ListBenefits,insInfo.ListPatPlans,insInfo.ListInsPlans,proc3.ProcDate,insInfo.ListInsSubs
-			);
-			Assert.IsFalse(Procedures.HasMetFrequencyLimitation(
-				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc3.ProcNum),listHistList,insInfo.ListBenefits,proc3,
-				ProcedureCodes.GetProcCode(proc3.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan)
-			);
-			//4th proc has reached frequency limitation.
-			Procedure proc4=ProcedureT.CreateProcedure(pat,"D2392",ProcStat.TP,"31",300,DateTime.Today,surf:"D");//"resin-based composite - one surface, posterior"
-			insInfo.ListAllProcs.Add(proc4);
-			//This will compute estimates.
-			listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
-			listHistList=ClaimProcs.GetHistList(
-				pat.PatNum,insInfo.ListBenefits,insInfo.ListPatPlans,insInfo.ListInsPlans,proc4.ProcDate,insInfo.ListInsSubs
-			);
-			List<ClaimProcHist> loopList=ClaimProcs.GetHistForProc(listClaimProcs,proc3,proc3.CodeNum);//Add proc3 to the looplist to give it higher TP priority than proc4.
-			Assert.IsTrue(Procedures.HasMetFrequencyLimitation(
-				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc4.ProcNum),listHistList,insInfo.ListBenefits,proc4,
-				ProcedureCodes.GetProcCode(proc4.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan,loopList)
-			);
-		}
-
-		///<summary>Ins specifies one composite filling per [tooth] every 5 years and a limit of three fillings per year [mouth]. Patient had a composite filling on #29 three years ago and composite fillings on #2 and #3 three months ago. Estimate for compostive filling on #29 should be $0. Patient needs composite fillings on #30 and #31. For #30 it should be $300. For #31 should be $0.</summary>
-		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Procedures_HasMetFrequencyLimitation_1CompPerTthPer5Years_3FillingsPerMouthPerYr)]
-		[Documentation.VersionAdded("23.3.1")]
-		[Documentation.Description(@"Ins specifies one composite filling per [tooth] every 5 years and a limit of three fillings per year [mouth]. Patient had a composite filling on #29 three years ago and composite fillings on #2 and #3 three months ago. Estimate for compostive filling on #29 should be $0. Patient needs composite fillings on #30 and #31. For #30 it should be $300. For #31 should be $0.")]
-		public void Procedures_HasMetFrequencyLimitation_1CompPerTthPer5Years_3FillingsPerMouthPerYr() {
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			PrefT.UpdateBool(PrefName.ClaimProcsAllowedToBackdate,true);
-			CodeGroupT.ClearCodeGroupTable();
-			ProcedureCodeT.AddIfNotPresent("D2391");//"resin-based composite - one surface, posterior"
-			ProcedureCodeT.AddIfNotPresent("D2392");//"resin-based composite - two surfaces, posterior"
-			CodeGroup codeGroup=CodeGroupT.Upsert("GroupFillings","D2391,D2392");
-			Patient pat=PatientT.CreatePatient(suffix);
-			InsuranceInfo insInfo=InsuranceT.AddInsurance(pat,suffix);
-			//Add Restorative category at 100% to test that categories do not intefere with frequency limitations.
-			insInfo.ListBenefits.Add(BenefitT.CreateCategoryPercent(insInfo.PriInsPlan.PlanNum,EbenefitCategory.Restorative,100));
-			insInfo.ListBenefits.Add(
-				BenefitT.CreateFrequencyCodeGroup(insInfo.PriInsPlan.PlanNum,codeGroup.CodeGroupNum,BenefitQuantity.Years,5,BenefitTimePeriod.None,TreatmentArea.Tooth)
-			);
-			insInfo.ListBenefits.Add(
-				BenefitT.CreateFrequencyCodeGroup(insInfo.PriInsPlan.PlanNum,codeGroup.CodeGroupNum,BenefitQuantity.NumberOfServices,3,BenefitTimePeriod.CalendarYear,TreatmentArea.Mouth)
-			);
-			insInfo.PriInsPlan.MonthRenew=(byte)((DateTime.Today.Month+1) % 12);
-			DateTime proc1Date=new DateTime(DateTime.Today.Year,DateTime.Today.Month,1).AddYears(-3);//Three years ago.
-			Procedure proc1=ProcedureT.CreateProcedure(pat,"D2391",ProcStat.C,"29",300,proc1Date,surf:"M");//"resin-based composite - one surface, posterior"
-			insInfo.ListAllProcs.Add(proc1);
-			//Creates a cp with status of NotReceived
-			Claim claim=ClaimT.CreateClaim(new List<Procedure> { proc1 },insInfo);
-			Procedure proc2=ProcedureT.CreateProcedure(pat,"D2392",ProcStat.C,"2",300,DateTime.Today.AddMonths(-3),surf:"OD");//"resin-based composite - two surfaces, posterior"
-			insInfo.ListAllProcs.Add(proc2);
-			Procedure proc3=ProcedureT.CreateProcedure(pat,"D2391",ProcStat.C,"3",300,DateTime.Today.AddMonths(-3),surf:"M");//"resin-based composite - one surface, posterior"
-			insInfo.ListAllProcs.Add(proc3);
-			//Creates a cp with status of NotReceived
-			Claim claim2=ClaimT.CreateClaim(new List<Procedure> { proc2,proc3 },insInfo);
-			Procedure proc4=ProcedureT.CreateProcedure(pat,"D2392",ProcStat.TP,"29",300,DateTime.Today,surf:"OD");//"resin-based composite - two surfaces, posterior"
-			insInfo.ListAllProcs.Add(proc4);
-			//This will compute estimates.
-			List<ClaimProc> listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
-			List<ClaimProcHist> listHistList=ClaimProcs.GetHistList(
-				pat.PatNum,insInfo.ListBenefits,insInfo.ListPatPlans,insInfo.ListInsPlans,proc4.ProcDate,insInfo.ListInsSubs
-			);
-			//4th proc has reached frequency limitation due to #29 composite 3 years ago.
-			Assert.IsTrue(Procedures.HasMetFrequencyLimitation(
-				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc4.ProcNum),listHistList,insInfo.ListBenefits,proc4,
-				ProcedureCodes.GetProcCode(proc4.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan)
-			);
-			//5th proc has not reached frequency limitation.
-			Procedure proc5=ProcedureT.CreateProcedure(pat,"D2391",ProcStat.TP,"30",300,DateTime.Today,surf:"D");//"resin-based composite - one surface, posterior"
-			insInfo.ListAllProcs.Add(proc5);
-			//This will compute estimates.
-			listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
-			//Add proc4 to the looplist to give it higher TP priority than proc5.
-			List<ClaimProcHist> loopList=ClaimProcs.GetHistForProc(listClaimProcs,proc4,proc4.CodeNum);
-			Assert.IsFalse(Procedures.HasMetFrequencyLimitation(
-				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc5.ProcNum),listHistList,insInfo.ListBenefits,proc5,
-				ProcedureCodes.GetProcCode(proc5.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan,loopList)
-			);
-			//6th proc has reached frequency limitation due to being the 4th composite this year, after #2, #3 and #30.
-			Procedure proc6=ProcedureT.CreateProcedure(pat,"D2391",ProcStat.TP,"31",300,DateTime.Today,surf:"O");//"resin-based composite - one surface, posterior"
-			insInfo.ListAllProcs.Add(proc6);
-			//This will compute estimates.
-			listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
-			//Add proc5 to the looplist to give it higher TP priority than proc6.
-			loopList.AddRange(ClaimProcs.GetHistForProc(listClaimProcs,proc5,proc5.CodeNum));
-			Assert.IsTrue(Procedures.HasMetFrequencyLimitation(
-				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc6.ProcNum),listHistList,insInfo.ListBenefits,proc6,
-				ProcedureCodes.GetProcCode(proc6.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan,loopList)
-			);
-		}
-
-		///<summary>Exams and limited exams are covered as a group, one per year [mouth]. An exam was performed 3 months ago an covered at $150. A limited exam today should be $0.</summary>
-		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Procedures_HasMetFrequencyLimitation_ExamsGrouped)]
-		[Documentation.VersionAdded("23.3.1")]
-		[Documentation.Description(@"Exams and limited exams are covered as a group, one per year [mouth]. An exam was performed 3 months ago an covered at $150. A limited exam today should be $0.")]
-		public void Procedures_HasMetFrequencyLimitation_ExamsGrouped() {
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			PrefT.UpdateBool(PrefName.ClaimProcsAllowedToBackdate,true);
-			CodeGroupT.ClearCodeGroupTable();
-			ProcedureCodeT.AddIfNotPresent("D0120");//"periodic oral evaluation - established patient"
-			ProcedureCodeT.AddIfNotPresent("D0140");//"limited oral evaluation - problem focused"
-			CodeGroup codeGroup=CodeGroupT.Upsert("GroupExams","D0120,D0140");
-			Patient pat=PatientT.CreatePatient(suffix);
-			InsuranceInfo insInfo=InsuranceT.AddInsurance(pat,suffix);
-			//Add General category at 100% to test that categories do not intefere with frequency limitations.
-			insInfo.ListBenefits.Add(BenefitT.CreateCategoryPercent(insInfo.PriInsPlan.PlanNum,EbenefitCategory.General,100));
-			insInfo.ListBenefits.Add(
-				BenefitT.CreateFrequencyCodeGroup(insInfo.PriInsPlan.PlanNum,codeGroup.CodeGroupNum,BenefitQuantity.NumberOfServices,1,BenefitTimePeriod.CalendarYear,TreatmentArea.Mouth)
-			);
-			insInfo.PriInsPlan.MonthRenew=(byte)((DateTime.Today.Month+1) % 12);
-			Procedure proc1=ProcedureT.CreateProcedure(pat,"D0120",ProcStat.C,"",150,DateTime.Today.AddMonths(-3));//"periodic oral evaluation - established patient"
-			insInfo.ListAllProcs.Add(proc1);
-			//Creates a cp with status of NotReceived
-			Claim claim=ClaimT.CreateClaim(new List<Procedure> { proc1 },insInfo);
-			//2nd proc has reached frequency limitation.
-			Procedure proc2=ProcedureT.CreateProcedure(pat,"D0140",ProcStat.TP,"",120,DateTime.Today);//"limited oral evaluation - problem focused"
-			insInfo.ListAllProcs.Add(proc2);
-			//This will compute estimates.
-			List<ClaimProc> listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
-			List<ClaimProcHist> listHistList=ClaimProcs.GetHistList(
-				pat.PatNum,insInfo.ListBenefits,insInfo.ListPatPlans,insInfo.ListInsPlans,proc2.ProcDate,insInfo.ListInsSubs
-			);
-			Assert.IsTrue(Procedures.HasMetFrequencyLimitation(
-				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc2.ProcNum),listHistList,insInfo.ListBenefits,proc2,
-				ProcedureCodes.GetProcCode(proc2.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan)
-			);
-		}
-
-		///<summary>Exams and limited exams are covered separately, one per year [mouth]. An exam was performed 3 months ago an covered at $150. A limited exam today should be $120.</summary>
-		[TestMethod]
-		[Documentation.Numbering(Documentation.EnumTestNum.Procedures_HasMetFrequencyLimitation_ExamsSeparate)]
-		[Documentation.VersionAdded("23.3.1")]
-		[Documentation.Description(@"Exams and limited exams are covered separately, one per year [mouth]. An exam was performed 3 months ago an covered at $150. A limited exam today should be $120.")]
-		public void Procedures_HasMetFrequencyLimitation_ExamsSeparate() {
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			PrefT.UpdateBool(PrefName.ClaimProcsAllowedToBackdate,true);
-			Patient pat=PatientT.CreatePatient(suffix);
-			InsuranceInfo insInfo=InsuranceT.AddInsurance(pat,suffix);
-			//Add General category at 100% to test that categories do not intefere with frequency limitations.
-			insInfo.ListBenefits.Add(BenefitT.CreateCategoryPercent(insInfo.PriInsPlan.PlanNum,EbenefitCategory.General,100));
-			insInfo.ListBenefits.Add(
-				BenefitT.CreateFrequencyLimitation("D0120",1,BenefitQuantity.NumberOfServices,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.CalendarYear,treatArea:TreatmentArea.Mouth)
-			);
-			insInfo.ListBenefits.Add(
-				BenefitT.CreateFrequencyLimitation("D0140",1,BenefitQuantity.NumberOfServices,insInfo.PriInsPlan.PlanNum,BenefitTimePeriod.CalendarYear,treatArea:TreatmentArea.Mouth)
-			);
-			insInfo.PriInsPlan.MonthRenew=(byte)((DateTime.Today.Month+1) % 12);
-			Procedure proc1=ProcedureT.CreateProcedure(pat,"D0120",ProcStat.C,"",150,DateTime.Today.AddMonths(-3));//"periodic oral evaluation - established patient"
-			insInfo.ListAllProcs.Add(proc1);
-			//Creates a cp with status of NotReceived
-			Claim claim=ClaimT.CreateClaim(new List<Procedure> { proc1 },insInfo);
-			//2nd proc has reached frequency limitation.
-			Procedure proc2=ProcedureT.CreateProcedure(pat,"D0140",ProcStat.TP,"",120,DateTime.Today);//"limited oral evaluation - problem focused"
-			insInfo.ListAllProcs.Add(proc2);
-			//This will compute estimates.
-			List<ClaimProc> listClaimProcs=ProcedureT.ComputeEstimates(pat,insInfo);
-			List<ClaimProcHist> listHistList=ClaimProcs.GetHistList(
-				pat.PatNum,insInfo.ListBenefits,insInfo.ListPatPlans,insInfo.ListInsPlans,proc2.ProcDate,insInfo.ListInsSubs
-			);
-			Assert.IsFalse(Procedures.HasMetFrequencyLimitation(
-				listClaimProcs.FirstOrDefault(x => x.ProcNum==proc2.ProcNum),listHistList,insInfo.ListBenefits,proc2,
-				ProcedureCodes.GetProcCode(proc2.CodeNum),insInfo.PriInsPlan,insInfo.ListInsPlans,insInfo.PriPatPlan)
-			);
-		}
-
 		#endregion
 
 		[TestMethod]
@@ -1555,7 +1122,7 @@ namespace UnitTests.Procedures_Test {
 			insInfo.ListAllProcs.Add(proc1);
 			Claim claim=ClaimT.CreateClaim(new List<Procedure> { proc1 },insInfo);
 			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(pat.PatNum);
-			ClaimT.ReceiveClaim(claim,listClaimProcs,doSetInsPayAmt:true);
+			ClaimT.ReceiveClaim(claim,listClaimProcs);
 			Operatory op=OperatoryT.CreateOperatory(suffix);
 			Appointment apt=AppointmentT.CreateAppointment(pat.PatNum,new DateTime(2018,2,1),op.OperatoryNum,pat.PriProv);
 			Procedure proc2=ProcedureT.CreateProcedure(pat,"D1110",ProcStat.TP,"",77,new DateTime(2018,2,1),aptNum:apt.AptNum);
@@ -4867,10 +4434,10 @@ If instead the preference was off for this unit test, then Writeoff2 would have 
 				procOld=procHist[i].Copy();
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
-				Double test=Procedures.GetDiscountAmountForDiscountPlanAndValidate(procHist[i]);
+				Double test=Procedures.GetDiscountAmountForDiscountPlan(procHist[i]);
 			}
 			DiscountPlanT.ClearDiscountPlanPrefs();
-			Assert.AreEqual(true,procHist.All(x=>Procedures.GetDiscountAmountForDiscountPlanAndValidate(x)==5));
+			Assert.AreEqual(true,procHist.All(x=>Procedures.GetDiscountAmountForDiscountPlan(x)==5));
 		}
 
 		[TestMethod]
@@ -4912,7 +4479,7 @@ If instead the preference was off for this unit test, then Writeoff2 would have 
 			feeSchedNums.Add(feeNum5);
 			Procedure procOld;
 			for(int i=0;i<procHist.Count;i++) {
-				double test=Procedures.GetDiscountAmountForDiscountPlanAndValidate(procHist[i]);
+				double test=Procedures.GetDiscountAmountForDiscountPlan(procHist[i]);
 				procOld=procHist[i].Copy();
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
@@ -4962,7 +4529,7 @@ If instead the preference was off for this unit test, then Writeoff2 would have 
 			feeSchedNums.Add(feeNum5);
 			Procedure procOld;
 			for(int i=0;i<procHist.Count;i++) {
-				double test=Procedures.GetDiscountAmountForDiscountPlanAndValidate(procHist[i]);
+				double test=Procedures.GetDiscountAmountForDiscountPlan(procHist[i]);
 				procOld=procHist[i].Copy();
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
@@ -5013,7 +4580,7 @@ If instead the preference was off for this unit test, then Writeoff2 would have 
 			feeSchedNums.Add(feeNum5);
 			Procedure procOld;
 			for(int i=0;i<procHist.Count;i++) {
-				double test=Procedures.GetDiscountAmountForDiscountPlanAndValidate(procHist[i]);
+				double test=Procedures.GetDiscountAmountForDiscountPlan(procHist[i]);
 				procOld=procHist[i].Copy();
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);	
@@ -5064,7 +4631,7 @@ If instead the preference was off for this unit test, then Writeoff2 would have 
 			feeSchedNums.Add(feeNum5);
 			Procedure procOld;
 			for(int i=0;i<procHist.Count;i++) {
-				double test=Procedures.GetDiscountAmountForDiscountPlanAndValidate(procHist[i]);
+				double test=Procedures.GetDiscountAmountForDiscountPlan(procHist[i]);
 				procOld=procHist[i].Copy();
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);
@@ -5115,7 +4682,7 @@ If instead the preference was off for this unit test, then Writeoff2 would have 
 			feeSchedNums.Add(feeNum5);
 			Procedure procOld;
 			for(int i=0;i<procHist.Count;i++) {
-				double test=Procedures.GetDiscountAmountForDiscountPlanAndValidate(procHist[i]);
+				double test=Procedures.GetDiscountAmountForDiscountPlan(procHist[i]);
 				procOld=procHist[i].Copy();
 				procHist[i].ProcStatus=ProcStat.C;
 				Procedures.Update(procHist[i],procOld);

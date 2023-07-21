@@ -53,7 +53,6 @@ namespace OpenDental {
 		private List<JobLink> _listJobLinks;
 		private List<Job> _listJobs;
 		private List<TaskAttachment> _listTaskAttachments;
-		private bool _isAbort=false;
 		private bool _isLoading;
 		private List<TaskReminderType> _listTaskReminderTypes;
 		///<summary>Do not allow any task or task related changes.  Only allow copy and cancel buttons, and copying of text.
@@ -135,10 +134,10 @@ namespace OpenDental {
 						}
 					}
 				}
-				if(!Security.IsAuthorized(EnumPermType.TaskDelete,true)) {//need to block them if they don't have TaskDelete permission
+				if(!Security.IsAuthorized(Permissions.TaskDelete,true)) {//need to block them if they don't have TaskDelete permission
 					butDelete.Enabled=false;
 				}
-				if(!isTaskForCurUser && !Security.IsAuthorized(EnumPermType.TaskEdit,true)) {
+				if(!isTaskForCurUser && !Security.IsAuthorized(Permissions.TaskEdit,true)) {
 					butAutoNote.Enabled=false;
 					butEditAutoNote.Enabled=false;
 					textDescript.ReadOnly=true;
@@ -165,11 +164,12 @@ namespace OpenDental {
 					}
 				}
 			}
-			if(_defNumPrioritySelected==0) {//The task does not yet have a priority assigned.  Find the last default and assign it, if available.
+			if(_defNumPrioritySelected==0) {//The task does not yet have a priority assigned.  Find the default and assign it, if available.
 				for(int i=0;i<_listDefsTaskPriorities.Count;i++) {
 					if(_listDefsTaskPriorities[i].ItemValue=="D") {
 						_defNumPrioritySelected=_listDefsTaskPriorities[i].DefNum;
 						hasDefault=true;
+						break;
 					}
 				}
 			}
@@ -380,7 +380,7 @@ namespace OpenDental {
 				butRed.Visible=true;
 				butBlue.Visible=true;
 			}
-			if(!Security.IsAuthorized(EnumPermType.TaskEdit,true)){
+			if(!Security.IsAuthorized(Permissions.TaskEdit,true)){
 				butAudit.Visible=false;
 			}
 			SetTaskStartingLocation();
@@ -498,13 +498,12 @@ namespace OpenDental {
 				return;
 			}
 			//Atach new job
-			using FormJobSearch formJobSearch=new FormJobSearch();
-			formJobSearch.DoBlockProjects=true;
+			using FormJobSearch formJobSearch = new FormJobSearch();
 			formJobSearch.ShowDialog();
 			if(formJobSearch.DialogResult!=DialogResult.OK || formJobSearch.SelectedJobNum==0) {
 				return;
 			}
-			JobLink jobLink=new JobLink();
+			JobLink jobLink = new JobLink();
 			jobLink.JobNum=formJobSearch.SelectedJobNum;
 			jobLink.FKey=TaskCur.TaskNum;
 			jobLink.LinkType=JobLinkType.Task;
@@ -815,12 +814,12 @@ namespace OpenDental {
 		}
 
 		private void butAutoNote_Click(object sender,EventArgs e) {
-			FrmAutoNoteCompose frmAutoNoteCompose=new FrmAutoNoteCompose();
-			frmAutoNoteCompose.ShowDialog();
-			if(!frmAutoNoteCompose.IsDialogOK) {
+			using FormAutoNoteCompose formAutoNoteCompose=new FormAutoNoteCompose();
+			formAutoNoteCompose.ShowDialog();
+			if(formAutoNoteCompose.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			textDescript.AppendText(frmAutoNoteCompose.StrCompletedNote);
+			textDescript.AppendText(formAutoNoteCompose.StrCompletedNote);
 			butEditAutoNote.Visible=GetHasAutoNotePrompt();
 		}
 
@@ -896,7 +895,7 @@ namespace OpenDental {
 			using FormApptsOther formApptsOther=new FormApptsOther(formPatientSelect.PatNumSelected,null);//Select only, can't create new appt so don't need pinboard appointments.
 			formApptsOther.AllowSelectOnly=true;
 			formApptsOther.ShowDialog();
-			if(formApptsOther.DialogResult!=DialogResult.OK) {
+			if(formApptsOther.DialogResult==DialogResult.Cancel) {
 				return;
 			}
 			TaskCur.KeyNum=formApptsOther.ListAptNumsSelected[0];
@@ -971,8 +970,6 @@ namespace OpenDental {
 			List<string> listCategories=Enum.GetNames(typeof(JobCategory)).ToList();
 			//Queries can't be created from here
 			listCategories.Remove(JobCategory.Query.ToString());
-			//Projects can't be created from here
-			listCategories.Remove(JobCategory.Project.ToString());
 			listCategories.Remove(JobCategory.MarketingDesign.ToString());
 			if(!JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
 				listCategories.Remove(JobCategory.NeedNoApproval.ToString());
@@ -983,23 +980,21 @@ namespace OpenDental {
 			if(!JobPermissions.IsAuthorized(JobPerm.UnresolvedIssues,true)) {
 				listCategories.Remove(JobCategory.UnresolvedIssue.ToString());
 			}
-			InputBox inputBoxCategoryChoose=new InputBox("Choose a job category",listCategories);
-			inputBoxCategoryChoose.ShowDialog();
-			if(inputBoxCategoryChoose.IsDialogCancel) {
+			using InputBox inputBoxCategoryChoose=new InputBox("Choose a job category",listCategories);
+			if(inputBoxCategoryChoose.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
-			if(inputBoxCategoryChoose.SelectedIndex==-1) {
+			if(inputBoxCategoryChoose.comboSelection.SelectedIndex==-1) {
 				MsgBox.Show(this,"You must choose a category to create a job.");
 				return;
 			}
-			JobCategory jobCategory=(JobCategory)Enum.GetNames(typeof(JobCategory)).ToList().IndexOf(listCategories[inputBoxCategoryChoose.SelectedIndex]);
+			JobCategory jobCategory=(JobCategory)Enum.GetNames(typeof(JobCategory)).ToList().IndexOf(inputBoxCategoryChoose.comboSelection.GetSelected<string>());
 			jobNew.Category=jobCategory;
-			InputBox inputBoxTitle=new InputBox("Provide a brief title for the job.");
-			inputBoxTitle.ShowDialog();
-			if(inputBoxTitle.IsDialogCancel) {
+			using InputBox inputBoxTitle=new InputBox("Provide a brief title for the job.");
+			if(inputBoxTitle.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
-			if(String.IsNullOrEmpty(inputBoxTitle.StringResult)) {
+			if(String.IsNullOrEmpty(inputBoxTitle.textResult.Text)) {
 				MsgBox.Show(this,"You must type a title to create a job.");
 				return;
 			}
@@ -1008,7 +1003,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"You have no priorities setup in definitions.");
 				return;
 			}
-			jobNew.Title=inputBoxTitle.StringResult;
+			jobNew.Title=inputBoxTitle.textResult.Text;
 			long priorityNum=0;
 			priorityNum=listDefsJobPriorities.FirstOrDefault(x => x.ItemValue.Contains("JobDefault")).DefNum;
 			if(jobNew.Category.In(JobCategory.Bug,JobCategory.Conversion,JobCategory.UnresolvedIssue)) {
@@ -1337,15 +1332,15 @@ namespace OpenDental {
 		private void RefreshTask() {
 			if(TaskCur==null) {
 				MsgBox.Show(this,"This task is in an invalid state. The task will now be closed so it can be opened again in a valid state.");
-				_isAbort=true;
-				DialogResult=DialogResult.Cancel;
+				DialogResult=DialogResult.Abort;
+				Close();
 				return;
 			}
 			TaskCur=Tasks.GetOne(TaskCur.TaskNum);
 			if(TaskCur==null) {
 				MsgBox.Show(this,"This task has been deleted and must be closed.");
-				_isAbort=true;
-				DialogResult=DialogResult.Cancel;
+				DialogResult=DialogResult.Abort;
+				Close();
 				return;
 			}
 			_taskList=TaskLists.GetOne(TaskCur.TaskListNum);
@@ -1367,7 +1362,7 @@ namespace OpenDental {
 				if(Tasks.GetOne(TaskCur.TaskNum)==null) {
 					MsgBox.Show(this,"Task already deleted.");//if task has remained open and has become stale on a workstation.
 					butDelete.Enabled=false;
-					butSave.Enabled=false;
+					butOK.Enabled=false;
 					butSend.Enabled=false;
 					butAddNote.Enabled=false;
 					Text+=" - {"+Lan.g(this,"Deleted")+"}";
@@ -1400,7 +1395,7 @@ namespace OpenDental {
 			taskHist.IsNoteChange=DidNotesChange;
 			taskHist.UserNum=Security.CurUser.UserNum;
 			TaskHists.Insert(taskHist);
-			SecurityLogs.MakeLogEntry(EnumPermType.TaskDelete,0,"Task "+POut.Long(TaskCur.TaskNum)+" deleted",0);
+			SecurityLogs.MakeLogEntry(Permissions.TaskDelete,0,"Task "+POut.Long(TaskCur.TaskNum)+" deleted",0);
 			DialogResult=DialogResult.OK;
 			Close();
 		}
@@ -1480,7 +1475,7 @@ namespace OpenDental {
 			if(!SaveCur()) {
 				return;
 			}
-			SaveCopy(formTaskListSelect.ListSelectedLists.Skip(1).ToList());//Skip one because tasks was saved to first task list
+			SaveCopy(formTaskListSelect.ListSelectedLists.Skip(1).ToList());//Copies/Inserts task and sends to inboxes if multiple lists were selected.
 			//Check for changes.  If something changed, send a signal.
 			if(DidNotesChange || !TaskCur.Equals(_taskOld) || _hasStatusChanged) {
 				Signalods.SetInvalid(InvalidType.TaskPopup,KeyType.Task,TaskCur.TaskNum);//popup
@@ -1491,8 +1486,8 @@ namespace OpenDental {
 			Close();
 		}
 
-		///<summary>Copies/Inserts task and sends to inboxes if multiple lists were selected.</summary>
-		public bool SaveCopy(List<long> listTaskListNums) {
+		///<summary>Saves a copy of the task</summary>
+		private bool SaveCopy(List<long> listTaskListNums) {
 			for(int i=0;i< listTaskListNums.Count;i++) {
 				Task taskCopy=TaskCur.Copy();
 				taskCopy.TaskListNum=listTaskListNums[i];
@@ -1560,23 +1555,10 @@ namespace OpenDental {
 			groupReminder.Enabled=!doSetReadOnly;
 			listCategory.Enabled=!doSetReadOnly;
 			long taskListNum= Security.CurUser.TaskListInBox;
-			//Always block deleting tasks if they don't have permission
-			if(!Security.IsAuthorized(EnumPermType.TaskDelete,suppressMessage: true)){
-				butDelete.Enabled=false;
-			}
-			//If this task is in the current users task list, or they created it, or they have permission, allow them to mark it done.
+			//If this task is in the current users task list, or they created it, or they have permission, allow them to mark it done. 
 			if((TaskCur.TaskListNum==taskListNum && taskListNum!=0) || Tasks.IsAuthorizedOrOwner(TaskCur)) {
 				checkDone.Enabled=true;
 				return;
-			}
-			//Otherwise we know it's not in their list, and that they didn't create it, so check their permission.
-			if(!Security.IsAuthorized(EnumPermType.TaskEdit,suppressMessage: true)) {
-				butAutoNote.Enabled=false;
-				butEditAutoNote.Enabled=false;
-				textDescript.ReadOnly=true;
-				textDescript.BackColor=System.Drawing.SystemColors.Window;
-				textDescriptOverride.ReadOnly=true;
-				textDescriptOverride.BackColor=System.Drawing.SystemColors.Window;
 			}
 			if(checkIsReadOnly.Checked) {
 				//Only disable the done checkbox if the task is read only, isn't in the current user's task list, and wasn't created by the current user.
@@ -1592,7 +1574,7 @@ namespace OpenDental {
 		///<summary>Sets all controls to read-only or disabled except cancel and copy button.</summary>
 		private void DisableMostControls() {
 			//Disable most controls.
-			DisableAllExcept(butCopy,textDateTimeEntry,textDateTimeFinished,labelTaskChanged,splitContainer);
+			DisableAllExcept(butCancel,butCopy,textDateTimeEntry,textDateTimeFinished,labelTaskChanged,splitContainer);
 			//Enable and set read-only for fields we want to allow copying from.
 			#region splitContainerDescriptNote
 			splitContainer.Enabled=true;  //This was probably already true but just in case
@@ -1605,7 +1587,7 @@ namespace OpenDental {
 			#endregion splitContainerDescriptNote
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			if(!TrySaveAndShouldClose()) {
 				return;
 			}
@@ -1642,26 +1624,31 @@ namespace OpenDental {
 			UserControlTasks.RefillLocalTaskGrids(TaskCur,_listTaskNotes,listSignalNums,canKeepTask);
 		}
 
-		private void FormTaskEdit_FormClosing(object sender,FormClosingEventArgs e) {
-			if(_isAbort) {
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			if(_formTaskNoteEdit != null && !_formTaskNoteEdit.IsDisposed) {
+				MsgBox.Show(this,"One or more task note edit windows are open and must be closed.");
 				return;
 			}
-			if(DialogResult!=DialogResult.OK && _listDefsTaskPriorities.Count>=1) {//X click. There's two DialogResult.Cancels in LoadTask() caused by _listDefsTaskPriorities.Count<1 already addressed.
-				if(_formTaskNoteEdit!=null && !_formTaskNoteEdit.IsDisposed) {//This can only happen if the user closes the window using the X in the upper right and TaskNoteEdit is open.
-					MsgBox.Show(this,"One or more task note edit windows are open and must be closed.");
-					e.Cancel=true;
+			if(IsNew) { 
+				List<TaskAttachment> listTaskAttachments=TaskAttachments.GetManyByTaskNum(TaskCur.TaskNum);
+				if(listTaskAttachments!=null && listTaskAttachments.Count>0 && 
+					!MsgBox.Show(this,MsgBoxButtons.YesNo,"This task has attachments. Continue? If yes, any linked documents can be deleted from the imaging module if desired.")) {
 					return;
 				}
-				if(IsNew) { 
-					List<TaskAttachment> listTaskAttachments=TaskAttachments.GetManyByTaskNum(TaskCur.TaskNum);
-					if(listTaskAttachments!=null && listTaskAttachments.Count>0 && 
-						!MsgBox.Show(this,MsgBoxButtons.YesNo,"This task has attachments. Continue? If yes, any linked documents can be deleted from the imaging module if desired.")) {
-						e.Cancel=true;
-						return;
-					}
-				}
 			}
-			
+			DialogResult=DialogResult.Cancel;
+			Close();
+		}
+
+		private void FormTaskEdit_FormClosing(object sender,FormClosingEventArgs e) {
+			if(DialogResult==DialogResult.Abort) {
+				return;
+			}
+			if(DialogResult==DialogResult.None && (_formTaskNoteEdit!=null && !_formTaskNoteEdit.IsDisposed)) {//This can only happen if the user closes the window using the X in the upper right.
+				MsgBox.Show(this,"One or more task note edit windows are open and must be closed.");
+				e.Cancel=true;
+				return;
+			}
 			if(PrefC.GetBool(PrefName.TasksNewTrackedByUser)) {
 				//No more automation here
 			}
@@ -1675,7 +1662,7 @@ namespace OpenDental {
 			}
 			if(IsNew) {
 				Tasks.Delete(TaskCur.TaskNum);//Shouldn't be displayed in UserControlTasks yet, so no refill needed.
-				SecurityLogs.MakeLogEntry(EnumPermType.TaskDelete,0,"Task "+POut.Long(TaskCur.TaskNum)+" deleted",0);
+				SecurityLogs.MakeLogEntry(Permissions.TaskDelete,0,"Task "+POut.Long(TaskCur.TaskNum)+" deleted",0);
 			}
 			else if(DidNotesChange) {//Note changed and dialogue result was not OK
 				//This should only ever be hit if the user clicked cancel or X.  Everything else will have dialogue result OK and exit above.
@@ -1720,11 +1707,11 @@ namespace OpenDental {
 				MessageBox.Show(Lan.g(this,"No Auto Note available to edit."));
 				return;
 			}
-			FrmAutoNoteCompose frmAutoNoteCompose=new FrmAutoNoteCompose();
-			frmAutoNoteCompose.StrMainTextNote=textDescript.Text;
-			frmAutoNoteCompose.ShowDialog();
-			if(frmAutoNoteCompose.IsDialogOK) {
-				textDescript.Text=frmAutoNoteCompose.StrCompletedNote;
+			using FormAutoNoteCompose formAutoNoteCompose=new FormAutoNoteCompose();
+			formAutoNoteCompose.StrMainTextNote=textDescript.Text;
+			formAutoNoteCompose.ShowDialog();
+			if(formAutoNoteCompose.DialogResult==DialogResult.OK) {
+				textDescript.Text=formAutoNoteCompose.StrCompletedNote;
 				butEditAutoNote.Visible=GetHasAutoNotePrompt();
 			}
 		}

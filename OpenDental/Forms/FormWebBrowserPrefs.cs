@@ -21,6 +21,11 @@ namespace OpenDental {
 			Lan.F(this);
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+			Close();
+		}
+
 		private async void FormWebBrowserPrefs_Load(object sender,EventArgs e) {
 			if(SizeWindow!=new Size(0,0)) {
 				Size=new Size(LayoutManager.Scale(SizeWindow.Width),LayoutManager.Scale(SizeWindow.Height));
@@ -40,7 +45,7 @@ namespace OpenDental {
 				}
 				Location=new Point(x,y);
 			}
-			if(!ODBuild.IsThinfinity()) {
+			if(!ODBuild.IsWeb()) {
 				try {
 					await webView.Init();
 					webView.CoreWebView2.NewWindowRequested+=CoreWebView2_NewWindowRequested;
@@ -55,7 +60,7 @@ namespace OpenDental {
 			if(string.IsNullOrEmpty(HtmlContent)) {
 				return;
 			}
-			if(ODBuild.IsThinfinity()) {//Webview2 doesn't work with cloud, use a webBrowser object as a backup until Thinfinity supports webview2
+			if(ODBuild.IsWeb()) {//Webview2 doesn't work with cloud, use a webBrowser object as a backup until Thinfinity supports webview2
 				webBrowser.Visible=true;
 				webBrowser.DocumentText=HtmlContent;
 				return;

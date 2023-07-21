@@ -27,7 +27,7 @@ namespace OpenDental {
 
 		private void FormEtrans834Import_Load(object sender,EventArgs e) {
 			textImportPath.Text=PrefC.GetString(PrefName.Ins834ImportPath);
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				//Not implemented yet for OD Cloud
 				textImportPath.Text="";
 				textImportPath.Enabled=false;
@@ -174,7 +174,7 @@ namespace OpenDental {
 			Application.DoEvents();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(_thread!=null && !_thread.HasQuit) {
 				return;//Force the user to wait until the window has finished loading/refreshing, because we need to know which file to import.
 			}
@@ -193,14 +193,12 @@ namespace OpenDental {
 			Close();
 		}
 
-		private void FormEtrans834Import_FormClosing(object sender,FormClosingEventArgs e) {
-			//If user closed window with X or Esc, then DialogResult=DialogResult.None because this was launched with Show instead of ShowDialog.
-			if(DialogResult==DialogResult.OK) {
-				return;
-			}
+		private void butCancel_Click(object sender,EventArgs e) {
 			if(_thread!=null) {
 				_thread.QuitAsync();
 			}
+			DialogResult=DialogResult.Cancel;
+			Close();
 		}
 
 	}

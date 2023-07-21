@@ -24,6 +24,7 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWikiCompare));
+			this.button1 = new OpenDental.UI.Button();
 			this.textContentRight = new OpenDental.ODcodeBox();
 			this.textContentLeft = new OpenDental.ODcodeBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -31,6 +32,17 @@
 			this.label3 = new System.Windows.Forms.Label();
 			this.labelHelpNew = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+			// 
+			// button1
+			// 
+			this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.button1.Location = new System.Drawing.Point(1077, 625);
+			this.button1.Name = "button1";
+			this.button1.Size = new System.Drawing.Size(75, 24);
+			this.button1.TabIndex = 2;
+			this.button1.Text = "Close";
+			this.button1.UseVisualStyleBackColor = true;
+			this.button1.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// textContentRight
 			// 
@@ -41,7 +53,7 @@
 			this.textContentRight.Location = new System.Drawing.Point(585, 43);
 			this.textContentRight.Name = "textContentRight";
 			this.textContentRight.ReadOnly = true;
-			this.textContentRight.Size = new System.Drawing.Size(567, 606);
+			this.textContentRight.Size = new System.Drawing.Size(567, 577);
 			this.textContentRight.TabIndex = 7;
 			this.textContentRight.Text = "";
 			// 
@@ -53,7 +65,7 @@
 			this.textContentLeft.Location = new System.Drawing.Point(12, 43);
 			this.textContentLeft.Name = "textContentLeft";
 			this.textContentLeft.ReadOnly = true;
-			this.textContentLeft.Size = new System.Drawing.Size(567, 606);
+			this.textContentLeft.Size = new System.Drawing.Size(567, 577);
 			this.textContentLeft.TabIndex = 6;
 			this.textContentLeft.Text = "";
 			// 
@@ -108,6 +120,7 @@
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.textContentRight);
 			this.Controls.Add(this.textContentLeft);
+			this.Controls.Add(this.button1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormWikiCompare";
@@ -120,6 +133,7 @@
 		}
 
 		#endregion
+		private UI.Button button1;
 		private ODcodeBox textContentRight;
 		private ODcodeBox textContentLeft;
 		private System.Windows.Forms.Label label1;

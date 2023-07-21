@@ -85,8 +85,8 @@ namespace OpenDental{
 		}
 
 		private void butStart_Click(object sender,EventArgs e) {
-			if(ODEnvironment.IsCloudServer) {
-				MsgBox.Show(this,"Bridge is not available while using Open Dental Cloud.");
+			if(ODBuild.IsWeb()) {
+				MsgBox.Show(this,"Bridge is not available while viewing through the web.");
 				return;
 			}
 			if(!SaveToDb()){
@@ -102,7 +102,7 @@ namespace OpenDental{
 			propVal=ProgramProperties.GetPropVal(ProgramCur.ProgramNum,"DateTimeLastUploaded");
 			DateTime dateT=PIn.DateT(propVal);
 			if(dateT.Year<1880){
-				if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"This is an initial synchronization.  It could take a while.  You can probably continue to work on this computer, but you will need to leave the program running on this workstation until the sync is done.  Begin initial synchronization?"))
+				if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"This is an initial synchronization.  It could take a while.  You can probably continue to work on this computer, but you will need to leave the program running on this workstation until the synch is done.  Begin initial synchronization?"))
 				{
 					return;
 				}
@@ -113,8 +113,8 @@ namespace OpenDental{
 		}
 
 		private void butViewLog_Click(object sender,EventArgs e) {
-			if(ODEnvironment.IsCloudServer) {
-				MsgBox.Show(this,"Bridge is not available while using Open Dental Cloud.");
+			if(ODBuild.IsWeb()) {
+				MsgBox.Show(this,"Bridge is not available while viewing through the web.");
 				return;
 			}
 			Process.Start(_logfile);
@@ -129,7 +129,7 @@ namespace OpenDental{
 			if(program==null){
 				return;
 			}
-			if(!Programs.IsEnabledByHq(program,out _) || !program.Enabled || ODEnvironment.IsCloudServer){
+			if(!Programs.IsEnabledByHq(program,out _) || !program.Enabled || ODBuild.IsWeb()){
 				return;
 			}
 			//get current time and use delta from now on?
@@ -144,7 +144,7 @@ namespace OpenDental{
 		}
 
 		private static void ThreadStartTarget(object data){
-			File.WriteAllText(_logfile,DateTime.Now.ToString()+"  Sync thread started.\r\n");//creates or clears the log
+			File.WriteAllText(_logfile,DateTime.Now.ToString()+"  Synch thread started.\r\n");//creates or clears the log
 			Program program=(Program)data;
 			int intervalSec=PIn.Int(ProgramProperties.GetPropVal(program.ProgramNum,"IntervalSeconds"));
 			int intervalSecError=intervalSec*4;
@@ -228,8 +228,8 @@ namespace OpenDental{
 					+listRecallsToSync.Count
 					+listProcedureCodesToSync.Count;
 				if(totalObjectsToSynch==0){//if there are still no objects
-					File.AppendAllText(_logfile,DateTime.Now.ToString()+"  Current.  Sleeping between sync.\r\n");
-					ProgramProperties.SetProperty(program.ProgramNum,"SynchStatus","Current.  Sleeping between sync.");
+					File.AppendAllText(_logfile,DateTime.Now.ToString()+"  Current.  Sleeping between synch.\r\n");
+					ProgramProperties.SetProperty(program.ProgramNum,"SynchStatus","Current.  Sleeping between synch.");
 					Thread.Sleep(TimeSpan.FromSeconds(intervalSec));//sleep for a while
 					continue;
 				}
@@ -687,8 +687,8 @@ namespace OpenDental{
 				MessageBox.Show(err);
 				return false;
 			}
-			if(ODEnvironment.IsCloudServer) {
-				MsgBox.Show(this,"Bridge is not available while using Open Dental Cloud.");
+			if(ODBuild.IsWeb()) {
+				MsgBox.Show(this,"Bridge is not available while viewing through the web.");
 				return false;
 			}
 			if(textProgDesc.Text==""){
@@ -714,7 +714,7 @@ namespace OpenDental{
 			}
 			if(checkEnabled.Checked && Environment.MachineName!=textWorkstationName.Text.ToUpper()){
 				MessageBox.Show("This workstation is: "+Environment.MachineName+".  The workstation entered does not match.\r\n"
-					+"UAppoint setup should only be performed from the workstation responsible for sync.");
+					+"UAppoint setup should only be performed from the workstation responsible for synch.");
 				return false;
 			}
 			int intervalSec=0;
@@ -756,13 +756,13 @@ namespace OpenDental{
 			for(int i=0;i<_listProgramProperties.Count;i++) {
 				if(_listProgramProperties[i].IsHighSecurity && ProgramProperties.GetPropVal(ProgramCur.ProgramNum,_listProgramProperties[i].PropertyDesc)!=_listProgramProperties[i].TagOD.ToString()){
 					string logText=$"{ProgramCur.ProgDesc}+'s {_listProgramProperties[i].PropertyDesc} for headquarters was altered.";
-					SecurityLogs.MakeLogEntry(EnumPermType.ManageHighSecurityProgProperties,0,logText,ProgramCur.ProgramNum,DateTime.Now);
+					SecurityLogs.MakeLogEntry(Permissions.ManageHighSecurityProgProperties,0,logText,ProgramCur.ProgramNum,DateTime.Now);
 				}
 			}
 			return true;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!SaveToDb()){
 				return;
 			}
@@ -773,12 +773,15 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void textPassword_TextChanged(object sender,EventArgs e) {
 			//Let the users see what they are typing if they clear out the password field completely
 			if(textPassword.Text.Trim().Length==0) {
 				textPassword.UseSystemPasswordChar=false;
 			}
 		}
-
 	}
 }

@@ -190,12 +190,16 @@ namespace OpenDental {
 			labelExistingLab.Visible=true;
 		}
 
-		private void butOK_Click(object sender,EventArgs e) {
+		private void butSave_Click(object sender,EventArgs e) {
 			if(PatientCur==null) {
 				MsgBox.Show(this,"Please attach to patient first.");
 				return;
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

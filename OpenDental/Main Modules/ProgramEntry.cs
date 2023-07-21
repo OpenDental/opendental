@@ -22,7 +22,7 @@ namespace OpenDental {
 			//See also http://stackoverflow.com/questions/8335983/accessviolationexception-on-tooltip-that-faults-comctl32-dll-net-4-0
 			Application.EnableVisualStyles();//This line fixes rare AccessViolationExceptions for ToolTips on our ValidDate boxes, ValidDouble boxes, etc...
 			Application.SetCompatibleTextRenderingDefault(false);//designer uses new text rendering.  This makes the exe use matching text rendering.  Before this was added, it was common for labels to be longer in the running program than they were in the designer.
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 				//Exits OD gracefully if the user closes the browser or navigates away
 				Web.OnCloseHandler=FormOpenDental.S_ProcessKillCommand;
@@ -86,7 +86,6 @@ namespace OpenDental {
 			}
 			if(File.Exists(Path.Combine(appDir,"NoCustomBorders.txt"))){
 				FormODBase.AreBordersMS=true;
-				FormFrame.AreBordersMS=true;
 			}
 			//In Win10, this registry entry is for 'Let Windows try to fix apps so they're not blurry'.
 			//In Win11, behavior is true, but the registry entry is gone and there is no option to change it.

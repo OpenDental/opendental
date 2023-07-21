@@ -118,7 +118,6 @@ namespace OpenDentBusiness{
 		Mountainside,
 		NewTomNNT,
 		Office,
-		One2,
 		///<summary>Obsolete. All instances may be removed as you run across them.  Also see Programs.UsingOrion.</summary>
 		Orion,
 		OrthoCAD,
@@ -133,7 +132,6 @@ namespace OpenDentBusiness{
 		///<summary>FxImage was renamed to PatientGallery.</summary>
 		PatientGallery,
 		Patterson,
-		Pearl,
 		PerioPal,
 		PDMP,
 		Pixel,
@@ -162,7 +160,6 @@ namespace OpenDentBusiness{
 		Sirona,
 		SMARTDent,
 		Sopro,
-		SOTACloud,
 		SteriSimple,
 		ThreeShape,
 		TigerView,

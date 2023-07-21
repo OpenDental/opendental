@@ -45,7 +45,8 @@ namespace OpenDental{
 			this.textDate = new OpenDental.ValidDate();
 			this.butStudentPicker = new OpenDental.UI.Button();
 			this.gridCriterion = new OpenDental.UI.GridOD();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
@@ -235,12 +236,12 @@ namespace OpenDental{
 			this.butStudentPicker.Text = "...";
 			this.butStudentPicker.Click += new System.EventHandler(this.butStudentPicker_Click);
 			// 
-			// gridCriterion
+			// gridMain
 			// 
 			this.gridCriterion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.gridCriterion.Location = new System.Drawing.Point(18, 87);
-			this.gridCriterion.Name = "gridCriterion";
+			this.gridCriterion.Name = "gridMain";
 			this.gridCriterion.SelectionMode = OpenDental.UI.GridSelectionMode.OneCell;
 			this.gridCriterion.Size = new System.Drawing.Size(487, 342);
 			this.gridCriterion.TabIndex = 143;
@@ -250,15 +251,25 @@ namespace OpenDental{
 			this.gridCriterion.CellLeave += new OpenDental.UI.ODGridClickEventHandler(this.gridCriterion_CellLeave);
 			this.gridCriterion.CellEnter += new OpenDental.UI.ODGridClickEventHandler(this.gridCriterion_CellEnter);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(750, 455);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 5;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(671, 458);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 5;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(752, 458);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 6;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butDelete
 			// 
@@ -298,7 +309,8 @@ namespace OpenDental{
 			this.Controls.Add(this.textTitle);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textGradeScaleName);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEvaluationEdit";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -311,7 +323,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox textCourse;
 		private System.Windows.Forms.Label label2;

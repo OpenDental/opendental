@@ -35,6 +35,7 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTaskListSelect));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.labelMulti = new System.Windows.Forms.Label();
 			this.checkMulti = new OpenDental.UI.CheckBox();
@@ -44,10 +45,21 @@ namespace OpenDental {
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(350, 481);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 5;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(597, 481);
+			this.butOK.Location = new System.Drawing.Point(350, 451);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 4;
@@ -108,7 +120,7 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridMain.Location = new System.Drawing.Point(11, 150);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(572, 355);
+			this.gridMain.Size = new System.Drawing.Size(325, 355);
 			this.gridMain.TabIndex = 3;
 			this.gridMain.TitleVisible = false;
 			this.gridMain.WrapText = false;
@@ -117,7 +129,8 @@ namespace OpenDental {
 			// FormTaskListSelect
 			// 
 			this.AcceptButton = this.butOK;
-			this.ClientSize = new System.Drawing.Size(684, 517);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(437, 517);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.checkIncludeAll);
 			this.Controls.Add(this.label1);
@@ -125,6 +138,7 @@ namespace OpenDental {
 			this.Controls.Add(this.labelMulti);
 			this.Controls.Add(this.checkMulti);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -137,6 +151,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private Label labelMulti;
 		private OpenDental.UI.CheckBox checkMulti;

@@ -33,10 +33,10 @@ namespace OpenDental {
 		}
 
 		private void buttonUseAutoNote_Click(object sender,EventArgs e) {
-			FrmAutoNoteCompose frmAutoNoteCompose=new FrmAutoNoteCompose();
-			frmAutoNoteCompose.ShowDialog();
-			if(frmAutoNoteCompose.IsDialogOK) {
-				textAppended.AppendText(frmAutoNoteCompose.StrCompletedNote);
+			using FormAutoNoteCompose formAutoNoteCompose=new FormAutoNoteCompose();
+			formAutoNoteCompose.ShowDialog();
+			if(formAutoNoteCompose.DialogResult==DialogResult.OK) {
+				textAppended.AppendText(formAutoNoteCompose.StrCompletedNote);
 			}
 		}
 
@@ -70,34 +70,12 @@ namespace OpenDental {
 			ProcedureCur.SigIsTopaz=signatureBoxWrapper.GetSigIsTopaz();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			Procedure procedure=ProcedureCur.Copy();
 			ProcedureCur.UserNum=Security.CurUser.UserNum;
 			ProcedureCur.Note=textNotes.Text+"\r\n"
 				+DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString()+" "+Security.CurUser.UserName+":  "
 				+textAppended.Text;
-			if((procedure.UserNum!=ProcedureCur.UserNum) && !procedure.Signature.IsNullOrEmpty()) {
-				//Check if user is subcribed to the alertType.SignatureCleared and create an alert.
-				if(AlertSubs.GetAllAlertTypesForUser(procedure.UserNum).Contains(AlertType.SignatureCleared)) {
-					string procCode=ProcedureCodes.GetStringProcCode(procedure.CodeNum);
-					string procedureType=Lans.g(this,"Procedure");
-					if(ProcedureCodes.GetStringProcCode(ProcedureCur.CodeNum)==ProcedureCodes.GroupProcCode) {
-						procedureType=Lans.g(this,"Group");
-					}
-					string alertDescription=Lans.g(this,"Locked")+" "+procedureType+" "+Lans.g(this,"Note Changed for PatNum:")+" "+procedure.PatNum+" "
-					+Lans.g(this,"Date:")+" "+procedure.ProcDate.ToShortDateString()+" "
-					+Lans.g(this,"Procedure Code:")+" "+procCode;
-					AlertItems.Insert(new AlertItem {
-						//Allow to alert to be deleted or marked as read.
-						Actions=ActionType.MarkAsRead | ActionType.Delete,
-						Description=alertDescription,
-						Severity=SeverityType.Low,
-						Type=AlertType.SignatureCleared,
-						UserNum=procedure.UserNum,
-						ClinicNum=procedure.ClinicNum,
-					});
-				}
-			}
 			try {
 				SaveSignature();
 			}
@@ -109,9 +87,12 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormProcNoteAppend_FormClosing(object sender,FormClosingEventArgs e) {
 			signatureBoxWrapper?.SetTabletState(0);
 		}
-
 	}
 }

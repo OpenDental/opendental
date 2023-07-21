@@ -28,12 +28,15 @@ namespace OpenDental{
 			this.labelFilterTypes = new System.Windows.Forms.Label();
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
+			this.butCancel = new OpenDental.UI.Button();
 			this.menuMain = new OpenDental.UI.MenuOD();
 			this.panelSheetPreview = new OpenDental.UI.PanelOD();
 			this.labelVerticalDivider = new System.Windows.Forms.Label();
 			this.groupEClipboard = new OpenDental.UI.GroupBox();
+			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butSendToDevice = new OpenDental.UI.Button();
+			this.butSendAllToDevice = new OpenDental.UI.Button();
 			this.groupEClipboard.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -79,6 +82,16 @@ namespace OpenDental{
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
 			this.gridMain.SelectionCommitted += new System.EventHandler(this.gridMain_SelectionCommitted);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.butCancel.Location = new System.Drawing.Point(357, 668);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 4;
+			this.butCancel.Text = "Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// menuMain
 			// 
 			this.menuMain.Location = new System.Drawing.Point(0, 0);
@@ -110,13 +123,23 @@ namespace OpenDental{
 			// 
 			// groupEClipboard
 			// 
+			this.groupEClipboard.Controls.Add(this.label2);
 			this.groupEClipboard.Controls.Add(this.label1);
 			this.groupEClipboard.Controls.Add(this.butSendToDevice);
+			this.groupEClipboard.Controls.Add(this.butSendAllToDevice);
 			this.groupEClipboard.Location = new System.Drawing.Point(4, 571);
 			this.groupEClipboard.Name = "groupEClipboard";
-			this.groupEClipboard.Size = new System.Drawing.Size(425, 53);
+			this.groupEClipboard.Size = new System.Drawing.Size(425, 91);
 			this.groupEClipboard.TabIndex = 50;
 			this.groupEClipboard.Text = "Send to ODTouch";
+			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(91, 63);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(330, 18);
+			this.label2.TabIndex = 3;
+			this.label2.Text = "Logs the current user into the device and displays all exam sheets ";
 			// 
 			// label1
 			// 
@@ -138,6 +161,18 @@ namespace OpenDental{
 			this.butSendToDevice.UseVisualStyleBackColor = true;
 			this.butSendToDevice.Click += new System.EventHandler(this.butSendToDevice_Click);
 			// 
+			// butSendAllToDevice
+			// 
+			this.butSendAllToDevice.Image = global::OpenDental.Properties.Resources.arrowRightLine;
+			this.butSendAllToDevice.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.butSendAllToDevice.Location = new System.Drawing.Point(3, 58);
+			this.butSendAllToDevice.Name = "butSendAllToDevice";
+			this.butSendAllToDevice.Size = new System.Drawing.Size(85, 24);
+			this.butSendAllToDevice.TabIndex = 0;
+			this.butSendAllToDevice.Text = "All Exams";
+			this.butSendAllToDevice.UseVisualStyleBackColor = true;
+			this.butSendAllToDevice.Click += new System.EventHandler(this.butSendAllToDevice_Click);
+			// 
 			// FormExamSheets
 			// 
 			this.ClientSize = new System.Drawing.Size(974, 696);
@@ -148,6 +183,7 @@ namespace OpenDental{
 			this.Controls.Add(this.listExamTypes);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.menuMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormExamSheets";
@@ -159,6 +195,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.ListBox listExamTypes;
@@ -167,7 +205,9 @@ namespace OpenDental{
 		private OpenDental.UI.PanelOD panelSheetPreview;
 		private System.Windows.Forms.Label labelVerticalDivider;
 		private UI.GroupBox groupEClipboard;
+		private UI.Button butSendAllToDevice;
 		private UI.Button butSendToDevice;
+		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label1;
 	}
 }

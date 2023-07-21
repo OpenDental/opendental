@@ -136,7 +136,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOk_Click(object sender,EventArgs e) {
 			//validation
 			if(EduResourceCur.DiseaseDefNum==0 && EduResourceCur.MedicationNum==0 && EduResourceCur.SmokingSnoMed==""
 				&& textLabResultsID.Text=="" && textLabTestName.Text=="" && textCompareValue.Text=="")
@@ -181,6 +181,10 @@ namespace OpenDental {
 				EduResources.Update(EduResourceCur);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

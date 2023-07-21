@@ -55,7 +55,8 @@
 			this.radioNonUserStatuses = new System.Windows.Forms.RadioButton();
 			this.radioUserStatuses = new System.Windows.Forms.RadioButton();
 			this.butAddAssessment = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.groupTobaccoUse.SuspendLayout();
 			this.groupIntervention.SuspendLayout();
 			this.groupAssessment.SuspendLayout();
@@ -398,21 +399,33 @@
 			this.butAddAssessment.Text = "Add Assessment";
 			this.butAddAssessment.Click += new System.EventHandler(this.butAssessed_Click);
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(879, 488);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(76, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(879, 488);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(76, 24);
+			this.butCancel.TabIndex = 4;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(797, 488);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(76, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// FormEhrPatientSmoking
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(967, 524);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.groupTobaccoUse);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.comboSmokeStatus);
@@ -451,7 +464,8 @@
 		private System.Windows.Forms.TextBox textDateIntervention;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label7;
-		private UI.Button butSave;
+		private UI.Button butCancel;
+		private UI.Button butOK;
 		private System.Windows.Forms.RadioButton radioAllStatuses;
 		private System.Windows.Forms.RadioButton radioNonUserStatuses;
 		private System.Windows.Forms.RadioButton radioUserStatuses;

@@ -45,7 +45,7 @@ namespace OpenDental{
 			textInterest.Text=PayPlanChargeCur.Interest.ToString("n");
 			textNote.Text=PayPlanChargeCur.Note;
 			if(PrefC.HasClinicsEnabled) {
-				comboBoxClinic.ClinicNumSelected=PayPlanChargeCur.ClinicNum;
+				comboBoxClinic.SelectedClinicNum=PayPlanChargeCur.ClinicNum;
 			}
 			if(_payPlan.IsDynamic) {
 				comboBoxClinic.Enabled=true;
@@ -71,17 +71,17 @@ namespace OpenDental{
 			//Do not let the user edit certain fields when APR is present.
 			if(!CompareDouble.IsZero(_payPlan.APR)) {
 				textPrincipal.ReadOnly=!_payPlan.IsDynamic; //Dynamic payment plan charges should still be able to alter their principal for now.
-				if(Security.IsAuthorized(EnumPermType.PayPlanChargeDateEdit,true)) {
-					string strPlanType=Lan.g(this,"Patient ");
+				if(Security.IsAuthorized(Permissions.PayPlanChargeDateEdit,true)) {
+					string strPlanType=Lan.g(this,"Patient");
 					if(_payPlan.PlanNum > 0) {
-						strPlanType=Lan.g(this,"Insurance ");
+						strPlanType=Lan.g(this,"Insurance");
 					}
 					if(_payPlan.IsDynamic) {
-						strPlanType="";
+						strPlanType=Lan.g(this,"Dynamic");
 					}
-					string logText=strPlanType+Lan.g(this,"Payment Plan Charge with amount due of")
+					string logText=strPlanType + " " + Lan.g(this,"Payment Plan Charge with amount due of")
 						+" " + PayPlanChargeCur.Principal.ToString("C") + " "+ Lan.g(this,"was viewed.");
-					SecurityLogs.MakeLogEntry(EnumPermType.PayPlanChargeDateEdit,_payPlan.PatNum,logText,_payPlan.PayPlanNum,DateTime.MinValue);
+					SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeDateEdit,_payPlan.PatNum,logText,_payPlan.PayPlanNum,DateTime.MinValue);
 				}
 				else {//User does not have the PayPlanChargeDateEdit permission
 					//There is no need to make a security log entry, but the user should not be allowed to edit the Date field.
@@ -94,7 +94,7 @@ namespace OpenDental{
 		private void FillComboProv() {
 			comboBoxProv.Items.Clear();
 			if(_payPlan.IsDynamic) {
-				comboBoxProv.Items.AddProvsAbbr(Providers.GetProvsForClinic(comboBoxClinic.ClinicNumSelected));
+				comboBoxProv.Items.AddProvsAbbr(Providers.GetProvsForClinic(comboBoxClinic.SelectedClinicNum));
 				comboBoxProv.SetSelectedProvNum(PayPlanChargeCur.ProvNum);
 				comboBoxProv.Enabled=true;
 				return;
@@ -108,7 +108,7 @@ namespace OpenDental{
 			FillComboProv();
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textDate.IsValid()
 				|| !textPrincipal.IsValid()
 				|| !textInterest.IsValid())
@@ -116,28 +116,17 @@ namespace OpenDental{
 				MessageBox.Show(Lan.g(this,"Please fix data entry errors first."));
 				return;
 			}
-			if(textNote.Text.Contains("Down Payment")) {
-				MessageBox.Show(Lan.g(this,"The phrase 'Down Payment' cannot be used in the notes."));
-				return;
-			}
 			DateTime chargeDate=PIn.Date(textDate.Text);
 			double principal=PIn.Double(textPrincipal.Text);
 			double interest=PIn.Double(textInterest.Text);
 			if(_payPlan.IsDynamic) {
 				if(PayPlanChargeCur.IsDebitAdjustment && principal<0) {
-					MsgBox.Show(this,"Payment plan adjustments cannot have negative principal.");
+					MsgBox.Show(this,"Dynamic payment plan adjustments cannot have negative principal.");
 					return;
 				}
 				bool isNextChargeDate=PayPlanEdit.IsChargeDateNextChargeDate(chargeDate,_payPlan);
 				if(isNextChargeDate) {
 					MsgBox.Show(this,"This charge date is the same as a future charge date. This will prevent the future charge from being issued","Warning");
-				}
-				Procedure procedure=Procedures.GetOneProc(PayPlanChargeCur.FKey,false);
-				double adjustment=Adjustments.GetTotForProc(procedure.ProcNum);
-				double procFeeAdjusted=procedure.ProcFee+adjustment;
-				if(principal > procFeeAdjusted) {
-					MsgBox.Show(this,"Principal cannot be greater than the procedure fee plus adjustments.");
-					return;
 				}
 			}
 			//Charge Date, Note, and Provider changed.
@@ -157,7 +146,7 @@ namespace OpenDental{
 			if(PayPlanChargeCur.ProvNum!=comboBoxProv.GetSelectedProvNum()) {
 				ListChangeLog.Add("Provider");
 			}
-			if(PayPlanChargeCur.ClinicNum!=comboBoxClinic.ClinicNumSelected) {
+			if(PayPlanChargeCur.ClinicNum!=comboBoxClinic.SelectedClinicNum) {
 				ListChangeLog.Add("Clinic");
 			}
 			PayPlanChargeCur.ChargeDate=chargeDate;
@@ -167,7 +156,7 @@ namespace OpenDental{
 			//Patient payment plans are not allowed to change provnum or clinicNum here.
 			if(_payPlan.IsDynamic) {
 				PayPlanChargeCur.ProvNum=comboBoxProv.GetSelectedProvNum();
-				PayPlanChargeCur.ClinicNum=comboBoxClinic.ClinicNumSelected;
+				PayPlanChargeCur.ClinicNum=comboBoxClinic.SelectedClinicNum;
 			}
 			DialogResult=DialogResult.OK;
 		}
@@ -177,12 +166,7 @@ namespace OpenDental{
 			//It is never okay to delete a payment plan charge that has a payment (paysplit) associated to it.
 			List<PayPlanCharge> listPayPlanChargesNotDeleted=PayPlanCharges.DeleteDebitsWithoutPayments(new List<PayPlanCharge>{ PayPlanChargeCur },doDelete:false);
 			if(listPayPlanChargesNotDeleted.Count > 0) {
-				string msgString="Cannot delete";
-				if(listPayPlanChargesNotDeleted.Exists(x=>x.Note.ToLower().Contains("down payment"))){
-					msgString+=" down payment charges, or";
-				}
-				msgString+=" charges with payments attached.";
-				MsgBox.Show(Lans.g(this,msgString));
+				MsgBox.Show("Cannot delete charges with payments attached.");
 				return;
 			}
 			if(IsNew){
@@ -193,5 +177,11 @@ namespace OpenDental{
 			PayPlanChargeCur=null;//Setting this null so we know to get rid of it when the form closes. 
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 	}
+
+	
 }

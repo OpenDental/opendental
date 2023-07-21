@@ -24,6 +24,7 @@ namespace OpenDental {
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPath));
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.textDocPath = new System.Windows.Forms.TextBox();
 			this.textExportPath = new System.Windows.Forms.TextBox();
 			this.butBrowseExport = new OpenDental.UI.Button();
@@ -81,30 +82,41 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(588, 588);
+			this.butOK.Location = new System.Drawing.Point(507, 555);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 2;
-			this.butOK.Text = "&Save";
-			this.butOK.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(588, 555);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 3;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// textDocPath
 			// 
-			this.textDocPath.Location = new System.Drawing.Point(7, 60);
+			this.textDocPath.Location = new System.Drawing.Point(7, 51);
 			this.textDocPath.Name = "textDocPath";
 			this.textDocPath.Size = new System.Drawing.Size(497, 20);
 			this.textDocPath.TabIndex = 1;
 			// 
 			// textExportPath
 			// 
-			this.textExportPath.Location = new System.Drawing.Point(19, 452);
+			this.textExportPath.Location = new System.Drawing.Point(19, 422);
 			this.textExportPath.Name = "textExportPath";
 			this.textExportPath.Size = new System.Drawing.Size(515, 20);
 			this.textExportPath.TabIndex = 1;
 			// 
 			// butBrowseExport
 			// 
-			this.butBrowseExport.Location = new System.Drawing.Point(538, 450);
+			this.butBrowseExport.Location = new System.Drawing.Point(538, 419);
 			this.butBrowseExport.Name = "butBrowseExport";
 			this.butBrowseExport.Size = new System.Drawing.Size(76, 25);
 			this.butBrowseExport.TabIndex = 91;
@@ -113,7 +125,7 @@ namespace OpenDental {
 			// 
 			// butBrowseDoc
 			// 
-			this.butBrowseDoc.Location = new System.Drawing.Point(510, 56);
+			this.butBrowseDoc.Location = new System.Drawing.Point(510, 47);
 			this.butBrowseDoc.Name = "butBrowseDoc";
 			this.butBrowseDoc.Size = new System.Drawing.Size(76, 25);
 			this.butBrowseDoc.TabIndex = 2;
@@ -122,34 +134,34 @@ namespace OpenDental {
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(20, 381);
+			this.label1.Location = new System.Drawing.Point(20, 358);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(596, 65);
+			this.label1.Size = new System.Drawing.Size(596, 59);
 			this.label1.TabIndex = 92;
 			this.label1.Text = resources.GetString("label1.Text");
 			this.label1.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// labelPathSameForAll
 			// 
-			this.labelPathSameForAll.Location = new System.Drawing.Point(7, 4);
+			this.labelPathSameForAll.Location = new System.Drawing.Point(7, 6);
 			this.labelPathSameForAll.Name = "labelPathSameForAll";
-			this.labelPathSameForAll.Size = new System.Drawing.Size(579, 50);
+			this.labelPathSameForAll.Size = new System.Drawing.Size(579, 41);
 			this.labelPathSameForAll.TabIndex = 93;
 			this.labelPathSameForAll.Text = resources.GetString("labelPathSameForAll.Text");
 			this.labelPathSameForAll.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(20, 476);
+			this.label3.Location = new System.Drawing.Point(20, 448);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(596, 65);
+			this.label3.Size = new System.Drawing.Size(596, 57);
 			this.label3.TabIndex = 96;
 			this.label3.Text = resources.GetString("label3.Text");
 			this.label3.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// butBrowseLetter
 			// 
-			this.butBrowseLetter.Location = new System.Drawing.Point(538, 545);
+			this.butBrowseLetter.Location = new System.Drawing.Point(538, 508);
 			this.butBrowseLetter.Name = "butBrowseLetter";
 			this.butBrowseLetter.Size = new System.Drawing.Size(76, 25);
 			this.butBrowseLetter.TabIndex = 95;
@@ -158,7 +170,7 @@ namespace OpenDental {
 			// 
 			// textLetterMergePath
 			// 
-			this.textLetterMergePath.Location = new System.Drawing.Point(19, 548);
+			this.textLetterMergePath.Location = new System.Drawing.Point(19, 511);
 			this.textLetterMergePath.Name = "textLetterMergePath";
 			this.textLetterMergePath.Size = new System.Drawing.Size(515, 20);
 			this.textLetterMergePath.TabIndex = 94;
@@ -166,7 +178,7 @@ namespace OpenDental {
 			// checkMultiplePaths
 			// 
 			this.checkMultiplePaths.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkMultiplePaths.Location = new System.Drawing.Point(7, 86);
+			this.checkMultiplePaths.Location = new System.Drawing.Point(7, 77);
 			this.checkMultiplePaths.Name = "checkMultiplePaths";
 			this.checkMultiplePaths.Size = new System.Drawing.Size(580, 44);
 			this.checkMultiplePaths.TabIndex = 98;
@@ -181,7 +193,7 @@ namespace OpenDental {
 			this.groupbox1.Controls.Add(this.radioUseFolder);
 			this.groupbox1.Location = new System.Drawing.Point(10, 12);
 			this.groupbox1.Name = "groupbox1";
-			this.groupbox1.Size = new System.Drawing.Size(624, 365);
+			this.groupbox1.Size = new System.Drawing.Size(624, 354);
 			this.groupbox1.TabIndex = 0;
 			this.groupbox1.Text = "A to Z Images Folder for storing images and documents";
 			// 
@@ -189,7 +201,7 @@ namespace OpenDental {
 			// 
 			this.radioSftp.Location = new System.Drawing.Point(9, 76);
 			this.radioSftp.Name = "radioSftp";
-			this.radioSftp.Size = new System.Drawing.Size(569, 18);
+			this.radioSftp.Size = new System.Drawing.Size(569, 17);
 			this.radioSftp.TabIndex = 103;
 			this.radioSftp.Text = "Store images on a server via SSH File Transfer Protocol (SFTP)";
 			this.radioSftp.UseVisualStyleBackColor = true;
@@ -199,7 +211,7 @@ namespace OpenDental {
 			// 
 			this.radioDropboxStorage.Location = new System.Drawing.Point(9, 57);
 			this.radioDropboxStorage.Name = "radioDropboxStorage";
-			this.radioDropboxStorage.Size = new System.Drawing.Size(435, 18);
+			this.radioDropboxStorage.Size = new System.Drawing.Size(435, 17);
 			this.radioDropboxStorage.TabIndex = 102;
 			this.radioDropboxStorage.Text = "Store images in Dropbox (an internet connection will be required)";
 			this.radioDropboxStorage.UseVisualStyleBackColor = true;
@@ -213,7 +225,7 @@ namespace OpenDental {
 			this.tabControlDataStorageType.Controls.Add(this.tabSftp);
 			this.tabControlDataStorageType.Location = new System.Drawing.Point(11, 100);
 			this.tabControlDataStorageType.Name = "tabControlDataStorageType";
-			this.tabControlDataStorageType.Size = new System.Drawing.Size(606, 256);
+			this.tabControlDataStorageType.Size = new System.Drawing.Size(606, 245);
 			this.tabControlDataStorageType.TabIndex = 97;
 			this.tabControlDataStorageType.TabStop = false;
 			// 
@@ -233,13 +245,13 @@ namespace OpenDental {
 			this.tabAtoZ.Location = new System.Drawing.Point(2, 21);
 			this.tabAtoZ.Name = "tabAtoZ";
 			this.tabAtoZ.Padding = new System.Windows.Forms.Padding(3);
-			this.tabAtoZ.Size = new System.Drawing.Size(602, 233);
+			this.tabAtoZ.Size = new System.Drawing.Size(602, 222);
 			this.tabAtoZ.TabIndex = 0;
 			this.tabAtoZ.Text = "AtoZ";
 			// 
 			// butBrowseLocal
 			// 
-			this.butBrowseLocal.Location = new System.Drawing.Point(510, 202);
+			this.butBrowseLocal.Location = new System.Drawing.Point(510, 193);
 			this.butBrowseLocal.Name = "butBrowseLocal";
 			this.butBrowseLocal.Size = new System.Drawing.Size(76, 25);
 			this.butBrowseLocal.TabIndex = 103;
@@ -248,7 +260,7 @@ namespace OpenDental {
 			// 
 			// butBrowseServer
 			// 
-			this.butBrowseServer.Location = new System.Drawing.Point(510, 156);
+			this.butBrowseServer.Location = new System.Drawing.Point(510, 147);
 			this.butBrowseServer.Name = "butBrowseServer";
 			this.butBrowseServer.Size = new System.Drawing.Size(76, 25);
 			this.butBrowseServer.TabIndex = 106;
@@ -257,7 +269,7 @@ namespace OpenDental {
 			// 
 			// labelServerPath
 			// 
-			this.labelServerPath.Location = new System.Drawing.Point(7, 140);
+			this.labelServerPath.Location = new System.Drawing.Point(7, 131);
 			this.labelServerPath.Name = "labelServerPath";
 			this.labelServerPath.Size = new System.Drawing.Size(488, 17);
 			this.labelServerPath.TabIndex = 107;
@@ -266,14 +278,14 @@ namespace OpenDental {
 			// 
 			// textServerPath
 			// 
-			this.textServerPath.Location = new System.Drawing.Point(7, 160);
+			this.textServerPath.Location = new System.Drawing.Point(7, 151);
 			this.textServerPath.Name = "textServerPath";
 			this.textServerPath.Size = new System.Drawing.Size(497, 20);
 			this.textServerPath.TabIndex = 105;
 			// 
 			// labelLocalPath
 			// 
-			this.labelLocalPath.Location = new System.Drawing.Point(7, 186);
+			this.labelLocalPath.Location = new System.Drawing.Point(7, 177);
 			this.labelLocalPath.Name = "labelLocalPath";
 			this.labelLocalPath.Size = new System.Drawing.Size(498, 17);
 			this.labelLocalPath.TabIndex = 104;
@@ -282,7 +294,7 @@ namespace OpenDental {
 			// 
 			// textLocalPath
 			// 
-			this.textLocalPath.Location = new System.Drawing.Point(7, 206);
+			this.textLocalPath.Location = new System.Drawing.Point(7, 197);
 			this.textLocalPath.Name = "textLocalPath";
 			this.textLocalPath.Size = new System.Drawing.Size(497, 20);
 			this.textLocalPath.TabIndex = 102;
@@ -294,7 +306,7 @@ namespace OpenDental {
 			this.tabInDatabase.Location = new System.Drawing.Point(2, 21);
 			this.tabInDatabase.Name = "tabInDatabase";
 			this.tabInDatabase.Padding = new System.Windows.Forms.Padding(3);
-			this.tabInDatabase.Size = new System.Drawing.Size(602, 233);
+			this.tabInDatabase.Size = new System.Drawing.Size(602, 222);
 			this.tabInDatabase.TabIndex = 1;
 			this.tabInDatabase.Text = "Database";
 			// 
@@ -319,7 +331,7 @@ namespace OpenDental {
 			this.tabDropbox.Location = new System.Drawing.Point(2, 21);
 			this.tabDropbox.Name = "tabDropbox";
 			this.tabDropbox.Padding = new System.Windows.Forms.Padding(3);
-			this.tabDropbox.Size = new System.Drawing.Size(602, 233);
+			this.tabDropbox.Size = new System.Drawing.Size(602, 222);
 			this.tabDropbox.TabIndex = 2;
 			this.tabDropbox.Text = "Dropbox";
 			// 
@@ -400,7 +412,7 @@ namespace OpenDental {
 			this.tabSftp.Controls.Add(this.textSftpHostname);
 			this.tabSftp.Location = new System.Drawing.Point(2, 21);
 			this.tabSftp.Name = "tabSftp";
-			this.tabSftp.Size = new System.Drawing.Size(602, 233);
+			this.tabSftp.Size = new System.Drawing.Size(602, 222);
 			this.tabSftp.TabIndex = 3;
 			this.tabSftp.Text = "SFTP";
 			// 
@@ -500,7 +512,7 @@ namespace OpenDental {
 			// 
 			this.radioDatabaseStorage.Location = new System.Drawing.Point(9, 38);
 			this.radioDatabaseStorage.Name = "radioDatabaseStorage";
-			this.radioDatabaseStorage.Size = new System.Drawing.Size(537, 18);
+			this.radioDatabaseStorage.Size = new System.Drawing.Size(537, 17);
 			this.radioDatabaseStorage.TabIndex = 101;
 			this.radioDatabaseStorage.Text = "Store images directly in database.  No AtoZ folder. (Some features will be unavai" +
     "lable)";
@@ -512,7 +524,7 @@ namespace OpenDental {
 			this.radioUseFolder.Checked = true;
 			this.radioUseFolder.Location = new System.Drawing.Point(9, 19);
 			this.radioUseFolder.Name = "radioUseFolder";
-			this.radioUseFolder.Size = new System.Drawing.Size(333, 18);
+			this.radioUseFolder.Size = new System.Drawing.Size(333, 17);
 			this.radioUseFolder.TabIndex = 0;
 			this.radioUseFolder.TabStop = true;
 			this.radioUseFolder.Text = "Store images and documents on a local or network folder.";
@@ -522,7 +534,8 @@ namespace OpenDental {
 			// FormPath
 			// 
 			this.AcceptButton = this.butOK;
-			this.ClientSize = new System.Drawing.Size(675, 626);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(675, 593);
 			this.Controls.Add(this.groupbox1);
 			this.Controls.Add(this.butBrowseLetter);
 			this.Controls.Add(this.butBrowseExport);
@@ -530,6 +543,7 @@ namespace OpenDental {
 			this.Controls.Add(this.textLetterMergePath);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textExportPath);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -555,6 +569,7 @@ namespace OpenDental {
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.TextBox textExportPath;
 		private System.Windows.Forms.TextBox textDocPath;
 		private OpenDental.UI.Button butBrowseExport;

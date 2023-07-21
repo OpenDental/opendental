@@ -147,12 +147,12 @@ namespace OpenDental {
 			if(!MsgBox.Show(MsgBoxButtons.OKCancel,strWarning)) {
 				return;
 			}
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=SigButDefs.SynchTheAllComputerWithPhoneComps;
 			//This is an HQ only tool that is not safe to abort, do not show the Cancel button.
 			progressOD.ShowCancelButton=false;
 			try {
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex) {
 				FriendlyException.Show("Critical error during the synchronization process. The database has most likely been partially manipulated.",ex);
@@ -177,7 +177,7 @@ namespace OpenDental {
 			if(sigButDefButton==null) {
 				return;
 			}
-			_sigButDefArray=SigButDefs.MoveUp(sigButDefButton,_sigButDefArray).ToArray();
+			_sigButDefArray=SigButDefs.MoveUp(sigButDefButton,_sigButDefArray);
 			FillList();
 			listButtons.SelectedIndex=selected-1;
 		}
@@ -199,9 +199,13 @@ namespace OpenDental {
 				MsgBox.Show(this,$"No more than {_maxNumButtonsInList} buttons are allowed.");
 				return;
 			}
-			_sigButDefArray=SigButDefs.MoveDown(sigButDefButton,_sigButDefArray).ToArray();
+			_sigButDefArray=SigButDefs.MoveDown(sigButDefButton,_sigButDefArray);
 			FillList();
 			listButtons.SelectedIndex=selected+1;
+		}
+
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
 		}
 
 		private void FormMessagingButSetup_FormClosing(object sender,FormClosingEventArgs e) {
@@ -209,5 +213,39 @@ namespace OpenDental {
 			DataValid.SetInvalid(InvalidType.SigMessages);
 		}
 
+		
+
+		
+
+		
+
+		
+
+	
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

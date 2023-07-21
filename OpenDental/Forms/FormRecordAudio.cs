@@ -86,6 +86,10 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormRecordAudio_FormClosing(object sender,FormClosingEventArgs e) {
 			//Delete the temp file since we don't need it anymore.
 			try {

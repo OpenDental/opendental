@@ -130,7 +130,7 @@ namespace OpenDental.User_Controls.SetupWizard {
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ProviderEdit)) {
+			if(!Security.IsAuthorized(Permissions.ProviderEdit)) {
 				return;
 			}
 			Provider selectedProv = (Provider)gridMain.ListGridRows[e.Row].Tag;
@@ -143,7 +143,7 @@ namespace OpenDental.User_Controls.SetupWizard {
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ProviderAdd)) {
+			if(!Security.IsAuthorized(Permissions.ProviderAdd)) {
 				return;
 			}
 			using FormProvEdit FormPE = new FormProvEdit();

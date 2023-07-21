@@ -7,10 +7,10 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="369" Height="117" 
-             Text="Page Title" >
+             Text="Page Title" Loaded="FrmWikiRename_Loaded" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:Label x:Name="label2" Width="101" Height="20" Margin="1,33,0,0" Text="Page Title" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textPageTitle" Width="216" Height="20" Margin="106,33,0,0" TabIndexOD="0" />
-		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="_Save" Click="butSave_Click" />
+		<ui:TextBox x:Name="textPageTitle" Width="216" Height="20" Margin="106,33,0,0" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,10,10" Text="Save" Click="butSave_Click" />
 	</Grid>
 </local:FrmODBase>

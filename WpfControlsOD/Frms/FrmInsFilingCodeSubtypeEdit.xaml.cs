@@ -18,13 +18,14 @@ namespace OpenDental {
 		///<summary></summary>
 		public FrmInsFilingCodeSubtypeEdit()
 		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
-			Load+=FrmInsFilingCodeSubtypeEdit_Load;
-			PreviewKeyDown+=FrmInsFilingcodeSubtypeEdit_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmInsFilingCodeSubtypeEdit_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmInsFilingCodeSubtypeEdit_Loaded(object sender,RoutedEventArgs e) {
 			textDescription.Text=InsFilingCodeSubtypeCur.Descript;
 		}
 
@@ -45,12 +46,6 @@ namespace OpenDental {
 			}
 		}
 
-		private void FrmInsFilingcodeSubtypeEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
-		}
-
 		private void butSave_Click(object sender, System.EventArgs e) {
 			if(this.textDescription.Text==""){
 				MessageBox.Show(Lans.g(this,"Please enter a description."));
@@ -62,3 +57,24 @@ namespace OpenDental {
 
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

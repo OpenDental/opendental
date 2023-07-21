@@ -213,21 +213,22 @@ namespace OpenDental {
 			// 
 			// groupBoxOtherInsInfo
 			// 
+			this.groupBoxOtherInsInfo.Controls.Add(this.checkInsDefaultShowUCRonClaims);
 			this.groupBoxOtherInsInfo.Controls.Add(this.checkInsPlanExclusionsUseUCR);
 			this.groupBoxOtherInsInfo.Controls.Add(this.checkEnableZeroWriteoffOnLimitations);
 			this.groupBoxOtherInsInfo.Controls.Add(this.checkEnableZeroWriteoffOnAnnualMax);
 			this.groupBoxOtherInsInfo.Controls.Add(this.checkInsPlanExclusionsMarkDoNotBill);
-			this.groupBoxOtherInsInfo.Location = new System.Drawing.Point(20, 219);
+			this.groupBoxOtherInsInfo.Location = new System.Drawing.Point(20, 196);
 			this.groupBoxOtherInsInfo.Name = "groupBoxOtherInsInfo";
-			this.groupBoxOtherInsInfo.Size = new System.Drawing.Size(450, 114);
+			this.groupBoxOtherInsInfo.Size = new System.Drawing.Size(450, 137);
 			this.groupBoxOtherInsInfo.TabIndex = 279;
-			this.groupBoxOtherInsInfo.Text = "Write-Offs for Non-Covered Services";
+			this.groupBoxOtherInsInfo.Text = "Other Insurance Info";
 			// 
 			// checkInsDefaultShowUCRonClaims
 			// 
 			this.checkInsDefaultShowUCRonClaims.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkInsDefaultShowUCRonClaims.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkInsDefaultShowUCRonClaims.Location = new System.Drawing.Point(40, 176);
+			this.checkInsDefaultShowUCRonClaims.Location = new System.Drawing.Point(40, 15);
 			this.checkInsDefaultShowUCRonClaims.Name = "checkInsDefaultShowUCRonClaims";
 			this.checkInsDefaultShowUCRonClaims.Size = new System.Drawing.Size(400, 17);
 			this.checkInsDefaultShowUCRonClaims.TabIndex = 261;
@@ -238,37 +239,37 @@ namespace OpenDental {
 			// 
 			this.checkInsPlanExclusionsUseUCR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkInsPlanExclusionsUseUCR.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkInsPlanExclusionsUseUCR.Location = new System.Drawing.Point(18, 15);
+			this.checkInsPlanExclusionsUseUCR.Location = new System.Drawing.Point(18, 38);
 			this.checkInsPlanExclusionsUseUCR.Name = "checkInsPlanExclusionsUseUCR";
 			this.checkInsPlanExclusionsUseUCR.Size = new System.Drawing.Size(422, 17);
 			this.checkInsPlanExclusionsUseUCR.TabIndex = 277;
-			this.checkInsPlanExclusionsUseUCR.Text = "Ins plans with exclusions use UCR fee (zero out write-offs)";
+			this.checkInsPlanExclusionsUseUCR.Text = "Ins plans with exclusions use UCR fee";
 			// 
 			// checkEnableZeroWriteoffOnLimitations
 			// 
 			this.checkEnableZeroWriteoffOnLimitations.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkEnableZeroWriteoffOnLimitations.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkEnableZeroWriteoffOnLimitations.Location = new System.Drawing.Point(18, 83);
+			this.checkEnableZeroWriteoffOnLimitations.Location = new System.Drawing.Point(18, 106);
 			this.checkEnableZeroWriteoffOnLimitations.Name = "checkEnableZeroWriteoffOnLimitations";
 			this.checkEnableZeroWriteoffOnLimitations.Size = new System.Drawing.Size(422, 17);
 			this.checkEnableZeroWriteoffOnLimitations.TabIndex = 373;
-			this.checkEnableZeroWriteoffOnLimitations.Text = "Ins plans use UCR fee (zero out write-offs) when frequency or age limits are met";
+			this.checkEnableZeroWriteoffOnLimitations.Text = "Ins plans zero out write-offs when frequencies or age limits are met";
 			// 
 			// checkEnableZeroWriteoffOnAnnualMax
 			// 
 			this.checkEnableZeroWriteoffOnAnnualMax.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkEnableZeroWriteoffOnAnnualMax.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkEnableZeroWriteoffOnAnnualMax.Location = new System.Drawing.Point(18, 60);
+			this.checkEnableZeroWriteoffOnAnnualMax.Location = new System.Drawing.Point(18, 83);
 			this.checkEnableZeroWriteoffOnAnnualMax.Name = "checkEnableZeroWriteoffOnAnnualMax";
 			this.checkEnableZeroWriteoffOnAnnualMax.Size = new System.Drawing.Size(422, 17);
 			this.checkEnableZeroWriteoffOnAnnualMax.TabIndex = 372;
-			this.checkEnableZeroWriteoffOnAnnualMax.Text = "Ins plans use UCR fee (zero out write-offs) when annual max is met";
+			this.checkEnableZeroWriteoffOnAnnualMax.Text = "Ins plans zero out write-offs when annual max is met";
 			// 
 			// checkInsPlanExclusionsMarkDoNotBill
 			// 
 			this.checkInsPlanExclusionsMarkDoNotBill.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkInsPlanExclusionsMarkDoNotBill.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkInsPlanExclusionsMarkDoNotBill.Location = new System.Drawing.Point(18, 38);
+			this.checkInsPlanExclusionsMarkDoNotBill.Location = new System.Drawing.Point(18, 61);
 			this.checkInsPlanExclusionsMarkDoNotBill.Name = "checkInsPlanExclusionsMarkDoNotBill";
 			this.checkInsPlanExclusionsMarkDoNotBill.Size = new System.Drawing.Size(422, 17);
 			this.checkInsPlanExclusionsMarkDoNotBill.TabIndex = 276;
@@ -276,7 +277,6 @@ namespace OpenDental {
 			// 
 			// groupBoxInsuranceGeneral
 			// 
-			this.groupBoxInsuranceGeneral.Controls.Add(this.checkInsDefaultShowUCRonClaims);
 			this.groupBoxInsuranceGeneral.Controls.Add(this.checkPatInitBillingTypeFromPriInsPlan);
 			this.groupBoxInsuranceGeneral.Controls.Add(this.checkInsurancePlansShared);
 			this.groupBoxInsuranceGeneral.Controls.Add(this.checkFixedBenefitBlankLikeZero);
@@ -286,7 +286,7 @@ namespace OpenDental {
 			this.groupBoxInsuranceGeneral.Controls.Add(this.checkInsDefaultAssignmentOfBenefits);
 			this.groupBoxInsuranceGeneral.Location = new System.Drawing.Point(20, 10);
 			this.groupBoxInsuranceGeneral.Name = "groupBoxInsuranceGeneral";
-			this.groupBoxInsuranceGeneral.Size = new System.Drawing.Size(450, 203);
+			this.groupBoxInsuranceGeneral.Size = new System.Drawing.Size(450, 180);
 			this.groupBoxInsuranceGeneral.TabIndex = 278;
 			this.groupBoxInsuranceGeneral.Text = "Insurance General";
 			// 
@@ -371,7 +371,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBoxOtherInsInfo);
 			this.Controls.Add(this.groupBoxInsuranceGeneral);
 			this.Name = "UserControlFamilyInsurance";
-			this.Size = new System.Drawing.Size(494, 660);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxPerVisitProcedureCodes.ResumeLayout(false);
 			this.groupBoxPerVisitProcedureCodes.PerformLayout();
 			this.groupBoxCOB.ResumeLayout(false);

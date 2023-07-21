@@ -24,10 +24,21 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormClaimResend));
+			this.butCancel = new OpenDental.UI.Button();
 			this.radioClaimOriginal = new System.Windows.Forms.RadioButton();
 			this.radioClaimReplacement = new System.Windows.Forms.RadioButton();
 			this.butSend = new OpenDental.UI.Button();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(321,66);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75,24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// radioClaimOriginal
 			// 
@@ -56,7 +67,7 @@ namespace OpenDental{
 			this.butSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butSend.Image = ((System.Drawing.Image)(resources.GetObject("butSend.Image")));
 			this.butSend.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butSend.Location = new System.Drawing.Point(310,66);
+			this.butSend.Location = new System.Drawing.Point(229,66);
 			this.butSend.Name = "butSend";
 			this.butSend.Size = new System.Drawing.Size(86,24);
 			this.butSend.TabIndex = 131;
@@ -70,6 +81,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butSend);
 			this.Controls.Add(this.radioClaimReplacement);
 			this.Controls.Add(this.radioClaimOriginal);
+			this.Controls.Add(this.butCancel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormClaimResend";
@@ -80,6 +92,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.RadioButton radioClaimOriginal;
 		private System.Windows.Forms.RadioButton radioClaimReplacement;
 		private UI.Button butSend;

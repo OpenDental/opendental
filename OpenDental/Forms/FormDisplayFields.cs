@@ -51,6 +51,7 @@ namespace OpenDental{
 		}
 
 		private void FillGrids(){
+			_listDisplayFieldsAvail=DisplayFields.GetAllAvailableList(DisplayFieldCategoryCur);//This one needs to be called repeatedly.
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			GridColumn col;
@@ -65,22 +66,22 @@ namespace OpenDental{
 			for(int i=0;i<_listDisplayFieldsShowing.Count;i++){
 				row=new GridRow();
 				row.Cells.Add(_listDisplayFieldsShowing[i].InternalName);
-				string displayText=_listDisplayFieldsShowing[i].DescriptionOverride;
-				if(string.IsNullOrWhiteSpace(displayText)) {
-					displayText=_listDisplayFieldsShowing[i].Description;
-				}
-				row.Cells.Add(displayText);
+				row.Cells.Add(_listDisplayFieldsShowing[i].Description);
 				row.Cells.Add(_listDisplayFieldsShowing[i].ColumnWidth.ToString());
 				gridMain.ListGridRows.Add(row);
 			}
 			gridMain.EndUpdate();
 			//Remove items from AvailList that are in the ListShowing.
-			_listDisplayFieldsAvail=DisplayFields.GetAllAvailableList(DisplayFieldCategoryCur).Except(_listDisplayFieldsShowing, new DisplayFieldComparer()).ToList();
-			listAvailable.Items.Clear();
-			if(DisplayFieldCategoryCur==DisplayFieldCategory.SuperFamilyGridCols) {
-				listAvailable.Items.AddList(_listDisplayFieldsAvail,x=>x.ToDescriptionString());
-				return;
+			for(int i=0;i<_listDisplayFieldsShowing.Count;i++){
+				for(int j=0;j<_listDisplayFieldsAvail.Count;j++) {
+					//Only removing one item from AvailList per iteration of i, so RemoveAt() is safe without going backwards.
+					if(_listDisplayFieldsShowing[i].InternalName==_listDisplayFieldsAvail[j].InternalName) {
+						_listDisplayFieldsAvail.RemoveAt(j);
+						break;
+					}
+				}
 			}
+			listAvailable.Items.Clear();
 			listAvailable.Items.AddList(_listDisplayFieldsAvail,x=>x.ToString());
 		}
 
@@ -172,26 +173,7 @@ namespace OpenDental{
 			_changed=true;
 		}
 
-		private bool ContainsDuplicateDescriptions() {
-			List<string> listDescriptions=new List<string>();
-			for(int i=0;i<_listDisplayFieldsShowing.Count;i++) {
-				string description=_listDisplayFieldsShowing[i].Description;
-				if(string.IsNullOrEmpty(description)) {
-					continue;
-				}
-				if(_listDisplayFieldsShowing.Any(x => x.InternalName==description) || listDescriptions.Contains(description)) {
-					return true;
-				}
-				listDescriptions.Add(description);
-			}
-			return false;
-		}
-
-		private void butSave_Click(object sender,EventArgs e) {
-			if(ContainsDuplicateDescriptions()) {
-				MsgBox.Show("Display Fields cannot have duplicate descriptions or descriptions matching FieldName. Fix all entries before saving.");
-				return;
-			}
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!_changed) {
 				DialogResult=DialogResult.OK;
 				return;
@@ -201,19 +183,9 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		public class DisplayFieldComparer : IEqualityComparer<DisplayField> {
-			public int GetHashCode(DisplayField displayField) {
-				string hash=displayField.InternalName;
-				return hash.GetHashCode();
-			}
-
-			public bool Equals(DisplayField displayFieldA, DisplayField displayFieldB) {
-				bool retVal=displayFieldA.InternalName==displayFieldB.InternalName;
-				if(displayFieldA.InternalName=="" || displayFieldB.InternalName=="") {
-					retVal=retVal && displayFieldA.Description==displayFieldB.Description;
-				}
-				return retVal;
-			}
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
+
 	}
 }

@@ -61,8 +61,9 @@ namespace OpenDental {
 			this.radioBiWeekly = new System.Windows.Forms.RadioButton();
 			this.dateTimeStart = new System.Windows.Forms.DateTimePicker();
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.butGenerate = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBoxSemiMonthly.SuspendLayout();
@@ -140,8 +141,8 @@ namespace OpenDental {
 			// 
 			this.textDaysAfterPayPeriod.Location = new System.Drawing.Point(170, 73);
 			this.textDaysAfterPayPeriod.MaxVal = 200;
-			this.textDaysAfterPayPeriod.MinVal = 1;
 			this.textDaysAfterPayPeriod.Name = "textDaysAfterPayPeriod";
+			this.textDaysAfterPayPeriod.ShowZero = false;
 			this.textDaysAfterPayPeriod.Size = new System.Drawing.Size(40, 20);
 			this.textDaysAfterPayPeriod.TabIndex = 21;
 			this.textDaysAfterPayPeriod.TextChanged += new System.EventHandler(this.numDaysAfterPayPeriod_TextChanged);
@@ -383,15 +384,15 @@ namespace OpenDental {
 			this.gridMain.TranslationName = "TablePayPeriods";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(543, 523);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 18;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(482, 523);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 18;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butGenerate
 			// 
@@ -404,16 +405,27 @@ namespace OpenDental {
 			this.butGenerate.Text = "&Generate";
 			this.butGenerate.Click += new System.EventHandler(this.butGenerate_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(563, 523);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// FormPayPeriodManager
 			// 
 			this.ClientSize = new System.Drawing.Size(650, 559);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.label1);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.dateTimeStart);
 			this.Controls.Add(this.butGenerate);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -431,9 +443,11 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private UI.Button butCancel;
 		private UI.Button butGenerate;
 		private UI.GridOD gridMain;
-		private UI.Button butSave;
+		private UI.Button butOK;
 		private DateTimePicker dateTimeStart;
 		private Label label1;
 		private RadioButton radioWeekly;

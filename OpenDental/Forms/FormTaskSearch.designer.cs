@@ -62,6 +62,7 @@ namespace OpenDental{
 			this.checkLimit = new OpenDental.UI.CheckBox();
 			this.gridTasks = new OpenDental.UI.GridOD();
 			this.butRefresh = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.butNewTask = new OpenDental.UI.Button();
 			this.checkReportServer = new OpenDental.UI.CheckBox();
 			this.groupBox2.SuspendLayout();
@@ -457,6 +458,16 @@ namespace OpenDental{
 			this.butRefresh.Text = "&Refresh";
 			this.butRefresh.Click += new System.EventHandler(this.butRefresh_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(1143, 660);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 6;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butNewTask
 			// 
 			this.butNewTask.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -486,6 +497,7 @@ namespace OpenDental{
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.butRefresh);
 			this.Controls.Add(this.gridTasks);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormTaskSearch";
 			this.Text = "Task Search";
@@ -502,6 +514,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridTasks;
 		private UI.Button butRefresh;
 		private OpenDental.UI.GroupBox groupBox2;

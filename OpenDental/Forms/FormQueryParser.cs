@@ -34,7 +34,7 @@ namespace OpenDental {
 			SetFilterControlsAndAction(action,(int)TimeSpan.FromSeconds(0.5).TotalMilliseconds,textQuery);
 			textQuery.Text=_userQuery.QueryText;
 			FillGrid();
-			if(!Security.IsAuthorized(EnumPermType.UserQueryAdmin,true)) {
+			if(!Security.IsAuthorized(Permissions.UserQueryAdmin,true)) {
 				textQuery.ReadOnly=true;
 			}
 		}
@@ -75,19 +75,17 @@ namespace OpenDental {
 		///<summary>When a row is double clicked, bring up an input box that allows the user to change the variable's value.</summary>
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			QuerySetStmtObject querySetStmtObject = (QuerySetStmtObject)gridMain.SelectedGridRows[0].Tag;
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-			inputBoxParam.LabelText=Lan.g(this,"Set value for")+" "+ querySetStmtObject.Variable;
-			inputBoxParam.Text=querySetStmtObject.Value;
-			InputBox inputBox=new InputBox(inputBoxParam);
+			using InputBox inputBox=new InputBox(new List<InputBoxParam> {
+				new InputBoxParam(InputBoxType.TextBox,Lan.g(this,"Set value for")+" "+ querySetStmtObject.Variable,text: querySetStmtObject.Value)
+			});
 			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel){
+			if(inputBox.DialogResult!=DialogResult.OK){
 				return;
 			}
 			string stmtOld = querySetStmtObject.Stmt;
 			//Regular expression for the expression @Variable = Value.
 			Regex regex=new Regex(Regex.Escape(querySetStmtObject.Variable)+@"\s*=\S*?[;|,]*"+Regex.Escape(querySetStmtObject.Value));
-			string stmtNew=regex.Replace(stmtOld,querySetStmtObject.Variable+"="+inputBox.StringResult,1);
+			string stmtNew=regex.Replace(stmtOld,querySetStmtObject.Variable+"="+inputBox.textResult.Text,1);
 			_userQuery.QueryText=_userQuery.QueryText.Replace(stmtOld,stmtNew);
 			if(stmtOld == stmtNew) {
 				return; //don't bother refilling the grid if the value didn't change.
@@ -181,6 +179,10 @@ namespace OpenDental {
 			this.DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			this.DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormQueryParser_FormClosing(object sender,FormClosingEventArgs e) {
 			if(DialogResult != DialogResult.OK) {
 				_userQuery.QueryText = _userQueryOld.QueryText; //change the text back to what it used to be if the users cancels.
@@ -189,5 +191,6 @@ namespace OpenDental {
 			_userQuery.QueryText=textQuery.Text;
 		}
 
+	
 	}
 }

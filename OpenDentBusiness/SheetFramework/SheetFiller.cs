@@ -687,10 +687,10 @@ namespace OpenDentBusiness {
 							ins2Percentages+=",  ";
 						}
 						ins2Percentages+=CovCats.GetDesc(benefitList[j].CovCatNum)+" "+benefitList[j].Percent.ToString()+"%";
+						ins2FreqBW=Benefits.GetFrequencyDisplay(FrequencyType.BW,benefitList,plan.PlanNum);
+						ins2FreqExams=Benefits.GetFrequencyDisplay(FrequencyType.Exam,benefitList,plan.PlanNum);
+						ins2FreqPanoFMX=Benefits.GetFrequencyDisplay(FrequencyType.PanoFMX,benefitList,plan.PlanNum);
 					}
-					ins2FreqBW=Benefits.GetFrequencyDisplay(FrequencyType.BW,benefitList,plan.PlanNum);
-					ins2FreqExams=Benefits.GetFrequencyDisplay(FrequencyType.Exam,benefitList,plan.PlanNum);
-					ins2FreqPanoFMX=Benefits.GetFrequencyDisplay(FrequencyType.PanoFMX,benefitList,plan.PlanNum);
 					ins2Employer=Employers.GetEmployer(plan.EmployerNum).EmpName;//blank if no Employer listed
 				}
 				#endregion
@@ -951,12 +951,7 @@ namespace OpenDentBusiness {
 					if(activeAllergies!="") {
 						activeAllergies+=", ";
 					}
-					try {//unknown methods can cause the allergy to be deleted sometimes
-						activeAllergies+=AllergyDefs.GetDescription(listAllergies[i].AllergyDefNum);
-					}
-					catch {
-						continue;
-					}
+					activeAllergies+=AllergyDefs.GetDescription(listAllergies[i].AllergyDefNum);
 				}
 				#endregion
 				#region Medication
@@ -2294,7 +2289,7 @@ namespace OpenDentBusiness {
 
 		private static void FillFieldsForRoutingSlip(Sheet sheet,Patient pat,Appointment apt) {
 			Family fam=Patients.GetFamily(apt.PatNum);
-			LabCase labForApt=LabCases.GetForApt(apt.AptNum).FirstOrDefault();
+			LabCase labForApt=LabCases.GetForApt(apt.AptNum);
 			Referral referral=Referrals.GetReferralForPat(apt.PatNum);
 			string str;
 			foreach(SheetField field in sheet.SheetFields) {
@@ -3490,7 +3485,7 @@ namespace OpenDentBusiness {
 							}
 							facCur=listFacilities[i];
 							fieldValDir+="Dir:  "+facCur.DirectorFName+" "+facCur.DirectorLName+", "+facCur.DirectorTitle+"\r\nPh:  ";
-							if(facCur.Phone.Length==10 && TelephoneNumbers.IsFormattingAllowed()) {
+							if(facCur.Phone.Length==10 && TelephoneNumbers.IsFormattingAllowed) {
 								fieldValDir+=facCur.Phone.Substring(0,3)+"-"+facCur.Phone.Substring(3,3)+"-"+facCur.Phone.Substring(6);
 							}
 							else {
@@ -3551,7 +3546,7 @@ namespace OpenDentBusiness {
 						if(pat==null) {
 							continue;
 						}
-						if(pat.HmPhone.Length==10 && TelephoneNumbers.IsFormattingAllowed()) {
+						if(pat.HmPhone.Length==10 && TelephoneNumbers.IsFormattingAllowed) {
 							field.FieldValue=pat.HmPhone.Substring(0,3)+"-"+pat.HmPhone.Substring(3,3)+"-"+pat.HmPhone.Substring(6);
 							break;
 						}
@@ -3607,7 +3602,7 @@ namespace OpenDentBusiness {
 						field.FieldValue+=PrefC.GetString(PrefName.PracticeZip);
 						break;
 					case "PracticePh":
-						if(PrefC.GetString(PrefName.PracticePhone).Length==10 && TelephoneNumbers.IsFormattingAllowed()) {
+						if(PrefC.GetString(PrefName.PracticePhone).Length==10 && TelephoneNumbers.IsFormattingAllowed) {
 							field.FieldValue=PrefC.GetString(PrefName.PracticePhone).Substring(0,3)+"-"+PrefC.GetString(PrefName.PracticePhone).Substring(3,3)+
 								"-"+PrefC.GetString(PrefName.PracticePhone).Substring(6);
 							break;
@@ -3851,9 +3846,9 @@ namespace OpenDentBusiness {
 					sLine1+=statementTotal.ToString("c");
 				}
 				else {
-					double patInsEst=tableMisc.Rows.OfType<DataRow>()
-						.Where(x=>x["descript"].ToString()=="patInsEst")
-						.Sum(x=>PIn.Double(x["value"].ToString()));
+					double patInsEst=PIn.Double(tableMisc.Rows.OfType<DataRow>()
+						.Where(x => x["descript"].ToString()=="patInsEst")
+						.Select(x => x["value"].ToString()).FirstOrDefault());//safe, if string is blank or null PIn.Double will return 0
 					sLine1+=statementTotal.ToString("c");
 					sLine2+=patInsEst.ToString("c");
 					sLine3+=(statementTotal-patInsEst).ToString("c");
@@ -4445,7 +4440,6 @@ namespace OpenDentBusiness {
 						else {
 							field.FieldValue=Lans.g("RxMulti","VOID");
 							field.FontSize=50;
-							field.GrowthBehavior=GrowthBehaviorEnum.FillDown;
 						}
 						break;
 					case "Drug2":
@@ -4455,7 +4449,6 @@ namespace OpenDentBusiness {
 						else {
 							field.FieldValue=Lans.g("RxMulti","VOID");
 							field.FontSize=50;
-							field.GrowthBehavior=GrowthBehaviorEnum.FillDown;
 						}
 						break;
 					case "Drug3":
@@ -4465,7 +4458,6 @@ namespace OpenDentBusiness {
 						else {
 							field.FieldValue=Lans.g("RxMulti","VOID");
 							field.FontSize=50;
-							field.GrowthBehavior=GrowthBehaviorEnum.FillDown;
 						}
 						break;
 					case "Drug4":
@@ -4475,7 +4467,6 @@ namespace OpenDentBusiness {
 						else {
 							field.FieldValue=Lans.g("RxMulti","VOID");
 							field.FontSize=50;
-							field.GrowthBehavior=GrowthBehaviorEnum.FillDown;
 						}
 						break;
 					case "Drug5":
@@ -4485,7 +4476,6 @@ namespace OpenDentBusiness {
 						else {
 							field.FieldValue=Lans.g("RxMulti","VOID");
 							field.FontSize=50;
-							field.GrowthBehavior=GrowthBehaviorEnum.FillDown;
 						}
 						break;
 					case "Drug6":
@@ -4495,7 +4485,6 @@ namespace OpenDentBusiness {
 						else {
 							field.FieldValue=Lans.g("RxMulti","VOID");
 							field.FontSize=50;
-							field.GrowthBehavior=GrowthBehaviorEnum.FillDown;
 						}
 						break;
 					case "Disp":

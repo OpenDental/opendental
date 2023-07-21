@@ -49,7 +49,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textInsBenefitEligibilityDaysStandard.IsValid()) {
 				MsgBox.Show(this,"The number entered for standard insurance benefit eligibility was not a valid number.  Please enter a valid number to continue.");
 				return;
@@ -112,11 +112,14 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormInsVerificationSetup_FormClosing(object sender,FormClosingEventArgs e) {
 			if(_hasChanged) {
 				DataValid.SetInvalid(InvalidType.Prefs);
 			}
 		}
-
 	}
 }

@@ -18,7 +18,7 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -67,14 +67,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DataConnectionBase, Version=24.1.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="MySql.Data, Version=1.0.7.30072, Culture=neutral, PublicKeyToken=c5687fc88969c44d">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Required dlls\MySql.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenDental, Version=24.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\OpenDental\bin\Debug\OpenDental.exe</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -142,14 +137,6 @@
     <ProjectReference Include="..\CodeBase\xCodeBase.csproj">
       <Project>{18f7bc78-4b99-48d3-a1f1-0d13a63e3cf9}</Project>
       <Name>xCodeBase</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DataConnectionBase\xDataConnectionBase.csproj">
-      <Project>{29c41020-4411-41f2-9061-9b71b5b32b5d}</Project>
-      <Name>xDataConnectionBase</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OpenDentBusiness\OpenDentBusiness.csproj">
-      <Project>{3d0fc76e-803c-4de2-bdb1-47d63a4e2357}</Project>
-      <Name>OpenDentBusiness</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnitTests\UnitTests.csproj">
       <Project>{7069e361-5105-4a13-8d66-5d528b582ba6}</Project>

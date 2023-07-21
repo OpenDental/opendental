@@ -50,5 +50,10 @@ namespace OpenDental {
 			gridActions.EndUpdate();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+		}
+
+
 	}
 }

@@ -73,7 +73,7 @@ namespace OpenDental {
 						return;
 					} 
 					this.Invoke(() => {
-						if(comboBoxClinicPicker1.ClinicNumSelected==clinicNum) {
+						if(comboBoxClinicPicker1.SelectedClinicNum==clinicNum) {
 							FillGrid();
 						}
 					});
@@ -94,7 +94,7 @@ namespace OpenDental {
 				gridMain.Columns.Add(col);
 				gridMain.ListGridRows.Clear();
 				GridRow row;
-				if(!_concurrentDictionaryIdentities.TryGetValue(comboBoxClinicPicker1.ClinicNumSelected,out Identities identities) 
+				if(!_concurrentDictionaryIdentities.TryGetValue(comboBoxClinicPicker1.SelectedClinicNum,out Identities identities) 
 					|| !string.IsNullOrWhiteSpace(identities.FriendlyMessage)) 
 				{
 					return;
@@ -115,7 +115,7 @@ namespace OpenDental {
 
 		private void butRefresh_Click(object sender,EventArgs e) {
 			//Load identities for this one clinic.
-			Refresh(comboBoxClinicPicker1.ClinicNumSelected);
+			Refresh(comboBoxClinicPicker1.SelectedClinicNum);
 		}
 
 		private void Refresh(params long[] longArrayClinicNums) {
@@ -145,7 +145,7 @@ namespace OpenDental {
 		}
 
 		private void UpdateClinicUi() {
-			long clinicNum=comboBoxClinicPicker1.ClinicNumSelected;
+			long clinicNum=comboBoxClinicPicker1.SelectedClinicNum;
 			bool isActivated=Clinics.IsMassEmailSignedUp(clinicNum) || Clinics.IsSecureEmailSignedUp(clinicNum);
 			butAdd.Enabled=isActivated;
 			butDelete.Enabled=isActivated;
@@ -171,7 +171,7 @@ namespace OpenDental {
 				DataValid.SetInvalid(InvalidType.Prefs);
 			}
 			else {
-				ClinicPrefs.Upsert(PrefName.EmailHostingUseNoReply,comboBoxClinicPicker1.ClinicNumSelected,POut.Bool(checkUseNoReply.Checked));
+				ClinicPrefs.Upsert(PrefName.EmailHostingUseNoReply,comboBoxClinicPicker1.SelectedClinicNum,POut.Bool(checkUseNoReply.Checked));
 				DataValid.SetInvalid(InvalidType.ClinicPrefs);
 			}
 		}
@@ -182,7 +182,7 @@ namespace OpenDental {
 			formEmailAddresses.ShowDialog();
 			if(formEmailAddresses.DialogResult==DialogResult.OK) {
 				long emailAddressNum=formEmailAddresses.EmailAddressNum;
-				long clinicNum=comboBoxClinicPicker1.ClinicNumSelected;
+				long clinicNum=comboBoxClinicPicker1.SelectedClinicNum;
 				EmailAddress emailAddress=EmailAddresses.GetOne(emailAddressNum);
 				string error="";
 				ShowProgress(() => {					
@@ -218,7 +218,7 @@ namespace OpenDental {
 			{
 				return;
 			}
-			long clinicNum=comboBoxClinicPicker1.ClinicNumSelected;
+			long clinicNum=comboBoxClinicPicker1.SelectedClinicNum;
 			string error="";
 			ShowProgress(() => {
 				try {
@@ -235,12 +235,12 @@ namespace OpenDental {
 		}
 
 		private void ShowProgress(Action action) {
-			ProgressWin progress=new ProgressWin();
+			ProgressOD progress=new ProgressOD();
 				progress.ActionMain=() => {
 					action();
 			};
 			progress.StartingMessage=Lan.g(this,"Loading");
-			progress.ShowDialog();
+			progress.ShowDialogProgress();
 			if(progress.IsCancelled){
 				return;
 			}

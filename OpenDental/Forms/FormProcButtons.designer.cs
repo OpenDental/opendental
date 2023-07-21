@@ -37,6 +37,7 @@ namespace OpenDental {
 			this.butUp = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -166,9 +167,21 @@ namespace OpenDental {
 			this.butDelete.Text = "&Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(648, 433);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 8;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormProcButtons
 			// 
-			this.ClientSize = new System.Drawing.Size(580, 475);
+			this.ClientSize = new System.Drawing.Size(746, 483);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.labelEdit);
 			this.Controls.Add(this.panelQuickButtons);
 			this.Controls.Add(this.listViewButtons);
@@ -193,6 +206,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.Button butDelete;
 		private OpenDental.UI.Button butDown;

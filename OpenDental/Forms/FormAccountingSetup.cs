@@ -132,7 +132,7 @@ namespace OpenDental{
 			textAccountCashInc.Text=Accounts.GetDescript(_selectedPayAccountNum);
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			string accountingDepositAccounts="";
 			for(int i=0;i<_listDepAccountNums.Count;i++) {
 				if(i>0) {
@@ -155,5 +155,29 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -32,7 +32,7 @@ namespace OpenDental {
 		}
 
 		private void FormUpdate_Load(object sender, System.EventArgs e) {
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				MsgBox.Show(this,"Updates are not allowed manually from within the program. Please call support.");
 				Close();
 				return;
@@ -53,16 +53,16 @@ namespace OpenDental {
 				textUpdateCode.Text=PrefC.GetString(PrefName.UpdateCode);
 				textWebsitePath.Text=PrefC.GetString(PrefName.UpdateWebsitePath);//should include trailing /
 				butDownload.Enabled=false;
-				if(!Security.IsAuthorized(EnumPermType.UpdateInstall)) {//gives a message box if no permission
+				if(!Security.IsAuthorized(Permissions.UpdateInstall)) {//gives a message box if no permission
 					butCheck.Enabled=false;
 				}
 				return;
 			}
-			if(Security.IsAuthorized(EnumPermType.UpdateInstall,true)) {
+			if(Security.IsAuthorized(Permissions.UpdateInstall,true)) {
 				butCheck2.Visible=true;
 				return;
 			}
-			textConnectionMessage.Text=Lan.g(this,"Not authorized for")+" "+GroupPermissions.GetDesc(EnumPermType.UpdateInstall);
+			textConnectionMessage.Text=Lan.g(this,"Not authorized for")+" "+GroupPermissions.GetDesc(Permissions.UpdateInstall);
 		}
 
 		private void LayoutMenu() {
@@ -75,7 +75,7 @@ namespace OpenDental {
 			if(PrefC.GetBool(PrefName.UpdateWindowShowsClassicView)) {
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.UpdateInstall)) {
+			if(!Security.IsAuthorized(Permissions.UpdateInstall)) {
 				return;
 			}
 			using FormUpdateSetup formUpdateSetup=new FormUpdateSetup();
@@ -170,12 +170,12 @@ namespace OpenDental {
 				&& string.IsNullOrEmpty(_alphaAvailable))
 			{
 				textConnectionMessage.Text+=Lan.g(this,"  There are no downloads available.");
-				SecurityLogs.MakeLogEntry(EnumPermType.UpdateInstall,0,"Checked for updates.");//patNum=0 defaults to Security.CurUser.UserNum
+				SecurityLogs.MakeLogEntry(Permissions.UpdateInstall,0,"Checked for updates.");//patNum=0 defaults to Security.CurUser.UserNum
 				return;
 			}
 			textConnectionMessage.Text+=Lan.g(this,"  The following downloads are available.\r\n"
 				+"Be sure to stop the program on all other computers in the office before installing.");
-			SecurityLogs.MakeLogEntry(EnumPermType.UpdateInstall,0,"Checked for updates.");//patNum=0 defaults to Security.CurUser.UserNum
+			SecurityLogs.MakeLogEntry(Permissions.UpdateInstall,0,"Checked for updates.");//patNum=0 defaults to Security.CurUser.UserNum
 		}
 
 		///<summary>Parses the xml result from the server and uses it to fill class wide variables.  Throws exceptions.</summary>
@@ -340,12 +340,12 @@ namespace OpenDental {
 		}
 
 		private void butInstallBuild_Click(object sender,EventArgs e) {
-			SecurityLogs.MakeLogEntry(EnumPermType.UpdateInstall,0,"Installed update for build version: "+_buildAvailable);
+			SecurityLogs.MakeLogEntry(Permissions.UpdateInstall,0,"Installed update for build version: "+_buildAvailable);
 			DownloadInstallPatchForVersion(_buildAvailable,_buildAvailableCode,false);
 		}
 
 		private void butInstallStable_Click(object sender,EventArgs e) {
-			SecurityLogs.MakeLogEntry(EnumPermType.UpdateInstall,0,"Installed update for stable version: "+_stableAvailable);
+			SecurityLogs.MakeLogEntry(Permissions.UpdateInstall,0,"Installed update for stable version: "+_stableAvailable);
 			DownloadInstallPatchForVersion(_stableAvailable,_stableAvailableCode,true);
 		}
 
@@ -359,7 +359,7 @@ namespace OpenDental {
 			{
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.UpdateInstall,0,"Installed update for beta version: "+_betaAvailable);
+			SecurityLogs.MakeLogEntry(Permissions.UpdateInstall,0,"Installed update for beta version: "+_betaAvailable);
 			DownloadInstallPatchForVersion(_betaAvailable,_betaAvailableCode,true);
 		}
 
@@ -370,7 +370,7 @@ namespace OpenDental {
 			{
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.UpdateInstall,0,"Installed update for alpha version: "+_alphaAvailable);
+			SecurityLogs.MakeLogEntry(Permissions.UpdateInstall,0,"Installed update for alpha version: "+_alphaAvailable);
 			DownloadInstallPatchForVersion(_alphaAvailable,_alphaAvailableCode,true);
 		}
 
@@ -403,13 +403,13 @@ namespace OpenDental {
 
 		///<summary>Downloads the build update MSI file and starts the install, closing OpenDental.</summary>
 		private void butDownMsiBuild_Click(object sender,EventArgs e) {
-			SecurityLogs.MakeLogEntry(EnumPermType.UpdateInstall,0,"Downloaded update for build version: "+_buildAvailable);
+			SecurityLogs.MakeLogEntry(Permissions.UpdateInstall,0,"Downloaded update for build version: "+_buildAvailable);
 			DownloadAndStartMSI(_buildAvailableCode);
 		}
 
 		///<summary>Downloads the stable update MSI file and starts the install, closing OpenDental.</summary>
 		private void butDownloadMsiStable_Click(object sender,EventArgs e) {
-			SecurityLogs.MakeLogEntry(EnumPermType.UpdateInstall,0,"Downloaded update for stable version: "+_stableAvailable);
+			SecurityLogs.MakeLogEntry(Permissions.UpdateInstall,0,"Downloaded update for stable version: "+_stableAvailable);
 			DownloadAndStartMSI(_stableAvailableCode);
 		}
 
@@ -419,12 +419,12 @@ namespace OpenDental {
 				MsgBox.Show("You must check the acknowledgement in order to download a beta version.");
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.UpdateInstall,0,"Downloaded update for beta version: "+_betaAvailable);
+			SecurityLogs.MakeLogEntry(Permissions.UpdateInstall,0,"Downloaded update for beta version: "+_betaAvailable);
 			DownloadAndStartMSI(_betaAvailableCode);
 		}
 
 		private void butDownloadMsiAlpha_Click(object sender,EventArgs e) {
-			SecurityLogs.MakeLogEntry(EnumPermType.UpdateInstall,0,"Downloaded update for alpha version: "+_alphaAvailable);
+			SecurityLogs.MakeLogEntry(Permissions.UpdateInstall,0,"Downloaded update for alpha version: "+_alphaAvailable);
 			DownloadAndStartMSI(_alphaAvailableCode);
 		}
 
@@ -490,11 +490,15 @@ namespace OpenDental {
 		}
 
 		#endregion
+
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 		private void FormUpdate_FormClosing(object sender,FormClosingEventArgs e) {
-			if(Security.IsAuthorized(EnumPermType.UpdateInstall,DateTime.Now,true)	&& PrefC.GetBool(PrefName.UpdateWindowShowsClassicView)) {
+			if(Security.IsAuthorized(Permissions.UpdateInstall,DateTime.Now,true)	&& PrefC.GetBool(PrefName.UpdateWindowShowsClassicView)) {
 				SavePrefs();
 			}
 		}
-
 	}
 }

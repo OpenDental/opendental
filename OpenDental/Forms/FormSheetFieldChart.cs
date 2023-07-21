@@ -26,7 +26,7 @@ namespace OpenDental {
 
 		private void FormSheetFieldChart_Load(object sender,EventArgs e) {
 			if(IsReadOnly){
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 			}
 			if(SheetFieldDefCur.FieldValue[0]!='0' && SheetFieldDefCur.FieldValue[0]!='1') {
@@ -45,7 +45,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(radioPermanent.Checked) {
 				SheetFieldDefCur.FieldValue="0;"+SheetFieldDefCur.FieldValue.Substring(2);
 			}
@@ -57,5 +57,14 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+	
+
+		
+
+		
 	}
 }

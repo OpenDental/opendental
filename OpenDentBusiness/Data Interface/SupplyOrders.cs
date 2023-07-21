@@ -43,34 +43,34 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static long Insert(SupplyOrder supplyOrder) {
+		public static long Insert(SupplyOrder order) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				supplyOrder.SupplyOrderNum=Meth.GetLong(MethodBase.GetCurrentMethod(),supplyOrder);
-				return supplyOrder.SupplyOrderNum;
+				order.SupplyOrderNum=Meth.GetLong(MethodBase.GetCurrentMethod(),order);
+				return order.SupplyOrderNum;
 			}
-			return Crud.SupplyOrderCrud.Insert(supplyOrder);
+			return Crud.SupplyOrderCrud.Insert(order);
 		}
 
 		///<summary></summary>
-		public static void Update(SupplyOrder supplyOrder) {
+		public static void Update(SupplyOrder order) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),supplyOrder);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),order);
 				return;
 			}
-			Crud.SupplyOrderCrud.Update(supplyOrder);
+			Crud.SupplyOrderCrud.Update(order);
 		}
 
 		///<summary>No need to surround with try-catch.  Also deletes supplyOrderItems.</summary>
-		public static void DeleteObject(SupplyOrder supplyOrder){
+		public static void DeleteObject(SupplyOrder order){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),supplyOrder);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),order);
 				return;
 			}
 			//validate that not already in use-no
 			//delete associated orderItems
-			string command="DELETE FROM supplyorderitem WHERE SupplyOrderNum="+POut.Long(supplyOrder.SupplyOrderNum);
+			string command="DELETE FROM supplyorderitem WHERE SupplyOrderNum="+POut.Long(order.SupplyOrderNum);
 			Db.NonQ(command);
-			Crud.SupplyOrderCrud.Delete(supplyOrder.SupplyOrderNum);
+			Crud.SupplyOrderCrud.Delete(order.SupplyOrderNum);
 		}
 
 		//Retotals all items attached to order and updates AmountTotal.
@@ -81,10 +81,10 @@ namespace OpenDentBusiness{
 			string command="SELECT SUM(Qty*Price) FROM supplyorderitem WHERE SupplyOrderNum="+orderNum;
 			double amountTotal=PIn.Double(Db.GetScalar(command));
 			command="SELECT * FROM supplyorder WHERE SupplyOrderNum="+orderNum;
-			SupplyOrder supplyOrder=Crud.SupplyOrderCrud.SelectOne(command);
-			supplyOrder.AmountTotal=amountTotal;
-			SupplyOrders.Update(supplyOrder);
-			return supplyOrder;
+			SupplyOrder so=Crud.SupplyOrderCrud.SelectOne(command);
+			so.AmountTotal=amountTotal;
+			SupplyOrders.Update(so);
+			return so;
 		}
 	}
 

@@ -26,6 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDrugManufacturerSetup));
 			this.listMain = new OpenDental.UI.ListBox();
 			this.butAdd = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// listMain
@@ -51,11 +52,22 @@ namespace OpenDental{
 			this.butAdd.Text = "&Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(221, 310);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 11;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormDrugManufacturerSetup
 			// 
 			this.ClientSize = new System.Drawing.Size(324, 362);
 			this.Controls.Add(this.listMain);
 			this.Controls.Add(this.butAdd);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormDrugManufacturerSetup";
 			this.Text = " Drug Manufacturer Setup";
@@ -68,6 +80,7 @@ namespace OpenDental{
 
 		private OpenDental.UI.ListBox listMain;
 		private UI.Button butAdd;
+		private UI.Button butClose;
 
 	}
 }

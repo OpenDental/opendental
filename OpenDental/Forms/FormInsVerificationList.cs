@@ -341,7 +341,7 @@ namespace OpenDental {
 			if(grid==gridAssignMedicaid) {
 				insVerifyListType=InsVerifyListType.Medicaid;
 			}
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				List<InsVerifyGridObject> listInsVerifyGridObjects=InsVerifies.GetVerifyGridList(dateStartStandard,dateEndStandard,dateLastPatEligibilityStandard,dateLastPlanBenefitsStandard,
 					_listClinicNumsVerifyClinicsFilter,_listDefNumsVerifyRegionsFilter,_defNumVerifyStatusFilter,_userNumVerify,textVerifyCarrier.Text,
@@ -354,7 +354,7 @@ namespace OpenDental {
 					listInsVerifyGridRows.Add(new InsVerifyGridRow(listInsVerifyGridObjects[i],_dictionaryDefsStatus,_listUserodsInRegion));
 				}
 			};
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			return listInsVerifyGridRows;
 		}
 
@@ -640,7 +640,7 @@ namespace OpenDental {
 		private void gridMainRight_click(object sender,System.EventArgs e) {
 			switch(_contextMenuRightClick.MenuItems.IndexOf((MenuItem)sender)) {
 				case 0:
-					GlobalFormOpenDental.GotoFamily(_insVerifyGridObjectRowSelected.GetPatNum());
+					GotoModule.GotoFamily(_insVerifyGridObjectRowSelected.GetPatNum());
 					break;
 				case 1:
 					OnOpenInsPlan();
@@ -884,17 +884,14 @@ namespace OpenDental {
 		private void SetStatus(long statusDefNum,bool isVerifyGrid) {
 			string statusNote="";
 			bool hasChanged=false;
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.TextBoxMultiLine;
-			inputBoxParam.LabelText="Add a status note:";
+			using InputBox inputBox=new InputBox(Lan.g(this,"Add a status note:"),true);
+			inputBox.setTitle(Lan.g(this,"Add Status Note"));
 			if(!isVerifyGrid) {
-				inputBoxParam.Text=GetInsVerifyNote();
+				inputBox.textResult.Text=GetInsVerifyNote();
 			}
-			InputBox inputBox=new InputBox(inputBoxParam);
-			inputBox.SetTitle(Lan.g(this,"Add Status Note"));
 			inputBox.ShowDialog();
-			if(inputBox.IsDialogOK) {
-				statusNote=inputBox.StringResult;
+			if(inputBox.DialogResult==DialogResult.OK) {
+				statusNote=inputBox.textResult.Text;
 				hasChanged=true;
 			}
 			if(isVerifyGrid) {
@@ -1005,6 +1002,10 @@ namespace OpenDental {
 		private void tabControlVerificationList_Selected(object sender,EventArgs e) {
 			FillDisplayInfo(null);
 			FillControls();
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 
 		///<summary>This represents a row in either the Verification List Grid, or the Assignment Grid.  The assignment grid won't use the DateLastAssigned variable.</summary>

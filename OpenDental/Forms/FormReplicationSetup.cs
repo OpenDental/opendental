@@ -62,7 +62,7 @@ namespace OpenDental {
 			gridMain.Columns.Add(col);
 			col=new GridColumn(Lan.g("FormReplicationSetup","UpdateBlocked"),100,HorizontalAlignment.Center);
 			gridMain.Columns.Add(col);
-			col=new GridColumn(Lan.g("FormReplicationSetup","IsTempAllowed"),100,HorizontalAlignment.Center);
+			col=new GridColumn(Lan.g("FormReplicationSetup","IsReport"),100,HorizontalAlignment.Center);
 			gridMain.Columns.Add(col);
 			gridMain.ListGridRows.Clear();
 			GridRow row;
@@ -132,7 +132,7 @@ namespace OpenDental {
 		}
 
 		private void butTest_Click(object sender,EventArgs e) {
-			long server_id=ReplicationServers.GetServerId();
+			long server_id=ReplicationServers.Server_id;
 			string msg="";
 			if(server_id==0) {
 				msg="server_id not set for this server.\r\n\r\n";
@@ -178,7 +178,7 @@ namespace OpenDental {
 				}
 				catch(Exception ex) {
 					Cursor=Cursors.Default;
-					MessageBox.Show(Lan.g(this,"Error forcing sync on server")+" "+compName+": "+ex.Message);
+					MessageBox.Show(Lan.g(this,"Error forcing synch on server")+" "+compName+": "+ex.Message);
 					isReplicationSucessfull=false;
 					break;//Cancel operation.
 				}
@@ -194,14 +194,14 @@ namespace OpenDental {
 				}
 				if(slaveStatus.Rows[0]["Slave_IO_Running"].ToString().ToLower()!="yes") {
 					Cursor=Cursors.Default;
-					MessageBox.Show(Lan.g(this,"Error forcing sync on server")+" "+compName+": "
+					MessageBox.Show(Lan.g(this,"Error forcing synch on server")+" "+compName+": "
 						+Lan.g(this,"Slave IO is not running on server")+" "+compName);
 					isReplicationSucessfull=false;
 					break;
 				}
 				if(slaveStatus.Rows[0]["Slave_SQL_Running"].ToString().ToLower()!="yes") {
 					Cursor=Cursors.Default;
-					MessageBox.Show(Lan.g(this,"Error forcing sync on server")+" "+compName+": "
+					MessageBox.Show(Lan.g(this,"Error forcing synch on server")+" "+compName+": "
 						+Lan.g(this,"Slave SQL is not running on server")+" "+compName);
 					isReplicationSucessfull=false;
 					break;
@@ -214,7 +214,7 @@ namespace OpenDental {
 			}
 			if(isReplicationSucessfull) {
 				Cursor=Cursors.Default;
-				MessageBox.Show(Lan.g(this,"Database sync completed successfully."));
+				MessageBox.Show(Lan.g(this,"Database synch completed successfully."));
 			}
 			//Do not leave this function without connecting back to original database, or closing program.
 			//At this point we are still connected to the last replication server in the list, try to connect back up to the original database.
@@ -241,11 +241,27 @@ namespace OpenDental {
 			Prefs.UpdateInt(PrefName.ReplicationFailureAtServer_id,0);
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 		private void FormReplicationSetup_FormClosing(object sender,FormClosingEventArgs e) {
 			if(_isChanged) {
 				DataValid.SetInvalid(InvalidType.ReplicationServers);
 			}
 		}
 
+	
+
+		
+
+		
+
+		
+
+	
+
+		
+		
 	}
 }

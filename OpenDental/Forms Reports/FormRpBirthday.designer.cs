@@ -35,6 +35,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpBirthday));
 			this.label3 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.validDateTo = new OpenDental.ValidDate();
@@ -53,38 +54,49 @@ namespace OpenDental {
 			// 
 			// butSave
 			// 
+			butSave.AdjustImageLocation = new System.Drawing.Point(0,0);
 			butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			butSave.Location = new System.Drawing.Point(202, 34);
+			butSave.Location = new System.Drawing.Point(202,30);
 			butSave.Name = "butSave";
-			butSave.Size = new System.Drawing.Size(87, 26);
+			butSave.Size = new System.Drawing.Size(87,26);
 			butSave.TabIndex = 44;
 			butSave.Text = "Save Msg";
 			butSave.Click += new System.EventHandler(this.butSave_Click);
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(8, 99);
+			this.label3.Location = new System.Drawing.Point(8,99);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(82, 18);
+			this.label3.Size = new System.Drawing.Size(82,18);
 			this.label3.TabIndex = 39;
 			this.label3.Text = "To";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(10, 73);
+			this.label2.Location = new System.Drawing.Point(10,73);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(82, 18);
+			this.label2.Size = new System.Drawing.Size(82,18);
 			this.label2.TabIndex = 37;
 			this.label2.Text = "From";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(546,216);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75,26);
+			this.butCancel.TabIndex = 44;
+			this.butCancel.Text = "&Cancel";
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(563, 176);
+			this.butOK.Location = new System.Drawing.Point(546,176);
 			this.butOK.Name = "butOK";
-			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.Size = new System.Drawing.Size(75,26);
 			this.butOK.TabIndex = 43;
 			this.butOK.Text = "Report";
 			this.butOK.Click += new System.EventHandler(this.butReport_Click);
@@ -100,7 +112,7 @@ namespace OpenDental {
 			this.groupBox1.Controls.Add(this.label2);
 			this.groupBox1.Location = new System.Drawing.Point(21, 22);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(286, 131);
+			this.groupBox1.Size = new System.Drawing.Size(286,131);
 			this.groupBox1.TabIndex = 45;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Date Range";
@@ -122,17 +134,17 @@ namespace OpenDental {
 			// butRight
 			// 
 			this.butRight.Image = global::OpenDental.Properties.Resources.Right;
-			this.butRight.Location = new System.Drawing.Point(206, 28);
+			this.butRight.Location = new System.Drawing.Point(206,28);
 			this.butRight.Name = "butRight";
-			this.butRight.Size = new System.Drawing.Size(45, 26);
+			this.butRight.Size = new System.Drawing.Size(45,26);
 			this.butRight.TabIndex = 49;
 			this.butRight.Click += new System.EventHandler(this.butRight_Click);
 			// 
 			// butMonth
 			// 
-			this.butMonth.Location = new System.Drawing.Point(96, 28);
+			this.butMonth.Location = new System.Drawing.Point(96,28);
 			this.butMonth.Name = "butMonth";
-			this.butMonth.Size = new System.Drawing.Size(101, 26);
+			this.butMonth.Size = new System.Drawing.Size(101,26);
 			this.butMonth.TabIndex = 48;
 			this.butMonth.Text = "Next Month";
 			this.butMonth.Click += new System.EventHandler(this.butMonth_Click);
@@ -140,9 +152,9 @@ namespace OpenDental {
 			// butLeft
 			// 
 			this.butLeft.Image = global::OpenDental.Properties.Resources.Left;
-			this.butLeft.Location = new System.Drawing.Point(42, 28);
+			this.butLeft.Location = new System.Drawing.Point(42,28);
 			this.butLeft.Name = "butLeft";
-			this.butLeft.Size = new System.Drawing.Size(45, 26);
+			this.butLeft.Size = new System.Drawing.Size(45,26);
 			this.butLeft.TabIndex = 47;
 			this.butLeft.Click += new System.EventHandler(this.butLeft_Click);
 			// 
@@ -152,9 +164,9 @@ namespace OpenDental {
 			this.groupBox4.Controls.Add(butSave);
 			this.groupBox4.Controls.Add(this.label4);
 			this.groupBox4.Controls.Add(this.butPostcards);
-			this.groupBox4.Location = new System.Drawing.Point(332, 22);
+			this.groupBox4.Location = new System.Drawing.Point(332,22);
 			this.groupBox4.Name = "groupBox4";
-			this.groupBox4.Size = new System.Drawing.Size(306, 131);
+			this.groupBox4.Size = new System.Drawing.Size(306,131);
 			this.groupBox4.TabIndex = 46;
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "Postcards";
@@ -162,18 +174,18 @@ namespace OpenDental {
 			// textPostcardMsg
 			// 
 			this.textPostcardMsg.AcceptsReturn = true;
-			this.textPostcardMsg.Location = new System.Drawing.Point(10, 34);
+			this.textPostcardMsg.Location = new System.Drawing.Point(10,30);
 			this.textPostcardMsg.Multiline = true;
 			this.textPostcardMsg.Name = "textPostcardMsg";
-			this.textPostcardMsg.Size = new System.Drawing.Size(186, 87);
+			this.textPostcardMsg.Size = new System.Drawing.Size(186,87);
 			this.textPostcardMsg.TabIndex = 45;
 			this.textPostcardMsg.Text = "Dear ?FName,  Happy ?AgeOrdinal Birthday!  Now, you\'re ?Age years old.";
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(7, 16);
+			this.label4.Location = new System.Drawing.Point(7,12);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(158, 17);
+			this.label4.Size = new System.Drawing.Size(158,17);
 			this.label4.TabIndex = 18;
 			this.label4.Text = "Message";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
@@ -182,9 +194,9 @@ namespace OpenDental {
 			// 
 			this.butPostcards.Image = global::OpenDental.Properties.Resources.butPrintSmall;
 			this.butPostcards.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPostcards.Location = new System.Drawing.Point(202, 95);
+			this.butPostcards.Location = new System.Drawing.Point(202,91);
 			this.butPostcards.Name = "butPostcards";
-			this.butPostcards.Size = new System.Drawing.Size(87, 26);
+			this.butPostcards.Size = new System.Drawing.Size(87,26);
 			this.butPostcards.TabIndex = 16;
 			this.butPostcards.Text = "Preview";
 			this.butPostcards.Click += new System.EventHandler(this.butPostcards_Click);
@@ -192,9 +204,11 @@ namespace OpenDental {
 			// FormRpBirthday
 			// 
 			this.AcceptButton = this.butOK;
-			this.ClientSize = new System.Drawing.Size(652, 214);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(660,264);
 			this.Controls.Add(this.groupBox4);
 			this.Controls.Add(this.groupBox1);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormRpBirthday";
@@ -211,6 +225,7 @@ namespace OpenDental {
 
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label2;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.Button butRight;

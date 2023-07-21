@@ -37,7 +37,8 @@ namespace OpenDental{
 			this.butDown = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.labelTotalPoint = new System.Windows.Forms.Label();
 			this.textTotalPoints = new System.Windows.Forms.TextBox();
 			this.SuspendLayout();
@@ -121,7 +122,7 @@ namespace OpenDental{
 			this.butCriterionAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.butCriterionAdd.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butCriterionAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butCriterionAdd.Location = new System.Drawing.Point(385, 93);
+			this.butCriterionAdd.Location = new System.Drawing.Point(365, 93);
 			this.butCriterionAdd.Name = "butCriterionAdd";
 			this.butCriterionAdd.Size = new System.Drawing.Size(75, 24);
 			this.butCriterionAdd.TabIndex = 5;
@@ -142,7 +143,7 @@ namespace OpenDental{
 			this.butDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.butDown.Image = global::OpenDental.Properties.Resources.down;
 			this.butDown.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDown.Location = new System.Drawing.Point(385, 239);
+			this.butDown.Location = new System.Drawing.Point(365, 239);
 			this.butDown.Name = "butDown";
 			this.butDown.Size = new System.Drawing.Size(75, 24);
 			this.butDown.TabIndex = 7;
@@ -155,7 +156,7 @@ namespace OpenDental{
 			this.butUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.butUp.Image = global::OpenDental.Properties.Resources.up;
 			this.butUp.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butUp.Location = new System.Drawing.Point(385, 209);
+			this.butUp.Location = new System.Drawing.Point(365, 209);
 			this.butUp.Name = "butUp";
 			this.butUp.Size = new System.Drawing.Size(75, 24);
 			this.butUp.TabIndex = 6;
@@ -170,26 +171,36 @@ namespace OpenDental{
 			this.gridMain.Location = new System.Drawing.Point(12, 93);
 			this.gridMain.Name = "gridMain";
 			this.gridMain.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridMain.Size = new System.Drawing.Size(367, 288);
+			this.gridMain.Size = new System.Drawing.Size(347, 288);
 			this.gridMain.TabIndex = 60;
 			this.gridMain.Title = "Criteria Used";
 			this.gridMain.TranslationName = "FormEvaluationDefEdit";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(404, 411);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 10;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(365, 381);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 10;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(365, 411);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 11;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// labelTotalPoint
 			// 
 			this.labelTotalPoint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelTotalPoint.Location = new System.Drawing.Point(201, 388);
+			this.labelTotalPoint.Location = new System.Drawing.Point(162, 388);
 			this.labelTotalPoint.Name = "labelTotalPoint";
 			this.labelTotalPoint.Size = new System.Drawing.Size(112, 17);
 			this.labelTotalPoint.TabIndex = 130;
@@ -199,7 +210,7 @@ namespace OpenDental{
 			// textTotalPoints
 			// 
 			this.textTotalPoints.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.textTotalPoints.Location = new System.Drawing.Point(315, 387);
+			this.textTotalPoints.Location = new System.Drawing.Point(276, 387);
 			this.textTotalPoints.MaxLength = 255;
 			this.textTotalPoints.Name = "textTotalPoints";
 			this.textTotalPoints.ReadOnly = true;
@@ -208,8 +219,8 @@ namespace OpenDental{
 			// 
 			// FormEvaluationDefEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(491, 447);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(452, 447);
 			this.Controls.Add(this.labelTotalPoint);
 			this.Controls.Add(this.textTotalPoints);
 			this.Controls.Add(this.label3);
@@ -225,12 +236,12 @@ namespace OpenDental{
 			this.Controls.Add(this.butDown);
 			this.Controls.Add(this.butUp);
 			this.Controls.Add(this.gridMain);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEvaluationDefEdit";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Evaluation Definition Edit";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormEvaluationDefEdit_FormClosing);
 			this.Load += new System.EventHandler(this.FormEvaluationDefEdit_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -239,7 +250,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private UI.Button butDown;
 		private UI.Button butUp;
 		private UI.GridOD gridMain;

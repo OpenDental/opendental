@@ -10,7 +10,6 @@ using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using CodeBase;
 using PdfSharp.Pdf;
-using OpenDentBusiness.Crud;
 
 namespace OpenDentBusiness {
 
@@ -47,12 +46,12 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>For orderBy, use 0 for BillingType and 1 for PatientName.</summary>
-		public static DataTable GetBilling(bool isSent,int orderBy,DateTime dateFrom,DateTime dateTo,List<long> listClinicNums){
+		public static DataTable GetBilling(bool isSent,int orderBy,DateTime dateFrom,DateTime dateTo,List<long> clinicNums){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetTable(MethodBase.GetCurrentMethod(),isSent,orderBy,dateFrom,dateTo,listClinicNums);
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),isSent,orderBy,dateFrom,dateTo,clinicNums);
 			}
 			DataTable table=new DataTable();
-			DataRow dataRow;
+			DataRow row;
 			//columns that start with lowercase are altered for display rather than being raw data.
 			table.Columns.Add("amountDue");
 			table.Columns.Add("balTotal");
@@ -89,8 +88,8 @@ namespace OpenDentBusiness {
 			//if(dateFrom.Year>1800){
 			command+="AND statement.DateSent<"+POut.Date(dateTo.AddDays(1))+" ";//less than midnight tonight
 			//}
-			if(listClinicNums.Count>0) {
-				command+="AND patient.ClinicNum IN ("+string.Join(",",listClinicNums)+") ";
+			if(clinicNums.Count>0) {
+				command+="AND patient.ClinicNum IN ("+string.Join(",",clinicNums)+") ";
 			}
 			command+="GROUP BY guar.BalTotal,patient.BillingType,patient.FName,guar.InsEst,statement.IsSent,"
 				+"patient.LName,patient.MiddleI,statement.Mode_,guar.PayPlanDue,patient.Preferred,"
@@ -101,123 +100,124 @@ namespace OpenDentBusiness {
 			else{
 				command+="ORDER BY patient.LName,patient.FName,statement.StatementNum";
 			}
-			DataTable tableRaw=Db.GetTable(command);
+			DataTable rawTable=Db.GetTable(command);
 			double balTotal;
 			double insEst;
 			double payPlanDue;
-			DateTime dateLastStatement;
-			List<Patient> listPatientsFamilyGuarantors;
-			for(int i=0;i<tableRaw.Rows.Count;i++) {
-				dataRow=table.NewRow();
-				if(tableRaw.Rows[i]["SuperFamily"].ToString()=="0") {//not a super statement, just get bal info from guarantor
-					balTotal=PIn.Double(tableRaw.Rows[i]["BalTotal"].ToString());
-					insEst=PIn.Double(tableRaw.Rows[i]["InsEst"].ToString());
-					payPlanDue=PIn.Double(tableRaw.Rows[i]["PayPlanDue"].ToString());
+			DateTime lastStatement;
+			List<Patient> listFamilyGuarantors;
+			foreach(DataRow rawRow in rawTable.Rows) {
+				row=table.NewRow();
+				if(rawRow["SuperFamily"].ToString()=="0") {//not a super statement, just get bal info from guarantor
+					balTotal=PIn.Double(rawRow["BalTotal"].ToString());
+					insEst=PIn.Double(rawRow["InsEst"].ToString());
+					payPlanDue=PIn.Double(rawRow["PayPlanDue"].ToString());
 				}
 				else {//super statement, add all guar positive balances to get bal total for super family
-					listPatientsFamilyGuarantors=Patients.GetSuperFamilyGuarantors(PIn.Long(tableRaw.Rows[i]["SuperFamily"].ToString())).FindAll(x => x.HasSuperBilling);
+					listFamilyGuarantors=Patients.GetSuperFamilyGuarantors(PIn.Long(rawRow["SuperFamily"].ToString())).FindAll(x => x.HasSuperBilling);
 					//exclude fams with neg balances in the total for super family stmts (per Nathan 5/25/2016)
 					if(PrefC.GetBool(PrefName.BalancesDontSubtractIns)) {
-						listPatientsFamilyGuarantors=listPatientsFamilyGuarantors.FindAll(x => x.BalTotal>0);
+						listFamilyGuarantors=listFamilyGuarantors.FindAll(x => x.BalTotal>0);
 						insEst=0;
 					}
 					else {
-						listPatientsFamilyGuarantors=listPatientsFamilyGuarantors.FindAll(x => (x.BalTotal-x.InsEst)>0);
-						insEst=listPatientsFamilyGuarantors.Sum(x => x.InsEst);
+						listFamilyGuarantors=listFamilyGuarantors.FindAll(x => (x.BalTotal-x.InsEst)>0);
+						insEst=listFamilyGuarantors.Sum(x => x.InsEst);
 					}
-					balTotal=listPatientsFamilyGuarantors.Sum(x => x.BalTotal);
-					payPlanDue=listPatientsFamilyGuarantors.Sum(x => x.PayPlanDue);
+					balTotal=listFamilyGuarantors.Sum(x => x.BalTotal);
+					payPlanDue=listFamilyGuarantors.Sum(x => x.PayPlanDue);
 				}
-				dataRow["amountDue"]=(balTotal-insEst).ToString("F");
-				dataRow["balTotal"]=balTotal.ToString("F");;
-				dataRow["billingType"]=Defs.GetName(DefCat.BillingTypes,PIn.Long(tableRaw.Rows[i]["BillingType"].ToString()));
+				row["amountDue"]=(balTotal-insEst).ToString("F");
+				row["balTotal"]=balTotal.ToString("F");;
+				row["billingType"]=Defs.GetName(DefCat.BillingTypes,PIn.Long(rawRow["BillingType"].ToString()));
 				if(insEst==0){
-					dataRow["insEst"]="";
+					row["insEst"]="";
 				}
 				else{
-					dataRow["insEst"]=insEst.ToString("F");
+					row["insEst"]=insEst.ToString("F");
 				}
-				dataRow["IsSent"]=tableRaw.Rows[i]["IsSent"].ToString();
-				dateLastStatement=PIn.Date(tableRaw.Rows[i]["LastStatement"].ToString());
-				if(dateLastStatement.Year<1880){
-					dataRow["lastStatement"]="";
+				row["IsSent"]=rawRow["IsSent"].ToString();
+				lastStatement=PIn.Date(rawRow["LastStatement"].ToString());
+				if(lastStatement.Year<1880){
+					row["lastStatement"]="";
 				}
 				else{
-					dataRow["lastStatement"]=dateLastStatement.ToShortDateString();
+					row["lastStatement"]=lastStatement.ToShortDateString();
 				}
-				dataRow["mode"]=Lans.g("enumStatementMode",((StatementMode)PIn.Int(tableRaw.Rows[i]["Mode_"].ToString())).ToString());
-				dataRow["name"]=Patients.GetNameLF(tableRaw.Rows[i]["LName"].ToString(),tableRaw.Rows[i]["FName"].ToString(),tableRaw.Rows[i]["Preferred"].ToString(),tableRaw.Rows[i]["MiddleI"].ToString());
-				dataRow["PatNum"]=tableRaw.Rows[i]["PatNum"].ToString();
+				row["mode"]=Lans.g("enumStatementMode",((StatementMode)PIn.Int(rawRow["Mode_"].ToString())).ToString());
+				row["name"]=Patients.GetNameLF(rawRow["LName"].ToString(),rawRow["FName"].ToString(),rawRow["Preferred"].ToString(),rawRow["MiddleI"].ToString());
+				row["PatNum"]=rawRow["PatNum"].ToString();
 				if(payPlanDue==0){
-					dataRow["payPlanDue"]="";
+					row["payPlanDue"]="";
 				}
 				else{
-					dataRow["payPlanDue"]=payPlanDue.ToString("F");
+					row["payPlanDue"]=payPlanDue.ToString("F");
 				}
-				dataRow["StatementNum"]=tableRaw.Rows[i]["StatementNum"].ToString();
-				dataRow["SuperFamily"]=tableRaw.Rows[i]["SuperFamily"].ToString();
-				dataRow["ClinicNum"]=tableRaw.Rows[i]["ClinicNum"].ToString();
-				table.Rows.Add(dataRow);
+				row["StatementNum"]=rawRow["StatementNum"].ToString();
+				row["SuperFamily"]=rawRow["SuperFamily"].ToString();
+				row["ClinicNum"]=rawRow["ClinicNum"].ToString();
+				table.Rows.Add(row);
 			}
 			return table;
 		}
 
 		///<summary>This query is flawed.</summary>
-		public static DataTable GetStatementNotesPracticeWeb(long patnum) {
+		public static DataTable GetStatementNotesPracticeWeb(long PatientID) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetTable(MethodBase.GetCurrentMethod(),patnum);
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),PatientID);
 			}
-			string command=@"SELECT Note FROM statement Where Patnum="+patnum;
+			string command=@"SELECT Note FROM statement Where Patnum="+PatientID;
 			return Db.GetTable(command);
 		}
 
 		///<summary>This query is flawed.</summary>
-		public static Statement GetStatementInfoPracticeWeb(long patnum) {
+		public static Statement GetStatementInfoPracticeWeb(long PatientID) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<Statement>(MethodBase.GetCurrentMethod(),patnum);
+				return Meth.GetObject<Statement>(MethodBase.GetCurrentMethod(),PatientID);
 			}
-			string command=@"Select SinglePatient,DateRangeFrom,DateRangeTo,Intermingled FROM statement WHERE PatNum = "+patnum;
+			string command=@"Select SinglePatient,DateRangeFrom,DateRangeTo,Intermingled
+												FROM statement WHERE PatNum = "+PatientID;
 			return Crud.StatementCrud.SelectOne(command);
 		}
 
 		///<summary>Fetches StatementNums restricted by the DateTStamp, PatNums and a limit of records per patient. If limitPerPatient is zero all StatementNums of a patient are fetched</summary>
-		public static List<long> GetChangedSinceStatementNums(DateTime dateChangedSince,List<long> listPatnumsEligibleForUpload,int limitPerPatient) {
+		public static List<long> GetChangedSinceStatementNums(DateTime changedSince,List<long> eligibleForUploadPatNumList,int limitPerPatient) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<long>>(MethodBase.GetCurrentMethod(),dateChangedSince,listPatnumsEligibleForUpload,limitPerPatient);
+				return Meth.GetObject<List<long>>(MethodBase.GetCurrentMethod(),changedSince,eligibleForUploadPatNumList,limitPerPatient);
 			}
-			List<long> listStatementNums = new List<long>();
-			string strLimit="";
+			List<long> statementnums = new List<long>();
+			string limitStr="";
 			if(limitPerPatient>0) {
-				strLimit="LIMIT "+ limitPerPatient;
+				limitStr="LIMIT "+ limitPerPatient;
 			}
 			DataTable table;
 			// there are possibly more efficient ways to implement this using a single sql statement but readability of the sql can be compromised
-			if(listPatnumsEligibleForUpload.Count>0) {
-				for(int i=0;i<listPatnumsEligibleForUpload.Count;i++) {
-					string command="SELECT StatementNum FROM statement WHERE DateTStamp > "+POut.DateT(dateChangedSince)+" AND PatNum='" 
-						+listPatnumsEligibleForUpload[i].ToString()+"' ORDER BY DateSent DESC, StatementNum DESC "+strLimit;
+			if(eligibleForUploadPatNumList.Count>0) {
+				for(int i=0;i<eligibleForUploadPatNumList.Count;i++) {
+					string command="SELECT StatementNum FROM statement WHERE DateTStamp > "+POut.DateT(changedSince)+" AND PatNum='" 
+						+eligibleForUploadPatNumList[i].ToString()+"' ORDER BY DateSent DESC, StatementNum DESC "+limitStr;
 					table=Db.GetTable(command);
 					for(int j=0;j<table.Rows.Count;j++) {
-						listStatementNums.Add(PIn.Long(table.Rows[j]["StatementNum"].ToString()));
+						statementnums.Add(PIn.Long(table.Rows[j]["StatementNum"].ToString()));
 					}
 				}
 			}
-			return listStatementNums;
+			return statementnums;
 		}
 
 		///<summary>Used along with GetChangedSinceStatementNums</summary>
-		public static List<Statement> GetMultStatements(List<long> listStatementNums) {
+		public static List<Statement> GetMultStatements(List<long> statementNums) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Statement>>(MethodBase.GetCurrentMethod(),listStatementNums);
+				return Meth.GetObject<List<Statement>>(MethodBase.GetCurrentMethod(),statementNums);
 			}
 			string strStatementNums="";
 			DataTable table;
-			if(listStatementNums.Count>0) {
-				for(int i=0;i<listStatementNums.Count;i++) {
+			if(statementNums.Count>0) {
+				for(int i=0;i<statementNums.Count;i++) {
 					if(i>0) {
 						strStatementNums+="OR ";
 					}
-					strStatementNums+="StatementNum='"+listStatementNums[i].ToString()+"' ";
+					strStatementNums+="StatementNum='"+statementNums[i].ToString()+"' ";
 				}
 				string command="SELECT * FROM statement WHERE "+strStatementNums;
 				table=Db.GetTable(command);
@@ -225,68 +225,66 @@ namespace OpenDentBusiness {
 			else {
 				table=new DataTable();
 			}
-			List<Statement> listStatements=Crud.StatementCrud.TableToList(table);
-			return listStatements;
+			Statement[] multStatements=Crud.StatementCrud.TableToList(table).ToArray();
+			List<Statement> statementList=new List<Statement>(multStatements);
+			return statementList;
 		}
 
 		///<summary>Returns an email message for the patient based on the statement passed in.</summary>
-		public static EmailMessage GetEmailMessageForStatement(Statement statement,Patient patient,EmailAddress fromAddress=null) {
-			if(statement.PatNum!=patient.PatNum) {
+		public static EmailMessage GetEmailMessageForStatement(Statement stmt,Patient pat) {
+			if(stmt.PatNum!=pat.PatNum) {
 				string logMsg=Lans.g("Statements","Mismatched PatNums detected between current patient and current statement:")+"\r\n"
-					+Lans.g("Statements","Statement PatNum:")+" "+statement.PatNum+" "+Lans.g("Statements","(assumed correct)")+"\r\n"
-					+Lans.g("Statements","Patient PatNum:")+" "+patient.PatNum+" "+Lans.g("Statements","(possibly incorrect)");
-				SecurityLogs.MakeLogEntry(EnumPermType.StatementPatNumMismatch,statement.PatNum,logMsg,LogSources.Diagnostic);
+					+Lans.g("Statements","Statement PatNum:")+" "+stmt.PatNum+" "+Lans.g("Statements","(assumed correct)")+"\r\n"
+					+Lans.g("Statements","Patient PatNum:")+" "+pat.PatNum+" "+Lans.g("Statements","(possibly incorrect)");
+				SecurityLogs.MakeLogEntry(Permissions.StatementPatNumMismatch,stmt.PatNum,logMsg,LogSources.Diagnostic);
 			}
 			//No need to check MiddleTierRole; no call to db.
-			EmailMessage emailMessage=new EmailMessage();
-			emailMessage.PatNum=patient.PatNum;
-			emailMessage.ToAddress=patient.Email;
-			EmailAddress emailAddress=fromAddress;
-			if(emailAddress==null) {
-				emailAddress=EmailAddresses.GetByClinic(patient.ClinicNum);
-			}
-			emailMessage.FromAddress=EmailAddresses.OverrideSenderAddressClinical(emailAddress,patient.ClinicNum).GetFrom();
+			EmailMessage message=new EmailMessage();
+			message.PatNum=pat.PatNum;
+			message.ToAddress=pat.Email;
+			EmailAddress emailAddress=EmailAddresses.GetByClinic(pat.ClinicNum);
+			message.FromAddress=EmailAddresses.OverrideSenderAddressClinical(emailAddress,pat.ClinicNum).GetFrom();
 			string str;
-			if(statement.EmailSubject!=null && statement.EmailSubject!="") {
-				str=statement.EmailSubject;//Set str to the email subject if one was already set.
+			if(stmt.EmailSubject!=null && stmt.EmailSubject!="") {
+				str=stmt.EmailSubject;//Set str to the email subject if one was already set.
 			}
 			else {//Subject was not set.  Set str to the default billing email subject.
 				str=PrefC.GetString(PrefName.BillingEmailSubject);
 			}
-			emailMessage.Subject=Statements.ReplaceVarsForEmail(str,patient,statement);
-			if(statement.EmailBody!=null && statement.EmailBody!="") {
-				str=statement.EmailBody;//Set str to the email body if one was already set.
+			message.Subject=Statements.ReplaceVarsForEmail(str,pat,stmt);
+			if(stmt.EmailBody!=null && stmt.EmailBody!="") {
+				str=stmt.EmailBody;//Set str to the email body if one was already set.
 			}
 			else {//Body was not set.  Set str to the default billing email body text.
 				str=PrefC.GetString(PrefName.BillingEmailBodyText);
 			}
-			emailMessage.BodyText=Statements.ReplaceVarsForEmail(str,patient,statement);
-			emailMessage.MsgType=EmailMessageSource.Statement;
-			return emailMessage;
+			message.BodyText=Statements.ReplaceVarsForEmail(str,pat,stmt);
+			message.MsgType=EmailMessageSource.Statement;
+			return message;
 		}
 
-		public static EmailMessage GetEmailMessageForPortalStatement(Statement statement,Patient patient) {
+		public static EmailMessage GetEmailMessageForPortalStatement(Statement stmt,Patient pat) {
 			//No need to check MiddleTierRole; no call to db.
-			if(statement.PatNum!=patient.PatNum) {
+			if(stmt.PatNum!=pat.PatNum) {
 				string logMsg=Lans.g("Statements","Mismatched PatNums detected between current patient and current statement:")+"\r\n"
-					+Lans.g("Statements","Statement PatNum:")+" "+statement.PatNum+" "+Lans.g("Statements","(assumed correct)")+"\r\n"
-					+Lans.g("Statements","Patient PatNum:")+" "+patient.PatNum+" "+Lans.g("Statements","(possibly incorrect)");
-				SecurityLogs.MakeLogEntry(EnumPermType.StatementPatNumMismatch,statement.PatNum,logMsg,LogSources.Diagnostic);
+					+Lans.g("Statements","Statement PatNum:")+" "+stmt.PatNum+" "+Lans.g("Statements","(assumed correct)")+"\r\n"
+					+Lans.g("Statements","Patient PatNum:")+" "+pat.PatNum+" "+Lans.g("Statements","(possibly incorrect)");
+				SecurityLogs.MakeLogEntry(Permissions.StatementPatNumMismatch,stmt.PatNum,logMsg,LogSources.Diagnostic);
 			}
-			EmailMessage emailMessage=new EmailMessage();
-			emailMessage.PatNum=patient.PatNum;
-			emailMessage.ToAddress=patient.Email;
-			EmailAddress emailAddress=EmailAddresses.GetByClinic(patient.ClinicNum);
-			emailMessage.FromAddress=EmailAddresses.OverrideSenderAddressClinical(emailAddress,patient.ClinicNum).GetFrom();
+			EmailMessage message=new EmailMessage();
+			message.PatNum=pat.PatNum;
+			message.ToAddress=pat.Email;
+			EmailAddress emailAddress=EmailAddresses.GetByClinic(pat.ClinicNum);
+			message.FromAddress=EmailAddresses.OverrideSenderAddressClinical(emailAddress,pat.ClinicNum).GetFrom();
 			string emailBody;
-			if(statement.EmailSubject!=null && statement.EmailSubject!="") {
-				emailMessage.Subject=statement.EmailSubject;
+			if(stmt.EmailSubject!=null && stmt.EmailSubject!="") {
+				message.Subject=stmt.EmailSubject;
 			}
 			else {//Subject was not preset, set a default subject.
-				emailMessage.Subject=Lans.g("Statements","New Statement Available");
+				message.Subject=Lans.g("Statements","New Statement Available");
 			}
-			if(statement.EmailBody!=null && statement.EmailBody!="") {
-				emailBody=statement.EmailBody;
+			if(stmt.EmailBody!=null && stmt.EmailBody!="") {
+				emailBody=stmt.EmailBody;
 			}
 			else {//Body was not preset, set a body text.
 				emailBody=Lans.g("Statements","Dear")+" [nameFnoPref],\r\n\r\n"
@@ -296,19 +294,19 @@ namespace OpenDentBusiness {
 					+Lans.g("Statements","2. Enter your credentials to gain access to your account.")+"\r\n"
 					+Lans.g("Statements","3. Click the Account icon on the left and select the most recent Statement to view.");
 			}
-			emailMessage.BodyText=Statements.ReplaceVarsForEmail(emailBody,patient,statement);
-			emailMessage.MsgType=EmailMessageSource.Statement;
-			return emailMessage;
+			message.BodyText=Statements.ReplaceVarsForEmail(emailBody,pat,stmt);
+			message.MsgType=EmailMessageSource.Statement;
+			return message;
 		}
 
 		///<summary>Gets a list of unsent StatementNums.</summary>
-		public static List<long> GetUnsentStatements(params StatementMode[] statementModeArray) {
+		public static List<long> GetUnsentStatements(params StatementMode[] arrayStatementMode) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<long>>(MethodBase.GetCurrentMethod(),statementModeArray);
+				return Meth.GetObject<List<long>>(MethodBase.GetCurrentMethod(),arrayStatementMode);
 			}
 			string command=$"SELECT StatementNum FROM statement WHERE IsSent=0 ";
-			if(statementModeArray.Length!=0) {
-				command+=$"AND Mode_ IN({string.Join(",",statementModeArray.Select(x => POut.Enum(x)))})";
+			if(arrayStatementMode.Length!=0) {
+				command+=$"AND Mode_ IN({string.Join(",",arrayStatementMode.Select(x => POut.Enum(x)))})";
 			}
 			return Db.GetListLong(command);
 		}
@@ -333,8 +331,8 @@ namespace OpenDentBusiness {
 				//Unusual middle tier check. The billing tool can send thousands of statements to this function. In that case, middle tier will error
 				//saying "Request Too Large". Because this is simple inserting, we will instead break it up into trips of 100 statements.
 				for(int i=0;i<listStatements.Count;i+=100) {
-					List<Statement> listStatementsToSend=listStatements.GetRange(i,Math.Min(100,listStatements.Count-i));
-					Meth.GetVoid(MethodBase.GetCurrentMethod(),listStatementsToSend);
+					List<Statement> listStatementToSend=listStatements.GetRange(i,Math.Min(100,listStatements.Count-i));
+					Meth.GetVoid(MethodBase.GetCurrentMethod(),listStatementToSend);
 				}
 				return;
 			}
@@ -345,15 +343,15 @@ namespace OpenDentBusiness {
 		#region Update
 
 		///<summary>Updates the statements with the send status.</summary>
-		public static void UpdateSmsSendStatus(List<long> listStmtNumsToUpdate,AutoCommStatus autoCommStatus) {
+		public static void UpdateSmsSendStatus(List<long> listStmtNumsToUpdate,AutoCommStatus sendStatus) {
 			if(listStmtNumsToUpdate.Count==0) {
 				return;
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listStmtNumsToUpdate,autoCommStatus);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),listStmtNumsToUpdate,sendStatus);
 				return;
 			}
-			string command="UPDATE statement SET SmsSendStatus="+POut.Int((int)autoCommStatus)
+			string command="UPDATE statement SET SmsSendStatus="+POut.Int((int)sendStatus)
 				+" WHERE StatementNum IN("+string.Join(",",listStmtNumsToUpdate.Select(x => POut.Long(x)))+")";
 			Db.NonQ(command);
 		}
@@ -385,15 +383,15 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}
 
-		public static void AttachDoc(long statementNum,Document document,bool doUpdateDoc=true) {
+		public static void AttachDoc(long statementNum,Document doc,bool doUpdateDoc=true) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),statementNum,document,doUpdateDoc);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),statementNum,doc,doUpdateDoc);
 				return;
 			}
 			if(doUpdateDoc) {
-				Documents.Update(document);
+				Documents.Update(doc);
 			}
-			string command="UPDATE statement SET DocNum="+POut.Long(document.DocNum)
+			string command="UPDATE statement SET DocNum="+POut.Long(doc.DocNum)
 				+" WHERE StatementNum="+POut.Long(statementNum);
 			Db.NonQ(command);
 		}
@@ -433,17 +431,17 @@ namespace OpenDentBusiness {
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),listStatements,forceImageDelete);
 				return;
 			}
-			for(int i=0;i<listStatements.Count;i++) {
+			foreach(Statement stmt in listStatements) { 
 				//Per Nathan the image should not be deleted if the user does not have the Image Delete permission.  The statement can still be deleted.
-				if(listStatements[i].DocNum!=0 && (forceImageDelete || Security.IsAuthorized(EnumPermType.ImageDelete,listStatements[i].DateSent,true))) {
+				if(stmt.DocNum!=0 && (forceImageDelete || Security.IsAuthorized(Permissions.ImageDelete,stmt.DateSent,true))) {
 					//deleted the pdf
-					Patient patient=Patients.GetPat(listStatements[i].PatNum);
-					string patFolder=ImageStore.GetPatientFolder(patient,ImageStore.GetPreferredAtoZpath());
-					List<Document> listDocuments=new List<Document>();
-					listDocuments.Add(Documents.GetByNum(listStatements[i].DocNum,true));
-					ImageStore.DeleteDocuments(listDocuments,patFolder);//May throw if document is in use.
+					Patient pat=Patients.GetPat(stmt.PatNum);
+					string patFolder=ImageStore.GetPatientFolder(pat,ImageStore.GetPreferredAtoZpath());
+					List<Document> listdocs=new List<Document>();
+					listdocs.Add(Documents.GetByNum(stmt.DocNum,true));
+					ImageStore.DeleteDocuments(listdocs,patFolder);//May throw if document is in use.
 				}
-				Delete(listStatements[i]);
+				Delete(stmt);
 			}
 		}
 
@@ -512,73 +510,74 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Email statements allow variables to be present in the message body and subject, this method replaces those variables with the information from the patient passed in.  Simply pass in the string for the subject or body and the corresponding patient.</summary>
-		private static string ReplaceVarsForEmail(string str,Patient patient,Statement statement) {
+		private static string ReplaceVarsForEmail(string str,Patient pat,Statement stmt) {
 			//No need to check MiddleTierRole; no call to db.
-			str=ReplaceVarsForSms(str,patient,statement);
+			str=ReplaceVarsForSms(str,pat,stmt);
 			//These were not inluded in ReplaceVarsForSms because the last name is considered PHI.
-			str=str.Replace("[nameFL]",patient.GetNameFL());
-			str=str.Replace("[nameFLnoPref]",patient.GetNameFLnoPref());
-			str=str.Replace("[nameFnoPref]",patient.FName);
+			str=str.Replace("[nameFL]",pat.GetNameFL());
+			str=str.Replace("[nameFLnoPref]",pat.GetNameFLnoPref());
+			str=str.Replace("[nameFnoPref]",pat.FName);
 			return str;
 		}
 
 		///<summary>Replaces variable tags with the information from the patient passed in.</summary>
-		public static string ReplaceVarsForSms(string smsTemplate,Patient patient,Statement statement,Clinic clinic=null,bool includeInsEst=false) {
+		public static string ReplaceVarsForSms(string smsTemplate,Patient pat,Statement stmt,Clinic clinic=null,
+			bool includeInsEst=false) {
 			//No need to check MiddleTierRole; no call to db.
-			StringBuilder stringBuilder=new StringBuilder();
-			stringBuilder.Append(smsTemplate);
+			StringBuilder retVal=new StringBuilder();
+			retVal.Append(smsTemplate);
 			if(smsTemplate.Contains("[monthlyCardsOnFile]")) {
-				StringTools.RegReplace(stringBuilder,"\\[monthlyCardsOnFile]",CreditCards.GetMonthlyCardsOnFile(patient.PatNum));
+				StringTools.RegReplace(retVal,"\\[monthlyCardsOnFile]",CreditCards.GetMonthlyCardsOnFile(pat.PatNum));
 			}
-			StringTools.RegReplace(stringBuilder,"\\[nameF]",patient.GetNameFirst());
-			StringTools.RegReplace(stringBuilder,"\\[namePref]",patient.Preferred);
-			StringTools.RegReplace(stringBuilder,"\\[PatNum]",patient.PatNum.ToString());
-			StringTools.RegReplace(stringBuilder,"\\[currentMonth]",DateTime.Now.ToString("MMMM"));
+			StringTools.RegReplace(retVal,"\\[nameF]",pat.GetNameFirst());
+			StringTools.RegReplace(retVal,"\\[namePref]",pat.Preferred);
+			StringTools.RegReplace(retVal,"\\[PatNum]",pat.PatNum.ToString());
+			StringTools.RegReplace(retVal,"\\[currentMonth]",DateTime.Now.ToString("MMMM"));
 			if(clinic==null) { 
-				clinic=Clinics.GetClinic(patient.ClinicNum)??Clinics.GetPracticeAsClinicZero();
+				clinic=Clinics.GetClinic(pat.ClinicNum)??Clinics.GetPracticeAsClinicZero();
 			}
 			string officePhone=clinic.Phone;
 			if(string.IsNullOrEmpty(officePhone)) {
 				officePhone=PrefC.GetString(PrefName.PracticePhone);
 			}
-			StringTools.RegReplace(stringBuilder,"\\[OfficePhone]",TelephoneNumbers.ReFormat(officePhone));
+			StringTools.RegReplace(retVal,"\\[OfficePhone]",TelephoneNumbers.ReFormat(officePhone));
 			string officeName=clinic.Description;
 			if(string.IsNullOrEmpty(officeName)) {
 				officeName=PrefC.GetString(PrefName.PracticeTitle);
 			}
-			StringTools.RegReplace(stringBuilder,"\\[OfficeName]",officeName);
+			StringTools.RegReplace(retVal,"\\[OfficeName]",officeName);
 			if(smsTemplate.ToLower().Contains("[statementurl]") || smsTemplate.ToLower().Contains("[statementshorturl]")) {
-				AssignURLsIfNecessary(statement,patient);
+				AssignURLsIfNecessary(stmt,pat);
 			}
-			StringTools.RegReplace(stringBuilder,"\\[StatementURL]",statement.StatementURL);
-			StringTools.RegReplace(stringBuilder,"\\[StatementShortURL]",statement.StatementShortURL);
-			double balance=statement.BalTotal;
+			StringTools.RegReplace(retVal,"\\[StatementURL]",stmt.StatementURL);
+			StringTools.RegReplace(retVal,"\\[StatementShortURL]",stmt.StatementShortURL);
+			double balance=stmt.BalTotal;
 			if(includeInsEst) {
-				balance=Math.Max(balance-statement.InsEst,0);
+				balance=Math.Max(balance-stmt.InsEst,0);
 			}
 			if(balance<=0) {
-				stringBuilder.Replace("[StatementBalance]",balance.ToString("c"));
+				retVal.Replace("[StatementBalance]",balance.ToString("c"));
 			}
 			else {
-				StringTools.RegReplace(stringBuilder,"\\[StatementBalance]",balance.ToString("c"));
+				StringTools.RegReplace(retVal,"\\[StatementBalance]",balance.ToString("c"));
 			}
-			return stringBuilder.ToString();
+			return retVal.ToString();
 		}
 
 		///<summary>Allows an email receipt to be sent to a patient through the portal.  Throws exceptions in the case where the email from address is not valid. Sends a seperate email if the document was unable to be created.</summary>
-		public static void EmailStatementPatientPortal(Statement statement,string toAddress,EmailAddress emailAddressFrom,Patient patient) {
+		public static void EmailStatementPatientPortal(Statement stmt,string toAddress,EmailAddress fromAddress,Patient patCur) {
 			//Create the Statement Object
-			Insert(statement);
+			Insert(stmt);
 			//Create the .pdf file
-			SheetDef sheetDef=SheetUtil.GetStatementSheetDef(statement);
-			Sheet sheet=SheetUtil.CreateSheet(sheetDef,statement.PatNum,statement.HidePayment);
-			DataSet dataSet=AccountModules.GetAccount(statement.PatNum,statement,doShowHiddenPaySplits:statement.IsReceipt);
-			sheet.Parameters.Add(new SheetParameter(true,"Statement") { ParamValue=statement });
-			SheetFiller.FillFields(sheet,dataSet,statement);
-			SheetUtil.CalculateHeights(sheet,dataSet,statement);
-			string tempPath=ODFileUtils.CombinePaths(PrefC.GetTempFolderPath(),statement.PatNum.ToString()+".pdf");
+			SheetDef sheetDef=SheetUtil.GetStatementSheetDef(stmt);
+			Sheet sheet=SheetUtil.CreateSheet(sheetDef,stmt.PatNum,stmt.HidePayment);
+			DataSet dataSet=AccountModules.GetAccount(stmt.PatNum,stmt,doShowHiddenPaySplits:stmt.IsReceipt);
+			sheet.Parameters.Add(new SheetParameter(true,"Statement") { ParamValue=stmt });
+			SheetFiller.FillFields(sheet,dataSet,stmt);
+			SheetUtil.CalculateHeights(sheet,dataSet,stmt);
+			string tempPath=ODFileUtils.CombinePaths(PrefC.GetTempFolderPath(),stmt.PatNum.ToString()+".pdf");
 			SheetDrawingJob sheetDrawingJob=new SheetDrawingJob();
-			PdfDocument pdfDocument=sheetDrawingJob.CreatePdf(sheet,statement,dataSet:dataSet);
+			PdfDocument pdf=sheetDrawingJob.CreatePdf(sheet,stmt,dataSet:dataSet);
 			long category=0;
 			//Find the image category for statements
 			List<Def> listDefs=Defs.GetDefsForCategory(DefCat.ImageCats,true);
@@ -592,27 +591,27 @@ namespace OpenDentBusiness {
 				category=listDefs[0].DefNum;//put it in the first category.
 			}
 			//create doc--------------------------------------------------------------------------------------
-			Document document=null;
+			Document docc=null;
 			string errorMessage="";
 			try {
-				SheetDrawingJob.SavePdfToFile(pdfDocument,tempPath);
-				document=ImageStore.Import(tempPath,category,Patients.GetPat(statement.PatNum));
+				SheetDrawingJob.SavePdfToFile(pdf,tempPath);
+				docc=ImageStore.Import(tempPath,category,Patients.GetPat(stmt.PatNum));
 			}
 			catch {
 				errorMessage="Thank you for your recent payment. An error occurred when creating your receipt, please contact your provider to request a copy.";
-				EmailMessage emailMessageError=GetEmailMessageForStatement(statement,Patients.GetPat(statement.PatNum));
+				EmailMessage emailMessageError=GetEmailMessageForStatement(stmt,Patients.GetPat(stmt.PatNum));
 				emailMessageError.ToAddress=toAddress;
 				emailMessageError.MsgType=EmailMessageSource.PaymentReceipt;
 				emailMessageError.SentOrReceived=EmailSentOrReceived.Sent;
 				emailMessageError.MsgDateTime=DateTime_.Now;
 				emailMessageError.BodyText=errorMessage;
-				if(emailAddressFrom==null || !EmailAddresses.IsValidEmail(emailAddressFrom.GetFrom())) {//Check to make sure that our "from" email address is valid.
+				if(fromAddress==null || !EmailAddresses.IsValidEmail(fromAddress.GetFrom())) {//Check to make sure that our "from" email address is valid.
 					throw new ODException("Thank you for your recent payment. An error occurred when attempting to email your receipt," 
 						+" please contact your provider.",ODException.ErrorCodes.ReceiptEmailAddressInvalid);
 				}
-				emailAddressFrom=EmailAddresses.OverrideSenderAddressClinical(emailAddressFrom,patient.ClinicNum); //Use clinic's Email Sender Address Override, if present
+				fromAddress=EmailAddresses.OverrideSenderAddressClinical(fromAddress,patCur.ClinicNum); //Use clinic's Email Sender Address Override, if present
 				try {
-					EmailMessages.SendEmail(emailMessageError,emailAddressFrom);
+					EmailMessages.SendEmail(emailMessageError,fromAddress);
 				}
 				catch (Exception ex) {
 					ex.DoNothing();
@@ -620,36 +619,36 @@ namespace OpenDentBusiness {
 				}
 				return;
 			}
-			Patient patientGuarantor=Patients.GetPat(statement.PatNum);
-			string guarFolder=ImageStore.GetPatientFolder(patientGuarantor,ImageStore.GetPreferredAtoZpath());
+			Patient guarantor=Patients.GetPat(stmt.PatNum);
+			string guarFolder=ImageStore.GetPatientFolder(guarantor,ImageStore.GetPreferredAtoZpath());
 			string fileName="";
-			document.ImgType=ImageType.Document;
-			document.Description=Lans.g("Statement","Receipt");
-			document.DateCreated=statement.DateSent;
-			statement.DocNum=document.DocNum;//this signals the calling class that the pdf was created successfully.
+			docc.ImgType=ImageType.Document;
+			docc.Description=Lans.g("Statement","Receipt");
+			docc.DateCreated=stmt.DateSent;
+			stmt.DocNum=docc.DocNum;//this signals the calling class that the pdf was created successfully.
 			//Attach Doc to the statement in the DB
-			AttachDoc(statement.StatementNum,document);
+			AttachDoc(stmt.StatementNum,docc);
 			//Doc fileName and Copy to emailAttach Folder
 			string attachPath=EmailAttaches.GetAttachPath();
 			fileName=DateTime.Now.ToString("yyyyMMdd")+DateTime.Now.TimeOfDay.Ticks.ToString()+ODRandom.Next(1000).ToString()+".pdf";
 			string filePathAndName=FileIO.FileAtoZ.CombinePaths(attachPath,fileName);
-			FileIO.FileAtoZ.Copy(ImageStore.GetFilePath(Documents.GetByNum(statement.DocNum),guarFolder),filePathAndName,FileAtoZSourceDestination.AtoZToAtoZ);
-			if(emailAddressFrom==null || !EmailAddresses.IsValidEmail(emailAddressFrom.GetFrom())) {//Check to make sure that our "from" email address is valid.
+			FileIO.FileAtoZ.Copy(ImageStore.GetFilePath(Documents.GetByNum(stmt.DocNum),guarFolder),filePathAndName,FileAtoZSourceDestination.AtoZToAtoZ);
+			if(fromAddress==null || !EmailAddresses.IsValidEmail(fromAddress.GetFrom())) {//Check to make sure that our "from" email address is valid.
 				throw new ODException("Thank you for your recent payment. An error occurred when attempting to email your receipt," 
 					+" please refresh your page to view your statement.",ODException.ErrorCodes.ReceiptEmailAddressInvalid);
 			}
 			//Create email and attachment objects
-			EmailMessage emailMessage=GetEmailMessageForStatement(statement,patientGuarantor);
-			EmailAttach emailAttach=new EmailAttach();
-			emailAttach.DisplayedFileName="Statement.pdf";
-			emailAttach.ActualFileName=fileName;
-			emailMessage.Attachments.Add(emailAttach);
+			EmailMessage emailMessage=GetEmailMessageForStatement(stmt,guarantor);
+			EmailAttach emailAttachment=new EmailAttach();
+			emailAttachment.DisplayedFileName="Statement.pdf";
+			emailAttachment.ActualFileName=fileName;
+			emailMessage.Attachments.Add(emailAttachment);
 			emailMessage.ToAddress=toAddress;
 			emailMessage.MsgType=EmailMessageSource.PaymentReceipt;
 			emailMessage.SentOrReceived=EmailSentOrReceived.Sent;
 			emailMessage.MsgDateTime=DateTime_.Now;
 			try {
-				EmailMessages.SendEmail(emailMessage,emailAddressFrom);
+				EmailMessages.SendEmail(emailMessage,fromAddress);
 			}
 			catch(Exception ex) {
 				ex.DoNothing();
@@ -658,157 +657,124 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		public static Statement CreateReceiptStatement(Patient patient, StatementMode statementMode) {
-			Statement statement=new Statement();
-			statement.PatNum=patient.PatNum;
-			statement.DateSent=DateTime.Today;
-			statement.IsSent=true;
-			statement.Mode_=StatementMode.Email;
-			statement.HidePayment=true;
-			statement.Intermingled=PrefC.GetBool(PrefName.IntermingleFamilyDefault);
-			statement.SinglePatient=!statement.Intermingled;
-			statement.IsReceipt=true;
-			statement.StatementType=StmtType.NotSet;
-			statement.DateRangeFrom=DateTime.Today;
-			statement.DateRangeTo=DateTime.Today;
-			statement.Note="";
-			statement.NoteBold="";
-			Patient patientGuarantor=null;
-			if(patient!=null) {
-				patientGuarantor=Patients.GetPat(patient.Guarantor);
+		public static Statement CreateReceiptStatement(Patient patCur, StatementMode mode) {
+			Statement stmt=new Statement();
+			stmt.PatNum=patCur.PatNum;
+			stmt.DateSent=DateTime.Today;
+			stmt.IsSent=true;
+			stmt.Mode_=StatementMode.Email;
+			stmt.HidePayment=true;
+			stmt.Intermingled=PrefC.GetBool(PrefName.IntermingleFamilyDefault);
+			stmt.SinglePatient=!stmt.Intermingled;
+			stmt.IsReceipt=true;
+			stmt.StatementType=StmtType.NotSet;
+			stmt.DateRangeFrom=DateTime.Today;
+			stmt.DateRangeTo=DateTime.Today;
+			stmt.Note="";
+			stmt.NoteBold="";
+			Patient guarantor=null;
+			if(patCur!=null) {
+				guarantor=Patients.GetPat(patCur.Guarantor);
 			}
-			if(patientGuarantor!=null) {
-				statement.IsBalValid=true;
-				statement.BalTotal=patientGuarantor.BalTotal;
-				statement.InsEst=patientGuarantor.InsEst;
+			if(guarantor!=null) {
+				stmt.IsBalValid=true;
+				stmt.BalTotal=guarantor.BalTotal;
+				stmt.InsEst=guarantor.InsEst;
 			}
-			return statement;
+			return stmt;
 		}
 
 		///<summary>If the statement does not have a short guid or URL, a call will be made to HQ to assign it one. The statement will be updated
 		///to the database.</summary>
-		public static void AssignURLsIfNecessary(Statement statement,Patient patient) {
-			if(!string.IsNullOrEmpty(statement.ShortGUID) && !string.IsNullOrEmpty(statement.StatementURL)) {
-				return;
+		public static void AssignURLsIfNecessary(Statement stmt,Patient pat) {
+			if(string.IsNullOrEmpty(stmt.ShortGUID) || string.IsNullOrEmpty(stmt.StatementURL)) {
+				List<WebServiceMainHQProxy.ShortGuidResult> listShortGuidUrls=WebServiceMainHQProxy.GetShortGUIDs(1,1,pat.ClinicNum,
+					eServiceCode.PatientPortalViewStatement);
+				Statement stmtOld=stmt.Copy();
+				stmt.ShortGUID=listShortGuidUrls[0].ShortGuid;
+				stmt.StatementURL=listShortGuidUrls[0].MediumURL;
+				stmt.StatementShortURL=listShortGuidUrls[0].ShortURL;
+				Statements.Update(stmt,stmtOld);
 			}
-			List<WebServiceMainHQProxy.ShortGuidResult> listShortGuidResultsUrls=WebServiceMainHQProxy.GetShortGUIDs(1,1,patient.ClinicNum,
-				eServiceCode.PatientPortalViewStatement);
-			Statement statementOld=statement.Copy();
-			statement.ShortGUID=listShortGuidResultsUrls[0].ShortGuid;
-			statement.StatementURL=listShortGuidResultsUrls[0].MediumURL;
-			statement.StatementShortURL=listShortGuidResultsUrls[0].ShortURL;
-			Statements.Update(statement,statementOld);
-		}
-
-		///<summary>Assigns the given ShortGUID to the Statement with the given StatementNum</summary>
-		public static void UpdateShortGUID(long statementNum,string shortGuid) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),statementNum,shortGuid);
-				return;
-			}
-			string command="UPDATE statement SET ShortGUID='"+POut.String(shortGuid)+"' WHERE StatementNum="+POut.Long(statementNum);
-			Db.NonQ(command);
 		}
 
 		public static Statement CreateLimitedStatement(List<long> listPatNumsSelected,long patNum,List<long> listPayClaimNums,List<long> listAdjustments,
-			List<long> listPayNums,List<long> listProcedures,List<long> listPayPlanChargeNums,long superFamily=0,
-			EnumLimitedCustomFamily limitedCustomFamily=EnumLimitedCustomFamily.None)
+			List<long> listPayNums,List<long> listProcedures,List<long> listPayPlanChargeNums,long superFamily=0,EnumLimitedCustomFamily limitedCustomFamily=EnumLimitedCustomFamily.None)
 		{
-			Statement statement=new Statement();
-			statement.PatNum=patNum;
-			statement.DateSent=DateTime.Today;
-			statement.IsSent=false;
-			statement.Mode_=StatementMode.InPerson;
-			statement.HidePayment=false;
-			statement.SinglePatient=listPatNumsSelected.Count==1;//SinglePatient determined by the selected transactions
-			statement.Intermingled=listPatNumsSelected.Count>1 && PrefC.GetBool(PrefName.IntermingleFamilyDefault);
-			statement.IsReceipt=false;
-			statement.IsInvoice=false;
-			statement.StatementType=StmtType.LimitedStatement;
-			statement.DateRangeFrom=DateTime.MinValue;
-			statement.DateRangeTo=DateTime.Today;
-			statement.Note="";
-			statement.NoteBold="";
-			statement.IsBalValid=true;
-			statement.BalTotal=0;
-			statement.InsEst=0;
-			statement.SuperFamily=superFamily;
-			statement.LimitedCustomFamily=limitedCustomFamily;
-			Statements.Insert(statement);//we need stmt.StatementNum for attaching procs, adjustments, paysplits, and payment plan charges to the statement
-			for(int i=0;i<listAdjustments.Count;i++) {
-				StmtLink stmtLink=new StmtLink();
-				stmtLink.FKey=listAdjustments[i];
-				stmtLink.StatementNum=statement.StatementNum;
-				stmtLink.StmtLinkType=StmtLinkTypes.Adj;
-				StmtLinks.Insert(stmtLink);
+			Statement stmt =new Statement();
+			if(listPatNumsSelected.Count==1) {
+				stmt.PatNum=listPatNumsSelected[0];
 			}
-			for(int i=0;i<listPayNums.Count;i++) {
-				Payment payment=Payments.GetPayment(listPayNums[i]);
-				List<PaySplit> listPaySplits=PaySplits.GetForPayment(listPayNums[i]);
-				for(int l=0;l<listPaySplits.Count;l++) {
-					StmtLink stmtLink=new StmtLink();
-					stmtLink.FKey=listPaySplits[l].SplitNum;
-					stmtLink.StatementNum=statement.StatementNum;
-					stmtLink.StmtLinkType=StmtLinkTypes.PaySplit;
-					StmtLinks.Insert(stmtLink);
-				}
+			else {
+				stmt.PatNum=patNum;
 			}
-			for(int i=0;i<listProcedures.Count;i++) {
-				StmtLink stmtLink=new StmtLink();
-				stmtLink.FKey=listProcedures[i];
-				stmtLink.StatementNum=statement.StatementNum;
-				stmtLink.StmtLinkType=StmtLinkTypes.Proc;
-				StmtLinks.Insert(stmtLink);
+			stmt.DateSent=DateTime.Today;
+			stmt.IsSent=false;
+			stmt.Mode_=StatementMode.InPerson;
+			stmt.HidePayment=false;
+			stmt.SinglePatient=listPatNumsSelected.Count==1;//SinglePatient determined by the selected transactions
+			stmt.Intermingled=listPatNumsSelected.Count>1 && PrefC.GetBool(PrefName.IntermingleFamilyDefault);
+			stmt.IsReceipt=false;
+			stmt.IsInvoice=false;
+			stmt.StatementType=StmtType.LimitedStatement;
+			stmt.DateRangeFrom=DateTime.MinValue;
+			stmt.DateRangeTo=DateTime.Today;
+			stmt.Note="";
+			stmt.NoteBold="";
+			stmt.IsBalValid=true;
+			stmt.BalTotal=0;
+			stmt.InsEst=0;
+			stmt.SuperFamily=superFamily;
+			stmt.LimitedCustomFamily=limitedCustomFamily;
+			Statements.Insert(stmt);//we need stmt.StatementNum for attaching procs, adjustments, paysplits, and payment plan charges to the statement
+			foreach(long adjNum in listAdjustments) {
+				StmtLinks.Insert(new StmtLink() { FKey=adjNum,StatementNum=stmt.StatementNum,StmtLinkType=StmtLinkTypes.Adj});
 			}
-			for(int i=0;i<listPayClaimNums.Count;i++) {
-				StmtLink stmtLink=new StmtLink();
-				stmtLink.FKey=listPayClaimNums[i];
-				stmtLink.StatementNum=statement.StatementNum;
-				stmtLink.StmtLinkType=StmtLinkTypes.ClaimPay;
-				StmtLinks.Insert(stmtLink);
+			foreach(long payNum in listPayNums) {
+				Payment payment=Payments.GetPayment(payNum);
+				PaySplits.GetForPayment(payNum)
+						.ForEach(x => StmtLinks.Insert(new StmtLink() { FKey=x.SplitNum,StatementNum=stmt.StatementNum,StmtLinkType=StmtLinkTypes.PaySplit }));
+			}
+			foreach(long procNum in listProcedures) {
+				StmtLinks.Insert(new StmtLink() { FKey=procNum,StatementNum=stmt.StatementNum,StmtLinkType=StmtLinkTypes.Proc});
+			}
+			foreach(long claimNum in listPayClaimNums) {
+				StmtLinks.Insert(new StmtLink() {FKey=claimNum,StatementNum=stmt.StatementNum,StmtLinkType=StmtLinkTypes.ClaimPay});
 			}
 			for(int i=0;i<listPayPlanChargeNums.Count;i++) {
-				StmtLink stmtLink=new StmtLink();
-				stmtLink.FKey=listPayPlanChargeNums[i];
-				stmtLink.StatementNum=statement.StatementNum;
-				stmtLink.StmtLinkType=StmtLinkTypes.PayPlanCharge;
-				StmtLinks.Insert(stmtLink);
+				StmtLinks.Insert(new StmtLink() { FKey=listPayPlanChargeNums[i],StatementNum=stmt.StatementNum,StmtLinkType=StmtLinkTypes.PayPlanCharge });
 			}
-			if(limitedCustomFamily!=EnumLimitedCustomFamily.None || listPatNumsSelected.Any(x => x!=patNum)) {
+			if(limitedCustomFamily!=EnumLimitedCustomFamily.None) {
 				for(int i=0;i<listPatNumsSelected.Count;i++) {
-					StmtLink stmtLink=new StmtLink();
-					stmtLink.FKey=listPatNumsSelected[i];
-					stmtLink.StatementNum=statement.StatementNum;
-					stmtLink.StmtLinkType=StmtLinkTypes.PatNum;
-					StmtLinks.Insert(stmtLink);
+					StmtLinks.Insert(new StmtLink() { FKey=listPatNumsSelected[i],StatementNum=stmt.StatementNum,StmtLinkType=StmtLinkTypes.PatNum });
 				}
 			}
 			//set statement lists to null in order to force refresh the lists now that we've inserted all of the StmtAttaches
-			statement.ListAdjNums=null;
-			statement.ListPaySplitNums=null;
-			statement.ListProcNums=null;
-			statement.ListInsPayClaimNums=null;
-			statement.ListPayPlanChargeNums=null;
-			statement.ListPatNums=null;
+			stmt.ListAdjNums=null;
+			stmt.ListPaySplitNums=null;
+			stmt.ListProcNums=null;
+			stmt.ListInsPayClaimNums=null;
+			stmt.ListPayPlanChargeNums=null;
+			stmt.ListPatNums=null;
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				//Currently when using MiddleTier null lists inside an object like above causes the deserialized statement to incorrectly set the null lists
 				//to empty lists.
 				//In the case of a Statement, the public property associated to list in question does not run queries to populate the list as expected because
 				//it checks for a null list, but instead sees an empty list.
 				//We may fix the underlying MiddleTier bug later, but this is an immediate patch to address this symptom.
-				statement.ListAdjNums=StmtLinks.GetForStatementAndType(statement.StatementNum,StmtLinkTypes.Adj);
-				statement.ListPaySplitNums=StmtLinks.GetForStatementAndType(statement.StatementNum,StmtLinkTypes.PaySplit);
-				if(statement.IsInvoice) {
-					statement.ListProcNums=Procedures.GetForInvoice(statement.StatementNum);
+				stmt.ListAdjNums=StmtLinks.GetForStatementAndType(stmt.StatementNum,StmtLinkTypes.Adj);
+				stmt.ListPaySplitNums=StmtLinks.GetForStatementAndType(stmt.StatementNum,StmtLinkTypes.PaySplit);
+				if(stmt.IsInvoice) {
+					stmt.ListProcNums=Procedures.GetForInvoice(stmt.StatementNum);
 				}
 				else {
-					statement.ListProcNums=StmtLinks.GetForStatementAndType(statement.StatementNum,StmtLinkTypes.Proc);
+					stmt.ListProcNums=StmtLinks.GetForStatementAndType(stmt.StatementNum,StmtLinkTypes.Proc);
 				}
-				statement.ListInsPayClaimNums=StmtLinks.GetForStatementAndType(statement.StatementNum,StmtLinkTypes.ClaimPay);
-				statement.ListPayPlanChargeNums=StmtLinks.GetForStatementAndType(statement.StatementNum,StmtLinkTypes.PayPlanCharge);
-				statement.ListPatNums=StmtLinks.GetForStatementAndType(statement.StatementNum,StmtLinkTypes.PatNum);
+				stmt.ListInsPayClaimNums=StmtLinks.GetForStatementAndType(stmt.StatementNum,StmtLinkTypes.ClaimPay);
+				stmt.ListPayPlanChargeNums=StmtLinks.GetForStatementAndType(stmt.StatementNum,StmtLinkTypes.PayPlanCharge);
+				stmt.ListPatNums=StmtLinks.GetForStatementAndType(stmt.StatementNum,StmtLinkTypes.PatNum);
 			}
-			return statement;
+			return stmt;
 		}
 
 		///<summary>Creates statement prods for a statement based off of the dataSet passed in, then syncs this list with the existing statementprods for the statement in the DB.</summary>
@@ -820,10 +786,10 @@ namespace OpenDentBusiness {
 			StatementProds.SyncForStatement(dataSet,statementNum,docNum);
 		}
 
-		///<summary>Pass in a list of statement DataSets. Creates statement prods for the statements based off of their dataSets, then syncs these statementprods with the existing statementprods for the statements in the DB.</summary>
-		public static void SyncStatementProdsForMultipleStatements(List<StatementData> listStatementDatas) {
+		///<summary>Pass in a dictionary for which the keys are StatementNums and the values are statement DataSets. Creates statement prods for the statements based off of their dataSets, then syncs these statementprods with the existing statementprods for the statements in the DB.</summary>
+		public static void SyncStatementProdsForMultipleStatements(Dictionary<long,StatementData> dictStmtDataSets) {
 			//No need to check MiddleTierRole; no call to db.
-			StatementProds.SyncForMultipleStatements(listStatementDatas);
+			StatementProds.SyncForMultipleStatements(dictStmtDataSets);
 		}
 
 		///<summary>Sets the installment plans field on each of the statements passed in.</summary>
@@ -846,31 +812,14 @@ namespace OpenDentBusiness {
 					if(!dictionarySuperFamInstallmentPlans.TryGetValue(dictFamilies[listStatements[i].PatNum].Guarantor.SuperFamily,out listStatements[i].ListInstallmentPlans)) {
 						listStatements[i].ListInstallmentPlans=new List<InstallmentPlan>();
 					}
-					continue;
 				}
-				if(dictionaryFamInstallmentPlans.ContainsKey(dictFamilies[listStatements[i].PatNum].Guarantor.PatNum)) {
+				else if(dictionaryFamInstallmentPlans.ContainsKey(dictFamilies[listStatements[i].PatNum].Guarantor.PatNum)) {
 					listStatements[i].ListInstallmentPlans=new List<InstallmentPlan> { dictionaryFamInstallmentPlans[dictFamilies[listStatements[i].PatNum].Guarantor.PatNum] };
-					continue;
 				}
-				listStatements[i].ListInstallmentPlans=new List<InstallmentPlan>();
+				else {
+					listStatements[i].ListInstallmentPlans=new List<InstallmentPlan>();
+				}
 			}
-		}
-
-		///<summary>Returns the family's balance according to the most recent statement across the entire family.</summary>
-		public static double GetFamilyBalance(long patNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<double>(MethodBase.GetCurrentMethod(),patNum);
-			}
-			List<Patient> listPatients=OpenDentBusiness.Patients.GetFamily(patNum).ListPats.ToList();
-			string command="SELECT * FROM statement "
-										+"WHERE PatNum IN("+string.Join(",",listPatients.Select(x => POut.Long(x.PatNum)).ToList())+") "
-										+"AND IsSent=1 "
-										+"ORDER BY StatementNum DESC LIMIT 1";
-			Statement statement=OpenDentBusiness.Crud.StatementCrud.SelectOne(command);
-			if(statement==null) {
-				return 0;
-			}
-			return statement.BalTotal-statement.InsEst;
 		}
 
 		///<summary>Returns a dictionary of Key-PatNum, Value-Family for the statements passed in.</summary>
@@ -879,16 +828,15 @@ namespace OpenDentBusiness {
 			if(listStatements.IsNullOrEmpty()) {
 				return new Dictionary<long, Family>();
 			}
-			Dictionary<long,Family> dictionaryFamilyValues=Patients.GetFamilies(listStatements.Select(x => x.PatNum).ToList())
+			return Patients.GetFamilies(listStatements.Select(x => x.PatNum).ToList())
 				.SelectMany(fam => fam.ListPats.Select(y => new { y.PatNum,fam }))
 				.Distinct()
 				.ToDictionary(x => x.PatNum,x => x.fam);
-			return dictionaryFamilyValues;
 		}
 
 		///<summary>Returns a dictionary of batches of statements.  The key is the batch num which is 1 based (helpful when displaying to the user).</summary>
 		public static Dictionary<int,List<Statement>> GetBatchesForStatements(List<Statement> listStatements,out List<long> listClinicNums,
-			List<Patient> listPatients) 
+			Dictionary<long,Family> dictFamilies=null) 
 		{
 			//No need to check MiddleTierRole; no call to db.
 			listClinicNums=new List<long>();
@@ -896,19 +844,16 @@ namespace OpenDentBusiness {
 			if(listStatements.IsNullOrEmpty()) {
 				return dictStatementsForSend;
 			}
+			if(dictFamilies==null) {
+				dictFamilies=GetFamiliesForStatements(listStatements);
+			}
 			//A dictionary of batches of statements.  The key is the batch num which is 1 based (helpful when displaying to the user).
 			//If clinics are on, batch by clinics. Otherwise, batch by BillingElectBatchMax.
 			if(PrefC.HasClinicsEnabled) {
 				//Make each clinic one batch
 				for(int i=0;i<listStatements.Count;i++) {
 					//Find the clinicnum.
-					Patient patient=listPatients.Find(x => x.PatNum==listStatements[i].PatNum);
-					//no need to test for null. Guaranteed to have this patient.
-					Patient patientGuarantor=listPatients.Find(x => x.PatNum==patient.Guarantor);
-					if(patientGuarantor==null) {
-						continue;//should never happen
-					}
-					long clinicNum=patientGuarantor.ClinicNum;
+					long clinicNum=dictFamilies[listStatements[i].PatNum].Guarantor.ClinicNum;
 					if(!listClinicNums.Contains(clinicNum)) {
 						listClinicNums.Add(clinicNum);
 					}
@@ -918,19 +863,20 @@ namespace OpenDentBusiness {
 					}
 					dictStatementsForSend[index].Add(listStatements[i]);
 				}
-				return dictStatementsForSend;
 			}
-			int maxStmtsPerBatch=PrefC.GetInt(PrefName.BillingElectBatchMax);
-			if(maxStmtsPerBatch==0 || PrefC.GetString(PrefName.BillingUseElectronic)=="2" || PrefC.GetString(PrefName.BillingUseElectronic)=="4") {//Max is disabled or Output to File billing option or using EDS.
-				maxStmtsPerBatch=listStatements.Count;//Make the batch size equal to the list of statements so that we send them all at once.
-			}
-			int batchCount=-1; //-1 so we can start the dictionary at 0
-			for(int i=0;i<listStatements.Count;i++) {
-				if(i % maxStmtsPerBatch==0) {
-					batchCount++;
-					dictStatementsForSend.Add(batchCount,new List<Statement>());
+			else {
+				int maxStmtsPerBatch=PrefC.GetInt(PrefName.BillingElectBatchMax);
+				if(maxStmtsPerBatch==0 || PrefC.GetString(PrefName.BillingUseElectronic)=="2" || PrefC.GetString(PrefName.BillingUseElectronic)=="4") {//Max is disabled or Output to File billing option or using EDS.
+					maxStmtsPerBatch=listStatements.Count;//Make the batch size equal to the list of statements so that we send them all at once.
 				}
-				dictStatementsForSend[batchCount].Add(listStatements[i]);
+				int batchCount=-1; //-1 so we can start the dictionary at 0
+				for(int i=0;i<listStatements.Count;i++) {
+					if(i % maxStmtsPerBatch==0) {
+						batchCount++;
+						dictStatementsForSend.Add(batchCount,new List<Statement>());
+					}
+					dictStatementsForSend[batchCount].Add(listStatements[i]);
+				}
 			}
 			return dictStatementsForSend;
 		}
@@ -958,29 +904,29 @@ namespace OpenDentBusiness {
 			Dictionary<long,string> dictionaryPatnumsSkippedMisc)
 		{
 			//No need to check MiddleTierRole; no call to db.
-			List<long> listStatementNumsSuccess=listSmsToMobiles
+			List<long> listSuccessStatementNums=listSmsToMobiles
 				//SmsToMobile that were queued successfully
 				.Where(x => x.SmsStatus!=SmsDeliveryStatus.FailNoCharge)
 				//That correspond to a statement
 				.Select(x => listStmtNumsToUpdate.FirstOrDefault(y => y.Item1==x.GuidMessage)?.Item2??0)
 				.Where(x => x!=0)
 				.ToList();
-			UpdateSmsSendStatus(listStatementNumsSuccess,AutoCommStatus.SendSuccessful);
-			List<long> listStatementNumsFailure=listSmsToMobiles
+			UpdateSmsSendStatus(listSuccessStatementNums,AutoCommStatus.SendSuccessful);
+			List<long> listFailureStatementNums=listSmsToMobiles
 				//SmsToMobile that were not queued successfully
 				.Where(x => x.SmsStatus==SmsDeliveryStatus.FailNoCharge)
 				//That correspond to a statement
 				.Select(x => listStmtNumsToUpdate.FirstOrDefault(y => y.Item1==x.GuidMessage)?.Item2??0)
 				.Where(x => x!=0)
 				.ToList();
-			UpdateSmsSendStatus(listStatementNumsFailure,AutoCommStatus.SendFailed);
+			UpdateSmsSendStatus(listFailureStatementNums,AutoCommStatus.SendFailed);
 			//listDictPatnumsSkipped[2] is for displaying miscellaneous (in this case, sms related) errors to user.
-			List<SmsToMobile> listSmsToMobilesFails = listSmsToMobiles.Where(x => x.SmsStatus==SmsDeliveryStatus.FailNoCharge).ToList();
-			for(int i=0;i<listSmsToMobilesFails.Count;++i) {
-				if(!dictionaryPatnumsSkippedMisc.ContainsKey(listSmsToMobilesFails[i].PatNum)) {
-					dictionaryPatnumsSkippedMisc[listSmsToMobilesFails[i].PatNum]="";
+			List<SmsToMobile> listSmsToMobileFails = listSmsToMobiles.Where(x => x.SmsStatus==SmsDeliveryStatus.FailNoCharge).ToList();
+			for(int i=0;i<listSmsToMobileFails.Count;++i) {
+				if(!dictionaryPatnumsSkippedMisc.ContainsKey(listSmsToMobileFails[i].PatNum)) {
+					dictionaryPatnumsSkippedMisc[listSmsToMobileFails[i].PatNum]="";
 				}
-				dictionaryPatnumsSkippedMisc[listSmsToMobilesFails[i].PatNum]+=Lans.g("Statements","Error Sending text messages")+": "+listSmsToMobilesFails[i].CustErrorText;
+				dictionaryPatnumsSkippedMisc[listSmsToMobileFails[i].PatNum]+=Lans.g("Statements","Error Sending text messages")+": "+listSmsToMobileFails[i].CustErrorText;
 			}
 		}
 
@@ -994,19 +940,19 @@ namespace OpenDentBusiness {
 			else {
 				statementMode=StatementMode.Mail;
 			}
-			Def defBillingType=Defs.GetDef(DefCat.BillingTypes,patAging.BillingType);
-			if(defBillingType != null && defBillingType.ItemValue=="E") {
+			Def billingType=Defs.GetDef(DefCat.BillingTypes,patAging.BillingType);
+			if(billingType != null && billingType.ItemValue=="E") {
 				statementMode=StatementMode.Email;
 			}
 			return statementMode;
 		}
 
 		///<summary>Returns true if the patient statement mode has an option to send by SMS.</summary>
-		public static bool DoSendSms(PatAging patAging,Dictionary<long,PatAgingData> dictPatAgingData,List<StatementMode> listStatementModes) {
+		public static bool DoSendSms(PatAging patAge,Dictionary<long,PatAgingData> dictPatAgingData,List<StatementMode> listStatementModes) {
 			//No need to check MiddleTierRole; no call to db.
 			PatAgingData patAgingData;
-			dictPatAgingData.TryGetValue(patAging.PatNum,out patAgingData);
-			if(listStatementModes.Contains(GetStatementMode(patAging))
+			dictPatAgingData.TryGetValue(patAge.PatNum,out patAgingData);
+			if(listStatementModes.Contains(GetStatementMode(patAge))
 				&& patAgingData!=null
 				&& patAgingData.PatComm!=null
 				&& patAgingData.PatComm.IsSmsAnOption) {
@@ -1018,49 +964,50 @@ namespace OpenDentBusiness {
 		///<summary>Creates a new pdf, attaches it to a new doc, and attaches that to the statement.  If it cannot create a pdf, for example if no AtoZ 
 		///folders, then it will simply result in a docnum of zero, so no attached doc. Only used for batch statment printing. Returns the path of the
 		///temp file where the pdf is saved.Temp file should be deleted manually.  Will return an empty string when unable to create the file.</summary>
-		public static string CreateStatementPdfSheets(Statement statement,Patient patient,Family family,DataSet dataSet) {
+		public static string CreateStatementPdfSheets(Statement stmt,Patient pat,Family fam,DataSet dataSet) {
 			//No need to check MiddleTierRole; no call to db.
-			Statement statementNew=statement;
-			SheetDef sheetDef=SheetUtil.GetStatementSheetDef(statementNew);
-			Sheet sheet=SheetUtil.CreateSheet(sheetDef,statementNew.PatNum,statementNew.HidePayment);
-			sheet.Parameters.Add(new SheetParameter(true,"Statement") { ParamValue=statementNew });
-			SheetFiller.FillFields(sheet,dataSet,statementNew,pat: patient,fam: family);
-			SheetUtil.CalculateHeights(sheet,dataSet,statementNew,pat: patient,patGuar: family.Guarantor);
-			string tempPath=ODFileUtils.CombinePaths(PrefC.GetTempFolderPath(),statementNew.PatNum.ToString()+".pdf");
-			SheetPrinting.CreatePdf(sheet,tempPath,statementNew,dataSet,null,pat: patient,patGuar: family.Guarantor);
-			List<Def> listDefsImageCat=Defs.GetDefsForCategory(DefCat.ImageCats,true);
+			Statement StmtCur=stmt;
+			SheetDef sheetDef=SheetUtil.GetStatementSheetDef(StmtCur);
+			Sheet sheet=SheetUtil.CreateSheet(sheetDef,StmtCur.PatNum,StmtCur.HidePayment);
+			sheet.Parameters.Add(new SheetParameter(true,"Statement") { ParamValue=StmtCur });
+			SheetFiller.FillFields(sheet,dataSet,StmtCur,pat: pat,fam: fam);
+			SheetUtil.CalculateHeights(sheet,dataSet,StmtCur,pat: pat,patGuar: fam.Guarantor);
+			string tempPath=ODFileUtils.CombinePaths(PrefC.GetTempFolderPath(),StmtCur.PatNum.ToString()+".pdf");
+			SheetPrinting.CreatePdf(sheet,tempPath,StmtCur,dataSet,null,pat: pat,patGuar: fam.Guarantor);
+			List<Def> listImageCatDefs=Defs.GetDefsForCategory(DefCat.ImageCats,true);
 			long category=0;
-			for(int i = 0;i<listDefsImageCat.Count;i++) {
-				if(Regex.IsMatch(listDefsImageCat[i].ItemValue,@"S")) {
-					category=listDefsImageCat[i].DefNum;
+			for(int i = 0;i<listImageCatDefs.Count;i++) {
+				if(Regex.IsMatch(listImageCatDefs[i].ItemValue,@"S")) {
+					category=listImageCatDefs[i].DefNum;
 					break;
 				}
 			}
 			if(category==0) {
-				category=listDefsImageCat[0].DefNum;//put it in the first category.
+				category=listImageCatDefs[0].DefNum;//put it in the first category.
 			}
 			//create doc--------------------------------------------------------------------------------------
-			OpenDentBusiness.Document document=null;
+			OpenDentBusiness.Document docc=null;
 			try {
-				document=ImageStore.Import(tempPath,category,patient);
+				docc=ImageStore.Import(tempPath,category,pat);
 			}
 			catch {
 				return "";//Error saving the document
 			}
-			document.ImgType=ImageType.Document;
-			if(statementNew.IsInvoice) {
-				document.Description=Lans.g(nameof(Statements),"Invoice");
+			docc.ImgType=ImageType.Document;
+			if(StmtCur.IsInvoice) {
+				docc.Description=Lans.g(nameof(Statements),"Invoice");
 			}
 			else {
-				if(statementNew.IsReceipt==true) {
-					document.Description=Lans.g(nameof(Statements),"Receipt");
+				if(StmtCur.IsReceipt==true) {
+					docc.Description=Lans.g(nameof(Statements),"Receipt");
 				}
 				else {
-					document.Description=Lans.g(nameof(Statements),"Statement");
+					docc.Description=Lans.g(nameof(Statements),"Statement");
 				}
 			}
-			statementNew.DocNum=document.DocNum;//this signals the calling class that the pdf was created successfully.
-			Statements.AttachDoc(statementNew.StatementNum,document);
+			docc.DateCreated=StmtCur.DateSent;
+			StmtCur.DocNum=docc.DocNum;//this signals the calling class that the pdf was created successfully.
+			Statements.AttachDoc(StmtCur.StatementNum,docc);
 			return tempPath;
 		}
 
@@ -1076,7 +1023,7 @@ namespace OpenDentBusiness {
 			string patFolder=ImageStore.GetPatientFolder(patient,ImageStore.GetPreferredAtoZpath());
 			string fileName=prependCategoryNum+patient.LName+patient.FName+statement.DocNum.ToString()+".csv";
 			return WriteStatementToCSV(statement,fileName,patFolder);
-		}
+    }
 
 		///<summary></summary>
 		private static string WriteStatementToCSV(Statement statement,string fileName,string filePath) {
@@ -1086,21 +1033,21 @@ namespace OpenDentBusiness {
 			string path=FileAtoZ.CombinePaths(filePath,fileName); 
 			DataSet dataSet=AccountModules.GetStatementDataSet(statement,true,doIncludePatLName:PrefC.IsODHQ);
 			DataTable dataTable=SheetFramework.SheetDataTableUtil.GetTable_StatementMain(dataSet,statement);
-			StringBuilder stringBuilderExportCSV=new StringBuilder();
+			StringBuilder exportCSV=new StringBuilder();
 			long stateNum=statement.StatementNum;
-			stringBuilderExportCSV.AppendLine("Invoice/Statement Number,"
+			exportCSV.AppendLine("Invoice/Statement Number," 
 				+"Date Created," 
 				+"Procedure Total," 
 				+"Ins Estimate," 
 				+"Total Amount,");
-			stringBuilderExportCSV.AppendLine($"\"{stateNum}\","
-				+$"\"{statement.DateSent.ToShortDateString()}\","
+			exportCSV.AppendLine($"\"{stateNum}\"," 
+				+$"\"{statement.DateSent.ToShortDateString()}\"," 
 				+$"\"{statement.BalTotal}\"," 
 				+$"\"{statement.InsEst}\"," 
 				+$"\"{statement.BalTotal-statement.InsEst}\",");
-			stringBuilderExportCSV.AppendLine("");
-			stringBuilderExportCSV.AppendLine("");
-			stringBuilderExportCSV.AppendLine("Date,"
+			exportCSV.AppendLine("");
+			exportCSV.AppendLine("");
+			exportCSV.AppendLine("Date,"
 				+"Patient Number,"
 				+"Patient Name,"
 				+"Code,"
@@ -1110,77 +1057,17 @@ namespace OpenDentBusiness {
 				+"Balance");
 			for(int i=0;i<dataTable.Rows.Count;i++) {
 				long patNum=PIn.Long(dataTable.Rows[i]["PatNum"].ToString());
-				stringBuilderExportCSV.AppendLine($"\"{dataTable.Rows[i]["date"]}\","
+				exportCSV.AppendLine($"\"{dataTable.Rows[i]["date"]}\"," 
 					+$"\"{patNum}\"," 
-					+$"\"{Patients.GetNameFL(patNum)}\","
-					+$"\"{dataTable.Rows[i]["ProcCode"]}\","
-					+$"\"{dataTable.Rows[i]["description"]}\","
-					+$"\"{dataTable.Rows[i]["charges"].ToString()}\","
-					+$"\"{dataTable.Rows[i]["credits"].ToString()}\","
+					+$"\"{Patients.GetNameFL(patNum)}\"," 
+					+$"\"{dataTable.Rows[i]["ProcCode"]}\"," 
+					+$"\"{dataTable.Rows[i]["description"]}\"," 
+					+$"\"{dataTable.Rows[i]["charges"].ToString()}\"," 
+					+$"\"{dataTable.Rows[i]["credits"].ToString()}\"," 
 					+$"\"{dataTable.Rows[i]["balance"].ToString()}\",");
 			}
-			File.WriteAllText(path,stringBuilderExportCSV.ToString());
+			File.WriteAllText(path,exportCSV.ToString());
 			return path;
-		}
-
-		///<summary>Takes the passed in patient to create a statement for the guarantor. This logic used to just exist behind the toolBarButStatement_Click in the account controller</summary>
-		public static Statement GenerateStatement(Patient patient,DateTime dateStart,DateTime dateEnd,StatementMode statementMode) {
-			Statement statement=new Statement();
-			statement.PatNum=patient.Guarantor;
-			statement.DateSent=DateTime.Today;
-			statement.IsSent=true;
-			statement.Mode_=statementMode;
-			statement.HidePayment=false;
-			statement.SinglePatient=false;
-			statement.Intermingled=PrefC.GetBool(PrefName.IntermingleFamilyDefault);
-			statement.StatementType=StmtType.NotSet;
-			statement.DateRangeTo=DateTime.Today;//This is needed for payment plan accuracy.//new DateTime(2200,1,1);
-			if(dateEnd!=DateTime.MinValue) {
-				statement.DateRangeTo=dateEnd;
-			}
-			statement.DateRangeFrom=DateTime.MinValue;
-			if(dateStart!=DateTime.MinValue) {//dateStart has ultimate precedence. User may have intentionally set the date range for statement.
-				statement.DateRangeFrom=dateStart;
-			}
-			else {//Use preferences to determine the "from" date.
-				long billingDefaultsLastDaysPref=PrefC.GetLong(PrefName.BillingDefaultsLastDays);
-				if(billingDefaultsLastDaysPref > 0) {//0 days means ignore preference and show everything.
-					statement.DateRangeFrom=DateTime.Today.AddDays(-billingDefaultsLastDaysPref);
-				}
-				if(PrefC.GetBool(PrefName.BillingShowTransSinceBalZero)) {
-					Patient patientForAging=Patients.GetPat(statement.PatNum);
-					List<PatAging> listPatAgings=Patients.GetAgingListSimple(new List<long> {}, new List<long> { patientForAging.Guarantor },true);
-					DataTable tableBals=Ledgers.GetDateBalanceBegan(listPatAgings,isSuperBills:false);//More Options selection has a super family option. We would need new checkbox here.
-					if(tableBals.Rows.Count > 0) {
-						DateTime dateTimeFrom=PIn.Date(tableBals.Rows[0]["DateZeroBal"].ToString());
-						if(dateTimeFrom > statement.DateRangeFrom) {//Zero balance date range has precedence if it's more recent than billing default date range.
-							statement.DateRangeFrom=dateTimeFrom;
-						}
-					}
-				}
-			}
-			statement.Note="";
-			statement.NoteBold="";
-			Patient patientGuarantor=null;
-			if(patient!=null) {
-				patientGuarantor=Patients.GetPat(patient.Guarantor);
-			}
-			if(patientGuarantor!=null) {
-				statement.IsBalValid=true;
-				statement.BalTotal=patientGuarantor.BalTotal;
-				statement.InsEst=patientGuarantor.InsEst;
-			}
-			return statement;
-		}
-
-		///<summary>Returns the PatNum of the patient that this statement is responsible for. Typically returns StatementCur.PatNum.
-		///Can return a different PatNum if this is a SinglePatient statement and there is only one PatNum StmtLink associated with this statement.</summary>
-		public static long GetPatNumForGetAccount(Statement statement) {
-			long patNum=statement.PatNum;
-			if(statement.SinglePatient && statement.ListPatNums.Distinct().Count()==1) {
-				patNum=statement.ListPatNums.First();
-			}
-			return patNum;
 		}
 		#endregion
 	}
@@ -1191,48 +1078,48 @@ namespace OpenDentBusiness {
 		///<summary>Date the statement was sent.</summary>
 		public DateTime DateSent;
 		///<summary>PatNum of the guarantor of the family that the statement is for or the PatNum of the SuperFamily head if the statement is a SuperFamily statement.</summary>
-		public long PatNumGuarantor;
+		public long GuarantorPatNum;
 		///<summary>Guarantor's primary provider's ProvNum or the SuperFamily head's primary provider's ProvNum if the statement is a SuperFamily statement.</summary>
-		public long ProvNumPriGuarantor;
+		public long GuarantorPriProvNum;
 		///<summary>True if the statement is a superfamily statement.</summary>
 		public bool IsSuperFamilyStatement;
 		///<summary>Holds the PatNums of all guarantors in super family if the statement is a super family statement, otherwise it just holds the family's guarantor.</summary>
-		public List<long> ListPatNumsGuarantor=new List<long>();
+		public List<long> ListGuarantorPatNums=new List<long>();
 		///<summary>The StatementProds associated to the statement.</summary>
 		public List<StatementProd> ListStatementProds=new List<StatementProd>();
 		///<summary>The DocNum of the document associated to the statement.</summary>
 		public long DocNum;
 		///<summary>Specific tables and columns from the DataSet used to create the statement for inserting or syncing StatementProds.</summary>
 		[XmlIgnore]
-		public DataSet DataSetStmtNew;
+		public DataSet StmtDataSet;
 
 		///<summary>For serialization purposes.</summary>
 		public StatementData() {
 		}
 
 		///<summary>This constructur only sets the DocNum and StmtDataSet and is only used when building a collection of StatementData sets for the purpose of syncing StatementProds for multiple statements.</summary>
-		public StatementData(DataSet dataSetStmt,long docNum) {
-			DataSetStmtNew=new DataSet();
-			for(int i=0;i<dataSetStmt.Tables.Count;i++) {
+		public StatementData(DataSet stmtDataSet,long docNum) {
+			StmtDataSet=new DataSet();
+			for(int i=0;i<stmtDataSet.Tables.Count;i++) {
 				//Each family member will have their own account table, so only consider tables that start with 'account'.
-				if(!dataSetStmt.Tables[i].TableName.StartsWith("account")) {
+				if(!stmtDataSet.Tables[i].TableName.StartsWith("account")) {
 					continue;
 				}
-				DataTable tableAccount=dataSetStmt.Tables[i].Copy();
+				DataTable tableAccount=stmtDataSet.Tables[i].Copy();
 				//Remove columns that are not used when inserting or syncing StatementProds to save memory.
 				for(int j=tableAccount.Columns.Count-1;j>=0;j--) {
 					if(!tableAccount.Columns[j].ColumnName.In("AdjNum","creditsDouble","PayPlanChargeNum","ProcNum","procsOnObj")) {
 						tableAccount.Columns.RemoveAt(j);
 					}
 				}
-				DataSetStmtNew.Tables.Add(tableAccount);
+				StmtDataSet.Tables.Add(tableAccount);
 			}
 			DocNum=docNum;
 		}
 
 		///<summary>Used when creating late charges. Gets a list of StatementData objects based on the filters used in ForLateCharges. Should only be run after aging has been run.</summary>
-		public static List<StatementData> GetListStatementDataForLateCharges(bool isExcludeAccountNoTil,bool isExcludeExistingLateCharges,
-			decimal excludeBalancesLessThan,DateTime dateRangeStart,DateTime dateRangeEnd,List<long> listBillingTypes)
+		public static List<StatementData> GetListStatementDataForLateCharges(bool isExcludeAccountNoTil,bool isExcludeExistingLateCharges
+			,decimal excludeBalancesLessThan,DateTime dateRangeStart,DateTime dateRangeEnd,List<long> listBillingTypes)
 		{
 			if(listBillingTypes.IsNullOrEmpty()) {
 				return new List<StatementData>();
@@ -1288,45 +1175,56 @@ namespace OpenDentBusiness {
 			}
 			command+="ORDER BY statement.DateSent,statement.StatementNum";
 			DataTable table=Db.GetTable(command);
-			List<StatementData> listStatementDatas=new List<StatementData>();
+			Dictionary<long,StatementData> dictStatementData=new Dictionary<long,StatementData>();
 			//If we end up wanting to prevent late charges from being created twice for a single statement that has had multiple documents made for it,
 			//we can remove the dictionary entry for the statement in this loop if we come across a StatementProd that has a non-zero LateChargeAdjNum.
 			//We would then have to remove the "ON statementprod.LateChargeAdjNum=0 clause from the query above.
 			for(int i=0;i<table.Rows.Count;i++) {
-				DataRow dataRow=table.Rows[i];
-				long statementNum=PIn.Long(dataRow["StatementNum"].ToString());
-				//If a list entry for the statement does not yet exist, create one.
-				//All the StatementProds should have the same StatementNum.
-				StatementData statementData=listStatementDatas.Find(x => x.ListStatementProds.Any(y => y.StatementNum==statementNum));
-				if(statementData==null) {
-					statementData=new StatementData();
-					statementData.DateSent=PIn.Date(dataRow["DateSent"].ToString());
-					statementData.PatNumGuarantor=PIn.Long(dataRow["PatNum"].ToString());
-					statementData.ProvNumPriGuarantor=PIn.Long(dataRow["PriProv"].ToString());
-					statementData.IsSuperFamilyStatement=PIn.Long(dataRow["SuperFamily"].ToString())!=0;
-					statementData.ListPatNumsGuarantor.Add(statementData.PatNumGuarantor);
+				DataRow rowCur=table.Rows[i];
+				long statementNum=PIn.Long(rowCur["StatementNum"].ToString());
+				//If a dictionary entry for the statement does not yet exist, create one.
+				if(!dictStatementData.ContainsKey(statementNum)) {
+					StatementData statementData=new StatementData();
+					statementData.DateSent=PIn.Date(rowCur["DateSent"].ToString());
+					statementData.GuarantorPatNum=PIn.Long(rowCur["PatNum"].ToString());
+					statementData.GuarantorPriProvNum=PIn.Long(rowCur["PriProv"].ToString());
+					statementData.IsSuperFamilyStatement=PIn.Long(rowCur["SuperFamily"].ToString())!=0;
+					statementData.ListGuarantorPatNums.Add(statementData.GuarantorPatNum);
 					if(statementData.IsSuperFamilyStatement) {
-						statementData.ListPatNumsGuarantor=Patients.GetSuperFamilyGuarantors(statementData.PatNumGuarantor).Select(x => x.PatNum).ToList();
+						statementData.ListGuarantorPatNums=Patients.GetSuperFamilyGuarantors(statementData.GuarantorPatNum).Select(x => x.PatNum).ToList();
 					}
-					listStatementDatas.Add(statementData);
+					dictStatementData.Add(statementNum,statementData);
 				}
-				//Then, add the statement prod to the list in this statement's list entry.
+				//Then, add the statement prod to the list in this statement's dictionary entry.
 				StatementProd statementProd=new StatementProd();
-				statementProd.StatementProdNum=PIn.Long(dataRow["StatementProdNum"].ToString());
+				statementProd.StatementProdNum=PIn.Long(rowCur["StatementProdNum"].ToString());
 				statementProd.StatementNum=statementNum;
-				statementProd.FKey=PIn.Long(dataRow["FKey"].ToString());
-				statementProd.ProdType=(ProductionType)PIn.Int(dataRow["ProdType"].ToString());
-				statementProd.LateChargeAdjNum=PIn.Long(dataRow["LateChargeAdjNum"].ToString());
-				statementData.ListStatementProds.Add(statementProd);
+				statementProd.FKey=PIn.Long(rowCur["FKey"].ToString());
+				statementProd.ProdType=(ProductionType)PIn.Int(rowCur["ProdType"].ToString());
+				statementProd.LateChargeAdjNum=PIn.Long(rowCur["LateChargeAdjNum"].ToString());
+				dictStatementData[statementNum].ListStatementProds.Add(statementProd);
 			}
-			return listStatementDatas;
+			List<StatementData> listStatementData=dictStatementData.Values.ToList();
+			return listStatementData;
 		}
 
 	}
 
 	public struct EbillStatement {
-		public Statement Statement;
-		public Family Family;
+
+		public Statement statement;
+		public Family family;
+
 	}
 
 }
+
+
+
+
+
+
+
+
+
+

@@ -127,7 +127,7 @@ namespace OpenDentBusiness.AutoComm {
 			}
 		}
 
-		private string AppendEClipboardTokens(List<ApptResponse> listApptResponses,string logSubDir) {
+		private string AppendEClipboardTokens(List<ApptResponse> listApptResponses,string logSubDir) {				
 			if(listApptResponses.IsNullOrEmpty()) {
 				return "";
 			}
@@ -157,18 +157,15 @@ namespace OpenDentBusiness.AutoComm {
 		private void MarkArrived(IEnumerable<ApptResponse> listAppts,bool doAlert) {
 			long arrivedTrigger=PrefC.GetLong(PrefName.AppointmentTimeArrivedTrigger);
 			List<ApptResponse> listArriving=listAppts.Where(x => x.Appointment.Confirmed!=arrivedTrigger).ToList();
-			for(int i=0;i<listArriving.Count();i++) {
+			foreach(ApptResponse appt in listArriving) {
 				//This update will trigger eClipboard to generate the appropriate check-in sheets if the appointment is not already marked as arrived.
 				//If the clinic is setup for eClipboard checking, the appropriate token needs to be included in the Arrival Response sms.
-				long arrivedStatusNew=Appointments.GetApptConfirmationStatus(listArriving[i].Appointment.AptNum);
-				if(arrivedStatusNew!=arrivedTrigger){ //If the confirmation status has not already been updated manually, do it here and create a log.
-					Appointments.SetConfirmed(listArriving[i].Appointment,arrivedTrigger);
-					SecurityLogs.MakeLogEntry(EnumPermType.ApptConfirmStatusEdit,listArriving[i].Appointment.PatNum,"Appointment confirmation status changed from "
-						+Defs.GetName(DefCat.ApptConfirmed,listArriving[i].Appointment.Confirmed)+" to "+Defs.GetName(DefCat.ApptConfirmed,arrivedTrigger)
-						+" due to an Arrival text.",listArriving[i].Appointment.AptNum,LogSources.AutoConfirmations,listArriving[i].Appointment.DateTStamp);
-					EServiceLogs.MakeLogEntry(eServiceAction.ArrivalReceived,eServiceType.Arrivals,FKeyType.ApptNum,patNum:listArriving[i].Appointment.PatNum
-						,FKey:listArriving[i].Appointment.AptNum,clinicNum:listArriving[i].Appointment.ClinicNum);
-				}
+				Appointments.SetConfirmed(appt.Appointment,arrivedTrigger);
+				SecurityLogs.MakeLogEntry(Permissions.ApptConfirmStatusEdit,appt.Appointment.PatNum,"Appointment confirmation status changed from "
+					+Defs.GetName(DefCat.ApptConfirmed,appt.Appointment.Confirmed)+" to "+Defs.GetName(DefCat.ApptConfirmed,arrivedTrigger)
+					+" due to an Arrival text.",appt.Appointment.AptNum,LogSources.AutoConfirmations,appt.Appointment.DateTStamp);
+				EServiceLogs.MakeLogEntry(eServiceAction.ArrivalReceived,eServiceType.Arrivals,FKeyType.ApptNum,patNum:appt.Appointment.PatNum
+					,FKey:appt.Appointment.AptNum,clinicNum:appt.Appointment.ClinicNum);
 			}
 			if(doAlert) {
 				CreateArrivalAlert(listArriving);
@@ -181,7 +178,7 @@ namespace OpenDentBusiness.AutoComm {
 				AlertItem alert=new AlertItem() {
 					ClinicNum=appt.Appointment.ClinicNum,
 					Description=appt.PatComm.GetFirstOrPreferred()
-						+" "+Lans.g(this,"arrived at")+" "+DateTime.Now.ToShortTimeString()
+						+" "+Lans.g(this,"arrived at")+" "+DateTime.Now.ToShortTimeString()						
 						+" "+DateTime.Now.ToString(PrefC.PatientCommunicationDateFormat)
 						+" "+Lans.g(this,"for appointment at")+" "+appt.Appointment.AptDateTime.ToShortTimeString()
 						+" "+appt.Appointment.AptDateTime.ToString(PrefC.PatientCommunicationDateFormat),

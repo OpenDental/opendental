@@ -60,7 +60,7 @@ namespace OpenDentBusiness{
 					//Was changed, pref exists, and is false
 					//Defaults are not in use.
 					//Create a copy of the default MBP if no MBP exists, otherwise update existing to match default.
-					if(MBP==null && DefaultMBP!=null)  {
+					if(MBP==null)  {
 						MBP=new MobileBrandingProfile {
 							ClinicNum=listClinicsChanged[i],
 							OfficeDescription=DefaultMBP.OfficeDescription,

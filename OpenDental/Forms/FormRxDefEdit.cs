@@ -152,7 +152,7 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			//RxCui is set when butRxNormSelect is clicked.
 			if(CultureInfo.CurrentCulture.Name.EndsWith("US") && _rxDef.RxCui==0) {//United States
 				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Warning: RxNorm was not picked.  "
@@ -175,6 +175,10 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormRxDefEdit_FormClosing(object sender,FormClosingEventArgs e) {
 			if(DialogResult==DialogResult.OK){
 				return;//close as normal
@@ -183,6 +187,5 @@ namespace OpenDental{
 				RxDefs.Delete(_rxDef);
 			}
 		}
-
 	}
 }

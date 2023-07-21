@@ -74,15 +74,14 @@ namespace UnitTests.PayPlanEdit_Tests {
 			Patient pat=PatientT.CreatePatient(MethodBase.GetCurrentMethod().Name);
 			Procedure proc1=ProcedureT.CreateProcedure(pat,"D1120",ProcStat.C,"",100,DateTime.Today.AddMonths(-3));
 			Procedure proc2=ProcedureT.CreateProcedure(pat,"D0220",ProcStat.C,"",92,DateTime.Today.AddMonths(-3));
-			List<Procedure> listProcs = new List<Procedure> {proc1,proc2 };
-			PayPlan payplan=PayPlanT.CreatePayPlanWithCredits(pat.PatNum,30,DateTime.Today.AddMonths(-3),0,listProcs);
+			PayPlan payplan=PayPlanT.CreatePayPlanWithCredits(pat.PatNum,30,DateTime.Today.AddMonths(-3),0,new List<Procedure> {proc1,proc2 });
 			Payment payment=PaymentT.MakePayment(pat.PatNum,30,DateTime.Today.AddMonths(-2),payplan.PayPlanNum);//make a payment for the plan
 			List<PayPlanCharge> listCharges=PayPlanCharges.GetForPayPlan(payplan.PayPlanNum);
 			double totalFutureNegAdjs=PayPlanT.GetTotalNegFutureAdjs(listCharges);
 			List<PayPlanCharge> listChargesAndCredits=PayPlanEdit.CreatePayPlanAdjustments(-62,listCharges,totalFutureNegAdjs);//make adjustments for the plan.
 			listChargesAndCredits.Add(PayPlanChargeT.CreateNegativeCreditForAdj(pat.PatNum,payplan.PayPlanNum,-62));//add the tx credit for the adjustment
 			//Balance should equal 100. $192 of completed tx - $30 payment + $-62 adjustment. 
-			PayPlanCharge closeOutCharge=PayPlanEdit.CalculatePatPayPlanCloseoutCharge(listChargesAndCredits,listProcs,payplan,today);
+			PayPlanCharge closeOutCharge=PayPlanEdit.CloseOutPatPayPlan(listChargesAndCredits,payplan,today);
 			//List<PayPlanCharge> listFinalCharges=listChargesAndCredits.RemoveAll(x => x.ChargeDate > today.Date);
 			listChargesAndCredits.RemoveAll(x => x.ChargeDate > DateTime.Today);
 			listChargesAndCredits.Add(closeOutCharge);
@@ -102,7 +101,6 @@ namespace UnitTests.PayPlanEdit_Tests {
 			//Create a manual amortization schedule where the $1000 is split up into 5 payments.
 			//Have the first payment of $200 due today. The remaining $800 will be due in the future.
 			List<PayPlanCharge> listPayPlanCharges=new List<PayPlanCharge>();
-			List<Procedure> listProcs=new List<Procedure>();
 			for(int i=0;i<5;i++) {
 				listPayPlanCharges.Add(new PayPlanCharge() {
 					ChargeDate=DateTime.Today.AddMonths(listPayPlanCharges.Count),
@@ -114,7 +112,7 @@ namespace UnitTests.PayPlanEdit_Tests {
 				});
 			}
 			//A 'Close Out Charge' of $800 should be suggested when the user closes out this payment plan.
-			PayPlanCharge payPlanChargeCloseOut=PayPlanEdit.CalculatePatPayPlanCloseoutCharge(listPayPlanCharges,listProcs,payPlan,DateTime.Today);
+			PayPlanCharge payPlanChargeCloseOut=PayPlanEdit.CloseOutPatPayPlan(listPayPlanCharges,payPlan,DateTime.Today);
 			Assert.AreEqual(800,payPlanChargeCloseOut.Principal);
 		}
 
@@ -230,32 +228,6 @@ namespace UnitTests.PayPlanEdit_Tests {
 			List<PayPlanCharge> listChargesThisPeriod=PayPlanEdit.GetListExpectedCharges(listChargesDb,terms,fam,listEntries,dynamicPayPlan,true);
 			//assert expected results
 			Assert.AreEqual(22,listChargesThisPeriod.Sum(x => x.Principal));
-		}
-
-		[TestMethod]
-		public void PayPlanEdit_GetListExpectedCharges_ChargesAreGeneratedAndBackdatedCorrectly() {
-			//set up dynamic pay plan prefs
-			PrefT.UpdateDateT(PrefName.DynamicPayPlanLastDateTime,DateTime.MinValue);
-			PrefT.UpdateDateT(PrefName.DynamicPayPlanRunTime,DateTime.Now);
-			//set up payment plan
-			Patient pat=PatientT.CreatePatient(MethodBase.GetCurrentMethod().Name);
-			Family fam=Patients.GetFamily(pat.PatNum);
-			long provNum=ProviderT.CreateProvider("LS");
-			//create the production that will be attached to the payment plan
-			List<Procedure> listProcs=new List<Procedure>();
-			List<Adjustment> listAdjs=new List<Adjustment>();
-			listProcs.Add(ProcedureT.CreateProcedure(pat,"D0220",ProcStat.C,"",165,DateTime.Today));
-			listProcs.Add(ProcedureT.CreateProcedure(pat,"D0221",ProcStat.C,"",25,DateTime.Today));
-			listAdjs.Add(AdjustmentT.MakeAdjustment(pat.PatNum,10));
-			PayPlan dynamicPayPlan=PayPlanT.CreateDynamicPaymentPlan(pat.PatNum,pat.PatNum,DateTime.Today.AddMonths(-1),5,0,22,listProcs,listAdjs);
-			//run logic to generate charges (look at recurring charges tests for reference)
-			List<PayPlanCharge> listChargesDb=PayPlanCharges.GetForPayPlan(dynamicPayPlan.PayPlanNum);
-			List<PayPlanLink> listEntries=PayPlanLinks.GetForPayPlans(new List<long>{dynamicPayPlan.PayPlanNum});
-			PayPlanTerms terms=PayPlanT.GetTerms(dynamicPayPlan,listEntries);
-			List<PayPlanCharge> listChargesThisPeriod=PayPlanEdit.GetListExpectedCharges(listChargesDb,terms,fam,listEntries,dynamicPayPlan,true);
-			//assert expected results
-			Assert.AreEqual(22,listChargesThisPeriod.Sum(x=>x.Principal));
-			Assert.AreEqual(listChargesDb[0].ChargeDate,terms.DateFirstPayment);
 		}
 
 		[TestMethod]
@@ -1406,45 +1378,6 @@ namespace UnitTests.PayPlanEdit_Tests {
 			Assert.AreEqual(0,totalLeftDue);
 			Assert.AreEqual(28,totalInUnearned);
 			Assert.AreEqual(0,totalDPPUnearned);
-		}
-
-		[TestMethod]
-		public void PayPlanEdit_ApplyPrepaymentToDynamicPaymentPlan_ExtraHiddenUnearned_CloseOut_MoveToRegularUnearned() {
-			/*--------------------------------------------------------------------------
-			 * Dynamic Payment Plan with 1 procedures $100.
-			 * Make a $200 payment plan prepayment.
-			 * Issue first months charge. Payments of 100.
-			 * Apply the charges to the first months charge of $100.
-			 * Close out the dynamic payment plan. 
-			 * Assert that the close out transfers the remaining hidden unearned to regular unearned so the user can use the income transfer.
-			 *--------------------------------------------------------------------------*/
-
-			//set up payment plan
-			Patient pat=PatientT.CreatePatient(MethodBase.GetCurrentMethod().Name);
-			Family fam=Patients.GetFamily(pat.PatNum);
-			long provNum=ProviderT.CreateProvider("LS");
-
-			//create the produciton that will be attached to the payment plan with the 
-			List<Procedure> listProcs=new List<Procedure>();
-			List<Adjustment> listAdjs=new List<Adjustment>();
-			listProcs.Add(ProcedureT.CreateProcedure(pat,"D0220",ProcStat.C,"",100,DateTime.Today.AddMonths(1)));
-			PayPlan dynamicPayPlan=PayPlanT.CreateDynamicPaymentPlan(pat.PatNum,pat.PatNum,DateTime.Today,0,0,100,listProcs,listAdjs
-				,PayPlanFrequency.Monthly,dateInterestStart:DateTime.Today,dynamicPayPlanTPOptions:DynamicPayPlanTPOptions.TreatAsComplete);
-
-			//Create a DynamicPayPlanPrePayment of $200. 
-			long prepayUnearnedType=PrefC.GetLong(PrefName.DynamicPayPlanPrepaymentUnearnedType);
-			Payment paymentDynamicPrePay=PaymentT.MakePayment(pat.PatNum,200,payDate:DateTime.Now,procNum:listProcs[0].ProcNum,payPlanNum:dynamicPayPlan.PayPlanNum,unearnedType:prepayUnearnedType);
-			List<PayPlanCharge> listPayPlanCharges=PayPlanCharges.GetForPayPlan(dynamicPayPlan.PayPlanNum);
-
-			//Apply the prepayment to the dynamic payplan
-			PayPlanEdit.ApplyPrepaymentToDynamicPaymentPlan(pat.PatNum,paymentDynamicPrePay.PayAmt,listPayPlanCharges);
-
-			//Close the plan out and verify that all prepayments were moved to the charges.
-			PayPlanT.CloseDynamicPaymentPlan(dynamicPayPlan,fam);
-			List<PaySplit> listUnearned=PaySplits.GetUnearnedForAccount(new List<long> {pat.PatNum});
-
-			//Assert that the dynamic prepayment amounts were transfers to regular unearned.
-			Assert.AreEqual(0,listUnearned.FindAll(x => x.UnearnedType==prepayUnearnedType).Sum(x => x.SplitAmt));
 		}
 		#endregion
 		#region Dynamic Payment Plan Charge issuer

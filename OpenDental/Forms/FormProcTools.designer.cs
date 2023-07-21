@@ -44,6 +44,7 @@ namespace OpenDental {
 			this.checkApptProcsQuickAdd = new OpenDental.UI.CheckBox();
 			this.checkRecallTypes = new OpenDental.UI.CheckBox();
 			this.butRun = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.labelLineOne = new System.Windows.Forms.Label();
 			this.labelLineTwo = new System.Windows.Forms.Label();
 			this.SuspendLayout();
@@ -74,9 +75,11 @@ namespace OpenDental {
 			this.checkDcodes.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.checkDcodes.Location = new System.Drawing.Point(15, 141);
 			this.checkDcodes.Name = "checkDcodes";
-			this.checkDcodes.Size = new System.Drawing.Size(646, 46);
+			this.checkDcodes.Size = new System.Drawing.Size(646, 36);
 			this.checkDcodes.TabIndex = 45;
-			this.checkDcodes.Text = resources.GetString("checkDcodes.Text");
+			this.checkDcodes.Text = "D Codes - Add any missing 2023 CDT Codes and fix descriptions and blank abbreviat" +
+    "ions of existing codes. This option does not work in the trial version, self-com" +
+    "piled version, or outside the USA.";
 			// 
 			// checkNcodes
 			// 
@@ -123,17 +126,27 @@ namespace OpenDental {
 			// butRun
 			// 
 			this.butRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butRun.Location = new System.Drawing.Point(603, 393);
+			this.butRun.Location = new System.Drawing.Point(477, 381);
 			this.butRun.Name = "butRun";
 			this.butRun.Size = new System.Drawing.Size(82, 26);
 			this.butRun.TabIndex = 50;
 			this.butRun.Text = "Run Now";
 			this.butRun.Click += new System.EventHandler(this.butRun_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(586, 381);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(82, 26);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// labelLineOne
 			// 
 			this.labelLineOne.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.labelLineOne.Location = new System.Drawing.Point(15, 188);
+			this.labelLineOne.Location = new System.Drawing.Point(15, 185);
 			this.labelLineOne.Name = "labelLineOne";
 			this.labelLineOne.Size = new System.Drawing.Size(670, 2);
 			this.labelLineOne.TabIndex = 53;
@@ -141,7 +154,7 @@ namespace OpenDental {
 			// labelLineTwo
 			// 
 			this.labelLineTwo.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.labelLineTwo.Location = new System.Drawing.Point(15, 203);
+			this.labelLineTwo.Location = new System.Drawing.Point(15, 200);
 			this.labelLineTwo.Name = "labelLineTwo";
 			this.labelLineTwo.Size = new System.Drawing.Size(670, 2);
 			this.labelLineTwo.TabIndex = 54;
@@ -160,6 +173,7 @@ namespace OpenDental {
 			this.Controls.Add(this.checkDcodes);
 			this.Controls.Add(this.checkTcodes);
 			this.Controls.Add(this.checkAutocodes);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -171,6 +185,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.CheckBox checkAutocodes;
 		private OpenDental.UI.CheckBox checkTcodes;
 		private OpenDental.UI.CheckBox checkDcodes;

@@ -20,12 +20,10 @@ namespace OpenDental {
 
 		public FrmUserSetting() {
 			InitializeComponent();
-			Load+=FrmUserSetting_Load;
-			PreviewKeyDown+=FrmUserSetting_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmUserSetting_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmUserSetting_Loaded(object sender,RoutedEventArgs e) {
 			//Logoff After Minutes
 			UserOdPref userOdPrefLogOffAfterMinutes=UserOdPrefs.GetByUserAndFkeyType(Security.CurUser.UserNum,UserOdFkeyType.LogOffTimerOverride).FirstOrDefault();
 			textLogOffAfterMinutes.Text=(userOdPrefLogOffAfterMinutes==null) ? "" : userOdPrefLogOffAfterMinutes.ValueString;
@@ -62,12 +60,12 @@ namespace OpenDental {
 					FkeyType=UserOdFkeyType.ToothChartUsesDiffColorByProv
 				});
 				doSetInvalid=true;
-				ToothChartRelay.RefreshToothColorsPrefs();
+//ToothChartRelay.RefreshToothColorsPrefs();
 			}
 			if(checkToothChartUsesDiffColorByProv.Checked==false && _userOdPrefDiffChartColorForCurProv!=null) {
 				UserOdPrefs.Delete(_userOdPrefDiffChartColorForCurProv.UserOdPrefNum);
 				doSetInvalid=true;
-				ToothChartRelay.RefreshToothColorsPrefs();
+//ToothChartRelay.RefreshToothColorsPrefs();
 			}
 			if(doSetInvalid) {
 				DataValid.SetInvalid(InvalidType.UserOdPrefs);
@@ -75,16 +73,11 @@ namespace OpenDental {
 			#endregion
 		}
 
-		private void FrmUserSetting_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
-		}
-
 		private void butSave_Click(object sender,EventArgs e) {
 			SavePreferences();
 			IsDialogOK=true;
 		}
+
 
 	}
 }

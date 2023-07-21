@@ -267,43 +267,41 @@ namespace OpenDentBusiness{
 			return total;
 		}
 
-		///<summary>Returns a list of Annual Running totals. If dateStart is minval it will be modified to the current year. If dateStop is minval it will be modified to maxValue.</summary>
-
-		public static List<double> GetAnnualTotalsForPatByDiscountPlan(long patNum,DateTime dateStart,DateTime dateStop,DiscountPlan discountPlan,DateTime dateProcMax,List<Adjustment> listAdjustments=null)
+		public static List<double> GetAnnualTotalsForPatByDiscountPlanSub(DiscountPlanSub discountPlanSub,DiscountPlan discountPlan,
+			DateTime dateProcMax,List<Adjustment> listAdjustments=null)
 		{
 			//No need to check MiddleTierRole; no call to db.
 			List<double> listAnnualRunningTotals=new List<double>();
 			if(dateProcMax.Year<1880 && listAdjustments.IsNullOrEmpty()) {
 				return listAnnualRunningTotals;
 			}
-			DateTime startDate=DiscountPlanSubs.GetAnnualMaxDateEffective(dateStart);
-			DateTime endDate=DiscountPlanSubs.GetAnnualMaxDateTerm(dateStop);
-			return GetAnnualTotalsForPatByDiscountPlanHelper(patNum,discountPlan,dateProcMax,listAdjustments,startDate,endDate);
+			DateTime startDate=DiscountPlanSubs.GetAnnualMaxDateEffective(discountPlanSub);
+			DateTime endDate=DiscountPlanSubs.GetAnnualMaxDateTerm(discountPlanSub);
+			return GetAnnualTotalsForPatByDiscountPlanSub(discountPlanSub,discountPlan,dateProcMax,listAdjustments,startDate,endDate);
 		}
 
 		///<summary>Returns a list of Annual Running totals.</summary>
-		public static List<double> GetAnnualTotalsForPatByDiscountPlanHelper(long patNum,DiscountPlan discountPlan,DateTime maxProcDate,
+		public static List<double> GetAnnualTotalsForPatByDiscountPlanSub(DiscountPlanSub discountPlanSub,DiscountPlan discountPlan,DateTime maxProcDate,
 			List<Adjustment> listAdjustments,DateTime startDate,DateTime endDate)
 		{
 			//No need to check MiddleTierRole; no call to db.
-			DateTime dateUpperBound=endDate;//Tracks the end of the discount plan.
 			if(listAdjustments==null) {
-				listAdjustments=GetForDateRange(startDate,dateUpperBound,ListTools.FromSingle(patNum));
+				listAdjustments=GetForDateRange(startDate,endDate,ListTools.FromSingle(discountPlanSub.PatNum));
 			}
 			List<double> listAnnualRunningTotals=new List<double>();
-			if(dateUpperBound==DateTime.MaxValue) {
-				dateUpperBound=maxProcDate;
+			if(endDate==DateTime.MaxValue) {
+				endDate=maxProcDate;
 			}
-			if(dateUpperBound < startDate) {
+			if(endDate < startDate) {
 				return listAnnualRunningTotals;
 			}
-			int annualSegments=GetDifferenceNumberOfYears(startDate,dateUpperBound);
+			int annualSegments=GetDifferenceNumberOfYears(startDate,endDate);
 			for(int i=0;i<annualSegments;i++) {
 				listAnnualRunningTotals.Add(0);
 			}
 			for(int i=0;i<listAdjustments.Count;i++) {
-				int index=GetAnnualMaxSegmentIndex(startDate,endDate,listAdjustments[i].ProcDate);//Use original endDate
-				if(listAdjustments[i].PatNum!=patNum 
+				int index=GetAnnualMaxSegmentIndex(discountPlanSub,listAdjustments[i].ProcDate);
+				if(listAdjustments[i].PatNum!=discountPlanSub.PatNum 
 					|| listAdjustments[i].AdjType!=discountPlan.DefNum 
 					|| listAdjustments[i].AdjAmt > 0
 					|| index==-1
@@ -329,17 +327,17 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns the index for a dateTime to get the annualMax running total from GetAnnualTotalsForPatByDiscountPlanSub. Returns -1 on invalid dateTime, or minVal.</summary>
-		public static int GetAnnualMaxSegmentIndex(DateTime dateStart,DateTime dateStop,DateTime dateIndex) {
+		public static int GetAnnualMaxSegmentIndex(DiscountPlanSub discountPlanSub,DateTime dateTime) {
 			//No need to check MiddleTierRole; no call to db.
-			if(dateIndex==DateTime.MinValue) {
+			if(dateTime==DateTime.MinValue || discountPlanSub==null) {
 				return -1;
 			}
-			DateTime startDate=DiscountPlanSubs.GetAnnualMaxDateEffective(dateStart);
-			DateTime endDate=DiscountPlanSubs.GetAnnualMaxDateTerm(dateStop);
-			if(dateIndex<startDate || dateIndex>endDate) {
+			DateTime startDate=DiscountPlanSubs.GetAnnualMaxDateEffective(discountPlanSub);
+			DateTime endDate=DiscountPlanSubs.GetAnnualMaxDateTerm(discountPlanSub);
+			if(dateTime<startDate || dateTime>endDate) {
 				return -1;
 			}
-			int index=GetDifferenceNumberOfYears(startDate,dateIndex);
+			int index=GetDifferenceNumberOfYears(startDate,dateTime);
 			if(index > 0) {
 				index-=1; //Index is 0 based.
 			}
@@ -390,7 +388,7 @@ namespace OpenDentBusiness{
 			if(discountPlan==null) { //Patient doesn't have a discountPlan
 				return 0;
 			}
-			double adjAmt=Procedures.GetDiscountAmountForDiscountPlanAndValidate(procedure,discountPlanSub:discountPlanSub,discountPlan:discountPlan);
+			double adjAmt=Procedures.GetDiscountAmountForDiscountPlan(procedure,discountPlanSub:discountPlanSub,discountPlan:discountPlan);
 			if(adjAmt<=0) {
 				return 0;
 			}
@@ -406,7 +404,7 @@ namespace OpenDentBusiness{
 			adjustmentDiscountPlan.ProcNum=procedure.ProcNum;
 			Insert(adjustmentDiscountPlan);
 			TsiTransLogs.CheckAndInsertLogsIfAdjTypeExcluded(adjustmentDiscountPlan);
-			SecurityLogs.MakeLogEntry(EnumPermType.AdjustmentCreate,procedure.PatNum,"Adjustment made for discount plan: "+adjustmentDiscountPlan.AdjAmt.ToString("f"));
+			SecurityLogs.MakeLogEntry(Permissions.AdjustmentCreate,procedure.PatNum,"Adjustment made for discount plan: "+adjustmentDiscountPlan.AdjAmt.ToString("f"));
 			Procedures.UpdateDiscountPlanAmt(procedure.ProcNum,adjAmt);
 			return adjAmt;
 		}
@@ -465,7 +463,7 @@ namespace OpenDentBusiness{
 			adjustmentSalesTax.ProvNum=provNum;
 			Insert(adjustmentSalesTax);
 			TsiTransLogs.CheckAndInsertLogsIfAdjTypeExcluded(adjustmentSalesTax);
-			SecurityLogs.MakeLogEntry(EnumPermType.AdjustmentCreate,procedure.PatNum,"Adjustment made for sales tax: "+adjustmentSalesTax.AdjAmt);
+			SecurityLogs.MakeLogEntry(Permissions.AdjustmentCreate,procedure.PatNum,"Adjustment made for sales tax: "+adjustmentSalesTax.AdjAmt);
 		}
 
 		///<summary>Creates a late charge adjustment for a statement and returns the AdjNum.</summary>
@@ -481,7 +479,7 @@ namespace OpenDentBusiness{
 			adjustmentLateCharge.ProvNum=provNum;
 			adjustmentLateCharge.AdjNote=Lans.g("Adjustment","Late charge for statement sent on")+$" {dateStatementSent.ToShortDateString()}.";
 			TsiTransLogs.CheckAndInsertLogsIfAdjTypeExcluded(adjustmentLateCharge);
-			SecurityLogs.MakeLogEntry(EnumPermType.AdjustmentCreate,patNum,
+			SecurityLogs.MakeLogEntry(Permissions.AdjustmentCreate,patNum,
 				$"Adjustment for late charge for statement sent on {dateStatementSent.ToShortDateString()}, Amount: {adjustmentLateCharge.AdjAmt.ToString("c")}");
 			long adjNum=Insert(adjustmentLateCharge);
 			StatementProds.UpdateLateChargeAdjNumForMany(adjNum,listProcNums,listAdjNums,listPayPlanChargeNums,dateMaxUpdateStmtProd);
@@ -547,7 +545,7 @@ namespace OpenDentBusiness{
 			List<long> listAdjNums=new List<long>();
 			for(int i=0;i<listAdjustments.Count;i++) { //loops through the rows
 				listAdjNums.Add(listAdjustments[i].AdjNum);
-				SecurityLogs.MakeLogEntry(EnumPermType.AdjustmentEdit,listAdjustments[i].PatNum, //and creates audit trail entry for every row to be deleted
+				SecurityLogs.MakeLogEntry(Permissions.AdjustmentEdit,listAdjustments[i].PatNum, //and creates audit trail entry for every row to be deleted
 				"Delete adjustment for patient: "
 				+Patients.GetLim(listAdjustments[i].PatNum).GetNameLF()+", "
 				+(listAdjustments[i].AdjAmt).ToString("c"),0,listAdjustments[i].SecDateTEdit);
@@ -699,19 +697,19 @@ namespace OpenDentBusiness{
 				DataRow rowCur=table.Rows[i];
 				listAdjNumsToDelete.Add(PIn.Long(rowCur["AdjNum"].ToString()));
 				Action actionCreateAuditTrailEntry=()=>{
-					SecurityLogs.MakeLogEntry(EnumPermType.AdjustmentEdit,PIn.Long(rowCur["PatNum"].ToString()),
+					SecurityLogs.MakeLogEntry(Permissions.AdjustmentEdit,PIn.Long(rowCur["PatNum"].ToString()),
 						"Delete adjustment for patient, undo "+adjTypeStr.ToLower()+" charges: "
 						+Patients.GetNameLF(rowCur["LName"].ToString(),rowCur["FName"].ToString(),rowCur["Preferred"].ToString(),rowCur["MiddleI"].ToString())
 						+", "+PIn.Double(rowCur["AdjAmt"].ToString()).ToString("c"),0,PIn.DateT(rowCur["SecDateTEdit"].ToString()));
 					if(++loopCount%5==0) {//Have to use loopCount instead of i because we must increment within the action.
-						ODEvent.Fire(ODEventType.ProgressBar,Lans.g("FinanceCharge","Creating log entries for "+adjTypeStr.ToLower()+" charges ")
+						ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("FinanceCharge","Creating log entries for "+adjTypeStr.ToLower()+" charges ")
 							+loopCount+" out of "+table.Rows.Count);
 					}
 				};
 				listActions.Add(actionCreateAuditTrailEntry);
 			}
 			ODThread.RunParallel(listActions,TimeSpan.FromMinutes(2));
-			ODEvent.Fire(ODEventType.ProgressBar,Lans.g("FinanceCharge","Deleting")+" "+table.Rows.Count+" "
+			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("FinanceCharge","Deleting")+" "+table.Rows.Count+" "
 				+Lans.g("FinanceCharge",adjTypeStr.ToLower()+" charge adjustments")+"...");
 			Crud.AdjustmentCrud.DeleteMany(listAdjNumsToDelete);
 			//Doing this because it is possible for a late charge's adjustment type to be changed to a billing or finance charge type.
@@ -745,7 +743,7 @@ namespace OpenDentBusiness{
 				}
 				else {
 					listAdjNumsDeleted.Add(PIn.Long(dataRow["AdjNum"].ToString()));
-					SecurityLogs.MakeLogEntry(EnumPermType.AdjustmentEdit,PIn.Long(dataRow["PatNum"].ToString()),
+					SecurityLogs.MakeLogEntry(Permissions.AdjustmentEdit,PIn.Long(dataRow["PatNum"].ToString()),
 						$"Late charges dated {dateUndo.ToShortDateString()} undone, Adjustment deleted, Amount: "
 						+$"{PIn.Decimal(dataRow["AdjAmt"].ToString()).ToString("c")}");
 					Crud.AdjustmentCrud.Delete(PIn.Long(dataRow["AdjNum"].ToString()));

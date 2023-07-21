@@ -27,7 +27,7 @@ namespace OpenDental {
 
 		private void FormSheetFieldGrid_Load(object sender,EventArgs e) {
 			if(IsReadOnly) {
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 			}
 			labelEnableGrowthBehavior.Visible=false;
@@ -65,7 +65,7 @@ namespace OpenDental {
 			else {
 				SheetFieldDefCur.Height=0;
 				//These grids display a title.
-				if(SheetFieldDefCur.FieldName.In("StatementPayPlan","StatementDynamicPayPlan","StatementPayPlanOld","StatementPayPlanGrid","StatementInvoicePayment","TreatPlanBenefitsFamily","TreatPlanBenefitsIndividual")) {
+				if(SheetFieldDefCur.FieldName.In("StatementPayPlan","StatementDynamicPayPlan","StatementInvoicePayment","TreatPlanBenefitsFamily","TreatPlanBenefitsIndividual")) {
 					SheetFieldDefCur.Height+=18;//grid.TitleHeight;
 				}
 				SheetFieldDefCur.Height+=15;//grid.HeaderHeight
@@ -106,7 +106,7 @@ namespace OpenDental {
 			return error.IsNullOrEmpty();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			string error;
 			if(!IsValid(out error)) {
 				MsgBox.Show(error);
@@ -136,6 +136,11 @@ namespace OpenDental {
 			SheetFieldDefCur.IsNew=false;
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 
 	}
 }

@@ -162,11 +162,11 @@ namespace OpenDentBusiness{
 			Crud.TaskAttachmentCrud.Update(taskAttachment);
 		}
 
-		public static bool Update(TaskAttachment taskAttachment,TaskAttachment taskAttachmentOld){
+		public static bool Update(TaskAttachment taskAttachmentCur,TaskAttachment taskAttachmentOld){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),taskAttachment,taskAttachmentOld);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),taskAttachmentCur,taskAttachmentOld);
 			}
-			return Crud.TaskAttachmentCrud.Update(taskAttachment,taskAttachmentOld);
+			return Crud.TaskAttachmentCrud.Update(taskAttachmentCur,taskAttachmentOld);
 		}
 
 		///<summary></summary>

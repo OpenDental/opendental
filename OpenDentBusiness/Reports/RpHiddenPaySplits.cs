@@ -1,5 +1,4 @@
-﻿using CodeBase;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -30,11 +29,9 @@ namespace OpenDentBusiness {
 												LEFT JOIN procedurecode ON procedurecode.CodeNum=procedurelog.CodeNum
 												LEFT JOIN provider ON provider.ProvNum=paysplit.ProvNum
 												LEFT JOIN clinic ON clinic.ClinicNum=paysplit.ClinicNum
-												WHERE paysplit.ProvNum IN ({string.Join(",",listProvNums)}) ";
-												if(!listUnearnedTypeDefNums.IsNullOrEmpty()) {
-													command+=$@"AND paysplit.UnearnedType IN ({string.Join(",",listUnearnedTypeDefNums)}) ";
-												}
-												command+=$@"AND {DbHelper.BetweenDates("paysplit.DatePay",dateFrom,dateTo)} ";  
+												WHERE paysplit.ProvNum IN ({string.Join(",",listProvNums)})
+												AND paysplit.UnearnedType IN ({string.Join(",",listUnearnedTypeDefNums)})
+												AND {DbHelper.BetweenDates("paysplit.DatePay",dateFrom,dateTo)} ";  
 												if(listClinicNums.Count>0) {
 													command+=$"AND paysplit.ClinicNum IN ({string.Join(",",listClinicNums)}) ";
 												}

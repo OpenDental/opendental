@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPatientPickWebForm));
+			this.butCancel = new OpenDental.UI.Button();
 			this.labelExplanation = new System.Windows.Forms.Label();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.groupWebFormInfo = new OpenDental.UI.GroupBox();
@@ -46,6 +47,16 @@ namespace OpenDental{
 			this.label1 = new System.Windows.Forms.Label();
 			this.groupWebFormInfo.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(539, 451);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// labelExplanation
 			// 
@@ -214,7 +225,7 @@ namespace OpenDental{
 			// butSkip
 			// 
 			this.butSkip.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSkip.Location = new System.Drawing.Point(444, 434);
+			this.butSkip.Location = new System.Drawing.Point(444, 451);
 			this.butSkip.Name = "butSkip";
 			this.butSkip.Size = new System.Drawing.Size(75, 24);
 			this.butSkip.TabIndex = 12;
@@ -241,7 +252,8 @@ namespace OpenDental{
 			// 
 			// FormPatientPickWebForm
 			// 
-			this.ClientSize = new System.Drawing.Size(626, 470);
+			this.ClientSize = new System.Drawing.Size(626, 487);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butSkip);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butDiscard);
@@ -264,6 +276,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label labelExplanation;
 		private UI.GridOD gridMain;
 		private OpenDental.UI.GroupBox groupWebFormInfo;

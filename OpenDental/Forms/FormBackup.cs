@@ -73,7 +73,7 @@ namespace OpenDental {
 			}
 			textSupplementalBackupCopyNetworkPath.Text=PrefC.GetString(PrefName.SupplementalBackupNetworkPath);
 			#endregion Supplemental Tab
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				//OD Cloud users cannot use this tool because they're InnoDb.
 				tabControl1.TabPages.Remove(tabPageBackup);
 				//We don't want to allow the user to connect to another server.
@@ -220,14 +220,13 @@ namespace OpenDental {
 				MsgBox.Show(this,Lan.g(this,"Not enough free disk space available on the destination drive to backup the database."));
 				return;
 			}
-			string msg="";
 			//there is enough drive space, show progress bar and make backup
-			ProgressWin progressOD=new ProgressWin();
-			progressOD.IsBlocks=true;
-			progressOD.ActionMain=() => InstanceMethodDatabaseBackup(dbName,textBackupFromPath.Text,textBackupToPath.Text,dbSize,isInnoDb,out msg);
+			ProgressOD progressOD=new ProgressOD();
+			progressOD.ProgStyle=ProgressBarStyle.Blocks;
+			progressOD.ActionMain=() => InstanceMethodDatabaseBackup(dbName,textBackupFromPath.Text,textBackupToPath.Text,dbSize,isInnoDb);
 			progressOD.StartingMessage=Lan.g(this,"Preparing backup");
 			try {
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex) {
 				//catch error from InstanceMethodDatabaseBackup thrown from inside the ProgressOD thread
@@ -237,10 +236,9 @@ namespace OpenDental {
 			if(progressOD.IsCancelled) {
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.Backup,0,Lan.g(this,"Database backup created at ")+textBackupToPath.Text);
+			SecurityLogs.MakeLogEntry(Permissions.Backup,0,Lan.g(this,"Database backup created at ")+textBackupToPath.Text);
 			//AtoZ folder if selected for backup.=================================================================================================================
 			if(!ShouldUseAtoZFolder()) {
-				MessageBox.Show(msg);
 				Close();
 				return;
 			}
@@ -248,8 +246,8 @@ namespace OpenDental {
 			string aToZDirectory=aToZFullPath.Substring(aToZFullPath.LastIndexOf(Path.DirectorySeparatorChar)+1);
 			double aToZSize=GetFileSizes(ODFileUtils.CombinePaths(aToZFullPath,""),
 				ODFileUtils.CombinePaths(new string[] { textBackupToPath.Text,aToZDirectory,"" }))/1024;
-			progressOD=new ProgressWin();
-			progressOD.IsBlocks=true;
+			progressOD=new ProgressOD();
+			progressOD.ProgStyle=ProgressBarStyle.Blocks;
 			progressOD.ActionMain=() => {
 				if(!hasDriveSpace(textBackupToPath.Text,aToZSize)) {
 					throw new Exception(Lan.g(this,"Not enough free disk space available on the destination drive to backup the A to Z folder."));
@@ -258,7 +256,7 @@ namespace OpenDental {
 			};
 			progressOD.StartingMessage=Lan.g(this,"Backing up A to Z Folder");
 			try {
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex) {
 				//catch error from InstanceMethodAtoZBackup thrown from inside the ProgressOD thread
@@ -268,8 +266,8 @@ namespace OpenDental {
 			if(progressOD.IsCancelled) {
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.Backup,0,Lan.g(this,"A to Z folder backup created at ")+textBackupToPath.Text);
-			MessageBox.Show(Lan.g(this,msg));
+			SecurityLogs.MakeLogEntry(Permissions.Backup,0,Lan.g(this,"A to Z folder backup created at ")+textBackupToPath.Text);
+			MessageBox.Show(Lan.g(this,"Backup complete."));
 			Close();
 		}
 
@@ -289,11 +287,10 @@ namespace OpenDental {
 			return true;
 		}
 
-		private void InstanceMethodDatabaseBackup(string databaseName,string backupFromPath,string backupToPath,double databaseSize,bool isInnoDb,out string msg) {
+		private void InstanceMethodDatabaseBackup(string databaseName,string backupFromPath,string backupToPath,double databaseSize,bool isInnoDb) {
 			double currentValue=0;
 			string fromPath=ODFileUtils.CombinePaths(backupFromPath,databaseName);
-			bool hasInnoDbTables=InnoDb.HasInnoDbTables(databaseName);
-			if(hasInnoDbTables) {
+			if(InnoDb.HasInnoDbTables(databaseName)) {
 				string dbName=MiscData.MakeABackup(isAutoBackup: false);
 				fromPath=ODFileUtils.CombinePaths(backupFromPath,dbName);
 			}
@@ -317,10 +314,6 @@ namespace OpenDental {
 			}
 			catch {
 				throw new Exception(Lan.g(this,"Failed to create directory for backup."));
-			}
-			if(!hasInnoDbTables) {
-				//Make sure all data has been written to the disk before making a file copy. Run a flush tables for all database(s) if MyISAM.
-				MiscData.FlushTables();
 			}
 			for(int i = 0;i<fileInfoArray.Length;i++) {
 				string fromFile=fileInfoArray[i].FullName;
@@ -348,10 +341,10 @@ namespace OpenDental {
 				currentValue+=(double)fileInfoArray[i].Length/(double)1024/(double)1024;
 				string progressBarMessage=Lan.g(this,"Copied ")+Math.Round(currentValue,2).ToString()+"MB "+Lan.g(this,"of ")+databaseSize.ToString()+"MB";
 				ProgressBarHelper progressBarHelper=new ProgressBarHelper(progressBarMessage,blockValue:(int)(currentValue/databaseSize*100),blockMax:100);
-				ODEvent.Fire(ODEventType.ProgressBar,progressBarHelper);
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,progressBarHelper);
 			}
-			msg=Lan.g(this,"Database backup complete.");
-			if(hasInnoDbTables) {
+			string msg=Lan.g(this,"Database backup complete.");
+			if(InnoDb.HasInnoDbTables(databaseName)) {
 				msg+=" "+Lan.g(this,"A copy has been backed up to your target directory");
 				try {
 					Directory.Delete(fromPath,true);
@@ -361,6 +354,7 @@ namespace OpenDental {
 				}
 				msg+=".";
 			}
+			MessageBox.Show(msg);
 		}
 
 		private void InstanceMethodAtoZBackup(string backupToPath, string aToZDirectory,string aToZFullPath, double aToZSize) {
@@ -420,7 +414,7 @@ namespace OpenDental {
 		}
 
 		///<summary>A recursive fuction that copies any new or changed files or folders from one directory to another.  An exception will be thrown if either directory does not already exist.  fromPath is the fully qualified path of the directory to copy.  toPath is the fully qualified path of the destination directory.  Both paths must include a trailing \.  The max size should be calculated ahead of time.  It's passed in for use in progress bar.</summary>
-		private void CopyDirectoryIncremental(string fromPath,string toPath, double maxSize,bool supress=false){
+		private void CopyDirectoryIncremental(string fromPath,string toPath, double maxSize){
 			if(!Directory.Exists(fromPath)){
 				throw new Exception(fromPath+" does not exist.");
 			}
@@ -429,31 +423,13 @@ namespace OpenDental {
 			}
 			DirectoryInfo directoryInfo=new DirectoryInfo(fromPath);
 			DirectoryInfo[] directoryInfoArray=directoryInfo.GetDirectories();
-			bool containsMaxPathLimit=false;
-			if(!supress) {
-				for(int i=0;i<directoryInfoArray.Length;i++) {
-					if(directoryInfoArray[i].FullName.Length>100) {
-						containsMaxPathLimit=true;
-						break;
-					}
-				}
-				if(containsMaxPathLimit) {
-					if(!MsgBox.Show(MsgBoxButtons.YesNo, "Your AtoZ images folder contains file paths that exceed the length limit, this could result in data loss."
-							+" These will likely be skipped. Continue anyways?")) {
-						throw new ODException("User manually cancelled out of the Backup or Restore.");
-					}
-					else {
-						supress=true;
-					}
-				}
-			}
 			for(int i=0;i<directoryInfoArray.Length;i++){
 				string destinationPath=ODFileUtils.CombinePaths(toPath,directoryInfoArray[i].Name);
 				if(!Directory.Exists(destinationPath)){
 					Directory.CreateDirectory(destinationPath);
 				}
 				CopyDirectoryIncremental(ODFileUtils.CombinePaths(directoryInfoArray[i].FullName,""),
-					ODFileUtils.CombinePaths(destinationPath,""),maxSize,supress);
+					ODFileUtils.CombinePaths(destinationPath,""),maxSize);
 			}
 			FileInfo[] fileInfoArray=directoryInfo.GetFiles();//of fromPath
 			for(int i=0;i<fileInfoArray.Length;i++){
@@ -468,26 +444,16 @@ namespace OpenDental {
 							//normal read/write file before it may be overwritten.
 							File.SetAttributes(toFile,FileAttributes.Normal);//Remove read only from the destination file.
 						}
-						try {//Certain characters or filename lengths cause an error
-							File.Copy(fromFile,toFile,true);
-						}
-						catch {
-							continue;
-						}
+						File.Copy(fromFile,toFile,true);
 					}
 				}
 				else{//file doesn't exist, so just copy
-					try {
-						File.Copy(fromFile,toFile);
-					}
-					catch {
-						continue;
-					}
+					File.Copy(fromFile,toFile);
 				}
 				_amtCopied+=(double)fileInfoArray[i].Length/1048576.0; //Number of megabytes.
 				string progressBarMessage=Lan.g(this,"Copied ")+Math.Round(_amtCopied,2).ToString()+"MB "+Lan.g(this,"of ")+maxSize.ToString()+"MB";
 				ProgressBarHelper progressBarHelper=new ProgressBarHelper(progressBarMessage,blockValue:(int)(_amtCopied/maxSize*100),blockMax:100);
-				ODEvent.Fire(ODEventType.ProgressBar,progressBarHelper);
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,progressBarHelper);
 			}
 		}
 
@@ -603,12 +569,12 @@ namespace OpenDental {
 			//restore A-Z folder, and give user a chance to cancel it.
 			if(ShouldUseAtoZFolder()) {
 				string aToZFullPath=ODFileUtils.RemoveTrailingSeparators(ImageStore.GetPreferredAtoZpath());
-				ProgressWin progressOD=new ProgressWin();
-				progressOD.IsBlocks=true;
+				ProgressOD progressOD=new ProgressOD();
+				progressOD.ProgStyle=ProgressBarStyle.Blocks;
 				progressOD.ActionMain=() => InstanceMethodRestore(aToZFullPath,textBackupRestoreFromPath.Text);
 				progressOD.StartingMessage=Lan.g(this,"Database restored.\r\nRestoring A to Z folder.");
 				try {
-					progressOD.ShowDialog();
+					progressOD.ShowDialogProgress();
 				}
 				catch(Exception ex) {
 					//catch error from InstanceMethodRestore thrown from inside the ProgressOD thread
@@ -644,6 +610,10 @@ namespace OpenDental {
 			}
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void checkExcludeImages_Click(object sender,EventArgs e) {
 			textBackupRestoreAtoZToPath.Enabled=ShouldUseAtoZFolder();
 			butBrowseRestoreAtoZTo.Enabled=ShouldUseAtoZFolder();
@@ -672,7 +642,7 @@ namespace OpenDental {
 		private void butArchive_Click(object sender,EventArgs e) {
 			#region Validation
 			if(checkArchiveDoBackupFirst.Checked) { //We only need to validate the backup settings if the user wants to make a backup first
-				if(!MsgBox.Show(MsgBoxButtons.YesNo,"To make a backup of the database, ensure no other machines are currently using Open Dental. Proceed?")) {
+				if(!MsgBox.Show(MsgBoxButtons.YesNo,"To make a backup of the database, ensure no other machines are currently using OpenDental. Proceed?")) {
 					return;
 				}
 				//Validation
@@ -690,7 +660,7 @@ namespace OpenDental {
 				}
 			}
 			#endregion
-			UI.ProgressWin progressOD=new UI.ProgressWin();
+			UI.ProgressOD progressOD=new UI.ProgressOD();
 			progressOD.ActionMain=() => {
 				//Make a backup if needed
 				if(checkArchiveDoBackupFirst.Checked) {
@@ -702,24 +672,19 @@ namespace OpenDental {
 				//Delete the unnecessary data
 				if(checkSecurityLog.Checked) {
 					SecurityLogs.DeleteBeforeDateInclusive(dateTimeArchive.Value);//this fires events
-					SecurityLogs.MakeLogEntry(EnumPermType.Backup,0,$"SecurityLog and SecurityLogHashes on/before {dateTimeArchive.Value} deleted.");
+					SecurityLogs.MakeLogEntry(Permissions.Backup,0,$"SecurityLog and SecurityLogHashes on/before {dateTimeArchive.Value} deleted.");
 				}
 				if(checkEmailMessage.Checked) {
 					EmailMessages.DeleteBeforeDate(dateTimeArchive.Value);
-					SecurityLogs.MakeLogEntry(EnumPermType.Backup,0,$"EmailMessages on/before {dateTimeArchive.Value} deleted.");
+					SecurityLogs.MakeLogEntry(Permissions.Backup,0,$"EmailMessages on/before {dateTimeArchive.Value} deleted.");
 				}
 			};
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex) {
 				FriendlyException.Show("An error occurred backing up the old database. Old data was not removed from the database. "+
-					"Ensure no other machines are currently using Open Dental and try again.",ex);
-				return;
-			}
-			//The UI enforces a backup to occur above when optimize is checked
-			if(checkOptimize.Checked) {
-				Shared.RepairAndOptimize(true);
+					"Ensure no other machines are currently using OpenDental and try again.",ex);
 			}
 		}
 
@@ -737,7 +702,7 @@ namespace OpenDental {
 
 		private void TabControl1_SelectedIndexChanged(object sender,EventArgs e) {
 			if(tabControl1.SelectedTab==tabPageSupplementalBackups) {
-				if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+				if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 					tabControl1.SelectedTab=tabPageBackup;
 					return;
 				}
@@ -770,28 +735,17 @@ namespace OpenDental {
 				catch(Exception ex) {
 					ex.DoNothing();//Internet probably is unavailble right now.
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.SupplementalBackup,0,
+				SecurityLogs.MakeLogEntry(Permissions.SupplementalBackup,0,
 					"Supplemental backup has been "+(checkSupplementalBackupEnabled.Checked?"Enabled":"Disabled")+".");
 			}
 			if(Prefs.UpdateString(PrefName.SupplementalBackupNetworkPath,textSupplementalBackupCopyNetworkPath.Text)) {
-				SecurityLogs.MakeLogEntry(EnumPermType.SupplementalBackup,0,
+				SecurityLogs.MakeLogEntry(Permissions.SupplementalBackup,0,
 					labelSupplementalBackupCopyNetworkPath.Text+" changed to '"+textSupplementalBackupCopyNetworkPath.Text+"'.");
 			}
 			MsgBox.Show(this,"Saved");
 		}
 
 		#endregion Supplemental Tab
-
-		private void checkOptimize_Click(object sender,EventArgs e) {
-			if(checkOptimize.Checked) {
-				checkArchiveDoBackupFirst.Checked=true;
-				checkArchiveDoBackupFirst.Enabled=false;
-			}
-			else {
-				checkArchiveDoBackupFirst.Enabled=true;
-			}
-		}
-
 	}
 
 	///<summary>Backing up can fail at two points, when backing up the database or the A to Z images.  This delegate lets the backup thread manipulate a local variable so that we can let the user know at what point the backup failed.</summary>

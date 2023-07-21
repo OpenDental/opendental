@@ -49,7 +49,7 @@ namespace OpenDentalCloud.Core {
 		}
 			
 		///<summary>The file stored in bytes.  This value will grow while the download is still in progress.</summary>
-		public byte[] ByteArray {
+		public byte[] FileContent {
 			get {
 				byte[] fileContent=new byte[1];
 				lock(_lock) {

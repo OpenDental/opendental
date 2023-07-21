@@ -143,5 +143,11 @@ namespace OpenDental {
 			EhrPatients.Update(_ehrPatientCur);
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
+		
+
 	}
 }

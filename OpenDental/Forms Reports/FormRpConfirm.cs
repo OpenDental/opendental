@@ -103,9 +103,9 @@ namespace OpenDental{
 				}
 			}
 			command+=" FROM patient,appointment "
-				+"WHERE patient.PatNum=appointment.PatNum AND(";
+				+"WHERE patient.PatNum=appointment.PatNum AND(";       
 			for(int i=0;i<AptNums.Length;i++){
-				if(i>0){
+				if(i>0){ 
 					command+=" OR";
 				}
 				command+=" appointment.AptNum='"+AptNums[i]+"'";
@@ -115,11 +115,19 @@ namespace OpenDental{
 			report.Query=command;
 			using FormQuery FormQ=new FormQuery(report);
 			FormQ.IsReport=false;
-			FormQ.SubmitQuery();
-      FormQ.textQuery.Text=report.Query;
-			FormQ.ShowDialog();
-      DialogResult=DialogResult.OK;
+			FormQ.SubmitQuery();	
+      FormQ.textQuery.Text=report.Query;					
+			FormQ.ShowDialog();		
+      DialogResult=DialogResult.OK; 
 		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
 
 	}
 }

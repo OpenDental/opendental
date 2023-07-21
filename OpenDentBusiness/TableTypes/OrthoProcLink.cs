@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace OpenDentBusiness{
 
-	/// <summary>Used to attach procedures to an OrthoCase. Multiple procs are typically attached to one OrthoCase.</summary>
+	/// <summary>Used to attach procedures to an OrthoCase.</summary>
 	[Serializable]
 	public class OrthoProcLink:TableBase {
 		///<summary>Primary key</summary>

@@ -50,20 +50,13 @@ namespace OpenDental{
 			}
 			for(int i=0;i<_listPatientsLastFive.Count;i++) {
 				string name=_listPatientsLastFive[i].GetNameLF();
-				if(PrefC.IsODHQ) {
-					name+=" - "+POut.Long(_listPatientsLastFive[i].PatNum);
-				}
 				contextMenu.MenuItems.Add(name,eventHandlerOnClick);
 			}
 			contextMenu.MenuItems.Add("-");
 			contextMenu.MenuItems.Add("FAMILY");
 			if(patNum!=0 && family!=null) {
 				for(int i=0;i<family.ListPats.Length;i++) {
-					string name=family.ListPats[i].GetNameLF();
-					if(PrefC.IsODHQ) {
-						name+=" - "+POut.Long(family.ListPats[i].PatNum);
-					}
-					contextMenu.MenuItems.Add(name,eventHandlerOnClick);
+					contextMenu.MenuItems.Add(family.ListPats[i].GetNameLF(),eventHandlerOnClick);
 				}
 			}
 		}
@@ -200,9 +193,6 @@ namespace OpenDental{
 			}
 			else if(PrefC.GetLong(PrefName.ShowIDinTitleBar)==2) {
 				retVal+=" - "+_patientSelected.ChartNumber;
-				object[] objectArray={ _patientSelected,retVal };
-				Plugins.HookAddCode(null,"PatientL.GetMainTitleSamePat_afterAddChartNum",objectArray);
-				retVal=(string)objectArray[1];
 			}
 			else if(PrefC.GetLong(PrefName.ShowIDinTitleBar)==3) {
 				if(_patientSelected.Birthdate.Year>1880) {
@@ -255,41 +245,5 @@ namespace OpenDental{
 			return retVal;
 		}
 
-		///<summary>Checks if the patient is allowed to receive text messages. Also prompts user for whether or not they want to update the patient to allow texts to be received. This method is able to modify the
-		///passed in patient object's TxtMsgOk field.</summary>
-		public static bool CheckPatientTextingAllowed(Patient patient,object sender) {
-			if(patient.TxtMsgOk==YN.Yes) {
-				return true;
-			}
-			bool updateTextYN=false;
-			if(patient.TxtMsgOk==YN.No) {
-				if(MsgBox.Show(sender,MsgBoxButtons.YesNo,"This patient is marked to not receive text messages. "
-					+"Would you like to mark this patient as okay to receive text messages?")) {
-					updateTextYN=true;
-				}
-				else {
-					return false;
-				}
-			}
-			if(patient.TxtMsgOk==YN.Unknown && PrefC.GetBool(PrefName.TextMsgOkStatusTreatAsNo)) {
-				if(MsgBox.Show(sender,MsgBoxButtons.YesNo,"This patient might not want to receive text messages. "
-					+"Would you like to mark this patient as okay to receive text messages?")) {
-					updateTextYN=true;
-				}
-				else {
-					return false;
-				}
-			}
-			if(updateTextYN) {
-				if(!Security.IsAuthorized(EnumPermType.PatientEdit)) {
-					return false;
-				}
-				Patient patientOld=patient.Copy();
-				patient.TxtMsgOk=YN.Yes;
-				Patients.Update(patient,patientOld);
-				SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,patient.PatNum,$"Patient TxtMsgOK changed from {patientOld.TxtMsgOk} to {patient.TxtMsgOk}",0,LogSources.None,DateTime.Now,Security.CurUser.UserNum);
-			}
-			return true;
-		}
 	}
 }

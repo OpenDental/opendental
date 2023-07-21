@@ -24,9 +24,20 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEtrans835PickEra));
+			this.butClose = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.gridEras = new OpenDental.UI.GridOD();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(411, 295);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// label1
 			// 
@@ -44,7 +55,7 @@ namespace OpenDental{
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridEras.Location = new System.Drawing.Point(15, 30);
 			this.gridEras.Name = "gridEras";
-			this.gridEras.Size = new System.Drawing.Size(471, 261);
+			this.gridEras.Size = new System.Drawing.Size(471, 259);
 			this.gridEras.TabIndex = 5;
 			this.gridEras.Title = "ERA List";
 			this.gridEras.TranslationName = "TableERA";
@@ -52,10 +63,11 @@ namespace OpenDental{
 			// 
 			// FormEtrans835PickEra
 			// 
-			this.ClientSize = new System.Drawing.Size(498, 303);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(498, 331);
 			this.Controls.Add(this.gridEras);
 			this.Controls.Add(this.label1);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEtrans835PickEra";
 			this.Text = "ERAs";
@@ -65,6 +77,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label label1;
 		private UI.GridOD gridEras;
 	}

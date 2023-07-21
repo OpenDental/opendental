@@ -18,10 +18,7 @@ namespace OpenDental.UI{
 		private Region _regionTriangle;
 		///<summary>Usually 1, unless bigger than 18 wide.</summary>
 		private float _scale;
-		///<summary>Interior of triangle.</summary>
-		private Color _color;
-		private Timer _timerTriangle;
-		private Timer _timerPopup;
+		private Timer _timer;
 		private ToolTipOD _toolTipOD;
 		private DatabaseIntegrity _databaseIntegrity;
 
@@ -29,8 +26,6 @@ namespace OpenDental.UI{
 			InitializeComponent();
 			DoubleBuffered=true;
 			_scale=Width/18f;
-			///255, 128, 0 is pure orange
-			_color=Color.FromArgb(255,255,192,128);
 			_toolTipOD=new ToolTipOD();
 			_toolTipOD.SetControlAndAction(this,ToolTipSetString);
 		}
@@ -47,76 +42,28 @@ namespace OpenDental.UI{
 				return;
 			}
 			//We have an invalid hash and we are going to show a triangle. Let's see how aggressive we will get.
-			DatabaseIntegrity databaseIntegrity=DatabaseIntegrities.GetOneClass(warningIntegrityType);
-			if(databaseIntegrity is null){
+			_databaseIntegrity=DatabaseIntegrities.GetOneClass(warningIntegrityType);
+			if(_databaseIntegrity is null){
 				//connection to HQ failed, so just don't show warnings.
 				Visible=false;
 				return;
 			}
-			_databaseIntegrity=new DatabaseIntegrity();
-			_databaseIntegrity.WarningIntegrityType=warningIntegrityType; //In case of DefaultClass, overwrite with this one
-			_databaseIntegrity.Behavior=databaseIntegrity.Behavior;
-			_databaseIntegrity.Message=databaseIntegrity.Message;
+			_databaseIntegrity.WarningIntegrityType=warningIntegrityType;//if this was default, we want the correct class type
 			//for both popup and triangle, we will show this triangle
 			Visible=true;
-			if(_databaseIntegrity.Behavior==EnumIntegrityBehavior.TriangleRed) {
-				_color=Color.OrangeRed;
-			}
-			SetTriangleBehavior();
 		}
 
 		///<summary></summary>
-		private void ToolTipSetString(Control control, Point point) {
+		private void ToolTipSetString(Point point) {
 			if(_regionTriangle is null) {
-				_toolTipOD.SetString(this,"");
+				_toolTipOD.SetString("");
 				return;
 			}
 			if(_regionTriangle.IsVisible(point)){
-				_toolTipOD.SetString(this,Lan.g(this,"Click to learn about Database Integrity"),Font);
+				_toolTipOD.SetString(Lan.g(this,"Click to learn about Database Integrity"),Font);
 				return;
 			}
-			_toolTipOD.SetString(this,"");
-		}
-
-		///<summary>Defines how the triangle will appear based on the EnumIntegrity behavior. Sets and starts a timer for behaviors with dynamic triangles.</summary>
-		private void SetTriangleBehavior() {
-			int interval;
-			if(_databaseIntegrity.Behavior==EnumIntegrityBehavior.TrianglePulse) {
-				interval=100;
-			}
-			else if(_databaseIntegrity.Behavior==EnumIntegrityBehavior.TriangleBlinkSlow) {
-				interval=1000;
-			}
-			else if(_databaseIntegrity.Behavior==EnumIntegrityBehavior.TriangleBlinkFast) {
-				interval=500;
-			}
-			else { //all other behaviors have a static triangle
-				return;
-			}
-			_timerTriangle=new Timer();
-			_timerTriangle.Interval=interval;
-			_timerTriangle.Enabled=true;
-			_timerTriangle.Tick+=TimerTriangle_Tick;
-		}
-
-		///<summary>Changes the alpha value (transparency) for triangles with dynamic behaviors. Only effects interior region; the border of the triangle can always be seen. This makes the tooltip always available to the user.</summary>
-		private void TimerTriangle_Tick(object sender, EventArgs e) {
-			int alpha;
-			if(_databaseIntegrity.Behavior==EnumIntegrityBehavior.TrianglePulse) {
-				if(_color.A%2==0) { //If even, alpha needs to increment
-					alpha=_color.A+20; 
-				}
-				else { //otherwise decrement
-					alpha=_color.A-20;
-				}
-				alpha=Math.Min(255,alpha); //No larger than 255
-				alpha=Math.Max(100,alpha); //No smaller than 100 (still paritially visible)
-			}
-			else {//Otherwise blink
-				alpha=Math.Abs(_color.A-255); //either zero(min) or 255(max)
-			}
-			_color=Color.FromArgb(alpha,_color);
-			Refresh();
+			_toolTipOD.SetString("");
 		}
 
 		private void ShowPopup(){
@@ -129,23 +76,23 @@ namespace OpenDental.UI{
 				return;
 			}
 			//We use a timer so that the draw will finish before the popup
-			_timerPopup=new Timer();
-			_timerPopup.Interval=100;
-			_timerPopup.Tick+=TimerPopup_Tick;
-			_timerPopup.Enabled=true;
+			_timer=new Timer();
+			_timer.Interval=100;
+			_timer.Tick+=Timer_Tick;
+			_timer.Enabled=true;
 		}
 
-		private void TimerPopup_Tick(object sender,EventArgs e) {
-			_timerPopup.Enabled=false;//only happens once
+		private void Timer_Tick(object sender,EventArgs e) {
+			_timer.Enabled=false;//only happens once
 			if(_databaseIntegrity is null){
 				return;//probably an HQ connection issue, but this probably wouldn't fire anyway.
 			}
 			if(_databaseIntegrity.Behavior!=EnumIntegrityBehavior.Popup){
 				return;
 			}
-			FrmDatabaseIntegrity frmDatabaseIntegrity=new FrmDatabaseIntegrity();
-			frmDatabaseIntegrity.MessageToShow=_databaseIntegrity.Message.Replace("[Class]",_databaseIntegrity.WarningIntegrityType.ToString());
-			frmDatabaseIntegrity.ShowDialog();
+			using FormDatabaseIntegrity formDatabaseIntegrity=new FormDatabaseIntegrity();
+			formDatabaseIntegrity.MessageToShow=_databaseIntegrity.Message.Replace("[Class]",_databaseIntegrity.WarningIntegrityType.ToString());
+			formDatabaseIntegrity.ShowDialog();
 		}
 
 		protected override void OnPaint(PaintEventArgs pe){
@@ -161,7 +108,6 @@ namespace OpenDental.UI{
 			//g.DrawPolygon(Pens.Red,pointArray);
 			FillListTips(pointFArray,rounding:3*_scale);
 			GraphicsPath graphicsPath = new GraphicsPath();
-			string str="";//this is to get the points so I can use them over in WPF. AddCurve is not supported.
 			for(int i=0;i<_listTips.Count;i++){
 				//draw curve at this
 				pointFArray=new PointF[5];
@@ -172,22 +118,15 @@ namespace OpenDental.UI{
 				pointFArray[4]=_listTips[i].PointFNext4;
 				//tension 1 is the most relaxed, but that just makes it look like an M
 				graphicsPath.AddCurve(pointFArray,offset:1,numberOfSegments:2,tension:0.2f);
-				str+="curve:"
-					+pointFArray[0].ToString()+","
-					+pointFArray[1].ToString()+","
-					+pointFArray[2].ToString()+","
-					+pointFArray[3].ToString()+","
-					+pointFArray[4].ToString()+"\r\n";
 				//draw line between this tip and next
 				graphicsPath.AddLine(_listTips[i].PointFTipNext3,pointFArray[4]=_listTips[i].PointFNext4);
-				str+="line:"
-					+pointFArray[3].ToString()+","
-					+pointFArray[4].ToString()+"\r\n";
 			}
 			_regionTriangle=new Region(graphicsPath);
-			using SolidBrush solidBrushOrange=new SolidBrush(_color);
+			//255, 128, 0 is pure orange
+			Color colorOrange=Color.FromArgb(255, 192, 128);
+			using SolidBrush solidBrushOrange=new SolidBrush(colorOrange);
 			g.FillPath(solidBrushOrange,graphicsPath);
-			using Pen penOrange=new Pen(_color);
+			using Pen penOrange=new Pen(colorOrange);
 			g.DrawPath(Pens.Orange,graphicsPath);
 			//g.DrawLine(Pens.Blue,_listTips[0].PointFPrevious0,_listTips[0].PointFTipPrevious1);
 			//g.DrawLine(Pens.Blue,pointFArray[3],pointFArray[4]);
@@ -210,10 +149,10 @@ namespace OpenDental.UI{
 			if(_databaseIntegrity is null){
 				return;//probably an HQ connection issue, but this probably wouldn't fire anyway.
 			}
-			FrmDatabaseIntegrity frmDatabaseIntegrity=new FrmDatabaseIntegrity();
+			using FormDatabaseIntegrity formDatabaseIntegrity=new FormDatabaseIntegrity();
 			//the next line applies to both Popup and Triangle when user clicks.
-			frmDatabaseIntegrity.MessageToShow=_databaseIntegrity.Message.Replace("[Class]",_databaseIntegrity.WarningIntegrityType.ToString());
-			frmDatabaseIntegrity.ShowDialog();
+			formDatabaseIntegrity.MessageToShow=_databaseIntegrity.Message.Replace("[Class]",_databaseIntegrity.WarningIntegrityType.ToString());
+			formDatabaseIntegrity.ShowDialog();
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e){

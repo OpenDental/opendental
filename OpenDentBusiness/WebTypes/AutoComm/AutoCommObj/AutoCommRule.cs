@@ -94,10 +94,6 @@ namespace OpenDentBusiness.AutoComm {
 			SendMultipleInvites=aptRemRule.SendMultipleInvites;
 			TimeSpanMultipleInvites=aptRemRule.TimeSpanMultipleInvites;
 		}
-
-		public AutoCommRule Copy() {
-			return (AutoCommRule)this.MemberwiseClone();
-		}
 	}
 
 }

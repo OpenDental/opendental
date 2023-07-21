@@ -41,6 +41,7 @@ namespace OpenDental {
 			this.butDown = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.butCombine = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
@@ -114,6 +115,16 @@ namespace OpenDental {
 			this.butAdd.Text = "&Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(875, 437);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(80, 26);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butCombine
 			// 
 			this.butCombine.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -134,6 +145,7 @@ namespace OpenDental {
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butAdd);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -148,6 +160,7 @@ namespace OpenDental {
 		#endregion
 
 		private OpenDental.UI.Button butAdd;
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GridOD gridMain;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.Button butDown;

@@ -24,6 +24,7 @@ namespace OpenDental {
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormCareCredit));
+			this.butClose = new OpenDental.UI.Button();
 			this.comboProviders = new OpenDental.UI.ComboBox();
 			this.labelProviders = new System.Windows.Forms.Label();
 			this.comboClinics = new OpenDental.UI.ComboBoxClinicPicker();
@@ -35,9 +36,21 @@ namespace OpenDental {
 			this.labelMerchantClosedDescription = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(346, 261);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 8;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// comboProviders
 			// 
-			this.comboProviders.Location = new System.Drawing.Point(100, 42);
+			this.comboProviders.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.comboProviders.Location = new System.Drawing.Point(100, 57);
 			this.comboProviders.Name = "comboProviders";
 			this.comboProviders.Size = new System.Drawing.Size(214, 21);
 			this.comboProviders.TabIndex = 1;
@@ -46,7 +59,8 @@ namespace OpenDental {
 			// 
 			// labelProviders
 			// 
-			this.labelProviders.Location = new System.Drawing.Point(5, 43);
+			this.labelProviders.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.labelProviders.Location = new System.Drawing.Point(5, 58);
 			this.labelProviders.Name = "labelProviders";
 			this.labelProviders.Size = new System.Drawing.Size(93, 16);
 			this.labelProviders.TabIndex = 273;
@@ -55,9 +69,10 @@ namespace OpenDental {
 			// 
 			// comboClinics
 			// 
+			this.comboClinics.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.comboClinics.HqDescription = "Headquarters";
 			this.comboClinics.IncludeUnassigned = true;
-			this.comboClinics.Location = new System.Drawing.Point(63, 14);
+			this.comboClinics.Location = new System.Drawing.Point(63, 29);
 			this.comboClinics.Name = "comboClinics";
 			this.comboClinics.Size = new System.Drawing.Size(251, 21);
 			this.comboClinics.TabIndex = 0;
@@ -65,8 +80,9 @@ namespace OpenDental {
 			// 
 			// butApply
 			// 
+			this.butApply.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.butApply.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butApply.Location = new System.Drawing.Point(100, 86);
+			this.butApply.Location = new System.Drawing.Point(100, 101);
 			this.butApply.Name = "butApply";
 			this.butApply.Size = new System.Drawing.Size(75, 24);
 			this.butApply.TabIndex = 2;
@@ -75,8 +91,9 @@ namespace OpenDental {
 			// 
 			// butLookup
 			// 
+			this.butLookup.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.butLookup.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butLookup.Location = new System.Drawing.Point(100, 127);
+			this.butLookup.Location = new System.Drawing.Point(100, 142);
 			this.butLookup.Name = "butLookup";
 			this.butLookup.Size = new System.Drawing.Size(75, 24);
 			this.butLookup.TabIndex = 3;
@@ -85,8 +102,9 @@ namespace OpenDental {
 			// 
 			// butTransactions
 			// 
+			this.butTransactions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butTransactions.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butTransactions.Location = new System.Drawing.Point(34, 233);
+			this.butTransactions.Location = new System.Drawing.Point(27, 261);
 			this.butTransactions.Name = "butTransactions";
 			this.butTransactions.Size = new System.Drawing.Size(90, 24);
 			this.butTransactions.TabIndex = 7;
@@ -95,8 +113,9 @@ namespace OpenDental {
 			// 
 			// butReport
 			// 
+			this.butReport.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.butReport.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butReport.Location = new System.Drawing.Point(239, 86);
+			this.butReport.Location = new System.Drawing.Point(239, 101);
 			this.butReport.Name = "butReport";
 			this.butReport.Size = new System.Drawing.Size(75, 24);
 			this.butReport.TabIndex = 5;
@@ -105,7 +124,8 @@ namespace OpenDental {
 			// 
 			// butPromotions
 			// 
-			this.butPromotions.Location = new System.Drawing.Point(239, 127);
+			this.butPromotions.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.butPromotions.Location = new System.Drawing.Point(239, 142);
 			this.butPromotions.Name = "butPromotions";
 			this.butPromotions.Size = new System.Drawing.Size(75, 24);
 			this.butPromotions.TabIndex = 6;
@@ -114,10 +134,11 @@ namespace OpenDental {
 			// 
 			// labelMerchantClosedDescription
 			// 
+			this.labelMerchantClosedDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelMerchantClosedDescription.ForeColor = System.Drawing.Color.Red;
-			this.labelMerchantClosedDescription.Location = new System.Drawing.Point(74, 170);
+			this.labelMerchantClosedDescription.Location = new System.Drawing.Point(69, 193);
 			this.labelMerchantClosedDescription.Name = "labelMerchantClosedDescription";
-			this.labelMerchantClosedDescription.Size = new System.Drawing.Size(308, 40);
+			this.labelMerchantClosedDescription.Size = new System.Drawing.Size(352, 39);
 			this.labelMerchantClosedDescription.TabIndex = 274;
 			this.labelMerchantClosedDescription.Text = "The Merchant Number you are using has been closed.\r\nPlease refer to the manual on" +
     " how to change your settings.";
@@ -125,8 +146,10 @@ namespace OpenDental {
 			// 
 			// FormCareCredit
 			// 
-			this.ClientSize = new System.Drawing.Size(401, 278);
+			this.CancelButton = this.butClose;
+			this.ClientSize = new System.Drawing.Size(433, 297);
 			this.Controls.Add(this.labelMerchantClosedDescription);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butPromotions);
 			this.Controls.Add(this.butLookup);
 			this.Controls.Add(this.butApply);
@@ -144,6 +167,7 @@ namespace OpenDental {
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private UI.ComboBox comboProviders;
 		private System.Windows.Forms.Label labelProviders;
 		private UI.ComboBoxClinicPicker comboClinics;

@@ -33,7 +33,8 @@ namespace OpenDental{
 			this.butBodyFieldsPlainText = new OpenDental.UI.Button();
 			this.textboxPlainText = new OpenDental.ODtextBox();
 			this.butEditTemplate = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOk = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butDeleteTemplate = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
@@ -58,7 +59,7 @@ namespace OpenDental{
 			this.textSubject.Location = new System.Drawing.Point(153, 73);
 			this.textSubject.Multiline = false;
 			this.textSubject.Name = "textSubject";
-			this.textSubject.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textSubject.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textSubject.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textSubject.Size = new System.Drawing.Size(606, 20);
 			this.textSubject.TabIndex = 1;
@@ -84,7 +85,7 @@ namespace OpenDental{
 			this.textTemplateName.Location = new System.Drawing.Point(153, 37);
 			this.textTemplateName.Multiline = false;
 			this.textTemplateName.Name = "textTemplateName";
-			this.textTemplateName.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textTemplateName.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textTemplateName.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textTemplateName.Size = new System.Drawing.Size(606, 20);
 			this.textTemplateName.TabIndex = 0;
@@ -129,9 +130,9 @@ namespace OpenDental{
 			this.textboxPlainText.DetectUrls = false;
 			this.textboxPlainText.Location = new System.Drawing.Point(150, 113);
 			this.textboxPlainText.Name = "textboxPlainText";
-			this.textboxPlainText.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textboxPlainText.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textboxPlainText.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this.textboxPlainText.Size = new System.Drawing.Size(609, 352);
+			this.textboxPlainText.Size = new System.Drawing.Size(609, 334);
 			this.textboxPlainText.TabIndex = 2;
 			this.textboxPlainText.Text = "";
 			// 
@@ -147,16 +148,27 @@ namespace OpenDental{
 			this.butEditTemplate.Text = "Edit HTML Body";
 			this.butEditTemplate.Click += new System.EventHandler(this.butEditTemplate_Click);
 			// 
-			// butSave
+			// butOk
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butSave.Location = new System.Drawing.Point(806, 489);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 4;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOk.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.butOk.Location = new System.Drawing.Point(721, 489);
+			this.butOk.Name = "butOk";
+			this.butOk.Size = new System.Drawing.Size(75, 26);
+			this.butOk.TabIndex = 4;
+			this.butOk.Text = "OK";
+			this.butOk.Click += new System.EventHandler(this.butOk_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.butCancel.Location = new System.Drawing.Point(806, 489);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 5;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butDeleteTemplate
 			// 
@@ -174,7 +186,8 @@ namespace OpenDental{
 			// 
 			this.ClientSize = new System.Drawing.Size(893, 527);
 			this.Controls.Add(this.butDeleteTemplate);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOk);
 			this.Controls.Add(this.butEditTemplate);
 			this.Controls.Add(this.label6);
 			this.Controls.Add(this.butBodyFieldsPlainText);
@@ -187,7 +200,6 @@ namespace OpenDental{
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMassEmailTemplate";
 			this.Text = "Mass Email Template";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMassEmailTemplate_FormClosing);
 			this.Load += new System.EventHandler(this.FormMassEmailTemplate_Load);
 			this.ResumeLayout(false);
 
@@ -204,7 +216,8 @@ namespace OpenDental{
 		private UI.Button butBodyFieldsPlainText;
 		private ODtextBox textboxPlainText;
 		private UI.Button butEditTemplate;
-		private UI.Button butSave;
+		private UI.Button butOk;
+		private UI.Button butCancel;
 		private UI.Button butDeleteTemplate;
 	}
 }

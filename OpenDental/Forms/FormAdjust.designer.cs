@@ -30,6 +30,7 @@
 			this.labelAdditions = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.textAdjDate = new OpenDental.ValidDate();
 			this.labelSubtractions = new System.Windows.Forms.Label();
 			this.butDelete = new OpenDental.UI.Button();
@@ -74,7 +75,6 @@
 			this.label19 = new System.Windows.Forms.Label();
 			this.butDetachProc = new OpenDental.UI.Button();
 			this.butAttachProc = new OpenDental.UI.Button();
-			this.checkOnlyTsiExcludedAdjTypes = new OpenDental.UI.CheckBox();
 			this.groupProcedure.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -126,12 +126,23 @@
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(644, 470);
+			this.butOK.Location = new System.Drawing.Point(614, 433);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 6;
-			this.butOK.Text = "&Save";
-			this.butOK.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(614, 471);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 7;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// textAdjDate
 			// 
@@ -151,8 +162,7 @@
 			// 
 			// butDelete
 			// 
-			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butDelete.Location = new System.Drawing.Point(24, 470);
+			this.butDelete.Location = new System.Drawing.Point(24, 469);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(75, 24);
 			this.butDelete.TabIndex = 17;
@@ -251,7 +261,7 @@
 			this.textNote.DetectUrls = false;
 			this.textNote.Location = new System.Drawing.Point(176, 415);
 			this.textNote.Name = "textNote";
-			this.textNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Adjustment;
+			this.textNote.QuickPasteType = OpenDentBusiness.QuickPasteType.Adjustment;
 			this.textNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNote.Size = new System.Drawing.Size(355, 79);
 			this.textNote.TabIndex = 5;
@@ -302,8 +312,8 @@
 			this.labelProcDisabled.Name = "labelProcDisabled";
 			this.labelProcDisabled.Size = new System.Drawing.Size(236, 69);
 			this.labelProcDisabled.TabIndex = 169;
-			this.labelProcDisabled.Text = "Procedures cannot be attached to adjustments unless all payments or payment plans" +
-    " for the adjustment are removed.";
+			this.labelProcDisabled.Text = "Procedures cannot be attached to adjustments unless all payments or dynamic payme" +
+    "nt plans for the adjustment are removed.";
 			this.labelProcDisabled.Visible = false;
 			// 
 			// butEditAnyway
@@ -557,20 +567,10 @@
 			this.butAttachProc.Text = "Attach";
 			this.butAttachProc.Click += new System.EventHandler(this.butAttachProc_Click);
 			// 
-			// checkOnlyTsiExcludedAdjTypes
-			// 
-			this.checkOnlyTsiExcludedAdjTypes.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkOnlyTsiExcludedAdjTypes.Location = new System.Drawing.Point(72, 174);
-			this.checkOnlyTsiExcludedAdjTypes.Name = "checkOnlyTsiExcludedAdjTypes";
-			this.checkOnlyTsiExcludedAdjTypes.Size = new System.Drawing.Size(214, 20);
-			this.checkOnlyTsiExcludedAdjTypes.TabIndex = 171;
-			this.checkOnlyTsiExcludedAdjTypes.Text = "Only TSI excluded adjustment types";
-			this.checkOnlyTsiExcludedAdjTypes.CheckedChanged += new System.EventHandler(this.checkOnlyTsiExcludedAdjTypes_Checked);
-			// 
 			// FormAdjust
 			// 
-			this.ClientSize = new System.Drawing.Size(731, 504);
-			this.Controls.Add(this.checkOnlyTsiExcludedAdjTypes);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(731, 528);
 			this.Controls.Add(this.groupProcedure);
 			this.Controls.Add(this.butPickProv);
 			this.Controls.Add(this.comboProv);
@@ -586,6 +586,7 @@
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.labelSubtractions);
 			this.Controls.Add(this.textAdjDate);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.labelAdditions);
@@ -613,6 +614,7 @@
 		private System.Windows.Forms.Label labelAdditions;
 		private System.Windows.Forms.Label label2;
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label labelSubtractions;
 		private OpenDental.UI.Button butDelete;
 		private OpenDental.ValidDouble textAmount;
@@ -657,6 +659,5 @@
 		private OpenDental.UI.Button butEditAnyway;
 		private System.Windows.Forms.Label labelEditAnyway;
 		private System.Windows.Forms.Label labelProcDisabled;
-		private UI.CheckBox checkOnlyTsiExcludedAdjTypes;
 	}
 }

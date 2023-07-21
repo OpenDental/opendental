@@ -24,6 +24,7 @@ namespace OpenDental {
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
+			this.checkCanadianPpoLabEst = new OpenDental.UI.CheckBox();
 			this.textInsWriteoffDescript = new System.Windows.Forms.TextBox();
 			this.label17 = new System.Windows.Forms.Label();
 			this.groupBoxClaimsMedical = new OpenDental.UI.GroupBox();
@@ -37,7 +38,6 @@ namespace OpenDental {
 			this.comboClaimCredit = new OpenDental.UI.ComboBox();
 			this.labelClaimCredit = new System.Windows.Forms.Label();
 			this.groupBoxOD2 = new OpenDental.UI.GroupBox();
-			this.checkClaimFinalizeWarning = new OpenDental.UI.CheckBox();
 			this.checkInsAutoReceiveNoAssign = new OpenDental.UI.CheckBox();
 			this.checkShowClaimPatResp = new OpenDental.UI.CheckBox();
 			this.checkPromptForSecondaryClaim = new OpenDental.UI.CheckBox();
@@ -47,7 +47,6 @@ namespace OpenDental {
 			this.checkInsEstRecalcReceived = new OpenDental.UI.CheckBox();
 			this.checkClaimTrackingExcludeNone = new OpenDental.UI.CheckBox();
 			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
-			this.checkEclaimsSubscIDUsesPatID = new OpenDental.UI.CheckBox();
 			this.checkPpoUseUcr = new OpenDental.UI.CheckBox();
 			this.checkClaimFormTreatDentSaysSigOnFile = new OpenDental.UI.CheckBox();
 			this.textClaimAttachPath = new System.Windows.Forms.TextBox();
@@ -60,8 +59,6 @@ namespace OpenDental {
 			this.butReplacements = new OpenDental.UI.Button();
 			this.textClaimIdentifier = new System.Windows.Forms.TextBox();
 			this.checkClaimsValidateACN = new OpenDental.UI.CheckBox();
-			this.checkCanadianPpoLabEst = new OpenDental.UI.CheckBox();
-			this.checkClaimPrimaryReceivedRecalcSecondary = new OpenDental.UI.CheckBox();
 			this.groupBoxClaimsMedical.SuspendLayout();
 			this.groupBoxClaimsPayments.SuspendLayout();
 			this.groupBoxOD2.SuspendLayout();
@@ -69,16 +66,25 @@ namespace OpenDental {
 			this.groupBoxClaimIdPrefix.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// checkCanadianPpoLabEst
+			// 
+			this.checkCanadianPpoLabEst.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkCanadianPpoLabEst.Location = new System.Drawing.Point(93, 579);
+			this.checkCanadianPpoLabEst.Name = "checkCanadianPpoLabEst";
+			this.checkCanadianPpoLabEst.Size = new System.Drawing.Size(367, 17);
+			this.checkCanadianPpoLabEst.TabIndex = 5;
+			this.checkCanadianPpoLabEst.Text = "Canadian PPO insurance plans create lab estimates";
+			// 
 			// textInsWriteoffDescript
 			// 
-			this.textInsWriteoffDescript.Location = new System.Drawing.Point(330, 611);
+			this.textInsWriteoffDescript.Location = new System.Drawing.Point(330, 557);
 			this.textInsWriteoffDescript.Name = "textInsWriteoffDescript";
 			this.textInsWriteoffDescript.Size = new System.Drawing.Size(130, 20);
 			this.textInsWriteoffDescript.TabIndex = 4;
 			// 
 			// label17
 			// 
-			this.label17.Location = new System.Drawing.Point(73, 613);
+			this.label17.Location = new System.Drawing.Point(73, 560);
 			this.label17.Name = "label17";
 			this.label17.Size = new System.Drawing.Size(254, 17);
 			this.label17.TabIndex = 284;
@@ -89,7 +95,7 @@ namespace OpenDental {
 			// 
 			this.groupBoxClaimsMedical.Controls.Add(this.checkClaimMedTypeIsInstWhenInsPlanIsMedical);
 			this.groupBoxClaimsMedical.Controls.Add(this.checkEclaimsMedicalProvTreatmentAsOrdering);
-			this.groupBoxClaimsMedical.Location = new System.Drawing.Point(20, 558);
+			this.groupBoxClaimsMedical.Location = new System.Drawing.Point(20, 503);
 			this.groupBoxClaimsMedical.Name = "groupBoxClaimsMedical";
 			this.groupBoxClaimsMedical.Size = new System.Drawing.Size(450, 51);
 			this.groupBoxClaimsMedical.TabIndex = 3;
@@ -121,7 +127,7 @@ namespace OpenDental {
 			this.groupBoxClaimsPayments.Controls.Add(this.checkInsPayNoWriteoffMoreThanProc);
 			this.groupBoxClaimsPayments.Controls.Add(this.comboClaimCredit);
 			this.groupBoxClaimsPayments.Controls.Add(this.labelClaimCredit);
-			this.groupBoxClaimsPayments.Location = new System.Drawing.Point(20, 444);
+			this.groupBoxClaimsPayments.Location = new System.Drawing.Point(20, 389);
 			this.groupBoxClaimsPayments.Name = "groupBoxClaimsPayments";
 			this.groupBoxClaimsPayments.Size = new System.Drawing.Size(450, 112);
 			this.groupBoxClaimsPayments.TabIndex = 2;
@@ -183,8 +189,6 @@ namespace OpenDental {
 			// 
 			// groupBoxOD2
 			// 
-			this.groupBoxOD2.Controls.Add(this.checkClaimPrimaryReceivedRecalcSecondary);
-			this.groupBoxOD2.Controls.Add(this.checkClaimFinalizeWarning);
 			this.groupBoxOD2.Controls.Add(this.checkInsAutoReceiveNoAssign);
 			this.groupBoxOD2.Controls.Add(this.checkShowClaimPatResp);
 			this.groupBoxOD2.Controls.Add(this.checkPromptForSecondaryClaim);
@@ -193,20 +197,11 @@ namespace OpenDental {
 			this.groupBoxOD2.Controls.Add(this.checkShowClaimPayTracking);
 			this.groupBoxOD2.Controls.Add(this.checkInsEstRecalcReceived);
 			this.groupBoxOD2.Controls.Add(this.checkClaimTrackingExcludeNone);
-			this.groupBoxOD2.Location = new System.Drawing.Point(20, 239);
+			this.groupBoxOD2.Location = new System.Drawing.Point(20, 222);
 			this.groupBoxOD2.Name = "groupBoxOD2";
-			this.groupBoxOD2.Size = new System.Drawing.Size(450, 203);
+			this.groupBoxOD2.Size = new System.Drawing.Size(450, 165);
 			this.groupBoxOD2.TabIndex = 1;
 			this.groupBoxOD2.Text = "Claims Receive";
-			// 
-			// checkClaimFinalizeWarning
-			// 
-			this.checkClaimFinalizeWarning.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkClaimFinalizeWarning.Location = new System.Drawing.Point(30, 162);
-			this.checkClaimFinalizeWarning.Name = "checkClaimFinalizeWarning";
-			this.checkClaimFinalizeWarning.Size = new System.Drawing.Size(410, 17);
-			this.checkClaimFinalizeWarning.TabIndex = 8;
-			this.checkClaimFinalizeWarning.Text = "Warn users to finalize payments for received claims";
 			// 
 			// checkInsAutoReceiveNoAssign
 			// 
@@ -282,7 +277,6 @@ namespace OpenDental {
 			// 
 			// groupBoxOD1
 			// 
-			this.groupBoxOD1.Controls.Add(this.checkEclaimsSubscIDUsesPatID);
 			this.groupBoxOD1.Controls.Add(this.checkPpoUseUcr);
 			this.groupBoxOD1.Controls.Add(this.checkClaimFormTreatDentSaysSigOnFile);
 			this.groupBoxOD1.Controls.Add(this.textClaimAttachPath);
@@ -295,18 +289,9 @@ namespace OpenDental {
 			this.groupBoxOD1.Controls.Add(this.checkClaimsValidateACN);
 			this.groupBoxOD1.Location = new System.Drawing.Point(20, 10);
 			this.groupBoxOD1.Name = "groupBoxOD1";
-			this.groupBoxOD1.Size = new System.Drawing.Size(450, 227);
+			this.groupBoxOD1.Size = new System.Drawing.Size(450, 210);
 			this.groupBoxOD1.TabIndex = 0;
 			this.groupBoxOD1.Text = "Claims Send";
-			// 
-			// checkEclaimsSubscIDUsesPatID
-			// 
-			this.checkEclaimsSubscIDUsesPatID.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkEclaimsSubscIDUsesPatID.Location = new System.Drawing.Point(50, 70);
-			this.checkEclaimsSubscIDUsesPatID.Name = "checkEclaimsSubscIDUsesPatID";
-			this.checkEclaimsSubscIDUsesPatID.Size = new System.Drawing.Size(390, 17);
-			this.checkEclaimsSubscIDUsesPatID.TabIndex = 293;
-			this.checkEclaimsSubscIDUsesPatID.Text = "On e-claims, use Optional Patient ID instead of Subscriber ID";
 			// 
 			// checkPpoUseUcr
 			// 
@@ -321,7 +306,7 @@ namespace OpenDental {
 			// checkClaimFormTreatDentSaysSigOnFile
 			// 
 			this.checkClaimFormTreatDentSaysSigOnFile.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkClaimFormTreatDentSaysSigOnFile.Location = new System.Drawing.Point(40, 112);
+			this.checkClaimFormTreatDentSaysSigOnFile.Location = new System.Drawing.Point(40, 93);
 			this.checkClaimFormTreatDentSaysSigOnFile.Name = "checkClaimFormTreatDentSaysSigOnFile";
 			this.checkClaimFormTreatDentSaysSigOnFile.Size = new System.Drawing.Size(400, 17);
 			this.checkClaimFormTreatDentSaysSigOnFile.TabIndex = 4;
@@ -357,7 +342,7 @@ namespace OpenDental {
 			// comboZeroDollarProcClaimBehavior
 			// 
 			this.comboZeroDollarProcClaimBehavior.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboZeroDollarProcClaimBehavior.Location = new System.Drawing.Point(272, 89);
+			this.comboZeroDollarProcClaimBehavior.Location = new System.Drawing.Point(272, 70);
 			this.comboZeroDollarProcClaimBehavior.Name = "comboZeroDollarProcClaimBehavior";
 			this.comboZeroDollarProcClaimBehavior.Size = new System.Drawing.Size(168, 21);
 			this.comboZeroDollarProcClaimBehavior.TabIndex = 3;
@@ -365,7 +350,7 @@ namespace OpenDental {
 			// labelCreatingClaimsZeroProcedures
 			// 
 			this.labelCreatingClaimsZeroProcedures.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelCreatingClaimsZeroProcedures.Location = new System.Drawing.Point(56, 91);
+			this.labelCreatingClaimsZeroProcedures.Location = new System.Drawing.Point(56, 73);
 			this.labelCreatingClaimsZeroProcedures.Name = "labelCreatingClaimsZeroProcedures";
 			this.labelCreatingClaimsZeroProcedures.Size = new System.Drawing.Size(213, 17);
 			this.labelCreatingClaimsZeroProcedures.TabIndex = 292;
@@ -375,7 +360,7 @@ namespace OpenDental {
 			// checkPriClaimAllowSetToHoldUntilPriReceived
 			// 
 			this.checkPriClaimAllowSetToHoldUntilPriReceived.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkPriClaimAllowSetToHoldUntilPriReceived.Location = new System.Drawing.Point(73, 150);
+			this.checkPriClaimAllowSetToHoldUntilPriReceived.Location = new System.Drawing.Point(73, 131);
 			this.checkPriClaimAllowSetToHoldUntilPriReceived.Name = "checkPriClaimAllowSetToHoldUntilPriReceived";
 			this.checkPriClaimAllowSetToHoldUntilPriReceived.Size = new System.Drawing.Size(367, 17);
 			this.checkPriClaimAllowSetToHoldUntilPriReceived.TabIndex = 6;
@@ -387,7 +372,7 @@ namespace OpenDental {
 			this.groupBoxClaimIdPrefix.BackColor = System.Drawing.Color.White;
 			this.groupBoxClaimIdPrefix.Controls.Add(this.butReplacements);
 			this.groupBoxClaimIdPrefix.Controls.Add(this.textClaimIdentifier);
-			this.groupBoxClaimIdPrefix.Location = new System.Drawing.Point(40, 169);
+			this.groupBoxClaimIdPrefix.Location = new System.Drawing.Point(40, 150);
 			this.groupBoxClaimIdPrefix.Name = "groupBoxClaimIdPrefix";
 			this.groupBoxClaimIdPrefix.Size = new System.Drawing.Size(407, 55);
 			this.groupBoxClaimIdPrefix.TabIndex = 7;
@@ -415,29 +400,11 @@ namespace OpenDental {
 			// checkClaimsValidateACN
 			// 
 			this.checkClaimsValidateACN.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkClaimsValidateACN.Location = new System.Drawing.Point(73, 131);
+			this.checkClaimsValidateACN.Location = new System.Drawing.Point(73, 112);
 			this.checkClaimsValidateACN.Name = "checkClaimsValidateACN";
 			this.checkClaimsValidateACN.Size = new System.Drawing.Size(367, 17);
 			this.checkClaimsValidateACN.TabIndex = 5;
 			this.checkClaimsValidateACN.Text = "Require ACN# in remarks on claims with ADDP group name";
-			// 
-			// checkCanadianPpoLabEst
-			// 
-			this.checkCanadianPpoLabEst.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkCanadianPpoLabEst.Location = new System.Drawing.Point(93, 633);
-			this.checkCanadianPpoLabEst.Name = "checkCanadianPpoLabEst";
-			this.checkCanadianPpoLabEst.Size = new System.Drawing.Size(367, 17);
-			this.checkCanadianPpoLabEst.TabIndex = 5;
-			this.checkCanadianPpoLabEst.Text = "Canadian PPO insurance plans create lab estimates";
-			// 
-			// checkClaimPrimaryReceivedRecalcSecondary
-			// 
-			this.checkClaimPrimaryReceivedRecalcSecondary.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkClaimPrimaryReceivedRecalcSecondary.Location = new System.Drawing.Point(30, 181);
-			this.checkClaimPrimaryReceivedRecalcSecondary.Name = "checkClaimPrimaryReceivedRecalcSecondary";
-			this.checkClaimPrimaryReceivedRecalcSecondary.Size = new System.Drawing.Size(410, 17);
-			this.checkClaimPrimaryReceivedRecalcSecondary.TabIndex = 9;
-			this.checkClaimPrimaryReceivedRecalcSecondary.Text = "Auto update secondary claim estimates when primary is received";
 			// 
 			// UserControlAccountInsurance
 			// 
@@ -451,7 +418,7 @@ namespace OpenDental {
 			this.Controls.Add(this.textInsWriteoffDescript);
 			this.Controls.Add(this.checkCanadianPpoLabEst);
 			this.Name = "UserControlAccountInsurance";
-			this.Size = new System.Drawing.Size(494, 660);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxClaimsMedical.ResumeLayout(false);
 			this.groupBoxClaimsPayments.ResumeLayout(false);
 			this.groupBoxOD2.ResumeLayout(false);
@@ -500,9 +467,6 @@ namespace OpenDental {
 		private OpenDental.UI.CheckBox checkEclaimsSeparateTreatProv;
 		private OpenDental.UI.CheckBox checkInsAutoReceiveNoAssign;
 		private OpenDental.UI.CheckBox checkClaimPaymentPickStatementType;
-		private UI.CheckBox checkEclaimsSubscIDUsesPatID;
-		private UI.CheckBox checkClaimFinalizeWarning;
-		private UI.CheckBox checkClaimPrimaryReceivedRecalcSecondary;
 	}
         
 }

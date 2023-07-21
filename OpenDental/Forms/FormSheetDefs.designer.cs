@@ -40,6 +40,7 @@ namespace OpenDental {
 			this.grid1 = new OpenDental.UI.GridOD();
 			this.grid2 = new OpenDental.UI.GridOD();
 			this.butNew = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.listFilter = new OpenDental.UI.ListBox();
 			this.SuspendLayout();
 			// 
@@ -136,6 +137,16 @@ namespace OpenDental {
 			this.butNew.Text = "New";
 			this.butNew.Click += new System.EventHandler(this.butNew_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(832, 564);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 8;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// listFilter
 			// 
 			this.listFilter.Location = new System.Drawing.Point(4, 30);
@@ -157,6 +168,7 @@ namespace OpenDental {
 			this.Controls.Add(this.grid1);
 			this.Controls.Add(this.grid2);
 			this.Controls.Add(this.butNew);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormSheetDefs";
 			this.Text = "Sheet Defs";
@@ -168,6 +180,7 @@ namespace OpenDental {
 		#endregion
 
 		private OpenDental.UI.Button butNew;
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GridOD grid2;
 		private UI.GridOD grid1;
 		private OpenDental.UI.Button butCopy;

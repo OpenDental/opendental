@@ -23,27 +23,24 @@ namespace OpenDental {
 		private bool _hasDownloaded;
 		///<summary>Track current status of each code system.</summary>
 		private List<CodeSystemStatus> _listCodeSystemStatuses=new List<CodeSystemStatus>();
-		///<summary>Optionally set this before opening form.</summary>
-		public List<EnumCodeSystemName> listEnumCodeSystemNames;
+		private CodeSystemName[] _codeSystemNameArrayAutoImports;
 		
-		public FormCodeSystemsImport() {
+		public FormCodeSystemsImport(params CodeSystemName[] arrayAutoImportCodeSystemNames) {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
+			_codeSystemNameArrayAutoImports=arrayAutoImportCodeSystemNames;
 		}
 
 		private void FormCodeSystemsImport_Load(object sender,EventArgs e) {
 			_isMemberNation=true;//Assume we show the SNOMED row. Handles validating on import instead of on load.
 			checkKeepDescriptions.Checked=true;//If checked, preserves old behavior of not updating existing descriptions. Users probably want it unchecked.
 			UpdateCodeSystemThread.Finished+=new EventHandler(UpdateCodeSystemThread_FinishedSafe);
-			if(listEnumCodeSystemNames==null){
-				return;
-			}
-			if(listEnumCodeSystemNames.Count > 0) {
+			if(_codeSystemNameArrayAutoImports.Length > 0) {
 				CheckUpdates();
-				for(int i=0;i<listEnumCodeSystemNames.Count;i++) {
+				for(int i=0;i<_codeSystemNameArrayAutoImports.Length;i++) {
 					for(int j=0;j<gridMain.ListGridRows.Count;j++) {
-						if(gridMain.ListGridRows[j].Cells[0].Text.ToLower()==listEnumCodeSystemNames[i].ToString().ToLower()) {
+						if(gridMain.ListGridRows[j].Cells[0].Text.ToLower()==_codeSystemNameArrayAutoImports[i].ToString().ToLower()) {
 							gridMain.SetSelected(j,true);
 						}
 					}
@@ -239,9 +236,8 @@ namespace OpenDental {
 							//This prompt has the chance of allowing users to "corrupt" their data and import codes for one year and identify them as codes from a 
 							//different year. To fix this would require a manual query. If this is a common occurance, consider automating this step based on the codes
 							//detected inside the MEDU file.
-							InputBox input=new InputBox("What year are these CPT codes for?");
-							input.ShowDialog();
-							if(input.IsDialogCancel || !Regex.IsMatch(input.StringResult,@"^\d{4}$")) {//A four digit value was not entered.
+							using InputBox input=new InputBox("What year are these CPT codes for?");
+							if(input.ShowDialog()==DialogResult.Cancel || !Regex.IsMatch(input.textResult.Text,@"^\d{4}$")) {//A four digit value was not entered.
 								codeSystemStatus=_listCodeSystemStatuses.FirstOrDefault(x => x.CodeSystemName==codeSystem.CodeSystemName);
 								if(codeSystemStatus==null) {
 									codeSystemStatus=new CodeSystemStatus();
@@ -253,7 +249,7 @@ namespace OpenDental {
 								codeSystemStatus.SystemStatus=Lan.g("CodeSystemImporter","CPT code year must be specified.");
 								continue;
 							}
-							versionID=input.StringResult;
+							versionID=input.textResult.Text;
 						}
 						//Add a new thread. We will run these all in parallel once we have them all queued.
 						UpdateCodeSystemThread.Add(ODFileUtils.CombinePaths(PrefC.GetTempFolderPath(),meduFileName),
@@ -1008,6 +1004,10 @@ If the master term dictionary or software program containing the UCUM table, UCU
 				return updateService.RequestCodeSystemDownload(stringBuilder.ToString());
 			}
 		}
+		
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 
 		///<summary>If there are still import threads running then prompt the user to see if they want to abort the imports prematurely.</summary>
 		private void FormCodeSystemsImport_FormClosing(object sender,FormClosingEventArgs e) {
@@ -1035,7 +1035,7 @@ If the master term dictionary or software program containing the UCUM table, UCU
 		}
 	}
 
-	public enum EnumCodeSystemName {
+	public enum CodeSystemName {
 		CDCREC,
 		CVX,
 		HCPCS,
@@ -1048,5 +1048,4 @@ If the master term dictionary or software program containing the UCUM table, UCU
 		UCUM,
 		CPT,
 	}
-
 }

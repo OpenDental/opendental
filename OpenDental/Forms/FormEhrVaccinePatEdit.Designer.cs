@@ -68,7 +68,8 @@
 			this.butUngroupObservations = new OpenDental.UI.Button();
 			this.butGroupObservations = new OpenDental.UI.Button();
 			this.butAddObservation = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.button1 = new OpenDental.UI.Button();
+			this.button2 = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.butNoneProvAdministering = new OpenDental.UI.Button();
 			this.butNoneProvOrdering = new OpenDental.UI.Button();
@@ -458,15 +459,25 @@
 			this.butAddObservation.Text = "&Add";
 			this.butAddObservation.Click += new System.EventHandler(this.butAddObservation_Click);
 			// 
-			// butSave
+			// button1
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(772, 563);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(92, 24);
-			this.butSave.TabIndex = 282;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.button1.Location = new System.Drawing.Point(772, 563);
+			this.button1.Name = "button1";
+			this.button1.Size = new System.Drawing.Size(92, 24);
+			this.button1.TabIndex = 282;
+			this.button1.Text = "&OK";
+			this.button1.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// button2
+			// 
+			this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.button2.Location = new System.Drawing.Point(870, 563);
+			this.button2.Name = "button2";
+			this.button2.Size = new System.Drawing.Size(92, 24);
+			this.button2.TabIndex = 281;
+			this.button2.Text = "&Cancel";
+			this.button2.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butDelete
 			// 
@@ -527,7 +538,8 @@
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(974, 599);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.button1);
+			this.Controls.Add(this.button2);
 			this.Controls.Add(this.butUngroupObservations);
 			this.Controls.Add(this.butGroupObservations);
 			this.Controls.Add(this.butAddObservation);
@@ -635,7 +647,8 @@
 		private UI.Button butNoneProvOrdering;
 		private UI.Button butNoneProvAdministering;
 		private UI.Button butDelete;
-		private UI.Button butSave;
+		private UI.Button button1;
+		private UI.Button button2;
 		private System.Windows.Forms.TextBox textUser;
 		private UI.GridOD gridObservations;
 		private UI.Button butAddObservation;

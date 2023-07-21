@@ -33,13 +33,13 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns a list of ClinicCount objects that contains ClinicNum and Count.
-		///Excludes all patients with PatStatus of Deleted, Archived, Deceased, or NonPatient unless isAllStatuses is set to true.</summary>
-		public static List<ClinicCount> GetListClinicPatientCount(bool isAllStatuses=false) {
+		///Excludes all patients with PatStatus of Deleted, Archived, Deceased, or NonPatient unless IsAllStatuses is set to true.</summary>
+		public static List<ClinicCount> GetListClinicPatientCount(bool IsAllStatuses=false) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ClinicCount>>(MethodBase.GetCurrentMethod(),isAllStatuses);
+				return Meth.GetObject<List<ClinicCount>>(MethodBase.GetCurrentMethod(),IsAllStatuses);
 			}
 			string command="SELECT ClinicNum,COUNT(*) AS Count FROM patient ";
-			if(!isAllStatuses) {
+			if(!IsAllStatuses) {
 				command+="WHERE PatStatus NOT IN ("+POut.Int((int)PatientStatus.Deleted)+","+POut.Int((int)PatientStatus.Archived)+","
 					+POut.Int((int)PatientStatus.Deceased)+","+POut.Int((int)PatientStatus.NonPatient)+") ";
 			} 
@@ -58,6 +58,48 @@ namespace OpenDentBusiness{
 		public class ClinicCount {
 			public long ClinicNum;
 			public int Count;
+		}
+
+		///<summary>Gets a list of Clinics for a given pharmacyNum.</summary>
+		///<param name="pharmacyNum">The primary key of the pharmacy.</param>
+		public static List<Clinic> GetClinicsForPharmacy(long pharmacyNum) {
+			//No need to check MiddleTierRole; no call to db.
+			SerializableDictionary<long,List<Clinic>> dict=GetDictClinicsForPharmacy(pharmacyNum);
+			List<Clinic> listClinics;
+			if(!dict.TryGetValue(pharmacyNum,out listClinics)) {
+				listClinics=new List<Clinic>();
+			}
+			return listClinics;
+		}
+
+		///<summary>Gets a SerializableDictionary of Lists of Clinics for given pharmacyNums.</summary>
+		///<param name="arrPharmacyNums">The primary key of the pharmacy.</param>
+		public static SerializableDictionary<long,List<Clinic>> GetDictClinicsForPharmacy(params long[] arrPharmacyNums) {
+			SerializableDictionary<long,List<Clinic>> dict=new SerializableDictionary<long,List<Clinic>>();
+			if(arrPharmacyNums.Length==0) {
+				return dict;
+			}
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<SerializableDictionary<long,List<Clinic>>>(MethodBase.GetCurrentMethod(),arrPharmacyNums);
+			}
+			string command="SELECT pharmclinic.PharmacyNum,clinic.* "
+				+"FROM clinic "
+				+"INNER JOIN pharmclinic ON pharmclinic.ClinicNum=clinic.ClinicNum "
+				+"WHERE pharmclinic.PharmacyNum IN("+string.Join(",",arrPharmacyNums)+") "
+				+"ORDER BY clinic.Abbr";
+			DataTable table=Db.GetTable(command);
+			List<Clinic> listClinics=Crud.ClinicCrud.TableToList(table);
+			for(int i=0;i<table.Rows.Count;i++) {
+				long pharmacyNum=PIn.Long(table.Rows[i]["PharmacyNum"].ToString());
+				Clinic clinic=listClinics[i];//1:1
+				List<Clinic> listClinicsPharm;
+				if(!dict.TryGetValue(pharmacyNum,out listClinicsPharm)) {
+					listClinicsPharm=new List<Clinic>();
+					dict.Add(pharmacyNum,listClinicsPharm);
+				}
+				listClinicsPharm.Add(clinic);
+			}
+			return dict;
 		}
 		#endregion
 
@@ -154,71 +196,58 @@ namespace OpenDentBusiness{
 
 		///<summary>The currently selected clinic's ClinicNum.  Unlike the one stored in FormOpenDental, this is accessible from the business layer.</summary>
 		public static long ClinicNum {
-			//The preferred pattern here would have been GetClinicNum() instead of a property.
-			//But there are a huge number of places we would have to fix with very little benefit.
-			//So we are leaving this as is for now.
-			get {
-				return _clinicNum;
-			}
-		}
-
-		public static void SetClinicNum(long clinicNum){
-			//No need to check MiddleTierRole; no call to db.
-			if(_clinicNum==clinicNum) {
-				return;//no change
-			}
-			_clinicNum=clinicNum;
-			if(Security.CurUser==null) {
-				return;
-			}
-			if(PrefC.GetString(PrefName.ClinicTrackLast)!="User") {
-				return;
-			}
-			List<UserOdPref> listUserOdPrefs = UserOdPrefs.GetByUserAndFkeyType(Security.CurUser.UserNum,UserOdFkeyType.ClinicLast);//should only be one.
-			if(listUserOdPrefs.Count > 0) {
-				bool isSetInvalidNeeded=false;
-				for(int i=0;i<listUserOdPrefs.Count;i++) {
-					UserOdPref userOdPrefOld=listUserOdPrefs[i].Clone();
-					listUserOdPrefs[i].Fkey=clinicNum;
-					if(UserOdPrefs.Update(listUserOdPrefs[i],userOdPrefOld)) {
-						isSetInvalidNeeded=true;
+			get { return _clinicNum; }
+			set {
+				if(_clinicNum==value) {
+					return;//no change
+				}
+				_clinicNum=value;
+				if(Security.CurUser==null) {
+					return;
+				}
+				if(PrefC.GetString(PrefName.ClinicTrackLast)!="User") {
+					return;
+				}
+				List<UserOdPref> listUserOdPrefs = UserOdPrefs.GetByUserAndFkeyType(Security.CurUser.UserNum,UserOdFkeyType.ClinicLast);//should only be one.
+				if(listUserOdPrefs.Count > 0) {
+					bool isSetInvalidNeeded=false;
+					for(int i=0;i<listUserOdPrefs.Count;i++) {
+						UserOdPref userOdPrefOld=listUserOdPrefs[i].Clone();
+						listUserOdPrefs[i].Fkey=value;
+						if(UserOdPrefs.Update(listUserOdPrefs[i],userOdPrefOld)) {
+							isSetInvalidNeeded=true;
+						}
+					}
+					if(isSetInvalidNeeded) {
+						//Only need to signal cache refresh on change.
+						Signalods.SetInvalid(InvalidType.UserOdPrefs);
+						UserOdPrefs.RefreshCache();
 					}
 				}
-				if(isSetInvalidNeeded) {
-					//Only need to signal cache refresh on change.
+				else {
+					UserOdPrefs.Insert(
+						new UserOdPref() {
+							UserNum=Security.CurUser.UserNum,
+							FkeyType=UserOdFkeyType.ClinicLast,
+							Fkey=value,
+						}
+					);
 					Signalods.SetInvalid(InvalidType.UserOdPrefs);
 					UserOdPrefs.RefreshCache();
 				}
-				return;
-			}
-			UserOdPref userOdPref=new UserOdPref();
-			userOdPref.UserNum=Security.CurUser.UserNum;
-			userOdPref.FkeyType=UserOdFkeyType.ClinicLast;
-			userOdPref.Fkey=clinicNum;
-			UserOdPrefs.Insert(userOdPref);
-			Signalods.SetInvalid(InvalidType.UserOdPrefs);
-			UserOdPrefs.RefreshCache();
+			}//end set
 		}
 
 		///<summary>Sets Clinics.ClinicNum. Used when logging on to determines what clinic to start with based on user and workstation preferences.</summary>
-		public static void LoadClinicNumForUser(string clinicNumCLA="") {
-			//No need to check MiddleTierRole; no call to db.
+		public static void LoadClinicNumForUser() {
 			_clinicNum=0;//aka headquarters clinic when clinics are enabled.
 			if(!PrefC.HasClinicsEnabled || Security.CurUser==null) {
 				return;
 			}
 			List<Clinic> listClinics = Clinics.GetForUserod(Security.CurUser);
-			if(!long.TryParse(clinicNumCLA, out long clinicNum)){
-				clinicNum=-1;
-			}
-			if(clinicNum>=0 && listClinics.Any(x => x.ClinicNum==clinicNum)){
-				_clinicNum=clinicNum;
-				return;
-			}
-			
 			switch(PrefC.GetString(PrefName.ClinicTrackLast)) {
 				case "Workstation":
-					if(Security.CurUser.ClinicIsRestricted && Security.CurUser.ClinicNum!=ComputerPrefs.LocalComputer.ClinicNum) {//The user is restricted and it's not the clinic this computer last used.
+					if(Security.CurUser.ClinicIsRestricted && Security.CurUser.ClinicNum!=ComputerPrefs.LocalComputer.ClinicNum) {//The user is restricted and it's not the clinic this computer has by default
 						//User's default clinic isn't the LocalComputer's clinic, see if they have access to the Localcomputer's clinic, if so, use it.
 						Clinic clinic=listClinics.Find(x => x.ClinicNum==ComputerPrefs.LocalComputer.ClinicNum);
 						if(clinic!=null) {
@@ -228,26 +257,27 @@ namespace OpenDentBusiness{
 							_clinicNum=Security.CurUser.ClinicNum;//Use the user's default clinic if they don't have access to LocalComputer's clinic.
 						}
 					}
-					else { //The user is not restricted, just use the clinic in the ComputerPref table.
+					else {//The user is not restricted, just use the clinic in the ComputerPref table.
 						_clinicNum=ComputerPrefs.LocalComputer.ClinicNum;
 					}
-					break;
+					return;//Error
 				case "User":
-					List<UserOdPref> listUserOdPrefs=UserOdPrefs.GetByUserAndFkeyType(Security.CurUser.UserNum,UserOdFkeyType.ClinicLast);//should only be one or none.
-					if(listUserOdPrefs.Count==0) {
-						UserOdPref userOdPref=new UserOdPref();
-						userOdPref.UserNum=Security.CurUser.UserNum;
-						userOdPref.FkeyType=UserOdFkeyType.ClinicLast;
-						userOdPref.Fkey=Security.CurUser.ClinicNum;//default clinic num
-						UserOdPrefs.Insert(userOdPref);
-						listUserOdPrefs.Add(userOdPref);
+					List<UserOdPref> prefs = UserOdPrefs.GetByUserAndFkeyType(Security.CurUser.UserNum,UserOdFkeyType.ClinicLast);//should only be one or none.
+					if(prefs.Count==0) {
+						UserOdPref pref =
+							new UserOdPref() {
+								UserNum=Security.CurUser.UserNum,
+								FkeyType=UserOdFkeyType.ClinicLast,
+								Fkey=Security.CurUser.ClinicNum//default clinic num
+							};
+						UserOdPrefs.Insert(pref);
+						prefs.Add(pref);
 						Signalods.SetInvalid(InvalidType.UserOdPrefs);
 						UserOdPrefs.RefreshCache();
 					}
-					if(!listClinics.Any(x => x.ClinicNum==listUserOdPrefs[0].Fkey)) {//user is restricted and does not have access to the computerpref clinic
-						return;
+					if(listClinics.Any(x => x.ClinicNum==prefs[0].Fkey)) {//user is restricted and does not have access to the computerpref clinic
+						_clinicNum=prefs[0].Fkey;
 					}
-					_clinicNum=listUserOdPrefs[0].Fkey;
 					return;
 				case "None":
 				default:
@@ -260,26 +290,30 @@ namespace OpenDentBusiness{
 
 		///<summary>Called when logging user off or closing opendental.</summary>
 		public static void LogOff() {
-			//No need to check MiddleTierRole; no call to db.
 			if(!PrefC.HasClinicsEnabled) {
 				_clinicNum=0;
 				return;
 			}
-			if(PrefC.GetString(PrefName.ClinicTrackLast)=="Workstation"){ 
-				//Other two options are "None" and "User"
-				//"User" is handled below.
-				ComputerPrefs.LocalComputer.ClinicNum=Clinics.ClinicNum;
-				ComputerPrefs.Update(ComputerPrefs.LocalComputer);
+			switch(PrefC.GetString(PrefName.ClinicTrackLast)) {
+				case "Workstation":
+					ComputerPrefs.LocalComputer.ClinicNum=Clinics.ClinicNum;
+					ComputerPrefs.Update(ComputerPrefs.LocalComputer);
+					break;
+				case "User"://handled below
+				case "None":
+				default:
+					break;
 			}
 			//We want to always upsert a user pref for the user because we will be looking at it for MobileWeb regardless of the preference for 
 			//ClinicTrackLast.
 			List<UserOdPref> listUserOdPrefs=UserOdPrefs.GetByUserAndFkeyType(Security.CurUser.UserNum,UserOdFkeyType.ClinicLast);//should only be one or none.
 			if(listUserOdPrefs.Count==0) {
-				UserOdPref userOdPref=new UserOdPref();
-				userOdPref.UserNum=Security.CurUser.UserNum;
-				userOdPref.FkeyType=UserOdFkeyType.ClinicLast;
-				userOdPref.Fkey=Clinics.ClinicNum;
-				UserOdPrefs.Insert(userOdPref);
+				UserOdPref pref=new UserOdPref() {
+					UserNum=Security.CurUser.UserNum,
+					FkeyType=UserOdFkeyType.ClinicLast,
+					Fkey=Clinics.ClinicNum
+				};
+				UserOdPrefs.Insert(pref);
 			}
 			bool isSetInvalidNeeded=false;
 			for(int i=0;i < listUserOdPrefs.Count;i++) {
@@ -289,13 +323,11 @@ namespace OpenDentBusiness{
 					isSetInvalidNeeded=true;
 				}
 			};
-			if(!isSetInvalidNeeded) {
-				_clinicNum=0;
-				return;
+			if(isSetInvalidNeeded) {
+				//Only need to signal cache refresh on change.
+				Signalods.SetInvalid(InvalidType.UserOdPrefs);
+				UserOdPrefs.RefreshCache();
 			}
-			//Only need to signal cache refresh on change.
-			Signalods.SetInvalid(InvalidType.UserOdPrefs);
-			UserOdPrefs.RefreshCache();
 			_clinicNum=0;
 		}
 
@@ -309,11 +341,11 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Only sync changed fields.</summary>
-		public static bool Update(Clinic clinic,Clinic clinicOld) {
+		public static bool Update(Clinic clinic,Clinic oldClinic) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),clinic,clinicOld);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),clinic,oldClinic);
 			}
-			return Crud.ClinicCrud.Update(clinic,clinicOld);
+			return Crud.ClinicCrud.Update(clinic,oldClinic);
 		}
 
 		///<summary>Checks dependencies first.  Throws exception if can't delete.</summary>
@@ -463,13 +495,13 @@ namespace OpenDentBusiness{
 				List<string> listUsers=new List<string>();
 				for(int i=0;i<table.Rows.Count;i++) {
 					long userNum=PIn.Long(table.Rows[i]["UserNum"].ToString());
-					Userod userod=Userods.GetUser(userNum);
-					if(userod==null) {//Should not happen.
+					Userod user=Userods.GetUser(userNum);
+					if(user==null) {//Should not happen.
 						continue;
 					}
-					listUsers.Add(userod.UserName);
+					listUsers.Add(user.UserName);
 				}
-				throw new Exception(Lans.g("Clinics","Cannot delete clinic because the following Open Dental users are subscribed to it:")+"\r"+String.Join("\r",listUsers.OrderBy(x => x).ToList()));
+				throw new Exception(Lans.g("Clinics","Cannot delete clinic because the following Open Dental users are subscribed to it:")+"\r"+String.Join("\r",listUsers.OrderBy(x => x).ToArray()));
 			}
 			#endregion
 			#region UserClinics
@@ -477,15 +509,15 @@ namespace OpenDentBusiness{
 				+"WHERE userclinic.ClinicNum="+POut.Long(clinic.ClinicNum);
 			table=Db.GetTable(command);
 			if(table.Rows.Count>0) {
-				string userNames="";
+				string users="";
 				for(int i=0;i<table.Rows.Count;i++) {
 					if(i > 0) {
-						userNames+=",";
+						users+=",";
 					}
-					userNames+=table.Rows[i][0].ToString();
+					users+=table.Rows[i][0].ToString();
 				}
 				throw new Exception(
-					Lans.g("Clinics","Cannot delete clinic because the following users are restricted to this clinic in security setup:")+" "+userNames);
+					Lans.g("Clinics","Cannot delete clinic because the following users are restricted to this clinic in security setup:")+" "+users);
 			}
 			#endregion
 			//End checking for dependencies.
@@ -531,11 +563,11 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Syncs two supplied lists of Clinics. Returns true if db changes were made.</summary>
-		public static bool Sync(List<Clinic> listClinicsNew,List<Clinic> listClinicsOld) {
+		public static bool Sync(List<Clinic> listNew,List<Clinic> listOld) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),listClinicsNew,listClinicsOld);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),listNew,listOld);
 			}
-			return Crud.ClinicCrud.Sync(listClinicsNew,listClinicsOld);
+			return Crud.ClinicCrud.Sync(listNew,listOld);
 		}
 
 		///<summary>Returns the patient's clinic based on the recall passed in.
@@ -553,9 +585,9 @@ namespace OpenDentBusiness{
 				+"INNER JOIN recall ON patient.PatNum=recall.PatNum "
 				+"WHERE recall.RecallNum="+POut.Long(recallNum)+" "
 				+DbHelper.LimitAnd(1);
-			long clinicNumPatient=PIn.Long(DataCore.GetScalar(command));
-			if(clinicNumPatient>0) {
-				return GetFirstOrDefault(x => x.ClinicNum==clinicNumPatient);
+			long patientClinicNum=PIn.Long(DataCore.GetScalar(command));
+			if(patientClinicNum>0) {
+				return GetFirstOrDefault(x => x.ClinicNum==patientClinicNum);
 			}
 			//Patient does not have an assigned clinic.  Grab the clinic from a scheduled or completed appointment with the largest date.
 			command=@"SELECT appointment.ClinicNum,appointment.AptDateTime 
@@ -564,9 +596,9 @@ namespace OpenDentBusiness{
 				WHERE appointment.AptStatus IN ("+POut.Int((int)ApptStatus.Scheduled)+","+POut.Int((int)ApptStatus.Complete)+")"+@"
 				ORDER BY AptDateTime DESC";
 			command=DbHelper.LimitOrderBy(command,1);
-			long clinicNumAppt=PIn.Long(DataCore.GetScalar(command));
-			if(clinicNumAppt>0) {
-				return GetFirstOrDefault(x => x.ClinicNum==clinicNumAppt);
+			long appointmentClinicNum=PIn.Long(DataCore.GetScalar(command));
+			if(appointmentClinicNum>0) {
+				return GetFirstOrDefault(x => x.ClinicNum==appointmentClinicNum);
 			}
 			return null;
 		}
@@ -588,12 +620,9 @@ namespace OpenDentBusiness{
 				clinic=GetFirstOrDefault(x => x.ClinicNum==clinicNum);
 			}
 			else {//Use the custom list passed in.
-				clinic=listClinics.Find(x => x.ClinicNum==clinicNum);
+				clinic=listClinics.FirstOrDefault(x => x.ClinicNum==clinicNum);
 			}
-			if(clinic==null) {
-				return "";
-			}
-			return clinic.Description;
+			return (clinic==null ? "" : clinic.Description);
 		}
 
 		///<summary>Returns an empty string for invalid clinicNums.  Will get results for hidden clinics too.</summary>
@@ -604,22 +633,16 @@ namespace OpenDentBusiness{
 				clinic=GetFirstOrDefault(x => x.ClinicNum==clinicNum);
 			}
 			else {//Use the custom list passed in.
-				clinic=listClinics.Find(x => x.ClinicNum==clinicNum);
+				clinic=listClinics.FirstOrDefault(x => x.ClinicNum==clinicNum);
 			}
-			if(clinic==null) { 
-				return "";
-			}
-			return clinic.Abbr;
+			return (clinic==null ? "" : clinic.Abbr);
 		}
 
 		///<summary>Returns practice default for invalid clinicNums.  Will get results for hidden clinics too.</summary>
 		public static PlaceOfService GetPlaceService(long clinicNum) {
 			//No need to check MiddleTierRole; no call to db.
 			Clinic clinic=GetFirstOrDefault(x => x.ClinicNum==clinicNum);
-			if(clinic==null){ 
-				return (PlaceOfService)PrefC.GetLong(PrefName.DefaultProcedurePlaceService);
-			}
-			return clinic.DefaultPlaceService;
+			return (clinic==null ? (PlaceOfService)PrefC.GetLong(PrefName.DefaultProcedurePlaceService) : clinic.DefaultPlaceService);
 		}
 
 		///<summary>Used by HL7 when parsing incoming messages.  
@@ -634,10 +657,7 @@ namespace OpenDentBusiness{
 			if(clinic==null) {
 				clinic=_clinicCache.GetFirstOrDefault(x => x.Description.ToLower()==description.ToLower());
 			}
-			if(clinic==null){ 
-				return 0;
-			}
-			return clinic.ClinicNum;
+			return (clinic==null) ? 0 : clinic.ClinicNum;
 		}
 
 		///<summary>Returns the Clinic's TimeZone. This must be set by the user or it will be null.</summary>
@@ -659,8 +679,7 @@ namespace OpenDentBusiness{
 		///<summary>Returns a list of clinics the curUser has permission to access.  
 		///If the user is not restricted, the list will contain all of the clinics. Does NOT include hidden clinics (and never should anyway).
 		///If doIncludeHQ is true, then it will also include a dummy HQ clinic with ClinicNum=0 using practice info, even if clinics are disabled.</summary>
-		public static List<Clinic> GetForUserod(Userod userod,bool doIncludeHQ=false, string hqClinicName=null) {
-			//No need to check MiddleTierRole; no call to db.
+		public static List<Clinic> GetForUserod(Userod curUser,bool doIncludeHQ=false, string hqClinicName = null) {
 			List<Clinic> listClinics=new List<Clinic>();
 			//Add HQ clinic if requested, even if clinics are disabled.  Counter-intuitive, but required for offices that had clinics enabled and then
 			//turned them off.  If clinics are enabled and the user is restricted this will be filtered out below.
@@ -668,27 +687,25 @@ namespace OpenDentBusiness{
 				listClinics.Add(GetPracticeAsClinicZero(hqClinicName));
 			}
 			listClinics.AddRange(GetDeepCopy(true));//don't include hidden clinics
-			if(!PrefC.HasClinicsEnabled || !userod.ClinicIsRestricted || userod.ClinicNum==0) {
-				return listClinics;
+			if(PrefC.HasClinicsEnabled && curUser.ClinicIsRestricted && curUser.ClinicNum!=0) {
+				//If Clinics are enabled and user is restricted, then only return clinics the person has permission for.
+				List<long> listUserClinicNums=UserClinics.GetForUser(curUser.UserNum).Select(x => x.ClinicNum).ToList();
+				listClinics.RemoveAll(x => !listUserClinicNums.Contains(x.ClinicNum));//Remove all clinics that are not in the list of UserClinics.
 			}
-			//If Clinics are enabled and user is restricted, then only return clinics the person has permission for.
-			List<long> listUserClinicNums=UserClinics.GetForUser(userod.UserNum).Select(x => x.ClinicNum).ToList();
-			listClinics.RemoveAll(x => !listUserClinicNums.Contains(x.ClinicNum));//Remove all clinics that are not in the list of UserClinics.
 			return listClinics;
 		}
 
 		///<summary>Returns a list of clinics the curUser has permission to access, including hidden. If the user is not restricted, the list will contain all of the clinics.</summary>
-		public static List<Clinic> GetAllForUserod(Userod userod) {
-			//No need to check MiddleTierRole; no call to db.
+		public static List<Clinic> GetAllForUserod(Userod curUser) {
 			List<Clinic> listClinics=GetDeepCopy();
 			if(!PrefC.HasClinicsEnabled) {
 				return listClinics;
 			}
-			if(!userod.ClinicIsRestricted || userod.ClinicNum==0) {
-				return listClinics;
+			if(curUser.ClinicIsRestricted && curUser.ClinicNum!=0) {
+				List<UserClinic> listUserClinics=UserClinics.GetForUser(curUser.UserNum);
+				return listClinics.FindAll(x => listUserClinics.Exists(y => y.ClinicNum==x.ClinicNum)).ToList();
 			}
-			List<UserClinic> listUserClinics=UserClinics.GetForUser(userod.UserNum);
-			return listClinics.FindAll(x => listUserClinics.Exists(y => y.ClinicNum==x.ClinicNum)).ToList();
+			return listClinics;
 		}
 
 		///<summary>This method returns true if the given provider is set as the default clinic provider for any clinic.
@@ -707,7 +724,6 @@ namespace OpenDentBusiness{
 
 		///<summary>Gets the default clinic for texting. Returns null if no clinic is set as default.</summary>
 		public static Clinic GetDefaultForTexting() {
-			//No need to check MiddleTierRole; no call to db.
 			return GetFirstOrDefault(x => x.ClinicNum==PrefC.GetLong(PrefName.TextingDefaultClinicNum));
 		}
 
@@ -732,57 +748,47 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>True when a clinic has activated Email Hosting, which means they have Email Hosting credentials.</summary>
-		public static bool HasEmailHostingCredentials(long clinicNum) {
-			//No need to check MiddleTierRole; no call to db.
-			bool hasEmailHostingCred;
+		public static bool HasEmailHostingCredentials(long clinicNum) {			
 			if(clinicNum==0) {
-				hasEmailHostingCred=!string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.MassEmailGuid))
+				return !string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.MassEmailGuid))
 					&& !string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.MassEmailSecret));
-				return hasEmailHostingCred;
 			}
-			hasEmailHostingCred=!string.IsNullOrWhiteSpace(ClinicPrefs.GetPref(PrefName.MassEmailGuid,clinicNum)?.ValueString)
-				&& !string.IsNullOrWhiteSpace(ClinicPrefs.GetPref(PrefName.MassEmailSecret,clinicNum)?.ValueString);
-			return hasEmailHostingCred;
+			else {
+				return !string.IsNullOrWhiteSpace(ClinicPrefs.GetPref(PrefName.MassEmailGuid,clinicNum)?.ValueString)
+					&& !string.IsNullOrWhiteSpace(ClinicPrefs.GetPref(PrefName.MassEmailSecret,clinicNum)?.ValueString);
+			} 
 		}
 
 		public static bool IsMassEmailSignedUp(long clinicNum) {
-			//No need to check MiddleTierRole; no call to db.
-			HostedEmailStatus hostedEmailStatus=GetEmailHostingStatus(PrefName.MassEmailStatus,clinicNum);
-			bool isMassEmailUp=hostedEmailStatus.HasFlag(HostedEmailStatus.SignedUp) && HasEmailHostingCredentials(clinicNum);
-			return isMassEmailUp;
+			HostedEmailStatus status=GetEmailHostingStatus(PrefName.MassEmailStatus,clinicNum);
+			return status.HasFlag(HostedEmailStatus.SignedUp) && HasEmailHostingCredentials(clinicNum);
 		}
 
 		///<summary>True when a clinic (or the practice) has activated and enabled mass emails.</summary>
 		public static bool IsMassEmailEnabled(long clinicNum) {
-			//No need to check MiddleTierRole; no call to db.
-			bool isMassEmailEnabled=IsMassEmailSignedUp(clinicNum) && GetEmailHostingStatus(PrefName.MassEmailStatus,clinicNum).HasFlag(HostedEmailStatus.Enabled);
-			return isMassEmailEnabled;
+			return IsMassEmailSignedUp(clinicNum) && GetEmailHostingStatus(PrefName.MassEmailStatus,clinicNum).HasFlag(HostedEmailStatus.Enabled);
 		}
 		
 		public static bool IsSecureEmailSignedUp(long clinicNum) {
-			//No need to check MiddleTierRole; no call to db.
-			HostedEmailStatus hostedEmailStatus=GetEmailHostingStatus(PrefName.EmailSecureStatus,clinicNum);
-			bool isSecureEmailUp=hostedEmailStatus.HasFlag(HostedEmailStatus.SignedUp) && HasEmailHostingCredentials(clinicNum);
-			return isSecureEmailUp;
+			HostedEmailStatus status=GetEmailHostingStatus(PrefName.EmailSecureStatus,clinicNum);
+			return status.HasFlag(HostedEmailStatus.SignedUp) && HasEmailHostingCredentials(clinicNum);
 		}
 
 		///<summary>True when a clinic (or the practice) has activated and enabled secure emails.</summary>
 		public static bool IsSecureEmailEnabled(long clinicNum) {
-			//No need to check MiddleTierRole; no call to db.
-			bool isSecureEmailEnabled=IsSecureEmailSignedUp(clinicNum) && GetEmailHostingStatus(PrefName.EmailSecureStatus,clinicNum).HasFlag(HostedEmailStatus.Enabled);
-			return isSecureEmailEnabled;
+			return IsSecureEmailSignedUp(clinicNum) && GetEmailHostingStatus(PrefName.EmailSecureStatus,clinicNum).HasFlag(HostedEmailStatus.Enabled);
 		}
 
-		private static HostedEmailStatus GetEmailHostingStatus(PrefName prefName,long clinicNum) {
-			//No need to check MiddleTierRole; no call to db.
-			HostedEmailStatus hostedEmailStatus;
+		private static HostedEmailStatus GetEmailHostingStatus(PrefName prefName,long clinicNum) {			
+			HostedEmailStatus emailHostingStatus;
 			if(clinicNum==0) {
-				hostedEmailStatus=PrefC.GetEnum<HostedEmailStatus>(prefName);
-				return hostedEmailStatus;
+				emailHostingStatus=PrefC.GetEnum<HostedEmailStatus>(prefName);
 			}
-			//Does not default to the practice preference value if not found.  Intentional.
-			hostedEmailStatus=PIn.Enum<HostedEmailStatus>(ClinicPrefs.GetInt(prefName,clinicNum));
-			return hostedEmailStatus;
+			else {
+				//Does not default to the practice preference value if not found.  Intentional.
+				emailHostingStatus=PIn.Enum<HostedEmailStatus>(ClinicPrefs.GetInt(prefName,clinicNum));
+			}
+			return emailHostingStatus;
 		}
 
 		///<summary>Provide the currently selected clinic num (FormOpenDental.ClinicNum).  If clinics are not enabled, this will return true if the pref
@@ -794,9 +800,9 @@ namespace OpenDentBusiness{
 			if(clinicNum==0) {//either headquarters is selected or the clinics feature is not enabled, use practice pref
 				return PrefC.GetBool(PrefName.PracticeIsMedicalOnly);
 			}
-			Clinic clinic=Clinics.GetClinic(clinicNum);
-			if(clinic!=null) {
-				return clinic.IsMedicalOnly;
+			Clinic clinicCur=Clinics.GetClinic(clinicNum);
+			if(clinicCur!=null) {
+				return clinicCur.IsMedicalOnly;
 			}
 			return false;
 		}
@@ -808,69 +814,66 @@ namespace OpenDentBusiness{
 			if(clinicName==null) {
 				clinicName=PrefC.GetString(PrefName.PracticeTitle);
 			}
-			Clinic clinic=new Clinic();
-			clinic.ClinicNum=0;
-			clinic.Abbr=clinicName;
-			clinic.Description=clinicName;
-			clinic.Address=PrefC.GetString(PrefName.PracticeAddress);
-			clinic.Address2=PrefC.GetString(PrefName.PracticeAddress2);
-			clinic.City=PrefC.GetString(PrefName.PracticeCity);
-			clinic.State=PrefC.GetString(PrefName.PracticeST);
-			clinic.Zip=PrefC.GetString(PrefName.PracticeZip);
-			clinic.BillingAddress=PrefC.GetString(PrefName.PracticeBillingAddress);
-			clinic.BillingAddress2=PrefC.GetString(PrefName.PracticeBillingAddress2);
-			clinic.BillingCity=PrefC.GetString(PrefName.PracticeBillingCity);
-			clinic.BillingState=PrefC.GetString(PrefName.PracticeBillingST);
-			clinic.BillingZip=PrefC.GetString(PrefName.PracticeBillingZip);
-			clinic.PayToAddress=PrefC.GetString(PrefName.PracticePayToAddress);
-			clinic.PayToAddress2=PrefC.GetString(PrefName.PracticePayToAddress2);
-			clinic.PayToCity=PrefC.GetString(PrefName.PracticePayToCity);
-			clinic.PayToState=PrefC.GetString(PrefName.PracticePayToST);
-			clinic.PayToZip=PrefC.GetString(PrefName.PracticePayToZip);
-			clinic.Phone=PrefC.GetString(PrefName.PracticePhone);
-			clinic.BankNumber=PrefC.GetString(PrefName.PracticeBankNumber);
-			clinic.DefaultPlaceService=(PlaceOfService)PrefC.GetInt(PrefName.DefaultProcedurePlaceService);
-			clinic.InsBillingProv=PrefC.GetLong(PrefName.InsBillingProv);
-			clinic.Fax=PrefC.GetString(PrefName.PracticeFax);
-			clinic.EmailAddressNum=PrefC.GetLong(PrefName.EmailDefaultAddressNum);
-			clinic.DefaultProv=PrefC.GetLong(PrefName.PracticeDefaultProv);
-			clinic.SmsContractDate=PrefC.GetDate(PrefName.SmsContractDate);
-			clinic.SmsMonthlyLimit=PrefC.GetDouble(PrefName.SmsMonthlyLimit,doUseEnUSFormat:true);
-			clinic.IsConfirmEnabled=true;
-			clinic.IsMedicalOnly=PrefC.GetBool(PrefName.PracticeIsMedicalOnly);
-			return clinic;
+			return new Clinic {
+				ClinicNum=0,
+				Abbr=clinicName,
+				Description=clinicName,
+				Address=PrefC.GetString(PrefName.PracticeAddress),
+				Address2=PrefC.GetString(PrefName.PracticeAddress2),
+				City=PrefC.GetString(PrefName.PracticeCity),
+				State=PrefC.GetString(PrefName.PracticeST),
+				Zip=PrefC.GetString(PrefName.PracticeZip),
+				BillingAddress=PrefC.GetString(PrefName.PracticeBillingAddress),
+				BillingAddress2=PrefC.GetString(PrefName.PracticeBillingAddress2),
+				BillingCity=PrefC.GetString(PrefName.PracticeBillingCity),
+				BillingState=PrefC.GetString(PrefName.PracticeBillingST),
+				BillingZip=PrefC.GetString(PrefName.PracticeBillingZip),
+				PayToAddress=PrefC.GetString(PrefName.PracticePayToAddress),
+				PayToAddress2=PrefC.GetString(PrefName.PracticePayToAddress2),
+				PayToCity=PrefC.GetString(PrefName.PracticePayToCity),
+				PayToState=PrefC.GetString(PrefName.PracticePayToST),
+				PayToZip=PrefC.GetString(PrefName.PracticePayToZip),
+				Phone=PrefC.GetString(PrefName.PracticePhone),
+				BankNumber=PrefC.GetString(PrefName.PracticeBankNumber),
+				DefaultPlaceService=(PlaceOfService)PrefC.GetInt(PrefName.DefaultProcedurePlaceService),
+				InsBillingProv=PrefC.GetLong(PrefName.InsBillingProv),
+				Fax=PrefC.GetString(PrefName.PracticeFax),
+				EmailAddressNum=PrefC.GetLong(PrefName.EmailDefaultAddressNum),
+				DefaultProv=PrefC.GetLong(PrefName.PracticeDefaultProv),
+				SmsContractDate=PrefC.GetDate(PrefName.SmsContractDate),
+				SmsMonthlyLimit=PrefC.GetDouble(PrefName.SmsMonthlyLimit,doUseEnUSFormat:true),
+				IsConfirmEnabled=true,
+				IsMedicalOnly=PrefC.GetBool(PrefName.PracticeIsMedicalOnly)
+			};
 		}
 
 		///<summary>Replaces all clinic fields in the given message with the supplied clinic's information.  Returns the resulting string.
 		///Will use clinic information when available, otherwise defaults to practice info.
 		///Replaces: [OfficePhone], [OfficeFax], [OfficeName], [OfficeAddress], and possibly [EmailDisclaimer]. </summary>
 		public static string ReplaceOffice(string message,Clinic clinic,bool isHtmlEmail=false,bool doReplaceDisclaimer=false) {
-			//No need to check MiddleTierRole; no call to db.
-			StringBuilder stringBuilder=new StringBuilder(message);
-			ReplaceOffice(stringBuilder,clinic,isHtmlEmail,doReplaceDisclaimer);
-			return stringBuilder.ToString();
+			StringBuilder template=new StringBuilder(message);
+			ReplaceOffice(template,clinic,isHtmlEmail,doReplaceDisclaimer);
+			return template.ToString();
 		}
 
 		///<summary>Replaces all clinic fields in the given message with the supplied clinic's information.  Returns the resulting string.
 		///Will use clinic information when available, otherwise defaults to practice info.
 		///Replaces: [OfficePhone], [OfficeFax], [OfficeName], [OfficeAddress], and possibly [EmailDisclaimer]. </summary>
-		public static void ReplaceOffice(StringBuilder stringBuilder,Clinic clinic,bool isHtmlEmail=false,bool replaceDisclaimer=false) {
-			//No need to check MiddleTierRole; no call to db.
+		public static void ReplaceOffice(StringBuilder template,Clinic clinic,bool isHtmlEmail=false,bool doReplaceDisclaimer=false) {
 			string officePhone=GetOfficePhone(clinic);
 			string officeName=GetOfficeName(clinic);
 			string officeAddr=GetOfficeAddress(clinic);
 			string officeFax=GetOfficeFax(clinic);
-			ReplaceTags.ReplaceOneTag(stringBuilder,"[OfficePhone]",officePhone,isHtmlEmail);
-			ReplaceTags.ReplaceOneTag(stringBuilder,"[OfficeFax]",officeFax,isHtmlEmail);
-			ReplaceTags.ReplaceOneTag(stringBuilder,"[OfficeName]",officeName,isHtmlEmail);
-			ReplaceTags.ReplaceOneTag(stringBuilder,"[OfficeAddress]",officeAddr,isHtmlEmail);
-			if(replaceDisclaimer) {
-				ReplaceTags.ReplaceOneTag(stringBuilder,"[EmailDisclaimer]",OpenDentBusiness.EmailMessages.GetEmailDisclaimer(clinic?.ClinicNum??0),isHtmlEmail);
+			ReplaceTags.ReplaceOneTag(template,"[OfficePhone]",officePhone,isHtmlEmail);
+			ReplaceTags.ReplaceOneTag(template,"[OfficeFax]",officeFax,isHtmlEmail);
+			ReplaceTags.ReplaceOneTag(template,"[OfficeName]",officeName,isHtmlEmail);
+			ReplaceTags.ReplaceOneTag(template,"[OfficeAddress]",officeAddr,isHtmlEmail);
+			if(doReplaceDisclaimer) {
+				ReplaceTags.ReplaceOneTag(template,"[EmailDisclaimer]",OpenDentBusiness.EmailMessages.GetEmailDisclaimer(clinic?.ClinicNum??0),isHtmlEmail);
 			}
 		}
 
 		public static string GetOfficeName(Clinic clinic) {
-			//No need to check MiddleTierRole; no call to db.
 			string officeName=clinic?.Description;
 			if(string.IsNullOrEmpty(officeName)) {
 				officeName=PrefC.GetString(PrefName.PracticeTitle);
@@ -879,7 +882,6 @@ namespace OpenDentBusiness{
 		}
 
 		public static string GetOfficeFax(Clinic clinic) {
-			//No need to check MiddleTierRole; no call to db.
 			string officeFax=clinic?.Fax;
 			if(string.IsNullOrEmpty(officeFax)) {
 				officeFax=PrefC.GetString(PrefName.PracticeFax);
@@ -888,7 +890,6 @@ namespace OpenDentBusiness{
 		}
 
 		public static string GetOfficePhone(Clinic clinic) {
-			//No need to check MiddleTierRole; no call to db.
 			string officePhone=clinic?.Phone;
 			if(string.IsNullOrEmpty(officePhone)) {
 				officePhone=PrefC.GetString(PrefName.PracticePhone);
@@ -897,24 +898,23 @@ namespace OpenDentBusiness{
 		}
 
 		public static string GetOfficeAddress(Clinic clinic) {
-			//No need to check MiddleTierRole; no call to db.
-			if(clinic!=null && clinic.ClinicNum!=0 && !string.IsNullOrWhiteSpace(clinic.Address)) {
-				return Patients.GetAddressFull(clinic.Address,clinic.Address2,clinic.City,clinic.State,clinic.Zip);
+			if(clinic is null || clinic.ClinicNum==0 || string.IsNullOrWhiteSpace(clinic.Address)) {
+				return Patients.GetAddressFull(
+					PrefC.GetString(PrefName.PracticeAddress),
+					PrefC.GetString(PrefName.PracticeAddress2),
+					PrefC.GetString(PrefName.PracticeCity),
+					PrefC.GetString(PrefName.PracticeST),
+					PrefC.GetString(PrefName.PracticeZip)
+				);
 			}
-			string address=PrefC.GetString(PrefName.PracticeAddress);
-			string address2=PrefC.GetString(PrefName.PracticeAddress2);
-			string city=PrefC.GetString(PrefName.PracticeCity);
-			string state=PrefC.GetString(PrefName.PracticeST);
-			string zip=PrefC.GetString(PrefName.PracticeZip);
-			return Patients.GetAddressFull(address,address2,city,state,zip);
+			return Patients.GetAddressFull(clinic.Address,clinic.Address2,clinic.City,clinic.State,clinic.Zip);
 		}
 
 		///<summary>Used for ClinicNums in API parameters. Converts the ClinicNum param to a long and returns it. If it cannot be converted or the clinic does not exist, it returns -1. Will correctly return 0 for HQ if a "0" was given.</summary>
-		public static long GetClinicNumForApi(string strClinicNum) {
-			//No need to check MiddleTierRole; no call to db.
+		public static long GetClinicNumForApi(string clinicNumStr) {
 			long clinicNum;
 			try {
-				clinicNum=System.Convert.ToInt64(strClinicNum);
+				clinicNum=System.Convert.ToInt64(clinicNumStr);
 			}
 			catch(Exception ex) {
 				return -1;

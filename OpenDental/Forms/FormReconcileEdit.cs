@@ -187,7 +187,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textDate.IsValid()
 				|| !textStart.IsValid()
 				|| !textEnd.IsValid()) 
@@ -202,6 +202,10 @@ namespace OpenDental {
 			Reconciles.Update(ReconcileCur);
 			SaveList();
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void FormReconcileEdit_FormClosing(object sender,FormClosingEventArgs e) {
@@ -322,6 +326,5 @@ namespace OpenDental {
 			MigraDocHelper.DrawGrid(section,gridMain);
 			return document;
 		}
-
 	}
 }

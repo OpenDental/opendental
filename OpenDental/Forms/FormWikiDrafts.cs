@@ -114,6 +114,10 @@ namespace OpenDental {
 			gridMain.Focus();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void butDelete_Click(object sender,EventArgs e) {
 			if(gridMain.GetSelectedIndex()<0) {
 				return;

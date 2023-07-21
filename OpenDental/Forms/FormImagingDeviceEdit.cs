@@ -37,7 +37,7 @@ namespace OpenDentalImaging {
 		}
 
 		private void comboTwainName_DropDown(object sender,EventArgs e) {
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				if(!CloudClientL.IsCloudClientRunning()) {
 					return;
 				}
@@ -54,15 +54,15 @@ namespace OpenDentalImaging {
 				MsgBox.Show(this,"EzTwain4.dll not found.  Please run the setup file in your images folder.");
 				return;
 			}
+			EZTwain.GetSourceList();
 			comboTwainName.Items.Clear();
-			if(!EZTwain.GetSourceList()) {
-				return;
-			}
-			StringBuilder stringBuilder=new StringBuilder();
-			stringBuilder.EnsureCapacity(64);
-			while(EZTwain.GetNextSourceName(stringBuilder)) {
+			while(true){
+				StringBuilder stringBuilder=new StringBuilder();
+				bool hasName=EZTwain.GetNextSourceName(stringBuilder);
+				if(!hasName){
+					break;
+				}
 				comboTwainName.Items.Add(stringBuilder.ToString());
-				stringBuilder.EnsureCapacity(64);
 			}
 		}
 
@@ -78,7 +78,7 @@ namespace OpenDentalImaging {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textDescription.Text==""){
 				MsgBox.Show(this,"Please enter a description.");
 				return;
@@ -98,6 +98,10 @@ namespace OpenDentalImaging {
 				ImagingDevices.Update(ImagingDeviceCur);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

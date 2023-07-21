@@ -26,7 +26,7 @@ namespace OpenDental {
 
 		private void FormResellerEdit_Load(object sender,EventArgs e) {
 			//Only Jordan should be able to alter reseller credentials.
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,true)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin,true)) {
 				labelCredentials.Text="Only users with Security Admin can edit credentials.";
 				textUserName.ReadOnly=true;
 				textPassword.ReadOnly=true;
@@ -36,7 +36,6 @@ namespace OpenDental {
 			if(_resellerCur.PasswordHash.Trim()!="") {
 				password="********";//Don't show the password hash.
 			}
-			checkAllowSignupPortal.Checked=_resellerCur.AllowSignupPortal;
 			textPassword.Text=password;
 			FillGridMain();
 			FillGridServices();
@@ -131,12 +130,12 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please select a customer first.");
 				return;
 			}
-			GlobalFormOpenDental.GotoAccount(PIn.Long(_tableCustomers.Rows[gridMain.GetSelectedIndex()]["PatNum"].ToString()));
+			GotoModule.GotoAccount(PIn.Long(_tableCustomers.Rows[gridMain.GetSelectedIndex()]["PatNum"].ToString()));
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
 			//Only Jordan should be able to add services.
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
 			ResellerService resellerService=new ResellerService();
@@ -151,7 +150,7 @@ namespace OpenDental {
 
 		private void gridServices_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			//Only Jordan should be able to edit services.
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,true)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin,true)) {
 				return;
 			}
 			ResellerService resellerService=_listResellerServices[gridServices.GetSelectedIndex()];
@@ -165,7 +164,7 @@ namespace OpenDental {
 
 		private void butDelete_Click(object sender,EventArgs e) {
 			//Only Jordan should be able to delete resellers.
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
 			//Do not let the reseller be deleted if they have customers in their list.
@@ -182,7 +181,7 @@ namespace OpenDental {
 			Patients.Update(patient,patientOld);
 			string logEntry=Lan.g(this,"Patient's status changed from ")+patientOld.PatStatus.GetDescription()+Lan.g(this," to ")
 				+patient.PatStatus.GetDescription()+Lan.g(this," from the Reseller Edit window.");
-			SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,patient.PatNum,logEntry);
+			SecurityLogs.MakeLogEntry(Permissions.PatientEdit,patient.PatNum,logEntry);
 			RegistrationKey[] registrationKeyArray=RegistrationKeys.GetForPatient(patient.PatNum);
 			for(int i=0;i<registrationKeyArray.Length;i++) {
 				DateTime dateTimeNow=MiscData.GetNowDateTime();
@@ -196,7 +195,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textPassword.Text!="" && textUserName.Text.Trim()=="") {
 				MsgBox.Show(this,"User Name cannot be blank.");
 				return;
@@ -245,10 +244,14 @@ namespace OpenDental {
 			if(textPassword.Text!="********") {
 				_resellerCur.LoginDetails=Authentication.GenerateLoginDetailsSHA512(textPassword.Text);
 			}
-			_resellerCur.AllowSignupPortal=checkAllowSignupPortal.Checked;
 			Resellers.Update(_resellerCur);
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 
 	}
 }

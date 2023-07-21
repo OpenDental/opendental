@@ -139,7 +139,7 @@ namespace OpenDentBusiness {
 				command+=@" AND (guarAging.BalOver90 != 0) ";
 			}
 			else {
-				command+=@" AND (guarAging.BalOver90 != 0 OR guarAging.Bal_61_90 != 0 OR guarAging.Bal_31_60 != 0 OR guarAging.Bal_0_30 != 0) ";
+				command+=@" AND (guarAging.BalOver90 >= 0.005 OR guarAging.Bal_61_90 >= 0.005 OR guarAging.Bal_31_60 >= 0.005 OR guarAging.Bal_0_30 >= 0.005) ";
 			}
 			if(ageOptions.NegativeBalOptions == AgingOptions.NegativeBalAgingOptions.Exclude) {
 				command +=" AND guarAging.BalTotal > 0 ";
@@ -203,7 +203,7 @@ namespace OpenDentBusiness {
 			chargeTypeInclude = "("+chargeTypeInclude +") ";
 			string command;
 			command=@"
-					SELECT 'PPComplete' TranType,(CASE WHEN pp.PlanNum > 0 THEN ppc.PatNum ELSE ppc.Guarantor END) PatNum,ppc.ChargeDate TranDate,
+					SELECT 'PPComplete' TranType,ppc.Guarantor PatNum,ppc.ChargeDate TranDate,
 					(CASE WHEN ppc.ChargeType != "+POut.Int((int)PayPlanChargeType.Debit)+@" THEN -ppc.Principal 
 					WHEN pp.PlanNum=0 THEN ppc.Principal+ppc.Interest ELSE 0 END) TranAmount
 					FROM payplancharge ppc 
@@ -274,15 +274,6 @@ namespace OpenDentBusiness {
 					)adjSplit ON adjSplit.AdjNum=adjustment.AdjNum
 				) prodlink ON prodlink.LinkNum=payplanlink.PayPlanLinkNum 
 				WHERE prodlink.AgeDate <= {POut.Date(ageOptions.DateAsOf)} ";
-			//Taken from GetTransQueryString. Calculates discounts on procedures.
-			PayPlanVersions payPlanVersionCur=(PayPlanVersions)PrefC.GetInt(PrefName.PayPlansVersion);
-			if(payPlanVersionCur.In(PayPlanVersions.AgeCreditsAndDebits,PayPlanVersions.AgeCreditsOnly)) {
-				command+="UNION ALL SELECT 'PayPlanLink' TranType,p.PatNum,p.ProcDate,COALESCE(p.Discount+p.DiscountPlanAmt) FROM procedurelog p "+
-					"INNER JOIN payplanlink ppl ON p.ProcNum=ppl.FKey AND ppl.FKey=p.ProcNum AND ppl.LinkType="+POut.Int((int)PayPlanLinkType.Procedure)+" "+
-					"INNER JOIN payplan pp ON ppl.PayPlanNum=pp.PayPlanNum	"+
-					"WHERE pp.IsDynamic=1 AND pp.DynamicPayPlanTPOption="+POut.Int((int)DynamicPayPlanTPOptions.TreatAsComplete)+" "+
-					"AND (p.Discount!=0 OR p.DiscountPlanAmt!=0) AND p.ProcStatus="+POut.Int((int)ProcStat.TP)+" AND p.ProcDate <="+POut.Date(ageOptions.DateAsOf);
-			}
 			return command;
 		}
 

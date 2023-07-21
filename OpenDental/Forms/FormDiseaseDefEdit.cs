@@ -46,8 +46,8 @@ namespace OpenDental{
 				textSnomed.Text=DiseaseDefCur.SnomedCode;
 			}
 			checkIsHidden.Checked=DiseaseDefCur.IsHidden;
-			if(!Security.IsAuthorized(EnumPermType.ProblemDefEdit)) {
-				butSave.Enabled=false;
+			if(!Security.IsAuthorized(Permissions.ProblemDefEdit)) {
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 			}
 			butDelete.Enabled=!_isSheetField;
@@ -120,7 +120,7 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(textName.Text=="") {
 				MsgBox.Show(this,"Not allowed to create a Disease Definition without a description.");
 				return;
@@ -137,5 +137,36 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+	
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

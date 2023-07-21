@@ -6,7 +6,9 @@ namespace CodeBase {
 	///<summary>A wrapper for FormProgressExtended.</summary>
 	public class ODProgressExtended : IODProgressExtended {
 		private Action _actionCloser;
+		private IODEvent _event;
 		private ProgBarStyle _progBarStyle;
+		private ODEventType _odEventType;
 
 		public bool IsPaused { get; private set; }
 
@@ -16,30 +18,32 @@ namespace CodeBase {
 
 		///<param name="currentForm">The form to activate once the progress is done. If you cannot possibly pass in a form, it is okay to pass in null.
 		///</param>
-		public ODProgressExtended(Form currentForm,object tag=null,ProgBarStyle progBarStyle=ProgBarStyle.Blocks,
+		public ODProgressExtended(ODEventType odEventType,IODEvent odEvent,Form currentForm,object tag=null,ProgBarStyle progBarStyle=ProgBarStyle.Blocks,
 			string lanThis="ProgressExtended",string cancelButtonText=null)
 		{
-			_actionCloser=ODProgress.ShowExtended(currentForm,tag,
+			_actionCloser=ODProgress.ShowExtended(odEventType,odEvent.GetType(),currentForm,tag,
 				new ProgressCanceledHandler((object sender,EventArgs e) => {
 					IsCanceled=true;
 				}),
 				new ProgressPausedHandler((object sender,ProgressPausedArgs e) => {
 					IsPaused=e.IsPaused;
 				}),cancelButtonText);
+			_event=odEvent;
 			_progBarStyle=progBarStyle;
+			_odEventType=odEventType;
 			LanThis=lanThis;
 		}
 
 		public void AllowResume() {//resume progress
-			ODEvent.Fire(ODEventType.ProgressBar,new ProgressBarHelper((""),progressBarEventType:ProgBarEventType.AllowResume));
+			_event.FireEvent(new ODEventArgs(_odEventType,new ProgressBarHelper((""),progressBarEventType:ProgBarEventType.AllowResume)));
 		}
 
 		public void HideButtons() {//hide pause and cancel buttons
-			ODEvent.Fire(ODEventType.ProgressBar,new ProgressBarHelper((""),progressBarEventType:ProgBarEventType.HideButtons));
+			_event.FireEvent(new ODEventArgs(_odEventType,new ProgressBarHelper((""),progressBarEventType:ProgBarEventType.HideButtons)));
 		}
 
 		public void OnProgressDone() {//shows "Close" if not visible already
-			ODEvent.Fire(ODEventType.ProgressBar,new ProgressBarHelper((""),progressBarEventType:ProgBarEventType.Done));
+			_event.FireEvent(new ODEventArgs(_odEventType,new ProgressBarHelper((""),progressBarEventType:ProgBarEventType.Done)));
 		}
 
 		public void Close() {
@@ -57,7 +61,7 @@ namespace CodeBase {
 					progBarHelper.ProgressStyle=_progBarStyle;
 				}
 			}
-			ODEvent.Fire(ODEventType.ProgressBar,e.Tag);
+			_event.FireEvent(e);
 		}
 
 		/// <summary>Initializes a new bar or updates the progress bar with more specific information</summary>
@@ -65,12 +69,12 @@ namespace CodeBase {
 			,string labelTop="",bool isLeftHidden=false,bool isTopHidden=false,bool isPercentHidden=false
 			,ProgBarStyle progStyle=ProgBarStyle.Blocks,ProgBarEventType progEvent=ProgBarEventType.ProgressBar) 
 		{
-			ODEvent.Fire(ODEventType.ProgressBar,new ProgressBarHelper(labelValue,percentVal,barVal,barMax,progStyle
-				,tagString,marqSpeed,labelTop,isLeftHidden,isTopHidden,isPercentHidden,progressBarEventType:progEvent));
+			_event.FireEvent(new ODEventArgs(_odEventType,new ProgressBarHelper(labelValue,percentVal,barVal,barMax,progStyle
+				,tagString,marqSpeed,labelTop,isLeftHidden,isTopHidden,isPercentHidden,progressBarEventType:progEvent)));
 		}
 
 		public void UpdateProgress(string message) {
-			ODEvent.Fire(ODEventType.ProgressBar,new ProgressBarHelper(message,progressBarEventType:ProgBarEventType.TextMsg));
+			_event.FireEvent(new ODEventArgs(_odEventType,new ProgressBarHelper(message,progressBarEventType:ProgBarEventType.TextMsg)));
 		}
 
 		/// <summary>
@@ -78,8 +82,8 @@ namespace CodeBase {
 		/// </summary>
 		public void UpdateProgress(string labelTop,string tagstring,string percentVal="",int barVal=0,int barMax=100
 			,bool isTopHidden=false,string labelValue="") {
-			ODEvent.Fire(ODEventType.ProgressBar,new ProgressBarHelper(labelValue,percentVal,barVal,barMax,tagString:tagstring,labelTop:labelTop
-				,isTopHidden:isTopHidden));
+			_event.FireEvent(new ODEventArgs(_odEventType,new ProgressBarHelper(labelValue,percentVal,barVal,barMax,tagString:tagstring,labelTop:labelTop
+				,isTopHidden:isTopHidden)));
 		}
 
 		/// <summary>Checks if progress is paused and waits if it is. If progress gets canceled (while paused or not) returns true</summary>

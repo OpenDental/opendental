@@ -38,7 +38,8 @@ namespace OpenDental{
 			this.checkIsLandscape = new OpenDental.UI.CheckBox();
 			this.textHeight = new OpenDental.ValidNum();
 			this.textWidth = new OpenDental.ValidNum();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.checkBypassLockDate = new OpenDental.UI.CheckBox();
 			this.checkHasMobileLayout = new OpenDental.UI.CheckBox();
 			this.checkAutoSaveCheck = new OpenDental.UI.CheckBox();
@@ -175,15 +176,25 @@ namespace OpenDental{
 			this.textWidth.Size = new System.Drawing.Size(69, 20);
 			this.textWidth.TabIndex = 95;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(481, 505);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(417, 505);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(505, 505);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// checkBypassLockDate
 			// 
@@ -284,7 +295,7 @@ namespace OpenDental{
 			// 
 			// FormSheetDef
 			// 
-			this.ClientSize = new System.Drawing.Size(566, 541);
+			this.ClientSize = new System.Drawing.Size(594, 541);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.labelAutoSaveOverride);
 			this.Controls.Add(this.comboAutoSaveOverride);
@@ -301,7 +312,8 @@ namespace OpenDental{
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.labelSheetType);
 			this.Controls.Add(this.listSheetType);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormSheetDef";
 			this.Text = "Sheet Def";
@@ -317,7 +329,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label labelSheetType;
 		private OpenDental.UI.ListBox listSheetType;
 		private OpenDental.UI.GroupBox groupBox1;

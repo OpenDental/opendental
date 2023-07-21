@@ -51,7 +51,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textToothRange.Text==""){
 				if(OrthoHardwareCur.OrthoHardwareType==EnumOrthoHardwareType.Bracket){
 					MsgBox.Show(this,"Please enter a tooth.");
@@ -105,5 +105,10 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
 	}
 }

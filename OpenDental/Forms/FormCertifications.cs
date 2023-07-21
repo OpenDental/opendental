@@ -319,7 +319,7 @@ namespace OpenDental {
 		}
 
 		private void butSetup_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.CertificationSetup)) {
+			if(!Security.IsAuthorized(Permissions.CertificationSetup)) {
 				return;
 			}
 			using FormCertificationSetup formCertificationSetup=new FormCertificationSetup();
@@ -419,7 +419,7 @@ namespace OpenDental {
 			if(radioCertification.Checked) {
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.CertificationEmployee)) {
+			if(!Security.IsAuthorized(Permissions.CertificationEmployee)) {
 				return;
 			}
 			if(listBoxEmployee.SelectedIndex==-1) {
@@ -479,5 +479,8 @@ namespace OpenDental {
 			}
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }

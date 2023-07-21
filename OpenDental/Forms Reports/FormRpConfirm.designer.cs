@@ -25,6 +25,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpConfirm));
 			this.labelPatient = new System.Windows.Forms.Label();
 			this.listSelect = new OpenDental.UI.ListBox();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.listSelect2 = new OpenDental.UI.ListBox();
@@ -46,13 +47,24 @@ namespace OpenDental {
 			this.listSelect.Location = new System.Drawing.Point(12,30);
 			this.listSelect.Name = "listSelect";
 			this.listSelect.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
-			this.listSelect.Size = new System.Drawing.Size(170,365);
+			this.listSelect.Size = new System.Drawing.Size(170,355);
 			this.listSelect.TabIndex = 5;
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(434,362);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75,26);
+			this.butCancel.TabIndex = 8;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(396,369);
+			this.butOK.Location = new System.Drawing.Point(434,326);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75,26);
 			this.butOK.TabIndex = 7;
@@ -75,14 +87,15 @@ namespace OpenDental {
 			this.listSelect2.Location = new System.Drawing.Point(208,30);
 			this.listSelect2.Name = "listSelect2";
 			this.listSelect2.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
-			this.listSelect2.Size = new System.Drawing.Size(170,365);
+			this.listSelect2.Size = new System.Drawing.Size(170,355);
 			this.listSelect2.TabIndex = 9;
 			// 
 			// FormRpConfirm
 			// 
 			this.AcceptButton = this.butOK;
-			this.ClientSize = new System.Drawing.Size(483,408);
 			this.AutoScaleBaseSize = new System.Drawing.Size(5,13);
+			this.ClientSize = new System.Drawing.Size(538,408);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.listSelect2);
@@ -102,6 +115,7 @@ namespace OpenDental {
 		#endregion
 
 		private System.Windows.Forms.Label labelPatient;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.ListBox listSelect;

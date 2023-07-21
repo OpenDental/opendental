@@ -20,25 +20,20 @@ namespace OpenDental {
 		///<summary></summary>
 		public FrmEmployerEdit()
 		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
+			//Lan.F(this);
 			KeyDown+=Frm_KeyDown;
-			Load+=FrmEmployerEdit_Load;
-			PreviewKeyDown+=FrmEmployerEdit_PreviewKeyDown;
 		}
 
-		private void FrmEmployerEdit_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmEmployerEdit_Loaded(object sender,RoutedEventArgs e) {
 			textEmp.Text=EmployerCur.EmpName;
 		}
 
 		private void Frm_KeyDown(object sender,KeyEventArgs e) {
 			if(e.Key==Key.Enter) {
-				butSave_Click(this,new EventArgs());
-			}
-		}
-
-		private void FrmEmployerEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
 				butSave_Click(this,new EventArgs());
 			}
 		}
@@ -60,5 +55,27 @@ namespace OpenDental {
 			IsDialogOK=true;
 		}
 
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -31,6 +31,7 @@ namespace OpenDental{
 			this.butPrint = new OpenDental.UI.Button();
 			this.butAddSupply = new OpenDental.UI.Button();
 			this.butNewOrder = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.checkShowReceived = new OpenDental.UI.CheckBox();
 			this.SuspendLayout();
 			// 
@@ -111,6 +112,16 @@ namespace OpenDental{
 			this.butNewOrder.Text = "New Order";
 			this.butNewOrder.Click += new System.EventHandler(this.butNewOrder_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(678, 672);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// checkShowReceived
 			// 
 			this.checkShowReceived.AutoSize = true;
@@ -132,11 +143,11 @@ namespace OpenDental{
 			this.Controls.Add(this.gridOrders);
 			this.Controls.Add(this.comboSupplier);
 			this.Controls.Add(this.label3);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.KeyPreview = false;
 			this.Name = "FormSupplyOrders";
 			this.Text = "Supply Orders";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormSupplyOrders_FormClosing);
 			this.Load += new System.EventHandler(this.FormSupplyOrders_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -144,6 +155,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butCancel;
 		private UI.Button butNewOrder;
 		private UI.GridOD gridOrders;
 		private UI.ComboBox comboSupplier;

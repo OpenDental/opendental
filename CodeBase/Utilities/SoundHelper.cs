@@ -8,7 +8,7 @@ namespace CodeBase {
 		/// <summary>If running in ODCloud, converts the given byte array to base64 and sends the data asynchronously to the browser to be played.
 		/// Otherwise, plays the sound asynchronously using SoundPlayer.Play().</summary>
 		public static void PlaySound(byte[] rawData) {
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				string base64=Convert.ToBase64String(rawData);
 				ODException.SwallowAnyException(() => ODCloudClient.SendDataToBrowser(base64,(int)ODCloudClient.BrowserAction.PlaySound));
 				return;
@@ -21,7 +21,7 @@ namespace CodeBase {
 		/// <summary>If running in ODCloud, converts the given byte array to base64 and sends the data synchronously to the browser to be played.
 		/// Otherwise, plays the sound synchronously using SoundPlayer.PlaySync().</summary>
 		public static void PlaySoundSync(byte[] rawData) {
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				string base64=Convert.ToBase64String(rawData);
 				ODException.SwallowAnyException(() => ODCloudClient.SendToBrowserSynchronously(base64,ODCloudClient.BrowserAction.PlaySound,5,false));
 				return;

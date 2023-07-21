@@ -48,7 +48,8 @@ namespace OpenDental {
 			this.butWriteOff = new OpenDental.UI.Button();
 			this.butDeductible = new OpenDental.UI.Button();
 			this.textWriteOff = new OpenDental.ValidDouble();
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.checkIncludeWOPercCoPay = new OpenDental.UI.CheckBox();
 			this.butSplitProcs = new OpenDental.UI.Button();
 			this.SuspendLayout();
@@ -87,11 +88,11 @@ namespace OpenDental {
 			// label2
 			// 
 			this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.label2.Location = new System.Drawing.Point(567, 658);
+			this.label2.Location = new System.Drawing.Point(496, 658);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(311, 39);
 			this.label2.TabIndex = 122;
-			this.label2.Text = "Before you click Save, the Deductible and the Ins Pay amounts should exactly match " +
+			this.label2.Text = "Before you click OK, the Deductible and the Ins Pay amounts should exactly match " +
     "the insurance EOB.";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
@@ -271,15 +272,26 @@ namespace OpenDental {
 			this.textWriteOff.TabIndex = 119;
 			this.textWriteOff.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(890, 659);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 25);
-			this.butSave.TabIndex = 1;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(890, 659);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 25);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(809, 659);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 25);
+			this.butOK.TabIndex = 1;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// checkIncludeWOPercCoPay
 			// 
@@ -303,7 +315,8 @@ namespace OpenDental {
 			// FormEtrans835ClaimPay
 			// 
 			this.ClientSize = new System.Drawing.Size(974, 696);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.checkIncludeWOPercCoPay);
 			this.Controls.Add(this.butSplitProcs);
 			this.Controls.Add(this.textEobInsPayAmt);
@@ -344,7 +357,8 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textInsPayAllowed;
 		private System.Windows.Forms.TextBox textClaimFee;
 		private System.Windows.Forms.Label label1;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butDeductible;
 		private OpenDental.UI.Button butWriteOff;
 		private System.Windows.Forms.Label label2;

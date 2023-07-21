@@ -50,13 +50,13 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Surround with try-catch.</summary>
-		public static void DeleteObject(SupplyOrderItem supplyOrderItem){
+		public static void DeleteObject(SupplyOrderItem supp){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),supplyOrderItem);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),supp);
 				return;
 			}
 			//validate that not already in use.
-			Crud.SupplyOrderItemCrud.Delete(supplyOrderItem.SupplyOrderItemNum);
+			Crud.SupplyOrderItemCrud.Delete(supp.SupplyOrderItemNum);
 		}
 	}
 	
@@ -67,3 +67,12 @@ namespace OpenDentBusiness{
 
 
 }
+
+
+
+
+
+
+
+
+

@@ -19,6 +19,10 @@ namespace OpenDental{
 			Lan.F(this);
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 		private void FormTrojanHelp_Load(object sender,EventArgs e) {
 			textMain.Select(0,31);
 			textMain.SelectionFont=new Font(Font,FontStyle.Bold);
@@ -33,6 +37,5 @@ namespace OpenDental{
 			textMain.Select(1473,10);
 			textMain.SelectionFont=new Font(Font,FontStyle.Bold);
 		}
-
 	}
 }

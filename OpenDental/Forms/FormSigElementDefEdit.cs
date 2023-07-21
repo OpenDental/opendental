@@ -103,24 +103,14 @@ namespace OpenDental{
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			string importFilePath;
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				importFilePath=ODCloudClient.ImportFileForCloud();
-				if(importFilePath.IsNullOrEmpty()) {
-					return;
-				}
-			}
-			else {
-				using OpenFileDialog openFileDialog1=new OpenFileDialog();
-				openFileDialog1.FileName="";
-				openFileDialog1.DefaultExt="wav";
-				if(openFileDialog1.ShowDialog() !=DialogResult.OK){
-					return;
-				}
-				importFilePath=openFileDialog1.FileName;
+			using OpenFileDialog openFileDialog1=new OpenFileDialog();
+			openFileDialog1.FileName="";
+			openFileDialog1.DefaultExt="wav";
+			if(openFileDialog1.ShowDialog() !=DialogResult.OK){
+				return;
 			}
 			try{
-				SigElementDefCur.Sound=POut.Sound(importFilePath);
+				SigElementDefCur.Sound=POut.Sound(openFileDialog1.FileName);
 			}
 			catch(ApplicationException ex){
 				MessageBox.Show(ex.Message);
@@ -131,7 +121,7 @@ namespace OpenDental{
 
 		private void butExport_Click(object sender,EventArgs e) {
 			#region Web Build
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				string fileName=SigElementDefCur.SigText+".wav";
 				string tempPath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
 				try {
@@ -141,12 +131,7 @@ namespace OpenDental{
 					MessageBox.Show(ex.Message);
 					return;
 				}
-				if(ODBuild.IsThinfinity()) {
-					ThinfinityUtils.ExportForDownload(tempPath);
-				}
-				else {//Is AppStream
-					CloudClientL.ExportForCloud(tempPath);
-				}
+				ThinfinityUtils.ExportForDownload(tempPath);
 				return;
 			}
 			#endregion Web Build
@@ -192,7 +177,7 @@ namespace OpenDental{
 			SetSoundButtons();
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textLightRow.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
@@ -214,5 +199,41 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+
+		
+
+		
+
+
+		
+
+
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

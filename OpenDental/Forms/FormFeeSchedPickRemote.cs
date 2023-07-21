@@ -117,6 +117,13 @@ namespace OpenDental {
 
 		private void FillListFeeSchedFilesOntario() {
 			_listFeeSchedFilesOntario=new List<string>();
+			_listFeeSchedFilesOntario.Add("ON_ODA_2022_AN.txt");//Ontario Dental Association 2022 fee schedule for Anaesthesiologists.
+			_listFeeSchedFilesOntario.Add("ON_ODA_2022_EN.txt");//Ontario Dental Association 2022 fee schedule for Endodontists.
+			_listFeeSchedFilesOntario.Add("ON_ODA_2022_GP.txt");//Ontario Dental Association 2022 fee schedule for General Practitioners.
+			_listFeeSchedFilesOntario.Add("ON_ODA_2022_OS.txt");//Ontario Dental Association 2022 fee schedule for Oral & Maxillofacial Surgeons.
+			_listFeeSchedFilesOntario.Add("ON_ODA_2022_PA.txt");//Ontario Dental Association 2022 fee schedule for Paediatric Dentists.
+			_listFeeSchedFilesOntario.Add("ON_ODA_2022_PE.txt");//Ontario Dental Association 2022 fee schedule for Periodontists.
+			_listFeeSchedFilesOntario.Add("ON_ODA_2022_PR.txt");//Ontario Dental Association 2022 fee schedule for Prosthodontists.
 			_listFeeSchedFilesOntario.Add("ON_ODA_2023_AN.txt");//Ontario Dental Association 2023 fee schedule for Anaesthesiologists.
 			_listFeeSchedFilesOntario.Add("ON_ODA_2023_EN.txt");//Ontario Dental Association 2023 fee schedule for Endodontists.
 			_listFeeSchedFilesOntario.Add("ON_ODA_2023_GP.txt");//Ontario Dental Association 2023 fee schedule for General Practitioners.
@@ -124,25 +131,18 @@ namespace OpenDental {
 			_listFeeSchedFilesOntario.Add("ON_ODA_2023_PA.txt");//Ontario Dental Association 2023 fee schedule for Paediatric Dentists.
 			_listFeeSchedFilesOntario.Add("ON_ODA_2023_PE.txt");//Ontario Dental Association 2023 fee schedule for Periodontists.
 			_listFeeSchedFilesOntario.Add("ON_ODA_2023_PR.txt");//Ontario Dental Association 2023 fee schedule for Prosthodontists.
-			_listFeeSchedFilesOntario.Add("ON_ODA_2024_AN.txt");//Ontario Dental Association 2024 fee schedule for Anaesthesiologists.
-			_listFeeSchedFilesOntario.Add("ON_ODA_2024_EN.txt");//Ontario Dental Association 2024 fee schedule for Endodontists.
-			_listFeeSchedFilesOntario.Add("ON_ODA_2024_GP.txt");//Ontario Dental Association 2024 fee schedule for General Practitioners.
-			_listFeeSchedFilesOntario.Add("ON_ODA_2024_OS.txt");//Ontario Dental Association 2024 fee schedule for Oral & Maxillofacial Surgeons.
-			_listFeeSchedFilesOntario.Add("ON_ODA_2024_PA.txt");//Ontario Dental Association 2024 fee schedule for Paediatric Dentists.
-			_listFeeSchedFilesOntario.Add("ON_ODA_2024_PE.txt");//Ontario Dental Association 2024 fee schedule for Periodontists.
-			_listFeeSchedFilesOntario.Add("ON_ODA_2024_PR.txt");//Ontario Dental Association 2024 fee schedule for Prosthodontists.
 		}
 
 		private void FillListFeeSchedFilesBCDA() {
 			_listFeeSchedFilesBCDA=new List<string>();
+			_listFeeSchedFilesBCDA.Add("BC_BCDA_2022_GP.txt");//British Columbia Dental Association 2022 fee schedule for General Practitioners.
+			_listFeeSchedFilesBCDA.Add("BC_BCDA_2022_LTC.txt");//British Columbia Dental Association 2022 fee schedule.
+			_listFeeSchedFilesBCDA.Add("BC_BCDA_2022_PA.txt");//British Columbia Dental Association 2022 fee schedule for Paediatric Dentists.
+			_listFeeSchedFilesBCDA.Add("BC_BCDA_2022_PE.txt");//British Columbia Dental Association 2022 fee schedule for Periodontists.
 			_listFeeSchedFilesBCDA.Add("BC_BCDA_2023_GP.txt");//British Columbia Dental Association 2023 fee schedule for General Practitioners.
 			_listFeeSchedFilesBCDA.Add("BC_BCDA_2023_LTC.txt");//British Columbia Dental Association 2023 fee schedule.
 			_listFeeSchedFilesBCDA.Add("BC_BCDA_2023_PA.txt");//British Columbia Dental Association 2023 fee schedule for Paediatric Dentists.
 			_listFeeSchedFilesBCDA.Add("BC_BCDA_2023_PE.txt");//British Columbia Dental Association 2023 fee schedule for Periodontists.
-			_listFeeSchedFilesBCDA.Add("BC_BCDA_2024_GP.txt");//British Columbia Dental Association 2024 fee schedule for General Practitioners.
-			_listFeeSchedFilesBCDA.Add("BC_BCDA_2024_LTC.txt");//British Columbia Dental Association 2024 fee schedule.
-			_listFeeSchedFilesBCDA.Add("BC_BCDA_2024_PA.txt");//British Columbia Dental Association 2024 fee schedule for Paediatric Dentists.
-			_listFeeSchedFilesBCDA.Add("BC_BCDA_2024_PE.txt");//British Columbia Dental Association 2024 fee schedule for Periodontists.
 		}
 
 		private void gridFeeSchedFiles_CellClick(object sender,ODGridClickEventArgs e) {
@@ -155,6 +155,10 @@ namespace OpenDental {
 
 		private void butOK_Click(object sender,EventArgs e) {
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

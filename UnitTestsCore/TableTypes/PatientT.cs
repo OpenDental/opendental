@@ -11,7 +11,7 @@ namespace UnitTestsCore {
 			long secProvNum=0,long guarantor=0,bool setPortalAccessInfo=false,PatientStatus patStatus=PatientStatus.Patient,bool hasSignedTil=false,
 			bool doInsert=true,int billingCycleDay=1,string language="",string wkPhone="",string address="",string city="",
 			string zip="",string state="",long superfamily=0,string hasIns="",string wirelessPhone="",string middleI="",long billingType=0,
-			double balTotal=0,string famFinUrgNote="",long employerNum=0,string ssn="12356") 
+			double balTotal=0) 
 		{
 			Patient pat=new Patient {
 				Email=email,
@@ -26,7 +26,7 @@ namespace UnitTestsCore {
 				LName=lName+suffix,
 				FName=fName+suffix,
 				MiddleI=middleI,
-				SSN=ssn,
+				SSN="12356",
 				BillingType=PrefC.GetLong(PrefName.PracticeDefaultBillType),
 				ClinicNum=clinicNum,
 				Preferred=preferredName,
@@ -44,7 +44,6 @@ namespace UnitTestsCore {
 				HasIns=hasIns,
 				ChartNumber="0",
 				BalTotal=balTotal,
-				EmployerNum=employerNum,
 			};
 			if(billingType!=0) {
 				if(Defs.GetDef(DefCat.BillingTypes,billingType)!=null) {
@@ -88,7 +87,6 @@ namespace UnitTestsCore {
 			if(guarantor > 0) {
 				pat.Guarantor=guarantor;
 			}
-			pat.FamFinUrgNote=famFinUrgNote;
 			if(lName=="") {
 				pat.LName=listLastNames[random.Next(0,2)];
 			}

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using OpenDentBusiness;
@@ -19,9 +18,7 @@ namespace OpenDental {
 		public string Message;
 		///<summary>TxtMsgOk status of the patient.  Required if sending message without loading form or loading with patient selected.</summary>
 		public YN YNTxtMsgOk;
-		/// <summary>List of short-URLs that were pre-generated and already in the message when it was send to this Form. Used to compare outgoing message to see if the user edited the message by adding new/different short-URLs.</summary>
-		private List<string> _listShortURLsAllowed=new List<string>();
-
+		
 		public FormTxtMsgEdit() {
 			InitializeComponent();
 			InitializeLayoutManager();
@@ -30,7 +27,6 @@ namespace OpenDental {
 
 		private void FormTxtMsgEdit_Load(object sender,EventArgs e) {
 			textWirelessPhone.Text=WirelessPhone;
-			_listShortURLsAllowed=PrefC.GetListShortURLs(Message??"");
 			textMessage.Text=Message;
 			SetMessageCounts();
 			if(PatNum==0) {
@@ -106,15 +102,9 @@ namespace OpenDental {
 				MsgBox.Show(this,"It is not OK to text this patient.");
 				return false;
 			}
-			List<string> listShortURLs=PrefC.GetListShortURLs(message).Except(_listShortURLsAllowed).ToList();
-			if(listShortURLs.Count>0) {
-				string errorMessage=Lan.g(this,"Message cannot contain the URL")+$" {listShortURLs[0]} "+Lan.g(this,"as these are only allowed for eServices.");
-				MessageBox.Show(errorMessage);
-				return false;
-			}
 			if(SmsPhones.IsIntegratedTextingEnabled()) {
 				try {
-					SmsToMobiles.SendSmsSingle(patNum,wirelessPhone,message,clinicNum,smsMessageSource,userod:Security.CurUser);  //Can pass in 0 as PatNum if no patient selected.
+					SmsToMobiles.SendSmsSingle(patNum,wirelessPhone,message,clinicNum,smsMessageSource,user:Security.CurUser);  //Can pass in 0 as PatNum if no patient selected.
 					return true;
 				}
 				catch(Exception ex) {
@@ -163,7 +153,7 @@ namespace OpenDental {
 			commlog.UserNum=Security.CurUser.UserNum;
 			commlog.DateTimeEnd=DateTime.Now;
 			Commlogs.Insert(commlog);
-			SecurityLogs.MakeLogEntry(EnumPermType.CommlogEdit,commlog.PatNum,"Insert Text Message");
+			SecurityLogs.MakeLogEntry(Permissions.CommlogEdit,commlog.PatNum,"Insert Text Message");
 			return true;
 		}
 
@@ -247,5 +237,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

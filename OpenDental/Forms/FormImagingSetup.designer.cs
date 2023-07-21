@@ -56,7 +56,8 @@ namespace OpenDental {
 			this.label2 = new System.Windows.Forms.Label();
 			this.upDownExposure = new System.Windows.Forms.NumericUpDown();
 			this.butSetScanner = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupScanningOptions.SuspendLayout();
 			this.groupBox2.SuspendLayout();
@@ -199,7 +200,7 @@ namespace OpenDental {
 			// 
 			this.label7.Location = new System.Drawing.Point(345, 42);
 			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(274, 15);
+			this.label7.Size = new System.Drawing.Size(246, 15);
 			this.label7.TabIndex = 23;
 			this.label7.Text = "0-100. 100=No compression.  Typical setting: 40";
 			this.label7.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
@@ -371,25 +372,37 @@ namespace OpenDental {
 			this.butSetScanner.Text = "Set Default Scanner";
 			this.butSetScanner.Click += new System.EventHandler(this.butSetScanner_Click);
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(562, 519);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 2;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(627, 558);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 3;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(627, 520);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 2;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// FormImagingSetup
 			// 
-			this.ClientSize = new System.Drawing.Size(649, 555);
+			this.ClientSize = new System.Drawing.Size(729, 606);
 			this.Controls.Add(this.butSetScanner);
 			this.Controls.Add(this.groupBoxSuni);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -413,7 +426,8 @@ namespace OpenDental {
 		}
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label12;
 		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.GroupBox groupBox2;

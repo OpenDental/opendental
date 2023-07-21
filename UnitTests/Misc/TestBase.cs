@@ -49,7 +49,7 @@ namespace UnitTests {
 		/// Do this first so that the time the Initialize and ClassInitialize methods take doesn't get counted in the test times. </summary>
 		[AssemblyInitialize]
 		public static void Initialize(TestContext context) {
-			ODBuild.IsUnitTest=true;//Causes FormFriendlyException to throw rather than displaying a MessageBox.
+			ODInitialize.IsRunningInUnitTest=true;//Causes FormFriendlyException to throw rather than displaying a MessageBox.
 			ODInitialize.Initialize();
 			if(!UnitTestsCore.DatabaseTools.SetDbConnection(UnitTestDbName,"localhost","3306","root","",false)) {//Put this in a config file in the future.
 				UnitTestsCore.DatabaseTools.SetDbConnection("","localhost","3306","root","",false);

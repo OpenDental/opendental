@@ -54,8 +54,6 @@
 			this.textReplicationMasterDatabase = new System.Windows.Forms.TextBox();
 			this.textReplicationMasterServer = new System.Windows.Forms.TextBox();
 			this.checkIsOneWayReplication = new System.Windows.Forms.CheckBox();
-			this.textPEM = new System.Windows.Forms.TextBox();
-			this.labelpem = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.groupReplicationMaster.SuspendLayout();
 			this.SuspendLayout();
@@ -63,7 +61,7 @@
 			// butCancel
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.Location = new System.Drawing.Point(292, 493);
+			this.butCancel.Location = new System.Drawing.Point(292, 450);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 23);
 			this.butCancel.TabIndex = 0;
@@ -74,7 +72,7 @@
 			// butOk
 			// 
 			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOk.Location = new System.Drawing.Point(211, 493);
+			this.butOk.Location = new System.Drawing.Point(211, 450);
 			this.butOk.Name = "butOk";
 			this.butOk.Size = new System.Drawing.Size(75, 23);
 			this.butOk.TabIndex = 1;
@@ -254,7 +252,7 @@
 			this.groupReplicationMaster.Controls.Add(this.textReplicationMasterUser);
 			this.groupReplicationMaster.Controls.Add(this.textReplicationMasterDatabase);
 			this.groupReplicationMaster.Controls.Add(this.textReplicationMasterServer);
-			this.groupReplicationMaster.Location = new System.Drawing.Point(27, 321);
+			this.groupReplicationMaster.Location = new System.Drawing.Point(27, 282);
 			this.groupReplicationMaster.Name = "groupReplicationMaster";
 			this.groupReplicationMaster.Size = new System.Drawing.Size(324, 160);
 			this.groupReplicationMaster.TabIndex = 3;
@@ -345,7 +343,7 @@
 			// 
 			// checkIsOneWayReplication
 			// 
-			this.checkIsOneWayReplication.Location = new System.Drawing.Point(27, 296);
+			this.checkIsOneWayReplication.Location = new System.Drawing.Point(27, 253);
 			this.checkIsOneWayReplication.Name = "checkIsOneWayReplication";
 			this.checkIsOneWayReplication.Size = new System.Drawing.Size(324, 24);
 			this.checkIsOneWayReplication.TabIndex = 4;
@@ -353,29 +351,11 @@
 			this.checkIsOneWayReplication.UseVisualStyleBackColor = true;
 			this.checkIsOneWayReplication.CheckedChanged += new System.EventHandler(this.checkIsOneWayReplication_CheckedChanged);
 			// 
-			// textPEM
-			// 
-			this.textPEM.Location = new System.Drawing.Point(156, 264);
-			this.textPEM.Name = "textPEM";
-			this.textPEM.Size = new System.Drawing.Size(189, 20);
-			this.textPEM.TabIndex = 5;
-			// 
-			// labelpem
-			// 
-			this.labelpem.Location = new System.Drawing.Point(27, 266);
-			this.labelpem.Name = "labelpem";
-			this.labelpem.Size = new System.Drawing.Size(122, 18);
-			this.labelpem.TabIndex = 13;
-			this.labelpem.Text = "SKY SQL PEM";
-			this.labelpem.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
 			// FormWebConfigSettings
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(379, 528);
-			this.Controls.Add(this.labelpem);
-			this.Controls.Add(this.textPEM);
+			this.ClientSize = new System.Drawing.Size(379, 485);
 			this.Controls.Add(this.checkIsOneWayReplication);
 			this.Controls.Add(this.groupReplicationMaster);
 			this.Controls.Add(this.groupBox1);
@@ -389,7 +369,6 @@
 			this.groupReplicationMaster.ResumeLayout(false);
 			this.groupReplicationMaster.PerformLayout();
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 
@@ -426,7 +405,5 @@
 		private System.Windows.Forms.TextBox textReplicationMasterDatabase;
 		private System.Windows.Forms.TextBox textReplicationMasterServer;
 		private System.Windows.Forms.CheckBox checkIsOneWayReplication;
-		private System.Windows.Forms.TextBox textPEM;
-		private System.Windows.Forms.Label labelpem;
 	}
 }

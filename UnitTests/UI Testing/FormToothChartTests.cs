@@ -24,7 +24,7 @@ namespace UnitTests {
 			if(_patient!=null) {
 				return;//Data has already been initialized.
 			}
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.StartingMessage="Initialize Data";
 			progressOD.ActionMain=() => {
 				//Initialize a unit test database for the corresponding maj.min version if one doesn't already exist.
@@ -90,7 +90,7 @@ namespace UnitTests {
 				_listRowsProcForGraphical=ChartModules.GetProgNotes(_patient.PatNum,false,null).Select().ToList();
 				#endregion
 			};
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 		}
 
 		private void butToothChartBig_Click(object sender,EventArgs e) {

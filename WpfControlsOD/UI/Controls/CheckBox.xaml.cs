@@ -16,12 +16,11 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace WpfControls.UI{
-/*
+	/*
 Jordan is the only one allowed to edit this file.
 
 How to use the CheckBox control:
 -Height should be about 20
--Since Checked is a nullable, you have to explicitly compare like this: Checked==true or Checked==false, not Checked.Value, or (bool)Checked
 -MS has no CheckChanged event, so we don't either.  Use Click.
 -If disabled, then Click event won't fire. (still researching this, and we may need to let it fire anyway in some cases)
 -We may need to distinguish between mouse events on the box vs text.
@@ -35,16 +34,11 @@ How to use the CheckBox control:
 	public partial class CheckBox : UserControl{
 		private EnumCheckAlign _checkAlign;
 		private bool? _checked=false;
-		private bool _isHover=false;
 		private bool _isThreeState=false;
 		
 		public CheckBox(){
 			InitializeComponent();
-			//Width=100;
-			//Height=20;
 			grid.MouseDown+=grid_MouseDown;
-			grid.MouseMove+=Grid_MouseMove;
-			grid.MouseLeave+=Grid_MouseLeave;
 			IsEnabledChanged+=CheckBox_IsEnabledChanged;
 		}
 
@@ -72,10 +66,8 @@ How to use the CheckBox control:
 					System.Windows.Controls.Grid.SetColumn(border,0);
 					System.Windows.Controls.Grid.SetColumn(textBlock,1);
 					textBlock.TextAlignment=TextAlignment.Left;
-					textBlock.HorizontalAlignment=HorizontalAlignment.Left;
 					border.VerticalAlignment=VerticalAlignment.Top;
 					textBlock.VerticalAlignment=VerticalAlignment.Top;
-					textBlock.Padding=new Thickness(5,0,0,0);
 				}
 				if(_checkAlign==EnumCheckAlign.MiddleLeft){
 					grid.ColumnDefinitions.Clear();
@@ -89,10 +81,8 @@ How to use the CheckBox control:
 					System.Windows.Controls.Grid.SetColumn(border,0);
 					System.Windows.Controls.Grid.SetColumn(textBlock,1);
 					textBlock.TextAlignment=TextAlignment.Left;
-					textBlock.HorizontalAlignment=HorizontalAlignment.Left;
 					border.VerticalAlignment=VerticalAlignment.Center;
 					textBlock.VerticalAlignment=VerticalAlignment.Center;
-					textBlock.Padding=new Thickness(5,0,0,0);
 				}
 				if(_checkAlign==EnumCheckAlign.MiddleRight){
 					grid.ColumnDefinitions.Clear();
@@ -106,15 +96,12 @@ How to use the CheckBox control:
 					System.Windows.Controls.Grid.SetColumn(border,1);
 					System.Windows.Controls.Grid.SetColumn(textBlock,0);
 					textBlock.TextAlignment=TextAlignment.Right;
-					textBlock.HorizontalAlignment=HorizontalAlignment.Right;
 					border.VerticalAlignment=VerticalAlignment.Center;
 					textBlock.VerticalAlignment=VerticalAlignment.Center;
-					textBlock.Padding=new Thickness(0,0,5,0);
 				}
 			}
 		}
 
-		///<summary>Since it's a nullable, you have to explicitly compare like this: Checked==true or Checked==false, not Checked.Value, or (bool)Checked.</summary>
 		[Category("OD")]
 		[Description("Since it's a nullable, you have to explicitly compare like this: Checked==true or Checked==false, not Checked.Value, or (bool)Checked.")]
 		[DefaultValue(false)]
@@ -161,13 +148,6 @@ How to use the CheckBox control:
 				SetCheckVis();
 			}
 		}
-
-		//[Category("OD")]
-		//[DefaultValue(int.MaxValue)]
-		//[Description("Use this instead of TabIndex.")]
-		//public int TabIndexOD{
-			 //TabIndex is just for textboxes for now.
-		//}
 		
 		[Category("OD")]
 		public string Text {
@@ -193,19 +173,12 @@ How to use the CheckBox control:
 			}
 		}
 		#endregion Properties
-
 		private void CheckBox_IsEnabledChanged(object sender,DependencyPropertyChangedEventArgs e) {
 			//This is nice because it gets hit when changing the property in the designer.
 			SetColors();
 		}
-		
-		private void Grid_MouseLeave(object sender,MouseEventArgs e) {
-			_isHover=false;
-			SetColors();
-		}
 
 		private void grid_MouseDown(object sender,MouseButtonEventArgs e) {
-			//This does not actually fire unless a control inside the grid is clicked.
 			//order is unchecked-checked-indeterm
 			if(Checked==false){
 				Checked=true;
@@ -225,11 +198,6 @@ How to use the CheckBox control:
 			Click?.Invoke(this,new EventArgs());
 		}
 
-		private void Grid_MouseMove(object sender,MouseEventArgs e) {
-			_isHover=true;
-			SetColors();
-		}
-
 		private void SetCheckVis(){
 			polylineCheck.Visibility=Visibility.Collapsed;
 			rectangleIndeterm.Visibility=Visibility.Collapsed;
@@ -246,12 +214,6 @@ How to use the CheckBox control:
 		}
 
 		private void SetColors(){
-			if(_isHover){
-				border.Background=new SolidColorBrush(Color.FromRgb(210,239,255));
-			}
-			else{
-				border.Background=Brushes.White;
-			}
 			if(IsEnabled){
 				textBlock.Foreground=Brushes.Black;//not hit very often. Usually black because of default.
 				border.BorderBrush=new SolidColorBrush(Color.FromRgb(111,111,111));//#FF6F6F6F

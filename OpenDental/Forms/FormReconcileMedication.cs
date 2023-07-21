@@ -344,7 +344,7 @@ namespace OpenDental {
 			FillReconcileGrid();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(_listMedicationPatsReconcile.Count==0) {
 				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"The reconcile list is empty which will cause all existing medications to be removed.  Continue?")) {
 					return;
@@ -407,11 +407,16 @@ namespace OpenDental {
 					Medication medicationInter=Medications.GetMedicationFromDbByRxCui(_listMedicationPatsReconcile[i].RxCui);
 					using FormCDSIntervention FormCDSI=new FormCDSIntervention();
 					FormCDSI.ListCDSInterventions=EhrTriggers.TriggerMatch(medicationInter,_patient);
-					FormCDSI.ShowIfRequired();
+					FormCDSI.ShowIfRequired(false);
 				}
 			}
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 
 	}
 }

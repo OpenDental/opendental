@@ -160,7 +160,7 @@ namespace OpenDental.User_Controls {
 				if(_isPermissionMode) {
 					row.Cells.Add(reportCur.Description+(reportCur.IsHidden ? " (hidden)" : ""));
 					if(GroupPermissions.HasPermission(_listUserGroups[comboUserGroup.SelectedIndex].UserGroupNum,
-						EnumPermType.Reports,
+						Permissions.Reports,
 						reportCur.DisplayReportNum,
 						listGroupPermissions:ListGroupPermissionsForReports))
 					{
@@ -227,7 +227,7 @@ namespace OpenDental.User_Controls {
 				GroupPermission groupPerm=new GroupPermission();
 				groupPerm.NewerDate=DateTime.MinValue;
 				groupPerm.NewerDays=0;
-				groupPerm.PermType=EnumPermType.Reports;
+				groupPerm.PermType=Permissions.Reports;
 				groupPerm.UserGroupNum=_listUserGroups[comboUserGroup.SelectedIndex].UserGroupNum;
 				groupPerm.FKey=0;
 				ListGroupPermissionsForReports.Add(groupPerm);
@@ -261,7 +261,7 @@ namespace OpenDental.User_Controls {
 			if(_isPermissionMode) {
 				if(_selectedCell.X==1) {
 					if(GroupPermissions.HasPermission(_listUserGroups[comboUserGroup.SelectedIndex].UserGroupNum,
-						EnumPermType.Reports,
+						Permissions.Reports,
 						clicked.DisplayReportNum,
 						listGroupPermissions:ListGroupPermissionsForReports))
 					{
@@ -282,7 +282,7 @@ namespace OpenDental.User_Controls {
 								GroupPermission groupPerm=new GroupPermission();
 								groupPerm.NewerDate=DateTime.MinValue;
 								groupPerm.NewerDays=0;
-								groupPerm.PermType=EnumPermType.Reports;
+								groupPerm.PermType=Permissions.Reports;
 								groupPerm.UserGroupNum=_listUserGroups[comboUserGroup.SelectedIndex].UserGroupNum;
 								groupPerm.FKey=ListDisplayReportAll[i].DisplayReportNum;
 								ListGroupPermissionsForReports.Add(groupPerm);
@@ -293,7 +293,7 @@ namespace OpenDental.User_Controls {
 						GroupPermission groupPerm=new GroupPermission();
 						groupPerm.NewerDate=DateTime.MinValue;
 						groupPerm.NewerDays=0;
-						groupPerm.PermType=EnumPermType.Reports;
+						groupPerm.PermType=Permissions.Reports;
 						groupPerm.UserGroupNum=_listUserGroups[comboUserGroup.SelectedIndex].UserGroupNum;
 						groupPerm.FKey=clicked.DisplayReportNum;
 						ListGroupPermissionsForReports.Add(groupPerm);

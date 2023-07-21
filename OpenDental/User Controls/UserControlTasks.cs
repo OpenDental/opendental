@@ -25,62 +25,56 @@ namespace OpenDental {
 		///<summary>An arraylist of TaskLists beginning from the trunk and adding on branches.  If the count is 0, then we are in the trunk of one of the five categories.  The last TaskList in the TreeHistory is the one that is open in the main window.</summary>
 		private List<TaskList> _listTaskListTreeHistory;
 		///<summary>A TaskList that is on the 'clipboard' waiting to be pasted.  Will be null if nothing has been copied yet.</summary>
-		private TaskList _taskListClip;
+		private TaskList _clipTaskList;
 		///<summary>A Task that is on the 'clipboard' waiting to be pasted.  Will be null if nothing has been copied yet.</summary>
-		private Task _taskClip;
+		private Task _clipTask;
 		///<summary>If there is an item on our 'clipboard', this tracks whether it was cut.</summary>
 		private bool _wasCut;
+		///<summary>The index of the last clicked item in the main list.</summary>
+		private int _clickedI;
 		///<summary>After closing, if this is not zero, then it will jump to the object specified in GotoKeyNum.</summary>
-		public TaskObjectType TaskObjectTypeGoTo;
+		public TaskObjectType GotoType;
 		///<summary>After closing, if this is not zero, then it will jump to the specified patient.</summary>
-		public long KeyNumGoTo;
+		public long GotoKeyNum;
 		///<summary>All notes for the showing tasks, ordered by date time.</summary>
 		private List<TaskNote> _listTaskNotes=new List<TaskNote>();
 		///<summary>A friendly string that could be used as the title of any window that has this control on it.
 		///It will contain the description of the currently selected task list and a count of all new tasks within that list.</summary>
-		public string TitleControlParent;
+		public string ControlParentTitle;
 		private const int _TriageListNum=1697;
 		private bool _isTaskSortApptDateTime;//Use task AptDateTime sort setup in FormTaskOptions.
 		private bool _isShowFinishedTasks=false;//Show finished task setup in FormTaskOptions.
 		private bool _isShowArchivedTaskLists;//Show archived task lists in FormTaskOptions.
 		private DateTime _dateTimeStartShowFinished=DateTime.Today.AddDays(-7);//Show finished task date setup in FormTaskOptions.
 		///<summary>Keeps track of which tasks are expanded.  Persists between TaskList list updates.</summary>
-		private List<long> _listTaskNumsExpanded=new List<long>();
+		private List<long> _listExpandedTaskNums=new List<long>();
 		private bool _isCollapsedByDefault;
 		private bool _hasListSwitched;
 		///<summary>This can be three states: 0 for all tasks expanded, 1 for all tasks collapsed, and -1 for mixed.</summary>
 		private int _taskCollapsedState;
+		///<summary>When a task is selected via right click, we make a shallow copy of the task so menu options are performed on the correct task.</summary>
+		private Task _clickedTask;
 		///<summary>The states of patients from previously seen tasks.</summary>
 		private Dictionary<long,string> _dictPatStates=new Dictionary<long, string>();
 		///<summary>Signalnums for Task or TaskList signals sent from this machine, that have not yet been received back from 
 		///FormOpenDental.OnProcessSignals(). Do not include InvalidType.TaskPopup.</summary>
-		private List<long> _listSignalNumsSentTask=new List<long>();
-		///<summary>All instances of this control that are currently open.</summary>
-		private static List <UserControlTasks> _listUserControlTaskss=new List<UserControlTasks>();
+		private List<long> _listSentTaskSignalNums=new List<long>();
+		private static List <UserControlTasks> _listInstances=new List<UserControlTasks>();
 		///<summary>TaskListNums for TaskLists the current user is subscribed to.
 		///Is static so can be referenced from multiple instances of this control.  Locked each time it is accessed so it is thread safe.</summary>
-		private static List<long> _listTaskListNumsSubscribed=new List<long>();
+		private static List<long> _listSubscribedTaskListNums=new List<long>();
 		///<summary>A list of job links used for displaying whether a task has an attached job.</summary>
 		private static List<JobLink> _listJobLinks=new List<JobLink>();
 		///<summary>A list of jobs that are used for determining whether a task has an attached job in the fill grid.</summary>
 		private static List<Job> _listJobs=new List<Job>();
 		///<summary>The action which occurs when the Toggle Chat button is clicked.  Only set for OD HQ triage.</summary>
 		private Action _actionChatToggle=null;
-		///<summary>Defines which filter type is the default for the current tasklist for filtering the Task grid.</summary>
-		private EnumTaskFilterType _enumTaskFilterTypeForList;
-		///<summary>This is the patient used to filter tasks from.</summary>
-		private Patient _patientFilter;
-		///<summary>This is the start date to filter tasks from.</summary>
-		private DateTime _dateFilterStart;
-		///<summary>This is the end date to filter tasks from</summary>
-		private DateTime _dateFilterEnd;
-		///<summary>The current clinic selected for filtering</summary>
-		private List<long> _listClinicNumsFilter=new List<long>();
-		///<summary>The current region selected for filtering</summary>
-		private List<long> _listDefNumsRegionFilter=new List<long>();
-		private EnumTaskPatientFilterType _enumTaskPatientFilterType;
+		///<summary>Defines which filter type is currently in use for filtering the Task grid.</summary>
+		private GlobalTaskFilterType _globalFilterType;
+		///<summary>Foreign keys to either a Clinic or a Region Def.  Indicates current filter on the selected TaskList.</summary>
+		private List<long> _listFilterFkeys;
 		///<summary>Defined here so we can change the text on this button depending on filer setting.</summary>
-		private ODToolBarButton _odToolBarButtonFilter;
+		private ODToolBarButton _butFilter;
 		///<summary>Dictionary to look up task list by primary key. Key: TaskListNum. Value: TaskList.</summary>
 		private Dictionary<long,TaskList> _dictTaskLists;
 		///<summary>A list of all task attachments for tasks in the selected task list.</summary>
@@ -92,18 +86,16 @@ namespace OpenDental {
 		///<summary>Makes an additional reference pointer to _listTasks when at the trunk of the Main or Reminder tab and manual refresh is enabled.</summary>
 		private List<Task> _listTasksCopy=new List<Task>();
 		///<summary></summary>
-		private string _tabNamePrevious;
+		private string _previousTabName;
 		/// <summary>used for searching tasknum via the clipboard</summary>
 		private long _taskNumOld=-1;
-		///<summary>Only used from UI.</summary>
-		private List<TaskList> _listTaskListsHistory;
 
 		///<summary>Creates a thread safe copy of _listSubscribedTaskListNums.</summary>
-		private static List<long> ListTaskListNumsSubscribed {
+		private static List<long> ListSubscribedTaskListNums {
 			get {
 				List <long> listTaskListNums=null;
-				lock(_listTaskListNumsSubscribed) {
-					listTaskListNums=new List<long>(_listTaskListNumsSubscribed);
+				lock(_listSubscribedTaskListNums) {
+					listTaskListNums=new List<long>(_listSubscribedTaskListNums);
 				}
 				return listTaskListNums;
 			}
@@ -116,42 +108,41 @@ namespace OpenDental {
 			//Lan.F(this);
 			Lan.C(this,menuEdit);
 			gridMain.ContextMenu=menuEdit;
-			_listUserControlTaskss.Add(this);
+			_listInstances.Add(this);
 		}
 
 		///<summary>Destructor.  Removes this instance from the private list of instances.</summary>
 		~UserControlTasks() {
-			_listUserControlTaskss.Remove(this);
+			_listInstances.Remove(this);
 		}
 
 		private void UserControlTasks_Resize(object sender,EventArgs e) {
 			//ToolBarMain is docked, h=25
-			//Filter area always show
+			//LayoutManager.Move(taskListFilterGroupBox,new Rectangle(2,LayoutManager.Scale(27),LayoutManager.Scale(200),LayoutManager.Scale(45)));
 			LayoutManager.Move(tabControl,new Rectangle(0,LayoutManager.Scale(49),Width,LayoutManager.Scale(20)));
 			LayoutManager.Move(monthCalendar,new Rectangle(0,LayoutManager.Scale(70),LayoutManager.Scale(227),LayoutManager.Scale(162)));
 			LayoutManager.MoveWidth(tree,Width);
 			LayoutManager.MoveWidth(gridMain,Width);
 			FillGrid(new List<Signalod>());//Sets height.  Does not run query.
-			LayoutTreeAndGrid();
 		}
 
 		///<summary>Calls RefreshTasks for all known instances of UserControlTasks for each instance which is visible and not disposed.</summary>
-		public static void RefreshTasksForAllInstances(List<Signalod> listSignalods,UserControlTasksTab userControlTasksTabRefresh=UserControlTasksTab.Invalid) {
-			foreach(UserControlTasks control in _listUserControlTaskss) {
+		public static void RefreshTasksForAllInstances(List<Signalod> listSignals,UserControlTasksTab tabToRefresh=UserControlTasksTab.Invalid) {
+			foreach(UserControlTasks control in _listInstances) {
 				if(!control.Visible || control.IsDisposed) {
 					continue;
 				}
-				if(userControlTasksTabRefresh!=UserControlTasksTab.Invalid && control.TaskTab!=userControlTasksTabRefresh) {
+				if(tabToRefresh!=UserControlTasksTab.Invalid && control.TaskTab!=tabToRefresh) {
 					continue;
 				}
-				Logger.LogAction("UserControlTasks.RefreshTasks",LogPath.Signals,() => control.FillGrid(listSignalods));
+				Logger.LogAction("UserControlTasks.RefreshTasks",LogPath.Signals,() => control.FillGrid(listSignals));
 			}
 		}
 
 		///<summary>Resets the currently applied filter to either the preference TasksGlobalFilterType, or the selected TaskList's override, for all 
 		///instances of UserControlTasks.</summary>
 		public static void ResetGlobalTaskFilterTypesToDefaultAllInstances() {
-			foreach(UserControlTasks control in _listUserControlTaskss) {
+			foreach(UserControlTasks control in _listInstances) {
 				if(!control.Visible || control.IsDisposed) {
 					continue;
 				}
@@ -199,7 +190,7 @@ namespace OpenDental {
 					LayoutManager.Add(tabReminders,tabControl);
 				}
 			}
-			if(_listTaskListsHistory==null) {//first time opening
+			if(Tasks.LastOpenList==null) {//first time openning
 				_listTaskListTreeHistory=new List<TaskList>();
 				monthCalendar.SelectionStart=DateTime.Today;
 			}
@@ -213,7 +204,7 @@ namespace OpenDental {
 				//for(int i=0;i<Tasks.LastOpenList.Count;i++) {
 				//	TreeHistory.Add(((TaskList)Tasks.LastOpenList[i]).Copy());
 				//}
-				monthCalendar.SelectionStart=Tasks.dateLastOpen;
+				monthCalendar.SelectionStart=Tasks.LastOpenDate;
 			}
 			if(PrefC.GetBool(PrefName.EnterpriseManualRefreshMainTaskLists)) {
 				butRefresh.Visible=true;
@@ -224,14 +215,14 @@ namespace OpenDental {
 			if(PrefC.IsODHQ) {
 				menuNavJob.Visible=true;
 				menuNavJob.Enabled=false;
-				if(Security.IsAuthorized(EnumPermType.TaskDelete,true)) {
+				if(Security.IsAuthorized(Permissions.TaskDelete,true)) {
 					menuDeleteTaken.Visible=true;
 				}
 			}
 			menuNavAttachment.Enabled=false;
 			_isTaskSortApptDateTime=PrefC.GetBool(PrefName.TaskSortApptDateTime);//This sets it for use and also for the task options default value.
-			List<UserOdPref> listUserOdPrefsForCollapsing=UserOdPrefs.GetByUserAndFkeyType(Security.CurUser.UserNum,UserOdFkeyType.TaskCollapse);
-			_isCollapsedByDefault=listUserOdPrefsForCollapsing.Count==0 ? false : PIn.Bool(listUserOdPrefsForCollapsing[0].ValueString);
+			List<UserOdPref> listPrefsForCollapsing=UserOdPrefs.GetByUserAndFkeyType(Security.CurUser.UserNum,UserOdFkeyType.TaskCollapse);
+			_isCollapsedByDefault=listPrefsForCollapsing.Count==0 ? false : PIn.Bool(listPrefsForCollapsing[0].ValueString);
 			_hasListSwitched=true;
 			_taskCollapsedState=_isCollapsedByDefault ? 1 : 0;
 			SetFiltersToDefault();//Fills Tree and Grid
@@ -277,7 +268,7 @@ namespace OpenDental {
 				return UserControlTasksTab.Invalid;//Default.  Should not happen.
 			}
 			set {
-				UI.TabPage tabPageOld=tabControl.SelectedTab;
+				UI.TabPage tabOld=tabControl.SelectedTab;
 				if(value==UserControlTasksTab.ForUser) {
 					tabControl.SelectedTab=tabUser;
 				}
@@ -311,7 +302,7 @@ namespace OpenDental {
 				else if(value==UserControlTasksTab.Invalid) {
 					//Do nothing.
 				}
-				if(tabControl.SelectedTab!=tabPageOld) {//Tab changed, refresh the tree.
+				if(tabControl.SelectedTab!=tabOld) {//Tab changed, refresh the tree.
 					_listTaskListTreeHistory=new List<TaskList>();//clear the tree no matter which tab selected.
 					FillTree();
 					FillGrid();
@@ -346,20 +337,19 @@ namespace OpenDental {
 			tabNew.Text="New for";
 			_listTaskListTreeHistory=new List<TaskList>();
 			FillTree();
-			gridMain.SetAll(false);
 			gridMain.ListGridRows.Clear();
 			gridMain.Invalidate();
 		}
 
 		///<summary>Used by OD HQ.</summary>
 		public void FillGridWithTriageList() {
-			TaskList taskList=TaskLists.GetOne(_TriageListNum);
+			TaskList tlOne=TaskLists.GetOne(_TriageListNum);
 			tabControl.SelectedTab=tabMain;
 			if(_listTaskListTreeHistory==null) {
 				_listTaskListTreeHistory=new List<TaskList>();
 			}
 			_listTaskListTreeHistory.Clear();
-			_listTaskListTreeHistory.Add(taskList);
+			_listTaskListTreeHistory.Add(tlOne);
 			if(_listTaskLists==null) {
 				_listTaskLists=new List<TaskList>();
 			}
@@ -368,7 +358,7 @@ namespace OpenDental {
 				_listTasks=new List<Task>();
 			}
 			_listTasks.Clear();
-			_listTasks=Tasks.RefreshChildren(_TriageListNum,false,monthCalendar.SelectionStart,Security.CurUser.UserNum,0,TaskType.All,_listClinicNumsFilter,_listDefNumsRegionFilter);
+			_listTasks=Tasks.RefreshChildren(_TriageListNum,false,monthCalendar.SelectionStart,Security.CurUser.UserNum,0,TaskType.All,_globalFilterType,_listFilterFkeys);
 			FillTree();
 			FillGrid();
 			gridMain.Focus();//Allow immediate mouse wheel scroll when loading triage list, no click required
@@ -389,143 +379,92 @@ namespace OpenDental {
 				DataValid.SetInvalid(InvalidType.Prefs);
 				Cursor=Cursors.Default;
 			}
-			ODEvent.Fired+=PatientChangedEvent_Fired;
+			PatientChangedEvent.Fired+=PatientChangedEvent_Fired;
 		}
 
 		/// <summary> Refreshes patient task list when we switch patients</summary>
 		private void PatientChangedEvent_Fired(ODEventArgs e) {
-			if(e.EventType!=ODEventType.Patient){
-				return;
-			}
 			RefreshPatTicketsIfNeeded();
 		}
 
 		///<summary></summary>
 		public void LayoutToolBar() {
 			ToolBarMain.Buttons.Clear();
-			ODToolBarButton odToolBarButtonOptions=new ODToolBarButton();
-			odToolBarButtonOptions.Text=Lan.g(this,"Options");
-			odToolBarButtonOptions.ToolTipText=Lan.g(this,"Set session specific task options.");
-			odToolBarButtonOptions.Tag="Options";
-			ToolBarMain.Buttons.Add(odToolBarButtonOptions);
+			ODToolBarButton butOptions=new ODToolBarButton();
+			butOptions.Text=Lan.g(this,"Options");
+			butOptions.ToolTipText=Lan.g(this,"Set session specific task options.");
+			butOptions.Tag="Options";
+			ToolBarMain.Buttons.Add(butOptions);
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Add Task List"),0,"","AddList"));
-			ODToolBarButton odToolBarButtonTask=new ODToolBarButton(Lan.g(this,"Add Task"),1,"","AddTask");
-			odToolBarButtonTask.Style=ODToolBarButtonStyle.DropDownButton;
-			odToolBarButtonTask.DropDownMenu=menuTask;
-			ToolBarMain.Buttons.Add(odToolBarButtonTask);
+			ODToolBarButton butTask=new ODToolBarButton(Lan.g(this,"Add Task"),1,"","AddTask");
+			butTask.Style=ODToolBarButtonStyle.DropDownButton;
+			butTask.DropDownMenu=menuTask;
+			ToolBarMain.Buttons.Add(butTask);
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Search"),-1,"","Search"));
-			ODToolBarButton odToolBarButton=new ODToolBarButton();
-			odToolBarButton.Text=Lan.g(this,"Manage Blocks");
-			odToolBarButton.ToolTipText=Lan.g(this,"Manage which task lists will have popups blocked even when subscribed.");
-			odToolBarButton.Tag="BlockSubsc";
-			odToolBarButton.IsTogglePushed=Security.CurUser.DefaultHidePopups;
-			ToolBarMain.Buttons.Add(odToolBarButton);
+			ODToolBarButton button=new ODToolBarButton();
+			button.Text=Lan.g(this,"Manage Blocks");
+			button.ToolTipText=Lan.g(this,"Manage which task lists will have popups blocked even when subscribed.");
+			button.Tag="BlockSubsc";
+			button.IsTogglePushed=Security.CurUser.DefaultHidePopups;
+			ToolBarMain.Buttons.Add(button);
 			//Filtering only works if Clinics are enabled and preference turned on.
-			if((EnumTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType)!=EnumTaskFilterType.Disabled) {
-				//string textBut=string.Empty;
-				//if(_enumTaskFilterType==EnumTaskFilterType.None) {
-				//	textBut="Unfiltered";
-				//}
-				//else {
-				//	textBut="Filtered by "+_enumTaskFilterType.GetDescription();
-				//}
-				_odToolBarButtonFilter=new ODToolBarButton("Task Filter",-1,"Select filter.","Filter");
-				ToolBarMain.Buttons.Add(_odToolBarButtonFilter);
+			if(PrefC.HasClinicsEnabled && (GlobalTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType)!=GlobalTaskFilterType.Disabled) {
+				string textBut=string.Empty;
+				if(_globalFilterType==GlobalTaskFilterType.None) {
+					textBut="Unfiltered";
+				}
+				else {
+					textBut="Filtered by "+_globalFilterType.GetDescription();
+				}
+				_butFilter=new ODToolBarButton(textBut,-1,"Select filter.","Filter");
+				_butFilter.Style=ODToolBarButtonStyle.DropDownButton;
+				_butFilter.DropDownMenu=menuFilter;
+				ToolBarMain.Buttons.Add(_butFilter);
 			}
 			ToolBarMain.Invalidate();
 		}
 
 		private void FillTree() {
 			tree.Nodes.Clear();
-			TreeNode treeNode;
+			TreeNode node;
 			//TreeNode lastNode=null;
-			string descNode;
+			string nodedesc;
 			for(int i=0;i<_listTaskListTreeHistory.Count;i++) {
-				descNode=_listTaskListTreeHistory[i].Descript;
+				nodedesc=_listTaskListTreeHistory[i].Descript;
 				if(tabControl.SelectedTab==tabUser) {
-					descNode=_listTaskListTreeHistory[i].ParentDesc+descNode;
+					nodedesc=_listTaskListTreeHistory[i].ParentDesc+nodedesc;
 				}
-				treeNode=new TreeNode(descNode);
-				treeNode.Tag=_listTaskListTreeHistory[i].TaskListNum;
+				node=new TreeNode(nodedesc);
+				node.Tag=_listTaskListTreeHistory[i].TaskListNum;
 				if(tree.SelectedNode==null) {
-					tree.Nodes.Add(treeNode);
+					tree.Nodes.Add(node);
 				}
 				else {
-					tree.SelectedNode.Nodes.Add(treeNode);
+					tree.SelectedNode.Nodes.Add(node);
 				}
-				tree.SelectedNode=treeNode;
+				tree.SelectedNode=node;
 			}
 			if(tree.SelectedNode!=null) {
-				bool isHQClinic=true;
-				bool isHQRegion=true;
-				if(_listClinicNumsFilter.Count!=1 || !_listClinicNumsFilter.Contains(0)) {
-					isHQClinic=false;
-				}
-				if(_listDefNumsRegionFilter.Count!=1 || !_listDefNumsRegionFilter.Contains(0)) {
-					isHQRegion=false;
-				}
-				string filterText="";
-				if(_listClinicNumsFilter.Count>0 && !isHQClinic) {
-					filterText+=""+string.Join(",",_listClinicNumsFilter.Select(x => Clinics.GetAbbr(x)))+"";
-				}
-				else if(_listDefNumsRegionFilter.Count>0 && !isHQRegion) {
-					filterText+=""+string.Join(",",_listDefNumsRegionFilter.Select(x => Defs.GetName(DefCat.Regions,x)))+"";
-				}
-				if(_dateFilterStart==DateTime.Today && _dateFilterEnd==DateTime.Today) {
-					if(filterText!="") {
-						filterText+=", ";
-					}
-					filterText+="Today";
-				}
-				else if(_dateFilterStart==DateTime.Today.AddDays(1) && _dateFilterEnd==DateTime.Today.AddDays(1)) {
-					if(filterText!="") {
-						filterText+=", ";
-					}
-					filterText+="Tomorrow";
-				}
-				else if(_dateFilterStart!=DateTime.MinValue && _dateFilterEnd!=DateTime.MinValue) {
-					if(filterText!="") {
-						filterText+=", ";
-					}
-					filterText+=_dateFilterStart.ToShortDateString()+"-"+_dateFilterEnd.ToShortDateString();
-				}
-				else if(_dateFilterStart!=DateTime.MinValue && _dateFilterEnd==DateTime.MinValue) {
-					if(filterText!="") {
-						filterText+=", ";
-					}
-					filterText+="Starting "+_dateFilterStart.ToShortDateString();
-				}
-				else if(_dateFilterEnd!=DateTime.MinValue && _dateFilterStart==DateTime.MinValue) {
-					if(filterText!="") {
-						filterText+=", ";
-					}
-					filterText+="Through "+_dateFilterEnd.ToShortDateString();
-				}
-				if(_patientFilter!=null) {
-					if(filterText!="") {
-						filterText+=", ";
-					}
-					filterText+=_patientFilter.GetNameLF();
-				}
-				if(filterText!="") {
-					tree.SelectedNode.Text+=" ("+filterText+")";
+				switch(_globalFilterType) {
+					case GlobalTaskFilterType.Clinic:
+						tree.SelectedNode.Text+="(filtering by [Clinic(s):"+string.Join(",",_listFilterFkeys.Select(x => Clinics.GetAbbr(x)))+"])";
+						break;
+					case GlobalTaskFilterType.Region:
+						tree.SelectedNode.Text+="(filtering by [Region(s):"+string.Join(",",_listFilterFkeys.Select(x => Defs.GetName(DefCat.Regions,x)))+"])";
+						break;
+					case GlobalTaskFilterType.None:
+					default:
+						break;
 				}
 			}
 			//remember this position for the next time we open tasks
-			_listTaskListsHistory=new List<TaskList>();
+			Tasks.LastOpenList=new ArrayList();
 			for(int i=0;i<_listTaskListTreeHistory.Count;i++) {
-				_listTaskListsHistory.Add(_listTaskListTreeHistory[i].Copy());
+				Tasks.LastOpenList.Add(_listTaskListTreeHistory[i].Copy());
 			}
 			Tasks.LastOpenGroup=tabControl.SelectedIndex;
-			Tasks.dateLastOpen=monthCalendar.SelectionStart;
+			Tasks.LastOpenDate=monthCalendar.SelectionStart;
 			//layout
-			LayoutTreeAndGrid();
-		}
-
-		private void LayoutTreeAndGrid() {
-			if(_listTaskListTreeHistory==null) {
-				return;
-			}
 			if(tabControl.SelectedTab==tabDate || tabControl.SelectedTab==tabWeek || tabControl.SelectedTab==tabMonth) {
 				LayoutManager.MoveLocation(tree,new Point(tree.Left,monthCalendar.Bottom+1));//Show the calendar.
 			}
@@ -546,73 +485,119 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>Sets the classwide filter variables to the current tasklist's default values.</summary>
-		private void SetFiltersToDefault(TaskList taskList=null) {
-			_enumTaskFilterTypeForList=EnumTaskFilterType.Default;
-			_patientFilter=null;
-			_enumTaskPatientFilterType=EnumTaskPatientFilterType.AllPatients;
-			_dateFilterStart=DateTime.MinValue;
-			_dateFilterEnd=DateTime.MinValue;
-			if(taskList==null && tree.SelectedNode!=null) {//Check if there is a current tasklist selected.
-				taskList=_listTaskListTreeHistory.FirstOrDefault(x => x.TaskListNum==(long)tree.SelectedNode.Tag);
+		///<summary>Sets the classwide filter variables to their default values.</summary>
+		private void SetFiltersToDefault(TaskList taskListSelected=null) {
+			GlobalTaskFilterType globalFilterType=GlobalTaskFilterType.Default;
+			if(taskListSelected==null && tree.SelectedNode!=null) {//Check if there is a current tasklist selected.
+				taskListSelected=_listTaskListTreeHistory.FirstOrDefault(x => x.TaskListNum==(long)tree.SelectedNode.Tag);
 			}
-			if(taskList!=null) {//And if so, use its GlobalTaskFilterType override.
-				_enumTaskFilterTypeForList=taskList.GlobalTaskFilterType;
+			if(taskListSelected!=null) {//And if so, use its GlobalTaskFilterType override.
+				globalFilterType=taskListSelected.GlobalTaskFilterType;
 			}
 			if(Clinics.ClinicNum==0) {//HQ clinic, do not apply filtering.
-				_enumTaskFilterTypeForList=EnumTaskFilterType.None;
+				globalFilterType=GlobalTaskFilterType.None;
 			}
-			if(_enumTaskFilterTypeForList==EnumTaskFilterType.Default) {//Get the global default filter setting.
-				_enumTaskFilterTypeForList=(EnumTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType);
+			if(globalFilterType==GlobalTaskFilterType.Default) {//Get the default filter setting.
+				globalFilterType=(GlobalTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType);
 			}
 			//At this point, we have the GlobalFilterType to use.  Make sure it's a valid choice.
-			_enumTaskFilterTypeForList=DowngradeFilterTypeIfNeeded(_enumTaskFilterTypeForList);
-			switch(_enumTaskFilterTypeForList) {
-				case EnumTaskFilterType.None:
-					_listClinicNumsFilter=new List<long> { 0 };
-					_listDefNumsRegionFilter=new List<long> { 0 };
+			globalFilterType=DowngradeFilterTypeIfNeeded(globalFilterType);
+			switch(globalFilterType) {
+				case GlobalTaskFilterType.None:
+					SetFilters(GlobalTaskFilterType.None,new List<long> { 0 });
 					break;
-				case EnumTaskFilterType.Clinic:
-					_listClinicNumsFilter=new List<long> { Clinics.ClinicNum };//Default to currently selected clinic.
-					_listDefNumsRegionFilter=new List<long> { 0 };
+				case GlobalTaskFilterType.Clinic:
+					SetFilters(GlobalTaskFilterType.Clinic,new List<long> { Clinics.ClinicNum });//Default to currently selected clinic.
 					break;
-				case EnumTaskFilterType.Region:
+				case GlobalTaskFilterType.Region:
 					//Default to currently selected clinic's region.  Use 0 if no region defined.
-					_listDefNumsRegionFilter=new List<long> { Clinics.GetClinic(Clinics.ClinicNum)?.Region??0 };
-					_listClinicNumsFilter=new List<long> { 0 };
+					SetFilters(GlobalTaskFilterType.Region,new List<long> { Clinics.GetClinic(Clinics.ClinicNum)?.Region??0 });
 					break;
+				case GlobalTaskFilterType.Disabled:
+					FillTree();
+					FillGrid();
+					break;
+			}
+		}
+
+		///<summary>Determines if globalFilterType should be downgraded based on Clinics being enabled/disabled and Region definitions.</summary>
+		private GlobalTaskFilterType DowngradeFilterTypeIfNeeded(GlobalTaskFilterType globalFilterType) {
+			if(!PrefC.HasClinicsEnabled) {//Downgrade to None if Clinics are disabled.
+				globalFilterType=GlobalTaskFilterType.None;
+			}
+			else if(globalFilterType==GlobalTaskFilterType.Region && Defs.GetDefsForCategory(DefCat.Regions).Count==0) {
+				globalFilterType=GlobalTaskFilterType.None;//Downgrade to None if Region selected but no Regions defined.
+			}
+			return globalFilterType;
+		}
+
+		private void SetFilters(GlobalTaskFilterType globalFilterType,List<long> listFilterFkeys) {
+			bool isChangingFilterType=(_globalFilterType!=globalFilterType);
+			_globalFilterType=globalFilterType;
+			_listFilterFkeys=listFilterFkeys;
+			if(isChangingFilterType && _butFilter!=null) {
+				if(_globalFilterType==GlobalTaskFilterType.None) {
+					_butFilter.Text="Unfiltered";
+				}
+				else {
+					_butFilter.Text="Filtered by "+_globalFilterType.GetDescription();
+				}
+				ToolBarMain.Invalidate();//Redraw immediately.
 			}
 			FillTree();
 			FillGrid();
 		}
-
-		///<summary>Determines if globalFilterType should be downgraded based on Clinics being enabled/disabled and Region definitions.</summary>
-		private EnumTaskFilterType DowngradeFilterTypeIfNeeded(EnumTaskFilterType enumTaskFilterType) {
-			if(!PrefC.HasClinicsEnabled) {//Downgrade to None if Clinics are disabled.
-				enumTaskFilterType=EnumTaskFilterType.None;
-			}
-			else if(enumTaskFilterType==EnumTaskFilterType.Region && Defs.GetDefsForCategory(DefCat.Regions).Count==0) {
-				enumTaskFilterType=EnumTaskFilterType.None;//Downgrade to None if Region selected but no Regions defined.
-			}
-			return enumTaskFilterType;
+		
+		///<summary>Allows the user to reset filtering to the default setting for the current Tasklist.</summary>
+		private void menuItemFilterDefault_Click(object sender,EventArgs e) {
+			SetFiltersToDefault();
 		}
 
-		//private void SetFilters(EnumTaskFilterType enumTaskFilterType,List<long> listFilterFkeys) {
-		//	bool isChangingFilterType=(_enumTaskFilterType!=enumTaskFilterType);
-		//	_enumTaskFilterType=enumTaskFilterType;
-			//_listFKeysFilter=listFilterFkeys;
-			//if(isChangingFilterType && _odToolBarButtonFilter!=null) {
-			//	if(_enumTaskFilterType==EnumTaskFilterType.None) {
-			//		_odToolBarButtonFilter.Text="Unfiltered";
-			//	}
-				//else {
-				//	_odToolBarButtonFilter.Text="Filtered by "+_enumTaskFilterType.GetDescription();
-				//}
-				//ToolBarMain.Invalidate();//Redraw immediately.
-			//}
-		//	FillTree();
-		//	FillGrid();
-		//}
+		///<summary>Allows the user to temporarily turn of Filtering.</summary>
+		private void menuItemFilterNone_Click(object sender,EventArgs e) {
+			SetFilters(GlobalTaskFilterType.None,new List<long>{ 0 });//Fills Tree and Grid
+		}
+
+		///<summary>Allows the user to temporarily select a different Clinic to filter by.  Only allows user choices from unrestricted Clinics.</summary>
+		private void menuItemFilterClinic_Click(object sender,EventArgs e) {
+			List<GridColumn> listGridCols=new List<GridColumn>() {
+				new GridColumn(Lan.g(this,"Abbr"),70),
+				new GridColumn(Lan.g(this,"Description"),100,HorizontalAlignment.Left){ IsWidthDynamic=true }
+			};
+			List<GridRow> listGridRows=new List<GridRow>();
+			Clinics.GetAllForUserod(Security.CurUser).ForEach(x => {//Only Clinics the user has access to.
+				GridRow row=new GridRow(x.Abbr,x.Description);
+				row.Tag=x.ClinicNum;
+				listGridRows.Add(row);
+			});
+			using FormGridSelection formSelect=new FormGridSelection(listGridCols,listGridRows,"Select a Clinic","Clinics",GridSelectionMode.MultiExtended);
+			if(formSelect.ShowDialog()!=DialogResult.OK) {
+				return;
+			}
+			SetFilters(GlobalTaskFilterType.Clinic,formSelect.ListSelectedTags.Select(x => (long)x).ToList());//Fills Tree and Grid
+		}
+
+		///<summary>Allows the user to temporarily select a different Region to filter by.  Only allows user choices from Regions associated to 
+		///unrestricted clinics.</summary>
+		private void menuItemFilterRegion_Click(object sender,EventArgs e) {
+			List<GridColumn> listGridCols=new List<GridColumn>() {
+				new GridColumn(Lan.g(this,"Name"),70),
+			};
+			List<GridRow> listGridRows=new List<GridRow>();
+			//Regions associated to clinics that the user has access to (unrestricted).
+			List<long> listRegionDefNums=Clinics.GetAllForUserod(Security.CurUser).FindAll(x => x.Region!=0).Select(x => x.Region).ToList();
+			listRegionDefNums.Distinct().ForEach(x => {
+				Def regionDef=Defs.GetDef(DefCat.Regions,x);
+				GridRow row=new GridRow(regionDef.ItemName);
+				row.Tag=regionDef.DefNum;
+				listGridRows.Add(row);
+			});
+			using FormGridSelection formSelect=new FormGridSelection(listGridCols,listGridRows,"Select a Region","Regions",GridSelectionMode.MultiExtended);
+			if(formSelect.ShowDialog()!=DialogResult.OK) {
+				return;
+			}
+			SetFilters(GlobalTaskFilterType.Region,formSelect.ListSelectedTags.Select(x => (long)x).ToList());//Fills Tree and Grid
+		}
 
 		///<summary>Causes all instances of UserControlTasks to replace/remove the passed in Task and TaskNotes from the list of currently displayed 
 		///Tasks, then, if necessary, refills the grid without querying the database for the Task or TaskNotes. Adds signalNums for signals associated
@@ -622,13 +607,13 @@ namespace OpenDental {
 		public static void RefillLocalTaskGrids(Task task,List<TaskNote> listTaskNotes,List<long> listSentSignalNums,bool canKeepTask=true) {
 			DataValid.SetInvalid(InvalidType.Task);//Fires plugin hook, refreshes Chart module if visible.
 			UserControlTasks.AddSentSignalNums(listSentSignalNums);
-			foreach(UserControlTasks control in _listUserControlTaskss) {
+			foreach(UserControlTasks control in _listInstances) {
 				if(!control.Visible && !control.IsDisposed) {//Verify control is visible and active
 					continue;
 				}
-				long taskListNum=0;//Default to one of the main trunks.
+				long parent=0;//Default to one of the main trunks.
 				if(control._listTaskListTreeHistory!=null && control._listTaskListTreeHistory.Count>0) {//not on main trunk
-					taskListNum=control._listTaskListTreeHistory[control._listTaskListTreeHistory.Count-1].TaskListNum;
+					parent=control._listTaskListTreeHistory[control._listTaskListTreeHistory.Count-1].TaskListNum;
 				}
 				if(task==null) {
 					//Just FillGrid.
@@ -639,7 +624,7 @@ namespace OpenDental {
 					control._listTasks.RemoveAll(x => x.TaskNum==task.TaskNum);
 					control._listTaskNotes.RemoveAll(x => x.TaskNum==task.TaskNum);//Remove corresponding taskNotes.
 				}
-				else if(canKeepTask && (task.TaskListNum==taskListNum//Task is in the currently displayed TaskList.
+				else if(canKeepTask && (task.TaskListNum==parent//Task is in the currently displayed TaskList.
 					|| (control.tabControl.SelectedTab==control.tabNew && control.IsInNewTab(task))//Task should display in 'New for User' tab.
 					|| (control.tabControl.SelectedTab==control.tabOpenTickets && task.UserNum==Security.CurUser.UserNum 
 						&& task.ObjectType==TaskObjectType.Patient)//Open Tab
@@ -667,7 +652,7 @@ namespace OpenDental {
 					control._listTasks.RemoveAll(x => x.TaskNum==task.TaskNum);
 					control._listTaskNotes.RemoveAll(x => x.TaskNum==task.TaskNum);//Remove corresponding taskNotes.
 				}
-				control.FullRefreshIfNeeded(taskListNum);
+				control.FullRefreshIfNeeded(parent);
 			}
 		}
 
@@ -678,11 +663,11 @@ namespace OpenDental {
 		///To remove taskList from grid in all instances, pass in canKeepTask=true.</summary>
 		public static void RefillLocalTaskGrids(TaskList taskList,List<long> listSentSignalNums,bool canKeepTaskList=true) {
 			AddSentSignalNums(listSentSignalNums);
-			List <long> listTaskListNumsSubscribed=ListTaskListNumsSubscribed;//Get list copy above loop to avoid making unnecessary copies.
-			foreach(UserControlTasks control in _listUserControlTaskss) {
-				long taskListNum=0;//Default to one of the main trunks.
+			List <long> listSubscribedTaskListNums=ListSubscribedTaskListNums;//Get list copy above loop to avoid making unnecessary copies.
+			foreach(UserControlTasks control in _listInstances) {
+				long parent=0;//Default to one of the main trunks.
 				if(control._listTaskListTreeHistory!=null && control._listTaskListTreeHistory.Count>0) {//not on main trunk
-					taskListNum=control._listTaskListTreeHistory[control._listTaskListTreeHistory.Count-1].TaskListNum;
+					parent=control._listTaskListTreeHistory[control._listTaskListTreeHistory.Count-1].TaskListNum;
 				}
 				if(taskList!=null) {
 					foreach(TaskList list in control._listTaskLists) {
@@ -706,14 +691,14 @@ namespace OpenDental {
 					}
 				}
 				//On 'ForUser' tab and not subscribed to this list.
-				else if(control.tabControl.SelectedTab==control.tabUser && !listTaskListNumsSubscribed.Contains(taskList.TaskListNum)) {
+				else if(control.tabControl.SelectedTab==control.tabUser && !listSubscribedTaskListNums.Contains(taskList.TaskListNum)) {
 					control._listTaskLists.RemoveAll(x => x.TaskListNum==taskList.TaskListNum);
 				}
 				else if(canKeepTaskList 
 					//not on 'New for User' and taskList is in the currently displayed TaskList ('New for User' only shows Tasks)
-					&& ((control.tabControl.SelectedTab!=control.tabNew && taskList.Parent==taskListNum)
+					&& ((control.tabControl.SelectedTab!=control.tabNew && taskList.Parent==parent)
 						//On 'for User' tab and taskList is a subscribed TaskList
-						|| (control.tabControl.SelectedTab==control.tabUser && listTaskListNumsSubscribed.Contains(taskList.TaskListNum)))) 
+						|| (control.tabControl.SelectedTab==control.tabUser && listSubscribedTaskListNums.Contains(taskList.TaskListNum)))) 
 				{
 					int insertIndex=0;
 					if(control._listTaskLists.Count==0) {
@@ -738,7 +723,7 @@ namespace OpenDental {
 				else {//TaskList is not in current TaskList,or was deleted(canKeepTaskList==false)
 					control._listTaskLists.RemoveAll(x => x.TaskListNum==taskList.TaskListNum);
 				}
-				control.FullRefreshIfNeeded(taskListNum);
+				control.FullRefreshIfNeeded(parent);
 			}
 		}
 
@@ -758,31 +743,31 @@ namespace OpenDental {
 			if(listSignalNums==null || listSignalNums.Count==0) {
 				return;
 			}
-			foreach(UserControlTasks control in _listUserControlTaskss) {
-				control._listSignalNumsSentTask.AddRange(listSignalNums);
+			foreach(UserControlTasks control in _listInstances) {
+				control._listSentTaskSignalNums.AddRange(listSignalNums);
 			}
 		}
 
 		///<summary>Removes any matching Signalod.SignalNums from this instance's list of sent Task/TaskList related signalnums.</summary>
-		private List<Signalod> RemoveSentSignalNums(List<Signalod> listSignalodsReceived) {
-			if(listSignalodsReceived==null || listSignalodsReceived.Count==0) {
+		private List<Signalod> RemoveSentSignalNums(List<Signalod> listReceivedSignals) {
+			if(listReceivedSignals==null || listReceivedSignals.Count==0) {
 				return new List<Signalod>();
 			}
-			for(int i=listSignalodsReceived.Count-1;i>=0;i--) {
-				long signalNumReceived=listSignalodsReceived[i].SignalNum;
-				if(_listSignalNumsSentTask.Contains(signalNumReceived)) {
-					_listSignalNumsSentTask.Remove(signalNumReceived);
-					listSignalodsReceived.RemoveAt(i);
+			for(int i=listReceivedSignals.Count-1;i>=0;i--) {
+				long receivedSignalNum=listReceivedSignals[i].SignalNum;
+				if(_listSentTaskSignalNums.Contains(receivedSignalNum)) {
+					_listSentTaskSignalNums.Remove(receivedSignalNum);
+					listReceivedSignals.RemoveAt(i);
 				}
 			}
-			return listSignalodsReceived;
+			return listReceivedSignals;
 		}
 
 		///<summary>Determines if Task should display in the 'New for' tab.  If using TasksNewTrackedByUser preference, Task.IsUnread must be correctly 
 		///set prior to calling this method.</summary>
 		private bool IsInNewTab(Task task) {
 			if(PrefC.GetBool(PrefName.TasksNewTrackedByUser) && task.IsUnread) {//The new way
-				if(!ListTaskListNumsSubscribed.Contains(task.TaskListNum)) {
+				if(!ListSubscribedTaskListNums.Contains(task.TaskListNum)) {
 					return false;
 				}
 				return true;
@@ -797,80 +782,57 @@ namespace OpenDental {
 		///a task in _listTasks, the task is already refreshed in memory and only the one task is refreshed from the database.
 		///Otherwise, a full refresh will only be run when certain types of signals corresonding to the current selected tabs are found in listSignals.
 		///</summary>
-		private void FillGrid(List<Signalod> listSignalods=null,bool isManualRefresh=false,bool isFilterRefresh=false) {
-			// These two try-catches will preserve the selection when a signal comes in and triggers fillgrid()
-			Task taskSelected=null;
-			try {
-				taskSelected=gridMain.SelectedTag<Task>();
-			}
-			catch(Exception ex) {
-				//Grid can come desynced with its selected indices after a refresh, which was causing crashes. 
-				//Now we won't crash, but there's a non-zero chance of the task we just marked read
-				//losing its selected status.
-				ex.DoNothing();
-			}
-			TaskList taskListSelected=null;
-			try{
-				taskListSelected=gridMain.SelectedTag<TaskList>();
-			}
-			catch(Exception ex) {
-				//Same problem as above. Our task list might lose its selected status,
-				//but it's better than just crashing.
-				ex.DoNothing();
-			}
+		private void FillGrid(List<Signalod> listSignals=null,bool isManualRefresh=false) {
 			if(Security.CurUser==null 
 				|| (RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT && !Security.IsUserLoggedIn)) 
 			{
 				gridMain.BeginUpdate();
-				gridMain.SetAll(false);
 				gridMain.ListGridRows.Clear();
 				gridMain.EndUpdate();
 				return;
 			}
-			long taskListNum;
-			DateTime dateTime;
+			long parent;
+			DateTime date;
 			if(_listTaskListTreeHistory==null){
 				return;
 			}
 			if(_listTaskListTreeHistory.Count>0) {//not on main trunk
-				taskListNum=_listTaskListTreeHistory[_listTaskListTreeHistory.Count-1].TaskListNum;
-				dateTime=DateTime.MinValue;
+				parent=_listTaskListTreeHistory[_listTaskListTreeHistory.Count-1].TaskListNum;
+				date=DateTime.MinValue;
 			}
 			else {//one of the main trunks
-				taskListNum=0;
-				dateTime=monthCalendar.SelectionStart;
+				parent=0;
+				date=monthCalendar.SelectionStart;
 			}
 			LayoutManager.MoveHeight(gridMain,ClientSize.Height-gridMain.Top);
-			if(listSignalods==null) {//Full refresh.
-				if(!isFilterRefresh) {
-					RefreshMainLists(taskListNum,dateTime,isManualRefresh: isManualRefresh);
-				}
+			if(listSignals==null) {//Full refresh.
+				RefreshMainLists(parent,date,isManualRefresh: isManualRefresh);
 			}
 			else {
 				//Remove any Task related signals that originated from this instance of OpenDental.
-				listSignalods=RemoveSentSignalNums(listSignalods.FindAll(x => new List<InvalidType>()
+				listSignals=RemoveSentSignalNums(listSignals.FindAll(x => new List<InvalidType>()
 					{ InvalidType.Task,InvalidType.TaskList,InvalidType.TaskAuthor,InvalidType.TaskPatient }.Contains(x.IType)));
 				//User is observing a task list for which a TaskList signal is specified, or TaskList from signal is a sublist of current view.
-				if(listSignalods.Exists(x => x.IType==InvalidType.TaskList && (x.FKey==taskListNum || _listTaskLists.Exists(y => y.TaskListNum==x.FKey)))) {
-					RefreshMainLists(taskListNum,dateTime,isManualRefresh: isManualRefresh);
+				if(listSignals.Exists(x => x.IType==InvalidType.TaskList && (x.FKey==parent || _listTaskLists.Exists(y => y.TaskListNum==x.FKey)))) {
+					RefreshMainLists(parent,date,isManualRefresh: isManualRefresh);
 				}
 				//User is observing the New Tasks tab and a TaskList signal is received for a TaskList the user is subscribed to.
-				else if(tabControl.SelectedTab==tabNew && listSignalods.Exists(x => x.IType==InvalidType.TaskList && ListTaskListNumsSubscribed.Contains(x.FKey))) {
-					RefreshMainLists(taskListNum,dateTime,isManualRefresh: isManualRefresh);
+				else if(tabControl.SelectedTab==tabNew && listSignals.Exists(x => x.IType==InvalidType.TaskList && ListSubscribedTaskListNums.Contains(x.FKey))) {
+					RefreshMainLists(parent,date,isManualRefresh: isManualRefresh);
 				}
 				//User is observing the Open Tasks tab and a TaskAuthor signal is received with the current user specified in the FKey.
-				else if(tabControl.SelectedTab==tabOpenTickets && listSignalods.Exists(x => x.IType==InvalidType.TaskAuthor && x.FKey==Security.CurUser.UserNum)) {
-					RefreshMainLists(taskListNum,dateTime,isManualRefresh: isManualRefresh);
+				else if(tabControl.SelectedTab==tabOpenTickets && listSignals.Exists(x => x.IType==InvalidType.TaskAuthor && x.FKey==Security.CurUser.UserNum)) {
+					RefreshMainLists(parent,date,isManualRefresh: isManualRefresh);
 				}
 				//User is observing the Patient Tasks tab and a TaskPatient signal is received for the patient the user currently has selected.
-				else if(tabControl.SelectedTab==tabPatientTickets && listSignalods.Exists(x => x.IType==InvalidType.TaskPatient && x.FKey==FormOpenDental.PatNumCur)) {
-					RefreshMainLists(taskListNum,dateTime,isManualRefresh: isManualRefresh);
+				else if(tabControl.SelectedTab==tabPatientTickets && listSignals.Exists(x => x.IType==InvalidType.TaskPatient && x.FKey==FormOpenDental.PatNumCur)) {
+					RefreshMainLists(parent,date,isManualRefresh: isManualRefresh);
 				}
 				else {//Individual Task signals. Only refreshes if the task is in the currently displayed list of Tasks. Add/Remove is addressed with TaskList signals.
-					foreach(Signalod signalod in listSignalods) {
-						if(signalod.IType.In(InvalidType.Task,InvalidType.TaskPopup) && signalod.FKeyType==KeyType.Task) {
-							if(_listTasks.Exists(x => x.TaskNum==signalod.FKey)) {//A signal indicates that a task we are looking at has been modified.
-								RefreshMainLists(taskListNum,dateTime,isManualRefresh: isManualRefresh);//Full refresh.
+					foreach(Signalod signal in listSignals) {
+						if(signal.IType.In(InvalidType.Task,InvalidType.TaskPopup) && signal.FKeyType==KeyType.Task) {
+							if(_listTasks.Exists(x => x.TaskNum==signal.FKey)) {//A signal indicates that a task we are looking at has been modified.
+								RefreshMainLists(parent,date,isManualRefresh: isManualRefresh);//Full refresh.
 								break;
 							}
 						}
@@ -905,35 +867,35 @@ namespace OpenDental {
 					}
 				}
 				if(changeMade) {
-					RefreshMainLists(taskListNum,dateTime,isManualRefresh: isManualRefresh);
+					RefreshMainLists(parent,date,isManualRefresh: isManualRefresh);
 				}
 				//now add back any repeating lists and tasks that meet the criteria
 				//Get lists of all repeating lists and tasks of one type.  We will pick items from these two lists.
-				List<TaskList> listTaskListsRepeating=new List<TaskList>();
-				List<Task> tasksRepeating=new List<Task>();
+				List<TaskList> repeatingLists=new List<TaskList>();
+				List<Task> repeatingTasks=new List<Task>();
 				if(tabControl.SelectedTab==tabDate){
-					listTaskListsRepeating=TaskLists.RefreshRepeating(TaskDateType.Day,Security.CurUser.UserNum,Clinics.ClinicNum
+					repeatingLists=TaskLists.RefreshRepeating(TaskDateType.Day,Security.CurUser.UserNum,Clinics.ClinicNum
 					,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
-					tasksRepeating=Tasks.RefreshRepeating(TaskDateType.Day,Security.CurUser.UserNum,_listClinicNumsFilter,_listDefNumsRegionFilter);
+					repeatingTasks=Tasks.RefreshRepeating(TaskDateType.Day,Security.CurUser.UserNum,_globalFilterType,_listFilterFkeys);
 				}
 				if(tabControl.SelectedTab==tabWeek){
-					listTaskListsRepeating=TaskLists.RefreshRepeating(TaskDateType.Week,Security.CurUser.UserNum,Clinics.ClinicNum
+					repeatingLists=TaskLists.RefreshRepeating(TaskDateType.Week,Security.CurUser.UserNum,Clinics.ClinicNum
 					,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
-					tasksRepeating=Tasks.RefreshRepeating(TaskDateType.Week,Security.CurUser.UserNum,_listClinicNumsFilter,_listDefNumsRegionFilter);
+					repeatingTasks=Tasks.RefreshRepeating(TaskDateType.Week,Security.CurUser.UserNum,_globalFilterType,_listFilterFkeys);
 				}
 				if(tabControl.SelectedTab==tabMonth) {
-					listTaskListsRepeating=TaskLists.RefreshRepeating(TaskDateType.Month,Security.CurUser.UserNum,Clinics.ClinicNum
+					repeatingLists=TaskLists.RefreshRepeating(TaskDateType.Month,Security.CurUser.UserNum,Clinics.ClinicNum
 					,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
-					tasksRepeating=Tasks.RefreshRepeating(TaskDateType.Month,Security.CurUser.UserNum,_listClinicNumsFilter,_listDefNumsRegionFilter);
+					repeatingTasks=Tasks.RefreshRepeating(TaskDateType.Month,Security.CurUser.UserNum,_globalFilterType,_listFilterFkeys);
 				}
 				//loop through list and add back any that meet criteria.
 				changeMade=false;
 				bool alreadyExists;
-				for(int i=0;i<listTaskListsRepeating.Count;i++) {
+				for(int i=0;i<repeatingLists.Count;i++) {
 					//if already exists, skip
 					alreadyExists=false;
 					for(int j=0;j<_listTaskLists.Count;j++) {//loop through Main list
-						if(_listTaskLists[j].FromNum==listTaskListsRepeating[i].TaskListNum) {
+						if(_listTaskLists[j].FromNum==repeatingLists[i].TaskListNum) {
 							alreadyExists=true;
 							break;
 						}
@@ -942,19 +904,19 @@ namespace OpenDental {
 						continue;
 					}
 					//otherwise, duplicate the list
-					listTaskListsRepeating[i].DateTL=dateTime;
-					listTaskListsRepeating[i].FromNum=listTaskListsRepeating[i].TaskListNum;
-					listTaskListsRepeating[i].IsRepeating=false;
-					listTaskListsRepeating[i].Parent=0;
-					listTaskListsRepeating[i].ObjectType=0;//user will have to set explicitly
-					DuplicateExistingList(listTaskListsRepeating[i],true);//repeating lists cannot be subscribed to, so send null in as old list, will not attempt to move subscriptions
+					repeatingLists[i].DateTL=date;
+					repeatingLists[i].FromNum=repeatingLists[i].TaskListNum;
+					repeatingLists[i].IsRepeating=false;
+					repeatingLists[i].Parent=0;
+					repeatingLists[i].ObjectType=0;//user will have to set explicitly
+					DuplicateExistingList(repeatingLists[i],true);//repeating lists cannot be subscribed to, so send null in as old list, will not attempt to move subscriptions
 					changeMade=true;
 				}
-				for(int i=0;i<tasksRepeating.Count;i++) {
+				for(int i=0;i<repeatingTasks.Count;i++) {
 					//if already exists, skip
 					alreadyExists=false;
 					for(int j=0;j<_listTasks.Count;j++) {//loop through Main list
-						if(_listTasks[j].FromNum==tasksRepeating[i].TaskNum) {
+						if(_listTasks[j].FromNum==repeatingTasks[i].TaskNum) {
 							alreadyExists=true;
 							break;
 						}
@@ -963,66 +925,64 @@ namespace OpenDental {
 						continue;
 					}
 					//otherwise, duplicate the task
-					tasksRepeating[i].DateTask=dateTime;
-					tasksRepeating[i].FromNum=tasksRepeating[i].TaskNum;
-					tasksRepeating[i].IsRepeating=false;
-					tasksRepeating[i].TaskListNum=0;
+					repeatingTasks[i].DateTask=date;
+					repeatingTasks[i].FromNum=repeatingTasks[i].TaskNum;
+					repeatingTasks[i].IsRepeating=false;
+					repeatingTasks[i].TaskListNum=0;
 					//repeatingTasks[i].UserNum//repeating tasks shouldn't get a usernum
-					Tasks.Insert(tasksRepeating[i]);
+					Tasks.Insert(repeatingTasks[i]);
 					changeMade=true;
 				}
 				if(changeMade) {
-					RefreshMainLists(taskListNum,dateTime,isManualRefresh: isManualRefresh);
+					RefreshMainLists(parent,date,isManualRefresh: isManualRefresh);
 				}
 			}//End of dated trunk automation--------------------------------------------------------------------------
 			#endregion dated trunk automation
-			// Having GetFilteredTaskLists() out here prevents having to call DB every time we type in the filter.
-			List<TaskList> listTaskLists=GetFilteredTaskLists();
 			//bool isTaskSelectedVisible=gridMain.IsTagVisible(_clickedTask);
-			bool isHqAndTriageList=PrefC.GetBool(PrefName.DockPhonePanelShow) && taskListNum==_TriageListNum;//True if HQ and looking at 'Triage' task list
+			bool isHqAndTriageList=PrefC.GetBool(PrefName.DockPhonePanelShow) && parent==_TriageListNum;//True if HQ and looking at 'Triage' task list
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
-			GridColumn gridColumn=new GridColumn("",17);
-			gridColumn.ImageList=imageListTree;
-			gridMain.Columns.Add(gridColumn);//Checkbox column
+			GridColumn col=new GridColumn("",17);
+			col.ImageList=imageListTree;
+			gridMain.Columns.Add(col);//Checkbox column
 			if(tabControl.SelectedTab==tabNew && !PrefC.GetBool(PrefName.TasksNewTrackedByUser)) {//The old way
-				gridColumn=new GridColumn(Lan.g("TableTasks","Read"),35,HorizontalAlignment.Center);
+				col=new GridColumn(Lan.g("TableTasks","Read"),35,HorizontalAlignment.Center);
 				//col.ImageList=imageListTree;
-				gridMain.Columns.Add(gridColumn);
+				gridMain.Columns.Add(col);
 			}
 			if(tabControl.SelectedTab==tabNew || tabControl.SelectedTab==tabOpenTickets || tabControl.SelectedTab==tabPatientTickets) {
-				gridColumn=new GridColumn(Lan.g("TableTasks","Task List"),90);
-				gridMain.Columns.Add(gridColumn);
+				col=new GridColumn(Lan.g("TableTasks","Task List"),90);
+				gridMain.Columns.Add(col);
 			}
-			gridColumn=new GridColumn(Lan.g(this,"+/-"),17,HorizontalAlignment.Center);
-			gridColumn.HeaderClick+=GridHeaderClickEvent;
-			gridMain.Columns.Add(gridColumn);
+			col=new GridColumn(Lan.g(this,"+/-"),17,HorizontalAlignment.Center);
+			col.CustomClickEvent+=GridHeaderClickEvent;
+			gridMain.Columns.Add(col);
 			if(PrefC.GetBool(PrefName.DockPhonePanelShow)){//HQ
-				gridColumn=new GridColumn(Lan.g("TableTasks","ST"),30,HorizontalAlignment.Center);//ST
-				gridMain.Columns.Add(gridColumn);
+				col=new GridColumn(Lan.g("TableTasks","ST"),30,HorizontalAlignment.Center);//ST
+				gridMain.Columns.Add(col);
 				List<long> listPatsNotInDict=_listTasks.Where(x => x.ObjectType==TaskObjectType.Patient && x.KeyNum!=0 && !_dictPatStates.ContainsKey(x.KeyNum))
 					.Select(x => x.KeyNum).ToList();
 				Dictionary<long,string> dictPatNewStates=Patients.GetStatesForPats(listPatsNotInDict);
 				foreach(long patNum in dictPatNewStates.Keys) {
 					_dictPatStates.Add(patNum,dictPatNewStates[patNum]);
 				}
-				if(taskListNum!=_TriageListNum) {//Everything that's not triage
-					gridColumn=new GridColumn(Lan.g("TableTasks","Job"),30,HorizontalAlignment.Center);//Job
-					gridMain.Columns.Add(gridColumn);
+				if(parent!=_TriageListNum) {//Everything that's not triage
+					col=new GridColumn(Lan.g("TableTasks","Job"),30,HorizontalAlignment.Center);//Job
+					gridMain.Columns.Add(col);
 				}
 			}
 			if(!isHqAndTriageList) {//Everything that is not HQ's triage task list will have the attachments column
-				gridColumn=new GridColumn(Lan.g("TableTasks","Att"),30,HorizontalAlignment.Center);//Attachment(s)
-				gridMain.Columns.Add(gridColumn);
+				col=new GridColumn(Lan.g("TableTasks","Att"),30,HorizontalAlignment.Center);//Attachment(s)
+				gridMain.Columns.Add(col);
 			}
 			if(isHqAndTriageList){//HQ and triage list only
-				gridColumn=new GridColumn(Lan.g("TableTasks","Category"),70,HorizontalAlignment.Center);//Category
-				gridMain.Columns.Add(gridColumn);
+				col=new GridColumn(Lan.g("TableTasks","Category"),70,HorizontalAlignment.Center);//Category
+				gridMain.Columns.Add(col);
 			}
-			gridColumn=new GridColumn(Lan.g("TableTasks","Description"),80);//any width
-			gridMain.Columns.Add(gridColumn);
+			col=new GridColumn(Lan.g("TableTasks","Description"),80);//any width
+			gridMain.Columns.Add(col);
 			gridMain.ListGridRows.Clear();
-			GridRow gridRow;
+			GridRow row;
 			string dateStr="";
 			string objDesc="";
 			string tasklistdescript="";
@@ -1032,71 +992,66 @@ namespace OpenDental {
 			string attStr="";
 			string categoryStr="";
 			int imageindex;
-			List<Def> listDefsTaskCategory=Defs.GetDefsForCategory(DefCat.TaskCategories);
-			List<Def> listDefsTaskPriority=Defs.GetDefsForCategory(DefCat.TaskPriorities);
-			// pre-define the index that will represent taskSelected or taskListSelected
-			int selectedIndex=-1;
-			for(int i=0;i<listTaskLists.Count;i++) {
+			List<Def> listTaskCategories=Defs.GetDefsForCategory(DefCat.TaskCategories);
+			List<Def> listTaskPriorities=Defs.GetDefsForCategory(DefCat.TaskPriorities);
+			for(int i=0;i<_listTaskLists.Count;i++) {
 				dateStr="";
-				if(listTaskLists[i].DateTL.Year>1880
+				if(_listTaskLists[i].DateTL.Year>1880
 					&& (tabControl.SelectedTab==tabUser || tabControl.SelectedTab==tabMain || tabControl.SelectedTab==tabReminders))
 				{
-					if(listTaskLists[i].DateType==TaskDateType.Day) {
-						dateStr=listTaskLists[i].DateTL.ToShortDateString()+" - ";
+					if(_listTaskLists[i].DateType==TaskDateType.Day) {
+						dateStr=_listTaskLists[i].DateTL.ToShortDateString()+" - ";
 					}
-					else if(listTaskLists[i].DateType==TaskDateType.Week) {
-						dateStr=Lan.g(this,"Week of")+" "+listTaskLists[i].DateTL.ToShortDateString()+" - ";
+					else if(_listTaskLists[i].DateType==TaskDateType.Week) {
+						dateStr=Lan.g(this,"Week of")+" "+_listTaskLists[i].DateTL.ToShortDateString()+" - ";
 					}
-					else if(listTaskLists[i].DateType==TaskDateType.Month) {
-						dateStr=listTaskLists[i].DateTL.ToString("MMMM")+" - ";
+					else if(_listTaskLists[i].DateType==TaskDateType.Month) {
+						dateStr=_listTaskLists[i].DateTL.ToString("MMMM")+" - ";
 					}
 				}
 				objDesc="";
 				if(tabControl.SelectedTab==tabUser){
-					objDesc=listTaskLists[i].ParentDesc;
+					objDesc=_listTaskLists[i].ParentDesc;
 				}
-				tasklistdescript=listTaskLists[i].Descript;
+				tasklistdescript=_listTaskLists[i].Descript;
 				imageindex=0;
-				if(listTaskLists[i].NewTaskCount>0){
+				if(_listTaskLists[i].NewTaskCount>0){
 					imageindex=3;//orange
-					tasklistdescript=tasklistdescript+"("+listTaskLists[i].NewTaskCount.ToString()+")";
+					tasklistdescript=tasklistdescript+"("+_listTaskLists[i].NewTaskCount.ToString()+")";
 				}
-				gridRow=new GridRow();
-				gridRow.Cells.Add(imageindex.ToString());
-				gridRow.Cells.Add("");
+				row=new GridRow();
+				row.Cells.Add(imageindex.ToString());
+				row.Cells.Add("");
 				if(PrefC.GetBool(PrefName.DockPhonePanelShow)) {//HQ.  Add if job manager is available
-					gridRow.Cells.Add("");//ST
-					if(taskListNum!=_TriageListNum) {//Everything that's not triage
-						gridRow.Cells.Add("");//Job
+					row.Cells.Add("");//ST
+					if(parent!=_TriageListNum) {//Everything that's not triage
+						row.Cells.Add("");//Job
 					}
 				}
 				if(!isHqAndTriageList) {//Everything that is not HQ's triage task list will have the attachments column
-					gridRow.Cells.Add("");//Att
+					row.Cells.Add("");//Att
 				}
 				if(isHqAndTriageList){//HQ and triage list only
-					gridRow.Cells.Add("");//Category
+					row.Cells.Add("");//Category
 				}
-				gridRow.Cells.Add(dateStr+objDesc+tasklistdescript);
-				gridRow.Tag=listTaskLists[i];
-				gridMain.ListGridRows.Add(gridRow);
-				// Check if this taskList was selected before FillGrid() was called.
-				if(taskListSelected!=null && _listTaskLists[i].TaskListNum==taskListSelected.TaskListNum ){
-					selectedIndex=gridMain.ListGridRows.Count-1;
-				}
+				row.Cells.Add(dateStr+objDesc+tasklistdescript);
+				row.Tag=_listTaskLists[i];
+				gridMain.ListGridRows.Add(row);
 			}
 			List<long> listAptNums=_listTasks.Where(x => x.ObjectType==TaskObjectType.Appointment).Select(y => y.KeyNum).ToList();
 			SerializableDictionary<long,string> dictApptObjDescripts=Tasks.GetApptObjDescripts(listAptNums);
+			int selectedTaskIndex=-1;
 			for(int i=0;i<_listTasks.Count;i++) {
 				dateStr="";
 				jobNumString="";
 				string stateString="";
 				attStr="";
 				categoryStr="";
-				Color colorTaskCategory=Defs.GetColor(DefCat.TaskCategories,_listTasks[i].TriageCategory,listDefsTaskCategory);
-				Color colorTaskPriority=Defs.GetColor(DefCat.TaskPriorities,_listTasks[i].PriorityDefNum,listDefsTaskPriority);
+				Color colorTaskCategory=Defs.GetColor(DefCat.TaskCategories,_listTasks[i].TriageCategory,listTaskCategories);
+				Color colorTaskPriority=Defs.GetColor(DefCat.TaskPriorities,_listTasks[i].PriorityDefNum,listTaskPriorities);
 				if(PrefC.GetBool(PrefName.DockPhonePanelShow)) {//HQ
 					stateString=HQStateColumn(_listTasks[i]);//ST
-					if(taskListNum!=_TriageListNum) {//Everything that's not triage
+					if(parent!=_TriageListNum) {//Everything that's not triage
 						//get list of jobs attached to task then insert info about those jobs.
 						List<long> listJobNums=_listJobLinks.Where(x => x.FKey==_listTasks[i].TaskNum).Select(x => x.JobNum).ToList();
 						if(_listJobs.Any(x => listJobNums.Contains(x.JobNum))) {
@@ -1108,7 +1063,7 @@ namespace OpenDental {
 					attStr="X";//Has attachments
 				}
 				if(isHqAndTriageList){//HQ and triage list only
-					categoryStr=Defs.GetName(DefCat.TaskCategories,_listTasks[i].TriageCategory,listDefsTaskCategory);
+					categoryStr=Defs.GetName(DefCat.TaskCategories,_listTasks[i].TriageCategory,listTaskCategories);
 				}
 				if(tabControl.SelectedTab==tabUser || tabControl.SelectedTab==tabNew
 					|| tabControl.SelectedTab==tabOpenTickets || tabControl.SelectedTab==tabMain 
@@ -1154,17 +1109,17 @@ namespace OpenDental {
 					objDesc+=Userods.GetName(_listTasks[i].UserNum)+" - ";
 				}
 				notes="";
-				List<TaskNote> listTaskNotes=_listTaskNotes.FindAll(x => x.TaskNum==_listTasks[i].TaskNum);
-				if(!_listTaskNumsExpanded.Contains(_listTasks[i].TaskNum) && listTaskNotes.Count>1) {
-					TaskNote taskNoteLast=listTaskNotes[listTaskNotes.Count-1];
+				List<TaskNote> listNotesForTask=_listTaskNotes.FindAll(x => x.TaskNum==_listTasks[i].TaskNum);
+				if(!_listExpandedTaskNums.Contains(_listTasks[i].TaskNum) && listNotesForTask.Count>1) {
+					TaskNote lastNote=listNotesForTask[listNotesForTask.Count-1];
 					notes+="\r\n\u22EE\r\n" //Vertical ellipse followed by last note. \u22EE - vertical ellipses
-							+"=="+Userods.GetName(taskNoteLast.UserNum)+" - "
-							+taskNoteLast.DateTimeNote.ToShortDateString()+" "
-							+taskNoteLast.DateTimeNote.ToShortTimeString()
-							+" - "+taskNoteLast.Note;
+							+"=="+Userods.GetName(lastNote.UserNum)+" - "
+							+lastNote.DateTimeNote.ToShortDateString()+" "
+							+lastNote.DateTimeNote.ToShortTimeString()
+							+" - "+lastNote.Note;
 				}
 				else { //Expanded
-					foreach(TaskNote note in listTaskNotes) {
+					foreach(TaskNote note in listNotesForTask) {
 						notes+="\r\n"//even on the first loop
 							+"=="+Userods.GetName(note.UserNum)+" - "
 							+note.DateTimeNote.ToShortDateString()+" "
@@ -1172,153 +1127,154 @@ namespace OpenDental {
 							+" - "+note.Note;
 					}
 				}
-				gridRow=new GridRow();
+				row=new GridRow();
 				if(PrefC.GetBool(PrefName.TasksNewTrackedByUser)) {//The new way
 					if(_listTasks[i].TaskStatus==TaskStatusEnum.Done) {
-						gridRow.Cells.Add("1");
+						row.Cells.Add("1");
 					}
 					else {
 						if(_listTasks[i].IsUnread) {
-							gridRow.Cells.Add("4");
+							row.Cells.Add("4");
 						}
 						else{
-							gridRow.Cells.Add("2");
+							row.Cells.Add("2");
 						}
 					}
 				}
 				else {
 					switch(_listTasks[i].TaskStatus) {
 						case TaskStatusEnum.New:
-							gridRow.Cells.Add("4");
+							row.Cells.Add("4");
 							break;
 						case TaskStatusEnum.Viewed:
-							gridRow.Cells.Add("2");
+							row.Cells.Add("2");
 							break;
 						case TaskStatusEnum.Done:
-							gridRow.Cells.Add("1");
+							row.Cells.Add("1");
 							break;
 					}
 					if(tabControl.SelectedTab==tabNew) {//In this mode, there's a extra column in this tab
-						gridRow.Cells.Add("read");
+						row.Cells.Add("read");
 					}
 				}
 				if(tabControl.SelectedTab==tabNew || tabControl.SelectedTab==tabOpenTickets || tabControl.SelectedTab==tabPatientTickets) {
-					gridRow.Cells.Add(_listTasks[i].ParentDesc);
+					row.Cells.Add(_listTasks[i].ParentDesc);
 				}
 				if(_listTasks[i].DescriptOverride!=""){
-					gridRow.Cells.Add("");// +/- is irrelevant
+					row.Cells.Add("");// +/- is irrelevant
 					if(PrefC.GetBool(PrefName.DockPhonePanelShow)) {//HQ
-						gridRow.Cells.Add(stateString);//ST
-						if(taskListNum!=_TriageListNum) {//Everything that's not triage
-							gridRow.Cells.Add(jobNumString);//Job
+						row.Cells.Add(stateString);//ST
+						if(parent!=_TriageListNum) {//Everything that's not triage
+							row.Cells.Add(jobNumString);//Job
 						}
 					}
 					if(!isHqAndTriageList) {//Everything that is not HQ's triage task list will have the attachments column
-						gridRow.Cells.Add(attStr);//Att
+						row.Cells.Add(attStr);//Att
 					}
 					if(isHqAndTriageList){//HQ and triage list only
-						gridRow.Cells.Add(categoryStr);//Category
-						gridRow.Cells.Last().ColorBackG=colorTaskCategory;
+						row.Cells.Add(categoryStr);//Category
+						row.Cells.Last().ColorBackG=colorTaskCategory;
 					}
-					gridRow.Cells.Add(dateStr+objDesc+_listTasks[i].DescriptOverride);
+					row.Cells.Add(dateStr+objDesc+_listTasks[i].DescriptOverride);
 					if(isHqAndTriageList) {//HQ and triage list only
-						gridRow.Cells.Last().ColorBackG=colorTaskPriority;
+						row.Cells.Last().ColorBackG=colorTaskPriority;
 					}
 				}
-				else if(_listTaskNumsExpanded.Contains(_listTasks[i].TaskNum)) {//Expanded
-					if(_listTasks[i].Descript.Length>250 || listTaskNotes.Count>1 || (listTaskNotes.Count==1 && notes.Length>250)) {
-						gridRow.Cells.Add("-");
+				else if(_listExpandedTaskNums.Contains(_listTasks[i].TaskNum)) {//Expanded
+					if(_listTasks[i].Descript.Length>250 || listNotesForTask.Count>1 || (listNotesForTask.Count==1 && notes.Length>250)) {
+						row.Cells.Add("-");
 					}
 					else {
-						gridRow.Cells.Add("");
+						row.Cells.Add("");
 					}
 					if(PrefC.GetBool(PrefName.DockPhonePanelShow)) {//HQ
-						gridRow.Cells.Add(stateString);//ST
-						if(taskListNum!=_TriageListNum) {//Everything that's not triage
-							gridRow.Cells.Add(jobNumString);//Job
+						row.Cells.Add(stateString);//ST
+						if(parent!=_TriageListNum) {//Everything that's not triage
+							row.Cells.Add(jobNumString);//Job
 						}
 					}
 					if(!isHqAndTriageList) {//Everything that is not HQ's triage task list will have the attachments column
-						gridRow.Cells.Add(attStr);//Att
+						row.Cells.Add(attStr);//Att
 					}
 					if(isHqAndTriageList){//HQ and triage list only
-						gridRow.Cells.Add(categoryStr);//Category
-						gridRow.Cells.Last().ColorBackG=colorTaskCategory;
+						row.Cells.Add(categoryStr);//Category
+						row.Cells.Last().ColorBackG=colorTaskCategory;
 					}
-					gridRow.Cells.Add(dateStr+objDesc+_listTasks[i].Descript+notes);
+					row.Cells.Add(dateStr+objDesc+_listTasks[i].Descript+notes);
 					if(isHqAndTriageList) {//HQ and triage list only
-						gridRow.Cells.Last().ColorBackG=colorTaskPriority;
+						row.Cells.Last().ColorBackG=colorTaskPriority;
 					}
 				}
 				else {//not expanded
 					//Conditions for giving collapse option: Descript is long, there is more than one note, or there is one note and it's long.
-					if(_listTasks[i].Descript.Length>250 || listTaskNotes.Count>1 || (listTaskNotes.Count==1 && notes.Length>250)) {
-						gridRow.Cells.Add("+");
+					if(_listTasks[i].Descript.Length>250 || listNotesForTask.Count>1 || (listNotesForTask.Count==1 && notes.Length>250)) {
+						row.Cells.Add("+");
 						if(PrefC.GetBool(PrefName.DockPhonePanelShow)) {//HQ
-							gridRow.Cells.Add(stateString);//ST
-							if(taskListNum!=_TriageListNum) {//Everything that's not triage
-								gridRow.Cells.Add(jobNumString);//Job
+							row.Cells.Add(stateString);//ST
+							if(parent!=_TriageListNum) {//Everything that's not triage
+								row.Cells.Add(jobNumString);//Job
 							}
 						}
 						if(!isHqAndTriageList) {//Everything that is not HQ's triage task list will have the attachments column
-							gridRow.Cells.Add(attStr);//Att
+							row.Cells.Add(attStr);//Att
 						}
 						if(isHqAndTriageList){//HQ and triage list only
-							gridRow.Cells.Add(categoryStr);//Category
-							gridRow.Cells.Last().ColorBackG=colorTaskCategory;
+							row.Cells.Add(categoryStr);//Category
+							row.Cells.Last().ColorBackG=colorTaskCategory;
 						}
-						string stringRow=dateStr+objDesc;
+						string rowString=dateStr+objDesc;
 						if(_listTasks[i].Descript.Length>250) {
-							stringRow+=_listTasks[i].Descript.Substring(0,250)+"(...)";//546,300 tasks have average Descript length of 142.1 characters.
+							rowString+=_listTasks[i].Descript.Substring(0,250)+"(...)";//546,300 tasks have average Descript length of 142.1 characters.
 						}
 						else {
-							stringRow+=_listTasks[i].Descript;
+							rowString+=_listTasks[i].Descript;
 						}
 						if(notes.Length>250) {
-							stringRow+=notes.Substring(0,250)+"(...)";
+							rowString+=notes.Substring(0,250)+"(...)";
 						}
 						else {
-							stringRow+=notes;
+							rowString+=notes;
 						}
-						gridRow.Cells.Add(stringRow);
+						row.Cells.Add(rowString);
 						if(isHqAndTriageList) {//HQ and triage list only
-							gridRow.Cells.Last().ColorBackG=colorTaskPriority;
+							row.Cells.Last().ColorBackG=colorTaskPriority;
 						}
 					}
 					else {//Descript length <= 250 and notes <=1 and note length is <= 250.  No collapse option.
-						gridRow.Cells.Add("");
+						row.Cells.Add("");
 						if(PrefC.GetBool(PrefName.DockPhonePanelShow)) {//HQ
-							gridRow.Cells.Add(stateString);//ST
-							if(taskListNum!=_TriageListNum) {//Everything that's not triage
-								gridRow.Cells.Add(jobNumString);//Job
+							row.Cells.Add(stateString);//ST
+							if(parent!=_TriageListNum) {//Everything that's not triage
+								row.Cells.Add(jobNumString);//Job
 							}
 						}
 						if(!isHqAndTriageList) {//Everything that is not HQ's triage task list will have the attachments column
-							gridRow.Cells.Add(attStr);//Att
+							row.Cells.Add(attStr);//Att
 						}
 						if(isHqAndTriageList){//HQ and triage list only
-							gridRow.Cells.Add(categoryStr);//Category
-							gridRow.Cells.Last().ColorBackG=colorTaskCategory;
+							row.Cells.Add(categoryStr);//Category
+							row.Cells.Last().ColorBackG=colorTaskCategory;
 						}
-						gridRow.Cells.Add(dateStr+objDesc+_listTasks[i].Descript+notes);
+						row.Cells.Add(dateStr+objDesc+_listTasks[i].Descript+notes);
 						if(isHqAndTriageList) {//HQ and triage list only
-							gridRow.Cells.Last().ColorBackG=colorTaskPriority;
+							row.Cells.Last().ColorBackG=colorTaskPriority;
 						}
 					}
 				}
 				if(!isHqAndTriageList){//HQ's triage list should not have color coded row as that task list is treated differently
-					gridRow.ColorBackG=Defs.GetColor(DefCat.TaskPriorities,_listTasks[i].PriorityDefNum);//No need to do any text detection for triage priorities, we'll just use the task priority colors.
+					row.ColorBackG=Defs.GetColor(DefCat.TaskPriorities,_listTasks[i].PriorityDefNum);//No need to do any text detection for triage priorities, we'll just use the task priority colors.
 				}
-				gridRow.Tag=_listTasks[i];
-				gridMain.ListGridRows.Add(gridRow);
-				// Check if this task was selected before FillGrid() was called
-				if(taskSelected!=null && _listTasks[i].TaskNum==taskSelected.TaskNum) {//_clickedTask can be a TaskList
-					selectedIndex=gridMain.ListGridRows.Count-1;
+				row.Tag=_listTasks[i];
+				gridMain.ListGridRows.Add(row);
+				if(_clickedTask is Task && _listTasks[i].TaskNum==_clickedTask.TaskNum) {//_clickedTask can be a TaskList
+					selectedTaskIndex=gridMain.ListGridRows.Count-1;
 				}
 			}
 			gridMain.EndUpdate();
-			// Reselect the Task / TaskList that was selected before FillGrid() was called
-			gridMain.SetSelected(selectedIndex,true);
+			//if(isTaskSelectedVisible) {//Only scroll the previously selected task (now reselected task) into view if it was previously visible.
+				//gridMain.ScrollToIndex(selectedTaskIndex); For now, this is confusing techs, revisit later.
+			//}
+			gridMain.SetSelected(selectedTaskIndex,true);
 			//Without this 'scroll value reset', drilling down into a tasklist that contains tasks will sometimes result in an empty grid, until the user 
 			//interacts with the grid, example, scrolling will cause the grid to repaint and properly display the expected tasks.
 			gridMain.ScrollValue=gridMain.ScrollValue;//this forces scroll value to reset if it's > allowed max.
@@ -1329,9 +1285,7 @@ namespace OpenDental {
 				SetPatientTicketTab(gridMain.ListGridRows.Count);
 			}
 			else {
-				if(!isFilterRefresh) {
-					SetPatientTicketTab(-1);
-				}
+				SetPatientTicketTab(-1);
 			}
 			SetControlTitleHelper();
 		}
@@ -1372,64 +1326,64 @@ namespace OpenDental {
 			if(FillGridEvent==null){//Delegate has not been assigned, so we do not care.
 				return;
 			}
-			string descriptTaskList="";
+			string taskListDescript="";
 			if(tabControl.SelectedTab==tabNew) {//Special case tab. All grid rows are guaranteed to be task so we manually set values.
-				descriptTaskList=Lan.g(this,"New for")+" "+Security.CurUser.UserName;
+				taskListDescript=Lan.g(this,"New for")+" "+Security.CurUser.UserName;
 			}
 			else if(_listTaskListTreeHistory.Count>0){//Not in main trunk
-				descriptTaskList=_listTaskListTreeHistory[_listTaskListTreeHistory.Count-1].Descript;
+				taskListDescript=_listTaskListTreeHistory[_listTaskListTreeHistory.Count-1].Descript;
 			}
-			if(descriptTaskList=="") {//Should only happen when at main trunk.
-				TitleControlParent=Lan.g(this,"Tasks");
+			if(taskListDescript=="") {//Should only happen when at main trunk.
+				ControlParentTitle=Lan.g(this,"Tasks");
 			}
 			else {
 				int tasksNewCount=_listTaskLists.Sum(x => x.NewTaskCount);
-				if(PrefC.GetBool(PrefName.TasksNewTrackedByUser)) {
-					tasksNewCount+=_listTasks.Count(x => x.IsUnread);
-				}
-				else {
-					tasksNewCount+=_listTasks.Count(x => x.TaskStatus==TaskStatusEnum.New);
-				}
-				TitleControlParent=Lan.g(this,"Tasks")+" - "+descriptTaskList+" ("+tasksNewCount.ToString()+")";
+				tasksNewCount+=_listTasks.Sum(x => x.TaskStatus==TaskStatusEnum.New?1:0);
+				ControlParentTitle=Lan.g(this,"Tasks")+" - "+taskListDescript+" ("+tasksNewCount.ToString()+")";
 			}
 			FillGridEvent.Invoke(this,new EventArgs());
 		}
 
 		///<summary>A recursive function that checks every child in a list IsFromRepeating.  If any are marked complete, then it returns true, signifying that this list should be immune from being deleted since it's already in use.</summary>
-		private bool AnyAreMarkedComplete(TaskList taskList) {
+		private bool AnyAreMarkedComplete(TaskList list) {
 			//get all children:
-			List<TaskList> listTaskListsChildren=TaskLists.RefreshChildren(taskList.TaskListNum,Security.CurUser.UserNum,0,TaskType.Normal);
-			List<Task> listTasksChild=Tasks.RefreshChildren(taskList.TaskListNum,true,DateTime.MinValue,Security.CurUser.UserNum,0,TaskType.Normal);
-			for(int i=0;i<listTaskListsChildren.Count;i++) {
-				if(AnyAreMarkedComplete(listTaskListsChildren[i])) {
+			List<TaskList> childLists=TaskLists.RefreshChildren(list.TaskListNum,Security.CurUser.UserNum,0,TaskType.Normal);
+			List<Task> childTasks=Tasks.RefreshChildren(list.TaskListNum,true,DateTime.MinValue,Security.CurUser.UserNum,0,TaskType.Normal);
+			for(int i=0;i<childLists.Count;i++) {
+				if(AnyAreMarkedComplete(childLists[i])) {
 					return true;
 				}
 			}
-			for(int i=0;i<listTasksChild.Count;i++) {
-				if(listTasksChild[i].TaskStatus==TaskStatusEnum.Done) {
+			for(int i=0;i<childTasks.Count;i++) {
+				if(childTasks[i].TaskStatus==TaskStatusEnum.Done) {
 					return true;
 				}
 			}
 			return false;
 		}
 
-		///<summary>Returns a filtered and reordered list of task lists based on the text within the Task List Filter control.</summary>
-		private List<TaskList> GetFilteredTaskLists() {
-			string filterToUpper=textListFilter.Text.ToUpper().Trim();
-			if(string.IsNullOrWhiteSpace(filterToUpper)) {
-				return _listTaskLists;
+		/// <summary>parameters are passthrough parameters to TaskLists.RefreshChildren. Gets that list, then filters from there.</summary>
+		private void FilterTaskList(ref List<TaskList> listToFilter) {
+			//We wait to filter until the entire description is created because one task might be filtered, but it's parent isn't
+			if(string.IsNullOrWhiteSpace(textListFilter.Text)) {
+				return;
 			}
-			//Filter out any task lists that do not contail the filter text.
-			List<TaskList> listTaskLists=_listTaskLists.FindAll(x => x.Descript.ToUpper().Trim().Contains(filterToUpper));
-			//Ordering will be:
-			//1. Task lists whose name starts with the filter text
-			//2. Task lists whose name contains the filter text (alphabetically)
-			return listTaskLists.OrderByDescending(x => x.Descript.ToUpper().Trim().StartsWith(filterToUpper))
+			//This is the same filter algorithm that is used in FormTaskListSelect
+			//Odering will be:
+			//1. tasklists whose name starts with the search text
+			//2. tasklists whose name doesn't start with, but does contain search text
+			//3. tasklists whose name doesn't contain search text but whose path starts with the search text
+			//4. tasklists whose name doesn't contain search text and whose path doesn't start with search text but whose path does contain search text
+			//5. then by tasklist.Descript
+			listToFilter=listToFilter
+				.FindAll(x => x.Descript.ToUpper().Trim().Contains(textListFilter.Text.ToUpper().Trim()))//either the tasklist name contains search text
+				.OrderByDescending(x => x.Descript.ToUpper().Trim().StartsWith(textListFilter.Text.ToUpper().Trim()))
+				.ThenByDescending(x => x.Descript.ToUpper().Trim().Contains(textListFilter.Text.ToUpper().Trim()))
 				.ThenBy(x => x.Descript).ToList();
 		}
 
 		///<summary>If parent=0, then this is a trunk.</summary>
-		private void RefreshMainLists(long taskListNum,DateTime date,bool isManualRefresh=false) {
+		private void RefreshMainLists(long parent,DateTime date,bool isManualRefresh=false) {
 			if(this.DesignMode){
 				_listTaskLists=new List<TaskList>();
 				_listTasks=new List<Task>();
@@ -1439,63 +1393,63 @@ namespace OpenDental {
 			if(tabControl==null) {
 				return;
 			}
-			_listSignalNumsSentTask.Clear();//Full refresh, tracked sent signals are now irrelevant and taking up memory.
+			_listSentTaskSignalNums.Clear();//Full refresh, tracked sent signals are now irrelevant and taking up memory.
 			TaskType taskType=TaskType.Normal;
 			if(tabControl.SelectedTab==tabReminders) {
 				taskType=TaskType.Reminder;
 			}
 			//Clear copy lists if switching between tabs.
 			UI.TabPage tabPageSelected=tabControl.SelectedTab;
-			if(tabPageSelected is null || _tabNamePrevious!=tabPageSelected.Name) {
+			if(tabPageSelected is null || _previousTabName!=tabPageSelected.Name) {
 				_listTaskListsCopy=new List<TaskList>();
 				_listTasksCopy=new List<Task>();
 			}
-			if(taskListNum!=0){//not a trunk
+			if(parent!=0){//not a trunk
 				//if(TreeHistory.Count>0//we already know this is true
 				long userNumInbox=TaskLists.GetMailboxUserNum(_listTaskListTreeHistory[0].TaskListNum);
-				_listTaskLists=TaskLists.RefreshChildren(taskListNum,Security.CurUser.UserNum,userNumInbox,taskType,Clinics.ClinicNum
+				_listTaskLists=TaskLists.RefreshChildren(parent,Security.CurUser.UserNum,userNumInbox,taskType,Clinics.ClinicNum
 					,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
-				_listTasks=Tasks.RefreshChildren(taskListNum,_isShowFinishedTasks,_dateTimeStartShowFinished,Security.CurUser.UserNum,userNumInbox,taskType,
-					_isTaskSortApptDateTime,_listClinicNumsFilter,_listDefNumsRegionFilter,_dateFilterStart,_dateFilterEnd,_patientFilter);
+				_listTasks=Tasks.RefreshChildren(parent,_isShowFinishedTasks,_dateTimeStartShowFinished,Security.CurUser.UserNum,userNumInbox,taskType,
+					_isTaskSortApptDateTime,_globalFilterType,_listFilterFkeys);
 			}
 			else if(tabControl.SelectedTab==tabUser) {
 				//If HQ clinic or clinics disabled, default to "0" Region.
 				_listTaskLists=TaskLists.RefreshUserTrunk(Security.CurUser.UserNum,Clinics.ClinicNum,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
-				lock(_listTaskListNumsSubscribed) {
-					_listTaskListNumsSubscribed=_listTaskLists.Select(x => x.TaskListNum).ToList();
+				lock(_listSubscribedTaskListNums) {
+					_listSubscribedTaskListNums=_listTaskLists.Select(x => x.TaskListNum).ToList();
 				}
 				_listTasks=new List<Task>();//no tasks in the user trunk
 			}
 			else if(tabControl.SelectedTab==tabNew) {
 				_listTaskLists=new List<TaskList>();//no task lists in new tab
-				_listTasks=Tasks.RefreshUserNew(Security.CurUser.UserNum,_listClinicNumsFilter,_listDefNumsRegionFilter);
-				lock(_listTaskListNumsSubscribed) {
-					_listTaskListNumsSubscribed=GetSubscribedTaskLists(Security.CurUser.UserNum).Select(x => x.TaskListNum).ToList();
+				_listTasks=Tasks.RefreshUserNew(Security.CurUser.UserNum,_globalFilterType,_listFilterFkeys);
+				lock(_listSubscribedTaskListNums) {
+					_listSubscribedTaskListNums=GetSubscribedTaskLists(Security.CurUser.UserNum).Select(x => x.TaskListNum).ToList();
 				}
 			}
 			else if(tabControl.SelectedTab==tabOpenTickets) {
 				_listTaskLists=new List<TaskList>();//no task lists in new tab
-				_listTasks=Tasks.RefreshOpenTickets(Security.CurUser.UserNum,_listClinicNumsFilter,_listDefNumsRegionFilter);
+				_listTasks=Tasks.RefreshOpenTickets(Security.CurUser.UserNum,_globalFilterType,_listFilterFkeys);
 			}
 			else if(tabControl.SelectedTab==tabPatientTickets) {
 				_listTaskLists=new List<TaskList>();
 				_listTasks=new List<Task>();
 				if(FormOpenDental.PatNumCur!=0) {
-					_listTasks=Tasks.RefreshPatientTickets(FormOpenDental.PatNumCur,Security.CurUser.UserNum,_listClinicNumsFilter,_listDefNumsRegionFilter);
+					_listTasks=Tasks.RefreshPatientTickets(FormOpenDental.PatNumCur,Security.CurUser.UserNum,_globalFilterType,_listFilterFkeys);
 				}
 			}
 			else if(tabControl.SelectedTab==tabMain) {
 				if(!PrefC.GetBool(PrefName.EnterpriseManualRefreshMainTaskLists)) {
 					_listTaskLists=TaskLists.RefreshMainTrunk(Security.CurUser.UserNum,TaskType.Normal,Clinics.ClinicNum
 						,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
-					_listTasks=Tasks.RefreshMainTrunk(_isShowFinishedTasks,_dateTimeStartShowFinished,Security.CurUser.UserNum,TaskType.Normal
-						,_listClinicNumsFilter,_listDefNumsRegionFilter);
+					_listTasks=Tasks.RefreshMainTrunk(_isShowFinishedTasks,_dateTimeStartShowFinished,Security.CurUser.UserNum,TaskType.Normal,_globalFilterType
+						,_listFilterFkeys);
 				}
 				else if(isManualRefresh) {
 					_listTaskLists=TaskLists.RefreshMainTrunk(Security.CurUser.UserNum,TaskType.Normal,Clinics.ClinicNum
 						,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
-					_listTasks=Tasks.RefreshMainTrunk(_isShowFinishedTasks,_dateTimeStartShowFinished,Security.CurUser.UserNum,TaskType.Normal
-						,_listClinicNumsFilter,_listDefNumsRegionFilter);
+					_listTasks=Tasks.RefreshMainTrunk(_isShowFinishedTasks,_dateTimeStartShowFinished,Security.CurUser.UserNum,TaskType.Normal,_globalFilterType
+						,_listFilterFkeys);
 					//Store references to the list of Tasks and TaskLists so they can be used when navigating from a child task list to the parent of the Main tab.
 					_listTaskListsCopy=_listTaskLists;
 					_listTasksCopy=_listTasks;
@@ -1510,13 +1464,13 @@ namespace OpenDental {
 					_listTaskLists=TaskLists.RefreshMainTrunk(Security.CurUser.UserNum,TaskType.Reminder,Clinics.ClinicNum
 						,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
 					_listTasks=Tasks.RefreshMainTrunk(_isShowFinishedTasks,_dateTimeStartShowFinished,Security.CurUser.UserNum,TaskType.Reminder
-						,_listClinicNumsFilter,_listDefNumsRegionFilter);
+						,_globalFilterType,_listFilterFkeys);
 				}
 				else if(isManualRefresh) { 
 					_listTaskLists=TaskLists.RefreshMainTrunk(Security.CurUser.UserNum,TaskType.Reminder,Clinics.ClinicNum
 						,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
 					_listTasks=Tasks.RefreshMainTrunk(_isShowFinishedTasks,_dateTimeStartShowFinished,Security.CurUser.UserNum,TaskType.Reminder
-						,_listClinicNumsFilter,_listDefNumsRegionFilter);
+						,_globalFilterType,_listFilterFkeys);
 					//Store references to the list of Tasks and TaskLists so they can be used when navigating from a child task list to the parent of the Reminder tab.
 					_listTaskListsCopy=_listTaskLists;
 					_listTasksCopy=_listTasks;
@@ -1528,25 +1482,25 @@ namespace OpenDental {
 			}
 			else if(tabControl.SelectedTab==tabRepeating) {
 				_listTaskLists=TaskLists.RefreshRepeatingTrunk(Security.CurUser.UserNum,Clinics.ClinicNum,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
-				_listTasks=Tasks.RefreshRepeatingTrunk(Security.CurUser.UserNum,_listClinicNumsFilter,_listDefNumsRegionFilter);
+				_listTasks=Tasks.RefreshRepeatingTrunk(Security.CurUser.UserNum,_globalFilterType,_listFilterFkeys);
 			}
 			else if(tabControl.SelectedTab==tabDate) {
 				_listTaskLists=TaskLists.RefreshDatedTrunk(date,TaskDateType.Day,Security.CurUser.UserNum,Clinics.ClinicNum
 					,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
 				_listTasks=Tasks.RefreshDatedTrunk(date,TaskDateType.Day,_isShowFinishedTasks,_dateTimeStartShowFinished,Security.CurUser.UserNum
-					,_listClinicNumsFilter,_listDefNumsRegionFilter);
+					,_globalFilterType,_listFilterFkeys);
 			}
 			else if(tabControl.SelectedTab==tabWeek) {
 				_listTaskLists=TaskLists.RefreshDatedTrunk(date,TaskDateType.Week,Security.CurUser.UserNum,Clinics.ClinicNum
 					,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
 				_listTasks=Tasks.RefreshDatedTrunk(date,TaskDateType.Week,_isShowFinishedTasks,_dateTimeStartShowFinished,Security.CurUser.UserNum
-					,_listClinicNumsFilter,_listDefNumsRegionFilter);
+					,_globalFilterType,_listFilterFkeys);
 			}
 			else if(tabControl.SelectedTab==tabMonth) {
 				_listTaskLists=TaskLists.RefreshDatedTrunk(date,TaskDateType.Month,Security.CurUser.UserNum,Clinics.ClinicNum
 					,Clinics.GetClinic(Clinics.ClinicNum)?.Region??0);
 				_listTasks=Tasks.RefreshDatedTrunk(date,TaskDateType.Month,_isShowFinishedTasks,_dateTimeStartShowFinished,Security.CurUser.UserNum
-					,_listClinicNumsFilter,_listDefNumsRegionFilter);
+					,_globalFilterType,_listFilterFkeys);
 			}
 			if(PrefC.IsODHQ && _listTasks!=null && _listTasks.Count>0) {
 				_listJobLinks=JobLinks.GetForTaskNums(_listTasks.Select(x => x.TaskNum).ToList());
@@ -1570,6 +1524,7 @@ namespace OpenDental {
 			if(!_isShowArchivedTaskLists) {
 				_listTaskLists.RemoveAll(x => x.TaskListStatus==TaskListStatusEnum.Archived || TaskLists.IsAncestorTaskListArchived(ref _dictTaskLists,x));
 			}
+			FilterTaskList(ref _listTaskLists);
 			//notes
 			List<long> taskNums=new List<long>();
 			for(int i=0;i<_listTasks.Count;i++) {
@@ -1577,55 +1532,55 @@ namespace OpenDental {
 			}
 			if(_hasListSwitched) {
 				if(_isCollapsedByDefault) {
-					_listTaskNumsExpanded.Clear();
+					_listExpandedTaskNums.Clear();
 				}
 				else {
-					_listTaskNumsExpanded.AddRange(taskNums);
+					_listExpandedTaskNums.AddRange(taskNums);
 				}
 				_hasListSwitched=false;
 			}
 			else {
 				if(_taskCollapsedState==1) {//Header was clicked, make all collapsed
-					_listTaskNumsExpanded.Clear();				
+					_listExpandedTaskNums.Clear();				
 				}
 				else if(_taskCollapsedState==0) {//Header was clicked, make all expanded
-					_listTaskNumsExpanded.AddRange(taskNums);
+					_listExpandedTaskNums.AddRange(taskNums);
 				}
 				else { 
-					for(int i=_listTaskNumsExpanded.Count-1;i>=0;i--) {
-						if(!taskNums.Contains(_listTaskNumsExpanded[i])) {
-							_listTaskNumsExpanded.Remove(_listTaskNumsExpanded[i]);//The Task was removed from the visual list, don't keep it around in the expanded list.
+					for(int i=_listExpandedTaskNums.Count-1;i>=0;i--) {
+						if(!taskNums.Contains(_listExpandedTaskNums[i])) {
+							_listExpandedTaskNums.Remove(_listExpandedTaskNums[i]);//The Task was removed from the visual list, don't keep it around in the expanded list.
 						}
 					}
 				}
 			}
 			_listTaskNotes=TaskNotes.RefreshForTasks(taskNums);
-			_tabNamePrevious="";
+			_previousTabName="";
 			if(tabControl.SelectedTab!=null) {
-				_tabNamePrevious=tabControl.SelectedTab.Name;
+				_previousTabName=tabControl.SelectedTab.Name;
 			}
 		}
 
 		///<summary>Returns a list of TaskLists containing all directly and indirectly subscribed TaskLists for the current user.</summary>
 		public static List<TaskList> GetSubscribedTaskLists(long userNum) {
-			List<TaskList> listTaskListsAll=TaskLists.GetAll();
+			List<TaskList> listAllTaskLists=TaskLists.GetAll();
 			List<long> listSubscribedTaskListNums=TaskSubscriptions.GetTaskSubscriptionsForUser(userNum).Select(x => x.TaskListNum).ToList();
-			List<TaskList> listTaskListsQueue=listTaskListsAll.FindAll(x => listSubscribedTaskListNums.Contains(x.TaskListNum));//Task lists to consider.
-			List<TaskList> listTaskListsSubscribed=new List<TaskList>();
-			while(listTaskListsQueue.Count>0) {
-				TaskList taskList=listTaskListsQueue[0];
-				listTaskListsQueue.RemoveAt(0);//pop
-				if(!listTaskListsSubscribed.Contains(taskList)) {//Avoid duplicate return values
-					listTaskListsSubscribed.Add(taskList);//Each item added to the queue will be part of the return list.
+			List<TaskList> listQueueTaskLists=listAllTaskLists.FindAll(x => listSubscribedTaskListNums.Contains(x.TaskListNum));//Task lists to consider.
+			List<TaskList> listSubscribedTaskLists=new List<TaskList>();
+			while(listQueueTaskLists.Count>0) {
+				TaskList taskList=listQueueTaskLists[0];
+				listQueueTaskLists.RemoveAt(0);//pop
+				if(!listSubscribedTaskLists.Contains(taskList)) {//Avoid duplicate return values
+					listSubscribedTaskLists.Add(taskList);//Each item added to the queue will be part of the return list.
 				}
-				List<TaskList> taskListChildren=listTaskListsAll.FindAll(x => x.Parent==taskList.TaskListNum);//Children of taskList.
-				foreach(TaskList child in taskListChildren) {
-					if(!listTaskListsSubscribed.Contains(child) && !listTaskListsQueue.Contains(child)) {//Avoid duplicate return values.
-						listTaskListsQueue.Add(child);//push
+				List<TaskList> listChildren=listAllTaskLists.FindAll(x => x.Parent==taskList.TaskListNum);//Children of taskList.
+				foreach(TaskList child in listChildren) {
+					if(!listSubscribedTaskLists.Contains(child) && !listQueueTaskLists.Contains(child)) {//Avoid duplicate return values.
+						listQueueTaskLists.Add(child);//push
 					}
 				}
 			}
-			return listTaskListsSubscribed;
+			return listSubscribedTaskLists;
 		}
 
 		private void tabControl_Selecting(object sender,int e) {
@@ -1663,9 +1618,6 @@ namespace OpenDental {
 				case "BlockSubsc":
 					BlockSubsc_Clicked();
 					break;
-				case "Filter":
-					Filter_Clicked();
-					break;
 			}
 		}
 	
@@ -1675,12 +1627,12 @@ namespace OpenDental {
 			formTaskOptions.StartPosition=FormStartPosition.Manual;//Allows us to set starting form starting Location.
 			Point pointFormLocation=this.PointToScreen(ToolBarMain.Location);//Since we cant get ToolBarMain.Buttons["Options"] location directly.
 			pointFormLocation.X+=ToolBarMain.Buttons["Options"].Bounds.Width;//Add Options button width so by default form opens along side button.
-			Rectangle rectangleScreenDim=SystemInformation.VirtualScreen;//Dimensions of users screen. Includes if user has more then 1 screen.
-			if(pointFormLocation.X+formTaskOptions.Width > rectangleScreenDim.Width) {//Not all of form will be on screen, so adjust.
-				pointFormLocation.X=rectangleScreenDim.Width-formTaskOptions.Width-5;//5 for some padding.
+			Rectangle screenDim=SystemInformation.VirtualScreen;//Dimensions of users screen. Includes if user has more then 1 screen.
+			if(pointFormLocation.X+formTaskOptions.Width > screenDim.Width) {//Not all of form will be on screen, so adjust.
+				pointFormLocation.X=screenDim.Width-formTaskOptions.Width-5;//5 for some padding.
 			}
-			if(pointFormLocation.Y+formTaskOptions.Height > rectangleScreenDim.Height) {//Not all of form will be on screen, so adjust.
-				pointFormLocation.Y=rectangleScreenDim.Height-formTaskOptions.Height-5;//5 for some padding.
+			if(pointFormLocation.Y+formTaskOptions.Height > screenDim.Height) {//Not all of form will be on screen, so adjust.
+				pointFormLocation.Y=screenDim.Height-formTaskOptions.Height-5;//5 for some padding.
 			}
 			formTaskOptions.Location=pointFormLocation;
 			formTaskOptions.ShowDialog();
@@ -1696,63 +1648,8 @@ namespace OpenDental {
 			FillGrid();
 		}
 
-		private void Filter_Clicked() {
-
-			long keyNum;
-			FrmTaskFilter frmTaskFilter=new FrmTaskFilter();
-			Task task = gridMain.SelectedTag<Task>();
-			if(task==null) {
-				keyNum=0;
-			}
-			else {
-				keyNum=task.KeyNum;
-				if(task.ObjectType==TaskObjectType.Patient) {
-					frmTaskFilter.PatientTask=Patients.GetPat(keyNum);
-				}
-				else if(task.ObjectType==TaskObjectType.Appointment) {
-					Appointment appointment=Appointments.GetOneApt(keyNum);
-					if(appointment!=null) {//Appointment could get deleted after clicking on task, so check for null
-						frmTaskFilter.PatientTask=Patients.GetPat(appointment.PatNum);
-					}
-				}
-			}
-			if(_patientFilter!=null) {
-				frmTaskFilter.PatientSelected=_patientFilter;
-			}
-			frmTaskFilter.PatientMain=Patients.GetPat(FormOpenDental.PatNumCur);
-			frmTaskFilter.EnumTaskPatientFilterType_=_enumTaskPatientFilterType;
-			frmTaskFilter.DateStart=_dateFilterStart;
-			frmTaskFilter.DateEnd=_dateFilterEnd;
-			frmTaskFilter.ListClinicNumsSelected=_listClinicNumsFilter;
-			frmTaskFilter.ListDefNumsRegionsSelected=_listDefNumsRegionFilter;
-			frmTaskFilter.ShowDialog();
-			if(!frmTaskFilter.IsDialogOK) {
-				return;
-			}
-			_enumTaskPatientFilterType=frmTaskFilter.EnumTaskPatientFilterType_;
-			_dateFilterStart=frmTaskFilter.DateStart;
-			_dateFilterEnd=frmTaskFilter.DateEnd;
-			_listClinicNumsFilter=frmTaskFilter.ListClinicNumsSelected;
-			_listDefNumsRegionFilter=frmTaskFilter.ListDefNumsRegionsSelected;
-			_patientFilter=frmTaskFilter.PatientSelected;
-			if(frmTaskFilter.ClearAllClicked) {
-				if(_listTaskListTreeHistory==null) {
-					_listTaskListTreeHistory=new List<TaskList>();
-				}
-				if(_listTaskListTreeHistory.Count>0) {
-					TaskList taskList=_listTaskListTreeHistory.Last();
-					SetFiltersToDefault(taskList);
-				}
-				else {
-					SetFiltersToDefault();
-				}
-			}
-			FillTree();
-			FillGrid();
-		}
-
 		private void AddList_Clicked() {
-			if(!Security.IsAuthorized(EnumPermType.TaskListCreate,false)) {
+			if(!Security.IsAuthorized(Permissions.TaskListCreate,false)) {
 				return;
 			}
 			if(tabControl.SelectedTab==tabUser && _listTaskListTreeHistory.Count==0) {//trunk of user tab
@@ -1794,10 +1691,10 @@ namespace OpenDental {
 			if(tabControl.SelectedTab==tabRepeating) {
 				taskList.IsRepeating=true;
 			}
-			taskList.GlobalTaskFilterType=EnumTaskFilterType.Default;//Results in this taskList inheriting value from PrefName.TasksGlobalFilterType
-			using FormTaskListEdit formTaskListEdit=new FormTaskListEdit(taskList);
-			formTaskListEdit.IsNew=true;
-			if(formTaskListEdit.ShowDialog()==DialogResult.OK) {
+			taskList.GlobalTaskFilterType=GlobalTaskFilterType.Default;//Results in this taskList inheriting value from PrefName.TasksGlobalFilterType
+			using FormTaskListEdit FormT=new FormTaskListEdit(taskList);
+			FormT.IsNew=true;
+			if(FormT.ShowDialog()==DialogResult.OK) {
 				long signalNum=Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,taskList.Parent);//Signal for source parent tasklist.
 				RefillLocalTaskGrids(taskList,listSentSignalNums:new List<long>() { signalNum });
 			}
@@ -1855,10 +1752,10 @@ namespace OpenDental {
 			if(isReminder) {
 				task.ReminderType=TaskReminderType.Once;
 			}
-			FormTaskEdit formTaskEdit=new FormTaskEdit(task,taskOld);
-			formTaskEdit.IsNew=true;
-			formTaskEdit.Closing+=new CancelEventHandler(TaskGoToEvent);
-			formTaskEdit.Show();//non-modal
+			FormTaskEdit FormT=new FormTaskEdit(task,taskOld);
+			FormT.IsNew=true;
+			FormT.Closing+=new CancelEventHandler(TaskGoToEvent);
+			FormT.Show();//non-modal
 		}
 
 		private void AddTask_Clicked() {
@@ -1889,7 +1786,7 @@ namespace OpenDental {
 					Task task=Tasks.GetOne(taskNum);
 					if (task!=null) { //don't show the task search form and just open up the task that has been found
 						FormTaskEdit formTaskEdit=new FormTaskEdit(task);
-						formTaskEdit.Show();
+						formTaskEdit.Show(this);
 						return;
 					}
 				}
@@ -1898,15 +1795,15 @@ namespace OpenDental {
 			// this doesn't need to be disposed of as it is not shown modally (https://stackoverflow.com/a/3097383)
 			FormTaskSearch formTaskbarSearch=new FormTaskSearch();
 			_taskNumOld=-1; // reset _taskNumCur so if they click search again with same clipboard contents it will go straight to taskEdit
-			formTaskbarSearch.Show();
+			formTaskbarSearch.Show(this);
 		}
 
 		public void TaskGoToEvent(object sender,CancelEventArgs e) {
-			FormTaskEdit formTaskEdit=(FormTaskEdit)sender;
-			if(formTaskEdit.TaskObjectTypeGoTo!=TaskObjectType.None) {
-				TaskObjectTypeGoTo=formTaskEdit.TaskObjectTypeGoTo;
-				KeyNumGoTo=formTaskEdit.KeyNumGoTo;
-				FormOpenDental.S_TaskGoTo(TaskObjectTypeGoTo,KeyNumGoTo);
+			FormTaskEdit FormT=(FormTaskEdit)sender;
+			if(FormT.TaskObjectTypeGoTo!=TaskObjectType.None) {
+				GotoType=FormT.TaskObjectTypeGoTo;
+				GotoKeyNum=FormT.KeyNumGoTo;
+				FormOpenDental.S_TaskGoTo(GotoType,GotoKeyNum);
 			}
 			if(!this.IsDisposed) {
 				FillGrid();
@@ -1914,39 +1811,35 @@ namespace OpenDental {
 		}
 
 		private void BlockSubsc_Clicked() {
-			using FormTaskListBlocks formTaskListBlocks = new FormTaskListBlocks();
-			formTaskListBlocks.ShowDialog();
-			if(formTaskListBlocks.DialogResult==DialogResult.OK) {
+			using FormTaskListBlocks FormTLB = new FormTaskListBlocks();
+			FormTLB.ShowDialog();
+			if(FormTLB.DialogResult==DialogResult.OK) {
 				DataValid.SetInvalid(InvalidType.Security);
 			}
 		}
 
 		private void Done_Clicked() {
 			//already blocked if list
-			Task task=gridMain.SelectedTag<Task>();
-			if(task==null) {
-				MsgBox.Show(this,"Please select a valid task.");
-				return;
-			}
-			Task taskOld=task.Copy();
+			Task task=_clickedTask;
+			Task oldTask=task.Copy();
 			task.TaskStatus=TaskStatusEnum.Done;
 			if(task.DateTimeFinished.Year<1880) {
 				task.DateTimeFinished=DateTime.Now;
 			}
 			try {
-				Tasks.Update(task,taskOld);
+				Tasks.Update(task,oldTask);
 			}
 			catch(Exception ex) {
 				//We manipulated the TaskStatus and need to set it back to what it was because something went wrong.
-				int idx=_listTasks.FindIndex(x => x.TaskNum==taskOld.TaskNum);
+				int idx=_listTasks.FindIndex(x => x.TaskNum==oldTask.TaskNum);
 				if(idx>-1) {
-					_listTasks[idx]=taskOld;
+					_listTasks[idx]=oldTask;
 				}
 				MessageBox.Show(ex.Message);
 				return;
 			}
 			TaskUnreads.DeleteForTask(task);
-			TaskHist taskHist=new TaskHist(taskOld);
+			TaskHist taskHist=new TaskHist(oldTask);
 			taskHist.UserNumHist=Security.CurUser.UserNum;
 			TaskHists.Insert(taskHist);
 			long signalNum=Signalods.SetInvalid(InvalidType.Task,KeyType.Task,task.TaskNum);//Only needs to send signal for the one task.
@@ -1954,78 +1847,57 @@ namespace OpenDental {
 		}
 
 		private void Edit_Clicked() {
-			TaskList taskList = gridMain.SelectedTag<TaskList>();
-			Task task = gridMain.SelectedTag<Task>();
-			if(taskList!=null) {//is list
-				using FormTaskListEdit formTaskListEdit=new FormTaskListEdit(taskList);
-				formTaskListEdit.ShowDialog();
-				long signalNum=Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,taskList.Parent);//Signal for source parent tasklist.
-				RefillLocalTaskGrids(taskList,new List<long>() { signalNum });//No db call.
+			if(_clickedI < _listTaskLists.Count) {//is list
+				using FormTaskListEdit FormT=new FormTaskListEdit(_listTaskLists[_clickedI]);
+				FormT.ShowDialog();
+				long signalNum=Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,_listTaskLists[_clickedI].Parent);//Signal for source parent tasklist.
+				RefillLocalTaskGrids(_listTaskLists[_clickedI],new List<long>() { signalNum });//No db call.
 			}
-			else if(task!=null) {//task
-				FormTaskEdit formTaskEdit=new FormTaskEdit(task);//Handles signals for this task edit.
-				formTaskEdit.Show();//non-modal
-			}
-			else { //both are null; object was removed and right-click never left.
-				MsgBox.Show(this,"Please select a valid task or task list.");
-				return;
+			else {//task
+				FormTaskEdit FormT=new FormTaskEdit(_clickedTask);//Handles signals for this task edit.
+				FormT.Show();//non-modal
 			}
 		}
 
 		private void Cut_Clicked() {
-			TaskList taskList=gridMain.SelectedTag<TaskList>();
-			Task task=gridMain.SelectedTag<Task>();
+			if(_clickedI < _listTaskLists.Count) {//is list
+				_clipTaskList=_listTaskLists[_clickedI].Copy();
+				_clipTask=null;
+			}
+			else {//task
+				_clipTaskList=null;
+				_clipTask=_clickedTask.Copy();
+			}
 			_wasCut=true;
-			if(taskList!=null) {//is list
-				_taskListClip=taskList.Copy();
-				_taskClip=null;
-			}
-			else if(task!=null) {//task
-				_taskListClip=null;
-				_taskClip=gridMain.SelectedTag<Task>().Copy();
-			}
-			else {
-				MsgBox.Show(this,"Please select a valid task or task list.");
-				_taskListClip=null;
-				_taskClip=null;
-				_wasCut=false;
-			}
 		}
 
 		private void Copy_Clicked() {
-			TaskList taskList=gridMain.SelectedTag<TaskList>();
-			Task task=gridMain.SelectedTag<Task>();
-			if(taskList!=null) {//is list
-				_taskListClip=taskList.Copy();
-				_taskClip=null;
+			if(_clickedI < _listTaskLists.Count) {//is list
+				_clipTaskList=_listTaskLists[_clickedI].Copy();
+				_clipTask=null;
 			}
-			else if(task!=null) {//task
-				_taskListClip=null;
-				_taskClip=gridMain.SelectedTag<Task>().Copy();
-				if(!String.IsNullOrEmpty(_taskClip.ReminderGroupId)) {
+			else {//task
+				_clipTaskList=null;
+				_clipTask=_clickedTask.Copy();
+				if(!String.IsNullOrEmpty(_clipTask.ReminderGroupId)) {
 					//Any reminder tasks duplicated must have a brand new ReminderGroupId
 					//so that they do not affect the original reminder task chain.
-					Tasks.SetReminderGroupId(_taskClip);
+					Tasks.SetReminderGroupId(_clipTask);
 				}
-			}
-			else {
-				MsgBox.Show(this,"Please select a valid task or task list.");
-				_taskListClip=null;
-				_taskClip=null;
 			}
 			_wasCut=false;
 		}
 
 		///<summary>When copying and pasting, Task hist will be lost because the pasted task has a new TaskNum.</summary>
 		private void Paste_Clicked() {
-			if(_taskListClip!=null) {//a taskList is on the clipboard
+			if(_clipTaskList!=null) {//a taskList is on the clipboard
 				if(!_wasCut) {
 					return;//Tasklists are no longer allowed to be copied, only cut.  Code should never make it this far.
 				}
-				TaskList taskListNew=_taskListClip.Copy();
-				long parentNumClipTL=_taskListClip.Parent;
+				TaskList newTL=_clipTaskList.Copy();
+				long clipTlParentNum=_clipTaskList.Parent;
 				if(_listTaskListTreeHistory.Count>0) {//not on main trunk
-					taskListNew.Parent=_listTaskListTreeHistory[_listTaskListTreeHistory.Count-1].TaskListNum;
+					newTL.Parent=_listTaskListTreeHistory[_listTaskListTreeHistory.Count-1].TaskListNum;
 					if(tabControl.SelectedTab==tabUser){
 						//treat pasting just like it's the main tab, because not on the trunk.
 					}
@@ -2037,70 +1909,70 @@ namespace OpenDental {
 						//treat pasting just like it's the main tab.
 					}
 					else if(tabControl.SelectedTab==tabRepeating){
-						taskListNew.DateTL=DateTime.MinValue;//never a date
+						newTL.DateTL=DateTime.MinValue;//never a date
 						//leave dateType alone, since that affects how it repeats
 					}
 					else if(tabControl.SelectedTab==tabDate
 						|| tabControl.SelectedTab==tabWeek
 						|| tabControl.SelectedTab==tabMonth) 
 					{
-						taskListNew.DateTL=DateTime.MinValue;//children do not get dated
-						taskListNew.DateType=TaskDateType.None;//this doesn't matter either for children
+						newTL.DateTL=DateTime.MinValue;//children do not get dated
+						newTL.DateType=TaskDateType.None;//this doesn't matter either for children
 					}
 				}
 				else {//one of the main trunks
-					taskListNew.Parent=0;
+					newTL.Parent=0;
 					if(tabControl.SelectedTab==tabUser) {
 						//maybe we should treat this like a subscription rather than a paste.  Implement later.  For now:
 						MsgBox.Show(this,"Not allowed to paste directly to the trunk of this tab.  Try using the subscription feature instead.");
 						return;
 					}
 					else if(tabControl.SelectedTab==tabMain) {
-						taskListNew.DateTL=DateTime.MinValue;
-						taskListNew.DateType=TaskDateType.None;
+						newTL.DateTL=DateTime.MinValue;
+						newTL.DateType=TaskDateType.None;
 					}
 					else if(tabControl.SelectedTab==tabReminders) {
-						taskListNew.DateTL=DateTime.MinValue;
-						taskListNew.DateType=TaskDateType.None;
+						newTL.DateTL=DateTime.MinValue;
+						newTL.DateType=TaskDateType.None;
 					}
 					else if(tabControl.SelectedTab==tabRepeating) {
-						taskListNew.DateTL=DateTime.MinValue;//never a date
+						newTL.DateTL=DateTime.MinValue;//never a date
 						//newTL.DateType=TaskDateType.None;//leave alone
 					}
 					else if(tabControl.SelectedTab==tabDate){
-						taskListNew.DateTL=monthCalendar.SelectionStart;
-						taskListNew.DateType=TaskDateType.Day;
+						newTL.DateTL=monthCalendar.SelectionStart;
+						newTL.DateType=TaskDateType.Day;
 					}
 					else if(tabControl.SelectedTab==tabWeek) {
-						taskListNew.DateTL=monthCalendar.SelectionStart;
-						taskListNew.DateType=TaskDateType.Week;
+						newTL.DateTL=monthCalendar.SelectionStart;
+						newTL.DateType=TaskDateType.Week;
 					}
 					else if(tabControl.SelectedTab==tabMonth) {
-						taskListNew.DateTL=monthCalendar.SelectionStart;
-						taskListNew.DateType=TaskDateType.Month;
+						newTL.DateTL=monthCalendar.SelectionStart;
+						newTL.DateType=TaskDateType.Month;
 					}
 				}
 				if(tabControl.SelectedTab==tabRepeating) {
-					taskListNew.IsRepeating=true;
+					newTL.IsRepeating=true;
 				}
 				else {
-					taskListNew.IsRepeating=false;
+					newTL.IsRepeating=false;
 				}
-				taskListNew.FromNum=0;//always
-				if(_taskListClip.TaskListNum==taskListNew.Parent && _wasCut) {
+				newTL.FromNum=0;//always
+				if(_clipTaskList.TaskListNum==newTL.Parent && _wasCut) {
 					MsgBox.Show(this,"Cannot cut and paste a task list into itself.  Please move it into a different task list.");
 					return;
 				}
-				if(TaskLists.IsAncestor(_taskListClip.TaskListNum,taskListNew.Parent)) {
+				if(TaskLists.IsAncestor(_clipTaskList.TaskListNum,newTL.Parent)) {
 					//The user is attempting to cut or copy a TaskList into one of its ancestors.  We don't want to do normal movement logic for this case.
 					//We move the TaskList desired to have its parent to the list they desire.  
 					//We change the TaskList's direct children to have the parent of the TaskList being moved.
-					MoveListIntoAncestor(taskListNew,_taskListClip.Parent);
+					MoveListIntoAncestor(newTL,_clipTaskList.Parent);
 				}
 				else {
 					//If the user has task filters on this TaskList or one of its children, prompt the user they may be moving tasks that are filtered.
-					if((EnumTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType)!=EnumTaskFilterType.Disabled &&
-						(_enumTaskFilterTypeForList!=EnumTaskFilterType.None || TaskLists.HasGlobalFilterTypeInTree(taskListNew)) && !ODBuild.IsUnitTest)
+					if((GlobalTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType)!=GlobalTaskFilterType.Disabled &&
+						(_globalFilterType!=GlobalTaskFilterType.None || TaskLists.HasGlobalFilterTypeInTree(newTL)) && !ODInitialize.IsRunningInUnitTest)
 					{
 						if(!MsgBox.Show(this,MsgBoxButtons.OKCancel
 							,"Task filters are turned on in this task list or one of its sub lists.  Pasting will cause filtered tasks to move as "
@@ -2110,26 +1982,26 @@ namespace OpenDental {
 						}
 					}
 					if(tabControl.SelectedTab==tabUser || tabControl.SelectedTab==tabMain || tabControl.SelectedTab==tabReminders) {
-						MoveTaskList(taskListNew,true);
+						MoveTaskList(newTL,true);
 					}
 					else {
-						MoveTaskList(taskListNew,false);
+						MoveTaskList(newTL,false);
 					}
 				}
 				List<long> listSignalNums=new List<long>();
-				if(parentNumClipTL!=0) {
-					listSignalNums.Add(Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,parentNumClipTL));//Signal for source parent tasklist.
+				if(clipTlParentNum!=0) {
+					listSignalNums.Add(Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,clipTlParentNum));//Signal for source parent tasklist.
 				}
-				if(taskListNew.Parent!=0) {
-					listSignalNums.Add(Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,taskListNew.Parent));//Signal for destination parent tasklist.
+				if(newTL.Parent!=0) {
+					listSignalNums.Add(Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,newTL.Parent));//Signal for destination parent tasklist.
 				}
-				RefillLocalTaskGrids(taskListNew,listSignalNums);//No db call.
+				RefillLocalTaskGrids(newTL,listSignalNums);//No db call.
 			}
-			else if(_taskClip!=null) {//a task is on the clipboard
-				Task taskNew=_taskClip.Copy();
-				long clipTaskTaskListNum=_taskClip.TaskListNum;
+			else if(_clipTask!=null) {//a task is on the clipboard
+				Task newT=_clipTask.Copy();
+				long clipTaskTaskListNum=_clipTask.TaskListNum;
 				if(_listTaskListTreeHistory.Count>0) {//not on main trunk
-					taskNew.TaskListNum=_listTaskListTreeHistory[_listTaskListTreeHistory.Count-1].TaskListNum;
+					newT.TaskListNum=_listTaskListTreeHistory[_listTaskListTreeHistory.Count-1].TaskListNum;
 					if(tabControl.SelectedTab==tabUser) {
 						//treat pasting just like it's the main tab, because not on the trunk.
 					}
@@ -2141,136 +2013,132 @@ namespace OpenDental {
 						//treat pasting just like it's the main tab.
 					}
 					else if(tabControl.SelectedTab==tabRepeating) {
-						taskNew.DateTask=DateTime.MinValue;//never a date
+						newT.DateTask=DateTime.MinValue;//never a date
 						//leave dateType alone, since that affects how it repeats
 					}
 					else if(tabControl.SelectedTab==tabDate
 						|| tabControl.SelectedTab==tabWeek
 						|| tabControl.SelectedTab==tabMonth) 
 					{
-						taskNew.DateTask=DateTime.MinValue;//children do not get dated
-						taskNew.DateType=TaskDateType.None;//this doesn't matter either for children
+						newT.DateTask=DateTime.MinValue;//children do not get dated
+						newT.DateType=TaskDateType.None;//this doesn't matter either for children
 					}
 				}
 				else {//one of the main trunks
-					taskNew.TaskListNum=0;
+					newT.TaskListNum=0;
 					if(tabControl.SelectedTab==tabUser) {
 						//never allowed to have a task on the user trunk.
 						MsgBox.Show(this,"Tasks may not be pasted directly to the trunk of this tab.  Try pasting within a list instead.");
 						return;
 					}
 					else if(tabControl.SelectedTab==tabMain) {
-						taskNew.DateTask=DateTime.MinValue;
-						taskNew.DateType=TaskDateType.None;
+						newT.DateTask=DateTime.MinValue;
+						newT.DateType=TaskDateType.None;
 					}
 					else if(tabControl.SelectedTab==tabReminders) {
-						taskNew.DateTask=DateTime.MinValue;
-						taskNew.DateType=TaskDateType.None;
+						newT.DateTask=DateTime.MinValue;
+						newT.DateType=TaskDateType.None;
 					}
 					else if(tabControl.SelectedTab==tabRepeating) {
-						taskNew.DateTask=DateTime.MinValue;//never a date
+						newT.DateTask=DateTime.MinValue;//never a date
 						//newTL.DateType=TaskDateType.None;//leave alone
 					}
 					else if(tabControl.SelectedTab==tabDate) {
-						taskNew.DateTask=monthCalendar.SelectionStart;
-						taskNew.DateType=TaskDateType.Day;
+						newT.DateTask=monthCalendar.SelectionStart;
+						newT.DateType=TaskDateType.Day;
 					}
 					else if(tabControl.SelectedTab==tabWeek) {
-						taskNew.DateTask=monthCalendar.SelectionStart;
-						taskNew.DateType=TaskDateType.Week;
+						newT.DateTask=monthCalendar.SelectionStart;
+						newT.DateType=TaskDateType.Week;
 					}
 					else if(tabControl.SelectedTab==tabMonth) {
-						taskNew.DateTask=monthCalendar.SelectionStart;
-						taskNew.DateType=TaskDateType.Month;
+						newT.DateTask=monthCalendar.SelectionStart;
+						newT.DateType=TaskDateType.Month;
 					}
 				}
 				if(tabControl.SelectedTab==tabRepeating) {
-					taskNew.IsRepeating=true;
+					newT.IsRepeating=true;
 				}
 				else {
-					taskNew.IsRepeating=false;
+					newT.IsRepeating=false;
 				}
-				taskNew.FromNum=0;//always
-				if(!String.IsNullOrEmpty(taskNew.ReminderGroupId)) {
+				newT.FromNum=0;//always
+				if(!String.IsNullOrEmpty(newT.ReminderGroupId)) {
 					//Any reminder tasks duplicated to another task list must have a brand new ReminderGroupId
 					//so that they do not affect the original reminder task chain.
-					Tasks.SetReminderGroupId(taskNew);
+					Tasks.SetReminderGroupId(newT);
 				}
-				if(_wasCut && Tasks.WasTaskAltered(_taskClip)){
+				if(_wasCut && Tasks.WasTaskAltered(_clipTask)){
 					MsgBox.Show("Tasks","Not allowed to move because the task has been altered by someone else.");
 					FillGrid();
 					return;
 				}
-				string descriptHist="";
-				List<TaskNote> listTaskNotes;
+				string histDescript="";
+				List<TaskNote> noteList;
 				List<long> listSignalNums=new List<long>();
 				if(_wasCut) { //cut
-					if(clipTaskTaskListNum==taskNew.TaskListNum) {//User cut then paste into the same task list.
+					if(clipTaskTaskListNum==newT.TaskListNum) {//User cut then paste into the same task list.
 						return;//Nothing to do.
 					}
-					listTaskNotes=TaskNotes.GetForTask(taskNew.TaskNum);
-					descriptHist="This task was cut from task list "+TaskLists.GetFullPath(_taskClip.TaskListNum)+" and pasted into "+TaskLists.GetFullPath(taskNew.TaskListNum);
-					Tasks.Update(taskNew,_taskClip);
+					noteList=TaskNotes.GetForTask(newT.TaskNum);
+					histDescript="This task was cut from task list "+TaskLists.GetFullPath(_clipTask.TaskListNum)+" and pasted into "+TaskLists.GetFullPath(newT.TaskListNum);
+					Tasks.Update(newT,_clipTask);
 					listSignalNums.Add(Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,clipTaskTaskListNum));//Signal for source tasklist.
-					listSignalNums.Add(Signalods.SetInvalid(InvalidType.Task,KeyType.Task,_taskClip.TaskNum));//Signal for current task.
+					listSignalNums.Add(Signalods.SetInvalid(InvalidType.Task,KeyType.Task,_clipTask.TaskNum));//Signal for current task.
 				}
 				else { //copied
-					listTaskNotes=TaskNotes.GetForTask(taskNew.TaskNum);
-					taskNew.TaskNum=Tasks.Insert(taskNew);//Creates a new PK for newT  Copy, no need to signal source.
-					listSignalNums.Add(Signalods.SetInvalid(InvalidType.Task,KeyType.Task,taskNew.TaskNum));//Signal for new task.
-					descriptHist="This task was copied from task "+_taskClip.TaskNum+" in task list "+TaskLists.GetFullPath(_taskClip.TaskListNum);
-					for(int t=0;t<listTaskNotes.Count;t++) {
-						listTaskNotes[t].TaskNum=taskNew.TaskNum;
-						TaskNotes.Insert(listTaskNotes[t]);//Creates the new note with the current datetime stamp.
-						TaskNotes.Update(listTaskNotes[t]);//Restores the historical datetime for the note.
+					noteList=TaskNotes.GetForTask(newT.TaskNum);
+					newT.TaskNum=Tasks.Insert(newT);//Creates a new PK for newT  Copy, no need to signal source.
+					listSignalNums.Add(Signalods.SetInvalid(InvalidType.Task,KeyType.Task,newT.TaskNum));//Signal for new task.
+					histDescript="This task was copied from task "+_clipTask.TaskNum+" in task list "+TaskLists.GetFullPath(_clipTask.TaskListNum);
+					for(int t=0;t<noteList.Count;t++) {
+						noteList[t].TaskNum=newT.TaskNum;
+						TaskNotes.Insert(noteList[t]);//Creates the new note with the current datetime stamp.
+						TaskNotes.Update(noteList[t]);//Restores the historical datetime for the note.
 					}
 				}
-				TaskHist taskHist=new TaskHist(taskNew);
-				taskHist.Descript=descriptHist;
-				taskHist.UserNum=Security.CurUser.UserNum;
-				TaskHists.Insert(taskHist);
-				Signalods.SetInvalid(InvalidType.TaskPopup,KeyType.Task,taskNew.TaskNum);//Popup
-				TaskUnreads.AddUnreads(taskNew,Security.CurUser.UserNum);//we also need to tell the database about all the users with unread tasks
-				listSignalNums.Add(Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,taskNew.TaskListNum));//Signal for destination tasklist.
-				RefillLocalTaskGrids(taskNew,listTaskNotes,listSignalNums);//No db call.
+				TaskHist hist=new TaskHist(newT);
+				hist.Descript=histDescript;
+				hist.UserNum=Security.CurUser.UserNum;
+				TaskHists.Insert(hist);
+				Signalods.SetInvalid(InvalidType.TaskPopup,KeyType.Task,newT.TaskNum);//Popup
+				TaskUnreads.AddUnreads(newT,Security.CurUser.UserNum);//we also need to tell the database about all the users with unread tasks
+				listSignalNums.Add(Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,newT.TaskListNum));//Signal for destination tasklist.
+				RefillLocalTaskGrids(newT,noteList,listSignalNums);//No db call.
 			}
 			//Turn the cut into a copy once the users has pasted at least once.
 			_wasCut=false;
 		}
 
 		/// <summary>Return the FormTaskEdit that was created from showing the task.  Can return null.</summary>
-		private FormTaskEdit SendToMe_Clicked(bool openTask=true) {
+		private FormTaskEdit SendToMe_Clicked(bool doOpenTask=true) {
 			if(Security.CurUser.TaskListInBox==0) {
 				MsgBox.Show(this,"You do not have an inbox.");
 				return null;
 			}
-			Task task=gridMain.SelectedTag<Task>();
-			if(task==null) {
-				MsgBox.Show(this,"Please select a valid task.");
-				return null;
-			}
-			Task taskOld=task.Copy();
+			Task task=_clickedTask;
+			Task oldTask=task.Copy();
 			task.TaskListNum=Security.CurUser.TaskListInBox;
 			Cursor=Cursors.WaitCursor;
 			List<long> listSignalNums=new List<long>();
 			try {
-				Tasks.Update(task,taskOld);
+				Tasks.Update(task,oldTask);
 				//At HQ the refresh interval wasn't quick enough for the task to pop up.
 				//We will immediately show the task instead of waiting for the refresh interval.
-				TaskHist taskHist=new TaskHist(taskOld);
+				TaskHist taskHist=new TaskHist(oldTask);
 				taskHist.UserNumHist=Security.CurUser.UserNum;
 				TaskHists.Insert(taskHist);
-				listSignalNums.Add(Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,taskOld.TaskListNum));//Signal for old TaskList containing this Task.
+				listSignalNums.Add(Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,oldTask.TaskListNum));//Signal for old TaskList containing this Task.
 				listSignalNums.Add(Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,task.TaskListNum));//Signal for new tasklist.
 				listSignalNums.Add(Signalods.SetInvalid(InvalidType.Task,KeyType.Task,task.TaskNum));//Signal for task.
 				RefillLocalTaskGrids(task,_listTaskNotes.FindAll(x => x.TaskNum==task.TaskNum),listSignalNums);
 				Cursor=Cursors.Default;
-				FormTaskEdit formTaskEdit=new FormTaskEdit(task,task.Copy());
-				formTaskEdit.IsPopup=true;
-				if(openTask) {
-					formTaskEdit.Show();//non-modal
+				FormTaskEdit FormT=new FormTaskEdit(task,task.Copy());
+				FormT.IsPopup=true;
+				if(doOpenTask) {
+					FormT.Show();//non-modal
 				}
-				return formTaskEdit;
+				return FormT;
 			}
 			catch(Exception ex) {
 				Cursor=Cursors.Default;
@@ -2282,53 +2150,48 @@ namespace OpenDental {
 
 		/// <summary>Sends a task to the current user, opens the task, and opens a new tasknote for the user to edit.</summary>
 		private void SendToMeAndGoto_Clicked() {
-			Task task=gridMain.SelectedTag<Task>();
-			FormTaskEdit formTaskEditOpened=SendToMe_Clicked(openTask:false);
-			if(formTaskEditOpened==null) {
+			FormTaskEdit openedForm=SendToMe_Clicked(doOpenTask:false);
+			if(openedForm==null) {
 				return;
 			}
-			Goto_Clicked(task);
-			formTaskEditOpened.Show();//We want to show any popups first before we open the task.
+			Goto_Clicked();
+			openedForm.Show();//We want to show any popups first before we open the task.
 			//If opened from another form and the user presses cancel on FormTaskNoteEdit, it will hide the task behind the parent form (this).  
 			//Calling activate makes sure if we cancel out, the topmost form will be FormTaskEdit.
-			formTaskEditOpened.Activate();
+			openedForm.Activate();
 			//String should not be changed.  Used for auditing triage tasks.
-			formTaskEditOpened.AddNoteToTaskAndEdit("Returned call. ");
-			Tasks.TaskEditCreateLog(EnumPermType.TaskNoteEdit,Lan.g(this,"Automatically added task note")+": Returned Call",Tasks.GetOne(formTaskEditOpened.TaskCur.TaskNum));
+			openedForm.AddNoteToTaskAndEdit("Returned call. ");
+			Tasks.TaskEditCreateLog(Permissions.TaskNoteEdit,Lan.g(this,"Automatically added task note")+": Returned Call",Tasks.GetOne(openedForm.TaskCur.TaskNum));
 		}
 
-		private void Goto_Clicked(Task task=null) {
-			Task taskGoTo=task??gridMain.SelectedTag<Task>();
+		private void Goto_Clicked() {
 			//not even allowed to get to this point unless a valid task
-			if(taskGoTo==null) {
-				MsgBox.Show(this,"Please select a valid task.");
-				return;
-			}
-			TaskObjectTypeGoTo=taskGoTo.ObjectType;
-			KeyNumGoTo=taskGoTo.KeyNum;
-			FormOpenDental.S_TaskGoTo(TaskObjectTypeGoTo,KeyNumGoTo);
+			Task task=_clickedTask;
+			GotoType=task.ObjectType;
+			GotoKeyNum=task.KeyNum;
+			FormOpenDental.S_TaskGoTo(GotoType,GotoKeyNum);
 		}
 
 		///<summary>Marks the selected task as read and updates the grid.</summary>
-		private void MarkRead(Task taskMarked) {
-			if(taskMarked==null) {
+		private void MarkRead(Task markedTask) {
+			if(markedTask==null) {
 				MsgBox.Show(this,"Please select a valid task.");
 				return;
 			}
-			taskMarked.IsUnread=TaskUnreads.IsUnread(Security.CurUser.UserNum,taskMarked);
+			markedTask.IsUnread=TaskUnreads.IsUnread(Security.CurUser.UserNum,markedTask);
 			if(PrefC.GetBool(PrefName.TasksNewTrackedByUser)) {
 				if(tabControl.SelectedTab==tabNew){
 					//these are never in someone else's inbox, so don't block.
 				}
 				else if(tabControl.SelectedTab==tabPatientTickets 
-					&& taskMarked.IsUnread) 
+					&& markedTask.IsUnread) 
 				{
 					//Task clicked is new for the user, don't block.
 				}
 				else{
 					long userNumInbox=0;
 					if(tabControl.SelectedTab.In(tabOpenTickets,tabPatientTickets)) {
-						userNumInbox=TaskLists.GetMailboxUserNumByAncestor(taskMarked.TaskNum);
+						userNumInbox=TaskLists.GetMailboxUserNumByAncestor(markedTask.TaskNum);
 					}
 					else {
 						if(_listTaskListTreeHistory.Count!=0) {
@@ -2344,21 +2207,21 @@ namespace OpenDental {
 						return;
 					}
 				}
-				if(taskMarked.IsUnread) {
-					if(Tasks.IsReminderTask(taskMarked) && taskMarked.DateTimeEntry>DateTime.Now){
+				if(markedTask.IsUnread) {
+					if(Tasks.IsReminderTask(markedTask) && markedTask.DateTimeEntry>DateTime.Now){
 						MsgBox.Show(this,"Not allowed to mark future Reminders as read.");
 					}
 					else{
-						TaskUnreads.SetRead(Security.CurUser.UserNum,taskMarked);//Takes care of Db.
+						TaskUnreads.SetRead(Security.CurUser.UserNum,markedTask);//Takes care of Db.
 					}
 				}
-				long signalNum=Signalods.SetInvalid(InvalidType.Task,KeyType.Task,taskMarked.TaskNum);//Signal for markedTask.
-				RefillLocalTaskGrids(taskMarked,_listTaskNotes.FindAll(x => x.TaskNum==taskMarked.TaskNum),new List<long>() { signalNum });
+				long signalNum=Signalods.SetInvalid(InvalidType.Task,KeyType.Task,markedTask.TaskNum);//Signal for markedTask.
+				RefillLocalTaskGrids(markedTask,_listTaskNotes.FindAll(x => x.TaskNum==markedTask.TaskNum),new List<long>() { signalNum });
 				//if already read, nothing else to do.  If done, nothing to do
 			}
 			else {
-				if(taskMarked.TaskStatus==TaskStatusEnum.New) {
-					Task task=taskMarked.Copy();
+				if(markedTask.TaskStatus==TaskStatusEnum.New) {
+					Task task=markedTask.Copy();
 					Task taskOld=task.Copy();
 					task.TaskStatus=TaskStatusEnum.Viewed;
 					try {
@@ -2381,8 +2244,8 @@ namespace OpenDental {
 				return;
 			}
 			Task task=Tasks.GetOne(taskAttachment.TaskNum);
-			if(task==null) {
-				MsgBox.Show(this,"Please select a valid task.");
+			if(Tasks.IsTaskDeleted(task.TaskNum)) {
+				MsgBox.Show(this,"The task for this attachment was deleted.");
 				return;
 			}
 			FormTaskAttachmentEdit formTaskAttachmentEdit=new FormTaskAttachmentEdit(task);
@@ -2396,43 +2259,44 @@ namespace OpenDental {
 			UserControlTasks.RefillLocalTaskGrids(task,_listTaskNotes,new List<long>() { signalNum });			
 		}
 
-		private void MoveListIntoAncestor(TaskList taskListNew,long taskListNumParentOld) {
+		private void MoveListIntoAncestor(TaskList newList,long oldListParent) {
 			if(_wasCut) {//If the TaskList was cut, move direct children of the list "up" one in the hierarchy and then update
-				List<TaskList> listTaskListsChildren=TaskLists.RefreshChildren(taskListNew.TaskListNum,Security.CurUser.UserNum,0,TaskType.All);
-				for(int i=0;i<listTaskListsChildren.Count;i++) {
-					listTaskListsChildren[i].Parent=taskListNumParentOld;
-					TaskLists.Update(listTaskListsChildren[i]);
+				List<TaskList> childLists=TaskLists.RefreshChildren(newList.TaskListNum,Security.CurUser.UserNum,0,TaskType.All);
+				for(int i=0;i<childLists.Count;i++) {
+					childLists[i].Parent=oldListParent;
+					TaskLists.Update(childLists[i]);
 				}
-				TaskLists.Update(taskListNew);
+				TaskLists.Update(newList);
 			}
 			else {//Just insert a new TaskList if it was copied.
-				TaskLists.Insert(taskListNew);
+				TaskLists.Insert(newList);
 			}
 		}
 
 		///<summary>Assign new parent FKey for existing tasklist, and update TaskAncestors.  Used when cutting and pasting a tasklist.
 		///Does not create new task or tasklist entries.</summary>
-		private void MoveTaskList(TaskList taskListNew,bool isInMainOrUser) {
-			List<TaskList> listTaskListsChildren=TaskLists.RefreshChildren(taskListNew.TaskListNum,Security.CurUser.UserNum,0,TaskType.All);
-			List<Task> listTasksChild=Tasks.RefreshChildren(taskListNew.TaskListNum,true,DateTime.MinValue,Security.CurUser.UserNum,0,TaskType.All);//No filtering, because all child tasks should move regardless of filtration.
-			TaskLists.Update(taskListNew);//Not making a new TaskList, just moving an old one
-			for(int i=0;i<listTaskListsChildren.Count;i++) { //updates all the child tasklists and recursively calls this method for each of their children lists.
-				listTaskListsChildren[i].Parent=taskListNew.TaskListNum;
-				if(taskListNew.IsRepeating) {
-					listTaskListsChildren[i].IsRepeating=true;
-					listTaskListsChildren[i].DateTL=DateTime.MinValue;//never a date
+		private void MoveTaskList(TaskList newList,bool isInMainOrUser) {
+			List<TaskList> childLists=TaskLists.RefreshChildren(newList.TaskListNum,Security.CurUser.UserNum,0,TaskType.All);
+			List<Task> childTasks=Tasks.RefreshChildren(newList.TaskListNum,true,DateTime.MinValue,Security.CurUser.UserNum,0,TaskType.All
+				,GlobalTaskFilterType.None);//No filtering, because all child tasks should move regardless of filtration.
+			TaskLists.Update(newList);//Not making a new TaskList, just moving an old one
+			for(int i=0;i<childLists.Count;i++) { //updates all the child tasklists and recursively calls this method for each of their children lists.
+				childLists[i].Parent=newList.TaskListNum;
+				if(newList.IsRepeating) {
+					childLists[i].IsRepeating=true;
+					childLists[i].DateTL=DateTime.MinValue;//never a date
 				}
 				else {
-					listTaskListsChildren[i].IsRepeating=false;
+					childLists[i].IsRepeating=false;
 				}
-				listTaskListsChildren[i].FromNum=0;
+				childLists[i].FromNum=0;
 				if(!isInMainOrUser) {
-					listTaskListsChildren[i].DateTL=DateTime.MinValue;
-					listTaskListsChildren[i].DateType=TaskDateType.None;
+					childLists[i].DateTL=DateTime.MinValue;
+					childLists[i].DateType=TaskDateType.None;
 				}
-				MoveTaskList(listTaskListsChildren[i],isInMainOrUser);//delete any existing subscriptions
+				MoveTaskList(childLists[i],isInMainOrUser);//delete any existing subscriptions
 			}
-			TaskAncestors.SynchManyForSameTasklist(listTasksChild,taskListNew.TaskListNum,taskListNew.Parent);
+			TaskAncestors.SynchManyForSameTasklist(childTasks,newList.TaskListNum,newList.Parent);
 		}
 
 		///<summary>Only used for dated task lists. Should NOT be used for regular task lists, puts too much strain on DB with large amount of tasks.
@@ -2441,60 +2305,61 @@ namespace OpenDental {
 		///That way, Date and type are only set in initial loop.  All children preserve original dates and types. 
 		///The isRepeating value will be applied in all loops.  Also, make sure to change the parent num to the new one before calling this function.
 		///The taskListNum will always change, because we are inserting new record into database. </summary>
-		private void DuplicateExistingList(TaskList taskListNew,bool isInMainOrUser) {
+		private void DuplicateExistingList(TaskList newList,bool isInMainOrUser) {
 			//get all children:
-			List<TaskList> listTaskListChildren=TaskLists.RefreshChildren(taskListNew.TaskListNum,Security.CurUser.UserNum,0,TaskType.All);
-			List<Task> listTasksChild=Tasks.RefreshChildren(taskListNew.TaskListNum,true,DateTime.MinValue,Security.CurUser.UserNum,0,TaskType.All);//No filtering, because all child tasks should duplicate regardless of filtration.
+			List<TaskList> childLists=TaskLists.RefreshChildren(newList.TaskListNum,Security.CurUser.UserNum,0,TaskType.All);
+			List<Task> childTasks=Tasks.RefreshChildren(newList.TaskListNum,true,DateTime.MinValue,Security.CurUser.UserNum,0,TaskType.All,
+				GlobalTaskFilterType.None);//No filtering, because all child tasks should duplicate regardless of filtration.
 			if(_wasCut) { //Not making a new TaskList, just moving an old one
-				TaskLists.Update(taskListNew);
+				TaskLists.Update(newList);
 			}
 			else {//copied -- We are making a new TaskList, we're keeping the old one as well
-				TaskLists.Insert(taskListNew);
+				TaskLists.Insert(newList);
 			}
 			//now we have a new taskListNum to work with
-			for(int i=0;i<listTaskListChildren.Count;i++) { //updates all the child tasklists and recursively calls this method for each of their children lists.
-				listTaskListChildren[i].Parent=taskListNew.TaskListNum;
-				if(taskListNew.IsRepeating) {
-					listTaskListChildren[i].IsRepeating=true;
-					listTaskListChildren[i].DateTL=DateTime.MinValue;//never a date
+			for(int i=0;i<childLists.Count;i++) { //updates all the child tasklists and recursively calls this method for each of their children lists.
+				childLists[i].Parent=newList.TaskListNum;
+				if(newList.IsRepeating) {
+					childLists[i].IsRepeating=true;
+					childLists[i].DateTL=DateTime.MinValue;//never a date
 				}
 				else {
-					listTaskListChildren[i].IsRepeating=false;
+					childLists[i].IsRepeating=false;
 				}
-				listTaskListChildren[i].FromNum=0;
+				childLists[i].FromNum=0;
 				if(!isInMainOrUser) {
-					listTaskListChildren[i].DateTL=DateTime.MinValue;
-					listTaskListChildren[i].DateType=TaskDateType.None;
+					childLists[i].DateTL=DateTime.MinValue;
+					childLists[i].DateType=TaskDateType.None;
 				}
-				DuplicateExistingList(listTaskListChildren[i],isInMainOrUser);//delete any existing subscriptions
+				DuplicateExistingList(childLists[i],isInMainOrUser);//delete any existing subscriptions
 			}
-			for(int i = 0;i<listTasksChild.Count;i++) { //updates all the child tasks. If the task list was cut, then just update the child tasks' ancestors.
+			for(int i = 0;i<childTasks.Count;i++) { //updates all the child tasks. If the task list was cut, then just update the child tasks' ancestors.
 				if(_wasCut) {
-					TaskAncestors.Synch(listTasksChild[i]);
+					TaskAncestors.Synch(childTasks[i]);
 				}
 				else {//copied
-					listTasksChild[i].TaskListNum=taskListNew.TaskListNum;
-					if(taskListNew.IsRepeating) {
-						listTasksChild[i].IsRepeating=true;
-						listTasksChild[i].DateTask=DateTime.MinValue;//never a date
+					childTasks[i].TaskListNum=newList.TaskListNum;
+					if(newList.IsRepeating) {
+						childTasks[i].IsRepeating=true;
+						childTasks[i].DateTask=DateTime.MinValue;//never a date
 					}
 					else {
-						listTasksChild[i].IsRepeating=false;
+						childTasks[i].IsRepeating=false;
 					}
-					listTasksChild[i].FromNum=0;
+					childTasks[i].FromNum=0;
 					if(!isInMainOrUser) {
-						listTasksChild[i].DateTask=DateTime.MinValue;
-						listTasksChild[i].DateType=TaskDateType.None;
+						childTasks[i].DateTask=DateTime.MinValue;
+						childTasks[i].DateType=TaskDateType.None;
 					}
-					if(!String.IsNullOrEmpty(listTasksChild[i].ReminderGroupId)) {
+					if(!String.IsNullOrEmpty(childTasks[i].ReminderGroupId)) {
 						//Any reminder tasks duplicated to another task list must have a brand new ReminderGroupId
 						//so that they do not affect the original reminder task chain.
-						Tasks.SetReminderGroupId(listTasksChild[i]);
+						Tasks.SetReminderGroupId(childTasks[i]);
 					}
-					List<TaskNote> noteList=TaskNotes.GetForTask(listTasksChild[i].TaskNum);
-					long taskNumNew=Tasks.Insert(listTasksChild[i]);
+					List<TaskNote> noteList=TaskNotes.GetForTask(childTasks[i].TaskNum);
+					long newTaskNum=Tasks.Insert(childTasks[i]);
 					for(int t=0;t<noteList.Count;t++) {
-						noteList[t].TaskNum=taskNumNew;
+						noteList[t].TaskNum=newTaskNum;
 						TaskNotes.Insert(noteList[t]);//Creates the new note with the current datetime stamp.
 						TaskNotes.Update(noteList[t]);//Restores the historical datetime for the note.
 					}
@@ -2503,44 +2368,44 @@ namespace OpenDental {
 		}
 
 		private void Delete_Clicked() {
-			TaskList taskList = gridMain.SelectedTag<TaskList>();
-			Task task = gridMain.SelectedTag<Task>();
-			if(taskList!=null) {//is list
+			if(_clickedI < _listTaskLists.Count) {//is list
+				TaskList taskListToDelete=_listTaskLists[_clickedI];
 				//check to make sure the list is empty.  Do not filter tasks so we don't try to delete a list that still has tasks.
-				List<Task> listTasks=Tasks.RefreshChildren(taskList.TaskListNum,true,DateTime.MinValue,Security.CurUser.UserNum,0,TaskType.All);
-				List<TaskList> listTaskLists=TaskLists.RefreshChildren(taskList.TaskListNum,Security.CurUser.UserNum,0,TaskType.All);
-				int countHiddenTasks=listTaskLists.Sum(x => x.NewTaskCount)+listTasks.Count-taskList.NewTaskCount;
-				if(listTasks.Count>0 || listTaskLists.Count>0){
+				List<Task> tsks=Tasks.RefreshChildren(taskListToDelete.TaskListNum,true,DateTime.MinValue,Security.CurUser.UserNum,0,TaskType.All,
+					GlobalTaskFilterType.None);
+				List<TaskList> tsklsts=TaskLists.RefreshChildren(taskListToDelete.TaskListNum,Security.CurUser.UserNum,0,TaskType.All);
+				int countHiddenTasks=tsklsts.Sum(x => x.NewTaskCount)+tsks.Count-taskListToDelete.NewTaskCount;
+				if(tsks.Count>0 || tsklsts.Count>0){
 					MessageBox.Show(Lan.g(this,"Not allowed to delete a list unless it's empty.  This task list contains:")+"\r\n"
-						+listTasks.FindAll(x => String.IsNullOrEmpty(x.ReminderGroupId)).Count+" "+Lan.g(this,"normal tasks")+"\r\n"
-						+listTasks.FindAll(x => !String.IsNullOrEmpty(x.ReminderGroupId)).Count+" "+Lan.g(this,"reminder tasks")+"\r\n"
+						+tsks.FindAll(x => String.IsNullOrEmpty(x.ReminderGroupId)).Count+" "+Lan.g(this,"normal tasks")+"\r\n"
+						+tsks.FindAll(x => !String.IsNullOrEmpty(x.ReminderGroupId)).Count+" "+Lan.g(this,"reminder tasks")+"\r\n"
 						+countHiddenTasks+" "+Lan.g(this,"filtered tasks")+"\r\n"
-						+listTaskLists.Count+" "+Lan.g(this,"task lists"));
+						+tsklsts.Count+" "+Lan.g(this,"task lists"));
 					return;
 				}
-				if(TaskLists.GetMailboxUserNum(taskList.TaskListNum)!=0) {
+				if(TaskLists.GetMailboxUserNum(taskListToDelete.TaskListNum)!=0) {
 					MsgBox.Show(this,"Not allowed to delete task list because it is attached to a user inbox.");
 					return;
 				}
 				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete this empty list?")) {
 					return;
 				}
-				TaskSubscriptions.UpdateTaskListSubs(taskList.TaskListNum,0);
-				TaskLists.Delete(taskList);
-				long signalNum=Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,taskList.Parent);//Signal for source tasklist.
-				RefillLocalTaskGrids(taskList,new List<long>() { signalNum },false);//No db calls.
+				TaskSubscriptions.UpdateTaskListSubs(taskListToDelete.TaskListNum,0);
+				TaskLists.Delete(taskListToDelete);
+				long signalNum=Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,taskListToDelete.Parent);//Signal for source tasklist.
+				RefillLocalTaskGrids(taskListToDelete,new List<long>() { signalNum },false);//No db calls.
 			}
-			else if (task!=null) {//Is task
+			else {//Is task
 				//This security logic should match FormTaskEdit for when we enable the delete button.
 				bool isTaskForCurUser = true;
-				if(task.UserNum!=Security.CurUser.UserNum) {//current user didn't write this task, so block them.
+				if(_clickedTask.UserNum!=Security.CurUser.UserNum) {//current user didn't write this task, so block them.
 					isTaskForCurUser=false;//Delete will only be enabled if the user has the TaskEdit and TaskNoteEdit permissions.
 				}
-				if(task.TaskListNum!=Security.CurUser.TaskListInBox) {//the task is not in the logged-in user's inbox
+				if(_clickedTask.TaskListNum!=Security.CurUser.TaskListInBox) {//the task is not in the logged-in user's inbox
 					isTaskForCurUser=false;//Delete will only be enabled if the user has the TaskEdit and TaskNoteEdit permissions.
 				}
 				if(isTaskForCurUser) {
-					List<TaskNote> listTaskNotes=TaskNotes.GetForTask(task.TaskNum);//so we can check so see if other users have added notes
+					List<TaskNote> listTaskNotes=TaskNotes.GetForTask(_clickedTask.TaskNum);//so we can check so see if other users have added notes
 					for(int i = 0;i<listTaskNotes.Count;i++) {
 						if(Security.CurUser.UserNum!=listTaskNotes[i].UserNum) {
 							isTaskForCurUser=false;
@@ -2549,65 +2414,62 @@ namespace OpenDental {
 					}
 				}
 				//Purposefully show a popup if the user is not authorized to delete this task.
-				if(!Security.IsAuthorized(EnumPermType.TaskDelete)) {
+				if(!Security.IsAuthorized(Permissions.TaskDelete)) {
 					return;
 				}
 				//This logic should match FormTaskEdit.butDelete_Click()
 				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete Task?")) {
 					return;
 				}
-				if(Tasks.GetOne(task.TaskNum)==null) {
+				if(Tasks.GetOne(_clickedTask.TaskNum)==null) {
 					MsgBox.Show(this,"Task already deleted.");
 					return;
 				}
-				if(task.TaskListNum==0) {
-					Tasks.TaskEditCreateLog(Lan.g(this,"Deleted task"),task);
+				if(_clickedTask.TaskListNum==0) {
+					Tasks.TaskEditCreateLog(Lan.g(this,"Deleted task"),_clickedTask);
 				}
 				else {
 					string logText=Lan.g(this,"Deleted task from tasklist");
-					if(taskList!=null) {
-						logText+=" "+taskList.Descript;
+					TaskList tList=TaskLists.GetOne(_clickedTask.TaskListNum);
+					if(tList!=null) {
+						logText+=" "+tList.Descript;
 					}
 					else {
 						logText+=". Task list no longer exists";
 					}
 					logText+=".";
-					Tasks.TaskEditCreateLog(logText,task);
+					Tasks.TaskEditCreateLog(logText,_clickedTask);
 				}
-				int countDocuments=TaskAttachments.GetCountDocumentForTaskNum(task.TaskNum);
-				Tasks.Delete(task.TaskNum);//always do it this way to clean up all five tables (six if hq)
+				int countDocuments=TaskAttachments.GetCountDocumentForTaskNum(_clickedTask.TaskNum);
+				Tasks.Delete(_clickedTask.TaskNum);//always do it this way to clean up all five tables (six if hq)
 				if(countDocuments>0) { 
 					MsgBox.Show(this,"This task has linked document(s). The task attachments have been deleted and the documents can be deleted via the imaging module, if desired.");
 				}
 				List<long> listSignalNums=new List<long>();
-				listSignalNums.Add(Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,task.TaskListNum));//Signal for source tasklist.
-				listSignalNums.Add(Signalods.SetInvalid(InvalidType.Task,KeyType.Task,task.TaskNum));//Signal for current task.
-				RefillLocalTaskGrids(task,_listTaskNotes.FindAll(x => x.TaskNum==task.TaskNum),listSignalNums,false);
-				TaskHist taskHist = new TaskHist(task);
-				taskHist.IsNoteChange=false;
-				taskHist.UserNum=Security.CurUser.UserNum;
-				TaskHists.Insert(taskHist);
-				SecurityLogs.MakeLogEntry(EnumPermType.TaskDelete,0,"Task "+POut.Long(task.TaskNum)+" deleted",0);
-			}
-			else {
-				MsgBox.Show(this, "Please select a valid task or task list.");
-				return;
+				listSignalNums.Add(Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,_clickedTask.TaskListNum));//Signal for source tasklist.
+				listSignalNums.Add(Signalods.SetInvalid(InvalidType.Task,KeyType.Task,_clickedTask.TaskNum));//Signal for current task.
+				RefillLocalTaskGrids(_clickedTask,_listTaskNotes.FindAll(x => x.TaskNum==_clickedTask.TaskNum),listSignalNums,false);
+				TaskHist taskHistory = new TaskHist(_clickedTask);
+				taskHistory.IsNoteChange=false;
+				taskHistory.UserNum=Security.CurUser.UserNum;
+				TaskHists.Insert(taskHistory);
+				SecurityLogs.MakeLogEntry(Permissions.TaskDelete,0,"Task "+POut.Long(_clickedTask.TaskNum)+" deleted",0);
 			}
 		}
 
 		///<summary>A recursive function that deletes the specified list and all children.</summary>
-		private void DeleteEntireList(TaskList taskList) {
+		private void DeleteEntireList(TaskList list) {
 			//get all children:
-			List<TaskList> listTaskListsChildren=TaskLists.RefreshChildren(taskList.TaskListNum,Security.CurUser.UserNum,0,TaskType.All);
-			List<Task> listTasksChild=Tasks.RefreshChildren(taskList.TaskListNum,true,DateTime.MinValue,Security.CurUser.UserNum,0,TaskType.All);
-			for(int i=0;i<listTaskListsChildren.Count;i++) {
-				DeleteEntireList(listTaskListsChildren[i]);
+			List<TaskList> childLists=TaskLists.RefreshChildren(list.TaskListNum,Security.CurUser.UserNum,0,TaskType.All);
+			List<Task> childTasks=Tasks.RefreshChildren(list.TaskListNum,true,DateTime.MinValue,Security.CurUser.UserNum,0,TaskType.All);
+			for(int i=0;i<childLists.Count;i++) {
+				DeleteEntireList(childLists[i]);
 			}
-			for(int i=0;i<listTasksChild.Count;i++) {
-				Tasks.Delete(listTasksChild[i].TaskNum);
+			for(int i=0;i<childTasks.Count;i++) {
+				Tasks.Delete(childTasks[i].TaskNum);
 			}
 			try {
-				TaskLists.Delete(taskList);
+				TaskLists.Delete(list);
 			}
 			catch(Exception e) {
 				MessageBox.Show(e.Message);
@@ -2634,60 +2496,92 @@ namespace OpenDental {
 			else if(e.Col==1) {//Task List column (an index varaible would help)
 				return;//Don't double click on expand column
 			}
-			Task task=gridMain.SelectedTag<Task>();
-			if(task!=null) {//is task
+			if(e.Row >= _listTaskLists.Count) {//is task
+				if(IsInvalidTaskRow(e.Row)) {
+					return; //could happen if the task list refreshed while the double-click was happening.
+				}
 				//It's important to grab the task directly from the db because the status in this list is fake, being the "unread" status instead.
-				task=Tasks.GetOne(task.TaskNum);
+				Task task=Tasks.GetOne(_listTasks[e.Row-_listTaskLists.Count].TaskNum);
 				if(task==null) {//Task was deleted or moved.
 					return;
 				}
-				FormTaskEdit formTaskEdit=new FormTaskEdit(task);
-				formTaskEdit.Show();//non-modal
+				FormTaskEdit FormT=new FormTaskEdit(task);
+				FormT.Show();//non-modal
 			}
 		}
 
+		///<summary>Necessary to use this handler to set _clickedI before menuEdit_Popup.  This is due to the order MouseDown vs CellClick events fire.
+		///Only using CellClick to set these variables resulted in stale values in menuEdit_Popup.</summary>
+		private void gridMain_MouseDown(object sender,MouseEventArgs e) {
+			SetClickedIAndTask(e);
+		}
+
 		private void gridMain_CellClick(object sender,ODGridClickEventArgs e) {
+			int clickedCol=e.Col;
 			if(e.Button!=MouseButtons.Left) {
 				return;
 			}
-			TaskList taskList=gridMain.SelectedTag<TaskList>();
-			if(taskList!=null) { // is a TaskList
-				_listTaskListTreeHistory.Add(taskList);
+			if(_clickedI < _listTaskLists.Count) {//is list
+				_listTaskListTreeHistory.Add(_listTaskLists[_clickedI]);
 				_hasListSwitched=true;
-				SetFiltersToDefault(taskList);//Fills Tree and Grid
+				SetFiltersToDefault(_listTaskLists[_clickedI]);//Fills Tree and Grid
 				return;
 			}
-			Task taskSelected=gridMain.SelectedTag<Task>();
 			_taskCollapsedState=-1;
 			if(tabControl.SelectedTab==tabNew && !PrefC.GetBool(PrefName.TasksNewTrackedByUser)){//There's an extra column
-				if(e.Col==1) {
-					TaskUnreads.SetRead(Security.CurUser.UserNum,taskSelected);
+				if(clickedCol==1) {
+					TaskUnreads.SetRead(Security.CurUser.UserNum,_listTasks[_clickedI-_listTaskLists.Count]);
 					FillGrid();
 				}
-				if(e.Col==3) {//Expand column
-					if(_listTaskNumsExpanded.Contains(taskSelected.TaskNum)) {
-						_listTaskNumsExpanded.Remove(taskSelected.TaskNum);
+				if(clickedCol==3) {//Expand column
+					if(_listExpandedTaskNums.Contains(_listTasks[_clickedI-_listTaskLists.Count].TaskNum)) {
+						_listExpandedTaskNums.Remove(_listTasks[_clickedI-_listTaskLists.Count].TaskNum);
 					}
 					else { 
-						_listTaskNumsExpanded.Add(taskSelected.TaskNum);
+						_listExpandedTaskNums.Add(_listTasks[_clickedI-_listTaskLists.Count].TaskNum);
 					}
 					FillGrid();
 				}
-				return;
+				return;//but ignore column 0 for now.  We would need to add that as a new feature.
 			}
-			if(e.Col==0){//check tasks off
-				MarkRead(taskSelected);
+			if(clickedCol==0){//check tasks off
+				MarkRead(_listTasks[_clickedI-_listTaskLists.Count]);
 			}
-			if((tabControl.SelectedTab.In(tabNew,tabPatientTickets,tabOpenTickets) && e.Col==2) 
-				|| (tabControl.SelectedTab!=tabNew && e.Col==1)) 
+			if((tabControl.SelectedTab.In(tabNew,tabPatientTickets,tabOpenTickets) && clickedCol==2) 
+				|| (tabControl.SelectedTab!=tabNew && clickedCol==1)) 
 			{
-				if(_listTaskNumsExpanded.Contains(taskSelected.TaskNum)) {
-					_listTaskNumsExpanded.Remove(taskSelected.TaskNum);
+				if(_listExpandedTaskNums.Contains(_listTasks[_clickedI-_listTaskLists.Count].TaskNum)) {
+					_listExpandedTaskNums.Remove(_listTasks[_clickedI-_listTaskLists.Count].TaskNum);
 				}
 				else { 
-					_listTaskNumsExpanded.Add(taskSelected.TaskNum);
+					_listExpandedTaskNums.Add(_listTasks[_clickedI-_listTaskLists.Count].TaskNum);
 				}
 				FillGrid();
+			}
+		}
+				
+		///<summary>Helper function to centralize _clickedI and _clickedTask logic.</summary>
+		private void SetClickedIAndTask(object e) {
+			if(e is ODGridClickEventArgs) {
+				_clickedI=((ODGridClickEventArgs)e).Row;
+			}
+			else if(e is MouseEventArgs) {
+				_clickedI=gridMain.PointToRow(((MouseEventArgs)e).Y);
+			}
+			if(_clickedI==-1){
+				return;
+			}
+			if(_clickedI>=gridMain.ListGridRows.Count) {//Grid refreshed mid-click and _clickedI is no longer valid.
+				_clickedI=-1;
+				_clickedTask=null;
+				SetMenusEnabled();
+				return;
+			}
+			if(gridMain.ListGridRows[_clickedI].Tag is Task) {
+				_clickedTask=(Task)gridMain.ListGridRows[_clickedI].Tag;//Task lists cause _clickedTask to be null
+			}
+			else {
+				_clickedTask=null;
 			}
 		}
 
@@ -2696,10 +2590,8 @@ namespace OpenDental {
 		}
 
 		private void SetMenusEnabled() {
-			TaskList taskList = gridMain.SelectedTag<TaskList>();
-			Task task=gridMain.SelectedTag<Task>();
 			//Done----------------------------------
-			if(gridMain.SelectedIndices.Length==0 || taskList!=null) {//or a tasklist selected
+			if(gridMain.SelectedIndices.Length==0 || _clickedI < _listTaskLists.Count) {//or a tasklist selected
 				menuItemDone.Enabled=false;
 			}
 			else {
@@ -2715,7 +2607,7 @@ namespace OpenDental {
 			else {
 				menuItemEdit.Enabled=true;
 				menuItemCut.Enabled=true;
-				if(taskList!=null) {//Is a tasklist
+				if(_clickedI < _listTaskLists.Count) {//Is a tasklist
 					menuItemCopy.Enabled=false;//We don't want users to copy tasklists, only move them by cut.
 				}
 				else {
@@ -2727,7 +2619,7 @@ namespace OpenDental {
 			if(tabControl.SelectedTab==tabUser && _listTaskListTreeHistory.Count==0) {//not allowed to paste into the trunk of a user tab
 				menuItemPaste.Enabled=false;
 			}
-			else if(_taskListClip==null && _taskClip==null) {
+			else if(_clipTaskList==null && _clipTask==null) {
 				menuItemPaste.Enabled=false;
 			}
 			else {//there is an item on our clipboard
@@ -2744,15 +2636,15 @@ namespace OpenDental {
 				menuItemSubscribe.Enabled=false;
 				menuItemUnsubscribe.Enabled=false;
 			}
-			else if(tabControl.SelectedTab==tabUser && taskList!=null) {//user tab and is a list
+			else if(tabControl.SelectedTab==tabUser && _clickedI<_listTaskLists.Count) {//user tab and is a list
 				menuItemSubscribe.Enabled=false;
 				menuItemUnsubscribe.Enabled=true;
 			}
-			else if(tabControl.SelectedTab==tabMain && taskList!=null) {//main and tasklist
+			else if(tabControl.SelectedTab==tabMain && _clickedI < _listTaskLists.Count) {//main and tasklist
 				menuItemSubscribe.Enabled=true;
 				menuItemUnsubscribe.Enabled=false;
 			}
-			else if(tabControl.SelectedTab==tabReminders && taskList!=null) {//reminders and tasklist
+			else if(tabControl.SelectedTab==tabReminders && _clickedI < _listTaskLists.Count) {//reminders and tasklist
 				menuItemSubscribe.Enabled=true;
 				menuItemUnsubscribe.Enabled=false;
 			}
@@ -2762,19 +2654,20 @@ namespace OpenDental {
 			}
 			menuItemPriority.MenuItems.Clear();
 			//SendToMe/GoTo/Task Priority/DeleteTaskTaken---------------------------------------------------------------
-			if(gridMain.SelectedIndices.Length>0 && task!=null){//is task
+			if(gridMain.SelectedIndices.Length>0 && _clickedI >= _listTaskLists.Count){//is task
 				//The clicked task was removed from _listTasks, could happen between FillGrid(), mouse click, and now
-				if(_listTasks.IndexOf(task)<0) {
+				if(IsInvalidTaskRow(_clickedI)) {
 					IgnoreTaskClick();
 					return;
 				}
+				Task task=_listTasks[_clickedI-_listTaskLists.Count];
 				if(task.ObjectType==TaskObjectType.None) {
 					menuItemGoto.Enabled=false;
 				}
 				else {
 					menuItemGoto.Enabled=true;
 				}
-				if(PrefC.IsODHQ && Security.IsAuthorized(EnumPermType.TaskDelete,true)) {
+				if(PrefC.IsODHQ && Security.IsAuthorized(Permissions.TaskDelete,true)) {
 					menuDeleteTaken.Enabled=true;
 				}
 				else {
@@ -2794,10 +2687,10 @@ namespace OpenDental {
 				}
 				else {
 					menuItemPriority.Enabled=true;
-					Def[] defArray=Defs.GetDefsForCategory(DefCat.TaskPriorities,true).ToArray();
-					foreach(Def def in defArray) {
-						MenuItem menuItem=menuItemPriority.MenuItems.Add(def.ItemName);
-						menuItem.Click+=(sender,e) => menuTaskPriority_Click(task,def);
+					Def[] defs=Defs.GetDefsForCategory(DefCat.TaskPriorities,true).ToArray();
+					foreach(Def def in defs) {
+						MenuItem item=menuItemPriority.MenuItems.Add(def.ItemName);
+						item.Click+=(sender,e) => menuTaskPriority_Click(task,def);
 					}
 				}
 				//If a task is read only, disable actions in the right click menu that modify the task
@@ -2830,22 +2723,23 @@ namespace OpenDental {
 				menuDeleteTaken.Enabled=false;
 			}
 			//Navigate to Job-------------------------------------------------------------
-			if(gridMain.SelectedIndices.Length>0 && task!=null && PrefC.IsODHQ) {
+			if(gridMain.SelectedIndices.Length>0 && _clickedI >= _listTaskLists.Count && PrefC.IsODHQ) {
 				//The clicked task was removed from _listTasks, could happen between FillGrid(), mouse click, and now
-				if(_listTasks.IndexOf(task)<0) {
+				if(IsInvalidTaskRow(_clickedI)) {
 					IgnoreTaskClick();
 					return;
 				}
+				Task task=_listTasks[_clickedI-_listTaskLists.Count];
 				//get list of jobs attached to task then insert info about those jobs.
-				List<JobLink> listJobLinks=JobLinks.GetForTask(task.TaskNum);
-				List<Job> listJobs=Jobs.GetMany(listJobLinks.Select(x => x.JobNum).ToList());
+				List<JobLink> _listJobLinks=JobLinks.GetForTask(task.TaskNum);
+				List<Job> _listJobs=Jobs.GetMany(_listJobLinks.Select(x => x.JobNum).ToList());
 				//If a job exists that is attached to the task
-				if(listJobs.Count>0) {
+				if(_listJobs.Count>0) {
 					menuNavJob.MenuItems.Clear();	//clear whatever items were in the menu before.
 					MenuItem newItem;
 					string title;
 					//Get a jobnum that matches the column in task menu
-					foreach(Job selectedJob in listJobs) {
+					foreach(Job selectedJob in _listJobs) {
 						title=selectedJob.JobNum.ToString()+" ";
 						//Append the correct letter to the jobnum
 						switch(selectedJob.Category) {
@@ -2904,16 +2798,17 @@ namespace OpenDental {
 				}
 			}
 			//Navigate to attachment
-			if(gridMain.SelectedIndices.Length>0 && task!=null){//is task
+			if(gridMain.SelectedIndices.Length>0 && _clickedI >= _listTaskLists.Count){//is task
 				//The clicked task was removed from _listTasks, could happen between FillGrid(), mouse click, and now
-				if(_listTasks.IndexOf(task)<0) {
+				if(IsInvalidTaskRow(_clickedI)) {
 					IgnoreTaskClick();
 					return;
 				}
+				Task task=_listTasks[_clickedI-_listTaskLists.Count];
 				List<TaskAttachment> listTaskAttachments=TaskAttachments.GetManyByTaskNum(task.TaskNum);
 				if(!listTaskAttachments.IsNullOrEmpty()) {
 					menuNavAttachment.MenuItems.Clear();	//clear whatever items were in the menu before.
-					MenuItem menuItemNew;
+					MenuItem newItem;
 					string description;
 					for(int i=0;i<listTaskAttachments.Count;i++) { 
 						TaskAttachment taskAttachment=listTaskAttachments[i];
@@ -2922,10 +2817,10 @@ namespace OpenDental {
 							description=description.Substring(0,30);
 						}
 						description+="...";
-						menuItemNew=new MenuItem(description);
-						menuItemNew.Tag=taskAttachment;
-						menuItemNew.Click+=(sender,e) => menuNavAtt_Click(sender,e,taskAttachment);	//set a custom click event
-						menuNavAttachment.MenuItems.Add(menuItemNew);
+						newItem=new MenuItem(description);
+						newItem.Tag=taskAttachment;
+						newItem.Click+=(sender,e) => menuNavAtt_Click(sender,e,taskAttachment);	//set a custom click event
+						menuNavAttachment.MenuItems.Add(newItem);
 					}
 					menuNavAttachment.Enabled=true;
 				}
@@ -2936,17 +2831,17 @@ namespace OpenDental {
 			//Archived/Unarchived-------------------------------------------------------------
 			menuArchive.Visible=false;
 			menuUnarchive.Visible=false;
-			if(taskList!=null && tabControl.SelectedTab==tabMain && _listTaskLists.IndexOf(taskList)>-1 
-				&& taskList.TaskListStatus==TaskListStatusEnum.Active)
+			if(_clickedI > -1 && tabControl.SelectedTab==tabMain && _clickedI < _listTaskLists.Count 
+				&& _listTaskLists[_clickedI].TaskListStatus==TaskListStatusEnum.Active)
 			{
 				menuArchive.Visible=true;
 			}
-			if(taskList!=null && tabControl.SelectedTab.In(tabUser,tabMain,tabReminders) && _listTaskLists.IndexOf(taskList)>-1
-				&& taskList.TaskListStatus==TaskListStatusEnum.Archived)
+			if(_clickedI > -1 && tabControl.SelectedTab.In(tabUser,tabMain,tabReminders) && _clickedI < _listTaskLists.Count
+				&& _listTaskLists[_clickedI].TaskListStatus==TaskListStatusEnum.Archived)
 			{
 				menuUnarchive.Visible=true;
 			}
-			if(gridMain.GetSelectedIndex()<0) {//Not clicked on any row
+			if(_clickedI<0) {//Not clicked on any row
 				menuItemDone.Enabled=false;
 				menuItemEdit.Enabled=false;
 				menuItemCut.Enabled=false;
@@ -2963,24 +2858,25 @@ namespace OpenDental {
 			}
 		}
 
+		private bool IsInvalidTaskRow(int row) {//Index out of range
+			return (row-_listTaskLists.Count < 0 || row-_listTaskLists.Count >= _listTasks.Count);
+		}
+
 		private void IgnoreTaskClick() {
-			gridMain.SetAll(false);//unselect problem row
+			gridMain.SetSelected(_clickedI,false);//unselect problem row
+			_clickedI=-1;//since row is unselected		
 			foreach(MenuItem menuItem in gridMain.ContextMenu.MenuItems) { //disable ContextMenu options
 				menuItem.Enabled=false;
 			}
+			Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,_clickedTask.TaskListNum);
 			FillGrid();//Full Refresh.
 		}
 
 		private void OnSubscribe_Click(){
-			TaskList taskList=gridMain.SelectedTag<TaskList>();
-			if(taskList==null) {
-				MsgBox.Show(this,"Please select a valid task list");
-				return;
-			}
 			//Won't even get to this point unless it is a list.  TaskListNum will never be 0.
-			if(TaskSubscriptions.TrySubscList(taskList.TaskListNum,Security.CurUser.UserNum)) {
-				lock(_listTaskListNumsSubscribed) {
-					_listTaskListNumsSubscribed=GetSubscribedTaskLists(Security.CurUser.UserNum).Select(x => x.TaskListNum).ToList();
+			if(TaskSubscriptions.TrySubscList(_listTaskLists[_clickedI].TaskListNum,Security.CurUser.UserNum)) {
+				lock(_listSubscribedTaskListNums) {
+					_listSubscribedTaskListNums=GetSubscribedTaskLists(Security.CurUser.UserNum).Select(x => x.TaskListNum).ToList();
 				}
 			}
 			else { //already subscribed.
@@ -2988,20 +2884,15 @@ namespace OpenDental {
 				return;
 			}
 			MsgBox.Show(this,"Done");
-			RefillLocalTaskGrids(taskList,null);
+			RefillLocalTaskGrids(_listTaskLists[_clickedI],null);
 		}
 
 		private void OnUnsubscribe_Click() {
-			TaskList taskList=gridMain.SelectedTag<TaskList>();
-			if(taskList==null) {
-				MsgBox.Show(this,"Please select a valid task list");
-				return;
-			}
-			TaskSubscriptions.UnsubscList(taskList.TaskListNum,Security.CurUser.UserNum);
-			lock(_listTaskListNumsSubscribed) {
-				_listTaskListNumsSubscribed=GetSubscribedTaskLists(Security.CurUser.UserNum).Select(x => x.TaskListNum).ToList();
+			TaskSubscriptions.UnsubscList(_listTaskLists[_clickedI].TaskListNum,Security.CurUser.UserNum);
+			lock(_listSubscribedTaskListNums) {
+				_listSubscribedTaskListNums=GetSubscribedTaskLists(Security.CurUser.UserNum).Select(x => x.TaskListNum).ToList();
 			};
-			RefillLocalTaskGrids(taskList,null);
+			RefillLocalTaskGrids(_listTaskLists[_clickedI],null);
 		}
 
 		private void menuItemDone_Click(object sender,EventArgs e) {
@@ -3049,7 +2940,7 @@ namespace OpenDental {
 		}
 
 		private void menuItemMarkRead_Click(object sender,EventArgs e) {
-			MarkRead(gridMain.SelectedTag<Task>());
+			MarkRead(_clickedTask);
 		}
 
 		private void menuNavJob_Click(object sender,EventArgs e,Job selectedJob) {
@@ -3062,17 +2953,17 @@ namespace OpenDental {
 
 		private void menuDeleteTaken_Click(object sender,EventArgs e) {
 			Cursor=Cursors.WaitCursor;
-			TaskTakens.DeleteForTask(gridMain.SelectedTag<Task>().TaskNum);
+			TaskTakens.DeleteForTask(_clickedTask.TaskNum);
 			Cursor=Cursors.Default;
 			MsgBox.Show(this,"Task taken deleted");
 		}
 
-		private void menuTaskPriority_Click(Task task,Def defPriority) {
+		private void menuTaskPriority_Click(Task task,Def priorityDef) {
 			Task taskNew=task.Copy();
-			taskNew.PriorityDefNum=defPriority.DefNum;
+			taskNew.PriorityDefNum=priorityDef.DefNum;
 			try {
 				Tasks.Update(taskNew,task);
-				if(PrefC.IsODHQ && defPriority.DefNum==502) {//They chose Blue as their priority
+				if(PrefC.IsODHQ && priorityDef.DefNum==502) {//They chose Blue as their priority
 					TaskNote taskNote=new TaskNote();
 					taskNote.UserNum=Security.CurUser.UserNum;
 					taskNote.TaskNum=task.TaskNum;
@@ -3096,26 +2987,20 @@ namespace OpenDental {
 			if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Archiving a task list will remove all Subscribers. Continue?")) {
 				return;
 			}
-			TaskList taskList = gridMain.SelectedTag<TaskList>();
-			if(taskList==null) {
-				MsgBox.Show("Could not archive task list.");
-				return;
-			}
-			TaskLists.Archive(taskList);
-			long signalNum=Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,taskList.Parent);//Signal for source parent tasklist.
-			RefillLocalTaskGrids(taskList,new List<long>() { signalNum });//No db call.
+			TaskLists.Archive(_listTaskLists[_clickedI]);
+			long signalNum=Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,_listTaskLists[_clickedI].Parent);//Signal for source parent tasklist.
+			RefillLocalTaskGrids(_listTaskLists[_clickedI],new List<long>() { signalNum });//No db call.
 		}
 
 		private void menuUnarchive_Click(object sender,EventArgs e) {
-			TaskList taskList=gridMain.SelectedTag<TaskList>();
 			//Will not get here unless clicked index is an archived task list
-			TaskLists.Unarchive(taskList);
-			long signalNum=Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,taskList.Parent);//Signal for source parent tasklist.
-			RefillLocalTaskGrids(taskList,new List<long>() { signalNum });//No db call.
+			TaskLists.Unarchive(_listTaskLists[_clickedI]);
+			long signalNum=Signalods.SetInvalid(InvalidType.TaskList,KeyType.Undefined,_listTaskLists[_clickedI].Parent);//Signal for source parent tasklist.
+			RefillLocalTaskGrids(_listTaskLists[_clickedI],new List<long>() { signalNum });//No db call.
 		}
 
 		private void textFilter_TextChanged(object sender, EventArgs e) {
-			FillGrid(isFilterRefresh:true);
+			FillGrid();
 		}
 
 		//private void listMain_SelectedIndexChanged(object sender,System.EventArgs e) {
@@ -3123,17 +3008,17 @@ namespace OpenDental {
 		//}
 
 		private void tree_MouseDown(object sender,System.Windows.Forms.MouseEventArgs e) {
-			TreeNode treeNodeSelected=tree.GetNodeAt(e.X,e.Y);
-			if(treeNodeSelected==null) {
+			TreeNode selectedNode=tree.GetNodeAt(e.X,e.Y);
+			if(selectedNode==null) {
 				return;//Clicking just below a node results in tree.GetNodeAt(e.X,e.Y) to be null.  Since user didn't make an actual selection, return.
 			}
 			for(int i=_listTaskListTreeHistory.Count-1;i>0;i--) {
-				if(_listTaskListTreeHistory[i].TaskListNum==(long)treeNodeSelected.Tag) {
+				if(_listTaskListTreeHistory[i].TaskListNum==(long)selectedNode.Tag) {
 					break;//don't remove the node click on or any higher node
 				}
 				_listTaskListTreeHistory.RemoveAt(i);
 			}
-			TaskList taskListNewSelection=_listTaskListTreeHistory.FirstOrDefault(x => x.TaskListNum==(long)treeNodeSelected.Tag);
+			TaskList taskListNewSelection=_listTaskListTreeHistory.FirstOrDefault(x => x.TaskListNum==(long)selectedNode.Tag);
 			SetFiltersToDefault(taskListNewSelection);//Fills Tree and Grid.
 		}
 		

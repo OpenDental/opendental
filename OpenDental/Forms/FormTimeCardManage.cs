@@ -59,12 +59,12 @@ namespace OpenDental {
 				if(!Security.CurUser.ClinicIsRestricted) {
 					comboClinic.IncludeAll=true;
 				}
-				comboClinic.ClinicNumSelected=Clinics.ClinicNum;
+				comboClinic.SelectedClinicNum=Clinics.ClinicNum;
 			}
 			_listPayPeriods=PayPeriods.GetDeepCopy();
 			LayoutMenu();
 			FillPayPeriod();
-			butTimeCardBenefits.Visible=PrefC.IsODHQ && Security.IsAuthorized(EnumPermType.TimecardsEditAll,true);
+			butTimeCardBenefits.Visible=PrefC.IsODHQ && Security.IsAuthorized(Permissions.TimecardsEditAll,true);
 		}
 
 		private void LayoutMenu() {
@@ -98,7 +98,7 @@ namespace OpenDental {
 			bool isAll=false;
 			if(PrefC.HasClinicsEnabled) {
 				if(Security.CurUser.ClinicIsRestricted) {
-					clinicNum=comboClinic.ClinicNumSelected;
+					clinicNum=comboClinic.SelectedClinicNum;
 				}
 				else {//All and Headquarters are the first two available options.
 					if(comboClinic.IsAllSelected) {
@@ -108,7 +108,7 @@ namespace OpenDental {
 						//Do nothing since the defaults are this selection
 					}
 					else {//A specific clinic was selected.
-						clinicNum=comboClinic.ClinicNumSelected;
+						clinicNum=comboClinic.SelectedClinicNum;
 					}
 				}
 			}
@@ -802,7 +802,7 @@ namespace OpenDental {
 		}
 
 		private void butDaily_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.TimecardsEditAll)) {
+			if(!Security.IsAuthorized(Permissions.TimecardsEditAll)) {
 				return;
 			}
 			string errorAllEmployees=TimeCardRules.ValidateOvertimeRules(new List<long>{0});//Validates the "all employees" timecard rules first.
@@ -846,7 +846,7 @@ namespace OpenDental {
 		}
 
 		private void butWeekly_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.TimecardsEditAll)) {
+			if(!Security.IsAuthorized(Permissions.TimecardsEditAll)) {
 				return;
 			}
 			if(gridMain.SelectedIndices.Length==0){
@@ -955,7 +955,7 @@ namespace OpenDental {
 				if(PrefC.HasClinicsEnabled) {
 					text+="\r\n"+Lan.g(this,"Clinic")+": ";
 					if(Security.CurUser.ClinicIsRestricted) {
-						text+=Clinics.GetAbbr(comboClinic.ClinicNumSelected);
+						text+=Clinics.GetAbbr(comboClinic.SelectedClinicNum);
 					}
 					else {//All and Headquarters are the first two available options.
 						if(comboClinic.IsAllSelected) {
@@ -965,7 +965,7 @@ namespace OpenDental {
 							text+=Lan.g(this,"Headquarters");
 						}
 						else {//A specific clinic was selected.
-							text+=Clinics.GetAbbr(comboClinic.ClinicNumSelected);
+							text+=Clinics.GetAbbr(comboClinic.SelectedClinicNum);
 						}
 					}
 				}
@@ -998,7 +998,7 @@ namespace OpenDental {
 		///<summary>Exports MainTable (a data table) not the actual OD Grid. This allows for EmployeeNum and ADPNum without having to perform any lookups.</summary>
 		private void butExportGrid_Click(object sender,EventArgs e) {
 			using FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-			if(!ODBuild.IsThinfinity()) {
+			if(!ODBuild.IsWeb()) {
 				if(folderBrowserDialog.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
@@ -1054,7 +1054,7 @@ namespace OpenDental {
 				stringBuilder.AppendLine(row);
 			}
 			string fileName="ODPayroll"+DateTime.Now.ToString("yyyyMMdd_hhmmss")+".TXT";
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.ExportForDownload(fileName,stringBuilder.ToString());
 				return;
 			}
@@ -1186,14 +1186,14 @@ namespace OpenDental {
 				}
 			}
 			using FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-			if(!ODBuild.IsThinfinity()) {
+			if(!ODBuild.IsWeb()) {
 				if(folderBrowserDialog.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
 			}
 			string fileSuffix=GenerateFileSuffix(folderBrowserDialog.SelectedPath,"\\EPI"+coCode);
 			try {
-				if(ODBuild.IsThinfinity()) {
+				if(ODBuild.IsWeb()) {
 					string fileName="EPI"+coCode+fileSuffix+".CSV";
 					ThinfinityUtils.ExportForDownload(fileName,stringBuilder.ToString());
 				}
@@ -1270,7 +1270,7 @@ namespace OpenDental {
 				#endregion
 			}//end file contents
 			using FolderBrowserDialog folderBrowserDialog=new FolderBrowserDialog();
-			if(!ODBuild.IsThinfinity()) {
+			if(!ODBuild.IsWeb()) {
 				if(folderBrowserDialog.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
@@ -1287,7 +1287,7 @@ namespace OpenDental {
 				errors+="  The pay frequency '"+payPeriodInterval+"' does not match the pay period date range.\r\n";
 			}
 			try {
-				if(ODBuild.IsThinfinity()) {
+				if(ODBuild.IsWeb()) {
 					ThinfinityUtils.ExportForDownload(fileName+".CSV",stringBuilder.ToString());
 				}
 				else {
@@ -1312,7 +1312,7 @@ namespace OpenDental {
 			//generate suffix from i
 			for(int i=0;i<=1297;i++) {//1296=36*36 to represent all acceptable suffixes for file name consisting of two alphanumeric digits; +1 to catch error. (A-Z, 0-9)
 				fileSuffix="";
-				if(ODEnvironment.IsCloudServer) {
+				if(ODBuild.IsWeb()) {
 					return ""; //we don't have a way to check if the file exists.
 				}
 				if(i==1297) {
@@ -1364,8 +1364,11 @@ namespace OpenDental {
 		private void setupToolStripMenuItem_Click(object sender,EventArgs e) {
 			using FormTimeCardSetup formTimeCardSetup=new FormTimeCardSetup();
 			formTimeCardSetup.ShowDialog();
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Time Card Setup");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Time Card Setup");
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }

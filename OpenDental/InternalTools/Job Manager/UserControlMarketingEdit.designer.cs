@@ -52,13 +52,13 @@
 			this.label3 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.comboPhase = new OpenDental.UI.ComboBox();
+			this.comboPriority = new OpenDental.UI.ComboBox();
 			this.textCustomer = new System.Windows.Forms.TextBox();
 			this.textTitle = new System.Windows.Forms.TextBox();
 			this.textDateEntry = new System.Windows.Forms.TextBox();
 			this.textJobNum = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.panel4 = new System.Windows.Forms.Panel();
-			this.comboPriority = new System.Windows.Forms.ComboBox();
 			this.textHoursLeft = new OpenDental.ValidDouble();
 			this.butAddTime = new OpenDental.UI.Button();
 			this.label15 = new System.Windows.Forms.Label();
@@ -376,6 +376,14 @@
 			this.comboPhase.TabIndex = 315;
 			this.comboPhase.SelectionChangeCommitted += new System.EventHandler(this.comboPhase_SelectionChangeCommitted);
 			// 
+			// comboPriority
+			// 
+			this.comboPriority.Location = new System.Drawing.Point(126, 26);
+			this.comboPriority.Name = "comboPriority";
+			this.comboPriority.Size = new System.Drawing.Size(121, 21);
+			this.comboPriority.TabIndex = 314;
+			this.comboPriority.SelectionChangeCommitted += new System.EventHandler(this.comboPriority_SelectionChangeCommitted);
+			// 
 			// textCustomer
 			// 
 			this.textCustomer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -423,7 +431,6 @@
 			// 
 			// panel4
 			// 
-			this.panel4.Controls.Add(this.comboPriority);
 			this.panel4.Controls.Add(this.textHoursLeft);
 			this.panel4.Controls.Add(this.butAddTime);
 			this.panel4.Controls.Add(this.label15);
@@ -455,6 +462,7 @@
 			this.panel4.Controls.Add(this.textSchedDate);
 			this.panel4.Controls.Add(this.butActions);
 			this.panel4.Controls.Add(this.comboPhase);
+			this.panel4.Controls.Add(this.comboPriority);
 			this.panel4.Controls.Add(this.label9);
 			this.panel4.Controls.Add(this.textTitle);
 			this.panel4.Controls.Add(this.label5);
@@ -477,18 +485,6 @@
 			this.panel4.Name = "panel4";
 			this.panel4.Size = new System.Drawing.Size(766, 151);
 			this.panel4.TabIndex = 329;
-			// 
-			// comboPriority
-			// 
-			this.comboPriority.FormattingEnabled = true;
-			this.comboPriority.IntegralHeight = false;
-			this.comboPriority.Location = new System.Drawing.Point(126, 26);
-			this.comboPriority.MaxDropDownItems = 10;
-			this.comboPriority.Name = "comboPriority";
-			this.comboPriority.Size = new System.Drawing.Size(121, 21);
-			this.comboPriority.TabIndex = 361;
-			this.comboPriority.SelectionChangeCommitted += new System.EventHandler(this.comboPriority_SelectionChangeCommitted);
-			this.comboPriority.Leave += new System.EventHandler(this.comboPriority_Leave);
 			// 
 			// textHoursLeft
 			// 
@@ -807,7 +803,7 @@
 			this.textEditorMain.Location = new System.Drawing.Point(0, 0);
 			this.textEditorMain.MainFont = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.textEditorMain.MainRtf = "{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033{\\fonttbl{\\f0\\fnil\\fcharset0 " +
-    "Arial;}}\r\n{\\*\\generator Riched20 10.0.22621}\\viewkind4\\uc1 \r\n\\pard\\fs20\\par\r\n}\r\n" +
+    "Arial;}}\r\n{\\*\\generator Riched20 10.0.19041}\\viewkind4\\uc1 \r\n\\pard\\fs20\\par\r\n}\r\n" +
     "";
 			this.textEditorMain.MainText = "";
 			this.textEditorMain.MinimumSize = new System.Drawing.Size(450, 120);
@@ -945,6 +941,7 @@
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label2;
 		private UI.ComboBox comboPhase;
+		private UI.ComboBox comboPriority;
 		private System.Windows.Forms.TextBox textCustomer;
 		private System.Windows.Forms.TextBox textTitle;
 		private System.Windows.Forms.TextBox textDateEntry;
@@ -994,6 +991,5 @@
 		private System.Windows.Forms.Label label22;
 		private UI.Button butChangeEst;
 		private UI.CheckBox checkIncludeCompleteCanceled;
-		private System.Windows.Forms.ComboBox comboPriority;
 	}
 }

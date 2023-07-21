@@ -35,11 +35,5 @@ namespace UnitTestsCore {
 			Fees.Update(fee);
 		}
 
-		///<summary>Deletes everything from the Fee table. Does not truncate the table so that PKs are not reused on accident.</summary>
-		public static void ClearFeeTable() {
-			string command="DELETE FROM Fee";
-			DataCore.NonQ(command);
-		}
-
 	}
 }

@@ -41,6 +41,7 @@ namespace OpenDental {
 			this.label4 = new System.Windows.Forms.Label();
 			this.listToFrom = new OpenDental.UI.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
 			this.butDown = new OpenDental.UI.Button();
@@ -100,12 +101,22 @@ namespace OpenDental {
 			this.label1.Text = "Users";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(365, 379);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butAdd
 			// 
 			this.butAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.butAdd.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAdd.Location = new System.Drawing.Point(312, 154);
+			this.butAdd.Location = new System.Drawing.Point(365, 241);
 			this.butAdd.Name = "butAdd";
 			this.butAdd.Size = new System.Drawing.Size(75, 26);
 			this.butAdd.TabIndex = 19;
@@ -117,7 +128,7 @@ namespace OpenDental {
 			this.butUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.butUp.Image = global::OpenDental.Properties.Resources.up;
 			this.butUp.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butUp.Location = new System.Drawing.Point(312, 186);
+			this.butUp.Location = new System.Drawing.Point(365, 273);
 			this.butUp.Name = "butUp";
 			this.butUp.Size = new System.Drawing.Size(75, 26);
 			this.butUp.TabIndex = 20;
@@ -129,7 +140,7 @@ namespace OpenDental {
 			this.butDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.butDown.Image = global::OpenDental.Properties.Resources.down;
 			this.butDown.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDown.Location = new System.Drawing.Point(312, 218);
+			this.butDown.Location = new System.Drawing.Point(365, 305);
 			this.butDown.Name = "butDown";
 			this.butDown.Size = new System.Drawing.Size(75, 26);
 			this.butDown.TabIndex = 21;
@@ -138,7 +149,7 @@ namespace OpenDental {
 			// 
 			// FormMessagingSetup
 			// 
-			this.ClientSize = new System.Drawing.Size(406, 430);
+			this.ClientSize = new System.Drawing.Size(492, 430);
 			this.Controls.Add(this.butDown);
 			this.Controls.Add(this.butUp);
 			this.Controls.Add(this.butAdd);
@@ -148,6 +159,7 @@ namespace OpenDental {
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.listToFrom);
 			this.Controls.Add(this.label1);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -160,6 +172,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.ListBox listMessages;
 		private Label label5;
 		private OpenDental.UI.ListBox listExtras;

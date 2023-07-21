@@ -123,7 +123,7 @@ namespace OpenDentBusiness.HL7 {
 			guar.SSN=seg.GetFieldFullText(12);
 			if(isNewGuar) {
 				Patients.Insert(guar,!useChartNumber);//if using chartnumber (standalone mode), then can't insert using existing PK
-				SecurityLogs.MakeLogEntry(EnumPermType.PatientCreate,guar.PatNum,"Created from HL7 for eCW.",LogSources.HL7);
+				SecurityLogs.MakeLogEntry(Permissions.PatientCreate,guar.PatNum,"Created from HL7 for eCW.",LogSources.HL7);
 				guarOld=guar.Copy();
 				guar.Guarantor=guar.PatNum;
 				Patients.Update(guar,guarOld);

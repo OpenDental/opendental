@@ -320,19 +320,19 @@ namespace OpenDental{
 					//OR the Setup.exe could have been manually sent to our customer (during troubleshooting with HQ).
 					//For those scenarios, the preference will be empty at this point and we need to let other computers know that an update going to start.
 					//Updating the string (again) here will guarantee that all computers know an update is in fact in progress from this machine.
-					Prefs.UpdateString(PrefName.UpdateInProgressOnComputerName,Environment.MachineName);
+					Prefs.UpdateString(PrefName.UpdateInProgressOnComputerName,ODEnvironment.MachineName);
 				}
 				//Currently okay to show progress during isSilent.
-				UI.ProgressWin progressOD=new UI.ProgressWin();
+				UI.ProgressOD progressOD=new UI.ProgressOD();
 				progressOD.ActionMain=() => ConvertDatabases.InvokeConvertMethods();
 				progressOD.ShowCancelButton=false;
-				//progressOD.TypeEvent=typeof(ODEvent);
-				//progressOD.ODEventType=ODEventType.ConvertDatabases;
+				progressOD.TypeEvent=typeof(ODEvent);
+				progressOD.ODEventType=ODEventType.ConvertDatabases;
 				if(isSilent) {
 					ConvertDatabases.InvokeConvertMethods();
 				}
 				else {
-					progressOD.ShowDialog();
+					progressOD.ShowDialogProgress();
 				}
 				if(FromVersion>=new Version("3.4.0")) {
 					//CacheL.Refresh(InvalidType.Prefs);//or it won't know it has to update in the next line.
@@ -341,7 +341,7 @@ namespace OpenDental{
 				//Specific caches should be invalid after convert script update.
 				Cache.Refresh(InvalidType.Prefs,InvalidType.Programs);
 				SecurityLog securityLog=new SecurityLog {
-					PermType=EnumPermType.UpdateInstall,
+					PermType=Permissions.UpdateInstall,
 					UserNum=0,//UserNum=0 because security log is created prior to a user logging in.
 					LogDateTime=DateTime.Now,
 					LogText="New version detected. Database update initiated from "+FromVersion.ToString()+" to "+ToVersion.ToString()+".",

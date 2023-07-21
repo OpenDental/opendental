@@ -27,6 +27,7 @@ namespace OpenDental {
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpHiddenPaySplits));
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.odDateRangePicker = new OpenDental.UI.ODDateRangePicker();
 			this.checkAllProv = new OpenDental.UI.CheckBox();
 			this.listBoxProv = new OpenDental.UI.ListBox();
@@ -42,12 +43,22 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(435, 299);
+			this.butOK.Location = new System.Drawing.Point(354, 298);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 4;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.ButOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(435, 298);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 5;
+			this.butCancel.Text = "&Cancel";
 			// 
 			// odDateRangePicker
 			// 
@@ -159,6 +170,7 @@ namespace OpenDental {
 			this.Controls.Add(this.odDateRangePicker);
 			this.Controls.Add(this.listBoxClinic);
 			this.Controls.Add(this.labelClinic);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormRpHiddenPaySplits";
@@ -171,6 +183,7 @@ namespace OpenDental {
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.ODDateRangePicker odDateRangePicker;
 		private OpenDental.UI.CheckBox checkAllProv;
 		private OpenDental.UI.ListBox listBoxProv;

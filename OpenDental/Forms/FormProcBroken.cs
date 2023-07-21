@@ -30,7 +30,7 @@ namespace OpenDental {
 			textDateEntry.Text=_procedure.DateEntryC.ToShortDateString();
 			textProcDate.Text=_procedure.ProcDate.ToShortDateString();
 			textAmount.Text=_procedure.ProcFee.ToString("f");
-			comboClinic.ClinicNumSelected=_procedure.ClinicNum;
+			comboClinic.SelectedClinicNum=_procedure.ClinicNum;
 			fillComboProv();
 			comboProv.SetSelectedProvNum(_procedure.ProvNum);
 			textUser.Text=Userods.GetName(_procedure.UserNum);
@@ -47,40 +47,40 @@ namespace OpenDental {
 		}
 
 		private void butPickProv_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick = new FrmProviderPick(comboProv.Items.GetAll<Provider>());
-			frmProviderPick.ProvNumSelected=comboProv.GetSelectedProvNum();
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick = new FormProviderPick(comboProv.Items.GetAll<Provider>());
+			formProviderPick.ProvNumSelected=comboProv.GetSelectedProvNum();
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboProv.SetSelectedProvNum(frmProviderPick.ProvNumSelected);
+			comboProv.SetSelectedProvNum(formProviderPick.ProvNumSelected);
 		}
 
 		///<summary>Fills combo provider based on which clinic is selected and attempts to preserve provider selection if any.</summary>
 		private void fillComboProv() {
 			long provNum=comboProv.GetSelectedProvNum();
 			comboProv.Items.Clear();
-			comboProv.Items.AddProvsAbbr(Providers.GetProvsForClinic(comboClinic.ClinicNumSelected));
+			comboProv.Items.AddProvsAbbr(Providers.GetProvsForClinic(comboClinic.SelectedClinicNum));
 			comboProv.SetSelectedProvNum(provNum);
 		}
 
 		private void butAutoNoteChart_Click(object sender,EventArgs e) {
-			FrmAutoNoteCompose frmAutoNoteCompose=new FrmAutoNoteCompose();
-			frmAutoNoteCompose.ShowDialog();
-			if(frmAutoNoteCompose.IsDialogOK) {
-				textChartNotes.AppendText(frmAutoNoteCompose.StrCompletedNote);
+			using FormAutoNoteCompose formAutoNoteCompose=new FormAutoNoteCompose();
+			formAutoNoteCompose.ShowDialog();
+			if(formAutoNoteCompose.DialogResult==DialogResult.OK) {
+				textChartNotes.AppendText(formAutoNoteCompose.StrCompletedNote);
 			}
 		}
 
 		private void butAutoNoteAccount_Click(object sender,EventArgs e) {
-			FrmAutoNoteCompose frmAutoNoteCompose=new FrmAutoNoteCompose();
-			frmAutoNoteCompose.ShowDialog();
-			if(frmAutoNoteCompose.IsDialogOK) {
-				textAccountNotes.AppendText(frmAutoNoteCompose.StrCompletedNote);
+			using FormAutoNoteCompose formAutoNoteCompose=new FormAutoNoteCompose();
+			formAutoNoteCompose.ShowDialog();
+			if(formAutoNoteCompose.DialogResult==DialogResult.OK) {
+				textAccountNotes.AppendText(formAutoNoteCompose.StrCompletedNote);
 			}
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			if(!textProcDate.IsValid() || !textAmount.IsValid())
 			{
 				MsgBox.Show(this,"Please fix data entry errors first.");
@@ -113,12 +113,16 @@ namespace OpenDental {
 			_procedure.Note=textChartNotes.Text;
 			_procedure.BillingNote=textAccountNotes.Text;
 			_procedure.ProvNum=comboProv.GetSelectedProvNum();
-			_procedure.ClinicNum=comboClinic.ClinicNumSelected;
+			_procedure.ClinicNum=comboClinic.SelectedClinicNum;
 			Procedures.Update(_procedure,_procedureOld);
 			ProcedureCode procedureCode=ProcedureCodes.GetProcCode(_procedure.CodeNum);
 			string logText=procedureCode.ProcCode+" ("+_procedure.ProcStatus+"), "+Lan.g(this,"Fee")+": "+_procedure.ProcFee.ToString("c")+", "+procedureCode.Descript;
-			SecurityLogs.MakeLogEntry(IsNew ? EnumPermType.ProcComplCreate : EnumPermType.ProcCompleteEdit,_procedure.PatNum,logText);
+			SecurityLogs.MakeLogEntry(IsNew ? Permissions.ProcComplCreate : Permissions.ProcCompleteEdit,_procedure.PatNum,logText);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void FormProcBroken_FormClosing(object sender,FormClosingEventArgs e) {
@@ -131,5 +135,6 @@ namespace OpenDental {
 			}
 		}
 
+		
 	}
 }

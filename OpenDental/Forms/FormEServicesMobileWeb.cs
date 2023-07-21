@@ -52,5 +52,8 @@ namespace OpenDental {
 			FormOpenDental.S_MenuItemSecurity_Click(sender,e);
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }

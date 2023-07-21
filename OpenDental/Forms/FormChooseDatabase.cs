@@ -22,18 +22,17 @@ namespace OpenDental {
 		private void FormChooseDatabase_Load(object sender,EventArgs e) {
 			Logger.LogToPath("Load",LogPath.Startup,LogPhase.Start);
 			FillForm();
-			if(ODEnvironment.IsCloudInstance) {
+			if(ODBuild.IsWeb()) {
 				//Don't let the user choose another office's database (this window should never show anyway because NoShowOnStartup should be true)
-				DisableAllExcept(butOK);
+				DisableAllExcept(butOK,butCancel);
 			}
 			Logger.LogToPath("Load",LogPath.Startup,LogPhase.End);
-			this.ActiveControl=comboComputerName;
 		}
 
 		private void FillForm() {
 			Logger.LogToPath("FillForm",LogPath.Startup,LogPhase.Start);
 			if(ChooseDatabaseInfo_.IsAccessedFromMainMenu) {
-				if(ODEnvironment.IsCloudInstance) {
+				if(ODBuild.IsWeb()) {
 					textUser.UseSystemPasswordChar=true;
 				}
 				comboComputerName.Enabled=false;
@@ -41,8 +40,6 @@ namespace OpenDental {
 				comboDatabase.Enabled=false;
 				comboDatabase.Text=DataConnection.GetDatabaseName();
 				checkConnectServer.Enabled=false;
-				textUser.ReadOnly=true;
-				textPassword.ReadOnly=true;
 				textURI.ReadOnly=true;
 			}
 			listType.Items.Add("MySql");
@@ -111,16 +108,15 @@ namespace OpenDental {
 		private void FillComboComputerNames() {
 			Logger.LogToPath("FillComboComputerNames",LogPath.Startup,LogPhase.Start);
 			comboComputerName.Items.Clear();
-			List<string> listComputerNames = CentralConnections.GetComputerNames();
-			comboComputerName.Items.AddRange(listComputerNames.ToArray());
+			comboComputerName.Items.AddRange(CentralConnections.GetComputerNames());
 			Logger.LogToPath("FillComboComputerNames",LogPath.Startup,LogPhase.End);
 		}
 
 		private void FillComboDatabases() {
 			Logger.LogToPath("FillComboDatabases",LogPath.Startup,LogPhase.Start);
 			comboDatabase.Items.Clear();
-			List<string> listNames=CentralConnections.GetDatabases(ChooseDatabaseInfo_.CentralConnectionCur,ChooseDatabaseInfo_.DatabaseType);
-			comboDatabase.Items.AddRange(listNames.ToArray());
+			string[] stringArrayDatabases=CentralConnections.GetDatabases(ChooseDatabaseInfo_.CentralConnectionCur,ChooseDatabaseInfo_.DatabaseType);
+			comboDatabase.Items.AddRange(stringArrayDatabases);
 			Logger.LogToPath("FillComboDatabases",LogPath.Startup,LogPhase.End);
 		}
 
@@ -137,13 +133,11 @@ namespace OpenDental {
 				groupDirect.Enabled=false;
 				checkDynamicMode.Checked=false;
 				checkDynamicMode.Enabled=false;
-				textPEM.Enabled=false;
 			}
 			else {
 				groupServer.Enabled=false;
 				groupDirect.Enabled=true;
 				checkDynamicMode.Enabled=true;
-				textPEM.Enabled=true;
 			}
 		}
 
@@ -200,6 +194,10 @@ namespace OpenDental {
 				return;
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

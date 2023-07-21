@@ -74,7 +74,6 @@ Double-click tab header to rename tab.";
 				addClinicDefaultToolStripMenuItem.Visible=false;
 			}
 			AddDefaultTabs();
-			this.KeyDown+=FormDashboardEditTab_KeyDown;
 		}
 
 		private void RefreshData(bool invalidateFirst) {
@@ -93,12 +92,6 @@ Double-click tab header to rename tab.";
 		}
 		#endregion
 
-		private void FormDashboardEditTab_KeyDown(object sender,KeyEventArgs e) {
-			if(e.KeyData==Keys.Escape){
-				Close();
-			}
-		}
-
 		private void listItems_MouseDown(object sender,MouseEventArgs e) {
 			int i=listItems.IndexFromPoint(new Point(e.X,e.Y));
 			if(i<0) {
@@ -113,10 +106,10 @@ Double-click tab header to rename tab.";
 				
 		private void setupToolStripMenuItem_Click(object sender,EventArgs e) {
 			if(!IsEditMode) {
-				if(!Security.IsAuthorized(EnumPermType.GraphicalReportSetup)) {
+				if(!Security.IsAuthorized(Permissions.GraphicalReportSetup)) {
 					return;
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.GraphicalReportSetup,0,"Accessed graphical reports setup controls.");
+				SecurityLogs.MakeLogEntry(Permissions.GraphicalReportSetup,0,"Accessed graphical reports setup controls.");
 			}
 			IsEditMode=!IsEditMode;
 		}

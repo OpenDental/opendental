@@ -31,7 +31,7 @@ namespace OpenDental {
 
 		private void FillGrid() {
 			List<SheetDef> listSheetDefsWidgets=SheetDefs.GetCustomForType(SheetTypeEnum.PatientDashboardWidget);
-			listSheetDefsWidgets=listSheetDefsWidgets.FindAll(x => Security.IsAuthorized(EnumPermType.DashboardWidget,x.SheetDefNum,true));
+			listSheetDefsWidgets=listSheetDefsWidgets.FindAll(x => Security.IsAuthorized(Permissions.DashboardWidget,x.SheetDefNum,true));
 			List<SheetDef> listSheetDefsSelected=gridMain.SelectedTags<SheetDef>();
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
@@ -59,7 +59,7 @@ namespace OpenDental {
 		}
 
 		private void setupToolStripMenuItem_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			using FormDashboardWidgetSetup formDashboardWidgetSetup=new FormDashboardWidgetSetup();
@@ -73,5 +73,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+    private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

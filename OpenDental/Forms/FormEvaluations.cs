@@ -22,7 +22,7 @@ namespace OpenDental {
 		private void FormEvaluations_Load(object sender,EventArgs e) {
 			_provider=Providers.GetProv(Security.CurUser.ProvNum);
 			//_userProv will only be allowed to be null if the user is an admin. Checking for null in this block is not necessary.
-			if(!Security.IsAuthorized(EnumPermType.AdminDentalEvaluations,suppressMessage:true)) {
+			if(!Security.IsAuthorized(Permissions.AdminDentalEvaluations,suppressMessage:true)) {
 				//Admins are allowed to look at and edit all evaluations, but they cannot add new evaluations
 				//This could easily be added in the future if desired.
 				groupAdmin.Visible=false;
@@ -143,6 +143,11 @@ namespace OpenDental {
 			using FormEvaluationReport formEvaluationReport=new FormEvaluationReport();
 			formEvaluationReport.ShowDialog();
 		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 
 	}
 }

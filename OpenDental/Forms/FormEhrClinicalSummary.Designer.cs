@@ -24,6 +24,7 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrClinicalSummary));
+			this.butClose = new System.Windows.Forms.Button();
 			this.butSendToPortal = new System.Windows.Forms.Button();
 			this.gridEHRMeasureEvents = new OpenDental.UI.GridOD();
 			this.butDelete = new System.Windows.Forms.Button();
@@ -36,6 +37,17 @@
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(180, 440);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 23);
+			this.butClose.TabIndex = 7;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butSendToPortal
 			// 
@@ -140,6 +152,7 @@
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.gridEHRMeasureEvents);
 			this.Controls.Add(this.butDelete);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrClinicalSummary";
 			this.Text = "Clinical Summary";
@@ -151,6 +164,8 @@
 		}
 
 		#endregion
+
+		private System.Windows.Forms.Button butClose;
 		private System.Windows.Forms.Button butSendToPortal;
         private OpenDental.UI.GridOD gridEHRMeasureEvents;
 				private System.Windows.Forms.Button butDelete;

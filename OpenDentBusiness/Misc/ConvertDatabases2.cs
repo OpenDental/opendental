@@ -331,7 +331,7 @@ namespace OpenDentBusiness {
 					command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 						+"VALUES ("
 						+"'"+POut.Long(programNum)+"', "
-						+"'"+POut.Long((int)EnumToolBar.ChartModule)+"', "
+						+"'"+POut.Long((int)ToolBarsAvail.ChartModule)+"', "
 						+"'iCat')";
 					Db.NonQ32(command);
 					//end of iCat Bridge
@@ -751,7 +751,7 @@ DROP TABLE IF EXISTS etAck";
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+POut.Long(programNum)+"', "
-					+"'"+POut.Long((int)EnumToolBar.ChartModule)+"', "
+					+"'"+POut.Long((int)ToolBarsAvail.ChartModule)+"', "
 					+"'Camsight')";
 				Db.NonQ32(command);
 				//CliniView Bridge---------------------------------------------------------------------------
@@ -773,7 +773,7 @@ DROP TABLE IF EXISTS etAck";
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+POut.Long(programNum)+"', "
-					+"'"+POut.Long((int)EnumToolBar.ChartModule)+"', "
+					+"'"+POut.Long((int)ToolBarsAvail.ChartModule)+"', "
 					+"'CliniView')";
 				Db.NonQ32(command);
 				command="UPDATE preference SET ValueString = '6.7.12.0' WHERE PrefName = 'DataBaseVersion'";
@@ -841,13 +841,13 @@ DROP TABLE IF EXISTS etAck";
 				for(int i=0;i<table.Rows.Count;i++) {
 					groupNum=PIn.Int(table.Rows[i][0].ToString());
 					command="INSERT INTO grouppermission (NewerDate,UserGroupNum,PermType) "
-						+"VALUES('0001-01-01',"+POut.Long(groupNum)+","+POut.Long((int)EnumPermType.TreatPlanEdit)+")";
+						+"VALUES('0001-01-01',"+POut.Long(groupNum)+","+POut.Long((int)Permissions.TreatPlanEdit)+")";
 					Db.NonQ32(command);
 					command="INSERT INTO grouppermission (NewerDate,UserGroupNum,PermType) "
-						+"VALUES('0001-01-01',"+POut.Long(groupNum)+","+POut.Long((int)EnumPermType.ReportProdInc)+")";
+						+"VALUES('0001-01-01',"+POut.Long(groupNum)+","+POut.Long((int)Permissions.ReportProdInc)+")";
 					Db.NonQ32(command);
 					command="INSERT INTO grouppermission (NewerDate,UserGroupNum,PermType) "
-						+"VALUES('0001-01-01',"+POut.Long(groupNum)+","+POut.Long((int)EnumPermType.TimecardDeleteEntry)+")";
+						+"VALUES('0001-01-01',"+POut.Long(groupNum)+","+POut.Long((int)Permissions.TimecardDeleteEntry)+")";
 					Db.NonQ32(command);
 				}
 				command="INSERT INTO preference (PrefName,ValueString,Comments) VALUES ('BillingExcludeIfUnsentProcs','0','')";
@@ -1836,7 +1836,7 @@ DROP TABLE IF EXISTS etAck";
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+POut.Long(programNum)+"', "
-					+"'"+POut.Long((int)EnumToolBar.ChartModule)+"', "
+					+"'"+POut.Long((int)ToolBarsAvail.ChartModule)+"', "
 					+"'EZDent')";
 				Db.NonQ(command);
 				command="UPDATE preference SET ValueString = '6.8.12.0' WHERE PrefName = 'DataBaseVersion'";
@@ -2476,7 +2476,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+POut.Long(programNum)+"', "
-					+"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+					+"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 					+"'Sopro')";
 				Db.NonQ(command);
 				command="UPDATE preference SET ValueString = '7.2.31.0' WHERE PrefName = 'DataBaseVersion'";
@@ -2522,7 +2522,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+POut.Long(programNum)+"', "
-					+"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+					+"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 					+"'Progeny')";
 				Db.NonQ32(command);
 				//ProcDate, split off time component-----------------------------------------------------------------------
@@ -2564,7 +2564,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+POut.Long(programNum)+"', "
-					+"'"+POut.Int((int)EnumToolBar.ChartModule)+"', "
+					+"'"+POut.Int((int)ToolBarsAvail.ChartModule)+"', "
 					+"'OrthoPlex')";
 				Db.NonQ(command);
 				command="ALTER TABLE patient ADD AskToArriveEarly int NOT NULL";
@@ -2697,13 +2697,13 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 				command="ALTER TABLE commlog ADD SigIsTopaz tinyint NOT NULL";
 				Db.NonQ(command);
 				command="INSERT INTO grouppermission (NewerDays,UserGroupNum,PermType) " //Everyone starts with sheet edit initially.
-					+"SELECT 0,UserGroupNum,"+POut.Int((int)EnumPermType.SheetEdit)+" "
+					+"SELECT 0,UserGroupNum,"+POut.Int((int)Permissions.SheetEdit)+" "
 					+"FROM usergroup";
 				Db.NonQ(command);
 				command="ALTER TABLE procedurelog ADD ProcTimeEnd time NOT NULL";
 				Db.NonQ(command);
 				command="INSERT INTO grouppermission (NewerDays,UserGroupNum,PermType) " //Everyone starts with commlog edit initially.
-					+"SELECT 0,UserGroupNum,"+POut.Int((int)EnumPermType.CommlogEdit)+" "
+					+"SELECT 0,UserGroupNum,"+POut.Int((int)Permissions.CommlogEdit)+" "
 					+"FROM usergroup";
 				Db.NonQ(command);	
 				command="ALTER TABLE patfielddef ADD FieldType tinyint NOT NULL";
@@ -2820,7 +2820,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<aptList.Length;i++) {
 						Appointment newApt=aptList[i].Copy();
 						newApt.ProcDescript="";
-						Procedure[] procsForOne=Procedures.GetProcsOneApt(aptList[i].AptNum,procsMultApts).ToArray();
+						Procedure[] procsForOne=Procedures.GetProcsOneApt(aptList[i].AptNum,procsMultApts);
 						string procDescript="";
 						for(int j=0;j<procsForOne.Length;j++) {
 							ProcedureCode procCode=ProcedureCodes.GetProcCodeFromDb(procsForOne[j].CodeNum);
@@ -3497,7 +3497,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i][0].ToString());
 						command="INSERT INTO grouppermission (NewerDays,UserGroupNum,PermType) "
-							+"VALUES(0,"+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.PerioEdit)+")";
+							+"VALUES(0,"+POut.Long(groupNum)+","+POut.Int((int)Permissions.PerioEdit)+")";
 						Db.NonQ32(command);
 					}
 				}
@@ -3505,7 +3505,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i][0].ToString());
 						command="INSERT INTO grouppermission (GroupPermNum,NewerDays,UserGroupNum,PermType) "
-							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.PerioEdit)+")";
+							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Int((int)Permissions.PerioEdit)+")";
 						Db.NonQ32(command);
 					}
 				}
@@ -3530,7 +3530,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 						+"VALUES ("
 						+"'"+POut.Long(programNum)+"', "
-						+"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+						+"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 						+"'Cerec')";
 					Db.NonQ32(command);
 				}
@@ -3557,7 +3557,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 						+"VALUES ("
 						+"(SELECT MAX(ToolButItemNum)+1 FROM toolbutitem),"
 						+"'"+POut.Long(programNum)+"', "
-						+"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+						+"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 						+"'Cerec')";
 					Db.NonQ32(command);
 				}//End of Cerec Bridge code. This chunk of code works with MySQL, and is unlikely to cause Oracle bugs.
@@ -3612,7 +3612,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i][0].ToString());
 						command="INSERT INTO grouppermission (UserGroupNum,PermType) "
-						+"VALUES("+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.ProcEditShowFee)+")";
+						+"VALUES("+POut.Long(groupNum)+","+POut.Int((int)Permissions.ProcEditShowFee)+")";
 						Db.NonQ32(command);
 					}
 				}
@@ -3620,7 +3620,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i][0].ToString());
 						command="INSERT INTO grouppermission (GroupPermNum,NewerDays,UserGroupNum,PermType) "
-						+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.ProcEditShowFee)+")";
+						+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Int((int)Permissions.ProcEditShowFee)+")";
 						Db.NonQ32(command);
 					}
 				}
@@ -3680,7 +3680,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 						+"VALUES ("
 						+"'"+POut.Long(programNum)+"', "
-						+"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+						+"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 						+"'PattersonImg')";
 					Db.NonQ32(command);
 				}
@@ -3706,7 +3706,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 						+"VALUES ("
 						+"(SELECT MAX(ToolButItemNum)+1 FROM toolbutitem),"
 						+"'"+POut.Long(programNum)+"', "
-						+"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+						+"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 						+"'PattersonImg')";
 					Db.NonQ32(command);
 				}//end Patterson Imaging bridge
@@ -5196,7 +5196,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					+"VALUES ("
 					+"'"+POut.Long(toolButItemNum)+"',"
 					+"'"+programNum.ToString()+"', "
-					+"'"+POut.Int((int)EnumToolBar.ChartModule)+"', "
+					+"'"+POut.Int((int)ToolBarsAvail.ChartModule)+"', "
 					+"'EvaSoft')";
 				Db.NonQ(command);
 				if(DataConnection.DBtype==DatabaseType.MySql) {
@@ -5751,7 +5751,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 						newerDays=PIn.Int(table.Rows[i][1].ToString());
 						groupNum=PIn.Long(table.Rows[i][2].ToString());
 						command="INSERT INTO grouppermission (NewerDate,NewerDays,UserGroupNum,PermType) "
-							+"VALUES("+POut.Date(newerDate)+","+POut.Int(newerDays)+","+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.ProcDelete)+")";
+							+"VALUES("+POut.Date(newerDate)+","+POut.Int(newerDays)+","+POut.Long(groupNum)+","+POut.Int((int)Permissions.ProcDelete)+")";
 						Db.NonQ32(command);
 					}
 				}
@@ -5761,7 +5761,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 						newerDays=PIn.Int(table.Rows[i][1].ToString());
 						groupNum=PIn.Long(table.Rows[i][2].ToString());
 						command="INSERT INTO grouppermission (GroupPermNum,NewerDate,NewerDays,UserGroupNum,PermType) "
-							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),"+POut.Date(newerDate)+","+POut.Int(newerDays)+","+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.ProcDelete)+")";
+							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),"+POut.Date(newerDate)+","+POut.Int(newerDays)+","+POut.Long(groupNum)+","+POut.Int((int)Permissions.ProcDelete)+")";
 						Db.NonQ32(command);
 					}
 				}
@@ -6441,7 +6441,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 						+"VALUES ("
 						+"'"+POut.Long(programNum)+"', "
-						+"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+						+"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 						+"'Apixia')";
 					Db.NonQ32(command);
 				}
@@ -6467,7 +6467,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 						+"VALUES ("
 						+"(SELECT MAX(ToolButItemNum)+1 FROM toolbutitem),"
 						+"'"+POut.Long(programNum)+"', "
-						+"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+						+"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 						+"'Apixia')";
 					Db.NonQ32(command);
 				}//end Apixia Imaging bridge
@@ -6514,14 +6514,14 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					Db.NonQ(command);
 				}
 				//Add Providers permission to groups with existing Setup permission------------------------------------------------------
-				command="SELECT DISTINCT UserGroupNum FROM grouppermission WHERE PermType="+POut.Int((int)EnumPermType.Setup);
+				command="SELECT DISTINCT UserGroupNum FROM grouppermission WHERE PermType="+POut.Int((int)Permissions.Setup);
 				DataTable table=Db.GetTable(command);
 				long groupNum;
 				if(DataConnection.DBtype==DatabaseType.MySql) {
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 						command="INSERT INTO grouppermission (UserGroupNum,PermType) "
-							+"VALUES("+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.ProviderEdit)+")";
+							+"VALUES("+POut.Long(groupNum)+","+POut.Int((int)Permissions.ProviderEdit)+")";
 						Db.NonQ32(command);
 					}
 				}
@@ -6529,7 +6529,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 						command="INSERT INTO grouppermission (GroupPermNum,NewerDays,UserGroupNum,PermType) "
-							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.ProviderEdit)+")";
+							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Int((int)Permissions.ProviderEdit)+")";
 						Db.NonQ32(command);
 					}
 				}
@@ -6559,7 +6559,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 						command="INSERT INTO grouppermission (UserGroupNum,PermType) "
-							+"VALUES("+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.ReferralAdd)+")";
+							+"VALUES("+POut.Long(groupNum)+","+POut.Int((int)Permissions.ReferralAdd)+")";
 						Db.NonQ32(command);
 					}
 				}
@@ -6567,7 +6567,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 						command="INSERT INTO grouppermission (GroupPermNum,NewerDays,UserGroupNum,PermType) "
-							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.ReferralAdd)+")";
+							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Int((int)Permissions.ReferralAdd)+")";
 						Db.NonQ32(command);
 					}
 				}
@@ -6868,7 +6868,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 						+"VALUES ("
 						+POut.Long(programNum)+", "
-						+POut.Int(((int)EnumToolBar.ChartModule))+", "
+						+POut.Int(((int)ToolBarsAvail.ChartModule))+", "
 						+"'VixWinBase41')";
 					Db.NonQ32(command);
 				}
@@ -6894,7 +6894,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 						+"VALUES ("
 						+"(SELECT MAX(ToolButItemNum)+1 FROM toolbutitem),"
 						+POut.Long(programNum)+", "
-						+POut.Int(((int)EnumToolBar.ChartModule))+", "
+						+POut.Int(((int)ToolBarsAvail.ChartModule))+", "
 						+"'VixWinBase41')";
 					Db.NonQ32(command);
 				}
@@ -7029,13 +7029,13 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 				long groupNum;
 				command="SELECT DISTINCT UserGroupNum "
 					+"FROM grouppermission "
-					+"WHERE PermType="+POut.Int((int)EnumPermType.SecurityAdmin);
+					+"WHERE PermType="+POut.Int((int)Permissions.SecurityAdmin);
 				DataTable table=Db.GetTable(command);
 				if(DataConnection.DBtype==DatabaseType.MySql) {
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 						command="INSERT INTO grouppermission (UserGroupNum,PermType) "
-							+"VALUES("+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.InsPlanChangeSubsc)+")";
+							+"VALUES("+POut.Long(groupNum)+","+POut.Int((int)Permissions.InsPlanChangeSubsc)+")";
 						Db.NonQ32(command);
 					}
 				}
@@ -7043,7 +7043,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 						command="INSERT INTO grouppermission (GroupPermNum,NewerDays,UserGroupNum,PermType) "
-							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.InsPlanChangeSubsc)+")";
+							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Int((int)Permissions.InsPlanChangeSubsc)+")";
 						Db.NonQ32(command);
 					}
 				}
@@ -8366,7 +8366,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 						+"VALUES ("
 						+"'"+POut.Long(programNum)+"', "
-						+"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+						+"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 						+"'MiPACS')";
 					Db.NonQ32(command);
 				}
@@ -8385,7 +8385,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 						+"VALUES ("
 						+"(SELECT MAX(ToolButItemNum)+1 FROM toolbutitem),"
 						+"'"+POut.Long(programNum)+"', "
-						+"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+						+"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 						+"'MiPACS')";
 					Db.NonQ32(command);
 				}//end MiPACS Imaging bridge
@@ -8785,7 +8785,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 						command="INSERT INTO grouppermission (UserGroupNum,PermType) "
-							+"VALUES("+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.RefAttachDelete)+")";
+							+"VALUES("+POut.Long(groupNum)+","+POut.Int((int)Permissions.RefAttachDelete)+")";
 						Db.NonQ32(command);
 					}
 				}
@@ -8793,7 +8793,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 						command="INSERT INTO grouppermission (GroupPermNum,NewerDays,UserGroupNum,PermType) "
-							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.RefAttachDelete)+")";
+							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Int((int)Permissions.RefAttachDelete)+")";
 						Db.NonQ32(command);
 					}
 				}
@@ -8802,7 +8802,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 						command="INSERT INTO grouppermission (UserGroupNum,PermType) "
-							+"VALUES("+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.RefAttachAdd)+")";
+							+"VALUES("+POut.Long(groupNum)+","+POut.Int((int)Permissions.RefAttachAdd)+")";
 						Db.NonQ32(command);
 					}
 				}
@@ -8810,7 +8810,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 						command="INSERT INTO grouppermission (GroupPermNum,NewerDays,UserGroupNum,PermType) "
-							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.RefAttachAdd)+")";
+							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Int((int)Permissions.RefAttachAdd)+")";
 						Db.NonQ32(command);
 					}
 				}
@@ -9002,7 +9002,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 						+"VALUES ("
 						+"'"+POut.Long(programNum)+"', "
-						+"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+						+"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 						+"'RayMage')";
 					Db.NonQ(command);
 				}
@@ -9028,7 +9028,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 						+"VALUES ("
 						+"(SELECT MAX(ToolButItemNum)+1 FROM toolbutitem),"
 						+"'"+POut.Long(programNum)+"', "
-						+"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+						+"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 						+"'RayMage')";
 					Db.NonQ(command);
 				}//end RayMage Imaging bridge
@@ -9052,7 +9052,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 						+"VALUES ("
 						+"'"+POut.Long(programNum)+"', "
-						+"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+						+"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 						+"'BioPAK')";
 					Db.NonQ(command);
 				}
@@ -9078,7 +9078,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 						+"VALUES ("
 						+"(SELECT MAX(ToolButItemNum)+1 FROM toolbutitem),"
 						+"'"+POut.Long(programNum)+"', "
-						+"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+						+"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 						+"'BioPAK')";
 					Db.NonQ(command);
 				}//end BioPAK Imaging bridge
@@ -9389,7 +9389,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 						command="INSERT INTO grouppermission (UserGroupNum,PermType) "
-							+"VALUES("+POut.Long(groupNum)+","+POut.Long((int)EnumPermType.GraphicalReports)+")";
+							+"VALUES("+POut.Long(groupNum)+","+POut.Long((int)Permissions.GraphicalReports)+")";
 						Db.NonQ(command);
 					}
 				}
@@ -9397,7 +9397,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 						command="INSERT INTO grouppermission (GroupPermNum,NewerDays,UserGroupNum,PermType) "
-							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Long((int)EnumPermType.GraphicalReports)+")";
+							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Long((int)Permissions.GraphicalReports)+")";
 						Db.NonQ(command);
 					}
 				}
@@ -9522,7 +9522,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 				  command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 				    +"VALUES ("
 				    +"'"+POut.Long(programNum)+"', "
-				    +"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+				    +"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 				    +"'ClioSoft')";
 				  Db.NonQ(command);
 				}
@@ -9548,7 +9548,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 				    +"VALUES ("
 				    +"(SELECT MAX(ToolButItemNum)+1 FROM toolbutitem),"
 				    +"'"+POut.Long(programNum)+"', "
-				    +"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+				    +"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 				    +"'ClioSoft')";
 				  Db.NonQ(command);
 				}//end ClioSoft bridge				
@@ -9559,7 +9559,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 						command="INSERT INTO grouppermission (UserGroupNum,PermType) "
-							+"VALUES("+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.AutoNoteQuickNoteEdit)+")";
+							+"VALUES("+POut.Long(groupNum)+","+POut.Int((int)Permissions.AutoNoteQuickNoteEdit)+")";
 						Db.NonQ32(command);
 					}
 				}
@@ -9567,7 +9567,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 						command="INSERT INTO grouppermission (GroupPermNum,NewerDays,UserGroupNum,PermType) "
-							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.AutoNoteQuickNoteEdit)+")";
+							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Int((int)Permissions.AutoNoteQuickNoteEdit)+")";
 						Db.NonQ32(command);
 					}
 				}
@@ -9591,7 +9591,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 				    +"VALUES ("
 				    +"'"+POut.Long(programNum)+"', "
-				    +"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+				    +"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 				    +"'Tscan')";
 					Db.NonQ(command);
 				}
@@ -9617,7 +9617,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 				    +"VALUES ("
 				    +"(SELECT MAX(ToolButItemNum)+1 FROM toolbutitem),"
 				    +"'"+POut.Long(programNum)+"', "
-				    +"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+				    +"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 				    +"'Tscan')";
 					Db.NonQ(command);
 				}//end Tscan bridge
@@ -9965,7 +9965,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 				  command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 				    +"VALUES ("
 				    +"'"+POut.Long(programNum)+"', "
-				    +"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+				    +"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 				    +"'CaptureLink')";
 				  Db.NonQ(command);
 				}
@@ -9991,7 +9991,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 				    +"VALUES ("
 				    +"(SELECT MAX(ToolButItemNum)+1 FROM toolbutitem),"
 				    +"'"+POut.Long(programNum)+"', "
-				    +"'"+POut.Int(((int)EnumToolBar.ChartModule))+"', "
+				    +"'"+POut.Int(((int)ToolBarsAvail.ChartModule))+"', "
 				    +"'CaptureLink')";
 				  Db.NonQ(command);
 				}//end CaptureLink bridge
@@ -10151,7 +10151,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 						command="INSERT INTO grouppermission (UserGroupNum,PermType) "
-							+"VALUES("+POut.Long(groupNum)+","+POut.Long((int)EnumPermType.Billing)+")";
+							+"VALUES("+POut.Long(groupNum)+","+POut.Long((int)Permissions.Billing)+")";
 						Db.NonQ(command);
 					}
 				}
@@ -10159,20 +10159,20 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 						command="INSERT INTO grouppermission (GroupPermNum,NewerDays,UserGroupNum,PermType) "
-							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Long((int)EnumPermType.Billing)+")";
+							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Long((int)Permissions.Billing)+")";
 						Db.NonQ(command);
 					}
 				}
 				//Add EquipmentSetup permission to all groups that had Setup permission---------------------------------------------
 				command="SELECT DISTINCT UserGroupNum "
 					+"FROM grouppermission "
-					+"WHERE PermType="+POut.Int((int)EnumPermType.Setup);
+					+"WHERE PermType="+POut.Int((int)Permissions.Setup);
 				table=Db.GetTable(command);
 				if(DataConnection.DBtype==DatabaseType.MySql) {
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 						command="INSERT INTO grouppermission (UserGroupNum,PermType) "
-							+"VALUES("+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.EquipmentSetup)+")";
+							+"VALUES("+POut.Long(groupNum)+","+POut.Int((int)Permissions.EquipmentSetup)+")";
 						Db.NonQ(command);
 					}
 				}
@@ -10180,7 +10180,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 					for(int i=0;i<table.Rows.Count;i++) {
 						groupNum=PIn.Long(table.Rows[i]["UserGroupNum"].ToString());
 						command="INSERT INTO grouppermission (GroupPermNum,NewerDays,UserGroupNum,PermType) "
-							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Int((int)EnumPermType.EquipmentSetup)+")";
+							+"VALUES((SELECT MAX(GroupPermNum)+1 FROM grouppermission),0,"+POut.Long(groupNum)+","+POut.Int((int)Permissions.EquipmentSetup)+")";
 						Db.NonQ(command);
 					}
 				}
@@ -10289,7 +10289,7 @@ VALUES('MercuryDE','"+POut.String(@"C:\MercuryDE\Temp\")+@"','0','','1','','','1
 				//Add ProblemEdit permission to all groups that had Setup permission---------------------------------------------
 				command="SELECT DISTINCT UserGroupNum "
 				  +"FROM grouppermission "
-				  +"WHERE PermType="+POut.Int((int)EnumPermType.Setup);
+				  +"WHERE PermType="+POut.Int((int)Permissions.Setup);
 				table=Db.GetTable(command);
 				if(DataConnection.DBtype==DatabaseType.MySql) {
 					for(int i=0;i<table.Rows.Count;i++) {

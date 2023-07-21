@@ -12,15 +12,84 @@ using OpenDental.UI;
 using OpenDentBusiness;
 
 namespace OpenDentBusiness.UI {
-	//=====WARNING! THERE IS A DUPLICATE OF THIS FILE OVER IN WpfControlsOD/UI/Controls/Supplemental/PopupHelper2
-	//=====UNTIL THIS FILE IS COMPLETELY DEPRECATED, BOTH FILES MUST BE KEPT IN SYNC.
-	//=====ANY CHANGES TO ONE MUST ALSO BE MADE IN THE OTHER.
 	///<summary>A helper class used add reference links to context menus</summary>
 	public class PopupHelper {
+		#region Methods - Private
+		private static void OpenWikiPage(string pageTitle) {
+			if(WikiPages.NavPageDelegate!=null) {
+				WikiPages.NavPageDelegate.Invoke(pageTitle);
+			}
+		}
+
+		private static void OpenPatNum(long patNum) {
+			Patient pat=Patients.GetPat(patNum);
+			if(pat==null) {
+				Object sender="OpenDental";
+				MessageBox.Show(Lans.g(sender.GetType().Name,"Patient does not exist."));
+				return;
+			}
+			else if(Patients.NavPatDelegate!=null) {
+				Patients.NavPatDelegate.Invoke(pat,true);
+			}
+		}
+
+		private static void OpenTaskNum(long taskNum) {
+			if(Tasks.NavTaskDelegate!=null) {
+				Tasks.NavTaskDelegate.Invoke(taskNum);
+			}
+		}
+
+		private static void OpenJobNum(long jobNum) {
+			if(Jobs.NavJobDelegate!=null) {
+				Jobs.NavJobDelegate.Invoke(jobNum);
+			}
+		}
+
+		private static void OpenWebPage(string url) {
+			try {
+				if(!url.ToLower().StartsWith("http")) {
+					url=@"http://"+url;
+				}
+				Process.Start(url);
+			}
+			catch {
+				MessageBox.Show(Lans.g("PopupHelper","Failed to open web browser.  Please make sure you have a default browser set and are connected to the internet then try again."),Lans.g("PopupHelper","Attention"));
+			}
+		}
+
+		private static void OpenUNCPath(string folderPath) {
+			//It is significantly faster to check if the directory exists before calling Process.Start() in the case that you have an invalid path.
+			//Everything is a directory, scrubbed all specific files.
+			bool isValidPath=Directory.Exists(folderPath);
+			if(isValidPath) {
+				try {
+					Process.Start(folderPath);
+				}
+				catch(Exception e) {
+					MessageBox.Show(e.Message);
+				}
+			}
+			else {
+				MessageBox.Show(Lans.g("PopupHelper","Failed to open file location. Please make sure file path is valid."));
+			}
+		}
+
+		///<summary>Regular expresion used to help identify URLs. This is not all encompassing, there will be URLs that do not match this but this should work for 99%. May match URLs inside of parenthesis. These should be trimmed on both sides.</summary>
+		private static string UrlRegexString() {
+			string singleMatch=@"(http:\/\/|https:\/\/)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=,()]*)";
+			//The first match matches normal URLs. The second match matches URLs surrounded in parenthesis. It also checks the next character
+			//after a closing parenthesis to make sure the parenthesis was not simply found somewhere in the URL. The next character can be
+			//punctuation and it will match fine. Otherwise, it will default to the normal URL match. The parenthesis are stripped out after the
+			//match
+			string retVal=$@"({singleMatch})|(\({singleMatch}\)(?!([-a-zA-Z0-9\@:%_\+~#\&//=()])))";
+			return retVal;
+		}
+		#endregion Methods - Private
+
 		#region Methods - Public
 		///<summary>For a given context menu item, returns a sorted list of menu item links. This supports wiki, patient, task, Job, URL, web, and file explorer.</summary>
-		public static List<MenuItem> GetContextMenuItemLinks(string contextMenuItemText,bool rightClickLinks) {
-			List<MenuItem> listMenuItemsLinks=new List<MenuItem>();
+		public static List<MenuItem> GetContextMenuItemLinks(string contextMenuItemText,bool DoShowRightClickLinks) {
+			List<MenuItem> listMenuItemLinks=new List<MenuItem>();
 			List<string> listStringMatches=new List<string>();
 			List<long> listNumMatches=new List<long>();
 			bool doWikiLogic=false;//Default the Wiki logic to false
@@ -39,9 +108,9 @@ namespace OpenDentBusiness.UI {
 					.Distinct()
 					.ToList();
 				for(int i=0;i<listStringMatches.Count;i++) {
-					string pageName=listStringMatches[i]; //To avoid lazy eval
-					EventHandler eventHandler=(s,eArg) => { OpenWikiPage(pageName); };
-					listMenuItemsLinks.Add(new MenuItem("Wiki - "+listStringMatches[i],eventHandler));
+					string curMatch=listStringMatches[i]; //To avoid lazy eval
+					EventHandler onClick=(s,eArg) => { OpenWikiPage(curMatch); };
+					listMenuItemLinks.Add(new MenuItem("Wiki - "+listStringMatches[i],onClick));
 				}
 			}
 			listStringMatches=GetURLsFromText(contextMenuItemText);
@@ -57,52 +126,45 @@ namespace OpenDentBusiness.UI {
 				if(title.Length>24) {
 					title=title.Substring(0,24)+"...";
 				}
-				string strMatch=listStringMatches[i]; //To avoid lazy eval
-				EventHandler eventHandler=(s,eArg)=> { OpenWebPage(strMatch); };
-				listMenuItemsLinks.Add(new MenuItem("Web - "+title,eventHandler));
+				string curMatch=listStringMatches[i]; //To avoid lazy eval
+				EventHandler onClick=(s,eArg)=> { OpenWebPage(curMatch); };
+				listMenuItemLinks.Add(new MenuItem("Web - "+title,onClick));
 			}
 			listStringMatches=ODFileUtils.GetFilePathsFromText(contextMenuItemText);
 			for(int i=0;i<listStringMatches.Count;i++) {
-				string strMatch=listStringMatches[i]; //To avoid lazy eval
-				EventHandler eventHandler=(s,eArg) => { OpenUNCPath(strMatch); };
-				listMenuItemsLinks.Add(new MenuItem("File Explorer - "+listStringMatches[i],eventHandler));
+				string curMatch=listStringMatches[i]; //To avoid lazy eval
+				EventHandler onClick=(s,eArg) => { OpenUNCPath(curMatch); };
+				listMenuItemLinks.Add(new MenuItem("File Explorer - "+listStringMatches[i],onClick));
 			}
-			if(rightClickLinks) {
+			if(DoShowRightClickLinks) {
 				listNumMatches=GetPatNumsFromText(contextMenuItemText);
 				for(int i=0;i<listNumMatches.Count;i++) {
-					long patNum=listNumMatches[i];
-					EventHandler eventHandler=(s,eArg) => { OpenPatNum(patNum); };
-					listMenuItemsLinks.Add(new MenuItem("PatNum - "+listNumMatches[i],eventHandler));
+					long curMatch=listNumMatches[i];
+					EventHandler onClick=(s,eArg) => { OpenPatNum(curMatch); };
+					listMenuItemLinks.Add(new MenuItem("PatNum - "+listNumMatches[i],onClick));
 				}
 				listNumMatches=GetTaskNumsFromText(contextMenuItemText);
 				for(int i=0;i<listNumMatches.Count;i++) {
-					long taskNum=listNumMatches[i];
-					EventHandler eventHandler=(s,eArg) => { OpenTaskNum(taskNum); };
-					listMenuItemsLinks.Add(new MenuItem("TaskNum - "+listNumMatches[i],eventHandler));
+					long curMatch=listNumMatches[i];
+					EventHandler onClick=(s,eArg) => { OpenTaskNum(curMatch); };
+					listMenuItemLinks.Add(new MenuItem("TaskNum - "+listNumMatches[i],onClick));
 				}
 				if(PrefC.IsODHQ) {
 					listNumMatches=GetJobNumsFromText(contextMenuItemText);
 					for(int i = 0;i<listNumMatches.Count;i++) {
-						long jobNum = listNumMatches[i];
-						EventHandler eventHandler = (s,eArg) => { OpenJobNum(jobNum); };
-						listMenuItemsLinks.Add(new MenuItem("JobNum - "+listNumMatches[i],eventHandler));
+						long curMatch = listNumMatches[i];
+						EventHandler onClick = (s,eArg) => { OpenJobNum(curMatch); };
+						listMenuItemLinks.Add(new MenuItem("JobNum - "+listNumMatches[i],onClick));
 					}
 				}
 			}
-			listMenuItemsLinks=listMenuItemsLinks.OrderByDescending(x => x.Text=="-").ThenBy(x => x.Text).ToList();//alphabetize the link items.
-			return listMenuItemsLinks;
+			listMenuItemLinks=listMenuItemLinks.OrderByDescending(x => x.Text=="-").ThenBy(x => x.Text).ToList();//alphabetize the link items.
+			return listMenuItemLinks;
 		}
 
 		///<summary>Returns a list of strings from the given text that are URLs.</summary>
 		public static List<string> GetURLsFromText(string text) {
-			//Regular expresion used to help identify URLs. This is not all encompassing.
-			//There will be URLs that do not match this but this should work for 99%. May match URLs inside of parenthesis. These should be trimmed on both sides.
-			string singleMatch=@"(http:\/\/|https:\/\/)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=,()]*)";
-			//The first match matches normal URLs. The second match matches URLs surrounded in parenthesis. It also checks the next character
-			//after a closing parenthesis to make sure the parenthesis was not simply found somewhere in the URL. The next character can be
-			//punctuation and it will match fine. Otherwise, it will default to the normal URL match. The parenthesis are stripped out after the
-			//match
-			string urlRegexString=$@"({singleMatch})|(\({singleMatch}\)(?!([-a-zA-Z0-9\@:%_\+~#\&//=()])))";
+			string urlRegexString=UrlRegexString();
 			List<string> listStringMatches=Regex.Matches(text,urlRegexString)
 				.OfType<Match>()
 				.Select(m => m.Groups[0].Value)
@@ -155,65 +217,5 @@ namespace OpenDentBusiness.UI {
 		}
 
 		#endregion Methods - Public
-
-		#region Methods - Private
-		private static void OpenWikiPage(string pageTitle) {
-			if(WikiPages.NavPageDelegate!=null) {
-				WikiPages.NavPageDelegate.Invoke(pageTitle);
-			}
-		}
-
-		private static void OpenPatNum(long patNum) {
-			Patient pat=Patients.GetPat(patNum);
-			if(pat==null) {
-				MessageBox.Show(Lans.g("OpenDental","Patient does not exist."));
-				return;
-			}
-			GlobalFormOpenDental.PatientSelected(pat,true);
-		}
-
-		private static void OpenTaskNum(long taskNum) {
-			if(Tasks.NavTaskDelegate!=null) {
-				Tasks.NavTaskDelegate.Invoke(taskNum);
-			}
-		}
-
-		private static void OpenJobNum(long jobNum) {
-			if(Jobs.NavJobDelegate!=null) {
-				Jobs.NavJobDelegate.Invoke(jobNum);
-			}
-		}
-
-		private static void OpenWebPage(string url) {
-			try {
-				if(!url.ToLower().StartsWith("http")) {
-					url=@"http://"+url;
-				}
-				Process.Start(url);
-			}
-			catch {
-				MessageBox.Show(Lans.g("PopupHelper","Failed to open web browser.  Please make sure you have a default browser set and are connected to the internet then try again."),Lans.g("PopupHelper","Attention"));
-			}
-		}
-
-		private static void OpenUNCPath(string folderPath) {
-			//It is significantly faster to check if the directory exists before calling Process.Start() in the case that you have an invalid path.
-			//Everything is a directory, scrubbed all specific files.
-			bool isValidPath=Directory.Exists(folderPath);
-			if(isValidPath) {
-				try {
-					Process.Start(folderPath);
-				}
-				catch(Exception e) {
-					MessageBox.Show(e.Message);
-				}
-			}
-			else {
-				MessageBox.Show(Lans.g("PopupHelper","Failed to open file location. Please make sure file path is valid."));
-			}
-		}
-		#endregion Methods - Private
-
-
 	}
 }

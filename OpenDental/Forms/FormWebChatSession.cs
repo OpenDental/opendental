@@ -31,7 +31,7 @@ namespace OpenDental {
 
 		private void FormWebChatSession_Load(object sender,EventArgs e) {
 			if(_webChatSession.DateTend.Year > 1880) {//Session has ended?
-				DisableAllExcept(textOwner,textWebChatSessionNum,textName,textEmail,textPractice,textPhone,webChatThread,butAttachSuggestion,butSearchAndAttach,textCustomer
+				DisableAllExcept(textOwner,textWebChatSessionNum,textName,textEmail,textPractice,textPhone,webChatThread,butClose,butAttachSuggestion,butSearchAndAttach,textCustomer
 					,tabControlMain);
 				//tabControlMain needs to be enabled to view notes, but these options still need to be disabled.
 				butSend.Enabled=false;
@@ -172,7 +172,7 @@ namespace OpenDental {
 				return;
 			}
 			patient=Patients.GetPat(formPatientSelect.PatNumSelected);
-			GlobalFormOpenDental.PatientSelected(patient,true);
+			FormOpenDental.S_Contr_PatientSelected(patient,true);
 			textCustomer.Text=patient.GetNameLF();
 			WebChatSession webChatSessionOld=_webChatSession.Clone();
 			_webChatSession.PatNum=patient.PatNum;
@@ -187,7 +187,7 @@ namespace OpenDental {
 			_webChatSession.PatNum=_patientSuggested.PatNum;
 			WebChatSessions.Update(_webChatSession,webChatSessionOld);//Updated immediately for concurrency. 
 			butAttachSuggestion.Enabled=false;
-			GlobalFormOpenDental.PatientSelected(_patientSuggested,true);
+			FormOpenDental.S_Contr_PatientSelected(_patientSuggested,true);
 		}
 
 		private void butEndSession_Click(object sender,EventArgs e) {
@@ -261,7 +261,7 @@ namespace OpenDental {
 			string strNoteNew=webChatNote.Note;
 			if(strNoteOld!=strNoteNew) {
 				string msg="Web Chat Session ("+webChatNote.WebChatSessionNum.ToString()+") Note has been created";
-				SecurityLogs.MakeLogEntry(EnumPermType.WebChatEdit,_webChatSession.PatNum,msg);
+				SecurityLogs.MakeLogEntry(Permissions.WebChatEdit,_webChatSession.PatNum,msg);
 			}
 			FillGridODNotes();
 		}
@@ -281,9 +281,9 @@ namespace OpenDental {
 			_formWebChatSessionNoteEdit.ShowDialog(this);
 			_formWebChatSessionNoteEdit.Dispose();
 			string strNoteNew=webChatNote.Note;
-			if(strNoteOld!=strNoteNew || _formWebChatSessionNoteEdit.IsDeleted) {
+			if(strNoteOld!=strNoteNew) {
 				string msg="Web Chat Session ("+webChatNote.WebChatSessionNum.ToString()+") Note has been edited";
-				SecurityLogs.MakeLogEntry(EnumPermType.WebChatEdit,_webChatSession.PatNum,msg);
+				SecurityLogs.MakeLogEntry(Permissions.WebChatEdit,_webChatSession.PatNum,msg);
 			}
 			FillGridODNotes();
 		}
@@ -298,6 +298,11 @@ namespace OpenDental {
 			butAddNote.Visible=false;//No need to add notes from the messaging screen.
 			_countMsgsViewed=_countMsgsActual;
 			SetTabColor(); 
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+			Close();
 		}
 
 		private void FormWebChatSession_FormClosing(object sender,FormClosingEventArgs e) {

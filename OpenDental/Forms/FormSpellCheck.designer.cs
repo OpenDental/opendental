@@ -30,6 +30,7 @@ namespace OpenDental{
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butDelete = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -98,6 +99,16 @@ namespace OpenDental{
 			this.butAdd.Text = "Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(448, 610);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// label1
 			// 
 			this.label1.AutoSize = true;
@@ -112,6 +123,7 @@ namespace OpenDental{
 			// FormSpellCheck
 			// 
 			this.ClientSize = new System.Drawing.Size(535, 646);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.checkBox1);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.butAdd);
@@ -130,6 +142,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private UI.Button butAdd;
 		private System.Windows.Forms.Label label4;

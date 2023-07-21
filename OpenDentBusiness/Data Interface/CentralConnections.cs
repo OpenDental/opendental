@@ -95,124 +95,124 @@ namespace OpenDentBusiness{
 			}
 			string command= "DELETE FROM centralconnection WHERE CentralConnectionNum = "+POut.Long(centralConnectionNum);
 			Db.NonQ(command);
-			command= "DELETE FROM conngroupattach WHERE CentralConnectionNum = "+POut.Long(centralConnectionNum);
-			Db.NonQ(command);
 		}
 		#endregion
 
 		#region Choose Database
 		///<summary>Gets a list of all computer names on the network (this is not easy)</summary>
-		public static List<string> GetComputerNames(){
+		public static string[] GetComputerNames(){
 			if(Environment.OSVersion.Platform==PlatformID.Unix) {
-				return new List<string>();
+				return new string[0];
 			}
 			try {
 				Logger.LogToPath("Delete tempCompNames.txt",LogPath.Startup,LogPhase.Start);
 				File.Delete(ODFileUtils.CombinePaths(Application.StartupPath,"tempCompNames.txt"));
 				Logger.LogToPath("Delete tempCompNames.txt",LogPath.Startup,LogPhase.End);
-				List<string> listStrings = new List<string>();
+				ArrayList retList=new ArrayList();
 				//string myAdd=Dns.GetHostByName(Dns.GetHostName()).AddressList[0].ToString();//obsolete
 				Logger.LogToPath("Dns.GetHostEntry",LogPath.Startup,LogPhase.Start);
 				string myAdd=Dns.GetHostEntry(Dns.GetHostName()).AddressList[0].ToString();
 				Logger.LogToPath("Dns.GetHostEntry",LogPath.Startup,LogPhase.End);
-				ProcessStartInfo processStartInfo=new ProcessStartInfo();
-				processStartInfo.FileName=@"C:\WINDOWS\system32\cmd.exe";//Path for the cmd prompt
-				processStartInfo.Arguments="/c net view > tempCompNames.txt";//Arguments for the command prompt
+				ProcessStartInfo psi=new ProcessStartInfo();
+				psi.FileName=@"C:\WINDOWS\system32\cmd.exe";//Path for the cmd prompt
+				psi.Arguments="/c net view > tempCompNames.txt";//Arguments for the command prompt
 				//"/c" tells it to run the following command which is "net view > tempCompNames.txt"
 				//"net view" lists all the computers on the network
 				//" > tempCompNames.txt" tells dos to put the results in a file called tempCompNames.txt
-				processStartInfo.WindowStyle=ProcessWindowStyle.Hidden;//Hide the window
+				psi.WindowStyle=ProcessWindowStyle.Hidden;//Hide the window
 				Logger.LogToPath("CMD net view",LogPath.Startup,LogPhase.Start);
-				Process.Start(processStartInfo);
-				StreamReader streamReader=null; //Gets disposed in close() call at end of method
+				Process.Start(psi);
+				StreamReader sr=null;
 				string filename=ODFileUtils.CombinePaths(Application.StartupPath,"tempCompNames.txt");
 				Thread.Sleep(200);//sleep for 1/5 second
 				if(!File.Exists(filename)) {
 					Logger.LogToPath("CMD net view - FileNotExist",LogPath.Startup,LogPhase.End);
-					return new List<string>();
+					return new string[0];
 				}
 				try {
-					streamReader=new StreamReader(filename);
+					sr=new StreamReader(filename);
 				}
 				catch(Exception) {
 					Logger.LogToPath("CMD net view - StreamReader Exception",LogPath.Startup,LogPhase.End);
-					return new List<string>();
+					return new string[0];
 				}
-				if(streamReader.Peek()==-1) {//If the file is empty, return.
+				if(sr.Peek()==-1) {//If the file is empty, return.
 					Logger.LogToPath("CMD net view - Empty File",LogPath.Startup,LogPhase.End);
-					return new List<string>();
+					return new string[0];
 				}
-				while(!streamReader.ReadLine().StartsWith("--")) {
+				while(!sr.ReadLine().StartsWith("--")) {
 					//The line just before the data looks like: --------------------------
 				}
 				string line="";
-				listStrings.Add("localhost");
+				retList.Add("localhost");
 				while(true) {
-					line=streamReader.ReadLine();
+					line=sr.ReadLine();
 					if(line.StartsWith("The"))//cycle until we reach,"The command completed successfully."
 						break;
 					line=line.Split(char.Parse(" "))[0];// Split the line after the first space
 					// Normally, in the file it lists it like this
 					// \\MyComputer                 My Computer's Description
 					// Take off the slashes, "\\MyComputer" to "MyComputer"
-					listStrings.Add(line.Substring(2,line.Length-2));
+					retList.Add(line.Substring(2,line.Length-2));
 				}
-				streamReader.Close();
+				sr.Close();
 				Logger.LogToPath("CMD net view",LogPath.Startup,LogPhase.End);
 				Logger.LogToPath("Delete tempCompNames.txt cleanup",LogPath.Startup,LogPhase.Start);
 				File.Delete(ODFileUtils.CombinePaths(Application.StartupPath,"tempCompNames.txt"));
 				Logger.LogToPath("Delete tempCompNames.txt cleanup",LogPath.Startup,LogPhase.End);
-				return listStrings;
+				string[] retArray=new string[retList.Count];
+				retList.CopyTo(retArray);
+				return retArray;
 			}
 			catch(Exception) {//it will always fail if not WinXP
 				Logger.LogToPath("CMD net view - Generic Exception",LogPath.Startup,LogPhase.End);
-				return new List<string>();
+				return new string[0];
 			}
 		}
 
 		///<summary></summary>
-		public static List<string> GetDatabases(CentralConnection centralConnection,DatabaseType databaseType) {
+		public static string[] GetDatabases(CentralConnection centralConnection,DatabaseType dbType) {
 			Logger.LogToPath("GetDatabases",LogPath.Startup,LogPhase.Start);
 			if(centralConnection.ServerName=="") {
 				Logger.LogToPath("GetDatabases - Blank ServerName",LogPath.Startup,LogPhase.End);
-				return new List<string>();
+				return new string[0];
 			}
-			if(databaseType!=DatabaseType.MySql) {
+			if(dbType!=DatabaseType.MySql) {
 				Logger.LogToPath("GetDatabases - Not MySQL",LogPath.Startup,LogPhase.End);
-				return new List<string>();//because SHOW DATABASES won't work
+				return new string[0];//because SHOW DATABASES won't work
 			}
 			try {
 				Logger.LogToPath("DataConnection",LogPath.Startup,LogPhase.Start);
-				DataConnection dataConnection;
+				DataConnection dcon;
 				//use the one table that we know exists
 				if(centralConnection.MySqlUser=="") {
-					dataConnection=new DataConnection(centralConnection.ServerName,"mysql","root",centralConnection.MySqlPassword,databaseType);
+					dcon=new DataConnection(centralConnection.ServerName,"mysql","root",centralConnection.MySqlPassword,dbType);
 				}
 				else {
-					dataConnection=new DataConnection(centralConnection.ServerName,"mysql",centralConnection.MySqlUser,centralConnection.MySqlPassword
-						,databaseType);
+					dcon=new DataConnection(centralConnection.ServerName,"mysql",centralConnection.MySqlUser,centralConnection.MySqlPassword
+						,dbType);
 				}
 				Logger.LogToPath("DataConnection",LogPath.Startup,LogPhase.End);
 				Logger.LogToPath("SHOW DATABASES",LogPath.Startup,LogPhase.Start);
 				string command="SHOW DATABASES";
 				//if this next step fails, table will simply have 0 rows
-				DataTable table=dataConnection.GetTable(command,false);
+				DataTable table=dcon.GetTable(command,false);
 				Logger.LogToPath("SHOW DATABASES",LogPath.Startup,LogPhase.End);
-				List<string> listNames=new List<string>();
+				string[] dbNames=new string[table.Rows.Count];
 				for(int i=0;i<table.Rows.Count;i++){
-					listNames.Add(table.Rows[i][0].ToString());
+					dbNames[i]=table.Rows[i][0].ToString();
 				}
 				Logger.LogToPath("GetDatabases",LogPath.Startup,LogPhase.End);
-				return listNames;
+				return dbNames;
 			}
 			catch(Exception) {
 				Logger.LogToPath("GetDatabases - Generic Exception",LogPath.Startup,LogPhase.End);
-				return new List<string>();
+				return new string[0];
 			}
 		}
 
 		///<summary>Throws an exception to display to the user if anything goes wrong.</summary>
-		public static void TryToConnect(CentralConnection centralConnection,DatabaseType databaseType,string connectionString="",bool noShowOnStartup=false,
+		public static void TryToConnect(CentralConnection centralConnection,DatabaseType dbType,string connectionString="",bool noShowOnStartup=false,
 			List<string> listAdminCompNames=null,bool isCommandLineArgs=false,bool useDynamicMode=false,bool allowAutoLogin=true) 
 		{
 			if(!string.IsNullOrEmpty(centralConnection.ServiceURI)) {
@@ -251,15 +251,15 @@ namespace OpenDentBusiness{
 			}
 			else {
 				Logger.LogToPath("DataConnection.SetDb",LogPath.Startup,LogPhase.Start);
-				DataConnection.DBtype=databaseType;
-				DataConnection dataConnection=new DataConnection();
+				DataConnection.DBtype=dbType;
+				DataConnection dcon=new DataConnection();
 				if(connectionString.Length > 0) {
-					dataConnection.SetDb(connectionString,"",DataConnection.DBtype);
+					dcon.SetDb(connectionString,"",DataConnection.DBtype);
 				}
 				else {
 					//Password could be plain text password from the Password field of the config file, the decrypted password from the MySQLPassHash field
 					//of the config file, or password entered by the user and can be blank (empty string) in all cases
-					dataConnection.SetDb(centralConnection.ServerName,centralConnection.DatabaseName,centralConnection.MySqlUser
+					dcon.SetDb(centralConnection.ServerName,centralConnection.DatabaseName,centralConnection.MySqlUser
 						,centralConnection.MySqlPassword,"","",DataConnection.DBtype,centralConnection.SslCA);
 				}
 				Logger.LogToPath("DataConnection.SetDb",LogPath.Startup,LogPhase.End);
@@ -267,7 +267,7 @@ namespace OpenDentBusiness{
 				RemotingClient.MiddleTierRole=MiddleTierRole.ClientDirect;
 			}
 			//Only gets this far if we have successfully connected, thus, saving connection settings is appropriate.
-			TrySaveConnectionSettings(centralConnection,databaseType,connectionString,noShowOnStartup:noShowOnStartup,listAdminCompNames,
+			TrySaveConnectionSettings(centralConnection,dbType,connectionString,noShowOnStartup:noShowOnStartup,listAdminCompNames,
 				isCommandLineArgs:isCommandLineArgs,useDynamicMode:useDynamicMode,allowAutoLogin:allowAutoLogin);
 		}
 
@@ -278,18 +278,18 @@ namespace OpenDentBusiness{
 			if(!File.Exists(xmlPath)) {
 				return;
 			}
-			XmlDocument xmlDocument=new XmlDocument();
-			xmlDocument.Load(xmlPath);
-			RemotingClient.MidTierProxyAddress=xmlDocument.SelectSingleNode("//Address").InnerText;
-			RemotingClient.MidTierProxyUserName=xmlDocument.SelectSingleNode("//UserName").InnerText;
-			RemotingClient.MidTierProxyPassword=xmlDocument.SelectSingleNode("//Password").InnerText;
+			XmlDocument doc=new XmlDocument();
+			doc.Load(xmlPath);
+			RemotingClient.MidTierProxyAddress=doc.SelectSingleNode("//Address").InnerText;
+			RemotingClient.MidTierProxyUserName=doc.SelectSingleNode("//UserName").InnerText;
+			RemotingClient.MidTierProxyPassword=doc.SelectSingleNode("//Password").InnerText;
 		}
 
 		///<summary>Returns true if the connection settings were successfully saved to the FreeDentalConfig file and/or Windows PasswordVault.  
 		///Otherwise, false.
 		///Set isCommandLineArgs to true in order to preserve settings within FreeDentalConfig.xml that are not command line args.
 		///E.g. the current value within the FreeDentalConfig.xml for NoShowOnStartup will be preserved instead of the value passed in.</summary>
-		public static bool TrySaveConnectionSettings(CentralConnection centralConnection,DatabaseType databaseType,string connectionString=""
+		public static bool TrySaveConnectionSettings(CentralConnection centralConnection,DatabaseType dbType,string connectionString=""
 			,bool noShowOnStartup=false,List<string> listAdminCompNames=null,bool isCommandLineArgs=false,bool useDynamicMode=false,bool allowAutoLogin=true) 
 		{
 			try {
@@ -328,104 +328,105 @@ namespace OpenDentBusiness{
 					#endregion
 					********************************************************************************************************/
 				}
-				XmlWriterSettings xmlWriterSettings=new XmlWriterSettings();
-				xmlWriterSettings.Indent=true;
-				xmlWriterSettings.IndentChars=("    ");
-				using XmlWriter xmlWriter=XmlWriter.Create(ODFileUtils.CombinePaths(Application.StartupPath,"FreeDentalConfig.xml"),xmlWriterSettings);
-				xmlWriter.WriteStartElement("ConnectionSettings");
-				if(!allowAutoLogin) {
-					//Only add if it was added before.
-					xmlWriter.WriteElementString("AllowAutoLogin","False");
-				}
-				if(connectionString!="") {
-					xmlWriter.WriteStartElement("ConnectionString");
-					xmlWriter.WriteString(connectionString);
-					xmlWriter.WriteEndElement();
-				}
-				else if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientDirect) {
-					xmlWriter.WriteStartElement("DatabaseConnection");
-					xmlWriter.WriteStartElement("ComputerName");
-					xmlWriter.WriteString(centralConnection.ServerName);
-					xmlWriter.WriteEndElement();
-					xmlWriter.WriteStartElement("Database");
-					xmlWriter.WriteString(centralConnection.DatabaseName);
-					xmlWriter.WriteEndElement();
-					xmlWriter.WriteStartElement("User");
-					xmlWriter.WriteString(centralConnection.MySqlUser);
-					xmlWriter.WriteEndElement();
-					string encryptedPwd;
-					CDT.Class1.Encrypt(centralConnection.MySqlPassword,out encryptedPwd);//sets encryptedPwd ot value or null
-					xmlWriter.WriteStartElement("Password");
-					//If encryption fails, write plain text password to xml file; maintains old behavior.
-					xmlWriter.WriteString(string.IsNullOrEmpty(encryptedPwd) ? centralConnection.MySqlPassword : "");
-					xmlWriter.WriteEndElement();
-					xmlWriter.WriteStartElement("MySQLPassHash");
-					xmlWriter.WriteString(encryptedPwd??"");
-					xmlWriter.WriteEndElement();
-					xmlWriter.WriteStartElement("NoShowOnStartup");
-					if(noShowOnStartup) {
-						xmlWriter.WriteString("True");
+				XmlWriterSettings settings=new XmlWriterSettings();
+				settings.Indent=true;
+				settings.IndentChars=("    ");
+				using(XmlWriter writer=XmlWriter.Create(ODFileUtils.CombinePaths(Application.StartupPath,"FreeDentalConfig.xml"),settings)) {
+					writer.WriteStartElement("ConnectionSettings");
+					if(!allowAutoLogin) {
+						//Only add if it was added before.
+						writer.WriteElementString("AllowAutoLogin","False");
+					}
+					if(connectionString!="") {
+						writer.WriteStartElement("ConnectionString");
+						writer.WriteString(connectionString);
+						writer.WriteEndElement();
+					}
+					else if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientDirect) {
+						writer.WriteStartElement("DatabaseConnection");
+						writer.WriteStartElement("ComputerName");
+						writer.WriteString(centralConnection.ServerName);
+						writer.WriteEndElement();
+						writer.WriteStartElement("Database");
+						writer.WriteString(centralConnection.DatabaseName);
+						writer.WriteEndElement();
+						writer.WriteStartElement("User");
+						writer.WriteString(centralConnection.MySqlUser);
+						writer.WriteEndElement();
+						string encryptedPwd;
+						CDT.Class1.Encrypt(centralConnection.MySqlPassword,out encryptedPwd);//sets encryptedPwd ot value or null
+						writer.WriteStartElement("Password");
+						//If encryption fails, write plain text password to xml file; maintains old behavior.
+						writer.WriteString(string.IsNullOrEmpty(encryptedPwd) ? centralConnection.MySqlPassword : "");
+						writer.WriteEndElement();
+						writer.WriteStartElement("MySQLPassHash");
+						writer.WriteString(encryptedPwd??"");
+						writer.WriteEndElement();
+						writer.WriteStartElement("NoShowOnStartup");
+						if(noShowOnStartup) {
+							writer.WriteString("True");
+						}
+						else {
+							writer.WriteString("False");
+						}
+						writer.WriteEndElement();
+						if(!string.IsNullOrEmpty(centralConnection.SslCA)) {
+							writer.WriteStartElement("SslCa");
+							writer.WriteString(centralConnection.SslCA);
+							writer.WriteEndElement();
+						}
+					}
+					else if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+						writer.WriteStartElement("ServerConnection");
+						writer.WriteStartElement("URI");
+						writer.WriteString(centralConnection.ServiceURI);
+						writer.WriteEndElement();//end URI
+						if(centralConnection.IsAutomaticLogin) {
+							writer.WriteStartElement("User");
+							writer.WriteString(centralConnection.OdUser);
+							writer.WriteEndElement();//end Username
+							writer.WriteStartElement("UsingAutoLogin");
+							writer.WriteString("True");
+							writer.WriteEndElement();//end UsingAutoLogin
+						}
+						writer.WriteStartElement("UsingEcw");
+						if(centralConnection.WebServiceIsEcw) {
+							writer.WriteString("True");
+						}
+						else {
+							writer.WriteString("False");
+						}
+						writer.WriteEndElement();//end UsingEcw
+						writer.WriteEndElement();//end ServerConnection
+					}
+					writer.WriteStartElement("DatabaseType");
+					if(dbType==DatabaseType.MySql) {
+						writer.WriteString("MySql");
 					}
 					else {
-						xmlWriter.WriteString("False");
+						writer.WriteString("Oracle");
 					}
-					xmlWriter.WriteEndElement();
-					if(!string.IsNullOrEmpty(centralConnection.SslCA)) {
-						xmlWriter.WriteStartElement("SslCa");
-						xmlWriter.WriteString(centralConnection.SslCA);
-						xmlWriter.WriteEndElement();
+					writer.WriteEndElement();
+					writer.WriteStartElement("UseDynamicMode");
+					writer.WriteString(useDynamicMode.ToString());
+					writer.WriteEndElement();
+					if(OpenDentBusiness.WebTypes.Shared.XWeb.XWebs.UseXWebTestGateway) {
+						writer.WriteStartElement("UseXWebTestGateway");
+						writer.WriteString("True");
+						writer.WriteEndElement();
 					}
-				}
-				else if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-					xmlWriter.WriteStartElement("ServerConnection");
-					xmlWriter.WriteStartElement("URI");
-					xmlWriter.WriteString(centralConnection.ServiceURI);
-					xmlWriter.WriteEndElement();//end URI
-					if(centralConnection.IsAutomaticLogin) {
-						xmlWriter.WriteStartElement("User");
-						xmlWriter.WriteString(centralConnection.OdUser);
-						xmlWriter.WriteEndElement();//end Username
-						xmlWriter.WriteStartElement("UsingAutoLogin");
-						xmlWriter.WriteString("True");
-						xmlWriter.WriteEndElement();//end UsingAutoLogin
+					if(listAdminCompNames!=null && listAdminCompNames.Count>0) {
+						writer.WriteStartElement("AdminCompNames");
+						foreach(string compName in listAdminCompNames) {
+							writer.WriteStartElement("CompName");
+							writer.WriteString(compName);
+							writer.WriteEndElement();
+						}
+						writer.WriteEndElement();
 					}
-					xmlWriter.WriteStartElement("UsingEcw");
-					if(centralConnection.WebServiceIsEcw) {
-						xmlWriter.WriteString("True");
-					}
-					else {
-						xmlWriter.WriteString("False");
-					}
-					xmlWriter.WriteEndElement();//end UsingEcw
-					xmlWriter.WriteEndElement();//end ServerConnection
-				}
-				xmlWriter.WriteStartElement("DatabaseType");
-				if(databaseType==DatabaseType.MySql) {
-					xmlWriter.WriteString("MySql");
-				}
-				else {
-					xmlWriter.WriteString("Oracle");
-				}
-				xmlWriter.WriteEndElement();
-				xmlWriter.WriteStartElement("UseDynamicMode");
-				xmlWriter.WriteString(useDynamicMode.ToString());
-				xmlWriter.WriteEndElement();
-				if(OpenDentBusiness.WebTypes.Shared.XWeb.XWebs.UseXWebTestGateway) {
-					xmlWriter.WriteStartElement("UseXWebTestGateway");
-					xmlWriter.WriteString("True");
-					xmlWriter.WriteEndElement();
-				}
-				if(listAdminCompNames!=null && listAdminCompNames.Count>0) {
-					xmlWriter.WriteStartElement("AdminCompNames");
-					for(int i=0;i<listAdminCompNames.Count;i++){
-						xmlWriter.WriteStartElement("CompName");
-						xmlWriter.WriteString(listAdminCompNames[i]);
-						xmlWriter.WriteEndElement();
-					}
-					xmlWriter.WriteEndElement();
-				}
-				xmlWriter.WriteEndElement();
-				xmlWriter.Close();
+					writer.WriteEndElement();
+					writer.Flush();
+				}//using writer
 				//Input the user's credentials to WCM (Windows Credential Manager) if necessary.
 				if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT 
 					&& !string.IsNullOrWhiteSpace(centralConnection.ServiceURI) 
@@ -477,8 +478,8 @@ namespace OpenDentBusiness{
 			ChooseDatabaseInfo chooseDatabaseInfo=new ChooseDatabaseInfo();
 			CentralConnection centralConnection=new CentralConnection();
 			string connectionString="";
-			YN yNNoShow=YN.Unknown;
-			DatabaseType databaseType=DatabaseType.MySql;
+			YN noShow=YN.Unknown;
+			DatabaseType dbType=DatabaseType.MySql;
 			List<string> listAdminCompNames=new List<string>();
 			bool useDynamicMode=false;
 			bool allowAutoLogin=true;
@@ -490,42 +491,42 @@ namespace OpenDentBusiness{
 			//2. /etc/opendental/config.xml (or corresponding machine path in Windows) (should be default for new installs) 
 			//3. Application Directory/FreeDentalConfig.xml (read-only if user is not admin)
 			if(!File.Exists(xmlPath)) {
-				FileStream fileStream;
+				FileStream fs;
 				try {
-					fileStream=File.Create(xmlPath);
+					fs=File.Create(xmlPath);
 				}
 				catch(Exception) {
 					//No translation right here because we typically do not have a database connection yet.
 					throw new ODException("The very first time that the program is run, it must be run as an Admin.  "
 						+"If using Vista, right click, run as Admin.");
 				}
-				fileStream.Close();
+				fs.Close();
 			}
 			#endregion
-			XmlDocument xmlDocument=new XmlDocument();
+			XmlDocument document=new XmlDocument();
 			try {
-				xmlDocument.Load(xmlPath);
-				XPathNavigator xPathNavigator=xmlDocument.CreateNavigator();
-				XPathNavigator xPathNavigator2;
+				document.Load(xmlPath);
+				XPathNavigator Navigator=document.CreateNavigator();
+				XPathNavigator nav;
 				#region Nodes with No UI
 				//Always look for these settings first in order to always preserve them correctly.
-				xPathNavigator2=xPathNavigator.SelectSingleNode("//AdminCompNames");
-				if(xPathNavigator2!=null) {
+				nav=Navigator.SelectSingleNode("//AdminCompNames");
+				if(nav!=null) {
 					listAdminCompNames.Clear(); //this method gets called more than once
-					XPathNodeIterator xPathNavigatorIterator=xPathNavigator2.SelectChildren(XPathNodeType.All);
-					for(int i=0;i<xPathNavigatorIterator.Count;i++) {
-						xPathNavigatorIterator.MoveNext();
-						listAdminCompNames.Add(xPathNavigatorIterator.Current.Value);//Add this computer name to the list.
+					XPathNodeIterator navIterator=nav.SelectChildren(XPathNodeType.All);
+					for(int i=0;i<navIterator.Count;i++) {
+						navIterator.MoveNext();
+						listAdminCompNames.Add(navIterator.Current.Value);//Add this computer name to the list.
 					}
 				}
 				//See if there's a UseXWebTestGateway
-				xPathNavigator2=xPathNavigator.SelectSingleNode("//UseXWebTestGateway");
-				if(xPathNavigator2!=null) {
-					OpenDentBusiness.WebTypes.Shared.XWeb.XWebs.UseXWebTestGateway=xPathNavigator2.Value.ToLower()=="true";
+				nav=Navigator.SelectSingleNode("//UseXWebTestGateway");
+				if(nav!=null) {
+					OpenDentBusiness.WebTypes.Shared.XWeb.XWebs.UseXWebTestGateway=nav.Value.ToLower()=="true";
 				}
 				//See if there's a AllowAutoLogin node
-				xPathNavigator2=xPathNavigator.SelectSingleNode("//AllowAutoLogin");
-				if(xPathNavigator2!=null && xPathNavigator2.Value.ToLower()=="false") {
+				nav=Navigator.SelectSingleNode("//AllowAutoLogin");
+				if(nav!=null && nav.Value.ToLower()=="false") {
 					//Node must be specifically set to false to change the allowAutoLogin bool.
 					allowAutoLogin=false;
 				}
@@ -533,87 +534,87 @@ namespace OpenDentBusiness{
 				#region Nodes from Choose Database Window
 				#region Nodes with No Group Box
 				//Database Type
-				xPathNavigator2=xPathNavigator.SelectSingleNode("//DatabaseType");
-				databaseType=DatabaseType.MySql;
-				if(xPathNavigator2!=null && xPathNavigator2.Value=="Oracle") {
-					databaseType=DatabaseType.Oracle;
+				nav=Navigator.SelectSingleNode("//DatabaseType");
+				dbType=DatabaseType.MySql;
+				if(nav!=null && nav.Value=="Oracle") {
+					dbType=DatabaseType.Oracle;
 				}
 				//ConnectionString
-				xPathNavigator2=xPathNavigator.SelectSingleNode("//ConnectionString");
-				if(xPathNavigator2!=null) {
+				nav=Navigator.SelectSingleNode("//ConnectionString");
+				if(nav!=null) {
 					//If there is a ConnectionString, then use it.
-					connectionString=xPathNavigator2.Value;
+					connectionString=nav.Value;
 				}
 				//UseDynamicMode
-				xPathNavigator2=xPathNavigator.SelectSingleNode("//UseDynamicMode");
-				if(xPathNavigator2!=null) {
+				nav=Navigator.SelectSingleNode("//UseDynamicMode");
+				if(nav!=null) {
 					//If there is a node, take in its value
-					useDynamicMode=PIn.Bool(xPathNavigator2.Value);
+					useDynamicMode=PIn.Bool(nav.Value);
 				}
 				#endregion
 				#region Connection Settings Group Box
 				//See if there's a DatabaseConnection
-				xPathNavigator2=xPathNavigator.SelectSingleNode("//DatabaseConnection");
-				if(xPathNavigator2!=null) {
+				nav=Navigator.SelectSingleNode("//DatabaseConnection");
+				if(nav!=null) {
 					//If there is a DatabaseConnection, then use it.
-					centralConnection.ServerName=xPathNavigator2.SelectSingleNode("ComputerName").Value;
-					centralConnection.DatabaseName=xPathNavigator2.SelectSingleNode("Database").Value;
-					centralConnection.MySqlUser=xPathNavigator2.SelectSingleNode("User").Value;
-					centralConnection.MySqlPassword=xPathNavigator2.SelectSingleNode("Password").Value;
-					centralConnection.SslCA=xPathNavigator2.SelectSingleNode("SslCa")?.Value??"";
-					XPathNavigator xPathNavigatorEncryptedPwdNode=xPathNavigator2.SelectSingleNode("MySQLPassHash");
+					centralConnection.ServerName=nav.SelectSingleNode("ComputerName").Value;
+					centralConnection.DatabaseName=nav.SelectSingleNode("Database").Value;
+					centralConnection.MySqlUser=nav.SelectSingleNode("User").Value;
+					centralConnection.MySqlPassword=nav.SelectSingleNode("Password").Value;
+					centralConnection.SslCA=nav.SelectSingleNode("SslCa")?.Value??"";
+					XPathNavigator encryptedPwdNode=nav.SelectSingleNode("MySQLPassHash");
 					//If the Password node is empty, but there is a value in the MySQLPassHash node, decrypt the node value and use that instead
 					string _decryptedPwd;
 					if(centralConnection.MySqlPassword==""
-						&& xPathNavigatorEncryptedPwdNode!=null
-						&& xPathNavigatorEncryptedPwdNode.Value!=""
-						&& CDT.Class1.Decrypt(xPathNavigatorEncryptedPwdNode.Value,out _decryptedPwd))
+						&& encryptedPwdNode!=null
+						&& encryptedPwdNode.Value!=""
+						&& CDT.Class1.Decrypt(encryptedPwdNode.Value,out _decryptedPwd))
 					{
 						//decrypted value could be an empty string, which means they don't have a password set, so textPassword will be an empty string
 						centralConnection.MySqlPassword=_decryptedPwd;
 					}
-					XPathNavigator xPathNavigatorNoShow=xPathNavigator2.SelectSingleNode("NoShowOnStartup");
-					if(xPathNavigatorNoShow!=null) {
-						if(xPathNavigatorNoShow.Value=="True") {
-							yNNoShow=YN.Yes;
+					XPathNavigator noshownav=nav.SelectSingleNode("NoShowOnStartup");
+					if(noshownav!=null) {
+						if(noshownav.Value=="True") {
+							noShow=YN.Yes;
 						}
 						else {
-							yNNoShow=YN.No;
+							noShow=YN.No;
 						}
 					}
 				}
 				#endregion
 				#region Connect to Middle Tier Group Box
-				xPathNavigator2=xPathNavigator.SelectSingleNode("//ServerConnection");
+				nav=Navigator.SelectSingleNode("//ServerConnection");
 				/* example:
 				<ServerConnection>
 					<URI>http://server/OpenDentalServer/ServiceMain.asmx</URI>
 					<UsingEcw>True</UsingEcw>
 				</ServerConnection>
 				*/
-				if(xPathNavigator2!=null) {
+				if(nav!=null) {
 					//If there is a ServerConnection, then use it.
-					centralConnection.ServiceURI=xPathNavigator2.SelectSingleNode("URI").Value;
-					XPathNavigator xPathNavigatorEcw=xPathNavigator2.SelectSingleNode("UsingEcw");
-					if(xPathNavigatorEcw!=null && xPathNavigatorEcw.Value=="True") {
-						yNNoShow=YN.Yes;
+					centralConnection.ServiceURI=nav.SelectSingleNode("URI").Value;
+					XPathNavigator ecwnav=nav.SelectSingleNode("UsingEcw");
+					if(ecwnav!=null && ecwnav.Value=="True") {
+						noShow=YN.Yes;
 						centralConnection.WebServiceIsEcw=true;
 					}
-					XPathNavigator xPathNavigatorAutoLogin=xPathNavigator2.SelectSingleNode("UsingAutoLogin");
+					XPathNavigator autoLoginNav=nav.SelectSingleNode("UsingAutoLogin");
 					//Retrieve the user from the Windows password vault for the current ServiceURI that was last to successfully single sign on.
 					//If credentials are found then log the user in.  This is safe to do because the password vault is unique per Windows user and workstation.
 					//There is code elsewhere that will handle password vault management (only storing the last valid single sign on per ServiceURI).
 					//allowAutoLogin defaults to true unless the office specifically set it to false.
-					if(xPathNavigatorAutoLogin!=null && xPathNavigatorAutoLogin.Value=="True" && allowAutoLogin) {
+					if(autoLoginNav!=null && autoLoginNav.Value=="True" && allowAutoLogin) {
 						if(!WindowsPasswordVaultWrapper.TryRetrieveUserName(centralConnection.ServiceURI,out centralConnection.OdUser)) {
-							centralConnection.OdUser=xPathNavigator2.SelectSingleNode("User").Value;//No username found.  Use the User in FreeDentalConfig (preserve old behavior).
+							centralConnection.OdUser=nav.SelectSingleNode("User").Value;//No username found.  Use the User in FreeDentalConfig (preserve old behavior).
 						}
 						//Get the user's password from Windows Credential Manager
 						try {
 							centralConnection.OdPassword=
 								WindowsPasswordVaultWrapper.RetrievePassword(centralConnection.ServiceURI,centralConnection.OdUser);
 							//Must set this so FormChooseDatabase() does not launch
-							yNNoShow=YN.Yes;
+							noShow=YN.Yes;
 							centralConnection.IsAutomaticLogin=true;
 						}
 						catch(Exception ex) {
@@ -638,29 +639,29 @@ namespace OpenDentBusiness{
 			chooseDatabaseInfo.AllowAutoLogin=allowAutoLogin;
 			chooseDatabaseInfo.CentralConnectionCur=centralConnection;
 			chooseDatabaseInfo.ConnectionString=connectionString;
-			chooseDatabaseInfo.DatabaseType=databaseType;
+			chooseDatabaseInfo.DatabaseType=dbType;
 			//IsAccessibleFromMainMenu is set in FormOpenDental
 			chooseDatabaseInfo.ListAdminCompNames=listAdminCompNames;
-			chooseDatabaseInfo.NoShow=yNNoShow;
+			chooseDatabaseInfo.NoShow=noShow;
 			chooseDatabaseInfo.UseDynamicMode=useDynamicMode;
 			return chooseDatabaseInfo;
 		}
 
 		///<summary>Filters _listConns to only include connections that are associated to the selected connection group.</summary>
-		public static List<CentralConnection> FilterConnections(List<CentralConnection> listCentralConnections,string filterText,ConnectionGroup connectionGroup) {
+		public static List<CentralConnection> FilterConnections(List<CentralConnection> listConns,string filterText,ConnectionGroup connGroup) {
 			//No need to check MiddleTierRole; no call to db.
 			//Get all ConnGroupAttaches for selected group.
-			List<CentralConnection> listCentralConnectionsRet=listCentralConnections;
-			if(connectionGroup!=null) {
+			List<CentralConnection> retVal=listConns;
+			if(connGroup!=null) {
 				//Find all central connections that are in the group list
-				List<ConnGroupAttach> listCentralConnGroupAttaches=ConnGroupAttaches.GetForGroup(connectionGroup.ConnectionGroupNum);
-				listCentralConnectionsRet=listCentralConnectionsRet.FindAll(x => listCentralConnGroupAttaches.Exists(y => y.CentralConnectionNum==x.CentralConnectionNum));
+				List<ConnGroupAttach> listCentralConnGroupAttaches=ConnGroupAttaches.GetForGroup(connGroup.ConnectionGroupNum);
+				retVal=retVal.FindAll(x => listCentralConnGroupAttaches.Exists(y => y.CentralConnectionNum==x.CentralConnectionNum));
 			}
 			//Find all central connections that meet the filterText criteria
-			listCentralConnectionsRet=listCentralConnectionsRet.FindAll(x => x.DatabaseName.ToLower().Contains(filterText.ToLower()) 
+			retVal=retVal.FindAll(x => x.DatabaseName.ToLower().Contains(filterText.ToLower()) 
 																 || x.ServerName.ToLower().Contains(filterText.ToLower()) 
 																 || x.ServiceURI.ToLower().Contains(filterText.ToLower()));
-			return listCentralConnectionsRet;
+			return retVal;
 		}
 
 		///<summary>Encrypts signature text and returns a base 64 string so that it can go directly into the database.</summary>
@@ -670,24 +671,24 @@ namespace OpenDentBusiness{
 				return "";
 			}
 			byte[] ecryptBytes=Encoding.UTF8.GetBytes(str);
-			MemoryStream memoryStream=new MemoryStream();
-			CryptoStream cryptoStream=null;
-			AesCryptoServiceProvider aesCryptoServiceProvider=new AesCryptoServiceProvider();
-			aesCryptoServiceProvider.Key=key;
-			aesCryptoServiceProvider.IV=new byte[16];
-			ICryptoTransform iCryptoTransformEncryptor=aesCryptoServiceProvider.CreateEncryptor(aesCryptoServiceProvider.Key,aesCryptoServiceProvider.IV);
-			cryptoStream=new CryptoStream(memoryStream,iCryptoTransformEncryptor,CryptoStreamMode.Write);
-			cryptoStream.Write(ecryptBytes,0,ecryptBytes.Length);
-			cryptoStream.FlushFinalBlock();
-			byte[] byteArrayEncrypted=new byte[memoryStream.Length];
-			memoryStream.Position=0;
-			memoryStream.Read(byteArrayEncrypted,0,(int)memoryStream.Length);
-			cryptoStream.Dispose();
-			memoryStream.Dispose();
-			if(aesCryptoServiceProvider!=null) {
-				aesCryptoServiceProvider.Clear();
+			MemoryStream ms=new MemoryStream();
+			CryptoStream cs=null;
+			Aes aes=new AesCryptoServiceProvider();
+			aes.Key=key;
+			aes.IV=new byte[16];
+			ICryptoTransform encryptor=aes.CreateEncryptor(aes.Key,aes.IV);
+			cs=new CryptoStream(ms,encryptor,CryptoStreamMode.Write);
+			cs.Write(ecryptBytes,0,ecryptBytes.Length);
+			cs.FlushFinalBlock();
+			byte[] encryptedBytes=new byte[ms.Length];
+			ms.Position=0;
+			ms.Read(encryptedBytes,0,(int)ms.Length);
+			cs.Dispose();
+			ms.Dispose();
+			if(aes!=null) {
+				aes.Clear();
 			}
-			return Convert.ToBase64String(byteArrayEncrypted);			
+			return Convert.ToBase64String(encryptedBytes);			
 		}
 
 		public static string Decrypt(string str,byte[] key) {
@@ -696,21 +697,21 @@ namespace OpenDentBusiness{
 				return "";
 			}
 			try {
-				byte[] byteArrayEncrypted=Convert.FromBase64String(str);
-				MemoryStream memoryStream=null;
-				CryptoStream cryptoStream=null;
-				StreamReader streamReader=null;
+				byte[] encrypted=Convert.FromBase64String(str);
+				MemoryStream ms=null;
+				CryptoStream cs=null;
+				StreamReader sr=null;
 				Aes aes=new AesCryptoServiceProvider();
 				aes.Key=key;
 				aes.IV=new byte[16];
-				ICryptoTransform iCryptoTransformDecryptor=aes.CreateDecryptor(aes.Key,aes.IV);
-				memoryStream=new MemoryStream(byteArrayEncrypted);
-				cryptoStream=new CryptoStream(memoryStream,iCryptoTransformDecryptor,CryptoStreamMode.Read);
-				streamReader=new StreamReader(cryptoStream);
-				string decrypted=streamReader.ReadToEnd();
-				memoryStream.Dispose();
-				cryptoStream.Dispose();
-				streamReader.Dispose();
+				ICryptoTransform decryptor=aes.CreateDecryptor(aes.Key,aes.IV);
+				ms=new MemoryStream(encrypted);
+				cs=new CryptoStream(ms,decryptor,CryptoStreamMode.Read);
+				sr=new StreamReader(cs);
+				string decrypted=sr.ReadToEnd();
+				ms.Dispose();
+				cs.Dispose();
+				sr.Dispose();
 				if(aes!=null) {
 					aes.Clear();
 				}
@@ -725,41 +726,41 @@ namespace OpenDentBusiness{
 		///<summary></summary>
 		private static string GenerateHash(string message) {
 			//No need to check MiddleTierRole; no call to db.
-			byte[] byteArrayData=Encoding.ASCII.GetBytes(message);
-			HashAlgorithm hashAlgorithm=SHA1.Create();
-			byte[] byteArrayHash=hashAlgorithm.ComputeHash(byteArrayData);
-			byte byte1;
-			byte byte2;
-			string str1;
-			string str2;
-			StringBuilder stringBuilder=new StringBuilder();
-			for(int i=0;i<byteArrayHash.Length;i++) {
-				if(byteArrayHash[i]==0) {
-					byte1=0;
-					byte2=0;
+			byte[] data=Encoding.ASCII.GetBytes(message);
+			HashAlgorithm algorithm=SHA1.Create();
+			byte[] hashbytes=algorithm.ComputeHash(data);
+			byte digit1;
+			byte digit2;
+			string char1;
+			string char2;
+			StringBuilder strHash=new StringBuilder();
+			for(int i=0;i<hashbytes.Length;i++) {
+				if(hashbytes[i]==0) {
+					digit1=0;
+					digit2=0;
 				}
 				else {
-					byte1=(byte)Math.Floor((double)byteArrayHash[i]/16d);
+					digit1=(byte)Math.Floor((double)hashbytes[i]/16d);
 					//double remainder=Math.IEEERemainder((double)hashbytes[i],16d);
-					byte2=(byte)(byteArrayHash[i]-(byte)(16*byte1));
+					digit2=(byte)(hashbytes[i]-(byte)(16*digit1));
 				}
-				str1=ByteToStr(byte1);
-				str2=ByteToStr(byte2);
-				stringBuilder.Append(str1);
-				stringBuilder.Append(str2);
+				char1=ByteToStr(digit1);
+				char2=ByteToStr(digit2);
+				strHash.Append(char1);
+				strHash.Append(char2);
 			}
-			return stringBuilder.ToString();
+			return strHash.ToString();
 		}
 
 		///<summary>Supply a CentralConnection and this method will go through the logic to put together the connection string.</summary>
-		public static string GetConnectionString(CentralConnection centralConnection) {
+		public static string GetConnectionString(CentralConnection conn) {
 			string connString="";
-			if(centralConnection.DatabaseName!="") {
-				connString=centralConnection.ServerName;
-				connString+=", "+centralConnection.DatabaseName;
+			if(conn.DatabaseName!="") {
+				connString=conn.ServerName;
+				connString+=", "+conn.DatabaseName;
 			}
-			else if(centralConnection.ServiceURI!="") {
-				connString=centralConnection.ServiceURI;
+			else if(conn.ServiceURI!="") {
+				connString=conn.ServiceURI;
 			}
 			return connString;
 		}
@@ -827,7 +828,7 @@ namespace OpenDentBusiness{
 
 		///<summary>Every optional parameter provided should coincide with a command line argument. The values passed in will typically override any settings loaded in from the config file. Passing in a value for webServiceUri or databaseName will cause the config file to not even be considered.</summary>
 		public static ChooseDatabaseInfo GetChooseDatabaseInfoFromConfig(string webServiceUri="",YN webServiceIsEcw=YN.Unknown,string odUser=""
-			,string serverName="",string databaseName="",string mySqlUser="",string mySqlPassword="",string mySqlPassHash="",YN yNNoShow=YN.Unknown
+			,string serverName="",string databaseName="",string mySqlUser="",string mySqlPassword="",string mySqlPassHash="",YN noShow=YN.Unknown
 			,string odPassword="",bool useDynamicMode=false,string odPassHash="") 
 		{
 			ChooseDatabaseInfo chooseDatabaseInfo=new ChooseDatabaseInfo();
@@ -872,8 +873,8 @@ namespace OpenDentBusiness{
 				CDT.Class1.Decrypt(mySqlPassHash,out decryptedPwd);
 				chooseDatabaseInfo.CentralConnectionCur.MySqlPassword=decryptedPwd;
 			}
-			if(yNNoShow!=YN.Unknown) {
-				chooseDatabaseInfo.NoShow=yNNoShow;
+			if(noShow!=YN.Unknown) {
+				chooseDatabaseInfo.NoShow=noShow;
 			}
 			if(odUser!="" && odPassword!="") {
 				chooseDatabaseInfo.NoShow=YN.Yes;

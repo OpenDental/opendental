@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Text;
-using OpenDentBusiness;
-using OpenDentBusiness.WebTypes.WebForms;
 
 namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 	public class WebForms_SheetDefCrud {
@@ -62,7 +60,6 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 			table.Columns.Add("HasMobileLayout");
 			table.Columns.Add("ClinicNum");
 			table.Columns.Add("RegistrationKeyNum");
-			table.Columns.Add("RevID");
 			foreach(WebForms_SheetDef webForms_SheetDef in listWebForms_SheetDefs) {
 				table.Rows.Add(new object[] {
 					POut.Long  (webForms_SheetDef.WebSheetDefID),
@@ -78,7 +75,6 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 					POut.Bool  (webForms_SheetDef.HasMobileLayout),
 					POut.Long  (webForms_SheetDef.ClinicNum),
 					POut.Long  (webForms_SheetDef.RegistrationKeyNum),
-					POut.Int   (webForms_SheetDef.RevID),
 				});
 			}
 			return table;
@@ -103,7 +99,6 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 				webForms_SheetDef.HasMobileLayout   = PIn.Bool  (table.Rows[i]["HasMobileLayout"].ToString());
 				webForms_SheetDef.ClinicNum         = PIn.Long  (table.Rows[i]["ClinicNum"].ToString());
 				webForms_SheetDef.RegistrationKeyNum= PIn.Long  (table.Rows[i]["RegistrationKeyNum"].ToString());
-				webForms_SheetDef.RevID             = PIn.Int   (table.Rows[i]["RevID"].ToString());
 				retVal.Add(webForms_SheetDef);
 			}
 			return retVal;
@@ -120,7 +115,7 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 			if(useExistingPK) {
 				command+="WebSheetDefID,";
 			}
-			command+="DentalOfficeID,Description,SheetType,FontSize,FontName,Width,Height,IsLandscape,SheetDefNum,HasMobileLayout,ClinicNum,RegistrationKeyNum,RevID) VALUES(";
+			command+="DentalOfficeID,Description,SheetType,FontSize,FontName,Width,Height,IsLandscape,SheetDefNum,HasMobileLayout,ClinicNum,RegistrationKeyNum) VALUES(";
 			if(useExistingPK) {
 				command+=POut.Long(webForms_SheetDef.WebSheetDefID)+",";
 			}
@@ -136,8 +131,7 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 				+    POut.Long  (webForms_SheetDef.SheetDefNum)+","
 				+    POut.Bool  (webForms_SheetDef.HasMobileLayout)+","
 				+    POut.Long  (webForms_SheetDef.ClinicNum)+","
-				+    POut.Long  (webForms_SheetDef.RegistrationKeyNum)+","
-				+    POut.Int   (webForms_SheetDef.RevID)+")";
+				+    POut.Long  (webForms_SheetDef.RegistrationKeyNum)+")";
 			if(useExistingPK) {
 				DataCore.NonQ(command);
 			}
@@ -167,7 +161,7 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 					if(useExistingPK) {
 						sbCommands.Append("WebSheetDefID,");
 					}
-					sbCommands.Append("DentalOfficeID,Description,SheetType,FontSize,FontName,Width,Height,IsLandscape,SheetDefNum,HasMobileLayout,ClinicNum,RegistrationKeyNum,RevID) VALUES ");
+					sbCommands.Append("DentalOfficeID,Description,SheetType,FontSize,FontName,Width,Height,IsLandscape,SheetDefNum,HasMobileLayout,ClinicNum,RegistrationKeyNum) VALUES ");
 					countRows=0;
 				}
 				else {
@@ -187,8 +181,7 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 				sbRow.Append(POut.Long(webForms_SheetDef.SheetDefNum)); sbRow.Append(",");
 				sbRow.Append(POut.Bool(webForms_SheetDef.HasMobileLayout)); sbRow.Append(",");
 				sbRow.Append(POut.Long(webForms_SheetDef.ClinicNum)); sbRow.Append(",");
-				sbRow.Append(POut.Long(webForms_SheetDef.RegistrationKeyNum)); sbRow.Append(",");
-				sbRow.Append(POut.Int(webForms_SheetDef.RevID)); sbRow.Append(")");
+				sbRow.Append(POut.Long(webForms_SheetDef.RegistrationKeyNum)); sbRow.Append(")");
 				if(sbCommands.Length+sbRow.Length+1 > TableBase.MaxAllowedPacketCount && countRows > 0) {
 					DataCore.NonQ(sbCommands.ToString());
 					sbCommands=null;
@@ -221,8 +214,7 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 				+"SheetDefNum       =  "+POut.Long  (webForms_SheetDef.SheetDefNum)+", "
 				+"HasMobileLayout   =  "+POut.Bool  (webForms_SheetDef.HasMobileLayout)+", "
 				+"ClinicNum         =  "+POut.Long  (webForms_SheetDef.ClinicNum)+", "
-				+"RegistrationKeyNum=  "+POut.Long  (webForms_SheetDef.RegistrationKeyNum)+", "
-				+"RevID             =  "+POut.Int   (webForms_SheetDef.RevID)+" "
+				+"RegistrationKeyNum=  "+POut.Long  (webForms_SheetDef.RegistrationKeyNum)+" "
 				+"WHERE WebSheetDefID = "+POut.Long(webForms_SheetDef.WebSheetDefID);
 			DataCore.NonQ(command);
 		}
@@ -277,10 +269,6 @@ namespace OpenDentBusiness.WebTypes.WebForms.Crud{
 			if(webForms_SheetDef.RegistrationKeyNum != oldWebForms_SheetDef.RegistrationKeyNum) {
 				if(command!="") { command+=",";}
 				command+="RegistrationKeyNum = "+POut.Long(webForms_SheetDef.RegistrationKeyNum)+"";
-			}
-			if(webForms_SheetDef.RevID != oldWebForms_SheetDef.RevID) {
-				if(command!="") { command+=",";}
-				command+="RevID = "+POut.Int(webForms_SheetDef.RevID)+"";
 			}
 			if(command=="") {
 				return false;

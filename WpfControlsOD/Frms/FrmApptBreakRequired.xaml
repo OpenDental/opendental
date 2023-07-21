@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="323" Height="150" 
-             Text="Break Appointment" HasHelpButton="False" MinMaxBoxes="False" >
+             Text="Break Appointment" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:Label x:Name="labelBreakAppt" Margin="12,9,0,0" Text="Before an appointment can be moved or deleted it must first be broken. Please specify whether it was missed or cancelled." />
 		<ui:Button x:Name="butMissed" Width="70" Height="20" Margin="24,0,0,0" Text="_Missed" Click="butMissed_Click" VerticalAlignment="Center" />

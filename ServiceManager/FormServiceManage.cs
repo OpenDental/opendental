@@ -94,10 +94,10 @@ namespace ServiceManager {
 				MessageBox.Show("Error.  Service name must begin with \"OpenDent\".");
 				return;
 			}
-			//if(ServicesHelper.HasService(serviceName,_serviceFileInfo)) {
-			//	MessageBox.Show("Error.  Either a service with this name is already installed or there is another service installed from this directory.");
-			//	return;
-			//}
+			if(ServicesHelper.HasService(serviceName,_serviceFileInfo)) {
+				MessageBox.Show("Error.  Either a service with this name is already installed or there is another service installed from this directory.");
+				return;
+			}
 			if(_serviceFileInfo.Name=="OpenDentalEConnector.exe"
 				|| _serviceFileInfo.Name=="OpenDentalService.exe" 
 				|| _serviceFileInfo.Name=="OpenDentalReplicationService.exe"

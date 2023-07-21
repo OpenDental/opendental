@@ -22,11 +22,11 @@ namespace OpenDental{
 		public bool IsNew;
 
 		///<summary></summary>
-		public FormTransactionEdit(Transaction transaction,long accountNum){
+		public FormTransactionEdit(long transactionNum,long accountNum){
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
-			_transaction=transaction;
+			_transaction=Transactions.GetTrans(transactionNum);
 			_accountOfOrigin=Accounts.GetAccount(accountNum);
 			//AccountNumOrigin=accountNumOrigin;
 		}
@@ -34,7 +34,7 @@ namespace OpenDental{
 		private void FormTransactionEdit_Load(object sender,EventArgs e) {
 			_listJournalEntries=JournalEntries.GetForTrans(_transaction.TransactionNum);//Count might be 0
 			if(IsNew) {
-				if(!Security.IsAuthorized(EnumPermType.AccountingCreate,DateTime.Today)) {
+				if(!Security.IsAuthorized(Permissions.AccountingCreate,DateTime.Today)) {
 					//we will check the date again when saving
 					DialogResult=DialogResult.Cancel;
 					return;
@@ -43,8 +43,8 @@ namespace OpenDental{
 			else {
 				//for an existing transaction, there will always be at least 2 entries.
 				//We enforce security here based on date displayed, not date entered
-				if(!Security.IsAuthorized(EnumPermType.AccountingEdit,_listJournalEntries[0].DateDisplayed)) {
-					butSave.Enabled=false;
+				if(!Security.IsAuthorized(Permissions.AccountingEdit,_listJournalEntries[0].DateDisplayed)) {
+					butOK.Enabled=false;
 					butDelete.Enabled=false;
 				}
 			}
@@ -631,12 +631,12 @@ namespace OpenDental{
 				return;
 			}
 			if(!IsNew){
-				SecurityLogs.MakeLogEntry(EnumPermType.AccountingEdit,0,securityentry);
+				SecurityLogs.MakeLogEntry(Permissions.AccountingEdit,0,securityentry);
 			}
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textDate.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
@@ -644,13 +644,13 @@ namespace OpenDental{
 			DateTime date=PIn.Date(textDate.Text);
 			//Prevent backdating----------------------------------------------------------------------------------------
 			if(IsNew) {
-				if(!Security.IsAuthorized(EnumPermType.AccountingCreate,date)) {
+				if(!Security.IsAuthorized(Permissions.AccountingCreate,date)) {
 					return;
 				}
 			}
 			else {
 				//We enforce security here based on date displayed, not date entered
-				if(!Security.IsAuthorized(EnumPermType.AccountingEdit,date)) {
+				if(!Security.IsAuthorized(Permissions.AccountingEdit,date)) {
 					return;
 				}
 			}
@@ -711,7 +711,7 @@ namespace OpenDental{
 				tot+=_listJournalEntries[i].DebitAmt;
 			}
 			if(IsNew) {
-				SecurityLogs.MakeLogEntry(EnumPermType.AccountingCreate,0,
+				SecurityLogs.MakeLogEntry(Permissions.AccountingCreate,0,
 					date.ToShortDateString()+" "+_accountOfOrigin.Description+" "+tot.ToString("c"),_transaction.TransactionNum,DateTime.MinValue);
 				DialogResult=DialogResult.OK;
 				return;
@@ -721,9 +721,12 @@ namespace OpenDental{
 				txt+=" "+_accountOfOrigin.Description;
 			}
 			txt+=" "+tot.ToString("c");
-			SecurityLogs.MakeLogEntry(EnumPermType.AccountingEdit,0,txt,_transaction.TransactionNum,dateTimePrevious);
+			SecurityLogs.MakeLogEntry(Permissions.AccountingEdit,0,txt,_transaction.TransactionNum,dateTimePrevious);
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

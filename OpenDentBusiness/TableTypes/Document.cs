@@ -21,7 +21,7 @@ namespace OpenDentBusiness{
 		public long PatNum;
 		/// <summary>The name of the file. Does not include any directory info.</summary>
 		public string FileName;
-		/// <summary>Enum:ImageType Document, Radiograph, Photo, File, Attachment.</summary>
+		/// <summary>Enum:ImageType Document, Radiograph, Photo, File</summary>
 		public ImageType ImgType;
 		/// <summary>True if flipped horizontally. A vertical flip would be stored as a horizontal flip plus a 180 rotation.</summary>
 		public bool IsFlipped;
@@ -69,43 +69,22 @@ namespace OpenDentBusiness{
 		public long ProvNum;
 		///<summary>Set to true as part of conversion to 21.4. Set back to false once the crop is converted to the new scheme. It would take too long to do this conversion in the normal script because it involves loading each image to obtain width and height. So this is a lazy conversion.</summary>
 		public bool IsCropOld;
-		/// <summary>Stores a JSON serialized OcrInsScanResponse object. The type of this object is defined by the OcrCaptureType.</summary>
-		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
-		public string OcrResponseData;
-		/// <summary>Enum:EnumOcrCaptureType 0=Miscellaneous, 1=PrimaryInsFront, 2=PrimaryInsBack, 3=SecondaryInsFront, 4=SecondaryInsBack. Only used when patient scans their insurance card from eClipboard.</summary>
-		public EnumOcrCaptureType ImageCaptureType;
-		///<summary>Set true by default for radiographs and tooth charts. When set to true, it will print additional heading text including patient name, DOB, and today's date.</summary>
-		public bool PrintHeading;
 
 		///<summary>Returns a copy/clone of this Document.</summary>
 		public Document Copy() {
 			return (Document)this.MemberwiseClone();
 		}
 	}
-
-	///<summary>The type of image for images module.</summary>
-	public enum ImageType{
-		///<summary>0- Includes scanned documents and screenshots.</summary>
-		Document,
-		///<summary>1</summary>
-		Radiograph,
-		///<summary>2</summary>
-		Photo,
-		///<summary>3- For instance a Word document or a spreadsheet. Not an image.</summary>
-		File,
-		///<summary>4- Used for Claim Attachments. Preserves original resolution.</summary>
-		Attachment
-	}
 	
-	///<summary>Supported sources that help identify what the corresponding ExternalGUID column should be used for.</summary>
-	public enum ExternalSourceType {
-		///<summary>This is a document that is not stored in an external source.  All documents stored by Open Dental will be this type.</summary>
-		None,
-		///<summary>This document can be found in a corresponding Dropbox account.</summary>
-		Dropbox,
-		///<summary>This document is saved from a download from XVWeb program link.</summary>
-		XVWeb,
-	}
+		///<summary>Supported sources that help identify what the corresponding ExternalGUID column should be used for.</summary>
+		public enum ExternalSourceType {
+			///<summary>This is a document that is not stored in an external source.  All documents stored by Open Dental will be this type.</summary>
+			None,
+			///<summary>This document can be found in a corresponding Dropbox account.</summary>
+			Dropbox,
+			///<summary>This document is saved from a download from XVWeb program link.</summary>
+			XVWeb,
+		}
 	
 }
 

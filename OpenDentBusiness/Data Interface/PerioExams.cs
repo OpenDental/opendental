@@ -13,26 +13,39 @@ using PdfSharp.Pdf;
 namespace OpenDentBusiness{
 	///<summary></summary>
 	public class PerioExams{
+		///<summary>Bad pattern. This is public static because it would be hard to pass it into ContrPerio.  Only used by UI.</summary>
+		public static List<PerioExam> ListExams;
+
 		///<summary>Most recent date last.  All exams loaded, even if not displayed.</summary>
-		public static List<PerioExam> Refresh(long patNum) {
+		public static void Refresh(long patNum) {
+			//No need to check MiddleTierRole; no call to db.
+			DataTable table=GetExamsTable(patNum);
+			ListExams=new List<PerioExam>();
+			PerioExam exam;
+			for(int i=0;i<table.Rows.Count;i++){
+				exam=new PerioExam();
+				exam.PerioExamNum= PIn.Long   (table.Rows[i][0].ToString());
+				exam.PatNum      = PIn.Long(table.Rows[i][1].ToString());
+				exam.ExamDate    = PIn.Date(table.Rows[i][2].ToString());
+				exam.ProvNum     = PIn.Long(table.Rows[i][3].ToString());
+				exam.DateTMeasureEdit     = PIn.DateT(table.Rows[i][4].ToString());
+				exam.Note				 = PIn.String(table.Rows[i][5].ToString());
+				ListExams.Add(exam);
+			}
+			//return list;
+			//PerioMeasures.Refresh(patNum);
+		}
+
+		public static DataTable GetExamsTable(long patNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<PerioExam>>(MethodBase.GetCurrentMethod(),patNum);
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),patNum);
 			}
 			string command=
 				"SELECT * from perioexam"
-				+" WHERE PatNum = "+POut.Long(patNum)
+				+" WHERE PatNum = '"+patNum.ToString()+"'"
 				+" ORDER BY perioexam.ExamDate";
-			return Crud.PerioExamCrud.SelectMany(command);
-		}
-
-		public static bool HasPerio(long patNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),patNum);
-			}
-			string command=
-				"SELECT COUNT(perioExamNum) FROM perioexam"
-				+" WHERE PatNum = "+POut.Long(patNum);
-			return Db.GetInt(command)>0;
+			DataTable table=Db.GetTable(command);
+			return table;
 		}
 
 		///<summary>Gets a list of PerioExams from the DB for the API based on PatNum and/or ExamDate.
@@ -47,6 +60,11 @@ namespace OpenDentBusiness{
 			}
 			command+=" ORDER BY perioexam.PerioExamNum";
 			return Crud.PerioExamCrud.SelectMany(command);
+		}
+
+		public static List<PerioExam> GetExamsList(long patNum) {
+			//No need to check MiddleTierRole; no call to db.
+			return Crud.PerioExamCrud.TableToList(GetExamsTable(patNum));
 		}
 
 		///<summary></summary>
@@ -94,7 +112,7 @@ namespace OpenDentBusiness{
 		///<summary>Returns the toothNums from 1-32 to skip for the given patient.</summary>
 		private static List<int> GetSkippedTeethForExam(Patient pat,PerioExam examCur) {
 			List<int> listSkippedTeeth=new List<int>();
-			List<PerioExam> listOtherExamsForPat=Refresh(pat.PatNum)
+			List<PerioExam> listOtherExamsForPat=GetExamsList(pat.PatNum)
 				.Where(x => x.PerioExamNum!=examCur.PerioExamNum)
 				.OrderBy(x => x.ExamDate)
 				.ToList();
@@ -151,6 +169,18 @@ namespace OpenDentBusiness{
 			Db.NonQ(command);
 			command= "DELETE from periomeasure WHERE PerioExamNum = '"+Cur.PerioExamNum.ToString()+"'";
 			Db.NonQ(command);
+		}
+
+		///<summary>Used by PerioMeasures when refreshing to organize array.</summary>
+		public static int GetExamIndex(List<PerioExam> list,long perioExamNum) {
+			//No need to check MiddleTierRole; no call to db.
+			for(int i=0;i<list.Count;i++) {
+				if(list[i].PerioExamNum==perioExamNum) {
+					return i;
+				}
+			}
+			//MessageBox.Show("Error. PerioExamNum not in list: "+perioExamNum.ToString());
+			return 0;
 		}
 
 		///<summary>Used by ContrPerio to get a perio exam.</summary>

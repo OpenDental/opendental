@@ -25,6 +25,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTranslationCat));
 			this.listCats = new OpenDental.UI.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
+			this.butClose = new OpenDental.UI.Button();
 			this.butExport = new OpenDental.UI.Button();
 			this.butDownload = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
@@ -50,6 +51,17 @@ namespace OpenDental {
 			this.label1.Size = new System.Drawing.Size(214, 18);
 			this.label1.TabIndex = 1;
 			this.label1.Text = "Select a category";
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(416, 600);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butExport
 			// 
@@ -92,8 +104,10 @@ namespace OpenDental {
 			// 
 			// FormTranslationCat
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(520, 648);
 			this.Controls.Add(this.labelLanguage);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.butExport);
 			this.Controls.Add(this.label1);
@@ -114,6 +128,7 @@ namespace OpenDental {
 
 		private OpenDental.UI.ListBox listCats;
 		private System.Windows.Forms.Label label1;
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butExport;
 		private OpenDental.UI.Button butDownload;
 		private System.Windows.Forms.Label label2;

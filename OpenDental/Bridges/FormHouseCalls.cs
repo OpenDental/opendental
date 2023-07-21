@@ -14,7 +14,11 @@ namespace OpenDental{
 		public Program ProgramCur;
 
 		///<summary></summary>
-		public FormHouseCalls() {
+		public FormHouseCalls()
+		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
@@ -122,5 +126,34 @@ namespace OpenDental{
 			return inputStr.Replace("\"","");
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

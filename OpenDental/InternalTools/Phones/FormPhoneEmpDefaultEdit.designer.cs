@@ -61,7 +61,8 @@ namespace OpenDental {
 			this.textPhoneExt = new OpenDental.ValidNum();
 			this.textEmployeeNum = new OpenDental.ValidNum();
 			this.butDelete = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.comboSite = new OpenDental.UI.ComboBox();
 			this.label18 = new System.Windows.Forms.Label();
 			this.label19 = new System.Windows.Forms.Label();
@@ -158,7 +159,7 @@ namespace OpenDental {
 			this.textNotes.DetectUrls = false;
 			this.textNotes.Location = new System.Drawing.Point(144, 415);
 			this.textNotes.Name = "textNotes";
-			this.textNotes.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.PhoneEmpDefaultStatus;
+			this.textNotes.QuickPasteType = OpenDentBusiness.QuickPasteType.EmployeeStatus;
 			this.textNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNotes.Size = new System.Drawing.Size(352, 51);
 			this.textNotes.TabIndex = 7;
@@ -313,22 +314,32 @@ namespace OpenDental {
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(27, 573);
+			this.butDelete.Location = new System.Drawing.Point(28, 615);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(84, 24);
 			this.butDelete.TabIndex = 13;
 			this.butDelete.Text = "Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(644, 573);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 11;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(739, 615);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 11;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(832, 615);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 12;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// comboSite
 			// 
@@ -467,7 +478,7 @@ namespace OpenDental {
 			// 
 			// FormPhoneEmpDefaultEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(731, 609);
+			this.ClientSize = new System.Drawing.Size(924, 652);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.label19);
 			this.Controls.Add(this.label18);
@@ -498,7 +509,8 @@ namespace OpenDental {
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -513,7 +525,9 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private Label label1;
 		private Label label2;
 		private OpenDental.UI.Button butDelete;

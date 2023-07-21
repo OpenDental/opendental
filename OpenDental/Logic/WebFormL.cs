@@ -66,15 +66,17 @@ namespace OpenDental {
 					imageFormat=image.RawFormat;
 				}
 				else if(CloudStorage.IsCloudStorage) {
-					byte[] byteArray=CloudStorage.Download(filePath,fileName);
-					if(byteArray==null) {
+					OpenDentalCloud.Core.TaskStateDownload taskStateDownload=CloudStorage.Download(filePath,fileName);
+					if(taskStateDownload==null || taskStateDownload.FileContent==null) {
 						sheetDef.SheetFieldDefs[j].ImageData="";
 						MessageBox.Show(Lan.g(CloudStorage.LanThis,"Unable to download image."));
 						return;
 					}
-					using MemoryStream memoryStream=new MemoryStream(byteArray);
-					image=new Bitmap(Image.FromStream(memoryStream));
-					imageFormat=ImageFormat.Bmp;
+					else {
+						using MemoryStream memoryStream=new MemoryStream(taskStateDownload.FileContent);
+						image=new Bitmap(Image.FromStream(memoryStream));
+						imageFormat=ImageFormat.Bmp;
+					}
 				}
 				if(image==null) {//Image is missing
 					sheetDef.SheetFieldDefs[j].ImageData="";
@@ -248,9 +250,7 @@ namespace OpenDental {
 				listSheetIDs=WebForms_Sheets.GetSheetIDs(listClinicNums:listClinicNums);
 			}
 			catch(Exception ex) {
-				string log=Lan.g("FormWebForms","There was a problem downloading the register of pending web forms:")+" "+ex.Message;
-				EServiceLogs.MakeLogEntryWebForms(eServiceAction.WFError,note:log);
-				result.ListMsgs.Add(log);
+				result.ListMsgs.Add(Lan.g("FormWebForms","There was a problem downloading the register of pending web forms:")+" "+ex.Message);
 				result.IsSuccess=false;
 				return result;
 			}
@@ -275,11 +275,9 @@ namespace OpenDental {
 					listWebFormSheets=WebForms_Sheets.GetSheets(listSheetIDs:listSheetIDsForBatch,listClinicNums:listClinicNums);
 				}
 				catch(Exception ex) {
-					string log=Lan.g("FormWebForms","There was a problem downloading pending web forms for batch")+$" {(i + 1)} / {countTotalBatches}";
-					log+="\r\n"+"  ^"+Lan.g("FormWebForms","SheetIDs in batch:")+" "+string.Join(", ",listSheetIDsForBatch);
-					log+="\r\n"+"  ^"+Lan.g("FormWebForms","Error message:")+" "+ex.Message;
-					EServiceLogs.MakeLogEntryWebForms(eServiceAction.WFError,note:log);
-					result.ListMsgs.Add(log);
+					result.ListMsgs.Add(Lan.g("FormWebForms","There was a problem downloading pending web forms for batch")+$" {(i + 1)} / {countTotalBatches}");
+					result.ListMsgs.Add("  ^"+Lan.g("FormWebForms","SheetIDs in batch:")+" "+string.Join(", ",listSheetIDsForBatch));
+					result.ListMsgs.Add("  ^"+Lan.g("FormWebForms","Error message:")+" "+ex.Message);
 					continue;//Attempt to download subsequent batches just in case there is a specific problem with a specific batch.
 				}
 				//Process the web forms and then tell HQ to delete all of the web forms that have been successfully retrieved.
@@ -290,21 +288,23 @@ namespace OpenDental {
 					}
 					try { //This try catch is put so that a defective downloaded sheet does not stop other sheets from being downloaded.
 						if(!DidImportSheet(listWebFormSheets[k],null,listWebFormSheets,null,cultureName,ref listSheetIdsForDeletion,ref patientImportChoice)) {
-							string log=Lan.g("FormWebForms","User manually cancelled Web Form importing.");
-							EServiceLogs.MakeLogEntryWebForms(eServiceAction.WFCancelled,note:log);
-							result.ListMsgs.Add(log);
+							result.ListMsgs.Add(Lan.g("FormWebForms","User manually cancelled Web Form importing."));
 							result.IsSuccess=false;//User wants to cancel out of the importing process.
 							return result;
 						}
 					}
 					catch(Exception e) {
 						result.ListMsgs.Add(e.Message);
-						EServiceLogs.MakeLogEntryWebForms(eServiceAction.WFError,FKey:listWebFormSheets[k].SheetID,note:e.Message);
 					}
 				}
 				if(listSheetIdsForDeletion.Count > 0) {
-					List<WebForms_Sheet> listWebForms_SheetsDelete=listWebFormSheets.FindAll(x=>listSheetIdsForDeletion.Contains(x.SheetID));
-					WebForms_Sheets.DeleteSheetData(listWebForms_SheetsDelete);
+					if(!WebForms_Sheets.DeleteSheetData(listSheetIdsForDeletion.Distinct().ToList())) {
+						result.ListMsgs.Add(Lan.g("FormWebForms","There was a problem telling HQ that the web forms were retrieved."));
+						result.ListMsgs.Add("  ^"+Lan.g("FormWebForms","The following web forms will be downloaded again the next time forms are retrieved."));
+						result.ListMsgs.Add("  ^"+Lan.g("FormWebForms","SheetIDs:")+" "+string.Join(", ",listSheetIdsForDeletion));
+						result.IsSuccess=false;//This is a critical problem that the user needs to be made aware of due to the fact that it will cause duplicate web forms to be downloaded.
+						return result;
+					}
 				}
 			}
 			result.IsSuccess=true;
@@ -388,11 +388,6 @@ namespace OpenDental {
 				else {//Cemt Import
 					listWebSheetNumsForPat=Sheets.FindSheetsForPat(sheet,listSheets);
 				}
-				//Get the sheets for this patient so we know which ones to pass the logger
-				List<WebForms_Sheet> listWebForms_SheetsLogged=new List<WebForms_Sheet>();
-				if(isWebForms){
-					listWebForms_SheetsLogged=listWebSheets.FindAll(x=>listWebSheetNumsForPat.Contains(x.SheetID));
-				}
 				// Only prompt the user if this is a new name/birthday combo
 				if(lastActionChosen==null) {
 					using FormPatientPickWebForm formPatientPickWebForm=new FormPatientPickWebForm(webFormsSheet,listWebSheetNumsForPat.Count,sheet);
@@ -405,13 +400,7 @@ namespace OpenDental {
 						if(isWebForms) {
 							//user wants to stop importing altogether
 							//we will pick up where we left off here next time
-							List<WebForms_Sheet> listWebForms_SheetsDelete=new List<WebForms_Sheet>();
-							for(int i=0;i<listWebSheets.Count;i++) {
-								if(listSheetIdsForDeletion.Contains(listWebSheets[i].SheetID)) {
-									listWebForms_SheetsDelete.Add(listWebSheets[i]);
-								}
-							}
-							WebForms_Sheets.DeleteSheetData(listWebForms_SheetsDelete);
+							WebForms_Sheets.DeleteSheetData(listSheetIdsForDeletion.Distinct().ToList());
 						}
 						return false;// only false when user wants to stop importing
 					}
@@ -419,11 +408,6 @@ namespace OpenDental {
 						if(formPatientPickWebForm.IsDiscardAll()) {
 							//user wants to delete all webforms for this patient. Mark them for deletion.
 							listSheetIdsForDeletion.AddRange(listWebSheetNumsForPat);
-							//Log the discard of these sheets.
-							for(int i=0;i<listWebForms_SheetsLogged.Count;i++) {
-								EServiceLogs.MakeLogEntryWebForms(eServiceAction.WFDiscardedForm,0,listWebForms_SheetsLogged[i].ClinicNum,
-									listWebForms_SheetsLogged[i].SheetID,listWebForms_SheetsLogged[i].EServiceLogGuid);
-							}
 						}
 						// The user chose Skip
 						else {
@@ -431,12 +415,8 @@ namespace OpenDental {
 							if(patientImportChoice!=null) {
 								patientImportChoice.SetSkipActionForPatient(lName,fName,bDate);
 							}
-							//Log that we skipped these sheets.
-							for(int i=0;i<listWebForms_SheetsLogged.Count;i++) {
-								EServiceLogs.MakeLogEntryWebForms(eServiceAction.WFSkippedForm,0,listWebForms_SheetsLogged[i].ClinicNum,
-									listWebForms_SheetsLogged[i].SheetID,listWebForms_SheetsLogged[i].EServiceLogGuid);
-							}
 						}
+						MakeEServiceLog(isWebForms,patNum,0);//We know neither patNum nor sheetNum, but let's at least log that somebody filled out some sheet.
 						return true;//continue on to the next one
 					}
 					patNum=formPatientPickWebForm.PatNumSelected;//might be zero to indicate new patient
@@ -447,11 +427,7 @@ namespace OpenDental {
 				}
 				else if(lastActionChosen.IsSkip) {
 					// User chose "Skip" last time this name/birthday combo appeared
-					//Log that we skipped these sheets.
-					for(int i=0;i<listWebForms_SheetsLogged.Count;i++) {
-						EServiceLogs.MakeLogEntryWebForms(eServiceAction.WFSkippedForm,patNum:0,listWebForms_SheetsLogged[i].ClinicNum,
-							listWebForms_SheetsLogged[i].SheetID,listWebForms_SheetsLogged[i].EServiceLogGuid);
-					}
+					MakeEServiceLog(isWebForms,patNum,0);//We know neither patNum nor sheetNum, but let's at least log that somebody filled out some sheet.
 					return true;
 				}
 				else {
@@ -472,7 +448,7 @@ namespace OpenDental {
 				}
 				logText+=" "+lName+", "+fName+" "+bDate.ToShortDateString()+"\r\n"
 					+Lan.g("FormWebForms","Auto imported into:")+" "+patient.LName+", "+patient.FName+" "+patient.Birthdate.ToShortDateString();
-				SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,patNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.SheetEdit,patNum,logText);
 			}
 			if(patNum==0) {
 				patient=CreatePatient(lName,fName,bDate,webFormsSheet,sheet,cultureName);
@@ -487,25 +463,19 @@ namespace OpenDental {
 				}
 				logText+=" "+lName+", "+fName+" "+bDate.ToShortDateString()+"\r\n"
 					+Lan.g("FormWebForms","User created new pat:")+" "+patient.LName+", "+patient.FName+" "+patient.Birthdate.ToShortDateString();
-				SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,patNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.SheetEdit,patNum,logText);
 			}
 			else if(patient==null) {
 				patient=Patients.GetPat(patNum);
 			}
 			//We should probably make a security log entry for a manually selected patient.
 			if(isWebForms) {
-				if(Sheets.HasWebFormSheetID(webFormsSheet.SheetID)) {
-					//Another entity has already inserted this web form into the sheet table. Do not create a duplicate.
-					//Instead, add this SheetID to the list of SheetIDs to ask HQ to delete from their servers since we have already retrieved it before.
-					listSheetIdsForDeletion.Add(webFormsSheet.SheetID);
-					return true;
-				}
 				Sheet newSheet=SheetUtil.CreateSheetFromWebSheet(patNum,webFormsSheet);
 				Sheets.SaveNewSheet(newSheet);
 				if(DataExistsInDb(newSheet)) {
 					listSheetIdsForDeletion.Add(webFormsSheet.SheetID);
 				}
-				EServiceLogs.MakeLogEntry(eServiceAction.WFCompletedForm,eServiceType.WebForms,FKeyType.SheetNum,patNum,newSheet.ClinicNum,newSheet.SheetNum);
+				MakeEServiceLog(isWebForms,patNum,newSheet.SheetNum);
 			}
 			else {//CEMT Patient Transfer
 				//Sheet is ready to get updated with the patient.
@@ -518,6 +488,14 @@ namespace OpenDental {
 				Sheets.Update(sheet);
 			}
 			return true;
+		}
+
+		///<summary></summary>
+		private static void MakeEServiceLog(bool isWebForms,long patNum, long sheetNum) {
+			if(isWebForms) {
+				long clinicNum=Patients.GetLimForPats(new List<long>() { patNum },true).FirstOrDefault()?.ClinicNum??0;
+				EServiceLogs.MakeLogEntry(eServiceAction.WFCompletedForm,eServiceType.WebForms,FKeyType.SheetNum,patNum:patNum,FKey:sheetNum,clinicNum:clinicNum);
+			}
 		}
 
 		/// <summary>
@@ -578,7 +556,7 @@ namespace OpenDental {
 			if(isWebForm){
 				logText="Created from Web Forms.";
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.PatientCreate,patientNew.PatNum,logText);
+			SecurityLogs.MakeLogEntry(Permissions.PatientCreate,patientNew.PatNum,logText);
 			//set Guarantor field the same as PatNum
 			Patient patientOld=patientNew.Copy();
 			patientNew.Guarantor=patientNew.PatNum;

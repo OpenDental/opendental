@@ -13,7 +13,6 @@ namespace CentralManager {
 		public string HashedResult;
 		public bool IsInSecurityWindow;
 		private bool _isCreate;
-		public bool IsPassWordStrong=false;
 		public PasswordContainer LoginDetails;
 		public string PasswordTyped;
 
@@ -41,8 +40,7 @@ namespace CentralManager {
 				textPassword.PasswordChar='*';
 			}
 		}
-		
-		//<summary>Mimics FormUserPassoword.butOk_Click()<summary>
+
 		private void butOK_Click(object sender,EventArgs e) {
 			Userod user=Userods.GetUserByName(textUserName.Text,false);
 			if(!_isCreate && !IsInSecurityWindow) {
@@ -60,22 +58,8 @@ namespace CentralManager {
 				MessageBox.Show(this,"Passwords cannot be blank.");
 				return;
 			}
-			string explanation=Userods.IsPasswordStrong(textPassword.Text);
-			if(PrefC.GetBool(PrefName.PasswordsMustBeStrong)) {
-				if(explanation!="") {
-					MessageBox.Show(explanation);
-					return;
-				}
-			}
-			//If the PasswordsMustBeStrong preference is off, still store whether or not the password is strong in case the preference is turned on later
-			IsPassWordStrong=string.IsNullOrEmpty(explanation);
 			PasswordTyped=textPassword.Text;//Update the last typed in for middle tier refresh
-			if(Programs.UsingEcwTightOrFullMode()) {//Same check as FormLogOn
-				LoginDetails=Authentication.GenerateLoginDetails(PasswordTyped,HashTypes.MD5_ECW);
-			}
-			else {
-				LoginDetails=Authentication.GenerateLoginDetailsSHA512(PasswordTyped);
-			}
+			LoginDetails=Authentication.GenerateLoginDetailsSHA512(PasswordTyped);
 			DialogResult=DialogResult.OK;
 		}
 

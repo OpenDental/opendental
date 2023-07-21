@@ -24,14 +24,26 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMedLabPatSelect));
+			this.butCancel = new System.Windows.Forms.Button();
 			this.gridLabs = new OpenDental.UI.GridOD();
-			this.butOK = new System.Windows.Forms.Button();
+			this.butSave = new System.Windows.Forms.Button();
 			this.butPatSelect = new OpenDental.UI.Button();
 			this.label5 = new System.Windows.Forms.Label();
 			this.textName = new System.Windows.Forms.TextBox();
 			this.labelExistingLab = new System.Windows.Forms.Label();
 			this.gridPidInfo = new OpenDental.UI.GridOD();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(737, 357);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 23);
+			this.butCancel.TabIndex = 9;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// gridLabs
 			// 
@@ -45,16 +57,16 @@
 			this.gridLabs.Title = "Labs";
 			this.gridLabs.TranslationName = "TableLabs";
 			// 
-			// butOK
+			// butSave
 			// 
-			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(737, 357);
-			this.butOK.Name = "butOK";
-			this.butOK.Size = new System.Drawing.Size(75, 23);
-			this.butOK.TabIndex = 10;
-			this.butOK.Text = "&OK";
-			this.butOK.UseVisualStyleBackColor = true;
-			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butSave.Location = new System.Drawing.Point(656, 357);
+			this.butSave.Name = "butSave";
+			this.butSave.Size = new System.Drawing.Size(75, 23);
+			this.butSave.TabIndex = 10;
+			this.butSave.Text = "Save";
+			this.butSave.UseVisualStyleBackColor = true;
+			this.butSave.Click += new System.EventHandler(this.butSave_Click);
 			// 
 			// butPatSelect
 			// 
@@ -88,7 +100,7 @@
 			// 
 			this.labelExistingLab.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.labelExistingLab.ForeColor = System.Drawing.Color.Red;
-			this.labelExistingLab.Location = new System.Drawing.Point(352, 360);
+			this.labelExistingLab.Location = new System.Drawing.Point(271, 360);
 			this.labelExistingLab.Name = "labelExistingLab";
 			this.labelExistingLab.Size = new System.Drawing.Size(386, 17);
 			this.labelExistingLab.TabIndex = 250;
@@ -116,7 +128,8 @@
 			this.Controls.Add(this.butPatSelect);
 			this.Controls.Add(this.label5);
 			this.Controls.Add(this.textName);
-			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.gridLabs);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMedLabPatSelect";
@@ -130,7 +143,8 @@
 		#endregion
 
 		private OpenDental.UI.GridOD gridLabs;
-		private System.Windows.Forms.Button butOK;
+		private System.Windows.Forms.Button butCancel;
+		private System.Windows.Forms.Button butSave;
 		private UI.Button butPatSelect;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox textName;

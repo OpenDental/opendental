@@ -75,19 +75,5 @@ namespace UnitTestsCore {
 			AsapComms.Insert(asapComm);
 			return asapComm;
 		}
-
-		///<summary>Updates the DateTimeEntry of an AsapComm to the number of daysPrevious. Unable to set the DateTimeEntry to anything but DateTime.Now in the CRUD Layer.</summary>
-		public static void SetDateTimeEntryToDaysPast(AsapComm asapComm,int daysPrevious) {
-			string command="UPDATE asapcomm SET DateTimeEntry = "+POut.Date(DateTime.Now.AddDays(-daysPrevious))
-				+" WHERE AsapCommNum = "+POut.Long(asapComm.AsapCommNum);
-			DataCore.NonQ(command);
-    }
-
-		///<summary>Deletes everything from the AsapComm table. Does not truncate the table so that PKs are not reused on accident.</summary>
-		public static void ClearAsapCommTable() {
-			string command="DELETE FROM AsapComm";
-			DataCore.NonQ(command);
-		}
-
 	}
 }

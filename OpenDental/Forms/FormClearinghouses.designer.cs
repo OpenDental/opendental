@@ -42,7 +42,7 @@ namespace OpenDental {
 			this.textReportCheckInterval = new System.Windows.Forms.TextBox();
 			this.labelReportheckUnits = new System.Windows.Forms.Label();
 			this.butAdd = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.labelGuide = new System.Windows.Forms.Label();
 			this.gridMain = new OpenDental.UI.GridOD();
@@ -54,7 +54,6 @@ namespace OpenDental {
 			this.textReportComputerName = new System.Windows.Forms.TextBox();
 			this.butThisComputer = new OpenDental.UI.Button();
 			this.labelReportComputerName = new System.Windows.Forms.Label();
-			this.label1 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.groupRecieveSettings.SuspendLayout();
 			this.SuspendLayout();
@@ -131,15 +130,15 @@ namespace OpenDental {
 			this.butAdd.Text = "&Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
 			// 
-			// butSave
+			// butClose
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(810, 474);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 0;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(805, 466);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// comboClinic
 			// 
@@ -266,22 +265,11 @@ namespace OpenDental {
 			this.labelReportComputerName.Text = "Computer To Receive Reports Automatically";
 			this.labelReportComputerName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// label1
-			// 
-			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label1.Location = new System.Drawing.Point(741, 428);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(146, 37);
-			this.label1.TabIndex = 33;
-			this.label1.Text = "(Clearinghouses get saved as they are changed)";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
 			// FormClearinghouses
 			// 
 			this.ClientSize = new System.Drawing.Size(891, 503);
-			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butAdd);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.groupRecieveSettings);
 			this.Controls.Add(this.labelGuide);
 			this.Controls.Add(this.comboClinic);
@@ -301,7 +289,7 @@ namespace OpenDental {
 		}
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.GroupBox groupBox1;
 		private UI.Button butDefaultMedical;
@@ -320,6 +308,5 @@ namespace OpenDental {
 		private TextBox textReportComputerName;
 		private UI.Button butThisComputer;
 		private Label labelReportComputerName;
-		private Label label1;
 	}
 }

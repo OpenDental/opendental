@@ -27,7 +27,7 @@ namespace OpenDentBusiness {
 			loadData.ListInsPlans=InsPlans.RefreshForSubList(loadData.ListInsSubs);
 			loadData.TableApppointmentFields=Appointments.GetApptFields(appointment.AptNum);
 			loadData.TableComms=Appointments.GetCommTable(appointment.PatNum.ToString(),appointment.AptNum);
-			loadData.ListLabCases=LabCases.GetForApt(appointment);
+			loadData.LabCase=(isNew ? null : LabCases.GetForApt(appointment));
 			loadData.TablePatients=Appointments.GetPatTable(appointment.PatNum.ToString(),appointment);
 			loadData.ListClaimProcs=ClaimProcs.RefreshForProcs(loadData.ListProceduresForAppointment.Select(x => x.ProcNum).ToList());
 			loadData.ListAdjustments=Adjustments.GetForProcs(loadData.ListProceduresForAppointment.Select(x => x.ProcNum).ToList());
@@ -111,7 +111,7 @@ namespace OpenDentBusiness {
 			public DataTable TableApppointmentFields;
 			[XmlIgnore]
 			public DataTable TableComms;
-			public List<LabCase> ListLabCases;
+			public LabCase LabCase;
 			[XmlIgnore]
 			public DataTable TablePatients;
 			public List<ReqStudent> ListReqStudents;

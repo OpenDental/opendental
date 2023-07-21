@@ -22,7 +22,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <ResGenToolArchitecture>Managed32Bit</ResGenToolArchitecture>
     <TargetFrameworkProfile />
     <PublishUrl>http://localhost/OpenDental/</PublishUrl>
@@ -68,9 +68,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <CodeAnalysisRuleSet>OpenDental.ruleset</CodeAnalysisRuleSet>
     <LangVersion>8.0</LangVersion>
-    <DocumentationFile>
-    </DocumentationFile>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <DocumentationFile>bin\Release\OpenDental.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
@@ -100,12 +98,6 @@
     <DocumentationFile>bin\Release\OpenDental.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AWSSDK.Core">
-      <HintPath>..\Required dlls\AWSSDK.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="AWSSDK.IdentityStore">
-      <HintPath>..\Required dlls\AWSSDK.IdentityStore.dll</HintPath>
-    </Reference>
     <Reference Include="AxInterop.AcroPDFLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Required dlls\AxInterop.AcroPDFLib.dll</HintPath>
@@ -235,8 +227,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Required dlls\MigraDoc.RtfRendering.dll</HintPath>
     </Reference>
-    <Reference Include="MySql.Data, Version=8.0.32.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="MySql.Data, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\Required dlls\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="NDde, Version=1.3.171.0, Culture=neutral, PublicKeyToken=6949dadb6e675e5a">
@@ -395,30 +386,114 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bridges\JazzClassicPatientUpdate.cs" />
+    <Compile Include="Bridges\JazzClassicExamView.cs" />
+    <Compile Include="Bridges\JazzClassicCapture.cs" />
+    <Compile Include="Bridges\Shining3D.cs" />
+    <Compile Include="Bridges\PracticeBooster.cs" />
+    <Compile Include="Bridges\MeditLink.cs" />
+    <Compile Include="Bridges\AiDental.cs" />
     <Compile Include="Bridges\FormDrCeph.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Bridges\FormDrCeph.Designer.cs">
       <DependentUpon>FormDrCeph.cs</DependentUpon>
     </Compile>
+    <Compile Include="Bridges\PluginLoader.cs" />
+    <Compile Include="Bridges\PORTRAY.cs" />
+    <Compile Include="Bridges\RayBridge.cs" />
     <Compile Include="Bridges\FormHouseCalls.designer.cs">
       <DependentUpon>FormHouseCalls.cs</DependentUpon>
     </Compile>
     <Compile Include="Bridges\FormIap.designer.cs">
       <DependentUpon>FormIap.cs</DependentUpon>
     </Compile>
+    <Compile Include="Bridges\SteriSimple.cs" />
+    <Compile Include="Bridges\ThreeShape.cs" />
+    <Compile Include="Bridges\Benco.cs" />
+    <Compile Include="Bridges\DexisIntegrator.cs" />
+    <Compile Include="Bridges\VisionX.cs" />
+    <Compile Include="Bridges\XDR.cs" />
     <Compile Include="Bridges\FormOryxUserSettings.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Bridges\FormOryxUserSettings.designer.cs">
       <DependentUpon>FormOryxUserSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="Bridges\Oryx.cs" />
+    <Compile Include="Bridges\DentalXChange.cs" />
+    <Compile Include="Bridges\Midway.cs" />
+    <Compile Include="Bridges\ApteryxImage.cs" />
+    <Compile Include="Bridges\CADI.cs" />
+    <Compile Include="Bridges\Carestream.cs" />
+    <Compile Include="Bridges\HdxWill.cs" />
+    <Compile Include="Bridges\NewTomNNT.cs" />
+    <Compile Include="Bridges\iDixel.cs" />
+    <Compile Include="Bridges\Adstra.cs" />
+    <Compile Include="Bridges\Apteryx.cs" />
+    <Compile Include="Bridges\AudaxCeph.cs" />
+    <Compile Include="Bridges\Cerec.cs" />
+    <Compile Include="Bridges\Apixia.cs" />
+    <Compile Include="Bridges\BioPAK.cs" />
+    <Compile Include="Bridges\CaptureLink.cs" />
+    <Compile Include="Bridges\ClioSoft.cs" />
+    <Compile Include="Bridges\AaTemplate.cs" />
+    <Compile Include="Bridges\CDS.cs" />
+    <Compile Include="Bridges\CleaRay.cs" />
+    <Compile Include="Bridges\OrthoInsight3d.cs" />
+    <Compile Include="Bridges\PandaPerioAdvanced.cs" />
+    <Compile Include="Bridges\PayConnectTerminal.cs" />
+    <Compile Include="Bridges\PracticeByNumbers.cs" />
+    <Compile Include="Bridges\DentalIntel.cs" />
+    <Compile Include="Bridges\OrthoCad.cs" />
+    <Compile Include="Bridges\RapidCall.cs" />
+    <Compile Include="Bridges\Romexis.cs" />
+    <Compile Include="Bridges\DentalTek.cs" />
+    <Compile Include="Bridges\DemandForce.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Bridges\Office.cs" />
+    <Compile Include="Bridges\HandyDentist.cs" />
+    <Compile Include="Bridges\Irys.cs" />
+    <Compile Include="Bridges\PandaPerio.cs" />
+    <Compile Include="Bridges\Scanora.cs" />
+    <Compile Include="Bridges\SmartDent.cs" />
+    <Compile Include="Bridges\ActeonImagingSuite.cs" />
+    <Compile Include="Bridges\Triana.cs" />
+    <Compile Include="Bridges\Visora.cs" />
+    <Compile Include="Bridges\VistaDent.cs" />
+    <Compile Include="Bridges\DentalStudio.cs" />
+    <Compile Include="Bridges\DivvyPostcardService.cs" />
+    <Compile Include="Bridges\Guru.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Bridges\Tscan.cs" />
+    <Compile Include="Bridges\RayMage.cs" />
+    <Compile Include="Bridges\MiPACS.cs" />
+    <Compile Include="Bridges\QuickBooks.cs" />
+    <Compile Include="Bridges\VixWinBase36.cs" />
+    <Compile Include="Bridges\VixWinBase41.cs" />
+    <Compile Include="Bridges\EvaSoft.cs" />
+    <Compile Include="Bridges\Orion.cs" />
+    <Compile Include="Bridges\PaperlessTechnology.cs" />
+    <Compile Include="Bridges\Patterson.cs" />
+    <Compile Include="Bridges\PreXion.cs" />
+    <Compile Include="Bridges\Ewoo.cs" />
     <Compile Include="Bridges\FormTrophyNamePick.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Bridges\FormTrophyNamePick.Designer.cs">
       <DependentUpon>FormTrophyNamePick.cs</DependentUpon>
     </Compile>
+    <Compile Include="Bridges\Camsight.cs" />
+    <Compile Include="Bridges\Cliniview.cs" />
+    <Compile Include="Bridges\ICat.cs" />
+    <Compile Include="Bridges\ECW.cs" />
+    <Compile Include="Bridges\Progeny.cs" />
+    <Compile Include="Bridges\Sopro.cs" />
+    <Compile Include="Bridges\Tesia_statements.cs" />
+    <Compile Include="Bridges\Dolphin.cs" />
+    <Compile Include="Bridges\Digora.cs" />
     <Compile Include="Bridges\FormHouseCalls.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -431,12 +506,39 @@
     <Compile Include="Bridges\FormPatienteBill.designer.cs">
       <DependentUpon>FormPatienteBill.cs</DependentUpon>
     </Compile>
-    <Compile Include="Bridges\FormPrintTrojan.cs">
+    <Compile Include="Bridges\FormPrintReport.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Bridges\FormPrintTrojan.designer.cs">
-      <DependentUpon>FormPrintTrojan.cs</DependentUpon>
+    <Compile Include="Bridges\FormPrintReport.designer.cs">
+      <DependentUpon>FormPrintReport.cs</DependentUpon>
     </Compile>
+    <Compile Include="Bridges\Dxis.cs" />
+    <Compile Include="Bridges\Vipersoft.cs" />
+    <Compile Include="Bridges\DBSWin.cs" />
+    <Compile Include="Bridges\DentalEye.cs" />
+    <Compile Include="Bridges\DentForms.cs" />
+    <Compile Include="Bridges\DentX.cs" />
+    <Compile Include="Bridges\Dexis.cs" />
+    <Compile Include="Bridges\DrCeph.cs" />
+    <Compile Include="Bridges\FloridaProbe.cs" />
+    <Compile Include="Bridges\Iap.cs" />
+    <Compile Include="Bridges\ImageFX.cs" />
+    <Compile Include="Bridges\Lightyear.cs" />
+    <Compile Include="Bridges\MediaDent.cs" />
+    <Compile Include="Bridges\Owandy.cs" />
+    <Compile Include="Bridges\PerioPal.cs" />
+    <Compile Include="Bridges\Planmeca.cs" />
+    <Compile Include="Bridges\Schick.cs" />
+    <Compile Include="Bridges\Sirona.cs" />
+    <Compile Include="Bridges\TigerView.cs" />
+    <Compile Include="Bridges\Trojan.cs" />
+    <Compile Include="Bridges\Trophy.cs" />
+    <Compile Include="Bridges\TrophyEnhanced.cs" />
+    <Compile Include="Bridges\VixWin.cs" />
+    <Compile Include="Bridges\VixWinNumbered.cs" />
+    <Compile Include="Bridges\VixWinOld.cs" />
+    <Compile Include="Bridges\XVWeb.cs" />
+    <Compile Include="Bridges\ZImage.cs" />
     <Compile Include="Forms Reports\FormQuery.designer.cs">
       <DependentUpon>FormQuery.cs</DependentUpon>
     </Compile>
@@ -472,6 +574,9 @@
     </Compile>
     <Compile Include="Forms Reports\FormRpConfirm.designer.cs">
       <DependentUpon>FormRpConfirm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms Reports\FormRpCourseGrades.designer.cs">
+      <DependentUpon>FormRpCourseGrades.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms Reports\FormRpDPPOvercharged.cs">
       <SubType>Form</SubType>
@@ -596,107 +701,35 @@
     <Compile Include="Forms Reports\FormSearchPatNotes.designer.cs">
       <DependentUpon>FormSearchPatNotes.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormTasksForAppt.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormTasksForAppt.Designer.cs">
-      <DependentUpon>FormTasksForAppt.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\FormBenefitFrequencyEdit.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormBenefitFrequencyEdit.Designer.cs">
-      <DependentUpon>FormBenefitFrequencyEdit.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\BasicTemplate.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\BasicTemplate.Designer.cs">
-      <DependentUpon>BasicTemplate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\FormBenefitFrequencies.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormBenefitFrequencies.Designer.cs">
-      <DependentUpon>FormBenefitFrequencies.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\FormClaimAttachHistory.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormClaimAttachHistory.designer.cs">
-      <DependentUpon>FormClaimAttachHistory.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\FormClaimAttachPasteDXCItem.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormClaimAttachPasteDXCItem.designer.cs">
-      <DependentUpon>FormClaimAttachPasteDXCItem.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\FormClaimAttachSnipDXC.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormClaimAttachSnipDXC.designer.cs">
-      <DependentUpon>FormClaimAttachSnipDXC.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\FormCloudUserEdit.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormCloudUserEdit.Designer.cs">
-      <DependentUpon>FormCloudUserEdit.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\FormCloudUsers.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormCloudUsers.Designer.cs">
-      <DependentUpon>FormCloudUsers.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\FormEClipboardImageCaptureDefEdit.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormEClipboardImageCaptureDefEdit.Designer.cs">
-      <DependentUpon>FormEClipboardImageCaptureDefEdit.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\FormEServicesMobileAppDeviceManage.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormEServicesMobileAppDeviceManage.Designer.cs">
-      <DependentUpon>FormEServicesMobileAppDeviceManage.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\FormClaimAttachPasteDXC.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormClaimAttachPasteDXC.designer.cs">
-      <DependentUpon>FormClaimAttachPasteDXC.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\FormImagePickerDXC.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormImagePickerDXC.designer.cs">
-      <DependentUpon>FormImagePickerDXC.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\FormMessageToPayEdit.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FormMessageToPayEdit.Designer.cs">
-      <DependentUpon>FormMessageToPayEdit.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\FormTaskSubscribers.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormTaskSubscribers.Designer.cs">
       <DependentUpon>FormTaskSubscribers.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormPayPlanTemplateEdit.cs">
+    <Compile Include="Forms\FormFaqEdit.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FormPayPlanTemplateEdit.Designer.cs">
-      <DependentUpon>FormPayPlanTemplateEdit.cs</DependentUpon>
+    <Compile Include="Forms\FormFaqEdit.Designer.cs">
+      <DependentUpon>FormFaqEdit.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormPayPlanTemplates.cs">
+    <Compile Include="Forms\FormFaqPicker.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FormPayPlanTemplates.Designer.cs">
-      <DependentUpon>FormPayPlanTemplates.cs</DependentUpon>
+    <Compile Include="Forms\FormFaqPicker.Designer.cs">
+      <DependentUpon>FormFaqPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormFaqVersionRelease.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormFaqVersionRelease.Designer.cs">
+      <DependentUpon>FormFaqVersionRelease.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormHelpBrowser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormHelpBrowser.Designer.cs">
+      <DependentUpon>FormHelpBrowser.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormCodeGroupEdit.cs">
       <SubType>Form</SubType>
@@ -727,6 +760,12 @@
     </Compile>
     <Compile Include="Forms\FormPayConnect2iFrame.Designer.cs">
       <DependentUpon>FormPayConnect2iFrame.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormCommReferral.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormCommReferral.Designer.cs">
+      <DependentUpon>FormCommReferral.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormPayPlanChargeSelection.cs">
       <SubType>Form</SubType>
@@ -812,6 +851,12 @@
     <Compile Include="Forms\FormEServicesAutoMsgingPreferences.Designer.cs">
       <DependentUpon>FormEServicesAutoMsgingPreferences.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormDatePicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormDatePicker.Designer.cs">
+      <DependentUpon>FormDatePicker.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormMassEmailSendResults.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -866,6 +911,12 @@
     <Compile Include="Forms\FormOrthoHardwareSpecs.Designer.cs">
       <DependentUpon>FormOrthoHardwareSpecs.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormSheetFieldDefAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormSheetFieldDefAdd.designer.cs">
+      <DependentUpon>FormSheetFieldDefAdd.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormSheetFieldAdd.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -896,17 +947,29 @@
     <Compile Include="Forms\FormWebBrowserPrefs.designer.cs">
       <DependentUpon>FormWebBrowserPrefs.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormODTouchSecurityEdit.cs">
+    <Compile Include="Forms\FormEClipboardSecurityEdit.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FormODTouchSecurityEdit.designer.cs">
-      <DependentUpon>FormODTouchSecurityEdit.cs</DependentUpon>
+    <Compile Include="Forms\FormEClipboardSecurityEdit.designer.cs">
+      <DependentUpon>FormEClipboardSecurityEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormCommItemHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormCommItemHistory.Designer.cs">
+      <DependentUpon>FormCommItemHistory.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormWebFormNextForms.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormWebFormNextForms.Designer.cs">
       <DependentUpon>FormWebFormNextForms.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormMountAndAcquire.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormMountAndAcquire.Designer.cs">
+      <DependentUpon>FormMountAndAcquire.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormPerioSetup.cs">
       <SubType>Form</SubType>
@@ -932,6 +995,12 @@
     <Compile Include="Forms\FormContinuityOfCareDocument.Designer.cs">
       <DependentUpon>FormContinuityOfCareDocument.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormDatabaseIntegrity.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormDatabaseIntegrity.Designer.cs">
+      <DependentUpon>FormDatabaseIntegrity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormEClipboardImageCaptureDefs.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -956,6 +1025,12 @@
     <Compile Include="Forms\FormWebSchedCarrierRule.Designer.cs">
       <DependentUpon>FormWebSchedCarrierRule.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormImageScale.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormImageScale.Designer.cs">
+      <DependentUpon>FormImageScale.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormInsPlansOverrides.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -967,6 +1042,18 @@
     </Compile>
     <Compile Include="Forms\FormMessageReplacementTextEdit.Designer.cs">
       <DependentUpon>FormMessageReplacementTextEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormMountItemEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormMountItemEdit.designer.cs">
+      <DependentUpon>FormMountItemEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormMountLayoutEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormMountLayoutEdit.designer.cs">
+      <DependentUpon>FormMountLayoutEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormSecureEmailSetup.cs">
       <SubType>Form</SubType>
@@ -1016,6 +1103,12 @@
     <Compile Include="Forms\FormImageDrawColor.Designer.cs">
       <DependentUpon>FormImageDrawColor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormImageDrawEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormImageDrawEdit.Designer.cs">
+      <DependentUpon>FormImageDrawEdit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormAdvertisingPostcardsAccountSetup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1033,6 +1126,12 @@
     </Compile>
     <Compile Include="Forms\FormImageFloatWindows.Designer.cs">
       <DependentUpon>FormImageFloatWindows.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\BasicTemplate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\BasicTemplate.Designer.cs">
+      <DependentUpon>BasicTemplate.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormAllocationsSetup.cs">
       <SubType>Form</SubType>
@@ -1112,6 +1211,9 @@
     <Compile Include="Forms\FormAudit.designer.cs">
       <DependentUpon>FormAudit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormAuditOneType.designer.cs">
+      <DependentUpon>FormAuditOneType.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormAutoCode.designer.cs">
       <DependentUpon>FormAutoCode.cs</DependentUpon>
     </Compile>
@@ -1144,6 +1246,9 @@
     </Compile>
     <Compile Include="Forms\FormBillingOptions.designer.cs">
       <DependentUpon>FormBillingOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormBillingUndo.designer.cs">
+      <DependentUpon>FormBillingUndo.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormBlockoutCutCopyPaste.designer.cs">
       <DependentUpon>FormBlockoutCutCopyPaste.cs</DependentUpon>
@@ -1220,8 +1325,14 @@
     <Compile Include="Forms\FormContacts.designer.cs">
       <DependentUpon>FormContacts.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormConvertLang39.designer.cs">
+      <DependentUpon>FormConvertLang39.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormCounties.designer.cs">
       <DependentUpon>FormCounties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormCountyEdit.designer.cs">
+      <DependentUpon>FormCountyEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormCustomerManagement.designer.cs">
       <DependentUpon>FormCustomerManagement.cs</DependentUpon>
@@ -1268,6 +1379,12 @@
     <Compile Include="Forms\FormDisplayFieldsOrthoChart.designer.cs">
       <DependentUpon>FormDisplayFieldsOrthoChart.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormDocInfo.designer.cs">
+      <DependentUpon>FormDocInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormDocSign.designer.cs">
+      <DependentUpon>FormDocSign.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormDunningEdit.designer.cs">
       <DependentUpon>FormDunningEdit.cs</DependentUpon>
     </Compile>
@@ -1294,6 +1411,9 @@
     </Compile>
     <Compile Include="Forms\FormEmailMessageEdit.designer.cs">
       <DependentUpon>FormEmailMessageEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormEmailSetup.designer.cs">
+      <DependentUpon>FormEmailSetup.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormEmailTemplateEdit.designer.cs">
       <DependentUpon>FormEmailTemplateEdit.cs</DependentUpon>
@@ -1340,6 +1460,9 @@
     <Compile Include="Forms\FormFeeEdit.designer.cs">
       <DependentUpon>FormFeeEdit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormFeeSchedEdit.designer.cs">
+      <DependentUpon>FormFeeSchedEdit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormFeeScheds.designer.cs">
       <DependentUpon>FormFeeScheds.cs</DependentUpon>
     </Compile>
@@ -1370,8 +1493,14 @@
     <Compile Include="Forms\FormImageSelectClaimAttach.designer.cs">
       <DependentUpon>FormImageSelectClaimAttach.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormImageViewer.designer.cs">
+      <DependentUpon>FormImageViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormImagingSetup.designer.cs">
       <DependentUpon>FormImagingSetup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormImportXML.designer.cs">
+      <DependentUpon>FormImportXML.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormInsAdj.designer.cs">
       <DependentUpon>FormInsAdj.cs</DependentUpon>
@@ -1400,14 +1529,20 @@
     <Compile Include="Forms\FormInsPlans.designer.cs">
       <DependentUpon>FormInsPlans.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormInsPlanSelectFam.designer.cs">
-      <DependentUpon>FormInsPlanSelectFam.cs</DependentUpon>
+    <Compile Include="Forms\FormInsPlanSelect.designer.cs">
+      <DependentUpon>FormInsPlanSelect.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormInsPlansMerge.designer.cs">
       <DependentUpon>FormInsPlansMerge.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormInsSpanEdit.designer.cs">
       <DependentUpon>FormInsSpanEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormInstructorEdit.designer.cs">
+      <DependentUpon>FormInstructorEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormInstructors.designer.cs">
+      <DependentUpon>FormInstructors.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormJournal.designer.cs">
       <DependentUpon>FormJournal.cs</DependentUpon>
@@ -1448,8 +1583,14 @@
     <Compile Include="Forms\FormLetters.designer.cs">
       <DependentUpon>FormLetters.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormLetterViewList.designer.cs">
+      <DependentUpon>FormLetterViewList.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormLicense.designer.cs">
       <DependentUpon>FormLicense.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormLogoffWarning.designer.cs">
+      <DependentUpon>FormLogoffWarning.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormMassEmailExamples.cs">
       <SubType>Form</SubType>
@@ -1475,6 +1616,9 @@
     <Compile Include="Forms\FormMessagingSetup.designer.cs">
       <DependentUpon>FormMessagingSetup.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormMisc.designer.cs">
+      <DependentUpon>FormMisc.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormMountainside.designer.cs">
       <DependentUpon>FormMountainside.cs</DependentUpon>
     </Compile>
@@ -1484,6 +1628,9 @@
     <Compile Include="Forms\FormMountDefs.designer.cs">
       <DependentUpon>FormMountDefs.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormMountEdit.designer.cs">
+      <DependentUpon>FormMountEdit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormNotePick.designer.cs">
       <DependentUpon>FormNotePick.cs</DependentUpon>
     </Compile>
@@ -1492,6 +1639,9 @@
     </Compile>
     <Compile Include="Forms\FormOperatoryEdit.designer.cs">
       <DependentUpon>FormOperatoryEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormPasswordReset.designer.cs">
+      <DependentUpon>FormPasswordReset.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormPatFieldCheckEdit.designer.cs">
       <DependentUpon>FormPatFieldCheckEdit.cs</DependentUpon>
@@ -1553,6 +1703,9 @@
     <Compile Include="Forms\FormPopupDisplay.designer.cs">
       <DependentUpon>FormPopupDisplay.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormPopupEdit.designer.cs">
+      <DependentUpon>FormPopupEdit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormPractice.designer.cs">
       <DependentUpon>FormPractice.cs</DependentUpon>
     </Compile>
@@ -1604,8 +1757,14 @@
     <Compile Include="Forms\FormProgramProperty.designer.cs">
       <DependentUpon>FormProgramProperty.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormProgress.designer.cs">
+      <DependentUpon>FormProgress.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormProvEdit.designer.cs">
       <DependentUpon>FormProvEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormProviderPick.designer.cs">
+      <DependentUpon>FormProviderPick.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormProviderSetup.designer.cs">
       <DependentUpon>FormProviderSetup.cs</DependentUpon>
@@ -1621,6 +1780,15 @@
     </Compile>
     <Compile Include="Forms\FormQuestionDefs.designer.cs">
       <DependentUpon>FormQuestionDefs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormQuickPaste.designer.cs">
+      <DependentUpon>FormQuickPaste.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormQuickPasteCat.designer.cs">
+      <DependentUpon>FormQuickPasteCat.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormQuickPasteNoteEdit.designer.cs">
+      <DependentUpon>FormQuickPasteNoteEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormRecallEdit.designer.cs">
       <DependentUpon>FormRecallEdit.cs</DependentUpon>
@@ -1639,6 +1807,18 @@
     </Compile>
     <Compile Include="Forms\FormReconciles.designer.cs">
       <DependentUpon>FormReconciles.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormRefAttachEdit.designer.cs">
+      <DependentUpon>FormRefAttachEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormReferralEdit.designer.cs">
+      <DependentUpon>FormReferralEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormReferralSelect.designer.cs">
+      <DependentUpon>FormReferralSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormReferralsPatient.designer.cs">
+      <DependentUpon>FormReferralsPatient.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormRegistrationKey.designer.cs">
       <DependentUpon>FormRegistrationKey.cs</DependentUpon>
@@ -1763,6 +1943,12 @@
     <Compile Include="Forms\FormEmailHostingAddressVerification.designer.cs">
       <DependentUpon>FormEmailHostingAddressVerification.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormFaqVersionPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormFaqVersionPicker.Designer.cs">
+      <DependentUpon>FormFaqVersionPicker.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormSecurityLock.designer.cs">
       <DependentUpon>FormSecurityLock.cs</DependentUpon>
     </Compile>
@@ -1774,6 +1960,12 @@
     </Compile>
     <Compile Include="Forms\FormSigElementDefEdit.designer.cs">
       <DependentUpon>FormSigElementDefEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormSiteEdit.designer.cs">
+      <DependentUpon>FormSiteEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormSites.designer.cs">
+      <DependentUpon>FormSites.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormStateAbbrs.designer.cs">
       <DependentUpon>FormStateAbbrs.cs</DependentUpon>
@@ -1819,6 +2011,12 @@
     </Compile>
     <Compile Include="Forms\FormToothChartBig.designer.cs">
       <DependentUpon>FormToothChartBig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormToothGridDef.designer.cs">
+      <DependentUpon>FormToothGridDef.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormToothGridDefEdit.designer.cs">
+      <DependentUpon>FormToothGridDefEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormTPsign.designer.cs">
       <DependentUpon>FormTPsign.cs</DependentUpon>
@@ -1873,6 +2071,12 @@
     </Compile>
     <Compile Include="Forms\FormMassEmailTemplates.designer.cs">
       <DependentUpon>FormMassEmailTemplates.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormAcquireOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormAcquireOptions.designer.cs">
+      <DependentUpon>FormAcquireOptions.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormProdSelect.cs">
       <SubType>Form</SubType>
@@ -2081,6 +2285,18 @@
     <Compile Include="Forms\FormCareCreditSetup.Designer.cs">
       <DependentUpon>FormCareCreditSetup.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormDocumentSizeMount.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormDocumentSizeMount.designer.cs">
+      <DependentUpon>FormDocumentSizeMount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormDocumentSize.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormDocumentSize.designer.cs">
+      <DependentUpon>FormDocumentSize.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormEServicesPatientPortal.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -2123,6 +2339,12 @@
     <Compile Include="Forms\FormEServicesMobileSynch.designer.cs">
       <DependentUpon>FormEServicesMobileSynch.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormEServicesMassEmail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormEServicesMassEmail.designer.cs">
+      <DependentUpon>FormEServicesMassEmail.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormEServicesSetup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -2147,6 +2369,12 @@
     <Compile Include="Forms\FormImageCatMerge.designer.cs">
       <DependentUpon>FormImageCatMerge.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormBencoSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormBencoSetup.Designer.cs">
+      <DependentUpon>FormBencoSetup.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormMountItemDefEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -2158,6 +2386,12 @@
     </Compile>
     <Compile Include="Forms\FormMountDefGenerate.designer.cs">
       <DependentUpon>FormMountDefGenerate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormPatientEditEmail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormPatientEditEmail.designer.cs">
+      <DependentUpon>FormPatientEditEmail.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormOrthoCase.cs">
       <SubType>Form</SubType>
@@ -2236,6 +2470,12 @@
     </Compile>
     <Compile Include="Forms\FormFHIRAssignKey.designer.cs">
       <DependentUpon>FormFHIRAssignKey.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormShortCodeOptIn.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormShortCodeOptIn.designer.cs">
+      <DependentUpon>FormShortCodeOptIn.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormSupportStatus.cs">
       <SubType>Form</SubType>
@@ -2327,6 +2567,12 @@
     <Compile Include="Forms\FormGridSelection.designer.cs">
       <DependentUpon>FormGridSelection.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormLayoutSheetDefs.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormLayoutSheetDefs.Designer.cs">
+      <DependentUpon>FormLayoutSheetDefs.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormPatientEdit.Designer.cs">
       <DependentUpon>FormPatientEdit.cs</DependentUpon>
     </Compile>
@@ -2412,17 +2658,8 @@
     <Compile Include="Forms\FormCareCreditTransactions.designer.cs">
       <DependentUpon>FormCareCreditTransactions.cs</DependentUpon>
     </Compile>
-    <Compile Include="InternalTools\Job Manager\FormTeamSummary.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="InternalTools\Job Manager\FormTeamSummary.Designer.cs">
-      <DependentUpon>FormTeamSummary.cs</DependentUpon>
-    </Compile>
-    <Compile Include="InternalTools\Job Manager\FormCodeReviewReport.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="InternalTools\Job Manager\FormCodeReviewReport.Designer.cs">
-      <DependentUpon>FormCodeReviewReport.cs</DependentUpon>
+    <Compile Include="Forms\InputBox.designer.cs">
+      <DependentUpon>InputBox.cs</DependentUpon>
     </Compile>
     <Compile Include="InternalTools\Job Manager\FormJobTeamEdit.cs">
       <SubType>Form</SubType>
@@ -2493,12 +2730,6 @@
     <Compile Include="InternalTools\Job Manager\FormJobTimeLog.Designer.cs">
       <DependentUpon>FormJobTimeLog.cs</DependentUpon>
     </Compile>
-    <Compile Include="InternalTools\Job Manager\UserControlProjectEdit.Designer.cs">
-      <DependentUpon>UserControlProjectEdit.cs</DependentUpon>
-    </Compile>
-    <Compile Include="InternalTools\Job Manager\UserControlProjectEdit.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="InternalTools\Job Manager\UserControlJobManagerEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -2516,12 +2747,6 @@
     </Compile>
     <Compile Include="InternalTools\Job Manager\UserControlSprintManager.Designer.cs">
       <DependentUpon>UserControlSprintManager.cs</DependentUpon>
-    </Compile>
-    <Compile Include="InternalTools\Job Manager\UserControlTeamReport.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="InternalTools\Job Manager\UserControlTeamReport.Designer.cs">
-      <DependentUpon>UserControlTeamReport.cs</DependentUpon>
     </Compile>
     <Compile Include="InternalTools\Phones\FormMapAreaContainerEdit.cs">
       <SubType>Form</SubType>
@@ -2565,6 +2790,9 @@
     <Compile Include="InternalTools\Phones\FormMapHQPrefs.Designer.cs">
       <DependentUpon>FormMapHQPrefs.cs</DependentUpon>
     </Compile>
+    <Compile Include="InternalTools\Phones\FormMapHQ.Designer.cs">
+      <DependentUpon>FormMapHQ.cs</DependentUpon>
+    </Compile>
     <Compile Include="InternalTools\Phones\FormPhoneEmpDefaultEdit.designer.cs">
       <DependentUpon>FormPhoneEmpDefaultEdit.cs</DependentUpon>
     </Compile>
@@ -2583,7 +2811,6 @@
     <Compile Include="InternalTools\Phones\MapPanel.Designer.cs">
       <DependentUpon>MapPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="InternalTools\Phones\PersistentTcpClient.cs" />
     <Compile Include="InternalTools\Phones\UserControlMapDetails.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -2592,6 +2819,7 @@
     </Compile>
     <Compile Include="Logic\AutoNoteL.cs" />
     <Compile Include="Logic\CareCreditL.cs" />
+    <Compile Include="Logic\CloudClientL.cs" />
     <Compile Include="Logic\PayConnectL.cs" />
     <Compile Include="Logic\PayPlanL.cs" />
     <Compile Include="Logic\aaLogicUI.cs" />
@@ -2612,14 +2840,14 @@
     <Compile Include="Main Modules\ControlFamily.designer.cs">
       <DependentUpon>ControlFamily.cs</DependentUpon>
     </Compile>
-    <Compile Include="Main Modules\ControlImagesOld.designer.cs">
-      <DependentUpon>ControlImagesOld.cs</DependentUpon>
+    <Compile Include="Main Modules\ControlImages.designer.cs">
+      <DependentUpon>ControlImages.cs</DependentUpon>
     </Compile>
-    <Compile Include="Main Modules\ControlImages.cs">
+    <Compile Include="Main Modules\ControlImagesJ.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Main Modules\ControlImages.Designer.cs">
-      <DependentUpon>ControlImages.cs</DependentUpon>
+    <Compile Include="Main Modules\ControlImagesJ.Designer.cs">
+      <DependentUpon>ControlImagesJ.cs</DependentUpon>
     </Compile>
     <Compile Include="Main Modules\ControlManage.designer.cs">
       <DependentUpon>ControlManage.cs</DependentUpon>
@@ -2634,6 +2862,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Misc\DbmInfo.cs" />
+    <Compile Include="Misc\Result.cs" />
     <Compile Include="Misc\WebServiceRequest.cs" />
     <Compile Include="ReportingComplex\FormReportComplex.designer.cs">
       <DependentUpon>FormReportComplex.cs</DependentUpon>
@@ -2729,7 +2958,6 @@
     <Compile Include="UI\ComboBox.Designer.cs">
       <DependentUpon>ComboBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\FormLauncherHelper.cs" />
     <Compile Include="UI\ListBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -2748,9 +2976,6 @@
     <Compile Include="UI\ODDateRangePicker.Designer.cs">
       <DependentUpon>ODDateRangePicker.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\ODPrintPreviewControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="UI\PanelOD.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -2763,6 +2988,12 @@
     <Compile Include="UI\TestForWpf.Designer.cs">
       <DependentUpon>TestForWpf.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\TextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\TextBox.Designer.cs">
+      <DependentUpon>TextBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\ClinicSelector\ClinicPrefHelper.cs" />
     <Compile Include="UI\CloudIframe.cs">
       <SubType>UserControl</SubType>
@@ -2770,6 +3001,8 @@
     <Compile Include="UI\CloudIframe.Designer.cs">
       <DependentUpon>CloudIframe.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\DatabaseIntegrity\DatabaseIntegrities.cs" />
+    <Compile Include="UI\DatabaseIntegrity\DatabaseIntegrity.cs" />
     <Compile Include="UI\Direct2D\Direct2d.cs" />
     <Compile Include="UI\FolderBrowserDialog.cs" />
     <Compile Include="UI\ControlDoubleBuffered.cs">
@@ -2827,6 +3060,13 @@
     <Compile Include="UI\IconLibrary\IconSelector.cs" />
     <Compile Include="UI\IconLibrary\IconLibrary.cs" />
     <Compile Include="UI\IconLibrary\Gen_Recall.cs" />
+    <Compile Include="UI\ImagesModule\ImageSelector.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ImagesModule\ImageSelector.Designer.cs">
+      <DependentUpon>ImageSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ImagesModule\ImageTools.cs" />
     <Compile Include="UI\Splitters\SplitContainer.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -2876,6 +3116,16 @@
     <Compile Include="UI\ODColorPicker.Designer.cs">
       <DependentUpon>ODColorPicker.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\ODPrintPreviewControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Progress\FormProgressAuto.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Progress\FormProgressAuto.Designer.cs">
+      <DependentUpon>FormProgressAuto.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Progress\ProgressOD.cs" />
     <Compile Include="UI\SheetLayoutController.cs" />
     <Compile Include="Logic\ApptViewItemL.cs" />
     <Compile Include="Logic\AutomationL.cs" />
@@ -2899,6 +3149,7 @@
     <Compile Include="Logic\ProcedureL.cs" />
     <Compile Include="Logic\ProgramL.cs" />
     <Compile Include="Logic\RefAttachL.cs" />
+    <Compile Include="Logic\ReferralL.cs" />
     <Compile Include="Logic\RxAlertL.cs" />
     <Compile Include="Logic\SecurityL.cs" />
     <Compile Include="Logic\WebFormL.cs" />
@@ -3004,11 +3255,11 @@
     <Compile Include="Forms\FormClaimAttachmentItemEdit.designer.cs">
       <DependentUpon>FormClaimAttachmentItemEdit.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FormClaimAttachment.cs">
+    <Compile Include="Forms\FormClaimAttachmentDXC.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FormClaimAttachment.Designer.cs">
-      <DependentUpon>FormClaimAttachment.cs</DependentUpon>
+    <Compile Include="Forms\FormClaimAttachmentDXC.Designer.cs">
+      <DependentUpon>FormClaimAttachmentDXC.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormDefEditWebSchedApptTypes.cs">
       <SubType>Form</SubType>
@@ -3021,6 +3272,12 @@
     </Compile>
     <Compile Include="Forms\FormDoseSpotAssignClinicId.designer.cs">
       <DependentUpon>FormDoseSpotAssignClinicId.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormODSnippingTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormODSnippingTool.Designer.cs">
+      <DependentUpon>FormODSnippingTool.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormPaySimpleSetup.cs">
       <SubType>Form</SubType>
@@ -3061,6 +3318,12 @@
     <Compile Include="Forms\FormChooseDatabase.Designer.cs">
       <DependentUpon>FormChooseDatabase.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormCommItem.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormCommItem.Designer.cs">
+      <DependentUpon>FormCommItem.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormLoginFailed.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -3096,6 +3359,12 @@
     </Compile>
     <Compile Include="Forms\FormDatabaseMaintenancePat.designer.cs">
       <DependentUpon>FormDatabaseMaintenancePat.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormSiteLinkEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormSiteLinkEdit.designer.cs">
+      <DependentUpon>FormSiteLinkEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormGlobalSecurity.cs">
       <SubType>Form</SubType>
@@ -3250,6 +3519,12 @@
     <Compile Include="Forms Reports\FormRpInsPayPlansPastDue.designer.cs">
       <DependentUpon>FormRpInsPayPlansPastDue.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormImageCompare.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormImageCompare.designer.cs">
+      <DependentUpon>FormImageCompare.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormWebSchedAppts.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -3270,6 +3545,12 @@
     </Compile>
     <Compile Include="Forms\FormWebSchedASAPHistory.designer.cs">
       <DependentUpon>FormWebSchedASAPHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormFriendlyException.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormFriendlyException.designer.cs">
+      <DependentUpon>FormFriendlyException.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormWebSchedASAPSend.cs">
       <SubType>Form</SubType>
@@ -3312,6 +3593,12 @@
     </Compile>
     <Compile Include="Forms\FormCloneAdd.designer.cs">
       <DependentUpon>FormCloneAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormCloneManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormCloneManager.designer.cs">
+      <DependentUpon>FormCloneManager.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormDomainUserPick.cs">
       <SubType>Form</SubType>
@@ -3366,6 +3653,12 @@
     </Compile>
     <Compile Include="Forms\FormSetupWizard.designer.cs">
       <DependentUpon>FormSetupWizard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormCommItemUserPrefs.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormCommItemUserPrefs.designer.cs">
+      <DependentUpon>FormCommItemUserPrefs.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormApptConflicts.cs">
       <SubType>Form</SubType>
@@ -3469,6 +3762,12 @@
     <Compile Include="Forms\FormOrthoAutoClaims.designer.cs">
       <DependentUpon>FormOrthoAutoClaims.cs</DependentUpon>
     </Compile>
+    <Compile Include="InternalTools\Job Manager\FormCommitPrompt.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InternalTools\Job Manager\FormCommitPrompt.Designer.cs">
+      <DependentUpon>FormCommitPrompt.cs</DependentUpon>
+    </Compile>
     <Compile Include="InternalTools\Job Manager\FormVersionPrompt.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -3486,6 +3785,12 @@
     </Compile>
     <Compile Include="Forms\FormOrthoSetup.designer.cs">
       <DependentUpon>FormOrthoSetup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormPatientRaceEthnicity.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormPatientRaceEthnicity.designer.cs">
+      <DependentUpon>FormPatientRaceEthnicity.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormFieldDefLink.cs">
       <SubType>Form</SubType>
@@ -3541,6 +3846,12 @@
     <Compile Include="Forms\FormXWebTransactions.designer.cs">
       <DependentUpon>FormXWebTransactions.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormInCaseOfEmergency.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormInCaseOfEmergency.designer.cs">
+      <DependentUpon>FormInCaseOfEmergency.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormDropboxAuthorize.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -3582,6 +3893,12 @@
     </Compile>
     <Compile Include="Forms\FormOrthoChartSetup.designer.cs">
       <DependentUpon>FormOrthoChartSetup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormOrthoChartTabEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormOrthoChartTabEdit.designer.cs">
+      <DependentUpon>FormOrthoChartTabEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormAdjustmentPicker.cs">
       <SubType>Form</SubType>
@@ -3748,6 +4065,12 @@
     <Compile Include="Forms\FormRadOrderList.designer.cs">
       <DependentUpon>FormRadOrderList.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormActionNeeded.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormActionNeeded.designer.cs">
+      <DependentUpon>FormActionNeeded.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormProviderMerge.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -3771,6 +4094,12 @@
     </Compile>
     <Compile Include="Forms\FormRequiredFields.designer.cs">
       <DependentUpon>FormRequiredFields.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormMessageReplacements.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormMessageReplacements.designer.cs">
+      <DependentUpon>FormMessageReplacements.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormErxAccess.cs">
       <SubType>Form</SubType>
@@ -4009,6 +4338,12 @@
     <Compile Include="Forms\FormEvaluationEdit.designer.cs">
       <DependentUpon>FormEvaluationEdit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormEvaluationCriterionEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormEvaluationCriterionEdit.designer.cs">
+      <DependentUpon>FormEvaluationCriterionEdit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormEvaluations.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -4083,6 +4418,12 @@
     </Compile>
     <Compile Include="Forms\FormDisplayFieldOrthoEdit.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormEtrans835Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormEtrans835Print.designer.cs">
+      <DependentUpon>FormEtrans835Print.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormEtrans835ProcEdit.cs">
       <SubType>Form</SubType>
@@ -4336,6 +4677,12 @@
     <Compile Include="Forms\FormEhrPatientSmoking.Designer.cs">
       <DependentUpon>FormEhrPatientSmoking.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormEhrPatList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormEhrPatList.Designer.cs">
+      <DependentUpon>FormEhrPatList.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormEhrPatListElementEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -4402,11 +4749,23 @@
     <Compile Include="Forms\FormEhrVaccines.Designer.cs">
       <DependentUpon>FormEhrVaccines.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormEhrVitalsignEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormEhrVitalsignEdit.Designer.cs">
+      <DependentUpon>FormEhrVitalsignEdit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormMapAreaEdit.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormMapAreaEdit.Designer.cs">
       <DependentUpon>FormMapAreaEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormMapSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormMapSetup.Designer.cs">
+      <DependentUpon>FormMapSetup.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormEhrClinicalSummary.cs">
       <SubType>Form</SubType>
@@ -4419,6 +4778,12 @@
     </Compile>
     <Compile Include="Forms\FormEhrElectronicCopy.Designer.cs">
       <DependentUpon>FormEhrElectronicCopy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormPopupAudit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormPopupAudit.designer.cs">
+      <DependentUpon>FormPopupAudit.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormInterventions.cs">
       <SubType>Form</SubType>
@@ -4510,6 +4875,12 @@
     <Compile Include="Forms\FormLoincs.Designer.cs">
       <DependentUpon>FormLoincs.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormMedicationUpdate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormMedicationUpdate.designer.cs">
+      <DependentUpon>FormMedicationUpdate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormPatListEHR2014.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -4527,6 +4898,12 @@
     </Compile>
     <Compile Include="Forms\FormPayorTypes.Designer.cs">
       <DependentUpon>FormPayorTypes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormSnomedEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormSnomedEdit.designer.cs">
+      <DependentUpon>FormSnomedEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormSnomeds.cs">
       <SubType>Form</SubType>
@@ -4557,6 +4934,12 @@
     </Compile>
     <Compile Include="Forms\FormVitalsignEdit2014.Designer.cs">
       <DependentUpon>FormVitalsignEdit2014.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormVitalsigns.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormVitalsigns.Designer.cs">
+      <DependentUpon>FormVitalsigns.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormWebMailMessageEdit.cs">
       <SubType>Form</SubType>
@@ -4735,7 +5118,25 @@
     <Compile Include="Forms\FormSheetFieldExam.designer.cs">
       <DependentUpon>FormSheetFieldExam.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormScreenPatEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormScreenPatEdit.designer.cs">
+      <DependentUpon>FormScreenPatEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormScreenSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormScreenSetup.designer.cs">
+      <DependentUpon>FormScreenSetup.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormErx.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormToothGridDefEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormToothGridDef.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormHL7MsgEdit.cs">
@@ -4909,6 +5310,12 @@
     <Compile Include="Forms\FormReferralProcTrack.designer.cs">
       <DependentUpon>FormReferralProcTrack.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormReportsUds.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormReportsUds.designer.cs">
+      <DependentUpon>FormReportsUds.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormProviderMultiPick.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -4951,6 +5358,12 @@
     <Compile Include="Forms\FormEhrQuarterlyKeyEdit.designer.cs">
       <DependentUpon>FormEhrQuarterlyKeyEdit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormEhrQuarterlyKeys.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormEhrQuarterlyKeys.designer.cs">
+      <DependentUpon>FormEhrQuarterlyKeys.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormTestLatency.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -4981,6 +5394,9 @@
     <Compile Include="Forms\FormOrthoChart.designer.cs">
       <DependentUpon>FormOrthoChart.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormLogoffWarning.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormRxNorms.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -4998,6 +5414,12 @@
     </Compile>
     <Compile Include="Forms\FormEduResourceSetup.Designer.cs">
       <DependentUpon>FormEduResourceSetup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormEmailSetupEHR.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormEmailSetupEHR.designer.cs">
+      <DependentUpon>FormEmailSetupEHR.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormPatFieldCheckEdit.cs">
       <SubType>Form</SubType>
@@ -5071,6 +5493,12 @@
     <Compile Include="Forms\FormAllergySetup.designer.cs">
       <DependentUpon>FormAllergySetup.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormIcd9Edit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormIcd9Edit.designer.cs">
+      <DependentUpon>FormIcd9Edit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormIcd9s.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -5137,11 +5565,23 @@
     <Compile Include="Forms\FormCreditCardManage.designer.cs">
       <DependentUpon>FormCreditCardManage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormUserPick.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormUserPick.designer.cs">
+      <DependentUpon>FormUserPick.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormTaskNoteEdit.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormTaskNoteEdit.designer.cs">
       <DependentUpon>FormTaskNoteEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormMobile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormMobile.designer.cs">
+      <DependentUpon>FormMobile.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormInsPlanConvert_7_5_17.cs">
       <SubType>Form</SubType>
@@ -5238,6 +5678,12 @@
     </Compile>
     <Compile Include="Forms\FormPayConnect.designer.cs">
       <DependentUpon>FormPayConnect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormProcEditExplain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormProcEditExplain.designer.cs">
+      <DependentUpon>FormProcEditExplain.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormPatFieldPickEdit.cs">
       <SubType>Form</SubType>
@@ -5353,6 +5799,9 @@
     <Compile Include="Forms\FormPerioGraphical.designer.cs">
       <DependentUpon>FormPerioGraphical.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FormProviderPick.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormMountainside.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -5410,6 +5859,36 @@
     <Compile Include="Forms\FormClaimPayPreAuth.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\FormAutoNotePromptPreview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormAutoNotePromptPreview.designer.cs">
+      <DependentUpon>FormAutoNotePromptPreview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormAutoNotePromptMultiResp.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormAutoNotePromptMultiResp.designer.cs">
+      <DependentUpon>FormAutoNotePromptMultiResp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormAutoNotePromptOneResp.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormAutoNotePromptOneResp.designer.cs">
+      <DependentUpon>FormAutoNotePromptOneResp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormAutoNotePromptText.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormAutoNotePromptText.designer.cs">
+      <DependentUpon>FormAutoNotePromptText.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormAutoNoteCompose.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormAutoNoteCompose.designer.cs">
+      <DependentUpon>FormAutoNoteCompose.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FormAutoNoteControls.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -5440,6 +5919,21 @@
     <Compile Include="Forms\FormSecurityLock.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\FormBackupReminder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormBackupReminder.designer.cs">
+      <DependentUpon>FormBackupReminder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormMonthView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormMonthView.designer.cs">
+      <DependentUpon>FormMonthView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormFeeSchedEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormFeeScheds.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -5463,6 +5957,12 @@
     </Compile>
     <Compile Include="Forms\FormRecallTypes.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormRecallListOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormRecallListOptions.designer.cs">
+      <DependentUpon>FormRecallListOptions.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FormProcEditAll.cs">
       <SubType>Form</SubType>
@@ -5552,6 +6052,12 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormPharmacies.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormSiteEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormSites.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormPatientAddAll.cs">
@@ -5650,6 +6156,9 @@
     <Compile Include="Forms Reports\FormRpConfirm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms Reports\FormRpCourseGrades.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms Reports\FormRpFinanceCharge.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -5708,6 +6217,9 @@
     <Compile Include="Forms\FormUpdateSetup.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\FormPopupEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormDisplayFieldEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -5715,6 +6227,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormProcCodeNoteEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormReferralsPatient.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormTrojanCollectSetup.cs">
@@ -5751,6 +6266,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormClaimCreate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormMountEdit.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormReqStudentEdit.cs">
@@ -5855,6 +6373,9 @@
     <Compile Include="Forms\FormAudit.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\FormAuditOneType.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormAutoCode.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -5874,6 +6395,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormBillingOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormBillingUndo.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormCarrierCombine.cs">
@@ -5942,7 +6466,13 @@
     <Compile Include="Forms\FormContacts.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\FormConvertLang39.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormCounties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormCountyEdit.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormDatabaseMaintenance.cs">
@@ -5966,6 +6496,12 @@
     <Compile Include="Forms\FormDiseaseDefs.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\FormDocInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormDocSign.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormDunningEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -5976,6 +6512,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormEmailMessageEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormEmailSetup.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormEmailTemplateEdit.cs">
@@ -5999,6 +6538,12 @@
     <Compile Include="Forms\FormGroupPermEdit.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\FormImageViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormImportXML.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormInsAdj.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -6020,13 +6565,19 @@
     <Compile Include="Forms\FormInsPlans.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FormInsPlanSelectFam.cs">
+    <Compile Include="Forms\FormInsPlanSelect.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormInsPlansMerge.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormInsSpanEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormInstructorEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormInstructors.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormJournal.cs">
@@ -6045,6 +6596,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormLetters.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormLetterViewList.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormLogOn.cs">
@@ -6068,6 +6622,9 @@
     <Compile Include="Forms\FormMessagingSetup.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\FormMisc.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormNotePick.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -6075,6 +6632,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormOperatoryEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormPasswordReset.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormPatFieldDefEdit.cs">
@@ -6164,6 +6724,9 @@
     <Compile Include="Forms\FormProgramProperty.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\FormProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormProvEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -6185,6 +6748,15 @@
     <Compile Include="Forms\FormFormPatEdit.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\FormQuickPaste.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormQuickPasteCat.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormQuickPasteNoteEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormRecallEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -6198,6 +6770,15 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormReconciles.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormRefAttachEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormReferralEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormReferralSelect.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FormRepeatChargeEdit.cs">
@@ -6320,6 +6901,9 @@
     <Compile Include="Forms\FormUserPassword.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\InputBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormTPsign.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -6376,6 +6960,15 @@
     </Compile>
     <Compile Include="InternalTools\JobManagerUserOverview.Designer.cs">
       <DependentUpon>JobManagerUserOverview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InternalTools\Phones\EscalationViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="InternalTools\Phones\EscalationViewControl.Designer.cs">
+      <DependentUpon>EscalationViewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InternalTools\Phones\FormMapHQ.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="InternalTools\Phones\FormPhoneEmpDefaultEscalationEdit.cs">
       <SubType>Form</SubType>
@@ -6444,7 +7037,7 @@
     <Compile Include="Main Modules\ControlChart.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Main Modules\ControlImagesOld.cs">
+    <Compile Include="Main Modules\ControlImages.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Main Modules\ControlFamily.cs">
@@ -6594,6 +7187,7 @@
     <Compile Include="UI\OdProgressBar.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\PopupFade.cs" />
     <Compile Include="UI\ODButtonPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -6604,6 +7198,8 @@
     <Compile Include="UI\ODPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\Sparks3DInterface.cs" />
+    <Compile Include="UI\ToothChartRelay.cs" />
     <Compile Include="UI\VideoCamera\Camera.cs" />
     <Compile Include="UI\VideoCamera\CameraFrameSource.cs" />
     <Compile Include="UI\VideoCamera\CameraMethods.cs" />
@@ -6643,23 +7239,23 @@
     <Compile Include="User Controls\Dashboard\DashIndividualDiscount.Designer.cs">
       <DependentUpon>DashIndividualDiscount.cs</DependentUpon>
     </Compile>
+    <Compile Include="User Controls\MapCubicle.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="User Controls\MapCubicle.Designer.cs">
+      <DependentUpon>MapCubicle.cs</DependentUpon>
+    </Compile>
+    <Compile Include="User Controls\MapLabel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="User Controls\MapLabel.Designer.cs">
+      <DependentUpon>MapLabel.cs</DependentUpon>
+    </Compile>
     <Compile Include="User Controls\Preferences\UserControlAccountAdjustments.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="User Controls\Preferences\UserControlAccountAdjustments.Designer.cs">
       <DependentUpon>UserControlAccountAdjustments.cs</DependentUpon>
-    </Compile>
-    <Compile Include="User Controls\Preferences\UserControlMainWindowMisc.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="User Controls\Preferences\UserControlMainWindowMisc.Designer.cs">
-      <DependentUpon>UserControlMainWindowMisc.cs</DependentUpon>
-    </Compile>
-    <Compile Include="User Controls\Preferences\UserControlMainWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="User Controls\Preferences\UserControlMainWindow.Designer.cs">
-      <DependentUpon>UserControlMainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="User Controls\Preferences\UserControlAccountGeneral.cs">
       <SubType>UserControl</SubType>
@@ -6812,6 +7408,12 @@
     </Compile>
     <Compile Include="User Controls\GraphScheduleDay.Designer.cs">
       <DependentUpon>GraphScheduleDay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="User Controls\MapAreaPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="User Controls\MapAreaPanel.Designer.cs">
+      <DependentUpon>MapAreaPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="User Controls\Dashboard\DashApptGrid.cs">
       <SubType>UserControl</SubType>
@@ -7026,8 +7628,8 @@
       <DependentUpon>FormIap.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Bridges\FormPrintTrojan.resx">
-      <DependentUpon>FormPrintTrojan.cs</DependentUpon>
+    <EmbeddedResource Include="Bridges\FormPrintReport.resx">
+      <DependentUpon>FormPrintReport.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms Reports\FormRpProcOverpaid.resx">
@@ -7040,48 +7642,6 @@
     <EmbeddedResource Include="Forms Reports\FormRpServiceDateView.resx">
       <DependentUpon>FormRpServiceDateView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormTasksForAppt.resx">
-      <DependentUpon>FormTasksForAppt.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormBenefitFrequencyEdit.resx">
-      <DependentUpon>FormBenefitFrequencyEdit.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\BasicTemplate.resx">
-      <DependentUpon>BasicTemplate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormBenefitFrequencies.resx">
-      <DependentUpon>FormBenefitFrequencies.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormClaimAttachHistory.resx">
-      <DependentUpon>FormClaimAttachHistory.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormClaimAttachPasteDXCItem.resx">
-      <DependentUpon>FormClaimAttachPasteDXCItem.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormClaimAttachSnipDXC.resx">
-      <DependentUpon>FormClaimAttachSnipDXC.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormCloudUserEdit.resx">
-      <DependentUpon>FormCloudUserEdit.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormCloudUsers.resx">
-      <DependentUpon>FormCloudUsers.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormEClipboardImageCaptureDefEdit.resx">
-      <DependentUpon>FormEClipboardImageCaptureDefEdit.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormEServicesMobileAppDeviceManage.resx">
-      <DependentUpon>FormEServicesMobileAppDeviceManage.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormClaimAttachPasteDXC.resx">
-      <DependentUpon>FormClaimAttachPasteDXC.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormImagePickerDXC.resx">
-      <DependentUpon>FormImagePickerDXC.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormMessageToPayEdit.resx">
-      <DependentUpon>FormMessageToPayEdit.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormTaskSubscribers.resx">
       <DependentUpon>FormTaskSubscribers.cs</DependentUpon>
     </EmbeddedResource>
@@ -7091,11 +7651,17 @@
     <EmbeddedResource Include="Forms\FormCodeGroups.resx">
       <DependentUpon>FormCodeGroups.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormPayPlanTemplateEdit.resx">
-      <DependentUpon>FormPayPlanTemplateEdit.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FormFaqEdit.resx">
+      <DependentUpon>FormFaqEdit.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormPayPlanTemplates.resx">
-      <DependentUpon>FormPayPlanTemplates.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FormFaqPicker.resx">
+      <DependentUpon>FormFaqPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormFaqVersionRelease.resx">
+      <DependentUpon>FormFaqVersionRelease.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormHelpBrowser.resx">
+      <DependentUpon>FormHelpBrowser.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormPatientListDiscount.resx">
       <DependentUpon>FormPatientListDiscount.cs</DependentUpon>
@@ -7105,6 +7671,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormPayConnect2iFrame.resx">
       <DependentUpon>FormPayConnect2iFrame.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormCommReferral.resx">
+      <DependentUpon>FormCommReferral.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormPayPlanChargeSelection.resx">
       <DependentUpon>FormPayPlanChargeSelection.cs</DependentUpon>
@@ -7135,6 +7704,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormEServicesAutoMsgingPreferences.resx">
       <DependentUpon>FormEServicesAutoMsgingPreferences.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormDatePicker.resx">
+      <DependentUpon>FormDatePicker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormERouting.resx">
       <DependentUpon>FormERouting.cs</DependentUpon>
@@ -7175,6 +7747,10 @@
     <EmbeddedResource Include="Forms\FormOrthoHardwareSpecs.resx">
       <DependentUpon>FormOrthoHardwareSpecs.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormSheetFieldDefAdd.resx">
+      <DependentUpon>FormSheetFieldDefAdd.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormSheetFieldAdd.resx">
       <DependentUpon>FormSheetFieldAdd.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -7192,11 +7768,17 @@
     <EmbeddedResource Include="Forms\FormWebBrowserPrefs.resx">
       <DependentUpon>FormWebBrowserPrefs.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormODTouchSecurityEdit.resx">
-      <DependentUpon>FormODTouchSecurityEdit.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FormEClipboardSecurityEdit.resx">
+      <DependentUpon>FormEClipboardSecurityEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormCommItemHistory.resx">
+      <DependentUpon>FormCommItemHistory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormWebFormNextForms.resx">
       <DependentUpon>FormWebFormNextForms.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormMountAndAcquire.resx">
+      <DependentUpon>FormMountAndAcquire.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormPerioSetup.resx">
       <DependentUpon>FormPerioSetup.cs</DependentUpon>
@@ -7211,6 +7793,9 @@
     <EmbeddedResource Include="Forms\FormContinuityOfCareDocument.resx">
       <DependentUpon>FormContinuityOfCareDocument.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormDatabaseIntegrity.resx">
+      <DependentUpon>FormDatabaseIntegrity.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormEClipboardImageCaptureDefs.resx">
       <DependentUpon>FormEClipboardImageCaptureDefs.cs</DependentUpon>
     </EmbeddedResource>
@@ -7223,11 +7808,21 @@
     <EmbeddedResource Include="Forms\FormWebSchedCarrierRule.resx">
       <DependentUpon>FormWebSchedCarrierRule.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormImageScale.resx">
+      <DependentUpon>FormImageScale.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormInsPlansOverrides.resx">
       <DependentUpon>FormInsPlansOverrides.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormMessageReplacementTextEdit.resx">
       <DependentUpon>FormMessageReplacementTextEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormMountItemEdit.resx">
+      <DependentUpon>FormMountItemEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormMountLayoutEdit.resx">
+      <DependentUpon>FormMountLayoutEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormSecureEmailSetup.resx">
       <DependentUpon>FormSecureEmailSetup.cs</DependentUpon>
@@ -7256,11 +7851,17 @@
     <EmbeddedResource Include="Forms\FormAdvertisingPostcardsAccountSetup.resx">
       <DependentUpon>FormAdvertisingPostcardsAccountSetup.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormImageDrawEdit.resx">
+      <DependentUpon>FormImageDrawEdit.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormImageFloat.resx">
       <DependentUpon>FormImageFloat.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormImageFloatWindows.resx">
       <DependentUpon>FormImageFloatWindows.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\BasicTemplate.resx">
+      <DependentUpon>BasicTemplate.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormAllocationsSetup.resx">
       <DependentUpon>FormAllocationsSetup.cs</DependentUpon>
@@ -7328,11 +7929,17 @@
     <EmbeddedResource Include="Forms\FormEmailHostingAddressVerification.resx">
       <DependentUpon>FormEmailHostingAddressVerification.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormFaqVersionPicker.resx">
+      <DependentUpon>FormFaqVersionPicker.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormVideo.resx">
       <DependentUpon>FormVideo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormMassEmailTemplates.resx">
       <DependentUpon>FormMassEmailTemplates.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormAcquireOptions.resx">
+      <DependentUpon>FormAcquireOptions.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormProdSelect.resx">
       <DependentUpon>FormProdSelect.cs</DependentUpon>
@@ -7436,6 +8043,12 @@
     <EmbeddedResource Include="Forms\FormCareCreditSetup.resx">
       <DependentUpon>FormCareCreditSetup.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormDocumentSizeMount.resx">
+      <DependentUpon>FormDocumentSizeMount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormDocumentSize.resx">
+      <DependentUpon>FormDocumentSize.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormEServicesPatientPortal.resx">
       <DependentUpon>FormEServicesPatientPortal.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -7464,6 +8077,10 @@
       <DependentUpon>FormEServicesMobileSynch.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormEServicesMassEmail.resx">
+      <DependentUpon>FormEServicesMassEmail.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormEServicesSetup.resx">
       <DependentUpon>FormEServicesSetup.cs</DependentUpon>
     </EmbeddedResource>
@@ -7478,11 +8095,17 @@
     <EmbeddedResource Include="Forms\FormImageCatMerge.resx">
       <DependentUpon>FormImageCatMerge.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormBencoSetup.resx">
+      <DependentUpon>FormBencoSetup.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormMountItemDefEdit.resx">
       <DependentUpon>FormMountItemDefEdit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormMountDefGenerate.resx">
       <DependentUpon>FormMountDefGenerate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormPatientEditEmail.resx">
+      <DependentUpon>FormPatientEditEmail.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormOrthoCase.resx">
       <DependentUpon>FormOrthoCase.cs</DependentUpon>
@@ -7524,6 +8147,9 @@
     <EmbeddedResource Include="Forms\FormFHIRAssignKey.resx">
       <DependentUpon>FormFHIRAssignKey.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormShortCodeOptIn.resx">
+      <DependentUpon>FormShortCodeOptIn.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormSupportStatus.resx">
       <DependentUpon>FormSupportStatus.cs</DependentUpon>
     </EmbeddedResource>
@@ -7542,6 +8168,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormScheduledProcesses.resx">
       <DependentUpon>FormScheduledProcesses.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormLayoutSheetDefs.resx">
+      <DependentUpon>FormLayoutSheetDefs.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormAdjustSelect.resx">
       <DependentUpon>FormAdjustSelect.cs</DependentUpon>
@@ -7597,12 +8226,6 @@
     <EmbeddedResource Include="Forms\FormCareCreditTransactions.resx">
       <DependentUpon>FormCareCreditTransactions.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="InternalTools\Job Manager\FormTeamSummary.resx">
-      <DependentUpon>FormTeamSummary.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="InternalTools\Job Manager\FormCodeReviewReport.resx">
-      <DependentUpon>FormCodeReviewReport.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Job Manager\FormJobTeamEdit.resx">
       <DependentUpon>FormJobTeamEdit.cs</DependentUpon>
     </EmbeddedResource>
@@ -7640,14 +8263,8 @@
     <EmbeddedResource Include="InternalTools\Job Manager\UserControlMarketingEdit.resx">
       <DependentUpon>UserControlMarketingEdit.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="InternalTools\Job Manager\UserControlProjectEdit.resx">
-      <DependentUpon>UserControlProjectEdit.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Job Manager\UserControlSprintManager.resx">
       <DependentUpon>UserControlSprintManager.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="InternalTools\Job Manager\UserControlTeamReport.resx">
-      <DependentUpon>UserControlTeamReport.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Phones\FormMapAreaContainerEdit.resx">
       <DependentUpon>FormMapAreaContainerEdit.cs</DependentUpon>
@@ -7677,8 +8294,8 @@
       <DependentUpon>ControlAppt.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Main Modules\ControlImages.resx">
-      <DependentUpon>ControlImages.cs</DependentUpon>
+    <EmbeddedResource Include="Main Modules\ControlImagesJ.resx">
+      <DependentUpon>ControlImagesJ.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ReportingComplex\FormReportComplex.resx" />
@@ -7727,14 +8344,17 @@
     <EmbeddedResource Include="Forms\FormClaimAttachmentItemEdit.resx">
       <DependentUpon>FormClaimAttachmentItemEdit.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormClaimAttachment.resx">
-      <DependentUpon>FormClaimAttachment.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FormClaimAttachmentDXC.resx">
+      <DependentUpon>FormClaimAttachmentDXC.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormDefEditWebSchedApptTypes.resx">
       <DependentUpon>FormDefEditWebSchedApptTypes.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormDoseSpotAssignClinicId.resx">
       <DependentUpon>FormDoseSpotAssignClinicId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormODSnippingTool.resx">
+      <DependentUpon>FormODSnippingTool.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormPaySimpleSetup.resx">
       <DependentUpon>FormPaySimpleSetup.cs</DependentUpon>
@@ -7754,6 +8374,9 @@
     <EmbeddedResource Include="Forms\FormChooseDatabase.resx">
       <DependentUpon>FormChooseDatabase.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormCommItem.resx">
+      <DependentUpon>FormCommItem.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormLoginFailed.resx">
       <DependentUpon>FormLoginFailed.cs</DependentUpon>
     </EmbeddedResource>
@@ -7772,6 +8395,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormDatabaseMaintenancePat.resx">
       <DependentUpon>FormDatabaseMaintenancePat.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormSiteLinkEdit.resx">
+      <DependentUpon>FormSiteLinkEdit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormGlobalSecurity.resx">
       <DependentUpon>FormGlobalSecurity.cs</DependentUpon>
@@ -7860,6 +8486,9 @@
     <EmbeddedResource Include="Forms Reports\FormRpInsPayPlansPastDue.resx">
       <DependentUpon>FormRpInsPayPlansPastDue.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormImageCompare.resx">
+      <DependentUpon>FormImageCompare.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormWebSchedAppts.resx">
       <DependentUpon>FormWebSchedAppts.cs</DependentUpon>
     </EmbeddedResource>
@@ -7872,6 +8501,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormWebSchedASAPHistory.resx">
       <DependentUpon>FormWebSchedASAPHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormFriendlyException.resx">
+      <DependentUpon>FormFriendlyException.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormWebSchedASAPSend.resx">
       <DependentUpon>FormWebSchedASAPSend.cs</DependentUpon>
@@ -7893,6 +8525,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormCloneAdd.resx">
       <DependentUpon>FormCloneAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormCloneManager.resx">
+      <DependentUpon>FormCloneManager.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormDomainUserPick.resx">
       <DependentUpon>FormDomainUserPick.cs</DependentUpon>
@@ -7921,6 +8556,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormSetupWizard.resx">
       <DependentUpon>FormSetupWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormCommItemUserPrefs.resx">
+      <DependentUpon>FormCommItemUserPrefs.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormApptConflicts.resx">
       <DependentUpon>FormApptConflicts.cs</DependentUpon>
@@ -7977,6 +8615,9 @@
     <EmbeddedResource Include="Forms\FormOrthoAutoClaims.resx">
       <DependentUpon>FormOrthoAutoClaims.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="InternalTools\Job Manager\FormCommitPrompt.resx">
+      <DependentUpon>FormCommitPrompt.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Job Manager\FormVersionPrompt.resx">
       <DependentUpon>FormVersionPrompt.cs</DependentUpon>
     </EmbeddedResource>
@@ -7986,6 +8627,9 @@
     <EmbeddedResource Include="Forms\FormOrthoSetup.resx">
       <DependentUpon>FormOrthoSetup.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormPatientRaceEthnicity.resx">
+      <DependentUpon>FormPatientRaceEthnicity.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormTaskPreferences.resx">
       <DependentUpon>FormTaskPreferences.cs</DependentUpon>
@@ -8020,6 +8664,10 @@
     <EmbeddedResource Include="Forms\FormFHIRSetup.resx">
       <DependentUpon>FormFHIRSetup.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormInCaseOfEmergency.resx">
+      <DependentUpon>FormInCaseOfEmergency.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormTimePick.resx">
       <DependentUpon>FormTimePick.cs</DependentUpon>
     </EmbeddedResource>
@@ -8031,6 +8679,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormOrthoChartSetup.resx">
       <DependentUpon>FormOrthoChartSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormOrthoChartTabEdit.resx">
+      <DependentUpon>FormOrthoChartTabEdit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormAdjustmentPicker.resx">
       <DependentUpon>FormAdjustmentPicker.cs</DependentUpon>
@@ -8125,6 +8776,9 @@
     <EmbeddedResource Include="Forms\FormRadOrderList.resx">
       <DependentUpon>FormRadOrderList.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormActionNeeded.resx">
+      <DependentUpon>FormActionNeeded.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormProviderMerge.resx">
       <DependentUpon>FormProviderMerge.cs</DependentUpon>
     </EmbeddedResource>
@@ -8136,6 +8790,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormRequiredFields.resx">
       <DependentUpon>FormRequiredFields.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormMessageReplacements.resx">
+      <DependentUpon>FormMessageReplacements.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormErxAccess.resx">
       <DependentUpon>FormErxAccess.cs</DependentUpon>
@@ -8262,6 +8919,9 @@
     <EmbeddedResource Include="Forms\FormEvaluationEdit.resx">
       <DependentUpon>FormEvaluationEdit.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormEvaluationCriterionEdit.resx">
+      <DependentUpon>FormEvaluationCriterionEdit.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormEvaluations.resx">
       <DependentUpon>FormEvaluations.cs</DependentUpon>
     </EmbeddedResource>
@@ -8303,6 +8963,9 @@
     <EmbeddedResource Include="Forms\FormDisplayFieldOrthoEdit.resx">
       <DependentUpon>FormDisplayFieldOrthoEdit.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormEtrans835Print.resx">
+      <DependentUpon>FormEtrans835Print.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormEtrans835ProcEdit.resx">
       <DependentUpon>FormEtrans835ProcEdit.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -8310,6 +8973,9 @@
     <EmbeddedResource Include="Forms\FormEtrans835ClaimEdit.resx">
       <DependentUpon>FormEtrans835ClaimEdit.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormMedicationUpdate.resx">
+      <DependentUpon>FormMedicationUpdate.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormUcums.resx">
       <DependentUpon>FormUcums.cs</DependentUpon>
@@ -8446,6 +9112,9 @@
     <EmbeddedResource Include="Forms\FormEhrPatientSmoking.resx">
       <DependentUpon>FormEhrPatientSmoking.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormEhrPatList.resx">
+      <DependentUpon>FormEhrPatList.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormEhrPatListElementEdit.resx">
       <DependentUpon>FormEhrPatListElementEdit.cs</DependentUpon>
     </EmbeddedResource>
@@ -8476,8 +9145,17 @@
     <EmbeddedResource Include="Forms\FormEhrVaccines.resx">
       <DependentUpon>FormEhrVaccines.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormEhrVitalsignEdit.resx">
+      <DependentUpon>FormEhrVitalsignEdit.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormMapAreaEdit.resx">
       <DependentUpon>FormMapAreaEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormMapSetup.resx">
+      <DependentUpon>FormMapSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormPopupAudit.resx">
+      <DependentUpon>FormPopupAudit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormInterventions.resx">
       <DependentUpon>FormInterventions.cs</DependentUpon>
@@ -8534,6 +9212,10 @@
     <EmbeddedResource Include="Forms\FormPayorTypes.resx">
       <DependentUpon>FormPayorTypes.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormSnomedEdit.resx">
+      <DependentUpon>FormSnomedEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormSnomeds.resx">
       <DependentUpon>FormSnomeds.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -8549,6 +9231,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormVitalsignEdit2014.resx">
       <DependentUpon>FormVitalsignEdit2014.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormVitalsigns.resx">
+      <DependentUpon>FormVitalsigns.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormWebMailMessageEdit.resx">
       <DependentUpon>FormWebMailMessageEdit.cs</DependentUpon>
@@ -8642,6 +9327,20 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormSheetFieldExam.resx">
       <DependentUpon>FormSheetFieldExam.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormScreenPatEdit.resx">
+      <DependentUpon>FormScreenPatEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormScreenSetup.resx">
+      <DependentUpon>FormScreenSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormToothGridDefEdit.resx">
+      <DependentUpon>FormToothGridDefEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormToothGridDef.resx">
+      <DependentUpon>FormToothGridDef.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormHL7MsgEdit.resx">
@@ -8746,6 +9445,10 @@
       <DependentUpon>FormReferralProcTrack.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormReportsUds.resx">
+      <DependentUpon>FormReportsUds.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormProviderMultiPick.resx">
       <DependentUpon>FormProviderMultiPick.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -8778,6 +9481,10 @@
       <DependentUpon>FormEhrQuarterlyKeyEdit.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormEhrQuarterlyKeys.resx">
+      <DependentUpon>FormEhrQuarterlyKeys.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormTestLatency.resx">
       <DependentUpon>FormTestLatency.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -8798,6 +9505,10 @@
       <DependentUpon>FormOrthoChart.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormLogoffWarning.resx">
+      <DependentUpon>FormLogoffWarning.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormRxNorms.resx">
       <DependentUpon>FormRxNorms.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -8807,6 +9518,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormEduResourceSetup.resx">
       <DependentUpon>FormEduResourceSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormEmailSetupEHR.resx">
+      <DependentUpon>FormEmailSetupEHR.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormPatFieldCheckEdit.resx">
       <DependentUpon>FormPatFieldCheckEdit.cs</DependentUpon>
@@ -8857,6 +9572,10 @@
       <DependentUpon>FormAllergySetup.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormIcd9Edit.resx">
+      <DependentUpon>FormIcd9Edit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormIcd9s.resx">
       <DependentUpon>FormIcd9s.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -8901,8 +9620,16 @@
       <DependentUpon>FormCreditCardManage.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormUserPick.resx">
+      <DependentUpon>FormUserPick.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormTaskNoteEdit.resx">
       <DependentUpon>FormTaskNoteEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormMobile.resx">
+      <DependentUpon>FormMobile.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormInsPlanConvert_7_5_17.resx">
@@ -9024,6 +9751,10 @@
       <DependentUpon>FormRpConfirm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms Reports\FormRpCourseGrades.resx">
+      <DependentUpon>FormRpCourseGrades.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms Reports\FormRpFinanceCharge.resx">
       <DependentUpon>FormRpFinanceCharge.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -9100,6 +9831,10 @@
       <DependentUpon>FormUpdateSetup.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormPopupEdit.resx">
+      <DependentUpon>FormPopupEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormDisplayFieldEdit.resx">
       <DependentUpon>FormDisplayFieldEdit.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -9110,6 +9845,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormProcCodeNoteEdit.resx">
       <DependentUpon>FormProcCodeNoteEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormReferralsPatient.resx">
+      <DependentUpon>FormReferralsPatient.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormTrojanCollectSetup.resx">
@@ -9150,6 +9889,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormClaimCreate.resx">
       <DependentUpon>FormClaimCreate.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormMountEdit.resx">
+      <DependentUpon>FormMountEdit.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormReqStudentEdit.resx">
@@ -9288,6 +10031,10 @@
       <DependentUpon>FormAudit.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormAuditOneType.resx">
+      <DependentUpon>FormAuditOneType.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormAutoCode.resx">
       <DependentUpon>FormAutoCode.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -9314,6 +10061,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormBillingOptions.resx">
       <DependentUpon>FormBillingOptions.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormBillingUndo.resx">
+      <DependentUpon>FormBillingUndo.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormCarrierCombine.resx">
@@ -9404,8 +10155,16 @@
       <DependentUpon>FormContacts.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormConvertLang39.resx">
+      <DependentUpon>FormConvertLang39.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormCounties.resx">
       <DependentUpon>FormCounties.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormCountyEdit.resx">
+      <DependentUpon>FormCountyEdit.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormDatabaseMaintenance.resx">
@@ -9436,6 +10195,14 @@
       <DependentUpon>FormDiseaseDefs.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormDocInfo.resx">
+      <DependentUpon>FormDocInfo.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormDocSign.resx">
+      <DependentUpon>FormDocSign.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormDunningEdit.resx">
       <DependentUpon>FormDunningEdit.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -9450,6 +10217,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormEmailMessageEdit.resx">
       <DependentUpon>FormEmailMessageEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormEmailSetup.resx">
+      <DependentUpon>FormEmailSetup.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormEmailTemplateEdit.resx">
@@ -9480,6 +10251,14 @@
       <DependentUpon>FormGroupPermEdit.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormImageViewer.resx">
+      <DependentUpon>FormImageViewer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormImportXML.resx">
+      <DependentUpon>FormImportXML.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormInsAdj.resx">
       <DependentUpon>FormInsAdj.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -9508,8 +10287,8 @@
       <DependentUpon>FormInsPlans.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FormInsPlanSelectFam.resx">
-      <DependentUpon>FormInsPlanSelectFam.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FormInsPlanSelect.resx">
+      <DependentUpon>FormInsPlanSelect.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormInsPlansMerge.resx">
@@ -9518,6 +10297,14 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormInsSpanEdit.resx">
       <DependentUpon>FormInsSpanEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormInstructorEdit.resx">
+      <DependentUpon>FormInstructorEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormInstructors.resx">
+      <DependentUpon>FormInstructors.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormJournal.resx">
@@ -9542,6 +10329,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormLetters.resx">
       <DependentUpon>FormLetters.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormLetterViewList.resx">
+      <DependentUpon>FormLetterViewList.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormLogOn.resx">
@@ -9572,6 +10363,10 @@
       <DependentUpon>FormMessagingSetup.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormMisc.resx">
+      <DependentUpon>FormMisc.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormNotePick.resx">
       <DependentUpon>FormNotePick.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -9582,6 +10377,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormOperatoryEdit.resx">
       <DependentUpon>FormOperatoryEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormPasswordReset.resx">
+      <DependentUpon>FormPasswordReset.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormPatFieldDefEdit.resx">
@@ -9700,6 +10499,10 @@
       <DependentUpon>FormProgramProperty.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormProgress.resx">
+      <DependentUpon>FormProgress.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormProvEdit.resx">
       <DependentUpon>FormProvEdit.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -9728,6 +10531,18 @@
       <DependentUpon>FormFormPatEdit.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormQuickPaste.resx">
+      <DependentUpon>FormQuickPaste.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormQuickPasteCat.resx">
+      <DependentUpon>FormQuickPasteCat.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormQuickPasteNoteEdit.resx">
+      <DependentUpon>FormQuickPasteNoteEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormRecallEdit.resx">
       <DependentUpon>FormRecallEdit.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -9746,6 +10561,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormReconciles.resx">
       <DependentUpon>FormReconciles.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormRefAttachEdit.resx">
+      <DependentUpon>FormRefAttachEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormReferralEdit.resx">
+      <DependentUpon>FormReferralEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormReferralSelect.resx">
+      <DependentUpon>FormReferralSelect.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormRepeatChargeEdit.resx">
@@ -9904,6 +10731,10 @@
       <DependentUpon>FormUserPassword.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\InputBox.resx">
+      <DependentUpon>InputBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormTPsign.resx">
       <DependentUpon>FormTPsign.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -9925,7 +10756,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Job Manager\UserControlJobEdit.resx">
       <DependentUpon>UserControlJobEdit.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Job Manager\FormJobReviewEdit.resx">
       <DependentUpon>FormJobReviewEdit.cs</DependentUpon>
@@ -9935,6 +10765,13 @@
     </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\JobManagerUserOverview.resx">
       <DependentUpon>JobManagerUserOverview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InternalTools\Phones\EscalationViewControl.resx">
+      <DependentUpon>EscalationViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InternalTools\Phones\FormMapHQ.resx">
+      <DependentUpon>FormMapHQ.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="InternalTools\Phones\FormPhoneEmpDefaultEscalationEdit.resx">
       <DependentUpon>FormPhoneEmpDefaultEscalationEdit.cs</DependentUpon>
@@ -9968,8 +10805,8 @@
       <DependentUpon>ControlChart.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Main Modules\ControlImagesOld.resx">
-      <DependentUpon>ControlImagesOld.cs</DependentUpon>
+    <EmbeddedResource Include="Main Modules\ControlImages.resx">
+      <DependentUpon>ControlImages.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Main Modules\ControlFamily.resx">
@@ -10056,6 +10893,9 @@
       <DependentUpon>ODDateRangePicker.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\TextBox.resx">
+      <DependentUpon>TextBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Splitters\SplitContainer.resx">
       <DependentUpon>SplitContainer.cs</DependentUpon>
     </EmbeddedResource>
@@ -10091,6 +10931,9 @@
     <EmbeddedResource Include="UI\ODPictureBox.resx">
       <DependentUpon>ODPictureBox.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Progress\FormProgressAuto.resx">
+      <DependentUpon>FormProgressAuto.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\ToolBarOD.resx">
       <DependentUpon>ToolBarOD.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -10111,14 +10954,11 @@
     <EmbeddedResource Include="User Controls\Dashboard\DashIndividualDiscount.resx">
       <DependentUpon>DashIndividualDiscount.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="User Controls\MapCubicle.resx">
+      <DependentUpon>MapCubicle.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="User Controls\Preferences\UserControlAccountAdjustments.resx">
       <DependentUpon>UserControlAccountAdjustments.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="User Controls\Preferences\UserControlMainWindowMisc.resx">
-      <DependentUpon>UserControlMainWindowMisc.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="User Controls\Preferences\UserControlMainWindow.resx">
-      <DependentUpon>UserControlMainWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="User Controls\Preferences\UserControlAccountGeneral.resx">
       <DependentUpon>UserControlAccountGeneral.cs</DependentUpon>
@@ -10411,6 +11251,8 @@
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
     <None Include="Resources\DpsPos.dll.config" />
+    <None Include="Resources\en_US_aff" />
+    <None Include="Resources\en_US_dic" />
     <None Include="Web References\CallFireService\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
@@ -10423,8 +11265,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\payconnect-btn-26.png" />
-    <Resource Include="Resources\Midway_Icon_22x22.png" />
     <None Include="Resources\Icon1.ico" />
     <None Include="Resources\Podium_logo_Black.png" />
     <None Include="Resources\XamlStyle_ToolBarButton.txt" />
@@ -10464,6 +11304,7 @@
     <None Include="Resources\ExternalLink.png" />
     <Resource Include="Resources\webChatIcon.png" />
     <None Include="Resources\opendentallicense.txt" />
+    <None Include="Resources\Midway_Icon_22x22.bmp" />
     <None Include="Resources\downArrowWinForm.png" />
     <None Include="Resources\setupGears.gif" />
     <Resource Include="Resources\PaySimple_Button.png" />
@@ -10595,6 +11436,10 @@
       <DependentUpon>FormPayConnect.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormProcEditExplain.resx">
+      <DependentUpon>FormProcEditExplain.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormPatFieldPickEdit.resx">
       <DependentUpon>FormPatFieldPickEdit.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -10691,6 +11536,10 @@
       <DependentUpon>FormPerioGraphical.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormProviderPick.resx">
+      <DependentUpon>FormProviderPick.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormMountainside.resx">
       <DependentUpon>FormMountainside.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -10743,6 +11592,26 @@
       <DependentUpon>FormClaimPayPreAuth.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormAutoNotePromptPreview.resx">
+      <DependentUpon>FormAutoNotePromptPreview.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormAutoNotePromptMultiResp.resx">
+      <DependentUpon>FormAutoNotePromptMultiResp.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormAutoNotePromptOneResp.resx">
+      <DependentUpon>FormAutoNotePromptOneResp.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormAutoNotePromptText.resx">
+      <DependentUpon>FormAutoNotePromptText.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormAutoNoteCompose.resx">
+      <DependentUpon>FormAutoNoteCompose.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormAutoNoteControls.resx">
       <DependentUpon>FormAutoNoteControls.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -10767,6 +11636,18 @@
       <DependentUpon>FormSecurityLock.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormBackupReminder.resx">
+      <DependentUpon>FormBackupReminder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormMonthView.resx">
+      <DependentUpon>FormMonthView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormFeeSchedEdit.resx">
+      <DependentUpon>FormFeeSchedEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormFeeScheds.resx">
       <DependentUpon>FormFeeScheds.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -10789,6 +11670,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormRecallTypes.resx">
       <DependentUpon>FormRecallTypes.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormRecallListOptions.resx">
+      <DependentUpon>FormRecallListOptions.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormProcEditAll.resx">
@@ -10861,6 +11746,14 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormPharmacies.resx">
       <DependentUpon>FormPharmacies.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormSiteEdit.resx">
+      <DependentUpon>FormSiteEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormSites.resx">
+      <DependentUpon>FormSites.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FormPatientAddAll.resx">

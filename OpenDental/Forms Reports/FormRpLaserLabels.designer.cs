@@ -85,6 +85,7 @@ namespace OpenDental {
 			this.checkBirthdayActive = new OpenDental.UI.CheckBox();
 			this.labLabelStart = new System.Windows.Forms.Label();
 			this.panLabels = new System.Windows.Forms.Panel();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.tabCustomLabels.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericCusCount)).BeginInit();
@@ -418,7 +419,7 @@ namespace OpenDental {
 			// 
 			this.radioButRange.Location = new System.Drawing.Point(170, 10);
 			this.radioButRange.Name = "radioButRange";
-			this.radioButRange.Size = new System.Drawing.Size(167, 17);
+			this.radioButRange.Size = new System.Drawing.Size(130, 17);
 			this.radioButRange.TabIndex = 1;
 			this.radioButRange.Text = "Range of Companies";
 			this.radioButRange.UseVisualStyleBackColor = true;
@@ -602,7 +603,6 @@ namespace OpenDental {
 			this.tabLabelSetup.Controls.Add(this.tabInsCo);
 			this.tabLabelSetup.Controls.Add(this.tabCustomLabels);
 			this.tabLabelSetup.Controls.Add(this.tabBirthday);
-			this.tabLabelSetup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.tabLabelSetup.Location = new System.Drawing.Point(13, 13);
 			this.tabLabelSetup.Name = "tabLabelSetup";
 			this.tabLabelSetup.Size = new System.Drawing.Size(423, 345);
@@ -729,10 +729,21 @@ namespace OpenDental {
 			this.panLabels.Size = new System.Drawing.Size(170, 230);
 			this.panLabels.TabIndex = 8;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(554, 386);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 23);
+			this.butCancel.TabIndex = 1;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(553, 382);
+			this.butOK.Location = new System.Drawing.Point(459, 386);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 23);
 			this.butOK.TabIndex = 0;
@@ -742,10 +753,11 @@ namespace OpenDental {
 			// 
 			// FormRpLaserLabels
 			// 
-			this.ClientSize = new System.Drawing.Size(649, 417);
+			this.ClientSize = new System.Drawing.Size(649, 428);
 			this.Controls.Add(this.panLabels);
 			this.Controls.Add(this.labLabelStart);
 			this.Controls.Add(this.tabLabelSetup);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -799,6 +811,7 @@ namespace OpenDental {
 		private NumericUpDown numericInsCoSingle;
 		private OpenDental.UI.Button butEndName;
 		private OpenDental.UI.Button butStartName;
+		private OpenDental.UI.Button butCancel;
 		private Label labZip;
 		private Label labState;
 		private Label labCity;

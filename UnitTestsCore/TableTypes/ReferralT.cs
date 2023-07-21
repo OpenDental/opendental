@@ -24,21 +24,13 @@ namespace UnitTestsCore {
 			return refNew;
 		}
 		
-		public static Referral CreateReferralWithoutRefAttach(long patNum,bool isDoctor=false,bool isHidden=false,bool notPerson=false,string title="",
-			bool isPreferred=false,string businessName="",string fName="",string lName="",string mName="",long specialty=0)
+		public static Referral CreateReferralWithoutRefAttach(long patNum,bool isDoctor=true,string fName="",string lName="")
 		{
 			Referral refNew=new Referral();
 			refNew.IsDoctor=isDoctor;
 			refNew.FName=fName;
 			refNew.LName=lName;
-			refNew.MName=mName;
-			refNew.Specialty=specialty;
 			refNew.PatNum=patNum;
-			refNew.IsHidden=isHidden;
-			refNew.NotPerson=notPerson;
-			refNew.Title=title;
-			refNew.IsPreferred=isPreferred;
-			refNew.BusinessName=businessName;
 			Referrals.Insert(refNew);
 			Referrals.RefreshCache();
 			return refNew;

@@ -25,7 +25,8 @@
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormReminderRuleEdit));
 			this.butDelete = new System.Windows.Forms.Button();
-			this.butSave = new System.Windows.Forms.Button();
+			this.butOk = new System.Windows.Forms.Button();
+			this.butCancel = new System.Windows.Forms.Button();
 			this.comboReminderCriterion = new OpenDental.UI.ComboBox();
 			this.textCriterionValue = new System.Windows.Forms.TextBox();
 			this.textReminderMessage = new System.Windows.Forms.TextBox();
@@ -51,16 +52,27 @@
 			this.butDelete.UseVisualStyleBackColor = true;
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
-			// butSave
+			// butOk
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(359, 177);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 1;
-			this.butSave.Text = "Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOk.Location = new System.Drawing.Point(278, 178);
+			this.butOk.Name = "butOk";
+			this.butOk.Size = new System.Drawing.Size(75, 24);
+			this.butOk.TabIndex = 1;
+			this.butOk.Text = "Ok";
+			this.butOk.UseVisualStyleBackColor = true;
+			this.butOk.Click += new System.EventHandler(this.butOk_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(359, 178);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// comboReminderCriterion
 			// 
@@ -182,7 +194,8 @@
 			this.Controls.Add(this.textReminderMessage);
 			this.Controls.Add(this.textCriterionValue);
 			this.Controls.Add(this.comboReminderCriterion);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOk);
 			this.Controls.Add(this.butDelete);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormReminderRuleEdit";
@@ -197,7 +210,8 @@
 		#endregion
 
 		private System.Windows.Forms.Button butDelete;
-		private System.Windows.Forms.Button butSave;
+		private System.Windows.Forms.Button butOk;
+		private System.Windows.Forms.Button butCancel;
 		private OpenDental.UI.ComboBox comboReminderCriterion;
 		private System.Windows.Forms.TextBox textCriterionValue;
 		private System.Windows.Forms.TextBox textReminderMessage;

@@ -114,7 +114,7 @@ namespace OpenDental {
 			FillMain();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			//Sync the in memory list with the deep copy that was made from our cache when this window loaded.
 			if(PhoneComps.Sync(_listPhoneComps,_listPhoneCompsOrig)) {
 				//Changes were made when the sync was called.  Let other workstations know about the changes.
@@ -123,5 +123,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

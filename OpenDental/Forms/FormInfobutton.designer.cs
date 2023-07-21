@@ -74,6 +74,7 @@ namespace OpenDental{
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butPreviewRequest = new OpenDental.UI.Button();
 			this.butSend = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butPreview = new OpenDental.UI.Button();
 			this.groupBoxContext.SuspendLayout();
 			this.groupBox7.SuspendLayout();
@@ -103,6 +104,7 @@ namespace OpenDental{
 			this.groupBoxContext.TabIndex = 4;
 			this.groupBoxContext.TabStop = false;
 			this.groupBoxContext.Text = "Context";
+			this.groupBoxContext.Enter += new System.EventHandler(this.groupBoxContext_Enter);
 			// 
 			// groupBox7
 			// 
@@ -603,12 +605,22 @@ namespace OpenDental{
 			// butSend
 			// 
 			this.butSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSend.Location = new System.Drawing.Point(501, 553);
+			this.butSend.Location = new System.Drawing.Point(420, 553);
 			this.butSend.Name = "butSend";
 			this.butSend.Size = new System.Drawing.Size(75, 24);
 			this.butSend.TabIndex = 3;
 			this.butSend.Text = "&Send";
 			this.butSend.Click += new System.EventHandler(this.butSend_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(501, 553);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butPreview
 			// 
@@ -637,6 +649,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butPreview);
 			this.Controls.Add(this.groupBoxContext);
 			this.Controls.Add(this.butSend);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormInfobutton";
 			this.Text = "InfoButton Portal";
@@ -660,6 +673,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butSend;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.GroupBox groupBoxContext;
 		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.RadioButton radioReqPat;

@@ -82,7 +82,7 @@ namespace OpenDental {
 			comboAlignment.SetSelected(0);
 			_horizontalAlignment=comboAlignment.GetSelected<HorizontalAlignment>();
 			textQuery.Text = _query;
-			if(!Security.IsAuthorized(EnumPermType.UserQueryAdmin,true)) {
+			if(!Security.IsAuthorized(Permissions.UserQueryAdmin,true)) {
 				//lock the query textbox, add button, and paste button for users without permissions.
 				textQuery.ReadOnly=true;
 				butAdd.Enabled=false;
@@ -118,17 +118,7 @@ namespace OpenDental {
 			if(_doSubmitOnLoad) {
 				//Coming from FormOpenDental menu item click for query favorites.
 				//Existence in this list is taken to mean sql in these queries is considered safe to run.
-				bool isAllowed=false;
-				try {
-					isAllowed=Db.IsSqlAllowed(textQuery.Text);
-				}
-				catch (Exception ex) {
-					MsgBox.Show(this,ex.Message);
-					return;
-				}
-				if(isAllowed) {
-					SubmitQueryThreaded(true);
-				}
+				SubmitQueryThreaded(true);
 			}
 		}
 
@@ -142,6 +132,11 @@ namespace OpenDental {
 				textQuery.Text=formQueryEdit.UserQueryCur.QueryText;
 				_gridResults.Title=formQueryEdit.UserQueryCur.Description;
 			}
+		}
+
+		private void butClose_Click(object sender,System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+			Close();
 		}
 
 		private void butCopy_Click(object sender,System.EventArgs e) {
@@ -171,7 +166,7 @@ namespace OpenDental {
 		private void butPaste_Click(object sender,System.EventArgs e) {
 			IDataObject iDataObject;
 			try {
-				if(ODEnvironment.IsCloudServer) {
+				if(ODBuild.IsWeb()) {
 					textQuery.Text=ODClipboard.GetText();
 					return;
 				}
@@ -224,10 +219,6 @@ namespace OpenDental {
 		}
 
 		private void butPrint_Click(object sender,EventArgs e) {
-			PrintoutOrientation printoutOrientation=PrintoutOrientation.Portrait;
-			if(radioLandscape.Checked) {
-				printoutOrientation=PrintoutOrientation.Landscape;
-			}
 			if(_gridResults.ListGridRows.Count == 0 && _gridResults.Columns.Count == 0) {
 				MsgBox.Show(MessageBoxButtons.OK,Lan.g(this,"No report to print. Please run a query."));
 				return;
@@ -236,16 +227,11 @@ namespace OpenDental {
 			_isHeadingPrinted=false;
 			PrinterL.TryPrintOrDebugRpPreview(
 				pd_PrintPage,
-				Lan.g(this,$"{(String.IsNullOrEmpty(textTitle.Text) ? "User Query" : textTitle.Text)} printed"),
-				printoutOrientation
+				Lan.g(this,$"{(String.IsNullOrEmpty(textTitle.Text) ? "User Query" : textTitle.Text)} printed")
 			);
 		}
 
 		private void butPrintPreview_Click(object sender,EventArgs e) {
-			PrintoutOrientation printoutOrientation=PrintoutOrientation.Portrait;
-			if(radioLandscape.Checked) {
-				printoutOrientation=PrintoutOrientation.Landscape;
-			}
 			if(_gridResults.ListGridRows.Count == 0 && _gridResults.Columns.Count == 0) {
 				MsgBox.Show(MessageBoxButtons.OK,Lan.g(this,"No report to preview. Please run a query."));
 				return;
@@ -255,7 +241,6 @@ namespace OpenDental {
 			PrinterL.TryPrintOrDebugRpPreview(
 				pd_PrintPage,
 				Lan.g(this,$"{(String.IsNullOrEmpty(textTitle.Text) ? "User Query" : textTitle.Text)} previewed"),
-				printoutOrientation,
 				isForcedPreview:true
 			);
 		}
@@ -298,50 +283,43 @@ namespace OpenDental {
 				MessageBox.Show(Lan.g(this,"Please run query first"));
 				return;
 			}
-			string filePath;
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),"ODUserQueryExport.xls");
+			string fileName=textTitle.Text;
+			if(string.IsNullOrEmpty(fileName)) {
+				fileName="queryexport.txt";
+			}
+			string filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
+			if(ODBuild.IsWeb()) {
+				//file download dialog will come up later, after file is created.
 			}
 			else {
-				saveFileDialog2=new SaveFileDialog {
-					AddExtension=true,
-					Filter="Text files(*.txt)|*.txt|Excel Files(*.xls)|*.xls|All files(*.*)|*.*",
-					FilterIndex=0
-				};
+				saveFileDialog2=new SaveFileDialog();
+				saveFileDialog2.AddExtension=true;
+				//saveFileDialog2.Title=Lan.g(this,"Select Folder to Save File To");
 				if(_userQuery==null || _userQuery.FileName==null || _userQuery.FileName==""){//.FileName==null)
 					saveFileDialog2.FileName=textTitle.Text;
 				}
 				else{
 					saveFileDialog2.FileName=_userQuery.FileName;
 				}
-				if(ODEnvironment.IsCloudServer) {
-					if(saveFileDialog2.ShowDialog()!=DialogResult.OK) { 
-						return;
+				if(!Directory.Exists(PrefC.GetString(PrefName.ExportPath))) {
+					try {
+						Directory.CreateDirectory(PrefC.GetString(PrefName.ExportPath));
+						saveFileDialog2.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
 					}
-					if(saveFileDialog2.FileName.IsNullOrEmpty()) {
-						MsgBox.Show("Failed to save the file.");
-						return;
+					catch {
+						//initialDirectory will be blank
 					}
-					filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),saveFileDialog2.FileName.Split('\\').Last());
 				}
-				else {
-					if(!Directory.Exists(PrefC.GetString(PrefName.ExportPath))) {
-						try {
-							Directory.CreateDirectory(PrefC.GetString(PrefName.ExportPath));
-							saveFileDialog2.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
-						}
-						catch {
-							//initialDirectory will be blank
-						}
-					}
-					else saveFileDialog2.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
-					if(saveFileDialog2.ShowDialog()!=DialogResult.OK) {
-						saveFileDialog2.Dispose();
-						return;
-					}
-					filePath=saveFileDialog2.FileName;
+				else saveFileDialog2.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
+				//saveFileDialog2.DefaultExt="txt";
+				saveFileDialog2.Filter="Text files(*.txt)|*.txt|Excel Files(*.xls)|*.xls|All files(*.*)|*.*";
+				saveFileDialog2.FilterIndex=0;
+				if(saveFileDialog2.ShowDialog()!=DialogResult.OK) {
 					saveFileDialog2.Dispose();
+					return;
 				}
+				filePath=saveFileDialog2.FileName;
+				saveFileDialog2.Dispose();
 			}
 			using StreamWriter streamWriter = new StreamWriter(filePath,false);
 			//new FileStream(,FileMode.Create,FileAccess.Write,FileShare.Read)))
@@ -388,11 +366,8 @@ namespace OpenDental {
 				}
 			}
 			streamWriter.Close();
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.ExportForDownload(filePath);
-			}
-			else if(ODCloudClient.IsAppStream) {
-				CloudClientL.ExportForCloud(filePath);
 			}
 			else {
 				MessageBox.Show(Lan.g(this,"File created successfully"));
@@ -926,7 +901,7 @@ namespace OpenDental {
 				patient = Patients.GetPat(patNum);
 			}
 			if(patient.PatNum != 0) {
-				GlobalFormOpenDental.PatientSelected(patient,true);
+				FormOpenDental.S_Contr_PatientSelected(patient,true);
 			}
 		}
 
@@ -974,7 +949,7 @@ namespace OpenDental {
 			LayoutHelperForState(QueryExecuteState.Formatting);
 			ClearGrid();
 			FillGrid(radioRaw.Checked);
-			SecurityLogs.MakeLogEntry(EnumPermType.UserQuery,0,textQuery.Text);
+			SecurityLogs.MakeLogEntry(Permissions.UserQuery,0,textQuery.Text);
 			LayoutHelperForState(QueryExecuteState.Idle);
 			Cursor=Cursors.Default;
 		}
@@ -996,9 +971,11 @@ namespace OpenDental {
 					butPrintPreview.Enabled=true;
 					butPrint.Enabled=true;
 					textTitle.Enabled=true;
+					butClose.Enabled=true;
 					break;
 				case QueryExecuteState.Executing:
 					butSubmit.Text=Lan.g(this,"Stop Execution"); //the submit button and the close button should be enabled.
+					butClose.Enabled=true;
 					this.Text=Lans.g(this,"User Query - Executing Query...");
 					textQuery.Enabled=false;
 					butFavorite.Enabled=false;
@@ -1025,9 +1002,10 @@ namespace OpenDental {
 					butPrintPreview.Enabled=false;
 					butPrint.Enabled=false;
 					textTitle.Enabled=false;
+					butClose.Enabled=false;
 					break;
 			}
-			if(!Security.IsAuthorized(EnumPermType.UserQueryAdmin,true)) {
+			if(!Security.IsAuthorized(Permissions.UserQueryAdmin,true)) {
 				//lock the query textbox, add button, and paste button for users without permissions.
 				textQuery.ReadOnly=true;
 				butAdd.Enabled=false;

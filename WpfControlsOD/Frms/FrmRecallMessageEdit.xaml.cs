@@ -17,21 +17,12 @@ namespace OpenDental {
 
 		public FrmRecallMessageEdit(PrefName prefName) {
 			InitializeComponent();
+			//Lan.F(this);
 			_prefName=prefName;
-			Load+=FrmRecallMessageEdit_Load;
-			PreviewKeyDown+=FrmRecallMessageEdit_PreviewKeyDown;
 		}
 
-		private void FrmRecallMessageEdit_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmRecallMessageEdit_Loaded(object sender,RoutedEventArgs e) {
 			textMain.Text=MessageVal;
-			textMain.SelectAll();
-		}
-
-		private void FrmRecallMessageEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {
@@ -76,14 +67,9 @@ namespace OpenDental {
 					return;
 				}
 			}
-			string errorText=PrefC.GetFirstShortURL(textMain.Text);
-			if(!string.IsNullOrWhiteSpace(errorText)) {
-				MsgBox.Show(this,"Message cannot contain the URL "+errorText+" as this is only allowed for eServices.");
-				return;
-			}
 			MessageVal=textMain.Text;
 			IsDialogOK=true;
 		}
-
+		
 	}
 }

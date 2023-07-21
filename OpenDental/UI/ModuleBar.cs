@@ -516,6 +516,21 @@ namespace OpenDental {
 
 	}
 
+	#region Enum
+	/// <summary>There is no relationship between the underlying enum values and the idx of each module.  These numbers are not stored in the database and may be freely changed with new versions.  Idx numbers, by contrast, might be stored in db sometimes, although I have not yet found an instance.</summary>
+	public enum EnumModuleType{
+		None,
+		Appointments,
+		Family,
+		Account,
+		TreatPlan,
+		Chart,
+		Imaging,
+		//EcwChart and/or TP?,
+		Manage
+	}
+	#endregion Enum
+
 	#region Class ModuleButton
 	///<summary>Lightweight, just to keep track of a few fields.</summary>
 	public class ModuleBarButton{

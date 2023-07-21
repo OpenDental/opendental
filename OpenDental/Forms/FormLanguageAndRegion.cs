@@ -31,20 +31,21 @@ namespace OpenDental {
 			}
 			comboLanguageAndRegion.SelectedIndex=_listCultureInfos.FindIndex(x => x.DisplayName==cultureInfo.DisplayName);
 			checkNoShow.Checked=ComputerPrefs.LocalComputer.NoShowLanguage;
-			if(!Security.IsAuthorized(EnumPermType.Setup,true)) {
+			if(!Security.IsAuthorized(Permissions.Setup,true)) {
 				comboLanguageAndRegion.Visible=false;
 				labelNewLAR.Visible=false;
-				butSave.Enabled=false;
+				butOK.Enabled=false;
+				butCancel.Text=Lan.g(this,"&Close");
 				checkNoShow.Enabled=false;
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(comboLanguageAndRegion.SelectedIndex==-1) {
 				MsgBox.Show(this,"Select a language and region.");
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.Setup, true)){
+			if(!Security.IsAuthorized(Permissions.Setup, true)){
 				DialogResult=DialogResult.OK;
 				return;
 			}
@@ -55,6 +56,10 @@ namespace OpenDental {
 			ComputerPrefs.LocalComputer.NoShowLanguage=checkNoShow.Checked;
 			ComputerPrefs.Update(ComputerPrefs.LocalComputer);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

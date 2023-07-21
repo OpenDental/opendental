@@ -279,7 +279,7 @@ namespace CentralManager {
 				else {
 					if(tableDailyProdForConn.Rows.Count>0) {
 						//Need to order the table by date.
-						tableDailyProdForConn=tableDailyProdForConn.Select().OrderBy(r => PIn.Date(r["Date"].ToString())).CopyToDataTable();
+						tableDailyProdForConn=tableDailyProdForConn.Select().OrderBy(r => r.GetDate("Date")).CopyToDataTable();
 					}
 					query=report.AddQuery(tableDailyProdForConn,reportDataCur.ConnectionString,"",SplitByKind.Value,1,true);
 				}

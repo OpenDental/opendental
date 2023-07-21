@@ -12,7 +12,9 @@ using OpenDentBusiness;
 using WpfControls.UI;
 
 namespace OpenDental {
-	/// <summary></summary>
+	/// <summary>
+	/// Summary description for FormBasicTemplate.
+	/// </summary>
 	public partial class FrmAutoCodeLessIntrusive:FrmODBase {
 		///<summary>The text to display in this dialog</summary>
 		public string StrMain;
@@ -42,28 +44,17 @@ namespace OpenDental {
 			_listClaimProcs=listClaimProcs;
 			_strTeeth=strTeeth;
 			InitializeComponent();
+			//Lan.F(this,new Control[] {labelMain});
 			//labelMain is translated from calling Form (FormProcEdit)
-			Load+=FrmAutoCodeLessIntrusive_Load;
-			PreviewKeyDown+=FrmAutoCodeLessIntrusive_PreviewKeyDown;
 		}
 
-		private void FrmAutoCodeLessIntrusive_Load(object sender, EventArgs e) {
-			Lang.F(this, labelMain);
+		private void FrmAutoCodeLessIntrusive_Loaded(object sender, RoutedEventArgs e) {
 			//Moved from FormProcEdit.SaveAndClose() in version 16.3+
 			labelMain.Text=ProcedureCodes.GetProcCode(_verifyCodeNum).ProcCode
 				+" ("+ProcedureCodes.GetProcCode(_verifyCodeNum).Descript+") "
 				+Lans.g("FormProcEdit","is the recommended procedure code for this procedure.  Change procedure code and fee?");
 			if(PrefC.GetBool(PrefName.ProcEditRequireAutoCodes)) {
 				butNo.Text=Lans.g(this,"Edit Proc");//Button will otherwise say 'No'.
-			}
-		}
-
-		private void FrmAutoCodeLessIntrusive_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butYes.IsAltKey(Key.Y,e)) {
-				butYes_Click(this,new EventArgs());
-			}
-			if(butNo.IsAltKey(Key.N,e)) {
-				butNo_Click(this,new EventArgs());
 			}
 		}
 
@@ -84,9 +75,9 @@ namespace OpenDental {
 					+"_procCodeCur.CodeNum: "+(_procedureCode==null ? "NULL" : _procedureCode.CodeNum.ToString())+"\r\n"
 					+"\r\n"
 					+"StackTrace:\r\n"+ae.StackTrace;
-				FrmMsgBoxCopyPaste frmMsgBoxCopyPaste=new FrmMsgBoxCopyPaste(error);
-				frmMsgBoxCopyPaste.Text="Fatal Error!!!";
-				frmMsgBoxCopyPaste.Show();//Use .Show() to make it easy for the user to keep this window open while they call in.
+				MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(error);
+				msgBoxCopyPaste.Text="Fatal Error!!!";
+				msgBoxCopyPaste.Show();//Use .Show() to make it easy for the user to keep this window open while they call in.
 				return;
 			}
 			//Don't change code if proc is linked to OrthoCase
@@ -95,7 +86,44 @@ namespace OpenDental {
 				return;
 			}
 			//Moved from FormProcEdit.SaveAndClose() in version 16.3+
-			AutoCodes.ApplyAutoCodeToProcedure(ProcedureCur,_verifyCodeNum,_listPatPlans,_listInsSubs,_listInsPlans,_patient,_listClaimProcs,_listBenefits,_procedureCode,_strTeeth);
+			Procedure procedureOld=ProcedureCur.Copy();
+			ProcedureCur.CodeNum=_verifyCodeNum;
+			List<ProcStat> listProcStats=new List<ProcStat>();
+			listProcStats.Add(ProcStat.TP);
+			listProcStats.Add(ProcStat.C);
+			listProcStats.Add(ProcStat.TPi);
+			listProcStats.Add(ProcStat.Cn);
+			if(listProcStats.Contains(ProcedureCur.ProcStatus)) {//Only change the fee if Complete, TP, TPi, or Cn.
+				InsSub insSub=null;
+				InsPlan insPlan=null;
+				if(_listPatPlans.Count>0) {
+					insSub=InsSubs.GetSub(_listPatPlans[0].InsSubNum,_listInsSubs);
+					insPlan=InsPlans.GetPlan(insSub.PlanNum,_listInsPlans);
+				}
+				ProcedureCur.ProcFee=Fees.GetAmount0(ProcedureCur.CodeNum,FeeScheds.GetFeeSched(_patient,_listInsPlans,_listPatPlans,_listInsSubs,ProcedureCur.ProvNum),
+					ProcedureCur.ClinicNum,ProcedureCur.ProvNum);
+				if(insPlan!=null && insPlan.PlanType=="p") {//PPO
+					double standardFee=Fees.GetAmount0(ProcedureCur.CodeNum,Providers.GetProv(Patients.GetProvNum(_patient)).FeeSched,ProcedureCur.ClinicNum,
+						ProcedureCur.ProvNum);
+					ProcedureCur.ProcFee=Math.Max(ProcedureCur.ProcFee,standardFee);
+				}
+			}
+			Procedures.Update(ProcedureCur,procedureOld);
+			//Compute estimates required, otherwise if adding through quick add, it could have incorrect WO or InsEst if code changed.
+			Procedures.ComputeEstimates(ProcedureCur,_patient.PatNum,_listClaimProcs,true,_listInsPlans,_listPatPlans,_listBenefits,_patient.Age,_listInsSubs);
+			Recalls.Synch(ProcedureCur.PatNum);
+			if(!ProcedureCur.ProcStatus.In(ProcStat.C,ProcStat.EO,ProcStat.EC)) {
+				IsDialogOK=true;
+				return;
+			}
+			string strLogText=_procedureCode.ProcCode+" ("+ProcedureCur.ProcStatus+"), ";
+			if(_strTeeth!=null && _strTeeth.Trim()!="") {
+				strLogText+=Lans.g(this,"Teeth")+": "+_strTeeth+", ";
+			}
+			strLogText+=Lans.g(this,"Fee")+": "+ProcedureCur.ProcFee.ToString("F")+", "+_procedureCode.Descript;
+			if(ProcedureCur.ProcStatus.In(ProcStat.EO,ProcStat.EC)) {
+				SecurityLogs.MakeLogEntry(Permissions.ProcExistingEdit,_patient.PatNum,strLogText);
+			}
 			IsDialogOK=true;
 		}
 
@@ -105,3 +133,24 @@ namespace OpenDental {
 
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

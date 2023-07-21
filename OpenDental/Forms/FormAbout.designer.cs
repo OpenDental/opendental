@@ -30,6 +30,7 @@ namespace OpenDental{
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAbout));
 			this.labelVersion = new System.Windows.Forms.Label();
+			this.butClose = new OpenDental.UI.Button();
 			this.labelCopyright = new System.Windows.Forms.Label();
 			this.labelMySQLCopyright = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
@@ -57,6 +58,17 @@ namespace OpenDental{
 			this.labelVersion.TabIndex = 1;
 			this.labelVersion.Text = "Version:";
 			this.labelVersion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.butClose.Location = new System.Drawing.Point(541, 322);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 25);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// labelCopyright
 			// 
@@ -91,7 +103,7 @@ namespace OpenDental{
 			// butLicense
 			// 
 			this.butLicense.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butLicense.Location = new System.Drawing.Point(521, 324);
+			this.butLicense.Location = new System.Drawing.Point(449, 322);
 			this.butLicense.Name = "butLicense";
 			this.butLicense.Size = new System.Drawing.Size(88, 25);
 			this.butLicense.TabIndex = 50;
@@ -198,7 +210,7 @@ namespace OpenDental{
 			// butDiagnostics
 			// 
 			this.butDiagnostics.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butDiagnostics.Location = new System.Drawing.Point(429, 324);
+			this.butDiagnostics.Location = new System.Drawing.Point(357, 322);
 			this.butDiagnostics.Name = "butDiagnostics";
 			this.butDiagnostics.Size = new System.Drawing.Size(88, 25);
 			this.butDiagnostics.TabIndex = 59;
@@ -217,6 +229,7 @@ namespace OpenDental{
 			// 
 			// FormAbout
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(628, 370);
 			this.Controls.Add(this.butDiagnostics);
 			this.Controls.Add(this.labelMariaDBCopyright);
@@ -225,6 +238,7 @@ namespace OpenDental{
 			this.Controls.Add(this.panelHL);
 			this.Controls.Add(this.label9);
 			this.Controls.Add(this.butLicense);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.labelMySQLCopyright);
 			this.Controls.Add(this.labelCopyright);
@@ -244,6 +258,7 @@ namespace OpenDental{
 		#endregion
 
 		private System.Windows.Forms.Label labelVersion;
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label labelCopyright;
 		private System.Windows.Forms.Label labelMySQLCopyright;
 		private System.Windows.Forms.Label label4;

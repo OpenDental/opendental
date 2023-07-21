@@ -46,6 +46,7 @@ namespace OpenDental{
 			this.label11 = new System.Windows.Forms.Label();
 			this.textProvNumFrom = new System.Windows.Forms.TextBox();
 			this.butMerge = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupBoxInto.SuspendLayout();
 			this.groupBoxFrom.SuspendLayout();
 			this.SuspendLayout();
@@ -250,12 +251,22 @@ namespace OpenDental{
 			// 
 			this.butMerge.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butMerge.Enabled = false;
-			this.butMerge.Location = new System.Drawing.Point(602, 209);
+			this.butMerge.Location = new System.Drawing.Point(505, 209);
 			this.butMerge.Name = "butMerge";
 			this.butMerge.Size = new System.Drawing.Size(75, 24);
 			this.butMerge.TabIndex = 3;
 			this.butMerge.Text = "Merge";
 			this.butMerge.Click += new System.EventHandler(this.butMerge_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(589, 209);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// FormProviderMerge
 			// 
@@ -264,6 +275,7 @@ namespace OpenDental{
 			this.Controls.Add(this.groupBoxFrom);
 			this.Controls.Add(this.groupBoxInto);
 			this.Controls.Add(this.butMerge);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormProviderMerge";
 			this.Text = "Merge Providers";
@@ -278,6 +290,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butMerge;
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GroupBox groupBoxInto;
 		private System.Windows.Forms.TextBox textNpiInto;
 		private System.Windows.Forms.Label label5;

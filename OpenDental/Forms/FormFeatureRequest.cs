@@ -37,10 +37,12 @@ namespace OpenDental {
 		private void FormFeatureRequest_Load(object sender, System.EventArgs e) {
 			if(IsSelectionMode) {
 				this.Text="Select a Feature Request";
+				butClose.Text="Cancel";
 				labelVote.Visible=false;
 			}
 			else {//normal for customer
 				butOK.Visible=false;
+				butClose.Text="Close";
 				butEdit.Visible=false;
 			}
 			_tableRequests=new ODDataTable();
@@ -276,6 +278,17 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			if(IsSelectionMode) {
+				DialogResult=DialogResult.Cancel;
+			}
+			Close();
+		}
+
+		private void FormUpdate_FormClosing(object sender,FormClosingEventArgs e) {
+			
+		}
+
 		///<summary>For sorting FRs because we do not have access to the ApprovalEnum in Resuests.cs in the WebServiceCustomerUpdates solution.</summary>
 		private static List<string> _arrayApprovalEnumStrings=new List<string> {
 			"New",//0, although this comes back as -1 now.
@@ -365,6 +378,32 @@ namespace OpenDental {
 				return PIn.Long(gridRowX["RequestId"].ToString()).CompareTo(PIn.Long(gridRowY["RequestId"].ToString()));
 			}
 		}
-
 	}
+
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

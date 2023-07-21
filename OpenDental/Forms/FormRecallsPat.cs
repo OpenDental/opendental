@@ -154,7 +154,7 @@ namespace OpenDental {
 						_listRecalls[i].RecallInterval=RecallTypes.GetInterval(PrefC.GetLong(PrefName.RecallTypeSpecialProphy));
 						//previous date will be reset below in synch, but probably won't change since similar triggers.
 						Recalls.Update(_listRecalls[i]);
-						SecurityLogs.MakeLogEntry(EnumPermType.RecallEdit,_listRecalls[i].PatNum,"Recall changed to Prophy from the Recalls for Patient window.");
+						SecurityLogs.MakeLogEntry(Permissions.RecallEdit,_listRecalls[i].PatNum,"Recall changed to Prophy from the Recalls for Patient window.");
 						break;
 					}
 				}
@@ -169,7 +169,7 @@ namespace OpenDental {
 					_listRecalls[i].RecallInterval=RecallTypes.GetInterval(PrefC.GetLong(PrefName.RecallTypeSpecialPerio));
 					//previous date will be reset below in synch, but probably won't change since similar triggers.
 					Recalls.Update(_listRecalls[i]);
-					SecurityLogs.MakeLogEntry(EnumPermType.RecallEdit,_listRecalls[i].PatNum,"Recall changed to Perio from the Recalls for Patient window.");
+					SecurityLogs.MakeLogEntry(Permissions.RecallEdit,_listRecalls[i].PatNum,"Recall changed to Perio from the Recalls for Patient window.");
 					isFound=true;
 					break;
 				}
@@ -181,7 +181,7 @@ namespace OpenDental {
 				recall.RecallInterval=RecallTypes.GetInterval(PrefC.GetLong(PrefName.RecallTypeSpecialPerio));
 				recall.RecallTypeNum=PrefC.GetLong(PrefName.RecallTypeSpecialPerio);
 				Recalls.Insert(recall);
-				SecurityLogs.MakeLogEntry(EnumPermType.RecallEdit,recall.PatNum,"Perio recall added from the Recalls for Patient window.");
+				SecurityLogs.MakeLogEntry(Permissions.RecallEdit,recall.PatNum,"Perio recall added from the Recalls for Patient window.");
 			}
 			FillGrid();
 		}
@@ -196,6 +196,10 @@ namespace OpenDental {
 			formRecallEdit.RecallCur=recall;
 			formRecallEdit.ShowDialog();
 			FillGrid();
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {	
+			Close();
 		}
 
 		private void FormRecallsPat_FormClosing(object sender,FormClosingEventArgs e) {
@@ -217,5 +221,15 @@ namespace OpenDental {
 			Plugins.HookAddCode(this,"FormRecallsPat.FormClosing_end",PatNum);
 		}
 
+		
+
+		
+
+		
+
+		
+		
+
+		
 	}
 }

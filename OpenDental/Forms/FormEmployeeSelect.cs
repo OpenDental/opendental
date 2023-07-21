@@ -25,8 +25,8 @@ namespace OpenDental{
 		}
 
 		private void FormEmployeeSelect_Load(object sender, System.EventArgs e) {
+			RefreshList();
 			FillGrid();
-			SetFilterControlsAndAction(() => FillGrid(),500,textSearch);
 			Height=System.Windows.Forms.Screen.FromControl(this).WorkingArea.Height-2;
 			Top=2;
 			if(PrefC.IsODHQ) {
@@ -35,8 +35,12 @@ namespace OpenDental{
 			}
 		}
 
-		private void FillGrid(){
+		private void RefreshList(){
+			Employees.RefreshCache();
 			_listEmployeesFull=Employees.GetDeepCopy();
+		}
+
+		private void FillGrid(){
 			_listEmployeesShowing=new List<Employee>();
 			for(int i=0;i<_listEmployeesFull.Count;i++){
 				if(textSearch.Text!=""){
@@ -118,6 +122,10 @@ namespace OpenDental{
 			gridMain.EndUpdate();
 		}
 
+		private void textSearch_KeyUp(object sender, KeyEventArgs e){
+			FillGrid();
+		}
+
 		private void checkHidden_CheckedChanged(object sender, EventArgs e){
 			FillGrid();
 		}
@@ -146,7 +154,7 @@ namespace OpenDental{
 			if(formEmployeeEdit.DialogResult!=DialogResult.OK){
 				return;
 			}
-			Employees.RefreshCache();
+			RefreshList();
 			FillGrid();
 			_isChanged=true;
 		}
@@ -159,7 +167,7 @@ namespace OpenDental{
 			if(formEmployeeEdit.DialogResult!=DialogResult.OK){
 				return;
 			}
-			Employees.RefreshCache();
+			RefreshList();
 			FillGrid();
 			_isChanged=true;
 			for(int i=0;i<_listEmployeesShowing.Count;i++){
@@ -179,12 +187,16 @@ namespace OpenDental{
 				}
 				catch{}
 			}
-			Employees.RefreshCache();
+			RefreshList();
 			FillGrid();
 		}
 
 		private void butExport_Click(object sender, EventArgs e){
 			gridMain.Export("Employees");
+		}
+
+		private void butClose_Click(object sender, System.EventArgs e) {
+			this.Close();
 		}
 
 		private void FormEmployee_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -193,5 +205,6 @@ namespace OpenDental{
 			}
 		}
 
+	
 	}
 }

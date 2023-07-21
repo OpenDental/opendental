@@ -198,7 +198,7 @@ namespace OpenDentalGraph {
 				FilterIndex=1,
 				RestoreDirectory=true,
 			};
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				sd.FileName=ODFileUtils.CombinePaths(Path.GetTempPath(),"chart_export.pdf");
 			}
 			else {
@@ -216,7 +216,7 @@ namespace OpenDentalGraph {
 						xGraphics.DrawImage(_bmpSheet,0,0,page.Width,page.Height);
 					}
 					pdfDoc.Save(sd.FileName);
-					if(ODBuild.IsThinfinity()) {
+					if(ODBuild.IsWeb()) {
 						ThinfinityUtils.ExportForDownload(sd.FileName);
 					}
 					MessageBox.Show(Lans.g(this,"Chart saved."));

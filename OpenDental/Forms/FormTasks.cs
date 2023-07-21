@@ -48,17 +48,17 @@ namespace OpenDental{
 		}
 
 		private void userControlTasks1_GoToChanged(object sender,EventArgs e) {
-			TaskObjectType taskObjectTypeGoto=userControlTasks1.TaskObjectTypeGoTo;
-			long gotoKeyNum=userControlTasks1.KeyNumGoTo;
+			TaskObjectType taskObjectTypeGoto=userControlTasks1.GotoType;
+			long gotoKeyNum=userControlTasks1.GotoKeyNum;
 			if(taskObjectTypeGoto==TaskObjectType.Patient){
 				if(gotoKeyNum!=0){
 					Patient patient=Patients.GetPat(gotoKeyNum);
 					//OnPatientSelected(pat);
 					if(_isTriage) {
-						GlobalFormOpenDental.GotoChart(patient.PatNum);
+						GotoModule.GotoChart(patient.PatNum);
 					}
 					else {
-						GlobalFormOpenDental.GotoAccount(patient.PatNum);
+						GotoModule.GotoAccount(patient.PatNum);
 					}
 				}
 			}
@@ -85,7 +85,7 @@ namespace OpenDental{
 			}
 			//Patient patient=Patients.GetPat(appointment.PatNum);
 			//OnPatientSelected(pat);
-			GlobalFormOpenDental.GotoAppointment(dateTimeSelected,appointment.AptNum);
+			GotoModule.GotoAppointment(dateTimeSelected,appointment.AptNum);
 			//DialogResult=DialogResult.OK;
 		}
 
@@ -189,7 +189,7 @@ namespace OpenDental{
 		}
 
 		private void UserControlTasks1_FillGridEvent(object sender,EventArgs e) {
-			this.Text=userControlTasks1.TitleControlParent;
+			this.Text=userControlTasks1.ControlParentTitle;
 		}
 
 		/* private void timer1_Tick(object sender,EventArgs e) {

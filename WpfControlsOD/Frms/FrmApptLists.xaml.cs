@@ -19,12 +19,14 @@ namespace OpenDental {
 		///<summary></summary>
 		public FrmApptLists()
 		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
-			Load+=FrmApptLists_Load;
+			//Lan.F(this);
 		}
 
-		private void FrmApptLists_Load(object sender, EventArgs e) {
-			Lang.F(this);
+		private void FrmApptLists_Loaded(object sender, RoutedEventArgs e) {
 			Plugins.HookAddCode(this,"FormApptLists.Load_start");
 		}
 
@@ -62,7 +64,6 @@ namespace OpenDental {
 			ApptListSelectionResult=ApptListSelection.InsVerify;
 			IsDialogOK=true;
 		}
-
 	}
 
 	///<summary>Used in FormApptLists as the selection result.</summary>
@@ -84,3 +85,24 @@ namespace OpenDental {
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

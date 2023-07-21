@@ -27,7 +27,8 @@ namespace OpenDental{
 			this.label2 = new System.Windows.Forms.Label();
 			this.textDescription = new System.Windows.Forms.TextBox();
 			this.labelPercent = new System.Windows.Forms.Label();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.comboScaleType = new OpenDental.UI.ComboBox();
 			this.labelScaleType = new System.Windows.Forms.Label();
@@ -62,15 +63,25 @@ namespace OpenDental{
 			this.labelPercent.Text = "Assumes 0-100% scale.";
 			this.labelPercent.Visible = false;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(336, 342);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 6;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(336, 312);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 6;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(336, 342);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 7;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butAdd
 			// 
@@ -145,7 +156,8 @@ namespace OpenDental{
 			this.Controls.Add(this.comboScaleType);
 			this.Controls.Add(this.labelScaleType);
 			this.Controls.Add(this.labelWarning);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.labelPercent);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.textDescription);
@@ -154,7 +166,6 @@ namespace OpenDental{
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormGradingScaleEdit";
 			this.Text = "Grading Scale Edit";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormGradingScaleEdit_FormClosing);
 			this.Load += new System.EventHandler(this.FormGradingScaleEdit_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -168,7 +179,8 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox textDescription;
 		private System.Windows.Forms.Label labelPercent;
-		private UI.Button butSave;
+		private UI.Button butOK;
+		private UI.Button butCancel;
 		private OpenDental.UI.ComboBox comboScaleType;
 		private System.Windows.Forms.Label labelScaleType;
 		private UI.Button butDelete;

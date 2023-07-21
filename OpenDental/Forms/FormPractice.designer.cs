@@ -52,8 +52,6 @@ namespace OpenDental {
 			this.textBankRouting = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
-			this.textBillingPhone = new OpenDental.ValidPhone();
-			this.labelBillingPhone = new System.Windows.Forms.Label();
 			this.label18 = new System.Windows.Forms.Label();
 			this.checkUseBillingAddressOnClaims = new OpenDental.UI.CheckBox();
 			this.label7 = new System.Windows.Forms.Label();
@@ -65,8 +63,6 @@ namespace OpenDental {
 			this.label8 = new System.Windows.Forms.Label();
 			this.label11 = new System.Windows.Forms.Label();
 			this.groupBox3 = new OpenDental.UI.GroupBox();
-			this.textPayToPhone = new OpenDental.ValidPhone();
-			this.labelPayToPhone = new System.Windows.Forms.Label();
 			this.label17 = new System.Windows.Forms.Label();
 			this.label13 = new System.Windows.Forms.Label();
 			this.textPayToZip = new System.Windows.Forms.TextBox();
@@ -81,8 +77,13 @@ namespace OpenDental {
 			this.textPhone = new OpenDental.ValidPhone();
 			this.label19 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.comboProv = new OpenDental.UI.ComboBox();
+			this.labelBillingPhone = new System.Windows.Forms.Label();
+			this.textBillingPhone = new OpenDental.ValidPhone();
+			this.labelPayToPhone = new System.Windows.Forms.Label();
+			this.textPayToPhone = new OpenDental.ValidPhone();
 			this.groupBox2.SuspendLayout();
 			this.groupBox4.SuspendLayout();
 			this.groupSwiss.SuspendLayout();
@@ -148,11 +149,12 @@ namespace OpenDental {
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(429, 87);
 			this.groupBox2.TabIndex = 4;
+			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Physical Treating Address";
 			// 
 			// label16
 			// 
-			this.label16.Location = new System.Drawing.Point(5, 42);
+			this.label16.Location = new System.Drawing.Point(5, 36);
 			this.label16.Name = "label16";
 			this.label16.Size = new System.Drawing.Size(97, 16);
 			this.label16.TabIndex = 0;
@@ -161,42 +163,42 @@ namespace OpenDental {
 			// 
 			// textZip
 			// 
-			this.textZip.Location = new System.Drawing.Point(318, 62);
+			this.textZip.Location = new System.Drawing.Point(318, 57);
 			this.textZip.Name = "textZip";
 			this.textZip.Size = new System.Drawing.Size(102, 20);
 			this.textZip.TabIndex = 5;
 			// 
 			// textST
 			// 
-			this.textST.Location = new System.Drawing.Point(264, 62);
+			this.textST.Location = new System.Drawing.Point(264, 57);
 			this.textST.Name = "textST";
 			this.textST.Size = new System.Drawing.Size(52, 20);
 			this.textST.TabIndex = 4;
 			// 
 			// textCity
 			// 
-			this.textCity.Location = new System.Drawing.Point(103, 62);
+			this.textCity.Location = new System.Drawing.Point(103, 57);
 			this.textCity.Name = "textCity";
 			this.textCity.Size = new System.Drawing.Size(159, 20);
 			this.textCity.TabIndex = 3;
 			// 
 			// textAddress2
 			// 
-			this.textAddress2.Location = new System.Drawing.Point(103, 40);
+			this.textAddress2.Location = new System.Drawing.Point(103, 35);
 			this.textAddress2.Name = "textAddress2";
 			this.textAddress2.Size = new System.Drawing.Size(317, 20);
 			this.textAddress2.TabIndex = 2;
 			// 
 			// textAddress
 			// 
-			this.textAddress.Location = new System.Drawing.Point(103, 18);
+			this.textAddress.Location = new System.Drawing.Point(103, 13);
 			this.textAddress.Name = "textAddress";
 			this.textAddress.Size = new System.Drawing.Size(317, 20);
 			this.textAddress.TabIndex = 1;
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(4, 20);
+			this.label5.Location = new System.Drawing.Point(4, 15);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(98, 14);
 			this.label5.TabIndex = 0;
@@ -205,7 +207,7 @@ namespace OpenDental {
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(4, 64);
+			this.label6.Location = new System.Drawing.Point(4, 59);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(98, 15);
 			this.label6.TabIndex = 0;
@@ -221,7 +223,7 @@ namespace OpenDental {
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(25, 32);
+			this.label3.Location = new System.Drawing.Point(28, 32);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(96, 28);
 			this.label3.TabIndex = 0;
@@ -254,6 +256,7 @@ namespace OpenDental {
 			this.groupBox4.Name = "groupBox4";
 			this.groupBox4.Size = new System.Drawing.Size(235, 104);
 			this.groupBox4.TabIndex = 14;
+			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "Default Insurance Billing Provider";
 			// 
 			// comboInsBillingProv
@@ -299,6 +302,7 @@ namespace OpenDental {
 			this.groupSwiss.Name = "groupSwiss";
 			this.groupSwiss.Size = new System.Drawing.Size(392, 146);
 			this.groupSwiss.TabIndex = 8;
+			this.groupSwiss.TabStop = false;
 			this.groupSwiss.Text = "Switzerland";
 			// 
 			// textBankAddress
@@ -353,34 +357,17 @@ namespace OpenDental {
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(429, 160);
 			this.groupBox1.TabIndex = 5;
+			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Billing Address";
-			// 
-			// textBillingPhone
-			// 
-			this.textBillingPhone.Location = new System.Drawing.Point(103, 131);
-			this.textBillingPhone.Name = "textBillingPhone";
-			this.textBillingPhone.Size = new System.Drawing.Size(121, 20);
-			this.textBillingPhone.TabIndex = 7;
-			// 
-			// labelBillingPhone
-			// 
-			this.labelBillingPhone.Location = new System.Drawing.Point(3, 134);
-			this.labelBillingPhone.Name = "labelBillingPhone";
-			this.labelBillingPhone.Size = new System.Drawing.Size(98, 15);
-			this.labelBillingPhone.TabIndex = 0;
-			this.labelBillingPhone.Text = "Phone";
-			this.labelBillingPhone.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label18
 			// 
-			this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-			this.label18.Location = new System.Drawing.Point(103, 5);
+			this.label18.Location = new System.Drawing.Point(100, 14);
 			this.label18.Name = "label18";
-			this.label18.Size = new System.Drawing.Size(323, 38);
+			this.label18.Size = new System.Drawing.Size(310, 29);
 			this.label18.TabIndex = 0;
-			this.label18.Text = "Optional. Cannot be a PO Box if Use on Claims is checked. Also overrides the pr" +
-    "actice address on DentalXChange statements.";
-			this.label18.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+			this.label18.Text = "Optional.  Cannot be a PO Box if Use on Claims is checked.  Also overrides the pr" +
+    "actice address on EHG statements.";
 			// 
 			// checkUseBillingAddressOnClaims
 			// 
@@ -470,31 +457,16 @@ namespace OpenDental {
 			this.groupBox3.Name = "groupBox3";
 			this.groupBox3.Size = new System.Drawing.Size(429, 142);
 			this.groupBox3.TabIndex = 6;
+			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Pay To Address";
-			// 
-			// textPayToPhone
-			// 
-			this.textPayToPhone.Location = new System.Drawing.Point(103, 113);
-			this.textPayToPhone.Name = "textPayToPhone";
-			this.textPayToPhone.Size = new System.Drawing.Size(121, 20);
-			this.textPayToPhone.TabIndex = 6;
-			// 
-			// labelPayToPhone
-			// 
-			this.labelPayToPhone.Location = new System.Drawing.Point(4, 115);
-			this.labelPayToPhone.Name = "labelPayToPhone";
-			this.labelPayToPhone.Size = new System.Drawing.Size(98, 15);
-			this.labelPayToPhone.TabIndex = 0;
-			this.labelPayToPhone.Text = "Phone";
-			this.labelPayToPhone.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label17
 			// 
-			this.label17.Location = new System.Drawing.Point(103, 12);
+			this.label17.Location = new System.Drawing.Point(103, 14);
 			this.label17.Name = "label17";
 			this.label17.Size = new System.Drawing.Size(317, 33);
 			this.label17.TabIndex = 0;
-			this.label17.Text = "Optional for claims. Can be a PO Box. Sent in addition to treating or billing a" +
+			this.label17.Text = "Optional for claims.  Can be a PO Box.  Sent in addition to treating or billing a" +
     "ddress.";
 			// 
 			// label13
@@ -571,6 +543,7 @@ namespace OpenDental {
 			// 
 			// textFax
 			// 
+			this.textFax.IsFormattingEnabled = false;
 			this.textFax.Location = new System.Drawing.Point(122, 83);
 			this.textFax.Name = "textFax";
 			this.textFax.Size = new System.Drawing.Size(121, 20);
@@ -578,6 +551,7 @@ namespace OpenDental {
 			// 
 			// textPhone
 			// 
+			this.textPhone.IsFormattingEnabled = false;
 			this.textPhone.Location = new System.Drawing.Point(122, 61);
 			this.textPhone.Name = "textPhone";
 			this.textPhone.Size = new System.Drawing.Size(121, 20);
@@ -601,15 +575,26 @@ namespace OpenDental {
 			this.label9.Text = "Phone";
 			this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(804, 540);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 9;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(785, 547);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 10;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(704, 547);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 9;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// comboProv
 			// 
@@ -618,9 +603,43 @@ namespace OpenDental {
 			this.comboProv.Size = new System.Drawing.Size(212, 21);
 			this.comboProv.TabIndex = 5;
 			// 
+			// labelBillingPhone
+			// 
+			this.labelBillingPhone.Location = new System.Drawing.Point(3, 134);
+			this.labelBillingPhone.Name = "labelBillingPhone";
+			this.labelBillingPhone.Size = new System.Drawing.Size(98, 15);
+			this.labelBillingPhone.TabIndex = 0;
+			this.labelBillingPhone.Text = "Phone";
+			this.labelBillingPhone.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// textBillingPhone
+			// 
+			this.textBillingPhone.IsFormattingEnabled = false;
+			this.textBillingPhone.Location = new System.Drawing.Point(103, 131);
+			this.textBillingPhone.Name = "textBillingPhone";
+			this.textBillingPhone.Size = new System.Drawing.Size(121, 20);
+			this.textBillingPhone.TabIndex = 7;
+			// 
+			// labelPayToPhone
+			// 
+			this.labelPayToPhone.Location = new System.Drawing.Point(4, 115);
+			this.labelPayToPhone.Name = "labelPayToPhone";
+			this.labelPayToPhone.Size = new System.Drawing.Size(98, 15);
+			this.labelPayToPhone.TabIndex = 0;
+			this.labelPayToPhone.Text = "Phone";
+			this.labelPayToPhone.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// textPayToPhone
+			// 
+			this.textPayToPhone.IsFormattingEnabled = false;
+			this.textPayToPhone.Location = new System.Drawing.Point(103, 113);
+			this.textPayToPhone.Name = "textPayToPhone";
+			this.textPayToPhone.Size = new System.Drawing.Size(121, 20);
+			this.textPayToPhone.TabIndex = 6;
+			// 
 			// FormPractice
 			// 
-			this.ClientSize = new System.Drawing.Size(891, 578);
+			this.ClientSize = new System.Drawing.Size(892, 596);
 			this.Controls.Add(this.comboProv);
 			this.Controls.Add(this.textFax);
 			this.Controls.Add(this.textPhone);
@@ -635,7 +654,8 @@ namespace OpenDental {
 			this.Controls.Add(this.labelPlaceService);
 			this.Controls.Add(this.textBankNumber);
 			this.Controls.Add(this.textPracticeTitle);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.listBillType);
 			this.Controls.Add(this.label12);
 			this.Controls.Add(this.label10);
@@ -678,7 +698,8 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.TextBox textPracticeTitle;
 		private System.Windows.Forms.Label label3;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.ListBox listBillType;
 		private System.Windows.Forms.Label label16;
 		private System.Windows.Forms.Label labelPlaceService;

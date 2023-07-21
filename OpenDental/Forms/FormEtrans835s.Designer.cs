@@ -34,6 +34,7 @@
 			this.textRangeMax = new OpenDental.ValidNum();
 			this.labelDaysOldMax = new System.Windows.Forms.Label();
 			this.labelDaysOldMin = new System.Windows.Forms.Label();
+			this.butClose = new OpenDental.UI.Button();
 			this.labelCheckTrace = new System.Windows.Forms.Label();
 			this.labelCarrier = new System.Windows.Forms.Label();
 			this.labelStatus = new System.Windows.Forms.Label();
@@ -70,7 +71,6 @@
 			this.listStatus.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
 			this.listStatus.Size = new System.Drawing.Size(120, 56);
 			this.listStatus.TabIndex = 106;
-			this.listStatus.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listStatus_MouseUp);
 			// 
 			// butRefresh
 			// 
@@ -132,6 +132,16 @@
 			this.labelDaysOldMin.Text = "Min";
 			this.labelDaysOldMin.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(944, 757);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 6;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// labelCheckTrace
 			// 
 			this.labelCheckTrace.Location = new System.Drawing.Point(422, 31);
@@ -183,7 +193,7 @@
 			this.comboClinics.IncludeUnassigned = true;
 			this.comboClinics.Location = new System.Drawing.Point(546, 51);
 			this.comboClinics.Name = "comboClinics";
-			this.comboClinics.IsMultiSelect = true;
+			this.comboClinics.SelectionModeMulti = true;
 			this.comboClinics.Size = new System.Drawing.Size(198, 21);
 			this.comboClinics.TabIndex = 111;
 			// 
@@ -195,7 +205,7 @@
 			this.textControlId.DetectUrls = false;
 			this.textControlId.Location = new System.Drawing.Point(313, 50);
 			this.textControlId.Name = "textControlId";
-			this.textControlId.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.InsPlan;
+			this.textControlId.QuickPasteType = OpenDentBusiness.QuickPasteType.InsPlan;
 			this.textControlId.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
 			this.textControlId.Size = new System.Drawing.Size(111, 21);
 			this.textControlId.TabIndex = 110;
@@ -210,7 +220,7 @@
 			this.textCarrier.Location = new System.Drawing.Point(583, 8);
 			this.textCarrier.Multiline = false;
 			this.textCarrier.Name = "textCarrier";
-			this.textCarrier.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.InsPlan;
+			this.textCarrier.QuickPasteType = OpenDentBusiness.QuickPasteType.InsPlan;
 			this.textCarrier.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textCarrier.Size = new System.Drawing.Size(161, 21);
 			this.textCarrier.TabIndex = 105;
@@ -225,7 +235,7 @@
 			this.textCheckTrace.Location = new System.Drawing.Point(583, 29);
 			this.textCheckTrace.Multiline = false;
 			this.textCheckTrace.Name = "textCheckTrace";
-			this.textCheckTrace.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.FinancialNotes;
+			this.textCheckTrace.QuickPasteType = OpenDentBusiness.QuickPasteType.FinancialNotes;
 			this.textCheckTrace.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textCheckTrace.Size = new System.Drawing.Size(161, 21);
 			this.textCheckTrace.TabIndex = 10;
@@ -240,7 +250,7 @@
 			this.gridMain.Location = new System.Drawing.Point(16, 83);
 			this.gridMain.Name = "gridMain";
 			this.gridMain.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridMain.Size = new System.Drawing.Size(1003, 579);
+			this.gridMain.Size = new System.Drawing.Size(1003, 669);
 			this.gridMain.TabIndex = 8;
 			this.gridMain.Title = "ERAs";
 			this.gridMain.TranslationName = "TableEtrans835s";
@@ -267,7 +277,7 @@
 			// butAutoProcessedEras
 			// 
 			this.butAutoProcessedEras.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butAutoProcessedEras.Location = new System.Drawing.Point(16, 668);
+			this.butAutoProcessedEras.Location = new System.Drawing.Point(16, 758);
 			this.butAutoProcessedEras.Name = "butAutoProcessedEras";
 			this.butAutoProcessedEras.Size = new System.Drawing.Size(149, 24);
 			this.butAutoProcessedEras.TabIndex = 272;
@@ -277,7 +287,7 @@
 			// 
 			// FormEtrans835s
 			// 
-			this.ClientSize = new System.Drawing.Size(1034, 696);
+			this.ClientSize = new System.Drawing.Size(1034, 786);
 			this.Controls.Add(this.butAutoProcessedEras);
 			this.Controls.Add(this.checkShowFinalizedOnly);
 			this.Controls.Add(this.checkAutomatableCarriersOnly);
@@ -291,6 +301,7 @@
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.textCheckTrace);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.labelCheckTrace);
 			this.Controls.Add(this.labelCarrier);
 			this.Controls.Add(this.labelStatus);
@@ -305,6 +316,7 @@
 		}
 
 		#endregion
+		private UI.Button butClose;
 		private UI.Button butRefresh;
 		private System.Windows.Forms.ImageList imageListCalendar;
 		private System.Windows.Forms.Label labelCheckTrace;

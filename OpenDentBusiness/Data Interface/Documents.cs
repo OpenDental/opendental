@@ -51,15 +51,6 @@ namespace OpenDentBusiness {
 			return Crud.DocumentCrud.TableToList(table);
 		}
 
-		///<summary> Returns all Documents with an image capture type that is not Miscellaneous, in descending order by dateCreated. </summary>
-		public static List<Document> GetOcrDocumentsForPat(long patNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Document>>(MethodBase.GetCurrentMethod(),patNum);
-			}
-			string command="SELECT * FROM document WHERE PatNum="+POut.Long(patNum)+" AND ImageCaptureType > 0 ORDER BY DateCreated DESC";
-			return Crud.DocumentCrud.SelectMany(command);
-		}
-
 		///<summary>Gets all documents for a patient, returning a list of documents with the server's current DateTime. </summary>
 		public static List<DocumentForApi> GetAllWithPatForApi(long patNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -261,7 +252,7 @@ namespace OpenDentBusiness {
 			}
 			return listStrings;
 		}
-
+		
 		///<summary>Will return null if no picture for this patient.</summary>
 		public static Document GetPatPictFromDb(long patNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -536,21 +527,13 @@ namespace OpenDentBusiness {
 						while(File.Exists(Path.Combine(Path.GetDirectoryName(fileList[j]),fileName))) {
 							fileName="x"+fileName;
 						}
-						File.Move(fileList[j],Path.Combine(Path.GetDirectoryName(fileList[j]),fileName));
+						File.Move(fileList[j],Path.Combine(Path.GetDirectoryName(fileList[j]),fileName));						
 					}
 					long prefixCategoryNum=PIn.Long(resultPrefix.Trim('_'));
 					doc.DocCategory=Defs.GetFirstForCategory(DefCat.ImageCats,true).DefNum;
 					//Check if the category exists, if so move to that category otherwise it will go into the first one
 					if(listImageDefNums.Contains(prefixCategoryNum)) {
 						doc.DocCategory=prefixCategoryNum;
-					}
-					if(fileName.ToLower().EndsWith(".dcm")) {//DICOM images come with additional metadata we need to collect
-						doc.ImgType=ImageType.Radiograph;
-						BitmapDicom bitmapDicom=DicomHelper.GetFromFile(fileList[j]);
-						DicomHelper.CalculateWindowingOnImport(bitmapDicom);
-						doc.PrintHeading=true;
-						doc.WindowingMin=bitmapDicom.WindowingMin;
-						doc.WindowingMax=bitmapDicom.WindowingMax;
 					}
 					doc.DateCreated=DateTime.Now;
 					DateTime datePrevious=doc.DateTStamp;
@@ -560,7 +543,7 @@ namespace OpenDentBusiness {
 					Insert(doc,patient);
 					countAdded++;
 					string docCat=Defs.GetDef(DefCat.ImageCats,doc.DocCategory).ItemName;
-					SecurityLogs.MakeLogEntry(EnumPermType.ImageEdit,patient.PatNum,Lans.g("ContrImages","Document Created: A file")+", "+doc.FileName+", "
+					SecurityLogs.MakeLogEntry(Permissions.ImageEdit,patient.PatNum,Lans.g("ContrImages","Document Created: A file")+", "+doc.FileName+", "
 						+Lans.g("ContrImages","placed into the patient's AtoZ images folder from outside of the program was detected and a record automatically inserted into the first image category")+", "+docCat,doc.DocNum,datePrevious);
 				}
 			}
@@ -727,12 +710,11 @@ namespace OpenDentBusiness {
 			tableReturn.Columns.Add("DateCreated");
 			tableReturn.Columns.Add("docCategory");
 			tableReturn.Columns.Add("DocCategory");
-			tableReturn.Columns.Add("ToothNumbers");
 			tableReturn.Columns.Add("DateTStamp");
 			tableReturn.Columns.Add("serverDateTime");
 			command="SELECT "+DbHelper.Now();
 			DateTime dateTimeServer=PIn.DateT(Db.GetScalar(command)); //run first for rigorous inclusion of documents
-			command="SELECT DocNum,FileName,Description,Note,DateCreated,DocCategory,ToothNumbers,DateTStamp FROM document WHERE PatNum='"+POut.Long(patNum)+"' AND MountItemNum=0"; //select all documents not associated with mounts
+			command="SELECT DocNum,FileName,Description,Note,DateCreated,DocCategory,DateTStamp FROM document WHERE PatNum='"+POut.Long(patNum)+"' AND MountItemNum=0"; //select all documents not associated with mounts
 			tableDocuments=Db.GetTable(command);
 			command="SELECT MountNum,Description,Note,DocCategory,DateCreated FROM mount WHERE PatNum='"+POut.Long(patNum)+"'"; //select all mounts for patient
 			tableMounts=Db.GetTable(command);
@@ -750,7 +732,6 @@ namespace OpenDentBusiness {
 				string defName=Defs.GetName(DefCat.ImageCats,docCategoryDefNum,listDefsForCategory);
 				row["docCategory"]=defName;
 				row["DocCategory"]=docCategoryDefNum;
-				row["ToothNumbers"]=tableDocuments.Rows[i]["ToothNumbers"].ToString();
 				row["DateTStamp"]=PIn.Date(tableDocuments.Rows[i]["DateTStamp"].ToString()).ToString(dateTimeFormatString);
 				row["serverDateTime"]=dateTimeServer.ToString(dateTimeFormatString);
 				listDataRows.Add(row);
@@ -768,7 +749,6 @@ namespace OpenDentBusiness {
 				string defName=Defs.GetName(DefCat.ImageCats,docCategoryDefNum,listDefsForCategory);
 				row["docCategory"]=defName;
 				row["DocCategory"]=docCategoryDefNum;
-				row["ToothNumbers"]="";//not a field for Mounts
 				row["DateTStamp"]=""; //not a field for Mounts
 				row["serverDateTime"]=dateTimeServer.ToString(dateTimeFormatString);
 				listDataRows.Add(row);
@@ -939,11 +919,11 @@ namespace OpenDentBusiness {
 			}
 			else {//Cloud storage
 				//Download file to temp directory
-				byte[] byteArray=CloudStorage.Download(ImageStore.GetPatientFolder(patCur,ImageStore.GetPreferredAtoZpath())
+				OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.Download(ImageStore.GetPatientFolder(patCur,ImageStore.GetPreferredAtoZpath())
 					,docCur.FileName);
 				docPath=PrefC.GetRandomTempFile(ImageStore.GetExtension(docCur));
-				File.WriteAllBytes(docPath,byteArray);
-				if(ODBuild.IsThinfinity()) {
+				File.WriteAllBytes(docPath,state.FileContent);
+				if(ODBuild.IsWeb()) {
 					ThinfinityUtils.HandleFile(docPath);
 					return "";
 				}
@@ -1014,10 +994,10 @@ namespace OpenDentBusiness {
 			}
 			else {//Cloud storage
 				//Download file to temp directory
-				byte[] byteArray=CloudStorage.Download(ImageStore.GetPatientFolder(patCur,ImageStore.GetPreferredAtoZpath())
+				OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.Download(ImageStore.GetPatientFolder(patCur,ImageStore.GetPreferredAtoZpath())
 					,docCur.FileName);
 				docPath=PrefC.GetRandomTempFile(ImageStore.GetExtension(docCur));
-				File.WriteAllBytes(docPath,byteArray);
+				File.WriteAllBytes(docPath,state.FileContent);
 			}
 			return docPath;
 		}
@@ -1108,7 +1088,7 @@ namespace OpenDentBusiness {
 					}
 					else if(CloudStorage.IsCloudStorage) {
 						//Upload file to patient's AtoZ folder
-						CloudStorage.Upload(ImageStore.GetPatientFolder(PatCur,"")
+						OpenDentalCloud.Core.TaskStateUpload state=CloudStorage.Upload(ImageStore.GetPatientFolder(PatCur,"")
 							,fileName+".pdf"
 							,File.ReadAllBytes(tempFile));
 					}
@@ -1187,7 +1167,7 @@ namespace OpenDentBusiness {
 					}
 					else if(CloudStorage.IsCloudStorage) {
 						//Upload file to patient's AtoZ folder
-						CloudStorage.Upload(ImageStore.GetPatientFolder(PatCur,"")
+						OpenDentalCloud.Core.TaskStateUpload state=CloudStorage.Upload(ImageStore.GetPatientFolder(PatCur,"")
 							,fileName+".pdf"
 							,File.ReadAllBytes(tempFile));
 					}
@@ -1200,74 +1180,6 @@ namespace OpenDentBusiness {
 				return ex.Message;
 			}
 			return "";
-		}
-
-		///<summary>Throws exception. Creates and Saves a PDF document for the given statement.</summary>
-		public static DataSet CreateAndSaveStatementPDF(Statement statement,SheetDef sheetDef,bool isLimitedCustom,bool showLName,bool excludeTxfr,List<Def> listDefsImageCat,string pdfFileName="",Sheet sheet=null,DataSet dataSet=null,string description="") {
-			string tempPath;
-			if(statement==null || sheetDef==null) {
-				return null;
-			}
-			if(dataSet==null) {
-				if(isLimitedCustom) {
-					dataSet=AccountModules.GetSuperFamAccount(statement,doIncludePatLName:showLName,doShowHiddenPaySplits:statement.IsReceipt,doExcludeTxfrs:excludeTxfr);
-				}
-				else {
-					long patNum=Statements.GetPatNumForGetAccount(statement);
-					dataSet=AccountModules.GetAccount(patNum,statement,doIncludePatLName:showLName,doShowHiddenPaySplits:statement.IsReceipt,doExcludeTxfrs:excludeTxfr);
-				}
-			}
-			if(pdfFileName=="") {
-				if(sheet==null) {
-					sheet=SheetUtil.CreateSheet(sheetDef,statement.PatNum,statement.HidePayment);
-					sheet.Parameters.Add(new SheetParameter(true,"Statement") { ParamValue=statement });
-					SheetFiller.FillFields(sheet,dataSet,statement);
-					SheetUtil.CalculateHeights(sheet,dataSet,statement);
-				}
-				tempPath=ODFileUtils.CombinePaths(PrefC.GetTempFolderPath(),statement.PatNum.ToString()+".pdf");
-				SheetPrinting.CreatePdf(sheet,tempPath,statement,dataSet,null);
-			}
-			else {
-				tempPath=pdfFileName;
-			}
-			long category=0;
-			for(int i=0;i<listDefsImageCat.Count;i++) {
-				if(Regex.IsMatch(listDefsImageCat[i].ItemValue,@"S")) {
-					category=listDefsImageCat[i].DefNum;
-					break;
-				}
-			}
-			if(category==0) {
-				category=listDefsImageCat[0].DefNum;//put it in the first category.
-			}
-			//create doc--------------------------------------------------------------------------------------
-			Document document=null;
-			try {
-				document=ImageStore.Import(tempPath,category,Patients.GetPat(statement.PatNum));
-			}
-			catch {
-				throw;
-			}
-			finally {
-				//Delete the temp file since we don't need it anymore.
-				try {
-					if(pdfFileName=="") {//If they're passing in a PDF file name, they probably have it open somewhere else.
-						File.Delete(tempPath);
-					}
-				}
-				catch {
-					//Do nothing.  This file will likely get cleaned up later.
-				}
-			}
-			document.ImgType=ImageType.Document;
-			document.Description=description;
-			//Some customers have wanted to sort their statements in the images module by date and time.
-			//We would need to enhance DateSent to include the time portion.
-			statement.DateSent=document.DateCreated;
-			statement.DocNum=document.DocNum;//this signals the calling class that the pdf was created successfully.
-			Statements.AttachDoc(statement.StatementNum,document);
-			Statements.SyncStatementProdsForStatement(dataSet,statement.StatementNum,statement.DocNum);
-			return dataSet;
 		}
 
 		public static bool IsVC2015Installed(){
@@ -1292,66 +1204,6 @@ namespace OpenDentBusiness {
 			return false;
 		}
 		#endregion Xam Methods
-
-		///<summary>Will create a treatment plan PDF without any references to OpenDental. This method is only used for the API. 
-		///Returns a list of DocNums when successfully saved a document. Throws errors, surround with a Try / Catch.</summary>
-		public static List<long> CreateAndSaveTreatmentPlanPdfForApi(TreatPlan treatPlan) {
-			string errorMessage="";
-			List<long> listDocNums=new List<long>();
-			try {
-				Patient PatCur=Patients.GetPat(treatPlan.PatNum);
-				List<Def> listImageCatDefs=Defs.GetDefsForCategory(DefCat.ImageCats,true);
-				List<long> categories=listImageCatDefs.Where(x => x.ItemValue.Contains("R")).Select(x=>x.DefNum).ToList();
-				if(categories.Count==0) {
-					//we must save at least one document, pick first non-hidden image category.
-					Def imgCat=listImageCatDefs.FirstOrDefault(x => !x.IsHidden);
-					if(imgCat==null) {
-						throw new Exception("There are currently no image categories.");
-					}
-					categories.Add(imgCat.DefNum);
-				}
-				errorMessage=TryCreateTreatmentPlanPdfFile(treatPlan,out string tempFile);
-				if(!string.IsNullOrWhiteSpace(errorMessage)) {
-					throw new Exception(errorMessage);
-				}
-				string rawBase64="";
-				if(PrefC.AtoZfolderUsed!=DataStorageType.LocalAtoZ) {
-					//Convert the pdf into its raw bytes
-					rawBase64=Convert.ToBase64String(System.IO.File.ReadAllBytes(tempFile));
-				}
-				foreach(long docCategory in categories) {//usually only one, but do allow them to be saved once per image category.
-					Document docSave=new Document();
-					docSave.DocNum=Insert(docSave);
-					string fileName="TPArchive"+docSave.DocNum;
-					docSave.ImgType=ImageType.Document;
-					docSave.DateCreated=DateTime.Now;
-					docSave.PatNum=treatPlan.PatNum;
-					docSave.DocCategory=docCategory;
-					docSave.Description=fileName;//no extension.
-					docSave.RawBase64=rawBase64;//blank if using AtoZfolder
-					if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
-						string filePath=ImageStore.GetPatientFolder(PatCur,ImageStore.GetPreferredAtoZpath());
-						while(File.Exists(filePath+"\\"+fileName+".pdf")) {
-							fileName+="x";
-						}
-						File.Copy(tempFile,filePath+"\\"+fileName+".pdf");
-					}
-					else if(CloudStorage.IsCloudStorage) {
-						//Upload file to patient's AtoZ folder
-						CloudStorage.Upload(ImageStore.GetPatientFolder(PatCur,"")
-							,fileName+".pdf"
-							,File.ReadAllBytes(tempFile));
-					}
-					docSave.FileName=fileName+".pdf";//file extension used for both DB images and AtoZ images
-					Update(docSave);
-					listDocNums.Add(docSave.DocNum);
-				}
-			}
-			catch(Exception ex) {
-				throw new Exception(ex.Message);
-			}
-			return listDocNums;
-		}
 	}
 
 	public class DocumentForApi {

@@ -27,8 +27,8 @@ namespace OpenDental{
 
 		private void FormTreatPlanEdit_Load(object sender, System.EventArgs e) {
 			//this window never comes up for new TP.  Always saved ahead of time.
-			if(!Security.IsAuthorized(EnumPermType.TreatPlanEdit,_treatPlan.DateTP)) {
-				butSave.Enabled=false;
+			if(!Security.IsAuthorized(Permissions.TreatPlanEdit,_treatPlan.DateTP)) {
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 				butPickResponsParty.Enabled=false;
 				butClearResponsParty.Enabled=false;
@@ -37,12 +37,12 @@ namespace OpenDental{
 				textHeading.ReadOnly=true;
 				textDateTP.ReadOnly=true;
 				textNote.ReadOnly=true;
-				if(Security.IsAuthorized(EnumPermType.TreatPlanSign,_treatPlan.DateTP)) {//User has permission to edit the heading field.
+				if(Security.IsAuthorized(Permissions.TreatPlanSign,_treatPlan.DateTP)) {//User has permission to edit the heading field.
 					textHeading.ReadOnly=false;
-					butSave.Enabled=true;
+					butOK.Enabled=true;
 				}
 			}
-			if(!Security.IsAuthorized(EnumPermType.TreatPlanPresenterEdit,true)) {
+			if(!Security.IsAuthorized(Permissions.TreatPlanPresenterEdit,true)) {
 				butPickPresenter.Visible=false;
 			}
 			if(_treatPlan.UserNumPresenter>0) {
@@ -64,7 +64,7 @@ namespace OpenDental{
 				textResponsParty.Text=Patients.GetLim(_treatPlan.ResponsParty).GetNameLF();
 			}
 			if(_treatPlan.Signature!="") { //Per Nathan 01 OCT 2015: In addition to invalidating signature (old behavior) we will also block editing signed TPs.
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				textHeading.ReadOnly=true;
 				textDateTP.ReadOnly=true;
 				textNote.ReadOnly=true;
@@ -141,11 +141,11 @@ namespace OpenDental{
 		private void butSigClear_Click(object sender,EventArgs e) {
 			//Cannot click this button if you are not authorized to edit, so it is safe to re-enable edit controls below.
 			//Disable signature buttons
-			if(!Security.IsAuthorized(EnumPermType.TreatPlanEdit,_treatPlan.DateTP)) {
-				butSave.Enabled=false;
+			if(!Security.IsAuthorized(Permissions.TreatPlanEdit,_treatPlan.DateTP)) {
+				butOK.Enabled=false;
 			}
 			else {
-				butSave.Enabled=true;
+				butOK.Enabled=true;
 			}
 			_treatPlan.Signature="";
 			_treatPlan.SignatureText="";
@@ -197,16 +197,11 @@ namespace OpenDental{
 				MessageBox.Show(ex.Message);
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.TreatPlanEdit,_treatPlan.PatNum,"Delete TP: "+_treatPlan.DateTP.ToShortDateString());
+			SecurityLogs.MakeLogEntry(Permissions.TreatPlanEdit,_treatPlan.PatNum,"Delete TP: "+_treatPlan.DateTP.ToShortDateString());
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
-			#region Validation
-			if(string.IsNullOrWhiteSpace(textHeading.Text)) {
-				MsgBox.Show(this,"Header name cannot be empty.");
-				return;
-			}
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textDateTP.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
@@ -215,7 +210,6 @@ namespace OpenDental{
 				MsgBox.Show(this,"Please enter a date first.");
 				return;
 			}
-			#endregion Validation
 			_treatPlan.DateTP=PIn.Date(textDateTP.Text);
 			_treatPlan.Heading=textHeading.Text;
 			_treatPlan.Note=textNote.Text;
@@ -227,13 +221,16 @@ namespace OpenDental{
 			}
 			//PlanCur.SecUserNumEntry is updated automatically by MySQL.
 			TreatPlans.Update(_treatPlan);
-			SecurityLogs.MakeLogEntry(EnumPermType.TreatPlanEdit,_treatPlan.PatNum,"Edit TP: "+_treatPlan.DateTP.ToShortDateString());
+			SecurityLogs.MakeLogEntry(Permissions.TreatPlanEdit,_treatPlan.PatNum,"Edit TP: "+_treatPlan.DateTP.ToShortDateString());
 			if(_userodPresenter!=null && (_userodPresenterOld==null || _userodPresenter.UserNum != _userodPresenterOld.UserNum)) {
-				SecurityLogs.MakeLogEntry(EnumPermType.TreatPlanPresenterEdit,_treatPlan.PatNum,
+				SecurityLogs.MakeLogEntry(Permissions.TreatPlanPresenterEdit,_treatPlan.PatNum,
 					"TP Presenter Changed from "+(_userodPresenterOld==null?"\"null\"":_userodPresenterOld.UserName)+" to "+_userodPresenter.UserName+".");
 			}
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

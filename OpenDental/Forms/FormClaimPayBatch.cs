@@ -63,7 +63,8 @@ namespace OpenDental{
 				butViewEra.Visible=false;
 			}
 			else {
-				butSave.Visible=false;
+				butOK.Visible=false;
+				butClose.Text=Lan.g(this,"Close");
 			}
 			if(IsFromClaim) {
 				//Remove context menus from the grids.  This preserves old functionality.
@@ -77,7 +78,7 @@ namespace OpenDental{
 				//an incomplete payment that's not yet locked
 			}
 			else{//locked
-				if(!Security.IsAuthorized(EnumPermType.InsPayEdit,_claimPayment.CheckDate)) {
+				if(!Security.IsAuthorized(Permissions.InsPayEdit,_claimPayment.CheckDate)) {
 					butDelete.Enabled=false;
 					gridAttached.AllowSelection=false;
 					gridAttached.CellDoubleClick-=gridAttached_CellDoubleClick;
@@ -330,7 +331,7 @@ namespace OpenDental{
 		}
 
 		private void gridAttached_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ClaimView)) {
+			if(!Security.IsAuthorized(Permissions.ClaimView)) {
 				return;
 			}
 			//top grid
@@ -404,7 +405,7 @@ namespace OpenDental{
 		}
 
 		private void gridOut_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ClaimView)) {
+			if(!Security.IsAuthorized(Permissions.ClaimView)) {
 				return;
 			}
 			//bottom grid
@@ -445,28 +446,28 @@ namespace OpenDental{
 
 		private void menuItemGotoAccount_Click(object sender,EventArgs e) {
 			//for the upper grid
-			if(gridAttached.SelectedIndices.Length!=1 || !Security.IsAuthorized(EnumPermType.AccountModule)) {
+			if(gridAttached.SelectedIndices.Length!=1 || !Security.IsAuthorized(Permissions.AccountModule)) {
 				return;
 			}
 			ClaimPaySplit claimPaySplitSelected=gridAttached.SelectedTag<ClaimPaySplit>();
 			GotoPatNum=claimPaySplitSelected.PatNum;
 			GotoClaimNum=claimPaySplitSelected.ClaimNum;
 			Patient pat=Patients.GetPat(GotoPatNum);
-			GlobalFormOpenDental.PatientSelected(pat,isRefreshCurModule:false);
-			GlobalFormOpenDental.GotoClaim(GotoClaimNum);
+			FormOpenDental.S_Contr_PatientSelected(pat,isRefreshCurModule:false);
+			GotoModule.GotoClaim(GotoClaimNum);
 		}
 
 		private void menuItemGotoOut_Click(object sender,EventArgs e) {
 			//for the lower grid
-			if(gridOut.SelectedIndices.Length!=1 || !Security.IsAuthorized(EnumPermType.AccountModule)) {
+			if(gridOut.SelectedIndices.Length!=1 || !Security.IsAuthorized(Permissions.AccountModule)) {
 				return;
 			}
 			ClaimPaySplit claimPaySplitSelected=gridOut.SelectedTag<ClaimPaySplit>();
 			GotoPatNum=claimPaySplitSelected.PatNum;
 			GotoClaimNum=claimPaySplitSelected.ClaimNum;
 			Patient pat=Patients.GetPat(GotoPatNum);
-			GlobalFormOpenDental.PatientSelected(pat,isRefreshCurModule:false);
-			GlobalFormOpenDental.GotoClaim(GotoClaimNum);
+			FormOpenDental.S_Contr_PatientSelected(pat,isRefreshCurModule:false);
+			GotoModule.GotoClaim(GotoClaimNum);
 		}
 
 		//private void menuItemGoToAccount_Click(object sender,EventArgs e) {
@@ -583,7 +584,7 @@ namespace OpenDental{
 			Close();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!IsAmountAndTotalEqual()) {
 				return;
 			}
@@ -603,6 +604,11 @@ namespace OpenDental{
 			Close();
 		}
 
+		private void butClose_Click(object sender,System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;			
+			Close();
+		}
+
 		private void FormClaimPayBatch_FormClosing(object sender,FormClosingEventArgs e) {
 			if(DialogResult==DialogResult.Cancel && IsFromClaim && IsNew) {//This acts as a Cancel button. Happens when butClose or the red x is clicked.
 				if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Delete this payment?")) {
@@ -615,7 +621,7 @@ namespace OpenDental{
 				return;
 			}
 			if(_isDeleting){//This is here because the delete button could also set this.
-				SecurityLogs.MakeLogEntry(EnumPermType.InsPayEdit,0,"Claim Payment Deleted: "+_claimPayment.ClaimPaymentNum);
+				SecurityLogs.MakeLogEntry(Permissions.InsPayEdit,0,"Claim Payment Deleted: "+_claimPayment.ClaimPaymentNum);
 				return;
 			}
 			if(IsDisposed) {//This should only happen if interupted by an Auto-Logoff.
@@ -654,10 +660,10 @@ namespace OpenDental{
 				RunAgingForClaims();
 			}
 			if(IsNew) {
-				SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,0,"Claim Payment: "+_claimPayment.ClaimPaymentNum);
+				SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,0,"Claim Payment: "+_claimPayment.ClaimPaymentNum);
 			}
 			else {
-				SecurityLogs.MakeLogEntry(EnumPermType.InsPayEdit,0,"Claim Payment: "+_claimPayment.ClaimPaymentNum);
+				SecurityLogs.MakeLogEntry(Permissions.InsPayEdit,0,"Claim Payment: "+_claimPayment.ClaimPaymentNum);
 			}
 		}
 	}

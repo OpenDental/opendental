@@ -22,6 +22,17 @@ namespace OpenDentBusiness{
 		[CrudColumn(SpecialType = CrudSpecialColType.DateTEntry)]
 		public DateTime EntryDateTime;
 
+		public EntryLog() {
+
+		}
+
+		public EntryLog(long userNum,EntryLogFKeyType keyType,long Fkey,LogSources logSource) {
+			UserNum=userNum;
+			FKeyType=keyType;
+			FKey=Fkey;
+			LogSource=logSource;
+		}
+
 		///<summary></summary>
 		public EntryLog Copy() {
 			return (EntryLog)this.MemberwiseClone();

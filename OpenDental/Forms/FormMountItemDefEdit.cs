@@ -33,12 +33,12 @@ namespace OpenDental {
 			listMessageReplaceTypes.Add(MessageReplaceType.Office);
 			listMessageReplaceTypes.Add(MessageReplaceType.Patient);
 			listMessageReplaceTypes.Add(MessageReplaceType.Mount);
-			FrmMessageReplacements frmMessageReplacements=new FrmMessageReplacements(listMessageReplaceTypes);
-			frmMessageReplacements.MessageReplacementSystemType=MessageReplacementSystemType.Mount;
-			frmMessageReplacements.IsSelectionMode=true;
-			frmMessageReplacements.ShowDialog();
-			if(frmMessageReplacements.IsDialogOK) {
-				textTextShowing.SelectedText=frmMessageReplacements.ReplacementTextSelected;
+			using FormMessageReplacements formMessageReplacements=new FormMessageReplacements(listMessageReplaceTypes);
+			formMessageReplacements.MessageReplacementSystemType=MessageReplacementSystemType.Mount;
+			formMessageReplacements.IsSelectionMode=true;
+			formMessageReplacements.ShowDialog();
+			if(formMessageReplacements.DialogResult==DialogResult.OK) {
+				textTextShowing.SelectedText=formMessageReplacements.Replacement;
 			}
 		}
 
@@ -54,7 +54,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textXpos.IsValid()
 				|| !textYpos.IsValid()
 				|| !textWidth.IsValid()
@@ -96,5 +96,10 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
 	}
 }

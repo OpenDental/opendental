@@ -42,24 +42,24 @@ namespace OpenDental {
 		///<summary>Fills the Global Task filter combobox with options.  Only visible if Clinics are enabled, or if previous selection no is longer 
 		///available, example: Clinics have been turned off, Clinic filter no longer available.</summary>
 		private void FillComboGlobalFilter() {
-			EnumTaskFilterType globalPref=(EnumTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType);
-			comboFilterDefault.Items.Add(Lan.g(this,EnumTaskFilterType.Disabled.GetDescription()),EnumTaskFilterType.Disabled);
-			comboFilterDefault.Items.Add(Lan.g(this,EnumTaskFilterType.None.GetDescription()),EnumTaskFilterType.None);
+			GlobalTaskFilterType globalPref=(GlobalTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType);
+			comboGlobalFilter.Items.Add(Lan.g(this,GlobalTaskFilterType.Disabled.GetDescription()),GlobalTaskFilterType.Disabled);
+			comboGlobalFilter.Items.Add(Lan.g(this,GlobalTaskFilterType.None.GetDescription()),GlobalTaskFilterType.None);
 			if(PrefC.HasClinicsEnabled) {
 				labelGlobalFilter.Visible=true;
-				comboFilterDefault.Visible=true;
-				comboFilterDefault.Items.Add(Lan.g(this,EnumTaskFilterType.Clinic.GetDescription()),EnumTaskFilterType.Clinic);
+				comboGlobalFilter.Visible=true;
+				comboGlobalFilter.Items.Add(Lan.g(this,GlobalTaskFilterType.Clinic.GetDescription()),GlobalTaskFilterType.Clinic);
 				if(Defs.GetDefsForCategory(DefCat.Regions).Count>0) {
-					comboFilterDefault.Items.Add(Lan.g(this,EnumTaskFilterType.Region.GetDescription()),EnumTaskFilterType.Region);
+					comboGlobalFilter.Items.Add(Lan.g(this,GlobalTaskFilterType.Region.GetDescription()),GlobalTaskFilterType.Region);
 				}
 			}
-			comboFilterDefault.SetSelectedEnum(globalPref);
-			if(comboFilterDefault.SelectedIndex==-1) {
+			comboGlobalFilter.SetSelectedEnum(globalPref);
+			if(comboGlobalFilter.SelectedIndex==-1) {
 				labelGlobalFilter.Visible=true;
-				comboFilterDefault.Visible=true;
-				errorProvider1.SetError(comboFilterDefault,$"Previous selection \"{globalPref.GetDescription()}\" is no longer available.  "
+				comboGlobalFilter.Visible=true;
+				errorProvider1.SetError(comboGlobalFilter,$"Previous selection \"{globalPref.GetDescription()}\" is no longer available.  "
 					+"Saving will overwrite previous setting.");
-				comboFilterDefault.SelectedIndex=0;
+				comboGlobalFilter.SelectedIndex=0;
 			}
 		}
 
@@ -79,7 +79,7 @@ namespace OpenDental {
 		}
 
 		private void comboGlobalFilter_SelectionChangeCommitted(object sender,EventArgs e) {
-			errorProvider1.SetError(comboFilterDefault,string.Empty);//Clear the error, if applicable.
+			errorProvider1.SetError(comboGlobalFilter,string.Empty);//Clear the error, if applicable.
 		}
 
 		private void butTaskInboxSetup_Click(object sender,EventArgs e) {
@@ -116,7 +116,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!validNumX.IsValid() | !validNumY.IsValid()) {
 				MessageBox.Show(Lan.g(this,"Please fix data entry errors first."));
 				return;
@@ -131,7 +131,7 @@ namespace OpenDental {
 			isChanged |= Prefs.UpdateBool(PrefName.TasksNewTrackedByUser,checkTasksNewTrackedByUser.Checked);
 			isChanged |= Prefs.UpdateBool(PrefName.TasksShowOpenTickets,checkShowOpenTickets.Checked);
 			isChanged |= Prefs.UpdateBool(PrefName.TaskSortApptDateTime,checkTaskSortApptDateTime.Checked);
-			isChanged |= Prefs.UpdateInt(PrefName.TasksGlobalFilterType,(int)comboFilterDefault.GetSelected<EnumTaskFilterType>());
+			isChanged |= Prefs.UpdateInt(PrefName.TasksGlobalFilterType,(int)comboGlobalFilter.GetSelected<GlobalTaskFilterType>());
 			isChanged |= Prefs.UpdateLong(PrefName.TaskAttachmentCategory,comboImageCategoryFolders.GetSelected<Def>()?.DefNum??0);//If 'none' is selected, def will be null so set the pref to 0
 			if(ComputerPrefs.LocalComputer.TaskKeepListHidden!=checkBoxTaskKeepListHidden.Checked) {
 				ComputerPrefs.LocalComputer.TaskKeepListHidden=checkBoxTaskKeepListHidden.Checked;
@@ -158,6 +158,10 @@ namespace OpenDental {
 				ComputerPrefs.Update(ComputerPrefs.LocalComputer);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

@@ -43,7 +43,7 @@ namespace OpenDental {
 			_listProviders.Insert(0,Providers.GetUnearnedProv());
 			_listFilteredProviders=new List<Provider>();
 			textToday.Text=DateTime.Today.ToShortDateString();
-			if(!Security.IsAuthorized(EnumPermType.ReportProdIncAllProviders,true)) {
+			if(!Security.IsAuthorized(Permissions.ReportProdIncAllProviders,true)) {
 				Provider prov=Providers.GetFirstOrDefault(x => x.ProvNum==Security.CurUser.ProvNum);
 				if(prov!=null) {
 					_listProviders=_listProviders.FindAll(x => x.FName == prov.FName && x.LName == prov.LName);
@@ -64,7 +64,7 @@ namespace OpenDental {
 				listProv.SetSelected(0);
 			}
 			//If the user cannot run this report for any other provider, every single provider available in the list will be the provider logged in.
-			if(!Security.IsAuthorized(EnumPermType.ReportProdIncAllProviders,true)) {
+			if(!Security.IsAuthorized(Permissions.ReportProdIncAllProviders,true)) {
 				listProv.SetAll(true);
 			}
 			if(!PrefC.HasClinicsEnabled){
@@ -1197,5 +1197,16 @@ namespace OpenDental {
 			//DialogResult=DialogResult.OK;//Stay here so that a series of similar reports can be run
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }
+
+
+
+
+
+
+
+

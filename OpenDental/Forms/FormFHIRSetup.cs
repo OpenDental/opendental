@@ -132,7 +132,7 @@ namespace OpenDental {
 			listPermissions.Items.AddList(apiKeyPair.ListAPIPermissions, x => x.GetDescription());
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butClose_Click(object sender,EventArgs e) {
 			if(!textSubInterval.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
@@ -154,4 +154,6 @@ namespace OpenDental {
 		}
 
 	}
+
+	
 }

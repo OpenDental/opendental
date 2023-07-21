@@ -61,11 +61,11 @@ namespace OpenDental{
 				return false;
 			}
 			//It's been more than 24 hours since repeat charges started.
-			if(Security.IsAuthorized(EnumPermType.SecurityAdmin,true)) {
+			if(Security.IsAuthorized(Permissions.SecurityAdmin,true)) {
 				string message=Lans.g(this,"Repeating Charges last started on")+" "+repeatingChargesBeginDateTime.ToString()
 					+Lans.g(this,".  Restart repeating charges?");
 				if(MsgBox.Show(MsgBoxButtons.OKCancel,message)) {
-					SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,"Restarted repeating charges. Previous Repeating Charges Begin DateTime was "
+					SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,"Restarted repeating charges. Previous Repeating Charges Begin DateTime was "
 						+repeatingChargesBeginDateTime.ToString()+".");
 					return true;
 				}
@@ -86,26 +86,47 @@ namespace OpenDental{
 				MsgBox.Show(this,"Unable to connect to AvaTax API.");
 				return;
 			}
-			Prefs.RefreshCache();
-			//If aging is still running, then AgingBeginDateTime will have a value in it, otherwise if aging is not running, AgingBeginDateTime will be DateTime.MinVal due to GetDateT.
-			if(!PrefC.IsAgingAllowedToStart()){
-				MsgBox.Show(this, "Aging is currently running. The Repeating Charges tool cannot be run until Aging has finished.\r\nIf you believe Aging has finished, go to Setup, Preferences and clear the \"DateTime the currently running aging started\".");
-				return;
-			}
 			Cursor=Cursors.WaitCursor;
 			RepeatChargeResult repeatChargeResult=RepeatCharges.RunRepeatingCharges(MiscData.GetNowDateTime(),checkRunAging.Checked);
 			string metrics=repeatChargeResult.ProceduresAddedCount+" "+Lan.g(this,"procedures added.")+"\r\n"+repeatChargeResult.ClaimsAddedCount+" "
 				+Lan.g(this,"claims added.");
-			SecurityLogs.MakeLogEntry(EnumPermType.RepeatChargeTool,0,"Repeat Charge Tool ran.\r\n"+metrics);
+			SecurityLogs.MakeLogEntry(Permissions.RepeatChargeTool,0,"Repeat Charge Tool ran.\r\n"+metrics);
 			Cursor=Cursors.Default;
 			MessageBox.Show(metrics);
 			if(!string.IsNullOrEmpty(repeatChargeResult.ErrorMsg.ToString())) {
-				SecurityLogs.MakeLogEntry(EnumPermType.RepeatChargeTool,0,"Repeat Charge Tool Error: "+repeatChargeResult.ErrorMsg.ToString());
+				SecurityLogs.MakeLogEntry(Permissions.RepeatChargeTool,0,"Repeat Charge Tool Error: "+repeatChargeResult.ErrorMsg.ToString());
 				MessageBox.Show(repeatChargeResult.ErrorMsg.ToString());
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
+		}	
+
+		private void butCancel_Click(object sender, EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
+
+		
+
 
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -15,7 +15,10 @@ namespace OpenDental{
 		private List<ProcApptColor> _listProcApptColors;
 
 		///<summary></summary>
-		public FormProcApptColors() {
+		public FormProcApptColors()	{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
@@ -58,5 +61,43 @@ namespace OpenDental{
 			FillGrid();
 		}
 
+		private void butClose_Click(object sender,System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void butOK_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+		}
+
+		
+
+		
+
+		
+
+
+
+		
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

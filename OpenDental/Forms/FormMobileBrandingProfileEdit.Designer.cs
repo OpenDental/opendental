@@ -24,7 +24,8 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMobileBrandingProfileEdit));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.butSelectImage = new OpenDental.UI.Button();
@@ -37,15 +38,26 @@ namespace OpenDental{
 			this.label3 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(478, 215);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(406, 215);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(487, 215);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// label2
 			// 
@@ -88,7 +100,7 @@ namespace OpenDental{
 			this.textDescription.Location = new System.Drawing.Point(95, 161);
 			this.textDescription.Multiline = false;
 			this.textDescription.Name = "textDescription";
-			this.textDescription.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Letter;
+			this.textDescription.QuickPasteType = OpenDentBusiness.QuickPasteType.Letter;
 			this.textDescription.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textDescription.Size = new System.Drawing.Size(230, 20);
 			this.textDescription.TabIndex = 9;
@@ -114,7 +126,7 @@ namespace OpenDental{
 			this.textFilePathImage.Location = new System.Drawing.Point(95, 56);
 			this.textFilePathImage.Multiline = false;
 			this.textFilePathImage.Name = "textFilePathImage";
-			this.textFilePathImage.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Letter;
+			this.textFilePathImage.QuickPasteType = OpenDentBusiness.QuickPasteType.Letter;
 			this.textFilePathImage.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textFilePathImage.Size = new System.Drawing.Size(175, 20);
 			this.textFilePathImage.SpellCheckIsEnabled = false;
@@ -151,6 +163,7 @@ namespace OpenDental{
 			// 
 			// FormMobileBrandingProfileEdit
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(574, 251);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.label3);
@@ -161,7 +174,8 @@ namespace OpenDental{
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butSelectImage);
 			this.Controls.Add(this.label2);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMobileBrandingProfileEdit";
 			this.Text = "Mobile Branding Profile Edit";
@@ -172,7 +186,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
 		private UI.Button butSelectImage;

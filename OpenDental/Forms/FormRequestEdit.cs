@@ -67,8 +67,8 @@ namespace OpenDental {
 			textTotalPoints.BackColor=_colorDisabled;
 			textTotalCritical.BackColor=_colorDisabled;
 			textWeight.BackColor=_colorDisabled;
-			if(PrefC.IsODHQ && !Security.IsAuthorized(EnumPermType.FeatureRequestEdit,true)) {
-				this.DisableAllExcept(butAddDiscuss,textNote,textDetail);
+			if(PrefC.IsODHQ && !Security.IsAuthorized(Permissions.FeatureRequestEdit,true)) {
+				this.DisableAllExcept(butCancel,butAddDiscuss,textNote,textDetail);
 				textDetail.ReadOnly=true;
 			}
 		}
@@ -597,7 +597,7 @@ namespace OpenDental {
 			return true;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textNote.Text!=""){
 				MsgBox.Show(this,"You need to save your note first.");
 				return;
@@ -609,6 +609,24 @@ namespace OpenDental {
 			Close();
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+			Close();
+		}
+
+		
+
+		
+
+		
+	
+
+		
+		
+
+		
+
+		
 	}
 
 	/*

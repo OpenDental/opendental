@@ -145,7 +145,7 @@ namespace OpenDentBusiness {
 			public static bool IsRCMRunning {
 				get {
 					bool isRCMRunning=false;
-					if(ODEnvironment.IsCloudServer) {
+					if(ODBuild.IsWeb()) {
 						isRCMRunning=ODCloudClient.IsProcessRunning("rcm");
 					}
 					else {
@@ -171,7 +171,7 @@ namespace OpenDentBusiness {
 					cashBackAmt,expDate);
 				string url=$"{_edgeExpressRCMURL}?xl2Parameters={strBldXml}";
 				string response;
-				if(ODBuild.IsThinfinity()) {
+				if(ODBuild.IsWeb()) {
 					//Timeout is 120 seconds because that's how long we set the timeout for PayConnect terminal.
 					response=ODCloudClient.DownloadString(url,timeoutSecs: 120,doShowProgressBar: false);
 				}
@@ -420,42 +420,39 @@ namespace OpenDentBusiness {
 
 			private static void AddUIParams(XmlWriter xmlWriter,string returnUrl) {
 				xmlWriter.WriteStartElement("HOSTPAYSETTING");
-				xmlWriter.WriteStartElement("POSDEVICE");
-				xmlWriter.WriteElementString("TYPE","KEYED");
-				xmlWriter.WriteEndElement();//POSDEVICE
-				xmlWriter.WriteStartElement("RETURNOPTION");
-				if(ODBuild.IsDebug()) {
-					xmlWriter.WriteElementString("RETURNURL",returnUrl); //use this line for debugging easier
-				}
-				else {
-					xmlWriter.WriteElementString("RETURNURL",returnUrl);
-				}
-				xmlWriter.WriteElementString("RETURNTARGET","_self");//without this line, the top level window will be redirected to RETURNURL
-				xmlWriter.WriteEndElement();//RETURNOPTION
-				xmlWriter.WriteElementString("DISABLEFRAMING","false");//allows us to put the page in an iframe.
-				xmlWriter.WriteStartElement("CUSTOMIZATION");
-				xmlWriter.WriteStartElement("PAGE");
-				xmlWriter.WriteStartElement("BILLINGFIRSTNAME");
-				xmlWriter.WriteElementString("VISIBLE","false");//They've already entered their name
-				xmlWriter.WriteEndElement();//BILLINGFIRSTNAME
-				xmlWriter.WriteStartElement("BILLINGMIDDLENAME");
-				xmlWriter.WriteElementString("VISIBLE","false");//They've already entered their name
-				xmlWriter.WriteEndElement();//BILLINGMIDDLENAME
-				xmlWriter.WriteStartElement("BILLINGLASTNAME");
-				xmlWriter.WriteElementString("VISIBLE","false");//They've already entered their name
-				xmlWriter.WriteEndElement();//BILLINGLASTNAME
-				xmlWriter.WriteStartElement("BILLINGCOMPANY");
-				xmlWriter.WriteElementString("VISIBLE","false");
-				xmlWriter.WriteEndElement();//BILLINGCOMPANY
-				xmlWriter.WriteStartElement("BILLINGCUSTOMERTITLE");
-				xmlWriter.WriteElementString("VISIBLE","false");
-				xmlWriter.WriteEndElement();//BILLINGCUSTOMERTITLE
-				xmlWriter.WriteStartElement("ORDERINFO");
-				xmlWriter.WriteElementString("LABEL","Payment Information");
-				xmlWriter.WriteEndElement();//ORDERINFO
-				xmlWriter.WriteEndElement();//PAGE
-				xmlWriter.WriteEndElement();//CUSTOMIZATION
-				xmlWriter.WriteEndElement();//HOSTPAYSETTING
+					xmlWriter.WriteStartElement("POSDEVICE");
+					xmlWriter.WriteElementString("TYPE","KEYED");
+					xmlWriter.WriteEndElement();//POSDEVICE
+					xmlWriter.WriteStartElement("RETURNOPTION");
+					if(ODBuild.IsDebug()) {
+						xmlWriter.WriteElementString("RETURNURL",returnUrl); //use this line for debugging easier
+					}
+					else {
+						xmlWriter.WriteElementString("RETURNURL",returnUrl);
+					}
+					xmlWriter.WriteElementString("RETURNTARGET","_self");//without this line, the top level window will be redirected to RETURNURL
+					xmlWriter.WriteEndElement();//RETURNOPTION
+					xmlWriter.WriteElementString("DISABLEFRAMING","false");//allows us to put the page in an iframe.
+					xmlWriter.WriteStartElement("CUSTOMIZATION");
+					xmlWriter.WriteStartElement("PAGE");
+					xmlWriter.WriteStartElement("BILLINGFIRSTNAME");
+					xmlWriter.WriteElementString("VISIBLE","false");//They've already entered their name
+					xmlWriter.WriteEndElement();//BILLINGFIRSTNAME
+					xmlWriter.WriteStartElement("BILLINGMIDDLENAME");
+					xmlWriter.WriteElementString("VISIBLE","false");//They've already entered their name
+					xmlWriter.WriteEndElement();//BILLINGMIDDLENAME
+					xmlWriter.WriteStartElement("BILLINGLASTNAME");
+					xmlWriter.WriteElementString("VISIBLE","false");//They've already entered their name
+					xmlWriter.WriteEndElement();//BILLINGLASTNAME
+					xmlWriter.WriteStartElement("BILLINGCOMPANY");
+					xmlWriter.WriteElementString("VISIBLE","false");
+					xmlWriter.WriteEndElement();//BILLINGCOMPANY
+					xmlWriter.WriteStartElement("BILLINGCUSTOMERTITLE");
+					xmlWriter.WriteElementString("VISIBLE","false");
+					xmlWriter.WriteEndElement();//BILLINGCUSTOMERTITLE
+					xmlWriter.WriteEndElement();//PAGE
+					xmlWriter.WriteEndElement();//CUSTOMIZATION
+					xmlWriter.WriteEndElement();//HOSTPAYSETTING
 			}
 
 			///<summary>Sets the expiration and inserts the response to the db.</summary>
@@ -566,8 +563,9 @@ namespace OpenDentBusiness {
 				CreditCardSource creditCardSource,bool isWebPayment,string alias="",bool allowDuplicates=false,string email="",string logGuid="",
 				long paymentNum=0,long clinicNum=-1,string returnUrl="")
 			{
-				//No need to check MiddleTierRole; no call to db.
-				if(!creditCardSource.In(CreditCardSource.XWeb, CreditCardSource.XWebPortalLogin, CreditCardSource.XWebPaymentPortal, CreditCardSource.XWebPaymentPortalGuest, CreditCardSource.EdgeExpressCNP, CreditCardSource.EdgeExpressPaymentPortal, CreditCardSource.EdgeExpressPaymentPortalGuest, CreditCardSource.XWebPaymentPortal, CreditCardSource.XWebPaymentPortalGuest))
+				//No need to check MiddleTierRole;no call to db.
+				if(!creditCardSource.In(CreditCardSource.XWeb,CreditCardSource.XWebPortalLogin,CreditCardSource.EdgeExpressCNP,
+					CreditCardSource.EdgeExpressPaymentPortal,CreditCardSource.EdgeExpressPaymentPortalGuest)) 
 				{
 					throw new ODException("Invalid CreditCardSource: "+creditCardSource.ToString(),ODException.ErrorCodes.OtkArgsInvalid);
 				}
@@ -607,7 +605,7 @@ namespace OpenDentBusiness {
 				bool isWebPayment,string alias,bool allowDuplicates,List<CreditCardSource> listCreditCardSourcesEdgeExpress,
 				long clinicNum=-1) 
 			{
-				//No need to check MiddleTierRole; no call to db.
+				//No need to check MiddleTierRole;no call to db.
 				if(!listCreditCardSourcesEdgeExpress.Contains(ccSource)) {
 					throw new ODException("Invalid CreditCardSource: "+ccSource.ToString(),ODException.ErrorCodes.OtkArgsInvalid);
 				}
@@ -632,7 +630,7 @@ namespace OpenDentBusiness {
 			public static XWebResponse GetUrlForCreditCardAlias(long patNum,CreditCardSource ccSource,bool isWebPayment,double amount=0,
 				bool doCreateAlias=true,bool doUseCurrentClinicNum=false)
 			{
-				//No need to check MiddleTierRole; no call to db.
+				//No need to check MiddleTierRole;no call to db.
 				try {
 					XWebResponse response=SendEdgeExpressRequest(patNum,EdgeExpressTransType.CreditAuth,_edgeExpressHostPayUrl,isWebPayment,amount,doCreateAlias:doCreateAlias,
 						doUseCurrentClinicNum:doUseCurrentClinicNum);
@@ -647,7 +645,7 @@ namespace OpenDentBusiness {
 
 			///<summary>Tells EdgeExpress to delete their saved copy of the credit card that matches the supplied token.</summary>
 			public static XWebResponse UpdateAlias(long patNum,string alias,DateTime expDate) {
-				//No need to check MiddleTierRole; no call to db.
+				//No need to check MiddleTierRole;no call to db.
 				try {
 					XWebResponse response=SendEdgeExpressRequest(patNum,EdgeExpressTransType.AliasUpdate,_edgeExpressDirectPayUrl,false,alias:alias,expDate:expDate.ToString("MMyy"));
 					FinishEdgeExpressUrlRequest(response);
@@ -660,7 +658,7 @@ namespace OpenDentBusiness {
 
 			///<summary>Tells EdgeExpress to delete their saved copy of the credit card that matches the supplied token.</summary>
 			public static XWebResponse DeleteAlias(long patNum,string alias) {
-				//No need to check MiddleTierRole; no call to db.
+				//No need to check MiddleTierRole;no call to db.
 				try {
 					XWebResponse response=SendEdgeExpressRequest(patNum,EdgeExpressTransType.AliasDelete,_edgeExpressDirectPayUrl,false,alias:alias);
 					FinishEdgeExpressUrlRequest(response);
@@ -672,7 +670,7 @@ namespace OpenDentBusiness {
 			}
 
 			public static XWebResponse VoidTransaction(long patNum,string transactionID,double amount,bool isWebPayment) {
-				//No need to check MiddleTierRole; no call to db.
+				//No need to check MiddleTierRole;no call to db.
 				try {
 					XWebResponse response=SendEdgeExpressRequest(patNum,EdgeExpressTransType.CreditVoid,_edgeExpressDirectPayUrl,isWebPayment,amount:amount,
 						doCreateAlias:false,transactionID:transactionID);
@@ -685,7 +683,7 @@ namespace OpenDentBusiness {
 			}
 
 			public static XWebResponse ReturnTransaction(long patNum,string transactionID,double amount,bool isWebPayment) {
-				//No need to check MiddleTierRole; no call to db.
+				//No need to check MiddleTierRole;no call to db.
 				try {
 					XWebResponse response=SendEdgeExpressRequest(patNum,EdgeExpressTransType.CreditReturn,_edgeExpressDirectPayUrl,isWebPayment,amount:amount,
 						doCreateAlias:false,transactionID:transactionID);
@@ -698,7 +696,7 @@ namespace OpenDentBusiness {
 			}
 
 			public static XWebResponse ForceTransaction(long patNum,string transactionID,double amount,bool isWebPayment) {
-				//No need to check MiddleTierRole; no call to db.
+				//No need to check MiddleTierRole;no call to db.
 				try {
 					XWebResponse response=SendEdgeExpressRequest(patNum,EdgeExpressTransType.CreditOnlineCapture,_edgeExpressDirectPayUrl,isWebPayment,amount:amount,
 						doCreateAlias:false,transactionID:transactionID);
@@ -712,7 +710,7 @@ namespace OpenDentBusiness {
 
 			///<summary>Makes a web request to EdgeExpress to get the status for the OTK passed in.  Throws exceptions.</summary>
 			public static XWebResponse GetOtkStatus(long patNum,string orderId,bool isWebPayment,long clinicNum=-1) {
-				//No need to check MiddleTierRole; no call to db.
+				//No need to check MiddleTierRole;no call to db.
 				try {
 					return SendEdgeExpressRequest(patNum,EdgeExpressTransType.QueryPayment,_edgeExpressDirectPayUrl,isWebPayment,orderId:orderId,clinicNum:clinicNum);
 				}

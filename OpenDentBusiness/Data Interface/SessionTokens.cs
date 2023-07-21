@@ -20,69 +20,67 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Generates a new token and inserts it into the database.</summary>
-		public static SessionToken GenerateToken(SessionTokenType sessionTokenType,long fkey) {
+		public static SessionToken GenerateToken(SessionTokenType tokenType,long fkey) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<SessionToken>(MethodBase.GetCurrentMethod(),sessionTokenType,fkey);
+				return Meth.GetObject<SessionToken>(MethodBase.GetCurrentMethod(),tokenType,fkey);
 			}
-			SessionToken sessionToken=new SessionToken();
-			sessionToken.FKey=fkey;
-			sessionToken.TokenType=sessionTokenType;
-			sessionToken.Expiration=MiscData.GetNowDateTime().AddHours(24);
-			//Using 128 bits because it would be impossible to brute force using today's techniques
-			sessionToken.TokenPlainText=ODCrypt.CryptUtil.RandomString(128);
-			sessionToken.SessionTokenHash=GetHash(sessionToken.TokenPlainText);
-			Insert(sessionToken);
+			SessionToken token=new SessionToken {
+				FKey=fkey,
+				TokenType=tokenType,
+				Expiration=MiscData.GetNowDateTime().AddHours(24),
+				TokenPlainText=ODCrypt.CryptUtil.RandomString(128),//Using 128 bits because it would be impossible to brute force using today's techniques
+			};
+			token.SessionTokenHash=GetHash(token.TokenPlainText);
+			Insert(token);
 			//These fields don't need to be sent to the client.
-			sessionToken.SessionTokenHash="";
-			sessionToken.SessionTokenNum=0;
-			return sessionToken;
+			token.SessionTokenHash="";
+			token.SessionTokenNum=0;
+			return token;
 		}
 
 		///<summary>Hashes the session token using SHA3.</summary>
 		private static string GetHash(string sessionToken) {
-			//No need to check MiddleTierRole; no call to db.
 			//Salt not necessary because the token is almost certainly unique.
 			PasswordContainer passwordContainer=new PasswordContainer(HashTypes.SHA3_512,"",Authentication.HashPasswordSHA512(sessionToken));
 			return passwordContainer.ToString();
 		}
 
 		///<summary>Checks that the passed in token is valid. Throws if not. Returns the matching token from the database.</summary>
-		public static SessionToken CheckToken(string sessionToken,SessionTokenType sessionTokenType,long fkey) {
-			//No need to check MiddleTierRole; no call to db.
-			return CheckToken(sessionToken,new List<SessionTokenType> { sessionTokenType },fkey);
+		public static SessionToken CheckToken(string sessionToken,SessionTokenType tokenType,long fkey) {
+			return CheckToken(sessionToken,new List<SessionTokenType> { tokenType },fkey);
 		}
 
 		///<summary>Checks that the passed in token is valid. Throws if not. Returns the matching token from the database.</summary>
-		public static SessionToken CheckToken(string token,List<SessionTokenType> listTokenTypes,long fkey) {
+		public static SessionToken CheckToken(string sessionToken,List<SessionTokenType> listTokenTypes,long fkey) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<SessionToken>(MethodBase.GetCurrentMethod(),token,listTokenTypes,fkey);
+				return Meth.GetObject<SessionToken>(MethodBase.GetCurrentMethod(),sessionToken,listTokenTypes,fkey);
 			}
-			if(token.IsNullOrEmpty()) {
+			if(sessionToken.IsNullOrEmpty()) {
 				throw new ODException("Invalid credentials");
 			}
 			if(listTokenTypes.Count==0) {
 				throw new Exception("Token type required");
 			}
-			string tokenHash=GetHash(token);
+			string tokenHash=GetHash(sessionToken);
 			string command=$"SELECT *,NOW() DatabaseTime FROM sessiontoken WHERE SessionTokenHash='{POut.String(tokenHash)}' ";
 			if(listTokenTypes.Any(x => x!=SessionTokenType.Undefined)) {
 				command+=$"AND TokenType IN({string.Join(",",listTokenTypes.Select(x =>  POut.Int((int)x)))}) ";
 			}
 			DataTable table=Db.GetTable(command);
-			List<SessionToken> listSessionTokens=Crud.SessionTokenCrud.TableToList(table);
-			if(listSessionTokens.Count==0) {
+			List<SessionToken> listTokens=Crud.SessionTokenCrud.TableToList(table);
+			if(listTokens.Count==0) {
 				throw new ODException("Invalid credentials");
 			}
-			SessionToken sessionToken=listSessionTokens[0];
-			DateTime dateTimeDb=PIn.DateT(table.Rows[0]["DatabaseTime"].ToString());
-			if(sessionToken.Expiration < dateTimeDb) {
+			SessionToken token=listTokens[0];
+			DateTime dbTime=PIn.DateT(table.Rows[0]["DatabaseTime"].ToString());
+			if(token.Expiration < dbTime) {
 				//Normally won't get here because apps will request a new token before it expires.
 				throw new ODException("Session has expired.",ODException.ErrorCodes.SessionExpired);
 			}
 			bool isAuthorized=false;
-			if(fkey==0 || fkey==sessionToken.FKey 
+			if(fkey==0 || fkey==token.FKey 
 				//Check if the FKey for the token is allowed to view the patient for the request
-				|| (listTokenTypes.Contains(SessionTokenType.PatientPortal) && Patients.GetPatNumsForPhi(sessionToken.FKey).Contains(fkey))) 
+				|| (listTokenTypes.Contains(SessionTokenType.PatientPortal) && Patients.GetPatNumsForPhi(token.FKey).Contains(fkey))) 
 			{
 				isAuthorized=true;
 			}
@@ -90,9 +88,8 @@ namespace OpenDentBusiness{
 				//For example, the token is for a different patient than the patient for which information is being requested.
 				throw new ODException("Invalid credentials");
 			}
-			return sessionToken;
+			return token;
 		}
-
 		///<summary>Deletes the token if it is present in the database.</summary>
 		public static void DeleteToken(string sessionToken) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

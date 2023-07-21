@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEmailDigitalSignature));
 			this.butTrust = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textCertificateAuthority = new System.Windows.Forms.TextBox();
 			this.textValidFrom = new System.Windows.Forms.TextBox();
@@ -44,12 +45,22 @@ namespace OpenDental{
 			// butTrust
 			// 
 			this.butTrust.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butTrust.Location = new System.Drawing.Point(384, 293);
+			this.butTrust.Location = new System.Drawing.Point(106, 316);
 			this.butTrust.Name = "butTrust";
 			this.butTrust.Size = new System.Drawing.Size(75, 24);
 			this.butTrust.TabIndex = 3;
 			this.butTrust.Text = "Trust";
 			this.butTrust.Click += new System.EventHandler(this.butTrust_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(403, 316);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// label2
 			// 
@@ -177,8 +188,9 @@ namespace OpenDental{
 			// 
 			// FormEmailDigitalSignature
 			// 
-			this.ClientSize = new System.Drawing.Size(488, 329);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(497, 352);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.textTrustExplanation);
 			this.Controls.Add(this.label8);
 			this.Controls.Add(this.textTrustStatus);
@@ -208,6 +220,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butTrust;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox textCertificateAuthority;
 		private System.Windows.Forms.TextBox textValidFrom;

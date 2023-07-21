@@ -132,10 +132,10 @@ namespace CentralManager {
 		}
 
 		public static List<GroupPermission> SyncDisplayReportFKeysCEMT(List<GroupPermission> listGroupPermissions,List<DisplayReport> listDisplayReportsRemote,List<DisplayReport> listDisplayReportsCEMT) {
-			List<GroupPermission> listGroupPermReportsCEMT=listGroupPermissions.FindAll(x => x.PermType==EnumPermType.Reports);
+			List<GroupPermission> listGroupPermReportsCEMT=listGroupPermissions.FindAll(x => x.PermType==Permissions.Reports);
 			if(listGroupPermReportsCEMT.Any(x => x.FKey==0)) {//Has permission to all reports.
 				//Remove all non-zero group permissions of PermType Reports so that a single group permission is synchronized to grant permission to all reports.
-				listGroupPermissions.RemoveAll(x => x.PermType==EnumPermType.Reports && x.FKey!=0);
+				listGroupPermissions.RemoveAll(x => x.PermType==Permissions.Reports && x.FKey!=0);
 				return listGroupPermissions;
 			}
 			for(int j=0;j < listGroupPermReportsCEMT.Count;j++) {
@@ -160,7 +160,7 @@ namespace CentralManager {
 		}
 
 		///<summary>Returns a list of group permissions where all of the non-zero FKey objects have been removed for the permission passed in. Useful when performing an all-or-nothing synchronization because there is no concrete way to cross-reference the remote database and correct the right CEMT FKey value. If there is, there needs to be a special method implemented to do this - see SyncDisplayReportsCEMT().</summary>
-		public static List<GroupPermission> RemoveFKeysForPermissions(List<GroupPermission> listGroupPermissions,EnumPermType permission) {
+		public static List<GroupPermission> RemoveFKeysForPermissions(List<GroupPermission> listGroupPermissions,Permissions permission) {
 			//This method was invoked because it's not safe to leave FKey specific group permissions around for the permission provided.
 			//Only allow group permissions with no FKey set which typically mean that the user group has full access (or no access). AKA all-or-nothing.
 			listGroupPermissions.RemoveAll(x => x.PermType==permission && x.FKey!=0);
@@ -182,7 +182,7 @@ namespace CentralManager {
 				//AdjustmentTypeDeny is another permission that utilizes the FKey column.
 				//This permission does not have a paradigm that allows the CEMT to know what exactly each FKey from the remote db represents.
 				//Therefore, we will only allow the CEMT to grant all or deny all adjustment types (aka ignore group permissions FKey column for values other than 0).
-				centralUserData.ListGroupPermissions=RemoveFKeysForPermissions(centralUserData.ListGroupPermissions,EnumPermType.AdjustmentTypeDeny);
+				centralUserData.ListGroupPermissions=RemoveFKeysForPermissions(centralUserData.ListGroupPermissions,Permissions.AdjustmentTypeDeny);
 				#endregion
 				List<GroupPermission> listGroupPerms=new List<GroupPermission>();
 				for(int j=0;j<listRemoteCEMTUserGroups.Count;j++) {
@@ -228,7 +228,7 @@ namespace CentralManager {
 			Prefs.UpdateBoolNoCache(PrefName.SecurityLockIncludesAdmin,_securityLockAdmin);
 			Prefs.UpdateBoolNoCache(PrefName.CentralManagerSecurityLock,_securityCentralLock);
 			Signalods.SetInvalidNoCache(InvalidType.Prefs);
-			SecurityLogs.MakeLogEntryNoCache(EnumPermType.SecurityAdmin,0,"Enterprise Management Tool updated security settings");
+			SecurityLogs.MakeLogEntryNoCache(Permissions.SecurityAdmin,0,"Enterprise Management Tool updated security settings");
 			//Get remote users, usergroups, associated permissions, and alertsubs
 			List<Userod> listRemoteUsers=Userods.GetUsersNoCache();
 			#region Detect Conflicts
@@ -271,7 +271,7 @@ namespace CentralManager {
 			AlertSubs.DeleteAndInsertForSuperUsers(_listCEMTUsers,listAlertSubsToInsert);
 			//Refresh server's cache of userods
 			Signalods.SetInvalidNoCache(InvalidType.Security);
-			SecurityLogs.MakeLogEntryNoCache(EnumPermType.SecurityAdmin,0,"Enterprise Management Tool synced users.");
+			SecurityLogs.MakeLogEntryNoCache(Permissions.SecurityAdmin,0,"Enterprise Management Tool synced users.");
 			odThread.Tag=new List<string>() { "","","" };//No errors.
 		}
 
@@ -337,7 +337,7 @@ namespace CentralManager {
 			AlertSubs.DeleteAndInsertForSuperUsers(_listCEMTUsers,listAlertSubsToInsert);
 			//Refresh server's cache of userods
 			Signalods.SetInvalidNoCache(InvalidType.Security);
-			SecurityLogs.MakeLogEntryNoCache(EnumPermType.SecurityAdmin,0,"Enterprise Management Tool synced users.");
+			SecurityLogs.MakeLogEntryNoCache(Permissions.SecurityAdmin,0,"Enterprise Management Tool synced users.");
 			odThread.Tag=new List<string>() { "","","" };//No errors.
 		}
 
@@ -366,7 +366,7 @@ namespace CentralManager {
 			Prefs.UpdateBoolNoCache(PrefName.SecurityLockIncludesAdmin,_securityLockAdmin);
 			Prefs.UpdateBoolNoCache(PrefName.CentralManagerSecurityLock,_securityCentralLock);
 			Signalods.SetInvalidNoCache(InvalidType.Prefs);
-			SecurityLogs.MakeLogEntryNoCache(EnumPermType.SecurityAdmin,0,"Enterprise Management Tool updated security settings");
+			SecurityLogs.MakeLogEntryNoCache(Permissions.SecurityAdmin,0,"Enterprise Management Tool updated security settings");
 			odThread.Tag=new List<string>() { "","","" };//No errors.
 		}
 

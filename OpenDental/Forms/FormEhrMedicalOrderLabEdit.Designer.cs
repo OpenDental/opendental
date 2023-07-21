@@ -24,7 +24,8 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrMedicalOrderLabEdit));
-			this.butSave = new System.Windows.Forms.Button();
+			this.butOK = new System.Windows.Forms.Button();
+			this.butCancel = new System.Windows.Forms.Button();
 			this.butDelete = new System.Windows.Forms.Button();
 			this.textDescription = new System.Windows.Forms.TextBox();
 			this.labelDescription = new System.Windows.Forms.Label();
@@ -38,16 +39,27 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(403, 346);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 11;
-			this.butSave.Text = "&Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(322, 346);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 11;
+			this.butOK.Text = "OK";
+			this.butOK.UseVisualStyleBackColor = true;
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(403, 346);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 10;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butDelete
 			// 
@@ -173,7 +185,8 @@
 			this.Controls.Add(this.labelDescription);
 			this.Controls.Add(this.textDescription);
 			this.Controls.Add(this.butDelete);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrMedicalOrderLabEdit";
 			this.Text = "Lab Order Edit";
@@ -185,7 +198,8 @@
 
 		#endregion
 
-		private System.Windows.Forms.Button butSave;
+		private System.Windows.Forms.Button butOK;
+		private System.Windows.Forms.Button butCancel;
 		private System.Windows.Forms.Button butDelete;
 		private System.Windows.Forms.TextBox textDescription;
 		private System.Windows.Forms.Label labelDescription;

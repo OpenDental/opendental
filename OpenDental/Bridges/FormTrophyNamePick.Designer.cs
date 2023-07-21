@@ -1,4 +1,4 @@
-namespace OpenDental{
+namespace OpenDental.Bridges{
 	partial class FormTrophyNamePick {
 		/// <summary>
 		/// Required designer variable.
@@ -28,6 +28,7 @@ namespace OpenDental{
 			this.butNew = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -43,7 +44,7 @@ namespace OpenDental{
 			// butNew
 			// 
 			this.butNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butNew.Location = new System.Drawing.Point(497, 437);
+			this.butNew.Location = new System.Drawing.Point(497, 399);
 			this.butNew.Name = "butNew";
 			this.butNew.Size = new System.Drawing.Size(84, 24);
 			this.butNew.TabIndex = 141;
@@ -67,12 +68,22 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(497, 483);
+			this.butOK.Location = new System.Drawing.Point(497, 442);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(84, 24);
 			this.butOK.TabIndex = 3;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(497, 483);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(84, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// FormTrophyNamePick
 			// 
@@ -81,6 +92,7 @@ namespace OpenDental{
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormTrophyNamePick";
 			this.Text = "Select Folder";
@@ -92,6 +104,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.Button butNew;

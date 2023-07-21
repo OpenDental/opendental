@@ -27,11 +27,8 @@
 			this.timerTitle = new System.Windows.Forms.Timer(this.components);
 			this.timerVersion = new System.Windows.Forms.Timer(this.components);
 			this.panel3 = new System.Windows.Forms.Panel();
-			this.checkIncludeCompleteCanceled = new OpenDental.UI.CheckBox();
-			this.butParentPick = new OpenDental.UI.Button();
 			this.textParent = new System.Windows.Forms.TextBox();
 			this.label11 = new System.Windows.Forms.Label();
-			this.butParentRemove = new OpenDental.UI.Button();
 			this.labelRelatedJobs = new System.Windows.Forms.Label();
 			this.treeRelatedJobs = new System.Windows.Forms.TreeView();
 			this.gridRoles = new OpenDental.UI.GridOD();
@@ -56,19 +53,11 @@
 			this.textJobNum = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.panel4 = new System.Windows.Forms.Panel();
-			this.comboPriority = new System.Windows.Forms.ComboBox();
 			this.label23 = new System.Windows.Forms.Label();
 			this.textDeadlineDate = new System.Windows.Forms.TextBox();
-			this.textHoursLeft = new OpenDental.ValidDouble();
-			this.butAddTime = new OpenDental.UI.Button();
 			this.label15 = new System.Windows.Forms.Label();
-			this.butTimeLog = new OpenDental.UI.Button();
-			this.textActualHours = new OpenDental.ValidDouble();
-			this.textEstHours = new OpenDental.ValidDouble();
 			this.label21 = new System.Windows.Forms.Label();
 			this.label22 = new System.Windows.Forms.Label();
-			this.butChangeEst = new OpenDental.UI.Button();
-			this.butPhoneNums = new OpenDental.UI.Button();
 			this.label16 = new System.Windows.Forms.Label();
 			this.text0_30 = new System.Windows.Forms.TextBox();
 			this.label17 = new System.Windows.Forms.Label();
@@ -84,22 +73,33 @@
 			this.label13 = new System.Windows.Forms.Label();
 			this.textBillingType = new System.Windows.Forms.TextBox();
 			this.label12 = new System.Windows.Forms.Label();
-			this.butEmail = new OpenDental.UI.Button();
-			this.butCommlog = new OpenDental.UI.Button();
 			this.label10 = new System.Windows.Forms.Label();
 			this.textSchedDate = new System.Windows.Forms.TextBox();
-			this.butActions = new OpenDental.UI.Button();
-			this.comboPhase = new OpenDental.UI.ComboBox();
-			this.checkApproved = new OpenDental.UI.CheckBox();
 			this.panel5 = new System.Windows.Forms.Panel();
 			this.splitContainer = new System.Windows.Forms.SplitContainer();
-			this.textEditorMain = new OpenDental.OdtextEditor();
 			this.tabControlMain = new System.Windows.Forms.TabControl();
 			this.tabMain = new System.Windows.Forms.TabPage();
 			this.gridNotes = new OpenDental.UI.GridOD();
 			this.tabReviews = new System.Windows.Forms.TabPage();
 			this.gridReview = new OpenDental.UI.GridOD();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+			this.textEditorMain = new OpenDental.OdtextEditor();
+			this.textHoursLeft = new OpenDental.ValidDouble();
+			this.butAddTime = new OpenDental.UI.Button();
+			this.butTimeLog = new OpenDental.UI.Button();
+			this.textActualHours = new OpenDental.ValidDouble();
+			this.textEstHours = new OpenDental.ValidDouble();
+			this.butChangeEst = new OpenDental.UI.Button();
+			this.butPhoneNums = new OpenDental.UI.Button();
+			this.butEmail = new OpenDental.UI.Button();
+			this.butCommlog = new OpenDental.UI.Button();
+			this.butActions = new OpenDental.UI.Button();
+			this.comboPhase = new OpenDental.UI.ComboBox();
+			this.comboPriority = new OpenDental.UI.ComboBox();
+			this.checkApproved = new OpenDental.UI.CheckBox();
+			this.checkIncludeCompleteCanceled = new OpenDental.UI.CheckBox();
+			this.butParentPick = new OpenDental.UI.Button();
+			this.butParentRemove = new OpenDental.UI.Button();
 			this.panel3.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.panel4.SuspendLayout();
@@ -130,26 +130,6 @@
 			this.panel3.Size = new System.Drawing.Size(241, 234);
 			this.panel3.TabIndex = 305;
 			// 
-			// checkIncludeCompleteCanceled
-			// 
-			this.checkIncludeCompleteCanceled.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkIncludeCompleteCanceled.Location = new System.Drawing.Point(101, 127);
-			this.checkIncludeCompleteCanceled.Name = "checkIncludeCompleteCanceled";
-			this.checkIncludeCompleteCanceled.Size = new System.Drawing.Size(135, 24);
-			this.checkIncludeCompleteCanceled.TabIndex = 327;
-			this.checkIncludeCompleteCanceled.Text = "Include Complete/Canceled";
-			this.checkIncludeCompleteCanceled.CheckedChanged += new System.EventHandler(this.checkIncludeCompleteCanceled_CheckedChanged);
-			// 
-			// butParentPick
-			// 
-			this.butParentPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.butParentPick.Location = new System.Drawing.Point(190, 105);
-			this.butParentPick.Name = "butParentPick";
-			this.butParentPick.Size = new System.Drawing.Size(23, 20);
-			this.butParentPick.TabIndex = 315;
-			this.butParentPick.Text = "...";
-			this.butParentPick.Click += new System.EventHandler(this.butParentPick_Click);
-			// 
 			// textParent
 			// 
 			this.textParent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -170,16 +150,6 @@
 			this.label11.TabIndex = 313;
 			this.label11.Text = "Parent Job Num";
 			this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// butParentRemove
-			// 
-			this.butParentRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.butParentRemove.Icon = OpenDental.UI.EnumIcons.DeleteX;
-			this.butParentRemove.Location = new System.Drawing.Point(213, 105);
-			this.butParentRemove.Name = "butParentRemove";
-			this.butParentRemove.Size = new System.Drawing.Size(23, 20);
-			this.butParentRemove.TabIndex = 314;
-			this.butParentRemove.Click += new System.EventHandler(this.butParentRemove_Click);
 			// 
 			// labelRelatedJobs
 			// 
@@ -406,7 +376,6 @@
 			// 
 			// panel4
 			// 
-			this.panel4.Controls.Add(this.comboPriority);
 			this.panel4.Controls.Add(this.label23);
 			this.panel4.Controls.Add(this.textDeadlineDate);
 			this.panel4.Controls.Add(this.textHoursLeft);
@@ -440,6 +409,7 @@
 			this.panel4.Controls.Add(this.textSchedDate);
 			this.panel4.Controls.Add(this.butActions);
 			this.panel4.Controls.Add(this.comboPhase);
+			this.panel4.Controls.Add(this.comboPriority);
 			this.panel4.Controls.Add(this.label9);
 			this.panel4.Controls.Add(this.textTitle);
 			this.panel4.Controls.Add(this.label5);
@@ -463,18 +433,6 @@
 			this.panel4.Size = new System.Drawing.Size(766, 170);
 			this.panel4.TabIndex = 329;
 			// 
-			// comboPriority
-			// 
-			this.comboPriority.FormattingEnabled = true;
-			this.comboPriority.IntegralHeight = false;
-			this.comboPriority.Location = new System.Drawing.Point(126, 23);
-			this.comboPriority.MaxDropDownItems = 10;
-			this.comboPriority.Name = "comboPriority";
-			this.comboPriority.Size = new System.Drawing.Size(121, 21);
-			this.comboPriority.TabIndex = 362;
-			this.comboPriority.SelectionChangeCommitted += new System.EventHandler(this.comboPriority_SelectionChangeCommitted);
-			this.comboPriority.Leave += new System.EventHandler(this.comboPriority_Leave);
-			// 
 			// label23
 			// 
 			this.label23.Location = new System.Drawing.Point(325, 86);
@@ -491,27 +449,6 @@
 			this.textDeadlineDate.TabIndex = 360;
 			this.textDeadlineDate.Leave += new System.EventHandler(this.textDeadlineDate_Leave);
 			// 
-			// textHoursLeft
-			// 
-			this.textHoursLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.textHoursLeft.Location = new System.Drawing.Point(647, 146);
-			this.textHoursLeft.MaxVal = 1000000D;
-			this.textHoursLeft.MinVal = 0D;
-			this.textHoursLeft.Name = "textHoursLeft";
-			this.textHoursLeft.ReadOnly = true;
-			this.textHoursLeft.Size = new System.Drawing.Size(44, 20);
-			this.textHoursLeft.TabIndex = 357;
-			// 
-			// butAddTime
-			// 
-			this.butAddTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butAddTime.Location = new System.Drawing.Point(693, 125);
-			this.butAddTime.Name = "butAddTime";
-			this.butAddTime.Size = new System.Drawing.Size(71, 20);
-			this.butAddTime.TabIndex = 355;
-			this.butAddTime.Text = "Add Time";
-			this.butAddTime.Click += new System.EventHandler(this.butAddTime_Click);
-			// 
 			// label15
 			// 
 			this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -521,38 +458,6 @@
 			this.label15.TabIndex = 356;
 			this.label15.Text = "Hrs. Left";
 			this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// butTimeLog
-			// 
-			this.butTimeLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butTimeLog.Location = new System.Drawing.Point(693, 146);
-			this.butTimeLog.Name = "butTimeLog";
-			this.butTimeLog.Size = new System.Drawing.Size(71, 20);
-			this.butTimeLog.TabIndex = 359;
-			this.butTimeLog.Text = "Log";
-			this.butTimeLog.Click += new System.EventHandler(this.butTimeLog_Click);
-			// 
-			// textActualHours
-			// 
-			this.textActualHours.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.textActualHours.Location = new System.Drawing.Point(647, 125);
-			this.textActualHours.MaxVal = 1000000D;
-			this.textActualHours.MinVal = 0D;
-			this.textActualHours.Name = "textActualHours";
-			this.textActualHours.ReadOnly = true;
-			this.textActualHours.Size = new System.Drawing.Size(44, 20);
-			this.textActualHours.TabIndex = 354;
-			// 
-			// textEstHours
-			// 
-			this.textEstHours.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.textEstHours.Location = new System.Drawing.Point(647, 104);
-			this.textEstHours.MaxVal = 1000000D;
-			this.textEstHours.MinVal = 0D;
-			this.textEstHours.Name = "textEstHours";
-			this.textEstHours.ReadOnly = true;
-			this.textEstHours.Size = new System.Drawing.Size(44, 20);
-			this.textEstHours.TabIndex = 353;
 			// 
 			// label21
 			// 
@@ -573,26 +478,6 @@
 			this.label22.TabIndex = 351;
 			this.label22.Text = "Hrs. Est.";
 			this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// butChangeEst
-			// 
-			this.butChangeEst.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butChangeEst.Location = new System.Drawing.Point(693, 104);
-			this.butChangeEst.Name = "butChangeEst";
-			this.butChangeEst.Size = new System.Drawing.Size(71, 20);
-			this.butChangeEst.TabIndex = 358;
-			this.butChangeEst.Text = "Change Est.";
-			this.butChangeEst.Click += new System.EventHandler(this.butChangeEst_Click);
-			// 
-			// butPhoneNums
-			// 
-			this.butPhoneNums.Location = new System.Drawing.Point(506, 140);
-			this.butPhoneNums.Name = "butPhoneNums";
-			this.butPhoneNums.Size = new System.Drawing.Size(75, 23);
-			this.butPhoneNums.TabIndex = 350;
-			this.butPhoneNums.Text = "Phone Nums";
-			this.butPhoneNums.UseVisualStyleBackColor = true;
-			this.butPhoneNums.Click += new System.EventHandler(this.butPhoneNums_Click);
 			// 
 			// label16
 			// 
@@ -724,28 +609,6 @@
 			this.label12.TabIndex = 334;
 			this.label12.Text = "Billing Type";
 			// 
-			// butEmail
-			// 
-			this.butEmail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.butEmail.Location = new System.Drawing.Point(706, 47);
-			this.butEmail.Name = "butEmail";
-			this.butEmail.Size = new System.Drawing.Size(58, 23);
-			this.butEmail.TabIndex = 332;
-			this.butEmail.Text = "Email";
-			this.butEmail.UseVisualStyleBackColor = true;
-			this.butEmail.Click += new System.EventHandler(this.butEmail_Click);
-			// 
-			// butCommlog
-			// 
-			this.butCommlog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCommlog.Location = new System.Drawing.Point(706, 23);
-			this.butCommlog.Name = "butCommlog";
-			this.butCommlog.Size = new System.Drawing.Size(58, 23);
-			this.butCommlog.TabIndex = 331;
-			this.butCommlog.Text = "Commlog";
-			this.butCommlog.UseVisualStyleBackColor = true;
-			this.butCommlog.Click += new System.EventHandler(this.butCommlog_Click);
-			// 
 			// label10
 			// 
 			this.label10.Location = new System.Drawing.Point(325, 49);
@@ -761,35 +624,6 @@
 			this.textSchedDate.Size = new System.Drawing.Size(140, 20);
 			this.textSchedDate.TabIndex = 329;
 			this.textSchedDate.Leave += new System.EventHandler(this.textSchedDate_Leave);
-			// 
-			// butActions
-			// 
-			this.butActions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.butActions.Image = global::OpenDental.Properties.Resources.arrowDownTriangle;
-			this.butActions.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.butActions.Location = new System.Drawing.Point(605, 23);
-			this.butActions.Name = "butActions";
-			this.butActions.Size = new System.Drawing.Size(95, 23);
-			this.butActions.TabIndex = 303;
-			this.butActions.Text = "Job Actions";
-			this.butActions.Click += new System.EventHandler(this.butActions_Click);
-			// 
-			// comboPhase
-			// 
-			this.comboPhase.Location = new System.Drawing.Point(126, 63);
-			this.comboPhase.Name = "comboPhase";
-			this.comboPhase.Size = new System.Drawing.Size(121, 21);
-			this.comboPhase.TabIndex = 315;
-			this.comboPhase.SelectionChangeCommitted += new System.EventHandler(this.comboPhase_SelectionChangeCommitted);
-			// 
-			// checkApproved
-			// 
-			this.checkApproved.Location = new System.Drawing.Point(474, 23);
-			this.checkApproved.Name = "checkApproved";
-			this.checkApproved.Size = new System.Drawing.Size(74, 24);
-			this.checkApproved.TabIndex = 326;
-			this.checkApproved.Text = "Approved";
-			this.checkApproved.CheckedChanged += new System.EventHandler(this.checkApproved_CheckedChanged);
 			// 
 			// panel5
 			// 
@@ -816,25 +650,6 @@
 			this.splitContainer.Size = new System.Drawing.Size(766, 556);
 			this.splitContainer.SplitterDistance = 496;
 			this.splitContainer.TabIndex = 308;
-			// 
-			// textEditorMain
-			// 
-			this.textEditorMain.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.textEditorMain.HasEditorOptions = true;
-			this.textEditorMain.HasSaveButton = true;
-			this.textEditorMain.Location = new System.Drawing.Point(0, 0);
-			this.textEditorMain.MainFont = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.textEditorMain.MainRtf = "{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033{\\fonttbl{\\f0\\fnil\\fcharset0 " +
-    "Consolas;}}\r\n{\\*\\generator Riched20 10.0.22621}\\viewkind4\\uc1 \r\n\\pard\\f0\\fs18\\pa" +
-    "r\r\n}\r\n";
-			this.textEditorMain.MainText = "";
-			this.textEditorMain.MinimumSize = new System.Drawing.Size(450, 120);
-			this.textEditorMain.Name = "textEditorMain";
-			this.textEditorMain.ReadOnly = false;
-			this.textEditorMain.Size = new System.Drawing.Size(496, 556);
-			this.textEditorMain.TabIndex = 306;
-			this.textEditorMain.SaveClick += new OpenDental.ODtextEditorSaveEventHandler(this.textEditor_SaveClick);
-			this.textEditorMain.OnTextEdited += new OpenDental.OdtextEditor.textChangedEventHandler(this.textEditorMain_OnTextEdited);
 			// 
 			// tabControlMain
 			// 
@@ -912,6 +727,187 @@
 			this.tableLayoutPanel2.Size = new System.Drawing.Size(247, 726);
 			this.tableLayoutPanel2.TabIndex = 307;
 			// 
+			// textEditorMain
+			// 
+			this.textEditorMain.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.textEditorMain.HasEditorOptions = true;
+			this.textEditorMain.HasSaveButton = true;
+			this.textEditorMain.Location = new System.Drawing.Point(0, 0);
+			this.textEditorMain.MainFont = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.textEditorMain.MainRtf = "{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033{\\fonttbl{\\f0\\fnil\\fcharset0 " +
+    "Consolas;}}\r\n{\\*\\generator Riched20 10.0.19041}\\viewkind4\\uc1 \r\n\\pard\\f0\\fs18\\pa" +
+    "r\r\n}\r\n";
+			this.textEditorMain.MainText = "";
+			this.textEditorMain.MinimumSize = new System.Drawing.Size(450, 120);
+			this.textEditorMain.Name = "textEditorMain";
+			this.textEditorMain.ReadOnly = false;
+			this.textEditorMain.Size = new System.Drawing.Size(496, 556);
+			this.textEditorMain.TabIndex = 306;
+			this.textEditorMain.SaveClick += new OpenDental.ODtextEditorSaveEventHandler(this.textEditor_SaveClick);
+			this.textEditorMain.OnTextEdited += new OpenDental.OdtextEditor.textChangedEventHandler(this.textEditorMain_OnTextEdited);
+			// 
+			// textHoursLeft
+			// 
+			this.textHoursLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.textHoursLeft.Location = new System.Drawing.Point(647, 146);
+			this.textHoursLeft.MaxVal = 1000000D;
+			this.textHoursLeft.MinVal = 0D;
+			this.textHoursLeft.Name = "textHoursLeft";
+			this.textHoursLeft.ReadOnly = true;
+			this.textHoursLeft.Size = new System.Drawing.Size(44, 20);
+			this.textHoursLeft.TabIndex = 357;
+			// 
+			// butAddTime
+			// 
+			this.butAddTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butAddTime.Location = new System.Drawing.Point(693, 125);
+			this.butAddTime.Name = "butAddTime";
+			this.butAddTime.Size = new System.Drawing.Size(71, 20);
+			this.butAddTime.TabIndex = 355;
+			this.butAddTime.Text = "Add Time";
+			this.butAddTime.Click += new System.EventHandler(this.butAddTime_Click);
+			// 
+			// butTimeLog
+			// 
+			this.butTimeLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butTimeLog.Location = new System.Drawing.Point(693, 146);
+			this.butTimeLog.Name = "butTimeLog";
+			this.butTimeLog.Size = new System.Drawing.Size(71, 20);
+			this.butTimeLog.TabIndex = 359;
+			this.butTimeLog.Text = "Log";
+			this.butTimeLog.Click += new System.EventHandler(this.butTimeLog_Click);
+			// 
+			// textActualHours
+			// 
+			this.textActualHours.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.textActualHours.Location = new System.Drawing.Point(647, 125);
+			this.textActualHours.MaxVal = 1000000D;
+			this.textActualHours.MinVal = 0D;
+			this.textActualHours.Name = "textActualHours";
+			this.textActualHours.ReadOnly = true;
+			this.textActualHours.Size = new System.Drawing.Size(44, 20);
+			this.textActualHours.TabIndex = 354;
+			// 
+			// textEstHours
+			// 
+			this.textEstHours.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.textEstHours.Location = new System.Drawing.Point(647, 104);
+			this.textEstHours.MaxVal = 1000000D;
+			this.textEstHours.MinVal = 0D;
+			this.textEstHours.Name = "textEstHours";
+			this.textEstHours.ReadOnly = true;
+			this.textEstHours.Size = new System.Drawing.Size(44, 20);
+			this.textEstHours.TabIndex = 353;
+			// 
+			// butChangeEst
+			// 
+			this.butChangeEst.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butChangeEst.Location = new System.Drawing.Point(693, 104);
+			this.butChangeEst.Name = "butChangeEst";
+			this.butChangeEst.Size = new System.Drawing.Size(71, 20);
+			this.butChangeEst.TabIndex = 358;
+			this.butChangeEst.Text = "Change Est.";
+			this.butChangeEst.Click += new System.EventHandler(this.butChangeEst_Click);
+			// 
+			// butPhoneNums
+			// 
+			this.butPhoneNums.Location = new System.Drawing.Point(506, 140);
+			this.butPhoneNums.Name = "butPhoneNums";
+			this.butPhoneNums.Size = new System.Drawing.Size(75, 23);
+			this.butPhoneNums.TabIndex = 350;
+			this.butPhoneNums.Text = "Phone Nums";
+			this.butPhoneNums.UseVisualStyleBackColor = true;
+			this.butPhoneNums.Click += new System.EventHandler(this.butPhoneNums_Click);
+			// 
+			// butEmail
+			// 
+			this.butEmail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.butEmail.Location = new System.Drawing.Point(706, 47);
+			this.butEmail.Name = "butEmail";
+			this.butEmail.Size = new System.Drawing.Size(58, 23);
+			this.butEmail.TabIndex = 332;
+			this.butEmail.Text = "Email";
+			this.butEmail.UseVisualStyleBackColor = true;
+			this.butEmail.Click += new System.EventHandler(this.butEmail_Click);
+			// 
+			// butCommlog
+			// 
+			this.butCommlog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCommlog.Location = new System.Drawing.Point(706, 23);
+			this.butCommlog.Name = "butCommlog";
+			this.butCommlog.Size = new System.Drawing.Size(58, 23);
+			this.butCommlog.TabIndex = 331;
+			this.butCommlog.Text = "Commlog";
+			this.butCommlog.UseVisualStyleBackColor = true;
+			this.butCommlog.Click += new System.EventHandler(this.butCommlog_Click);
+			// 
+			// butActions
+			// 
+			this.butActions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.butActions.Image = global::OpenDental.Properties.Resources.arrowDownTriangle;
+			this.butActions.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.butActions.Location = new System.Drawing.Point(605, 23);
+			this.butActions.Name = "butActions";
+			this.butActions.Size = new System.Drawing.Size(95, 23);
+			this.butActions.TabIndex = 303;
+			this.butActions.Text = "Job Actions";
+			this.butActions.Click += new System.EventHandler(this.butActions_Click);
+			// 
+			// comboPhase
+			// 
+			this.comboPhase.Location = new System.Drawing.Point(126, 63);
+			this.comboPhase.Name = "comboPhase";
+			this.comboPhase.Size = new System.Drawing.Size(121, 21);
+			this.comboPhase.TabIndex = 315;
+			this.comboPhase.SelectionChangeCommitted += new System.EventHandler(this.comboPhase_SelectionChangeCommitted);
+			// 
+			// comboPriority
+			// 
+			this.comboPriority.Location = new System.Drawing.Point(126, 26);
+			this.comboPriority.Name = "comboPriority";
+			this.comboPriority.Size = new System.Drawing.Size(121, 21);
+			this.comboPriority.TabIndex = 314;
+			this.comboPriority.SelectionChangeCommitted += new System.EventHandler(this.comboPriority_SelectionChangeCommitted);
+			// 
+			// checkApproved
+			// 
+			this.checkApproved.Location = new System.Drawing.Point(474, 23);
+			this.checkApproved.Name = "checkApproved";
+			this.checkApproved.Size = new System.Drawing.Size(74, 24);
+			this.checkApproved.TabIndex = 326;
+			this.checkApproved.Text = "Approved";
+			this.checkApproved.CheckedChanged += new System.EventHandler(this.checkApproved_CheckedChanged);
+			// 
+			// checkIncludeCompleteCanceled
+			// 
+			this.checkIncludeCompleteCanceled.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkIncludeCompleteCanceled.Location = new System.Drawing.Point(101, 127);
+			this.checkIncludeCompleteCanceled.Name = "checkIncludeCompleteCanceled";
+			this.checkIncludeCompleteCanceled.Size = new System.Drawing.Size(135, 24);
+			this.checkIncludeCompleteCanceled.TabIndex = 327;
+			this.checkIncludeCompleteCanceled.Text = "Include Complete/Canceled";
+			this.checkIncludeCompleteCanceled.CheckedChanged += new System.EventHandler(this.checkIncludeCompleteCanceled_CheckedChanged);
+			// 
+			// butParentPick
+			// 
+			this.butParentPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.butParentPick.Location = new System.Drawing.Point(190, 105);
+			this.butParentPick.Name = "butParentPick";
+			this.butParentPick.Size = new System.Drawing.Size(23, 20);
+			this.butParentPick.TabIndex = 315;
+			this.butParentPick.Text = "...";
+			this.butParentPick.Click += new System.EventHandler(this.butParentPick_Click);
+			// 
+			// butParentRemove
+			// 
+			this.butParentRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.butParentRemove.Icon = OpenDental.UI.EnumIcons.DeleteX;
+			this.butParentRemove.Location = new System.Drawing.Point(213, 105);
+			this.butParentRemove.Name = "butParentRemove";
+			this.butParentRemove.Size = new System.Drawing.Size(23, 20);
+			this.butParentRemove.TabIndex = 314;
+			this.butParentRemove.Click += new System.EventHandler(this.butParentRemove_Click);
+			// 
 			// UserControlQueryEdit
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -963,6 +959,7 @@
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label2;
 		private UI.ComboBox comboPhase;
+		private UI.ComboBox comboPriority;
 		private System.Windows.Forms.TextBox textCustomer;
 		private System.Windows.Forms.TextBox textTitle;
 		private System.Windows.Forms.TextBox textDateEntry;
@@ -1014,6 +1011,5 @@
 		private UI.CheckBox checkIncludeCompleteCanceled;
 		private System.Windows.Forms.Label label23;
 		private System.Windows.Forms.TextBox textDeadlineDate;
-		private System.Windows.Forms.ComboBox comboPriority;
 	}
 }

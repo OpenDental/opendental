@@ -16,7 +16,7 @@ using CodeBase;
 using OpenDentBusiness.Crud;
 
 namespace OpenDental.InternalTools.Phones{
-	///<summary>This is the panel where all the cubicles are drawn.</summary>
+	///<summary>This is the panel where all the cubicles are drawn.  For now, it is contained within a scrollable panel, but that might change once pan and zoom are added.</summary>
 	public partial class MapPanel:UserControl{
 		#region Fields - public
 		public bool IsEditMode;
@@ -970,21 +970,6 @@ namespace OpenDental.InternalTools.Phones{
 			using Font fontNew=new Font(font.FontFamily,emSize,font.Style);
 			g.DrawString(text,fontNew,brush,rectangleF,stringFormat);
 			//g.DrawString(text,font,brush,rectangleF,stringFormat);
-		}
-
-		///<summary>Replaces Graphics.DrawString. Finds a suitable font size to fit the text to the bounding rectangle.</summary>
-		public static void FitTextOld(string text,Font font,Brush brush,RectangleF rectF,StringFormat stringFormat,Graphics g) {
-			float emSize=font.Size;
-			Size size=TextRenderer.MeasureText(text,font);
-			if(size.Width>=rectF.Width) {
-				emSize=emSize*(rectF.Width/size.Width);//get the ratio of the room width to font width and multiply that by the font size
-				if(emSize<2) {//don't let the font be smaller than 2 point font
-					emSize=2F;
-				}
-			}
-			using(Font newFont=new Font(font.FontFamily,emSize,font.Style)) {
-				g.DrawString(text,newFont,brush,rectF,stringFormat);
-			}
 		}
 
 		///<summary>Returns idx of cubicle clicked on, or -1 if no valid cubicle. Ignores labels. Pass in control coords.</summary>

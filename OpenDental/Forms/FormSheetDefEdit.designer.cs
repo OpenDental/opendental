@@ -36,7 +36,8 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSheetDefEdit));
 			this.panelMain = new OpenDental.UI.PanelOD();
 			this.butAlignTop = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.groupBoxSubViews = new OpenDental.UI.GroupBox();
 			this.checkSynchMatchedFields = new OpenDental.UI.CheckBox();
 			this.comboLanguages = new OpenDental.UI.ComboBox();
@@ -134,20 +135,32 @@ namespace OpenDental{
 			this.butAlignTop.Text = "Top";
 			this.butAlignTop.Click += new System.EventHandler(this.butAlignTop_Click);
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(210, 669);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(72, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.TabStop = false;
-			this.butSave.Text = "Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(210, 669);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(72, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.TabStop = false;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(136, 669);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(72, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.TabStop = false;
+			this.butOK.Text = "OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// groupBoxSubViews
 			// 
 			this.groupBoxSubViews.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.groupBoxSubViews.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupBoxSubViews.Controls.Add(this.checkSynchMatchedFields);
 			this.groupBoxSubViews.Controls.Add(this.comboLanguages);
 			this.groupBoxSubViews.Location = new System.Drawing.Point(4, 567);
@@ -162,7 +175,7 @@ namespace OpenDental{
 			this.checkSynchMatchedFields.Name = "checkSynchMatchedFields";
 			this.checkSynchMatchedFields.Size = new System.Drawing.Size(142, 18);
 			this.checkSynchMatchedFields.TabIndex = 3;
-			this.checkSynchMatchedFields.Text = "Sync matched fields";
+			this.checkSynchMatchedFields.Text = "Synch matched fields";
 			this.checkSynchMatchedFields.CheckedChanged += new System.EventHandler(this.checkSynchMatchedFields_CheckedChanged);
 			// 
 			// comboLanguages
@@ -195,6 +208,7 @@ namespace OpenDental{
 			// 
 			// groupAlignH
 			// 
+			this.groupAlignH.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupAlignH.Controls.Add(this.butAlignRight);
 			this.groupAlignH.Controls.Add(this.butAlignCenterH);
 			this.groupAlignH.Controls.Add(this.butAlignLeft);
@@ -248,6 +262,7 @@ namespace OpenDental{
 			// groupPage
 			// 
 			this.groupPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.groupPage.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupPage.Controls.Add(this.butPageAdd);
 			this.groupPage.Controls.Add(this.butPageRemove);
 			this.groupPage.Location = new System.Drawing.Point(158, 584);
@@ -392,7 +407,8 @@ namespace OpenDental{
 			// 
 			this.panelRight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.panelRight.Controls.Add(this.butSave);
+			this.panelRight.Controls.Add(this.butCancel);
+			this.panelRight.Controls.Add(this.butOK);
 			this.panelRight.Controls.Add(this.groupShowField);
 			this.panelRight.Controls.Add(this.checkBlue);
 			this.panelRight.Controls.Add(this.groupAddField);
@@ -420,6 +436,7 @@ namespace OpenDental{
 			// 
 			// groupShowField
 			// 
+			this.groupShowField.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupShowField.Controls.Add(this.checkShowMobileHeader);
 			this.groupShowField.Controls.Add(this.checkShowScreenChart);
 			this.groupShowField.Controls.Add(this.checkShowGrid);
@@ -624,6 +641,7 @@ namespace OpenDental{
 			// 
 			// groupAddField
 			// 
+			this.groupAddField.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupAddField.Controls.Add(this.labelMobileHeader);
 			this.groupAddField.Controls.Add(this.butScreenChart);
 			this.groupAddField.Controls.Add(this.butSpecial);
@@ -856,7 +874,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.TextBox textDescription;
 		private OpenDental.UI.Button butDelete;
 		private System.Windows.Forms.Label labelInternal;

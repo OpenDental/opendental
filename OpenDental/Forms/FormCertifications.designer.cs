@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormCertifications));
+			this.butCancel = new OpenDental.UI.Button();
 			this.listBoxEmployee = new OpenDental.UI.ListBox();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.listBoxCategories = new OpenDental.UI.ListBox();
@@ -47,6 +48,17 @@ namespace OpenDental{
 			this.checkSortDateCertComplete = new OpenDental.UI.CheckBox();
 			this.groupBoxOrderBy.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(1014, 625);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 10;
+			this.butCancel.Text = "Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// listBoxEmployee
 			// 
@@ -255,6 +267,7 @@ namespace OpenDental{
 			// 
 			// FormCertifications
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(1095, 663);
 			this.Controls.Add(this.checkSortDateCertComplete);
 			this.Controls.Add(this.textEmpSearch);
@@ -270,6 +283,7 @@ namespace OpenDental{
 			this.Controls.Add(this.labelCertification);
 			this.Controls.Add(this.listBoxCertification);
 			this.Controls.Add(this.groupBoxOrderBy);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.labelEmployee);
 			this.Controls.Add(this.listBoxEmployee);
 			this.Controls.Add(this.labelCategories);
@@ -286,6 +300,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butCancel;
 		private UI.ListBox listBoxEmployee;
 		private UI.GridOD gridMain;
 		private UI.ListBox listBoxCategories;

@@ -13,6 +13,7 @@ using System.Xml;
 
 namespace OpenDental {
 	public partial class FormJobSearch:FormODBase {
+		public string InitialSearchString="";
 		///<summary>List of all jobs currently loaded into JobManagerHelper</summary>
 		private List<Job> _listJobsAll;
 		private List<Job> _listJobsSearch;
@@ -22,8 +23,6 @@ namespace OpenDental {
 		private List<Job> _listSelectedJobs;
 		private bool _isMultiSelect;
 		private List<Def> _listJobPriorities;
-		public bool DoBlockProjects=false;
-		public string InitialSearchString="";
 
 		///<summary>Returns the JobNum for the selected job.  Returns 0 if no job selected.
 		///This getter is helpful when the only information needed is the JobNum which will save db calls due to not filling the Job object.</summary>
@@ -71,12 +70,7 @@ namespace OpenDental {
 			listBoxPhases.SetSelected((int)JobPhase.Complete+1,false);
 			//Categories
 			listBoxCategory.Items.Add("Any");
-			foreach(JobCategory jobCategory in Enum.GetValues(typeof(JobCategory))) {
-				if(DoBlockProjects && jobCategory==JobCategory.Project){
-					continue;
-				}
-				listBoxCategory.Items.Add(jobCategory.ToString(),jobCategory);
-			}
+			listBoxCategory.Items.AddEnums<JobCategory>();
 			listBoxCategory.SetSelected(0);
 			//Priorities
 			listBoxPriorities.Items.Add("Any");
@@ -101,7 +95,7 @@ namespace OpenDental {
 			if(listBoxUsers.SelectedIndices.Count>0 && !listBoxUsers.SelectedIndices.Contains(0)) {
 				userNums=listBoxUsers.GetListSelected<Userod>().Select(x => x.UserNum).ToArray();//This excludes 'Any' so is safe
 			}
-			if(listBoxCategory.SelectedIndices.Count>0 && (!listBoxCategory.SelectedIndices.Contains(0))) {
+			if(listBoxCategory.SelectedIndices.Count>0 && !listBoxCategory.SelectedIndices.Contains(0)) {
 				jobCats=listBoxCategory.GetListSelected<JobCategory>().ToArray();//This excludes 'Any' so is safe
 			}
 			if(listBoxPhases.SelectedIndices.Count>0 && !listBoxPhases.SelectedIndices.Contains(0)) {
@@ -110,7 +104,7 @@ namespace OpenDental {
 			if(listBoxPriorities.SelectedIndices.Count>0 && !listBoxPriorities.SelectedIndices.Contains(0)) {
 				jobPriorities=listBoxPriorities.GetListSelected<Def>().Select(x => x.DefNum).ToArray();
 			}
-			Action actionCloseProgress=ODProgress.Show("Getting job data...");
+			Action actionCloseProgress=ODProgress.Show(ODEventType.Job,typeof(JobEvent),"Getting job data...");
 			#region Get Missing Data
 			//This entire section will go out to the database and get any data that is unknown based on some of the filters.
 			//The other filters will be applied later via the cached lists.
@@ -126,7 +120,7 @@ namespace OpenDental {
 				return;
 			}
 			//Only get the feature request entries that we care about.
-			ODEvent.Fire(ODEventType.Job,"Getting feature request data...");
+			JobEvent.Fire(ODEventType.Job,"Getting feature request data...");
 			List<long> listFeatureRequestNums=_listJobsAll.SelectMany(x => x.ListJobLinks)
 				.Where(x => x.LinkType==JobLinkType.Request)
 				.Select(x => x.FKey)
@@ -138,7 +132,7 @@ namespace OpenDental {
 				_listFeatureRequestsAll.AddRange(FeatureRequests.GetAll(listFeatureRequestNums));
 			}
 			//Only get the bug entries that we care about.
-			ODEvent.Fire(ODEventType.Job,"Getting bug data...");
+			JobEvent.Fire(ODEventType.Job,"Getting bug data...");
 			List<long> listBugIds=_listJobsAll.SelectMany(x => x.ListJobLinks)
 				.Where(x => x.LinkType==JobLinkType.Bug)
 				.Select(x => x.FKey)
@@ -150,7 +144,7 @@ namespace OpenDental {
 				_listBugsAll.AddRange(Bugs.GetMany(listBugIds));
 			}
 			#endregion
-			ODEvent.Fire(ODEventType.Job,"Filling grid...");
+			JobEvent.Fire(ODEventType.Job,"Filling grid...");
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			gridMain.Columns.Add(new GridColumn("Job\r\nNum",50,GridSortingStrategy.AmountParse));
@@ -183,9 +177,6 @@ namespace OpenDental {
 					continue;
 				}
 				if(!jobCur.DateTimeEntry.Between(dateFrom.Value,dateTo.Value)) {
-					continue;
-				}
-				if(DoBlockProjects && jobCur.Category==JobCategory.Project) {
 					continue;
 				}
 				bool isJobMatch=false;
@@ -283,14 +274,8 @@ namespace OpenDental {
 			}
 			if(_isMultiSelect) {
 				_listSelectedJobs=gridMain.SelectedGridRows.Select(x => (Job)x.Tag).ToList();
-				if(!ValidateProject(_listSelectedJobs.Exists(x => x.Category==JobCategory.Project))) {
-					return;
-				}
 			}
 			_selectedJob=(Job)gridMain.ListGridRows[e.Row].Tag;
-			if(_selectedJob==null || !ValidateProject(_selectedJob.Category==JobCategory.Project)) {
-				return;
-			}
 			DialogResult=DialogResult.OK;
 		}
 
@@ -299,34 +284,14 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
-			if(_selectedJob==null) {
-				MsgBox.Show(this,"Please select at least one job before clicking OK.");
-				return;
-			}
 			if(_isMultiSelect) {
 				if(gridMain.SelectedGridRows.Count==0) {
 					MsgBox.Show(this,"Please select at least one job before clicking OK.");
 					return;
 				}
 				_listSelectedJobs=gridMain.SelectedGridRows.Select(x => (Job)x.Tag).ToList();
-				if(!ValidateProject(_listSelectedJobs.Exists(x => x.Category==JobCategory.Project))) {
-					return;
-				}
-			}
-			else {
-				if(!ValidateProject(_selectedJob.Category==JobCategory.Project)) {
-					return;
-				}
 			}
 			DialogResult=DialogResult.OK;
-		}
-
-		private bool ValidateProject(bool isProjectSelected) {
-			if(DoBlockProjects && isProjectSelected) {
-					MsgBox.Show(this,"Projects cannot be selected.");
-					return false;
-			}
-			return true;
 		}
 
 		private void butCancel_Click(object sender,EventArgs e) {

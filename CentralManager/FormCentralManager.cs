@@ -391,9 +391,8 @@ namespace CentralManager {
 			}
 			try {
 				Security.CurUser.IsPasswordResetRequired=false;
-				Security.CurUser.PasswordIsStrong=FormCPE.IsPassWordStrong;
 				Userods.Update(Security.CurUser);
-				Userods.UpdatePassword(Security.CurUser,FormCPE.LoginDetails,FormCPE.IsPassWordStrong,includeCEMT:true); ;
+				Userods.UpdatePassword(Security.CurUser,FormCPE.LoginDetails,false,includeCEMT:true); ;
 				Security.PasswordTyped=FormCPE.PasswordTyped;//Update the last typed in for middle tier refresh
 				Security.CurUser=Userods.GetUserNoCache(Security.CurUser.UserNum);//UpdatePassword() changes multiple fields.  Refresh from db.
 			}
@@ -428,7 +427,7 @@ namespace CentralManager {
 
 		#region Events - Menu Setup
 		private void menuConnSetup_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			using FormCentralConnections FormCC=new FormCentralConnections();
@@ -439,7 +438,7 @@ namespace CentralManager {
 		}
 
 		private void menuGroups_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			ConnectionGroup connGroupCur=null;
@@ -453,7 +452,7 @@ namespace CentralManager {
 		}
 
 		private void menuItemReportSetup_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			using FormCentralReportSetup FormCRS=new FormCentralReportSetup(Security.CurUser.UserNum,true);
@@ -463,7 +462,7 @@ namespace CentralManager {
 		}
 
 		private void menuItemSecurity_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
 			using FormCentralSecurity FormCUS=new FormCentralSecurity();
@@ -476,13 +475,13 @@ namespace CentralManager {
 		}
 				
 		private void menuItemDisplayFields_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			using FormDisplayFieldCategories FormD=new FormDisplayFieldCategories(true);
 			FormD.ShowDialog();
 			DisplayFields.RefreshCache();
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Display Fields");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Display Fields");
 		}
 		#endregion Events - Menu Setup
 
@@ -493,11 +492,11 @@ namespace CentralManager {
 			if(displayReport!=null) {
 				displayReportNum=displayReport.DisplayReportNum;
 			}
-			if(!GroupPermissions.HasPermission(Security.CurUser,EnumPermType.Reports,displayReportNum,listGroupPermissions:_listGroupPermissions_Reports)) {
+			if(!GroupPermissions.HasPermission(Security.CurUser,Permissions.Reports,displayReportNum,listGroupPermissions:_listGroupPermissions_Reports)) {
 				MsgBox.Show(this,"You do not have the 'More Options' report permission.");
 				return;
 			}
-			if(Security.CurUser.ProvNum==0 && !Security.IsAuthorized(EnumPermType.ReportProdIncAllProviders,true)) {
+			if(Security.CurUser.ProvNum==0 && !Security.IsAuthorized(Permissions.ReportProdIncAllProviders,true)) {
 				MsgBox.Show(this,"The current user needs to have the 'All Providers' permission for this report");
 				return;
 			}
@@ -526,20 +525,20 @@ namespace CentralManager {
 		#region Events - Menu Help
 
 		private void menuItemQueryMonitor_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.QueryMonitor)) {
+			if(!Security.IsAuthorized(Permissions.QueryMonitor)) {
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.QueryMonitor,0,"Query Monitor opened.");
+			SecurityLogs.MakeLogEntry(Permissions.QueryMonitor,0,"Query Monitor opened.");
 			FormQueryMonitor formQueryMonitor=new FormQueryMonitor();
 			formQueryMonitor.IsPayloadMonitor=false;
 			formQueryMonitor.Show();
 		}
 
 		private void menuItemPayloadMonitor_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.QueryMonitor)) {
+			if(!Security.IsAuthorized(Permissions.QueryMonitor)) {
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.QueryMonitor,0,"Payload Monitor opened.");
+			SecurityLogs.MakeLogEntry(Permissions.QueryMonitor,0,"Payload Monitor opened.");
 			FormQueryMonitor formQueryMonitor=new FormQueryMonitor();
 			formQueryMonitor.IsPayloadMonitor=true;
 			formQueryMonitor.Show();
@@ -957,11 +956,11 @@ namespace CentralManager {
 					}
 					else if(dictDomainUsers.Count>1) {
 						//multiple users returned
-						InputBox box=new InputBox(Lan.g(this,"Select an Open Dental user to log in with:"),dictDomainUsers.Values.ToList());
-						box.ShowDialog();
-						if(box.IsDialogOK) {
-							Security.CurUser=Userods.GetUserNoCache(dictDomainUsers.Keys.ElementAt(box.SelectedIndex));
-							return true;
+						using(InputBox box=new InputBox(Lan.g(this,"Select an Open Dental user to log in with:"),dictDomainUsers.Values.ToList())){
+							if(box.ShowDialog()==DialogResult.OK) {
+								Security.CurUser=Userods.GetUserNoCache(dictDomainUsers.Keys.ElementAt(box.SelectedIndex));
+								return true;
+							}
 						}
 					}
 					//If no users match the domainUser show the normal log in screen

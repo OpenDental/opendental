@@ -27,15 +27,11 @@ namespace OpenDental {
 		///<summary></summary>
 		public FrmZipCodeEdit() {
 			InitializeComponent();
+			//Lan.F(this);
 			KeyDown+=Frm_KeyDown;
-			Load+=FrmZipCodeEdit_Load;
-			textCity.TextChanged+=textCity_TextChanged;
-			textState.TextChanged+=textState_TextChanged;
-			PreviewKeyDown+=FrmZipCodeEdit_PreviewKeyDown;
 		}
 
-		private void FrmZipCodeEdit_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmZipCodeEdit_Loaded(object sender,RoutedEventArgs e) {
 			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
 				if(IsNew) {
 					this.Text="Add Postal Code";
@@ -55,11 +51,8 @@ namespace OpenDental {
 				}
 			}
 			textZip.Text=ZipCodeCur.ZipCodeDigits;
-			textZip.SelectAll();
-			textState.Text=ZipCodeCur.State;
-			textState.SelectAll();
 			textCity.Text=ZipCodeCur.City;
-			textCity.SelectAll();
+			textState.Text=ZipCodeCur.State;
 			checkIsFrequent.Checked=ZipCodeCur.IsFrequent;
 		}
 
@@ -92,12 +85,6 @@ namespace OpenDental {
 			}
 		}
 
-		private void FrmZipCodeEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
-		}
-
 		private void butSave_Click(object sender, System.EventArgs e) {
 			if(textZip.Text=="" || textCity.Text=="" || textState.Text==""){
 				MsgBox.Show(this,"City,State, or Zip Cannot be left blank");
@@ -119,6 +106,8 @@ namespace OpenDental {
 		private void butCancel_Click(object sender, System.EventArgs e) {
 			IsDialogOK=false;
 		}
+
+		
 
 	}
 }

@@ -28,11 +28,11 @@ namespace OpenDental {
 		///<summary>Fill both listboxes with the states that are taxed and non-taxed based on the current bridge settings.</summary>
 		private void FillListStates() {
 			for(int i=0;i<USlocales.ListAll.Count;i++) {
-				if(AvaTax.GetListTaxableStates().Contains(USlocales.ListAll[i].Abbr)) {
-					listBoxTaxedStates.Items.Add(USlocales.ListAll[i].Description,USlocales.ListAll[i].Abbr);
+				if(AvaTax.GetListTaxableStates().Contains(USlocales.ListAll[i].PostalAbbr)) {
+					listBoxTaxedStates.Items.Add(USlocales.ListAll[i].Name,USlocales.ListAll[i].PostalAbbr);
 				}
 				else {
-					listBoxNonTaxedStates.Items.Add(USlocales.ListAll[i].Description,USlocales.ListAll[i].Abbr);
+					listBoxNonTaxedStates.Items.Add(USlocales.ListAll[i].Name,USlocales.ListAll[i].PostalAbbr);
 				}
 			}
 		}
@@ -122,15 +122,15 @@ namespace OpenDental {
 			listBoxTaxedStates.Items.Clear();
 			listBoxNonTaxedStates.Items.Clear();
 			for(int i=0;i<USlocales.ListAll.Count;i++) {
-				if(listStringsStatesToMove.Contains(USlocales.ListAll[i].Abbr)) {
-					listBoxTaxedStates.Items.Add(USlocales.ListAll[i].Description,USlocales.ListAll[i].Abbr);
+				if(listStringsStatesToMove.Contains(USlocales.ListAll[i].PostalAbbr)) {
+					listBoxTaxedStates.Items.Add(USlocales.ListAll[i].Name,USlocales.ListAll[i].PostalAbbr);
 					continue;
 				}
-				if(listStringsStatesInTaxed.Contains(USlocales.ListAll[i].Abbr)) {
-					listBoxTaxedStates.Items.Add(USlocales.ListAll[i].Description,USlocales.ListAll[i].Abbr);
+				if(listStringsStatesInTaxed.Contains(USlocales.ListAll[i].PostalAbbr)) {
+					listBoxTaxedStates.Items.Add(USlocales.ListAll[i].Name,USlocales.ListAll[i].PostalAbbr);
 				}
 				else {
-					listBoxNonTaxedStates.Items.Add(USlocales.ListAll[i].Description,USlocales.ListAll[i].Abbr);
+					listBoxNonTaxedStates.Items.Add(USlocales.ListAll[i].Name,USlocales.ListAll[i].PostalAbbr);
 				}
 			}
 		}
@@ -142,21 +142,21 @@ namespace OpenDental {
 			listBoxTaxedStates.Items.Clear();
 			listBoxNonTaxedStates.Items.Clear();
 			for(int i=0;i<USlocales.ListAll.Count;i++) {
-				if(listStringsStatesToMove.Contains(USlocales.ListAll[i].Abbr)) {
-					listBoxNonTaxedStates.Items.Add(USlocales.ListAll[i].Description,USlocales.ListAll[i].Abbr);
+				if(listStringsStatesToMove.Contains(USlocales.ListAll[i].PostalAbbr)) {
+					listBoxNonTaxedStates.Items.Add(USlocales.ListAll[i].Name,USlocales.ListAll[i].PostalAbbr);
 					continue;
 				}
-				if(listStringsStatesInTaxed.Contains(USlocales.ListAll[i].Abbr)) {
-					listBoxTaxedStates.Items.Add(USlocales.ListAll[i].Description,USlocales.ListAll[i].Abbr);
+				if(listStringsStatesInTaxed.Contains(USlocales.ListAll[i].PostalAbbr)) {
+					listBoxTaxedStates.Items.Add(USlocales.ListAll[i].Name,USlocales.ListAll[i].PostalAbbr);
 				}
 				else {
-					listBoxNonTaxedStates.Items.Add(USlocales.ListAll[i].Description,USlocales.ListAll[i].Abbr);
+					listBoxNonTaxedStates.Items.Add(USlocales.ListAll[i].Name,USlocales.ListAll[i].PostalAbbr);
 				}
 			}
 		}
 
 		///<summary>Only save program properties on close</summary>
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!validTaxLockDate.IsValid()) {
 				MsgBox.Show(this,"Enter a valid tax lock date");
 				return;
@@ -181,5 +181,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

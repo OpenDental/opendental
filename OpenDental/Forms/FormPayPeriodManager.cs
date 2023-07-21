@@ -335,6 +335,10 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
 			}
+			if(textDaysAfterPayPeriod.Enabled && textDaysAfterPayPeriod.Text=="0") {
+				MsgBox.Show(this,"# Days After Pay Period cannot be zero.");
+				return;
+			}
 			if(radioSemiMonthly.Checked) {
 				GenerateSemiMonthlyPayPeriods();
 				return;
@@ -504,7 +508,7 @@ namespace OpenDental {
 			radioPayAfter.Checked=true;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(gridMain.ListGridRows.Count==0) {
 				MsgBox.Show(this,"Pay periods must be generated first.");
 				return;
@@ -548,5 +552,31 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -76,7 +76,7 @@ namespace OpenDental{
 			this.textNote.HasAutoNotes = true;
 			this.textNote.Location = new System.Drawing.Point(98, 63);
 			this.textNote.Name = "textNote";
-			this.textNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.JobManager;
+			this.textNote.QuickPasteType = OpenDentBusiness.QuickPasteType.JobManager;
 			this.textNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNote.Size = new System.Drawing.Size(541, 218);
 			this.textNote.TabIndex = 0;

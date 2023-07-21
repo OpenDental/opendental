@@ -58,15 +58,11 @@
 			this.textVersionText = new System.Windows.Forms.TextBox();
 			this.gridTesting = new OpenDental.UI.GridOD();
 			this.tabQuery = new System.Windows.Forms.TabPage();
-			this.gridQueries = new OpenDental.UI.GridOD();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
-			this.lblJobPriority = new System.Windows.Forms.Label();
-			this.lblJobPhase = new System.Windows.Forms.Label();
-			this.comboQueryPhaseFilter = new OpenDental.UI.ComboBox();
-			this.comboQueryPriorityFilter = new OpenDental.UI.ComboBox();
 			this.butQueriesRefresh = new OpenDental.UI.Button();
 			this.checkShowQueryComplete = new OpenDental.UI.CheckBox();
 			this.checkShowQueryCancelled = new OpenDental.UI.CheckBox();
+			this.gridQueries = new OpenDental.UI.GridOD();
 			this.tabNotify = new System.Windows.Forms.TabPage();
 			this.gridNotify = new OpenDental.UI.GridOD();
 			this.checkNotifyShowHqOnly = new OpenDental.UI.CheckBox();
@@ -74,14 +70,10 @@
 			this.checkSubscribedIncludeOnHold = new OpenDental.UI.CheckBox();
 			this.gridSubscribedJobs = new OpenDental.UI.GridOD();
 			this.tabNeedsEngineer = new System.Windows.Forms.TabPage();
-			this.labelNeedsEngineerTeam = new System.Windows.Forms.Label();
-			this.comboTeamFilterNeedsEngineer = new OpenDental.UI.ComboBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this.comboProposedVersionNeedsEngineer = new OpenDental.UI.ComboBox();
 			this.gridAvailableJobs = new OpenDental.UI.GridOD();
 			this.tabNeedsExpert = new System.Windows.Forms.TabPage();
-			this.label2 = new System.Windows.Forms.Label();
-			this.comboTeamFilterNeedsExpert = new OpenDental.UI.ComboBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.comboProposedVersionNeedsExpert = new OpenDental.UI.ComboBox();
 			this.gridAvailableJobsExpert = new OpenDental.UI.GridOD();
@@ -90,8 +82,6 @@
 			this.tabSearch = new System.Windows.Forms.TabPage();
 			this.gridSearch = new OpenDental.UI.GridOD();
 			this.groupBox2 = new OpenDental.UI.GroupBox();
-			this.labelTeamSearch = new System.Windows.Forms.Label();
-			this.comboTeamSearch = new OpenDental.UI.ComboBox();
 			this.checkResults = new OpenDental.UI.CheckBox();
 			this.labeluserSearch = new System.Windows.Forms.Label();
 			this.comboProposedVersionSearch = new OpenDental.UI.ComboBox();
@@ -116,11 +106,6 @@
 			this.checkShowOnHoldSubmitted = new OpenDental.UI.CheckBox();
 			this.gridSubmittedJobs = new OpenDental.UI.GridOD();
 			this.userControlJobManagerEditor = new OpenDental.UserControlJobManagerEditor();
-			this.tabProjectManagement = new System.Windows.Forms.TabPage();
-			this.checkOnlyShowTopLevel = new OpenDental.UI.CheckBox();
-			this.gridProjectManagement = new OpenDental.UI.GridOD();
-			this.labelProjectManagementTeam = new System.Windows.Forms.Label();
-			this.comboTeamFilterProjectManagement = new OpenDental.UI.ComboBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.butAdvSearch = new OpenDental.UI.Button();
 			this.butMe = new OpenDental.UI.Button();
@@ -165,7 +150,6 @@
 			this.groupBox3.SuspendLayout();
 			this.tabUnresolvedIssues.SuspendLayout();
 			this.tabSubmittedJobs.SuspendLayout();
-			this.tabProjectManagement.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// contextMenuQueries
@@ -239,7 +223,6 @@
 			this.tabControlNav.Controls.Add(this.tabMarketing);
 			this.tabControlNav.Controls.Add(this.tabUnresolvedIssues);
 			this.tabControlNav.Controls.Add(this.tabSubmittedJobs);
-			this.tabControlNav.Controls.Add(this.tabProjectManagement);
 			this.tabControlNav.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tabControlNav.Location = new System.Drawing.Point(0, 0);
 			this.tabControlNav.Multiline = true;
@@ -248,6 +231,7 @@
 			this.tabControlNav.Size = new System.Drawing.Size(357, 767);
 			this.tabControlNav.TabIndex = 1;
 			this.tabControlNav.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControlNav_DrawItem);
+			this.tabControlNav.SelectedIndexChanged += new System.EventHandler(this.tabControlNav_SelectedIndexChanged);
 			this.tabControlNav.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tabControlNav_Selecting);
 			// 
 			// tabPatternReview
@@ -255,10 +239,10 @@
 			this.tabPatternReview.Controls.Add(this.label13);
 			this.tabPatternReview.Controls.Add(this.dateExcludeCompleteBefore);
 			this.tabPatternReview.Controls.Add(this.gridPatternReview);
-			this.tabPatternReview.Location = new System.Drawing.Point(4, 94);
+			this.tabPatternReview.Location = new System.Drawing.Point(4, 76);
 			this.tabPatternReview.Name = "tabPatternReview";
 			this.tabPatternReview.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPatternReview.Size = new System.Drawing.Size(349, 669);
+			this.tabPatternReview.Size = new System.Drawing.Size(349, 687);
 			this.tabPatternReview.TabIndex = 12;
 			this.tabPatternReview.Text = "Pattern Review";
 			this.tabPatternReview.UseVisualStyleBackColor = true;
@@ -292,7 +276,7 @@
 			this.gridPatternReview.Location = new System.Drawing.Point(3, 26);
 			this.gridPatternReview.Name = "gridPatternReview";
 			this.gridPatternReview.ShowContextMenu = false;
-			this.gridPatternReview.Size = new System.Drawing.Size(343, 640);
+			this.gridPatternReview.Size = new System.Drawing.Size(343, 658);
 			this.gridPatternReview.TabIndex = 239;
 			this.gridPatternReview.Title = "Jobs For Review";
 			this.gridPatternReview.TranslationName = "FormJobManager";
@@ -305,10 +289,10 @@
 			this.tabAction.Controls.Add(this.comboProposedVersionNeedsAction);
 			this.tabAction.Controls.Add(this.checkShowUnassigned);
 			this.tabAction.Controls.Add(this.gridAction);
-			this.tabAction.Location = new System.Drawing.Point(4, 94);
+			this.tabAction.Location = new System.Drawing.Point(4, 76);
 			this.tabAction.Name = "tabAction";
 			this.tabAction.Padding = new System.Windows.Forms.Padding(3);
-			this.tabAction.Size = new System.Drawing.Size(349, 669);
+			this.tabAction.Size = new System.Drawing.Size(349, 687);
 			this.tabAction.TabIndex = 0;
 			this.tabAction.Text = "Needs Action";
 			this.tabAction.UseVisualStyleBackColor = true;
@@ -359,7 +343,7 @@
 			this.gridAction.Location = new System.Drawing.Point(3, 48);
 			this.gridAction.Name = "gridAction";
 			this.gridAction.ShowContextMenu = false;
-			this.gridAction.Size = new System.Drawing.Size(343, 618);
+			this.gridAction.Size = new System.Drawing.Size(343, 636);
 			this.gridAction.TabIndex = 227;
 			this.gridAction.Title = "Action Items";
 			this.gridAction.TranslationName = "FormJobManager";
@@ -371,10 +355,10 @@
 			// 
 			this.tabSpecialProjects.Controls.Add(this.checkShowUnassignedSpecial);
 			this.tabSpecialProjects.Controls.Add(this.gridSpecial);
-			this.tabSpecialProjects.Location = new System.Drawing.Point(4, 94);
+			this.tabSpecialProjects.Location = new System.Drawing.Point(4, 76);
 			this.tabSpecialProjects.Name = "tabSpecialProjects";
 			this.tabSpecialProjects.Padding = new System.Windows.Forms.Padding(3);
-			this.tabSpecialProjects.Size = new System.Drawing.Size(349, 669);
+			this.tabSpecialProjects.Size = new System.Drawing.Size(349, 687);
 			this.tabSpecialProjects.TabIndex = 11;
 			this.tabSpecialProjects.Text = "Special Projects";
 			this.tabSpecialProjects.UseVisualStyleBackColor = true;
@@ -399,7 +383,7 @@
 			this.gridSpecial.Location = new System.Drawing.Point(3, 31);
 			this.gridSpecial.Name = "gridSpecial";
 			this.gridSpecial.ShowContextMenu = false;
-			this.gridSpecial.Size = new System.Drawing.Size(343, 635);
+			this.gridSpecial.Size = new System.Drawing.Size(343, 653);
 			this.gridSpecial.TabIndex = 239;
 			this.gridSpecial.Title = "Action Items";
 			this.gridSpecial.TranslationName = "FormTaskEdit";
@@ -411,10 +395,10 @@
 			this.tabDocumentation.Controls.Add(this.label1);
 			this.tabDocumentation.Controls.Add(this.textDocumentationVersion);
 			this.tabDocumentation.Controls.Add(this.gridDocumentation);
-			this.tabDocumentation.Location = new System.Drawing.Point(4, 94);
+			this.tabDocumentation.Location = new System.Drawing.Point(4, 76);
 			this.tabDocumentation.Name = "tabDocumentation";
 			this.tabDocumentation.Padding = new System.Windows.Forms.Padding(3);
-			this.tabDocumentation.Size = new System.Drawing.Size(349, 669);
+			this.tabDocumentation.Size = new System.Drawing.Size(349, 687);
 			this.tabDocumentation.TabIndex = 6;
 			this.tabDocumentation.Text = "Documentation";
 			this.tabDocumentation.UseVisualStyleBackColor = true;
@@ -446,7 +430,7 @@
 			this.gridDocumentation.HasMultilineHeaders = true;
 			this.gridDocumentation.Location = new System.Drawing.Point(3, 26);
 			this.gridDocumentation.Name = "gridDocumentation";
-			this.gridDocumentation.Size = new System.Drawing.Size(343, 639);
+			this.gridDocumentation.Size = new System.Drawing.Size(343, 657);
 			this.gridDocumentation.TabIndex = 239;
 			this.gridDocumentation.Title = "Action Items";
 			this.gridDocumentation.TranslationName = "FormTaskEdit";
@@ -462,10 +446,10 @@
 			this.tabTesting.Controls.Add(this.label3);
 			this.tabTesting.Controls.Add(this.textVersionText);
 			this.tabTesting.Controls.Add(this.gridTesting);
-			this.tabTesting.Location = new System.Drawing.Point(4, 94);
+			this.tabTesting.Location = new System.Drawing.Point(4, 76);
 			this.tabTesting.Name = "tabTesting";
 			this.tabTesting.Padding = new System.Windows.Forms.Padding(3);
-			this.tabTesting.Size = new System.Drawing.Size(349, 669);
+			this.tabTesting.Size = new System.Drawing.Size(349, 687);
 			this.tabTesting.TabIndex = 9;
 			this.tabTesting.Text = "Testing";
 			this.tabTesting.UseVisualStyleBackColor = true;
@@ -497,9 +481,9 @@
 			// 
 			this.checkShowAllUsers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkShowAllUsers.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkShowAllUsers.Location = new System.Drawing.Point(3, 6);
+			this.checkShowAllUsers.Location = new System.Drawing.Point(9, 6);
 			this.checkShowAllUsers.Name = "checkShowAllUsers";
-			this.checkShowAllUsers.Size = new System.Drawing.Size(106, 20);
+			this.checkShowAllUsers.Size = new System.Drawing.Size(100, 20);
 			this.checkShowAllUsers.TabIndex = 244;
 			this.checkShowAllUsers.Text = "Show All Users";
 			this.checkShowAllUsers.CheckedChanged += new System.EventHandler(this.checkShowAllUsers_CheckedChanged);
@@ -544,7 +528,7 @@
 			this.gridTesting.HasMultilineHeaders = true;
 			this.gridTesting.Location = new System.Drawing.Point(3, 62);
 			this.gridTesting.Name = "gridTesting";
-			this.gridTesting.Size = new System.Drawing.Size(343, 590);
+			this.gridTesting.Size = new System.Drawing.Size(343, 608);
 			this.gridTesting.TabIndex = 228;
 			this.gridTesting.Title = "Completed Jobs";
 			this.gridTesting.TranslationName = "FormTaskEdit";
@@ -553,89 +537,32 @@
 			// 
 			// tabQuery
 			// 
-			this.tabQuery.Controls.Add(this.gridQueries);
 			this.tabQuery.Controls.Add(this.groupBox1);
-			this.tabQuery.Location = new System.Drawing.Point(4, 94);
+			this.tabQuery.Controls.Add(this.gridQueries);
+			this.tabQuery.Location = new System.Drawing.Point(4, 76);
 			this.tabQuery.Name = "tabQuery";
 			this.tabQuery.Padding = new System.Windows.Forms.Padding(3);
-			this.tabQuery.Size = new System.Drawing.Size(349, 669);
+			this.tabQuery.Size = new System.Drawing.Size(349, 687);
 			this.tabQuery.TabIndex = 5;
 			this.tabQuery.Text = "Queries";
 			this.tabQuery.UseVisualStyleBackColor = true;
 			// 
-			// gridQueries
-			// 
-			this.gridQueries.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.gridQueries.HasMultilineHeaders = true;
-			this.gridQueries.Location = new System.Drawing.Point(2, 96);
-			this.gridQueries.Name = "gridQueries";
-			this.gridQueries.Size = new System.Drawing.Size(344, 577);
-			this.gridQueries.TabIndex = 230;
-			this.gridQueries.Title = "Queries to be done";
-			this.gridQueries.TranslationName = "Job Edit";
-			this.gridQueries.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridQueries_CellDoubleClick);
-			this.gridQueries.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridQueries_CellClick);
-			// 
 			// groupBox1
 			// 
-			this.groupBox1.Controls.Add(this.lblJobPriority);
-			this.groupBox1.Controls.Add(this.lblJobPhase);
-			this.groupBox1.Controls.Add(this.comboQueryPhaseFilter);
-			this.groupBox1.Controls.Add(this.comboQueryPriorityFilter);
 			this.groupBox1.Controls.Add(this.butQueriesRefresh);
 			this.groupBox1.Controls.Add(this.checkShowQueryComplete);
 			this.groupBox1.Controls.Add(this.checkShowQueryCancelled);
 			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
 			this.groupBox1.Location = new System.Drawing.Point(3, 3);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(343, 90);
+			this.groupBox1.Size = new System.Drawing.Size(343, 40);
 			this.groupBox1.TabIndex = 239;
-			this.groupBox1.Text = "Filters";
-			// 
-			// lblJobPriority
-			// 
-			this.lblJobPriority.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.lblJobPriority.AutoSize = true;
-			this.lblJobPriority.Location = new System.Drawing.Point(89, 36);
-			this.lblJobPriority.Name = "lblJobPriority";
-			this.lblJobPriority.Size = new System.Drawing.Size(41, 13);
-			this.lblJobPriority.TabIndex = 247;
-			this.lblJobPriority.Text = "Priority:";
-			// 
-			// lblJobPhase
-			// 
-			this.lblJobPhase.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.lblJobPhase.AutoSize = true;
-			this.lblJobPhase.Location = new System.Drawing.Point(89, 9);
-			this.lblJobPhase.Name = "lblJobPhase";
-			this.lblJobPhase.Size = new System.Drawing.Size(40, 13);
-			this.lblJobPhase.TabIndex = 246;
-			this.lblJobPhase.Text = "Phase:";
-			// 
-			// comboQueryPhaseFilter
-			// 
-			this.comboQueryPhaseFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboQueryPhaseFilter.Location = new System.Drawing.Point(175, 6);
-			this.comboQueryPhaseFilter.Name = "comboQueryPhaseFilter";
-			this.comboQueryPhaseFilter.SelectionModeMulti = true;
-			this.comboQueryPhaseFilter.Size = new System.Drawing.Size(163, 21);
-			this.comboQueryPhaseFilter.TabIndex = 245;
-			this.comboQueryPhaseFilter.SelectionChangeCommitted += new System.EventHandler(this.comboQueryPhaseFilter_SelectionChangeCommitted);
-			// 
-			// comboQueryPriorityFilter
-			// 
-			this.comboQueryPriorityFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboQueryPriorityFilter.Location = new System.Drawing.Point(175, 33);
-			this.comboQueryPriorityFilter.Name = "comboQueryPriorityFilter";
-			this.comboQueryPriorityFilter.SelectionModeMulti = true;
-			this.comboQueryPriorityFilter.Size = new System.Drawing.Size(163, 21);
-			this.comboQueryPriorityFilter.TabIndex = 244;
-			this.comboQueryPriorityFilter.SelectionChangeCommitted += new System.EventHandler(this.comboQueryPriorityFilter_SelectionChangeCommitted);
+			this.groupBox1.Text = "Complete and Cancelled Filters";
 			// 
 			// butQueriesRefresh
 			// 
 			this.butQueriesRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.butQueriesRefresh.Location = new System.Drawing.Point(258, 61);
+			this.butQueriesRefresh.Location = new System.Drawing.Point(257, 13);
 			this.butQueriesRefresh.Name = "butQueriesRefresh";
 			this.butQueriesRefresh.Size = new System.Drawing.Size(80, 24);
 			this.butQueriesRefresh.TabIndex = 243;
@@ -645,28 +572,43 @@
 			// checkShowQueryComplete
 			// 
 			this.checkShowQueryComplete.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkShowQueryComplete.Location = new System.Drawing.Point(12, 62);
+			this.checkShowQueryComplete.Location = new System.Drawing.Point(0, 16);
 			this.checkShowQueryComplete.Name = "checkShowQueryComplete";
-			this.checkShowQueryComplete.Size = new System.Drawing.Size(114, 20);
+			this.checkShowQueryComplete.Size = new System.Drawing.Size(135, 20);
 			this.checkShowQueryComplete.TabIndex = 237;
 			this.checkShowQueryComplete.Text = "Include Complete";
 			// 
 			// checkShowQueryCancelled
 			// 
 			this.checkShowQueryCancelled.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkShowQueryCancelled.Location = new System.Drawing.Point(110, 62);
+			this.checkShowQueryCancelled.Location = new System.Drawing.Point(116, 16);
 			this.checkShowQueryCancelled.Name = "checkShowQueryCancelled";
 			this.checkShowQueryCancelled.Size = new System.Drawing.Size(135, 20);
 			this.checkShowQueryCancelled.TabIndex = 238;
 			this.checkShowQueryCancelled.Text = "Include Cancelled";
 			// 
+			// gridQueries
+			// 
+			this.gridQueries.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.gridQueries.HasMultilineHeaders = true;
+			this.gridQueries.Location = new System.Drawing.Point(2, 46);
+			this.gridQueries.Name = "gridQueries";
+			this.gridQueries.Size = new System.Drawing.Size(344, 638);
+			this.gridQueries.TabIndex = 230;
+			this.gridQueries.Title = "Queries to be done";
+			this.gridQueries.TranslationName = "Job Edit";
+			this.gridQueries.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridQueries_CellDoubleClick);
+			this.gridQueries.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridQueries_CellClick);
+			// 
 			// tabNotify
 			// 
 			this.tabNotify.Controls.Add(this.gridNotify);
 			this.tabNotify.Controls.Add(this.checkNotifyShowHqOnly);
-			this.tabNotify.Location = new System.Drawing.Point(4, 94);
+			this.tabNotify.Location = new System.Drawing.Point(4, 76);
 			this.tabNotify.Name = "tabNotify";
-			this.tabNotify.Size = new System.Drawing.Size(349, 669);
+			this.tabNotify.Size = new System.Drawing.Size(349, 687);
 			this.tabNotify.TabIndex = 7;
 			this.tabNotify.Text = "Notify Customer";
 			this.tabNotify.UseVisualStyleBackColor = true;
@@ -679,7 +621,7 @@
 			this.gridNotify.HasMultilineHeaders = true;
 			this.gridNotify.Location = new System.Drawing.Point(3, 29);
 			this.gridNotify.Name = "gridNotify";
-			this.gridNotify.Size = new System.Drawing.Size(343, 637);
+			this.gridNotify.Size = new System.Drawing.Size(343, 655);
 			this.gridNotify.TabIndex = 240;
 			this.gridNotify.Title = "Action Items";
 			this.gridNotify.TranslationName = "FormTaskEdit";
@@ -701,10 +643,10 @@
 			// 
 			this.tabSubscribed.Controls.Add(this.checkSubscribedIncludeOnHold);
 			this.tabSubscribed.Controls.Add(this.gridSubscribedJobs);
-			this.tabSubscribed.Location = new System.Drawing.Point(4, 94);
+			this.tabSubscribed.Location = new System.Drawing.Point(4, 76);
 			this.tabSubscribed.Name = "tabSubscribed";
 			this.tabSubscribed.Padding = new System.Windows.Forms.Padding(3);
-			this.tabSubscribed.Size = new System.Drawing.Size(349, 669);
+			this.tabSubscribed.Size = new System.Drawing.Size(349, 687);
 			this.tabSubscribed.TabIndex = 8;
 			this.tabSubscribed.Text = "Subscribed Jobs";
 			this.tabSubscribed.UseVisualStyleBackColor = true;
@@ -729,7 +671,7 @@
 			this.gridSubscribedJobs.Location = new System.Drawing.Point(2, 30);
 			this.gridSubscribedJobs.Name = "gridSubscribedJobs";
 			this.gridSubscribedJobs.NoteSpanStop = 4;
-			this.gridSubscribedJobs.Size = new System.Drawing.Size(344, 636);
+			this.gridSubscribedJobs.Size = new System.Drawing.Size(344, 654);
 			this.gridSubscribedJobs.TabIndex = 239;
 			this.gridSubscribedJobs.Title = "Subscribed Jobs";
 			this.gridSubscribedJobs.TranslationName = "Job Edit";
@@ -738,35 +680,16 @@
 			// 
 			// tabNeedsEngineer
 			// 
-			this.tabNeedsEngineer.Controls.Add(this.labelNeedsEngineerTeam);
-			this.tabNeedsEngineer.Controls.Add(this.comboTeamFilterNeedsEngineer);
 			this.tabNeedsEngineer.Controls.Add(this.label7);
 			this.tabNeedsEngineer.Controls.Add(this.comboProposedVersionNeedsEngineer);
 			this.tabNeedsEngineer.Controls.Add(this.gridAvailableJobs);
-			this.tabNeedsEngineer.Location = new System.Drawing.Point(4, 94);
+			this.tabNeedsEngineer.Location = new System.Drawing.Point(4, 76);
 			this.tabNeedsEngineer.Name = "tabNeedsEngineer";
 			this.tabNeedsEngineer.Padding = new System.Windows.Forms.Padding(3);
-			this.tabNeedsEngineer.Size = new System.Drawing.Size(349, 669);
+			this.tabNeedsEngineer.Size = new System.Drawing.Size(349, 687);
 			this.tabNeedsEngineer.TabIndex = 2;
 			this.tabNeedsEngineer.Text = "Needs Engineer";
 			this.tabNeedsEngineer.UseVisualStyleBackColor = true;
-			// 
-			// labelNeedsEngineerTeam
-			// 
-			this.labelNeedsEngineerTeam.Location = new System.Drawing.Point(180, 8);
-			this.labelNeedsEngineerTeam.Name = "labelNeedsEngineerTeam";
-			this.labelNeedsEngineerTeam.Size = new System.Drawing.Size(45, 16);
-			this.labelNeedsEngineerTeam.TabIndex = 324;
-			this.labelNeedsEngineerTeam.Text = "Team";
-			this.labelNeedsEngineerTeam.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// comboTeamFilterNeedsEngineer
-			// 
-			this.comboTeamFilterNeedsEngineer.Location = new System.Drawing.Point(231, 7);
-			this.comboTeamFilterNeedsEngineer.Name = "comboTeamFilterNeedsEngineer";
-			this.comboTeamFilterNeedsEngineer.Size = new System.Drawing.Size(112, 21);
-			this.comboTeamFilterNeedsEngineer.TabIndex = 325;
-			this.comboTeamFilterNeedsEngineer.SelectionChangeCommitted += new System.EventHandler(this.comboTeamFilterNeedsEngineer_SelectionChangeCommitted);
 			// 
 			// label7
 			// 
@@ -779,9 +702,9 @@
 			// 
 			// comboProposedVersionNeedsEngineer
 			// 
-			this.comboProposedVersionNeedsEngineer.Location = new System.Drawing.Point(76, 7);
+			this.comboProposedVersionNeedsEngineer.Location = new System.Drawing.Point(73, 7);
 			this.comboProposedVersionNeedsEngineer.Name = "comboProposedVersionNeedsEngineer";
-			this.comboProposedVersionNeedsEngineer.Size = new System.Drawing.Size(101, 21);
+			this.comboProposedVersionNeedsEngineer.Size = new System.Drawing.Size(117, 21);
 			this.comboProposedVersionNeedsEngineer.TabIndex = 323;
 			this.comboProposedVersionNeedsEngineer.SelectionChangeCommitted += new System.EventHandler(this.comboProposedVersionNeedsEngineer_SelectionChangeCommitted);
 			// 
@@ -799,35 +722,16 @@
 			// 
 			// tabNeedsExpert
 			// 
-			this.tabNeedsExpert.Controls.Add(this.label2);
-			this.tabNeedsExpert.Controls.Add(this.comboTeamFilterNeedsExpert);
 			this.tabNeedsExpert.Controls.Add(this.label8);
 			this.tabNeedsExpert.Controls.Add(this.comboProposedVersionNeedsExpert);
 			this.tabNeedsExpert.Controls.Add(this.gridAvailableJobsExpert);
-			this.tabNeedsExpert.Location = new System.Drawing.Point(4, 94);
+			this.tabNeedsExpert.Location = new System.Drawing.Point(4, 76);
 			this.tabNeedsExpert.Name = "tabNeedsExpert";
 			this.tabNeedsExpert.Padding = new System.Windows.Forms.Padding(3);
-			this.tabNeedsExpert.Size = new System.Drawing.Size(349, 669);
+			this.tabNeedsExpert.Size = new System.Drawing.Size(349, 687);
 			this.tabNeedsExpert.TabIndex = 3;
 			this.tabNeedsExpert.Text = "Needs Expert";
 			this.tabNeedsExpert.UseVisualStyleBackColor = true;
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(180, 8);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(45, 16);
-			this.label2.TabIndex = 326;
-			this.label2.Text = "Team";
-			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// comboTeamFilterNeedsExpert
-			// 
-			this.comboTeamFilterNeedsExpert.Location = new System.Drawing.Point(231, 7);
-			this.comboTeamFilterNeedsExpert.Name = "comboTeamFilterNeedsExpert";
-			this.comboTeamFilterNeedsExpert.Size = new System.Drawing.Size(112, 21);
-			this.comboTeamFilterNeedsExpert.TabIndex = 327;
-			this.comboTeamFilterNeedsExpert.SelectionChangeCommitted += new System.EventHandler(this.comboTeamFilterNeedsExpert_SelectionChangeCommitted);
 			// 
 			// label8
 			// 
@@ -840,9 +744,9 @@
 			// 
 			// comboProposedVersionNeedsExpert
 			// 
-			this.comboProposedVersionNeedsExpert.Location = new System.Drawing.Point(76, 7);
+			this.comboProposedVersionNeedsExpert.Location = new System.Drawing.Point(73, 7);
 			this.comboProposedVersionNeedsExpert.Name = "comboProposedVersionNeedsExpert";
-			this.comboProposedVersionNeedsExpert.Size = new System.Drawing.Size(101, 21);
+			this.comboProposedVersionNeedsExpert.Size = new System.Drawing.Size(117, 21);
 			this.comboProposedVersionNeedsExpert.TabIndex = 325;
 			this.comboProposedVersionNeedsExpert.SelectionChangeCommitted += new System.EventHandler(this.comboProposedVersionNeedsExpert_SelectionChangeCommitted);
 			// 
@@ -861,10 +765,10 @@
 			// tabOnHold
 			// 
 			this.tabOnHold.Controls.Add(this.gridJobsOnHold);
-			this.tabOnHold.Location = new System.Drawing.Point(4, 94);
+			this.tabOnHold.Location = new System.Drawing.Point(4, 76);
 			this.tabOnHold.Name = "tabOnHold";
 			this.tabOnHold.Padding = new System.Windows.Forms.Padding(3);
-			this.tabOnHold.Size = new System.Drawing.Size(349, 669);
+			this.tabOnHold.Size = new System.Drawing.Size(349, 687);
 			this.tabOnHold.TabIndex = 4;
 			this.tabOnHold.Text = "On Hold";
 			this.tabOnHold.UseVisualStyleBackColor = true;
@@ -875,7 +779,7 @@
 			this.gridJobsOnHold.HasMultilineHeaders = true;
 			this.gridJobsOnHold.Location = new System.Drawing.Point(3, 3);
 			this.gridJobsOnHold.Name = "gridJobsOnHold";
-			this.gridJobsOnHold.Size = new System.Drawing.Size(343, 663);
+			this.gridJobsOnHold.Size = new System.Drawing.Size(343, 681);
 			this.gridJobsOnHold.TabIndex = 230;
 			this.gridJobsOnHold.Title = "Jobs On Hold";
 			this.gridJobsOnHold.TranslationName = "Job Edit";
@@ -886,10 +790,10 @@
 			// 
 			this.tabSearch.Controls.Add(this.gridSearch);
 			this.tabSearch.Controls.Add(this.groupBox2);
-			this.tabSearch.Location = new System.Drawing.Point(4, 94);
+			this.tabSearch.Location = new System.Drawing.Point(4, 76);
 			this.tabSearch.Name = "tabSearch";
 			this.tabSearch.Padding = new System.Windows.Forms.Padding(3);
-			this.tabSearch.Size = new System.Drawing.Size(349, 669);
+			this.tabSearch.Size = new System.Drawing.Size(349, 687);
 			this.tabSearch.TabIndex = 10;
 			this.tabSearch.Text = "Search";
 			this.tabSearch.UseVisualStyleBackColor = true;
@@ -898,9 +802,9 @@
 			// 
 			this.gridSearch.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.gridSearch.HasMultilineHeaders = true;
-			this.gridSearch.Location = new System.Drawing.Point(3, 161);
+			this.gridSearch.Location = new System.Drawing.Point(3, 134);
 			this.gridSearch.Name = "gridSearch";
-			this.gridSearch.Size = new System.Drawing.Size(343, 523);
+			this.gridSearch.Size = new System.Drawing.Size(343, 550);
 			this.gridSearch.TabIndex = 240;
 			this.gridSearch.Title = "Results";
 			this.gridSearch.TranslationName = "Job Edit";
@@ -909,8 +813,6 @@
 			// 
 			// groupBox2
 			// 
-			this.groupBox2.Controls.Add(this.labelTeamSearch);
-			this.groupBox2.Controls.Add(this.comboTeamSearch);
 			this.groupBox2.Controls.Add(this.checkResults);
 			this.groupBox2.Controls.Add(this.labeluserSearch);
 			this.groupBox2.Controls.Add(this.comboProposedVersionSearch);
@@ -924,33 +826,14 @@
 			this.groupBox2.Dock = System.Windows.Forms.DockStyle.Top;
 			this.groupBox2.Location = new System.Drawing.Point(3, 3);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(343, 158);
+			this.groupBox2.Size = new System.Drawing.Size(343, 131);
 			this.groupBox2.TabIndex = 241;
 			this.groupBox2.Text = "Filters";
-			// 
-			// labelTeamSearch
-			// 
-			this.labelTeamSearch.Location = new System.Drawing.Point(46, 86);
-			this.labelTeamSearch.Name = "labelTeamSearch";
-			this.labelTeamSearch.Size = new System.Drawing.Size(45, 16);
-			this.labelTeamSearch.TabIndex = 329;
-			this.labelTeamSearch.Text = "Team";
-			this.labelTeamSearch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// comboTeamSearch
-			// 
-			this.comboTeamSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboTeamSearch.Location = new System.Drawing.Point(92, 85);
-			this.comboTeamSearch.Name = "comboTeamSearch";
-			this.comboTeamSearch.Size = new System.Drawing.Size(247, 21);
-			this.comboTeamSearch.TabIndex = 330;
-			this.comboTeamSearch.SelectionChangeCommitted += new System.EventHandler(this.comboTeamSearch_SelectionChangeCommitted);
 			// 
 			// checkResults
 			// 
 			this.checkResults.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkResults.Location = new System.Drawing.Point(2, 132);
+			this.checkResults.Location = new System.Drawing.Point(0, 107);
 			this.checkResults.Name = "checkResults";
 			this.checkResults.Size = new System.Drawing.Size(106, 20);
 			this.checkResults.TabIndex = 328;
@@ -959,7 +842,7 @@
 			// 
 			// labeluserSearch
 			// 
-			this.labeluserSearch.Location = new System.Drawing.Point(22, 63);
+			this.labeluserSearch.Location = new System.Drawing.Point(22, 59);
 			this.labeluserSearch.Name = "labeluserSearch";
 			this.labeluserSearch.Size = new System.Drawing.Size(69, 16);
 			this.labeluserSearch.TabIndex = 326;
@@ -970,7 +853,7 @@
 			// 
 			this.comboProposedVersionSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboProposedVersionSearch.Location = new System.Drawing.Point(92, 62);
+			this.comboProposedVersionSearch.Location = new System.Drawing.Point(92, 58);
 			this.comboProposedVersionSearch.Name = "comboProposedVersionSearch";
 			this.comboProposedVersionSearch.Size = new System.Drawing.Size(247, 21);
 			this.comboProposedVersionSearch.TabIndex = 327;
@@ -979,7 +862,7 @@
 			// textUserSearch
 			// 
 			this.textUserSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.textUserSearch.Location = new System.Drawing.Point(223, 108);
+			this.textUserSearch.Location = new System.Drawing.Point(223, 83);
 			this.textUserSearch.Name = "textUserSearch";
 			this.textUserSearch.Size = new System.Drawing.Size(116, 20);
 			this.textUserSearch.TabIndex = 249;
@@ -988,9 +871,9 @@
 			// labelProposedVersionSearch
 			// 
 			this.labelProposedVersionSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelProposedVersionSearch.Location = new System.Drawing.Point(186, 109);
+			this.labelProposedVersionSearch.Location = new System.Drawing.Point(182, 79);
 			this.labelProposedVersionSearch.Name = "labelProposedVersionSearch";
-			this.labelProposedVersionSearch.Size = new System.Drawing.Size(35, 16);
+			this.labelProposedVersionSearch.Size = new System.Drawing.Size(35, 23);
 			this.labelProposedVersionSearch.TabIndex = 248;
 			this.labelProposedVersionSearch.Text = "User";
 			this.labelProposedVersionSearch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -1000,16 +883,15 @@
 			this.comboPrioritySearch.AllowScroll = false;
 			this.comboPrioritySearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboPrioritySearch.Location = new System.Drawing.Point(92, 39);
+			this.comboPrioritySearch.Location = new System.Drawing.Point(92, 35);
 			this.comboPrioritySearch.Name = "comboPrioritySearch";
-			this.comboPrioritySearch.SelectionModeMulti = true;
 			this.comboPrioritySearch.Size = new System.Drawing.Size(247, 21);
 			this.comboPrioritySearch.TabIndex = 247;
 			this.comboPrioritySearch.SelectionChangeCommitted += new System.EventHandler(this.comboPrioritySearch_SelectionChangeCommitted);
 			// 
 			// labelPrioritySearch
 			// 
-			this.labelPrioritySearch.Location = new System.Drawing.Point(36, 38);
+			this.labelPrioritySearch.Location = new System.Drawing.Point(36, 34);
 			this.labelPrioritySearch.Margin = new System.Windows.Forms.Padding(0);
 			this.labelPrioritySearch.Name = "labelPrioritySearch";
 			this.labelPrioritySearch.Size = new System.Drawing.Size(55, 20);
@@ -1021,7 +903,7 @@
 			// 
 			this.checkContactSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkContactSearch.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkContactSearch.Location = new System.Drawing.Point(181, 132);
+			this.checkContactSearch.Location = new System.Drawing.Point(181, 107);
 			this.checkContactSearch.Name = "checkContactSearch";
 			this.checkContactSearch.Size = new System.Drawing.Size(158, 20);
 			this.checkContactSearch.TabIndex = 245;
@@ -1033,7 +915,7 @@
 			this.comboCatSearch.AllowScroll = false;
 			this.comboCatSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboCatSearch.Location = new System.Drawing.Point(92, 16);
+			this.comboCatSearch.Location = new System.Drawing.Point(92, 12);
 			this.comboCatSearch.Name = "comboCatSearch";
 			this.comboCatSearch.Size = new System.Drawing.Size(247, 21);
 			this.comboCatSearch.TabIndex = 244;
@@ -1041,7 +923,7 @@
 			// 
 			// labelCatSearch
 			// 
-			this.labelCatSearch.Location = new System.Drawing.Point(36, 15);
+			this.labelCatSearch.Location = new System.Drawing.Point(36, 11);
 			this.labelCatSearch.Margin = new System.Windows.Forms.Padding(0);
 			this.labelCatSearch.Name = "labelCatSearch";
 			this.labelCatSearch.Size = new System.Drawing.Size(55, 20);
@@ -1053,10 +935,10 @@
 			// 
 			this.tabMarketing.Controls.Add(this.groupBox3);
 			this.tabMarketing.Controls.Add(this.gridMarketing);
-			this.tabMarketing.Location = new System.Drawing.Point(4, 94);
+			this.tabMarketing.Location = new System.Drawing.Point(4, 76);
 			this.tabMarketing.Name = "tabMarketing";
 			this.tabMarketing.Padding = new System.Windows.Forms.Padding(3);
-			this.tabMarketing.Size = new System.Drawing.Size(349, 669);
+			this.tabMarketing.Size = new System.Drawing.Size(349, 687);
 			this.tabMarketing.TabIndex = 13;
 			this.tabMarketing.Text = "Design/Marketing";
 			this.tabMarketing.UseVisualStyleBackColor = true;
@@ -1109,7 +991,7 @@
 			this.gridMarketing.HasMultilineHeaders = true;
 			this.gridMarketing.Location = new System.Drawing.Point(2, 46);
 			this.gridMarketing.Name = "gridMarketing";
-			this.gridMarketing.Size = new System.Drawing.Size(344, 620);
+			this.gridMarketing.Size = new System.Drawing.Size(344, 638);
 			this.gridMarketing.TabIndex = 240;
 			this.gridMarketing.Title = "Design Jobs to be done";
 			this.gridMarketing.TranslationName = "Job Edit";
@@ -1120,10 +1002,10 @@
 			this.tabUnresolvedIssues.Controls.Add(this.gridUnresolvedIssues);
 			this.tabUnresolvedIssues.Controls.Add(this.butRefreshUnresolved);
 			this.tabUnresolvedIssues.Controls.Add(this.checkIncludeCancelledUnresolved);
-			this.tabUnresolvedIssues.Location = new System.Drawing.Point(4, 94);
+			this.tabUnresolvedIssues.Location = new System.Drawing.Point(4, 76);
 			this.tabUnresolvedIssues.Name = "tabUnresolvedIssues";
 			this.tabUnresolvedIssues.Padding = new System.Windows.Forms.Padding(3);
-			this.tabUnresolvedIssues.Size = new System.Drawing.Size(349, 669);
+			this.tabUnresolvedIssues.Size = new System.Drawing.Size(349, 687);
 			this.tabUnresolvedIssues.TabIndex = 14;
 			this.tabUnresolvedIssues.Text = "Unresolved Issues";
 			this.tabUnresolvedIssues.UseVisualStyleBackColor = true;
@@ -1136,7 +1018,7 @@
 			this.gridUnresolvedIssues.HasMultilineHeaders = true;
 			this.gridUnresolvedIssues.Location = new System.Drawing.Point(2, 35);
 			this.gridUnresolvedIssues.Name = "gridUnresolvedIssues";
-			this.gridUnresolvedIssues.Size = new System.Drawing.Size(344, 626);
+			this.gridUnresolvedIssues.Size = new System.Drawing.Size(344, 644);
 			this.gridUnresolvedIssues.TabIndex = 245;
 			this.gridUnresolvedIssues.Title = "Unresolved Issues";
 			this.gridUnresolvedIssues.TranslationName = "Job Edit";
@@ -1165,10 +1047,10 @@
 			// 
 			this.tabSubmittedJobs.Controls.Add(this.checkShowOnHoldSubmitted);
 			this.tabSubmittedJobs.Controls.Add(this.gridSubmittedJobs);
-			this.tabSubmittedJobs.Location = new System.Drawing.Point(4, 94);
+			this.tabSubmittedJobs.Location = new System.Drawing.Point(4, 76);
 			this.tabSubmittedJobs.Name = "tabSubmittedJobs";
 			this.tabSubmittedJobs.Padding = new System.Windows.Forms.Padding(3);
-			this.tabSubmittedJobs.Size = new System.Drawing.Size(349, 669);
+			this.tabSubmittedJobs.Size = new System.Drawing.Size(349, 687);
 			this.tabSubmittedJobs.TabIndex = 15;
 			this.tabSubmittedJobs.Text = "Submitted Jobs";
 			this.tabSubmittedJobs.UseVisualStyleBackColor = true;
@@ -1191,68 +1073,12 @@
 			this.gridSubmittedJobs.Location = new System.Drawing.Point(3, 29);
 			this.gridSubmittedJobs.Name = "gridSubmittedJobs";
 			this.gridSubmittedJobs.ShowContextMenu = false;
-			this.gridSubmittedJobs.Size = new System.Drawing.Size(343, 636);
+			this.gridSubmittedJobs.Size = new System.Drawing.Size(343, 654);
 			this.gridSubmittedJobs.TabIndex = 239;
 			this.gridSubmittedJobs.Title = "Submitted Jobs";
 			this.gridSubmittedJobs.TranslationName = "FormJobManager";
 			this.gridSubmittedJobs.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridSubmittedJobs_CellDoubleClick);
 			this.gridSubmittedJobs.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridSubmittedJobs_CellClick);
-			// 
-			// tabProjectManagement
-			// 
-			this.tabProjectManagement.Controls.Add(this.checkOnlyShowTopLevel);
-			this.tabProjectManagement.Controls.Add(this.gridProjectManagement);
-			this.tabProjectManagement.Controls.Add(this.labelProjectManagementTeam);
-			this.tabProjectManagement.Controls.Add(this.comboTeamFilterProjectManagement);
-			this.tabProjectManagement.Location = new System.Drawing.Point(4, 94);
-			this.tabProjectManagement.Name = "tabProjectManagement";
-			this.tabProjectManagement.Size = new System.Drawing.Size(349, 669);
-			this.tabProjectManagement.TabIndex = 16;
-			this.tabProjectManagement.Text = "Project Management";
-			this.tabProjectManagement.UseVisualStyleBackColor = true;
-			// 
-			// checkOnlyShowTopLevel
-			// 
-			this.checkOnlyShowTopLevel.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkOnlyShowTopLevel.Location = new System.Drawing.Point(3, 8);
-			this.checkOnlyShowTopLevel.Name = "checkOnlyShowTopLevel";
-			this.checkOnlyShowTopLevel.Size = new System.Drawing.Size(171, 20);
-			this.checkOnlyShowTopLevel.TabIndex = 329;
-			this.checkOnlyShowTopLevel.Text = "Only show top-level projects";
-			this.checkOnlyShowTopLevel.CheckedChanged += new System.EventHandler(this.checkOnlyShowTopLevel_CheckedChanged);
-			// 
-			// gridProjectManagement
-			// 
-			this.gridProjectManagement.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.gridProjectManagement.HasMultilineHeaders = true;
-			this.gridProjectManagement.Location = new System.Drawing.Point(3, 34);
-			this.gridProjectManagement.Name = "gridProjectManagement";
-			this.gridProjectManagement.ShowContextMenu = false;
-			this.gridProjectManagement.Size = new System.Drawing.Size(343, 632);
-			this.gridProjectManagement.TabIndex = 328;
-			this.gridProjectManagement.Title = "Projects";
-			this.gridProjectManagement.TranslationName = "FormJobManager";
-			this.gridProjectManagement.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridProjectManagement_CellDoubleClick);
-			this.gridProjectManagement.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridProjectManagement_CellClick);
-			// 
-			// labelProjectManagementTeam
-			// 
-			this.labelProjectManagementTeam.Location = new System.Drawing.Point(180, 8);
-			this.labelProjectManagementTeam.Name = "labelProjectManagementTeam";
-			this.labelProjectManagementTeam.Size = new System.Drawing.Size(45, 16);
-			this.labelProjectManagementTeam.TabIndex = 326;
-			this.labelProjectManagementTeam.Text = "Team";
-			this.labelProjectManagementTeam.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// comboTeamFilterProjectManagement
-			// 
-			this.comboTeamFilterProjectManagement.Location = new System.Drawing.Point(231, 7);
-			this.comboTeamFilterProjectManagement.Name = "comboTeamFilterProjectManagement";
-			this.comboTeamFilterProjectManagement.Size = new System.Drawing.Size(112, 21);
-			this.comboTeamFilterProjectManagement.TabIndex = 327;
-			this.comboTeamFilterProjectManagement.SelectionChangeCommitted += new System.EventHandler(this.comboTeamFilterProjectManagement_SelectionChangeCommitted);
 			// 
 			// userControlJobManagerEditor
 			// 
@@ -1262,7 +1088,6 @@
 			this.userControlJobManagerEditor.Name = "userControlJobManagerEditor";
 			this.userControlJobManagerEditor.Size = new System.Drawing.Size(1158, 767);
 			this.userControlJobManagerEditor.TabIndex = 0;
-			this.userControlJobManagerEditor.GoToJobEvent += new UserControlJobManagerEditor.UserControlJobManagerEditorGoToJobEventHandler(this.userControlJobManagerEditor_GoToJob);
 			// 
 			// label5
 			// 
@@ -1464,7 +1289,6 @@
 			this.tabTesting.PerformLayout();
 			this.tabQuery.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
-			this.groupBox1.PerformLayout();
 			this.tabNotify.ResumeLayout(false);
 			this.tabSubscribed.ResumeLayout(false);
 			this.tabNeedsEngineer.ResumeLayout(false);
@@ -1477,7 +1301,6 @@
 			this.groupBox3.ResumeLayout(false);
 			this.tabUnresolvedIssues.ResumeLayout(false);
 			this.tabSubmittedJobs.ResumeLayout(false);
-			this.tabProjectManagement.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -1506,10 +1329,6 @@
 		private UI.GridOD gridQueries;
 		private OpenDental.UI.CheckBox checkShowQueryCancelled;
 		private OpenDental.UI.CheckBox checkShowQueryComplete;
-		private UI.ComboBox comboQueryPhaseFilter;
-		private UI.ComboBox comboQueryPriorityFilter;
-		private System.Windows.Forms.Label lblJobPriority;
-		private System.Windows.Forms.Label lblJobPhase;
 		private System.Windows.Forms.TabPage tabDocumentation;
 		private UI.GridOD gridDocumentation;
 		private System.Windows.Forms.TabPage tabNotify;
@@ -1591,16 +1410,5 @@
 		private OpenDental.UI.CheckBox checkShowOnHoldSubmitted;
 		private UI.GridOD gridSubmittedJobs;
 		private OpenDental.UI.CheckBox checkNotifyShowHqOnly;
-		private System.Windows.Forms.Label labelNeedsEngineerTeam;
-		private UI.ComboBox comboTeamFilterNeedsEngineer;
-		private System.Windows.Forms.Label label2;
-		private UI.ComboBox comboTeamFilterNeedsExpert;
-		private System.Windows.Forms.TabPage tabProjectManagement;
-		private System.Windows.Forms.Label labelProjectManagementTeam;
-		private UI.ComboBox comboTeamFilterProjectManagement;
-		private UI.GridOD gridProjectManagement;
-		private System.Windows.Forms.Label labelTeamSearch;
-		private UI.ComboBox comboTeamSearch;
-		private UI.CheckBox checkOnlyShowTopLevel;
 	}
 }

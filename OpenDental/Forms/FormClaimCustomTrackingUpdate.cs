@@ -57,7 +57,6 @@ namespace OpenDental {
 			}
 			textNotes.Text=claimTracking?.Note??"";
 			FillComboErrorCode();
-			SetTextErrorDesc();
 		}
 
 		private void FillComboErrorCode() {
@@ -82,19 +81,16 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>Sets the read-only textbox with the description of the selected ClaimErrorCode.</summary>
-		private void SetTextErrorDesc() {
-			textErrorDesc.Text="";
-			if(comboErrorCode.Enabled && comboErrorCode.GetSelected<Def>()!=null) {
-				textErrorDesc.Text=comboErrorCode.GetSelected<Def>().ItemValue.ToString();
-			}
-		}
-
 		private void comboErrorCode_SelectionChangeCommitted(object sender,EventArgs e) {
-			SetTextErrorDesc();
+			if((!comboErrorCode.Enabled) || comboErrorCode.GetSelected<Def>()==null) {
+				textErrorDesc.Text="";
+			}
+			else {
+				textErrorDesc.Text=comboErrorCode.GetSelected<Def>().ItemValue.ToString();
+			}	
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butUpdate_Click(object sender,EventArgs e) {
 			if(comboCustomTracking.SelectedIndex==-1) {
 				//Defaults to -1 when editing and old ClaimTracking where TrackingDefNum is 0 ('None') and ClaimTrackingStatusExcludesNone is true.
 				MsgBox.Show(this,"You must specify a Custom Track Status.");
@@ -138,5 +134,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

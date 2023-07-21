@@ -102,7 +102,7 @@ namespace OpenDental {
 			this.listBoxProvs.Location = new System.Drawing.Point(3, 3);
 			this.listBoxProvs.Name = "listBoxProvs";
 			this.listBoxProvs.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
-			this.listBoxProvs.Size = new System.Drawing.Size(164, 151);
+			this.listBoxProvs.Size = new System.Drawing.Size(164, 147);
 			this.listBoxProvs.TabIndex = 23;
 			this.listBoxProvs.SelectedIndexChanged += new System.EventHandler(this.listProv_SelectedIndexChanged);
 			this.listBoxProvs.Click += new System.EventHandler(this.listProv_Click);
@@ -135,7 +135,7 @@ namespace OpenDental {
 			this.listBoxEmps.Location = new System.Drawing.Point(3, 3);
 			this.listBoxEmps.Name = "listBoxEmps";
 			this.listBoxEmps.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
-			this.listBoxEmps.Size = new System.Drawing.Size(164, 151);
+			this.listBoxEmps.Size = new System.Drawing.Size(164, 147);
 			this.listBoxEmps.TabIndex = 30;
 			this.listBoxEmps.SelectedIndexChanged += new System.EventHandler(this.listEmp_SelectedIndexChanged);
 			this.listBoxEmps.Click += new System.EventHandler(this.listEmp_Click);
@@ -197,7 +197,7 @@ namespace OpenDental {
 			this.butPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butPrint.Image = global::OpenDental.Properties.Resources.butPrint;
 			this.butPrint.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPrint.Location = new System.Drawing.Point(921, 667);
+			this.butPrint.Location = new System.Drawing.Point(921, 732);
 			this.butPrint.Name = "butPrint";
 			this.butPrint.Size = new System.Drawing.Size(90, 24);
 			this.butPrint.TabIndex = 26;
@@ -235,7 +235,7 @@ namespace OpenDental {
 			this.gridMain.Location = new System.Drawing.Point(223, 12);
 			this.gridMain.Name = "gridMain";
 			this.gridMain.SelectionMode = OpenDental.UI.GridSelectionMode.OneCell;
-			this.gridMain.Size = new System.Drawing.Size(761, 649);
+			this.gridMain.Size = new System.Drawing.Size(761, 714);
 			this.gridMain.TabIndex = 0;
 			this.gridMain.Title = "Schedule";
 			this.gridMain.TranslationName = "TableSchedule";
@@ -269,13 +269,13 @@ namespace OpenDental {
 			this.groupCopy.Controls.Add(this.label3);
 			this.groupCopy.Location = new System.Drawing.Point(5, 492);
 			this.groupCopy.Name = "groupCopy";
-			this.groupCopy.Size = new System.Drawing.Size(206, 85);
+			this.groupCopy.Size = new System.Drawing.Size(206, 113);
 			this.groupCopy.TabIndex = 39;
 			this.groupCopy.Text = "Copy";
 			// 
 			// butCopyWeek
 			// 
-			this.butCopyWeek.Location = new System.Drawing.Point(87, 56);
+			this.butCopyWeek.Location = new System.Drawing.Point(6, 83);
 			this.butCopyWeek.Name = "butCopyWeek";
 			this.butCopyWeek.Size = new System.Drawing.Size(75, 24);
 			this.butCopyWeek.TabIndex = 28;
@@ -316,7 +316,7 @@ namespace OpenDental {
 			this.groupPaste.Controls.Add(this.checkReplace);
 			this.groupPaste.Controls.Add(this.textRepeat);
 			this.groupPaste.Controls.Add(this.butPaste);
-			this.groupPaste.Location = new System.Drawing.Point(5, 582);
+			this.groupPaste.Location = new System.Drawing.Point(5, 611);
 			this.groupPaste.Name = "groupPaste";
 			this.groupPaste.Size = new System.Drawing.Size(206, 109);
 			this.groupPaste.TabIndex = 40;
@@ -344,7 +344,7 @@ namespace OpenDental {
 			// 
 			this.checkReplace.Checked = true;
 			this.checkReplace.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.checkReplace.Location = new System.Drawing.Point(6, 32);
+			this.checkReplace.Location = new System.Drawing.Point(6, 34);
 			this.checkReplace.Name = "checkReplace";
 			this.checkReplace.Size = new System.Drawing.Size(146, 18);
 			this.checkReplace.TabIndex = 31;
@@ -436,7 +436,7 @@ namespace OpenDental {
 			// 
 			// FormSchedule
 			// 
-			this.ClientSize = new System.Drawing.Size(1023, 696);
+			this.ClientSize = new System.Drawing.Size(1023, 761);
 			this.Controls.Add(this.groupBoxFilter);
 			this.Controls.Add(this.groupCopy);
 			this.Controls.Add(this.groupPaste);

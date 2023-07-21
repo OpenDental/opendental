@@ -95,7 +95,6 @@ namespace OpenDentBusiness.Crud{
 				claimProc.IsTransfer          = PIn.Bool  (row["IsTransfer"].ToString());
 				claimProc.ClaimAdjReasonCodes = PIn.String(row["ClaimAdjReasonCodes"].ToString());
 				claimProc.IsOverpay           = PIn.Bool  (row["IsOverpay"].ToString());
-				claimProc.SecurityHash        = PIn.String(row["SecurityHash"].ToString());
 				retVal.Add(claimProc);
 			}
 			return retVal;
@@ -152,7 +151,6 @@ namespace OpenDentBusiness.Crud{
 				IsTransfer          = PIn.Bool  (row["IsTransfer"].ToString()),
 				ClaimAdjReasonCodes = PIn.String(row["ClaimAdjReasonCodes"].ToString()),
 				IsOverpay           = PIn.Bool  (row["IsOverpay"].ToString()),
-				SecurityHash        = PIn.String(row["SecurityHash"].ToString()),
 			};
 		}
 
@@ -210,7 +208,6 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("IsTransfer");
 			table.Columns.Add("ClaimAdjReasonCodes");
 			table.Columns.Add("IsOverpay");
-			table.Columns.Add("SecurityHash");
 			foreach(ClaimProc claimProc in listClaimProcs) {
 				table.Rows.Add(new object[] {
 					POut.Long  (claimProc.ClaimProcNum),
@@ -261,7 +258,6 @@ namespace OpenDentBusiness.Crud{
 					POut.Bool  (claimProc.IsTransfer),
 					            claimProc.ClaimAdjReasonCodes,
 					POut.Bool  (claimProc.IsOverpay),
-					            claimProc.SecurityHash,
 				});
 			}
 			return table;
@@ -281,7 +277,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="ClaimProcNum,";
 			}
-			command+="ProcNum,ClaimNum,PatNum,ProvNum,FeeBilled,InsPayEst,DedApplied,Status,InsPayAmt,Remarks,ClaimPaymentNum,PlanNum,DateCP,WriteOff,CodeSent,AllowedOverride,Percentage,PercentOverride,CopayAmt,NoBillIns,PaidOtherIns,BaseEst,CopayOverride,ProcDate,DateEntry,LineNumber,DedEst,DedEstOverride,InsEstTotal,InsEstTotalOverride,PaidOtherInsOverride,EstimateNote,WriteOffEst,WriteOffEstOverride,ClinicNum,InsSubNum,PaymentRow,PayPlanNum,ClaimPaymentTracking,SecUserNumEntry,SecDateEntry,DateSuppReceived,DateInsFinalized,IsTransfer,ClaimAdjReasonCodes,IsOverpay,SecurityHash) VALUES(";
+			command+="ProcNum,ClaimNum,PatNum,ProvNum,FeeBilled,InsPayEst,DedApplied,Status,InsPayAmt,Remarks,ClaimPaymentNum,PlanNum,DateCP,WriteOff,CodeSent,AllowedOverride,Percentage,PercentOverride,CopayAmt,NoBillIns,PaidOtherIns,BaseEst,CopayOverride,ProcDate,DateEntry,LineNumber,DedEst,DedEstOverride,InsEstTotal,InsEstTotalOverride,PaidOtherInsOverride,EstimateNote,WriteOffEst,WriteOffEstOverride,ClinicNum,InsSubNum,PaymentRow,PayPlanNum,ClaimPaymentTracking,SecUserNumEntry,SecDateEntry,DateSuppReceived,DateInsFinalized,IsTransfer,ClaimAdjReasonCodes,IsOverpay) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(claimProc.ClaimProcNum)+",";
 			}
@@ -332,8 +328,7 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Date  (claimProc.DateInsFinalized)+","
 				+    POut.Bool  (claimProc.IsTransfer)+","
 				+"'"+POut.String(claimProc.ClaimAdjReasonCodes)+"',"
-				+    POut.Bool  (claimProc.IsOverpay)+","
-				+"'"+POut.String(claimProc.SecurityHash)+"')";
+				+    POut.Bool  (claimProc.IsOverpay)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -358,7 +353,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="ClaimProcNum,";
 			}
-			command+="ProcNum,ClaimNum,PatNum,ProvNum,FeeBilled,InsPayEst,DedApplied,Status,InsPayAmt,Remarks,ClaimPaymentNum,PlanNum,DateCP,WriteOff,CodeSent,AllowedOverride,Percentage,PercentOverride,CopayAmt,NoBillIns,PaidOtherIns,BaseEst,CopayOverride,ProcDate,DateEntry,LineNumber,DedEst,DedEstOverride,InsEstTotal,InsEstTotalOverride,PaidOtherInsOverride,EstimateNote,WriteOffEst,WriteOffEstOverride,ClinicNum,InsSubNum,PaymentRow,PayPlanNum,ClaimPaymentTracking,SecUserNumEntry,SecDateEntry,DateSuppReceived,DateInsFinalized,IsTransfer,ClaimAdjReasonCodes,IsOverpay,SecurityHash) VALUES(";
+			command+="ProcNum,ClaimNum,PatNum,ProvNum,FeeBilled,InsPayEst,DedApplied,Status,InsPayAmt,Remarks,ClaimPaymentNum,PlanNum,DateCP,WriteOff,CodeSent,AllowedOverride,Percentage,PercentOverride,CopayAmt,NoBillIns,PaidOtherIns,BaseEst,CopayOverride,ProcDate,DateEntry,LineNumber,DedEst,DedEstOverride,InsEstTotal,InsEstTotalOverride,PaidOtherInsOverride,EstimateNote,WriteOffEst,WriteOffEstOverride,ClinicNum,InsSubNum,PaymentRow,PayPlanNum,ClaimPaymentTracking,SecUserNumEntry,SecDateEntry,DateSuppReceived,DateInsFinalized,IsTransfer,ClaimAdjReasonCodes,IsOverpay) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(claimProc.ClaimProcNum)+",";
 			}
@@ -409,8 +404,7 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Date  (claimProc.DateInsFinalized)+","
 				+    POut.Bool  (claimProc.IsTransfer)+","
 				+"'"+POut.String(claimProc.ClaimAdjReasonCodes)+"',"
-				+    POut.Bool  (claimProc.IsOverpay)+","
-				+"'"+POut.String(claimProc.SecurityHash)+"')";
+				+    POut.Bool  (claimProc.IsOverpay)+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -469,8 +463,7 @@ namespace OpenDentBusiness.Crud{
 				+"DateInsFinalized    =  "+POut.Date  (claimProc.DateInsFinalized)+", "
 				+"IsTransfer          =  "+POut.Bool  (claimProc.IsTransfer)+", "
 				+"ClaimAdjReasonCodes = '"+POut.String(claimProc.ClaimAdjReasonCodes)+"', "
-				+"IsOverpay           =  "+POut.Bool  (claimProc.IsOverpay)+", "
-				+"SecurityHash        = '"+POut.String(claimProc.SecurityHash)+"' "
+				+"IsOverpay           =  "+POut.Bool  (claimProc.IsOverpay)+" "
 				+"WHERE ClaimProcNum = "+POut.Long(claimProc.ClaimProcNum);
 			Db.NonQ(command);
 		}
@@ -657,10 +650,6 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="IsOverpay = "+POut.Bool(claimProc.IsOverpay)+"";
 			}
-			if(claimProc.SecurityHash != oldClaimProc.SecurityHash) {
-				if(command!="") { command+=",";}
-				command+="SecurityHash = '"+POut.String(claimProc.SecurityHash)+"'";
-			}
 			if(command=="") {
 				return false;
 			}
@@ -806,9 +795,6 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(claimProc.IsOverpay != oldClaimProc.IsOverpay) {
-				return true;
-			}
-			if(claimProc.SecurityHash != oldClaimProc.SecurityHash) {
 				return true;
 			}
 			return false;

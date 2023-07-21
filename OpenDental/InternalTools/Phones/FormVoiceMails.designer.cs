@@ -36,6 +36,7 @@ namespace OpenDental{
 			this.gridVoiceMails = new OpenDental.UI.GridOD();
 			this.butCreateTask = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -158,6 +159,16 @@ namespace OpenDental{
 			this.butDelete.Text = "&Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(768, 477);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(78, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormVoiceMails
 			// 
 			this.ClientSize = new System.Drawing.Size(858, 513);
@@ -168,6 +179,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.axWindowsMediaPlayer);
 			this.Controls.Add(this.gridVoiceMails);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormVoiceMails";
 			this.Text = "Voice Mails";
@@ -179,6 +191,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridVoiceMails;
 		private System.Windows.Forms.ContextMenu menuVoiceMailsRightClick;
 		private System.Windows.Forms.MenuItem menuSendToMe;

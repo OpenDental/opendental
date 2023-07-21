@@ -73,6 +73,10 @@ namespace OpenDental {
 			FillGrid();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 		private void FormScheduledProcesses_FormClosing(object sender,FormClosingEventArgs e) {
 			bool isChanged=false;
 			isChanged |=Prefs.UpdateBool(PrefName.InsBatchVerifyCheckAnnualMax, checkCheckAnnualMax.Checked);
@@ -84,6 +88,5 @@ namespace OpenDental {
 				DataValid.SetInvalid(InvalidType.Prefs);
 			}
 		}
-
 	}
 }

@@ -45,10 +45,11 @@ namespace OpenDental {
 			this.textMoveTo = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.checkShowHidden = new OpenDental.UI.CheckBox();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butAdd = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.butSelectAll = new OpenDental.UI.Button();
 			this.butSelectNone = new OpenDental.UI.Button();
 			this.groupClinicOrder.SuspendLayout();
@@ -165,15 +166,16 @@ namespace OpenDental {
 			this.checkShowHidden.Text = "Show Hidden";
 			this.checkShowHidden.CheckedChanged += new System.EventHandler(this.checkShowHidden_CheckedChanged);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(831, 573);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 13;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(827, 541);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 13;
+			this.butOK.Text = "&OK";
+			this.butOK.Visible = false;
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// gridMain
 			// 
@@ -209,6 +211,16 @@ namespace OpenDental {
 			this.butAdd.Text = "&Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(827, 573);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 1;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butSelectAll
 			// 
 			this.butSelectAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -236,7 +248,8 @@ namespace OpenDental {
 			// FormClinics
 			// 
 			this.ClientSize = new System.Drawing.Size(914, 611);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butSelectNone);
 			this.Controls.Add(this.butSelectAll);
 			this.Controls.Add(this.groupClinicOrder);
@@ -262,9 +275,10 @@ namespace OpenDental {
 		#endregion
 
 		private OpenDental.UI.Button butAdd;
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label label1;
 		private UI.GridOD gridMain;
-		private UI.Button butSave;
+		private UI.Button butOK;
 		private OpenDental.UI.GroupBox groupMovePats;
 		private UI.Button butMovePats;
 		private UI.Button butClinicPick;

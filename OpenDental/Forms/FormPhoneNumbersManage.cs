@@ -38,34 +38,28 @@ namespace OpenDental {
 			if(listOther.SelectedIndex==-1) {
 				return;
 			}
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.ValidPhone;
-			inputBoxParam.LabelText=Lan.g(this,"Phone Number");
-			inputBoxParam.Text=listOther.Items.GetTextShowingAt(listOther.SelectedIndex);
-			InputBox inputBox=new InputBox(inputBoxParam);
+			using InputBox inputBox=new InputBox(null,new InputBoxParam(InputBoxType.ValidPhone,Lan.g(this,"Phone Number")));
+			inputBox.textResult.Text=listOther.Items.GetTextShowingAt(listOther.SelectedIndex);
 			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			if(inputBox.DialogResult!=DialogResult.OK) {
 				return;
 			}
 			PhoneNumber phoneNumber=listOther.GetSelected<PhoneNumber>();
-			phoneNumber.PhoneNumberVal=inputBox.StringResult;
+			phoneNumber.PhoneNumberVal=inputBox.textResult.Text;
 			phoneNumber.PhoneNumberDigits=PhoneNumbers.RemoveNonDigitsAndTrimStart(phoneNumber.PhoneNumberVal);
 			PhoneNumbers.Update(phoneNumber);
 			FillList();
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.ValidPhone;
-			inputBoxParam.LabelText=Lan.g(this,"Phone Number");
-			InputBox inputBox=new InputBox(inputBoxParam);
+			using InputBox inputBox=new InputBox(null,new InputBoxParam(InputBoxType.ValidPhone,Lan.g(this,"Phone Number")));
 			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			if(inputBox.DialogResult!=DialogResult.OK) {
 				return;
 			}
 			PhoneNumber phoneNumber=new PhoneNumber();
 			phoneNumber.PatNum=PatNum;
-			phoneNumber.PhoneNumberVal=inputBox.StringResult;
+			phoneNumber.PhoneNumberVal=inputBox.textResult.Text;
 			phoneNumber.PhoneNumberDigits=PhoneNumbers.RemoveNonDigitsAndTrimStart(phoneNumber.PhoneNumberVal);
 			PhoneNumbers.Insert(phoneNumber);
 			FillList();
@@ -80,7 +74,7 @@ namespace OpenDental {
 			FillList();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			Patient patientOld=_patient.Copy();
 			_patient.WkPhone=textWkPhone.Text;
 			_patient.HmPhone=textHmPhone.Text;
@@ -90,5 +84,12 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
 	}
 }

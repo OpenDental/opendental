@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormVideo));
+			this.butClose = new OpenDental.UI.Button();
 			this.pictureBoxCamera = new System.Windows.Forms.PictureBox();
 			this.butCapture = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
@@ -31,6 +32,17 @@ namespace OpenDental{
 			this.label2 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBoxCamera)).BeginInit();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(341, 282);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 0;
+			this.butClose.TabStop = false;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// pictureBoxCamera
 			// 
@@ -91,6 +103,7 @@ namespace OpenDental{
 			this.Controls.Add(this.comboCameras);
 			this.Controls.Add(this.butCapture);
 			this.Controls.Add(this.pictureBoxCamera);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormVideo";
 			this.Text = "Video Capture";
@@ -105,6 +118,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.PictureBox pictureBoxCamera;
 		private UI.Button butCapture;
 		private System.Windows.Forms.Label label1;

@@ -24,7 +24,7 @@ namespace OpenDental{
 		}
 
 		private void FormHL7Defs_Load(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup,true)){
+			if(!Security.IsAuthorized(Permissions.Setup,true)){
 				butCopy.Enabled=false;
 				grid2.Enabled=false;
 				grid1.Enabled=false;
@@ -185,6 +185,10 @@ namespace OpenDental{
 			FillGrid2();
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 		private void FormHL7Defs_FormClosing(object sender,FormClosingEventArgs e) {
 			DataValid.SetInvalid(InvalidType.HL7Defs);
 			DataValid.SetInvalid(InvalidType.Prefs);
@@ -193,3 +197,6 @@ namespace OpenDental{
 
 	}
 }
+
+
+

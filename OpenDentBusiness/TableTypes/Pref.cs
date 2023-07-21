@@ -467,8 +467,6 @@ namespace OpenDentBusiness {
 		BillingElectVendorId,
 		BillingElectVendorPMSCode,
 		BillingEmailBodyText,
-		[PrefName(ValueType=PrefValueType.BOOL)]
-		BillingEmailIncludeAutograph,
 		BillingEmailSubject,
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		BillingExcludeBadAddresses,
@@ -566,9 +564,6 @@ namespace OpenDentBusiness {
 		///<summary>If true, we will display the Patient Repsonsibility in the claim edit and claim payment windows.</summary>
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		ClaimEditShowPatResponsibility,
-		///<summary>If true, users receives a warning when a received claim payment isn't finalized.</summary>
-		[PrefName(ValueType=PrefValueType.BOOL)]
-		ClaimFinalizeWarning,
 		///<summary>If true, we will include the Pay Tracking column in the claim edit and claim payment windows.</summary>
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		ClaimEditShowPayTracking,
@@ -597,10 +592,6 @@ namespace OpenDentBusiness {
 		ClaimPaymentPickStatementType,
 		///<summary>When true, procedurecode overrides will send the override's description to insurance instead of the original procedurecode's description.</summary>
 		ClaimPrintProcChartedDesc,
-		[PrefName(ValueType=PrefValueType.BOOL)]
-		///<summary>Receiving a primary claim will automatically recalculate the estimates on any claims that share procedures with the primary claim. 
-		///On by default.</summary>
-		ClaimPrimaryReceivedRecalcSecondary,
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		///<summary>Recieving a primary claim will make secondary claims with ClaimStatus 'Hold until Pri Recieved' display a popup of actions for those secondary claims.
 		///When true, this preference will remove the 'Do Nothing' option from that popup so the user has to change the status to
@@ -683,12 +674,6 @@ namespace OpenDentBusiness {
 		CloudSessionLimitCap,
 		///<summary>Local preference. The maximum number of sessions of Open Dental Cloud allowed to be running simultaneously.</summary>
 		CloudSessionLimit,
-		///<summary>Hidden preference. False for cloud users using Thinfinity. Controls how Open Dental communicates with the ODCloudClient. Set to False to use the original HTTP system with Thinfinity. If altered a restart is required as this value is set to a static variable on startup</summary>
-		CloudIsAppStream,
-		///<summary>Hidden preference. The directory used for standard cloud client communication. If altered a restart is required as this value is set to a static variable on startup</summary>
-		CloudFileWatcherDirectory,
-		///<summary>Hidden preference. The directory used for API communication. If altered a restart is required as this value is set to a static variable on startup.</summary>
-		CloudFileWatcherDirectoryAPI,
 		///<summary>0=standard, 1=alternate icons on ModuleBar and a few on Main Toolbar.  This no longer affects any colors.</summary>
 		///<summary>Deprecated</summary>
 		ColorTheme,
@@ -741,9 +726,6 @@ namespace OpenDentBusiness {
 		CustomersHQServer,
 		CustomizedForPracticeWeb,
 		DatabaseConvertedForMySql41,
-		///<summary>Boolean, false by default. When enabled, sql mode and replication status will not be changed. Used for Cloud Hosted Databases.</summary>
-		[PrefName(ValueType=PrefValueType.BOOL)]
-		DatabaseGlobalVariablesDontSet,
 		///<summary>String. Stores the obfuscated DatabaseIntegrites whitelist from the last successful call to HQ.</summary>
 		[PrefName(ValueType=PrefValueType.STRING)]
 		DatabaseIntegritiesWhiteList, 
@@ -751,8 +733,7 @@ namespace OpenDentBusiness {
 		DatabaseMaintenanceDisableOptimize,
 		///<summary>bool. Set to false by default. If true, database maintenance will skip table checks.</summary>
 		DatabaseMaintenanceSkipCheckTable,
-		///<summary>Deprecated. Was never used. Uses <see cref="DatabaseModeEnum"/>. Defaults to 'Normal'.</summary>
-		[Obsolete()]
+		///<summary>Uses <see cref="DatabaseModeEnum"/>. Defaults to 'Normal'.</summary>
 		DatabaseMode,
 		DataBaseVersion,
 		DateDepositsStarted,
@@ -767,8 +748,6 @@ namespace OpenDentBusiness {
 		///<summary>Long. 0 by default. Used to assign a user group to a new user that is added by a user who does not have the SecurityAdmin user 
 		///permission.</summary>
 		DefaultUserGroup,
-		///<summary>Boolean. Set to false by default. When set to true, it will no longer be necessary to manually approve devices.</summary>
-		DevAutoApproveDevice,
 		///<summary>Bool.  Default true 1. Applies to all computers.</summary>
 		DirectX11ToothChartUseIfAvail,
 		///<summary>Comma delimited list of procedure codes that represent Exam codes. D Code. Defaults to empty string.</summary>
@@ -847,9 +826,6 @@ namespace OpenDentBusiness {
 		///<summary>No one should ever have their preference set to include all 7 days. NEVER DO THIS.</summary>
 		EConfirmExcludeDays,
 		EclaimsSeparateTreatProv,
-		///<summary>Use Optional Patient ID "PatID" in place of SubscriberID if this preference is checked. Both 4010 and 5010. Disabled by default for backward compatibility.</summary>
-		[PrefName(ValueType=PrefValueType.BOOL)]
-		EclaimsSubscIDUsesPatID,
 		///<summary>Boolean, false by default. When enabled, the patient will be able to make payments and view past statements during checkin.</summary>
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		EClipboardAllowPaymentOnCheckin,
@@ -867,7 +843,7 @@ namespace OpenDentBusiness {
 		///<summary>String.  When EClipboardEnableByodSms is true, this template will be used for sending 'eClipboard Check-In Links'.</summary>
 		[PrefName(ValueType=PrefValueType.STRING)]
 		EClipboardByodSmsTemplate,
-		///<summary>Determines how often eClipboard will ask clinicians to reverify using a PIN or BioAuth. -1 Indicates security checks are disabled. This has been made into a global (non-clinic) pref, per Nathan/Sean/Sam.</summary>
+		///<summary>Determines how often eClipboard will ask clinicians to reverify using a PIN or BioAuth. -1 Indicates security checks are disabled.</summary>
 		[PrefName(ValueType=PrefValueType.INT)]
 		EClipboardClinicalValidationFrequency,
 		///<summary>Boolean, true by default. If this is true, when the patient status is changed to the waiting room status, we will check if there
@@ -1034,39 +1010,15 @@ namespace OpenDentBusiness {
 		///new user in a clinic.</summary>
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		EnterpriseNoneApptViewDefaultDisabled,
-		///<summary>definition.DefNum of category InsurancePaymentType. Zero by default. Used for claimpayments made from ERA ACH payments.</summary>
-		[PrefName(ValueType=PrefValueType.LONG)]
-		EraAchPaymentType,
 		EraAllowTotalPayments,
 		///<summary>Enum:EraAutomationMode. 1 by default. 0=UseGlobal(not used in the preference table), 1=ReviewAll, 2=SemiAutomatic.</summary>
 		[PrefName(ValueType=PrefValueType.ENUM)]
 		EraAutomationBehavior,
-		///<summary>Enum:EnumEraAutoPostWriteOff. 0 by default. 0=PriFromERA, 1=Always, 2=PriFromPlan</summary>
-		[PrefName(ValueType=PrefValueType.ENUM)]
-		EraAutoPostWriteOff,
-		///<summary>definition.DefNum of category InsurancePaymentType. Zero by default. Used for claimpayments made from ERA CHK payments.</summary>
-		[PrefName(ValueType=PrefValueType.LONG)]
-		EraChkPaymentType,
-		///<summary>definition.DefNum of category InsurancePaymentType. Zero by default. Used for claimpayments made from ERA payments of types other than ACH, CHK, and FWT.
-		///Will also be used for ACH, CHK, and FWT payments if their corresponding preferences aren't set (EraAchPaymentType, EraChkPaymentType, EraFwtPaymentType).
-		///If those preferences and this preference aren't set, we look for an InsurancePaymentType definition with the name "EFT" for ACH, "Check" for CHK, and "Wired" for FWT.
-		///The claimpayment type is set to zero (undefined) if a match is not found.</summary>
-		[PrefName(ValueType=PrefValueType.LONG)]
-		EraDefaultPaymentType,
-		///<summary>definition.DefNum of category InsurancePaymentType. Zero by default. Used for claimpayments made from ERA FWT payments.</summary>
-		[PrefName(ValueType=PrefValueType.LONG)]
-		EraFwtPaymentType,
 		///<summary>Boolean, false by default.  When true then there will be 1 page per each claim paid for an ERA header and ERA claim paid on printouts.</summary>
 		EraPrintOneClaimPerPage,
 		///<summary>Boolean, true by default.  When true, the ERA 'Verify and Enter Payment' window will post WriteOffs for procedures covered by category percentage or 
 		///medicaid/flat copay insurance plans.  When false, WriteOffs will not be posted for these insurance plan types.</summary>
 		EraIncludeWOPercCoPay,
-		///<summary>A comma delimited list of Claim Adjustment Reason Codes (CARCs). Defaults to "97,16,252,242,50,251,B7,226,250", a list provided by NADG. If the payment 
-		///information on an ERA applies any of the codes in this list to a claim or any of the claim's procedures, ERA auto-processing will not process the claim. Claims assigned
-		///these codes often need to be resubmitted with additional documentation, and automatically receiving them with no payment forces users to detach the claim from the check
-		///and change the status for the claim and each ClaimProc before resubmitting.</summary>
-		[PrefName(ValueType=PrefValueType.STRING)]
-		EraNoAutoProcessCarcCodes,
 		///<summary>Boolean, true by default.  When true loads database data for ERAs when loading the ERA 835s window.  Enterprise only for now.</summary>
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		EraRefreshOnLoad,
@@ -1083,31 +1035,10 @@ namespace OpenDentBusiness {
 		EraStrictClaimMatching,
 		///<summary>Locally stored DateTime for previous next time, mirrors EServiceAccount column at HQ.</summary>
 		EserviceLogUploadTimeNext,
-		///<summary>Boolean, true by default. Determines whether the econnector is able to accept intranet requests.</summary>
+		///<summary>Boolean, false by default. Determines whether the econnector is able to accept intranet requests.</summary>
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		EServiceListenerEnabled,
 		ExportPath,
-		///<summary>Int.  Number of days before day of runtime to use as the 'ChangedSinceDate' for running automated family balancer.</summary>
-		[PrefName(ValueType=PrefValueType.INT)]
-		FamilyBalancerChangedSinceNumDays,
-		///<summary>Boolean, false by default.  When true, uses pref FamilyBalancerLastDayRun as the 'ChangedSinceDate' and when false, uses pref FamilyBalancerChangedSinceNumDays.</summary>
-		[PrefName(ValueType=PrefValueType.BOOL)]
-		FamilyBalancerChangedSinceUseLastDayRun,
-		///<summary>DateTime.  Timestamps the last time the automated family balancer was run.</summary>
-		[PrefName(ValueType=PrefValueType.DATETIME)]
-		FamilyBalancerDateLastRun,
-		///<summary>Boolean, false by default.  When true, running automated family balancer will delete all transfers, regardless of date, if they have PayType=0 and Amt=0.</summary>
-		[PrefName(ValueType=PrefValueType.BOOL)]
-		FamilyBalancerDeleteAllTransfers,
-		///<summary>Boolean, false by default.  When true, allows automated family balancer to run from OpenDentalService.</summary>
-		[PrefName(ValueType=PrefValueType.BOOL)]
-		FamilyBalancerEnabled,
-		///<summary>Stored as a DateTime, only TimeOfDay is used to determine when family balancer should run.</summary>
-		[PrefName(ValueType=PrefValueType.DATETIME)]
-		FamilyBalancerTimeRun,
-		///<summary>Boolean, true by default.  When true, runs automated family balancer using FIFO. When false, runs as rigorous.</summary>
-		[PrefName(ValueType=PrefValueType.BOOL)]
-		FamilyBalancerUseFIFO,
 		///<summary>Allows guarantor access to all family health information in the patient portal.  Default is 1.</summary>
 		FamPhiAccess,
 		///<summary>Deprecated.</summary>
@@ -1151,8 +1082,6 @@ namespace OpenDentBusiness {
 		HL7FolderIn,
 		///<summary>Deprecated.  Use SiteLink.EmployeeNum instead.  Used by HQ. Projected onto wall displayed on top of FormMapHQ</summary>
 		HQTriageCoordinator,
-		///<summary>Only used at Open Dental HQ. Not added with script.</summary>
-		HQVideoToken,
 		///<summary>procedurelog.DiagnosticCode will be set to this for new procedures and complete procedures if this field was blank when set complete.
 		///This can be an ICD-9 or an ICD-10.  In future versions, could be another an ICD-11, ICD-12, etc.</summary>
 		ICD9DefaultForNewProcs,
@@ -1391,8 +1320,6 @@ namespace OpenDentBusiness {
 		///the procedurelog table for scheduled non-CPOE radiology procs.  When the first row is inserted into the ehrprovkey table, or if there is an
 		///existing row when the db is updated, this will be set to true.  Otherwise false.  Users can manually turn this pref on or off.</summary>
 		IsAlertRadiologyProcsEnabled,
-		/// <summary>Indicates whether or not a clinic has ODTouch enabled. Will be a preference for clinic 0, otherwise a clinicpref.</summary>
-		IsODTouchEnabled,
 		///<summary>Enum.  Flags ItransNCpl.ItransUpdateFields: identifies what carrier fields to update when impotring carriers for ITRANS 2.0.</summary>
 		ItransImportFields,
 		JobManagerDefaultEmail,
@@ -1488,8 +1415,6 @@ namespace OpenDentBusiness {
 		MobileExcludeApptsBeforeDate,
 		MobileUserName,
 		MobileWebClinicsSignedUp,
-		///<summary>Int. Adjusts RunInterval of MsgToPay in seconds.</summary>
-		MsgToPaySendThreadFrequency,
 		//MobileSyncLastFileNumber,
 		//MobileSyncPath,
 		///<summary>The major and minor version of the current MySQL connection.  Gets updated on startup when a new version is detected.</summary>
@@ -1500,7 +1425,7 @@ namespace OpenDentBusiness {
 		NewCropAccountId,
 		///<summary>The date this customer last checked with HQ to determine which provider have access to eRx.</summary>
 		NewCropDateLastAccessCheck,
-		///<summary>DEPRECATED. True for customers who were using NewCrop before version 15.4.  True if NewCropAccountId was not blank when upgraded.</summary>
+		///<summary>True for customers who were using NewCrop before version 15.4.  True if NewCropAccountId was not blank when upgraded.</summary>
 		NewCropIsLegacy,
 		///<summary>Controls which NewCrop database to use.  If false, then the customer uses the First Data Bank (FDB) database, otherwise the 
 		///customer uses the LexiData database.  Connecting to LexiData saves NewCrop some money on the new accounts.  Additionally, the RxNorms which
@@ -1521,11 +1446,6 @@ namespace OpenDentBusiness {
 		///<summary>Duration the eConnector will maintain in memory cache of SmsToMobile and SmsFromMobile messages before purging older messages.
 		///Stored as hours.</summary>
 		ODMobileCacheDurationHours,
-		/// <summary>Used for the clinicpref table when clinics are enabled, otherwise used by preference table. Specifies the ODTouch device limit for a given clinic (i.e. the count of devices included with an ODTouch signup). Any devices over this limit are considered surplus and subject to additional charge(s). </summary>
-		ODTouchDeviceLimit,
-		///<summary>This is only true for New York Office of Mental Health.</summary>
-		[PrefName(ValueType = PrefValueType.BOOL)]
-		OmhNy,
 		///<summary>Mark online payments as processed when an eClipboard/patient portal payment is auto-split.</summary>
 		[PrefName(ValueType = PrefValueType.BOOL)]
 		OnlinePaymentsMarkAsProcessed,
@@ -1545,8 +1465,6 @@ namespace OpenDentBusiness {
 		OrthoBandingCodes,
 		///<summary>When turned on, ortho case information is shown in the ortho chart.</summary>
 		OrthoCaseInfoInOrthoChart,
-		///<summary>This gets turned on to track down bugs in the ortho chart. Saves info to OrthoChartLog table.</summary>
-		OrthoChartLoggingOn,
 		///<summary>Determines whether claims with ortho procedures on them will automatically be marked as Ortho claims.</summary>
 		OrthoClaimMarkAsOrtho,
 		///<summary>When true, ortho claims' "OrthoDate" will be automatically set to the patient's first ortho procedure when created.</summary>
@@ -1669,9 +1587,6 @@ namespace OpenDentBusiness {
 		PayPlanAdjType,
 		/// <summary>bool. Set to false by default. If true, the "Due Now" column will be hidden from pay plans grid in acct module.</summary>
 		PayPlanHideDueNow,
-		///<summary>Boolean. True by default. If false, allows the payment plan window to not require the full lock box to be checked before saving.</summary>
-		[PrefName(ValueType=PrefValueType.BOOL)]
-		PayPlanRequireLockForAPR,
 		PayPlansBillInAdvanceDays,
 		///<summary>Boolean.  False by default.  If true, payment plan window will exclude past activity in the amortization grid by default.</summary>
 		PayPlansExcludePastActivity,
@@ -1684,12 +1599,6 @@ namespace OpenDentBusiness {
 		PayPlanSaveSignedToPdf,
 		[PrefName(ValueType=PrefValueType.STRING)]
 		PayPlanTermsAndConditions,
-		[PrefName(ValueType=PrefValueType.STRING)]
-		PaymentPortalMsgToPayEmailMessageTemplate,
-		[PrefName(ValueType=PrefValueType.STRING)]
-		PaymentPortalMsgToPaySubjectTemplate,
-		[PrefName(ValueType=PrefValueType.STRING)]
-		PaymentPortalMsgToPayTextMessageTemplate,
 		///<summary>False by default.  If true, PDF files will not preview with a single click. They will open with double-click. This might help with RDP.</summary>
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		PdfLaunchWindow,
@@ -1805,9 +1714,6 @@ namespace OpenDentBusiness {
 		ProcGroupNoteDoesAggregate,
 		///<summary>DEPRECATED DateTime.  Next date that the advertising programming properties will automatically check.</summary>		
 		ProgramAdditionalFeatures,
-		///<summary>Hidden preference, no UI to edit this list, but it is present in all databases.  Comma delimited list of ProgramNames for programlinks that are disabled in Web
-		///mode for various reasons.  We can manually edit this list </summary>
-		ProgramLinksDisabledForWeb,
 		///<summary>Deprecated. Use updatehistory table instead.  Stored the DateTime of when the ProgramVersion preference last changed.</summary>		
 		ProgramVersionLastUpdated,
 		ProgramVersion,
@@ -2007,8 +1913,6 @@ namespace OpenDentBusiness {
 		ReportingServerMySqlUser,
 		///<summary>When using a distinct reporting server, stores the hashed mysql password.</summary>
 		ReportingServerMySqlPassHash,
-		/// <summary>Used for connecting to Maria DB SkySQL.</summary>
-		ReportingServerSslCa,
 		///<summary>When using a distinct reporting server over middle tier, stores the uri.</summary>
 		ReportingServerURI,
 		///<summary>Boolean, on by default.</summary>
@@ -2059,8 +1963,6 @@ namespace OpenDentBusiness {
 		SaveDXCAttachments,
 		///<summary>Boolean. 0 by default.  Allows users to choose if they want to save a copy of any attachments they send to DXC.</summary>
 		SaveDXCSOAPAsXML,
-		///<summary>Boolean. 1 by default. Allows users to choose if they want to save a copy of any attachments they send to EDS.</summary>
-		SaveEDSAttachments,
 		ScannerCompression,
 		ScannerResolution,
 		ScannerSuppressDialog,
@@ -2070,9 +1972,6 @@ namespace OpenDentBusiness {
 		///<summary>Boolean. Off by default so that users will have to opt into utilizing the screening with sheets feature.
 		///Screening with sheets is extremely customized for Dental3 (D3)</summary>
 		ScreeningsUseSheets,
-		///<summary>Default true. When logging in with a badge, require a password. If false, then swiping the badge gets you directly in without further action. This is lower security, but some offices might like it.</summary>
-		[PrefName(ValueType=PrefValueType.BOOL)]
-		SecurityBadgesRequirePassword,
 		///<summary>UserGroupNum for Instructors.  Set only for dental schools in dental school setup.</summary>
 		SecurityGroupForInstructors,
 		///<summary>UserGroupNum for Students.  Set only for dental schools in dental school setup.</summary>
@@ -2530,9 +2429,6 @@ namespace OpenDentBusiness {
 		WebSchedExistingPatSearchAfterDays,
 		/// <summary>String, the webforms url that should be launched after an existing patient signs up using web sched.</summary>
 		WebSchedExistingPatWebFormsURL,
-		///<summary>Long, 0 by default. eConnector will parse this pref to send manual recalls.</summary>
-		[PrefName(ValueType=PrefValueType.LONG)]
-		WebSchedManualSendTriggered,
 		WebSchedMessage,
 		WebSchedMessageText,
 		WebSchedMessage2,
@@ -2658,10 +2554,7 @@ namespace OpenDentBusiness {
 		///<summary>Enum. The communication type for Web Sched verifications to recalls. 0: None, 1: Text, 2: E-mail, 3: Text and E-mail</summary>
 		WebSchedVerifyRecallType,
 		WebServiceHQServerURL,
-		///<summary>Update Server: Version updates can only be performed from this computer, and the eConnector can only be installed on this computer.</summary>
 		WebServiceServerName,
-		///<summary>Allow WebServiceServerName to be blank so that updates can be performed from any computer. eConnector will not work.</summary>
-		WebServiceServerNameCanBeBlank,
 		///<summary>If enabled, allows users to right click on ODTextboxes or ODGrids to populate the context menu with any detected wiki links.</summary>
 		WikiDetectLinks,
 		///<summary>If enabled, allows users to create new wiki pages when following links from textboxes and grids. (Disable to prevent proliferation of misspelled wiki pages.)</summary>
@@ -2801,25 +2694,25 @@ namespace OpenDentBusiness {
 
 	public enum RigorousAccounting {
 		///<summary>0 - Payments are automatically split and paysplit validity is enforced.</summary>
-		[Description("Rigorous")]
+		[Description("Enforce Fully")]
 		EnforceFully,
 		///<summary>1 - Payments are automatically split, but paysplit validity is not enforced.</summary>
 		[Description("Auto-Split Only")]
 		AutoSplitOnly,
 		///<summary>2 - Payments are not automatically split, nor is paysplit validity enforced.</summary>
-		[Description("Manual")]
+		[Description("Don't Enforce")]
 		DontEnforce
 	}
 
 	public enum RigorousAdjustments {
 		///<summary>0 - Automatically link adjustments and procedures, adjustment linking enforced.</summary>
-		[Description("Rigorous")]
+		[Description("Enforce Fully")]
 		EnforceFully,
 		///<summary>1 - Adjustment links are made automatically, but it can be edited.</summary>
 		[Description("Link Only")]
 		LinkOnly,
 		///<summary>2 - Adjustment links aren't made, nor are they enforced.</summary>
-		[Description("Manual")]
+		[Description("Don't Enforce")]
 		DontEnforce
 	}
 
@@ -2861,7 +2754,7 @@ namespace OpenDentBusiness {
 		[Description("No electronic billing")]
 		None,
 		///<summary>1.</summary>
-		[Description("DentalXChange")]
+		[Description("Dental X Change")]
 		EHG,
 		///<summary>2 - (xml file).</summary>
 		[Description("Output to file")]
@@ -2926,18 +2819,6 @@ namespace OpenDentBusiness {
 		FullyAutomatic,
 	}
 
-	public enum EnumEraAutoPostWriteOff {
-		///<summary>0 - only posts write-offs for primary</summary>
-		[Description("Primary from ERA")]
-		PriFromERA,
-		///<summary>1 - Always posts write-offs</summary>
-		[Description("Always")]
-		Always,
-		///<summary>2 - Uses the patplan ordinal to post write-off</summary>
-		[Description("Primary from Plan")]
-		PriFromPlan
-	}
-
 		///<summary>Indicates how the user prefers to print their Appt module.</summary>
 		public enum ApptPrintColorBehavior {
 		///<summary>0 - Full Color.</summary>
@@ -2957,4 +2838,5 @@ namespace OpenDentBusiness {
 		///<summary> 2 - Allow.</summary>
 		Allow
 	}
+
 }

@@ -179,7 +179,7 @@ namespace OpenDentBusiness {
 		}
 
 		public static string BuildReceiptString(PayConnectService.transType transType,string refNum,string nameOnCard,string cardNumber,
-			string magData,string authCode,string statusDescription,List<string> messages,decimal amount,bool doShowSignatureLine,long clinicNum,string cardType="",decimal surchargeAmount=0) 
+			string magData,string authCode,string statusDescription,List<string> messages,decimal amount,bool doShowSignatureLine,long clinicNum) 
 		{
 			string result="";
 			cardNumber=cardNumber??""; //Prevents null reference exceptions when PayConnectPortal transactions don't have an associated card number
@@ -197,19 +197,13 @@ namespace OpenDentBusiness {
 			result+="Transaction #".PadRight(xright-xleft,'.')+refNum+Environment.NewLine;
 			result+="Name".PadRight(xright-xleft,'.')+nameOnCard+Environment.NewLine;
 			result+="Account".PadRight(xright-xleft,'.');
-			if(cardNumber.Length>4) {
-				for(int i = 0;i<cardNumber.Length-4;i++) {
-					result+="*";
-				}
+			for(int i = 0;i<cardNumber.Length-4;i++) {
+				result+="*";
+			}
+			if(cardNumber.Length>=4) {
 				result+=cardNumber.Substring(cardNumber.Length-4)+Environment.NewLine;//last 4 digits of card number only.
 			}
-			else {//Cardnumber is the last 4 digits
-				result+=cardNumber.PadLeft(16,'*')+Environment.NewLine;
-			}
-			if(cardType.IsNullOrEmpty()) {
-				cardType=CreditCardUtils.GetCardType(cardNumber);
-			}
-			result+="Card Type".PadRight(xright-xleft,'.')+cardType+Environment.NewLine;
+			result+="Card Type".PadRight(xright-xleft,'.')+CreditCardUtils.GetCardType(cardNumber)+Environment.NewLine;
 			result+="Entry".PadRight(xright-xleft,'.')+(String.IsNullOrEmpty(magData) ? "Manual" : "Swiped")+Environment.NewLine;
 			result+="Auth Code".PadRight(xright-xleft,'.')+authCode+Environment.NewLine;
 			result+="Result".PadRight(xright-xleft,'.')+statusDescription+Environment.NewLine;
@@ -221,11 +215,11 @@ namespace OpenDentBusiness {
 				}
 			}
 			result+=Environment.NewLine+Environment.NewLine+Environment.NewLine;
-			if(transType==PayConnectService.transType.VOID) {
-				result+=GetAmountStringForReceipt((amount*-1),(surchargeAmount*-1),xleft,xright);
+			if(transType.In(PayConnectService.transType.RETURN,PayConnectService.transType.VOID)) {
+				result+="Total Amt".PadRight(xright-xleft,'.')+(amount*-1)+Environment.NewLine;
 			}
 			else {
-				result+=GetAmountStringForReceipt(amount,surchargeAmount,xleft,xright);
+				result+="Total Amt".PadRight(xright-xleft,'.')+amount+Environment.NewLine;
 			}
 			result+=Environment.NewLine+Environment.NewLine+Environment.NewLine;
 			result+="I agree to pay the above total amount according to my card issuer/bank agreement."+Environment.NewLine;
@@ -237,19 +231,6 @@ namespace OpenDentBusiness {
 				result+="Electronically signed";
 			}
 			return result;
-		}
-
-		private static string GetAmountStringForReceipt(decimal amount,decimal surchargeAmount,int xleft,int xright) {
-			string receiptString="";
-			if(surchargeAmount!=0) {
-				receiptString+="Amt".PadRight(xright-xleft,'.')+amount.ToString("c")+Environment.NewLine;
-				receiptString+="Surcharge".PadRight(xright-xleft,'.')+surchargeAmount.ToString("c")+Environment.NewLine;
-				receiptString+="Total Amt".PadRight(xright-xleft,'.')+(amount+surchargeAmount).ToString("c")+Environment.NewLine;
-			}
-			else {
-				receiptString+="Total Amt".PadRight(xright-xleft,'.')+amount.ToString("c")+Environment.NewLine;
-			}
-			return receiptString;
 		}
 
 		#region Patient Portal Interface
@@ -373,7 +354,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Only deletes the credit card from Open Dental.  We currently do not delete PayConnect tokens from PayConnect anywhere like we do with XCharge/XWeb/PaySimple.
 		///Throws exceptions.</summary>
-		public static void DeleteCreditCard(Patient pat,CreditCard cc,LogSources logSource=LogSources.None) {
+		public static void DeleteCreditCard(Patient pat,CreditCard cc) {
 			if(pat==null) {
 				throw new ODException("No Patient Found",ODException.ErrorCodes.NoPatientFound);
 			}
@@ -383,7 +364,12 @@ namespace OpenDentBusiness {
 			if(string.IsNullOrEmpty(cc.PayConnectToken)) {
 				throw new ODException("Invalid CC Alias",ODException.ErrorCodes.OtkArgsInvalid);
 			}
-			CreditCards.DeleteAndRefresh(cc,logSource);
+			CreditCards.Delete(cc.CreditCardNum);
+			List<CreditCard> creditCards=CreditCards.Refresh(pat.PatNum);
+			for(int i=0;i<creditCards.Count;i++) {
+				creditCards[i].ItemOrder=creditCards.Count-(i+1);
+				CreditCards.Update(creditCards[i]);//Resets ItemOrder.
+			}
 		}
 
 		///<summary>Putting this functionality in it's own class scope prevents it from being serialized for DTO.
@@ -462,7 +448,6 @@ namespace OpenDentBusiness {
 								OnLoggerEvent("PaymentToken has been completed: "+responseWebCur.PayToken,LogLevel.Information);
 								if(responseWebCur.IsTokenSaved) {
 									CreditCards.InsertFromPayConnect(responseWebCur);
-									SecurityLogs.MakeLogEntry(EnumPermType.CreditCardEdit,responseWebCur.PatNum,"Credit Card Added");
 								}
 								Patient pat=Patients.GetPat(responseWebCur.PatNum);
 								long clinicNum=0;
@@ -481,11 +466,11 @@ namespace OpenDentBusiness {
 									EmailAddress emailAddressFrom=EmailAddresses.GetByClinic(clinicNum,true);
 									Statements.EmailStatementPatientPortal(Statements.CreateReceiptStatement(pat,StatementMode.Email),responseWebCur.EmailResponse,emailAddressFrom,pat);
 								}
-								//If a patient is on a mobile device, we need to create a refresh payment mobile notification so they can see the payment worked.
+								//If a patient is on a mobile device, we need to send a refresh payment push notification so they can see the payment worked.
 								List<MobileAppDevice> listMobileAppDevicesPat=MobileAppDevices.GetAll(responseWebCur.PatNum);
 								MobileAppDevice device=listMobileAppDevicesPat.FirstOrDefault(x => x.PatNum==responseWebCur.PatNum);
 								if(device!=null && device.LastCheckInActivity>DateTime.Now.AddHours(-1)) {
-									MobileNotifications.CI_RefreshPayment(device.MobileAppDeviceNum,responseWebCur.PatNum,out string errorMsg);
+									PushNotificationUtils.CI_RefreshPayment(device.MobileAppDeviceNum,responseWebCur.PatNum,out string errorMsg);
 								}
 								break;
 							case PayConnectWebStatus.Cancelled:

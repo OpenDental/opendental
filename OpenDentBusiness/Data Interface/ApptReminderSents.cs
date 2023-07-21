@@ -11,14 +11,14 @@ namespace OpenDentBusiness{
 	public class ApptReminderSents{
 		#region Get Methods
 
-		public static List<ApptReminderSent> GetForApt(params long[] apptNumArray) {
-			if(apptNumArray.IsNullOrEmpty()) {
+		public static List<ApptReminderSent> GetForApt(params long[] arrApptNums) {
+			if(arrApptNums.IsNullOrEmpty()) {
 				return new List<ApptReminderSent>();
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ApptReminderSent>>(MethodBase.GetCurrentMethod(),apptNumArray);
+				return Meth.GetObject<List<ApptReminderSent>>(MethodBase.GetCurrentMethod(),arrApptNums);
 			}
-			string command="SELECT * FROM apptremindersent WHERE ApptNum IN ("+string.Join(",",apptNumArray.Select(x => POut.Long(x)))+") ";
+			string command="SELECT * FROM apptremindersent WHERE ApptNum IN ("+string.Join(",",arrApptNums.Select(x => POut.Long(x)))+") ";
 			return Crud.ApptReminderSentCrud.SelectMany(command);
 		}
 
@@ -60,16 +60,16 @@ namespace OpenDentBusiness{
 			Crud.ApptReminderSentCrud.Delete(apptReminderSentNum);
 		}
 
-		public static void Delete(params long[] apptReminderSentNumsArray) {
+		public static void Delete(params long[] arrApptReminderSentNums) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),apptReminderSentNumsArray);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),arrApptReminderSentNums);
 				return;
 			}
-			if(apptReminderSentNumsArray.IsNullOrEmpty()) {
+			if(arrApptReminderSentNums.IsNullOrEmpty()) {
 				return;
 			}
 			string command="DELETE FROM apptremindersent WHERE ApptReminderSentNum IN ("
-				+string.Join(",",apptReminderSentNumsArray.Select(x => POut.Long(x)))+")";
+				+string.Join(",",arrApptReminderSentNums.Select(x => POut.Long(x)))+")";
 			Db.NonQ(command);
 		}
 
@@ -77,14 +77,13 @@ namespace OpenDentBusiness{
 		///AutoComm will resend these automatically where the appointment still exists.
 		///HQ will increment the Sequence number of the .ics file such that the calendar entry on the patient's device is updated.
 		///Remove those that the user specifically said to not resend</summary>
-		public static void HandleApptChanged(Logger.IWriteLine log) {
-			//No need to check MiddleTierRole; no call to db.
-			List<ApptReminderSent> listApptRemindersSentsChanged=GetForApptChanged();
-			log.WriteLine($"Deleting {listApptRemindersSentsChanged.Count} ApptReminderSent entries.",LogLevel.Information);
-			string verboseLog=string.Join("\r\n\t\t",listApptRemindersSentsChanged
+		public static void HandleApptChanged(Logger.IWriteLine log) {			
+			List<ApptReminderSent> listRemindersChanged=GetForApptChanged();
+			log.WriteLine($"Deleting {listRemindersChanged.Count} ApptReminderSent entries.",LogLevel.Information);
+			string verboseLog=string.Join("\r\n\t\t",listRemindersChanged
 				.Select(x => $"ApptReminderSentNum: {x.ApptReminderSentNum}, PatNum: {x.PatNum}, ApptDateTime: {x.ApptDateTime}"));
 			log.WriteLine($"Deleting \r\n\t\t{verboseLog}",LogLevel.Verbose);
-			Delete(listApptRemindersSentsChanged.Select(x => x.ApptReminderSentNum).ToArray());
+			Delete(listRemindersChanged.Select(x => x.ApptReminderSentNum).ToArray());
 		}
 
 		//<summary>Get the list of ApptReminderSents where the appointment was rescheduled or cancelled after sending the reminder.</summary>
@@ -93,12 +92,12 @@ namespace OpenDentBusiness{
 				return Meth.GetObject<List<ApptReminderSent>>(MethodBase.GetCurrentMethod());
 			}
 			//Do not include UnscheduledList or Broken appointments
-			List<ApptStatus> listApptStatuses=new List<ApptStatus>() { ApptStatus.UnschedList, ApptStatus.Broken };
+			List<ApptStatus> listStatus=new List<ApptStatus>() { ApptStatus.UnschedList, ApptStatus.Broken };
 			string command=@"SELECT apptremindersent.* 
 				FROM apptremindersent
 				LEFT JOIN appointment ON apptremindersent.ApptNum=appointment.AptNum
 				WHERE (appointment.AptNum IS NULL OR appointment.AptDateTime!=apptremindersent.ApptDateTime
-				OR appointment.AptStatus IN ("+string.Join(",",listApptStatuses.Select(x => POut.Int((int)x)))+"))";
+				OR appointment.AptStatus IN ("+string.Join(",",listStatus.Select(x => POut.Int((int)x)))+"))";
 			return Crud.ApptReminderSentCrud.SelectMany(command);
 		}
 

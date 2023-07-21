@@ -27,6 +27,7 @@ namespace OpenDental{
 			this.labelWarning = new System.Windows.Forms.Label();
 			this.butTryAgain = new OpenDental.UI.Button();
 			this.butOverride = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// labelWarning
@@ -43,7 +44,7 @@ namespace OpenDental{
 			// butTryAgain
 			// 
 			this.butTryAgain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butTryAgain.Location = new System.Drawing.Point(479, 160);
+			this.butTryAgain.Location = new System.Drawing.Point(398, 160);
 			this.butTryAgain.Name = "butTryAgain";
 			this.butTryAgain.Size = new System.Drawing.Size(75, 24);
 			this.butTryAgain.TabIndex = 1;
@@ -61,11 +62,22 @@ namespace OpenDental{
 			this.butOverride.Visible = false;
 			this.butOverride.Click += new System.EventHandler(this.butOverride_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(479, 160);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// FormUpdateInProgress
 			// 
 			this.AcceptButton = this.butTryAgain;
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(566, 195);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.labelWarning);
 			this.Controls.Add(this.butTryAgain);
 			this.Controls.Add(this.butOverride);
@@ -84,5 +96,6 @@ namespace OpenDental{
 		private OpenDental.UI.Button butTryAgain;
 		private OpenDental.UI.Button butOverride;
 		private System.Windows.Forms.Label labelWarning;
+		private UI.Button butCancel;
 	}
 }

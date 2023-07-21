@@ -21,7 +21,7 @@ namespace OpenDental.User_Controls.SetupWizard {
 		}
 
 		private void UserControlSetupWizRegKey_Load(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,true)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin,true)) {
 				butChangeRegKey.Enabled=false;
 			}
 			FillControls();

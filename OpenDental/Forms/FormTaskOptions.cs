@@ -53,7 +53,7 @@ namespace OpenDental {
 			textStartDate.Enabled=false;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textStartDate.IsValid()) {
 				if(checkShowFinished.Checked) {
 					MsgBox.Show(this,"Invalid finished task start date");
@@ -84,5 +84,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

@@ -28,7 +28,8 @@ namespace OpenDental{
 			this.imageListMain = new System.Windows.Forms.ImageList(this.components);
 			this.textContentEmail = new OpenDental.ODcodeBox();
 			this.webBrowserEmail = new System.Windows.Forms.WebBrowser();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOk = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.toolBarBottom = new OpenDental.UI.ToolBarOD();
 			this.toolBarTop = new OpenDental.UI.ToolBarOD();
 			this.labelPreview = new System.Windows.Forms.Label();
@@ -92,15 +93,25 @@ namespace OpenDental{
 			this.webBrowserEmail.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.webBrowserEmail_Navigated);
 			this.webBrowserEmail.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowserEmail_Navigating);
 			// 
-			// butSave
+			// butOk
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(1143, 659);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 25);
-			this.butSave.TabIndex = 87;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOk.Location = new System.Drawing.Point(1050, 659);
+			this.butOk.Name = "butOk";
+			this.butOk.Size = new System.Drawing.Size(75, 25);
+			this.butOk.TabIndex = 87;
+			this.butOk.Text = "&OK";
+			this.butOk.Click += new System.EventHandler(this.butOk_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(1134, 659);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 25);
+			this.butCancel.TabIndex = 86;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// toolBarBottom
 			// 
@@ -158,7 +169,8 @@ namespace OpenDental{
 			// FormEmailEdit
 			// 
 			this.ClientSize = new System.Drawing.Size(1230, 696);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOk);
 			this.Controls.Add(this.checkIsRaw);
 			this.Controls.Add(this.textContentEmail);
 			this.Controls.Add(this.webBrowserEmail);
@@ -181,7 +193,8 @@ namespace OpenDental{
 		private UI.ToolBarOD toolBarTop;
 		private UI.ToolBarOD toolBarBottom;
 		private System.Windows.Forms.ImageList imageListMain;
-		private UI.Button butSave;
+		private UI.Button butCancel;
+		private UI.Button butOk;
 		private ODcodeBox textContentEmail;
 		private System.Windows.Forms.WebBrowser webBrowserEmail;
 		private System.Windows.Forms.Label labelPreview;

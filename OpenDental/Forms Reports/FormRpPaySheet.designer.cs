@@ -42,6 +42,7 @@ namespace OpenDental {
 			this.checkAllClin = new OpenDental.UI.CheckBox();
 			this.listClin = new OpenDental.UI.ListBox();
 			this.labelClin = new System.Windows.Forms.Label();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.listInsuranceTypes = new OpenDental.UI.ListBox();
 			this.checkAllClaimPayGroups = new OpenDental.UI.CheckBox();
@@ -49,8 +50,6 @@ namespace OpenDental {
 			this.checkUnearned = new OpenDental.UI.CheckBox();
 			this.checkReportDisplayUnearnedTP = new OpenDental.UI.CheckBox();
 			this.checkShowOnlinePatientPaymentsSeparately = new OpenDental.UI.CheckBox();
-			this.checkShowCareCreditFees = new OpenDental.UI.CheckBox();
-			this.checkShowPayConnectFees = new OpenDental.UI.CheckBox();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -97,6 +96,7 @@ namespace OpenDental {
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.ColorBackLabel = System.Drawing.Color.Empty;
 			this.groupBox1.Controls.Add(this.checkShowProvSeparate);
 			this.groupBox1.Controls.Add(this.radioPatient);
 			this.groupBox1.Controls.Add(this.radioCheck);
@@ -193,10 +193,20 @@ namespace OpenDental {
 			this.labelClin.Text = "Clinics";
 			this.labelClin.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(747, 445);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 4;
+			this.butCancel.Text = "&Cancel";
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(747, 457);
+			this.butOK.Location = new System.Drawing.Point(747, 410);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 3;
@@ -258,29 +268,9 @@ namespace OpenDental {
 			this.checkShowOnlinePatientPaymentsSeparately.TabIndex = 61;
 			this.checkShowOnlinePatientPaymentsSeparately.Text = "Show online patient payments separately";
 			// 
-			// checkShowCareCreditFees
-			// 
-			this.checkShowCareCreditFees.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkShowCareCreditFees.Location = new System.Drawing.Point(26, 442);
-			this.checkShowCareCreditFees.Name = "checkShowCareCreditFees";
-			this.checkShowCareCreditFees.Size = new System.Drawing.Size(159, 18);
-			this.checkShowCareCreditFees.TabIndex = 62;
-			this.checkShowCareCreditFees.Text = "Show CareCredit fees";
-			// 
-			// checkShowPayConnectFees
-			// 
-			this.checkShowPayConnectFees.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-			this.checkShowPayConnectFees.Location = new System.Drawing.Point(26, 465);
-			this.checkShowPayConnectFees.Name = "checkShowPayConnectFees";
-			this.checkShowPayConnectFees.Size = new System.Drawing.Size(159, 18);
-			this.checkShowPayConnectFees.TabIndex = 63;
-			this.checkShowPayConnectFees.Text = "Show PayConnect fees";
-			// 
 			// FormRpPaySheet
 			// 
-			this.ClientSize = new System.Drawing.Size(844, 507);
-			this.Controls.Add(this.checkShowPayConnectFees);
-			this.Controls.Add(this.checkShowCareCreditFees);
+			this.ClientSize = new System.Drawing.Size(844, 495);
 			this.Controls.Add(this.checkShowOnlinePatientPaymentsSeparately);
 			this.Controls.Add(this.checkReportDisplayUnearnedTP);
 			this.Controls.Add(this.checkUnearned);
@@ -297,6 +287,7 @@ namespace OpenDental {
 			this.Controls.Add(this.checkAllProv);
 			this.Controls.Add(this.listProv);
 			this.Controls.Add(this.label1);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.date2);
 			this.Controls.Add(this.date1);
@@ -312,6 +303,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.MonthCalendar date2;
 		private System.Windows.Forms.MonthCalendar date1;
@@ -334,7 +327,5 @@ namespace OpenDental {
 		private OpenDental.UI.CheckBox checkShowProvSeparate;
 		private OpenDental.UI.CheckBox checkReportDisplayUnearnedTP;
 		private UI.CheckBox checkShowOnlinePatientPaymentsSeparately;
-		private UI.CheckBox checkShowCareCreditFees;
-		private UI.CheckBox checkShowPayConnectFees;
 	}
 }

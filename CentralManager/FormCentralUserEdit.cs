@@ -102,13 +102,12 @@ namespace CentralManager {
 				isCreate=true;
 			}
 			using FormCentralUserPasswordEdit FormCPE=new FormCentralUserPasswordEdit(isCreate,UserCur.UserName);
-				FormCPE.IsInSecurityWindow=true;
+			FormCPE.IsInSecurityWindow=true;
 			FormCPE.ShowDialog();
 			if(FormCPE.DialogResult==DialogResult.Cancel){
 				return;
 			}
 			UserCur.LoginDetails=FormCPE.LoginDetails;
-			UserCur.PasswordIsStrong=FormCPE.IsPassWordStrong;
 			_passwordTyped=FormCPE.PasswordTyped;
 			if(UserCur.PasswordHash==""){
 				butPassword.Text="Create Password";

@@ -19,7 +19,7 @@ namespace UnitTests{
 			//InitializeUIManager();
 		}
 
-		private void FormLayoutManagerTests_Load(object sender,EventArgs e){
+		private void FormUIManagerTests_Load(object sender,EventArgs e){
 			//bool isHandleCreated=butDelete.IsHandleCreated;//true
 			//butDelete.Text="New text";//verified that this will fail as it should
 			listBox1.Items.Clear();
@@ -41,7 +41,7 @@ namespace UnitTests{
 			canvas.Children.Add(textBox);*/
 		}
 
-		private void FormLayoutManagerTests_KeyDown(object sender,KeyEventArgs e) {
+		private void FormUIManagerTests_KeyDown(object sender,KeyEventArgs e) {
 			MsgBox.Show("Form");
 		}
 

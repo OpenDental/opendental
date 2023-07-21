@@ -11,11 +11,11 @@ namespace OpenDental {
 		///<summary>ProcCodes will be null unless trigger is CompleteProcedure or ScheduledProcedure.
 		///This routine will generally fail silently.  Will return true if a trigger happened.</summary>
 		
-		public static bool Trigger(EnumAutomationTrigger automationTrigger,List<string> listProcCodes,long patNum,long aptNum=0) {
+		public static bool Trigger(AutomationTrigger automationTrigger,List<string> listProcCodes,long patNum,long aptNum=0) {
 			return Trigger<object>(automationTrigger,listProcCodes,patNum,aptNum);
 		}
 
-		public static bool Trigger<T>(EnumAutomationTrigger automationTrigger,List<string> listProcCodes,long patNum,long aptNum=0,T triggerObj=default(T)) {
+		public static bool Trigger<T>(AutomationTrigger automationTrigger,List<string> listProcCodes,long patNum,long aptNum=0,T triggerObj=default(T)) {
 			Action<string> actionShowMsg=(msg) => {//msg is pre-translated
 				MsgBox.Show(msg);
 			};
@@ -23,13 +23,14 @@ namespace OpenDental {
 				return MessageBox.Show(msg,caption,MessageBoxButtons.YesNo) == DialogResult.Yes;
 			};
 			Action<Commlog> actionShowCommlog=(commLog) => {
-				FrmCommItem frmCommItem = new FrmCommItem(commLog);
-				frmCommItem.ShowDialog();
+				using(FormCommItem formCommItem = new FormCommItem(commLog)) {
+					formCommItem.ShowDialog();
+				}
 			};
 			Action<Sheet> actionShowSheetFillEdit=(sheet) => {
-				using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit();
-				formSheetFillEdit.SheetCur=sheet;
-				formSheetFillEdit.ShowDialog();
+				using(FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit(sheet)) {
+					formSheetFillEdit.ShowDialog();
+				}
 			};
 			Func<List<Procedure>,Image> funcCreateToothChartImage=(listProcs) => {
 				return SheetPrinting.GetToothChartHelper(patNum,false,listProceduresFilteredOverride:listProcs);

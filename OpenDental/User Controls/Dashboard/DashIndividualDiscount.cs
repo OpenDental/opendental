@@ -55,7 +55,7 @@ namespace OpenDental {
 			if(pat==null || _discountPlanSub==null || _discountPlan==null) {
 				return;
 			}
-			if(!DiscountPlanSubs.GetAnnualDateRangeSegmentForGivenDate(DateTime.Now,_discountPlanSub.DateEffective,_discountPlanSub.DateTerm,out DateTime startDate,out DateTime stopDate)) {
+			if(!DiscountPlanSubs.GetAnnualDateRangeSegmentForGivenDate(_discountPlanSub,DateTime.Now,out DateTime startDate,out DateTime stopDate)) {
 				return;
 			}
 			_discountAmtUsed=Adjustments.GetTotForPatByType(_discountPlanSub.PatNum,_discountPlan.DefNum,startDate,stopDate);

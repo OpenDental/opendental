@@ -60,5 +60,9 @@ namespace OpenDental {
 			formEtrans835Edit.Show();//Not attached to parent window because the user may have to close parent window to navigate other areas of the program.
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 	}
 }

@@ -24,8 +24,20 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPatientListDiscount));
+			this.butCancel = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(461, 640);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 23);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "Close";
+			this.butCancel.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridMain
 			// 
@@ -41,8 +53,10 @@ namespace OpenDental{
 			// 
 			// FormPatientListDiscount
 			// 
-			this.ClientSize = new System.Drawing.Size(517, 634);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(540, 671);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormPatientListDiscount";
 			this.Text = "Patient List";
@@ -52,6 +66,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butCancel;
 		private UI.GridOD gridMain;
 	}
 }

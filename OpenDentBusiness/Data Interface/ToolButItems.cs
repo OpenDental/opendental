@@ -50,13 +50,13 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Always refreshes the ClientWeb's cache.</summary>
-		public static DataTable GetTableFromCache(bool refreshCache) {
+		public static DataTable GetTableFromCache(bool doRefreshCache) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),refreshCache);
+				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),doRefreshCache);
 				_ToolButItemCache.FillCacheFromTable(table);
 				return table;
 			}
-			return _ToolButItemCache.GetTableFromCache(refreshCache);
+			return _ToolButItemCache.GetTableFromCache(doRefreshCache);
 		}
 
 		public static void ClearCache() {
@@ -65,31 +65,31 @@ namespace OpenDentBusiness{
 		#endregion
 
 		///<summary></summary>
-		public static long Insert(ToolButItem toolButItem){
+		public static long Insert(ToolButItem Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				toolButItem.ToolButItemNum=Meth.GetLong(MethodBase.GetCurrentMethod(),toolButItem);
-				return toolButItem.ToolButItemNum;
+				Cur.ToolButItemNum=Meth.GetLong(MethodBase.GetCurrentMethod(),Cur);
+				return Cur.ToolButItemNum;
 			}
-			return Crud.ToolButItemCrud.Insert(toolButItem);
+			return Crud.ToolButItemCrud.Insert(Cur);
 		}
 
 		///<summary>This in not currently being used.</summary>
-		public static void Update(ToolButItem toolButItem){
+		public static void Update(ToolButItem Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),toolButItem);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),Cur);
 				return;
 			}
-			Crud.ToolButItemCrud.Update(toolButItem);
+			Crud.ToolButItemCrud.Update(Cur);
 		}
 
 		///<summary>This is not currently being used.</summary>
-		public static void Delete(ToolButItem tootlButItem){
+		public static void Delete(ToolButItem Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),tootlButItem);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),Cur);
 				return;
 			}
 			string command = "DELETE from toolbutitem WHERE ToolButItemNum = '"
-				+POut.Long(tootlButItem.ToolButItemNum)+"'";
+				+POut.Long(Cur.ToolButItemNum)+"'";
 			Db.NonQ(command);
 		}
 
@@ -111,9 +111,9 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns a list of toolbutitems for the specified toolbar. Used when laying out toolbars.</summary>
-		public static List<ToolButItem> GetForToolBar(EnumToolBar toolBarsAvail) {
+		public static List<ToolButItem> GetForToolBar(ToolBarsAvail toolbar) {
 			//No need to check MiddleTierRole; no call to db.
-			return GetWhere(x => x.ToolBar==toolBarsAvail && (Programs.IsEnabled(x.ProgramNum) || ProgramProperties.IsAdvertisingBridge(x.ProgramNum)));
+			return GetWhere(x => x.ToolBar==toolbar && (Programs.IsEnabled(x.ProgramNum) || ProgramProperties.IsAdvertisingBridge(x.ProgramNum)));
 		}
 	}
 

@@ -83,7 +83,7 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}
 
-		public static void InsertRepeatChargeChangeSecurityLogEntry(RepeatCharge oldCharge,EnumPermType permType,Patient oldPat,RepeatCharge newCharge=null,
+		public static void InsertRepeatChargeChangeSecurityLogEntry(RepeatCharge oldCharge,Permissions permType,Patient oldPat,RepeatCharge newCharge=null,
 			bool isAutomated=false,LogSources source=LogSources.None, Patient newPat=null) 
 		{
 			bool hasChanges=false;
@@ -140,15 +140,15 @@ namespace OpenDentBusiness {
 			if(isAutomated) {//If the change was created automatically by SignUpPortal, eRx, etc
 				secLogText+="Changed automatically by system\r\n";
 			}
-			if(hasChanges || permType==EnumPermType.RepeatChargeCreate || permType==EnumPermType.RepeatChargeDelete) { 
+			if(hasChanges || permType==Permissions.RepeatChargeCreate || permType==Permissions.RepeatChargeDelete) { 
 				SecurityLogs.MakeLogEntry(permType,oldCharge.PatNum,secLogText,source);
 			}
 		}
 
-		private static string GetRepeatChargeChangeString(string paramName,string oldVal,string newVal,EnumPermType permType,ref bool hasChanges,bool isNote=false) {
+		private static string GetRepeatChargeChangeString(string paramName,string oldVal,string newVal,Permissions permType,ref bool hasChanges,bool isNote=false) {
 			//No need to check MiddleTierRole; private method and ref parameter.
 			string stringChange=paramName+" '"+oldVal+"'";
-			if(permType==EnumPermType.RepeatChargeUpdate) {
+			if(permType==Permissions.RepeatChargeUpdate) {
 				if(newVal!=oldVal) {
 					hasChanges=true;
 					if(isNote) {
@@ -355,13 +355,15 @@ namespace OpenDentBusiness {
 				}
 				if(doComputeAging && listAddedPatNums.Count>0) {
 					List<long> listGuarantors=Patients.GetGuarantorsForPatNums(listAddedPatNums);
+					DateTime dateTAgingBeganPref=DateTime.MinValue;
 					DateTime dtNow=MiscData.GetNowDateTime();
 					//will only use the famaging table if more than 1 guarantor
 					if(listGuarantors.Count>1) {//if this will utilize the famaging table we need to check and set the pref to block others from starting aging
 						Prefs.RefreshCache();
-						if(!PrefC.IsAgingAllowedToStart()) {//pref has been set by another process, don't run aging and notify user
+						dateTAgingBeganPref=PrefC.GetDateT(PrefName.AgingBeginDateTime);
+						if(dateTAgingBeganPref>DateTime.MinValue) {//pref has been set by another process, don't run aging and notify user
 							result.ErrorMsg.AppendLine(Lans.g("RepeatCharges","Aging failed to run for patients who had repeat charges added to their account. This is due to "
-								+"the currently running aging calculations which began on")+" "+PrefC.GetDateT(PrefName.AgingBeginDateTime).ToString()+".  "+Lans.g("RepeatCharges","If you "
+								+"the currently running aging calculations which began on")+" "+dateTAgingBeganPref.ToString()+".  "+Lans.g("RepeatCharges","If you "
 								+"believe the current aging process has finished, a user with SecurityAdmin permission can manually clear the date and time by going " 
 								+"to Setup | Preferences | Account - General and pressing the 'Clear' button.  You will need to run aging manually once the current aging process has "
 								+"finished or date and time is cleared."));
@@ -521,7 +523,7 @@ namespace OpenDentBusiness {
 			}
 			procedure.MedicalCode=ProcedureCodes.GetProcCode(procedure.CodeNum).MedicalCode;
 			procedure.BaseUnits=ProcedureCodes.GetProcCode(procedure.CodeNum).BaseUnits;
-			Procedures.SetDiagnosticCodesToDefault(procedure,procCode);
+			procedure.DiagnosticCode=PrefC.GetString(PrefName.ICD9DefaultForNewProcs);
 			if(isNewCropInitial || isNewCropFutureDated) {
 				procedure.RepeatChargeNum=0;
 			}
@@ -689,7 +691,7 @@ namespace OpenDentBusiness {
 					procConfirm.ProvNum=PrefC.GetLong(PrefName.PracticeDefaultProv);
 					procConfirm.MedicalCode=procCodeConfirm.MedicalCode;
 					procConfirm.BaseUnits=procCodeConfirm.BaseUnits;
-					Procedures.SetDiagnosticCodesToDefault(procConfirm,procCodeConfirm);
+					procConfirm.DiagnosticCode=PrefC.GetString(PrefName.ICD9DefaultForNewProcs);
 					procConfirm.BillingNote=smsBilling.BillingDescConfirmation;
 					procConfirm.PlaceService=Clinics.GetPlaceService(pat.ClinicNum);
 					Procedures.Insert(procConfirm);
@@ -713,7 +715,7 @@ namespace OpenDentBusiness {
 					procAccess.ProvNum=PrefC.GetLong(PrefName.PracticeDefaultProv);
 					procAccess.MedicalCode=procCodeAccess.MedicalCode;
 					procAccess.BaseUnits=procCodeAccess.BaseUnits;
-					Procedures.SetDiagnosticCodesToDefault(procAccess,procCodeAccess);
+					procAccess.DiagnosticCode=PrefC.GetString(PrefName.ICD9DefaultForNewProcs);
 					procAccess.BillingNote=smsBilling.BillingDescSms;
 					procAccess.PlaceService=Clinics.GetPlaceService(pat.ClinicNum); 
 					Procedures.Insert(procAccess);
@@ -737,7 +739,7 @@ namespace OpenDentBusiness {
 					procUsage.ProvNum=PrefC.GetLong(PrefName.PracticeDefaultProv);
 					procUsage.MedicalCode=procCodeUsage.MedicalCode;
 					procUsage.BaseUnits=procCodeUsage.BaseUnits;
-					Procedures.SetDiagnosticCodesToDefault(procUsage,procCodeUsage);
+					procUsage.DiagnosticCode=PrefC.GetString(PrefName.ICD9DefaultForNewProcs);
 					procUsage.PlaceService=Clinics.GetPlaceService(pat.ClinicNum); 
 					procUsage.BillingNote="Texting Usage charge for "+smsBilling.DateUsage.ToString("MMMM yyyy")+".";
 					Procedures.Insert(procUsage);

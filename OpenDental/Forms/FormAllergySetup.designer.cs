@@ -27,6 +27,7 @@ namespace OpenDental{
 			this.checkShowHidden = new OpenDental.UI.CheckBox();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butAdd = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
@@ -66,14 +67,25 @@ namespace OpenDental{
 			this.butAdd.Text = "&Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(296, 310);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(296, 310);
+			this.butOK.Location = new System.Drawing.Point(296, 280);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 6;
 			this.butOK.Text = "&OK";
+			this.butOK.Visible = false;
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// FormAllergySetup
@@ -83,6 +95,7 @@ namespace OpenDental{
 			this.Controls.Add(this.checkShowHidden);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butAdd);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormAllergySetup";
 			this.Text = "Allergy Setup";
@@ -94,6 +107,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butAdd;
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private OpenDental.UI.CheckBox checkShowHidden;
 		private UI.Button butOK;

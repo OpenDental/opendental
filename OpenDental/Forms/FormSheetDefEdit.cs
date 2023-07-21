@@ -167,16 +167,13 @@ namespace OpenDental {
 
 		#region Methods - Event Handlers
 		private void butAddMobileHeader_Click(object sender,EventArgs e) {
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-			inputBoxParam.LabelText=Lan.g(this,"Mobile Header");
-			inputBoxParam.MaxLengthText=255;
-			InputBox inputBox=new InputBox(inputBoxParam);
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			using InputBox inputBox=new InputBox(Lan.g(this,"Mobile Header"));
+			inputBox.MaxInputTextLength=255;
+			inputBox.ShowDelete=true;
+			if(inputBox.ShowDialog()!=DialogResult.OK || inputBox.IsDeleteClicked) {
 				return;
 			}
-			AddNewSheetFieldDef(SheetFieldDef.NewMobileHeader(inputBox.StringResult));
+			AddNewSheetFieldDef(SheetFieldDef.NewMobileHeader(inputBox.textResult.Text));
 			FillFieldList();
 			panelMain.Invalidate();
 		}
@@ -280,13 +277,10 @@ namespace OpenDental {
 
 		private void butAutoSnap_Click(object sender,EventArgs e) {
 			string prompt="Please enter auto snap column width between 10 and 100, or 0 to disable.";
-			List<InputBoxParam> listInputBoxParams=new List<InputBoxParam>();
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-			inputBoxParam.LabelText=prompt;
-			inputBoxParam.Text=_gridSnapDistance.ToString();
-			listInputBoxParams.Add(inputBoxParam);
-			Func<string,bool> funcOkClick=new Func<string, bool>((inputVal)=> { 
+			List<InputBoxParam> listInputBoxParam=new List<InputBoxParam> { 
+				new InputBoxParam(InputBoxType.TextBox,prompt,_gridSnapDistance.ToString(),Size.Empty) 
+			};
+			Func<string,bool> funcOnOkClick=new Func<string, bool>((inputVal)=> { 
 				int val=PIn.Int(inputVal,false);
 				if(val!=0 && !val.Between(10,100)) {
 					MsgBox.Show("Please enter a value between 10 and 100, or 0 to disable.");
@@ -294,16 +288,18 @@ namespace OpenDental {
 				}
 				return true;
 			});
-			InputBox inputBox=new InputBox(listInputBoxParams);
-			inputBox.FuncOkClick=funcOkClick;
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			using InputBox inputBox=new InputBox(listInputBoxParam,funcOnOkClick);
+			if(inputBox.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
 			_listSnapXVals.Clear();
 			_listSnapYVals.Clear();
-			_gridSnapDistance=PIn.Int(inputBox.StringResult);
+			_gridSnapDistance=PIn.Int(inputBox.textResult.Text);
 			panelMain.Invalidate();
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void butCopy_Click(object sender,EventArgs e) {
@@ -337,7 +333,7 @@ namespace OpenDental {
 			}
 			try {
 				SheetDefs.DeleteObject(SheetDef_.SheetDefNum);
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,Lan.g(this,"SheetDef")+" "+SheetDef_.Description+" "+Lan.g(this,"was deleted."));
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,Lan.g(this,"SheetDef")+" "+SheetDef_.Description+" "+Lan.g(this,"was deleted."));
 				DialogResult=DialogResult.OK;
 			}
 			catch(Exception ex) {
@@ -400,7 +396,7 @@ namespace OpenDental {
 			butMobile.Text=Lan.g(this,"Show Mobile");
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!ValidateInOK()) {
 				return;
 			}
@@ -429,10 +425,10 @@ namespace OpenDental {
 				return;
 			}
 			SheetDef_.PageCount++;
-			panelMain.Height=LayoutManager.Scale(SheetDef_.HeightTotal);
+			panelMain.Height=SheetDef_.HeightTotal;
 			if(SheetDef_.PageCount>1){
-				panelMain.Height-=LayoutManager.Scale(_margins.Bottom);//first page
-				panelMain.Height-=(SheetDef_.PageCount-1)*(LayoutManager.Scale(_margins.Top+_margins.Bottom));//remaining pages
+				panelMain.Height-=_margins.Bottom;//first page
+				panelMain.Height-=(SheetDef_.PageCount-1)*(_margins.Top+_margins.Bottom);//remaining pages
 			}
 			//RefreshBitmapBackground();
 			AddUndoLevel("Page Add");
@@ -463,8 +459,8 @@ namespace OpenDental {
 			}
 			panelMain.Height=LayoutManager.Scale(SheetDef_.HeightTotal);
 			if(SheetDef_.PageCount>1){
-				panelMain.Height-=LayoutManager.Scale(_margins.Bottom);//-60 first page
-				panelMain.Height-=(SheetDef_.PageCount-1)*(LayoutManager.Scale(_margins.Top+_margins.Bottom));//-100 remaining pages
+				panelMain.Height-=_margins.Bottom;//-60 first page
+				panelMain.Height-=(SheetDef_.PageCount-1)*(_margins.Top+_margins.Bottom);//-100 remaining pages
 			}
 			//RefreshBitmapBackground();
 			AddUndoLevel("Page Remove");
@@ -496,7 +492,8 @@ namespace OpenDental {
 		private void butTabOrder_Click(object sender,EventArgs e) {
 			_isTabMode=!_isTabMode;
 			if(_isTabMode) {
-				butSave.Enabled=false;
+				butOK.Enabled=false;
+				butCancel.Enabled=false;
 				butDelete.Enabled=false;
 				groupAddField.Enabled=false;
 				groupShowField.Enabled=false;
@@ -512,7 +509,8 @@ namespace OpenDental {
 				_listSheetFieldDefsTabOrder=new List<SheetFieldDef>(); //clear or create the list of tab orders.
 			}
 			else {
-				butSave.Enabled=true;
+				butOK.Enabled=true;
+				butCancel.Enabled=true;
 				butDelete.Enabled=true;
 				groupAddField.Enabled=true;
 				groupShowField.Enabled=true;
@@ -774,7 +772,8 @@ namespace OpenDental {
 			_imageToothChart=null;
 			if(IsInternal) {
 				butDelete.Visible=false;
-				butSave.Visible=false;
+				butOK.Visible=false;
+				butCancel.Text=Lan.g(this,"Close");
 				groupAddField.Visible=false;
 				groupShowField.Visible=false;
 				groupPage.Visible=false;
@@ -977,13 +976,9 @@ namespace OpenDental {
 				_isMouseDown=false;
 				_isCtrlDown=false;
 				_isAltDown=false;
-				if(sheetFieldDef==null) {
-					return;
-				}
-				if(sheetFieldDef.FieldType!=SheetFieldType.InputField 
-					&& sheetFieldDef.FieldType!=SheetFieldType.CheckBox 
-					&& sheetFieldDef.FieldType!=SheetFieldType.ComboBox) 
-				{
+				if(sheetFieldDef==null
+					//Some of the fields below are redundant and should never be returned from HitTest but are here to explicity exclude them.
+				   || sheetFieldDef.FieldType==SheetFieldType.Drawing || sheetFieldDef.FieldType==SheetFieldType.Image || sheetFieldDef.FieldType==SheetFieldType.Line || sheetFieldDef.FieldType==SheetFieldType.OutputText || sheetFieldDef.FieldType==SheetFieldType.Parameter || sheetFieldDef.FieldType==SheetFieldType.PatImage || sheetFieldDef.FieldType==SheetFieldType.Rectangle || sheetFieldDef.FieldType==SheetFieldType.StaticText) {
 					return;
 				}
 				if(_listSheetFieldDefsTabOrder.Contains(sheetFieldDef)) {
@@ -2254,10 +2249,6 @@ namespace OpenDental {
 						formSheetFieldInput.SheetFieldDefCur=sheetFieldDef;
 						formSheetFieldInput.IsReadOnly=IsInternal;
 						formSheetFieldInput.IsEditMobile=isEditMobile;
-						if(sheetFieldDef.FieldValue.Contains("AutoNoteNum:")) {
-							string autoNoteNum=sheetFieldDef.FieldValue.Substring(sheetFieldDef.FieldValue.IndexOf(":")+1);
-							formSheetFieldInput.AutoNoteNum=Convert.ToInt64(autoNoteNum);
-						}
 						formSheetFieldInput.ShowDialog();
 						if(formSheetFieldInput.DialogResult!=DialogResult.OK) {
 							return;
@@ -2426,23 +2417,19 @@ namespace OpenDental {
 					}
 					break;
 				case SheetFieldType.MobileHeader:
-					InputBoxParam inputBoxParam=new InputBoxParam();
-					inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-					inputBoxParam.LabelText=Lan.g(this,"Mobile Header");
-					inputBoxParam.Text=sheetFieldDef.UiLabelMobile;
-					inputBoxParam.MaxLengthText=255;
-					InputBox inputBox=new InputBox(inputBoxParam);
-					inputBox.ShowDelete=true;
-					inputBox.ShowDialog();
-					if(inputBox.IsDialogCancel) {
-						return;
+					using(InputBox FormInputBox=new InputBox(Lan.g(this,"Mobile Header"),sheetFieldDef.UiLabelMobile) {MaxInputTextLength=255,ShowDelete=true,}) 
+					{
+						if(FormInputBox.ShowDialog()!=DialogResult.OK) {
+							return;
+						}
+						if(FormInputBox.IsDeleteClicked) {
+							SheetDef_.SheetFieldDefs.RemoveAt(idx);//Deleted
+						}
+						else {
+							sheetFieldDef.UiLabelMobile=FormInputBox.textResult.Text;
+						}
 					}
-					if(inputBox.IsDeleteClicked) {
-						SheetDef_.SheetFieldDefs.RemoveAt(idx);//Deleted
-					}
-					else {
-						sheetFieldDef.UiLabelMobile=inputBox.StringResult;
-					}
+					
 					break;
 			}
 			if(sheetFieldDefCopy.FieldType!=SheetFieldType.MobileHeader) {
@@ -2508,17 +2495,23 @@ namespace OpenDental {
 				return;
 			}
 			//Cloud storage from here down
-			UI.ProgressWin progressWin=new UI.ProgressWin();
-			progressWin.StartingMessage="Downloading" + sheetFieldDef.FieldName + "...";
-			byte[] byteArray=null;
-			progressWin.ActionMain=() => {
-				byteArray=CloudStorage.Download(SheetUtil.GetImagePath(),sheetFieldDef.FieldName);
-			};
-			progressWin.ShowDialog();
-			if(byteArray==null || byteArray.Length==0){
+			using FormProgress formProgress=new FormProgress();
+			formProgress.DisplayText=Lan.g(CloudStorage.LanThis,"Downloading " + sheetFieldDef.FieldName + "...");
+			formProgress.NumberFormat="F";
+			formProgress.NumberMultiplication=1;
+			formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+			formProgress.TickMS=1000;
+			OpenDentalCloud.Core.TaskStateDownload taskStateDownload=CloudStorage.DownloadAsync(SheetUtil.GetImagePath(),sheetFieldDef.FieldName,
+				new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
+			if(formProgress.ShowDialog()==DialogResult.Cancel) {
+				taskStateDownload.DoCancel=true;
 				return;
 			}
-			using MemoryStream memoryStream=new MemoryStream(byteArray);
+			if(taskStateDownload==null || taskStateDownload.FileContent==null) {
+				//File wasn't downloaded, do nothing
+				return;
+			}
+			using MemoryStream memoryStream=new MemoryStream(taskStateDownload.FileContent);
 			using Image image = Image.FromStream(memoryStream);
 			sheetFieldDef.ImageField=new Bitmap(image,sheetFieldDef.Width,sheetFieldDef.Height);
 		}
@@ -2554,19 +2547,15 @@ namespace OpenDental {
 			}
 			if(pointOrigin.X==0 && pointOrigin.Y==0) { //allows for cascading pastes in the upper right hand corner.
 				Rectangle rectangle=panelMain.Bounds; //Gives relative position of panel (scroll position)
-				//Current resized height/width of parent panel but must be unscaled since we are dealing with unscaled figures below
-				int h=LayoutManager.Unscale(panelLeft.Height); 
-				int w=LayoutManager.Unscale(panelLeft.Width);
+				int h=panelLeft.Height; //Current resized height/width of parent panel
+				int w=panelLeft.Width;
 				int maxH=0;
 				int maxW=0;
 				for(int i=0;i<_listSheetFieldDefsCopyPaste.Count;i++) { //calculate height/width of control to be pasted
 					maxH=Math.Max(maxH,_listSheetFieldDefsCopyPaste[i].Height);
 					maxW=Math.Max(maxW,_listSheetFieldDefsCopyPaste[i].Width);
 				}
-				//Scrollbars do not always show up when using zoom, only add their size when visible
-				int verticalScrollWidth=panelLeft.VerticalScroll.Visible ? 10 : 0;
-				int horizontalScrollHeight=panelLeft.HorizontalScroll.Visible ? 10 : 0;
-				pointOrigin=new Point((-1)*rectangle.X+w/2-maxW/2-verticalScrollWidth,(-1)*rectangle.Y+h/2-maxH/2-horizontalScrollHeight); //Center: scroll position * (-1) + 1/2 size of window - 1/2 the size of the field - 10 for scroll bar
+				pointOrigin=new Point((-1)*rectangle.X+w/2-maxW/2-10,(-1)*rectangle.Y+h/2-maxH/2-10); //Center: scroll position * (-1) + 1/2 size of window - 1/2 the size of the field - 10 for scroll bar
 				pointOrigin.X+=_pasteOffset;
 				pointOrigin.Y+=_pasteOffset+_pasteOffsetY;
 			}
@@ -2618,15 +2607,15 @@ namespace OpenDental {
 			inputBoxParam.InputBoxType_=InputBoxType.CheckBox;
 			inputBoxParam.LabelText=message;
 			inputBoxParam.Text="Force patients to fill out again";
-			inputBoxParam.SizeParam=new System.Windows.Size(200,80);
-			inputBoxParam.PointPosition=new System.Windows.Point(15,30);
+			inputBoxParam.SizeParam=new Size(200,80);
+			inputBoxParam.PointPosition=new Point(15,30);
 			listInputBoxParams.Add(inputBoxParam);
-			InputBox inputBox = new InputBox(listInputBoxParams);
+			using InputBox inputBox = new InputBox(listInputBoxParams, null);
 			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			if(inputBox.DialogResult == DialogResult.Cancel) {
 				return false; // don't save the sheet
 			}
-			if(!inputBox.BoolResult) {
+			if(!inputBox.checkBoxResult.Checked) {
 				return true; // save the sheet but don't update override
 			}
 			message = "Are you sure you want to force all patients to fill out this form again? Clicking 'No' will not update the eClipboard version of this sheet.";
@@ -2692,13 +2681,12 @@ namespace OpenDental {
 		///<summary>Returns true if user selected a new language via InputBox to translate to, otherwise false.</summary>
 		private bool TryAddTranslation(out string selectedLangauge) {
 			selectedLangauge=null;
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.ComboSelect;
-			inputBoxParam.LabelText=Lan.g(this,"Please select a new language to translate to.");
-			inputBoxParam.ListSelections=_listSheetDefLanguagesUnused.Select(x => x.Display).ToList();
-			InputBox formInputBox=new InputBox(inputBoxParam);
-			formInputBox.ShowDialog();
-			if(formInputBox.IsDialogCancel) {
+			string prompt=Lan.g(this,"Please select a new language to translate to.");
+			List<InputBoxParam> listInputBoxParams=new List<InputBoxParam> { 
+				new InputBoxParam(InputBoxType.ComboSelect,prompt,_listSheetDefLanguagesUnused.Select(x => x.Display).ToList()) 
+			};
+			using InputBox formInputBox=new InputBox(listInputBoxParams);
+			if(formInputBox.ShowDialog()!=DialogResult.OK) {
 				return false;
 			}
 			selectedLangauge=_listSheetDefLanguagesUnused[formInputBox.SelectedIndex].ThreeLetters;
@@ -2712,8 +2700,8 @@ namespace OpenDental {
 			}
 			sizeNew.Height=LayoutManager.Scale(SheetDef_.HeightTotal);
 			if(SheetDef_.PageCount>1){
-				sizeNew.Height-=LayoutManager.Scale(_margins.Bottom);//-60 first page
-				sizeNew.Height-=(SheetDef_.PageCount-1)*(LayoutManager.Scale(_margins.Top+_margins.Bottom));//-100 remaining pages
+				sizeNew.Height-=_margins.Bottom;//-60 first page
+				sizeNew.Height-=(SheetDef_.PageCount-1)*(_margins.Top+_margins.Bottom);//-100 remaining pages
 			}
 			if(panelMain.Size==sizeNew){
 				//this is called repeatedly during resize, and we also don't want to resize position unless required
@@ -2889,12 +2877,6 @@ namespace OpenDental {
 					}
 					if(SheetDef_.SheetFieldDefs.FindAll(x => x.FieldType==SheetFieldType.Grid && x.FieldName=="TreatPlanMain").GroupBy(x => x.Language).Any(x => x.ToList().Count<1)) {
 						MessageBox.Show(Lan.g(this,"Treatment plans must have one main grid."));
-						return false;
-					}
-					break;
-				case SheetTypeEnum.PaymentPlan:
-					if(SheetDef_.SheetFieldDefs.FindAll(x => x.FieldType==SheetFieldType.SigBox).GroupBy(x => x.Language).Any(x => x.ToList().Count>1)) {
-						MessageBox.Show(Lan.g(this,"Payment plans cannot have more than one signature box."));
 						return false;
 					}
 					break;
@@ -3165,9 +3147,10 @@ namespace OpenDental {
 				#region StatementPayPlan
 				case "StatementPayPlan":
 				case "StatementDynamicPayPlan":
-				case "StatementPayPlanOld":
-				case "StatementPayPlanGrid":
-					string text ="Payment Plans";
+					string text="Payment Plans";
+					if(sheetFieldDef.FieldName=="StatementDynamicPayPlan") {
+						text="Dynamic Payment Plans";
+					}
 					sizeStr=g.MeasureString(text,new Font(FontFamily.GenericSansSerif,LayoutManager.UnscaleMS(10),FontStyle.Bold));
 					g.FillRectangle(Brushes.White,sheetFieldDef.XPos,yPosGrid,grid.Width,heightGridTitle);
 					g.DrawString(text,new Font(FontFamily.GenericSansSerif,LayoutManager.UnscaleMS(10),FontStyle.Bold),new SolidBrush(Color.Black),sheetFieldDef.XPos+(sheetFieldDef.Width-sizeStr.Width)/2,yPosGrid);
@@ -3289,8 +3272,11 @@ namespace OpenDental {
 				yPosGrid+=heightGridRow;
 			}
 			#region drawFooter
-			if(sheetFieldDef.FieldName=="StatementPayPlan" || sheetFieldDef.FieldName=="StatementDynamicPayPlan" || sheetFieldDef.FieldName=="StatementPayPlanGrid" || sheetFieldDef.FieldName=="StatementPayPlanOld") {
+			if(sheetFieldDef.FieldName=="StatementPayPlan" || sheetFieldDef.FieldName=="StatementDynamicPayPlan") {
 				string text="Payment Plan Amount Due: "+"0.00";
+				if(sheetFieldDef.FieldName=="StatementDynamicPayPlan") {
+					text="Dynamic Payment Plan Amount Due: "+"0.00";
+				}
 				RectangleF rectangleF=new RectangleF(sheetFieldDef.Width-sheetFieldDef.Width-60,yPosGrid,sheetFieldDef.Width,heightGridTitle);
 				g.FillRectangle(Brushes.White,rectangleF);
 				StringFormat stringFormat=new StringFormat();
@@ -3465,10 +3451,6 @@ namespace OpenDental {
 		private void DrawSigBox(SheetFieldDef sheetFieldDef,Graphics g,bool isSelected) {
 			Color colorOutline=GetOutlineColorForSheetFieldDef(sheetFieldDef,_colorGray);
 			Color colorText=_colorGray;
-			if(checkBlue.Checked){
-				colorOutline=GetOutlineColorForSheetFieldDef(sheetFieldDef,_colorBlue);
-				colorText=_colorBlue;
-			}
 			if(isSelected) {
 				colorOutline=GetOutlineColorForSheetFieldDef(sheetFieldDef,_colorRed,true);
 				colorText=_colorRed;
@@ -3708,7 +3690,6 @@ namespace OpenDental {
 			using SolidBrush solidBrush=new SolidBrush(colorText);
 			StringFormat stringFormat=new StringFormat();
 			stringFormat.Alignment=StringAlignment.Near;//left
-			stringFormat.SetTabStops(0.0f, new float[] {50.0f});
 			if(sheetFieldDef.TextAlign==HorizontalAlignment.Center){
 				stringFormat.Alignment=StringAlignment.Center;
 			}

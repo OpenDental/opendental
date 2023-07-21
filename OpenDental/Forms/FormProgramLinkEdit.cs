@@ -73,7 +73,7 @@ namespace OpenDental{
 		}
 
 		private bool CanEnableProgram() {
-			if(!ODEnvironment.IsCloudServer) {
+			if(!ODBuild.IsWeb()) {
 				return true;
 			}
 			if(Programs.GetListDisabledForWeb().Select(x => x.ToString()).Contains(ProgramCur.ProgName)) {
@@ -97,7 +97,7 @@ namespace OpenDental{
 			pictureBox.Image=PIn.Bitmap(ProgramCur.ButtonImage);
 			List<ToolButItem> listToolButItems=ToolButItems.GetForProgram(ProgramCur.ProgramNum);
 			listToolBars.Items.Clear();
-			listToolBars.Items.AddEnums<EnumToolBar>();
+			listToolBars.Items.AddEnums<ToolBarsAvail>();
 			for(int i=0;i<listToolButItems.Count;i++) {
 				listToolBars.SetSelectedEnum(listToolButItems[i].ToolBar);
 			}
@@ -238,22 +238,12 @@ namespace OpenDental{
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			string importFilePath;
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				importFilePath=ODCloudClient.ImportFileForCloud();
-				if(importFilePath.IsNullOrEmpty()) {
-					return; //User cancelled out of OpenFileDialog
-				}
-			}
-			else {
-				using OpenFileDialog openFileDialog=new OpenFileDialog();
-				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-					return;
-				}
-				importFilePath=openFileDialog.FileName;
+			using OpenFileDialog openFileDialog=new OpenFileDialog();
+			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+				return;
 			}
 			try {
-				Image imageImported=Image.FromFile(importFilePath);
+				Image imageImported=Image.FromFile(openFileDialog.FileName);
 				if(imageImported.Size!=new Size(22,22)) {
 					MessageBox.Show(Lan.g(this,"Required image dimensions are 22x22.")
 						+"\r\n"+Lan.g(this,"Selected image dimensions are")+": "+imageImported.Size.Width+"x"+imageImported.Size.Height);
@@ -308,9 +298,9 @@ namespace OpenDental{
 			,string prompt) 
 		{
 			ProgramProperty programPropertyOld=programProperty.Copy();
-			InputBox inputBox=new InputBox(prompt,listForDisplays,listValuesForDb.FindIndex(x => x==programProperty.PropertyValue));
+			using InputBox inputBox=new InputBox(prompt,listForDisplays,listValuesForDb.FindIndex(x => x==programProperty.PropertyValue));
 			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel || inputBox.SelectedIndex==-1 || 
+			if(inputBox.DialogResult!=DialogResult.OK || inputBox.SelectedIndex==-1 || 
 				listValuesForDb[inputBox.SelectedIndex]==programPropertyOld.PropertyValue) 
 			{
 				return;
@@ -352,15 +342,15 @@ namespace OpenDental{
 			ShowPLButHiddenLabel();//Set the "Hide Button for Clinics" button based on the updated list.
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			//If a program has been disabled by HQ when a customer attempts to enable it, we should block them from doing so, so as not to waste their time trying to launch it
 			if(checkEnabled.Checked && !Programs.IsEnabledByHq(ProgramCur,out string err)) {
 				MsgBox.Show(err);
 				return;
 			}
 			if(checkEnabled.Checked && textPluginDllName.Text!="") {
-				if(ODEnvironment.IsCloudServer) {
-					MessageBox.Show(Lan.g(this,"Plugins are not allowed while using Open Dental Cloud."));
+				if(ODBuild.IsWeb()) {
+					MessageBox.Show(Lan.g(this,"Plugins are not allowed in Cloud mode."));
 					return;
 				}
 				string dllPath=ODFileUtils.CombinePaths(Application.StartupPath,textPluginDllName.Text);
@@ -398,7 +388,7 @@ namespace OpenDental{
 			}
 			ToolButItems.DeleteAllForProgram(ProgramCur.ProgramNum);
 			//then add one toolButItem for each highlighted row in listbox
-			List<EnumToolBar> listToolBarsAvails=listToolBars.GetListSelected<EnumToolBar>();
+			List<ToolBarsAvail> listToolBarsAvails=listToolBars.GetListSelected<ToolBarsAvail>();
 			for(int i=0;i<listToolBarsAvails.Count;i++){
 				ToolButItem toolButItem=new ToolButItem();
 				toolButItem.ProgramNum=ProgramCur.ProgramNum;
@@ -409,6 +399,10 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormProgramLinkEdit_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
 			if(DialogResult==DialogResult.OK)
 				return;
@@ -416,6 +410,26 @@ namespace OpenDental{
 				Programs.Delete(ProgramCur);
 			}
 		}
-
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -214,19 +214,19 @@ namespace OpenDental {
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			if(e.Row<0 || !Security.IsAuthorized(EnumPermType.AccountModule)) {
+			if(e.Row<0 || !Security.IsAuthorized(Permissions.AccountModule)) {
 				return;
 			}
 			long patNum=PIn.Long(_tableTrans.Rows[e.Row]["PatNum"].ToString());
-			GlobalFormOpenDental.GotoAccount(patNum);
+			GotoModule.GotoAccount(patNum);
 		}
 
 		private void menuItemGoTo_Click(object sender,EventArgs e) {
-			if(gridMain.SelectedIndices.Length<1 || !Security.IsAuthorized(EnumPermType.AccountModule)) {
+			if(gridMain.SelectedIndices.Length<1 || !Security.IsAuthorized(Permissions.AccountModule)) {
 				return;
 			}
 			long patNum=PIn.Long(_tableTrans.Rows[gridMain.SelectedIndices[0]]["PatNum"].ToString());
-			GlobalFormOpenDental.GotoAccount(patNum);
+			GotoModule.GotoAccount(patNum);
 		}
 
 		private void openPaymentToolStripMenuItem_Click(object sender,EventArgs e) {
@@ -248,7 +248,7 @@ namespace OpenDental {
 		private void voidPaymentToolStripMenuItem_Click(object sender,EventArgs e) {
 			//A new payment is being created upon clicking this menu item. The payment date is set to "DateTime.Now" in 
 			//PayConnectL.VoidOrRefundPayConnectPortalTransaction(...) and in XWebs.VoidPayment paynote
-			if(!Security.IsAuthorized(EnumPermType.PaymentCreate,DateTime.Today)) {
+			if(!Security.IsAuthorized(Permissions.PaymentCreate,DateTime.Today)) {
 				return;
 			}
 			if(gridMain.SelectedIndices.Length<1
@@ -291,7 +291,7 @@ namespace OpenDental {
 
 		private void processReturnToolStripMenuItem_Click(object sender,EventArgs e) {
 			//using DateTime.Today because this process will create a new payment (refund)
-			if(!Security.IsAuthorized(EnumPermType.PaymentCreate,DateTime.Today)) {
+			if(!Security.IsAuthorized(Permissions.PaymentCreate,DateTime.Today)) {
 				return;
 			}
 			if(gridMain.SelectedIndices.Length<1) {
@@ -302,7 +302,7 @@ namespace OpenDental {
 				long patNum=PIn.Long(_tableTrans.Rows[gridMain.SelectedIndices[0]]["PatNum"].ToString());
 				string alias=_tableTrans.Rows[gridMain.SelectedIndices[0]]["Alias"].ToString();
 				List<CreditCard> listCreditCards=CreditCards.GetCardsByToken(alias,
-					new List<CreditCardSource> { CreditCardSource.XWeb, CreditCardSource.XWebPortalLogin, CreditCardSource.XWebPaymentPortal, CreditCardSource.XWebPaymentPortalGuest });
+					new List<CreditCardSource> { CreditCardSource.XWeb, CreditCardSource.XWebPortalLogin });
 				if(listCreditCards.Count==0) {
 					MsgBox.Show(this,"This credit card is no longer stored in the database. Return cannot be processed.");
 					return;
@@ -319,7 +319,7 @@ namespace OpenDental {
 					Payment paymentReturn=Payments.InsertReturnXWebPayment(payment,formXWeb.XWebResponse_.GetFormattedNote(false),(-formXWeb.XWebResponse_.Amount));
 					formXWeb.XWebResponse_.PaymentNum=paymentReturn.PayNum;
 					XWebResponses.Update(formXWeb.XWebResponse_);
-					SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,paymentReturn.PatNum,
+					SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,paymentReturn.PatNum,
 						Patients.GetLim(paymentReturn.PatNum).GetNameLF() + ", " + paymentReturn.PayAmt.ToString("c"));
 					FillGrid();
 				}
@@ -333,6 +333,10 @@ namespace OpenDental {
 			}
 			MsgBox.Show("Return successful.");
 			FillGrid();
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 
 	}

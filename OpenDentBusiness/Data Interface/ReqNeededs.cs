@@ -8,12 +8,12 @@ using OpenDentBusiness.Crud;
 namespace OpenDentBusiness{
 ///<summary></summary>
 	public class ReqNeededs{
-		public static DataTable Refresh(long schoolClassNum,long schoolCourseNum) {
+		public static DataTable Refresh(long schoolClass,long schoolCourse) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetTable(MethodBase.GetCurrentMethod(),schoolClassNum,schoolCourseNum);
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),schoolClass,schoolCourse);
 			}
-			string command="SELECT * FROM reqneeded WHERE SchoolClassNum="+POut.Long(schoolClassNum)
-				+" AND SchoolCourseNum="+POut.Long(schoolCourseNum)
+			string command="SELECT * FROM reqneeded WHERE SchoolClassNum="+POut.Long(schoolClass)
+				+" AND SchoolCourseNum="+POut.Long(schoolCourse)
 				+" ORDER BY Descript";
 			return Db.GetTable(command);
 		}
@@ -27,21 +27,21 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static void Update(ReqNeeded reqNeeded) {
+		public static void Update(ReqNeeded req) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),reqNeeded);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),req);
 				return;
 			}
-			Crud.ReqNeededCrud.Update(reqNeeded);
+			Crud.ReqNeededCrud.Update(req);
 		}
 
 		///<summary></summary>
-		public static long Insert(ReqNeeded reqNeeded) {
+		public static long Insert(ReqNeeded req) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				reqNeeded.ReqNeededNum=Meth.GetLong(MethodBase.GetCurrentMethod(),reqNeeded);
-				return reqNeeded.ReqNeededNum;
+				req.ReqNeededNum=Meth.GetLong(MethodBase.GetCurrentMethod(),req);
+				return req.ReqNeededNum;
 			}
-			return Crud.ReqNeededCrud.Insert(reqNeeded);
+			return Crud.ReqNeededCrud.Insert(req);
 		}
 
 		///<summary>Surround with try/catch.</summary>
@@ -66,12 +66,27 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Inserts, updates, or deletes rows to reflect changes between listNew and stale listOld.</summary>
-		public static void Sync(List<ReqNeeded> listReqNeededsNew,List<ReqNeeded> listReqNeededsOld) {
+		public static void Sync(List<ReqNeeded> listNew,List<ReqNeeded> listOld) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listReqNeededsNew,listReqNeededsOld);//never pass DB list through the web service
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),listNew,listOld);//never pass DB list through the web service
 				return;
 			}
-			Crud.ReqNeededCrud.Sync(listReqNeededsNew,listReqNeededsOld);
+			Crud.ReqNeededCrud.Sync(listNew,listOld);
 		}
 	}
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -44,6 +44,7 @@ namespace OpenDental {
 			this.label4 = new System.Windows.Forms.Label();
 			this.listProv = new OpenDental.UI.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.groupShowInsWriteoffs = new OpenDental.UI.GroupBox();
 			this.radioWriteoffClaim = new System.Windows.Forms.RadioButton();
@@ -210,10 +211,20 @@ namespace OpenDental {
 			this.label1.Text = "Providers";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(693, 307);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 11;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(687, 322);
+			this.butOK.Location = new System.Drawing.Point(693, 272);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 10;
@@ -247,9 +258,9 @@ namespace OpenDental {
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(3, 109);
+			this.label5.Location = new System.Drawing.Point(6, 109);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(275, 24);
+			this.label5.Size = new System.Drawing.Size(259, 24);
 			this.label5.TabIndex = 2;
 			this.label5.Text = "(This is discussed in the PPO section of the manual)";
 			// 
@@ -279,7 +290,7 @@ namespace OpenDental {
 			// 
 			// FormRpProdGoal
 			// 
-			this.ClientSize = new System.Drawing.Size(774, 359);
+			this.ClientSize = new System.Drawing.Size(801, 359);
 			this.Controls.Add(this.groupShowInsWriteoffs);
 			this.Controls.Add(this.checkClinicBreakdown);
 			this.Controls.Add(this.checkAllClin);
@@ -291,6 +302,7 @@ namespace OpenDental {
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.listProv);
 			this.Controls.Add(this.label1);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -308,6 +320,8 @@ namespace OpenDental {
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.ListBox listProv;

@@ -31,7 +31,6 @@
     <Compile Include="..\CodeBase\Utilities\LoggerOld.cs" Link="LoggerOld.cs" />
     <Compile Include="..\CodeBase\Utilities\MiscUtils.cs" Link="MiscUtils.cs" />
     <Compile Include="..\CodeBase\Utilities\ODBuild.cs" Link="ODBuild.cs" />
-    <Compile Include="..\CodeBase\Utilities\ODEnvironment.cs" Link="ODEnvironment.cs" />
     <Compile Include="..\CodeBase\Utilities\ODEvent.cs" Link="ODEvent.cs" />
     <Compile Include="..\CodeBase\Utilities\ODException.cs" Link="ODException.cs" />
     <Compile Include="..\CodeBase\Utilities\ODFileUtils.cs" Link="ODFileUtils.cs" />

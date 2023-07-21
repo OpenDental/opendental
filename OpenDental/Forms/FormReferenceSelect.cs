@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using OpenDental.UI;
@@ -40,8 +39,13 @@ namespace OpenDental {
 				superFam=PIn.Int(textSuperFamily.Text);
 			}
 			catch { }
-			List<long> listBillingTypes=listBillingType.GetListSelected<Def>().Select(x=>x.DefNum).ToList();
-			_tableRef=CustReferences.GetReferenceTable(limit,listBillingTypes,checkBadRefs.Checked,checkUsedRefs.Checked,checkGuarOnly.Checked,textCity.Text,textState.Text,
+			long[] longArrayBillingTypes=new long[listBillingType.SelectedIndices.Count];
+			if(listBillingType.SelectedIndices.Count!=0){
+				for(int i=0;i<listBillingType.SelectedIndices.Count;i++) {
+					longArrayBillingTypes[i]=_listDefsBillingTypes[listBillingType.SelectedIndices[i]].DefNum;
+				}
+			}
+			_tableRef=CustReferences.GetReferenceTable(limit,longArrayBillingTypes,checkBadRefs.Checked,checkUsedRefs.Checked,checkGuarOnly.Checked,textCity.Text,textState.Text,
 				textZip.Text,textAreaCode.Text,textSpecialty.Text,superFam,textLName.Text,textFName.Text,textPatNum.Text,age,textCountry.Text);
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
@@ -305,5 +309,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

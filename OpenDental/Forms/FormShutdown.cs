@@ -26,7 +26,7 @@ namespace OpenDental {
 			_listComputers=Computers.GetDeepCopy();
 			_listUserods=Userods.GetDeepCopy();
 			_listActiveInstances=ActiveInstances.GetAllResponsiveActiveInstances().OrderByDescending(x => x.DateTimeLastActive).ToList();
-			if(ODBuild.IsThinfinity() && !Security.IsAuthorized(EnumPermType.CloseOtherSessions)) {
+			if(ODBuild.IsWeb() && !Security.IsAuthorized(Permissions.CloseOtherSessions)) {
 				butCloseSessions.Enabled=false;
 			}
 			if(IsUpdate) {
@@ -85,12 +85,15 @@ namespace OpenDental {
 			}
 			List<ActiveInstance> listActiveInstances=gridActiveInstances.SelectedTags<ActiveInstance>()
 				.Where(x => x.ActiveInstanceNum!=ActiveInstances.GetActiveInstance().ActiveInstanceNum).ToList();
-			SecurityLogs.MakeLogEntry(EnumPermType.CloseOtherSessions,0,"User "+Security.CurUser.UserName
+			SecurityLogs.MakeLogEntry(Permissions.CloseOtherSessions,0,"User "+Security.CurUser.UserName
 				+" ended "+listActiveInstances.Count+" sessions via Shutdown Workstations.");
 			ActiveInstances.CloseActiveInstances(listActiveInstances);
 			_listActiveInstances.RemoveAll(x => listActiveInstances.Select(y => y.ActiveInstanceNum).Contains(x.ActiveInstanceNum));
 			FillGrid();
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

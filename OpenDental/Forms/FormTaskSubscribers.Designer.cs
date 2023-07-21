@@ -24,8 +24,20 @@ namespace OpenDental {
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTaskSubscribers));
+			this.butClose = new OpenDental.UI.Button();
 			this.gridODSubscribers = new OpenDental.UI.GridOD();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(257, 480);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 1;
+			this.butClose.Text = "&Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridODSubscribers
 			// 
@@ -35,13 +47,14 @@ namespace OpenDental {
 			this.gridODSubscribers.Location = new System.Drawing.Point(10, 10);
 			this.gridODSubscribers.Name = "gridODSubscribers";
 			this.gridODSubscribers.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridODSubscribers.Size = new System.Drawing.Size(322, 472);
+			this.gridODSubscribers.Size = new System.Drawing.Size(322, 464);
 			this.gridODSubscribers.TabIndex = 2;
 			// 
 			// FormTaskSubscribers
 			// 
-			this.ClientSize = new System.Drawing.Size(344, 494);
+			this.ClientSize = new System.Drawing.Size(344, 512);
 			this.Controls.Add(this.gridODSubscribers);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormTaskSubscribers";
 			this.Text = "Subscribers";
@@ -51,6 +64,7 @@ namespace OpenDental {
 		}
 
 		#endregion
+		private UI.Button butClose;
 		private UI.GridOD gridODSubscribers;
 	}
 }

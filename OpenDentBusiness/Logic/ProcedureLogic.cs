@@ -10,107 +10,106 @@ namespace OpenDentBusiness {
 	public class ProcedureLogic{
 
 		///<summary>The supplied DataRows must include the following columns: ProcStatus(optional),Priority(optional),ToothRange,ToothNum,ProcCode.  This sorts procedures based on priority, then tooth number, then procCode.  It does not care about dates or status.  Currently used in Account module, appointments, and Chart module sorting.  TP uses Procedures.ProcedureComparer.</summary>
-		public static int CompareProcedures(DataRow dataRowX,DataRow dataRowY) {
+		public static int CompareProcedures(DataRow x,DataRow y) {
 			//first, by status
-			if(dataRowX.Table.Columns.Contains("ProcStatus") && dataRowY.Table.Columns.Contains("ProcStatus")) {
-				if(dataRowX["ProcStatus"].ToString()!=dataRowY["ProcStatus"].ToString()) {
+			if(x.Table.Columns.Contains("ProcStatus") && y.Table.Columns.Contains("ProcStatus")) {
+				if(x["ProcStatus"].ToString()!=y["ProcStatus"].ToString()) {
 					//Cn,TP,R,EO,C,EC,D
 					//EC procs will draw on top of C procs of same date in the 3D tooth chart, 
 					//but this is not a problem since C procs should always have a later date than EC procs.
 					//EC must come after C so that group notes will come after their procedures in Progress Notes.
-					int idxX=0;
-					switch(dataRowX["ProcStatus"].ToString()) {
+					int xIdx=0;
+					switch(x["ProcStatus"].ToString()) {
 						case "8"://TPi
-							idxX=0;
+							xIdx=0;
 							break;
 						case "7"://Cn
-							idxX=1;
+							xIdx=1;
 							break;
 						case "1"://TP
-							idxX=2;
+							xIdx=2;
 							break;
 						case "5"://R
-							idxX=3;
+							xIdx=3;
 							break;
 						case "4"://EO
-							idxX=4;
+							xIdx=4;
 							break;
 						case "2"://C
-							idxX=5;
+							xIdx=5;
 							break;
 						case "3"://EC
-							idxX=6;
+							xIdx=6;
 							break;
 						case "6"://D
-							idxX=7;
+							xIdx=7;
 							break;
 					}
-					int idxY=0;
-					switch(dataRowY["ProcStatus"].ToString()) {
+					int yIdx=0;
+					switch(y["ProcStatus"].ToString()) {
 						case "8"://TPi
-							idxY=0;
+							yIdx=0;
 							break;
 						case "7"://Cn
-							idxY=1;
+							yIdx=1;
 							break;
 						case "1"://TP
-							idxY=2;
+							yIdx=2;
 							break;
 						case "5"://R
-							idxY=3;
+							yIdx=3;
 							break;
 						case "4"://EO
-							idxY=4;
+							yIdx=4;
 							break;
 						case "2"://C
-							idxY=5;
+							yIdx=5;
 							break;
 						case "3"://EC
-							idxY=6;
+							yIdx=6;
 							break;
 						case "6"://D
-							idxY=7;
+							yIdx=7;
 							break;
 					}
-					return idxX.CompareTo(idxY);
+					return xIdx.CompareTo(yIdx);
 				}
 			}
 			//by priority
-			if(dataRowX.Table.Columns.Contains("Priority") && dataRowY.Table.Columns.Contains("Priority")){
-				if(dataRowX["Priority"].ToString()!=dataRowY["Priority"].ToString()) {//if priorities are different
-					if(dataRowX["Priority"].ToString()=="0") {
+			if(x.Table.Columns.Contains("Priority") && y.Table.Columns.Contains("Priority")){
+				if(x["Priority"].ToString()!=y["Priority"].ToString()) {//if priorities are different
+					if(x["Priority"].ToString()=="0") {
 						return 1;//x is greater than y. Priorities always come first.
 					}
-					if(dataRowY["Priority"].ToString()=="0") {
+					if(y["Priority"].ToString()=="0") {
 						return -1;//x is less than y. Priorities always come first.
 					}
-					int defOrderX=Defs.GetOrder(DefCat.TxPriorities,PIn.Long(dataRowX["Priority"].ToString()));
-					int defOrderY=Defs.GetOrder(DefCat.TxPriorities,PIn.Long(dataRowY["Priority"].ToString()));
-					return defOrderX.CompareTo(defOrderY);
+					return Defs.GetOrder(DefCat.TxPriorities,PIn.Long(x["Priority"].ToString())).CompareTo
+						(Defs.GetOrder(DefCat.TxPriorities,PIn.Long(y["Priority"].ToString())));
 				}
 			}
 			//priorities are the same, so sort by toothrange
-			if(dataRowX["ToothRange"].ToString()!=dataRowY["ToothRange"].ToString()) {
+			if(x["ToothRange"].ToString()!=y["ToothRange"].ToString()) {
 				//empty toothranges come before filled toothrange values
-				return dataRowX["ToothRange"].ToString().CompareTo(dataRowY["ToothRange"].ToString());
+				return x["ToothRange"].ToString().CompareTo(y["ToothRange"].ToString());
 			}
 			//toothranges are the same (usually empty), so compare toothnumbers
-			if(dataRowX["ToothNum"].ToString()!=dataRowY["ToothNum"].ToString()) {
+			if(x["ToothNum"].ToString()!=y["ToothNum"].ToString()) {
 				//this also puts invalid or empty toothnumbers before the others.
-				return Tooth.ToInt(dataRowX["ToothNum"].ToString()).CompareTo(Tooth.ToInt(dataRowY["ToothNum"].ToString()));
+				return Tooth.ToInt(x["ToothNum"].ToString()).CompareTo(Tooth.ToInt(y["ToothNum"].ToString()));
 			}
-			if(dataRowX["ProcCode"].ToString()!=dataRowY["ProcCode"].ToString()) {
+			if(x["ProcCode"].ToString()!=y["ProcCode"].ToString()) {
 			//priority and toothnums are the same, so sort by proccode if different.
-				return dataRowX["ProcCode"].ToString().CompareTo(dataRowY["ProcCode"].ToString());
+				return x["ProcCode"].ToString().CompareTo(y["ProcCode"].ToString());
 			}
 			//priority, tooth number, and proccode are all the same.  Sort by ProcNum so we have a determinate order if everything else is the same.
-			return dataRowX["ProcNum"].ToString().CompareTo(dataRowY["ProcNum"].ToString());
+			return x["ProcNum"].ToString().CompareTo(y["ProcNum"].ToString());
 		}
 
 		///<summary>Compares two procedures and returns the order they should appear based on status, priority, toothrange, toothnum, then proccode.
 		///Uses the same logic as the other CompareProcedures but takes Procedure objects instead of DataRows.
 		///Does not sort Canadian labs correctly.  Make sure there are no Canadian labs present prior to comparing.</summary>
-		public static int CompareProcedures(Procedure procedureX,Procedure procedureY) {
+		public static int CompareProcedures(Procedure x,Procedure y) {
 			//We cannot sort Canadian labs within this comparer because there can be multiple labs associated to one procedure.
 			//This comparer doesn't have enough information in order to sort a procedure and correctly move the corresponding lab(s) with it.
 			//Therefore, Canadian labs need to be sorted as an additional step after this comparer has been invoked.
@@ -123,14 +122,14 @@ namespace OpenDentBusiness {
 			//}
 			//=========================================================================================================================
 			//first by status
-			if(procedureX.ProcStatus!=procedureY.ProcStatus) {
+			if(x.ProcStatus!=y.ProcStatus) {
 				//Cn,TP,R,EO,C,EC,D
 				//EC procs will draw on top of C procs of same date in the 3D tooth chart, 
 				//but this is not a problem since C procs should always have a later date than EC procs.
 				//EC must come after C so that group notes will come after their procedures in Progress Notes.
-				int idxX, idxY;
-				List<ProcStat> sortOrder=new List<ProcStat> {
-					//The order of statuses in this list is very important and determines the sort order for procedures.
+				int xIdx, yIdx;
+				List<ProcStat> sortOrder = new List<ProcStat>
+				{//The order of statuses in this list is very important and determines the sort order for procedures.
 					ProcStat.TPi,
 					ProcStat.Cn,
 					ProcStat.TP,
@@ -140,54 +139,64 @@ namespace OpenDentBusiness {
 					ProcStat.EC,
 					ProcStat.D
 				};
-				idxX=sortOrder.IndexOf(procedureX.ProcStatus);
-				idxY=sortOrder.IndexOf(procedureY.ProcStatus);
-				return idxX.CompareTo(idxY);
+				xIdx=sortOrder.IndexOf(x.ProcStatus);
+				yIdx=sortOrder.IndexOf(y.ProcStatus);
+				return xIdx.CompareTo(yIdx);
 			}
 			//by priority
-			if(procedureX.Priority!=procedureY.Priority) {//if priorities are different
-					if(procedureX.Priority==0) {
+			if(x.Priority!=y.Priority) {//if priorities are different
+					if(x.Priority==0) {
 						return 1;//x is greater than y. Priorities always come first.
 					}
-					if(procedureY.Priority==0) {
+					if(y.Priority==0) {
 						return -1;//x is less than y. Priorities always come first.
 					}
-					return Defs.GetOrder(DefCat.TxPriorities,procedureX.Priority).CompareTo(Defs.GetOrder(DefCat.TxPriorities,procedureY.Priority));
+					return Defs.GetOrder(DefCat.TxPriorities,x.Priority).CompareTo(Defs.GetOrder(DefCat.TxPriorities,y.Priority));
 			}
 			//priorities are the same, so sort by toothrange
-			if(procedureX.ToothRange!=procedureY.ToothRange) {
+			if(x.ToothRange!=y.ToothRange) {
 				//empty toothranges come before filled toothrange values
-				return procedureX.ToothRange.CompareTo(procedureY.ToothRange);
+				return x.ToothRange.CompareTo(y.ToothRange);
 			}
 			//toothranges are the same (usually empty), so compare toothnumbers
-			if(procedureX.ToothNum!=procedureY.ToothNum) {
+			if(x.ToothNum!=y.ToothNum) {
 				//this also puts invalid or empty toothnumbers before the others.
-				return Tooth.ToInt(procedureX.ToothNum).CompareTo(Tooth.ToInt(procedureY.ToothNum));
+				return Tooth.ToInt(x.ToothNum).CompareTo(Tooth.ToInt(y.ToothNum));
 			}
 			//priority and toothnums are the same, so sort by proccode.
-			if(procedureX.CodeNum!=procedureY.CodeNum) {
+			if(x.CodeNum!=y.CodeNum) {
 				//GetProcCode(...).ProcCode can be null.
 				//We do not protect the second call because comparing any string to null doesn't cause an error.
-				string procCode=ProcedureCodes.GetProcCode(procedureX.CodeNum).ProcCode??"";
-				return procCode.CompareTo(ProcedureCodes.GetProcCode(procedureY.CodeNum).ProcCode);
+				string procCode=ProcedureCodes.GetProcCode(x.CodeNum).ProcCode??"";
+				return procCode.CompareTo(ProcedureCodes.GetProcCode(y.CodeNum).ProcCode);
 			}
 			//if everything else is the same, sort by ProcNum so sort is deterministic
-			return procedureX.ProcNum.CompareTo(procedureY.ProcNum);
+			return x.ProcNum.CompareTo(y.ProcNum);
 		}
 
 		///<summary>Sorts the list of procedures passed in via CompareProcedures.  Correctly sorts Canadian labs if needed.</summary>
-		public static void SortProcedures(List<Procedure> listProcedures) {
+		public static void SortProcedures(ref List<Procedure> listProcedures) {
 			//Keep track of all Canadian labs which will be manually re-inserted underneath their corresponding parent procedure.
-			List<Procedure> listProceduresLab=listProcedures.FindAll(x => x.ProcNumLab!=0);
+			Dictionary<long,List<Procedure>> dictProcLabs=listProcedures.FindAll(x => x.ProcNumLab!=0)
+				.GroupBy(x => x.ProcNumLab)
+				.ToDictionary(x => x.Key,x => x.ToList());
 			//Remove all labs from the list prior to sorting.  Labs are always below their parent proc.
-			listProcedures.RemoveAll(x => x.ProcNumLab!=0);
+			listProcedures.RemoveAll(x => dictProcLabs.Keys.Contains(x.ProcNumLab));
 			//Sort the list of procedures that are missing Canadian labs.
 			listProcedures.Sort(CompareProcedures);
 			//Loop backward so we can insert as we go without affecting the index.
 			for(int i=listProcedures.Count-1;i>=0;i--) {
-				List<Procedure> listProceduresChildren=listProceduresLab.FindAll(x => x.ProcNumLab==listProcedures[i].ProcNum);
-				listProcedures.InsertRange(i+1,listProceduresChildren);//Insert labs below parent proc.
+				long procNum=listProcedures[i].ProcNum;
+				if(!dictProcLabs.Keys.Contains(procNum)) {
+					continue;//Not a parent proc.
+				}
+				listProcedures.InsertRange(i+1,dictProcLabs[procNum]);//Insert labs below parent proc.
 			}
 		}
+
+
+
 	}
+
+
 }

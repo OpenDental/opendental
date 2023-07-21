@@ -35,11 +35,23 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormContacts));
+			this.butOK = new OpenDental.UI.Button();
 			this.listCategory = new OpenDental.UI.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.SuspendLayout();
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butOK.Location = new System.Drawing.Point(799,658);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75,25);
+			this.butOK.TabIndex = 1;
+			this.butOK.Text = "&Close";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// listCategory
 			// 
@@ -83,11 +95,14 @@ namespace OpenDental {
 			// 
 			// FormContacts
 			// 
-			this.ClientSize = new System.Drawing.Size(886, 693);
+			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butOK;
+			this.ClientSize = new System.Drawing.Size(886,693);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.listCategory);
+			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -100,6 +115,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.ListBox listCategory;
 		private OpenDental.UI.Button butAdd;

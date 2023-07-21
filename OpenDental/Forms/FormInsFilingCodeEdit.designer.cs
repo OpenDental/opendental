@@ -41,7 +41,8 @@ namespace OpenDental {
 			this.label2 = new System.Windows.Forms.Label();
 			this.gridInsFilingCodeSubtypes = new OpenDental.UI.GridOD();
 			this.butDelete = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.label3 = new System.Windows.Forms.Label();
 			this.comboGroup = new OpenDental.UI.ComboBox();
@@ -98,22 +99,32 @@ namespace OpenDental {
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(27, 331);
+			this.butDelete.Location = new System.Drawing.Point(27, 352);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(81, 26);
 			this.butDelete.TabIndex = 8;
 			this.butDelete.Text = "Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(420, 331);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 6;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(412, 352);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 6;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(503, 352);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 7;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butAdd
 			// 
@@ -154,9 +165,10 @@ namespace OpenDental {
 			// 
 			// FormInsFilingCodeEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(507, 375);
+			this.ClientSize = new System.Drawing.Size(604, 396);
 			this.Controls.Add(this.checkExcludeOtherCoverage);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.comboGroup);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.butAdd);
@@ -172,14 +184,15 @@ namespace OpenDental {
 			this.Name = "FormInsFilingCodeEdit";
 			this.ShowInTaskbar = false;
 			this.Text = "Edit Claim Filing Code";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormInsFilingCodeEdit_FormClosing);
 			this.Load += new System.EventHandler(this.FormInsFilingCodeEdit_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textDescription;
 		private OpenDental.UI.Button butDelete;

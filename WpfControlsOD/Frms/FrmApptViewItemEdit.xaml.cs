@@ -17,12 +17,10 @@ namespace OpenDental {
 
 		public FrmApptViewItemEdit() {
 			InitializeComponent();
-			Load+=FrmApptViewItemEdit_Load;
-			PreviewKeyDown+=FrmApptViewItemEdit_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmApptViewItemEdit_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmApptViewItemEdit_Loaded(object sender,RoutedEventArgs e) {
 			if(ApptViewItemCur.ApptFieldDefNum>0) {
 				textDesc.Text=ApptFieldDefs.GetFieldName(ApptViewItemCur.ApptFieldDefNum);
 			}
@@ -53,12 +51,6 @@ namespace OpenDental {
 			_hasColorChanged=true;
 		}
 
-		private void FrmApptViewItemEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
-		}
-
 		private void butSave_Click(object sender,EventArgs e) {
 			if(_hasColorChanged) {
 				ApptViewItemCur.ElementColor=ColorOD.FromWpf(panelColor.ColorBack);
@@ -70,6 +62,7 @@ namespace OpenDental {
 			ApptViewItemCur.ElementAlignment=(ApptViewAlignment)listAlignment.SelectedIndex;
 			IsDialogOK=true;
 		}
+
 
 	}
 }

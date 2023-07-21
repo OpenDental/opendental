@@ -11,24 +11,26 @@ namespace OpenDentBusiness{
 		///<summary>Primary key.</summary>
 		[CrudColumn(IsPriKey=true)]
 		public long PatFieldDefNum;
-		///<summary>This is treated as the key. The name of the field that the user will be allowed to fill in the patient info window.</summary>
+		///<summary>The name of the field that the user will be allowed to fill in the patient info window.</summary>
 		public string FieldName;
 		///<summary>Enum:PatFieldType Text=0,PickList=1,Date=2,Checkbox=3,Currency=4</summary>
 		public PatFieldType FieldType;
-		///<summary>Deprecated. Use patfieldpickitem.</summary>
+		///<summary>The text that contains pick list values.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
 		public string PickList;
 		//<summary>Enum:PatFieldMapping Certain reports such as Medicaid make use of patient fields that are explicitly mapped.</summary>
 		//public PatFieldMapping FieldMapping;
 		///<summary></summary>
 		public int ItemOrder;
-		///<summary>Hides this PatField for any patient where it's currently blank. If already in use by a patient, then it still shows.</summary>
+		///<summary></summary>
 		public bool IsHidden;
 
 		///<summary></summary>
 		public PatFieldDef Copy() {
 			return (PatFieldDef)this.MemberwiseClone();
 		}
+
+		
 	}
 
 	///<summary></summary>
@@ -48,12 +50,6 @@ namespace OpenDentBusiness{
 		///<summary>6 - CareCredit pre-approval status. For example, FieldValue string="Pre-Approved", from CareCreditWebStatus enum.</summary>
 		[Description("CareCredit Pre-Approval Status")]
 		CareCreditStatus,
-		///<summary>7 - CareCredit pre-approval amount.</summary>
-		[Description("CareCredit Pre-Approval Amount")]
-		CareCreditPreApprovalAmt,
-		///<summary>8 - CareCredit - Remaining available Credit for CareCredit cardholders.</summary>
-		[Description("CareCredit Available Credit")]
-		CareCreditAvailableCredit
 	}
 
 	//public enum PatFieldMapping{
@@ -62,4 +58,16 @@ namespace OpenDentBusiness{
 		//<summary>1</summary>
 		//IncomeForPoverty	
 	//}
+
+
 }
+
+
+
+
+
+
+
+
+
+

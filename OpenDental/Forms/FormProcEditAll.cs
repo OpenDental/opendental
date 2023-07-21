@@ -60,7 +60,7 @@ namespace OpenDental {
 				}
 			}
 			if(!IsUserAuthorizedForProcDate(procDateOldest)) {
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butEditAnyway.Enabled=false;
 			}
 			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(ListProcedures[0].PatNum);
@@ -92,18 +92,18 @@ namespace OpenDental {
 					dateEoEcOldest=ListProcedures.Where(x => x.ProcStatus.In(ProcStat.EO,ProcStat.EC)).Min(x => x.DateEntryC);
 				}
 				if(_canAllBypass){
-					if(_hasCompletedProc && !Security.IsAuthorized(EnumPermType.ProcCompleteEdit,dateCProcs,ListProcedures[0].CodeNum,0)){
+					if(_hasCompletedProc && !Security.IsAuthorized(Permissions.ProcCompleteEdit,dateCProcs,ListProcedures[0].CodeNum,0)){
 						return false;
 					}
-					if(_hasExistingProc && !Security.IsAuthorized(EnumPermType.ProcExistingEdit,dateEoEcOldest,ListProcedures[0].CodeNum,0)){
+					if(_hasExistingProc && !Security.IsAuthorized(Permissions.ProcExistingEdit,dateEoEcOldest,ListProcedures[0].CodeNum,0)){
 						return false;
 					}
 					return true;
 				}
-				if(_hasCompletedProc && !Security.IsAuthorized(EnumPermType.ProcCompleteEdit,dateCProcs)){
+				if(_hasCompletedProc && !Security.IsAuthorized(Permissions.ProcCompleteEdit,dateCProcs)){
 					return false;
 				}
-				if(_hasExistingProc && !Security.IsAuthorized(EnumPermType.ProcExistingEdit,dateEoEcOldest)){
+				if(_hasExistingProc && !Security.IsAuthorized(Permissions.ProcExistingEdit,dateEoEcOldest)){
 					return false;
 				}
 			}
@@ -182,12 +182,11 @@ namespace OpenDental {
 		}
 
 		private void butMoreProvs_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick=new FrmProviderPick(_listProvidersForClinic);
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick=new FormProviderPick(_listProvidersForClinic);
+			if(formProviderPick.ShowDialog(this)!=DialogResult.OK) {
 				return;
 			}
-			comboProv.SetSelectedProvNum(frmProviderPick.ProvNumSelected);
+			comboProv.SetSelectedProvNum(formProviderPick.ProvNumSelected);
 		}
 
 		private void butEditAnyway_Click(object sender,EventArgs e) {
@@ -307,7 +306,7 @@ namespace OpenDental {
 			listNewClaimProcs=listClaimProcs.Except(listClaimProcsOrig).ToList();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!EntriesAreValid()) {
 				return;
 			}
@@ -329,29 +328,6 @@ namespace OpenDental {
 				List<long> listSchedulePlanLinksFKey=OrthoPlanLinks.GetAllForOrthoCasesByType(listOrthoCases.Select(x=>x.OrthoCaseNum).ToList(),OrthoPlanLinkType.OrthoSchedule).Select(x=>x.FKey).ToList();
 				listOrthoSchedules=OrthoSchedules.GetMany(listSchedulePlanLinksFKey);
 			}
-			bool changeFees=false;
-			Provider provider=comboProv.GetSelected<Provider>();
-			ProcFeeHelper procFeeHelper=new ProcFeeHelper(patNum);
-			if(provider!=null) {
-				//Act like the provider changed on all of the procedures.
-				List<Procedure> listProceduresNew=ListProcedures.Select(x => x.Copy()).ToList();
-				List<Procedure> listProceduresOld=ListProcedures.Select(x => x.Copy()).ToList();
-				for(int i=0;i<listProceduresNew.Count;i++) {
-					listProceduresNew[i].ProvNum=provider.ProvNum;
-				}
-				//Check to see if the ProcFee will change due to the provider changing.
-				string promptText="";
-				procFeeHelper.FillData();
-				bool canChangeFees=Procedures.ShouldFeesChange(listProceduresNew,listProceduresOld,ref promptText,procFeeHelper);
-				if(canChangeFees) {
-					if(promptText=="") {//No prompt, so change fees because canFeesChange==true.
-						changeFees=true;
-					}
-					else {//Show the prompt if not already shown, and change fees if user picks 'Yes'.
-						changeFees=MsgBox.Show(MsgBoxButtons.YesNo,promptText);
-					}
-				}
-			}
 			for(int i=0;i<ListProcedures.Count;i++) {
 				bool hasChanged=false;
 				bool hasDateChanged=false;
@@ -363,16 +339,10 @@ namespace OpenDental {
 					hasDateChanged=true;
 					hasChanged=true;
 				}
-				if(provider!=null && provider.ProvNum!=ListProcedures[i].ProvNum) {//Using selection
-					ListProcedures[i].ProvNum=provider.ProvNum;
+				if(comboProv.GetSelected<Provider>()!=null && comboProv.GetSelected<Provider>().ProvNum!=ListProcedures[i].ProvNum) {//Using selection
+					ListProcedures[i].ProvNum=comboProv.GetSelected<Provider>().ProvNum;
 					//Mimics FormProcEdit, uses different criteria than Procedures.ComputeEstimates().
 					ClaimProcs.TrySetProvFromProc(ListProcedures[i],listClaimProcsForProc);
-					hasChanged=true;
-				}
-				if(changeFees) {
-					ListProcedures[i].ProcFee=Procedures.GetProcFee(procFeeHelper.Pat,procFeeHelper.ListPatPlans,procFeeHelper.ListInsSubs,
-						procFeeHelper.ListInsPlans,ListProcedures[i].CodeNum,ListProcedures[i].ProvNum,ListProcedures[i].ClinicNum,
-						ListProcedures[i].MedicalCode,procFeeHelper.ListBenefitsPrimary,procFeeHelper.ListFees);
 					hasChanged=true;
 				}
 				if(comboClinic.GetSelected<Clinic>()!=null && comboClinic.GetSelected<Clinic>().ClinicNum!=ListProcedures[i].ClinicNum) {//Using selection
@@ -431,16 +401,20 @@ namespace OpenDental {
 				}
 			}
 			if(logTextProcComplete!="") {
-				SecurityLogs.MakeLogEntry(EnumPermType.ProcCompleteEdit,patNum,logTextProcComplete);
+				SecurityLogs.MakeLogEntry(Permissions.ProcCompleteEdit,patNum,logTextProcComplete);
 			}
 			if(logTextProcExisting!="") {
-				SecurityLogs.MakeLogEntry(EnumPermType.ProcExistingEdit,patNum,logTextProcExisting);
+				SecurityLogs.MakeLogEntry(Permissions.ProcExistingEdit,patNum,logTextProcExisting);
 			}
 			if(logTextProcOther!="") {
-				SecurityLogs.MakeLogEntry(EnumPermType.ProcEdit,patNum,logTextProcOther);
+				SecurityLogs.MakeLogEntry(Permissions.ProcEdit,patNum,logTextProcOther);
 			}
 			#endregion
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private enum SecurityLogFields {
@@ -449,5 +423,6 @@ namespace OpenDental {
 			ClinicNum
 		}
 
+		
 	}
 }

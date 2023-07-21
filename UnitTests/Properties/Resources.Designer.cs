@@ -160,30 +160,6 @@ namespace UnitTests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ISA*00*          *00*          *30*330989922      *30*330989922      *171003*0802*U*00401*000000000*0*P*:~
-        ///GS*HP*330989922*330989922*20171003*0802*0*X*004010X091A1~
-        ///ST*835*0001~
-        ///BPR*I*353*C*CHK************20171004~
-        ///TRN*1*0045284538*1942761537~
-        ///REF*EV*DDSRIX00~
-        ///DTM*405*20171001~
-        ///N1*PR*Delta Dental Insurance Co~
-        ///N3*PO Box 1809~
-        ///N4*Alpharetta*GA*30023~
-        ///PER*CX*CUSTOMER SERVICE*TE*8005212651~
-        ///N1*PE*Chirag R Vaid Dds Dental Corp*FI*123456789~
-        ///N3*2201 Main Ave Ste 100~
-        ///N4*Salem*OR*973055722~
-        ///REF*TJ*811902608~
-        ///LX*1 [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string JustinSmithERA_NoAutoProcessCARCs {
-            get {
-                return ResourceManager.GetString("JustinSmithERA_NoAutoProcessCARCs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to {
         ///  &quot;carriers&quot;: [
         ///    {

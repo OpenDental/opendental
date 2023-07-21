@@ -14,16 +14,16 @@
 #pragma warning disable 1591
 
 namespace OpenDentBusiness.DentalxchangePartnerService {
-    using System.Diagnostics;
     using System;
+    using System.Web.Services;
+    using System.Diagnostics;
+    using System.Web.Services.Protocols;
     using System.Xml.Serialization;
     using System.ComponentModel;
-    using System.Web.Services.Protocols;
-    using System.Web.Services;
     
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Web.Services.WebServiceBindingAttribute(Name="DeaPortBinding", Namespace="dxci.dea")]
@@ -31,25 +31,19 @@ namespace OpenDentBusiness.DentalxchangePartnerService {
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(ImageReferenceResponse[]))]
     public partial class DeaPartnerService : System.Web.Services.Protocols.SoapHttpClientProtocol {
         
-        private System.Threading.SendOrPostCallback addImageOperationCompleted;
+        private System.Threading.SendOrPostCallback openAttachmentOperationCompleted;
         
         private System.Threading.SendOrPostCallback submitAttachmentOperationCompleted;
         
-        private System.Threading.SendOrPostCallback openAttachmentOperationCompleted;
-        
-        private System.Threading.SendOrPostCallback addNarrativeOperationCompleted;
-        
-        private System.Threading.SendOrPostCallback deleteImageOperationCompleted;
-        
-        private System.Threading.SendOrPostCallback deleteAllImagesOperationCompleted;
-        
         private System.Threading.SendOrPostCallback sendCompleteAttachmentOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback addImageOperationCompleted;
         
         private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
         public DeaPartnerService() {
-            this.Url = global::OpenDentBusiness.Properties.Settings.Default.OpenDentBusiness_DentalxchangePartnerService_DeaPartnerService;
+            this.Url = "https://prelive2.dentalxchange.com:443/dea/DeaPartnerService";
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;
@@ -84,57 +78,46 @@ namespace OpenDentBusiness.DentalxchangePartnerService {
         }
         
         /// <remarks/>
-        public event addImageCompletedEventHandler addImageCompleted;
+        public event openAttachmentCompletedEventHandler openAttachmentCompleted;
         
         /// <remarks/>
         public event submitAttachmentCompletedEventHandler submitAttachmentCompleted;
         
         /// <remarks/>
-        public event openAttachmentCompletedEventHandler openAttachmentCompleted;
-        
-        /// <remarks/>
-        public event addNarrativeCompletedEventHandler addNarrativeCompleted;
-        
-        /// <remarks/>
-        public event deleteImageCompletedEventHandler deleteImageCompleted;
-        
-        /// <remarks/>
-        public event deleteAllImagesCompletedEventHandler deleteAllImagesCompleted;
-        
-        /// <remarks/>
         public event sendCompleteAttachmentCompletedEventHandler sendCompleteAttachmentCompleted;
+        
+        /// <remarks/>
+        public event addImageCompletedEventHandler addImageCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("", RequestNamespace="dxci.dea", ResponseNamespace="dxci.dea", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         [return: System.Xml.Serialization.XmlElementAttribute("return", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public ImageReferenceResponses addImage([System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] Credentials Credentials, [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] AttachmentReference AttachmentReference, [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] AttachmentImage attachmentImage) {
-            object[] results = this.Invoke("addImage", new object[] {
+        public AttachmentReferenceResponse openAttachment([System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] Credentials Credentials, [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] Attachment attachment) {
+            object[] results = this.Invoke("openAttachment", new object[] {
                         Credentials,
-                        AttachmentReference,
-                        attachmentImage});
-            return ((ImageReferenceResponses)(results[0]));
+                        attachment});
+            return ((AttachmentReferenceResponse)(results[0]));
         }
         
         /// <remarks/>
-        public void addImageAsync(Credentials Credentials, AttachmentReference AttachmentReference, AttachmentImage attachmentImage) {
-            this.addImageAsync(Credentials, AttachmentReference, attachmentImage, null);
+        public void openAttachmentAsync(Credentials Credentials, Attachment attachment) {
+            this.openAttachmentAsync(Credentials, attachment, null);
         }
         
         /// <remarks/>
-        public void addImageAsync(Credentials Credentials, AttachmentReference AttachmentReference, AttachmentImage attachmentImage, object userState) {
-            if ((this.addImageOperationCompleted == null)) {
-                this.addImageOperationCompleted = new System.Threading.SendOrPostCallback(this.OnaddImageOperationCompleted);
+        public void openAttachmentAsync(Credentials Credentials, Attachment attachment, object userState) {
+            if ((this.openAttachmentOperationCompleted == null)) {
+                this.openAttachmentOperationCompleted = new System.Threading.SendOrPostCallback(this.OnopenAttachmentOperationCompleted);
             }
-            this.InvokeAsync("addImage", new object[] {
+            this.InvokeAsync("openAttachment", new object[] {
                         Credentials,
-                        AttachmentReference,
-                        attachmentImage}, this.addImageOperationCompleted, userState);
+                        attachment}, this.openAttachmentOperationCompleted, userState);
         }
         
-        private void OnaddImageOperationCompleted(object arg) {
-            if ((this.addImageCompleted != null)) {
+        private void OnopenAttachmentOperationCompleted(object arg) {
+            if ((this.openAttachmentCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.addImageCompleted(this, new addImageCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+                this.openAttachmentCompleted(this, new openAttachmentCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -173,168 +156,68 @@ namespace OpenDentBusiness.DentalxchangePartnerService {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("", RequestNamespace="dxci.dea", ResponseNamespace="dxci.dea", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         [return: System.Xml.Serialization.XmlElementAttribute("return", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public AttachmentReferenceResponse openAttachment([System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] Credentials Credentials, [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] Attachment attachment) {
-            object[] results = this.Invoke("openAttachment", new object[] {
-                        Credentials,
-                        attachment});
-            return ((AttachmentReferenceResponse)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void openAttachmentAsync(Credentials Credentials, Attachment attachment) {
-            this.openAttachmentAsync(Credentials, attachment, null);
-        }
-        
-        /// <remarks/>
-        public void openAttachmentAsync(Credentials Credentials, Attachment attachment, object userState) {
-            if ((this.openAttachmentOperationCompleted == null)) {
-                this.openAttachmentOperationCompleted = new System.Threading.SendOrPostCallback(this.OnopenAttachmentOperationCompleted);
-            }
-            this.InvokeAsync("openAttachment", new object[] {
-                        Credentials,
-                        attachment}, this.openAttachmentOperationCompleted, userState);
-        }
-        
-        private void OnopenAttachmentOperationCompleted(object arg) {
-            if ((this.openAttachmentCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.openAttachmentCompleted(this, new openAttachmentCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("", RequestNamespace="dxci.dea", ResponseNamespace="dxci.dea", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        [return: System.Xml.Serialization.XmlElementAttribute("return", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public AttachmentReferenceResponse addNarrative([System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] Credentials Credentials, [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] AttachmentReference attachmentReference, [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] string narrative) {
-            object[] results = this.Invoke("addNarrative", new object[] {
-                        Credentials,
-                        attachmentReference,
-                        narrative});
-            return ((AttachmentReferenceResponse)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void addNarrativeAsync(Credentials Credentials, AttachmentReference attachmentReference, string narrative) {
-            this.addNarrativeAsync(Credentials, attachmentReference, narrative, null);
-        }
-        
-        /// <remarks/>
-        public void addNarrativeAsync(Credentials Credentials, AttachmentReference attachmentReference, string narrative, object userState) {
-            if ((this.addNarrativeOperationCompleted == null)) {
-                this.addNarrativeOperationCompleted = new System.Threading.SendOrPostCallback(this.OnaddNarrativeOperationCompleted);
-            }
-            this.InvokeAsync("addNarrative", new object[] {
-                        Credentials,
-                        attachmentReference,
-                        narrative}, this.addNarrativeOperationCompleted, userState);
-        }
-        
-        private void OnaddNarrativeOperationCompleted(object arg) {
-            if ((this.addNarrativeCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.addNarrativeCompleted(this, new addNarrativeCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("", RequestNamespace="dxci.dea", ResponseNamespace="dxci.dea", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        [return: System.Xml.Serialization.XmlElementAttribute("return", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public DeaResponse deleteImage([System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] Credentials credentials, [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] ImageReference imageReference) {
-            object[] results = this.Invoke("deleteImage", new object[] {
-                        credentials,
-                        imageReference});
-            return ((DeaResponse)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void deleteImageAsync(Credentials credentials, ImageReference imageReference) {
-            this.deleteImageAsync(credentials, imageReference, null);
-        }
-        
-        /// <remarks/>
-        public void deleteImageAsync(Credentials credentials, ImageReference imageReference, object userState) {
-            if ((this.deleteImageOperationCompleted == null)) {
-                this.deleteImageOperationCompleted = new System.Threading.SendOrPostCallback(this.OndeleteImageOperationCompleted);
-            }
-            this.InvokeAsync("deleteImage", new object[] {
-                        credentials,
-                        imageReference}, this.deleteImageOperationCompleted, userState);
-        }
-        
-        private void OndeleteImageOperationCompleted(object arg) {
-            if ((this.deleteImageCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.deleteImageCompleted(this, new deleteImageCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("", RequestNamespace="dxci.dea", ResponseNamespace="dxci.dea", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        [return: System.Xml.Serialization.XmlElementAttribute("return", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public DeaResponse deleteAllImages([System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] Credentials credentials, [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] AttachmentReference AttachmentReference) {
-            object[] results = this.Invoke("deleteAllImages", new object[] {
-                        credentials,
-                        AttachmentReference});
-            return ((DeaResponse)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void deleteAllImagesAsync(Credentials credentials, AttachmentReference AttachmentReference) {
-            this.deleteAllImagesAsync(credentials, AttachmentReference, null);
-        }
-        
-        /// <remarks/>
-        public void deleteAllImagesAsync(Credentials credentials, AttachmentReference AttachmentReference, object userState) {
-            if ((this.deleteAllImagesOperationCompleted == null)) {
-                this.deleteAllImagesOperationCompleted = new System.Threading.SendOrPostCallback(this.OndeleteAllImagesOperationCompleted);
-            }
-            this.InvokeAsync("deleteAllImages", new object[] {
-                        credentials,
-                        AttachmentReference}, this.deleteAllImagesOperationCompleted, userState);
-        }
-        
-        private void OndeleteAllImagesOperationCompleted(object arg) {
-            if ((this.deleteAllImagesCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.deleteAllImagesCompleted(this, new deleteAllImagesCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("", RequestNamespace="dxci.dea", ResponseNamespace="dxci.dea", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        [return: System.Xml.Serialization.XmlElementAttribute("return", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public AttachmentReferenceResponse sendCompleteAttachment([System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] Credentials Credentials, [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] Attachment attachment, [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] [System.Xml.Serialization.XmlArrayItemAttribute("attachmentImage", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)] AttachmentImage[] attachmentImages, [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] bool releaseAttachment, [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] [System.Xml.Serialization.XmlIgnoreAttribute()] bool releaseAttachmentSpecified) {
+        public AttachmentReferenceResponse sendCompleteAttachment([System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] Credentials Credentials, [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] Attachment attachment, [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] [System.Xml.Serialization.XmlArrayItemAttribute("attachmentImage", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)] AttachmentImage[] attachmentImages) {
             object[] results = this.Invoke("sendCompleteAttachment", new object[] {
                         Credentials,
                         attachment,
-                        attachmentImages,
-                        releaseAttachment,
-                        releaseAttachmentSpecified});
+                        attachmentImages});
             return ((AttachmentReferenceResponse)(results[0]));
         }
         
         /// <remarks/>
-        public void sendCompleteAttachmentAsync(Credentials Credentials, Attachment attachment, AttachmentImage[] attachmentImages, bool releaseAttachment, bool releaseAttachmentSpecified) {
-            this.sendCompleteAttachmentAsync(Credentials, attachment, attachmentImages, releaseAttachment, releaseAttachmentSpecified, null);
+        public void sendCompleteAttachmentAsync(Credentials Credentials, Attachment attachment, AttachmentImage[] attachmentImages) {
+            this.sendCompleteAttachmentAsync(Credentials, attachment, attachmentImages, null);
         }
         
         /// <remarks/>
-        public void sendCompleteAttachmentAsync(Credentials Credentials, Attachment attachment, AttachmentImage[] attachmentImages, bool releaseAttachment, bool releaseAttachmentSpecified, object userState) {
+        public void sendCompleteAttachmentAsync(Credentials Credentials, Attachment attachment, AttachmentImage[] attachmentImages, object userState) {
             if ((this.sendCompleteAttachmentOperationCompleted == null)) {
                 this.sendCompleteAttachmentOperationCompleted = new System.Threading.SendOrPostCallback(this.OnsendCompleteAttachmentOperationCompleted);
             }
             this.InvokeAsync("sendCompleteAttachment", new object[] {
                         Credentials,
                         attachment,
-                        attachmentImages,
-                        releaseAttachment,
-                        releaseAttachmentSpecified}, this.sendCompleteAttachmentOperationCompleted, userState);
+                        attachmentImages}, this.sendCompleteAttachmentOperationCompleted, userState);
         }
         
         private void OnsendCompleteAttachmentOperationCompleted(object arg) {
             if ((this.sendCompleteAttachmentCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.sendCompleteAttachmentCompleted(this, new sendCompleteAttachmentCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("", RequestNamespace="dxci.dea", ResponseNamespace="dxci.dea", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [return: System.Xml.Serialization.XmlElementAttribute("return", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public ImageReferenceResponses addImage([System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] Credentials Credentials, [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] AttachmentReference AttachmentReference, [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)] AttachmentImage attachmentImage) {
+            object[] results = this.Invoke("addImage", new object[] {
+                        Credentials,
+                        AttachmentReference,
+                        attachmentImage});
+            return ((ImageReferenceResponses)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void addImageAsync(Credentials Credentials, AttachmentReference AttachmentReference, AttachmentImage attachmentImage) {
+            this.addImageAsync(Credentials, AttachmentReference, attachmentImage, null);
+        }
+        
+        /// <remarks/>
+        public void addImageAsync(Credentials Credentials, AttachmentReference AttachmentReference, AttachmentImage attachmentImage, object userState) {
+            if ((this.addImageOperationCompleted == null)) {
+                this.addImageOperationCompleted = new System.Threading.SendOrPostCallback(this.OnaddImageOperationCompleted);
+            }
+            this.InvokeAsync("addImage", new object[] {
+                        Credentials,
+                        AttachmentReference,
+                        attachmentImage}, this.addImageOperationCompleted, userState);
+        }
+        
+        private void OnaddImageOperationCompleted(object arg) {
+            if ((this.addImageCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.addImageCompleted(this, new addImageCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -358,7 +241,7 @@ namespace OpenDentBusiness.DentalxchangePartnerService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.9032.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -440,7 +323,427 @@ namespace OpenDentBusiness.DentalxchangePartnerService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.9032.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.dea")]
+    public partial class AttachmentImage {
+        
+        private imageTypeCode imageTypeCodeField;
+        
+        private bool imageTypeCodeFieldSpecified;
+        
+        private byte[] imageFileAsBase64Field;
+        
+        private string imageFileNameField;
+        
+        private orientationType imageOrientationTypeField;
+        
+        private bool imageOrientationTypeFieldSpecified;
+        
+        private string vendorImageIdField;
+        
+        private System.DateTime imageDateField;
+        
+        private bool imageDateFieldSpecified;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public imageTypeCode ImageTypeCode {
+            get {
+                return this.imageTypeCodeField;
+            }
+            set {
+                this.imageTypeCodeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ImageTypeCodeSpecified {
+            get {
+                return this.imageTypeCodeFieldSpecified;
+            }
+            set {
+                this.imageTypeCodeFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, DataType="base64Binary")]
+        public byte[] ImageFileAsBase64 {
+            get {
+                return this.imageFileAsBase64Field;
+            }
+            set {
+                this.imageFileAsBase64Field = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string ImageFileName {
+            get {
+                return this.imageFileNameField;
+            }
+            set {
+                this.imageFileNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public orientationType ImageOrientationType {
+            get {
+                return this.imageOrientationTypeField;
+            }
+            set {
+                this.imageOrientationTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ImageOrientationTypeSpecified {
+            get {
+                return this.imageOrientationTypeFieldSpecified;
+            }
+            set {
+                this.imageOrientationTypeFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string VendorImageId {
+            get {
+                return this.vendorImageIdField;
+            }
+            set {
+                this.vendorImageIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, DataType="date")]
+        public System.DateTime ImageDate {
+            get {
+                return this.imageDateField;
+            }
+            set {
+                this.imageDateField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ImageDateSpecified {
+            get {
+                return this.imageDateFieldSpecified;
+            }
+            set {
+                this.imageDateFieldSpecified = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.dea")]
+    public enum imageTypeCode {
+        
+        /// <remarks/>
+        B4,
+        
+        /// <remarks/>
+        DA,
+        
+        /// <remarks/>
+        DG,
+        
+        /// <remarks/>
+        EB,
+        
+        /// <remarks/>
+        OZ,
+        
+        /// <remarks/>
+        P6,
+        
+        /// <remarks/>
+        RB,
+        
+        /// <remarks/>
+        RR,
+        
+        /// <remarks/>
+        XP,
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlEnumAttribute("03")]
+        Item03,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.dea")]
+    public enum orientationType {
+        
+        /// <remarks/>
+        LEFT,
+        
+        /// <remarks/>
+        RIGHT,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.dea")]
+    public partial class ImageReference {
+        
+        private int imageReferenceIdField;
+        
+        private bool imageReferenceIdFieldSpecified;
+        
+        private string vendorImageIdField;
+        
+        /// <remarks/>
+        public int ImageReferenceId {
+            get {
+                return this.imageReferenceIdField;
+            }
+            set {
+                this.imageReferenceIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ImageReferenceIdSpecified {
+            get {
+                return this.imageReferenceIdFieldSpecified;
+            }
+            set {
+                this.imageReferenceIdFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string VendorImageId {
+            get {
+                return this.vendorImageIdField;
+            }
+            set {
+                this.vendorImageIdField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.dea")]
+    public partial class AttachmentReference {
+        
+        private string attachmentIDField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string AttachmentID {
+            get {
+                return this.attachmentIDField;
+            }
+            set {
+                this.attachmentIDField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.common")]
+    public partial class Status {
+        
+        private int codeField;
+        
+        private string descriptionField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public int code {
+            get {
+                return this.codeField;
+            }
+            set {
+                this.codeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public string description {
+            get {
+                return this.descriptionField;
+            }
+            set {
+                this.descriptionField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(DeaResponse))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ImageReferenceResponse))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ImageReferenceResponses))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(AttachmentReferenceResponse))]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.common")]
+    public abstract partial class Response {
+        
+        private Status statusField;
+        
+        private string[] messagesField;
+        
+        /// <remarks/>
+        public Status Status {
+            get {
+                return this.statusField;
+            }
+            set {
+                this.statusField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute("Message", IsNullable=false)]
+        public string[] Messages {
+            get {
+                return this.messagesField;
+            }
+            set {
+                this.messagesField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ImageReferenceResponse))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ImageReferenceResponses))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(AttachmentReferenceResponse))]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.dea")]
+    public partial class DeaResponse : Response {
+        
+        private bool msgSuccessField;
+        
+        /// <remarks/>
+        public bool MsgSuccess {
+            get {
+                return this.msgSuccessField;
+            }
+            set {
+                this.msgSuccessField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.dea")]
+    public partial class ImageReferenceResponse : DeaResponse {
+        
+        private ImageReference imageReferenceField;
+        
+        private string newSecurityTokenField;
+        
+        /// <remarks/>
+        public ImageReference ImageReference {
+            get {
+                return this.imageReferenceField;
+            }
+            set {
+                this.imageReferenceField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string NewSecurityToken {
+            get {
+                return this.newSecurityTokenField;
+            }
+            set {
+                this.newSecurityTokenField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.dea")]
+    public partial class ImageReferenceResponses : DeaResponse {
+        
+        private ImageReferenceResponse[] imageReferenceResponses1Field;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute("ImageReferenceResponses", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [System.Xml.Serialization.XmlArrayItemAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+        public ImageReferenceResponse[] ImageReferenceResponses1 {
+            get {
+                return this.imageReferenceResponses1Field;
+            }
+            set {
+                this.imageReferenceResponses1Field = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.dea")]
+    public partial class AttachmentReferenceResponse : DeaResponse {
+        
+        private AttachmentReference attachmentReferenceField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public AttachmentReference AttachmentReference {
+            get {
+                return this.attachmentReferenceField;
+            }
+            set {
+                this.attachmentReferenceField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.3752.0")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -450,10 +753,6 @@ namespace OpenDentBusiness.DentalxchangePartnerService {
         private int claimIdField;
         
         private bool claimIdFieldSpecified;
-        
-        private int groupIdField;
-        
-        private bool groupIdFieldSpecified;
         
         private string providerClaimIDField;
         
@@ -532,28 +831,6 @@ namespace OpenDentBusiness.DentalxchangePartnerService {
             }
             set {
                 this.claimIdFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public int GroupId {
-            get {
-                return this.groupIdField;
-            }
-            set {
-                this.groupIdField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool GroupIdSpecified {
-            get {
-                return this.groupIdFieldSpecified;
-            }
-            set {
-                this.groupIdFieldSpecified = value;
             }
         }
         
@@ -878,535 +1155,11 @@ namespace OpenDentBusiness.DentalxchangePartnerService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.9032.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.dea")]
-    public partial class ImageReference {
-        
-        private int imageReferenceIdField;
-        
-        private bool imageReferenceIdFieldSpecified;
-        
-        private string vendorImageIdField;
-        
-        /// <remarks/>
-        public int ImageReferenceId {
-            get {
-                return this.imageReferenceIdField;
-            }
-            set {
-                this.imageReferenceIdField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool ImageReferenceIdSpecified {
-            get {
-                return this.imageReferenceIdFieldSpecified;
-            }
-            set {
-                this.imageReferenceIdFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string VendorImageId {
-            get {
-                return this.vendorImageIdField;
-            }
-            set {
-                this.vendorImageIdField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.9032.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.common")]
-    public partial class Status {
-        
-        private int codeField;
-        
-        private string descriptionField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public int code {
-            get {
-                return this.codeField;
-            }
-            set {
-                this.codeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string description {
-            get {
-                return this.descriptionField;
-            }
-            set {
-                this.descriptionField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(DeaResponse))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ImageReferenceResponse))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ImageReferenceResponses))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(AttachmentReferenceResponse))]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.9032.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.common")]
-    public abstract partial class Response {
-        
-        private Status statusField;
-        
-        private string[] messagesField;
-        
-        /// <remarks/>
-        public Status Status {
-            get {
-                return this.statusField;
-            }
-            set {
-                this.statusField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("Message", IsNullable=false)]
-        public string[] Messages {
-            get {
-                return this.messagesField;
-            }
-            set {
-                this.messagesField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ImageReferenceResponse))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ImageReferenceResponses))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(AttachmentReferenceResponse))]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.9032.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.dea")]
-    public partial class DeaResponse : Response {
-        
-        private bool msgSuccessField;
-        
-        private string transactionIdField;
-        
-        /// <remarks/>
-        public bool MsgSuccess {
-            get {
-                return this.msgSuccessField;
-            }
-            set {
-                this.msgSuccessField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="integer")]
-        public string TransactionId {
-            get {
-                return this.transactionIdField;
-            }
-            set {
-                this.transactionIdField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.9032.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.dea")]
-    public partial class ImageReferenceResponse : DeaResponse {
-        
-        private ImageReference imageReferenceField;
-        
-        private string newSecurityTokenField;
-        
-        /// <remarks/>
-        public ImageReference ImageReference {
-            get {
-                return this.imageReferenceField;
-            }
-            set {
-                this.imageReferenceField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string NewSecurityToken {
-            get {
-                return this.newSecurityTokenField;
-            }
-            set {
-                this.newSecurityTokenField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.9032.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.dea")]
-    public partial class ImageReferenceResponses : DeaResponse {
-        
-        private ImageReferenceResponse[] imageReferenceResponses1Field;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute("ImageReferenceResponses", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        [System.Xml.Serialization.XmlArrayItemAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
-        public ImageReferenceResponse[] ImageReferenceResponses1 {
-            get {
-                return this.imageReferenceResponses1Field;
-            }
-            set {
-                this.imageReferenceResponses1Field = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.9032.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.dea")]
-    public partial class AttachmentReferenceResponse : DeaResponse {
-        
-        private AttachmentReference attachmentReferenceField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public AttachmentReference AttachmentReference {
-            get {
-                return this.attachmentReferenceField;
-            }
-            set {
-                this.attachmentReferenceField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.9032.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.dea")]
-    public partial class AttachmentReference {
-        
-        private string attachmentIDField;
-        
-        private string deliveryAttachmentIDField;
-        
-        private bool releaseAttachmentField;
-        
-        private bool releaseAttachmentFieldSpecified;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string AttachmentID {
-            get {
-                return this.attachmentIDField;
-            }
-            set {
-                this.attachmentIDField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string DeliveryAttachmentID {
-            get {
-                return this.deliveryAttachmentIDField;
-            }
-            set {
-                this.deliveryAttachmentIDField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public bool ReleaseAttachment {
-            get {
-                return this.releaseAttachmentField;
-            }
-            set {
-                this.releaseAttachmentField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool ReleaseAttachmentSpecified {
-            get {
-                return this.releaseAttachmentFieldSpecified;
-            }
-            set {
-                this.releaseAttachmentFieldSpecified = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.9032.0")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.dea")]
-    public partial class AttachmentImage {
-        
-        private imageTypeCode imageTypeCodeField;
-        
-        private bool imageTypeCodeFieldSpecified;
-        
-        private byte[] imageFileAsBase64Field;
-        
-        private string imageFileNameField;
-        
-        private orientationType imageOrientationTypeField;
-        
-        private bool imageOrientationTypeFieldSpecified;
-        
-        private string vendorImageIdField;
-        
-        private System.DateTime imageDateField;
-        
-        private bool imageDateFieldSpecified;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public imageTypeCode ImageTypeCode {
-            get {
-                return this.imageTypeCodeField;
-            }
-            set {
-                this.imageTypeCodeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool ImageTypeCodeSpecified {
-            get {
-                return this.imageTypeCodeFieldSpecified;
-            }
-            set {
-                this.imageTypeCodeFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, DataType="base64Binary")]
-        public byte[] ImageFileAsBase64 {
-            get {
-                return this.imageFileAsBase64Field;
-            }
-            set {
-                this.imageFileAsBase64Field = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string ImageFileName {
-            get {
-                return this.imageFileNameField;
-            }
-            set {
-                this.imageFileNameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public orientationType ImageOrientationType {
-            get {
-                return this.imageOrientationTypeField;
-            }
-            set {
-                this.imageOrientationTypeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool ImageOrientationTypeSpecified {
-            get {
-                return this.imageOrientationTypeFieldSpecified;
-            }
-            set {
-                this.imageOrientationTypeFieldSpecified = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string VendorImageId {
-            get {
-                return this.vendorImageIdField;
-            }
-            set {
-                this.vendorImageIdField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, DataType="date")]
-        public System.DateTime ImageDate {
-            get {
-                return this.imageDateField;
-            }
-            set {
-                this.imageDateField = value;
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool ImageDateSpecified {
-            get {
-                return this.imageDateFieldSpecified;
-            }
-            set {
-                this.imageDateFieldSpecified = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.9032.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.dea")]
-    public enum imageTypeCode {
-        
-        /// <remarks/>
-        B4,
-        
-        /// <remarks/>
-        DA,
-        
-        /// <remarks/>
-        DG,
-        
-        /// <remarks/>
-        EB,
-        
-        /// <remarks/>
-        OZ,
-        
-        /// <remarks/>
-        P6,
-        
-        /// <remarks/>
-        RB,
-        
-        /// <remarks/>
-        RR,
-        
-        /// <remarks/>
-        XP,
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlEnumAttribute("03")]
-        Item03,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.8.9032.0")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="dxci.dea")]
-    public enum orientationType {
-        
-        /// <remarks/>
-        LEFT,
-        
-        /// <remarks/>
-        RIGHT,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
-    public delegate void addImageCompletedEventHandler(object sender, addImageCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class addImageCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal addImageCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ImageReferenceResponses Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ImageReferenceResponses)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
-    public delegate void submitAttachmentCompletedEventHandler(object sender, submitAttachmentCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class submitAttachmentCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal submitAttachmentCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public DeaResponse Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((DeaResponse)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
     public delegate void openAttachmentCompletedEventHandler(object sender, openAttachmentCompletedEventArgs e);
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class openAttachmentCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
@@ -1428,44 +1181,18 @@ namespace OpenDentBusiness.DentalxchangePartnerService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
-    public delegate void addNarrativeCompletedEventHandler(object sender, addNarrativeCompletedEventArgs e);
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
+    public delegate void submitAttachmentCompletedEventHandler(object sender, submitAttachmentCompletedEventArgs e);
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class addNarrativeCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+    public partial class submitAttachmentCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
         
-        internal addNarrativeCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public AttachmentReferenceResponse Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((AttachmentReferenceResponse)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
-    public delegate void deleteImageCompletedEventHandler(object sender, deleteImageCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class deleteImageCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal deleteImageCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+        internal submitAttachmentCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }
@@ -1480,37 +1207,11 @@ namespace OpenDentBusiness.DentalxchangePartnerService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
-    public delegate void deleteAllImagesCompletedEventHandler(object sender, deleteAllImagesCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class deleteAllImagesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal deleteAllImagesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public DeaResponse Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((DeaResponse)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
     public delegate void sendCompleteAttachmentCompletedEventHandler(object sender, sendCompleteAttachmentCompletedEventArgs e);
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class sendCompleteAttachmentCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
@@ -1527,6 +1228,32 @@ namespace OpenDentBusiness.DentalxchangePartnerService {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((AttachmentReferenceResponse)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
+    public delegate void addImageCompletedEventHandler(object sender, addImageCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3752.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class addImageCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal addImageCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ImageReferenceResponses Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ImageReferenceResponses)(this.results[0]));
             }
         }
     }

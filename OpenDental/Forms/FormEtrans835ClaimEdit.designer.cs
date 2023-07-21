@@ -52,6 +52,7 @@ namespace OpenDental{
 			this.gridClaimAdjustments = new OpenDental.UI.GridOD();
 			this.gridAdjudicationInfo = new OpenDental.UI.GridOD();
 			this.gridProcedureBreakdown = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.gridSupplementalInfo = new OpenDental.UI.GridOD();
 			this.textDatePayerReceived = new System.Windows.Forms.TextBox();
 			this.label11 = new System.Windows.Forms.Label();
@@ -326,6 +327,16 @@ namespace OpenDental{
 			this.gridProcedureBreakdown.TranslationName = "FormEtrans835Edit";
 			this.gridProcedureBreakdown.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridProcedureBreakdown_CellDoubleClick);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(890, 664);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// gridSupplementalInfo
 			// 
 			this.gridSupplementalInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -416,6 +427,7 @@ namespace OpenDental{
 			this.Controls.Add(this.textPatientName);
 			this.Controls.Add(this.label8);
 			this.Controls.Add(this.gridProcedureBreakdown);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEtrans835ClaimEdit";
 			this.Text = "Claim Explanation of Benefits (EOB)";
@@ -429,6 +441,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GridOD gridProcedureBreakdown;
 		private System.Windows.Forms.TextBox textPatientName;
 		private System.Windows.Forms.Label label8;

@@ -35,7 +35,7 @@ namespace OpenDental {
 		///<summary>Clear the DateTime value which is used as the lock. Requires SecurityAdmin permission.</summary>
 		private void butClearAgingBeginDateT_Click(object sender,EventArgs e) {
 			//user doesn't have permission or the pref is already cleared
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin) || PrefC.GetDateT(PrefName.AgingBeginDateTime)==DateTime.MinValue) {//blank=DateTime.MinValue
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin) || PrefC.GetDateT(PrefName.AgingBeginDateTime)==DateTime.MinValue) {//blank=DateTime.MinValue
 				return;
 			}
 			if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"This will override the lock on the famaging table, potentially allowing a second connection to start "

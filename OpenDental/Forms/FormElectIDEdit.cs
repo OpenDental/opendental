@@ -79,7 +79,7 @@ namespace OpenDental {
 			return;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textPayerID.Text=="") {
 				MsgBox.Show(this,"Payer ID cannot be blank.");
 				return;
@@ -99,6 +99,10 @@ namespace OpenDental {
 				ElectIDs.Update(ElectIDCur);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

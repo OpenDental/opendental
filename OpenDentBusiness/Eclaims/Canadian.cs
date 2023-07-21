@@ -920,15 +920,9 @@ namespace OpenDentBusiness.Eclaims {
 				claim.DateSentOrig=claim.DateSent;
 				claim.ClaimStatus="S";//Reflect changes in cached object.
 			}
-			Family fam=null;
-			List<InsSub> subList=null;
-			List<InsPlan> planList=null;
-			List<Benefit> benefitList=null;
-			bool assignBenInsSub=Claims.GetAssignmentOfBenefits(claim,insSub);
 			CCDFieldInputter fieldInputter2=null;
 			bool canCreateSecClaim=(claim.ClaimType!="PreAuth" && claim.ClaimType!="S" && etransAck.Etype==EtransType.ClaimEOB_CA && planNum2>0);
-			bool hasImportedPrimaryEmbeddedEOB=false;
-			if(fieldInputter!=null && fieldInputter.GetValue("G39")!="" && fieldInputter.GetValue("G39")!="0000") {//There exists an embedded message within the response.
+			if(fieldInputter.GetValue("G39")!="" && fieldInputter.GetValue("G39")!="0000") {//There exists an embedded message within the response.
 				embeddedMsg=fieldInputter.GetValue("G40");
 				fieldInputter2=new CCDFieldInputter(embeddedMsg);
 				if(canCreateSecClaim && fieldInputter2.GetFieldById("A05").valuestr==carrier2.ElectID) {//Is the embedded message for the secondary carrier?
@@ -945,17 +939,6 @@ namespace OpenDentBusiness.Eclaims {
 					result=sbPrimaryOnly.ToString();
 				}
 				else {
-					if(assignBenInsSub && clearinghouseClin.IsEraDownloadAllowed!=EraBehaviors.None && (fieldInputter2.MsgType.In("21","23"))
-						&& fieldInputter2.GetFieldById("A05").valuestr==carrier.ElectID)//Both the response and the embedded response are for the primary carrier (ex Alberta Blue Cross).
-					{
-						fam=Patients.GetFamily(claim.PatNum);
-						subList=InsSubs.RefreshForFam(fam);
-						planList=InsPlans.RefreshForSubList(subList);
-						benefitList=Benefits.Refresh(patPlansForPatient,subList);
-						EOBImportHelper(fieldInputter2,claimProcsClaim,procListAll,claimProcList,claim,false,showProviderTransferWindow,clearinghouseClin.IsEraDownloadAllowed
-							,planList,benefitList,subList,patient);
-						hasImportedPrimaryEmbeddedEOB=true;
-					}
 					canCreateSecClaim=false;
 				}
 			}
@@ -964,37 +947,42 @@ namespace OpenDentBusiness.Eclaims {
 			etrans.AckEtransNum=etransAck.EtransNum;
 			Etranss.Update(etrans);
 			Etranss.SetMessage(etrans.EtransNum,strb.ToString());//Save outgoing history.
+			Family fam=null;
+			List<InsSub> subList=null;
+			List<InsPlan> planList=null;
+			List<Benefit> benefitList=null;
+			bool assignBenInsSub=Claims.GetAssignmentOfBenefits(claim,insSub);
 			if(errorMsg!="") {
 				throw new ApplicationException(errorMsg);
 			}
 			else if(assignBenInsSub && clearinghouseClin.IsEraDownloadAllowed!=EraBehaviors.None && (fieldInputter.MsgType.In("21","23"))) {
 				//EOB and Predetermination EOB
-				if(fam==null) {//Could have been loaded already above.  If fam is null, then so is subList, planList, and benefitList.
-					fam=Patients.GetFamily(claim.PatNum);
-					subList=InsSubs.RefreshForFam(fam);
-					planList=InsPlans.RefreshForSubList(subList);
-					benefitList=Benefits.Refresh(patPlansForPatient,subList);
-				}
+				fam=Patients.GetFamily(claim.PatNum);
+				subList=InsSubs.RefreshForFam(fam);
+				planList=InsPlans.RefreshForSubList(subList);
+				benefitList=Benefits.Refresh(patPlansForPatient,subList);
 				EOBImportHelper(fieldInputter,claimProcsClaim,procListAll,claimProcList,claim,false,showProviderTransferWindow,clearinghouseClin.IsEraDownloadAllowed
-					,planList,benefitList,subList,patient,isAdditive:hasImportedPrimaryEmbeddedEOB);
-				SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,claim.PatNum
+					,planList,benefitList,subList,patient);
+				SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,claim.PatNum
 					,"Claim for service date "+POut.Date(claim.DateService)+" amounts overwritten using received EOB amounts."
 					,LogSources.CanadaEobAutoImport);
 			}
-			CCDField fieldTransRefNum=fieldInputter.GetFieldById("G01");
-			if(fieldTransRefNum!=null && fieldTransRefNum.valuestr!=null) {
-				if(etransAck.AckCode!="R") {
-					if(fieldTransRefNum.valuestr.Trim()=="") {
-						//Sometimes the transaction reference number is not set in the response.  Will come back as all spaces.
-						//In this case we have to leave the reference number on the claim empty so that the Reverse button in the Claim Edit window is disabled.
-						claim.CanadaTransRefNum="";
+			if(claim.ClaimType!="PreAuth") {
+				CCDField fieldTransRefNum=fieldInputter.GetFieldById("G01");
+				if(fieldTransRefNum!=null && fieldTransRefNum.valuestr!=null) {
+					if(etransAck.AckCode!="R") {
+						if(fieldTransRefNum.valuestr.Trim()=="") {
+							//Sometimes the transaction reference number is not set in the response.  Will come back as all spaces.
+							//In this case we have to leave the reference number on the claim empty so that the Reverse button in the Claim Edit window is disabled.
+							claim.CanadaTransRefNum="";
+						}
+						else {
+							//The transaction reference number is left justified and padded with spaces on the right.
+							//We have to save this number exactly as reported to us (including spaces) so the insurance company can recognize claim reversals.
+							claim.CanadaTransRefNum=fieldTransRefNum.valuestr;
+						}
+						Claims.Update(claim);
 					}
-					else {
-						//The transaction reference number is left justified and padded with spaces on the right.
-						//We have to save this number exactly as reported to us (including spaces) so the insurance company can recognize claim reversals.
-						claim.CanadaTransRefNum=fieldTransRefNum.valuestr;
-					}
-					Claims.Update(claim);
 				}
 			}
 			if(doPrint && formCCDPrint!=null) {
@@ -1040,74 +1028,72 @@ namespace OpenDentBusiness.Eclaims {
 					subList,patient,patNote,listSelectedProcs,"",insPlan2,insSub2,patRelat2);
 				}
 				catch{}
-				if(claim2.ClaimNum > 0) {//ClaimNum will be set if the secondary claim was created successfully.
-					if(claim.ProvBill!=claim2.ProvBill || claim.ProvTreat!=claim2.ProvTreat) {
-						//The billing and treating providers need to be the same on the secondary claim as they were on the primary claim.
-						//This is particularly necessary when the primary claim has a secondary provider set as the Treating Provider.
-						claim2.ProvBill=claim.ProvBill;
-						claim2.ProvTreat=claim.ProvTreat;
-						Claims.Update(claim2);
+				if(claim.ProvBill!=claim2.ProvBill || claim.ProvTreat!=claim2.ProvTreat) {
+					//The billing and treating providers need to be the same on the secondary claim as they were on the primary claim.
+					//This is particularly necessary when the primary claim has a secondary provider set as the Treating Provider.
+					claim2.ProvBill=claim.ProvBill;
+					claim2.ProvTreat=claim.ProvTreat;
+					Claims.Update(claim2);
+				}
+				queueItem2=Claims.GetQueueList(claim2.ClaimNum,claim2.ClinicNum,0)[0];
+				if(embeddedMsg.IsNullOrEmpty()) {//No embedded secondary response
+					string responseMessageVersion=result.Substring(18,2);//Field A03 always exists on all messages and is always in the same location.
+					//We can only send an electronic secondary claim when the EOB received from the primary insurance is a version 04 message and when
+					//the secondary carrier accepts secondary claims electronically (COBs). Otherwise, the user must send the claim by paper.
+					if(responseMessageVersion!="02" && carrier2.IsCDA && carrier2.NoSendElect==NoSendElectType.SendElect
+						&& carrier2.CanadianSupportedTypes.HasFlag(CanSupTransTypes.CobClaimTransaction_07))
+					{
+						SendClaim(clearinghouseClin,queueItem2,doPrint,isAutomatic,formCCDPrint,showProviderTransferWindow,
+							printCdaClaimFormDelegate);//recursive
+						return queueItem2.ClaimNum;
 					}
-					queueItem2=Claims.GetQueueList(claim2.ClaimNum,claim2.ClinicNum,0)[0];
-					if(embeddedMsg.IsNullOrEmpty()) {//No embedded secondary response
-						string responseMessageVersion=result.Substring(18,2);//Field A03 always exists on all messages and is always in the same location.
-						//We can only send an electronic secondary claim when the EOB received from the primary insurance is a version 04 message and when
-						//the secondary carrier accepts secondary claims electronically (COBs). Otherwise, the user must send the claim by paper.
-						if(responseMessageVersion!="02" && carrier2.IsCDA && carrier2.NoSendElect==NoSendElectType.SendElect
-							&& carrier2.CanadianSupportedTypes.HasFlag(CanSupTransTypes.CobClaimTransaction_07))
-						{
-							SendClaim(clearinghouseClin,queueItem2,doPrint,isAutomatic,formCCDPrint,showProviderTransferWindow,
-								printCdaClaimFormDelegate);//recursive
-							return queueItem2.ClaimNum;
-						}
-						//The secondary carrier does not support COB claim transactions. We must print a manual claim form so the user can send manually.
-						if(doPrint) {
+					//The secondary carrier does not support COB claim transactions. We must print a manual claim form so the user can send manually.
+					if(doPrint) {
+						printCdaClaimFormDelegate(claim2);
+					}
+				}
+				else {//Embedded secondary response
+					Etrans etrans2=CreateEtransForSendClaim(queueItem2.ClaimNum,queueItem2.PatNum,clearinghouseClin.HqClearinghouseNum,EtransType.ClaimCOB_CA);//Can throw exception
+					Etrans etransAck2=new Etrans();
+					etransAck2.PatNum=etrans2.PatNum;
+					etransAck2.PlanNum=etrans2.PlanNum;
+					etransAck2.InsSubNum=etrans2.InsSubNum;
+					etransAck2.CarrierNum=etrans2.CarrierNum;
+					etransAck2.ClaimNum=etrans2.ClaimNum;
+					etransAck2.DateTimeTrans=DateTime.Now;
+					etransAck2.UserNum=Security.CurUser.UserNum;
+					//embedded response occurs when patient has the same carrier for primary and secondary so an embedded response is a COB by default
+					etransAck2.Etype=EtransType.ClaimCOB_CA;
+					Claims.SetClaimSent(queueItem2.ClaimNum);//No error, safe to set sent.
+					claim2.DateSent=MiscData.GetNowDateTime();
+					claim2.DateSentOrig=claim2.DateSent;
+					claim2.ClaimStatus="S";//Reflect changes in cached object.
+					CCDField embeddedFieldG05=fieldInputter2.GetFieldById("G05");
+					if(embeddedFieldG05!=null) {
+						etransAck.AckCode=embeddedFieldG05.valuestr;
+						if(etransAck.AckCode=="M") { //Manually print the claim form.
 							printCdaClaimFormDelegate(claim2);
 						}
 					}
-					else {//Embedded secondary response
-						Etrans etrans2=CreateEtransForSendClaim(queueItem2.ClaimNum,queueItem2.PatNum,clearinghouseClin.HqClearinghouseNum,EtransType.ClaimCOB_CA);//Can throw exception
-						Etrans etransAck2=new Etrans();
-						etransAck2.PatNum=etrans2.PatNum;
-						etransAck2.PlanNum=etrans2.PlanNum;
-						etransAck2.InsSubNum=etrans2.InsSubNum;
-						etransAck2.CarrierNum=etrans2.CarrierNum;
-						etransAck2.ClaimNum=etrans2.ClaimNum;
-						etransAck2.DateTimeTrans=DateTime.Now;
-						etransAck2.UserNum=Security.CurUser.UserNum;
-						//embedded response occurs when patient has the same carrier for primary and secondary so an embedded response is a COB by default
-						etransAck2.Etype=EtransType.ClaimCOB_CA;
-						Claims.SetClaimSent(queueItem2.ClaimNum);//No error, safe to set sent.
-						claim2.DateSent=MiscData.GetNowDateTime();
-						claim2.DateSentOrig=claim2.DateSent;
-						claim2.ClaimStatus="S";//Reflect changes in cached object.
-						CCDField embeddedFieldG05=fieldInputter2.GetFieldById("G05");
-						if(embeddedFieldG05!=null) {
-							etransAck.AckCode=embeddedFieldG05.valuestr;
-							if(etransAck.AckCode=="M") { //Manually print the claim form.
-								printCdaClaimFormDelegate(claim2);
-							}
-						}
-						Etranss.Insert(etransAck2);
-						Etranss.SetMessage(etransAck2.EtransNum,embeddedMsg);//Save incomming history.
-						etrans2.AckEtransNum=etransAck2.EtransNum;
-						Etranss.Update(etrans2);
-						Etranss.SetMessage(etrans2.EtransNum,strb.ToString());//Save outgoing history.  Same as sent primary eclaim.
-						//This mimics logic earlier in SendClaim(...) to make sure we're handling the embedded response appropriately
-						bool assignBenInsSub2=Claims.GetAssignmentOfBenefits(claim,insSub2);
-						if(assignBenInsSub2 && clearinghouseClin.IsEraDownloadAllowed!=EraBehaviors.None && fieldInputter2.MsgType.In("21","23")) {
-							benefitList=Benefits.Refresh(patPlansForPatient,subList);
-							claimProcList=ClaimProcs.Refresh(queueItem2.PatNum);
-							List<ClaimProc> claimProcsClaim2=ClaimProcs.GetForSendClaim(claimProcList,claim2.ClaimNum);
-							EOBImportHelper(fieldInputter2,claimProcsClaim2,procListAll,claimProcList,claim2,false,showProviderTransferWindow,clearinghouseClin.IsEraDownloadAllowed
-								,planList,benefitList,subList,patient);
-							SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,claim2.PatNum
-								,"Claim for service date "+POut.Date(claim2.DateService)+" amounts overwritten using received EOB amounts."
-								,LogSources.CanadaEobAutoImport);
-						}
-						if(doPrint && formCCDPrint!=null) {
-							formCCDPrint(etrans2,embeddedMsg,true);//Physically print the form.
-						}
+					Etranss.Insert(etransAck2);
+					Etranss.SetMessage(etransAck2.EtransNum,embeddedMsg);//Save incomming history.
+					etrans2.AckEtransNum=etransAck2.EtransNum;
+					Etranss.Update(etrans2);
+					Etranss.SetMessage(etrans2.EtransNum,strb.ToString());//Save outgoing history.  Same as sent primary eclaim.
+					//This mimics logic earlier in SendClaim(...) to make sure we're handling the embedded response appropriately
+					bool assignBenInsSub2=Claims.GetAssignmentOfBenefits(claim,insSub2);
+					if(assignBenInsSub2 && clearinghouseClin.IsEraDownloadAllowed!=EraBehaviors.None && fieldInputter2.MsgType.In("21","23")) {
+						benefitList=Benefits.Refresh(patPlansForPatient,subList);
+						claimProcList=ClaimProcs.Refresh(queueItem2.PatNum);
+						List<ClaimProc> claimProcsClaim2=ClaimProcs.GetForSendClaim(claimProcList,claim2.ClaimNum);
+						EOBImportHelper(fieldInputter2,claimProcsClaim2,procListAll,claimProcList,claim2,false,showProviderTransferWindow,clearinghouseClin.IsEraDownloadAllowed
+							,planList,benefitList,subList,patient);
+						SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,claim2.PatNum
+							,"Claim for service date "+POut.Date(claim2.DateService)+" amounts overwritten using received EOB amounts."
+							,LogSources.CanadaEobAutoImport);
+					}
+					if(doPrint && formCCDPrint!=null) {
+						formCCDPrint(etrans2,embeddedMsg,true);//Physically print the form.
 					}
 				}
 			}
@@ -1143,16 +1129,15 @@ namespace OpenDentBusiness.Eclaims {
 		}
 		
 		///<summary>Helper method that loops through given listClaimProcsForClaim and does various claimProc related updates depending on fieldInputter.MsgType.
-		///Currently only applies to EOB and Predetermination EOBs. Lab procedures are discovered and updated in listClaimProcs as claimprocs from listClaimProcsForClaim are updated.
-		///The following parameters need to be set if eobBehavior is DownloadDoNotReceive: listInsPlans, listBenefits, listInsSubs.
-		///For eraBehavior, do not pass in None. Set isAdditive to true to add imported amounts to claimprocs instead of overwriting claimproc amounts.</summary>
+		///Currently only applies to EOB and Predetermination EOBs. listLabProcs and listClaimProcs are used to pull information regarding lab procedures.
+		///The following parameters need to be set if eobBehavior is DownloadDoNotReceive: listInsPlans, listBenefits, listInsSubs, patAge.
+		///For eraBehavior, do not pass in None.</summary>
 		public static void EOBImportHelper(CCDFieldInputter fieldInputter,List<ClaimProc> listClaimProcsForClaim,List<Procedure> listPatProcs,
 			List<ClaimProc> listClaimProcs,Claim claim,bool isAutomatic,ShowProviderTransferWindowDelegate showProviderTransferWindow,EraBehaviors eobBehavior,
-			List<InsPlan> listInsPlans,List<Benefit> listBenefits,List<InsSub> listInsSubs,Patient patient,bool isAdditive=false)
+			List<InsPlan> listInsPlans,List<Benefit> listBenefits,List<InsSub> listInsSubs,Patient patient)//int patAge)
 		{
-			bool hasExistingPayments=(listClaimProcsForClaim.Exists(x => x.Status.In(ClaimProcStatus.Received,ClaimProcStatus.Supplemental,ClaimProcStatus.CapComplete) || x.ClaimPaymentNum!=0));
 			if(!fieldInputter.MsgType.In("21","23") //Currently only supports EOB and predetermination EOBs.
-				|| (hasExistingPayments && !isAdditive))//Mimics FormClaimEdit.cs by proc button.
+				|| (listClaimProcsForClaim.Exists(x => x.Status.In(ClaimProcStatus.Received,ClaimProcStatus.Supplemental,ClaimProcStatus.CapComplete) || x.ClaimPaymentNum!=0)))//Mimics FormClaimEdit.cs by proc button.
 			{
 				return;
 			}
@@ -1160,13 +1145,11 @@ namespace OpenDentBusiness.Eclaims {
 				return;
 			}
 			//Delete any pre existing claimProc total payment rows if any since we will be creating our own.
-			if(!isAdditive) {
-				for(int i=listClaimProcsForClaim.Count-1;i>=0;i--) {
-					ClaimProc cp=listClaimProcsForClaim[i];
-					if(cp.ProcNum==0) {
-						ClaimProcs.Delete(cp);
-						listClaimProcsForClaim.Remove(cp);
-					}
+			for(int i=listClaimProcsForClaim.Count-1;i>=0;i--) {
+				ClaimProc cp=listClaimProcsForClaim[i];
+				if(cp.ProcNum==0) {
+					ClaimProcs.Delete(cp);
+					listClaimProcsForClaim.Remove(cp);
 				}
 			}
 			bool isPreEob=(fieldInputter.MsgType=="23");
@@ -1227,23 +1210,23 @@ namespace OpenDentBusiness.Eclaims {
 							break;
 						case "G13"://Deductible Amount
 							if(isPreEob) {
-								SetAmt(ref claimProcCur.DedEst,PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr)),isAdditive);
+								claimProcCur.DedEst=PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr));
 							}
 							else {
-								SetAmt(ref claimProcCur.DedApplied,PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr)),isAdditive);
+								claimProcCur.DedApplied=PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr));
 							}
 							break;
 						case "G14"://Eligible Percentage
-							SetAmt(ref claimProcCur.Percentage,PIn.Int(RawPercentToDisplayPercent(field.valuestr)),isAdditive);
+							claimProcCur.Percentage=PIn.Int(RawPercentToDisplayPercent(field.valuestr));
 							break;
 						case "G15"://Benefit Amount for the Procedure
 							if(isPreEob) {
-								SetAmt(ref claimProcCur.InsEstTotal,PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr)),isAdditive);
+								claimProcCur.InsEstTotal=PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr));
 							}
 							else {
-								SetAmt(ref claimProcCur.InsEstTotalOverride,PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr)),isAdditive);//Set this so if it's not marked received, pat port is still reflected correctly
+								claimProcCur.InsEstTotalOverride=PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr));//Set this so if it's not marked received, pat port is still reflected correctly
 								if(eobBehavior==EraBehaviors.DownloadAndReceive) {
-									SetAmt(ref claimProcCur.InsPayAmt,PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr)),isAdditive);
+									claimProcCur.InsPayAmt=PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr));
 								}
 							}
 							break;
@@ -1252,32 +1235,32 @@ namespace OpenDentBusiness.Eclaims {
 						case "G56"://Deductible Amount for Lab Proc #1
 							if(claimProcLabOne!=null) {
 								if(isPreEob) {
-									SetAmt(ref claimProcLabOne.DedEst,PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr)),isAdditive);
+									claimProcLabOne.DedEst=PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr));
 								}
 								else {
-									SetAmt(ref claimProcLabOne.DedApplied,PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr)),isAdditive);
+									claimProcLabOne.DedApplied=PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr));
 								}
 								continue;
 							}
 							break;
 						case "G57"://Eligible Percentage for Lab Proc #1
 							if(claimProcLabOne!=null) {
-								SetAmt(ref claimProcLabOne.Percentage,PIn.Int(RawPercentToDisplayPercent(field.valuestr)),isAdditive);
+								claimProcLabOne.Percentage=PIn.Int(RawPercentToDisplayPercent(field.valuestr));
 								continue;
 							}
 							break;
 						case "G58"://Benefit Amount for Lab Proc #1
 							if(claimProcLabOne!=null) {
 								if(isPreEob) {
-									SetAmt(ref claimProcLabOne.InsEstTotal,PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr)),isAdditive);
+									claimProcLabOne.InsEstTotal=PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr));
 									//The following 2 commented out lines should not be necessary as they were taken care of before calling this function.
 									//ClaimProcs.CanadianLabBaseEstHelper(...) ensures that lab procs and parent procs have the same status.
 									//claimProcLabOne.Status=ClaimProcStatus.Preauth;
 								}
 								else {
-									SetAmt(ref claimProcLabOne.InsEstTotalOverride,PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr)),isAdditive);//Set this so if it's not marked received, pat port is still reflected correctly
+									claimProcLabOne.InsEstTotalOverride=PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr));//Set this so if it's not marked received, pat port is still reflected correctly
 									if(eobBehavior==EraBehaviors.DownloadAndReceive){
-										SetAmt(ref claimProcLabOne.InsPayAmt,PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr)),isAdditive);
+										claimProcLabOne.InsPayAmt=PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr));
 										claimProcLabOne.Status=ClaimProcStatus.Received;
 										claimProcLabOne.DateCP=DateTime.Today;
 										claimProcLabOne.DateEntry=DateTime.Now;//date it was set rec'd
@@ -1293,32 +1276,32 @@ namespace OpenDentBusiness.Eclaims {
 						case "G59"://Deductible Amount for Lab Proc #2
 							if(claimProcLabTwo!=null) {
 								if(isPreEob) {
-									SetAmt(ref claimProcLabTwo.DedEst,PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr)),isAdditive);
+									claimProcLabTwo.DedEst=PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr));
 								}
 								else {
-									SetAmt(ref claimProcLabTwo.DedApplied,PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr)),isAdditive);
+									claimProcLabTwo.DedApplied=PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr));
 								}
 								continue;
 							}
 							break;
 						case "G60"://Eligible Percentage for Lab Proc #2
 							if(claimProcLabTwo!=null) {
-								SetAmt(ref claimProcLabTwo.Percentage,PIn.Int(RawPercentToDisplayPercent(field.valuestr)),isAdditive);
+								claimProcLabTwo.Percentage=PIn.Int(RawPercentToDisplayPercent(field.valuestr));
 								continue;
 							}
 							break;
 						case "G61"://Benefit Amount for Lab Proc #2
 							if(claimProcLabTwo!=null) {
 								if(isPreEob) {
-									SetAmt(ref claimProcLabTwo.InsEstTotal,PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr)),isAdditive);
+									claimProcLabTwo.InsEstTotal=PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr));
 									//The following 2 commented out lines should not be necessary as they were taken care of before calling this function.
 									//ClaimProcs.CanadianLabBaseEstHelper(...) ensures that lab procs and parent procs have the same status.
 									//claimProcLabOne.Status=ClaimProcStatus.Preauth;
 								}
 								else {
-									SetAmt(ref claimProcLabTwo.InsEstTotalOverride,PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr)),isAdditive);//Set this so if it's not marked received, pat port is still reflected correctly
+									claimProcLabTwo.InsEstTotalOverride=PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr));//Set this so if it's not marked received, pat port is still reflected correctly
 									if(eobBehavior==EraBehaviors.DownloadAndReceive){
-										SetAmt(ref claimProcLabTwo.InsPayAmt,PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr)),isAdditive);
+										claimProcLabTwo.InsPayAmt=PIn.Double(RawMoneyStrToDisplayMoney(field.valuestr));
 										claimProcLabTwo.Status=ClaimProcStatus.Received;
 										claimProcLabTwo.DateCP=DateTime.Today;
 										claimProcLabTwo.DateEntry=DateTime.Now;//date it was set rec'd
@@ -1426,17 +1409,6 @@ namespace OpenDentBusiness.Eclaims {
 			List<PatPlan> patPlansForPatient=PatPlans.Refresh(claim.PatNum);
 			Claims.CalculateAndUpdate(listPatProcs,listInsPlans,claim,patPlansForPatient,listBenefits,patient,listInsSubs);
 			InsBlueBooks.SynchForClaimNums(claim.ClaimNum);
-			if(PrefC.GetBool(PrefName.ClaimPrimaryReceivedRecalcSecondary) && claim.ClaimType=="P") {
-				Claims.CalculateAndUpdateSecondariesFromPrimaries(new List<Claim> { claim });
-			}
-		}
-
-		private static void SetAmt(ref int amt,int val,bool isAdditive) {
-			amt=(isAdditive?(amt+val):val);
-		}
-
-		private static void SetAmt(ref double amt,double val,bool isAdditive) {
-			amt=(isAdditive?(amt+val):val);
 		}
 
 		///<summary>The given number must be in the format of: [+-]?[0-9]*</summary>
@@ -1447,7 +1419,7 @@ namespace OpenDentBusiness.Eclaims {
 				number=number.Substring(1,number.Length-1);
 			}
 			number=number.PadLeft(2,'0');//Guarantee at least 2 digits of length.
-			return sign+number.Substring(0,number.Length-2).TrimStart('0').PadLeft(1,'0')+CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator+
+			return sign+number.Substring(0,number.Length-2).TrimStart('0').PadLeft(1,'0')+"."+
 				number.Substring(number.Length-2,2);
 		}
 
@@ -1514,9 +1486,10 @@ namespace OpenDentBusiness.Eclaims {
 			}
 			//CommBridge can be None in testing when trying to write to local file (example CanadaFakeClearinghouse), and is
 			//also helpful in production if you want to see live payload output to file without worrying about software certificates.
-			bool isItrans=clearinghouseClin.CommBridge.In(EclaimsCommBridge.ITRANS,EclaimsCommBridge.ITRANS2);
+			bool isItrans=(clearinghouseClin.CommBridge==EclaimsCommBridge.ITRANS);
+			bool isItrans2=(clearinghouseClin.CommBridge==EclaimsCommBridge.ITRANS2);
 			bool isClaimstream=(clearinghouseClin.CommBridge==EclaimsCommBridge.Claimstream);
-			bool isCertificateNeeded=(network!=null && isClaimstream);
+			bool isCertificateNeeded=(network!=null && (isClaimstream || isItrans2));
 			string saveFolder=clearinghouseClin.ExportPath;
 			if(isCertificateNeeded) {//Download vendor identity certificate to appropriate subfolder if needed.
 				DirectoryInfo dirInfo=new DirectoryInfo(saveFolder);
@@ -1542,6 +1515,9 @@ namespace OpenDentBusiness.Eclaims {
 				else if(isClaimstream) {
 					errorMsg=Lans.g("Canadian","Transaction not supported for network")+" "+network.Descript;
 					return "";//Return empty response, since we never received one.
+				}
+				if(isItrans2 && !Directory.Exists(ODFileUtils.CombinePaths(saveFolder,subDir))) {
+					subDir="";
 				}
 				saveFolder=ODFileUtils.CombinePaths(saveFolder,subDir);
 				if(!Directory.Exists(saveFolder)) {
@@ -1684,7 +1660,7 @@ namespace OpenDentBusiness.Eclaims {
 				});
 			}
 			if(!File.Exists(outputFile)) {
-				if(isItrans) {
+				if(isItrans || isItrans2) {
 					errorMsg=Lans.g("Canadian","No response from iCAService (ITRANS) or ICDService (ITRANS 2.0). Ensure that the correct service for your version of ITRANS is started and the corresponding folder has the necessary permissions.");
 				}
 				else if(isClaimstream) {
@@ -1734,7 +1710,7 @@ namespace OpenDentBusiness.Eclaims {
 					errorCode=responses[1];
 				}
 				errorMsg=Lans.g("Canadian","Error")+" "+errorCode+"\r\n\r\n"+Lans.g("Canadian","Raw Response")+":\r\n"+resultPrefix+result+"\r\n\r\n";
-				if(isItrans) {
+				if(isItrans || isItrans2) {
 					if(errorCode=="1013") {
 						errorMsg+=Lans.g("Canadian","The CDA digital certificate for the provider is either missing, not exportable, expired, or invalid.")+"\r\n";
 					}

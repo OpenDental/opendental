@@ -26,6 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpUnearnedIncome));
 			this.tabControlMain = new OpenDental.UI.TabControl();
 			this.tabPageUnearnedAccounts = new OpenDental.UI.TabPage();
+			this.butUnearnedAcctCancel = new OpenDental.UI.Button();
 			this.butUnearnedAcctOk = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.checkUnearnedAcctAllClins = new OpenDental.UI.CheckBox();
@@ -35,6 +36,7 @@ namespace OpenDental{
 			this.checkUnearnedAllocationShowProv = new OpenDental.UI.CheckBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.checkUnearnedAllocationExcludeZero = new OpenDental.UI.CheckBox();
+			this.butUnallocatedCancel = new OpenDental.UI.Button();
 			this.butUnearnedAllocationOK = new OpenDental.UI.Button();
 			this.checkUnearnedAllocationAllTypes = new OpenDental.UI.CheckBox();
 			this.listUnearnedAllocationTypes = new OpenDental.UI.ListBox();
@@ -48,6 +50,7 @@ namespace OpenDental{
 			this.tabPageNetUnearned = new OpenDental.UI.TabPage();
 			this.checkNetUnearnedExcludeZero = new OpenDental.UI.CheckBox();
 			this.label5 = new System.Windows.Forms.Label();
+			this.butNetUnearnedCancel = new OpenDental.UI.Button();
 			this.butNetUnearnedOK = new OpenDental.UI.Button();
 			this.checkNetUnearnedAllTypes = new OpenDental.UI.CheckBox();
 			this.listNetUnearnedTypes = new OpenDental.UI.ListBox();
@@ -61,6 +64,7 @@ namespace OpenDental{
 			this.tabPageLineItemUnearned = new OpenDental.UI.TabPage();
 			this.checkLineItemShowProv = new OpenDental.UI.CheckBox();
 			this.label7 = new System.Windows.Forms.Label();
+			this.butLineItemCancel = new OpenDental.UI.Button();
 			this.butLineItemOK = new OpenDental.UI.Button();
 			this.label17 = new System.Windows.Forms.Label();
 			this.label16 = new System.Windows.Forms.Label();
@@ -91,6 +95,7 @@ namespace OpenDental{
 			// tabPageUnearnedAccounts
 			// 
 			this.tabPageUnearnedAccounts.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
+			this.tabPageUnearnedAccounts.Controls.Add(this.butUnearnedAcctCancel);
 			this.tabPageUnearnedAccounts.Controls.Add(this.butUnearnedAcctOk);
 			this.tabPageUnearnedAccounts.Controls.Add(this.label1);
 			this.tabPageUnearnedAccounts.Controls.Add(this.checkUnearnedAcctAllClins);
@@ -103,10 +108,21 @@ namespace OpenDental{
 			this.tabPageUnearnedAccounts.TabIndex = 3;
 			this.tabPageUnearnedAccounts.Text = "Unearned Accounts";
 			// 
+			// butUnearnedAcctCancel
+			// 
+			this.butUnearnedAcctCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butUnearnedAcctCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butUnearnedAcctCancel.Location = new System.Drawing.Point(532, 459);
+			this.butUnearnedAcctCancel.Name = "butUnearnedAcctCancel";
+			this.butUnearnedAcctCancel.Size = new System.Drawing.Size(75, 26);
+			this.butUnearnedAcctCancel.TabIndex = 85;
+			this.butUnearnedAcctCancel.Text = "&Cancel";
+			this.butUnearnedAcctCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butUnearnedAcctOk
 			// 
 			this.butUnearnedAcctOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butUnearnedAcctOk.Location = new System.Drawing.Point(538, 459);
+			this.butUnearnedAcctOk.Location = new System.Drawing.Point(532, 427);
 			this.butUnearnedAcctOk.Name = "butUnearnedAcctOk";
 			this.butUnearnedAcctOk.Size = new System.Drawing.Size(75, 26);
 			this.butUnearnedAcctOk.TabIndex = 84;
@@ -159,6 +175,7 @@ namespace OpenDental{
 			this.tabPageUnallocatedBalances.Controls.Add(this.checkUnearnedAllocationShowProv);
 			this.tabPageUnallocatedBalances.Controls.Add(this.label4);
 			this.tabPageUnallocatedBalances.Controls.Add(this.checkUnearnedAllocationExcludeZero);
+			this.tabPageUnallocatedBalances.Controls.Add(this.butUnallocatedCancel);
 			this.tabPageUnallocatedBalances.Controls.Add(this.butUnearnedAllocationOK);
 			this.tabPageUnallocatedBalances.Controls.Add(this.checkUnearnedAllocationAllTypes);
 			this.tabPageUnallocatedBalances.Controls.Add(this.listUnearnedAllocationTypes);
@@ -202,10 +219,21 @@ namespace OpenDental{
 			this.checkUnearnedAllocationExcludeZero.TabIndex = 76;
 			this.checkUnearnedAllocationExcludeZero.Text = "Exclude families with a net $0.00 unearned income balance";
 			// 
+			// butUnallocatedCancel
+			// 
+			this.butUnallocatedCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butUnallocatedCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butUnallocatedCancel.Location = new System.Drawing.Point(532, 459);
+			this.butUnallocatedCancel.Name = "butUnallocatedCancel";
+			this.butUnallocatedCancel.Size = new System.Drawing.Size(75, 26);
+			this.butUnallocatedCancel.TabIndex = 75;
+			this.butUnallocatedCancel.Text = "&Cancel";
+			this.butUnallocatedCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butUnearnedAllocationOK
 			// 
 			this.butUnearnedAllocationOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butUnearnedAllocationOK.Location = new System.Drawing.Point(538, 459);
+			this.butUnearnedAllocationOK.Location = new System.Drawing.Point(532, 427);
 			this.butUnearnedAllocationOK.Name = "butUnearnedAllocationOK";
 			this.butUnearnedAllocationOK.Size = new System.Drawing.Size(75, 26);
 			this.butUnearnedAllocationOK.TabIndex = 74;
@@ -307,6 +335,7 @@ namespace OpenDental{
 			this.tabPageNetUnearned.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
 			this.tabPageNetUnearned.Controls.Add(this.checkNetUnearnedExcludeZero);
 			this.tabPageNetUnearned.Controls.Add(this.label5);
+			this.tabPageNetUnearned.Controls.Add(this.butNetUnearnedCancel);
 			this.tabPageNetUnearned.Controls.Add(this.butNetUnearnedOK);
 			this.tabPageNetUnearned.Controls.Add(this.checkNetUnearnedAllTypes);
 			this.tabPageNetUnearned.Controls.Add(this.listNetUnearnedTypes);
@@ -342,10 +371,21 @@ namespace OpenDental{
 			this.label5.TabIndex = 2;
 			this.label5.Text = resources.GetString("label5.Text");
 			// 
+			// butNetUnearnedCancel
+			// 
+			this.butNetUnearnedCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butNetUnearnedCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butNetUnearnedCancel.Location = new System.Drawing.Point(532, 459);
+			this.butNetUnearnedCancel.Name = "butNetUnearnedCancel";
+			this.butNetUnearnedCancel.Size = new System.Drawing.Size(75, 26);
+			this.butNetUnearnedCancel.TabIndex = 77;
+			this.butNetUnearnedCancel.Text = "&Cancel";
+			this.butNetUnearnedCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butNetUnearnedOK
 			// 
 			this.butNetUnearnedOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butNetUnearnedOK.Location = new System.Drawing.Point(538, 459);
+			this.butNetUnearnedOK.Location = new System.Drawing.Point(532, 427);
 			this.butNetUnearnedOK.Name = "butNetUnearnedOK";
 			this.butNetUnearnedOK.Size = new System.Drawing.Size(75, 26);
 			this.butNetUnearnedOK.TabIndex = 76;
@@ -447,6 +487,7 @@ namespace OpenDental{
 			this.tabPageLineItemUnearned.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
 			this.tabPageLineItemUnearned.Controls.Add(this.checkLineItemShowProv);
 			this.tabPageLineItemUnearned.Controls.Add(this.label7);
+			this.tabPageLineItemUnearned.Controls.Add(this.butLineItemCancel);
 			this.tabPageLineItemUnearned.Controls.Add(this.butLineItemOK);
 			this.tabPageLineItemUnearned.Controls.Add(this.label17);
 			this.tabPageLineItemUnearned.Controls.Add(this.label16);
@@ -482,10 +523,21 @@ namespace OpenDental{
     " you want to see a line-by-line representation of transactions relating to unear" +
     "ned income.";
 			// 
+			// butLineItemCancel
+			// 
+			this.butLineItemCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butLineItemCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butLineItemCancel.Location = new System.Drawing.Point(532, 459);
+			this.butLineItemCancel.Name = "butLineItemCancel";
+			this.butLineItemCancel.Size = new System.Drawing.Size(75, 26);
+			this.butLineItemCancel.TabIndex = 78;
+			this.butLineItemCancel.Text = "&Cancel";
+			this.butLineItemCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butLineItemOK
 			// 
 			this.butLineItemOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butLineItemOK.Location = new System.Drawing.Point(538, 459);
+			this.butLineItemOK.Location = new System.Drawing.Point(532, 427);
 			this.butLineItemOK.Name = "butLineItemOK";
 			this.butLineItemOK.Size = new System.Drawing.Size(75, 26);
 			this.butLineItemOK.TabIndex = 77;
@@ -604,13 +656,17 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelLineItemClins;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label label4;
+		private UI.Button butUnallocatedCancel;
 		private UI.Button butUnearnedAllocationOK;
+		private UI.Button butNetUnearnedCancel;
 		private UI.Button butNetUnearnedOK;
+		private UI.Button butLineItemCancel;
 		private UI.Button butLineItemOK;
 		private System.Windows.Forms.Label label7;
 		private OpenDental.UI.CheckBox checkUnearnedAllocationExcludeZero;
 		private OpenDental.UI.CheckBox checkNetUnearnedExcludeZero;
 		private OpenDental.UI.TabPage tabPageUnearnedAccounts;
+		private UI.Button butUnearnedAcctCancel;
 		private UI.Button butUnearnedAcctOk;
 		private System.Windows.Forms.Label labelUnearnedAcctClins;
 		private OpenDental.UI.ListBox listUnearnedAcctClins;

@@ -47,6 +47,7 @@ namespace OpenDental {
 			this.label9 = new System.Windows.Forms.Label();
 			this.butDefault = new OpenDental.UI.Button();
 			this.butAnother = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
@@ -263,6 +264,16 @@ namespace OpenDental {
 			this.butAnother.Text = "Add, then another";
 			this.butAnother.Click += new System.EventHandler(this.butAnother_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(714, 387);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 12;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOK
 			// 
 			this.butOK.Location = new System.Drawing.Point(624, 387);
@@ -276,6 +287,7 @@ namespace OpenDental {
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(812, 512);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butDefault);
 			this.Controls.Add(this.label9);
 			this.Controls.Add(this.panel1);
@@ -312,6 +324,7 @@ namespace OpenDental {
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label1;
 		public System.Windows.Forms.TextBox textNewCode;
 		private OpenDental.UI.Button butAnother;

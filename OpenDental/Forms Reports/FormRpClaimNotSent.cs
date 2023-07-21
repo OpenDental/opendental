@@ -35,7 +35,7 @@ namespace OpenDental{
 			);
 			odDateRangePicker.SetDateTimeTo(DateTime.Now.Date);
 			odDateRangePicker.SetDateTimeFrom(odDateRangePicker.GetDateTimeTo().AddDays(-7)); //default to the previous week
-			_listClaimSentEditUsers=Userods.GetUsersByPermission(EnumPermType.ClaimSentEdit,false);
+			_listClaimSentEditUsers=Userods.GetUsersByPermission(Permissions.ClaimSentEdit,false);
 			_listOldClaimTrackings=ClaimTrackings.RefreshForUsers(ClaimTrackingType.ClaimUser,_listClaimSentEditUsers.Select(x => x.UserNum).ToList());
 			_listNewClaimTrackings=_listOldClaimTrackings.Select(x => x.Copy()).ToList();
 			//Fill the Ins Filter box
@@ -62,7 +62,7 @@ namespace OpenDental{
 			if(!ValidateFilters()) {
 				return;
 			}
-			List<long> listClinicNums=comboClinicMulti.ListClinicNumsSelected;
+			List<long> listClinicNums=comboClinicMulti.ListSelectedClinicNums;
 			DataTable table=RpClaimNotSent.GetClaimsNotSent(_startDate,_endDate,listClinicNums,false
 				,(ClaimNotSentStatuses)comboBoxInsFilter.SelectedItem);//this query can get slow with a large number of clinics (like NADG)
 			gridMain.BeginUpdate();
@@ -150,7 +150,7 @@ namespace OpenDental{
 				MsgBox.Show(this,"End date cannot be before start date.");
 				return false;
 			}
-			if(PrefC.HasClinicsEnabled && comboClinicMulti.ListClinicNumsSelected.Count==0) {
+			if(PrefC.HasClinicsEnabled && comboClinicMulti.ListSelectedClinicNums.Count==0) {
 				MsgBox.Show(this,"At least one clinic must be selected.");
 				return false;
 			}
@@ -165,7 +165,7 @@ namespace OpenDental{
 				return;
 			}
 			ReportComplex report=new ReportComplex(true,false);
-			List<long> listClinicNums=comboClinicMulti.ListClinicNumsSelected;
+			List<long> listClinicNums=comboClinicMulti.ListSelectedClinicNums;
 			DataTable table=RpClaimNotSent.GetClaimsNotSent(_startDate,_endDate,listClinicNums,true,(ClaimNotSentStatuses)comboBoxInsFilter.SelectedItem);
 			string subtitleClinics="";
 			subtitleClinics=comboClinicMulti.GetStringSelectedClinics();
@@ -209,13 +209,13 @@ namespace OpenDental{
 			int menuCode=(int)((MenuItem)sender).Tag;
 			switch(menuCode) {
 				case 0://Go to Account
-					GlobalFormOpenDental.GotoAccount(((UnsentInsClaim)gridMain.ListGridRows[index].Tag).PatNum);
+					GotoModule.GotoAccount(((UnsentInsClaim)gridMain.ListGridRows[index].Tag).PatNum);
 					break;
 			}
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ClaimView)) {
+			if(!Security.IsAuthorized(Permissions.ClaimView)) {
 				return;
 			}
 			Claim claim=Claims.GetClaim(((UnsentInsClaim)gridMain.ListGridRows[e.Row].Tag).ClaimNum);
@@ -234,6 +234,14 @@ namespace OpenDental{
 				return;
 			}
 		}
+		
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+			Close();
+		}
+
+
+
 
 		///<summary>Only used in this form to keep track of both the ClaimNum and PatNum within the grid. This is the grid's tag object.</summary>
 		private class UnsentInsClaim {
@@ -241,6 +249,5 @@ namespace OpenDental{
 			public long PatNum;
 			public long ClaimTrackingNum;
 		}
-
 	}
 }

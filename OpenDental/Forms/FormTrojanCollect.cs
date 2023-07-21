@@ -11,24 +11,25 @@ using OpenDentBusiness;
 namespace OpenDental {
 	/// <summary></summary>
 	public partial class FormTrojanCollect : FormODBase {
-		public Patient PatientCur;
+		private Patient _patient;
 		private Patient _patientGuar;
 		private Employer _employer;
 
 		///<summary></summary>
-		public FormTrojanCollect() {
+		public FormTrojanCollect(Patient patient) {
+			_patient=patient;
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
 		}
 
 		private void FormTrojanCollect_Load(object sender,EventArgs e) {
-			if(PatientCur==null) {
+			if(_patient==null) {
 				MsgBox.Show(this,"Please select a patient first.");
 				DialogResult=DialogResult.Cancel;
 				return;
 			}
-			_patientGuar=Patients.GetPat(PatientCur.Guarantor);
+			_patientGuar=Patients.GetPat(_patient.Guarantor);
 			if(_patientGuar.EmployerNum>0) {
 				_employer=Employers.GetEmployer(_patientGuar.EmployerNum);
 			}
@@ -78,7 +79,7 @@ namespace OpenDental {
 			labelPhone.Text=Clip(_patientGuar.HmPhone,13);
 			labelEmployer.Text=_employer?.EmpName??"";
 			labelEmpPhone.Text=_employer?.Phone??"";
-			labelPatient.Text=PatientCur.GetNameFL();
+			labelPatient.Text=_patient.GetNameFL();
 			DateTime dateLastProcedure=TrojanQueries.GetMaxProcedureDate(_patientGuar.PatNum);
 			DateTime dateLastPay=TrojanQueries.GetMaxPaymentDate(_patientGuar.PatNum);
 			textDate.Text=dateLastProcedure.ToShortDateString();
@@ -190,9 +191,9 @@ namespace OpenDental {
 			else if(radioSkip.Checked) {
 				stringBuilder_.Append("S*");
 			}
-			stringBuilder_.Append(Clip(PatientCur.LName,18)+"*");
-			stringBuilder_.Append(Clip(PatientCur.FName,18)+"*");
-			stringBuilder_.Append(Clip(PatientCur.MiddleI,1)+"*");
+			stringBuilder_.Append(Clip(_patient.LName,18)+"*");
+			stringBuilder_.Append(Clip(_patient.FName,18)+"*");
+			stringBuilder_.Append(Clip(_patient.MiddleI,1)+"*");
 			stringBuilder_.Append(Clip(_patientGuar.LName,18)+"*");//validated
 			stringBuilder_.Append(Clip(_patientGuar.FName,18)+"*");//validated
 			stringBuilder_.Append(Clip(_patientGuar.MiddleI,1)+"*");
@@ -233,7 +234,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Warning!! Request was not sent to Trojan within the 10 second limit.");
 				return;
 			}
-			Patients.UpdateFamilyBillingType(billingType,PatientCur.Guarantor);
+			Patients.UpdateFamilyBillingType(billingType,_patient.Guarantor);
 			Cursor=Cursors.Default;
 			DialogResult=DialogResult.OK;
 		}

@@ -127,13 +127,13 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<string>>(MethodBase.GetCurrentMethod());
 			}
-			List<string> listUcumCodes=new List<string>();
+			List<string> retVal=new List<string>();
 			string command="SELECT UcumCode FROM ucum";
-			DataTable table=Db.GetTable(command);
+			DataTable table=DataCore.GetTable(command);
 			for(int i=0;i<table.Rows.Count;i++) {
-				listUcumCodes.Add(table.Rows[i]["UcumCode"].ToString());
+				retVal.Add(table.Rows[i].ItemArray[0].ToString());
 			}
-			return listUcumCodes;
+			return retVal;
 		}
 
 		public static Ucum GetByCode(string ucumCode) {
@@ -156,10 +156,10 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<Ucum>>(MethodBase.GetCurrentMethod(),searchText);
 			}
-			string[] stringArraySearchTokens=searchText.Split(' ');
+			string[] searchTokens=searchText.Split(' ');
 			string command=@"SELECT * FROM ucum ";
-			for(int i=0;i<stringArraySearchTokens.Length;i++) {
-				command+=(i==0?"WHERE ":"AND ")+"(UcumCode LIKE '%"+POut.String(stringArraySearchTokens[i])+"%' OR Description LIKE '%"+POut.String(stringArraySearchTokens[i])+"%') ";
+			for(int i=0;i<searchTokens.Length;i++) {
+				command+=(i==0?"WHERE ":"AND ")+"(UcumCode LIKE '%"+POut.String(searchTokens[i])+"%' OR Description LIKE '%"+POut.String(searchTokens[i])+"%') ";
 			}
 			return Crud.UcumCrud.SelectMany(command);
 		}

@@ -28,8 +28,6 @@ namespace WpfControls.UI{
 		
 		public LinkLabel(){
 			InitializeComponent();
-			//Width=100;
-			//Height=18;
 			_hyperlink=new Hyperlink();
 			_hyperlink.NavigateUri=new Uri("http://www.google.com");//dummy link, or the event won't fire.
 			_hyperlink.RequestNavigate+=Hyperlink_RequestNavigate;

@@ -73,12 +73,12 @@ namespace OpenDental{
 		}
 
 		private bool GetPasswordFromUser() {
-			InputBox inputBoxPassword=new InputBox("To prevent accidental changes, please enter password.  It can be found in our manual.");
+			using InputBox inputBoxPassword=new InputBox("To prevent accidental changes, please enter password.  It can be found in our manual.");
 			inputBoxPassword.ShowDialog();
-			if(inputBoxPassword.IsDialogCancel) {
+			if(inputBoxPassword.DialogResult!=DialogResult.OK) {
 				return false;
 			}
-			if(inputBoxPassword.StringResult!="abracadabra") {
+			if(inputBoxPassword.textResult.Text!="abracadabra") {
 				MsgBox.Show(this,"Incorrect password.");
 				return false;
 			}
@@ -146,7 +146,7 @@ namespace OpenDental{
 			return true;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!IsClinicCheckBoxOk()) {
 				return;
 			}
@@ -177,6 +177,10 @@ namespace OpenDental{
 			//We should use ToolBut invalidation to redraw toolbars that could've been just enabled and stop forcing customers restarting.
 			//DataValid.SetInvalid(InvalidType.ToolBut);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

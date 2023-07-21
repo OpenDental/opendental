@@ -172,7 +172,6 @@ namespace OpenDental {
 			this.pictureBoxPat.TabIndex = 28;
 			this.pictureBoxPat.Text = "picturePat";
 			this.pictureBoxPat.TextNullImage = "Patient Picture Unavailable";
-			this.pictureBoxPat.DoubleClick += new System.EventHandler(this.pictureBoxPat_DoubleClick);
 			// 
 			// toolBarMain
 			// 

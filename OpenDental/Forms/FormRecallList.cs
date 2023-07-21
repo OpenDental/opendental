@@ -217,7 +217,7 @@ namespace OpenDental {
 			if(!PrefC.GetBool(PrefName.EasyHidePublicHealth) && !comboSiteRecalls.IsAllSelected) {
 				siteNum=comboSiteRecalls.GetSelectedKey<Site>(x => x.SiteNum);
 			}
-			long clinicNum=PrefC.HasClinicsEnabled?comboClinicRecalls.ClinicNumSelected:-1;
+			long clinicNum=PrefC.HasClinicsEnabled?comboClinicRecalls.SelectedClinicNum:-1;
 			long maxReminders=PrefC.GetLong(PrefName.RecallMaxNumberReminders);
 			//If dateTimeTo is blank, default to DateTime.MaxValue.
 			return Recalls.GetRecallList(datePickerRecalls.GetDateTimeFrom(),datePickerRecalls.GetDateTimeTo(true),checkGroupFamiliesRecalls.Checked,
@@ -304,9 +304,9 @@ namespace OpenDental {
 			//remember which recallnums were selected
 			List<PatRowTag> listPatRowTagsSelected=gridRecalls.SelectedTags<PatRowTag>();
 			Cursor=Cursors.WaitCursor;
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => _tableRecalls=GetRecallTable();
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled){
 				return;
 			}
@@ -518,8 +518,8 @@ namespace OpenDental {
 					commLog.Note+=".  ";
 					commLog.UserNum=Security.CurUser.UserNum;
 					commLog.IsNew=true;
-					FrmCommItem frmCommItem=new FrmCommItem(commLog);
-					frmCommItem.ShowDialog();
+					using FormCommItem formCommItem=new FormCommItem(commLog);
+					formCommItem.ShowDialog();
 				}
 			}
 			FillRecalls();
@@ -841,11 +841,8 @@ namespace OpenDental {
 				DateTime.Now
 			);
 			listWebSchedErrors.AddRange(listTemp);
-			//Workstations don't actually care about this pref, this pref is entirely for the eConnector.
-			CommTypeFlag commType=CommTypeFlag.Text|CommTypeFlag.Email|CommTypeFlag.SecureEmail;
-			Prefs.UpdateIntNoCache(PrefName.WebSchedManualSendTriggered,(int)commType); //This pref is for the EConnector running webschedrecalls, doesn't get used by anyone else so update without cache.
 			Cursor=Cursors.Default;
-			SecurityLogs.MakeLogEntry(EnumPermType.WebSchedRecallManualSend,0,Lan.g(this,"Web Sched Recalls manually sent."));
+			SecurityLogs.MakeLogEntry(Permissions.WebSchedRecallManualSend,0,Lan.g(this,"Web Sched Recalls manually sent."));
 			if(listWebSchedErrors.Count>0) {
 				//Show the error (already translated) to the user and then refresh the grid in case any were successful.
 				using MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(string.Join("\r\n",listWebSchedErrors));
@@ -867,7 +864,7 @@ namespace OpenDental {
 		}
 
 		private void butReport_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.UserQuery)) {
+			if(!Security.IsAuthorized(Permissions.UserQuery)) {
 				return;
 			}
 			if(gridRecalls.ListGridRows.Count < 1){
@@ -1164,7 +1161,7 @@ namespace OpenDental {
 
 		///<summary>Shared functionality with Recalls and Reactivations, be careful when making changes.</summary>
 		private void butEmail_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.EmailSend)) {
+			if(!Security.IsAuthorized(Permissions.EmailSend)) {
 				return;
 			}
 			if(IsGridEmpty()) {
@@ -1352,7 +1349,7 @@ namespace OpenDental {
 			}
 			FillCurGrid();
 			if(sentEmailCount>0) {
-				SecurityLogs.MakeLogEntry(EnumPermType.EmailSend,0,$"{(isRecallGridSelected? "Recall":"Reactivation")} Emails Sent: "+sentEmailCount);
+				SecurityLogs.MakeLogEntry(Permissions.EmailSend,0,$"{(isRecallGridSelected? "Recall":"Reactivation")} Emails Sent: "+sentEmailCount);
 			}
 			Cursor=Cursors.Default;
 		}
@@ -1412,7 +1409,7 @@ namespace OpenDental {
 					+_tableAddress.Rows[patientsPrinted]["State"].ToString()+" "
 					+_tableAddress.Rows[patientsPrinted]["Zip"].ToString()+"\r\n";
 				Rectangle rectangle=new Rectangle((int)xPos,(int)yPos,275,100);
-				OpenDental.InternalTools.Phones.MapPanel.FitTextOld(text,new Font(FontFamily.GenericSansSerif,11),Brushes.Black,rectangle,new StringFormat(),g);
+				MapCubicle.FitText(text,new Font(FontFamily.GenericSansSerif,11),Brushes.Black,rectangle,new StringFormat(),g);
 				//reposition for next label
 				xPos+=275;
 				if(xPos>850){//drop a line
@@ -1570,11 +1567,12 @@ namespace OpenDental {
 				return;
 			}
 			//button does not show when Recently Contacted tab is selected.
-			if(!Security.IsAuthorized(EnumPermType.FamilyModule)) {
+			if(!Security.IsAuthorized(Permissions.FamilyModule)) {
 				return;
 			}
+			ShrinkWindowBeforeMinMax();
 			WindowState=FormWindowState.Minimized;
-			GlobalFormOpenDental.GotoFamily(_patNumCur);
+			GotoModule.GotoFamily(_patNumCur);
 		}
 
 		///<summary>Shared functionality with Recalls and Reactivations, be careful when making changes.</summary>
@@ -1583,11 +1581,12 @@ namespace OpenDental {
 				return;
 			}
 			//button does not show when Recently Contacted tab is selected.
-			if(!Security.IsAuthorized(EnumPermType.AccountModule)) {
+			if(!Security.IsAuthorized(Permissions.AccountModule)) {
 				return;
 			}
+			ShrinkWindowBeforeMinMax();
 			WindowState=FormWindowState.Minimized;
-			GlobalFormOpenDental.GotoAccount(_patNumCur);
+			GotoModule.GotoAccount(_patNumCur);
 		}
 
 		///<summary>Shared functionality with Recalls and Reactivations, be careful when making changes.</summary>
@@ -1628,9 +1627,8 @@ namespace OpenDental {
 				commlog.Note+="  "+status;
 			}
 			commlog.IsNew=true;
-			FrmCommItem frmCommItem=new FrmCommItem(commlog);
-			frmCommItem.ShowDialog();
-			if(!frmCommItem.IsDialogOK) {
+			using FormCommItem formCommItem=new FormCommItem(commlog);
+			if(formCommItem.ShowDialog()!=DialogResult.OK) {
 				FillCurGrid();
 				return;
 			}
@@ -1706,12 +1704,12 @@ namespace OpenDental {
 
 		private void FillGridReminders() {
 			List<Recalls.RecallRecent> listRecallsRecent=new List<Recalls.RecallRecent>();
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => { 
 				//If dateTimeTo is blank, default to DateTime.MaxValue.
-				listRecallsRecent=Recalls.GetRecentRecalls(datePickerRemind.GetDateTimeFrom(),datePickerRemind.GetDateTimeTo(true),comboClinicRemind.ListClinicNumsSelected);
+				listRecallsRecent=Recalls.GetRecentRecalls(datePickerRemind.GetDateTimeFrom(),datePickerRemind.GetDateTimeTo(true),comboClinicRemind.ListSelectedClinicNums);
 				};
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled){
 				return;
 			}
@@ -1751,7 +1749,7 @@ namespace OpenDental {
 			List<PatRowTag> listPatRowTagsSelected=gridReactivations.SelectedTags<PatRowTag>();//remember selected rows
 			long clinicNum=-1;//-1 will show all patients without filtering clinics.
 			if(PrefC.HasClinicsEnabled) {
-				clinicNum=comboClinicReact.ClinicNumSelected;
+				clinicNum=comboClinicReact.SelectedClinicNum;
 			}
 			long siteNum;
 			if(PrefC.GetBool(PrefName.EasyHidePublicHealth) || comboSiteReact.IsAllSelected){
@@ -1761,7 +1759,7 @@ namespace OpenDental {
 				siteNum=comboSiteReact.GetSelected<Site>().SiteNum;
 			}
 			DataTable tableReacts=new DataTable();
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => { 
 				//If dateTimeTo is blank, default to DateTime.MaxValue.
 				tableReacts=Reactivations.GetReactivationList(datePickerReact.GetDateTimeTo(true),datePickerReact.GetDateTimeFrom(),
@@ -1770,7 +1768,7 @@ namespace OpenDental {
 					comboShowReactivate.GetSelected<RecallListShowNumberReminders>());
 			};
 			progressOD.StartingMessage=Lans.g(this,"Retrieving Reactivation List...");
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled){
 				return;
 			}
@@ -2000,7 +1998,7 @@ namespace OpenDental {
 
 		///<summary>Shared functionality with Recalls and Reactivations, be careful when making changes.</summary>
 		private void butSched_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.AppointmentCreate)) {
+			if(!Security.IsAuthorized(Permissions.AppointmentCreate)) {
 				return;
 			}
 			if(!IsOneRowSelected()) {
@@ -2034,12 +2032,13 @@ namespace OpenDental {
 			if(listAppointmentsPinned.Count<1) {
 				return;
 			}
+			ShrinkWindowBeforeMinMax();
 			WindowState=FormWindowState.Minimized;
 			if(isRecall && listAppointmentsPinned[listAppointmentsPinned.Count-1].AptDateTime>=DateTime.Today) { //we're dealing with a future recall(s), so pin it and jump to it's date
-				GlobalFormOpenDental.PinAndGoToAppt(listAppointmentsPinned.Select(x=>x.AptNum).ToList(),_patNumCur,listAppointmentsPinned[listAppointmentsPinned.Count-1].AptDateTime);
+				GotoModule.PinAndGoToAppt(listAppointmentsPinned.Select(x=>x.AptNum).ToList(),_patNumCur,listAppointmentsPinned[listAppointmentsPinned.Count-1].AptDateTime);
 			}
 			else { //it's a reactivation / it's a recall that is overdue or unsafe to jump to, so just pin it and jump to today's date
-				GlobalFormOpenDental.PinToAppt(listAppointmentsPinned.Select(x=>x.AptNum).ToList(),_patNumCur); 
+				GotoModule.PinToAppt(listAppointmentsPinned.Select(x=>x.AptNum).ToList(),_patNumCur); 
 			}
 			//no securitylog entry needed.  It will be made as each appt is dragged off pinboard.
 			_grid.SetAll(false);
@@ -2060,6 +2059,10 @@ namespace OpenDental {
 			return _tableAddress;
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+		
 		///<summary>Shared functionality with Recalls and Reactivations, be careful when making changes.
 		///Contains the various properties we might need when the user wants to do an operation for a specific row or set of rows.
 		///TODO in the future, use this to replace the need to use _tableRecalls in this form.</summary>
@@ -2079,6 +2082,10 @@ namespace OpenDental {
 			public AutoCommStatus AutoCommStatusWebSchedSend;
 		}
 
+		private void checkGroupFamilies_Click(object sender,MouseEventArgs e) {
+
+		}
+
 		///<summary>Rebuilds the context menu when the user right-clicks on the grids in this form. Rebuilding the context menu each time rather than just once on form_load is necessary to ensure that the correct context values are passed along to the user's selected function.</summary>
 		private void gridContextMenu_Popup(object sender, EventArgs e) {
 			menuRightClick.MenuItems.Clear();
@@ -2090,5 +2097,7 @@ namespace OpenDental {
 			menuRightClick.MenuItems.Add(menuItemSeeAccount);
 		}
 
+
 	}
+	
 }

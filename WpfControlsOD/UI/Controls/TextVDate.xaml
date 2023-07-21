@@ -5,7 +5,7 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 		xmlns:local="clr-namespace:WpfControls.UI"
 		mc:Ignorable="d" 
-		d:DesignWidth="75" d:DesignHeight="20">
+		d:DesignHeight="20" d:DesignWidth="75">
 	<UserControl.Style>
 		<Style>
 			<Setter Property="local:TextBox.HorizontalAlignment" Value="Left"/>

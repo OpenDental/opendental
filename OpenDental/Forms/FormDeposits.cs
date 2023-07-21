@@ -41,11 +41,11 @@ namespace OpenDental{
 		private void FillGrid(){
 			if(PrefC.HasClinicsEnabled) {
 				//GetForClinics uses an empty list to indicate "all", which is a loophole if user doesn't select an item.  So:
-				if(comboClinics.ListClinicNumsSelected.Count==0) {
+				if(comboClinics.ListSelectedClinicNums.Count==0) {
 					_listDeposits=Deposits.GetForClinics(new List<long>(){ Clinics.ClinicNum },IsSelectionMode);//restrict to current clinic
 				}
 				else {
-					_listDeposits=Deposits.GetForClinics(comboClinics.ListClinicNumsSelected,IsSelectionMode);
+					_listDeposits=Deposits.GetForClinics(comboClinics.ListSelectedClinicNums,IsSelectionMode);
 				} 
 			}
 			else {
@@ -123,6 +123,32 @@ namespace OpenDental{
 			DepositSelected=_listDeposits[grid.GetSelectedIndex()];
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

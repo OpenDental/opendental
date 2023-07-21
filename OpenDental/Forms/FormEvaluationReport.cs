@@ -287,5 +287,9 @@ namespace OpenDental {
 			_formQuery.Dispose();
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 	}
 }

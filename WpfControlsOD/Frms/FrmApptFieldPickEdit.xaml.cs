@@ -16,13 +16,11 @@ namespace OpenDental {
 
 		public FrmApptFieldPickEdit(ApptField field) {
 			InitializeComponent();
+			//Lan.F(this);
 			_field=field;
-			Load+=FrmApptFieldPickEdit_Load;
-			PreviewKeyDown+=FrmApptFieldPickEdit_PreviewKeyDown;
 		}
 
-		private void FrmApptFieldPickEdit_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmApptFieldPickEdit_Loaded(object sender,RoutedEventArgs e) {
 			labelName.Text=_field.FieldName;
 			string value=ApptFieldDefs.GetPickListByFieldName(_field.FieldName);
 			string[] valueArray=value.Split(new string[] { "\r\n" },StringSplitOptions.None);
@@ -31,12 +29,6 @@ namespace OpenDental {
 			}
 			if(!_field.IsNew) {
 				listBoxPick.SelectedItem=_field.FieldValue;
-			}
-		}
-
-		private void FrmApptFieldPickEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butOK.IsAltKey(Key.O,e)) {
-				butOK_Click(this,new EventArgs());
 			}
 		}
 
@@ -58,6 +50,5 @@ namespace OpenDental {
 			}
 			IsDialogOK=true;
 		}
-
 	}
 }

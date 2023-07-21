@@ -39,7 +39,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!PrefC.GetBool(PrefName.ShowFeatureEhr)) {
 				MsgBox.Show(this,"You must go to Setup, Show Features, and activate EHR before entering keys.");
 				return;
@@ -73,5 +73,12 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
 	}
 }

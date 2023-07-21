@@ -31,6 +31,7 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.butSearch = new System.Windows.Forms.Button();
 			this.butOK = new System.Windows.Forms.Button();
+			this.butCancel = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// gridMain
@@ -98,19 +99,31 @@
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(666, 495);
+			this.butOK.Location = new System.Drawing.Point(605, 495);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 23);
 			this.butOK.TabIndex = 16;
-			this.butOK.Text = "&OK";
+			this.butOK.Text = "OK";
 			this.butOK.UseVisualStyleBackColor = true;
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(686, 495);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 23);
+			this.butCancel.TabIndex = 17;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// FormEhrPatientSelectSimple
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(773, 530);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butSearch);
 			this.Controls.Add(this.textFName);
 			this.Controls.Add(this.label3);
@@ -136,6 +149,7 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button butSearch;
 		private System.Windows.Forms.Button butOK;
+		private System.Windows.Forms.Button butCancel;
 
 
 	}

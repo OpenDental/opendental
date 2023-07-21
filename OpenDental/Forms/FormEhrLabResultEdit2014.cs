@@ -21,6 +21,8 @@ namespace OpenDental {
 				foreach(Control c in this.Controls) {
 					c.Enabled=false;
 				}
+				butCancel.Enabled=true;
+				butCancel.Text="Close";
 				gridNotes.Enabled=true;
 				//butAddNote.Enabled=false;
 				//butObsIdLoinc.Enabled=false;
@@ -306,7 +308,7 @@ namespace OpenDental {
 			return true;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOk_Click(object sender,EventArgs e) {
 			if(!EntriesAreValid()) {
 				return;
 			}
@@ -451,6 +453,10 @@ namespace OpenDental {
 			}
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void butDelete_Click(object sender,EventArgs e) {
 			if(EhrLabResultCur.IsNew) {
 				DialogResult=DialogResult.Cancel;
@@ -463,5 +469,6 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		
 	}
 }

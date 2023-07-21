@@ -50,6 +50,7 @@ namespace OpenDental {
 			this.gridInternal = new OpenDental.UI.GridOD();
 			this.butCopy = new OpenDental.UI.Button();
 			this.butDefault = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
@@ -207,6 +208,17 @@ namespace OpenDental {
 			this.butDefault.Text = "Set Default";
 			this.butDefault.Click += new System.EventHandler(this.butDefault_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(698, 389);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 23);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormClaimForms
 			// 
 			this.ClientSize = new System.Drawing.Size(785, 424);
@@ -217,6 +229,7 @@ namespace OpenDental {
 			this.Controls.Add(this.gridInternal);
 			this.Controls.Add(this.butDefault);
 			this.Controls.Add(this.groupBox1);
+			this.Controls.Add(this.butClose);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -234,6 +247,7 @@ namespace OpenDental {
 		#endregion
 
 		private OpenDental.UI.Button butAdd;
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butDuplicate;
 		private OpenDental.UI.Button butDelete;
 		private OpenDental.UI.Button butExport;

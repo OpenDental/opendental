@@ -26,6 +26,7 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrVaccines));
 			this.butSubmitImmunization = new System.Windows.Forms.Button();
 			this.butAddVaccine = new System.Windows.Forms.Button();
+			this.butClose = new System.Windows.Forms.Button();
 			this.butExport = new System.Windows.Forms.Button();
 			this.label45 = new System.Windows.Forms.Label();
 			this.gridVaccine = new OpenDental.UI.GridOD();
@@ -53,6 +54,17 @@
 			this.butAddVaccine.Text = "Add";
 			this.butAddVaccine.UseVisualStyleBackColor = true;
 			this.butAddVaccine.Click += new System.EventHandler(this.butAddVaccine_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(569, 481);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(86, 23);
+			this.butClose.TabIndex = 4;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butExport
 			// 
@@ -108,6 +120,7 @@
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(663, 516);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.listVacShareOk);
 			this.Controls.Add(this.label45);
 			this.Controls.Add(this.butExport);
@@ -127,6 +140,7 @@
 		private System.Windows.Forms.Button butSubmitImmunization;
 		private System.Windows.Forms.Button butAddVaccine;
 		private OpenDental.UI.GridOD gridVaccine;
+		private System.Windows.Forms.Button butClose;
 		private System.Windows.Forms.Button butExport;
 		private System.Windows.Forms.Label label45;
 		private System.Windows.Forms.ListBox listVacShareOk;

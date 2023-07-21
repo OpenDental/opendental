@@ -97,6 +97,10 @@ namespace OpenDental{
 			}
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 		private void butDown_Click(object sender, System.EventArgs e) {
 			int idx=listMain.SelectedIndex;
 			if(idx==-1){
@@ -145,3 +149,30 @@ namespace OpenDental{
 		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

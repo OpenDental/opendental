@@ -58,7 +58,7 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			Employee employeeOld=EmployeeCur.Copy();
 			EmployeeCur.IsHidden=checkIsHidden.Checked;
 			EmployeeCur.LName=textLName.Text.Trim();//remove any leading/trailing whitespace
@@ -98,5 +98,45 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void FormEmployeeEdit_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+			
+		}
+
+		
+
+		
+		
 	}
+
+	
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

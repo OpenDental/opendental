@@ -50,6 +50,7 @@ namespace OpenDental{
 			}
 			else {*/
 			butOK.Visible=false;
+			butCancel.Text=Lan.g(this,"Close");
 			//multInput.Visible=false;
 			//Gets filled repeatedly.  Saved each time user double clicks on a row.  Only the answer can be edited.
 			FillGrid();
@@ -109,14 +110,11 @@ namespace OpenDental{
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			//only visible if editing existing quesionnaire.
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-			inputBoxParam.LabelText=FormPatCur.QuestionList[e.Row].Description;
-			inputBoxParam.Text=FormPatCur.QuestionList[e.Row].Answer;
-			InputBox inputBox=new InputBox(inputBoxParam);
+			using InputBox inputBox=new InputBox(FormPatCur.QuestionList[e.Row].Description);
+			inputBox.textResult.Text=FormPatCur.QuestionList[e.Row].Answer;
 			inputBox.ShowDialog();
-			if(inputBox.IsDialogOK){
-				FormPatCur.QuestionList[e.Row].Answer=inputBox.StringResult;
+			if(inputBox.DialogResult==DialogResult.OK){
+				FormPatCur.QuestionList[e.Row].Answer=inputBox.textResult.Text;
 				Questions.Update(FormPatCur.QuestionList[e.Row]);
 			}
 			FillGrid();
@@ -162,5 +160,39 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
+		
+
+		
+
+	
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

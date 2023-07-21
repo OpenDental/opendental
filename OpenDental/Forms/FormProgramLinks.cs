@@ -71,7 +71,7 @@ namespace OpenDental{
 					}
 					break;
 				case "eClinicalWorks":
-					if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+					if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 						break;
 					}
 					using(FormEClinicalWorks formEClinicalWorks=new FormEClinicalWorks()) {
@@ -178,6 +178,10 @@ namespace OpenDental{
 			}
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 		private void FormProgramLinks_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
 			if(!_didChange){
 				return;
@@ -193,6 +197,5 @@ namespace OpenDental{
 			Cursor=Cursors.Default;
 			DataValid.SetInvalid(InvalidType.Programs, InvalidType.ToolButsAndMounts);
 		}
-
 	}
 }

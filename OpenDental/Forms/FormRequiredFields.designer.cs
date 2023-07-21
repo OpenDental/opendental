@@ -36,6 +36,7 @@ namespace OpenDental {
 			this.gridConditions = new OpenDental.UI.GridOD();
 			this.butRight = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.comboFieldTypes = new OpenDental.UI.ComboBox();
 			this.SuspendLayout();
 			// 
@@ -43,7 +44,7 @@ namespace OpenDental {
 			// 
 			this.listAvailableFields.Location = new System.Drawing.Point(12, 74);
 			this.listAvailableFields.Name = "listAvailableFields";
-			this.listAvailableFields.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
+			this.listAvailableFields.SelectionMode = UI.SelectionMode.MultiExtended;
 			this.listAvailableFields.Size = new System.Drawing.Size(158, 511);
 			this.listAvailableFields.TabIndex = 0;
 			this.listAvailableFields.TabStop = false;
@@ -162,6 +163,16 @@ namespace OpenDental {
 			this.gridMain.TranslationName = "FormRequiredFields";
 			this.gridMain.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellClick);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(796, 559);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 5;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// comboFieldTypes
 			// 
 			this.comboFieldTypes.Location = new System.Drawing.Point(15, 32);
@@ -173,6 +184,7 @@ namespace OpenDental {
 			// FormRequiredFields
 			// 
 			this.ClientSize = new System.Drawing.Size(883, 595);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.comboFieldTypes);
 			this.Controls.Add(this.checkMedicaidLength);
 			this.Controls.Add(this.label2);
@@ -196,6 +208,8 @@ namespace OpenDental {
 		}
 
 		#endregion
+
+		private UI.Button butClose;
 		private UI.Button butRight;
 		private OpenDental.UI.ListBox listAvailableFields;
 		private UI.GridOD gridMain;

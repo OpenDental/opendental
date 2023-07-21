@@ -32,7 +32,7 @@ namespace OpenDental{
 					comboClinics.IsAllSelected=true;
 				}
 				else {
-					comboClinics.ClinicNumSelected=_dunning.ClinicNum;
+					comboClinics.SelectedClinicNum=_dunning.ClinicNum;
 				}
 			}
 			if(PrefC.GetBool(PrefName.ShowFeatureSuperfamilies)) {
@@ -95,7 +95,7 @@ namespace OpenDental{
 			}
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textDaysInAdvance.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
@@ -124,7 +124,7 @@ namespace OpenDental{
 			_dunning.EmailSubject=textEmailSubject.Text;
 			_dunning.IsSuperFamily=checkSuperFamily.Checked;
 			if(PrefC.HasClinicsEnabled) {
-				_dunning.ClinicNum=comboClinics.ClinicNumSelected;
+				_dunning.ClinicNum=comboClinics.SelectedClinicNum;
 			}
 			if(IsNew){
 				Dunnings.Insert(_dunning);
@@ -133,6 +133,10 @@ namespace OpenDental{
 				Dunnings.Update(_dunning);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

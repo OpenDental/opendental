@@ -24,12 +24,24 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrLabNoteEdit));
+			this.butCancel = new System.Windows.Forms.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butSave = new System.Windows.Forms.Button();
 			this.butDelete = new System.Windows.Forms.Button();
 			this.butAddComment = new System.Windows.Forms.Button();
 			this.label57 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(627, 357);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 23);
+			this.butCancel.TabIndex = 9;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// gridMain
 			// 
@@ -93,6 +105,7 @@
 			this.Controls.Add(this.butAddComment);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.gridMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrLabNoteEdit";
@@ -105,6 +118,7 @@
 		#endregion
 
 		private OpenDental.UI.GridOD gridMain;
+		private System.Windows.Forms.Button butCancel;
 		private System.Windows.Forms.Button butSave;
 		private System.Windows.Forms.Button butDelete;
 		private System.Windows.Forms.Button butAddComment;

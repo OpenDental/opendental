@@ -49,17 +49,7 @@ namespace OpenDentBusiness{
 			return (JournalEntry)this.MemberwiseClone();
 		}
 
-		public override string ToString() {
-			string str="";
-			if(DebitAmt!=0){
-				str+="Deb:"+DebitAmt.ToString("f2");
-			}
-			if(CreditAmt!=0){
-				str+="Cred:"+CreditAmt.ToString("f2");
-			}
-			str+=", "+Memo;
-			return str;
-		}
+
 
 
 

@@ -48,8 +48,6 @@ namespace OpenDentBusiness {
 		Customer,
 		///<summary>8 -</summary>
 		MobileBug,
-		///<summary>9 -</summary>
-		JobTeam
 	}
 
 }

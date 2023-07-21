@@ -29,6 +29,7 @@ namespace OpenDental{
 			this.labelInstructions = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -62,7 +63,7 @@ namespace OpenDental{
 			// 
 			this.label4.Location = new System.Drawing.Point(48, 16);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(375, 20);
+			this.label4.Size = new System.Drawing.Size(380, 20);
 			this.label4.TabIndex = 7;
 			this.label4.Text = "Duplicate blockouts can cause slowness in the Appointment module.";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -70,22 +71,33 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(187, 148);
+			this.butOK.Location = new System.Drawing.Point(255, 149);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
 			this.butOK.Text = "Clear";
-			this.butOK.Click += new System.EventHandler(this.butClear_Click);
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(354, 149);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// FormBlockoutDuplicatesFix
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(424, 196);
+			this.ClientSize = new System.Drawing.Size(454, 196);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.labelInstructions);
 			this.Controls.Add(this.labelCount);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormBlockoutDuplicatesFix";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -98,6 +110,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label labelCount;
 		private System.Windows.Forms.Label labelInstructions;

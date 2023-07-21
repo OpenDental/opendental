@@ -243,7 +243,7 @@ namespace DatabaseIntegrityCheck {
 			}
 			_isCheckRunning=true;
 			string command="SHOW FULL TABLES WHERE Table_type='BASE TABLE'";//Tables, not views.  Does not work in MySQL 4.1, however we test for MySQL version >= 5.0 in PrefL.
-			ODProgressExtended progExtended=new ODProgressExtended(
+			ODProgressExtended progExtended=new ODProgressExtended(ODEventType.Undefined,new DatabaseIntegrityEvent(),
 				this,tag: new ProgressBarHelper(("Check Initializing...")));
 			try {				
 				Cursor=Cursors.WaitCursor;
@@ -335,7 +335,7 @@ namespace DatabaseIntegrityCheck {
 			}
 			//this tool would only be used with MySQL, so the current code is just fine.
 			_isRepairRunning=true;
-			ODProgressExtended progExtended=new ODProgressExtended(
+			ODProgressExtended progExtended=new ODProgressExtended(ODEventType.Undefined,new DatabaseIntegrityEvent(),
 				this,tag:new ProgressBarHelper(("Repair Initializing...")));
 			try {
 				Cursor=Cursors.WaitCursor;
@@ -416,5 +416,9 @@ namespace DatabaseIntegrityCheck {
 		}
 	}
 
-	
+	public class DatabaseIntegrityEvent:IODEvent {
+		public static event ODEventHandler Fired;
+		public static void Fire(ODEventType odEventType,object tag) { Fired?.Invoke(new ODEventArgs(odEventType,tag)); }
+		public void FireEvent(ODEventArgs e) { Fired?.Invoke(e); }
+	}
 }

@@ -24,6 +24,7 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEHR));
+			this.butClose = new System.Windows.Forms.Button();
 			this.butMeasures = new System.Windows.Forms.Button();
 			this.butHash = new System.Windows.Forms.Button();
 			this.butEncryption = new System.Windows.Forms.Button();
@@ -51,6 +52,17 @@
 			this.groupBox5.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(713, 663);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(86, 23);
+			this.butClose.TabIndex = 9;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butMeasures
 			// 
@@ -307,6 +319,7 @@
 			this.Controls.Add(this.groupBox5);
 			this.Controls.Add(this.groupBox4);
 			this.Controls.Add(this.gridMu);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEHR";
 			this.Text = "EHR";
@@ -320,6 +333,8 @@
 		}
 
 		#endregion
+
+		private System.Windows.Forms.Button butClose;
 		private System.Windows.Forms.Button butMeasures;
 		private System.Windows.Forms.Button butHash;
 		private System.Windows.Forms.Button butEncryption;

@@ -343,11 +343,16 @@ namespace OpenDental {
 			MsgBox.Show(this,"Saved.");
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 		private void FormPerioGraphical_FormClosing(object sender,FormClosingEventArgs e) {
 			//We need to clear out the tooth graphics of the local toothchart, since they are shallow copies of the tooth chart in the Chart module.
 			//Otherwise, when the form disposes, the Chart module tooth graphics would also be disposed.
 			toothChartWrapper.TcData.ListToothGraphics.Clear();
 		}
 
+	
 	}
 }

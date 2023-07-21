@@ -54,7 +54,7 @@ namespace OpenDental{
 			//this only happens during debugging
 			labelTotPages.Text="1 / "+totalPages.ToString();
 			printPreviewControl2.Zoom = ((double)printPreviewControl2.ClientSize.Height
-				/ ODprintout.GetDefaultPaperSize().Height);
+				/ ODprintout.DefaultPaperSize.Height);
 		}
 
 		///<summary>Creates a new pdf, attaches it to a new doc, and attaches that to the statement.  If it cannot create a pdf, for example if no AtoZ 
@@ -1226,20 +1226,20 @@ namespace OpenDental{
 				return;
 			printPreviewControl2.StartPage--;
 			labelTotPages.Text=(printPreviewControl2.StartPage+1).ToString()
-				+" / "+totalPages.ToString();
+				+" / "+totalPages.ToString();	
 		}
 
 		private void butFwd_Click(object sender, System.EventArgs e) {
 			if(printPreviewControl2.StartPage==totalPages-1) return;
 			printPreviewControl2.StartPage++;
 			labelTotPages.Text=(printPreviewControl2.StartPage+1).ToString()
-				+" / "+totalPages.ToString();
+				+" / "+totalPages.ToString();		
 		}
 
 		private void butPrint_Click(object sender, System.EventArgs e) {
 			//just for debugging
 			/*PrintReport(false);
-			DialogResult=DialogResult.Cancel;*/	
+			DialogResult=DialogResult.Cancel;*/			
 		}
 
 	}

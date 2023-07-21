@@ -26,6 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWikiListHistory));
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butRevert = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.gridOld = new OpenDental.UI.GridOD();
 			this.gridCur = new OpenDental.UI.GridOD();
 			this.SuspendLayout();
@@ -51,6 +52,16 @@ namespace OpenDental{
 			this.butRevert.TabIndex = 84;
 			this.butRevert.Text = "Revert";
 			this.butRevert.Click += new System.EventHandler(this.butRevert_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(888, 602);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
 			// 
 			// gridOld
 			// 
@@ -89,7 +100,9 @@ namespace OpenDental{
 			// 
 			// FormWikiListHistory
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(975, 638);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.gridCur);
 			this.Controls.Add(this.gridOld);
 			this.Controls.Add(this.butRevert);
@@ -104,6 +117,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private UI.Button butRevert;
 		private UI.GridOD gridOld;

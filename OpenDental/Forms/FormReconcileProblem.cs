@@ -443,7 +443,7 @@ namespace OpenDental {
 			FillReconcileGrid();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(_listDiseasesReconcile.Count==0) {
 				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"The reconcile list is empty which will cause all existing problems to be removed.  Continue?")) {
 					return;
@@ -513,10 +513,13 @@ namespace OpenDental {
 				DiseaseDef diseaseDefInter=DiseaseDefs.GetItem(_listDiseasesReconcile[i].DiseaseDefNum);
 				using FormCDSIntervention FormCDSI=new FormCDSIntervention();
 				FormCDSI.ListCDSInterventions=EhrTriggers.TriggerMatch(diseaseDefInter,_patient);
-				FormCDSI.ShowIfRequired();
+				FormCDSI.ShowIfRequired(false);
 			}
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

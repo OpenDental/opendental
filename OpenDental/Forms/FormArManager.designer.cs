@@ -32,6 +32,7 @@ namespace OpenDental{
 			this.butHistory = new OpenDental.UI.Button();
 			this.labelTsiOcp = new System.Windows.Forms.Label();
 			this.butTsiOcp = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.tabControlMain = new OpenDental.UI.TabControl();
 			this.tabUnsent = new OpenDental.UI.TabPage();
 			this.checkExcludeBadAddress = new OpenDental.UI.CheckBox();
@@ -211,6 +212,16 @@ namespace OpenDental{
 			this.butTsiOcp.TabIndex = 32;
 			this.butTsiOcp.Text = "OCP";
 			this.butTsiOcp.Click += new System.EventHandler(this.butTsiOcp_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(1143, 660);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// tabControlMain
 			// 
@@ -1522,6 +1533,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butHistory);
 			this.Controls.Add(this.labelTsiOcp);
 			this.Controls.Add(this.butTsiOcp);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.tabControlMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormArManager";
@@ -1548,6 +1560,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridUnsent;
 		private System.Windows.Forms.Label labelUnsentMinBal;
 		private ValidDouble textUnsentMinBal;

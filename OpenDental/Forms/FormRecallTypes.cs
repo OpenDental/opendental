@@ -133,7 +133,7 @@ namespace OpenDental{
 			Cursor=Cursors.WaitCursor;
 			GC.Collect();//free up resources since this could take a lot of memory
 			DataValid.SetInvalid(InvalidType.RecallTypes);
-			Action actionCloseRecallSyncProgress=ODProgress.Show(Lan.g(this,"Running Prep Queries")+"...",false,true);
+			Action actionCloseRecallSyncProgress=ODProgress.Show(ODEventType.RecallSync,typeof(RecallSyncEvent),Lan.g(this,"Running Prep Queries")+"...",false,true);
 			bool isSyncCompleted=Recalls.SynchAllPatients();
 			actionCloseRecallSyncProgress?.Invoke();
 			GC.Collect();//clean up resources, force the garbage collector to collect since resources may remain tied-up
@@ -143,7 +143,11 @@ namespace OpenDental{
 				MsgBox.Show(this,"Done.");
 				return;
 			}
-			MsgBox.Show(this,"Sync is currently running from a different workstation.");
+			MsgBox.Show(this,"Synch is currently running from a different workstation.");
+		}
+
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
 		}
 
 		private void FormRecallTypes_FormClosing(object sender,FormClosingEventArgs e) {
@@ -156,16 +160,50 @@ namespace OpenDental{
 			{
 				Cursor=Cursors.WaitCursor;
 				GC.Collect();//free up resources since this could take a lot of memory
-				Action actionCloseRecallSyncProgress=ODProgress.Show(Lan.g(this,"Running Prep Queries")+"...");
+				Action actionCloseRecallSyncProgress=ODProgress.Show(ODEventType.RecallSync,typeof(RecallSyncEvent),Lan.g(this,"Running Prep Queries")+"...");
 				bool isSyncSuccessful=Recalls.SynchAllPatients();
 				actionCloseRecallSyncProgress?.Invoke();
 				GC.Collect();//clean up resources, force the garbage collector to collect since resources may remain tied-up
 				Cursor=Cursors.Default;
 				if(!isSyncSuccessful) {
-					MsgBox.Show(this,"Sync is currently running from a different workstation.  Recalls should be synchronized again later.");
+					MsgBox.Show(this,"Synch is currently running from a different workstation.  Recalls should be synchronized again later.");
 				}
 			}
 		}
 
+	
+
+	
+
+		
+
+		
+
+		
+
+
+
+		
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

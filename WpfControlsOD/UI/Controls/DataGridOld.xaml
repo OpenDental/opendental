@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="WpfControls.UI.DataGridOld"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+		xmlns:local="clr-namespace:WpfControls.UI"
+		mc:Ignorable="d" 
+		d:DesignHeight="200" d:DesignWidth="200">
+	<UserControl.Style>
+		<Style>
+			<Setter Property="local:DataGridOld.HorizontalAlignment" Value="Left"/>
+			<Setter Property="local:DataGridOld.VerticalAlignment" Value="Top"/>
+		</Style>
+	</UserControl.Style>
+	<UserControl.Resources>
+		<ResourceDictionary Source="../../Themes/DataGridDict.xaml"/>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="18"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<Border x:Name="borderTitle">
+			<Border.Background>
+				<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+					<GradientStop Color="	#9cafe6" Offset="0.0" />
+					<GradientStop Color="#3c5a96" Offset="1.0" />
+				</LinearGradientBrush>
+			</Border.Background>
+			<TextBlock x:Name="textTitle" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Medium" FontFamily="Segoe UI" FontSize="14"><!--font 14 is 10.5pt-->
+				DataGrid
+			</TextBlock>
+		</Border>
+		<DataGrid x:Name="dataGrid" Grid.Row="1" 
+					 Style="{DynamicResource DataGridStyleOD}" 
+					 ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderOD}" 
+					 RowStyle="{DynamicResource DataGridRowStyleOD}" 
+					 CellStyle="{DynamicResource DataGridCellStyleOD}"/>
+	</Grid>
+</UserControl>

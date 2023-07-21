@@ -97,16 +97,13 @@ namespace OpenDentBusiness{
 				jobLog.MainRTF+=jobNew.Implementation;
 				changes=changes|JobNotificationChanges.WriteupChange;
 			}
-			if(jobNew.JobVersion!=jobOld.JobVersion) {
-				logDescriptions.Add("Job Version Changed.");
-			}
 			//Do not log RequirementsJSON changes here.
 			//if(jobOld.RequirementsJSON!=jobNew.RequirementsJSON) {
 			//	logDescriptions.Add("Job Requirements List Changed.");
 			//	changes=changes|JobNotificationChanges.ConceptChange;
 			//}
 			if(jobOld.Title!=jobNew.Title) {
-				logDescriptions.Add("Job Title Changed from "+jobOld.Title+" to "+jobNew.Title+".");
+				logDescriptions.Add("Job Title Changed.");
 			}
 			if(jobOld.HoursEstimate!=jobNew.HoursEstimate) {
 				logDescriptions.Add("Job Estimate Changed from "+jobOld.HoursEstimate.ToString()+" hour(s) to "+jobNew.HoursEstimate.ToString()+" hour(s).");
@@ -334,20 +331,6 @@ namespace OpenDentBusiness{
 			return true;
 		}
 
-		public static JobLog MakeLogEntryForParentChange(Job job,long parentNumNew,long parentNumOld) {
-			JobLog jobLog=new JobLog() {
-				JobNum=job.JobNum,
-				UserNumChanged=Security.CurUser.UserNum,
-				UserNumExpert=job.UserNumExpert,
-				UserNumEngineer=job.UserNumEngineer,
-				Title=job.Title,
-				Description="Parent Changed From "+parentNumOld+" to "+parentNumNew+".",
-				TimeEstimate=TimeSpan.FromHours(job.HoursEstimate)
-			};
-			JobLogs.Insert(jobLog);
-			return JobLogs.GetOne(jobLog.JobLogNum);//to get new timestamp.
-		}
-		
 		public static JobLog MakeLogEntryForTitleChange(Job job,string oldTitle,string newTitle) {
 			JobLog jobLog = new JobLog() {
 				JobNum=job.JobNum,

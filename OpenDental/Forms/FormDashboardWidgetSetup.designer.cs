@@ -33,7 +33,7 @@ namespace OpenDental{
 			this.butDuplicate = new OpenDental.UI.Button();
 			this.butTools = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// gridCustom
@@ -134,20 +134,20 @@ namespace OpenDental{
 			this.butAdd.Text = "Add";
 			this.butAdd.Click += new System.EventHandler(this.ButAdd_Click);
 			// 
-			// butSave
+			// butClose
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(782, 626);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 2;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(782, 626);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// FormDashboardWidgetSetup
 			// 
 			this.ClientSize = new System.Drawing.Size(869, 658);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.butTools);
 			this.Controls.Add(this.butDuplicate);
@@ -176,6 +176,6 @@ namespace OpenDental{
 		private UI.Button butDuplicate;
 		private UI.Button butTools;
 		private UI.Button butAdd;
-		private UI.Button butSave;
+		private UI.Button butClose;
 	}
 }

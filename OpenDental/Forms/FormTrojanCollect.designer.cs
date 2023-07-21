@@ -49,6 +49,7 @@ namespace OpenDental {
 			this.radioSkip = new System.Windows.Forms.RadioButton();
 			this.butHelp = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.textDate = new OpenDental.ValidDate();
 			this.groupTransactionType = new OpenDental.UI.GroupBox();
 			this.textAmount = new OpenDental.ValidDouble();
@@ -250,7 +251,7 @@ namespace OpenDental {
 			// butHelp
 			// 
 			this.butHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butHelp.Location = new System.Drawing.Point(407, 249);
+			this.butHelp.Location = new System.Drawing.Point(263, 249);
 			this.butHelp.Name = "butHelp";
 			this.butHelp.Size = new System.Drawing.Size(75, 26);
 			this.butHelp.TabIndex = 2;
@@ -266,6 +267,16 @@ namespace OpenDental {
 			this.butOK.TabIndex = 1;
 			this.butOK.Text = "OK Send Transaction to Trojan";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(407, 249);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Cancel";
 			// 
 			// textDate
 			// 
@@ -310,6 +321,7 @@ namespace OpenDental {
 			// 
 			// FormTrojanCollect
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(494, 287);
 			this.Controls.Add(this.textAmount);
 			this.Controls.Add(this.groupTransactionType);
@@ -333,6 +345,7 @@ namespace OpenDental {
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butHelp);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.menuMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -347,6 +360,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butHelp;
 		private Label label1;

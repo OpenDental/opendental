@@ -34,6 +34,7 @@ namespace OpenDental{
 			this.butInstructorPicker = new OpenDental.UI.Button();
 			this.butGradingScales = new OpenDental.UI.Button();
 			this.butEvaluation = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -134,13 +135,24 @@ namespace OpenDental{
 			this.butEvaluation.Text = "Evaluations";
 			this.butEvaluation.Click += new System.EventHandler(this.butEvaluation_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(322, 177);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 5;
+			this.butCancel.Text = "Close";
+			this.butCancel.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormDentalSchoolSetup
 			// 
-			this.ClientSize = new System.Drawing.Size(343, 213);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(409, 213);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.butGradingScales);
 			this.Controls.Add(this.butEvaluation);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormDentalSchoolSetup";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -153,6 +165,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label1;
 		private UI.Button butStudentPicker;
 		private System.Windows.Forms.Label label2;

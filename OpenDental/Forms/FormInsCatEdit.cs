@@ -47,7 +47,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textPercent.IsValid())
 			//|| !textPriBasicPercent.IsValid()
 			{
@@ -72,5 +72,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

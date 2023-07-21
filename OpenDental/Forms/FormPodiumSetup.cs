@@ -42,8 +42,8 @@ namespace OpenDental {
 						checkEnabled.Enabled=false;
 					}
 				}
-				comboClinic.ClinicNumSelected=Clinics.ClinicNum;
-				_clinicNum=comboClinic.ClinicNumSelected;
+				comboClinic.SelectedClinicNum=Clinics.ClinicNum;
+				_clinicNum=comboClinic.SelectedClinicNum;
 			}
 			else {//clinics are not enabled, use ClinicNum 0 to indicate 'Headquarters' or practice level program properties
 				_clinicNum=0;
@@ -63,7 +63,7 @@ namespace OpenDental {
 					listUserClinicNums=Clinics.GetForUserod(Security.CurUser,true).Select(x => x.ClinicNum).ToList();
 			}
 			if(!comboClinic.IsUnassignedSelected) {
-					clinicNum=comboClinic.ClinicNumSelected;
+					clinicNum=comboClinic.SelectedClinicNum;
 			}
 			_listProgramProperties=ProgramProperties.GetListForProgramAndClinicWithDefault(_program.ProgramNum,clinicNum);
 			_programPropertyUseService=_listProgramProperties.Find(x => x.PropertyDesc==Podium.PropertyDescs.UseService);
@@ -118,7 +118,7 @@ namespace OpenDental {
 
 		private void comboClinic_SelectionChangeCommitted(object sender,EventArgs e) {
 			SaveClinicCurProgramPropertiesToList();
-			_clinicNum=comboClinic.ClinicNumSelected;
+			_clinicNum=comboClinic.SelectedClinicNum;
 			//This will either display the HQ value, or the clinic specific value.
 			ProgramProperty programProperty=_listProgramPropertiesChanged.Find(x => x.ClinicNum==_clinicNum);
 			if(programProperty==null){
@@ -135,8 +135,8 @@ namespace OpenDental {
 			if(_clinicNum==0) {
 				//Headquarters is selected so only update the location ID (might have changed) on all other location ID properties that match the "old" location ID of HQ.
 				programProperty=_listProgramPropertiesChanged.Find(x => x.ClinicNum==_clinicNum);
-				if(programProperty==null) {//should never happen, just in case
-					return;
+				if(programProperty!=null){
+					return;//No other clinic specific changes could have been made, we need to return.
 				}
 				//Get the location ID so that we correctly update all program properties with a matching location ID.
 				string locationIdOld=programProperty.PropertyValue;
@@ -312,7 +312,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textApptSetComplete.IsValid()
 				|| !textApptTimeArrived.IsValid()
 				|| !textApptTimeDismissed.IsValid()) 
@@ -327,5 +327,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

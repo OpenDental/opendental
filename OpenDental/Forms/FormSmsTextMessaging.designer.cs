@@ -45,9 +45,9 @@ namespace OpenDental{
 			this.label1 = new System.Windows.Forms.Label();
 			this.checkHidden = new OpenDental.UI.CheckBox();
 			this.label3 = new System.Windows.Forms.Label();
-			this.textDateTo = new OpenDental.ValidDate();
+			this.textDateTo = new ValidDate();
 			this.label2 = new System.Windows.Forms.Label();
-			this.textDateFrom = new OpenDental.ValidDate();
+			this.textDateFrom = new ValidDate();
 			this.butSend = new OpenDental.UI.Button();
 			this.textReply = new OpenDental.ODtextBox();
 			this.smsThreadView = new OpenDental.SmsThreadView();
@@ -55,6 +55,7 @@ namespace OpenDental{
 			this.butPatAll = new OpenDental.UI.Button();
 			this.butPatFind = new OpenDental.UI.Button();
 			this.butRefresh = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.comboClinics = new OpenDental.UI.ComboBoxClinicPicker();
 			this.textMsgCount = new OpenDental.ODtextBox();
 			this.textCharCount = new OpenDental.ODtextBox();
@@ -290,7 +291,7 @@ namespace OpenDental{
 			this.textReply.Enabled = false;
 			this.textReply.Location = new System.Drawing.Point(817, 556);
 			this.textReply.Name = "textReply";
-			this.textReply.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.TxtMsg;
+			this.textReply.QuickPasteType = OpenDentBusiness.QuickPasteType.TxtMsg;
 			this.textReply.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textReply.Size = new System.Drawing.Size(201, 98);
 			this.textReply.TabIndex = 165;
@@ -344,13 +345,23 @@ namespace OpenDental{
 			this.butRefresh.Text = "Refresh";
 			this.butRefresh.Click += new System.EventHandler(this.butRefresh_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(992, 660);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// comboClinics
 			// 
 			this.comboClinics.IncludeAll = true;
 			this.comboClinics.IncludeUnassigned = true;
 			this.comboClinics.Location = new System.Drawing.Point(586, 37);
 			this.comboClinics.Name = "comboClinics";
-			this.comboClinics.IsMultiSelect = true;
+			this.comboClinics.SelectionModeMulti = true;
 			this.comboClinics.Size = new System.Drawing.Size(229, 21);
 			this.comboClinics.TabIndex = 169;
 			// 
@@ -363,7 +374,7 @@ namespace OpenDental{
 			this.textMsgCount.DetectUrls = false;
 			this.textMsgCount.Location = new System.Drawing.Point(817, 675);
 			this.textMsgCount.Name = "textMsgCount";
-			this.textMsgCount.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.TxtMsg;
+			this.textMsgCount.QuickPasteType = OpenDentBusiness.QuickPasteType.TxtMsg;
 			this.textMsgCount.ReadOnly = true;
 			this.textMsgCount.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textMsgCount.Size = new System.Drawing.Size(53, 20);
@@ -380,7 +391,7 @@ namespace OpenDental{
 			this.textCharCount.DetectUrls = false;
 			this.textCharCount.Location = new System.Drawing.Point(817, 655);
 			this.textCharCount.Name = "textCharCount";
-			this.textCharCount.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.TxtMsg;
+			this.textCharCount.QuickPasteType = OpenDentBusiness.QuickPasteType.TxtMsg;
 			this.textCharCount.ReadOnly = true;
 			this.textCharCount.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textCharCount.Size = new System.Drawing.Size(53, 20);
@@ -433,6 +444,7 @@ namespace OpenDental{
 			this.Controls.Add(this.textDateTo);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.textDateFrom);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormSmsTextMessaging";
 			this.Text = "Text Messaging";
@@ -444,6 +456,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMessages;
 		private ValidDate textDateFrom;
 		private System.Windows.Forms.Label label2;

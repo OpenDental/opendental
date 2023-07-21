@@ -113,7 +113,7 @@ namespace OpenDental {
 				isSuccessfulMerge=Patients.MergeTwoPatients(_patientTo.PatNum,_patientFrom.PatNum);
 			}
 			catch(Exception ex) {
-				SecurityLogs.MakeLogEntry(EnumPermType.PatientMerge,_patientTo.PatNum,
+				SecurityLogs.MakeLogEntry(Permissions.PatientMerge,_patientTo.PatNum,
 					"Error occurred while merging Patient: "+_patientFrom.GetNameFL()+"\r\nPatNum From: "+_patientFrom.PatNum+"\r\nPatNum To: "+_patientTo.PatNum);
 				Cursor=Cursors.Default;
 				FriendlyException.Show(Lan.g(this,"Unable to fully merge patients.  Contact support."),ex);
@@ -194,10 +194,6 @@ namespace OpenDental {
 								//which is just clutter but at least the merge is guaranteed this way.
 							}
 						}
-						if(fileCopyFailures>0) {
-							MessageBox.Show(Lan.g(this,"Some files belonging to the from patient were not copied.")+"\r\n"
-								+Lan.g(this,"Number of files not copied")+": "+fileCopyFailures);
-						}
 					}
 					#endregion Copy AtoZ Documents
 				}//end if AtoZFolderUsed
@@ -211,33 +207,38 @@ namespace OpenDental {
 						Documents.MergePatientDocuments(_patientFrom.PatNum,_patientTo.PatNum);
 					}
 					else {
-						bool success=false;
-						UI.ProgressWin progressWin=new UI.ProgressWin();
-						progressWin.StartingMessage="Moving Documents...";
-						progressWin.ActionMain=() => success=CloudStorage.Move(atozFrom,atozTo);
-						progressWin.ShowDialog();
-						if(!success){
-							MsgBox.Show(this,"Some files belonging to the patient were not copied.");//+"\r\n"
-								//+Lan.g(this,"Number of files not copied")+": "+fileCopyFailures);
+						using FormProgress formProgress=new FormProgress();
+						formProgress.DisplayText="Moving Documents...";
+						formProgress.NumberFormat="F";
+						formProgress.NumberMultiplication=1;
+						formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+						formProgress.TickMS=1000;
+						OpenDentalCloud.Core.TaskStateMove taskStateMove=CloudStorage.MoveAsync(atozFrom
+							,atozTo
+							,new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
+						if(formProgress.ShowDialog()==DialogResult.Cancel) {
+							taskStateMove.DoCancel=true;
+							fileCopyFailures=taskStateMove.CountTotal-taskStateMove.CountSuccess;
 						}
-						//if(progressWin.IsCancelled){
-						//	fileCopyFailures=taskStateMove.CountTotal-taskStateMove.CountSuccess;
-						//}
-						//else {
-						//	fileCopyFailures=taskStateMove.CountFailed;
-						//}
+						else {
+							fileCopyFailures=taskStateMove.CountFailed;
+						}
 					}
 				}
 				Cursor=Cursors.Default;
+				if(fileCopyFailures>0) {
+					MessageBox.Show(Lan.g(this,"Some files belonging to the from patient were not copied.")+"\r\n"
+						+Lan.g(this,"Number of files not copied")+": "+fileCopyFailures);
+				}
 				//Make log entry here not in parent form because we can merge multiple patients at a time.
-				SecurityLogs.MakeLogEntry(EnumPermType.PatientMerge,_patientTo.PatNum,
+				SecurityLogs.MakeLogEntry(Permissions.PatientMerge,_patientTo.PatNum,
 					"Patient: "+_patientFrom.GetNameFL()+"\r\nPatNum From: "+_patientFrom.PatNum+"\r\nPatNum To: "+_patientTo.PatNum);
 				textPatNumFrom.Text="";
 				textPatientNameFrom.Text="";
 				textPatFromBirthdate.Text="";
 				//Set currently selected patient to Merge From patient
 				if(FormOpenDental.PatNumCur==_patientFrom.PatNum) {
-					GlobalFormOpenDental.PatientSelected(_patientTo,true);
+					FormOpenDental.S_Contr_PatientSelected(_patientTo,true);
 				}
 				//This will cause CheckUIState() to disabled the merge button until the user selects a new _patFrom.
 				_patientFrom=null;
@@ -245,6 +246,10 @@ namespace OpenDental {
 				MsgBox.Show(this,"Patients merged successfully.");
 			}//end MergeTwoPatients
 			Cursor=Cursors.Default;
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 
 	}

@@ -23,8 +23,6 @@ namespace OpenDentBusiness {
     public DateTime DateTimeUpserted;
     ///<summary>FK to document.DocNum. If a document is deleted, need to also delete any record from this table with the same DocNum.</summary>
     public long DocNum;
-     ///<summary>Enum:EnumOcrCaptureType 0=Miscellaneous, 1=PrimaryInsFront, 2=PrimaryInsBack, 3=SecondaryInsFront, 4=SecondaryInsBack </summary>
-    public EnumOcrCaptureType OcrCaptureType;
 
     ///<summary></summary>
     public EClipboardImageCapture Copy() {

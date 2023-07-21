@@ -24,22 +24,21 @@ namespace OpenDental {
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormApptReminderRuleAggEdit));
-			this.butSave = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.tabControl1 = new OpenDental.UI.TabControl();
 			this.tabPageDefault = new OpenDental.UI.TabPage();
-			this.panelMain = new OpenDental.UI.PanelOD();
 			this.tabControl1.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butClose
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(581, 567);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 6;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(581, 567);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 6;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// tabControl1
 			// 
@@ -62,23 +61,11 @@ namespace OpenDental {
 			this.tabPageDefault.TabIndex = 0;
 			this.tabPageDefault.Text = "Default";
 			// 
-			// panelMain
-			// 
-			this.panelMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.panelMain.Location = new System.Drawing.Point(2, 21);
-			this.panelMain.Name = "panelMain";
-			this.panelMain.Size = new System.Drawing.Size(663, 538);
-			this.panelMain.TabIndex = 0;
-			this.panelMain.Visible = false;
-			// 
 			// FormApptReminderRuleAggEdit
 			// 
 			this.ClientSize = new System.Drawing.Size(668, 603);
-			this.Controls.Add(this.panelMain);
 			this.Controls.Add(this.tabControl1);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormApptReminderRuleAggEdit";
 			this.Text = "Automated Messages Advanced Settings";
@@ -90,9 +77,8 @@ namespace OpenDental {
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.TabControl tabControl1;
 		private OpenDental.UI.TabPage tabPageDefault;
-		private UI.PanelOD panelMain;
 	}
 }

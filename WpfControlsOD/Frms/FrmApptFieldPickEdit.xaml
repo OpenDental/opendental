@@ -7,10 +7,10 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="375" Height="538" 
-             Text="Edit Appointment Field Pick List" MinMaxBoxes="False">
+             Text="Edit Appointment Field Pick List" Loaded="FrmApptFieldPickEdit_Loaded" >
     <Grid Background="#FFFCFDFE" >
         <ui:ListBox x:Name="listBoxPick" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="22,40,20,52" />
         <ui:Label x:Name="labelName" Width="335" Height="20" Margin="19,17,0,0" Text="Field Name" VAlign="Bottom" />
-        <ui:Button x:Name="butOK" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,21,10" Text="_OK" Click="butOK_Click" />
+        <ui:Button x:Name="butOK" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,21,10" Text="OK" Click="butOK_Click" />
     </Grid>
 </local:FrmODBase>

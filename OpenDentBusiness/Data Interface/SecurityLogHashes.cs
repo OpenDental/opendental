@@ -19,15 +19,15 @@ namespace OpenDentBusiness{
 		#endregion
 		
 		#region Delete
-		public static void DeleteWithMaxPriKey(long securityLogHashNumMax) {
+		public static void DeleteWithMaxPriKey(long maxSecurityLogHashNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),securityLogHashNumMax);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),maxSecurityLogHashNum);
 				return;
 			}
-			if(securityLogHashNumMax==0) {
+			if(maxSecurityLogHashNum==0) {
 				return;
 			}
-			string command="DELETE FROM securityloghash WHERE SecurityLogHashNum <= "+POut.Long(securityLogHashNumMax);
+			string command="DELETE FROM securityloghash WHERE SecurityLogHashNum <= "+POut.Long(maxSecurityLogHashNum);
 			Db.NonQ(command);
 		}
 
@@ -111,7 +111,7 @@ namespace OpenDentBusiness{
 		///<summary>Does not make a call to the db.  Returns a SHA-256 hash of the entire security log.  Length of 32 bytes.  Only called from CreateSecurityLogHash() and FormAudit.FillGrid()</summary>
 		public static string GetHashString(SecurityLog securityLog) {
 			//No need to check MiddleTierRole; no call to db.
-			HashAlgorithm hashAlgorithm=SHA256.Create();
+			HashAlgorithm algorithm=SHA256.Create();
 			//Build string to hash
 			string logString="";
 			//logString+=securityLog.SecurityLogNum;
@@ -125,9 +125,9 @@ namespace OpenDentBusiness{
 			if(securityLog.DateTPrevious!=DateTime.MinValue) {
 				logString+=POut.DateT(securityLog.DateTPrevious,false);
 			}
-			byte[] byteArrayUnicode=Encoding.Unicode.GetBytes(logString);
-			byte[] byteArray=hashAlgorithm.ComputeHash(byteArrayUnicode);
-			return Convert.ToBase64String(byteArray);
+			byte[] unicodeBytes=Encoding.Unicode.GetBytes(logString);
+			byte[] hashbytes=algorithm.ComputeHash(unicodeBytes);
+			return Convert.ToBase64String(hashbytes);
 		}
 		
 		/*

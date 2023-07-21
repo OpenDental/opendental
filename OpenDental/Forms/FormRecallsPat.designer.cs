@@ -27,6 +27,7 @@ namespace OpenDental{
 			this.butPerio = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// butPerio
@@ -66,12 +67,23 @@ namespace OpenDental{
 			this.gridMain.TranslationName = "TableRecallsPat";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(748, 396);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormRecallsPat
 			// 
 			this.ClientSize = new System.Drawing.Size(848, 439);
 			this.Controls.Add(this.butPerio);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormRecallsPat";
 			this.Text = "Recalls for Patient";
@@ -82,6 +94,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.Button butPerio;

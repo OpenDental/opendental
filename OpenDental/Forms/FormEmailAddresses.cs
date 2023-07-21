@@ -17,8 +17,6 @@ namespace OpenDental {
 		public long EmailAddressNum;
 		///<summary>If true, a signal for invalid Email cache will be sent out upon closing.</summary>
 		public bool IsChanged;
-		///<summary>When in SelectionModeIf true, allows selecting an email address associated to a user.</summary>
-		public bool DoAllowSelectingAddressWithUsers;
 
 		public FormEmailAddresses() {
 			InitializeComponent();
@@ -35,7 +33,6 @@ namespace OpenDental {
 				groupEmailPrefs.Visible=false;
 				butAdd.Visible=false;
 				checkEmailDisclaimer.Visible=false;
-				butSave.Text="&OK";
 			}
 			else {
 				textInboxCheckInterval.Text=PrefC.GetInt(PrefName.EmailInboxCheckInterval).ToString();//Calls PIn() internally.
@@ -49,7 +46,7 @@ namespace OpenDental {
 				return;
 			}
 			if(IsSelectionMode) {
-				if(!DoAllowSelectingAddressWithUsers && selectedAddress.UserNum!=0) {
+				if(selectedAddress.UserNum!=0) {
 					MsgBox.Show(this,"Please select an existing email address that is not associated with a user or clinic.");
 					return;
 				}
@@ -74,7 +71,7 @@ namespace OpenDental {
 			.ToList();
 			//Removes any user specific email addresses to the list if the currenty user is not admin
 			List<long> listUserodNums=new List<long>();
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,suppressMessage:true) || IsSelectionMode) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin,suppressMessage:true) || IsSelectionMode) {
 				listEmailAddresses.RemoveAll(x=>x.UserNum!=Security.CurUser.UserNum && x.UserNum!=0);
 			}
 			gridMain.BeginUpdate();
@@ -147,9 +144,13 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void butOK_Click(object sender,EventArgs e) {
 			if(IsSelectionMode) {
-				if(gridMain.SelectedTag<EmailAddress>() is null || (!DoAllowSelectingAddressWithUsers && gridMain.SelectedTag<EmailAddress>().UserNum!=0)) {
+				if(gridMain.SelectedTag<EmailAddress>() is null || gridMain.SelectedTag<EmailAddress>().UserNum!=0) {
 					MsgBox.Show(this,"Please select an existing email address that is not associated with a user or clinic.");
 					return;
 				}

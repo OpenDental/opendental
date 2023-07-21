@@ -725,7 +725,7 @@ namespace UnitTests.PaymentEdit_Tests {
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(ins.Pat.PatNum);
 			Procedures.ComputeEstimatesForAll(pat.PatNum,ins.ListAllClaimProcs,ins.ListAllProcs,ins.ListInsPlans,ins.ListPatPlans,ins.ListBenefits,pat.Age,
 				ins.ListInsSubs);
-			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListClaimProcsInserted;
+			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListInsertedClaimProcs;
 			Payment patPayment=PaymentT.MakePaymentNoSplits(pat.PatNum,35);
 			PaymentEdit.AutoSplit autoSplitData=PaymentEdit.AutoSplitForPayment(pat.PatNum,patPayment);
 			Assert.AreEqual(1,autoSplitData.ListPaySplitsSuggested.Count);
@@ -3479,13 +3479,13 @@ namespace UnitTests.PaymentEdit_Tests {
 			long provNum=ProviderT.CreateProvider(suffix);
 			Procedure proc=ProcedureT.CreateProcedure(pat,"D1120",ProcStat.C,"",100,procDate:DateTime.Today.AddMonths(-4),provNum:provNum);
 			DateTime datePayPlanStart=DateTime.Today.AddMonths(-3);
-			List<Procedure> listProcs=new List<Procedure>() { proc };
-			PayPlan payplan=PayPlanT.CreatePayPlanWithCredits(pat.PatNum,30,datePayPlanStart,provNum:provNum,listProcs);
+			PayPlan payplan=PayPlanT.CreatePayPlanWithCredits(pat.PatNum,30,datePayPlanStart,provNum:provNum,
+				listProcs:new List<Procedure>() { proc });
 			PaymentT.MakePayment(pat.PatNum,30,payDate:DateTime.Today.AddMonths(-2),payPlanNum:payplan.PayPlanNum,provNum:provNum,procNum:proc.ProcNum);
 			//jsalmon - There is technically no reason to close out the payment plan for today because nothing is due in the future...
 			//Leaving the "close out" code here just because it was here previously and doesn't really hurt anything, but also doesn't do anything...
 			List<PayPlanCharge> listCharges=PayPlanCharges.GetForPayPlan(payplan.PayPlanNum);
-			listCharges.Add(PayPlanEdit.CalculatePatPayPlanCloseoutCharge(listCharges,listProcs,payplan,DateTime.Today));
+			listCharges.Add(PayPlanEdit.CloseOutPatPayPlan(listCharges,payplan,DateTime.Today));
 			listCharges.RemoveAll(x => x.ChargeDate > DateTime.Today);
 			payplan.IsClosed=true;
 			PayPlans.Update(payplan);
@@ -8067,142 +8067,6 @@ namespace UnitTests.PaymentEdit_Tests {
 
 		///<summary></summary>
 		[TestMethod]
-		public void PaymentEdit_ConstructAndLinkChargeCredits_PayPlanProcPosAndNegCredits() {
-			/*****************************************************
-				Proc  provNum  $1000
-				PP    provNum  $500
-					PPC1  provNum  $1000
-						^Attached to Proc
-					PPC2  provNum  $-500
-						^Attached to Proc
-					PPC3  provNum  $500
-						^Debit
-			******************************************************/
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			long unearnedType=PrefC.GetLong(PrefName.PrepaymentUnearnedType);
-			long provNum=ProviderT.CreateProvider(suffix);
-			Patient patient=PatientT.CreatePatient(suffix);
-			Procedure procedure=ProcedureT.CreateProcedure(patient,"PPPPANC",ProcStat.C,"",1000,provNum:provNum);
-			PayPlan payPlan=PayPlanT.CreatePayPlanNoCharges(patient.PatNum,500,DateTime.Today,provNum:provNum);
-			//Make multiple payment plan credits; one positive and one negative.
-			PayPlanCharge payPlanCharge1=PayPlanChargeT.CreateOne(payPlan.PayPlanNum,patient.Guarantor,patient.PatNum,DateTime.Today,1000,provNum:provNum,
-				chargeType:PayPlanChargeType.Credit,procNum:procedure.ProcNum);
-			PayPlanCharge payPlanCharge2=PayPlanChargeT.CreateOne(payPlan.PayPlanNum,patient.Guarantor,patient.PatNum,DateTime.Today,-500,provNum:provNum,
-				chargeType:PayPlanChargeType.Credit,procNum:procedure.ProcNum);
-			PayPlanCharge payPlanCharge3=PayPlanChargeT.CreateOne(payPlan.PayPlanNum,patient.Guarantor,patient.PatNum,DateTime.Today,500,provNum:provNum,
-				chargeType:PayPlanChargeType.Debit);
-			PaymentEdit.ConstructResults constructResults=PaymentEdit.ConstructAndLinkChargeCredits(patient.PatNum);
-			/*****************************************************
-			AccountEntry:      Today  provNum  pat   $500
-				^Represents proc1
-			PayPlanCharge:     Today  provNum  pat   $500
-				^Represents ppd1 and proc1
-			******************************************************/
-			Assert.AreEqual(2,constructResults.ListAccountEntries.Count);
-			Assert.AreEqual(1,constructResults.ListAccountEntries.Count(x => x.GetType()==typeof(Procedure)
-				&& x.PatNum==patient.PatNum
-				&& x.ProvNum==provNum
-				&& x.AmountOriginal==1000
-				&& x.AmountEnd==500
-				&& x.Date==DateTime.Today
-				&& x.ProcNum==procedure.ProcNum));
-			Assert.AreEqual(1,constructResults.ListAccountEntries.Count(x => x.GetType()==typeof(FauxAccountEntry)
-				&& x.AdjNum==0
-				&& x.PatNum==patient.PatNum
-				&& x.ProvNum==provNum
-				&& ((FauxAccountEntry)x).Principal==500
-				&& x.AmountEnd==500
-				&& x.Date==DateTime.Today
-				&& x.ProcNum==procedure.ProcNum));
-		}
-
-		///<summary></summary>
-		[TestMethod]
-		public void PaymentEdit_ConstructAndLinkChargeCredits_PayPlanClosedWithInsurance() {
-			//This is the crazy scenario that I was given. TaskNum:5782156
-			/*****************************************************
-				Proc  provNum  $1392
-				Claim provNum  $1392
-					^Payment: $805.20  Write-off: $586.80
-				PP    provNum  $0
-					PPC1  provNum  $586.80
-						^Attached to Proc
-					PPC2  provNum  $-586.80
-						^Attached to Proc
-					PPD1  03/23/2022  provNum  $146.70
-					PPD2  03/23/2022  provNum -$146.70
-					PPD3  04/23/2022  provNum  $146.70
-					PPD4  04/23/2022  provNum -$146.70
-					PPD5  05/23/2022  provNum  $146.70
-					PPD6  05/23/2022  provNum -$146.70
-					PPD7  06/23/2022  provNum  $146.70
-					PPD8  06/23/2022  provNum -$146.70
-			******************************************************/
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			long unearnedType=PrefC.GetLong(PrefName.PrepaymentUnearnedType);
-			long provNum=ProviderT.CreateProvider(suffix);
-			Patient patient=PatientT.CreatePatient(suffix);
-			ProcedureCode procCode=ProcedureCodeT.CreateProcCode("PPPPANC");
-			Procedure procedure=ProcedureT.CreateProcedure(patient,procCode.ProcCode,ProcStat.C,"",1392,provNum:provNum);
-			InsuranceInfo insInfo=InsuranceT.AddInsurance(patient,suffix);
-			insInfo.ListBenefits.Add(BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,procCode.CodeNum,100));
-			Claim claim=ClaimT.CreateClaim(new List<Procedure> { procedure },insInfo);
-			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(patient.PatNum);
-			//Receive insurance payment the way the task indicates.
-			listClaimProcs.First().InsPayAmt=805.20;
-			listClaimProcs.First().WriteOff=586.80;
-			ClaimT.ReceiveClaim(claim,listClaimProcs);
-			PayPlan payPlan=PayPlanT.CreatePayPlanNoCharges(patient.PatNum,0,DateTime.Today,provNum:provNum);
-			//Make multiple payment plan credits that negate each other; one positive and one negative.
-			PayPlanCharge payPlanChargeCredit1=PayPlanChargeT.CreateOne(payPlan.PayPlanNum,patient.Guarantor,patient.PatNum,DateTime.Today,586.80,provNum:provNum,chargeType:PayPlanChargeType.Credit,procNum:procedure.ProcNum);
-			PayPlanCharge payPlanChargeCredit2=PayPlanChargeT.CreateOne(payPlan.PayPlanNum,patient.Guarantor,patient.PatNum,DateTime.Today,-586.80,provNum:provNum,chargeType:PayPlanChargeType.Credit,procNum:procedure.ProcNum);
-			//Create a bunch of payment plan credits that negate each other; positives and negatives.
-			DateTime dateTimeDebitStart=new DateTime(2022,03,23);
-			PayPlanCharge payPlanChargeDebit1=PayPlanChargeT.CreateOne(payPlan.PayPlanNum,patient.Guarantor,patient.PatNum,dateTimeDebitStart,146.70,provNum:provNum,chargeType:PayPlanChargeType.Debit);
-			PayPlanCharge payPlanChargeDebit2=PayPlanChargeT.CreateOne(payPlan.PayPlanNum,patient.Guarantor,patient.PatNum,dateTimeDebitStart,-146.70,provNum:provNum,chargeType:PayPlanChargeType.Debit);
-			PayPlanCharge payPlanChargeDebit3=PayPlanChargeT.CreateOne(payPlan.PayPlanNum,patient.Guarantor,patient.PatNum,dateTimeDebitStart.AddMonths(1),146.70,provNum:provNum,chargeType:PayPlanChargeType.Debit);
-			PayPlanCharge payPlanChargeDebit4=PayPlanChargeT.CreateOne(payPlan.PayPlanNum,patient.Guarantor,patient.PatNum,dateTimeDebitStart.AddMonths(1),-146.70,provNum:provNum,chargeType:PayPlanChargeType.Debit);
-			PayPlanCharge payPlanChargeDebit5=PayPlanChargeT.CreateOne(payPlan.PayPlanNum,patient.Guarantor,patient.PatNum,dateTimeDebitStart.AddMonths(2),146.70,provNum:provNum,chargeType:PayPlanChargeType.Debit);
-			PayPlanCharge payPlanChargeDebit6=PayPlanChargeT.CreateOne(payPlan.PayPlanNum,patient.Guarantor,patient.PatNum,dateTimeDebitStart.AddMonths(2),-146.70,provNum:provNum,chargeType:PayPlanChargeType.Debit);
-			PayPlanCharge payPlanChargeDebit7=PayPlanChargeT.CreateOne(payPlan.PayPlanNum,patient.Guarantor,patient.PatNum,dateTimeDebitStart.AddMonths(3),146.70,provNum:provNum,chargeType:PayPlanChargeType.Debit);
-			PayPlanCharge payPlanChargeDebit8=PayPlanChargeT.CreateOne(payPlan.PayPlanNum,patient.Guarantor,patient.PatNum,dateTimeDebitStart.AddMonths(3),-146.70,provNum:provNum,chargeType:PayPlanChargeType.Debit);
-			PaymentEdit.ConstructResults constructResults=PaymentEdit.ConstructAndLinkChargeCredits(patient.PatNum);
-			/*****************************************************
-			AccountEntry:      Today  provNum  pat   $0
-				^Represents proc and insurance paid for some and then wrote off the rest.
-			AllPayPlanStuff:   Today  provNum  pat   $0
-				^Represents credits, debits, everything.
-			******************************************************/
-			Assert.AreEqual(9,constructResults.ListAccountEntries.Count);
-			Assert.AreEqual(1,constructResults.ListAccountEntries.Count(x => x.GetType()==typeof(Procedure)
-				&& x.PatNum==patient.PatNum
-				&& x.ProvNum==provNum
-				&& x.AmountOriginal==1392
-				&& x.AmountEnd==0
-				&& x.Date==DateTime.Today
-				&& x.ProcNum==procedure.ProcNum));
-			for(int i=0;i<4;i++) {
-				Assert.AreEqual(1,constructResults.ListAccountEntries.Count(x => x.GetType()==typeof(FauxAccountEntry)
-					&& x.AdjNum==0
-					&& x.PatNum==patient.PatNum
-					&& x.ProvNum==provNum
-					&& ((FauxAccountEntry)x).Principal==146.70M
-					&& x.AmountEnd==0
-					&& x.Date==dateTimeDebitStart.AddMonths(i)
-					&& x.ProcNum==procedure.ProcNum));
-				Assert.AreEqual(1,constructResults.ListAccountEntries.Count(x => x.GetType()==typeof(FauxAccountEntry)
-					&& x.AdjNum==0
-					&& x.PatNum==patient.PatNum
-					&& x.ProvNum==provNum
-					&& ((FauxAccountEntry)x).Principal==-146.70M
-					&& x.AmountEnd==0
-					&& x.Date==dateTimeDebitStart.AddMonths(i)
-					&& x.ProcNum==0));
-			}
-		}
-
-		///<summary></summary>
-		[TestMethod]
 		public void PaymentEdit_ConstructAndLinkChargeCredits_PayPlanProcCreditWithAdjDiffProv() {
 			/*****************************************************
 				Proc1	provNum1	1000
@@ -11705,7 +11569,7 @@ namespace UnitTests.PaymentEdit_Tests {
 			claim.ProvBill=provNum;
 			claim.ProvTreat=provNum;
 			Claims.Insert(claim);
-			//create new as total claim payment.
+			//create new as total claim proc payment.
 			ClaimProcT.AddInsPaidAsTotal(pat.PatNum,ins.PriInsPlan.PlanNum,provNum,200,ins.PriInsSub.InsSubNum,0,0,claim.ClaimNum);
 			//Act as if we created a transfer (back when we allowed the unearned payment to have a provider)
 			Payment transfer1=PaymentT.MakePayment(pat.PatNum,200,provNum:provNum,unearnedType:unearnedType.DefNum);
@@ -11722,12 +11586,10 @@ namespace UnitTests.PaymentEdit_Tests {
 			//Should have a negative split that matched the provider and unearned type along with a positive split applied to the procedure
 			Assert.IsFalse(transferResults.HasInvalidSplits);
 			Assert.AreEqual(2,transferResults.ListSplitsCur.Count);
-			Assert.AreEqual(1,transferResults.ListSplitsCur.Count(x => x.UnearnedType==unearnedType.DefNum 
-				&& x.ProvNum==provNum 
-				&& CompareDouble.IsEqual(x.SplitAmt,-200)));
-			Assert.AreEqual(1,transferResults.ListSplitsCur.Count(x => x.ProcNum==proc.ProcNum 
-				&& x.ProvNum==provNum
-				&& CompareDouble.IsEqual(x.SplitAmt,200)));
+			Assert.AreEqual(1,transferResults.ListSplitsCur.FindAll(x => x.UnearnedType==unearnedType.DefNum && x.ProvNum==provNum 
+				&& CompareDouble.IsEqual(x.SplitAmt,-200)).Count);
+			Assert.AreEqual(1,transferResults.ListSplitsCur.FindAll(x => x.ProcNum==proc.ProcNum && x.ProvNum==provNum
+				&& CompareDouble.IsEqual(x.SplitAmt,200)).Count);
 			//Make the income transfer official by inserting the splits into the database and then run the transfer again.  No splits should be made!
 			PaySplits.InsertMany(0,transferResults.ListSplitsCur);
 			transferResults=PaymentT.BalanceAndIncomeTransfer(pat.PatNum);
@@ -13528,7 +13390,7 @@ namespace UnitTests.PaymentEdit_Tests {
 			ClaimT.ReceiveClaim(claim,new List<ClaimProc> { claimProc },true);
 			//uh oh, we overpaid now boys. Time to try an income transfer out.
 			PaymentEdit.ConstructResults results=PaymentEdit.ConstructAndLinkChargeCredits(patient1.PatNum,new List<long>{patient1.PatNum,patient2.PatNum},new List<PaySplit>(),0,
-				new List<AccountEntry>(),true,false,null,false,false,DateTime.Now,false,0,0,DateTime.MinValue,false,true);
+				new List<AccountEntry>(),true,false,null,false,false,DateTime.Now,false,0,0,DateTime.MinValue,false);
 			//begin transfer loops - Does not insert objects into database from this method. Testing method needs to insert.
 			if(!PaymentEdit.TryCreateIncomeTransfer(results.ListAccountEntries,DateTime.Today,out PaymentEdit.IncomeTransferData incomeTransferData)) {
 				throw new ODException(incomeTransferData.StringBuilderErrors.ToString().TrimEnd());

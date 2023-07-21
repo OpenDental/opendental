@@ -93,7 +93,7 @@ namespace OpenDental {
 			if((isClaimConnect || isEds) && _etransAck271!=null && _etransAck271.AckEtransNum!=0) {
 				_htmlResponse=EtransMessageTexts.GetMessageText(Etranss.GetEtrans(_etransAck271.AckEtransNum).EtransMessageTextNum);
 			}
-			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit,suppressMessage:true)) {
+			if(!Security.IsAuthorized(Permissions.InsPlanEdit,suppressMessage:true)) {
 				groupImport.Enabled=false;
 				groupImportBenefit.Enabled=false;
 				butImport.Enabled=false;
@@ -243,7 +243,7 @@ namespace OpenDental {
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			bool isAuthorized=Security.IsAuthorized(EnumPermType.InsPlanEdit,suppressMessage:true);
+			bool isAuthorized=Security.IsAuthorized(Permissions.InsPlanEdit,suppressMessage:true);
 			if(e.Col<2) {//raw benefit
 				using FormEtrans270EBraw formEtrans270EBraw=new FormEtrans270EBraw();
 				formEtrans270EBraw.EB271Cur=_listEB271s[e.Row];
@@ -366,8 +366,8 @@ namespace OpenDental {
 					x12response=ClaimConnect.Benefits270(clearinghouse,x12message,out etransHtml,OpenDentBusiness.Dentalxchange2016.Format.HTML);
 				}
 				catch(Exception ex) {
-					FrmFriendlyException frmFriendlyException=new FrmFriendlyException(Lans.g("FormInsPlan","Connection Error:")+"\r\n"+ex.GetType().Name,ex,isUnhandledException:false);
-					frmFriendlyException.Show();
+					FormFriendlyException formFriendlyException=new FormFriendlyException(Lans.g("FormInsPlan","Connection Error:")+"\r\n"+ex.GetType().Name,ex,isUnhandledException:false);
+					formFriendlyException.Show();
 				}
 				if(etransHtml!=null && etransHtml.EtransNum > 0) {
 					//Update EDI Etrans AckEtransNum to point to HTML's Etrans.
@@ -382,7 +382,7 @@ namespace OpenDental {
 				formWebBrowser.Show();
 				return;
 			}
-			PrintoutOrientation printoutOrientation=PrintoutOrientation.Portrait;
+			PrintoutOrientation printoutOrientation=PrintoutOrientation.Default;
 			if(radioModeElect.Checked) {//gridMain is wider for Electronic Import viewing mode, print/view in landscape to fit.
 				printoutOrientation=PrintoutOrientation.Landscape;
 			}
@@ -468,11 +468,32 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			EtransCur.Note=textNote.Text;
 			Etranss.Update(EtransCur);
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			//if(IsNew) {
+			//	EtransMessageTexts.Delete(EtransCur.EtransMessageTextNum);
+			//	Etranss.Delete(EtransCur.EtransNum);
+			//}
+			DialogResult=DialogResult.Cancel;
+		}
+
+	
+
+		
+
+		
+
+		
+
+		
+
+	
+
+		
 	}
 }

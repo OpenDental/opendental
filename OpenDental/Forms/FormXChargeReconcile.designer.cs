@@ -36,6 +36,7 @@ namespace OpenDental{
 			this.butPayments = new OpenDental.UI.Button();
 			this.butViewImported = new OpenDental.UI.Button();
 			this.butImport = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butValidate = new OpenDental.UI.Button();
 			this.SuspendLayout();
@@ -147,6 +148,16 @@ namespace OpenDental{
 			this.butImport.Text = "Import";
 			this.butImport.Click += new System.EventHandler(this.butImport_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(414, 378);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// label1
 			// 
 			this.label1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -183,6 +194,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butPayments);
 			this.Controls.Add(this.butViewImported);
 			this.Controls.Add(this.butImport);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormXChargeReconcile";
 			this.Text = "X-Charge Reconcile";
@@ -191,6 +203,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.Button butImport;
 		private System.Windows.Forms.Label label5;
 		private UI.Button butViewImported;

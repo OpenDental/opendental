@@ -121,7 +121,7 @@ namespace OpenDental {
 					if(CDSPermissions.GetForUser(Security.CurUser.UserNum).ShowCDS && CDSPermissions.GetForUser(Security.CurUser.UserNum).LabTestCDS) {
 						using FormCDSIntervention FormCDSI=new FormCDSIntervention();
 						FormCDSI.ListCDSInterventions=EhrTriggers.TriggerMatch(listEhrLabs[i].ListEhrLabResults[j],PatCur);
-						FormCDSI.ShowIfRequired();
+						FormCDSI.ShowIfRequired(false);
 					}
 				}
 			}
@@ -153,7 +153,7 @@ namespace OpenDental {
 				if(CDSPermissions.GetForUser(Security.CurUser.UserNum).ShowCDS && CDSPermissions.GetForUser(Security.CurUser.UserNum).LabTestCDS) {
 					using FormCDSIntervention FormCDSI=new FormCDSIntervention();
 					FormCDSI.ListCDSInterventions=EhrTriggers.TriggerMatch(FormLOE.EhrLabCur.ListEhrLabResults[i],PatCur);
-					FormCDSI.ShowIfRequired();
+					FormCDSI.ShowIfRequired(false);
 				}
 			}
 			FillGrid();
@@ -169,6 +169,17 @@ namespace OpenDental {
 			FillGrid();
 			//TODO:maybe add more code here for when we come back from form... In case we delete a lab from the form.
 		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+
+
+
+
 
 	}
 }

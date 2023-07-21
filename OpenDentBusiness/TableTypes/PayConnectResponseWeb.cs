@@ -95,7 +95,7 @@ namespace OpenDentBusiness {
 					CCExpiration=new DateTime(2000+int.Parse(responseValues.CreditCardExpireDate.Substring(2,2)),int.Parse(responseValues.CreditCardExpireDate.Substring(0,2)),1),//CCExpDate is stored as MMyy from PayConnect
 					CCSource=CCSource,
 					ClinicNum=Patients.GetPat(PatNum).ClinicNum,
-					ItemOrder=CreditCards.RefreshAll(PatNum).Count,
+					ItemOrder=CreditCards.Refresh(PatNum).Count,
 					Address="",
 					Zip="",
 					ChargeAmt=0,
@@ -116,11 +116,16 @@ namespace OpenDentBusiness {
 
 		///<summary>Formats a note that can be used as a PayNote on a payment. If the PayConnectResponseWeb is a return or a void of a positive payment, pass in
 		///false for keepAmountPositive.</summary>
-		public string GetFormattedNote(bool keepAmountPositive) {
+		public string GetFormattedNote(bool keepAmountPositive,bool isPayConnect2=false) {
 			//This is the class layout for the fields to be pulled out from the successful response string stored in the table
 			var responseTypePartial=new {
 				CreditCardNumber="",
 				TransactionID=0,
+				PaymentMethod=new {
+					CardPaymentMethod=new {
+						CardLast4Digits=""
+					}
+				},
 			};
 			//Pull out all of the field values we care about from the response string
 			var responseValues=JsonConvert.DeserializeAnonymousType(LastResponseStr,responseTypePartial);
@@ -131,39 +136,21 @@ namespace OpenDentBusiness {
 			else {
 				dateTimeProcessed=DateTime.Now;
 			}
+			string creditCard="";
+			string transactionID="";
+			if(isPayConnect2) {
+				creditCard=Lans.g(this,"Card Last Four:")+" "+responseValues.PaymentMethod.CardPaymentMethod.CardLast4Digits+"\r\n";
+				transactionID=RefNumber;
+			}
+			else {
+				creditCard=Lans.g(this,"Card Number:")+" "+responseValues.CreditCardNumber+"\r\n";
+				transactionID=responseValues.TransactionID.ToString();
+			}
 			return Lans.g(this,"Amount:")+" "+(keepAmountPositive ? Amount : -Amount).ToString("f")+"\r\n"
-				+Lans.g(this,"Card Number:")+" "+responseValues.CreditCardNumber+"\r\n"
-				+Lans.g(this,"Transaction ID:")+" "+responseValues.TransactionID+"\r\n"
+				+creditCard
+				+Lans.g(this,"Transaction ID:")+" "+transactionID+"\r\n"
 				+Lans.g(this,"Processed:")+" "+dateTimeProcessed.ToShortDateString()+" "+dateTimeProcessed.ToShortTimeString()+"\r\n"
 				+Lans.g(this,"Note:")+" "+PayNote;
-		}
-
-		///<summary>Formats a note that can be used as a PayNote on a PayConnect2 payment. Pass in the amount of the payment and a surcharge optionally.</summary>
-		public string GetPayConnect2FormattedNote(double amount,double surchargeAmount=0) {
-			//This is the class layout for the fields to be pulled out from the successful response string stored in the table
-			var responseTypePartial=new {
-				Status="",
-				AuthCode="",
-				PaymentMethod=new {
-					CardPaymentMethod=new {
-						CardLast4Digits="",
-						Network=""//Card Type
-					}
-				},
-			};
-			//Pull out all of the field values we care about from the response string
-			var responseValues=JsonConvert.DeserializeAnonymousType(LastResponseStr,responseTypePartial);
-			string resultNote=Lans.g(this,"Transaction Type")+": "+Enum.GetName(typeof(PayConnectService.transType),TransType)+"\r\n"
-				+Lans.g(this,"Status")+": "+responseValues.Status+"\r\n"
-				+Lans.g(this,"Amount")+": "+amount.ToString("C")+"\r\n"
-				+Lans.g(this,"Card Type")+": "+responseValues.PaymentMethod.CardPaymentMethod.Network+"\r\n"
-				+Lans.g(this,"Account")+": "+responseValues.PaymentMethod.CardPaymentMethod.CardLast4Digits+"\r\n"
-				+Lans.g(this,"Auth Code")+": "+responseValues.AuthCode+"\r\n"
-				+Lans.g(this,"Ref Number")+": "+RefNumber+"\r\n";
-			if(surchargeAmount>0) {
-				resultNote+=Lans.g(this,"Surcharge Fee Amount")+": "+surchargeAmount.ToString("C")+"\r\n";
-			}
-			return resultNote+=Lans.g(this,"Note:")+" "+PayNote;
 		}
 	}
 

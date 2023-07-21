@@ -238,7 +238,8 @@ namespace OpenDentBusiness {
 			List<DoseSpotMedicationWrapper> listDoseSpotMedicationWrappers=listDoseSpotPerscriptions.Select(x => new DoseSpotMedicationWrapper(x,null)).ToList();
 			//Add self reported medications.
 			listDoseSpotMedicationWrappers.AddRange(DoseSpotREST.GetSelfReported(token,oIDExternal.IDExternal).Select(x => new DoseSpotMedicationWrapper(null,x)).ToList());
-			foreach(DoseSpotMedicationWrapper doseSpotMedicationWrapper in listDoseSpotMedicationWrappers.Where(x=>x.MedicationStatus!=DoseSpotREST.MedicationStatus.Deleted)) {
+			listDoseSpotMedicationWrappers=listDoseSpotMedicationWrappers.FindAll(x => x.MedicationStatus!=DoseSpotREST.MedicationStatus.Deleted);
+			foreach(DoseSpotMedicationWrapper doseSpotMedicationWrapper in listDoseSpotMedicationWrappers) {
 				RxPat rxPatOld=null;
 				if(doseSpotMedicationWrapper.IsSelfReported) {
 					//Get self reported that originated in OD
@@ -282,7 +283,7 @@ namespace OpenDentBusiness {
 						SecurityLog securityLog = new SecurityLog();
 						securityLog.UserNum=0;//Don't attach to user since this is being done by DoseSpot
 						securityLog.CompName=Security.GetComplexComputerName();
-						securityLog.PermType=EnumPermType.RxEdit;
+						securityLog.PermType=Permissions.RxEdit;
 						securityLog.FKey=0;
 						securityLog.LogSource=LogSources.eRx;
 						securityLog.LogText="FROM("+rxPatOld.RxDate.ToShortDateString()+","+rxPatOld.Drug+","+rxPatOld.ProvNum+","+rxPatOld.Disp+","+rxPatOld.Refills+")"+"\r\nTO 'deleted' change made by DoseSpot eRx.";
@@ -293,7 +294,7 @@ namespace OpenDentBusiness {
 						SecurityLogs.MakeLogEntry(securityLog);
 						if(medicationPat!=null) {
 							MedicationPats.Delete(medicationPat);
-							securityLog.PermType=EnumPermType.PatMedicationListEdit;
+							securityLog.PermType=Permissions.PatMedicationListEdit;
 							securityLog.LogText=(medicationPat.MedicationNum==0 ? medicationPat.MedDescript : Medications.GetMedication(medicationPat.MedicationNum).MedName
 								)+" deleted by DoseSpot"+"\r\n"
 								+(String.IsNullOrEmpty(medicationPat.PatNote) ? "" : "Pat note: "+medicationPat.PatNote);
@@ -384,9 +385,7 @@ namespace OpenDentBusiness {
 					else {
 						provider=Providers.GetProv(patient.PriProv);
 					}
-					if(provider==null && rxPatOld!=null) {//Provide a fallback in case the provider is 'missing' due to being detached from the userod
-						rxPat.ProvNum=rxPatOld.ProvNum;
-					}
+					rxPat.ProvNum=provider.ProvNum;
 				}
 				//These fields are possibly set above, preserve old values if they are not.
 				if(rxPatOld!=null) {
@@ -408,7 +407,7 @@ namespace OpenDentBusiness {
 				else {
 					medicationPatNum=Erx.InsertOrUpdateErxMedication(rxPatOld,rxPat,rxCui,doseSpotMedicationWrapper.DisplayName,doseSpotMedicationWrapper.GenericProductName,isProvider);
 				}
-				if(rxPatOld==null && !doseSpotMedicationWrapper.MedicationStatus.In(DoseSpotREST.MedicationStatus.Unknown, DoseSpotREST.MedicationStatus.Inactive)) {//Only add the rx if it is new and it's status isn't deprecated.  We don't want to trigger automation for existing prescriptions.
+				if(rxPatOld==null) {//Only add the rx if it is new.  We don't want to trigger automation for existing prescriptions.
 					listRxPats.Add(rxPat);
 				}
 				if(doseSpotMedicationWrapper.MedicationStatus==DoseSpotREST.MedicationStatus.Active) {
@@ -450,7 +449,7 @@ namespace OpenDentBusiness {
 				if(listMedicationPats[i].MedicationNum!=0) {
 					medDescript=Medications.GetMedication(listMedicationPats[i].MedicationNum).MedName;
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.PatMedicationListEdit,listMedicationPats[i].PatNum,medDescript+" DoseSpot set inactive",LogSources.eRx);
+				SecurityLogs.MakeLogEntry(Permissions.PatMedicationListEdit,listMedicationPats[i].PatNum,medDescript+" DoseSpot set inactive",LogSources.eRx);
 			}
 			if(onRxAdd!=null && listRxPats.Count!=0) {
 				onRxAdd(listRxPats);
@@ -473,7 +472,7 @@ namespace OpenDentBusiness {
 			foreach(MedicationPat medicationPat in listMedicationPats) {
 				//Medications originating from DS are filtered out when the list is retrieved.
 				DoseSpotSelfReported doseSpotSelfReported=DoseSpotREST.MedicationPatToDoseSpotSelfReport(medicationPat);
-				if(string.IsNullOrWhiteSpace(doseSpotSelfReported.DisplayName)) {
+				if(doseSpotSelfReported.DisplayName.IsNullOrEmpty()) {
 					//Couldn't get a name from the medicationpat or the medication, don't send to DS without a name.
 					continue;
 				}
@@ -1860,7 +1859,7 @@ namespace OpenDentBusiness {
 				doseSpotSelfReported.SelfReportedMedicationId=ID;
 			}
 			//Set the DisplayName.
-			if(string.IsNullOrWhiteSpace(medicationPat.MedDescript) && medicationPat.MedicationNum!=0) {
+			if(String.IsNullOrEmpty(medicationPat.MedDescript) && medicationPat.MedicationNum!=0) {
 				Medication medication=Medications.GetMedication(medicationPat.MedicationNum);
 				doseSpotSelfReported.DisplayName=medication.MedName;
 			}
@@ -1871,7 +1870,7 @@ namespace OpenDentBusiness {
 			doseSpotSelfReported.Comment=Regex.Replace(medicationPat.PatNote,@"\n|\r"," ");
 			//500 characters is the max size for the comment field. Going over 500 will return a 400 error from the DoseSpot API.
 			if(doseSpotSelfReported.Comment.Length>500) {
-				SecurityLogs.MakeLogEntry(EnumPermType.LogDoseSpotMedicationNoteEdit,medicationPat.PatNum,"Medication patient note automatically reduced to 500 characters for sending to DoseSpot. Original note: "+"\n"
+				SecurityLogs.MakeLogEntry(Permissions.LogDoseSpotMedicationNoteEdit,medicationPat.PatNum,"Medication patient note automatically reduced to 500 characters for sending to DoseSpot. Original note: "+"\n"
 					+medicationPat.PatNote);
 				doseSpotSelfReported.Comment=doseSpotSelfReported.Comment.Substring(0,500);
 			}
@@ -1884,7 +1883,7 @@ namespace OpenDentBusiness {
 				doseSpotSelfReported.MedicationStatus=MedicationStatus.Completed;
 				doseSpotSelfReported.DateInactive=medicationPat.DateStop;
 				//A comment is required when a medication has been discontinued (figured out through testing, not in docs)
-				if(string.IsNullOrWhiteSpace(doseSpotSelfReported.Comment)) {
+				if(doseSpotSelfReported.Comment.IsNullOrEmpty()) {
 					//We were infinitely adding this note which was causing the comment to be greater than 500 characters and caused a 400 from DS.
 					doseSpotSelfReported.Comment="Discontinued in Open Dental";
 				}

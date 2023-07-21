@@ -20,7 +20,6 @@ namespace WpfControls.UI{
 	public partial class ToolBar : System.Windows.Controls.UserControl{
 /*
 Jordan is the only one allowed to edit this file.
-Height should be 25.
 Typically anchor it L,T,R at the top of a window in the designer, just under the menu.  
 We add all buttons in code, not in the designer.
 Boilerplate for adding buttons:
@@ -30,21 +29,28 @@ using WpfControls.UI;
 
 		private void LayoutToolBar() {
 			toolBarMain.Clear();//not usually necessary
-			toolBarMain.Add(Lans.g(this,"Add"),Add_Click,EnumIcons.Add);
+			toolBarMain.Add(Lans.g(this,"Add"),EnumIcons.Add,Add_Click);
 			toolBarMain.AddSeparator();
-			toolBarMain.Add(Lans.g(this,"Edit"),Edit_Click,toolTipText:Lans.g(this,"Edit Selected Account"));
-			ContextMenu contextMenu = new ContextMenu();
-			contextMenu.Add(new MenuItem("Item1",menuItem1_Click));
-			contextMenu.Add(new MenuItem("Item2",menuItem2_Click));
-			contextMenu.Add(new MenuItem("Item3",menuItem3_Click));
-			toolBarMain.Add(Lans.g(this,"Pick File"),toolBarButtonStyle:ToolBarButtonStyle.DropDownButton,contextMenuDropDown:contextMenu);
+			ToolBarButton toolBarButton=new ToolBarButton();
+			toolBarButton.Text=Lans.g(this,"Edit");
+			toolBarButton.ToolTipText=Lans.g(this,"Edit Selected Account");
+			toolBarButton.Style=ToolBarButtonStyle.DropDownButton;
+			toolBarButton.Click+=Edit_Click;
+			toolBarMain.Add(toolBarButton);
+			toolBarMain.Add(Lans.g(this,"Info"),"editPencil.gif",Info_Click);
 		}
 
 Click event handlers look like this:
 		private void Edit_Click(object sender,EventArgs e) { etc.
 
-Notice that there is only one way to add an icon, unlike with buttons.
-If you need a missing icon, Jordan will need to add it using the IconGenerator project.
+Notice that there are only 2 ways to add images. Examples of each are above.
+1. use an EnumIcon if it has the one you need.
+2. otherwise, save a bitmap (usually a png) to WpfControlsOD/Resources as follows:
+		a. Right click WpfControlsOD, Properties.
+		b. Resources tab, Add Resource, Add Existing File.
+		c. The file you want is usually in OpenDental/Resources. Selecting it will make a copy, which is what you want.
+		d. In Solution Explorer, Resources folder, find the new file..
+		e. Right click, Properties, Build Action: Resource.
 WPF doesn't use anything like the WF ImageList, so all of those will go away during the conversion.
 For button clicks, the old paradigm was one event for the entire toolbar.
 The new way of doing it is a separate event for each button.
@@ -52,10 +58,6 @@ The new way of doing it is a separate event for each button.
 */
 		public ToolBar(){
 			InitializeComponent();
-			if(!DesignerProperties.GetIsInDesignMode(this)){
-				stackPanel.Children.Clear();
-				border.Background=Brushes.White;
-			}
 		}
 
 		#region Properties
@@ -64,57 +66,32 @@ The new way of doing it is a separate event for each button.
 		#endregion Properties
 
 		#region Methods
+		public void Clear(){
+			toolBar.Items.Clear();
+		}
 
 		public void Add(ToolBarButton toolBarButton){
-			stackPanel.Children.Add(toolBarButton);
+			toolBar.Items.Add(toolBarButton);
 		}
 
-		public void Add(string text,EventHandler eventHandlerClick=null,EnumIcons icon=EnumIcons.None,ToolBarButtonStyle toolBarButtonStyle=ToolBarButtonStyle.NormalButton,
-			string toolTipText=null,ContextMenu contextMenuDropDown=null,object tag=null)
-		{
-			ToolBarButton toolBarButton = new ToolBarButton(text,eventHandlerClick,icon,toolBarButtonStyle,toolTipText,contextMenuDropDown,tag);
-			stackPanel.Children.Add(toolBarButton);
+		public void Add(string text,EnumIcons icon,EventHandler eventHandlerClick){
+			ToolBarButton toolBarButton=new ToolBarButton();
+			toolBarButton.Text=text;
+			toolBarButton.Icon=icon;
+			toolBarButton.Click+=eventHandlerClick;
+			toolBar.Items.Add(toolBarButton);
 		}
 
-		//public void Add(string text,string bitmapFileName,EventHandler eventHandlerClick){
-		//	ToolBarButton toolBarButton = new ToolBarButton();
-		//	toolBarButton.Text=text;
-		//	toolBarButton.BitmapFileName=bitmapFileName;
-		//	toolBarButton.Click+=eventHandlerClick;
-		//	stackPanel.Children.Add(toolBarButton);
-		//}
+		public void Add(string text,string bitmapFileName,EventHandler eventHandlerClick){
+			ToolBarButton toolBarButton=new ToolBarButton();
+			toolBarButton.Text=text;
+			toolBarButton.BitmapFileName=bitmapFileName;
+			toolBarButton.Click+=eventHandlerClick;
+			toolBar.Items.Add(toolBarButton);
+		}
 
 		public void AddSeparator(){
-			Rectangle rectangle=new Rectangle();
-			rectangle.Width=7;
-			rectangle.Height=24;
-			rectangle.Fill=Brushes.White;
-			stackPanel.Children.Add(rectangle);
-		}
-		public void Clear(){
-			stackPanel.Children.Clear();
-		}
 
-		public void SetEnabled(string tag,bool boolVal){
-			for(int i=0;i<stackPanel.Children.Count;i++){
-				if(stackPanel.Children[i].GetType()!=typeof(ToolBarButton)){
-					continue;
-				}
-				if(tag!=((ToolBarButton)stackPanel.Children[i]).Tag?.ToString()){
-					continue;
-				}
-				stackPanel.Children[i].IsEnabled=boolVal;
-				return;
-			}
-		}
-
-		public void SetEnabledAll(bool boolVal){
-			for(int i=0;i<stackPanel.Children.Count;i++){
-				if(stackPanel.Children[i].GetType()!=typeof(ToolBarButton)){
-					continue;
-				}
-				stackPanel.Children[i].IsEnabled=boolVal;
-			}
 		}
 		#endregion Methods
 

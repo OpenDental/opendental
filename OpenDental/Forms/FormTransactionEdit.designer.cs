@@ -70,7 +70,8 @@ namespace OpenDental {
 			this.butAttachDep = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.textDate = new OpenDental.ValidDate();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.labelReconcileDate = new System.Windows.Forms.Label();
 			this.textReconcileDate = new System.Windows.Forms.TextBox();
 			this.textDateTimeEdited = new System.Windows.Forms.TextBox();
@@ -109,7 +110,6 @@ namespace OpenDental {
 			this.textDateTimeEntered.ReadOnly = true;
 			this.textDateTimeEntered.Size = new System.Drawing.Size(147, 20);
 			this.textDateTimeEntered.TabIndex = 6;
-			this.textDateTimeEntered.TabStop = false;
 			// 
 			// label3
 			// 
@@ -212,7 +212,6 @@ namespace OpenDental {
 			this.textAccount.ReadOnly = true;
 			this.textAccount.Size = new System.Drawing.Size(230, 20);
 			this.textAccount.TabIndex = 4;
-			this.textAccount.TabStop = false;
 			// 
 			// textMemo
 			// 
@@ -310,6 +309,7 @@ namespace OpenDental {
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(444, 106);
 			this.groupBox1.TabIndex = 4;
+			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Source Documents";
 			// 
 			// butOpenInvoice
@@ -338,7 +338,6 @@ namespace OpenDental {
 			this.textSourceInvoice.ReadOnly = true;
 			this.textSourceInvoice.Size = new System.Drawing.Size(231, 20);
 			this.textSourceInvoice.TabIndex = 14;
-			this.textSourceInvoice.TabStop = false;
 			// 
 			// label1
 			// 
@@ -393,7 +392,6 @@ namespace OpenDental {
 			this.textSourceDeposit.ReadOnly = true;
 			this.textSourceDeposit.Size = new System.Drawing.Size(231, 20);
 			this.textSourceDeposit.TabIndex = 8;
-			this.textSourceDeposit.TabStop = false;
 			// 
 			// butAttachDep
 			// 
@@ -421,17 +419,27 @@ namespace OpenDental {
 			this.textDate.Location = new System.Drawing.Point(132, 59);
 			this.textDate.Name = "textDate";
 			this.textDate.Size = new System.Drawing.Size(100, 20);
-			this.textDate.TabIndex = 1;
+			this.textDate.TabIndex = 5;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(562, 470);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 2;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(568, 433);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 2;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(568, 462);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 1;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// labelReconcileDate
 			// 
@@ -459,7 +467,6 @@ namespace OpenDental {
 			this.textDateTimeEdited.ReadOnly = true;
 			this.textDateTimeEdited.Size = new System.Drawing.Size(147, 20);
 			this.textDateTimeEdited.TabIndex = 22;
-			this.textDateTimeEdited.TabStop = false;
 			// 
 			// labelDateTimeEdited
 			// 
@@ -477,7 +484,6 @@ namespace OpenDental {
 			this.textUserEntered.ReadOnly = true;
 			this.textUserEntered.Size = new System.Drawing.Size(100, 20);
 			this.textUserEntered.TabIndex = 24;
-			this.textUserEntered.TabStop = false;
 			// 
 			// labelUserEntered
 			// 
@@ -495,7 +501,6 @@ namespace OpenDental {
 			this.textUserEdited.ReadOnly = true;
 			this.textUserEdited.Size = new System.Drawing.Size(100, 20);
 			this.textUserEdited.TabIndex = 26;
-			this.textUserEdited.TabStop = false;
 			// 
 			// labelUserEdited
 			// 
@@ -508,7 +513,7 @@ namespace OpenDental {
 			// 
 			// FormTransactionEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(649, 508);
+			this.ClientSize = new System.Drawing.Size(677, 508);
 			this.Controls.Add(this.textUserEdited);
 			this.Controls.Add(this.labelUserEdited);
 			this.Controls.Add(this.textUserEntered);
@@ -526,7 +531,8 @@ namespace OpenDental {
 			this.Controls.Add(this.labelDateTimeEntered);
 			this.Controls.Add(this.labelDate);
 			this.Controls.Add(this.textDate);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -545,7 +551,9 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.GridOD gridMain;
 		private ValidDate textDate;
 		private Label labelDate;

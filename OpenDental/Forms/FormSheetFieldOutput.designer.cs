@@ -25,7 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSheetFieldOutput));
 			this.label2 = new System.Windows.Forms.Label();
-			this.listFields = new OpenDental.UI.ListBox();
+			this.listFields = new UI.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.label11 = new System.Windows.Forms.Label();
@@ -47,8 +47,9 @@ namespace OpenDental{
 			this.textWidth = new OpenDental.ValidNum();
 			this.textYPos = new OpenDental.ValidNum();
 			this.textXPos = new OpenDental.ValidNum();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
 			this.checkIsLocked = new OpenDental.UI.CheckBox();
 			this.textUiLabelMobile = new System.Windows.Forms.TextBox();
 			this.labelUiLabelMobile = new System.Windows.Forms.Label();
@@ -263,6 +264,26 @@ namespace OpenDental{
 			this.textXPos.Size = new System.Drawing.Size(69, 20);
 			this.textXPos.TabIndex = 91;
 			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(420, 346);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(420, 376);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butDelete
 			// 
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -274,16 +295,6 @@ namespace OpenDental{
 			this.butDelete.TabIndex = 100;
 			this.butDelete.Text = "Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
-			// 
-			// butSave
-			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(396, 376);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
 			// 
 			// checkIsLocked
 			// 
@@ -313,7 +324,7 @@ namespace OpenDental{
 			// 
 			// FormSheetFieldOutput
 			// 
-			this.ClientSize = new System.Drawing.Size(483, 412);
+			this.ClientSize = new System.Drawing.Size(507, 412);
 			this.Controls.Add(this.textUiLabelMobile);
 			this.Controls.Add(this.labelUiLabelMobile);
 			this.Controls.Add(this.checkIsLocked);
@@ -332,7 +343,8 @@ namespace OpenDental{
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.listFields);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormSheetFieldOutput";
 			this.Text = "Edit OutputText Field";
@@ -346,7 +358,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label2;
 		private UI.ListBox listFields;
 		private System.Windows.Forms.Label label1;

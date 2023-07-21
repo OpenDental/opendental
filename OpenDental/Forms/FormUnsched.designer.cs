@@ -28,6 +28,7 @@ namespace OpenDental {
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormUnsched));
+			this.butClose = new OpenDental.UI.Button();
 			this.grid = new OpenDental.UI.GridOD();
 			this.menuRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.toolStripMenuItemSelectPatient = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,6 +51,17 @@ namespace OpenDental {
 			this.menuMain = new OpenDental.UI.MenuOD();
 			this.menuRightClick.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(810, 655);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(87, 24);
+			this.butClose.TabIndex = 7;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// grid
 			// 
@@ -110,7 +122,7 @@ namespace OpenDental {
 			this.butPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butPrint.Image = global::OpenDental.Properties.Resources.butPrintSmall;
 			this.butPrint.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPrint.Location = new System.Drawing.Point(806, 655);
+			this.butPrint.Location = new System.Drawing.Point(812, 607);
 			this.butPrint.Name = "butPrint";
 			this.butPrint.Size = new System.Drawing.Size(87, 24);
 			this.butPrint.TabIndex = 21;
@@ -151,7 +163,7 @@ namespace OpenDental {
 			// 
 			// butRefresh
 			// 
-			this.butRefresh.Location = new System.Drawing.Point(806, 30);
+			this.butRefresh.Location = new System.Drawing.Point(813, 30);
 			this.butRefresh.Name = "butRefresh";
 			this.butRefresh.Size = new System.Drawing.Size(86, 24);
 			this.butRefresh.TabIndex = 31;
@@ -229,7 +241,9 @@ namespace OpenDental {
 			// 
 			// FormUnsched
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(909, 696);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.butRefresh);
 			this.Controls.Add(this.codeRangeFilter);
@@ -258,6 +272,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GridOD grid;
 		private OpenDental.UI.Button butPrint;
 		private OpenDental.UI.ComboBox comboOrder;

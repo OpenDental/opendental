@@ -57,6 +57,7 @@ namespace OpenDental{
 			this.label19 = new System.Windows.Forms.Label();
 			this.butFullSync = new OpenDental.UI.Button();
 			this.butSync = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.menuWebSchedVerifyTextTemplate.SuspendLayout();
 			this.groupPreferences.SuspendLayout();
 			this.SuspendLayout();
@@ -121,28 +122,28 @@ namespace OpenDental{
 			// 
 			this.label23.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.label23.Location = new System.Drawing.Point(-3, 9);
+			this.label23.Location = new System.Drawing.Point(13, 9);
 			this.label23.Name = "label23";
-			this.label23.Size = new System.Drawing.Size(839, 21);
+			this.label23.Size = new System.Drawing.Size(1159, 21);
 			this.label23.TabIndex = 244;
 			this.label23.Text = "eServices refer to Open Dental features that can be delivered electronically via " +
     "the internet.  All eServices hosted by Open Dental use the eConnector Service.";
-			this.label23.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.label23.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
 			// checkTroubleshooting
 			// 
 			this.checkTroubleshooting.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.checkTroubleshooting.Location = new System.Drawing.Point(461, 261);
+			this.checkTroubleshooting.Location = new System.Drawing.Point(635, 256);
 			this.checkTroubleshooting.Name = "checkTroubleshooting";
 			this.checkTroubleshooting.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.checkTroubleshooting.Size = new System.Drawing.Size(184, 24);
 			this.checkTroubleshooting.TabIndex = 254;
-			this.checkTroubleshooting.Text = "Sync Troubleshooting Mode";
+			this.checkTroubleshooting.Text = "Synch Troubleshooting Mode";
 			// 
 			// butDelete
 			// 
 			this.butDelete.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.butDelete.Location = new System.Drawing.Point(329, 305);
+			this.butDelete.Location = new System.Drawing.Point(503, 305);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(68, 24);
 			this.butDelete.TabIndex = 253;
@@ -152,7 +153,7 @@ namespace OpenDental{
 			// textDateTimeLastRun
 			// 
 			this.textDateTimeLastRun.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.textDateTimeLastRun.Location = new System.Drawing.Point(330, 264);
+			this.textDateTimeLastRun.Location = new System.Drawing.Point(504, 256);
 			this.textDateTimeLastRun.Name = "textDateTimeLastRun";
 			this.textDateTimeLastRun.Size = new System.Drawing.Size(207, 18);
 			this.textDateTimeLastRun.TabIndex = 252;
@@ -178,7 +179,7 @@ namespace OpenDental{
 			this.groupPreferences.Controls.Add(this.labelMobileSynchURL);
 			this.groupPreferences.Controls.Add(this.textMobileSyncServerURL);
 			this.groupPreferences.Controls.Add(this.labelMinutesBetweenSynch);
-			this.groupPreferences.Location = new System.Drawing.Point(61, 38);
+			this.groupPreferences.Location = new System.Drawing.Point(235, 33);
 			this.groupPreferences.Name = "groupPreferences";
 			this.groupPreferences.Size = new System.Drawing.Size(682, 212);
 			this.groupPreferences.TabIndex = 251;
@@ -317,13 +318,13 @@ namespace OpenDental{
 			this.labelMinutesBetweenSynch.Name = "labelMinutesBetweenSynch";
 			this.labelMinutesBetweenSynch.Size = new System.Drawing.Size(169, 19);
 			this.labelMinutesBetweenSynch.TabIndex = 79;
-			this.labelMinutesBetweenSynch.Text = "Minutes Between Sync";
+			this.labelMinutesBetweenSynch.Text = "Minutes Between Synch";
 			this.labelMinutesBetweenSynch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label19
 			// 
 			this.label19.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.label19.Location = new System.Drawing.Point(160, 264);
+			this.label19.Location = new System.Drawing.Point(334, 256);
 			this.label19.Name = "label19";
 			this.label19.Size = new System.Drawing.Size(167, 18);
 			this.label19.TabIndex = 250;
@@ -333,26 +334,38 @@ namespace OpenDental{
 			// butFullSync
 			// 
 			this.butFullSync.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.butFullSync.Location = new System.Drawing.Point(403, 305);
+			this.butFullSync.Location = new System.Drawing.Point(577, 305);
 			this.butFullSync.Name = "butFullSync";
 			this.butFullSync.Size = new System.Drawing.Size(68, 24);
 			this.butFullSync.TabIndex = 249;
-			this.butFullSync.Text = "Full Sync";
+			this.butFullSync.Text = "Full Synch";
 			this.butFullSync.Click += new System.EventHandler(this.butFullSync_Click);
 			// 
 			// butSync
 			// 
 			this.butSync.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.butSync.Location = new System.Drawing.Point(477, 305);
+			this.butSync.Location = new System.Drawing.Point(651, 305);
 			this.butSync.Name = "butSync";
 			this.butSync.Size = new System.Drawing.Size(68, 24);
 			this.butSync.TabIndex = 248;
-			this.butSync.Text = "Sync";
+			this.butSync.Text = "Synch";
 			this.butSync.Click += new System.EventHandler(this.butSync_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(1097, 656);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 501;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// FormEServicesMobileSynch
 			// 
-			this.ClientSize = new System.Drawing.Size(837, 342);
+			this.ClientSize = new System.Drawing.Size(1184, 692);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.checkTroubleshooting);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.label23);
@@ -363,7 +376,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butSync);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEServicesMobileSynch";
-			this.Text = "eServices Mobile Sync";
+			this.Text = "eServices Mobile Synch";
 			this.Load += new System.EventHandler(this.FormEServicesMobileSynch_Load);
 			this.menuWebSchedVerifyTextTemplate.ResumeLayout(false);
 			this.groupPreferences.ResumeLayout(false);
@@ -405,5 +418,6 @@ namespace OpenDental{
 		private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
+		private UI.Button butClose;
 	}
 }

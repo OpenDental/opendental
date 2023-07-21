@@ -94,11 +94,11 @@ namespace OpenDental {
 			listMessageReplaceTypes.Add(MessageReplaceType.Patient);
 			listMessageReplaceTypes.Add(MessageReplaceType.User);
 			listMessageReplaceTypes.Add(MessageReplaceType.Misc);
-			FrmMessageReplacements frmMessageReplacements=new FrmMessageReplacements(listMessageReplaceTypes);
-			frmMessageReplacements.IsSelectionMode=true;
-			frmMessageReplacements.ShowDialog();
-			if(frmMessageReplacements.IsDialogOK) {
-				textSubject.SelectedText=frmMessageReplacements.ReplacementTextSelected;
+			using FormMessageReplacements formMessageReplacements=new FormMessageReplacements(listMessageReplaceTypes);
+			formMessageReplacements.IsSelectionMode=true;
+			formMessageReplacements.ShowDialog();
+			if(formMessageReplacements.DialogResult==DialogResult.OK) {
+				textSubject.SelectedText=formMessageReplacements.Replacement;
 			}
 		}
 
@@ -109,11 +109,11 @@ namespace OpenDental {
 			listMessageReplaceTypes.Add(MessageReplaceType.Patient);
 			listMessageReplaceTypes.Add(MessageReplaceType.User);
 			listMessageReplaceTypes.Add(MessageReplaceType.Misc);
-			FrmMessageReplacements frmMessageReplacements=new FrmMessageReplacements(listMessageReplaceTypes);
-			frmMessageReplacements.IsSelectionMode=true;
-			frmMessageReplacements.ShowDialog();
-			if(frmMessageReplacements.IsDialogOK) {
-				textBodyText.SelectedText=frmMessageReplacements.ReplacementTextSelected;
+			using FormMessageReplacements formMessageReplacements=new FormMessageReplacements(listMessageReplaceTypes);
+			formMessageReplacements.IsSelectionMode=true;
+			formMessageReplacements.ShowDialog();
+			if(formMessageReplacements.DialogResult==DialogResult.OK) {
+				textBodyText.SelectedText=formMessageReplacements.Replacement;
 			}
 		}
 
@@ -144,17 +144,14 @@ namespace OpenDental {
 		}
 
 		private void menuItemRename_Click(object sender,EventArgs e) {
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-			inputBoxParam.LabelText=Lan.g(this,"Filename");
+			using InputBox inputBox=new InputBox(Lan.g(this,"Filename"));
 			EmailAttach emailAttach=_listEmailAttachesDisplayed[gridAttachments.SelectedIndices[0]];
-			inputBoxParam.Text=emailAttach.DisplayedFileName;
-			InputBox inputBox=new InputBox(inputBoxParam);
+			inputBox.textResult.Text=emailAttach.DisplayedFileName;
 			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			if(inputBox.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			emailAttach.DisplayedFileName=inputBox.StringResult;
+			emailAttach.DisplayedFileName=inputBox.textResult.Text;
 			FillAttachments();
 		}
 
@@ -249,7 +246,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(textSubject.Text=="" && textBodyText.Text==""){
 				MsgBox.Show(this,"Both the subject and body of the template cannot be left blank.");
 				return;
@@ -284,5 +281,29 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

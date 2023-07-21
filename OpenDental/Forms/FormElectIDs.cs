@@ -49,12 +49,7 @@ namespace OpenDental{
 				comboCommBridge.SetSelectedEnum(commBridge);
 			}
 			FillElectIDs(0);
-			if(IsSelectMode){
-				butAdd.Visible=false;
-			}
-			else{
-				butOK.Visible=false;
-			}
+			butAdd.Visible=(!IsSelectMode);
 			Plugins.HookAddCode(this,"FormElectIDs.Load_end");
 		}
 
@@ -137,5 +132,30 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

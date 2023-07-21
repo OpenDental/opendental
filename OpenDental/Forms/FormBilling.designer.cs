@@ -24,6 +24,7 @@ namespace OpenDental {
 		private void InitializeComponent(){
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormBilling));
+			this.butClose = new OpenDental.UI.Button();
 			this.butSend = new OpenDental.UI.Button();
 			this.butNone = new OpenDental.UI.Button();
 			this.butAll = new OpenDental.UI.Button();
@@ -58,11 +59,22 @@ namespace OpenDental {
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(802, 656);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 1;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butSend
 			// 
 			this.butSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butSend.BackColor = System.Drawing.SystemColors.Control;
-			this.butSend.Location = new System.Drawing.Point(801, 651);
+			this.butSend.Location = new System.Drawing.Point(802, 622);
 			this.butSend.Name = "butSend";
 			this.butSend.Size = new System.Drawing.Size(75, 24);
 			this.butSend.TabIndex = 0;
@@ -176,6 +188,7 @@ namespace OpenDental {
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(96, 136);
 			this.groupBox1.TabIndex = 33;
+			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Counts";
 			// 
 			// labelTexted
@@ -323,8 +336,6 @@ namespace OpenDental {
 			this.comboClinic.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.comboClinic.IncludeAll = true;
-			this.comboClinic.IncludeUnassigned = true;
-			this.comboClinic.IsMultiSelect = true;
 			this.comboClinic.Location = new System.Drawing.Point(390, 8);
 			this.comboClinic.Name = "comboClinic";
 			this.comboClinic.Size = new System.Drawing.Size(226, 21);
@@ -362,8 +373,10 @@ namespace OpenDental {
 			// FormBilling
 			// 
 			this.AcceptButton = this.butSend;
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(888, 688);
 			this.Controls.Add(this.butSend);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butDefaults);
 			this.Controls.Add(this.comboEmailFrom);
 			this.Controls.Add(this.label6);
@@ -389,8 +402,9 @@ namespace OpenDental {
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "FormBilling";
-			this.Text = "Billing List";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormBilling_FormClosing);
+			this.Text = "Bills";
+			this.CloseXClicked += new System.ComponentModel.CancelEventHandler(this.FormBilling_CloseXClicked);
+			this.Activated += new System.EventHandler(this.FormBilling_Activated);
 			this.Load += new System.EventHandler(this.FormBilling_Load);
 			this.contextMenu.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
@@ -399,6 +413,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butAll;
 		private OpenDental.UI.Button butNone;
 		private OpenDental.UI.Button butSend;

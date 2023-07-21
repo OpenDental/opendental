@@ -34,16 +34,16 @@ namespace OpenDental {
 				butCopyRules.Visible=false;
 			}
 			//Web Sched does not support ClinicNum 0 when clinics are enabled 
-			if(PrefC.HasClinicsEnabled && comboClinics.ClinicNumSelected==-1) { 
+			if(PrefC.HasClinicsEnabled && comboClinics.SelectedClinicNum==-1) { 
 				checkNewPatRequestIns.Enabled=false;
 				checkExistingPatRequestIns.Enabled=false;
 				_hasClinicSelected=false;
 			}
-			if(comboClinics.ClinicNumSelected<=0) {
+			if(comboClinics.SelectedClinicNum<=0) {
 				_clinicNum=0;
 			}
 			else {
-				_clinicNum=comboClinics.ClinicNumSelected;
+				_clinicNum=comboClinics.SelectedClinicNum;
 			}
 			_listCarrierNames=Carriers.GetAllDistinctCarrierNames();
 			if(_hasClinicSelected) {
@@ -129,7 +129,7 @@ namespace OpenDental {
 		}
 
 		private void comboWebSchedClinic_SelectionChangeCommitted(object sender,EventArgs e) {
-			if(comboClinics.ClinicNumSelected<=0) {
+			if(comboClinics.SelectedClinicNum<=0) {
 				return;
 			}
 			if(!_hasClinicSelected) {
@@ -137,7 +137,7 @@ namespace OpenDental {
 				checkExistingPatRequestIns.Enabled=true;
 				_hasClinicSelected=true;
 			}
-			_clinicNum=comboClinics.ClinicNumSelected;
+			_clinicNum=comboClinics.SelectedClinicNum;
 			FillCheckBoxCarrierRules();
 			FillGridWebSchedCarrierRules(true);
 			FillListBoxCarrierNames();
@@ -268,5 +268,8 @@ namespace OpenDental {
 			FillListBoxCarrierNames();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }

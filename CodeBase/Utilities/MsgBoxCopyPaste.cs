@@ -7,7 +7,9 @@ using System.Windows.Forms;
 using System.Text.RegularExpressions;
 
 namespace CodeBase{
-	/// <summary>Do not use this from WpfControlsOD. Instead use FrmMsgBoxCopyPaste.</summary>
+	/// <summary>
+	/// Summary description for FormBasicTemplate.
+	/// </summary>
 	public class MsgBoxCopyPaste:System.Windows.Forms.Form {
 		private Button butOK;
 		public TextBox textMain;
@@ -19,7 +21,7 @@ namespace CodeBase{
 		private Button butCopyAll;
 		protected int pagesPrinted;
 
-		///<summary></summary>
+		///<summary>This presents a message box to the user, but is better because it allows us to copy the text and paste it into another program for testing.  Especially useful for queries.</summary>
 		public MsgBoxCopyPaste(string displayText)
 		{
 			//

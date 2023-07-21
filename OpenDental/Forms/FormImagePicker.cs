@@ -28,7 +28,7 @@ namespace OpenDental {
 		}
 
 		/// <summary></summary>
-		private void FillGrid(string fileNameToSelect=null) {
+		private void FillGrid() {
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			GridColumn col=new GridColumn(Lan.g(this,"Image Name"),70);
@@ -54,24 +54,15 @@ namespace OpenDental {
 					_listImageNames.Add(listFileNames[i]);
 				}
 			}
-			int index=-1;
 			for(int i=0;i<_listImageNames.Count;i++) {
 				GridRow row=new GridRow();
-				string fileName=Path.GetFileName(_listImageNames[i]);
-				row.Cells.Add(fileName);
-				if(fileNameToSelect!=null && fileName==fileNameToSelect) {
-					index=i;
-				}
+				row.Cells.Add(Path.GetFileName(_listImageNames[i]));
 				gridMain.ListGridRows.Add(row);
 			}
 			gridMain.EndUpdate();
 			labelImageSize.Text=Lan.g(this,"Image Size")+":";
 			picturePreview.Image=null;
 			picturePreview.Invalidate();
-			if(index>-1) {//if importing exactly one image, select it upon returning.
-				gridMain.SetSelected(index);
-				paintPreviewPicture();
-			}
 		}
 
 		private void gridMain_CellClick(object sender,ODGridClickEventArgs e) {
@@ -97,67 +88,55 @@ namespace OpenDental {
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			string[] stringArrayFileNames;
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				List<string> listImportFilePaths=new List<string>(){ODCloudClient.ImportFileForCloud()};
-				if(listImportFilePaths[0].IsNullOrEmpty()) {
-					return;
-				}
-				stringArrayFileNames=listImportFilePaths.ToArray();
-			}
-			else {
-				using OpenFileDialog openFileDialog=new OpenFileDialog();
-				openFileDialog.Multiselect=true;
-				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-					return;
-				}
-				stringArrayFileNames=openFileDialog.FileNames;
+			using OpenFileDialog openFileDialog=new OpenFileDialog();
+			openFileDialog.Multiselect=true;
+			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+				return;
 			}
 			Invalidate();
-			for(int i=0;i<stringArrayFileNames.Length;i++) {
+			for(int i=0;i<openFileDialog.FileNames.Length;i++) {
 				//check file types?
-				string destinationPath=FileAtoZ.CombinePaths(_imageFolder,Path.GetFileName(stringArrayFileNames[i]));
-				if(!FileAtoZ.Exists(destinationPath)){
-					FileAtoZ.Copy(stringArrayFileNames[i],destinationPath,FileAtoZSourceDestination.LocalToAtoZ);
-					continue;
-				}
-				//from here down, file already exists
-				InputBoxParam inputBoxParam=new InputBoxParam();
-				inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-				inputBoxParam.LabelText=Lan.g(this,"New file name.");
-				inputBoxParam.Text=Path.GetFileName(stringArrayFileNames[i]);
-				InputBox inputBox=new InputBox(inputBoxParam);
-				inputBox.ShowDialog();
-				if(inputBox.IsDialogCancel) {
-					continue;//cancel, next file.
-				}
-				bool isCancel=false;
-				string stringResult=inputBox.StringResult;
-				while(true){
-					if(!string.IsNullOrWhiteSpace(stringResult) && !FileAtoZ.Exists(FileAtoZ.CombinePaths(_imageFolder,stringResult))){
-						break;
+				string destinationPath=FileAtoZ.CombinePaths(_imageFolder,Path.GetFileName(openFileDialog.FileNames[i]));
+				if(FileAtoZ.Exists(destinationPath)){
+					using InputBox inputBox=new InputBox(Lan.g(this,"New file name."));
+					switch(MessageBox.Show(Lan.g(this,"Overwrite Existing File")+": "+destinationPath,"",MessageBoxButtons.YesNoCancel)){
+						case DialogResult.No://rename, do not overwrite
+							inputBox.textResult.Text=Path.GetFileName(openFileDialog.FileNames[i]);
+							inputBox.ShowDialog();
+							if(inputBox.DialogResult!=DialogResult.OK) {
+								continue;//cancel, next file.
+							}
+							bool isCancel=false;
+							while(!isCancel && FileAtoZ.Exists(FileAtoZ.CombinePaths(_imageFolder,inputBox.textResult.Text))){
+								MsgBox.Show(this,"File name already exists.");
+								if(inputBox.ShowDialog()!=DialogResult.OK) {
+									isCancel=true;
+								}
+							}
+							if(isCancel) {
+								continue;//cancel rename, and go to next file.
+							}
+							destinationPath=FileAtoZ.CombinePaths(_imageFolder,inputBox.textResult.Text);
+							break;//proceed to save file.
+						case DialogResult.Yes://overwrite
+							try {
+								FileAtoZ.Delete(destinationPath);
+							}
+							catch(Exception ex){
+								MessageBox.Show(Lan.g(this,"Cannot copy file")+":" +openFileDialog.FileNames[i]+"\r\n"+ex.Message);
+								continue;
+							}
+							break;//file deleted, proceed to save.
+						default://cancel
+							continue;//skip this file.
 					}
-					MsgBox.Show(this,"File name cannot be blank or in use.");
-					InputBox inputBoxRefresh=new InputBox(inputBoxParam);
-					inputBoxRefresh.ShowDialog();
-					stringResult=inputBoxRefresh.StringResult;
-					if(inputBoxRefresh.IsDialogCancel) {
-						isCancel=true;
-						break;
-					}
 				}
-				if(isCancel) {
-					continue;//cancel rename, and go to next file.
-				}
-				destinationPath=FileAtoZ.CombinePaths(_imageFolder,stringResult);
-				FileAtoZ.Copy(stringArrayFileNames[i],destinationPath,FileAtoZSourceDestination.LocalToAtoZ);
-				stringArrayFileNames[i]=stringResult;
+				FileAtoZ.Copy(openFileDialog.FileNames[i],destinationPath,FileAtoZSourceDestination.LocalToAtoZ);
 			}
-			string fileName=null;
-			if(stringArrayFileNames.Length==1) {//if importing exactly one image, select it upon returning.
-				fileName=Path.GetFileName(stringArrayFileNames[0]);
+			FillGrid();
+			if(openFileDialog.FileNames.Length==1) {//if importing exactly one image, select it upon returning.
+				textSearch.Text=Path.GetFileName(openFileDialog.FileNames[0]);
 			}
-			FillGrid(fileNameToSelect:fileName);
 		}
 
 		private void textSearch_TextChanged(object sender,EventArgs e) {
@@ -178,6 +157,10 @@ namespace OpenDental {
 			}
 			ImageNameSelected=Path.GetFileName(_listImageNames[gridMain.GetSelectedIndex()]);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

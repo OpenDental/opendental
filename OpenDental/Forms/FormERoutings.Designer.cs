@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormERoutings));
+			this.butClose = new OpenDental.UI.Button();
 			this.gridERoutings = new OpenDental.UI.GridOD();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.datePicker = new OpenDental.UI.ODDateRangePicker();
@@ -37,10 +38,20 @@ namespace OpenDental{
 			this.butShowAll = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
-			// gridERoutings
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(708, 546);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
+			// gridFlows
 			// 
 			this.gridERoutings.Location = new System.Drawing.Point(26, 93);
-			this.gridERoutings.Name = "gridERoutings";
+			this.gridERoutings.Name = "gridFlows";
 			this.gridERoutings.Size = new System.Drawing.Size(746, 433);
 			this.gridERoutings.TabIndex = 4;
 			this.gridERoutings.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridFlowsCellDoubleClick);
@@ -135,6 +146,7 @@ namespace OpenDental{
 			this.Controls.Add(this.menuSetup);
 			this.Controls.Add(this.datePicker);
 			this.Controls.Add(this.gridERoutings);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormERoutings";
 			this.Text = "eRouting";
@@ -145,6 +157,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridERoutings;
 		private UI.ComboBoxClinicPicker comboClinic;
 		private UI.ODDateRangePicker datePicker;

@@ -7,9 +7,9 @@
 		<Setter Property="HorizontalAlignment" Value="Left"/>
 		<Setter Property="VerticalAlignment" Value="Top"/>
 	</Style>
-	<Style TargetType="{x:Type ui:TabPage}" x:Key="TabPageStyleOD">
+	<Style TargetType="TabItem" x:Key="TabItemStyleOD">
 		<Style.Resources>
-			<SolidColorBrush x:Key="TabPage.MouseOver.Background" Color="#E5EFFB"/>
+			<SolidColorBrush x:Key="TabItem.MouseOver.Background" Color="#E5EFFB"/>
 		</Style.Resources>
 		<Setter Property="Foreground" Value="Black"/>
 		<Setter Property="Background" Value="White"/>
@@ -20,7 +20,7 @@
 		<Setter Property="VerticalContentAlignment" Value="Stretch"/>
 		<Setter Property="Template">
 			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type ui:TabPage}">
+				<ControlTemplate TargetType="{x:Type TabItem}">
 					<Grid x:Name="templateRoot" SnapsToDevicePixels="true">
 						<Border x:Name="mainBorder" Background="#F5F5F5" BorderBrush="DarkGray" BorderThickness="1,1,1,0" Margin="0" CornerRadius="3,3,0,0">
 							<Border x:Name="innerBorder" Background="#AABEE6" BorderBrush="DarkGray" BorderThickness="1,1,1,0" Margin="-1" Opacity="0" CornerRadius="3,3,0,0"/>
@@ -33,7 +33,7 @@
 								<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="true"/>
 								<Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Left"/>
 							</MultiDataTrigger.Conditions>
-							<Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabPage.MouseOver.Background}"/>
+							<Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabItem.MouseOver.Background}"/>
 							<Setter Property="BorderBrush" TargetName="mainBorder" Value="DarkGray"/>
 							<Setter Property="BorderThickness" TargetName="innerBorder" Value="1,1,0,1"/>
 							<Setter Property="BorderThickness" TargetName="mainBorder" Value="1,1,0,1"/>
@@ -43,7 +43,7 @@
 								<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="true"/>
 								<Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Bottom"/>
 							</MultiDataTrigger.Conditions>
-							<Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabPage.MouseOver.Background}"/>
+							<Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabItem.MouseOver.Background}"/>
 							<Setter Property="BorderBrush" TargetName="mainBorder" Value="DarkGray"/>
 							<Setter Property="BorderThickness" TargetName="innerBorder" Value="1,0,1,1"/>
 							<Setter Property="BorderThickness" TargetName="mainBorder" Value="1,0,1,1"/>
@@ -53,7 +53,7 @@
 								<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="true"/>
 								<Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Right"/>
 							</MultiDataTrigger.Conditions>
-							<Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabPage.MouseOver.Background}"/>
+							<Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabItem.MouseOver.Background}"/>
 							<Setter Property="BorderBrush" TargetName="mainBorder" Value="DarkGray"/>
 							<Setter Property="BorderThickness" TargetName="innerBorder" Value="0,1,1,1"/>
 							<Setter Property="BorderThickness" TargetName="mainBorder" Value="0,1,1,1"/>
@@ -63,7 +63,7 @@
 								<Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="true"/>
 								<Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Top"/>
 							</MultiDataTrigger.Conditions>
-							<Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabPage.MouseOver.Background}"/>
+							<Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabItem.MouseOver.Background}"/>
 							<Setter Property="BorderBrush" TargetName="mainBorder" Value="DarkGray"/>
 							<Setter Property="BorderThickness" TargetName="innerBorder" Value="1,1,1,0"/>
 							<Setter Property="BorderThickness" TargetName="mainBorder" Value="1,1,1,0"/>

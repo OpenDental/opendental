@@ -39,7 +39,8 @@ namespace OpenDental{
 				this.label37
 			});
 			Lan.C("All", new System.Windows.Forms.Control[] {
-				butSave,
+				butOK,
+				butCancel,
 			});
 		}
 
@@ -94,7 +95,7 @@ namespace OpenDental{
 		}
 
 		private void butSetScanner_Click(object sender,EventArgs e) {
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				if(CloudClientL.IsCloudClientRunning()) {
 					ODCloudClient.SetDefaultScanner();
 				}
@@ -110,7 +111,7 @@ namespace OpenDental{
 			ImagingDeviceManager.EZTwain.SelectImageSource(this.Handle);
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textScanDocQuality.IsValid() || !textScanDocResolution.IsValid()) {
 				MessageBox.Show(Lan.g(this,"Please fix data entry errors first."));
 				return;
@@ -142,7 +143,7 @@ namespace OpenDental{
 			ComputerPrefs.Update(ComputerPrefs.LocalComputer);
 			DataValid.SetInvalid(InvalidType.Prefs);
 			if(_showScanDocSelectSourceOld!=checkScanDocSelectSource.Checked) {
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0
 					,Lan.g(this,"Show Select Scanner Window option changed from")+" "
 					+(_showScanDocSelectSourceOld?Lan.g(this,"true"):Lan.g(this,"false"))+" "
 					+Lan.g(this,"to")+" "+(checkScanDocSelectSource.Checked?Lan.g(this,"true"):Lan.g(this,"false")));
@@ -150,5 +151,13 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+
+		
 	}
 }

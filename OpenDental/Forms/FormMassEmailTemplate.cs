@@ -58,12 +58,12 @@ namespace OpenDental {
 			listMessageReplaceTypes.Add(MessageReplaceType.Patient);
 			listMessageReplaceTypes.Add(MessageReplaceType.User);
 			listMessageReplaceTypes.Add(MessageReplaceType.Misc);
-			FrmMessageReplacements frmMessageReplacements=new FrmMessageReplacements(listMessageReplaceTypes);
-			frmMessageReplacements.IsSelectionMode=true;
-			frmMessageReplacements.MessageReplacementSystemType=MessageReplacementSystemType.MassEmail;
-			frmMessageReplacements.ShowDialog();
-			if(frmMessageReplacements.IsDialogOK) {
-				textboxPlainText.SelectedText=ReplaceReplacementTag(frmMessageReplacements.ReplacementTextSelected);
+			using FormMessageReplacements formMessageReplacements=new FormMessageReplacements(listMessageReplaceTypes);
+			formMessageReplacements.IsSelectionMode=true;
+			formMessageReplacements.MessageReplacementSystemType=MessageReplacementSystemType.MassEmail;
+			formMessageReplacements.ShowDialog();
+			if(formMessageReplacements.DialogResult==DialogResult.OK) {
+				textboxPlainText.SelectedText=ReplaceReplacementTag(formMessageReplacements.Replacement);
 			}
 		}
 
@@ -99,12 +99,12 @@ namespace OpenDental {
 			listMessageReplaceTypes.Add(MessageReplaceType.Patient);
 			listMessageReplaceTypes.Add(MessageReplaceType.User);
 			listMessageReplaceTypes.Add(MessageReplaceType.Misc);
-			FrmMessageReplacements frmMessageReplacements=new FrmMessageReplacements(listMessageReplaceTypes);
-			frmMessageReplacements.IsSelectionMode=true;
-			frmMessageReplacements.MessageReplacementSystemType=MessageReplacementSystemType.MassEmail;
-			frmMessageReplacements.ShowDialog();
-			if(frmMessageReplacements.IsDialogOK) {
-				textSubject.SelectedText=ReplaceReplacementTag(frmMessageReplacements.ReplacementTextSelected);
+			using FormMessageReplacements formMessageReplacements=new FormMessageReplacements(listMessageReplaceTypes);
+			formMessageReplacements.IsSelectionMode=true;
+			formMessageReplacements.MessageReplacementSystemType=MessageReplacementSystemType.MassEmail;
+			formMessageReplacements.ShowDialog();
+			if(formMessageReplacements.DialogResult==DialogResult.OK) {
+				textSubject.SelectedText=ReplaceReplacementTag(formMessageReplacements.Replacement);
 				textSubject.Invalidate();
 			}
 		}
@@ -138,7 +138,10 @@ namespace OpenDental {
 		}
 
 		private void butDeleteTemplate_Click(object sender,EventArgs e) {
-			//If IsNew, this won't get hit because the button is set to not be visible if tempCur.IsNew=true;
+			if(_emailHostingTemplate.IsNew) {//Wont get hit as the button is set to not be visible if tempCur.IsNew=true;
+				DialogResult=DialogResult.Cancel;
+				return;
+			}
 			if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Are you sure you want to delete this template? This cannot be undone.")) {
 				return;
 			}
@@ -157,6 +160,12 @@ namespace OpenDental {
 			}
 			EmailHostingTemplates.Delete(_emailHostingTemplate.EmailHostingTemplateNum);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butOk_Click(object sender,EventArgs e) {
+			if(Save()) {
+				DialogResult=DialogResult.OK;
+			}
 		}
 
 		private bool Save() {
@@ -248,16 +257,7 @@ namespace OpenDental {
 			return true;//save successful
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
-			if(Save()) {
-				DialogResult=DialogResult.OK;
-			}
-		}
-
-		private void FormMassEmailTemplate_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult!=DialogResult.Cancel) {
-				return;
-			}
+		private void butCancel_Click(object sender,EventArgs e) {
 			bool isImportOrCopy=_emailHostingTemplate.IsNew && !string.IsNullOrEmpty(_emailHostingTemplate.BodyHTML);
 			//True when a new template is being created off of a pre-existing file (import).
 			if(isImportOrCopy  &&
@@ -265,7 +265,9 @@ namespace OpenDental {
 			{
 				return;
 			}
+			DialogResult=DialogResult.Cancel;
 		}
+
 
 	}
 }

@@ -18,26 +18,18 @@ namespace OpenDental {
 		///<summary></summary>
 		public FrmApptFieldEdit(ApptField field) {
 			InitializeComponent();
+			//Lan.F(this);
 			_field=field;
 			KeyDown+=Frm_KeyDown;
-			Load+=FrmApptFieldEdit_Load;
-			PreviewKeyDown+=FrmApptFieldEdit_PreviewKeyDown;
 		}
 
-		private void FrmApptFieldEdit_Load(object sender, EventArgs e) {
-			Lang.F(this);
+		private void FrmApptFieldEdit_Loaded(object sender, RoutedEventArgs e) {
 			labelName.Text=_field.FieldName;
 			textValue.Text=_field.FieldValue;
 		}
 
 		private void Frm_KeyDown(object sender,KeyEventArgs e) {
 			if(e.Key==Key.Enter) {
-				butSave_Click(this,new EventArgs());
-			}
-		}
-
-		private void FrmApptFieldEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
 				butSave_Click(this,new EventArgs());
 			}
 		}
@@ -56,6 +48,26 @@ namespace OpenDental {
 			}
 			IsDialogOK=true;
 		}
-
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

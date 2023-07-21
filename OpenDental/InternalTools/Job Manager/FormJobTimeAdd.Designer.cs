@@ -49,7 +49,7 @@ namespace OpenDental{
 			this.textDescription.DetectUrls = false;
 			this.textDescription.Location = new System.Drawing.Point(15, 105);
 			this.textDescription.Name = "textDescription";
-			this.textDescription.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.CommLog;
+			this.textDescription.QuickPasteType = OpenDentBusiness.QuickPasteType.CommLog;
 			this.textDescription.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textDescription.Size = new System.Drawing.Size(389, 157);
 			this.textDescription.TabIndex = 28;

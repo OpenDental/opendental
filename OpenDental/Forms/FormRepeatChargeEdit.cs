@@ -102,9 +102,9 @@ namespace OpenDental{
 						textErxAccountId.Text=listDoseSpotAccountIds[0];
 					}
 					else if(listDoseSpotAccountIds.Count>1) {
-						InputBox inputAccountIds=new InputBox(Lans.g(this,"Multiple Account IDs found.  Select one to assign to this repeat charge."),listDoseSpotAccountIds,0);
+						using InputBox inputAccountIds=new InputBox(Lans.g(this,"Multiple Account IDs found.  Select one to assign to this repeat charge."),listDoseSpotAccountIds,0);
 						inputAccountIds.ShowDialog();
-						if(inputAccountIds.IsDialogOK) {
+						if(inputAccountIds.DialogResult==DialogResult.OK) {
 							textErxAccountId.Text=listDoseSpotAccountIds[inputAccountIds.SelectedIndex];
 						}
 					}
@@ -152,7 +152,7 @@ namespace OpenDental{
 					//3. Manipulate the Note.
 					//4. Manipulate Billing Day because not all customers will have a non-eService repeating charge in order to manipulate.
 					//This is because legacy users (versions prior to 17.1) need the ability to manually set their monthly charge amount, etc.
-					SetFormReadOnly(this.PanelClient,butSave
+					SetFormReadOnly(this.PanelClient,butOK,butCancel
 						,textChargeAmt,labelChargeAmount
 						,textDateStart,labelDateStart
 						,textNote,labelNote
@@ -275,7 +275,7 @@ namespace OpenDental{
 				MsgBox.Show(this,"Invalid charge amount.");
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.ProcComplCreate,DateTime.Today,ProcedureCodes.GetCodeNum(textCode.Text),procFee)) {
+			if(!Security.IsAuthorized(Permissions.ProcComplCreate,DateTime.Today,ProcedureCodes.GetCodeNum(textCode.Text),procFee)) {
 				return;
 			}
 			RepeatCharge chargeManual=_repeatCharge.Copy();//Update the fields from the form in case the user made changes
@@ -295,7 +295,6 @@ namespace OpenDental{
 			RepeatCharges.AllocateUnearned(chargeManual,procedure,DateTime.Today);
 			Recalls.Synch(_repeatCharge.PatNum);
 			MsgBox.Show(this,"Procedure added.");
-			Signalods.SetInvalid(InvalidType.BillingList);
 		}
 
 		private void butCalculate_Click(object sender,EventArgs e) {
@@ -327,7 +326,7 @@ namespace OpenDental{
 
 		private void butDelete_Click(object sender, EventArgs e) {
 			Patient patientOld=Patients.GetPat(_repeatCharge.PatNum);
-			RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(_repeatCharge,EnumPermType.RepeatChargeDelete,patientOld,isAutomated:false);
+			RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(_repeatCharge,Permissions.RepeatChargeDelete,patientOld,isAutomated:false);
 			RepeatCharges.Delete(_repeatCharge);
 			DialogResult=DialogResult.OK;
 		}
@@ -404,7 +403,7 @@ namespace OpenDental{
 			return true;
 		}
 
-		private void butSave_Click(object sender, EventArgs e){
+		private void butOK_Click(object sender, EventArgs e){
 			if(!UpdateRepeatCharge(_repeatCharge)) {
 				return;
 			}
@@ -426,17 +425,24 @@ namespace OpenDental{
 					Patients.Update(patientNewChange,patientOldChange);
 				}
 				_repeatCharge.RepeatChargeNum=RepeatCharges.Insert(_repeatCharge);
-				RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(_repeatCharge,EnumPermType.RepeatChargeCreate,patientOldChange,isAutomated:false);
+				RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(_repeatCharge,Permissions.RepeatChargeCreate,patientOldChange,isAutomated:false);
 				if(PrefC.IsODHQ) {
 					AddProcedureToCC();
 				}
 			}
 			else{ //not a new repeat charge
-				RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(_repeatChargeOld,EnumPermType.RepeatChargeUpdate,patientOldChange,newCharge:_repeatCharge,isAutomated:false,newPat:patientNewChange);
+				RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(_repeatChargeOld,Permissions.RepeatChargeUpdate,patientOldChange,newCharge:_repeatCharge,isAutomated:false,newPat:patientNewChange);
 				RepeatCharges.Update(_repeatCharge);
 			}
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 	}
 }
+
+
+

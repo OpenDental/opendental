@@ -30,11 +30,11 @@ namespace OpenDental{
 
 		private void FormProcTPEdit_Load(object sender, System.EventArgs e){
 			//this window never comes up for new TP.  Always saved ahead of time.
-			if(!Security.IsAuthorized(EnumPermType.TreatPlanEdit,_dateTP) || _isSigned) {
+			if(!Security.IsAuthorized(Permissions.TreatPlanEdit,_dateTP) || _isSigned) {
 				if(_isSigned) {
 					labelWarning.Visible=true;
 				}
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 			}
 			comboPriority.Items.Add(Lan.g(this,"none"));
@@ -75,12 +75,12 @@ namespace OpenDental{
 
 		private void butDelete_Click(object sender, System.EventArgs e) {
 			ProcTPs.Delete(ProcTPCur);
-			SecurityLogs.MakeLogEntry(EnumPermType.TreatPlanEdit,ProcTPCur.PatNum,"Delete tp proc: "+ProcTPCur.Descript);
+			SecurityLogs.MakeLogEntry(Permissions.TreatPlanEdit,ProcTPCur.PatNum,"Delete tp proc: "+ProcTPCur.Descript);
 			ProcTPCur=null;
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textFeeAmt.IsValid()
 				|| !textPriInsAmt.IsValid()
 				|| !textSecInsAmt.IsValid()
@@ -116,9 +116,39 @@ namespace OpenDental{
 				ProcTPCur.FeeAllowed=PIn.Double(textFeeAllowed.Text);
 			}
 			ProcTPs.InsertOrUpdate(ProcTPCur,false);//IsNew not applicable here
-			SecurityLogs.MakeLogEntry(EnumPermType.TreatPlanEdit,ProcTPCur.PatNum,"Edit proc: "+ProcTPCur.Descript);
+			SecurityLogs.MakeLogEntry(Permissions.TreatPlanEdit,ProcTPCur.PatNum,"Edit proc: "+ProcTPCur.Descript);
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

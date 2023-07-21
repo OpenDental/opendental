@@ -80,5 +80,39 @@ namespace OpenDental{
 			FillList();
 		}
 
+		private void butOK_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

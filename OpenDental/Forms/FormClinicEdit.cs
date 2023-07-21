@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using CodeBase;
@@ -41,11 +40,6 @@ namespace OpenDental {
 		}
 
 		private void FormClinicEdit_Load(object sender, System.EventArgs e) {
-			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
-				label11.Text=Lang.g(this,"City, Prov, Postal");
-				label20.Text=Lang.g(this,"City, Prov, Postal");
-				label15.Text=Lang.g(this,"City, Prov, Postal");
-			}
 			checkIsMedicalOnly.Checked=ClinicCur.IsMedicalOnly;
 			if(Programs.UsingEcwTightOrFullMode()) {
 				checkIsMedicalOnly.Visible=false;
@@ -158,24 +152,24 @@ namespace OpenDental {
 		}
 
 		private void butPickInsBillingProv_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick=new FrmProviderPick(comboInsBillingProv.Items.GetAll<Provider>());
-			frmProviderPick.ProvNumSelected=comboInsBillingProv.GetSelectedProvNum();
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick=new FormProviderPick(comboInsBillingProv.Items.GetAll<Provider>());
+			formProviderPick.ProvNumSelected=comboInsBillingProv.GetSelectedProvNum();
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboInsBillingProv.SetSelectedProvNum(frmProviderPick.ProvNumSelected);
+			comboInsBillingProv.SetSelectedProvNum(formProviderPick.ProvNumSelected);
 		}
 
 		private void butPickDefaultProv_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick=new FrmProviderPick(comboDefaultProvider.Items.GetAll<Provider>());
-			frmProviderPick.ProvNumSelected=comboDefaultProvider.GetSelectedProvNum();//this is 0 if selectedIndex -1
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick=new FormProviderPick(comboDefaultProvider.Items.GetAll<Provider>());
+			formProviderPick.ProvNumSelected=comboDefaultProvider.GetSelectedProvNum();//this is 0 if selectedIndex -1
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			if(frmProviderPick.ProvNumSelected>0){
-				comboDefaultProvider.SetSelectedProvNum(frmProviderPick.ProvNumSelected);
+			if(formProviderPick.ProvNumSelected>0){
+				comboDefaultProvider.SetSelectedProvNum(formProviderPick.ProvNumSelected);
 			}
 		}
 
@@ -254,7 +248,7 @@ namespace OpenDental {
 			butEmailNone.Enabled=false;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			#region Validation 
 			if(textDescription.Text==""){
 				MsgBox.Show(this,"Description cannot be blank.");
@@ -322,8 +316,8 @@ namespace OpenDental {
 					return;
 				}
 			}
-			if(!Regex.IsMatch(textClinicEmailAliasOverride.Text,"^[A-Za-z0-9.@]*$")) {
-				MsgBox.Show(this,"The Email Alias Override can only contain letters, numbers, period (.), and the at sign (@).");
+			if(!Regex.IsMatch(textClinicEmailAliasOverride.Text,"^[A-Za-z0-9]*$")) {
+				MsgBox.Show(this,"The Email Alias Override can only contain letters and numbers.");
 				return;
 			}
 			#endregion Validation
@@ -405,6 +399,10 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void checkHidden_CheckedChanged(object sender,EventArgs e) {
 			if(!checkHidden.Checked) { //Unhiding clinic
 				return;
@@ -416,6 +414,5 @@ namespace OpenDental {
 				checkHidden.Checked=false; //Return box to unchecked
 			}
 		}
-
 	}
 }

@@ -184,7 +184,7 @@ namespace OpenDental {
 		}
 
 		private void FormEmailMessageEdit_Load(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup,suppressMessage:true)) {
+			if(!Security.IsAuthorized(Permissions.Setup,suppressMessage:true)) {
 				butAddTemplate.Enabled=false;
 				butDeleteTemplate.Enabled=false;
 			}
@@ -195,7 +195,7 @@ namespace OpenDental {
 			Cursor=Cursors.WaitCursor;
 			RefreshAll();
 			SetDefaultAutograph();
-			ODEvent.Fired+=EmailSaveEvent_Fired;
+			EmailSaveEvent.Fired+=EmailSaveEvent_Fired;
 			Cursor=Cursors.Default;
 			Plugins.HookAddCode(this,"FormEmailMessageEdit_Load_end",_emailMessage,emailPreview);
 		}
@@ -256,7 +256,7 @@ namespace OpenDental {
 			if(listTemplates.SelectedIndex==-1){
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			using FormEmailTemplateEdit formEmailTemplateEdit=new FormEmailTemplateEdit();
@@ -337,7 +337,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please select an item first.");
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			using FormEmailTemplateEdit formEmailTemplateEdit=new FormEmailTemplateEdit();
@@ -378,7 +378,19 @@ namespace OpenDental {
 			if(emailPreview.TryGetFromEmailAddress(out EmailAddress emailAddressOutgoing)==FromAddressMatchResult.Failed) {
 				return null;
 			}
-			return EmailAutographs.GetForOutgoing(listAutographs.Items.GetAll<EmailAutograph>(),emailAddressOutgoing);
+			string emailUsername=EmailMessages.GetAddressSimple(emailAddressOutgoing.EmailUsername);
+			string emailSender=EmailMessages.GetAddressSimple(emailAddressOutgoing.SenderAddress);
+			string autographEmail;
+			for(int i=0;i<listAutographs.Items.Count;i++) {
+				autographEmail=EmailMessages.GetAddressSimple(((EmailAutograph)listAutographs.Items.GetObjectAt(i)).EmailAddress.Trim());
+				//Use Contains() because an autograph can theoretically have multiple email addresses associated with it.
+				if((!string.IsNullOrWhiteSpace(emailUsername) && autographEmail.Contains(emailUsername)) 
+					|| (!string.IsNullOrWhiteSpace(emailSender) && autographEmail.Contains(emailSender)))
+				{
+					return (EmailAutograph)listAutographs.Items.GetObjectAt(i);
+				}
+			}
+			return null;
 		}
 
 		///<summary>Sets the default autograph that shows in the message body. 
@@ -391,13 +403,28 @@ namespace OpenDental {
 			if(emailAutograph==null) {
 				return;
 			}
-			if(!MarkupEdit.ContainsOdHtmlTags(emailAutograph.AutographText)) {//HTML autographs will be appended automatically on send.
+			if(!IsAutographHTML(emailAutograph)) {//HTML autographs will be appended automatically on send.
 				InsertAutograph(emailAutograph);
 			}
 		}
 		
+		///<summary>Currently just appends an autograph to the bottom of the email message.  When the functionality to reply to emails is implemented, 
+		///this will need to be modified so that it inserts the autograph text at the bottom of the new message being composed, but above the message
+		///history.</summary>
 		private void InsertAutograph(EmailAutograph emailAutograph) {
-			emailPreview.BodyText=EmailMessages.InsertAutograph(emailPreview.BodyText,emailAutograph);
+			emailPreview.BodyText+="\r\n\r\n"+emailAutograph.AutographText;
+		}
+
+		/// <summary>Returns true if the given EmailAutograph contains HTML tags, false otherwise. </summary>
+		private bool IsAutographHTML(EmailAutograph emailAutograph) {
+			string allTagsPattern="<(?:\"[^\"]*\"|'[^']*'|[^'\">])+>"; //Matches all HTML tags including inline css with double or single quotations.
+			bool doesContainHtml=Regex.IsMatch(emailAutograph.AutographText,allTagsPattern);
+			//An autograph without HTML tags may still have an OD-style image link (which requires HTML to insert correctly), so check for that as well
+			//This regex looks for any tags of the syntax "[[img:FILE.EXT]]" where "FILE" is any valid file name and "EXT" is a file extension that matches one of the image formats specified below
+			//We check for a valid file extension to prevent matching against non-image links, e.g. "[[How To Check A Patient In]]"
+			string imageTagPattern="\\[\\[img:.*(bmp|gif|jpeg|jpg|png|svg)\\]\\]$";
+			doesContainHtml|=Regex.IsMatch(emailAutograph.AutographText,imageTagPattern);
+			return doesContainHtml;
 		}
 
 		private void listAutographs_DoubleClick(object sender,EventArgs e) { //edit an autograph
@@ -428,8 +455,8 @@ namespace OpenDental {
 				MessageBox.Show(Lan.g(this,"Please select an autograph before inserting."));
 				return;
 			}
-			if(emailPreview.IsHtml ||MarkupEdit.ContainsOdHtmlTags(listAutographs.GetSelected<EmailAutograph>().AutographText)) {
-				if(MsgBox.Show(MsgBoxButtons.YesNo,"Adding an autograph to an email with images or HTML tags must be done from the Edit HTML window."
+			if(emailPreview.IsHtml || IsAutographHTML(listAutographs.GetSelected<EmailAutograph>())) {
+				if(MsgBox.Show(MsgBoxButtons.YesNo,"Autographs with images or HTML tags must be inserted from the Edit HTML window using the Autograph dropdown in the toolbar."
 					+"\r\n\r\nWould you like to open the Edit HTML window?")) 
 				{
 					OpenEditHtmlWindow();
@@ -489,7 +516,7 @@ namespace OpenDental {
 			Cursor=Cursors.WaitCursor;
 			EmailAddress emailAddress=emailPreview.EmailAddressPreview;
 			try {
-				_emailMessage=EmailMessages.ProcessRawEmailMessageIn(_emailMessage.BodyText,_emailMessage.EmailMessageNum,emailAddress,isAck:true,_emailMessage.SentOrReceived);//Does not change read status of email regardless of success.
+				_emailMessage=EmailMessages.ProcessRawEmailMessageIn(_emailMessage.BodyText,_emailMessage.EmailMessageNum,emailAddress,isAck:true);//If decryption is successful, sets status to ReceivedDirect.		
 			}
 			catch(Exception ex) {
 				MessageBox.Show(Lan.g(this,"Decryption failed.")+"\r\n"+ex.Message);
@@ -498,6 +525,8 @@ namespace OpenDental {
 				Cursor=Cursors.Default;
 				return;
 			}
+			//The Direct message was decrypted.
+			EmailMessages.UpdateSentOrReceivedRead(_emailMessage);//Mark read, because we are already viewing the message within the current window.
 			RefreshAll();
 			DidEmailChange=true;	
 			Cursor=Cursors.Default;
@@ -575,9 +604,9 @@ namespace OpenDental {
 				return;
 			}
 			Cursor=Cursors.WaitCursor;
-			EmailAddress emailAddressReceived=EmailAddresses.GetFirstOrDefault(x => x.EmailUsername==_emailMessage.RecipientAddress);
+			EmailAddress emailAddress=emailPreview.EmailAddressPreview;
 			try {
-				_emailMessage=EmailMessages.ProcessRawEmailMessageIn(_emailMessage.RawEmailIn,_emailMessage.EmailMessageNum,emailAddressReceived,isAck:false,_emailMessage.SentOrReceived);//Does not change read status of email regardless of success.
+				_emailMessage=EmailMessages.ProcessRawEmailMessageIn(_emailMessage.RawEmailIn,_emailMessage.EmailMessageNum,emailAddress,isAck:false);
 			}
 			catch(Exception ex) {
 				MessageBox.Show(Lan.g(this,"Refreshing failed.")+"\r\n"+ex.Message);
@@ -585,6 +614,7 @@ namespace OpenDental {
 				return;
 			}
 			Cursor=Cursors.Default;
+			EmailMessages.UpdateSentOrReceivedRead(_emailMessage);//Mark read, because we are already viewing the message within the current window.
 			RefreshAll();
 			DidEmailChange=true;
 		}
@@ -739,7 +769,7 @@ namespace OpenDental {
 		///<summary>Checks to make sure there's a value in the From and To address text boxes. If isSecureEmail is true, will also check if there's a value in the Subject line</summary>
 		private bool ValidateFieldsForSend(bool isSecureEmail=false) {
 			StringBuilder error=new StringBuilder();
-			if(emailPreview.FromAddress=="") {
+			if(emailPreview.FromAddress==""){ 
 				error.AppendLine(Lan.g(this,"Sender address is required."));
 			}
 			if(emailPreview.ToAddress=="" && emailPreview.CcAddress=="" && emailPreview.BccAddress=="") {
@@ -748,9 +778,12 @@ namespace OpenDental {
 			if(isSecureEmail && string.IsNullOrWhiteSpace(emailPreview.Subject)) {
 				error.AppendLine(Lan.g(this,"Subject line is required."));
 			}
-			string errorText=PrefC.GetFirstShortURL(emailPreview.BodyText);
-			if(!string.IsNullOrWhiteSpace(errorText)) {
-				error.AppendLine(Lan.g(this,"Message cannot contain the URL")+" "+errorText+" "+Lan.g(this,"as this is only allowed for eServices."));
+			List<string> listRedirectShortURLs=PrefC.GetString(PrefName.RedirectShortURLsFromHQ).Split(',').ToList();
+			for(int i=0;i<listRedirectShortURLs.Count;i++) {
+				string url=listRedirectShortURLs[i];
+				if(emailPreview.BodyText.Contains(url)) {
+					error.AppendLine(Lan.g(this,"Email message cannot contain the URL "+url+" as this is only allowed for eServices."));
+				}
 			}
 			string errorMsg=error.ToString();
 			if(!string.IsNullOrWhiteSpace(errorMsg)) {
@@ -764,7 +797,7 @@ namespace OpenDental {
 		private void butSend_Click(object sender, System.EventArgs e) {
 			toolBarSend.Enabled=false;
 			if(EmailMessages.IsReceived(_emailMessage.SentOrReceived)) {
-				if(!Security.IsAuthorized(EnumPermType.EmailSend)) {
+				if(!Security.IsAuthorized(Permissions.EmailSend)) {
 					toolBarSend.Enabled=true;
 					return;
 				}
@@ -801,10 +834,10 @@ namespace OpenDental {
 				toolBarSend.Enabled=true;
 				return;
 			}
-			if(emailAddress.RefreshToken.IsNullOrEmpty() && emailAddress.AuthenticationType==OAuthType.Microsoft) {
+			if(emailAddress.AccessToken.IsNullOrEmpty() && emailAddress.AuthenticationType==OAuthType.Microsoft) {
 				if(MsgBox.Show(this,MsgBoxButtons.YesNo,"This email address needs to be re-authenticated. Sign into this email through Microsoft?")) {
 					MicrosoftTokenHelper microsoftToken=new MicrosoftTokenHelper();
-					if(ODEnvironment.IsCloudServer) {
+					if(ODBuild.IsWeb()) {
 						if(!CloudClientL.IsCloudClientRunning()) {
 							toolBarSend.Enabled=true;
 							return; 
@@ -843,7 +876,7 @@ namespace OpenDental {
 			}
 			//If default autograph is HTML send the whole email as HTML.
 			EmailAutograph emailAutograph=FindDefaultEmailAutograph();
-			if(emailAutograph!=null && MarkupEdit.ContainsOdHtmlTags(emailAutograph.AutographText) && _emailMessage.HtmlType==EmailType.Regular) {
+			if(emailAutograph!=null && IsAutographHTML(emailAutograph) && _emailMessage.HtmlType==EmailType.Regular) {
 				bool hasValidHTML=false;
 				try {
 					string markupText=emailPreview.BodyText+"\r\n\r\n"+emailAutograph.AutographText;
@@ -875,10 +908,9 @@ namespace OpenDental {
 			}
 			catch(Exception ex){
 				Cursor=Cursors.Default;
-				if(ODEnvironment.IsCloudServer && ex.InnerException!=null) {
-					if(ex.InnerException.Message.Contains("InvalidAuthenticationToken") && emailAddress.AuthenticationType==OAuthType.Microsoft) {
+				if(ODBuild.IsWeb() && ex.InnerException!=null) {
+					if(ex.InnerException.Message.Contains("InvalidAuthenticationToken")) {
 						emailAddress.AccessToken="";
-						emailAddress.RefreshToken="";
 						EmailAddresses.Update(emailAddress);
 						DataValid.SetInvalid(InvalidType.Email);
 						butSend_Click(sender,e);
@@ -928,16 +960,16 @@ namespace OpenDental {
 			if(emailAddressSender==null) {
 				return;
 			}
-			SaveMsg();//wires UI into _emailMessage and inserts/updates db.
+			SaveMsg();//wires UI into _emailMessage and inserts/updates db.			
 			string toAddress=emailPreview.ToAddress;
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			//Send the Email
 			progressOD.ActionMain=() => {
 				_patient??=EmailMessages.GetPatient(_emailMessage);
 				EmailSecures.SendSecureEmail(_emailMessage,emailAddressSender,toAddress,_clinicNum,_emailMessageReplyingTo,_patient);
 			};
 			try {
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex) {
 				FriendlyException.Show(Lan.g(this,"Failed to send secure email.")+"\r\n"+ex.Message,ex);
@@ -989,7 +1021,7 @@ namespace OpenDental {
 			if(_didTemplatesChange){
 				DataValid.SetInvalid(InvalidType.Email);
 			}
-			ODEvent.Fired-=EmailSaveEvent_Fired;
+			EmailSaveEvent.Fired-=EmailSaveEvent_Fired;
 			if(DidEmailChange){
 				Signalods.SetInvalid(InvalidType.EmailMessages);
 				return;
@@ -998,5 +1030,6 @@ namespace OpenDental {
 				EmailMessages.Delete(_emailMessage);
 			}
 		}
+
 	}
 }

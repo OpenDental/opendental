@@ -19,10 +19,6 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using UnitTests.Documentation;
-using OpenDentBusiness;
-using DataConnectionBase;
-using System.Data.SqlClient;
-using System.Xml.Xsl;
 
 namespace DocumentationBuilder {
 	public partial class Form1:Form {
@@ -210,102 +206,6 @@ namespace DocumentationBuilder {
 			xmlWriter.WriteEndDocument();
 			xmlWriter.Flush();
 			xmlWriter.Close();
-		}
-
-		private void buttonPrefDocumentation_Click(object sender,EventArgs e) {
-			string inputFileODBusiness=ODFileUtils.CombinePaths(new string[] {"..","..","..","OpenDentBusiness","bin","Release","OpenDentBusiness.xml"});
-			XElement xElementODBusiness=XElement.Load(inputFileODBusiness); //Getting summaries found in Pref.cs, less than master list
-			List<XElement> listXElementsODBusinessMembers=xElementODBusiness.Descendants("member").ToList()
-				.FindAll(x => x.HasAttributes && x.Attribute("name")!=null);
-			List<XElement> listXElementsODBusiness=listXElementsODBusinessMembers.FindAll(x => x.Attribute("name").Value
-			.Contains($"F:OpenDentBusiness.PrefName.")).ToList();
-			string inputFileODPrefInfo=ODFileUtils.CombinePaths(new string[] {"..","..","..","OpenDental","Resources","PrefInfos.xml"});
-			XElement xElementPrefInfos=XElement.Load(inputFileODPrefInfo); //Getting details found in PrefInfos.cs, less than master list
-			List<XElement> listXElementsPrefInfos=xElementPrefInfos.Descendants("PrefInf").ToList();
-			List<PrefName> listPrefNames=Enum.GetValues(typeof(PrefName)).Cast<PrefName>().ToList();//Master list from Pref.cs that contains all prefs
-			XmlWriterSettings xmlWriterSettings=new XmlWriterSettings();
-			xmlWriterSettings.Indent=true;
-			xmlWriterSettings.IndentChars=("    ");
-			StringWriter stringWriter=new StringWriter();
-			XmlWriter xmlWriter=XmlWriter.Create(stringWriter,xmlWriterSettings);
-			xmlWriter.WriteProcessingInstruction("xml-stylesheet","type=\"text/xsl\" href=\"PrefsDocumentation.xsl\"");
-			xmlWriter.WriteStartElement("members");
-			xmlWriter.WriteAttributeString("version",textVersion.Text);
-			for(int i=0;i<listPrefNames.Count;i++){ //Loop through master Pref list
-				Type type=typeof(PrefName);
-				MemberInfo[] memberInfoArray=type.GetMembers();
-				xmlWriter.WriteStartElement("Preference");
-				string name=listPrefNames[i].ToString();
-				xmlWriter.WriteStartElement("PrefName");
-				xmlWriter.WriteString(listPrefNames[i].ToString());
-				xmlWriter.WriteEndElement();
-				xmlWriter.WriteStartElement("Summary");
-				if(listXElementsODBusiness.Any(x => x.FirstAttribute.Value.Contains(name))) { //Check if pref with summary is in master list
-					xmlWriter.WriteString(GetSummaryForMember(listXElementsODBusiness.Find(x => x.FirstAttribute.Value.Contains(name))));
-				}
-				else{
-					xmlWriter.WriteString("");
-				}
-				xmlWriter.WriteEndElement();
-				xmlWriter.WriteStartElement("Details");
-				if(!listXElementsPrefInfos.Any(x => x.Nodes().ToList()[0].ToString().Contains(name))) {//Check if pref with details is not in master list
-					xmlWriter.WriteString("");
-					xmlWriter.WriteEndElement();
-					xmlWriter.WriteEndElement();
-					continue;
-				}
-				List<XNode> listXNodes=listXElementsPrefInfos.FindAll(x => x.Nodes().ToList()[0].ToString().Contains(name)).Nodes().ToList();
-				string details=listXNodes[4].ToString();
-				if(listXNodes[4].ToString()=="<Details />") {
-					details=details.Replace("<Details />","");
-				}
-				details=details.Replace("<Details>","");
-				details=details.Replace("</Details>","");
-				details=details.Replace("\r\n","");
-				xmlWriter.WriteString(details);
-				xmlWriter.WriteEndElement();
-				xmlWriter.WriteEndElement();
-			}
-			xmlWriter.WriteEndElement();
-			xmlWriter.WriteEndDocument();
-			xmlWriter.Dispose();
-			string formattedXml=stringWriter.ToString();
-			string htmlResult=GetHtmlFromXml(formattedXml);
-			WriteHtmlToFile(htmlResult);
-		}
-
-		private string GetHtmlFromXml(string formattedXml){
-			string pathPrefsDocumentationXsl=ODFileUtils.CombinePaths(new string[] {"..","..","PrefsDocumentation.xsl"});
-			string xslContent=File.ReadAllText(pathPrefsDocumentationXsl);
-			XslCompiledTransform xslCompiledTransform=new XslCompiledTransform();
-			using(StringReader stringReader = new StringReader(xslContent)) {
-				using(XmlReader xmlReader = XmlReader.Create(stringReader)) {
-					xslCompiledTransform.Load(xmlReader);
-				}
-			}
-			using(StringReader stringReader = new StringReader(formattedXml)) {
-				using(XmlReader xmlReader = XmlReader.Create(stringReader)) {
-					using(StringWriter stringWriter = new StringWriter()) {
-						xslCompiledTransform.Transform(xmlReader,null,stringWriter);
-						return stringWriter.ToString();
-					}
-				}
-			}
-		}
-
-		private void WriteHtmlToFile(string html) {
-			string odVersion=Assembly.GetAssembly(typeof(OpenDental.FormOpenDental)).GetName().Version.ToString();
-			string formattedODVersion=odVersion.Replace("0","").Replace(".","");
-			string pathPreferenceTableHtml=@"..\..\PreferenceTable\Pref" + formattedODVersion + ".html";
-			if(!File.Exists(pathPreferenceTableHtml)) {
-				MessageBox.Show(pathPreferenceTableHtml+" does not exist. Creating a new file for this version.");
-				FileStream fileStream=File.Create(pathPreferenceTableHtml);
-				fileStream.Close();
-			}
-			using(StreamWriter streamWriter=new StreamWriter(pathPreferenceTableHtml)) {
-				streamWriter.Write(html);
-				streamWriter.Close();
-			}
 		}
 
 		private void Build() {
@@ -1088,7 +988,7 @@ namespace DocumentationBuilder {
 			}
 			return ancestors;
 		}
-
+	
 	
 
 

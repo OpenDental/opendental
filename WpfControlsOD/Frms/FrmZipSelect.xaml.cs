@@ -27,18 +27,15 @@ namespace OpenDental {
 		public FrmZipSelect() {
 			InitializeComponent();
 			KeyDown+=Frm_KeyDown;
-			FormClosing+=FrmZipSelect_Closing;
-			Load+=FrmZipSelect_Load;
-			MouseDoubleClick+=listMatches_DoubleClick;
-			PreviewKeyDown+=FrmZipSelect_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
 		//This form is only accessed directly from the patient edit window, either by pushing the
 		//button, or when user enters a zipcode that has more than one city available.
 		
-		private void FrmZipSelect_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmZipSelect_Loaded(object sender,RoutedEventArgs e) {
 		  FillList();
+
 		}
 
 		private void Frm_KeyDown(object sender,KeyEventArgs e) {
@@ -63,21 +60,6 @@ namespace OpenDental {
 				listMatches.Items.Add(itemText);
 			}
 			listMatches.SelectedIndex=-1;
-		}
-
-		private void FrmZipSelect_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butAdd.IsAltKey(Key.A,e)) {
-				butAdd_Click(this,new EventArgs());
-			}
-			if(butDelete.IsAltKey(Key.D,e)) {
-				butDelete_Click(this,new EventArgs());
-			}
-			if(butEdit.IsAltKey(Key.E,e)) {
-				butEdit_Click(this,new EventArgs());
-			}
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
 		}
 
 		private void butAdd_Click(object sender, System.EventArgs e) {
@@ -126,7 +108,7 @@ namespace OpenDental {
 			FillList();
 		}
 
-		private void listMatches_DoubleClick(object sender, MouseButtonEventArgs e) {
+		private void listMatches_DoubleClick(object sender, System.EventArgs e) {
 			if(listMatches.SelectedIndex==-1){
 				return;
 			}
@@ -149,5 +131,13 @@ namespace OpenDental {
 			}
 		}
 
+		
+
+
 	}
 }
+
+
+
+
+

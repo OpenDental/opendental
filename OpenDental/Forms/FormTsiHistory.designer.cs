@@ -29,6 +29,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTsiHistory));
 			this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.menuItemGoTo = new System.Windows.Forms.ToolStripMenuItem();
+			this.butClose = new OpenDental.UI.Button();
 			this.checkShowPatNums = new OpenDental.UI.CheckBox();
 			this.groupFilters = new OpenDental.UI.GroupBox();
 			this.comboClinics = new OpenDental.UI.ComboBoxClinicPicker();
@@ -62,14 +63,25 @@ namespace OpenDental{
 			this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuItemGoTo});
 			this.contextMenu.Name = "contextMenu";
-			this.contextMenu.Size = new System.Drawing.Size(105, 26);
+			this.contextMenu.Size = new System.Drawing.Size(106, 26);
 			// 
 			// menuItemGoTo
 			// 
 			this.menuItemGoTo.Name = "menuItemGoTo";
-			this.menuItemGoTo.Size = new System.Drawing.Size(104, 22);
+			this.menuItemGoTo.Size = new System.Drawing.Size(105, 22);
 			this.menuItemGoTo.Text = "Go To";
 			this.menuItemGoTo.Click += new System.EventHandler(this.menuItemGoTo_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(1143, 662);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 5;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// checkShowPatNums
 			// 
@@ -110,7 +122,7 @@ namespace OpenDental{
 			this.comboClinics.IncludeUnassigned = true;
 			this.comboClinics.Location = new System.Drawing.Point(605, 14);
 			this.comboClinics.Name = "comboClinics";
-			this.comboClinics.IsMultiSelect = true;
+			this.comboClinics.SelectionModeMulti = true;
 			this.comboClinics.Size = new System.Drawing.Size(258, 21);
 			this.comboClinics.TabIndex = 16;
 			this.comboClinics.SelectionChangeCommitted += new System.EventHandler(this.ComboClinics_SelectionChangeCommitted);
@@ -332,6 +344,7 @@ namespace OpenDental{
 			// FormTsiHistory
 			// 
 			this.ClientSize = new System.Drawing.Size(1230, 696);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butRefresh);
 			this.Controls.Add(this.checkShowPatNums);
 			this.Controls.Add(this.groupFilters);
@@ -351,6 +364,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private OpenDental.UI.GroupBox groupFilters;
 		private UI.Button butCurrent;

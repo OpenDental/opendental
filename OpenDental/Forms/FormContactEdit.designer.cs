@@ -35,36 +35,47 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormContactEdit));
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.textLName = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textFName = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
-			this.textWkPhone = new OpenDental.ValidPhone();
+			this.textWkPhone = new ValidPhone();
 			this.label4 = new System.Windows.Forms.Label();
-			this.textFax = new OpenDental.ValidPhone();
+			this.textFax = new ValidPhone();
 			this.label5 = new System.Windows.Forms.Label();
 			this.textNotes = new System.Windows.Forms.TextBox();
 			this.listCategory = new OpenDental.UI.ListBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(589, 389);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 25);
-			this.butSave.TabIndex = 1;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(591,450);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75,25);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(591,411);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75,25);
+			this.butOK.TabIndex = 1;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butDelete
 			// 
-			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butDelete.Location = new System.Drawing.Point(42, 389);
+			this.butDelete.Location = new System.Drawing.Point(42,450);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(75,25);
 			this.butDelete.TabIndex = 2;
@@ -172,8 +183,9 @@ namespace OpenDental {
 			// 
 			// FormContactEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(717,432);
 			this.AutoScaleBaseSize = new System.Drawing.Size(5,13);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(717,493);
 			this.Controls.Add(this.label6);
 			this.Controls.Add(this.listCategory);
 			this.Controls.Add(this.label5);
@@ -187,7 +199,8 @@ namespace OpenDental {
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butDelete);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -201,7 +214,9 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butDelete;
 		private System.Windows.Forms.TextBox textLName;
 		private System.Windows.Forms.Label label1;

@@ -6,7 +6,6 @@ using System.Text;
 using System.Windows.Forms;
 using OpenDentBusiness;
 using OpenDental.UI;
-using System.Linq;
 
 namespace OpenDental {
 	public partial class FormUpdateHistory:FormODBase {
@@ -30,7 +29,7 @@ namespace OpenDental {
 			gridMain.Columns.Add(col);
 			gridMain.ListGridRows.Clear();
 			GridRow row=null;
-			List<UpdateHistory> listUpdateHistories=UpdateHistories.GetAll().OrderByDescending(x => x.DateTimeUpdated).ToList();
+			List<UpdateHistory> listUpdateHistories=UpdateHistories.GetAll();
 			for(int i = 0;i<listUpdateHistories.Count;i++) {
 				row=new GridRow();
 				row.Cells.Add(listUpdateHistories[i].ProgramVersion);
@@ -40,5 +39,8 @@ namespace OpenDental {
 			gridMain.EndUpdate();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }

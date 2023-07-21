@@ -46,7 +46,7 @@ namespace OpenDental {
 			//Users who want to install multiple on one computer can use the Service Manager instead.
 			//Do nothing on error.  The Install button will simply be visible.
 			ODException.SwallowAnyException(() => {
-				if(ServicesHelper.GetServicesByExe("OpenDentalEConnector.exe").Count>0) {
+				if(PrefC.IsCloudMode || ServicesHelper.GetServicesByExe("OpenDentalEConnector.exe").Count>0) {
 					butInstallEConnector.Enabled=false;
 				}
 			});
@@ -57,7 +57,7 @@ namespace OpenDental {
 			textLogCleanupInterval.Text=PrefC.GetLong(PrefName.EConnectorCleanupLoggerIntervalDays).ToString();
 			checkEnableEServicesListener.Checked=PrefC.GetBool(PrefName.EServiceListenerEnabled);
 			//Disable certain buttons but let them continue to view.
-			butListenerServiceAck.Enabled=Security.IsAuthorized(EnumPermType.EServicesSetup,suppressMessage:true);
+			butListenerServiceAck.Enabled=Security.IsAuthorized(Permissions.EServicesSetup,suppressMessage:true);
 		}
 
 		///<summary>Updates the text box that is displaying the current status of the Listener Service.  Returns the status just in case other logic is needed outside of updating the status box.</summary>
@@ -200,7 +200,7 @@ namespace OpenDental {
 		}
 
 		private void butListenerAlertsOff_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
 			//Insert a row into the eservicesignal table to indicate to all computers to stop monitoring.
@@ -214,13 +214,13 @@ namespace OpenDental {
 			eServiceSignal.Tag="";
 			eServiceSignal.SigDateTime=MiscData.GetNowDateTime();
 			EServiceSignals.Insert(eServiceSignal);
-			SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,"Listener Service monitoring manually stopped via eServices Setup window.");
+			SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,"Listener Service monitoring manually stopped via eServices Setup window.");
 			MsgBox.Show(this,"Monitoring shutdown signal sent.  This will take up to one minute.");
 			FillGridListenerService();
 			FillTextListenerServiceStatus();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOk_Click(object sender,EventArgs e) {
 			bool doRefreshCache=false;
 			if(!textLogCleanupInterval.IsValid()) {
 				MsgBox.Show("Invalid entry for 'Delete logs older than'. Please enter a value between 0 and 36500.");
@@ -246,5 +246,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;	
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

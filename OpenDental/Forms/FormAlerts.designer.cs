@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAlerts));
+			this.butClose = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.labelOpenForm = new System.Windows.Forms.Label();
 			this.butViewDetails = new OpenDental.UI.Button();
@@ -33,6 +34,17 @@ namespace OpenDental{
 			this.butAcknowledge = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(828, 557);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 6;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridMain
 			// 
@@ -119,12 +131,13 @@ namespace OpenDental{
 			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.label1.Location = new System.Drawing.Point(776, 252);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(132, 18);
+			this.label1.Size = new System.Drawing.Size(117, 18);
 			this.label1.TabIndex = 9;
 			this.label1.Text = "(Delete or Mark Read)";
 			// 
 			// FormAlerts
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(915, 593);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butAcknowledge);
@@ -132,6 +145,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butViewDetails);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butDelete);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butOpenForm);
 			this.Controls.Add(this.butMarkAsRead);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -143,6 +157,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private UI.Button butDelete;
 		private UI.Button butOpenForm;

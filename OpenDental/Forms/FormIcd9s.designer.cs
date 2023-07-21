@@ -26,6 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormIcd9s));
 			this.listMain = new OpenDental.UI.ListBox();
 			this.butOK = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.textCode = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butSearch = new OpenDental.UI.Button();
@@ -47,12 +48,22 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(527,654);
+			this.butOK.Location = new System.Drawing.Point(527, 624);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(527, 654);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// textCode
 			// 
@@ -100,6 +111,7 @@ namespace OpenDental{
 			this.Controls.Add(this.textCode);
 			this.Controls.Add(this.listMain);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormIcd9s";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -113,6 +125,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.ListBox listMain;
 		private System.Windows.Forms.TextBox textCode;
 		private System.Windows.Forms.Label label1;

@@ -39,8 +39,8 @@ namespace OpenDental {
 		}
 
 		void FillGridInsPlans() {
-			_sortedByColumnIdx=gridInsPlans.GetSortedByColumnIdx();
-			_isSortAscending=gridInsPlans.IsSortedAscending();
+			_sortedByColumnIdx=gridInsPlans.SortedByColumnIdx;
+			_isSortAscending=gridInsPlans.SortedIsAscending;
 			gridInsPlans.BeginUpdate();
 			if(gridInsPlans.Columns.Count==0) {
 				gridInsPlans.Columns.Clear();
@@ -237,7 +237,8 @@ namespace OpenDental {
 			checkIsEmployerCreate.Enabled=false;
 			checkDropExistingIns.Enabled=false;
 			gridInsPlans.Enabled=false;
-			butSave.Enabled=false;
+			butOK.Enabled=false;
+			butCancel.Enabled=false;
 			Cursor=Cursors.WaitCursor;
 			Prefs.UpdateBool(PrefName.Ins834DropExistingPatPlans,checkDropExistingIns.Checked);
 			Prefs.UpdateBool(PrefName.Ins834IsPatientCreate,checkIsPatientCreate.Checked);
@@ -302,7 +303,7 @@ namespace OpenDental {
 			return true;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!TryImport834()){
 				return;
 			}
@@ -310,5 +311,11 @@ namespace OpenDental {
 			Close();
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+			Close();
+		}
+
 	}
+
 }

@@ -14,7 +14,11 @@ namespace OpenDental{
 		public int MinutesDisabled;
 
 		///<summary></summary>
-		public FormPopupDisplay() {
+		public FormPopupDisplay()
+		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
@@ -49,13 +53,13 @@ namespace OpenDental{
 			comboHours.Text="1";
 			MinutesDisabled=0;
 			if(PopupCur.UserNum==Security.CurUser.UserNum
-				|| Security.IsAuthorized(EnumPermType.PopupEdit,true)) {
+				|| Security.IsAuthorized(Permissions.PopupEdit,true)) {
 				return;
 			}
 			textDescription.ReadOnly=true;
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			if(PopupCur.Description.Replace("\r","")!=textDescription.Text.Replace("\r","")) {//if user changed the note. remove "\r" to homogenize line returns because "\r\n" is the same as "\n"
 				if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"Save changes to note?")) {
 					Popup popupArchive=PopupCur.Copy();
@@ -74,5 +78,37 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

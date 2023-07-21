@@ -7,9 +7,9 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="298" Height="380" 
-             Text="Select User Group" MinMaxBoxes="False" >
+             Text="Select User Group" Loaded="FrmUserGroupPicker_Loaded" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butOK" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,13" Text="_OK" Click="butOK_Click" />
-		<ui:ListBox x:Name="listGroups" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,12,103,13"/>
+		<ui:ListBox x:Name="listGroups" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,12,103,13" />
 	</Grid>
 </local:FrmODBase>

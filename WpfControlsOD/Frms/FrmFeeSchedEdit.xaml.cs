@@ -20,13 +20,14 @@ namespace OpenDental {
 		///<summary></summary>
 		public FrmFeeSchedEdit()
 		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
-			Load+=FrmFeeSchedEdit_Load;
-			PreviewKeyDown+=FrmFeeSchedEdit_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmFeeSchedEdit_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmFeeSchedEdit_Loaded(object sender,RoutedEventArgs e) {
 			textDescription.Text=FeeSchedCur.Description;
 			if(!FeeSchedCur.IsNew){
 				listType.IsEnabled=false;
@@ -107,9 +108,9 @@ namespace OpenDental {
 			List<Patient> listPatients=Patients.GetForFeeSched(FeeSchedCur.FeeSchedNum).FindAll(x => x.PatStatus!=PatientStatus.Deleted);
 			patsUsingFee=string.Join("\r\n",listPatients.Select(x => x.LName+", "+x.FName));
 			if(patsUsingFee!="") {
-				FrmMsgBoxCopyPaste frmMsgBoxCopyPaste=new FrmMsgBoxCopyPaste(Lans.g(this,"Cannot hide. Fee schedule currently in use by the following non-deleted patients")
+				using MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(Lans.g(this,"Cannot hide. Fee schedule currently in use by the following non-deleted patients")
 					+":\r\n"+patsUsingFee);
-				frmMsgBoxCopyPaste.ShowDialog();
+				msgBoxCopyPaste.ShowDialog();
 				checkIsHidden.Checked=false;
 			}
 		}
@@ -128,12 +129,6 @@ namespace OpenDental {
 				//listType is disabled for existing fee schedules.
 			}
 			return false;
-		}
-
-		private void FrmFeeSchedEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
 		}
 
 		private void butSave_Click(object sender, System.EventArgs e) {
@@ -185,9 +180,29 @@ namespace OpenDental {
 					log+=", Hidden:"+FeeSchedCur.IsHidden;
 				}
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.FeeSchedEdit,0,log,FeeSchedCur.FeeSchedNum,DateTime.Now);
+			SecurityLogs.MakeLogEntry(Permissions.FeeSchedEdit,0,log,FeeSchedCur.FeeSchedNum,DateTime.Now);
 			IsDialogOK=true;
 		}
-
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

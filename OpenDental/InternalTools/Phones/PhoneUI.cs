@@ -290,7 +290,7 @@ namespace OpenDental {
 			if(!CheckUserCanChangeStatus(phone)) {
 				return;
 			}
-			UI.ProgressWin progressOD=new UI.ProgressWin();
+			UI.ProgressOD progressOD=new UI.ProgressOD();
 			progressOD.ShowCancelButton=false;//safe because this is guaranteed to be only one second, more like a fancy wait cursor
 			progressOD.ActionMain=() => {
 				ClockEvents.ClockOut(employeeNum,TimeClockStatus.Lunch);
@@ -298,7 +298,7 @@ namespace OpenDental {
 			};
 			progressOD.StartingMessage=Lan.g(langThis,"Processing clock event...");
 			try {
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex) {
 				MessageBox.Show(ex.Message);//This message will tell user that they are already clocked out.
@@ -325,7 +325,7 @@ namespace OpenDental {
 			if(!CheckUserCanChangeStatus(phone)) {
 				return;
 			}
-			UI.ProgressWin progressOD=new UI.ProgressWin();
+			UI.ProgressOD progressOD=new UI.ProgressOD();
 			progressOD.ShowCancelButton=false;//safe because this is guaranteed to be only one second, more like a fancy wait cursor
 			progressOD.ActionMain=() => {
 				ClockEvents.ClockOut(employeeNum,TimeClockStatus.Home);//Update the clock event, phone (HQ only), and phone emp default (HQ only).
@@ -333,7 +333,7 @@ namespace OpenDental {
 			};
 			progressOD.StartingMessage=Lan.g(langThis,"Processing clock event...");
 			try {
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex) {
 				MessageBox.Show(ex.Message);//This message will tell user that they are already clocked out.
@@ -358,7 +358,7 @@ namespace OpenDental {
 			if(!CheckUserCanChangeStatus(phone)) {
 				return;
 			}
-			UI.ProgressWin progressOD=new UI.ProgressWin();
+			UI.ProgressOD progressOD=new UI.ProgressOD();
 			progressOD.ShowCancelButton=false;//safe because this is guaranteed to be only one second, more like a fancy wait cursor
 			progressOD.ActionMain=() => {
 				ClockEvents.ClockOut(employeeNum,TimeClockStatus.Break);
@@ -366,7 +366,7 @@ namespace OpenDental {
 			};
 			progressOD.StartingMessage=Lan.g(langThis,"Processing clock event...");
 			try {
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex) {
 				MessageBox.Show(ex.Message);//This message will tell user that they are already clocked out.
@@ -472,7 +472,7 @@ namespace OpenDental {
 					}
 				}
 			}*/
-			UI.ProgressWin progressOD=new UI.ProgressWin();
+			UI.ProgressOD progressOD=new UI.ProgressOD();
 			progressOD.ShowCancelButton=false;//safe because this is guaranteed to be only one second, more like a fancy wait cursor
 			progressOD.ActionMain=() => {
 				ClockEvents.ClockIn(employeeNum,isAtHome);
@@ -480,7 +480,7 @@ namespace OpenDental {
 			};
 			progressOD.StartingMessage=Lan.g(langThis,"Processing clock event...");
 			try {
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex) {
 				if(ex.Message.Contains("Already clocked in")) {
@@ -502,16 +502,13 @@ namespace OpenDental {
 				return true;
 			}
 			Userod selectedUser=Userods.GetUserByEmployeeNum(employeeNum);
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-			inputBoxParam.LabelText="Please enter password";
-			inputBoxParam.IsPassswordCharStar=true;
-			InputBox inputBox=new InputBox(inputBoxParam);
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			using InputBox inputPass=new InputBox("Please enter password:");
+			inputPass.textResult.PasswordChar='*';
+			inputPass.ShowDialog();
+			if(inputPass.DialogResult!=DialogResult.OK) {
 				return false;
 			}
-			if(!Authentication.CheckPassword(selectedUser,inputBox.StringResult)) { 
+			if(!Authentication.CheckPassword(selectedUser,inputPass.textResult.Text)) { 
 				MsgBox.Show("PhoneUI","Wrong password.");
 				return false;
 			}
@@ -550,7 +547,7 @@ namespace OpenDental {
 			if(Security.CurUser.EmployeeNum==phoneCur.EmployeeNum) { //User is changing their own tile. This is always allowed.
 				return true;
 			}
-			if(Security.IsAuthorized(EnumPermType.TimecardsEditAll,true)) { //User has time card edit permission so allow it.
+			if(Security.IsAuthorized(Permissions.TimecardsEditAll,true)) { //User has time card edit permission so allow it.
 				return true;
 			}
 			//User must enter target tile's password correctly.

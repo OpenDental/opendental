@@ -35,6 +35,7 @@ namespace OpenDental{
 			this.butPatFind = new OpenDental.UI.Button();
 			this.textMessage = new OpenDental.ODtextBox();
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.labelCharCount = new System.Windows.Forms.Label();
 			this.labelMsgCount = new System.Windows.Forms.Label();
 			this.textCharCount = new OpenDental.ODtextBox();
@@ -143,7 +144,7 @@ namespace OpenDental{
 			this.textMessage.DetectUrls = false;
 			this.textMessage.Location = new System.Drawing.Point(28, 181);
 			this.textMessage.Name = "textMessage";
-			this.textMessage.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.TxtMsg;
+			this.textMessage.QuickPasteType = OpenDentBusiness.QuickPasteType.TxtMsg;
 			this.textMessage.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textMessage.Size = new System.Drawing.Size(331, 113);
 			this.textMessage.TabIndex = 6;
@@ -152,12 +153,22 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(284, 303);
+			this.butOK.Location = new System.Drawing.Point(209, 303);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 7;
 			this.butOK.Text = "&Send";
 			this.butOK.Click += new System.EventHandler(this.butSend_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(290, 303);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 8;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// labelCharCount
 			// 
@@ -185,7 +196,7 @@ namespace OpenDental{
 			this.textCharCount.DetectUrls = false;
 			this.textCharCount.Location = new System.Drawing.Point(306, 132);
 			this.textCharCount.Name = "textCharCount";
-			this.textCharCount.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.TxtMsg;
+			this.textCharCount.QuickPasteType = OpenDentBusiness.QuickPasteType.TxtMsg;
 			this.textCharCount.ReadOnly = true;
 			this.textCharCount.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textCharCount.Size = new System.Drawing.Size(53, 20);
@@ -201,7 +212,7 @@ namespace OpenDental{
 			this.textMsgCount.DetectUrls = false;
 			this.textMsgCount.Location = new System.Drawing.Point(306, 159);
 			this.textMsgCount.Name = "textMsgCount";
-			this.textMsgCount.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.TxtMsg;
+			this.textMsgCount.QuickPasteType = OpenDentBusiness.QuickPasteType.TxtMsg;
 			this.textMsgCount.ReadOnly = true;
 			this.textMsgCount.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textMsgCount.Size = new System.Drawing.Size(53, 20);
@@ -224,6 +235,7 @@ namespace OpenDental{
 			this.Controls.Add(this.textMessage);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.textWirelessPhone);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.label1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormTxtMsgEdit";
@@ -238,6 +250,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private ODtextBox textMessage;
 		private ValidPhone textWirelessPhone;
 		private System.Windows.Forms.Label label1;

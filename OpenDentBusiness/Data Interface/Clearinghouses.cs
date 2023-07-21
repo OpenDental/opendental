@@ -90,11 +90,9 @@ namespace OpenDentBusiness {
 				return Meth.GetObject<List<Clearinghouse>>(MethodBase.GetCurrentMethod());
 			}
 			string command="SELECT * FROM clearinghouse WHERE ClinicNum!=0 ORDER BY Description";
-			List<Clearinghouse> listClearinghouses=Crud.ClearinghouseCrud.SelectMany(command);
-			for(int i=0;i<listClearinghouses.Count;i++){ 
-				listClearinghouses[i].Password=GetRevealPassword(listClearinghouses[i].Password);
-			}
-			return listClearinghouses;
+			List<Clearinghouse> clearinghouseRetVal=Crud.ClearinghouseCrud.SelectMany(command);
+			clearinghouseRetVal.ForEach(x => x.Password=GetRevealPassword(x.Password));
+			return clearinghouseRetVal;
 		}
 
 		///<summary>Returns the HQ-level default clearinghouse.  You must manually override using OverrideFields if needed.  If no default present, returns null.</summary>
@@ -106,17 +104,17 @@ namespace OpenDentBusiness {
 		///<summary>Gets the last batch number from db for the HQ version of this clearinghouseClin and increments it by one.
 		///Then saves the new value to db and returns it.  So even if the new value is not used for some reason, it will have already been incremented.
 		///Remember that LastBatchNumber is never accurate with local data in memory.</summary>
-		public static int GetNextBatchNumber(Clearinghouse clearinghouse){
+		public static int GetNextBatchNumber(Clearinghouse clearinghouseClin){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetInt(MethodBase.GetCurrentMethod(),clearinghouse);
+				return Meth.GetInt(MethodBase.GetCurrentMethod(),clearinghouseClin);
 			}
 			//get last batch number
 			string command="SELECT LastBatchNumber FROM clearinghouse "
-				+"WHERE ClearinghouseNum = "+POut.Long(clearinghouse.HqClearinghouseNum);
+				+"WHERE ClearinghouseNum = "+POut.Long(clearinghouseClin.HqClearinghouseNum);
 			DataTable table=Db.GetTable(command);
 			int batchNum=PIn.Int(table.Rows[0][0].ToString());
 			//and increment it by one
-			if(clearinghouse.Eformat==ElectronicClaimFormat.Canadian){
+			if(clearinghouseClin.Eformat==ElectronicClaimFormat.Canadian){
 				if(batchNum==999999){
 					batchNum=1;
 				}
@@ -134,29 +132,29 @@ namespace OpenDentBusiness {
 			}
 			//save the new batch number. Even if user cancels, it will have incremented.
 			command="UPDATE clearinghouse SET LastBatchNumber="+batchNum.ToString()
-				+" WHERE ClearinghouseNum = "+POut.Long(clearinghouse.HqClearinghouseNum);
+				+" WHERE ClearinghouseNum = "+POut.Long(clearinghouseClin.HqClearinghouseNum);
 			Db.NonQ(command);
 			return batchNum;
 		}
 
 		///<summary>Returns the clearinghouseNum for claims for the supplied payorID.  If the payorID was not entered or if no default was set, then 0 is returned.</summary>
-		public static long AutomateClearinghouseHqSelection(string payorID,EnumClaimMedType enumClaimMedType){
+		public static long AutomateClearinghouseHqSelection(string payorID,EnumClaimMedType medType){
 			//No need to check MiddleTierRole; no call to db.
 			//payorID can be blank.  For example, Renaissance does not require payorID.
 			Clearinghouse clearinghouseHq=null;
-			if(enumClaimMedType==EnumClaimMedType.Dental){
+			if(medType==EnumClaimMedType.Dental){
 				if(PrefC.GetLong(PrefName.ClearinghouseDefaultDent)==0){
 					return 0;
 				}
 				clearinghouseHq=GetClearinghouse(PrefC.GetLong(PrefName.ClearinghouseDefaultDent));
 			}
-			if(enumClaimMedType==EnumClaimMedType.Medical || enumClaimMedType==EnumClaimMedType.Institutional){
+			if(medType==EnumClaimMedType.Medical || medType==EnumClaimMedType.Institutional){
 				if(PrefC.GetLong(PrefName.ClearinghouseDefaultMed)==0){
 					//No default set, substituting emdeon medical otherwise first medical clearinghouse.
 					List<Clearinghouse> listClearingHouses=GetDeepCopy(false);
-					clearinghouseHq=listClearingHouses.Find(x => x.CommBridge==EclaimsCommBridge.EmdeonMedical&&x.HqClearinghouseNum==x.ClearinghouseNum);
+					clearinghouseHq=listClearingHouses.FirstOrDefault(x => x.CommBridge==EclaimsCommBridge.EmdeonMedical&&x.HqClearinghouseNum==x.ClearinghouseNum);
 					if(clearinghouseHq==null) {
-						clearinghouseHq=listClearingHouses.Find(x => x.Eformat==ElectronicClaimFormat.x837_5010_med_inst&&x.HqClearinghouseNum==x.ClearinghouseNum);
+						clearinghouseHq=listClearingHouses.FirstOrDefault(x => x.Eformat==ElectronicClaimFormat.x837_5010_med_inst&&x.HqClearinghouseNum==x.ClearinghouseNum);
 					}
 					//If we can't find a clearinghouse at all, just return 0.
 					if(clearinghouseHq==null) {
@@ -169,42 +167,42 @@ namespace OpenDentBusiness {
 			if(clearinghouseHq==null){//we couldn't find a default clearinghouse for that medType.  Needs to always be a default.
 				return 0;
 			}
-			Clearinghouse clearinghouseOverride=GetClearinghouseByPayorID(payorID);
-			if(clearinghouseOverride==null){ //no override, so just return the default.
-				return clearinghouseHq.ClearinghouseNum;
-			}
-			if(clearinghouseOverride.Eformat==ElectronicClaimFormat.x837D_4010 
-				|| clearinghouseOverride.Eformat==ElectronicClaimFormat.x837D_5010_dental
-				|| clearinghouseOverride.Eformat==ElectronicClaimFormat.Canadian 
-				|| clearinghouseOverride.Eformat==ElectronicClaimFormat.Ramq)
-			{//all dental formats
-				if(enumClaimMedType==EnumClaimMedType.Dental){//med type matches
-					return clearinghouseOverride.ClearinghouseNum;
+			Clearinghouse clearingHouseOverride=GetClearinghouseByPayorID(payorID);
+			if(clearingHouseOverride!=null) {//an override exists for this payorID
+				if(clearingHouseOverride.Eformat==ElectronicClaimFormat.x837D_4010 || clearingHouseOverride.Eformat==ElectronicClaimFormat.x837D_5010_dental
+					|| clearingHouseOverride.Eformat==ElectronicClaimFormat.Canadian || clearingHouseOverride.Eformat==ElectronicClaimFormat.Ramq)
+				{//all dental formats
+					if(medType==EnumClaimMedType.Dental){//med type matches
+						return clearingHouseOverride.ClearinghouseNum;
+					}
+				}
+				if(clearingHouseOverride.Eformat==ElectronicClaimFormat.x837_5010_med_inst){
+					if(medType==EnumClaimMedType.Medical || medType==EnumClaimMedType.Institutional) {//med type matches
+						return clearingHouseOverride.ClearinghouseNum;
+					}
 				}
 			}
-			if(clearinghouseOverride.Eformat!=ElectronicClaimFormat.x837_5010_med_inst){
-				return clearinghouseHq.ClearinghouseNum;
-			}
-			if(enumClaimMedType==EnumClaimMedType.Medical || enumClaimMedType==EnumClaimMedType.Institutional) {//med type matches
-				return clearinghouseOverride.ClearinghouseNum;
-			}
+			//no override, so just return the default.
 			return clearinghouseHq.ClearinghouseNum;
 		}
 
 		///<summary>Returns the first clearinghouse that is associated to the corresponding payorID passed in.  Returns null if no match found.</summary>
 		private static Clearinghouse GetClearinghouseByPayorID(string payorID) {
 			//No need to check MiddleTierRole; no call to db.
+			Clearinghouse clearinghouse=null;
 			if(string.IsNullOrEmpty(payorID)) {
-				return null;
+				return clearinghouse;
 			}
-			List<Clearinghouse> listClearinghouses=GetDeepCopy();
-			for(int i = 0;i<listClearinghouses.Count;i++) {
-				List<string> listPayorIDs=listClearinghouses[i].Payors.Split(',').ToList();
-				if(listPayorIDs.Contains(payorID)) {
-					return listClearinghouses[i];
-				}
-			}
-			return null;
+			//Take the entire clearinghouse cache (which is typically small) and flatten it into a dictionary by payor ID to clearinhouse.
+			//Each clearinghouse can be associated to multiple payor IDs (comma delimited string) so that must be broken down first.
+			GetDeepCopy().Select(x => new {
+				listPayorToHouse=x.Payors.Split(',').ToList()//Take every clearinghouse's payors and split them up (comma delimited string per house).
+					.Select(y => new { payor=y,house=x })      //Make a new object that ties the clearinghouse and payorID together (List<List<payor,house>>)
+			}).SelectMany(x => x.listPayorToHouse)         //Flatten the list of lists to make one long list of new objects (List<payor,house>)
+			.GroupBy(x => x.payor)                         //Group these new objects by the payor (if there are any duplicates we'll grab first in list)
+			.ToDictionary(x => x.Key,x => x.First().house) //Make a dictionary out of the new objects where Key: payor Value: the first house
+			.TryGetValue(payorID,out clearinghouse);       //Try and find the corresponding clearinghouse via the payorID passed in.
+			return clearinghouse;//Can return null and that is just fine.
 		}
 
 		///<summary>Returns the HQ-level default clearinghouse.  You must manually override using OverrideFields if needed.  If no default present, returns null.</summary>
@@ -216,16 +214,14 @@ namespace OpenDentBusiness {
 		///<summary>Gets an HQ clearinghouse from cache.  Will return null if invalid.</summary>
 		public static Clearinghouse GetClearinghouse(long clearinghouseNum){
 			//No need to check MiddleTierRole; no call to db.
-			Clearinghouse clearinghouse=GetFirstOrDefault(x => x.ClearinghouseNum==clearinghouseNum);
-			return clearinghouse;
+			return GetFirstOrDefault(x => x.ClearinghouseNum==clearinghouseNum);
 		}
 
 		///<summary>Gets revealed password for a clearinghouse password.</summary>
 		public static string GetRevealPassword(string concealPassword) {
-			//No need to check MiddleTierRole; no call to db.
-			string revealedPassword="";
-			CDT.Class1.RevealClearinghouse(concealPassword,out revealedPassword);
-			return revealedPassword;
+			string revealPassword="";
+			CDT.Class1.RevealClearinghouse(concealPassword,out revealPassword);
+			return revealPassword;
 		}
 
 		///<summary>Returns the clinic-level clearinghouse for the passed in Clearinghouse.  Usually used in conjunction with ReplaceFields().
@@ -237,12 +233,11 @@ namespace OpenDentBusiness {
 			if(clinicNum==0) { //HQ
 				return null;
 			}
-			string command="SELECT * FROM clearinghouse WHERE HqClearinghouseNum="+clearinghouseHq.ClearinghouseNum+" AND ClinicNum="+POut.Long(clinicNum);
+			string command="SELECT * FROM clearinghouse WHERE HqClearinghouseNum="+clearinghouseHq.ClearinghouseNum+" AND ClinicNum="+clinicNum;
 			Clearinghouse clearinghouseRetVal=Crud.ClearinghouseCrud.SelectOne(command);
-			if(clearinghouseRetVal==null) {
-				return null;
+			if(clearinghouseRetVal!=null) {
+				clearinghouseRetVal.Password=GetRevealPassword(clearinghouseRetVal.Password);
 			}
-			clearinghouseRetVal.Password=GetRevealPassword(clearinghouseRetVal.Password);
 			return clearinghouseRetVal;
 		}
 		#endregion
@@ -275,21 +270,21 @@ namespace OpenDentBusiness {
 			Crud.ClearinghouseCrud.Update(clearinghouse);
 		}
 
-		public static void Update(Clearinghouse clearinghouse,Clearinghouse clearinghouseOld) {
+		public static void Update(Clearinghouse clearinghouse,Clearinghouse oldClearinghouse) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),clearinghouse,clearinghouseOld);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),clearinghouse,oldClearinghouse);
 				return;
 			}
-			Crud.ClearinghouseCrud.Update(clearinghouse,clearinghouseOld);
+			Crud.ClearinghouseCrud.Update(clearinghouse,oldClearinghouse);
 		}
 
 		///<summary>Syncs a given list of clinic-level clearinghouses to a list of old clinic-level clearinghouses.</summary>
-		public static void Sync(List<Clearinghouse> listClearinghousesNew,List<Clearinghouse> listClearinghousesOld) {
+		public static void Sync(List<Clearinghouse> listClearinghouseNew,List<Clearinghouse> listClearinghouseOld) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listClearinghousesNew,listClearinghousesOld);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),listClearinghouseNew,listClearinghouseOld);
 				return;
 			}
-			Crud.ClearinghouseCrud.Sync(listClearinghousesNew,listClearinghousesOld);
+			Crud.ClearinghouseCrud.Sync(listClearinghouseNew,listClearinghouseOld);
 		}
 		#endregion
 
@@ -318,9 +313,7 @@ namespace OpenDentBusiness {
 			//Otherwise clinic level clearinghouse settings that were set when clinics were enabled would be used
 			//and user would have no way of fixing them unless they turned clinics back on.
 			//Use unassigned settings since they are what show in the UI when editing clearinghouse settings.
-			if(!PrefC.HasClinicsEnabled){ 
-				clinicNum=0;
-			}
+			clinicNum=(PrefC.HasClinicsEnabled?clinicNum:0);
 			Clearinghouse clearinghouseClin=Clearinghouses.GetForClinic(clearinghouseHq,clinicNum);
 			return OverrideFields(clearinghouseHq,clearinghouseClin);
 		}
@@ -415,15 +408,11 @@ namespace OpenDentBusiness {
 			//if(!String.IsNullOrEmpty(clearinghouseClin.SeparatorSegment)) {
 			//	clearinghouseRetVal.SeparatorSegment=clearinghouseClin.SeparatorSegment;
 			//}
-			if(!String.IsNullOrEmpty(clearinghouseClin.LocationID)) {
-				clearinghouseRetVal.LocationID=clearinghouseClin.LocationID;
-			}
 			clearinghouseRetVal.IsAttachmentSendAllowed=clearinghouseClin.IsAttachmentSendAllowed;
 			return clearinghouseRetVal;
 		}
 
 		public static void RetrieveReportsAutomatic(bool isAllClinics) {
-			//No need to check MiddleTierRole; no call to db.
 			List<long> listClinicNums=new List<long>();
 			if(isAllClinics) {
 				listClinicNums=Clinics.GetDeepCopy(true).Select(x => x.ClinicNum).ToList();
@@ -432,70 +421,64 @@ namespace OpenDentBusiness {
 			else {
 				listClinicNums=new List<long> { Clinics.ClinicNum };
 			}
-			Result result=IsTimeToRetrieveReports(true);
-			bool isTimeToRetrieve=result.IsSuccess;
+			string errMsg;
+			bool isTimeToRetrieve=IsTimeToRetrieveReports(true,out errMsg);
 			if(isTimeToRetrieve) {
 				Prefs.UpdateDateT(PrefName.ClaimReportReceiveLastDateTime,DateTime.Now);
 			}
-			List<Clearinghouse> listClearinghouses=GetDeepCopy();
-			long clearinghouseNumDefault=PrefC.GetLong(PrefName.ClearinghouseDefaultDent);
-			for(int i=0;i<listClearinghouses.Count;i++) {
-				Clearinghouse clearinghouseHq=listClearinghouses[i];
+			List<Clearinghouse> listClearinghousesHq=GetDeepCopy();
+			long defaultClearingHouseNum=PrefC.GetLong(PrefName.ClearinghouseDefaultDent);
+			for(int i=0;i<listClearinghousesHq.Count;i++) {
+				Clearinghouse clearinghouseHq=listClearinghousesHq[i];
 				Clearinghouse clearinghouseClin;
 				for(int j=0;j<listClinicNums.Count;j++) {
 					clearinghouseClin=OverrideFields(clearinghouseHq,listClinicNums[j]);
-					RetrieveReportsAutomaticHelper(clearinghouseClin,clearinghouseHq,clearinghouseNumDefault,isTimeToRetrieve);
+					RetrieveReportsAutomaticHelper(clearinghouseClin,clearinghouseHq,defaultClearingHouseNum,isTimeToRetrieve);
 				}
 			}
 
 		}
 
 		///<summary>Returns true if it is time to retrieve reports.</summary>
-		private static Result IsTimeToRetrieveReports(bool isAutomaticMode,IODProgressExtended odProgressExtended=null) {
-			//No need to check MiddleTierRole; no call to db.
-			Result result=new Result();
-			odProgressExtended=odProgressExtended??new ODProgressExtendedNull();
-			DateTime dateTimeLastReport=PIn.DateT(PrefC.GetStringNoCache(PrefName.ClaimReportReceiveLastDateTime));
-			double minutesClaimReportReceiveInternal=PIn.Double(PrefC.GetStringNoCache(PrefName.ClaimReportReceiveInterval));//Interval in minutes.
-			DateTime timeToReceive=DateTime.Now.Date+PrefC.GetDateT(PrefName.ClaimReportReceiveTime).TimeOfDay;
-			double minutesDiff=DateTime.Now.Subtract(dateTimeLastReport).TotalMinutes;
-			result.Msg="";
+		private static bool IsTimeToRetrieveReports(bool isAutomaticMode,out string errorMessage,IODProgressExtended progress=null) {
+			progress=progress??new ODProgressExtendedNull();
+			DateTime timeLastReport=PIn.DateT(PrefC.GetStringNoCache(PrefName.ClaimReportReceiveLastDateTime));
+			double timeReceiveInternal=PIn.Double(PrefC.GetStringNoCache(PrefName.ClaimReportReceiveInterval));//Interval in minutes.
+			DateTime timeToRecieve=DateTime.Now.Date+PrefC.GetDateT(PrefName.ClaimReportReceiveTime).TimeOfDay;
+			double timeDiff=DateTime.Now.Subtract(timeLastReport).TotalMinutes;
+			errorMessage="";
 			if(isAutomaticMode) {
-				if(minutesClaimReportReceiveInternal!=0) { //preference is set instead of pref for specific time. 
-					if(minutesDiff < minutesClaimReportReceiveInternal) {
+				if(timeReceiveInternal!=0) { //preference is set instead of pref for specific time. 
+					if(timeDiff < timeReceiveInternal) {
 						//Automatically retrieving reports from this computer and the report interval has not passed yet.
-						result.IsSuccess=false;
-						return result;
+						return false;
 					}
 				}
 				else {//pref is set for specific time, not interval
-					if(DateTime.Now.TimeOfDay < timeToReceive.TimeOfDay //We haven't reach to the time to retrieve
-						|| dateTimeLastReport.Date==DateTime.Today)//Or we have already retrieved today
+					if(DateTime.Now.TimeOfDay < timeToRecieve.TimeOfDay //We haven't reach to the time to retrieve
+						|| timeLastReport.Date==DateTime.Today)//Or we have already retrieved today
 					{
 						//Automatically retrieving reports and the time has not come to pass yet
-						result.IsSuccess=false;
-						return result;
+						return false;
 					}
 				}
 			}
-			else if(minutesDiff < 1) {
+			else if(timeDiff < 1) {
 				//When the user presses the Get Reports button manually we allow them to get reports up to once per minute
-				result.Msg=Lans.g(odProgressExtended.LanThis,"Reports can only be retrieved once per minute.");
-				odProgressExtended.UpdateProgress(Lans.g(odProgressExtended.LanThis,"Reports can only be retrieved once per minute. Attempting to import manually downloaded reports."));
-				result.IsSuccess=false;
-				return result;
+				errorMessage=Lans.g(progress.LanThis,"Reports can only be retrieved once per minute.");
+				progress.UpdateProgress(Lans.g(progress.LanThis,"Reports can only be retrieved once per minute. Attempting to import manually downloaded reports."));
+				return false;
 			}
-			result.IsSuccess=true;
-			return result;
+			return true;
 		}
 
-		private static void RetrieveReportsAutomaticHelper(Clearinghouse clearinghouseClin,Clearinghouse clearinghouseHq,long clearinghouseNumDefault
+		private static void RetrieveReportsAutomaticHelper(Clearinghouse clearinghouseClin,Clearinghouse clearinghouseHq,long defaultClearingHouseNum
 			,bool isTimeToRetrieve)
 		{
 			if(!Directory.Exists(clearinghouseClin.ResponsePath)) {
 				return;
 			}
-			if(clearinghouseHq.ClearinghouseNum==clearinghouseNumDefault) {//If it's the default dental clearinghouse
+			if(clearinghouseHq.ClearinghouseNum==defaultClearingHouseNum) {//If it's the default dental clearinghouse
 				RetrieveAndImport(clearinghouseClin,true,isTimeToRetrieve: isTimeToRetrieve);
 			}
 			else if(clearinghouseHq.Eformat==ElectronicClaimFormat.None) {//And the format is "None" (accessed from all regions)
@@ -510,19 +493,19 @@ namespace OpenDentBusiness {
 				//which will cause all reports for that office to be returned.
 				//Here we loop through all providers and find CDAnet providers with a valid provider number and office number, and we only send
 				//one report download request for one provider from each office.  For most offices, the loop will only send a single request.
-				List<Provider> listProviders=Providers.GetDeepCopy(true);
+				List<Provider> listProvs=Providers.GetDeepCopy(true);
 				List<string> listOfficeNums=new List<string>();
-				for(int j=0;j<listProviders.Count;j++) {//Get all unique office numbers from the providers.
-					if(!listProviders[j].IsCDAnet || listProviders[j].NationalProvID=="" || listProviders[j].CanadianOfficeNum=="") {
+				for(int j=0;j<listProvs.Count;j++) {//Get all unique office numbers from the providers.
+					if(!listProvs[j].IsCDAnet || listProvs[j].NationalProvID=="" || listProvs[j].CanadianOfficeNum=="") {
 						continue;
 					}
-					if(!listOfficeNums.Contains(listProviders[j].CanadianOfficeNum)) {//Ignore duplicate office numbers.
-						listOfficeNums.Add(listProviders[j].CanadianOfficeNum);
+					if(!listOfficeNums.Contains(listProvs[j].CanadianOfficeNum)) {//Ignore duplicate office numbers.
+						listOfficeNums.Add(listProvs[j].CanadianOfficeNum);
 						try {
 							clearinghouseHq=Eclaims.Canadian.GetCanadianClearinghouseHq(null);
 							clearinghouseClin=Clearinghouses.OverrideFields(clearinghouseHq,Clinics.ClinicNum);
 							//Run both version 02 and version 04 reports for all carriers and all networks.
-							Eclaims.CanadianOutput.GetOutstandingForDefault(listProviders[j]);
+							Eclaims.CanadianOutput.GetOutstandingForDefault(listProvs[j]);
 						}
 						catch {
 							//Supress errors importing reports.
@@ -542,15 +525,15 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		private static string RetrieveReports(Clearinghouse clearinghouseClin,bool isAutomaticMode,IODProgressExtended odProgressExtended=null) {
-			odProgressExtended=odProgressExtended??new ODProgressExtendedNull();
-			odProgressExtended.UpdateProgress(Lans.g(odProgressExtended.LanThis,"Beginning report retrieval..."),"reports","0%");
-			if(odProgressExtended.IsPauseOrCancel()) {
-				return Lans.g(odProgressExtended.LanThis,"Process canceled by user.");
+		private static string RetrieveReports(Clearinghouse clearinghouseClin,bool isAutomaticMode,IODProgressExtended progress=null) {
+			progress=progress??new ODProgressExtendedNull();
+			progress.UpdateProgress(Lans.g(progress.LanThis,"Beginning report retrieval..."),"reports","0%");
+			if(progress.IsPauseOrCancel()) {
+				return Lans.g(progress.LanThis,"Process canceled by user.");
 			}
-			StringBuilder stringBuilder=new StringBuilder();
-			if(Plugins.HookMethod(null,"Clearinghouses.RetrieveReports_afterProgressPauseOrCancel",clearinghouseClin,stringBuilder,odProgressExtended)) {
-				return stringBuilder.ToString();
+			StringBuilder errorMessage=new StringBuilder();
+			if(Plugins.HookMethod(null,"Clearinghouses.RetrieveReports_afterProgressPauseOrCancel",clearinghouseClin,errorMessage,progress)) {
+				return errorMessage.ToString();
 			}
 			if(clearinghouseClin.ISA08=="113504607") {//TesiaLink
 																								//But the import will still happen
@@ -563,12 +546,12 @@ namespace OpenDentBusiness {
 				return "";
 			}
 			if(clearinghouseClin.CommBridge==EclaimsCommBridge.WebMD) {
-				if(!WebMD.Launch(clearinghouseClin,0,isAutomaticMode,odProgressExtended)) {
+				if(!WebMD.Launch(clearinghouseClin,0,isAutomaticMode,progress)) {
 					return Lans.g("FormClaimReports","Error retrieving.")+"\r\n"+WebMD.ErrorMessage;
 				}
 			}
 			else if(clearinghouseClin.CommBridge==EclaimsCommBridge.BCBSGA) {
-				if(!BCBSGA.Retrieve(clearinghouseClin,true,new TerminalConnector(),odProgressExtended)) {
+				if(!BCBSGA.Retrieve(clearinghouseClin,true,new TerminalConnector(),progress)) {
 					return Lans.g("FormClaimReports","Error retrieving.")+"\r\n"+BCBSGA.ErrorMessage;
 				}
 			}
@@ -582,7 +565,7 @@ namespace OpenDentBusiness {
 								//This cannot happen, because the user is blocked by the UI before they get to this point.
 					}
 				}
-				else if(!ClaimConnect.Retrieve(clearinghouseClin,odProgressExtended)) {
+				else if(!ClaimConnect.Retrieve(clearinghouseClin,progress)) {
 					if(ClaimConnect.ErrorMessage.Contains(": 150\r\n")) {//Error message 150 "Service Not Contracted"
 						if(isAutomaticMode) {//The user opened FormClaimsSend, or FormOpenDental called this function automatically.
 							return "";//Pretend that there is no error when loading FormClaimsSend for those customers who do not pay for ERA service.
@@ -611,26 +594,26 @@ namespace OpenDentBusiness {
 				}
 			}
 			else if(clearinghouseClin.CommBridge==EclaimsCommBridge.MercuryDE) {
-				if(!MercuryDE.Launch(clearinghouseClin,0,odProgressExtended)) { 
+				if(!MercuryDE.Launch(clearinghouseClin,0,progress)) { 
 					return Lans.g("FormClaimReports","Error retrieving.")+"\r\n"+MercuryDE.ErrorMessage;
 				}
 			}
 			else if(clearinghouseClin.CommBridge==EclaimsCommBridge.EmdeonMedical) {
-				if(!EmdeonMedical.Retrieve(clearinghouseClin,odProgressExtended)) {
+				if(!EmdeonMedical.Retrieve(clearinghouseClin,progress)) {
 					return Lans.g("FormClaimReports","Error retrieving.")+"\r\n"+EmdeonMedical.ErrorMessage;
 				}
 			}
 			else if(clearinghouseClin.CommBridge==EclaimsCommBridge.DentiCal) {
-				if(!DentiCal.Launch(clearinghouseClin,0,odProgressExtended)) {
+				if(!DentiCal.Launch(clearinghouseClin,0,progress)) {
 					return Lans.g("FormClaimReports","Error retrieving.")+"\r\n"+DentiCal.ErrorMessage;
 				}
 			}
 			else if(clearinghouseClin.CommBridge==EclaimsCommBridge.EDS) {
 				List<string> listEdsErrors=new List<string>();
-				if(!EDS.Retrieve277s(clearinghouseClin,odProgressExtended)) {
+				if(!EDS.Retrieve277s(clearinghouseClin,progress)) {
 					listEdsErrors.Add(Lans.g("FormClaimReports","Error retrieving.")+"\r\n"+EDS.ErrorMessage);
 				}
-				if(!EDS.Retrieve835s(clearinghouseClin,odProgressExtended)) {
+				if(!EDS.Retrieve835s(clearinghouseClin,progress)) {
 					listEdsErrors.Add(Lans.g("FormClaimReports","Error retrieving.")+"\r\n"+EDS.ErrorMessage);
 				}
 				if(listEdsErrors.Count>0) {
@@ -652,8 +635,8 @@ namespace OpenDentBusiness {
 		///<summary>Takes any files found in the reports folder for the clearinghouse, and imports them into the database.
 		///Moves the original file into an Archive sub folder.
 		///Returns a string with any errors that occurred.</summary>
-		private static string ImportReportFiles(Clearinghouse clearinghouseClin,IODProgressExtended odProgressExtended=null) { //uses clinic-level clearinghouse where necessary.
-			odProgressExtended=odProgressExtended??new ODProgressExtendedNull();
+		private static string ImportReportFiles(Clearinghouse clearinghouseClin,IODProgressExtended progress=null) { //uses clinic-level clearinghouse where necessary.
+			progress=progress??new ODProgressExtendedNull();
 			if(!Directory.Exists(clearinghouseClin.ResponsePath)) {
 				return Lans.g("FormClaimReports","Report directory does not exist")+": "+clearinghouseClin.ResponsePath+"\r\n"+Lans.g("FormClaimReports","Go to Setup, Family/Insurance, Clearinghouses, and double-click the desired clearinghouse to update the path.");
 			}
@@ -661,120 +644,117 @@ namespace OpenDentBusiness {
 				//the report path is shared with many other important files.  Do not process anything.  Comm is synchronous only.
 				return "";
 			}
-			odProgressExtended.UpdateProgress(Lans.g(odProgressExtended.LanThis,"Reading download files"),"reports","55%",55);
-			if(odProgressExtended.IsPauseOrCancel()) {
-				return Lans.g(odProgressExtended.LanThis,"Import canceled by user.");
+			progress.UpdateProgress(Lans.g(progress.LanThis,"Reading download files"),"reports","55%",55);
+			if(progress.IsPauseOrCancel()) {
+				return Lans.g(progress.LanThis,"Import canceled by user.");
 			}
-			List<string> listFiles;
-			string pathToArchiveDir;
+			string[] files=null;
+			string archiveDir;
 			try {
-				listFiles=Directory.GetFiles(clearinghouseClin.ResponsePath).ToList();
-				pathToArchiveDir=ODFileUtils.CombinePaths(clearinghouseClin.ResponsePath,"Archive"+"_"+DateTime.Now.Year.ToString());
-				if(!Directory.Exists(pathToArchiveDir)) {
-					Directory.CreateDirectory(pathToArchiveDir);
+				files=Directory.GetFiles(clearinghouseClin.ResponsePath);
+				archiveDir=ODFileUtils.CombinePaths(clearinghouseClin.ResponsePath,"Archive"+"_"+DateTime.Now.Year.ToString());
+				if(!Directory.Exists(archiveDir)) {
+					Directory.CreateDirectory(archiveDir);
 				}
 			}
 			catch(UnauthorizedAccessException ex) {
 				ex.DoNothing();
 				return Lans.g("FormClaimReports","Access to the Report Path is denied.  Try running as administrator or contact your network administrator.");
 			}
-			List<string> listFilesFailedToMove=new List<string>();
-			List<string> listFilesFailedToImport=new List<string>();
-			odProgressExtended.UpdateProgress(Lans.g(odProgressExtended.LanThis,"Files read."));
-			odProgressExtended.UpdateProgress(Lans.g(odProgressExtended.LanThis,"Importing files"),"reports","83%",83);
-			if(listFiles.Count>0) {
-				odProgressExtended.UpdateProgressDetailed(Lans.g(odProgressExtended.LanThis,"Importing"),tagString:"import");//add a new progress bar for imports if there are any to import
+			List<string> listFailedMovingFiles=new List<string>();
+			List<string> listFailedImportingFiles=new List<string>();
+			progress.UpdateProgress(Lans.g(progress.LanThis,"Files read."));
+			progress.UpdateProgress(Lans.g(progress.LanThis,"Importing files"),"reports","83%",83);
+			if(files.Length>0) {
+				progress.UpdateProgressDetailed(Lans.g(progress.LanThis,"Importing"),tagString:"import");//add a new progress bar for imports if there are any to import
 			}
 			else {
-				odProgressExtended.UpdateProgress(Lans.g(odProgressExtended.LanThis,"No files to import."));
+				progress.UpdateProgress(Lans.g(progress.LanThis,"No files to import."));
 			}
-			for(int i=0;i<listFiles.Count;i++) {
-				int percentUpdated=(i/listFiles.Count)*100;
-				odProgressExtended.UpdateProgress(Lans.g(odProgressExtended.LanThis,"Importing")+" "+i+" / "+listFiles.Count,"import",percentUpdated+"%",percentUpdated);
-				if(odProgressExtended.IsPauseOrCancel()) {
-					return Lans.g(odProgressExtended.LanThis,"Import canceled by user.");
+			for(int i=0;i<files.Length;i++) {
+				int percent=(i/files.Length)*100;
+				progress.UpdateProgress(Lans.g(progress.LanThis,"Importing")+" "+i+" / "+files.Length,"import",percent+"%",percent);
+				if(progress.IsPauseOrCancel()) {
+					return Lans.g(progress.LanThis,"Import canceled by user.");
 				}
-				string pathToFileSource=listFiles[i];
-				string pathToFileDestination=ODFileUtils.CombinePaths(pathToArchiveDir,Path.GetFileName(listFiles[i]));
+				string fileSource=files[i];
+				string fileDestination=ODFileUtils.CombinePaths(archiveDir,Path.GetFileName(files[i]));
 				try {
-					File.Move(pathToFileSource,pathToFileDestination);
+					File.Move(fileSource,fileDestination);
 				}
 				catch(Exception ex) {
 					ex.DoNothing();//OK to continue, since ProcessIncomingReport() above saved the raw report into the etrans table.
-					listFilesFailedToMove.Add(pathToFileSource);
+					listFailedMovingFiles.Add(fileSource);
 					continue;//Skip current report file and leave in folder to processing later.
 				}
 				try {
 					Etranss.ProcessIncomingReport(
-						File.GetCreationTime(pathToFileDestination),
+						File.GetCreationTime(fileDestination),
 						clearinghouseClin.HqClearinghouseNum,
-						File.ReadAllText(pathToFileDestination),
+						File.ReadAllText(fileDestination),
 						Security.CurUser.UserNum);
 				}
 				catch(Exception ex) {
 					ex.DoNothing();
-					listFilesFailedToImport.Add(pathToFileSource);
-					File.Move(pathToFileDestination,pathToFileSource);//Move file back so that the archived folder only contains succesfully processed reports.
+					listFailedImportingFiles.Add(fileSource);
+					File.Move(fileDestination,fileSource);//Move file back so that the archived folder only contains succesfully processed reports.
 				}
-			}string errorMessage="";
-			if(listFilesFailedToMove.Count>0) {
-				errorMessage=Lans.g("FormClaimReports","Failed to move the following files to archive folder due to permission issues or duplicate file names:")
-					+"\r\n"+string.Join(",\r\n",listFilesFailedToMove);
+			}string retVal="";
+			if(listFailedMovingFiles.Count>0) {
+				retVal=Lans.g("FormClaimReports","Failed to move the following files to archive folder due to permission issues or duplicate file names:")
+					+"\r\n"+string.Join(",\r\n",listFailedMovingFiles);
 			}
-			if(listFilesFailedToImport.Count>0) {
-				errorMessage+="\r\n\r\n"+Lans.g("FormClaimReports","Failed to process following files due to malformed data:")
-					+"\r\n"+string.Join(",\r\n",listFilesFailedToImport);
+			if(listFailedImportingFiles.Count>0) {
+				retVal+="\r\n\r\n"+Lans.g("FormClaimReports","Failed to process following files due to malformed data:")
+					+"\r\n"+string.Join(",\r\n",listFailedImportingFiles);
 			}
-			return errorMessage;
+			return retVal;
 		}
 
 		///<summary></summary>
-		public static string RetrieveAndImport(Clearinghouse clearinghouse,bool isAutomaticMode,IODProgressExtended odProgressExtended=null
+		public static string RetrieveAndImport(Clearinghouse clearinghouseClin,bool isAutomaticMode,IODProgressExtended progress=null
 			,bool isTimeToRetrieve=false) 
 		{
-			//No need to check MiddleTierRole; no call to db.
-			odProgressExtended=odProgressExtended??new ODProgressExtendedNull();
-			Result result=IsTimeToRetrieveReports(isAutomaticMode,odProgressExtended);
-			string errorMessage=result.Msg;
-			bool doRetrieveReports=isTimeToRetrieve || (!isAutomaticMode && result.IsSuccess);			
+			progress=progress??new ODProgressExtendedNull();
+			string errorMessage="";
+			bool doRetrieveReports=isTimeToRetrieve || (!isAutomaticMode && IsTimeToRetrieveReports(isAutomaticMode,out errorMessage,progress));			
 			if(doRetrieveReports) {//Timer interval OK.  Now we can retrieve the reports from web services.
 				if(!isAutomaticMode) {
 					Prefs.UpdateDateT(PrefName.ClaimReportReceiveLastDateTime,DateTime.Now);
 				}
-				errorMessage=RetrieveReports(clearinghouse,isAutomaticMode,odProgressExtended);
+				errorMessage=RetrieveReports(clearinghouseClin,isAutomaticMode,progress);
 				if(errorMessage!="") {
-					odProgressExtended.UpdateProgress(Lans.g(odProgressExtended.LanThis,"Error getting reports, attempting to import manually downloaded reports."));
+					progress.UpdateProgress(Lans.g(progress.LanThis,"Error getting reports, attempting to import manually downloaded reports."));
 				}
-				odProgressExtended.UpdateProgress(Lans.g(odProgressExtended.LanThis,"Report retrieval successful. Attempting to import."));
+				progress.UpdateProgress(Lans.g(progress.LanThis,"Report retrieval successful. Attempting to import."));
 				//Don't return yet even if there was an error. This is so that Open Dental will automatically import reports that have been manually
 				//downloaded to the Reports folder.
 			}
-			if(isAutomaticMode && clearinghouse.ResponsePath.Trim()=="") {
+			if(isAutomaticMode && clearinghouseClin.ResponsePath.Trim()=="") {
 				return "";//The user opened FormClaimsSend, or FormOpenDental called this function automatically.
 			}
-			if(odProgressExtended.IsPauseOrCancel()) {
-				odProgressExtended.UpdateProgress(Lans.g(odProgressExtended.LanThis,"Canceled by user."));
+			if(progress.IsPauseOrCancel()) {
+				progress.UpdateProgress(Lans.g(progress.LanThis,"Canceled by user."));
 				return errorMessage;
 			}
-			string importErrors=ImportReportFiles(clearinghouse,odProgressExtended);
+			string importErrors=ImportReportFiles(clearinghouseClin,progress);
 			if(!string.IsNullOrWhiteSpace(importErrors)) {
 				if(string.IsNullOrWhiteSpace(errorMessage)) {
 					errorMessage=importErrors;
-					odProgressExtended.UpdateProgress(Lans.g(odProgressExtended.LanThis,"Error importing."));
+					progress.UpdateProgress(Lans.g(progress.LanThis,"Error importing."));
 				}
 				else {
 					errorMessage+="\r\n"+importErrors;
 				}
 			}
 			if(string.IsNullOrWhiteSpace(errorMessage) && string.IsNullOrWhiteSpace(importErrors)) {
-				odProgressExtended.UpdateProgress(Lans.g(odProgressExtended.LanThis,"Import successful."));
+				progress.UpdateProgress(Lans.g(progress.LanThis,"Import successful."));
 			}
 			return errorMessage;
 		}
 
 		///<summary>Returns and error message to display to the user if default clearinghouses are not set up; Otherwise, empty string.</summary>
 		public static string CheckClearinghouseDefaults() {
-			//No need to check MiddleTierRole; no call to db.
 			if(PrefC.GetLong(PrefName.ClearinghouseDefaultDent)==0) {
 				return Lans.g("ContrAccount","No default dental clearinghouse defined.");
 			}
@@ -789,40 +769,37 @@ namespace OpenDentBusiness {
 		///This method is only used in FormClearinghouseEdit.cs to defend against DB's with duplicate override rows.
 		///Loops through the list of overrides and updates each clearinghouse override associated to clearinghouseNew.ClinicNum.
 		///This was put into a centralized method for unit testing purposes. For more details see jobnum 11387.</summary>
-		///<param name="listClearinghousesOverrides">A list of all non-HQ clearinghouses which this method will manipulate (Clearinghouse overrides).</param>
+		///<param name="listClearinghouseOverrides">A list of all non-HQ clearinghouses which this method will manipulate (Clearinghouse overrides).</param>
 		///<param name="clearinghouseNew">The new Clearinghouse override object.  ClinicNum will be used from this clearinghouse.</param>
-		public static void SyncOverridesForClinic(ref List<Clearinghouse> listClearinghousesOverrides,Clearinghouse clearinghouseNew) {
+		public static void SyncOverridesForClinic(ref List<Clearinghouse> listClearinghouseOverrides,Clearinghouse clearinghouseNew) {
 			//No need to check MiddleTierRole; no call to db and uses an out parameter.
 			if(clearinghouseNew.ClinicNum==0) {
 				return;//Nothing to do when the ClinicNum associated to clearinghouseNew is 0.
 			}
 			//Get all clearinghouse overrides that are associated to the same HQ clearinghouse and clinic.
-			for(int i=0;i<listClearinghousesOverrides.Count;i++) {
-				if(listClearinghousesOverrides[i].HqClearinghouseNum!=clearinghouseNew.HqClearinghouseNum
-					|| listClearinghousesOverrides[i].ClinicNum!=clearinghouseNew.ClinicNum)
+			for(int i=0;i<listClearinghouseOverrides.Count;i++) {
+				if(listClearinghouseOverrides[i].HqClearinghouseNum!=clearinghouseNew.HqClearinghouseNum
+					|| listClearinghouseOverrides[i].ClinicNum!=clearinghouseNew.ClinicNum)
 				{
 					continue;
 				}
 				//Take all of the values from clearinghouseNew and put them into the current clearinghouseOverride (sync them).
 				//Make sure to preserve the ClearinghouseNum of the override before syncing the values.
-				long clearinghouseNumOverride=listClearinghousesOverrides[i].ClearinghouseNum;
-				listClearinghousesOverrides[i]=clearinghouseNew.Copy();
-				listClearinghousesOverrides[i].ClearinghouseNum=clearinghouseNumOverride;
+				long clearinghouseNumOverride=listClearinghouseOverrides[i].ClearinghouseNum;
+				listClearinghouseOverrides[i]=clearinghouseNew.Copy();
+				listClearinghouseOverrides[i].ClearinghouseNum=clearinghouseNumOverride;
 			}
 		}
 
-		///<summary>Some clearinghouses do not work in THINFINITY mode.</summary>
+		///<summary>Some clearinghouses do not work in WEB mode.</summary>
 		public static bool IsDisabledForWeb(Clearinghouse clearinghouse) {
-			//No need to check MiddleTierRole; no call to db.
-			bool isDisabled=IsDisabledForWeb(clearinghouse.Eformat,clearinghouse.CommBridge);
-			return isDisabled;
+			return IsDisabledForWeb(clearinghouse.Eformat,clearinghouse.CommBridge);
 		}
 
-		///<summary>Some clearinghouses do not work in THINFINITY mode.</summary>
-		public static bool IsDisabledForWeb(ElectronicClaimFormat electronicClaimFormat,EclaimsCommBridge eclaimsCommBridge) {
-			//No need to check MiddleTierRole; no call to db.
-			if(electronicClaimFormat.In(ElectronicClaimFormat.Renaissance,ElectronicClaimFormat.Canadian)
-				|| eclaimsCommBridge==EclaimsCommBridge.WebMD) {
+		///<summary>Some clearinghouses do not work in WEB mode.</summary>
+		public static bool IsDisabledForWeb(ElectronicClaimFormat eformat,EclaimsCommBridge commBridge) {
+			if(eformat.In(ElectronicClaimFormat.Renaissance,ElectronicClaimFormat.Canadian)
+				|| commBridge==EclaimsCommBridge.WebMD) {
 				return true;
 			}
 			return false;

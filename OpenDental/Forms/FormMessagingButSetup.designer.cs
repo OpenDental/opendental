@@ -41,6 +41,7 @@ namespace OpenDental {
 			this.label2 = new System.Windows.Forms.Label();
 			this.butDown = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butSynchAll = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
@@ -106,21 +107,31 @@ namespace OpenDental {
 			this.butUp.Text = "Up";
 			this.butUp.Click += new System.EventHandler(this.butUp_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(545, 332);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butSynchAll
 			// 
 			this.butSynchAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSynchAll.Location = new System.Drawing.Point(497, 45);
+			this.butSynchAll.Location = new System.Drawing.Point(545, 45);
 			this.butSynchAll.Name = "butSynchAll";
 			this.butSynchAll.Size = new System.Drawing.Size(75, 26);
 			this.butSynchAll.TabIndex = 24;
-			this.butSynchAll.Text = "Sync All";
+			this.butSynchAll.Text = "Synch All";
 			this.butSynchAll.UseVisualStyleBackColor = true;
 			this.butSynchAll.Visible = false;
 			this.butSynchAll.Click += new System.EventHandler(this.butSynchAll_Click);
 			// 
 			// FormMessagingButSetup
 			// 
-			this.ClientSize = new System.Drawing.Size(584, 383);
+			this.ClientSize = new System.Drawing.Size(654, 383);
 			this.Controls.Add(this.butSynchAll);
 			this.Controls.Add(this.listComputers);
 			this.Controls.Add(this.label2);
@@ -128,6 +139,7 @@ namespace OpenDental {
 			this.Controls.Add(this.butUp);
 			this.Controls.Add(this.listButtons);
 			this.Controls.Add(this.label1);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -140,6 +152,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butUp;
 		private OpenDental.UI.Button butDown;
 		private Label label1;

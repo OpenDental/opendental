@@ -184,13 +184,24 @@ namespace OpenDental {
 					if(CDSPermissions.GetForUser(Security.CurUser.UserNum).ShowCDS && CDSPermissions.GetForUser(Security.CurUser.UserNum).LabTestCDS) {
 						using FormCDSIntervention FormCDSI=new FormCDSIntervention();
 						FormCDSI.ListCDSInterventions=EhrTriggers.TriggerMatch(ListEhrLabs[i].ListEhrLabResults[j],PatCur);
-						FormCDSI.ShowIfRequired();
+						FormCDSI.ShowIfRequired(false);
 					}
 				}
 			}
 			DialogResult=DialogResult.OK;
 			//Done!
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+
+
+
+
 
 	}
 }

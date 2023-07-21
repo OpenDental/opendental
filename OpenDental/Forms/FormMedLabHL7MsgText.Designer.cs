@@ -24,10 +24,21 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMedLabHL7MsgText));
+			this.butClose = new OpenDental.UI.Button();
 			this.textMain = new System.Windows.Forms.TextBox();
 			this.listFileNames = new OpenDental.UI.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(797, 652);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 335;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// textMain
 			// 
@@ -40,7 +51,7 @@
 			this.textMain.Multiline = true;
 			this.textMain.Name = "textMain";
 			this.textMain.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.textMain.Size = new System.Drawing.Size(857, 588);
+			this.textMain.Size = new System.Drawing.Size(857, 559);
 			this.textMain.TabIndex = 336;
 			// 
 			// listFileNames
@@ -70,6 +81,7 @@
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.listFileNames);
 			this.Controls.Add(this.textMain);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMedLabHL7MsgText";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -81,6 +93,8 @@
 		}
 
 		#endregion
+
+		private UI.Button butClose;
 		public System.Windows.Forms.TextBox textMain;
 		private OpenDental.UI.ListBox listFileNames;
 		private System.Windows.Forms.Label label1;

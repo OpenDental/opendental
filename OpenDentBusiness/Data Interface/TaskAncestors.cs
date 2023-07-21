@@ -10,12 +10,12 @@ namespace OpenDentBusiness{
 	///<summary></summary>
 	public class TaskAncestors {	
 		///<summary></summary>
-		public static long Insert(TaskAncestor taskAncestor) {
+		public static long Insert(TaskAncestor ancestor) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				taskAncestor.TaskAncestorNum=Meth.GetLong(MethodBase.GetCurrentMethod(),taskAncestor);
-				return taskAncestor.TaskAncestorNum;
+				ancestor.TaskAncestorNum=Meth.GetLong(MethodBase.GetCurrentMethod(),ancestor);
+				return ancestor.TaskAncestorNum;
 			}
-			return Crud.TaskAncestorCrud.Insert(taskAncestor);
+			return Crud.TaskAncestorCrud.Insert(ancestor);
 		}
 
 		/*
@@ -38,7 +38,7 @@ namespace OpenDentBusiness{
 			long taskListNum=0;
 			long parentNum=task.TaskListNum;
 			DataTable table;
-			TaskAncestor taskAncestor;
+			TaskAncestor ancestor;
 			while(true){
 				if(parentNum==0){
 					break;//no parent to mark
@@ -51,10 +51,10 @@ namespace OpenDentBusiness{
 				}
 				taskListNum=PIn.Long(table.Rows[0]["TaskListNum"].ToString());
 				parentNum=PIn.Long(table.Rows[0]["Parent"].ToString());
-				taskAncestor=new TaskAncestor();
-				taskAncestor.TaskNum=task.TaskNum;
-				taskAncestor.TaskListNum=taskListNum;
-				Insert(taskAncestor);
+				ancestor=new TaskAncestor();
+				ancestor.TaskNum=task.TaskNum;
+				ancestor.TaskListNum=taskListNum;
+				Insert(ancestor);
 			}
 		}
 
@@ -74,9 +74,9 @@ namespace OpenDentBusiness{
 			DataTable table;
 			while(true){
 				List<TaskAncestor> listTaskAncestors = new List<TaskAncestor>();
-				for(int i=0;i<listTasks.Count;i++) {
+				foreach(Task t in listTasks) {
 					TaskAncestor ancestor = new TaskAncestor();
-					ancestor.TaskNum=listTasks[i].TaskNum;
+					ancestor.TaskNum=t.TaskNum;
 					ancestor.TaskListNum=taskListNum;
 					listTaskAncestors.Add(ancestor);
 				}

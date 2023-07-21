@@ -92,7 +92,7 @@ namespace OpenDental {
 			long rowsChanged=Medications.Merge(_medicationFrom.MedicationNum,_medicationInto.MedicationNum);
 			string logText=Lan.g(this,"Medications merged")+": "+_medicationFrom.MedName+" "+Lan.g(this,"merged into")+" "+_medicationInto.MedName+".\r\n"
 			+Lan.g(this,"Rows changed")+": "+POut.Long(rowsChanged);
-			SecurityLogs.MakeLogEntry(EnumPermType.MedicationMerge,0,logText);
+			SecurityLogs.MakeLogEntry(Permissions.MedicationMerge,0,logText);
 			textRxFrom.Clear();
 			textMedNumFrom.Clear();
 			textMedNameFrom.Clear();
@@ -100,6 +100,10 @@ namespace OpenDental {
 			MsgBox.Show(this,"Done.");
 			DataValid.SetInvalid(InvalidType.Medications);
 			CheckUIState();
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 
 	}

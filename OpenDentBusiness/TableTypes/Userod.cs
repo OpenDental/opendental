@@ -69,8 +69,6 @@ namespace OpenDentBusiness{
 		public DateTime DateTLastLogin;
 		///<summary>Pin for ODT. This is the hashed value of the pin. Not used in OD proper.</summary>
 		public string EClipboardClinicalPin;
-		///<summary>A unique number that corresponds to the number on an employee badge. The last numbers on an employee badge. Will be 1 to 4 digits. These numbers are assigned to the badges by the factory. We order a specific range of badges, such as 1801-2000, which are assigned in order and not reused to avoid duplicates. The first four digits on the badges are not used by the Lenel OnGuard software, so we do not use them here either.</summary>
-		public string BadgeId;
 
 		///<summary>The getter will return a struct created from the database-ready password which is stored in the Password field.
 		/// The setter will manipulate the Password variable to the string representation of this PasswordContainer object.</summary>

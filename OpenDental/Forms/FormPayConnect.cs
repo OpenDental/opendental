@@ -58,7 +58,7 @@ namespace OpenDental {
 				DialogResult=DialogResult.Cancel;
 				return;
 			}
-			if(ODEnvironment.IsCloudServer){
+			if(ODBuild.IsWeb()){
 				sigBoxWrapper.Enabled=false;
 			}
 			if(PIn.Bool(ProgramProperties.GetPropVal(_program.ProgramNum,"TerminalProcessingEnabled",_clinicNum))) {
@@ -94,7 +94,7 @@ namespace OpenDental {
 				|| _isAddingCard) //When adding a card, the web service must be used.
 			{
 				groupProcessMethod.Visible=false;
-				Height-=LayoutManager.Scale(55);//All the controls except for the Transaction Type group box should be anchored to the bottom, so they will move themselves up.
+				Height-=55;//All the controls except for the Transaction Type group box should be anchored to the bottom, so they will move themselves up.
 			}
 			else {
 				string procMethod=ProgramProperties.GetPropValForClinicOrDefault(_program.ProgramNum,
@@ -385,6 +385,49 @@ namespace OpenDental {
 			return true;
 		}
 
+		private void PrintReceipt(string receiptStr) {
+			string[] stringArrayReceiptLines=receiptStr.Split(new string[] { Environment.NewLine },StringSplitOptions.None);
+			MigraDoc.DocumentObjectModel.Document doc=new MigraDoc.DocumentObjectModel.Document();
+			doc.DefaultPageSetup.PageWidth=Unit.FromInch(3.0);
+			doc.DefaultPageSetup.PageHeight=Unit.FromInch(0.181*stringArrayReceiptLines.Length+0.56);//enough to print receipt text plus 9/16 inch (0.56) extra space at bottom.
+			doc.DefaultPageSetup.TopMargin=Unit.FromInch(0.25);
+			doc.DefaultPageSetup.LeftMargin=Unit.FromInch(0.25);
+			doc.DefaultPageSetup.RightMargin=Unit.FromInch(0.25);
+			MigraDoc.DocumentObjectModel.Font bodyFontx=MigraDocHelper.CreateFont(8,false);
+			bodyFontx.Name=FontFamily.GenericMonospace.Name;
+			MigraDoc.DocumentObjectModel.Section section=doc.AddSection();
+			Paragraph paragraph=section.AddParagraph();
+			ParagraphFormat paragraphFormat=new ParagraphFormat();
+			paragraphFormat.Alignment=ParagraphAlignment.Left;
+			paragraphFormat.Font=bodyFontx;
+			paragraph.Format=paragraphFormat;
+			paragraph.AddFormattedText(receiptStr,bodyFontx);
+			MigraDoc.Rendering.Printing.MigraDocPrintDocument migraDocPrintDocument=new MigraDoc.Rendering.Printing.MigraDocPrintDocument();
+			MigraDoc.Rendering.DocumentRenderer documentRenderer=new MigraDoc.Rendering.DocumentRenderer(doc);
+			documentRenderer.PrepareDocument();
+			migraDocPrintDocument.Renderer=documentRenderer;
+			if(ODBuild.IsDebug()) {
+				using FormRpPrintPreview formRpPrintPreview=new FormRpPrintPreview(migraDocPrintDocument);
+				formRpPrintPreview.ShowDialog();
+			}
+			else {
+				try {
+					ODprintout printout=PrinterL.CreateODprintout(
+						printSituation:PrintSituation.Receipt,
+						auditPatNum:_patient.PatNum,
+						auditDescription:Lans.g(this,"PayConnect receipt printed")
+					);
+					if(PrinterL.TrySetPrinter(printout)) {
+						migraDocPrintDocument.PrinterSettings=printout.PrintDoc.PrinterSettings;
+						migraDocPrintDocument.Print();
+					}
+				}
+				catch(Exception ex) {
+					MessageBox.Show(Lan.g(this,"Printer not available.")+"\r\n"+Lan.g(this,"Original error")+": "+ex.Message);
+				}
+			}
+		}
+
 		private PayConnectService.signatureResponse SendSignature(string refNumber) {
 			if(!sigBoxWrapper.GetSigChanged() || string.IsNullOrEmpty(sigBoxWrapper.GetSignature(""))) {
 				return null;
@@ -432,18 +475,12 @@ namespace OpenDental {
 			}
 			//if stored CC has a token and the token is not expired use it instead of the CC number and CC expiration.
 			if(_creditCard!=null //if the user selected a saved CC
-				&& _creditCard.PayConnectToken!="")//there is a stored token for this card
-				
+				&& _creditCard.PayConnectToken!="" //there is a stored token for this card
+				&& _creditCard.PayConnectTokenExp.Date>=DateTime.Today.Date) //the token is not expired
 			{
-				if(_creditCard.PayConnectTokenExp.Date>=DateTime.Today.Date) {//the token is not expired
-					expYear=_creditCard.PayConnectTokenExp.Year;
-					expMonth=_creditCard.PayConnectTokenExp.Month;
-				}
-				if(_creditCard.PayConnectTokenExp==DateTime.MinValue) {//The token exp date is invalid
-					expYear=_creditCard.CCExpiration.Year;
-					expMonth=_creditCard.CCExpiration.Month;
-				}
 				cardNumber=_creditCard.PayConnectToken;
+				expYear=_creditCard.PayConnectTokenExp.Year;
+				expMonth=_creditCard.PayConnectTokenExp.Month;
 			}
 			else if(PIn.Bool(ProgramProperties.GetPropVal(_program.ProgramNum,PayConnect.ProgramProperties.PayConnectPreventSavingNewCC,_clinicNum))) {
 				MsgBox.Show(this,"Cannot add a new credit card.");
@@ -454,22 +491,16 @@ namespace OpenDental {
 				authCode=textRefNumber.Text;
 			}
 			CreditCardRequest=PayConnect.BuildSaleRequest(PIn.Decimal(textAmount.Text),cardNumber,expYear,
-				expMonth,textNameOnCard.Text,textSecurityCode.Text,textZipCode.Text,magData,TransType,refNumber,
-				checkSaveToken.Checked,authCode,checkForceDuplicate.Checked);
+				expMonth,textNameOnCard.Text,textSecurityCode.Text,textZipCode.Text,magData,TransType,refNumber,checkSaveToken.Checked,authCode,checkForceDuplicate.Checked);
 			_transResponse=PayConnect.ProcessCreditCard(CreditCardRequest,_clinicNum,x => MessageBox.Show(x));
 			if(_transResponse==null || _transResponse.Status.code!=0) {//error in transaction
 				return false;
 			}
-			if(_creditCard!=null && _creditCard.PayConnectTokenExp.Year<1880) {
-				_creditCard.PayConnectTokenExp=_creditCard.CCExpiration;
-				CreditCards.Update(_creditCard);//Updating here for bugfix where PayConnectTokenExp fields were being invalidated. making sure that it is updated after adding the new value.
-			}
-			
 			PayConnectService.signatureResponse signatureResponse=SendSignature(_transResponse.RefNumber);			
 			if((TransType.In(PayConnectService.transType.SALE,PayConnectService.transType.RETURN,PayConnectService.transType.VOID))
 					&& _transResponse.Status.code==0) {//Only print a receipt if transaction is an approved SALE, RETURN, or VOID			
 				ReceiptStr=PayConnect.BuildReceiptString(CreditCardRequest,_transResponse,signatureResponse,_clinicNum);
-				PayConnectL.PrintReceipt(ReceiptStr,_patient);
+				PrintReceipt(ReceiptStr);
 			}
 			if(!PrefC.GetBool(PrefName.StoreCCnumbers) && !checkSaveToken.Checked) {//not storing the card number or the token
 				return true;
@@ -480,7 +511,7 @@ namespace OpenDental {
 				_creditCard=new CreditCard();
 				_creditCard.IsNew=true;
 				_creditCard.PatNum=_patient.PatNum;
-				List<CreditCard> listCreditCardsItemOrderCount=CreditCards.RefreshAll(_patient.PatNum);
+				List<CreditCard> listCreditCardsItemOrderCount=CreditCards.Refresh(_patient.PatNum);
 				_creditCard.ItemOrder=listCreditCardsItemOrderCount.Count;
 			}
 			_creditCard.CCExpiration=new DateTime(expYear,expMonth,DateTime.DaysInMonth(expYear,expMonth));
@@ -509,7 +540,6 @@ namespace OpenDental {
 					DateTime.DaysInMonth(_transResponse.PaymentToken.Expiration.year,_transResponse.PaymentToken.Expiration.month));
 				_creditCard.Procedures=PrefC.GetString(PrefName.DefaultCCProcs);
 				CreditCards.Insert(_creditCard);
-				SecurityLogs.MakeLogEntry(EnumPermType.CreditCardEdit,_patient.PatNum,"Credit Card Added");
 			}
 			else {
 				if(_creditCard.CCSource==CreditCardSource.XServer) {//This card has also been added for XCharge.
@@ -522,7 +552,7 @@ namespace OpenDental {
 
 		///<summary>Processes a PayConnect payment via a credit card terminal.</summary>
 		private bool ProcessPaymentTerminal() {
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				if(!CloudClientL.IsCloudClientRunning()) {
 					return false;
 				}
@@ -543,13 +573,13 @@ namespace OpenDental {
 					return false;
 				}
 				if(_payConnectResponse==null) {
-					SecurityLogs.MakeLogEntry(EnumPermType.CreditCardTerminal,_patient.PatNum,"No response received.");
+					SecurityLogs.MakeLogEntry(Permissions.CreditCardTerminal,_patient.PatNum,"No response received.");
 					return false;
 				}
 				textCardNumber.Text=_payConnectResponse.CardNumber;
 				textAmount.Text=_payConnectResponse.Amount.ToString("f");
 				ReceiptStr=PayConnectTerminal.BuildReceiptString(_payConnectResponse,false,_clinicNum);
-				PayConnectL.PrintReceipt(ReceiptStr,_patient);
+				PrintReceipt(ReceiptStr);
 				return true;
 			}//end of IsWeb()
 			PosRequest posRequest=null;
@@ -581,16 +611,16 @@ namespace OpenDental {
 				MessageBox.Show(Lan.g(this,"Error creating request:")+" "+ex.Message);
 				return false;
 			}
-			UI.ProgressWin progressOD=new UI.ProgressWin();
+			UI.ProgressOD progressOD=new UI.ProgressOD();
 			progressOD.ActionMain=() => _payConnectResponse=PayConnectTerminal.ToPayConnectResponse(DpsPos.ProcessCreditCard(posRequest));
 			progressOD.ShowCancelButton=false;
 			progressOD.StartingMessage=Lan.g(this,"Processing payment on terminal");
 			progressOD.StopNotAllowedMessage=Lan.g(this,"Not allowed to stop. Please wait up to 2 minutes.");
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
-				SecurityLogs.MakeLogEntry(EnumPermType.CreditCardTerminal,_patient.PatNum,"No response received.");
+				SecurityLogs.MakeLogEntry(Permissions.CreditCardTerminal,_patient.PatNum,"No response received.");
 				MessageBox.Show(Lan.g(this,"A payment was initiated but no response was received. The payment may or may not have processed."
 					+" Verify payment with your Credit Card merchant."),ex.Message);
 				return false;
@@ -623,11 +653,11 @@ namespace OpenDental {
 				wasSigned=false;
 			}
 			ReceiptStr=PayConnectTerminal.BuildReceiptString(_payConnectResponse,wasSigned,_clinicNum);
-			PayConnectL.PrintReceipt(ReceiptStr,_patient);
+			PrintReceipt(ReceiptStr);
 			return true;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			Cursor=Cursors.WaitCursor;
 			if(!VerifyData()) {
 				Cursor=Cursors.Default;
@@ -650,15 +680,16 @@ namespace OpenDental {
 			}
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormPayConnect_FormClosing(object sender,FormClosingEventArgs e) {
 			sigBoxWrapper?.SetTabletState(0);
 		}
 
 		///<summary>Only call after the form is closed and the DialogResult is DialogResult.OK.</summary>
 		public string GetAmountCharged() {
-			if(TransType==PayConnectService.transType.RETURN) {
-				return PIn.Decimal("-"+textAmount.Text).ToString("F");
-			}
 			return PIn.Decimal(textAmount.Text).ToString("F");
 		}
 
@@ -677,6 +708,7 @@ namespace OpenDental {
 			}
 			return null;
 		}
+
 
 	}
 }

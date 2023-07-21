@@ -37,16 +37,16 @@ namespace OpenDental {
 		#endregion
 
 		public LayoutManagerForms LayoutManager=new LayoutManagerForms();
-		///<summary>User can open a dialog from textBox for AutoNote or QuickPaste. This flag is set to true during that time so that TextBox_LostFocus doesn't try to dispose of the textBox in FormSheetFillEdit.</summary>
-		public bool IsDlgOpen=false;
 		private System.Windows.Forms.ContextMenu contextMenu;
 		private IContainer components;// Required designer variable.
 		private static Hunspell HunspellGlobal;//We create this object one time for every instance of this textbox control within the entire program.
-		private EnumQuickPasteType _quickPasteType;
+		private QuickPasteType quickPasteType;
 		private Graphics _graphicsBuffer;
 		public Timer timerSpellCheck;
 		private Point _pointClick;
 		public MatchOD MatchReplWord;
+		private bool _spellCheckIsEnabled=true;//set to true in constructor
+		private bool _editMode;//set to false in constructor
 		private Point _pointTextEnd;
 		///<summary>Only used when ImeCompositionCompatibility is enabled.  Set to true when the user presses the space bar.
 		///This will cause the cursor to move to the next position and no longer have composition affect the current character.
@@ -67,8 +67,8 @@ namespace OpenDental {
 		private static IntPtr _intPtrLib;
 		private bool isImeComposition;
 		private bool _enableDetectLinks=true;
-		private bool _hasAutoNotes;
 		///<summary>Must track menuitems that we have added, so that we know which ones to take away when reconstructing context menu.</summary>
+		private bool _hasAutoNotes;
 		private List<MenuItem> _listMenuItemsLinks;
 		///<summary>Stores the current words for all odtextboxes and if they are spelled correctly.  Speeds up spell checking.
 		///Words cannot be removed from the spelling dictionary and thus also cannot be removed from this dictionary.
@@ -91,17 +91,35 @@ namespace OpenDental {
 		[DefaultValue(true)]
 		public bool AllowsCarriageReturns { get; set; }=true;
 
+		///<summary>If right click, and there is 'PatNum:##', 'TaskNum:##', or 'JobNum:##', then the context menu will show a clickable link. Only used task edit window.</summary>
+		[Category("OD")]
+		[Description("If right click, and there is 'PatNum:##', 'TaskNum:##', or 'JobNum:##', then the context menu will show a clickable link. Only used task edit window.")]
+		[DefaultValue(false)]
+		public bool DoShowRightClickLinks { get; set; }=false;
+
 		///<summary>Set true to enable spell checking in this control.</summary>
 		[Category("OD"),Description("Set true to enable spell checking.")]
 		[DefaultValue(true)]
-		public bool SpellCheckIsEnabled {get;set;}=true;
+		public bool SpellCheckIsEnabled {
+			get {
+				return _spellCheckIsEnabled;
+			}
+			set {
+				_spellCheckIsEnabled=value;
+			}
+		}
 
-		///<summary>Set true to enable formatted text to be pasted.</summary>
-		[Category("OD")]
-		[Description("Set true to enable formatted text to be pasted.")]
+		///<summary>Set true to enable formatted text to paste in this control.</summary>
+		[Category("OD"),Description("Set true to allow edit mode formatting")]
 		[DefaultValue(false)]
-		public bool FormattedTextAllowed {get;set; }=false;
-		//this was called EditMode in previous versions
+		public bool EditMode {
+			get {
+				return _editMode;
+			}
+			set {
+				_editMode=value;
+			}
+		}
 
 		///<summary>Set to true to enable context menu option to insert auto notes.</summary>
 		[Category("OD"), Description("Set to true to enable context menu option to insert auto notes.")]
@@ -118,14 +136,7 @@ namespace OpenDental {
 		///<summary>Set true to enable the newer version 4.1 RichEdit library.</summary>
 		[Category("OD"), Description("Set true to enable RichEdit version 4.1 enhanced features.")]
 		[DefaultValue(false)]
-		//Seems to not be used.
 		public bool RichEdit4IsEnabled { get; set; }
-
-		///<summary>If right click, and there is 'PatNum:##', 'TaskNum:##', or 'JobNum:##', then the context menu will show a clickable link. Only used task edit window.</summary>
-		[Category("OD")]
-		[Description("If right click, and there is 'PatNum:##', 'TaskNum:##', or 'JobNum:##', then the context menu will show a clickable link. Only used in task edit window.")]
-		[DefaultValue(false)]
-		public bool RightClickLinks { get; set; }=false;
 
 		[DllImport("kernel32.dll",EntryPoint="LoadLibrary",CharSet=CharSet.Auto,SetLastError=true)]
 		private static extern IntPtr LoadLibrary(string fileName);
@@ -184,23 +195,24 @@ namespace OpenDental {
 				ex.DoNothing();//Do nothing.  Just treat the ODTextBox like it always has (no composition support).
 			}
 			InitializeComponent();// Required for Windows.Forms Class Composition Designer support
+			_spellCheckIsEnabled=true;
 			this.AcceptsTab=true;//Causes CR to not also trigger OK button on a form when that button is set as AcceptButton on the form.
 			this.DetectUrls=false;
 			if(System.ComponentModel.LicenseManager.UsageMode!=System.ComponentModel.LicenseUsageMode.Designtime
 				&& HunspellGlobal==null) {
 				if(ODBuild.IsDebug()) {
 					try {
-						HunspellGlobal=new Hunspell(WpfControls.Properties.Resources.en_US_aff,WpfControls.Properties.Resources.en_US_dic);
+						HunspellGlobal=new Hunspell(Properties.Resources.en_US_aff,Properties.Resources.en_US_dic);
 					}
 					catch(Exception ex) {
 						ex.DoNothing();
 						System.IO.File.Copy(@"..\..\..\Required dlls\Hunspellx64.dll","Hunspellx64.dll");
 						System.IO.File.Copy(@"..\..\..\Required dlls\Hunspellx86.dll","Hunspellx86.dll");
-						HunspellGlobal=new Hunspell(WpfControls.Properties.Resources.en_US_aff,WpfControls.Properties.Resources.en_US_dic);
+						HunspellGlobal=new Hunspell(Properties.Resources.en_US_aff,Properties.Resources.en_US_dic);
 					}
 				}
 				else {
-					HunspellGlobal=new Hunspell(WpfControls.Properties.Resources.en_US_aff,WpfControls.Properties.Resources.en_US_dic);
+					HunspellGlobal=new Hunspell(Properties.Resources.en_US_aff,Properties.Resources.en_US_dic);
 				}
 			}
 			EventHandler onClick=new EventHandler(menuItem_Click);
@@ -239,6 +251,7 @@ namespace OpenDental {
 			}
 			base.Dispose(disposing);
 		}
+
 
 		#region Component Designer generated code
 		/// <summary>
@@ -354,27 +367,17 @@ namespace OpenDental {
 		}
 
 		///<summary></summary>
-		[Category("OD"),Description("Must not be 'None', even if QuickPaste notes are not used.  One thing this does is to determine which category of Quick Paste notes opens first.")]
-		public EnumQuickPasteType QuickPasteType {
+		[Category("Behavior"),Description("This will determine which category of Quick Paste notes opens first.")]
+		public QuickPasteType QuickPasteType {
 			get {
-				return _quickPasteType;
+				return quickPasteType;
 			}
 			set {
-				_quickPasteType=value;
-				if(!DesignMode && value==EnumQuickPasteType.None) {
-					throw new InvalidEnumArgumentException("A value for the TextBoxLoc property must be set.");
+				quickPasteType=value;
+				if(value==QuickPasteType.None) {
+					throw new InvalidEnumArgumentException("A value for the QuickPasteType property must be set.");
 				}
 			}
-		}
-
-		private bool IsUsingSpellCheck(){
-			if(ODBuild.IsDebug() && Environment.MachineName.ToLower().In("jordansgalaxybk","jordanhome")){
-				return false;//for testing without a db
-			}
-			if(!SpellCheckIsEnabled){//for this control, as set in the designer
-				return false;
-			}
-			return PrefC.GetBool(PrefName.SpellCheckIsEnabled);
 		}
 
 		private void contextMenu_Popup(object sender,System.EventArgs e) {
@@ -386,7 +389,8 @@ namespace OpenDental {
 				contextMenu.MenuItems[13].Enabled=true;
 				contextMenu.MenuItems[14].Enabled=true;
 			}
-			if(!IsUsingSpellCheck()
+			if(!this._spellCheckIsEnabled
+			  || !PrefC.GetBool(PrefName.SpellCheckIsEnabled)
 			  || !IsOnMisspelled(_pointClick)) {//did not click on a misspelled word OR spell check is disabled
 				contextMenu.MenuItems[0].Visible=false;//suggestion 1
 				contextMenu.MenuItems[1].Visible=false;//suggestion 2
@@ -398,7 +402,8 @@ namespace OpenDental {
 				contextMenu.MenuItems[7].Visible=false;//Disable Spell Check
 				contextMenu.MenuItems[8].Visible=false;//separator
 			}
-			else if(IsUsingSpellCheck()
+			else if(this._spellCheckIsEnabled
+			  && PrefC.GetBool(PrefName.SpellCheckIsEnabled)
 			  && IsOnMisspelled(_pointClick)) {//clicked on or near a misspelled word AND spell check is enabled
 				List<string> suggestions=SpellSuggest();
 				if(suggestions.Count==0) {//no suggestions
@@ -434,7 +439,7 @@ namespace OpenDental {
 				contextMenu.MenuItems[11].Visible=false;
 				contextMenu.MenuItems[11].Enabled=false;
 			}
-			if(FormattedTextAllowed) {
+			if(EditMode) {
 				contextMenu.MenuItems[16].Visible=true;//Paste Plain Text
 				contextMenu.MenuItems[16].Enabled=true;
 			}
@@ -457,7 +462,7 @@ namespace OpenDental {
 			_listMenuItemsLinks.ForEach(x => contextMenu.MenuItems.Remove(x));//remove items from previous pass.
 			_listMenuItemsLinks.Clear();
 			_listMenuItemsLinks.Add(new MenuItem("-"));
-			_listMenuItemsLinks.AddRange(PopupHelper.GetContextMenuItemLinks(Text,RightClickLinks));
+			_listMenuItemsLinks.AddRange(PopupHelper.GetContextMenuItemLinks(Text,DoShowRightClickLinks));
 			if(_listMenuItemsLinks.Any(x => x.Text!="-")) {//at least one REAL menu item that is not the divider.
 				_listMenuItemsLinks.ForEach(x => contextMenu.MenuItems.Add(x));
 			}
@@ -514,7 +519,7 @@ namespace OpenDental {
 				case 2:
 				case 3:
 				case 4:
-					if(!IsUsingSpellCheck()) {//if spell check disabled, break.  Should never happen since the suggested words won't show if spell check disabled
+					if(!this._spellCheckIsEnabled || !PrefC.GetBool(PrefName.SpellCheckIsEnabled)) {//if spell check disabled, break.  Should never happen since the suggested words won't show if spell check disabled
 						break;
 					}
 					int originalCaret=this.SelectionStart;
@@ -534,7 +539,7 @@ namespace OpenDental {
 					break;
 				//case 5 is separator
 				case 6://Add to dict
-					if(!IsUsingSpellCheck()) {//if spell check disabled, break.  Should never happen since Add to Dict won't show if spell check disabled
+					if(!this._spellCheckIsEnabled || !PrefC.GetBool(PrefName.SpellCheckIsEnabled)) {//if spell check disabled, break.  Should never happen since Add to Dict won't show if spell check disabled
 						break;
 					}
 					string newWord=MatchReplWord.Value;
@@ -560,7 +565,7 @@ namespace OpenDental {
 					InsertDate();
 					break;
 				case 10://Insert Quick Paste Note
-					ShowQuickPaste();
+					ShowFullDialog();
 					break;
 				case 11://Insert Auto Note
 					AddAutoNote();
@@ -573,7 +578,7 @@ namespace OpenDental {
 					base.Copy();
 					break;
 				case 15://paste
-					if(FormattedTextAllowed) {
+					if(EditMode) {
 						PasteText();
 					}
 					else {
@@ -605,17 +610,15 @@ namespace OpenDental {
 
 		///<summary></summary>
 		private void EditAutoNote() {
-			FrmAutoNoteCompose frmAutoNoteCompose=new FrmAutoNoteCompose();
-			frmAutoNoteCompose.StrMainTextNote=SelectedText!=""?SelectedText:Text;
-			IsDlgOpen=true;
-			frmAutoNoteCompose.ShowDialog();
-			IsDlgOpen=false;
-			if(frmAutoNoteCompose.IsDialogOK) {
+			using FormAutoNoteCompose FormA=new FormAutoNoteCompose();
+			FormA.StrMainTextNote=SelectedText!=""?SelectedText:Text;
+			FormA.ShowDialog();
+			if(FormA.DialogResult==DialogResult.OK) {
 				if(SelectedText!=""){
-					SelectedText=frmAutoNoteCompose.StrCompletedNote;
+					SelectedText=FormA.StrCompletedNote;
 				}
 				else {
-					Text=frmAutoNoteCompose.StrCompletedNote;
+					Text=FormA.StrCompletedNote;
 					SelectionStart=Text.Length;
 				}
 			}
@@ -623,17 +626,15 @@ namespace OpenDental {
 
 		///<summary>Add an auto note</summary>
 		private void AddAutoNote() {
-			FrmAutoNoteCompose frmAutoNoteCompose=new FrmAutoNoteCompose();
-			IsDlgOpen=true;
-			frmAutoNoteCompose.ShowDialog();
-			IsDlgOpen=false;
-			if(frmAutoNoteCompose.IsDialogOK) {
-				SelectedText=frmAutoNoteCompose.StrCompletedNote;
+			using FormAutoNoteCompose FormA=new FormAutoNoteCompose();
+			FormA.ShowDialog();
+			if(FormA.DialogResult==DialogResult.OK) {
+				SelectedText=FormA.StrCompletedNote;
 			}
 		}
 
 		private void timerSpellCheck_Tick(object sender,EventArgs e) {
-			if(!IsUsingSpellCheck()) {//if spell check disabled, return
+			if(!this._spellCheckIsEnabled || !PrefC.GetBool(PrefName.SpellCheckIsEnabled)) {//if spell check disabled, return
 				return;
 			}
 			timerSpellCheck.Stop();
@@ -641,7 +642,7 @@ namespace OpenDental {
 		}
 
 		private void ODtextBox_VScroll(object sender,EventArgs e) {
-			if(!IsUsingSpellCheck()) {//if spell check disabled, return
+			if(!this._spellCheckIsEnabled || !PrefC.GetBool(PrefName.SpellCheckIsEnabled)) {//if spell check disabled, return
 				return;
 			}
 			timerSpellCheck.Stop();
@@ -656,7 +657,7 @@ namespace OpenDental {
 				}
 			}
 			base.OnKeyDown(e);
-			if(!IsUsingSpellCheck()) {//if spell check disabled, return
+			if(!this._spellCheckIsEnabled || !PrefC.GetBool(PrefName.SpellCheckIsEnabled)) {//if spell check disabled, return
 				return;
 			}
 			//The lines were shifted due to new input. This causes the location of the red wavy underline to shift down as well, so clear them.
@@ -668,7 +669,7 @@ namespace OpenDental {
 		///<summary>When the contents of the text box is resized, e.g. when word wrap creates a new line, clear red wavy lines so they don't shift down.</summary>
 		private void ODtextBox_ContentsResized(object sender,ContentsResizedEventArgs e) {
 			try {
-				if(DesignMode || !IsUsingSpellCheck()) {//if spell check disabled, return
+				if(DesignMode || !this._spellCheckIsEnabled || !PrefC.GetBool(PrefName.SpellCheckIsEnabled)) {//if spell check disabled, return
 					return;
 				}
 			}
@@ -691,24 +692,21 @@ namespace OpenDental {
 		///<summary></summary>
 		protected override void OnKeyUp(KeyEventArgs e) {
 			base.OnKeyUp(e);
-			if(ODBuild.IsDebug() && Environment.MachineName.ToLower().In("jordansgalaxybk","jordanhome")){
-				return;//for testing without a db
-			}
-			if(IsUsingSpellCheck()) {//Only spell check if enabled
+			if(this._spellCheckIsEnabled && PrefC.GetBool(PrefName.SpellCheckIsEnabled)) {//Only spell check if enabled
 				timerSpellCheck.Stop();
 			}
 			int originalLength=Text.Length;
 			int originalCaret=base.SelectionStart;
-			string newText=QuickPasteNotes.Substitute(Text,_quickPasteType);
+			string newText=QuickPasteNotes.Substitute(Text,quickPasteType);
 			if(Text!=newText) {
 				Text=newText;
 				SelectionStart=originalCaret+Text.Length-originalLength;
 			}
 			//then CtrlQ
 			if(e.KeyCode==Keys.Q && e.Modifiers==Keys.Control) {
-				ShowQuickPaste();
+				ShowFullDialog();
 			}
-			if(IsUsingSpellCheck()) {//Only spell check if enabled
+			if(this._spellCheckIsEnabled && PrefC.GetBool(PrefName.SpellCheckIsEnabled)) {//Only spell check if enabled
 				timerSpellCheck.Start();
 			}
 		}
@@ -785,7 +783,8 @@ namespace OpenDental {
 				spellCheckResult=new SpellCheckResult();
 			}
 			//Only spell check if enabled
-			if(!IsUsingSpellCheck()
+			if(!this._spellCheckIsEnabled 
+				|| !PrefC.GetBool(PrefName.SpellCheckIsEnabled)
 				|| PrefC.GetBool(PrefName.ImeCompositionCompatibility))
 			{
 				//Do not spell check languages that use composition.  If needed in the future, fix the bug where the first char disapears in the box.
@@ -925,7 +924,7 @@ namespace OpenDental {
 					word.Value=word.Value.Substring(0,word.Value.Length-1);
 				}
 				if(word.Value.Length>1) {
-					if(Regex.IsMatch(word.Value,@"[^a-zA-Z\'\-]")) {//if any extra characters (example comma), exclude the word
+					if(Regex.IsMatch(word.Value,@"[^a-zA-Z\'\-]")) {
 						continue;
 					}
 					listMatches.Add(word);
@@ -1111,32 +1110,11 @@ namespace OpenDental {
 			return;
 		}
 
-		private void ShowQuickPaste() {
-			FrmQuickPaste frmQuickPaste=new FrmQuickPaste();
-			frmQuickPaste.IsSelectionMode= true;
-			frmQuickPaste.ActionInsertVal=InsertValue;
-			frmQuickPaste.QuickPasteType_=_quickPasteType;
-			IsDlgOpen=true;
-			frmQuickPaste.ShowDialog();
-			IsDlgOpen=false;
-		}
-
-		private void InsertValue(string strPaste) {
-			try {
-				//When trying to paste plain text into the Rtf text, an exception will throw.
-				SelectedRtf=strPaste;
-				return;
-			}
-			catch{
-				//If we couldn't paste into the Rtf text, try to paste into the plain text section.
-			}
-			try {
-				SelectedText=strPaste;
-			}
-			catch{
-				//If pasting into the Rtf AND the plain text fails, notify the user.
-				MsgBox.Show(this,"There was a problem pasting clipboard contents.");
-			}
+		private void ShowFullDialog() {
+			using FormQuickPaste FormQ=new FormQuickPaste(false);
+			FormQ.RichTextBox_=this;
+			FormQ.QuickPasteType_=quickPasteType;
+			FormQ.ShowDialog();
 		}
 
 		private void InsertDate() {

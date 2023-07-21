@@ -54,7 +54,8 @@ namespace OpenDental {
 			this.button1 = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.comboSheetDefs = new OpenDental.UI.ComboBox();
 			this.labelSheet = new System.Windows.Forms.Label();
 			this.patContextMenu = new System.Windows.Forms.ContextMenu();
@@ -281,15 +282,25 @@ namespace OpenDental {
 			this.butDelete.Text = "Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butSave.Location = new System.Drawing.Point(782, 613);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(70, 24);
-			this.butSave.TabIndex = 11;
-			this.butSave.Text = "Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.butCancel.Location = new System.Drawing.Point(782, 613);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(70, 24);
+			this.butCancel.TabIndex = 12;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.butOK.Location = new System.Drawing.Point(706, 613);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(70, 24);
+			this.butOK.TabIndex = 11;
+			this.butOK.Text = "OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// comboSheetDefs
 			// 
@@ -364,7 +375,8 @@ namespace OpenDental {
 			// FormScreenGroupEdit
 			// 
 			this.ClientSize = new System.Drawing.Size(864, 641);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.comboSheetDefs);
 			this.Controls.Add(this.labelSheet);
 			this.Controls.Add(this.label4);
@@ -410,7 +422,7 @@ namespace OpenDental {
 		private OpenDental.UI.ComboBox comboPlaceService;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.ComboBox comboCounty;
 		private System.Windows.Forms.TextBox textDescription;
 		private System.Windows.Forms.Label labelScreener;
@@ -418,6 +430,7 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textProvName;
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.ComboBox comboGradeSchool;
+		private UI.Button butCancel;
 		private UI.Button butDelete;
 		private UI.GridOD gridMain;
 		private UI.GridOD gridScreenPats;

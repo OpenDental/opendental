@@ -9,11 +9,6 @@ namespace OpenDentBusiness{
 	///<summary></summary>
 	public class OrthoCases{
 		#region Get Methods
-		public static List<OrthoCase> GetPatientData(long patNum) {
-			//No need to check MiddleTierRole; no call to db.
-			return Refresh(patNum);
-		}
-
 		///<summary>Gets one OrthoCase from the db.</summary>
 		public static OrthoCase GetOne(long orthoCaseNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

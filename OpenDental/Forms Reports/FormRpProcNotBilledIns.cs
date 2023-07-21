@@ -111,7 +111,7 @@ namespace OpenDental{
 			DataTable tableNotBilled=new DataTable();
 			if(hasValidationPassed) {
 				//not truly all clinics; just the ones user has permission for
-				tableNotBilled=RpProcNotBilledIns.GetProcsNotBilled(comboClinics.ListClinicNumsSelected,checkMedical.Checked,_myReportDateFrom,_myReportDateTo,
+				tableNotBilled=RpProcNotBilledIns.GetProcsNotBilled(comboClinics.ListSelectedClinicNums,checkMedical.Checked,_myReportDateFrom,_myReportDateTo,
 					checkShowProcsNoIns.Checked,checkShowProcsInProcess.Checked);
 			}
 			string subtitleClinics="";
@@ -164,7 +164,7 @@ namespace OpenDental{
 				_myReportDateTo=DateTime.MaxValue;
 			}
 			if(PrefC.HasClinicsEnabled) {
-				if(comboClinics.ListClinicNumsSelected.Count==0){
+				if(comboClinics.ListSelectedClinicNums.Count==0){
 					comboClinics.IsAllSelected=true;
 				}
 			}
@@ -204,7 +204,7 @@ namespace OpenDental{
 				return;
 			}
 			//Ignore date lock for now, we just want to check the general permission for the button.
-			if(!Security.IsAuthorized(EnumPermType.NewClaimsProcNotBilled,DateTime.Today)) {
+			if(!Security.IsAuthorized(Permissions.NewClaimsProcNotBilled,DateTime.Today)) {
 				return;
 			}
 			//Generate List and Table----------------------------------------------------------------------------------------------------------------------
@@ -217,7 +217,7 @@ namespace OpenDental{
 			List<ClaimProc> listPatClaimProcs=new List<ClaimProc>();
 			List<ClaimProc> listCurClaimProcs=new List<ClaimProc>();
 			//find the date user is restricted by for this permission so it doesn't get called in a loop. General permission was already checked.
-			DateTime dateRestricted=GroupPermissions.GetDateRestrictedForPermission(EnumPermType.NewClaimsProcNotBilled,
+			DateTime dateRestricted=GroupPermissions.GetDateRestrictedForPermission(Permissions.NewClaimsProcNotBilled,
 				Security.CurUser.GetGroups(true).Select(x => x.UserGroupNum).ToList());
 			//Table rows need to be 1:1 with gridMain rows due to logic in ContrAccount.toolBarButIns_Click(...).
 			DataTable table=new DataTable();
@@ -348,12 +348,6 @@ namespace OpenDental{
 					"To set a new lock date for this report, go to Setup | Security | User Groups | Reports | Procedures Not Billed to Insurance, New Claims button.");
 				return;
 			}
-			else if(listProcNumsPastLockDate.Count>0 && !MsgBox.Show(this,MsgBoxButtons.OKCancel,POut.Int(listProcNumsPastLockDate.Count)
-				+" Claims will not be created because these procedure dates extend past the lock date for this report.\n" 
-				+ "To set a new lock date for this report, go to Setup | Security | User Groups | Reports | Procedures Not Billed to Insurance, New Claims button.")) 
-			{
-				return;
-			}
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Clicking OK will create up to "+POut.Int(claimCreatedCount)
 				+" claims and cannot be undone, except by manually going to each account.  "
 				+"Some claims may not be created if there are validation issues.\r\n"
@@ -442,6 +436,10 @@ namespace OpenDental{
 			ODEvent.Fire(ODEventType.FormProcNotBilled_GoTo,patNum);		
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 		private void FormRpProcNotBilledIns_FormClosing(object sender,FormClosingEventArgs e) {
 			Prefs.UpdateBool(PrefName.ClaimProcsNotBilledToInsAutoGroup,checkAutoGroupProcs.Checked);
 		}
@@ -493,6 +491,6 @@ namespace OpenDental{
 			ClinicNum=clinicNum;
 			PlaceService=placeService;
 		}
-
 	}
+
 }

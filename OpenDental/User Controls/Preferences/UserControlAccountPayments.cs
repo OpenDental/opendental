@@ -73,7 +73,6 @@ namespace OpenDental {
 			checkPayPlanSaveSignedPdf.Checked=PrefC.GetBool(PrefName.PayPlanSaveSignedToPdf);
 			checkPayPlansExcludePastActivity.Checked=PrefC.GetBool(PrefName.PayPlansExcludePastActivity);
 			checkPayPlansUseSheets.Checked=PrefC.GetBool(PrefName.PayPlansUseSheets);
-			checkPayPlanRequireLockForAPR.Checked=PrefC.GetBool(PrefName.PayPlanRequireLockForAPR);
 			foreach(PayPlanVersions version in Enum.GetValues(typeof(PayPlanVersions))) {
 				comboPayPlansVersion.Items.Add(Lan.g("enumPayPlanVersions",version.GetDescription()));
 			}
@@ -94,7 +93,7 @@ namespace OpenDental {
 
 		public bool SaveAccountPayments() {
 			if(string.IsNullOrWhiteSpace(textDynamicPayPlan.Text) || !textDynamicPayPlan.IsValid()) {
-				MsgBox.Show(this,"Payment plan time must be a valid time.");
+				MsgBox.Show(this,"Dynamic payment plan time must be a valid time.");
 				return false;
 			}
 			Changed|=Prefs.UpdateBool(PrefName.PayPlansUseSheets,checkPayPlansUseSheets.Checked);
@@ -114,7 +113,6 @@ namespace OpenDental {
 			Changed|=Prefs.UpdateBool(PrefName.AllowPrepayProvider,checkAllowPrepayProvider.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.ShowAllocateUnearnedPaymentPrompt,checkShowAllocateUnearnedPaymentPrompt.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.OnlinePaymentsMarkAsProcessed,checkOnlinePaymentsMarkAsProcessed.Checked);
-			Changed|=Prefs.UpdateBool(PrefName.PayPlanRequireLockForAPR,checkPayPlanRequireLockForAPR.Checked);
 			if(comboUnallocatedSplits.SelectedIndex!=-1) {
 				Changed|=Prefs.UpdateLong(PrefName.PrepaymentUnearnedType,comboUnallocatedSplits.GetSelectedDefNum());
 			}

@@ -104,7 +104,7 @@
 			this.textboxPlainText.DetectUrls = false;
 			this.textboxPlainText.Location = new System.Drawing.Point(3, 28);
 			this.textboxPlainText.Name = "textboxPlainText";
-			this.textboxPlainText.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textboxPlainText.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textboxPlainText.ReadOnly = true;
 			this.textboxPlainText.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textboxPlainText.Size = new System.Drawing.Size(424, 214);

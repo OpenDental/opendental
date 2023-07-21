@@ -31,7 +31,8 @@ namespace OpenDental{
 			this.comboCodeSet = new System.Windows.Forms.ComboBox();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.textNote = new System.Windows.Forms.TextBox();
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.checkPatientDeclined = new OpenDental.UI.CheckBox();
 			this.SuspendLayout();
@@ -106,15 +107,26 @@ namespace OpenDental{
 			this.textNote.Size = new System.Drawing.Size(550, 60);
 			this.textNote.TabIndex = 4;
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(564, 513);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(76, 24);
-			this.butSave.TabIndex = 5;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(565, 513);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(76, 24);
+			this.butCancel.TabIndex = 6;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(484, 513);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(76, 24);
+			this.butOK.TabIndex = 5;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butDelete
 			// 
@@ -140,7 +152,8 @@ namespace OpenDental{
 			this.ClientSize = new System.Drawing.Size(652, 548);
 			this.Controls.Add(this.checkPatientDeclined);
 			this.Controls.Add(this.butDelete);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.textNote);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.label1);
@@ -166,7 +179,8 @@ namespace OpenDental{
 		private System.Windows.Forms.ComboBox comboCodeSet;
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.TextBox textNote;
-		private UI.Button butSave;
+		private UI.Button butCancel;
+		private UI.Button butOK;
 		private UI.Button butDelete;
 		private OpenDental.UI.CheckBox checkPatientDeclined;
 	}

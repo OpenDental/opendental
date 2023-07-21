@@ -32,6 +32,7 @@ namespace OpenDental{
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.textDateTo = new OpenDental.ValidDate();
 			this.butAdd = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.textDateFrom = new OpenDental.ValidDate();
 			this.labelToDate = new System.Windows.Forms.Label();
 			this.labelFromDate = new System.Windows.Forms.Label();
@@ -112,6 +113,16 @@ namespace OpenDental{
 			this.butAdd.Text = "Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(788, 576);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// textDateFrom
 			// 
 			this.textDateFrom.Location = new System.Drawing.Point(121, 10);
@@ -148,6 +159,7 @@ namespace OpenDental{
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.textDateTo);
 			this.Controls.Add(this.butAdd);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.textDateFrom);
 			this.Controls.Add(this.labelToDate);
 			this.Controls.Add(this.labelFromDate);
@@ -161,6 +173,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.Label labelFromDate;
 		private System.Windows.Forms.Label labelToDate;

@@ -41,7 +41,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textODAMemberNumber.Text=="") {
 				MsgBox.Show(this,$"{_dentalAssociationName} Member Number cannot be blank.");
 				return;
@@ -55,6 +55,10 @@ namespace OpenDental {
 				Prefs.UpdateString(PrefName.CanadaODAMemberPass,textODAMemberPassword.Text);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

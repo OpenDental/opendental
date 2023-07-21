@@ -41,9 +41,6 @@ namespace OpenDentBusiness {
 					pat.ImageFolder,'/');//use '/' char instead of Path.DirectorySeparatorChar
 			}
 			else if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
-				object[] objectArray={pat,AtoZpath};
-				Plugins.HookAddCode(null,"ImageStore.GetPatientFolder_LocalAtoZ",objectArray);
-				AtoZpath=(string)objectArray[1];
 				retVal=ODFileUtils.CombinePaths(AtoZpath,
 					pat.ImageFolder.Substring(0,1).ToUpper(),
 					pat.ImageFolder);//use Path.DirectorySeparatorChar
@@ -169,7 +166,8 @@ namespace OpenDentBusiness {
 				fileList.AddRange(fiList.Select(x => x.FullName));
 			}
 			else {//Cloud
-				List<string> listFiles=CloudStorage.ListFolderContents(patFolder);
+				OpenDentalCloud.Core.TaskStateListFolders state=CloudStorage.ListFolderContents(patFolder);
+				List<string> listFiles=state.ListFolderPathsDisplay;
 				List<Document> listDocs=Documents.GetAllWithPat(pat.PatNum).ToList();
 				listFiles=listFiles.Select(x => Path.GetFileName(x)).ToList();
 				foreach(string fileName in listFiles) {
@@ -234,9 +232,14 @@ namespace OpenDentBusiness {
 					return DicomHelper.GetFromFile(localPath);
 				}
 				BitmapDicom bitmapDicom=null;
-				byte[] byteArray=CloudStorage.Download(patFolder.Replace("\\","/"),doc.FileName);
-				using(MemoryStream ms=new MemoryStream(byteArray)) {
-					bitmapDicom=DicomHelper.GetFromStream(ms);//Warning! Untested!
+				try {
+					OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.Download(patFolder.Replace("\\","/"),doc.FileName,true);
+					using(MemoryStream ms=new MemoryStream(state.FileContent)) {
+						bitmapDicom=DicomHelper.GetFromStream(ms);//Warning! Untested!
+					}
+				}
+				catch(Exception e) {
+					e.DoNothing();
 				}
 				return bitmapDicom;
 			}
@@ -294,8 +297,9 @@ namespace OpenDentBusiness {
 					}
 					else {
 						try {
-							byte[] byteArray=CloudStorage.Download(patFolder.Replace("\\","/"),doc.FileName);
-							using(MemoryStream ms=new MemoryStream(byteArray)) {
+							OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.Download(patFolder.Replace("\\","/")
+								,doc.FileName,true);
+							using(MemoryStream ms=new MemoryStream(state.FileContent)) {
 								bmp=new Bitmap(ms);
 							}
 						}
@@ -349,8 +353,9 @@ namespace OpenDentBusiness {
 							bmp=new Bitmap(localPath);
 						}
 						else {
-							byte[] byteArray=CloudStorage.Download(GetEobFolder(),eob.FileName);
-							using(MemoryStream ms = new MemoryStream(byteArray)) {
+							OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.Download(GetEobFolder()
+							,eob.FileName);
+							using(MemoryStream ms = new MemoryStream(state.FileContent)) {
 								bmp=new Bitmap(ms);
 							}
 						}
@@ -400,9 +405,10 @@ namespace OpenDentBusiness {
 			else if(CloudStorage.IsCloudStorage) {
 				if(HasImageExtension(amd.FileName)) {
 					try {
-						byte[] byteArray=CloudStorage.Download(GetAmdFolder(),amd.FileName);
+						OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.Download(GetAmdFolder()
+						,amd.FileName);
 						Bitmap bmp=null;
-						using(MemoryStream ms = new MemoryStream(byteArray)) {
+						using(MemoryStream ms = new MemoryStream(state.FileContent)) {
 							bmp=new Bitmap(ms);
 						}
 						values[0]=bmp;
@@ -428,8 +434,8 @@ namespace OpenDentBusiness {
 
 		public static byte[] GetBytes(Document doc,string patFolder) {
 			if(CloudStorage.IsCloudStorage) {
-				byte[] byteArray=CloudStorage.Download(patFolder.Replace("\\","/"),doc.FileName);
-				return byteArray;
+				OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.Download(patFolder.Replace("\\","/"),doc.FileName);
+				return state.FileContent;
 			}
 			string path = ODFileUtils.CombinePaths(patFolder,doc.FileName);
 			if(!File.Exists(path)) {
@@ -488,11 +494,10 @@ namespace OpenDentBusiness {
 					image.Dispose();//releases file lock
 				}
 			}
-			else if(doc.FileName.ToLower().EndsWith(".dcm")){
+			else if(doc.FileName.EndsWith(".dcm")){
 				doc.ImgType=ImageType.Radiograph;
 				BitmapDicom bitmapDicom=DicomHelper.GetFromFile(pathImportFrom);
 				DicomHelper.CalculateWindowingOnImport(bitmapDicom);
-				doc.PrintHeading=true;
 				doc.WindowingMin=bitmapDicom.WindowingMin;
 				doc.WindowingMax=bitmapDicom.WindowingMax;
 			}
@@ -514,8 +519,8 @@ namespace OpenDentBusiness {
 			return doc;
 		}
 
-		/// <summary>Saves to AtoZ folder, Cloud, or to db.  Saves image as a jpg.  Compression will differ depending on imageType. Throws exception if it can't save. doPrintHeading is set to true for ToothChart and radiographs.</summary>
-		public static Document Import(Bitmap image,long docCategory,ImageType imageType,Patient pat,string mimeType="image/jpeg",bool doPrintHeading=false) {
+		/// <summary>Saves to AtoZ folder, Cloud, or to db.  Saves image as a jpg.  Compression will differ depending on imageType. Throws exception if it can't save.</summary>
+		public static Document Import(Bitmap image,long docCategory,ImageType imageType,Patient pat,string mimeType="image/jpeg") {
 			string patFolder="";
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ || CloudStorage.IsCloudStorage) {
 				patFolder=GetPatientFolder(pat,GetPreferredAtoZpath());
@@ -526,9 +531,6 @@ namespace OpenDentBusiness {
 			doc.DateCreated = DateTime.Now;
 			doc.PatNum = pat.PatNum;
 			doc.DocCategory = docCategory;
-			if(doPrintHeading) {
-				doc.PrintHeading=true;
-			}
 			Documents.Insert(doc,pat);//creates filename and saves to db
 			doc=Documents.GetByNum(doc.DocNum);
 			long qualityL = 0;
@@ -635,7 +637,7 @@ namespace OpenDentBusiness {
 					//byte[] bytes=OpenDentBusiness.FileIO.FileAtoZ.ReadAllBytes(pathSourceFile);
 					//OpenDentBusiness.FileIO.FileAtoZ.WriteAllBytes(CloudStorage.PathTidy(ODFileUtils.CombinePaths(patFolder,doc.FileName)),bytes);
 					CloudStorage.Copy(pathSourceFile,CloudStorage.PathTidy(ODFileUtils.CombinePaths(patFolder,doc.FileName)));
-					ImageStore.LogDocument(Lans.g("ContrImages","Document Created")+": ",EnumPermType.ImageEdit,doc,DateTime.MinValue); //new doc, min date.
+					ImageStore.LogDocument(Lans.g("ContrImages","Document Created")+": ",Permissions.ImageEdit,doc,DateTime.MinValue); //new doc, min date.
 				}
 				else {
 					SaveDocument(doc,pathSourceFile,patFolder);//Makes log entry
@@ -660,7 +662,6 @@ namespace OpenDentBusiness {
 			doc.DateCreated = DateTime.Now;
 			doc.PatNum = pat.PatNum;
 			doc.DocCategory = docCategory;
-			doc.PrintHeading=true;
 			doc.WindowingMin = PrefC.GetInt(PrefName.ImageWindowingMin);
 			doc.WindowingMax = PrefC.GetInt(PrefName.ImageWindowingMax);
 			Documents.Insert(doc,pat);//creates filename and saves to db
@@ -968,7 +969,7 @@ namespace OpenDentBusiness {
 					}
 				}
 			}
-			LogDocument(Lans.g("ContrImages","Document Created")+": ",EnumPermType.ImageEdit,doc,DateTime.MinValue); //a brand new document is always passed-in
+			LogDocument(Lans.g("ContrImages","Document Created")+": ",Permissions.ImageEdit,doc,DateTime.MinValue); //a brand new document is always passed-in
 		}
 
 		///<summary>If usingAtoZfoler, then patFolder must be fully qualified and valid.  If not usingAtoZ folder, this uploads to Cloud or fills the doc.RawBase64 which must then be updated to db.</summary>
@@ -992,7 +993,7 @@ namespace OpenDentBusiness {
 					}
 				}
 			}
-			LogDocument(Lans.g("ContrImages",doc.ImgType+" Created")+": ",EnumPermType.ImageCreate,doc,DateTime.MinValue); //a brand new document is always passed-in
+			LogDocument(Lans.g("ContrImages",doc.ImgType+" Created")+": ",Permissions.ImageCreate,doc,DateTime.MinValue); //a brand new document is always passed-in
 		}
 
 		///<summary>If using AtoZfolder, then patFolder must be fully qualified and valid.  If not using AtoZfolder, this uploads to Cloud or fills the eob.RawBase64 which must then be updated to db.</summary>
@@ -1007,7 +1008,7 @@ namespace OpenDentBusiness {
 				byte[] rawData=File.ReadAllBytes(pathSourceFile);
 				doc.RawBase64=Convert.ToBase64String(rawData);
 			}
-			LogDocument(Lans.g("ContrImages",doc.ImgType+" Created")+": ",EnumPermType.ImageCreate,doc,DateTime.MinValue); //a brand new document is always passed-in
+			LogDocument(Lans.g("ContrImages",doc.ImgType+" Created")+": ",Permissions.ImageCreate,doc,DateTime.MinValue); //a brand new document is always passed-in
 		}
 
 		///<summary>If using AtoZfolder, then patFolder must be fully qualified and valid.  If not using AtoZfolder, this uploads to Cloud or fills the doc.RawBase64 which must then be updated to db.</summary>
@@ -1021,7 +1022,7 @@ namespace OpenDentBusiness {
 			else {//Assume DataStorageType.InDatabase
 				doc.RawBase64=Convert.ToBase64String(arrayBytes);
 			}
-			LogDocument(Lans.g("ContrImages",doc.ImgType+" Created")+": ",EnumPermType.ImageCreate,doc,DateTime.MinValue); //a brand new document is always passed-in
+			LogDocument(Lans.g("ContrImages",doc.ImgType+" Created")+": ",Permissions.ImageCreate,doc,DateTime.MinValue); //a brand new document is always passed-in
 		}
 
 		///<summary>If using AtoZfolder, then patFolder must be fully qualified and valid.  If not using AtoZfolder, this fills the eob.RawBase64 which must then be updated to db.</summary>
@@ -1126,7 +1127,7 @@ namespace OpenDentBusiness {
 						string filePath = ODFileUtils.CombinePaths(patFolder,documents[i].FileName);
 						if(File.Exists(filePath)) {
 							File.Delete(filePath);
-							LogDocument(Lans.g("ContrImages","Document Deleted")+": ",EnumPermType.ImageDelete,documents[i],documents[i].DateTStamp);
+							LogDocument(Lans.g("ContrImages","Document Deleted")+": ",Permissions.ImageDelete,documents[i],documents[i].DateTStamp);
 						}
 					}
 					catch {
@@ -1294,7 +1295,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Makes log entry for documents.  Supply beginning text, permission, document, and the DateTStamp that the document was previously last 
 		///edited.</summary>
-		public static void LogDocument(string logMsgStart,EnumPermType perm,Document doc, DateTime secDatePrevious,long userNum=0) {
+		public static void LogDocument(string logMsgStart,Permissions perm,Document doc, DateTime secDatePrevious) {
 			string logMsg=logMsgStart+doc.FileName;
 			if(doc.Description!="") {
 				string descriptDoc=doc.Description;
@@ -1305,11 +1306,7 @@ namespace OpenDentBusiness {
 			}
 			Def docCat=Defs.GetDef(DefCat.ImageCats,doc.DocCategory);
 			logMsg+=" "+Lans.g("ContrImages","with category")+" "+docCat.ItemName;
-			if(userNum==0) {
-				SecurityLogs.MakeLogEntry(perm,doc.PatNum,logMsg,doc.DocNum,secDatePrevious);
-				return;
-			}
-			SecurityLogs.MakeLogEntry(perm,doc.PatNum,logMsg,doc.DocNum,LogSources.None,secDatePrevious,userNum);
+			SecurityLogs.MakeLogEntry(perm,doc.PatNum,logMsg,doc.DocNum,secDatePrevious);
 		}
 
 	}

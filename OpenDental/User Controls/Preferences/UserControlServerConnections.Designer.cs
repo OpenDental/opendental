@@ -102,16 +102,16 @@ namespace OpenDental {
 			// 
 			this.labelSkySQL.Location = new System.Drawing.Point(18, 147);
 			this.labelSkySQL.Name = "labelSkySQL";
-			this.labelSkySQL.Size = new System.Drawing.Size(115, 17);
+			this.labelSkySQL.Size = new System.Drawing.Size(86, 17);
 			this.labelSkySQL.TabIndex = 105;
-			this.labelSkySQL.Text = "Sky SQL PEM (rare)";
+			this.labelSkySQL.Text = "Sky SQL PEM";
 			this.labelSkySQL.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textSkySQL
 			// 
-			this.textSkySQL.Location = new System.Drawing.Point(139, 144);
+			this.textSkySQL.Location = new System.Drawing.Point(110, 144);
 			this.textSkySQL.Name = "textSkySQL";
-			this.textSkySQL.Size = new System.Drawing.Size(292, 20);
+			this.textSkySQL.Size = new System.Drawing.Size(318, 20);
 			this.textSkySQL.TabIndex = 105;
 			// 
 			// comboServerName
@@ -226,7 +226,7 @@ namespace OpenDental {
 			this.Controls.Add(this.checkUseReadOnlyServer);
 			this.Controls.Add(this.groupBoxReadOnlyServerSetup);
 			this.Name = "UserControlServerConnections";
-			this.Size = new System.Drawing.Size(494, 660);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxReadOnlyServerSetup.ResumeLayout(false);
 			this.groupConnectionSettings.ResumeLayout(false);
 			this.groupConnectionSettings.PerformLayout();

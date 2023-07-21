@@ -21,10 +21,10 @@ namespace OpenDental {
 
 	public partial class FormSheetFillEdit:FormODBase {
 		#region Fields - private
-		///<summary>Statements use Sheets needs access to the entire Account data set for measuring grids.  See RefreshPanel(). Optionally set before opening form.</summary>
-		public DataSet DataSet_=null;
-		///<summary>True if export as CSV was checked in FormStatementOptions.cs. Optionally set before opening form.</summary>
-		public bool DoExportCSV=false;
+		///<summary>Statements use Sheets needs access to the entire Account data set for measuring grids.  See RefreshPanel()</summary>
+		private DataSet _dataSet;
+		///<summary>True if export as CSV was checked in FormStatementOptions.cs</summary>
+		private bool _doExportCSV;
 		///<summary>When user clicks on text, we calculate the idx within the string where they clicked.  It's class level so that we can draw it during debugging.</summary>
 		private int _idxSelectedChar=-1;
 		private bool _isMouseDown;
@@ -35,7 +35,6 @@ namespace OpenDental {
 		///<summary>When user clicks on text, this list of rectangles is created, on for each char, so that we can hit test where they clicked.  It's class level so that we can draw the rectangles during debugging.</summary>
 		private List<RectangleF> _listRectangleFsChars=new List<RectangleF>();
 		private List<SignatureBoxWrapper> _listSignatureBoxWrappers=new List<SignatureBoxWrapper>();
-		private List<RichTextBox> _listRichTextBoxesSignatures=new List<RichTextBox>();
 		///<summary>Only used here to draw the dashed margin lines.</summary>
 		private Margins _marginsPrint=new Margins(0,0,40,60);
 		///<summary>The location where the PDF file has been created.</summary>
@@ -44,10 +43,6 @@ namespace OpenDental {
 		private Timer _timerSaveButtonText;
 		///<summary>Creates a unique identifier for this instance of the form. This can be used when creating a thread with a unique group name.</summary>
 		private string _uniqueFormIdentifier;
-		///<summary>Tab order of the currently selected control, either checkbox, textbox, or combobox. 1-based in sheets.</summary>
-		private int _tabCurrent=0;
-		///<summary>The current sheetField the user is hovering over. Used to add a hovering highlight. This can only be a combobox or checkbox.</summary>
-		private SheetField _sheetFieldHover;
 		#endregion Fields - private
 
 		#region Fields - public
@@ -67,7 +62,7 @@ namespace OpenDental {
 		public MedLab MedLabCur;
 		///<summary>A method that will be invoked when printing/email/creating PDF of a statement.</summary>
 		public SaveStatementToDocDelegate SaveStatementToDocDelegate;
-		///<summary>Will be null if deleted. Set before opening form.</summary>
+		///<summary>Will be null if deleted.</summary>
 		public Sheet SheetCur;
 		public Statement StatementCur;
 
@@ -75,11 +70,14 @@ namespace OpenDental {
 
 		#region Constructor
 		///<summary>Use this constructor when displaying a statement.  dataSet should be filled with the data set from AccountModules.GetAccount()</summary>
-		public FormSheetFillEdit(){
+		public FormSheetFillEdit(Sheet sheet,DataSet dataSet=null,bool doExportCSV=false){
 			InitializeComponent();
 			InitializeLayoutManager();
 			MouseWheel+=FormSheetFillEdit_MouseWheelScroll;
 			Lan.F(this);
+			SheetCur=sheet;
+			_dataSet=dataSet;
+			_doExportCSV=doExportCSV;
 		}
 		#endregion Constructor
 
@@ -97,19 +95,12 @@ namespace OpenDental {
 		}
 
 		public static void ShowForm(Sheet sheet,FormClosingEventHandler formClosingEventHandler=null,bool isReadOnly=false) {
-			FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit();
-			formSheetFillEdit.SheetCur=sheet;
+			FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit(sheet);
 			if(formClosingEventHandler!=null) {
 				formSheetFillEdit.FormClosing+=formClosingEventHandler;
 			}
 			formSheetFillEdit.IsReadOnly=isReadOnly;
 			formSheetFillEdit.Show();
-		}
-
-		///<summary>Returns the bottom Y index of the given page number for the current sheet, adjusted for margins.  Used for drawing page breaks and limiting Y position of added fields.</summary>
-		private int GetBottomOfPage(int pageCount) {
-			int marginPerPage=_marginsPrint.Top+_marginsPrint.Bottom;
-			return pageCount*(SheetCur.HeightPage-marginPerPage)+_marginsPrint.Top;
 		}
 		#endregion Methods - public
 
@@ -123,18 +114,23 @@ namespace OpenDental {
 				return;
 			}
 			FillFieldsFromControls();
+			FieldValueChanged(sender);//the sender doesn't matter
 			LoadImages();
 			LayoutFields();
-			ClearSigs();
 			panelMain.Invalidate();
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+			Close();
 		}
 
 		private void butChangePat_Click(object sender,EventArgs e) {
 			using FormPatientSelect formPatientSelect=new FormPatientSelect();
 			formPatientSelect.IsSelectionModeOnly=true;
 			if(formPatientSelect.ShowDialog()==DialogResult.OK) {
-				SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,SheetCur.PatNum,Lan.g(this,"Sheet with ID")+" "+SheetCur.SheetNum+" "+Lan.g(this,"moved to PatNum")+" "+formPatientSelect.PatNumSelected);
-				SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,formPatientSelect.PatNumSelected,Lan.g(this,"Sheet with ID")+" "+SheetCur.SheetNum+" "+Lan.g(this,"moved from PatNum")+" "+SheetCur.PatNum);
+				SecurityLogs.MakeLogEntry(Permissions.SheetEdit,SheetCur.PatNum,Lan.g(this,"Sheet with ID")+" "+SheetCur.SheetNum+" "+Lan.g(this,"moved to PatNum")+" "+formPatientSelect.PatNumSelected);
+				SecurityLogs.MakeLogEntry(Permissions.SheetEdit,formPatientSelect.PatNumSelected,Lan.g(this,"Sheet with ID")+" "+SheetCur.SheetNum+" "+Lan.g(this,"moved from PatNum")+" "+SheetCur.PatNum);
 				SheetCur.PatNum=formPatientSelect.PatNumSelected;
 				if(SheetCur.PatNum>0) {
 					checkSaveToImages.Enabled=true;
@@ -163,9 +159,7 @@ namespace OpenDental {
 				if(hasSheetFromDb) {
 					//We need to refresh SheetCur with the sheet from the database due to signature printing.
 					//Without this line, a user could create a new sheet, sign it, click print and the signature would not show correctly.
-					DisposeOfImages();
 					SheetCur=Sheets.GetSheet(SheetCur.SheetNum);
-					LoadImages();
 				}
 			}
 			//whether this is a new sheet, or one pulled from the database,
@@ -207,16 +201,11 @@ namespace OpenDental {
 			}
 			string pdfFile=EmailSheet(strEmailAddress,subject);
 			if(HasEmailBeenSent && SheetCur.SheetType==SheetTypeEnum.Statement && SaveStatementToDocDelegate!=null) {
-				SaveStatementToDocDelegate(StatementCur,SheetCur,DataSet_,pdfFile);
+				SaveStatementToDocDelegate(StatementCur,SheetCur,_dataSet,pdfFile);
 			}
 			if(_isAutoSave && checkSaveToImages.Checked) {
 				SaveAsDocument('U',"PatientForm");
 			}
-		}
-
-		private void butFontAbout_Click(object sender,EventArgs e) {
-			MsgBox.Show(this,"When updating to 23.1 from previous versions, the horizontal space between letters within sheets has increased slightly. If some text no longer fits inside the boxes, this tool can be used to reduce the font size by 0.5 for all text fields in the entire sheet. This can be done repeatedly if needed.");
-			return;
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
@@ -248,14 +237,14 @@ namespace OpenDental {
 			else {
 				filePathAndName=PrefC.GetRandomTempFile(".pdf");
 				if(IsStatement) {
-					SheetPrinting.CreatePdf(SheetCur,filePathAndName,StatementCur,MedLabCur,DataSet_);
+					SheetPrinting.CreatePdf(SheetCur,filePathAndName,StatementCur,MedLabCur,_dataSet);
 				}
 				else {
 					SheetPrinting.CreatePdf(SheetCur,filePathAndName,StatementCur,MedLabCur);
 				}
 			}
 			try {
-				if(ODBuild.IsThinfinity()) {
+				if(ODBuild.IsWeb()) {
 					ThinfinityUtils.HandleFile(filePathAndName);
 				}
 				else {
@@ -266,9 +255,9 @@ namespace OpenDental {
 				FriendlyException.Show(Lan.g(this,"Unable to open the file."),ex);
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,SheetCur.PatNum,SheetCur.Description+" from "+SheetCur.DateTimeSheet.ToShortDateString()+" pdf was created");
+			SecurityLogs.MakeLogEntry(Permissions.SheetEdit,SheetCur.PatNum,SheetCur.Description+" from "+SheetCur.DateTimeSheet.ToShortDateString()+" pdf was created");
 			if(SheetCur.SheetType==SheetTypeEnum.Statement && SaveStatementToDocDelegate!=null) {
-				SaveStatementToDocDelegate(StatementCur,SheetCur,DataSet_,filePathAndName);
+				SaveStatementToDocDelegate(StatementCur,SheetCur,_dataSet,filePathAndName);
 			}
 			if(SheetCur.SheetType==SheetTypeEnum.LabSlip) {
 				SaveAsDocument('B',"LabSlipArchive");
@@ -308,13 +297,13 @@ namespace OpenDental {
 				return;
 			}
 			if(IsStatement) {
-				SheetPrinting.Print(SheetCur,DataSet_,1,IsRxControlled,StatementCur,MedLabCur);
+				SheetPrinting.Print(SheetCur,_dataSet,1,IsRxControlled,StatementCur,MedLabCur);
 			}
 			else {
 				SheetPrinting.Print(SheetCur,1,IsRxControlled,StatementCur,MedLabCur);
 			}
 			if(SheetCur.SheetType==SheetTypeEnum.Statement && SaveStatementToDocDelegate!=null) {
-				SaveStatementToDocDelegate(StatementCur,SheetCur,DataSet_);
+				SaveStatementToDocDelegate(StatementCur,SheetCur,_dataSet);
 			}
 			if(SheetCur.SheetType==SheetTypeEnum.LabSlip) {
 				SaveAsDocument('B',"LabSlipArchive");
@@ -322,7 +311,7 @@ namespace OpenDental {
 			if(_isAutoSave && checkSaveToImages.Checked) {
 				SaveAsDocument('U',"PatientForm");
 			}
-			if(DoExportCSV) {
+			if(_doExportCSV) {
 				Statements.SaveStatementAsCSV(StatementCur);
 			}
 			DialogResult=DialogResult.OK;
@@ -346,9 +335,7 @@ namespace OpenDental {
 				if(hasSheetFromDb) {
 					//We need to refresh SheetCur with the sheet from the database due to signature printing.
 					//Without this line, a user could create a new sheet, sign it, click print and the signature would not show correctly.
-					DisposeOfImages();
 					SheetCur=Sheets.GetSheet(SheetCur.SheetNum);
-					LoadImages();
 				}
 			}
 			//whether this is a new sheet, or one pulled from the database,
@@ -424,7 +411,7 @@ namespace OpenDental {
 			}
 			if(formSheetOutputFormat.QtyPaperCopies>0){
 				if(IsStatement) {
-					SheetPrinting.Print(SheetCur,DataSet_,1,IsRxControlled,StatementCur,MedLabCur);
+					SheetPrinting.Print(SheetCur,_dataSet,1,IsRxControlled,StatementCur,MedLabCur);
 				}
 				else {
 					SheetPrinting.Print(SheetCur,formSheetOutputFormat.QtyPaperCopies,IsRxControlled,StatementCur,MedLabCur);
@@ -439,7 +426,7 @@ namespace OpenDental {
 				pdfFile=EmailSheet(formSheetOutputFormat.Email2Address,Lan.g(this,"RE: ")+Patients.GetLim(SheetCur.PatNum).GetNameLF());
 			}
 			if(SheetCur.SheetType==SheetTypeEnum.Statement && SaveStatementToDocDelegate!=null) {
-				SaveStatementToDocDelegate(StatementCur,SheetCur,DataSet_,pdfFile);
+				SaveStatementToDocDelegate(StatementCur,SheetCur,_dataSet,pdfFile);
 			}
 			if(SheetCur.SheetType==SheetTypeEnum.LabSlip) {
 				SaveAsDocument('B',"LabSlipArchive");
@@ -449,20 +436,6 @@ namespace OpenDental {
 			}
 			DialogResult=DialogResult.OK;
 			Close();
-		}
-
-		private void butReduceFontSize_Click(object sender,EventArgs e) {
-			for(int i=0;i<SheetCur.SheetFields.Count();i++) {
-				if(!SheetCur.SheetFields[i].FieldType.In(SheetFieldType.InputField,SheetFieldType.OutputText,SheetFieldType.StaticText)) {
-					continue;
-				}
-				if(SheetCur.SheetFields[i].FontSize<(2.5f)) {
-					SheetCur.SheetFields[i].FontSize=2;
-					continue;
-				}
-				SheetCur.SheetFields[i].FontSize-=0.5f;
-			}
-			panelMain.Invalidate();
 		}
 
 		private void butRestore_Click(object sender,EventArgs e) {
@@ -482,7 +455,7 @@ namespace OpenDental {
 					return;
 				}
 				SaveSignaturePayPlan();
-				SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,SheetCur.PatNum,SheetCur.Description+" from "+SheetCur.DateTimeSheet.ToShortDateString());
+				SecurityLogs.MakeLogEntry(Permissions.SheetEdit,SheetCur.PatNum,SheetCur.Description+" from "+SheetCur.DateTimeSheet.ToShortDateString());
 				DialogResult=DialogResult.OK;
 				Close();
 				return;
@@ -517,9 +490,9 @@ namespace OpenDental {
 			if(!TryToSaveData()){
 				return;
 			}
-			//Create mobile notification to update eClipboard device with new sheet.
-			MobileNotifications.CI_AddSheet(SheetCur.PatNum,SheetCur.SheetNum);
-			SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,SheetCur.PatNum,SheetCur.Description+" from "+SheetCur.DateTimeSheet.ToShortDateString());
+			//Push new sheet to eClipboard.
+			OpenDentBusiness.WebTypes.PushNotificationUtils.CI_AddSheet(SheetCur.PatNum,SheetCur.SheetNum);
+			SecurityLogs.MakeLogEntry(Permissions.SheetEdit,SheetCur.PatNum,SheetCur.Description+" from "+SheetCur.DateTimeSheet.ToShortDateString());
 			DialogResult=DialogResult.OK;
 			Close();
 		}
@@ -561,7 +534,6 @@ namespace OpenDental {
 					_listSignatureBoxWrappers[i]?.SetTabletState(0);
 				}
 			}
-			DisposeOfImages();
 		}
 
 		private void FormSheetFillEdit_Load(object sender,EventArgs e) {
@@ -595,10 +567,6 @@ namespace OpenDental {
 			_listPoints=new List<Point>();
 			_uniqueFormIdentifier=MiscUtils.CreateRandomAlphaNumericString(15);//Thread safe random
 			Sheets.SetPageMargin(SheetCur,_marginsPrint);
-			if(SheetCur.IsNew || IsInTerminal) {
-				butReduceFontSize.Visible=false;
-				butFontAbout.Visible=false;
-			}
 			if(IsInTerminal) {
 				labelDateTime.Visible=false;
 				textDateTime.Visible=false;
@@ -618,6 +586,7 @@ namespace OpenDental {
 				butAddField.Visible=false;
 				MinimizeBox=false;
 				MaximizeBox=false;
+				this.TopMost=true;
 			}
 			if(SheetCur.IsLandscape){
 				LayoutManager.MoveWidth(panelMain,SheetCur.Height);//+20 for VScrollBar
@@ -646,6 +615,7 @@ namespace OpenDental {
 				butChangePat.Visible=false;
 				checkErase.Visible=false;
 				butAddField.Visible=false;
+				butCancel.Text="Close";
 			}
 			if(SheetCur.SheetType==SheetTypeEnum.PaymentPlan) {//hide buttons if PP sheet type
 				labelShowInTerminal.Visible=false;
@@ -658,14 +628,6 @@ namespace OpenDental {
 				butChangePat.Visible=false;
 				butSave.Visible=true;
 				butAddField.Visible=false;
-			}
-			//Check the sheetfields to see if any need to be populated with an autonote.
-			for(int i=0;i<SheetCur.SheetFields.Count;i++) {
-				if(SheetCur.SheetFields[i].FieldValue.Contains("AutoNoteNum:")) {
-					long autoNoteNum=Convert.ToInt64(SheetCur.SheetFields[i].FieldValue.Substring(SheetCur.SheetFields[i].FieldValue.IndexOf(":")+1));
-					AutoNote autoNote=AutoNotes.GetWhere(x => x.AutoNoteNum==autoNoteNum).FirstOrDefault();
-					SheetCur.SheetFields[i].FieldValue=autoNote.MainText;
-				}
 			}
 			//Some controls may be on subsequent pages if the SheetFieldDef is multipage.
 			int bottomLastField=0;
@@ -680,16 +642,6 @@ namespace OpenDental {
 				textShowInTerminal.Text=SheetCur.ShowInTerminal.ToString();
 			}
 			LoadImages();
-			//We need to double check any sheet Input, Output, and Static Text fields for growth behavior. If this sheet was sent over as a webform, the height for a specific field may have been adjusted to conform to a web or mobile web view. If the height was adjusted, we need to re-measure and adjust these fields once they are retreived in OD.
-			for(int i=0;i<SheetCur.SheetFields.Count;i++) {
-				if(!SheetCur.SheetFields[i].FieldType.In(SheetFieldType.InputField,SheetFieldType.OutputText,SheetFieldType.StaticText)) {
-					continue;
-				}
-				if(!SheetCur.SheetFields[i].GrowthBehavior.In(GrowthBehaviorEnum.DownGlobal,GrowthBehaviorEnum.DownLocal)) {
-					continue;
-				}
-				ResizeTextBox(SheetCur.SheetFields[i],SheetCur.SheetFields[i].FieldValue);
-			}
 			string strErr=LayoutFields();
 			if(!string.IsNullOrWhiteSpace(strErr)) {
 				MsgBox.Show(this,strErr);//An invalid SheetField was repaired.
@@ -708,27 +660,13 @@ namespace OpenDental {
 			if(IsStatement) {
 				SelectFirstOptionComboBoxes();
 			}
-			List<SheetField> listSheetFieldsPositiveTabOrder=SheetCur.SheetFields.FindAll(x=>x.TabOrder>0).ToList();
-			//TabOrder is 1-indexed
-			if(listSheetFieldsPositiveTabOrder.Count>0) {
-				_tabCurrent=listSheetFieldsPositiveTabOrder.Select(x=>x.TabOrder).ToList().Min();
-				SheetField sheetFieldFirstTab=listSheetFieldsPositiveTabOrder.Find(x=>x.TabOrder==_tabCurrent);
-				if(sheetFieldFirstTab!=null) {//probably can't be null
-					if(sheetFieldFirstTab.FieldType==SheetFieldType.InputField) {
-						CreateFloatingTextBox(sheetFieldFirstTab,Point.Empty);
-					}
-				}
-			}
 			//If it is an exam and has the permission to save it, enable the save button.
-			if(SheetCur.SheetType==SheetTypeEnum.ExamSheet && butOK.Enabled && butOK.Visible && !IsReadOnly){
-				butSave.Visible=true;
-				butOK.Text="Save && Close";
-			}
+			butSave.Visible=(SheetCur.SheetType==SheetTypeEnum.ExamSheet && butOK.Enabled && butOK.Visible && !IsReadOnly);
 			if(SheetCur.IsNew && SheetCur.SheetType!=SheetTypeEnum.PaymentPlan) {//payplan does not get saved to db so sheet is always new
 				butChangePat.Enabled=false;
 				return;
 			}
-			if(SheetCur.PatNum!=0 && !Security.IsAuthorized(EnumPermType.SheetDelete,SheetCur.DateTimeSheet,true,true,0,-1,SheetCur.SheetDefNum,0)) {
+			if(SheetCur.PatNum!=0 && !Security.IsAuthorized(Permissions.SheetDelete,SheetCur.DateTimeSheet,true,true,0,-1,SheetCur.SheetDefNum,0)) {
 				butDelete.Enabled=false;
 			}
 			if(SheetCur.IsDeleted && !IsStatement && !IsInTerminal) {
@@ -740,7 +678,7 @@ namespace OpenDental {
 				butAddField.Visible=false;
 			}
 			//from here on, only applies to existing sheets.
-			if(!Security.IsAuthorized(EnumPermType.SheetEdit,SheetCur.DateTimeSheet,false,false,0,-1,SheetCur.SheetDefNum,0)) {
+			if(!Security.IsAuthorized(Permissions.SheetEdit,SheetCur.DateTimeSheet,false,false,0,-1,SheetCur.SheetDefNum,0)) {
 				butSave.Visible=false;
 				panelMain.Enabled=false;
 				butOK.Enabled=false;
@@ -807,14 +745,9 @@ namespace OpenDental {
 			if(sheetField.FieldType!=SheetFieldType.PatImage){
 				return;
 			}
-			if(IsInTerminal) {
-				return;
-			}
-			int pageCount=Sheets.CalculatePageCount(SheetCur,_marginsPrint);
 			using FormSheetFieldEditPatImage formSheetFieldEditPatImage=new FormSheetFieldEditPatImage();
 			formSheetFieldEditPatImage.SheetFieldCur=sheetField;
 			formSheetFieldEditPatImage.SheetCur=SheetCur;
-			formSheetFieldEditPatImage.BottomYLimit=GetBottomOfPage(pageCount)-1;
 			formSheetFieldEditPatImage.ShowDialog();
 			if(formSheetFieldEditPatImage.DialogResult!=DialogResult.OK){
 				return;
@@ -826,12 +759,10 @@ namespace OpenDental {
 			else{
 				SheetFields.Update(sheetField);
 			}
-			ClearSigs();
+			FieldValueChanged(sender);//the sender doesn't matter
 			sheetField.BitmapLoaded?.Dispose();
 			sheetField.BitmapLoaded=null;
 			LoadImageOnePat(sheetField);
-			//Refresh panel view because PatImage location might have changed to be off the screen.
-			LayoutFields();
 			panelMain.Invalidate();
 		}
 
@@ -843,9 +774,28 @@ namespace OpenDental {
 			Point pointSheet=new Point(LayoutManager.Unscale(e.X),LayoutManager.Unscale(e.Y));
 			SheetField sheetField=HitTest(pointSheet);
 			if(sheetField?.FieldType==SheetFieldType.CheckBox){
-				_tabCurrent=sheetField.TabOrder;
-				SetCheckBoxAndRadioGroupStates(sheetField);
-				ClearSigs();
+				if(sheetField.FieldValue==""){
+					sheetField.FieldValue="X";
+					if(sheetField.RadioButtonValue!="" || sheetField.RadioButtonGroup!=""){
+						//this is a radioButton, so uncheck others in the group
+						for(int i=0;i<SheetCur.SheetFields.Count;i++){
+							if(sheetField==SheetCur.SheetFields[i]) {
+								continue;//skip self
+							}
+							if(sheetField.FieldName!=SheetCur.SheetFields[i].FieldName) {
+								continue;//not in this radio group
+							}
+							//If both checkbox field names are set to "misc" then we instead use the RadioButtonGroup as the actual radio button group name.
+							if(sheetField.FieldName=="misc" && sheetField.RadioButtonGroup!=SheetCur.SheetFields[i].RadioButtonGroup){
+								continue;
+							}
+							SheetCur.SheetFields[i].FieldValue="";
+						}
+					}
+				}
+				else{
+					sheetField.FieldValue="";
+				}
 				panelMain.Invalidate();
 				return;
 			}
@@ -853,15 +803,7 @@ namespace OpenDental {
 				|| sheetField?.FieldType==SheetFieldType.StaticText
 				|| sheetField?.FieldType==SheetFieldType.OutputText)
 			{
-				_tabCurrent=sheetField.TabOrder;
-				_sheetFieldHover=null;
-				bool isRightClick=false;
-				if(e.Button==MouseButtons.Right) {
-					isRightClick=true;
-				}
-				panelMain.Invalidate();
-				CreateFloatingTextBox(sheetField,e.Location,isRightClick:isRightClick);
-				ClearSigs();
+				CreateFloatingTextBox(sheetField,e.Location);
 				return;
 			}
 			if(sheetField?.FieldType==SheetFieldType.PatImage){
@@ -870,9 +812,6 @@ namespace OpenDental {
 			}
 			if(sheetField?.FieldType==SheetFieldType.ComboBox){
 				CreateFloatingComboOptions(sheetField);
-				ClearSigs();
-				_tabCurrent=sheetField.TabOrder;
-				panelMain.Invalidate();
 				return;
 			}
 			//Can draw everywhere else
@@ -880,28 +819,13 @@ namespace OpenDental {
 				return;
 			}
 			_listPoints.Add(pointSheet);
-			_tabCurrent=0;
-			panelMain.Invalidate();
 		}
 
 		private void panelMain_MouseMove(object sender,MouseEventArgs e) {
-			Point pointSheet=new Point(LayoutManager.Unscale(e.X),LayoutManager.Unscale(e.Y));
-			if(!_isMouseDown) {
-				SheetField sheetField=HitTest(pointSheet);
-				if(_sheetFieldHover==sheetField){//works even if either or both are null
-					return;
-				}
-				if(sheetField?.FieldType==SheetFieldType.CheckBox || sheetField?.FieldType==SheetFieldType.ComboBox) {
-					_sheetFieldHover=sheetField;
-					panelMain.Invalidate();
-					return;
-				}
-				_sheetFieldHover=null;
-				panelMain.Invalidate();
+			if(!_isMouseDown){
 				return;
 			}
-			_sheetFieldHover=null;
-			panelMain.Invalidate();
+			Point pointSheet=new Point(LayoutManager.Unscale(e.X),LayoutManager.Unscale(e.Y));
 			if(checkErase.Checked){
 				//look for any lines that intersect the "eraser".
 				//since the line segments are so short, it's sufficient to check end points.
@@ -972,7 +896,7 @@ namespace OpenDental {
 			sheetField.FontName="";
 			sheetField.RadioButtonValue="";
 			SheetCur.SheetFields.Add(sheetField);
-			ClearSigs();
+			FieldValueChanged(sender);
 			_listPoints.Clear();
 			panelScroll.Focus();
 		}
@@ -1010,9 +934,6 @@ namespace OpenDental {
 				}
 				if(SheetCur.SheetFields[i].BitmapLoaded==null){
 					g.DrawRectangle(Pens.Black,SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width,SheetCur.SheetFields[i].Height);
-					if(IsInTerminal) {
-						continue;
-					}
 					using Font font=new Font(FontFamily.GenericSansSerif,LayoutManager.UnscaleMS(8.25f));
 					float y=SheetCur.SheetFields[i].YPos+SheetCur.SheetFields[i].Height/2;
 					g.DrawString("Double click to add an image",font,Brushes.Black,SheetCur.SheetFields[i].XPos,y);
@@ -1034,11 +955,7 @@ namespace OpenDental {
 				}
 				Rectangle rectangle=new Rectangle(SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width,SheetCur.SheetFields[i].Height);
 				if(SheetCur.SheetFields[i].FieldType==SheetFieldType.InputField){
-					Color colorBack=Color.FromArgb(245,245,200);
-					if(!panelMain.Enabled) {
-						colorBack=Color.FromArgb(240,240,240);//light gray for disabled
-					}
-					using Brush brushBack=new SolidBrush(colorBack);
+					using Brush brushBack=new SolidBrush(Color.FromArgb(245,245,200));
 					g.FillRectangle(brushBack,rectangle);
 				}
 				FontStyle fontStyle=FontStyle.Regular;
@@ -1052,7 +969,6 @@ namespace OpenDental {
 				}
 				StringFormat stringFormat=new StringFormat();
 				stringFormat.Alignment=StringAlignment.Near;
-				stringFormat.SetTabStops(0.0f, new float[] {50.0f});
 				if(SheetCur.SheetFields[i].FieldType!=SheetFieldType.InputField){
 					if(SheetCur.SheetFields[i].TextAlign==HorizontalAlignment.Center){
 						stringFormat.Alignment=StringAlignment.Center;
@@ -1070,25 +986,13 @@ namespace OpenDental {
 				if(SheetCur.SheetFields[i].FieldType!=SheetFieldType.CheckBox) {
 					continue;
 				}
-				if(_tabCurrent==SheetCur.SheetFields[i].TabOrder && _tabCurrent>0) {
-					g.DrawRectangle(new Pen(Color.FromArgb(249,187,67),2),SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].Height-1);
-				}
-				else if(_sheetFieldHover==SheetCur.SheetFields[i]) {
-					g.DrawRectangle(new Pen(Color.FromArgb(249,187,67),2),SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].Height-1);
-				}
 				if(SheetCur.SheetFields[i].FieldValue=="") {
 					continue;
 				}
 				//FieldValue is X
 				using Pen pen=new Pen(Color.Black);//checkboxes have no color choice, and they've always been drawn with 1 px thickness
-				//Jordan In 23.1, we switched from controls to direct drawing.
-				//Example for manual:
-				//Rectangle: x=0, y=0, w=13, h=13
-				//Checkbox: x=1, y=1, w=12, h=12
-				//The checkbox will then really only draw 11x11 because of the -1 in drawing
-				//This results in exactly 1 pixel inset, and the 11x11 is also technically correct.
-				g.DrawLine(pen,SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].XPos+SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].YPos+SheetCur.SheetFields[i].Height-1);
-				g.DrawLine(pen,SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos+SheetCur.SheetFields[i].Height-1,SheetCur.SheetFields[i].XPos+SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].YPos);
+				g.DrawLine(pen,SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].XPos+SheetCur.SheetFields[i].Width,SheetCur.SheetFields[i].YPos+SheetCur.SheetFields[i].Height);
+				g.DrawLine(pen,SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos+SheetCur.SheetFields[i].Height,SheetCur.SheetFields[i].XPos+SheetCur.SheetFields[i].Width,SheetCur.SheetFields[i].YPos);
 			}
 			//Combobox-----------------------------------------------------------------------------------------------------------------
 			for(int i=0;i<SheetCur.SheetFields.Count;i++){
@@ -1096,38 +1000,10 @@ namespace OpenDental {
 					continue;
 				}
 				Rectangle rectangle=new Rectangle(SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width,SheetCur.SheetFields[i].Height);
-				Color colorBack=Color.FromArgb(245,245,200);
-				if(!panelMain.Enabled) {
-					colorBack=Color.FromArgb(240,240,240);//light gray for disabled
-				}
-				using Brush brushBack=new SolidBrush(colorBack);
+				using Brush brushBack=new SolidBrush(Color.FromArgb(245,245,200));
 				g.FillRectangle(brushBack,rectangle);
-				//Dropdown arrow to the right that indicates that this is comboBox
-				float xPosArrowStart=SheetCur.SheetFields[i].XPos+SheetCur.SheetFields[i].Width;
-				float yPosArrowStart=SheetCur.SheetFields[i].YPos+(SheetCur.SheetFields[i].Height/2f);
-				using Pen _penArrow=new Pen(Color.FromArgb(20,20,20),1.5f);
-				if(_tabCurrent==SheetCur.SheetFields[i].TabOrder && _tabCurrent>0) {
-					Color colorHighlight=Color.FromArgb(240,210,100);//orangish
-					g.FillRectangle(new SolidBrush(colorHighlight),SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].Height-1);
-				}
-				else if(_sheetFieldHover==SheetCur.SheetFields[i]) {
-					Color colorHighlight=Color.FromArgb(240,210,100);//orangish
-					g.FillRectangle(new SolidBrush(colorHighlight),SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width-1,SheetCur.SheetFields[i].Height-1);
-				}
-				g.DrawLine(_penArrow,
-					x1:xPosArrowStart-LayoutManager.ScaleF(13),
-					y1:yPosArrowStart-LayoutManager.ScaleF(1.5f),
-					x2:xPosArrowStart-LayoutManager.ScaleF(9.5f),
-					y2:yPosArrowStart+LayoutManager.ScaleF(1.5f));
-				g.DrawLine(_penArrow,
-					x1:xPosArrowStart-LayoutManager.ScaleF(9.5f),
-					y1:yPosArrowStart+LayoutManager.ScaleF(1.5f),
-					x2:xPosArrowStart-LayoutManager.ScaleF(6),
-					y2:yPosArrowStart-LayoutManager.ScaleF(1.5f));
 				//combobox has no font options like fontname, size, color, bold, or align
-				//We need the size of the text to scale with the height of the combobox. This is to match old behavior. Comboboxes have a default size when added, and we want it to look like 11 at that height.
-				//A static textbox field has a default font size of 11 and a height of 19. To create consistency with comboBoxes, we take the default height of the comboBox 19 and multiply it by 0.58 (rounded) = 11 font size.
-				using Font font=new Font(FontFamily.GenericSansSerif,SheetCur.SheetFields[i].Height*.58f);
+				using Font font=new Font(FontFamily.GenericSansSerif,LayoutManager.UnscaleMS(8.25f));
 				string str=SheetFields.GetComboSelectedOption(SheetCur.SheetFields[i]);
 				g.DrawString(str,font,Brushes.Black,rectangle);
 			}
@@ -1184,7 +1060,7 @@ namespace OpenDental {
 				if(!SheetCur.SheetFields[i].FieldType.In(SheetFieldType.Grid)){
 					continue;
 				}
-				SheetPrinting.DrawFieldGrid(SheetCur.SheetFields[i],SheetCur,g,null,DataSet_,StatementCur,MedLabCur,scaleMS:LayoutManager.GetScaleMS());
+				SheetPrinting.DrawFieldGrid(SheetCur.SheetFields[i],SheetCur,g,null,_dataSet,StatementCur,MedLabCur,scaleMS:LayoutManager.GetScaleMS());
 			}
 			//Special----------------------------------------------------------------------------------------------------------------------
 			///Rare. Referral letter tooth chart seems to the only example because the chart module controls are only shown in FormSheetDefEdit, not FormSheetFillEdit.
@@ -1194,15 +1070,6 @@ namespace OpenDental {
 				}
 				OpenDentBusiness.SheetPrinting.DrawFieldSpecial(SheetCur,SheetCur.SheetFields[i],g,null,0);
 			}
-			//Draw pagebreak
-			using Pen penDashPage=new Pen(Color.Green);
-			penDashPage.DashPattern=new float[] {4.0F,3.0F,2.0F,3.0F};
-			int pageCount=Sheets.CalculatePageCount(SheetCur,_marginsPrint);
-			for(int i=1;i<pageCount;i++) {
-				int bottomYOfPage=GetBottomOfPage(i);
-				g.DrawLine(penDashPage,0,bottomYOfPage,SheetCur.WidthPage,bottomYOfPage);
-			}
-			//End Draw Page Break
 			//for testing
 			//if(_listRectangleFsChars.Count>0){
 			//	g.DrawRectangles(Pens.Red,_listRectangleFsChars.ToArray());
@@ -1222,15 +1089,9 @@ namespace OpenDental {
 		}
 
 		private void TextBox_PreviewKeyDown(object sender,PreviewKeyDownEventArgs e) {
-			ClearSigs();
 			//preview is used because Tab doesn't hit KeyDown because it's intercepted by Windows to select the next control
-			ODtextBox textBox=(ODtextBox)sender;
+			System.Windows.Forms.TextBox textBox=(System.Windows.Forms.TextBox)sender;
 			SheetField sheetField=(SheetField)textBox.Tag;
-			if(e.KeyCode==Keys.Tab && sheetField.FieldType==SheetFieldType.StaticText) {
-				//Allow tabs to be inserted into static text fields.
-				e.IsInputKey=true;
-				return;
-			}
 			if(e.KeyCode==Keys.Tab
 				|| e.KeyCode==Keys.Enter && !textBox.Multiline)
 			{
@@ -1241,77 +1102,21 @@ namespace OpenDental {
 				if(tabOrder==0){
 					return;
 				}
-				List<SheetField> listSheetFieldsTabs=SheetCur.SheetFields
-					.FindAll(x=>x.TabOrder>tabOrder 
-						&& (x.FieldType==SheetFieldType.InputField || x.FieldType==SheetFieldType.CheckBox || x.FieldType==SheetFieldType.ComboBox))
-					.OrderBy(x=>x.TabOrder).ToList();
-				if(listSheetFieldsTabs.Count==0){
-					_tabCurrent=0;
+				//No, this logic will not wrap around to the first tab order.  Nobody cares.
+				List<SheetField> listSheetFields=SheetCur.SheetFields.FindAll(x=>x.TabOrder>tabOrder && x.FieldType==SheetFieldType.InputField).OrderBy(x=>x.TabOrder).ToList();
+				if(listSheetFields.Count==0){
 					return;
 				}
-				SheetField sheetFieldNext=listSheetFieldsTabs[0];
-				_tabCurrent=sheetFieldNext.TabOrder;
-				panelMain.Invalidate();
-				if(sheetFieldNext.FieldType==SheetFieldType.CheckBox || sheetFieldNext.FieldType==SheetFieldType.ComboBox) {
-					return;
-				}
+				SheetField sheetFieldNext=listSheetFields[0];
 				CreateFloatingTextBox(sheetFieldNext,Point.Empty);
 			}
 		}
 
-		private void PanelMain_PreviewKeyDown(object sender,PreviewKeyDownEventArgs e)	{
-			//preview is used because Tab doesn't hit KeyDown because it's intercepted by Windows to select the next control
-			if(e.KeyCode==Keys.Space) {
-				SheetField sheetField=SheetCur.SheetFields.Find(x=>x.TabOrder==_tabCurrent);
-				if(sheetField==null) {
-					return;
-				}
-				if(sheetField.FieldType==SheetFieldType.InputField) {
-					return;
-				}
-				ClearSigs();
-				panelMain.Invalidate();
-				if(sheetField.FieldType==SheetFieldType.ComboBox) {
-					CreateFloatingComboOptions(sheetField);
-					return;
-				}
-				//must be checkbox
-				if(sheetField?.FieldType==SheetFieldType.CheckBox) {
-					SetCheckBoxAndRadioGroupStates(sheetField);
-					return;
-				}
-			}
-			//Enter key not supported for tabbing. Causes issues.
-			if(e.KeyCode==Keys.Tab) {
-				List<SheetField> listSheetFields=SheetCur.SheetFields.FindAll(x=>x.TabOrder>_tabCurrent && (x.FieldType==SheetFieldType.InputField || x.FieldType==SheetFieldType.CheckBox || x.FieldType==SheetFieldType.ComboBox)).OrderBy(x=>x.TabOrder).ToList();
-				panelMain.Invalidate();
-				if(listSheetFields.Count==0) {
-					_tabCurrent=0;
-					return;
-				}
-				SheetField sheetFieldNext=listSheetFields[0];
-				_tabCurrent=sheetFieldNext.TabOrder;
-				if(sheetFieldNext.FieldType==SheetFieldType.CheckBox || sheetFieldNext.FieldType==SheetFieldType.ComboBox) {
-					return;
-				}
-				CreateFloatingTextBox(sheetFieldNext,Point.Empty,true);
-			}
-		}
-
 		private void TextBox_LostFocus(object sender,EventArgs e) {
-			ODtextBox textBox=(ODtextBox)sender;
-			if(textBox.IsDisposed || textBox.Disposing){ 
-				return; 
-			}
+			System.Windows.Forms.TextBox textBox=(System.Windows.Forms.TextBox)sender;
 			SheetField sheetField=(SheetField)textBox.Tag;
-			sheetField.FieldValue=textBox.Text;
+			sheetField.FieldValue=textBox.Text.Trim();
 			//int scroll=panelScroll.VerticalScroll.Value;
-			if(sheetField.GrowthBehavior!=GrowthBehaviorEnum.None){
-				ResizeTextBox(sheetField,sheetField.FieldValue,textBox);
-			}
-			if(textBox.IsDlgOpen) {
-				return;
-			}
 			textBox.Dispose();
 			panelMain.Controls.Remove(textBox);
 			//panelScroll.VerticalScroll.Value=scroll;
@@ -1322,22 +1127,46 @@ namespace OpenDental {
 			timerTextChanged.Tag=sender;
 			timerTextChanged.Start();
 		}
-		
+
 		private void timerTextChanged_Tick(object sender,EventArgs e) {
 			timerTextChanged.Stop();
-			ODtextBox textBox=(ODtextBox)timerTextChanged.Tag;
-			if(textBox.IsDisposed || textBox.Disposing){
-				return;
-			}
+			System.Windows.Forms.TextBox textBox=(System.Windows.Forms.TextBox)timerTextChanged.Tag;
 			timerTextChanged.Tag=null;
 			SheetField sheetField=(SheetField)textBox.Tag;
 			string fieldValue=textBox.Text;
 			//sheetField.FieldValue=textBox.Text;
-			//int cursorPos=textBox.SelectionStart;
+			int cursorPos=textBox.SelectionStart;
 			if(sheetField.GrowthBehavior==GrowthBehaviorEnum.None){
 				return;
 			}
-			ResizeTextBox(sheetField,fieldValue,textBox);
+			FontStyle fontstyle=FontStyle.Regular;
+			if(sheetField.FontIsBold){
+				fontstyle=FontStyle.Bold;
+			}
+			using Font font=new Font(sheetField.FontName,sheetField.FontSize,fontstyle);
+			using Graphics g=this.CreateGraphics();
+			//no need worry about scaling here. Not sure why.
+			SizeF sizeF=g.MeasureString(fieldValue,font,sheetField.Width);
+			int calcH=(int)sizeF.Height;
+			calcH+=font.Height+2;//add one line just in case.
+			if(calcH<=sheetField.Height){//no growth needed. 
+				return;
+			}
+			//the field height needs to change, so:
+			//calculate growth in 96dpi
+			int amountOfGrowth=calcH-sheetField.Height;
+			sheetField.Height=calcH;
+			LayoutManager.MoveHeight(textBox,LayoutManager.Scale(calcH));
+			//Growth of entire form.
+			//seems like we should instead be changing the sheet height, but that's probably handled somewhere else.
+			LayoutManager.MoveHeight(panelMain,panelMain.Height+amountOfGrowth);
+			if(sheetField.GrowthBehavior==GrowthBehaviorEnum.DownGlobal) {
+				SheetUtil.MoveAllDownBelowThis(SheetCur,sheetField,amountOfGrowth);
+			}
+			else if(sheetField.GrowthBehavior==GrowthBehaviorEnum.DownLocal) {
+				SheetUtil.MoveAllDownWhichIntersect(SheetCur,sheetField,amountOfGrowth);
+			}
+			RepositionControls();
 		}
 
 		private void timerChangeSaveButtonText(object sender,EventArgs e) {
@@ -1361,27 +1190,17 @@ namespace OpenDental {
 			//int scrollVal=panelScroll.VerticalScroll.Value;
 			Point point=new Point(LayoutManager.Scale(sheetField.XPos),yPos+height);//+scrollVal);
 			contextMenu.Show(panelMain,point);//Can't resize width, it's done according to width of items.
-			_isMouseDown=false;//contextMenu is closed, so Mouse shouldn't be considered down anymore
 		}
 
 		///<summary>This is for an input field, static text, or output text to edit text, and then it goes away. The point passed in is so that we can put the cursor in the right place.</summary>
-		private void CreateFloatingTextBox(SheetField sheetField,Point point,bool isFromCheckBox=false,bool isRightClick=false){
-			string text=sheetField.FieldValue;
-			if(sheetField.FieldType==SheetFieldType.InputField && Regex.IsMatch(text,@"\[Prompt:""[a-zA-Z_0-9 ]+""\]")) { //is an AutoNote
-				FrmAutoNoteCompose frmAutoNoteCompose=new FrmAutoNoteCompose();
-				frmAutoNoteCompose.StrMainTextNote=text;
-				frmAutoNoteCompose.ShowDialog();
-				if(frmAutoNoteCompose.IsDialogOK) {
-					text=frmAutoNoteCompose.StrCompletedNote;
-				}
-			}
+		private void CreateFloatingTextBox(SheetField sheetField,Point point){
 			//Convert \n that are by themselves to \r\n. Explanation is in SheetsInternal.GetSheetFromResource().
-			text=Regex.Replace(text,@"(?<!\r)\n","\r\n");
+			string text=Regex.Replace(sheetField.FieldValue,@"(?<!\r)\n","\r\n");
 			_idxSelectedChar=HitTestChars(sheetField,point,text);
 			//panelMain.Invalidate();//for testing
 			//return;
 			//Now, create the textBox==========================================================================================================================
-			ODtextBox textBox=new ODtextBox();
+			System.Windows.Forms.TextBox textBox=new System.Windows.Forms.TextBox();
 			textBox.BorderStyle=BorderStyle.None;
 			if(sheetField.FieldType==SheetFieldType.InputField){
 				textBox.BackColor=Color.FromArgb(245,245,200);
@@ -1393,7 +1212,7 @@ namespace OpenDental {
 			if(sheetField.ItemColor!=Color.FromArgb(0)){//if not empty
 				textBox.ForeColor=sheetField.ItemColor;
 			}
-			textBox.SelectionAlignment=sheetField.TextAlign;
+			textBox.TextAlign=sheetField.TextAlign;
 			FontStyle style=FontStyle.Regular;
 			if(sheetField.FontIsBold) {
 				style=FontStyle.Bold;
@@ -1403,7 +1222,7 @@ namespace OpenDental {
 			//fontSize=fontSize*1.04f;//This is an attempt to make the textbox show exactly the same as the drawing.
 			//TextRenderer was added to C# so that we could draw to match the textbox perfectly if we wanted.
 			//But we need the other way around.  We don't want to be forced to use TextRenderer everywhere just so a temp textbox matches.
-			//The final solution will be to switch to WPF which is consistent for drawing and textboxes.
+			//The final solution will be to build our own UI.TextBox, which isn't too hard, but can't be immediate.
 			textBox.Font=new Font(sheetField.FontName,fontSize,style);
 			if(LayoutManager.Scale(sheetField.Height)<=textBox.Font.Height+5 && sheetField.GrowthBehavior==GrowthBehaviorEnum.None) {
 				textBox.Multiline=false;
@@ -1413,13 +1232,7 @@ namespace OpenDental {
 			}
 			textBox.Text=text;
 			textBox.Height=LayoutManager.Scale(sheetField.Height);
-			textBox.ScrollBars=RichTextBoxScrollBars.None;//but we do want scrollbars if needed
-			if(IsInTerminal) { 
-				// Do not allow patients to use the right click menu
-				textBox.ContextMenu=new ContextMenu();
-			}
-			textBox.HasAutoNotes=true;
-			textBox.QuickPasteType=EnumQuickPasteType.Sheets;
+			textBox.ScrollBars=ScrollBars.None;//but we do want scrollbars if needed
 			textBox.Tag=sheetField;
 			textBox.LostFocus+=TextBox_LostFocus;
 			textBox.PreviewKeyDown+=TextBox_PreviewKeyDown;
@@ -1429,14 +1242,7 @@ namespace OpenDental {
 			LayoutManager.Add(textBox,panelMain);
 			//int scroll=panelScroll.VerticalScroll.Value;
 			//panelScroll.VerticalScroll.Value=scroll;
-			if(isFromCheckBox) {
-				//textBox will instantly lose focus if tabbing from a checkbox and using .Select() or Focus(), so use .SelectAll() instead
-				textBox.SelectAll();
-			}
-			else {
-				//SelectAll() doesn't work when tabbing from another textbox. Cursor won't show.
-				textBox.Select();
-			}
+			textBox.Select();
 			if(point==Point.Empty//just tabbing over from a previous field, so select end
 				|| _idxSelectedChar==-1)
 			{
@@ -1444,9 +1250,6 @@ namespace OpenDental {
 			}
 			else{
 				textBox.SelectionStart=_idxSelectedChar;
-			}
-			if(isRightClick) {
-				textBox.ContextMenu.Show(panelMain,point);
 			}
 		}
 
@@ -1469,7 +1272,7 @@ namespace OpenDental {
 			else {
 				emailAddress=EmailAddresses.GetNewEmailDefault(Security.CurUser.UserNum,patient.ClinicNum);
 			}
-			if(!Security.IsAuthorized(EnumPermType.EmailSend,false)) {//Still need to return after printing, but not send emails.
+			if(!Security.IsAuthorized(Permissions.EmailSend,false)) {//Still need to return after printing, but not send emails.
 				DialogResult=DialogResult.OK;
 				Close();
 				return "";
@@ -1493,7 +1296,7 @@ namespace OpenDental {
 				}
 			}
 			else if(IsStatement) {
-				SheetPrinting.CreatePdf(SheetCur,pdfFile,StatementCur,MedLabCur,DataSet_);
+				SheetPrinting.CreatePdf(SheetCur,pdfFile,StatementCur,MedLabCur,_dataSet);
 			}
 			else {
 				SheetPrinting.CreatePdf(SheetCur,pdfFile,StatementCur,MedLabCur);
@@ -1519,7 +1322,7 @@ namespace OpenDental {
 			emailAttach.ActualFileName=fileName;
 			emailMessage.Attachments.Add(emailAttach);
 			emailMessage.MsgType=emailMessageSource;
-			if(DoExportCSV) {
+			if(_doExportCSV) {
 				rnd=new Random();
 				string csvFileName=DateTime.Now.ToString("yyyyMMdd")+"_"+DateTime.Now.TimeOfDay.Ticks.ToString()+rnd.Next(1000).ToString()+".csv";
 				string csvPathAndName=ODFileUtils.CombinePaths(attachPath,csvFileName);
@@ -1559,10 +1362,6 @@ namespace OpenDental {
 				//sigBox.SetInvalid();
 				_listSignatureBoxWrappers[i].ClearSignature(clearTopazTablet:false);//The user is purposefully "invalidating" the old signature by changing the contents of the sheet. 
 			}
-			for(int i=0;i<_listRichTextBoxesSignatures.Count;i++) {
-				_listRichTextBoxesSignatures[i].Dispose();
-			}
-			_listRichTextBoxesSignatures.Clear();
 		}
 
 		///<summary>Pass in a point in sheet coords. This doesn't hit test for everything, but just for items that we might want to click on. Frequently returns null.</summary>
@@ -1794,7 +1593,6 @@ namespace OpenDental {
 					richTextBox.Font=new Font("Arial",LayoutManager.ScaleF(8.25f));
 					LayoutManager.Add(richTextBox,panelMain);
 					richTextBox.BringToFront();
-					_listRichTextBoxesSignatures.Add(richTextBox);
 				}
 				_listSignatureBoxWrappers.Add(signatureBoxWrapper);
 			}
@@ -1814,13 +1612,6 @@ namespace OpenDental {
 			string filePathAndName=ODFileUtils.CombinePaths(SheetUtil.GetImagePath(),sheetField.FieldName);
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ && File.Exists(filePathAndName)) {
 				Bitmap bitmap=(Bitmap)Image.FromFile(filePathAndName);
-				if (sheetField.Width<=0) {
-					sheetField.Width=bitmap.Width;
-				}
-				if (sheetField.Height<=0) {
-					// maintain aspect ratio in case the sheetfield.width was different from bitmap.width
-					sheetField.Height=(int)Math.Ceiling(1.0f*sheetField.Width/bitmap.Width*bitmap.Height);
-				}
 				sheetField.BitmapLoaded=new Bitmap(bitmap,sheetField.Width,sheetField.Height);
 				bitmap?.Dispose();
 				return;
@@ -1829,32 +1620,25 @@ namespace OpenDental {
 				return;
 			}
 			//Cloud storage from here down
-			UI.ProgressWin progressWin=new UI.ProgressWin();
-			progressWin.StartingMessage="Downloading...";
-			byte[] byteArray=null;
-			progressWin.ActionMain=() => {
-				byteArray=CloudStorage.Download(SheetUtil.GetImagePath(),sheetField.FieldName);
-			};
-			progressWin.ShowDialog();
-			if(byteArray==null || byteArray.Length==0){
+			using FormProgress formProgress=new FormProgress();
+			formProgress.DisplayText=Lan.g(CloudStorage.LanThis,"Downloading " + sheetField.FieldName + "...");
+			formProgress.NumberFormat="F";
+			formProgress.NumberMultiplication=1;
+			formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+			formProgress.TickMS=1000;
+			OpenDentalCloud.Core.TaskStateDownload taskStateDownload=CloudStorage.DownloadAsync(SheetUtil.GetImagePath(),sheetField.FieldName,
+				new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
+			if(formProgress.ShowDialog()==DialogResult.Cancel) {
+				taskStateDownload.DoCancel=true;
+				return;
+			}
+			if(taskStateDownload==null || taskStateDownload.FileContent==null) {
 				//File wasn't downloaded, do nothing
 				return;
 			}
-			using MemoryStream memoryStream=new MemoryStream(byteArray);
+			using MemoryStream memoryStream=new MemoryStream(taskStateDownload.FileContent);
 			using Image image = Image.FromStream(memoryStream);
 			sheetField.BitmapLoaded=new Bitmap(image,sheetField.Width,sheetField.Height);
-		}
-
-		private void DisposeOfImages() {
-			//This only happens when we delete the current sheet.
-			if(SheetCur==null) {
-				return;
-			}
-			for(int i=0;i<SheetCur.SheetFields.Count;i++) {
-				if(SheetCur.SheetFields[i].BitmapLoaded!=null) {
-					SheetCur.SheetFields[i].BitmapLoaded.Dispose();
-				}
-			}
 		}
 
 		///<summary>Loads one PatImage from disk or cloud into sheetFieldDef.ImageField. We call this again if image changes for some reason.  This fails if sheetField.BitmapLoaded already has an image, so you have to clear that bitmap if you want to force a refresh.</summary>
@@ -1894,46 +1678,10 @@ namespace OpenDental {
 		///<summary>This is called after automatic growth to move a few controls to their new locations.  But most of the fields are just quickly drawn and they have no controls.</summary>
 		private void RepositionControls(){
 			for(int i=0;i<panelMain.Controls.Count;i++){
-				if(panelMain.Controls[i].Tag==null) {
-					continue;
-				}
 				SheetField sheetField=(SheetField)panelMain.Controls[i].Tag;
 				Point point=new Point(LayoutManager.Scale(sheetField.XPos),LayoutManager.Scale(sheetField.YPos));
 				LayoutManager.MoveLocation(panelMain.Controls[i],point);
 			}
-		}
-
-		///<summary>For resizing textBoxes with Growth Behavior set to DownLocal or DownGlobal. Also necessary on load to re-adjust any webform sheetfield height adjustments to Input, Output, and StaticText fields that had Growth Behavior applied.</summary>
-		private void ResizeTextBox(SheetField sheetField,string fieldValue,ODtextBox textBox=null) { 
-			FontStyle fontstyle=FontStyle.Regular;
-			if(sheetField.FontIsBold){
-				fontstyle=FontStyle.Bold;
-			}
-			using Font font=new Font(sheetField.FontName,sheetField.FontSize,fontstyle);
-			using Graphics g=this.CreateGraphics();
-			//no need worry about scaling here. Not sure why.
-			SizeF sizeF=g.MeasureString(fieldValue,font,sheetField.Width);
-			int calcH=(int)sizeF.Height;
-			if(calcH<=sheetField.Height){//no growth needed. 
-				return;
-			}
-			//the field height needs to change, so:
-			//calculate growth in 96dpi
-			int amountOfGrowth=calcH-sheetField.Height;
-			sheetField.Height=calcH;
-			if(textBox!=null){
-				LayoutManager.MoveHeight(textBox,LayoutManager.Scale(calcH));
-			}
-			//Growth of entire form.
-			//seems like we should instead be changing the sheet height, but that's probably handled somewhere else.
-			LayoutManager.MoveHeight(panelMain,panelMain.Height+amountOfGrowth);
-			if(sheetField.GrowthBehavior==GrowthBehaviorEnum.DownGlobal) {
-				SheetUtil.MoveAllDownBelowThis(SheetCur,sheetField,amountOfGrowth);
-			}
-			else if(sheetField.GrowthBehavior==GrowthBehaviorEnum.DownLocal) {
-				SheetUtil.MoveAllDownWhichIntersect(SheetCur,sheetField,amountOfGrowth);
-			}
-			RepositionControls();
 		}
 
 		///<summary>For all the combo boxes on the form, selects the first option if nothing is already selected.</summary>
@@ -1946,32 +1694,6 @@ namespace OpenDental {
 				if(sheetComboBox.ComboOptions.Length > 0 && sheetComboBox.SelectedOption=="") {
 					sheetComboBox.SelectedOption=sheetComboBox.ComboOptions[0];
 				}
-			}
-		}
-
-		///<summary>Unchecks all other check or radio buttons within a group. Pass in the sheetfield that should be toggled.</summary>
-		private void SetCheckBoxAndRadioGroupStates(SheetField sheetField) {
-			if(sheetField.FieldValue=="") {
-				sheetField.FieldValue="X";
-				if(sheetField.RadioButtonValue!="" || sheetField.RadioButtonGroup!=""){
-					//this is a radioButton, so uncheck others in the group
-					for(int i=0;i<SheetCur.SheetFields.Count;i++){
-						if(sheetField==SheetCur.SheetFields[i]) {
-							continue;//skip self
-						}
-						if(sheetField.FieldName!=SheetCur.SheetFields[i].FieldName) {
-							continue;//not in this radio group
-						}
-						//If both checkbox field names are set to "misc" then we instead use the RadioButtonGroup as the actual radio button group name.
-						if(sheetField.FieldName=="misc" && sheetField.RadioButtonGroup!=SheetCur.SheetFields[i].RadioButtonGroup){
-							continue;
-						}
-						SheetCur.SheetFields[i].FieldValue="";
-					}
-				}
-			}
-			else{
-				sheetField.FieldValue="";
 			}
 		}
 
@@ -2046,8 +1768,8 @@ namespace OpenDental {
 				SheetCur.SheetFields[i].SheetNum=SheetCur.SheetNum;
 			}
 			if(!isNewReferralLetterWithProcsOrChart) {
-				//Prog grids and tooth charts are complex to generate, and we have no mechanism to store them with a sheet.
-				//So when those are present, we always just generate a pdf, and the user will have no way to get back to the sheet.
+				//Don't need to do this for referral letters that have tooth charts or grids because 
+				//we don't save their sheet fields. Instead, they are saved and accessed as PDFs. 
 				//Sync fields before sigBoxes
 				SheetFields.Sync(SheetCur.SheetFields.FindAll(x => !x.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice)),SheetCur.SheetNum,isSigBoxOnly:false);
 			}
@@ -2073,7 +1795,6 @@ namespace OpenDental {
 				//Refresh the fields so they are in the correct order. Don't need to do this for referral letters that have tooth charts or grids because
 				//we don't save their sheet fields. Instead, they are saved and accessed as PDFs. 
 				if(!isNewReferralLetterWithProcsOrChart) {
-					DisposeOfImages();
 					SheetFields.GetFieldsAndParameters(SheetCur);
 				}
 				string keyData=Sheets.GetSignatureKey(SheetCur);
@@ -2134,10 +1855,7 @@ namespace OpenDental {
 			}
 			//now sync SigBoxes
 			SheetFields.Sync(listSheetFieldsSigBoxes,SheetCur.SheetNum,isSigBoxOnly:true);
-			DisposeOfImages();
 			SheetFields.GetFieldsAndParameters(SheetCur);
-			//Method GetFieldsAndParameters() resyncs the sheet with the DB therefore wiping out any connected bitmaps
-			LoadImages();
 			//Each (SheetField)control has a tag pointing at a SheetCur.SheetField, and GetFieldsAndParameters() causes us to overwrite SheetCur.SheetFields.
 			//This leaves the tag pointing at nothing, so we need to call LayoutFields() to re-link the controls and data.
 			LayoutFields();
@@ -2272,41 +1990,41 @@ namespace OpenDental {
 
 		///<summary>Returns true when all of the sheet fields with IsRequired set to true have a value set. Otherwise, a message box shows and false is returned.</summary>
 		private bool VerifyRequiredFields(){
-			//SigBoxes are checked separately due to specific properties not in SheetField
-			for(int i=0;i<_listSignatureBoxWrappers.Count;i++) {
-				SheetField sheetField=(SheetField)_listSignatureBoxWrappers[i].Tag;
-				if(!sheetField.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice)){
+			FillFieldsFromControls();
+			for(int i=0;i<panelMain.Controls.Count;i++){
+				if(panelMain.Controls[i].Tag==null){
 					continue;
 				}
-				OpenDental.UI.SignatureBoxWrapper sigBox= _listSignatureBoxWrappers[i];
-				if(sheetField.IsRequired && (!sigBox.IsValid || sigBox.SigIsBlank)){
-					MsgBox.Show(this,"Signature required");
-					return false;
-				}
-			}
-			for(int i=0;i<SheetCur.SheetFields.Count;i++){
-				if(SheetCur.SheetFields[i]==null){
-					continue;
-				}
-				if(!SheetCur.SheetFields[i].IsRequired) {
-					continue;
-				}
-				//SigBoxes are different than InputFields, we do not check them here
-				if(SheetCur.SheetFields[i].FieldType==SheetFieldType.InputField){
-					SheetField sheetField=SheetCur.SheetFields[i];
-					if(string.IsNullOrWhiteSpace(sheetField.FieldValue)){
+				if(panelMain.Controls[i].GetType()==typeof(RichTextBox)){
+					SheetField sheetField=(SheetField)panelMain.Controls[i].Tag;
+					if(sheetField.FieldType!=SheetFieldType.InputField){
+						continue;
+					}
+					RichTextBox richTextBoxInput=(RichTextBox)panelMain.Controls[i];
+					if(sheetField.IsRequired && richTextBoxInput.Text.Trim()==""){
 						if(sheetField.FieldName=="misc" && !string.IsNullOrWhiteSpace(sheetField.ReportableName)) {
 							MessageBox.Show(Lan.g(this,"You must enter a value for")+" "+sheetField.ReportableName+" "+Lan.g(this,"before continuing."));
 						}
 						else {
 							MessageBox.Show(Lan.g(this,"You must enter a value for")+" "+sheetField.FieldName+" "+Lan.g(this,"before continuing."));
 						}
-						return false;
+						return false;			
 					}	
 				}
-				else if(SheetCur.SheetFields[i].FieldType==SheetFieldType.CheckBox){//Radio button groups or misc checkboxes
-					SheetField sheetField=SheetCur.SheetFields[i];
-					if(sheetField.FieldValue!="X"){//required but this one not checked
+				else if(panelMain.Controls[i].GetType()==typeof(OpenDental.UI.SignatureBoxWrapper)){
+					SheetField sheetField=(SheetField)panelMain.Controls[i].Tag;
+					if(!sheetField.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice)){
+						continue;
+					}
+					OpenDental.UI.SignatureBoxWrapper sigBox=(OpenDental.UI.SignatureBoxWrapper)panelMain.Controls[i];
+					if(sheetField.IsRequired && (!sigBox.IsValid || sigBox.SigIsBlank)){
+						MsgBox.Show(this,"Signature required");
+						return false;
+					}
+				}
+				else if(panelMain.Controls[i].GetType()==typeof(SheetCheckBox)){//Radio button groups or misc checkboxes
+					SheetField sheetField=(SheetField)panelMain.Controls[i].Tag;
+					if(sheetField.IsRequired && sheetField.FieldValue!="X"){//required but this one not checked
 						//first, checkboxes that are not radiobuttons.  For example, a checkbox at bottom of web form used in place of signature.
 						if(sheetField.RadioButtonValue=="" //doesn't belong to a built-in group
 							&& sheetField.RadioButtonGroup=="") //doesn't belong to a custom group
@@ -2323,11 +2041,11 @@ namespace OpenDental {
 							//Not the most efficient check, but there won't usually be more than a few hundred items so the user will not ever notice. We can speed up later if needed.
 							bool isValueSet=false;//we will be checking to see if at least one in the group has a value
 							int numGroupButtons=0;//a count of the buttons in the group
-							for(int j=0;j<SheetCur.SheetFields.Count;j++){
-								if(SheetCur.SheetFields[j].FieldType!=SheetFieldType.CheckBox){
+							for(int j=0;j<panelMain.Controls.Count;j++){
+								if(panelMain.Controls[j].GetType()!=typeof(SheetCheckBox)){
 									continue;//skip everything that's not a checkbox
 								}
-								SheetField sheetField2=SheetCur.SheetFields[j];
+								SheetField sheetField2=(SheetField)panelMain.Controls[j].Tag;
 								//whether built-in or custom, this makes sure it's a match.
 								//the other comparison will also match because they are empty strings
 								if(sheetField2.RadioButtonGroup.ToLower()==sheetField.RadioButtonGroup.ToLower()//if they are in the same group ("" for built-in, some string for custom group)
@@ -2472,11 +2190,18 @@ namespace OpenDental {
 				}
 				else if(CloudStorage.IsCloudStorage) {
 					//Upload file to patient's AtoZ folder
-					UI.ProgressWin progressWin=new UI.ProgressWin();
-					progressWin.StartingMessage="Uploading Treatment Plan...";
-					progressWin.ActionMain=() => CloudStorage.Upload(ImageStore.GetPatientFolder(patient,""),fileName+".pdf",File.ReadAllBytes(tempFile));
-					progressWin.ShowDialog();
-					if(progressWin.IsCancelled){
+					using FormProgress formProgress=new FormProgress();
+					formProgress.DisplayText="Uploading Treatment Plan...";
+					formProgress.NumberFormat="F";
+					formProgress.NumberMultiplication=1;
+					formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+					formProgress.TickMS=1000;
+					OpenDentalCloud.Core.TaskStateUpload taskStateUpload=CloudStorage.UploadAsync(ImageStore.GetPatientFolder(patient,"")
+						,fileName+".pdf"
+						,File.ReadAllBytes(tempFile)
+						,new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
+					if(formProgress.ShowDialog()==DialogResult.Cancel) {
+						taskStateUpload.DoCancel=true;
 						break;
 					}
 				}
@@ -2513,12 +2238,11 @@ namespace OpenDental {
 				Screens.DeleteForSheet(SheetCur.SheetNum);
 			}
 			Sheets.Delete(SheetCur.SheetNum,SheetCur.PatNum,SheetCur.ShowInTerminal);
-			SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,SheetCur.PatNum,SheetCur.Description
+			SecurityLogs.MakeLogEntry(Permissions.SheetEdit,SheetCur.PatNum,SheetCur.Description
 				+" "+Lan.g(this,"deleted from")+" "+SheetCur.DateTimeSheet.ToShortDateString());
 			if(SheetCur.ShowInTerminal>0) {
 				Signalods.SetInvalid(InvalidType.Kiosk);
 			}
-			DisposeOfImages();
 			SheetCur=null;
 			DialogResult=DialogResult.OK;
 			Close();
@@ -2535,7 +2259,7 @@ namespace OpenDental {
 			if(_isAutoSave && checkSaveToImages.Checked) {
 				SaveAsDocument('U',"PatientForm");
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,SheetCur.PatNum,SheetCur.Description+" from "+SheetCur.DateTimeSheet.ToShortDateString());
+			SecurityLogs.MakeLogEntry(Permissions.SheetEdit,SheetCur.PatNum,SheetCur.Description+" from "+SheetCur.DateTimeSheet.ToShortDateString());
 			DialogResult=DialogResult.OK;
 			Close();
 		}
@@ -2608,17 +2332,19 @@ namespace OpenDental {
 			if(SheetCur.SheetType!=SheetTypeEnum.PatientForm) {
 				return true;
 			}
-			for(int i=0;i<SheetCur.SheetFields.Count;i++){
-				if(SheetCur.SheetFields[i]==null){
+			for(int i=0;i<panelMain.Controls.Count;i++){
+				if(panelMain.Controls[i].Tag==null){
 					continue;
 				}
-				if(SheetCur.SheetFields[i].FieldType!=SheetFieldType.InputField){
-					continue;
-				}
-				SheetField sheetField=SheetCur.SheetFields[i];
-				if(sheetField.FieldName=="State" && sheetField.FieldValue.Trim().Length!=2 && sheetField.FieldValue.Trim().Length>0) {
-					MessageBox.Show(Lan.g(this,"The State field must be exactly two characters in length."));
-					return false;
+				if(panelMain.Controls[i].GetType()==typeof(RichTextBox)) {
+					SheetField sheetField=(SheetField)panelMain.Controls[i].Tag;
+					if(sheetField.FieldType!=SheetFieldType.InputField){
+						continue;
+					}
+					if(sheetField.FieldName=="State" && sheetField.FieldValue.Trim().Length!=2 && sheetField.FieldValue.Trim().Length>0) {
+						MessageBox.Show(Lan.g(this,"The State field must be exactly two characters in length."));
+						return false;
+					}
 				}
 			}
 			return true;

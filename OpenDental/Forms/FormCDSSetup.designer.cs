@@ -27,7 +27,8 @@ namespace OpenDental{
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.radioGroup = new System.Windows.Forms.RadioButton();
 			this.radioUser = new System.Windows.Forms.RadioButton();
-			this.butSave = new System.Windows.Forms.Button();
+			this.butOk = new System.Windows.Forms.Button();
+			this.butCancel = new System.Windows.Forms.Button();
 			this.label6 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -66,16 +67,27 @@ namespace OpenDental{
 			this.radioUser.TabIndex = 61;
 			this.radioUser.Text = "by User";
 			// 
-			// butSave
+			// butOk
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(647, 493);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 63;
-			this.butSave.Text = "&Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOk.Location = new System.Drawing.Point(566, 493);
+			this.butOk.Name = "butOk";
+			this.butOk.Size = new System.Drawing.Size(75, 24);
+			this.butOk.TabIndex = 63;
+			this.butOk.Text = "Save";
+			this.butOk.UseVisualStyleBackColor = true;
+			this.butOk.Click += new System.EventHandler(this.butOk_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(647, 493);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 64;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// label6
 			// 
@@ -92,7 +104,8 @@ namespace OpenDental{
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(734, 529);
 			this.Controls.Add(this.label6);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOk);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.radioGroup);
 			this.Controls.Add(this.radioUser);
 			this.Controls.Add(this.gridMain);
@@ -110,7 +123,8 @@ namespace OpenDental{
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.RadioButton radioGroup;
 		private System.Windows.Forms.RadioButton radioUser;
-		private System.Windows.Forms.Button butSave;
+		private System.Windows.Forms.Button butOk;
+		private System.Windows.Forms.Button butCancel;
 		private System.Windows.Forms.Label label6;
 	}
 }

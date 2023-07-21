@@ -13,8 +13,8 @@ namespace OpenDentBusiness{
 		///<summary>.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
 		public string Description;
-		///<summary>Enum:EnumAutomationTrigger What triggers this automation</summary>
-		public EnumAutomationTrigger Autotrigger;
+		///<summary>Enum:AutomationTrigger What triggers this automation</summary>
+		public AutomationTrigger Autotrigger;
 		///<summary>If this has a CompleteProcedure trigger, this is a comma-delimited list of codes that will trigger the action.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
 		public string ProcCodes;
@@ -44,29 +44,29 @@ namespace OpenDentBusiness{
 
 
 	///<summary></summary>
-	public enum EnumAutomationTrigger {
-		///<summary>0</summary>
-		ProcedureComplete,
-		///<summary>1</summary>
-		ApptBreak,
-		///<summary>2</summary>
-		ApptNewPatCreate,
-		///<summary>3. Regardless of module.  Usually only used with conditions.</summary>
-		PatientOpen,
-		///<summary>4</summary>
-		ApptCreate,
-		///<summary>5. Attaching a procedure to a scheduled appointment.</summary>
-		ProcSchedule,
-		///<summary>6</summary>
-		BillingTypeSet,
-		///<summary>7</summary>
+	public enum AutomationTrigger {
+		///<summary></summary>
+		CompleteProcedure,
+		///<summary></summary>
+		BreakAppointment,
+		///<summary></summary>
+		CreateApptNewPat,
+		///<summary>Regardless of module.  Usually only used with conditions.</summary>
+		OpenPatient,
+		///<summary></summary>
+		CreateAppt,
+		///<summary>Attaching a procedure to a scheduled appointment.</summary>
+		ScheduleProcedure,
+		///<summary></summary>
+		SetBillingType,
+		//<summary>Either a single statement or as part of the billing process.  Either print or </summary>
+		//CreateStatement
+		///<summary>Creating a new Rx</summary>
 		RxCreate,
-		///<summary>8</summary>
-		ClaimCreate,
-		///<summary>9</summary>
-		ClaimOpen,
-		///<summary>10</summary>
-		ApptComplete,
+		///<summary>Creating a new Claim</summary>
+		CreateClaim,
+		///<summary>Opening an existing Claim</summary>
+		OpenClaim,
 	}
 
 	///<summary></summary>

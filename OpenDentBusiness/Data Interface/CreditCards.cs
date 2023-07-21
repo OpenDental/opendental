@@ -48,29 +48,20 @@ namespace OpenDentBusiness{
 		///proper.</summary>
 		public static List<CreditCard> Refresh(long patNum){
 			//No need to check MiddleTierRole; no call to db.
-			List<CreditCardSource> listCreditCardSources=Enum.GetValues(typeof(CreditCardSource)).Cast<CreditCardSource>()
-				.Where(x => !x.In(CreditCards.GetCreditCardSourcesForOnlinePayments().ToArray())).ToList();
-			//This CCSource is used in ODProper and Payment Portal/Patient Portal. Adding so OD Proper can handle this CCSource correctly.
-			listCreditCardSources.Add(CreditCardSource.EdgeExpressCNP);
-			return RefreshBySource(patNum,listCreditCardSources);
-		}
-
-		///<summary>If patNum==0 then does not filter on PatNum; otherwise filters on PatNum. Includes all credit cards sources.</summary>
-		public static List<CreditCard> RefreshAll(long patNum){
-			//No need to check MiddleTierRole; no call to db.
-			List<CreditCardSource> listCreditCardSources=Enum.GetValues(typeof(CreditCardSource)).Cast<CreditCardSource>().ToList();
-			return RefreshBySource(patNum,listCreditCardSources);
+			List<CreditCardSource> listSources=Enum.GetValues(typeof(CreditCardSource)).Cast<CreditCardSource>()
+				.Where(x => !x.In(CreditCardSource.PayConnectPortalLogin,CreditCardSource.CareCredit)).ToList();
+			return RefreshBySource(patNum,listSources);
 		}
 
 		///<summary>Get all credit cards by a given list of CreditCardSource(s). Optionally filter by a given patNum.</summary>
-		public static List<CreditCard> RefreshBySource(long patNum,List<CreditCardSource> listCreditCardSources) {
+		public static List<CreditCard> RefreshBySource(long patNum,List<CreditCardSource> listSources) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<CreditCard>>(MethodBase.GetCurrentMethod(),patNum,listCreditCardSources);
+				return Meth.GetObject<List<CreditCard>>(MethodBase.GetCurrentMethod(),patNum,listSources);
 			}
-			if(listCreditCardSources.Count==0) {
+			if(listSources.Count==0) {
 				return new List<CreditCard>();
 			}
-			string command="SELECT * FROM creditcard WHERE CCSource IN ("+string.Join(",",listCreditCardSources.Select(x=>POut.Int((int)x)))+") ";
+			string command="SELECT * FROM creditcard WHERE CCSource IN ("+string.Join(",",listSources.Select(x=>POut.Int((int)x)))+") ";
 			if(patNum!=0) { //Add the PatNum criteria.
 				command+="AND PatNum="+POut.Long(patNum)+" ";
 			}
@@ -97,120 +88,110 @@ namespace OpenDentBusiness{
 
 		///<summary>Validate payConnectResponseWeb and create a new credit card from the PayConnectResponseWeb.</summary>
 		public static long InsertFromPayConnect(PayConnectResponseWeb payConnectResponseWeb) {
-			//No need to check MiddleTierRole; no call to db.
-			List<CreditCardSource> listCreditCardSources=new List<CreditCardSource>();
-			listCreditCardSources.Add(CreditCardSource.PayConnect);
-			listCreditCardSources.Add(CreditCardSource.PayConnectPortal);
-			listCreditCardSources.Add(CreditCardSource.PayConnectPortalLogin);
-			if(GetTokenCount(payConnectResponseWeb.PaymentToken,listCreditCardSources)>0) { //Prevent duplicates.
+			//No need to check MiddleTierRole;no call to db.
+			if(GetTokenCount(payConnectResponseWeb.PaymentToken,
+				new List<CreditCardSource> { CreditCardSource.PayConnect,CreditCardSource.PayConnectPortal,CreditCardSource.PayConnectPortalLogin })>0) { //Prevent duplicates.
 				throw new Exception("PayConnect token already exists: "+payConnectResponseWeb.PaymentToken);
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.CreditCardEdit,payConnectResponseWeb.PatNum,"Credit Card Added");
 			return Insert(payConnectResponseWeb.ToCreditCard());
 		}
 
 		///<summary>Creates a new credit card from the XWebResponse if it doesn't exist. Returns CreditCardNum of new or existing card.</summary>
-		public static void InsertFromXWeb(XWebResponse xWebResponse) {
-			//No need to check MiddleTierRole; no call to db.
-			List<CreditCardSource> listCreditCardSources=new List<CreditCardSource>();
-			listCreditCardSources.Add(CreditCardSource.XWeb);
-			listCreditCardSources.Add(CreditCardSource.XWebPortalLogin);
-			listCreditCardSources.Add(CreditCardSource.EdgeExpressCNP);
-			listCreditCardSources.Add(CreditCardSource.EdgeExpressRCM);
-			listCreditCardSources.Add(CreditCardSource.XServer);
-			listCreditCardSources.Add(CreditCardSource.XServerPayConnect);
-			listCreditCardSources.Add(CreditCardSource.EdgeExpressPaymentPortal);
-			listCreditCardSources.Add(CreditCardSource.EdgeExpressPaymentPortalGuest);
-			listCreditCardSources.Add(CreditCardSource.XWebPaymentPortal);
-			listCreditCardSources.Add(CreditCardSource.XWebPaymentPortalGuest);
+		public static long InsertFromXWeb(XWebResponse xWebResponse) {
+			//No need to check MiddleTierRole;no call to db.
+			List<CreditCardSource> listSources=new List<CreditCardSource> { 
+				CreditCardSource.XWeb,
+				CreditCardSource.XWebPortalLogin,
+				CreditCardSource.EdgeExpressCNP,
+				CreditCardSource.EdgeExpressRCM,
+				CreditCardSource.XServer,
+				CreditCardSource.XServerPayConnect
+			};
 			//Prevent duplicates.
-			if(GetTokenCount(xWebResponse.Alias,listCreditCardSources)>0) {
-				GetCardsByToken(xWebResponse.Alias,listCreditCardSources);
-				return;
+			if(GetTokenCount(xWebResponse.Alias,listSources)>0) {
+				return GetCardsByToken(xWebResponse.Alias,listSources).First().CreditCardNum;
 			}
 			//EdgeExpress doesn't mask a couple of the beginning numbers, so we'll go through and mask it appropriately. Doesn't hurt to do this for other card sources too.
 			int idxLast4Digits=(xWebResponse.MaskedAcctNum.Length-4);
 			string ccNumberMasked=(new string('X',idxLast4Digits))+xWebResponse.MaskedAcctNum.Substring(idxLast4Digits);//Replace the first all but last 4 with X's
-			CreditCard creditCard=new CreditCard();
-			creditCard.PatNum=xWebResponse.PatNum;
-			creditCard.XChargeToken=xWebResponse.Alias;
-			creditCard.CCNumberMasked=ccNumberMasked;
-			creditCard.CCExpiration=xWebResponse.AccountExpirationDate;
-			creditCard.CCSource=xWebResponse.CCSource;
-			creditCard.ClinicNum=xWebResponse.ClinicNum;
-			creditCard.ItemOrder=RefreshAll(xWebResponse.PatNum).Count;
-			creditCard.Address="";
-			creditCard.Zip="";
-			creditCard.ChargeAmt=0;
-			creditCard.DateStart=DateTime.MinValue;
-			creditCard.DateStop=DateTime.MinValue;
-			creditCard.Note="";
-			creditCard.PayPlanNum=0;
-			creditCard.PayConnectToken="";
-			creditCard.PayConnectTokenExp=DateTime.MinValue;
-			creditCard.PaySimpleToken="";
-			creditCard.Procedures="";
-			Insert(creditCard);
-			SecurityLogs.MakeLogEntry(EnumPermType.CreditCardEdit,xWebResponse.PatNum,"Credit Card Added");
+			return Insert(new CreditCard() {
+				PatNum=xWebResponse.PatNum,
+				XChargeToken=xWebResponse.Alias,
+				CCNumberMasked=ccNumberMasked,
+				CCExpiration=xWebResponse.AccountExpirationDate,
+				CCSource=xWebResponse.CCSource,
+				ClinicNum=xWebResponse.ClinicNum,
+				ItemOrder=Refresh(xWebResponse.PatNum).Count,
+				Address="",
+				Zip="",
+				ChargeAmt=0,
+				DateStart=DateTime.MinValue,
+				DateStop=DateTime.MinValue,
+				Note="",
+				PayPlanNum=0,
+				PayConnectToken="",
+				PayConnectTokenExp=DateTime.MinValue,
+				PaySimpleToken="",
+				Procedures="",
+			});
 		}
 
 		///<summary>Inserts entry into audit trail if any credit card field has been edited</summary>
 		public static void InsertAuditTrailEntry(CreditCard creditCardNew,CreditCard creditCardOld) {
-			//No need to check MiddleTierRole; no call to db.
-			StringBuilder stringBuilder=new StringBuilder();
+			StringBuilder stringBuilderLogText=new StringBuilder();
 			if(creditCardNew.Address != creditCardOld.Address) {
-				stringBuilder.AppendLine($"Address changed from: {creditCardOld.Address} to {creditCardNew.Address}.");
+				stringBuilderLogText.AppendLine($"Address changed from: {creditCardOld.Address} to {creditCardNew.Address}.");
 			}
 			if(creditCardNew.Zip != creditCardOld.Zip) {
-				stringBuilder.AppendLine($"Zip changed from: {creditCardOld.Zip} to {creditCardNew.Zip}.");
+				stringBuilderLogText.AppendLine($"Zip changed from: {creditCardOld.Zip} to {creditCardNew.Zip}.");
 			}
 			if(creditCardNew.XChargeToken != creditCardOld.XChargeToken) {
-				stringBuilder.AppendLine($"XChargeToken changed from: {creditCardOld.XChargeToken} to {creditCardNew.XChargeToken}.");
+				stringBuilderLogText.AppendLine($"XChargeToken changed from: {creditCardOld.XChargeToken} to {creditCardNew.XChargeToken}.");
 			}
 			if(creditCardNew.CCNumberMasked != creditCardOld.CCNumberMasked) {
-				stringBuilder.AppendLine($"CCNumberMasked changed from: {creditCardOld.CCNumberMasked} to {creditCardNew.CCNumberMasked}.");
+				stringBuilderLogText.AppendLine($"CCNumberMasked changed from: {creditCardOld.CCNumberMasked} to {creditCardNew.CCNumberMasked}.");
 			}
 			if((creditCardNew.CCExpiration.Date.Month != creditCardOld.CCExpiration.Date.Month) || (creditCardNew.CCExpiration.Date.Year != creditCardOld.CCExpiration.Date.Year)) {
-				stringBuilder.AppendLine($"CCExpiration changed from: {creditCardOld.CCExpiration.ToString("MMyy")} to {creditCardNew.CCExpiration.ToString("MMyy")}.");
+				stringBuilderLogText.AppendLine($"CCExpiration changed from: {creditCardOld.CCExpiration.ToString("MMyy")} to {creditCardNew.CCExpiration.ToString("MMyy")}.");
 			}
 			if(creditCardNew.ItemOrder != creditCardOld.ItemOrder) {
-				stringBuilder.AppendLine($"ItemOrder changed from: {creditCardOld.ItemOrder} to {creditCardNew.ItemOrder}.");
+				stringBuilderLogText.AppendLine($"ItemOrder changed from: {creditCardOld.ItemOrder} to {creditCardNew.ItemOrder}.");
 			}
 			if(creditCardNew.ChargeAmt != creditCardOld.ChargeAmt) {
-				stringBuilder.AppendLine($"ChargeAmt changed from: {creditCardOld.ChargeAmt} to {creditCardNew.ChargeAmt}.");
+				stringBuilderLogText.AppendLine($"ChargeAmt changed from: {creditCardOld.ChargeAmt} to {creditCardNew.ChargeAmt}.");
 			}
 			if(creditCardNew.DateStart.Date != creditCardOld.DateStart.Date) {
-				stringBuilder.AppendLine($"DateStart changed from: {creditCardOld.DateStart.Date} to {creditCardNew.DateStart.Date}.");
+				stringBuilderLogText.AppendLine($"DateStart changed from: {creditCardOld.DateStart.Date} to {creditCardNew.DateStart.Date}.");
 			}
 			if(creditCardNew.DateStop.Date != creditCardOld.DateStop.Date) {
-				stringBuilder.AppendLine($"DateStop changed from: {creditCardOld.DateStop.Date} to {creditCardNew.DateStop.Date}.");
+				stringBuilderLogText.AppendLine($"DateStop changed from: {creditCardOld.DateStop.Date} to {creditCardNew.DateStop.Date}.");
 			}
 			if(creditCardNew.Note != creditCardOld.Note) {
-				stringBuilder.AppendLine($"Note changed from: {creditCardOld.Note} to {creditCardNew.Note}.");
+				stringBuilderLogText.AppendLine($"Note changed from: {creditCardOld.Note} to {creditCardNew.Note}.");
 			}
 			if(creditCardNew.PayPlanNum != creditCardOld.PayPlanNum) {
-				stringBuilder.AppendLine($"PayPlanNum changed from: {creditCardOld.PayPlanNum} to {creditCardNew.PayPlanNum}.");
+				stringBuilderLogText.AppendLine($"PayPlanNum changed from: {creditCardOld.PayPlanNum} to {creditCardNew.PayPlanNum}.");
 			}
 			if(creditCardNew.PayConnectToken != creditCardOld.PayConnectToken) {
-				stringBuilder.AppendLine($"PayConnectToken changed from: {creditCardOld.PayConnectToken} to {creditCardNew.PayConnectToken}.");
+				stringBuilderLogText.AppendLine($"PayConnectToken changed from: {creditCardOld.PayConnectToken} to {creditCardNew.PayConnectToken}.");
 			}
 			if(creditCardNew.PayConnectTokenExp.Date != creditCardOld.PayConnectTokenExp.Date) {
-				stringBuilder.AppendLine($"PayConnectTokenExp changed from: {creditCardOld.PayConnectTokenExp.Date} to {creditCardNew.PayConnectTokenExp.Date}");
+				stringBuilderLogText.AppendLine($"PayConnectTokenExp changed from: {creditCardOld.PayConnectTokenExp.Date} to {creditCardNew.PayConnectTokenExp.Date}");
 			}
 			if(creditCardNew.Procedures != creditCardOld.Procedures) {
-				stringBuilder.AppendLine($"Procedures changed from: {creditCardOld.Procedures} to {creditCardNew.Procedures}.");
+				stringBuilderLogText.AppendLine($"Procedures changed from: {creditCardOld.Procedures} to {creditCardNew.Procedures}.");
 			}
 			if(creditCardNew.CCSource != creditCardOld.CCSource) {
-				stringBuilder.AppendLine($"CCSource changed from: {creditCardOld.CCSource} to {creditCardNew.CCSource}.");
+				stringBuilderLogText.AppendLine($"CCSource changed from: {creditCardOld.CCSource} to {creditCardNew.CCSource}.");
 			}
 			if(creditCardNew.ClinicNum != creditCardOld.ClinicNum) {
-				stringBuilder.AppendLine($"ClinicNum changed from: {creditCardOld.ClinicNum} to {creditCardNew.ClinicNum}.");
+				stringBuilderLogText.AppendLine($"ClinicNum changed from: {creditCardOld.ClinicNum} to {creditCardNew.ClinicNum}.");
 			}
 			if(creditCardNew.ExcludeProcSync != creditCardOld.ExcludeProcSync) {
-				stringBuilder.AppendLine($"ExcludeProcSync changed from: {creditCardOld.ExcludeProcSync} to {creditCardNew.ExcludeProcSync}.");
+				stringBuilderLogText.AppendLine($"ExcludeProcSync changed from: {creditCardOld.ExcludeProcSync} to {creditCardNew.ExcludeProcSync}.");
 			}
 			if(creditCardNew.PaySimpleToken != creditCardOld.PaySimpleToken) { 
-				stringBuilder.AppendLine($"PaySimpleToken changed from: {creditCardOld.PaySimpleToken} to {creditCardNew.PaySimpleToken}.");
+				stringBuilderLogText.AppendLine($"PaySimpleToken changed from: {creditCardOld.PaySimpleToken} to {creditCardNew.PaySimpleToken}.");
 			}
 			if(creditCardNew.ChargeFrequency != creditCardOld.ChargeFrequency) {
 				string oldFrequency=GetHumanReadableFrequency(creditCardOld.ChargeFrequency);
@@ -221,20 +202,20 @@ namespace OpenDentBusiness{
 				if(string.IsNullOrWhiteSpace(newFrequency)) {
 					newFrequency="None";
 				}
-				stringBuilder.AppendLine($"ChargeFrequency changed from: {oldFrequency} to {newFrequency}.");
+				stringBuilderLogText.AppendLine($"ChargeFrequency changed from: {oldFrequency} to {newFrequency}.");
 			}
 			if(creditCardNew.CanChargeWhenNoBal != creditCardOld.CanChargeWhenNoBal) {
-				stringBuilder.AppendLine($"CanChargeWhenNoBal changed from: {creditCardOld.CanChargeWhenNoBal} to {creditCardNew.CanChargeWhenNoBal}.");
+				stringBuilderLogText.AppendLine($"CanChargeWhenNoBal changed from: {creditCardOld.CanChargeWhenNoBal} to {creditCardNew.CanChargeWhenNoBal}.");
 			}
 			if(creditCardNew.PaymentType != creditCardOld.PaymentType) {
-				stringBuilder.AppendLine($"PaymentType changed from: {creditCardOld.PaymentType} to {creditCardNew.PaymentType}.");
+				stringBuilderLogText.AppendLine($"PaymentType changed from: {creditCardOld.PaymentType} to {creditCardNew.PaymentType}.");
 			}
 			if(creditCardNew.IsRecurringActive != creditCardOld.IsRecurringActive) {
-				stringBuilder.AppendLine($"IsRecurringActive changed from: {creditCardOld.IsRecurringActive} to {creditCardNew.IsRecurringActive}.");
+				stringBuilderLogText.AppendLine($"IsRecurringActive changed from: {creditCardOld.IsRecurringActive} to {creditCardNew.IsRecurringActive}.");
 			}
-			string logText=stringBuilder.ToString();
+			string logText=stringBuilderLogText.ToString();
 			if(!String.IsNullOrEmpty(logText)) { 
-				SecurityLogs.MakeLogEntry(EnumPermType.CreditCardEdit,creditCardOld.PatNum,logText,creditCardOld.CreditCardNum,DateTime.Now);
+				SecurityLogs.MakeLogEntry(Permissions.CreditCardEdit,creditCardOld.PatNum,logText,creditCardOld.CreditCardNum,DateTime.Now);
 			}
 		}
 
@@ -257,20 +238,6 @@ namespace OpenDentBusiness{
 			Db.NonQ(command);
 		}
 
-		///<summary>Deletes a credit card from the database for the provided patient. Then it updates the ItemOrder for any other existing CreditCard for the patient.</summary>
-		public static void DeleteAndRefresh(CreditCard cc,LogSources logSource=LogSources.None) {
-			if(cc==null) {
-				return;
-			}
-			Delete(cc.CreditCardNum);
-			SecurityLogs.MakeLogEntry(EnumPermType.CreditCardEdit,cc.PatNum,"Credit Card Removed",logSource);
-			List<CreditCard> creditCards=RefreshAll(cc.PatNum);
-			for(int i=0;i<creditCards.Count;i++) {
-				creditCards[i].ItemOrder=creditCards.Count-(i+1);
-				Update(creditCards[i]);//Resets ItemOrder.
-			}
-		}
-
 		///<summary>Gets the masked CC# and exp date for all cards setup for monthly charges for the specified patient.  Only used for filling [CreditCardsOnFile] variable when emailing statements.</summary>
 		public static string GetMonthlyCardsOnFile(long patNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
@@ -280,13 +247,13 @@ namespace OpenDentBusiness{
 			string command="SELECT * FROM creditcard WHERE PatNum="+POut.Long(patNum)
 				+" AND ("+DbHelper.Year("DateStop")+"<1880 OR DateStop>"+DbHelper.Now()+") "//Recurring card is active.
 				+" AND ChargeAmt>0"
-				+" AND CCSource NOT IN ("+POut.Enum(CreditCardSource.XWeb)+","+POut.Enum(CreditCardSource.XWebPortalLogin)+") ";//Not created from the Patient Portal
-			List<CreditCard> listCreditCardsMonthly=Crud.CreditCardCrud.SelectMany(command);
-			for(int i=0;i<listCreditCardsMonthly.Count;i++) {
+				+" AND CCSource NOT IN ("+(int)CreditCardSource.XWeb+","+(int)CreditCardSource.XWebPortalLogin+") ";//Not created from the Patient Portal
+			List<CreditCard> monthlyCards=Crud.CreditCardCrud.SelectMany(command);
+			for(int i=0;i<monthlyCards.Count;i++) {
 				if(i>0) {
 					result+=", ";
 				}
-				result+=listCreditCardsMonthly[i].CCNumberMasked+" exp:"+listCreditCardsMonthly[i].CCExpiration.ToString("MM/yy");
+				result+=monthlyCards[i].CCNumberMasked+" exp:"+monthlyCards[i].CCExpiration.ToString("MM/yy");
 			}
 			return result;
 		}
@@ -299,7 +266,7 @@ namespace OpenDentBusiness{
 			string command="SELECT * FROM creditcard WHERE PatNum="+POut.Long(patNum)
 				+" AND ("+DbHelper.Year("DateStop")+"<1880 OR DateStop>="+DbHelper.Curdate()+") "
 				+" AND ("+DbHelper.Year("DateStart")+">1880 AND DateStart<="+DbHelper.Curdate()+") "//Recurring card is active.
-				+" AND CCSource NOT IN ("+POut.Enum(CreditCardSource.XWeb)+","+POut.Enum(CreditCardSource.XWebPortalLogin)+") ";//Not created from the Patient Portal
+				+" AND CCSource NOT IN ("+(int)CreditCardSource.XWeb+","+(int)CreditCardSource.XWebPortalLogin+") ";//Not created from the Patient Portal
 			return Crud.CreditCardCrud.SelectMany(command);
 		}
 
@@ -312,18 +279,18 @@ namespace OpenDentBusiness{
 			string command="UPDATE creditcard SET Procedures='"+string.Join(",",listProcCodes.Select(x => POut.String(x)))+"'"
 				+" WHERE ("+DbHelper.Year("DateStop")+"<1880 OR DateStop>="+DbHelper.Curdate()+") "//Stop date has not past
 				+" AND ExcludeProcSync=0"
-				+" AND CCSource NOT IN ("+POut.Enum(CreditCardSource.XWeb)+","+POut.Enum(CreditCardSource.XWebPortalLogin)+") ";//Not created from the Patient Portal
+				+" AND CCSource NOT IN ("+(int)CreditCardSource.XWeb+","+(int)CreditCardSource.XWebPortalLogin+") ";//Not created from the Patient Portal
 			Db.NonQ(command);
 		}
 
 		///<summary>Returns list of credit cards that are ready for a recurring charge.  Filters by ClinicNums in list if provided.  List of ClinicNums
 		///should contain all clinics the current user is authorized to access.  Further filtering by selected clinics is done at the UI level to save
 		///DB calls.</summary>
-		public static List<RecurringChargeData> GetRecurringChargeList(List<long> listClinicNums,DateTime date) {
+		public static List<RecurringChargeData> GetRecurringChargeList(List<long> listClinicNums,DateTime curDate) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<RecurringChargeData>>(MethodBase.GetCurrentMethod(),listClinicNums,date);
+				return Meth.GetObject<List<RecurringChargeData>>(MethodBase.GetCurrentMethod(),listClinicNums,curDate);
 			}
-			List<RecurringChargeData> listRecurringChargeDatas=new List<RecurringChargeData>();
+			List<RecurringChargeData> listChargeData=new List<RecurringChargeData>();
 			//This query will return patient information and the latest recurring payment whom:
 			//	-have recurring charges setup and today's date falls within the start and stop range.
 			//NOTE: Query will return patients with or without payments regardless of when that payment occurred, filtering is done below.
@@ -342,7 +309,7 @@ namespace OpenDentBusiness{
 				+"INNER JOIN patient pat ON pat.PatNum=cc.PatNum "
 				+"INNER JOIN patient guar ON guar.PatNum=pat.Guarantor "
 				+"WHERE cc.PayPlanNum=0 "//Keeps card from showing up in case they have a balance AND is setup for payment plan. 
-				+"AND CCSource NOT IN ("+POut.Int((int)CreditCardSource.XWeb)+","+POut.Int((int)CreditCardSource.XWebPortalLogin)+") ";//Not created from the Patient Portal
+				+"AND CCSource NOT IN ("+(int)CreditCardSource.XWeb+","+(int)CreditCardSource.XWebPortalLogin+") ";//Not created from the Patient Portal
 			if(listClinicNums!=null && listClinicNums.Count>0) {
 				command+="AND cc.ClinicNum IN ("+string.Join(",",listClinicNums.Select(x => POut.Long(x)))+") ";
 			}
@@ -376,7 +343,7 @@ namespace OpenDentBusiness{
 					+"GROUP BY PayPlanNum"
 				+") ppc ON ppc.PayPlanNum=cc.PayPlanNum "
 				+"WHERE cc.PayPlanNum>0 "
-				+"AND CCSource NOT IN ("+POut.Int((int)CreditCardSource.XWeb)+","+POut.Int((int)CreditCardSource.XWebPortalLogin)+") ";//Not created from the Patient Portal
+				+"AND CCSource NOT IN ("+(int)CreditCardSource.XWeb+","+(int)CreditCardSource.XWebPortalLogin+") ";//Not created from the Patient Portal
 			if(listClinicNums!=null && listClinicNums.Count>0) {
 				command+="AND cc.ClinicNum IN ("+string.Join(",",listClinicNums.Select(x => POut.Long(x)))+") ";
 			}
@@ -402,7 +369,7 @@ namespace OpenDentBusiness{
 			DataTable table=Db.GetTable(command);
 			//Query for latest payments seperately because this takes a very long time when run as a sub select
 			if(table.Rows.Count<1) {
-				return listRecurringChargeDatas;
+				return listChargeData;
 			}
 			List<string> listStrCreditCardNums=table.Rows.AsEnumerable<DataRow>().Select(x=>POut.String(x["CreditCardNum"].ToString())).ToList();
 			command="SELECT cc.PatNum,cc.CreditCardNum,MAX(CASE WHEN "+DbHelper.Year("p.RecurringChargeDate")+" > 1880 "
@@ -415,71 +382,69 @@ namespace OpenDentBusiness{
 			List<DataRow> listDataRowLatestPayments=Db.GetTable(command).Rows.AsEnumerable<DataRow>().ToList();
 			for(int i=0;i<table.Rows.Count;i++) {
 				string strCreditCardNum=table.Rows[i]["CreditCardNum"].ToString();
-				DataRow dataRowCreditCard=listDataRowLatestPayments.Find(x => x["CreditCardNum"].ToString()==strCreditCardNum);
+				DataRow dataRowCreditCard=listDataRowLatestPayments.FirstOrDefault(x => x["CreditCardNum"].ToString()==strCreditCardNum);
 				if(dataRowCreditCard==null) {
 					continue;
 				}
 				table.Rows[i]["LatestPayment"]=dataRowCreditCard["RecurringChargeDate"].ToString();
 			}
 			table.Columns.Add("RecurringChargeDate",typeof(DateTime));//Will get set in FilterRecurringChargeList
-			FilterRecurringChargeList(table,date);
-			for(int i=0;i<table.Rows.Count;i++){
-				RecurringChargeData recurringChargeData=new RecurringChargeData();
-				recurringChargeData.Address=table.Rows[i]["Address"].ToString();
-				recurringChargeData.AddressPat=table.Rows[i]["AddressPat"].ToString();
-				recurringChargeData.BillingCycleDay=PIn.Int(table.Rows[i]["BillingCycleDay"].ToString());
-				recurringChargeData.CCExpiration=PIn.DateT(table.Rows[i]["CCExpiration"].ToString());
-				recurringChargeData.CCNumberMasked=table.Rows[i]["CCNumberMasked"].ToString();
-				recurringChargeData.CCSource=PIn.Enum<CreditCardSource>(table.Rows[i]["CCSource"].ToString());
-				recurringChargeData.DateStart=PIn.DateT(table.Rows[i]["DateStart"].ToString());
-				recurringChargeData.Guarantor=PIn.Long(table.Rows[i]["Guarantor"].ToString());
-				recurringChargeData.LatestPayment=PIn.DateT(table.Rows[i]["LatestPayment"].ToString());
-				recurringChargeData.PatName=table.Rows[i]["PatName"].ToString();
-				recurringChargeData.PayConnectToken=table.Rows[i]["PayConnectToken"].ToString();
-				recurringChargeData.PayConnectTokenExp=PIn.Date(table.Rows[i]["PayConnectTokenExp"].ToString());
-				recurringChargeData.PayPlanNum=PIn.Long(table.Rows[i]["PayPlanNum"].ToString());
-				recurringChargeData.PayPlanPatNum=PIn.Long(table.Rows[i]["PayPlanPatNum"].ToString());
-				recurringChargeData.PaySimpleToken=table.Rows[i]["PaySimpleToken"].ToString();
-				recurringChargeData.Procedures=table.Rows[i]["Procedures"].ToString();
-				recurringChargeData.ProvNum=PIn.Long(table.Rows[i]["ProvNum"].ToString());
-				RecurringCharge recurringCharge=new RecurringCharge();
-				recurringCharge.ChargeAmt=PIn.Double(table.Rows[i]["ChargeAmt"].ToString());
-				recurringCharge.ChargeStatus=RecurringChargeStatus.NotYetCharged;
-				recurringCharge.ClinicNum=0;
-				if(PrefC.HasClinicsEnabled){
-					recurringCharge.ClinicNum=PIn.Long(table.Rows[i]["ClinicNum"].ToString());
-				}
-				recurringCharge.CreditCardNum=PIn.Long(table.Rows[i]["CreditCardNum"].ToString());
-				recurringCharge.FamBal=PIn.Double(table.Rows[i]["FamBalTotal"].ToString());
-				recurringCharge.PatNum=PIn.Long(table.Rows[i]["PatNum"].ToString());
-				recurringCharge.PayPlanDue=PIn.Double(table.Rows[i]["PayPlanDue"].ToString());
-				recurringCharge.RepeatAmt=PIn.Double(table.Rows[i]["ChargeAmt"].ToString());
-				recurringCharge.UserNum=Security.CurUser.UserNum;
-				recurringChargeData.RecurringCharge=recurringCharge;
-				recurringChargeData.RecurringChargeDate=PIn.DateT(table.Rows[i]["RecurringChargeDate"].ToString());
-				recurringChargeData.XChargeToken=table.Rows[i]["XChargeToken"].ToString();
-				recurringChargeData.Zip=table.Rows[i]["Zip"].ToString();
-				recurringChargeData.ZipPat=table.Rows[i]["ZipPat"].ToString();
-				recurringChargeData.CanChargeWhenNoBal=PIn.Bool(table.Rows[i]["CanChargeWhenNoBal"].ToString());
-				recurringChargeData.PaymentType=PIn.Long(table.Rows[i]["PaymentType"].ToString());
-				recurringChargeData.CCIsRecurringActive=PIn.Bool(table.Rows[i]["IsRecurringActive"].ToString());
+			FilterRecurringChargeList(table,curDate);
+			foreach(DataRow row in table.Rows) {
+				RecurringChargeData chargeData=new RecurringChargeData {
+					Address=row["Address"].ToString(),
+					AddressPat=row["AddressPat"].ToString(),
+					BillingCycleDay=PIn.Int(row["BillingCycleDay"].ToString()),
+					CCExpiration=PIn.DateT(row["CCExpiration"].ToString()),
+					CCNumberMasked=row["CCNumberMasked"].ToString(),
+					CCSource=PIn.Enum<CreditCardSource>(row["CCSource"].ToString()),
+					DateStart=PIn.DateT(row["DateStart"].ToString()),
+					Guarantor=PIn.Long(row["Guarantor"].ToString()),
+					LatestPayment=PIn.DateT(row["LatestPayment"].ToString()),
+					PatName=row["PatName"].ToString(),
+					PayConnectToken=row["PayConnectToken"].ToString(),
+					PayConnectTokenExp=PIn.Date(row["PayConnectTokenExp"].ToString()),
+					PayPlanNum=PIn.Long(row["PayPlanNum"].ToString()),
+					PayPlanPatNum=PIn.Long(row["PayPlanPatNum"].ToString()),
+					PaySimpleToken=row["PaySimpleToken"].ToString(),
+					Procedures=row["Procedures"].ToString(),
+					ProvNum=PIn.Long(row["ProvNum"].ToString()),
+					RecurringCharge=new RecurringCharge {
+						ChargeAmt=PIn.Double(row["ChargeAmt"].ToString()),
+						ChargeStatus=RecurringChargeStatus.NotYetCharged,
+						ClinicNum=PrefC.HasClinicsEnabled ? PIn.Long(row["ClinicNum"].ToString()) : 0,
+						CreditCardNum=PIn.Long(row["CreditCardNum"].ToString()),
+						FamBal=PIn.Double(row["FamBalTotal"].ToString()),
+						PatNum=PIn.Long(row["PatNum"].ToString()),
+						PayPlanDue=PIn.Double(row["PayPlanDue"].ToString()),
+						RepeatAmt=PIn.Double(row["ChargeAmt"].ToString()),
+						UserNum=Security.CurUser.UserNum
+					},
+					RecurringChargeDate=PIn.DateT(row["RecurringChargeDate"].ToString()),
+					XChargeToken=row["XChargeToken"].ToString(),
+					Zip=row["Zip"].ToString(),
+					ZipPat=row["ZipPat"].ToString(),
+					CanChargeWhenNoBal=PIn.Bool(row["CanChargeWhenNoBal"].ToString()),
+					PaymentType=PIn.Long(row["PaymentType"].ToString()),
+					CCIsRecurringActive=PIn.Bool(row["IsRecurringActive"].ToString()),
+				};
 				//negative family balance does not subtract from payplan amount due and negative payplan amount due does not subtract from family balance due
-				double totalBal=Math.Max(recurringChargeData.RecurringCharge.FamBal,0);
-				if(CompareDouble.IsZero(recurringChargeData.RecurringCharge.PayPlanDue)) {
-					recurringChargeData.RecurringCharge.TotalDue=totalBal;
-					listRecurringChargeDatas.Add(recurringChargeData);
-					continue;
+				double totalBal=Math.Max(chargeData.RecurringCharge.FamBal,0);
+				if(CompareDouble.IsZero(chargeData.RecurringCharge.PayPlanDue)) {
+					chargeData.RecurringCharge.TotalDue=totalBal;
 				}
-				if(PrefC.GetInt(PrefName.PayPlansVersion)==1) {//in PP v2, the PP amt due is included in the pat balance
-					totalBal+=Math.Max(recurringChargeData.RecurringCharge.PayPlanDue,0);
+				else {
+					if(PrefC.GetInt(PrefName.PayPlansVersion)==1) {//in PP v2, the PP amt due is included in the pat balance
+						totalBal+=Math.Max(chargeData.RecurringCharge.PayPlanDue,0);
+					}
+					else if(PrefC.GetInt(PrefName.PayPlansVersion)==2) {
+						totalBal=Math.Max(totalBal,chargeData.RecurringCharge.PayPlanDue);//At minimum, the Total Due should be the Pay Plan Due amount.
+					}
+					chargeData.RecurringCharge.TotalDue=totalBal;
 				}
-				else if(PrefC.GetInt(PrefName.PayPlansVersion)==2) {
-					totalBal=Math.Max(totalBal,recurringChargeData.RecurringCharge.PayPlanDue);//At minimum, the Total Due should be the Pay Plan Due amount.
-				}
-				recurringChargeData.RecurringCharge.TotalDue=totalBal;
-				listRecurringChargeDatas.Add(recurringChargeData);
+				listChargeData.Add(chargeData);
 			}
-			return listRecurringChargeDatas;
+			return listChargeData;
 		}
 		
 		/// <summary>Adds up the total fees for the procedures passed in that have been completed since the last billing day.</summary>
@@ -489,21 +454,21 @@ namespace OpenDentBusiness{
 			}
 			//Find the beginning of the current billing cycle, use that date to total charges between now and then for this cycle only.
 			//Include that date only when we are not on the first day of the current billing cycle.
-			DateTime dateStartBillingCycle;
+			DateTime startBillingCycle;
 			if(DateTime.Today.Day>billingDay) {//if today is 7/13/2015 and billingDay is 26, startBillingCycle will be 6/26/2015
-				dateStartBillingCycle=new DateTime(DateTime.Today.Year,DateTime.Today.Month,billingDay);
+				startBillingCycle=new DateTime(DateTime.Today.Year,DateTime.Today.Month,billingDay);
 			}
 			else {
 				//DateTime.Today.AddMonths handles the number of days in the month and leap years
 				//Examples: if today was 12/31/2015, AddMonths(-1) would yield 11/30/2015; if today was 3/31/2016, AddMonths(-1) would yield 2/29/2016
-				dateStartBillingCycle=DateTime.Today.AddMonths(-1);
-				if(billingDay<=DateTime.DaysInMonth(dateStartBillingCycle.Year,dateStartBillingCycle.Month)) {
+				startBillingCycle=DateTime.Today.AddMonths(-1);
+				if(billingDay<=DateTime.DaysInMonth(startBillingCycle.Year,startBillingCycle.Month)) {
 					//This corrects the issue of a billing cycle day after today but this month doesn't have enough days when last month does
 					//Example: if today was 11/30/2015 and the pat's billing cycle day was the 31st, startBillingCycle=Today.AddMonths(-1) would be 10/30/2015.
 					//But this pat's billing cycle day is the 31st and the December has 31 days.  This adjusts the start of the billing cycle to 10/31/2015.
 					//Example 2: if today was 2/29/2016 (leap year) and the pat's billing cycle day was the 30th, startBillingCycle should be 1/30/2016.
 					//Today.AddMonths(-1) would be 1/29/2016, so this adjusts startBillingCycle to 1/30/2016.
-					dateStartBillingCycle=new DateTime(dateStartBillingCycle.Year,dateStartBillingCycle.Month,billingDay);
+					startBillingCycle=new DateTime(startBillingCycle.Year,startBillingCycle.Month,billingDay);
 				}
 			}
 			string procStr="'"+POut.String(procedures).Replace(",","','")+"'";
@@ -527,10 +492,10 @@ namespace OpenDentBusiness{
 				|| (billingDay>DateTime.Today.Day
 				&& DateTime.Today.Day==DateTime.DaysInMonth(DateTime.Today.Year,DateTime.Today.Month)))
 			{
-				command+="AND pl.ProcDate>"+POut.Date(dateStartBillingCycle);
+				command+="AND pl.ProcDate>"+POut.Date(startBillingCycle);
 			}
 			else {
-				command+="AND pl.ProcDate>="+POut.Date(dateStartBillingCycle);
+				command+="AND pl.ProcDate>="+POut.Date(startBillingCycle);
 			}
 			return PIn.Double(Db.GetScalar(command));
 		}
@@ -552,23 +517,22 @@ namespace OpenDentBusiness{
 
 		///<summary>Filters out cards that do not to be charged for their recurring payment.
 		///Table must include columns labeled LatestPayment, DateStart, ChargeAmt, RecurringChargeDate, and ChargeFrequency.</summary>
-		public static void FilterRecurringChargeList(DataTable table,DateTime date) {
-			//No need to check MiddleTierRole; no call to db.
+		public static void FilterRecurringChargeList(DataTable table,DateTime curDate) {
 			//Loop through table and remove patients that do not need to be charged yet.
 			//Modify the charge amount if necessary to account for the number of missed charges in the last month.
 			for(int i=0;i<table.Rows.Count;i++) {
 				DateTime dateStart=PIn.DateT(table.Rows[i]["DateStart"].ToString());
-				DateTime dateLatestPayment=PIn.Date(table.Rows[i]["LatestPayment"].ToString());
+				DateTime latestPayment=PIn.Date(table.Rows[i]["LatestPayment"].ToString());
 				string chargeFrequency=table.Rows[i]["ChargeFrequency"].ToString();
-				DateTime dateRecurringCharge=new DateTime();
+				DateTime recurringChargeDate=new DateTime();
 				int chargeCount=0;
 				if(GetFrequencyType(chargeFrequency)==ChargeFrequencyType.FixedDayOfMonth) {
-					chargeCount=GetCountChargesFixedDay(date,dateLatestPayment,dateStart,chargeFrequency,out dateRecurringCharge);
+					chargeCount=GetCountChargesFixedDay(curDate,latestPayment,dateStart,chargeFrequency,out recurringChargeDate);
 				}
 				else if(GetFrequencyType(chargeFrequency)==ChargeFrequencyType.FixedWeekDay) {
-					chargeCount=GetCountChargesFixedWeekday(date,dateLatestPayment,dateStart,chargeFrequency,out dateRecurringCharge);
+					chargeCount=GetCountChargesFixedWeekday(curDate,latestPayment,dateStart,chargeFrequency,out recurringChargeDate);
 				}
-				table.Rows[i]["RecurringChargeDate"]=dateRecurringCharge;
+				table.Rows[i]["RecurringChargeDate"]=recurringChargeDate;
 				if(chargeCount > 0) {
 					//Charge them for the number of charges they haven't paid in the last month. This mimics old logic that would charge them once
 					//regardless of how far back their last payment was. In this case, if they are charged twice a month, charge them two times the
@@ -584,129 +548,126 @@ namespace OpenDentBusiness{
 
 		///<summary>Returns true if the patient should be charged for the date being checked. This logic should be used when dealing with a 
 		///payment that should be charged only one specific day per month (FixedDayOfMonth or nth weekday of every month).</summary>
-		public static DateTime GetDateCharge(DateTime dateThisMonthDayToBeCharged,DateTime dateLastMonthDayToBeCharged,DateTime date,DateTime dateLatestPayment,DateTime dateStart) 
+		public static bool DoChargePatient(DateTime thisMonthDayToBeCharged,DateTime lastMonthDayToBeCharged,DateTime curDate,DateTime latestPayment,
+			DateTime dateStart,out DateTime chargeDate) 
 		{
-			//No need to check MiddleTierRole; no call to db.
-			if(dateThisMonthDayToBeCharged.Date<=date.Date) {//If it is past their time to be charged for this month
-				if(dateStart.Date<=dateThisMonthDayToBeCharged.Date) {
+			if(thisMonthDayToBeCharged.Date<=curDate.Date) {//If it is past their time to be charged for this month
+				if(dateStart.Date<=thisMonthDayToBeCharged.Date) {
 					//if their last payment was before their day to be charged
-					if(dateLatestPayment.Date < dateThisMonthDayToBeCharged.Date) {
-						return dateThisMonthDayToBeCharged;
+					if(latestPayment.Date < thisMonthDayToBeCharged.Date) {
+						chargeDate=thisMonthDayToBeCharged;
+						return true;
 					}
 				}
-				return new DateTime();
 			}
-			//It's not past their date for this month
-			//This next check is to make sure last month they should have been charged based on the dateStart.
-			//An example where this will be false is when a recurring charge is created on February 2nd and set to every 16th of every month.
-			//When they run the tool on February 3rd, the card should not be charged as January 16th is before the plan was created.
-			if(dateStart.Date<=dateLastMonthDayToBeCharged.Date) {
-				//Check to see if the payment happened for last month's date
-				if(dateLatestPayment.Date < dateLastMonthDayToBeCharged.Date) {//if not charge them
-					return dateLastMonthDayToBeCharged;
+			else {//It's not past their date for this month
+				//This next check is to make sure last month they should have been charged based on the dateStart.
+				//An example where this will be false is when a recurring charge is created on February 2nd and set to every 16th of every month.
+				//When they run the tool on February 3rd, the card should not be charged as January 16th is before the plan was created.
+				if(dateStart.Date<=lastMonthDayToBeCharged.Date) {
+					//Check to see if the payment happened for last month's date
+					if(latestPayment.Date < lastMonthDayToBeCharged.Date) {//if not charge them
+						chargeDate=lastMonthDayToBeCharged;
+						return true;
+					}
 				}
 			}
-			return new DateTime();
+			chargeDate=new DateTime();
+			return false;
 		}
 
 		///<summary>Gets the number of charges that should be charged if the recurring charge is for fixed day(s) of the month.</summary>
-		private static int GetCountChargesFixedDay(DateTime date,DateTime dateLatestPayment,DateTime dateStart,string chargeFrequency,
-			out DateTime dateRecurringCharge) 
+		private static int GetCountChargesFixedDay(DateTime curDate,DateTime latestPayment,DateTime dateStart,string chargeFrequency,
+			out DateTime recurringChargeDate) 
 		{
-			//No need to check MiddleTierRole; no call to db.
-			dateRecurringCharge=new DateTime();
+			recurringChargeDate=new DateTime();
 			//Get days to be charged on.
 			int chargeCount=0;
 			List<int> listDays=GetDaysOfMonthForChargeFrequency(chargeFrequency).Split(',').Select(x => PIn.Int(x)).ToList();
-			int daysInThisMonth=DateTime.DaysInMonth(date.Year,date.Month);
+			int daysInThisMonth=DateTime.DaysInMonth(curDate.Year,curDate.Month);
 			//Only time not accurate is curDate.Month=1. Dec has 31 days regardless of year, however.
-			int daysInLastMonth=DateTime.DaysInMonth(date.AddMonths(-1).Year,date.AddMonths(-1).Month);
-			for(int i=0;i<listDays.Count;i++){
+			int daysInLastMonth=DateTime.DaysInMonth(curDate.AddMonths(-1).Year,curDate.AddMonths(-1).Month);
+			foreach(int day in listDays) {//foreach day they should have been charged
 				//this will get the day it should be charged. e.g. the card gets charged on the 31st of every month. If the month is february,
 				//Day to be charged is Feb 28th.
-				DateTime dateThisMonthDayToBeCharged=new DateTime(date.Year,date.Month,Math.Min(daysInThisMonth,listDays[i]));
+				DateTime thisMonthDayToBeCharged=new DateTime(curDate.Year,curDate.Month,Math.Min(daysInThisMonth,day));
 				//Calculates the last months charge date. In the example above on the 31st of every month, while february's charge date
 				//is the 28th, January's was the 31st. 
-				DateTime dateLastMonthDayToBeCharged=new DateTime(date.AddMonths(-1).Year,date.AddMonths(-1).Month,
-					Math.Min(daysInLastMonth,listDays[i]));
-				DateTime dateThisCharge=GetDateCharge(dateThisMonthDayToBeCharged,dateLastMonthDayToBeCharged,date,dateLatestPayment,dateStart);
-				if(dateThisCharge.Year<1880){
-					continue;
+				DateTime lastMonthDayToBeCharged=new DateTime(curDate.AddMonths(-1).Year,curDate.AddMonths(-1).Month,
+					Math.Min(daysInLastMonth,day));
+				DateTime chargeDateThisCharge;
+				if(DoChargePatient(thisMonthDayToBeCharged,lastMonthDayToBeCharged,curDate,latestPayment,dateStart,out chargeDateThisCharge)) {
+					chargeCount++;
+					recurringChargeDate=ODMathLib.Max(recurringChargeDate,chargeDateThisCharge);
 				}
-				chargeCount++;
-				dateRecurringCharge=ODMathLib.Max(dateRecurringCharge,dateThisCharge);
 			}
 			return chargeCount;
 		}
 
 		///<summary>Gets the number of charges that should be charged if the recurring charge is for fixed weekday(s) of the month.</summary>
-		private static int GetCountChargesFixedWeekday(DateTime date,DateTime dateLatestPayment,DateTime dateStart,string chargeFrequency,
-			out DateTime dateRecurringCharge)
+		private static int GetCountChargesFixedWeekday(DateTime curDate,DateTime latestPayment,DateTime dateStart,string chargeFrequency,
+			out DateTime recurringChargeDate)
 		{
-			//No need to check MiddleTierRole; no call to db.
 			int chargeCount=0;
-			DayOfWeekFrequency dayOfWeekFrequency=GetDayOfWeekFrequency(chargeFrequency);
-			DayOfWeek dayOfWeek=GetDayOfWeek(chargeFrequency);
-			if(dayOfWeekFrequency==DayOfWeekFrequency.Every) {
+			DayOfWeekFrequency frequency=GetDayOfWeekFrequency(chargeFrequency);
+			DayOfWeek day=GetDayOfWeek(chargeFrequency);
+			if(frequency==DayOfWeekFrequency.Every) {
 				//Due to the limitations of pulling one latest payment and the expectation that people will run this frequently, in the case
 				//of many missed charges, we only charge up to a month worth of charges. E.g. If someone is charged every friday, 
 				//only the previous four fridays will be checked and charged if their latest payment is far back.
 				//Get dateTime for the most recent day that is the day of the week that is <= today
-				DateTime recentDateToCharge=MiscUtils.GetMostRecentDayOfWeek(date,dayOfWeek);
-				dateRecurringCharge=recentDateToCharge;
+				DateTime recentDateToCharge=MiscUtils.GetMostRecentDayOfWeek(curDate,day);
+				recurringChargeDate=recentDateToCharge;
 				for(int j=0;j<4;j++) {
 					//Make sure the day being looked at was after the start date. This prevents cards from being charged for weeks that 
 					//were before the recurring charge was created
-					if(recentDateToCharge.AddDays(-j*7)<dateStart) {
-						continue;
-					}
-					if(dateLatestPayment.Date < recentDateToCharge.Date.AddDays(-j*7)) {
-						chargeCount++;
-						//keep checking to see when the latestpayment was. For practices running their report frequently, this will
-						//almost never make it past the first loop.
+					if(recentDateToCharge.AddDays(-j*7)>=dateStart) {
+						if(latestPayment.Date < recentDateToCharge.Date.AddDays(-j*7)) {
+							chargeCount++;
+							//keep checking to see when the latestpayment was. For practices running their report frequently, this will
+							//almost never make it past the first loop.
+						}
 					}
 				}
-				return chargeCount;
 			}
-			if(dayOfWeekFrequency==DayOfWeekFrequency.EveryOther) {
+			else if(frequency==DayOfWeekFrequency.EveryOther) {
 				//Similar to DayOfWeekFrequency.Every, in the case of many missed payments, the last 2 instances of the weekday will be 
 				//checked. The every other cycle will be reset if it is not clear what week rotation is being charge on based 
 				//on the latestpayment
 				//Get the most recent date for the day of the week in the every other cycle
-				DateTime dateRecentToCharge=dateLatestPayment;
-				if(dateLatestPayment.Year > 1880) {//if a payment has occurred
+				DateTime recentDateToCharge=latestPayment;
+				if(latestPayment.Year > 1880) {//if a payment has occurred
 					//if it was last paid on a day that is not the designated day of the week, find the closest.
-					if(dateLatestPayment.DayOfWeek!=dayOfWeek) {
-						dateRecentToCharge=MiscUtils.GetMostRecentDayOfWeek(dateLatestPayment,dayOfWeek);
+					if(latestPayment.DayOfWeek!=day) {
+						recentDateToCharge=MiscUtils.GetMostRecentDayOfWeek(latestPayment,day);
 					}
 					//Continue the every other cycle until finding the most recent day of the week for this two week cycle
-					while(dateRecentToCharge.AddDays(14)<=date) {
-						dateRecentToCharge=dateRecentToCharge.AddDays(14);
+					while(recentDateToCharge.AddDays(14)<=curDate) {
+						recentDateToCharge=recentDateToCharge.AddDays(14);
 					}
 				}
 				else {//if no payment, find the most recent day of the week that occurred in the past to begin the every other cycle.
-					dateRecentToCharge=MiscUtils.GetMostRecentDayOfWeek(date,dayOfWeek);
+					recentDateToCharge=MiscUtils.GetMostRecentDayOfWeek(curDate,day);
 				}
-				dateRecurringCharge=dateRecentToCharge;
+				recurringChargeDate=recentDateToCharge;
 				for(int j=0;j<2;j++) {
 					//Make sure the day being looked at was after the start date. This prevents cards from being charged for weeks that 
 					//were before the recurring charge was created
-					if(dateRecentToCharge.AddDays(-j*14)>=dateStart) {
-						if(dateRecentToCharge.AddDays(-j*14) > dateLatestPayment) {
+					if(recentDateToCharge.AddDays(-j*14)>=dateStart) {
+						if(recentDateToCharge.AddDays(-j*14) > latestPayment) {
 							chargeCount++;
 						}
 					}
 				}
-				return chargeCount;
 			}
-			//handles all nth day of the month.
-			//Get day to charge on this month and for last month.
-			//(int)frequency-1 -- see DayOfWeekFrequencyEnum
-			DateTime thisMonthDayToBeCharged=GetNthWeekdayofMonth(date,(int)dayOfWeekFrequency-1,dayOfWeek);
-			DateTime lastMonthDayToBeCharged=GetNthWeekdayofMonth(date.AddMonths(-1),(int)dayOfWeekFrequency-1,dayOfWeek);
-			dateRecurringCharge=GetDateCharge(thisMonthDayToBeCharged,lastMonthDayToBeCharged,date,dateLatestPayment,dateStart);
-			if(dateRecurringCharge.Year>1880){
-				chargeCount++;
+			else {//handles all nth day of the month.
+				//Get day to charge on this month and for last month.
+				//(int)frequency-1 -- see DayOfWeekFrequencyEnum
+				DateTime thisMonthDayToBeCharged=GetNthWeekdayofMonth(curDate,(int)frequency-1,day);
+				DateTime lastMonthDayToBeCharged=GetNthWeekdayofMonth(curDate.AddMonths(-1),(int)frequency-1,day);
+				if(DoChargePatient(thisMonthDayToBeCharged,lastMonthDayToBeCharged,curDate,latestPayment,dateStart,out recurringChargeDate)) {
+					chargeCount++;
+				}
 			}
 			return chargeCount;
 		}
@@ -714,7 +675,6 @@ namespace OpenDentBusiness{
 		///<summary>Gets the nth day of the week of a month. If the nth day does not exist, it will return the last day of the month passed in.
 		///date should be the year and month that the nth day will be found in.</summary>
 		public static DateTime GetNthWeekdayofMonth(DateTime date,int nthWeek,DayOfWeek dayOfWeek) {
-			//No need to check MiddleTierRole; no call to db.
 			DateTime dateNth=DateTools.ToBeginningOfMonth(date);
 			dateNth=MiscUtils.GetUpcomingDayOfWeek(dateNth,dayOfWeek);
 			dateNth=dateNth.AddDays((nthWeek-1)*7);
@@ -734,7 +694,7 @@ namespace OpenDentBusiness{
 			}
 			string command=$"SELECT * FROM creditcard WHERE XChargeToken='{POut.String(token)}' ";
 			if(!includeXWeb) {
-				command+=$"AND CCSource NOT IN({POut.Int((int)CreditCardSource.XWeb)},{POut.Int((int)CreditCardSource.XWebPortalLogin)},{POut.Int((int)CreditCardSource.XWebPaymentPortal)},{POut.Int((int)CreditCardSource.XWebPaymentPortalGuest)}) ";
+				command+=$"AND CCSource NOT IN({POut.Int((int)CreditCardSource.XWeb)},{POut.Int((int)CreditCardSource.XWebPortalLogin)}) ";
 			}
 			return CountSameCard(Crud.CreditCardCrud.SelectMany(command));
 		}
@@ -762,63 +722,58 @@ namespace OpenDentBusiness{
 			string command=$"SELECT * FROM creditcard WHERE PaySimpleToken='{POut.String(token)}' ";
 			if(!isAch) {
 				command+=$"AND CCSource!={POut.Int((int)CreditCardSource.PaySimpleACH)} ";
-				command+=$"AND CCSource!={POut.Int((int)CreditCardSource.PaySimplePaymentPortalACH)} ";
 			}
 			return CountSameCard(Crud.CreditCardCrud.SelectMany(command));
 		}
 
 		///<summary>Returns number of times token is in use.  Token was duplicated once and caused the wrong card to be charged.</summary>
-		public static int GetTokenCount(string token,List<CreditCardSource> listCreditCardSources) {
+		public static int GetTokenCount(string token,List<CreditCardSource> listSources) {
 			//No need to check MiddleTierRole; no call to db.
-			return CountSameCard(GetCardsByToken(token,listCreditCardSources));
+			return CountSameCard(GetCardsByToken(token,listSources));
 		}
 
 		///<summary>Counts how many cards are probably the same.</summary>
-		private static int CountSameCard(List<CreditCard> listCreditCards) {
-			//No need to check MiddleTierRole; no call to db.
+		private static int CountSameCard(List<CreditCard> listCards) {
 			//There may be duplicate tokens if the office adds the same CC multiple times (on the same patient or on multiple patients).
 			//This is considered valid and we only want to catch duplicates for different CC numbers
 			//CCNumberMasked only stores 4 digits, so adding the extra data to the select "grouping" allows a more reliable count.
-			int countSameCard=listCreditCards
+			return listCards
 				.Select(x => x.CCNumberMasked.Substring(x.CCNumberMasked.Length-4)+x.CCExpiration.ToString("MMYYYYY")+x.CCSource.ToString())
 				.Distinct()
 				.Count();
-			return countSameCard;
 		}
 
-		public static List<CreditCard> GetCardsByToken(string token,List<CreditCardSource> listCreditCardSources) {
+		public static List<CreditCard> GetCardsByToken(string token,List<CreditCardSource> listSources) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<CreditCard>>(MethodBase.GetCurrentMethod(),token,listCreditCardSources);
+				return Meth.GetObject<List<CreditCard>>(MethodBase.GetCurrentMethod(),token,listSources);
 			}
-			if(listCreditCardSources.Count==0) {
+			if(listSources.Count==0) {
 				return new List<CreditCard>();
 			}
-			string command="SELECT * FROM creditcard WHERE CCSource IN ("+string.Join(",",listCreditCardSources.Select(x=>POut.Int((int)x)))+") AND (0 ";
-			if(listCreditCardSources.Any(x=>x.In(CreditCardSource.PayConnect,
-				CreditCardSource.XServerPayConnect,
-				CreditCardSource.PayConnectPaymentPortal,
-				CreditCardSource.PayConnectPaymentPortalGuest)))
+			string command="SELECT * FROM creditcard WHERE CCSource IN ("+string.Join(",",listSources.Select(x=>POut.Int((int)x)))+") AND (0 ";
+			if(listSources.Contains(CreditCardSource.PayConnect) 
+				|| listSources.Contains(CreditCardSource.XServerPayConnect)
+				|| listSources.Contains(CreditCardSource.PayConnectPaymentPortal)
+				|| listSources.Contains(CreditCardSource.PayConnectPaymentPortalGuest)) 
 			{
 				command+="OR PayConnectToken='"+POut.String(token)+"' ";
 			}
-			if(listCreditCardSources.Any(x=>x.In(CreditCardSource.XServer,
-				CreditCardSource.XWeb,
-				CreditCardSource.XWebPaymentPortal,
-				CreditCardSource.XWebPaymentPortalGuest,
-				CreditCardSource.XServerPayConnect,
-				CreditCardSource.XWebPortalLogin,
-				CreditCardSource.EdgeExpressCNP,
-				CreditCardSource.EdgeExpressRCM,
-				CreditCardSource.EdgeExpressPaymentPortal,
-				CreditCardSource.EdgeExpressPaymentPortalGuest)))
+			if(listSources.Contains(CreditCardSource.XServer)
+				|| listSources.Contains(CreditCardSource.XWeb)
+				|| listSources.Contains(CreditCardSource.XServerPayConnect)
+				|| listSources.Contains(CreditCardSource.XWebPortalLogin)
+				|| listSources.Contains(CreditCardSource.EdgeExpressCNP)
+				|| listSources.Contains(CreditCardSource.EdgeExpressRCM)
+				|| listSources.Contains(CreditCardSource.EdgeExpressPaymentPortal)
+				|| listSources.Contains(CreditCardSource.EdgeExpressPaymentPortalGuest))
 			{
 				command+="OR XChargeToken='"+POut.String(token)+"' ";
 			}
-			if(listCreditCardSources.Any(x=>x.In(CreditCardSource.PaySimple,
-				CreditCardSource.PaySimpleACH,
-				CreditCardSource.PaySimplePaymentPortal,
-				CreditCardSource.PaySimplePaymentPortalACH,
-				CreditCardSource.PaySimplePaymentPortalGuest)))
+			if(listSources.Contains(CreditCardSource.PaySimple)
+				|| listSources.Contains(CreditCardSource.PaySimpleACH)
+				|| listSources.Contains(CreditCardSource.PaySimplePaymentPortal)
+				|| listSources.Contains(CreditCardSource.PaySimplePaymentPortalACH)
+				|| listSources.Contains(CreditCardSource.PaySimplePaymentPortalGuest)) 
 			{
 				command+="OR PaySimpleToken='"+POut.String(token)+"' ";
 			}
@@ -826,22 +781,25 @@ namespace OpenDentBusiness{
 			return Crud.CreditCardCrud.SelectMany(command);
 		}
 
-		public static List<CreditCard> GetCardsWithTokenBySource(List<CreditCardSource> listCreditCardSources) {
+		public static List<CreditCard> GetCardsWithTokenBySource(List<CreditCardSource> listSources) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<CreditCard>>(MethodBase.GetCurrentMethod(),listCreditCardSources);
+				return Meth.GetObject<List<CreditCard>>(MethodBase.GetCurrentMethod(),listSources);
 			}
-			if(listCreditCardSources.Count==0) {
+			if(listSources.Count==0) {
 				return new List<CreditCard>();
 			}
-			string command="SELECT * FROM creditcard WHERE CCSource IN ("+string.Join(",",listCreditCardSources.Select(x=>POut.Int((int)x)))+") AND (0 ";
-			if(listCreditCardSources.Contains(CreditCardSource.PayConnect) || listCreditCardSources.Contains(CreditCardSource.XServerPayConnect)) {
+			string command="SELECT * FROM creditcard WHERE CCSource IN ("+string.Join(",",listSources.Select(x=>POut.Int((int)x)))+") AND (0 ";
+			if(listSources.Contains(CreditCardSource.PayConnect) || listSources.Contains(CreditCardSource.XServerPayConnect)) {
 				command+="OR PayConnectToken!='' ";
 			}
-			if(listCreditCardSources.Exists(x=>x.In(CreditCardSource.XServer, CreditCardSource.XWeb, CreditCardSource.XServerPayConnect, CreditCardSource.XWebPortalLogin,CreditCardSource.XWebPaymentPortal,CreditCardSource.XWebPaymentPortalGuest)))
+			if(listSources.Contains(CreditCardSource.XServer)
+				|| listSources.Contains(CreditCardSource.XWeb)
+				|| listSources.Contains(CreditCardSource.XServerPayConnect)
+				|| listSources.Contains(CreditCardSource.XWebPortalLogin))
 			{
 				command+="OR XChargeToken!='' ";
 			}
-			if(listCreditCardSources.Contains(CreditCardSource.PaySimple)) {
+			if(listSources.Contains(CreditCardSource.PaySimple)) {
 				command+="OR PaySimpleToken!='' ";
 			}
 			command+=")";
@@ -850,18 +808,17 @@ namespace OpenDentBusiness{
 
 		public static List<CreditCardSource> GetCreditCardSourcesForOnlinePayments() {
 			//No need to check MiddleTierRole; no call to db.
-			List<CreditCardSource> listCreditCardSources=typeof(CreditCardSource).GetFields(BindingFlags.Public | BindingFlags.Static)
+			return typeof(CreditCardSource).GetFields(BindingFlags.Public | BindingFlags.Static)
 				.Where(x => x.IsDefined(typeof(OnlinePaymentMethod),false)).Select(x => (CreditCardSource)x.GetValue(null)).ToList();
-			return listCreditCardSources;
 		}
 
 		///<summary>Gets every credit card in the db with an X-Charge token that was created from the specified source.</summary>
-		public static List<CreditCard> GetCardsWithXChargeTokens(CreditCardSource creditCardSource=CreditCardSource.XServer) {
+		public static List<CreditCard> GetCardsWithXChargeTokens(CreditCardSource ccSource=CreditCardSource.XServer) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<CreditCard>>(MethodBase.GetCurrentMethod(),creditCardSource);
+				return Meth.GetObject<List<CreditCard>>(MethodBase.GetCurrentMethod(),ccSource);
 			}
 			string command="SELECT * FROM creditcard WHERE XChargeToken!=\"\" "
-				+"AND CCSource="+POut.Int((int)creditCardSource);
+				+"AND CCSource="+POut.Int((int)ccSource);
 			return Crud.CreditCardCrud.SelectMany(command);
 		}
 
@@ -876,14 +833,13 @@ namespace OpenDentBusiness{
 
 		///<summary>Gets a token that can be used by XWeb. A token that is created by the XCharge client program can be used for XWeb after stripping
 		///off the beginning 3 characters which are always "XAW".</summary>
-		public static string GetXWebToken(CreditCard creditCard) {
-			//No need to check MiddleTierRole; no call to db.
+		public static string GetXWebToken(CreditCard cc) {
 			//CM 07/05/2018 - I don't have any documentation about removing "XAW" from the token in order to use it for XWeb, but I think I got that
 			//information from an email from someone at OpenEdge.
-			if(!creditCard.IsXWeb() && creditCard.XChargeToken.StartsWith("XAW")) {
-				return creditCard.XChargeToken.Substring(3);
+			if(!cc.IsXWeb() && cc.XChargeToken.StartsWith("XAW")) {
+				return cc.XChargeToken.Substring(3);
 			}
-			return creditCard.XChargeToken;
+			return cc.XChargeToken;
 		}
 
 		///<summary>Gets the chargefrequencytype for a given credit card. See enum for types.</summary>
@@ -916,51 +872,48 @@ namespace OpenDentBusiness{
 		
 		/// <summary>Takaes in a CreditCard.ChargeFrequency string and parses it into a human readable form to be displayed to users</summary>
 		public static string GetHumanReadableFrequency(string chargeFrequency) {
-			//No need to check MiddleTierRole; no call to db.
 			string humanReadableFrequencyString="";
 			if(String.IsNullOrEmpty(chargeFrequency) || !chargeFrequency.Contains("|")) {
 				return humanReadableFrequencyString;
 			}
-			ChargeFrequencyType chargeFrequencyType=GetFrequencyType(chargeFrequency);
-			switch(chargeFrequencyType) {
+			ChargeFrequencyType frequencyType=GetFrequencyType(chargeFrequency);
+      switch(frequencyType) {
 				case ChargeFrequencyType.FixedDayOfMonth:
 					humanReadableFrequencyString=GetHumanReadableFrequencyFixedMonthly(chargeFrequency);
 					break;
 				case ChargeFrequencyType.FixedWeekDay:
 					humanReadableFrequencyString=GetHumanReadableFrequencyFixedWeekly(chargeFrequency);
 					break;
-			}
+      }
 			return humanReadableFrequencyString;
 		}
 
 		private static string GetHumanReadableFrequencyFixedWeekly(string chargeFrequency) {
-			//No need to check MiddleTierRole; no call to db.
 			string humanReadableFrequencyString="";
-			DayOfWeekFrequency dayOfWeekFrequency=GetDayOfWeekFrequency(chargeFrequency);
-			DayOfWeek dayOfWeek=GetDayOfWeek(chargeFrequency);
-			if(dayOfWeekFrequency==DayOfWeekFrequency.EveryOther) {
+			DayOfWeekFrequency dayFrequency=GetDayOfWeekFrequency(chargeFrequency);
+			DayOfWeek weekDay=GetDayOfWeek(chargeFrequency);
+      if(dayFrequency==DayOfWeekFrequency.EveryOther) {
 				humanReadableFrequencyString+=Lans.g("CreditCardFrequency","Every Other")+" ";
 			}
 			else {
-				humanReadableFrequencyString+=Lans.g("CreditCardFrequency",Enum.GetName(typeof(DayOfWeekFrequency),dayOfWeekFrequency)+" ");
+				humanReadableFrequencyString+=Lans.g("CreditCardFrequency",Enum.GetName(typeof(DayOfWeekFrequency),dayFrequency)+" ");
 			}
-			humanReadableFrequencyString+=Lans.g("CreditCardFrequency",Enum.GetName(typeof(DayOfWeek),dayOfWeek));
+			humanReadableFrequencyString+=Lans.g("CreditCardFrequency",Enum.GetName(typeof(DayOfWeek),weekDay));
 			humanReadableFrequencyString+=" "+Lans.g("CreditCardFrequency","of the month");
 			return humanReadableFrequencyString;
 		}
 
 		private static string GetHumanReadableFrequencyFixedMonthly(string chargeFrequency) {
-			//No need to check MiddleTierRole; no call to db.
 			List<string> listOfDates=GetDaysOfMonthForChargeFrequency(chargeFrequency).Split(',').ToList();
 			string strDates=Lans.g("CreditCardFrequency","Days of the month:")+" ";
-			if(listOfDates.Count==1) {
+      if(listOfDates.Count==1) {
 				strDates+=listOfDates[0];
 				return strDates;
-			}
+      }
 			for(int i=0;i<listOfDates.Count;i++) {
 				if(i==listOfDates.Count-1) {
 					strDates+=" "+Lans.g("All","and")+listOfDates[i];
-				}
+        }
 				else {
 					strDates+=listOfDates[i]+",";
 				}
@@ -988,37 +941,25 @@ namespace OpenDentBusiness{
 
 		///<summary>Checks if a credit card has a recurring charge associated with it. Returns true if it does, false if not.</summary>
 		public static bool IsRecurring(CreditCard creditCard) {
-			//No need to check MiddleTierRole; no call to db.
-			if(creditCard.DateStart.Year<1880){
-				return false;
-			}
-			if(CompareDouble.IsZero(creditCard.ChargeAmt)){
-				return false;
-			}
-			if(creditCard.ChargeFrequency.IsNullOrEmpty()){
-				return false;
-			}
-			return true;
+			return (creditCard.DateStart.Year>1880 && !CompareDouble.IsZero(creditCard.ChargeAmt) && !creditCard.ChargeFrequency.IsNullOrEmpty());
 		}
 
 		///<summary>Inserts a CreditCard for EdgeExpress or X-Charge.</summary>
 		public static CreditCard CreateNewOpenEdgeCard(long patNum,long clinicNum,string token,string expMonth,string expYear,string ccNumberMasked,
-			CreditCardSource creditCardSource) 
+			CreditCardSource ccSource) 
 		{
-			//No need to check MiddleTierRole; no call to db.
-			CreditCard creditCard=new CreditCard();
-			List<CreditCard> listCreditCardItemOrderCount=RefreshAll(patNum);
-			creditCard.ItemOrder=listCreditCardItemOrderCount.Count;
-			creditCard.PatNum=patNum;
-			creditCard.CCExpiration=new DateTime(Convert.ToInt32("20"+expYear),Convert.ToInt32(expMonth),1);
-			creditCard.XChargeToken=token;
-			creditCard.CCNumberMasked=ccNumberMasked;
-			creditCard.Procedures=PrefC.GetString(PrefName.DefaultCCProcs);
-			creditCard.CCSource=creditCardSource;
-			creditCard.ClinicNum=clinicNum;
-			Insert(creditCard);
-			SecurityLogs.MakeLogEntry(EnumPermType.CreditCardEdit,patNum,"Credit Card Added");
-			return creditCard;
+			CreditCard cc=new CreditCard();
+			List<CreditCard> itemOrderCount=Refresh(patNum);
+			cc.ItemOrder=itemOrderCount.Count;
+			cc.PatNum=patNum;
+			cc.CCExpiration=new DateTime(Convert.ToInt32("20"+expYear),Convert.ToInt32(expMonth),1);
+			cc.XChargeToken=token;
+			cc.CCNumberMasked=ccNumberMasked;
+			cc.Procedures=PrefC.GetString(PrefName.DefaultCCProcs);
+			cc.CCSource=ccSource;
+			cc.ClinicNum=clinicNum;
+			Insert(cc);
+			return cc;
 		}
 
 		public static void RemoveRecurringCharges(long payPlanNum) {

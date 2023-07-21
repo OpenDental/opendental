@@ -30,7 +30,7 @@ namespace OpenDental{
 			date1.SelectionStart=DateTime.Today;
 			date2.SelectionStart=DateTime.Today;
 			_listProviders=Providers.GetListReports();
-			if(!Security.IsAuthorized(EnumPermType.ReportDailyAllProviders,true)) {
+			if(!Security.IsAuthorized(Permissions.ReportDailyAllProviders,true)) {
 				//They either have permission or have a provider at this point.  If they don't have permission they must have a provider.
 				_listProviders=_listProviders.FindAll(x => x.ProvNum==Security.CurUser.ProvNum);
 				checkAllProv.Checked=false;
@@ -232,6 +232,11 @@ namespace OpenDental{
 			using FormReportComplex FormR=new FormReportComplex(report);
 			FormR.ShowDialog();
 			DialogResult=DialogResult.OK;
+		}
+		
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

@@ -81,11 +81,45 @@ namespace OpenDental{
 			_changed=true;
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 		private void FormPayPeriods_FormClosing(object sender,FormClosingEventArgs e) {
 			if(_changed) {
 				DataValid.SetInvalid(InvalidType.Views);
 			}
 		}
 
+		
+
+		
+
+		
+
+
+
+		
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -157,6 +157,10 @@ namespace OpenDental {
 			using MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(_msgText);
 			msgBoxCopyPaste.ShowDialog();
 		}
+
+		private void butOK_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+		}
 		
 	}
 }

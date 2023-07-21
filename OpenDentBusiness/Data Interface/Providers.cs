@@ -98,7 +98,7 @@ namespace OpenDentBusiness{
 
 		#region Get Methods
 
-		///<summary>Checks to see if the providers passed in have term dates that occur before the date passed in.
+		///<summary>Checks to see if the providers passed in have term dates that occur after the date passed in.
 		///Returns a list of the ProvNums that have invalid term dates.  Otherwise; empty list.</summary>
 		public static List<long> GetInvalidProvsByTermDate(List<long> listProvNums,DateTime dateCompare) {
 			//No need to check MiddleTierRole; no call to db.
@@ -947,6 +947,7 @@ namespace OpenDentBusiness{
 			}
 			string[] provNumForeignKeys=new string[] { //add any new FKs to this list.
 				"adjustment.ProvNum",
+				"anestheticrecord.ProvNum",
 				"appointment.ProvNum",
 				"appointment.ProvHyg",
 				"apptviewitem.ProvNum",
@@ -973,7 +974,6 @@ namespace OpenDentBusiness{
 				"operatory.ProvDentist",
 				"operatory.ProvHygienist",
 				"orthocase.ProvNum",
-				//"orthocharlog.ProvNum",
 				"patient.PriProv",
 				"patient.SecProv",
 				"payplancharge.ProvNum",

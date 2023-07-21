@@ -32,8 +32,9 @@ namespace OpenDental{
 			this.labelNextClaim = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textPatient = new System.Windows.Forms.TextBox();
-			this.butSave = new OpenDental.UI.Button();
-			this.textFee = new OpenDental.ValidDouble();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.textFee = new ValidDouble();
 			this.checkUseDefaultFee = new OpenDental.UI.CheckBox();
 			this.textDateNextClaim = new OpenDental.ValidDate();
 			this.SuspendLayout();
@@ -107,15 +108,25 @@ namespace OpenDental{
 			this.textPatient.Size = new System.Drawing.Size(229, 20);
 			this.textPatient.TabIndex = 5;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(278, 164);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 4;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(230, 192);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 4;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(311, 192);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 3;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// textFee
 			// 
@@ -146,8 +157,8 @@ namespace OpenDental{
 			// 
 			// FormOrthoPat
 			// 
-			this.ClientSize = new System.Drawing.Size(365, 200);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(398, 228);
 			this.Controls.Add(this.textDateNextClaim);
 			this.Controls.Add(this.checkUseDefaultFee);
 			this.Controls.Add(this.textFee);
@@ -159,7 +170,8 @@ namespace OpenDental{
 			this.Controls.Add(this.labelNextClaim);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.textPatient);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormOrthoPat";
 			this.Text = "Ortho Patient Setup";
@@ -169,7 +181,9 @@ namespace OpenDental{
 		}
 
 		#endregion
-		private UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private UI.Button butOK;
 		private System.Windows.Forms.TextBox textPatient;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label labelNextClaim;

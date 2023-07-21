@@ -29,12 +29,20 @@ namespace OpenDental {
 		#endregion Fields - Public
 
 		#region Fields - Private
+		///<summary>If this is set in an inherited form, then the font of the title will be a different size.  This avoids touching form.Font because of ambient property complexities.</summary>
+		protected Font _fontTitle=null;
+		///<summary>Only true if FormClosed has been called by the system.</summary>
+		private bool _hasClosed=false;
+		///<summary>True when form has been shown by the system. Shown occurs last in the forms construction life cycle. The Shown event is only raised the first time a form is displayed.</summary>
+		private bool _hasShown=false;
 		///<summary>Property backer</summary>
 		private bool _isImageFloatDocked=false;
 		///<summary></summary>
 		private bool _isImageFloatDragging=false;
 		///<summary>Property backer</summary>
 		private bool _isImageFloatSelected=false;
+		///<summary>The thread that is run to check if filter controls have had their changes commited.  If a single control is considered to have commited changes then the thread will only fire the _filterAction once and then will wait for more input.</summary>
+		private ODThread _threadFilter;	
 		#endregion Fields - Private
 
 		#region Fields - Private - Drawing, Border, Dpi
@@ -45,7 +53,7 @@ namespace OpenDental {
 		private static Color _colorBorderOutline=Color.Black;
 		///<summary>This is the size and location of the Form when mouse down, based in pixels. If multiple screens, it's coordinates of the entire combined desktop.</summary>
 		private Rectangle _rectangleOnDesktopMouseDown;
-		///<summary>This is the container for the canvas and all controls. It replaces PanelClient and the client area of the form.</summary>
+		///<summary>When using UIManager, this is the container for the canvas and all controls. It replaces PanelClient and the client area of the form.</summary>
 		public ElementHost ElementHostUI;
 		///<summary>If isMouseDown, then one of these is used to specify where.</summary>
 		private EnumMouseDownRegion _enumMouseDownRegion;
@@ -59,7 +67,7 @@ namespace OpenDental {
 		private bool _isHotMin;
 		private bool _isHotHelp;
 		///<summary>This panel is the same size as the form.  This is where all painting and mouse events happen.  The only reason we need to do this instead of painting directly on the form is because of a MS bug. The bug treats large portions of the window as the LowerR drag handle when the window is moved over to a high dpi screen.  This is very easy to duplicate on any simple new project, and it misbehaves across all situations, the only reqirements being high dpi with a dialog. We also use this panel with UIManager, but we cover up the L,R, and B.</summary>
-		public PanelSubclassBorder PanelBorders;
+		public PanelDoubleBuffered PanelBorders;
 		///<summary>In screen coordinates.  Prevents drawing events unless mouse moves.</summary>
 		protected Point _pointMouseScreenPrevious;
 		///<summary>In screen coordinates.  For dragging.</summary>
@@ -74,7 +82,9 @@ namespace OpenDental {
 		///<summary>This tracks when we hover over the maximize button to trigger the snap window. Disposed.</summary>
 		private System.Windows.Forms.Timer timerHoverSnap;
 		private ToolTip _toolTipBorderButtons;
-		public UIManager UIManager_;
+		protected UIManager _uIManager;
+		//<summary>Um is short for UIManager. This is how programmers interact with all controls on a form.</summary>
+		//protected Um _um;
 		///<summary>Keeps track of window state changes.  We use it to restore minimized forms to their previous state.</summary>
 		private FormWindowState _windowStateOld;
 		#endregion Fields - Private - Drawing, Border, Dpi
@@ -96,6 +106,11 @@ namespace OpenDental {
 		#region Constructor
 		public FormFrame() {
 			#region Designer Properties
+			//these properties show as default values in the extended designer UIs
+			//==Jordan is the only one who edits these because there are undocumented touchy consequences
+			//Anything that's done in the Load below will show in the designer of derived forms.
+			//For example, a property value here will be interpreted as a default in derived forms, meaning the designer will not preserve the value.
+			//As another example, ClientSize can interfere with max size or min size
 			this.AutoScaleMode=AutoScaleMode.None;//AutoScaleMode.Font is a huge problem.  Causes double resize.
 			//this.ClientSize=new System.Drawing.Size(974,696);
 			this.DoubleBuffered=true;
@@ -157,6 +172,22 @@ namespace OpenDental {
 		[DefaultValue(true)]
 		public bool HasHelpButton {get;set;}=true;
 
+		///<summary>True when form has been shown by the system.</summary>
+		[Browsable(false)]
+		public bool HasShown {
+			get {
+				return _hasShown;
+			}
+		}
+
+		///<summary>Only true if FormClosed has been called by the system.  No references, but used in IsDisposedOrClosed via reflection.</summary>
+		[Browsable(false)]
+		public bool HasClosed {
+			get {
+				return _hasClosed;
+			}
+		}
+
 		///<summary>Set to true for Kiosk to block user from dragging or clicking.</summary>
 		[Category("OD")]
 		[Description("Set to true for Kiosk to block user from dragging or clicking.")]
@@ -177,7 +208,7 @@ namespace OpenDental {
 					ShowInTaskbar=false;
 				}
 				else{//false
-					if(!ODBuild.IsThinfinity()) {
+					if(!ODBuild.IsWeb()) {
 						//This causes the form to refresh and in cloud the attached iframe loses the image and you have to reselect the image to make it show again.
 						//Also, there is no need to show in taskbar for cloud
 						ShowInTaskbar=true;
@@ -229,19 +260,15 @@ namespace OpenDental {
 		}
 
 		private void ODForm_FormClosed(object sender,FormClosedEventArgs e) {
-
+			if(_threadFilter!=null) {
+				_threadFilter.QuitAsync();//It's fine if our thread loop finishes, it protects against unhandled exceptions.
+				_threadFilter=null;
+				//We don't want an enumeration exception here so don't clear _listFilterControls. It will get garbage collected anyways.
+			}
+			_hasClosed=true;
 		}
 
 		protected override void OnLoad(EventArgs e){
-			try{
-				List<Def> listDefsMisColors = Defs.GetDefsForCategory(DefCat.MiscColors);
-				SetBorderColor(DefCatMiscColors.MainBorder,listDefsMisColors[(int)DefCatMiscColors.MainBorder].ItemColor);
-				SetBorderColor(DefCatMiscColors.MainBorderOutline,listDefsMisColors[(int)DefCatMiscColors.MainBorderOutline].ItemColor);
-				SetBorderColor(DefCatMiscColors.MainBorderText,listDefsMisColors[(int)DefCatMiscColors.MainBorderText].ItemColor);
-			}
-			catch{
-				//can fail in windows with no db connection, like in testing
-			}
 			if(DesignMode){
 				return;
 			}
@@ -252,8 +279,8 @@ namespace OpenDental {
 			System.Windows.Forms.Screen screen0=System.Windows.Forms.Screen.FromControl(this);//automatically returns screen that contains largest portion of this form
 			int dpiScreen0=Dpi.GetScreenDpi(screen0);//extern DllImport
 			float scaleMS=(float)dpiScreen0/96f;//example 1.5
-			UIManager_.SetScaleMS(scaleMS);
-			UIManager_.SetElementHost();
+			_uIManager.SetScaleMS(scaleMS);
+			_uIManager.SetElementHost();
 			PanelBorders.SendToBack();
 			PanelBorders.Paint+=PanelBorders_Paint;
 			PanelBorders.MouseDoubleClick+=PanelBorders_MouseDoubleClick;
@@ -261,9 +288,6 @@ namespace OpenDental {
 			PanelBorders.MouseDown+=PanelBorders_MouseDown;
 			PanelBorders.MouseMove+=PanelBorders_MouseMove;
 			PanelBorders.MouseUp+=PanelBorders_MouseUp;
-			PanelBorders.EventMaxClick+=PanelBorders_EventMaxClick;
-			PanelBorders.EventMouseMoveMax+=PanelBorders_EventMouseMoveMax;
-			PanelBorders.EventMouseLeave+=PanelBorders_EventMouseLeave;
 			PanelBorders.Invalidate();
 			if(!isMaximized){
 				//int widthBorder=(Width-_uIManager.SizeClientOriginal.Width)/2;//for testing
@@ -271,9 +295,9 @@ namespace OpenDental {
 				//Here's how it behaves: At 96dpi: 8. At 125%: 9. At 150%: 11. At 200%: 13
 				//Not a great pattern to work with, but the following math is accurate in all four of those cases.
 				//This same math must be used in other places.
-				int widthBorder=(int)Math.Round(8+(5*(UIManager_.GetScaleMS()-1)),MidpointRounding.AwayFromZero);
-				int widthNew = UIManager_.Scale(UIManager_.SizeClientOriginal.Width)+widthBorder*2;//includes Zoom
-				int heightNew = UIManager_.Scale(UIManager_.SizeClientOriginal.Height)+widthBorder+UIManager_.GetHeightTitleBar();
+				int widthBorder=(int)Math.Round(8+(5*(_uIManager.GetScaleMS()-1)),MidpointRounding.AwayFromZero);
+				int widthNew = _uIManager.Scale(_uIManager.SizeClientOriginal.Width)+widthBorder*2;//includes Zoom
+				int heightNew = _uIManager.Scale(_uIManager.SizeClientOriginal.Height)+widthBorder+_uIManager.GetHeightTitleBar();
 				Rectangle boundsNew = Bounds;
 				boundsNew.X-=(widthNew-Width)/2;
 				boundsNew.Y-=(heightNew-Height)/2;
@@ -282,38 +306,17 @@ namespace OpenDental {
 				Bounds=boundsNew;
 				//panelBorders and ElementHostingUI are laid out in UIManager.LayoutFormBoundsAndFonts()
 			}
-			UIManager_.LayoutFormBoundsAndFonts();
+			_uIManager.LayoutFormBoundsAndFonts();
 			base.OnLoad(e);
-			//The above line is calling Form.OnLoad.
-			//Remember that we are already inside FormFrame.OnLoad override.
-			//The above line causes all FormFrame.Load event handlers to be invoked, like the one over in FrmODBase for example.
-			//Within that event handle is where we raise our fake Frm Load (not Loaded) event.
-			//This Frm Load event only has handlers in the derived Frms. There is nothing in FrmODBase.
-			//As we document at the top of FrmODBase, the Frm Load event handler is the recommended place to explicity set focus.
-			//Right after the derived Frm Load event handlers run, then FrmODBase.FormFrame_Load calls SetFocusToFirst().
-			//If we did not already explicity set focus, then this will set focus to something, even if just the Frm itself.
-			//We are now guaranteed to have focus even in all cases, even if we didn't explicity set focus.
-			//Testing:
-			//We found a Frm with menu, toolbar, and alt-key shortcuts: FrmTestAllControls.
-			//On that Frm, we tested that menu hover, toolbar hover, and the alt-keys all worked in two different scenarios:
-			//1. When we added a line at the end of the Load event similar to this: textBox.Focus().
-			//2. When there is no focus set in the Load event.
-			//if(!UIManager_.FrmODBaseHosted.IsKeyboardFocusWithin){
-				//This never gets hit. We worked instead on setting focus prior to this point.
-				//ElementHostUI.Select();//this lets the hover effects work properly on menus and toolbars.
-				//Winforms Select() does not distinguish between keyboard and logical focus.
-				//UIManager_.FrmODBaseHosted.Focus();//Keyboard and logical focus so that keystrokes will work.
-				//Since Frms are not focusable by default, this actually selects the first control inside the Frm.
-				//See FrmTestFocusTabbing for more notes and scenarios regarding focus.
-			//}
-			//Also seeFrmODBase constructor.
+			ElementHostUI.Select();//this lets the hover effects work properly on menus and toolbars.
+			_uIManager.FrmODBaseHosted.Focus();//so that keystrokes will work
 		}
 
 		protected override void OnResize(EventArgs e){
 			//Even when we draw our own border, this gets fired automatically from the WndProc message.
 			base.OnResize(e);
 			if(ElementHostUI!=null){
-				UIManager_.LayoutFormBoundsAndFonts();
+				_uIManager.LayoutFormBoundsAndFonts();
 			}
 			if(WindowState!=FormWindowState.Minimized) {
 				_windowStateOld=WindowState;
@@ -408,13 +411,13 @@ namespace OpenDental {
 		}
 
 		///<summary>Before minimizing or maximizing a window, we need to reduce width and height by 16 and 39 pixels.  This allows the subsequent restore to be the correct size.  Otherwise, window gets slightly bigger with each restore.</summary>
-		//public void ShrinkWindowBeforeMinMax() {
-		//	if(AreBordersMS){
-		//		return;//No need to shrink when we don't control the layout
-		//	}
-		//	//Size=new Size(Width-16,Height-39);//these numbers are the MS border widths.
-		//	Size=new Size(Width,Height-31);
-		//}
+		public void ShrinkWindowBeforeMinMax() {
+			if(AreBordersMS){
+				return;//No need to shrink when we don't control the layout
+			}
+			//Size=new Size(Width-16,Height-39);//these numbers are the MS border widths.
+			Size=new Size(Width,Height-31);
+		}
 		#endregion Methods - Public
 
 		#region Border Drawing
@@ -493,7 +496,7 @@ namespace OpenDental {
 		}
 
 		public void InitializeFormMaker(FrmODBase frmODBase){
-			UIManager_=new UIManager(this,frmODBase);//using this overload avoids creating proxies or any of that
+			_uIManager=new UIManager(this,frmODBase);//using this overload avoids creating proxies or any of that
 		}
 
 		private void PanelBorders_Paint(object sender, PaintEventArgs e){
@@ -555,7 +558,6 @@ namespace OpenDental {
 			if(ControlBox && MaximizeBox){
 				xPos-=wEdge;
 				_rectangleButMax=new Rectangle(xPos,yPos,wEdge,hEdge);
-				PanelBorders.RectangleButMax=_rectangleButMax;
 			}
 			if(ControlBox && MinimizeBox){
 				xPos-=wEdge;
@@ -654,25 +656,22 @@ namespace OpenDental {
 			}
 			Rectangle rectangleIcon=new Rectangle(MaxInset()+5,MaxInset()+4,ScaleI(20),ScaleI(20));
 			if(ShowIcon){
-				//for some reason, I couldn't get form.Icon to work.
-				Icon icon=WpfControls.Properties.Resources.Icon;
-				g.DrawImage(icon.ToBitmap(),rectangleIcon);
+				g.DrawImage(Icon.ToBitmap(),rectangleIcon);
 			}
-			//if(_fontTitle==null){
-			RectangleF rectangleText=new RectangleF(MaxInset()+ScaleF(30),MaxInset()+ScaleF(7),
-			_rectangleButtons.Left-ScaleF(30)-MaxInset()+ScaleF(8),heightFont+2);//The 8 is just so we can get closer to the right
-			g.DrawString(this.Text,font,brushText,rectangleText);
-			//}
-			//else{//this won't be needed until we convert FormOpenDental to WPF, 
-			//and then it should be hard coded instead of using _fontTitle.
-			//	//We actually ignore the font size sent in
-			//	RectangleF rectangleText=new RectangleF(
-			//		x:MaxInset()+ScaleF(30),
-			//		y:MaxInset()+ScaleF(3),
-			//		width:_rectangleButtons.Left-ScaleF(30)-MaxInset()+ScaleF(8),//The 8 is just so we can get closer to the right
-			//		height:heightFontMainWindow+2);
-			//	g.DrawString(this.Text,fontMainWindow,brushText,rectangleText);
-			//}
+			if(_fontTitle==null){
+				RectangleF rectangleText=new RectangleF(MaxInset()+ScaleF(30),MaxInset()+ScaleF(7),
+				_rectangleButtons.Left-ScaleF(30)-MaxInset()+ScaleF(8),heightFont+2);//The 8 is just so we can get closer to the right
+				g.DrawString(this.Text,font,brushText,rectangleText);
+			}
+			else{
+				//We actually ignore the font size sent in
+				RectangleF rectangleText=new RectangleF(
+					x:MaxInset()+ScaleF(30),
+					y:MaxInset()+ScaleF(3),
+					width:_rectangleButtons.Left-ScaleF(30)-MaxInset()+ScaleF(8),//The 8 is just so we can get closer to the right
+					height:heightFontMainWindow+2);
+				g.DrawString(this.Text,fontMainWindow,brushText,rectangleText);
+			}
 		}
 
 		///<summary>Takes one of the 3 border colors at a time.</summary>
@@ -702,7 +701,7 @@ namespace OpenDental {
 			if(WindowState==FormWindowState.Maximized){
 				return;
 			}
-			if(e.Y>UIManager_.GetHeightTitleBar()){
+			if(e.Y>_uIManager.GetHeightTitleBar()){
 				return;
 			}		
 			if(e.X>_rectangleButtons.X-2){
@@ -718,6 +717,9 @@ namespace OpenDental {
 				MsgBox.Show(this,"PDFs cannot be undocked.  Double click to open in PDF viewer.");
 				return;
 			}
+			//Windows will not reliably restore the size after maximize.  It gets bigger each time.  We need to trick it by resizing the window before maximizing.
+			//This does not cause any flicker
+			ShrinkWindowBeforeMinMax();
 			WindowState=FormWindowState.Maximized;
 		}
 
@@ -735,41 +737,6 @@ namespace OpenDental {
 			UR,
 			LL,
 			LR
-		}
-
-		private void PanelBorders_EventMaxClick(object sender,EventArgs e) {
-			System.Windows.Forms.Screen screen=System.Windows.Forms.Screen.FromHandle(this.Handle);
-			if(WindowState==FormWindowState.Maximized){ //restore down
-				WindowState=FormWindowState.Normal;
-				if(Location==new Point(0,0)){
-					Location=new Point(screen.WorkingArea.X+screen.WorkingArea.Width/2-Width/2,screen.WorkingArea.Y+screen.WorkingArea.Height/2-Height/2);
-				}
-				if(Location.Y<screen.Bounds.Y){
-					Location=new Point(Location.X,screen.WorkingArea.Y);
-				}
-			}
-			else{//maximize
-				if(this.GetType().ToString()=="FormImageFloat" && IsImageFloatLocked){
-					MsgBox.Show(this,"PDFs cannot be undocked.  Double click to open in PDF viewer.");
-					return;
-				}
-				if(this.GetType().ToString()=="FormImageFloat"){
-					IsImageFloatDocked=false;
-					IsImageFloatLocked=false;
-				}
-				WindowState=FormWindowState.Maximized;
-			}
-			OnResizeEnd(new EventArgs());
-		}
-
-		private void PanelBorders_EventMouseMoveMax(object sender,EventArgs e) {
-			_isHotMax=true;
-			PanelBorders.Invalidate();
-		}
-
-		private void PanelBorders_EventMouseLeave(object sender,EventArgs e) {
-			_isHotMax=false;
-			PanelBorders.Invalidate();
 		}
 
 		private void PanelBorders_MouseDown(object sender, MouseEventArgs e){
@@ -823,7 +790,7 @@ namespace OpenDental {
 		}
 
 		private void PanelBorders_MouseMove(object sender, MouseEventArgs e){
-			if(UIManager_==null){
+			if(_uIManager==null){
 				return;
 			}
 			if(IsBorderLocked){
@@ -946,14 +913,7 @@ namespace OpenDental {
 			//But putting PanelBorders.Invalidate() after SetDesktopBounds below does not cause flicker
 			#endregion Button Hover Effects
 			#region Taskbar
-			if(WindowState==FormWindowState.Maximized && e.Y>=Height-16){
-				//Check if e.y is at 1080 pixels, or the bottom of the screen
-				//Jordan-I don't understand this math, but the comments are here for future use.
-				//Example: FormODBase's height=1096, which is 1080 + 8 on top and 8 on bottom for boarders, and FormODBase.Bounds.Y's starting location is -8 which means it's bottom location is 1088.
-				//PanelBorders.Height=1081, starting location is 7 therefore the bottom location is 1088 as well
-				//MouseMove will fire at e.y=1080 inside of PanelBorders as this is technically 1088 inside of FormODBase
-				//Equation=e.Y picked up at 1080 and must be greater than or equal to FormODBase.Height 1096-16 pixels (-8 for top and bottom)
-				//Over in UIManager.LayoutFormBoundsAndFonts, PanelClient and PanelBorders get set to allow this section to be hit.
+			if(WindowState==FormWindowState.Maximized && e.Y>Height-MaxInset()-2){
 				IntPtr hWnd=FindWindow("Shell_TrayWnd", "");
 				if(hWnd!=IntPtr.Zero){
 					APPBARDATA appBarData = new APPBARDATA();
@@ -1068,8 +1028,8 @@ namespace OpenDental {
 				if(rectangleNew.Width<150){
 					rectangleNew.Width=150;//without this, it will go down to 135, but not sure where that limit is coded.
 				}
-				if(rectangleNew.Height<UIManager_.GetHeightTitleBar()+widthBorder){
-					rectangleNew.Height=UIManager_.GetHeightTitleBar()+widthBorder;
+				if(rectangleNew.Height<_uIManager.GetHeightTitleBar()+widthBorder){
+					rectangleNew.Height=_uIManager.GetHeightTitleBar()+widthBorder;
 				}	
 				SetDesktopBounds(rectangleNew.X,rectangleNew.Y,rectangleNew.Width,rectangleNew.Height);
 			}
@@ -1105,6 +1065,9 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				Point pointDelta =new Point(Control.MousePosition.X-_pointMouseDownScreen.X,Control.MousePosition.Y-_pointMouseDownScreen.Y);
 				if(Bounds.Top<screen.Bounds.Top+1 && MaximizeBox && (Math.Abs(pointDelta.X)>3 || Math.Abs(pointDelta.Y)>3)){
 					//snap to top to maximize. Only allow if there's a Maximize button.
+					//Windows will not reliably restore the size after maximize.  It gets bigger each time.  We need to trick it by resizing the window before maximizing.
+					//This does not cause any flicker
+					ShrinkWindowBeforeMinMax();
 					WindowState=FormWindowState.Maximized;
 				}
 				else if(screen.Primary && pointMouse.X==screen.WorkingArea.Right-1){
@@ -1129,7 +1092,6 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				return;
 			}
 			if(_rectangleButMax.Contains(e.Location) && MaximizeBox){
-				/*This won't happen because of PanelBorders WndProc
 				if(WindowState==FormWindowState.Maximized){ //restore down
 					WindowState=FormWindowState.Normal;
 					if(Location==new Point(0,0)){
@@ -1153,13 +1115,18 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 					}
 					WindowState=FormWindowState.Maximized;
 				}
-				OnResizeEnd(new EventArgs());*/
+				OnResizeEnd(new EventArgs());
 				return;
 			}
 			if(_rectangleButMin.Contains(e.Location) && MinimizeBox){
 				if(this.GetType().ToString()=="FormImageFloat" && IsImageFloatLocked){
 					MsgBox.Show(this,"PDFs cannot be undocked.  Double click to open in PDF viewer.");
 					return;
+				}
+				if(WindowState!=FormWindowState.Maximized){//not an issue if starting maximized
+					//Windows will not reliably restore the size after minimize.  It gets bigger each time.  We need to trick it by resizing the window before minimizing.
+					//This does not cause any flicker
+					ShrinkWindowBeforeMinMax();
 				}
 				WindowState=FormWindowState.Minimized;
 				if(this.GetType().ToString()=="FormImageFloat"){
@@ -1172,7 +1139,7 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 			if(_regionButHelp.IsVisible(e.Location) && HasHelpButton){//IsVisible really means HitTest
 				string formName="";
 				if(GetHelpOverride()=="") {
-					formName=Name;//Name was already fixed to look like Form... instead of Frm...
+					formName=Name;
 				}
 				else{
 					formName=GetHelpOverride();
@@ -1180,18 +1147,16 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				try{
 					bool isKeyValid=ODHelp.IsEncryptedKeyValid();//always true in debug
 					string manualPageURL=OpenDentalHelp.ODHelp.GetManualPage(formName,PrefC.GetString(PrefName.ProgramVersion),isKeyValid);
-					//GetManualPage is also where form name gets sent to clipboard.
-					if(ODBuild.IsThinfinity()) {
+					if(ODBuild.IsWeb()) {
 						Process.Start(manualPageURL);
 					}
-					else if(ODCloudClient.IsAppStream){
-						ODCloudClient.LaunchFileWithODCloudClient(manualPageURL);
-					}
 					else{
-						FrmHelpBrowser frmHelpBrowser=new FrmHelpBrowser();
-						frmHelpBrowser.EnableUI(enableUI:isKeyValid);//If false, then just the Help Feature page shows
-						frmHelpBrowser.GoToPage(manualPageURL);
-						frmHelpBrowser.Show();
+						Process.Start(manualPageURL);
+						//todo: fix for wpf:
+						//FormHelpBrowser formHelpBrowser=FormHelpBrowser.GetFormHelpBrowser(enableUI:isKeyValid);//If false, then just the Help Feature page shows
+						//formHelpBrowser.GoToPage(manualPageURL);
+						//formHelpBrowser.Show();
+						//UIHelper.ForceBringToFront(formHelpBrowser);
 					}
 					if(!isKeyValid) {
 						//comes up on top of locked browser.
@@ -1207,27 +1172,27 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 
 		#region UIManagerTransition
 		private int GetHeightTitleBar(){
-			return UIManager_.GetHeightTitleBar();
+			return _uIManager.GetHeightTitleBar();
 		}
 
 		private int ScaleI(float val96){//Scale is already taken
-			return UIManager_.Scale(val96);
+			return _uIManager.Scale(val96);
 		}
 
 		private float ScaleF(float val96){
-			return UIManager_.ScaleF(val96);
+			return _uIManager.ScaleF(val96);
 		}
 
 		private float ScaleFontODZoom(float val96){
-			return UIManager_.ScaleFontODZoom(val96);
+			return _uIManager.ScaleFontODZoom(val96);
 		}
 
 		private float ScaleMS(float val96){
-			return UIManager_.ScaleMS(val96);
+			return _uIManager.ScaleMS(val96);
 		}
 
 		private int WidthBorder(){
-			return UIManager_.Scale(15);//this was obtained by trial and error
+			return _uIManager.Scale(15);//this was obtained by trial and error
 			//Its only effect is the spacing to the right of the X close button.
 		}
 		#endregion UIManagerTransition
@@ -1257,7 +1222,6 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 
 		private const int WM_DPICHANGED=0x02E0;
 		private const int WM_NCCALCSIZE = 0x83;
-		private const int WM_WINDOWPOSCHANGED=0x0047;
 
 		[StructLayout(LayoutKind.Sequential)]
 		private struct NCCALCSIZE_PARAMS{
@@ -1271,7 +1235,7 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 		protected override void WndProc(ref Message m) {
 			#region WM_DPICHANGED
 			if (m.Msg==WM_DPICHANGED){
-				if(UIManager_==null){
+				if(_uIManager==null){
 					base.WndProc(ref m);
 					return;
 				}
@@ -1296,11 +1260,11 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				//The above is not redundant because this form is unaware of DeviceDpi
 				//valScreen/ScaleMy();
 				SizeF size96Old;
-				size96Old=new SizeF(UIManager_.UnscaleF(Width),UIManager_.UnscaleF(Height));
-				UIManager_.SetScaleMS(dpi/96f);//example 1.5
+				size96Old=new SizeF(_uIManager.UnscaleF(Width),_uIManager.UnscaleF(Height));
+				_uIManager.SetScaleMS(dpi/96f);//example 1.5
 				if(WindowState==FormWindowState.Maximized){
 					//don't try to resize. This gets hit when user changes resolution or scale of a monitor
-					UIManager_.LayoutFormBoundsAndFonts();
+					_uIManager.LayoutFormBoundsAndFonts();
 				}
 				else{
 					Rectangle rectangle=new Rectangle(rectSuggested.Left,rectSuggested.Top,rectSuggested.Right-rectSuggested.Left,rectSuggested.Bottom-rectSuggested.Top);
@@ -1311,8 +1275,8 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 					else{
 						if(ComputerPrefs.LocalComputer.Zoom!=0){
 							//make slight adjustments to the suggested rectangle to include Zoom
-							int widthNew=UIManager_.Scale(size96Old.Width);
-							int heightNew=UIManager_.Scale(size96Old.Height);
+							int widthNew=_uIManager.Scale(size96Old.Width);
+							int heightNew=_uIManager.Scale(size96Old.Height);
 							//todo: We shouldn't be changing the rectangle, but it's just a small amount.
 							//https://learn.microsoft.com/en-us/windows/win32/hidpi/high-dpi-desktop-application-development-on-windows
 							rectangle.X-=(widthNew-rectangle.Width)/2;
@@ -1347,7 +1311,7 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				//Just like MS, the top resize is within the titlebar, not in the outside shadow.
 				//We are leaving an 8 pixel border on L,R,B to show the shadow and allow dragging.
 				//See notes in Load
-				int widthBorder=(int)Math.Round(8+(5*(UIManager_.GetScaleMS()-1)),MidpointRounding.AwayFromZero);
+				int widthBorder=(int)Math.Round(8+(5*(_uIManager.GetScaleMS()-1)),MidpointRounding.AwayFromZero);
 				rectangle=new Rectangle(rectangle.X+widthBorder,rectangle.Y,rectangle.Width-widthBorder*2,rectangle.Height-widthBorder);
 				ncCalcSizeParams.rgrc0 = new RECT(rectangle);
 				Marshal.StructureToPtr(ncCalcSizeParams,m.LParam,true);//return screen coords of new window client area
@@ -1383,15 +1347,6 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				//https://stackoverflow.com/questions/2135068/how-to-set-the-size-of-the-non-client-area-of-a-win32-window-native
 			}
 			#endregion WM_NCCALCSIZE
-			#region WM_WINDOWPOSCHANGED
-			if(m.Msg==WM_WINDOWPOSCHANGED) {
-				//This is a workaround needed to make Windows 11 Snap Layout function properly when the window was maximized because of a Microsoft bug that wasn't fixed until .Net 7 https://github.com/dotnet/winforms/issues/6153.
-				System.Reflection.FieldInfo restoredBoundsSpecified = typeof(Form).GetField("restoredWindowBoundsSpecified",System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-				if(restoredBoundsSpecified!=null) {
-					restoredBoundsSpecified.SetValue(this,BoundsSpecified.None);
-				}
-			}
-			#endregion WM_WINDOWPOSCHANGED
 			base.WndProc(ref m);
 		}
 
@@ -1436,16 +1391,13 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 		#endregion Help
 
 		private void InitializeComponent() {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormFrame));
 			this.SuspendLayout();
 			// 
-			// FormFrame
+			// FormODBase
 			// 
 			this.BackColor = System.Drawing.SystemColors.Control;
 			this.ClientSize = new System.Drawing.Size(284, 261);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.Name = "FormFrame";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			this.Name = "FormODBase";
 			this.ResumeLayout(false);
 
 		}
@@ -1455,8 +1407,46 @@ Application.DoEvents();//Without this, there are huge drag artifacts, especially
 				DoubleBuffered=true;
 			}
 		}
-
 	}
 
 }
 
+
+#region Ignore these notes
+//There are many ways to draw a window border.  Here are a few possibilities:
+//1.(How we do it) Put all controls into a PanelClient that is slightly smaller than the form.  Eliminate MS borders.  
+//  Add PanelBorder, filling the form, behind PanelClient.  This is where drawing and mouse happens.
+//  Downsides: Any control.Parent would fail if it's assuming a form, but there aren't many. Switch to control.TopLevelControl, which is guaranteed to be the form.
+//  Manual layout uses ClientSize, so ClientSize.get was tweaked to hide the base version and instead use the PanelClient.ClientSize.
+//  Flicker when resizing seems to be an unsolvable problem.  People don't resize very often, and many of my favorite UIs flicker when resizing.  So we will live with it.
+//  I'm pretty sure there are some Win32 tweaks we can add to remove the kinds of flicker caused by multiple resizes.
+//2.Same as above, except draw directly on main form.  This was not possible due to a bug in MS, as described in PanelBorder above.
+//3.(Worked but decided against it) Added 4 docked panels to sides to push in any docked controls.  Move all non-docked controls down and right on load. 
+//  Downsides: Any manual layoutcould no longer use 0,0 as origin and would be different than it was in designer.
+//  Flicker was same as #1.
+//  Finally, controls could spill over onto border.
+//4.(Worked but decided against it) Overrode WndProc to assign a sizable border.  
+//  https://www.codeproject.com/Tips/1081558/Custom-Border-Windows-Style
+//  Had same flicker as 1 and 2.  Didn't give me enough control over exact boundaries and behaviors.
+//5. Use WndProc to gain access to non-client area for drawing
+//  http://geekswithblogs.net/kobush/articles/CustomBorderForms.aspx
+//  No code example available.  He says his solution is buggy.
+//6. Windows Style Builder? Seems like old tech.
+//7. Wrap the WinForm in a WPF form. This would probably work, but probably wouldn't solve the flicker.
+
+//2020-05-05- Issues for later:
+//ODProgress and Help both have UI in a separate thread from the main OD thread.
+//This is bad.  Both should be deprecated and rewritten.
+//ODProgress has tentacles, including ODMessageBox and various code inside this class.
+//As long as ODProgress exists, none of the related code can be damaged.
+//Another issue to be aware of is how OD forces closing.
+//It must force various open windows to close, 
+//so there is a fair amount of code scattered around that tries to close windows and then kills them.
+//This code will generally stay in place since it's good.
+//Signal processing code doesn't really need to be in this class, so we might move it eventually.
+//This would allow more forms to process signals, even if they didn't inherit from FormODBase.
+//For example, our internal tools.
+
+
+
+#endregion Ignore these notes

@@ -26,6 +26,7 @@ namespace OpenDental{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWebBrowserPrefs));
 			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+			this.butClose = new OpenDental.UI.Button();
 			this.webView = new CodeBase.Controls.ODWebView2();
 			this.webBrowser = new System.Windows.Forms.WebBrowser();
 			((System.ComponentModel.ISupportInitialize)(this.webView)).BeginInit();
@@ -37,6 +38,17 @@ namespace OpenDental{
 			this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
 			this.imageList1.Images.SetKeyName(0, "arrowLeft22.gif");
 			this.imageList1.Images.SetKeyName(1, "arrowRight22.gif");
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(297, 175);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// webView
 			// 
@@ -60,7 +72,7 @@ namespace OpenDental{
 			this.webBrowser.Location = new System.Drawing.Point(12, 12);
 			this.webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
 			this.webBrowser.Name = "webBrowser";
-			this.webBrowser.Size = new System.Drawing.Size(360, 187);
+			this.webBrowser.Size = new System.Drawing.Size(360, 157);
 			this.webBrowser.TabIndex = 5;
 			this.webBrowser.Visible = false;
 			// 
@@ -69,6 +81,7 @@ namespace OpenDental{
 			this.ClientSize = new System.Drawing.Size(384, 211);
 			this.Controls.Add(this.webBrowser);
 			this.Controls.Add(this.webView);
+			this.Controls.Add(this.butClose);
 			this.Cursor = System.Windows.Forms.Cursors.Default;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormWebBrowserPrefs";
@@ -82,6 +95,7 @@ namespace OpenDental{
 
 		#endregion
 		private System.Windows.Forms.ImageList imageList1;
+		private UI.Button butClose;
 		private CodeBase.Controls.ODWebView2 webView;
 		private System.Windows.Forms.WebBrowser webBrowser;
 	}

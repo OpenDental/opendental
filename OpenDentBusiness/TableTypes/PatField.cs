@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace OpenDentBusiness{
 
-	/// <summary>These are custom fields added and managed by the user. Each row here is a field value for one patient.</summary>
+	/// <summary>These are custom fields added and managed by the user.</summary>
 	[Serializable]
 	[CrudTable(IsSecurityStamped=true)]
 	public class PatField:TableBase {
@@ -28,9 +28,34 @@ namespace OpenDentBusiness{
 		[CrudColumn(SpecialType=CrudSpecialColType.TimeStamp)]
 		public DateTime SecDateTEdit;
 
+
 		///<summary></summary>
 		public PatField Copy() {
 			return (PatField)this.MemberwiseClone();
 		}
+
 	}
+
+		
+
+
+
+		
+	
+
+	
+
+	
+
+
 }
+
+
+
+
+
+
+
+
+
+

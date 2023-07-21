@@ -9,8 +9,7 @@ namespace OpenDentBusiness {
 	public class AutoCommActives {
 		///<summary></summary>
 		public static bool IsForEmail(CommType commType) {
-			ContactMethod contactMethod=EnumTools.GetAttributeOrDefault<CommTypeAttribute>(commType).ContactMethod;
-			return contactMethod==ContactMethod.Email;
+			return EnumTools.GetAttributeOrDefault<CommTypeAttribute>(commType).ContactMethod==ContactMethod.Email;
 		}
 
 		public static bool IsForEmail(string commTypeStr) {

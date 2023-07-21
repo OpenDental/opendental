@@ -41,7 +41,7 @@ namespace OpenDental {
 			_webMailNotifBody=PrefC.GetString(PrefName.PatientPortalNotifyBody);
 			RefreshEmail(browserWebMailNotificatonBody,_webMailNotifBody);
 			_isWebMailRawHtml=PrefC.GetEnum<EmailType>(PrefName.PortalWebEmailTemplateType)==EmailType.RawHtml;
-			bool allowEdit=Security.IsAuthorized(EnumPermType.EServicesSetup,suppressMessage:true);
+			bool allowEdit=Security.IsAuthorized(Permissions.EServicesSetup,suppressMessage:true);
 			groupBoxNotification.Enabled=allowEdit;
 			butCustomUrl.Visible=allowEdit;
 			ConstructURL();
@@ -49,10 +49,10 @@ namespace OpenDental {
 
 		///<summary>When customize URL button is clicked, prompt for custom URL.</summary>
 		private void butCustomUrl_Click (object sender,EventArgs e) {
-			InputBox inputBox=new InputBox(Lan.g(this,"Input Custom URL"));
+			using InputBox inputBox=new InputBox(Lan.g(this,"Input Custom URL"));
 			inputBox.ShowDialog();
-			if(inputBox.IsDialogOK && !inputBox.StringResult.IsNullOrEmpty()) {
-				textPatientFacingUrlPortal.Text=inputBox.StringResult;
+			if(inputBox.DialogResult==DialogResult.OK && !inputBox.textResult.Text.IsNullOrEmpty()) {
+				textPatientFacingUrlPortal.Text=inputBox.textResult.Text;
 			}
 		}
 
@@ -84,8 +84,8 @@ namespace OpenDental {
 		private void ConstructURL() {
 			textHostedUrlPortal.Clear();
 			string url=_signupOutEServiceHQUrls.HostedUrl;
-			if(comboPPClinicUrl.ClinicNumSelected>0) {//'None' is not selected
-				url+="&CID="+comboPPClinicUrl.ClinicNumSelected;
+			if(comboPPClinicUrl.SelectedClinicNum>0) {//'None' is not selected
+				url+="&CID="+comboPPClinicUrl.SelectedClinicNum;
 			}
 			textHostedUrlPortal.Text=url;
 		}
@@ -129,7 +129,7 @@ namespace OpenDental {
 			Prefs.UpdateInt(PrefName.PortalWebEmailTemplateType,(int)emailType);
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!ODBuild.IsDebug()) {
 				if(!textPatientFacingUrlPortal.Text.ToUpper().StartsWith("HTTPS")) {
 					MsgBox.Show(this,"Patient Facing URL must start with HTTPS.");
@@ -156,5 +156,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

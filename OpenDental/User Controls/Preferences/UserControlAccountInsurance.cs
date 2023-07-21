@@ -32,16 +32,16 @@ namespace OpenDental {
 		private void butReplacements_Click(object sender,EventArgs e) {
 			List<MessageReplaceType> listMessageReplaceTypes=new List<MessageReplaceType>();
 			listMessageReplaceTypes.Add(MessageReplaceType.Patient);
-			FrmMessageReplacements frmMessageReplacements=new FrmMessageReplacements(listMessageReplaceTypes);
-			frmMessageReplacements.IsSelectionMode=true;
-			frmMessageReplacements.ShowDialog();
-			if(frmMessageReplacements.IsDialogCancel) {
+			using FormMessageReplacements form=new FormMessageReplacements(listMessageReplaceTypes);
+			form.IsSelectionMode=true;
+			form.ShowDialog();
+			if(form.DialogResult!=DialogResult.OK) {
 				return;
 			}
 			textClaimIdentifier.Focus();
 			int cursorIndex=textClaimIdentifier.SelectionStart;
-			textClaimIdentifier.Text=textClaimIdentifier.Text.Insert(cursorIndex,frmMessageReplacements.ReplacementTextSelected);
-			textClaimIdentifier.SelectionStart=cursorIndex+frmMessageReplacements.ReplacementTextSelected.Length;
+			textClaimIdentifier.Text=textClaimIdentifier.Text.Insert(cursorIndex,form.Replacement);
+			textClaimIdentifier.SelectionStart=cursorIndex+form.Replacement.Length;
 		}
 		#endregion Methods - Event Handlers
 
@@ -58,7 +58,6 @@ namespace OpenDental {
 			textClaimAttachPath.Text=PrefC.GetString(PrefName.ClaimAttachExportPath);
 			checkEclaimsMedicalProvTreatmentAsOrdering.Checked=PrefC.GetBool(PrefName.ClaimMedProvTreatmentAsOrdering);
 			checkEclaimsSeparateTreatProv.Checked=PrefC.GetBool(PrefName.EclaimsSeparateTreatProv);
-			checkEclaimsSubscIDUsesPatID.Checked=PrefC.GetBool(PrefName.EclaimsSubscIDUsesPatID);
 			checkClaimsValidateACN.Checked=PrefC.GetBool(PrefName.ClaimsValidateACN);
 			checkAllowProcAdjFromClaim.Checked=PrefC.GetBool(PrefName.AllowProcAdjFromClaim);
 			comboClaimCredit.Items.AddList(Enum.GetNames(typeof(ClaimProcCreditsGreaterThanProcFee)));
@@ -80,13 +79,8 @@ namespace OpenDental {
 			checkClaimPrimaryRecievedForceSecondaryStatus.Checked=PrefC.GetBool(PrefName.ClaimPrimaryRecievedForceSecondaryStatus);
 			checkInsAutoReceiveNoAssign.Checked=PrefC.GetBool(PrefName.InsAutoReceiveNoAssign);
 			checkClaimPaymentPickStatementType.Checked=PrefC.GetBool(PrefName.ClaimPaymentPickStatementType);
-			checkClaimFinalizeWarning.Checked=PrefC.GetBool(PrefName.ClaimFinalizeWarning);
-			checkClaimPrimaryReceivedRecalcSecondary.Checked=PrefC.GetBool(PrefName.ClaimPrimaryReceivedRecalcSecondary);
 			if(!CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
 				checkCanadianPpoLabEst.Visible=false;
-			}
-			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
-				checkEclaimsSubscIDUsesPatID.Visible=false;
 			}
 		}
 
@@ -96,7 +90,6 @@ namespace OpenDental {
 			Changed|=Prefs.UpdateBool(PrefName.ClaimFormTreatDentSaysSigOnFile,checkClaimFormTreatDentSaysSigOnFile.Checked);
 			Changed|=Prefs.UpdateString(PrefName.ClaimAttachExportPath,textClaimAttachPath.Text);
 			Changed|=Prefs.UpdateBool(PrefName.EclaimsSeparateTreatProv,checkEclaimsSeparateTreatProv.Checked);
-			Changed|=Prefs.UpdateBool(PrefName.EclaimsSubscIDUsesPatID,checkEclaimsSubscIDUsesPatID.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.ClaimsValidateACN,checkClaimsValidateACN.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.ClaimMedTypeIsInstWhenInsPlanIsMedical,checkClaimMedTypeIsInstWhenInsPlanIsMedical.Checked);
 			Changed|=Prefs.UpdateString(PrefName.InsWriteoffDescript,textInsWriteoffDescript.Text);
@@ -117,8 +110,6 @@ namespace OpenDental {
 			Changed|=Prefs.UpdateBool(PrefName.ClaimPrimaryRecievedForceSecondaryStatus,checkClaimPrimaryRecievedForceSecondaryStatus.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.InsAutoReceiveNoAssign,checkInsAutoReceiveNoAssign.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.ClaimPaymentPickStatementType,checkClaimPaymentPickStatementType.Checked);
-			Changed|=Prefs.UpdateBool(PrefName.ClaimFinalizeWarning,checkClaimFinalizeWarning.Checked);
-			Changed|=Prefs.UpdateBool(PrefName.ClaimPrimaryReceivedRecalcSecondary,checkClaimPrimaryReceivedRecalcSecondary.Checked);
 			return true;
 		}
 		#endregion Methods - Public

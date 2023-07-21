@@ -27,6 +27,7 @@ namespace OpenDental{
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.labelWarning = new System.Windows.Forms.Label();
 			this.butCheck = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.labelTotal = new System.Windows.Forms.Label();
 			this.labelVerified = new System.Windows.Forms.Label();
 			this.labelInvalid = new System.Windows.Forms.Label();
@@ -65,6 +66,16 @@ namespace OpenDental{
 			this.butCheck.TabIndex = 3;
 			this.butCheck.Text = "Check";
 			this.butCheck.Click += new System.EventHandler(this.butCheck_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(638, 498);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// labelTotal
 			// 
@@ -127,6 +138,7 @@ namespace OpenDental{
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(725, 534);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.textInvalid);
 			this.Controls.Add(this.textVerified);
 			this.Controls.Add(this.textTotal);
@@ -149,6 +161,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butCheck;
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.Label labelWarning;
 		private System.Windows.Forms.Label labelTotal;

@@ -33,7 +33,7 @@ namespace OpenDental{
 			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOk = new OpenDental.UI.Button();
 			this.label25 = new System.Windows.Forms.Label();
 			this.groupBox3 = new OpenDental.UI.GroupBox();
 			this.checkEnableEServicesListener = new OpenDental.UI.CheckBox();
@@ -54,6 +54,7 @@ namespace OpenDental{
 			this.labelListenerStatus = new System.Windows.Forms.Label();
 			this.butListenerAlertsOff = new OpenDental.UI.Button();
 			this.textListenerServiceStatus = new System.Windows.Forms.TextBox();
+			this.butCancel = new OpenDental.UI.Button();
 			this.menuWebSchedVerifyTextTemplate.SuspendLayout();
 			this.groupBox3.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -115,22 +116,22 @@ namespace OpenDental{
 			this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
 			this.selectAllToolStripMenuItem.Text = "Select All";
 			// 
-			// butSave
+			// butOk
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(915, 553);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 23);
-			this.butSave.TabIndex = 500;
-			this.butSave.Text = "&Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOk.Location = new System.Drawing.Point(834, 532);
+			this.butOk.Name = "butOk";
+			this.butOk.Size = new System.Drawing.Size(75, 23);
+			this.butOk.TabIndex = 500;
+			this.butOk.Text = "OK";
+			this.butOk.UseVisualStyleBackColor = true;
+			this.butOk.Click += new System.EventHandler(this.butOk_Click);
 			// 
 			// label25
 			// 
 			this.label25.Location = new System.Drawing.Point(12, 9);
 			this.label25.Name = "label25";
-			this.label25.Size = new System.Drawing.Size(981, 90);
+			this.label25.Size = new System.Drawing.Size(932, 68);
 			this.label25.TabIndex = 251;
 			this.label25.Text = resources.GetString("label25.Text");
 			// 
@@ -152,7 +153,7 @@ namespace OpenDental{
 			this.groupBox3.Controls.Add(this.labelListenerStatus);
 			this.groupBox3.Controls.Add(this.butListenerAlertsOff);
 			this.groupBox3.Controls.Add(this.textListenerServiceStatus);
-			this.groupBox3.Location = new System.Drawing.Point(15, 100);
+			this.groupBox3.Location = new System.Drawing.Point(15, 80);
 			this.groupBox3.Name = "groupBox3";
 			this.groupBox3.Size = new System.Drawing.Size(975, 447);
 			this.groupBox3.TabIndex = 249;
@@ -212,7 +213,7 @@ namespace OpenDental{
 			// 
 			this.labelInstallWarning.Location = new System.Drawing.Point(524, 72);
 			this.labelInstallWarning.Name = "labelInstallWarning";
-			this.labelInstallWarning.Size = new System.Drawing.Size(399, 15);
+			this.labelInstallWarning.Size = new System.Drawing.Size(399, 13);
 			this.labelInstallWarning.TabIndex = 256;
 			this.labelInstallWarning.Text = " By clicking \'Install\' you consent to running the eConnector as a service";
 			// 
@@ -230,7 +231,7 @@ namespace OpenDental{
 			this.labelListenerServiceAck.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.labelListenerServiceAck.Location = new System.Drawing.Point(324, 318);
 			this.labelListenerServiceAck.Name = "labelListenerServiceAck";
-			this.labelListenerServiceAck.Size = new System.Drawing.Size(578, 15);
+			this.labelListenerServiceAck.Size = new System.Drawing.Size(578, 13);
 			this.labelListenerServiceAck.TabIndex = 254;
 			this.labelListenerServiceAck.Text = "Acknowledge all errors.  This will stop the eServices menu from showing yellow.";
 			this.labelListenerServiceAck.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -332,12 +333,24 @@ namespace OpenDental{
 			this.textListenerServiceStatus.Size = new System.Drawing.Size(100, 20);
 			this.textListenerServiceStatus.TabIndex = 246;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(915, 531);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 501;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// FormEServicesEConnector
 			// 
-			this.ClientSize = new System.Drawing.Size(1002, 583);
+			this.ClientSize = new System.Drawing.Size(1002, 563);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.label25);
 			this.Controls.Add(this.groupBox3);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOk);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEServicesEConnector";
 			this.Text = "eServices EConnector";
@@ -352,7 +365,7 @@ namespace OpenDental{
 		}
 
 		#endregion
-		private UI.Button butSave;
+		private UI.Button butOk;
 		private OpenDental.UI.GroupBox groupBox3;
 		private UI.Button butStartListenerService;
 		private System.Windows.Forms.Label label24;
@@ -377,6 +390,7 @@ namespace OpenDental{
 		private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
 		private OpenDental.UI.CheckBox checkEmailsWithDiffProcess;
+		private UI.Button butCancel;
 		private System.Windows.Forms.Label labelIntervalDays;
 		private ValidNum textLogCleanupInterval;
 		private OpenDental.UI.GroupBox groupBox1;

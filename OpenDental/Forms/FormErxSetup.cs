@@ -227,17 +227,14 @@ namespace OpenDental {
 		}
 
 		private void butClearAccountId_Click(object sender,EventArgs e) {
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-			inputBoxParam.LabelText="Please enter password";
-			inputBoxParam.IsPassswordCharStar=true;
-			InputBox inputBox=new InputBox(inputBoxParam);
-			inputBox.SetTitle("Clear Account ID");
+			using InputBox inputBox=new InputBox("Please enter password");
+			inputBox.setTitle("Clear Account ID");
+			inputBox.textResult.PasswordChar='*';
 			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			if(inputBox.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			if(inputBox.StringResult!="eRxTeamPW") {
+			if(inputBox.textResult.Text!="eRxTeamPW") {
 				MsgBox.Show(this,"Wrong password");
 				return;
 			}
@@ -275,7 +272,7 @@ namespace OpenDental {
 			FillGridDoseSpot();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(checkEnabled.Checked && !Programs.IsEnabledByHq(ProgramName.eRx,out string err)) {
 				MsgBox.Show(err);
 				return;
@@ -288,6 +285,10 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private class DoseSpotGridRowModel {
 			public Clinic ClinicCur;
 			public ProgramProperty ProgramPropertyClinicID;
@@ -296,6 +297,5 @@ namespace OpenDental {
 			public DoseSpotGridRowModel() {
 			}
 		}
-
 	}
 }

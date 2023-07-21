@@ -39,6 +39,7 @@ namespace OpenDental {
 			this.grid2 = new OpenDental.UI.GridOD();
 			this.butDuplicate = new OpenDental.UI.Button();
 			this.butCopy = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.butHistory = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
@@ -91,6 +92,16 @@ namespace OpenDental {
 			this.butCopy.Text = "Copy";
 			this.butCopy.Click += new System.EventHandler(this.butCopy_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(887, 607);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butHistory
 			// 
 			this.butHistory.Location = new System.Drawing.Point(38, 8);
@@ -103,6 +114,7 @@ namespace OpenDental {
 			// FormHL7Defs
 			// 
 			this.ClientSize = new System.Drawing.Size(974, 641);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butHistory);
 			this.Controls.Add(this.butDuplicate);
 			this.Controls.Add(this.butCopy);
@@ -120,6 +132,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private UI.Button butClose;
 		private UI.Button butCopy;
 		private UI.GridOD grid2;
 		private UI.GridOD grid1;

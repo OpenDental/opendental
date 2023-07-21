@@ -68,7 +68,7 @@ namespace xCrudGenerator {
 						return GetEntireSclassMobile(typeClass.Name,obj,priKey1.Name,priKey2.Name,Sname,tablename,priKeyParam1,priKeyParam2,isTableHist);
 					}
 					else {
-						List<EnumPermType> listAuditTrailPerms=GroupPermissions.GetPermsFromCrudAuditPerm(CrudTableAttribute.GetCrudAuditPermForClass(typeClass));
+						List<Permissions> listAuditTrailPerms=GroupPermissions.GetPermsFromCrudAuditPerm(CrudTableAttribute.GetCrudAuditPermForClass(typeClass));
 						return GetEntireSclass(typeClass.Name,obj,priKey.Name,Sname,tablename,priKeyParam,listAuditTrailPerms,isTableHist);
 					}
 				case SnippetType.AddTable:
@@ -287,7 +287,7 @@ namespace xCrudGenerator {
 			return retVal;
 		}
 
-		private static string GetClearFkey(List<EnumPermType> listPermissions,string typeClassName,string priKeyParam,string priKeyName) {
+		private static string GetClearFkey(List<Permissions> listPermissions,string typeClassName,string priKeyParam,string priKeyName) {
 			string retVal="";
 			if(listPermissions==null || listPermissions.Count==0){
 				return retVal;
@@ -304,7 +304,7 @@ namespace xCrudGenerator {
 			return retVal;
 		}
 
-		private static string GetClearFkeyList(List<EnumPermType> listPermissions,string typeClassName,string priKeyParam,string priKeyName) {
+		private static string GetClearFkeyList(List<Permissions> listPermissions,string typeClassName,string priKeyParam,string priKeyName) {
 			string retVal="";
 			if(listPermissions==null || listPermissions.Count==0) {
 				return retVal;
@@ -323,7 +323,7 @@ namespace xCrudGenerator {
 		}
 
 		private static string GetEntireSclass(string typeClassName,string obj,string priKeyName,string Sname,string tablename,string priKeyParam,
-			List<EnumPermType> listAuditTrailPerms,bool isTableHist)
+			List<Permissions> listAuditTrailPerms,bool isTableHist)
 		{
 			string str=@"using System;
 using System.Collections.Generic;

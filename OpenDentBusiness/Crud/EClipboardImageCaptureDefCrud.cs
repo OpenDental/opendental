@@ -52,7 +52,6 @@ namespace OpenDentBusiness.Crud{
 				eClipboardImageCaptureDef.IsSelfPortrait              = PIn.Bool  (row["IsSelfPortrait"].ToString());
 				eClipboardImageCaptureDef.FrequencyDays               = PIn.Int   (row["FrequencyDays"].ToString());
 				eClipboardImageCaptureDef.ClinicNum                   = PIn.Long  (row["ClinicNum"].ToString());
-				eClipboardImageCaptureDef.OcrCaptureType              = (OpenDentBusiness.EnumOcrCaptureType)PIn.Int(row["OcrCaptureType"].ToString());
 				retVal.Add(eClipboardImageCaptureDef);
 			}
 			return retVal;
@@ -69,7 +68,6 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("IsSelfPortrait");
 			table.Columns.Add("FrequencyDays");
 			table.Columns.Add("ClinicNum");
-			table.Columns.Add("OcrCaptureType");
 			foreach(EClipboardImageCaptureDef eClipboardImageCaptureDef in listEClipboardImageCaptureDefs) {
 				table.Rows.Add(new object[] {
 					POut.Long  (eClipboardImageCaptureDef.EClipboardImageCaptureDefNum),
@@ -77,7 +75,6 @@ namespace OpenDentBusiness.Crud{
 					POut.Bool  (eClipboardImageCaptureDef.IsSelfPortrait),
 					POut.Int   (eClipboardImageCaptureDef.FrequencyDays),
 					POut.Long  (eClipboardImageCaptureDef.ClinicNum),
-					POut.Int   ((int)eClipboardImageCaptureDef.OcrCaptureType),
 				});
 			}
 			return table;
@@ -97,7 +94,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="EClipboardImageCaptureDefNum,";
 			}
-			command+="DefNum,IsSelfPortrait,FrequencyDays,ClinicNum,OcrCaptureType) VALUES(";
+			command+="DefNum,IsSelfPortrait,FrequencyDays,ClinicNum) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(eClipboardImageCaptureDef.EClipboardImageCaptureDefNum)+",";
 			}
@@ -105,8 +102,7 @@ namespace OpenDentBusiness.Crud{
 				     POut.Long  (eClipboardImageCaptureDef.DefNum)+","
 				+    POut.Bool  (eClipboardImageCaptureDef.IsSelfPortrait)+","
 				+    POut.Int   (eClipboardImageCaptureDef.FrequencyDays)+","
-				+    POut.Long  (eClipboardImageCaptureDef.ClinicNum)+","
-				+    POut.Int   ((int)eClipboardImageCaptureDef.OcrCaptureType)+")";
+				+    POut.Long  (eClipboardImageCaptureDef.ClinicNum)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -131,7 +127,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="EClipboardImageCaptureDefNum,";
 			}
-			command+="DefNum,IsSelfPortrait,FrequencyDays,ClinicNum,OcrCaptureType) VALUES(";
+			command+="DefNum,IsSelfPortrait,FrequencyDays,ClinicNum) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(eClipboardImageCaptureDef.EClipboardImageCaptureDefNum)+",";
 			}
@@ -139,8 +135,7 @@ namespace OpenDentBusiness.Crud{
 				     POut.Long  (eClipboardImageCaptureDef.DefNum)+","
 				+    POut.Bool  (eClipboardImageCaptureDef.IsSelfPortrait)+","
 				+    POut.Int   (eClipboardImageCaptureDef.FrequencyDays)+","
-				+    POut.Long  (eClipboardImageCaptureDef.ClinicNum)+","
-				+    POut.Int   ((int)eClipboardImageCaptureDef.OcrCaptureType)+")";
+				+    POut.Long  (eClipboardImageCaptureDef.ClinicNum)+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -156,8 +151,7 @@ namespace OpenDentBusiness.Crud{
 				+"DefNum                      =  "+POut.Long  (eClipboardImageCaptureDef.DefNum)+", "
 				+"IsSelfPortrait              =  "+POut.Bool  (eClipboardImageCaptureDef.IsSelfPortrait)+", "
 				+"FrequencyDays               =  "+POut.Int   (eClipboardImageCaptureDef.FrequencyDays)+", "
-				+"ClinicNum                   =  "+POut.Long  (eClipboardImageCaptureDef.ClinicNum)+", "
-				+"OcrCaptureType              =  "+POut.Int   ((int)eClipboardImageCaptureDef.OcrCaptureType)+" "
+				+"ClinicNum                   =  "+POut.Long  (eClipboardImageCaptureDef.ClinicNum)+" "
 				+"WHERE EClipboardImageCaptureDefNum = "+POut.Long(eClipboardImageCaptureDef.EClipboardImageCaptureDefNum);
 			Db.NonQ(command);
 		}
@@ -181,10 +175,6 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="ClinicNum = "+POut.Long(eClipboardImageCaptureDef.ClinicNum)+"";
 			}
-			if(eClipboardImageCaptureDef.OcrCaptureType != oldEClipboardImageCaptureDef.OcrCaptureType) {
-				if(command!="") { command+=",";}
-				command+="OcrCaptureType = "+POut.Int   ((int)eClipboardImageCaptureDef.OcrCaptureType)+"";
-			}
 			if(command=="") {
 				return false;
 			}
@@ -207,9 +197,6 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(eClipboardImageCaptureDef.ClinicNum != oldEClipboardImageCaptureDef.ClinicNum) {
-				return true;
-			}
-			if(eClipboardImageCaptureDef.OcrCaptureType != oldEClipboardImageCaptureDef.OcrCaptureType) {
 				return true;
 			}
 			return false;

@@ -62,31 +62,31 @@ namespace OpenDentBusiness{
 		#endregion Cache Pattern
 
 		///<summary></summary>
-		public static long Insert(ClaimFormItem claimFormItem) {
+		public static long Insert(ClaimFormItem item) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				claimFormItem.ClaimFormItemNum=Meth.GetLong(MethodBase.GetCurrentMethod(),claimFormItem);
-				return claimFormItem.ClaimFormItemNum;
+				item.ClaimFormItemNum=Meth.GetLong(MethodBase.GetCurrentMethod(),item);
+				return item.ClaimFormItemNum;
 			}
-			return Crud.ClaimFormItemCrud.Insert(claimFormItem);
+			return Crud.ClaimFormItemCrud.Insert(item);
 		}
 
 		///<summary></summary>
-		public static void Update(ClaimFormItem claimFormItem){
+		public static void Update(ClaimFormItem item){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),claimFormItem);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),item);
 				return;
 			}
-			Crud.ClaimFormItemCrud.Update(claimFormItem);
+			Crud.ClaimFormItemCrud.Update(item);
 		}
 
 		///<summary></summary>
-		public static void Delete(ClaimFormItem claimFormItem){
+		public static void Delete(ClaimFormItem item){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),claimFormItem);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),item);
 				return;
 			}
 			string command = "DELETE FROM claimformitem "
-				+"WHERE ClaimFormItemNum = '"+POut.Long(claimFormItem.ClaimFormItemNum)+"'";
+				+"WHERE ClaimFormItemNum = '"+POut.Long(item.ClaimFormItemNum)+"'";
  			Db.NonQ(command);
 		}
 

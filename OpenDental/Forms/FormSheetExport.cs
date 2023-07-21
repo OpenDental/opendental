@@ -75,24 +75,18 @@ namespace OpenDental {
 				msgBoxCopyPaste.ShowDialog();
 			}
 			XmlSerializer xmlSerializer=new XmlSerializer(typeof(SheetDef));
-			string fileName="SheetDefCustom.xml";
-			if(ODEnvironment.IsCloudServer) {
+			string filename="SheetDefCustom.xml";
+			if(ODBuild.IsWeb()) {
 				StringBuilder stringBuilder2=new StringBuilder();
 				using XmlWriter xmlWriter=XmlWriter.Create(stringBuilder2);
 				xmlSerializer.Serialize(xmlWriter,sheetDef);
 				xmlWriter.Close();
-				if(ODBuild.IsThinfinity()) {
-					ThinfinityUtils.ExportForDownload(fileName,stringBuilder2.ToString());
-				}
-				else {//Is AppStream
-					File.WriteAllText(fileName,stringBuilder2.ToString());
-					CloudClientL.ExportForCloud(fileName);
-				}
+				ThinfinityUtils.ExportForDownload(filename,stringBuilder2.ToString());
 			}
 			else {
 				using SaveFileDialog saveFileDialog=new SaveFileDialog();
 				saveFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
-				saveFileDialog.FileName=fileName;
+				saveFileDialog.FileName=filename;
 				if(saveFileDialog.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
@@ -102,6 +96,13 @@ namespace OpenDental {
 			}
 			MsgBox.Show(this,"Exported");
 		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+		}
+
+
+
 
 	}
 }

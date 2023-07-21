@@ -11,11 +11,11 @@ namespace OpenDentBusiness{
 	public class UserOdPrefs {
 		#region Update
 		///<summary></summary>
-		public static bool Sync(List<UserOdPref> listUserOdPrefsNew,List<UserOdPref> listUserOdPrefsOld){
+		public static bool Sync(List<UserOdPref> listNew,List<UserOdPref> listOld){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),listUserOdPrefsNew,listUserOdPrefsOld);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),listNew,listOld);
 			}
-			return Crud.UserOdPrefCrud.Sync(listUserOdPrefsNew,listUserOdPrefsOld);
+			return Crud.UserOdPrefCrud.Sync(listNew,listOld);
 		}
 		#endregion
 
@@ -74,13 +74,13 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Always refreshes the ClientWeb's cache.</summary>
-		public static DataTable GetTableFromCache(bool refreshCache) {
+		public static DataTable GetTableFromCache(bool doRefreshCache) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),refreshCache);
+				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),doRefreshCache);
 				_userOdPrefCache.FillCacheFromTable(table);
 				return table;
 			}
-			return _userOdPrefCache.GetTableFromCache(refreshCache);
+			return _userOdPrefCache.GetTableFromCache(doRefreshCache);
 		}
 
 		public static void ClearCache() {
@@ -96,7 +96,9 @@ namespace OpenDentBusiness{
 				Crud.UserOdPrefCrud.Update(userOdPref);
 				return true;
 			}
-			return Crud.UserOdPrefCrud.Update(userOdPref,userOdPrefOld);
+			else {
+				return Crud.UserOdPrefCrud.Update(userOdPref,userOdPrefOld);
+			}
 		}
 
 		///<summary></summary>
@@ -108,12 +110,12 @@ namespace OpenDentBusiness{
 			return Crud.UserOdPrefCrud.Insert(userOdPref);
 		}
 
-		public static void InsertMany(List<UserOdPref> listUserOdPrefs) {
+		public static void InsertMany(List<UserOdPref> listUserOdPref) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listUserOdPrefs);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),listUserOdPref);
 				return;
 			}
-			Crud.UserOdPrefCrud.InsertMany(listUserOdPrefs);
+			Crud.UserOdPrefCrud.InsertMany(listUserOdPref);
 		}
 
 		///<summary></summary>
@@ -153,66 +155,67 @@ namespace OpenDentBusiness{
 		///<summary>This will ensure that when inserting this preference that there are no other preferences that are of the same fkey/fkeytype/user combination.
 		///This will likely only be used in specific scenarios where there is only 1 userodpref for the fkey/fkeytype passed in.
 		///To use this method with multiple userodprefs, you must make ValueString contain a JSON object or equivalent complex document.</summary>
-		public static void DeleteMany(long userNum,long fkey,UserOdFkeyType userOdFkeyType) {
+		public static void DeleteMany(long userNum,long fkey,UserOdFkeyType fkeyType) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),userNum,fkey,userOdFkeyType);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),userNum,fkey,fkeyType);
 				return;
 			}
 			//Delete any userodpref rows that match its usernum/fkey/fkeytype.
 			string command="DELETE FROM userodpref WHERE UserNum="+POut.Long(userNum)
-				+" AND FkeyType="+POut.Int((int)userOdFkeyType)
+				+" AND FkeyType="+POut.Int((int)fkeyType)
 				+" AND Fkey="+POut.Long(fkey);
 			Db.NonQ(command);
 		}
 
-		public static void DeleteManyForUserAndFkeyType(long userNum,UserOdFkeyType userOdFkeyType) {
+		public static void DeleteManyForUserAndFkeyType(long userNum,UserOdFkeyType fkeyType) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),userNum,userOdFkeyType);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),userNum,fkeyType);
 				return;
 			}
 			//Delete any userodpref rows that match its usernum/fkeytype.
 			string command="DELETE FROM userodpref WHERE UserNum="+POut.Long(userNum)
-				+" AND FkeyType="+POut.Int((int)userOdFkeyType);
+				+" AND FkeyType="+POut.Int((int)fkeyType);
 			Db.NonQ(command);
 		}
 
-		public static List<UserOdPref> GetByUserAndFkeyType(long userNum,UserOdFkeyType userOdFkeyType) {
+		public static List<UserOdPref> GetByUserAndFkeyType(long userNum,UserOdFkeyType fkeyType) {
 			//No need to check MiddleTierRole; no call to db.
-			return GetWhere(x => x.UserNum==userNum && x.FkeyType==userOdFkeyType);
+			return GetWhere(x => x.UserNum==userNum && x.FkeyType==fkeyType);
 		}
 
-		public static List<UserOdPref> GetByFkeyAndFkeyType(long fkey,UserOdFkeyType userOdFkeyType) {
+		public static List<UserOdPref> GetByFkeyAndFkeyType(long fkey,UserOdFkeyType fkeyType) {
 			//No need to check MiddleTierRole; no call to db.
-			return GetWhere(x => x.Fkey==fkey && x.FkeyType==userOdFkeyType);
+			return GetWhere(x => x.Fkey==fkey && x.FkeyType==fkeyType);
 		}
 
-		public static List<UserOdPref> GetByUserFkeyAndFkeyType(long userNum,long fkey,UserOdFkeyType userOdFkeyType) {
+		public static List<UserOdPref> GetByUserFkeyAndFkeyType(long userNum,long fkey,UserOdFkeyType fkeyType) {
 			//No need to check MiddleTierRole; no call to db.
-			return GetWhere(x => x.UserNum==userNum && x.Fkey==fkey && x.FkeyType==userOdFkeyType);
+			return GetWhere(x => x.UserNum==userNum && x.Fkey==fkey && x.FkeyType==fkeyType);
 		}
 
 		///<summary>Creates a new UserOdPref if the fkeyType does not exist for the userNum.</summary>
-		public static UserOdPref GetFirstOrNewByUserAndFkeyType(long userNum,UserOdFkeyType userOdFkeyType) {
+		public static UserOdPref GetFirstOrNewByUserAndFkeyType(long userNum,UserOdFkeyType fkeyType) {
 			//No need to check MiddleTierRole; no call to db.
-			UserOdPref userOdPref=GetFirstOrDefault(x => x.UserNum==userNum && x.FkeyType==userOdFkeyType);
+			UserOdPref userOdPref=GetFirstOrDefault(x => x.UserNum==userNum && x.FkeyType==fkeyType);
 			//Create a new instance if db value does not exist.
 			if(userOdPref==null) {
-				userOdPref=new UserOdPref();
-				userOdPref.IsNew=true;
-				userOdPref.UserOdPrefNum=0;
-				userOdPref.Fkey=0;
-				userOdPref.FkeyType=userOdFkeyType;
-				userOdPref.UserNum=userNum;
-				userOdPref.ValueString="";
-				userOdPref.ClinicNum=0;
+				userOdPref=new UserOdPref() {
+					IsNew=true,
+					UserOdPrefNum=0,
+					Fkey=0,
+					FkeyType=fkeyType,
+					UserNum=userNum,
+					ValueString="",
+					ClinicNum=0,
+				};
 			}
 			return userOdPref;
 		}
 
 		///<summary>Will return a list of UserOdPrefs corresponding to the usernum/fkey/fkeytype combination given.</summary>
-		public static List<UserOdPref> GetByUserAndFkeyAndFkeyType(long userNum,long fkey,UserOdFkeyType userOdFkeyType,List<long> listClinicNums=null) {
+		public static List<UserOdPref> GetByUserAndFkeyAndFkeyType(long userNum,long fkey,UserOdFkeyType fkeyType,List<long> listClinicNums=null) {
 			//No need to check MiddleTierRole; no call to db.
-			List<UserOdPref> listUserOdPrefs=GetWhere(x => x.UserNum==userNum && x.Fkey==fkey && x.FkeyType==userOdFkeyType);
+			List<UserOdPref> listUserOdPrefs=GetWhere(x => x.UserNum==userNum && x.Fkey==fkey && x.FkeyType==fkeyType);
 			if(!listClinicNums.IsNullOrEmpty()) {
 				listUserOdPrefs=listUserOdPrefs.Where(x => listClinicNums.Contains(x.ClinicNum)).ToList();
 			}
@@ -220,46 +223,47 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Will return the UserOdPref corresponding to the usernum/fkey/fkeytype/ClinicNum composite key given.</summary>
-		public static UserOdPref GetByCompositeKey(long userNum,long fkey,UserOdFkeyType userOdFkeyType,long clinicNum=0) {
+		public static UserOdPref GetByCompositeKey(long userNum,long fkey,UserOdFkeyType fkeyType,long clinicNum=0) {
 			//No need to check MiddleTierRole; no call to db.
 			UserOdPref userOdPref=GetFirstOrDefault(x => 
 				x.UserNum==userNum
 				&& x.Fkey==fkey 
-				&& x.FkeyType==userOdFkeyType
+				&& x.FkeyType==fkeyType
 				&& x.ClinicNum==clinicNum);
 			//Create a new instance if db value does not exist.
 			if(userOdPref==null) {
-				userOdPref=new UserOdPref(); 
-				userOdPref.IsNew=true;
-				userOdPref.UserOdPrefNum=0;
-				userOdPref.Fkey=fkey;
-				userOdPref.FkeyType=userOdFkeyType;
-				userOdPref.UserNum=userNum;
-				userOdPref.ValueString="";
-				userOdPref.ClinicNum=clinicNum;
+				userOdPref=new UserOdPref() {
+					IsNew=true,
+					UserOdPrefNum=0,
+					Fkey=fkey,
+					FkeyType=fkeyType,
+					UserNum=userNum,
+					ValueString="",
+					ClinicNum=clinicNum,
+				};
 			}
 			return userOdPref;
 		}
 	
 		///<summary>Returns a list of UserOdPrefs for the given UserOdFkeyType.</summary>
-		public static List<UserOdPref> GetByFkeyType(UserOdFkeyType userOdFkeyType) {
+		public static List<UserOdPref> GetByFkeyType(UserOdFkeyType fkeyType) {
 			//No need to check MiddleTierRole; no call to db.
-			return GetWhere(x => x.FkeyType==userOdFkeyType);
+			return GetWhere(x => x.FkeyType==fkeyType);
 		}
 
-		public static List<UserOdPref> GetAllByFkeyAndFkeyType(long fkey,UserOdFkeyType userOdFkeyType) {
+		public static List<UserOdPref> GetAllByFkeyAndFkeyType(long fkey,UserOdFkeyType fkeyType) {
 			//No need to check MiddleTierRole; no call to db.
-			return GetWhere(x => x.Fkey==fkey && x.FkeyType==userOdFkeyType);
+			return GetWhere(x => x.Fkey==fkey && x.FkeyType==fkeyType);
 		}
 
 		///<summary>Deletes UserOdPref with provided parameters.  If "userNum" is 0 then will delete all UserOdPref's with corresponding fkeyType and fkey.</summary>
-		public static void DeleteForFkey(long userNum,UserOdFkeyType userOdFkeyType,long fkey) {
+		public static void DeleteForFkey(long userNum,UserOdFkeyType fkeyType,long fkey) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),userNum,userOdFkeyType,fkey);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),userNum,fkeyType,fkey);
 				return;
 			}
 			string command = "DELETE FROM userodpref "
-				+"WHERE Fkey="+POut.Long(fkey)+" AND FkeyType="+POut.Int((int)userOdFkeyType);
+				+"WHERE Fkey="+POut.Long(fkey)+" AND FkeyType="+POut.Int((int)fkeyType);
 			if(userNum!=0) {
 				command+=" AND UserNum="+POut.Long(userNum);
 			}
@@ -268,13 +272,13 @@ namespace OpenDentBusiness{
 
 		///<summary>Deletes UserOdPref with provided parameters.
 		///If "userNum" is 0 then will delete all UserOdPref's with corresponding fkeyType and valueString.</summary>
-		public static void DeleteForValueString(long userNum,UserOdFkeyType userOdFkeyType,string valueString) {
+		public static void DeleteForValueString(long userNum,UserOdFkeyType fkeyType,string valueString) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),userNum,userOdFkeyType,valueString);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),userNum,fkeyType,valueString);
 				return;
 			}
 			string command = "DELETE FROM userodpref "
-				+"WHERE ValueString='"+POut.String(valueString)+"' AND FkeyType="+POut.Int((int)userOdFkeyType);
+				+"WHERE ValueString='"+POut.String(valueString)+"' AND FkeyType="+POut.Int((int)fkeyType);
 			if(userNum!=0) {
 				command+=" AND UserNum="+POut.Long(userNum);
 			}

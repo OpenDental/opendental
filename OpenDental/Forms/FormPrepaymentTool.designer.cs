@@ -25,6 +25,7 @@ namespace OpenDental {
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPrepaymentTool));
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.GridPrepayment = new OpenDental.UI.GridOD();
 			this.butAddMonths = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
@@ -52,12 +53,23 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(540, 545);
+			this.butOK.Location = new System.Drawing.Point(515, 544);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
-			this.butOK.Text = "&Save";
-			this.butOK.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(596, 544);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// GridPrepayment
 			// 
@@ -235,7 +247,7 @@ namespace OpenDental {
 			// 
 			this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(275, 671);
+			this.label2.Location = new System.Drawing.Point(328, 671);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(0, 13);
 			this.label2.TabIndex = 124;
@@ -255,7 +267,7 @@ namespace OpenDental {
 			// label5
 			// 
 			this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.label5.Location = new System.Drawing.Point(236, 572);
+			this.label5.Location = new System.Drawing.Point(289, 579);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(382, 128);
 			this.label5.TabIndex = 126;
@@ -282,7 +294,8 @@ namespace OpenDental {
 			// 
 			// FormPrepaymentTool
 			// 
-			this.ClientSize = new System.Drawing.Size(630, 709);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(683, 709);
 			this.Controls.Add(this.butPreviousProc);
 			this.Controls.Add(this.GridCompletedProcs);
 			this.Controls.Add(this.label5);
@@ -299,6 +312,7 @@ namespace OpenDental {
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.GridPrepayment);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormPrepaymentTool";
 			this.Text = "Prepayment Tool";
@@ -313,6 +327,7 @@ namespace OpenDental {
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private UI.GridOD GridPrepayment;
 		private UI.Button butAddMonths;
 		private System.Windows.Forms.Label label1;

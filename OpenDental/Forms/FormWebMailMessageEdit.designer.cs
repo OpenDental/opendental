@@ -43,6 +43,7 @@ namespace OpenDental{
 			this.butPreview = new OpenDental.UI.Button();
 			this.textBody = new OpenDental.ODtextBox();
 			this.butSend = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butProvPick = new OpenDental.UI.Button();
 			this.menuMain = new OpenDental.UI.MenuOD();
 			this.SuspendLayout();
@@ -212,7 +213,7 @@ namespace OpenDental{
 			this.textBody.DetectUrls = false;
 			this.textBody.Location = new System.Drawing.Point(119, 139);
 			this.textBody.Name = "textBody";
-			this.textBody.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textBody.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textBody.ReadOnly = true;
 			this.textBody.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textBody.Size = new System.Drawing.Size(632, 213);
@@ -222,12 +223,22 @@ namespace OpenDental{
 			// butSend
 			// 
 			this.butSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSend.Location = new System.Drawing.Point(676, 372);
+			this.butSend.Location = new System.Drawing.Point(595, 372);
 			this.butSend.Name = "butSend";
 			this.butSend.Size = new System.Drawing.Size(75, 24);
 			this.butSend.TabIndex = 6;
 			this.butSend.Text = "&Send";
 			this.butSend.Click += new System.EventHandler(this.butSend_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(676, 372);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 7;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butProvPick
 			// 
@@ -266,6 +277,7 @@ namespace OpenDental{
 			this.Controls.Add(this.textTo);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butSend);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.menuMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormWebMailMessageEdit";
@@ -279,6 +291,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butSend;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.TextBox textTo;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textFrom;

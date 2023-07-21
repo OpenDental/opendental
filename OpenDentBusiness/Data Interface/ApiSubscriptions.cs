@@ -209,7 +209,7 @@ namespace OpenDentBusiness{
 		///<summary></summary>
 		public static List<Appointment> GetApptsForSubscription(DateTime dateTimeStart,DateTime dateTimeStop,int limit=1000,int offset=0){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Appointment>>(MethodBase.GetCurrentMethod(),dateTimeStart,dateTimeStop,limit,offset);
+				return Meth.GetObject<List<Appointment>>(MethodBase.GetCurrentMethod(),dateTimeStart,dateTimeStop);
 			}
 			string command="SELECT * FROM appointment "
 				+"WHERE DateTStamp >= "+POut.DateT(dateTimeStart)+" "
@@ -224,7 +224,7 @@ namespace OpenDentBusiness{
 		///<summary>Returns a list of HistAppts where the HistApptAction=4 (Deleted), and DateTStamp is between the Previous polling time and now.</summary>
 		public static List<HistAppointment> GetHistApptsForSubscription(DateTime dateTimeStart,DateTime dateTimeStop,int limit=1000,int offset=0){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<HistAppointment>>(MethodBase.GetCurrentMethod(),dateTimeStart,dateTimeStop,limit,offset);
+				return Meth.GetObject<List<HistAppointment>>(MethodBase.GetCurrentMethod(),dateTimeStart,dateTimeStop);
 			}
 			string command="SELECT * FROM histappointment "
 				+"WHERE DateTStamp >= "+POut.DateT(dateTimeStart)+" "
@@ -240,7 +240,7 @@ namespace OpenDentBusiness{
 		///<summary></summary>
 		public static List<Patient> GetPatsForSubscription(DateTime dateTimeStart,DateTime dateTimeStop,int limit=1000,int offset=0){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Patient>>(MethodBase.GetCurrentMethod(),dateTimeStart,dateTimeStop,limit,offset);
+				return Meth.GetObject<List<Patient>>(MethodBase.GetCurrentMethod(),dateTimeStart,dateTimeStop);
 			}
 			string command="SELECT * FROM patient "
 				+"WHERE DateTStamp >= "+POut.DateT(dateTimeStart)+" "
@@ -254,7 +254,7 @@ namespace OpenDentBusiness{
 		///<summary></summary>
 		public static List<PatField> GetPatFieldsForSubscription(DateTime dateTimeStart,DateTime dateTimeStop,int limit=1000,int offset=0) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<PatField>>(MethodBase.GetCurrentMethod(),dateTimeStart,dateTimeStop,limit,offset);
+				return Meth.GetObject<List<PatField>>(MethodBase.GetCurrentMethod(),dateTimeStart,dateTimeStop);
 			}
 			string command="SELECT * FROM patfield "
 				+"WHERE SecDateTEdit >= "+POut.DateT(dateTimeStart)+" "

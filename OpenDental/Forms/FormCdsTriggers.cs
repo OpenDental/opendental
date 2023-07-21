@@ -28,7 +28,7 @@ namespace OpenDental {
 			menuMain.Enabled=false;
 			butAddTrigger.Enabled=false;
 			gridMain.Enabled=false;
-			if(CDSPermissions.GetForUser(Security.CurUser.UserNum).SetupCDS || Security.IsAuthorized(EnumPermType.SecurityAdmin,true)) {
+			if(CDSPermissions.GetForUser(Security.CurUser.UserNum).SetupCDS || Security.IsAuthorized(Permissions.SecurityAdmin,true)) {
 				menuMain.Enabled=true;
 				butAddTrigger.Enabled=true;
 				gridMain.Enabled=true;
@@ -92,6 +92,10 @@ namespace OpenDental {
 			formCDSSetup.ShowDialog();
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormEhrTriggers_FormClosing(object sender,FormClosingEventArgs e) {
 			EhrMeasureEvent ehrMeasureEvent=new EhrMeasureEvent();
 			ehrMeasureEvent.DateTEvent=DateTime.Now;
@@ -99,6 +103,7 @@ namespace OpenDental {
 			ehrMeasureEvent.MoreInfo=Lan.g(this,"Triggers currently enabled")+": "+ListEhrTriggers.Count;
 			EhrMeasureEvents.Insert(ehrMeasureEvent);
 		}
+
 
 	}
 }

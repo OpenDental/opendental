@@ -135,15 +135,6 @@ namespace OpenDentBusiness{
 				+"ORDER BY ItemOrder";
 			return Crud.RefAttachCrud.SelectMany(command);
 		}
-
-		///<summary>Gets one RefAttach from the database using the primary key. Returns null if not found.</summary>
-		public static RefAttach GetOne(long refAttachNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<RefAttach>(MethodBase.GetCurrentMethod(),refAttachNum);
-			}
-			return Crud.RefAttachCrud.SelectOne(refAttachNum);
-		}
-
 		#endregion
 	
 		#region Insert

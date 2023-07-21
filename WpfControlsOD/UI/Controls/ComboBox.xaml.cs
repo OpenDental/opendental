@@ -20,66 +20,10 @@ using System.Windows.Shapes;
 using OpenDentBusiness;
 
 namespace WpfControls.UI{
-	/*
+/*
 Jordan is the only one allowed to edit this file.
-Also see the similar controls: ComboClinic and UI.ListBox
-Height should always be 21.
-This comboBox is optimized for very long lists that are even taller than the screen.
-Does not allow text entry.  It will always behave like a dropdown listbox.
-Exception to above: It sometimes needs to display text for an item that's not in the list due to perms, but still no text entry.
 
-PROVIDER as a field:--------------------------------------------------------------------------------------------
-comboProv.Items.Clear();//skip in Load()
-comboProv.Items.AddProvNone();//optional
-comboProv.Items.AddProvsAbbr(Providers.GetProvsForClinic(comboClinic.SelectedClinicNum));
-comboProv.SetSelectedProvNum(adj.ProvNum);
-...
-adj.ProvNum=comboProv.GetSelectedProvNum();
-
-PROVIDERS on reports:--------------------------------------------------------------------------------------------
-(in Designer) SelectionModeMulti=true;
-comboProvs.IncludeAll=true;
-comboProvs.Items.AddProvsFull(Providers.GetListReports());
-comboProvs.IsAllSelected=true;
-...
-string stringDisplayProvs=comboProvs.GetStringSelectedItems();
-List<long> listProvNums=comboProvs.GetSelectedProvNums();
-RunReport(listProvNums,stringDisplayProvs);
-
-DEF:--------------------------------------------------------------------------------------------------------------
-comboDefs.Items.Clear();//skip in Load()
-comboDefs.Items.AddDefNone();//optional
-comboDefs.Items.AddDefs(Defs.GetDefsForCategory(DefCat.ApptStatus,isShort:true));
-comboDefs.SetSelectedDefNum(appt.AptStatus); 
-...
-appt.AptStatus=comboDefs.GetSelectedDefNum();
-
-ENUM---------------------------------------------------------------------------------------------------------------
-comboArea.Items.AddEnums<EnumArea>();
-Or, rarely: comboArea.Items.Add(Lan.g("enumArea","First Item"),EnumArea.FirstItem);
-Or, to exclude an enum:
-List<EraAutomationMode> listEraAutomationModeValues=typeof(EraAutomationMode).GetEnumValues()
-				.AsEnumerable<EraAutomationMode>()
-				.Where(x => x!=EraAutomationMode.UseGlobal)
-				.ToList();
-comboEraAutomation.Items.AddListEnum(listEraAutomationModeValues);
-To select an enum after filling the list:
-comboArea.SetSelected((int)proc.Area);
-Or: comboArea.SetSelectedEnum(proc.Area);//type is inferred 
-...
-proc.Area=comboArea.GetSelected<EnumArea>();
-
-Other db table types----------------------------------------------------------------------------------------------
-These are a little more complex, but they are really hardly ever used
-comboObj.Items.Clear();//skip in Load()
-comboObj.IncludeAll=true;//optional
-comboObj.Items.AddNone<ObjType>();//optional
-comboObj.Items.AddList(listObjs,x=>x.LName);//the abbr parameter is usually skipped. <T> is inferred.
-comboObj.SetSelectedKey<ObjType>(adj.ObjNum,x=>x.ObjNum,x=>Objs.GetName(x)); 
-...
-adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
-
-	*/
+*/
 
 	///<summary></summary>
 	public partial class ComboBox : UserControl{
@@ -87,15 +31,13 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		private bool _isExpanded;
 		private bool _isHover;
 		private bool _isMultiSelect=false;
-		///<summary>If selected index is -1, this can be used to store and retrieve the primary key. _textWhenMissing is what shows to the user.</summary>
-		private long _keyWhenMissing=0;//odd note: FormClaimCustomTrackingUpdate sets this to -1 to indicate none, which should be fine.
 		private SolidColorBrush _solidColorBrushHoverBackground=new SolidColorBrush(Color.FromArgb(10,0,100,255));//20% blue wash
 		private SolidColorBrush _solidColorBrushHoverBorder=new SolidColorBrush(Color.FromRgb(126,180,234));//blue
-		///<summary>This gets set when the user selects an item that is not present in the list. Selected index is also set to -1.
-		private string _textWhenMissing="";
-		private string _textForAllOption="All";
 		private WindowComboPicker _windowComboPicker;
-		private Color _colorBack=Colors.White;
+		///<summary>This gets set when the user sets an item that is not present in the list. Selected index is also set to -1.
+		private string _overrideText="";
+		///<summary>If selected index is -1, this can be used to store and retrieve the primary key. _overrideText is what shows to the user.</summary>
+		private long _selectedKey=0;//odd note: FormClaimCustomTrackingUpdate sets this to -1 to indicate none, which should be fine.
 		#endregion Fields - Private
 
 		#region Fields - Private for Properties
@@ -108,11 +50,11 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		#region Constructor
 		public ComboBox(){
 			InitializeComponent();
-			//Width=100;//Can't do this, or comboClinc gets messed up
-			//Height=21;
 			MouseLeave+=comboBox_MouseLeave;
+			MouseLeftButtonDown+=comboBox_MouseLeftButtonDown;
 			MouseLeftButtonUp+=comboBox_MouseLeftButtonUp;
 			MouseMove+=comboBox_MouseMove;
+			PreviewMouseLeftButtonDown+=ComboBox_PreviewMouseLeftButtonDown;
 			Items=new ComboBoxItemCollection(this);
 		}
 		#endregion Constructor
@@ -143,37 +85,16 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 				_isMultiSelect=value;
 			}
 		}
-
-		//[Category("OD")]
-		//[DefaultValue(int.MaxValue)]
-		//[Description("Use this instead of TabIndex.")]
-		//public int TabIndexOD{
-			 //TabIndex is just for textboxes for now.
-		//}
 		#endregion Properties - Public Browsable
 
 		#region Properties - Public not Browsable
-		/// <summary>Gets/Sets the background color for the combobox</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[DefaultValue(typeof(Color),"White")]
-		public Color ColorBack {
-			get {
-				return _colorBack;
-			}
-			set {
-				_colorBack = value;
-				grid.Background=new SolidColorBrush(value);
-			}
-		}
-
 		///<summary>Set to true to include 'All' as a selection option at the top. 'All' can sometimes be intended to indicate more items than are actually showing in list.  Test IsAllSelected separately if this is the case.  This works for both single and multi selection mode.  This extra row is never part of the Items or internal _listSelectedIndices.  But, if you get SelectedIndices, and the user has selected All, then indices for all the items in the list will be returned.</summary>
-		[Browsable(false)]//because it's better to see this in the code than to only see it in the designer.  Intentionally different than ComboClinic.
+		[Browsable(false)]//because it's better to see this in the code than to only see it in the designer.  Intentionally different than ComboBoxClinicPicker.
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[DefaultValue(false)]
 		public bool IncludeAll {
 			//Note: Intentionally not adding other special types like "none".  
-			//Those are easy to implement manually, whereas "all" is more complex and benefits more from internalization.
+			//Those are easy to implement manually, wherease "all" is more complex and benefits a little from internalization.
 			get {
 				return _includeAll;
 			}
@@ -224,8 +145,7 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 					return;//because it was set programmatically, we shouldn't fire event
 				}
 				_listSelectedIndices.Clear();
-				_textWhenMissing="";
-				_keyWhenMissing=0;
+				_overrideText="";
 				if(value!=-1){
 					_listSelectedIndices.Add(value);
 				}
@@ -323,7 +243,7 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			return listSelected;
 		}
 
-		///<summary>Gets the selected object.  Can be null for object or 0 for enum.  Throws exception for SelectionModeMulti. Never includes All.</summary>
+		///<summary>Gets the selected object.  Can be null for object or 0 for enum.  Throws exception for SelectionModeMulti.</summary>
 		public T GetSelected<T>() {
 			if(IsMultiSelect){
 				throw new Exception("GetSelected is ambiguous when IsMultiSelect.");
@@ -344,14 +264,13 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			return GetSelectedKey<Def>(x=>x.DefNum);
 		}
 
-		///<summary>Gets the key like PatNum from the selected index. ProvNum and DefNum have their own selectors.  funcSelectKey example x=>x.PatNum.  If selected index is -1, it will try to grab the key that was passed in earlier with SetSelectedKey.  If there is none, then it will return 0.  Completely ignores IsAllSelected, so if you are interested in that, test it first. Throws exception for MultiSelect.</summary>
+		///<summary>Gets the key like PatNum from the selected index. ProvNum and DefNum have their own selectors.  funcSelectKey example x=>x.PatNum.  If selected index is -1, it will try to grab the key that was passed in earlier with SetSelectedKey.  If there is none, then it will return 0.  Completely ignores IsAllSelected, so if you are interested in that, test it first.</summary>
 		public long GetSelectedKey<T>(Func<T,long> funcSelectKey){
-			//if(IsMultiSelect){
-			//	throw new Exception("GetSelected is ambiguous when IsMultiSelect.");
-			//can't do this because we call it from a multiselect in ComboClinic ListClinicNumsSelected
-			//}
+			if(IsMultiSelect){
+				throw new Exception("GetSelected is ambiguous when IsMultiSelect.");
+			}
 			if(_listSelectedIndices.Count==0){
-				return _keyWhenMissing;//could be zero
+				return _selectedKey;//could be zero
 			}
 			if(Items.GetObjectAt(_listSelectedIndices[0])==null){//just in case
 				return 0;
@@ -389,7 +308,7 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 					return retVal;
 				}
 				else{
-					return _textForAllOption;//"All";
+					return "All";
 				}
 			}
 			for(int i=0;i<_listSelectedIndices.Count;i++){
@@ -404,11 +323,6 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 				}
 			}
 			return retVal;
-		}
-
-		///<summary>Ignore. Just used in one spot: FormScheduleDayEdit for convenience.</summary>
-		public string GetText(){
-			return textBlock.Text;
 		}
 
 		///<summary>Sets all rows either selected or unselected. If 'All' is present, it gets ignored because it's handled separately from the normal items.</summary>
@@ -426,12 +340,12 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			SetText();
 		}
 
-		///<summary>Sets one row to selected. Does not clear other selected rows unless single selection mode.</summary>
+		///<summary>Sets one row to selected.</summary>
 		public void SetSelected(int index){
 			SetSelected(index,true);
 		}
 
-		///<summary>Sets one row either selected or unselected. Does not clear other selected rows unless single selection mode.</summary>
+		///<summary>Sets one row either selected or unselected.</summary>
 		public void SetSelected(int index,bool value){
 			if(value){//setting true
 				if(_listSelectedIndices.Contains(index)){
@@ -456,8 +370,8 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		public void SetSelectedDefNum(long defNum){
 			if(defNum==0){//special handling for 0. We don't want to go looking in the cache.
 				_listSelectedIndices.Clear();
-				_textWhenMissing="";
-				_keyWhenMissing=0;
+				_overrideText="";
+				_selectedKey=0;
 				//look for a 0 dummy def in list that user added
 				for(int i=0;i<Items.Count;i++) {
 					if(Items.GetObjectAt(i)==null){
@@ -474,8 +388,8 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 					}
 				}
 				//0 is not in list
-				_textWhenMissing=Lans.g("Defs","none");
-				_keyWhenMissing=0;//still, and selectedIndex is -1
+				_overrideText=Lans.g("Defs","none");
+				_selectedKey=0;//still, and selectedIndex is -1
 				SelectedIndexChanged?.Invoke(this,new EventArgs());
 				SetText();
 				return;
@@ -505,8 +419,8 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		///<param name="funcOverrideText">Examples:  x=>Carriers.GetName(x), or x=>"none"</param>
 		public void SetSelectedKey<T>(long key,Func<T,long> funcSelectKey,Func<long,string> funcOverrideText=null){
 			_listSelectedIndices.Clear();
-			_textWhenMissing="";
-			_keyWhenMissing=0;
+			_overrideText="";
+			_selectedKey=0;
 			for(int i=0;i<Items.Count;i++) {
 				if(Items.GetObjectAt(i)==null){
 					continue;
@@ -526,15 +440,15 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			//Like this: x=>Providers.GetProv(x).  That would be handy to test for null, but we would still need a func to get the overrideText from that.
 			//It also has the downside of no fixed text, and I also don't see a spot where it's needed, so not doing that.
 			if(funcOverrideText==null){
-				_textWhenMissing=key.ToString();
+				_overrideText=key.ToString();
 			}
 			else{
-				_textWhenMissing=funcOverrideText(key);
+				_overrideText=funcOverrideText(key);
 			}
-			if(_textWhenMissing==null || _textWhenMissing==""){
-				_textWhenMissing=key.ToString();//show the number because we don't want to show nothing
+			if(_overrideText==null || _overrideText==""){
+				_overrideText=key.ToString();//show the number because we don't want to show nothing
 			}
-			_keyWhenMissing=key;
+			_selectedKey=key;
 			SelectedIndexChanged?.Invoke(this,new EventArgs());
 			SetText();
 		}
@@ -543,8 +457,8 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		public void SetSelectedProvNum(long provNum){
 			if(provNum==0){//special handling for 0. We don't want to go looking in the cache.
 				_listSelectedIndices.Clear();
-				_textWhenMissing="";
-				_keyWhenMissing=0;
+				_overrideText="";
+				_selectedKey=0;
 				//look for a 0 dummy prov in list that user added
 				for(int i=0;i<Items.Count;i++) {
 					if(Items.GetObjectAt(i)==null){
@@ -561,8 +475,8 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 					}
 				}
 				//0 is not in list
-				_textWhenMissing=Lans.g("Providers","none");
-				_keyWhenMissing=0;//still, and selectedIndex is -1
+				_overrideText=Lans.g("Providers","none");
+				_selectedKey=0;//still, and selectedIndex is -1
 				SelectedIndexChanged?.Invoke(this,new EventArgs());
 				SetText();
 				return;
@@ -571,17 +485,16 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			//In case the provider long descriptions are being used, this method won't know about that, and will just use Abbr,
 			//but it will include (hidden), so that should be more than acceptable.
 		}
-
-		///<summary>If IncludeAll, this allows us to set the text. Otherwise, the default is All.</summary>
-		public void SetTextForAllOption(string text){
-			_textForAllOption=text;
-		}
 		#endregion Methods - Public
 
 		#region Methods - event handlers, mouse
 		private void comboBox_MouseLeave(object sender,MouseEventArgs e) {
 			_isHover=false;
 			SetColors();
+		}
+
+		private void comboBox_MouseLeftButtonDown(object sender,MouseButtonEventArgs e) {
+
 		}
 
 		private void comboBox_MouseLeftButtonUp(object sender,MouseButtonEventArgs e) {
@@ -606,8 +519,8 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			List<int> selectedIndices=new List<int>();
 			int indexOffset=0;
 			if(IncludeAll){
-				listStrings.Add(_textForAllOption);
-				listAbbrevs.Add(_textForAllOption);
+				listStrings.Add("All");
+				listAbbrevs.Add("All");
 				indexOffset=1;
 				if(IsAllSelected){
 					selectedIndices.Add(0);
@@ -624,9 +537,9 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			}
 			_windowComboPicker.ListStrings=listStrings;
 			_windowComboPicker.ListAbbrevs=listAbbrevs;
-			_windowComboPicker.PointInitial=PointToScreen(new Point(0,ActualHeight));
+			_windowComboPicker.PointInitial=PointToScreen(new Point(0,Height));
 			//_windowComboPicker.MinimumSize=new Size(15,15);
-			_windowComboPicker.Width=ActualWidth;
+			_windowComboPicker.Width=this.Width;
 			if(IsMultiSelect){
 				_windowComboPicker.IsMultiSelect=true;
 				_windowComboPicker.ListIndicesSelected=selectedIndices;
@@ -635,12 +548,33 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			else{
 				if(selectedIndices.Count==0){
 					_windowComboPicker.SelectedIndex=-1;
+					_windowComboPicker.OverrideText=_overrideText;
 				}
 				else{
 					_windowComboPicker.SelectedIndex=selectedIndices[0];
 				}
 			}
 			_windowComboPicker.Show();
+		}
+
+		private void _windowComboPicker_SelectionChanged(object sender,EventArgs e) {
+			//only fires in multiSelect 
+			if(IncludeAll){
+				if(_windowComboPicker.ListIndicesSelected.Contains(0)){
+					IsAllSelected=true;
+				}
+				else{
+					IsAllSelected=false;
+				}
+			}
+			if(IsAllSelected){//if all is selected, we ignore other selections
+				return;
+			}
+			_listSelectedIndices=new List<int>(_windowComboPicker.ListIndicesSelected);
+			//for(int i=0;i<_windowComboPicker.ListIndicesSelected.Count;i++){
+			//	_listSelectedIndices.Add(_windowComboPicker.ListIndicesSelected[i]);
+			//}
+			SetText();
 		}
 
 		private void comboBox_MouseMove(object sender,MouseEventArgs e) {
@@ -656,6 +590,10 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			else{
 				_isExpanded=false;
 			}
+		}
+
+		private void ComboBox_PreviewMouseLeftButtonDown(object sender,MouseButtonEventArgs e) {
+			
 		}
 
 		private void _windowComboPicker_Closed(object sender,EventArgs e) {
@@ -684,34 +622,9 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 					}
 				}
 			}
-			//These events are always raised, even if no changes.
 			SelectionChangeCommitted?.Invoke(this,e);
 			SelectedIndexChanged?.Invoke(this,e);
-			SetText();
-		}
-
-		private void _windowComboPicker_SelectionChanged(object sender,EventArgs e) {
-			//only fires in multiSelect 
-			if(IncludeAll){
-				if(_windowComboPicker.ListIndicesSelected.Contains(0)){
-					IsAllSelected=true;
-				}
-				else{
-					IsAllSelected=false;
-				}
-			}
-			if(IsAllSelected){//if all is selected, we ignore other selections
-				return;
-			}
-			_listSelectedIndices.Clear();
-			for(int i=0;i<_windowComboPicker.ListIndicesSelected.Count;i++){
-				if(IncludeAll){
-					_listSelectedIndices.Add(_windowComboPicker.ListIndicesSelected[i]-1);//All is in position 0
-				}
-				else{
-					_listSelectedIndices.Add(_windowComboPicker.ListIndicesSelected[i]);
-				}
-			}
+			//Refresh();//to get rid of flickering when selecting after select and after dropdown closes.
 			SetText();
 		}
 		#endregion Methods - event handlers, mouse
@@ -720,12 +633,11 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 		///<summary>Uses the full text if one item is selected.  If multiple items are selected, we string abbreviations together with commas.  But if that string is wider than widthMax, we instead show "Multiple".</summary>
 		private string GetDisplayText(int widthMax){
 			if(IsAllSelected){//works the same for IsMultiselect or not
-				//_textWhenMissing is not checked here because All only makes sense for multi, and _textWhenMissing only makes sense for single.
-				return _textForAllOption;
+				return "All";
 			}
 			if(_listSelectedIndices.Count==0){
-				if(_textWhenMissing!=""){
-					return _textWhenMissing;
+				if(_overrideText!=""){
+					return _overrideText;
 				}
 				return "";
 			}
@@ -754,12 +666,10 @@ adj.ObjNum=comboObj.GetSelectedKey<ObjType>(x=>x.ObjNum);
 			if(_isHover){
 				border.Background=_solidColorBrushHoverBackground;
 				border.BorderBrush=_solidColorBrushHoverBorder;
-				grid.Background=new SolidColorBrush(Colors.White);//so the blue wash looks nicer
 			}
 			else{
 				border.Background=Brushes.Transparent;
 				border.BorderBrush=Brushes.DarkGray;
-				grid.Background=new SolidColorBrush(_colorBack);
 			}
 		}
 

@@ -125,9 +125,7 @@ namespace OpenDentBusiness{
 		///<summary>7 - Includes non-FHIR API.</summary>
 		FHIR,
 		///<summary>8</summary>
-		NewPatThankYou,
-		///<summary>9</summary>
-		MsgToPay
+		NewPatThankYou
 	}
 
 	///<summary></summary>

@@ -226,7 +226,7 @@ namespace OpenDental {
 			Action loadingProgress=null;
 			try {
 				if(isRefreshNeeded) {
-					loadingProgress=ODProgress.Show(Lan.g(this,"Refreshing Data")+"...");
+					loadingProgress=ODProgress.Show(ODEventType.BugSubmission,typeof(BugSubmissionEvent),Lan.g(this,"Refreshing Data")+"...");
 				}
 				RefreshFilterGroupSortAndFillGridSubs(isRefreshNeeded,grouping95,loadingProgress);
 				loadingProgress?.Invoke();
@@ -249,12 +249,12 @@ namespace OpenDental {
 					_listBugSubmissions=ListBugSubmissionsViewed;
 				}
 				else {
-					ODEvent.Fire(ODEventType.BugSubmission,Lan.g(this,"Refreshing Data: Bugs"));
+					BugSubmissionEvent.Fire(ODEventType.BugSubmission,Lan.g(this,"Refreshing Data: Bugs"));
 					_listBugSubmissions=new List<BugSubmission>();//Dereference the list of subs so that the old items can be garbage collected.
 					_listBugSubmissions=BugSubmissions.GetAllInRange(dateRangePicker.GetDateTimeFrom(),dateRangePicker.GetDateTimeTo(),listSelectedVersions);
 				}
 				try {
-					ODEvent.Fire(ODEventType.BugSubmission,Lan.g(this,"Refreshing Data: Patients"));
+					BugSubmissionEvent.Fire(ODEventType.BugSubmission,Lan.g(this,"Refreshing Data: Patients"));
 					_dictionaryPatients=new Dictionary<string,Patient>();//Dereference the dictionary of patients so that the old items can be garbage collected.
 					_dictionaryPatients=RegistrationKeys.GetPatientsByKeys(_listBugSubmissions.Select(x => x.RegKey).ToList());
 				}
@@ -262,13 +262,13 @@ namespace OpenDental {
 					e.DoNothing();
 					_dictionaryPatients=new Dictionary<string, Patient>();
 				}
-				ODEvent.Fire(ODEventType.BugSubmission,Lan.g(this,"Refreshing Data: JobLinks"));
+				BugSubmissionEvent.Fire(ODEventType.BugSubmission,Lan.g(this,"Refreshing Data: JobLinks"));
 				_listJobLinks=new List<JobLink>();//Dereference the list of job links so that the old items can be garbage collected.
 				_listJobLinks=JobLinks.GetManyForType(JobLinkType.Bug,_listBugSubmissions.Select(x => x.BugId).Where(x => x!=0).Distinct().ToList());
 				#endregion
 			}
 			#region Filter Logic
-			ODEvent.Fire(ODEventType.BugSubmission,"Filtering Data");
+			BugSubmissionEvent.Fire(ODEventType.BugSubmission,"Filtering Data");
 			List<string> listSelectedRegKeys=comboRegKeys.GetListSelected<string>();
 			if(comboRegKeys.IsAllSelected) {
 				listSelectedRegKeys.Clear();//An empty list means that all is selected
@@ -298,7 +298,7 @@ namespace OpenDental {
 			#endregion
 			#region Grouping Logic
 			List<BugSubGridRow> listBugSubGridRows=new List<BugSubGridRow>();
-			ODEvent.Fire(ODEventType.BugSubmission,"Grouping Data");
+			BugSubmissionEvent.Fire(ODEventType.BugSubmission,"Grouping Data");
 			switch(comboGrouping.SelectedIndex) {
 				case 0:
 					#region None
@@ -386,7 +386,7 @@ namespace OpenDental {
 			}
 			#endregion
 			#region Sorting Logic
-			ODEvent.Fire(ODEventType.BugSubmission,"Sorting Data");
+			BugSubmissionEvent.Fire(ODEventType.BugSubmission,"Sorting Data");
 			switch(comboSortBy.SelectedIndex) {
 				case 0:
 					listBugSubGridRows=listBugSubGridRows.OrderByDescending(x => new Version(x.BugSubmissionDisplay.ProgramVersion))
@@ -396,7 +396,7 @@ namespace OpenDental {
 			}
 			#endregion
 			#region Fill gridSubs
-			ODEvent.Fire(ODEventType.BugSubmission,"Filling Grid");
+			BugSubmissionEvent.Fire(ODEventType.BugSubmission,"Filling Grid");
 			for(int i = 0;i<listBugSubGridRows.Count;++i) {
 				gridSubs.ListGridRows.Add(GetODGridRowForSub(listBugSubGridRows[i]));
 			}
@@ -604,15 +604,11 @@ namespace OpenDental {
 		private void comboVersions_SelectionChangeCommitted(object sender,EventArgs e) {
 			string group95Matching="";
 			if(sender==comboGrouping && comboGrouping.SelectedIndex==3) {//95%
-				InputBoxParam inputBoxParam=new InputBoxParam();
-				inputBoxParam.InputBoxType_=InputBoxType.TextBoxMultiLine;
-				inputBoxParam.LabelText="Paste the stack trace you wish to match against."; 
-				InputBox inputBox=new InputBox(inputBoxParam);
-				inputBox.ShowDialog();
-				if(inputBox.IsDialogCancel) {
+				using InputBox inputBox=new InputBox("Paste the stack trace you wish to match against.",true);
+				if(inputBox.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
-				group95Matching=inputBox.StringResult;
+				group95Matching=inputBox.textResult.Text;
 			}
 			FillSubGrid(grouping95:group95Matching);
 		}
@@ -631,14 +627,13 @@ namespace OpenDental {
 				_minGroupingCount=-1;
 				return;
 			}
-			InputBox inputBox=new InputBox("Minimum number of submissions:");
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel || inputBox.StringResult.IsNullOrEmpty()){
+			using InputBox inputBox=new InputBox("Minimum number of submissions:");
+			if(inputBox.ShowDialog()!=DialogResult.OK || inputBox.textResult.Text.IsNullOrEmpty()){
 				listShowHideOptions.SetSelected(3,false);//Deselect 'None'
 				_minGroupingCount=-1;
 				return;
 			}
-			_minGroupingCount=PIn.Int(inputBox.StringResult,false);
+			_minGroupingCount=PIn.Int(inputBox.textResult.Text,false);
 			FillSubGrid();
 		}
 		
@@ -678,6 +673,11 @@ namespace OpenDental {
 			else {
 				FillSubGrid(true);
 			}
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+			Close();
 		}
 
 		private class BugSubGridRow {

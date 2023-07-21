@@ -83,5 +83,11 @@ namespace OpenDental {
 			gridTaskHist.EndUpdate();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			this.Close();
+		}
+
+		
+
 	}
 }

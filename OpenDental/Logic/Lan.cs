@@ -116,10 +116,6 @@ namespace OpenDental {
 					C(classType,tabControl);
 					continue;
 				}
-				if(controlArray[c] is UI.TabControl tabControlOD) {
-					C(classType,tabControlOD);
-					continue;
-				}
 				if(controlArray[c] is UI.MenuOD menuOD) {
 					menuOD.TranslateMenuItems(classType);
 					continue;
@@ -166,22 +162,7 @@ namespace OpenDental {
 		}
 
 		///<summary></summary>
-		public static void C(Control controlSender,params UI.TabControl[] paramsTabControls) {
-			string classType=(controlSender==null ? "All": controlSender.GetType().Name);
-			C(classType,paramsTabControls);
-		}
-
-		///<summary></summary>
 		public static void C(string classType,params TabControl[] paramsTabControls) {
-			for(int c=0;c<paramsTabControls.Length;c++){
-				for(int p=0;p<paramsTabControls[c].TabPages.Count;p++){
-					paramsTabControls[c].TabPages[p].Text=Lans.ConvertString(classType, paramsTabControls[c].TabPages[p].Text);
-				}
-			}
-		}
-
-		///<summary></summary>
-		public static void C(string classType,params UI.TabControl[] paramsTabControls) {
 			for(int c=0;c<paramsTabControls.Length;c++){
 				for(int p=0;p<paramsTabControls[c].TabPages.Count;p++){
 					paramsTabControls[c].TabPages[p].Text=Lans.ConvertString(classType, paramsTabControls[c].TabPages[p].Text);
@@ -263,11 +244,6 @@ namespace OpenDental {
 				if(typeContr==typeof(TabControl)) {
 					//Translate all tab pages on the tab control.
 					C(senderTypeName,(TabControl)controlParent.Controls[c]);
-					continue;
-				}
-				if(typeContr==typeof(UI.TabControl)) {
-					//Translate all tab pages on the tab control.
-					C(senderTypeName,(UI.TabControl)controlParent.Controls[c]);
 					continue;
 				}
 				//Generically try to translate all orther controls not specifically mentioned above.

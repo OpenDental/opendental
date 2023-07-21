@@ -14,7 +14,7 @@ namespace OpenDental {
 		{
 			List<Procedure> listProcedures=Procedures.SetCompleteInAppt(appointment,listInsPlans,listPatPlans,patient,listInsSub,removeCompletedProcs);
 			List<string> listStrProcCodes=listProcedures.Select(x => ProcedureCodes.GetStringProcCode(x.CodeNum)).ToList();
-			AutomationL.Trigger(EnumAutomationTrigger.ProcedureComplete,listStrProcCodes,appointment.PatNum);
+			AutomationL.Trigger(AutomationTrigger.CompleteProcedure,listStrProcCodes,appointment.PatNum);
 			Procedures.AfterProcsSetComplete(listProcedures);
 			return listProcedures;
 		}
@@ -119,7 +119,7 @@ namespace OpenDental {
 				return true;//paysplits exist on one of the completed procedures. Per Nathan, don't change the provider. User will need to change manually.
 			}
 			for(int i=0;i<listProceduresCompletedWithDifferentProv.Count;i++) {
-				EnumPermType permissions=GroupPermissions.SwitchExistingPermissionIfNeeded(EnumPermType.ProcCompleteEdit,listProceduresCompletedWithDifferentProv[i]);
+				Permissions permissions=GroupPermissions.SwitchExistingPermissionIfNeeded(Permissions.ProcCompleteEdit,listProceduresCompletedWithDifferentProv[i]);
 				DateTime dateTimeForPerm=Procedures.GetDateForPermCheck(listProceduresCompletedWithDifferentProv[i]);
 				if(Security.IsGlobalDateLock(permissions,dateTimeForPerm)) {
 					return true;
@@ -166,12 +166,9 @@ namespace OpenDental {
 
 		///<summary>Only needs to be called when procOld.ProcStatus is C, EO or EC.</summary>
 		public static bool CheckPermissionsAndGlobalLockDate(Procedure procedureOld, Procedure procedureNew, DateTime dateTimeProc,
-			double procFeeOverride=double.MinValue,bool suppressMessage=false)
-		{
+			double procFeeOverride=double.MinValue) {
 			Action<string> actionNotAuth=(msg) => {
-				if(!suppressMessage) {
-					MsgBox.Show(msg);
-				}
+				MsgBox.Show(msg);
 			};
 			return Procedures.CheckPermissionsAndGlobalLockDate(procedureOld,procedureNew,dateTimeProc,Security.CurUser,procFeeOverride,actionNotAuth);
 		}

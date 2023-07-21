@@ -23,6 +23,7 @@ namespace OpenDental {
 
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEmployeeSelect));
+			this.butClose = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.label1 = new System.Windows.Forms.Label();
@@ -36,6 +37,17 @@ namespace OpenDental {
 			this.textSearch = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(846, 589);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 16;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butAdd
 			// 
@@ -165,6 +177,7 @@ namespace OpenDental {
 			this.textSearch.Name = "textSearch";
 			this.textSearch.Size = new System.Drawing.Size(179, 20);
 			this.textSearch.TabIndex = 0;
+			this.textSearch.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textSearch_KeyUp);
 			// 
 			// label2
 			// 
@@ -177,6 +190,8 @@ namespace OpenDental {
 			// 
 			// FormEmployeeSelect
 			// 
+			this.AcceptButton = this.butClose;
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(933, 627);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.textSearch);
@@ -190,6 +205,7 @@ namespace OpenDental {
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butAdd);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -204,6 +220,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.Button butDelete;

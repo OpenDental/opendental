@@ -35,24 +35,23 @@ namespace OpenDental {
 			this.label3 = new System.Windows.Forms.Label();
 			this.listUsed = new OpenDental.UI.ListBox();
 			this.textCustom = new System.Windows.Forms.TextBox();
+			this.label4 = new System.Windows.Forms.Label();
 			this.butAddCustom = new OpenDental.UI.Button();
 			this.butDown = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.comboLanguagesIndicateNone = new OpenDental.UI.ComboBox();
 			this.label5 = new System.Windows.Forms.Label();
-			this.label6 = new System.Windows.Forms.Label();
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// listAvailable
 			// 
 			this.listAvailable.Location = new System.Drawing.Point(32, 107);
 			this.listAvailable.Name = "listAvailable";
-			this.listAvailable.Size = new System.Drawing.Size(278, 425);
+			this.listAvailable.Size = new System.Drawing.Size(278, 394);
 			this.listAvailable.TabIndex = 1;
 			// 
 			// label1
@@ -92,16 +91,25 @@ namespace OpenDental {
 			// 
 			// textCustom
 			// 
-			this.textCustom.Location = new System.Drawing.Point(12, 23);
+			this.textCustom.Location = new System.Drawing.Point(32, 531);
 			this.textCustom.Name = "textCustom";
-			this.textCustom.Size = new System.Drawing.Size(267, 20);
+			this.textCustom.Size = new System.Drawing.Size(278, 20);
 			this.textCustom.TabIndex = 11;
+			// 
+			// label4
+			// 
+			this.label4.Location = new System.Drawing.Point(30, 504);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(281, 23);
+			this.label4.TabIndex = 12;
+			this.label4.Text = "Custom";
+			this.label4.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// butAddCustom
 			// 
 			this.butAddCustom.Image = global::OpenDental.Properties.Resources.Right;
 			this.butAddCustom.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.butAddCustom.Location = new System.Drawing.Point(308, 19);
+			this.butAddCustom.Location = new System.Drawing.Point(340, 527);
 			this.butAddCustom.Name = "butAddCustom";
 			this.butAddCustom.Size = new System.Drawing.Size(75, 26);
 			this.butAddCustom.TabIndex = 13;
@@ -148,15 +156,25 @@ namespace OpenDental {
 			this.butAdd.Text = "Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(651, 615);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 6;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(649, 486);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 6;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(649, 527);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// comboLanguagesIndicateNone
 			// 
@@ -174,43 +192,25 @@ namespace OpenDental {
 			this.label5.Text = "Indicator that patient has no specified language\r\nCustom languages only";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
-			// label6
-			// 
-			this.label6.Location = new System.Drawing.Point(9, 46);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(272, 46);
-			this.label6.TabIndex = 165;
-			this.label6.Text = "Type in full name of custom language, e.g.:\r\nTamasheq, American Sign Language, Kl" +
-    "ingon, etc.\r\nDo not type in an existing language, like Spanish.";
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this.butAddCustom);
-			this.groupBox1.Controls.Add(this.textCustom);
-			this.groupBox1.Controls.Add(this.label6);
-			this.groupBox1.Location = new System.Drawing.Point(32, 546);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(395, 95);
-			this.groupBox1.TabIndex = 167;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Custom Language";
-			// 
 			// FormLanguagesUsed
 			// 
-			this.ClientSize = new System.Drawing.Size(738, 653);
-			this.Controls.Add(this.groupBox1);
+			this.ClientSize = new System.Drawing.Size(776, 580);
 			this.Controls.Add(this.label5);
 			this.Controls.Add(this.comboLanguagesIndicateNone);
+			this.Controls.Add(this.butAddCustom);
+			this.Controls.Add(this.label4);
+			this.Controls.Add(this.textCustom);
 			this.Controls.Add(this.butDown);
 			this.Controls.Add(this.butUp);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.butAdd);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.listUsed);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.listAvailable);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -219,27 +219,27 @@ namespace OpenDental {
 			this.Text = "Language Definitions";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormLanguagesUsed_FormClosing);
 			this.Load += new System.EventHandler(this.FormLanguagesUsed_Load);
-			this.groupBox1.ResumeLayout(false);
-			this.groupBox1.PerformLayout();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.ListBox listAvailable;
 		private Label label1;
 		private Label label2;
 		private Label label3;
 		private OpenDental.UI.ListBox listUsed;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.Button butDelete;
 		private OpenDental.UI.Button butUp;
 		private OpenDental.UI.Button butDown;
 		private TextBox textCustom;
+		private Label label4;
 		private UI.Button butAddCustom;
 		private OpenDental.UI.ComboBox comboLanguagesIndicateNone;
 		private Label label5;
-		private Label label6;
-		private GroupBox groupBox1;
 	}
 }

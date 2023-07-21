@@ -34,17 +34,15 @@ namespace OpenDental {
 		}
 
 		private async void FormErx_Load(object sender,EventArgs e) {
-			if(!ODBuild.IsThinfinity()) {//Don't use WebView2 or toolbar in cloud
-				try {
-					await webViewMain.Init();
-				}
-				catch(Exception ex) {
-					Close();
-					return;
-				}
-				Text=Lan.g(this,"Loading")+"...";
-				LayoutToolBars();
+			try {
+				await webViewMain.Init();
 			}
+			catch(Exception ex) {
+				Close();
+				return;		
+			}
+			Text=Lan.g(this,"Loading")+"...";
+			LayoutToolBars();
 			if(ErxOptionCur==ErxOption.NewCrop) {
 				ComposeNewRxNewCrop();
 			}
@@ -71,6 +69,7 @@ namespace OpenDental {
 			if(!IsUrlSingleUse) {
 				ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Refresh"),-1,"","Refresh"));
 			}
+			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Close"),-1,"","Close"));
 			ToolBarMain.Invalidate();
 		}
 
@@ -88,12 +87,7 @@ namespace OpenDental {
 
 		public void ComposeNewRxDoseSpot() {
 			string doseSpotUrl=Erx.GetRxDoseSpotUrl(StringSSOQuery);
-			if(ODBuild.IsThinfinity()) {
-				cloudIframe.Initialize(doseSpotUrl);
-			}
-			else {
-				webViewMain.CoreWebView2.Navigate(doseSpotUrl);
-			}
+			webViewMain.CoreWebView2.Navigate(doseSpotUrl);
 		}
 
 		private void webViewMain_NavigationCompleted(object sender,CoreWebView2NavigationCompletedEventArgs e) {
@@ -121,6 +115,10 @@ namespace OpenDental {
 				case "Refresh":
 					webViewMain.Refresh();
 					break;
+				case "Close":
+					DialogResult=DialogResult.Cancel;
+					Close();//For when we launch the window in a non-modal manner.
+					break;
 			}
 		}
 
@@ -142,6 +140,5 @@ namespace OpenDental {
 			base.OnClosed(e);
 			ODEvent.Fire(ODEventType.ErxBrowserClosed,PatientCur);
 		}
-
 	}
 }

@@ -27,6 +27,7 @@ namespace OpenDental{
 			this.label1 = new System.Windows.Forms.Label();
 			this.textCharge = new System.Windows.Forms.TextBox();
 			this.butAdd = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.butSave = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.gridMain = new OpenDental.UI.GridOD();
@@ -65,6 +66,16 @@ namespace OpenDental{
 			this.butAdd.TabIndex = 194;
 			this.butAdd.Text = "Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(1010, 470);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butSave
 			// 
@@ -134,6 +145,7 @@ namespace OpenDental{
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrProvKeysCustomer";
 			this.Text = "Provider Keys for This Family";
@@ -144,6 +156,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private UI.Button butAdd;
 		private System.Windows.Forms.Label label1;

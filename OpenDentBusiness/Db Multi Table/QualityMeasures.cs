@@ -7837,7 +7837,7 @@ BMI 18.5-25.";
 				}
 				string xmlResult=strBuilder.ToString();
 				dictPatNumXml.Add(patNumCur,xmlResult);
-				SecurityLogs.MakeLogEntry(EnumPermType.Copy,patNumCur,"QRDA Category I generated");//Create audit log entry.
+				SecurityLogs.MakeLogEntry(Permissions.Copy,patNumCur,"QRDA Category I generated");//Create audit log entry.
 			}
 			_w.Flush();
 			_w.Close();

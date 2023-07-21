@@ -68,21 +68,15 @@ namespace OpenDental {
 
 		///<summary>Returns false if description or logo are invalid, otherwise true.</summary>
 		private bool ValidateMobileBrandingProfile() {
-			if(textDescription.Text.IsNullOrEmpty() && textFilePathImage.Text.IsNullOrEmpty()) {
-				MsgBox.Show("To clear Branding Profile, use clear button.");
+			try {
+				//fetch and dispose the file. Will throw if image is invalid.
+				Image.FromFile(textFilePathImage.Text).Dispose();
+			}
+			catch (Exception e) {
+				MsgBox.Show("Branding Image could not be loaded.\r\n"+e.Message);
 				return false;
 			}
-			if(!textFilePathImage.Text.IsNullOrEmpty()){
-				try {
-					//fetch and dispose the file. Will throw if image is invalid.
-					Image.FromFile(textFilePathImage.Text).Dispose();
-				}
-				catch (Exception e) {
-					MsgBox.Show("Branding Image could not be loaded.\r\n"+e.Message);
-					return false;
-				}
-			}
-			if(textDescription.Text.IsNullOrEmpty() && !textFilePathImage.Text.IsNullOrEmpty()) {
+			if(textDescription.Text.IsNullOrEmpty()) {
 				MsgBox.Show("Clinic Name is required.");
 				return false;
 			}
@@ -126,11 +120,10 @@ namespace OpenDental {
 		}
 
 		/// <summary>Insert or Update</summary>
-		private void butSave_Click(object sender,EventArgs e) {
-			//If this is a new mobileBrandingProfile, and both fields are empty, close the form on ok click without saving.
+		private void butOK_Click(object sender,EventArgs e) {
+			//If this is a new mobileBrandingProfile, and both fields are empty, close the form on ok click.
 			if(_mobileBrandingProfile.IsNew && textDescription.Text.IsNullOrEmpty() && textFilePathImage.Text.IsNullOrEmpty()) {
 				DialogResult=DialogResult.Cancel;
-				return;
 			}
 			if(!ValidateMobileBrandingProfile()) {
 				return;
@@ -147,6 +140,11 @@ namespace OpenDental {
 				MobileBrandingProfiles.Update(_mobileBrandingProfile);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		/// <summary>Closes the form.</summary>
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

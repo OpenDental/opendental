@@ -57,7 +57,7 @@ namespace OpenDental {
 			checkHidePatientsSeenSince.Checked=false;//Should be defaulted to unchecked on load.
 			datePickerPatientsSeenSince.SetDateTime(DateTime.Now.AddYears(-3));
 			checkHidePatientsNotSeenSince.Checked=true;
-			checkUserQuery.Enabled=Security.IsAuthorized(EnumPermType.UserQuery,true);
+			checkUserQuery.Enabled=Security.IsAuthorized(Permissions.UserQuery,true);
 		}
 
 		private void gridMain_CellClick(object sender,ODGridClickEventArgs e) {
@@ -223,12 +223,12 @@ namespace OpenDental {
 			}
 			//Try to execute the user query and show the error if the query was invalid
 			try {
-				UI.ProgressWin progressOD=new UI.ProgressWin();
+				UI.ProgressOD progressOD=new UI.ProgressOD();
 				progressOD.ActionMain=() => {
 					tableReportQueryResults=Reports.GetTable(stringQueryCommand);
 				};
 				progressOD.StartingMessage="Running Query...";
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 				if(progressOD.IsCancelled){
 					return null;
 				}
@@ -279,8 +279,8 @@ namespace OpenDental {
 
 		///<summary>List of all activated and enabled clinics selected by the user that are allowed to send mass emails.</summary>
 		private List<long> GetSelectedActivatedClinicNums() {
-			List<long> listClinicNums=(comboClinics.ClinicNumSelected<0) ? comboClinics.ListClinics.Select(x => x.ClinicNum).ToList() 
-				: new List<long> { comboClinics.ClinicNumSelected };
+			List<long> listClinicNums=(comboClinics.SelectedClinicNum<0) ? comboClinics.ListClinics.Select(x => x.ClinicNum).ToList() 
+				: new List<long> { comboClinics.SelectedClinicNum };
 			return listClinicNums;
 		}
 
@@ -336,13 +336,17 @@ namespace OpenDental {
 			panelUserQuery.Visible=checkUserQuery.Checked;
 			panelFilterControls.Visible=!checkUserQuery.Checked;
 		}
+
 		
-		private void butOK_Click(object sender,EventArgs e) {
+		private void butCommitList_Click(object sender,EventArgs e) {
 			ListPatientInfos=gridMain.ListGridRows.Where(x=>x.Cells[0].Text=="X").Select(x=>((PatientInfo)x.Tag)).ToList();
 			DialogResult=DialogResult.OK;
 			Close();
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 
 	public enum AdvertisingType {

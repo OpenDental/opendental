@@ -112,10 +112,6 @@ namespace OpenDental {
 
 		public List<string> ValidateTemplates() {
 			List<string> errors=new List<string>();
-			List<string> allTextTemplates=new List<string> { textEmailSubjAggShared.Text, textEmailAggPerAppt.Text, textSMSAggPerAppt.Text, textSMSAggShared.Text, textAggregateAutoReply.Text, textSingleAutoReply.Text, textArrivalResponse.Text, textComeIn.Text };
-			if(ContainsShortURLs(allTextTemplates, out errors)) {
-				return errors;
-			}
 			if(Rule.TypeCur==ApptReminderType.Arrival) {
 				if(string.IsNullOrWhiteSpace(textSMSAggShared.Text)) {
 					errors.Add(groupBoxSMSAggShared.Text+Lan.g(this," cannot be blank."));
@@ -182,43 +178,25 @@ namespace OpenDental {
 			return errors;
 		}
 
-		private bool ContainsShortURLs(List<string> allTextTemplates, out List<string> retErrors) {
-			bool retContainsURLs=false;
-			List<string> errors=new List<string>();
-			foreach(string str in allTextTemplates) {
-				string url=PrefC.GetFirstShortURL(str);
-				if(!string.IsNullOrWhiteSpace(url)) {
-					retContainsURLs=true;
-					errors.Add(Lan.g(this,"Message cannot contain the URL")+" "+url+" "+Lan.g(this,"as this is only allowed for eServices."));
-				}
-			}
-			retErrors=errors;
-			return retContainsURLs;
-		}
-
 		///<summary>Validates the AddToCalendar tag. Adds to the error list if the AddToCalendar tag is present but not signed up for eConfirmations</summary>
 		public List<string> AddCalendarTagErrors() {
 			List<string> listErrors=new List<string>();
-			string addToCalTag=ApptThankYouSents.ADD_TO_CALENDAR.ToLower();
-			if(!textSMSAggPerAppt.Text.ToLower().Contains(addToCalTag)
-				&& !textEmailAggPerAppt.Text.ToLower().Contains(addToCalTag))
-			{
-				return listErrors;
-			}
-			if(textSMSAggShared.Text.ToLower().Contains(addToCalTag)) {
-				listErrors.AddRange(ErrorText("texts",Rule.TypeCur,true));
-			}
-			if(_templateEmailAggShared.ToLower().Contains(addToCalTag)) {
-				listErrors.AddRange(ErrorText("emails",Rule.TypeCur,true));
-			}
-			if(!listErrors.IsNullOrEmpty()) {
-				return listErrors;
-			}
 			//Only these rule types will have [AddToCalendar] tags.
+			if(!Rule.TypeCur.In(ApptReminderType.ConfirmationFutureDay,ApptReminderType.ScheduleThankYou,ApptReminderType.Reminder)) {
+				return listErrors;
+			}
 			//[AddToCalendar] tags are allowed tag when eConfirmations are enabled so don't bother validating.
-			if(ApptReminderRules.IsAddToCalendarTagSupported(Rule.TypeCur)
-				&& PrefC.GetBool(PrefName.ApptConfirmAutoSignedUp))
-			{
+			if(PrefC.GetBool(PrefName.ApptConfirmAutoSignedUp)) {
+				return listErrors;
+			}
+			string addToCalTag=ApptThankYouSents.ADD_TO_CALENDAR.ToLower();
+			if(Rule.TypeCur==ApptReminderType.ConfirmationFutureDay) {//Add to calendar for Confirmations are only allowed for auto replies.
+				if(textSingleAutoReply.Text.ToLower().Contains(addToCalTag)) {
+					listErrors.AddRange(ErrorText("texts",Rule.TypeCur,false));
+				}
+				if(textAggregateAutoReply.Text.ToLower().Contains(addToCalTag)) {
+					listErrors.AddRange(ErrorText("texts",Rule.TypeCur,true));
+				}
 				return listErrors;
 			}
 			//Validates for Reminders and ThankYous, no auto replies for these rule types.
@@ -228,15 +206,17 @@ namespace OpenDental {
 			if(textEmailAggPerAppt.Text.ToLower().Contains(addToCalTag)) {
 				listErrors.AddRange(ErrorText("emails",Rule.TypeCur,false));
 			}
+			if(textSMSAggShared.Text.ToLower().Contains(addToCalTag)) {
+				listErrors.AddRange(ErrorText("texts",Rule.TypeCur,true));
+			}
+			if(_templateEmailAggShared.ToLower().Contains(addToCalTag)) {
+				listErrors.AddRange(ErrorText("emails",Rule.TypeCur,true));
+			}
 			return listErrors;
 		}
 
 		private List<string> ErrorText(string mode,ApptReminderType reminderType,bool isAgg) {
 			List<string> listErrors=new List<string>();
-			if(!ApptReminderRules.IsAddToCalendarTagSupported(reminderType)) {
-				listErrors.Add(Lan.g(this,"AddToCalendar tag can only be used for Reminders, Thank-Yous, and eConfirmations."));
-				return listErrors;
-			}
 			if(isAgg) {
 				if(reminderType==ApptReminderType.ConfirmationFutureDay) {
 					listErrors.Add(Lan.g(this,"Automated Confirmation Aggregate auto-reply texts cannot contain ")+ApptThankYouSents.ADD_TO_CALENDAR+Lan.g(this,". Use Per Appointment instead."));
@@ -291,8 +271,14 @@ namespace OpenDental {
 			if(!PrefC.GetBool(PrefName.ApptConfirmAutoSignedUp)) {
 				listErrors.Add(Lan.g(this,$"Automated New Patient Thank-Yous cannot be used when not signed up for eConfirmations."));
 			}
+			if(!_templateEmailAggShared.Contains(ApptNewPatThankYouSents.NEW_PAT_WEB_FORM_TAG)) {
+				listErrors.Add(Lan.g(this,"Aggregated Email Template must contain ")+ApptNewPatThankYouSents.NEW_PAT_WEB_FORM_TAG);
+			}
 			if(!textEmailAggPerAppt.Text.Contains(ApptNewPatThankYouSents.NEW_PAT_WEB_FORM_TAG)) {
 				listErrors.Add(Lan.g(this,"Aggregated Email Template Per Appointment must contain ")+ApptNewPatThankYouSents.NEW_PAT_WEB_FORM_TAG);
+			}
+			if(!textSMSAggShared.Text.Contains(ApptNewPatThankYouSents.NEW_PAT_WEB_FORM_TAG)) {
+				listErrors.Add(Lan.g(this,"Aggregated SMS Template must contain ")+ApptNewPatThankYouSents.NEW_PAT_WEB_FORM_TAG);
 			}
 			if(!textSMSAggPerAppt.Text.Contains(ApptNewPatThankYouSents.NEW_PAT_WEB_FORM_TAG)) {
 				listErrors.Add(Lan.g(this,"Aggregated SMS Template Per Appointment must contain ")+ApptNewPatThankYouSents.NEW_PAT_WEB_FORM_TAG);

@@ -55,6 +55,7 @@ namespace OpenDental{
 			this.textFamSecDed = new System.Windows.Forms.TextBox();
 			this.label17 = new System.Windows.Forms.Label();
 			this.gridRemainTimeUnits = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupBoxIndIns.SuspendLayout();
 			this.groupBoxFamilyIns.SuspendLayout();
 			this.SuspendLayout();
@@ -62,7 +63,6 @@ namespace OpenDental{
 			// groupBoxIndIns
 			// 
 			this.groupBoxIndIns.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBoxIndIns.Controls.Add(this.label16);
 			this.groupBoxIndIns.Controls.Add(this.textPriDed);
 			this.groupBoxIndIns.Controls.Add(this.textPriUsed);
 			this.groupBoxIndIns.Controls.Add(this.textPriDedRem);
@@ -80,12 +80,14 @@ namespace OpenDental{
 			this.groupBoxIndIns.Controls.Add(this.label14);
 			this.groupBoxIndIns.Controls.Add(this.label15);
 			this.groupBoxIndIns.Controls.Add(this.textSecMax);
+			this.groupBoxIndIns.Controls.Add(this.label16);
 			this.groupBoxIndIns.Controls.Add(this.textSecDed);
 			this.groupBoxIndIns.Controls.Add(this.textSecUsed);
-			this.groupBoxIndIns.Location = new System.Drawing.Point(581, 86);
+			this.groupBoxIndIns.Location = new System.Drawing.Point(574, 86);
 			this.groupBoxIndIns.Name = "groupBoxIndIns";
-			this.groupBoxIndIns.Size = new System.Drawing.Size(194, 160);
+			this.groupBoxIndIns.Size = new System.Drawing.Size(193, 160);
 			this.groupBoxIndIns.TabIndex = 1;
+			this.groupBoxIndIns.TabStop = false;
 			this.groupBoxIndIns.Text = "Individual Insurance";
 			// 
 			// textPriDed
@@ -253,9 +255,9 @@ namespace OpenDental{
 			// 
 			// label16
 			// 
-			this.label16.Location = new System.Drawing.Point(127, 16);
+			this.label16.Location = new System.Drawing.Point(130, 16);
 			this.label16.Name = "label16";
-			this.label16.Size = new System.Drawing.Size(65, 14);
+			this.label16.Size = new System.Drawing.Size(60, 14);
 			this.label16.TabIndex = 1;
 			this.label16.Text = "Secondary";
 			this.label16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -283,18 +285,19 @@ namespace OpenDental{
 			// groupBoxFamilyIns
 			// 
 			this.groupBoxFamilyIns.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBoxFamilyIns.Controls.Add(this.label9);
 			this.groupBoxFamilyIns.Controls.Add(this.textFamPriMax);
 			this.groupBoxFamilyIns.Controls.Add(this.textFamPriDed);
 			this.groupBoxFamilyIns.Controls.Add(this.label4);
 			this.groupBoxFamilyIns.Controls.Add(this.label8);
 			this.groupBoxFamilyIns.Controls.Add(this.textFamSecMax);
+			this.groupBoxFamilyIns.Controls.Add(this.label9);
 			this.groupBoxFamilyIns.Controls.Add(this.textFamSecDed);
 			this.groupBoxFamilyIns.Controls.Add(this.label17);
-			this.groupBoxFamilyIns.Location = new System.Drawing.Point(581, 5);
+			this.groupBoxFamilyIns.Location = new System.Drawing.Point(574, 5);
 			this.groupBoxFamilyIns.Name = "groupBoxFamilyIns";
-			this.groupBoxFamilyIns.Size = new System.Drawing.Size(194, 80);
+			this.groupBoxFamilyIns.Size = new System.Drawing.Size(193, 80);
 			this.groupBoxFamilyIns.TabIndex = 0;
+			this.groupBoxFamilyIns.TabStop = false;
 			this.groupBoxFamilyIns.Text = "Family Insurance";
 			// 
 			// textFamPriMax
@@ -319,7 +322,7 @@ namespace OpenDental{
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(73, 16);
+			this.label4.Location = new System.Drawing.Point(74, 16);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(60, 15);
 			this.label4.TabIndex = 66;
@@ -347,9 +350,9 @@ namespace OpenDental{
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(127, 16);
+			this.label9.Location = new System.Drawing.Point(131, 16);
 			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(65, 14);
+			this.label9.Size = new System.Drawing.Size(60, 14);
 			this.label9.TabIndex = 68;
 			this.label9.Text = "Secondary";
 			this.label9.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -380,17 +383,29 @@ namespace OpenDental{
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridRemainTimeUnits.Location = new System.Drawing.Point(12, 5);
 			this.gridRemainTimeUnits.Name = "gridRemainTimeUnits";
-			this.gridRemainTimeUnits.Size = new System.Drawing.Size(563, 397);
+			this.gridRemainTimeUnits.Size = new System.Drawing.Size(556, 397);
 			this.gridRemainTimeUnits.TabIndex = 4;
 			this.gridRemainTimeUnits.Title = "Time Units Remaining";
 			this.gridRemainTimeUnits.TranslationName = "TableTimeRemaining";
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(693, 378);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormInsRemain
 			// 
-			this.ClientSize = new System.Drawing.Size(787, 414);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(780, 414);
 			this.Controls.Add(this.gridRemainTimeUnits);
 			this.Controls.Add(this.groupBoxIndIns);
 			this.Controls.Add(this.groupBoxFamilyIns);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormInsRemain";
 			this.Text = "Insurance Remaining";
@@ -404,6 +419,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GroupBox groupBoxIndIns;
 		private System.Windows.Forms.TextBox textPriDed;
 		private System.Windows.Forms.TextBox textPriUsed;

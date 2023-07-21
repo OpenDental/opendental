@@ -65,41 +65,41 @@ namespace OpenDentBusiness{
 		#endregion Cache Pattern
 
 		///<summary></summary>
-		public static long Insert(AutoCodeCond autoCodeCond){
+		public static long Insert(AutoCodeCond Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				autoCodeCond.AutoCodeCondNum=Meth.GetLong(MethodBase.GetCurrentMethod(),autoCodeCond);
-				return autoCodeCond.AutoCodeCondNum;
+				Cur.AutoCodeCondNum=Meth.GetLong(MethodBase.GetCurrentMethod(),Cur);
+				return Cur.AutoCodeCondNum;
 			}
-			return Crud.AutoCodeCondCrud.Insert(autoCodeCond);
+			return Crud.AutoCodeCondCrud.Insert(Cur);
 		}
 
 		///<summary></summary>
-		public static void Update(AutoCodeCond autoCodeCond){
+		public static void Update(AutoCodeCond Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),autoCodeCond);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),Cur);
 				return;
 			}
-			Crud.AutoCodeCondCrud.Update(autoCodeCond);
+			Crud.AutoCodeCondCrud.Update(Cur);
 		}
 
 		///<summary></summary>
-		public static void Delete(AutoCodeCond autoCodeCond){
+		public static void Delete(AutoCodeCond Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),autoCodeCond);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),Cur);
 				return;
 			}
-			string command="DELETE from autocodecond WHERE autocodecondnum = '"+POut.Long(autoCodeCond.AutoCodeCondNum)+"'";
+			string command="DELETE from autocodecond WHERE autocodecondnum = '"+POut.Long(Cur.AutoCodeCondNum)+"'";
 			Db.NonQ(command);
 		}
 
 		///<summary></summary>
-		public static void DeleteForItemNum(long autoCodeItemNum) {
+		public static void DeleteForItemNum(long itemNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),autoCodeItemNum);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),itemNum);
 				return;
 			}
 			string command= "DELETE from autocodecond WHERE autocodeitemnum = '"
-				+POut.Long(autoCodeItemNum)+"'";//AutoCodeItems.Cur.AutoCodeItemNum)
+				+POut.Long(itemNum)+"'";//AutoCodeItems.Cur.AutoCodeItemNum)
 			Db.NonQ(command);
 		}
 
@@ -110,9 +110,9 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static bool IsSurf(AutoCondition autoCondition){
+		public static bool IsSurf(AutoCondition myAutoCondition){
 			//No need to check MiddleTierRole; no call to db.
-			switch(autoCondition){
+			switch(myAutoCondition){
 				case AutoCondition.One_Surf:
 				case AutoCondition.Two_Surf:
 				case AutoCondition.Three_Surf:
@@ -125,9 +125,9 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static bool ConditionIsMet(AutoCondition autoCondition,string toothNum,string surf,bool isAdditional,bool willBeMissing,int age){
+		public static bool ConditionIsMet(AutoCondition myAutoCondition, string toothNum,string surf,bool isAdditional,bool willBeMissing,int age){
 			//No need to check MiddleTierRole; no call to db.
-			switch(autoCondition){
+			switch(myAutoCondition){
 				case AutoCondition.Anterior:
 					return Tooth.IsAnterior(toothNum);
 				case AutoCondition.Posterior:
@@ -170,4 +170,18 @@ namespace OpenDentBusiness{
 		}
 	}
 
+	
+
+	
+
+
 }
+
+
+
+
+
+
+
+
+

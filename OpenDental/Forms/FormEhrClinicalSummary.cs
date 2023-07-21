@@ -72,7 +72,7 @@ namespace OpenDental {
 				}
 			}
 			File.WriteAllText(Path.Combine(dlg.SelectedPath,"ccd.xml"),ccd);
-			File.WriteAllText(Path.Combine(dlg.SelectedPath,"ccd.xsl"),EhrSummaryCcds.GetEhrResource("CCD"));
+			File.WriteAllText(Path.Combine(dlg.SelectedPath,"ccd.xsl"),FormEHR.GetEhrResource("CCD"));
 			EhrMeasureEvent newMeasureEvent = new EhrMeasureEvent();
 			newMeasureEvent.DateTEvent = DateTime.Now;
 			newMeasureEvent.EventType = EhrMeasureEventType.ClinicalSummaryProvidedToPt;
@@ -123,7 +123,7 @@ namespace OpenDental {
 				attachSs.DisplayedFileName="ccd.xsl";
 				attachSs.ActualFileName=attachCcd.ActualFileName.Substring(0,attachCcd.ActualFileName.Length-4)+".xsl";//Same base name as the CCD.  The base names must match or the file will not display properly in internet browsers.
 				listAttachments.Add(attachSs);
-				FileAtoZ.WriteAllText(FileAtoZ.CombinePaths(attachPath,attachSs.ActualFileName),EhrSummaryCcds.GetEhrResource("CCD"),
+				FileAtoZ.WriteAllText(FileAtoZ.CombinePaths(attachPath,attachSs.ActualFileName),FormEHR.GetEhrResource("CCD"),
 					"Uploading Attachment for Clinical Summary...");
 				//Create and save the webmail message containing the attachments.
 				EmailMessage msgWebMail=new EmailMessage();				
@@ -211,6 +211,24 @@ namespace OpenDental {
 			}
 			FillGridEHRMeasureEvents();
 		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
+	
+
+		
+
+
+
+
+
+
+
+
+
+
 
 	}
 }

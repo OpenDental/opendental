@@ -89,7 +89,7 @@ namespace OpenDental{
 		}
 
 		private void checkIsGraphed_Click(object sender,EventArgs e) {
-			if(Security.IsAuthorized(EnumPermType.Schedules) && Security.IsAuthorized(EnumPermType.Setup)) {
+			if(Security.IsAuthorized(Permissions.Schedules) && Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			//Put the checkbox back the way it was before user clicked on it.
@@ -102,7 +102,7 @@ namespace OpenDental{
 		}
 
 		private void checkHasColor_Click(object sender,EventArgs e) {
-			if(Security.IsAuthorized(EnumPermType.Schedules) && Security.IsAuthorized(EnumPermType.Setup)) {
+			if(Security.IsAuthorized(Permissions.Schedules) && Security.IsAuthorized(Permissions.Setup)) {
 				return;//allowed to change if user has both permissions. 
 			}
 			//Put the checkbox back the way it was before user clicked on it.
@@ -115,7 +115,7 @@ namespace OpenDental{
 		}
 
 		private void listRingGroup_SelectedIndexChanged(object sender,EventArgs e) {
-			if(_isLoading || listRingGroup.GetSelected<AsteriskQueues>()==_pedOld.RingGroups || Security.IsAuthorized(EnumPermType.Setup)) {
+			if(_isLoading || listRingGroup.GetSelected<AsteriskQueues>()==_pedOld.RingGroups || Security.IsAuthorized(Permissions.Setup)) {
 				return;//either we're loading, or index clicked on is the same as inital, or user is okay to change. 
 			}
 			//user is not allowed, switch index back to what it was when loading.
@@ -135,7 +135,7 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			//Using a switch statement in case we want special functionality for the other statuses later on.
 			switch(listStatusOverride.GetSelected<PhoneEmpStatusOverride>()) {
 				case PhoneEmpStatusOverride.None:
@@ -270,5 +270,44 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+		
+
+	
+
+	
+
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

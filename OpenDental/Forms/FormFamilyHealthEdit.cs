@@ -54,11 +54,11 @@ namespace OpenDental {
 				return;
 			}
 			FamilyHealths.Delete(FamilyHealthCur.FamilyHealthNum);
-			SecurityLogs.MakeLogEntry(EnumPermType.PatFamilyHealthEdit,FamilyHealthCur.PatNum,FamilyHealthCur.PersonName+" "+FamilyHealthCur.Relationship+" deleted");
+			SecurityLogs.MakeLogEntry(Permissions.PatFamilyHealthEdit,FamilyHealthCur.PatNum,FamilyHealthCur.PersonName+" "+FamilyHealthCur.Relationship+" deleted");
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(listRelationship.SelectedIndex<0) {
 				MsgBox.Show(this,"Relationship required.");
 				return;
@@ -75,15 +75,18 @@ namespace OpenDental {
 			FamilyHealthCur.Relationship=listRelationship.GetSelected<FamilyRelationship>();
 			FamilyHealthCur.PersonName=textName.Text;
 			if(FamilyHealthCur.IsNew) {
-				SecurityLogs.MakeLogEntry(EnumPermType.PatFamilyHealthEdit,FamilyHealthCur.PatNum,FamilyHealthCur.PersonName+" "+FamilyHealthCur.Relationship+" added");
+				SecurityLogs.MakeLogEntry(Permissions.PatFamilyHealthEdit,FamilyHealthCur.PatNum,FamilyHealthCur.PersonName+" "+FamilyHealthCur.Relationship+" added");
 				FamilyHealths.Insert(FamilyHealthCur);
 			}
 			else {
 				FamilyHealths.Update(FamilyHealthCur);
-				SecurityLogs.MakeLogEntry(EnumPermType.PatFamilyHealthEdit,FamilyHealthCur.PatNum,FamilyHealthCur.PersonName+" "+FamilyHealthCur.Relationship+" edited");
+				SecurityLogs.MakeLogEntry(Permissions.PatFamilyHealthEdit,FamilyHealthCur.PatNum,FamilyHealthCur.PersonName+" "+FamilyHealthCur.Relationship+" edited");
 			}
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

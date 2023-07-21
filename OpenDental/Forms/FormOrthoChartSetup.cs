@@ -31,8 +31,10 @@ namespace OpenDental {
 			gridTabNames.BeginUpdate();
 			gridTabNames.ListGridRows.Clear();
 			gridTabNames.Columns.Clear();
-			gridTabNames.Columns.Add(new UI.GridColumn("Tab Name",160,HorizontalAlignment.Left){ IsWidthDynamic=true });
-			gridTabNames.Columns.Add(new UI.GridColumn("Is Hidden",100,HorizontalAlignment.Center));
+			int isHiddenWidth=100;
+			int tabNameWidth=gridTabNames.Width-10-isHiddenWidth;//10 for scrollbar.
+			gridTabNames.Columns.Add(new UI.GridColumn("Tab Name",tabNameWidth,HorizontalAlignment.Left));
+			gridTabNames.Columns.Add(new UI.GridColumn("Is Hidden",isHiddenWidth,HorizontalAlignment.Center));
 			for(int i=0;i<_listOrthoChartTabsNew.Count;i++) {
 				UI.GridRow row=new UI.GridRow();
 				row.Tag=_listOrthoChartTabsNew[i];
@@ -92,7 +94,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			bool isVisible=false;
 			for(int i=0;i<_listOrthoChartTabsNew.Count;i++) {
 				_listOrthoChartTabsNew[i].ItemOrder=i;
@@ -107,6 +109,10 @@ namespace OpenDental {
 			OrthoChartTabs.Sync(_listOrthoChartTabsNew,_listOrthoChartTabsDb);
 			DataValid.SetInvalid(InvalidType.OrthoChartTabs);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

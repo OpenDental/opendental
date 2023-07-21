@@ -17,7 +17,11 @@ namespace OpenDental{
 		private PatField _patFieldOld;
 
 		///<summary></summary>
-		public FormPatFieldEdit(PatField patField) {
+		public FormPatFieldEdit(PatField patField)
+		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
@@ -34,14 +38,18 @@ namespace OpenDental{
 		}
 
 		private void butUseAutoNote_Click(object sender,EventArgs e) {
-			FrmAutoNoteCompose frmAutoNoteCompose=new FrmAutoNoteCompose();
-			frmAutoNoteCompose.ShowDialog();
-			if(frmAutoNoteCompose.IsDialogOK) {
-				textValue.AppendText(frmAutoNoteCompose.StrCompletedNote);
+			using FormAutoNoteCompose formAutoNoteCompose=new FormAutoNoteCompose();
+			formAutoNoteCompose.ShowDialog();
+			if(formAutoNoteCompose.DialogResult==DialogResult.OK) {
+				textValue.AppendText(formAutoNoteCompose.StrCompletedNote);
 			}
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		/*private void buttonDelete_Click(object sender,EventArgs e) {
+			
+		}*/
+
+		private void butOK_Click(object sender, System.EventArgs e) {
 			_patField.FieldValue=textValue.Text;
 			if(_patField.FieldValue==""){//if blank, then delete
 				if(IsNew) {
@@ -65,5 +73,43 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void FormPatFieldDefEdit_FormClosing(object sender,FormClosingEventArgs e) {
+			/*if(DialogResult==DialogResult.OK){
+				return;
+			}
+			if(IsNew) {
+				PatFields.Delete(Field);
+			}*/
+		}
+	
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

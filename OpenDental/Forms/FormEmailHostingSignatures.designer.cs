@@ -24,7 +24,7 @@ namespace OpenDental {
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEmailHostingSignatures));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.butEditSignature = new OpenDental.UI.Button();
 			this.labelHtml = new System.Windows.Forms.Label();
 			this.webBrowserSignature = new System.Windows.Forms.WebBrowser();
@@ -35,16 +35,16 @@ namespace OpenDental {
 			this.labelNotActivated = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butSave.Location = new System.Drawing.Point(809, 304);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butOK.Location = new System.Drawing.Point(809, 304);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&Close";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butEditSignature
 			// 
@@ -119,7 +119,7 @@ namespace OpenDental {
 			this.textboxPlainText.DetectUrls = false;
 			this.textboxPlainText.Location = new System.Drawing.Point(12, 72);
 			this.textboxPlainText.Name = "textboxPlainText";
-			this.textboxPlainText.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textboxPlainText.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textboxPlainText.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textboxPlainText.Size = new System.Drawing.Size(424, 226);
 			this.textboxPlainText.TabIndex = 318;
@@ -137,7 +137,7 @@ namespace OpenDental {
 			// 
 			// FormEmailHostingSignatures
 			// 
-			this.CancelButton = this.butSave;
+			this.CancelButton = this.butOK;
 			this.ClientSize = new System.Drawing.Size(893, 335);
 			this.Controls.Add(this.labelNotActivated);
 			this.Controls.Add(this.label1);
@@ -147,7 +147,7 @@ namespace OpenDental {
 			this.Controls.Add(this.webBrowserSignature);
 			this.Controls.Add(this.labelPlainText);
 			this.Controls.Add(this.textboxPlainText);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEmailHostingSignatures";
 			this.Text = "Hosted Email Signatures";
@@ -158,7 +158,7 @@ namespace OpenDental {
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
 		private UI.Button butEditSignature;
 		private System.Windows.Forms.Label labelHtml;
 		private System.Windows.Forms.WebBrowser webBrowserSignature;

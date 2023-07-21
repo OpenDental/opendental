@@ -33,7 +33,8 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEmailTemplateEdit));
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textBodyText = new OpenDental.ODtextBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -56,15 +57,26 @@ namespace OpenDental {
 			this.groupBoxOD1.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(883, 656);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 25);
-			this.butSave.TabIndex = 5;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(883, 656);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 25);
+			this.butCancel.TabIndex = 6;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(802, 656);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 25);
+			this.butOK.TabIndex = 5;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// label2
 			// 
@@ -86,7 +98,7 @@ namespace OpenDental {
 			this.textBodyText.DetectUrls = false;
 			this.textBodyText.Location = new System.Drawing.Point(97, 86);
 			this.textBodyText.Name = "textBodyText";
-			this.textBodyText.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textBodyText.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textBodyText.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textBodyText.Size = new System.Drawing.Size(861, 564);
 			this.textBodyText.TabIndex = 3;
@@ -131,7 +143,7 @@ namespace OpenDental {
 			this.textSubject.Location = new System.Drawing.Point(97, 65);
 			this.textSubject.Multiline = false;
 			this.textSubject.Name = "textSubject";
-			this.textSubject.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textSubject.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textSubject.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textSubject.Size = new System.Drawing.Size(635, 20);
 			this.textSubject.TabIndex = 2;
@@ -148,7 +160,7 @@ namespace OpenDental {
 			this.textDescription.Location = new System.Drawing.Point(97, 44);
 			this.textDescription.Multiline = false;
 			this.textDescription.Name = "textDescription";
-			this.textDescription.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textDescription.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textDescription.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textDescription.Size = new System.Drawing.Size(635, 20);
 			this.textDescription.TabIndex = 1;
@@ -279,7 +291,8 @@ namespace OpenDental {
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textBodyText);
 			this.Controls.Add(this.label2);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.webBrowserHtml);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEmailTemplateEdit";
@@ -291,7 +304,9 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label label2;
 		private OpenDental.ODtextBox textBodyText;
 		private Label label1;

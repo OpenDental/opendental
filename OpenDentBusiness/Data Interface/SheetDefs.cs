@@ -15,7 +15,6 @@ namespace OpenDentBusiness{
 
 		///<summary>Returns true if this sheet def is allowed to bypass the global lock date.</summary>
 		public static bool CanBypassLockDate(long sheetDefNum) {
-			//No need to check MiddleTierRole; no call to db.
 			SheetDef sheetDef=SheetDefs.GetFirstOrDefault(x => x.SheetDefNum==sheetDefNum);
 			if(sheetDef==null) {
 				return false;
@@ -24,12 +23,11 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns true if any StaticText fields on the sheet def contain any of the StaticTextFields passed in. Otherwise false.</summary>
-		public static bool ContainsStaticFields(SheetDef sheetDef,params StaticTextField[] staticTextFieldArray) {
-			//No need to check MiddleTierRole; no call to db.
-			if(sheetDef.SheetFieldDefs.IsNullOrEmpty() || staticTextFieldArray.IsNullOrEmpty()) {
+		public static bool ContainsStaticFields(SheetDef sheetDef,params StaticTextField[] arrayStaticTextFields) {
+			if(sheetDef.SheetFieldDefs.IsNullOrEmpty() || arrayStaticTextFields.IsNullOrEmpty()) {
 				return false;
 			}
-			List<string> listStaticTextFields=staticTextFieldArray.Select(x => x.ToReplacementString()).ToList();
+			List<string> listStaticTextFields=arrayStaticTextFields.Select(x => x.ToReplacementString()).ToList();
 			for(int i=0;i<sheetDef.SheetFieldDefs.Count;i++) {
 				if(sheetDef.SheetFieldDefs[i].FieldType!=SheetFieldType.StaticText) {
 					continue;
@@ -42,12 +40,11 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns true if any Grids on the sheet def contain any of the specific Grids passed in. Otherwise false.</summary>
-		public static bool ContainsGrids(SheetDef sheetDef,params string[] gridNameArray) {
-			//No need to check MiddleTierRole; no call to db.
-			if(sheetDef.SheetFieldDefs.IsNullOrEmpty() || gridNameArray.IsNullOrEmpty()) {
+		public static bool ContainsGrids(SheetDef sheetDef,params string[] arrayGridNames) {
+			if(sheetDef.SheetFieldDefs.IsNullOrEmpty() || arrayGridNames.IsNullOrEmpty()) {
 				return false;
 			}
-			List<string> listGrids=gridNameArray.ToList();
+			List<string> listGrids=arrayGridNames.ToList();
 			for(int i=0;i<sheetDef.SheetFieldDefs.Count;i++) {
 				if(sheetDef.SheetFieldDefs[i].FieldType!=SheetFieldType.Grid) {
 					continue;
@@ -61,37 +58,21 @@ namespace OpenDentBusiness{
 
 		///<summary>SheetType must either by PatientForm of MedicalHistory.</summary>
 		public static bool IsWebFormAllowed(SheetTypeEnum sheetType) {
-			//No need to check MiddleTierRole; no call to db.
-			if(sheetType.In(SheetTypeEnum.PatientForm,SheetTypeEnum.MedicalHistory)){
-				return true;
-			}
-			return false;
+			return sheetType.In(SheetTypeEnum.PatientForm,SheetTypeEnum.MedicalHistory);
 		}
 
 		///<summary>SheetType must either by PatientForm of MedicalHistory.</summary>
 		public static bool IsMobileAllowed(SheetTypeEnum sheetType) {
-			//No need to check MiddleTierRole; no call to db.
-			if (IsWebFormAllowed(sheetType)) {
-				return true;
-			}
-			if (sheetType==SheetTypeEnum.Consent) {
-				return true;
-			}
-			if (sheetType==SheetTypeEnum.ExamSheet) {
-				return true;
-			}
-			return false;
+			return (IsWebFormAllowed(sheetType) || sheetType==SheetTypeEnum.Consent || sheetType==SheetTypeEnum.ExamSheet);
 		}
 
 		///<summary>Determines if a sheetDef is of a SheetTypeEnum that describes a Dashboard.</summary>
 		public static bool IsDashboardType(SheetDef sheetDef) {
-			//No need to check MiddleTierRole; no call to db.
 			return IsDashboardType(sheetDef.SheetType);
 		}
 
 		///<summary>Determines if a SheetTypeEnum is a Dashboard.</summary>
 		public static bool IsDashboardType(SheetTypeEnum sheetType) {
-			//No need to check MiddleTierRole; no call to db.
 			if(sheetType.In(SheetTypeEnum.PatientDashboard,SheetTypeEnum.PatientDashboardWidget)) {
 				return true;
 			}
@@ -166,11 +147,11 @@ namespace OpenDentBusiness{
 		///<Summary>Gets one SheetDef from the cache.  Also includes the fields and parameters for the sheetdef.</Summary>
 		public static SheetDef GetSheetDef(long sheetDefNum,bool hasExceptions=true) {
 			//No need to check MiddleTierRole; no call to db.
-			SheetDef sheetDef=GetFirstOrDefault(x => x.SheetDefNum==sheetDefNum);
-			if(hasExceptions || sheetDef!=null) {
-				GetFieldsAndParameters(sheetDef);
+			SheetDef sheetdef=GetFirstOrDefault(x => x.SheetDefNum==sheetDefNum);
+			if(hasExceptions || sheetdef!=null) {
+				GetFieldsAndParameters(sheetdef);
 			}
-			return sheetDef;
+			return sheetdef;
 		}
 
 		///<summary>Updates the SheetDef only.  Does not included attached fields.</summary>
@@ -200,8 +181,8 @@ namespace OpenDentBusiness{
 			else{
 				Crud.SheetDefCrud.Update(sheetDef);
 			}
-			for(int i=0;i<sheetDef.SheetFieldDefs.Count;i++) {
-				sheetDef.SheetFieldDefs[i].SheetDefNum=sheetDef.SheetDefNum;
+			foreach(SheetFieldDef field in sheetDef.SheetFieldDefs){
+				field.SheetDefNum=sheetDef.SheetDefNum;
 			}
 			SheetFieldDefs.Sync(sheetDef.SheetFieldDefs,sheetDef.SheetDefNum);
 			return sheetDef.SheetDefNum;
@@ -241,26 +222,28 @@ namespace OpenDentBusiness{
 					+"\r\n"+string.Join(", ",table.Select().Select(x => x["Description"].ToString())));
 			}
 			//validate that not already in use as a default sheet
-			List<PrefName> listPrefNamesDefault=new List<PrefName>();
-			listPrefNamesDefault.Add(PrefName.SheetsDefaultChartModule);
-			listPrefNamesDefault.Add(PrefName.SheetsDefaultRx);
-			listPrefNamesDefault.Add(PrefName.SheetsDefaultLimited);
-			listPrefNamesDefault.Add(PrefName.SheetsDefaultStatement);
-			listPrefNamesDefault.Add(PrefName.SheetsDefaultInvoice);
-			listPrefNamesDefault.Add(PrefName.SheetsDefaultReceipt);
-			listPrefNamesDefault.Add(PrefName.SheetsDefaultTreatmentPlan);
-			if(listPrefNamesDefault.Any(x => PrefC.GetLong(x)==sheetDefNum)) {
+			List<PrefName> listSheetDefaultPrefs=new List<PrefName>() {
+				PrefName.SheetsDefaultChartModule,
+				PrefName.SheetsDefaultRx,
+				PrefName.SheetsDefaultLimited,
+				PrefName.SheetsDefaultStatement,
+				PrefName.SheetsDefaultInvoice,
+				PrefName.SheetsDefaultReceipt,
+				PrefName.SheetsDefaultTreatmentPlan,
+			};
+			if(listSheetDefaultPrefs.Any(x => PrefC.GetLong(x)==sheetDefNum)) {
 				throw new ApplicationException(Lans.g("sheetDefs","SheetDef is in use as a default sheet. Not allowed to delete."));
 			}
 			//validate that not already in use by clinicPref.
-			List<PrefName> listPrefNamesClinicDefault=new List<PrefName>();
-			listPrefNamesClinicDefault.Add(PrefName.SheetsDefaultRx);
-			listPrefNamesClinicDefault.Add(PrefName.SheetsDefaultChartModule);
-			listPrefNamesClinicDefault.Add(PrefName.SheetsDefaultTreatmentPlan);
+			List<PrefName> listClinicSheetDefaultPrefs=new List<PrefName>() {
+				PrefName.SheetsDefaultRx,
+				PrefName.SheetsDefaultChartModule,
+				PrefName.SheetsDefaultTreatmentPlan,
+			};
 			command="SELECT ClinicNum "
 				+"FROM clinicpref "
 				+"WHERE ValueString='"+POut.Long(sheetDefNum)+"' "
-				+"AND PrefName IN("+string.Join(",",listPrefNamesClinicDefault.Select(x => "'"+x.ToString()+"'"))+") ";
+				+"AND PrefName IN("+string.Join(",",listClinicSheetDefaultPrefs.Select(x => "'"+x.ToString()+"'"))+") ";
 			table=Db.GetTable(command);
 			if(table.Rows.Count>0) {
 				throw new ApplicationException(Lans.g("sheetDefs","SheetDef is in use by clinics. Not allowed to delete.")
@@ -283,7 +266,7 @@ namespace OpenDentBusiness{
 			}
 			command="DELETE FROM grouppermission" 
 				+" WHERE FKey="+POut.Long(sheetDefNum)
-				+" AND PermType="+POut.Enum<EnumPermType>(EnumPermType.DashboardWidget);
+				+" AND PermType="+POut.Enum<Permissions>(Permissions.DashboardWidget);
 			Db.NonQ(command);
 			command="DELETE FROM sheetfielddef WHERE SheetDefNum="+POut.Long(sheetDefNum);
 			Db.NonQ(command);
@@ -305,77 +288,104 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Gets all custom sheetdefs(without fields or parameters) for a particular type.</summary>
-		public static List<SheetDef> GetCustomForType(SheetTypeEnum sheetType){
+		public static List<SheetDef> GetCustomForType(SheetTypeEnum sheettype){
 			//No need to check MiddleTierRole; no call to db.
-			return GetWhere(x => x.SheetType==sheetType);
+			return GetWhere(x => x.SheetType==sheettype);
 		}
 
 		///<summary>Gets the description from the cache.</summary>
 		public static string GetDescription(long sheetDefNum) {
 			//No need to check MiddleTierRole; no call to db.
 			SheetDef sheetDef=GetFirstOrDefault(x => x.SheetDefNum==sheetDefNum);
-			if (sheetDef==null) {
-				return "";
-			}
-			return sheetDef.Description;
+			return (sheetDef==null ? "" : sheetDef.Description);
 		}
 
 		public static SheetDef GetInternalOrCustom(SheetInternalType sheetInternalType) {
-			//No need to check MiddleTierRole; no call to db.
-			SheetDef sheetDefRetVal=SheetsInternal.GetSheetDef(sheetInternalType);
-			SheetDef sheetDefCustom=GetCustomForType(sheetDefRetVal.SheetType).OrderBy(x => x.Description).ThenBy(x => x.SheetDefNum).FirstOrDefault();
-			if(sheetDefCustom!=null) {
-				sheetDefRetVal=GetSheetDef(sheetDefCustom.SheetDefNum);
+			SheetDef retVal=SheetsInternal.GetSheetDef(sheetInternalType);
+			SheetDef custom=GetCustomForType(retVal.SheetType).OrderBy(x => x.Description).ThenBy(x => x.SheetDefNum).FirstOrDefault();
+			if(custom!=null) {
+				retVal=GetSheetDef(custom.SheetDefNum);
 			}
-			return sheetDefRetVal;
+			return retVal;
+		}
+
+		///<summary>Returns the SheetTypeEnum and Sheet Def defaults for a clinic, if clinics is not on/or user is altering HQ settings 
+		///it will instead return user defaults, if neither is present then it will return the pratice default.</summary>
+		public static Dictionary<SheetTypeEnum,SheetDef> GetDefaultSheetDefs(long clinicNum=0,params SheetTypeEnum[] arrSheetTypes) {
+			//No need to check MiddleTierRole; no call to db.
+			Dictionary<SheetTypeEnum,SheetDef> retVal=new Dictionary<SheetTypeEnum,SheetDef>();
+			foreach(SheetTypeEnum sheetTypeEnum in arrSheetTypes) {
+				SheetDef defaultSheetDef=GetSheetDef(PrefC.GetDefaultSheetDefNum(sheetTypeEnum),false);
+				if(clinicNum==0) {
+					if(defaultSheetDef==null) {
+						defaultSheetDef=SheetsInternal.GetSheetDef(sheetTypeEnum);
+					}
+					retVal.Add(sheetTypeEnum,defaultSheetDef);
+				}
+				else {
+					ClinicPref clinicPrefCur=ClinicPrefs.GetPref(Prefs.GetSheetDefPref(sheetTypeEnum),clinicNum);
+					defaultSheetDef=SheetsInternal.GetSheetDef(sheetTypeEnum);
+					if(clinicPrefCur!=null && PIn.Long(clinicPrefCur.ValueString)!=0) {//If ValueString is 0 then we want to keep it as the internal sheet def.
+						defaultSheetDef=GetSheetDef(PIn.Long(clinicPrefCur.ValueString),false);
+					}
+					if(clinicPrefCur!=null) {//If there was a row in the clinicpref table, add whatever the sheetdef was to the retval dictionary.
+						retVal.Add(sheetTypeEnum,defaultSheetDef);
+					}
+				}
+			}
+			return retVal;
 		}
 
 		///<summary>Passing in a clinicNum of 0 will use the base default sheet def.  Otherwise returns the clinic specific default sheetdef.</summary>
 		public static SheetDef GetSheetsDefault(SheetTypeEnum sheetType,long clinicNum=0) {
 			//No need to check MiddleTierRole; no call to db.
-			ClinicPref clinicPref=ClinicPrefs.GetPref(Prefs.GetSheetDefPref(sheetType),clinicNum);
-			SheetDef sheetDefDefault;
-			if(clinicPref==null) {//If there wasn't a row for the specific clinic, use the base default sheetdef
-				sheetDefDefault=GetSheetDef(PrefC.GetDefaultSheetDefNum(sheetType),false);
-				if(sheetDefDefault==null) {
-					sheetDefDefault=SheetsInternal.GetSheetDef(sheetType);
+			ClinicPref clinicPrefCur=ClinicPrefs.GetPref(Prefs.GetSheetDefPref(sheetType),clinicNum);
+			SheetDef defaultSheetDef;
+			if(clinicPrefCur==null) {//If there wasn't a row for the specific clinic, use the base default sheetdef
+				defaultSheetDef=GetSheetDef(PrefC.GetDefaultSheetDefNum(sheetType),false);
+				if(defaultSheetDef==null) {
+					defaultSheetDef=SheetsInternal.GetSheetDef(sheetType);
 				}
-				return sheetDefDefault;//Return the base default sheetdef
+				return defaultSheetDef;//Return the base default sheetdef
 			}
 			//Clinic specific sheet def found
-			if(PIn.Long(clinicPref.ValueString)==0) {//If ValueString is 0 then we want to keep it as the internal sheet def.
-				sheetDefDefault=SheetsInternal.GetSheetDef(sheetType);
+			if(PIn.Long(clinicPrefCur.ValueString)==0) {//If ValueString is 0 then we want to keep it as the internal sheet def.
+				defaultSheetDef=SheetsInternal.GetSheetDef(sheetType);
 			}
 			else {
-				sheetDefDefault=GetSheetDef(PIn.Long(clinicPref.ValueString),false);
+				defaultSheetDef=GetSheetDef(PIn.Long(clinicPrefCur.ValueString),false);
 			}
-			return sheetDefDefault;
+			return defaultSheetDef;
 		}
 
-		///<summary>Gets a list of sheetdefs from the DB. Used by the API. If modifying this method, please contact someone from the API team.</summary>
-		public static List<SheetDef> GetSheetDefsForApi(int intLimit,int intOffset){
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<SheetDef>>(MethodBase.GetCurrentMethod(),intLimit,intOffset);
+		///<summary>Returns a dictionary such that the key is a specific ClinicNum from given listClinicNums and the value is a
+		///dictionary such that its key is a SheetTypeEnum and the value is the corresponding SheetDef for the ClinicNum/SheetTypeEnum combo.
+		///A ClinicNum will only exist in the returned Dictionaries keys if an associated SheetTypeEnum and SheetDef could be found.</summary>
+		public static Dictionary<long,Dictionary<SheetTypeEnum,SheetDef>> GetSheetDefDefaults(List<long> listClinicNums,params SheetTypeEnum[] arrSheetTypes) {
+			//No need to check MiddleTierRole; no call to db.
+			Dictionary<long,Dictionary<SheetTypeEnum,SheetDef>> retVal=new Dictionary<long,Dictionary<SheetTypeEnum,SheetDef>>();
+			foreach(long clinicNum in new List<long>() { 0 }.Concat(listClinicNums).Distinct()) {//If listClinicNums is empty (clinics are disabled) this will still run for 0 (headquarters).
+				Dictionary<SheetTypeEnum,SheetDef> dictDefaultSheetDefs=GetDefaultSheetDefs(clinicNum,arrSheetTypes);
+				if(dictDefaultSheetDefs.Count>0 && !retVal.ContainsKey(clinicNum)) {
+					//Only add items that contain return values. If given listClinicNums contains a 0 then the following line would throw an exception.
+					retVal.Add(clinicNum,dictDefaultSheetDefs);
+				}
 			}
-			string command="SELECT * FROM sheetdef ";
-			command+="ORDER BY SheetDefNum "
-				+"LIMIT "+POut.Int(intOffset)+", "+POut.Int(intLimit);
-			return Crud.SheetDefCrud.SelectMany(command);
+			return retVal;
 		}
 
 		///<summary>Sets the FieldName for each SheetFieldDef in sheetDef.SheetFieldDefs to the Def.DefNum defined as the Patient Image definition.
 		///Defaults to the first definition in the Image category if Patient Image is not defined.
 		///This is necessary because the resource for the internal sheet likely does not contain a valid Def primary key.</summary>
 		public static void SetPatImageFieldNames(SheetDef sheetDef) {
-			//No need to check MiddleTierRole; no call to db.
 			//We need to figure out which Image Category should be used for any PatImage SheetFieldDefs.
-			List<Def> listDefsImage=Defs.GetDefsForCategory(DefCat.ImageCats,true);
+			List<Def> listImageDefs=Defs.GetDefsForCategory(DefCat.ImageCats,true);
 			long defNum=0;
 			//A user can define a specific image category as being the Patient Picture definition, see FormDefEditImages.butOK_Click().
 			//SheetFieldDef.FieldName corresponds to Def.DefNum for a PatImage type SheetFieldDef.
-			Def def=listDefsImage.FirstOrDefault(x => x.ItemValue.Contains("P"));
+			Def def=listImageDefs.FirstOrDefault(x => x.ItemValue.Contains("P"));
 			if(def==null) {
-				def=listDefsImage.FirstOrDefault();//Default to the first image category definition if one isn't defined as the Patient Image definition.
+				def=listImageDefs.FirstOrDefault();//Default to the first image category definition if one isn't defined as the Patient Image definition.
 			}
 			if(def==null) {//No Image Category definitions setup.
 				defNum=0;
@@ -383,11 +393,11 @@ namespace OpenDentBusiness{
 			else {
 				defNum=def.DefNum;
 			}
-			for(int i=0;i<sheetDef.SheetFieldDefs.Count;i++) {
-				if(sheetDef.SheetFieldDefs[i].FieldType!=SheetFieldType.PatImage) {
+			foreach(SheetFieldDef sheetFieldDef in sheetDef.SheetFieldDefs) {
+				if(sheetFieldDef.FieldType!=SheetFieldType.PatImage) {
 					continue;
 				}
-				sheetDef.SheetFieldDefs[i].FieldName=POut.Long(defNum);
+				sheetFieldDef.FieldName=POut.Long(defNum);
 			}
 		}
 

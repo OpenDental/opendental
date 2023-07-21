@@ -24,25 +24,25 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormXchargeTrans));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.labelCashBackAmt = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
-			this.textCashBackAmt = new OpenDental.ValidDouble();
+			this.textCashBackAmt = new ValidDouble();
 			this.listTransType = new OpenDental.UI.ListBox();
 			this.checkSaveToken = new OpenDental.UI.CheckBox();
 			this.checkSignature = new OpenDental.UI.CheckBox();
 			this.checkPrintReceipt = new OpenDental.UI.CheckBox();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(243, 233);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 2;
-			this.butSave.Text = "Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(219, 221);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 2;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// labelCashBackAmt
 			// 
@@ -66,8 +66,6 @@ namespace OpenDental{
 			// textCashBackAmt
 			// 
 			this.textCashBackAmt.Location = new System.Drawing.Point(52, 177);
-			this.textCashBackAmt.MaxVal = 100000000D;
-			this.textCashBackAmt.MinVal = -100000000D;
 			this.textCashBackAmt.Name = "textCashBackAmt";
 			this.textCashBackAmt.Size = new System.Drawing.Size(100, 20);
 			this.textCashBackAmt.TabIndex = 61;
@@ -108,7 +106,7 @@ namespace OpenDental{
 			// FormXchargeTrans
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(345, 282);
+			this.ClientSize = new System.Drawing.Size(321, 270);
 			this.Controls.Add(this.checkPrintReceipt);
 			this.Controls.Add(this.checkSignature);
 			this.Controls.Add(this.checkSaveToken);
@@ -116,9 +114,10 @@ namespace OpenDental{
 			this.Controls.Add(this.textCashBackAmt);
 			this.Controls.Add(this.labelCashBackAmt);
 			this.Controls.Add(this.label1);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormXchargeTrans";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "X-Charge Transaction Types";
 			this.Load += new System.EventHandler(this.FormXchargeTrans_Load);
 			this.ResumeLayout(false);
@@ -128,7 +127,7 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label labelCashBackAmt;
 		private System.Windows.Forms.Label label1;
 		private ValidDouble textCashBackAmt;

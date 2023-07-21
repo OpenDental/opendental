@@ -14,6 +14,187 @@ namespace OpenDentBusiness.WebTypes {
 
 		///<summary>For unit testing. Set this in order to get a callback when SendPush gets an exceptions.</summary>
 		public static Action<Exception> MockExceptionHandler=null;
+
+		#region eClipboard
+		///<summary>Check-in the given patient on the given device. 
+		///The device will simulate the patient entering their FName, LName, BDate then clicking Submit and then Confirming their identity.</summary>
+		public static void CI_CheckinPatient(long patNum,long mobileAppDeviceNum) {
+			Patient pat=Patients.GetPat(patNum);
+			if(pat==null) {
+				return;
+			}
+			//See CI_CheckinPatient for input details.
+			SendPushBackground(PushType.CI_CheckinPatient,mobileAppDeviceNum,listTags: new List<string>() { pat.FName,pat.LName,pat.Birthdate.Ticks.ToString(),patNum.ToString() });
+		}
+
+		///<summary>Add a sheet the the device check-in checklist.</summary>
+		public static void CI_AddSheet(long patNum,long sheetNum) {
+			Patient pat=Patients.GetPat(patNum);
+			if(pat==null) {
+				return;
+			}
+			List<MobileAppDevice> listMads=MobileAppDevices.GetAll(patNum);
+			if(listMads.IsNullOrEmpty()) {
+				return;
+			}
+			Sheet sheet=Sheets.GetOne(sheetNum);
+			if(sheet==null) {
+				return;
+			}
+			//See CI_AddSheet for input details.
+			foreach(MobileAppDevice mad in listMads) {
+				SendPushBackground(PushType.CI_AddSheet,mad.MobileAppDeviceNum,listPrimaryKeys: new List<long>() { pat.PatNum,sheet.SheetNum });
+			}
+		}
+
+		///<summary>Remove a sheet from a device check-in checklist.</summary>
+		public static void CI_RemoveSheet(long patNum,long sheetNum) {
+			Patient pat=Patients.GetPat(patNum);
+			//Inentionally not getting the actual Sheet from the db here. It may have already been deleted, now time to get it off the device.
+			if(pat==null) {
+				return;
+			}
+			List<MobileAppDevice> listMads=MobileAppDevices.GetAll(patNum);
+			if(listMads.IsNullOrEmpty()) {
+				return;
+			}
+			//See CI_RemoveSheet for input details.
+			foreach(MobileAppDevice mad in listMads) {
+				SendPushBackground(PushType.CI_RemoveSheet,mad.MobileAppDeviceNum,listPrimaryKeys: new List<long>() { pat.PatNum,sheetNum });
+			}
+		}
+
+		///<summary>Take this device back to check-in. Any action being taken in an existing check-in session will be lost.</summary>
+		public static void CI_GoToCheckin(long mobileAppDeviceNum) {
+			//See CI_GoToCheckin for input details.
+			SendPushBackground(PushType.CI_GoToCheckin,mobileAppDeviceNum);
+		}
+
+		///<summary>Occurs when the MobileAppDevice.IsAllowed changed for this device or this MobileAppDevice row is deleted (send isAllowed = false).</summary>
+		public static void CI_IsAllowedChanged(long mobileAppDeviceNum,bool isAllowed) {
+			//See CI_IsAllowedChanged for input details.
+			SendPushBackground(PushType.CI_IsAllowedChanged,mobileAppDeviceNum,listTags: new List<string>() { POut.Bool(isAllowed) },runAsync:false);
+		}
+
+		///<summary>This push occurs when the eClipboard preferences for the given clinic change.</summary>
+		public static void CI_NewEClipboardPrefs(long clinicNum) {
+			bool allowSelfPortrait=EClipboardImageCaptureDefs.Refresh().Any(x => x.ClinicNum==clinicNum && x.IsSelfPortrait);
+			//See CI_NewEClipboardPrefs for input details.
+			SendPushBackground(PushType.CI_NewEClipboardPrefs,clinicNum:clinicNum,
+				listTags:new List<string>() {
+					POut.Bool(ClinicPrefs.GetBool(PrefName.EClipboardAllowSelfCheckIn,clinicNum)),
+					ClinicPrefs.GetPrefValue(PrefName.EClipboardMessageComplete,clinicNum),
+					POut.Bool(allowSelfPortrait),//Pref 'EClipboardAllowSelfPortraitOnCheckIn' deprecated and replaced by 'eclipboardimagecapturedef' table.
+					POut.Bool(ClinicPrefs.GetBool(PrefName.EClipboardPresentAvailableFormsOnCheckIn,clinicNum)),
+					POut.Bool(ClinicPrefs.GetBool(PrefName.EClipboardHasMultiPageCheckIn,clinicNum)),
+					POut.Bool(ClinicPrefs.GetBool(PrefName.EClipboardAllowPaymentOnCheckin,clinicNum)),
+				}
+			);
+		}
+
+		///<summary>Attempts to send a push notificaiton to the given mobileAppDeviceNum so that the device can view treatPlan and PDF.
+		///Returns true if no error occurred, otherwise false and errorMsg is set.</summary>
+		public static bool CI_SendTreatmentPlan(PdfDocument doc,TreatPlan treatPlan,bool hasPracticeSig,long mobileAppDeviceNum
+			,out string errorMsg,out long mobileDataByteNum)
+		{
+			mobileDataByteNum=-1;
+			try {
+				if(MobileDataBytes.TryInsertPDF(doc,treatPlan.PatNum,null,eActionType.TreatmentPlan,out mobileDataByteNum,out errorMsg,
+					new List<string>() { treatPlan.Heading,hasPracticeSig.ToString(),treatPlan.DateTP.Ticks.ToString() })){
+					//update the treatment plan MobileAppDeviceNum so we now it is on an device
+					TreatPlans.UpdateMobileAppDeviceNum(treatPlan,mobileAppDeviceNum);
+					Signalods.SetInvalid(InvalidType.TPModule,KeyType.PatNum,treatPlan.PatNum);
+					Signalods.SetInvalid(InvalidType.EClipboard);
+					SendPushBackground(PushType.CI_TreatmentPlan,mobileAppDeviceNum
+						,listPrimaryKeys: new List<long>() { mobileDataByteNum,treatPlan.PatNum,treatPlan.TreatPlanNum }
+						,listTags: new List<string>() { treatPlan.Heading,hasPracticeSig.ToString(), treatPlan.DateTP.Ticks.ToString() }
+						,runAsync: true
+					);
+				}
+			}
+			catch(Exception ex){
+				errorMsg=ex.Message;
+			}
+			return (errorMsg.IsNullOrEmpty());
+		}
+
+		///<summary>Removes the MobileAppDeviceNum from the treatment plan as well.</summary>
+		public static void CI_RemoveTreatmentPlan(long mobileDeviceNum,TreatPlan treatPlan){
+			SendPushBackground(PushType.CI_RemoveTreatmentPlan,mobileDeviceNum,listPrimaryKeys:new List<long>() { treatPlan.PatNum,treatPlan.TreatPlanNum });
+			//TreatPlanParams are only inserted into the database if this pref is true
+			if(PrefC.GetBool(PrefName.TreatPlanSaveSignedToPdf)) {
+				TreatPlanParams.DeleteByTreatPlanNum(treatPlan.TreatPlanNum);
+			}
+			//Treatment plan is being removed from device, so the MobileAppDeviceNum needs to be 0
+			TreatPlans.UpdateMobileAppDeviceNum(treatPlan,0);
+			Signalods.SetInvalid(InvalidType.TPModule,KeyType.PatNum,treatPlan.PatNum);
+			Signalods.SetInvalid(InvalidType.EClipboard);
+		}
+
+		///<summary>Attempts to send a push notificaiton to the given mobileAppDeviceNum..
+		///Returns true if no error occurred, otherwise false and errorMsg is set.</summary>
+		public static bool CI_SendPayment(long mobileAppDeviceNum,long patNum,out string errorMsg)
+		{
+			errorMsg="";
+			try {
+				SendPushBackground(PushType.CI_SendPayment,mobileAppDeviceNum,
+					listPrimaryKeys:new List<long> { patNum },
+					runAsync:true);
+			}
+			catch(Exception ex) {
+				errorMsg=ex.Message;
+			}
+			return errorMsg.IsNullOrEmpty();
+		}
+
+		///<summary>Attempts to send a push notification to the given mobileAppDeviceNum so that if a patient is on the payment window, it will refresh
+		///the data to display the most recent payments.</summary>
+		public static void CI_RefreshPayment(long mobileAppDeviceNum,long patNum,out string errorMsg) {
+			errorMsg="";
+			try {
+				SendPushBackground(PushType.CI_RefreshPayment,mobileAppDeviceNum,
+					listPrimaryKeys:new List<long>{ patNum },
+					runAsync:true);
+			}
+			catch(Exception ex) {
+				errorMsg=ex.Message;
+			}
+		}
+
+		///<summary>Attempts to send a push notificaiton to the given mobileAppDeviceNum so that the device can view treatPlan and PDF.
+		///Returns true if no error occurred, otherwise false and errorMsg is set.</summary>
+		public static bool CI_SendPaymentPlan(PdfDocument doc,PayPlan payPlan,long mobileAppDeviceNum,out string errorMsg,out long mobileDataByteNum) {
+			mobileDataByteNum=-1;
+			Patient pat=Patients.GetPat(payPlan.PatNum);
+			try {
+				List<string> listTags=new List<string>() { payPlan.PlanNum.ToString(),payPlan.PayPlanDate.Ticks.ToString(),pat.GetNameFirstOrPrefL() };
+				if(MobileDataBytes.TryInsertPDF(doc,payPlan.PatNum,null,eActionType.PaymentPlan,out mobileDataByteNum,out errorMsg,listTags)){
+					//update the payment plan MobileAppDeviceNum so we now it is on an device
+					PayPlans.UpdateMobileAppDeviceNum(payPlan,mobileAppDeviceNum);
+					Signalods.SetInvalid(InvalidType.AccModule,KeyType.PatNum,payPlan.PatNum);
+					Signalods.SetInvalid(InvalidType.EClipboard);
+					SendPushBackground(PushType.CI_PaymentPlan,mobileAppDeviceNum
+						,listPrimaryKeys: new List<long>() { mobileDataByteNum,payPlan.PatNum,payPlan.PayPlanNum }
+						,listTags: listTags
+						,runAsync: true
+					);
+				}
+			}
+			catch(Exception ex){
+				errorMsg=ex.Message;
+			}
+			return (errorMsg.IsNullOrEmpty());
+		}
+
+		public static void CI_RemovePaymentPlan(long mobileDeviceNum,PayPlan payPlan) {
+			SendPushBackground(PushType.CI_RemovePaymentPlan,mobileDeviceNum,listPrimaryKeys:new List<long>() { payPlan.PatNum,payPlan.PayPlanNum});
+			//Treatment plan is being removed from device, so the MobileAppDeviceNum needs to be 0
+			PayPlans.UpdateMobileAppDeviceNum(payPlan,0);
+			Signalods.SetInvalid(InvalidType.AccModule,KeyType.PatNum,payPlan.PatNum);
+			Signalods.SetInvalid(InvalidType.EClipboard);
+		}
+		#endregion
+
 		#region ODMobile
 
 		///<summary>Notifies all registered devices that a new SMS has been received. Pass in the patient for this SmsFromMobile if one exists. This will
@@ -42,13 +223,69 @@ namespace OpenDentBusiness.WebTypes {
 			SendPushAlert(PushType.ODM_NewTextMessage,$@"New Message",$@"Received a new message from {senderName}",clinicNum:sms.ClinicNum,
 				listTags:new List<string>() { sms.MobilePhoneNumber });
 		}
+
+		///<summary>Notifies all registered devices that all user for this ClinicNum should be logged out of version OD Mobile.
+		///This will only be sent to registered devices attached to the ClinicNum.</summary>
+		public static void ODM_LogoutClinic(long clinicNum) {
+			//See ODM_LogoutODUser for input details.
+			SendPushBackground(PushType.ODM_LogoutODUser,clinicNum: clinicNum,runAsync:false);
+		}
+
+		///<summary>Notifies all registered devices that this userNum should be logged out of version OD Mobile.
+		///This will only be sent to registered devices attached to the UserNum.</summary>
+		public static void ODM_LogoutODUser(long userNum) {
+			//See ODM_LogoutODUser for input details. Explicitly specify non-clinic specific.
+			SendPushBackground(PushType.ODM_LogoutODUser,clinicNum:-1,userNum:userNum,listPrimaryKeys: new List<long> { userNum },runAsync: false);
+		}
+
+		public static void ODM_Erx(Provider provider) {
+			SendPushAlert(PushType.ODM_Erx,"eRx",$@"DoseSpot provider: {provider.Abbr} notification count has changed");
+		}
+
+		public static void ODM_ErxPatient(Provider provider,Patient patient) {
+			SendPushAlert(PushType.ODM_Erx,"eRx",$@"DoseSpot prescription status has updated for a patient");//TODO can we put the pat name here?
+		}
+
 		#endregion
 
+		#region Clinical 
+		public static bool CL_ExamSheet(long patNum,long sheetNum,long mobileAppDeviceNum,out string errorMsg) {
+			errorMsg="";
+			try {
+				List<long> listPrimaryKeys=new List<long>() { patNum,sheetNum };
+				SendPushBackground(PushType.CL_ExamSheet,mobileAppDeviceNum,listPrimaryKeys:listPrimaryKeys);
+			}
+			catch (Exception ex) {
+				errorMsg=ex.Message;
+			}
+			return errorMsg.IsNullOrEmpty();
+		}
+		#endregion Clinical
+
 		#region Send Helpers
+		///<summary>Sends a push notification as a background message to tell open applications to perform a specific task (as defined by the payload). 
+		///The user does NOT need to interact with the app to process this action.
+		///Background push is silent and generally the user does not care if it fails. 
+		///Swallows errors and logs to PushNotifications Logger directory.  </summary>
+		///<param name="pushType">The action for apps to take in the background.</param>
+		///<param name="mobileAppDeviceNum">The MobileAppDeviceNum for the devices that the push notification will be sent to. 
+		///Only use this when notification is intended for one and only one device. ClinicNum param will be ignored if MobileAppDeviceNum is specified.
+		///In this case the ClinicNum belonging to this MobileAppDevice row will be used instead..</param>
+		///<param name="clinicNum">The ClinicNum for the devices that the push notification will be sent to. 
+		///If the office does not have clinics enabled, use clinicNum of 0. -1 is a flag that means do not attach or validate a specific clinic.</param>
+		///<param name="userNum">The UserNum for the UserOD that the push notification will be sent to. 
+		///Only applies to ODMobile. If userNum=0 then will not be targeted to a specific UserOD.</param>
+		///<param name="listPrimaryKeys">Varies depending on specific PushType(s).</param>
+		///<param name="listTags">Varies depending on specific PushType(s).</param>
+		///<param name="runAsync">Spawn thread and do not wait for result if true.</param>
+		private static void SendPushBackground(PushType pushType,long mobileAppDeviceNum=0,long clinicNum=0,long userNum=0,List<long> listPrimaryKeys=null,List<string> listTags=null,bool runAsync = true) {
+			SendPush(pushType,false,mobileAppDeviceNum,clinicNum,userNum,listPrimaryKeys,listTags,runAsync:runAsync);
+		}
+
 		///<summary>Sends a push notification as an alert. Makes an alert on the device if possible. 
 		///If the user clicks on the alert or the app is already open, will do the given action.
 		///Swallows errors and logs to PushNotifications Logger directory.  </summary>
-		///<param name="pushType">The alert type for apps to show.</param>
+		///<param name="pushType">The action for apps to take in the background.</param>
 		///<param name="alertTitle">The title of the alert that will appear in the notification center.</param>
 		///<param name="alertMessage">The contents of the alert.</param>
 		///<param name="mobileAppDeviceNum">The MobileAppDeviceNum for the devices that the push notification will be sent to. 
@@ -67,28 +304,44 @@ namespace OpenDentBusiness.WebTypes {
 			if(string.IsNullOrEmpty(alertTitle)||string.IsNullOrEmpty(alertMessage)) {
 				throw new Exception("Alert title and message are required.");
 			}
-			SendPush(pushType,mobileAppDeviceNum,clinicNum,userNum,listPrimaryKeys,listTags,alertTitle,alertMessage,runAsync);
+			SendPush(pushType,true,mobileAppDeviceNum,clinicNum,userNum,listPrimaryKeys,listTags,alertTitle,alertMessage,runAsync);
 		}
 
 		///<summary>Only call this method from SendPushBackground() or SendPushAlert(). See summary of those methods for documentation.
 		///If runAsync==true then spawns a worker thread and makes the web call. This method is passive and returns void so no reason to wait for return.</summary>
-		private static void SendPush(PushType pushType,long mobileAppDeviceNum=0,long clinicNum=0,long userNum=0,
+		private static void SendPush(PushType pushType,bool isAlert,long mobileAppDeviceNum=0,long clinicNum=0,long userNum=0,
 			List<long> listPrimaryKeys=null,List<string> listTags=null,string alertTitle=null,string alertMessage=null,bool runAsync=true) 
 		{
 			void execute() {
 				eServiceCode eService=eServiceCode.EClipboard;
 				switch(pushType) {
-					case PushType.ODM_NewTextMessage:
-						eService=eServiceCode.MobileWeb;
+					case PushType.CI_CheckinPatient:
+					case PushType.CI_AddSheet:
+					case PushType.CI_RemoveSheet:
+					case PushType.CI_GoToCheckin:
+					case PushType.CI_NewEClipboardPrefs:
+					case PushType.CI_IsAllowedChanged:
+					case PushType.CI_TreatmentPlan:
+					case PushType.CI_RemoveTreatmentPlan:
+					case PushType.CI_SendPayment:
+					case PushType.CI_RefreshPayment:
+					case PushType.CI_PaymentPlan:
+					case PushType.CI_RemovePaymentPlan:
+					case PushType.CL_ExamSheet:
+						eService=eServiceCode.EClipboard;
 						break;
+					case PushType.ODM_NewTextMessage:
+					case PushType.ODM_LogoutODUser:
 					case PushType.ODM_Erx:
 					case PushType.ODM_ErxPatient:
+						eService=eServiceCode.MobileWeb;
+						break;
 					case PushType.None:
 					default:
 						throw new Exception("Unsupported PushType: "+pushType.ToString());
 				}
 				PushNotificationPayload payload=new PushNotificationPayload {
-					IsAlert=true,
+					IsAlert=isAlert,
 					AlertMessage=alertMessage??"",
 					AlertTitle=alertTitle??"",
 					UserNum=userNum,
@@ -117,7 +370,9 @@ namespace OpenDentBusiness.WebTypes {
 				}
 				//Validate that this clinic is signed up for MobileWeb if the push is related to ODMobile
 				else if(eService==eServiceCode.MobileWeb && !MobileAppDevices.IsClinicSignedUpForMobileWeb(payload.ClinicNum)) {
-					throw new Exception($"ClinicNum {payload.ClinicNum} is not signed up for ODMobile.");
+					if(clinicNum>-1 || pushType!=PushType.ODM_LogoutODUser) { //Logout is allowed to be sent to non-specific clinicNum. All others are not.
+						throw new Exception($"ClinicNum {payload.ClinicNum} is not signed up for ODMobile.");
+					}
 				}
 				string jsonPayload=JsonConvert.SerializeObject(payload,typeof(PushNotificationPayload),new JsonSerializerSettings());
 				string result=WebServiceMainHQProxy.GetWebServiceMainHQInstance().SendPushNotification(PayloadHelper.CreatePayload("",eService),jsonPayload);

@@ -113,15 +113,12 @@ namespace OpenDental {
 			FillGrid();
 		}
 
-		private void FormTaskAttachments_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult!=DialogResult.Cancel) {
-				return;
-			}
+		private void butClose_Click(object sender,EventArgs e) {
 			if(_isRefreshRequired) {
 				DialogResult=DialogResult.OK;
 				return;
 			}
+			DialogResult=DialogResult.Cancel;
 		}
-
 	}
 }

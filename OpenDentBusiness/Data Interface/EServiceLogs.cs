@@ -77,17 +77,6 @@ namespace OpenDentBusiness {
 		}
 		#endregion Modification Methods
 		#region Misc Methods
-		/// <summary>Makes a new EServices log entry specifically for WebForms logging. Prepends Security.CurUser.EServiceType to note.</summary>
-		public static EServiceLog MakeLogEntryWebForms(eServiceAction eServiceAction,long patNum=0,long clinicNum=0,long FKey=0,string logGuid="",string note="") {
-			if(Security.CurUser.EServiceType==EServiceTypes.None) {
-				note="User; "+note;
-			}
-			else {
-				note=Security.CurUser.EServiceType.ToString()+"; "+note;
-			}
-			return MakeLogEntry(eServiceAction,eServiceType.WebForms,FKeyType.WebFormSheetID,patNum,clinicNum,FKey,logGuid,note);
-		}
-
 		///<summary>Makes a new EServices log entry. PatNum can be 0.</summary>
 		public static EServiceLog MakeLogEntry(eServiceAction eServiceAction,eServiceType eServiceType,FKeyType keyType,
 			long patNum=0,long clinicNum=0,long FKey=0,string logGuid="",string note="") {

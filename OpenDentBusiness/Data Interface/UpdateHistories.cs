@@ -77,11 +77,11 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Returns the latest version information.</summary>
-		public static UpdateHistory GetForVersion(string strVersion) {
+		public static UpdateHistory GetForVersion(string version) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<UpdateHistory>(MethodBase.GetCurrentMethod(),strVersion);
+				return Meth.GetObject<UpdateHistory>(MethodBase.GetCurrentMethod(),version);
 			}
-			string command="SELECT * FROM updatehistory WHERE ProgramVersion='"+POut.String(strVersion.ToString())+"'";
+			string command="SELECT * FROM updatehistory WHERE ProgramVersion='"+POut.String(version.ToString())+"'";
 			return Crud.UpdateHistoryCrud.SelectOne(command);
 		}
 
@@ -93,12 +93,12 @@ namespace OpenDentBusiness {
 				version=new Version(Math.Max(version.Major,0),Math.Max(version.Minor,0),Math.Max(version.Build,0),Math.Max(version.Revision,0));
 				return Meth.GetObject<DateTime>(MethodBase.GetCurrentMethod(),version);
 			}
-			List<UpdateHistory> listUpdateHistories=UpdateHistories.GetAll();
-			for(int i=0;i<listUpdateHistories.Count;i++) {
-				Version versionCompare=new Version();
-				ODException.SwallowAnyException(() => { versionCompare=new Version(listUpdateHistories[i].ProgramVersion); });//Just in case.
-				if(versionCompare>=version) {
-					return listUpdateHistories[i].DateTimeUpdated;
+			List<UpdateHistory> listUpdates=UpdateHistories.GetAll();
+			foreach(UpdateHistory update in listUpdates) {
+				Version compareVersion=new Version();
+				ODException.SwallowAnyException(() => { compareVersion=new Version(update.ProgramVersion); });//Just in case.
+				if(compareVersion>=version) {
+					return update.DateTimeUpdated;
 				}
 			}
 			//The earliest version was later than the version passed in.
@@ -130,9 +130,10 @@ namespace OpenDentBusiness {
 
 		///<summary>Attempts to send the customer's License Agreement signature to BugsHQ database. Returns true if web call successfully inserts a signature, otherwise false. </summary>
 		public static bool SendSignatureToHQ(string regKey,string obfuscatedSignature) {
-			List<PayloadItem> listPayloadItems=new List<PayloadItem>();
-			listPayloadItems.Add(new PayloadItem(regKey,"RegistrationKey"));
-			listPayloadItems.Add(new PayloadItem(obfuscatedSignature,"Signature"));
+			List<PayloadItem> listPayloadItems=new List<PayloadItem>(){
+						new PayloadItem(regKey,"RegistrationKey"),
+						new PayloadItem(obfuscatedSignature,"Signature")
+					};
 			string officeData=PayloadHelper.CreatePayload(listPayloadItems,eServiceCode.LicenseAgreementSig);
 			string result;
 			try {

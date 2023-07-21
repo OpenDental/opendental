@@ -24,7 +24,8 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAdvertisingPostcardsAccountSetup));
-			this.butSave = new OpenDental.UI.Button();
+			this.butAdd = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.labelEmail = new System.Windows.Forms.Label();
 			this.textEmail = new System.Windows.Forms.TextBox();
 			this.labelFName = new System.Windows.Forms.Label();
@@ -42,15 +43,26 @@ namespace OpenDental{
 			this.labelRequiredFields = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butAdd
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(350, 205);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butAdd.Location = new System.Drawing.Point(269, 205);
+			this.butAdd.Name = "butAdd";
+			this.butAdd.Size = new System.Drawing.Size(75, 24);
+			this.butAdd.TabIndex = 3;
+			this.butAdd.Text = "Add";
+			this.butAdd.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(350, 205);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// labelEmail
 			// 
@@ -150,7 +162,7 @@ namespace OpenDental{
 			// 
 			// butViewAccount
 			// 
-			this.butViewAccount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.butViewAccount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butViewAccount.Location = new System.Drawing.Point(18, 205);
 			this.butViewAccount.Name = "butViewAccount";
 			this.butViewAccount.Size = new System.Drawing.Size(122, 24);
@@ -180,6 +192,7 @@ namespace OpenDental{
 			// 
 			// FormAdvertisingPostcardsAccountSetup
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(437, 241);
 			this.Controls.Add(this.labelRequiredFields);
 			this.Controls.Add(this.butViewAccount);
@@ -195,7 +208,8 @@ namespace OpenDental{
 			this.Controls.Add(this.textLastName);
 			this.Controls.Add(this.textFirstName);
 			this.Controls.Add(this.labelLName);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butAdd);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormAdvertisingPostcardsAccountSetup";
 			this.Text = "Advertising - Postcards Add Account";
@@ -207,7 +221,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butAdd;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label labelEmail;
 		private System.Windows.Forms.TextBox textEmail;
 		private System.Windows.Forms.Label labelFName;

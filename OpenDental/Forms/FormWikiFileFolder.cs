@@ -36,11 +36,6 @@ namespace OpenDental {
 				textLink.Text=folderBrowserDialog.SelectedPath;
 				return;
 			}
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				//Block File browsing in AppStream to prevent access to file directory of the VM. We will redirect to use the ODCloudClient in a future job.
-				MessageBox.Show(Lans.g(this,"File browsing not allowed in web mode."));
-				return;
-			}
 			using OpenFileDialog openFileDialog=new OpenFileDialog();
 			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
 				return;
@@ -50,7 +45,7 @@ namespace OpenDental {
 
 		private void butOK_Click(object sender,EventArgs e) {
 			if(IsFolderMode){
-				if(!ODBuild.IsThinfinity() && !Directory.Exists(textLink.Text)) {
+				if(!ODBuild.IsWeb() && !Directory.Exists(textLink.Text)) {
 					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Folder does not exist. Continue anyway?")) {
 						return;
 					}
@@ -64,7 +59,7 @@ namespace OpenDental {
 				}
 			}
 			else{//file mode
-				if(!ODBuild.IsThinfinity() && !File.Exists(textLink.Text)) {
+				if(!ODBuild.IsWeb() && !File.Exists(textLink.Text)) {
 					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"File does not exist. Continue anyway?")) {
 						return;
 					}
@@ -72,6 +67,10 @@ namespace OpenDental {
 			}
 			LinkSelected=textLink.Text;
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

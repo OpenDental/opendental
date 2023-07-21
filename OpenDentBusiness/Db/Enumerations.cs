@@ -255,9 +255,9 @@ namespace OpenDentBusiness{
 		PhoneNumbers,
 		///<summary>35. Deprecated, use SigMessages instead.  Old summary: Signal/message defs</summary>
 		Signals,
-		///<summary>36. And ChartViews.</summary>
+		///<summary>36</summary>
 		DisplayFields,
-		///<summary>37. And ApptFields and PatFieldPickItems.</summary>
+		///<summary>37. And ApptFields.</summary>
 		PatFields,
 		///<summary>38</summary>
 		AccountingAutoPays,
@@ -379,7 +379,7 @@ namespace OpenDentBusiness{
 		ProviderClinicLink,
 		///<summary>96. Used for refreshing the KioskManager with eClipboard information.</summary>
 		EClipboard,
-		///<summary>97. Used for refreshing the TP module for a specific patient. PatNum used in FKey.</summary>
+		///<summary>97. Used for refreshing the TP module for a specific patient.</summary>
 		TPModule,
 		///<summary>98. Used for closing Cloud sessions. ActiveInstanceNum is the Fkey.</summary>
 		ActiveInstance,
@@ -389,11 +389,11 @@ namespace OpenDentBusiness{
 		UserOdPrefs,
 		///<summary>101. Used internally by OD HQ.</summary>
 		JobTeams,
-		///<summary>102. Used to refresh the Account Module for a specific patient. PatNum used in FKey.</summary>
+		///<summary>102. Used to refresh the Account Module for a specific patient.</summary>
 		AccModule,
 		///<summary>103. Used for limitedBetaFeature Cache.</summary>
 		LimitedBetaFeature,
-		///<summary>104. Used to refresh Perio Chart. patient.PatNum used in FKey.</summary>
+		///<summary>104. Used to refresh Perio Chart.</summary>
 		PerioExams,
 		///<summary>105. </summary>
 		EmailInboxRetrieve,
@@ -407,12 +407,6 @@ namespace OpenDentBusiness{
 		FlowDefLink,
 		///<summary>110. Group of codes used with frequency limitations.</summary>
 		CodeGroups,
-		///<summary>111. Used to refresh the billing list when it's open and a patient's account was adjusted. Works immediately on the current computer and at the signal interval of about 10 seconds on other computers.</summary>
-		BillingList,
-		///<summary>112. Indicates that database connection settings have changed and the cached connections should be reinitialized.</summary>
-		ConnectionStoreClear,
-		///<summary>113. Used internally by OD HQ for the daycare.</summary>
-		Children,
 	}
 	//<summary></summary>
 	/*public enum ButtonType{
@@ -663,6 +657,28 @@ namespace OpenDentBusiness{
 	}
 
 	///<summary></summary>
+	public enum ToolBarsAvail{
+		///<summary>0</summary>
+		AccountModule,
+		///<summary>1</summary>
+		ApptModule,
+		///<summary>2</summary>
+		ChartModule,
+		///<summary>3</summary>
+		ImagesModule,
+		///<summary>4</summary>
+		FamilyModule,
+		///<summary>5</summary>
+		TreatmentPlanModule,
+		///<summary>6</summary>
+		ClaimsSend,
+		///<summary>7 Shows in the toolbar at the top that is common to all modules.</summary>
+		MainToolbar,
+		///<summary>8 Shows in the main menu Reports submenu.</summary>
+		ReportsMenu,
+	}
+
+	///<summary></summary>
 	public enum TimeClockStatus{
 		///<summary>0</summary>
 		[Description("Home")]
@@ -673,6 +689,26 @@ namespace OpenDentBusiness{
 		///<summary>2</summary>
 		[Description("Break")]
 		Break
+	}
+
+	///<summary>In perio, the type of measurements for a given row.</summary>
+	public enum PerioSequenceType{
+		///<summary>0</summary>
+		Mobility,
+		///<summary>1</summary>
+		Furcation,
+		///<summary>2-AKA recession.</summary>
+		GingMargin,
+		///<summary>3-MucoGingivalJunction- the division between attached and unattached mucosa.</summary>
+		MGJ,
+		///<summary>4</summary>
+		Probing,
+		///<summary>5-For the skiptooth type, set surf to none, and ToothValue to 1.</summary>
+		SkipTooth,
+		///<summary>6. Sum of flags for bleeding(1), suppuration(2), plaque(4), and calculus(8).</summary>
+		Bleeding,
+		///<summary>7. But this type is never saved to the db. It is always calculated on the fly.</summary>
+		CAL
 	}
 
 	///<summary>Deprecated, use patientrace table instead.  Temporarily used for converting old patient races to patientrace entries and screening.  Race and ethnicity for patient. Used by public health.  The problem is that everyone seems to want different choices.  If we give these choices their own table, then we also need to include mapping functions.  These are currently used in ArizonaReports, HL7 w ECW, EHR, and DrCeph bridge.  Foreign users would like their own mappings.</summary>
@@ -751,9 +787,23 @@ namespace OpenDentBusiness{
 		Urgent
 	}
 
-	///<summary>Each item in the enum should uniquely describe the location of a single TextBoxOD.  No sharing.  In many cases, this is tied to QuickPasteCat to determine which category to default to when opening.</summary>
-	public enum EnumQuickPasteType {
-		///<summary>0 - If None is used for a TextRich, then QuickPasteNotes will be disabled.</summary>
+	///<summary>The type of image for images module.</summary>
+	public enum ImageType{
+		///<summary>0- Includes scanned documents and screenshots.</summary>
+		Document,
+		///<summary>1</summary>
+		Radiograph,
+		///<summary>2</summary>
+		Photo,
+		///<summary>3- For instance a Word document or a spreadsheet. Not an image.</summary>
+		File,
+		///<summary>4- Used for Claim Attachments. Preserves original resolution.</summary>
+		Attachment
+	}
+
+	///<summary>Used by QuickPasteCat to determine which category to default to when opening.</summary>
+	public enum QuickPasteType {
+		///<summary>0 - None should never be used.  It is simply used as a "default" when adding a new control.  Searching for usage of "None" is an easy way to find spots where our pattern was not followed correctly.</summary>
 		None,
 		///<summary>1</summary>
 		Procedure,
@@ -816,31 +866,29 @@ namespace OpenDentBusiness{
 		///<summary>30</summary>
 		ClaimCustomTrack,
 		///<summary>31</summary>
-		AutoNotePrompt,
+		AutoNote,
 		///<summary>32</summary>
 		JobManager,
-		///<summary>33 - Do not use</summary>
+		///<summary>33 - Only to be used if the ReadOnly property is set to true.</summary>
 		ReadOnly,
 		///<summary>34</summary>
 		Lab,
 		///<summary>35</summary>
 		Equipment,
 		///<summary>36</summary>
-		Etrans834Import,
+		FilePath,
 		///<summary>37</summary>
-		InCaseOfEmergency,
+		ContactInfo,
 		///<summary>38</summary>
-		ProviderSearchFilter,
+		Office,
 		///<summary>39</summary>
 		ProgramLink,
 		///<summary>40</summary>
-		PhoneEmpDefaultStatus,
+		EmployeeStatus,
 		///<summary>41</summary>
 		WebChat,
 		///<summary>42</summary>
 		FAQ,
-		///<summary>43-Just autonotes, not quickpaste.</summary>
-		Sheets
 	}
 
 	///<summary>For every type of electronic claim format that Open Dental can create, there will be an item in this enumeration.  All e-claim formats are hard coded due to complexity.</summary>
@@ -1410,11 +1458,7 @@ namespace OpenDentBusiness{
 		///<summary>For non-FHIR, ProcedureLog POST, PUT & DELETE. </summary>
 		ApiProcedureLogs,
 		///<summary>For non-FHIR, for rarely used Setup resources. </summary>
-		ApiSetup,
-		///<summary>For non-FHIR, ASAPComm POST. </summary>
-		ApiTextingASAP,
-		///<summary>For non-FHIR, reduces throttle to 500ms and increases remote limit to 1000 (and local/service limit to 10000). </summary>
-		ApiEnterprise
+		ApiSetup
 	}
 
 	///<summary>Will be deprecated soon. FHIRKeyStatus has mostly replaced this.</summary>
@@ -1693,6 +1737,127 @@ namespace OpenDentBusiness{
       ///<summary>3 - Reserved for HQ</summary>
       HQReserve
    }
+
+	///<summary>Used by EServiceSignal.ServiceCode. Each service will have an entry here. Stored as an int for forward compatibility.</summary>
+	public enum eServiceCode {
+		///<summary>0 - Should not be used. If you are seeing this then an entry was made incorrectly.</summary>		
+		Undefined = 0,
+		///<summary>1 - Runs 1 instance per customer on a given client PC.</summary>		
+		ListenerService = 1,
+		///<summary>2 - Runs 1 instance total on HQ server.</summary>		
+		[Description("Texting Access")]
+		IntegratedTexting = 2,
+		///<summary>3 - Runs 1 instance total on HQ server.</summary>		
+		HQProxyService = 3,
+		///<summary>4 - EService WebApp.</summary>		
+		[Description("Mobile Web")]
+		MobileWeb,
+		///<summary>5 - EService WebApp.</summary>		
+		[Description("Patient Portal")]
+		PatientPortal,
+		///<summary>6 - EService WebApp. The "Recall" version of Web Sched.</summary>		
+		[Description("Web Sched Recalls")]
+		WebSched,
+		///<summary>7 - EService WebApp.</summary>		
+		[Description("Web Forms")]
+		WebForms,
+		///<summary>8 - EService WebApp.</summary>		
+		ResellerPortal,
+		///<summary>9 - EService WebApp.</summary>		
+		FeaturePortal,
+		///<summary>10 - EService WebApp.</summary>		
+		[Description("Auto E-Confirmation")]
+		ConfirmationRequest,
+		///<summary>11 - EService WebApp.</summary>		
+		OAuth,
+		///<summary>12 - RESTful API from HL7.</summary>		
+		FHIR,
+		///<summary>13 - EService WebApp. The "New Patient Appointment" version of Web Sched.</summary>
+		[Description("Web Sched New Patient")]
+		WebSchedNewPatAppt,
+		///<summary>14 - HQ only WebApp. Allows HQ to remotely modify web services.</summary>
+		HQManager,
+		///<summary>15 - Entitles this practice/clinic to all eServices. Supercedes any other repeat charges for this practice/clinic.</summary>
+		[Description("E-Services Bundle")]
+		Bundle,
+		///<summary>16 - IntegratedTexting is the actual enum value for texting access.  This value is for the usage portion.
+		///Not used in billing, mainly used to keep technicians from manually adding the "TextUse" procedure code as a repeating charge.</summary>
+		[Description("Texting Usage")]
+		IntegratedTextingUsage,
+		///<summary>17 - Resellers need to be able to give this service (not technically an eService) to their customers via sign up portal.</summary>		
+		[Description("Software Only")]
+		ResellerSoftwareOnly,
+		///<summary>18 - Denotes the SignupPortal web app.  Only currently used to get a new URL path separate from FeaturePortal.</summary>		
+		SignupPortal,
+		///<summary>19 - Used by WebServiceCustomerUpdate to ask WebServiceHQ if this RegKey is eligible for OD proper version updates.</summary>		
+		SoftwareUpdate,
+		///<summary>20 - EService Web App. The "ASAP" version of Web Sched.</summary>		
+		[Description("Web Sched ASAP")]
+		WebSchedASAP,
+		///<summary>21 - Request made to store information about unhandled exceptions</summary>		
+		[Description("Bug Submission")]
+		BugSubmission,
+		/// <summary>22 - </summary>
+		[Description("Make Payment")]
+		PatientPortalMakePayment,
+		/// <summary>23 - </summary>
+		[Description("View Statement")]
+		PatientPortalViewStatement,
+		///<summary>24 - </summary>
+		WebHostSynch,
+		///<summary>25 - Monitoring app used by OD HQ.</summary>
+		Headmaster,
+		///<summary>26 - EClipboard mobile application.</summary>
+		[Description("eClipboard")]
+		EClipboard,
+		///<summary>27 - Displays Help information.</summary>
+		ODHelp,
+		///<summary>28- Originally for paysimple ACH payments</summary>
+		PaySimple,
+		///<summary>29 - Used for storing customers OD software versions.</summary>
+		CustomerVersion,
+		///<summary>30 - eServiceCode that corresponds to ProcCode 045 in customers db at HQ. Not used for eService validation. 
+		///Use ConfirmationRequest insted.</summary>
+		ConfirmationOwn,
+		///<summary>31 - eServiceCode that corresponds to ProcCode 046 in customers db at HQ. Not used for eService validation. 
+		///Use IntegratedTexting insted.</summary>
+		IntegratedTextingOwn,
+		///<summary>32 - eServiceCode that corresponds to ProcCode 030 in customers db at HQ. Not used for eService validation.</summary>
+		SoftwareOnly,
+		///<summary>33</summary>
+		SupplementalBackup,
+		///<summary>34 - Will have a $0 RepeatCharge. Procedure will be generated each month as a function of number of masss email messages sent. Each email message has an incremental cost.</summary>
+		[HostedUrl(CanResellerOverride = true)]
+		[Description("Mass Email Usage")]
+		EmailMassUsage,
+		///<summary>35 - Will have a $0 RepeatCharge. Procedure will be generated each month as a function of number of secure email messages sent. Each email message has an incremental cost.</summary>
+		[Description("Secure Email Usage")]
+		EmailSecureUsage,
+		///<summary>36 - Has a RepeatCharge. Clinics sign up for access to use secure email. Each email sent will be charged an additional fee, see EmailSecureUsage.</summary>
+		[Description("Secure Email Access")]
+		EmailSecureAccess,
+		///<summary>37 - eService for Automated Appointment Thank-Yous and calendar events.</summary>
+		[Description("Automated Appointment Thank-You")]
+		ApptThankYou,
+		///<summary>38.</summary>
+		OregonCryo,
+		///<summary>39 - eServices logging service.</summary>
+		EserviceLog,
+		///<summary>40 - Used for storing customers license agreement acceptance signature. </summary>
+		LicenseAgreementSig,
+		///<summary>41 - A Windows service running at HQ that is monitored by Headmaster.</summary>
+		WebFormManager,
+		///<summary>42 - Eclipboard Clinical Mobile application.</summary>
+		ODTouch,
+		///<summary>43 - Payment Portal UI.</summary>
+		PaymentPortalUI,
+		///<summary>44 - Payment Portal Api.</summary>
+		PaymentPortalApi,
+		///<summary>45 - EService Api.</summary>
+		EServiceApi,
+		///<summary>46 - Auth Api.</summary>
+		AuthApi
+	}
 }
 
 

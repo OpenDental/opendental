@@ -38,6 +38,7 @@ namespace OpenDental {
 			this.textLogGuid = new System.Windows.Forms.TextBox();
 			this.comboBoxTypes = new OpenDental.UI.ComboBox();
 			this.comboBoxActions = new OpenDental.UI.ComboBox();
+			this.butClose = new OpenDental.UI.Button();
 			this.labelRows = new System.Windows.Forms.Label();
 			this.groupBoxFilters.SuspendLayout();
 			this.SuspendLayout();
@@ -69,7 +70,7 @@ namespace OpenDental {
 			this.comboBoxClinicMulti.IncludeUnassigned = true;
 			this.comboBoxClinicMulti.Location = new System.Drawing.Point(889, 11);
 			this.comboBoxClinicMulti.Name = "comboBoxClinicMulti";
-			this.comboBoxClinicMulti.IsMultiSelect = true;
+			this.comboBoxClinicMulti.SelectionModeMulti = true;
 			this.comboBoxClinicMulti.Size = new System.Drawing.Size(197, 22);
 			this.comboBoxClinicMulti.TabIndex = 51;
 			// 
@@ -186,6 +187,17 @@ namespace OpenDental {
 			this.comboBoxActions.Text = "eServiceAction";
 			this.comboBoxActions.SelectionChangeCommitted += new System.EventHandler(this.comboBoxActions_SelectionChangeCommitted);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(1093, 607);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 56;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// labelRows
 			// 
 			this.labelRows.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -201,6 +213,7 @@ namespace OpenDental {
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(1180, 636);
 			this.Controls.Add(this.labelRows);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.groupBoxFilters);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.datePicker);
@@ -223,6 +236,7 @@ namespace OpenDental {
 		private UI.GridOD gridMain;
 		private OpenDental.UI.CheckBox checkDistinctLogGuid;
 		private OpenDental.UI.GroupBox groupBoxFilters;
+		private UI.Button butClose;
 		private System.Windows.Forms.Label labelRows;
 		private UI.ComboBox comboBoxTypes;
 		private UI.ComboBox comboBoxActions;

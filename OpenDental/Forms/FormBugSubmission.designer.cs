@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormBugSubmission));
 			this.butAddViewJob = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.labelName = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.labelDateTime = new System.Windows.Forms.Label();
@@ -40,13 +41,25 @@ namespace OpenDental{
 			// butAddViewJob
 			// 
 			this.butAddViewJob.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butAddViewJob.Location = new System.Drawing.Point(600, 606);
+			this.butAddViewJob.Location = new System.Drawing.Point(514, 611);
 			this.butAddViewJob.MinimumSize = new System.Drawing.Size(80, 24);
 			this.butAddViewJob.Name = "butAddViewJob";
 			this.butAddViewJob.Size = new System.Drawing.Size(80, 24);
 			this.butAddViewJob.TabIndex = 3;
 			this.butAddViewJob.Text = "&Add Job";
 			this.butAddViewJob.Click += new System.EventHandler(this.butAddViewJob_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(600, 611);
+			this.butClose.MinimumSize = new System.Drawing.Size(80, 24);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(80, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// labelName
 			// 
@@ -108,7 +121,7 @@ namespace OpenDental{
 			// butAddViewBug
 			// 
 			this.butAddViewBug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butAddViewBug.Location = new System.Drawing.Point(506, 606);
+			this.butAddViewBug.Location = new System.Drawing.Point(428, 611);
 			this.butAddViewBug.MinimumSize = new System.Drawing.Size(80, 24);
 			this.butAddViewBug.Name = "butAddViewBug";
 			this.butAddViewBug.Size = new System.Drawing.Size(80, 24);
@@ -150,6 +163,7 @@ namespace OpenDental{
 			// FormBugSubmission
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(692, 642);
 			this.Controls.Add(this.labelHashNum);
 			this.Controls.Add(this.label5);
@@ -161,6 +175,7 @@ namespace OpenDental{
 			this.Controls.Add(this.labelName);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.butAddViewJob);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.bugSubmissionControl);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormBugSubmission";
@@ -173,6 +188,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butAddViewJob;
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label labelName;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label labelDateTime;

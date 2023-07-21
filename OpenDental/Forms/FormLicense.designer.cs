@@ -35,16 +35,27 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormLicense));
+			this.butClose = new OpenDental.UI.Button();
 			this.listBoxLicense = new OpenDental.UI.ListBox();
 			this.textLicense = new System.Windows.Forms.RichTextBox();
 			this.labelLicense = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(764, 482);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// listBoxLicense
 			// 
 			this.listBoxLicense.Location = new System.Drawing.Point(12, 55);
 			this.listBoxLicense.Name = "listBoxLicense";
-			this.listBoxLicense.Size = new System.Drawing.Size(144, 395);
+			this.listBoxLicense.Size = new System.Drawing.Size(144, 329);
 			this.listBoxLicense.TabIndex = 20;
 			this.listBoxLicense.SelectedIndexChanged += new System.EventHandler(this.listLicense_SelectedIndexChanged);
 			// 
@@ -55,7 +66,7 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.textLicense.Location = new System.Drawing.Point(162, 35);
 			this.textLicense.Name = "textLicense";
-			this.textLicense.Size = new System.Drawing.Size(677, 473);
+			this.textLicense.Size = new System.Drawing.Size(662, 425);
 			this.textLicense.TabIndex = 21;
 			this.textLicense.Text = "";
 			// 
@@ -71,6 +82,7 @@ namespace OpenDental {
 			// FormLicense
 			// 
 			this.ClientSize = new System.Drawing.Size(851, 520);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.labelLicense);
 			this.Controls.Add(this.textLicense);
 			this.Controls.Add(this.listBoxLicense);
@@ -85,6 +97,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.ListBox listBoxLicense;
 		private RichTextBox textLicense;
 		private Label labelLicense;

@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEdgeExpressSetup));
+			this.butCancel = new OpenDental.UI.Button();
 			this.checkPreventSavingNewCC = new OpenDental.UI.CheckBox();
 			this.checkForceDuplicate = new OpenDental.UI.CheckBox();
 			this.groupPaySettings = new OpenDental.UI.GroupBox();
@@ -40,13 +41,23 @@ namespace OpenDental{
 			this.comboPaymentType = new OpenDental.UI.ComboBox();
 			this.labelPaymentType = new System.Windows.Forms.Label();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.checkEnabled = new OpenDental.UI.CheckBox();
 			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
 			this.labelClinicEnable = new System.Windows.Forms.Label();
 			this.groupPaySettings.SuspendLayout();
 			this.groupCredentials.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(341, 387);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 19;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// checkPreventSavingNewCC
 			// 
@@ -200,15 +211,15 @@ namespace OpenDental{
 			this.comboClinic.TabIndex = 16;
 			this.comboClinic.SelectionChangeCommitted += new System.EventHandler(this.comboClinic_SelectionChangeCommitted);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(341, 391);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 18;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(255, 387);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 18;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// checkEnabled
 			// 
@@ -245,9 +256,10 @@ namespace OpenDental{
 			// 
 			this.ClientSize = new System.Drawing.Size(435, 429);
 			this.Controls.Add(this.labelClinicEnable);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.groupPaySettings);
 			this.Controls.Add(this.comboClinic);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.checkEnabled);
 			this.Controls.Add(this.linkLabel1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -262,6 +274,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private UI.Button butCancel;
 		private OpenDental.UI.CheckBox checkPreventSavingNewCC;
 		private OpenDental.UI.CheckBox checkForceDuplicate;
 		private OpenDental.UI.GroupBox groupPaySettings;
@@ -277,7 +291,7 @@ namespace OpenDental{
 		private OpenDental.UI.ComboBox comboPaymentType;
 		private System.Windows.Forms.Label labelPaymentType;
 		private UI.ComboBoxClinicPicker comboClinic;
-		private UI.Button butSave;
+		private UI.Button butOK;
 		private OpenDental.UI.CheckBox checkEnabled;
 		private System.Windows.Forms.LinkLabel linkLabel1;
 		private System.Windows.Forms.Label labelClinicEnable;

@@ -374,7 +374,7 @@ namespace OpenDental{
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textBoxViewDesc.Text.Trim()=="") {
 				MsgBox.Show(this,"View description cannot be blank.");
 				return;
@@ -447,9 +447,16 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void comboDatesShowing_SelectedIndexChanged(object sender,EventArgs e) {
 			_changed=true;
 		}
+
+
+
 
 	}
 }

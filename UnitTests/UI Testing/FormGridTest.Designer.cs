@@ -132,11 +132,16 @@
 			// 
 			// gridNew
 			// 
-			this.gridNew.AllowSortingByColumn = true;
+			this.gridNew.AllowSelection = false;
 			this.gridNew.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.gridNew.ArrowsWhenNoFocus = true;
+			this.gridNew.HasDropDowns = true;
+			this.gridNew.HScrollVisible = true;
 			this.gridNew.Location = new System.Drawing.Point(579, 39);
 			this.gridNew.Name = "gridNew";
+			this.gridNew.SelectionMode = OpenDental.UI.GridSelectionMode.OneCell;
+			this.gridNew.ShowContextMenu = false;
 			this.gridNew.Size = new System.Drawing.Size(436, 518);
 			this.gridNew.TabIndex = 75;
 			this.gridNew.Title = "New Grid";

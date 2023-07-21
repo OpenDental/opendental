@@ -7,9 +7,10 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="715" Height="563" 
-             Text="Zip Codes" MinMaxBoxes="False">
+             Text="Zip Codes" Loaded="FrmZipCodes_Loaded" 
+             FormClosing="FrmZipCodes_Closing">
 	<Grid Background="#FFFCFDFE" >
-		<ui:Grid x:Name="gridZipCode" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,17,122,24" Title="Zip Codes" SortingAllowByColumn="True"  />
+		<ui:Grid x:Name="gridZipCode" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,17,122,24" Title="Zip Codes" CellDoubleClick="gridZipCode_CellDoubleClick" SortingByColumnAllowed="True"  />
 		<ui:Button x:Name="butDelete" HorizontalAlignment="Right" Width="76" VerticalAlignment="Bottom" Height="26" Margin="0,0,24,127" Text="_Delete" Click="butDelete_Click" />
 		<ui:Button x:Name="butAdd" HorizontalAlignment="Right" Width="76" VerticalAlignment="Bottom" Height="26" Margin="0,0,24,163" Text="_Add" Click="butAdd_Click" />
 	</Grid>

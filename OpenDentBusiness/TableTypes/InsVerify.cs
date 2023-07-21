@@ -11,7 +11,7 @@ namespace OpenDentBusiness {
 		public long InsVerifyNum;
 		///<summary>The date of the last successful verification.</summary>
 		public DateTime DateLastVerified;
-		///<summary>FK to userod.UserNum. Typically 0. There is an optional feature that lets an office "assign" users to a verification so that they can split the load of verifying between different users.</summary>
+		///<summary>FK to userod.UserNum.  This is the assigned user for this verification.</summary>
 		public long UserNum;
 		///<summary>Enum:VerifyTypes either InsuranceBenefits or PatientEnrollment</summary>
 		public VerifyTypes VerifyType;

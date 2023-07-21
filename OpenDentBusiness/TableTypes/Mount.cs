@@ -27,7 +27,7 @@ namespace OpenDentBusiness {
 		public int Width;
 		/// <summary>The height of the mount, in pixels.</summary>
 		public int Height;
-		///<summary>Color of the mount background.  Typically white for photos and black for radiographs. Transparency not allowed.</summary>
+		///<summary>Color of the mount background.  Typically white for photos and black for radiographs.</summary>
 		[XmlIgnore]
 		public Color ColorBack;
 		///<summary>FK to provider.ProvNum. Optional. Used for radiographs.</summary>

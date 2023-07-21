@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRepeatChargeEditMulti));
+			this.butClose = new OpenDental.UI.Button();
 			this.textProcCode = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
@@ -44,6 +45,17 @@ namespace OpenDental{
 			this.label12 = new System.Windows.Forms.Label();
 			this.textPatNumSuperFamilyHead = new System.Windows.Forms.TextBox();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(592, 269);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 7;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// textProcCode
 			// 
@@ -159,7 +171,7 @@ namespace OpenDental{
 			// butRun
 			// 
 			this.butRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butRun.Location = new System.Drawing.Point(558, 269);
+			this.butRun.Location = new System.Drawing.Point(511, 269);
 			this.butRun.Name = "butRun";
 			this.butRun.Size = new System.Drawing.Size(75, 24);
 			this.butRun.TabIndex = 6;
@@ -211,7 +223,8 @@ namespace OpenDental{
 			// 
 			// FormRepeatChargeEditMulti
 			// 
-			this.ClientSize = new System.Drawing.Size(645, 305);
+			this.CancelButton = this.butClose;
+			this.ClientSize = new System.Drawing.Size(679, 305);
 			this.Controls.Add(this.textPatNumSuperFamilyHead);
 			this.Controls.Add(this.label12);
 			this.Controls.Add(this.comboIsEnabled);
@@ -231,6 +244,7 @@ namespace OpenDental{
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textProcCode);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormRepeatChargeEditMulti";
 			this.Text = "Multi Repeat Charge Edit";
@@ -241,6 +255,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.TextBox textProcCode;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;

@@ -26,6 +26,7 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPayorTypes));
 			this.label7 = new System.Windows.Forms.Label();
 			this.butAdd = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.SuspendLayout();
 			// 
@@ -51,6 +52,16 @@
 			this.butAdd.Text = "Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(621, 235);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 31;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// gridMain
 			// 
 			this.gridMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -70,6 +81,7 @@
 			this.ClientSize = new System.Drawing.Size(702, 271);
 			this.Controls.Add(this.label7);
 			this.Controls.Add(this.butAdd);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.gridMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormPayorTypes";
@@ -82,6 +94,7 @@
 		#endregion
 
 		private UI.Button butAdd;
+		private UI.Button butClose;
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.Label label7;
 	}

@@ -7,7 +7,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using CodeBase;
 using DataConnectionBase;
 
 namespace OpenDentBusiness{
@@ -30,7 +29,7 @@ namespace OpenDentBusiness{
 				return Crud.AutoCodeCrud.ListToTable(dictAutoCodes.Values.Cast<AutoCode>().ToList(),"AutoCode");
 			}
 			protected override void FillCacheIfNeeded() {
-				AutoCodes.GetTableFromCache(doRefreshCache:false);
+				AutoCodes.GetTableFromCache(false);
 			}
 			protected override bool IsInDictShort(AutoCode autoCode) {
 				return !autoCode.IsHidden;
@@ -67,7 +66,7 @@ namespace OpenDentBusiness{
 
 		///<summary>Refreshes the cache and returns it as a DataTable. This will refresh the ClientWeb's cache and the ServerWeb's cache.</summary>
 		public static DataTable RefreshCache() {
-			return GetTableFromCache(doRefreshCache:true);
+			return GetTableFromCache(true);
 		}
 
 		///<summary>Fills the local cache with the passed in DataTable.</summary>
@@ -91,27 +90,27 @@ namespace OpenDentBusiness{
 		#endregion Cache Pattern
 
 		///<summary></summary>
-		public static long Insert(AutoCode autoCode) {
+		public static long Insert(AutoCode Cur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				autoCode.AutoCodeNum=Meth.GetLong(MethodBase.GetCurrentMethod(),autoCode);
-				return autoCode.AutoCodeNum;
+				Cur.AutoCodeNum=Meth.GetLong(MethodBase.GetCurrentMethod(),Cur);
+				return Cur.AutoCodeNum;
 			}
-			return Crud.AutoCodeCrud.Insert(autoCode);
+			return Crud.AutoCodeCrud.Insert(Cur);
 		}
 
 		///<summary></summary>
-		public static void Update(AutoCode autoCode){
+		public static void Update(AutoCode Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),autoCode);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),Cur);
 				return;
 			}
-			Crud.AutoCodeCrud.Update(autoCode);
+			Crud.AutoCodeCrud.Update(Cur);
 		}
 
 		///<summary>Surround with try/catch.  Currently only called from FormAutoCode and FormAutoCodeEdit.</summary>
-		public static void Delete(AutoCode autoCode){
+		public static void Delete(AutoCode autoCodeCur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),autoCode);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),autoCodeCur);
 				return;
 			}
 			//look for dependencies in ProcButton table.
@@ -121,7 +120,7 @@ namespace OpenDentBusiness{
 			for(int i=0;i<listProcButtons.Count;i++) {
 				for(int j=0;j<listProcButtonItems.Count;j++) {
 					if(listProcButtonItems[j].ProcButtonNum==listProcButtons[i].ProcButtonNum 
-						&& listProcButtonItems[j].AutoCodeNum==autoCode.AutoCodeNum) 
+						&& listProcButtonItems[j].AutoCodeNum==autoCodeCur.AutoCodeNum) 
 					{
 						if(strInUse!="") {
 							strInUse+="; ";
@@ -135,66 +134,20 @@ namespace OpenDentBusiness{
 			if(strInUse!="") {
 				throw new ApplicationException(Lans.g("AutoCodes","Not allowed to delete autocode because it is in use.  Procedure buttons using this autocode include ")+strInUse);
 			}
-			List<AutoCodeItem> listAutoCodeItems=AutoCodeItems.GetListForCode(autoCode.AutoCodeNum);
+			List<AutoCodeItem> listAutoCodeItems=AutoCodeItems.GetListForCode(autoCodeCur.AutoCodeNum);
 			for(int i=0;i<listAutoCodeItems.Count;i++) {
-				AutoCodeItem AutoCodeItem=listAutoCodeItems[i];
-				AutoCodeConds.DeleteForItemNum(AutoCodeItem.AutoCodeItemNum);
-				AutoCodeItems.Delete(AutoCodeItem);
-			}
-			Crud.AutoCodeCrud.Delete(autoCode.AutoCodeNum);
+				AutoCodeItem AutoCodeItemCur=listAutoCodeItems[i];
+        AutoCodeConds.DeleteForItemNum(AutoCodeItemCur.AutoCodeItemNum);
+        AutoCodeItems.Delete(AutoCodeItemCur);
+      }
+			Crud.AutoCodeCrud.Delete(autoCodeCur.AutoCodeNum);
 		}
 
 		///<summary>Used in ProcButtons.SetToDefault.  Returns 0 if the given autocode does not exist.</summary>
 		public static long GetNumFromDescript(string descript) {
 			//No need to check MiddleTierRole; no call to db.
 			AutoCode autoCode=_autoCodeCache.GetFirstOrDefault(x => x.Description==descript,true);
-			long autoCodeNum=0;
-			if(autoCode!=null){
-				autoCodeNum=autoCode.AutoCodeNum;
-			}
-			return autoCodeNum;
-		}
-
-		///<summary>Applies the autocode to the procedure that is passed in. Since the procedure is being passed in by reference, we are editing it and do not need to return it.</summary>
-		public static void ApplyAutoCodeToProcedure(Procedure procedure,long verifyCodeNum,List<PatPlan> listPatPlans,List<InsSub> listInsSubs,List<InsPlan> listInsPlan,Patient patient,List<ClaimProc> listClaimProcs,List<Benefit> listBenefits,ProcedureCode procedureCode,string strTeeth) {
-			Procedure procedureOld=procedure.Copy();
-			procedure.CodeNum=verifyCodeNum;
-			List<ProcStat> listProcStats=new List<ProcStat>();
-			listProcStats.Add(ProcStat.TP);
-			listProcStats.Add(ProcStat.C);
-			listProcStats.Add(ProcStat.TPi);
-			listProcStats.Add(ProcStat.Cn);
-			if(listProcStats.Contains(procedure.ProcStatus)) {//Only change the fee if Complete, TP, TPi, or Cn.
-				InsSub insSub=null;
-				InsPlan insPlan=null;
-				if(listPatPlans.Count>0) {
-					insSub=InsSubs.GetSub(listPatPlans[0].InsSubNum,listInsSubs);
-					insPlan=InsPlans.GetPlan(insSub.PlanNum,listInsPlan);
-				}
-				procedure.ProcFee=Fees.GetAmount0(procedure.CodeNum,FeeScheds.GetFeeSched(patient,listInsPlan,listPatPlans,listInsSubs,procedure.ProvNum),
-					procedure.ClinicNum,procedure.ProvNum);
-				if(insPlan!=null && insPlan.PlanType=="p") {//PPO
-					double standardFee=Fees.GetAmount0(procedure.CodeNum,Providers.GetProv(Patients.GetProvNum(patient)).FeeSched,procedure.ClinicNum,
-						procedure.ProvNum);
-					procedure.ProcFee=Math.Max(procedure.ProcFee,standardFee);
-				}
-			}
-			Procedures.Update(procedure,procedureOld);
-			//Compute estimates required, otherwise if adding through quick add, it could have incorrect WO or InsEst if code changed.
-			Procedures.ComputeEstimates(procedure,patient.PatNum,listClaimProcs,true,listInsPlan,listPatPlans,listBenefits,patient.Age,listInsSubs);
-			Recalls.Synch(procedure.PatNum);
-			if(!procedure.ProcStatus.In(ProcStat.C,ProcStat.EO,ProcStat.EC)) {
-				return;
-			}
-			string strLogText=procedureCode.ProcCode+" ("+procedure.ProcStatus+"), ";
-			if(strTeeth!=null && strTeeth.Trim()!="") {
-				strLogText+=Lans.g("FrmAutoCodeLessIntrusive","Teeth")+": "+strTeeth+", ";
-			}
-			strLogText+=Lans.g("FrmAutoCodeLessIntrusive","Fee")+": "+procedure.ProcFee.ToString("F")+", "+procedureCode.Descript;
-			if(procedure.ProcStatus.In(ProcStat.EO,ProcStat.EC)) {
-				SecurityLogs.MakeLogEntry(EnumPermType.ProcExistingEdit,patient.PatNum,strLogText);
-			}
-			return;
+			return (autoCode==null) ? 0 : autoCode.AutoCodeNum;
 		}
 
 		//------

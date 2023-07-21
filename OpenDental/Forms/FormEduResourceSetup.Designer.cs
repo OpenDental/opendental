@@ -24,9 +24,21 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEduResourceSetup));
+			this.butClose = new System.Windows.Forms.Button();
 			this.butAdd = new System.Windows.Forms.Button();
 			this.gridEdu = new OpenDental.UI.GridOD();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(805, 496);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 23);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butAdd
 			// 
@@ -58,6 +70,7 @@
 			this.ClientSize = new System.Drawing.Size(892, 531);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.gridEdu);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEduResourceSetup";
 			this.Text = "Education Resources Setup";
@@ -69,6 +82,7 @@
 		#endregion
 
 		private UI.GridOD gridEdu;
+		private System.Windows.Forms.Button butClose;
 		private System.Windows.Forms.Button butAdd;
 	}
 }

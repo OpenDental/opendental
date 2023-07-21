@@ -27,7 +27,7 @@ namespace OpenDental {
 		}
 		private void FormPayTerminalEdit_Load(object sender,EventArgs e) {
 			if(!_isNew) {
-				comboClinic.ClinicNumSelected=_payTerminalCur.ClinicNum;
+				comboClinic.SelectedClinicNum=_payTerminalCur.ClinicNum;
 				textName.Text=_payTerminalCur.Name;
 				textId.Text=_payTerminalCur.TerminalID;
 			}
@@ -44,14 +44,14 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textId.Text.IsNullOrEmpty()) {
 				MsgBox.Show(this,"Terminal ID is required.");
 				return;
 			}
 			_payTerminalCur.Name=textName.Text;
 			_payTerminalCur.TerminalID=textId.Text;
-			_payTerminalCur.ClinicNum=comboClinic.ClinicNumSelected;
+			_payTerminalCur.ClinicNum=comboClinic.SelectedClinicNum;
 			if(_isNew) {
 				PayTerminals.Insert(_payTerminalCur);
 			}
@@ -61,5 +61,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

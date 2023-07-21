@@ -35,7 +35,8 @@ namespace OpenDental {
 			this.comboStart = new System.Windows.Forms.ComboBox();
 			this.listBoxOps = new OpenDental.UI.ListBox();
 			this.labelOps = new System.Windows.Forms.Label();
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.SuspendLayout();
 			// 
@@ -65,7 +66,7 @@ namespace OpenDental {
 			this.textNote.DetectUrls = false;
 			this.textNote.Location = new System.Drawing.Point(97, 92);
 			this.textNote.Name = "textNote";
-			this.textNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Schedule;
+			this.textNote.QuickPasteType = OpenDentBusiness.QuickPasteType.Schedule;
 			this.textNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNote.Size = new System.Drawing.Size(220, 113);
 			this.textNote.TabIndex = 15;
@@ -98,14 +99,14 @@ namespace OpenDental {
 			this.comboStart.Size = new System.Drawing.Size(120, 21);
 			this.comboStart.TabIndex = 24;
 			// 
-			// listBoxOps
+			// listOps
 			// 
 			this.listBoxOps.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.listBoxOps.IntegralHeight = false;
 			this.listBoxOps.Location = new System.Drawing.Point(348, 34);
-			this.listBoxOps.Name = "listBoxOps";
+			this.listBoxOps.Name = "listOps";
 			this.listBoxOps.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
 			this.listBoxOps.Size = new System.Drawing.Size(243, 349);
 			this.listBoxOps.TabIndex = 27;
@@ -120,15 +121,25 @@ namespace OpenDental {
     "peratory provider.";
 			this.labelOps.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(516, 393);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 12;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(516, 393);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 14;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(428, 393);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 12;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// comboClinic
 			// 
@@ -149,7 +160,8 @@ namespace OpenDental {
 			this.Controls.Add(this.comboStop);
 			this.Controls.Add(this.comboStart);
 			this.Controls.Add(this.textNote);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.labelStop);
 			this.Controls.Add(this.labelStart);
@@ -165,7 +177,9 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label labelStop;
 		private System.Windows.Forms.Label labelStart;
 		private OpenDental.ODtextBox textNote;

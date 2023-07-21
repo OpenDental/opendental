@@ -32,7 +32,7 @@ namespace OpenDentBusiness.WebTypes.Shared.XWeb {
 		public static XWebResponse MakePaymentWithAlias(long patNum,string payNote,double amount,long creditCardNum,bool createPayment,
 			ChargeSource chargeSource=ChargeSource.PatientPortal,bool forceDuplicates=true,string email="",string logGuid="",CreditCardSource creditCardSource=CreditCardSource.XWeb) 
 		{
-			//No need to check MiddleTierRole; no call to db.
+			//No need to check MiddleTierRole;no call to db.
 			XWebInputDTGPaymentSale input=new XWebInputDTGPaymentSale(patNum,payNote,amount,creditCardNum,createPayment,forceDuplicates,creditCardSource);
 			input.ChargeSource=chargeSource;
 			return input.GenerateOutput(email,logGuid);
@@ -40,20 +40,20 @@ namespace OpenDentBusiness.WebTypes.Shared.XWeb {
 
 		///<summary>Void a payment using DTG directly. This is only valid for payments on the same day on which they originated.  Throws exceptions.</summary>
 		public static XWebResponse VoidPayment(long patNum,string payNote,long xWebResponseNum) {
-			//No need to check MiddleTierRole; no call to db.
+			//No need to check MiddleTierRole;no call to db.
 			return new XWebInputDTGPaymentVoid(patNum,payNote,xWebResponseNum).GenerateOutput();
 		}
 
 		///<summary>Return a payment amount to a credit card using DTG directly.  Use this when void is not an option or you want to credit directly to the credit card without first having a transaction to void.  Throws exceptions.</summary>
 		public static XWebResponse ReturnPayment(long patNum,string payNote,double amount,long creditCardNum,bool createPayment) {
-			//No need to check MiddleTierRole; no call to db.
+			//No need to check MiddleTierRole;no call to db.
 			return new XWebInputDTGPaymentReturn(patNum,payNote,amount,creditCardNum,createPayment).GenerateOutput();
 		}
 
 		///<summary>Delete a credit card from the database and delete it from XWeb repository using DTG directly.  Throws exceptions.</summary>
-		public static XWebResponse DeleteCreditCard(long patNum,long creditCardNum,LogSources logSource=LogSources.None) {
-			//No need to check MiddleTierRole; no call to db.
-			return new XWebInputDTGDeleteAlias(patNum,creditCardNum,logSource).GenerateOutput(doThrowWhenOnlinePaymentsDisabled:false);//Allow the card to be deleted even if online payments are turned off.
+		public static XWebResponse DeleteCreditCard(long patNum,long creditCardNum) {
+			//No need to check MiddleTierRole;no call to db.
+			return new XWebInputDTGDeleteAlias(patNum,creditCardNum).GenerateOutput(doThrowWhenOnlinePaymentsDisabled:false);//Allow the card to be deleted even if online payments are turned off.
 		}
 
 		#endregion
@@ -542,10 +542,9 @@ namespace OpenDentBusiness.WebTypes.Shared.XWeb {
 				}
 			}
 			protected override XWebTransactionStatus ApprovalStatus { get { return XWebTransactionStatus.DtgAliasDeleted; } }
-			private LogSources _logSource=LogSources.None;
 
-			public XWebInputDTGDeleteAlias(long patNum,long creditCardNum,LogSources logSource) : base(XWebTransactionType.AliasDeleteTransaction,patNum,"Deleting CreditCard: "+creditCardNum.ToString()) {
-				CreditCard cc = CreditCards.GetOne(creditCardNum);
+			public XWebInputDTGDeleteAlias(long patNum,long creditCardNum) : base(XWebTransactionType.AliasDeleteTransaction,patNum,"Deleting CreditCard: "+creditCardNum.ToString()) {
+				CreditCard cc=CreditCards.GetOne(creditCardNum);
 				if(cc==null) {
 					throw new ODException("CreditCardNum not found: "+creditCardNum.ToString(),ODException.ErrorCodes.OtkArgsInvalid);
 				}
@@ -556,7 +555,6 @@ namespace OpenDentBusiness.WebTypes.Shared.XWeb {
 					throw new ODException("Invalid CC Alias",ODException.ErrorCodes.OtkArgsInvalid);
 				}
 				_cc=cc;
-				_logSource=logSource;
 			}
 
 			///<summary>Performs base XWebInputDTGForPayment behavior and deletes CreditCard row.</summary>
@@ -564,8 +562,13 @@ namespace OpenDentBusiness.WebTypes.Shared.XWeb {
 				//Verify result and set response.PayNote.
 				base.PostProcessOutput(response);
 				response.Alias=_cc.XChargeToken;
-				try { response.PayNote="Deleted CreditCard: "+JsonConvert.SerializeObject(_cc); } catch { }		
-				CreditCards.DeleteAndRefresh(_cc,_logSource);
+				try { response.PayNote="Deleted CreditCard: "+JsonConvert.SerializeObject(_cc); } catch { }				
+				CreditCards.Delete(_cc.CreditCardNum);
+				List<CreditCard> creditCards=CreditCards.Refresh(_patNum);
+				for(int i=0;i<creditCards.Count;i++) {
+					creditCards[i].ItemOrder=creditCards.Count-(i+1);
+					CreditCards.Update(creditCards[i]);//Resets ItemOrder.
+				}			
 			}
 		}
 		#endregion

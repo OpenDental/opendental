@@ -43,6 +43,9 @@ namespace OpenDental {
 			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.radioOrderCarrier = new System.Windows.Forms.RadioButton();
 			this.radioOrderEmp = new System.Windows.Forms.RadioButton();
+			this.butOK = new OpenDental.UI.Button();
+			this.butBlank = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.groupBox2.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -237,6 +240,39 @@ namespace OpenDental {
 			this.radioOrderEmp.Text = "Employer";
 			this.radioOrderEmp.Click += new System.EventHandler(this.radioOrderEmp_Click);
 			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(799, 664);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(78, 24);
+			this.butOK.TabIndex = 4;
+			this.butOK.Text = "OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butBlank
+			// 
+			this.butBlank.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.butBlank.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.butBlank.Location = new System.Drawing.Point(427, 664);
+			this.butBlank.Name = "butBlank";
+			this.butBlank.Size = new System.Drawing.Size(87, 24);
+			this.butBlank.TabIndex = 3;
+			this.butBlank.Text = "Blank Plan";
+			this.butBlank.Visible = false;
+			this.butBlank.Click += new System.EventHandler(this.butBlank_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(894, 664);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(78, 24);
+			this.butCancel.TabIndex = 5;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// groupBox1
 			// 
 			this.groupBox1.Controls.Add(this.textEmployer);
@@ -268,6 +304,9 @@ namespace OpenDental {
 			this.Controls.Add(this.butHide);
 			this.Controls.Add(this.butMerge);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butBlank);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormInsPlans";
 			this.ShowInTaskbar = false;
@@ -280,6 +319,10 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butBlank;
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.RadioButton radioOrderCarrier;
 		private System.Windows.Forms.RadioButton radioOrderEmp;

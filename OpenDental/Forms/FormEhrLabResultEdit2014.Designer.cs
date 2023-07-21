@@ -24,7 +24,8 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrLabResultEdit2014));
-			this.butSave = new System.Windows.Forms.Button();
+			this.butCancel = new System.Windows.Forms.Button();
+			this.butOk = new System.Windows.Forms.Button();
 			this.textAnalysisDateTime = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.textObsID = new System.Windows.Forms.TextBox();
@@ -170,16 +171,27 @@
 			this.groupCE.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(882, 649);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 4;
-			this.butSave.Text = "&Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(883, 649);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 5;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOk
+			// 
+			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOk.Location = new System.Drawing.Point(802, 649);
+			this.butOk.Name = "butOk";
+			this.butOk.Size = new System.Drawing.Size(75, 24);
+			this.butOk.TabIndex = 4;
+			this.butOk.Text = "Ok";
+			this.butOk.UseVisualStyleBackColor = true;
+			this.butOk.Click += new System.EventHandler(this.butOk_Click);
 			// 
 			// textAnalysisDateTime
 			// 
@@ -1451,7 +1463,7 @@
 			// 
 			this.listAbnormalFlags.Location = new System.Drawing.Point(12, 208);
 			this.listAbnormalFlags.Name = "listAbnormalFlags";
-			this.listAbnormalFlags.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
+			this.listAbnormalFlags.SelectionMode = UI.SelectionMode.MultiExtended;
 			this.listAbnormalFlags.Size = new System.Drawing.Size(287, 251);
 			this.listAbnormalFlags.TabIndex = 1;
 			// 
@@ -1478,7 +1490,8 @@
 			this.Controls.Add(this.groupBox6);
 			this.Controls.Add(this.groupOrganization);
 			this.Controls.Add(this.gridNotes);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOk);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrLabResultEdit2014";
 			this.Text = "Lab Result Edit";
@@ -1509,7 +1522,9 @@
 		}
 
 		#endregion
-		private System.Windows.Forms.Button butSave;
+
+		private System.Windows.Forms.Button butCancel;
+		private System.Windows.Forms.Button butOk;
 		private System.Windows.Forms.TextBox textAnalysisDateTime;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox textObsID;

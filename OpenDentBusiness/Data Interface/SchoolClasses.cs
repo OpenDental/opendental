@@ -37,8 +37,8 @@ namespace OpenDentBusiness{
 			return _schoolClassCache.GetDeepCopy(isShort);
 		}
 
-		public static SchoolClass GetFirstOrDefault(Func<SchoolClass,bool> funcMatch,bool isShort=false) {
-			return _schoolClassCache.GetFirstOrDefault(funcMatch,isShort);
+		public static SchoolClass GetFirstOrDefault(Func<SchoolClass,bool> match,bool isShort=false) {
+			return _schoolClassCache.GetFirstOrDefault(match,isShort);
 		}
 
 		///<summary>Refreshes the cache and returns it as a DataTable. This will refresh the ClientWeb's cache and the ServerWeb's cache.</summary>
@@ -67,34 +67,34 @@ namespace OpenDentBusiness{
 		#endregion
 
 		///<summary></summary>
-		public static void Update(SchoolClass schoolClass){
+		public static void Update(SchoolClass sc){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),schoolClass);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),sc);
 				return;
 			}
-			Crud.SchoolClassCrud.Update(schoolClass);
+			Crud.SchoolClassCrud.Update(sc);
 		}
 
 		///<summary></summary>
-		public static long Insert(SchoolClass schoolClass) {
+		public static long Insert(SchoolClass sc) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				schoolClass.SchoolClassNum=Meth.GetLong(MethodBase.GetCurrentMethod(),schoolClass);
-				return schoolClass.SchoolClassNum;
+				sc.SchoolClassNum=Meth.GetLong(MethodBase.GetCurrentMethod(),sc);
+				return sc.SchoolClassNum;
 			}
-			return Crud.SchoolClassCrud.Insert(schoolClass);
+			return Crud.SchoolClassCrud.Insert(sc);
 		}
 
 		///<summary></summary>
-		public static void InsertOrUpdate(SchoolClass schoolClass, bool isNew){
+		public static void InsertOrUpdate(SchoolClass sc, bool isNew){
 			//No need to check MiddleTierRole; no call to db.
 			//if(IsRepeating && DateTask.Year>1880){
 			//	throw new Exception(Lans.g(this,"Task cannot be tagged repeating and also have a date."));
 			//}
 			if(isNew){
-				Insert(schoolClass);
+				Insert(sc);
 			}
 			else{
-				Update(schoolClass);
+				Update(sc);
 			}
 		}
 
@@ -126,10 +126,7 @@ namespace OpenDentBusiness{
 		public static string GetDescript(long SchoolClassNum) {
 			//No need to check MiddleTierRole; no call to db.
 			SchoolClass schoolClass=GetFirstOrDefault(x => x.SchoolClassNum==SchoolClassNum);
-			if (schoolClass==null) {
-				return "";
-			}
-			return GetDescript(schoolClass);
+			return (schoolClass==null ? "" : GetDescript(schoolClass));
 		}
 
 		public static string GetDescript(SchoolClass schoolClass) {
@@ -139,3 +136,23 @@ namespace OpenDentBusiness{
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

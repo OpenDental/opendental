@@ -16,8 +16,6 @@ namespace OpenDentBusiness {
 			public bool IsCheckoutTokenRequest;
 			public bool IsExistingCustomerTokenRequest;
 			public bool IsSucessPostPaymentRequest;
-			public bool IsSuccessDeleteRequest;
-			public bool IsFailDeleteRequest;
 			public double PayAmt;
 		}
 
@@ -80,11 +78,6 @@ namespace OpenDentBusiness {
 			}
 			return PaySimpleApi.PostAccountACH(GetAuthHeader(clinicNum),
 				PaySimpleApi.MakeNewAccountACHData(customerId,routingNumber,acctNumber,bankName,isCheckings));
-		}
-
-		public static PaySimpleApiGetACHResponse GetACHAccount(long clinicNum,string accountId) {
-			ValidateProgram(clinicNum);
-			return PaySimpleApi.GetACHAccount(GetAuthHeader(clinicNum),accountId);
 		}
 
 		public static PaySimpleApiGetCCResponse GetCreditCard(long clinicNum,string accountId) {
@@ -484,19 +477,6 @@ namespace OpenDentBusiness {
 			public string CreatedOn;
 		}
 
-		public class PaySimpleApiGetACHResponse {
-			public bool IsCheckingAccount;
-			public string RoutingNumber;
-			public string AccountNumber;
-			public string BankName;
-			public long CustomerId;
-			public bool IsDefault;
-			public bool RequiresValidation;
-			public long Id;
-			public string LastModified;
-			public string CreatedOn;
-		}
-
 		private class PaySimpleApi {
 
 			#region SDK Calls
@@ -739,56 +719,6 @@ namespace OpenDentBusiness {
 					Amount=response.FullResponse.Response.Amount,
 					CCSource=ccSource,
 				};
-			}
-
-			public static PaySimpleApiGetACHResponse GetACHAccount(string authHeader, string externalId) {
-				#region Response
-				var response=Request(ApiRoute.AccountACH,HttpMethod.Get,authHeader,"",
-					new {
-						Meta=new {
-							Errors=new {
-								ErrorCode="InvalidInput",
-								ErrorMessages=new [] {new {
-										Field="",
-										Message="",
-									}
-								}
-							},
-							HttpStatus="",
-							HttpStatusCode="",
-							PagingDetails="",
-						},
-						Response=new {
-							IsCheckingAccount=false,
-							RoutingNumber="",
-							AccountNumber="",
-							BankName="",
-							CustomerId=(long)0,
-							IsDefault=false,
-							RequiresValidation=false,
-							Id=(long)0,
-							LastModified="",
-							CreatedOn=""
-						}
-					},externalId==""?"":externalId
-				);
-				#endregion
-				if(response==null || response.FullResponse==null || response.FullResponse.Response==null) {
-					throw new Exception("Unexpected response from PaySimple"+(response!=null ? ": "+response.RawResponse : ""));
-				}
-				return new PaySimpleApiGetACHResponse() {
-					IsCheckingAccount=response.FullResponse.Response.IsCheckingAccount,
-					RoutingNumber=response.FullResponse.Response.RoutingNumber,
-					AccountNumber=response.FullResponse.Response.AccountNumber,
-					BankName=response.FullResponse.Response.BankName,
-					CustomerId=response.FullResponse.Response.CustomerId,
-					IsDefault=response.FullResponse.Response.IsDefault,
-					RequiresValidation=response.FullResponse.Response.RequiresValidation,
-					Id=response.FullResponse.Response.Id,
-					LastModified=response.FullResponse.Response.LastModified,
-					CreatedOn=response.FullResponse.Response.CreatedOn,
-				};
-				
 			}
 
 			public static PaySimpleApiGetCCResponse GetCreditCard(string authHeader,string externalId) {
@@ -1083,32 +1013,6 @@ namespace OpenDentBusiness {
 				return new RequestResponse<T>(JsonConvert.DeserializeAnonymousType(resStr,resType),resStr);
 			}
 
-			private static RequestResponse<T> MockSuccessGetCreditCardResponse<T>(T resType) {
-				string resStr=@"
-					{
-						""Meta"": {
-							""Errors"": null,
-							""HttpStatus"": ""Created"",
-							""HttpStatusCode"": 201,
-							""PagingDetails"": null
-						},
-						""Response"": {
-							""CreditCardNumber"": ""************1111"",
-							""ExpirationDate"": ""12/2020"",
-							""Issuer"": ""Visa"",
-							""BillingZipCode"": ""80202"",
-							""CustomerId"": 9695143,
-							""IsDefault"": true,
-							""RequiresValidation"": false,
-							""Id"": 8989970 ,
-							""LastModified"": ""2018-05-09T21:03:45Z"",
-							""CreatedOn"": ""2018-05-09T21:03:45Z""
-						}
-					}";
-				return new RequestResponse<T>(JsonConvert.DeserializeAnonymousType(resStr,resType),resStr);
-
-			}
-
 			///<summary>The following mock return a successful Checkout Token per PaySimple's documentation.</summary>
 			private static RequestResponse<T> MockCheckoutTokenResponse<T>(T resType) {
 				string resStr=@"
@@ -1142,16 +1046,6 @@ namespace OpenDentBusiness {
 						}
 					}";
 				return new RequestResponse<T>(JsonConvert.DeserializeAnonymousType(resStr,resType),resStr);
-			}
-
-			private static RequestResponse<T> MockDeleteResponseFail<T>(T resType) {
-				//No need to try and deserialize a response here because the DELETE method works different than the other actions. Also our logic is set up that if the response code is not 204 No Content, then we throw an error similar to the one below.
-				throw new Exception("Error deleting: 500 Some test error");
-			}
-
-			private static RequestResponse<T> MockDeleteResponseSuccess<T>(T resType) {
-				//For this case, we will assume everything was successful. Our DELETE method doesn't actually use the response object so we can just have an empty object returned.
-				return new RequestResponse<T>(JsonConvert.DeserializeAnonymousType("",resType),"");
 			}
 
 			///<summary>Throws exceptions for http codes of 300 or more from API call.</summary>
@@ -1383,15 +1277,6 @@ namespace OpenDentBusiness {
 					}
 					else if(Mock.IsSucessPostPaymentRequest && route==ApiRoute.Payment) {
 						return MockSuccessPaymentResponse(responseType,Mock.PayAmt);
-					}
-					else if(Mock.IsSucessPostPaymentRequest && route==ApiRoute.AccountCreditCard) {
-						return MockSuccessGetCreditCardResponse(responseType);
-					}
-					else if(Mock.IsSuccessDeleteRequest && (route==ApiRoute.AccountACH || route==ApiRoute.AccountCreditCard)) { 
-						return MockDeleteResponseSuccess(responseType);
-					}
-					else if(Mock.IsFailDeleteRequest && (route==ApiRoute.AccountACH || route==ApiRoute.AccountCreditCard)) { 
-						return MockDeleteResponseFail(responseType);
 					}
 				}
 				using(WebClient client=new WebClient()) {

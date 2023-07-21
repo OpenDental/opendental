@@ -122,11 +122,5 @@ namespace UnitTestsCore {
 			return listProviders;
 		}
 
-		///<summary>Deletes (almost) everything from the provider table.</summary>
-		public static void ClearProviderTable() {
-			string command="DELETE FROM provider WHERE ProvNum > 2";
-			DataCore.NonQ(command);
-		}
-
 	}
 }

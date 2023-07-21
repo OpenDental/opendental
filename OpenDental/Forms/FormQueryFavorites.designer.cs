@@ -28,6 +28,7 @@ namespace OpenDental {
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormQueryFavorites));
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.butEdit = new OpenDental.UI.Button();
@@ -36,7 +37,7 @@ namespace OpenDental {
 			this.textSearch = new System.Windows.Forms.TextBox();
 			this.butShowHide = new OpenDental.UI.Button();
 			this.checkWrapText = new OpenDental.UI.CheckBox();
-			this.textQuery = new System.Windows.Forms.TextBox();
+			this.textQuery = new OpenDental.ODtextBox();
 			this.splitContainer = new OpenDental.UI.SplitContainer();
 			this.splitterPanel1 = new OpenDental.UI.SplitterPanel();
 			this.splitterPanel2 = new OpenDental.UI.SplitterPanel();
@@ -48,12 +49,23 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(1005, 622);
+			this.butOK.Location = new System.Drawing.Point(917, 622);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(998, 622);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 4;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butAdd
 			// 
@@ -148,13 +160,16 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.textQuery.BackColor = System.Drawing.SystemColors.Control;
+			this.textQuery.DetectLinksEnabled = false;
+			this.textQuery.DetectUrls = false;
 			this.textQuery.Location = new System.Drawing.Point(4, 32);
-			this.textQuery.Multiline = true;
 			this.textQuery.Name = "textQuery";
+			this.textQuery.QuickPasteType = OpenDentBusiness.QuickPasteType.ReadOnly;
 			this.textQuery.ReadOnly = true;
-			this.textQuery.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.textQuery.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textQuery.Size = new System.Drawing.Size(616, 568);
 			this.textQuery.TabIndex = 0;
+			this.textQuery.Text = "";
 			this.textQuery.WordWrap = false;
 			// 
 			// splitContainer
@@ -167,7 +182,6 @@ namespace OpenDental {
 			this.splitContainer.Controls.Add(this.splitterPanel1);
 			this.splitContainer.Controls.Add(this.splitterPanel2);
 			this.splitContainer.Cursor = System.Windows.Forms.Cursors.Default;
-			this.splitContainer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.splitContainer.IsSplitterFixed = true;
 			this.splitContainer.Location = new System.Drawing.Point(5, 12);
 			this.splitContainer.Name = "splitContainer";
@@ -204,8 +218,10 @@ namespace OpenDental {
 			// FormQueryFavorites
 			// 
 			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(1084, 656);
 			this.Controls.Add(this.splitContainer);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -219,7 +235,6 @@ namespace OpenDental {
 			this.splitterPanel1.ResumeLayout(false);
 			this.splitterPanel1.PerformLayout();
 			this.splitterPanel2.ResumeLayout(false);
-			this.splitterPanel2.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -227,12 +242,13 @@ namespace OpenDental {
 
 		#region Form Controls
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.Button butDelete;
 		private OpenDental.UI.Button butEdit;
 		private UI.GridOD gridMain;
 		private UI.Button butShowHide;
-		private System.Windows.Forms.TextBox textQuery;
+		private ODtextBox textQuery;
 		private OpenDental.UI.CheckBox checkWrapText;
 		private Label label5;
 		private TextBox textSearch;

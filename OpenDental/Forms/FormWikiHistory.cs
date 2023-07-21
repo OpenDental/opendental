@@ -27,7 +27,7 @@ namespace OpenDental {
 			LoadWikiPage(gridMain.ListGridRows[gridMain.GetSelectedIndex()].Tag as WikiPageHist);//should never be null.
 			Text=Lan.g(this,"Wiki History")+" - "+PageTitle;
 			//Page is locked and user doesn't have permission
-			if(IsLocked && !Security.IsAuthorized(EnumPermType.WikiAdmin,true)) {
+			if(IsLocked && !Security.IsAuthorized(Permissions.WikiAdmin,true)) {
 				butRevert.Enabled=false;
 			}
 			else {
@@ -148,6 +148,10 @@ namespace OpenDental {
 			wikiPageNew.UserNum=Security.CurUser.UserNum;
 			WikiPages.InsertAndArchive(wikiPageNew);
 			FillGrid();
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void butCompare_Click(object sender,EventArgs e) {

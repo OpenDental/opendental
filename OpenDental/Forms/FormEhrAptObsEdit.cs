@@ -185,7 +185,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			EhrAptObsIdentifier ehrAptObsId=(EhrAptObsIdentifier)comboObservationQuestion.SelectedIndex;
 			if(listValueType.SelectedIndex==(int)EhrAptObsType.Address && ehrAptObsId!=EhrAptObsIdentifier.TreatFacilityLocation ||
 				listValueType.SelectedIndex!=(int)EhrAptObsType.Address && ehrAptObsId==EhrAptObsIdentifier.TreatFacilityLocation) {
@@ -230,6 +230,10 @@ namespace OpenDental {
 				_ehrAptObsCur.UcumCode=comboUnits.Items[comboUnits.SelectedIndex].ToString();
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

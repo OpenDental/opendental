@@ -47,21 +47,18 @@ namespace OpenDentBusiness.Crud{
 			MobileAppDevice mobileAppDevice;
 			foreach(DataRow row in table.Rows) {
 				mobileAppDevice=new MobileAppDevice();
-				mobileAppDevice.MobileAppDeviceNum   = PIn.Long  (row["MobileAppDeviceNum"].ToString());
-				mobileAppDevice.ClinicNum            = PIn.Long  (row["ClinicNum"].ToString());
-				mobileAppDevice.DeviceName           = PIn.String(row["DeviceName"].ToString());
-				mobileAppDevice.UniqueID             = PIn.String(row["UniqueID"].ToString());
-				mobileAppDevice.IsEclipboardEnabled  = PIn.Bool  (row["IsEclipboardEnabled"].ToString());
-				mobileAppDevice.PatNum               = PIn.Long  (row["PatNum"].ToString());
-				mobileAppDevice.IsBYODDevice         = PIn.Bool  (row["IsBYODDevice"].ToString());
-				mobileAppDevice.LastCheckInActivity  = PIn.DateT (row["LastCheckInActivity"].ToString());
-				mobileAppDevice.EclipboardLastAttempt= PIn.DateT (row["EclipboardLastAttempt"].ToString());
-				mobileAppDevice.EclipboardLastLogin  = PIn.DateT (row["EclipboardLastLogin"].ToString());
-				mobileAppDevice.DevicePage           = (OpenDentBusiness.MADPage)PIn.Int(row["DevicePage"].ToString());
-				mobileAppDevice.UserNum              = PIn.Long  (row["UserNum"].ToString());
-				mobileAppDevice.ODTouchLastLogin     = PIn.DateT (row["ODTouchLastLogin"].ToString());
-				mobileAppDevice.ODTouchLastAttempt   = PIn.DateT (row["ODTouchLastAttempt"].ToString());
-				mobileAppDevice.IsODTouchEnabled     = PIn.Bool  (row["IsODTouchEnabled"].ToString());
+				mobileAppDevice.MobileAppDeviceNum = PIn.Long  (row["MobileAppDeviceNum"].ToString());
+				mobileAppDevice.ClinicNum          = PIn.Long  (row["ClinicNum"].ToString());
+				mobileAppDevice.DeviceName         = PIn.String(row["DeviceName"].ToString());
+				mobileAppDevice.UniqueID           = PIn.String(row["UniqueID"].ToString());
+				mobileAppDevice.IsAllowed          = PIn.Bool  (row["IsAllowed"].ToString());
+				mobileAppDevice.PatNum             = PIn.Long  (row["PatNum"].ToString());
+				mobileAppDevice.IsBYODDevice       = PIn.Bool  (row["IsBYODDevice"].ToString());
+				mobileAppDevice.LastCheckInActivity= PIn.DateT (row["LastCheckInActivity"].ToString());
+				mobileAppDevice.LastAttempt        = PIn.DateT (row["LastAttempt"].ToString());
+				mobileAppDevice.LastLogin          = PIn.DateT (row["LastLogin"].ToString());
+				mobileAppDevice.DevicePage         = (OpenDentBusiness.MADPage)PIn.Int(row["DevicePage"].ToString());
+				mobileAppDevice.UserNum            = PIn.Long  (row["UserNum"].ToString());
 				retVal.Add(mobileAppDevice);
 			}
 			return retVal;
@@ -77,34 +74,28 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("ClinicNum");
 			table.Columns.Add("DeviceName");
 			table.Columns.Add("UniqueID");
-			table.Columns.Add("IsEclipboardEnabled");
+			table.Columns.Add("IsAllowed");
 			table.Columns.Add("PatNum");
 			table.Columns.Add("IsBYODDevice");
 			table.Columns.Add("LastCheckInActivity");
-			table.Columns.Add("EclipboardLastAttempt");
-			table.Columns.Add("EclipboardLastLogin");
+			table.Columns.Add("LastAttempt");
+			table.Columns.Add("LastLogin");
 			table.Columns.Add("DevicePage");
 			table.Columns.Add("UserNum");
-			table.Columns.Add("ODTouchLastLogin");
-			table.Columns.Add("ODTouchLastAttempt");
-			table.Columns.Add("IsODTouchEnabled");
 			foreach(MobileAppDevice mobileAppDevice in listMobileAppDevices) {
 				table.Rows.Add(new object[] {
 					POut.Long  (mobileAppDevice.MobileAppDeviceNum),
 					POut.Long  (mobileAppDevice.ClinicNum),
 					            mobileAppDevice.DeviceName,
 					            mobileAppDevice.UniqueID,
-					POut.Bool  (mobileAppDevice.IsEclipboardEnabled),
+					POut.Bool  (mobileAppDevice.IsAllowed),
 					POut.Long  (mobileAppDevice.PatNum),
 					POut.Bool  (mobileAppDevice.IsBYODDevice),
 					POut.DateT (mobileAppDevice.LastCheckInActivity,false),
-					POut.DateT (mobileAppDevice.EclipboardLastAttempt,false),
-					POut.DateT (mobileAppDevice.EclipboardLastLogin,false),
+					POut.DateT (mobileAppDevice.LastAttempt,false),
+					POut.DateT (mobileAppDevice.LastLogin,false),
 					POut.Int   ((int)mobileAppDevice.DevicePage),
 					POut.Long  (mobileAppDevice.UserNum),
-					POut.DateT (mobileAppDevice.ODTouchLastLogin,false),
-					POut.DateT (mobileAppDevice.ODTouchLastAttempt,false),
-					POut.Bool  (mobileAppDevice.IsODTouchEnabled),
 				});
 			}
 			return table;
@@ -124,7 +115,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="MobileAppDeviceNum,";
 			}
-			command+="ClinicNum,DeviceName,UniqueID,IsEclipboardEnabled,PatNum,IsBYODDevice,LastCheckInActivity,EclipboardLastAttempt,EclipboardLastLogin,DevicePage,UserNum,ODTouchLastLogin,ODTouchLastAttempt,IsODTouchEnabled) VALUES(";
+			command+="ClinicNum,DeviceName,UniqueID,IsAllowed,PatNum,IsBYODDevice,LastCheckInActivity,LastAttempt,LastLogin,DevicePage,UserNum) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(mobileAppDevice.MobileAppDeviceNum)+",";
 			}
@@ -132,17 +123,14 @@ namespace OpenDentBusiness.Crud{
 				     POut.Long  (mobileAppDevice.ClinicNum)+","
 				+"'"+POut.String(mobileAppDevice.DeviceName)+"',"
 				+"'"+POut.String(mobileAppDevice.UniqueID)+"',"
-				+    POut.Bool  (mobileAppDevice.IsEclipboardEnabled)+","
+				+    POut.Bool  (mobileAppDevice.IsAllowed)+","
 				+    POut.Long  (mobileAppDevice.PatNum)+","
 				+    POut.Bool  (mobileAppDevice.IsBYODDevice)+","
 				+    POut.DateT (mobileAppDevice.LastCheckInActivity)+","
-				+    POut.DateT (mobileAppDevice.EclipboardLastAttempt)+","
-				+    POut.DateT (mobileAppDevice.EclipboardLastLogin)+","
+				+    POut.DateT (mobileAppDevice.LastAttempt)+","
+				+    POut.DateT (mobileAppDevice.LastLogin)+","
 				+    POut.Int   ((int)mobileAppDevice.DevicePage)+","
-				+    POut.Long  (mobileAppDevice.UserNum)+","
-				+    POut.DateT (mobileAppDevice.ODTouchLastLogin)+","
-				+    POut.DateT (mobileAppDevice.ODTouchLastAttempt)+","
-				+    POut.Bool  (mobileAppDevice.IsODTouchEnabled)+")";
+				+    POut.Long  (mobileAppDevice.UserNum)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -167,7 +155,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="MobileAppDeviceNum,";
 			}
-			command+="ClinicNum,DeviceName,UniqueID,IsEclipboardEnabled,PatNum,IsBYODDevice,LastCheckInActivity,EclipboardLastAttempt,EclipboardLastLogin,DevicePage,UserNum,ODTouchLastLogin,ODTouchLastAttempt,IsODTouchEnabled) VALUES(";
+			command+="ClinicNum,DeviceName,UniqueID,IsAllowed,PatNum,IsBYODDevice,LastCheckInActivity,LastAttempt,LastLogin,DevicePage,UserNum) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(mobileAppDevice.MobileAppDeviceNum)+",";
 			}
@@ -175,17 +163,14 @@ namespace OpenDentBusiness.Crud{
 				     POut.Long  (mobileAppDevice.ClinicNum)+","
 				+"'"+POut.String(mobileAppDevice.DeviceName)+"',"
 				+"'"+POut.String(mobileAppDevice.UniqueID)+"',"
-				+    POut.Bool  (mobileAppDevice.IsEclipboardEnabled)+","
+				+    POut.Bool  (mobileAppDevice.IsAllowed)+","
 				+    POut.Long  (mobileAppDevice.PatNum)+","
 				+    POut.Bool  (mobileAppDevice.IsBYODDevice)+","
 				+    POut.DateT (mobileAppDevice.LastCheckInActivity)+","
-				+    POut.DateT (mobileAppDevice.EclipboardLastAttempt)+","
-				+    POut.DateT (mobileAppDevice.EclipboardLastLogin)+","
+				+    POut.DateT (mobileAppDevice.LastAttempt)+","
+				+    POut.DateT (mobileAppDevice.LastLogin)+","
 				+    POut.Int   ((int)mobileAppDevice.DevicePage)+","
-				+    POut.Long  (mobileAppDevice.UserNum)+","
-				+    POut.DateT (mobileAppDevice.ODTouchLastLogin)+","
-				+    POut.DateT (mobileAppDevice.ODTouchLastAttempt)+","
-				+    POut.Bool  (mobileAppDevice.IsODTouchEnabled)+")";
+				+    POut.Long  (mobileAppDevice.UserNum)+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -198,20 +183,17 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Updates one MobileAppDevice in the database.</summary>
 		public static void Update(MobileAppDevice mobileAppDevice) {
 			string command="UPDATE mobileappdevice SET "
-				+"ClinicNum            =  "+POut.Long  (mobileAppDevice.ClinicNum)+", "
-				+"DeviceName           = '"+POut.String(mobileAppDevice.DeviceName)+"', "
-				+"UniqueID             = '"+POut.String(mobileAppDevice.UniqueID)+"', "
-				+"IsEclipboardEnabled  =  "+POut.Bool  (mobileAppDevice.IsEclipboardEnabled)+", "
-				+"PatNum               =  "+POut.Long  (mobileAppDevice.PatNum)+", "
-				+"IsBYODDevice         =  "+POut.Bool  (mobileAppDevice.IsBYODDevice)+", "
-				+"LastCheckInActivity  =  "+POut.DateT (mobileAppDevice.LastCheckInActivity)+", "
-				+"EclipboardLastAttempt=  "+POut.DateT (mobileAppDevice.EclipboardLastAttempt)+", "
-				+"EclipboardLastLogin  =  "+POut.DateT (mobileAppDevice.EclipboardLastLogin)+", "
-				+"DevicePage           =  "+POut.Int   ((int)mobileAppDevice.DevicePage)+", "
-				+"UserNum              =  "+POut.Long  (mobileAppDevice.UserNum)+", "
-				+"ODTouchLastLogin     =  "+POut.DateT (mobileAppDevice.ODTouchLastLogin)+", "
-				+"ODTouchLastAttempt   =  "+POut.DateT (mobileAppDevice.ODTouchLastAttempt)+", "
-				+"IsODTouchEnabled     =  "+POut.Bool  (mobileAppDevice.IsODTouchEnabled)+" "
+				+"ClinicNum          =  "+POut.Long  (mobileAppDevice.ClinicNum)+", "
+				+"DeviceName         = '"+POut.String(mobileAppDevice.DeviceName)+"', "
+				+"UniqueID           = '"+POut.String(mobileAppDevice.UniqueID)+"', "
+				+"IsAllowed          =  "+POut.Bool  (mobileAppDevice.IsAllowed)+", "
+				+"PatNum             =  "+POut.Long  (mobileAppDevice.PatNum)+", "
+				+"IsBYODDevice       =  "+POut.Bool  (mobileAppDevice.IsBYODDevice)+", "
+				+"LastCheckInActivity=  "+POut.DateT (mobileAppDevice.LastCheckInActivity)+", "
+				+"LastAttempt        =  "+POut.DateT (mobileAppDevice.LastAttempt)+", "
+				+"LastLogin          =  "+POut.DateT (mobileAppDevice.LastLogin)+", "
+				+"DevicePage         =  "+POut.Int   ((int)mobileAppDevice.DevicePage)+", "
+				+"UserNum            =  "+POut.Long  (mobileAppDevice.UserNum)+" "
 				+"WHERE MobileAppDeviceNum = "+POut.Long(mobileAppDevice.MobileAppDeviceNum);
 			Db.NonQ(command);
 		}
@@ -231,9 +213,9 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="UniqueID = '"+POut.String(mobileAppDevice.UniqueID)+"'";
 			}
-			if(mobileAppDevice.IsEclipboardEnabled != oldMobileAppDevice.IsEclipboardEnabled) {
+			if(mobileAppDevice.IsAllowed != oldMobileAppDevice.IsAllowed) {
 				if(command!="") { command+=",";}
-				command+="IsEclipboardEnabled = "+POut.Bool(mobileAppDevice.IsEclipboardEnabled)+"";
+				command+="IsAllowed = "+POut.Bool(mobileAppDevice.IsAllowed)+"";
 			}
 			if(mobileAppDevice.PatNum != oldMobileAppDevice.PatNum) {
 				if(command!="") { command+=",";}
@@ -247,13 +229,13 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="LastCheckInActivity = "+POut.DateT(mobileAppDevice.LastCheckInActivity)+"";
 			}
-			if(mobileAppDevice.EclipboardLastAttempt != oldMobileAppDevice.EclipboardLastAttempt) {
+			if(mobileAppDevice.LastAttempt != oldMobileAppDevice.LastAttempt) {
 				if(command!="") { command+=",";}
-				command+="EclipboardLastAttempt = "+POut.DateT(mobileAppDevice.EclipboardLastAttempt)+"";
+				command+="LastAttempt = "+POut.DateT(mobileAppDevice.LastAttempt)+"";
 			}
-			if(mobileAppDevice.EclipboardLastLogin != oldMobileAppDevice.EclipboardLastLogin) {
+			if(mobileAppDevice.LastLogin != oldMobileAppDevice.LastLogin) {
 				if(command!="") { command+=",";}
-				command+="EclipboardLastLogin = "+POut.DateT(mobileAppDevice.EclipboardLastLogin)+"";
+				command+="LastLogin = "+POut.DateT(mobileAppDevice.LastLogin)+"";
 			}
 			if(mobileAppDevice.DevicePage != oldMobileAppDevice.DevicePage) {
 				if(command!="") { command+=",";}
@@ -262,18 +244,6 @@ namespace OpenDentBusiness.Crud{
 			if(mobileAppDevice.UserNum != oldMobileAppDevice.UserNum) {
 				if(command!="") { command+=",";}
 				command+="UserNum = "+POut.Long(mobileAppDevice.UserNum)+"";
-			}
-			if(mobileAppDevice.ODTouchLastLogin != oldMobileAppDevice.ODTouchLastLogin) {
-				if(command!="") { command+=",";}
-				command+="ODTouchLastLogin = "+POut.DateT(mobileAppDevice.ODTouchLastLogin)+"";
-			}
-			if(mobileAppDevice.ODTouchLastAttempt != oldMobileAppDevice.ODTouchLastAttempt) {
-				if(command!="") { command+=",";}
-				command+="ODTouchLastAttempt = "+POut.DateT(mobileAppDevice.ODTouchLastAttempt)+"";
-			}
-			if(mobileAppDevice.IsODTouchEnabled != oldMobileAppDevice.IsODTouchEnabled) {
-				if(command!="") { command+=",";}
-				command+="IsODTouchEnabled = "+POut.Bool(mobileAppDevice.IsODTouchEnabled)+"";
 			}
 			if(command=="") {
 				return false;
@@ -296,7 +266,7 @@ namespace OpenDentBusiness.Crud{
 			if(mobileAppDevice.UniqueID != oldMobileAppDevice.UniqueID) {
 				return true;
 			}
-			if(mobileAppDevice.IsEclipboardEnabled != oldMobileAppDevice.IsEclipboardEnabled) {
+			if(mobileAppDevice.IsAllowed != oldMobileAppDevice.IsAllowed) {
 				return true;
 			}
 			if(mobileAppDevice.PatNum != oldMobileAppDevice.PatNum) {
@@ -308,25 +278,16 @@ namespace OpenDentBusiness.Crud{
 			if(mobileAppDevice.LastCheckInActivity != oldMobileAppDevice.LastCheckInActivity) {
 				return true;
 			}
-			if(mobileAppDevice.EclipboardLastAttempt != oldMobileAppDevice.EclipboardLastAttempt) {
+			if(mobileAppDevice.LastAttempt != oldMobileAppDevice.LastAttempt) {
 				return true;
 			}
-			if(mobileAppDevice.EclipboardLastLogin != oldMobileAppDevice.EclipboardLastLogin) {
+			if(mobileAppDevice.LastLogin != oldMobileAppDevice.LastLogin) {
 				return true;
 			}
 			if(mobileAppDevice.DevicePage != oldMobileAppDevice.DevicePage) {
 				return true;
 			}
 			if(mobileAppDevice.UserNum != oldMobileAppDevice.UserNum) {
-				return true;
-			}
-			if(mobileAppDevice.ODTouchLastLogin != oldMobileAppDevice.ODTouchLastLogin) {
-				return true;
-			}
-			if(mobileAppDevice.ODTouchLastAttempt != oldMobileAppDevice.ODTouchLastAttempt) {
-				return true;
-			}
-			if(mobileAppDevice.IsODTouchEnabled != oldMobileAppDevice.IsODTouchEnabled) {
 				return true;
 			}
 			return false;

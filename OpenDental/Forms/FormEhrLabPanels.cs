@@ -25,6 +25,7 @@ namespace OpenDental {
 		private void FormLabPanels_Load(object sender,EventArgs e) {
 			if(!IsSelectionMode) {
 				butOK.Visible=false;
+				butCancel.Text="Close";
 			}
 			FillGrid();
 		}
@@ -139,6 +140,16 @@ namespace OpenDental {
 			SelectedLabPanelNum=listLP[gridMain.SelectedIndices[0]].LabPanelNum;
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+
+
 
 	}
 }

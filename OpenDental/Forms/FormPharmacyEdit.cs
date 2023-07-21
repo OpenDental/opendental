@@ -12,16 +12,17 @@ namespace OpenDental {
 		public Pharmacy PharmacyCur;
 
 		///<summary></summary>
-		public FormPharmacyEdit() {
+		public FormPharmacyEdit()
+		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
 		}
 
 		private void FormPharmacyEdit_Load(object sender, System.EventArgs e) {
-			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
-				label11.Text=Lang.g(this,"City, Province, Postal Code");
-			}
 			textStoreName.Text=PharmacyCur.StoreName;
 			textPhone.Text=PharmacyCur.Phone;
 			textFax.Text=PharmacyCur.Fax;
@@ -33,9 +34,9 @@ namespace OpenDental {
 			textNote.Text=PharmacyCur.Note;
 			//Selects all clinics that have a link to this pharmacy. This will only display and select the clinics the user has access to.
 			List<PharmClinic> listPharmClinics=PharmClinics.GetPharmClinicsForPharmacy(PharmacyCur.PharmacyNum);
-			comboClinic.ListClinicNumsSelected=listPharmClinics.Select(x => x.ClinicNum).ToList();
+			comboClinic.ListSelectedClinicNums=listPharmClinics.Select(x => x.ClinicNum).ToList();
 			//Save the currently selected clinics for synching down below.
-			comboClinic.Tag=listPharmClinics.Where(x => comboClinic.ListClinicNumsSelected.Contains(x.ClinicNum)).ToList();
+			comboClinic.Tag=listPharmClinics.Where(x => comboClinic.ListSelectedClinicNums.Contains(x.ClinicNum)).ToList();
 			//remember, this is NOT all PharmClinics for this Pharmacy, but only the ones that this user has permission to see
 		}
 
@@ -57,7 +58,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(textStoreName.Text==""){
 				MessageBox.Show(Lan.g(this,"Store name cannot be blank."));
 				return;
@@ -92,17 +93,51 @@ namespace OpenDental {
 			List<PharmClinic> listPharmClinicOld=(List<PharmClinic>)comboClinic.Tag;
 			List<PharmClinic> listPharmClinicNew=new List<PharmClinic>();
 			//comboClinic.All might be selected, and would result in ListSelectedClinicNums containing only the clinics showing in the combobox, which very will not include clinics that user does not have permissions for.  "All" is not separately tested for.  Because the new list is synched against the old list, clinics that aren't showing are not affected one way or the other.
-			for(int i=0;i<comboClinic.ListClinicNumsSelected.Count;i++) {
-				if(listPharmClinicOld.Any(x => x.ClinicNum==comboClinic.ListClinicNumsSelected[i])) {//if it existed before, add it to the list
-					listPharmClinicNew.Add(listPharmClinicOld.First(x => x.ClinicNum==comboClinic.ListClinicNumsSelected[i]));
+			for(int i=0;i<comboClinic.ListSelectedClinicNums.Count;i++) {
+				if(listPharmClinicOld.Any(x => x.ClinicNum==comboClinic.ListSelectedClinicNums[i])) {//if it existed before, add it to the list
+					listPharmClinicNew.Add(listPharmClinicOld.First(x => x.ClinicNum==comboClinic.ListSelectedClinicNums[i]));
 				}
 				else {//otherwise, create a new link.
-					listPharmClinicNew.Add(new PharmClinic(PharmacyCur.PharmacyNum,comboClinic.ListClinicNumsSelected[i]));
+					listPharmClinicNew.Add(new PharmClinic(PharmacyCur.PharmacyNum,comboClinic.ListSelectedClinicNums[i]));
 				}
 			}
 			PharmClinics.Sync(listPharmClinicNew,listPharmClinicOld);
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

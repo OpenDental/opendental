@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormApptTypes));
 			this.butAdd = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butDown = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
@@ -40,10 +41,20 @@ namespace OpenDental{
 			this.butAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.butAdd.Location = new System.Drawing.Point(345, 88);
 			this.butAdd.Name = "butAdd";
-			this.butAdd.Size = new System.Drawing.Size(79, 24);
+			this.butAdd.Size = new System.Drawing.Size(75, 24);
 			this.butAdd.TabIndex = 156;
 			this.butAdd.Text = "Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(345, 427);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 157;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridMain
 			// 
@@ -103,11 +114,12 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(345, 428);
+			this.butOK.Location = new System.Drawing.Point(345, 397);
 			this.butOK.Name = "butOK";
-			this.butOK.Size = new System.Drawing.Size(79, 24);
+			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 162;
 			this.butOK.Text = "&OK";
+			this.butOK.Visible = false;
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// FormApptTypes
@@ -118,6 +130,7 @@ namespace OpenDental{
 			this.Controls.Add(this.checkPrompt);
 			this.Controls.Add(this.butDown);
 			this.Controls.Add(this.butUp);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.gridMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -133,6 +146,7 @@ namespace OpenDental{
 
 		private UI.Button butAdd;
 		private UI.GridOD gridMain;
+		private UI.Button butClose;
 		private UI.Button butDown;
 		private UI.Button butUp;
 		private OpenDental.UI.CheckBox checkPrompt;

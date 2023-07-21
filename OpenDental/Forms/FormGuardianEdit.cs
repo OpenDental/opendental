@@ -44,12 +44,12 @@ namespace OpenDental {
 		}
 
 		private void butPick_Click(object sender,EventArgs e) {
-			FrmFamilyMemberSelect frmFamilyMemberSelect=new FrmFamilyMemberSelect(_family);
-			frmFamilyMemberSelect.ShowDialog();
-			if(frmFamilyMemberSelect.IsDialogCancel) {
+			using FormFamilyMemberSelect formFamilyMemberSelect=new FormFamilyMemberSelect(_family);
+			formFamilyMemberSelect.ShowDialog();
+			if(formFamilyMemberSelect.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			_guardian.PatNumGuardian=frmFamilyMemberSelect.SelectedPatNum;
+			_guardian.PatNumGuardian=formFamilyMemberSelect.SelectedPatNum;
 			textFamilyMember.Text=_family.GetNameInFamFL(_guardian.PatNumGuardian);
 		}
 
@@ -63,7 +63,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			//PatNumChild already set
 			//PatNumGuardian already set
 			_guardian.IsGuardian=checkIsGuardian.Checked;
@@ -77,6 +77,10 @@ namespace OpenDental {
 				Guardians.Update(_guardian);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 		
 	}

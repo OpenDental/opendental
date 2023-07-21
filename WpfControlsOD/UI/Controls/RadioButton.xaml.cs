@@ -38,8 +38,6 @@ How to use the CheckBox control:
 		
 		public RadioButton(){
 			InitializeComponent();
-			//Width=100;
-			//Height=20;
 			grid.MouseDown+=grid_MouseDown;
 			IsEnabledChanged+=RadioButton_IsEnabledChanged;
 		}
@@ -113,47 +111,12 @@ How to use the CheckBox control:
 				return _checked;
 			}
 			set{
-				if(_checked==value){
-					return; //no change
-				}
 				_checked=value;
-				if(!value){//unchecking. This can only happen programmatically
+				if(_checked){
+					ellipseSmallBlack.Visibility=Visibility.Visible;
+				}
+				else{
 					ellipseSmallBlack.Visibility=Visibility.Collapsed;
-					return;
-				} 
-				//everything below here is for checking it.
-				ellipseSmallBlack.Visibility=Visibility.Visible;
-				//uncheck all other radio buttons that are siblings
-				if(DesignerProperties.GetIsInDesignMode(this)){
-					return;
-				}
-				//List<RadioButton> listRadioButtons=new List<RadioButton>();
-				//Type typeParent=Parent.GetType();//UI.Panel, UI.GroupBox, or UserControl
-				//Type typeBase=typeParent.BaseType;//ItemsControl
-				//Type typeBase2=typeBase.BaseType;//FrameworkElement
-				if(Parent is ItemsControl itemsControl){//UI.Panel or UI.GroupBox
-					ItemCollection itemCollection=itemsControl.Items;
-					for(int i=0;i<itemCollection.Count;i++){
-						if(itemCollection[i]==this){
-							continue;
-						}
-						if(itemCollection[i] is RadioButton radioButton){
-							radioButton.Checked=false;
-						}
-					}
-					return;
-				}
-				if(Parent is System.Windows.Controls.Grid grid){
-					//grids are always used as the content of FrmODBase, and this code will make it work for all grids
-					UIElementCollection uIElementCollection=grid.Children;
-					for(int i=0;i<uIElementCollection.Count;i++){
-						if(uIElementCollection[i]==this){
-							continue;
-						}
-						if(uIElementCollection[i] is RadioButton radioButton){
-							radioButton.Checked=false;
-						}
-					}
 				}
 			}
 		}
@@ -171,21 +134,8 @@ How to use the CheckBox control:
 			}
 		}
 
-		[Category("OD")]
-		[DefaultValue(int.MaxValue)]
-		[Description("Use this instead of TabIndex.")]
-		public int TabIndexOD{
-			//For now, this is just to move it down into the OD category,
-			//but later, there are plans to enhance it.
-			//Because TabIndex is an Advanced Property, we had to give it a new name to keep it out of Advanced Property area.
-			get{
-				return TabIndex;
-			}
-			set{
-				TabIndex=value;
-				//InvalidateVisual();//if we want the new TabIndex value to show immediately. But there's a performance hit, so no.
-			}
-		}
+		//IsEnabled is already a property, and it seems to already affect children in this control.
+		//So while it could be better, it seems to be at least functional.
 		
 		[Category("OD")]
 		public string Text {
@@ -213,8 +163,43 @@ How to use the CheckBox control:
 		#endregion Properties
 
 		private void grid_MouseDown(object sender,MouseButtonEventArgs e) {
-			Checked=true;//this also unchecks any other sibling radiobuttons
 			Click?.Invoke(this,new EventArgs());
+			if(Checked){
+				return;//not allowed to uncheck
+			}
+			Checked=true;
+			//uncheck all other radio buttons that are siblings
+			if(DesignerProperties.GetIsInDesignMode(this)){
+				return;
+			}
+			//List<RadioButton> listRadioButtons=new List<RadioButton>();
+			//Type typeParent=Parent.GetType();//UI.Panel, UI.GroupBox, or UserControl
+			//Type typeBase=typeParent.BaseType;//ItemsControl
+			//Type typeBase2=typeBase.BaseType;//FrameworkElement
+			if(Parent is ItemsControl itemsControl){//UI.Panel or UI.GroupBox
+				ItemCollection itemCollection=itemsControl.Items;
+				for(int i=0;i<itemCollection.Count;i++){
+					if(itemCollection[i]==this){
+						continue;
+					}
+					if(itemCollection[i] is RadioButton radioButton){
+						radioButton.Checked=false;
+					}
+				}
+				return;
+			}
+			if(Parent is System.Windows.Controls.Grid grid){
+				//grids are always used as the content of FrmODBase, and this code will make it work for all grids
+				UIElementCollection uIElementCollection=grid.Children;
+				for(int i=0;i<uIElementCollection.Count;i++){
+					if(uIElementCollection[i]==this){
+						continue;
+					}
+					if(uIElementCollection[i] is RadioButton radioButton){
+						radioButton.Checked=false;
+					}
+				}
+			}
 		}
 
 		private void RadioButton_IsEnabledChanged(object sender,DependencyPropertyChangedEventArgs e) {

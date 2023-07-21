@@ -52,7 +52,7 @@ namespace OpenDental {
 			checkOutstandingRpDateTab.Checked=PrefC.GetBool(PrefName.OutstandingInsReportDateFilterTab);
 			checkReportDisplayUnearnedTP.Checked=PrefC.GetBool(PrefName.ReportsDoShowHiddenTPPrepayments);
 			textIncompleteProcsExcludeCodes.Text=PrefC.GetString(PrefName.ReportsIncompleteProcsExcludeCodes);
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				tabControl1.TabPages.Remove(tabReportServer);//Web users can't change their database settings.
 			}
 			else {
@@ -71,7 +71,6 @@ namespace OpenDental {
 			comboServerName.Text=PrefC.GetString(PrefName.ReportingServerCompName);
 			comboDatabase.Text=PrefC.GetString(PrefName.ReportingServerDbName);
 			textMysqlUser.Text=PrefC.GetString(PrefName.ReportingServerMySqlUser);
-			textSkySQL.Text=PrefC.GetString(PrefName.ReportingServerSslCa);
 			string decryptedPass;
 			CDT.Class1.Decrypt(PrefC.GetString(PrefName.ReportingServerMySqlPassHash),out decryptedPass);
 			textMysqlPass.Text=decryptedPass;
@@ -226,7 +225,7 @@ namespace OpenDental {
 				userControlReportSetup.InitializeOnStartup(false,_userGroupNum,false);//This will change usergroups when they change tabs.  NOT what we want......
 			}
 			else if(tabControl1.SelectedIndex==1) {
-				if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+				if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 					tabControl1.SelectedIndex=0;
 					return;
 				}
@@ -242,7 +241,6 @@ namespace OpenDental {
 				hasChanged |=Prefs.UpdateString(PrefName.ReportingServerDbName,"");
 				hasChanged |=Prefs.UpdateString(PrefName.ReportingServerMySqlUser,"");
 				hasChanged |=Prefs.UpdateString(PrefName.ReportingServerMySqlPassHash,"");
-				hasChanged |=Prefs.UpdateString(PrefName.ReportingServerSslCa,"");
 				hasChanged |=Prefs.UpdateString(PrefName.ReportingServerURI,"");
 			}
 			else {
@@ -253,7 +251,6 @@ namespace OpenDental {
 					hasChanged |=Prefs.UpdateString(PrefName.ReportingServerDbName,comboDatabase.Text);
 					hasChanged |=Prefs.UpdateString(PrefName.ReportingServerMySqlUser,textMysqlUser.Text);
 					hasChanged |=Prefs.UpdateString(PrefName.ReportingServerMySqlPassHash,encryptedPass);
-					hasChanged |=Prefs.UpdateString(PrefName.ReportingServerSslCa,textSkySQL.Text);
 					hasChanged |=Prefs.UpdateString(PrefName.ReportingServerURI,"");
 				}
 				else {
@@ -261,7 +258,6 @@ namespace OpenDental {
 					hasChanged |=Prefs.UpdateString(PrefName.ReportingServerDbName,"");
 					hasChanged |=Prefs.UpdateString(PrefName.ReportingServerMySqlUser,"");
 					hasChanged |=Prefs.UpdateString(PrefName.ReportingServerMySqlPassHash,"");
-					hasChanged |=Prefs.UpdateString(PrefName.ReportingServerSslCa,"");
 					hasChanged |=Prefs.UpdateString(PrefName.ReportingServerURI,textMiddleTierURI.Text);
 				}
 			}
@@ -281,7 +277,7 @@ namespace OpenDental {
 			textIncompleteProcsExcludeCodes.Text=string.Join(",",listExcludeCodes);
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			List<string> listAllExcludeCodes=GetIncompleteProcsExcludeCodes();
 			_hasChanged |=Prefs.UpdateInt(PrefName.ReportsPPOwriteoffDefaultToProcDate,comboReportWriteoff.SelectedIndex);
 			_hasChanged |=Prefs.UpdateBool(PrefName.ReportsShowPatNum,checkReportsShowPatNum.Checked);
@@ -299,16 +295,16 @@ namespace OpenDental {
 			_hasChanged |=Prefs.UpdateBool(PrefName.ReportsDoShowHiddenTPPrepayments,checkReportDisplayUnearnedTP.Checked);
 			_hasChanged |=Prefs.UpdateString(PrefName.ReportsIncompleteProcsExcludeCodes,string.Join(",",listAllExcludeCodes));
 			if(UpdateReportingServer()) {
+				ConnectionStoreBase.ClearConnectionDictionary();
 				_hasChanged=true;
-				DataValid.SetInvalid(InvalidType.ConnectionStoreClear);
 			}
 			if(_hasChanged) {
 				DataValid.SetInvalid(InvalidType.Prefs);
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Report settings have been changed.");
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Report settings have been changed.");
 			}
-			if(Security.IsAuthorized(EnumPermType.SecurityAdmin,true)) {
+			if(Security.IsAuthorized(Permissions.SecurityAdmin,true)) {
 				if(GroupPermissions.Sync(userControlReportSetup.ListGroupPermissionsForReports,userControlReportSetup.ListGroupPermissionsOld)) {
-					SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,"Report permissions have been changed.");
+					SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,"Report permissions have been changed.");
 				}
 				DataValid.SetInvalid(InvalidType.Security);
 			}
@@ -318,5 +314,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

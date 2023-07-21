@@ -35,7 +35,7 @@ namespace OpenDental{
 			textOpName.Text=_operatory.OpName;
 			textAbbrev.Text=_operatory.Abbrev;
 			checkIsHidden.Checked=_operatory.IsHidden;
-			comboClinic.ClinicNumSelected=_operatory.ClinicNum;//can be 0
+			comboClinic.SelectedClinicNum=_operatory.ClinicNum;//can be 0
 			FillCombosProv();
 			comboProv.SetSelectedProvNum(_operatory.ProvDentist);
 			comboHyg.SetSelectedProvNum(_operatory.ProvHygienist);
@@ -62,23 +62,23 @@ namespace OpenDental{
 		}
 
 		private void butPickProv_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick=new FrmProviderPick(comboProv.Items.GetAll<Provider>());
-			frmProviderPick.ProvNumSelected=comboProv.GetSelectedProvNum();
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick=new FormProviderPick(comboProv.Items.GetAll<Provider>());
+			formProviderPick.ProvNumSelected=comboProv.GetSelectedProvNum();
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboProv.SetSelectedProvNum(frmProviderPick.ProvNumSelected);
+			comboProv.SetSelectedProvNum(formProviderPick.ProvNumSelected);
 		}
 
 		private void butPickHyg_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick=new FrmProviderPick(comboHyg.Items.GetAll<Provider>());
-			frmProviderPick.ProvNumSelected=comboHyg.GetSelectedProvNum();
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick=new FormProviderPick(comboHyg.Items.GetAll<Provider>());
+			formProviderPick.ProvNumSelected=comboHyg.GetSelectedProvNum();
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboHyg.SetSelectedProvNum(frmProviderPick.ProvNumSelected);
+			comboHyg.SetSelectedProvNum(formProviderPick.ProvNumSelected);
 		}
 
 		private void ComboClinic_SelectionChangeCommitted(object sender, EventArgs e){
@@ -108,12 +108,12 @@ namespace OpenDental{
 			long provNum=comboProv.GetSelectedProvNum();
 			comboProv.Items.Clear();
 			comboProv.Items.AddProvNone();
-			comboProv.Items.AddProvsAbbr(Providers.GetProvsForClinic(comboClinic.ClinicNumSelected));
+			comboProv.Items.AddProvsAbbr(Providers.GetProvsForClinic(comboClinic.SelectedClinicNum));
 			comboProv.SetSelectedProvNum(provNum);
 			provNum=comboHyg.GetSelectedProvNum();
 			comboHyg.Items.Clear();
 			comboHyg.Items.AddProvNone();
-			comboHyg.Items.AddProvsAbbr(Providers.GetProvsForClinic(comboClinic.ClinicNumSelected));
+			comboHyg.Items.AddProvsAbbr(Providers.GetProvsForClinic(comboClinic.SelectedClinicNum));
 			comboHyg.SetSelectedProvNum(provNum);
 		}
 
@@ -127,7 +127,7 @@ namespace OpenDental{
 			if(operatory.OpName!=textOpName.Text
 				|| operatory.Abbrev!=textAbbrev.Text
 				|| operatory.IsHidden!=checkIsHidden.Checked
-				|| operatory.ClinicNum!=comboClinic.ClinicNumSelected
+				|| operatory.ClinicNum!=comboClinic.SelectedClinicNum
 				|| operatory.ProvDentist!=comboProv.GetSelectedProvNum()
 				|| operatory.ProvHygienist!=comboHyg.GetSelectedProvNum()
 				|| operatory.IsHygiene!=checkIsHygiene.Checked
@@ -137,7 +137,7 @@ namespace OpenDental{
 				MsgBox.Show(this,"Changes were detected above.  Save all changes, get completely out of the operatories window, and then re-enter.");
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.Setup) || !Security.IsAuthorized(EnumPermType.AppointmentEdit)) {
+			if(!Security.IsAuthorized(Permissions.Setup) || !Security.IsAuthorized(Permissions.AppointmentEdit)) {
 				return;
 			}
 			//Operatory operatory=Operatories.GetOperatory(contrApptPanel.OpNumClicked);
@@ -154,19 +154,17 @@ namespace OpenDental{
 			{
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,Lan.g(this,"Update Provs on Future Appts tool run on operatory ")+_operatory.Abbrev+".");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,Lan.g(this,"Update Provs on Future Appts tool run on operatory ")+_operatory.Abbrev+".");
 			List<Appointment> listAppointments=Appointments.GetAppointmentsForOpsByPeriod(new List<long>() {_operatory.OperatoryNum},DateTime.Now);//no end date, so all future
 			List<Appointment> listAppointmentsOld=new List<Appointment>();
 			for(int i=0;i<listAppointments.Count;i++) {
 				listAppointmentsOld.Add(listAppointments[i].Copy());
 			}
-			bool isUpdateSuccessful=ControlApptRef.MoveAppointments(listAppointments,listAppointmentsOld,_operatory);
-			if(isUpdateSuccessful) {
-				MsgBox.Show(this,"Done");
-			}
+			ControlApptRef.MoveAppointments(listAppointments,listAppointmentsOld,_operatory);
+			MsgBox.Show(this,"Done");
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(textOpName.Text==""){
 				MsgBox.Show(this,"Operatory name cannot be blank.");
 				return;
@@ -180,7 +178,7 @@ namespace OpenDental{
 			_operatory.OperatoryType=comboOpType.GetSelectedDefNum();
 			_operatory.Abbrev=textAbbrev.Text;
 			_operatory.IsHidden=checkIsHidden.Checked;
-			_operatory.ClinicNum=comboClinic.ClinicNumSelected;
+			_operatory.ClinicNum=comboClinic.SelectedClinicNum;
 			_operatory.ProvDentist=comboProv.GetSelectedProvNum();
 			_operatory.ProvHygienist=comboHyg.GetSelectedProvNum();
 			_operatory.IsHygiene=checkIsHygiene.Checked;
@@ -197,5 +195,30 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

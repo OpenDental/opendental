@@ -55,8 +55,6 @@ namespace OpenDentBusiness.Crud{
 				faq.ManualVersion   = PIn.Int   (row["ManualVersion"].ToString());
 				faq.ImageUrl        = PIn.String(row["ImageUrl"].ToString());
 				faq.DateTEntry      = PIn.DateT (row["DateTEntry"].ToString());
-				faq.UserNumCreated  = PIn.Long  (row["UserNumCreated"].ToString());
-				faq.UserNumEdited   = PIn.Long  (row["UserNumEdited"].ToString());
 				retVal.Add(faq);
 			}
 			return retVal;
@@ -76,8 +74,6 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("ManualVersion");
 			table.Columns.Add("ImageUrl");
 			table.Columns.Add("DateTEntry");
-			table.Columns.Add("UserNumCreated");
-			table.Columns.Add("UserNumEdited");
 			foreach(Faq faq in listFaqs) {
 				table.Rows.Add(new object[] {
 					POut.Long  (faq.FaqNum),
@@ -88,8 +84,6 @@ namespace OpenDentBusiness.Crud{
 					POut.Int   (faq.ManualVersion),
 					            faq.ImageUrl,
 					POut.DateT (faq.DateTEntry,false),
-					POut.Long  (faq.UserNumCreated),
-					POut.Long  (faq.UserNumEdited),
 				});
 			}
 			return table;
@@ -109,7 +103,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="FaqNum,";
 			}
-			command+="QuestionText,AnswerText,EmbeddedMediaUrl,IsStickied,ManualVersion,ImageUrl,DateTEntry,UserNumCreated,UserNumEdited) VALUES(";
+			command+="QuestionText,AnswerText,EmbeddedMediaUrl,IsStickied,ManualVersion,ImageUrl,DateTEntry) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(faq.FaqNum)+",";
 			}
@@ -120,9 +114,7 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Bool  (faq.IsStickied)+","
 				+    POut.Int   (faq.ManualVersion)+","
 				+"'"+POut.String(faq.ImageUrl)+"',"
-				+    DbHelper.Now()+","
-				+    POut.Long  (faq.UserNumCreated)+","
-				+    POut.Long  (faq.UserNumEdited)+")";
+				+    DbHelper.Now()+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -147,7 +139,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="FaqNum,";
 			}
-			command+="QuestionText,AnswerText,EmbeddedMediaUrl,IsStickied,ManualVersion,ImageUrl,DateTEntry,UserNumCreated,UserNumEdited) VALUES(";
+			command+="QuestionText,AnswerText,EmbeddedMediaUrl,IsStickied,ManualVersion,ImageUrl,DateTEntry) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(faq.FaqNum)+",";
 			}
@@ -158,9 +150,7 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Bool  (faq.IsStickied)+","
 				+    POut.Int   (faq.ManualVersion)+","
 				+"'"+POut.String(faq.ImageUrl)+"',"
-				+    DbHelper.Now()+","
-				+    POut.Long  (faq.UserNumCreated)+","
-				+    POut.Long  (faq.UserNumEdited)+")";
+				+    DbHelper.Now()+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -178,10 +168,8 @@ namespace OpenDentBusiness.Crud{
 				+"EmbeddedMediaUrl= '"+POut.String(faq.EmbeddedMediaUrl)+"', "
 				+"IsStickied      =  "+POut.Bool  (faq.IsStickied)+", "
 				+"ManualVersion   =  "+POut.Int   (faq.ManualVersion)+", "
-				+"ImageUrl        = '"+POut.String(faq.ImageUrl)+"', "
+				+"ImageUrl        = '"+POut.String(faq.ImageUrl)+"' "
 				//DateTEntry not allowed to change
-				+"UserNumCreated  =  "+POut.Long  (faq.UserNumCreated)+", "
-				+"UserNumEdited   =  "+POut.Long  (faq.UserNumEdited)+" "
 				+"WHERE FaqNum = "+POut.Long(faq.FaqNum);
 			Db.NonQ(command);
 		}
@@ -214,14 +202,6 @@ namespace OpenDentBusiness.Crud{
 				command+="ImageUrl = '"+POut.String(faq.ImageUrl)+"'";
 			}
 			//DateTEntry not allowed to change
-			if(faq.UserNumCreated != oldFaq.UserNumCreated) {
-				if(command!="") { command+=",";}
-				command+="UserNumCreated = "+POut.Long(faq.UserNumCreated)+"";
-			}
-			if(faq.UserNumEdited != oldFaq.UserNumEdited) {
-				if(command!="") { command+=",";}
-				command+="UserNumEdited = "+POut.Long(faq.UserNumEdited)+"";
-			}
 			if(command=="") {
 				return false;
 			}
@@ -253,12 +233,6 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			//DateTEntry not allowed to change
-			if(faq.UserNumCreated != oldFaq.UserNumCreated) {
-				return true;
-			}
-			if(faq.UserNumEdited != oldFaq.UserNumEdited) {
-				return true;
-			}
 			return false;
 		}
 

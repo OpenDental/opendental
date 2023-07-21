@@ -157,9 +157,9 @@ namespace OpenDental {
 			CopyRulesHelper(listClinics);
 		}
 
-		private void butOK_Click(object sender,EventArgs e) {
+		private void butClose_Click(object sender,EventArgs e) {
 			DialogResult=DialogResult.OK;
+			Close();
 		}
-
 	}
 }

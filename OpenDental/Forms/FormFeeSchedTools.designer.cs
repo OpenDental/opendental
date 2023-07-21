@@ -82,6 +82,7 @@ namespace OpenDental {
 			this.butPickSchedTo = new OpenDental.UI.Button();
 			this.butCopy = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
+			this.butCancel = new OpenDental.UI.Button();
 			this.groupBox7.SuspendLayout();
 			this.groupGlobalUpdateFees.SuspendLayout();
 			this.groupBox5.SuspendLayout();
@@ -105,10 +106,10 @@ namespace OpenDental {
 			// 
 			this.comboClinicTo.HqDescription = "Default";
 			this.comboClinicTo.IncludeUnassigned = true;
-			this.comboClinicTo.IsMultiSelect = true;
-			this.comboClinicTo.Location = new System.Drawing.Point(51, 46);
+			this.comboClinicTo.Location = new System.Drawing.Point(63, 45);
 			this.comboClinicTo.Name = "comboClinicTo";
-			this.comboClinicTo.Size = new System.Drawing.Size(301, 21);
+			this.comboClinicTo.SelectionModeMulti = true;
+			this.comboClinicTo.Size = new System.Drawing.Size(210, 21);
 			this.comboClinicTo.TabIndex = 2;
 			// 
 			// groupBox7
@@ -125,16 +126,16 @@ namespace OpenDental {
 			this.groupBox7.Controls.Add(this.labelGroup);
 			this.groupBox7.Location = new System.Drawing.Point(12, 31);
 			this.groupBox7.Name = "groupBox7";
-			this.groupBox7.Size = new System.Drawing.Size(391, 107);
+			this.groupBox7.Size = new System.Drawing.Size(328, 107);
 			this.groupBox7.TabIndex = 0;
 			this.groupBox7.TabStop = false;
 			this.groupBox7.Text = "Select Fees";
 			// 
 			// comboProvider
 			// 
-			this.comboProvider.Location = new System.Drawing.Point(88, 73);
+			this.comboProvider.Location = new System.Drawing.Point(100, 72);
 			this.comboProvider.Name = "comboProvider";
-			this.comboProvider.Size = new System.Drawing.Size(264, 21);
+			this.comboProvider.Size = new System.Drawing.Size(174, 21);
 			this.comboProvider.TabIndex = 4;
 			// 
 			// comboGroup
@@ -149,22 +150,22 @@ namespace OpenDental {
 			// 
 			this.comboClinic.HqDescription = "Default";
 			this.comboClinic.IncludeUnassigned = true;
-			this.comboClinic.Location = new System.Drawing.Point(51, 46);
+			this.comboClinic.Location = new System.Drawing.Point(63, 46);
 			this.comboClinic.Name = "comboClinic";
-			this.comboClinic.Size = new System.Drawing.Size(301, 21);
+			this.comboClinic.Size = new System.Drawing.Size(211, 21);
 			this.comboClinic.TabIndex = 2;
 			// 
 			// comboFeeSched
 			// 
-			this.comboFeeSched.Location = new System.Drawing.Point(88, 20);
+			this.comboFeeSched.Location = new System.Drawing.Point(100, 19);
 			this.comboFeeSched.Name = "comboFeeSched";
-			this.comboFeeSched.Size = new System.Drawing.Size(264, 21);
+			this.comboFeeSched.Size = new System.Drawing.Size(174, 21);
 			this.comboFeeSched.TabIndex = 0;
 			this.comboFeeSched.SelectionChangeCommitted += new System.EventHandler(this.comboFeeCombos_SelectionChangeCommitted);
 			// 
 			// butPickProv
 			// 
-			this.butPickProv.Location = new System.Drawing.Point(358, 73);
+			this.butPickProv.Location = new System.Drawing.Point(279, 72);
 			this.butPickProv.Name = "butPickProv";
 			this.butPickProv.Size = new System.Drawing.Size(23, 21);
 			this.butPickProv.TabIndex = 5;
@@ -173,7 +174,7 @@ namespace OpenDental {
 			// 
 			// label12
 			// 
-			this.label12.Location = new System.Drawing.Point(3, 20);
+			this.label12.Location = new System.Drawing.Point(14, 20);
 			this.label12.Name = "label12";
 			this.label12.Size = new System.Drawing.Size(87, 17);
 			this.label12.TabIndex = 35;
@@ -182,7 +183,7 @@ namespace OpenDental {
 			// 
 			// butPickGroup
 			// 
-			this.butPickGroup.Location = new System.Drawing.Point(358, 47);
+			this.butPickGroup.Location = new System.Drawing.Point(279, 46);
 			this.butPickGroup.Name = "butPickGroup";
 			this.butPickGroup.Size = new System.Drawing.Size(23, 21);
 			this.butPickGroup.TabIndex = 3;
@@ -192,7 +193,7 @@ namespace OpenDental {
 			// 
 			// butPickSched
 			// 
-			this.butPickSched.Location = new System.Drawing.Point(358, 20);
+			this.butPickSched.Location = new System.Drawing.Point(279, 19);
 			this.butPickSched.Name = "butPickSched";
 			this.butPickSched.Size = new System.Drawing.Size(23, 21);
 			this.butPickSched.TabIndex = 1;
@@ -201,18 +202,18 @@ namespace OpenDental {
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(22, 75);
+			this.label8.Location = new System.Drawing.Point(11, 73);
 			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(65, 17);
+			this.label8.Size = new System.Drawing.Size(90, 17);
 			this.label8.TabIndex = 33;
 			this.label8.Text = "Provider";
 			this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// labelGroup
 			// 
-			this.labelGroup.Location = new System.Drawing.Point(48, 47);
+			this.labelGroup.Location = new System.Drawing.Point(9, 47);
 			this.labelGroup.Name = "labelGroup";
-			this.labelGroup.Size = new System.Drawing.Size(36, 17);
+			this.labelGroup.Size = new System.Drawing.Size(90, 17);
 			this.labelGroup.TabIndex = 34;
 			this.labelGroup.Text = "Group";
 			this.labelGroup.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -225,7 +226,7 @@ namespace OpenDental {
 			this.groupGlobalUpdateFees.Controls.Add(this.comboGlobalUpdateClinics);
 			this.groupGlobalUpdateFees.Controls.Add(this.label4);
 			this.groupGlobalUpdateFees.Controls.Add(this.butUpdate);
-			this.groupGlobalUpdateFees.Location = new System.Drawing.Point(413, 209);
+			this.groupGlobalUpdateFees.Location = new System.Drawing.Point(368, 209);
 			this.groupGlobalUpdateFees.Name = "groupGlobalUpdateFees";
 			this.groupGlobalUpdateFees.Size = new System.Drawing.Size(248, 230);
 			this.groupGlobalUpdateFees.TabIndex = 5;
@@ -236,7 +237,7 @@ namespace OpenDental {
 			// 
 			this.label9.Location = new System.Drawing.Point(6, 114);
 			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(239, 77);
+			this.label9.Size = new System.Drawing.Size(208, 77);
 			this.label9.TabIndex = 6;
 			this.label9.Text = "Only for offices that run reports after updating fee schedules and before selecti" +
     "ng patients. Recalculates treatment planned estimates, write-offs, ortho cases, " +
@@ -256,9 +257,9 @@ namespace OpenDental {
 			// 
 			this.comboGlobalUpdateClinics.IncludeAll = true;
 			this.comboGlobalUpdateClinics.IncludeUnassigned = true;
-			this.comboGlobalUpdateClinics.IsMultiSelect = true;
 			this.comboGlobalUpdateClinics.Location = new System.Drawing.Point(6, 26);
 			this.comboGlobalUpdateClinics.Name = "comboGlobalUpdateClinics";
+			this.comboGlobalUpdateClinics.SelectionModeMulti = true;
 			this.comboGlobalUpdateClinics.Size = new System.Drawing.Size(231, 21);
 			this.comboGlobalUpdateClinics.TabIndex = 0;
 			// 
@@ -294,7 +295,7 @@ namespace OpenDental {
 			// 
 			// butImportCanada
 			// 
-			this.butImportCanada.Location = new System.Drawing.Point(88, 51);
+			this.butImportCanada.Location = new System.Drawing.Point(87, 51);
 			this.butImportCanada.Name = "butImportCanada";
 			this.butImportCanada.Size = new System.Drawing.Size(84, 24);
 			this.butImportCanada.TabIndex = 2;
@@ -303,7 +304,7 @@ namespace OpenDental {
 			// 
 			// butImport
 			// 
-			this.butImport.Location = new System.Drawing.Point(88, 21);
+			this.butImport.Location = new System.Drawing.Point(87, 21);
 			this.butImport.Name = "butImport";
 			this.butImport.Size = new System.Drawing.Size(84, 24);
 			this.butImport.TabIndex = 1;
@@ -327,7 +328,7 @@ namespace OpenDental {
 			this.groupBox3.Controls.Add(this.butIncrease);
 			this.groupBox3.Controls.Add(this.textPercent);
 			this.groupBox3.Controls.Add(this.label2);
-			this.groupBox3.Location = new System.Drawing.Point(413, 32);
+			this.groupBox3.Location = new System.Drawing.Point(368, 32);
 			this.groupBox3.Name = "groupBox3";
 			this.groupBox3.Size = new System.Drawing.Size(248, 167);
 			this.groupBox3.TabIndex = 2;
@@ -458,14 +459,14 @@ namespace OpenDental {
 			this.groupBox1.Controls.Add(this.label1);
 			this.groupBox1.Location = new System.Drawing.Point(12, 149);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(391, 141);
+			this.groupBox1.Size = new System.Drawing.Size(328, 141);
 			this.groupBox1.TabIndex = 1;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Copy To";
 			// 
 			// butPickGroupTo
 			// 
-			this.butPickGroupTo.Location = new System.Drawing.Point(358, 46);
+			this.butPickGroupTo.Location = new System.Drawing.Point(279, 45);
 			this.butPickGroupTo.Name = "butPickGroupTo";
 			this.butPickGroupTo.Size = new System.Drawing.Size(23, 21);
 			this.butPickGroupTo.TabIndex = 43;
@@ -475,9 +476,9 @@ namespace OpenDental {
 			// 
 			// labelGroupTo
 			// 
-			this.labelGroupTo.Location = new System.Drawing.Point(31, 46);
+			this.labelGroupTo.Location = new System.Drawing.Point(9, 47);
 			this.labelGroupTo.Name = "labelGroupTo";
-			this.labelGroupTo.Size = new System.Drawing.Size(56, 17);
+			this.labelGroupTo.Size = new System.Drawing.Size(90, 17);
 			this.labelGroupTo.TabIndex = 42;
 			this.labelGroupTo.Text = "Group";
 			this.labelGroupTo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -493,31 +494,31 @@ namespace OpenDental {
 			// 
 			// comboProviderTo
 			// 
-			this.comboProviderTo.Location = new System.Drawing.Point(88, 73);
+			this.comboProviderTo.Location = new System.Drawing.Point(100, 71);
 			this.comboProviderTo.Name = "comboProviderTo";
-			this.comboProviderTo.Size = new System.Drawing.Size(264, 21);
+			this.comboProviderTo.Size = new System.Drawing.Size(173, 21);
 			this.comboProviderTo.TabIndex = 4;
 			// 
 			// comboFeeSchedTo
 			// 
-			this.comboFeeSchedTo.Location = new System.Drawing.Point(88, 20);
+			this.comboFeeSchedTo.Location = new System.Drawing.Point(100, 19);
 			this.comboFeeSchedTo.Name = "comboFeeSchedTo";
-			this.comboFeeSchedTo.Size = new System.Drawing.Size(264, 21);
+			this.comboFeeSchedTo.Size = new System.Drawing.Size(173, 21);
 			this.comboFeeSchedTo.TabIndex = 0;
 			this.comboFeeSchedTo.SelectionChangeCommitted += new System.EventHandler(this.comboFeeCombos_SelectionChangeCommitted);
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(25, 75);
+			this.label7.Location = new System.Drawing.Point(26, 74);
 			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(62, 16);
+			this.label7.Size = new System.Drawing.Size(75, 16);
 			this.label7.TabIndex = 39;
 			this.label7.Text = "Provider";
 			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// butPickProvTo
 			// 
-			this.butPickProvTo.Location = new System.Drawing.Point(358, 72);
+			this.butPickProvTo.Location = new System.Drawing.Point(279, 71);
 			this.butPickProvTo.Name = "butPickProvTo";
 			this.butPickProvTo.Size = new System.Drawing.Size(23, 21);
 			this.butPickProvTo.TabIndex = 5;
@@ -526,7 +527,7 @@ namespace OpenDental {
 			// 
 			// butPickSchedTo
 			// 
-			this.butPickSchedTo.Location = new System.Drawing.Point(358, 20);
+			this.butPickSchedTo.Location = new System.Drawing.Point(279, 19);
 			this.butPickSchedTo.Name = "butPickSchedTo";
 			this.butPickSchedTo.Size = new System.Drawing.Size(23, 21);
 			this.butPickSchedTo.TabIndex = 1;
@@ -535,7 +536,7 @@ namespace OpenDental {
 			// 
 			// butCopy
 			// 
-			this.butCopy.Location = new System.Drawing.Point(88, 100);
+			this.butCopy.Location = new System.Drawing.Point(100, 106);
 			this.butCopy.Name = "butCopy";
 			this.butCopy.Size = new System.Drawing.Size(75, 24);
 			this.butCopy.TabIndex = 6;
@@ -544,16 +545,26 @@ namespace OpenDental {
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(2, 20);
+			this.label1.Location = new System.Drawing.Point(18, 21);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(88, 16);
+			this.label1.Size = new System.Drawing.Size(83, 16);
 			this.label1.TabIndex = 3;
 			this.label1.Text = "Fee Schedule";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(567, 455);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 7;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormFeeSchedTools
 			// 
-			this.ClientSize = new System.Drawing.Size(675, 485);
+			this.ClientSize = new System.Drawing.Size(654, 491);
 			this.Controls.Add(this.checkShowGroups);
 			this.Controls.Add(this.groupBox7);
 			this.Controls.Add(this.groupGlobalUpdateFees);
@@ -561,6 +572,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -584,6 +596,7 @@ namespace OpenDental {
 		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.Button butCopy;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.ComboBox comboFeeSchedTo;
 		private OpenDental.UI.GroupBox groupBox2;
 		private OpenDental.UI.Button butClear;

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UnitTestsCore</RootNamespace>
     <AssemblyName>UnitTestsCore</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -99,22 +99,13 @@
     <Compile Include="TableTypes\CalendarIcsInfoT.cs" />
     <Compile Include="TableTypes\CdcrecT.cs" />
     <Compile Include="TableTypes\CentralManagerT.cs" />
-    <Compile Include="TableTypes\ClaimPaymentT.cs" />
-    <Compile Include="TableTypes\ClaimTrackingT.cs" />
     <Compile Include="TableTypes\CodeGroupT.cs" />
-    <Compile Include="TableTypes\CovCatT.cs" />
     <Compile Include="TableTypes\DisplayFieldT.cs" />
-    <Compile Include="TableTypes\DocumentT.cs" />
-    <Compile Include="TableTypes\EhrPatient.cs" />
     <Compile Include="TableTypes\EmployerT.cs" />
     <Compile Include="TableTypes\EClipboardImageCaptureDefT.cs" />
     <Compile Include="TableTypes\EClipboardImageCaptureT.cs" />
-    <Compile Include="TableTypes\EobAttachT.cs" />
     <Compile Include="TableTypes\GroupPermissionT.cs" />
     <Compile Include="TableTypes\HistAppointmentT.cs" />
-    <Compile Include="TableTypes\LabCaseT.cs" />
-    <Compile Include="TableTypes\LaboratoryT.cs" />
-    <Compile Include="TableTypes\MobileNotificationT.cs" />
     <Compile Include="TableTypes\OrthoChartRowT.cs" />
     <Compile Include="TableTypes\OrthoChartT.cs" />
     <Compile Include="TableTypes\PatFieldDefT.cs" />
@@ -183,7 +174,6 @@
     <Compile Include="TableTypes\DiscountPlanT.cs" />
     <Compile Include="TableTypes\PayPlanChargeT.cs" />
     <Compile Include="TableTypes\PayPlanLinkT.cs" />
-    <Compile Include="TableTypes\PlannedApptT.cs" />
     <Compile Include="TableTypes\PopupT.cs" />
     <Compile Include="TableTypes\ProcButtonItemT.cs" />
     <Compile Include="TableTypes\ProcButtonT.cs" />
@@ -199,14 +189,11 @@
     <Compile Include="TableTypes\RecallTriggerT.cs" />
     <Compile Include="TableTypes\RefAttachT.cs" />
     <Compile Include="TableTypes\ReferralT.cs" />
-    <Compile Include="TableTypes\ResellerServiceT.cs" />
     <Compile Include="TableTypes\ResellerT.cs" />
     <Compile Include="TableTypes\RegistrationKeyT.cs" />
     <Compile Include="TableTypes\RepeatChargeT.cs" />
     <Compile Include="TableTypes\PharmacyT.cs" />
     <Compile Include="TableTypes\RxNormT.cs" />
-    <Compile Include="TableTypes\RxPatT.cs" />
-    <Compile Include="TableTypes\SecurityLogT.cs" />
     <Compile Include="TableTypes\SessionTokenT.cs" />
     <Compile Include="TableTypes\SiteT.cs" />
     <Compile Include="TableTypes\SiteLinkT.cs" />
@@ -219,8 +206,6 @@
     <Compile Include="TableTypes\ApiSubscriptionT.cs" />
     <Compile Include="TableTypes\TaskAncestorT.cs" />
     <Compile Include="TableTypes\TaskUnreadT.cs" />
-    <Compile Include="TableTypes\TimeAdjustT.cs" />
-    <Compile Include="TableTypes\MsgToPaySentT.cs" />
     <Compile Include="TableTypes\ToothInitialT.cs" />
     <Compile Include="TableTypes\TreatPlanT.cs" />
     <Compile Include="TableTypes\UserGroupT.cs" />

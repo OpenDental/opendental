@@ -20,12 +20,10 @@ namespace OpenDental {
 		public FrmOrthoChartAddDate() {
 			InitializeComponent();
 			DateSelected=new DateTime();
-			Load+=FrmOrthoChartAddDate_Load;
-			PreviewKeyDown+=FrmOrthoChartAddDate_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmOrthoChartAddDate_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmOrthoChartAddDate_Loaded(object sender,RoutedEventArgs e) {
 			comboProv.Items.AddProvNone();
 			comboProv.Items.AddProvsAbbr(Providers.GetProvsForClinic(Clinics.ClinicNum));
 			comboProv.SetSelected(0);
@@ -39,12 +37,6 @@ namespace OpenDental {
 			textDate.Text=DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString();
 		}
 
-		private void FrmOrthoChartAddDate_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
-		}
-
 		private void butSave_Click(object sender,EventArgs e) {
 			if(!DateTime.TryParse(textDate.Text,out DateSelected)) {
 				MsgBox.Show(this,"Please fix date entry.");
@@ -53,6 +45,5 @@ namespace OpenDental {
 			ProvNumSelected=comboProv.GetSelectedProvNum();
 			IsDialogOK=true;
 		}
-
 	}
 }

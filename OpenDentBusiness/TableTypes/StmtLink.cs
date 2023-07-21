@@ -33,8 +33,6 @@ namespace OpenDentBusiness {
 		///<summary>4 - Pay plan charge</summary>
 		PayPlanCharge,
 		/// <summary>5 - Patient </summary>
-		PatNum,
-		///<summary>6 - MsgToPaySent </summary>
-		MsgToPaySent
+		PatNum
 	}
 }

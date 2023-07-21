@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="356" Height="145" 
-             Text="Select Grid Type" >
+             Text="Select Grid Type" Loaded="FrmSheetFieldGridType_Loaded" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butOK" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="_OK" Click="butOK_Click" />
 		<ui:ComboBox x:Name="comboGridType" Width="196" Height="21" Margin="119,51,0,0" />

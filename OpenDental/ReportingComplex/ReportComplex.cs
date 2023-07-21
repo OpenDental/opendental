@@ -158,7 +158,7 @@ namespace OpenDental.ReportingComplex {
 
 		///<summary>Adds a ReportObject with the given font, to the top-center of the Report Header Section.  Should only be done once, and done before any subTitles.</summary>
 		public void AddTitle(string name,string title,Font font){
-			ODEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Adding Title To Report")+"...");
+			ReportComplexEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Adding Title To Report")+"...");
 			SizeF sizeF=_grfx.MeasureString(title,font);
 			Size size=new Size((int)(sizeF.Width/_grfx.DpiX*100+2),(int)(sizeF.Height/_grfx.DpiY*100));
 			int xPos;
@@ -202,7 +202,7 @@ namespace OpenDental.ReportingComplex {
 		///<summary>Adds a ReportObject with the given font, at the bottom-center of the Report Header Section.
 		///Should only be done after AddTitle.  You can add as many subtitles as you want.  Padding is added to the height only of the subtitle.</summary>
 		public void AddSubTitle(string name,string subTitle,Font font,int padding) {
-			ODEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Adding SubTitle To Report")+"...");
+			ReportComplexEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Adding SubTitle To Report")+"...");
 			SizeF sizeF=_grfx.MeasureString(subTitle,font);
 			Size size=new Size((int)(sizeF.Width/_grfx.DpiX*100+2),(int)(sizeF.Height/_grfx.DpiY*100));
 			int xPos;
@@ -456,7 +456,7 @@ namespace OpenDental.ReportingComplex {
 				if(_reportObjects[i].ObjectType==ReportObjectType.QueryObject) {
 					QueryObject query=(QueryObject)_reportObjects[i];
 					bool wasSubmitted=false;
-					ProgressWin progressOD=new ProgressWin();
+					ProgressOD progressOD=new ProgressOD();
 					if(query.IsQueryStringNullOrEmpty) {
 						wasSubmitted=query.SubmitQuery();
 					}
@@ -464,7 +464,7 @@ namespace OpenDental.ReportingComplex {
 						progressOD.ActionMain=() => { 
 							wasSubmitted=query.SubmitQuery();
 						};
-						progressOD.ShowDialog();
+						progressOD.ShowDialogProgress();
 					}
 					if(!wasSubmitted) {
 						MsgBox.Show(this,"There was an error generating this report."
@@ -481,7 +481,7 @@ namespace OpenDental.ReportingComplex {
 					TotalRows+=query.ReportTable.Rows.Count;
 					//Check if the query needs to be split up into sub queries.  E.g. one payment report query split up via payment type.
 					if(!String.IsNullOrWhiteSpace(query.ColumnNameToSplitOn)) { 
-						ODEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Creating Splits Based On")+" "+query.ColumnNameToSplitOn+"...");
+						ReportComplexEvent.Fire(ODEventType.ReportComplex,Lan.g("ReportComplex","Creating Splits Based On")+" "+query.ColumnNameToSplitOn+"...");
 						//The query needs to be split up into sub queries every time the ColumnNameToSplitOn cell changes.  
 						//Therefore, we need to create a separate QueryObject for every time the cell value changes.
 						string lastCellValue="";

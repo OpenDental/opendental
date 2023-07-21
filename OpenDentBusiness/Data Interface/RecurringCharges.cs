@@ -610,8 +610,8 @@ namespace OpenDentBusiness {
 			strBuilderResultText=new StringBuilder();
 			amount=0;
 			receipt=new StringBuilder();
-			if(ODEnvironment.IsCloudServer) {
-				MarkFailed(chargeData,Lans.g(_lanThis,"XCharge is not available while using Open Dental Cloud."),LogLevel.Error);
+			if(ODBuild.IsWeb()) {
+				MarkFailed(chargeData,Lans.g(_lanThis,"XCharge is not available while viewing through the web."),LogLevel.Error);
 				return false;
 			}
 			long clinicNumCur=0;
@@ -877,9 +877,6 @@ namespace OpenDentBusiness {
 				MarkFailed(chargeData,Lans.g(_lanThis,"Unable to find patient")+" "+chargeData.RecurringCharge.PatNum);
 				return;
 			}
-			if(chargeData.PayConnectTokenExp==DateTime.MinValue) {
-				chargeData.PayConnectTokenExp=chargeData.CCExpiration;
-			}
 			DateTime exp=chargeData.PayConnectTokenExp;
 			if(tokenOrCCMasked=="") {
 				isPayConnectToken=false;
@@ -923,7 +920,6 @@ namespace OpenDentBusiness {
 				chargeData.RecurringCharge.ChargeStatus=RecurringChargeStatus.ChargeSuccessful;
 				Success++;
 				CreditCard ccCur=CreditCards.GetOne(chargeData.RecurringCharge.CreditCardNum);
-				ccCur.PayConnectTokenExp=chargeData.CCExpiration;
 				UpdateCreditCardPayConnect(ccCur,payConnectResponse);
 				//add to strbuilder that will be written to txt file and to the payment note
 				if(PrefC.HasClinicsEnabled && dictClinicNumDesc.ContainsKey(clinicNumCur)) {
@@ -999,12 +995,7 @@ namespace OpenDentBusiness {
 					errorMessage="Validation error";
 				}
 				else {
-					try {
-						errorMessage=((PayConnect2.ResponseError)response.ErrorResponse.Error).ToString();
-					}
-					catch (Exception e) { 
-						errorMessage="Error returned from PayConnect: unable to parse error message";
-					}
+					errorMessage=((PayConnect2.ResponseError)response.ErrorResponse.Error).ToString();
 				}
 				MarkDeclined(chargeData,errorMessage);
 			}
@@ -1078,7 +1069,7 @@ namespace OpenDentBusiness {
 			strBuilderResultFile.AppendLine("Recurring charge results for "+DateTime.Now.ToShortDateString()+" ran at "+DateTime.Now.ToShortTimeString());
 			strBuilderResultFile.AppendLine();
 			string paySimpleAccountId=chargeData.PaySimpleToken;
-			int tokenCount=CreditCards.GetPaySimpleTokenCount(paySimpleAccountId,chargeData.CCSource==CreditCardSource.PaySimpleACH || chargeData.CCSource==CreditCardSource.PaySimplePaymentPortalACH);
+			int tokenCount=CreditCards.GetPaySimpleTokenCount(paySimpleAccountId,chargeData.CCSource==CreditCardSource.PaySimpleACH);
 			if(string.IsNullOrWhiteSpace(paySimpleAccountId) || tokenCount!=1) {
 				string msg=(tokenCount>1)?"A duplicate token was found":"A token was not found";
 				MarkFailed(chargeData,Lans.g(_lanThis,msg+", the card cannot be charged."));
@@ -1133,7 +1124,7 @@ namespace OpenDentBusiness {
 				}
 				strBuilderResultText.AppendLine(response.ToNoteString(clinicDesc,"Manual",Security.CurUser.UserName,expStr,"PaySimple Token"));
 				resultAmt=(double)response.Amount;
-				response.BuildReceiptString(ccCur.CCNumberMasked,ccExpMonth,ccExpYear,"",clinicNumCur,isACH: ccCur.IsPaySimpleACH());
+				response.BuildReceiptString(ccCur.CCNumberMasked,ccExpMonth,ccExpYear,"",clinicNumCur,isACH: ccCur.CCSource==CreditCardSource.PaySimpleACH);
 				receipt=response.TransactionReceipt;
 			}
 			catch(Exception ex) {
@@ -1224,10 +1215,10 @@ namespace OpenDentBusiness {
 				//Test if the user can create a payment with the new pay date.
 				bool isBeforeLockDate;
 				if(Security.CurUser.UserNum > 0) {
-					isBeforeLockDate=(!Security.IsAuthorized(EnumPermType.PaymentCreate,newPayDate,true));
+					isBeforeLockDate=(!Security.IsAuthorized(Permissions.PaymentCreate,newPayDate,true));
 				}
 				else {
-					isBeforeLockDate=Security.IsGlobalDateLock(EnumPermType.PaymentCreate,newPayDate,true);
+					isBeforeLockDate=Security.IsGlobalDateLock(Permissions.PaymentCreate,newPayDate,true);
 				}
 				if(isBeforeLockDate) {
 					if(warnings.Count==0) {
@@ -1271,13 +1262,13 @@ namespace OpenDentBusiness {
 			if(ccSource==CreditCardSource.PaySimple) {
 				ppPayTypeDesc=PaySimple.PropertyDescs.PaySimplePayTypeCC;
 			}
-			else if(ccSource==CreditCardSource.PaySimpleACH || ccSource==CreditCardSource.PaySimplePaymentPortalACH) {
+			else if(ccSource==CreditCardSource.PaySimpleACH) {
 				ppPayTypeDesc=PaySimple.PropertyDescs.PaySimplePayTypeACH;
 			}
 			else if(ccSource==CreditCardSource.EdgeExpressCNP || ccSource==CreditCardSource.EdgeExpressRCM) {
 				ppPayTypeDesc=EdgeExpressProps.PaymentType;
 			}
-			if(ccSource!=CreditCardSource.PaySimpleACH && ccSource!=CreditCardSource.PaySimplePaymentPortalACH) {
+			if(ccSource!=CreditCardSource.PaySimpleACH) {
 				paymentCur.PayType=PrefC.GetLong(PrefName.RecurringChargesPayTypeCC);
 			}
 			if(paymentCur.PayType==0) {//Pref default not set or this is ACH
@@ -1299,7 +1290,7 @@ namespace OpenDentBusiness {
 			paymentCur.Receipt=receipt;
 			paymentCur.MerchantFee=merchantFee;
 			Payments.Insert(paymentCur);
-			SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,paymentCur.PatNum,patCur.GetNameLF()+", "
+			SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,paymentCur.PatNum,patCur.GetNameLF()+", "
 				+paymentCur.PayAmt.ToString("c")+", "+Lans.g(_lanThis,"created from the Recurring Charges List"));
 			recCharge.RecurringCharge.PayNum=paymentCur.PayNum;
 			if(xWebResponseNum>0) {
@@ -1356,7 +1347,6 @@ namespace OpenDentBusiness {
 					Payments.Update(paymentCur,oldPayment);
 				}
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
 			return listPaySplits;
 		}
 
@@ -1419,7 +1409,6 @@ namespace OpenDentBusiness {
 				}
 				listPaySplits.Add(split);
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
 			return listPaySplits;
 		}
 

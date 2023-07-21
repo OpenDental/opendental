@@ -1,4 +1,4 @@
-/*Any changes to this file should be also done in the SecurityHashingTool solution, including changing DateStart.*/
+﻿/*Any changes to this file should be also done in the SecurityHashingTool solution, including changing DateStart.*/
 using CodeBase;
 using System;
 using System.Collections.Generic;
@@ -11,25 +11,20 @@ using System.Threading.Tasks;
 namespace OpenDentBusiness.Misc {
 	public class SecurityHash {
 		///<summary>The date Open Dental started hashing fields into paysplit.SecurityHash. Used to determine if hashing is required. </summary>
-		public static DateTime DateStart=new DateTime(2024,8,11);
+		public static DateTime DateStart=new DateTime(2023,4,24);
 		///<summary>Only set to false for standalone hashing tool. </summary>
 		public static bool IsThreaded=true;
 		private static bool _arePaySplitsUpdated=false;
 		private static bool _areAppointmentsUpdated=false;
 		private static bool _arePatientsUpdated=false;
 		private static bool _arePayPlansUpdated=false;
-		private static bool _areClaimsUpdated=false;
-		private static bool _areClaimProcsUpdated=false;
 
-		///<summary>This method is NOT safe to invoke during database conversions. It is only to be called AFTER all conversions have taken place in order to avoid a rare table lockup. 
-		///Runs a hashing algorithm over all tables for which Open Dental is enforcing database integrity. Overwrites any existing SecurityHashes with new ones for recent entries. </summary>
+		///<summary>This method is allowed anywhere in the ConvertDatabase scripts.  It's specially written to never crash. It does not affect the schema. It can be called multiple times during a conversion and will only run once.  Updates the SecurityHash fields of all tables for which Open Dental is enforcing database integrity. First clears out all existing SecurityHashes, then creates new ones for recent entries. </summary>
 		public static void UpdateHashing() {
 			RunPaysplit();
 			RunAppointment();
 			RunPatient();
 			RunPayPlan();
-			RunClaim();
-			RunClaimProc();
 			string updating="Updating database.";
 			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
 		}
@@ -37,16 +32,6 @@ namespace OpenDentBusiness.Misc {
 		///<summary>Only used one time during a conversion script. Sets the _arePatientsUpdate boolean to false. Allows the hashing logic to run on the patient table a subsequent time during a convert script update. </summary>
 		public static void ResetPatientHashing() {
 			_arePatientsUpdated=false;
-		}
-
-		///<summary>Returns either SecurityHash.DateStart or the date from a month prior to today, whichever is more recent.</summary>
-		public static DateTime GetHashingDate() {
-			DateTime dateLastMonth=DateTime.Now.Date.AddMonths(-1);
-			DateTime dateStartHashing=DateStart;
-			if(dateLastMonth>DateStart) {
-				dateStartHashing=dateLastMonth;
-			}
-			return dateStartHashing;
 		}
 
 		private static void RunPaysplit() {
@@ -80,9 +65,8 @@ namespace OpenDentBusiness.Misc {
 		}
 
 		private static void PaysplitWorker() {
-			DateTime dateStartHashing=GetHashingDate();
 			//Hash entries made after new date
-			string command="SELECT SplitNum, PatNum, SplitAmt, DatePay, SecurityHash FROM paysplit WHERE DatePay >= "+POut.Date(dateStartHashing);
+			string command="SELECT SplitNum, PatNum, SplitAmt, DatePay, SecurityHash FROM paysplit WHERE DatePay >= "+POut.Date(DateStart);
 			DataTable table=Db.GetTable(command);
 			long splitNum;
 			string unhashedText="";
@@ -124,9 +108,8 @@ namespace OpenDentBusiness.Misc {
 			}
 			string updating="Hashing appointments.";
 			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
-			DateTime dateStartHashing=GetHashingDate();
 			//Hash entries made after new date
-			string command="SELECT AptNum, AptStatus, Confirmed, AptDateTime, SecurityHash FROM appointment WHERE AptDateTime>= "+POut.Date(dateStartHashing);
+			string command="SELECT AptNum, AptStatus, Confirmed, AptDateTime, SecurityHash FROM appointment WHERE AptDateTime>= "+POut.Date(DateStart);
 			DataTable table=Db.GetTable(command);
 			long aptNum;
 			string unhashedText="";
@@ -155,6 +138,7 @@ namespace OpenDentBusiness.Misc {
 			_areAppointmentsUpdated=true;
 		}
 
+		///<summary>Hashes ALL patients with an empty SecurityHash field. Does not use the DateStart like other table hashing methods. </summary>
 		private static void RunPatient() {
 			if(_arePatientsUpdated) {
 				return;
@@ -181,9 +165,11 @@ namespace OpenDentBusiness.Misc {
 		}
 
 		private static void PatientWorker() {
-			//Hash entries made after new date
-			string command="SELECT PatNum FROM patient WHERE SecurityHash = ''";
+			//Get all ALL unhashed patients and any with duplicate SecurityHash values
+			string command="SELECT PatNum FROM patient LEFT JOIN (SELECT SecurityHash FROM patient GROUP BY SecurityHash HAVING COUNT(*)>1) "+
+				"patDup ON patDup.SecurityHash=patient.SecurityHash WHERE patient.SecurityHash='' OR patDup.SecurityHash IS NOT NULL";
 			DataTable table=Db.GetTable(command);
+			//Do not clear current hashes
 			long patNum;
 			string unhashedText="";
 			string hashedText="";
@@ -191,12 +177,13 @@ namespace OpenDentBusiness.Misc {
 				patNum=PIn.Long(table.Rows[i]["PatNum"].ToString());
 				unhashedText=patNum.ToString();
 				try {
-					hashedText=CDT.Class1.CreateSaltedHash(unhashedText,isStatic:true);
+					hashedText=CDT.Class1.CreateSaltedHash(unhashedText);
 				}
 				catch(Exception ex) {
 					ex.DoNothing();
 					hashedText=ex.GetType().Name;
 				}
+				//This loop takes 7 minutes for 1M patients when run locally, but it's taking too long for customers.
 				command=$@"UPDATE patient SET SecurityHash='{POut.String(hashedText)}' WHERE PatNum={POut.Long(patNum)}";
 				Db.NonQ(command);
 			}
@@ -220,9 +207,8 @@ namespace OpenDentBusiness.Misc {
 			//Clear old hashes
 			string command="UPDATE payplan SET SecurityHash=''";
 			Db.NonQ(command);
-			DateTime dateStartHashing=GetHashingDate();
 			//Hash entries made after new date
-			command="SELECT * FROM payplan WHERE PayPlanDate>= "+POut.Date(dateStartHashing);
+			command="SELECT * FROM payplan WHERE PayPlanDate>= "+POut.Date(DateStart);
 			DataTable table=Db.GetTable(command);
 			long payPlanNum;
 			string unhashedText="";
@@ -245,113 +231,6 @@ namespace OpenDentBusiness.Misc {
 				Db.NonQ(command);
 			}
 			_arePayPlansUpdated=true;
-		}
-
-		private static void RunClaim() {
-			if(_areClaimsUpdated) {
-				return;
-			}
-			//Check if columns are present
-			if(!LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claim","SecurityHash")
-			  || !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claim","ClaimFee")
-				|| !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claim","ClaimStatus")
-				|| !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claim","InsPayEst")
-				|| !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claim","InsPayAmt"))
-			{
-				return;
-			}
-			string updating="Hashing claims.";
-			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
-			DateTime dateStartHashing=GetHashingDate();
-			//Hash entries made after new date
-			string command="SELECT ClaimNum, ClaimFee, ClaimStatus, InsPayEst, InsPayAmt, SecurityHash FROM claim WHERE DateService >= "+POut.Date(dateStartHashing);
-			DataTable table=Db.GetTable(command);
-			long claimNum;
-			string unhashedText="";
-			string hashedText="";
-			string hashedTextOld="";
-			for(int i=0;i<table.Rows.Count;i++) {
-				unhashedText="";
-				claimNum=PIn.Long(table.Rows[i]["ClaimNum"].ToString());
-				hashedTextOld=PIn.String(table.Rows[i]["SecurityHash"].ToString());
-				unhashedText+=PIn.Double(table.Rows[i]["ClaimFee"].ToString()).ToString("F2");
-				unhashedText+=PIn.String(table.Rows[i]["ClaimStatus"].ToString());
-				unhashedText+=PIn.Double(table.Rows[i]["InsPayEst"].ToString()).ToString("F2");
-				unhashedText+=PIn.Double(table.Rows[i]["InsPayAmt"].ToString()).ToString("F2");
-				try {
-					hashedText=CDT.Class1.CreateSaltedHash(unhashedText);
-				}
-				catch(Exception ex) {
-					ex.DoNothing();
-					hashedText=ex.GetType().Name;
-				}
-				if(hashedTextOld!=hashedText) { //Only update SecurityHash if it's different.
-					command=$@"UPDATE claim SET SecurityHash='{POut.String(hashedText)}' WHERE ClaimNum={POut.Long(claimNum)}";
-					Db.NonQ(command);
-				}
-			}
-			_areClaimsUpdated=true;
-		}
-
-		private static void RunClaimProc() {
-			if(_areClaimProcsUpdated) {
-				return;
-			}
-			//Check if columns are present
-			if(!LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claimproc","SecurityHash")
-			  || !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claimproc","ClaimNum")
-				|| !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claimproc","Status")
-				|| !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claimproc","InsPayEst")
-				|| !LargeTableHelper.ColumnExists(LargeTableHelper.GetCurrentDatabase(),"claimproc","InsPayAmt"))
-			{
-				return;
-			}
-			string updating="Hashing claimprocs.";
-			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
-			//Threading because it can take too long and it doesn't matter if user starts working while it's still in progress.
-			//They might see integrity triangles until this completes.
-			//If they shut down before it completes, then those won't be fixed until the next time they run the hashing (their next update).
-			_areClaimProcsUpdated=true;
-			if(IsThreaded){
-				ThreadStart threadStart=new ThreadStart(ClaimProcWorker);
-				Thread thread=new Thread(threadStart);
-				thread.IsBackground=true;
-				thread.Start();
-			}
-			else{
-				ClaimProcWorker();
-			}
-		}
-
-		private static void ClaimProcWorker() {
-			DateTime dateStartHashing=GetHashingDate();
-			//Hash entries made after new date
-			string command="SELECT ClaimProcNum, ClaimNum, Status, InsPayEst, InsPayAmt, SecurityHash FROM claimproc WHERE SecDateEntry >= "+POut.Date(dateStartHashing);
-			DataTable table=Db.GetTable(command);
-			long claimProcNum;
-			string unhashedText="";
-			string hashedText="";
-			string hashedTextOld="";
-			for(int i=0;i<table.Rows.Count;i++) {
-				unhashedText="";
-				claimProcNum=PIn.Long(table.Rows[i]["ClaimProcNum"].ToString());
-				hashedTextOld=PIn.String(table.Rows[i]["SecurityHash"].ToString());
-				unhashedText+=PIn.Long(table.Rows[i]["ClaimNum"].ToString());
-				unhashedText+=PIn.Int(table.Rows[i]["Status"].ToString());
-				unhashedText+=PIn.Double(table.Rows[i]["InsPayEst"].ToString()).ToString("F2");
-				unhashedText+=PIn.Double(table.Rows[i]["InsPayAmt"].ToString()).ToString("F2");
-				try {
-					hashedText=CDT.Class1.CreateSaltedHash(unhashedText);
-				}
-				catch(Exception ex) {
-					ex.DoNothing();
-					hashedText=ex.GetType().Name;
-				}
-				if(hashedTextOld!=hashedText) { //Only update SecurityHash if it's different.
-					command=$@"UPDATE claimproc SET SecurityHash='{POut.String(hashedText)}' WHERE ClaimProcNum={POut.Long(claimProcNum)}";
-					Db.NonQ(command);
-				}
-			}
 		}
 
 	}

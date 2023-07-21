@@ -67,20 +67,6 @@ namespace OpenDentBusiness {
 			return Db.GetList(command,Crud.ProcedureCrud.RowToObj);
 		}
 
-		///<summary>Gets a list of distinct PatNums who have at least one completed procedure.</summary>
-		public static List<long> GetAllPatNumsWithCompletedProcs(List<long> listPatNums) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<long>>(MethodBase.GetCurrentMethod(),listPatNums);
-			}
-			if(listPatNums.IsNullOrEmpty()) {
-				return new List<long>();
-			}
-			string command="SELECT DISTINCT PatNum FROM procedurelog "
-				+"WHERE ProcStatus="+POut.Int((int)ProcStat.C)+" "
-				+"And PatNum IN"+" ("+String.Join(",",listPatNums)+")";
-			return Db.GetListLong(command);
-		}
-
 		public static List<Procedure> GetAllForPatsAndStatuses(List<long> listPatNums,params ProcStat[] arrayProcStats) {
 			if(listPatNums.IsNullOrEmpty() || arrayProcStats.IsNullOrEmpty()) {
 				return new List<Procedure>();
@@ -427,7 +413,7 @@ namespace OpenDentBusiness {
 				result[i].SigIsTopaz=PIn.Bool(table.Rows[0]["SigIsTopaz"].ToString());
 				result[i].Signature =PIn.String(table.Rows[0]["Signature"].ToString());
 			}
-			ProcedureLogic.SortProcedures(result);
+			ProcedureLogic.SortProcedures(ref result);
 			return result;
 		}
 
@@ -454,18 +440,6 @@ namespace OpenDentBusiness {
 				result[i].Signature =PIn.String(table.Rows[0]["Signature"].ToString());
 			}
 			return result;
-		}
-
-		/// <summary>Returns a list of Procedures attached to a given ClaimNum</summary>
-		public static List<Procedure> GetProcsForClaimNum(long claimNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Procedure>>(MethodBase.GetCurrentMethod(),claimNum);
-			}
-			string command="SELECT * FROM procedurelog " +
-				"INNER JOIN claimproc " +
-				"ON claimproc.ProcNum=procedurelog.ProcNum " +
-				"WHERE ClaimNum=" + claimNum.ToString();
-			return Crud.ProcedureCrud.SelectMany(command);
 		}
 
 		///<summary>Gets all procedures associated with corresponding claimprocs. Returns empty procedure list if an empty list was passed in.</summary>
@@ -616,39 +590,42 @@ namespace OpenDentBusiness {
 			return Crud.ProcedureCrud.SelectOne(command);
 		}
 
-		///<summary>Gets a list of all the procedures attached to the specified appointments.  Then, use GetProcsOneApt to pull procedures for one appointment from this list or GetProductionOneApt.  This process requires only one call to the database.  "myAptNums" is the list of appointments to get procedures for.</summary>
-		public static List<Procedure> GetProcsMultApts(List<long> listAptNums) {
-			if(listAptNums.IsNullOrEmpty()) {
+		///<summary>Gets a list of all the procedures attached to the specified appointments.  Then, use GetProcsOneApt to pull procedures for one appointment from this list or GetProductionOneApt.  This process requires only one call to the database.  "myAptNums" is the list of appointments to get procedures for.  isForNext gets procedures for a list of next appointments rather than regular appointments.</summary>
+		public static List<Procedure> GetProcsMultApts(List<long> myAptNums,bool isForPlanned=false) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Procedure>>(MethodBase.GetCurrentMethod(),myAptNums,isForPlanned);
+			}
+			if(myAptNums.Count==0) {
 				return new List<Procedure>();
 			}
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Procedure>>(MethodBase.GetCurrentMethod(),listAptNums);
-			}
 			string strAptNums="";
-			for(int i=0;i<listAptNums.Count;i++) {
+			for(int i=0;i<myAptNums.Count;i++) {
 				if(i>0) {
 					strAptNums+=" OR";
 				}
-				strAptNums+=" (AptNum="+POut.Long(listAptNums[i]);
-				strAptNums+=" OR PlannedAptNum="+POut.Long(listAptNums[i])+")";
+				if(isForPlanned) {
+					strAptNums+=" PlannedAptNum='"+POut.Long(myAptNums[i])+"'";
+				}
+				else {
+					strAptNums+=" AptNum='"+POut.Long(myAptNums[i])+"'";
+				}
 			}
 			string command = "SELECT * FROM procedurelog WHERE"+strAptNums;
 			return Crud.ProcedureCrud.SelectMany(command);
 		}
 
 		///<summary>Gets procedures for one appointment by looping through the procsMultApts which was filled previously from GetProcsMultApts.</summary>
-		public static List<Procedure> GetProcsOneApt(long myAptNum,List<Procedure> procsMultApts,bool isForPlanned=false) {
+		public static Procedure[] GetProcsOneApt(long myAptNum,List<Procedure> procsMultApts) {
 			//No need to check MiddleTierRole; no call to db.
-			List<Procedure> listProcedures=new List<Procedure>();
+			ArrayList al=new ArrayList();
 			for(int i=0;i<procsMultApts.Count;i++) {
-				if(isForPlanned && procsMultApts[i].PlannedAptNum==myAptNum) {//If proc is attached to this planned appt only
-					listProcedures.Add(procsMultApts[i].Copy());
-				}
-				else if(procsMultApts[i].AptNum==myAptNum) {//If proc is attached to this appointment
-					listProcedures.Add(procsMultApts[i].Copy());
+				if(procsMultApts[i].AptNum==myAptNum) {
+					al.Add(procsMultApts[i].Copy());
 				}
 			}
-			return listProcedures;
+			Procedure[] retVal=new Procedure[al.Count];
+			al.CopyTo(retVal);
+			return retVal;
 		}
 
 		///<summary>Gets procedures for one appointment for use in the API direct from the DB. If none are found, this returns null.</summary>
@@ -836,7 +813,7 @@ namespace OpenDentBusiness {
 			}
 			string command="SELECT PatNum,procedurelog.ProvNum,COUNT(ProcNum) procCount "
 				+"FROM procedurelog "
-				+"INNER JOIN provider ON procedurelog.ProvNum=provider.ProvNum AND provider.IsHidden=0 AND provider.IsSecondary=0 AND provider.IsNotPerson=0 "
+				+"INNER JOIN provider ON procedurelog.ProvNum=provider.ProvNum AND provider.IsHidden=0 "
 				+"WHERE PatNum IN ("+string.Join(",",listPatNums)+") "
 				+"AND ProcStatus="+POut.Int((int)ProcStat.C)+" "
 				+"GROUP BY procedurelog.ProvNum,PatNum" +" "
@@ -1056,17 +1033,6 @@ namespace OpenDentBusiness {
 			return PIn.Long(Db.GetScalar(command));
 		}
 
-		///<summary>Returns the most recent SRP for the passed in procedures.</summary>
-		public static Procedure GetMostRecentSRP(List<Procedure> listProcedures) {
-			//No need to check MiddleTierRole; no call to db.
-			List<long> listSRPCodeNums=ProcedureCodes.GetCodeNumsForCodeGroupFixed(EnumCodeGroupFixed.SRP);
-			List<Procedure> listSRPProceduresOrdered=listProcedures
-				.FindAll(x => x.ProcStatus.In(ProcStat.EO,ProcStat.C) && x.CodeNum.In(listSRPCodeNums.ToArray()))
-				.OrderBy(x => x.ProcDate).ToList();
-			//Most recent will be at the end of the list
-			return listSRPProceduresOrdered.LastOrDefault();
-		}
-
 		///<summary>Returns all the unique diagnostic codes in the list.  If there is less than 12 unique codes then it will pad the list with empty
 		///entries if isPadded is true.  Will always place the principal diagnosis as the first item in the list.</summary>
 		public static List<string> GetUniqueDiagnosticCodes(List<Procedure> listProcs,bool isPadded) {
@@ -1190,28 +1156,10 @@ namespace OpenDentBusiness {
 			return retVal;
 		}
 
-		///<summary>Gets one ProcedureForApi from db. Returns null if not found. Please notify the API team before modifying.</summary>
-		public static ProcedureForApi GetOneProcForApi(long procNum) {
+		///<summary>Gets a list of ProcedureForApi from db. Returns an empty list if not found.</summary>
+		public static List<ProcedureForApi> GetProceduresForApi(int limit,int offset,long patNum,DateTime dateTStamp,long aptNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<ProcedureForApi>(MethodBase.GetCurrentMethod(),procNum);
-			}
-			if(procNum==0) {
-				return null;
-			}
-			string command="SELECT * FROM procedurelog "
-				+"WHERE ProcNum = '"+POut.Long(procNum)+"'";
-			string commandDatetime="SELECT "+DbHelper.Now();
-			DateTime dateTimeServer=PIn.DateT(OpenDentBusiness.Db.GetScalar(commandDatetime));//run before procedures for rigorous inclusion of procedures
-			ProcedureForApi procedureForApi=new ProcedureForApi();
-			procedureForApi.ProcedureCur=Crud.ProcedureCrud.SelectOne(command);
-			procedureForApi.DateTimeServer=dateTimeServer;
-			return procedureForApi;
-		}
-
-		///<summary>Gets a list of ProcedureForApi from db. Returns an empty list if not found. Please notify the API team before modifying.</summary>
-		public static List<ProcedureForApi> GetProceduresForApi(int limit,int offset,long patNum,DateTime dateTStamp,long aptNum,long clinicNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ProcedureForApi>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,dateTStamp,aptNum,clinicNum);
+				return Meth.GetObject<List<ProcedureForApi>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,dateTStamp,aptNum);
 			}
 			List<ProcedureForApi> listProcedureForApis=new List<ProcedureForApi>();
 			string command="SELECT * FROM procedurelog "
@@ -1221,9 +1169,6 @@ namespace OpenDentBusiness {
 			}
 			if(aptNum!=0) {
 				command+="AND AptNum='"+POut.Long(aptNum)+"' ";
-			}
-			if(clinicNum>-1) {
-				command+="AND ClinicNum='"+POut.Long(clinicNum)+"' ";
 			}
 			command+="ORDER BY ProcNum DESC "
 				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
@@ -1285,7 +1230,7 @@ namespace OpenDentBusiness {
 			}
 			//Security.CurUser.UserNum gets set on MT by the DtoProcessor so it matches the user from the client WS.
 			procedure.SecUserNumEntry=Security.CurUser.UserNum;
-			procedure.DiscountPlanAmt=GetDiscountAmountForDiscountPlanAndValidate(procedure);
+			procedure.DiscountPlanAmt=GetDiscountAmountForDiscountPlan(procedure);
 			if(procedure.ProcStatus==ProcStat.C) {
 				procedure.DateComplete=DateTime.Today;
 			}
@@ -1326,7 +1271,7 @@ namespace OpenDentBusiness {
 		///<summary>Returns 0 if the procedure will exceed AnnualMax or FreqLimitations. If the patient attached to the procedure doesn't have a discountplan will return 0.
 		///Will also return 0 if there is no associated Fee with the procedure. Otherwise returns the expected DiscountPlanAmt.
 		///freqLimitationMessage and annualMaxMessage will be blank if no limitations have been met.</summary>
-		public static double GetDiscountAmountForDiscountPlanAndValidate(Procedure procedure,DiscountPlanSub discountPlanSub=null,DiscountPlan discountPlan=null,double runningTotal=0,List<Procedure> listAddHistProcs=null)
+		public static double GetDiscountAmountForDiscountPlan(Procedure procedure,DiscountPlanSub discountPlanSub=null,DiscountPlan discountPlan=null,double runningTotal=0,List<Procedure> listAddHistProcs=null)
 		{
 			//No remoting role check;
 			ExceedsFreqLimitation=false;
@@ -1343,60 +1288,14 @@ namespace OpenDentBusiness {
 					return 0;
 				}
 			}
-			if(!DiscountPlanSubs.GetAnnualDateRangeSegmentForGivenDate(procedure.ProcDate,discountPlanSub.DateEffective,discountPlanSub.DateTerm,out DateTime startDate,out DateTime stopDate)) {
-				return 0;
-			}
-			//Check if the frequency limitation is exceeded
-			string discountPlanFrequencyLimits="";
-			try {
-				if(discountPlanSub!=null) {
-					discountPlanFrequencyLimits=DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(ListTools.FromSingle(procedure),procedure.PatNum,
-						procedure.ProcDate,discountPlanSub:discountPlanSub,listAddHistProcs:listAddHistProcs);
-				}
-			} 
-			catch(Exception e) {//Just Swollow it, the following if statement actually will handle things
-				discountPlanFrequencyLimits=e.Message;//Set this to something so at least we don't try applying a Fee.
-			}
-			if(!string.IsNullOrEmpty(discountPlanFrequencyLimits)) {
-				ExceedsFreqLimitation=true;
+			if(!DiscountPlanSubs.GetAnnualDateRangeSegmentForGivenDate(discountPlanSub,procedure.ProcDate,out DateTime startDate,out DateTime stopDate)) {
 				return 0;
 			}
 			Dictionary<long,long> dictDiscountFees=DiscountPlans.GetFeeSchedNumsByPatNums(ListTools.FromSingle(procedure.PatNum));
 			if(dictDiscountFees.Count==0) {//Only do this if the patient has a discount plan.
 				return 0;
 			}
-			return GetDiscountAmountForDiscountPlan(procedure,discountPlanSub.PatNum,startDate,stopDate,dictDiscountFees.First().Value,discountPlan,runningTotal,listAddHistProcs);
-		}
-
-		///<summary>Returns 0 if the procedure will exceed AnnualMax or FreqLimitations. If the patient attached to the procedure doesn't have a discountplan will return 0.
-		///Will also return 0 if there is no associated Fee with the procedure. Otherwise returns the expected DiscountPlanAmt.
-		///freqLimitationMessage and annualMaxMessage will be blank if no limitations have been met.</summary>
-		public static double GetDiscountAmountForDiscountPlanEstimate(Procedure procedure,long patNum,DateTime dateEffective,DateTime dateTerm,DiscountPlan discountPlan=null,double runningTotal=0,List<Procedure> listAddHistProcs=null)
-		{
-			//No remoting role check;
-			ExceedsFreqLimitation=false;
-			ExceedsAnnualMax=false;
-			if(discountPlan==null) {
-				return 0;
-			}
-			if(!DiscountPlanSubs.GetAnnualDateRangeSegmentForGivenDate(procedure.ProcDate,dateEffective,dateTerm,out DateTime startDate,out DateTime stopDate)) {
-				return 0;
-			}
-			//Check if the frequency limitation is exceeded
-			string discountPlanFrequencyLimits=DiscountPlans.CheckDiscountFrequency(ListTools.FromSingle(procedure),procedure.PatNum,procedure.ProcDate,dateEffective,dateTerm,discountPlan,listAddHistProcs);
-			if(!string.IsNullOrEmpty(discountPlanFrequencyLimits)) {
-				ExceedsFreqLimitation=true;
-				return 0;
-			}
-			return GetDiscountAmountForDiscountPlan(procedure,patNum,startDate,stopDate,discountPlan.FeeSchedNum,discountPlan,runningTotal,listAddHistProcs);
-		}
-
-		///<summary>Returns 0 if the procedure will exceed AnnualMax or FreqLimitations. If the patient attached to the procedure doesn't have a discountplan will return 0.
-		///Will also return 0 if there is no associated Fee with the procedure. Otherwise returns the expected DiscountPlanAmt.
-		///freqLimitationMessage and annualMaxMessage will be blank if no limitations have been met.</summary>
-		public static double GetDiscountAmountForDiscountPlan(Procedure procedure,long patNum,DateTime dateStart,DateTime dateStop,long feeSchedNum,DiscountPlan discountPlan=null,double runningTotal=0,List<Procedure> listAddHistProcs=null)
-		{
-			Fee procFee=Fees.GetFee(procedure.CodeNum,feeSchedNum,procedure.ClinicNum,procedure.ProvNum);
+			Fee procFee=Fees.GetFee(procedure.CodeNum,dictDiscountFees.First().Value,procedure.ClinicNum,procedure.ProvNum);
 			if(procFee==null) {//No fee for discount plan's feesched
 				Provider procProv=Providers.GetProv(procedure.ProvNum);
 				procFee=Fees.GetFee(procedure.CodeNum,procProv.FeeSched,procedure.ClinicNum,procProv.ProvNum);
@@ -1414,6 +1313,21 @@ namespace OpenDentBusiness {
 			if(procFee==null || procFee.Amount==-1) { //If there is no procfee from the fee sched, there will be no discount
 				return 0;
 			}
+			//Check if the frequency limitation is exceeded
+			string discountPlanFrequencyLimits="";
+			try {
+				if(discountPlanSub!=null) {
+					discountPlanFrequencyLimits=DiscountPlans.CheckDiscountFrequency(ListTools.FromSingle(procedure),procedure.PatNum,
+						procedure.ProcDate,discountPlanSub:discountPlanSub,listAddHistProcs:listAddHistProcs);
+				}
+			} 
+			catch(Exception e) {//Just Swollow it, the following if statement actually will handle things
+				discountPlanFrequencyLimits=e.Message;//Set this to something so at least we don't try applying a Fee.
+			}
+			if(!string.IsNullOrEmpty(discountPlanFrequencyLimits)) {
+				ExceedsFreqLimitation=true;
+				return 0;
+			}
 			//Check if the annual max is exceeded
 			double procFeeAmt=procFee.Amount;
 			double estimatedDiscountAmt=procedure.ProcFeeTotal-(procFeeAmt*procedure.Quantity);
@@ -1421,7 +1335,7 @@ namespace OpenDentBusiness {
 				return 0;
 			}
 			if(runningTotal==0) {
-				runningTotal=Adjustments.GetTotForPatByType(patNum,discountPlan.DefNum,dateStart,dateStop,procNumExclude:procedure.ProcNum);
+				runningTotal=Adjustments.GetTotForPatByType(discountPlanSub.PatNum,discountPlan.DefNum,startDate,stopDate,procNumExclude:procedure.ProcNum);
 			}
 			if(discountPlan.AnnualMax==-1) {
 				return estimatedDiscountAmt;
@@ -1438,7 +1352,6 @@ namespace OpenDentBusiness {
 			}
 			return estimatedDiscountAmt;
 		}
-
 		#endregion
 
 		#region Update
@@ -1463,7 +1376,7 @@ namespace OpenDentBusiness {
 					string logText=procCode.ProcCode+" ("+procOld.ProcStatus+"), ";
 					if(procOld.ProcStatus!=procNew.ProcStatus) {//Status changed.
 						string statusText=logText+Lans.g("Procedures"," changed from ")+procOld.ProcStatus+Lans.g("Procedures"," to ")+procNew.ProcStatus;
-						SecurityLogs.MakeLogEntry(EnumPermType.ProcCompleteStatusEdit,procNew.PatNum,statusText);
+						SecurityLogs.MakeLogEntry(Permissions.ProcCompleteStatusEdit,procNew.PatNum,statusText);
 					}
 					if(!string.IsNullOrEmpty(procTeethStr)) {
 						logText+=Lans.g("Procedures","Teeth")+": "+procTeethStr+", ";
@@ -1473,11 +1386,11 @@ namespace OpenDentBusiness {
 						logText+=Lans.g("Procedures","Provider was changed from")+" "+Providers.GetAbbr(procOld.ProvNum)+" "+Lans.g("Procedures","to")+" "+Providers.GetAbbr(procNew.ProvNum)+".";
 					}
 					if(procOld.ProcStatus.In(ProcStat.EO,ProcStat.EC)) {
-						SecurityLogs.MakeLogEntry(EnumPermType.ProcExistingEdit,procNew.PatNum,logText);
+						SecurityLogs.MakeLogEntry(Permissions.ProcExistingEdit,procNew.PatNum,logText);
 					}
 					else {  //completed procedures, adds changes to securitylog if certain fields edited
 						logText+=SecurityLogs.AppendProcCompleteEditSecurityLog(procNew,procOld);
-						SecurityLogs.MakeLogEntry(EnumPermType.ProcCompleteEdit,procNew.PatNum,logText);
+						SecurityLogs.MakeLogEntry(Permissions.ProcCompleteEdit,procNew.PatNum,logText);
 					}
 				}
 				#endregion
@@ -1545,7 +1458,7 @@ namespace OpenDentBusiness {
 			if(oldProcedure.ProcStatus==ProcStat.C && procedure.ProcStatus!=ProcStat.C) {
 				Adjustments.DeleteForProcedure(procedure.ProcNum);
 			}
-			if(procedure.ProcStatus==ProcStat.C && procedure.DateComplete.Year<1880 && (oldProcedure.ProcStatus!=ProcStat.C)) {
+			if(procedure.ProcStatus==ProcStat.C && procedure.DateComplete.Year<1880) {
 				procedure.DateComplete=DateTime.Today;
 			}
 			else if(procedure.ProcStatus!=ProcStat.C && procedure.DateComplete.Date==DateTime.Today.Date) {
@@ -1717,27 +1630,6 @@ namespace OpenDentBusiness {
 				}
 				command+="ProcNum="+POut.Long(procNums[i]);
 			}
-			Db.NonQ(command);
-		}
-
-		public static void AttachToApptForApi(List<long> procNums,Appointment appointment,bool isPlanned) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),procNums,appointment,isPlanned);
-				return;
-			}
-			if(procNums.Count==0) {
-				return;
-			}
-			string command="UPDATE procedurelog SET ";
-			if(isPlanned) {
-				command+="PlannedAptNum";
-			}
-			else {
-				command+="AptNum";
-			}
-			command+="="+POut.Long(appointment.AptNum)+", ";
-			command+="ProcDate="+POut.Date(appointment.AptDateTime)+" ";
-			command+="WHERE ProcNum IN ("+String.Join(",",procNums)+")";
 			Db.NonQ(command);
 		}
 
@@ -1948,12 +1840,12 @@ namespace OpenDentBusiness {
 					//that if we make any other changes to this proc that are not in this section we should consolidate update statements.
 					Procedure procCur=listProcsForAppt[index];
 					Procedure procOld=procCur.Copy();
-					EnumPermType perm=GroupPermissions.SwitchExistingPermissionIfNeeded(EnumPermType.ProcCompleteEdit,procOld);
+					Permissions perm=GroupPermissions.SwitchExistingPermissionIfNeeded(Permissions.ProcCompleteEdit,procOld);
 					DateTime dateForPerm=GetDateForPermCheck(procOld);
 					if(procOld.ProcStatus.In(ProcStat.C,ProcStat.EO,ProcStat.EC) && !Security.IsAuthorized(perm,dateForPerm,true)) {
 						continue;
 					}
-						ChangeProcInAppointment(AptCur,procCur);//Doesn't update DB
+					ChangeProcInAppointment(AptCur,procCur);//Doesn't update DB
 					dictOrthoProcLinks.TryGetValue(procCur.ProcNum,out orthoProcLink);
 					if(doUpdateProcFees && orthoProcLink==null) {//Can't update fees for procedures linked to orthocases.
 						procFeeHelper=procFeeHelper??new ProcFeeHelper(pat,null,null,SubList,PlanList,null);
@@ -1973,12 +1865,12 @@ namespace OpenDentBusiness {
 				List<PatPlan> listPatPlans=PatPlans.Refresh(AptCur.PatNum);
 				SetCompleteInAppt(AptCur,PlanList,listPatPlans,pat,SubList,removeCompletedProcs);
 				if(AptOld.AptStatus==ApptStatus.Complete) {//seperate log entry for completed appointments
-					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentCompleteEdit,pat.PatNum,AptCur.AptDateTime.ToShortDateString()
+					SecurityLogs.MakeLogEntry(Permissions.AppointmentCompleteEdit,pat.PatNum,AptCur.AptDateTime.ToShortDateString()
 						+", "+AptCur.ProcDescript+", Procedures automatically set complete due to appt being set complete",AptCur.AptNum,logSource,
 						AptOld.DateTStamp);
 				}
 				else {
-					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentEdit,pat.PatNum,AptCur.AptDateTime.ToShortDateString()
+					SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,pat.PatNum,AptCur.AptDateTime.ToShortDateString()
 						+", "+AptCur.ProcDescript+", Procedures automatically set complete due to appt being set complete",AptCur.AptNum,logSource,
 						AptOld.DateTStamp);
 				}
@@ -2126,7 +2018,7 @@ namespace OpenDentBusiness {
 					+": "+procNew.ProcDate.ToShortDateString()+"  "+Lans.g("Procedures","With a Fee of")+": "+procNew.ProcFee.ToString("c")+".  "
 					+Lans.g("Procedures","Changed the discount value from")+" "+procOld.Discount.ToString("c")+" "+Lans.g("Procedures","to")+" "
 					+procNew.Discount.ToString("c");
-			SecurityLogs.MakeLogEntry(EnumPermType.TreatPlanDiscountEdit,procNew.PatNum,message);
+			SecurityLogs.MakeLogEntry(Permissions.TreatPlanDiscountEdit,procNew.PatNum,message);
 		}
 
 		///<summary></summary>
@@ -2249,7 +2141,7 @@ namespace OpenDentBusiness {
 			command=$"SELECT COUNT(*) FROM payplanlink WHERE payplanlink.FKey={POut.Long(procNum)} " +
 				$"AND payplanlink.LinkType={POut.Int((int)PayPlanLinkType.Procedure)}";
 			if(Db.GetCount(command)!="0") {
-				throw new Exception(Lans.g("Procedures","Not allowed to delete a procedure that is attached to a payment plan."));
+				throw new Exception(Lans.g("Procedures","Not allowed to delete a procedure that is attached to a dynamic payment plan."));
 			}
 		}
 
@@ -2665,9 +2557,9 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Used to display procedure descriptions on appointments. The returned string also includes surf and toothNum.</summary>
-		public static string GetDescription(Procedure proc,bool forAccount=false) {
+		public static string GetDescription(Procedure proc) {
 			//No need to check MiddleTierRole; no call to db.
-			return ConvertProcToString(proc.CodeNum,proc.Surf,proc.ToothNum,forAccount);
+			return ConvertProcToString(proc.CodeNum,proc.Surf,proc.ToothNum,false);
 		}
 
 		///<summary>Used to display procedure descriptions on letters. The returned string also includes surf and toothNum.</summary>
@@ -2701,14 +2593,12 @@ namespace OpenDentBusiness {
 			}
 			proc.ClinicNum=apt.ClinicNum;
 			if(proc.ProcStatus==ProcStat.TP && apt.AptDateTime!=DateTime.MinValue) {
-				if((proc.PlannedAptNum==apt.AptNum && proc.AptNum==0) || apt.AptStatus!=ApptStatus.Planned) {
-					proc.ProcDate=apt.AptDateTime;
-				}
+				proc.ProcDate=apt.AptDateTime;
 			}
 			return proc;
 		}
 
-		private static bool IsProcComplAuthorized(EnumPermType perm,Procedure proc,bool includeCodeNumAndFee=false) {
+		private static bool IsProcComplAuthorized(Permissions perm,Procedure proc,bool includeCodeNumAndFee=false) {
 			//No need to check MiddleTierRole; no call to db.
 			if(!proc.ProcStatus.In(ProcStat.C,ProcStat.EO,ProcStat.EC)) {
 				return true;//Don't check security if the procedure isn't completed (or EO/EC).
@@ -2725,12 +2615,12 @@ namespace OpenDentBusiness {
 
 		public static bool IsProcComplDeleteAuthorized(Procedure proc,bool includeCodeNumAndFee=false) {
 			//No need to check MiddleTierRole; no call to db.
-			return IsProcComplAuthorized(EnumPermType.ProcCompleteStatusEdit,proc,includeCodeNumAndFee);
+			return IsProcComplAuthorized(Permissions.ProcCompleteStatusEdit,proc,includeCodeNumAndFee);
 		}
 
 		public static bool IsProcComplEditAuthorized(Procedure proc,bool includeCodeNumAndFee=false) {
 			//No need to check MiddleTierRole; no call to db.
-			return IsProcComplAuthorized(EnumPermType.ProcCompleteEdit,proc,includeCodeNumAndFee);
+			return IsProcComplAuthorized(Permissions.ProcCompleteEdit,proc,includeCodeNumAndFee);
 		}
 
 		///<summary>Returns true when we want to allow procedure fees to be changed.
@@ -2807,7 +2697,7 @@ namespace OpenDentBusiness {
 			if(_odThreadQueueData!=null) {
 				throw new ApplicationException("Global update fees tool is already running.");
 			}
-			ODEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper(("Getting table of fees to update...")
+			FeeSchedEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper(("Getting table of fees to update...")
 				,progressBarEventType:ProgBarEventType.TextMsg));
 			Stopwatch s=new Stopwatch();
 			if(ODBuild.IsDebug()) {
@@ -2912,7 +2802,7 @@ namespace OpenDentBusiness {
 							&& procNumLab!=0) 
 						{
 							currentRowCount++;
-							ODEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper(progressText,(int)percentComplete+"%"
+							FeeSchedEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper(progressText,(int)percentComplete+"%"
 								,(int)percentComplete,100,ProgBarStyle.Blocks,"Clinic"
 								,labelTop: "Batch "+batchNumber+"/"+_listProcNumsMaxForGroups.Count));
 							continue;//The proc fee for a lab is derived from the lab fee on the parent procedure.
@@ -2978,7 +2868,7 @@ namespace OpenDentBusiness {
 						if(CompareDouble.IsEqual(newFee,procFeeCur)) {
 							rowSkippedCount++;
 							currentRowCount++;
-							ODEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper(progressText,(int)percentComplete+"%"
+							FeeSchedEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper(progressText,(int)percentComplete+"%"
 								,(int)percentComplete,100,ProgBarStyle.Blocks,"Clinic"
 								,labelTop:"Batch "+batchNumber+"/"+_listProcNumsMaxForGroups.Count));
 							continue;
@@ -2992,23 +2882,23 @@ namespace OpenDentBusiness {
 						dictFeeListCodes[newFee].Last().Add(procNum);
 						currentRowCount++;
 						//update batch label for progress bar
-						ODEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper(progressText,(int)percentComplete+"%"
+						FeeSchedEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper(progressText,(int)percentComplete+"%"
 							,(int)percentComplete,100,ProgBarStyle.Blocks,"Clinic",
 							labelTop:"Batch "+batchNumber+"/"+_listProcNumsMaxForGroups.Count));
 					}//end of foreach loop. Done with one batch of procedures.
-					ODEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper(
+					FeeSchedEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper(
 						"Batch "+batchNumber+"/"+_listProcNumsMaxForGroups.Count+" fee process completed"
 						,progressBarEventType:ProgBarEventType.TextMsg));
 				}//end of while loop. Done with all batches of procedures.
-				ODEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper(progressText,100+"%"
+				FeeSchedEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper(progressText,100+"%"
 						,100,100,ProgBarStyle.Blocks,"Clinic",labelTop:"Batch "+batchNumber+"/"+_listProcNumsMaxForGroups.Count));
-				ODEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper(
+				FeeSchedEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper(
 					"Procedure fees processed "+progressText+" "+_totCount+"/"+_totCount
 					,progressBarEventType:ProgBarEventType.TextMsg));
 				if(dictFeeListCodes.Count==0) {
 					return 0;//no procedure fees updated, all skipped
 				}
-				ODEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper(
+				FeeSchedEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper(
 					"Updating fees...",progressBarEventType:ProgBarEventType.TextMsg));
 				#region Create List of Actions			
 				List<Action> listActions=dictFeeListCodes.SelectMany(x => x.Value.Select(y => new Action(() => {
@@ -3028,10 +2918,10 @@ namespace OpenDentBusiness {
 				ODThread.RunParallel(listActions,TimeSpan.FromMinutes(30)
 					,onException:new ODThread.ExceptionDelegate((ex) => {
 						//Notify the user what went wrong via the text box.
-						ODEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper("Error updating ProcFee: "+ex.Message
+						FeeSchedEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper("Error updating ProcFee: "+ex.Message
 							,progressBarEventType:ProgBarEventType.TextMsg));
 				}));//each group of actions gets X minutes.
-				ODEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper("Fees Updated Successfully",
+				FeeSchedEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper("Fees Updated Successfully",
 						progressBarEventType:ProgBarEventType.TextMsg));
 			}//end of try
 			catch(Exception ex) {
@@ -3125,7 +3015,7 @@ namespace OpenDentBusiness {
 				#endregion Create List of Actions
 				ODThread.RunParallel(listActions,TimeSpan.FromMinutes(30),onException:new ODThread.ExceptionDelegate((ex) => {
 						//Notify the user what went wrong via the text box.
-						ODEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper("Error getting TP procedures batch: "+ex.Message
+						FeeSchedEvent.Fire(ODEventType.FeeSched,new ProgressBarHelper("Error getting TP procedures batch: "+ex.Message
 							,progressBarEventType:ProgBarEventType.TextMsg));
 				}));
 			}
@@ -3878,9 +3768,8 @@ namespace OpenDentBusiness {
 				patPlanNum=patPlan.PatPlanNum;
 			}
 			ClaimProcStatus[] arrayClaimProcStatuses=new ClaimProcStatus[] {
-				ClaimProcStatus.Received,ClaimProcStatus.InsHist,ClaimProcStatus.NotReceived,ClaimProcStatus.Estimate,ClaimProcStatus.Supplemental
+				ClaimProcStatus.Received,ClaimProcStatus.InsHist,ClaimProcStatus.NotReceived,ClaimProcStatus.Estimate
 			};
-			List<BenefitProcCodes> listMatchingFrequencyBenefits=new List<BenefitProcCodes>();//List of all frequency benefits matcihng the given procedure.
 			for(int i=0;i<listBenefits.Count;i++) {
 				if(listBenefits[i].CodeNum==0 && listBenefits[i].CodeGroupNum==0) {
 					//Frequency limitation benefits are required to have a CodeNum or CodeGroupNum set.
@@ -3906,7 +3795,7 @@ namespace OpenDentBusiness {
 					listCodeNums.Add(listBenefits[i].CodeNum);
 					listProcCodes.Add(ProcedureCodes.GetStringProcCode(listBenefits[i].CodeNum));
 				}
-				else if(listBenefits[i].CodeGroupNum > 0) {
+				else if(listBenefits[i].CodeGroupNum > 0 && !CodeGroups.IsHidden(listBenefits[i].CodeGroupNum)) {
 					//Get all of the CodeNums associated with the code group.
 					listCodeNums.AddRange(CodeGroups.GetCodeNums(listBenefits[i].CodeGroupNum));
 					//Get all of the ProcCodes associated with the CodeNums.
@@ -3921,20 +3810,12 @@ namespace OpenDentBusiness {
 				if(listCodeNums.IsNullOrEmpty() || !listCodeNums.Contains(procedure.CodeNum)) {
 					continue;
 				}
-				listMatchingFrequencyBenefits.Add(new BenefitProcCodes() { Benefit=listBenefits[i],ListProcCodes=listProcCodes });
-			}
-			List<BenefitProcCodes> listPatientOverrides=listMatchingFrequencyBenefits.FindAll(x => x.Benefit.PatPlanNum!=0);
-			if(listPatientOverrides.Count > 0) {
-				listMatchingFrequencyBenefits=listPatientOverrides;
-			}
-			listBenefits=listMatchingFrequencyBenefits.Select(x => x.Benefit).ToList();
-			for(int i=0;i<listBenefits.Count;i++) {
 				//Find all relevant ClaimProcHist entries for this claimproc, benefit, procedure, and procedure code.
 				List<ClaimProcHist> claimProcHistList=listClaimProcHists.FindAll(x => x.PatNum==procedure.PatNum
 					&& x.Status.In(arrayClaimProcStatuses)
 					&& x.InsSubNum==claimProc.InsSubNum
-					&& listMatchingFrequencyBenefits[i].ListProcCodes.Contains(x.StrProcCode)
-					&& IsSameProcedureArea(x.ToothNum,procedure.ToothNum,x.ToothRange,procedure.ToothRange,x.Surf,procedure.Surf,procedureCode.TreatArea,listBenefits[i].TreatArea));
+					&& listProcCodes.Contains(x.StrProcCode)
+					&& IsSameProcedureArea(x.ToothNum,procedure.ToothNum,x.ToothRange,procedure.ToothRange,x.Surf,procedure.Surf,procedureCode.TreatArea));
 				int quantityLimit;
 				DateTime dateLowerBound;
 				DateTime dateUpperBound;
@@ -3989,12 +3870,14 @@ namespace OpenDentBusiness {
 				//Each procedure has the potential to have multiple claimprocs associated with it.
 				//Only count ClaimProcHist entries once per procedure.
 				int quantityHist=claimProcHistList.Where(x => x.ProcDate.Between(dateLowerBound,dateUpperBound,isLowerBoundInclusive:isLowerBoundInclusive))
-					.Where(x => x.Amount!=0 || x.Status==ClaimProcStatus.InsHist)//Unpaid procs do not count against quantity, except InsHist because amounts are always 0
 					.DistinctBy(x => x.ProcNum)
 					.Count();
+				//This is the first benefit to make it this far and should be the ONLY benefit considered in regards to frequency limitations.
+				//The list of benefits are ordered in a very specific way (e.g. patient override benefits show up first in the list).
 				if(quantityHist>=quantityLimit) {
 					return true;//Frequency limitation has been met.
 				}
+				return false;
 			}
 			//All of the frequency limitation benefits have been considered and none of them were pertinent to the procedure being considered.
 			return false;
@@ -4004,7 +3887,7 @@ namespace OpenDentBusiness {
 		///Because we store toothrange,toothnum, and surf as strings they default to be empty which results in false positives in our logic. Checking for empty strings whilst doing our logic
 		///in ComputeForOrdinal() results in a very ugly and unreadable linq statement. This method simply pulls out that logic and simplifies the linq statement above.</summary>
 		public static bool IsSameProcedureArea(string histToothNum,string procCurToothNum,string histToothRangeStr,string procCurToothRangeStr,
-			string histSurf,string procCurSurf,TreatmentArea procCurTreatArea,TreatmentArea benTreatArea=TreatmentArea.None) 
+			string histSurf,string procCurSurf,TreatmentArea procCurTreatArea) 
 		{
 			//Procedures like exams and BW's do not ever specify a toothnum, toothrange, or surface.
 			if(string.IsNullOrEmpty(histToothNum) 
@@ -4016,48 +3899,14 @@ namespace OpenDentBusiness {
 			{
 				return true;
 			}
-			if(benTreatArea==TreatmentArea.Mouth) {
-				return true;
-			}
 			//No need to check MiddleTierRole; no call to db.
 			string[] histToothRange=histToothRangeStr?.Split(new char[] {','},StringSplitOptions.RemoveEmptyEntries)??Array.Empty<string>();
 			string[] procCurToothRange=procCurToothRangeStr?.Split(new char[] {','},StringSplitOptions.RemoveEmptyEntries)??Array.Empty<string>();
-			if(benTreatArea==TreatmentArea.ToothRange) {
-				if(histToothRange.Length==0 && histSurf=="U") {
-					histToothRange=new string[] { "1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16" };//See Tooth.IsMaxillary().
-				}
-				else if(histToothRange.Length==0 && histSurf=="L") {
-					histToothRange=new string[] { "17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32" };
-				}
-				else if(procCurToothRange.Length==0 && procCurSurf=="U") {
-					procCurToothRange=new string[] { "1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16" };//See Tooth.IsMaxillary().
-				}
-				else if(procCurToothRange.Length==0 && procCurSurf=="L") {
-					procCurToothRange=new string[] { "17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32" };
-				}
-			}
 			bool hasToothRangeOverlap=histToothRange.Intersect(procCurToothRange).Count() > 0;
 			bool hasCurToothInHistRange=histToothRange.Any(y => y!="" && y==procCurToothNum);
 			bool hasHistToothInCurRange=!string.IsNullOrWhiteSpace(histToothNum) && procCurToothRange.Contains(histToothNum);
 			bool hasSameToothNum=!string.IsNullOrWhiteSpace(procCurToothNum) && histToothNum==procCurToothNum;
-			if(benTreatArea==TreatmentArea.Arch) {
-				if(string.IsNullOrEmpty(histSurf) && histToothRange.Length > 0) {
-					histSurf=Tooth.IsMaxillary(histToothRange[0])?"U":"L";
-				}
-				if(string.IsNullOrEmpty(procCurSurf) && procCurToothRange.Length > 0) {
-					procCurSurf=Tooth.IsMaxillary(procCurToothRange[0])?"U":"L";
-				}
-			}
 			bool hasSameSurface=histSurf==procCurSurf;
-			if(benTreatArea==TreatmentArea.Arch) {
-				return hasSameSurface;
-			}
-			else if(benTreatArea==TreatmentArea.Tooth) {
-				return hasSameToothNum;
-			}
-			else if(benTreatArea==TreatmentArea.ToothRange) {
-				return hasToothRangeOverlap;
-			}
 			if(hasSameSurface
 					&& (hasSameToothNum
 						|| hasHistToothInCurRange
@@ -4188,7 +4037,7 @@ namespace OpenDentBusiness {
 					}
 					procCur.DateEntryC=DateTime.Now;//this triggers it to set to server time NOW().
 					if(procCur.DiagnosticCode=="") {
-						SetDiagnosticCodesToDefault(procCur,procCode);
+						procCur.DiagnosticCode=PrefC.GetString(PrefName.ICD9DefaultForNewProcs);
 						procCur.IcdVersion=PrefC.GetByte(PrefName.DxIcdVersion);
 					}
 				}
@@ -4343,9 +4192,6 @@ namespace OpenDentBusiness {
 			Patient patCur=Patients.GetLim(procCur.PatNum);
 			PatientNote patNoteCur=PatientNotes.Refresh(patCur.PatNum,patCur.Guarantor);
 			DateTime firstOrthoProcDate=GetFirstOrthoProcDate(patNoteCur);
-			if(firstOrthoProcDate==DateTime.MinValue) {
-				firstOrthoProcDate=procCur.ProcDate;
-			}
 			DateSpan dateSpan=new DateSpan(firstOrthoProcDate,procCur.ProcDate);
 			int totalMonthsDiff=(dateSpan.YearsDiff*12)+dateSpan.MonthsDiff+(dateSpan.DaysDiff<15?0:1);
 			patNoteCur.OrthoMonthsTreatOverride=totalMonthsDiff; //Setting the patient notes OrthoMonthsTreatOverride will set the Tx Total Months.
@@ -4401,12 +4247,12 @@ namespace OpenDentBusiness {
 						Appointment apptOldPlanned=listAppointments.FirstOrDefault(x => x.AptNum==proc.PlannedAptNum && x.AptStatus==ApptStatus.Planned);
 						string apptOldPlannedDateStr=(apptOldPlanned==null ? "[INVALID #"+proc.PlannedAptNum+"]" : apptOldPlanned.AptDateTime.ToShortDateString());
 						//Add securityLog to planned appointment.
-						SecurityLogs.MakeLogEntry(EnumPermType.AppointmentEdit,AptCur.PatNum,Lans.g("AppointmentEdit","Procedure")+" "
+						SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,AptCur.PatNum,Lans.g("AppointmentEdit","Procedure")+" "
 							+ProcedureCodes.GetProcCode(proc.CodeNum).AbbrDesc+" "+Lans.g("AppointmentEdit","moved from planned appointment created on")+" "
 							+apptOldPlannedDateStr+" "+Lans.g("AppointmentEdit","to planned appointment created on")+" "
 							+AptCur.AptDateTime.ToShortDateString(),AptCur.AptNum,logSource,AptCur.DateTStamp);
 						//Add securityLog to previously planned appointment.
-						SecurityLogs.MakeLogEntry(EnumPermType.AppointmentEdit,apptOldPlanned?.PatNum??AptCur.PatNum,Lans.g("AppointmentEdit","Procedure")+" "
+						SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,apptOldPlanned?.PatNum??AptCur.PatNum,Lans.g("AppointmentEdit","Procedure")+" "
 							+ProcedureCodes.GetProcCode(proc.CodeNum).AbbrDesc+" "+Lans.g("AppointmentEdit","moved from planned appointment created on")+" "
 							+apptOldPlannedDateStr+" "+Lans.g("AppointmentEdit","to planned appointment created on")+" "
 							+apptOldPlannedDateStr,apptOldPlanned?.AptNum??0,logSource,apptOldPlanned?.DateTStamp??default);
@@ -4419,11 +4265,11 @@ namespace OpenDentBusiness {
 						Appointment apptOld=listAppointments.FirstOrDefault(x => x.AptNum==proc.AptNum);
 						string apptOldDateStr=(apptOld==null ? "[INVALID #"+proc.AptNum+"]" : apptOld.AptDateTime.ToShortDateString());
 						//Add securityLog to appointment.
-						SecurityLogs.MakeLogEntry(EnumPermType.AppointmentEdit,AptCur.PatNum,Lans.g("AppointmentEdit","Procedure")+" "
+						SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,AptCur.PatNum,Lans.g("AppointmentEdit","Procedure")+" "
 							+ProcedureCodes.GetProcCode(proc.CodeNum).AbbrDesc+" "+Lans.g("AppointmentEdit","moved from appointment on")+" "+apptOldDateStr
 							+" "+Lans.g("AppointmentEdit","to appointment on")+" "+AptCur.AptDateTime,AptCur.AptNum,logSource,AptCur.DateTStamp);
 						//Add securityLog to previous appointment.
-						SecurityLogs.MakeLogEntry(EnumPermType.AppointmentEdit,apptOld?.PatNum??AptCur.PatNum,Lans.g("AppointmentEdit","Procedure")+" "
+						SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,apptOld?.PatNum??AptCur.PatNum,Lans.g("AppointmentEdit","Procedure")+" "
 							+ProcedureCodes.GetProcCode(proc.CodeNum).AbbrDesc+" "+Lans.g("AppointmentEdit","moved from appointment on")+" "+apptOldDateStr
 							+" "+Lans.g("AppointmentEdit","to appointment on")+" "+apptOldDateStr,apptOld?.AptNum??0,logSource,apptOld?.DateTStamp??default);
 						UpdateOtherApptDesc(proc,AptCur,isAptPlanned,listAppointments,listProcs);
@@ -4468,7 +4314,7 @@ namespace OpenDentBusiness {
 				logText+=Lans.g("Procedures","Teeth")+": "+toothNums+", ";
 			}
 			logText+=Lans.g("Procedures","Fee")+": "+procCur.ProcFee.ToString("F")+", "+procCode.Descript;
-			SecurityLogs.MakeLogEntry(EnumPermType.ProcComplCreate,patNum,logText);
+			SecurityLogs.MakeLogEntry(Permissions.ProcComplCreate,patNum,logText);
 		}
 
 		///<summary>Creates securitylog entry for completed procedure where appointment ProvNum is different than the procedures provnum.</summary>
@@ -4480,7 +4326,7 @@ namespace OpenDentBusiness {
 				logText+=" "+Lans.g("Procedures","Provider was changed from")+" "+Providers.GetAbbr(procOld.ProvNum)+" "+Lans.g("Procedures","to")+" "+
 					Providers.GetAbbr(proc.ProvNum)+".";
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.ProcCompleteEdit,proc.PatNum,logText,proc.ProcNum,LogSources.None,procOld.DateTStamp);
+			SecurityLogs.MakeLogEntry(Permissions.ProcCompleteEdit,proc.PatNum,logText,proc.ProcNum,LogSources.None,procOld.DateTStamp);
 		}
 
 		///<summary>Sets all procedures for apt complete.  Flags procedures as CPOE as needed (when prov logged in).  Makes a log entry for each completed proc.</summary>
@@ -4546,7 +4392,7 @@ namespace OpenDentBusiness {
 			proc.BaseUnits=procCodeCur.BaseUnits;
 			proc.SiteNum=pat.SiteNum;
 			proc.RevCode=procCodeCur.RevenueCodeDefault;
-			SetDiagnosticCodesToDefault(proc,procCodeCur);
+			proc.DiagnosticCode=PrefC.GetString(PrefName.ICD9DefaultForNewProcs);
 			proc.PlaceService=Clinics.GetPlaceService(proc.ClinicNum); 
 			if(Userods.IsUserCpoe(Security.CurUser)) {
 				//This procedure is considered CPOE because the provider is the one that has added it.
@@ -4679,12 +4525,12 @@ namespace OpenDentBusiness {
 						textDate=apt.AptDateTime;
 					}
 				}
-				if(!isQuickAdd && !Security.IsAuthorized(EnumPermType.ProcComplCreate,textDate,true,true, user,0,-1,0,0,actionNotAuthorized: actionOnFailure)){//use the new date
+				if(!isQuickAdd && !Security.IsAuthorized(Permissions.ProcComplCreate,textDate,true,true, user,0,-1,0,0,actionNotAuthorized: actionOnFailure)){//use the new date
 					return false;
 				}
 			}
 			else if(!isQuickAdd && isNew && procedure.ProcStatus==ProcStat.C) {//if new procedure is complete
-				if(!Security.IsAuthorized(EnumPermType.ProcComplCreate,textDate,true,true,user,procedure.CodeNum,procFee,0,0,actionNotAuthorized: actionOnFailure)){
+				if(!Security.IsAuthorized(Permissions.ProcComplCreate,textDate,true,true,user,procedure.CodeNum,procFee,0,0,actionNotAuthorized: actionOnFailure)){
 					return false;
 				}
 			}
@@ -4858,7 +4704,7 @@ namespace OpenDentBusiness {
 			if(!procOld.ProcStatus.In(ProcStat.C,ProcStat.EO,ProcStat.EC)) {//that was already complete
 				return true;
 			}
-			EnumPermType perm=GroupPermissions.SwitchExistingPermissionIfNeeded(EnumPermType.ProcCompleteStatusEdit,procOld);
+			Permissions perm=GroupPermissions.SwitchExistingPermissionIfNeeded(Permissions.ProcCompleteStatusEdit,procOld);
 			DateTime dateToUseProcOld=Procedures.GetDateForPermCheck(procOld);
 			if(procOld.ProcStatus!=procNew.ProcStatus 
 				&& !Security.IsAuthorized(perm,dateToUseProcOld,true,true,user,0,-1,0,0,actionNotAuthorized:actionNotAuthorized)) 
@@ -4869,13 +4715,13 @@ namespace OpenDentBusiness {
 				DateTime dateToUseProcCur=Procedures.GetDateForPermCheck(procNew,procDate);
 				if(procOld.ProcStatus!=procNew.ProcStatus) {
 					if(procOld.ProcStatus==ProcStat.C) {
-						perm=EnumPermType.ProcCompleteStatusEdit;
+						perm=Permissions.ProcCompleteStatusEdit;
 					}
 					else if(procNew.ProcStatus==ProcStat.C) {
-						perm=EnumPermType.ProcComplCreate;
+						perm=Permissions.ProcComplCreate;
 					}
 					else {
-						perm=EnumPermType.ProcExistingEdit;
+						perm=Permissions.ProcExistingEdit;
 					}
 					if(!Security.IsAuthorized(perm,dateToUseProcCur,true,true,user,0,-1,0,0,actionNotAuthorized:actionNotAuthorized)) {//block new date, too
 						return false;
@@ -4889,7 +4735,7 @@ namespace OpenDentBusiness {
 					|| !CompareDouble.IsEqual(procOld.ProcFee,procFee) //If user changed the procedure fee
 					|| procOld.CodeNum != procNew.CodeNum) //If user changed the procedure code
 				{
-					perm=GroupPermissions.SwitchExistingPermissionIfNeeded(EnumPermType.ProcCompleteEdit,procNew);
+					perm=GroupPermissions.SwitchExistingPermissionIfNeeded(Permissions.ProcCompleteEdit,procNew);
 					if(!Security.IsAuthorized(perm,dateToUseProcCur,true,true,user,procNew.CodeNum,procFee,0,0,actionNotAuthorized:actionNotAuthorized)) {
 						return false;
 					}
@@ -5023,8 +4869,7 @@ namespace OpenDentBusiness {
 				}
 				procedure.DateEntryC=DateTime.Now;//this triggers it to set to server time NOW().
 				if(procedure.DiagnosticCode=="") {
-					ProcedureCode procedureCode=ProcedureCodes.GetProcCode(procedure.CodeNum);
-					SetDiagnosticCodesToDefault(procedure,procedureCode);
+					procedure.DiagnosticCode=PrefC.GetString(PrefName.ICD9DefaultForNewProcs);
 					procedure.IcdVersion=PrefC.GetByte(PrefName.DxIcdVersion);
 				}
 			}
@@ -5042,7 +4887,7 @@ namespace OpenDentBusiness {
 				if(PaySplits.IsPaySplitAttached(procedure.ProcNum)) {
 					List<PaySplit> listPaySplit=PaySplits.GetPaySplitsFromProc(procedure.ProcNum);
 					foreach(PaySplit paySplit in listPaySplit) {
-						if(!Security.IsAuthorized(EnumPermType.PaymentEdit,Payments.GetPayment(paySplit.PayNum).PayDate,actionNotAuthorized: actionNotAuthorized)) {
+						if(!Security.IsAuthorized(Permissions.PaymentEdit,Payments.GetPayment(paySplit.PayNum).PayDate,actionNotAuthorized: actionNotAuthorized)) {
 							return false;
 						}
 						if(procedure.ProvNum!=paySplit.ProvNum) {
@@ -5055,7 +4900,7 @@ namespace OpenDentBusiness {
 					}
 				}
 				foreach(Adjustment adjust in listAdjusts) {
-					if(!Security.IsAuthorized(EnumPermType.AdjustmentEdit,adjust.AdjDate,actionNotAuthorized: actionNotAuthorized)) {
+					if(!Security.IsAuthorized(Permissions.AdjustmentEdit,adjust.AdjDate,actionNotAuthorized: actionNotAuthorized)) {
 						return false;
 					}
 					if(procedure.ProvNum!=adjust.ProvNum && PrefC.GetInt(PrefName.RigorousAdjustments)==(int)RigorousAdjustments.EnforceFully) {
@@ -5336,34 +5181,23 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		///<summary>Checks auto codes if the procedure is not complete or the user has permission to edit completed procedures, can prompt user.
-		///Returns false if the user is required by the ProcEditRequireAutoCodes preference to use the suggested procedure code and they chose
-		///to return to the edit procedure window. If a user is not passed in, it will be set to the current user that is logged in.</summary>
-		public static bool TryAutoCodesPrompt(ref Procedure procedure,Procedure procedureOld,ProcedureCode procedureCode,bool isMandibular,Patient patient,ref List<ClaimProc> listClaimProcsForProc,
-			Func<long,Procedure> funcPromptFormACLI,Userod userod=null)
+		///<summary>Checks auto codes if the procedure is not complete or the user has permission to edit completed procedures, can prompt user.</summary>
+		public static void TryAutoCodesPrompt(ref Procedure procedure,Procedure procedureOld,ProcedureCode procedureCode,bool isMandibular,Patient patient,ref List<ClaimProc> listClaimProcsForProc,
+			Func<long,Procedure> funcPromptFormACLI)
 		{
-			EnumPermType perm=GroupPermissions.SwitchExistingPermissionIfNeeded(EnumPermType.ProcCompleteEdit,procedure);
+			Permissions perm=GroupPermissions.SwitchExistingPermissionIfNeeded(Permissions.ProcCompleteEdit,procedure);
 			DateTime dateForPerm=GetDateForPermCheck(procedure);
-			bool isAuthorized;
-			if(userod==null) {
-				isAuthorized=Security.IsAuthorized(perm,dateForPerm,true);
-			}
-			else {
-				isAuthorized=Security.IsAuthorized(perm,dateForPerm,true,true,userod);
-			}
-			if(!procedureOld.ProcStatus.In(ProcStat.C,ProcStat.EO,ProcStat.EC) || isAuthorized) {
+			if(!procedureOld.ProcStatus.In(ProcStat.C,ProcStat.EO,ProcStat.EC) || Security.IsAuthorized(perm,dateForPerm,true)) {
 				//Only check auto codes if the procedure is not complete or the user has permission to edit completed procedures.
-				long codeNumRecommended=AutoCodeItems.GetRecommendedCodeNum(procedure,procedureCode,patient,isMandibular,listClaimProcsForProc);
-				if(procedure.CodeNum!=codeNumRecommended) {
-					Procedure proc=funcPromptFormACLI(codeNumRecommended);
-					if(proc==null){//null if preference requires user to use suggested auto-code and they chose to edit the procedure
-						return false;
+				if(AutoCodeItems.ShouldPromptForCodeChange(procedure,procedureCode,patient,isMandibular,listClaimProcsForProc,out long verifyCode)) {
+					Procedure proc=funcPromptFormACLI(verifyCode);
+					if(proc==null){
+						return;
 					}
 					procedure=proc;
 					listClaimProcsForProc=ClaimProcs.RefreshForProc(procedure.ProcNum);//funPromptFormACLI may have added claimprocs.
 				}
 			}
-			return true;
 		}
 
 		///<summary>Called in our mobile applications, mimics FormProcEdit logic.</summary>
@@ -5424,7 +5258,7 @@ namespace OpenDentBusiness {
 				Func<List<Procedure>,Image> funcCreateToothChartImage=(listProcs) => {
 					return ToothChartHelper.GetImage(procedure.PatNum,false,listProceduresFilteredOverride:listProcs);
 				};
-				Automations.Trigger<object>(EnumAutomationTrigger.ProcedureComplete,procCodeList,procedure.PatNum,
+				Automations.Trigger<object>(AutomationTrigger.CompleteProcedure,procCodeList,procedure.PatNum,
 					dicBlockedAutomations,actionOnShowMsg,(msg,caption) => funcYesNoPrompt.Invoke(msg),onShowCommLog,onShowSheetFillEdit,funcCreateToothChartImage
 				);
 				AfterProcsSetComplete(new List<Procedure>() { procedure });
@@ -5461,130 +5295,6 @@ namespace OpenDentBusiness {
 				error="Error occurred when encrypting the patient signature.";
 			}
 			return (error.IsNullOrEmpty());
-		}
-
-		///<summary>This method modifies DiagnosticCode, DiagnosticCode2, DiagnosticCode3, and DiagnosticCode4 on the passed in procedure.</summary>
-		public static void SetDiagnosticCodesToDefault(Procedure procedure,ProcedureCode procedureCode) {
-			if(string.IsNullOrEmpty(procedureCode.DiagnosticCodes)) {
-				procedure.DiagnosticCode=PrefC.GetString(PrefName.ICD9DefaultForNewProcs);
-			}
-			else {
-				List<string> listDiagnosticCodes=procedureCode.DiagnosticCodes.Split(',').ToList();
-				procedure.DiagnosticCode=listDiagnosticCodes[0];
-				if(listDiagnosticCodes.Count>1) {
-					procedure.DiagnosticCode2=listDiagnosticCodes[1];
-				}
-				if(listDiagnosticCodes.Count>2) {
-					procedure.DiagnosticCode3=listDiagnosticCodes[2];
-				}
-				if(listDiagnosticCodes.Count>3) {
-					procedure.DiagnosticCode4=listDiagnosticCodes[3];
-				}
-			}
-		}
-
-		///<summary>Checks permissions and preferences to validate the user can delete the procedure. If everything passes, this method will try and delete the method also. 
-		///Will return a result object with a msg that should be used to display to the user.</summary>
-		public static Result DeleteProcedure(Procedure procedure,Procedure procedureOld) {
-			Result result=new Result() { IsSuccess=false };
-			List<ClaimProc> listClaimProcs=ClaimProcs.RefreshForProc(procedure.ProcNum);
-			OrthoProcLink orthoProcLink=OrthoProcLinks.GetByProcNum(procedure.ProcNum);
-			if(procedureOld.ProcStatus==ProcStat.TP || procedureOld.ProcStatus==ProcStat.TPi) {
-				ClaimProc claimProcPreAuth=listClaimProcs.Where(x=>x.ProcNum==procedureOld.ProcNum && x.ClaimNum!=0 && x.Status==ClaimProcStatus.Preauth).FirstOrDefault();
-				if(claimProcPreAuth!=null && ClaimProcs.RefreshForClaim(claimProcPreAuth.ClaimNum).GroupBy(x=>x.ProcNum).Count()==1) {
-					result.Msg="Not allowed to delete the last procedure from a preauthorization. The entire preauthorization would have to be deleted.";
-					return result;
-				}
-			}
-			if(orthoProcLink!=null) {
-				result.Msg="Not allowed to delete a procedure that is linked to an ortho case. " +
-					"Detach the procedure from the ortho case or delete the ortho case first.";
-				return result;
-			}
-			if(PrefC.GetBool(PrefName.ApptsRequireProc)) {
-				List<Appointment> listAppointmentsEmpty=Appointments.GetApptsGoingToBeEmpty(new List<Procedure>() { procedure });
-				if(listAppointmentsEmpty.Count>0) {
-					result.Msg="Not allowed to delete the last procedure from an appointment.";
-					return result;
-				}
-			}
-			if(procedure.AptNum!=0 || procedure.PlannedAptNum!=0){//If the procedure is attached to an appointment
-				string res=Appointments.CheckRequiredProcForApptType(new List<Procedure>() { procedure });
-				if(res!=""){
-					result.Msg=res;
-					return result;
-				}
-			}
-			try {
-				Delete(procedure.ProcNum);//also deletes the claimProcs and adjustments. Might throw exception.
-				Recalls.Synch(procedure.PatNum);//needs to be moved into Procedures.Delete
-			}
-			catch(Exception ex){
-				result.Msg=ex.Message;
-				return result;
-			}
-			EnumPermType permissions=EnumPermType.ProcDelete;
-			string tag="";
-			switch(procedureOld.ProcStatus) {
-				case ProcStat.C:
-					permissions=EnumPermType.ProcCompleteStatusEdit;
-					tag=", Deleted";
-					break;
-				case ProcStat.EO:
-				case ProcStat.EC:
-					permissions=EnumPermType.ProcExistingEdit;
-					tag=", Deleted";
-					break;
-			}
-			SecurityLogs.MakeLogEntry(permissions,procedureOld.PatNum,
-				ProcedureCodes.GetProcCode(procedureOld.CodeNum).ProcCode+" ("+procedureOld.ProcStatus+"), "+procedureOld.ProcFee.ToString("c")+tag);
-			result.IsSuccess=true;
-			return result;
-		}
-
-		///<summary>This method is called where a user is attempting to edit a procedure that is attached to a claim. There are two separate permissions 
-		///	that deal with this scenario and we need to consider if we need to check for one or both and why.</summary>
-		public static bool HasPermissionsToEditProcWithClaim(List<ClaimProc> listClaimProcs,List<Claim> listClaims,long userNum=0,bool suppressMessage=false) {
-			bool hasSentOrRecPreauth=false;
-			bool hasSentOrRecClaim=false;
-			DateTime dateOldestClaim=Procedures.GetOldestClaimDate(listClaimProcs,includePreAuth:false);
-			DateTime dateOldestPreAuth=Procedures.GetOldestPreAuth(listClaimProcs);
-			List<EnumPermType> listPermissionss=new List<EnumPermType>();
-			List<long> listClaimProcClaimNums=listClaimProcs.Select(x=>x.ClaimNum).ToList();
-			List<Claim> listClaimsSentOrReceived=listClaims.Where(x=>x.ClaimStatus=="R" || x.ClaimStatus=="S").ToList();
-			for(int i=0;i<listClaimsSentOrReceived.Count;i++) {
-				Claim claim=listClaimsSentOrReceived[i];
-				if(listClaimProcClaimNums.Contains(claim.ClaimNum)) {
-					hasSentOrRecPreauth|=claim.ClaimType=="PreAuth";
-					hasSentOrRecClaim|=claim.ClaimType!="PreAuth";
-				}
-			}
-			if(hasSentOrRecPreauth) {
-				listPermissionss.Add(EnumPermType.PreAuthSentEdit);
-			}
-			if(hasSentOrRecClaim) {
-				listPermissionss.Add(EnumPermType.ClaimSentEdit);
-			}
-			bool isAllowed=true;
-			for(int i=0;i<listPermissionss.Count();i++) {
-				if(listPermissionss[i]==EnumPermType.PreAuthSentEdit) {
-					if(userNum==0) {//userNum was not passed in so use the curUser object in the Sercurity class
-						isAllowed&=Security.IsAuthorized(listPermissionss[i],dateOldestPreAuth,suppressMessage);
-					}
-					else {
-						isAllowed&=Security.IsAuthorized(listPermissionss[i],dateOldestPreAuth,suppressMessage,false,Userods.GetUser(userNum));
-					}
-				}
-				else {
-					if(userNum==0) {//userNum was not passed in so use the curUser object in the Sercurity class
-						isAllowed&=Security.IsAuthorized(listPermissionss[i],dateOldestClaim,suppressMessage);
-					}
-					else {
-						isAllowed&=Security.IsAuthorized(listPermissionss[i],dateOldestClaim,suppressMessage,false,Userods.GetUser(userNum));
-					}
-				}
-			}
-			return isAllowed;
 		}
 		#endregion
 
@@ -5639,7 +5349,7 @@ namespace OpenDentBusiness {
 			}
 			procedure.ClinicNum=patient.ClinicNum;
 			procedure.SiteNum=patient.SiteNum;
-			SetDiagnosticCodesToDefault(procedure,procedureCode);
+			procedure.DiagnosticCode=PrefC.GetString(PrefName.ICD9DefaultForNewProcs);
 			procedure.PlaceService=Clinics.GetPlaceService(procedure.ClinicNum);
 			procedure.Surf="";
 			if(prefName==PrefName.InsHistPerioLLCodes) {
@@ -5657,10 +5367,10 @@ namespace OpenDentBusiness {
 			return procedure;
 		}
 
-		///<summary>Returns the most recent procedure for the InsHist preference CodeNums. Returns null if no precedure is found.</summary>
-		public static Procedure GetMostRecentInsHistProc(List<Procedure> listProcedures,List<long> listCodeNumsInsHist,PrefName prefName) {
+		///<summary>Returns the most recent EO procedure for the InsHist preference CodeNums. Returns null if no precedure is found.</summary>
+		public static Procedure GetMostRecentInsHistProc(List<Procedure> listProceduresPatEo,List<long> listCodeNumsInsHist,PrefName prefName) {
 			//No need to check MiddleTierRole; no call to db.
-			List<Procedure> listProceduresHistCodeNum=listProcedures.FindAll(x => listCodeNumsInsHist.Contains(x.CodeNum));
+			List<Procedure> listProceduresHistCodeNum=listProceduresPatEo.FindAll(x => listCodeNumsInsHist.Contains(x.CodeNum));
 			List<Procedure> listProceduresFiltered;
 			//For Perio procs, we also need to look at the surface a procedure was done on.
 			switch(prefName) {
@@ -5905,11 +5615,6 @@ namespace OpenDentBusiness {
 	public class ProcedureForApi {
 		public Procedure ProcedureCur;
 		public DateTime DateTimeServer;
-	}
-
-	public class BenefitProcCodes {
-		public Benefit Benefit;
-		public List<string> ListProcCodes;
 	}
 
 }

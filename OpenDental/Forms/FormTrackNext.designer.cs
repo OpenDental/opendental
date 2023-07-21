@@ -33,6 +33,7 @@ namespace OpenDental {
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTrackNext));
+			this.butClose = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.menuRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.toolStripMenuItemSelectPatient = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,6 +54,17 @@ namespace OpenDental {
 			this.menuMain = new OpenDental.UI.MenuOD();
 			this.menuRightClick.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(758, 624);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(87, 24);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridMain
 			// 
@@ -146,7 +158,7 @@ namespace OpenDental {
 			this.butPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butPrint.Image = global::OpenDental.Properties.Resources.butPrintSmall;
 			this.butPrint.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPrint.Location = new System.Drawing.Point(755, 624);
+			this.butPrint.Location = new System.Drawing.Point(758, 576);
 			this.butPrint.Name = "butPrint";
 			this.butPrint.Size = new System.Drawing.Size(87, 24);
 			this.butPrint.TabIndex = 31;
@@ -214,6 +226,7 @@ namespace OpenDental {
 			// 
 			// FormTrackNext
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(855, 664);
 			this.Controls.Add(this.codeRangeFilter);
 			this.Controls.Add(this.label6);
@@ -228,6 +241,7 @@ namespace OpenDental {
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.butRefresh);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.menuMain);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -241,6 +255,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.ComboBox comboProv;
 		private Label label4;

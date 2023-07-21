@@ -26,17 +26,7 @@ namespace OpenDentBusiness.Email {
 		public static void WireEmailUnsecure(BasicEmailAddress address,BasicEmailMessage emailMessage,NameValueCollection nameValueCollectionHeaders
 			,params AlternateView[] arrayAlternateViews) 
 		{
-			try {
-				WireEmailUnsecure(address,emailMessage,nameValueCollectionHeaders,EMAIL_SEND_TIMEOUT_MS,arrayAlternateViews);
-			}
-			catch(Exception ex){
-				if(ex.Message.Split(' ').Contains("451")) {
-					throw new ODException("Email provider is having temporary send issues. This could be due to high email demand. Please try again later.");
-				}
-				else {
-					throw new ODException("Error sending email",ex);
-				}
-			}
+			WireEmailUnsecure(address,emailMessage,nameValueCollectionHeaders,EMAIL_SEND_TIMEOUT_MS,arrayAlternateViews);
 		}
 
 		///<summary>Throws exceptions. Attempts to physically send the message over the network wire. This is used from wherever email needs to be 
@@ -44,7 +34,8 @@ namespace OpenDentBusiness.Email {
 		///be null.</summary>
 		public static void WireEmailUnsecure(BasicEmailAddress address,BasicEmailMessage emailMessage,NameValueCollection nameValueCollectionHeaders,
 			int emailSendTimeoutMs=EMAIL_SEND_TIMEOUT_MS,params AlternateView[] arrayAlternateViews) {
-			if(address.AuthenticationType.In(BasicOAuthType.Google,BasicOAuthType.Microsoft)) {
+			//For now we only support OAuth for Gmail but this may change in the future.
+			if(!address.AccessToken.IsNullOrEmpty() && address.AuthenticationType.In(BasicOAuthType.Google,BasicOAuthType.Microsoft)) {
 				SendEmailOAuth(address,emailMessage);
 			}
 			else {
@@ -98,9 +89,6 @@ namespace OpenDentBusiness.Email {
 							var cdoatt=cdo.AddAttachment(attachmentPath.FullPath);
 							//Use actual file name for this field.
 							cdoatt.Fields["urn:schemas:mailheader:content-id"].Value=Path.GetFileName(attachmentPath.FullPath);
-							//Sets the 'friendly' filename for the attachment; failure to set this optional field will result in OD using the AtoZ filename for the attachment
-							//See https://www.rfc-editor.org/rfc/rfc2183 for more details
-							cdoatt.Fields["urn:schemas:mailheader:content-disposition"].Value="attachment;filename="+attachmentPath.DisplayedFilename;
 							cdoatt.Fields.Update();
 						}
 					}
@@ -210,11 +198,7 @@ namespace OpenDentBusiness.Email {
 				}
 				catch(Exception ex) {
 					//This will bubble up to the UI level and be caught in a copypaste box.
-					string errorMessage=ex.Message;
-					if(ex.InnerException!=null) {
-						errorMessage=ex.InnerException.Message;
-					}
-					throw new Exception($"Error sending email with OAuth authorization: {errorMessage}");
+					throw new Exception($"Error sending email with OAuth authorization: {ex.Message}");
 				}
 			}
 		}

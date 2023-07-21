@@ -35,6 +35,7 @@ namespace OpenDental.ReportingComplex {
 			this.imageListMain = new System.Windows.Forms.ImageList(this.components);
 			this.printPreviewControl2 = new OpenDental.UI.ODPrintPreviewControl();
 			this.ToolBarMain = new OpenDental.UI.ToolBarOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// imageListMain
@@ -53,13 +54,12 @@ namespace OpenDental.ReportingComplex {
 			this.printPreviewControl2.AutoZoom = false;
 			this.printPreviewControl2.Location = new System.Drawing.Point(0, 25);
 			this.printPreviewControl2.Name = "printPreviewControl2";
-			this.printPreviewControl2.Size = new System.Drawing.Size(831, 591);
+			this.printPreviewControl2.Size = new System.Drawing.Size(831, 562);
 			this.printPreviewControl2.TabIndex = 6;
 			// 
 			// ToolBarMain
 			// 
 			this.ToolBarMain.Dock = System.Windows.Forms.DockStyle.Top;
-			this.ToolBarMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.ToolBarMain.ImageList = this.imageListMain;
 			this.ToolBarMain.Location = new System.Drawing.Point(0, 0);
 			this.ToolBarMain.Name = "ToolBarMain";
@@ -68,10 +68,24 @@ namespace OpenDental.ReportingComplex {
 			this.ToolBarMain.ButtonClick += new OpenDental.UI.ODToolBarButtonClickEventHandler(this.ToolBarMain_ButtonClick);
 			this.ToolBarMain.PageNav += new OpenDental.UI.ODToolBarButtonPageNavEventHandler(this.ToolBarMain_PageNav);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(753, 590);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 23);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormReportComplex
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(831, 616);
 			this.Controls.Add(this.printPreviewControl2);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.ToolBarMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormReportComplex";
@@ -88,5 +102,6 @@ namespace OpenDental.ReportingComplex {
 		private OpenDental.UI.ToolBarOD ToolBarMain;
 		private System.Windows.Forms.ImageList imageListMain;
 		private OpenDental.UI.ODPrintPreviewControl printPreviewControl2;
+		private UI.Button butClose;
 	}
 }

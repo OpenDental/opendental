@@ -23,17 +23,29 @@ namespace OpenDental {
 
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSchoolCourses));
+			this.butClose = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butOK = new OpenDental.UI.Button();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(362, 473);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butAdd
 			// 
 			this.butAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butAdd.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAdd.Location = new System.Drawing.Point(16, 478);
+			this.butAdd.Location = new System.Drawing.Point(16, 472);
 			this.butAdd.Name = "butAdd";
 			this.butAdd.Size = new System.Drawing.Size(79, 26);
 			this.butAdd.TabIndex = 10;
@@ -48,7 +60,7 @@ namespace OpenDental {
 			this.gridMain.Location = new System.Drawing.Point(12, 12);
 			this.gridMain.Name = "gridMain";
 			this.gridMain.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridMain.Size = new System.Drawing.Size(425, 448);
+			this.gridMain.Size = new System.Drawing.Size(425, 423);
 			this.gridMain.TabIndex = 61;
 			this.gridMain.Title = "Courses";
 			this.gridMain.TranslationName = "FormEvaluationDefEdit";
@@ -58,16 +70,19 @@ namespace OpenDental {
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butOK.Location = new System.Drawing.Point(362, 478);
+			this.butOK.Location = new System.Drawing.Point(362, 441);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 62;
 			this.butOK.Text = "&OK";
+			this.butOK.Visible = false;
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// FormSchoolCourses
 			// 
-			this.ClientSize = new System.Drawing.Size(453, 521);
+			this.CancelButton = this.butClose;
+			this.ClientSize = new System.Drawing.Size(453, 515);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butAdd);
@@ -82,6 +97,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butAdd;
 		private UI.GridOD gridMain;
 		private UI.Button butOK;

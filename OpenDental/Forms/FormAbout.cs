@@ -60,5 +60,8 @@ namespace OpenDental{
 			formLicense.ShowDialog();
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

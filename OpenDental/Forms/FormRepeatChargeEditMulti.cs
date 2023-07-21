@@ -103,7 +103,7 @@ namespace OpenDental {
 			RepeatCharge repeatChargeNew=repeatChargeOld.Copy();
 			repeatChargeNew.ChargeAmt=PIn.Double(textChargeAmountNew.Text);
 			Patient patient=Patients.GetPat(repeatChargeOld.PatNum);
-			RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatChargeOld,EnumPermType.RepeatChargeUpdate,patient,repeatChargeNew);
+			RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatChargeOld,Permissions.RepeatChargeUpdate,patient,repeatChargeNew);
 		}
 
 		private void WriteToDesktop() {
@@ -159,6 +159,10 @@ namespace OpenDental {
 			_isDisabledCount=0;
 			MsgBox.Show(this,_listRepeatCharges.Count+" repeat charges were updated.\n" +
 				"RepeatCharges_"+dateTime+".txt was saved to your desktop.");
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 
 	}

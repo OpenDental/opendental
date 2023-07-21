@@ -24,7 +24,7 @@ namespace OpenDental{
 		}
 
 		private void FormQueryFormulate_Load(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.UserQueryAdmin,true)) { //disable controls for users without permission
+			if(!Security.IsAuthorized(Permissions.UserQueryAdmin,true)) { //disable controls for users without permission
 				butEdit.Enabled=false;
 				butDelete.Enabled=false;
 				butAdd.Enabled=false;
@@ -44,7 +44,7 @@ namespace OpenDental{
 			if(doRefreshList) {
 				_listUserQueries=UserQueries.GetDeepCopy();
 			}
-			bool isAuthorized=Security.IsAuthorized(EnumPermType.UserQueryAdmin,true);
+			bool isAuthorized=Security.IsAuthorized(Permissions.UserQueryAdmin,true);
 			string[] stringArraySearchTerms = Regex.Split(textSearch.Text,@"\W");//matches any non-word character
 			//get all queries that contain ALL of the search terms entered, either in the query text or the query description.
 			List<UserQuery> listUserQueryDisplay = _listUserQueries
@@ -102,7 +102,7 @@ namespace OpenDental{
 				return;
 			}
 			UserQueryCur = (UserQuery)gridMain.ListGridRows[gridMain.GetSelectedIndex()].Tag;
-			textQuery.Text=UserQueryCur.QueryText.Replace("\n","\r\n");
+			textQuery.Text=UserQueryCur.QueryText;
 		}
 
 		private void gridMain_CellClick(object sender,ODGridClickEventArgs e) {
@@ -218,6 +218,10 @@ namespace OpenDental{
 			}
 			//user has permission to edit the query, so just run the query.
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

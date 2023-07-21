@@ -49,10 +49,14 @@ namespace OpenDental{
 			//else{
 			//	checkCDAnet.Visible=false;
 			//}
-			if(!IsSelectMode) {
+			if(IsSelectMode) {
+				butCancel.Text=Lan.g(this,"Cancel");
+			}
+			else {
+				butCancel.Text=Lan.g(this,"Close");
 				butOK.Visible=false;
 			}
-			if(!Security.IsAuthorized(EnumPermType.CarrierCreate,true)) {
+			if(!Security.IsAuthorized(Permissions.CarrierCreate,true)) {
 				butAdd.Enabled=false;
 			}
 			Clearinghouse clearingHouse=Clearinghouses.GetDefaultDental();
@@ -118,14 +122,8 @@ namespace OpenDental{
 			column=new GridColumn(Lan.g("TableCarriers","City"),90);
 			gridMain.Columns.Add(column);
 			column=new GridColumn(Lan.g("TableCarriers","ST"),50);
-			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
-				column=new GridColumn(Lan.g("TableCarriers","Prov"),50);
-			}
 			gridMain.Columns.Add(column);
 			column=new GridColumn(Lan.g("TableCarriers","Zip"),70);
-			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
-				column=new GridColumn(Lan.g("TableCarriers","Postal"),70);
-			}
 			gridMain.Columns.Add(column);
 			column=new GridColumn(Lan.g("TableCarriers","ElectID"),50);
 			gridMain.Columns.Add(column);
@@ -304,7 +302,7 @@ namespace OpenDental{
 		}
 
 		private void butCombine_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsCarrierCombine)) {
+			if(!Security.IsAuthorized(Permissions.InsCarrierCombine)) {
 				return;
 			}
 			if(gridMain.SelectedIndices.Length<2){
@@ -341,7 +339,7 @@ namespace OpenDental{
 			}
 			DataValid.SetInvalid(InvalidType.Carriers);
 			string logText=Lan.g(this,"The following carriers were combined into")+$" '{carrierName}': {carrierNames}";
-			SecurityLogs.MakeLogEntry(EnumPermType.InsCarrierCombine,0,logText);
+			SecurityLogs.MakeLogEntry(Permissions.InsCarrierCombine,0,logText);
 			FillGrid();
 		}
 
@@ -443,5 +441,35 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

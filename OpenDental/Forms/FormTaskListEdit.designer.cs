@@ -33,7 +33,8 @@ namespace OpenDental {
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTaskListEdit));
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.labelDescription = new System.Windows.Forms.Label();
 			this.labelGlobalFilter = new System.Windows.Forms.Label();
 			this.comboGlobalFilter = new OpenDental.UI.ComboBox();
@@ -52,15 +53,25 @@ namespace OpenDental {
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(375, 236);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 4;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(395, 223);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 5;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(395, 182);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 4;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// labelDescription
 			// 
@@ -77,7 +88,7 @@ namespace OpenDental {
 			this.labelGlobalFilter.Name = "labelGlobalFilter";
 			this.labelGlobalFilter.Size = new System.Drawing.Size(116, 19);
 			this.labelGlobalFilter.TabIndex = 138;
-			this.labelGlobalFilter.Text = "Filter";
+			this.labelGlobalFilter.Text = "Global Filter Override";
 			this.labelGlobalFilter.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// comboGlobalFilter
@@ -186,16 +197,17 @@ namespace OpenDental {
 			// 
 			// FormTaskListEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(462, 274);
-			this.Controls.Add(this.comboGlobalFilter);
+			this.ClientSize = new System.Drawing.Size(503, 274);
 			this.Controls.Add(this.labelGlobalFilter);
+			this.Controls.Add(this.comboGlobalFilter);
 			this.Controls.Add(this.textTaskListNum);
 			this.Controls.Add(this.labelTaskListNum);
 			this.Controls.Add(this.listObjectType);
 			this.Controls.Add(this.labelObjectType);
 			this.Controls.Add(this.textDateTL);
 			this.Controls.Add(this.textDescript);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.checkFromNum);
 			this.Controls.Add(this.listDateType);
 			this.Controls.Add(this.labelDateType);
@@ -215,7 +227,9 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label labelDescription;
 		private System.Windows.Forms.Label labelDate;
 		private System.Windows.Forms.Label labelDate2;

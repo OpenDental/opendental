@@ -65,7 +65,11 @@ namespace OpenDental {
 			textDateNextClaim.Text = firstOfMonth.ToShortDateString();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textFee.IsValid()) {
 				MsgBox.Show(this,"Please enter a valid fee.");
 				return;
@@ -93,6 +97,5 @@ namespace OpenDental {
 			}
 			DialogResult=DialogResult.OK;
 		}
-
 	}
 }

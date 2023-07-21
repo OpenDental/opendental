@@ -45,11 +45,16 @@ namespace OpenDental {
 		///<summary>Fills the grid with the contents of the corresponding wiki list table in the database.
 		///After filling the grid, FilterGrid() will get invoked to apply any advanced search options.</summary>
 		private void FillGrid() {
-			_listWikiListHeaderWidths=WikiListHeaderWidths.GetForListNoCache(WikiListCurName);
+			_listWikiListHeaderWidths=WikiListHeaderWidths.GetForList(WikiListCurName);
 			_table=WikiLists.GetByName(WikiListCurName);
 			if(_table.Rows.Count>0 && _listWikiListHeaderWidths.Count!=_table.Columns.Count) {//if these do not match, something happened to be desynched at the right moment.
-				MsgBox.Show(this,"Unable to open the wiki list.");
-				return;
+				WikiListHeaderWidths.RefreshCache();
+				_table=WikiLists.GetByName(WikiListCurName);
+				_listWikiListHeaderWidths=WikiListHeaderWidths.GetForList(WikiListCurName);
+				if(_listWikiListHeaderWidths.Count!=_table.Columns.Count) {//if they still do not match, one of them did not get synched correctly.
+					MsgBox.Show(this,"Unable to open the wiki list.");
+					return;
+				}
 			}
 			_hasHiddenColumns=_listWikiListHeaderWidths.Any(x => x.IsHidden);
 			gridMain.BeginUpdate();
@@ -140,7 +145,6 @@ namespace OpenDental {
 			formWikiListItemEdit.WikiListName=WikiListCurName;
 			formWikiListItemEdit.ItemNum=PIn.Long(_table.Rows[(int)gridMain.ListGridRows[e.Row].Tag][0].ToString());
 			formWikiListItemEdit.ListWikiListHeaderWidths=_listWikiListHeaderWidths;
-			formWikiListItemEdit.ShowHidden=checkBoxIncludeHiddenColumns.Checked;
 			//saving occurs from within the form.
 			if(formWikiListItemEdit.ShowDialog()!=DialogResult.OK) {
 				return;
@@ -159,7 +163,7 @@ namespace OpenDental {
 				}
 				return false;
 			}
-			if(!Security.IsAuthorized(EnumPermType.WikiListSetup)) {//gives a message box if no permission
+			if(!Security.IsAuthorized(Permissions.WikiListSetup)) {//gives a message box if no permission
 				return false;
 			}
 			if(checkBoxIncludeHiddenColumns.Checked || !_hasHiddenColumns) {
@@ -204,7 +208,7 @@ namespace OpenDental {
 		}
 
 		private void butColumnEdit_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.WikiListSetup)) {//gives a message box if no permission
+			if(!Security.IsAuthorized(Permissions.WikiListSetup)) {//gives a message box if no permission
 				return;
 			}
 			using FormWikiListHeaders formWikiListHeaders=new FormWikiListHeaders(WikiListCurName);
@@ -216,7 +220,7 @@ namespace OpenDental {
 		}
 
 		private void butColumnAdd_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.WikiListSetup)) {//gives a message box if no permission
+			if(!Security.IsAuthorized(Permissions.WikiListSetup)) {//gives a message box if no permission
 				return;
 			}
 			SetIsEdited();
@@ -243,7 +247,6 @@ namespace OpenDental {
 			formWikiListItemEdit.WikiListName=WikiListCurName;
 			formWikiListItemEdit.ItemNum=WikiLists.AddItem(WikiListCurName);
 			formWikiListItemEdit.ListWikiListHeaderWidths=_listWikiListHeaderWidths;
-			formWikiListItemEdit.ShowHidden=checkBoxIncludeHiddenColumns.Checked;
 			if(formWikiListItemEdit.ShowDialog()!=DialogResult.OK) {
 				//delete new item because dialog was not OK'ed.
 				WikiLists.DeleteItem(formWikiListItemEdit.WikiListName,formWikiListItemEdit.ItemNum,formWikiListItemEdit.ListWikiListHeaderWidths.ElementAtOrDefault(0)?.ColName);
@@ -263,13 +266,12 @@ namespace OpenDental {
 		private void butRenameList_Click(object sender,EventArgs e) {
 			//Logic copied from FormWikiLists.butAdd_Click()---------------------
 			string newListName;
-			InputBox inputBox=new InputBox("New List Name");
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			using InputBox inputBox=new InputBox("New List Name"); 
+			if(inputBox.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
 			//Format input as it would be saved in the database--------------------------------------------
-			newListName=inputBox.StringResult.ToLower().Replace(" ","");
+			newListName=inputBox.textResult.Text.ToLower().Replace(" ","");
 			//Validate list name---------------------------------------------------------------------------
 			if(string.IsNullOrEmpty(newListName)) {
 				MsgBox.Show(this,"List name cannot be blank.");
@@ -310,7 +312,7 @@ namespace OpenDental {
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.WikiListSetup)) {//gives a message box if no permission
+			if(!Security.IsAuthorized(Permissions.WikiListSetup)) {//gives a message box if no permission
 				return;
 			}
 			if(gridMain.ListGridRows.Count>0) {

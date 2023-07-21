@@ -43,13 +43,13 @@ namespace OpenDental {
 			private set {
 				_isInitialized=value;
 				//Unsubscribe first to avoid duplicate subscriptions, or subscription "leaks".
-				ODEvent.Fired-=PatientEvent_Fired;
-				ODEvent.Fired-=PatientChangedEvent_Fired;
-				ODEvent.Fired-=PatientDashboardDataEvent_Fired;
+				PatientEvent.Fired-=PatientEvent_Fired;
+				PatientChangedEvent.Fired-=PatientChangedEvent_Fired;
+				PatientDashboardDataEvent.Fired-=PatientDashboardDataEvent_Fired;
 				if(_isInitialized){
-					ODEvent.Fired+=PatientEvent_Fired;
-					ODEvent.Fired+=PatientChangedEvent_Fired;
-					ODEvent.Fired+=PatientDashboardDataEvent_Fired;
+					PatientEvent.Fired+=PatientEvent_Fired;
+					PatientChangedEvent.Fired+=PatientChangedEvent_Fired;
+					PatientDashboardDataEvent.Fired+=PatientDashboardDataEvent_Fired;
 				}
 			}
 		}
@@ -85,25 +85,16 @@ namespace OpenDental {
 		}
 
 		private void PatientEvent_Fired(ODEventArgs e) {
-			if(e.EventType!=ODEventType.Patient){
-				return;
-			}
 			if(((e.Tag as Patient)?.PatNum??-1)==FormOpenDental.PatNumCur) {
 				RefreshDashboard();
 			}
 		}
 
 		private void PatientChangedEvent_Fired(ODEventArgs e) {
-			if(e.EventType!=ODEventType.Patient){
-				return;
-			}
 			RefreshDashboard();
 		}
 
 		private void PatientDashboardDataEvent_Fired(ODEventArgs e) {
-			if(e.EventType!=ODEventType.ModuleSelected){
-				return;
-			}
 			if(e==null || e.Tag==null) {
 				return;
 			}
@@ -162,7 +153,7 @@ namespace OpenDental {
 
 		///<summary>Adds a new Widget to the current Dashboard container.</summary>
 		public bool AddWidget(SheetDef sheetDef) {
-			if(sheetDef==null || !Security.IsAuthorized(EnumPermType.DashboardWidget,sheetDef.SheetDefNum,true)) {
+			if(sheetDef==null || !Security.IsAuthorized(Permissions.DashboardWidget,sheetDef.SheetDefNum,true)) {
 				return false;
 			}
 			UserControlDashboardWidget widget=null;

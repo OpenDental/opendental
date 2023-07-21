@@ -24,7 +24,8 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormeConfimationExclusionDays));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.checkUseHQ = new OpenDental.UI.CheckBox();
 			this.comboBoxClinicPicker = new OpenDental.UI.ComboBoxClinicPicker();
 			this.listBoxExclusionDays = new OpenDental.UI.ListBox();
@@ -38,15 +39,26 @@ namespace OpenDental{
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(349, 440);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(289, 500);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(375, 500);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// checkUseHQ
 			// 
@@ -72,7 +84,7 @@ namespace OpenDental{
 			this.listBoxExclusionDays.Location = new System.Drawing.Point(45, 148);
 			this.listBoxExclusionDays.Name = "listBoxExclusionDays";
 			this.listBoxExclusionDays.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
-			this.listBoxExclusionDays.Size = new System.Drawing.Size(120, 115);
+			this.listBoxExclusionDays.Size = new System.Drawing.Size(120, 95);
 			this.listBoxExclusionDays.TabIndex = 6;
 			this.listBoxExclusionDays.Text = "listBoxExclusionDays";
 			// 
@@ -140,7 +152,7 @@ namespace OpenDental{
 			// 
 			this.checkShowPastDates.Location = new System.Drawing.Point(297, 150);
 			this.checkShowPastDates.Name = "checkShowPastDates";
-			this.checkShowPastDates.Size = new System.Drawing.Size(138, 24);
+			this.checkShowPastDates.Size = new System.Drawing.Size(161, 24);
 			this.checkShowPastDates.TabIndex = 13;
 			this.checkShowPastDates.Text = "Show Past Dates";
 			this.checkShowPastDates.CheckedChanged += new System.EventHandler(this.checkShowPastDates_CheckedChanged);
@@ -149,15 +161,15 @@ namespace OpenDental{
 			// 
 			this.label1.Location = new System.Drawing.Point(24, 9);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(372, 34);
+			this.label1.Size = new System.Drawing.Size(418, 18);
 			this.label1.TabIndex = 14;
-			this.label1.Text = "Set which days of the week or dates to exclude sending eConfirmations and Web Sch" +
-    "ed Recalls";
+			this.label1.Text = "Set which days of the week or dates to exclude sending eConfirmations";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// FormeConfimationExclusionDays
 			// 
-			this.ClientSize = new System.Drawing.Size(439, 482);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(462, 536);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.labelUseDefaultMessage);
 			this.Controls.Add(this.checkShowPastDates);
@@ -169,10 +181,11 @@ namespace OpenDental{
 			this.Controls.Add(this.labelExclusionDays);
 			this.Controls.Add(this.comboBoxClinicPicker);
 			this.Controls.Add(this.checkUseHQ);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormeConfimationExclusionDays";
-			this.Text = "eConfirmation and Web Sched Recall Exclusion Days";
+			this.Text = "eConfirmation Exclusion Days";
 			this.Load += new System.EventHandler(this.FormAutoCommExclusionDays_Load);
 			this.ResumeLayout(false);
 
@@ -180,7 +193,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
         private OpenDental.UI.CheckBox checkUseHQ;
         private UI.ComboBoxClinicPicker comboBoxClinicPicker;
         private UI.ListBox listBoxExclusionDays;

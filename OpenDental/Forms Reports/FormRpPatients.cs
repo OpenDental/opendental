@@ -412,7 +412,6 @@ namespace OpenDental {
 			}
 			if(NeedProcLogFirst || NeedProcLogLast) {
 				listWhereClauses.Add("procedurelog.patnum=patient.patnum");
-				listWhereClauses.Add("procedurelog.procstatus!="+POut.Enum<ProcStat>(ProcStat.D));
 			}
 			if(NeedRecall) {
 				listWhereClauses.Add("recall.PatNum=patient.PatNum");
@@ -608,19 +607,29 @@ namespace OpenDental {
 				case "PatStatus":
 					SetListBoxConditions();
 					listBoxColumns.Items.Clear();
-					listBoxColumns.Items.AddEnums<PatientStatus>();
+					listBoxColumns.Items.Add("Patient");
+					listBoxColumns.Items.Add("NonPatient");
+					listBoxColumns.Items.Add("Inactive");
+					listBoxColumns.Items.Add("Archived");
+					listBoxColumns.Items.Add("Deleted");
+					listBoxColumns.Items.Add("Deceased");
+					listBoxColumns.Items.Add("Prospective");
 					break;
 				case "Gender":
 					SetListBoxConditions();
 					listBoxColumns.Items.Clear();
-					listBoxColumns.Items.AddEnums<PatientGender>();
+					listBoxColumns.Items.Add("Male");
+					listBoxColumns.Items.Add("Female");
+					listBoxColumns.Items.Add("Unknown");
 					break;
 				case "Position":
 					SetListBoxConditions();
 					listConditions.SelectedIndex=1;
 					listConditions.Enabled=false;
 					listBoxColumns.Items.Clear();
-					listBoxColumns.Items.AddEnums<PatientPosition>();
+					listBoxColumns.Items.Add("Single");
+					listBoxColumns.Items.Add("Married");
+					listBoxColumns.Items.Add("Child");
 					break;
 				case "FeeSched":
 					SetListBoxConditions();
@@ -902,8 +911,6 @@ namespace OpenDental {
 							UsingProcLogFirst.Add(false);
 							UsingProcLogLast.Add(false);
 							UsingRecall.Add(false);
-							_usingProcFComplete.Add(false);
-							_usingProcLComplete.Add(false);
 						}
 						if(i==0) {
 							sItem="(";
@@ -929,8 +936,6 @@ namespace OpenDental {
 							UsingProcLogFirst.Add(false);
 							UsingProcLogLast.Add(false);
 							UsingRecall.Add(false);
-							_usingProcFComplete.Add(false);
-							_usingProcLComplete.Add(false);
 						}
 						if(i==0) {
 							sItem="(";
@@ -957,8 +962,6 @@ namespace OpenDental {
 							UsingProcLogFirst.Add(false);
 							UsingProcLogLast.Add(false);
 							UsingRecall.Add(true);
-							_usingProcFComplete.Add(false);
-							_usingProcLComplete.Add(false);
 						}
 						if(i==0) {
 							sItem="(";
@@ -985,8 +988,6 @@ namespace OpenDental {
 							UsingProcLogFirst.Add(false);
 							UsingProcLogLast.Add(false);
 							UsingRecall.Add(false);
-							_usingProcFComplete.Add(false);
-							_usingProcLComplete.Add(false);
 						}
 						if(i==0) {
 							sItem="(";
@@ -1012,8 +1013,6 @@ namespace OpenDental {
 							UsingProcLogFirst.Add(false);
 							UsingProcLogLast.Add(false);
 							UsingRecall.Add(false);
-							_usingProcFComplete.Add(false);
-							_usingProcLComplete.Add(false);
 						}
 						if(i==0) {
 							sItem="(";
@@ -1029,88 +1028,10 @@ namespace OpenDental {
 						listPrerequisites.Items.Add(sItem);
 					}
 				}
-				else if(DropListFilter.SelectedItem.ToString()=="PatStatus") {
-					sItem="";
-					for(int i = 0;i<listBoxColumns.SelectedIndices.Count;i++) {
-						if(i>0) {
-							UsingInsPlans.Add(false);
-							UsingRefDent.Add(false);
-							UsingRefPat.Add(false);
-							UsingProcLogFirst.Add(false);
-							UsingProcLogLast.Add(false);
-							UsingRecall.Add(false);
-							_usingProcFComplete.Add(false);
-							_usingProcLComplete.Add(false);
-						}
-						if(i==0) {
-							sItem="(";
-						}
-						else {
-							sItem="OR ";
-						}
-						sItem+="patient.PatStatus "+listConditions.SelectedItem.ToString()+" '"
-							+listBoxColumns.SelectedIndices[i].ToString()+"'";
-						if(i==listBoxColumns.SelectedIndices.Count-1) {
-							sItem+=")";
-						}
-						listPrerequisites.Items.Add(sItem);
-					}
-				}
-				else if(DropListFilter.SelectedItem.ToString()=="Gender") {
-					sItem="";
-					for(int i = 0;i<listBoxColumns.SelectedIndices.Count;i++) {
-						if(i>0) {
-							UsingInsPlans.Add(false);
-							UsingRefDent.Add(false);
-							UsingRefPat.Add(false);
-							UsingProcLogFirst.Add(false);
-							UsingProcLogLast.Add(false);
-							UsingRecall.Add(false);
-							_usingProcFComplete.Add(false);
-							_usingProcLComplete.Add(false);
-						}
-						if(i==0) {
-							sItem="(";
-						}
-						else {
-							sItem="OR ";
-						}
-						sItem+="patient.Gender "+listConditions.SelectedItem.ToString()+" '"
-							+listBoxColumns.SelectedIndices[i].ToString()+"'";
-						if(i==listBoxColumns.SelectedIndices.Count-1) {
-							sItem+=")";
-						}
-						listPrerequisites.Items.Add(sItem);
-					}
-				}
-				else if(DropListFilter.SelectedItem.ToString()=="Position") {
-					sItem="";
-					for(int i = 0;i<listBoxColumns.SelectedIndices.Count;i++) {
-						if(i>0) {
-							UsingInsPlans.Add(false);
-							UsingRefDent.Add(false);
-							UsingRefPat.Add(false);
-							UsingProcLogFirst.Add(false);
-							UsingProcLogLast.Add(false);
-							UsingRecall.Add(false);
-							_usingProcFComplete.Add(false);
-							_usingProcLComplete.Add(false);
-						}
-						if(i==0) {
-							sItem="(";
-						}
-						else {
-							sItem="OR ";
-						}
-						sItem+="patient.Position "+listConditions.SelectedItem.ToString()+" '"
-							+listBoxColumns.SelectedIndices[i].ToString()+"'";
-						if(i==listBoxColumns.SelectedIndices.Count-1) {
-							sItem+=")";
-						}
-						listPrerequisites.Items.Add(sItem);
-					}
-				}
 				else {
+					//PatStatus
+					//Gender
+					//Position
 					//PriRelationship
 					//SecRelationship
 					for(int i = 0;i<listBoxColumns.SelectedIndices.Count;i++) {
@@ -1141,6 +1062,7 @@ namespace OpenDental {
 			#endregion IsDropDown
 			CreateSQL();
 			FillSQLbox();
+			listConditions.Enabled=true;
 			TextBox.Clear();
 			TextDate.Clear();
 			TextValidAge.Clear();
@@ -1170,6 +1092,11 @@ namespace OpenDental {
 		}
 
 		#endregion
+
+		private void butCancel_Click(object sender,System.EventArgs e) {
+
+		}
+
 		private void RemoveListPrerequisitesItem(int index) {
 			string item=(string)listPrerequisites.Items.GetObjectAt(index);
 			if(item.Contains("(") && item.Contains(")")) {
@@ -1202,6 +1129,5 @@ namespace OpenDental {
 				listPrerequisites.SelectedIndices.RemoveAt(listPrerequisites.SelectedIndices.Count-1);
 			}
 		}
-
 	}
 }

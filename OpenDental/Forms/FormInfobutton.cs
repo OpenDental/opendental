@@ -1144,6 +1144,14 @@ namespace OpenDental {
 			return responseFromServer;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void groupBoxContext_Enter(object sender,EventArgs e) {
+
+		}
+
 	}
 
 	///<summary>Only enumerating the highest level task codes, OE, PATDOC, and PATINFO., Enum generated from HL7 ActTaskCode [2.16.840.1.113883.1.11.19846] which is a subset of ActCode [OID=2.16.840.1.113883.5.4] documentation published 20120831 10:21 AM.</summary>

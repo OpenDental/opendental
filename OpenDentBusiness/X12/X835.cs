@@ -30,7 +30,7 @@ namespace OpenDentBusiness {
 		///<summary>BPR03 converted to bool.</summary>
 		private bool _isCredit;
 		///<summary>BPR04 Payment Method Code.  Required.</summary>
-		public string PaymentMethodCode { get; private set; }
+		public string _paymentMethodCode;
 		///<summary>BPR04 converted into a human readable form.</summary>
 		private string _payMethodDescript;
 		///<summary>BPR15 As many as 4 trailing digits of the account the payment was deposited into (only if payment was made electronically).  If not present, will be blank.</summary>
@@ -113,21 +113,21 @@ namespace OpenDentBusiness {
 		///<summary>If the 835 was paid electronically (EFT), then will return the effective date.  Otherwise, for physical checks, returns today's date.</summary>
 		public DateTime DateReceived {
 			get {
-				if(PaymentMethodCode=="NON") {//No payment
+				if(_paymentMethodCode=="NON") {//No payment
 					return DateTime.Today;
 				}
-				if(PaymentMethodCode=="ACH" && DateEffective.Year>1980) {//Electronic check
+				if(_paymentMethodCode=="ACH" && DateEffective.Year>1980) {//Electronic check
 					return DateEffective;
 				}
-				if(PaymentMethodCode=="BOP" && DateEffective.Year>1980) {//Financial institution option.
+				if(_paymentMethodCode=="BOP" && DateEffective.Year>1980) {//Financial institution option.
 					//I doubt we will ever see this status on our end.  A bank will usually see this status, then strip it out and replace it before it gets to us.
 					//Safe to assume most banks will probably choose electronic deposit.
 					return DateEffective;
 				}
-				if(PaymentMethodCode=="CHK") {//Physical check
+				if(_paymentMethodCode=="CHK") {//Physical check
 					return DateTime.Today;
 				}
-				if(PaymentMethodCode=="FWT" && DateEffective.Year>1980) {//Wire transfer
+				if(_paymentMethodCode=="FWT" && DateEffective.Year>1980) {//Wire transfer
 					return DateEffective;
 				}
 				return DateTime.Today;
@@ -478,38 +478,48 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Given listClaims should be a list of claims that have been filtered down for this ERA using ListPaidClaims ClaimNums.</summary>
-		public List<X835ClaimData> GetClaimDataList(List<Hx835_ShortClaim> listClaims) {
+		public List<X835ClaimData> GetClaimDataList(List<Hx835_ShortClaim> listClaims,Dictionary<long,bool> dictClaimPaymentsExist=null) {
 			List<long> listClaimNums=this.ListClaimsPaid.Select(x => x.ClaimNum).Where(x => x!=0).ToList();
-			List<ClaimProc> listClaimProcs = ClaimProcs.RefreshForClaims(listClaimNums).FindAll(x=>x.ClaimPaymentNum!=0);
-			Dictionary<long,List<Hx835_Claim>> dictMatchedEraClaims=GetClaimsPaidDict();
-			List<X835ClaimData> ListX835ClaimDatas=new List<X835ClaimData>();
-			for(int i=0;i<ListClaimsPaid.Count;i++) {
-				Hx835_ShortClaim hx835_ShortClaim;//Either null, manually detached or valid claim.
-				switch(ListClaimsPaid[i].ClaimStatus) {
+			//Every claim num is associated to a bool. True when there is an existing claimPayment.
+			if(dictClaimPaymentsExist==null) {
+				dictClaimPaymentsExist=ClaimPayments.HasClaimPayment(listClaimNums);
+				dictClaimPaymentsExist.Add(-1,false);//-1 for unmatched claims, value doesn't effect anything currently.  Simply used for reference.
+				dictClaimPaymentsExist.Add(0,false);//0 for manually detached claims, value doesn't effect anything currently.  Simply used for reference.
+			}
+			Dictionary<long,List<Hx835_Claim>> dictMatchedEraClaims=GetClaimsPaidDict();//Will contain keys -1 and 0 like above if needed.
+			List<X835ClaimData> listRetVals=new List<X835ClaimData>();
+			foreach(Hx835_Claim eraClaim in this.ListClaimsPaid) {
+				Hx835_ShortClaim matchedClaim;//Either null, manually detached or valid claim.
+				switch(eraClaim.ClaimStatus) {
 					default://Just in case.
 					case EraClaimStatus.NotMatched:
-						hx835_ShortClaim=null;
-						break;
+						matchedClaim=null;
+					break;
 					case EraClaimStatus.ManuallyDetached:
-						hx835_ShortClaim=new Hx835_ShortClaim();
-						break;
+						matchedClaim=new Hx835_ShortClaim();
+					break;
 					case EraClaimStatus.Attached:
 						//This could still be null but listClaims should be a filtered list of claims based on ListClaimsPaid ClaimNums.
-						hx835_ShortClaim=listClaims.FirstOrDefault(x => x.ClaimNum==ListClaimsPaid[i].ClaimNum);
-						break;
+						matchedClaim=listClaims.FirstOrDefault(x => x.ClaimNum==eraClaim.ClaimNum);
+					break;
 				}
 				long claimNum=-1;
-				if(hx835_ShortClaim!=null) {
-					claimNum=hx835_ShortClaim.ClaimNum;
+				if(matchedClaim!=null) {
+					claimNum=matchedClaim.ClaimNum;
 				}
-				List<Hx835_Claim> listhx835_Claims=new List<Hx835_Claim>();
+				List<Hx835_Claim> listHx835Claims=new List<Hx835_Claim>();
 				if(dictMatchedEraClaims.ContainsKey(claimNum)) {
-					listhx835_Claims=dictMatchedEraClaims[claimNum];
+					listHx835Claims=dictMatchedEraClaims[claimNum];
 				}
-				bool hasPayment=listClaimProcs.Exists(x=>x.ClaimNum==claimNum);
-				ListX835ClaimDatas.Add(new X835ClaimData(hx835_ShortClaim,hasPayment,listhx835_Claims));
+				listRetVals.Add(new X835ClaimData(matchedClaim,dictClaimPaymentsExist[claimNum],listHx835Claims));
 			}
-			return ListX835ClaimDatas;
+			return listRetVals;
+		}
+
+		public X835Status GetStatus(List<Hx835_ShortClaim> listClaims,List<Hx835_ShortClaimProc> listAllClaimProcs,List<Etrans835Attach> listAllAttaches,
+			Dictionary<long,bool> dictClaimPaymentsExist=null)
+		{
+			return GetStatus(this.GetClaimDataList(listClaims,dictClaimPaymentsExist),listAllClaimProcs,listAllAttaches);
 		}
 
 		public X835Status GetStatus(List<X835ClaimData> listClaimDatas,List<Hx835_ShortClaimProc> listAllClaimProcs,List<Etrans835Attach> listAllAttaches) { 
@@ -563,7 +573,7 @@ namespace OpenDentBusiness {
 		public X835Status GetStatus() {
 			List<Hx835_ShortClaim> listAttachedClaims=RefreshClaims().Select(x => new Hx835_ShortClaim(x)).ToList();
 			RefreshAttachesAndClaimProcsFromDb(out List<Etrans835Attach> listAttaches,out List<Hx835_ShortClaimProc> listClaimProcs);
-			return GetStatus(GetClaimDataList(listAttachedClaims),listClaimProcs,listAttaches);
+			return GetStatus(listAttachedClaims,listClaimProcs,listAttaches);
 		}
 
 		///<summary>Returns a list of claims from the DB that are attached to the current era claims.
@@ -601,31 +611,6 @@ namespace OpenDentBusiness {
 				claimCur.TagOD=this.ListClaimsPaid[i];
 			}
 			return listClaims;
-		}
-
-		public static long GetInsurancePaymentTypeDefNum(string paymentMethodCode){
-			long defNumDefault=PrefC.GetLong(PrefName.EraDefaultPaymentType);
-			switch(paymentMethodCode){
-				case "CHK":
-					return GetInsurancePaymentTypeDefNumHelper(PrefName.EraChkPaymentType,defNumDefault,"Check");
-				case "ACH":
-					return GetInsurancePaymentTypeDefNumHelper(PrefName.EraAchPaymentType,defNumDefault,"EFT");
-				case "FWT":
-					return GetInsurancePaymentTypeDefNumHelper(PrefName.EraFwtPaymentType,defNumDefault,"Wired");
-				default:
-					return defNumDefault;
-			}
-		}
-
-		private static long GetInsurancePaymentTypeDefNumHelper(PrefName prefName,long defNumDefault,string defItemName){
-			long defNum=PrefC.GetLong(prefName);
-			if(defNum!=0){
-				return defNum;
-			}
-			if(defNumDefault!=0){
-				return defNumDefault;
-			}
-			return Defs.GetByExactName(DefCat.InsurancePaymentType,defItemName,isShort:true);
 		}
 
 		public string GetHumanReadable() {
@@ -683,8 +668,8 @@ namespace OpenDentBusiness {
 				_isCredit=true;
 			}
 			//BPR04 Payment Method Code.  Required.
-			PaymentMethodCode=segBPR.Get(4);
-			_payMethodDescript=GetDescriptForPaymentMethodCode(PaymentMethodCode);
+			_paymentMethodCode=segBPR.Get(4);
+			_payMethodDescript=GetDescriptForPaymentMethodCode(_paymentMethodCode);
 			//BPR05 Payment Format Code.  Situational.  We do not use.
 			//BPR06 (DFI) ID Number Qualifier.  Situational.  We do not use.
 			//BPR07 (DFI) Identification Number.  Situational.  We do not use.
@@ -937,7 +922,6 @@ namespace OpenDentBusiness {
 			retVal.PatientDeductAmt=0;
 			retVal.PatientPortionAmt=0;
 			retVal.WriteoffAmt=0;
-			retVal.PreAuthInsEst=0;
 			//"Amounts in CLP05 must have supporting adjustments reflected in CAS segments at the 2100 (CLP) or 2110 (SVC) loop level with a
 			//Claim Adjustment Group (CAS01) code or PR (Patient Responsibility)"
 			foreach(Hx835_Adj adj in retVal.ListClaimAdjustments) {//Sum claim level adjustments.
@@ -968,7 +952,6 @@ namespace OpenDentBusiness {
 				retVal.PatientDeductAmt+=proc.DeductibleAmt;
 				retVal.PatientPortionAmt+=proc.PatientPortionAmt;
 				retVal.WriteoffAmt+=proc.WriteoffAmt;
-				retVal.PreAuthInsEst+=proc.PreAuthInsEst;
 			}
 			//Now modify the claim dates to encompass the procedure dates.  This step causes procedure dates to bubble up to the claim level when only service line dates are provided.
 			for(int i=0;i<retVal.ListProcs.Count;i++) {
@@ -987,7 +970,7 @@ namespace OpenDentBusiness {
 				}
 			}
 			retVal.SegmentCount=segNum-segNumCLP;
-			retVal.AllowedAmt=retVal.InsPaid+retVal.PreAuthInsEst+retVal.PatientRespAmt;
+			retVal.AllowedAmt=retVal.InsPaid+retVal.PatientRespAmt;
 			return retVal;
 		}
 
@@ -1375,9 +1358,6 @@ namespace OpenDentBusiness {
 				else if(adj.AdjCode=="OA") {//Other Adjustments.  Guide page 198.
 					//Going to display amount to the user, they must decide if they want to use it.
 					//"Avoid using the Other Adjustment Group COde (OA) except for business situations described in sections 1.10.2.6, 1.10.2.7 and 1.10.2.13."
-					if(adj.ReasonCode=="101") {//"Predetermination: anticipated payment upon completion of services or claim adjudication."
-						proc.PreAuthInsEst+=adj.AdjAmt;
-					}
 				}
 				else if(adj.AdjCode=="PI") {//Payor Initiated Reductions.  Guide page 198.
 					//Going to display amount to the user, they must decide if they want to use it.
@@ -1452,7 +1432,7 @@ namespace OpenDentBusiness {
 				segNum++;
 			}
 			proc.SegmentCount=segNum-segNumSVC;
-			proc.AllowedAmt=proc.InsPaid+proc.PreAuthInsEst+proc.PatRespTotal;
+			proc.AllowedAmt=proc.InsPaid+proc.PatRespTotal;
 			return proc;
 		}
 
@@ -3519,10 +3499,6 @@ namespace OpenDentBusiness {
 		public decimal ClaimFee;
 		///<summary>CLP04 The total amount insurance paid.</summary>
 		public decimal InsPaid;
-		///<summary>For preauths, is the estimated payment amount for the claim.
-		///This is an amount calculated as the sum of the procedure PreAuthInsEst amounts.
-		///Ignores claim-level preauth adjustments, because we cannot create a By Total proc for preauths, just as in the Edit Claim window.</summary>
-		public decimal PreAuthInsEst;
 		///<summary>CLP05 A portion of the ChargeAmtTotal which the patient is responsible for.</summary>
 		public decimal PatientRespAmt;
 		///<summary>Patient portion for this claim.
@@ -3555,7 +3531,7 @@ namespace OpenDentBusiness {
 		public List<Hx835_Proc> ListProcs;
 		///<summary>The sum of all adjustment amounts in ListClaimAdjustments.</summary>
 		public decimal ClaimAdjustmentTotal;
-		///<summary>AllowedAmt = (Claim InsPaid/InsEst)+(Claim PatientRespAmt)</summary>
+		///<summary>AllowedAmt = (Claim InsPaid)+(Claim PatientRespAmt)</summary>
 		public decimal AllowedAmt;
 		///<summary>True if remark code MA15 is used in either segment MIA or MOA (if present).  Also true if there are multiple CLP segments on
 		///the same 835 containing the same ClaimTrackingNumber.  We have seen carriers represent split claims this way(ex Commonwealth of Massachussetts/EOHHS/Office of Medicaid).
@@ -3630,14 +3606,6 @@ namespace OpenDentBusiness {
 				}
 			}
 			return true;
-		}
-
-		///<summary>Returns all CARC codes for the claim or its procedures that we are not supposed to auto-process.</summary>
-		public List<string> GetCarcCodesNoAutoProcessForClaim() {
-			List<string> listCarcCodesNoAutoProcess=PrefC.GetString(PrefName.EraNoAutoProcessCarcCodes).Split(",",StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
-			List<string> listClaimCarcCodes=ListClaimAdjustments.Select(x => x.ReasonCode).ToList();
-			List<string> listProcedureCarcCodes=ListProcs.SelectMany(x => x.ListProcAdjustments).Select(x => x.ReasonCode).ToList();
-			return listCarcCodesNoAutoProcess.FindAll(x => listClaimCarcCodes.Contains(x) || listProcedureCarcCodes.Contains(x));
 		}
 		
 		private List<Hx835_ShortClaimProc> GetClaimProcsForEraProcs(List<Hx835_ShortClaimProc> listAllClaimProcs,List<long> listSplitClaimNums) {
@@ -3755,17 +3723,12 @@ namespace OpenDentBusiness {
 			return sb.ToString();
 		}
 
-		///<summary>Returns true if the last name AND (first name OR partial first name) of the passed in patient don't match the name on this 835 claim.
+		///<summary>Returns true if the first AND preferred name OR last name of the passed in patient don't match the name on this 835 claim.
 		///All names are converted to lower case and spaces are removed to improve matching.</summary>
-		public bool DoesPatientNameMatch(Patient pat) {
-			string patFName=pat.FName.Trim().ToLower();
-			string patLName=pat.LName.Trim().ToLower();
-			string patFNameOnClaim=this.PatientName.Fname.Trim().ToLower();
-			string patLNameOnClaim=this.PatientName.Lname.Trim().ToLower();
-			bool doesLNameMatch=patLName==patLNameOnClaim;
-			bool doesFNameMatch=patFName==patFNameOnClaim;
-			bool doesFNamePartiallyMatch=patFName.Length>1 && patFNameOnClaim.StartsWith(patFName);
-			return doesLNameMatch && (doesFNameMatch || doesFNamePartiallyMatch);
+		public bool IsPatientNameMisMatched(Patient pat) {
+			return (this.PatientName.Fname.ToLower().Replace(" ","")!=pat.FName.ToLower().Replace(" ","")
+				&& this.PatientName.Fname.ToLower().Replace(" ","")!=pat.Preferred.ToLower().Replace(" ",""))
+				|| this.PatientName.Lname.ToLower().Replace(" ","")!=pat.LName.ToLower().Replace(" ","");
 		}
 
 		public Hx835_Claim Copy(){
@@ -3798,11 +3761,8 @@ namespace OpenDentBusiness {
 		public string ProcCodeAdjudicated;
 		///<summary>SVC2.</summary>
 		public decimal ProcFee;
-		///<summary>SVC3. For regular claims, contains actual insurance paid amount.</summary>
+		///<summary>SVC3.</summary>
 		public decimal InsPaid;
-		///<summary>The sum of all adjustment amounts in ListProcAdjustments where CAS01=OA and CAS02=101.
-		///For preauths, is the estimated payment amount for the proc.</summary>
-		public decimal PreAuthInsEst;
 		///<summary>SVC6-2.  The procedure code submitted with the claim.  Helps identify the procedure the adjudication is regarding in case of bundling/unbundling and procedure splits.</summary>
 		public string ProcCodeBilled;
 		///<summary>DTM*150 or DTM*472 of loop 2110.  Situational.  If not present, then the procedure service start date is the same as the claim service start date.</summary>
@@ -3823,9 +3783,9 @@ namespace OpenDentBusiness {
 		///<summary>The sum of all adjustment amounts in ListProcAdjustments where CAS01=PR and CAS02=1.
 		///DeductibleAmt=PatRespTotal-PatientPortionAmt</summary>
 		public decimal DeductibleAmt;
-		///<summary>The sum of all adjustment amounts in ListProcAdjustments which are not patient responsibility (where CAS01==CO).</summary>
+		///<summary>The sum of all adjustment amounts in ListProcAdjustments which are not patient responsibility (where CAS01!=PR).</summary>
 		public decimal WriteoffAmt;
-		///<summary>AllowedAmt = (InsPay/InsEst)+(PatRespTotal)</summary>
+		///<summary>AllowedAmt = (InsPay)+(PatRespTotal)</summary>
 		public decimal AllowedAmt;
 		///<summary>SVC2. The original ordinal of the claims insurance when the outoing 837 was sent.</summary>
 		public long PlanOrdinal;
@@ -3956,7 +3916,7 @@ namespace OpenDentBusiness {
 		public string AdjCode;
 		///<summary>True when CAS01 = PR and (CAS02 or CAS05 or CAS08 or CAS11 or CAS14 or CAS17) is 1.</summary>
 		public bool IsDeductible;
-		///See GetDescriptFrom139(). 
+		///See code source 139 at http://www.wpc-edi.com/reference/codelists/healthcare/claim-adjustment-reason-codes/. 
 		///The most useful values in code source 139 are: 1=Deductible Amount, 2=Coinsurance Amount, 3=Co-payment Amount.</summary>
 		public string ReasonCode;
 
@@ -4249,8 +4209,6 @@ namespace OpenDentBusiness {
 		public string PaymentFinalizationError="";
 		///<summary>Will be set true if the ERA was not in a Partial, Unprocessed, or NotFinalized state when automatic processing starts.</summary>
 		public bool DidEraStartAsFinalized=false;
-		/// <summary>The number of processed claims that have name mismatches</summary>
-		public int CountProcessedClaimsWithNameMismatch=0;
 
 		public X835Status Status {
 			get {
@@ -4272,24 +4230,23 @@ namespace OpenDentBusiness {
 			return ListPatNamesWithoutClaimMatch.Count==0 && ListClaimErrors.Count==0;
 		}
 
-		///<summary>Returns false if the user must choose an insurance payment plan, the carrier does not allow ERA automation, 
-		///the claim is processed already, the claimprocs are recieved but the ERA should be providing initial payment,
+		///<summary>Returns false if the user must choose an insurance payment plan, the name on the ERA claim does not match the name on the claim from DB, 
+		///the carrier does not allow ERA automation, the claim is processed already, the claimprocs are recieved but the ERA should be providing initial payment,
 		///or the claimprocs aren't received and the ERA should be providing a supplemental payment or reversal. 
 		///If any of these errors are present, an error message will be added to the list for this EraAutomationResult.</summary>
 		public bool CanClaimBeAutoProcessed(bool isFullyAutomatic,Patient patient,InsPlan insPlan,Hx835_Claim claimPaid,List<PayPlan> listPayPlans,
 			List<Hx835_ShortClaimProc> listClaimProcsAll,List<Hx835_ShortClaimProc> listClaimProcsForClaim,List<Etrans835Attach> listAttaches)
 		{
 			StringBuilder stringBuilderErrorMessage=new StringBuilder();
-			List<string> listCarcCodesNoAutoProcessForClaim=claimPaid.GetCarcCodesNoAutoProcessForClaim();
-			if(!listCarcCodesNoAutoProcessForClaim.IsNullOrEmpty()) {
-				stringBuilderErrorMessage.AppendLine(Lans.g("X835","Payment information included the following Claim Adjustment Reason Codes:")+" "
-					+string.Join(", ",listCarcCodesNoAutoProcessForClaim)+". "
-					+Lans.g("X835","Claim wasn't processed per the codes set in your 'Don't auto-process claims with CARC codes' preference."));
-			}
 			//Check if user must choose an insurance payment plan to apply the payment to.
 			if(listPayPlans.Count>1) {
 				stringBuilderErrorMessage.AppendLine(Lans.g("X835","There are multiple insurance payment plans that this payment could be associated to. " +
 					"The claim must be processed manually so that an insurance payment plan can be chosen."));
+			}
+			//Check if a name mismatch exists
+			bool isPatientNameMisMatched=claimPaid.IsPatientNameMisMatched(patient);
+			if(isPatientNameMisMatched) {
+				stringBuilderErrorMessage.AppendLine(Lans.g("X835","The patient name on the ERA does not match the patient on this claim."));
 			}
 			Carrier carrier=Carriers.GetCarrier(insPlan.CarrierNum);
 			//Check if Carrier allows autoprocessing
@@ -4425,7 +4382,7 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Adds to the existing note passed in for an etrans. Indicates that automatic processing was completed or attempted on today's date.</summary>
-		public static string CreateEtransNote(X835Status status,string note,int countProcessedClaimsWithNameMismatches) {
+		public static string CreateEtransNote(X835Status status,string note) {
 			if(note.Trim().IsNullOrEmpty()) {
 				note="";//Clear the existing note if it is only white space.
 			}
@@ -4439,15 +4396,7 @@ namespace OpenDentBusiness {
 			else {
 				automationNote=Lans.g("X835","Automatic processing attempted on");
 			}
-			automationNote+=" "+DateTime.Today.ToShortDateString();
-			string nameMismatchNote="";
-			if(countProcessedClaimsWithNameMismatches==1) {
-				nameMismatchNote="\r\n"+Lans.g("X835","1 claim was processed with a mismatched name.");
-			}
-			else if(countProcessedClaimsWithNameMismatches>1) {
-				nameMismatchNote="\r\n"+countProcessedClaimsWithNameMismatches+" "+Lans.g("X835","claims were processed with mismatched names.");
-			}
-			return automationNote+nameMismatchNote+note;
+			return automationNote+" "+DateTime.Today.ToShortDateString()+note;
 		}
 	}
 

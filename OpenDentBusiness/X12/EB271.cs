@@ -22,7 +22,6 @@ namespace OpenDentBusiness
 		public List<X12Segment> SupplementalSegments;
 
 		public EB271(X12Segment segment,bool isInNetwork,bool isCoinsuranceInverted,X12Segment segHsd=null) {
-			//If we don't already have an EB01, we fill in each list of EBs with every possible one.
 			if(eb01==null) {
 				FillDictionaries();
 			}
@@ -32,18 +31,15 @@ namespace OpenDentBusiness
 			Segment=segment;
 			SupplementalSegments=new List<X12Segment>();
 			//start pattern matching to generate closest Benefit
-			//We search through the lists we created to find the closest matching value if it exists for each element in the segment.
 			EB01 eb01val=eb01.Find(EB01MatchesCode);
 			EB02 eb02val=eb02.Find(EB02MatchesCode);
 			EB03 eb03val=eb03.Find(EB03MatchesCode);
 			EB06 eb06val=eb06.Find(EB06MatchesCode);
 			EB09 eb09val=eb09.Find(EB09MatchesCode);
 			ProcedureCode proccode=null;
-			//If a procedure code exists in the segment
 			if(ProcedureCodes.IsValidCode(Segment.Get(13,2))) {
 				proccode=ProcedureCodes.GetProcCode(Segment.Get(13,2));
 			}
-			//If none of the values are filled in or supported, the benefit is null and we exit.
 			if(!eb01val.IsSupported
 				|| (eb02val!=null && !eb02val.IsSupported)
 				|| (eb03val!=null && !eb03val.IsSupported)
@@ -111,39 +107,31 @@ namespace OpenDentBusiness
 				Benefitt=null;
 				return;
 			}
-			//If quantity is larger than the largest quantity we support, then ignore.
-			//This is handled above for the EB section, but the HSD section needs it's own quantity validation too.
-			//Example 999 days
-			if(segHsd!=null && (PIn.Double(segHsd.Get(2)) > (double)byte.MaxValue)){
-				Benefitt=null;
-				return;
-			}
 			Benefitt=new Benefit();
-			//Each number here corresponds with an element of an EB segment
-			//1-Elegibility Benefit Inf
+			//1
 			Benefitt.BenefitType=eb01val.BenefitType;
-			//2-Coverage Level Code`
+			//2
 			if(eb02val!=null) {
 				Benefitt.CoverageLevel=eb02val.CoverageLevel;
 			}
-			//3-Service Type Code
+			//3
 			if(eb03val!=null) {
 				Benefitt.CovCatNum=CovCats.GetForEbenCat(eb03val.ServiceType).CovCatNum;
 			}
 			//4-Insurance type - we ignore.
 			//5-Plan description - we ignore.
-			//6-Time Period Qualifier
+			//6
 			if(eb06val!=null) {
 				Benefitt.TimePeriod=eb06val.TimePeriod;
 			}
-			//7-Monetary amount. Situational
+			//7
 			if(Segment.Get(7)!="") {
-				Benefitt.MonetaryAmt=PIn.Double(Segment.Get(7));
+				Benefitt.MonetaryAmt=PIn.Double(Segment.Get(7));//Monetary amount. Situational
 			}
-			//8-Percent
+			//8
 			if(Segment.Get(8)!="") {
 				if(isCoinsuranceInverted && Benefitt.BenefitType==InsBenefitType.CoInsurance) {//Some carriers incorrectly send insurance percentage.
-					Benefitt.Percent=(int)(PIn.Double(Segment.Get(8))*100);//Came to us inverted, do Not Invert.
+					Benefitt.Percent=(int)(PIn.Double(Segment.Get(8))*100);//Percent. Came to us inverted, do Not Invert.
 				}
 				else {
 					//OD shows the percentage paid by Insurance by default.
@@ -162,13 +150,12 @@ namespace OpenDentBusiness
 			}
 			//11-Authorization. Ignored.
 			//12-In network. Ignored.
-			//13-Completed medical procedure ID (Procedure)
+			//13-proc
 			if(proccode!=null) {
 				Benefitt.CodeNum=proccode.CodeNum;//element 13,2
 			}
-			//If they have a HSD segment and a valid ADA code
 			if(Benefitt.BenefitType==InsBenefitType.Limitations
-				&& proccode!=null 
+				&& proccode!=null //Valid ADA code.
 				&& segHsd!=null)
 			{
 				if(segHsd.Elements.Length < 6 || segHsd.Elements[2]=="" || segHsd.Elements[5]=="") {
@@ -178,7 +165,6 @@ namespace OpenDentBusiness
 				Benefitt.Quantity=PIn.Byte(segHsd.Elements[2]);//HSD02: Quantity.
 				Benefitt.TimePeriod=eb06.FirstOrDefault(x => x.Code==segHsd.Elements[5]).TimePeriod;//HSD05: Frequency.
 			}
-			//14-Comp Diag Code Point. Ignored.
 		}
 
 		///<summary>The most human-readable description possible.  This is only used in one place, the 270/271 window.</summary>

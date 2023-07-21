@@ -59,7 +59,7 @@ namespace OpenDental{
 		}
 
 		private void menuItemQuickBooks_Click(Object sender, EventArgs e) {
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				MsgBox.Show(this,"QuickBooks is not available while viewing through the web.");
 				return;
 			}
@@ -82,15 +82,16 @@ namespace OpenDental{
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Add"),EnumIcons.Add,"","Add"));
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Edit"),1,Lan.g(this,"Edit Selected Account"),"Edit"));
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Export"),2,Lan.g(this,"Export the Chart of Accounts"),"Export"));
+			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Close"),-1,"Close This Window","Close"));
 		}
 		private void menuItemLock_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
 			FrmAccountingLock frmAccountingLock=new FrmAccountingLock();
 			frmAccountingLock.ShowDialog();
 			if(frmAccountingLock.IsDialogOK==true){
-				SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,"Accounting Lock Changed");
+				SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,"Accounting Lock Changed");
 			}
 		}
 
@@ -116,6 +117,9 @@ namespace OpenDental{
 					break;
 				case "Edit":
 					Edit_Click();
+					break;
+				case "Close":
+					Close();
 					break;
 				case "Export":
 					Export_Click();
@@ -205,7 +209,7 @@ namespace OpenDental{
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			long accountNum=PIn.Long(_tableAccounts.Rows[e.Row]["AccountNum"].ToString());
+			long accountNum=PIn.Long(_tableAccounts.Rows[gridMain.GetSelectedIndex()]["AccountNum"].ToString());
 			if(accountNum==0) {
 				MsgBox.Show(this,"This account is generated automatically, and there is currently no way to view the detail.  It is the sum of all income minus all expenses for all previous years.");
 				return;

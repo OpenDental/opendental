@@ -27,6 +27,7 @@ namespace OpenDental{
 			this.textLog = new System.Windows.Forms.TextBox();
 			this.checkShow = new OpenDental.UI.CheckBox();
 			this.butRunCheck = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// textLog
@@ -61,6 +62,16 @@ namespace OpenDental{
 			this.butRunCheck.Text = "Run Check";
 			this.butRunCheck.Click += new System.EventHandler(this.butRunCheck_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(638, 498);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// FormEcwDiag
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -68,6 +79,7 @@ namespace OpenDental{
 			this.Controls.Add(this.checkShow);
 			this.Controls.Add(this.butRunCheck);
 			this.Controls.Add(this.textLog);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEcwDiag";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -79,6 +91,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.TextBox textLog;
 		private UI.Button butRunCheck;
 		private OpenDental.UI.CheckBox checkShow;

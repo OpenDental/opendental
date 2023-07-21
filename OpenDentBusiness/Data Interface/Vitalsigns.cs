@@ -117,22 +117,28 @@ namespace OpenDentBusiness{
 			if(ageBeforeJanFirst<18) {//Do not clasify children as over/underweight
 				return InterventionCodeSet.Nutrition;//we will sent Nutrition to FormInterventionEdit, but this could also be a physical activity intervention
 			}
-			if(ageBeforeJanFirst<65) {
+			else if(ageBeforeJanFirst<65) {
 				if(bmi<18.5) {
 					return InterventionCodeSet.BelowNormalWeight;
 				}
-				if(bmi<25) {
+				else if(bmi<25) {
 					return InterventionCodeSet.None;
 				}
-				return InterventionCodeSet.AboveNormalWeight;
+				else {
+					return InterventionCodeSet.AboveNormalWeight;
+				}
 			}
-			if(bmi < 23) {
-				return InterventionCodeSet.BelowNormalWeight;
+			else {
+				if(bmi<23) {
+					return InterventionCodeSet.BelowNormalWeight;
+				}
+				else if(bmi<30) {
+					return InterventionCodeSet.None;
+				}
+				else {
+					return InterventionCodeSet.AboveNormalWeight;
+				}
 			}
-			if(bmi < 30) {
-				return InterventionCodeSet.None;
-			}
-			return InterventionCodeSet.AboveNormalWeight;
 		}
 
 		///<summary>Fills a list with GenderAge_LMS objects. The GenderAge field is a string containing the gender (m or f) and age in months. The LMS field is list of floats, the L=power of Box-Cox transformation, M=median, 
@@ -752,8 +758,7 @@ namespace OpenDentBusiness{
 			Disease disease=Diseases.GetOne(vitalsign.PregDiseaseNum);
 			if(vitalsign.DateTaken<disease.DateStart
 				|| (disease.DateStop.Year>1880 && vitalsign.DateTaken>disease.DateStop))
-			{
-				//the current exam is no longer within dates of preg problem, uncheck the pregnancy box and remove the pointer to the disease
+			{//the current exam is no longer within dates of preg problem, uncheck the pregnancy box and remove the pointer to the disease
 				throw new Exception("This exam is not within the active dates of the attached pregnancy problem.");
 			}
 			return vitalsign.PregDiseaseNum;

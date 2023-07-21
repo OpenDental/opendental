@@ -50,7 +50,7 @@ namespace OpenDental {
 			gridMain.Columns.Add(col);
 			gridMain.ListGridRows.Clear();
 			GridRow row;
-			List<CovSpan> listCovSpans;
+			CovSpan[] covSpanArray;
 			for(int i=0;i<_listCovCats.Count;i++) {
 				row=new GridRow();
 				row.Tag=_listCovCats[i].Copy();
@@ -74,13 +74,13 @@ namespace OpenDental {
 					row.Cells.Add(_listCovCats[i].EbenefitCat.ToString());
 				}
 				gridMain.ListGridRows.Add(row);
-				listCovSpans=CovSpans.GetForCat(_listCovCats[i].CovCatNum);
-				for(int j=0;j<listCovSpans.Count;j++){
+				covSpanArray=CovSpans.GetForCat(_listCovCats[i].CovCatNum);
+				for(int j=0;j<covSpanArray.Length;j++){
 					row=new GridRow();
-					row.Tag=listCovSpans[j].Copy();
+					row.Tag=covSpanArray[j].Copy();
 					row.Cells.Add("");
-					row.Cells.Add(listCovSpans[j].FromCode);
-					row.Cells.Add(listCovSpans[j].ToCode);
+					row.Cells.Add(covSpanArray[j].FromCode);
+					row.Cells.Add(covSpanArray[j].ToCode);
 					row.Cells.Add("");
 					row.Cells.Add("");
 					gridMain.ListGridRows.Add(row);
@@ -239,10 +239,14 @@ namespace OpenDental {
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Reset orders and spans to default?")) {
 				return;
 			}
-			CovCats.SetSpansToDefault();
 			CovCats.SetOrdersToDefault();
+			CovCats.SetSpansToDefault();
 			FillSpans();
 			MsgBox.Show(this,"Done.");
+		}
+
+		private void butOK_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.OK;
 		}
 
 		private void FormInsCatsSetup_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -250,6 +254,10 @@ namespace OpenDental {
 				DataValid.SetInvalid(InvalidType.InsCats);
 			}
 		}
+
+		
+
+		
 
 	}
 }

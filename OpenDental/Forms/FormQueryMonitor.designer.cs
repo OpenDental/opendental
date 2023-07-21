@@ -25,6 +25,7 @@ namespace OpenDental {
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormQueryMonitor));
+			this.butClose = new OpenDental.UI.Button();
 			this.butStart = new OpenDental.UI.Button();
 			this.butLog = new OpenDental.UI.Button();
 			this.gridFeed = new OpenDental.UI.GridOD();
@@ -48,6 +49,17 @@ namespace OpenDental {
 			this.splitterPanel1.SuspendLayout();
 			this.splitterPanel2.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(949, 476);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butStart
 			// 
@@ -173,7 +185,7 @@ namespace OpenDental {
 			this.textCommand.DetectUrls = false;
 			this.textCommand.Location = new System.Drawing.Point(6, 45);
 			this.textCommand.Name = "textCommand";
-			this.textCommand.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Query;
+			this.textCommand.QuickPasteType = OpenDentBusiness.QuickPasteType.Query;
 			this.textCommand.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textCommand.Size = new System.Drawing.Size(924, 212);
 			this.textCommand.TabIndex = 0;
@@ -237,12 +249,14 @@ namespace OpenDental {
 			// 
 			// FormQueryMonitor
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(1036, 512);
 			this.Controls.Add(this.splitContainer);
 			this.Controls.Add(this.buttonClear);
 			this.Controls.Add(this.butCopy);
 			this.Controls.Add(this.butLog);
 			this.Controls.Add(this.butStart);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormQueryMonitor";
 			this.Text = "Query Monitor";
@@ -258,6 +272,7 @@ namespace OpenDental {
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private UI.Button butStart;
 		private UI.Button butLog;
 		private UI.GridOD gridFeed;

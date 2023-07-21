@@ -38,12 +38,12 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary></summary>
-		public static void InsertMany(List<ApptGeneralMessageSent> listApptGeneralMessageSents) {
+		public static void InsertMany(List<ApptGeneralMessageSent> listapptGeneralMessageSents) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listApptGeneralMessageSents);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),listapptGeneralMessageSents);
 				return;
 			}
-			Crud.ApptGeneralMessageSentCrud.InsertMany(listApptGeneralMessageSents);
+			Crud.ApptGeneralMessageSentCrud.InsertMany(listapptGeneralMessageSents);
 		}
 		#endregion Methods - Modify
 		/*

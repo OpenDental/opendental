@@ -24,7 +24,8 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormProcNoteAppend));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.signatureBoxWrapper = new OpenDental.UI.SignatureBoxWrapper();
 			this.label15 = new System.Windows.Forms.Label();
 			this.buttonUseAutoNote = new OpenDental.UI.Button();
@@ -37,15 +38,25 @@ namespace OpenDental{
 			this.labelPermAlert = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(487, 447);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(440, 447);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(521, 447);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// signatureBoxWrapper
 			// 
@@ -91,7 +102,7 @@ namespace OpenDental{
 			this.textNotes.DetectUrls = false;
 			this.textNotes.Location = new System.Drawing.Point(112, 38);
 			this.textNotes.Name = "textNotes";
-			this.textNotes.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Procedure;
+			this.textNotes.QuickPasteType = OpenDentBusiness.QuickPasteType.Procedure;
 			this.textNotes.ReadOnly = true;
 			this.textNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNotes.Size = new System.Drawing.Size(450, 164);
@@ -125,7 +136,7 @@ namespace OpenDental{
 			this.textAppended.HasAutoNotes = true;
 			this.textAppended.Location = new System.Drawing.Point(112, 208);
 			this.textAppended.Name = "textAppended";
-			this.textAppended.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Procedure;
+			this.textAppended.QuickPasteType = OpenDentBusiness.QuickPasteType.Procedure;
 			this.textAppended.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textAppended.Size = new System.Drawing.Size(450, 108);
 			this.textAppended.TabIndex = 115;
@@ -153,8 +164,8 @@ namespace OpenDental{
 			// 
 			// FormProcNoteAppend
 			// 
-			this.ClientSize = new System.Drawing.Size(572, 483);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(608, 483);
 			this.Controls.Add(this.labelPermAlert);
 			this.Controls.Add(this.textAppended);
 			this.Controls.Add(this.label1);
@@ -165,7 +176,8 @@ namespace OpenDental{
 			this.Controls.Add(this.label7);
 			this.Controls.Add(this.label15);
 			this.Controls.Add(this.signatureBoxWrapper);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormProcNoteAppend";
 			this.Text = "Procedure Note Append";
@@ -178,7 +190,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private UI.SignatureBoxWrapper signatureBoxWrapper;
 		private System.Windows.Forms.Label label15;
 		private UI.Button buttonUseAutoNote;

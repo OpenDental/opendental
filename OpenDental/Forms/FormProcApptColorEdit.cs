@@ -15,7 +15,11 @@ namespace OpenDental{
 		public ApptViewItem ApptViewItemCur;
 
 		///<summary></summary>
-		public FormProcApptColorEdit() {
+		public FormProcApptColorEdit()
+		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
@@ -61,7 +65,11 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(textCodeRange.Text.Trim()=="") {
 				MessageBox.Show(Lan.g(this,"Code range cannot be blank."));
 				return;
@@ -86,3 +94,24 @@ namespace OpenDental{
 
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

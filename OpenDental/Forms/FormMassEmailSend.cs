@@ -27,7 +27,7 @@ namespace OpenDental {
 		}
 
 		private void LoadUI() {
-			long clinicNum=comboClinic.ClinicNumSelected;
+			long clinicNum=comboClinic.SelectedClinicNum;
 			LoadVerifiedEmails(clinicNum);
 			UpdateClinicIsNotEnabled(clinicNum);
 			FillComboEmailHostingTemplate(clinicNum);
@@ -76,13 +76,13 @@ namespace OpenDental {
 		}
 
 		private void menuItemTemplates_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.EServicesSetup)) {
+			if(!Security.IsAuthorized(Permissions.EServicesSetup)) {
 				return;
 			}
 			using FormMassEmailTemplates formMassEmailTemplates=new FormMassEmailTemplates();
 			formMassEmailTemplates.ShowDialog();
 			//In case a new template was added, refresh the template comboBox
-			FillComboEmailHostingTemplate(comboClinic.ClinicNumSelected);
+			FillComboEmailHostingTemplate(comboClinic.SelectedClinicNum);
 			PreviewTemplate();
 		}
 		
@@ -242,16 +242,16 @@ namespace OpenDental {
 				return;
 			}
 			EmailAddress emailAddress=EmailAddresses.GetOne(formEmailAddresses.EmailAddressNum);
-			SetEmailAddressSender(emailAddress,comboClinic.ClinicNumSelected);
+			SetEmailAddressSender(emailAddress,comboClinic.SelectedClinicNum);
 		}
 
 		private void butVerifications_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.EServicesSetup)) {
+			if(!Security.IsAuthorized(Permissions.EServicesSetup)) {
 				return;
 			}
 			using FormEmailHostingAddressVerification formEmailHostingAddressVerification=new FormEmailHostingAddressVerification();
 			formEmailHostingAddressVerification.ShowDialog();
-			long clinicNum=comboClinic.ClinicNumSelected;
+			long clinicNum=comboClinic.SelectedClinicNum;
 			//This form ran web calls to get the most up-to-date verified addresses.  The user has to click a link in the verification email to finish the
 			//process for any new verifications to be "successful".
 			_listIdentityResources=formEmailHostingAddressVerification.GetVerifiedAddresses(clinicNum);
@@ -335,14 +335,14 @@ namespace OpenDental {
 				senderAddress=mailAddressReplyTo.Address;
 			}
 			MassEmailSendResult massEmailSendResult=null;
-			UI.ProgressWin progressOD=new UI.ProgressWin();
+			UI.ProgressOD progressOD=new UI.ProgressOD();
 			progressOD.ActionMain=() => {
 				massEmailSendResult=Promotions.SendEmails(emailHostingTemplate,
 					listMassEmailDestinations,//This is just one email, the sender.
 					alias,mailAddressReplyTo.Address,promotionName,PromotionType.Manual,emailHostingTemplate.ClinicNum,senderAddress,isVerificationBatch:true);
 			};
 			progressOD.StartingMessage=Lan.g(this,"Sending verification email...");
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled){
 				return;
 			}
@@ -357,14 +357,14 @@ namespace OpenDental {
 				return;
 			}
 			//Now send out the mass email to all of the recipients.
-			progressOD=new UI.ProgressWin();
+			progressOD=new UI.ProgressOD();
 			progressOD.ActionMain=() => {
 				massEmailSendResult=Promotions.SendEmails(emailHostingTemplate,
 					_listPatientInfos.Select(x => new MassEmailDestination { PatNum=x.PatNum,AptNum=x.NextAptNum,ToAddress=x.Email}).ToList(),
 					alias,mailAddressReplyTo.Address,promotionName,PromotionType.Manual,emailHostingTemplate.ClinicNum,senderAddress);
 			};
 			progressOD.StartingMessage=Lan.g(this,"Sending emails...");
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled){
 				return;
 			}
@@ -383,5 +383,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

@@ -9,7 +9,7 @@ namespace UnitTestsCore {
 	public class CodeGroupT {
 
 		///<summary>Returns true if a new CodeGroup was added.</summary>
-		public static bool AddIfNotPresent(string groupName,string procCodes,EnumCodeGroupFixed codeGroupFixed=EnumCodeGroupFixed.None,bool isHidden=false,bool showInAgeLimit=false) {
+		public static bool AddIfNotPresent(string groupName,string procCodes,EnumCodeGroupFixed codeGroupFixed=EnumCodeGroupFixed.None,bool isHidden=false) {
 			if(CodeGroups.GetExists(x => x.GroupName==groupName)) {
 				return false;
 			}
@@ -18,7 +18,6 @@ namespace UnitTestsCore {
 				GroupName=groupName,
 				ItemOrder=CodeGroups.GetCount(),
 				IsHidden=isHidden,
-				ShowInAgeLimit=showInAgeLimit,
 				ProcCodes=procCodes,
 			});
 			CodeGroups.RefreshCache();
@@ -26,7 +25,7 @@ namespace UnitTestsCore {
 		}
 
 		///<summary>Updates or inserts a CodeGroup with the provided group name (and additional information). Returns the new or updated code group from cache.</summary>
-		public static CodeGroup Upsert(string groupName,string procCodes,EnumCodeGroupFixed codeGroupFixed=EnumCodeGroupFixed.None,bool isHidden=false,bool showInAgeLimit=false) {
+		public static CodeGroup Upsert(string groupName,string procCodes,EnumCodeGroupFixed codeGroupFixed=EnumCodeGroupFixed.None,bool isHidden=false) {
 			if(codeGroupFixed!=EnumCodeGroupFixed.None) {
 				//There can only be one.
 				string command="DELETE FROM codegroup WHERE CodeGroupFixed = "+POut.Enum(codeGroupFixed);
@@ -35,13 +34,12 @@ namespace UnitTestsCore {
 			}
 			CodeGroup codeGroup=CodeGroups.GetFirstOrDefault(x => x.GroupName==groupName);
 			if(codeGroup==null) {
-				AddIfNotPresent(groupName,procCodes,codeGroupFixed:codeGroupFixed,isHidden:isHidden,showInAgeLimit:showInAgeLimit);
+				AddIfNotPresent(groupName,procCodes,codeGroupFixed:codeGroupFixed,isHidden:isHidden);
 			}
 			else {
 				codeGroup.CodeGroupFixed=codeGroupFixed;
 				codeGroup.ProcCodes=procCodes;
 				codeGroup.IsHidden=isHidden;
-				codeGroup.ShowInAgeLimit=showInAgeLimit;
 				CodeGroups.Update(codeGroup);
 				CodeGroups.RefreshCache();
 			}

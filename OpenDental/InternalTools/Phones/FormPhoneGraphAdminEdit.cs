@@ -32,7 +32,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			//Date can't be changed
 			PhoneGraphCur.Note=textNote.Text;
 			int dailyLimit=0;
@@ -43,13 +43,15 @@ namespace OpenDental {
 				MsgBox.Show("Please fix entry first.");
 				return;
 			}
-			if(PhoneGraphCur.DailyLimit!=dailyLimit) {
-				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Max Prescheduled Off changed from "+PhoneGraphCur.DailyLimit+" to "+dailyLimit);
-			}
 			PhoneGraphCur.DailyLimit=dailyLimit;
 			PhoneGraphs.InsertOrUpdate(PhoneGraphCur);
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			this.DialogResult=DialogResult.Cancel;
+		}
+
+	
 	}
 }

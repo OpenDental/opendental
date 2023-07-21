@@ -29,7 +29,7 @@ namespace OpenDental {
 		private void FormSheetFieldImage_Load(object sender,EventArgs e) {
 			textYPos.MaxVal=SheetDefCur.HeightTotal-1;//The maximum y-value of the sheet field must be within the page vertically.
 			if(IsReadOnly){
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 			}
 			FillCombo();
@@ -50,7 +50,8 @@ namespace OpenDental {
 				}
 				else {//Cloud
 					//Get file list
-					files=CloudStorage.ListFolderContents(SheetUtil.GetImagePath()).ToArray();
+					OpenDentalCloud.Core.TaskStateListFolders state=CloudStorage.ListFolderContents(SheetUtil.GetImagePath());
+					files=state.ListFolderPathsDisplay.ToArray();
 				}
 				for(int i=0;i<files.Length;i++) {
 					//remove some common offending file types (non image files)
@@ -67,51 +68,47 @@ namespace OpenDental {
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			string importFilePath;
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				importFilePath=ODCloudClient.ImportFileForCloud();
-				if(importFilePath.IsNullOrEmpty()){
-					return;
-				}
+			using OpenFileDialog dialogOpenFile=new OpenFileDialog();
+			dialogOpenFile.Multiselect=false;
+			if(dialogOpenFile.ShowDialog()!=DialogResult.OK){
+				return;
 			}
-			else {
-				using OpenFileDialog dialogOpenFile=new OpenFileDialog();
-				dialogOpenFile.Multiselect=false;
-				if(dialogOpenFile.ShowDialog()!=DialogResult.OK){
-					return;
-				}
-				if(!File.Exists(dialogOpenFile.FileName)){
-					MsgBox.Show(this,"File does not exist.");
-					return;
-				}
-				importFilePath=dialogOpenFile.FileName;
+			if(!File.Exists(dialogOpenFile.FileName)){
+				MsgBox.Show(this,"File does not exist.");
+				return;
 			}
-			if(!ImageHelper.HasImageExtension(importFilePath)){
+			if(!ImageHelper.HasImageExtension(dialogOpenFile.FileName)){
 				MsgBox.Show(this,"Only allowed to import an image.");
 				return;
 			}
-			string newName=importFilePath;
+			string newName=dialogOpenFile.FileName;
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
-				newName=ODFileUtils.CombinePaths(SheetUtil.GetImagePath(),Path.GetFileName(importFilePath));
+				newName=ODFileUtils.CombinePaths(SheetUtil.GetImagePath(),Path.GetFileName(dialogOpenFile.FileName));
 				if(File.Exists(newName)) {
 					MsgBox.Show(this,"A file of that name already exists in SheetImages.  Please rename the file before importing.");
 					return;
 				}
-				File.Copy(importFilePath,newName);
+				File.Copy(dialogOpenFile.FileName,newName);
 			}
 			else if(CloudStorage.IsCloudStorage) {
-				if(CloudStorage.FileExists(ODFileUtils.CombinePaths(SheetUtil.GetImagePath(),Path.GetFileName(importFilePath)))) {
+				if(CloudStorage.FileExists(ODFileUtils.CombinePaths(SheetUtil.GetImagePath(),Path.GetFileName(dialogOpenFile.FileName)))) {
 					MsgBox.Show(this,"A file of that name already exists in SheetImages.  Please rename the file before importing.");
 					return;
 				}
-				UI.ProgressWin progressWin=new UI.ProgressWin();
-				progressWin.StartingMessage="Uploading...";
-				progressWin.ActionMain=() => CloudStorage.Upload(SheetUtil.GetImagePath(),Path.GetFileName(importFilePath),File.ReadAllBytes(importFilePath));
-				progressWin.ShowDialog();
-				if(progressWin.IsCancelled){
+				using FormProgress formProgress=new FormProgress();
+				formProgress.DisplayText=Lan.g(CloudStorage.LanThis,"Uploading...");
+				formProgress.NumberFormat="F";
+				formProgress.NumberMultiplication=1;
+				formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+				formProgress.TickMS=1000;
+				OpenDentalCloud.Core.TaskStateUpload taskStateUpload=CloudStorage.UploadAsync(SheetUtil.GetImagePath(),Path.GetFileName(dialogOpenFile.FileName)
+					,File.ReadAllBytes(dialogOpenFile.FileName)
+					,new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
+				if(formProgress.ShowDialog()==DialogResult.Cancel) {
+					taskStateUpload.DoCancel=true;
 					return;
 				}
-				newName=Path.GetFileName(importFilePath);
+				newName=Path.GetFileName(dialogOpenFile.FileName);
 				//It would be nice to save the image somewhere so that we don't have to download it again.
 			}			
 			FillCombo();
@@ -165,20 +162,26 @@ namespace OpenDental {
 					pictureBox.Image=new Bitmap(SheetFieldDefCur.ImageField);
 				}
 				else {
-					UI.ProgressWin progressWin=new UI.ProgressWin();
-					progressWin.StartingMessage=Lan.g(CloudStorage.LanThis,"Downloading...");
-					byte[] byteArray=null;
-					progressWin.ActionMain=() => {
-						byteArray=CloudStorage.Download(SheetUtil.GetImagePath(),comboFieldName.Text);
-					};
-					progressWin.ShowDialog();
-					if(byteArray==null || byteArray.Length==0){
-						pictureBox.Image=null;
+					using FormProgress formProgress=new FormProgress();
+					formProgress.DisplayText=Lan.g(CloudStorage.LanThis,"Downloading...");
+					formProgress.NumberFormat="F";
+					formProgress.NumberMultiplication=1;
+					formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+					formProgress.TickMS=1000;
+					OpenDentalCloud.Core.TaskStateDownload taskStateDownload=CloudStorage.DownloadAsync(SheetUtil.GetImagePath(),comboFieldName.Text,
+						new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
+					if(formProgress.ShowDialog()==DialogResult.Cancel) {
+						taskStateDownload.DoCancel=true;
 						return;
 					}
-					using MemoryStream memoryStream=new MemoryStream(byteArray);
-					using Image image=Image.FromStream(memoryStream);
-					pictureBox.Image=new Bitmap(image);
+					if(taskStateDownload==null || taskStateDownload.FileContent==null) {
+						pictureBox.Image=null;
+					}
+					else {
+						using MemoryStream memoryStream=new MemoryStream(taskStateDownload.FileContent);
+						using Image image=Image.FromStream(memoryStream);
+						pictureBox.Image=new Bitmap(image);
+					}
 				}
 			}
 			else{
@@ -273,7 +276,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textXPos.IsValid()
 				|| !textYPos.IsValid()
 				|| !textWidth.IsValid()
@@ -309,20 +312,28 @@ namespace OpenDental {
 						MsgBox.Show(this,"Image file does not exist.");
 						return;
 					}
-					UI.ProgressWin progressWin=new UI.ProgressWin();
-					progressWin.StartingMessage="Downloading...";
-					byte[] byteArray=null;
-					progressWin.ActionMain=() => {
-						byteArray=CloudStorage.Download(SheetUtil.GetImagePath(),comboFieldName.Text);
-					};
-					progressWin.ShowDialog();
-					if(byteArray==null || byteArray.Length==0){
+					using FormProgress FormP=new FormProgress();
+					FormP.DisplayText=Lan.g(CloudStorage.LanThis,"Downloading...");
+					FormP.NumberFormat="F";
+					FormP.NumberMultiplication=1;
+					FormP.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+					FormP.TickMS=1000;
+					OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.DownloadAsync(SheetUtil.GetImagePath(),comboFieldName.Text,
+						new OpenDentalCloud.ProgressHandler(FormP.UpdateProgress));
+					if(FormP.ShowDialog()==DialogResult.Cancel) {
+						state.DoCancel=true;
 						MsgBox.Show(this,"Select a valid image first.");
 						return;
 					}
-					using MemoryStream stream=new MemoryStream(byteArray);
-					using Image img=Image.FromStream(stream);
-					pictureBox.Image=new Bitmap(img);
+					if(state==null || state.FileContent==null) {
+						MsgBox.Show(this,"Select a valid image first.");
+						return;
+					}
+					else {
+						using MemoryStream stream=new MemoryStream(state.FileContent);
+						using Image img=Image.FromStream(stream);
+						pictureBox.Image=new Bitmap(img);
+					}
 				}
 			}
 			SheetFieldDefCur.FieldName=comboFieldName.Text;
@@ -338,9 +349,29 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormSheetFieldImage_FormClosing(object sender,FormClosingEventArgs e) {
 			pictureBox.Image?.Dispose();
 		}
 
+		
+		
+
+		
+
+	
+
+		
+
+		
+
+		
+
+		
+
+		
 	}
 }

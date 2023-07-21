@@ -32,7 +32,6 @@ namespace OpenDental{
 		private List <PatPlan> _listPatPlans;
 		private List<Patient> _listPatientsSuperFamilyGuarantors;
 		private List<Patient> _listPatientsSuperFamilyMembers;
-		private List<PatField> _listPatFieldsForSuperFam;
 		///<summary>All recalls for this entire family.</summary>
 		private List<Recall> _listRecalls;
 		///<summary>All the data necessary to load the module.</summary>
@@ -45,7 +44,6 @@ namespace OpenDental{
 		private Point _pointLastClicked;
 		private SortStrategy _sortStrategySuperFam;
 		private ToolBarOD toolBarMain;
-		private int _widthGridSuperFam;
 		#endregion Fields - Private
 
 		#region Constructor
@@ -80,30 +78,30 @@ namespace OpenDental{
 				|| gridPat.ListGridRows[e.Row].Tag.ToString()=="SS#"
 				|| gridPat.ListGridRows[e.Row].Tag.ToString()=="DOB") 
 			{
-				if(!Security.IsAuthorized(EnumPermType.PatientEdit)) {
+				if(!Security.IsAuthorized(Permissions.PatientEdit)) {
 					return;
 				}
 				using FormPatientEdit formPatientEdit=new FormPatientEdit(_patient,_family);
 				formPatientEdit.IsNew=false;
 				formPatientEdit.ShowDialog();
 				if(formPatientEdit.DialogResult==DialogResult.OK) {
-					GlobalFormOpenDental.PatientSelected(_patient,false);
+					FormOpenDental.S_Contr_PatientSelected(_patient,false);
 				}
 			}
 			//Check tags and perform corresponding action for said tag type.
 			else if(gridPat.ListGridRows[e.Row].Tag.ToString()=="Referral") {
 				//RefAttach refattach=(RefAttach)gridPat.Rows[e.Row].Tag;
-				FrmReferralsPatient frmReferralsPatient=new FrmReferralsPatient();
-				frmReferralsPatient.PatNum=_patient.PatNum;
-				frmReferralsPatient.ShowDialog();
+				using FormReferralsPatient formReferralsPatient=new FormReferralsPatient();
+				formReferralsPatient.PatNum=_patient.PatNum;
+				formReferralsPatient.ShowDialog();
 			}
 			else if(gridPat.ListGridRows[e.Row].Tag.ToString()=="References") {
 				using FormReference formReference=new FormReference();
 				formReference.ShowDialog();
 				if(formReference.PatNumGoto!=0) {
 					Patient patient=Patients.GetPat(formReference.PatNumGoto);
-					GlobalFormOpenDental.PatientSelected(patient,false);
-					GlobalFormOpenDental.GotoFamily(formReference.PatNumGoto);
+					FormOpenDental.S_Contr_PatientSelected(patient,false);
+					GotoModule.GotoFamily(formReference.PatNumGoto);
 					return;
 				}
 				if(formReference.DialogResult!=DialogResult.OK) {
@@ -169,7 +167,7 @@ namespace OpenDental{
 				&& gridPat.ListGridRows[idxRowClick].Tag is string
 				&& ((string)gridPat.ListGridRows[idxRowClick].Tag=="DOB"))
 			{
-				if(Security.IsAuthorized(EnumPermType.PatientDOBView,true)
+				if(Security.IsAuthorized(Permissions.PatientDOBView,true)
 					&& gridPat.ListGridRows[idxRowClick].Cells[gridPat.ListGridRows[idxRowClick].Cells.Count-1].Text!="")
 				{
 					menuItemDOB.Visible=true;
@@ -212,7 +210,7 @@ namespace OpenDental{
 				&& gridPat.ListGridRows[idxRowClick].Tag is string
 				&& ((string)gridPat.ListGridRows[idxRowClick].Tag=="SS#"))
 			{
-				if(Security.IsAuthorized(EnumPermType.PatientSSNView,true) 
+				if(Security.IsAuthorized(Permissions.PatientSSNView,true) 
 					&& gridPat.ListGridRows[idxRowClick].Cells[gridPat.ListGridRows[idxRowClick].Cells.Count-1].Text!="")
 				{
 					menuItemSSN.Visible=true;
@@ -248,7 +246,7 @@ namespace OpenDental{
 			row.Cells[row.Cells.Count-1].Text=Patients.DOBFormatHelper(_patient.Birthdate,false);
 			gridPat.EndUpdate();
 			string logtext="Date of birth unmasked in Family Module";
-			SecurityLogs.MakeLogEntry(EnumPermType.PatientDOBView,_patient.PatNum,logtext);
+			SecurityLogs.MakeLogEntry(Permissions.PatientDOBView,_patient.PatNum,logtext);
 		}
 
 		private void MenuItemUnmaskSSN_Click(object sender,EventArgs e) {
@@ -267,25 +265,25 @@ namespace OpenDental{
 				logtext="Social Security Number";
 			}
 			logtext+=" unmasked in Family Module";
-			SecurityLogs.MakeLogEntry(EnumPermType.PatientSSNView,_patient.PatNum,logtext);
+			SecurityLogs.MakeLogEntry(Permissions.PatientSSNView,_patient.PatNum,logtext);
 		}
 		#endregion Methods - Event Handlers - GridPatient 
 
 		#region Methods - Event Handlers - GridFamily
 		private void gridFamily_CellClick(object sender,ODGridClickEventArgs e) {
-			GlobalFormOpenDental.PatientSelected(gridFamily.SelectedTag<Patient>(),false);
+			FormOpenDental.S_Contr_PatientSelected(gridFamily.SelectedTag<Patient>(),false);
 			ModuleSelected(gridFamily.SelectedTag<Patient>().PatNum);
 		}
 
 		private void gridFamily_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.PatientEdit)) {
+			if(!Security.IsAuthorized(Permissions.PatientEdit)) {
 				return;
 			}
 			using FormPatientEdit formPatientEdit=new FormPatientEdit(_patient,_family);
 			formPatientEdit.IsNew=false;
 			formPatientEdit.ShowDialog();
 			if(formPatientEdit.DialogResult==DialogResult.OK) {
-				GlobalFormOpenDental.PatientSelected(_patient,false);
+				FormOpenDental.S_Contr_PatientSelected(_patient,false);
 			}
 			ModuleSelected(_patient.PatNum);
 		}
@@ -309,7 +307,7 @@ namespace OpenDental{
 
 		#region Methods - Event Handlers - GridSuperFam
 		private void gridSuperFam_CellClick(object sender,ODGridClickEventArgs e) {
-			GlobalFormOpenDental.PatientSelected(_listPatientsSuperFamilyGuarantors[e.Row],false);
+			FormOpenDental.S_Contr_PatientSelected(_listPatientsSuperFamilyGuarantors[e.Row],false);
 			ModuleSelected(_listPatientsSuperFamilyGuarantors[e.Row].PatNum);
 		}
 
@@ -406,7 +404,7 @@ namespace OpenDental{
 			}
 			DiscountPlanSubs.Delete(_discountPlanSub.DiscountSubNum);
 			string logText="The discount plan "+DiscountPlans.GetPlan(_discountPlanSub.DiscountPlanNum).Description+" was dropped.";
-			SecurityLogs.MakeLogEntry(EnumPermType.DiscountPlanAddDrop,_patient.PatNum,logText);
+			SecurityLogs.MakeLogEntry(Permissions.DiscountPlanAddDrop,_patient.PatNum,logText);
 			_discountPlanSub=null;
 			FillInsData();
 		}
@@ -425,7 +423,7 @@ namespace OpenDental{
 				return;
 			}
 			Patient patient=(Patient)gridPatientClones.ListGridRows[e.Row].Tag;
-			GlobalFormOpenDental.PatientSelected(patient,false);
+			FormOpenDental.S_Contr_PatientSelected(patient,false);
 			ModuleSelected(patient.PatNum);
 		}
 		#endregion Methods - Event Handlers - Patient Clones
@@ -478,18 +476,7 @@ namespace OpenDental{
 				return;
 			}
 			if(e.Button.Tag.GetType()==typeof(Program)) {
-				WpfControls.ProgramL.Execute(((Program)e.Button.Tag).ProgramNum,_patient);
-			}
-		}
-
-		private void pictureBoxPat_DoubleClick(object sender,EventArgs e) {
-			if(Plugins.HookMethod(this,"ControlFamily.pictureBoxPat_DoubleClick",_patient)) {
-				//Example to pop open your own bigger image:
-				//Document document=Documents.GetPatPictFromDb(_patient.PatNum);
-				//string patFolder=ImageStore.GetPatientFolder(_patient,ImageStore.GetPreferredAtoZpath());
-				//using Bitmap bitmap=ImageStore.OpenImage(document,patFolder);
-				//show the bitmap in your own new window.
-				return;
+				ProgramL.Execute(((Program)e.Button.Tag).ProgramNum,_patient);
 			}
 		}
 		#endregion Methods - Event Handlers - Other
@@ -539,7 +526,7 @@ namespace OpenDental{
 				toolBarButton.Style=ODToolBarButtonStyle.Label;
 				toolBarMain.Buttons.Add(toolBarButton);
 				toolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Add"),-1,Lan.g(this,"Creates a clone of the currently selected patient."),"AddClone"));
-				toolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Sync"),-1,Lan.g(this,"Sync information to the clone patient or create a clone of the currently selected patient if one does not exist"),"SynchClone"));
+				toolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Synch"),-1,Lan.g(this,"Synch information to the clone patient or create a clone of the currently selected patient if one does not exist"),"SynchClone"));
 				toolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Break"),-1,Lan.g(this,"Remove selected patient from the clone group."),"BreakClone"));
 			}
 			if(PrefC.GetBool(PrefName.ShowFeatureSuperfamilies)) {
@@ -563,10 +550,9 @@ namespace OpenDental{
 				toolBarButton.DropDownMenu=contextMenuDiscount;
 				toolBarMain.Buttons.Add(toolBarButton);
 			}
-			ProgramL.LoadToolBar(toolBarMain,EnumToolBar.FamilyModule);
+			ProgramL.LoadToolbar(toolBarMain,ToolBarsAvail.FamilyModule);
 			toolBarMain.Invalidate();
 			Plugins.HookAddCode(this,"ContrFamily.LayoutToolBar_end",_patient);
-			UpdateToolbarButtons();
 		}
 
 		///<summary></summary>
@@ -575,28 +561,11 @@ namespace OpenDental{
 			if(_patient!=null && _patient.PatStatus==PatientStatus.Deleted) {
 				MsgBox.Show("Selected patient has been deleted by another workstation.");
 				PatientL.RemoveFromMenu(_patient.PatNum);
-				GlobalFormOpenDental.PatientSelected(new Patient(),false);
-				RefreshModuleData(0);
-			}
-			if(_patient!=null && _patient.PatStatus==PatientStatus.Archived && !Security.IsAuthorized(EnumPermType.ArchivedPatientSelect,suppressMessage:true)) {
-				GlobalFormOpenDental.PatientSelected(new Patient(),false);
+				FormOpenDental.S_Contr_PatientSelected(new Patient(),false);
 				RefreshModuleData(0);
 			}
 			RefreshModuleScreen();
-			ODEvent.Fire(ODEventType.ModuleSelected,_loadData);
-			if(_patient!=null && DatabaseIntegrities.DoShowPopup(_patient.PatNum,EnumModuleType.Family)) {
-				List<Claim> listClaims=Claims.GetForPat(_patient.PatNum);
-				List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(new List<long>(){_patient.PatNum});
-				bool areHashesValid=Patients.AreAllHashesValid(_patient,new List<Appointment>(),new List<PayPlan>(),new List<PaySplit>(),listClaims,listClaimProcs);
-				if(!areHashesValid) {
-					DatabaseIntegrities.AddPatientModuleToCache(_patient.PatNum,EnumModuleType.Family); //Add to cached list for next time
-					//show popup
-					DatabaseIntegrity databaseIntegrity=DatabaseIntegrities.GetModule();
-					FrmDatabaseIntegrity frmDatabaseIntegrity=new FrmDatabaseIntegrity();
-					frmDatabaseIntegrity.MessageToShow=databaseIntegrity.Message;
-					frmDatabaseIntegrity.ShowDialog();
-				}
-			}
+			PatientDashboardDataEvent.Fire(ODEventType.ModuleSelected,_loadData);
 			Plugins.HookAddCode(this,"ContrFamily.ModuleSelected_end",patNum);
 		}
 
@@ -778,7 +747,7 @@ namespace OpenDental{
 					#endregion Billing Type
 					#region Birthdate
 					case "Birthdate":
-						if(PrefC.GetBool(PrefName.PatientDOBMasked) || !Security.IsAuthorized(EnumPermType.PatientDOBView,true)) {
+						if(PrefC.GetBool(PrefName.PatientDOBMasked) || !Security.IsAuthorized(Permissions.PatientDOBView,true)) {
 							row.Cells.Add(Patients.DOBFormatHelper(_patient.Birthdate,true));
 							row.Tag="DOB";//Used later to tell if we're right clicking on the DOB row
 							break;
@@ -1216,10 +1185,6 @@ namespace OpenDental{
 					//the Select Patient window.
 					continue;
 				}
-				if(_family.ListPats[i].PatStatus==PatientStatus.Deleted) {
-					//Don't show deleted family members
-					continue;
-				}
 				row=new GridRow();
 				row.Cells.Add(_family.GetNameInFamLFI(i));
 				row.Cells.Add(Lan.g("enumPatientPosition",_family.ListPats[i].Position.ToString()));
@@ -1263,7 +1228,7 @@ namespace OpenDental{
 		}
 
 		private void ToolButAdd_Click() {
-			if(!Security.IsAuthorized(EnumPermType.PatientEdit)) {
+			if(!Security.IsAuthorized(Permissions.PatientEdit)) {
 				return;
 			}
 			//At HQ, some resellers don't add clients through the reseller portal.
@@ -1284,6 +1249,7 @@ namespace OpenDental{
 			patientTemp.Email         =_patient.Email;
 			patientTemp.TxtMsgOk      =_patient.TxtMsgOk;
 			patientTemp.ShortCodeOptIn=_patient.ShortCodeOptIn;
+			patientTemp.Guarantor     =_patient.Guarantor;
 			patientTemp.CreditType    =_patient.CreditType;
 			if(!PrefC.GetBool(PrefName.PriProvDefaultToSelectProv)) {
 				patientTemp.PriProv     =_patient.PriProv;
@@ -1294,8 +1260,11 @@ namespace OpenDental{
 			patientTemp.AddrNote      =_patient.AddrNote;
 			patientTemp.ClinicNum     =_patient.ClinicNum;//this is probably better in case they don't have user.ClinicNums set.
 			//tempPat.ClinicNum  =Security.CurUser.ClinicNum;
+			if(Patients.GetPat(patientTemp.Guarantor).SuperFamily!=0) {
+				patientTemp.SuperFamily=_patient.SuperFamily;
+			}
 			Patients.Insert(patientTemp,false);
-			SecurityLogs.MakeLogEntry(EnumPermType.PatientCreate,patientTemp.PatNum,"Created from Family Module Add button.");
+			SecurityLogs.MakeLogEntry(Permissions.PatientCreate,patientTemp.PatNum,"Created from Family Module Add button.");
 			CustReference custReference=new CustReference();
 			custReference.PatNum=patientTemp.PatNum;
 			CustReferences.Insert(custReference);
@@ -1312,15 +1281,7 @@ namespace OpenDental{
 			formPatientEdit.IsNew=true;
 			formPatientEdit.ShowDialog();
 			if(formPatientEdit.DialogResult==DialogResult.OK) {
-				//Set guarantor and superfam when we've actually finished creating the patient AND have decided to keep it
-				//There were issues where non-complete patients were showing up because of a closure or crash while formPatientEdit was open
-				Patient patientOld=patientTemp.Copy();
-				patientTemp.Guarantor=_patient.Guarantor;
-				if(Patients.GetPat(patientTemp.Guarantor).SuperFamily!=0) {
-					patientTemp.SuperFamily=_patient.SuperFamily;
-				}
-				Patients.Update(patientTemp,patientOld);
-				GlobalFormOpenDental.PatientSelected(patientTemp,false);
+				FormOpenDental.S_Contr_PatientSelected(patientTemp,false);
 				ModuleSelected(patientTemp.PatNum);
 				return;
 			}
@@ -1328,7 +1289,7 @@ namespace OpenDental{
 		}
 
 		private void ToolButDelete_Click() {
-			if(!Security.IsAuthorized(EnumPermType.PatientEdit)) {
+			if(!Security.IsAuthorized(Permissions.PatientEdit)) {
 				return;
 			}
 			//this doesn't actually delete the patient, just changes their status
@@ -1371,7 +1332,7 @@ namespace OpenDental{
 			bool hasRepeat=repeatChargeArray.Length>0;
 			bool hasCC=listCreditCards.Count>0;
 			bool hasRegKey=registrationKeyArray.Length>0;
-			bool hasPerio=PerioExams.HasPerio(_patient.PatNum);
+			bool hasPerio=PerioExams.GetExamsTable(_patient.PatNum).Rows.Count>0;
 			bool hasClones=(listPatNumClones.Count>1);//The list of "clones for all" will always include the current patient.
 			bool hasDiscount=discountPlanNum>0;
 			bool hasAllergies=Allergies.GetAll(_patient.PatNum,true).Any();
@@ -1466,8 +1427,8 @@ namespace OpenDental{
 							Recalls.Update(_listRecalls[i]);
 						}
 					}
-					SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,patientOld.PatNum,"Patient deleted");
-					GlobalFormOpenDental.PatientSelected(new Patient(),false);
+					SecurityLogs.MakeLogEntry(Permissions.PatientEdit,patientOld.PatNum,"Patient deleted");
+					FormOpenDental.S_Contr_PatientSelected(new Patient(),false);
 					ModuleSelected(0);
 					//does not delete notes or plans, etc.
 				}
@@ -1497,9 +1458,9 @@ namespace OpenDental{
 				_listRecalls[i].DateDue=DateTime.MinValue;
 				Recalls.Update(_listRecalls[i]);
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,patientOld.PatNum,"Patient deleted");
+			SecurityLogs.MakeLogEntry(Permissions.PatientEdit,patientOld.PatNum,"Patient deleted");
 			ModuleSelected(patientOld.Guarantor);//Sets PatCur to PatOld guarantor.
-			GlobalFormOpenDental.PatientSelected(_patient,false);//PatCur is now the Guarantor.
+			FormOpenDental.S_Contr_PatientSelected(_patient,false);//PatCur is now the Guarantor.
 			PatientL.RemoveFromMenu(patientOld.PatNum);//Always remove deleted patients from the dropdown menu.
 		}
 
@@ -1572,31 +1533,33 @@ namespace OpenDental{
 					if(_patient.SuperFamily>0 && PrefC.GetBool(PrefName.SuperFamNewPatAddIns)) {
 						AddSuperGuarPriInsToFam(_patient.Guarantor);
 					}
-					SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,_patient.PatNum,"Patient moved to new family.");
+					SecurityLogs.MakeLogEntry(Permissions.PatientEdit,_patient.PatNum,"Patient moved to new family.");
 					break;
 				case DialogResult.No://move to an existing family
 					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Select the family to move this patient to from the list that will come up next.")) {
 						return;
 					}
-					FrmPatientSelect frmPatientSelect=new FrmPatientSelect();
-					frmPatientSelect.ShowDialog();
-					if(frmPatientSelect.IsDialogCancel) {
-						return;
-					}
-					Patient patientInNewFam=Patients.GetPat(frmPatientSelect.PatNumSelected);
-					if(patientInNewFam.Guarantor==_patient.Guarantor) {
-						return;// Patient is already a part of the family.
-					}
-					Popups.CopyForMovingFamilyMember(_patient);//Copy Family Level Popups to new Family. 
-					if(_patient.SuperFamily!=patientInNewFam.SuperFamily) {//If they are moving into or out of a superfamily
-						if(_patient.SuperFamily!=0) {//If they are currently in a SuperFamily.  Otherwise, no superfamily popups to worry about.
-							Popups.CopyForMovingSuperFamily(_patient,patientInNewFam.SuperFamily);
+					using(FormPatientSelect formPatientSelect=new FormPatientSelect()) {
+						formPatientSelect.IsSelectionModeOnly=true;
+						formPatientSelect.ShowDialog();
+						if(formPatientSelect.DialogResult!=DialogResult.OK) {
+							return;
 						}
+						Patient patientInNewFam=Patients.GetPat(formPatientSelect.PatNumSelected);
+						if(patientInNewFam.Guarantor==_patient.Guarantor) {
+							return;// Patient is already a part of the family.
+						}
+						Popups.CopyForMovingFamilyMember(_patient);//Copy Family Level Popups to new Family. 
+						if(_patient.SuperFamily!=patientInNewFam.SuperFamily) {//If they are moving into or out of a superfamily
+							if(_patient.SuperFamily!=0) {//If they are currently in a SuperFamily.  Otherwise, no superfamily popups to worry about.
+								Popups.CopyForMovingSuperFamily(_patient,patientInNewFam.SuperFamily);
+							}
+						}
+						_patient.Guarantor=patientInNewFam.Guarantor;
+						_patient.SuperFamily=patientInNewFam.SuperFamily;//assign to the new superfamily
 					}
-					_patient.Guarantor=patientInNewFam.Guarantor;
-					_patient.SuperFamily=patientInNewFam.SuperFamily;//assign to the new superfamily
 					Patients.Update(_patient,patientOld);
-					SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,_patient.PatNum,"Patient moved from family of '"+patientOld.Guarantor+"' "
+					SecurityLogs.MakeLogEntry(Permissions.PatientEdit,_patient.PatNum,"Patient moved from family of '"+patientOld.Guarantor+"' "
 						+"to existing family of '"+_patient.Guarantor+"'");
 					break;
 			}
@@ -1830,112 +1793,63 @@ namespace OpenDental{
 				Appointments.UpdateInsPlansForPat(family.ListPats[i].PatNum);
 			}
 			if(hasPatPlanAdded) {
-				SecurityLogs.MakeLogEntry(EnumPermType.PatPlanCreate,patientSuperFamGuar.PatNum,"Inserted new PatPlans for each family member of the super family guarantor.");
+				SecurityLogs.MakeLogEntry(Permissions.PatPlanCreate,patientSuperFamGuar.PatNum,"Inserted new PatPlans for each family member of the super family guarantor.");
 			}
 		}
 
 		private void FillGridSuperFam() {
 			gridSuperFam.BeginUpdate();
 			gridSuperFam.Columns.Clear();
-			List<DisplayField> listDisplayFields=DisplayFields.GetForCategory(DisplayFieldCategory.SuperFamilyGridCols);
-			for(int i=0;i<listDisplayFields.Count;i++) {
-				string displayName=listDisplayFields[i].DescriptionOverride;
-				if(string.IsNullOrWhiteSpace(displayName)) {
-					displayName=listDisplayFields[i].Description;
-				}
-				if(string.IsNullOrWhiteSpace(displayName)) {
-					displayName=listDisplayFields[i].InternalName;
-				}
-				GridColumn gridColumn=new GridColumn(Lan.g("gridSuperFam",displayName),listDisplayFields[i].ColumnWidth);
-				if(listDisplayFields[i].InternalName!="Name") {
-					gridColumn.TextAlign=HorizontalAlignment.Center;
-				}
-				gridSuperFam.Columns.Add(gridColumn);
-			}
-			_widthGridSuperFam=LayoutManager.Scale(listDisplayFields.Sum(x=>x.ColumnWidth)+SystemInformation.VerticalScrollBarWidth);
-			gridSuperFam.Width=_widthGridSuperFam;
+			GridColumn col=new GridColumn(Lan.g("gridSuperFam","Name"),280);
+			gridSuperFam.Columns.Add(col);
+			col=new GridColumn(Lan.g("gridSuperFam","Stmt"),280){ IsWidthDynamic=true };
+			gridSuperFam.Columns.Add(col);
 			gridSuperFam.ListGridRows.Clear();
 			if(_patient==null) {
 				gridSuperFam.EndUpdate();
 				return;
 			}
+			GridRow row;
 			_listPatientsSuperFamilyGuarantors.Sort(sortPatientListBySuperFamily);
 			_listPatientsSuperFamilyMembers.Sort(sortPatientListBySuperFamily);
+			List<Patient> listPatientsSuperFamilyMembersNotMerged=_listPatientsSuperFamilyMembers.FindAll(x => !PatientLinks.WasPatientMerged(x.PatNum,_loadData.ListMergeLinks) || x.PatNum==_patient.PatNum);
+			string strSuperFam="";
 			//Loop through each family within the super family.
 			for(int i=0;i<_listPatientsSuperFamilyGuarantors.Count;i++) {
-				GridRow gridRow=new GridRow();
-				Patient patientGuar=_listPatientsSuperFamilyGuarantors[i];
-				gridRow.Tag=patientGuar;
-				//Loop through each displayField within the user-chosen displayField list.
-				for(int j=0;j<listDisplayFields.Count;j++) {
-					switch(listDisplayFields[j].InternalName) {
-						case "Name":
-							string strSuperFam=GetCellTextSuperFamName(patientGuar);
-							gridRow.Cells.Add(strSuperFam);
-							if(i==0) {
-								gridRow.Cells[j].Bold=YN.Yes;
-								gridRow.Cells[j].ColorText=Color.OrangeRed;
-							}
-							break;
-						case "Stmt":
-							gridRow.Cells.Add(patientGuar.HasSuperBilling ? "X" : "");
-							break;
-						case "": //Patfields
-							string celltext=GetCellTextSuperFamPatField(patientGuar,listDisplayFields[j].Description);
-							gridRow.Cells.Add(celltext);
-							break;
+				row=new GridRow();
+				//Make a string that displays all the names of the family members.
+				//Always start with the guarantor followed by the rest of the family.
+				strSuperFam=_listPatientsSuperFamilyGuarantors[i].GetNameLF();
+				for(int j=0;j<listPatientsSuperFamilyMembersNotMerged.Count;j++) {
+					if(listPatientsSuperFamilyMembersNotMerged[j].Guarantor!=_listPatientsSuperFamilyGuarantors[i].Guarantor) {
+						continue;//Not part of this family.
 					}
+					if(listPatientsSuperFamilyMembersNotMerged[j].PatNum==_listPatientsSuperFamilyGuarantors[i].PatNum) {
+						continue;//Guarantor is already in the string.
+					}
+					strSuperFam+="\r\n   "+StringTools.Truncate(listPatientsSuperFamilyMembersNotMerged[j].GetNameLF(),40,true);
 				}
-				gridSuperFam.ListGridRows.Add(gridRow);
+				row.Cells.Add(strSuperFam);
+				row.Tag=_listPatientsSuperFamilyGuarantors[i].PatNum;
+				if(i==0) {
+					row.Cells[0].Bold=YN.Yes;
+					row.Cells[0].ColorText=Color.OrangeRed;
+				}
+				if(_listPatientsSuperFamilyGuarantors[i].HasSuperBilling) {
+					row.Cells.Add("X");
+				}
+				else {
+					row.Cells.Add("");
+				}
+				gridSuperFam.ListGridRows.Add(row);
 			}
 			gridSuperFam.EndUpdate();
 			for(int i=0;i<gridSuperFam.ListGridRows.Count;i++) {
-				if(((Patient)gridSuperFam.ListGridRows[i].Tag).PatNum==_patient.Guarantor) {
+				if((long)gridSuperFam.ListGridRows[i].Tag==_patient.Guarantor) {
 					gridSuperFam.SetSelected(i,true);
 					break;
 				}
 			}
-		}
-
-		private string GetCellTextSuperFamPatField(Patient patientGuar, string description) {
-			PatField patField=_listPatFieldsForSuperFam.Find(x=>x.PatNum==patientGuar.PatNum && x.FieldName==description);//Will frequently be null because many patients will have no PatField yet
-			string celltext=PatFields.GetAbbrOrValue(patField,description);//GetAbbrOrValue returns "" if patField is null.
-			if(patField==null) {//If patField is null here we aren't going to get any more info, so return.
-				return celltext;
-			}
-			PatFieldDef patFieldDef=PatFieldDefs.GetFieldDefByFieldName(patField.FieldName);
-			switch(patFieldDef.FieldType) {
-				case PatFieldType.Checkbox:
-					celltext=patField.FieldValue=="1" ? "X" : "";
-					break;
-				case PatFieldType.Currency:
-					if(Decimal.TryParse(celltext,out decimal result)) {
-						celltext=string.Format("{0:C}",result);
-					}
-					break;
-			}
-			return celltext;
-		}
-
-		private string GetCellTextSuperFamName(Patient patientGuar) {
-			//Make a string that displays all the names of the family members.
-			//Always start with the guarantor followed by the rest of the family.
-			string stringReturn = patientGuar.GetNameLF();
-			//From here down, we are adding family members to the string
-			//when the family is currently selected in the superfam grid.
-			for(int i = 0;i<_listPatientsSuperFamilyMembers.Count;i++) {
-				if(_listPatientsSuperFamilyMembers[i].Guarantor!=patientGuar.Guarantor) {
-					continue; //Not part of patientGuar's family.
-				}
-				if(_listPatientsSuperFamilyMembers[i].PatNum==patientGuar.PatNum) {
-					continue; //Guarantor is already in the string.
-				}
-				if(PatientLinks.WasPatientMerged(_listPatientsSuperFamilyMembers[i].PatNum,_loadData.ListMergeLinks)) {
-					continue; //Patient was merged into another patient, we only want the 'other' patient.
-				}
-				stringReturn+="\r\n   "+StringTools.Truncate(_listPatientsSuperFamilyMembers[i].GetNameLF(),40,true);
-			}
-			return stringReturn;
 		}
 
 		private int sortPatientListBySuperFamily(Patient patient1,Patient patient2) {
@@ -1948,16 +1862,6 @@ namespace OpenDental{
 			if(patient2.PatNum==patient2.SuperFamily) {
 				return 1;
 			}
-			//Sort Inactive patients to bottom of list.
-			if(patient1.PatStatus!=patient2.PatStatus) {
-				if(patient1.PatStatus==PatientStatus.Inactive) {
-					return 1;
-				}
-				if(patient2.PatStatus==PatientStatus.Inactive) {
-					return -1;
-				}
-			}
-			//The sorting below happens when they are both active or both inactive.
 			switch(_sortStrategySuperFam) {
 				case SortStrategy.NameAsc:
 					return patient1.GetNameLF().CompareTo(patient2.GetNameLF());
@@ -1979,7 +1883,7 @@ namespace OpenDental{
 			if(_patient.SuperFamily==0) {
 				Patients.AssignToSuperfamily(_patient.Guarantor,_patient.Guarantor);
 				SecurityLogs.MakeLogEntry(
-					EnumPermType.PatientEdit,
+					Permissions.PatientEdit,
 					_patient.PatNum,
 					Lan.g(this,"Patient added to superfamily. Previous superfamily guarantor PatNum:0, and current superfamily guarantor PatNum:") +_patient.SuperFamily + "."
 					
@@ -1988,12 +1892,12 @@ namespace OpenDental{
 				return;
 			}
 			//we must want to add some other family to this superfamily
-			FrmPatientSelect frmPatientSelect=new FrmPatientSelect();
-			frmPatientSelect.ShowDialog();
-			if(frmPatientSelect.IsDialogCancel) {
+			using FormPatientSelect formPatientSelect=new FormPatientSelect();
+			formPatientSelect.IsSelectionModeOnly=true;
+			if(formPatientSelect.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
-			Patient patientSelected=Patients.GetPat(frmPatientSelect.PatNumSelected);
+			Patient patientSelected=Patients.GetPat(formPatientSelect.PatNumSelected);
 			long superFamilyGuarantorNumPrevious=patientSelected.SuperFamily;
 			if(patientSelected.SuperFamily==_patient.SuperFamily) {
 				MsgBox.Show(this,"That patient is already part of this superfamily.");
@@ -2039,7 +1943,7 @@ namespace OpenDental{
 						continue;
 					}
 					SecurityLogs.MakeLogEntry(
-						EnumPermType.PatientEdit,
+						Permissions.PatientEdit,
 						listPatientNumsInSuperFam[i],
 						Lan.g(this,"Patient removed from superfamily. Previous superfamily guarantor PatNum:")+superFamilyGuarantorNumPrevious+
 						Lan.g(this,". Superfamily Disbanded.")
@@ -2049,7 +1953,7 @@ namespace OpenDental{
 			}
 			Patients.AssignToSuperfamily(patientSelected.Guarantor,_patient.SuperFamily);
 			SecurityLogs.MakeLogEntry(
-				EnumPermType.PatientEdit,
+				Permissions.PatientEdit,
 				patientSelected.PatNum,
 				Lan.g(this,"Patient added to superfamily. Previous superfamily guarantor PatNum:")+superFamilyGuarantorNumPrevious+
 				Lan.g(this, " and current superfamily guarantor PatNum:") +_patient.SuperFamily + "."
@@ -2072,7 +1976,7 @@ namespace OpenDental{
 			List<long> listPatientNumsInSuperFam=Patients.GetAllFamilyPatNumsForSuperFam(new List<long>(){_patient.SuperFamily});
 			for(int i=0;i<listPatientNumsInSuperFam.Count;i++) {
 				SecurityLogs.MakeLogEntry(
-					EnumPermType.PatientEdit,
+					Permissions.PatientEdit,
 					listPatientNumsInSuperFam[i],
 					Lan.g(this,"Patient removed from superfamily. Previous superfamily guarantor PatNum:")+_patient.SuperFamily+
 					Lan.g(this,". Superfamily Disbanded.")
@@ -2097,7 +2001,7 @@ namespace OpenDental{
 				patientTemp.SuperFamily=0;
 				Patients.Update(patientTemp,_family.ListPats[i]);
 				SecurityLogs.MakeLogEntry(
-					EnumPermType.PatientEdit,
+					Permissions.PatientEdit,
 					patientTemp.PatNum,
 					Lan.g(this,"Patient removed from superfamily. Previous superfamily guarantor PatNum:")+superFamilyGuarantorNumPrevious+"."
 					);
@@ -2189,7 +2093,7 @@ namespace OpenDental{
 				rowDiscount=new GridRow();
 				rowDiscount.Cells.Add(Lan.g("TableDiscountPlans","Plan Note"));
 				GridCell cellNote = new GridCell();
-				cellNote.Text=StringTools.Truncate(discountPlan.PlanNote,1000,hasElipsis:true);
+				cellNote.Text=discountPlan.PlanNote;
 				cellNote.Bold=YN.Yes;
 				cellNote.ColorText=Color.Red;
 				rowDiscount.Cells.Add(cellNote);
@@ -2198,7 +2102,7 @@ namespace OpenDental{
 				rowDiscount=new GridRow();
 				rowDiscount.Cells.Add(Lan.g("TableDiscountPlans","Subscriber Note"));
 				cellNote = new GridCell();
-				cellNote.Text=StringTools.Truncate(_discountPlanSub.SubNote,1000,hasElipsis:true);
+				cellNote.Text=_discountPlanSub.SubNote;
 				cellNote.Bold=YN.Yes;
 				cellNote.ColorText=Color.Red;
 				rowDiscount.Cells.Add(cellNote);
@@ -2427,13 +2331,16 @@ namespace OpenDental{
 					{
 						strDesc+=Lan.g(this,"Ortho Max")+" ";
 					}
-					else if(Benefits.IsAgeLimit(benefitMatrix[x,y])) {
-						string desc = CodeGroups.GetGroupName(benefitMatrix[x,y].CodeGroupNum) + " age limit";
-						strDesc+=Lan.g(this,desc)+" ";
+					else if(Benefits.IsFluorideAgeLimit(benefitMatrix[x,y])) {
+						strDesc+=Lan.g(this,"Fluoride age limit")+" ";
+						isAgeLimitation=true;
+					}
+					else if(Benefits.IsSealantAgeLimit(benefitMatrix[x,y])) {
+						strDesc+=Lan.g(this,"Sealant age limit")+" ";
 						isAgeLimitation=true;
 					}
 					else if(benefitMatrix[x,y].CodeGroupNum!=0) {
-						strDesc+=CodeGroups.GetGroupName(benefitMatrix[x,y].CodeGroupNum)+" "+Lan.g(this,"frequency")+" ";
+						strDesc+=CodeGroups.GetGroupName(benefitMatrix[x,y].CodeGroupNum,isShort:true)+" "+Lan.g(this,"frequency")+" ";
 					}
 					else if(benefitMatrix[x,y].CodeNum==0 && procedureCode.AbbrDesc!=null) {//e.g. flo
 						strDesc+=procedureCode.AbbrDesc+" ";
@@ -2728,7 +2635,7 @@ namespace OpenDental{
 			formInsPlan.IsNewPlan=isNewPlan;
 			formInsPlan.IsNewPatPlan=true;
 			if(formInsPlan.ShowDialog()!=DialogResult.Cancel) {
-				SecurityLogs.MakeLogEntry(EnumPermType.PatPlanCreate,_patient.PatNum,"Inserted new PatPlan for patient. InsPlanNum: "+formInsPlan.GetPlanCurNum());
+				SecurityLogs.MakeLogEntry(Permissions.PatPlanCreate,_patient.PatNum,"Inserted new PatPlan for patient. InsPlanNum: "+formInsPlan.GetPlanCurNum());
 				//Update users treatment plans to tie in to insurance
 				TreatPlans.UpdateTreatmentPlanType(_patient);
 			}//this updates estimates also.
@@ -2873,7 +2780,7 @@ namespace OpenDental{
 			string strDataUpdated=Patients.SynchClonesWithPatient(_patient,_family,_listInsPlans,_listInsSubs,_listBenefits,_listPatPlans);
 			ModuleSelected(_patient.PatNum);
 			if(string.IsNullOrWhiteSpace(strDataUpdated)) {
-				strDataUpdated=Lan.g(this,"No changes were made, data already in sync.");
+				strDataUpdated=Lan.g(this,"No changes were made, data already in synch.");
 			}
 			new MsgBoxCopyPaste(strDataUpdated).Show();
 		}
@@ -2881,9 +2788,6 @@ namespace OpenDental{
 
 		#region Methods - Private - Other
 		private void FillPatientPicture() {
-			if(Plugins.HookMethod(this,"ContrFamily.FillPatientPicture",_patient,pictureBoxPat)){
-				return;
-			}
 			pictureBoxPat.Image?.Dispose();
 			pictureBoxPat.Image=null;
 			pictureBoxPat.TextNullImage=Lan.g(this,"Patient Picture Unavailable");
@@ -2929,12 +2833,13 @@ namespace OpenDental{
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Select the family to move this patient to from the list that will come up next.")) {
 				return false;
 			}
-			FrmPatientSelect frmPatientSelect=new FrmPatientSelect();
-			frmPatientSelect.ShowDialog();
-			if(frmPatientSelect.IsDialogCancel) {
+			using FormPatientSelect formPatientSelect=new FormPatientSelect();
+			formPatientSelect.IsSelectionModeOnly=true;
+			formPatientSelect.ShowDialog();
+			if(formPatientSelect.DialogResult!=DialogResult.OK) {
 				return false;
 			}
-			Patient patientInNewFam=Patients.GetPat(frmPatientSelect.PatNumSelected);
+			Patient patientInNewFam=Patients.GetPat(formPatientSelect.PatNumSelected);
 			if(family!=null) {//Move all family members marked as merged silently (The family should only contain guarantor and any merged pats at this point)
 				for(int i=0;i<family.ListPats.Count();i++) {
 					if(family.ListPats[i].PatNum==patientOld.PatNum) {
@@ -2965,13 +2870,13 @@ namespace OpenDental{
 				_patientNote=null;
 				_discountPlanSub=null;
 				_family=null;
-				_listPatPlans=new List<PatPlan>();
+				_listPatPlans=new List<PatPlan>(); 
 				return;
 			}
 			if(_patient!=null && _discountPlanSub!=null && _loadData.ListPatPlans.Count>0) {
 				DiscountPlanSubs.DeleteForPatient(_patient.PatNum);
 				string logText=Lan.g(this,"The discount plan")+" "+DiscountPlans.GetPlan(_discountPlanSub.DiscountPlanNum).Description+" "+Lan.g(this,"was automatically dropped due to patient having an insuarance plan.");
-				SecurityLogs.MakeLogEntry(EnumPermType.DiscountPlanAddDrop,_patient.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.DiscountPlanAddDrop,_patient.PatNum,logText);
 				string messageText="Discount plan removed due to patient having both an insurance plan and a discount plan. "
 					+"If the patient should have a discount plan, please first remove all insurance plans before adding a discount plan.";
 				MsgBox.Show(messageText);
@@ -2994,27 +2899,12 @@ namespace OpenDental{
 			_arrayPatFields=_loadData.ArrPatFields;
 			_listPatientsSuperFamilyMembers=_loadData.SuperFamilyMembers;
 			_listPatientsSuperFamilyGuarantors=_loadData.SuperFamilyGuarantors;
-			_listPatFieldsForSuperFam=_loadData.ListPatFieldsSuperFam;
 			//Takes the preference string and converts it to an enum object
 			_sortStrategySuperFam=(SortStrategy)PrefC.GetInt(PrefName.SuperFamSortStrategy);
 		}
 
 		private void RefreshModuleScreen() {
-			UpdateToolbarButtons();
-			LayoutManager.LayoutControlBoundsAndFonts(splitContainerSuperClones);
-			FillPatientPicture();
-			FillPatientData();
-			FillFamilyData();
-			FillGridRecall();
-			FillInsData();
-			FillGridSuperFam();
-			FillGridPatientClones();
-			Plugins.HookAddCode(this,"ContrFamily.RefreshModuleScreen_end");
-		}
-
-		///<summary>Enables toolbar buttons if a patient is selected, otherwise disables them.</summary>
-		private void UpdateToolbarButtons() {
-			if(_patient!=null) {//if there is a patient
+			if(_patient!=null){//if there is a patient
 				//ToolBarMain.Buttons["Recall"].Enabled=true;
 				toolBarMain.Buttons["Add"].Enabled=true;
 				toolBarMain.Buttons["Delete"].Enabled=true;
@@ -3030,11 +2920,6 @@ namespace OpenDental{
 				bool showPanelForPatientClone=PrefC.GetBool(PrefName.ShowFeaturePatientClone) && _loadData.ListPatientsClones!=null && _loadData.ListPatientsClones.Count > 1;
 				if(showPanelForSuperfamilies || showPanelForPatientClone) {
 					splitContainerSuperClones.Visible=true;
-					if(showPanelForSuperfamilies) {
-						List<DisplayField> listDisplayFields=DisplayFields.GetForCategory(DisplayFieldCategory.SuperFamilyGridCols);
-						_widthGridSuperFam=LayoutManager.Scale(listDisplayFields.Sum(x=>x.ColumnWidth)+SystemInformation.VerticalScrollBarWidth);
-						LayoutManager.MoveWidth(splitContainerSuperClones,_widthGridSuperFam);
-					}
 					LayoutManager.MoveLocation(gridIns,new Point(splitContainerSuperClones.Right+2,gridIns.Top));
 					LayoutManager.MoveWidth(gridIns,Width-gridIns.Left);
 				}
@@ -3148,9 +3033,17 @@ namespace OpenDental{
 						toolBarMain.Buttons["BreakClone"].Enabled=false;
 					}
 				}
-			}
-			toolBarMain.Invalidate();
-		}
+			}	
+			LayoutManager.LayoutControlBoundsAndFonts(splitContainerSuperClones);
+			FillPatientPicture();
+			FillPatientData();
+			FillFamilyData();
+			FillGridRecall();
+			FillInsData();
+			FillGridSuperFam();
+			FillGridPatientClones();
+			Plugins.HookAddCode(this,"ContrFamily.RefreshModuleScreen_end");
+		} 
 		#endregion Methods - Private - Other
 
 		#region Methods - Helpers - GridIns

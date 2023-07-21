@@ -70,45 +70,45 @@ namespace OpenDentBusiness{
 		#endregion
 
 		///<summary></summary>
-		public static void Update(CovSpan covSpan) {
+		public static void Update(CovSpan span) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),covSpan);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),span);
 				return;
 			}
-			Validate(covSpan);
-			Crud.CovSpanCrud.Update(covSpan);
+			Validate(span);
+			Crud.CovSpanCrud.Update(span);
 			return;
 		}
 
 		///<summary></summary>
-		public static long Insert(CovSpan covSpan) {
+		public static long Insert(CovSpan span) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				covSpan.CovSpanNum=Meth.GetLong(MethodBase.GetCurrentMethod(),covSpan);
-				return covSpan.CovSpanNum;
+				span.CovSpanNum=Meth.GetLong(MethodBase.GetCurrentMethod(),span);
+				return span.CovSpanNum;
 			}
-			Validate(covSpan);
-			return Crud.CovSpanCrud.Insert(covSpan);
+			Validate(span);
+			return Crud.CovSpanCrud.Insert(span);
 		}
 
 		///<summary></summary>
-		private static void Validate(CovSpan covSpan){
+		private static void Validate(CovSpan span){
 			//No need to check MiddleTierRole; no call to db.
-			if(covSpan.FromCode=="" || covSpan.ToCode=="") {
+			if(span.FromCode=="" || span.ToCode=="") {
 				throw new ApplicationException(Lans.g("FormInsSpanEdit","Codes not allowed to be blank."));
 			}
-			if(String.Compare(covSpan.ToCode,covSpan.FromCode)<0){
+			if(String.Compare(span.ToCode,span.FromCode)<0){
 				throw new ApplicationException(Lans.g("FormInsSpanEdit","From Code must be less than To Code.  Remember that the comparison is alphabetical, not numeric.  For instance, 100 would come before 2, but after 02."));
 			}
 		}
 
 		///<summary></summary>
-		public static void Delete(CovSpan covSpan) {
+		public static void Delete(CovSpan span) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),covSpan);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),span);
 				return;
 			}
 			string command="DELETE FROM covspan"
-				+" WHERE CovSpanNum = '"+POut.Long(covSpan.CovSpanNum)+"'";
+				+" WHERE CovSpanNum = '"+POut.Long(span.CovSpanNum)+"'";
 			Db.NonQ(command);
 		}
 
@@ -127,62 +127,36 @@ namespace OpenDentBusiness{
 			//No need to check MiddleTierRole; no call to db.
 			CovSpan covSpan=GetLastOrDefault(x => String.Compare(myCode,x.FromCode)>=0
 					&& String.Compare(myCode,x.ToCode)<=0);
-			if(covSpan==null){
-				return 0;
-			}
-			return covSpan.CovCatNum;
+			return (covSpan==null ? 0 : covSpan.CovCatNum);
 		}
 
 		public static List<long> GetCats(string myCode) {
-			//No need to check MiddleTierRole; no call to db.
-			List<long> listCovCatNums=GetWhere(x => String.Compare(myCode,x.FromCode)>=0
+			return GetWhere(x => String.Compare(myCode,x.FromCode)>=0
 				&& String.Compare(myCode,x.ToCode)<=0).Select(x => x.CovCatNum).ToList();
-			return listCovCatNums;
 		}
 
 		///<summary></summary>
-		public static List<CovSpan> GetForCat(long covCatNum) {
+		public static CovSpan[] GetForCat(long catNum) {
 			//No need to check MiddleTierRole; no call to db.
-			return GetWhere(x => x.CovCatNum==covCatNum);
+			return GetWhere(x => x.CovCatNum==catNum).ToArray();
 		}
 
 		///<summary>If the supplied code falls within any of the supplied spans, then returns true.</summary>
-		public static bool IsCodeInSpans(string strProcCode,List<CovSpan> listCovSpans) {
+		public static bool IsCodeInSpans(string strProcCode,CovSpan[] covSpanArray) {
 			//No need to check MiddleTierRole; no call to db.
-			for(int i=0;i<listCovSpans.Count;i++) {
-				if(String.Compare(strProcCode,listCovSpans[i].FromCode)>=0
-					&& String.Compare(strProcCode,listCovSpans[i].ToCode)<=0) 
-				{
+			for(int i=0;i<covSpanArray.Length;i++) {
+				if(String.Compare(strProcCode,covSpanArray[i].FromCode)>=0
+					&& String.Compare(strProcCode,covSpanArray[i].ToCode)<=0) {
 					return true;
 				}
 			}
 			return false;
 		}
-
-		///<summary>Gets one CovSpan from the DB. Returns null if not found.</summary>
-		public static CovSpan GetOne(long covSpanNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<CovSpan>(MethodBase.GetCurrentMethod(),covSpanNum);
-			}
-			string command="SELECT * FROM covspan WHERE CovSpanNum="+POut.Long(covSpanNum);
-			return Crud.CovSpanCrud.SelectOne(command);
-		}
-
-		///<summary>Gets multiple CovSpans from database. Returns null if not found.</summary>
-		public static List<CovSpan> GetCovSpansForApi(int limit,int offset,long covCatNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<CovSpan>>(MethodBase.GetCurrentMethod(),limit,offset,covCatNum);
-			}
-			string command="SELECT * FROM covspan ";
-			if(covCatNum>-1) {
-				command+="WHERE CovCatNum="+POut.Long(covCatNum)+" ";
-			}
-			command+="ORDER BY CovSpanNum "//Ensure order for limit and offset.
-			+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
-			return Crud.CovSpanCrud.SelectMany(command);
-		}
-
 	}
+
+	
+
+
 }
 
 

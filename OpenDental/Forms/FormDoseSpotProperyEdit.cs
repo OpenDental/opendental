@@ -61,7 +61,7 @@ namespace OpenDental {
 		}
 
 		private void menuItemSetup_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ClinicEdit)) {
+			if(!Security.IsAuthorized(Permissions.ClinicEdit)) {
 				return;
 			}
 			using FormClinicEdit formClinicEdit=new FormClinicEdit(_clinic.Copy());
@@ -118,11 +118,14 @@ namespace OpenDental {
 				+"If patients in this clinic can be shared with other clinics, contact DoseSpot to link this clinic before using.");
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			ClinicIdVal=textClinicID.Text.Trim();
 			ClinicKeyVal=textClinicKey.Text.Trim();
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

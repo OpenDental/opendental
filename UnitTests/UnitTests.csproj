@@ -15,7 +15,7 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -140,7 +140,7 @@
       <HintPath>..\packages\Mono.Cecil.0.10.3\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MySql.Data, Version=8.0.32.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+    <Reference Include="MySql.Data, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Required dlls\MySql.Data.dll</HintPath>
     </Reference>
@@ -197,7 +197,6 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="Tao.Platform.Windows, Version=1.0.0.4, Culture=neutral, PublicKeyToken=701104b2da67a104, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -210,11 +209,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PdmpPropertyTest.cs" />
-    <Compile Include="UI Testing\FormGraphicsTests.cs">
+    <Compile Include="UI Testing\FormEscalationViewTests.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI Testing\FormGraphicsTests.Designer.cs">
-      <DependentUpon>FormGraphicsTests.cs</DependentUpon>
+    <Compile Include="UI Testing\FormEscalationViewTests.Designer.cs">
+      <DependentUpon>FormEscalationViewTests.cs</DependentUpon>
     </Compile>
     <Compile Include="UI Testing\FormSplitContainerTests.cs">
       <SubType>Form</SubType>
@@ -246,11 +245,11 @@
     <Compile Include="UI Testing\FormLayoutManagerTests.Designer.cs">
       <DependentUpon>FormLayoutManagerTests.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI Testing\FormTestAllControls.cs">
+    <Compile Include="UI Testing\FormUIManagerTests.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI Testing\FormTestAllControls.Designer.cs">
-      <DependentUpon>FormTestAllControls.cs</DependentUpon>
+    <Compile Include="UI Testing\FormUIManagerTests.Designer.cs">
+      <DependentUpon>FormUIManagerTests.cs</DependentUpon>
     </Compile>
     <Compile Include="UI Testing\FormWpfConverter.cs">
       <SubType>Form</SubType>
@@ -258,11 +257,6 @@
     <Compile Include="UI Testing\FormWpfConverter.Designer.cs">
       <DependentUpon>FormWpfConverter.cs</DependentUpon>
     </Compile>
-    <Compile Include="UnitTests\ClockEventsTests.cs" />
-    <Compile Include="UnitTests\CodeSystemsTests.cs" />
-    <Compile Include="UnitTests\RpCustomAgingTests.cs" />
-    <Compile Include="UnitTests\PayConnect2Tests.cs" />
-    <Compile Include="UnitTests\RpDppOverchargedTests.cs" />
     <Compile Include="UnitTests\SetupWizardTests.cs" />
     <Compile Include="UnitTests\RpOutstandInsTests.cs" />
     <Compile Include="UnitTests\PaymentsTests.cs" />
@@ -472,8 +466,8 @@
     <Compile Include="UnitTests\TimeSlotsTests.cs" />
     <Compile Include="UnitTests\ContrApptSingleTests.cs" />
     <Compile Include="UnitTests\WikiPagesTests.cs" />
-    <EmbeddedResource Include="UI Testing\FormGraphicsTests.resx">
-      <DependentUpon>FormGraphicsTests.cs</DependentUpon>
+    <EmbeddedResource Include="UI Testing\FormEscalationViewTests.resx">
+      <DependentUpon>FormEscalationViewTests.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI Testing\FormSplitContainerTests.resx">
       <DependentUpon>FormSplitContainerTests.cs</DependentUpon>
@@ -546,8 +540,8 @@
     <EmbeddedResource Include="UI Testing\FormLayoutManagerTests.resx">
       <DependentUpon>FormLayoutManagerTests.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI Testing\FormTestAllControls.resx">
-      <DependentUpon>FormTestAllControls.cs</DependentUpon>
+    <EmbeddedResource Include="UI Testing\FormUIManagerTests.resx">
+      <DependentUpon>FormUIManagerTests.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI Testing\FormWpfConverter.resx">
       <DependentUpon>FormWpfConverter.cs</DependentUpon>
@@ -638,7 +632,6 @@
     <Content Include="Resources\BC_BCDA_2018_GPOOC.txt" />
     <Content Include="Resources\canadianprocedurecodes.txt" />
     <None Include="Resources\deleteX.gif" />
-    <Content Include="Resources\JustinSmithERA_NoAutoProcessCARCs.txt" />
     <Content Include="Resources\JustinSmithERA.txt" />
     <None Include="Resources\x271Test.txt" />
     <None Include="Resources\test-n-cpl.txt" />

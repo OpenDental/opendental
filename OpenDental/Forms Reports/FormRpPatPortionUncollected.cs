@@ -33,8 +33,8 @@ namespace OpenDental{
 		private void FillGrid() {
 			_fromDate = odDateRangePicker.GetDateTimeFrom();
 			_toDate = odDateRangePicker.GetDateTimeTo();
-			_listClinicNums = comboBoxClinicPicker.ListClinicNumsSelected;
-			_listClinics = Clinics.GetClinics(comboBoxClinicPicker.ListClinicNumsSelected);
+			_listClinicNums = comboBoxClinicPicker.ListSelectedClinicNums;
+			_listClinics = Clinics.GetClinics(comboBoxClinicPicker.ListSelectedClinicNums);
 			_isAllSelected = comboBoxClinicPicker.IsAllSelected;
 			gridOD.BeginUpdate();
 			gridOD.ListGridRows.Clear();
@@ -136,7 +136,7 @@ namespace OpenDental{
 		}
 
 		private void menuItemAccount_Click(object sender, EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.AccountModule)) {
+			if(!Security.IsAuthorized(Permissions.AccountModule)) {
 				return;
 			}
 			if(gridOD.SelectedIndices.Length==0) {
@@ -144,7 +144,11 @@ namespace OpenDental{
 				return;
 			}
 			long patNum=PIn.Long(gridOD.SelectedTag<DataRow>()["PatNum"].ToString());
-			GlobalFormOpenDental.GotoAccount(patNum);
+			GotoModule.GotoAccount(patNum);
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 
 	}

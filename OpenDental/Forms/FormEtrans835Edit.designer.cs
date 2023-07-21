@@ -65,10 +65,11 @@ namespace OpenDental{
 			this.labelEquation1 = new System.Windows.Forms.Label();
 			this.textNote = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butClaimDetails = new OpenDental.UI.Button();
 			this.butPrint = new OpenDental.UI.Button();
 			this.butRawMessage = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.butBatch = new OpenDental.UI.Button();
 			this.butDetachClaim = new OpenDental.UI.Button();
 			this.butPreview = new OpenDental.UI.Button();
@@ -446,6 +447,16 @@ namespace OpenDental{
 			this.label2.Text = "Note";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(890, 663);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 216;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butClaimDetails
 			// 
 			this.butClaimDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -477,15 +488,15 @@ namespace OpenDental{
 			this.butRawMessage.Text = "Raw Message";
 			this.butRawMessage.Click += new System.EventHandler(this.butRawMessage_Click);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(883, 664);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(809, 663);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butBatch
 			// 
@@ -593,6 +604,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butPreview);
 			this.Controls.Add(this.butDetachClaim);
 			this.Controls.Add(this.butBatch);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.textNote);
 			this.Controls.Add(this.butClaimDetails);
@@ -631,7 +643,7 @@ namespace OpenDental{
 			this.Controls.Add(this.label5);
 			this.Controls.Add(this.butRawMessage);
 			this.Controls.Add(this.gridClaimDetails);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEtrans835Edit";
 			this.Text = "Electronic Remittance Advice (ERA) - Electronic EOB - Format X12 835";
@@ -648,7 +660,7 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.GridOD gridClaimDetails;
 		private UI.Button butRawMessage;
 		private System.Windows.Forms.Label label5;
@@ -692,6 +704,7 @@ namespace OpenDental{
 		private UI.Button butClaimDetails;
 		private System.Windows.Forms.TextBox textNote;
 		private System.Windows.Forms.Label label2;
+		private UI.Button butCancel;
 		private UI.Button butBatch;
 		private UI.Button butDetachClaim;
 		private UI.Button butPreview;

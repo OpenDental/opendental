@@ -34,6 +34,7 @@ namespace OpenDental {
 			this.imageListTree = new System.Windows.Forms.ImageList(this.components);
 			this.labelSelection = new System.Windows.Forms.Label();
 			this.treeNotes = new System.Windows.Forms.TreeView();
+			this.butClose = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.checkCollapse = new OpenDental.UI.CheckBox();
 			this.butExport = new OpenDental.UI.Button();
@@ -76,6 +77,16 @@ namespace OpenDental {
 			this.treeNotes.DragDrop += new System.Windows.Forms.DragEventHandler(this.treeNotes_DragDrop);
 			this.treeNotes.DragEnter += new System.Windows.Forms.DragEventHandler(this.treeNotes_DragEnter);
 			this.treeNotes.DragOver += new System.Windows.Forms.DragEventHandler(this.treeNotes_DragOver);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(340, 637);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(79, 26);
+			this.butClose.TabIndex = 1;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butAdd
 			// 
@@ -124,6 +135,7 @@ namespace OpenDental {
 			// FormAutoNotes
 			// 
 			this.ClientSize = new System.Drawing.Size(431, 675);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butImport);
 			this.Controls.Add(this.butExport);
 			this.Controls.Add(this.checkCollapse);
@@ -142,6 +154,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.TreeView treeNotes;
 		private OpenDental.UI.Button butAdd;
 		private Label labelSelection;

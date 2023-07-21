@@ -145,10 +145,10 @@ namespace OpenDentBusiness {
 		#region Methods That Affect All or Many Tables------------------------------------------------------------------------------------------------------
 
 		///<summary></summary>
-		[DbmMethodAttr(HasBreakDown=true,HasWarningMessage=true)]
+		[DbmMethodAttr]
 		public static string MySQLServerOptionsValidate(bool verbose,DbmMode modeCur) {
-			if(PrefC.GetBool(PrefName.DatabaseGlobalVariablesDontSet)) {
-				return "";//Hosted databases don't have permission to call SET GLOBAL. Also the MySQL variables can be assumed to be correct.
+			if(PrefC.IsCloudMode) {
+				return "";//Cloud hosted Open Dental databases don't have permission to call SET GLOBAL, also the MySQL variables can be assumed to be correct, since we host it.
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
@@ -156,44 +156,32 @@ namespace OpenDentBusiness {
 			if(DataConnection.DBtype==DatabaseType.Oracle) {
 				return Lans.g("FormDatabaseMaintenance","Currently not Oracle compatible.  Please call support.");
 			}
-			List<GlobalVariableH> listGlobalVars=new List<GlobalVariableH>();
-			listGlobalVars.Add(new GlobalVariableH("sql_mode","no_auto_create_user"));
-			listGlobalVars.Add(new GlobalVariableH("myisam_recover_options","off"));
-			listGlobalVars.Add(new GlobalVariableH("slave_skip_errors","off"));
-			listGlobalVars.Add(new GlobalVariableH("optimizer_switch", "split_materialized=off", requiresVersionCheck:true, "version", "10.5.9"));
-			// Check to see if user may not have permission to access global variables.
-			if(listGlobalVars.Exists(x=>x.MayLackPermissions)) {
-				return Lans.g("FormDatabaseMaintenance","Unable to access MySQL server global variables to validate server options, probably due to permissions")+".\r\n";
+			string command="SHOW GLOBAL VARIABLES LIKE 'sql_mode'";
+			DataTable table=Db.GetTable(command);
+			if(table.Rows.Count<1||table.Columns.Count<2) {//user may not have permission to access global variables?
+				return Lans.g("FormDatabaseMaintenance","Unable to access the MySQL server variable 'sql_mode', probably due to permissions")+".  "
+					+Lans.g("FormDatabaseMaintenance","The sql_mode must be blank or NO_AUTO_CREATE_USER")+".\r\n";
 			}
-			if(listGlobalVars.TrueForAll(x=>x.IsValid)) { // Check to see if we have issues or if we can simply return here.
-				string successLog="";
-				if(verbose) {
-					successLog+="Done.  No maintenance needed.\r\n\r\n";
-					for(int i = 0;i<listGlobalVars.Count;i++) {
-						successLog+=listGlobalVars[i].GetMessage();
-					}
+			string sqlmode=table.Rows[0][1].ToString();
+			string sqlmodeDisplay=(string.IsNullOrWhiteSpace(sqlmode) ? Lans.g("FormDatabaseMaintenance","blank") : sqlmode);//translated 'blank' for display
+			if(string.IsNullOrWhiteSpace(sqlmode)||sqlmode.ToUpper()=="NO_AUTO_CREATE_USER") {
+				if(!verbose) {
+					//Nothing broken, not verbose, show ""
+					return "";
 				}
-				return successLog;
+				else {
+					//Nothing is broken, verbose on, show current sql_mode.
+					return Lans.g("FormDatabaseMaintenance","The MySQL server variable 'sql_mode' is currently set to")+" "+sqlmodeDisplay+".\r\n";
+				}
 			}
-			// If we have any issues, we reset the log (which would only have messages relating to non-error states at this point), and add the approriate errors/issues to the log. We set hasCritcalWarning=true to indicate that we have possible data-loss due to the incorrect settings.
-			string warningMessage=Lans.g("FormDatabaseMaintenance","There are some global MySQL variables that are not set correctly. A manual fix is required to prevent data loss. For more information please check the web manual at")+" https://opendental.com/manual/myini.html ";
-			string issueLog="";
+			string log="";
 			switch(modeCur) {
-				case DbmMode.Breakdown:
-					for(int i = 0;i<listGlobalVars.Count;i++) {
-						// Grab only the invalid/error messages.
-						if(!listGlobalVars[i].IsValid) {
-							issueLog+=listGlobalVars[i].GetMessage();
-						}
-					}
-					break;
 				case DbmMode.Check:
-					if(!listGlobalVars.TrueForAll(x=>x.IsValid)) {
-						issueLog+=warningMessage+Lans.g("FormDatabaseMaintenance","Double click to see a break down.")+"\r\n";
-					}
+					log+=Lans.g("FormDatabaseMaintenance","The MySQL server variable 'sql_mode' must be blank or NO_AUTO_CREATE_USER and is currently set to")
+						+" "+sqlmodeDisplay+".\r\n";
 					break;
 				case DbmMode.Fix:
-					/*try {
+					try {
 						command="SET GLOBAL sql_mode=''";
 						Db.NonQ(command);
 						command="SET SESSION sql_mode=''";
@@ -206,15 +194,10 @@ namespace OpenDentBusiness {
 						log+=Lans.g("FormDatabaseMaintenance","Unable to set the MySQL server variable 'sql_mode', probably due to permissions")+".  "
 							+Lans.g("FormDatabaseMaintenance","The sql_mode must be blank or NO_AUTO_CREATE_USER and is currently set to")
 							+" "+sqlmodeDisplay+".\r\n";
-					}*/
-					//E46954 disabled the "Fix" logic above in favor of showing the bad config to the user and asking them to fix it with suggested options
-					//However, we must still return an error message from this case in order to trigger the correct feedback logic
-					if(!listGlobalVars.TrueForAll(x => x.IsValid)) {
-						issueLog+=warningMessage+Lans.g("FormDatabaseMaintenance","Double click to see a break down.")+"\r\n";
 					}
 					break;
 			}//end switch
-			return issueLog;
+			return log;
 		}
 
 		///<summary>Returns a Tuple with Item1=log string and Item2=whether the table checks were successful.</summary>
@@ -244,7 +227,7 @@ namespace OpenDentBusiness {
 			string checkingTable=Lans.g(nameof(MiscData),"Checking table");
 			for(int i=0;i<tableNames.Length;i++) {
 				//Alert the thread we are running this on that we are checking this table.
-				ODEvent.Fire(ODEventType.ProgressBar,checkingTable+": "+tableNames[i]);
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,checkingTable+": "+tableNames[i]);
 				command="CHECK TABLE `"+tableNames[i]+"`";
 				try {
 					table=Db.GetTable(command);
@@ -303,7 +286,7 @@ namespace OpenDentBusiness {
 			}
 			for(int i=0;i<tableNames.Length;i++) {
 				//Alert anyone that cares that we are optimizing this table.
-				ODEvent.Fire(ODEventType.ProgressBar,Lans.g("MiscData","Optimizing table")+": "+tableNames[i]);
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("MiscData","Optimizing table")+": "+tableNames[i]);
 				OptimizeTable(tableNames[i],forceOptimize:forceOptimize,listInnoDbTableNames:listInnoDbTableNames);
 			}
 			for(int i=0;i<tableNames.Length;i++) {
@@ -311,7 +294,7 @@ namespace OpenDentBusiness {
 					continue;
 				}
 				//Alert anyone that cares that we are repairing this table.
-				ODEvent.Fire(ODEventType.ProgressBar,Lans.g("MiscData","Repairing table")+": "+tableNames[i]);
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("MiscData","Repairing table")+": "+tableNames[i]);
 				command="REPAIR TABLE `"+tableNames[i]+"`";
 				Db.NonQ(command);
 			}
@@ -727,7 +710,6 @@ namespace OpenDentBusiness {
 				//"alertitem",//Not including this because we intentionally set ClinicNum to -1 to indicate the alert's for all clinics.
 				"appointment",
 				"claim",
-				"claimpayment",
 				"claimproc",
 				"histappointment",
 				"patient",
@@ -742,8 +724,8 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 					if(table.Rows.Count > 0 || verbose) {
-						log+=Lans.g("FormDatabaseMaintenance","Total rows found with invalid ClinicNums: ")+table.Select().Sum(x => PIn.Long(x["CountInvalid"].ToString()))
-							+"\r\n  "+string.Join("\r\n  ",table.Select().Select(x => PIn.String(x["TableName"].ToString())+": "+PIn.String(x["CountInvalid"].ToString())));
+						log+=Lans.g("FormDatabaseMaintenance","Total rows found with invalid ClinicNums: ")+table.Select().Sum(x => x.GetLong("CountInvalid"))
+							+"\r\n  "+string.Join("\r\n  ",table.Select().Select(x => x.GetString("TableName")+": "+x.GetString("CountInvalid")));
 					}
 					break;
 				case DbmMode.Fix:
@@ -753,8 +735,8 @@ namespace OpenDentBusiness {
 					}
 					int numberFixed=table.Rows.Count;
 					if(numberFixed!=0 || verbose) {
-						log+=Lans.g("FormDatabaseMaintenance","Total rows fixed with invalid ClinicNums: ")+table.Select().Sum(x => PIn.Long(x["CountInvalid"].ToString()))
-							+"\r\n  "+string.Join("\r\n  ",table.Select().Select(x => PIn.String(x["TableName"].ToString())+": "+PIn.String(x["CountInvalid"].ToString())));
+						log+=Lans.g("FormDatabaseMaintenance","Total rows fixed with invalid ClinicNums: ")+table.Select().Sum(x => x.GetLong("CountInvalid"))
+							+"\r\n  "+string.Join("\r\n  ",table.Select().Select(x => x.GetString("TableName")+": "+x.GetString("CountInvalid")));
 					}
 					break;
 			}
@@ -762,7 +744,7 @@ namespace OpenDentBusiness {
 		}
 
 		[DbmMethodAttr(HasBreakDown=true)]
-		public static string TransactionsWithFutureDates(bool verbose,DbmMode modeCur) { 
+		public static string TransactionsWithFutureDates(bool verbose,DbmMode modeCur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
 			}
@@ -950,7 +932,7 @@ namespace OpenDentBusiness {
 							listAptNums.Add(PIn.Long(tableAptNums.Rows[i]["AptNum"].ToString()));
 						}
 						if(listAptNums.Count>0) {
-							List<EnumPermType> listPerms=GroupPermissions.GetPermsFromCrudAuditPerm(CrudTableAttribute.GetCrudAuditPermForClass(typeof(Appointment)));
+							List<Permissions> listPerms=GroupPermissions.GetPermsFromCrudAuditPerm(CrudTableAttribute.GetCrudAuditPermForClass(typeof(Appointment)));
 							List<SecurityLog> listSecurityLogs=SecurityLogs.GetFromFKeysAndType(listAptNums,listPerms);
 							Appointments.ClearFkey(listAptNums);//Zero securitylog FKey column for rows to be deleted.
 							//Add securitylog changes to listDbmLogs
@@ -1013,7 +995,7 @@ namespace OpenDentBusiness {
 						listAptNums.Add(PIn.Long(tableAptNums.Rows[i]["AptNum"].ToString()));
 					}
 					if(listAptNums.Count>0) {
-						List<EnumPermType> listPerms=GroupPermissions.GetPermsFromCrudAuditPerm(CrudTableAttribute.GetCrudAuditPermForClass(typeof(Appointment)));
+						List<Permissions> listPerms=GroupPermissions.GetPermsFromCrudAuditPerm(CrudTableAttribute.GetCrudAuditPermForClass(typeof(Appointment)));
 						List<SecurityLog> listSecurityLogs=SecurityLogs.GetFromFKeysAndType(listAptNums,listPerms);
 						Appointments.ClearFkey(listAptNums);//Zero securitylog FKey column for rows to be deleted.
 						//Add changes to listDbmLogs
@@ -1144,14 +1126,14 @@ namespace OpenDentBusiness {
 				+"INNER JOIN ("
 					+"SELECT PatNum,FKey,MAX(LogDateTime) LogDateTime "
 					+"FROM securitylog "
-					+"WHERE PermType="+POut.Int((int)EnumPermType.AppointmentCreate)+" "
+					+"WHERE PermType="+POut.Int((int)Permissions.AppointmentCreate)+" "
 					+"AND FKey>0 "
 					+"GROUP BY PatNum,FKey "
 					+"HAVING COUNT(*)>1"
 				+") sl ON sl.PatNum=securitylog.PatNum "
 				+"AND sl.FKey=securitylog.FKey "
 				+"AND sl.LogDateTime!=securitylog.LogDateTime "
-				+"AND securitylog.PermType="+POut.Int((int)EnumPermType.AppointmentCreate)+" "
+				+"AND securitylog.PermType="+POut.Int((int)Permissions.AppointmentCreate)+" "
 				+"GROUP BY securitylog.PatNum,securitylog.FKey";
 			List<SecurityLog> listDupApptCreates=Crud.SecurityLogCrud.SelectMany(command);
 			string log="";
@@ -1313,17 +1295,16 @@ namespace OpenDentBusiness {
 			string log="";
 			string command;
 			DataTable table;
-			//Non-limitation benefits cannot be created with a TreatmentArea other than None, so the TreatArea column is irrelevant for non-frequency benefits and should not affect the results
 			switch(modeCur) {
 				case DbmMode.Check:
 					command="SELECT COUNT(*) DuplicateCount FROM "  // Do a sub-select to get the count - for some reason it's much faster
 						+"(SELECT DISTINCT ben2.BenefitNum FROM "
-						+"(SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, CodeGroupNum, TreatArea, COUNT(*) FROM "
-						+"(SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, CodeGroupNum, TreatArea "
+						+"(SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, COUNT(*) FROM "
+						+"(SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel "
 						+"FROM benefit ORDER BY BenefitNum ASC) ben3 "
-						+"GROUP BY PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, CodeGroupNum, TreatArea "
+						+"GROUP BY PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel "
 						+"HAVING COUNT(*) > 1) ben "
-						+"INNER JOIN (SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, CodeGroupNum, TreatArea FROM benefit) ben2 "  // select the specific columns we want - selecting the whole table takes 4x longer for some reason
+						+"INNER JOIN (SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel FROM benefit) ben2 "  // select the specific columns we want - selecting the whole table takes 4x longer for some reason
 						+"ON ben.PlanNum=ben2.PlanNum "
 						+"AND ben.PatPlanNum=ben2.PatPlanNum "
 						+"AND ben.CovCatNum=ben2.CovCatNum "
@@ -1335,8 +1316,6 @@ namespace OpenDentBusiness {
 						+"AND ben.Quantity=ben2.Quantity "
 						+"AND ben.CodeNum=ben2.CodeNum "
 						+"AND ben.CoverageLevel=ben2.CoverageLevel "
-						+"AND ben.CodeGroupNum=ben2.CodeGroupNum "
-						+"AND ben.TreatArea=ben2.TreatArea "
 						+"AND ben.BenefitNum!=ben2.BenefitNum) ben4";  //This ensures that the benefit with the lowest primary key in the match will not be counted.
 					int numFound=PIn.Int(Db.GetCount(command));
 					if(numFound>0 || verbose) {
@@ -1345,12 +1324,12 @@ namespace OpenDentBusiness {
 					break;
 				case DbmMode.Fix:
 					command="SELECT DISTINCT ben2.BenefitNum FROM "
-						+"(SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, CodeGroupNum, TreatArea, COUNT(*) "
-						+"FROM (SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, CodeGroupNum, TreatArea FROM benefit "
+						+"(SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, COUNT(*) "
+						+"FROM (SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel FROM benefit "
 						+"ORDER BY BenefitNum ASC) ben3 "
-						+"GROUP BY PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, CodeGroupNum, TreatArea "
+						+"GROUP BY PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel "
 						+"HAVING COUNT(*) > 1) ben "
-						+"INNER JOIN (SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel, CodeGroupNum, TreatArea FROM benefit) ben2 "
+						+"INNER JOIN (SELECT BenefitNum, PlanNum, PatPlanNum, CovCatNum, BenefitType, Percent, MonetaryAmt, TimePeriod, QuantityQualifier, Quantity, CodeNum, CoverageLevel FROM benefit) ben2 "
 						+"ON ben.PlanNum=ben2.PlanNum "
 						+"AND ben.PatPlanNum=ben2.PatPlanNum "
 						+"AND ben.CovCatNum=ben2.CovCatNum "
@@ -1362,25 +1341,17 @@ namespace OpenDentBusiness {
 						+"AND ben.Quantity=ben2.Quantity "
 						+"AND ben.CodeNum=ben2.CodeNum "
 						+"AND ben.CoverageLevel=ben2.CoverageLevel "
-						+"AND ben.CodeGroupNum=ben2.CodeGroupNum "
-						+"AND ben.TreatArea=ben2.TreatArea "
 						+"AND ben.BenefitNum!=ben2.BenefitNum";  //This ensures that the benefit with the lowest primary key in the match will not be deleted.
 					table=Db.GetTable(command);
-					string methodName=MethodBase.GetCurrentMethod().Name;
-					List<DbmLog> listDbmlogs=new List<DbmLog>();
 					List<long> listBenefitNums=new List<long>();
 					if(table.Rows.Count>0 || verbose) {
 						for(int i = 0;i<table.Rows.Count;i++) {
-							long benefitNum=PIn.Long(table.Rows[i]["BenefitNum"].ToString());
-							listBenefitNums.Add(benefitNum);
-							DbmLog dbmLog=new DbmLog(Security.CurUser.UserNum,benefitNum,DbmLogFKeyType.Benefit,DbmLogActionType.Delete,methodName,"Deleted duplicate benefit.");
-							listDbmlogs.Add(dbmLog);
+							listBenefitNums.Add(PIn.Long(table.Rows[i]["BenefitNum"].ToString()));
 						}
 						long numFixed=0;
 						if(listBenefitNums.Count>0) {
 							command="DELETE FROM benefit WHERE BenefitNum IN ("+string.Join(",",listBenefitNums)+")";
 							numFixed=PIn.Long(Db.NonQ(command).ToString());
-							Crud.DbmLogCrud.InsertMany(listDbmlogs);
 						}
 						log+=Lans.g("FormDatabaseMaintenance","Duplicate benefits deleted")+": "+numFixed.ToString()+"\r\n";
 					}
@@ -1408,7 +1379,6 @@ namespace OpenDentBusiness {
 					+"AND ben.QuantityQualifier=ben2.QuantityQualifier "
 					+"AND ben.Quantity=ben2.Quantity "
 					+"AND ben.CodeNum=ben2.CodeNum "
-					+"AND ben.CodeGroupNum=ben2.CodeGroupNum "
 					+"AND ben.CoverageLevel=ben2.CoverageLevel "
 					+"AND ben.BenefitNum<ben2.BenefitNum "
 				+"INNER JOIN insplan ON insplan.PlanNum=ben.PlanNum "
@@ -1770,7 +1740,7 @@ namespace OpenDentBusiness {
 			switch(modeCur) {
 				case DbmMode.Check:
 					command=$"SELECT COUNT(*) FROM claim " +
-						$"WHERE {patWhere}NOT EXISTS(SELECT * FROM claimproc WHERE claim.ClaimNum=claimproc.ClaimNum AND IsOverPay=0)";
+						$"WHERE {patWhere}NOT EXISTS(SELECT * FROM claimproc WHERE claim.ClaimNum=claimproc.ClaimNum)";
 					int numFound=PIn.Int(Db.GetCount(command));
 					if(numFound!=0 || verbose) {
 						log+=Lans.g("FormDatabaseMaintenance","Claims found with no claimprocs")+": "+numFound+"\r\n";
@@ -1780,14 +1750,14 @@ namespace OpenDentBusiness {
 					List<DbmLog> listDbmLogs=new List<DbmLog>();
 					string methodName=MethodBase.GetCurrentMethod().Name;
 					command="SELECT claim.ClaimNum FROM claim "
-						+$"WHERE {patWhere}NOT EXISTS(SELECT * FROM claimproc WHERE claim.ClaimNum=claimproc.ClaimNum AND IsOverPay=0)";
+						+$"WHERE {patWhere}NOT EXISTS(SELECT * FROM claimproc WHERE claim.ClaimNum=claimproc.ClaimNum)";
 					DataTable tableClaimNums=Db.GetTable(command);
 					List<long> listClaimNums=new List<long>();
 					for(int i = 0;i<tableClaimNums.Rows.Count;i++) {
 						listClaimNums.Add(PIn.Long(tableClaimNums.Rows[i]["ClaimNum"].ToString()));
 					}
 					if(listClaimNums.Count>0) {
-						List<EnumPermType> listPerms=GroupPermissions.GetPermsFromCrudAuditPerm(CrudTableAttribute.GetCrudAuditPermForClass(typeof(Claim)));
+						List<Permissions> listPerms=GroupPermissions.GetPermsFromCrudAuditPerm(CrudTableAttribute.GetCrudAuditPermForClass(typeof(Claim)));
 						List<SecurityLog> listSecurityLogs=SecurityLogs.GetFromFKeysAndType(listClaimNums,listPerms);
 						Claims.ClearFkey(listClaimNums);//Zero securitylog FKey column for rows to be deleted.
 						//Insert changes to DbmLogs
@@ -1796,7 +1766,7 @@ namespace OpenDentBusiness {
 					}
 					//Orphaned claims do not show in the account module (tested) so we need to delete them because no other way.
 					command=@"DELETE FROM claim "
-						+$"WHERE {patWhere}NOT EXISTS(SELECT * FROM claimproc WHERE claim.ClaimNum=claimproc.ClaimNum AND IsOverPay=0)";
+						+$"WHERE {patWhere}NOT EXISTS(SELECT * FROM claimproc WHERE claim.ClaimNum=claimproc.ClaimNum)";
 					long numberFixed=Db.NonQ(command);
 					listClaimNums.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x,DbmLogFKeyType.Claim,DbmLogActionType.Delete,
 						methodName,"Deleted claim from ClaimDeleteWithNoClaimProcs")));
@@ -2199,7 +2169,7 @@ namespace OpenDentBusiness {
 								long dummyPatNum=Patients.Insert(dummyPatient,true);
 								listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,dummyPatNum,DbmLogFKeyType.Patient,DbmLogActionType.Insert,
 									methodName,"Inserted new patient from ClaimPaymentCheckAmt."));
-								SecurityLogs.MakeLogEntry(EnumPermType.PatientCreate,dummyPatNum,"Recreated from DBM fix for ClaimPaymentCheckAmt.",LogSources.DBM);
+								SecurityLogs.MakeLogEntry(Permissions.PatientCreate,dummyPatNum,"Recreated from DBM fix for ClaimPaymentCheckAmt.",LogSources.DBM);
 								pat=Patients.GetPat(dummyPatient.PatNum);
 							}
 							log+="   Patient: #"+table.Rows[i]["PatNum"].ToString()+":"+pat.GetNameFirstOrPrefL()
@@ -2826,16 +2796,6 @@ namespace OpenDentBusiness {
 					//This is just estimate info, regardless of the claimproc status, so totally safe.
 					command="UPDATE claimproc SET InsPayEst=0 WHERE NoBillIns=1 AND IsOverpay=0 AND InsPayEst !=0";
 					long numberFixed=Db.NonQ(command);
-					for(int i=0;i<listClaimProcs.Count;i++) {
-						ClaimProc claimProcOld=listClaimProcs[i];
-						if(ClaimProcs.IsClaimProcHashValid(claimProcOld)) { //Only rehash claimprocs that were already valid.
-							//Since the query updated each of the claimprocs to have an InsPayEst of 0, we're going to make a copy of the current one and set it's InsPayEst to 0 before hashing.
-							ClaimProc claimProc=claimProcOld.Copy();
-							claimProc.InsPayEst=0;
-							claimProc.SecurityHash=ClaimProcs.HashFields(claimProc);
-							Crud.ClaimProcCrud.Update(claimProc);
-						}
-					}
 					listClaimProcs.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x.ClaimProcNum,DbmLogFKeyType.ClaimProc,
 						DbmLogActionType.Update,methodName,"Updated InsPayEst from "+x.InsPayEst+" to 0 from ClaimProcEstNoBillIns.")));
 					if(numberFixed>0 || verbose) {
@@ -2868,16 +2828,6 @@ namespace OpenDentBusiness {
 					//The InsPayAmt is already being ignored due to the status of the claimproc.  So changing its value is harmless.
 					command=@"UPDATE claimproc SET InsPayAmt=0 WHERE InsPayAmt > 0 AND ClaimNum=0 AND Status=6";
 					long numberFixed=Db.NonQ(command);
-					for(int i=0;i<listClaimProcs.Count;i++) {
-						ClaimProc claimProcOld=listClaimProcs[i];
-						if(ClaimProcs.IsClaimProcHashValid(claimProcOld)) { //Only rehash claimprocs that were already valid.
-							//Since the query updated each of the claimprocs to have an InsPayAmt of 0, we're going to make a copy of the current one and set it's InsPayAmt to 0 before hashing.
-							ClaimProc claimProc=claimProcOld.Copy();
-							claimProc.InsPayAmt=0;
-							claimProc.SecurityHash=ClaimProcs.HashFields(claimProc);
-							Crud.ClaimProcCrud.Update(claimProc);
-						}
-					}
 					listClaimProcs.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x.ClaimProcNum,DbmLogFKeyType.ClaimProc,
 						DbmLogActionType.Update,methodName,"Updated InsPayAmt from "+x.InsPayEst+" to 0 from ClaimProcEstWithInsPaidAmt.")));
 					if(numberFixed>0 || verbose) {
@@ -3096,48 +3046,38 @@ namespace OpenDentBusiness {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
 			}
-			string command=@$"SELECT * 
+			string command=@$"SELECT ClaimProcNum 
 				FROM claimproc 
 				WHERE Status={POut.Int((int)ClaimProcStatus.NotReceived)}
 				AND ClaimNum=0
 				AND InsPayAmt=0 
 				AND WriteOff=0";
-			List<ClaimProc> listClaimProcs=ClaimProcCrud.SelectMany(command);
+			List<long> listClaimProcNums=Db.GetListLong(command);
 			string log="";
-			if(listClaimProcs.Count==0 && !verbose) {
+			if(listClaimProcNums.Count==0 && !verbose) {
 				return log;
 			}
 			switch(modeCur) {
 				case DbmMode.Check:
 					log+=Lans.g("FormDatabaseMaintenance",$"ClaimProcs with status")+
 						" '"+ClaimProcStatus.NotReceived.GetDescription()+"' "+
-						Lans.g("FormDatabaseMaintenance","found where no claim is attached:")+" "+POut.Long(listClaimProcs.Count)+"\r\n";
+						Lans.g("FormDatabaseMaintenance","found where no claim is attached:")+" "+POut.Long(listClaimProcNums.Count)+"\r\n";
 					break;
 				case DbmMode.Fix:
 					List<DbmLog> listDbmLogs=new List<DbmLog>();
 					string methodName=MethodBase.GetCurrentMethod().Name;
-					if(listClaimProcs.Count>0) {
+					if(listClaimProcNums.Count>0) {
 						command=$"UPDATE claimproc SET Status={POut.Enum(ClaimProcStatus.Estimate)} "+
-							$"WHERE ClaimProcNum IN("+string.Join(",",listClaimProcs.Select(x=>x.ClaimProcNum))+")";
+							$"WHERE ClaimProcNum IN("+string.Join(",",listClaimProcNums)+")";
 						Db.NonQ(command);
-						for(int i=0;i<listClaimProcs.Count;i++) {
-							ClaimProc claimProcOld=listClaimProcs[i];
-							if(ClaimProcs.IsClaimProcHashValid(claimProcOld)) { //Only rehash claimprocs that were already valid.
-								//Since the query updated each of the claimprocs to have a Status of Estimate, we're going to make a copy of the current one and set it's Status to Estimate before hashing.
-								ClaimProc claimProc=claimProcOld.Copy();
-								claimProc.Status=ClaimProcStatus.Estimate;
-								claimProc.SecurityHash=ClaimProcs.HashFields(claimProc);
-								Crud.ClaimProcCrud.Update(claimProc);
-							}
-						}
-						listClaimProcs.ForEach(x=>listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x.ClaimProcNum,DbmLogFKeyType.ClaimProc,
+						listClaimProcNums.ForEach(x=>listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x,DbmLogFKeyType.ClaimProc,
 							DbmLogActionType.Update,methodName,$"Updated status of ClaimProc from '{ClaimProcStatus.NotReceived.GetDescription()}' to " +
 							$"'{ClaimProcStatus.Estimate.GetDescription()}' because no claim was attached.")));
 					}
-					if(listClaimProcs.Count>0 || verbose) {
+					if(listClaimProcNums.Count>0 || verbose) {
 						Crud.DbmLogCrud.InsertMany(listDbmLogs);
 						log+=Lans.g("FormDatabaseMaintenance","ClaimProcs with invalid claims set to")+" "+ClaimProcStatus.Estimate.GetDescription()+
-							": "+POut.Long(listClaimProcs.Count)+"\r\n";
+							": "+POut.Long(listClaimProcNums.Count)+"\r\n";
 					}
 					break;
 			}
@@ -3377,7 +3317,7 @@ namespace OpenDentBusiness {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
 			}
-			if(!CultureInfo.CurrentCulture.Name.EndsWith("CA") && !ODBuild.IsUnitTest) {//Canadian. en-CA or fr-CA
+			if(!CultureInfo.CurrentCulture.Name.EndsWith("CA") && !ODInitialize.IsRunningInUnitTest) {//Canadian. en-CA or fr-CA
 				return Lans.g("FormDatabaseMaintenance","Skipped. Local computer region must be set to Canada to run.");
 			}
 			StringBuilder log=new StringBuilder();
@@ -3430,13 +3370,12 @@ namespace OpenDentBusiness {
 					LEFT JOIN patient ON claimproc.PatNum=patient.PatNum
 					LEFT JOIN procedurelog ON claimproc.ProcNum=procedurelog.ProcNum 
 					WHERE claimproc.WriteOff<0
-					AND claimproc.IsTransfer=0 "+//The income transfer tool creates claimprocs with negative writeoffs. These are valid.
-					"AND claimproc.Status!="+POut.Enum(ClaimProcStatus.Supplemental);//Ignore supplementals since these are allowed to be negative
+					AND claimproc.IsTransfer=0";//The income transfer tool creates claimprocs with negative writeoffs. These are valid.
 			DataTable table=Db.GetTable(command);
 			if(table.Rows.Count==0 && !verbose) {
 				return "";
 			}
-			string log=Lans.g("FormDatabaseMaintenance","Negative writeoffs found: ")+table.Rows.Count+"\r\n";
+			string log=Lans.g("FormDatabaseMaintenance","Negative writeoffs found: ")+table.Rows.Count;
 			switch(modeCur) {
 				case DbmMode.Check:
 				case DbmMode.Fix:
@@ -4170,7 +4109,7 @@ namespace OpenDentBusiness {
 									&& listEtrans835s[j].TransRefNum==x835.TransRefNum
 									&& listEtrans835s[j].InsPaid==(double)x835.InsPaid
 									&& listEtrans835s[j].ControlId==x835.ControlId
-									&& listEtrans835s[j].PaymentMethodCode==x835.PaymentMethodCode
+									&& listEtrans835s[j].PaymentMethodCode==x835._paymentMethodCode
 									&& listEtrans835s[j].PatientName==patientName
 									//We don't want to include status because claims may have changed, and the Etrans835 status may not be up to date.
 									/*&& listEtrans835s[j].Status==x835.GetStatus()*/)
@@ -4949,7 +4888,7 @@ namespace OpenDentBusiness {
 							Db.NonQ(command);
 							listClaimProc.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x.ClaimProcNum,DbmLogFKeyType.ClaimProc,
 								DbmLogActionType.Delete,methodName,"Deleted claimproc from InsPlanInvalidNum.")));
-							List<EnumPermType> listPerms=GroupPermissions.GetPermsFromCrudAuditPerm(CrudTableAttribute.GetCrudAuditPermForClass(typeof(InsSub)));
+							List<Permissions> listPerms=GroupPermissions.GetPermsFromCrudAuditPerm(CrudTableAttribute.GetCrudAuditPermForClass(typeof(InsSub)));
 							listSecurityLogs=SecurityLogs.GetFromFKeysAndType(new List<long> { insSubNum },listPerms);
 							InsSubs.ClearFkey(insSubNum);
 							listSecurityLogs.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x.SecurityLogNum,DbmLogFKeyType.Securitylog,
@@ -4996,7 +4935,7 @@ namespace OpenDentBusiness {
 						command="SELECT COUNT(*) FROM claimproc WHERE PlanNum="+POut.Long(planNum)+" AND Status NOT IN (6,3)";//Estimate,Adjustment
 						countUsed+=PIn.Int(Db.GetCount(command));
 						if(countUsed==0) {//There are no other pointers to this invalid plannum or this inssub, delete this inssub
-							List<EnumPermType> listPerms=GroupPermissions.GetPermsFromCrudAuditPerm(CrudTableAttribute.GetCrudAuditPermForClass(typeof(InsSub)));
+							List<Permissions> listPerms=GroupPermissions.GetPermsFromCrudAuditPerm(CrudTableAttribute.GetCrudAuditPermForClass(typeof(InsSub)));
 							listSecurityLogs=SecurityLogs.GetFromFKeysAndType(new List<long> { insSubNum },listPerms);
 							InsSubs.ClearFkey(insSubNum);
 							listSecurityLogs.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x.SecurityLogNum,DbmLogFKeyType.Securitylog,
@@ -5108,7 +5047,7 @@ namespace OpenDentBusiness {
 						Patients.Update(pat,patOld);
 						listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,pat.PatNum,DbmLogFKeyType.Patient,DbmLogActionType.Update,
 							methodName,"Updated PatStatus from "+patOld.PatStatus+" to "+PatientStatus.Archived+"."));
-						SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,pat.PatNum,
+						SecurityLogs.MakeLogEntry(Permissions.PatientEdit,pat.PatNum,
 							"Patient status changed from 'Deleted' to 'Archived' from DBM fix for InsSubInvalidSubscriber.",LogSources.DBM);
 					}
 					int numberFixed=table.Rows.Count;
@@ -5332,7 +5271,7 @@ namespace OpenDentBusiness {
 						listClaimNums.Add(PIn.Long(tableClaimNums.Rows[i]["ClaimNum"].ToString()));
 					}
 					if(listClaimNums.Count>0) {
-						List<EnumPermType> listPerms=GroupPermissions.GetPermsFromCrudAuditPerm(CrudTableAttribute.GetCrudAuditPermForClass(typeof(Claim)));
+						List<Permissions> listPerms=GroupPermissions.GetPermsFromCrudAuditPerm(CrudTableAttribute.GetCrudAuditPermForClass(typeof(Claim)));
 						List<SecurityLog> listSecurityLogs=SecurityLogs.GetFromFKeysAndType(listClaimNums,listPerms);
 						Claims.ClearFkey(listClaimNums);//Zero securitylog FKey column for rows to be deleted.
 						listSecurityLogs.ForEach(x => listDbmLogs.Add(new DbmLog(Security.CurUser.UserNum,x.SecurityLogNum,DbmLogFKeyType.Securitylog,
@@ -5568,35 +5507,6 @@ namespace OpenDentBusiness {
 						Db.NonQ(command);
 						log+=Lans.g("FormDatabaseMaintenance","   All invalid transactions have been attached to the account called UNKNOWN.")+"\r\n";
 						log+=Lans.g("FormDatabaseMaintenance","   They need to be fixed manually.")+"\r\n";
-					}
-					break;
-			}
-			return log;
-		}
-
-		[DbmMethodAttr(IsReplicationUnsafe=true)]
-		public static string JournalEntryInvalidTransactionNum(bool verbose,DbmMode dbmMode) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,dbmMode);
-			}
-			string command="SELECT COUNT(*) FROM journalentry WHERE TransactionNum NOT IN(SELECT TransactionNum FROM transaction)";
-			int numFound=PIn.Int(Db.GetCount(command));
-			string log="";
-			switch(dbmMode) {
-				case DbmMode.Check:
-					if(numFound > 0 || verbose) {
-						log+=Lans.g("FormDatabaseMaintenance","Transactions found with an invalid transaction number")+": "+numFound+"\r\n";
-					}
-					break;
-				case DbmMode.Fix:
-					if(numFound > 0 || verbose) {
-						log+=Lans.g("FormDatabaseMaintenance","Transactions found with an invalid transaction number")+": "+numFound+"\r\n";
-					}
-					if(numFound > 0) {
-						//Delete the journalentry row.
-						command="DELETE FROM journalentry WHERE TransactionNum NOT IN(SELECT TransactionNum FROM transaction)";
-						Db.NonQ(command);
-						log+=Lans.g("FormDatabaseMaintenance","All invalid transactions have been deleted from transaction history.")+"\r\n";
 					}
 					break;
 			}
@@ -8706,6 +8616,7 @@ namespace OpenDentBusiness {
 		}
 		#endregion ProcedureLog-------------------------------------------------------------------------------------------------------------------------
 		#region ProgramProperty, Provider, QuickPasteNote-----------------------------------------------------------------------------------------------
+
 		[DbmMethodAttr]
 		public static string ProgramPropertiesDuplicateLocalPath(bool verbose,DbmMode modeCur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -9594,7 +9505,7 @@ namespace OpenDentBusiness {
 		}
 
 		#endregion ScheduleOp, Schedule, SecurityLog, Sheet---------------------------------------------------------------------------------------------
-		#region Signal, SigMessage, SmsFromMobile, Statement, SummaryOfCare--------------------------------------------------------------------------------------------
+		#region Signal, SigMessage, Statement, SummaryOfCare--------------------------------------------------------------------------------------------
 
 		[DbmMethodAttr]
 		public static string SignalInFuture(bool verbose,DbmMode modeCur) {
@@ -9646,43 +9557,6 @@ namespace OpenDentBusiness {
 					break;
 			}
 			return log;
-		}
-
-		[DbmMethodAttr]
-		public static string SmsFromMobilesInvalidClinicNum(bool verbose, DbmMode dbmMode) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,dbmMode);
-			}
-			string log="";
-			string command="";
-			switch(dbmMode){
-				case DbmMode.Check:
-					command="SELECT COUNT(*) FROM smsfrommobile WHERE ClinicNum=-1";
-					long numFound=PIn.Long(Db.GetCount(command));
-					if(numFound>0 || verbose) {
-						log+=Lans.g("FormDatabaseMaintenance","Messages found with invalid ClinicNum(s)")+": "+numFound+"\r\n";
-					}
-					break;
-			case DbmMode.Fix:
-					//Grab all the smsfrommobiles that have -1 clinicnums and try to match them up with smsphones that have valid clinicnums.
-					command="SELECT s.SmsFromMobileNum,p.ClinicNum " +
-					"FROM smsfrommobile s " +
-					"INNER JOIN smsphone p ON s.SmsPhoneNumber=p.PhoneNumber " +
-					"WHERE s.ClinicNum=-1 AND p.ClinicNum<>-1";
-					DataTable dataTable=Db.GetTable(command);
-					long numFixed=0;
-					for(int i = 0;i < dataTable.Rows.Count;i++) {
-						DataRow dataRow=dataTable.Rows[i];
-						command="UPDATE smsfrommobile SET ClinicNum="+PIn.Long(dataRow["ClinicNum"].ToString())+" WHERE SmsFromMobileNum="+PIn.Long(dataRow["SmsFromMobileNum"].ToString());
-						Db.NonQ(command);
-						numFixed++;
-					}
-					if(numFixed>0 || verbose) {
-						log+=Lans.g("FormDatabaseMaintenance","Messages with invalid ClinicNum(s) fixed")+": "+numFixed+"\r\n";
-					}
-					break;
-				}
-		 return log;
 		}
 
 		[DbmMethodAttr]
@@ -9787,7 +9661,7 @@ namespace OpenDentBusiness {
 		}
 
 		#endregion Signal, SigMessage, Statement, SummaryOfCare-----------------------------------------------------------------------------------------
-		#region Task, TaskList, TimeCardRule, ToothInitial, TreatPlan-------------------------------------------------------------------------------------------------
+		#region Task, TaskList, TimeCardRule, TreatPlan-------------------------------------------------------------------------------------------------
 		[DbmMethodAttr]
 		public static string TaskListsAbandonedRepeating(bool verbose,DbmMode modeCur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -10046,33 +9920,6 @@ namespace OpenDentBusiness {
 			return log;
 		}
 		
-		[DbmMethodAttr(IsOneOff=true)]
-		public static string ToothChartInvalidInitialTypes(bool verbose, DbmMode modeCur) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
-			}
-			string log="";
-			ToothInitialType toothInitialTypeMax=Enum.GetValues(typeof(ToothInitialType)).Cast<ToothInitialType>().Max();
-			string command=$"SELECT ToothInitialNum FROM toothinitial WHERE InitialType > {POut.Int((int)toothInitialTypeMax)}";
-			List<long> listToothInitialNumsInvalid=Db.GetListLong(command);
-			switch(modeCur){
-				case DbmMode.Check:
-					if(listToothInitialNumsInvalid.Count>0 || verbose) {
-						log+=Lans.g("FormDatabaseMaintenance","Invalid tooth chart annotations found")+": "+listToothInitialNumsInvalid.Count.ToString()+"\r\n";
-					}
-					break;
-				case DbmMode.Fix:
-					long numFixed=0;
-					if(listToothInitialNumsInvalid.Count > 0) {
-						command=$"DELETE FROM toothinitial WHERE ToothInitialNum IN ({string.Join(",",listToothInitialNumsInvalid)})";
-						numFixed=Db.NonQ(command);
-					}
-					log+=Lans.g("FormDatabaseMaintenance","Number of invalid tooth chart annotations removed")+": "+numFixed.ToString()+"\r\n";
-					break;
-				}
-			return log;
-		}
-
 		[DbmMethodAttr]
 		public static string TreatPlansInvalid(bool verbose,DbmMode modeCur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -11037,7 +10884,7 @@ HAVING cnt>1";
 			//Currently not including encrypted emails because the computer running this tool would need the private key to decrypt the message and
 			//we would need to take an extra step at the end (after cleaning up attachments) to re-encrypt the modified email message. 
 			//The current customers complaining only have bloat with clear text emails so that is where we are going to start with the clean up tool.
-			ODEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Getting email messages from the database..."));
+			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Getting email messages from the database..."));
 			DataTable tableEmailMessageNums=Db.GetTable(command);
 			if(tableEmailMessageNums.Rows.Count==0) {
 				return Lans.g("DatabaseMaintenance","There are no email messages that need to be cleaned up.");
@@ -11049,7 +10896,7 @@ HAVING cnt>1";
 			int index=1;
 			//Call the processing email logic for each email which will clear out the RawEmailIn column if the email is successfully digested.
 			foreach(DataRow row in tableEmailMessageNums.Rows) {
-				ODEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Processing email message")
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Processing email message")
 					+"  "+index.ToString()+" / "+tableEmailMessageNums.Rows.Count.ToString());
 				index++;
 				EmailMessage emailMessage=EmailMessages.GetOne(PIn.Long(row["EmailMessageNum"].ToString()));
@@ -11063,11 +10910,6 @@ HAVING cnt>1";
 				try {
 					EmailMessage emailMessageNew=EmailMessages.ProcessRawEmailMessageIn(emailMessage.RawEmailIn,emailMessage.EmailMessageNum
 						,emailAddress,false,oldEmailMessage.SentOrReceived);
-					emailMessageNew.FailReason=emailMessage.FailReason;// not copied over in ProcessRawEmailMessageIn()
-					if(emailMessageNew.RawEmailIn!=emailMessage.RawEmailIn && emailMessageNew.RawEmailIn.EndsWith("\r\n")) {
-						//In Health.Direct.Agent.IncomingMessage.SerializeMessage(), a trailing newline is sometimes added.
-						emailMessageNew.RawEmailIn=emailMessageNew.RawEmailIn.Substring(0,emailMessageNew.RawEmailIn.Length-2);
-					}
 					if(Crud.EmailMessageCrud.UpdateComparison(emailMessageNew,oldEmailMessage)) {
 						cleanedCount++;
 					}
@@ -11081,14 +10923,14 @@ HAVING cnt>1";
 				}
 			}
 			if(DataConnection.DBtype==DatabaseType.MySql && tableEmailMessageNums.Rows.Count!=noChangeCount) {//Using MySQL and something actually changed.
-				ODEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Optimizing the email message table..."));
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Optimizing the email message table..."));
 				OptimizeTable("emailmessage");
 			}
 			string strResults=Lans.g("DatabaseMaintenance","Done.  No clean up required.");
 			if(cleanedCount > 0 || errorCount > 0) {
 				strResults=Lans.g("DatabaseMaintenance","Total email messages considered")+": "+tableEmailMessageNums.Rows.Count.ToString()+"\r\n"
 					+Lans.g("DatabaseMaintenance","Email messages successfully cleaned up")+": "+cleanedCount.ToString()+"\r\n"
-					+Lans.g("DatabaseMaintenance","Email messages that did not need to be cleaned up")+": "+noChangeCount.ToString()+"\r\n"
+					+Lans.g("DatabaseMaintenance","Email messages that did not nead to be cleaned up")+": "+noChangeCount.ToString()+"\r\n"
 					+Lans.g("DatabaseMaintenance","Email messages that failed to be cleaned up")+": "+errorCount.ToString();
 			}
 			return strResults;
@@ -11390,7 +11232,7 @@ HAVING cnt>1";
 						command+=$@"
 							OPTIMIZE TABLE {fullTableName};";
 					}
-					ODEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Dropping redundant indexes")+" "
+					ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Dropping redundant indexes")+" "
 						+(doOptimize?(Lans.g("DatabaseMaintenance","and optimizing")+" "):"")+Lans.g("DatabaseMaintenance","table")+" "
 						+fullTableName.Replace("`","")+".");
 					Db.NonQ(command);
@@ -11410,7 +11252,7 @@ HAVING cnt>1";
 				FROM emailmessageuid
 				GROUP BY BINARY MsgId
 				HAVING COUNT(*)>1";
-			ODEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Getting duplicate email message uids from the database..."));
+			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Getting duplicate email message uids from the database..."));
 			List<string> listDupMsgUidNums=Db.GetListString(command);
 			if(listDupMsgUidNums.Count>0) {
 				for(int i=0;i<listDupMsgUidNums.Count;i++) {
@@ -11419,8 +11261,8 @@ HAVING cnt>1";
 						if(listMsgUidNums.Count==0) {
 							continue;//shouldn't happen
 						}
-						ODEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Deleting duplicate email message uids from the database..."));
-						Db.NonQ($"DELETE FROM emailmessageuid WHERE EmailMessageUidNum IN({string.Join(",",listMsgUidNums)})");
+						ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Deleting duplicate email message uids from the database..."));
+						Db.NonQ($"DELETE FROM emailmessage WHERE EmailMessageNum IN({string.Join(",",listMsgUidNums)})");
 					}
 					catch(Exception ex) {
 						ex.DoNothing();
@@ -11434,7 +11276,7 @@ HAVING cnt>1";
 				FROM emailmessage
 				GROUP BY BINARY SUBJECT,RecipientAddress,ToAddress,FromAddress,CcAddress,BccAddress,BINARY BodyText,MsgDateTime
 				HAVING COUNT(*)>1";
-			ODEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Getting duplicate email messages from the database..."));
+			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Getting duplicate email messages from the database..."));
 			List<string> listDupMsgNums=Db.GetListString(command);
 			if(listDupMsgNums.Count==0) {
 				return Lans.g("DatabaseMaintenance","There are no duplicate emails that need to be cleaned up.");
@@ -11445,7 +11287,7 @@ HAVING cnt>1";
 					if(listMsgNums.Count==0) {
 						continue;
 					}
-					ODEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Deleting duplicate email messages from the database..."));
+					ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Deleting duplicate email messages from the database..."));
 					Db.NonQ($"DELETE FROM emailmessage WHERE EmailMessageNum IN({string.Join(",",listMsgNums)})");
 				}
 				catch(Exception ex) {
@@ -11454,7 +11296,7 @@ HAVING cnt>1";
 				}
 			}
 			if(DataConnection.DBtype==DatabaseType.MySql) {//Using MySQL.
-				ODEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Optimizing the email message and email message uid tables..."));
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Optimizing the email message and email message uid tables..."));
 				OptimizeTable("emailmessageuid");
 				OptimizeTable("emailmessage");
 			}
@@ -11477,7 +11319,7 @@ HAVING cnt>1";
 				return Lans.g("DatabaseMaintenance","This tool will not remove attachments using cloud storage or AtoZ folders."); 
 			}
 			string command="SELECT ActualFileName FROM emailattach WHERE EmailMessageNum NOT IN (SELECT EmailMessageNum FROM emailmessage)";
-			ODEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Getting attachments not linked to an email message from the database..."));
+			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Getting attachments not linked to an email message from the database..."));
 			List<string> listAttachmentFilesToDelete=Db.GetListString(command);
 			if(listAttachmentFilesToDelete.Count==0) {
 				return Lans.g("DatabaseMaintenance","There are no attachments that need to be deleted.");
@@ -11487,7 +11329,7 @@ HAVING cnt>1";
 			int errorsCount=0;
 			int deletedCount=0;
 			//Delete all the attachment files within the images folder that aren't linked to a email message.
-			ODEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Deleting unlinked attachments in the EmailAttachments folder..."));
+			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Deleting unlinked attachments in the EmailAttachments folder..."));
 			for(int i=0;i<listAttachmentFilesToDelete.Count;i++) {
 				try {
 					string attachFilePath=FileAtoZ.CombinePaths(attachPath,listAttachmentFilesToDelete[i]);
@@ -11501,11 +11343,11 @@ HAVING cnt>1";
 					errorsCount++;
 				}
 			}
-			ODEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Deleting unlinked email attaches from the database..."));
+			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Deleting unlinked email attaches from the database..."));
 			command="DELETE FROM emailattach WHERE EmailMessageNum NOT IN (SELECT EmailMessageNum FROM emailmessage)";
 			Db.NonQ(command);
 			if(DataConnection.DBtype==DatabaseType.MySql) {//Using MySQL.
-				ODEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Optimizing the email attach table..."));
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lans.g("DatabaseMaintenance","Optimizing the email attach table..."));
 				OptimizeTable("emailattach");
 			}
 			string strResults=Lans.g("DatabaseMaintenance","Done.  No clean up required.");
@@ -11515,22 +11357,6 @@ HAVING cnt>1";
 					+Lans.g("DatabaseMaintenance","Email Attaches that failed to be deleted")+": "+errorsCount.ToString();
 			}
 			return strResults;
-		}
-
-		///<summary>Update all to new insurance plan type.</summary>
-		public static void UpdateInsurancePlanType(string planType) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),planType);
-				return;
-			}
-			string command="";
-			if(planType=="Percentage") {
-				command="UPDATE insplan SET PlanType='p' WHERE PlanType=''";
-			}
-			else{//"Category"
-				command="UPDATE insplan SET PlanType='' WHERE PlanType='p'";
-			}
-			Db.NonQ(command);
 		}
 
 		#endregion Tool Button and Helper Methods-----------------------------------------------------------------------------------------------------------
@@ -11741,84 +11567,6 @@ HAVING cnt>1";
 			public ProcedureCodeGroup(string procCode,List<ProcedureCode> listProcedureCodes) {
 				ProcCode=procCode;
 				ListProcedureCodes=listProcedureCodes;
-			}
-		}
-
-		/// <summary>SQL Global Variable Helper Class for DBM method 'MySQLServerOptionsValidate' to check if that variable is set to that value. You can also pass in a list of requirements and it will check to see if the variable value matches any of the supplied list of strings. You may also pass in a version by specifying 'requiresVersionCheck=true' and supplying a sql global version variable name and a minimum required version number. This should be in a standard dot-based format such as "10.5.21.0". When supplying a version minimum, IsValid will return true if the main variable is valid - the version is only checked if the main variable is not valid.<br></br><b>Example:</b> If the dbms needs to have the sql variable "myisam_recover_options" set to "off" if the dbms variable 'version' is greater than or equal to "10.5.9" => "new GlobalVariableH("myisam_recover_options", "off", requiresVersionCheck:true, "version", "10.5.9"));"</summary>
-		private class GlobalVariableH {
-			/// <summary>Literal string of the db variable name. Like: "sql_mode"</summary>
-			public readonly string Name;
-			/// <summary>Value retrieved from the DB when instantiated.</summary>
-			public readonly string Value;
-			/// <summary>Returns true if the value is blank or if it contains one of the passed-in desired values. If a version is supplied and it fails the primary validity check, it will perform a secondary validity check. In that case IsValid will return true only if the current version is less than the supplied version.</summary>
-			public readonly bool IsValid;
-			public readonly bool MayLackPermissions;
-			public readonly bool RequiresVersionCheck;
-			private readonly string _versionCur;
-			private readonly List<string> _listDesiredValues;
-
-			public GlobalVariableH(string varName, string desiredValue, bool requiresVersionCheck=false, string versionVarName="", string versionMin="") : this(varName, new List<string>(){ desiredValue }, requiresVersionCheck, versionVarName, versionMin) { }
-
-			public GlobalVariableH(string varName, List<string> listDesiredValues, bool requiresVersionCheck=false, string versionVarName=null, string versionMin=null) {
-				Name=varName;
-				_listDesiredValues=listDesiredValues;
-				DataTable table=Db.GetTable($"SHOW GLOBAL VARIABLES LIKE '{Name}'");
-				if(table.Rows.Count<1 || table.Columns.Count<2) { // User may not have permission to access global variables?
-					MayLackPermissions=true;
-					return;
-				}
-				Value=table.Rows[0][1].ToString().ToLower().Trim();
-				IsValid=_listDesiredValues.Exists(x=> Value.Contains(x)) || string.IsNullOrWhiteSpace(Value);
-				if(!requiresVersionCheck || versionVarName==null || versionMin==null) {
-					return;
-				}
-				table=Db.GetTable($"SHOW GLOBAL VARIABLES LIKE '{versionVarName}'");
-				if(table.Rows.Count<1 || table.Columns.Count<2) { // User may not have permission to access global variables?
-					MayLackPermissions=true;
-					return;
-				}
-				_versionCur=table.Rows[0][1].ToString().Trim();
-				IsValid=IsValid || !CurVerMeetsMinReq(_versionCur,versionMin);
-				RequiresVersionCheck=true;
-			}
-
-			private bool CurVerMeetsMinReq(string versionCur, string versionMin) {
-				List<string> valuesCur=versionCur.Split('.').ToList();
-				List<string> valuesMin=versionMin.Split('.').ToList();
-				int versionSegments=Math.Min(valuesCur.Count,valuesMin.Count);
-				for(int i=0;i<versionSegments;i++) {
-					string digitsOnly=new string(valuesCur[i].Where(x=>char.IsDigit(x)).ToArray());
-					if (PIn.Int(digitsOnly)>PIn.Int(valuesMin[i])) {
-						return true;
-					}
-					else if(PIn.Int(digitsOnly)<PIn.Int(valuesMin[i])) {
-						return false;
-					}
-				}
-				return true;
-			}
-
-			///<summary>Returns a string in the following format: "The MySQL server variable [variableName] is currently set to [variableValue].\r\n". If the object passed in isn't Valid it will automatically add the clause "should be blank or [ReqVal], but " to the middle of the string as appropriate. All (static parts) of the string are translated using Lan.g().</summary>
-			public string GetMessage() {
-				string message="";
-				if(RequiresVersionCheck && !IsValid) {
-					message+=Lans.g("FormDatabaseMaintenance","For your DBMS version")+$" ({_versionCur}), ";
-				}
-				message+=Lans.g("FormDatabaseMaintenance","The MySQL server variable")+$" '{Name}' ";
-				if(!IsValid) {
-					if(_listDesiredValues.Count==1) {
-						message+=Lans.g("FormDatabaseMaintenance","should be blank or")+$" '{_listDesiredValues[0]}', ";
-					}
-					else if(_listDesiredValues.Count>1) {
-						string tempS=string.Join("', '",_listDesiredValues);
-						tempS=tempS.Insert(tempS.LastIndexOf(',')+1," or ");
-						message+=Lans.g("FormDatabaseMaintenance","should be blank")+$", '{tempS}', ";
-					}
-					message+=Lans.g("FormDatabaseMaintenance","but")+" ";
-				}
-				string myVal=string.IsNullOrWhiteSpace(Value)?Lans.g("FormDatabaseMaintenance","blank"):Value;
-				message+=Lans.g("FormDatabaseMaintenance","is currently set to")+$" '{myVal}'.\r\n";
-				return message;
 			}
 		}
 

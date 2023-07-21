@@ -21,8 +21,9 @@ namespace OpenDental {
 		}
 
 		private void FormAllergySetup_Load(object sender,EventArgs e) {
-			if(!IsSelectionMode) {
-				butOK.Visible=false;
+			if(IsSelectionMode) {
+				butOK.Visible=true;
+				butClose.Text="Cancel";
 			}
 			FillGrid();
 		}
@@ -69,7 +70,7 @@ namespace OpenDental {
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.AllergyDefEdit)) {
+			if(!Security.IsAuthorized(Permissions.AllergyDefEdit)) {
 				return;
 			}
 			using FormAllergyDefEdit formAllergyDefEdit=new FormAllergyDefEdit();
@@ -89,5 +90,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

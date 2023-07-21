@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormCloudManagement));
+			this.butClose = new OpenDental.UI.Button();
 			this.butCloseSession = new OpenDental.UI.Button();
 			this.labelSessions = new System.Windows.Forms.Label();
 			this.labelSlash = new System.Windows.Forms.Label();
@@ -48,6 +49,16 @@ namespace OpenDental{
 			this.groupStorageManagement.SuspendLayout();
 			this.groupAllowedAddresses.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(847, 450);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
 			// 
 			// butCloseSession
 			// 
@@ -279,11 +290,13 @@ namespace OpenDental{
 			// 
 			// FormCloudManagement
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(934, 486);
 			this.Controls.Add(this.groupAllowedAddresses);
 			this.Controls.Add(this.groupStorageManagement);
 			this.Controls.Add(this.butChangePassword);
 			this.Controls.Add(this.groupSessionManagement);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormCloudManagement";
 			this.Text = "Cloud Management";
@@ -297,6 +310,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridActiveInstances;
 		private UI.Button butCloseSession;
 		private System.Windows.Forms.Label labelSessions;

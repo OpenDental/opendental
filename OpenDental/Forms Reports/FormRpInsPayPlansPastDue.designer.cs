@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpInsPayPlansPastDue));
+			this.butClose = new OpenDental.UI.Button();
 			this.labelProv = new System.Windows.Forms.Label();
 			this.comboProvs = new OpenDental.UI.ComboBox();
 			this.gridMain = new OpenDental.UI.GridOD();
@@ -33,6 +34,16 @@ namespace OpenDental{
 			this.butPrint = new OpenDental.UI.Button();
 			this.comboClinics = new OpenDental.UI.ComboBoxClinicPicker();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(758, 463);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// labelProv
 			// 
@@ -114,7 +125,7 @@ namespace OpenDental{
 			this.comboClinics.IncludeUnassigned = true;
 			this.comboClinics.Location = new System.Drawing.Point(416, 18);
 			this.comboClinics.Name = "comboClinics";
-			this.comboClinics.IsMultiSelect = true;
+			this.comboClinics.SelectionModeMulti = true;
 			this.comboClinics.Size = new System.Drawing.Size(200, 21);
 			this.comboClinics.TabIndex = 72;
 			this.comboClinics.SelectionChangeCommitted += new System.EventHandler(this.ComboClinics_SelectionChangeCommitted);
@@ -131,6 +142,7 @@ namespace OpenDental{
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.labelProv);
 			this.Controls.Add(this.comboProvs);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormRpInsPayPlansPastDue";
 			this.Text = "Insurance Payment Plans Past Due";
@@ -141,6 +153,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label labelProv;
 		private UI.ComboBox comboProvs;
 		private UI.GridOD gridMain;

@@ -183,7 +183,7 @@ namespace OpenDental {
 			if(!string.IsNullOrWhiteSpace(perVisitPatAmountProcCode) && !string.IsNullOrWhiteSpace(perVisitInsAmountProcCode)) {
 				labelPerVisit.Visible=false;
 			}
-			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit,true)) {
+			if(!Security.IsAuthorized(Permissions.InsPlanEdit,true)) {
 				Label labelNoPermission=new Label();
 				labelNoPermission.Text=Lan.g(this,"No Insurance Plan Edit permission.  Patient and Subscriber Information can still be saved.");
 				labelNoPermission.Location=new Point(groupChanges.Location.X,groupChanges.Location.Y+10);
@@ -232,6 +232,7 @@ namespace OpenDental {
 				comboBoxZeroWriteOffsOnAnnualMaxLimitation.Enabled=false;
 				comboZeroWriteOffsOnLimitationOrAging.Enabled=false;
 				checkShowBaseUnits.Enabled=false;
+				textDentaide.Enabled=false;
 				textPlanFlag.Enabled=false;
 				checkIsPMP.Enabled=false;
 				textCanadianDiagCode.Enabled=false;
@@ -254,7 +255,7 @@ namespace OpenDental {
 				textPerVisitPatAmount.Enabled=false;
 				textPerVisitInsAmount.Enabled=false;
 			}
-			if(!Security.IsAuthorized(EnumPermType.InsuranceVerification,true)) {
+			if(!Security.IsAuthorized(Permissions.InsuranceVerification,true)) {
 				//Disable buttons that set UI to now.
 				butVerifyPatPlan.Visible=false;//Using Visible instead of Enabled, Enabled makes the button background transparent and it looks strange.
 				butVerifyBenefits.Visible=false;
@@ -425,7 +426,7 @@ namespace OpenDental {
 				_procedureCodeOrthoAuto=ProcedureCodes.GetProcCode(_insPlan.OrthoAutoProcCodeNumOverride);
 			}
 			FillOrtho();
-			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit,true) || !Security.IsAuthorized(EnumPermType.CarrierEdit,true)) {
+			if(!Security.IsAuthorized(Permissions.InsPlanEdit,true) || !Security.IsAuthorized(Permissions.CarrierEdit,true)) {
 				groupCarrier.Enabled=false;
 			}
 			Cursor=Cursors.Default;
@@ -464,7 +465,7 @@ namespace OpenDental {
 		}
 
 		private void SetEnabledOrtho() {
-			if(!Security.IsAuthorized(EnumPermType.InsPlanOrthoEdit,true)) {
+			if(!Security.IsAuthorized(Permissions.InsPlanOrthoEdit,true)) {
 				//Disable every control within the Ortho tab.
 				for(int i=0;i<panelOrtho.Controls.Count;i++) {
 					ODException.SwallowAnyException(() => { panelOrtho.Controls[i].Enabled=false; });
@@ -623,7 +624,7 @@ namespace OpenDental {
 			textPerVisitPatAmount.Text=_insPlan.PerVisitPatAmount.ToString("f");
 			textPerVisitInsAmount.Text=_insPlan.PerVisitInsAmount.ToString("f");
 			FillCarrier(_insPlan.CarrierNum);
-			if(!Security.IsAuthorized(EnumPermType.CarrierCreate,true)) {
+			if(!Security.IsAuthorized(Permissions.CarrierCreate,true)) {
 				textCarrier.Enabled=false;
 				textPhone.Enabled=false;
 				textAddress.Enabled=false;
@@ -637,6 +638,12 @@ namespace OpenDental {
 			}
 			FillOtherSubscribers();
 			textPlanNote.Text=_insPlan.PlanNote;
+			if(_insPlan.DentaideCardSequence==0) {
+				textDentaide.Text="";
+			}
+			else{
+				textDentaide.Text=_insPlan.DentaideCardSequence.ToString();
+			}
 			textPlanFlag.Text=_insPlan.CanadianPlanFlag;
 			textCanadianDiagCode.Text=_insPlan.CanadianDiagnosticCode;
 			textCanadianInstCode.Text=_insPlan.CanadianInstitutionCode;
@@ -680,7 +687,7 @@ namespace OpenDental {
 			if(countSubs>10000) {//10,000 per Nathan.
 				comboLinked.Visible=false;
 				butOtherSubscribers.Visible=true;
-				LayoutManager.MoveLocation(butOtherSubscribers,comboLinked.Location);
+				butOtherSubscribers.Location=comboLinked.Location;
 				return;
 			}
 			comboLinked.Visible=true;
@@ -935,28 +942,29 @@ namespace OpenDental {
 
 		///<summary>Button not visible if SubCur=null, editing from big list.</summary>
 		private void butPick_Click(object sender,EventArgs e) {
-			if(!IsNewPlan && !Security.IsAuthorized(EnumPermType.InsPlanPickListExisting,true)) {
+			if(!IsNewPlan && !Security.IsAuthorized(Permissions.InsPlanPickListExisting,true)) {
 				MsgBox.Show(this,"Permission required: 'Change existing Ins Plan using Pick From List'.\r\n"
 					+"Alternatively, the Ins Plan can be dropped and a new plan may be added.");
 				return;
 			}
-			FrmInsPlanSelect frmInsPlanSelect=new FrmInsPlanSelect();
-			frmInsPlanSelect.empText=textEmployer.Text;
-			frmInsPlanSelect.carrierText=textCarrier.Text;
-			frmInsPlanSelect.ShowDialog();
-			if(!frmInsPlanSelect.IsDialogOK) {
+			using FormInsPlans formInsPlans=new FormInsPlans();
+			formInsPlans.empText=textEmployer.Text;
+			formInsPlans.carrierText=textCarrier.Text;
+			formInsPlans.IsSelectMode=true;
+			formInsPlans.ShowDialog();
+			if(formInsPlans.DialogResult==DialogResult.Cancel) {
 				return;
 			}
 			if(!IsNewPlan && !MsgBox.Show(this,MsgBoxButtons.OKCancel,"Are you sure you want to use the selected plan?  You should NOT use this if the patient is changing insurance.  Use the Drop button instead.")) {
 				return;
 			}
-			if(frmInsPlanSelect.InsPlanSelected.PlanNum==0) {//user clicked Blank
+			if(formInsPlans.InsPlanSelected.PlanNum==0) {//user clicked Blank
 				_insPlan=new InsPlan();
 				_insPlan.PlanNum=_insPlanOld.PlanNum;
 			}
 			else {//user selected an existing plan
-				_insPlan=frmInsPlanSelect.InsPlanSelected;
-				textInsPlanNum.Text=frmInsPlanSelect.InsPlanSelected.PlanNum.ToString();
+				_insPlan=formInsPlans.InsPlanSelected;
+				textInsPlanNum.Text=formInsPlans.InsPlanSelected.PlanNum.ToString();
 			}
 			FillFormWithPlanCur(true);
 			//We need to pass patPlanNum in to RefreshForPlan to get patient level benefits:
@@ -964,14 +972,14 @@ namespace OpenDental {
 			if(_patPlan!=null) {
 				patPlanNum=_patPlan.PatPlanNum;
 			}
-			if(frmInsPlanSelect.InsPlanSelected.PlanNum==0) {//user clicked blank
+			if(formInsPlans.InsPlanSelected.PlanNum==0) {//user clicked blank
 				_listBenefits=new List<Benefit>();
 			}
 			else {//user selected an existing plan
 				_listBenefits=Benefits.GetForPlanOrPatPlan(_insPlan.PlanNum,patPlanNum);
 			}
 			FillBenefits();
-			if(IsNewPlan || frmInsPlanSelect.InsPlanSelected.PlanNum==0) {//New plan or user clicked blank.
+			if(IsNewPlan || formInsPlans.InsPlanSelected.PlanNum==0) {//New plan or user clicked blank.
 				//Leave benefitListOld alone so that it will trigger deletion of the orphaned benefits later.
 			}
 			else{
@@ -1275,7 +1283,7 @@ namespace OpenDental {
 		}
 		
 		private void butChange_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPlanChangeSubsc)) {
+			if(!Security.IsAuthorized(Permissions.InsPlanChangeSubsc)) {
 				return;
 			}
 			try {
@@ -1297,19 +1305,19 @@ namespace OpenDental {
 				return;
 			}
 			Family family=Patients.GetFamily(_insSub.Subscriber);
-			FrmFamilyMemberSelect frmFamilyMemberSelect=new FrmFamilyMemberSelect(family,true);
-			frmFamilyMemberSelect.ShowDialog();
-			if(frmFamilyMemberSelect.IsDialogCancel) {
+			using FormFamilyMemberSelect formFamilyMemberSelect=new FormFamilyMemberSelect(family,true);
+			formFamilyMemberSelect.ShowDialog();
+			if(formFamilyMemberSelect.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			_insSub.Subscriber=frmFamilyMemberSelect.SelectedPatNum;
-			Patient patientSubscriber=Patients.GetLim(frmFamilyMemberSelect.SelectedPatNum);
+			_insSub.Subscriber=formFamilyMemberSelect.SelectedPatNum;
+			Patient patientSubscriber=Patients.GetLim(formFamilyMemberSelect.SelectedPatNum);
 			textSubscriber.Text=patientSubscriber.GetNameLF();
 			textSubscriberID.Text="";
 		}
 
 		private void CheckAssign_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPlanChangeAssign)) {
+			if(!Security.IsAuthorized(Permissions.InsPlanChangeAssign)) {
 				checkAssign.Checked=!checkAssign.Checked;
 			}
 		}
@@ -1355,8 +1363,8 @@ namespace OpenDental {
 		}
 
 		private void butImportTrojan_Click(object sender,System.EventArgs e) {
-			if(ODEnvironment.IsCloudServer) {
-				MsgBox.Show(this,"Bridge is not available while using Open Dental Cloud.");
+			if(ODBuild.IsWeb()) {
+				MsgBox.Show(this,"Bridge is not available while viewing through the web.");
 				return;//bridge is not yet available for web users.
 			}
 			//If SubCur is null, this button is not visible to click.
@@ -1421,8 +1429,7 @@ namespace OpenDental {
 					string[] stringArrayNote=new string[2];
 					stringArrayNote[0]=textPlanNote.Text;
 					stringArrayNote[1]=trojanObject.PlanNote;
-					using FormNotePick formNotePick=new FormNotePick();
-					formNotePick.StringArrayNotes=stringArrayNote;
+					using FormNotePick formNotePick=new FormNotePick(stringArrayNote);
 					formNotePick.UseTrojanImportDescription=true;
 					formNotePick.ShowDialog();
 					if(formNotePick.DialogResult==DialogResult.OK) {
@@ -1432,7 +1439,9 @@ namespace OpenDental {
 			}
 			//Clear exising benefits from screen, not db.
 			//Keep all limitation or age limit benefits.
-			List<Benefit> listBenefitsToKeep=_listBenefits.FindAll(x => Benefits.IsFrequencyLimitation(x) || Benefits.IsAgeLimit(x));
+			List<Benefit> listBenefitsToKeep=_listBenefits.FindAll(x => Benefits.IsFrequencyLimitation(x)
+					|| Benefits.IsFluorideAgeLimit(x)
+					|| Benefits.IsSealantAgeLimit(x));
 			_listBenefits=new List<Benefit>();
 			_listBenefits.AddRange(listBenefitsToKeep);
 			for(int i=0;i<trojanObject.BenefitList.Count;i++) {
@@ -1483,8 +1492,8 @@ namespace OpenDental {
 		}
 
 		private void butIapFind_Click(object sender,System.EventArgs e) {
-			if(ODEnvironment.IsCloudServer) {
-				MsgBox.Show(this,"Bridge is not available while using Open Dental Cloud.");
+			if(ODBuild.IsWeb()) {
+				MsgBox.Show(this,"Bridge is not available while viewing through the web.");
 				return;
 			}
 			//If SubCur is null, this button is not visible to click.
@@ -2028,7 +2037,7 @@ namespace OpenDental {
 						+Lan.g(this,"with the Subscriber ID")+" "+_insSub.SubscriberID+" "+Lan.g(this,"was deleted.");
 					_hasDeleted=true;
 					//PatPlanCur will be null if editing insurance plans from Lists > Insurance Plans.
-					SecurityLogs.MakeLogEntry(EnumPermType.InsPlanEdit,_patPlan?.PatNum??0,logText,_insPlan?.PlanNum??0,
+					SecurityLogs.MakeLogEntry(Permissions.InsPlanEdit,_patPlan?.PatNum??0,logText,_insPlan?.PlanNum??0,
 						_insPlan.SecDateTEdit);
 					DialogResult=DialogResult.OK;
 					return;
@@ -2052,7 +2061,7 @@ namespace OpenDental {
 			logText=Lan.g(this,"The insurance plan for the carrier")+" "+Carriers.GetCarrier(_insPlan.CarrierNum).CarrierName+" "+Lan.g(this,"was deleted.");
 			_hasDeleted=true;
 			//PatPlanCur will be null if editing insurance plans from Lists > Insurance Plans.
-			SecurityLogs.MakeLogEntry(EnumPermType.InsPlanEdit,_patPlan?.PatNum??0,logText,_insPlan?.PlanNum??0,
+			SecurityLogs.MakeLogEntry(Permissions.InsPlanEdit,_patPlan?.PatNum??0,logText,_insPlan?.PlanNum??0,
 				dateTimePrevious);
 			DialogResult=DialogResult.OK;
 		}
@@ -2094,7 +2103,7 @@ namespace OpenDental {
 			//PlanCur.ComputeEstimatesForCur();
 			_hasDropped=true;
 			string logText=Lan.g(this,"The insurance plan for the carrier")+" "+Carriers.GetCarrier(_insPlan.CarrierNum).CarrierName+" "+Lan.g(this,"was dropped.");
-			SecurityLogs.MakeLogEntry(EnumPermType.InsPlanEdit,_patPlan?.PatNum??0,logText,_insPlan?.PlanNum??0,
+			SecurityLogs.MakeLogEntry(Permissions.InsPlanEdit,_patPlan?.PatNum??0,logText,_insPlan?.PlanNum??0,
 				_insPlan.SecDateTEdit);
 			InsEditPatLogs.MakeLogEntry(null,_patPlan,InsEditPatLogType.PatPlan);
 			DialogResult=DialogResult.OK;
@@ -2127,7 +2136,7 @@ namespace OpenDental {
 			_listBenefits.Sort();
 			gridBenefits.BeginUpdate();
 			gridBenefits.Columns.Clear();
-			GridColumn col=new GridColumn("Pat",28, HorizontalAlignment.Center);
+			GridColumn col=new GridColumn("Pat",28);
 			gridBenefits.Columns.Add(col);
 			col=new GridColumn("Level",60);
 			gridBenefits.Columns.Add(col);
@@ -2384,9 +2393,9 @@ namespace OpenDental {
 								popup.PopupLevel=EnumPopupLevel.Patient;
 								popup.IsNew=true;
 								popup.Description=Lan.g(this,"Insurance expired.  Collect new insurance information.");
-								FrmPopupEdit frmPopupEdit=new FrmPopupEdit();
-								frmPopupEdit.PopupCur=popup;
-								frmPopupEdit.ShowDialog();
+								using FormPopupEdit formPopupEdit=new FormPopupEdit();
+								formPopupEdit.PopupCur=popup;
+								formPopupEdit.ShowDialog();
 							}
 						}
 						#endregion Drop plan and add popup
@@ -2592,7 +2601,7 @@ namespace OpenDental {
 			practiceAddress1 = PrefC.GetString(PrefName.PracticeAddress);
 			practiceAddress2 = PrefC.GetString(PrefName.PracticeAddress2);
 			// Format Phone
-			if(PrefC.GetString(PrefName.PracticePhone).Length == 10 && TelephoneNumbers.IsFormattingAllowed()) {
+			if(PrefC.GetString(PrefName.PracticePhone).Length == 10 && TelephoneNumbers.IsFormattingAllowed) {
 				practicePhone = PrefC.GetString(PrefName.PracticePhone).Substring(0,3)
 					+ "-" + PrefC.GetString(PrefName.PracticePhone).Substring(3,3)
 					+ "-" + PrefC.GetString(PrefName.PracticePhone).Substring(6);
@@ -2849,7 +2858,7 @@ namespace OpenDental {
 					//no change
 				}
 				else {
-					if(!Security.IsAuthorized(EnumPermType.InsPlanEdit,true)) {//Employer was changed and they don't have perms to make new insplan (they picked plan from list).
+					if(!Security.IsAuthorized(Permissions.InsPlanEdit,true)) {//Employer was changed and they don't have perms to make new insplan (they picked plan from list).
 						//Validate plan's employer in DB
 						Employer employerDB=Employers.GetByName(textEmployer.Text);
 						if(employerDB==null) {
@@ -2868,7 +2877,7 @@ namespace OpenDental {
 			}
 			else {//an employer was previously entered
 				if(textEmployer.Text=="") {
-					if(!Security.IsAuthorized(EnumPermType.InsPlanEdit,true)) {//Employer is now empty.  Need to see if the insplan in DB also has empty employer, or if someone else put one on it.
+					if(!Security.IsAuthorized(Permissions.InsPlanEdit,true)) {//Employer is now empty.  Need to see if the insplan in DB also has empty employer, or if someone else put one on it.
 						if(hasExistingEmployerChanged) {//Not a new insplan and employer was changed
 							MsgBox.Show(this,"The Employer for this insurance plan has been changed since the plan was loaded.  Please choose another insurance plan.");
 							return false;
@@ -2877,7 +2886,7 @@ namespace OpenDental {
 				}
 				//if text has changed
 				else if(_employerNameOrig!=textEmployer.Text) {//Employer text was changed since the window was loaded (picked from list or manually edited)
-					if(!Security.IsAuthorized(EnumPermType.InsPlanEdit,true)) {//Without permission, they must have picked from list.  Verify employer still exists.  If it does, verify the insplan still has same employer.
+					if(!Security.IsAuthorized(Permissions.InsPlanEdit,true)) {//Without permission, they must have picked from list.  Verify employer still exists.  If it does, verify the insplan still has same employer.
 						Employer employerDB=Employers.GetByName(textEmployer.Text);
 						if(employerDB==null) {
 							MsgBox.Show(this,"The Employer for this insurance plan has been combined or deleted since the plan was loaded.  Please choose another insurance plan.");
@@ -2918,7 +2927,7 @@ namespace OpenDental {
 			InsPlan insPlanDB=InsPlans.GetPlan(insSubDB.PlanNum,null);//Can have CarrierNum==0 if this is a new plan.
 			bool hasExistingCarrierChanged=(insPlanDB.CarrierNum!=_carrier.CarrierNum && insPlanDB.CarrierNum!=0 && insPlanDB.CarrierNum!=_carrierNumOrig);
 			if(_carrier.CarrierNum!=_carrierNumOrig && Carriers.Compare(carrierForm,_carrier)) {//Carrier was changed via "Pick From List" and not edited manually
-				if(Security.IsAuthorized(EnumPermType.InsPlanEdit,true)) {
+				if(Security.IsAuthorized(Permissions.InsPlanEdit,true)) {
 					if(Carriers.GetCarrierDB(_carrier.CarrierNum)==null && !MsgBox.Show(this,MsgBoxButtons.YesNo,"The Carrier selected has been combined or deleted since it was last picked.  Would you like to override those changes?")) {//Someone deleted/combined the carrier while the window was open.
 						return false;
 					}
@@ -2945,7 +2954,7 @@ namespace OpenDental {
 				//If we look up a carrier using the info in the form, if it exists, then fine.  If it doesn't exist, is it because it was manually edited, or because someone else deleted it.
 			}
 			else if(_insPlanOld.PlanNum!=_insPlan.PlanNum) {//Plan was picked from list
-				if(Security.IsAuthorized(EnumPermType.InsPlanEdit,true)) {
+				if(Security.IsAuthorized(Permissions.InsPlanEdit,true)) {
 					if(insPlanDB.CarrierNum!=_carrier.CarrierNum && !MsgBox.Show(this,MsgBoxButtons.YesNo,"The selected insurance plan has had its Carrier changed since it was loaded.  Would you like to override those changes?")) {
 						return false;
 					}
@@ -2981,6 +2990,7 @@ namespace OpenDental {
 		private bool FillPlanCurFromForm() {
 			if(!textDateEffect.IsValid()
 				|| !textDateTerm.IsValid()
+				|| !textDentaide.IsValid()
 				|| !textDateLastVerifiedBenefits.IsValid()
 				|| !textDateLastVerifiedPatPlan.IsValid())
 			{
@@ -3061,7 +3071,7 @@ namespace OpenDental {
 			_insPlan.RxBIN=textBIN.Text;
 			_insPlan.DivisionNo=textDivisionNo.Text;//only visible in Canada
 			//carrier-----------------------------------------------------------------------------------------------------
-			if(Security.IsAuthorized(EnumPermType.InsPlanEdit,true)) {//User has the ability to edit carrier information.  Check for matches, create new Carrier if applicable.
+			if(Security.IsAuthorized(Permissions.InsPlanEdit,true)) {//User has the ability to edit carrier information.  Check for matches, create new Carrier if applicable.
 				Carrier carrierForm=GetCarrierFromForm();
 				Carrier carrierOld=_carrier.Copy();
 				if(_carrier.CarrierNum==_carrierNumOrig && Carriers.Compare(carrierForm,_carrier) && _insPlan.PlanNum==_insPlanOld.PlanNum) {
@@ -3227,6 +3237,7 @@ namespace OpenDental {
 			}
 			_insPlan.CobRule=(EnumCobRule)comboCobRule.SelectedIndex;
 			//Canadian------------------------------------------------------------------------------------------
+			_insPlan.DentaideCardSequence=PIn.Byte(textDentaide.Text);
 			_insPlan.CanadianPlanFlag=textPlanFlag.Text;//validated
 			_insPlan.CanadianDiagnosticCode=textCanadianDiagCode.Text;//validated
 			_insPlan.CanadianInstitutionCode=textCanadianInstCode.Text;//validated
@@ -3389,7 +3400,7 @@ namespace OpenDental {
 			textOrthoAutoProc.Text=ProcedureCodes.GetProcCode(PrefC.GetLong(PrefName.OrthoAutoProcCodeNum)).ProcCode+" ("+Lan.g(this,"Default")+")";
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			bool removeLogs=false;
 			#region Validation
 			if(IsPatPlanRemoved()) {
@@ -3452,12 +3463,12 @@ namespace OpenDental {
 				//Therefore, we will only check the permission if they are editing an old plan.
 				if(_insSubOld!=null) {//Editing an old plan for a subscriber.
 					if(_insSubOld.AssignBen!=checkAssign.Checked) {
-						if(!Security.IsAuthorized(EnumPermType.InsPlanChangeAssign)) {
+						if(!Security.IsAuthorized(Permissions.InsPlanChangeAssign)) {
 							return;
 						}
 						//It is very possible that the user changed the patient associated to the ins sub.
 						//We need to make a security log for the most recent patient (_subCur.Subscriber) instead of the original patient (_subOld.Subscriber) that was passed in.
-						SecurityLogs.MakeLogEntry(EnumPermType.InsPlanChangeAssign,_insSub.Subscriber,Lan.g(this,"Assignment of Benefits (pay dentist) changed from")
+						SecurityLogs.MakeLogEntry(Permissions.InsPlanChangeAssign,_insSub.Subscriber,Lan.g(this,"Assignment of Benefits (pay dentist) changed from")
 							+" "+(_insSubOld.AssignBen?Lan.g(this,"checked"):Lan.g(this,"unchecked"))+" "
 							+Lan.g(this,"to")
 							+" "+(checkAssign.Checked?Lan.g(this,"checked"):Lan.g(this,"unchecked"))+" for plan "
@@ -3515,7 +3526,7 @@ namespace OpenDental {
 			#endregion 3 - PatPlan
 			//Sections 4 - 10 all deal with manipulating the insurance plan so make sure the user has permission to do so.
 			#region InsPlan Edit
-			if(Security.IsAuthorized(EnumPermType.InsPlanEdit,true)) {
+			if(Security.IsAuthorized(Permissions.InsPlanEdit,true)) {
 				if(_insSub==null) {//editing from big list.  No subscriber.  'pick from list' button not visible, making logic easier.
 					#region 4 - InsPlan Null Subscriber
 					try {
@@ -3557,7 +3568,7 @@ namespace OpenDental {
 									catch(ApplicationException ex) {
 										MessageBox.Show(ex.Message);
 										//do not need to update PlanCur because no changes were made.
-										SecurityLogs.MakeLogEntry(EnumPermType.InsPlanEdit,_patPlan?.PatNum??0
+										SecurityLogs.MakeLogEntry(Permissions.InsPlanEdit,_patPlan?.PatNum??0
 											,Lan.g(this,"FormInsPlan region 5 delete validation failed.  Plan was not deleted."),_insPlanOld.PlanNum,
 											DateTime.MinValue); //new plan, no date needed.
 										Close();
@@ -3594,7 +3605,7 @@ namespace OpenDental {
 										}
 										catch(ApplicationException ex) {
 											MessageBox.Show(ex.Message);
-											SecurityLogs.MakeLogEntry(EnumPermType.InsPlanEdit,_patPlan?.PatNum??0
+											SecurityLogs.MakeLogEntry(Permissions.InsPlanEdit,_patPlan?.PatNum??0
 												,Lan.g(this,"FormInsPlan region 6 delete validation failed.  Plan was not deleted."),_insPlanOld.PlanNum,
 												DateTime.MinValue); //new plan, no date needed.
 											Close();
@@ -3768,7 +3779,7 @@ namespace OpenDental {
 								}
 								catch(ApplicationException ex) {
 									MessageBox.Show(ex.Message);
-									SecurityLogs.MakeLogEntry(EnumPermType.InsPlanEdit,_patPlan?.PatNum??0
+									SecurityLogs.MakeLogEntry(Permissions.InsPlanEdit,_patPlan?.PatNum??0
 										,Lan.g(this,"FormInsPlan region 5a delete validation failed.  Plan was not deleted."),
 										_insPlanOld.PlanNum,DateTime.MinValue); //new plan, no date needed.
 									Close();
@@ -3805,7 +3816,7 @@ namespace OpenDental {
 						Dictionary<long,string> dictPatNames=Patients.GetPatientNames(new List<long>() { _insSubOld.Subscriber,_insSub.Subscriber });
 						//PatPlanCur will be null if editing insurance plans from Lists > Insurance Plans.
 						//However, the Change button is invisible from List > Insurance Plans, so we can count on PatPlanCur not null.
-						SecurityLogs.MakeLogEntry(EnumPermType.InsPlanChangeSubsc,_patPlan.PatNum,
+						SecurityLogs.MakeLogEntry(Permissions.InsPlanChangeSubsc,_patPlan.PatNum,
 							Lan.g(this,"Subscriber Changed from")+" "+dictPatNames[_insSubOld.Subscriber]+" #"+_insSubOld.Subscriber+" "
 							+Lan.g(this,"to")+" "+dictPatNames[_insSub.Subscriber]+" #"+_insSub.Subscriber);
 					}
@@ -3831,13 +3842,13 @@ namespace OpenDental {
 					string carrierNameOrig=carrierOrig.CarrierName;
 					string carrierNameNew=carrierNew.CarrierName;
 					if(carrierNameOrig!=carrierNameNew) {//The CarrierNum could have changed but the CarrierName might not have changed.  Only make an audit entry if the name changed.
-						SecurityLogs.MakeLogEntry(EnumPermType.InsPlanChangeCarrierName,_patPlan?.PatNum??0,Lan.g(this,"Carrier name changed in Edit Insurance Plan window from")+" "
+						SecurityLogs.MakeLogEntry(Permissions.InsPlanChangeCarrierName,_patPlan?.PatNum??0,Lan.g(this,"Carrier name changed in Edit Insurance Plan window from")+" "
 							+(string.IsNullOrEmpty(carrierNameOrig)?"blank":carrierNameOrig)+" "+Lan.g(this,"to")+" "
 							+(string.IsNullOrEmpty(carrierNameNew)?"blank":carrierNameNew),_insPlan.PlanNum,_insPlanOriginal.SecDateTEdit);
 					}
 				}
 				string message=GetSecurityLogMessage(carrierNew,carrierOrig);
-				SecurityLogs.MakeLogEntry(EnumPermType.CarrierEdit,0,message);
+				SecurityLogs.MakeLogEntry(Permissions.CarrierEdit,0,message);
 			}
 			catch(Exception ex) {
 				MessageBox.Show(Lan.g(this,"Error Code 12")+".  "+Lan.g(this,"Please contact support")+"\r\n"+"\r\n"+ex.Message+"\r\n"+ex.StackTrace);
@@ -3851,12 +3862,12 @@ namespace OpenDental {
 					string feeSchedOld=FeeScheds.GetDescription(_insPlanOriginal.FeeSched);
 					string feeSchedNew=FeeScheds.GetDescription(_insPlan.FeeSched);
 					string logText=Lan.g(this,"The fee schedule associated with insurance plan number")+" "+_insPlan.PlanNum.ToString()+" "+Lan.g(this,"for the carrier")+" "+carrierCur.CarrierName+" "+Lan.g(this,"was changed from")+" "+feeSchedOld+" "+Lan.g(this,"to")+" "+feeSchedNew;
-					SecurityLogs.MakeLogEntry(EnumPermType.InsPlanEdit,_patPlan?.PatNum??0,logText,_insPlan?.PlanNum??0,
+					SecurityLogs.MakeLogEntry(Permissions.InsPlanEdit,_patPlan?.PatNum??0,logText,_insPlan?.PlanNum??0,
 						_insPlanOriginal.SecDateTEdit);
 				}
 				if(InsPlanCrud.UpdateComparison(_insPlanOriginal,_insPlan)) {
 					string logText=Lan.g(this,"Insurance plan")+" "+_insPlan.PlanNum.ToString()+" "+Lan.g(this,"for the carrier")+" "+carrierCur.CarrierName+" "+Lan.g(this,"has changed.");
-					SecurityLogs.MakeLogEntry(EnumPermType.InsPlanEdit,_patPlan?.PatNum??0,logText,_insPlan?.PlanNum??0,
+					SecurityLogs.MakeLogEntry(Permissions.InsPlanEdit,_patPlan?.PatNum??0,logText,_insPlan?.PlanNum??0,
 						_insPlanOriginal.SecDateTEdit);
 				}
 			}
@@ -3874,6 +3885,10 @@ namespace OpenDental {
 				InsBlueBooks.UpdateByInsPlan(_insPlan);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		///<summary>Check to see if we should show confirmation message to user about deleting bluebook data for the currently populated form. Returns true if the criteria are met to show, false otherwise.</summary>
@@ -3905,7 +3920,7 @@ namespace OpenDental {
 				if(IsNewPatPlan//Only when assigning new insurance
 					&& _patPlan.Ordinal==1//Primary insurance.
 					&& _insPlan.BillingType!=0//Selection made.
-					&& Security.IsAuthorized(EnumPermType.PatientBillingEdit,true)
+					&& Security.IsAuthorized(Permissions.PatientBillingEdit,true)
 					&& PrefC.GetBool(PrefName.PatInitBillingTypeFromPriInsPlan))
 				{
 					Patient patient=Patients.GetPat(_patPlan.PatNum);
@@ -3914,7 +3929,7 @@ namespace OpenDental {
 						patNew.BillingType=_insPlan.BillingType;
 						Patients.Update(patNew,patient);
 						//This needs to be the last call due to automation possibily leaving the form in a closing limbo.
-						AutomationL.Trigger(EnumAutomationTrigger.BillingTypeSet,null,patNew.PatNum);
+						AutomationL.Trigger(AutomationTrigger.SetBillingType,null,patNew.PatNum);
 						Patients.InsertBillTypeChangeSecurityLogEntry(patient,patNew);
 					}
 				}
@@ -3940,7 +3955,7 @@ namespace OpenDental {
 				}
 				catch(ApplicationException ex) {
 					MessageBox.Show(ex.Message);
-					SecurityLogs.MakeLogEntry(EnumPermType.InsPlanEdit,_patPlan?.PatNum??0
+					SecurityLogs.MakeLogEntry(Permissions.InsPlanEdit,_patPlan?.PatNum??0
 						,Lan.g(this,"FormInsPlan_Closing delete validation failed.  Plan was not deleted."),_insPlanOld.PlanNum,DateTime.MinValue);//new plan, no date needed.
 					return;
 				}

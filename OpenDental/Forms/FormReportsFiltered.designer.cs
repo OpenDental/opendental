@@ -24,22 +24,36 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormReportsFiltered));
+			this.butCancel = new OpenDental.UI.Button();
 			this.listBoxFavorites = new OpenDental.UI.ListBox();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(304, 602);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// listBoxFavorites
 			// 
 			this.listBoxFavorites.Location = new System.Drawing.Point(13, 12);
 			this.listBoxFavorites.Name = "listBoxFavorites";
 			this.listBoxFavorites.SelectionMode = OpenDental.UI.SelectionMode.None;
-			this.listBoxFavorites.Size = new System.Drawing.Size(351, 605);
+			this.listBoxFavorites.Size = new System.Drawing.Size(351, 563);
 			this.listBoxFavorites.TabIndex = 5;
 			this.listBoxFavorites.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listBoxFavorites_MouseDown);
 			// 
 			// FormReportsFiltered
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(391, 638);
 			this.Controls.Add(this.listBoxFavorites);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormReportsFiltered";
 			this.Text = "Standard Reports Favorites";
@@ -49,6 +63,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butCancel;
 		private UI.ListBox listBoxFavorites;
 	}
 }

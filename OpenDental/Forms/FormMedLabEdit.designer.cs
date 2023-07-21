@@ -69,7 +69,8 @@ namespace OpenDental{
 			this.gridResults = new OpenDental.UI.GridOD();
 			this.butShowHL7 = new OpenDental.UI.Button();
 			this.butPDF = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.textGenComments = new OpenDental.ODtextBox();
 			this.textTestsOrd = new OpenDental.ODtextBox();
@@ -513,15 +514,25 @@ namespace OpenDental{
 			this.butPDF.Text = "Create PDF";
 			this.butPDF.Click += new System.EventHandler(this.butPDF_Click);
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(887, 664);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 333;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(887, 660);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 334;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(806, 660);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 333;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butDelete
 			// 
@@ -543,7 +554,7 @@ namespace OpenDental{
 			this.textGenComments.DetectUrls = false;
 			this.textGenComments.Location = new System.Drawing.Point(692, 85);
 			this.textGenComments.Name = "textGenComments";
-			this.textGenComments.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Lab;
+			this.textGenComments.QuickPasteType = OpenDentBusiness.QuickPasteType.Lab;
 			this.textGenComments.ReadOnly = true;
 			this.textGenComments.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textGenComments.Size = new System.Drawing.Size(270, 58);
@@ -558,7 +569,7 @@ namespace OpenDental{
 			this.textTestsOrd.DetectUrls = false;
 			this.textTestsOrd.Location = new System.Drawing.Point(692, 144);
 			this.textTestsOrd.Name = "textTestsOrd";
-			this.textTestsOrd.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Lab;
+			this.textTestsOrd.QuickPasteType = OpenDentBusiness.QuickPasteType.Lab;
 			this.textTestsOrd.ReadOnly = true;
 			this.textTestsOrd.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textTestsOrd.Size = new System.Drawing.Size(270, 58);
@@ -573,7 +584,7 @@ namespace OpenDental{
 			this.textAddlInfo.DetectUrls = false;
 			this.textAddlInfo.Location = new System.Drawing.Point(692, 26);
 			this.textAddlInfo.Name = "textAddlInfo";
-			this.textAddlInfo.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Lab;
+			this.textAddlInfo.QuickPasteType = OpenDentBusiness.QuickPasteType.Lab;
 			this.textAddlInfo.ReadOnly = true;
 			this.textAddlInfo.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textAddlInfo.Size = new System.Drawing.Size(270, 58);
@@ -585,7 +596,8 @@ namespace OpenDental{
 			this.ClientSize = new System.Drawing.Size(974, 696);
 			this.Controls.Add(this.butShowHL7);
 			this.Controls.Add(this.butPDF);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.labelPrint);
 			this.Controls.Add(this.labelShowHL7);
@@ -667,9 +679,10 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelShowHL7;
 		private System.Windows.Forms.Label labelPrint;
 		private UI.Button butDelete;
-		private UI.Button butSave;
+		private UI.Button butOK;
 		private UI.Button butPatSelect;
 		private UI.Button butProvSelect;
+		private UI.Button butCancel;
 		private UI.Button butPDF;
 		private UI.Button butShowHL7;
 

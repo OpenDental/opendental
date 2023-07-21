@@ -34,8 +34,6 @@ namespace OpenDental {
 		private Color _colorProv;
 		private Color _colorProvClinic;
 		private Color _colorDefault;
-		///<summary>Used to prevent recursive calls to the event handler gridMain_CellLeave().</summary>
-		private bool _isInCellLeave;
 		//<summary>Local copy of a FeeCache class that contains all fees, stored in memory for easy access and editing.  Synced on form closing.</summary>
 		//private FeeCache _feeCache;
 		///<summary>List of all fees for all three selected fee schedules.  This includes all clinic and provider overrides, regardless of selected clinic and provider.  We could do three separate lists, but that doesn't save us much.  And it's common to use all three columns with the same feeschedule, which would make synching separate lists difficult. Gets synched to db every time selected feescheds change.  This keeps it snappy when entering a series of fees because there is no db write.</summary>
@@ -65,18 +63,19 @@ namespace OpenDental {
 		
 		private void FormProcCodes_Load(object sender,System.EventArgs e) {
 			_listSecurityLogs=new List<SecurityLog>();
-			if(!Security.IsAuthorized(EnumPermType.Setup,DateTime.MinValue,true)) {
+			if(!Security.IsAuthorized(Permissions.Setup,DateTime.MinValue,true)) {
 				butEditFeeSched.Visible=false;
 				butTools.Visible=false;
 			}
-			if(!Security.IsAuthorized(EnumPermType.DefEdit,true)) {
+			if(!Security.IsAuthorized(Permissions.DefEdit,true)) {
 				butEditCategories.Visible=false;
 			}
-			if(!Security.IsAuthorized(EnumPermType.ProcCodeEdit,true)) {
+			if(!Security.IsAuthorized(Permissions.ProcCodeEdit,true)) {
 				groupProcCodeSetup.Visible=false;
 			}
 			if(!IsSelectionMode) {
 				butOK.Visible=false;
+				butCancel.Text=Lan.g(this,"Close");
 			}
 			else if(CanAllowMultipleSelections) {
 				//Allow the user to select multiple rows by changing the grid selection mode.
@@ -115,9 +114,9 @@ namespace OpenDental {
 			checkGroups1.Visible=isShowingGroups;
 			checkGroups2.Visible=isShowingGroups;
 			checkGroups3.Visible=isShowingGroups;
-			LayoutManager.MoveLocation(comboFeeSchedGroup1,new Point(LayoutManager.Scale(14),LayoutManager.Scale(96)));
-			LayoutManager.MoveLocation(comboFeeSchedGroup2,new Point(LayoutManager.Scale(14),LayoutManager.Scale(96)));
-			LayoutManager.MoveLocation(comboFeeSchedGroup3,new Point(LayoutManager.Scale(14),LayoutManager.Scale(96)));
+			LayoutManager.MoveLocation(comboFeeSchedGroup1,new Point(14,96));
+			LayoutManager.MoveLocation(comboFeeSchedGroup2,new Point(14,96));
+			LayoutManager.MoveLocation(comboFeeSchedGroup3,new Point(14,96));
 			FillComboBoxes();
 			SynchAndFillListFees(false);
 			_needsSynch=false;
@@ -231,10 +230,10 @@ namespace OpenDental {
 					List<long> listFeeSchedNumsSelected=new List<long>() { feeSchedNum1Selected,feeSchedNum2Selected,feeSchedNum3Selected }.FindAll(x => x>0);
 					List<FeeSchedGroup> listFeeSchedGroups=FeeSchedGroups.GetListFeeSchedGroups(listFeeSchedNumsSelected);
 					List<long> listClinicNums=_listClinics.Select(x => x.ClinicNum).ToList();
-					List<FeeSchedGroup> listFeeSchedGroups1=listFeeSchedGroups.FindAll(x => x.FeeSchedNum==feeSchedNum1Selected);
-					List<FeeSchedGroup> listFeeSchedGroups2=listFeeSchedGroups.FindAll(x => x.FeeSchedNum==feeSchedNum2Selected);
-					List<FeeSchedGroup> listFeeSchedGroups3=listFeeSchedGroups.FindAll(x => x.FeeSchedNum==feeSchedNum3Selected);
 					for(int i = 0;i<listClinicNums.Count();i++) {
+						List<FeeSchedGroup> listFeeSchedGroups1=listFeeSchedGroups.FindAll(x => x.FeeSchedNum==feeSchedGroupNum1Selected);
+						List<FeeSchedGroup> listFeeSchedGroups2=listFeeSchedGroups.FindAll(x => x.FeeSchedNum==feeSchedGroupNum2Selected);
+						List<FeeSchedGroup> listFeeSchedGroups3=listFeeSchedGroups.FindAll(x => x.FeeSchedNum==feeSchedGroupNum3Selected);
 						if(feeSchedNum1Selected>0 
 							&& checkGroups1.Checked 
 							&& listFeeSchedGroups1.Count>0)
@@ -242,9 +241,6 @@ namespace OpenDental {
 							List<FeeSchedGroup> listFeeSchedGroups1Fees=listFeeSchedGroups1.FindAll(x => x.ListClinicNumsAll.Contains(listClinicNums[i]));
 							for(int g=0;g<listFeeSchedGroups1Fees.Count;g++){
 								AddFeeSchedGroupToComboBox(listFeeSchedGroups1Fees[g],comboFeeSchedGroup1,feeSchedGroupNum1Selected);
-							}
-							if(comboFeeSchedGroup1.Items.Count>0 && comboFeeSchedGroup1.SelectedIndex<0) { 
-								comboFeeSchedGroup1.SetSelected(0);
 							}
 						}
 						if(feeSchedNum2Selected>0 
@@ -255,9 +251,6 @@ namespace OpenDental {
 							for(int g=0;g<listFeeSchedGroups2Fees.Count;g++){
 								AddFeeSchedGroupToComboBox(listFeeSchedGroups2Fees[g],comboFeeSchedGroup2,feeSchedGroupNum2Selected);
 							}
-							if(comboFeeSchedGroup2.Items.Count>0 && comboFeeSchedGroup2.SelectedIndex<0) { 
-								comboFeeSchedGroup2.SetSelected(0);
-							}
 						}
 						if(feeSchedNum3Selected>0 
 							&& checkGroups3.Checked 
@@ -266,9 +259,6 @@ namespace OpenDental {
 							List<FeeSchedGroup> listFeeSchedGroups3Fees=listFeeSchedGroups3.FindAll(x => x.ListClinicNumsAll.Contains(listClinicNums[i]));
 							for(int g=0;g<listFeeSchedGroups3Fees.Count;g++){
 								AddFeeSchedGroupToComboBox(listFeeSchedGroups3Fees[g],comboFeeSchedGroup3,feeSchedGroupNum3Selected);
-							}
-							if(comboFeeSchedGroup3.Items.Count>0 && comboFeeSchedGroup3.SelectedIndex<0) { 
-								comboFeeSchedGroup3.SetSelected(0);
 							}
 						}
 					}
@@ -286,7 +276,7 @@ namespace OpenDental {
 			if(_listFeeScheds.Count > 0 && comboFeeSched1.GetSelected<FeeSched>()!=null && comboFeeSched1.GetSelected<FeeSched>().IsGlobal) {
 				comboClinic1.Enabled=false;
 				butPickClinic1.Enabled=false;
-				comboClinic1.ClinicNumSelected=0;				
+				comboClinic1.SelectedClinicNum=0;				
 				comboProvider1.Enabled=false;
 				butPickProv1.Enabled=false;
 				comboProvider1.SelectedIndex=0;
@@ -296,7 +286,7 @@ namespace OpenDental {
 				if(PrefC.HasClinicsEnabled) {
 					if(feeSchedNum1Selected==0 || comboClinic1.Enabled==false) {
 						//Previously selected FeeSched WAS global or there was none selected previously, select OD's selected Clinic
-						comboClinic1.ClinicNumSelected=Clinics.ClinicNum;
+						comboClinic1.SelectedClinicNum=Clinics.ClinicNum;
 					}
 					comboClinic1.Enabled=true;
 					butPickClinic1.Enabled=true;
@@ -308,7 +298,7 @@ namespace OpenDental {
 			if(comboFeeSched2.SelectedIndex==0 || (comboFeeSched2.GetSelected<FeeSched>()!=null && comboFeeSched2.GetSelected<FeeSched>().IsGlobal)) {
 				comboClinic2.Enabled=false;
 				butPickClinic2.Enabled=false;
-				comboClinic2.ClinicNumSelected=0;
+				comboClinic2.SelectedClinicNum=0;
 				comboProvider2.Enabled=false;
 				butPickProv2.Enabled=false;
 				comboProvider2.SelectedIndex=0;
@@ -318,7 +308,7 @@ namespace OpenDental {
 				if(PrefC.HasClinicsEnabled) {
 					if(comboClinic2.Enabled==false) {
 						//Previously selected FeeSched WAS global, select OD's selected Clinic
-						comboClinic2.ClinicNumSelected=Clinics.ClinicNum;
+						comboClinic2.SelectedClinicNum=Clinics.ClinicNum;
 					}
 					comboClinic2.Enabled=true;
 					butPickClinic2.Enabled=true;
@@ -330,7 +320,7 @@ namespace OpenDental {
 			if(comboFeeSched3.SelectedIndex==0 || (comboFeeSched3.GetSelected<FeeSched>()!=null && comboFeeSched3.GetSelected<FeeSched>().IsGlobal)) {
 				comboClinic3.Enabled=false;
 				butPickClinic3.Enabled=false;
-				comboClinic3.ClinicNumSelected=0;
+				comboClinic3.SelectedClinicNum=0;
 				comboProvider3.Enabled=false;
 				butPickProv3.Enabled=false;
 				comboProvider3.SelectedIndex=0;
@@ -341,7 +331,7 @@ namespace OpenDental {
 			if(PrefC.HasClinicsEnabled) {
 				if(comboClinic3.Enabled==false) {//Previously selected FeeSched WAS global
 					//Select OD's selected Clinic
-					comboClinic3.ClinicNumSelected=Clinics.ClinicNum;
+					comboClinic3.SelectedClinicNum=Clinics.ClinicNum;
 				}
 				comboClinic3.Enabled=true;
 				butPickClinic3.Enabled=true;
@@ -405,20 +395,20 @@ namespace OpenDental {
 			List<long> listClinicNums2=new List<long> { 0 };
 			List<long> listClinicNums3=new List<long> { 0 };
 			if(PrefC.HasClinicsEnabled) { //Clinics is on
-				listClinicNums1=new List<long> { comboClinic1.ClinicNumSelected };
-				listClinicNums2=new List<long> { comboClinic2.ClinicNumSelected };
-				listClinicNums3=new List<long> { comboClinic3.ClinicNumSelected };
+				listClinicNums1=new List<long> { comboClinic1.SelectedClinicNum };
+				listClinicNums2=new List<long> { comboClinic2.SelectedClinicNum };
+				listClinicNums3=new List<long> { comboClinic3.SelectedClinicNum };
 				if(PrefC.GetBool(PrefName.ShowFeeSchedGroups)) {
 					//First groupbox
-					if(comboFeeSchedGroup1.Items.Count>0 && checkGroups1.Checked && comboFeeSchedGroup1.SelectedIndex>-1) {
+					if(checkGroups1.Checked && comboFeeSchedGroup1.SelectedIndex>-1) {
 						listClinicNums1=comboFeeSchedGroup1.GetSelected<FeeSchedGroup>().ListClinicNumsAll;
 					}
 					//Second groupbox
-					if(comboFeeSchedGroup2.Items.Count>0 && checkGroups2.Checked && comboFeeSchedGroup2.SelectedIndex>-1) {
+					if(checkGroups2.Checked && comboFeeSchedGroup2.SelectedIndex>-1) {
 						listClinicNums2=comboFeeSchedGroup2.GetSelected<FeeSchedGroup>().ListClinicNumsAll;
 					}
 					//Third groupbox
-					if(comboFeeSchedGroup3.Items.Count> 0 && checkGroups3.Checked && comboFeeSchedGroup3.SelectedIndex>-1) {
+					if(checkGroups3.Checked && comboFeeSchedGroup3.SelectedIndex>-1) {
 						listClinicNums3=comboFeeSchedGroup3.GetSelected<FeeSchedGroup>().ListClinicNumsAll;
 					}
 				}
@@ -500,31 +490,31 @@ namespace OpenDental {
 			if(PrefC.HasClinicsEnabled) { //Clinics is on
 				if(PrefC.GetBool(PrefName.ShowFeeSchedGroups)) {
 					//First groupbox
-					if(comboFeeSchedGroup1.Items.Count>0 && checkGroups1.Checked && comboFeeSchedGroup1.SelectedIndex>-1) {
+					if(checkGroups1.Checked && comboFeeSchedGroup1.SelectedIndex>-1) {
 						clinic1Num=comboFeeSchedGroup1.GetSelected<FeeSchedGroup>().ListClinicNumsAll.FirstOrDefault();
 					}
 					else {
-						clinic1Num=comboClinic1.ClinicNumSelected;
+						clinic1Num=comboClinic1.SelectedClinicNum;
 					}
 					//Second groupbox
-					if(comboFeeSchedGroup2.Items.Count>0 && checkGroups2.Checked && comboFeeSchedGroup2.SelectedIndex>-1) {
+					if(checkGroups2.Checked && comboFeeSchedGroup2.SelectedIndex>-1) {
 						clinic2Num=comboFeeSchedGroup2.GetSelected<FeeSchedGroup>().ListClinicNumsAll.FirstOrDefault();
 					}
 					else {
-						clinic2Num=comboClinic2.ClinicNumSelected;
+						clinic2Num=comboClinic2.SelectedClinicNum;
 					}
 					//Third groupbox
-					if(comboFeeSchedGroup3.Items.Count>0 && checkGroups3.Checked && comboFeeSchedGroup3.SelectedIndex>-1) {
+					if(checkGroups3.Checked && comboFeeSchedGroup3.SelectedIndex>-1) {
 						clinic3Num=comboFeeSchedGroup3.GetSelected<FeeSchedGroup>().ListClinicNumsAll.FirstOrDefault();
 					}
 					else {
-						clinic3Num=comboClinic3.ClinicNumSelected;
+						clinic3Num=comboClinic3.SelectedClinicNum;
 					}
 				}
 				else {
-					clinic1Num=comboClinic1.ClinicNumSelected;
-					clinic2Num=comboClinic2.ClinicNumSelected;
-					clinic3Num=comboClinic3.ClinicNumSelected;
+					clinic1Num=comboClinic1.SelectedClinicNum;
+					clinic2Num=comboClinic2.SelectedClinicNum;
+					clinic3Num=comboClinic3.SelectedClinicNum;
 				}
 			}
 			gridMain.BeginUpdate();
@@ -650,7 +640,7 @@ namespace OpenDental {
 				return;
 			}
 			//else not selecting a code
-			if(!Security.IsAuthorized(EnumPermType.ProcCodeEdit)) {
+			if(!Security.IsAuthorized(Permissions.ProcCodeEdit)) {
 				return;
 			}
 			if(e.Col>3) {
@@ -676,27 +666,13 @@ namespace OpenDental {
 		}
 
 		private void GridMain_CellEnter(object sender,ODGridClickEventArgs e) {
-			Security.IsAuthorized(EnumPermType.FeeSchedEdit);//Show message if user does not have permission.
-		}
-
-		private void gridMain_CellLeave(object sender,ODGridClickEventArgs e) {
-			if(_isInCellLeave) {
-				return;
-			}
-			_isInCellLeave=true;
-			try {
-				//This CellLeave event handler has the chance to get recursively fired.  The logic of this handler is not intended to be recursive and needs to guard against reentrance.The most common cause for reentrance is when the user is met with a popup noting that they lack security permissions to edit this cell value.
-				GridCellUpdateAndSecurityCheck(e);
-			}
-			finally {
-				_isInCellLeave=false;
-			}
+			Security.IsAuthorized(Permissions.FeeSchedEdit);//Show message if user does not have permission.
 		}
 
 		///<summary>Takes care of individual cell edits.  Calls FillGrid to refresh other columns using the same data.</summary>
-		private void GridCellUpdateAndSecurityCheck(ODGridClickEventArgs e) {
+		private void gridMain_CellLeave(object sender,ODGridClickEventArgs e) {
 			//This is where the real fee editing logic is.
-			if(!Security.IsAuthorized(EnumPermType.FeeSchedEdit,true)) { //Don't do anything if they don't have permission.
+			if(!Security.IsAuthorized(Permissions.FeeSchedEdit,true)) { //Don't do anything if they don't have permission.
 				return;
 			}
 			//Logic only works for columns 4 to 6.
@@ -719,7 +695,7 @@ namespace OpenDental {
 						isEditingGroup=true;
 					}
 					else {
-						clinicNum=comboClinic1.ClinicNumSelected;
+						clinicNum=comboClinic1.SelectedClinicNum;
 					}
 				}
 				fee=Fees.GetFee(codeNum,feeSched.FeeSchedNum,clinicNum,provNum,_listFees);
@@ -740,7 +716,7 @@ namespace OpenDental {
 						isEditingGroup=true;
 					}
 					else {
-						clinicNum=comboClinic2.ClinicNumSelected;
+						clinicNum=comboClinic2.SelectedClinicNum;
 					}
 				}
 				fee=Fees.GetFee(codeNum,feeSched.FeeSchedNum,clinicNum,provNum,_listFees);
@@ -761,7 +737,7 @@ namespace OpenDental {
 						isEditingGroup=true;
 					}
 					else {
-						clinicNum=comboClinic3.ClinicNumSelected;
+						clinicNum=comboClinic3.SelectedClinicNum;
 					}
 				}
 				fee=Fees.GetFee(codeNum,feeSched.FeeSchedNum,clinicNum,provNum,_listFees);
@@ -956,12 +932,12 @@ namespace OpenDental {
 					}
 				}
 			}
-			SecurityLog securityLog=SecurityLogs.MakeLogEntryNoInsert(EnumPermType.ProcFeeEdit,0,"Procedure: "+ProcedureCodes.GetStringProcCode(fee.CodeNum)
+			SecurityLog securityLog=SecurityLogs.MakeLogEntryNoInsert(Permissions.ProcFeeEdit,0,"Procedure: "+ProcedureCodes.GetStringProcCode(fee.CodeNum)
 				+", Fee: "+fee.Amount.ToString("c")
 				+", Fee Schedule: "+FeeScheds.GetDescription(fee.FeeSched)
 				+". Manual edit in grid from Procedure Codes list.",fee.CodeNum,LogSources.None);
 			_listSecurityLogs.Add(securityLog);
-			_listSecurityLogs.Add(SecurityLogs.MakeLogEntryNoInsert(EnumPermType.LogFeeEdit,0,"Fee changed",fee.FeeNum,LogSources.None,
+			_listSecurityLogs.Add(SecurityLogs.MakeLogEntryNoInsert(Permissions.LogFeeEdit,0,"Fee changed",fee.FeeNum,LogSources.None,
 				DateTPrevious:fee.SecDateTEdit));
 			_needsSynch=true;
 			FillGrid();
@@ -990,7 +966,7 @@ namespace OpenDental {
 				}
 			}
 			//we need to move security log to within the definition window for more complete tracking
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Definitions");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Definitions");
 			FillGrid();
 		}
 
@@ -1032,7 +1008,7 @@ namespace OpenDental {
 				SynchAndFillListFees(true);
 			}
 			//We are launching in edit mode thus we must check the FeeSchedEdit permission type.
-			if(!Security.IsAuthorized(EnumPermType.FeeSchedEdit)) {
+			if(!Security.IsAuthorized(Permissions.FeeSchedEdit)) {
 				return;
 			}
 			using FormFeeScheds formFeeScheds=new FormFeeScheds(false); //The Fee Scheds window can add or hide schedules.  It cannot delete schedules.
@@ -1059,7 +1035,7 @@ namespace OpenDental {
 			}
 			SynchAndFillListFees(false);
 			FillGrid();
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Fee Schedule Tools");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Fee Schedule Tools");
 		}
 
 		private void butExport_Click(object sender,EventArgs e) {
@@ -1081,8 +1057,8 @@ namespace OpenDental {
 			}
 			string filename="ProcCodes.xml";
 			string filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),filename); 
-			if(ODEnvironment.IsCloudServer) {
-				//Thinfinity: file download dialog will come up later, after file is created. AppStream: File will be created in client's Downloads folder.
+			if(ODBuild.IsWeb()) {
+				//file download dialog will come up later, after file is created.
 			}
 			else {
 				using SaveFileDialog saveFileDialog=new SaveFileDialog();
@@ -1097,11 +1073,8 @@ namespace OpenDental {
 			TextWriter textWriter=new StreamWriter(filePath);
 			xmlSerializer.Serialize(textWriter,listProcedureCodes);
 			textWriter.Close();
-			if(ODBuild.IsThinfinity()){
+			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.ExportForDownload(filePath);
-			}
-			else if(ODCloudClient.IsAppStream){
-				CloudClientL.ExportForCloud(filePath);
 			}
 			else {
 				MsgBox.Show(this,"Exported");
@@ -1109,30 +1082,20 @@ namespace OpenDental {
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.DefEdit)) {
+			if(!Security.IsAuthorized(Permissions.DefEdit)) {
 				return;
 			}
 			if(_needsSynch){
 				SynchAndFillListFees(true);
 			}
-			string importFilePath;
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				importFilePath=ODCloudClient.ImportFileForCloud();
-				if(importFilePath.IsNullOrEmpty()) {
-					return; //User cancelled out of OpenFileDialog
-				}
-			}
-			else {
-				using OpenFileDialog openFileDialog=new OpenFileDialog();
-				openFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
-				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-					return;
-				}
-				importFilePath=openFileDialog.FileName;
+			using OpenFileDialog openFileDialog=new OpenFileDialog();
+			openFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
+			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+				return;
 			}
 			int rowsInserted=0;
 			try {
-				rowsInserted=ImportProcCodes(importFilePath,null,"");
+				rowsInserted=ImportProcCodes(openFileDialog.FileName,null,"");
 			}
 			catch(ApplicationException ex) {
 				MessageBox.Show(ex.Message);
@@ -1145,7 +1108,7 @@ namespace OpenDental {
 			FillCats();
 			SynchAndFillListFees(false);//just in case there is a new fee?
 			FillGrid();
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,Lan.g(this,"Imported Procedure Codes"));
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,Lan.g(this,"Imported Procedure Codes"));
 		}
 
 		///<summary>Can be called externally.  Surround with try catch.  Returns number of codes inserted. 
@@ -1213,7 +1176,7 @@ namespace OpenDental {
 				}
 				listProcedureCodes[i].ProvNumDefault=0;//Always import procedure codes with no specific provider set.  The incoming prov might not exist.
 				ProcedureCodes.Insert(listProcedureCodes[i]);				
-				SecurityLogs.MakeLogEntry(EnumPermType.ProcCodeEdit,0,"Code"+listProcedureCodes[i].ProcCode+" added from procedure code import.",listProcedureCodes[i].CodeNum,
+				SecurityLogs.MakeLogEntry(Permissions.ProcCodeEdit,0,"Code"+listProcedureCodes[i].ProcCode+" added from procedure code import.",listProcedureCodes[i].CodeNum,
 					DateTime.MinValue);
 				retVal++;
 			}
@@ -1222,7 +1185,7 @@ namespace OpenDental {
 		}
 
 		private void butProcTools_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin, DateTime.MinValue)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin, DateTime.MinValue)) {
 				return;
 			}
 			if(_needsSynch){
@@ -1347,13 +1310,13 @@ namespace OpenDental {
 			else {
 				selectedClinicNum=GetClinicNumFromPicker(listClinicsToShow);//All clinic combo boxes have a none option, so always add 1.
 				if(buttonPicker==butPickClinic1) {
-					comboClinic1.ClinicNumSelected=selectedClinicNum;
+					comboClinic1.SelectedClinicNum=selectedClinicNum;
 				}
 				else if(buttonPicker==butPickClinic2) {
-					comboClinic2.ClinicNumSelected=selectedClinicNum;
+					comboClinic2.SelectedClinicNum=selectedClinicNum;
 				}
 				else if(buttonPicker==butPickClinic3) {
-					comboClinic3.ClinicNumSelected=selectedClinicNum;
+					comboClinic3.SelectedClinicNum=selectedClinicNum;
 				}
 			}
 			SynchAndFillListFees(_needsSynch);
@@ -1383,12 +1346,12 @@ namespace OpenDental {
 		///<summary>Launches the Provider picker and lets the user pick a specific provider.
 		///Returns the index of the selected provider within the Provider Cache (short).  Returns -1 if the user cancels out of the window.</summary>
 		private int GetProviderIndexFromPicker() {
-			FrmProviderPick frmProviderPick=new FrmProviderPick();
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick=new FormProviderPick();
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return -1;
 			}
-			return Providers.GetIndex(frmProviderPick.ProvNumSelected);
+			return Providers.GetIndex(formProviderPick.ProvNumSelected);
 		}
 
 		///<summary>Launches the Clinics window and lets the user pick a specific clinic.
@@ -1441,7 +1404,7 @@ namespace OpenDental {
 			if(checkGroups1.Checked) {
 				//Hide clinic combobox and wipe selection.
 				comboClinic1.Visible=false;
-				comboClinic1.ClinicNumSelected=0;
+				comboClinic1.SelectedClinicNum=0;
 				comboFeeSchedGroup1.Visible=true;
 				labelClinic1.Text="Fee Schedule Group";
 			}
@@ -1461,7 +1424,7 @@ namespace OpenDental {
 			if(checkGroups2.Checked) {
 				//Hide clinic combobox and wipe selection.
 				comboClinic2.Visible=false;
-				comboClinic2.ClinicNumSelected=0;
+				comboClinic2.SelectedClinicNum=0;
 				comboFeeSchedGroup2.Visible=true;
 				labelClinic2.Text="Fee Schedule Group";
 			}
@@ -1481,7 +1444,7 @@ namespace OpenDental {
 			if(checkGroups3.Checked) {
 				//Hide clinic combobox and wipe selection.
 				comboClinic3.Visible=false;
-				comboClinic3.ClinicNumSelected=0;
+				comboClinic3.SelectedClinicNum=0;
 				comboFeeSchedGroup3.Visible=true;
 				labelClinic3.Text="Fee Schedule Group";
 			}
@@ -1512,8 +1475,11 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormProcedures_Closing(object sender,System.ComponentModel.CancelEventArgs e) {
-			Focus();//Forces a call of gridMain_CellLeave() to check for any new entries that need synching before the form closes.
 			if(_needsSynch){
 				Cursor=Cursors.WaitCursor;
 				SynchAndFillListFees(true);
@@ -1523,6 +1489,5 @@ namespace OpenDental {
 				DataValid.SetInvalid(InvalidType.ProcCodes);
 			}
 		}
-
 	}
 }

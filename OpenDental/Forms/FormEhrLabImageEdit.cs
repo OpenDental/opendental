@@ -159,7 +159,7 @@ namespace OpenDental {
 			catch { }
 		}
 				
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			//Uncheck the waiting check box if any images are attached. User only has the option of setting the 'Waiting' flag if there are no images attached.
 			List<long> docNums=new List<long>();
 			for(int i=0;i<_listAttached.Count;i++) {
@@ -175,5 +175,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

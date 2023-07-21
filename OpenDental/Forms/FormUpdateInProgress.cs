@@ -71,5 +71,9 @@ namespace OpenDental {
 			MsgBox.Show(this,"You will be allowed access when you restart.");
 			DialogResult=DialogResult.Cancel;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

@@ -61,7 +61,8 @@ namespace OpenDental {
 			this.textPriInsAmt = new OpenDental.ValidDouble();
 			this.textFeeAmt = new OpenDental.ValidDouble();
 			this.butDelete = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.textProcAbbr = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.textFeeAllowed = new OpenDental.ValidDouble();
@@ -232,7 +233,7 @@ namespace OpenDental {
 			// 
 			this.labelWarning.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelWarning.Location = new System.Drawing.Point(116, 428);
+			this.labelWarning.Location = new System.Drawing.Point(116, 435);
 			this.labelWarning.Name = "labelWarning";
 			this.labelWarning.Size = new System.Drawing.Size(358, 16);
 			this.labelWarning.TabIndex = 0;
@@ -290,22 +291,32 @@ namespace OpenDental {
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(24, 423);
+			this.butDelete.Location = new System.Drawing.Point(24, 430);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(86, 26);
 			this.butDelete.TabIndex = 17;
 			this.butDelete.Text = "Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(477, 423);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 15;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(479, 392);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 15;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(479, 430);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 16;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// textProcAbbr
 			// 
@@ -343,7 +354,7 @@ namespace OpenDental {
 			// 
 			// FormProcTPEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(564, 461);
+			this.ClientSize = new System.Drawing.Size(606, 484);
 			this.Controls.Add(this.textFeeAllowed);
 			this.Controls.Add(this.labelFeeAllowed);
 			this.Controls.Add(this.textProcAbbr);
@@ -374,7 +385,8 @@ namespace OpenDental {
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.textToothNumTP);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -387,7 +399,9 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butDelete;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label labelToothNum;

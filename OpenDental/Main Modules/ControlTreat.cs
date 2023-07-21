@@ -184,7 +184,7 @@ namespace OpenDental{
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Print TP"),2,"","Print"));
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Email TP"),-1,"","Email"));
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Sign TP"),-1,"","Sign"));
-			ProgramL.LoadToolBar(ToolBarMain,EnumToolBar.TreatmentPlanModule);
+			ProgramL.LoadToolbar(ToolBarMain,ToolBarsAvail.TreatmentPlanModule);
 			ToolBarMain.Invalidate();
 			Plugins.HookAddCode(this,"ContrTreat.LayoutToolBar_end",PatientCur);
 			UpdateToolbarButtons();
@@ -199,29 +199,11 @@ namespace OpenDental{
 			if(PatientCur!=null && PatientCur.PatStatus==PatientStatus.Deleted) {
 				MsgBox.Show("Selected patient has been deleted by another workstation.");
 				PatientL.RemoveFromMenu(PatientCur.PatNum);
-				GlobalFormOpenDental.PatientSelected(new Patient(),false);
-				RefreshModuleData(0);
-			}
-			if(PatientCur!=null && PatientCur.PatStatus==PatientStatus.Archived && !Security.IsAuthorized(EnumPermType.ArchivedPatientSelect,suppressMessage:true)) {
-				GlobalFormOpenDental.PatientSelected(new Patient(),false);
+				FormOpenDental.S_Contr_PatientSelected(new Patient(),false);
 				RefreshModuleData(0);
 			}
 			RefreshModuleScreen(false);
-			ODEvent.Fire(ODEventType.ModuleSelected,_tpModuleData);
-			if(PatientCur!=null && DatabaseIntegrities.DoShowPopup(PatientCur.PatNum,EnumModuleType.TreatPlan)) {
-				List<Appointment> listAppointments=Appointments.GetAppointmentsForPat(PatientCur.PatNum);
-				List<Claim> listClaims=_listClaims;
-				List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(new List<long>(){PatientCur.PatNum}); //The TP module only has ClaimProcs with a status of Estimate or CapEstimate.
-				bool areHashesValid=Patients.AreAllHashesValid(PatientCur,listAppointments,new List<PayPlan>(),new List<PaySplit>(),listClaims,listClaimProcs);
-				if(!areHashesValid) {
-					DatabaseIntegrities.AddPatientModuleToCache(PatientCur.PatNum,EnumModuleType.TreatPlan); //Add to cached list for next time
-					//show popup
-					DatabaseIntegrity databaseIntegrity=DatabaseIntegrities.GetModule();
-					FrmDatabaseIntegrity frmDatabaseIntegrity=new FrmDatabaseIntegrity();
-					frmDatabaseIntegrity.MessageToShow=databaseIntegrity.Message;
-					frmDatabaseIntegrity.ShowDialog();
-				}
-			}
+			PatientDashboardDataEvent.Fire(ODEventType.ModuleSelected,_tpModuleData);
 			Plugins.HookAddCode(this,"ContrTreat.ModuleSelected_end",patNum);
 		}
 
@@ -340,10 +322,6 @@ namespace OpenDental{
 		private delegate void ToolBarClick();
 
 		private void menuConsent_Click(object sender,EventArgs e) {
-			if(PatientCur==null) {
-				MsgBox.Show("Please select a patient.");
-				return;
-			}
 			SheetDef sheetDef=(SheetDef)(((MenuItem)sender).Tag);
 			SheetDefs.GetFieldsAndParameters(sheetDef);
 			Sheet sheet=SheetUtil.CreateSheet(sheetDef,PatientCur.PatNum);
@@ -420,7 +398,7 @@ namespace OpenDental{
 				}
 			}
 			else if(e.Button.Tag.GetType()==typeof(Program)) {
-				WpfControls.ProgramL.Execute(((Program)e.Button.Tag).ProgramNum,PatientCur);
+				ProgramL.Execute(((Program)e.Button.Tag).ProgramNum,PatientCur);
 			}
 			Plugins.HookAddCode(this,"ContrTreat.ToolBarMain_ButtonClick_end",PatientCur,e);
 		}
@@ -1152,8 +1130,7 @@ namespace OpenDental{
 				gridPreAuth.EndUpdate();
 				return;
 			}
-			_arrayListPreAuth=new ArrayList();
-			_listClaims=_listClaims.OrderBy(x=>x.DateSent).ToList();
+			_arrayListPreAuth=new ArrayList();			
 			for(int i=0;i<_listClaims.Count;i++){
 				if(_listClaims[i].ClaimType=="PreAuth"){
 					_arrayListPreAuth.Add(_listClaims[i]);
@@ -1305,7 +1282,7 @@ namespace OpenDental{
 				if(_listTreatPlans[gridPlans.SelectedIndices[0]].MobileAppDeviceNum>0) {
 					if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Would you like to recall this treatment plan from the mobile device?")) {
 						treatPlan=_listTreatPlans[gridPlans.SelectedIndices[0]];
-						MobileNotifications.CI_RemoveTreatmentPlan(treatPlan.MobileAppDeviceNum,treatPlan);
+						PushNotificationUtils.CI_RemoveTreatmentPlan(treatPlan.MobileAppDeviceNum,treatPlan);
 						FillPlans();
 						return;
 					}
@@ -1353,8 +1330,8 @@ namespace OpenDental{
 			FillMain();
 		}
 		
-		///<summary>Attempts to update the eClipbaord device with the currently selected TP in gridPlans.
-		///If a device is set to the same patient as PatCur then we will automatically create the notification for that device.
+		///<summary>Attempts to send the currently selected TP in gridPlans to an eClipboard device.
+		///If a device is set to the same patient as PatCur then we will automatically PUSH the data to them.
 		///Otherwise we prompt for an unlock code if doPromptForDevice is not enabled.</summary>
 		private void TrySendTreatPlan(){
 			//Mimics FillPlans()
@@ -1385,7 +1362,7 @@ namespace OpenDental{
 				MsgBox.Show("This Treatment Plan has already been signed.");
 				return;
 			}
-			if(MobileAppDevices.ShouldCreateMobileNotification(PatientCur.PatNum, out MobileAppDevice device)) {
+			if(MobileAppDevices.ShouldSendPush(PatientCur.PatNum, out MobileAppDevice device)) {
 				PushSelectedTpToEclipboard(device);
 			}
 			else {
@@ -1401,7 +1378,7 @@ namespace OpenDental{
 				return;//document wont be null below.
 			}
 			using PdfDocument pdfDocument=GetTreatPlanPDF(out TreatPlan treatPlan,out bool hasPracticeSig); //Cant be null due to above check.
-			if(MobileNotifications.CI_SendTreatmentPlan(pdfDocument,treatPlan,hasPracticeSig,mobileAppDevice.MobileAppDeviceNum
+			if(PushNotificationUtils.CI_SendTreatmentPlan(pdfDocument,treatPlan,hasPracticeSig,mobileAppDevice.MobileAppDeviceNum
 				,out string errorMsg,out long mobileDataByeNum)) 
 			{
 				SendTreatPlanParam(treatPlan);
@@ -1653,7 +1630,7 @@ namespace OpenDental{
 		}
 
 		private void ToolBarMainEmail_Click() {
-			if(!Security.IsAuthorized(EnumPermType.EmailSend)) {
+			if(!Security.IsAuthorized(Permissions.EmailSend)) {
 				return;
 			}
 			PrepImageForPrinting();
@@ -1894,7 +1871,7 @@ namespace OpenDental{
 			_listTpRowsMain=TreatmentPlanModules.GetActiveTpPlanTpRows(checkShowMaxDed.Checked,checkShowDiscount.Checked,checkShowSubtotals.Checked,checkShowTotals.Checked,treatPlan,PatientCur,dateTimeTP.Value,_loadActiveTPData,_listInsPlans,_listBenefits,
 				_listPatPlans,_listSubstitutionLinks,_listInsSubs,_tpModuleData.DiscountPlanSub,_tpModuleData.DiscountPlan,_listProcedures,ref _listClaimProcs,_listClaimProcHists);
 			//Disable the discount check box if there is no discount
-			if(checkShowDiscount.Checked && CompareDecimal.IsZero(_listTpRowsMain.Sum(x=>x.Discount))) {
+			if(checkShowDiscount.Checked && CompareDecimal.IsZero(_listTpRowsMain.FirstOrDefault(x=>x.RowType==TpRowType.Total)?.Discount??0)) { //mimics Saved TP logic
 				checkShowDiscount.Checked=false;
 			}			
 			//Change the note
@@ -2577,9 +2554,6 @@ namespace OpenDental{
 		}
 
 		private void ToolBarMainUpdate_Click() {
-			if(dateTimeTP.Value!=DateTime.Today) {//Do not update current estimates based on future date estimates
-				dateTimeTP.Value=DateTime.Today;
-			}
 			if(!new[] { TreatPlanStatus.Active,TreatPlanStatus.Inactive }.Contains(_listTreatPlans[gridPlans.SelectedIndices[0]].TPStatus)) {
 				MsgBox.Show(this,"The update fee utility only works on current treatment plans, not any saved plans.");
 				return;
@@ -2655,7 +2629,8 @@ namespace OpenDental{
 
 		private void ToolBarMainCreate_Click(){//Save TP
 			//Cannot even click this button if user has not selected one of the treatment plans; Otherwise button is disabled.
-			if(!_listTreatPlans[gridPlans.SelectedIndices[0]].TPStatus.In(TreatPlanStatus.Active,TreatPlanStatus.Inactive)) {
+			if(!new[]{TreatPlanStatus.Active,TreatPlanStatus.Inactive}.Contains(_listTreatPlans[gridPlans.SelectedIndices[0]].TPStatus)){
+			//if(gridPlans.SelectedIndices[0]!=0){
 				MsgBox.Show(this,"An Active or Inactive TP must be selected before saving a TP.  You can highlight some procedures in the TP to save a TP with only those procedures in it.");
 				return;
 			}
@@ -2688,16 +2663,11 @@ namespace OpenDental{
 						treatPlanHeading+=$" ({fileNum+1})";
 					}
 				}
-				InputBox inputBoxHeadingName=new InputBox(Lan.g(this,$"Save Treatment Plan as"),treatPlanHeading);
-				inputBoxHeadingName.ShowDialog();
-				if(inputBoxHeadingName.IsDialogCancel) {
+				using InputBox inputBoxHeadingName=new InputBox(Lan.g(this,$"Save Treatment Plan as"),treatPlanHeading);
+				if(inputBoxHeadingName.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
-				if(inputBoxHeadingName.StringResult.Trim()=="") {
-					MessageBox.Show("Heading Name cannot be empty.");
-					return;
-				}
-				treatPlanHeading=inputBoxHeadingName.StringResult;
+				treatPlanHeading=inputBoxHeadingName.textResult.Text;
 			}
 			//If any of the following logic changes, notify someone on the xam team.
 			treatPlan.Heading=treatPlanHeading;
@@ -2754,7 +2724,9 @@ namespace OpenDental{
 
 		///<summary>Returns true if given treatPlanHeading is not currently in use by a saved TreatPlan in _listTreatPlans.</summary>
 		private bool IsSavedTPHeadingUnique(string treatPlanHeading) {
-			return _listTreatPlans.Count(x => x.TPStatus==TreatPlanStatus.Saved && x.Heading==treatPlanHeading)==0;
+			return (_listTreatPlans.FindAll(x => x.TPStatus==TreatPlanStatus.Saved 
+				&& x.Heading==treatPlanHeading).Count()==0
+			);
 		}
 
 		private void ToolBarMainSign_Click() {
@@ -2876,13 +2848,18 @@ namespace OpenDental{
 				}
 				else if(CloudStorage.IsCloudStorage) {
 					//Upload file to patient's AtoZ folder
-					UI.ProgressWin progressWin=new UI.ProgressWin();
-					progressWin.StartingMessage="Uploading Treatment Plan....";
-					progressWin.ActionMain=() => {
-						CloudStorage.Upload(ImageStore.GetPatientFolder(PatientCur,""),fileName+".pdf",File.ReadAllBytes(tempFile));
-					};
-					progressWin.ShowDialog();
-					if(progressWin.IsCancelled){
+					using FormProgress formProgress=new FormProgress();
+					formProgress.DisplayText="Uploading Treatment Plan...";
+					formProgress.NumberFormat="F";
+					formProgress.NumberMultiplication=1;
+					formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+					formProgress.TickMS=1000;
+					OpenDentalCloud.Core.TaskStateUpload taskStateUpload=CloudStorage.UploadAsync(ImageStore.GetPatientFolder(PatientCur,"")
+						,fileName+".pdf"
+						,File.ReadAllBytes(tempFile)
+						,new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
+					if(formProgress.ShowDialog()==DialogResult.Cancel) {
+						taskStateUpload.DoCancel=true;
 						break;
 					}
 				}
@@ -2920,7 +2897,7 @@ namespace OpenDental{
 			if(gridPlans.SelectedIndices.Length==0) {
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.ClaimView)) {
+			if(!Security.IsAuthorized(Permissions.ClaimView)) {
 				return;
 			}
 			if(!CheckClearinghouseDefaults()) {
@@ -2958,7 +2935,7 @@ namespace OpenDental{
 				}
 			}
 			Claim claim=new Claim();
-			using FormInsPlanSelectFam formInsPlanSelect=new FormInsPlanSelectFam(PatientCur.PatNum); 
+			using FormInsPlanSelect formInsPlanSelect=new FormInsPlanSelect(PatientCur.PatNum); 
 			formInsPlanSelect.ViewRelat=true;
 			if(formInsPlanSelect.InsPlanSelected==null) {//Won't be null if there is only one PatPlan
 				formInsPlanSelect.ShowDialog();
@@ -3004,7 +2981,7 @@ namespace OpenDental{
 				if(!claim.IsOrtho && PrefC.GetBool(PrefName.OrthoClaimMarkAsOrtho)) {//If it's already marked as Ortho (from a previous procedure), skip this
 					CovCat covCatOrtho=CovCats.GetFirstOrDefault(x => x.EbenefitCat==EbenefitCategory.Orthodontics,true);
 					if(covCatOrtho!=null) {
-						if(CovSpans.IsCodeInSpans(procedureCode.ProcCode,CovSpans.GetWhere(x => x.CovCatNum==covCatOrtho.CovCatNum)))	{
+						if(CovSpans.IsCodeInSpans(procedureCode.ProcCode,CovSpans.GetWhere(x => x.CovCatNum==covCatOrtho.CovCatNum).ToArray()))	{
 							claim.IsOrtho=true;
 						}
 					}
@@ -3131,19 +3108,21 @@ namespace OpenDental{
 		}
 
 		private void ToolBarMainDiscount_Click() {
-			if(gridMain.SelectedIndices.Length==0) {
-				gridMain.SetAll(true);
-			}
 			Def def=Defs.GetDef(DefCat.AdjTypes,PrefC.GetLong(PrefName.TreatPlanDiscountAdjustmentType));
-			List<ProcTP> listSelectedProcTPS=gridMain.SelectedTags<ProcTP>();
-			if(!GroupPermissions.HasPermissionForAdjType(EnumPermType.AdjustmentCreate,def,DateTime.Today,false)) {
+			if(!GroupPermissions.HasPermissionForAdjType(Permissions.AdjustmentCreate,def,false)) {
 				return;
 			}
 			if(!new[] { TreatPlanStatus.Active,TreatPlanStatus.Inactive }.Contains(_listTreatPlans[gridPlans.SelectedIndices[0]].TPStatus)) {
 				MsgBox.Show(this,"You can only create discounts from a current TP, not a saved TP.");
 				return;
 			}
-			List<Procedure> listProcedures=Procedures.GetManyProc(listSelectedProcTPS.Select(x => x.ProcNumOrig).ToList(),false);
+			if(gridMain.SelectedIndices.Length==0) {
+				gridMain.SetAll(true);
+			}
+			List<Procedure> listProcedures=Procedures.GetManyProc(gridMain.SelectedIndices.ToList()
+				.FindAll(x => gridMain.ListGridRows[x].Tag!=null)
+				.Select(x => ((ProcTP)gridMain.ListGridRows[x].Tag).ProcNumOrig)
+				.ToList(),false);
 			if(listProcedures.Count<=0) {
 				MsgBox.Show(this,"There are no procedures selected in the treatment plan. Please add to, or select from, procedures attached to the treatment plan before applying a discount");
 				return;
@@ -3163,7 +3142,7 @@ namespace OpenDental{
 		}
 
 		private void gridPreAuth_CellDoubleClick(object sender, OpenDental.UI.ODGridClickEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ClaimView)) {
+			if(!Security.IsAuthorized(Permissions.ClaimView)) {
 				return;
 			}
 			Claim claim=Claims.GetClaim(((Claim)_arrayListPreAuth[e.Row]).ClaimNum);//gets attached images.
@@ -3243,11 +3222,6 @@ namespace OpenDental{
 				.FindAll(x => x.Tag!=null && x.Tag.GetType()==typeof(ProcTP))//ProcTP's only
 				.Select(x => ((ProcTP)(x.Tag)).ProcNumOrig).ToList();//get ProcNums
 			//mimic calls to CreatePlannedAppt in ContrChart, no need for FillPlanned() since no gridPlanned
-			List<Procedure> listProceduresToPlan=Procedures.GetManyProc(listProcNumsSelected,includeNote:false);
-			if(listProceduresToPlan.Any(x => x.PlannedAptNum > 0)) {
-				MsgBox.Show("The selected procedure(s) are already attached to Planned Appointment(s). Procedure(s) must be detached from Planned Appointment(s) before a new Planned Appointment can be created");
-				return;
-			}
 			AppointmentL.CreatePlannedAppt(PatientCur,itemOrder,listProcNumsSelected);
 		}
 
@@ -3284,7 +3258,7 @@ namespace OpenDental{
 			FillMainDisplay();
 		}
 
-		///<summary>Enables toolbar buttons if a patient is selected, otherwise disables them.</summary>
+		/// <summary></summary>
 		private void UpdateToolbarButtons() {
 			if(PatientCur!=null && _listTreatPlans.Count>0) {
 				gridMain.Enabled=true;
@@ -3339,144 +3313,5 @@ namespace OpenDental{
 			ToolBarMain.Invalidate();
 			//listPreAuth.Enabled=false;
 		}
-
-		///<summary>Determines if the right click DXC options are grayed out. If the preauth selected does not have a clearinghouse, is not allowed to send attachments, or the clearinghouse is not ClaimConnect, then the options will be grayed out.</summary>
-		private void contextMenuPreAuthGrid_Popup(object sender,EventArgs e) {
-			menuItemSnipAttachment.Enabled=true;
-			menuItemSelectImage.Enabled=true;
-			menuItemPasteAttachment.Enabled=true;
-			menuItemAttachmentHistory.Enabled=true;
-			Clearinghouse clearingHouse=GetClearingHouseForClaim();
-			if(clearingHouse==null) {
-				menuItemSnipAttachment.Enabled=false;
-				menuItemSelectImage.Enabled=false;
-				menuItemPasteAttachment.Enabled=false;
-				menuItemAttachmentHistory.Enabled=false;
-				return;
-			}
-			//Are attachments allowed to be sent and is the office using ClaimConnect
-			if(clearingHouse?.IsAttachmentSendAllowed!=true || clearingHouse.CommBridge!=EclaimsCommBridge.ClaimConnect) {
-				menuItemSnipAttachment.Enabled=false;
-				menuItemSelectImage.Enabled=false;
-				menuItemPasteAttachment.Enabled=false;
-				menuItemAttachmentHistory.Enabled=false;
-			}
-		}
-
-		/// <summary>Return the clinic specific ClearningHouse based on the preauth the user clicked on. Can return null.</summary>
-		private Clearinghouse GetClearingHouseForClaim() {
-			//SelectionMode is set to OneRow
-			int idxPreAuthSelected=gridPreAuth.GetSelectedIndex();
-			if(idxPreAuthSelected==-1) {
-				return null;
-			}
-			Claim claimPreAuth=(Claim)_arrayListPreAuth[idxPreAuthSelected];
-			//Finding the clearing house settings for the selected preauth's clinic is from ClaimConnect.cs GetClearingHouseForClaim(). This method is private so the code was copied.
-			InsPlan insPlan=InsPlans.GetPlan(claimPreAuth.PlanNum,null);
-			if(insPlan==null) {
-				return null;
-			}
-			Carrier carrier=Carriers.GetCarrier(insPlan.CarrierNum);
-			if(carrier==null) {
-				return null;
-			}
-			if(carrier.ElectID.Length<2) {
-				return null;
-			}
-			//Fill clearing house with HQ fields
-			long clearingHouseNum=Clearinghouses.AutomateClearinghouseHqSelection(carrier.ElectID,claimPreAuth.MedType);
-			Clearinghouse clearingHouse=Clearinghouses.GetClearinghouse(clearingHouseNum);
-			//Refill clearingHouse with clinic specific fields
-			return Clearinghouses.OverrideFields(clearingHouse,claimPreAuth.ClinicNum);
-		}
-
-		private void menuItemSnipAttachment_Click(object sender,EventArgs e) {
-			//SelectionMode is set to OneRow
-			int idxPreAuthSelected=gridPreAuth.SelectedIndices[0];
-			//_arrayListPreAuth contains some, but not all claim information. Use it to get the ClaimNum and then get full claim
-			Claim claimPreAuth=Claims.GetClaim(((Claim)_arrayListPreAuth[idxPreAuthSelected]).ClaimNum);
-			if(claimPreAuth==null) {
-				return;
-			}
-			if(!ValidateRightClickDXC(claimPreAuth)) {
-				return;
-			}
-			FormClaimAttachSnipDXC formClaimAttachSnipDXC=new FormClaimAttachSnipDXC();
-			formClaimAttachSnipDXC.ClaimCur=claimPreAuth;
-			formClaimAttachSnipDXC.Patient=PatientCur;
-			formClaimAttachSnipDXC.Show();
-		}
-
-		private void menuItemSelectImage_Click(object sender,EventArgs e) {
-			//SelectionMode is set to OneRow
-			int idxPreAuthSelected=gridPreAuth.SelectedIndices[0];
-			//_arrayListPreAuth contains some, but not all claim information. Use it to get the ClaimNum and then get full claim
-			Claim claimPreAuth=Claims.GetClaim(((Claim)_arrayListPreAuth[idxPreAuthSelected]).ClaimNum);
-			if(claimPreAuth==null) {
-				return;
-			}
-			if(!ValidateRightClickDXC(claimPreAuth)) {
-				return;
-			}
-			using FormImagePickerDXC formImagePickerDXC=new FormImagePickerDXC();
-			formImagePickerDXC.PatientCur=PatientCur;
-			formImagePickerDXC.ClaimCur=claimPreAuth;
-			formImagePickerDXC.ShowDialog();
-		}
-
-		private void menuItemPasteAttachment_Click(object sender,EventArgs e) {
-			//SelectionMode is set to OneRow
-			int idxPreAuthSelected=gridPreAuth.SelectedIndices[0];
-			//_arrayListPreAuth contains some, but not all claim information. Use it to get the ClaimNum and then get full claim
-			Claim claimPreAuth=Claims.GetClaim(((Claim)_arrayListPreAuth[idxPreAuthSelected]).ClaimNum);
-			if(claimPreAuth==null) {
-				return;
-			}
-			if(!ValidateRightClickDXC(claimPreAuth)) {
-				return;
-			}
-			FormClaimAttachPasteDXC formClaimAttachPasteDXC=new FormClaimAttachPasteDXC();
-			formClaimAttachPasteDXC.ClaimCur=claimPreAuth;
-			formClaimAttachPasteDXC.PatientCur=PatientCur;
-			formClaimAttachPasteDXC.Show();
-		}
-
-		private void menuItemAttachmentHistory_Click(object sender,EventArgs e) {
-			//SelectionMode is set to OneRow
-			int idxPreAuthSelected=gridPreAuth.SelectedIndices[0];
-			//_arrayListPreAuth contains some, but not all claim information. Use it to get the ClaimNum and then get full claim
-			Claim claimPreAuth=Claims.GetClaim(((Claim)_arrayListPreAuth[idxPreAuthSelected]).ClaimNum);
-			if(claimPreAuth==null) {
-				return;
-			}
-			if(!ValidateRightClickDXC(claimPreAuth)) {
-				return;
-			}
-			using FormClaimAttachHistory formClaimAttachHistory=new FormClaimAttachHistory();
-			formClaimAttachHistory.ClaimCur=claimPreAuth;
-			formClaimAttachHistory.PatientCur=PatientCur;
-			formClaimAttachHistory.ShowDialog();
-		}
-
-		///<summary>Centralize validation for the DXC right click options. Validation logic taken from the FormClaimEdit.cs OpenAttachmentForm method.</summary>
-		private bool ValidateRightClickDXC(Claim claimPreAuth) {
-			if(claimPreAuth.ClaimStatus=="W") {
-				ClaimSendQueueItem[] claimSendQueueItemsArray=Claims.GetQueueList(claimPreAuth.ClaimNum,claimPreAuth.ClinicNum,0);
-				if(!claimSendQueueItemsArray[0].CanSendElect) {
-					MsgBox.Show(this,"Carrier is not set to Send Claims Electronically.");
-					return false;
-				}
-				Clearinghouse clearinghouseHq=ClearinghouseL.GetClearinghouseHq(claimSendQueueItemsArray[0].ClearinghouseNum);
-				Clearinghouse clearinghouseClin=Clearinghouses.OverrideFields(clearinghouseHq,Clinics.ClinicNum);
-				claimSendQueueItemsArray[0]=OpenDentBusiness.Eclaims.Eclaims.GetMissingData(clearinghouseClin,claimSendQueueItemsArray[0]);
-				if(claimSendQueueItemsArray[0].MissingData!="") {
-					MessageBox.Show("Cannot add attachments until missing data is fixed:\r\n"+claimSendQueueItemsArray[0].MissingData);
-					return false;
-				}
-			}
-			return true;
-		}
-
-
 	}
 }

@@ -49,7 +49,7 @@ namespace OpenDental {
 		}
 
 		private void butMerge_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.DefEdit)) {
+			if(!Security.IsAuthorized(Permissions.DefEdit)) {
 				return;
 			}
 			if(_defNumInto==_defNumFrom) { 
@@ -71,7 +71,7 @@ namespace OpenDental {
 			string logText=Lan.g(this,"Billing Type Merge from")
 				+" "+Defs.GetName(DefCat.BillingTypes,_defNumFrom)+" "+Lan.g(this,"to")+" "+Defs.GetName(DefCat.BillingTypes,_defNumInto);
 			//Make log entry here.
-			SecurityLogs.MakeLogEntry(EnumPermType.DefEdit,0,logText);
+			SecurityLogs.MakeLogEntry(Permissions.DefEdit,0,logText);
 			MsgBox.Show(this,"Billing Types merged successfully.");
 			textDefNumFrom.Clear();
 			textNameFrom.Clear();
@@ -80,5 +80,8 @@ namespace OpenDental {
 			CheckUIState();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }

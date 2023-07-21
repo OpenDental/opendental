@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWebChatSurveys));
+			this.butClose = new OpenDental.UI.Button();
 			this.groupFilters = new OpenDental.UI.GroupBox();
 			this.textSessionNum = new OpenDental.ODtextBox();
 			this.labelSessionNum = new System.Windows.Forms.Label();
@@ -37,6 +38,17 @@ namespace OpenDental{
 			this.labelTotals = new System.Windows.Forms.Label();
 			this.groupFilters.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(922, 660);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// groupFilters
 			// 
@@ -65,7 +77,7 @@ namespace OpenDental{
 			this.textSessionNum.Location = new System.Drawing.Point(98, 18);
 			this.textSessionNum.Multiline = false;
 			this.textSessionNum.Name = "textSessionNum";
-			this.textSessionNum.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textSessionNum.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textSessionNum.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textSessionNum.Size = new System.Drawing.Size(103, 20);
 			this.textSessionNum.TabIndex = 14;
@@ -108,7 +120,7 @@ namespace OpenDental{
 			this.textSurveyTextContains.Location = new System.Drawing.Point(581, 18);
 			this.textSurveyTextContains.Multiline = false;
 			this.textSurveyTextContains.Name = "textSurveyTextContains";
-			this.textSurveyTextContains.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textSurveyTextContains.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textSurveyTextContains.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textSurveyTextContains.Size = new System.Drawing.Size(159, 20);
 			this.textSurveyTextContains.TabIndex = 12;
@@ -171,11 +183,13 @@ namespace OpenDental{
 			// FormWebChatSurveys
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(1009, 696);
 			this.Controls.Add(this.labelTotals);
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.groupFilters);
 			this.Controls.Add(this.gridWebChatSurveys);
+			this.Controls.Add(this.butClose);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -189,6 +203,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GroupBox groupFilters;
 		private ODtextBox textSessionNum;
 		private System.Windows.Forms.Label labelSessionNum;

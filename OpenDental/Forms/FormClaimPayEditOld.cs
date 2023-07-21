@@ -33,14 +33,14 @@ namespace OpenDental{
 		private void FormClaimPayEdit_Load(object sender, System.EventArgs e) {
 			//ClaimPayment created before opening this form
 			if(IsNew){
-				if(!Security.IsAuthorized(EnumPermType.InsPayCreate)){//date not checked here
+				if(!Security.IsAuthorized(Permissions.InsPayCreate)){//date not checked here
 					DialogResult=DialogResult.Cancel;//causes claimPayment to be deleted.
 					return;
 				}
 			}
 			else{
-				if(!Security.IsAuthorized(EnumPermType.InsPayEdit,ClaimPaymentCur.CheckDate)){
-					butSave.Enabled=false;
+				if(!Security.IsAuthorized(Permissions.InsPayEdit,ClaimPaymentCur.CheckDate)){
+					butOK.Enabled=false;
 					butDelete.Enabled=false;
 				}
 			}
@@ -149,7 +149,7 @@ namespace OpenDental{
 			}
 			for(int i=0;i<splits.Count;i++){
 				if(splits[i].ClaimPaymentNum==ClaimPaymentCur.ClaimPaymentNum){
-					SecurityLogs.MakeLogEntry(EnumPermType.InsPayEdit,splits[i].PatNum,
+					SecurityLogs.MakeLogEntry(Permissions.InsPayEdit,splits[i].PatNum,
 						"Delete for patient: "
 						+Patients.GetLim(splits[i].PatNum).GetNameLF()+", "
 						+Lan.g(this,"Total Amt: ")+ClaimPaymentCur.CheckAmt.ToString("c")+", "
@@ -159,7 +159,11 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(textDate.Text=="") {
 				MsgBox.Show(this,"Please enter a date first.");
 				return;
@@ -180,15 +184,18 @@ namespace OpenDental{
 			}
 			if(IsNew){
 				//prevents backdating of initial check
-				if(!Security.IsAuthorized(EnumPermType.InsPayCreate,PIn.Date(textDate.Text))){
+				if(!Security.IsAuthorized(Permissions.InsPayCreate,PIn.Date(textDate.Text))){
 					return;
 				}
 				//prevents attaching claimprocs with a date that is older than allowed by security.
+
+
+
 			}
 			else{
 				//Editing an old entry will already be blocked if the date was too old, and user will not be able to click OK button.
 				//This catches it if user changed the date to be older.
-				if(!Security.IsAuthorized(EnumPermType.InsPayEdit,PIn.Date(textDate.Text))){
+				if(!Security.IsAuthorized(Permissions.InsPayEdit,PIn.Date(textDate.Text))){
 					return;
 				}
 			}
@@ -225,13 +232,13 @@ namespace OpenDental{
 					//And it always makes more audit trail entries when you click OK, even if you didn't actually attach new claims.
 					//But since this will cover the vast majority if situations.
 					if(IsNew){
-						SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,splits[i].PatNum,
+						SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,splits[i].PatNum,
 							Patients.GetLim(splits[i].PatNum).GetNameLF()+", "
 							+Lan.g(this,"Total Amt: ")+ClaimPaymentCur.CheckAmt.ToString("c")+", "
 							+Lan.g(this,"Claim Split: ")+splits[i].InsPayAmt.ToString("c"));
 					}
 					else{
-						SecurityLogs.MakeLogEntry(EnumPermType.InsPayEdit,splits[i].PatNum,
+						SecurityLogs.MakeLogEntry(Permissions.InsPayEdit,splits[i].PatNum,
 							Patients.GetLim(splits[i].PatNum).GetNameLF()+", "
 							+Lan.g(this,"Total Amt: ")+ClaimPaymentCur.CheckAmt.ToString("c")+", "
 							+Lan.g(this,"Claim Split: ")+splits[i].InsPayAmt.ToString("c"));
@@ -256,5 +263,22 @@ namespace OpenDental{
 			}
 		}
 
+		
+
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

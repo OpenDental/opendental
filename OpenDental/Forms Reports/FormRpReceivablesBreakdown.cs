@@ -378,6 +378,5 @@ namespace OpenDental {
 				}//END If 
 			}// END For Loop
 		}//END OK button Clicked
-
 	}
 }

@@ -23,26 +23,26 @@ namespace OpenDental {
 		}
 
 		private void FormSubscriberMove_Load(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPlanChangeSubsc)) {
+			if(!Security.IsAuthorized(Permissions.InsPlanChangeSubsc)) {
 				DialogResult=DialogResult.Cancel;
 				return;
 			}
 		}
 
 		private void butChangePatientInto_Click(object sender,EventArgs e) {
-			FrmInsPlanSelect frmInsPlanSelect=new FrmInsPlanSelect();
-			frmInsPlanSelect.ShowDialog();
-			if(frmInsPlanSelect.IsDialogOK) {
-				_insPlanInto=frmInsPlanSelect.InsPlanSelected;
+			using FormInsPlans formInsPlans=new FormInsPlans();
+			formInsPlans.IsSelectMode=true;
+			if(formInsPlans.ShowDialog()==DialogResult.OK) {
+				_insPlanInto=formInsPlans.InsPlanSelected;
 				textCarrierNameInto.Text=Carriers.GetName(_insPlanInto.CarrierNum);
 			}
 		}
 
 		private void butChangePatientFrom_Click(object sender,EventArgs e) {
-			FrmInsPlanSelect frmInsPlanSelect=new FrmInsPlanSelect();
-			frmInsPlanSelect.ShowDialog();
-			if(frmInsPlanSelect.IsDialogOK) {
-				_insPlanFrom=frmInsPlanSelect.InsPlanSelected;
+			using FormInsPlans formInsPlans=new FormInsPlans();
+			formInsPlans.IsSelectMode=true;
+			if(formInsPlans.ShowDialog()==DialogResult.OK) {
+				_insPlanFrom=formInsPlans.InsPlanSelected;
 				textCarrierNameFrom.Text=Carriers.GetName(_insPlanFrom.CarrierNum);
 			}
 		}
@@ -65,7 +65,7 @@ namespace OpenDental {
 			formInsPlan.ShowDialog();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(_insPlanFrom==null || InsPlans.GetPlan(_insPlanFrom.PlanNum,new List<InsPlan>())==null) {
 				MsgBox.Show(this,"Please pick a valid plan to move subscribers from.");
 				return;
@@ -98,20 +98,18 @@ namespace OpenDental {
 			}
 			Cursor=Cursors.Default;
 			MessageBox.Show(Lan.g(this,"Count of Subscribers Moved")+": "+countInsSubModified);
-			SecurityLogs.MakeLogEntry(EnumPermType.InsPlanChangeSubsc,0,Lan.g(this,"Subscribers Moved from")+" "+_insPlanFrom.PlanNum+" "+Lan.g(this,"to")+" "+_insPlanInto.PlanNum);
+			SecurityLogs.MakeLogEntry(Permissions.InsPlanChangeSubsc,0,Lan.g(this,"Subscribers Moved from")+" "+_insPlanFrom.PlanNum+" "+Lan.g(this,"to")+" "+_insPlanInto.PlanNum);
 			DialogResult=DialogResult.OK;//Closes the form.
 		}
 
-		private void FormSubscriberMove_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult!=DialogResult.Cancel) {
-				return;
-			}
-			if(!Security.IsAuthorized(EnumPermType.InsPlanChangeSubsc)) {//there is a DialogResult.Cancel in the Load caused by this scenario and is already addressed
-				return;
-			}
+		private void butCancel_Click(object sender,EventArgs e) {
 			//probably don't need this log entry, but here to maintain old behavior
-			SecurityLogs.MakeLogEntry(EnumPermType.InsPlanChangeSubsc,0,Lan.g(this,"Subscriber Move Cancel"));
+			SecurityLogs.MakeLogEntry(Permissions.InsPlanChangeSubsc,0,Lan.g(this,"Subscriber Move Cancel"));
+			DialogResult=DialogResult.Cancel;//Closes the form.
 		}
+
+
+
 
 	}
 }

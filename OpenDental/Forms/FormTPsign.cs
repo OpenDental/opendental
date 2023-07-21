@@ -26,7 +26,6 @@ namespace OpenDental{
 		public PrintDocument PrintDocumentCur;
 		private bool _sigChanged;
 		public TreatPlan TreatPlanCur;
-		private TreatPlan _treatPlanOld;
 		///<summary>Must be sorted by primary key.</summary>
 		private List<ProcTP> _listProcTPs;
 		//private bool allowTopaz;
@@ -46,10 +45,9 @@ namespace OpenDental{
 		}
 
 		private void FormTPsign_Load(object sender, System.EventArgs e) {
-			_treatPlanOld=TreatPlanCur.Copy();
 			//this window never comes up for new TP.  Always saved ahead of time.
-			if(!Security.IsAuthorized(EnumPermType.TreatPlanSign,TreatPlanCur.DateTP)) {
-				butSave.Enabled=false;
+			if(!Security.IsAuthorized(Permissions.TreatPlanSign,TreatPlanCur.DateTP)) {
+				butOK.Enabled=false;
 				signatureBoxWrapper.Enabled=false;
 				signatureBoxWrapperPractice.Enabled=false;
 				textTypeSig.Enabled=false;
@@ -63,11 +61,11 @@ namespace OpenDental{
 			ToolBarMain.Buttons["FullPage"].IsTogglePushed=true;
 			LayoutManager.MoveLocation(previewContr,new Point(0,ToolBarMain.Bottom));
 			LayoutManager.MoveSize(previewContr,new Size(ClientRectangle.Width,ClientRectangle.Height-ToolBarMain.Height-panelSig.Height));
-			if(PrintDocumentCur==null) {//Sheets
+			if(PrintDocumentCur==null) {//Only set when not pringing using sheets, shet via a MigraDoc.
 				//TODO:Implement ODprintout pattern - MigraDoc
-				//Just signing the TP, there is no way to print a Treat' Plan from the Sign TP window, so suppress the printer dialogs.
+				//Just signing the TP, there is no way to print a Treat' Plan from the Sign TP window so suppress the printer dialogs.
 				//Users will click the Print TP button from the Treat' Plan module when they want to print.
-				PrinterL.PrintPreviewControlOverride=previewContr;//Sets the printdoc to previewContr.Document after validation. Otherwise shows error.
+				PrinterL.ControlPreviewOverride=previewContr;//Sets the printdoc to previewContr.Document after validation. Otherwise shows error.
 				SheetPrinting.Print(SheetTP,isPrintDocument:false,isPreviewMode:true);
 				if(ODprintout.CurPrintout.SettingsErrorCode!=PrintoutErrorCode.Success) {
 					DialogResult=DialogResult.Cancel;
@@ -388,9 +386,9 @@ namespace OpenDental{
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			SaveSignature();//"saves" signature to TPCur, does not save to DB.
-			TreatPlans.Update(TreatPlanCur,_treatPlanOld);//save signature to DB.
+			TreatPlans.Update(TreatPlanCur);//save signature to DB.
 			TreatPlanCur.ListProcTPs=ProcTPs.RefreshForTP(TreatPlanCur.TreatPlanNum);
 			if(DoPrintUsingSheets) {
 				SheetParameter.SetParameter(SheetTP,"TreatPlan",TreatPlanCur); //update TP on sheet to have new signature for generating pdfs
@@ -416,14 +414,17 @@ namespace OpenDental{
 					TreatPlans.Update(TreatPlanCur); //update docnum. must be called after signature is updated.
 				}
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.TreatPlanEdit,TreatPlanCur.PatNum,"Sign TP");
+			SecurityLogs.MakeLogEntry(Permissions.TreatPlanEdit,TreatPlanCur.PatNum,"Sign TP");
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void FormTPsign_FormClosing(object sender,FormClosingEventArgs e) {
 			signatureBoxWrapperPractice?.SetTabletState(0);
 			signatureBoxWrapper?.SetTabletState(0);
 		}
-
 	}
 }

@@ -39,9 +39,10 @@ namespace OpenDental{
 			this.label8 = new System.Windows.Forms.Label();
 			this.butDelete = new OpenDental.UI.Button();
 			this.textServerId = new OpenDental.ValidNum();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.label11 = new System.Windows.Forms.Label();
-			this.checkTempTablesAllowedServer = new OpenDental.UI.CheckBox();
+			this.checkReportServer = new OpenDental.UI.CheckBox();
 			this.butThisComputerDesc = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
@@ -180,32 +181,44 @@ namespace OpenDental{
 			this.textServerId.Size = new System.Drawing.Size(100, 20);
 			this.textServerId.TabIndex = 1;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(574, 313);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 10;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(488, 313);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 10;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(579, 313);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 11;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// label11
 			// 
 			this.label11.Location = new System.Drawing.Point(258, 248);
 			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(368, 62);
+			this.label11.Size = new System.Drawing.Size(368, 46);
 			this.label11.TabIndex = 104;
-			this.label11.Text = resources.GetString("label11.Text");
+			this.label11.Text = "User queries with CREATE TABLE or DROP TABLE syntax can only be run when connecte" +
+    "d to this server.  Allowing such queries to run on non-report servers can cause " +
+    "replication to crash.";
 			// 
-			// checkTempTablesAllowedServer
+			// checkReportServer
 			// 
-			this.checkTempTablesAllowedServer.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkTempTablesAllowedServer.Location = new System.Drawing.Point(16, 248);
-			this.checkTempTablesAllowedServer.Name = "checkTempTablesAllowedServer";
-			this.checkTempTablesAllowedServer.Size = new System.Drawing.Size(236, 18);
-			this.checkTempTablesAllowedServer.TabIndex = 7;
-			this.checkTempTablesAllowedServer.Text = "Temp Tables Allowed Server";
+			this.checkReportServer.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.checkReportServer.Location = new System.Drawing.Point(16, 248);
+			this.checkReportServer.Name = "checkReportServer";
+			this.checkReportServer.Size = new System.Drawing.Size(236, 18);
+			this.checkReportServer.TabIndex = 7;
+			this.checkReportServer.Text = "Report Server";
 			// 
 			// butThisComputerDesc
 			// 
@@ -220,7 +233,7 @@ namespace OpenDental{
 			// 
 			this.ClientSize = new System.Drawing.Size(678, 353);
 			this.Controls.Add(this.butThisComputerDesc);
-			this.Controls.Add(this.checkTempTablesAllowedServer);
+			this.Controls.Add(this.checkReportServer);
 			this.Controls.Add(this.label11);
 			this.Controls.Add(this.label8);
 			this.Controls.Add(this.label7);
@@ -237,7 +250,8 @@ namespace OpenDental{
 			this.Controls.Add(this.textDescript);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormReplicationEdit";
 			this.Text = "Edit Replication Server";
@@ -249,7 +263,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textDescript;
 		private System.Windows.Forms.Label label2;
@@ -266,7 +281,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Label label11;
-		private OpenDental.UI.CheckBox checkTempTablesAllowedServer;
+		private OpenDental.UI.CheckBox checkReportServer;
 		private UI.Button butThisComputerDesc;
 	}
 }

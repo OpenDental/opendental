@@ -50,6 +50,11 @@ namespace OpenDentBusiness{
 			if(insVerify==null) {
 				return;
 			}
+			Insert(new InsVerifyHist(insVerify));
+			insVerify.UserNum=0;
+			insVerify.DefNum=0;
+			insVerify.Note="";
+			insVerify.DateLastAssigned=DateTime.MinValue;
 			bool isInsVerifyFutureDateBenefit=(PrefC.GetBool(PrefName.InsVerifyFutureDateBenefitYear) && insVerify.VerifyType==VerifyTypes.InsuranceBenefit);
 			bool isInsVerifyFutureDatePatEnrollment=(PrefC.GetBool(PrefName.InsVerifyFutureDatePatEnrollmentYear) && insVerify.VerifyType==VerifyTypes.PatientEnrollment);
 			if(insVerify.AppointmentDateTime>DateTime.MinValue) {
@@ -57,11 +62,6 @@ namespace OpenDentBusiness{
 					insVerify.DateLastVerified=insVerify.AppointmentDateTime;
 				}
 			}
-			Insert(new InsVerifyHist(insVerify));
-			insVerify.UserNum=0;
-			insVerify.DefNum=0;
-			insVerify.Note="";
-			insVerify.DateLastAssigned=DateTime.MinValue;
 			InsVerifies.Update(insVerify);
 		}
 

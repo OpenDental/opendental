@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMassEmailSend));
 			this.butSendEmails = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.userControlEmailTemplate1 = new OpenDental.UserControlEmailTemplate();
 			this.textSubject = new OpenDental.ODtextBox();
 			this.label2 = new System.Windows.Forms.Label();
@@ -47,7 +48,7 @@ namespace OpenDental{
 			this.groupBoxOD1 = new OpenDental.UI.GroupBox();
 			this.menuMain = new OpenDental.UI.MenuOD();
 			this.butSelectPatients = new OpenDental.UI.Button();
-			this.textNumberOfRecipients = new System.Windows.Forms.TextBox();
+			this.textNumberOfRecipients = new OpenDental.ODtextBox();
 			this.labelRecipients = new System.Windows.Forms.Label();
 			this.labelNotEnabled = new System.Windows.Forms.Label();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
@@ -62,12 +63,23 @@ namespace OpenDental{
 			// butSendEmails
 			// 
 			this.butSendEmails.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSendEmails.Location = new System.Drawing.Point(899, 660);
+			this.butSendEmails.Location = new System.Drawing.Point(818, 660);
 			this.butSendEmails.Name = "butSendEmails";
 			this.butSendEmails.Size = new System.Drawing.Size(88, 24);
 			this.butSendEmails.TabIndex = 3;
 			this.butSendEmails.Text = "Send Emails";
 			this.butSendEmails.Click += new System.EventHandler(this.butSendEmails_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(912, 660);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// userControlEmailTemplate1
 			// 
@@ -88,7 +100,7 @@ namespace OpenDental{
 			this.textSubject.Location = new System.Drawing.Point(25, 186);
 			this.textSubject.Multiline = false;
 			this.textSubject.Name = "textSubject";
-			this.textSubject.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textSubject.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textSubject.ReadOnly = true;
 			this.textSubject.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textSubject.Size = new System.Drawing.Size(470, 20);
@@ -125,7 +137,7 @@ namespace OpenDental{
 			this.textPatient.Location = new System.Drawing.Point(6, 18);
 			this.textPatient.Multiline = false;
 			this.textPatient.Name = "textPatient";
-			this.textPatient.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textPatient.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textPatient.ReadOnly = true;
 			this.textPatient.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textPatient.Size = new System.Drawing.Size(174, 20);
@@ -152,7 +164,7 @@ namespace OpenDental{
 			this.textboxAlias.Location = new System.Drawing.Point(9, 37);
 			this.textboxAlias.Multiline = false;
 			this.textboxAlias.Name = "textboxAlias";
-			this.textboxAlias.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textboxAlias.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textboxAlias.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textboxAlias.Size = new System.Drawing.Size(470, 20);
 			this.textboxAlias.TabIndex = 219;
@@ -176,7 +188,7 @@ namespace OpenDental{
 			this.textSenderAddress.Location = new System.Drawing.Point(25, 142);
 			this.textSenderAddress.Multiline = false;
 			this.textSenderAddress.Name = "textSenderAddress";
-			this.textSenderAddress.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textSenderAddress.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textSenderAddress.ReadOnly = true;
 			this.textSenderAddress.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textSenderAddress.Size = new System.Drawing.Size(428, 20);
@@ -205,7 +217,7 @@ namespace OpenDental{
 			// label3
 			// 
 			this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.label3.Location = new System.Drawing.Point(639, 666);
+			this.label3.Location = new System.Drawing.Point(558, 666);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(254, 18);
 			this.label3.TabIndex = 223;
@@ -221,7 +233,7 @@ namespace OpenDental{
 			this.textEmailGroup.Location = new System.Drawing.Point(25, 230);
 			this.textEmailGroup.Multiline = false;
 			this.textEmailGroup.Name = "textEmailGroup";
-			this.textEmailGroup.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textEmailGroup.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textEmailGroup.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textEmailGroup.Size = new System.Drawing.Size(470, 20);
 			this.textEmailGroup.TabIndex = 224;
@@ -321,10 +333,14 @@ namespace OpenDental{
 			// 
 			this.textNumberOfRecipients.AcceptsTab = true;
 			this.textNumberOfRecipients.BackColor = System.Drawing.SystemColors.Control;
+			this.textNumberOfRecipients.DetectLinksEnabled = false;
+			this.textNumberOfRecipients.DetectUrls = false;
 			this.textNumberOfRecipients.Enabled = false;
 			this.textNumberOfRecipients.Location = new System.Drawing.Point(824, 149);
 			this.textNumberOfRecipients.Name = "textNumberOfRecipients";
+			this.textNumberOfRecipients.QuickPasteType = OpenDentBusiness.QuickPasteType.ReadOnly;
 			this.textNumberOfRecipients.ReadOnly = true;
+			this.textNumberOfRecipients.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNumberOfRecipients.Size = new System.Drawing.Size(155, 20);
 			this.textNumberOfRecipients.TabIndex = 235;
 			this.textNumberOfRecipients.Text = "";
@@ -390,6 +406,7 @@ namespace OpenDental{
 			// 
 			// FormMassEmailSend
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(999, 696);
 			this.Controls.Add(this.groupClinics);
 			this.Controls.Add(this.butSelectPatients);
@@ -404,6 +421,7 @@ namespace OpenDental{
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.textSenderAddress);
 			this.Controls.Add(this.label1);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butSendEmails);
 			this.Controls.Add(this.textSubject);
 			this.Controls.Add(this.label2);
@@ -423,6 +441,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butSendEmails;
+		private OpenDental.UI.Button butCancel;
 		private UserControlEmailTemplate userControlEmailTemplate1;
 		private ODtextBox textSubject;
 		private System.Windows.Forms.Label label2;
@@ -445,7 +464,7 @@ namespace OpenDental{
 		private UI.GroupBox groupBoxOD1;
 		private UI.MenuOD menuMain;
 		private UI.Button butSelectPatients;
-		private System.Windows.Forms.TextBox textNumberOfRecipients;
+		private OpenDental.ODtextBox textNumberOfRecipients;
 		private System.Windows.Forms.Label labelRecipients;
 		private System.Windows.Forms.Label labelNotEnabled;
 		private UI.ComboBoxClinicPicker comboClinic;

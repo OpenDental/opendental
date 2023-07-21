@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="599" Height="364" 
-             Text="Zoom">
+             Text="Zoom" Loaded="FrmODBase_Loaded"  >
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butReset" Width="56" Height="24" Margin="168,176,0,0" Text="Reset" Click="butReset_Click" />
 		<ui:Label x:Name="label15" Width="185" Height="18" Margin="324,125,0,0" Text="Use this for most scaling" VAlign="Center" />
@@ -15,35 +15,35 @@
 		<ui:Label x:Name="label13" Width="228" Height="18" Margin="271,15,0,0" Text="If you make changes, reopen this window" VAlign="Center" />
 		<ui:Label x:Name="label11" Width="198" Height="18" Margin="290,179,0,0" Text="Calculates a scale that will make it fit" VAlign="Center" />
 		<ui:Button x:Name="butFit" Width="56" Height="24" Margin="230,176,0,0" Text="Fit" Click="butFit_Click" />
-		<ui:TextBox x:Name="textDesign2" Width="90" Height="20" Margin="230,232,0,0" ColorBack="#FFF0F0F0" HAlign="Center" ReadOnly="True" TabIndexOD="109" />
+		<ui:TextBox x:Name="textDesign2" Width="90" Height="20" Margin="230,232,0,0" ColorBack="#FFF0F0F0" HAlign="Center" />
 		<ui:Label x:Name="label19" Width="185" Height="32" Margin="324,226,0,0" Text="Maximum size of window that our engineers will design" VAlign="Center" />
-		<ui:TextBox x:Name="textBox4" Width="90" Height="20" Margin="134,232,0,0" ColorBack="#FFF0F0F0" Text="1246 x 735" HAlign="Center" ReadOnly="True" TabIndexOD="108" />
-		<ui:TextBox x:Name="textFit2" Width="90" Height="20" Margin="230,284,0,0" ColorBack="#FFF0F0F0" HAlign="Center" ReadOnly="True" TabIndexOD="113" />
+		<ui:TextBox x:Name="textBox4" Width="90" Height="20" Margin="134,232,0,0" ColorBack="#FFF0F0F0" Text="1246 x 735" HAlign="Center" />
+		<ui:TextBox x:Name="textFit2" Width="90" Height="20" Margin="230,284,0,0" ColorBack="#FFF0F0F0" HAlign="Center" />
 		<ui:Label x:Name="label6" Width="107" Height="18" Margin="25,232,0,0" Text="Design Specs" HAlign="Right" VAlign="Center" />
 		<ui:Label x:Name="label7" Width="78" Height="18" Margin="54,285,0,0" Text="Fit" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textFit1" Width="90" Height="20" Margin="134,284,0,0" ColorBack="#FFF0F0F0" HAlign="Center" ReadOnly="True" TabIndexOD="112" />
+		<ui:TextBox x:Name="textFit1" Width="90" Height="20" Margin="134,284,0,0" ColorBack="#FFF0F0F0" HAlign="Center" />
 		<ui:Label x:Name="label5" Width="78" Height="18" Margin="236,48,0,0" Text="Monitor 2" HAlign="Center" VAlign="Bottom" />
-		<ui:TextBox x:Name="textMax2" Width="90" Height="20" Margin="230,258,0,0" ColorBack="#FFF0F0F0" HAlign="Center" ReadOnly="True" TabIndexOD="111" />
-		<ui:TextBox x:Name="textScaleTotal2" Width="90" Height="20" Margin="230,206,0,0" ColorBack="#FFF0F0F0" HAlign="Center" ReadOnly="True" TabIndexOD="107" />
-		<ui:TextBox x:Name="textWorkingArea2" Width="90" Height="20" Margin="230,98,0,0" ColorBack="#FFF0F0F0" HAlign="Center" ReadOnly="True" TabIndexOD="103" />
-		<ui:TextBox x:Name="textScale2" Width="90" Height="20" Margin="230,124,0,0" ColorBack="#FFF0F0F0" HAlign="Center" ReadOnly="True" TabIndexOD="105" />
-		<ui:TextBox x:Name="textResolution2" Width="90" Height="20" Margin="230,72,0,0" ColorBack="#FFF0F0F0" HAlign="Center" ReadOnly="True" TabIndexOD="101" />
+		<ui:TextBox x:Name="textMax2" Width="90" Height="20" Margin="230,258,0,0" ColorBack="#FFF0F0F0" HAlign="Center" />
+		<ui:TextBox x:Name="textScaleTotal2" Width="90" Height="20" Margin="230,206,0,0" ColorBack="#FFF0F0F0" HAlign="Center" />
+		<ui:TextBox x:Name="textWorkingArea2" Width="90" Height="20" Margin="230,98,0,0" ColorBack="#FFF0F0F0" HAlign="Center" />
+		<ui:TextBox x:Name="textScale2" Width="90" Height="20" Margin="230,124,0,0" ColorBack="#FFF0F0F0" HAlign="Center" />
+		<ui:TextBox x:Name="textResolution2" Width="90" Height="20" Margin="230,72,0,0" ColorBack="#FFF0F0F0" HAlign="Center" />
 		<ui:Label x:Name="label4" Width="78" Height="18" Margin="140,48,0,0" Text="Monitor 1" HAlign="Center" VAlign="Bottom" />
 		<ui:Label x:Name="label12" Width="83" Height="18" Margin="49,259,0,0" Text="Maximum Size" HAlign="Right" VAlign="Center" />
 		<ui:Button x:Name="butSettings" Width="75" Height="24" Margin="190,11,0,0" Text="Settings" Click="butSettings_Click" />
-		<ui:TextBox x:Name="textMax1" Width="90" Height="20" Margin="134,258,0,0" ColorBack="#FFF0F0F0" HAlign="Center" ReadOnly="True" TabIndexOD="110" />
+		<ui:TextBox x:Name="textMax1" Width="90" Height="20" Margin="134,258,0,0" ColorBack="#FFF0F0F0" HAlign="Center" />
 		<ui:Label x:Name="label9" Width="328" Height="18" Margin="256,151,0,0" Text="%   Example 120%. Only applies to this computer." VAlign="Center" />
-		<ui:TextBox x:Name="textZoom" Width="56" Height="20" Margin="199,150,0,0" HAlign="Center" TabIndexOD="1"/>
-		<ui:TextBox x:Name="textScaleTotal1" Width="90" Height="20" Margin="134,206,0,0" ColorBack="#FFF0F0F0" HAlign="Center" ReadOnly="True" TabIndexOD="106" />
+		<ui:TextBox x:Name="textZoom" Width="56" Height="20" Margin="199,150,0,0" HAlign="Center" TextChanged="textZoom_TextChanged" />
+		<ui:TextBox x:Name="textScaleTotal1" Width="90" Height="20" Margin="134,206,0,0" ColorBack="#FFF0F0F0" HAlign="Center" />
 		<ui:Label x:Name="label8" Width="100" Height="18" Margin="97,151,0,0" Text="Zoom" HAlign="Right" VAlign="Center" />
 		<ui:Label x:Name="label10" Width="78" Height="18" Margin="54,207,0,0" Text="Total Scale" HAlign="Right" VAlign="Center" />
 		<ui:Label x:Name="label3" Width="84" Height="18" Margin="48,99,0,0" Text="Working Area" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textWorkingArea1" Width="90" Height="20" Margin="134,98,0,0" ColorBack="#FFF0F0F0" HAlign="Center" ReadOnly="True" TabIndexOD="102" />
+		<ui:TextBox x:Name="textWorkingArea1" Width="90" Height="20" Margin="134,98,0,0" ColorBack="#FFF0F0F0" HAlign="Center" />
 		<ui:Label x:Name="label2" Width="143" Height="18" Margin="43,14,0,0" Text="Microsoft Display Settings" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textScale1" Width="90" Height="20" Margin="134,124,0,0" ColorBack="#FFF0F0F0" HAlign="Center" ReadOnly="True" TabIndexOD="104" />
-		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,15,10" Text="_Save" Click="butSave_Click" RenderTransformOrigin="0.947,0.708" />
+		<ui:TextBox x:Name="textScale1" Width="90" Height="20" Margin="134,124,0,0" ColorBack="#FFF0F0F0" HAlign="Center" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,15,10" Text="Save" Click="butOK_Click" RenderTransformOrigin="0.947,0.708" />
 		<ui:Label x:Name="label21" Width="78" Height="18" Margin="54,73,0,0" Text="Resolution" HAlign="Right" VAlign="Center" />
-		<ui:TextBox x:Name="textResolution1" Width="90" Height="20" Margin="134,72,0,0" ColorBack="#FFF0F0F0" HAlign="Center" ReadOnly="True" TabIndexOD="100" />
+		<ui:TextBox x:Name="textResolution1" Width="90" Height="20" Margin="134,72,0,0" ColorBack="#FFF0F0F0" HAlign="Center" />
 		<ui:Label x:Name="label1" Width="94" Height="18" Margin="38,125,0,0" Text="Microsoft Scale" HAlign="Right" VAlign="Center" />
 	</Grid>
 </local:FrmODBase>

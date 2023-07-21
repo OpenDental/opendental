@@ -53,8 +53,6 @@ namespace OpenDental{
 		public bool IsNew;
 		///<summary>List of Negative adjustments. Will be inserted into DB as negative adjustment. </summary>
 		private List<Adjustment> _listAdjustments=new List<Adjustment>();
-		///<summary>List of Audit Trail log messages to be inserted if changes are finalized.</summary>
-		private List<string> _listLogs=new List<string>();
 
 		///<summary>The supplied payment plan should already have been saved in the database.</summary>
 		public FormPayPlan(PayPlan payPlan) {
@@ -108,13 +106,13 @@ namespace OpenDental{
 			}
 			if(PrefC.HasClinicsEnabled) {
 				if(IsNew) {
-					comboClinic.ClinicNumSelected=_patient.ClinicNum;
+					comboClinic.SelectedClinicNum=_patient.ClinicNum;
 				}
 				else if(_listPayPlanCharges.Count==0) {
-					comboClinic.ClinicNumSelected=0;
+					comboClinic.SelectedClinicNum=0;
 				}
 				else {
-					comboClinic.ClinicNumSelected=_listPayPlanCharges[0].ClinicNum;
+					comboClinic.SelectedClinicNum=_listPayPlanCharges[0].ClinicNum;
 				}
 			}
 			FillComboProv();
@@ -145,7 +143,7 @@ namespace OpenDental{
 				LayoutManager.MoveLocation(labelTxAmtInfo,new Point(labelTxAmtInfo.Location.X,labelTxAmtInfo.Location.Y-20));
 			}
 			else {
-				Text=Lan.g(this,"Old Payment Plan");
+				Text=Lan.g(this,"Patient Payment Plan");
 				labelInsPlan.Visible=false;
 				textInsPlan.Visible=false;
 				butChangePlan.Visible=false;
@@ -166,7 +164,7 @@ namespace OpenDental{
 			}
 			textTotalTxAmt.Text=PayPlans.GetTxTotalAmt(_listPayPlanCharges).ToString("f");
 			if(_payPlan.IsClosed) {
-				butSave.Text=Lan.g(this,"Reopen");
+				butOK.Text=Lan.g(this,"Reopen");
 				butDelete.Enabled=false;
 				butClosePlan.Enabled=false;
 				labelClosed.Visible=true;
@@ -202,8 +200,8 @@ namespace OpenDental{
 				butDelete.Visible=false;
 				butClosePlan.Visible=false;
 			}
-			if(!Security.IsAuthorized(EnumPermType.PayPlanEdit)) {
-				DisableAllExcept(butGoToGuar,butGoToPat,butPrint,checkExcludePast,butAddTxCredits,gridCharges);
+			if(!Security.IsAuthorized(Permissions.PayPlanEdit)) {
+				DisableAllExcept(butGoToGuar,butGoToPat,butCancel,butPrint,checkExcludePast,butAddTxCredits,gridCharges);
 				//allow grid so users can scroll, but de-register for event so charges cannot be modified. 
 				this.gridCharges.CellDoubleClick-=gridCharges_CellDoubleClick;
 			}
@@ -219,20 +217,20 @@ namespace OpenDental{
 		}
 
 		private void butPickProv_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick = new FrmProviderPick(comboProv.Items.GetAll<Provider>());
-			frmProviderPick.ProvNumSelected=comboProv.GetSelectedProvNum();
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick = new FormProviderPick(comboProv.Items.GetAll<Provider>());
+			formProviderPick.ProvNumSelected=comboProv.GetSelectedProvNum();
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboProv.SetSelectedProvNum(frmProviderPick.ProvNumSelected);
+			comboProv.SetSelectedProvNum(formProviderPick.ProvNumSelected);
 		}
 
 		///<summary>Fills combo provider based on which clinic is selected and attempts to preserve provider selection if any.</summary>
 		private void FillComboProv() {
 			long provNum=comboProv.GetSelectedProvNum();
 			comboProv.Items.Clear();
-			comboProv.Items.AddProvsFull(Providers.GetProvsForClinic(comboClinic.ClinicNumSelected));
+			comboProv.Items.AddProvsFull(Providers.GetProvsForClinic(comboClinic.SelectedClinicNum));
 			comboProv.SetSelectedProvNum(provNum);
 		}
 
@@ -420,7 +418,7 @@ namespace OpenDental{
 		}
 
 		private void butChangePlan_Click(object sender,System.EventArgs e) {
-			using FormInsPlanSelectFam formInsPlanSelect=new FormInsPlanSelectFam(_payPlan.PatNum);
+			using FormInsPlanSelect formInsPlanSelect=new FormInsPlanSelect(_payPlan.PatNum);
 			formInsPlanSelect.ShowDialog();
 			if(formInsPlanSelect.DialogResult==DialogResult.Cancel) {
 				return;
@@ -594,7 +592,6 @@ namespace OpenDental{
 				}
 				if(formPayPlanChargeEdit.PayPlanChargeCur==null) {//The user deleted the payplancharge.
 					_listPayPlanCharges.Remove(payPlanCharge);//We know the payPlanCharge object is inside _listPayPlanCharges.
-					_listLogs.Add("Deleted.");
 					if(payPlanCharge.Principal<0) {//adjustment
 						textAmount.Text=(PIn.Double(textAmount.Text)-(payPlanChargeOldAmt)).ToString("f");//charge will be negative, - to add the amount back
 					}
@@ -613,10 +610,6 @@ namespace OpenDental{
 						amtChanged=payPlanCharge.Principal-payPlanChargeOldAmt;//amt should be -
 					}
 					textAmount.Text=(PIn.Double(textAmount.Text)+(amtChanged)).ToString("f");
-				}
-				if(!formPayPlanChargeEdit.ListChangeLog.IsNullOrEmpty()) {
-					string log=PayPlans.GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
-					_listLogs.Add(log);
 				}
 			}
 			else if(gridCharges.ListGridRows[e.Row].Tag.GetType()==typeof(PaySplit)) {
@@ -640,7 +633,7 @@ namespace OpenDental{
 					MsgBox.Show(this,"The claim has been deleted.");
 				}
 				else {
-					if(!Security.IsAuthorized(EnumPermType.ClaimView)) {
+					if(!Security.IsAuthorized(Permissions.ClaimView)) {
 						return;
 					}
 					using FormClaimEdit formClaimEdit=new FormClaimEdit(claim,_patient,_family);//FormClaimEdit inserts and/or updates the claim and/or claimprocs, which could potentially change the bundle.
@@ -654,7 +647,7 @@ namespace OpenDental{
 
 		///<summary>Adds a debit.</summary>
 		private void butAdd_Click(object sender,System.EventArgs e) {
-			PayPlanCharge payPlanCharge=PayPlanEdit.CreateDebitCharge(_payPlan,_family,comboProv.GetSelectedProvNum(),comboClinic.ClinicNumSelected,0,0,DateTime.Today,"");
+			PayPlanCharge payPlanCharge=PayPlanEdit.CreateDebitCharge(_payPlan,_family,comboProv.GetSelectedProvNum(),comboClinic.SelectedClinicNum,0,0,DateTime.Today,"");
 			using FormPayPlanChargeEdit formPayPlanChargeEdit=new FormPayPlanChargeEdit(payPlanCharge,_payPlan);
 			formPayPlanChargeEdit.IsNew=true;
 			formPayPlanChargeEdit.ShowDialog();
@@ -662,7 +655,6 @@ namespace OpenDental{
 				return;
 			}
 			_listPayPlanCharges.Add(payPlanCharge);
-			_listLogs.Add("Added.");
 			FillCharges();
 			//fills signature. Most likely will invalidate the signature due to changes to PP
 			FillSignatureBox();
@@ -684,7 +676,7 @@ namespace OpenDental{
 		}
 
 		private void butSignPrint_Click(object sender,EventArgs e) {
-			if(HasErrors(allowNoCharges:true)) {
+			if(HasErrors()) {
 				return;
 			}
 			SaveData();
@@ -694,8 +686,7 @@ namespace OpenDental{
 			string keyData=PayPlans.GetKeyDataForSignature(_payPlan);
 			SheetParameter.SetParameter(sheet,"keyData",keyData);
 			SheetUtil.CalculateHeights(sheet);
-			using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit();
-			formSheetFillEdit.SheetCur=sheet;
+			using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit(sheet);
 			formSheetFillEdit.ShowDialog();
 			if(formSheetFillEdit.DialogResult!=DialogResult.OK) {
 				return;
@@ -716,7 +707,7 @@ namespace OpenDental{
 
 
 		private void butPrint_Click(object sender,System.EventArgs e) {
-			if(HasErrors(allowNoCharges:true)) {
+			if(HasErrors()) {
 				return;
 			}
 			SaveData(true);
@@ -849,64 +840,50 @@ namespace OpenDental{
 		}
 
 		private void butCloseOut_Click(object sender,EventArgs e) {
-			if(HasErrors(allowNoCharges:true)) {
+			if(HasErrors()) {
 				return;
 			}
-			bool shouldClosePlan;
-			if(IsInsPayPlan) {
-				shouldClosePlan=AdjustInsPayPlanChargesForClose();
+			if(!IsInsPayPlan) {//Patient Payment Plan
+				List<long> listProcNums=_listPayPlanCharges.Where(x => x.ProcNum!=0).Select(x => x.ProcNum).ToList();// Selects list of ProcNums from _listPayPlanCharges
+				List<Procedure> listProcedures=Procedures.GetManyProc(listProcNums,false);
+				if(listProcedures.Any(x => x.ProcStatus==ProcStat.TP)) {
+					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Treatment planned procedures are attached to the payment plan, closing the plan will remove those credits. Do you want to continue?")) {
+						return;
+					}
+				}
+				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Closing out this payment plan will remove interest from all future charges "
+					+"and make them due immediately.  Do you want to continue?")) {
+					return;
+				}
+				PayPlanCharge payPlanChargeCloseout=PayPlanEdit.CloseOutPatPayPlan(_listPayPlanCharges,_payPlan,DateTime.Today);
+				_listPayPlanCharges.RemoveAll(x => x.ChargeDate > DateTime.Today.Date); //also removes TP Procs
+				_listPayPlanCharges.Add(payPlanChargeCloseout);
 			}
-			else { //Patient Payment Plan
-				shouldClosePlan=AdjustPatPayPlanChargesForClose();
+			else {
+				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Closing out an insurance payment plan will change the Tx Completed Amt to match the amount"
+					+" insurance actually paid.  Do you want to continue?")) {
+					return;
+				}
+				double insPaidTotal=0;
+				for(int i=0;i < _tableClaimProcsBundled.Rows.Count;i++) {
+					insPaidTotal+=PIn.Double(_tableClaimProcsBundled.Rows[i]["InsPayAmt"].ToString());
+				}
+				textCompletedAmt.Text=insPaidTotal.ToString("f");
 			}
-			if (shouldClosePlan) {
-				ClosePayPlan(_payPlan);
-			}
-		}
-
-		private bool AdjustPatPayPlanChargesForClose() {
-			List<long> listCreditedProcNums=_listPayPlanCharges.Where(x => x.ProcNum!=0).Select(x => x.ProcNum).ToList();
-			List<Procedure> listCreditedProcedures=Procedures.GetManyProc(listCreditedProcNums,includeNote:false);
-			string prompt=Lan.g(this,"Interest will be removed from future charges and they will be made due immediately. Would you like to continue?");
-			if(listCreditedProcedures.Any(x => x.ProcStatus!=ProcStat.C)) {
-				prompt=Lan.g(this,"Credits for treatment planned procedures will be removed and total principal may be reduced.")+" "+prompt;
-			}
-			if (!MsgBox.Show(MsgBoxButtons.YesNo,prompt)) {
-				return false;
-			}
-			PayPlanCharge payPlanChargeCloseout=PayPlanEdit.CalculatePatPayPlanCloseoutCharge(_listPayPlanCharges,listCreditedProcedures,_payPlan,DateTime.Today);
-			_listPayPlanCharges.RemoveAll(x => x.ChargeDate > DateTime.Today.Date); //also removes TP Procs
-			_listPayPlanCharges.Add(payPlanChargeCloseout);
-			return true;
-		 }
-
-		private bool AdjustInsPayPlanChargesForClose() {
-			if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Closing out an insurance payment plan will change the Tx Completed Amt to match the amount insurance actually paid.  Do you want to continue?")) {
-				return false;
-			}
-			double insPaidTotal=0;
-			for(int i=0;i < _tableClaimProcsBundled.Rows.Count;i++) {
-				insPaidTotal+=PIn.Double(_tableClaimProcsBundled.Rows[i]["InsPayAmt"].ToString());
-			}
-			textCompletedAmt.Text=insPaidTotal.ToString("f");
-			return true;
-		}
-
-		private void ClosePayPlan(PayPlan payPlan) {
 			butClosePlan.Enabled=false;
-			payPlan.IsClosed=true;
+			_payPlan.IsClosed=true;
 			FillCharges();
 			SaveData();
-			CreditCards.RemoveRecurringCharges(payPlan.PayPlanNum);
+			CreditCards.RemoveRecurringCharges(_payPlan.PayPlanNum);
 			DialogResult=DialogResult.OK;
 		}
 
-		private bool HasErrors(bool allowNoCharges=false) {
+		private bool HasErrors() {
 			if(!textDate.IsValid() || !textCompletedAmt.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return true;
 			}
-			if(gridCharges.ListGridRows.Count==0 && !allowNoCharges) {
+			if(gridCharges.ListGridRows.Count==0) {
 				MsgBox.Show(this,"An amortization schedule must be created first.");
 				return true;
 			}
@@ -942,12 +919,12 @@ namespace OpenDental{
 			PayPlanTerms payPlanTerms=GetTermsFromUI();
 			if(isRecalculate) {
 				PayPlanEdit.PayPlanRecalculationData payPlanRecalculationData=PayPlanEdit.PayPlanRecalculationData.CreateRecalculationData(payPlanTerms,_payPlan,_family
-					,comboProv.GetSelectedProvNum(),comboClinic.ClinicNumSelected,_listPayPlanCharges,_listPaySplits,_formPayPlanRecalculate.IsPrepay,
+					,comboProv.GetSelectedProvNum(),comboClinic.SelectedClinicNum,_listPayPlanCharges,_listPaySplits,_formPayPlanRecalculate.IsPrepay,
 					_formPayPlanRecalculate.IsRecalculateInterest);
 				PayPlanEdit.RecalculateScheduleCharges(payPlanTerms,payPlanRecalculationData);
 			}
 			else{
-				PayPlanEdit.CreateScheduleCharges(payPlanTerms,_payPlan,_family,comboProv.GetSelectedProvNum(),comboClinic.ClinicNumSelected,_listPayPlanCharges);
+				PayPlanEdit.CreateScheduleCharges(payPlanTerms,_payPlan,_family,comboProv.GetSelectedProvNum(),comboClinic.SelectedClinicNum,_listPayPlanCharges);
 			}
 			AreTermsValid(payPlanTerms.AreTermsValid);
 			FillCharges();
@@ -1030,39 +1007,32 @@ namespace OpenDental{
 				return;
 			}
 			List<InputBoxParam> listInputBoxParams=new List<InputBoxParam>();
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.ValidDouble;
-			inputBoxParam.LabelText=Lan.g(this,"Please enter an amount:")+" ";
-			listInputBoxParams.Add(inputBoxParam);
-			inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.CheckBox;
-			inputBoxParam.Text=Lan.g(this,"Also make line item in Account Module");
-			inputBoxParam.SizeParam=new System.Windows.Size(250,30);
+			listInputBoxParams.Add(new InputBoxParam(InputBoxType.ValidDouble,Lan.g(this,"Please enter an amount:")+" "));
+			listInputBoxParams.Add(new InputBoxParam(InputBoxType.CheckBox,"",Lan.g(this,"Also make line item in Account Module"),new Size(250,30)));
+			using InputBox inputBox=new InputBox(listInputBoxParams
+				,new Func<string,bool>((text) => {
+					double amount=PIn.Double(text);
+					if(amount==0) {
+						MsgBox.Show(this,"Please enter a valid value");
+						return false;
+					}
+					if(amount<0) {
+						MsgBox.Show(this,"Please enter a positive value for the negative adjustment");
+						return false;
+					}
+					return true;
+				})
+			);
 			Def def=Defs.GetDef(DefCat.AdjTypes,PrefC.GetLong(PrefName.PayPlanAdjType));
-			if(!GroupPermissions.HasPermissionForAdjType(EnumPermType.AdjustmentCreate,def,DateTime.Today)) {
-				inputBoxParam.Enabled=false;
+			inputBox.setTitle(Lan.g(this,"Negative Pay Plan Adjustment"));
+			inputBox.SizeInitial=new Size(350,170);
+			if(!GroupPermissions.HasPermissionForAdjType(Permissions.AdjustmentCreate,def)) {
+				inputBox.checkBoxResult.Enabled=false;
 			}
-			listInputBoxParams.Add(inputBoxParam);
-			InputBox inputBox=new InputBox(listInputBoxParams);
-			inputBox.FuncOkClick=new Func<string,bool>((text) => {
-				double amount=PIn.Double(text);
-				if(amount==0) {
-					MsgBox.Show(this,"Please enter a valid value");
-					return false;
-				}
-				if(amount<0) {
-					MsgBox.Show(this,"Please enter a positive value for the negative adjustment");
-					return false;
-				}
-				return true;
-			});
-			inputBox.SetTitle(Lan.g(this,"Negative Pay Plan Adjustment"));
-			inputBox.SizeInitial=new System.Windows.Size(350,170);
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			if(inputBox.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
-			double negAdjAmt=-(PIn.Double(inputBox.StringResult));
+			double negAdjAmt=-(PIn.Double(inputBox.textResult.Text));
 			double totalRemainingBal=PayPlans.GetBalance(_payPlan.PayPlanNum,_listPayPlanCharges,_listPaySplits);
 			if(CompareDouble.IsGreaterThan(Math.Abs(negAdjAmt),totalRemainingBal)) {
 				MsgBox.Show(this,"Cannot add an adjustment totaling more than remaining balance due");
@@ -1070,7 +1040,7 @@ namespace OpenDental{
 			}
 			double totalNegFutureAdjs=_listPayPlanCharges.FindAll(x => x.ChargeType==PayPlanChargeType.Debit && x.Principal<0 && x.ChargeDate > DateTime.Today).Sum(x => x.Principal);
 			_listPayPlanCharges=PayPlanEdit.CreatePayPlanAdjustments(negAdjAmt,_listPayPlanCharges,totalNegFutureAdjs);
-			if(inputBox.BoolResult) {//Make adjustment visible in account module.
+			if(inputBox.checkBoxResult.Checked) {//Make adjustment visible in account module.
 				//set the information here, insert to the db upon saving
 				Adjustment adjustment=new Adjustment();
 				adjustment.AdjAmt=negAdjAmt; 
@@ -1081,7 +1051,7 @@ namespace OpenDental{
 				adjustment.AdjNote=Lan.g(this,"Payment plan adjustment");
 				adjustment.SecUserNumEntry=Security.CurUser.UserNum;
 				adjustment.SecDateTEdit=DateTime.Now;
-				adjustment.ClinicNum=comboClinic.ClinicNumSelected;
+				adjustment.ClinicNum=comboClinic.SelectedClinicNum;
 				if(Defs.GetDef(DefCat.AdjTypes,PrefC.GetLong(PrefName.PayPlanAdjType))!=null) {
 					adjustment.AdjType=Defs.GetDef(DefCat.AdjTypes,PrefC.GetLong(PrefName.PayPlanAdjType)).DefNum;
 				}
@@ -1150,7 +1120,7 @@ namespace OpenDental{
 				MsgBox.Show(this,"This Payment Plan has already been signed.");
 				return;
 			}
-			if(MobileAppDevices.ShouldCreateMobileNotification(_patient.PatNum,out MobileAppDevice device)) {
+			if(MobileAppDevices.ShouldSendPush(_patient.PatNum,out MobileAppDevice device)) {
 				PushSelectedPayPlanToEclipboard(device);
 			}
 			else {
@@ -1207,7 +1177,7 @@ namespace OpenDental{
 				return;//document wont be null below.
 			}
 			using PdfDocument pdfDocument=GetPayPlanPDF(_payPlan);//Cant be null due to above check.
-			if(MobileNotifications.CI_SendPaymentPlan(pdfDocument,_payPlan,mobileAppDevice.MobileAppDeviceNum
+			if(PushNotificationUtils.CI_SendPaymentPlan(pdfDocument,_payPlan,mobileAppDevice.MobileAppDeviceNum
 				,out string errorMsg,out long mobileDataByeNum)) 
 			{
 				//The payment plan's MobileAppDeviceNum needs to be updated so that we know it is on a device
@@ -1226,14 +1196,14 @@ namespace OpenDental{
 		///<summary>Performs validation on payplan and then calls SaveData() to save payplan if the payplan was valid. Sets DialogResult to OK</summary>
 		private bool Save() {
 			if(_payPlan.IsClosed) {
-				butSave.Text="OK";
+				butOK.Text="OK";
 				butDelete.Enabled=true;
 				butClosePlan.Enabled=true;
 				labelClosed.Visible=false;
 				_payPlan.IsClosed=false;
 				return false;
 			}
-			if(HasErrors(allowNoCharges:true)) {
+			if(HasErrors()) {
 				return false;
 			}
 			if(IsInsPayPlan && _payPlan.PlanNum==0) {
@@ -1306,10 +1276,10 @@ namespace OpenDental{
 				for(int i=0;i<_listAdjustments.Count;i++) {
 					Adjustments.Insert(_listAdjustments[i]);
 					TsiTransLogs.CheckAndInsertLogsIfAdjTypeExcluded(_listAdjustments[i]);
-					SecurityLogs.MakeLogEntry(EnumPermType.AdjustmentCreate,_patient.PatNum,Lan.g(this,"Adjustment created from payment plan for ")+_patient.GetNameFL()+", "+_listAdjustments[i].AdjAmt.ToString("c"));
-				}
+					SecurityLogs.MakeLogEntry(Permissions.AdjustmentCreate,_patient.PatNum,Lan.g(this,"Adjustment created from payment plan for")+" "
+						+_patient.GetNameFL()+", "+_listAdjustments[i].AdjAmt.ToString("c"));
+				}				
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
 			if(PayPlans.GetOne(_payPlan.PayPlanNum)==null) {
 				//The payment plan no longer exists in the database. 
 				MsgBox.Show(this,"This payment plan has been deleted by another user.");
@@ -1319,14 +1289,10 @@ namespace OpenDental{
 			PayPlanL.MakeSecLogEntries(_payPlan,_payPlanOld,signatureBoxWrapper.GetSigChanged(),
 				_isSigOldValid,signatureBoxWrapper.SigIsBlank,signatureBoxWrapper.IsValid,isPrinting);
 			for(int i=0;i<_listPayPlanCharges.Count;i++) {
-				_listPayPlanCharges[i].ClinicNum=comboClinic.ClinicNumSelected;
+				_listPayPlanCharges[i].ClinicNum=comboClinic.SelectedClinicNum;
 				_listPayPlanCharges[i].ProvNum=comboProv.GetSelectedProvNum();
 			}
 			PayPlanCharges.Sync(_listPayPlanCharges,_payPlan.PayPlanNum);
-			if(_listPayPlanCharges.Count>0) {
-				SecurityLogs.MakeLogEntries(EnumPermType.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,_listLogs);
-			}
-			_listLogs.Clear();//In case we save multiple times.
 		}
 
 		private void butDelete_Click(object sender,System.EventArgs e) {
@@ -1342,17 +1308,21 @@ namespace OpenDental{
 				MessageBox.Show(ex.Message);
 				return;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.PayPlanEdit,_patient.PatNum,
+			SecurityLogs.MakeLogEntry(Permissions.PayPlanEdit,_patient.PatNum,
 				(_payPlanOld.PlanNum == 0 ? "Patient" : "Insurance") + " Payment Plan deleted.",_payPlanOld.PayPlanNum,DateTime.MinValue);
 			DialogResult=DialogResult.OK;
 			Plugins.HookAddCode(this,"FormPayPlan.butDelete_Click_end",_patient,_payPlan);
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			if(!Save()) {
 				return;
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void FormPayPlan_Closing(object sender,System.ComponentModel.CancelEventArgs e) {

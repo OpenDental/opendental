@@ -11,10 +11,10 @@ using OpenDentBusiness;
 namespace OpenDental {
 	public class PrinterL {
 		
-		///<summary>Only used from FormTPSign because that uses a PrintPreviewControl on a custom form. Defines what control to show the printdoc in after validation.
+		///<summary>Rarely used.  When previewing, defines what control to show the printdoc in after validation.
 		///After used one time, is cleared back to the default value of null.
 		///This option is disabled when set to null.</summary>
-		public static PrintPreviewControl PrintPreviewControlOverride=null;
+		public static PrintPreviewControl ControlPreviewOverride=null;
 
 		///<summary>Gets a PrintDocument that has some added functionality.  All printing in Open Dental should use this method (or an ODprintout object) for printing.</summary>
 		///<param name="printPageEventHandler">The handler that will get invoked when printing.  This defines how to draw each page.</param>
@@ -63,7 +63,7 @@ namespace OpenDental {
 		///<param name="printoutOrientation">Defaults to printers default value.  Otherwise specify a value for either landscape or portrait.</param>
 		///<returns>Returns true if succesfully printed, or if preview is shown and OK is clicked.</returns>
 		public static bool TryPrintOrDebugRpPreview(PrintPageEventHandler printPageEventHandler,string auditDescription
-			,PrintoutOrientation printoutOrientation=PrintoutOrientation.Portrait,PrintSituation printSituation=PrintSituation.Default,
+			,PrintoutOrientation printoutOrientation=PrintoutOrientation.Default,PrintSituation printSituation=PrintSituation.Default,
 			long auditPatNum=0,Margins margins=null,PrintoutOrigin printoutOrigin=PrintoutOrigin.Default,bool isForcedPreview=false)
 		{
 			ODprintout printout=new ODprintout(
@@ -227,7 +227,7 @@ namespace OpenDental {
 			}
 			#endregion 2
 			#region 3 - Present the dialog
-			if(showPrompt && !ODEnvironment.IsCloudServer) {
+			if(showPrompt && !ODBuild.IsWeb()) {
 				PrintDialog printDialog=new PrintDialog();
 				printDialog.AllowSomePages=true;
 				printDialog.PrinterSettings=printerSettings;
@@ -244,7 +244,7 @@ namespace OpenDental {
 			#endregion 3
 			//Create audit log entry for printing.  PatNum can be 0.
 			if(!string.IsNullOrEmpty(auditDescription)){
-				SecurityLogs.MakeLogEntry(EnumPermType.Printing,patNum,auditDescription);
+				SecurityLogs.MakeLogEntry(Permissions.Printing,patNum,auditDescription);
 			}
 			return true;
 		}
@@ -282,14 +282,14 @@ namespace OpenDental {
 				ShowError(printout);
 				return false;
 			}
-			PrintPreviewControlOverride.Document=printout.PrintDoc;
-			PrintPreviewControlOverride=null;
+			ControlPreviewOverride.Document=printout.PrintDoc;
+			ControlPreviewOverride=null;
 			return true;
 		}
 
 		///<summary>Launches FormRpPrintPreview for the given printDoc.  Returns true if dialog result was OK; Otherwise false.</returns>
 		private static bool RpPreview(ODprintout printout) {
-			if(PrintPreviewControlOverride!=null) {
+			if(ControlPreviewOverride!=null) {
 				return IsControlPreviewOverrideValid(printout);
 			}
 			FormRpPrintPreview formRpPrintPreview=new FormRpPrintPreview(printout);
@@ -300,7 +300,7 @@ namespace OpenDental {
 		
 		///<summary>Launches FormPrintPreview for the given printDoc.  Returns true if dialog result was OK; Otherwise false.</returns>
 		private static bool PreviewClassic(ODprintout printout) {
-			if(PrintPreviewControlOverride!=null) {
+			if(ControlPreviewOverride!=null) {
 				return IsControlPreviewOverrideValid(printout);
 			}
 			MakeMarginsFitWithinHardMargins(printout.PrintDoc);

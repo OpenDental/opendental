@@ -215,7 +215,7 @@ namespace OpenDental {
 			this.Close();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!ValidateUserInput()) {
 				return;
 			}
@@ -250,14 +250,14 @@ namespace OpenDental {
 					if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Fees are about to be updated.  Continue?")) {
 						return;
 					}
-					ProgressWin progressOD=new ProgressWin();
+					ProgressOD progressOD=new ProgressOD();
 					progressOD.ActionMain=() => {
 						listClinicNumsNew.Remove(clinicNumMaster);
 						FeeScheds.CopyFeeSchedule(feeSched,clinicNumMaster,0,feeSched,listClinicNumsNew,0);
 						listClinicNumsNew.Add(clinicNumMaster);
 					};
 					progressOD.StartingMessage=Lans.g(this,"Creating Group, Please Wait...");
-					progressOD.ShowDialog();
+					progressOD.ShowDialogProgress();
 					if(progressOD.IsCancelled){
 						return;//fees could be partially copied which is no big deal.
 					}
@@ -267,10 +267,10 @@ namespace OpenDental {
 					if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Fees are about to be updated.  Continue?")) {
 						return;
 					}
-					ProgressWin progressOD=new ProgressWin();
+					ProgressOD progressOD=new ProgressOD();
 					progressOD.ActionMain=() => FeeScheds.CopyFeeSchedule(feeSched,0,0,feeSched,listClinicNumsNew,0);
 					progressOD.StartingMessage=Lans.g(this,"Creating Group, Please Wait...");
-					progressOD.ShowDialog();
+					progressOD.ShowDialogProgress();
 					if(progressOD.IsCancelled){
 						return;
 					}
@@ -300,5 +300,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

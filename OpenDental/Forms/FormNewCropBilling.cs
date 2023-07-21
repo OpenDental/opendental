@@ -375,7 +375,7 @@ namespace OpenDental {
 							patientNew.PatStatus=PatientStatus.Archived;
 							string logEntry=Lan.g(this,"Patient's status changed from ")+patientOld.PatStatus.GetDescription()
 								+Lan.g(this," to ")+patientNew.PatStatus.GetDescription()+Lan.g(this," from NewCrop Billing window.");
-							SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,patientNew.PatNum,logEntry);
+							SecurityLogs.MakeLogEntry(Permissions.PatientEdit,patientNew.PatNum,logEntry);
 						}
 						//Notify the user about any deleted or archived patients that were just given a new repeating charge.
 						if(patientOld.PatStatus==PatientStatus.Archived || patientOld.PatStatus==PatientStatus.Deleted) {
@@ -385,7 +385,7 @@ namespace OpenDental {
 						Patients.Update(patientNew,patientOld);
 					}
 					_listNewCropCharges[i].repeatCharge.RepeatChargeNum=RepeatCharges.Insert(_listNewCropCharges[i].repeatCharge);
-					RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(_listNewCropCharges[i].repeatCharge,EnumPermType.RepeatChargeCreate,isAutomated:true,oldPat:patientOld,newPat:patientNew);
+					RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(_listNewCropCharges[i].repeatCharge,Permissions.RepeatChargeCreate,isAutomated:true,oldPat:patientOld,newPat:patientNew);
 					DateTime dateNow=MiscData.GetNowDateTime();
 					Procedure procedurePrevMonth=new Procedure();
 					Procedure procedureCurrentMonth=new Procedure();
@@ -413,7 +413,7 @@ namespace OpenDental {
 							_listNewCropCharges[i].repeatCharge.DateStop=dateEndLastMonth;//Make sure the recent use is reflected in the end date.
 							Patient patientOld=Patients.GetPat(repeatChargeOld.PatNum);
 							RepeatCharges.Update(_listNewCropCharges[i].repeatCharge);
-							RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatChargeOld,EnumPermType.RepeatChargeUpdate,patientOld,newCharge:_listNewCropCharges[i].repeatCharge,isAutomated:true,source:LogSources.eRx);
+							RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatChargeOld,Permissions.RepeatChargeUpdate,patientOld,newCharge:_listNewCropCharges[i].repeatCharge,isAutomated:true,source:LogSources.eRx);
 						}
 					}
 				}
@@ -444,6 +444,10 @@ namespace OpenDental {
 			}
 			using MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(stringBuilderMsg.ToString());
 			msgBoxCopyPaste.ShowDialog();//Must be modal, because non-modal does not display here for some reason.
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

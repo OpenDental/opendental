@@ -24,6 +24,7 @@ namespace OpenDental {
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPatientStatusTool));
+			this.butCancel = new OpenDental.UI.Button();
 			this.groupCriteria = new OpenDental.UI.GroupBox();
 			this.comboPatientStatusCur = new OpenDental.UI.ComboBox();
 			this.labelPatientCurrent = new System.Windows.Forms.Label();
@@ -40,6 +41,17 @@ namespace OpenDental {
 			this.comboChangePatientStatusTo = new OpenDental.UI.ComboBox();
 			this.groupCriteria.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(932, 603);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// groupCriteria
 			// 
@@ -98,7 +110,7 @@ namespace OpenDental {
 			// 
 			this.listOptions.Location = new System.Drawing.Point(322, 19);
 			this.listOptions.Name = "listOptions";
-			this.listOptions.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
+			this.listOptions.SelectionMode = UI.SelectionMode.MultiExtended;
 			this.listOptions.Size = new System.Drawing.Size(120, 56);
 			this.listOptions.TabIndex = 77;
 			// 
@@ -162,7 +174,7 @@ namespace OpenDental {
 			// butRun
 			// 
 			this.butRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butRun.Location = new System.Drawing.Point(932, 602);
+			this.butRun.Location = new System.Drawing.Point(844, 603);
 			this.butRun.Name = "butRun";
 			this.butRun.Size = new System.Drawing.Size(75, 24);
 			this.butRun.TabIndex = 3;
@@ -188,6 +200,7 @@ namespace OpenDental {
 			// 
 			// FormPatientStatusTool
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(1019, 639);
 			this.Controls.Add(this.labelChangeTo);
 			this.Controls.Add(this.groupCriteria);
@@ -196,6 +209,7 @@ namespace OpenDental {
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butCreateList);
 			this.Controls.Add(this.butRun);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.comboChangePatientStatusTo);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormPatientStatusTool";
@@ -209,6 +223,7 @@ namespace OpenDental {
 		#endregion
 
 		private OpenDental.UI.Button butRun;
+		private OpenDental.UI.Button butCancel;
 		private UI.GridOD gridMain;
 		private UI.Button butCreateList;
 		private UI.Button butDeselectAll;

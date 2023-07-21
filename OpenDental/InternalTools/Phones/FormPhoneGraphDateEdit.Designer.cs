@@ -24,8 +24,9 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPhoneGraphDateEdit));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butEditSchedule = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.textSuperPeak = new System.Windows.Forms.TextBox();
 			this.textPeak = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
@@ -33,6 +34,16 @@ namespace OpenDental{
 			this.listSupers = new OpenDental.UI.ListBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(387, 616);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butEditSchedule
 			// 
@@ -43,15 +54,15 @@ namespace OpenDental{
 			this.butEditSchedule.TabIndex = 50;
 			this.butEditSchedule.Text = "&Edit Schedule";
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(386, 616);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 51;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(306, 616);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 51;
+			this.butOK.Text = "OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// textSuperPeak
 			// 
@@ -112,9 +123,10 @@ namespace OpenDental{
 			this.Controls.Add(this.textSuperPeak);
 			this.Controls.Add(this.textPeak);
 			this.Controls.Add(this.label2);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butEditSchedule);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormPhoneGraphDateEdit";
 			this.Text = "Phone Graph Edits";
@@ -125,12 +137,14 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private UI.Button butEditSchedule;
 		private System.Windows.Forms.TextBox textSuperPeak;
 		private System.Windows.Forms.TextBox textPeak;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label1;
-		private UI.Button butSave;
+		private UI.Button butOK;
 		private OpenDental.UI.ListBox listSupers;
 		private System.Windows.Forms.Label label3;
 	}

@@ -94,7 +94,8 @@ namespace OpenDental {
 			this.textExportPath = new System.Windows.Forms.TextBox();
 			this.textDescription = new System.Windows.Forms.TextBox();
 			this.butDelete = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.labelLoginID = new System.Windows.Forms.Label();
 			this.comboCommBridge = new OpenDental.UI.ComboBox();
 			this.label14 = new System.Windows.Forms.Label();
@@ -109,10 +110,8 @@ namespace OpenDental {
 			this.label1 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
 			this.labelExportPath = new System.Windows.Forms.Label();
-			this.checkSaveAttachments = new OpenDental.UI.CheckBox();
+			this.checkSaveDXC = new OpenDental.UI.CheckBox();
 			this.checkSaveDXCSoap = new OpenDental.UI.CheckBox();
-			this.textLocationID = new System.Windows.Forms.TextBox();
-			this.label2 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.groupBox3.SuspendLayout();
 			this.groupBox2.SuspendLayout();
@@ -211,6 +210,7 @@ namespace OpenDental {
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(924, 298);
 			this.groupBox1.TabIndex = 2;
+			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "X12 Required Fields - Provided by Clearinghouse or Carrier";
 			// 
 			// groupBox3
@@ -228,6 +228,7 @@ namespace OpenDental {
 			this.groupBox3.Name = "groupBox3";
 			this.groupBox3.Size = new System.Drawing.Size(435, 124);
 			this.groupBox3.TabIndex = 5;
+			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Hexadecimal Delimiters (Always blank except for Denti-Cal)";
 			// 
 			// label37
@@ -402,6 +403,7 @@ namespace OpenDental {
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(466, 124);
 			this.groupBox2.TabIndex = 4;
+			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Sender ID - Used in ISA06, GS02, 1000A NM1, and 1000A PER";
 			// 
 			// label30
@@ -698,15 +700,26 @@ namespace OpenDental {
 			this.butDelete.Text = "&Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(855, 658);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(78, 26);
-			this.butSave.TabIndex = 12;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(784, 658);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(78, 26);
+			this.butOK.TabIndex = 12;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(868, 658);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(78, 26);
+			this.butCancel.TabIndex = 13;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// labelLoginID
 			// 
@@ -833,15 +846,15 @@ namespace OpenDental {
 			this.labelExportPath.Text = "Claim Export Path";
 			this.labelExportPath.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
-			// checkSaveAttachments
+			// checkSaveDXC
 			// 
-			this.checkSaveAttachments.Location = new System.Drawing.Point(9, 517);
-			this.checkSaveAttachments.Name = "checkSaveAttachments";
-			this.checkSaveAttachments.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.checkSaveAttachments.Size = new System.Drawing.Size(256, 20);
-			this.checkSaveAttachments.TabIndex = 22;
-			this.checkSaveAttachments.Text = "Save Attachments to Imaging Module";
-			this.checkSaveAttachments.Visible = false;
+			this.checkSaveDXC.Location = new System.Drawing.Point(9, 517);
+			this.checkSaveDXC.Name = "checkSaveDXC";
+			this.checkSaveDXC.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+			this.checkSaveDXC.Size = new System.Drawing.Size(256, 20);
+			this.checkSaveDXC.TabIndex = 22;
+			this.checkSaveDXC.Text = "Save DXC Attachments to Images Module";
+			this.checkSaveDXC.Visible = false;
 			// 
 			// checkSaveDXCSoap
 			// 
@@ -853,30 +866,11 @@ namespace OpenDental {
 			this.checkSaveDXCSoap.Text = "Save DXC Transmissions (Troubleshooting Only)";
 			this.checkSaveDXCSoap.Visible = false;
 			// 
-			// textLocationID
-			// 
-			this.textLocationID.Location = new System.Drawing.Point(449, 392);
-			this.textLocationID.MaxLength = 255;
-			this.textLocationID.Name = "textLocationID";
-			this.textLocationID.Size = new System.Drawing.Size(119, 20);
-			this.textLocationID.TabIndex = 26;
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(380, 395);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(63, 17);
-			this.label2.TabIndex = 25;
-			this.label2.Text = "Location ID";
-			this.label2.TextAlign = System.Drawing.ContentAlignment.TopRight;
-			// 
 			// FormClearinghouseEdit
 			// 
 			this.ClientSize = new System.Drawing.Size(958, 696);
-			this.Controls.Add(this.textLocationID);
-			this.Controls.Add(this.label2);
 			this.Controls.Add(this.checkSaveDXCSoap);
-			this.Controls.Add(this.checkSaveAttachments);
+			this.Controls.Add(this.checkSaveDXC);
 			this.Controls.Add(this.checkAllowAttachSend);
 			this.Controls.Add(this.listBoxEraBehavior);
 			this.Controls.Add(this.checkIsClaimExportAllowed);
@@ -894,7 +888,8 @@ namespace OpenDental {
 			this.Controls.Add(this.textExportPath);
 			this.Controls.Add(this.textDescription);
 			this.Controls.Add(this.butDelete);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.labelLoginID);
 			this.Controls.Add(this.comboCommBridge);
 			this.Controls.Add(this.label14);
@@ -928,7 +923,9 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label labelExportPath;
 		private System.Windows.Forms.Label label6;
 		private OpenDental.UI.Button butDelete;
@@ -1002,9 +999,7 @@ namespace OpenDental {
 		private OpenDental.UI.CheckBox checkIsClaimExportAllowed;
 		private UI.ListBox listBoxEraBehavior;
 		private OpenDental.UI.CheckBox checkAllowAttachSend;
-		private OpenDental.UI.CheckBox checkSaveAttachments;
+		private OpenDental.UI.CheckBox checkSaveDXC;
 		private OpenDental.UI.CheckBox checkSaveDXCSoap;
-		private TextBox textLocationID;
-		private Label label2;
 	}
 }

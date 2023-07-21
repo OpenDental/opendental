@@ -45,6 +45,7 @@ namespace OpenDental{
 			this.label1 = new System.Windows.Forms.Label();
 			this.textMedNumInto = new System.Windows.Forms.TextBox();
 			this.butMerge = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupBoxFrom.SuspendLayout();
 			this.groupBoxInto.SuspendLayout();
 			this.SuspendLayout();
@@ -237,12 +238,21 @@ namespace OpenDental{
 			// butMerge
 			// 
 			this.butMerge.Enabled = false;
-			this.butMerge.Location = new System.Drawing.Point(602, 209);
+			this.butMerge.Location = new System.Drawing.Point(508, 209);
 			this.butMerge.Name = "butMerge";
 			this.butMerge.Size = new System.Drawing.Size(75, 24);
 			this.butMerge.TabIndex = 11;
 			this.butMerge.Text = "Merge";
 			this.butMerge.Click += new System.EventHandler(this.butMerge_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Location = new System.Drawing.Point(589, 209);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 10;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// FormMedicationMerge
 			// 
@@ -251,6 +261,7 @@ namespace OpenDental{
 			this.Controls.Add(this.groupBoxFrom);
 			this.Controls.Add(this.groupBoxInto);
 			this.Controls.Add(this.butMerge);
+			this.Controls.Add(this.butClose);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMedicationMerge";
@@ -279,6 +290,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textMedNumInto;
 		private UI.Button butMerge;
+		private UI.Button butClose;
 		private System.Windows.Forms.TextBox textGenNumFrom;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox textRxFrom;

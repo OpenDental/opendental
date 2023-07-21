@@ -25,7 +25,8 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTaskPreferences));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.checkTaskSortApptDateTime = new OpenDental.UI.CheckBox();
 			this.checkShowOpenTickets = new OpenDental.UI.CheckBox();
 			this.checkTasksNewTrackedByUser = new OpenDental.UI.CheckBox();
@@ -44,22 +45,32 @@ namespace OpenDental{
 			this.comboImageCategoryFolders = new OpenDental.UI.ComboBox();
 			this.labelGlobalFilter = new System.Windows.Forms.Label();
 			this.butTaskInboxSetup = new OpenDental.UI.Button();
-			this.comboFilterDefault = new OpenDental.UI.ComboBox();
+			this.comboGlobalFilter = new OpenDental.UI.ComboBox();
 			this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
 			this.groupBoxComputerDefaults.SuspendLayout();
 			this.groupBoxDatabase.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(297, 316);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 12;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(216, 316);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 12;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(297, 316);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 13;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// checkTaskSortApptDateTime
 			// 
@@ -219,7 +230,7 @@ namespace OpenDental{
 			this.groupBoxDatabase.Controls.Add(this.comboImageCategoryFolders);
 			this.groupBoxDatabase.Controls.Add(this.labelGlobalFilter);
 			this.groupBoxDatabase.Controls.Add(this.butTaskInboxSetup);
-			this.groupBoxDatabase.Controls.Add(this.comboFilterDefault);
+			this.groupBoxDatabase.Controls.Add(this.comboGlobalFilter);
 			this.groupBoxDatabase.Controls.Add(this.checkShowLegacyRepeatingTasks);
 			this.groupBoxDatabase.Controls.Add(this.checkTaskSortApptDateTime);
 			this.groupBoxDatabase.Controls.Add(this.checkTaskListAlwaysShow);
@@ -253,7 +264,7 @@ namespace OpenDental{
 			this.labelGlobalFilter.Name = "labelGlobalFilter";
 			this.labelGlobalFilter.Size = new System.Drawing.Size(177, 19);
 			this.labelGlobalFilter.TabIndex = 140;
-			this.labelGlobalFilter.Text = "Default Filter for Tasks in Lists";
+			this.labelGlobalFilter.Text = "Global Filter for Task Lists";
 			this.labelGlobalFilter.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.labelGlobalFilter.Visible = false;
 			// 
@@ -270,12 +281,12 @@ namespace OpenDental{
 			// 
 			// comboGlobalFilter
 			// 
-			this.comboFilterDefault.Location = new System.Drawing.Point(234, 146);
-			this.comboFilterDefault.Name = "comboGlobalFilter";
-			this.comboFilterDefault.Size = new System.Drawing.Size(120, 21);
-			this.comboFilterDefault.TabIndex = 139;
-			this.comboFilterDefault.Visible = false;
-			this.comboFilterDefault.SelectionChangeCommitted += new System.EventHandler(this.comboGlobalFilter_SelectionChangeCommitted);
+			this.comboGlobalFilter.Location = new System.Drawing.Point(234, 146);
+			this.comboGlobalFilter.Name = "comboGlobalFilter";
+			this.comboGlobalFilter.Size = new System.Drawing.Size(120, 21);
+			this.comboGlobalFilter.TabIndex = 139;
+			this.comboGlobalFilter.Visible = false;
+			this.comboGlobalFilter.SelectionChangeCommitted += new System.EventHandler(this.comboGlobalFilter_SelectionChangeCommitted);
 			// 
 			// errorProvider1
 			// 
@@ -284,7 +295,8 @@ namespace OpenDental{
 			// FormTaskPreferences
 			// 
 			this.ClientSize = new System.Drawing.Size(384, 352);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.groupBoxComputerDefaults);
 			this.Controls.Add(this.groupBoxDatabase);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -301,7 +313,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.CheckBox checkTaskSortApptDateTime;
 		private OpenDental.UI.CheckBox checkShowOpenTickets;
 		private OpenDental.UI.CheckBox checkTasksNewTrackedByUser;
@@ -317,7 +330,7 @@ namespace OpenDental{
 		private OpenDental.UI.CheckBox checkShowLegacyRepeatingTasks;
 		private OpenDental.UI.GroupBox groupBoxDatabase;
 		private UI.Button butTaskInboxSetup;
-		private UI.ComboBox comboFilterDefault;
+		private UI.ComboBox comboGlobalFilter;
 		private System.Windows.Forms.ErrorProvider errorProvider1;
 		private System.Windows.Forms.Label labelGlobalFilter;
 		private System.Windows.Forms.Label labelImageCategoryFolder;

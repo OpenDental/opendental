@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEServicesMobileSettings));
 			this.butVerifyAndSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.comboBoxClinicPicker1 = new OpenDental.UI.ComboBoxClinicPicker();
 			this.label1 = new System.Windows.Forms.Label();
 			this.textUserName = new System.Windows.Forms.TextBox();
@@ -51,6 +52,17 @@ namespace OpenDental{
 			this.butVerifyAndSave.TabIndex = 3;
 			this.butVerifyAndSave.Text = "Verify and Save";
 			this.butVerifyAndSave.Click += new System.EventHandler(this.butVerifyAndSave_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(208, 275);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// comboBoxClinicPicker1
 			// 
@@ -183,6 +195,7 @@ namespace OpenDental{
 			// 
 			// FormEServicesMobileSettings
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(295, 311);
 			this.Controls.Add(this.labelPermissionRequired);
 			this.Controls.Add(this.textConfirmPassword);
@@ -194,10 +207,10 @@ namespace OpenDental{
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.comboBoxClinicPicker1);
 			this.Controls.Add(this.butVerifyAndSave);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEServicesMobileSettings";
 			this.Text = "Mobile Settings";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormEServicesMobileSettings_FormClosing);
 			this.Load += new System.EventHandler(this.FormEServicesMobileSettings_Load);
 			this.groupAccountRecovery.ResumeLayout(false);
 			this.groupAccountRecovery.PerformLayout();
@@ -209,6 +222,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butVerifyAndSave;
+		private OpenDental.UI.Button butCancel;
 		private UI.ComboBoxClinicPicker comboBoxClinicPicker1;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textUserName;

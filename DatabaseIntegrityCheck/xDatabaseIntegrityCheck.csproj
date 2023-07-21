@@ -15,7 +15,7 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <ResGenToolArchitecture>Managed32Bit</ResGenToolArchitecture>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -60,8 +60,7 @@
     <Reference Include="CDT">
       <HintPath>..\Required dlls\CDT.dll</HintPath>
     </Reference>
-    <Reference Include="MySql.Data, Version=8.0.32.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="MySql.Data, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\Required dlls\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />

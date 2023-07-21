@@ -427,7 +427,7 @@ namespace OpenDental {
 			this.textTreatNote.Location = new System.Drawing.Point(97, 10);
 			this.textTreatNote.MaxLength = 32767;
 			this.textTreatNote.Name = "textTreatNote";
-			this.textTreatNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.TreatPlan;
+			this.textTreatNote.QuickPasteType = OpenDentBusiness.QuickPasteType.TreatPlan;
 			this.textTreatNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textTreatNote.Size = new System.Drawing.Size(363, 66);
 			this.textTreatNote.TabIndex = 248;
@@ -444,7 +444,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupTreatPlanSort);
 			this.Controls.Add(this.textTreatNote);
 			this.Name = "UserControlTreatPlanGeneral";
-			this.Size = new System.Drawing.Size(494, 660);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.Load += new System.EventHandler(this.UserControlTreatPlanGeneral_Load);
 			this.groupTreatPlan.ResumeLayout(false);
 			this.groupBoxDiscounts.ResumeLayout(false);

@@ -481,6 +481,10 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		/// <summary>Class to represent items coming in from the account module grid.</summary>
 		private class LimitedRow {
 			//Can be paymentNum,adjustmentNum,procedureNum,claimNum,payplanNum. NOTE: ClaimPayments will hold the ClaimNum. 
@@ -507,4 +511,6 @@ namespace OpenDental {
 		}
 
 	}
+
+	
 }

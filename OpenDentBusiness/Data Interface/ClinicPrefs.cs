@@ -92,12 +92,12 @@ namespace OpenDentBusiness{
 			Crud.ClinicPrefCrud.Update(clinicPref);
 		}
 
-		public static void Update(ClinicPref clinicPrefNew, ClinicPref clinicPrefOld) {
+		public static void Update(ClinicPref newPref, ClinicPref oldPref) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),clinicPrefNew,clinicPrefOld);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),newPref,oldPref);
 				return;
 			}
-			Crud.ClinicPrefCrud.Update(clinicPrefNew,clinicPrefOld);
+			Crud.ClinicPrefCrud.Update(newPref,oldPref);
 		}
 
 		///<summary></summary>
@@ -111,11 +111,11 @@ namespace OpenDentBusiness{
 
 		///<summary>Inserts, updates, or deletes db rows to match listNew.  No need to pass in userNum, it's set before remoting role check and passed to
 		///the server if necessary.  Doesn't create ApptComm items, but will delete them.  If you use Sync, you must create new Apptcomm items.</summary>
-		public static bool Sync(List<ClinicPref> listClinicPrefsNew,List<ClinicPref> listClinicPrefOld) {
+		public static bool Sync(List<ClinicPref> listNew,List<ClinicPref> listOld) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),listClinicPrefsNew,listClinicPrefOld);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),listNew,listOld);
 			}
-			return Crud.ClinicPrefCrud.Sync(listClinicPrefsNew,listClinicPrefOld);
+			return Crud.ClinicPrefCrud.Sync(listNew,listOld);
 		}
 
 		///<summary></summary>
@@ -128,45 +128,44 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>If including default, it will create an extra "clinicpref" with ClinicNum=0, based on the pref.</summary>
-		public static List<ClinicPref> GetPrefAllClinics(PrefName prefName,bool includeDefault=false) {
+		public static List<ClinicPref> GetPrefAllClinics(PrefName pref,bool includeDefault=false) {
 			//No need to check MiddleTierRole; no call to db.
-			List<ClinicPref> listClinicPrefs=new List<ClinicPref>();
+			List<ClinicPref> listRet=new List<ClinicPref>();
 			if(includeDefault){ 
-				listClinicPrefs.Add(new ClinicPref() { 
+				listRet.Add(new ClinicPref() { 
 					ClinicNum=0,
-					PrefName=prefName,
-					ValueString=prefName.GetValueAsText()
+					PrefName=pref,
+					ValueString=pref.GetValueAsText()
 				});
 			};
-			listClinicPrefs.AddRange(GetWhere(x => x.PrefName==prefName));
-			return listClinicPrefs;
+			listRet.AddRange(GetWhere(x => x.PrefName==pref));
+			return listRet;
 		}
 
 		///<summary></summary>
-		public static ClinicPref GetPref(PrefName prefName,long clinicNum,bool isDefaultIncluded=false) {
+		public static ClinicPref GetPref(PrefName pref,long clinicNum,bool isDefaultIncluded=false) {
 			//No need to check MiddleTierRole; no call to db.
-			return GetPrefAllClinics(prefName,isDefaultIncluded).Find(x => x.ClinicNum==clinicNum);
+			return GetPrefAllClinics(pref,isDefaultIncluded).FirstOrDefault(x => x.ClinicNum==clinicNum);
 		}
 
 		///<summary>Gets the ValueString for this clinic's pref or gets the actual preference if it does not exist.</summary>
-		public static string GetPrefValue(PrefName prefName,long clinicNum) {
+		public static string GetPrefValue(PrefName pref,long clinicNum) {
 			//No need to check MiddleTierRole; no call to db.
-			ClinicPref clinicPref=GetPrefAllClinics(prefName).Find(x => x.ClinicNum==clinicNum);
+			ClinicPref clinicPref=GetPrefAllClinics(pref).FirstOrDefault(x => x.ClinicNum==clinicNum);
 			if(clinicPref==null) {
-				return PrefC.GetString(prefName);
+				return PrefC.GetString(pref);
 			}
 			return clinicPref.ValueString;
 		}
 
 		///<summary>Update ClinicPrefs that contains a comma-delimited list of DefNums if there are changes.</summary>
-		public static void UpdateDefNumsForClinicPref(PrefName prefName,string strDefNumFrom,string strDefNumTo) {
-			//No need to check MiddleTierRole; no call to db.
+		public static void UpdateDefNumsForClinicPref(PrefName prefName,string defNumFrom,string defNumTo) {
 			List<ClinicPref> listClinicPrefs=GetPrefAllClinics(prefName);
 			for(int i=0;i<listClinicPrefs.Count;i++) {
 				List<string> listStrDefNums=GetPrefValue(prefName,listClinicPrefs[i].ClinicNum)
 					.Split(",",StringSplitOptions.RemoveEmptyEntries)
 					.ToList();
-				listStrDefNums=Defs.RemoveOrReplaceDefNum(listStrDefNums,strDefNumFrom,strDefNumTo);
+				listStrDefNums=Defs.RemoveOrReplaceDefNum(listStrDefNums,defNumFrom,defNumTo);
 				if(listStrDefNums==null) {
 					continue;//Nothing to update.
 				}
@@ -178,76 +177,95 @@ namespace OpenDentBusiness{
 		///<summary>Returns 0 if there is no clinicpref entry for the specified pref.</summary>
 		public static long GetLong(PrefName prefName,long clinicNum) {
 			//No need to check MiddleTierRole; no call to db.
-			ClinicPref clinicPref=GetPref(prefName,clinicNum);
-			if(clinicPref==null) {
-				return 0;
+			TryGetLong(prefName,clinicNum,out long value);
+			return value;
+		}
+
+		public static bool TryGetLong(PrefName prefName,long clinicNum,out long prefNum) {
+			//No need to check MiddleTierRole; no call to db.
+			ClinicPref pref=GetPref(prefName,clinicNum);
+			if(pref==null) {
+				prefNum=0;
+				return false;
 			}
-			long prefNum= PIn.Long(clinicPref.ValueString);
-			return prefNum;
+			prefNum= PIn.Long(pref.ValueString);
+			return true;
 		}
 
 		public static int GetInt(PrefName prefName,long clinicNum) {
 			//No need to check MiddleTierRole; no call to db.
-			ClinicPref clinicPref=GetPref(prefName,clinicNum);
-			if(clinicPref==null) {
-				return 0;
+			TryGetInt(prefName,clinicNum,out int value);
+			return value;
+		}
+
+		public static bool TryGetInt(PrefName prefName,long clinicNum,out int prefNum) {
+			//No need to check MiddleTierRole; no call to db.
+			ClinicPref pref=GetPref(prefName,clinicNum);
+			if(pref==null) {
+				prefNum=0;
+				return false;
 			}
-			int prefNum=PIn.Int(clinicPref.ValueString);
-			return prefNum;
+			prefNum=PIn.Int(pref.ValueString);
+			return true;
 		}
 
 		///<summary>Gets the ValueString as a boolean for this clinic's pref or gets the actual preference if it does not exist.</summary>
 		public static bool GetBool(PrefName prefName,long clinicNum) {
-			//No need to check MiddleTierRole; no call to db.
-			ClinicPref clinicPref=GetPref(prefName,clinicNum);
-			if(clinicPref==null) {
+			ClinicPref pref=GetPref(prefName,clinicNum);
+			if(pref==null) {
 				return PrefC.GetBool(prefName);
 			}
-			return PIn.Bool(clinicPref.ValueString);
-		}
-
-		/// <summary>Returns the bool for the specified pref. Explicitly checks if clinics are enabled. If they are, returns the corresponding clinicpref. Else, returns the value from the preference cache.</summary>
-		public static bool GetBoolHandleHasClinics(PrefName prefName, long clinicNum) {
-			//No need to check MiddleTierRole; no call to db.
-			if(PrefC.HasClinicsEnabled) {
-				return ClinicPrefs.GetBool(prefName,clinicNum);
-			}
-			bool retVal=PrefC.GetBool(prefName);
-			return retVal;
-		}
-
-		///<summary>Returns false if no clinic entry found for this pref. Otherwise returns true and value of isSet can be trusted.</summary>
-		public static bool TryGetBool(PrefName prefName,long clinicNum,out bool isSet) {
-			//No need to check MiddleTierRole; no call to db.
-			ClinicPref clinicPref=GetPref(prefName,clinicNum);
-			if(clinicPref==null) {
-				isSet=false;
-				return false;
-			}
-			isSet=PIn.Bool(clinicPref.ValueString);
-			return true;
+			return PIn.Bool(pref.ValueString);
 		}
 
 		///<summary>Inserts a pref of type long for the specified clinic.  Throws an exception if the preference already exists.</summary>
-		public static void InsertPref(PrefName prefName,long clinicNum,string valueString) {
+		public static void InsertPref(PrefName prefName,long clinicNum,string valueAsString) {
 			//No need to check MiddleTierRole; no call to db.
 			if(GetFirstOrDefault(x => x.ClinicNum==clinicNum && x.PrefName==prefName)!=null) {
 				throw new ApplicationException("The PrefName "+prefName+" already exists for ClinicNum: "+clinicNum);
 			}
 			ClinicPref clinicPrefToInsert=new ClinicPref();
 			clinicPrefToInsert.PrefName=prefName;
-			clinicPrefToInsert.ValueString=valueString;
+			clinicPrefToInsert.ValueString=valueAsString;
 			clinicPrefToInsert.ClinicNum=clinicNum;
 			Insert(clinicPrefToInsert);
 		}
 
+		///<summary>Updates a pref of type long for the specified clinic.  Returns true if a change was required, or false if no change needed.</summary>
+		public static bool UpdateLong(PrefName prefName,long clinicNum,long newValue) {
+			//Very unusual.  Involves cache, so Meth is used further down instead of here at the top.
+			ClinicPref clinicPref=GetFirstOrDefault(x => x.ClinicNum==clinicNum && x.PrefName==prefName);
+			if(clinicPref==null) {
+				throw new ApplicationException("The PrefName "+prefName+" does not exist for ClinicNum: "+clinicNum);
+			}
+			if(PIn.Long(clinicPref.ValueString)==newValue) {
+				return false;//no change needed
+			}
+			string command="UPDATE clinicpref SET ValueString='"+POut.Long(newValue)+"' "
+				+"WHERE PrefName='"+POut.String(prefName.ToString())+"' "
+				+"AND ClinicNum='"+POut.Long(clinicNum)+"'";
+			bool retVal=true;
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				retVal=Meth.GetBool(MethodBase.GetCurrentMethod(),prefName,clinicNum,newValue);
+			}
+			else {
+				Db.NonQ(command);
+			}
+			//Update local cache even though we should be invalidating the cache outside of this method.
+			ClinicPref cachedClinicPref=clinicPref;
+			cachedClinicPref.PrefName=prefName;
+			cachedClinicPref.ValueString=newValue.ToString();
+			cachedClinicPref.ClinicNum=clinicNum;
+			return retVal;
+		}
+
 		///<summary>Inserts a new clinic pref or updates the existing one.</summary>
 		///<returns>True if an insert or update was made, false otherwise.</returns>
-		public static bool Upsert(PrefName prefName,long clinicNum,string newValue) {
+		public static bool Upsert(PrefName pref,long clinicNum,string newValue) {
 			//No need to check MiddleTierRole; no call to db.
-			ClinicPref clinicPref=GetPref(prefName,clinicNum);
+			ClinicPref clinicPref=GetPref(pref,clinicNum);
 			if(clinicPref==null) {
-				InsertPref(prefName,clinicNum,newValue);
+				InsertPref(pref,clinicNum,newValue);
 				return true;
 			}
 			if(clinicPref.ValueString==newValue) {
@@ -259,18 +277,17 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Deletes the prefs for this clinic. If any pref does not exist, then nothing will be done with that pref.</summary>
-		public static long DeletePrefs(long clinicNum,List<PrefName> listPrefNames) {
-			//No need to check MiddleTierRole; no call to db.
-			if(listPrefNames.IsNullOrEmpty()) {
+		public static long DeletePrefs(long clinicNum,List<PrefName> listPrefs) {
+			if(listPrefs.IsNullOrEmpty()) {
 				return 0;
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetLong(MethodBase.GetCurrentMethod(),clinicNum,listPrefNames);
+				return Meth.GetLong(MethodBase.GetCurrentMethod(),clinicNum,listPrefs);
 			}
 			List<ClinicPref> listClinicPrefs=new List<ClinicPref>();
-			for(int i=0;i<listPrefNames.Count;i++){ 
-				ClinicPref clinicPref=GetPref(listPrefNames[i],clinicNum);
-				if(clinicPref!=null){ 
+			foreach(PrefName pref in listPrefs) {
+				ClinicPref clinicPref=GetPref(pref,clinicNum);
+				if(clinicPref!=null) {
 					listClinicPrefs.Add(clinicPref);
 				}
 			}
@@ -279,15 +296,6 @@ namespace OpenDentBusiness{
 			}
 			string command="DELETE FROM clinicpref WHERE ClinicPrefNum IN("+string.Join(",",listClinicPrefs.Select(x => x.ClinicPrefNum))+")";
 			return Db.NonQ(command);
-		}
-
-		///<summary>Returns true if ODTouch is allowed for this clinic, false otherwise. 
-		///Takes clinics feature on/off into account. Ok to call this when PrefC.HasClinicsEnabled==false.</summary>
-		public static bool IsODTouchAllowed(long clinicNum) {
-			//No need to check MiddleTierRole; no call to db.
-			//The office is on limited beta.
-			bool isAllowed=ClinicPrefs.GetBoolHandleHasClinics(PrefName.IsODTouchEnabled,clinicNum);
-			return isAllowed;
 		}
 	}
 }

@@ -70,7 +70,8 @@ namespace OpenDental{
 			this.labelAddress = new System.Windows.Forms.Label();
 			this.textAddress = new System.Windows.Forms.TextBox();
 			this.labelZip = new System.Windows.Forms.Label();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.textExpDate = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.textCardNumber = new System.Windows.Forms.TextBox();
@@ -115,6 +116,7 @@ namespace OpenDental{
 			this.groupChargeFrequency.Name = "groupChargeFrequency";
 			this.groupChargeFrequency.Size = new System.Drawing.Size(495, 114);
 			this.groupChargeFrequency.TabIndex = 19;
+			this.groupChargeFrequency.TabStop = true;
 			this.groupChargeFrequency.Text = "Charge Frequency";
 			// 
 			// comboDays
@@ -236,6 +238,7 @@ namespace OpenDental{
 			this.groupProcedures.Name = "groupProcedures";
 			this.groupProcedures.Size = new System.Drawing.Size(493, 142);
 			this.groupProcedures.TabIndex = 26;
+			this.groupProcedures.TabStop = true;
 			this.groupProcedures.Text = "Authorized Procedures";
 			this.groupProcedures.Visible = false;
 			// 
@@ -312,6 +315,7 @@ namespace OpenDental{
 			this.groupRecurringCharges.Name = "groupRecurringCharges";
 			this.groupRecurringCharges.Size = new System.Drawing.Size(495, 235);
 			this.groupRecurringCharges.TabIndex = 7;
+			this.groupRecurringCharges.TabStop = true;
 			this.groupRecurringCharges.Text = "Authorized Recurring Charges";
 			// 
 			// textDateStop
@@ -397,9 +401,9 @@ namespace OpenDental{
 			// checkChrgWithNoBal
 			// 
 			this.checkChrgWithNoBal.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkChrgWithNoBal.Location = new System.Drawing.Point(302, 17);
+			this.checkChrgWithNoBal.Location = new System.Drawing.Point(322, 17);
 			this.checkChrgWithNoBal.Name = "checkChrgWithNoBal";
-			this.checkChrgWithNoBal.Size = new System.Drawing.Size(148, 26);
+			this.checkChrgWithNoBal.Size = new System.Drawing.Size(128, 26);
 			this.checkChrgWithNoBal.TabIndex = 15;
 			this.checkChrgWithNoBal.Text = "Run charge even if no family balance present";
 			// 
@@ -450,7 +454,7 @@ namespace OpenDental{
 			this.textNote.Location = new System.Drawing.Point(129, 165);
 			this.textNote.MaxLength = 10000;
 			this.textNote.Name = "textNote";
-			this.textNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.FinancialNotes;
+			this.textNote.QuickPasteType = OpenDentBusiness.QuickPasteType.FinancialNotes;
 			this.textNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNote.Size = new System.Drawing.Size(344, 64);
 			this.textNote.TabIndex = 14;
@@ -548,15 +552,25 @@ namespace OpenDental{
 			this.labelZip.Text = "Zip";
 			this.labelZip.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(432, 627);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 30;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(351, 627);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 30;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(432, 627);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 31;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// textExpDate
 			// 
@@ -608,7 +622,8 @@ namespace OpenDental{
 			this.Controls.Add(this.labelAddress);
 			this.Controls.Add(this.textAddress);
 			this.Controls.Add(this.labelZip);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.textExpDate);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.textCardNumber);
@@ -633,7 +648,8 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textCardNumber;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.TextBox textExpDate;
-		private UI.Button butSave;
+		private UI.Button butOK;
+		private UI.Button butCancel;
 		private System.Windows.Forms.TextBox textZip;
 		private System.Windows.Forms.Label labelAddress;
 		private System.Windows.Forms.TextBox textAddress;

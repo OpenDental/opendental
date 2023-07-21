@@ -8,7 +8,6 @@ using System.Net;
 using System.Text;
 using System.Windows.Forms;
 using OpenDentBusiness;
-using System.Diagnostics;
 
 namespace OpenDental {
 	public partial class FormEServicesSetup:FormODBase {
@@ -54,7 +53,7 @@ namespace OpenDental {
 		public static bool ProcessSendSmsException(Exception ex) {
 			if((ex is ODException) && ((ODException)ex).ErrorCode==1) {
 				if(MsgBox.Show(typeof(FormEServicesSetup),MsgBoxButtons.YesNo,ex.Message+" Do you want to increase this spending limit?")) {
-					if(Security.IsAuthorized(EnumPermType.EServicesSetup)) {
+					if(Security.IsAuthorized(Permissions.EServicesSetup)) {
 						FormEServicesSetup formEServicesSetup=new FormEServicesSetup();
 						formEServicesSetup.Show();
 					}
@@ -67,13 +66,13 @@ namespace OpenDental {
 		///<summary>Makes a web call to WebServiceMainHQ to get the corresponding EServiceSetupFull information and then attempts to fill each tab.
 		///If anything goes wrong within this method a message box will show to the user and then the window will auto close via Abort.</summary>
 		public static WebServiceMainHQProxy.EServiceSetup.SignupOut GetSignupOut(WebServiceMainHQProxy.EServiceSetup.SignupOut signupOut=null) {
-			if(!ODEnvironment.IsCloudServer && MiscUtils.TryUpdateIeEmulation()) {
+			if(!ODBuild.IsWeb() && MiscUtils.TryUpdateIeEmulation()) {
 				throw new Exception("Browser emulation version updated.\r\nYou must restart this application before accessing the Signup Portal.");
 			}
 			//Send light version of clinics to HQ to be used by signup portal below. Get back all args needed from HQ in order to perform the operations of this window.
 			SignupPortalPermission signupPortalPermission=GetUserSignupPortalPermissions();
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,$"User {Security.CurUser.UserName} entered EService Setup with SignupPortalPermission {signupPortalPermission}");
-			UI.ProgressWin progressOD=new UI.ProgressWin();
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,$"User {Security.CurUser.UserName} entered EService Setup with SignupPortalPermission {signupPortalPermission}");
+			UI.ProgressOD progressOD=new UI.ProgressOD();
 			progressOD.ShowCancelButton=false; // approved by Jordan to hide cancel button here. 
 			if(signupOut==null) { //the first time this loads signupOut will be null, so we won't have a previous state to compare
 				progressOD.ActionMain=() => signupOut=WebServiceMainHQProxy.GetEServiceSetupFull(signupPortalPermission);
@@ -82,7 +81,7 @@ namespace OpenDental {
 				progressOD.ActionMain=() => signupOut=WebServiceMainHQProxy.GetEServiceSetupFull(signupPortalPermission,oldSignupOut:signupOut);
 			}
 			progressOD.StartingMessage="Validating eServices...";
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled){
 				return null;
 			}
@@ -95,10 +94,10 @@ namespace OpenDental {
 
 		private static SignupPortalPermission GetUserSignupPortalPermissions() {
 			SignupPortalPermission signupPortalPermission=SignupPortalPermission.ReadOnly;
-			if(Security.IsAuthorized(EnumPermType.SecurityAdmin,suppressMessage:true)) {
+			if(Security.IsAuthorized(Permissions.SecurityAdmin,suppressMessage:true)) {
 				signupPortalPermission=SignupPortalPermission.FullPermission;
 			}
-			else if(Security.IsAuthorized(EnumPermType.EServicesSetup,suppressMessage:true)) {
+			else if(Security.IsAuthorized(Permissions.EServicesSetup,suppressMessage:true)) {
 				signupPortalPermission=SignupPortalPermission.ReadOnly;
 			}
 			else {
@@ -113,28 +112,6 @@ namespace OpenDental {
 			//Signups may have changed so re-sync here before allowing other setups to occur.
 			_signupOut=GetSignupOut(_signupOut);
 			butSecureEmail.Visible=EmailSecures.IsSecureEmailReleased();
-		}
-
-		private void butMobileAppDevice_Click(object sender,EventArgs e) {
-			using FormEServicesMobileAppDeviceManage formMobileAppDeviceManage=new FormEServicesMobileAppDeviceManage();
-			formMobileAppDeviceManage.ShowDialog();
-		}
-
-		private void butODTouch_Click(object sender,EventArgs e) {
-			//Permissions check presumably. Discuss with Sam.
-			if(!ClinicPrefs.IsODTouchAllowed(Clinics.ClinicNum)) {
-				string site="https://www.opendental.com/site/odtouch.html";
-				try{
-					Process.Start(site);
-				}
-				catch{
-					MessageBox.Show(Lan.g(this,"Could not find")+" "+site+"\r\n"
-					+Lan.g(this,"Please set up a default web browser."));
-				}
-				return;
-			}
-			using FormODTouchSecurityEdit formODTouchSecEdit=new FormODTouchSecurityEdit();
-			formODTouchSecEdit.ShowDialog();
 		}
 
 		private void butEConnector_Click(object sender,EventArgs e) {
@@ -163,8 +140,7 @@ namespace OpenDental {
 		}
 
 		private void butTextingServices_Click(object sender,EventArgs e) {
-			using FormEServicesTexting formEServicesTexting=new FormEServicesTexting();
-			formEServicesTexting.SignupOut=_signupOut;
+			using FormEServicesTexting formEServicesTexting=new FormEServicesTexting(_signupOut);
 			formEServicesTexting.ShowDialog();
 		}
 
@@ -222,19 +198,22 @@ namespace OpenDental {
 		}
 		#endregion
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 		private void FormEServicesSetup2_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult==DialogResult.Abort || !Security.IsAuthorized(EnumPermType.EServicesSetup,suppressMessage:true)) {
+			if(DialogResult==DialogResult.Abort || !Security.IsAuthorized(Permissions.EServicesSetup,suppressMessage:true)) {
 				return;
 			}
 			DataValid.SetInvalid(InvalidType.Prefs);
 			DataValid.SetInvalid(InvalidType.Providers);//Providers includes clinics.
 			//Call this a second time so we can log if any important changes were made to this form.
 			//_signupOut gets filled on load and should not be null at this point
-			UI.ProgressWin progressOD=new UI.ProgressWin();
+			UI.ProgressOD progressOD=new UI.ProgressOD();
 			progressOD.ActionMain=() =>WebServiceMainHQProxy.GetEServiceSetupFull(GetUserSignupPortalPermissions(),oldSignupOut:_signupOut);
 			progressOD.StartingMessage="Saving eServices...";
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 		}
-
 	}
 }

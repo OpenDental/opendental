@@ -175,7 +175,7 @@ namespace OpenDental {
 		}
 
 		private void butRecall_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.AppointmentCreate)) {
+			if(!Security.IsAuthorized(Permissions.AppointmentCreate)) {
 				return;
 			}
 			if(PatRestrictionL.IsRestricted(_patient.PatNum,PatRestrict.ApptSchedule)) {
@@ -186,7 +186,7 @@ namespace OpenDental {
 				_patient=patientMerged;
 				FillFamily();
 				RefreshAppts();
-				GlobalFormOpenDental.PatientSelected(_patient,isRefreshCurModule: true,isApptRefreshDataPat: false);
+				FormOpenDental.S_Contr_PatientSelected(_patient,isRefreshCurModule: true,isApptRefreshDataPat: false);
 			}
 			if(_patient!=null && _patient.PatStatus.In(PatientStatus.Archived,PatientStatus.Deceased)) {
 				MsgBox.Show(this,"Appointments cannot be scheduled for "+_patient.PatStatus.ToString().ToLower()+" patients.");
@@ -231,7 +231,7 @@ namespace OpenDental {
 				Appointments.Update(appointment,appointmentOld);
 				Appointments.TryAddPerVisitProcCodesToAppt(appointment,appointmentOld.AptStatus);
 				_otherResult=OtherResult.CreateNew;
-				SecurityLogs.MakeLogEntry(EnumPermType.AppointmentCreate,appointment.PatNum,appointment.AptDateTime.ToString(),appointment.AptNum,datePrevious);
+				SecurityLogs.MakeLogEntry(Permissions.AppointmentCreate,appointment.PatNum,appointment.AptDateTime.ToString(),appointment.AptNum,datePrevious);
 				//If there is an existing HL7 def enabled, send a SIU message if there is an outbound SIU message defined
 				if(HL7Defs.IsExistingHL7Enabled()) {
 					//S12 - New Appt Booking event
@@ -271,7 +271,7 @@ namespace OpenDental {
 		}
 
 		private void butRecallFamily_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.AppointmentCreate)) {
+			if(!Security.IsAuthorized(Permissions.AppointmentCreate)) {
 				return;
 			}
 			MakeRecallFamily();
@@ -358,7 +358,7 @@ namespace OpenDental {
 		}
 
 		private void butNote_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.AppointmentCreate)) {
+			if(!Security.IsAuthorized(Permissions.AppointmentCreate)) {
 				return;
 			}
 			if(PatRestrictionL.IsRestricted(_patient.PatNum,PatRestrict.ApptSchedule)) {
@@ -417,7 +417,7 @@ namespace OpenDental {
 		}
 
 		private void butNew_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.AppointmentCreate)) {
+			if(!Security.IsAuthorized(Permissions.AppointmentCreate)) {
 				return;
 			}
 			if(PatRestrictionL.IsRestricted(_patient.PatNum,PatRestrict.ApptSchedule)) {
@@ -429,7 +429,7 @@ namespace OpenDental {
 				Text=Lan.g(this,"Appointments for")+" "+_patient.GetNameLF();
 				FillFamily();
 				RefreshAppts();
-				GlobalFormOpenDental.PatientSelected(_patient,
+				FormOpenDental.S_Contr_PatientSelected(_patient,
 					isRefreshCurModule: true,
 					isApptRefreshDataPat: true);//isApptRefreshDataPat: true because of a scenario where the user does switch from a merged patient but does not end up making an appointment. 
 			}
@@ -482,9 +482,6 @@ namespace OpenDental {
 					}
 					appointment=Appointments.AssignFieldsForOperatory(appointment);
 					appointment.AptStatus=ApptStatus.Scheduled;
-					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentMove,appointment.PatNum,
-						appointment.ProcDescript+", from "+appointmentOld.AptDateTime.ToString()+", to "+appointment.AptDateTime.ToString(),
-						appointment.AptNum,appointmentOld.DateTStamp);
 					Appointments.Update(appointment,appointmentOld);
 					Appointments.TryAddPerVisitProcCodesToAppt(appointment,appointmentOld.AptStatus);
 				}
@@ -499,7 +496,7 @@ namespace OpenDental {
 							Patients.Update(_patient,patOld);
 							string logEntry=Lan.g(this,"Patient's status changed from ")+patOld.PatStatus.GetDescription()+Lan.g(this," to ")
 								+_patient.PatStatus.GetDescription()+Lan.g(this," by making an appointment from the Other Appointments window.");
-							SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,_patient.PatNum,logEntry);
+							SecurityLogs.MakeLogEntry(Permissions.PatientEdit,_patient.PatNum,logEntry);
 						}
 					}
 					else if(!operatory.SetProspective && _patient.PatStatus==PatientStatus.Prospective) {
@@ -510,7 +507,7 @@ namespace OpenDental {
 							Patients.Update(_patient,patientOld);
 							string logEntry=Lan.g(this,"Patient's status changed from ")+patientOld.PatStatus.GetDescription()+Lan.g(this," to ")
 								+_patient.PatStatus.GetDescription()+Lan.g(this," by making an appointment from the Other Appointments window.");
-							SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,_patient.PatNum,logEntry);
+							SecurityLogs.MakeLogEntry(Permissions.PatientEdit,_patient.PatNum,logEntry);
 						}
 					}
 				}
@@ -523,9 +520,9 @@ namespace OpenDental {
 				_otherResult=OtherResult.NewToPinBoard;
 			}
 			if(appointment.IsNewPatient) {
-				AutomationL.Trigger(EnumAutomationTrigger.ApptNewPatCreate,listProcCodes: null,appointment.PatNum,appointment.AptNum);
+				AutomationL.Trigger(AutomationTrigger.CreateApptNewPat,listProcCodes: null,appointment.PatNum,appointment.AptNum);
 			}
-			AutomationL.Trigger(EnumAutomationTrigger.ApptCreate,listProcCodes: null,appointment.PatNum,appointment.AptNum);
+			AutomationL.Trigger(AutomationTrigger.CreateAppt,listProcCodes: null,appointment.PatNum,appointment.AptNum);
 			DialogResult=DialogResult.OK;
 		}
 
@@ -568,16 +565,12 @@ namespace OpenDental {
 			CheckStatus();
 		}
 
-		private void UpdateTextApptModNote() {
+		private void textApptModNote_Leave(object sender,EventArgs e) {
 			if(textApptModNote.Text!=_patient.ApptModNote) {
 				Patient patientOld=_patient.Copy();
 				_patient.ApptModNote=textApptModNote.Text;
 				Patients.Update(_patient,patientOld);
 			}
-		}
-
-		private void textApptModNote_Leave(object sender,EventArgs e) {
-			UpdateTextApptModNote();
 		}
 
 		private void butGoTo_Click(object sender, System.EventArgs e) {
@@ -605,7 +598,7 @@ namespace OpenDental {
 		}
 
 		private void butOK_Click(object sender, System.EventArgs e) {
-			//only visible when selecting from TaskList. oResult is completely ignored in this case.
+			//only used when selecting from TaskList. oResult is completely ignored in this case.
 			//I didn't bother enabling double click. Maybe later.
 			if(gridMain.GetSelectedIndex()==-1) {
 				MsgBox.Show(this,"Please select appointment first.");
@@ -616,8 +609,11 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormApptsOther_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-			UpdateTextApptModNote();
 			if(DialogResult==DialogResult.OK) {
 				return;
 			}
@@ -769,10 +765,6 @@ namespace OpenDental {
 			}
 			ListApptOthers=Appointments.GetApptOthersForPat(_patient.PatNum);
 			_listPlannedAppts=PlannedAppts.Refresh(_patient.PatNum);
-			ListApptOthers=ListApptOthers.OrderBy(appt => {
-				var plannedAppt=_listPlannedAppts.FirstOrDefault(x => x.AptNum==appt.AptNum);
-				return plannedAppt?.ItemOrder+ListApptOthers.Count??(ListApptOthers.IndexOf(appt));//Place planned appts after non-planned appts. Keep the same ordering amongst non-planned.
-			}).ToList();
 			_listPlannedApptsIncomplete=_listPlannedAppts.FindAll(x => !ListApptOthers.ToList()
 				.Exists(y => y.NextAptNum==x.AptNum && y.AptStatus==ApptStatus.Complete))
 				.OrderBy(x => x.ItemOrder).ToList();
@@ -807,7 +799,7 @@ namespace OpenDental {
 					return;
 				}
 				ApptOther apptOther=ListApptOthers.FirstOrDefault(x => x.AptNum==(long)gridMain.ListGridRows[e.Row].Tag);
-				ODEvent.Fire(ODEventType.SendToPinboard,new PinBoardArgs(_patient,apptOther,ListApptOthers));
+				SendToPinboardEvent.Fire(ODEventType.SendToPinboard,new PinBoardArgs(_patient,apptOther,ListApptOthers));
 				return;
 			}
 			RefreshData();

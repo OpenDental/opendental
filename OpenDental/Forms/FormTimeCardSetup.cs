@@ -270,6 +270,10 @@ namespace OpenDental{
 			FillGrid();
 		}
 
+		private void butClose_Click(object sender,System.EventArgs e) {
+			Close();
+		}
+
 		private void FormPayPeriods_FormClosing(object sender,FormClosingEventArgs e) {
 			//validation on Form_Closing to account for if the user doesn't use the close button to close the form.
 			string errors=TimeCardRules.ValidateOvertimeRules();
@@ -292,6 +296,5 @@ namespace OpenDental{
 				DataValid.SetInvalid(InvalidType.Employees,InvalidType.Prefs,InvalidType.TimeCardRules);
 			}
 		}
-
 	}
 }

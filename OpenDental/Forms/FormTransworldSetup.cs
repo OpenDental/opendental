@@ -287,7 +287,7 @@ namespace OpenDental {
 				}
 			}
 			stringBuilderLogText.Append(" was altered.");
-			SecurityLogs.MakeLogEntry(EnumPermType.ManageHighSecurityProgProperties,0,stringBuilderLogText.ToString(),_program.ProgramNum,DateTime.Now);
+			SecurityLogs.MakeLogEntry(Permissions.ManageHighSecurityProgProperties,0,stringBuilderLogText.ToString(),_program.ProgramNum,DateTime.Now);
 		}
 
 		private void comboClinic_SelectionChangeCommitted(object sender,EventArgs e) {
@@ -341,7 +341,7 @@ namespace OpenDental {
 			labelClientIdCollection.Enabled=(checkPRService.Checked || checkCollService.Checked);
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(checkEnabled.Checked && !Programs.IsEnabledByHq(ProgramName.Transworld,out string err)) {
 				MessageBox.Show(err);
 				return;
@@ -427,5 +427,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

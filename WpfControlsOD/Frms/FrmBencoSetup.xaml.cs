@@ -19,11 +19,9 @@ namespace OpenDental {
 			InitializeComponent();
 			_program=Programs.GetCur(ProgramName.BencoPracticeManagement);
 			_listToolButItems=ToolButItems.GetForProgram(_program.ProgramNum); //Initially only set up for Main Toolbar
-			Load+=FrmBencoSetup_Load;
-			PreviewKeyDown+=FrmBencoSetup_PreviewKeyDown;
 		}
 
-		private void FrmBencoSetup_Load(object sender,EventArgs e) {
+		private void FrmBencoSetup_Loaded(object sender,RoutedEventArgs e) {
 			checkEnable.Checked=_program.Enabled;
 			textProgDesc.Text=_program.ProgDesc;
 			textPath.Text=_program.Path;
@@ -33,9 +31,9 @@ namespace OpenDental {
 
 		private void FillToolBars() {
 			listToolBars.Items.Clear();
-			listToolBars.Items.AddEnums<EnumToolBar>();
+			listToolBars.Items.AddEnums<ToolBarsAvail>();
 			for(int i=0;i<listToolBars.Items.Count;i++) {
-				if(_listToolButItems.Any(x => x.ToolBar==(EnumToolBar)listToolBars.Items.GetObjectAt(i))) {
+				if(_listToolButItems.Any(x => x.ToolBar==(ToolBarsAvail)listToolBars.Items.GetObjectAt(i))) {
 					listToolBars.SetSelected(i);
 				}
 			}
@@ -69,12 +67,6 @@ namespace OpenDental {
 			}
 		}
 
-		private void FrmBencoSetup_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
-		}
-
 		private void butSave_Click(object sender,EventArgs e) {
 			//Program
 			_program.Enabled=checkEnable.Checked.Value;
@@ -83,7 +75,7 @@ namespace OpenDental {
 			Programs.Update(_program);
 			//Toolbar button
 			ToolButItems.DeleteAllForProgram(_program.ProgramNum);
-			List<EnumToolBar> listToolBarsAvails=listToolBars.GetListSelected<EnumToolBar>();
+			List<ToolBarsAvail> listToolBarsAvails=listToolBars.GetListSelected<ToolBarsAvail>();
 			for(int i=0;i<listToolBarsAvails.Count;++i) {
 				ToolButItem newBut=new ToolButItem();
 				newBut.ProgramNum=_program.ProgramNum;

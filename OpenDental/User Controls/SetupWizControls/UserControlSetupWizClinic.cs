@@ -121,7 +121,7 @@ namespace OpenDental.User_Controls.SetupWizard {
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ClinicEdit)) {
+			if(!Security.IsAuthorized(Permissions.ClinicEdit)) {
 				return;
 			}
 			using FormClinicEdit FormCE = new FormClinicEdit(new Clinic() { IsNew=true });
@@ -134,7 +134,7 @@ namespace OpenDental.User_Controls.SetupWizard {
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ClinicEdit)) {
+			if(!Security.IsAuthorized(Permissions.ClinicEdit)) {
 				return;
 			}
 			Clinic clinCur = (Clinic)gridMain.ListGridRows[e.Row].Tag;

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,18 +25,10 @@ namespace OpenDental {
 		///<summary></summary>
 		public FrmZipCodes() {
 			InitializeComponent();
-			Load+=FrmZipCodes_Load;
-			gridZipCode.CellDoubleClick+=gridZipCode_CellDoubleClick;
-			PreviewKeyDown+=FrmZipCodes_PreviewKeyDown;
-			FormClosing+=FrmZipCodes_Closing;
+			//Lan.F(this);
 		}
 
-		private void FrmZipCodes_Load(object sender, EventArgs e) {
-			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
-				this.Text=Lang.g(this,"Postal Codes");
-				gridZipCode.Title=Lang.g(this,"Postal Codes");
-			}
-			Lang.F(this);
+		private void FrmZipCodes_Loaded(object sender, RoutedEventArgs e) {
 		  FillGrid();
 		}
 
@@ -48,18 +39,12 @@ namespace OpenDental {
 			gridZipCode.Columns.Clear();
 			GridColumn gridColumn;
 			gridColumn=new GridColumn(Lans.g(this,"ZipCode"),75);
-			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
-				gridColumn=new GridColumn(Lans.g(this,"Postal"),75);
-			}
 			gridZipCode.Columns.Add(gridColumn);
 			gridColumn=new GridColumn(Lans.g(this,"City"),270);
 			gridZipCode.Columns.Add(gridColumn);
-			gridColumn=new GridColumn(Lans.g(this,"State"),80);
-			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
-				gridColumn=new GridColumn(Lans.g(this,"Prov"),80);
-			}
+			gridColumn=new GridColumn(Lans.g(this,"State"),50);
 			gridZipCode.Columns.Add(gridColumn);
-			gridColumn=new GridColumn(Lans.g(this,"Frequent"),0);
+			gridColumn=new GridColumn(Lans.g(this,"Frequent"),80);
 			gridColumn.IsWidthDynamic=true;
 			gridZipCode.Columns.Add(gridColumn);
 			gridZipCode.ListGridRows.Clear();
@@ -87,15 +72,6 @@ namespace OpenDental {
 			}
 			_isChanged=true;
 			FillGrid();
-		}
-
-		private void FrmZipCodes_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butAdd.IsAltKey(Key.A,e)) {
-				butAdd_Click(this,new EventArgs());
-			}
-			if(butDelete.IsAltKey(Key.D,e)) {
-				butDelete_Click(this,new EventArgs());
-			}
 		}
 
 		private void butDelete_Click(object sender, System.EventArgs e) {
@@ -130,5 +106,6 @@ namespace OpenDental {
 			}
 		}
 	
+
 	}
 }

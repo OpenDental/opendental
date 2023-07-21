@@ -61,7 +61,7 @@ namespace OpenDental {
 			this.textPledgeTemplate.DetectUrls = false;
 			this.textPledgeTemplate.Location = new System.Drawing.Point(152, 206);
 			this.textPledgeTemplate.Name = "textPledgeTemplate";
-			this.textPledgeTemplate.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textPledgeTemplate.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textPledgeTemplate.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textPledgeTemplate.Size = new System.Drawing.Size(709, 46);
 			this.textPledgeTemplate.TabIndex = 236;
@@ -87,7 +87,7 @@ namespace OpenDental {
 			this.textBodyTextTemplate.DetectUrls = false;
 			this.textBodyTextTemplate.Location = new System.Drawing.Point(152, 12);
 			this.textBodyTextTemplate.Name = "textBodyTextTemplate";
-			this.textBodyTextTemplate.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Email;
+			this.textBodyTextTemplate.QuickPasteType = OpenDentBusiness.QuickPasteType.Email;
 			this.textBodyTextTemplate.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textBodyTextTemplate.Size = new System.Drawing.Size(709, 188);
 			this.textBodyTextTemplate.TabIndex = 235;

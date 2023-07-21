@@ -51,13 +51,13 @@ namespace OpenDentBusiness {
 
 		#region Delete
 		///<summary></summary>
-		public static void Delete(ApptView apptView){
+		public static void Delete(ApptView Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),apptView);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),Cur);
 				return;
 			}
 			string command="DELETE FROM apptview WHERE ApptViewNum = '"
-				+POut.Long(apptView.ApptViewNum)+"'";
+				+POut.Long(Cur.ApptViewNum)+"'";
 			Db.NonQ(command);
 		}
 		#endregion
@@ -65,9 +65,9 @@ namespace OpenDentBusiness {
 		#region Misc Methods
 		///<summary>Determines if the ApptView is the "None" view.  Null is considered to be the "None" view for compatibility with other methods that
 		///expect the "None" view to be a null ApptView.</summary>
-		public static bool IsNoneView(ApptView apptView) {
+		public static bool IsNoneView(ApptView view) {
 			//No need to check MiddleTierRole; no call to db.
-			return apptView==null || apptView.ApptViewNum==APPTVIEWNUM_NONE;
+			return view==null || view.ApptViewNum==APPTVIEWNUM_NONE;
 		}
 		#endregion
 
@@ -108,7 +108,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Refreshes the cache and returns it as a DataTable. This will refresh the ClientWeb's cache and the ServerWeb's cache.</summary>
 		public static DataTable RefreshCache() {
-			return GetTableFromCache(refreshCache:true);
+			return GetTableFromCache(true);
 		}
 
 		///<summary>Fills the local cache with the passed in DataTable.</summary>
@@ -117,13 +117,13 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Always refreshes the ClientWeb's cache.</summary>
-		public static DataTable GetTableFromCache(bool refreshCache) {
+		public static DataTable GetTableFromCache(bool doRefreshCache) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),refreshCache);
+				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),doRefreshCache);
 				_apptViewCache.FillCacheFromTable(table);
 				return table;
 			}
-			return _apptViewCache.GetTableFromCache(refreshCache);
+			return _apptViewCache.GetTableFromCache(doRefreshCache);
 		}
 
 		public static void ClearCache() {

@@ -10,23 +10,18 @@ namespace OpenDental {
 		public LayoutManagerForms LayoutManager;
 		private string _templateEmail;
 		private bool _isLoading;
-		///<summary>Set in constructor. If the boolean is not passed in this will default to true</summary>
-		private bool _doCheckDisclaimer;
 
-		public UserControlReminderMessage(ApptReminderRule apptReminder,LayoutManagerForms layoutManager,bool doCheckDisclaimer=true) {
+		public UserControlReminderMessage(ApptReminderRule apptReminder,LayoutManagerForms layoutManager) {
 			InitializeComponent();
 			Font=LayoutManagerForms.FontInitial;
 			Rule=apptReminder;
 			LayoutManager=layoutManager;
 			LoadControl();
-			_doCheckDisclaimer=doCheckDisclaimer;
 		}
 
 		public UserControlReminderMessage() {//just so the designer can load.
 			InitializeComponent();
 		}
-
-		public string TemplateSms { get {return textTemplateSms.Text;} }
 
 		public ApptReminderRule Rule { get; }
 
@@ -35,7 +30,7 @@ namespace OpenDental {
 			formEE.MarkupText=_templateEmail;
 			formEE.IsRawAllowed=true;
 			formEE.IsRaw=Rule.EmailTemplateType==EmailType.RawHtml;
-			formEE.DoCheckForDisclaimer=_doCheckDisclaimer;
+			formEE.DoCheckForDisclaimer=true;
 			formEE.ShowDialog();
 			if(formEE.DialogResult!=DialogResult.OK) {
 				return;
@@ -190,20 +185,16 @@ namespace OpenDental {
 		///<summary>Validates the AddToCalendar tag. Adds to the error list if the AddToCalendar tag is present but not signed up for eConfirmations</summary>
 		public List<string> AddCalendarTagErrors() {
 			List<string> listErrors=new List<string>();
-			string addToCalTag=ApptThankYouSents.ADD_TO_CALENDAR.ToLower();
-			if(!textTemplateSms.Text.ToLower().Contains(addToCalTag)
-				&& !_templateEmail.ToLower().Contains(addToCalTag))
-			{
-				return listErrors;
-			}
 			//Only these rule types will have [AddToCalendar] tags.
 			//See UserControlReminderAgg.AddCalendarTagErrors() for auto reply validation.
-			//[AddToCalendar] tags are allowed tag when eConfirmations are enabled so don't bother validating.
-			if(ApptReminderRules.IsAddToCalendarTagSupported(Rule.TypeCur) 
-				&& PrefC.GetBool(PrefName.ApptConfirmAutoSignedUp)) 
-			{
+			if(!Rule.TypeCur.In(ApptReminderType.ScheduleThankYou,ApptReminderType.Reminder)) {
 				return listErrors;
 			}
+			//[AddToCalendar] tags are allowed tag when eConfirmations are enabled so don't bother validating.
+			if(PrefC.GetBool(PrefName.ApptConfirmAutoSignedUp)) {
+				return listErrors;
+			}
+			string addToCalTag=ApptThankYouSents.ADD_TO_CALENDAR.ToLower();
 			if(textTemplateSms.Text.ToLower().Contains(addToCalTag)) {
 				listErrors.AddRange(ErrorText("texts",Rule.TypeCur));
 			}
@@ -215,10 +206,6 @@ namespace OpenDental {
 
 		private List<string> ErrorText(string mode,ApptReminderType reminderType) {
 			List<string> listErrors=new List<string>();
-			if(!ApptReminderRules.IsAddToCalendarTagSupported(reminderType)) {
-				listErrors.Add(Lan.g(this,"AddToCalendar tag can only be used for Reminders, Thank-Yous, and eConfirmations."));
-				return listErrors;
-			}
 			if(reminderType==ApptReminderType.Reminder) {
 				if(mode=="texts") {
 					listErrors.Add(Lan.g(this,"Automated Reminder texts cannot contain ")+ApptThankYouSents.ADD_TO_CALENDAR+Lan.g(this," when not signed up for eConfirmations."));
@@ -233,14 +220,6 @@ namespace OpenDental {
 				}
 				else {
 					listErrors.Add(Lan.g(this,"Automated Thank-You emails cannot contain ")+ApptThankYouSents.ADD_TO_CALENDAR+Lan.g(this," when not signed up for eConfirmations."));
-				}
-			}
-			if(reminderType==ApptReminderType.ConfirmationFutureDay) {
-				if(mode=="texts") {
-					listErrors.Add(Lan.g(this,"Automated eConfirmation texts cannot contain ")+ApptThankYouSents.ADD_TO_CALENDAR+Lan.g(this," when not signed up for eConfirmations."));
-				}
-				else {
-					listErrors.Add(Lan.g(this,"Automated eConfirmation emails cannot contain ")+ApptThankYouSents.ADD_TO_CALENDAR+Lan.g(this," when not signed up for eConfirmations."));
 				}
 			}
 			return listErrors;
@@ -269,10 +248,7 @@ namespace OpenDental {
 				Rule.TemplateSMS="";
 			}
 			else {
-				//Clicking a link with a period will not get recognized. 
-				Rule.TemplateSMS=textTemplateSms.Text.Replace("[ConfirmURL].","[ConfirmURL] .");
-				Rule.TemplateSMS=textTemplateSms.Text.Replace($"{MsgToPaySents.MSG_TO_PAY_TAG}.",$"{MsgToPaySents.MSG_TO_PAY_TAG} .");
-				Rule.TemplateSMS=textTemplateSms.Text.Replace($"{MsgToPaySents.STATEMENT_URL_TAG}.",$"{MsgToPaySents.STATEMENT_URL_TAG} .");
+				Rule.TemplateSMS=textTemplateSms.Text.Replace("[ConfirmURL].","[ConfirmURL] .");//Clicking a link with a period will not get recognized. 
 			}
 			Rule.TemplateEmailSubject=textTemplateSubject.Text;
 			Rule.TemplateEmail=_templateEmail;

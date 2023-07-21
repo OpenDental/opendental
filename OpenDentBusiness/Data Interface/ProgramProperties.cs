@@ -214,10 +214,7 @@ namespace OpenDentBusiness {
 		///AND the program has a property of "Disable Advertising" = 1 OR "Disable Advertising HQ" = 1.
 		///This means that either the office has disabled the ad or HQ has disabled the ad.</summary>
 		public static bool IsAdvertisingDisabled(Program program) {
-			if(program==null) {
-				return true;
-			}
-			if(program.Enabled) {
+			if(program==null || program.Enabled) {
 				return false;//do not block advertising
 			}
 			return GetForProgram(program.ProgramNum).Any(x => (x.PropertyDesc=="Disable Advertising" && x.PropertyValue=="1") //Office has decided to hide the advertising
@@ -419,9 +416,8 @@ namespace OpenDentBusiness {
 			long paymentTypeDefNum;
 			string paymentTypeDefString;
 			bool isPaymentsAllowed;
-			bool isXWeb;
 			xwebProperties=new WebTypes.Shared.XWeb.WebPaymentProperties();
-			//No need to check MiddleTierRole; no call to db.
+			//No need to check MiddleTierRole;no call to db.
 			//Secure arguments are held in the db.
 			Program prog=Programs.GetCur(ProgramName.EdgeExpress);
 			if(prog!=null && prog.Enabled) {
@@ -431,11 +427,10 @@ namespace OpenDentBusiness {
 				terminalID=GetPropValFromList(listEdgeExpressProperties,PropertyDescs.EdgeExpress.TerminalID,clinicNum);
 				paymentTypeDefString=GetPropValFromList(listEdgeExpressProperties,PropertyDescs.EdgeExpress.PaymentType,clinicNum);
 				isPaymentsAllowed=PIn.Bool(GetPropValFromList(listEdgeExpressProperties,PropertyDescs.EdgeExpress.IsOnlinePaymentsEnabled,clinicNum));
-				isXWeb=false;
 			}
 			else {
 				prog=Programs.GetCur(ProgramName.Xcharge);
-				if(prog==null) {
+				if(prog==null) {					
 					throw new ODException("X-Charge program link not found.",ODException.ErrorCodes.XWebProgramProperties);
 				}
 				if(!prog.Enabled) { //EdgeExpress and XCharge not turned on.
@@ -447,18 +442,17 @@ namespace OpenDentBusiness {
 				terminalID=GetPropValFromList(listXchargeProperties,"TerminalID",clinicNum);
 				paymentTypeDefString=GetPropValFromList(listXchargeProperties,"PaymentType",clinicNum);
 				isPaymentsAllowed=PIn.Bool(GetPropValFromList(listXchargeProperties,"IsOnlinePaymentsEnabled",clinicNum));
-				isXWeb=true;
 			}
-			//Validate ALL XWebID, AuthKey, and TerminalID.  Each is required for X-Web to work.
+			//Validate ALL XWebID, AuthKey, and TerminalID.  Each is required for X-Web to work.		
 			if(string.IsNullOrEmpty(xWebID) || string.IsNullOrEmpty(authKey) || string.IsNullOrEmpty(terminalID) ||
-				!long.TryParse(paymentTypeDefString,out paymentTypeDefNum))
+				!long.TryParse(paymentTypeDefString,out paymentTypeDefNum)) 
 			{
 				throw new ODException("X-Web program properties not found.",ODException.ErrorCodes.XWebProgramProperties);
 			}
 			//XWeb ID must be 12 digits, Auth Key 32 alphanumeric characters, and Terminal ID 8 digits.
 			if(!Regex.IsMatch(xWebID,"^[0-9]{12}$")
 				||!Regex.IsMatch(authKey,"^[A-Za-z0-9]{32}$")
-				||!Regex.IsMatch(terminalID,"^[0-9]{8}$"))
+				||!Regex.IsMatch(terminalID,"^[0-9]{8}$")) 
 			{
 				throw new ODException("X-Web program properties not valid.",ODException.ErrorCodes.XWebProgramProperties);
 			}
@@ -467,12 +461,11 @@ namespace OpenDentBusiness {
 			xwebProperties.AuthKey=authKey;
 			xwebProperties.PaymentTypeDefNum=paymentTypeDefNum;
 			xwebProperties.IsPaymentsAllowed=isPaymentsAllowed;
-			xwebProperties.IsXWeb=isXWeb;
 		}
 
 		///<summary>Exception means failed. Return means success. paymentsAllowed should be check after return. If false then assume payments cannot be made for this clinic.</summary>
 		public static void GetPayConnectPatPortalCreds(long clinicNum,out PayConnect.WebPaymentProperties payConnectProps) {
-			//No need to check MiddleTierRole; no call to db.
+			//No need to check MiddleTierRole;no call to db.
 			//Secure arguments are held in the db.
 			payConnectProps=new PayConnect.WebPaymentProperties();
 			OpenDentBusiness.Program programPayConnect=OpenDentBusiness.Programs.GetCur(OpenDentBusiness.ProgramName.PayConnect);
@@ -515,7 +508,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns an IsOnlinePaymentsEnabled program property if one of the programs (excluding the passed in program) with online payments capability has it enabled, returns null if they do not. We exclude the passed in program because we are concerned about the other programs being enabled before deciding what to do with the passed in program.</summary>
 		public static ProgramProperty GetOnlinePaymentsEnabledForClinic(long clinicNum,ProgramName programName) {
-			//No need to check MiddleTierRole; no call to db.
+			//No need to check MiddleTierRole;no call to db.
 			ProgramProperty xchargeOnlinePaymentEnabled=ProgramProperties.GetWhere(x =>
 				x.ProgramNum==Programs.GetCur(ProgramName.Xcharge).ProgramNum
 				&& x.ClinicNum==clinicNum
@@ -560,7 +553,7 @@ namespace OpenDentBusiness {
 
 		///<summary>QuickBooks Online Accounts and Class Refs are stored as ',' separated Name/Id pairs. Each pair is separated by a '|'. Returns the Id for the passed in name of the Account or Class Ref.</summary>
 		public static string GetQuickBooksOnlineEntityIdByName(string propertyValue,string entityName) {
-			//No need to check MiddleTierRole; no call to db.
+			//No need to check MiddleTierRole;no call to db.
 			string[] arrayEntityNameIdPairs=propertyValue.Split('|');
 			for(int i=0;i<arrayEntityNameIdPairs.Length;i++) {
 				string[] arrayNameAndId=arrayEntityNameIdPairs[i].Split(',');
@@ -573,7 +566,7 @@ namespace OpenDentBusiness {
 
 		///<summary>QuickBooks Online Accounts and Class Refs are stored as ',' separated Name/Id pairs. Each pair is separated by a '|'. Returns a list of all Account or Class Ref names.</summary>
 		public static List<string> GetQuickBooksOnlineEntityNames(string propertyValue) {
-			//No need to check MiddleTierRole; no call to db.
+			//No need to check MiddleTierRole;no call to db.
 			List<string> listNames=new List<string>();
 			if(propertyValue.IsNullOrEmpty()) {
 				return listNames;
@@ -590,7 +583,7 @@ namespace OpenDentBusiness {
 		///Otherwise returns false. Suppress the message that Security.IsAuthorized might show.</summary>
 		public static bool CanEditProperties(List<ProgramProperty> listProperties, bool suppressMesssage=true) {
 			if(listProperties.Any(x => x.IsHighSecurity)) {
-				return Security.IsAuthorized(EnumPermType.ManageHighSecurityProgProperties,suppressMesssage);
+				return Security.IsAuthorized(Permissions.ManageHighSecurityProgProperties,suppressMesssage);
 			}
 			return true;
 		}
@@ -614,8 +607,6 @@ namespace OpenDentBusiness {
 		private static List<string> GetDeletablePropertyDescriptions() {
 			return new List<string>() {
 				PropertyDescs.ClinicHideButton,
-				PropertyDescs.DisableAdvertising,
-				PropertyDescs.DisableAdvertisingHQ
 			};
 		}
 
@@ -625,8 +616,6 @@ namespace OpenDentBusiness {
 			public const string Username="Username";
 			public const string Password="Password";
 			public const string ClinicHideButton="ClinicHideButton";
-			public const string DisableAdvertising="Disable Advertising";
-			public const string DisableAdvertisingHQ="Disable Advertising HQ";
 
 			//Prevents this class from being instansiated.
 			private PropertyDescs() { }
@@ -645,25 +634,9 @@ namespace OpenDentBusiness {
 				public const string CareCreditQSBatchEnabled="QSBatchEnabled";
 				public const string CareCreditQSBatchDays="CareCreditQSBatchDays";
 				public const string CareCreditPatField="CareCreditPatField";
-				public const string CareCreditPatFieldPreApprovalAmt="CareCreditPatFieldPreApprovalAmt";
-				public const string CareCreditPatFieldAvailableCredit="CareCreditPatFieldAvailableCredit";
 				public const string CareCreditIsMerchantNumberByProv="CareCreditIsMerchantNumberByProv";
 				public const string CareCreditMerchantNumber="CareCreditMerchantNumber";
 				public const string CareCreditDoDisableAdvertising="Disable Advertising";
-				public const string CareCreditPartnerCode="CareCreditPartnerCode";
-
-				public static string GetForPatFieldType(PatFieldType patFieldType){
-					if(patFieldType==PatFieldType.CareCreditStatus){
-						return CareCreditPatField;
-					}
-					else if(patFieldType==PatFieldType.CareCreditPreApprovalAmt){
-						return CareCreditPatFieldPreApprovalAmt;
-					}
-					else if(patFieldType==PatFieldType.CareCreditAvailableCredit){
-						return CareCreditPatFieldAvailableCredit;
-					}
-					return "";
-				}
 			}
 			public static class EdgeExpress {
 				public const string ForceRecurringCharge="EdgeExpressForceRecurringCharge";

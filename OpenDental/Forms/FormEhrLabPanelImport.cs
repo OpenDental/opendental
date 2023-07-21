@@ -191,7 +191,7 @@ OBX|4|NM|14927-8^Triglycerides^LN|333123|127|mg/dl|<150| N|||F|||20100920083000"
 			//return true;//I guess it's always true?
 		}
 
-		private void butOK_Click(object sender,EventArgs e) {
+		private void butOk_Click(object sender,EventArgs e) {
 			if(gridMain.GetSelectedIndex()==-1) {
 				MessageBox.Show("Please select a lab order first.");
 				return;
@@ -202,6 +202,19 @@ OBX|4|NM|14927-8^Triglycerides^LN|333123|127|mg/dl|<150| N|||F|||20100920083000"
 			CreateLabPanel();
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+	
+	
+
+		
+
+		
+
+		
 
 	}
 }

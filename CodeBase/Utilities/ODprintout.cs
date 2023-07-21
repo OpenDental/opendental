@@ -9,11 +9,11 @@ namespace CodeBase {
 	public class ODprintout {
 		///<summary></summary>
 		private PrintDocument _printDoc;
-		///<summary>Used to determine the printer that should be used.</summary>
+		///<summary>Used to determin the printiner that should be used.</summary>
 		public PrintSituation Situation=PrintSituation.Default;
 		///<summary>If this is set to zero, then it won't show the second number in #/# pages.</summary>
 		public int TotalPages=1;
-		///<summary>The description that is shown on the audit trails. If blank nothing will be entered.</summary>
+		///<summary>The description that is shown on the audi trails. If blank nothing will be entered.</summary>
 		public string AuditDescription="";
 		///<summary>Used when making audit trails.</summary>
 		public long AuditPatNum=0;
@@ -40,46 +40,48 @@ namespace CodeBase {
 		
 		///<summary>Returns true if printer can be validated.
 		///If false then SettingsErrorCode will contain more detailed information.</summary>
-		public bool HasValidSettings() {
-			try {
-				SettingsErrorCode=PrintoutErrorCode.Success;
-				if(PrinterSettings.InstalledPrinters.Count==0) {
-					SettingsErrorCode=PrintoutErrorCode.NoInstalledPrinter;
-					return false;
+		public bool HasValidSettings {
+			get {
+				try {
+					SettingsErrorCode=PrintoutErrorCode.Success;
+					if(PrinterSettings.InstalledPrinters.Count==0) {
+						SettingsErrorCode=PrintoutErrorCode.NoInstalledPrinter;
+						return false;
+					}
+					if(_printDoc.PrinterSettings==null) {//Should not happen
+						SettingsErrorCode=PrintoutErrorCode.PrinterSettingsNotFound;
+						return false;
+					}
+					if(_printDoc.PrinterSettings.PrinterName==null) {
+						SettingsErrorCode=PrintoutErrorCode.PrinterNameNotFound;
+						return false;
+					}
+					if(!_printDoc.PrinterSettings.IsValid) {
+						SettingsErrorCode=PrintoutErrorCode.InvalidPrinterSettings;
+						return false;
+					}
+					//Try to find the printable area.  If there are no printers, it will throw an InvalidPrinterException.
+					//We use the following pattern to deterimine which page size to use.
+					//The values are not used here, we simply are accessing them the same way to see if an exception is thrown.
+					//Therefore we will know when we check later the code will not fail.
+					if(_printDoc.DefaultPageSettings.PrintableArea.Width==0 || _printDoc.DefaultPageSettings.PrintableArea.Height==0) {
+						//At least one valid printer is installed.
+					}
 				}
-				if(_printDoc.PrinterSettings==null) {//Should not happen
-					SettingsErrorCode=PrintoutErrorCode.PrinterSettingsNotFound;
-					return false;
-				}
-				if(_printDoc.PrinterSettings.PrinterName==null) {
-					SettingsErrorCode=PrintoutErrorCode.PrinterNameNotFound;
-					return false;
-				}
-				if(!_printDoc.PrinterSettings.IsValid) {
+				catch(InvalidPrinterException ex) {//No printers installed.
+					ex.DoNothing();
 					SettingsErrorCode=PrintoutErrorCode.InvalidPrinterSettings;
+					ErrorEx=ex;
 					return false;
 				}
-				//Try to find the printable area.  If there are no printers, it will throw an InvalidPrinterException.
-				//We use the following pattern to determine which page size to use.
-				//The values are not used here, we simply are accessing them the same way to see if an exception is thrown.
-				//Therefore we will know when we check later the code will not fail.
-				if(_printDoc.DefaultPageSettings.PrintableArea.Width==0 || _printDoc.DefaultPageSettings.PrintableArea.Height==0) {
-					//At least one valid printer is installed.
+				catch(Win32Exception wex) {
+					wex.DoNothing();
+					SettingsErrorCode=PrintoutErrorCode.PrinterConnectionError;
+					ErrorEx=wex;
+					return false;
 				}
+				return true; 
 			}
-			catch(InvalidPrinterException ex) {//No printers installed.
-				ex.DoNothing();
-				SettingsErrorCode=PrintoutErrorCode.InvalidPrinterSettings;
-				ErrorEx=ex;
-				return false;
-			}
-			catch(Win32Exception wex) {
-				wex.DoNothing();
-				SettingsErrorCode=PrintoutErrorCode.PrinterConnectionError;
-				ErrorEx=wex;
-				return false;
-			}
-			return true; 
 		}
 
 		///<summary></summary>
@@ -91,13 +93,15 @@ namespace CodeBase {
 
 		///<summary>Creates an empty ODPrintDocuement to get the printiners default PaperSize.
 		///If not printer is installed this will return a PaperSize with width of 850 and height of 1100.</summary>
-		public static PaperSize GetDefaultPaperSize() {
-			try {
-				return (new PrintDocument().DefaultPageSettings.PaperSize);
-			}
-			catch(Exception ex) {
-				ex.DoNothing();
-				return new PaperSize("default",850,1100);
+		public static PaperSize DefaultPaperSize {
+			get {
+				try {
+					return (new PrintDocument().DefaultPageSettings.PaperSize);
+				}
+				catch(Exception ex) {
+					ex.DoNothing();
+					return new PaperSize("default",850,1100);
+				}
 			}
 		}
 
@@ -132,7 +136,7 @@ namespace CodeBase {
 			AuditPatNum=auditPatNum;
 			AuditDescription=auditDescription;
 			TotalPages=totalPages;
-			if(!HasValidSettings()) {
+			if(!HasValidSettings) {
 				return;
 			}
 			_printDoc.PrintPage+=printPageEventHandler;
@@ -161,7 +165,7 @@ namespace CodeBase {
 			if(duplex!=Duplex.Default) {
 				_printDoc.PrinterSettings.Duplex=duplex;
 			}
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				//https://referencesource.microsoft.com/#System.Drawing/commonui/System/Drawing/Printing/PrintDocument.cs,3f3c2622b65be86a
 				//The PrintController property will create a PrintControllerWithStatusDialog if no print controller is explictly set.
 				_printDoc.PrintController=new StandardPrintController();//Default PrintController shows a dialog that locks up web.
@@ -222,7 +226,7 @@ namespace CodeBase {
 		RxMulti
 	}
 	
-	///<summary>Used to identify specific reasons that validation failed during construction.
+	///<summary>Used to identify specific reasons that validaiton failed during construction.
 	///Set to PrintoutErrorCode.Success when validation is passed.</summary>
 	public enum PrintoutErrorCode {
 		///<summary>0</summary>

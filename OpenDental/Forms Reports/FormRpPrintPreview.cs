@@ -7,7 +7,7 @@ using CodeBase;
 using System.Drawing.Printing;
 
 namespace OpenDental{
-///<summary>This form is only launched and used in Debug.</summary>
+///<summary></summary>
 	public partial class FormRpPrintPreview : FormODBase {
 
 		///<summary></summary>

@@ -30,6 +30,7 @@ namespace OpenDental{
 			this.butTerminal = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
+			this.butCancel = new OpenDental.UI.Button();
 			this.menuMain = new OpenDental.UI.MenuOD();
 			this.butCopy = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
@@ -103,6 +104,16 @@ namespace OpenDental{
 			this.gridMain.TranslationName = "FormPatientForms";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(530, 646);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// menuMain
 			// 
 			this.menuMain.Dock = System.Windows.Forms.DockStyle.Top;
@@ -143,6 +154,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butTerminal);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.menuMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormPatientForms";
@@ -153,6 +165,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.Button butTerminal;

@@ -38,7 +38,7 @@ namespace OpenDental{
 				comboClinic.IsAllSelected=true;
 			}
 			else {
-				comboClinic.ClinicNumSelected=Clinics.ClinicNum;
+				comboClinic.SelectedClinicNum=Clinics.ClinicNum;
 			}
 			gridMain.ContextMenu=contextMenu1;
 			textDateFrom.Text="";//DateViewing.ToShortDateString();
@@ -84,20 +84,15 @@ namespace OpenDental{
 				operatoryNums=null;
 			}
 			else {//"All" that the user has access to or it could be just a single clinic the user has selected
-				for(int i=0;i<comboClinic.ListClinicNumsSelected.Count;i++) {
-					operatoryNums.AddRange(Operatories.GetOpsForClinic(comboClinic.ListClinicNumsSelected[i]).Select(x => x.OperatoryNum));
+				for(int i=0;i<comboClinic.ListSelectedClinicNums.Count;i++) {
+					operatoryNums.AddRange(Operatories.GetOpsForClinic(comboClinic.ListSelectedClinicNums[i]).Select(x => x.OperatoryNum));
 				}
 			}
 			for(int i=0;i<_table.Rows.Count;i++){
-				if(!Enum.TryParse(_table.Rows[i]["aptStatus"].ToString(),out ApptStatus aptStatus)) {
-					aptStatus=ApptStatus.None;
-				}
-				long clinicNum=PIn.Long(_table.Rows[i]["ClinicNum"].ToString());
 				if(PrefC.HasClinicsEnabled //no filtering for non clinics.
 					&& operatoryNums!=null //we don't have "All" selected for an unrestricted user.
 					&& _table.Rows[i]["AptNum"].ToString()!="0" //show unattached for any clinic 
-					&& !operatoryNums.Contains(PIn.Long(_table.Rows[i]["OpNum"].ToString())) //Attached appointment is scheduled in an Op for another clinic
-					&& (aptStatus!=ApptStatus.Planned || !comboClinic.ListClinicNumsSelected.Contains(clinicNum))) //Attached planned appointment is not under selected clinic
+					&& !operatoryNums.Contains(PIn.Long(_table.Rows[i]["OpNum"].ToString()))) //Attached appointment is scheduled in an Op for the clinic
 				{
 					continue;//appointment scheduled in an operatory for another clinic.
 				}
@@ -211,5 +206,32 @@ namespace OpenDental{
 			PrinterL.TryPrintOrDebugRpPreview(pd_PrintPage,Lan.g(this,"Lab case list printed"),PrintoutOrientation.Landscape);
 		}
 
+
+
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

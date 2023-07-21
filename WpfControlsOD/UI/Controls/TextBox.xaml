@@ -6,7 +6,7 @@
 		xmlns:local="clr-namespace:WpfControls.UI"
 		mc:Ignorable="d" 
 		x:Name="userControl" Background="White"
-		d:DesignWidth="75" d:DesignHeight="20">
+		d:DesignHeight="20" d:DesignWidth="75">
 	<UserControl.Style>
 		<Style>
 			<Setter Property="local:TextBox.HorizontalAlignment" Value="Left"/><!--This is for anchoring, not for aligning the text within the box.-->
@@ -19,6 +19,8 @@
 		</ControlTemplate>
 	</UserControl.Template>
 	<Grid>
-		<TextBox x:Name="textBox" x:FieldModifier="internal" VerticalContentAlignment="Top" HorizontalContentAlignment="Left"/>
+		<TextBox x:Name="textBox" x:FieldModifier="internal" VerticalContentAlignment="Top" HorizontalContentAlignment="Left">
+			
+		</TextBox>
 	</Grid>
 </UserControl>

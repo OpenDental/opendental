@@ -126,5 +126,11 @@ namespace OpenDental {
 			textPreferedConfidentialContact.Text=PatCur.PreferContactConfidential.ToString();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
+
+
 	}
 }

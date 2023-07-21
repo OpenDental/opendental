@@ -24,7 +24,8 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormApptTypeEdit));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.labelColor = new System.Windows.Forms.Label();
 			this.butColorClear = new OpenDental.UI.Button();
 			this.butColor = new System.Windows.Forms.Button();
@@ -52,15 +53,25 @@ namespace OpenDental{
 			this.groupBoxOD1.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(596, 549);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 16;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(549, 500);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 16;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(630, 500);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 17;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// labelColor
 			// 
@@ -122,7 +133,7 @@ namespace OpenDental{
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(28, 549);
+			this.butDelete.Location = new System.Drawing.Point(28, 500);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(75, 24);
 			this.butDelete.TabIndex = 15;
@@ -294,7 +305,7 @@ namespace OpenDental{
 			// 
 			// FormApptTypeEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(717, 585);
+			this.ClientSize = new System.Drawing.Size(717, 536);
 			this.Controls.Add(this.groupBoxOD1);
 			this.Controls.Add(this.labelBlockoutTypes);
 			this.Controls.Add(this.listBoxBlockoutTypes);
@@ -313,7 +324,8 @@ namespace OpenDental{
 			this.Controls.Add(this.labelColor);
 			this.Controls.Add(this.butColorClear);
 			this.Controls.Add(this.butColor);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.tbTime);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormApptTypeEdit";
@@ -327,7 +339,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private UI.Button butSave;
+		private UI.Button butOK;
+		private UI.Button butCancel;
 		private System.Windows.Forms.Label labelColor;
 		private UI.Button butColorClear;
 		private System.Windows.Forms.Button butColor;

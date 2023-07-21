@@ -243,7 +243,7 @@ namespace OpenDental {
 			supplyOrder.DatePlaced=new DateTime(2300,1,1);
 			supplyOrder.Note="";
 			supplyOrder.UserNum=0;//This will get set when the order is placed.
-			SecurityLogs.MakeLogEntry(EnumPermType.SupplyPurchases,patNum:0,"New Order Added.");
+			SecurityLogs.MakeLogEntry(Permissions.SupplyPurchases,patNum:0,"New Order Added.");
 			SupplyOrders.Insert(supplyOrder);
 			FillGridOrders();
 			gridOrders.SetSelected(_listSupplyOrders.Count-1,true);
@@ -369,10 +369,7 @@ namespace OpenDental {
 			FillGridOrderItem();
 		}
 
-		private void FormSupplyOrders_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult!=DialogResult.Cancel) {
-				return;
-			}
+		private void butClose_Click(object sender,EventArgs e) {
 			if(_userOdPrefShowReceived==null) {
 				UserOdPrefs.Insert(new UserOdPref() {
 					UserNum=Security.CurUser.UserNum,
@@ -380,6 +377,7 @@ namespace OpenDental {
 					ValueString=POut.Bool(checkShowReceived.Checked)
 				});
 				DataValid.SetInvalid(InvalidType.UserOdPrefs);
+				Close();
 				return;
 			}
 			UserOdPref userOdPrefOld=_userOdPrefShowReceived.Clone();
@@ -388,7 +386,9 @@ namespace OpenDental {
 				//Only need to signal cache refresh on change.
 				DataValid.SetInvalid(InvalidType.UserOdPrefs);
 			}
+			Close();
 		}
 
+		
 	}
 }

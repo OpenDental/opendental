@@ -69,10 +69,10 @@ namespace OpenDental {
 		}
 
 		private void butAuditTrail_Click(object sender,EventArgs e) {
-			List<EnumPermType> listPermissions=new List<EnumPermType>();
-			listPermissions.Add(EnumPermType.EhrMeasureEventEdit);
-			FrmAuditOneType frmAuditOneType=new FrmAuditOneType(0,listPermissions,Lan.g(this,"EHR Measure Event Edits"),0);
-			frmAuditOneType.ShowDialog();
+			List<Permissions> listPermissions=new List<Permissions>();
+			listPermissions.Add(Permissions.EhrMeasureEventEdit);
+			using FormAuditOneType FormAOT=new FormAuditOneType(0,listPermissions,Lan.g(this,"EHR Measure Event Edits"),0);
+			FormAOT.ShowDialog();
 		}
 
 		private void butRefresh_Click(object sender,EventArgs e) {
@@ -81,6 +81,10 @@ namespace OpenDental {
 
 		private void comboType_SelectionChangeCommitted(object sender,EventArgs e) {
 			FillGrid();
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
 		}
 
 	}

@@ -22,7 +22,7 @@ namespace OpenDental {
 		}
 
 		private void FormEServicesAutoMsgingPreferences_Load(object sender,EventArgs e) {
-			bool allowEdit=Security.IsAuthorized(EnumPermType.EServicesSetup,suppressMessage:true);
+			bool allowEdit=Security.IsAuthorized(Permissions.EServicesSetup,suppressMessage:true);
 			_webSheetIdDefaults=PrefC.GetString(PrefName.ApptNewPatientThankYouWebSheetDefID);
 			_under18SendToGuarantorDefault=PrefC.GetBool(PrefName.AutoCommUnder18SendToGuarantor);
 			LoadWebFormPrefs();
@@ -31,7 +31,7 @@ namespace OpenDental {
 			SetClinicComboBox();
 			LoadDefaultPreferences();
 			checkUseDefaultPrefs.Enabled=allowEdit;
-			butSave.Enabled=allowEdit;
+			butOK.Enabled=allowEdit;
 			EnablePreferenceControls(allowEdit);
 		}
 
@@ -43,7 +43,7 @@ namespace OpenDental {
 			comboClinic.HqDescription=hqDescription;
 			comboClinic.ForceShowUnassigned=true;
 			comboClinic.IncludeAll=false;
-			comboClinic.ClinicNumSelected=0;
+			comboClinic.SelectedClinicNum=0;
 			checkUseDefaultPrefs.Visible=false;
 		}
 
@@ -66,7 +66,7 @@ namespace OpenDental {
 			else {
 				LoadClinicPreferences();
 			}
-			bool allowEdit=Security.IsAuthorized(EnumPermType.EServicesSetup,suppressMessage:true) && (isDefaultClinic || !checkUseDefaultPrefs.Checked);
+			bool allowEdit=Security.IsAuthorized(Permissions.EServicesSetup,suppressMessage:true) && (isDefaultClinic || !checkUseDefaultPrefs.Checked);
 			EnablePreferenceControls(allowEdit);
 		}
 
@@ -192,7 +192,7 @@ namespace OpenDental {
 				clinicPref.ValueString=POut.Bool(true);
 				LoadDefaultPreferences();
 			}
-			bool allowEdit=Security.IsAuthorized(EnumPermType.EServicesSetup,suppressMessage:true) && !checkUseDefaultPrefs.Checked;
+			bool allowEdit=Security.IsAuthorized(Permissions.EServicesSetup,suppressMessage:true) && !checkUseDefaultPrefs.Checked;
 			EnablePreferenceControls(allowEdit);
 		}
 
@@ -227,7 +227,7 @@ namespace OpenDental {
 			clinicPref.ValueString=POut.String(webSheetDefIDs);
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			string error=ValidateChanges();
 			if(!string.IsNullOrWhiteSpace(error)) {
 				MessageBox.Show(Lan.g(this,error));
@@ -237,5 +237,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

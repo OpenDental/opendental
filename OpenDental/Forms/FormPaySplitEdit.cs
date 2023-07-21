@@ -65,7 +65,7 @@ namespace OpenDental {
 				_defUnearnedOld=comboUnearnedTypes.GetSelected<Def>();
 			}
 			if(PrefC.HasClinicsEnabled) {
-				comboClinic.ClinicNumSelected=PaySplitCur.ClinicNum;
+				comboClinic.SelectedClinicNum=PaySplitCur.ClinicNum;
 			}
 			FillComboProv();//also sets the combo to PaySplitCur.ProvNum. Handles 0
 			if(PaySplitCur.PayPlanNum==0){
@@ -105,7 +105,7 @@ namespace OpenDental {
 				if(PrefC.HasClinicsEnabled) {
 					comboClinic.Enabled=false;
 				}
-				if(Security.IsAuthorized(EnumPermType.Setup,true)) {
+				if(Security.IsAuthorized(Permissions.Setup,true)) {
 					labelEditAnyway.Visible=true;
 					butEditAnyway.Visible=true;
 				}
@@ -124,7 +124,7 @@ namespace OpenDental {
 		}
 
 		private void comboClinic_SelectionChangeCommitted(object sender,EventArgs e) {
-			PaySplitCur.ClinicNum=comboClinic.ClinicNumSelected;
+			PaySplitCur.ClinicNum=comboClinic.SelectedClinicNum;
 			FillComboProv();
 		}
 
@@ -173,13 +173,13 @@ namespace OpenDental {
 		}
 
 		private void butPickProv_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick = new FrmProviderPick(comboProvider.Items.GetAll<Provider>());
-			frmProviderPick.ProvNumSelected=PaySplitCur.ProvNum;
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick = new FormProviderPick(comboProvider.Items.GetAll<Provider>());
+			formProviderPick.ProvNumSelected=PaySplitCur.ProvNum;
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			PaySplitCur.ProvNum=frmProviderPick.ProvNumSelected;
+			PaySplitCur.ProvNum=formProviderPick.ProvNumSelected;
 			comboProvider.SetSelectedProvNum(PaySplitCur.ProvNum);
 		}
 
@@ -345,7 +345,7 @@ namespace OpenDental {
 				textProcPrevPaid.Text=procPrevPaid.ToString("F");
 			}
 			if(PrefC.HasClinicsEnabled) {
-				comboClinic.ClinicNumSelected=PaySplitCur.ClinicNum;
+				comboClinic.SelectedClinicNum=PaySplitCur.ClinicNum;
 			}
 			butAttachProc.Enabled=false;
 			if(!_isEditAnyway && PrefC.GetInt(PrefName.RigorousAccounting)==(int)RigorousAccounting.EnforceFully) {
@@ -366,7 +366,7 @@ namespace OpenDental {
 			//Find the combo option for the procedure's clinic and provider.  If they don't exist in the list (are hidden) then it will set the text of the combo box instead.
 			comboProvider.SetSelectedProvNum(PaySplitCur.ProvNum);
 			if(PrefC.HasClinicsEnabled) {
-				comboClinic.ClinicNumSelected=PaySplitCur.ClinicNum;//not sure why this is here again
+				comboClinic.SelectedClinicNum=PaySplitCur.ClinicNum;//not sure why this is here again
 			}
 			//Proc selected will always be for the pat this paysplit was made for
 			listPatient.SelectedIndex=_family.ListPats.ToList().FindIndex(x => x.PatNum==PaySplitCur.PatNum);
@@ -427,7 +427,7 @@ namespace OpenDental {
 			//Find the combo option for the adjustment's clinic and provider.  If they don't exist in the list (are hidden) then it will set the text of the combo box instead.
 			comboProvider.SetSelectedProvNum(_adjustment.ProvNum);
 			if(PrefC.HasClinicsEnabled) {
-				comboClinic.ClinicNumSelected=_adjustment.ClinicNum;
+				comboClinic.SelectedClinicNum=_adjustment.ClinicNum;
 			}
 			//Proc selected will always be for the pat this paysplit was made for
 			listPatient.SelectedIndex=_family.ListPats.ToList().FindIndex(x => x.PatNum==_adjustment.PatNum);
@@ -629,7 +629,7 @@ namespace OpenDental {
 			//We have been getting null reference reports from this security log entry.
 			//Only check if PaySplitCur is null because _paySplitCopy gets set OnLoad() which must have been invoked especially if they clicked Delete.
 			if(PaySplitCur!=null) {
-				SecurityLogs.MakeLogEntry(EnumPermType.PaymentEdit,PaySplitCur.PatNum,PaySplits.GetSecurityLogMsgDelete(PaySplitCur),0,_paySplitCopy.SecDateTEdit);
+				SecurityLogs.MakeLogEntry(Permissions.PaymentEdit,PaySplitCur.PatNum,PaySplits.GetSecurityLogMsgDelete(PaySplitCur),0,_paySplitCopy.SecDateTEdit);
 			}
 			PaySplitCur=null;
 			DialogResult=DialogResult.OK;
@@ -704,7 +704,7 @@ namespace OpenDental {
 			return true;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!IsValid()) {
 				return;
 			}
@@ -730,7 +730,7 @@ namespace OpenDental {
 					secLogText+=", clinic "+Clinics.GetAbbr(PaySplitCur.ClinicNum);
 				}
 				secLogText+=", amount "+PaySplitCur.SplitAmt.ToString("F");
-				SecurityLogs.MakeLogEntry(EnumPermType.PaymentEdit,PaySplitCur.PatNum,secLogText);
+				SecurityLogs.MakeLogEntry(Permissions.PaymentEdit,PaySplitCur.PatNum,secLogText);
 				DialogResult=DialogResult.OK;
 				return;
 			}
@@ -742,18 +742,19 @@ namespace OpenDental {
 			secLogText+=SecurityLogEntryHelper(Clinics.GetAbbr(_paySplitCopy.ClinicNum),Clinics.GetAbbr(PaySplitCur.ClinicNum),"clinic");
 			secLogText+=SecurityLogEntryHelper(_paySplitCopy.SplitAmt.ToString("F"),PaySplitCur.SplitAmt.ToString("F"),"amount");
 			secLogText+=SecurityLogEntryHelper(_paySplitCopy.PatNum.ToString(),PaySplitCur.PatNum.ToString(),"patient number");
-			SecurityLogs.MakeLogEntry(EnumPermType.PaymentEdit,PaySplitCur.PatNum,secLogText,0,_paySplitCopy.SecDateTEdit);
+			SecurityLogs.MakeLogEntry(Permissions.PaymentEdit,PaySplitCur.PatNum,secLogText,0,_paySplitCopy.SecDateTEdit);
 			DialogResult=DialogResult.OK;
 		}
 
-		private void FormPaySplitEdit_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult==DialogResult.OK) {
-				return;
-			}
+		private void ButCancel_Click(object sender, System.EventArgs e) {
 			if(IsNew) {
 				PaySplitCur=null;
 			}
-			if(PaySplitCur==null) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void FormPaySplitEdit_FormClosing(object sender,FormClosingEventArgs e) {
+			if(DialogResult==DialogResult.OK || PaySplitCur==null) {
 				return;
 			}
 			PaySplitCur.ClinicNum=_paySplitCopy.ClinicNum;
@@ -774,6 +775,5 @@ namespace OpenDental {
 			PaySplitCur.UnearnedType=_paySplitCopy.UnearnedType;
 			ListPaySplits.Where(x => x.IsSame(_paySplitCopy)).ForEach(x => x.ProcNum=_paySplitCopy.ProcNum);
 		}
-
 	}
 }

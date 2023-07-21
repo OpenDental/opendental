@@ -19,23 +19,16 @@ namespace OpenDental {
 	///<summary></summary>
 	public partial class FrmWikiSetup:FrmODBase {
 
+
 		public FrmWikiSetup() {
 			InitializeComponent();
-			Load+=FrmWikiSetup_Load;
-			PreviewKeyDown+=FrmWikiSetup_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmWikiSetup_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmWikiSetup_Loaded(object sender,RoutedEventArgs e) {
 			textMaster.Text=WikiPages.WikiPageMaster.PageContent;
 			checkDetectLinks.Checked=PrefC.GetBool(PrefName.WikiDetectLinks);
 			checkCreatePageFromLinks.Checked=PrefC.GetBool(PrefName.WikiCreatePageFromLink);
-		}
-
-		private void FrmWikiSetup_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {

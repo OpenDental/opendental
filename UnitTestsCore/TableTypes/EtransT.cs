@@ -29,20 +29,6 @@ namespace UnitTestsCore {
 			return etrans835;
 		}
 
-		///<summary>Creates an Etrans object with passed in values and inserts it into the database.</summary>
-		public static Etrans Insert835Etrans(long claimNum,long patNum,long clearingHouseNum,int batchNumber,EtransType etransType,DateTime dateTimeTrans) {
-			Etrans etrans=new Etrans();
-			etrans=Etranss.CreateEtransForClaim(claimNum,patNum,clearingHouseNum,etransType,batchNumber,0);
-			etrans.Etype=EtransType.ERA_835;
-			etrans.AckCode="";
-			etrans.TranSetId835="";
-			etrans.CarrierNameRaw=Carriers.GetCarrier(etrans.CarrierNum).ToString();
-			etrans.PatientNameRaw=Patients.GetNameLF(etrans.PatNum);
-			etrans.DateTimeTrans=dateTimeTrans;
-			Etranss.Insert(etrans);
-			return etrans;
-		}
-
 		///<summary>Builds the X835 for given etrans835 and etransMessageText.
 		///Also attempts to create attaches for patients in listPatients using their first/last name and the claim num in their tuple entry.</summary>
 		public static X835 Construct835(Etrans etrans835,string etransMessageText,List<ODTuple<Patient,long>> listPatients,out List<Etrans835Attach>listEtrans835Attaches)

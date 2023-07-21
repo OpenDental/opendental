@@ -25,6 +25,8 @@ namespace OpenDental {
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPerioSetup));
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
@@ -35,8 +37,27 @@ namespace OpenDental {
 			this.textF32 = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.butAll323 = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
 			this.SuspendLayout();
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(385, 208);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 5;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(466, 208);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 4;
+			this.butCancel.Text = "&Cancel";
 			// 
 			// label1
 			// 
@@ -121,27 +142,17 @@ namespace OpenDental {
 			// butAll323
 			// 
 			this.butAll323.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butAll323.Location = new System.Drawing.Point(12, 201);
+			this.butAll323.Location = new System.Drawing.Point(75, 208);
 			this.butAll323.Name = "butAll323";
 			this.butAll323.Size = new System.Drawing.Size(81, 24);
 			this.butAll323.TabIndex = 23;
 			this.butAll323.Text = "Set All 323";
 			this.butAll323.Click += new System.EventHandler(this.butAll323_Click);
 			// 
-			// butSave
-			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(467, 201);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 5;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
-			// 
 			// FormPerioSetup
 			// 
-			this.ClientSize = new System.Drawing.Size(554, 237);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(568, 249);
 			this.Controls.Add(this.butAll323);
 			this.Controls.Add(this.label5);
 			this.Controls.Add(this.textF32);
@@ -152,7 +163,8 @@ namespace OpenDental {
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormPerioSetup";
 			this.Text = "Perio Setup";
@@ -162,6 +174,9 @@ namespace OpenDental {
 		}
 
 		#endregion
+
+		private UI.Button butOK;
+		private UI.Button butCancel;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
@@ -172,6 +187,5 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textF32;
 		private System.Windows.Forms.Label label5;
 		private UI.Button butAll323;
-		private UI.Button butSave;
 	}
 }

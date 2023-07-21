@@ -24,7 +24,8 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormInsBlueBookRuleEdit));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.labelLimitType = new System.Windows.Forms.Label();
 			this.listLimitType = new OpenDental.UI.ListBox();
 			this.labelLimitValue = new System.Windows.Forms.Label();
@@ -33,15 +34,26 @@ namespace OpenDental{
 			this.textLimitValue = new OpenDental.ValidNum();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(164, 203);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.ButSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(115, 203);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.ButOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(196, 203);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.ButCancel_Click);
 			// 
 			// labelLimitType
 			// 
@@ -100,19 +112,20 @@ namespace OpenDental{
 			// 
 			// FormInsBlueBookRuleEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(251, 239);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(283, 239);
 			this.Controls.Add(this.textLimitValue);
 			this.Controls.Add(this.labelRule);
 			this.Controls.Add(this.textRule);
 			this.Controls.Add(this.labelLimitValue);
 			this.Controls.Add(this.labelLimitType);
 			this.Controls.Add(this.listLimitType);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormInsBlueBookRuleEdit";
 			this.Text = "Blue Book Rule Edit";
-			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormInsBlueBookRuleEdit_FormClosing);
 			this.Load += new System.EventHandler(this.FormInsBlueBookRuleEdit_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -121,7 +134,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label labelLimitType;
 		private OpenDental.UI.ListBox listLimitType;
 		private System.Windows.Forms.Label labelLimitValue;

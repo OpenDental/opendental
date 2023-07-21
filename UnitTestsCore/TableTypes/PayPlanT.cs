@@ -366,12 +366,6 @@ namespace UnitTestsCore {
 			return payPlan;
 		}
 		#endregion
-
-		///<summary>Deletes everything from the payplan table.</summary>
-		public static void ClearPayPlanTable() {
-			string command="DELETE FROM payplan WHERE PayPlanNum > 0";
-			DataCore.NonQ(command);
-		}
 	}
 
 }

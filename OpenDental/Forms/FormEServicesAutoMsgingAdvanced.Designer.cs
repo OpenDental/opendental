@@ -26,7 +26,8 @@ namespace OpenDental {
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEServicesAutoMsgingAdvanced));
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupAutomationStatuses = new OpenDental.UI.GroupBox();
 			this.butExclusionDays = new OpenDental.UI.Button();
 			this.radio2ClickConfirm = new System.Windows.Forms.RadioButton();
@@ -69,16 +70,27 @@ namespace OpenDental {
 			this.gridMain.TabIndex = 0;
 			this.gridMain.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellClick);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(1004, 630);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 1;
-			this.butSave.Text = "&Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(923, 611);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 1;
+			this.butOK.Text = "OK";
+			this.butOK.UseVisualStyleBackColor = true;
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(1004, 611);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Cancel";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// groupAutomationStatuses
 			// 
@@ -229,12 +241,12 @@ namespace OpenDental {
 			this.labelThankYouTitle.Text = "Auto Message Calendar Event Title";
 			this.labelThankYouTitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// textCalendarIcsTitle
+			// textThankYouTitle
 			// 
 			this.textCalendarIcsTitle.AcceptsTab = true;
 			this.textCalendarIcsTitle.BackColor = System.Drawing.SystemColors.Window;
 			this.textCalendarIcsTitle.Location = new System.Drawing.Point(225, 46);
-			this.textCalendarIcsTitle.Name = "textCalendarIcsTitle";
+			this.textCalendarIcsTitle.Name = "textThankYouTitle";
 			this.textCalendarIcsTitle.Size = new System.Drawing.Size(480, 20);
 			this.textCalendarIcsTitle.TabIndex = 276;
 			// 
@@ -310,8 +322,9 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.label11);
 			this.Controls.Add(this.groupAutomationStatuses);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.checkEnableNoClinic);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.gridMain);
 			this.Name = "FormEServicesAutoMsgingAdvanced";
 			this.Text = "eServices Automated Messaging Advanced Settings";
@@ -328,7 +341,8 @@ namespace OpenDental {
 		#endregion
 
 		private UI.GridOD gridMain;
-		private UI.Button butSave;
+		private UI.Button butOK;
+		private UI.Button butClose;
 		private OpenDental.UI.GroupBox groupAutomationStatuses;
 		private System.Windows.Forms.RadioButton radio2ClickConfirm;
 		private System.Windows.Forms.RadioButton radio1ClickConfirm;

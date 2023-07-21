@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Text;
-using System.Linq;
 
 namespace OpenDentBusiness{
 	///<summary></summary>
@@ -12,14 +11,10 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<Cpt>>(MethodBase.GetCurrentMethod(),searchText);
 			}
-			List<string> listSearchTokens=searchText.Split(' ').ToList();
-			string command=@"SELECT * FROM cpt WHERE ";
-			for(int i=0;i<listSearchTokens.Count;i++) {
-				if(i>0) {
-					command+="AND ";
-				}
-				command+="(CptCode LIKE '%"+POut.String(listSearchTokens[i])+"%' OR Description LIKE '%"
-					+POut.String(listSearchTokens[i])+"%') ";
+			string[] searchTokens=searchText.Split(' ');
+			string command=@"SELECT * FROM cpt ";
+			for(int i=0;i<searchTokens.Length;i++) {
+				command+=(i==0?"WHERE ":"AND ")+"(CptCode LIKE '%"+POut.String(searchTokens[i])+"%' OR Description LIKE '%"+POut.String(searchTokens[i])+"%') ";
 			}
 			return Crud.CptCrud.SelectMany(command);
 		}
@@ -45,13 +40,13 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<string>>(MethodBase.GetCurrentMethod());
 			}
-			List<string> listStrings=new List<string>();
+			List<string> retVal=new List<string>();
 			string command="SELECT CptCode FROM cpt";
 			DataTable table=DataCore.GetTable(command);
 			for(int i=0;i<table.Rows.Count;i++) {
-				listStrings.Add(table.Rows[i][0].ToString());
+				retVal.Add(table.Rows[i][0].ToString());
 			}
-			return listStrings;
+			return retVal;
 		}
 
 		///<summary>Gets one Cpt object directly from the database by CptCode.  If code does not exist, returns null.</summary>
@@ -92,21 +87,21 @@ namespace OpenDentBusiness{
 				return;
 			}
 			Cpt cpt=Cpts.GetByCode(POut.String(cptCode));
-			List<string> listVersionIDs=cpt.VersionIDs.Split(',').ToList();
-			bool foundVersionID=false;
-			string versionIDMax="";
-			for(int i=0;i<listVersionIDs.Count;i++) {
-				if(string.Compare(listVersionIDs[i],versionIDMax)>0) {//Find max versionID in list
-					versionIDMax=listVersionIDs[i];
+			string[] versionIDs=cpt.VersionIDs.Split(',');
+			bool versionIDFound=false;
+			string maxVersionID="";
+			for(int i=0;i<versionIDs.Length;i++) {
+				if(string.Compare(versionIDs[i],maxVersionID)>0) {//Find max versionID in list
+					maxVersionID=versionIDs[i];
 				}
-				if(listVersionIDs[i]==versionID) {//Find if versionID is already in list
-					foundVersionID=true;
+				if(versionIDs[i]==versionID) {//Find if versionID is already in list
+					versionIDFound=true;
 				}
 			}
-			if(!foundVersionID) {//If the current version isn't already in the list
+			if(!versionIDFound) {//If the current version isn't already in the list
 				cpt.VersionIDs+=','+versionID;  //VersionID should never be blank for an existing code... should we check?
 			}
-			if(string.Compare(versionID,versionIDMax)>=0) { //If newest version
+			if(string.Compare(versionID,maxVersionID)>=0) { //If newest version
 				cpt.Description=description;
 			}
 			Crud.CptCrud.Update(cpt);

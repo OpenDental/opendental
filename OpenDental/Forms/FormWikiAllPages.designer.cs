@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWikiAllPages));
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.webBrowserWiki = new System.Windows.Forms.WebBrowser();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.textSearch = new System.Windows.Forms.TextBox();
@@ -37,12 +38,22 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(925, 647);
+			this.butOK.Location = new System.Drawing.Point(925, 617);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(925, 647);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// webBrowserWiki
 			// 
@@ -93,7 +104,7 @@ namespace OpenDental{
 			// 
 			this.butBrackets.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butBrackets.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.butBrackets.Location = new System.Drawing.Point(925, 617);
+			this.butBrackets.Location = new System.Drawing.Point(925, 587);
 			this.butBrackets.Name = "butBrackets";
 			this.butBrackets.Size = new System.Drawing.Size(75, 24);
 			this.butBrackets.TabIndex = 12;
@@ -103,7 +114,7 @@ namespace OpenDental{
 			// butAdd
 			// 
 			this.butAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butAdd.Location = new System.Drawing.Point(925, 587);
+			this.butAdd.Location = new System.Drawing.Point(925, 557);
 			this.butAdd.Name = "butAdd";
 			this.butAdd.Size = new System.Drawing.Size(75, 24);
 			this.butAdd.TabIndex = 13;
@@ -130,6 +141,7 @@ namespace OpenDental{
 			this.Controls.Add(this.webBrowserWiki);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormWikiAllPages";
 			this.Text = "All Wiki Pages";
@@ -142,6 +154,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.WebBrowser webBrowserWiki;
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.TextBox textSearch;

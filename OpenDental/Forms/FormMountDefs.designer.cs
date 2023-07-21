@@ -38,6 +38,7 @@ namespace OpenDental {
 			this.listBoxMain = new OpenDental.UI.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butAdd = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.butDown = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
 			this.SuspendLayout();
@@ -55,9 +56,9 @@ namespace OpenDental {
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(3, 10);
+			this.label1.Location = new System.Drawing.Point(21, 10);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(384, 32);
+			this.label1.Size = new System.Drawing.Size(383, 32);
 			this.label1.TabIndex = 11;
 			this.label1.Text = "This is a list of radiograph mounts and image composites.  You can freely edit, m" +
     "ove, or delete any of these mounts without affecting patient records";
@@ -73,6 +74,16 @@ namespace OpenDental {
 			this.butAdd.TabIndex = 10;
 			this.butAdd.Text = "&Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(343, 444);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butDown
 			// 
@@ -100,12 +111,13 @@ namespace OpenDental {
 			// 
 			// FormMountDefs
 			// 
-			this.ClientSize = new System.Drawing.Size(388, 487);
+			this.ClientSize = new System.Drawing.Size(441, 487);
 			this.Controls.Add(this.butDown);
 			this.Controls.Add(this.butUp);
 			this.Controls.Add(this.listBoxMain);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butAdd);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -121,6 +133,7 @@ namespace OpenDental {
 
 		private OpenDental.UI.ListBox listBoxMain;
 		private OpenDental.UI.Button butAdd;
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.Button butDown;
 		private OpenDental.UI.Button butUp;

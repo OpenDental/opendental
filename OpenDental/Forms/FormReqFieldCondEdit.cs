@@ -313,15 +313,15 @@ namespace OpenDental {
 		}
 
 		private void butPickProv_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick=new FrmProviderPick(_listProviders);
+			using FormProviderPick formProviderPick=new FormProviderPick(_listProviders);
 			if(listConditionValues.SelectedIndices.Count>0) {//Initial formProviderPick selection
-				frmProviderPick.ProvNumSelected=_listProviders[listConditionValues.SelectedIndices[0]].ProvNum;
+				formProviderPick.ProvNumSelected=_listProviders[listConditionValues.SelectedIndices[0]].ProvNum;
 			}
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			listConditionValues.SelectedIndices.Add(_listProviders.FindIndex(x => x.ProvNum==frmProviderPick.ProvNumSelected));
+			listConditionValues.SelectedIndices.Add(_listProviders.FindIndex(x => x.ProvNum==formProviderPick.ProvNumSelected));
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
@@ -333,7 +333,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(listConditionType.SelectedIndex==-1) {
 				MsgBox.Show(this,"Please select a condition type.");
 				return;
@@ -515,6 +515,10 @@ namespace OpenDental {
 					break;
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

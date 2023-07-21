@@ -195,7 +195,7 @@ namespace OpenDental{
 			gridMain.ListGridRows.Add(row);
 			AddRow(Lans.g(this,"All"),Lans.g(this,"WebSched Email Aggregate"),Lans.g(this,"Subject Line.  Available variables")+": [NameF], "
 				+"[ClinicName], [PracticeName], [OfficeName]",PrefName.WebSchedAggregatedEmailSubject);
-			AddRow(Lans.g(this,"All"),Lans.g(this,"WebSched Email Aggregate"),Lans.g(this,"Email body.  Available variables")+": [FamilyListURLs], [FamilyList], [NameF],"
+			AddRow(Lans.g(this,"All"),Lans.g(this,"WebSched Email Aggregate"),Lans.g(this,"Email body.  Available variables")+": [FamilyListURLs], [NameF],"
 				+" [ClinicName], [ClinicPhone], [PracticeName], [PracticePhone], [OfficeName], [OfficePhone]",PrefName.WebSchedAggregatedEmailBody);
 			//
 			row=new GridRow();
@@ -205,7 +205,7 @@ namespace OpenDental{
 			row.Cells.Add(PrefC.GetString(PrefName.WebSchedMessageText));
 			row.Tag=PrefName.WebSchedMessageText.ToString();
 			gridMain.ListGridRows.Add(row);
-			AddRow(Lans.g(this,"All"),Lans.g(this,"WebSched Text Aggregate"),Lans.g(this,"Available variables")+": [FamilyListURLs], [FamilyList], [NameF], [ClinicName],"
+			AddRow(Lans.g(this,"All"),Lans.g(this,"WebSched Text Aggregate"),Lans.g(this,"Available variables")+": [FamilyListURLs], [NameF], [ClinicName],"
 				+" [ClinicPhone], [PracticeName], [PracticePhone], [OfficeName], [OfficePhone]",PrefName.WebSchedAggregatedTextMessage);
 			#endregion
 			#region 2nd Reminder
@@ -409,7 +409,7 @@ namespace OpenDental{
 			formEServicesWebSchedRecall.ShowDialog();
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textRight.IsValid()
 				|| !textDown.IsValid()
 				|| !textDaysPast.IsValid()
@@ -440,14 +440,6 @@ namespace OpenDental{
 			{
 				MsgBox.Show(this,"All status options on the left must be set.");
 				return;
-			}
-			for(int i = 0;i<gridMain.ListGridRows.Count;i++) {
-				int index =gridMain.Columns.GetIndex(Lan.g("TableRecallMsgs","Message"));
-				string errorText=PrefC.GetFirstShortURL(gridMain.ListGridRows[i].Cells[index].Text);
-				if(!string.IsNullOrWhiteSpace(errorText)) {
-					MsgBox.Show(this,Lan.g(this,"Message cannot contain the URL")+" "+errorText+" "+Lan.g(this,"as this is only allowed for eServices."));
-					return;
-				}
 			}
 			//End of Validation
 			if(Prefs.UpdateString(PrefName.RecallPostcardsPerSheet,textPostcardsPerSheet.Text)) {
@@ -510,5 +502,9 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
+
 }

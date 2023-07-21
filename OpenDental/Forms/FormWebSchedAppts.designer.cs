@@ -25,6 +25,7 @@ namespace OpenDental {
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormWebSchedAppts));
+			this.butClose = new OpenDental.UI.Button();
 			this.datePicker = new OpenDental.UI.ODDateRangePicker();
 			this.comboBoxClinicMulti = new OpenDental.UI.ComboBoxClinicPicker();
 			this.comboConfStatus = new OpenDental.UI.ComboBox();
@@ -45,6 +46,17 @@ namespace OpenDental {
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(1143, 660);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 6;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// datePicker
 			// 
 			this.datePicker.EnableWeekButtons = false;
@@ -62,7 +74,7 @@ namespace OpenDental {
 			this.comboBoxClinicMulti.IncludeUnassigned = true;
 			this.comboBoxClinicMulti.Location = new System.Drawing.Point(45, 69);
 			this.comboBoxClinicMulti.Name = "comboBoxClinicMulti";
-			this.comboBoxClinicMulti.IsMultiSelect = true;
+			this.comboBoxClinicMulti.SelectionModeMulti = true;
 			this.comboBoxClinicMulti.Size = new System.Drawing.Size(197, 22);
 			this.comboBoxClinicMulti.TabIndex = 1;
 			// 
@@ -93,7 +105,7 @@ namespace OpenDental {
 			this.gridMain.ContextMenuStrip = this.contextMenuMainGrid;
 			this.gridMain.Location = new System.Drawing.Point(13, 97);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(1205, 587);
+			this.gridMain.Size = new System.Drawing.Size(1205, 557);
 			this.gridMain.TabIndex = 5;
 			this.gridMain.Title = "Appointments";
 			this.gridMain.TranslationName = "TableAppointments";
@@ -188,6 +200,7 @@ namespace OpenDental {
 			// 
 			// FormWebSchedAppts
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(1230, 696);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.groupBox2);
@@ -196,6 +209,7 @@ namespace OpenDental {
 			this.Controls.Add(this.labelConfStatus);
 			this.Controls.Add(this.comboConfStatus);
 			this.Controls.Add(this.comboBoxClinicMulti);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormWebSchedAppts";
 			this.Text = "Web Sched Appointments";
@@ -208,6 +222,7 @@ namespace OpenDental {
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private UI.ODDateRangePicker datePicker;
 		private UI.ComboBoxClinicPicker comboBoxClinicMulti;
 		private OpenDental.UI.ComboBox comboConfStatus;

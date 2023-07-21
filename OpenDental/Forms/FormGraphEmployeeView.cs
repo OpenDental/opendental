@@ -17,8 +17,8 @@ namespace OpenDental {
 		private List<PhoneGraph> _listPhoneGraphsEmpCur;
 		///<summary>A list of schedules for the currently selected employee.</summary>
 		private List<Schedule> _listSchedulesEmpCur;
-		///<summary>A list of schedules for the currently selected employee's provider within the date range from the odDatePickers.</summary>
-		private List<Schedule> _listSchedulesProvCur;
+		///<summary>A list of schedules for all providers within the date range from the odDatePickers.</summary>
+		private List<Schedule> _listSchedulesProvs;
 		///<summary>ProvNum for the currently selected employee</summary>
 		private long _provNum;
 		private int _pagesPrinted;
@@ -32,7 +32,7 @@ namespace OpenDental {
 		}
 
 		private void FormGraphEmployeeView_Load(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Schedules,true)){
+			if(!Security.IsAuthorized(Permissions.Schedules,true)){
 				butCopy.Enabled=false;
 				butCopy.Visible=false;
 				butPaste.Enabled=false;
@@ -40,16 +40,15 @@ namespace OpenDental {
 				labelCopyPaste.Visible=false;
 			}
 			_listEmployees=Employees.GetDeepCopy(true);
-			//It's not guaranteed that the current employee is associated to a provider.
-			_listSchedulesProvCur=new List<Schedule>();
 			listBoxEmployees.Items.AddList(_listEmployees,x => x.FName);
 			listBoxEmployees.SetSelectedKey<Employee>(Security.CurUser.EmployeeNum,x => x.EmployeeNum);
 			odDatePickerFrom.SetDateTime(DateTime.Today);
 			odDatePickerTo.SetDateTime(DateTime.Today.AddMonths(3));
-			listBoxEmployees.SelectionChangeCommitted+=ListBoxEmployees_SelectionChangeCommitted;
-			odDatePickerFrom.DateTextChanged+=OdDatePickerFrom_DateTextChanged;
-			odDatePickerTo.DateTextChanged+=OdDatePickerTo_DateTextChanged;
 			FillGrid();
+		}
+
+		private void ButClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 
 		private void ButCopy_Click(object sender,EventArgs e) {
@@ -68,7 +67,7 @@ namespace OpenDental {
 			DateTime dateTimeEntry=DateTime.Parse(_gridRowCopied.Cells[0].Text);
 			//There should only be one phone graph per dateEntry
 			PhoneGraph phoneGraphCopied=_listPhoneGraphsEmpCur.Find(x => x.DateEntry==dateTimeEntry);
-			List<Schedule> listSchedulesCopied=_listSchedulesProvCur.FindAll(x => x.SchedDate==dateTimeEntry);
+			List<Schedule> listSchedulesCopied=_listSchedulesProvs.FindAll(x => x.ProvNum==_provNum && x.SchedDate==dateTimeEntry);
 			long empNumCur=listBoxEmployees.GetSelected<Employee>().EmployeeNum;
 			//For now, only update the phone graph overrides and provider schedules
 			for(int i=0; i<gridMain.SelectedGridRows.Count;i++) {
@@ -92,7 +91,7 @@ namespace OpenDental {
 					PhoneGraphs.InsertOrUpdate(phoneGraphSelected);
 				}
 				//Update provider schedules (start/stop times, etc)
-				List<Schedule> listSchedulesProvToUpdate=_listSchedulesProvCur.FindAll(x => x.SchedDate==dateTimeSelected);
+				List<Schedule> listSchedulesProvToUpdate=_listSchedulesProvs.FindAll(x => x.SchedDate==dateTimeSelected && x.ProvNum==_provNum);
 				for(int p=0; p<listSchedulesProvToUpdate.Count; p++) {
 					Schedules.Delete(listSchedulesProvToUpdate[p]);//No signal
 				}
@@ -121,7 +120,7 @@ namespace OpenDental {
 		}
 
 		private void GridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Schedules,true)) {
+			if(!Security.IsAuthorized(Permissions.Schedules,true)) {
 				return;
 			}
 			GridRow row=gridMain.SelectedGridRows[0];
@@ -143,7 +142,7 @@ namespace OpenDental {
 			Provider provider=Providers.GetFirstOrDefault(x=>x.ProvNum==_provNum);
 			if(provider!=null) {
 				formPhoneGraphEdit.ProvNum=_provNum;
-				formPhoneGraphEdit.ListSchedulesProv=_listSchedulesProvCur.FindAll(x=>x.SchedDate==dateEntry);
+				formPhoneGraphEdit.ListSchedulesProv=_listSchedulesProvs.FindAll(x=>x.ProvNum==provider.ProvNum && x.SchedType==ScheduleType.Provider && x.SchedDate==dateEntry);
 			}
 			formPhoneGraphEdit.ShowDialog();
 			if(formPhoneGraphEdit.DialogResult!=DialogResult.OK){
@@ -152,7 +151,7 @@ namespace OpenDental {
 			FillGrid();
 		}
 
-		private void ListBoxEmployees_SelectionChangeCommitted(object sender,EventArgs e) {
+		private void ListBoxEmployees_SelectedIndexChanged(object sender,EventArgs e) {
 			FillGrid();
 		}
 
@@ -177,9 +176,11 @@ namespace OpenDental {
 			Employee employee=listBoxEmployees.GetSelected<Employee>();
 			Provider providerForEmp=Providers.GetFirstOrDefault(x=>x.FName==employee.FName);
 			_listSchedulesEmpCur=Schedules.GetSchedListForDateRange(employee.EmployeeNum,odDatePickerFrom.GetDateTime(),odDatePickerTo.GetDateTime());
+			_listSchedulesProvs=Schedules.GetAllForDateRangeAndType(odDatePickerFrom.GetDateTime(),odDatePickerTo.GetDateTime(),ScheduleType.Provider);
+			List<Schedule> listSchedulesCurProv=new List<Schedule>();
 			if(providerForEmp!=null) {
 				_provNum=providerForEmp.ProvNum;
-				_listSchedulesProvCur=Schedules.GetForProv(odDatePickerFrom.GetDateTime(),odDatePickerTo.GetDateTime(),providerForEmp.ProvNum);
+				listSchedulesCurProv=_listSchedulesProvs.FindAll(x => x.ProvNum==_provNum);
 			}
 			_listPhoneGraphsEmpCur=PhoneGraphs.GetAllForEmployeeNum(employee.EmployeeNum);
 			PhoneEmpDefault phoneEmpDefault=PhoneEmpDefaults.GetOne(employee.EmployeeNum);
@@ -231,7 +232,7 @@ namespace OpenDental {
 					row.Cells.Add("");//Nothing is scheduled
 				}
 				//Scheduled provider time
-				List<Schedule> listSchedulesProv=_listSchedulesProvCur.FindAll(x => x.SchedDate==dateTimeCur);
+				List<Schedule> listSchedulesProv=listSchedulesCurProv.FindAll(x => x.SchedDate==dateTimeCur);
 				if(listSchedulesProv.Count>0) {
 					row.Cells.Add(Schedules.GetCommaDelimStringForScheds(listSchedulesProv));
 				}
@@ -271,6 +272,5 @@ namespace OpenDental {
 			_pagesPrinted++;
 			e.HasMorePages=false;//Only print one page
 		}
-
 	}
 }

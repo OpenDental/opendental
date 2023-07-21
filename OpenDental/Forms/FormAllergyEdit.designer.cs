@@ -35,6 +35,7 @@ namespace OpenDental{
 			this.textSnomedReaction = new System.Windows.Forms.TextBox();
 			this.butNoneSnomedReaction = new OpenDental.UI.Button();
 			this.butSnomedReactionSelect = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.SuspendLayout();
@@ -134,15 +135,25 @@ namespace OpenDental{
 			this.butSnomedReactionSelect.Text = "...";
 			this.butSnomedReactionSelect.Click += new System.EventHandler(this.butSnomedReactionSelect_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(427, 215);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 14;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(425, 215);
+			this.butOK.Location = new System.Drawing.Point(346, 215);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
-			this.butOK.Text = "&Save";
-			this.butOK.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butDelete
 			// 
@@ -165,6 +176,7 @@ namespace OpenDental{
 			this.Controls.Add(this.textSnomedReaction);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textDate);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.comboAllergies);
 			this.Controls.Add(this.labelAllergy);
 			this.Controls.Add(this.checkActive);
@@ -190,6 +202,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelReaction;
 		private System.Windows.Forms.Label labelAllergy;
 		private OpenDental.UI.ComboBox comboAllergies;
+		private UI.Button butCancel;
 		private System.Windows.Forms.TextBox textDate;
 		private System.Windows.Forms.Label label1;
 		private UI.Button butNoneSnomedReaction;

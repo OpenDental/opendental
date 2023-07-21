@@ -126,16 +126,16 @@ namespace OpenDental{
 			else {
 				odColorPickerBack.BackgroundColor=CarrierCur.ApptTextBackColor;
 			}
-			if(!Security.IsAuthorized(EnumPermType.CarrierEdit,true) && !IsNew) {
+			if(!Security.IsAuthorized(Permissions.CarrierEdit,true) && !IsNew) {
 				TurnOffUI();
 			}
-			else if(!Security.IsAuthorized(EnumPermType.CarrierCreate,true) && IsNew) {
+			else if(!Security.IsAuthorized(Permissions.CarrierCreate,true) && IsNew) {
 				TurnOffUI();
 			}
 		}
 
 		private void TurnOffUI() {
-			butSave.Enabled=false;
+			butOK.Enabled=false;
 			butDelete.Enabled=false;
 			textCarrierName.ReadOnly=true;
 			textPhone.ReadOnly=true;
@@ -261,7 +261,7 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(textCarrierName.Text==""){
 				MessageBox.Show(Lan.g(this,"Carrier Name cannot be blank."));
 				return;
@@ -294,7 +294,7 @@ namespace OpenDental{
 			if(IsNew){
 				try{
 					Carriers.Insert(CarrierCur);
-					SecurityLogs.MakeLogEntry(EnumPermType.CarrierCreate,0,Lan.g(this,"Carrier ")+CarrierCur.CarrierName+Lan.g(this," manually created."));
+					SecurityLogs.MakeLogEntry(Permissions.CarrierCreate,0,Lan.g(this,"Carrier ")+CarrierCur.CarrierName+Lan.g(this," manually created."));
 				}
 				catch(ApplicationException ex){
 					MessageBox.Show(ex.Message);
@@ -306,7 +306,7 @@ namespace OpenDental{
 					Carriers.Update(CarrierCur,carrierOld);
 					//If the carrier name has changed loop through all the insplans that use this carrier and make a securitylog entry.
 					if(carrierOld.CarrierName!=CarrierCur.CarrierName) {
-						SecurityLogs.MakeLogEntry(EnumPermType.InsPlanChangeCarrierName,0,Lan.g(this,"Carrier name changed in Edit Carrier window from")+" "
+						SecurityLogs.MakeLogEntry(Permissions.InsPlanChangeCarrierName,0,Lan.g(this,"Carrier name changed in Edit Carrier window from")+" "
 							+carrierOld.CarrierName+" "+Lan.g(this,"to")+" "+CarrierCur.CarrierName);
 					}
 				}
@@ -316,12 +316,12 @@ namespace OpenDental{
 				}
 			}
 			string logMessage=GetSecurityLogMessage(carrierOld);
-			EnumPermType permissionType;
+			Permissions permissionType;
 			if(IsNew) {
-				permissionType=EnumPermType.CarrierCreate;
+				permissionType=Permissions.CarrierCreate;
 			}
 			else {
-				permissionType=EnumPermType.CarrierEdit;
+				permissionType=Permissions.CarrierEdit;
 			}
 			if(!string.IsNullOrEmpty(logMessage)) {
 				SecurityLogs.MakeLogEntry(permissionType,0,logMessage);
@@ -329,5 +329,29 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

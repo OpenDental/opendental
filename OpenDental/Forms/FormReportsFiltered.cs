@@ -40,6 +40,9 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 		#endregion Methods - Event Handlers
 
 		#region Methods - Private
@@ -58,6 +61,5 @@ namespace OpenDental {
 			}
 		}
 		#endregion Methods - Private
-
 	}
 }

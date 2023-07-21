@@ -23,8 +23,8 @@ namespace OpenDentBusiness{
 		public static List<Screen> CreateScreensFromSheets(List<Sheet> listSheets) {
 			//No need to check MiddleTierRole; no call to db.
 			List<Screen> listScreens=new List<Screen>();
-			for(int i=0;i<listSheets.Count;i++) {
-				listScreens.Add(CreateScreenFromSheet(listSheets[i]));
+			foreach(Sheet sheet in listSheets) {
+				listScreens.Add(CreateScreenFromSheet(sheet));
 			}
 			return listScreens;
 		}
@@ -43,13 +43,13 @@ namespace OpenDentBusiness{
 				screen.ScreenGroupNum=(long)SheetParameter.GetParamByName(sheet.Parameters,"ScreenGroupNum").ParamValue;
 			}
 			screen.SheetNum=sheet.SheetNum;
-			for(int i=0;i<sheet.SheetFields.Count;i++) {
-				switch(sheet.SheetFields[i].FieldName) {
+			foreach(SheetField field in sheet.SheetFields) {
+				switch(field.FieldName) {
 					case "Gender":
-						if(sheet.SheetFields[i].FieldValue.Trim().ToLower().StartsWith("m")) {
+						if(field.FieldValue.Trim().ToLower().StartsWith("m")) {
 							screen.Gender=PatientGender.Male;
 						}
-						else if(sheet.SheetFields[i].FieldValue.Trim().ToLower().StartsWith("f")) {
+						else if(field.FieldValue.Trim().ToLower().StartsWith("f")) {
 							screen.Gender=PatientGender.Female;
 						}
 						else {
@@ -58,65 +58,69 @@ namespace OpenDentBusiness{
 						break;
 					case "Race/Ethnicity":
 						PatientRaceOld patientRace=PatientRaceOld.Unknown;
-						Enum.TryParse<PatientRaceOld>(sheet.SheetFields[i].FieldValue.Split(';')[0],out patientRace);
+						Enum.TryParse<PatientRaceOld>(field.FieldValue.Split(';')[0],out patientRace);
 						screen.RaceOld=patientRace;
 						break;
 					case "GradeLevel":
 						PatientGrade patientGrade=PatientGrade.Unknown;
-						Enum.TryParse<PatientGrade>(sheet.SheetFields[i].FieldValue.Split(';')[0],out patientGrade);
+						Enum.TryParse<PatientGrade>(field.FieldValue.Split(';')[0],out patientGrade);
 						screen.GradeLevel=patientGrade;
 						break;
 					case "Age":
 						if(screen.Age!=0) {
 							break;//Already calculated via Birthdate.
 						}
-						byte byteAge=0;
-						byte.TryParse(sheet.SheetFields[i].FieldValue,out byteAge);
-						screen.Age=byteAge;
+						byte age=0;
+						byte.TryParse(field.FieldValue,out age);
+						screen.Age=age;
 						break;
 					case "Urgency":
 						TreatmentUrgency treatmentUrgency=TreatmentUrgency.Unknown;
-						Enum.TryParse<TreatmentUrgency>(sheet.SheetFields[i].FieldValue.Split(';')[0],out treatmentUrgency);
+						Enum.TryParse<TreatmentUrgency>(field.FieldValue.Split(';')[0],out treatmentUrgency);
 						screen.Urgency=treatmentUrgency;
 						break;
 					case "ChartSealantTreatment":
 						//Only mark "carious" if TP chart has C marked for any tooth surface.
-						screen.HasCaries=YN.No;
-						if(sheet.SheetFields[i].FieldValue.Contains("C")) {
+						if(field.FieldValue.Contains("C")) {
 							screen.HasCaries=YN.Yes;//Caries is present in TP'd chart.  Compl chart doesn't matter, it's only for sealant placement.
 						}
+						else {
+							screen.HasCaries=YN.No;
+						}
 						//Only mark "needs sealants" if TP chart has S marked for any tooth surface.
-						screen.NeedsSealants=YN.No;
-						if(sheet.SheetFields[i].FieldValue.Contains("S")) {
+						if(field.FieldValue.Contains("S")) {
 							screen.NeedsSealants=YN.Yes;
+						}
+						else {
+							screen.NeedsSealants=YN.No;
 						}
 						break;
 					case "CariesExperience":
-						screen.CariesExperience=sheet.SheetFields[i].FieldValue=="X" ? YN.Yes : YN.No;
+						screen.CariesExperience=field.FieldValue=="X" ? YN.Yes : YN.No;
 						break;
 					case "EarlyChildCaries":
-						screen.EarlyChildCaries=sheet.SheetFields[i].FieldValue=="X" ? YN.Yes : YN.No;
+						screen.EarlyChildCaries=field.FieldValue=="X" ? YN.Yes : YN.No;
 						break;
 					case "ExistingSealants":
-						screen.ExistingSealants=sheet.SheetFields[i].FieldValue=="X" ? YN.Yes : YN.No;
+						screen.ExistingSealants=field.FieldValue=="X" ? YN.Yes : YN.No;
 						break;
 					case "MissingAllTeeth":
-						screen.MissingAllTeeth=sheet.SheetFields[i].FieldValue=="X" ? YN.Yes : YN.No;
+						screen.MissingAllTeeth=field.FieldValue=="X" ? YN.Yes : YN.No;
 						break;
 					case "Birthdate":
-						DateTime dateBirth=new DateTime(1,1,1);
-						DateTime.TryParse(sheet.SheetFields[i].FieldValue,out dateBirth);
-						screen.Birthdate=dateBirth;
+						DateTime birthdate=new DateTime(1,1,1);
+						DateTime.TryParse(field.FieldValue,out birthdate);
+						screen.Birthdate=birthdate;
 						//Check to see if the sheet has Age manually filled out.  
 						//If Age was not manually set, automatically calculate the age based on the birthdate entered.
 						//This matches screening functionality.
 						SheetField sheetFieldAge=sheet.SheetFields.FirstOrDefault(x => x.FieldName=="Age");
 						if(sheetFieldAge!=null && string.IsNullOrEmpty(sheetFieldAge.FieldValue)) {
-							screen.Age=PIn.Byte(Patients.DateToAge(dateBirth).ToString());
+							screen.Age=PIn.Byte(Patients.DateToAge(birthdate).ToString());
 						}
 						break;
 					case "Comments":
-						screen.Comments=sheet.SheetFields[i].FieldValue;
+						screen.Comments=field.FieldValue;
 						break;
 				}
 			}
@@ -132,9 +136,9 @@ namespace OpenDentBusiness{
 		///<summary>Takes a screening sheet that is associated to a patient and processes any corresponding ScreenCharts found.
 		///Processing will create treatment planned or completed procedures for the patient.
 		///Supply the sheet and then a bitwise enum of screen chart types to digest.
-		///listSheetFieldsProcOrig, nulls are allowed, the first represents the fluoride field, second is assessment field, all others are other procs.</summary>
-		public static void ProcessScreenChart(Sheet sheet,ScreenChartType screenChartTypes,long provNum,long sheetNum,List<SheetField> listSheetFieldsChartOrig
-			,List<SheetField> listSheetFieldsProcOrig) 
+		///listProcOrigVals, nulls are allowed, the first represents the fluoride field, second is assessment field, all others are other procs.</summary>
+		public static void ProcessScreenChart(Sheet sheet,ScreenChartType chartTypes,long provNum,long sheetNum,List<SheetField> listChartOrigVals
+			,List<SheetField> listProcOrigVals) 
 		{
 			//No need to check MiddleTierRole; no call to db.
 			if(sheet==null || sheet.PatNum==0) {
@@ -143,65 +147,56 @@ namespace OpenDentBusiness{
 			List<string> listToothVals=new List<string>();
 			List<string> listToothValsOld=new List<string>();
 			//Process treatment planned sealants.
-			for(int i=0;i<sheet.SheetFields.Count;i++) {//Go through the supplied sheet's fields and find the field.
-				if(screenChartTypes.HasFlag(ScreenChartType.TP) 
-					&& sheet.SheetFields[i].FieldType==SheetFieldType.ScreenChart 
-					&& sheet.SheetFields[i].FieldName=="ChartSealantTreatment") 
-				{
-					listToothVals=sheet.SheetFields[i].FieldValue.Split(';').ToList();
+			foreach(SheetField field in sheet.SheetFields) {//Go through the supplied sheet's fields and find the field.
+				if(chartTypes.HasFlag(ScreenChartType.TP) && field.FieldType==SheetFieldType.ScreenChart && field.FieldName=="ChartSealantTreatment") {
+					listToothVals=field.FieldValue.Split(';').ToList();
 					if(listToothVals[0]=="1") {//Primary tooth chart
 						continue;//Skip primary tooth charts because we do not need to create any TP procedures for them.
 					}
 					listToothVals.RemoveAt(0);//Remove the toothchart type value
-					if(listSheetFieldsChartOrig[0]!=null) {//Shouldn't be null if ChartSealantTreatment exists
-						listToothValsOld=listSheetFieldsChartOrig[0].FieldValue.Split(';').ToList();
+					if(listChartOrigVals[0]!=null) {//Shouldn't be null if ChartSealantTreatment exists
+						listToothValsOld=listChartOrigVals[0].FieldValue.Split(';').ToList();
 						listToothValsOld.RemoveAt(0);//Remove the toothchart type value
 					}
-					ScreenChartType screenChartType=ScreenChartType.TP;
-					ProcessScreenChartHelper(sheet.PatNum,listToothVals,screenChartType,provNum,sheetNum,listToothValsOld);
+					ScreenChartType chartType=ScreenChartType.TP;
+					ProcessScreenChartHelper(sheet.PatNum,listToothVals,chartType,provNum,sheetNum,listToothValsOld);
 					break;
 				}
 			}
 			listToothVals=new List<string>();//Clear out the tooth values for the next tooth chart.
 			//Process completed sealants.
-			for(int i=0;i<sheet.SheetFields.Count;i++) {//Go through the supplied sheet's fields and find the field.
-				if(screenChartTypes.HasFlag(ScreenChartType.C) 
-					&& sheet.SheetFields[i].FieldType==SheetFieldType.ScreenChart 
-					&& sheet.SheetFields[i].FieldName=="ChartSealantComplete") 
-				{
-					listToothVals=sheet.SheetFields[i].FieldValue.Split(';').ToList();
+			foreach(SheetField field in sheet.SheetFields) {//Go through the supplied sheet's fields and find the field.
+				if(chartTypes.HasFlag(ScreenChartType.C) && field.FieldType==SheetFieldType.ScreenChart && field.FieldName=="ChartSealantComplete") {
+					listToothVals=field.FieldValue.Split(';').ToList();
 					if(listToothVals[0]=="1") {//Primary tooth chart
 						continue;//Skip primary tooth charts because we do not need to create any TP procedures for them.
 					}
 					listToothVals.RemoveAt(0);//Remove the toothchart type value
-					if(listSheetFieldsChartOrig[1]!=null) {//Shouldn't be null if ChartSealantTreatment exists
-						listToothValsOld=listSheetFieldsChartOrig[1].FieldValue.Split(';').ToList();
+					if(listChartOrigVals[1]!=null) {//Shouldn't be null if ChartSealantTreatment exists
+						listToothValsOld=listChartOrigVals[1].FieldValue.Split(';').ToList();
 						listToothValsOld.RemoveAt(0);//Remove the toothchart type value
 					}
-					ScreenChartType screenChartType=ScreenChartType.C;
-					ProcessScreenChartHelper(sheet.PatNum,listToothVals,screenChartType,provNum,sheetNum,listToothValsOld);
+					ScreenChartType chartType=ScreenChartType.C;
+					ProcessScreenChartHelper(sheet.PatNum,listToothVals,chartType,provNum,sheetNum,listToothValsOld);
 					break;
 				}
 			}
 			//Process if the user wants to TP fluoride and/or assessment procedures and/or other procedures.
-			for(int i=0;i<sheet.SheetFields.Count;i++) {
-				if(sheet.SheetFields[i].FieldType!=SheetFieldType.CheckBox) {
+			foreach(SheetField field in sheet.SheetFields) {
+				if(field.FieldType!=SheetFieldType.CheckBox) {
 					continue;//Only care about check box types.
 				}
-				if(sheet.SheetFields[i].FieldName!="FluorideProc"
-					&& sheet.SheetFields[i].FieldName!="AssessmentProc"
-					&& !sheet.SheetFields[i].FieldName.StartsWith("Proc:"))
-				{
+				if(field.FieldName!="FluorideProc" && field.FieldName!="AssessmentProc" && !field.FieldName.StartsWith("Proc:")) {
 					continue;//Field name must be one of the two hard coded values, or a FieldName that starts with "Proc".
 				}
 				//Make other proc with provNum and patNum
-				SheetField sheetFieldOrig=listSheetFieldsProcOrig.FirstOrDefault(x => x.FieldName==sheet.SheetFields[i].FieldName && x.FieldType==SheetFieldType.CheckBox);
-				if(sheetFieldOrig==null || sheetFieldOrig.FieldValue!="" || sheet.SheetFields[i].FieldValue!="X") {
+				SheetField sheetFieldOrig=listProcOrigVals.FirstOrDefault(x => x.FieldName==field.FieldName && x.FieldType==SheetFieldType.CheckBox);
+				if(sheetFieldOrig==null || sheetFieldOrig.FieldValue!="" || field.FieldValue!="X") {
 					//Either not found or field was previously checked (already charted proc) or field is not checked (do not chart).
 					continue;
 				}
 				string strProcCode="";
-				switch(sheet.SheetFields[i].FieldName) {
+				switch(field.FieldName) {
 					case "FluorideProc"://Original value was blank, new value is "checked", make the D1206 (fluoride) proc.
 						strProcCode="D1206";
 						break;
@@ -209,34 +204,31 @@ namespace OpenDentBusiness{
 						strProcCode="D0191";
 						break;
 					default://Original value was blank, new value is "checked", make the proc.
-						strProcCode=sheet.SheetFields[i].FieldName.Substring(5);//Drop "Proc:" from FieldName.
+						strProcCode=field.FieldName.Substring(5);//Drop "Proc:" from FieldName.
 						break;
 				}
 				Procedure proc=Procedures.CreateProcForPatNum(sheet.PatNum,ProcedureCodes.GetCodeNum(strProcCode),"","",ProcStat.C,provNum);
 				if(proc!=null) {
-					SecurityLogs.MakeLogEntry(EnumPermType.ProcEdit,sheet.PatNum,strProcCode+" "+Lans.g("Screens","treatment planned during screening."));
+					SecurityLogs.MakeLogEntry(Permissions.ProcEdit,sheet.PatNum,strProcCode+" "+Lans.g("Screens","treatment planned during screening."));
 				}
 			}
 		}
 
 		///<summary>Helper method so that we do not have to duplicate code.  The length of toothValues must match the length of chartOrigVals.</summary>
-		private static void ProcessScreenChartHelper(long patNum,List<string> listToothValues,ScreenChartType screenChartType,long provNum,long sheetNum
-			,List<string> listChartOrigVals) 
+		private static void ProcessScreenChartHelper(long patNum,List<string> toothValues,ScreenChartType chartType,long provNum,long sheetNum
+			,List<string> chartOrigVals) 
 		{
 			//No need to check MiddleTierRole; no call to db.
-			for(int i=0;i<listToothValues.Count;i++) {//toothValues is in the order from low to high tooth number in the chart
-				if(!listToothValues[i].Contains("S")) {//No sealant, nothing to do.
+			for(int i=0;i<toothValues.Count;i++) {//toothValues is in the order from low to high tooth number in the chart
+				if(!toothValues[i].Contains("S")) {//No sealant, nothing to do.
 					continue;
 				}
 				//Logic to determine if the "S" changed surfaces or was erased between the time the toothchart was opened and when it was submitted.
-				List<string> listSurfacesNew=listToothValues[i].Split(',').ToList();
-				List<string> listSurfacesOrig=listChartOrigVals[i].Split(',').ToList();
+				string[] newSurfaces=toothValues[i].Split(',');
+				string[] origSurfaces=chartOrigVals[i].Split(',');
 				bool isDiff=false;
-				for(int j=0;j<listSurfacesOrig.Count;j++) {//Both arrays have the same length unless the chart doesn't exist in the original.
-					if((listSurfacesNew[j]=="S" && listSurfacesOrig[j]!="S") 
-						|| (listSurfacesNew[j]!="S" && listSurfacesOrig[j]=="S")) 
-					{
-						//"S" changed surfaces or was removed.
+				for(int j=0;j<origSurfaces.Length;j++) {//Both arrays have the same length unless the chart doesn't exist in the original.
+					if((newSurfaces[j]=="S" && origSurfaces[j]!="S") || (newSurfaces[j]!="S" && origSurfaces[j]=="S")) {//"S" changed surfaces or was removed.
 						isDiff=true;
 						break;
 					}
@@ -302,30 +294,30 @@ namespace OpenDentBusiness{
 				}
 				if(isMolar) {
 					if(isRight) {
-						if(listSurfacesNew[0]=="S") {
+						if(newSurfaces[0]=="S") {
 							surf+="D";
 						}
-						if(listSurfacesNew[1]=="S") {
+						if(newSurfaces[1]=="S") {
 							surf+="M";
 						}
 					}
 					else {//Is Left side
-						if(listSurfacesNew[0]=="S") {
+						if(newSurfaces[0]=="S") {
 							surf+="M";
 						}
-						if(listSurfacesNew[1]=="S") {
+						if(newSurfaces[1]=="S") {
 							surf+="D";
 						}
 					}
-					if(isLing && listSurfacesNew[2]=="S") {
+					if(isLing && newSurfaces[2]=="S") {
 						surf+="L";
 					}
-					if(!isLing && listSurfacesNew[2]=="S") {
+					if(!isLing && newSurfaces[2]=="S") {
 						surf+="B";
 					}
 				}
 				else {//Front teeth, only look at 3rd surface position in control as that's the only one the user can see.
-					if(listSurfacesNew[2]=="S") {
+					if(newSurfaces[2]=="S") {
 						surf="O";//NOTE: Not sure what surface to enter here... This is just a placeholder for now until we figure it out...
 					}
 				}
@@ -334,36 +326,34 @@ namespace OpenDentBusiness{
 				}
 				#endregion Parse Toothchart FieldValues
 				surf=Tooth.SurfTidyForDisplay(surf,tooth);
-				if(screenChartType==ScreenChartType.TP) {//Create TP'd sealant procs if they don't already exist for this patient.
+				if(chartType==ScreenChartType.TP) {//Create TP'd sealant procs if they don't already exist for this patient.
 					if(Procedures.GetProcForPatByToothSurfStat(patNum,toothNum,surf,ProcStat.TP)!=null) {
 						continue;
 					}
-					Procedure procedure=Procedures.CreateProcForPatNum(patNum,ProcedureCodes.GetCodeNum("D1351"),surf,tooth,ProcStat.TP,provNum);
-					if(procedure!=null) {
-						SecurityLogs.MakeLogEntry(EnumPermType.ProcEdit,patNum,"D1351 "+Lans.g("Screens","treatment planned during screening with tooth")
-							+" "+procedure.ToothNum.ToString()+" "+Lans.g("Screens","and surface")+" "+procedure.Surf);
+					Procedure proc=Procedures.CreateProcForPatNum(patNum,ProcedureCodes.GetCodeNum("D1351"),surf,tooth,ProcStat.TP,provNum);
+					if(proc!=null) {
+						SecurityLogs.MakeLogEntry(Permissions.ProcEdit,patNum,"D1351 "+Lans.g("Screens","treatment planned during screening with tooth")
+							+" "+proc.ToothNum.ToString()+" "+Lans.g("Screens","and surface")+" "+proc.Surf);
 					}
 				}
-				else if(screenChartType==ScreenChartType.C) {
-					Procedure procedure=Procedures.GetProcForPatByToothSurfStat(patNum,toothNum,surf,ProcStat.TP);
-					if(procedure==null) {//A TP procedure does not already exist.
-						procedure=Procedures.CreateProcForPatNum(patNum,ProcedureCodes.GetCodeNum("D1351"),surf,tooth,ProcStat.C,provNum);
+				else if(chartType==ScreenChartType.C) {
+					Procedure proc=Procedures.GetProcForPatByToothSurfStat(patNum,toothNum,surf,ProcStat.TP);
+					if(proc==null) {//A TP procedure does not already exist.
+						proc=Procedures.CreateProcForPatNum(patNum,ProcedureCodes.GetCodeNum("D1351"),surf,tooth,ProcStat.C,provNum);
 					}
 					else {//TP proc already exists, set it complete.
-						Procedure procOld=procedure.Copy();
-						procedure.ProcStatus=ProcStat.C;
-						procedure.DateEntryC=DateTime.Now;
-						procedure.ProcDate=DateTime.Now;
-						procedure.ProvNum=provNum;
-						Procedures.Update(procedure,procOld);
+						Procedure procOld=proc.Copy();
+						proc.ProcStatus=ProcStat.C;
+						proc.DateEntryC=DateTime.Now;
+						Procedures.Update(proc,procOld);
 					}
-					if(procedure!=null) {
-						SecurityLogs.MakeLogEntry(EnumPermType.ProcComplCreate,patNum,"D1351 "+Lans.g("Screens","set complete during screening with tooth")
-							+" "+procedure.ToothNum.ToString()+" "+Lans.g("Screens","and surface")+" "+procedure.Surf);
+					if(proc!=null) {
+						SecurityLogs.MakeLogEntry(Permissions.ProcComplCreate,patNum,"D1351 "+Lans.g("Screens","set complete during screening with tooth")
+							+" "+proc.ToothNum.ToString()+" "+Lans.g("Screens","and surface")+" "+proc.Surf);
 					}
 				}
 			}
-			if(screenChartType==ScreenChartType.C) {
+			if(chartType==ScreenChartType.C) {
 				Recalls.Synch(patNum);
 			}
 		}
@@ -380,30 +370,30 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static long Insert(OpenDentBusiness.Screen screen) {
+		public static long Insert(OpenDentBusiness.Screen Cur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				screen.ScreenNum=Meth.GetLong(MethodBase.GetCurrentMethod(),screen);
-				return screen.ScreenNum;
+				Cur.ScreenNum=Meth.GetLong(MethodBase.GetCurrentMethod(),Cur);
+				return Cur.ScreenNum;
 			}
-			return Crud.ScreenCrud.Insert(screen);
+			return Crud.ScreenCrud.Insert(Cur);
 		}
 
 		///<summary></summary>
-		public static void Update(OpenDentBusiness.Screen screen){
+		public static void Update(OpenDentBusiness.Screen Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),screen);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),Cur);
 				return;
 			}
-			Crud.ScreenCrud.Update(screen);
+			Crud.ScreenCrud.Update(Cur);
 		}
 
 		///<summary></summary>
-		public static void Delete(OpenDentBusiness.Screen screen){
+		public static void Delete(OpenDentBusiness.Screen Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),screen);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),Cur);
 				return;
 			}
-			string command = "DELETE from screen WHERE ScreenNum = '"+POut.Long(screen.ScreenNum)+"'";
+			string command = "DELETE from screen WHERE ScreenNum = '"+POut.Long(Cur.ScreenNum)+"'";
 			Db.NonQ(command);
 		}
 
@@ -432,3 +422,16 @@ namespace OpenDentBusiness{
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -57,5 +57,10 @@ namespace OpenDental {
 			Process.Start(e.LinkText);
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
+		
 	}
 }

@@ -133,7 +133,7 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(listProv.SelectedIndex==-1){
 				MsgBox.Show(this,"Please select a provider first.");
 				return;
@@ -157,11 +157,35 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormProcCodeNoteEdit_FormClosing(object sender,FormClosingEventArgs e) {
 			if(_hasChanged) {
 				DataValid.SetInvalid(InvalidType.ProcCodes);
 			}
 		}
-
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

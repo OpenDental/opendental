@@ -7,13 +7,13 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="627" Height="235" 
-             Text="Create AtoZ Folder" MinMaxBoxes="False">
+             Text="Create AtoZ Folder" Loaded="FrmAtoZFoldersCreate_Loaded" >
     <Grid Background="#FFFCFDFE" >
         <ui:TextBox x:Name="textName" Width="206" Height="20" Margin="214,148,0,0" Text="OpenDentImages" />
         <ui:Label x:Name="label3" Width="184" Height="18" Margin="26,151,0,0" Text="Folder name" HAlign="Right" />
         <ui:TextBox x:Name="textLocation" Width="323" Height="20" Margin="214,112,0,0" Text="C:\" />
         <ui:Label x:Name="label2" Width="184" Height="18" Margin="26,115,0,0" Text="Location of new folder" HAlign="Right" />
         <ui:Label x:Name="label1" Width="578" Height="76" Margin="24,23,0,0" Text="This operation should only be performed directly from the main computer where the database is located. This operation should only be run one time, and will create an A to Z folder which will be automatically shared on the network and will be accessible to everyone. Please do not continue until you understand these conditions. You may want to contact us for assistance." />
-        <ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,25,25" Text="_Save" Click="butSave_Click" />
+        <ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,25,25" Text="Save" Click="butSave_Click" />
     </Grid>
 </local:FrmODBase>

@@ -38,9 +38,6 @@
 			this.odDatePicker5 = new OpenDental.UI.ODDatePicker();
 			this.dateRangePicker = new OpenDental.UI.ODDateRangePicker();
 			this.odDateRangePicker1 = new OpenDental.UI.ODDateRangePicker();
-			this.textBox1 = new System.Windows.Forms.TextBox();
-			this.label7 = new System.Windows.Forms.Label();
-			this.textDateFrom = new OpenDental.ValidDate();
 			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -71,7 +68,6 @@
 			// 
 			this.odDatePicker2.BackColor = System.Drawing.Color.Transparent;
 			this.odDatePicker2.CalendarLocation = OpenDental.UI.ODDatePicker.EnumCalendarLocation.ToTheRight;
-			this.odDatePicker2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.odDatePicker2.Location = new System.Drawing.Point(3, 61);
 			this.odDatePicker2.Name = "odDatePicker2";
 			this.odDatePicker2.Size = new System.Drawing.Size(228, 22);
@@ -90,7 +86,6 @@
 			// 
 			this.odDatePicker1.BackColor = System.Drawing.Color.Transparent;
 			this.odDatePicker1.CalendarLocation = OpenDental.UI.ODDatePicker.EnumCalendarLocation.Above;
-			this.odDatePicker1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.odDatePicker1.Location = new System.Drawing.Point(3, 32);
 			this.odDatePicker1.Name = "odDatePicker1";
 			this.odDatePicker1.Size = new System.Drawing.Size(228, 22);
@@ -108,7 +103,6 @@
 			// odDatePickerFrom
 			// 
 			this.odDatePickerFrom.BackColor = System.Drawing.Color.Transparent;
-			this.odDatePickerFrom.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.odDatePickerFrom.Location = new System.Drawing.Point(3, 3);
 			this.odDatePickerFrom.Name = "odDatePickerFrom";
 			this.odDatePickerFrom.Size = new System.Drawing.Size(228, 22);
@@ -145,7 +139,6 @@
 			// 
 			this.odDatePicker3.BackColor = System.Drawing.Color.Transparent;
 			this.odDatePicker3.CalendarLocation = OpenDental.UI.ODDatePicker.EnumCalendarLocation.ToTheRight;
-			this.odDatePicker3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.odDatePicker3.Location = new System.Drawing.Point(277, 114);
 			this.odDatePicker3.Name = "odDatePicker3";
 			this.odDatePicker3.Size = new System.Drawing.Size(228, 22);
@@ -155,7 +148,6 @@
 			// 
 			this.odDatePicker4.BackColor = System.Drawing.Color.Transparent;
 			this.odDatePicker4.CalendarLocation = OpenDental.UI.ODDatePicker.EnumCalendarLocation.Above;
-			this.odDatePicker4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.odDatePicker4.Location = new System.Drawing.Point(277, 85);
 			this.odDatePicker4.Name = "odDatePicker4";
 			this.odDatePicker4.Size = new System.Drawing.Size(228, 22);
@@ -164,7 +156,6 @@
 			// odDatePicker5
 			// 
 			this.odDatePicker5.BackColor = System.Drawing.Color.Transparent;
-			this.odDatePicker5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.odDatePicker5.Location = new System.Drawing.Point(277, 56);
 			this.odDatePicker5.Name = "odDatePicker5";
 			this.odDatePicker5.Size = new System.Drawing.Size(171, 22);
@@ -173,7 +164,6 @@
 			// dateRangePicker
 			// 
 			this.dateRangePicker.BackColor = System.Drawing.SystemColors.Control;
-			this.dateRangePicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.dateRangePicker.Location = new System.Drawing.Point(36, 179);
 			this.dateRangePicker.Name = "dateRangePicker";
 			this.dateRangePicker.Size = new System.Drawing.Size(453, 22);
@@ -182,44 +172,17 @@
 			// odDateRangePicker1
 			// 
 			this.odDateRangePicker1.BackColor = System.Drawing.SystemColors.Control;
-			this.odDateRangePicker1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.odDateRangePicker1.IsVertical = true;
 			this.odDateRangePicker1.Location = new System.Drawing.Point(36, 258);
 			this.odDateRangePicker1.Name = "odDateRangePicker1";
 			this.odDateRangePicker1.Size = new System.Drawing.Size(232, 74);
 			this.odDateRangePicker1.TabIndex = 166;
 			// 
-			// textBox1
-			// 
-			this.textBox1.Location = new System.Drawing.Point(340, 30);
-			this.textBox1.Name = "textBox1";
-			this.textBox1.Size = new System.Drawing.Size(102, 20);
-			this.textBox1.TabIndex = 167;
-			// 
-			// label7
-			// 
-			this.label7.Location = new System.Drawing.Point(619, 130);
-			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(66, 18);
-			this.label7.TabIndex = 168;
-			this.label7.Text = "ValidDate";
-			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// textDateFrom
-			// 
-			this.textDateFrom.Location = new System.Drawing.Point(689, 130);
-			this.textDateFrom.Name = "textDateFrom";
-			this.textDateFrom.Size = new System.Drawing.Size(84, 20);
-			this.textDateFrom.TabIndex = 169;
-			// 
 			// FormDatePickerTests
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1112, 485);
-			this.Controls.Add(this.textDateFrom);
-			this.Controls.Add(this.label7);
-			this.Controls.Add(this.textBox1);
 			this.Controls.Add(this.dateRangePicker);
 			this.Controls.Add(this.odDateRangePicker1);
 			this.Controls.Add(this.label4);
@@ -233,7 +196,6 @@
 			this.Text = "FormDatePickerTesting";
 			this.panel1.ResumeLayout(false);
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 
@@ -253,8 +215,5 @@
 		private OpenDental.UI.ODDatePicker odDatePicker5;
 		private OpenDental.UI.ODDateRangePicker dateRangePicker;
 		private OpenDental.UI.ODDateRangePicker odDateRangePicker1;
-		private System.Windows.Forms.TextBox textBox1;
-		private System.Windows.Forms.Label label7;
-		private OpenDental.ValidDate textDateFrom;
 	}
 }

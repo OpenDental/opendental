@@ -17,22 +17,13 @@ namespace OpenDental {
 
 		public FrmOrthoChartTabEdit(OrthoChartTab orthoChartTab) {
 			InitializeComponent();
+			//Lan.F(this);
 			_orthoChartTab=orthoChartTab;
-			Load+=FrmOrthoChartTabEdit_Load;
-			PreviewKeyDown+=FrmOrthoChartTabEdit_PreviewKeyDown;
 		}
 
-		private void FrmOrthoChartTabEdit_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmOrthoChartTabEdit_Loaded(object sender,RoutedEventArgs e) {
 			textTabName.Text=_orthoChartTab.TabName;
-			textTabName.SelectAll();
 			checkIsHidden.Checked=_orthoChartTab.IsHidden;
-		}
-
-		private void FrmOrthoChartTabEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {

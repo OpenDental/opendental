@@ -48,6 +48,7 @@ namespace OpenDental {
 			this.butUp = new OpenDental.UI.Button();
 			this.listType = new OpenDental.UI.ListBox();
 			this.butAdd = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.labelHideUnused = new System.Windows.Forms.Label();
 			this.butHideUnused = new OpenDental.UI.Button();
 			this.butSetOrder = new System.Windows.Forms.Button();
@@ -60,25 +61,26 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(501, 604);
+			this.butOK.Location = new System.Drawing.Point(412, 570);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 23;
 			this.butOK.Text = "&OK";
+			this.butOK.Visible = false;
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// labelCleanUp
 			// 
-			this.labelCleanUp.Location = new System.Drawing.Point(380, 449);
+			this.labelCleanUp.Location = new System.Drawing.Point(315, 442);
 			this.labelCleanUp.Name = "labelCleanUp";
-			this.labelCleanUp.Size = new System.Drawing.Size(169, 36);
+			this.labelCleanUp.Size = new System.Drawing.Size(161, 36);
 			this.labelCleanUp.TabIndex = 22;
-			this.labelCleanUp.Text = "Deletes any allowed fee schedules that are not in use";
+			this.labelCleanUp.Text = "Deletes any allowed fee schedules that are not in use.";
 			// 
 			// butCleanUp
 			// 
 			this.butCleanUp.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butCleanUp.Location = new System.Drawing.Point(383, 422);
+			this.butCleanUp.Location = new System.Drawing.Point(318, 415);
 			this.butCleanUp.Name = "butCleanUp";
 			this.butCleanUp.Size = new System.Drawing.Size(99, 24);
 			this.butCleanUp.TabIndex = 21;
@@ -87,7 +89,7 @@ namespace OpenDental {
 			// 
 			// labelSort
 			// 
-			this.labelSort.Location = new System.Drawing.Point(380, 328);
+			this.labelSort.Location = new System.Drawing.Point(315, 321);
 			this.labelSort.Name = "labelSort";
 			this.labelSort.Size = new System.Drawing.Size(123, 44);
 			this.labelSort.TabIndex = 20;
@@ -96,7 +98,7 @@ namespace OpenDental {
 			// butSort
 			// 
 			this.butSort.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butSort.Location = new System.Drawing.Point(383, 301);
+			this.butSort.Location = new System.Drawing.Point(318, 294);
 			this.butSort.Name = "butSort";
 			this.butSort.Size = new System.Drawing.Size(75, 24);
 			this.butSort.TabIndex = 19;
@@ -105,7 +107,7 @@ namespace OpenDental {
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(380, 12);
+			this.label1.Location = new System.Drawing.Point(315, 5);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(100, 18);
 			this.label1.TabIndex = 18;
@@ -118,8 +120,9 @@ namespace OpenDental {
 			this.groupBox7.Controls.Add(this.label6);
 			this.groupBox7.Location = new System.Drawing.Point(17, 570);
 			this.groupBox7.Name = "groupBox7";
-			this.groupBox7.Size = new System.Drawing.Size(357, 58);
+			this.groupBox7.Size = new System.Drawing.Size(340, 58);
 			this.groupBox7.TabIndex = 17;
+			this.groupBox7.TabStop = false;
 			this.groupBox7.Text = "Check Ins Plan Fee Schedules";
 			// 
 			// butIns
@@ -144,7 +147,7 @@ namespace OpenDental {
 			// 
 			this.butDown.Image = global::OpenDental.Properties.Resources.down;
 			this.butDown.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDown.Location = new System.Drawing.Point(383, 177);
+			this.butDown.Location = new System.Drawing.Point(318, 170);
 			this.butDown.Name = "butDown";
 			this.butDown.Size = new System.Drawing.Size(75, 24);
 			this.butDown.TabIndex = 16;
@@ -156,7 +159,7 @@ namespace OpenDental {
 			this.butUp.AdjustImageLocation = new System.Drawing.Point(0, 1);
 			this.butUp.Image = global::OpenDental.Properties.Resources.up;
 			this.butUp.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butUp.Location = new System.Drawing.Point(383, 145);
+			this.butUp.Location = new System.Drawing.Point(318, 138);
 			this.butUp.Name = "butUp";
 			this.butUp.Size = new System.Drawing.Size(75, 24);
 			this.butUp.TabIndex = 15;
@@ -165,7 +168,7 @@ namespace OpenDental {
 			// 
 			// listType
 			// 
-			this.listType.Location = new System.Drawing.Point(383, 33);
+			this.listType.Location = new System.Drawing.Point(318, 26);
 			this.listType.Name = "listType";
 			this.listType.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
 			this.listType.Size = new System.Drawing.Size(120, 69);
@@ -176,25 +179,35 @@ namespace OpenDental {
 			// 
 			this.butAdd.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAdd.Location = new System.Drawing.Point(383, 375);
+			this.butAdd.Location = new System.Drawing.Point(318, 368);
 			this.butAdd.Name = "butAdd";
 			this.butAdd.Size = new System.Drawing.Size(75, 24);
 			this.butAdd.TabIndex = 10;
 			this.butAdd.Text = "&Add";
 			this.butAdd.Click += new System.EventHandler(this.butAdd_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(412, 604);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// labelHideUnused
 			// 
-			this.labelHideUnused.Location = new System.Drawing.Point(380, 515);
+			this.labelHideUnused.Location = new System.Drawing.Point(315, 508);
 			this.labelHideUnused.Name = "labelHideUnused";
-			this.labelHideUnused.Size = new System.Drawing.Size(123, 36);
+			this.labelHideUnused.Size = new System.Drawing.Size(161, 36);
 			this.labelHideUnused.TabIndex = 25;
 			this.labelHideUnused.Text = "Hides any fee schedules that are not in use";
 			// 
 			// butHideUnused
 			// 
 			this.butHideUnused.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butHideUnused.Location = new System.Drawing.Point(383, 488);
+			this.butHideUnused.Location = new System.Drawing.Point(318, 481);
 			this.butHideUnused.Name = "butHideUnused";
 			this.butHideUnused.Size = new System.Drawing.Size(99, 24);
 			this.butHideUnused.TabIndex = 22;
@@ -204,7 +217,7 @@ namespace OpenDental {
 			// butSetOrder
 			// 
 			this.butSetOrder.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butSetOrder.Location = new System.Drawing.Point(383, 226);
+			this.butSetOrder.Location = new System.Drawing.Point(318, 218);
 			this.butSetOrder.Name = "butSetOrder";
 			this.butSetOrder.Size = new System.Drawing.Size(75, 24);
 			this.butSetOrder.TabIndex = 26;
@@ -213,15 +226,15 @@ namespace OpenDental {
 			// 
 			// labelSetOrder
 			// 
-			this.labelSetOrder.Location = new System.Drawing.Point(460, 219);
+			this.labelSetOrder.Location = new System.Drawing.Point(394, 211);
 			this.labelSetOrder.Name = "labelSetOrder";
-			this.labelSetOrder.Size = new System.Drawing.Size(132, 40);
+			this.labelSetOrder.Size = new System.Drawing.Size(123, 44);
 			this.labelSetOrder.TabIndex = 27;
 			this.labelSetOrder.Text = "1. Select row to move.\r\n2. Toggle this button.\r\n3. Click new position.";
 			// 
 			// checkBoxShowHidden
 			// 
-			this.checkBoxShowHidden.Location = new System.Drawing.Point(383, 108);
+			this.checkBoxShowHidden.Location = new System.Drawing.Point(318, 101);
 			this.checkBoxShowHidden.Name = "checkBoxShowHidden";
 			this.checkBoxShowHidden.Size = new System.Drawing.Size(120, 17);
 			this.checkBoxShowHidden.TabIndex = 28;
@@ -232,7 +245,7 @@ namespace OpenDental {
 			// 
 			this.gridMain.Location = new System.Drawing.Point(17, 12);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(357, 552);
+			this.gridMain.Size = new System.Drawing.Size(278, 552);
 			this.gridMain.TabIndex = 11;
 			this.gridMain.Title = "FeeSchedules";
 			this.gridMain.TranslationName = "TableFeeScheds";
@@ -241,7 +254,7 @@ namespace OpenDental {
 			// 
 			// FormFeeScheds
 			// 
-			this.ClientSize = new System.Drawing.Size(588, 644);
+			this.ClientSize = new System.Drawing.Size(515, 644);
 			this.Controls.Add(this.checkBoxShowHidden);
 			this.Controls.Add(this.labelSetOrder);
 			this.Controls.Add(this.butSetOrder);
@@ -259,6 +272,7 @@ namespace OpenDental {
 			this.Controls.Add(this.listType);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butAdd);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -274,6 +288,7 @@ namespace OpenDental {
 		#endregion
 
 		private OpenDental.UI.Button butAdd;
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.ListBox listType;
 		private OpenDental.UI.Button butDown;

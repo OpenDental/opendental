@@ -33,6 +33,7 @@ namespace OpenDental {
 			this.label5 = new System.Windows.Forms.Label();
 			this.radioWriteoffProc = new System.Windows.Forms.RadioButton();
 			this.radioWriteoffPay = new System.Windows.Forms.RadioButton();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.checkAllProv = new OpenDental.UI.CheckBox();
 			this.checkAllClin = new OpenDental.UI.CheckBox();
@@ -96,10 +97,10 @@ namespace OpenDental {
 			this.radioWriteoffClaim.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
 			this.radioWriteoffClaim.Location = new System.Drawing.Point(9, 62);
 			this.radioWriteoffClaim.Name = "radioWriteoffClaim";
-			this.radioWriteoffClaim.Size = new System.Drawing.Size(269, 35);
+			this.radioWriteoffClaim.Size = new System.Drawing.Size(244, 43);
 			this.radioWriteoffClaim.TabIndex = 3;
 			this.radioWriteoffClaim.Text = "Using initial claim date for write-off estimates, insurance pay date for write-of" +
-    "f adjustments\r\n";
+			"f adjustments\r\n";
 			this.radioWriteoffClaim.TextAlign = System.Drawing.ContentAlignment.TopLeft;
 			this.radioWriteoffClaim.UseVisualStyleBackColor = true;
 			// 
@@ -135,10 +136,21 @@ namespace OpenDental {
 			this.radioWriteoffPay.TextAlign = System.Drawing.ContentAlignment.TopLeft;
 			this.radioWriteoffPay.UseVisualStyleBackColor = true;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(632, 379);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 4;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(635, 367);
+			this.butOK.Location = new System.Drawing.Point(632, 347);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 3;
@@ -185,7 +197,7 @@ namespace OpenDental {
 			// 
 			// FormRpWriteoffSheet
 			// 
-			this.ClientSize = new System.Drawing.Size(741, 417);
+			this.ClientSize = new System.Drawing.Size(741, 431);
 			this.Controls.Add(this.checkAllClin);
 			this.Controls.Add(this.listClin);
 			this.Controls.Add(this.labelClin);
@@ -193,6 +205,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.listProv);
 			this.Controls.Add(this.label1);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.date2);
 			this.Controls.Add(this.date1);
@@ -209,6 +222,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.MonthCalendar date2;
 		private System.Windows.Forms.MonthCalendar date1;

@@ -23,11 +23,23 @@ namespace OpenDental {
 
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormTranslation));
+			this.butClose = new OpenDental.UI.Button();
 			this.gridLan = new OpenDental.UI.GridOD();
 			this.butDeleteUnused = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butDelete = new OpenDental.UI.Button();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(847, 671);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridLan
 			// 
@@ -79,7 +91,9 @@ namespace OpenDental {
 			// 
 			// FormTranslation
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(958, 708);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butDeleteUnused);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.butDelete);
@@ -96,6 +110,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GridOD gridLan;
 		private OpenDental.UI.Button butDeleteUnused;
 		private Label label1;

@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSupportStatus));
+			this.butClose = new OpenDental.UI.Button();
 			this.textRegKey = new System.Windows.Forms.TextBox();
 			this.labelRegKey = new System.Windows.Forms.Label();
 			this.labelStatus = new System.Windows.Forms.Label();
@@ -31,6 +32,16 @@ namespace OpenDental{
 			this.labelHelpKey = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(364, 173);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// textRegKey
 			// 
@@ -64,7 +75,7 @@ namespace OpenDental{
 			this.labelStatusValue.ForeColor = System.Drawing.Color.Black;
 			this.labelStatusValue.Location = new System.Drawing.Point(246, 68);
 			this.labelStatusValue.Name = "labelStatusValue";
-			this.labelStatusValue.Size = new System.Drawing.Size(176, 20);
+			this.labelStatusValue.Size = new System.Drawing.Size(199, 20);
 			this.labelStatusValue.TabIndex = 7;
 			this.labelStatusValue.Text = "Loading...";
 			this.labelStatusValue.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -75,7 +86,7 @@ namespace OpenDental{
 			this.labelHelpKey.ForeColor = System.Drawing.Color.Black;
 			this.labelHelpKey.Location = new System.Drawing.Point(246, 106);
 			this.labelHelpKey.Name = "labelHelpKey";
-			this.labelHelpKey.Size = new System.Drawing.Size(176, 20);
+			this.labelHelpKey.Size = new System.Drawing.Size(199, 20);
 			this.labelHelpKey.TabIndex = 9;
 			this.labelHelpKey.Text = "Loading...";
 			this.labelHelpKey.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -86,19 +97,20 @@ namespace OpenDental{
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(235, 21);
 			this.label2.TabIndex = 8;
-			this.label2.Text = "Access to Help and Imaging:";
+			this.label2.Text = "Access to Help, 3D ToothChart, and Imaging:";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// FormSupportStatus
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(431, 148);
+			this.ClientSize = new System.Drawing.Size(451, 209);
 			this.Controls.Add(this.labelHelpKey);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.labelStatusValue);
 			this.Controls.Add(this.labelStatus);
 			this.Controls.Add(this.labelRegKey);
 			this.Controls.Add(this.textRegKey);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormSupportStatus";
 			this.Text = "Support Status";
@@ -109,6 +121,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.TextBox textRegKey;
 		private System.Windows.Forms.Label labelRegKey;
 		private System.Windows.Forms.Label labelStatus;

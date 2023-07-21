@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="316" Height="534" 
-             Text="Pick User" >
+             Text="Pick User" Loaded="FrmUserPick_Loaded" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butOK" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,26,18" Text="_OK" Click="butOK_Click" />
 		<ui:GroupBox x:Name="groupSelect" HorizontalAlignment="Right" Width="110" Height="114" Margin="0,48,12,0" Text="Select" >
@@ -16,6 +16,6 @@
 			<ui:Button x:Name="butNone" HorizontalAlignment="Center" Width="74" Height="24" Text="Select None" Click="butNone_Click" Margin="0,49,0,0"  />
 		</ui:GroupBox>
 		<ui:Button x:Name="butShow" HorizontalAlignment="Right" Width="75" Height="24" Margin="0,18,26,0" Text="Show All" Click="butShow_Click" />
-		<ui:ListBox x:Name="listUser" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,18,128,18"/>
+		<ui:ListBox x:Name="listUser" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,18,128,18" />
 	</Grid>
 </local:FrmODBase>

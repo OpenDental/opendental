@@ -25,13 +25,15 @@ namespace OpenDental {
 
 		private void FormApptReminderRuleEdit_Load(object sender,EventArgs e) {
 			UserControlReminderAgg userControlReminderAgg=new UserControlReminderAgg(ApptReminderRuleCur);
-			userControlReminderAgg.Dock=DockStyle.Fill;
 			if(ListApptReminderRulesNonDefault.Count==0) {
 				tabControl1.Visible=false;
-				panelMain.Visible=true;
-				LayoutManager.AddUnscaled(userControlReminderAgg,panelMain);
+				userControlReminderAgg.Bounds=tabControl1.Bounds;
+				userControlReminderAgg.Anchor=System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left 
+					| System.Windows.Forms.AnchorStyles.Right | System.Windows.Forms.AnchorStyles.Bottom;
+				LayoutManager.AddUnscaled(userControlReminderAgg,PanelClient);
 			}
 			else {
+				userControlReminderAgg.Dock=DockStyle.Fill;
 				LayoutManager.AddUnscaled(userControlReminderAgg,tabPageDefault);
 			}
 			for(int i=0;i<ListApptReminderRulesNonDefault.Count;i++) {
@@ -55,7 +57,7 @@ namespace OpenDental {
 			LayoutManager.LayoutFormBoundsAndFonts(this);
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butClose_Click(object sender,EventArgs e) {
 			if(ListApptReminderRulesNonDefault.Count==0) {
 				List<string> listErrors=UIHelper.GetAllControls(this).OfType<UserControlReminderAgg>().First().ValidateTemplates();
 				if(listErrors.Count!=0) {

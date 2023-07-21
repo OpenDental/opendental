@@ -209,7 +209,7 @@ namespace OpenDental {
 				}
 				//We will set the unique alert items' tags to all the itemNums of duplicate items in the list so that all can be marked read/deleted later.
 				for(int t=0;t<listAlertItemsUnique.Count;t++){
-					listAlertItemsUnique[t].TagOD=listAlertItemsForUser.FindAll(x => AlertItems.AreDuplicates(listAlertItemsUnique[t],x)).Select(x=>x.AlertItemNum).ToList();
+					listAlertItemsUnique[t].TagOD=listAlertItemsForUser.FindAll(x => AlertItems.AreDuplicates(listAlertItemsForUser[t],x)).Select(x=>x.AlertItemNum).ToList();
 				}
 				List<AlertItem> listAlertItems=listAlertItemsUnique.FindAll(x => x.Type!=AlertType.ClinicsChangedInternal).ToList();//These alerts are not supposed to be displayed to the end user.
 				//Update listUserAlertTypes to only those with active AlertItems.
@@ -426,7 +426,7 @@ namespace OpenDental {
 				return;
 			}
 			//If the user currently logged in has permission to view eService settings, turn on the listener monitor.
-			if(Security.CurUser==null || !Security.IsAuthorized(EnumPermType.EServicesSetup,true)) {
+			if(Security.CurUser==null || !Security.IsAuthorized(Permissions.EServicesSetup,true)) {
 				return;//Do not start the listener service monitor for users without permission.
 			}
 			//Process any Error signals that happened due to an update:
@@ -503,7 +503,7 @@ namespace OpenDental {
 			if(Security.CurUser==null) {
 				return;//Don't waste time processing phone metrics when no one is logged in and sitting at the log on screen.
 			}
-			if((_listFormMaps.Count>0) 
+			if((_listFormMapHQs.Count>0 || _listFormMaps.Count>0) 
 				&& DateTime.Now.Subtract(_dateHqOfficeDownLastRefreshed).TotalSeconds>PrefC.GetInt(PrefName.ProcessSigsIntervalInSecs)) 
 			{
 				List<OpenDentBusiness.Task> listOfficesDowns=Tasks.GetOfficeDowns();
@@ -555,7 +555,7 @@ namespace OpenDental {
 			if(DateTime.Now.Subtract(_dateTimeHqEServiceMetricsLastRefreshed).TotalSeconds<10) {
 				return;
 			}
-			if(_listFormMaps.Count==0) { //Do not run if the HQ map is not open.
+			if(_listFormMapHQs.Count==0 && _listFormMaps.Count==0) { //Do not run if the HQ map is not open.
 				return;
 			}
 			_dateTimeHqEServiceMetricsLastRefreshed=DateTime.Now;
@@ -563,6 +563,9 @@ namespace OpenDental {
 			EServiceMetrics metricsToday=EServiceMetrics.GetEServiceMetricsFromSignalHQ();
 			if(metricsToday==null) {
 				return;
+			}
+			foreach(FormMapHQ formMapHQ in _listFormMapHQs) {
+				formMapHQ.Invoke(new MethodInvoker(delegate { formMapHQ.SetEServiceMetrics(metricsToday); }));
 			}
 			for(int i=0;i<_listFormMaps.Count;i++) {
 				_listFormMaps[i].Invoke(new MethodInvoker(delegate { _listFormMaps[i].SetEServiceMetrics(metricsToday); }));
@@ -732,13 +735,11 @@ namespace OpenDental {
 		#endregion
 		#region ODCloudSetMachineName
 		
-		///<summary>For ODBuild.IsThinfinity and PrefC.IsAppStream only.  Begins a thread that will run once per minute attempting to set the ODEnvironment.MachineName by making a
-		///call to the ODCloudClient. If ODCloudClient is not running or throws an exception, the machine name will be set to "UNKNOWN".  The next time this thread runs, if the
-		///machine name is "UNKNOWN" we will attempt to get the machine name from the ODCloudClient again.  If the machine name is successfully retrieved from the ODCloudClient
-		///(i.e. ODEnvironment.MachineName!="UNKNOWN") we will not attempt to get the name from the cloud client again while this session is active.</summary>
+		///<summary>For ODBuild.IsWeb only.  Begins a thread that will run once per minute attempting to set the ODEnvironment.MachineName by making a call to the ODCloudClient.
+		///If ODCloudClient is not running or throws an exception, the machine name will be set to "UNKNOWN".  The next time this thread runs, if the machine name is "UNKNOWN" we will
+		///attempt to get the machine name from the ODCloudClient again.  If the machine name is successfully retrieved from the ODCloudClient (i.e. ODEnvironment.MachineName!="UNKNOWN") we will not attempt to get the name from the cloud client again while this session is active.</summary>
 		private void BeginODCloudMachineNameThread() {
-			//We have to call PrefC.IsAppStream here and not ODEnvironment.IsCloudServer so ODCloudClient.IsAppStream will be set to the pref cache value
-			if((!ODBuild.IsThinfinity() && !PrefC.IsAppStream) || IsThreadAlreadyRunning(FormODThreadNames.ODCloudMachineName)) {
+			if(!ODBuild.IsWeb() || IsThreadAlreadyRunning(FormODThreadNames.ODCloudMachineName)) {
 				return;
 			}
 			ODThread threadCloudMachineName=new ODThread(60000,o => {//Once a minute
@@ -746,7 +747,6 @@ namespace OpenDental {
 				if(ODEnvironment.MachineName.ToUpper()!=Security.CurComputerName.ToUpper()) {//_machineName was just found, update Security.cs and the activeinstance row
 					Security.CurComputerName=ODEnvironment.MachineName;
 					ActiveInstances.Upsert(Security.CurUser.UserNum,Computers.GetCur().ComputerNum,Process.GetCurrentProcess().Id);
-					this.InvokeIfRequired(() =>RefreshLocalDataPostCleanup(InvalidType.AllLocal));
 				}
 			});
 			threadCloudMachineName.AddExceptionHandler((e) => e.DoNothing());
@@ -1080,6 +1080,9 @@ namespace OpenDental {
 			else {
 				labelMsg.Font=new Font(FontFamily.GenericSansSerif,7.75f,FontStyle.Bold);
 				labelMsg.ForeColor=Color.Firebrick;
+			}
+			foreach(FormMapHQ formMapHQ in _listFormMapHQs) {
+				formMapHQ.SetVoicemailRed(voiceMailCount,ageOfOldestVoicemail);
 			}
 			for(int i=0;i<_listFormMaps.Count;i++) {
 				_listFormMaps[i].SetVoicemail(voiceMailCount,ageOfOldestVoicemail);

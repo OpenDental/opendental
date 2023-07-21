@@ -41,7 +41,7 @@ namespace OpenDental {
 			comboBoxActions.Items.AddList<string>(_listActionDescriptions,x => x);
 			comboBoxTypes.SelectedIndex=0;
 			comboBoxActions.SelectedIndex=0;
-			comboBoxClinicMulti.ClinicNumSelected=Clinics.ClinicNum;
+			comboBoxClinicMulti.SelectedClinicNum=Clinics.ClinicNum;
 		}
 
 		private void FillGrid() {
@@ -112,7 +112,7 @@ namespace OpenDental {
 		}
 
 		private void butRefresh_Click(object sender,EventArgs e) {
-			_listEServiceLogs=OpenDentBusiness.EServiceLogs.GetEServiceLog(comboBoxClinicMulti.ClinicNumSelected,datePicker.GetDateTimeFrom(),datePicker.GetDateTimeTo());
+			_listEServiceLogs=OpenDentBusiness.EServiceLogs.GetEServiceLog(comboBoxClinicMulti.SelectedClinicNum,datePicker.GetDateTimeFrom(),datePicker.GetDateTimeTo());
 			FillGrid();
 		}
 		
@@ -143,5 +143,8 @@ namespace OpenDental {
 			FillGrid();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }

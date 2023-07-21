@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMountDefGenerate));
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.listType = new OpenDental.UI.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -44,12 +45,23 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(501, 252);
+			this.butOK.Location = new System.Drawing.Point(420, 274);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
 			this.butOK.Text = "Generate";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(501, 274);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// label2
 			// 
@@ -180,7 +192,8 @@ namespace OpenDental{
 			// 
 			// FormMountDefGenerate
 			// 
-			this.ClientSize = new System.Drawing.Size(588, 288);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(588, 310);
 			this.Controls.Add(this.groupBoxOD1);
 			this.Controls.Add(this.label5);
 			this.Controls.Add(this.textHeight);
@@ -191,6 +204,7 @@ namespace OpenDental{
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.listType);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMountDefGenerate";
 			this.Text = "Generate Mount";
@@ -205,6 +219,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label2;
 		private OpenDental.UI.ListBox listType;
 		private System.Windows.Forms.Label label1;

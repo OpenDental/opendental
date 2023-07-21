@@ -167,13 +167,6 @@ namespace UnitTestsCore {
 			}
 		}
 
-		///<summary>Updates the SecDateTEdit of a Claim to the number of daysPrevious. Unable to set the SecDateTEdit to anything but DateTime.Now in the CRUD Layer.</summary>
-		public static void SetSecDateTEditToDaysPast(OpenDentBusiness.Claim odbClaim,int daysPrevious) {
-			string command="UPDATE claim SET SecDateTEdit = "+ OpenDentBusiness.POut.Date(DateTime.Now.AddDays(-daysPrevious))
-				+" WHERE ClaimNum = "+OpenDentBusiness.POut.Long(odbClaim.ClaimNum);
-			OpenDentBusiness.DataCore.NonQ(command);
-    }
-
 		///<summary>Deletes everything from the claim table.  Does not truncate the table so that PKs are not reused on accident.</summary>
 		public static void ClearClaimTable() {
 			string command="DELETE FROM claim";

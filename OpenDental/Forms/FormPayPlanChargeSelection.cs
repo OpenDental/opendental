@@ -1,4 +1,3 @@
-using CodeBase;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -66,24 +65,15 @@ namespace OpenDental {
 
 		private void listBoxPayPlanCharges_DoubleClick(object sender,EventArgs e) {
 			if(listBoxPayPlanCharges.SelectedIndex!=-1) {
-				PayPlanCharge payPlanChargeOld=_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex].Copy();
 				using FormPayPlanChargeEdit formPayPlanChargeEdit=new FormPayPlanChargeEdit(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex],_payPlan);
 				formPayPlanChargeEdit.ShowDialog();
 				if(formPayPlanChargeEdit.DialogResult==DialogResult.Cancel) {
 					return;
 				}
 				if(formPayPlanChargeEdit.PayPlanChargeCur==null) {
-					PayPlanCharges.Delete(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex]);
-					SecurityLogs.MakeLogEntry(EnumPermType.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,"Deleted.");
 					_listPayPlanCharges.RemoveAt(listBoxPayPlanCharges.SelectedIndex);
 				}
-				else {
-					PayPlanCharges.Update(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex],payPlanChargeOld);
-					if(!formPayPlanChargeEdit.ListChangeLog.IsNullOrEmpty()) {
-						string log=PayPlans.GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
-						SecurityLogs.MakeLogEntry(EnumPermType.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,log);
-					}
-				}
+				PayPlanCharges.Sync(_listPayPlanCharges,_payPlan.PayPlanNum);
 				FillListBox();//Refreshes the list box
 			}
 		}
@@ -94,40 +84,28 @@ namespace OpenDental {
 			}
 			//Zeros out all charges from inside of the _listPayPlanCharges list. 
 			for(int i=0;i<_listPayPlanCharges.Count;i++) {
-				PayPlanCharge payPlanChargeOld=_listPayPlanCharges[i].Copy();
 				_listPayPlanCharges[i].Principal=0;
 				_listPayPlanCharges[i].Interest=0;
-				PayPlanCharges.Update(_listPayPlanCharges[i],payPlanChargeOld);
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,"Principal and interest zeroed out.");
+			PayPlanCharges.Sync(_listPayPlanCharges,_payPlan.PayPlanNum);
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
 			if(listBoxPayPlanCharges.SelectedIndex!=-1) {
-				PayPlanCharge payPlanChargeOld=_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex].Copy();
 				using FormPayPlanChargeEdit formPayPlanChargeEdit=new FormPayPlanChargeEdit(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex],_payPlan);
 				formPayPlanChargeEdit.ShowDialog();
 				if(formPayPlanChargeEdit.DialogResult==DialogResult.Cancel) {
 					return;
 				}
 				if(formPayPlanChargeEdit.PayPlanChargeCur==null) {
-					PayPlanCharges.Delete(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex]);
-					SecurityLogs.MakeLogEntry(EnumPermType.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,"Deleted.");
 					_listPayPlanCharges.RemoveAt(listBoxPayPlanCharges.SelectedIndex);
 				}
-				else {
-					PayPlanCharges.Update(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex],payPlanChargeOld);
-					if(!formPayPlanChargeEdit.ListChangeLog.IsNullOrEmpty()) {
-						string log=PayPlans.GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
-						SecurityLogs.MakeLogEntry(EnumPermType.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,log);
-					}
-				}
+				PayPlanCharges.Sync(_listPayPlanCharges,_payPlan.PayPlanNum);
 				FillListBox();//Refreshes the list box
 			}
 			else {
 				MsgBox.Show(this,"You must select a charge first.");
 			}
 		}
-
 	}
 }

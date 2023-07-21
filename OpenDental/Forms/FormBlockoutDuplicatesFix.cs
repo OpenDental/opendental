@@ -30,7 +30,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butClear_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(labelCount.Text=="0") {
 				MsgBox.Show(this,"There are no duplicates to clear.");
 				return;
@@ -40,11 +40,16 @@ namespace OpenDental {
 			}
 			Cursor=Cursors.WaitCursor;
 			Schedules.ClearDuplicates();
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Clear duplicate blockouts.");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Clear duplicate blockouts.");
 			Cursor=Cursors.Default;
 			MsgBox.Show(this,"Done.");
 			FillLabels();
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			Close();
+		}
+
+		
 	}
 }

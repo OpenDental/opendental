@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormCreditRecurringDateChoose));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butLastMonth = new OpenDental.UI.Button();
 			this.butThisMonth = new OpenDental.UI.Button();
 			this.labelMessage = new System.Windows.Forms.Label();
@@ -34,6 +35,16 @@ namespace OpenDental{
 			this.butOK = new OpenDental.UI.Button();
 			this.labelNoDates = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(301, 159);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butLastMonth
 			// 
@@ -100,11 +111,12 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(288, 159);
+			this.butOK.Location = new System.Drawing.Point(220, 159);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 17;
 			this.butOK.Text = "&OK";
+			this.butOK.Visible = false;
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// labelNoDates
@@ -130,6 +142,7 @@ namespace OpenDental{
 			this.Controls.Add(this.labelMessage);
 			this.Controls.Add(this.butThisMonth);
 			this.Controls.Add(this.butLastMonth);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormCreditRecurringDateChoose";
 			this.Text = "Recurring Charge Month";
@@ -139,6 +152,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private UI.Button butLastMonth;
 		private UI.Button butThisMonth;
 		private System.Windows.Forms.Label labelMessage;

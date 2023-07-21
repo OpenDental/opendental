@@ -158,13 +158,11 @@ using OpenDental.UI;
 		private int _hoverRow=-1;
 		private bool _isMouseDown;
 		private bool _isMouseDownInHeader;
-		///<summary>True to show a triangle pointing up.  False to show a triangle pointing down.  Only works if _sortedByColumnIdx is not -1.</summary>
-		private bool _isSortedAscending;
 		///<summary>True between BeginUpdate-EndUpdate.</summary>
 		private bool _isUpdating;
 		///<summary>This is an alternative to setting up all of the GridRows in advance.  The DataRows get converted to GridRows on the fly.</summary>
 		private List<DataRow> _listDataRows;
-		private List<MenuItem> _listMenuItemsLinks;
+		private List<MenuItem> _listMenuItemLinks;
 		///<summary>Helps with drag selections. This is a snapshot of the selected indices when the mouse goes down and starts a drag.</summary>
 		private List<int> _listSelectedIndicesWhenMouseDown;
 		private MouseButtons _mouseButtonLastPressed;
@@ -177,8 +175,6 @@ using OpenDental.UI;
 		///<summary>Flag used for calculating the width of the last column for printing when the grid is being scaled.</summary>
 		private int _printWidth=0;
 		private Point _selectedCellOld;
-		///<summary>Typically -1 to show no triangle.  Or, specify a column to show a triangle.  The actual sorting happens at mouse down.</summary>
-		private int _sortedByColumnIdx = -1;
 		///<summary>Tab stop is set at 1/2" in ctor, top aligned, no trimming. Horizontal alignment and wrap are changed as needed.</summary>
 		private StringFormat _stringFormat;
 		///<summary>TextBoxBase so that it can be a normal TextBox or a RichTextBox.</summary>
@@ -357,7 +353,7 @@ using OpenDental.UI;
 			set {
 				_sortingAllowByColumn=value;
 				if(!_sortingAllowByColumn) {
-					_sortedByColumnIdx=-1;
+					SortedByColumnIdx=-1;
 				}
 			}
 		}
@@ -392,9 +388,9 @@ using OpenDental.UI;
 		[DefaultValue(false)]
 		public bool EditableAcceptsCR { get; set; } =false;
 
-		///<summary>If column is editable and user presses Enter, default behavior is to move right.  For some grids, default behavior needs to move down. Only intended for columns of numbers where you would never go sideways.</summary>
+		///<summary>If column is editable and user presses Enter, default behavior is to move right.  For some grids, default behavior needs to move down.</summary>
 		[Category("OD")]
-		[Description("If column is editable and user presses Enter, default behavior is to move right.  For some grids, default behavior needs to move down. Only intended for columns of numbers where you would never go sideways.")]
+		[Description("If column is editable and user presses Enter, default behavior is to move right.  For some grids, default behavior needs to move down.")]
 		[DefaultValue(false)]
 		public bool EditableEnterMovesDown { get; set; }
 
@@ -459,7 +455,6 @@ using OpenDental.UI;
 			}
 		}
 
-		///<summary>Set false to disallow links from being automatically added to right click menus.</summary>
 		[Category("OD")]
 		[Description("Set false to disallow links from being automatically added to right click menus.")]
 		[DefaultValue(true)]
@@ -791,7 +786,17 @@ using OpenDental.UI;
 				int[] intArray=_listSelectedIndices.ToArray();
 				return intArray;
 			}
-		}		
+		}
+
+		///<summary>Returns current sort column index.  Use SortForced to maintain current grid sorting when refreshing the grid.  Typically -1 to show no triangle.  Or, specify a column to show a triangle.  The actual sorting happens at mouse down.</summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int SortedByColumnIdx { get; private set; } = -1;
+
+		///<summary>Returns current sort order.  Use SortForced to maintain current grid sorting when refreshing the grid.  True to show a triangle pointing up.  False to show a triangle pointing down.  Only works if sortedByColumnIdx is not -1.</summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool SortedIsAscending { get; private set; }
 		#endregion Properties - Not Browsable
 
 		#region Methods - Public
@@ -833,14 +838,14 @@ using OpenDental.UI;
 			_listSelectedIndices=new List<int>();
 			_selectedCell=new Point(-1,-1);
 			textEdit?.Dispose();
-			_sortedByColumnIdx=-1;
+			SortedByColumnIdx=-1;
 			Invalidate();
 		}
 
 		///<summary>Exports the grid to a text or Excel file. The user will have the opportunity to choose the location of the export file.</summary>
 		public void Export(string fileName) {
 			string selectedFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				//file download dialog will come up later, after file is created.
 				//If extension is missing, add .txt extension. VirtualUI won't download if missing extension.
 				if(string.IsNullOrEmpty(Path.GetExtension(selectedFilePath))) {
@@ -896,7 +901,7 @@ using OpenDental.UI;
 				MessageBox.Show(Lans.g(this,"File in use by another program.  Close and try again."));
 				return;
 			}
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.ExportForDownload(selectedFilePath);
 			}
 			else {
@@ -972,7 +977,7 @@ using OpenDental.UI;
 			float scaleMS=_scaleMS;
 			float zoomLocal=_zoomLocal;
 			SetScaleAndZoom(1,1);
-			if(_printedRows==0 || scaleMS!=1 || zoomLocal!=1) {
+			if(_printedRows==0 || scaleMS!=1) {
 				//Recalculate row heights, 4% larger on the first page of printing, or when using zoom.
 				ComputeRows(g,doActualCalc:true);
 			}
@@ -1767,9 +1772,9 @@ using OpenDental.UI;
 			GraphicsState graphicsState=g.Save();
 			g.SmoothingMode=SmoothingMode.HighQuality;
 			for(int i=0;i<Columns.Count;i++) {
-				if(_sortedByColumnIdx == i) {
+				if(SortedByColumnIdx == i) {
 					PointF p=new PointF(-hScroll.Value+Columns[i].State.XPos+6,ScaleF(_heightTitle+_heightHeader/2f));
-					if(_isSortedAscending) {//pointing up
+					if(SortedIsAscending) {//pointing up
 						g.FillPolygon(Brushes.White,new PointF[] {
 						new PointF(p.X-4.9f,p.Y+2f),//LLstub
 						new PointF(p.X-4.9f,p.Y+2.5f),//LLbase
@@ -1914,18 +1919,66 @@ using OpenDental.UI;
 		#endregion Methods - Event Handlers
 
 		#region Methods - Event Handlers - Mouse
-		///<summary>Several locations throughout the program the context menu changes. This subscribes each menu to use the popup helper below.</summary>
+		///<summary>Several location throughout the program the context menu changes. This subscribes each menu to use the popup helper below.</summary>
 		protected override void OnContextMenuChanged(EventArgs e) {
-			//this event fires when the ContextMenu property of GridOD changes.
 			base.OnContextMenuChanged(e);
-			if(ContextMenu==null) {
-				ContextMenu=new ContextMenu();
+			if(this.ContextMenu==null) {
+				this.ContextMenu=new ContextMenu();
 			}
-			ContextMenu.Popup+=ContextMenu_Popup;
+			this.ContextMenu.Popup+=ContextMenuPopup;
 		}
 
 		///<summary>Just prior to displaying the context menu, add wiki links if neccesary.</summary>
-		protected virtual void ContextMenu_Popup(object sender,EventArgs e) {
+		private void ContextMenuPopupLinks(object sender, EventArgs e) {
+			//If multiple grids add the same instance of ConextMenu then all of them will raise this event any time any of them raise the event.
+			//Only allow the event to operate if this is the grid that actually fired the event.
+			try {
+				if(((ContextMenu)sender).SourceControl.Name != this.Name) {
+					return;
+				}
+			}
+			catch(Exception ex) {
+				ex.DoNothing();
+				return;
+			}
+			removeContextMenuLinks();
+			int rowClick = PointToRow(_mouseClickLocation.Y);
+			int colClick = PointToCol(_mouseClickLocation.X);
+			if(rowClick<0 || colClick<0) {//don't diplay links, not on grid row.
+				return;
+			}
+			if(_mouseButtonLastPressed==MouseButtons.Right && rowClick<=this.ListGridRows.Count) {
+				GridRow row = this.ListGridRows[rowClick];
+				if(this.ContextMenu==null) {
+					this.ContextMenu=new ContextMenu();
+					return;
+				}
+				_listMenuItemLinks=new List<MenuItem>();
+				if(this.ContextMenu.MenuItems.Count>0) {
+					_listMenuItemLinks.Add(new MenuItem("-"));
+				}
+				StringBuilder sb = new StringBuilder();
+				row.Cells.OfType<GridCell>().ToList().ForEach(x => sb.AppendLine(x.Text));
+				sb.AppendLine(row.Note);
+				_listMenuItemLinks.AddRange(OpenDentBusiness.UI.PopupHelper.GetContextMenuItemLinks(sb.ToString(),DoShowRightClickLinks));
+				if(_listMenuItemLinks.Any(x=>x.Text!="-")) {//at least one REAL menu item that is not the divider.
+					_listMenuItemLinks.ForEach(x => this.ContextMenu.MenuItems.Add(x));
+				}
+			}
+		}
+
+		///<summary>Removes wiki and web links from context menu.</summary>
+		private void removeContextMenuLinks() {
+			if(this.ContextMenu==null || _listMenuItemLinks==null) {
+				return;
+			}
+			foreach(MenuItem mi in _listMenuItemLinks) {
+				this.ContextMenu.MenuItems.Remove(mi);
+			}
+		}
+
+		///<summary>Just prior to displaying the context menu, add wiki links if neccesary.</summary>
+		protected virtual void ContextMenuPopup(object sender,EventArgs e) {
 			//If multiple grids add the same instance of ContextMenu, then all of them will raise this event any time any of them raise the event.
 			//Only allow the event to operate if this is the grid that actually fired the event.
 			try {
@@ -1976,51 +2029,7 @@ using OpenDental.UI;
 			}
 			//Link items----------------------------------------------------
 			if(HasLinkDetect) {//Links go below any "Copy Text" menu items.
-				ContextMenuAddPopupLinks(sender);
-			}
-		}
-
-		///<summary>Just prior to displaying the context menu, add wiki links if neccesary.</summary>
-		private void ContextMenuAddPopupLinks(object sender) {
-			//If multiple grids add the same instance of ContextMenu then all of them will raise this event any time any of them raise the event.
-			//Only allow the event to operate if this is the grid that actually fired the event.
-			try {
-				if(((ContextMenu)sender).SourceControl.Name != this.Name) {
-					return;
-				}
-			}
-			catch(Exception ex) {
-				ex.DoNothing();
-				return;
-			}
-			if(ContextMenu!=null && _listMenuItemsLinks!=null) {
-			//Removes all previous wiki and web links from context menu.
-				for(int i=_listMenuItemsLinks.Count-1;i>=0;i--) {//backward because removing
-					ContextMenu.MenuItems.Remove(_listMenuItemsLinks[i]);
-				}
-			}
-			int rowClick = PointToRow(_mouseClickLocation.Y);
-			int colClick = PointToCol(_mouseClickLocation.X);
-			if(rowClick<0 || colClick<0) {//don't diplay links, not on grid row.
-				return;
-			}
-			if(_mouseButtonLastPressed==MouseButtons.Right && rowClick<=this.ListGridRows.Count) {
-				GridRow gridRow = this.ListGridRows[rowClick];
-				if(this.ContextMenu==null) {
-					this.ContextMenu=new ContextMenu();
-					return;
-				}
-				_listMenuItemsLinks=new List<MenuItem>();
-				if(this.ContextMenu.MenuItems.Count>0) {
-					_listMenuItemsLinks.Add(new MenuItem("-"));
-				}
-				StringBuilder stringBuilder = new StringBuilder();
-				gridRow.Cells.OfType<GridCell>().ToList().ForEach(x => stringBuilder.AppendLine(x.Text));
-				stringBuilder.AppendLine(gridRow.Note);
-				_listMenuItemsLinks.AddRange(OpenDentBusiness.UI.PopupHelper.GetContextMenuItemLinks(stringBuilder.ToString(),DoShowRightClickLinks));
-				if(_listMenuItemsLinks.Any(x=>x.Text!="-")) {//at least one REAL menu item that is not the divider.
-					_listMenuItemsLinks.ForEach(x => this.ContextMenu.MenuItems.Add(x));
-				}
+				ContextMenuPopupLinks(sender,e);
 			}
 		}
 
@@ -2091,8 +2100,8 @@ using OpenDental.UI;
 			}
 			if(e.Y < 1+OriginY()) {//mouse down was on a column header
 				_isMouseDownInHeader=true;
-				if(_mouseDownCol!=-1 && Columns[_mouseDownCol].HeaderClick!=null) {
-					Columns[_mouseDownCol].HeaderClick(null,null);
+				if(_mouseDownCol!=-1 && Columns[_mouseDownCol].CustomClickEvent!=null) {
+					Columns[_mouseDownCol].CustomClickEvent(null,null);
 					return;
 				}
 				else if(AllowSortingByColumn) {
@@ -2312,21 +2321,25 @@ using OpenDental.UI;
 		}
 
 		void comboBox_KeyDown(object sender,KeyEventArgs e) {
-			if(e.KeyCode==Keys.Enter) {//usually move to the next cell
-				// No Consideration for EditableAllowsCR because this is a ComboBox.
-				if(EditableEnterMovesDown){
-					// No need for Dispose() or null assignment because the ComboBox is happy to give focus to the next cell.
-					if(_selectedCellOld.Y==ListGridRows.Count-1) {
-						return;//can't move down
-					}
-					_selectedCell=new Point(_selectedCellOld.X,_selectedCellOld.Y+1);
-					CreateComboBox();
-					return;
-				}
-				editBox_NextCellRight();
-			}
 			if(e.KeyCode==Keys.Tab) {
-				editBox_NextCellRight();
+				//supports moving to the right with tab, but not down
+				//Used primarily in ortho chart
+				for(int i=_selectedCellOld.X+1;i<Columns.Count;i++) {
+					if(Columns[i].IsEditable){//textbox
+						_selectedCell=new Point(i,_selectedCellOld.Y);
+						Focus();//moves focus from combobox to trigger dropDownBox_LostFocus, because the next line will change focus and change _selectedCellOld
+						CreateEditBox();
+						//If user was using arrow keys to select item, dropDownBox_SelectionChangeCommitted fired with each arrow click
+						//Then, when they tab, only this gets hit.
+						return;
+					}
+					if(Columns[i].ListDisplayStrings!=null) {//dropdown
+						_selectedCell=new Point(i,_selectedCellOld.Y);
+						Focus();
+						CreateComboBox();
+						return;
+					}
+				}
 			}
 		}
 
@@ -2509,7 +2522,6 @@ using OpenDental.UI;
 		private void editBox_NextCellRight() {
 			textEdit?.Dispose();//This fires editBox_LostFocus, which is where we call CellLeave.
 			textEdit=null;
-			Focus();//Fires comboBox_LostFocus, which is where we call CellLeave.
 			//find the next editable cell to the right.
 			for(int i= _selectedCellOld.X+1; i < Columns.Count; i++) {
 				if(Columns[i].IsEditable){//textbox
@@ -2527,19 +2539,16 @@ using OpenDental.UI;
 			if(_selectedCellOld.Y==ListGridRows.Count-1) {
 				return;//can't move down
 			}
-			//At this point, we know that we can move either down or down and left.
+			int nextCellToRight=-1;
 			for(int i=0; i < Columns.Count; i++) {
 				if(Columns[i].IsEditable) {
-					_selectedCell=new Point(i,_selectedCellOld.Y+1);
-					CreateEditBox();
-					return;
-				}
-				if(Columns[i].ListDisplayStrings!=null){
-					_selectedCell=new Point(i,_selectedCellOld.Y+1);
-					CreateComboBox();
-					return;
+					nextCellToRight= i;
+					break;
 				}
 			}
+			//guaranteed to have a value. Either the cell below, or possibly below and left.
+			_selectedCell=new Point(nextCellToRight,_selectedCellOld.Y+1);
+			CreateEditBox();
 		}
 		
 		void textEdit_KeyUp(object sender,KeyEventArgs e) {
@@ -3151,9 +3160,9 @@ using OpenDental.UI;
 				float widthText=g.MeasureString(Columns[i].Heading, font).Width;
 				float xPos=(float)x + (-hScroll.Value + Columns[i].State.XPos + Columns[i].State.Width /2f- widthText/2f);
 				g.DrawString(Columns[i].Heading, font, Brushes.Black,xPos,(float)y + 1);
-				if(_sortedByColumnIdx == i) {
+				if(SortedByColumnIdx == i) {
 					PointF p = new PointF(x + (-hScroll.Value+1+ Columns[i].State.XPos +6), y + (float)_heightHeader / 2f);
-					if(_isSortedAscending) { //pointing up
+					if(SortedIsAscending) { //pointing up
 						g.FillPolygon(Brushes.White,new PointF[] {
 							new PointF(p.X-4.9f,p.Y+2f), //LLstub
 							new PointF(p.X-4.9f,p.Y+2.5f), //LLbase
@@ -3503,20 +3512,10 @@ using OpenDental.UI;
 		#endregion Methods - Scrolling
 
 		#region Methods - Sorting
-		///<summary>Returns current sort column index.  Use SortForced to maintain current grid sorting after refreshing a grid.  </summary>
-		public int GetSortedByColumnIdx(){
-			return _sortedByColumnIdx;
-		}
-
-		///<summary>Returns current sort order.  Use SortForced to maintain current grid sorting after refreshing a grid.</summary>
-		public bool IsSortedAscending(){
-			return _isSortedAscending;
-		}
-
 		///<summary>Set sortedByColIdx to -1 to clear sorting. Copied from SortByColumn. No need to call fill grid after calling this.  Also used in PatientPortalManager.</summary>
 		public void SortForced(int sortedByColumnIdx,bool sortedIsAscending) {
-			_isSortedAscending=sortedIsAscending;
-			_sortedByColumnIdx=sortedByColumnIdx;
+			SortedIsAscending=sortedIsAscending;
+			SortedByColumnIdx=sortedByColumnIdx;
 			if(sortedByColumnIdx==-1) {
 				return;
 			}
@@ -3524,22 +3523,22 @@ using OpenDental.UI;
 			for(int i=0;i<ListGridRows.Count;i++) {
 				rowsSorted.Add(ListGridRows[i]);
 			}
-			if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.StringCompare) {
+			if(Columns[SortedByColumnIdx].SortingStrategy==GridSortingStrategy.StringCompare) {
 				rowsSorted.Sort(SortStringCompare);
 			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.DateParse) {
+			else if(Columns[SortedByColumnIdx].SortingStrategy==GridSortingStrategy.DateParse) {
 				rowsSorted.Sort(SortDateParse);
 			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.ToothNumberParse) {
+			else if(Columns[SortedByColumnIdx].SortingStrategy==GridSortingStrategy.ToothNumberParse) {
 				rowsSorted.Sort(SortToothNumberParse);
 			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.AmountParse) {
+			else if(Columns[SortedByColumnIdx].SortingStrategy==GridSortingStrategy.AmountParse) {
 				rowsSorted.Sort(SortAmountParse);
 			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.TimeParse) {
+			else if(Columns[SortedByColumnIdx].SortingStrategy==GridSortingStrategy.TimeParse) {
 				rowsSorted.Sort(SortTimeParse);
 			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.VersionNumber) {
+			else if(Columns[SortedByColumnIdx].SortingStrategy==GridSortingStrategy.VersionNumber) {
 				rowsSorted.Sort(SortVersionParse);
 			}
 			BeginUpdate();
@@ -3548,7 +3547,7 @@ using OpenDental.UI;
 				ListGridRows.Add(rowsSorted[i]);
 			}
 			EndUpdate();
-			_sortedByColumnIdx=sortedByColumnIdx;//Must be set again since set to -1 in EndUpdate();
+			SortedByColumnIdx=sortedByColumnIdx;//Must be set again since set to -1 in EndUpdate();
 		}
 
 		///<summary>Swaps two rows in the grid. Returns false if either of the indexes is greater than the number of rows in the grid.</summary>
@@ -3571,37 +3570,37 @@ using OpenDental.UI;
 			if(mouseDownCol==-1) {
 				return;
 			}
-			if(_sortedByColumnIdx==mouseDownCol) {//already sorting by this column
-				_isSortedAscending=!_isSortedAscending;//switch ascending/descending.
+			if(SortedByColumnIdx==mouseDownCol) {//already sorting by this column
+				SortedIsAscending=!SortedIsAscending;//switch ascending/descending.
 			}
 			else {
-				_isSortedAscending=true;//start out ascending
-				_sortedByColumnIdx=mouseDownCol;
+				SortedIsAscending=true;//start out ascending
+				SortedByColumnIdx=mouseDownCol;
 			}
 			if(AllowSortingByColumn) {
 				ColumnSortClick?.Invoke(this,new EventArgs());
-				_sortedByColumnIdx=mouseDownCol;//Must be set again since set to -1 in EndUpdate();
+				SortedByColumnIdx=mouseDownCol;//Must be set again since set to -1 in EndUpdate();
 			}
 			List<GridRow> rowsSorted=new List<GridRow>();
 			for(int i=0;i<ListGridRows.Count;i++) {
 				rowsSorted.Add(ListGridRows[i]);
 			}
-			if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.StringCompare) {
+			if(Columns[SortedByColumnIdx].SortingStrategy==GridSortingStrategy.StringCompare) {
 				rowsSorted.Sort(SortStringCompare);
 			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.DateParse) {
+			else if(Columns[SortedByColumnIdx].SortingStrategy==GridSortingStrategy.DateParse) {
 				rowsSorted.Sort(SortDateParse);
 			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.ToothNumberParse) {
+			else if(Columns[SortedByColumnIdx].SortingStrategy==GridSortingStrategy.ToothNumberParse) {
 				rowsSorted.Sort(SortToothNumberParse);
 			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.AmountParse) {
+			else if(Columns[SortedByColumnIdx].SortingStrategy==GridSortingStrategy.AmountParse) {
 				rowsSorted.Sort(SortAmountParse);
 			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.TimeParse) {
+			else if(Columns[SortedByColumnIdx].SortingStrategy==GridSortingStrategy.TimeParse) {
 				rowsSorted.Sort(SortTimeParse);
 			}
-			else if(Columns[_sortedByColumnIdx].SortingStrategy==GridSortingStrategy.VersionNumber) {
+			else if(Columns[SortedByColumnIdx].SortingStrategy==GridSortingStrategy.VersionNumber) {
 				rowsSorted.Sort(SortVersionParse);
 			}
 			BeginUpdate();
@@ -3610,26 +3609,26 @@ using OpenDental.UI;
 				ListGridRows.Add(rowsSorted[i]);
 			}
 			EndUpdate();
-			_sortedByColumnIdx=mouseDownCol;//Must be set again since set to -1 in EndUpdate();
+			SortedByColumnIdx=mouseDownCol;//Must be set again since set to -1 in EndUpdate();
 			if(AllowSortingByColumn) { //only check this if sorting by column is enabled for the grid
 				ColumnSorted?.Invoke(this,new EventArgs());
 			}
 		}
 
 		private int SortStringCompare(GridRow row1,GridRow row2) {
-			string textRow1=row1?.Cells[_sortedByColumnIdx].Text??"";
-			return (_isSortedAscending?1:-1)*textRow1.CompareTo(row2?.Cells[_sortedByColumnIdx].Text??"");
+			string textRow1=row1?.Cells[SortedByColumnIdx].Text??"";
+			return (SortedIsAscending?1:-1)*textRow1.CompareTo(row2?.Cells[SortedByColumnIdx].Text??"");
 		}
 
 		private int SortDateParse(GridRow row1,GridRow row2) {
-			string raw1=row1.Cells[_sortedByColumnIdx].Text;
-			string raw2=row2.Cells[_sortedByColumnIdx].Text;
+			string raw1=row1.Cells[SortedByColumnIdx].Text;
+			string raw2=row2.Cells[SortedByColumnIdx].Text;
 			DateTime date1=DateTime.MinValue;
 			DateTime date2=DateTime.MinValue;
 			//TryParse is a much faster operation than Parse in the event that the input won't parse to a date.
 			if(DateTime.TryParse(raw1,out date1) &&
 				DateTime.TryParse(raw2,out date2)) {
-				return (_isSortedAscending?1:-1)*date1.CompareTo(date2);
+				return (SortedIsAscending?1:-1)*date1.CompareTo(date2);
 			}
 			else { //One of the inputs is not a date so default string compare.
 				return SortStringCompare(row1,row2);
@@ -3637,14 +3636,14 @@ using OpenDental.UI;
 		}
 
 		private int SortTimeParse(GridRow row1,GridRow row2) {
-			string raw1=row1.Cells[_sortedByColumnIdx].Text;
-			string raw2=row2.Cells[_sortedByColumnIdx].Text;
+			string raw1=row1.Cells[SortedByColumnIdx].Text;
+			string raw2=row2.Cells[SortedByColumnIdx].Text;
 			TimeSpan time1;
 			TimeSpan time2;
 			//TryParse is a much faster operation than Parse in the event that the input won't parse to a date.
 			if(TimeSpan.TryParse(raw1,out time1) &&
 				TimeSpan.TryParse(raw2,out time2)) {
-				return (_isSortedAscending?1:-1)*time1.CompareTo(time2);
+				return (SortedIsAscending?1:-1)*time1.CompareTo(time2);
 			}
 			else { //One of the inputs is not a date so default string compare.
 				return SortStringCompare(row1,row2);
@@ -3654,8 +3653,8 @@ using OpenDental.UI;
 		private int SortToothNumberParse(GridRow row1,GridRow row2) {
 			//remember that teeth could be in international format.
 			//fail gracefully
-			string raw1=row1.Cells[_sortedByColumnIdx].Text;
-			string raw2=row2.Cells[_sortedByColumnIdx].Text;
+			string raw1=row1.Cells[SortedByColumnIdx].Text;
+			string raw2=row2.Cells[SortedByColumnIdx].Text;
 			if(!Tooth.IsValidEntry(raw1) && !Tooth.IsValidEntry(raw2)) {//both invalid
 				return 0;
 			}
@@ -3673,26 +3672,26 @@ using OpenDental.UI;
 				int toothInt2=Tooth.ToInt(tooth2);
 				retVal=toothInt1.CompareTo(toothInt2);
 			}
-			return (_isSortedAscending?1:-1)*retVal;
+			return (SortedIsAscending?1:-1)*retVal;
 		}
 
 		private int SortVersionParse(GridRow row1,GridRow row2) {
 			Version v1, v2;
-			if(!Version.TryParse(row1.Cells[_sortedByColumnIdx].Text,out v1)) {
+			if(!Version.TryParse(row1.Cells[SortedByColumnIdx].Text,out v1)) {
 				v1=new Version();//0.0.0.0
 			}
-			if(!Version.TryParse(row2.Cells[_sortedByColumnIdx].Text,out v2)) {
+			if(!Version.TryParse(row2.Cells[SortedByColumnIdx].Text,out v2)) {
 				v2=new Version();//0.0.0.0
 			}
-			return (_isSortedAscending?1:-1)*v1.CompareTo(v2);
+			return (SortedIsAscending?1:-1)*v1.CompareTo(v2);
 		}
 
 		private int SortAmountParse(GridRow row1,GridRow row2) {
 			//This is here because AmountParse does not sort correctly when the amount contains non-numeric characters
 			//We could improve this later with some kind of grid text cleaner that is called before running this sort.
-			string raw1=row1.Cells[_sortedByColumnIdx].Text;			
+			string raw1=row1.Cells[SortedByColumnIdx].Text;			
 			raw1=raw1.Replace("$","");
-			string raw2=row2.Cells[_sortedByColumnIdx].Text;
+			string raw2=row2.Cells[SortedByColumnIdx].Text;
 			raw2=raw2.Replace("$","");
 			Decimal amt1=0;
 			Decimal amt2=0;
@@ -3712,8 +3711,11 @@ using OpenDental.UI;
 					return 0;//shouldn't happen
 				}
 			}
-			return (_isSortedAscending?1:-1)*amt1.CompareTo(amt2);
+			return (SortedIsAscending?1:-1)*amt1.CompareTo(amt2);
 		}
+
+
+
 		#endregion Methods - Sorting		
 
 		#region Methods - Perform Events
@@ -4165,10 +4167,8 @@ using OpenDental.UI;
 				if(i==0
 					&& (_title.StartsWith("TreatPlanBenefitsFamily") 
 					|| _title.StartsWith("TreatPlanBenefitsIndividual")
-					|| _title.StartsWith("StatementPayPlanOld")
 					|| _title.StartsWith("StatementPayPlan")
 					|| _title.StartsWith("StatementDynamicPayPlan")
-					|| _title.StartsWith("StatementPayPlanGrid")
 					|| _title.StartsWith("StatementInvoicePayment")
 					|| _title.StartsWith("StatementMain.NotIntermingled")))
 				{
@@ -4185,13 +4185,7 @@ using OpenDental.UI;
 				}
 				#endregion
 				#region Page break logic
-				if(i==ListGridRows.Count-1 
-					&& (_title.StartsWith("StatementPayPlanOld") 
-						|| _title.StartsWith("StatementPayPlan") 
-						|| _title.StartsWith("StatementDynamicPayPlan") 
-						|| _title.StartsWith("StatementPayPlanGrid") 
-						|| _title.StartsWith("StatementInvoicePayment")))
-				{
+				if(i==ListGridRows.Count-1 && (_title.StartsWith("StatementPayPlan") || _title.StartsWith("StatementDynamicPayPlan") || _title.StartsWith("StatementInvoicePayment"))) {
 					drawFooter=true;
 				}
 				if(yPosCur //start position of row

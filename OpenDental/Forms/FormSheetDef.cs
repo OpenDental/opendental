@@ -31,7 +31,7 @@ namespace OpenDental {
 		private void FormSheetDef_Load(object sender,EventArgs e) {
 			SetHeightWidthMin();
 			if(IsReadOnly){
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butReduceFontSize.Enabled=false;
 			}
 			if(!IsInitial){
@@ -262,7 +262,7 @@ namespace OpenDental {
 			return;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textWidth.IsValid() || !textHeight.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
@@ -346,5 +346,14 @@ namespace OpenDental {
 			_formSheetDefEdit.UpdateSheetDefInBackground();
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+
+		
 	}
 }

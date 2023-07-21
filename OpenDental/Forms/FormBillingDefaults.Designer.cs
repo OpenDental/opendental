@@ -73,9 +73,9 @@ namespace OpenDental{
 			this.labelStartDate = new System.Windows.Forms.Label();
 			this.textNote = new OpenDental.ODtextBox();
 			this.label4 = new System.Windows.Forms.Label();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.checkBoxBillShowTransSinceZero = new OpenDental.UI.CheckBox();
-			this.checkBillingEmailIncludeAutograph = new OpenDental.UI.CheckBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox3.SuspendLayout();
 			this.groupBoxBilling.SuspendLayout();
@@ -91,7 +91,7 @@ namespace OpenDental{
 			this.groupBox1.Controls.Add(this.textSmsTemplate);
 			this.groupBox1.Controls.Add(this.label5);
 			this.groupBox1.Controls.Add(this.label7);
-			this.groupBox1.Location = new System.Drawing.Point(12, 557);
+			this.groupBox1.Location = new System.Drawing.Point(25, 555);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(850, 123);
 			this.groupBox1.TabIndex = 250;
@@ -126,7 +126,7 @@ namespace OpenDental{
 			this.textSmsTemplate.DetectUrls = false;
 			this.textSmsTemplate.Location = new System.Drawing.Point(12, 47);
 			this.textSmsTemplate.Name = "textSmsTemplate";
-			this.textSmsTemplate.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Statement;
+			this.textSmsTemplate.QuickPasteType = OpenDentBusiness.QuickPasteType.Statement;
 			this.textSmsTemplate.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textSmsTemplate.Size = new System.Drawing.Size(606, 70);
 			this.textSmsTemplate.TabIndex = 1;
@@ -171,9 +171,9 @@ namespace OpenDental{
 			this.textInvoiceNote.BackColor = System.Drawing.SystemColors.Window;
 			this.textInvoiceNote.DetectLinksEnabled = false;
 			this.textInvoiceNote.DetectUrls = false;
-			this.textInvoiceNote.Location = new System.Drawing.Point(24, 490);
+			this.textInvoiceNote.Location = new System.Drawing.Point(34, 483);
 			this.textInvoiceNote.Name = "textInvoiceNote";
-			this.textInvoiceNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Statement;
+			this.textInvoiceNote.QuickPasteType = OpenDentBusiness.QuickPasteType.Statement;
 			this.textInvoiceNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textInvoiceNote.Size = new System.Drawing.Size(831, 66);
 			this.textInvoiceNote.TabIndex = 251;
@@ -181,7 +181,7 @@ namespace OpenDental{
 			// 
 			// label11
 			// 
-			this.label11.Location = new System.Drawing.Point(23, 473);
+			this.label11.Location = new System.Drawing.Point(33, 466);
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(152, 16);
 			this.label11.TabIndex = 250;
@@ -192,15 +192,14 @@ namespace OpenDental{
 			// 
 			this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox3.Controls.Add(this.checkBillingEmailIncludeAutograph);
 			this.groupBox3.Controls.Add(this.textBillingEmailBody);
 			this.groupBox3.Controls.Add(this.label8);
 			this.groupBox3.Controls.Add(this.label9);
 			this.groupBox3.Controls.Add(this.textBillingEmailSubject);
 			this.groupBox3.Controls.Add(this.label10);
-			this.groupBox3.Location = new System.Drawing.Point(12, 273);
+			this.groupBox3.Location = new System.Drawing.Point(24, 281);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(850, 200);
+			this.groupBox3.Size = new System.Drawing.Size(850, 182);
 			this.groupBox3.TabIndex = 248;
 			this.groupBox3.Text = "Email Statements";
 			// 
@@ -214,7 +213,7 @@ namespace OpenDental{
 			this.textBillingEmailBody.DetectUrls = false;
 			this.textBillingEmailBody.Location = new System.Drawing.Point(12, 100);
 			this.textBillingEmailBody.Name = "textBillingEmailBody";
-			this.textBillingEmailBody.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Statement;
+			this.textBillingEmailBody.QuickPasteType = OpenDentBusiness.QuickPasteType.Statement;
 			this.textBillingEmailBody.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textBillingEmailBody.Size = new System.Drawing.Size(827, 76);
 			this.textBillingEmailBody.TabIndex = 1;
@@ -287,7 +286,7 @@ namespace OpenDental{
 			this.groupBoxBilling.Controls.Add(this.label3);
 			this.groupBoxBilling.Controls.Add(this.textVendorId);
 			this.groupBoxBilling.Controls.Add(this.label2);
-			this.groupBoxBilling.Location = new System.Drawing.Point(12, 131);
+			this.groupBoxBilling.Location = new System.Drawing.Point(24, 136);
 			this.groupBoxBilling.Name = "groupBoxBilling";
 			this.groupBoxBilling.Size = new System.Drawing.Size(850, 140);
 			this.groupBoxBilling.TabIndex = 247;
@@ -536,7 +535,7 @@ namespace OpenDental{
 			// label1
 			// 
 			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.label1.Location = new System.Drawing.Point(702, 9);
+			this.label1.Location = new System.Drawing.Point(715, 9);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(65, 14);
 			this.label1.TabIndex = 245;
@@ -546,7 +545,7 @@ namespace OpenDental{
 			// textDays
 			// 
 			this.textDays.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.textDays.Location = new System.Drawing.Point(656, 7);
+			this.textDays.Location = new System.Drawing.Point(669, 7);
 			this.textDays.Name = "textDays";
 			this.textDays.Size = new System.Drawing.Size(44, 20);
 			this.textDays.TabIndex = 0;
@@ -562,7 +561,7 @@ namespace OpenDental{
 			// labelStartDate
 			// 
 			this.labelStartDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelStartDate.Location = new System.Drawing.Point(507, 9);
+			this.labelStartDate.Location = new System.Drawing.Point(520, 9);
 			this.labelStartDate.Name = "labelStartDate";
 			this.labelStartDate.Size = new System.Drawing.Size(147, 14);
 			this.labelStartDate.TabIndex = 221;
@@ -579,7 +578,7 @@ namespace OpenDental{
 			this.textNote.DetectUrls = false;
 			this.textNote.Location = new System.Drawing.Point(24, 64);
 			this.textNote.Name = "textNote";
-			this.textNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Statement;
+			this.textNote.QuickPasteType = OpenDentBusiness.QuickPasteType.Statement;
 			this.textNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNote.Size = new System.Drawing.Size(831, 66);
 			this.textNote.TabIndex = 2;
@@ -587,7 +586,7 @@ namespace OpenDental{
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(23, 31);
+			this.label4.Location = new System.Drawing.Point(22, 31);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(575, 32);
 			this.label4.TabIndex = 240;
@@ -596,37 +595,40 @@ namespace OpenDental{
     "nstallment plan.";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(798, 688);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(719, 684);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(800, 684);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 4;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// checkBoxBillShowTransSinceZero
 			// 
 			this.checkBoxBillShowTransSinceZero.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.checkBoxBillShowTransSinceZero.Location = new System.Drawing.Point(579, 32);
+			this.checkBoxBillShowTransSinceZero.Location = new System.Drawing.Point(592, 32);
 			this.checkBoxBillShowTransSinceZero.Name = "checkBoxBillShowTransSinceZero";
 			this.checkBoxBillShowTransSinceZero.Size = new System.Drawing.Size(284, 18);
 			this.checkBoxBillShowTransSinceZero.TabIndex = 253;
 			this.checkBoxBillShowTransSinceZero.Text = "Show all transactions since zero or negative balance";
 			// 
-			// checkIncludeAutograph
-			// 
-			this.checkBillingEmailIncludeAutograph.Location = new System.Drawing.Point(12, 179);
-			this.checkBillingEmailIncludeAutograph.Name = "checkIncludeAutograph";
-			this.checkBillingEmailIncludeAutograph.Size = new System.Drawing.Size(270, 18);
-			this.checkBillingEmailIncludeAutograph.TabIndex = 265;
-			this.checkBillingEmailIncludeAutograph.Text = "Include Email Autograph of sender address";
-			// 
 			// FormBillingDefaults
 			// 
-			this.ClientSize = new System.Drawing.Size(877, 716);
-			this.Controls.Add(this.butSave);
+			this.ClientSize = new System.Drawing.Size(877, 712);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.checkBoxBillShowTransSinceZero);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.checkSinglePatient);
@@ -657,7 +659,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.CheckBox checkIntermingled;
 		private System.Windows.Forms.Label labelStartDate;
 		private ODtextBox textNote;
@@ -708,6 +711,5 @@ namespace OpenDental{
 		private OpenDental.UI.CheckBox checkBoxBillShowTransSinceZero;
 		private OpenDental.UI.CheckBox checkIncludeAdjust;
 		private OpenDental.UI.CheckBox checkIncludeClinicNum;
-		private UI.CheckBox checkBillingEmailIncludeAutograph;
 	}
 }

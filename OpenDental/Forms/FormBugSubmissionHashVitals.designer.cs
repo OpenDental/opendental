@@ -114,7 +114,7 @@ namespace OpenDental {
 			this.textBugIds.Location = new System.Drawing.Point(669, 16);
 			this.textBugIds.Multiline = false;
 			this.textBugIds.Name = "textBugIds";
-			this.textBugIds.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Procedure;
+			this.textBugIds.QuickPasteType = OpenDentBusiness.QuickPasteType.Procedure;
 			this.textBugIds.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textBugIds.Size = new System.Drawing.Size(162, 21);
 			this.textBugIds.TabIndex = 8;
@@ -159,7 +159,7 @@ namespace OpenDental {
 			this.textFullHash.Location = new System.Drawing.Point(231, 16);
 			this.textFullHash.Multiline = false;
 			this.textFullHash.Name = "textFullHash";
-			this.textFullHash.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Procedure;
+			this.textFullHash.QuickPasteType = OpenDentBusiness.QuickPasteType.Procedure;
 			this.textFullHash.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textFullHash.Size = new System.Drawing.Size(166, 21);
 			this.textFullHash.TabIndex = 4;
@@ -174,7 +174,7 @@ namespace OpenDental {
 			this.textPartHash.Location = new System.Drawing.Point(466, 16);
 			this.textPartHash.Multiline = false;
 			this.textPartHash.Name = "textPartHash";
-			this.textPartHash.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Procedure;
+			this.textPartHash.QuickPasteType = OpenDentBusiness.QuickPasteType.Procedure;
 			this.textPartHash.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textPartHash.Size = new System.Drawing.Size(164, 21);
 			this.textPartHash.TabIndex = 2;
@@ -189,7 +189,7 @@ namespace OpenDental {
 			this.textHashNum.Location = new System.Drawing.Point(61, 16);
 			this.textHashNum.Multiline = false;
 			this.textHashNum.Name = "textHashNum";
-			this.textHashNum.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Procedure;
+			this.textHashNum.QuickPasteType = OpenDentBusiness.QuickPasteType.Procedure;
 			this.textHashNum.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textHashNum.Size = new System.Drawing.Size(117, 21);
 			this.textHashNum.TabIndex = 0;

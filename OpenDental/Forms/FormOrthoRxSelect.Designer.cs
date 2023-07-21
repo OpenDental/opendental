@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormOrthoRxSelect));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.listBoxAvail = new OpenDental.UI.ListBox();
 			this.listBoxSelected = new OpenDental.UI.ListBox();
@@ -33,10 +34,21 @@ namespace OpenDental{
 			this.butSelect = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(621, 527);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(593, 486);
+			this.butOK.Location = new System.Drawing.Point(621, 497);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 5;
@@ -103,7 +115,8 @@ namespace OpenDental{
 			// 
 			// FormOrthoRxSelect
 			// 
-			this.ClientSize = new System.Drawing.Size(680, 522);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(708, 563);
 			this.Controls.Add(this.butSelect);
 			this.Controls.Add(this.butRemove);
 			this.Controls.Add(this.label2);
@@ -111,6 +124,7 @@ namespace OpenDental{
 			this.Controls.Add(this.listBoxSelected);
 			this.Controls.Add(this.listBoxAvail);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormOrthoRxSelect";
 			this.Text = "Select Ortho Prescription";
@@ -120,6 +134,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butCancel;
 		private UI.Button butOK;
 		private UI.ListBox listBoxAvail;
 		private UI.ListBox listBoxSelected;

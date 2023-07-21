@@ -15,8 +15,6 @@ namespace OpenDental {
 		///<summary>This is the object we are editing.</summary>
 		public SheetField SheetFieldCur;
 		public Sheet SheetCur;
-		///<summary>The Y value to limit placement of PatImage to, should be set by caller.</summary>
-		public int BottomYLimit;
 
 		public FormSheetFieldEditPatImage() {
 			InitializeComponent();
@@ -25,29 +23,27 @@ namespace OpenDental {
 		}
 
 		private void FormSheetFieldPatImage_Load(object sender,EventArgs e) {
-			if(BottomYLimit==0) {
-				BottomYLimit=SheetCur.Height;
-			}
 			FillFields();
-			textXPos.Text=SheetFieldCur.XPos.ToString();
-			textYPos.Text=SheetFieldCur.YPos.ToString();
-			textWidth.Text=SheetFieldCur.Width.ToString();
-			textHeight.Text=SheetFieldCur.Height.ToString();
 		}
 
 		private void FillFields(){
+			textYPos.MaxVal=SheetCur.Height-1;//The maximum y-value of the sheet field must be within the page vertically.
 			textFieldValueDoc.Text="";
 			textFieldValueMount.Text="";
 			if(SheetFieldCur.FieldValue.StartsWith("MountNum:")){
 				long mountNum=PIn.Long(SheetFieldCur.FieldValue.Substring(9));
 				Mount mount=Mounts.GetByNum(mountNum);
-				textFieldValueMount.Text=mount.DateCreated.ToShortDateString()+" "+mount.Description;
+				textFieldValueDoc.Text=mount.DateCreated.ToShortDateString()+" "+mount.Description;
 			}
 			else if(SheetFieldCur.FieldValue!=""){
 				long docNum=PIn.Long(SheetFieldCur.FieldValue);
 				Document document=Documents.GetByNum(docNum);
 				textFieldValueDoc.Text=document.DateCreated.ToShortDateString()+" "+document.Description;
 			}
+			textXPos.Text=SheetFieldCur.XPos.ToString();
+			textYPos.Text=SheetFieldCur.YPos.ToString();
+			textWidth.Text=SheetFieldCur.Width.ToString();
+			textHeight.Text=SheetFieldCur.Height.ToString();
 		}
 
 		private void butChange_Click(object sender, EventArgs e){
@@ -88,9 +84,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
-			//The maximum y-value of the sheet field must be within the sheet vertically.
-			textYPos.MaxVal=BottomYLimit-PIn.Int(textHeight.Text);
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textXPos.IsValid()
 				|| !textYPos.IsValid()
 				|| !textWidth.IsValid()
@@ -108,5 +102,10 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
 	}
 }

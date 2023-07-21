@@ -58,8 +58,6 @@ namespace OpenDental {
 			gridMain.Columns.Add(col);
 			col=new GridColumn(Lan.g(this,"Image Category"),120);
 			gridMain.Columns.Add(col);
-			col=new GridColumn(Lan.g(this,"Updated"),70);
-			gridMain.Columns.Add(col);
 			gridMain.ListGridRows.Clear();
 			GridRow row;
 			_table=Sheets.GetPatientFormsTable(PatNum);
@@ -70,7 +68,6 @@ namespace OpenDental {
 				row.Cells.Add(_table.Rows[i]["showInTerminal"].ToString());
 				row.Cells.Add(_table.Rows[i]["description"].ToString());
 				row.Cells.Add(_table.Rows[i]["imageCat"].ToString());
-				row.Cells.Add(_table.Rows[i]["DateTSheetEdited"].ToString());
 				gridMain.ListGridRows.Add(row);
 			}
 			gridMain.EndUpdate();
@@ -89,10 +86,10 @@ namespace OpenDental {
 			//Hold onto docNum so Image module refresh persists selection when closing FormPatientForms.
 			DocNum=PIn.Long(_table.Rows[e.Row]["DocNum"].ToString());//Set to 0 if not a Document, i.e. a Sheet.
 			if(DocNum!=0) {
-				if(!Security.IsAuthorized(EnumPermType.ImagingModule)) {
+				if(!Security.IsAuthorized(Permissions.ImagingModule)) {
 					return;
 				}
-				GlobalFormOpenDental.GotoImage(PatNum,DocNum); 
+				GotoModule.GotoImage(PatNum,DocNum); 
 				return;
 			}
 			//Sheets
@@ -102,32 +99,32 @@ namespace OpenDental {
 		}
 
 		private void menuItemSheets_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			using FormSheetDefs formSheetDefs=new FormSheetDefs();
 			formSheetDefs.ShowDialog();
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Sheets");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Sheets");
 			FillGrid();
 		}
 
 		private void menuItemImageCats_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.DefEdit)) {
+			if(!Security.IsAuthorized(Permissions.DefEdit)) {
 				return;
 			}
 			using FormDefinitions formDefinitions=new FormDefinitions(DefCat.ImageCats);
 			formDefinitions.ShowDialog();
-			SecurityLogs.MakeLogEntry(EnumPermType.DefEdit,0,"Defs");
+			SecurityLogs.MakeLogEntry(Permissions.DefEdit,0,"Defs");
 			FillGrid();
 		}
 
 		private void menuItemOptions_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			FrmSheetSetup frmSheetSetup=new FrmSheetSetup();
 			frmSheetSetup.ShowDialog();
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"ShowForms");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"ShowForms");
 			FillGrid();
 		}
 
@@ -161,7 +158,9 @@ namespace OpenDental {
 					}
 				}
 				//Will display FormApptsOther for the user to select an appointment or procedures to display on the sheet.
-				SheetUtilL.SetApptProcParamsForSheet(sheet,sheetDef,PatNum);
+				if(!SheetUtilL.SetApptProcParamsForSheet(sheet,sheetDef,PatNum)) {
+					return;
+				}
 				SheetParameter.SetParameter(sheet,"PatNum",PatNum);
 				SheetFiller.FillFields(sheet);
 				SheetUtil.CalculateHeights(sheet);
@@ -169,10 +168,9 @@ namespace OpenDental {
 					sheet.InternalNote="";//because null not ok
 					sheet.ShowInTerminal=(byte)(Sheets.GetBiggestShowInTerminal(PatNum)+1);
 					Sheets.SaveNewSheet(sheet);//save each sheet.
-					Sheets.SaveParameters(sheet);
-					//Create mobile notification to update eClipboard device with new sheet.
+					//Push new sheet to eClipboard.
 					if(isPatUsingEClipboard && sheetDef.HasMobileLayout) {
-						MobileNotifications.CI_AddSheet(sheet.PatNum,sheet.SheetNum);
+						OpenDentBusiness.WebTypes.PushNotificationUtils.CI_AddSheet(sheet.PatNum,sheet.SheetNum);
 					}
 				}
 			}
@@ -196,7 +194,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Cannot open kiosk unless process signal interval is set. To set it, go to Setup > Miscellaneous.");
 				return;
 			}
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				//Thinfinity messes up window ordering so sometimes FormOpenDental is visible in Kiosk mode.
 				for(int i=0;i<Application.OpenForms.Count;i++) {
 					Application.OpenForms[i].Visible=false;
@@ -206,7 +204,7 @@ namespace OpenDental {
 			formTerminal.IsSimpleMode=true;
 			formTerminal.PatNum=PatNum;
 			formTerminal.ShowDialog();
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				for(int i=0;i<Application.OpenForms.Count;i++) {
 					Application.OpenForms[i].Visible=true;
 				}
@@ -251,12 +249,11 @@ namespace OpenDental {
 			}
 			Sheet sheetNew=Sheets.PreFillSheetFromPreviousAndDatabase(sheetDefOriginal,sheet);
 			sheetNew.IsNew=true;
-			using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit();
-			formSheetFillEdit.SheetCur=sheetNew;
+			using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit(sheetNew);
 			formSheetFillEdit.ShowDialog();
 			//If they press ok, the form is inserted, so refresh the grid, make a security log, and select the new entry.
 			if(formSheetFillEdit.DialogResult==DialogResult.OK) {
-				SecurityLogs.MakeLogEntry(EnumPermType.Copy,PatNum,"Patient form "+sheet.Description+" from "+sheet.DateTimeSheet.ToString()+" copied via Pre-Fill");
+				SecurityLogs.MakeLogEntry(Permissions.Copy,PatNum,"Patient form "+sheet.Description+" from "+sheet.DateTimeSheet.ToString()+" copied via Pre-Fill");
 				FillGrid();
 				//Select the newly added sheet.
 				for(int i=0;i<_table.Rows.Count;i++) {
@@ -290,8 +287,7 @@ namespace OpenDental {
 				//no need to set SheetNums here.  That's done from inside FormSheetFillEdit
 			}
 			sheet2.IsNew=true;
-			using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit();
-			formSheetFillEdit.SheetCur=sheet2;
+			using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit(sheet2);
 			formSheetFillEdit.ShowDialog();
 			if(formSheetFillEdit.DialogResult==DialogResult.OK || formSheetFillEdit.DidChangeSheet) {
 				FillGrid();
@@ -300,7 +296,7 @@ namespace OpenDental {
 						gridMain.SetSelected(i,true);
 					}
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.Copy,PatNum,"Patient form "+sheet.Description+" from "+sheet.DateTimeSheet.ToString()+" copied");
+				SecurityLogs.MakeLogEntry(Permissions.Copy,PatNum,"Patient form "+sheet.Description+" from "+sheet.DateTimeSheet.ToString()+" copied");
 			}
 		}
 
@@ -348,5 +344,8 @@ namespace OpenDental {
 			}
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }

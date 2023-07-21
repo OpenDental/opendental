@@ -20,7 +20,6 @@ namespace OpenDental{
 		private List<ProgramProperty> _listProgramPropertiesWebPay=new List<ProgramProperty>();
 		///<summary>Used to revert the clinic drop down if the user tries to change clinics and the payment type hasn't been set.</summary>
 		private long _clinicNumRevert;
-		private bool _isLoading = false;
 		private List<Def> _listDefsPayTypes;
 
 		///<summary></summary>
@@ -35,13 +34,12 @@ namespace OpenDental{
 		}
 
 		private void FormXchargeSetup_Load(object sender,EventArgs e) {
-			_isLoading=true;
 			_program=Programs.GetCur(ProgramName.Xcharge);
 			if(_program==null) {
 				return;//should never happen
 			}
-			if(ODEnvironment.IsCloudServer) {
-				linkLabel1.Text+="\r\n"+Lans.g(this,"X-Charge is not supported while using Open Dental Cloud. Use EdgeExpress instead.");
+			if(ODBuild.IsWeb()) {
+				linkLabel1.Text+="\r\n"+Lans.g(this,"X-Charge is not supported in web mode. Use EdgeExpress instead.");
 			}
 			if(PrefC.HasClinicsEnabled) {
 				groupPaySettings.Text=Lan.g(this,"Clinic Payment Settings");
@@ -49,7 +47,7 @@ namespace OpenDental{
 					//if program link is enabled, disable the enable check box so the restricted user cannot disable for all clinics
 					checkEnabled.Enabled=!_program.Enabled;
 				}
-				comboClinic.ClinicNumSelected=Clinics.ClinicNum;
+				comboClinic.SelectedClinicNum=Clinics.ClinicNum;
 				_clinicNumRevert=Clinics.ClinicNum;
 			}
 			else {//clinics not enabled
@@ -70,14 +68,13 @@ namespace OpenDental{
 				textPassword.ReadOnly=true;
 			}
 			FillFields();
-			_isLoading=false;
 		}
 
 		///<summary>Fills all but comboClinic, checkEnabled, textPath, and textOverride which are filled on load.</summary>
 		private void FillFields() {
 			long clinicNum=0;
-			if(PrefC.HasClinicsEnabled && comboClinic.ClinicNumSelected>-1) {
-				clinicNum=comboClinic.ClinicNumSelected;
+			if(PrefC.HasClinicsEnabled && comboClinic.SelectedClinicNum>-1) {
+				clinicNum=comboClinic.SelectedClinicNum;
 			}
 			//Password
 			string password=ProgramProperties.GetPropValFromList(_listProgramProperties,"Password",clinicNum);
@@ -110,19 +107,19 @@ namespace OpenDental{
 		}
 
 		private void comboClinic_SelectionChangeCommitted(object sender,EventArgs e) {
-			if(comboClinic.ClinicNumSelected==_clinicNumRevert) {//didn't change the selected clinic
+			if(comboClinic.SelectedClinicNum==_clinicNumRevert) {//didn't change the selected clinic
 				return;
 			}
 			//XWeb will be enabled for the clinic if the enabled checkbox is checked and the 3 XWeb fields are not blank.  Don't let them switch clinics or
 			//close the form with only 1 or 2 of the three fields filled in.  If they fill in 1, they must fill in the other 2.  Per JasonS - 10/12/2015
 			bool isXWebEnabled=checkEnabled.Checked && (textXWebID.Text.Trim().Length>0 || textAuthKey.Text.Trim().Length>0  || textTerminalID.Text.Trim().Length>0);
 			if(isXWebEnabled && !ValidateXWeb()) {//error message box displayed in ValidateXWeb()
-				comboClinic.ClinicNumSelected=_clinicNumRevert;//validation didn't pass, revert clinic choice so they have to fix it
+				comboClinic.SelectedClinicNum=_clinicNumRevert;//validation didn't pass, revert clinic choice so they have to fix it
 				return;//if any of the X-Web fields do not pass validation, return
 			}
 			//if the payment type currently set is not valid and X-Charge is enabled, revert the clinic and return, message box shown in ValidatePaymentTypes
 			if(!ValidatePaymentTypes(false)) {
-				comboClinic.ClinicNumSelected=_clinicNumRevert;//revert clinic selection, X-Charge is enabled and the payment type is not valid
+				comboClinic.SelectedClinicNum=_clinicNumRevert;//revert clinic selection, X-Charge is enabled and the payment type is not valid
 				return;
 			}
 			SyncWithHQ();//if the user just modified the HQ credentials, change any credentials that were the same as HQ to keep them synched
@@ -182,7 +179,7 @@ namespace OpenDental{
 			for(int i = 0;i<listProgramPropertiesPropertyDesc.Count;i++) {
 				listProgramPropertiesPropertyDesc[i].PropertyValue=POut.Bool(checkPreventSavingNewCC.Checked);
 			}
-			_clinicNumRevert=comboClinic.ClinicNumSelected;//now that we've updated the values for the clinic we're switching from, update _clinicNumRevert
+			_clinicNumRevert=comboClinic.SelectedClinicNum;//now that we've updated the values for the clinic we're switching from, update _clinicNumRevert
 			textPassword.UseSystemPasswordChar=false;//FillFields will set this to true if the clinic being selected has a password set
 			textAuthKey.UseSystemPasswordChar=false;//FillFields will set this to true if the clinic being selected has an AuthKey entered
 			FillFields();
@@ -230,7 +227,7 @@ namespace OpenDental{
 			}
 			long clinicNum=0;
 			if(PrefC.HasClinicsEnabled) {
-				clinicNum=comboClinic.ClinicNumSelected;
+				clinicNum=comboClinic.SelectedClinicNum;
 			}
 			ProgramProperty programPropertyWebPayEnabled=ProgramProperties.GetOnlinePaymentsEnabledForClinic(clinicNum,ProgramName.Xcharge);
 			string msg=Lan.g(this,"Online payments is already enabled for another processor and must be disabled in order to use Xcharge online payments. "
@@ -405,19 +402,7 @@ namespace OpenDental{
 			}
 		}
 
-		private void checkEnabled_CheckedChanged(object sender,EventArgs e) {
-			if(ODEnvironment.IsCloudServer) {
-				bool isDisabledForWeb=Programs.GetListDisabledForWeb().Select(x => x.ToString()).Contains(_program.ProgName);
-				if(checkEnabled.Checked && isDisabledForWeb) {
-					checkEnabled.Checked=false;
-					if(!_isLoading){
-						MsgBox.Show(this,"Web users cannot currently enable this bridge");
-					}
-				}
-			}
-		}
-
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			#region Validation and Update Local List
 			if(_program==null) {//should never happen
 				MsgBox.Show(this,"X-Charge entry is missing from the database.");
@@ -472,7 +457,7 @@ namespace OpenDental{
 			//get selected ClinicNum (if enabled), PaymentType, encrypted Password, and encrypted AuthKey
 			long clinicNum=0;
 			if(PrefC.HasClinicsEnabled) {
-				clinicNum=comboClinic.ClinicNumSelected;
+				clinicNum=comboClinic.SelectedClinicNum;
 			}
 			string passwordEncrypted="";
 			if(textPassword.Text.Trim().Length>0) {
@@ -572,11 +557,15 @@ namespace OpenDental{
 						}					
 					}
 					stringBuilderLogText.Append(" was altered.");
-					SecurityLogs.MakeLogEntry(EnumPermType.ManageHighSecurityProgProperties,0,stringBuilderLogText.ToString(),_program.ProgramNum,DateTime.Now);
+					SecurityLogs.MakeLogEntry(Permissions.ManageHighSecurityProgProperties,0,stringBuilderLogText.ToString(),_program.ProgramNum,DateTime.Now);
 				}
 			}
 			DataValid.SetInvalid(InvalidType.Programs);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 	}
 }

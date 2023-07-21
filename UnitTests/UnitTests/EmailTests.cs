@@ -66,7 +66,7 @@ namespace UnitTests.Email_Tests {
 			string subject="";
 			List<MessageReplaceType> listMessageReplaceTypes=Enum.GetValues(typeof(MessageReplaceType)).Cast<MessageReplaceType>().ToList();
 			listMessageReplaceTypes.Remove(MessageReplaceType.PaymentPlan);
-			List<FrmMessageReplacements.ReplacementField> listReplacementFields=FrmMessageReplacements.GetReplacementFieldList(true,listMessageReplaceTypes);
+			List<FormMessageReplacements.ReplacementField> listReplacementFields=FormMessageReplacements.GetReplacementFieldList(true,listMessageReplaceTypes);
 			for(int i=0;i<listReplacementFields.Count;i++){
 				if(listReplacementFields[i].IsSupported){
 					subject+=listReplacementFields[i].FieldName;
@@ -643,38 +643,6 @@ So, ""Hello"".";
 			string invalidString="àäåæèéìñòöùü";
 			Assert.IsFalse(EmailAddresses.HasValidChars(invalidString));
 			Assert.IsTrue(EmailAddresses.HasValidChars(validString));
-		}
-
-		[TestMethod]
-		public void EmailMessages_GetEmailMessageForStatement_PassedInEmail() {
-			StatementT.ClearStatementTable();
-			PatientT.ClearPatientTable();
-			ClinicT.ClearClinicTable();
-			EmailAddress clinicEmail=EmailAddressT.CreateEmailAddress("default@default.com","default");
-			EmailAddress senderAddress=EmailAddressT.CreateEmailAddress("newEmail@email.com");
-			Clinic clinic=ClinicT.CreateClinic("clinic",emailAddressNum:clinicEmail.EmailAddressNum);
-			PrefT.UpdateLong(PrefName.EmailDefaultAddressNum,clinicEmail.EmailAddressNum);
-			PrefT.UpdateBool(PrefName.EasyNoClinics,false);
-			Patient pat=PatientT.CreatePatient(clinicNum:clinic.ClinicNum);
-			Statement statement=StatementT.CreateStatement(pat.PatNum);
-			EmailMessage message=Statements.GetEmailMessageForStatement(statement,pat,senderAddress);
-			Assert.AreEqual(senderAddress.SenderAddress,message.FromAddress);
-		}
-
-		[TestMethod]
-		public void EmailMessages_GetEmailMessageForStatement_NoPassedInEmail() {
-			StatementT.ClearStatementTable();
-			PatientT.ClearPatientTable();
-			ClinicT.ClearClinicTable();
-			EmailAddress clinicEmail=EmailAddressT.CreateEmailAddress("default@default.com","default");
-			PrefT.UpdateLong(PrefName.EmailDefaultAddressNum,clinicEmail.EmailAddressNum);
-			PrefT.UpdateBool(PrefName.EasyNoClinics,false);
-			Clinic clinic=ClinicT.CreateClinic("clinic",emailAddressNum:clinicEmail.EmailAddressNum);
-			Patient pat=PatientT.CreatePatient(clinicNum:clinic.ClinicNum);
-			Statement statement=StatementT.CreateStatement(pat.PatNum);
-			EmailAddress senderAddress=EmailAddressT.CreateEmailAddress("newEmail@email.com");
-			EmailMessage message=Statements.GetEmailMessageForStatement(statement,pat);
-			Assert.AreEqual(clinicEmail.SenderAddress,message.FromAddress);
 		}
 	}
 }

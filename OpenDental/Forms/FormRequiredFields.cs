@@ -414,12 +414,15 @@ namespace OpenDental {
 			}
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+		}
+
 		private void FormRequiredFields_FormClosing(object sender,FormClosingEventArgs e) {
 			if(Prefs.UpdateBool(PrefName.EnforceMedicaidIDLength,checkMedicaidLength.Checked)) {
 				DataValid.SetInvalid(InvalidType.Prefs);
 			}
 			DataValid.SetInvalid(InvalidType.RequiredFields);
 		}
-
 	}
 }

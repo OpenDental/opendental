@@ -98,7 +98,11 @@ namespace OpenDental {
 		private void butPrint_Click(object sender,EventArgs e) {
 			//use the modeless version, which also allows user to choose printer
 			webBrowser1.ShowPrintDialog();
-			DidPrint = true;
+			DidPrint = true;			
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

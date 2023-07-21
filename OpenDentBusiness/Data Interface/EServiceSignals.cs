@@ -84,10 +84,10 @@ namespace OpenDentBusiness{
 			DateTime dtNow=PIn.DateT(table.Rows[0]["ServerTime"].ToString());
 			if(
 				//eConnector exited gracefully and inserted its own critical signal.
-				listSignal[0].Severity==eServiceSignalSeverity.Critical 
+				listSignal[0].Severity==eServiceSignalSeverity.Critical ||
 				//eConnector did not exit gracefully but has not inserted a heartbeat in at least 6 minutes. It is considered critical.
 				//Listener is dropping a heartbeat every 5 minutes, so give 1 minute grace period to squelch race condition.
-				|| listSignal[0].SigDateTime<dtNow.AddMinutes(-(ECONNECTOR_HEARTBEAT_MINUTES+1)))
+				listSignal[0].SigDateTime<dtNow.AddMinutes(-(ECONNECTOR_HEARTBEAT_MINUTES+1)))
 			{
 				return eServiceSignalSeverity.Critical;
 			}

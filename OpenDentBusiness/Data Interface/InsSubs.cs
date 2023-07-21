@@ -536,13 +536,13 @@ namespace OpenDentBusiness{
 				InsPlans.ResetAppointmentInsplanNum(sub.PlanNum);
 				//The inssub points to an invalid plan, attempt to delete sub
 				InsSubs.Delete(sub.InsSubNum);
-				SecurityLogs.MakeLogEntry(EnumPermType.InsPlanEditSub,subscriberNum,"Deleted inssub with invalid insplan attached.");
+				SecurityLogs.MakeLogEntry(Permissions.InsPlanEditSub,subscriberNum,"Deleted inssub with invalid insplan attached.");
 			}
 			catch(Exception ex) {
 				ex.DoNothing();
 				//Create blank insplan and attach to inssub
 				InsSubs.AssignBlankPlanToInsSub(sub);
-				SecurityLogs.MakeLogEntry(EnumPermType.InsPlanEditSub,subscriberNum,"Inssub with invalid insplan found, attached blank insplan.");
+				SecurityLogs.MakeLogEntry(Permissions.InsPlanEditSub,subscriberNum,"Inssub with invalid insplan found, attached blank insplan.");
 			}
 			//Return false because the plan wasn't valid when entering the method, although it is now valid.
 			return false;
@@ -558,17 +558,5 @@ namespace OpenDentBusiness{
 			});
 			return isValid;
 		}
-
-		///<summary>Replace the tag "[SubscriberID]" with the insurance subcriber id (found on InsSub) for the patient. If there isn't one, replaces the [SubscriberID] tag with empty string and returns the message.</summary>
-		public static string ReplaceInsSub(string message,InsSub insSub,bool isHtmlEmail=false) {
-			StringBuilder stringBuilder=new StringBuilder(message);
-			if(insSub==null) {
-				ReplaceTags.ReplaceOneTag(stringBuilder,"[SubscriberID]","",isHtmlEmail);
-				return stringBuilder.ToString();
-			}
-			ReplaceTags.ReplaceOneTag(stringBuilder,"[SubscriberID]",insSub.SubscriberID,isHtmlEmail);
-			return stringBuilder.ToString();
-		}
-
 	}
 }

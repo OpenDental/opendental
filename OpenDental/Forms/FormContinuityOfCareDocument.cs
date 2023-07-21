@@ -19,7 +19,8 @@ namespace OpenDental {
 				continuityOfCareText=EhrCCD.GenerateClinicalSummary(PatCur,true,true,true,true,true,true,true,true,true,true,true,true,
 					textInstructions.Text,DateTime.MinValue,out string warnings);
 				if(!string.IsNullOrEmpty(warnings)) {
-					if(MessageBox.Show(warnings,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+					string warningMsg=Lan.g(this,"Click OK to ignore warnings and continue, or click Cancel.")+"\r\n"+warnings;
+					if(MessageBox.Show(warningMsg,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
 						return;
 					}
 				}
@@ -45,7 +46,8 @@ namespace OpenDental {
 				continuityOfCareText=EhrCCD.GenerateClinicalSummary(PatCur,true,true,true,true,true,true,true,true,true,true,true,true,
 					textInstructions.Text,DateTime.MinValue,out string warnings);
 				if(!string.IsNullOrEmpty(warnings)) {
-					if(MessageBox.Show(warnings,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+					string warningMsg=Lan.g(this,"Click OK to ignore warnings and continue, or click Cancel.")+"\r\n"+warnings;
+					if(MessageBox.Show(warningMsg,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
 						return;
 					}
 				}
@@ -66,13 +68,17 @@ namespace OpenDental {
 				}
 			}
 			File.WriteAllText(Path.Combine(formBrowserDialog.SelectedPath,"ccd.xml"),continuityOfCareText);
-			File.WriteAllText(Path.Combine(formBrowserDialog.SelectedPath,"ccd.xsl"),EhrSummaryCcds.GetEhrResource("CCD"));
+			File.WriteAllText(Path.Combine(formBrowserDialog.SelectedPath,"ccd.xsl"),FormEHR.GetEhrResource("CCD"));
 			EhrMeasureEvent ehrMeasureEvent=new EhrMeasureEvent();
 			ehrMeasureEvent.DateTEvent=DateTime.Now;
 			ehrMeasureEvent.EventType=EhrMeasureEventType.ClinicalSummaryProvidedToPt;
 			ehrMeasureEvent.PatNum=PatCur.PatNum;
 			EhrMeasureEvents.Insert(ehrMeasureEvent);
 			MsgBox.Show(this,"File has been exported.");
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			Close();
 		}
 
 	}

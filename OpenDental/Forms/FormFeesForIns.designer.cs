@@ -50,6 +50,7 @@ namespace OpenDental {
 			this.butSelectAll = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butChange = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butPrint = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
@@ -188,6 +189,16 @@ namespace OpenDental {
 			this.butChange.Text = "Change";
 			this.butChange.Click += new System.EventHandler(this.butChange_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(737, 632);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 3;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butPrint
 			// 
 			this.butPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -219,6 +230,7 @@ namespace OpenDental {
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butChange);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -231,6 +243,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butChange;
 		private OpenDental.UI.GridOD gridMain;
 		private TextBox textCarrier;

@@ -95,7 +95,7 @@ namespace OpenDental{
 				butEdit.Visible=false;
 				labelEdit.Visible=false;
 			}
-			if(!Security.IsAuthorized(EnumPermType.PatMedicationListEdit)) {
+			if(!Security.IsAuthorized(Permissions.PatMedicationListEdit)) {
 				butOK.Enabled=false;
 				butRemove.Enabled=false;
 			}
@@ -180,16 +180,16 @@ namespace OpenDental{
 			}
 			MedicationPats.Delete(MedicationPatCur);
 			if(MedicationPatCur.MedicationNum==0) {
-				SecurityLogs.MakeLogEntry(EnumPermType.PatMedicationListEdit,MedicationPatCur.PatNum,MedicationPatCur.MedDescript+" deleted");
+				SecurityLogs.MakeLogEntry(Permissions.PatMedicationListEdit,MedicationPatCur.PatNum,MedicationPatCur.MedDescript+" deleted");
 			}
 			else {
-				SecurityLogs.MakeLogEntry(EnumPermType.PatMedicationListEdit,MedicationPatCur.PatNum,Medications.GetMedication(MedicationPatCur.MedicationNum).MedName+" deleted");
+				SecurityLogs.MakeLogEntry(Permissions.PatMedicationListEdit,MedicationPatCur.PatNum,Medications.GetMedication(MedicationPatCur.MedicationNum).MedName+" deleted");
 			}
 			MedicationPatCur=null;//This prevents other windows trying to use the medication pat after this window has closed.
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textDateStart.IsValid() || !textDateStop.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
@@ -216,23 +216,55 @@ namespace OpenDental{
 			if(IsNew){
 				MedicationPats.Insert(MedicationPatCur);
 				if(MedicationPatCur.MedicationNum==0) {
-					SecurityLogs.MakeLogEntry(EnumPermType.PatMedicationListEdit,MedicationPatCur.PatNum,MedicationPatCur.MedDescript+" added");
+					SecurityLogs.MakeLogEntry(Permissions.PatMedicationListEdit,MedicationPatCur.PatNum,MedicationPatCur.MedDescript+" added");
 				}
 				else {
-					SecurityLogs.MakeLogEntry(EnumPermType.PatMedicationListEdit,MedicationPatCur.PatNum,Medications.GetMedication(MedicationPatCur.MedicationNum).MedName+" added");
+					SecurityLogs.MakeLogEntry(Permissions.PatMedicationListEdit,MedicationPatCur.PatNum,Medications.GetMedication(MedicationPatCur.MedicationNum).MedName+" added");
 				}
 			}
 			else{
 				MedicationPats.Update(MedicationPatCur);
 				if(MedicationPatCur.MedicationNum==0) {
-					SecurityLogs.MakeLogEntry(EnumPermType.PatMedicationListEdit,MedicationPatCur.PatNum,MedicationPatCur.MedDescript+" edited");
+					SecurityLogs.MakeLogEntry(Permissions.PatMedicationListEdit,MedicationPatCur.PatNum,MedicationPatCur.MedDescript+" edited");
 				}
 				else {
-					SecurityLogs.MakeLogEntry(EnumPermType.PatMedicationListEdit,MedicationPatCur.PatNum,Medications.GetMedication(MedicationPatCur.MedicationNum).MedName+" edited");
+					SecurityLogs.MakeLogEntry(Permissions.PatMedicationListEdit,MedicationPatCur.PatNum,Medications.GetMedication(MedicationPatCur.MedicationNum).MedName+" edited");
 				}
 			}
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

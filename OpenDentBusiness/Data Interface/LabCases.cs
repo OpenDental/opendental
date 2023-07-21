@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using CodeBase;
 using System.Data;
-using System.Linq;
 using System.Reflection;
 
 namespace OpenDentBusiness{
@@ -22,7 +20,6 @@ namespace OpenDentBusiness{
 			table.Columns.Add("AptDateTime",typeof(DateTime));
 			table.Columns.Add("aptDateTime");
 			table.Columns.Add("AptNum");
-			table.Columns.Add("ClinicNum");
 			table.Columns.Add("OpNum");
 			table.Columns.Add("lab");
 			table.Columns.Add("LabCaseNum");
@@ -34,7 +31,7 @@ namespace OpenDentBusiness{
 			List<DataRow> rows=new List<DataRow>();
 			//the first query only gets labcases that are attached to scheduled or planned appointments
 			string command="SELECT COALESCE(appointment.AptStatus,ap1.AptStatus) AptStatus, COALESCE(appointment.AptDateTime, ap1.AptDateTime) AS AptDateTime,"
-				+"COALESCE(appointment.AptNum, ap1.AptNum) AS AptNum, COALESCE(appointment.ClinicNum, ap1.ClinicNum) AS ClinicNum, COALESCE(appointment.Op, ap1.Op) AS Op, DateTimeChecked,"
+				+"COALESCE(appointment.AptNum, ap1.AptNum) AS AptNum, COALESCE(appointment.Op, ap1.Op) AS Op, DateTimeChecked,"
 				+"DateTimeRecd,DateTimeSent, LabCaseNum, laboratory.Description, LName, FName, Preferred, MiddleI, Phone,"
 				+"COALESCE(appointment.ProcDescript,ap1.ProcDescript) AS ProcDescript, Instructions "
 				+"FROM labcase "
@@ -63,7 +60,6 @@ namespace OpenDentBusiness{
 				row["AptDateTime"]=AptDateTime;
 				row["aptDateTime"]=AptDateTime.ToShortDateString()+(apptStatus!=ApptStatus.Planned?" "+AptDateTime.ToShortTimeString():"");
 				row["AptNum"]=raw.Rows[i]["AptNum"].ToString();
-				row["ClinicNum"]=raw.Rows[i]["ClinicNum"].ToString();
 				row["OpNum"]=raw.Rows[i]["Op"].ToString();
 				row["lab"]=raw.Rows[i]["Description"].ToString();
 				row["LabCaseNum"]=raw.Rows[i]["LabCaseNum"].ToString();
@@ -166,13 +162,13 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Used when drawing the planned appointment.</summary>
-		public static List<LabCase> GetForPlanned(long aptNum) {
+		public static LabCase GetForPlanned(long aptNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<LabCase>>(MethodBase.GetCurrentMethod(),aptNum);
+				return Meth.GetObject<LabCase>(MethodBase.GetCurrentMethod(),aptNum);
 			}
 			string command="SELECT * FROM labcase "
 				+"WHERE labcase.PlannedAptNum="+POut.Long(aptNum);
-			return Crud.LabCaseCrud.SelectMany(command);
+			return Crud.LabCaseCrud.SelectOne(command);
 		}
 
 		///<summary>Gets one labcase from database.</summary>
@@ -240,31 +236,23 @@ namespace OpenDentBusiness{
  			Db.NonQ(command);
 		}
 
-		///<summary>Attaches labcases to an appointment.</summary>
-		public static void AttachToAppt(List<long> listLabCaseNums,long aptNum) {
-			if(listLabCaseNums.IsNullOrEmpty()) {
-				return;
-			}
+		///<summary>Attaches a labcase to an appointment.</summary>
+		public static void AttachToAppt(long labCaseNum,long aptNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listLabCaseNums,aptNum);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),labCaseNum,aptNum);
 				return;
 			}
-			string command="UPDATE labcase SET AptNum="+POut.Long(aptNum)+" "
-				+"WHERE LabCaseNum IN ("+string.Join(",",listLabCaseNums.Select(x => POut.Long(x)).ToArray())+")";
+			string command="UPDATE labcase SET AptNum="+POut.Long(aptNum)+" WHERE LabCaseNum="+POut.Long(labCaseNum);
 			Db.NonQ(command);
 		}
 
-		///<summary>Attaches labcases to a planned appointment.</summary>
-		public static void AttachToPlannedAppt(List<long> listLabCaseNums,long plannedAptNum) {
-			if(listLabCaseNums.IsNullOrEmpty()) {
-				return;
-			}
+		///<summary>Attaches a labcase to a planned appointment.</summary>
+		public static void AttachToPlannedAppt(long labCaseNum,long plannedAptNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listLabCaseNums,plannedAptNum);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),labCaseNum,plannedAptNum);
 				return;
 			}
-			string command="UPDATE labcase SET PlannedAptNum="+POut.Long(plannedAptNum)+" "
-				+"WHERE LabCaseNum IN ("+string.Join(",",listLabCaseNums.Select(x => POut.Long(x)).ToArray())+")";
+			string command="UPDATE labcase SET PlannedAptNum="+POut.Long(plannedAptNum)+" WHERE LabCaseNum="+POut.Long(labCaseNum);
 			Db.NonQ(command);
 		}
 
@@ -279,24 +267,20 @@ namespace OpenDentBusiness{
 			return null;
 		}
 
-		///<summary>Gets labcases for an appointment. Used when creating routing slips.</summary>
-		public static List<LabCase> GetForApt(long aptNum) {
+		///<summary>Gets the labcase for an appointment. Used when creating routing slips.</summary>
+		public static LabCase GetForApt(long aptNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<LabCase>>(MethodBase.GetCurrentMethod(),aptNum);
+				return Meth.GetObject<LabCase>(MethodBase.GetCurrentMethod(),aptNum);
 			}
 			string command="SELECT * FROM labcase "
 				+"WHERE AptNum="+POut.Long(aptNum);
-			return Crud.LabCaseCrud.SelectMany(command);
+			return Crud.LabCaseCrud.SelectOne(command);
 		}
 
 		///<summary>Gets the labcase for an appointment.  Used in the Appointment Edit window.</summary>
-		public static List<LabCase> GetForApt(Appointment appt) {
+		public static LabCase GetForApt(Appointment appt) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<LabCase>>(MethodBase.GetCurrentMethod(),appt);
-			}
-			if(appt.AptNum==0) {
-				//A newly created appointment would have no LabCases, so return an empty list
-				return new List<LabCase>();
+				return Meth.GetObject<LabCase>(MethodBase.GetCurrentMethod(),appt);
 			}
 			string command="SELECT * FROM labcase ";
 			if(appt.AptStatus==ApptStatus.Planned) {
@@ -305,7 +289,7 @@ namespace OpenDentBusiness{
 			else {
 				command+="WHERE AptNum="+POut.Long(appt.AptNum);
 			}
-			return Crud.LabCaseCrud.SelectMany(command);
+			return Crud.LabCaseCrud.SelectOne(command);
 		}
 
 		///<summary>Gets the last time the labcase was changed.</summary>

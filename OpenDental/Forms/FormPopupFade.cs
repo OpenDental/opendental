@@ -8,12 +8,13 @@ using System.Windows.Forms;
 
 namespace OpenDental {
 	///<summary>Displays a message then begins to fade after 1 second.</summary>
-
-	public partial class FormPopupFade:FormODBase {
+			
+	public partial class FormPopupFade:Form {
 		///<summary>The number of milliseconds this form has been open.</summary>
 		private int _timeSpent;
 		///<summary>The number of milliseconds before the form starts to fade.</summary>
 		private int _timeBeforeFade=1000;
+		public bool DoDisplayCloseButton;
 		#region Click Through
 		///<summary>Code to make semi-transparent. 255 is fully visible; 0 is fully invisible.</summary>
 		//https://stackoverflow.com/questions/1524035/topmost-form-clicking-through-possible
@@ -54,11 +55,15 @@ namespace OpenDental {
 			//Dynamically set window creation point
 			//Click through portion
 			int wl=User32_GetWindowLong(this.Handle, GetWindowLong.GWL_EXSTYLE);
-			//https://msdn.microsoft.com/en-us/library/windows/desktop/ms633540(v=vs.85).aspx	
-			User32_SetWindowLong(this.Handle,GetWindowLong.GWL_EXSTYLE,wl | (int)ExtendedWindowStyles.WS_EX_LAYERED);
-			return;
+			//https://msdn.microsoft.com/en-us/library/windows/desktop/ms633540(v=vs.85).aspx
+			if(DoDisplayCloseButton) {		
+				User32_SetWindowLong(this.Handle,GetWindowLong.GWL_EXSTYLE,wl | (int)ExtendedWindowStyles.WS_EX_LAYERED);
+				return;
+			}
 			//WS_EX_Layered allows the form to fade away
 			//WS_EX_Transparent allows the form to be clicked through e.g. you can't click on anything in the form
+			User32_SetWindowLong(this.Handle,GetWindowLong.GWL_EXSTYLE,wl | (int)ExtendedWindowStyles.WS_EX_LAYERED | 
+				(int)ExtendedWindowStyles.WS_EX_TRANSPARENT);	
 		}
 		#endregion
 		#region Rounded Corners
@@ -75,11 +80,49 @@ namespace OpenDental {
 		);
 		#endregion
 
-		public FormPopupFade(string message) {
+		///<summary>Displays a message in popup that fades out slowly.</summary>
+		///<param name="sender">For translation.</param>
+		///<param name="message">The message to be displayed.</param>
+		///<param name="doDisplayClose">Set to true to display a Close button.</param>
+		///<param name="doTranslate">Set to false if you don't want to translate the message.</param>
+		public static void ShowMessage(object sender,string message,bool doDisplayClose=true,bool doTranslate=true) {
+			if(doTranslate) {
+				message=Lan.g(sender.GetType().Name,message);
+			}
+			FormPopupFade formPopupFade=new FormPopupFade(message,doDisplayClose);
+			formPopupFade.ShowInTaskbar=false;
+			formPopupFade.TopMost=true;
+			formPopupFade.Show();
+		}
+
+		private FormPopupFade(string message,bool doDisplayClose) {
 			InitializeComponent();
-			InitializeLayoutManager();
 			Lan.F(this);
+			DoDisplayCloseButton=doDisplayClose;
+			//Creates a border with rounded corners
+			if(DoDisplayCloseButton) {
+				butClose.Visible=true;
+			}
+			else {
+				this.FormBorderStyle=FormBorderStyle.None;	//Remove x in corner and border around form
+				Region=Region.FromHrgn(CreateRoundedRectRgn(0,0,this.Width,this.Height,20,20));
+				butClose.Visible=false;
+			}	
 			labelInfo.Text=message;
+			Size size=new Size(labelInfo.Width, Int32.MaxValue);
+			size=TextRenderer.MeasureText(labelInfo.Text, labelInfo.Font, size, TextFormatFlags.WordBreak);
+			labelInfo.Height=size.Height;
+			//Set position to be centered in form
+			Point pointLabelLoc=new Point(labelInfo.Size);
+			Point pointParent=new Point(this.Size);
+			if(DoDisplayCloseButton) {
+				labelInfo.Location=new Point((pointParent.X-pointLabelLoc.X)/2, (pointParent.Y-pointLabelLoc.Y)/2-35);//Bump up text if it has the close button
+			}
+			else {
+				labelInfo.Location=new Point((pointParent.X-pointLabelLoc.X)/2, (pointParent.Y-pointLabelLoc.Y)/2);
+			}			
+			//once placed set it to visible
+			labelInfo.Visible=true;
 			//start fadeout timer
 			//Set a minimum show time of 1000 and maximum of 3000.  The time the box shows depends on how much text there is.
 			_timeBeforeFade=Math.Min(Math.Max(1000,message.Length*30),3000);
@@ -105,5 +148,8 @@ namespace OpenDental {
 			}
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			this.Close();
+		}
 	}
 }

@@ -9,6 +9,7 @@ namespace OpenDentalCloud {
 
 	public abstract class TaskState {
 
+		public ProgressHandler ProgressHandler;
 		public bool IsDone { private set; get; }
 		public bool HasExceptions { get; set; }
 		public Exception Error { private set; get; }
@@ -24,18 +25,27 @@ namespace OpenDentalCloud {
 		public bool DoCancel { get; set; }
 		protected object _lock=new object();
 
+		protected void OnProgress(double newCurVal,string newDisplayText,double newMaxVal,string errorMessage) {
+			if(ProgressHandler==null) {
+				return;
+			}
+			ProgressHandler(newCurVal,newDisplayText,newMaxVal,errorMessage);
+		}
+
 		protected abstract Task PerformIO();
 
 		///<summary>Runs PerformIO logic behind a synchronous or asynchronous task.  See implemented class for PerformIO logic.</summary>
-		public void Execute(bool isAsync=false){
+		public void Execute(bool isAsync, string filename="") {
 			if(isAsync) {
 				new Task(async () => {
 					try {
 						//Effectively makes this a blocking call within the context of this anonymous task.
 						await PerformIO();
+						OnProgress(0,"",0,"");//This will automatically close the FormProgress window.		
 					}
 					catch(Exception e) {
 						Error=e;
+						OnProgress(0,"",100,e.Message + " " + filename);
 					}
 					finally {
 						IsDone=true;
@@ -59,7 +69,7 @@ namespace OpenDentalCloud {
 						wait.Set();
 					}
 				}).Start();
-				if(!wait.WaitOne(-1)) {//wait infinitely. This makes it synchronous.
+				if(!wait.WaitOne(-1)) {
 					throw new Exception("Action timed out.");
 				}
 				if(HasExceptions && HasFailed) {

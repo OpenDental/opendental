@@ -189,10 +189,7 @@ namespace OpenDentBusiness{
 				throw new Exception($"This practice or clinic is not signed up for eClipboard.\r\nGo to eServices | Signup Portal to sign up.");
 			}
 			try{
-				//If there is no heading present, than UTF8.GetBytes ignores empty strings, which means it doesn't put an empty header into the list of
-				//tags that gets sent over to eClipboard.
-				string treatPlanHeading=treatPlan.Heading.IsNullOrEmpty()?"(No heading)":treatPlan.Heading;
-				List<string> listTagValues=new List<string>() { treatPlanHeading,treatPlan.TreatPlanNum.ToString(),hasPracticeSig.ToString(),
+				List<string> listTagValues=new List<string>() { treatPlan.Heading,treatPlan.TreatPlanNum.ToString(),hasPracticeSig.ToString(),
 					treatPlan.DateTP.Ticks.ToString() };
 				TryInsertPDF(doc,treatPlan.PatNum,unlockCode,eActionType.TreatmentPlan
 					,out long mobileDataByteNum,out errorMsg,listTagValues
@@ -205,6 +202,26 @@ namespace OpenDentBusiness{
 				errorMsg=ex.Message;
 			}
 			return (errorMsg.IsNullOrEmpty() && mobileDataByte!=null);
+		}
+
+		///<summary>If computer num is set, FormMobileCode will not close unless a signal is recieved of type InvalidType.MobileDeviceQr, and the current computer num is the key for that signal.</summary>
+		public static bool TryInsertPatientPerio(Patient pat,string unlockCode,long perioExamNum,out string errorMsg,out MobileDataByte mobileDataByte) {
+		  errorMsg = "";
+		  try {
+			mobileDataByte = new MobileDataByte() {
+			  PatNum = pat.PatNum,
+			  RawBase64Data = perioExamNum<=0 ? "" : Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(perioExamNum))),
+			  RawBase64Code = (unlockCode.IsNullOrEmpty() ? "" : Convert.ToBase64String(Encoding.UTF8.GetBytes(unlockCode))),
+			  RawBase64Tag = Convert.ToBase64String(Encoding.UTF8.GetBytes(Security.CurUser.UserNum.ToString())),
+			  ActionType = eActionType.PerioExam
+			};
+			mobileDataByte.MobileDataByteNum=Insert(mobileDataByte);
+		  }
+		  catch (Exception ex) {
+			mobileDataByte = null;
+			errorMsg = ex.Message;
+		  }
+		  return errorMsg.IsNullOrEmpty();
 		}
 
 		public static bool TryInsertPatientCheckin(Patient pat,string unlockCode,out string errorMsg,out MobileDataByte mobileDataByte) {

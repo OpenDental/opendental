@@ -42,12 +42,13 @@ namespace OpenDental {
 			this.comboClass = new OpenDental.UI.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.comboInstructor = new OpenDental.UI.ComboBox();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.gridReqs = new OpenDental.UI.GridOD();
 			this.butAdd = new OpenDental.UI.Button();
 			this.butRemove = new OpenDental.UI.Button();
 			this.gridAttached = new OpenDental.UI.GridOD();
 			this.gridStudents = new OpenDental.UI.GridOD();
+			this.butCancel = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// label2
@@ -101,15 +102,15 @@ namespace OpenDental {
 			this.comboInstructor.TabIndex = 28;
 			this.comboInstructor.SelectionChangeCommitted += new System.EventHandler(this.comboInstructor_SelectionChangeCommitted);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(806, 623);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 27;
-			this.butSave.Text = "Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(806, 591);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 27;
+			this.butOK.Text = "OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// gridReqs
 			// 
@@ -170,10 +171,21 @@ namespace OpenDental {
 			this.gridStudents.TranslationName = "TableReqStudentMany";
 			this.gridStudents.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridStudents_CellClick);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(806, 623);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// FormReqAppt
 			// 
 			this.ClientSize = new System.Drawing.Size(893, 661);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.comboInstructor);
 			this.Controls.Add(this.gridReqs);
@@ -196,6 +208,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.GridOD gridStudents;
 		private Label label2;
 		private OpenDental.UI.ComboBox comboCourse;
@@ -205,7 +219,7 @@ namespace OpenDental {
 		private OpenDental.UI.Button butRemove;
 		private OpenDental.UI.Button butAdd;
 		private UI.GridOD gridReqs;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
 		private Label label3;
 		private UI.ComboBox comboInstructor;
 

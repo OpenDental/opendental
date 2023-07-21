@@ -168,5 +168,12 @@ namespace OpenDental {
 			AddElement(EhrRestrictionType.CommPref);
 		}
 
+		private void butOK_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

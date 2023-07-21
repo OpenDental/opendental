@@ -32,12 +32,13 @@ namespace OpenDental {
 			this.labelAvailable = new System.Windows.Forms.Label();
 			this.labelCategory = new System.Windows.Forms.Label();
 			this.gridMain = new OpenDental.UI.GridOD();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.butRight = new OpenDental.UI.Button();
 			this.butLeft = new OpenDental.UI.Button();
 			this.butDown = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
 			this.butDefault = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// labeldefault
@@ -57,7 +58,7 @@ namespace OpenDental {
 			this.listAvailable.Location = new System.Drawing.Point(373, 89);
 			this.listAvailable.Name = "listAvailable";
 			this.listAvailable.SelectionMode = OpenDental.UI.SelectionMode.MultiExtended;
-			this.listAvailable.Size = new System.Drawing.Size(164, 412);
+			this.listAvailable.Size = new System.Drawing.Size(158, 412);
 			this.listAvailable.TabIndex = 15;
 			// 
 			// labelAvailable
@@ -91,15 +92,15 @@ namespace OpenDental {
 			this.gridMain.TranslationName = "FormDisplayFields";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(462, 521);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 56;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(566, 474);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 56;
+			this.butOK.Text = "OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butRight
 			// 
@@ -125,7 +126,7 @@ namespace OpenDental {
 			this.butDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butDown.Image = global::OpenDental.Properties.Resources.down;
 			this.butDown.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDown.Location = new System.Drawing.Point(109, 505);
+			this.butDown.Location = new System.Drawing.Point(109, 507);
 			this.butDown.Name = "butDown";
 			this.butDown.Size = new System.Drawing.Size(82, 24);
 			this.butDown.TabIndex = 14;
@@ -138,7 +139,7 @@ namespace OpenDental {
 			this.butUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butUp.Image = global::OpenDental.Properties.Resources.up;
 			this.butUp.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butUp.Location = new System.Drawing.Point(12, 505);
+			this.butUp.Location = new System.Drawing.Point(12, 507);
 			this.butUp.Name = "butUp";
 			this.butUp.Size = new System.Drawing.Size(82, 24);
 			this.butUp.TabIndex = 13;
@@ -155,10 +156,21 @@ namespace OpenDental {
 			this.butDefault.Text = "Set to Default";
 			this.butDefault.Click += new System.EventHandler(this.butDefault_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(566, 504);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// FormDisplayFields
 			// 
-			this.ClientSize = new System.Drawing.Size(549, 556);
-			this.Controls.Add(this.butSave);
+			this.ClientSize = new System.Drawing.Size(664, 556);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.labelCategory);
 			this.Controls.Add(this.butRight);
 			this.Controls.Add(this.butLeft);
@@ -181,6 +193,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.Button butDefault;
 		private Label labeldefault;
@@ -190,7 +204,7 @@ namespace OpenDental {
 		private Label labelAvailable;
 		private OpenDental.UI.Button butRight;
 		private OpenDental.UI.Button butLeft;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
 		private Label labelCategory;
 	}
 }

@@ -6,7 +6,6 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using OpenDentBusiness;
-using CodeBase;
 
 namespace OpenDental {
 	public partial class FormTaskAttachmentEdit:FormODBase {
@@ -29,7 +28,7 @@ namespace OpenDental {
 
 		private void FormTaskAttachmentEdit_Load(object sender,EventArgs e) {
 			if(!CanEditAttachments()) {
-				DisableAllExcept(textValue);
+				DisableAllExcept(textValue,butCancel);
 				textValue.ReadOnly=true;
 			}
 			if(TaskAttachmentCur.DocNum==0) {
@@ -65,31 +64,21 @@ namespace OpenDental {
 		private void SetReadOnly() {
 			butDelete.Enabled=false;
 			butImport.Enabled=false;
-			butSave.Enabled=false;
+			butOK.Enabled=false;
 			textDescription.Enabled=false;
 			textValue.Enabled=false;
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			string importFilePath;
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				importFilePath=ODCloudClient.ImportFileForCloud();
-				if(importFilePath.IsNullOrEmpty()) {
-					return; //User cancelled out of OpenFileDialog
-				}
+			using OpenFileDialog openFileDialog=new OpenFileDialog();
+			openFileDialog.Multiselect=false;
+			if(!TaskAttachmentCur.IsNew && TaskAttachmentCur.DocNum>0) { 
+				openFileDialog.FileName=Documents.GetPath(_document.DocNum);
 			}
-			else {
-				using OpenFileDialog openFileDialog=new OpenFileDialog();
-				openFileDialog.Multiselect=false;
-				if(!TaskAttachmentCur.IsNew && TaskAttachmentCur.DocNum>0) { 
-					openFileDialog.FileName=Documents.GetPath(_document.DocNum);
-				}
-				if(openFileDialog.ShowDialog()==DialogResult.Cancel){
-					return;
-				}
-				importFilePath=openFileDialog.FileName;
+			if(openFileDialog.ShowDialog()==DialogResult.Cancel){
+				return;
 			}
-			if(!TryImportDoc(importFilePath)) {
+			if(!TryImportDoc(openFileDialog.FileName)) {
 				return;
 			}
 			textDocNum.Text=TaskAttachmentCur.DocNum.ToString();
@@ -134,7 +123,7 @@ namespace OpenDental {
 				return false;
 			}
 			if(!_task.IsNew && !TaskAttachmentCur.IsNew) {
-				if(!Security.IsAuthorized(EnumPermType.TaskEdit,suppressMessage:true)) {
+				if(!Security.IsAuthorized(Permissions.TaskEdit,suppressMessage:true)) {
 					return false;
 				}
 			}
@@ -175,7 +164,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(Tasks.IsTaskDeleted(_task.TaskNum)) {
 				MsgBox.Show(this,"The task for this attachment was deleted.");
 				return;
@@ -204,5 +193,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

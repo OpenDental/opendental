@@ -54,13 +54,13 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Always refreshes the ClientWeb's cache.</summary>
-		public static DataTable GetTableFromCache(bool refreshCache) {
+		public static DataTable GetTableFromCache(bool doRefreshCache) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),refreshCache);
+				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),doRefreshCache);
 				_vaccineDefCache.FillCacheFromTable(table);
 				return table;
 			}
-			return _vaccineDefCache.GetTableFromCache(refreshCache);
+			return _vaccineDefCache.GetTableFromCache(doRefreshCache);
 		}
 
 		public static void ClearCache() {

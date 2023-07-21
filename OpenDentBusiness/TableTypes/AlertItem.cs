@@ -198,9 +198,6 @@ namespace OpenDentBusiness {
 		///<summary>38 - Alert that is created when the SMSQueuer is turned on but no Broadcaster Servers are configured to send out text messages. Requires Engineers to update BroadcasterThreadSettings.</summary>
 		[Description("The SMS thread is not configured to run and we have queued messages.")]
 		SMSThread,
-		///<summary>39 - Alert that is created when a procedure or group note's signature is cleared by another user editing that note.</summary>
-		[Description("Procedure or Group Note's Signature Cleared")]
-		SignatureCleared,
 	}
 
 	///<summary>Represents the urgency of the alert.  Also determines the color for the menu item in the main menu.</summary>

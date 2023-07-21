@@ -23,6 +23,7 @@ namespace OpenDental {
 
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormProviderSetup));
+			this.butClose = new OpenDental.UI.Button();
 			this.butDown = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
@@ -65,6 +66,17 @@ namespace OpenDental {
 			this.groupMovePats.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(885, 665);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(82, 24);
+			this.butClose.TabIndex = 8;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butDown
 			// 
@@ -122,6 +134,7 @@ namespace OpenDental {
 			this.groupDentalSchools.Name = "groupDentalSchools";
 			this.groupDentalSchools.Size = new System.Drawing.Size(273, 174);
 			this.groupDentalSchools.TabIndex = 1;
+			this.groupDentalSchools.TabStop = false;
 			this.groupDentalSchools.Text = "Dental Schools Search by:";
 			// 
 			// label8
@@ -261,6 +274,7 @@ namespace OpenDental {
 			this.groupCreateUsers.Name = "groupCreateUsers";
 			this.groupCreateUsers.Size = new System.Drawing.Size(273, 76);
 			this.groupCreateUsers.TabIndex = 2;
+			this.groupCreateUsers.TabStop = false;
 			this.groupCreateUsers.Text = "Create Users";
 			// 
 			// comboUserGroup
@@ -295,6 +309,7 @@ namespace OpenDental {
 			this.groupMovePats.Name = "groupMovePats";
 			this.groupMovePats.Size = new System.Drawing.Size(273, 132);
 			this.groupMovePats.TabIndex = 3;
+			this.groupMovePats.TabStop = false;
 			this.groupMovePats.Text = "Move Patients";
 			// 
 			// butMoveSec
@@ -339,11 +354,11 @@ namespace OpenDental {
 			// 
 			// labelReassign
 			// 
-			this.labelReassign.Location = new System.Drawing.Point(8, 85);
+			this.labelReassign.Location = new System.Drawing.Point(8, 98);
 			this.labelReassign.Name = "labelReassign";
-			this.labelReassign.Size = new System.Drawing.Size(168, 44);
+			this.labelReassign.Size = new System.Drawing.Size(168, 31);
 			this.labelReassign.TabIndex = 18;
-			this.labelReassign.Text = "Reassigns patients to a different primary provider based on past procedures\r\n";
+			this.labelReassign.Text = "Reassigns primary provider to most-used provider\r\n";
 			this.labelReassign.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// label2
@@ -413,6 +428,7 @@ namespace OpenDental {
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(273, 91);
 			this.groupBox1.TabIndex = 19;
+			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Provider Order";
 			// 
 			// butAlphabetize
@@ -468,6 +484,7 @@ namespace OpenDental {
 			// 
 			// FormProviderSetup
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(982, 707);
 			this.Controls.Add(this.labelSearch);
 			this.Controls.Add(this.textSearch);
@@ -481,6 +498,7 @@ namespace OpenDental {
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.groupDentalSchools);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -501,6 +519,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butDown;
 		private OpenDental.UI.Button butUp;
 		private OpenDental.UI.Button butAdd;

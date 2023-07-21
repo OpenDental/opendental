@@ -73,7 +73,7 @@ namespace OpenDental {
 					ProgramProperties.PropertyDescs.XCharge.XChargeForceRecurringCharge,Clinics.ClinicNum));
 				if(!File.Exists(xPath)) {//program path is invalid
 					//if user has setup permission and they want to edit the program path, show the X-Charge setup window
-					if(Security.IsAuthorized(EnumPermType.Setup)
+					if(Security.IsAuthorized(Permissions.Setup)
 						&& MsgBox.Show(this,MsgBoxButtons.YesNo,"The X-Charge path is not valid.  Would you like to edit the path?"))
 					{
 						using FormXchargeSetup formXchargeSetup=new FormXchargeSetup();
@@ -124,7 +124,7 @@ namespace OpenDental {
 					labelUpdated.Text=Lans.g(this,"Updated=")+_recurringChargerator.Updated;
 				});
 			});
-			ODEvent.Fired+=StopRecurringCharges;//This is so we'll be alerted in case of a shutdown.
+			GeneralProgramEvent.Fired+=StopRecurringCharges;//This is so we'll be alerted in case of a shutdown.
 			labelCharged.Text=Lan.g(this,"Charged=")+"0";
 			labelFailed.Text=Lan.g(this,"Failed=")+"0";
 			checkShowInactive.Checked=PrefC.GetBool(PrefName.RecurringChargesShowInactive);
@@ -316,7 +316,7 @@ namespace OpenDental {
 		}
 		
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.AccountModule)) {
+			if(!Security.IsAuthorized(Permissions.AccountModule)) {
 				return;
 			}
 			if(e.Row<0) {
@@ -324,7 +324,7 @@ namespace OpenDental {
 				return;
 			}
 			long patNum=((RecurringChargeData)gridMain.ListGridRows[e.Row].Tag).RecurringCharge.PatNum;
-			GlobalFormOpenDental.GotoAccount(patNum);
+			GotoModule.GotoAccount(patNum);
 		}
 
 		private void butRefresh_Click(object sender,EventArgs e) {
@@ -446,7 +446,7 @@ namespace OpenDental {
 				return;
 			}
 			//Security.IsAuthorized will default to the minimum DateTime if none is set so we need to specify that the charge is being run today
-			if(!Security.IsAuthorized(EnumPermType.PaymentCreate,DateTime.Today)) {
+			if(!Security.IsAuthorized(Permissions.PaymentCreate,DateTime.Today)) {
 				return;
 			}
 			_recurringChargerator.IsCharging=true;//Doing this on the main thread in case another click event gets here before the thread can start
@@ -481,11 +481,14 @@ namespace OpenDental {
 			}
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 		private void FormCreditRecurringCharges_FormClosing(object sender,FormClosingEventArgs e) {
 			_recurringChargerator?.DeleteNotYetCharged();
 			_recurringChargerator?.StopCharges();//This will still allow the current card to finish.
-			ODEvent.Fired-=StopRecurringCharges;
+			GeneralProgramEvent.Fired-=StopRecurringCharges;
 		}
-
 	}
 }

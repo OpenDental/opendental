@@ -53,5 +53,10 @@ namespace OpenDental {
 			gridInsBlueBookLog.EndUpdate();
 		}
 
+		private void ButCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+
 	}
 }

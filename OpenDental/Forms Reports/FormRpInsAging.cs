@@ -216,6 +216,6 @@ namespace OpenDental{
 		private void checkShowBreakdownOptions_CheckedChanged(object sender,EventArgs e) {
 			groupFilter.Visible=checkOnlyShowPatsOutstandingClaims.Checked;
 		}
-
 	}
+
 }

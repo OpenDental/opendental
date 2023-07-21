@@ -60,7 +60,7 @@ namespace OpenDental {
 			for(int i=0;i<listClinicsUser.Count;i++){
 				_listClinics.Add(listClinicsUser[i]);
 			}
-			comboClinic.ClinicNumSelected=_clinicNumInitial;
+			comboClinic.SelectedClinicNum=_clinicNumInitial;
 			comboClinicChanged();//fills provs and emps and also fills grid
 			comboProv.Items.AddProvsAbbr(Providers.GetDeepCopy(true));
 			comboProv.SetSelectedProvNum(PrefC.GetLong(PrefName.ScheduleProvUnassigned));
@@ -82,9 +82,9 @@ namespace OpenDental {
 		}
 
 		private void comboClinicChanged(){
-			long clinicNumOrig=comboClinic.ClinicNumSelected;
+			long clinicNumOrig=comboClinic.SelectedClinicNum;
 			this.Text=Lan.g(this,"Edit Day")+" - "+comboClinic.Text;
-			if(comboClinic.ClinicNumSelected==0) {
+			if(comboClinic.SelectedClinicNum==0) {
 				groupPractice.Text=Lan.g(this,"Practice");
 			}
 			else {
@@ -104,7 +104,7 @@ namespace OpenDental {
 			//Fill lists with new information from new clinic
 			FillProvsAndEmps();
 			_listSchedules=Schedules.RefreshDayEditForPracticeProvsEmps(_dateSched,_listProviders.Select(x => x.ProvNum).Where(x => x>0).ToList(),
-				_listEmployees.Select(x => x.EmployeeNum).Where(x => x>0).ToList(),comboClinic.ClinicNumSelected);
+				_listEmployees.Select(x => x.EmployeeNum).Where(x => x>0).ToList(),comboClinic.SelectedClinicNum);
 			_listSchedulesOld=_listSchedules.Select(x => x.Copy()).ToList();
 			FillGrid();
 		}
@@ -123,8 +123,8 @@ namespace OpenDental {
 			provider.Abbr="none";
 			_listProviders=new List<Provider>() {provider};
 			if(PrefC.HasClinicsEnabled) {
-				_listProviders.AddRange(Providers.GetProvsForClinic(comboClinic.ClinicNumSelected));
-				_listEmployees.AddRange(Employees.GetEmpsForClinic(comboClinic.ClinicNumSelected));
+				_listProviders.AddRange(Providers.GetProvsForClinic(comboClinic.SelectedClinicNum));
+				_listEmployees.AddRange(Employees.GetEmpsForClinic(comboClinic.SelectedClinicNum));
 			}
 			else {
 				_listProviders.AddRange(Providers.GetDeepCopy(true));
@@ -346,7 +346,7 @@ namespace OpenDental {
 				.Select(x => x.Copy()).ToList();//Deep copy for safety
 			formScheduleEdit.ScheduleCur=selectedSchedule;
 			formScheduleEdit.ScheduleCur.IsNew=false;
-			formScheduleEdit.ClinicNum=comboClinic.ClinicNumSelected;
+			formScheduleEdit.ClinicNum=comboClinic.SelectedClinicNum;
 			formScheduleEdit.ListProvNums=new List<long>();
 			if(selectedSchedule.ProvNum>0) {//Don't look for conflicts against a schedule with no provider.
 				formScheduleEdit.ListProvNums.Add(selectedSchedule.ProvNum);
@@ -364,7 +364,7 @@ namespace OpenDental {
 				return;
 			}
 			_listSchedules=Schedules.RefreshDayEditForPracticeProvsEmps(_dateSched,_listProviders.Select(x => x.ProvNum).Where(x => x>0).ToList(),
-				_listEmployees.Select(x => x.EmployeeNum).Where(x => x>0).ToList(),comboClinic.ClinicNumSelected);
+				_listEmployees.Select(x => x.EmployeeNum).Where(x => x>0).ToList(),comboClinic.SelectedClinicNum);
 			_listSchedulesOld=_listSchedules.Select(x => x.Copy()).ToList();
 			FillGrid();
 		}
@@ -417,13 +417,12 @@ namespace OpenDental {
 			formScheduleEdit.ListSchedules=_listSchedules;
 			formScheduleEdit.ListProvNums=_listProvNumsSelected;
 			formScheduleEdit.ScheduleCur.IsNew=true;
-			formScheduleEdit.ClinicNum=comboClinic.ClinicNumSelected;
+			formScheduleEdit.ClinicNum=comboClinic.SelectedClinicNum;
 			formScheduleEdit.ShowDialog();
 			if(formScheduleEdit.DialogResult!=DialogResult.OK){
 				return;
 			}
 			Schedule scheduleTemp;
-			List<long> listProviderNums=new List<long>();
 			for(int i=0;i<listProv.SelectedIndices.Count;i++){
 				if(listProv.SelectedIndices[i]==0) {
 					continue;
@@ -432,22 +431,8 @@ namespace OpenDental {
 				scheduleTemp=schedule.Copy();
 				scheduleTemp.SchedType=ScheduleType.Provider;
 				scheduleTemp.ProvNum=_listProviders[listProv.SelectedIndices[i]].ProvNum;
-				listProviderNums.Add(scheduleTemp.ProvNum);
 				_listSchedules.Add(scheduleTemp);
 			}
-			listProviderNums=listProviderNums.Distinct().ToList();
-			List<string> listProviderNames=new List<string>();
-			for(int i=0;i<listProviderNums.Count;i++) {
-				Provider provider=Providers.GetFirstOrDefault(x => x.ProvNum==listProviderNums[i]);
-				if(provider==null) {
-					continue;
-				}
-				listProviderNames.Add(Providers.GetFormalName(provider.ProvNum));
-			}
-			if(listProviderNames.Count>0){
-				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Schedule Added for "+string.Join(", ",listProviderNames.OrderBy(x => x))+" on "+_dateSched.ToShortDateString());
-			}
-			List<long> listEmployeeNums=new List<long>();
 			for(int i=0;i<listEmp.SelectedIndices.Count;i++) {
 				if(listEmp.SelectedIndices[i]==0) {
 					continue;
@@ -456,20 +441,7 @@ namespace OpenDental {
 				scheduleTemp=schedule.Copy();
 				scheduleTemp.SchedType=ScheduleType.Employee;
 				scheduleTemp.EmployeeNum=_listEmployees[listEmp.SelectedIndices[i]].EmployeeNum;
-				listEmployeeNums.Add(scheduleTemp.EmployeeNum);
 				_listSchedules.Add(scheduleTemp);
-			}
-			listEmployeeNums=listEmployeeNums.Distinct().ToList();
-			List<string> listEmployeeNames=new List<string>();
-			for(int i=0;i<listEmployeeNums.Count;i++) {
-				Employee employee=Employees.GetFirstOrDefault(x => x.EmployeeNum==listEmployeeNums[i]);
-				if(employee==null) {
-					continue;
-				}
-				listEmployeeNames.Add(employee.FName);//Internal database includes the initial of the last name.
-			}
-			if(listEmployeeNames.Count>0){
-				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Schedule Added for "+string.Join(", ",listEmployeeNames.OrderBy(x => x))+" on "+_dateSched.ToShortDateString());
 			}
 			FillGrid();
 		}
@@ -486,7 +458,7 @@ namespace OpenDental {
 			//schedtype, provNum, and empnum will be set down below
 			using FormScheduleEdit formScheduleEdit=new FormScheduleEdit();
 			formScheduleEdit.ScheduleCur=schedule;
-			formScheduleEdit.ClinicNum=comboClinic.ClinicNumSelected;
+			formScheduleEdit.ClinicNum=comboClinic.SelectedClinicNum;
 			formScheduleEdit.ShowDialog();
 			if(formScheduleEdit.DialogResult!=DialogResult.OK) {
 				return;
@@ -518,10 +490,10 @@ namespace OpenDental {
 			schedule.SchedDate=_dateSched;
 			schedule.Status=SchedStatus.Open;
 			schedule.SchedType=ScheduleType.Practice;
-			schedule.ClinicNum=comboClinic.ClinicNumSelected;
+			schedule.ClinicNum=comboClinic.SelectedClinicNum;
 			using FormScheduleEdit formScheduleEdit=new FormScheduleEdit();
 			formScheduleEdit.ScheduleCur=schedule;
-			formScheduleEdit.ClinicNum=comboClinic.ClinicNumSelected;
+			formScheduleEdit.ClinicNum=comboClinic.SelectedClinicNum;
 			formScheduleEdit.ShowDialog();
 			if(formScheduleEdit.DialogResult!=DialogResult.OK) {
 				return;
@@ -535,11 +507,11 @@ namespace OpenDental {
 			schedule.SchedDate=_dateSched;
 			schedule.Status=SchedStatus.Holiday;
 			schedule.SchedType=ScheduleType.Practice;
-			schedule.ClinicNum=comboClinic.ClinicNumSelected;
+			schedule.ClinicNum=comboClinic.SelectedClinicNum;
 			using FormScheduleEdit formScheduleEdit=new FormScheduleEdit();
 			formScheduleEdit.ListSchedules=_listSchedules;
 			formScheduleEdit.ScheduleCur=schedule;
-			formScheduleEdit.ClinicNum=comboClinic.ClinicNumSelected;
+			formScheduleEdit.ClinicNum=comboClinic.SelectedClinicNum;
 			formScheduleEdit.ShowDialog();
 			if(formScheduleEdit.DialogResult!=DialogResult.OK) {
 				return;
@@ -562,7 +534,7 @@ namespace OpenDental {
 			//Fill lists with new information from new clinic
 			FillProvsAndEmps();
 			_listSchedules=Schedules.RefreshDayEditForPracticeProvsEmps(_dateSched,_listProviders.Select(x => x.ProvNum).Where(x => x>0).ToList(),
-				_listEmployees.Select(x => x.EmployeeNum).Where(x => x>0).ToList(),comboClinic.ClinicNumSelected);
+				_listEmployees.Select(x => x.EmployeeNum).Where(x => x>0).ToList(),comboClinic.SelectedClinicNum);
 			_listSchedulesOld=_listSchedules.Select(x => x.Copy()).ToList();
 			FillGrid();
 		}
@@ -581,7 +553,7 @@ namespace OpenDental {
 			//Fill lists with new information from new clinic
 			FillProvsAndEmps();
 			_listSchedules=Schedules.RefreshDayEditForPracticeProvsEmps(_dateSched,_listProviders.Select(x => x.ProvNum).Where(x => x>0).ToList(),
-				_listEmployees.Select(x => x.EmployeeNum).Where(x => x>0).ToList(),comboClinic.ClinicNumSelected);
+				_listEmployees.Select(x => x.EmployeeNum).Where(x => x>0).ToList(),comboClinic.SelectedClinicNum);
 			_listSchedulesOld=_listSchedules.Select(x => x.Copy()).ToList();
 			FillGrid();
 		}
@@ -604,34 +576,12 @@ namespace OpenDental {
 				}
 			}
 			_listSchedules.RemoveAll(x => listSchedulesToRemove.Contains(x));
-			List<string> listProviderNames=new List<string>();
-			for(int i=0;i<listSchedulesToRemove.Count;i++) {
-				Provider provider=Providers.GetFirstOrDefault(x => x.ProvNum==listSchedulesToRemove[i].ProvNum);
-				if(provider==null) {
-					continue;
-				}
-				listProviderNames.Add(Providers.GetFormalName(provider.ProvNum));
-			}
-			if(listProviderNames.Count>0) {
-				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Schedule Removed for "+string.Join(", ",listProviderNames.OrderBy(x => x))+" on "+_dateSched.ToShortDateString());
-			}
-			List<string> listEmployeeNames=new List<string>();
-			for(int i=0;i<listSchedulesToRemove.Count;i++) {
-				Employee employee=Employees.GetFirstOrDefault(x => x.EmployeeNum==listSchedulesToRemove[i].EmployeeNum);
-				if(employee==null) {
-					continue;
-				}
-				listEmployeeNames.Add(employee.FName);//Internal database includes the initial of the last name.
-			}
-			if(listEmployeeNames.Count>0) {
-				SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"Schedule Removed for "+string.Join(", ",listEmployeeNames.OrderBy(x => x))+" on "+_dateSched.ToShortDateString());
-			}
 			FillGrid();
 		}
 
 		private void butOkSchedule_Click(object sender,EventArgs e) {
 			GotoScheduleOnClose=true;
-			butSave_Click(sender,e);
+			butOK_Click(sender,e);
 		}
 
 		private void butViewGraph_Click(object sender,EventArgs e) {
@@ -639,7 +589,7 @@ namespace OpenDental {
 			formGraphEmployeeTime.ShowDialog();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			try {
 				Schedules.SetForDay(_listSchedules,_listSchedulesOld);
 			}
@@ -655,9 +605,13 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void tabControl1_SelectedIndexChanged(object sender, EventArgs e){
 			LayoutManager.LayoutControlBoundsAndFonts(tabControl1);
 		}
-
 	}
 }
+

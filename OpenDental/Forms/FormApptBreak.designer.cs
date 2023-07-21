@@ -24,6 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormApptBreak));
+			this.butCancel = new OpenDental.UI.Button();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.radioMissed = new System.Windows.Forms.RadioButton();
 			this.radioCancelled = new System.Windows.Forms.RadioButton();
@@ -32,6 +33,17 @@ namespace OpenDental{
 			this.butApptBook = new OpenDental.UI.Button();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(123, 158);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// groupBox1
 			// 
@@ -101,11 +113,13 @@ namespace OpenDental{
 			// FormApptBreak
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(206, 155);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(206, 194);
 			this.Controls.Add(this.butApptBook);
 			this.Controls.Add(this.butPinboard);
 			this.Controls.Add(this.butUnsched);
 			this.Controls.Add(this.groupBox1);
+			this.Controls.Add(this.butCancel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -120,6 +134,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.RadioButton radioCancelled;
 		private System.Windows.Forms.RadioButton radioMissed;

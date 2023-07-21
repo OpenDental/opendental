@@ -28,6 +28,7 @@ namespace OpenDental{
 			this.textLatency = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.butLatency = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.label3 = new System.Windows.Forms.Label();
@@ -74,6 +75,16 @@ namespace OpenDental{
 			this.butLatency.TabIndex = 4;
 			this.butLatency.Text = "Test";
 			this.butLatency.Click += new System.EventHandler(this.butLatency_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(314, 162);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// groupBox1
 			// 
@@ -141,11 +152,13 @@ namespace OpenDental{
 			// FormTestLatency
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(360, 150);
+			this.ClientSize = new System.Drawing.Size(401, 198);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormTestLatency";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Roundtrip latency";
 			this.Load += new System.EventHandler(this.FormTestLatency_Load);
 			this.groupBox1.ResumeLayout(false);
@@ -157,6 +170,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.Button butLatency;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textLatency;

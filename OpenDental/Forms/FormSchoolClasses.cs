@@ -58,5 +58,8 @@ namespace OpenDental{
 			FillList();
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
 	}
 }

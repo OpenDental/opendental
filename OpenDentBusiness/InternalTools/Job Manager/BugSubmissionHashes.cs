@@ -134,8 +134,8 @@ namespace OpenDentBusiness{
 						AND PartialHash='{sub.HashedSimpleStackTrace}'"
 					);
 					sub.ListMatchedBugInfos=table.Select().Select(x =>  
-						new BugSubmission.MatchedBugInfo(PIn.Long(x["bugSubmissionHashNum"].ToString()),PIn.Long(x["_bugId"].ToString())
-							,PIn.String(x["_versionsFixed"].ToString()))).ToList();
+						new BugSubmission.MatchedBugInfo(x.GetLong("bugSubmissionHashNum"),x.GetLong("_bugId"),x.GetString("_versionsFixed")
+					)).ToList();
 				},useConnectionStore);
 			}
 			if(sub.ListPendingFixBugInfos.Count>1) {//There are too many pending bugs and a developer will have to decide which to associate with.

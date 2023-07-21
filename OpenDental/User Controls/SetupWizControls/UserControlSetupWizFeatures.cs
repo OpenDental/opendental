@@ -38,7 +38,7 @@ namespace OpenDental.User_Controls.SetupWizard {
 		}
 
 		private void butAdvanced_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ShowFeatures)) {
+			if(!Security.IsAuthorized(Permissions.ShowFeatures)) {
 				return;
 			}
 			using FormShowFeatures FormFS=new FormShowFeatures();

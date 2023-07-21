@@ -71,30 +71,26 @@ namespace OpenDental {
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-			inputBoxParam.LabelText="Edit word";
+			using InputBox inputBoxEditWord=new InputBox("Edit word");
 			DictCustom dictCustomOrigWord=_listDictCustoms[e.Row];
-			inputBoxParam.Text=dictCustomOrigWord.WordText;
-			InputBox inputBoxEditWord=new InputBox(inputBoxParam);
-			inputBoxEditWord.ShowDialog();
-			if(inputBoxEditWord.IsDialogCancel) {
+			inputBoxEditWord.textResult.Text=dictCustomOrigWord.WordText;
+			if(inputBoxEditWord.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
-			if(inputBoxEditWord.StringResult==dictCustomOrigWord.WordText) {
+			if(inputBoxEditWord.textResult.Text==dictCustomOrigWord.WordText) {
 				return;
 			}
-			if(inputBoxEditWord.StringResult=="") {
+			if(inputBoxEditWord.textResult.Text=="") {
 				DictCustoms.Delete(dictCustomOrigWord.DictCustomNum);
 				DataValid.SetInvalid(InvalidType.DictCustoms);
 				FillGrid();
 				return;
 			}
-			string newWord=Regex.Replace(inputBoxEditWord.StringResult,"[\\s]|[\\p{P}\\p{S}-['-]]","");//don't allow words with spaces or punctuation except ' and - in them
+			string newWord=Regex.Replace(inputBoxEditWord.textResult.Text,"[\\s]|[\\p{P}\\p{S}-['-]]","");//don't allow words with spaces or punctuation except ' and - in them
 			for(int i=0;i<_listDictCustoms.Count;i++) {//Make sure it's not already in the custom list
 				if(_listDictCustoms[i].WordText==newWord) {
 					MsgBox.Show(this,"The word "+newWord+" is already in the custom word list.");
-					//inputBoxEditWord.TextBoxResult.Text=dictCustomOrigWord.WordText;//this line was doing nothing, so I commented it out.
+					inputBoxEditWord.textResult.Text=dictCustomOrigWord.WordText;
 					return;
 				}
 			}
@@ -112,6 +108,10 @@ namespace OpenDental {
 			DictCustoms.Delete(_listDictCustoms[gridMain.GetSelectedIndex()].DictCustomNum);
 			DataValid.SetInvalid(InvalidType.DictCustoms);
 			FillGrid();
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 
 		private void FormSpellCheck_FormClosing(object sender,FormClosingEventArgs e) {

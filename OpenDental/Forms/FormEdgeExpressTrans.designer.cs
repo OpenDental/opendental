@@ -24,7 +24,7 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEdgeExpressTrans));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.labelCashBackAmt = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.textCashBackAmt = new OpenDental.ValidDouble();
@@ -40,15 +40,15 @@ namespace OpenDental{
 			this.groupCardEntry.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(290, 283);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 2;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(290, 283);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 2;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// labelCashBackAmt
 			// 
@@ -79,10 +79,10 @@ namespace OpenDental{
 			this.textCashBackAmt.TabIndex = 61;
 			this.textCashBackAmt.Visible = false;
 			// 
-			// listBoxTransType
+			// listTransType
 			// 
 			this.listBoxTransType.Location = new System.Drawing.Point(53, 47);
-			this.listBoxTransType.Name = "listBoxTransType";
+			this.listBoxTransType.Name = "listTransType";
 			this.listBoxTransType.Size = new System.Drawing.Size(202, 108);
 			this.listBoxTransType.TabIndex = 62;
 			this.listBoxTransType.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listTransType_MouseClick);
@@ -175,7 +175,7 @@ namespace OpenDental{
 			this.Controls.Add(this.textCashBackAmt);
 			this.Controls.Add(this.labelCashBackAmt);
 			this.Controls.Add(this.label1);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEdgeExpressTrans";
 			this.Text = "EdgeExpress Transaction Types";
@@ -188,7 +188,7 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label labelCashBackAmt;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.ValidDouble textCashBackAmt;

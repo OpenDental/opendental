@@ -156,16 +156,15 @@ namespace OpenDental {
 			//The Legal Authenticator must have a valid first name, last name, and NPI number and is the "single person legally responsible for the document" and "must be a person".
 			if(provDefault.IsNotPerson) {
 				MsgBox.Show(this,"The practice default provider is marked 'Not a Person'.  Please select the provider legally responsible for the documents.  The provider must have a first name, last name, and NPI number.");
-				FrmProviderPick frmProviderPick=new FrmProviderPick();
-				frmProviderPick.ShowDialog();
-				if(!frmProviderPick.IsDialogOK) {
+				using FormProviderPick FormPP=new FormProviderPick();
+				if(FormPP.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
-				if(Providers.GetProv(frmProviderPick.ProvNumSelected).IsNotPerson) {
+				if(Providers.GetProv(FormPP.ProvNumSelected).IsNotPerson) {
 					MsgBox.Show(this,"The selected provider was marked 'Not a person'.");
 					return;
 				}
-				provNumLegal=frmProviderPick.ProvNumSelected;
+				provNumLegal=FormPP.ProvNumSelected;
 			}
 			using FolderBrowserDialog fbd = new FolderBrowserDialog();
 			if(fbd.ShowDialog()!=DialogResult.OK) {
@@ -205,6 +204,55 @@ namespace OpenDental {
 			Cursor=Cursors.Default;
 			MsgBox.Show(this,"QRDA files have been created within the selected directory.");
 		}
+
+		private void butSubmit_Click(object sender,EventArgs e) {
+			if(listQ==null) {
+				MsgBox.Show(this,"Click Refresh first.");
+				return;
+			}
+			Cursor=Cursors.WaitCursor;
+			try {
+				//EmailMessages.SendTestUnsecure("QRDA","qrda.xml",GenerateQRDA());
+				//code to export will need to include the cda.xsl style sheet as well as the cda.xsd
+				//using FolderBrowserDialog dlg=new FolderBrowserDialog();
+				//dlg.SelectedPath=ImageStore.GetPatientFolder(PatCur,ImageStore.GetPreferredAtoZpath());//Default to patient image folder.
+				//DialogResult result=dlg.ShowDialog();
+				//if(result!=DialogResult.OK) {
+				//	return;
+				//}
+				//if(File.Exists(Path.Combine(dlg.SelectedPath,"ccd.xml"))) {
+				//	if(MessageBox.Show("Overwrite existing ccd.xml?","",MessageBoxButtons.OKCancel)!=DialogResult.OK) {
+				//		return;
+				//	}
+				//}
+				//File.WriteAllText(Path.Combine(dlg.SelectedPath,"ccd.xml"),ccd);
+				//File.WriteAllText(Path.Combine(dlg.SelectedPath,"ccd.xsl"),FormEHR.GetEhrResource("CCD"));
+				//EhrMeasureEvent newMeasureEvent = new EhrMeasureEvent();
+				//newMeasureEvent.DateTEvent = DateTime.Now;
+				//newMeasureEvent.EventType = EhrMeasureEventType.ClinicalSummaryProvidedToPt;
+				//newMeasureEvent.PatNum = PatCur.PatNum;
+				//EhrMeasureEvents.Insert(newMeasureEvent);
+				//FillGridEHRMeasureEvents();
+				//MessageBox.Show("Exported");	
+			}
+			catch(Exception ex) {
+				Cursor=Cursors.Default;
+				MessageBox.Show(ex.Message);
+				return;
+			}
+			Cursor=Cursors.Default;
+			MsgBox.Show(this,"Sent");
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			this.Close();
+		}
+
+	
+
+	
+
+		
 
 	}
 }

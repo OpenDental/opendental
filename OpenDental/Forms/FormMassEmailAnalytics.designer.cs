@@ -24,12 +24,35 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMassEmailAnalytics));
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.comboClinicAnalytics = new OpenDental.UI.ComboBoxClinicPicker();
 			this.butRefreshAnalytics = new OpenDental.UI.Button();
 			this.gridAnalytics = new OpenDental.UI.GridOD();
 			this.dateRangeAnalytics = new OpenDental.UI.ODDateRangePicker();
 			this.labelNotActivated = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(996, 620);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(1077, 620);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// comboClinicAnalytics
 			// 
@@ -61,7 +84,7 @@ namespace OpenDental{
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridAnalytics.Location = new System.Drawing.Point(13, 50);
 			this.gridAnalytics.Name = "gridAnalytics";
-			this.gridAnalytics.Size = new System.Drawing.Size(1139, 594);
+			this.gridAnalytics.Size = new System.Drawing.Size(1139, 564);
 			this.gridAnalytics.TabIndex = 5;
 			this.gridAnalytics.Title = "Analytics";
 			this.gridAnalytics.TranslationName = "GridAnalytics";
@@ -87,12 +110,15 @@ namespace OpenDental{
 			// 
 			// FormMassEmailAnalytics
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(1164, 656);
 			this.Controls.Add(this.labelNotActivated);
 			this.Controls.Add(this.comboClinicAnalytics);
 			this.Controls.Add(this.butRefreshAnalytics);
 			this.Controls.Add(this.gridAnalytics);
 			this.Controls.Add(this.dateRangeAnalytics);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMassEmailAnalytics";
 			this.Text = "Mass Email Analytics";
@@ -102,6 +128,9 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private UI.ComboBoxClinicPicker comboClinicAnalytics;
 		private UI.Button butRefreshAnalytics;
 		private UI.GridOD gridAnalytics;

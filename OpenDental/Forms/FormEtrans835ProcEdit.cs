@@ -81,8 +81,7 @@ namespace OpenDental {
 			gridProcedureAdjustments.Columns.Clear();
 			const int colWidthDescription=200;
 			const int colWidthAdjAmt=80;
-			//Columns width are set const values, and are relational to the grids base size, so we need to unscale the grid's width to keep all of the values consistent when using zoom.
-			int widthCol=LayoutManager.Unscale(gridProcedureAdjustments.Width)-10-colWidthDescription-colWidthAdjAmt;
+			int widthCol=gridProcedureAdjustments.Width-10-colWidthDescription-colWidthAdjAmt;
 			gridProcedureAdjustments.Columns.Add(new UI.GridColumn("Description",colWidthDescription,HorizontalAlignment.Left));
 			gridProcedureAdjustments.Columns.Add(new UI.GridColumn("Reason",widthCol,HorizontalAlignment.Left));
 			gridProcedureAdjustments.Columns.Add(new UI.GridColumn("AdjAmt",colWidthAdjAmt,HorizontalAlignment.Right));
@@ -149,8 +148,7 @@ namespace OpenDental {
 			gridSupplementalInfo.BeginUpdate();
 			gridSupplementalInfo.Columns.Clear();
 			const int colWidthAmt=80;
-			//Columns width are set const values, and are relational to the grids base size, so we need to unscale the grid's width to keep all of the values consistent when using zoom.
-			int widthCol=LayoutManager.Unscale(gridSupplementalInfo.Width)-10-colWidthAmt;
+			int widthCol=gridSupplementalInfo.Width-10-colWidthAmt;
 			gridSupplementalInfo.Columns.Add(new GridColumn("Description",widthCol,HorizontalAlignment.Left));
 			gridSupplementalInfo.Columns.Add(new GridColumn("Amt",colWidthAmt,HorizontalAlignment.Right));
 			gridSupplementalInfo.ListGridRows.Clear();
@@ -313,6 +311,11 @@ namespace OpenDental {
 			_eraProcPrintingProgress=(EraProcPrintingProgress)(((int)_eraProcPrintingProgress)+1);//Transition
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+			Close();
+		}
+
 		///<summary>This enum represents the printing state.
 		///The printing state starts at option 0 and increments by 1 each time a state is completed.</summary>
 		private enum EraProcPrintingProgress {
@@ -333,6 +336,5 @@ namespace OpenDental {
 			///<summary>7</summary>
 			Done
 		}
-
 	}
 }

@@ -165,11 +165,11 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static bool Update(ClinicErx clinicErx,ClinicErx clinicErxOld) {
+		public static bool Update(ClinicErx clinicErx,ClinicErx oldClinicErx) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),clinicErx,clinicErxOld);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),clinicErx,oldClinicErx);
 			}
-			return Crud.ClinicErxCrud.Update(clinicErx,clinicErxOld);
+			return Crud.ClinicErxCrud.Update(clinicErx,oldClinicErx);
 		}
 		#endregion
 

@@ -88,5 +88,8 @@ namespace OpenDental {
 			return listGridRows;
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }

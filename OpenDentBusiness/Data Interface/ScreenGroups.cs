@@ -8,14 +8,14 @@ namespace OpenDentBusiness{
   ///<summary></summary>
 	public class ScreenGroups{
 		///<summary></summary>
-		public static List<ScreenGroup> Refresh(DateTime dateFrom,DateTime dateTo){
+		public static List<ScreenGroup> Refresh(DateTime fromDate,DateTime toDate){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ScreenGroup>>(MethodBase.GetCurrentMethod(),dateFrom,dateTo);
+				return Meth.GetObject<List<ScreenGroup>>(MethodBase.GetCurrentMethod(),fromDate,toDate);
 			}
 			string command =
 				"SELECT * from screengroup "
-				+"WHERE SGDate >= "+POut.DateT(dateFrom)+" "
-				+"AND SGDate < "+POut.DateT(dateTo.AddDays(1))+" "//Was including entries form the next day. Changed from <= to <.
+				+"WHERE SGDate >= "+POut.DateT(fromDate)+" "
+				+"AND SGDate < "+POut.DateT(toDate.AddDays(1))+" "//Was including entries form the next day. Changed from <= to <.
 				//added one day since it's calculated based on midnight.
 				+"ORDER BY SGDate,ScreenGroupNum";
 			return Crud.ScreenGroupCrud.SelectMany(command);
@@ -31,37 +31,37 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static long Insert(ScreenGroup screenGroup) {
+		public static long Insert(ScreenGroup Cur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				screenGroup.ScreenGroupNum=Meth.GetLong(MethodBase.GetCurrentMethod(),screenGroup);
-				return screenGroup.ScreenGroupNum;
+				Cur.ScreenGroupNum=Meth.GetLong(MethodBase.GetCurrentMethod(),Cur);
+				return Cur.ScreenGroupNum;
 			}
-			return Crud.ScreenGroupCrud.Insert(screenGroup);
+			return Crud.ScreenGroupCrud.Insert(Cur);
 		}
 
 		///<summary></summary>
-		public static void Update(ScreenGroup screenGroup){
+		public static void Update(ScreenGroup Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),screenGroup);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),Cur);
 				return;
 			}
-			Crud.ScreenGroupCrud.Update(screenGroup);
+			Crud.ScreenGroupCrud.Update(Cur);
 		}
 
 		///<summary>This will also delete all screen items, so may need to ask user first.</summary>
-		public static void Delete(ScreenGroup screenGroup){
+		public static void Delete(ScreenGroup Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),screenGroup);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),Cur);
 				return;
 			}
-			string command="SELECT SheetNum FROM screen WHERE ScreenGroupNum="+POut.Long(screenGroup.ScreenGroupNum)+" AND SheetNum!=0";
+			string command="SELECT SheetNum FROM screen WHERE ScreenGroupNum="+POut.Long(Cur.ScreenGroupNum)+" AND SheetNum!=0";
 			DataTable table=Db.GetTable(command);
-			for(int i=0;i<table.Rows.Count;i++) {//Delete any attached sheets if the screen gets deleted.
-				Sheets.Delete(PIn.Long(table.Rows[i]["SheetNum"].ToString()));
+			foreach(DataRow row in table.Rows) {//Delete any attached sheets if the screen gets deleted.
+				Sheets.Delete(PIn.Long(row["SheetNum"].ToString()));
 			}
-			command="DELETE FROM screen WHERE ScreenGroupNum ='"+POut.Long(screenGroup.ScreenGroupNum)+"'";
+			command="DELETE FROM screen WHERE ScreenGroupNum ='"+POut.Long(Cur.ScreenGroupNum)+"'";
 			Db.NonQ(command);
-			command="DELETE FROM screengroup WHERE ScreenGroupNum ='"+POut.Long(screenGroup.ScreenGroupNum)+"'";
+			command="DELETE FROM screengroup WHERE ScreenGroupNum ='"+POut.Long(Cur.ScreenGroupNum)+"'";
 			Db.NonQ(command);
 		}
 	}

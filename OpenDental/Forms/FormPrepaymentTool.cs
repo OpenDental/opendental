@@ -359,7 +359,6 @@ namespace OpenDental {
 			commlogPrepayment.PatNum=_patient.PatNum;
 			commlogPrepayment.SentOrReceived=CommSentOrReceived.Received;
 			commlogPrepayment.CommDateTime=DateTime.Now;
-			commlogPrepayment.DateTimeEnd=DateTime.Now;
 			commlogPrepayment.CommType=Commlogs.GetTypeAuto(CommItemTypeAuto.FIN);
 			commlogPrepayment.Mode_=CommItemMode.None;
 			commlogPrepayment.Note="";//Appended to below.
@@ -407,7 +406,7 @@ namespace OpenDental {
 					note+="Disabled repeat charge with Rate: "+POut.Double(listRepeatChargesForProc[i].ChargeAmt)+" for Code: "+POut.String(listRepeatChargesForProc[i].ProcCode)
 						+" Start Date: "+POut.Date(listRepeatChargesForProc[i].DateStart)+" Stop Date: "+POut.Date(listRepeatChargesForProc[i].DateStop)+"\r\n";
 					RepeatCharges.Update(listRepeatChargesForProc[i]);
-					RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatChargeOld,EnumPermType.RepeatChargeUpdate,patientOld,newCharge:listRepeatChargesForProc[i],isAutomated:false);
+					RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatChargeOld,Permissions.RepeatChargeUpdate,patientOld,newCharge:listRepeatChargesForProc[i],isAutomated:false);
 					continue;
 				}
 				//Need to push start date of existing repeat charge forward one month past the new repeat charge (if charge months overlap).
@@ -418,7 +417,7 @@ namespace OpenDental {
 					//Change to billing day to make sure it matches other repeat charges.
 					listRepeatChargesForProc[i].DateStart=dateNext;
 					RepeatCharges.Update(listRepeatChargesForProc[i]);
-					RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatChargeOld,EnumPermType.RepeatChargeUpdate,patientOld,newCharge:listRepeatChargesForProc[i],isAutomated:false);
+					RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatChargeOld,Permissions.RepeatChargeUpdate,patientOld,newCharge:listRepeatChargesForProc[i],isAutomated:false);
 				}
 			}
 			//Insert the new repeat charge.
@@ -426,7 +425,7 @@ namespace OpenDental {
 			Commlogs.Insert(commlogPrepayment);
 			patientOld=Patients.GetPat(repeatChargeNew.PatNum);
 			repeatChargeNew.RepeatChargeNum=RepeatCharges.Insert(repeatChargeNew);
-			RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatChargeNew,EnumPermType.RepeatChargeCreate,patientOld,isAutomated:false);
+			RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatChargeNew,Permissions.RepeatChargeCreate,patientOld,isAutomated:false);
 		}
 
 		///<summary>Adds all selected rows in the support grid to the prepayment grid.</summary>
@@ -661,7 +660,7 @@ namespace OpenDental {
 			FillGridPrepayment();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(_listProcedureCharges.Count==0) {
 				MessageBox.Show(Lan.g("Prepayment Tool","No procedures selected."));
 				return;
@@ -678,7 +677,10 @@ namespace OpenDental {
 			CreateProcedureLogs();
 			DialogResult=DialogResult.OK;
 		}
-		#endregion
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+		#endregion
 	}
 }

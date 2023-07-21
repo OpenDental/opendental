@@ -190,16 +190,16 @@ namespace OpenDental {
 		}
 
 		private void butPickProvOrdering_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick=new FrmProviderPick();
+			using FormProviderPick formP=new FormProviderPick();
 			if(comboProvNumOrdering.SelectedIndex > -1) {//Initial formP selection if selected prov is not hidden.
-				frmProviderPick.ProvNumSelected=_provNumSelectedOrdering;
+				formP.ProvNumSelected=_provNumSelectedOrdering;
 			}
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			formP.ShowDialog();
+			if(formP.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboProvNumOrdering.SelectedIndex=Providers.GetIndex(frmProviderPick.ProvNumSelected);
-			_provNumSelectedOrdering=frmProviderPick.ProvNumSelected;
+			comboProvNumOrdering.SelectedIndex=Providers.GetIndex(formP.ProvNumSelected);
+			_provNumSelectedOrdering=formP.ProvNumSelected;
 		}
 
 		private void butNoneProvOrdering_Click(object sender,EventArgs e) {
@@ -212,16 +212,16 @@ namespace OpenDental {
 		}
 
 		private void butPickProvAdministering_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick=new FrmProviderPick();
+			using FormProviderPick formP=new FormProviderPick();
 			if(comboProvNumAdministering.SelectedIndex > -1) {//Initial formP selection if selected prov is not hidden.
-				frmProviderPick.ProvNumSelected=_provNumSelectedAdministering;
+				formP.ProvNumSelected=_provNumSelectedAdministering;
 			}
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			formP.ShowDialog();
+			if(formP.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboProvNumAdministering.SelectedIndex=Providers.GetIndex(frmProviderPick.ProvNumSelected);
-			_provNumSelectedAdministering=frmProviderPick.ProvNumSelected;
+			comboProvNumAdministering.SelectedIndex=Providers.GetIndex(formP.ProvNumSelected);
+			_provNumSelectedAdministering=formP.ProvNumSelected;
 		}
 
 		private void butNoneProvAdministering_Click(object sender,EventArgs e) {
@@ -315,7 +315,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textDateExpiration.IsValid()) {
 				MessageBox.Show(Lan.g(this,"Please fix data entry errors first."));
 				return;
@@ -395,6 +395,16 @@ namespace OpenDental {
 			}
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+		
+
+	
+
+	
+
 
 	}
 }

@@ -108,7 +108,7 @@ namespace OpenDentBusiness{
 					+" HAVING BalOver90!=0 OR Bal_61_90!=0 OR Bal_31_60!=0 OR Bal_0_30!=0 OR BalTotal!=0 OR PayPlanDue!=0 OR InsEst!=0");
 				command="TRUNCATE TABLE famaging";
 				Db.NonQ(command);
-				SecurityLogs.MakeLogEntry(EnumPermType.FamAgingTruncate,0,"Family aging table truncated");
+				SecurityLogs.MakeLogEntry(Permissions.FamAgingTruncate,0,"Family aging table truncated");
 				FamAgings.InsertMany(listFamAgings);//use InsertMany so inserts are broken into statements no larger than max allowed packet
 				command=@"UPDATE patient p
 					LEFT JOIN famaging f ON p.PatNum=f.PatNum
@@ -139,12 +139,14 @@ namespace OpenDentBusiness{
 			}
 			string strErrorMsg="";
 			List<long> listGuarantorNums=Patients.GetGuarantorsForPatNums(listPatNumsAssociatedToDiffFam);
+			DateTime dateTAgingBeganPref=DateTime.MinValue;
 			DateTime dtNow=MiscData.GetNowDateTime();
 			if(listGuarantorNums.Count>1) {//if this will utilize the famaging table we need to check and set the pref to block others from starting aging
 				Prefs.RefreshCache();
-				if(!PrefC.IsAgingAllowedToStart()) {//pref has been set by another process, don't run aging and notify user
+				dateTAgingBeganPref=PrefC.GetDateT(PrefName.AgingBeginDateTime);
+				if(dateTAgingBeganPref>DateTime.MinValue) {//pref has been set by another process, don't run aging and notify user
 					strErrorMsg=Lans.g("Ledgers","Aging failed to run for patients who had paysplits created outside of the current family. This is due to "
-						+"the currently running aging calculations which began on")+" "+PrefC.GetDateT(PrefName.AgingBeginDateTime).ToString()+".  "+Lans.g("Ledgers","If you "
+						+"the currently running aging calculations which began on")+" "+dateTAgingBeganPref.ToString()+".  "+Lans.g("Ledgers","If you "
 						+"believe the current aging process has finished, a user with SecurityAdmin permission can manually clear the date and time by going "
 						+"to Setup | Preferences | Account - General and pressing the 'Clear' button.  You will need to run aging manually once the current aging process has "
 						+"finished or date and time is cleared.");
@@ -450,22 +452,9 @@ namespace OpenDentBusiness{
 				+(isAgedByProc?",a.ProcNum AgedProcNum,a.ProcDate AgedProcDate":"")+" "
 				+"FROM adjustment a "
 				+"WHERE a.AdjAmt != 0 "
-				+(isAllPats?"":("AND a.PatNum IN ("+familyPatNums+") "));
+				+(isAllPats?"":("AND a.PatNum IN ("+familyPatNums+") "))
 			#endregion Adjustments
-			#region Discounts for Versions 2 and 3
-			if(payPlanVersionCur.In(PayPlanVersions.AgeCreditsAndDebits,PayPlanVersions.AgeCreditsOnly)) {
-				command+="UNION ALL "
-					+"SELECT 'Discount' TranType,pp.PayPlanNum PriKey,pp.PatNum,p.ProcDate TranDate,p.Discount+p.DiscountPlanAmt TranAmount,0 PayPlanAmount,0 InsWoEst,0 InsPayEst"
-					+(doIncludeProcNum?",p.ProcNum,0 PayNum":"")
-					+(isAgedByProc?",p.ProcNum AgedProcNum,p.ProcDate AgedProcDate":"")+" "
-					+"FROM payplan pp "
-					+"INNER JOIN payplanlink ppl ON pp.PayPlanNum=ppl.PayPlanNum "
-					+"INNER JOIN procedurelog p ON ppl.FKey=p.ProcNum AND ppl.LinkType="+POut.Int((int)PayPlanLinkType.Procedure)+" AND p.ProcStatus="+POut.Int((int)ProcStat.TP)+" "
-					+"WHERE IsDynamic=1 AND DynamicPayPlanTPOption="+POut.Int((int)DynamicPayPlanTPOptions.TreatAsComplete)+" AND (p.Discount!=0 OR p.DiscountPlanAmt!=0) "
-					+(isAllPats?"":("AND pp.PatNum IN ("+familyPatNums+") "));
-			}
-			#endregion Discounts for Versions 2 and 3
-				command+="UNION ALL "
+				+"UNION ALL "
 			#region Paysplits and PayPlan Paysplits
 				+"SELECT 'PatPay' TranType,ps.SplitNum PriKey,ps.PatNum,ps.DatePay TranDate,";
 			//v1 and v3: splits not attached to payment plans, v2 or doAgePatPayPlanPayments: all splits for pat/fam

@@ -37,23 +37,21 @@ namespace OpenDental{
 			InitializeLayoutManager();
 			Lan.F(this);
 			//Permissions
-			EnumPermType[] permissionsArray=(EnumPermType[])Enum.GetValues(typeof(EnumPermType));
+			Permissions[] permissionsArray=(Permissions[])Enum.GetValues(typeof(Permissions));
 			_listPermissionsAlphabetic=new List<string>();
-			for(int i=1;i<permissionsArray.Length;i++){//skips the None permission so it can be inserted at the top
+			for(int i=1;i<permissionsArray.Length;i++){
 				if(GroupPermissions.HasAuditTrail(permissionsArray[i])) {
 					_listPermissionsAlphabetic.Add(permissionsArray[i].ToString());
 				}
 			}
 			_listPermissionsAlphabetic.Sort();
-			_listPermissionsAlphabetic.RemoveAll(x => x=="TextMessageView");
-			_listPermissionsAlphabetic.Insert(0,EnumPermType.None.ToString());
+			_listPermissionsAlphabetic.Insert(0,Permissions.None.ToString());
 			//LogSources
 			comboLogSource.IncludeAll=true;
 			List<LogSources> listLogSourcesAlphabetic=Enum.GetValues(typeof(LogSources)).Cast<LogSources>()
 				.OrderByDescending(x => x==LogSources.None)//All and None should be the first items suggested to the user.
 				.ThenBy(x => x.GetDescription())
 				.ToList();
-			listLogSourcesAlphabetic.RemoveAll(x => x==LogSources.TextMessaging);//Does not make security log entries
 			comboLogSource.Items.AddListEnum(listLogSourcesAlphabetic);
 		}
 
@@ -158,11 +156,11 @@ namespace OpenDental{
 				//Permission filter
 				if(comboPermission.SelectedIndex==0) {
 					securityLogArray=ReportsComplex.RunFuncOnReportServer(() => SecurityLogs.Refresh(PIn.Date(textDateFrom.Text),PIn.Date(textDateTo.Text),
-						EnumPermType.None,_patNum,datePreviousFrom,datePreviousTo,PIn.Int(textRows.Text),userNum,logSource), Prefs.GetBoolNoCache(PrefName.AuditTrailUseReportingServer));
+						Permissions.None,_patNum,datePreviousFrom,datePreviousTo,PIn.Int(textRows.Text),userNum,logSource), Prefs.GetBoolNoCache(PrefName.AuditTrailUseReportingServer));
 				}
 				else {
 					securityLogArray=ReportsComplex.RunFuncOnReportServer(() => SecurityLogs.Refresh(PIn.Date(textDateFrom.Text),PIn.Date(textDateTo.Text),
-						(EnumPermType)Enum.Parse(typeof(EnumPermType),comboPermission.SelectedItem.ToString()),_patNum,
+						(Permissions)Enum.Parse(typeof(Permissions),comboPermission.SelectedItem.ToString()),_patNum,
 						datePreviousFrom,datePreviousTo,PIn.Int(textRows.Text),userNum,logSource), Prefs.GetBoolNoCache(PrefName.AuditTrailUseReportingServer));
 				}
 			}
@@ -190,19 +188,19 @@ namespace OpenDental{
 				row.Cells.Add(securityLogArray[i].PatientName);
 				//user might be null due to old bugs.
 				row.Cells.Add(Userods.GetUser(securityLogArray[i].UserNum)?.UserName??(Lan.g(this,"Unknown")+"("+POut.Long(securityLogArray[i].UserNum)+")"));
-				if(securityLogArray[i].PermType==EnumPermType.ChartModule) {
+				if(securityLogArray[i].PermType==Permissions.ChartModule) {
 					row.Cells.Add("ChartModuleViewed");
 				}
-				else if(securityLogArray[i].PermType==EnumPermType.FamilyModule) {
+				else if(securityLogArray[i].PermType==Permissions.FamilyModule) {
 					row.Cells.Add("FamilyModuleViewed");
 				}
-				else if(securityLogArray[i].PermType==EnumPermType.AccountModule) {
+				else if(securityLogArray[i].PermType==Permissions.AccountModule) {
 					row.Cells.Add("AccountModuleViewed");
 				}
-				else if(securityLogArray[i].PermType==EnumPermType.ImagingModule) {
+				else if(securityLogArray[i].PermType==Permissions.ImagingModule) {
 					row.Cells.Add("ImagesModuleViewed");
 				}
-				else if(securityLogArray[i].PermType==EnumPermType.TPModule) {
+				else if(securityLogArray[i].PermType==Permissions.TPModule) {
 					row.Cells.Add("TreatmentPlanModuleViewed");
 				}
 				else {
@@ -210,7 +208,7 @@ namespace OpenDental{
 				}
 				row.Cells.Add(securityLogArray[i].CompName);
 				string logText=securityLogArray[i].LogText;
-				if(securityLogArray[i].PermType!=EnumPermType.UserQuery) {
+				if(securityLogArray[i].PermType!=Permissions.UserQuery) {
 					row.Cells.Add(logText);
 				}
 				else {

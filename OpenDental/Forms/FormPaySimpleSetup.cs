@@ -332,17 +332,17 @@ namespace OpenDental {
 		}
 
 		private void checkAllowOnlinePayments_Click(object sender,EventArgs e) {
-			long clinicNum=0;
-			if(PrefC.HasClinicsEnabled) {
-				clinicNum=_listUserClinicNums[comboClinic.SelectedIndex];
-			}
-			//If the user unchecked the "Allow Online Payments" checkbox, remove ProgramProperty for the other merchant service's property from the list of properties to update.
+			//If the user unchecked the "Allow Online Payments" checbox, remove ProgramProperty for the other merchant service's property from the list of properties to update.
 			if(!checkAllowOnlinePayments.Checked) {
-				ProgramProperty programPropToRemove=_listOnlinePaymentProgramProperties.Find(x => x.ClinicNum==clinicNum);
+				ProgramProperty programPropToRemove=_listOnlinePaymentProgramProperties.Find(x => x.ClinicNum==_listUserClinicNums[comboClinic.SelectedIndex]);
 				if(programPropToRemove!=null) {
 					_listOnlinePaymentProgramProperties.Remove(programPropToRemove);
 				}
 				return;
+			}
+			long clinicNum=0;
+			if(PrefC.HasClinicsEnabled) {
+				clinicNum=_listUserClinicNums[comboClinic.SelectedIndex];
 			}
 			ProgramProperty programProperty=ProgramProperties.GetOnlinePaymentsEnabledForClinic(clinicNum,ProgramName.PaySimple);
 			if(programProperty!=null) {
@@ -356,7 +356,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			#region Validation
 			//if program has been disabled at Hq and someone is trying to enable it from this form, block em
 			//if clinics are not enabled and the PaySimple program link is enabled, make sure there is a username and key set
@@ -464,5 +464,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

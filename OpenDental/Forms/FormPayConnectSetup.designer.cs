@@ -42,7 +42,6 @@ namespace OpenDental {
 			this.comboClinic = new OpenDental.UI.ComboBox();
 			this.labelClinic = new System.Windows.Forms.Label();
 			this.groupPaySettings = new OpenDental.UI.GroupBox();
-			this.butMerchantInfo = new OpenDental.UI.Button();
 			this.groupBoxVersion = new OpenDental.UI.GroupBox();
 			this.radioVersion2 = new System.Windows.Forms.RadioButton();
 			this.radioVersion1 = new System.Windows.Forms.RadioButton();
@@ -60,7 +59,8 @@ namespace OpenDental {
 			this.checkTerminal = new OpenDental.UI.CheckBox();
 			this.butDownloadDriver = new OpenDental.UI.Button();
 			this.labelClinicEnable = new System.Windows.Forms.Label();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.groupBoxTerminals = new OpenDental.UI.GroupBox();
 			this.butAddTerminal = new OpenDental.UI.Button();
 			this.gridODTerminals = new OpenDental.UI.GridOD();
@@ -160,7 +160,6 @@ namespace OpenDental {
 			// 
 			// groupPaySettings
 			// 
-			this.groupPaySettings.Controls.Add(this.butMerchantInfo);
 			this.groupPaySettings.Controls.Add(this.groupBoxVersion);
 			this.groupPaySettings.Controls.Add(this.checkSurcharge);
 			this.groupPaySettings.Controls.Add(this.textAPISecret);
@@ -181,17 +180,6 @@ namespace OpenDental {
 			this.groupPaySettings.Size = new System.Drawing.Size(754, 173);
 			this.groupPaySettings.TabIndex = 4;
 			this.groupPaySettings.Text = "Clinic Payment Settings";
-			// 
-			// butMerchantInfo
-			// 
-			this.butMerchantInfo.Location = new System.Drawing.Point(21, 97);
-			this.butMerchantInfo.Name = "butMerchantInfo";
-			this.butMerchantInfo.Size = new System.Drawing.Size(106, 24);
-			this.butMerchantInfo.TabIndex = 13;
-			this.butMerchantInfo.Text = "Merchant Info";
-			this.butMerchantInfo.UseVisualStyleBackColor = true;
-			this.butMerchantInfo.Visible = false;
-			this.butMerchantInfo.Click += new System.EventHandler(this.butMerchantInfo_Click);
 			// 
 			// groupBoxVersion
 			// 
@@ -354,15 +342,25 @@ namespace OpenDental {
 			this.labelClinicEnable.Text = "To enable PayConnect for a clinic, set the credentials for that clinic.";
 			this.labelClinicEnable.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(688, 670);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 26);
-			this.butSave.TabIndex = 6;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(607, 670);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 26);
+			this.butOK.TabIndex = 6;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(693, 670);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 7;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// groupBoxTerminals
 			// 
@@ -401,7 +399,8 @@ namespace OpenDental {
 			// 
 			this.ClientSize = new System.Drawing.Size(776, 708);
 			this.Controls.Add(this.groupBoxTerminals);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.butDownloadDriver);
 			this.Controls.Add(this.labelClinicEnable);
 			this.Controls.Add(this.groupPaySettings);
@@ -427,7 +426,9 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private LinkLabel linkLabel1;
 		private OpenDental.UI.CheckBox checkEnabled;
 		private Label label1;
@@ -459,6 +460,5 @@ namespace OpenDental {
 		private TextBox textAPISecret;
 		private UI.CheckBox checkSurcharge;
 		private UI.Button butAddTerminal;
-		private UI.Button butMerchantInfo;
 	}
 }

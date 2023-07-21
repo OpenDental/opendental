@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 using OpenDental.Bridges;
 using CodeBase;
 using System.Text;
-using System.Globalization;
 
 namespace OpenDental {
 	public partial class FormCreditCardManage:FormODBase {
@@ -83,7 +82,7 @@ namespace OpenDental {
 				string strCardNum=creditCard.CCNumberMasked;
 				if(Regex.IsMatch(strCardNum,"^\\d{12}(\\d{0,7})")) {	//Credit cards can have a minimum of 12 digits, maximum of 19
 					int idxLast4Digits=(strCardNum.Length-4);
-					strCardNum=(new string('X',16))+strCardNum.Substring(idxLast4Digits);//replace the first 16 with 16 X's
+					strCardNum=(new string('X',12))+strCardNum.Substring(idxLast4Digits);//replace the first 12 with 12 X's
 				}
 				row.Cells.Add(strCardNum);//1: Card Number
 				if(PrefC.HasClinicsEnabled) {
@@ -112,7 +111,7 @@ namespace OpenDental {
 				}
 				if(Programs.IsEnabled(ProgramName.EdgeExpress)) {
 					if(!string.IsNullOrEmpty(creditCard.XChargeToken) 
-						&& (creditCard.CCSource==CreditCardSource.EdgeExpressCNP || creditCard.CCSource==CreditCardSource.EdgeExpressRCM || creditCard.CCSource==CreditCardSource.EdgeExpressPaymentPortal)) 
+						&& (creditCard.CCSource==CreditCardSource.EdgeExpressCNP || creditCard.CCSource==CreditCardSource.EdgeExpressRCM)) 
 					{
 						row.Cells.Add("X");
 					}
@@ -133,7 +132,7 @@ namespace OpenDental {
 				}
 				if(Programs.IsEnabled(ProgramName.PaySimple)) {
 					row.Cells.Add(!string.IsNullOrEmpty(creditCard.PaySimpleToken) ? "X" : "");
-					row.Cells.Add(creditCard.IsPaySimpleACH() ? "X" : "");
+					row.Cells.Add(creditCard.CCSource==CreditCardSource.PaySimpleACH ? "X" : "");
 				}
 				if(PrefC.HasOnlinePaymentEnabled(out programNameForPayments)) {
 					if(programNameForPayments.In(ProgramName.Xcharge,ProgramName.EdgeExpress)) {
@@ -237,18 +236,9 @@ namespace OpenDental {
 			}
 			if(dictionaryEnabledProcessors.Count>1) {
 				List<string> listCreditCardProcessors=dictionaryEnabledProcessors.Select(x => x.Key).ToList();
-				InputBoxParam inputBoxParam=new InputBoxParam();
-				if(listCreditCardProcessors.Count>=10){
-					inputBoxParam.InputBoxType_=InputBoxType.ComboMultiSelect;
-				}
-				else{
-					inputBoxParam.InputBoxType_=InputBoxType.ListBoxMulti;
-				}
-				inputBoxParam.LabelText=Lan.g(this,"For which credit card processing company would you like to add this card?"); 
-				inputBoxParam.ListSelections=listCreditCardProcessors;
-				InputBox inputBox=new InputBox(inputBoxParam);
-				inputBox.ShowDialog();
-				if(inputBox.IsDialogCancel) {
+				using InputBox inputBox=
+					new InputBox(Lan.g(this,"For which credit card processing company would you like to add this card?"),listCreditCardProcessors,true);
+				if(inputBox.ShowDialog()==DialogResult.Cancel) {
 					return;
 				}
 				hasEdgeExpress=dictionaryEnabledProcessors.ContainsKey("EdgeExpress") && inputBox.SelectedIndices.Contains(dictionaryEnabledProcessors["EdgeExpress"]);
@@ -312,8 +302,8 @@ namespace OpenDental {
 				}
 			}
 			if(hasXCharge) {
-				if(ODEnvironment.IsCloudServer) {
-					MsgBox.Show(this,"XCharge is not available while using Open Dental Cloud.");
+				if(ODBuild.IsWeb()) {
+					MsgBox.Show(this,"XCharge is not available while viewing through the web.");
 					return;
 				}
 				Program program=Programs.GetCur(ProgramName.Xcharge);
@@ -323,7 +313,7 @@ namespace OpenDental {
 				//Force user to retry entering information until it's correct or they press cancel
 				while(!File.Exists(path) || string.IsNullOrEmpty(xPassword) || string.IsNullOrEmpty(xUsername)) {
 					MsgBox.Show(this,"The Path, Username, and/or Password for X-Charge have not been set or are invalid.");
-					if(!Security.IsAuthorized(EnumPermType.Setup)) {
+					if(!Security.IsAuthorized(Permissions.Setup)) {
 						return;
 					}
 					using FormXchargeSetup formXchargeSetup=new FormXchargeSetup();//refreshes program and program property caches on OK click
@@ -401,7 +391,6 @@ namespace OpenDental {
 					if(insertCard && xChargeToken!="") {//Might not be necessary but we've had successful charges with no tokens returned before.
 						creditCard=CreditCards.CreateNewOpenEdgeCard(_patient.PatNum,Clinics.ClinicNum,xChargeToken,exp.Substring(0,2),exp.Substring(2,2),
 							accountMasked,CreditCardSource.XServer);
-						SecurityLogs.MakeLogEntry(EnumPermType.CreditCardEdit,_patient.PatNum,"Credit Card Added");
 					}
 				}
 				catch(Exception ex) {
@@ -428,12 +417,12 @@ namespace OpenDental {
 					if(response==null) {
 						return;
 					}
-					else if(response.ResponseType==PayConnect2.ResponseType.IFrame && !response.iFrameResponse.Response.CardToken.IsNullOrEmpty()) {
+					else if(response.ResponseType==PayConnect2.ResponseType.IFrame && response.iFrameResponse.Status=="SUCCESS") {
 						PayConnect2.iFrameSuccessResponse cardData=response.iFrameResponse.Response;
 						CreditCard newCreditCard=new CreditCard();
 						newCreditCard.IsNew=true;
 						newCreditCard.PatNum=_patient.PatNum;
-						List<CreditCard> listCreditCardsItemOrderCount=CreditCards.RefreshAll(_patient.PatNum);
+						List<CreditCard> listCreditCardsItemOrderCount=CreditCards.Refresh(_patient.PatNum);
 						newCreditCard.ItemOrder=listCreditCardsItemOrderCount.Count;
 						int expiryYear=int.Parse(cardData.ExpiryYear);
 						int expiryMonth=int.Parse(cardData.ExpiryMonth);
@@ -441,7 +430,7 @@ namespace OpenDental {
 						//PayConnect informed us that the last 4 digits of the token are the same as the last 4 digits
 						//of the credit card that was used to create the token. Get the last 4 characters
 						//of the token string and then pad left with 'X' to make it look like a masked CC number.
-						newCreditCard.CCNumberMasked=cardData.CardToken.Substring(cardData.CardToken.Length-4).PadLeft(16,'X');
+						newCreditCard.CCNumberMasked=cardData.CardToken.Substring(cardData.CardToken.Length-4).PadLeft(12,'X');
 						newCreditCard.Zip=cardData.ZipCode;
 						newCreditCard.PayConnectToken="";
 						newCreditCard.PayConnectTokenExp=new DateTime(expiryYear,expiryMonth,DateTime.DaysInMonth(expiryYear,expiryMonth));//Testing has shown that this is now the same as the CC expiry.
@@ -450,7 +439,6 @@ namespace OpenDental {
 						newCreditCard.ClinicNum=Clinics.ClinicNum;
 						newCreditCard.Procedures=PrefC.GetString(PrefName.DefaultCCProcs);
 						CreditCards.Insert(newCreditCard);
-						SecurityLogs.MakeLogEntry(EnumPermType.CreditCardEdit,_patient.PatNum,"Credit Card Added");
 					}
 				}
 			}
@@ -490,8 +478,8 @@ namespace OpenDental {
 			CreditCards.Update(creditCard);
 			FillGrid();
 			MsgBox.Show(this,"Credit card moved successfully");
-			SecurityLogs.MakeLogEntry(EnumPermType.CreditCardMove,patNum,$"Credit card moved to PatNum: {formPatientSelect.PatNumSelected}");
-			SecurityLogs.MakeLogEntry(EnumPermType.CreditCardMove,formPatientSelect.PatNumSelected,$"Credit card moved from PatNum: {patNum}");
+			SecurityLogs.MakeLogEntry(Permissions.CreditCardMove,patNum,$"Credit card moved to PatNum: {formPatientSelect.PatNumSelected}");
+			SecurityLogs.MakeLogEntry(Permissions.CreditCardMove,formPatientSelect.PatNumSelected,$"Credit card moved from PatNum: {patNum}");
 		}
 
 		private void butUp_Click(object sender,EventArgs e) {
@@ -552,5 +540,8 @@ namespace OpenDental {
 			gridMain.SetSelected(selectedIndex+1,true);
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

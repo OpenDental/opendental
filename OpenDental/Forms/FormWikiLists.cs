@@ -36,36 +36,40 @@ namespace OpenDental {
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.WikiListSetup)) {
+			if(!Security.IsAuthorized(Permissions.WikiListSetup)) {
 				return;
 			}
-			InputBox inputBox = new InputBox("New List Name");
+			using InputBox inputBox = new InputBox("New List Name");
 			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			if(inputBox.DialogResult!=DialogResult.OK) {
 				return;
 			}
 			//Format input as it would be saved in the database--------------------------------------------
-			string strResult=inputBox.StringResult.ToLower().Replace(" ","");
+			inputBox.textResult.Text=inputBox.textResult.Text.ToLower().Replace(" ","");
 			//Validate list name---------------------------------------------------------------------------
-			if(DbHelper.isMySQLReservedWord(strResult)) {
+			if(DbHelper.isMySQLReservedWord(inputBox.textResult.Text)) {
 				//Can become an issue when retrieving column header names.
 				MsgBox.Show(this,"List name is a reserved word in MySQL.");
 				return;
 			}
-			if(strResult=="") {
+			if(inputBox.textResult.Text=="") {
 				MsgBox.Show(this,"List name cannot be blank.");
 				return;
 			}
-			if(WikiLists.CheckExists(strResult)) {
+			if(WikiLists.CheckExists(inputBox.textResult.Text)) {
 				if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"List already exists with that name. Would you like to edit existing list?")) {
 					return;
 				}
 			}
 			using FormWikiListEdit formWikiListEdit = new FormWikiListEdit();
-			formWikiListEdit.WikiListCurName = strResult;
+			formWikiListEdit.WikiListCurName = inputBox.textResult.Text;
 			//FormWLE.IsNew=true;//set within the form.
 			formWikiListEdit.ShowDialog();
 			FillList();
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
 		}
 	}
 }

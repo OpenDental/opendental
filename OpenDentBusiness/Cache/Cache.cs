@@ -9,14 +9,11 @@ using CodeBase;
 
 namespace OpenDentBusiness {
 	public class Cache {
-	/*
-		If you add a new cached TableType, then you need to either add a new Enumerations.InvalidType value or utilize an enum value that already exists.
-		Then, you need to add/edit sections in all 3 of the following methods: GetCacheDs(), FillCache(), and ClearCaches().
-		The "S" class for your new TableType will need to have a Cache Pattern region toward the top.
-		The Cache Pattern region might already exist and be commented out.
-		If that region is missing, you can run the CRUD generator, Create Snippet button, with "EntireSclass" selected in the combobox and your class selected in the listbox.
-		See wiki page Programming Pattern - Cache.
-	*/
+		//If you add a new cached TableTypes, then you need to either add a new Enumerations.InvalidType value or utilize an enum value that already exists.
+		//Then, you need to add/edit sections in all 3 of the following methods: etCacheDs(), FillCache(), and ClearCaches().
+		//The "S" class for your new TableType will need to have a Cache Pattern region toward the top.
+		//The Cache Pattern region might already exist and be commented out.
+		//If that region is missing, you can run the CRUD generator, Create Snippet button, with "EntireSclass" selected in the combobox and your class selected in the listbox.
 
 		///<summary> Keep track of all cache objects </summary>
 		private static List<object> _listCacheAbssAll=new List<object>();
@@ -72,10 +69,6 @@ namespace OpenDentBusiness {
 			DataSet ds=new DataSet();
 			//All Internal OD Tables that are cached go here
 			if(PrefC.IsODHQ) {
-				if(listITypes.Contains(InvalidType.Children) || isAll) {
-					ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.Children.ToString());
-					ds.Tables.Add(ChildRooms.GetTableFromCache(doRefreshServerCache));
-				}
 				if(listITypes.Contains(InvalidType.JobPermission) || isAll) {
 					ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.JobPermission.ToString());
 					ds.Tables.Add(JobPermissions.RefreshCache());
@@ -184,7 +177,6 @@ namespace OpenDentBusiness {
 			}
 			if(listITypes.Contains(InvalidType.DisplayFields) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.DisplayFields.ToString());
-				ds.Tables.Add(ChartViews.GetTableFromCache(doRefreshServerCache));
 				ds.Tables.Add(DisplayFields.GetTableFromCache(doRefreshServerCache));
 			}
 			if(listITypes.Contains(InvalidType.DisplayReports) || isAll) {
@@ -282,7 +274,6 @@ namespace OpenDentBusiness {
 			if(listITypes.Contains(InvalidType.PatFields) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.PatFields.ToString());
 				ds.Tables.Add(PatFieldDefs.GetTableFromCache(doRefreshServerCache));
-				ds.Tables.Add(PatFieldPickItems.GetTableFromCache(doRefreshServerCache));
 				ds.Tables.Add(ApptFieldDefs.GetTableFromCache(doRefreshServerCache));
 				ds.Tables.Add(FieldDefLinks.GetTableFromCache(doRefreshServerCache));
 			}
@@ -459,10 +450,6 @@ namespace OpenDentBusiness {
 			}
 			//All Internal OD Tables that are cached go here
 			if(PrefC.IsODHQ) {
-				if(listITypes.Contains(InvalidType.Children) || isAll) {
-					ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.Children.ToString());
-					ChildRooms.FillCacheFromTable(ds.Tables["ChildRoom"]);
-				}
 				if(listITypes.Contains(InvalidType.JobPermission) || isAll) {
 					ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.JobPermission.ToString());
 					JobPermissions.FillCache(ds.Tables["JobRole"]);
@@ -569,7 +556,6 @@ namespace OpenDentBusiness {
 			}
 			if(listITypes.Contains(InvalidType.DisplayFields) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.DisplayFields.ToString());
-				ChartViews.FillCacheFromTable(ds.Tables["ChartView"]);
 				DisplayFields.FillCacheFromTable(ds.Tables["DisplayField"]);
 			}
 			if(listITypes.Contains(InvalidType.DisplayReports) || isAll) {
@@ -605,9 +591,9 @@ namespace OpenDentBusiness {
 			}
 			if(listITypes.Contains(InvalidType.ERoutingDef) || isAll) {
 				ODEvent.Fire(ODEventType.Cache, suffix + InvalidType.PatFields.ToString());
-				ERoutingDefs.FillCacheFromTable(ds.Tables["ERoutingDef"]);
-				ERoutingActionDefs.FillCacheFromTable(ds.Tables["ERoutingActionDef"]);
-				ERoutingDefLinks.FillCacheFromTable(ds.Tables["ERoutingDefLink"]);
+				ERoutingDefs.FillCacheFromTable(ds.Tables["FlowDef"]);
+				ERoutingActionDefs.FillCacheFromTable(ds.Tables["FlowActionDef"]);
+				ERoutingDefLinks.FillCacheFromTable(ds.Tables["FlowDefLink"]);
 			}
 			if(listITypes.Contains(InvalidType.HL7Defs) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.HL7Defs.ToString());
@@ -661,7 +647,6 @@ namespace OpenDentBusiness {
 			if(listITypes.Contains(InvalidType.PatFields) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.PatFields.ToString());
 				PatFieldDefs.FillCacheFromTable(ds.Tables["PatFieldDef"]);
-				PatFieldPickItems.FillCacheFromTable(ds.Tables["PatFieldPickItem"]);
 				ApptFieldDefs.FillCacheFromTable(ds.Tables["ApptFieldDef"]);
 				FieldDefLinks.FillCacheFromTable(ds.Tables["FieldDefLink"]);
 			}
@@ -940,7 +925,7 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		///<summary>Runs the ClearCache method for each of the InvalidTypes passed in. Only for local machine. Send a signalod later.</summary>
+		///<summary>Runs the ClearCache method for each of the InvalidTypes passed in.</summary>
 		public static void ClearCaches(params InvalidType[] arrayITypes) {
 			//No RemotingClient check needed; The server does not need to clear these caches because it already knows about the changes.
 			//This is assuming that the workstation that was responsible for the cache change asked the MT server to update it's local cache.
@@ -954,10 +939,6 @@ namespace OpenDentBusiness {
 			}
 			//All Internal OD Tables that are cached go here
 			if(PrefC.IsODHQ) {
-				if(listITypes.Contains(InvalidType.Children) || isAll) {
-					ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.Children.ToString());
-					ChildRooms.ClearCache();
-				}
 				if(listITypes.Contains(InvalidType.JobPermission) || isAll) {
 					ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.JobPermission.ToString());
 					JobPermissions.ClearCache(); //Required special attention, may need to re-visit.
@@ -1063,7 +1044,6 @@ namespace OpenDentBusiness {
 			}
 			if(listITypes.Contains(InvalidType.DisplayFields) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.DisplayFields.ToString());
-				ChartViews.ClearCache();
 				DisplayFields.ClearCache();
 			}
 			if(listITypes.Contains(InvalidType.DisplayReports) || isAll) {
@@ -1161,7 +1141,6 @@ namespace OpenDentBusiness {
 			if(listITypes.Contains(InvalidType.PatFields) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,prefix+InvalidType.PatFields.ToString());
 				PatFieldDefs.ClearCache();
-				PatFieldPickItems.ClearCache();
 				ApptFieldDefs.ClearCache();
 				FieldDefLinks.ClearCache();
 			}

@@ -19,14 +19,11 @@ namespace OpenDental {
 
 		public FrmAlertCategoryEdit(AlertCategory alertCategory) {
 			InitializeComponent();
+			//Lan.F(this);
 			_alertCategory=alertCategory;
-			Load+=FrmAlertCategoryEdit_Load;
-			listBoxAlertTypes.MouseDown+=listBoxAlertTypes_MouseDown;
-			PreviewKeyDown+=FrmAlertCategoryEdit_PreviewKeyDown;
 		}
 		
-		private void FrmAlertCategoryEdit_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmAlertCategoryEdit_Loaded(object sender,RoutedEventArgs e) {
 			textDesc.Text=_alertCategory.Description;
 			_listAlertTypesShown=Enum.GetValues(typeof(AlertType)).OfType<AlertType>().ToList();
 			_listAlertTypesShown.RemoveAll(x => !PrefC.IsODHQ && GenericTools.IsODHQ(x));
@@ -49,16 +46,10 @@ namespace OpenDental {
 			}
 		}
 
-		private void listBoxAlertTypes_MouseDown(object sender,MouseButtonEventArgs e) {
+		private void listBoxAlertTypes_PreviewMouseDown(object sender,MouseButtonEventArgs e) {
 			if(_alertCategory.IsHQCategory) {
 				InitAlertTypeSelections();
 				MsgBox.Show(this,"You can only edit custom alert categories.");
-			}
-		}
-
-		private void FrmAlertCategoryEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
 			}
 		}
 
@@ -90,6 +81,7 @@ namespace OpenDental {
 			DataValid.SetInvalid(InvalidType.AlertCategories,InvalidType.AlertCategories);
 			IsDialogOK=true;
 		}
+
 
 	}
 }

@@ -62,6 +62,7 @@ namespace OpenDental {
 			_clinicChanged=false;
 			if(IsSelectionMode) {
 				butAdd.Visible=false;
+				butOK.Visible=true;
 				groupClinicOrder.Visible=false;
 				groupMovePats.Visible=false;
 				checkShowHidden.Visible=false;
@@ -73,7 +74,6 @@ namespace OpenDental {
 					butDown.Enabled=false;
 				}
 				_listClinicCounts=Clinics.GetListClinicPatientCount();
-				butSave.Visible=false;
 			}
 			if(IsMultiSelect) {
 				butSelectAll.Visible=true;
@@ -144,7 +144,7 @@ namespace OpenDental {
 		}
 
 		private void butAdd_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ClinicEdit)) {
+			if(!Security.IsAuthorized(Permissions.ClinicEdit)) {
 				return;
 			}
 			Clinic clinic=new Clinic();
@@ -171,7 +171,7 @@ namespace OpenDental {
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			if(!IsSelectionMode && !Security.IsAuthorized(EnumPermType.ClinicEdit)) {
+			if(!IsSelectionMode && !Security.IsAuthorized(Permissions.ClinicEdit)) {
 				return;
 			}
 			if(gridMain.ListGridRows.Count==0){
@@ -263,23 +263,23 @@ namespace OpenDental {
 			if(MessageBox.Show(msg,"",MessageBoxButtons.YesNo)!=DialogResult.Yes) {
 				return;
 			}
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => { 
 				int patsMoved=0;
 				int countTotal=listClinicCountsSelected.Sum(x => x.Count);
 				List<Action> listActions=listClinicCountsSelected.Select(x => new Action(() => {
 					Patients.ChangeClinicsForAll(x.ClinicNum,clinicTo.ClinicNum);//update all clinicNums to newClinic
-					SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,0,"Clinic changed for "+x.Count.ToString()+" patients from "
+					SecurityLogs.MakeLogEntry(Permissions.PatientEdit,0,"Clinic changed for "+x.Count.ToString()+" patients from "
 						+Clinics.GetAbbr(x.ClinicNum)+" to "+clinicTo.Abbr+".");
 					patsMoved+=x.Count;
-					ODEvent.Fire(ODEventType.ProgressBar,Lan.g(this,"Moved patients")+": "+patsMoved+" "+Lan.g(this,"out of total")+" "
+					ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g(this,"Moved patients")+": "+patsMoved+" "+Lan.g(this,"out of total")+" "
 						+countTotal.ToString());
 				})).ToList();
 				ODThread.RunParallel(listActions,TimeSpan.FromMinutes(2));
 			};
 			progressOD.StartingMessage=Lan.g(this,"Moving patients")+"...";
 			progressOD.TestSleep=true;
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			_listClinicCounts=Clinics.GetListClinicPatientCount();
 			FillGrid();
 			if(progressOD.IsCancelled){
@@ -413,7 +413,7 @@ namespace OpenDental {
 			gridMain.Focus();//Allows user to use ODGrid CTRL functionality.
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(IsSelectionMode && gridMain.SelectedIndices.Length>0) {
 				ClinicNumSelected=gridMain.SelectedTag<Clinic>()?.ClinicNum??0;
 				ListClinicNumsSelected=gridMain.SelectedTags<Clinic>().Select(x => x.ClinicNum).ToList();
@@ -422,11 +422,13 @@ namespace OpenDental {
 			Close();
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			ClinicNumSelected=0;
+			ListClinicNumsSelected=new List<long>();
+			Close();
+		}
+
 		private void FormClinics_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-			if(DialogResult==DialogResult.Cancel){
-				ClinicNumSelected=0;
-				ListClinicNumsSelected=new List<long>();
-			}
 			if(IsSelectionMode) {
 				return;
 			}
@@ -451,6 +453,5 @@ namespace OpenDental {
 				DataValid.SetInvalid(InvalidType.Providers);
 			}
 		}
-
 	}
 }

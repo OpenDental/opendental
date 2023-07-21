@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRedundantIndexes));
 			this.butDropIndexes = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butAll = new OpenDental.UI.Button();
 			this.butNone = new OpenDental.UI.Button();
@@ -41,6 +42,17 @@ namespace OpenDental{
 			this.butDropIndexes.TabIndex = 4;
 			this.butDropIndexes.Text = "Drop";
 			this.butDropIndexes.Click += new System.EventHandler(this.butDrop_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(1143, 454);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 5;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridMain
 			// 
@@ -99,7 +111,9 @@ namespace OpenDental{
 			// 
 			// FormRedundantIndexes
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(1230, 490);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.labelDescription);
 			this.Controls.Add(this.checkLogAddStatements);
 			this.Controls.Add(this.butAll);
@@ -117,6 +131,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butDropIndexes;
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private UI.Button butAll;
 		private UI.Button butNone;

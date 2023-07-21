@@ -6,7 +6,7 @@ namespace UnitTestsCore {
 	public class UserodT {
 
 		///<summary>Inserts the new user, refreshes the cache and then returns UserNum</summary>
-		public static Userod CreateUser(string userName="",string password="",List<long> userGroupNumbers=null,long clinicNum=0,bool isClinicIsRestricted=false,bool isHidden=false,bool doGeneratePassword=true) {
+		public static Userod CreateUser(string userName="",string password="",List<long> userGroupNumbers=null,long clinicNum=0,bool isClinicIsRestricted=false,bool isHidden=false) {
 			if(userName=="") {
 				userName="Username"+MiscUtils.CreateRandomAlphaNumericString(8);
 			}
@@ -18,9 +18,7 @@ namespace UnitTestsCore {
 			}
 			Userod newUser=new Userod();
 			newUser.UserName=userName;
-			if(doGeneratePassword) {
-				newUser.LoginDetails=Authentication.GenerateLoginDetails(password,HashTypes.SHA3_512);
-			}
+			newUser.LoginDetails=Authentication.GenerateLoginDetails(password,HashTypes.SHA3_512);
 			newUser.ClinicNum=clinicNum;
 			newUser.ClinicIsRestricted=isClinicIsRestricted;
 			newUser.IsHidden=isHidden;
@@ -36,12 +34,6 @@ namespace UnitTestsCore {
 			Userods.RefreshCache();
 			UserGroupAttaches.RefreshCache();
 			return newUser;
-		}
-
-		///<summary>Always recreate the admin user</summary>
-		public static void ClearTableAndCreateDefaultAdminUser() {
-			ClearUserodTable();
-			DataAction.RunPractice(() => CreateUser("Admin",doGeneratePassword:false));
 		}
 
 		public static void ClearPasswords() {

@@ -108,10 +108,10 @@ namespace OpenDental {
 				return new List<long>();//An empty list will cause the clinic filter to be ignored in SmsFromMobiles.GetMessages()
 			}
 			//we don't want an empty list
-			if(comboClinics.ListClinicNumsSelected.Count==0){
+			if(comboClinics.ListSelectedClinicNums.Count==0){
 				return new List<long>(){Clinics.ClinicNum };//current clinic
 			}
-			return comboClinics.ListClinicNumsSelected;
+			return comboClinics.ListSelectedClinicNums;
 		}
 
 		///<summary>Passively load _listPatients from db if entry is not already found.</summary>
@@ -159,12 +159,12 @@ namespace OpenDental {
 			if(PrefC.HasClinicsEnabled) {
 				//comboClinics.HqDescription="Practice";
 				//hqClinic.Abbr=(PrefC.GetString(PrefName.PracticeTitle)+" ("+Lan.g(this,"Practice")+")");
-				comboClinics.ClinicNumSelected=Clinics.ClinicNum;
+				comboClinics.SelectedClinicNum=Clinics.ClinicNum;
 				if(PrefC.GetBool(PrefName.EnterpriseApptList)) {//This form behaves differently when compared to the other 6 forms
 					comboClinics.IncludeAll=false;
 				}
 				else {
-					if(comboClinics.ClinicNumSelected==0) {
+					if(comboClinics.SelectedClinicNum==0) {
 						comboClinics.IsAllSelected=true;//jordan Users specifically requested this
 					}
 				}
@@ -215,15 +215,15 @@ namespace OpenDental {
 			menuItemHide.Visible=!IsGrouped();
 			menuItemUnhide.Visible=!IsGrouped();
 			menuItemBlockNumber.Visible=!IsGrouped();
-			if(PrefC.HasClinicsEnabled && comboClinics.ListClinicNumsSelected.Count==0) {
+			if(PrefC.HasClinicsEnabled && comboClinics.ListSelectedClinicNums.Count==0) {
 				gridMessages.BeginUpdate();
 				gridMessages.ListGridRows.Clear();
 				gridMessages.EndUpdate();
 				return;
 			}
 			//Hold these. We will be clearing them below and they will need to be restored.
-			int idxColSortBy=gridMessages.GetSortedByColumnIdx();
-			bool isSortAsc=gridMessages. IsSortedAscending();
+			int idxColSortBy=gridMessages.SortedByColumnIdx;
+			bool isSortAsc=gridMessages.SortedIsAscending;
 			if(idxColSortBy==-1 || !retainSort) {
 				idxColSortBy=0;
 				isSortAsc=false;
@@ -815,11 +815,11 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please select a message with a valid patient attached.");
 				return;
 			}
-			GlobalFormOpenDental.PatientSelected(Patients.GetPat(GetSelectedPatNum()),true);
+			FormOpenDental.S_Contr_PatientSelected(Patients.GetPat(GetSelectedPatNum()),true);
 		}
 
 		private void butSend_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.TextMessageSend)) {
+			if(!Security.IsAuthorized(Permissions.TextMessageSend)) {
 				return;
 			}
 			if(!HasSelectedMessage()) {
@@ -854,11 +854,6 @@ namespace OpenDental {
 					MsgBox.Show(this,"No default clinic setup for texting.");
 					return;
 				}
-			}
-			string errorText=PrefC.GetFirstShortURL(textReply.Text);
-			if(!string.IsNullOrWhiteSpace(errorText)) {
-				MsgBox.Show(this,Lan.g(this,"Message cannot contain the URL")+" "+errorText+" "+Lan.g(this,"as this is only allowed for eServices."));
-				return;
 			}
 			//Verify that the highlighted blue rows and grey selected row match before allowing the user to send the message.
 			//This was happening for the user due to the way ODGrid.CellClick functions.  This issue should now be fixed, but this is a catch-all
@@ -904,7 +899,7 @@ namespace OpenDental {
 				if(Plugins.HookMethod(this,"FormSmsTextMessaging.butReply_Click_sendSmsSingle",GetSelectedPatNum(),GetSelectedMobileNumber(),textReply.Text,YN.Yes)) {
 					goto HookSkipSmsCall;
 				}
-				SmsToMobiles.SendSmsSingle(GetSelectedPatNum(),GetSelectedMobileNumber(),textReply.Text,clinicNum,SmsMessageSource.DirectSms,userod: Security.CurUser);
+				SmsToMobiles.SendSmsSingle(GetSelectedPatNum(),GetSelectedMobileNumber(),textReply.Text,clinicNum,SmsMessageSource.DirectSms,user: Security.CurUser);
 			}
 			catch(Exception ex) {
 				if(!FormEServicesSetup.ProcessSendSmsException(ex)) {
@@ -917,6 +912,9 @@ namespace OpenDental {
 			FillGridMessageThread();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 		#endregion
 
 		#region Helper class
@@ -1032,6 +1030,9 @@ namespace OpenDental {
 			}
 		}
 		*/
+
+
+
 
 	}
 }

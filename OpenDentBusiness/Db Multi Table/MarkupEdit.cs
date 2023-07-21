@@ -125,9 +125,9 @@ namespace OpenDentBusiness {
 					fullPath=FileAtoZ.CombinePaths(imagePath,POut.String(imgName));
 					if(CloudStorage.IsCloudStorage) {				
 						//WebBrowser needs to have a local file to open, so we download the images to temp files.	
-						byte[] byteArray=CloudStorage.Download(Path.GetDirectoryName(fullPath),Path.GetFileName(fullPath));
+						OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.Download(Path.GetDirectoryName(fullPath),Path.GetFileName(fullPath));
 						string tempFile=PrefC.GetRandomTempFile(Path.GetExtension(fullPath));
-						File.WriteAllBytes(tempFile,byteArray);
+						File.WriteAllBytes(tempFile,state.FileContent);
 						fullPath=tempFile;
 					}
 				}
@@ -135,14 +135,7 @@ namespace OpenDentBusiness {
 			}
 			return s;
 		}
-
-		///<summary>Determines if the given text contains any HTML tags, ex <a href="opendental.com">opendental.com</a> or any Od wiki syntax tags that
-		///would result in HTML tags being added to the text when run through MarkupEdit.TranslateToXhtml()</summary>
-		public static bool ContainsOdHtmlTags(string text) {
-			Regex tagRegex=new Regex(@"<\s*([^ >]+)[^>]*>.*?<\s*/\s*\1\s*>");
-			return tagRegex.IsMatch(text??"")||ContainsOdMarkupForEmail(text??"");
-		}
-
+		
 		///<summary>Determines if the given text contains any OD Markup tags that would be replaced with HTML tags in an email.</summary>
 		public static bool ContainsOdMarkupForEmail(string text) {
 			List<string> listOdWikiRegex=new List<string> {
@@ -240,10 +233,10 @@ namespace OpenDentBusiness {
 					}
 					string fullPath=FileAtoZ.CombinePaths(wikiPath,POut.String(imgName));
 					if(CloudStorage.IsCloudStorage) {				
-						//WebBrowser needs to have a local file to open, so we download the images to temp files.
-						byte[] byteArray=CloudStorage.Download(Path.GetDirectoryName(fullPath),Path.GetFileName(fullPath));
+						//WebBrowser needs to have a local file to open, so we download the images to temp files.	
+						OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.Download(Path.GetDirectoryName(fullPath),Path.GetFileName(fullPath));
 						string tempFile=PrefC.GetRandomTempFile(Path.GetExtension(fullPath));
-						File.WriteAllBytes(tempFile,byteArray);
+						File.WriteAllBytes(tempFile,state.FileContent);
 						fullPath=tempFile;
 					}
 					//If our imported image has orientation changes, we want to make sure that gets reflected in the HTML render.
@@ -697,12 +690,8 @@ namespace OpenDentBusiness {
 			//for "<" and ">", so we do not want to match "&<" or "&>". We know that this will not perfectly parse all HTML tags, but it is good enough
 			//to use for searching.
 			StringTools.RegReplace(strb,_htmlTag,"");
-			//We also want to remove links to other wiki pages. We can assume that no internal links with pipes exist, since that is forbidden.
-			StringTools.RegReplace(strb,@"\[\[[^|]+?\]\]","");
-			//Matches a pair of opening brackets with the first following pair of closing brackets, and everything between.
-			//This will capture everything between the first pipe and the first pair of closing brackets.
-			//Replaces the whole match with the captured text, aka the tag's content.
-			StringTools.RegReplace(strb,@"\[\[.*?\|(.*?)\]\]","$1",RegexOptions.Singleline);
+			//We also want to remove links to other wiki pages.
+			StringTools.RegReplace(strb,@"\[\[.+?\]\]","");
 			return strb.ToString();
 		}
 

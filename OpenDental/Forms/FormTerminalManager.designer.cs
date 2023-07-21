@@ -41,6 +41,7 @@
 			this.butByod = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.contrClinicPicker = new OpenDental.UI.ComboBoxClinicPicker();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupBoxPassword.SuspendLayout();
 			this.groupBoxPatient.SuspendLayout();
 			this.SuspendLayout();
@@ -206,9 +207,20 @@
 			this.contrClinicPicker.Size = new System.Drawing.Size(200, 21);
 			this.contrClinicPicker.TabIndex = 16;
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(958, 573);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 15;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormTerminalManager
 			// 
 			this.ClientSize = new System.Drawing.Size(1045, 609);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butByod);
 			this.Controls.Add(this.contrClinicPicker);
 			this.Controls.Add(this.gridMain);
@@ -241,6 +253,7 @@
 		private System.Windows.Forms.Label labelSheets;
 		private System.Windows.Forms.Label labelPatient;
 		private OpenDental.UI.GroupBox groupBoxPassword;
+		private OpenDental.UI.Button butClose;
 		private UI.Button butPatForms;
 		private UI.ComboBoxClinicPicker contrClinicPicker;
 		private UI.Button butByod;

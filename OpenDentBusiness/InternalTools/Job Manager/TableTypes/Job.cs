@@ -768,8 +768,6 @@ namespace OpenDentBusiness {
 		MarketingDesign,
 		///<summary>12 -</summary>
 		UnresolvedIssue,
-		///<summary>13 -</summary>
-		Project,
 	}
 
 	public enum JobProposedVersion {

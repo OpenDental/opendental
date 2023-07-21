@@ -99,7 +99,7 @@ namespace OpenDental{
 		}
 
 		private void butEditCats_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.DefEdit)){
+			if(!Security.IsAuthorized(Permissions.DefEdit)){
 				return;
 			}
 			using FormDefinitions formDefinitions=new FormDefinitions(DefCat.LetterMergeCats);
@@ -159,43 +159,43 @@ namespace OpenDental{
 				return false;
 			}
 			table=FormQuery.MakeReadable(table,null,false);
+			using StreamWriter streamWriter=new StreamWriter(fileName,false);
+			string line="";  
+			for(int i=0;i<letterMerge.Fields.Count;i++){
+				if(letterMerge.Fields[i].StartsWith("referral.")){
+					line+="Ref"+letterMerge.Fields[i].Substring(9);
+				}
+				else{
+					line+=letterMerge.Fields[i];
+				}
+				if(i<letterMerge.Fields.Count-1){
+					line+="\t";
+				}
+			}
 			try{
-				using StreamWriter streamWriter=new StreamWriter(fileName,false);
-				string line="";  
-				for(int i=0;i<letterMerge.Fields.Count;i++){
-					if(letterMerge.Fields[i].StartsWith("referral.")){
-						line+="Ref"+letterMerge.Fields[i].Substring(9);
-					}
-					else{
-						line+=letterMerge.Fields[i];
-					}
-					if(i<letterMerge.Fields.Count-1){
+				streamWriter.WriteLine(line);
+			}
+			catch{
+				MsgBox.Show(this,"File in use by another program.  Close and try again.");
+				return false;
+			}
+			string cell;
+			for(int i=0;i<table.Rows.Count;i++){
+				line="";
+				for(int j=0;j<table.Columns.Count;j++){
+					cell=table.Rows[i][j].ToString();
+					cell=cell.Replace("\r","");
+					cell=cell.Replace("\n","");
+					cell=cell.Replace("\t","");
+					cell=cell.Replace("\"","");
+					line+=cell;
+					if(j<table.Columns.Count-1){
 						line+="\t";
 					}
 				}
 				streamWriter.WriteLine(line);
-				string cell;
-				for(int i=0;i<table.Rows.Count;i++){
-					line="";
-					for(int j=0;j<table.Columns.Count;j++){
-						cell=table.Rows[i][j].ToString();
-						cell=cell.Replace("\r","");
-						cell=cell.Replace("\n","");
-						cell=cell.Replace("\t","");
-						cell=cell.Replace("\"","");
-						line+=cell;
-						if(j<table.Columns.Count-1){
-							line+="\t";
-						}
-					}
-					streamWriter.WriteLine(line);
-				}
-				streamWriter.Close();
 			}
-			catch {
-				MsgBox.Show("File in use by another program.  Close and try again.");
-				return false;
-			}
+			streamWriter.Close();
 			return true;
 		}
 
@@ -274,25 +274,20 @@ namespace OpenDental{
 			_wordDocument=word_Application.Documents.Open(ref objectName,ref _objectMissing,ref _objectMissing,
 				ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,
 				ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing);
-			try {
-				_wordDocument.Select();
-				word_MailMerge=_wordDocument.MailMerge;
-				//Attach the data file.
-				_wordDocument.MailMerge.OpenDataSource(dataFile,ref _objectMissing,ref _objectMissing,ref _objectMissing,
-					ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,
-					ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing);
-				word_MailMerge.Destination = Word.WdMailMergeDestination.wdSendToPrinter;
-				//WrdApp.ActivePrinter=pd.PrinterSettings.PrinterName;
-				//replaced with following 4 lines due to MS bug that changes computer default printer
-				object word_Basic = word_Application.WordBasic;
-				object[] objectArrayWBValues = new object[] { printDocument.PrinterSettings.PrinterName, 1 };
-				String[] stringArrayWBNames = new String[] { "Printer", "DoNotSetAsSysDefault" };
-				word_Basic.GetType().InvokeMember("FilePrintSetup", BindingFlags.InvokeMethod, null, word_Basic, objectArrayWBValues, null, null, stringArrayWBNames);
-				word_MailMerge.Execute(ref _objectFalse);
-			}
-			catch {//Catches UE after hitting cancel
-				return;
-			}
+			_wordDocument.Select();
+			word_MailMerge=_wordDocument.MailMerge;
+			//Attach the data file.
+			_wordDocument.MailMerge.OpenDataSource(dataFile,ref _objectMissing,ref _objectMissing,ref _objectMissing,
+				ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,
+				ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing,ref _objectMissing);
+			word_MailMerge.Destination = Word.WdMailMergeDestination.wdSendToPrinter;
+			//WrdApp.ActivePrinter=pd.PrinterSettings.PrinterName;
+			//replaced with following 4 lines due to MS bug that changes computer default printer
+			object word_Basic = word_Application.WordBasic;
+			object[] objectArrayWBValues = new object[] { printDocument.PrinterSettings.PrinterName, 1 };
+			String[] stringArrayWBNames = new String[] { "Printer", "DoNotSetAsSysDefault" };
+			word_Basic.GetType().InvokeMember("FilePrintSetup", BindingFlags.InvokeMethod, null, word_Basic, objectArrayWBValues, null, null, stringArrayWBNames);
+			word_MailMerge.Execute(ref _objectFalse);
 			if(letterMerge.ImageFolder!=0) {//if image folder exist for this letter, save to AtoZ folder
 				try {
 					_wordDocument.Select();
@@ -524,11 +519,72 @@ namespace OpenDental{
 #endif
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormLetterMerges_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
 			if(_isChanged){
 				DataValid.SetInvalid(InvalidType.LetterMerge);
 			}
 		}
 
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

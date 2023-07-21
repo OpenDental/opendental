@@ -21,7 +21,6 @@ namespace OpenDentBusiness{
 		}
 
 		public static List<ConfirmationRequest> GetPendingForPatNumWithMessage(long patNum) {
-			//No need to check MiddleTierRole; no call to db.
 			List<ConfirmationRequest> listConfRequests=GetPendingForPatNum(patNum);
 			AutoCommSents.SetMessageBody(listConfRequests);
 			return listConfRequests;
@@ -33,12 +32,12 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<ConfirmationRequest>>(MethodBase.GetCurrentMethod());
 			}
-			List<ApptStatus> listApptStatuses=new List<ApptStatus>() { ApptStatus.UnschedList, ApptStatus.Broken };
+			List<ApptStatus> listStatus=new List<ApptStatus>() { ApptStatus.UnschedList, ApptStatus.Broken };
 			string command=@"SELECT confirmationrequest.*
 				FROM confirmationrequest
 				LEFT JOIN appointment ON confirmationrequest.ApptNum=appointment.AptNum
 				WHERE appointment.AptNum IS NULL OR appointment.AptDateTime!=confirmationrequest.ApptDateTime
-				OR appointment.AptStatus IN ("+string.Join(",",listApptStatuses.Select(x => POut.Int((int)x)))+")";
+				OR appointment.AptStatus IN ("+string.Join(",",listStatus.Select(x => POut.Int((int)x)))+")";
 			return Crud.ConfirmationRequestCrud.SelectMany(command);
 		}
 
@@ -66,12 +65,12 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Get all rows where RSVPStatus==PendingRsvp that match the apptReminderRule.</summary>
-		public static List<ConfirmationRequest> GetPendingForRule(long apptReminderRuleNum) {
+		public static List<ConfirmationRequest> GetPendingForRule(long apptReminderRule) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ConfirmationRequest>>(MethodBase.GetCurrentMethod(),apptReminderRuleNum);
+				return Meth.GetObject<List<ConfirmationRequest>>(MethodBase.GetCurrentMethod(),apptReminderRule);
 			}
 			string command="SELECT * FROM confirmationrequest WHERE RSVPStatus = "+POut.Int((int)RSVPStatusCodes.PendingRsvp)
-				+" AND ApptReminderRuleNum="+POut.Long(apptReminderRuleNum);
+				+" AND ApptReminderRuleNum="+POut.Long(apptReminderRule);
 			return Crud.ConfirmationRequestCrud.SelectMany(command);
 		}
 
@@ -85,12 +84,12 @@ namespace OpenDentBusiness{
 			return Crud.ConfirmationRequestCrud.SelectMany(command);
 		}
 
-		public static List<ConfirmationRequest> GetConfirmation(SmsToMobile smsToMobile) {
+		public static List<ConfirmationRequest> GetConfirmation(SmsToMobile sms) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ConfirmationRequest>>(MethodBase.GetCurrentMethod(),smsToMobile);
+				return Meth.GetObject<List<ConfirmationRequest>>(MethodBase.GetCurrentMethod(),sms);
 			}
-			string command=$"SELECT * FROM confirmationrequest WHERE {POut.String(nameof(ConfirmationRequest.MessageFk))} = {POut.Long(smsToMobile.SmsToMobileNum)} "  
-				+$"AND {POut.String(nameof(ConfirmationRequest.MessageType))}={POut.Int((int)CommType.Text)}";
+			string command=$"SELECT * FROM confirmationrequest WHERE {nameof(ConfirmationRequest.MessageFk)} = {POut.Long(sms.SmsToMobileNum)} " +
+				$"AND {nameof(ConfirmationRequest.MessageType)}={POut.Int((int)CommType.Text)}";
 			return Crud.ConfirmationRequestCrud.SelectMany(command);
 		}
 		
@@ -126,58 +125,56 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<ConfirmationRequest>>(MethodBase.GetCurrentMethod(),shortGuid);
 			}
-			List<ConfirmationRequest> listConfirmationRequestsByShortGuid=GetConfirmationsByShortGuid(shortGuid).FindAll(x => x.ApptNum > 0);
-			if(listConfirmationRequestsByShortGuid.IsNullOrEmpty()) {
+			List<ConfirmationRequest> listConfirmationsByShortGuid=GetConfirmationsByShortGuid(shortGuid).FindAll(x => x.ApptNum > 0);
+			if(listConfirmationsByShortGuid.IsNullOrEmpty()) {
 				//Return an empty list if there are no appointments to confirm for the ShortGUID passed in.
 				return new List<ConfirmationRequest>();
 			}
-			List<long> listApptNums=listConfirmationRequestsByShortGuid.Select(x => x.ApptNum).ToList();
+			List<long> listApptNums=listConfirmationsByShortGuid.Select(x => x.ApptNum).ToList();
 			//There is a bug where aggregate confirmations are getting entered with different ShortGUIDs.
 			//Therefore, include any confirmation requests that are associated to the same message that is being confirmed.
-			CommType commType=listConfirmationRequestsByShortGuid.First().MessageType;
-			long messageFk=listConfirmationRequestsByShortGuid.First().MessageFk;
-			if(commType==CommType.Invalid || messageFk<=0) {
-				//Return all confirmation requests that have been sent for these appointments.
-				return GetAllForAppts(listApptNums);
+			CommType commType=listConfirmationsByShortGuid.First().MessageType;
+			long messageFk=listConfirmationsByShortGuid.First().MessageFk;
+			if(commType!=CommType.Invalid && messageFk > 0) {
+				//The ShortGUID being confirmed is associated to a valid message (email, text, etc).
+				//Grab all of the confirmation requests associated with that exact message.
+				//E.g. The passed in ShortGUID='rlYEWau' and is associated with MessageType=1 and MessageFk=147
+				//Grab the rest of the confirmation requests associated with MessageType=1 and MessageFk=147
+				string command=$@"SELECT ApptNum FROM confirmationrequest 
+					WHERE ApptNum IN ({string.Join(",",listApptNums.Select(x => POut.Long(x)))})
+					OR (ApptNum > 0 AND MessageType={POut.Enum(commType)} AND MessageFk={POut.Long(messageFk)})";
+				//The above query may have grabbed a few NEW appointments that are associated with a different ShortGUID='2jWQxNr'
+				listApptNums=Db.GetListLong(command);
 			}
-			//The ShortGUID being confirmed is associated to a valid message (email, text, etc).
-			//Grab all of the confirmation requests associated with that exact message.
-			//E.g. The passed in ShortGUID='rlYEWau' and is associated with MessageType=1 and MessageFk=147
-			//Grab the rest of the confirmation requests associated with MessageType=1 and MessageFk=147
-			string command=$@"SELECT ApptNum FROM confirmationrequest 
-				WHERE ApptNum IN ({string.Join(",",listApptNums.Select(x => POut.Long(x)))})
-				OR (ApptNum > 0 AND MessageType={POut.Enum(commType)} AND MessageFk={POut.Long(messageFk)})";
-			//The above query may have grabbed a few NEW appointments that are associated with a different ShortGUID='2jWQxNr'
-			listApptNums=Db.GetListLong(command);
 			//Return all confirmation requests that have been sent for these appointments.
 			return GetAllForAppts(listApptNums);
 		}
 
 		///<summary>Expire confirmations for any appointments that have been rescheduled since sending out a confirmation request.</summary>
-		public static void HandleConfirmationsApptChanged(Logger.IWriteLine loggerIWriteLine) {	
+		public static void HandleConfirmationsApptChanged(Logger.IWriteLine log) {	
 			//No remoting role check needed.		
-			List<ConfirmationRequest> listConfirmationRequestsChanged=GetForApptChanged();
-			listConfirmationRequestsChanged=listConfirmationRequestsChanged.FindAll(x => !x.DoNotResend).ToList();//Remove those that the user specifically said to not resend
-			List<string> listStringShortGuids=listConfirmationRequestsChanged.FindAll(x => !string.IsNullOrWhiteSpace(x.ShortGUID)).Select(x => x.ShortGUID).ToList();
-			if(listStringShortGuids.Count==0) {
+			List<ConfirmationRequest> listChanged=GetForApptChanged();
+			listChanged=listChanged.Where(x => !x.DoNotResend).ToList();//Remove those that the user specifically said to not resend
+			List<string> listShortGuids=listChanged.Where(x => !string.IsNullOrWhiteSpace(x.ShortGUID)).Select(x => x.ShortGUID).ToList();
+			if(listShortGuids.Count==0) {
 				return;
 			}
-			string payloadContent=PayloadHelper.CreatePayloadContent(listStringShortGuids,"ListShortGuids");
-			string hqPayload=PayloadHelper.CreatePayload(payloadContent,eServiceCode.ConfirmationRequest);
+			string hqPayload=PayloadHelper.CreatePayload(PayloadHelper.CreatePayloadContent(listShortGuids,"ListShortGuids"),
+				eServiceCode.ConfirmationRequest);
 			string result=WebServiceMainHQProxy.GetWebServiceMainHQInstance().HandleConfirmationsApptChanged(hqPayload);
-			XmlDocument xmlDocument=new XmlDocument();
-			xmlDocument.LoadXml(result);
-			XmlNode xmlNode=xmlDocument.SelectSingleNode("//Error");
-			if(xmlNode!=null) {
-				loggerIWriteLine.WriteLine(xmlNode.InnerText,LogLevel.Error);
+			XmlDocument doc=new XmlDocument();
+			doc.LoadXml(result);
+			XmlNode node=doc.SelectSingleNode("//Error");
+			if(node!=null) {
+				log.WriteLine(node.InnerText,LogLevel.Error);
 				return;
 			}
-			loggerIWriteLine.WriteLine($"Deleting ConfirmationRequest entries for {listStringShortGuids.Count} ShortGuids.",LogLevel.Information);
-			string verboseLog=string.Join("\r\n\t\t",listStringShortGuids.Select(x => x));
-			loggerIWriteLine.WriteLine($"Deleting \r\n\t\t{verboseLog}",LogLevel.Verbose);
+			log.WriteLine($"Deleting ConfirmationRequest entries for {listShortGuids.Count} ShortGuids.",LogLevel.Information);
+			string verboseLog=string.Join("\r\n\t\t",listShortGuids.Select(x => x));
+			log.WriteLine($"Deleting \r\n\t\t{verboseLog}",LogLevel.Verbose);
 			//Deleting these will cause the AutoComm thread to resend where necessary.
-			long countDeleted=DeleteShortGuids(listStringShortGuids);
-			loggerIWriteLine.WriteLine($"Deleted {countDeleted} ConfirmationRequests.",LogLevel.Information);
+			long countDeleted=DeleteShortGuids(listShortGuids);
+			log.WriteLine($"Deleted {countDeleted} ConfirmationRequests.",LogLevel.Information);
 		}
 
 		///<summary>Update the RSVPStatusCode for the list of ConfirmationRequests matching the provided shortGuids</summary>

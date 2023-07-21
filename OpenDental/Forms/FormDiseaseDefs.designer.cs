@@ -49,6 +49,7 @@ namespace OpenDental {
 			this.butOK = new OpenDental.UI.Button();
 			this.butDown = new OpenDental.UI.Button();
 			this.butUp = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.butAlphabetize = new OpenDental.UI.Button();
 			this.labelAlphabetize = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
@@ -106,7 +107,7 @@ namespace OpenDental {
 			this.textSnoMed.Location = new System.Drawing.Point(88, 59);
 			this.textSnoMed.Multiline = false;
 			this.textSnoMed.Name = "textSnoMed";
-			this.textSnoMed.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.MedicationEdit;
+			this.textSnoMed.QuickPasteType = OpenDentBusiness.QuickPasteType.MedicationEdit;
 			this.textSnoMed.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textSnoMed.Size = new System.Drawing.Size(234, 20);
 			this.textSnoMed.TabIndex = 26;
@@ -124,7 +125,7 @@ namespace OpenDental {
 			this.textDescript.Location = new System.Drawing.Point(88, 80);
 			this.textDescript.Multiline = false;
 			this.textDescript.Name = "textDescript";
-			this.textDescript.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.MedicationEdit;
+			this.textDescript.QuickPasteType = OpenDentBusiness.QuickPasteType.MedicationEdit;
 			this.textDescript.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textDescript.Size = new System.Drawing.Size(441, 20);
 			this.textDescript.TabIndex = 25;
@@ -160,7 +161,7 @@ namespace OpenDental {
 			this.textICD10.Location = new System.Drawing.Point(88, 39);
 			this.textICD10.Multiline = false;
 			this.textICD10.Name = "textICD10";
-			this.textICD10.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.MedicationEdit;
+			this.textICD10.QuickPasteType = OpenDentBusiness.QuickPasteType.MedicationEdit;
 			this.textICD10.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textICD10.Size = new System.Drawing.Size(234, 20);
 			this.textICD10.TabIndex = 21;
@@ -187,7 +188,7 @@ namespace OpenDental {
 			this.textICD9.Location = new System.Drawing.Point(88, 19);
 			this.textICD9.Multiline = false;
 			this.textICD9.Name = "textICD9";
-			this.textICD9.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.MedicationEdit;
+			this.textICD9.QuickPasteType = OpenDentBusiness.QuickPasteType.MedicationEdit;
 			this.textICD9.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textICD9.Size = new System.Drawing.Size(234, 20);
 			this.textICD9.TabIndex = 19;
@@ -222,11 +223,11 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(589, 659);
+			this.butOK.Location = new System.Drawing.Point(592, 629);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(79, 26);
 			this.butOK.TabIndex = 15;
-			this.butOK.Text = "&OK";
+			this.butOK.Text = "OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butDown
@@ -254,6 +255,16 @@ namespace OpenDental {
 			this.butUp.Text = "&Up";
 			this.butUp.Click += new System.EventHandler(this.butUp_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(592, 661);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(79, 26);
+			this.butClose.TabIndex = 1;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butAlphabetize
 			// 
 			this.butAlphabetize.AdjustImageLocation = new System.Drawing.Point(0, 1);
@@ -280,6 +291,7 @@ namespace OpenDental {
 			// 
 			this.ClientSize = new System.Drawing.Size(680, 697);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.labelAlphabetize);
 			this.Controls.Add(this.butAlphabetize);
 			this.Controls.Add(this.butAdd);
@@ -300,6 +312,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butDown;
 		private System.Windows.Forms.ToolTip toolTip1;
 		private OpenDental.UI.Button butOK;

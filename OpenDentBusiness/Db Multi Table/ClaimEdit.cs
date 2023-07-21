@@ -32,7 +32,7 @@ namespace OpenDentBusiness {
 
 		///<summary>Updates the claim to the database.</summary>
 		public static UpdateData UpdateClaim(Claim ClaimCur,List<ClaimValCodeLog> listClaimValCodes,ClaimCondCodeLog claimCondCodeLog,
-			List<Procedure> listProcsToUpdatePlaceOfService,Patient pat,bool doMakeSecLog,EnumPermType permissionToLog) 
+			List<Procedure> listProcsToUpdatePlaceOfService,Patient pat,bool doMakeSecLog,Permissions permissionToLog) 
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<UpdateData>(MethodBase.GetCurrentMethod(),ClaimCur,listClaimValCodes,claimCondCodeLog,listProcsToUpdatePlaceOfService,

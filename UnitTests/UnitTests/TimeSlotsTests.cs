@@ -1343,17 +1343,5 @@ namespace UnitTests.TimeSlots_Tests {
 			Assert.AreEqual(restrictedBlockoutSchedOne.DateTimeStart,listAvailableWebSchedTimeslots[0].DateTimeStart);
 			Assert.AreEqual(restrictedBlockoutSchedOne.DateTimeStop,listAvailableWebSchedTimeslots[0].DateTimeStop);
 		}
-
-		/// <summary>Test that a new patient's fname will be checked against existing patients' first and preferred name. Also check that if the fname has no duplicate first or preferred name, then no duplicate will be returned.</summary>
-		[TestMethod]
-		public void TimeSlots_ChooseTimeSlotForNewPatAppt_DuplicateFNameAndPreferredCaughtFR(){
-			Patient pat=PatientT.CreatePatient(fName:"John",preferredName:"Jack",lName:"Doe",email:"Jack@Doe.com",birthDate: new DateTime(1971,6,28),phone:"5555555555");
-			//check that duplicate first name is caught
-			Assert.IsTrue(OpenDentBusiness.Patients.GetHasDuplicateForNameOrPreferredBirthdayEmailAndPhone("Doe","John",new DateTime(1971,6,28),"","5555555555"));
-			//check using preferred name as first name
-			Assert.IsTrue(OpenDentBusiness.Patients.GetHasDuplicateForNameOrPreferredBirthdayEmailAndPhone("Doe","Jack",new DateTime(1971,6,28),"","5555555555"));
-			//unique first name, everything else equal, no duplicate
-			Assert.IsFalse(OpenDentBusiness.Patients.GetHasDuplicateForNameOrPreferredBirthdayEmailAndPhone("Doe","Jane",new DateTime(1971,6,28),"","5555555555"));
-		}
 	}
 }

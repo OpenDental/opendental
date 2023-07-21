@@ -60,7 +60,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(listTransType.SelectedIndex==2) { //Debit Purchase
 				if(!textCashBackAmt.IsValid()) {
 					MsgBox.Show(this,"Please fix data entry errors first.");

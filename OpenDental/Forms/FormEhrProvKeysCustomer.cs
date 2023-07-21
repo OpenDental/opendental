@@ -78,7 +78,7 @@ namespace OpenDental {
 			formK.KeyCur.FullTimeEquiv=1;
 			formK.KeyCur.IsNew=true;
 			formK.ShowDialog();
-			SecurityLogs.MakeLogEntry(EnumPermType.EhrKeyAdd,Guarantor,"Added provider key.");
+			SecurityLogs.MakeLogEntry(Permissions.EhrKeyAdd,Guarantor,"Added provider key.");
 			FillGrid();
 		}
 
@@ -161,7 +161,7 @@ namespace OpenDental {
 			}
 			formK.KeyCur.IsNew=true;
 			formK.ShowDialog();
-			SecurityLogs.MakeLogEntry(EnumPermType.EhrKeyAdd,Guarantor,"Added quarterly key.");
+			SecurityLogs.MakeLogEntry(Permissions.EhrKeyAdd,Guarantor,"Added quarterly key.");
 			FillGridQ();
 		}
 
@@ -180,5 +180,18 @@ namespace OpenDental {
 			MsgBox.Show(this,"Saved.");
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
+		
+
+	
+
+	
+
+		
+
+		
 	}
 }

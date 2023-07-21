@@ -21,16 +21,16 @@ namespace OpenDental {
 		///<summary></summary>
 		public FrmUserGroupEdit(UserGroup curGroup)
 		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
+			//Lan.F(this);
 			_userGroup=curGroup;
-			Load+=FrmUserGroupEdit_Load;
-			PreviewKeyDown+=FrmUserGroupEdit_PreviewKeyDown;
 		}
 
-		private void FrmUserGroupEdit_Load(object sender, EventArgs e) {
-			Lang.F(this);
+		private void FrmUserGroupEdit_Loaded(object sender, RoutedEventArgs e) {
 			textDescription.Text=_userGroup.Description;
-			textDescription.SelectAll();
 		}
 
 		private void butDelete_Click(object sender, System.EventArgs e) {
@@ -49,12 +49,6 @@ namespace OpenDental {
 			}
 			catch(Exception ex){
 				MsgBox.Show(ex.Message);
-			}
-		}
-
-		private void FrmUserGroupEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
 			}
 		}
 
@@ -79,6 +73,26 @@ namespace OpenDental {
 			DataValid.SetInvalid(InvalidType.Security);
 			IsDialogOK=true;
 		}
-
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -21,36 +21,30 @@ namespace OpenDental {
 		///<summary></summary>
 		public FrmUserGroupPicker()
 		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
-			Load+=FrmUserGroupPicker_Load;
-			listGroups.MouseDoubleClick+=listGroups_DoubleClick;
-			PreviewKeyDown+=FrmUserGroupPicker_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmUserGroupPicker_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmUserGroupPicker_Loaded(object sender,RoutedEventArgs e) {
 			FillList();
 		}
 
 		private void FillList(){
 			UserGroups.RefreshCache();
 			listGroups.Items.Clear();
-			List<UserGroup> listUserGroups=UserGroups.GetWhere(x => IsAdminMode || !GroupPermissions.HasPermission(x.UserGroupNum,EnumPermType.SecurityAdmin,0));
+			List<UserGroup> listUserGroups=UserGroups.GetWhere(x => IsAdminMode || !GroupPermissions.HasPermission(x.UserGroupNum,Permissions.SecurityAdmin,0));
 			listGroups.Items.AddList(listUserGroups,x => x.Description);
 		}
 
-		private void listGroups_DoubleClick(object sender,MouseButtonEventArgs e) {
+		private void listGroups_DoubleClick(object sender,EventArgs e) {
 			if(listGroups.SelectedIndex==-1) {
 				return;
 			}
 			UserGroupSelected=listGroups.GetSelected<UserGroup>();
 			IsDialogOK=true;
-		}
-
-		private void FrmUserGroupPicker_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butOK.IsAltKey(Key.O,e)) {
-				butOK_Click(this,new EventArgs());
-			}
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
@@ -64,3 +58,24 @@ namespace OpenDental {
 
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -26,6 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEtrans270EBraw));
 			this.label1 = new System.Windows.Forms.Label();
 			this.gridMain = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.textRaw = new System.Windows.Forms.RichTextBox();
 			this.SuspendLayout();
 			// 
@@ -33,7 +34,7 @@ namespace OpenDental{
 			// 
 			this.label1.Location = new System.Drawing.Point(14, 13);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(349, 18);
+			this.label1.Size = new System.Drawing.Size(449, 18);
 			this.label1.TabIndex = 4;
 			this.label1.Text = "Raw benefit information as received from the insurance company";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
@@ -45,10 +46,20 @@ namespace OpenDental{
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridMain.Location = new System.Drawing.Point(16, 166);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(337, 258);
+			this.gridMain.Size = new System.Drawing.Size(401, 258);
 			this.gridMain.TabIndex = 21;
 			this.gridMain.Title = "EB (benefit) Elements";
 			this.gridMain.TranslationName = "FormEtrans270EBraw";
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(472, 401);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// textRaw
 			// 
@@ -57,15 +68,16 @@ namespace OpenDental{
 			this.textRaw.Location = new System.Drawing.Point(16, 34);
 			this.textRaw.Name = "textRaw";
 			this.textRaw.ReadOnly = true;
-			this.textRaw.Size = new System.Drawing.Size(337, 126);
+			this.textRaw.Size = new System.Drawing.Size(401, 126);
 			this.textRaw.TabIndex = 23;
 			this.textRaw.Text = "";
 			this.textRaw.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.textRaw_LinkClicked);
 			// 
 			// FormEtrans270EBraw
 			// 
-			this.ClientSize = new System.Drawing.Size(365, 452);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(572, 452);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.textRaw);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.label1);
@@ -79,6 +91,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.GridOD gridMain;
 		private System.Windows.Forms.RichTextBox textRaw;

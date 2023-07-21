@@ -114,12 +114,7 @@ namespace OpenDentBusiness{
 
 		public SheetDef Copy(){
 			SheetDef sheetdef=(SheetDef)this.MemberwiseClone();
-			if(Parameters!=null) {
-				sheetdef.Parameters=Parameters.Select(x => x.Copy()).ToList();
-			}
-			if(SheetFieldDefs!=null) {
-				sheetdef.SheetFieldDefs=SheetFieldDefs.Select(x => x.Copy()).ToList();
-			}
+			//do I need to copy the lists?
 			return sheetdef;
 		}
 

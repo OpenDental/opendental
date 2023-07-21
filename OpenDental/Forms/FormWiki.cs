@@ -17,7 +17,6 @@ namespace OpenDental {
 	public partial class FormWiki:FormODBase {
 		public WikiPage WikiPageCur;		
 		private List<string> _listHistoryNav;
-		private string wikiLinkMouseHoverName=null;
 		///<summary>Number of pages back that you are browsing. Current page == 0, Oldest page == _listHistoryNav.Length. </summary>
 		private int _idxHistoryNavBack;
 		const int FEATURE_DISABLE_NAVIGATION_SOUNDS = 21;
@@ -41,7 +40,7 @@ namespace OpenDental {
 			webBrowserWiki.StatusTextChanged += new EventHandler(WebBrowserWiki_StatusTextChanged);
 			Rectangle rectangleScreen=System.Windows.Forms.Screen.GetWorkingArea(this);
 			Width=LayoutManager.Scale(960);
-			Height=rectangleScreen.Height+(int)LayoutManager.ScaleMS(8);//for the transparent 8 pixels at bottom
+			Height=rectangleScreen.Height;
 			Left=rectangleScreen.Left+((rectangleScreen.Width-Width)/2);
 			Top=rectangleScreen.Top;
 			LayoutToolBar();
@@ -79,9 +78,6 @@ namespace OpenDental {
 			labelStatus.Text=webBrowserWiki.StatusText;
 			if(labelStatus.Text=="Done") {
 				labelStatus.Text="";
-			}
-			if(labelStatus.Text!="" && Control.MouseButtons==MouseButtons.Right) {
-				wikiLinkMouseHoverName=webBrowserWiki.StatusText;
 			}
 		}
 
@@ -242,7 +238,7 @@ namespace OpenDental {
 			if(WikiPageCur==null) {
 				return true;
 			}
-			if(Security.IsAuthorized(EnumPermType.WikiAdmin,true) || !WikiPageCur.IsLocked) {
+			if(Security.IsAuthorized(Permissions.WikiAdmin,true) || !WikiPageCur.IsLocked) {
 				return false;
 			}
 			MsgBox.Show(this,"This wiki page is locked and cannot be edited without the Wiki Admin security permission.");
@@ -543,11 +539,32 @@ namespace OpenDental {
 				//It is invalid to have more than one space in a row in URLs.
 				//When there is more than one space in a row, WebBrowserNavigatingEventArgs will convert the spaces into '&nbsp'
 				//In order for our internal wiki page links to work, we need to always replace the '&nbsp' chars with spaces again.
-				NavigateToWiki(e.Url.ToString(),isNewWindow:false);
+				string wikiPageTitle=Regex.Replace(e.Url.ToString(),@"\u00A0"," ").Substring(5);
+				WikiPage wikiPageDeleted=WikiPages.GetByTitle(wikiPageTitle,isDeleted:true);//Should most likely be null.
+				WikiPage wikiPageExisting;
+				if(wikiPageDeleted!=null && HasExistingWikiPage(wikiPageDeleted,out wikiPageExisting)) {
+					//Now replace any references to wikiPageDeleted with the non deleted wp(wpExisting).
+					WikiPages.UpdateWikiPageReferences(WikiPageCur.WikiPageNum,wikiPageDeleted.WikiPageNum,wikiPageExisting.WikiPageNum);
+					//Continue to load the page.
+				}
+				else if(wikiPageDeleted!=null) {
+					if(MessageBox.Show(Lan.g(this,"WikiPage '")+wikiPageTitle+Lan.g(this,"' is currently archived. Would you like to restore it?"),
+							"",MessageBoxButtons.OKCancel)!=DialogResult.OK) 
+					{
+						e.Cancel=true;
+						return;
+					}
+					else {
+						//User wants to restore the WikiPage.
+						WikiPages.WikiPageRestore(wikiPageDeleted,Security.CurUser.UserNum);
+					}
+				}
+				_idxHistoryNavBack--;//We have to decrement historyNavBack to tell whether or not we need to branch our page history or add to page history
+				LoadWikiPage(wikiPageTitle);
 				e.Cancel=true;
 				return;
 			}
-			else if(e.Url.ToString().Contains("wikifile:") && !ODBuild.IsThinfinity()) {
+			else if(e.Url.ToString().Contains("wikifile:") && !ODBuild.IsWeb()) {
 				string fileName=e.Url.ToString().Substring(e.Url.ToString().LastIndexOf("wikifile:")+9).Replace("/","\\");
 				if(!File.Exists(fileName)) {
 					MessageBox.Show(Lan.g(this,"File does not exist: ")+fileName);
@@ -563,7 +580,7 @@ namespace OpenDental {
 				e.Cancel=true;
 				return;
 			}
-			else if(e.Url.ToString().Contains("folder:") && !ODBuild.IsThinfinity()) {
+			else if(e.Url.ToString().Contains("folder:") && !ODBuild.IsWeb()) {
 				string folderName=e.Url.ToString().Substring(e.Url.ToString().LastIndexOf("folder:")+7).Replace("/","\\");
 				if(!Directory.Exists(folderName)) {
 					MessageBox.Show(Lan.g(this,"Folder does not exist: ")+folderName);
@@ -635,54 +652,25 @@ namespace OpenDental {
 			return true;
 		}
 
-		private void NavigateToWiki(string wikiAddress,bool isNewWindow) {
-			string pageTitle=Regex.Replace(wikiAddress,@"\u00A0"," ").Substring(5);
-			WikiPage wikiPageDeleted=WikiPages.GetByTitle(pageTitle,isDeleted:true);//Should most likely be null.
-			WikiPage wikiPageExisting;
-			if(wikiPageDeleted!=null && HasExistingWikiPage(wikiPageDeleted,out wikiPageExisting)) {
-				//Now replace any references to wikiPageDeleted with the non deleted wp(wpExisting).
-				WikiPages.UpdateWikiPageReferences(WikiPageCur.WikiPageNum,wikiPageDeleted.WikiPageNum,wikiPageExisting.WikiPageNum);
-				//Continue to load the page.
-			}
-			else if(wikiPageDeleted!=null) {
-				if(MessageBox.Show(Lan.g(this,"WikiPage '")+pageTitle+Lan.g(this,"' is currently archived. Would you like to restore it?"),
-						"",MessageBoxButtons.OKCancel)!=DialogResult.OK) 
-				{
-					return;
-				}
-				//User wants to restore the WikiPage.
-				WikiPages.WikiPageRestore(wikiPageDeleted,Security.CurUser.UserNum);
-			}
-			//Open wiki in a new window.
-			bool isCtrlDown=(Control.ModifierKeys & Keys.Control)==Keys.Control;
-			if (isNewWindow || isCtrlDown) {
-				WikiPages.NavPageDelegate(pageTitle);
-			}
-			else {
-				_idxHistoryNavBack--;//We have to decrement historyNavBack to tell whether or not we need to branch our page history or add to page history
-				LoadWikiPage(pageTitle);
-			}
-		}
-
 		private void webBrowserWiki_DocumentCompleted(object sender,WebBrowserDocumentCompletedEventArgs e) {			
-		}
-
-		private void webBrowserWiki_NewWindow(object sender,CancelEventArgs e) {
-			//right click option
-			if(wikiLinkMouseHoverName.StartsWith("wiki:")) {
-				NavigateToWiki(wikiLinkMouseHoverName,isNewWindow:true);
-				e.Cancel=true;
-			}
-			return;
 		}
 
 		private void FormWiki_ResizeEnd(object sender,EventArgs e) {
 			Rectangle rectangleScreen=System.Windows.Forms.Screen.GetWorkingArea(this);
-			if(Height>rectangleScreen.Height+(int)LayoutManager.ScaleMS(8)){
-				//8 is for the transparent pixels at bottom
-				Height=rectangleScreen.Height+(int)LayoutManager.ScaleMS(8);
+			if(Height>rectangleScreen.Height){
+				Height=rectangleScreen.Height;
 				Top=rectangleScreen.Top;
 			}
+		}
+
+		private void butOK_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+			Close();
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+			Close();
 		}
 
 		private void FormWiki_FormClosing(object sender,FormClosingEventArgs e) {
@@ -692,5 +680,7 @@ namespace OpenDental {
 			_formWikiSearch.Close();
 			_formWikiSearch.Dispose();
 		}
+
+		
 	}
 }

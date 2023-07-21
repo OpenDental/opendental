@@ -58,7 +58,7 @@ namespace OpenDental{
 			}
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(_isPasswordReset) {
 				if(textPassword.Text!=textCurrent.Text || string.IsNullOrWhiteSpace(textPassword.Text)) {
 					MsgBox.Show(this,"Passwords must match and not be empty.");
@@ -90,6 +90,9 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }
 

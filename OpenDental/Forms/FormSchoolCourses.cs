@@ -25,9 +25,8 @@ namespace OpenDental{
 		private void FormSchoolCourses_Load(object sender, System.EventArgs e) {
 			if(IsSelectionMode) {
 				butAdd.Visible=false;
-			}
-			else{
-				butOK.Visible=false;
+				butOK.Visible=true;
+				butClose.Text="Cancel";
 			}
 			_listSchoolCourses=SchoolCourses.GetDeepCopy();
 			FillGrid();
@@ -90,6 +89,10 @@ namespace OpenDental{
 				SchoolCourseSelected=_listSchoolCourses[gridMain.GetSelectedIndex()];
 				DialogResult=DialogResult.OK;
 			}
+		}
+
+		private void butClose_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

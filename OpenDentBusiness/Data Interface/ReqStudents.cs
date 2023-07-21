@@ -20,30 +20,30 @@ namespace OpenDentBusiness{
 			return Crud.ReqStudentCrud.SelectMany(command);
 		}
 
-		public static ReqStudent GetOne(long reqStudentNum) {
+		public static ReqStudent GetOne(long ReqStudentNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<ReqStudent>(MethodBase.GetCurrentMethod(),reqStudentNum);
+				return Meth.GetObject<ReqStudent>(MethodBase.GetCurrentMethod(),ReqStudentNum);
 			}
-			string command="SELECT * FROM reqstudent WHERE ReqStudentNum="+POut.Long(reqStudentNum);
-			return Crud.ReqStudentCrud.SelectOne(reqStudentNum);
+			string command="SELECT * FROM reqstudent WHERE ReqStudentNum="+POut.Long(ReqStudentNum);
+			return Crud.ReqStudentCrud.SelectOne(ReqStudentNum);
 		}
 
 		///<summary></summary>
-		public static void Update(ReqStudent reqStudent) {
+		public static void Update(ReqStudent req) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),reqStudent);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),req);
 				return;
 			}
-			Crud.ReqStudentCrud.Update(reqStudent);
+			Crud.ReqStudentCrud.Update(req);
 		}
 
 		///<summary></summary>
-		public static long Insert(ReqStudent reqStudent) {
+		public static long Insert(ReqStudent req) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				reqStudent.ReqStudentNum=Meth.GetLong(MethodBase.GetCurrentMethod(),reqStudent);
-				return reqStudent.ReqStudentNum;
+				req.ReqStudentNum=Meth.GetLong(MethodBase.GetCurrentMethod(),req);
+				return req.ReqStudentNum;
 			}
-			return Crud.ReqStudentCrud.Insert(reqStudent);
+			return Crud.ReqStudentCrud.Insert(req);
 		}
 
 		///<summary>Surround with try/catch.</summary>
@@ -52,9 +52,9 @@ namespace OpenDentBusiness{
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),reqStudentNum);
 				return;
 			}
-			ReqStudent reqStudent=GetOne(reqStudentNum);
+			ReqStudent req=GetOne(reqStudentNum);
 			//if a reqneeded exists, then disallow deletion.
-			if(ReqNeededs.GetReq(reqStudent.ReqNeededNum)==null) {
+			if(ReqNeededs.GetReq(req.ReqNeededNum)==null) {
 				throw new Exception(Lans.g("ReqStudents","Cannot delete requirement.  Delete the requirement needed instead."));
 			}
 			string command= "DELETE FROM reqstudent WHERE ReqStudentNum = "+POut.Long(reqStudentNum);
@@ -66,7 +66,7 @@ namespace OpenDentBusiness{
 				return Meth.GetTable(MethodBase.GetCurrentMethod(),provNum);
 			}
 			DataTable table=new DataTable();
-			DataRow dataRow;
+			DataRow row;
 			//columns that start with lowercase are altered for display rather than being raw data.
 			table.Columns.Add("appointment");
 			table.Columns.Add("course");
@@ -83,36 +83,36 @@ namespace OpenDentBusiness{
 				+"LEFT JOIN appointment ON reqstudent.AptNum=appointment.AptNum "
 				+"WHERE reqstudent.ProvNum="+POut.Long(provNum)
 				+" ORDER BY CourseID,ReqDescript";
-			DataTable tableRaw=Db.GetTable(command);
-			DateTime dateTimeApt;
+			DataTable raw=Db.GetTable(command);
+			DateTime AptDateTime;
 			DateTime dateCompleted;
-			for(int i=0;i<tableRaw.Rows.Count;i++) {
-				dataRow=table.NewRow();
-				dateTimeApt=PIn.DateT(tableRaw.Rows[i]["AptDateTime"].ToString());
-				if(dateTimeApt.Year>1880){
-					dataRow["appointment"]=dateTimeApt.ToShortDateString()+" "+dateTimeApt.ToShortTimeString()
-						+" "+tableRaw.Rows[i]["ProcDescript"].ToString();
+			for(int i=0;i<raw.Rows.Count;i++) {
+				row=table.NewRow();
+				AptDateTime=PIn.DateT(raw.Rows[i]["AptDateTime"].ToString());
+				if(AptDateTime.Year>1880){
+					row["appointment"]=AptDateTime.ToShortDateString()+" "+AptDateTime.ToShortTimeString()
+						+" "+raw.Rows[i]["ProcDescript"].ToString();
 				}
-				dataRow["course"]=tableRaw.Rows[i]["CourseID"].ToString();//+" "+raw.Rows[i]["CourseDescript"].ToString();
-				dateCompleted=PIn.Date(tableRaw.Rows[i]["DateCompleted"].ToString());
+				row["course"]=raw.Rows[i]["CourseID"].ToString();//+" "+raw.Rows[i]["CourseDescript"].ToString();
+				dateCompleted=PIn.Date(raw.Rows[i]["DateCompleted"].ToString());
 				if(dateCompleted.Year>1880){
-					dataRow["done"]="X";
+					row["done"]="X";
 				}
-				dataRow["patient"]=PatientLogic.GetNameLF(tableRaw.Rows[i]["LName"].ToString(),tableRaw.Rows[i]["FName"].ToString(),
-					tableRaw.Rows[i]["Preferred"].ToString(),tableRaw.Rows[i]["MiddleI"].ToString());
-				dataRow["ReqStudentNum"]=tableRaw.Rows[i]["ReqStudentNum"].ToString();
-				dataRow["requirement"]=tableRaw.Rows[i]["ReqDescript"].ToString();
-				table.Rows.Add(dataRow);
+				row["patient"]=PatientLogic.GetNameLF(raw.Rows[i]["LName"].ToString(),raw.Rows[i]["FName"].ToString(),
+					raw.Rows[i]["Preferred"].ToString(),raw.Rows[i]["MiddleI"].ToString());
+				row["ReqStudentNum"]=raw.Rows[i]["ReqStudentNum"].ToString();
+				row["requirement"]=raw.Rows[i]["ReqDescript"].ToString();
+				table.Rows.Add(row);
 			}
 			return table;
 		}
 
-		public static DataTable RefreshManyStudents(long schoolClassNum,long schoolCourseNum) {
+		public static DataTable RefreshManyStudents(long classNum,long courseNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetTable(MethodBase.GetCurrentMethod(),schoolClassNum,schoolCourseNum);
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),classNum,courseNum);
 			}
 			DataTable table=new DataTable();
-			DataRow dataRow;
+			DataRow row;
 			//columns that start with lowercase are altered for display rather than being raw data.
 			table.Columns.Add("donereq");
 			table.Columns.Add("FName");
@@ -122,34 +122,34 @@ namespace OpenDentBusiness{
 			string command="SELECT COUNT(DISTINCT req2.ReqStudentNum) donereq,FName,LName,provider.ProvNum,"
 				+"COUNT(DISTINCT req1.ReqStudentNum) totalreq "
 				+"FROM provider "
-				+"LEFT JOIN reqstudent req1 ON req1.ProvNum=provider.ProvNum AND req1.SchoolCourseNum="+POut.Long(schoolCourseNum)+" "
+				+"LEFT JOIN reqstudent req1 ON req1.ProvNum=provider.ProvNum AND req1.SchoolCourseNum="+POut.Long(courseNum)+" "
 				+"LEFT JOIN reqstudent req2 ON req2.ProvNum=provider.ProvNum AND "+DbHelper.Year("req2.DateCompleted")+" > 1880 "
-				+"AND req2.SchoolCourseNum="+POut.Long(schoolCourseNum)+" "
-				+"WHERE provider.SchoolClassNum="+POut.Long(schoolClassNum)
+				+"AND req2.SchoolCourseNum="+POut.Long(courseNum)+" "
+				+"WHERE provider.SchoolClassNum="+POut.Long(classNum)
 				+" GROUP BY FName,LName,provider.ProvNum "
 				+"ORDER BY LName,FName";
-			DataTable tableRaw=Db.GetTable(command);
-			for(int i=0;i<tableRaw.Rows.Count;i++) {
-				dataRow=table.NewRow();
-				dataRow["donereq"]=tableRaw.Rows[i]["donereq"].ToString();
-				dataRow["FName"]=tableRaw.Rows[i]["FName"].ToString();
-				dataRow["LName"]=tableRaw.Rows[i]["LName"].ToString();
-				dataRow["studentNum"]=tableRaw.Rows[i]["ProvNum"].ToString();
-				dataRow["totalreq"]=tableRaw.Rows[i]["totalreq"].ToString();
-				table.Rows.Add(dataRow);
+			DataTable raw=Db.GetTable(command);
+			for(int i=0;i<raw.Rows.Count;i++) {
+				row=table.NewRow();
+				row["donereq"]=raw.Rows[i]["donereq"].ToString();
+				row["FName"]=raw.Rows[i]["FName"].ToString();
+				row["LName"]=raw.Rows[i]["LName"].ToString();
+				row["studentNum"]=raw.Rows[i]["ProvNum"].ToString();
+				row["totalreq"]=raw.Rows[i]["totalreq"].ToString();
+				table.Rows.Add(row);
 			}
 			return table;
 		}
 
-		public static List<Provider> GetStudents(long schoolClassNum) {
+		public static List<Provider> GetStudents(long classNum) {
 			//No need to check MiddleTierRole; no call to db.
-			return Providers.GetWhere(x => x.SchoolClassNum==schoolClassNum,true);
+			return Providers.GetWhere(x => x.SchoolClassNum==classNum,true);
 		}
 
 		///<summary>Provider(student) is required.</summary>
-		public static DataTable GetForCourseClass(long schoolCourseNum,long schoolClassNum) {
+		public static DataTable GetForCourseClass(long schoolCourse,long schoolClass) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetTable(MethodBase.GetCurrentMethod(),schoolCourseNum,schoolClassNum);
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),schoolCourse,schoolClass);
 			}
 			string command="SELECT Descript,ReqNeededNum "
 				+"FROM reqneeded ";
@@ -157,40 +157,40 @@ namespace OpenDentBusiness{
 			//	command+="WHERE ProvNum="+POut.PInt(provNum);
 			//}
 			//else{
-				command+="WHERE SchoolCourseNum="+POut.Long(schoolCourseNum)
+				command+="WHERE SchoolCourseNum="+POut.Long(schoolCourse)
 					//+" AND ProvNum="+POut.PInt(provNum);
 			//}
-			+" AND SchoolClassNum="+POut.Long(schoolClassNum);
+			+" AND SchoolClassNum="+POut.Long(schoolClass);
 			command+=" ORDER BY Descript";
 			return Db.GetTable(command);
 		}
 
 		
 		///<summary>All fields for all reqs will have already been set.  All except for reqstudent.ReqStudentNum if new.  Now, they just have to be persisted to the database.</summary>
-		public static void SynchApt(List<ReqStudent> listReqStudentsAttached,List<ReqStudent> listReqStudentsRemoved,long aptNum) {
+		public static void SynchApt(List<ReqStudent> listReqsAttached,List<ReqStudent> listReqsRemoved,long aptNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listReqStudentsAttached,listReqStudentsRemoved,aptNum);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),listReqsAttached,listReqsRemoved,aptNum);
 				return;
 			}
 			string command;
 			//first, delete all that were removed from this appt
-			if(listReqStudentsRemoved.Count(x => x.ReqStudentNum != 0) > 0) {
-				command="DELETE FROM reqstudent WHERE ReqStudentNum IN("+string.Join(",",listReqStudentsRemoved.Where(x => x.ReqStudentNum != 0)
+			if(listReqsRemoved.Count(x => x.ReqStudentNum != 0) > 0) {
+				command="DELETE FROM reqstudent WHERE ReqStudentNum IN("+string.Join(",",listReqsRemoved.Where(x => x.ReqStudentNum != 0)
 					.Select(x => x.ReqStudentNum))+")";
 				Db.NonQ(command);
 			}
 			//second, detach all from this appt
 			command="UPDATE reqstudent SET AptNum=0 WHERE AptNum="+POut.Long(aptNum);
 			Db.NonQ(command);
-			if(listReqStudentsAttached.Count==0) {
+			if(listReqsAttached.Count==0) {
 				return;
 			}
-			for(int i=0;i<listReqStudentsAttached.Count;i++){
-				if(listReqStudentsAttached[i].ReqStudentNum==0){
-					ReqStudents.Insert(listReqStudentsAttached[i]);
+			for(int i=0;i<listReqsAttached.Count;i++){
+				if(listReqsAttached[i].ReqStudentNum==0){
+					ReqStudents.Insert(listReqsAttached[i]);
 				}
 				else{
-					ReqStudents.Update(listReqStudentsAttached[i]);
+					ReqStudents.Update(listReqsAttached[i]);
 				}
 			}
 		}
@@ -225,3 +225,16 @@ namespace OpenDentBusiness{
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

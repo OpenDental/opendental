@@ -57,19 +57,16 @@ namespace OpenDental {
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-			inputBoxParam.LabelText="Actual OID";
-			inputBoxParam.Text=_listOIDInternals[e.Row].IDRoot;
-			InputBox inputBox=new InputBox(inputBoxParam);
+			using InputBox inputBox=new InputBox("Actual OID");
+			inputBox.textResult.Text=_listOIDInternals[e.Row].IDRoot;
 			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			if(inputBox.DialogResult!=DialogResult.OK) {
 				return;
 			}
 			if(e.Row==0) {
-				_rootOIDString=inputBox.StringResult;
+				_rootOIDString=inputBox.textResult.Text;
 			}
-			_listOIDInternals[e.Row].IDRoot=inputBox.StringResult;
+			_listOIDInternals[e.Row].IDRoot=inputBox.textResult.Text;
 			FillGrid();
 		}
 
@@ -161,12 +158,18 @@ namespace OpenDental {
 			FillGrid();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			for(int i=0;i<_listOIDInternals.Count;i++) {
 				OIDInternals.Update(_listOIDInternals[i]);
 			}
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+
 
 	}
 }

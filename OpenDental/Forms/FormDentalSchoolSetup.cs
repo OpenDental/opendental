@@ -12,7 +12,7 @@ namespace OpenDental {
 		}
 
 		private void FormDentalSchoolSetup_Load(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			UserGroup userGroupStudent=UserGroups.GetGroup(PrefC.GetLong(PrefName.SecurityGroupForStudents));
@@ -26,7 +26,7 @@ namespace OpenDental {
 		}
 
 		private void butStudentPicker_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
 			FrmUserGroupPicker frmUserGroupPicker=new FrmUserGroupPicker();
@@ -56,7 +56,7 @@ namespace OpenDental {
 		}
 
 		private void butInstructorPicker_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
 			FrmUserGroupPicker frmUserGroupPicker=new FrmUserGroupPicker();
@@ -95,6 +95,10 @@ namespace OpenDental {
 			//EvaluationDefs can be added and edited from here.
 			using FormEvaluationDefs formEvaluationDefs=new FormEvaluationDefs();
 			formEvaluationDefs.ShowDialog();
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

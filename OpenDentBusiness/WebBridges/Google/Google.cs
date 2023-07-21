@@ -186,7 +186,7 @@ namespace OpenDentBusiness {
 					return;
 				}
 				for(int i=_MIN_PORT;i<_MAX_PORT;i++) {
-					if(ODEnvironment.IsCloudServer) {
+					if(ODBuild.IsWeb()) {
 						try {
 							if(!ODCloudClient.ODCloudAuthGoogleListener($"http://{IPAddress.Loopback}:{i}/")) {
 								continue;
@@ -220,7 +220,7 @@ namespace OpenDentBusiness {
 			///Exchanges the auth code for tokens and returns them. The GoogleToken returned may contain an error message from WebServiceMainHQ.
 			///If you are done with the AuthorizationRequest after calling this, be sure to call CloseListener().</summary>
 			public GoogleToken MakeAccessTokenRequest(string emailAddress) {
-				if(ODEnvironment.IsCloudServer) {
+				if(ODBuild.IsWeb()) {
 					if(!ODCloudClient.CheckIsListening()) {
 						throw new ODException("An attempt to request tokens was made before starting the HttpListener.");
 					}
@@ -234,14 +234,9 @@ namespace OpenDentBusiness {
 				_codeVerifier=RandomDataBase64Url(32);
 				_codeChallenge=Base64urlencodeNoPadding(Sha256(_codeVerifier));
 				BuildAuthorizationUrl(emailAddress);
-				if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-					ODCloudClient.LaunchFileWithODCloudClient(_url);
-				}
-				else{
-					Process.Start(_url);
-				}
+				Process.Start(_url);
 				string code="";
-				if(ODEnvironment.IsCloudServer) {
+				if(ODBuild.IsWeb()) {
 					string GoogleAuthCodeResponseHtml=Properties.Resources.GoogleAuthCodeResponseHtml;
 					ODCloudClient.HttpListenerGetContext();
 					while(string.IsNullOrWhiteSpace(code)) {
@@ -261,7 +256,7 @@ namespace OpenDentBusiness {
 			///<summary>Closes the HttpListener if it is not null. If you close the listener but intend to use this AuthorizationRequest again,
 			///you must call StartListener() again.</summary>
 			public void CloseListener() {
-				if(ODEnvironment.IsCloudServer) {
+				if(ODBuild.IsWeb()) {
 					ODCloudClient.CloseListener();
 				}
 				else {
@@ -343,7 +338,7 @@ namespace OpenDentBusiness {
 			///<summary>Returns the first Prefix of the HttpListener which should be our redirect URI.</summary>
 			private string GetRedirectUri() {
 				string redirectUri;
-				if(ODEnvironment.IsCloudServer) {
+				if(ODBuild.IsWeb()) {
 					redirectUri = ODCloudClient.GetRedirectUri();
 				}
 				else {

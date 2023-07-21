@@ -76,17 +76,6 @@ namespace OpenDentBusiness {
 			return Db.GetCount(command)!="0";
 		}
 
-		///<summary>Returns list of patnums where the pickitem is still in use.</summary>
-		public static List<long> GetPatNumsUsingPickItem(string patFieldPickItemName, string patFieldName) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<long>>(MethodBase.GetCurrentMethod(),patFieldPickItemName, patFieldName);
-			}
-			string command="SELECT * FROM patfield "
-				+"WHERE FieldName='"+POut.String(patFieldName)+"' "
-				+"AND FieldValue='"+POut.String(patFieldPickItemName)+"'";
-			return Crud.PatFieldCrud.SelectMany(command).ConvertAll(x=>x.PatNum);
-		}
-
 		///<summary>Get all PatFields for the given fieldName which belong to patients who have a corresponding entry in the RegistrationKey table. DO NOT REMOVE! Used by OD WebApps solution.</summary>
 		public static List<PatField> GetPatFieldsWithRegKeys(string fieldName) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -103,28 +92,6 @@ namespace OpenDentBusiness {
 				return;
 			}
 			Crud.PatFieldCrud.Update(patField);
-		}
-
-		///<summary>For all patients in the entire db when a FieldName changes.</summary>
-		public static void UpdateFieldName(string patFieldNameNew, string patFieldNameOld) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),patFieldNameNew,patFieldNameOld);
-				return;
-			}
-			string command="UPDATE patfield SET FieldName='"+POut.String(patFieldNameNew)+"' "
-				+"WHERE FieldName='"+POut.String(patFieldNameOld)+"'";
-			Db.NonQ(command);
-		}
-
-		///<summary>For all patients in the entire db when a PatField's PickListItem value changes.</summary>
-		public static void UpdatePatFieldValues(string patFieldName, string patFieldValueNew, string patFieldValueOld) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),patFieldName,patFieldValueNew,patFieldValueOld);
-				return;
-			}
-			string command="UPDATE patfield SET FieldValue='"+POut.String(patFieldValueNew)+"' "
-				+"WHERE FieldName='"+POut.String(patFieldName)+"' AND FieldValue='"+POut.String(patFieldValueOld)+"'";
-			Db.NonQ(command);
 		}
 
 		///<summary></summary>
@@ -149,10 +116,10 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Frequently returns null.</summary>
-		public static PatField GetByName(string name,PatField[] fieldList) {
+		public static PatField GetByName(string name,PatField[] fieldList){
 			//No need to check MiddleTierRole; no call to db.
-			for(int i=0;i<fieldList.Length;i++) {
-				if(fieldList[i].FieldName==name) {
+			for(int i=0;i<fieldList.Length;i++){
+				if(fieldList[i].FieldName==name){
 					return fieldList[i];
 				}
 			}
@@ -161,64 +128,16 @@ namespace OpenDentBusiness {
 
 		///<summary>A helper method to make a security log entry for deletion.  Because we have several patient field edit windows, this will allow us to change them all at once.</summary>
 		public static void MakeDeleteLogEntry(PatField patField) {
-			SecurityLogs.MakeLogEntry(EnumPermType.PatientFieldEdit,patField.PatNum,"Deleted patient field "+patField.FieldName+".  Value before deletion: \""+patField.FieldValue+"\"");
+			SecurityLogs.MakeLogEntry(Permissions.PatientFieldEdit,patField.PatNum,"Deleted patient field "+patField.FieldName+".  Value before deletion: \""+patField.FieldValue+"\"");
 		}
 
 		///<summary>A helper method to make a security log entry for an edit.  Because we have several patient field edit windows, this will allow us to change them all at once.</summary>
 		public static void MakeEditLogEntry(PatField patFieldOld,PatField patFieldCur) {
-			SecurityLogs.MakeLogEntry(EnumPermType.PatientFieldEdit,patFieldCur.PatNum
+			SecurityLogs.MakeLogEntry(Permissions.PatientFieldEdit,patFieldCur.PatNum
 					,"Edited patient field "+patFieldCur.FieldName+"\r\n"
 					+"Old value"+": \""+patFieldOld.FieldValue+"\"  New value: \""+patFieldCur.FieldValue+"\"");
 		}
-
-		///<summary>Gets all PatFields for all patients in list.</summary>
-		public static List<PatField> GetPatFieldsForSuperFam(List<long> listPatNumsSuperFam) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<PatField>>(MethodBase.GetCurrentMethod(),listPatNumsSuperFam);
-			}
-			List<DisplayField> listDisplayFields=DisplayFields.GetForCategory(DisplayFieldCategory.SuperFamilyGridCols)
-				.FindAll(x=>string.IsNullOrWhiteSpace(x.InternalName));//patfields have DisplayField.InternalName blank.
-			if(listDisplayFields.Count==0) {
-				return new List<PatField>();
-			}
-			string command="SELECT * FROM patfield WHERE (";
-			for(int i=0;i<listDisplayFields.Count;i++) {
-				if(i>0) {
-					command+=" OR ";
-				}
-				command+="FieldName='"+POut.String(listDisplayFields[i].Description)+"'";
-			}
-			if(listPatNumsSuperFam.Count>0) {
-				command+=") AND PatNum IN("+string.Join(",",listPatNumsSuperFam);
-			}
-			command+=")";
-			return Crud.PatFieldCrud.SelectMany(command);
-		}
-
-		///<summary>Abbreviations only exist for pick list items. The patFieldDefName passed in does not necessarily need to be a picklist.</summary>
-		public static string GetAbbrOrValue(PatField patField,string displayFieldName) {
-			//No need to check MiddleTierRole; no call to db.
-			if(patField==null) {
-				return "";//Common if this patient has no patField yet.
-			}
-			PatFieldDef patFieldDef=PatFieldDefs.GetFieldDefByFieldName(displayFieldName);
-			if(patFieldDef==null || patFieldDef.FieldType!=PatFieldType.PickList) {
-				return patField.FieldValue;
-			}
-			//It's a picklist
-			List<PatFieldPickItem> listPatFieldPickItems=PatFieldPickItems.GetWhere(x => x.PatFieldDefNum==patFieldDef.PatFieldDefNum);
-			PatFieldPickItem patFieldPickItem=listPatFieldPickItems.Find(x=>x.Name==patField.FieldValue);
-			if(patFieldPickItem!=null && !string.IsNullOrWhiteSpace(patFieldPickItem.Abbreviation)) {
-				return patFieldPickItem.Abbreviation;
-			}
-			return patField.FieldValue;
-		}
-
-		public static PatField GetPatField(long patFieldNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<PatField>(MethodBase.GetCurrentMethod(),patFieldNum);
-			}
-			return Crud.PatFieldCrud.SelectOne(patFieldNum);
-		}
 	}
+
+
 }

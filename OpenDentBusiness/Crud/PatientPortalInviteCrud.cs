@@ -49,6 +49,9 @@ namespace OpenDentBusiness.Crud{
 			foreach(DataRow row in table.Rows) {
 				patientPortalInvite=new PatientPortalInvite();
 				patientPortalInvite.PatientPortalInviteNum= PIn.Long  (row["PatientPortalInviteNum"].ToString());
+				patientPortalInvite.ApptNum               = PIn.Long  (row["ApptNum"].ToString());
+				patientPortalInvite.ApptDateTime          = PIn.DateT (row["ApptDateTime"].ToString());
+				patientPortalInvite.TSPrior               = TimeSpan.FromTicks(PIn.Long(row["TSPrior"].ToString()));
 				patientPortalInvite.PatNum                = PIn.Long  (row["PatNum"].ToString());
 				patientPortalInvite.ClinicNum             = PIn.Long  (row["ClinicNum"].ToString());
 				patientPortalInvite.SendStatus            = (OpenDentBusiness.AutoCommStatus)PIn.Int(row["SendStatus"].ToString());
@@ -58,9 +61,6 @@ namespace OpenDentBusiness.Crud{
 				patientPortalInvite.DateTimeSent          = PIn.DateT (row["DateTimeSent"].ToString());
 				patientPortalInvite.ResponseDescript      = PIn.String(row["ResponseDescript"].ToString());
 				patientPortalInvite.ApptReminderRuleNum   = PIn.Long  (row["ApptReminderRuleNum"].ToString());
-				patientPortalInvite.ApptNum               = PIn.Long  (row["ApptNum"].ToString());
-				patientPortalInvite.ApptDateTime          = PIn.DateT (row["ApptDateTime"].ToString());
-				patientPortalInvite.TSPrior               = TimeSpan.FromTicks(PIn.Long(row["TSPrior"].ToString()));
 				retVal.Add(patientPortalInvite);
 			}
 			return retVal;
@@ -73,6 +73,9 @@ namespace OpenDentBusiness.Crud{
 			}
 			DataTable table=new DataTable(tableName);
 			table.Columns.Add("PatientPortalInviteNum");
+			table.Columns.Add("ApptNum");
+			table.Columns.Add("ApptDateTime");
+			table.Columns.Add("TSPrior");
 			table.Columns.Add("PatNum");
 			table.Columns.Add("ClinicNum");
 			table.Columns.Add("SendStatus");
@@ -82,12 +85,12 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("DateTimeSent");
 			table.Columns.Add("ResponseDescript");
 			table.Columns.Add("ApptReminderRuleNum");
-			table.Columns.Add("ApptNum");
-			table.Columns.Add("ApptDateTime");
-			table.Columns.Add("TSPrior");
 			foreach(PatientPortalInvite patientPortalInvite in listPatientPortalInvites) {
 				table.Rows.Add(new object[] {
 					POut.Long  (patientPortalInvite.PatientPortalInviteNum),
+					POut.Long  (patientPortalInvite.ApptNum),
+					POut.DateT (patientPortalInvite.ApptDateTime,false),
+					POut.Long (patientPortalInvite.TSPrior.Ticks),
 					POut.Long  (patientPortalInvite.PatNum),
 					POut.Long  (patientPortalInvite.ClinicNum),
 					POut.Int   ((int)patientPortalInvite.SendStatus),
@@ -97,9 +100,6 @@ namespace OpenDentBusiness.Crud{
 					POut.DateT (patientPortalInvite.DateTimeSent,false),
 					            patientPortalInvite.ResponseDescript,
 					POut.Long  (patientPortalInvite.ApptReminderRuleNum),
-					POut.Long  (patientPortalInvite.ApptNum),
-					POut.DateT (patientPortalInvite.ApptDateTime,false),
-					POut.Long (patientPortalInvite.TSPrior.Ticks),
 				});
 			}
 			return table;
@@ -119,12 +119,15 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="PatientPortalInviteNum,";
 			}
-			command+="PatNum,ClinicNum,SendStatus,MessageType,MessageFk,DateTimeEntry,DateTimeSent,ResponseDescript,ApptReminderRuleNum,ApptNum,ApptDateTime,TSPrior) VALUES(";
+			command+="ApptNum,ApptDateTime,TSPrior,PatNum,ClinicNum,SendStatus,MessageType,MessageFk,DateTimeEntry,DateTimeSent,ResponseDescript,ApptReminderRuleNum) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(patientPortalInvite.PatientPortalInviteNum)+",";
 			}
 			command+=
-				     POut.Long  (patientPortalInvite.PatNum)+","
+				     POut.Long  (patientPortalInvite.ApptNum)+","
+				+    POut.DateT (patientPortalInvite.ApptDateTime)+","
+				+"'"+POut.Long  (patientPortalInvite.TSPrior.Ticks)+"',"
+				+    POut.Long  (patientPortalInvite.PatNum)+","
 				+    POut.Long  (patientPortalInvite.ClinicNum)+","
 				+    POut.Int   ((int)patientPortalInvite.SendStatus)+","
 				+    POut.Int   ((int)patientPortalInvite.MessageType)+","
@@ -132,10 +135,7 @@ namespace OpenDentBusiness.Crud{
 				+    DbHelper.Now()+","
 				+    POut.DateT (patientPortalInvite.DateTimeSent)+","
 				+    DbHelper.ParamChar+"paramResponseDescript,"
-				+    POut.Long  (patientPortalInvite.ApptReminderRuleNum)+","
-				+    POut.Long  (patientPortalInvite.ApptNum)+","
-				+    POut.DateT (patientPortalInvite.ApptDateTime)+","
-				+"'"+POut.Long  (patientPortalInvite.TSPrior.Ticks)+"')";
+				+    POut.Long  (patientPortalInvite.ApptReminderRuleNum)+")";
 			if(patientPortalInvite.ResponseDescript==null) {
 				patientPortalInvite.ResponseDescript="";
 			}
@@ -175,7 +175,7 @@ namespace OpenDentBusiness.Crud{
 						if(useExistingPK) {
 							sbCommands.Append("PatientPortalInviteNum,");
 						}
-						sbCommands.Append("PatNum,ClinicNum,SendStatus,MessageType,MessageFk,DateTimeEntry,DateTimeSent,ResponseDescript,ApptReminderRuleNum,ApptNum,ApptDateTime,TSPrior) VALUES ");
+						sbCommands.Append("ApptNum,ApptDateTime,TSPrior,PatNum,ClinicNum,SendStatus,MessageType,MessageFk,DateTimeEntry,DateTimeSent,ResponseDescript,ApptReminderRuleNum) VALUES ");
 						countRows=0;
 					}
 					else {
@@ -184,6 +184,9 @@ namespace OpenDentBusiness.Crud{
 					if(useExistingPK) {
 						sbRow.Append(POut.Long(patientPortalInvite.PatientPortalInviteNum)); sbRow.Append(",");
 					}
+					sbRow.Append(POut.Long(patientPortalInvite.ApptNum)); sbRow.Append(",");
+					sbRow.Append(POut.DateT(patientPortalInvite.ApptDateTime)); sbRow.Append(",");
+					sbRow.Append("'"+POut.Long  (patientPortalInvite.TSPrior.Ticks)+"'"); sbRow.Append(",");
 					sbRow.Append(POut.Long(patientPortalInvite.PatNum)); sbRow.Append(",");
 					sbRow.Append(POut.Long(patientPortalInvite.ClinicNum)); sbRow.Append(",");
 					sbRow.Append(POut.Int((int)patientPortalInvite.SendStatus)); sbRow.Append(",");
@@ -192,10 +195,7 @@ namespace OpenDentBusiness.Crud{
 					sbRow.Append(DbHelper.Now()); sbRow.Append(",");
 					sbRow.Append(POut.DateT(patientPortalInvite.DateTimeSent)); sbRow.Append(",");
 					sbRow.Append("'"+POut.String(patientPortalInvite.ResponseDescript)+"'"); sbRow.Append(",");
-					sbRow.Append(POut.Long(patientPortalInvite.ApptReminderRuleNum)); sbRow.Append(",");
-					sbRow.Append(POut.Long(patientPortalInvite.ApptNum)); sbRow.Append(",");
-					sbRow.Append(POut.DateT(patientPortalInvite.ApptDateTime)); sbRow.Append(",");
-					sbRow.Append("'"+POut.Long  (patientPortalInvite.TSPrior.Ticks)+"'"); sbRow.Append(")");
+					sbRow.Append(POut.Long(patientPortalInvite.ApptReminderRuleNum)); sbRow.Append(")");
 					if(sbCommands.Length+sbRow.Length+1 > TableBase.MaxAllowedPacketCount && countRows > 0) {
 						Db.NonQ(sbCommands.ToString());
 						sbCommands=null;
@@ -230,12 +230,15 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="PatientPortalInviteNum,";
 			}
-			command+="PatNum,ClinicNum,SendStatus,MessageType,MessageFk,DateTimeEntry,DateTimeSent,ResponseDescript,ApptReminderRuleNum,ApptNum,ApptDateTime,TSPrior) VALUES(";
+			command+="ApptNum,ApptDateTime,TSPrior,PatNum,ClinicNum,SendStatus,MessageType,MessageFk,DateTimeEntry,DateTimeSent,ResponseDescript,ApptReminderRuleNum) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(patientPortalInvite.PatientPortalInviteNum)+",";
 			}
 			command+=
-				     POut.Long  (patientPortalInvite.PatNum)+","
+				     POut.Long  (patientPortalInvite.ApptNum)+","
+				+    POut.DateT (patientPortalInvite.ApptDateTime)+","
+				+"'"+POut.Long(patientPortalInvite.TSPrior.Ticks)+"',"
+				+    POut.Long  (patientPortalInvite.PatNum)+","
 				+    POut.Long  (patientPortalInvite.ClinicNum)+","
 				+    POut.Int   ((int)patientPortalInvite.SendStatus)+","
 				+    POut.Int   ((int)patientPortalInvite.MessageType)+","
@@ -243,10 +246,7 @@ namespace OpenDentBusiness.Crud{
 				+    DbHelper.Now()+","
 				+    POut.DateT (patientPortalInvite.DateTimeSent)+","
 				+    DbHelper.ParamChar+"paramResponseDescript,"
-				+    POut.Long  (patientPortalInvite.ApptReminderRuleNum)+","
-				+    POut.Long  (patientPortalInvite.ApptNum)+","
-				+    POut.DateT (patientPortalInvite.ApptDateTime)+","
-				+"'"+POut.Long(patientPortalInvite.TSPrior.Ticks)+"')";
+				+    POut.Long  (patientPortalInvite.ApptReminderRuleNum)+")";
 			if(patientPortalInvite.ResponseDescript==null) {
 				patientPortalInvite.ResponseDescript="";
 			}
@@ -263,6 +263,9 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Updates one PatientPortalInvite in the database.</summary>
 		public static void Update(PatientPortalInvite patientPortalInvite) {
 			string command="UPDATE patientportalinvite SET "
+				+"ApptNum               =  "+POut.Long  (patientPortalInvite.ApptNum)+", "
+				+"ApptDateTime          =  "+POut.DateT (patientPortalInvite.ApptDateTime)+", "
+				+"TSPrior               =  "+POut.Long  (patientPortalInvite.TSPrior.Ticks)+", "
 				+"PatNum                =  "+POut.Long  (patientPortalInvite.PatNum)+", "
 				+"ClinicNum             =  "+POut.Long  (patientPortalInvite.ClinicNum)+", "
 				+"SendStatus            =  "+POut.Int   ((int)patientPortalInvite.SendStatus)+", "
@@ -271,10 +274,7 @@ namespace OpenDentBusiness.Crud{
 				//DateTimeEntry not allowed to change
 				+"DateTimeSent          =  "+POut.DateT (patientPortalInvite.DateTimeSent)+", "
 				+"ResponseDescript      =  "+DbHelper.ParamChar+"paramResponseDescript, "
-				+"ApptReminderRuleNum   =  "+POut.Long  (patientPortalInvite.ApptReminderRuleNum)+", "
-				+"ApptNum               =  "+POut.Long  (patientPortalInvite.ApptNum)+", "
-				+"ApptDateTime          =  "+POut.DateT (patientPortalInvite.ApptDateTime)+", "
-				+"TSPrior               =  "+POut.Long  (patientPortalInvite.TSPrior.Ticks)+" "
+				+"ApptReminderRuleNum   =  "+POut.Long  (patientPortalInvite.ApptReminderRuleNum)+" "
 				+"WHERE PatientPortalInviteNum = "+POut.Long(patientPortalInvite.PatientPortalInviteNum);
 			if(patientPortalInvite.ResponseDescript==null) {
 				patientPortalInvite.ResponseDescript="";
@@ -286,6 +286,18 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Updates one PatientPortalInvite in the database.  Uses an old object to compare to, and only alters changed fields.  This prevents collisions and concurrency problems in heavily used tables.  Returns true if an update occurred.</summary>
 		public static bool Update(PatientPortalInvite patientPortalInvite,PatientPortalInvite oldPatientPortalInvite) {
 			string command="";
+			if(patientPortalInvite.ApptNum != oldPatientPortalInvite.ApptNum) {
+				if(command!="") { command+=",";}
+				command+="ApptNum = "+POut.Long(patientPortalInvite.ApptNum)+"";
+			}
+			if(patientPortalInvite.ApptDateTime != oldPatientPortalInvite.ApptDateTime) {
+				if(command!="") { command+=",";}
+				command+="ApptDateTime = "+POut.DateT(patientPortalInvite.ApptDateTime)+"";
+			}
+			if(patientPortalInvite.TSPrior != oldPatientPortalInvite.TSPrior) {
+				if(command!="") { command+=",";}
+				command+="TSPrior = '"+POut.Long  (patientPortalInvite.TSPrior.Ticks)+"'";
+			}
 			if(patientPortalInvite.PatNum != oldPatientPortalInvite.PatNum) {
 				if(command!="") { command+=",";}
 				command+="PatNum = "+POut.Long(patientPortalInvite.PatNum)+"";
@@ -319,18 +331,6 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="ApptReminderRuleNum = "+POut.Long(patientPortalInvite.ApptReminderRuleNum)+"";
 			}
-			if(patientPortalInvite.ApptNum != oldPatientPortalInvite.ApptNum) {
-				if(command!="") { command+=",";}
-				command+="ApptNum = "+POut.Long(patientPortalInvite.ApptNum)+"";
-			}
-			if(patientPortalInvite.ApptDateTime != oldPatientPortalInvite.ApptDateTime) {
-				if(command!="") { command+=",";}
-				command+="ApptDateTime = "+POut.DateT(patientPortalInvite.ApptDateTime)+"";
-			}
-			if(patientPortalInvite.TSPrior != oldPatientPortalInvite.TSPrior) {
-				if(command!="") { command+=",";}
-				command+="TSPrior = '"+POut.Long  (patientPortalInvite.TSPrior.Ticks)+"'";
-			}
 			if(command=="") {
 				return false;
 			}
@@ -347,6 +347,15 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Returns true if Update(PatientPortalInvite,PatientPortalInvite) would make changes to the database.
 		///Does not make any changes to the database and can be called before remoting role is checked.</summary>
 		public static bool UpdateComparison(PatientPortalInvite patientPortalInvite,PatientPortalInvite oldPatientPortalInvite) {
+			if(patientPortalInvite.ApptNum != oldPatientPortalInvite.ApptNum) {
+				return true;
+			}
+			if(patientPortalInvite.ApptDateTime != oldPatientPortalInvite.ApptDateTime) {
+				return true;
+			}
+			if(patientPortalInvite.TSPrior != oldPatientPortalInvite.TSPrior) {
+				return true;
+			}
 			if(patientPortalInvite.PatNum != oldPatientPortalInvite.PatNum) {
 				return true;
 			}
@@ -370,15 +379,6 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(patientPortalInvite.ApptReminderRuleNum != oldPatientPortalInvite.ApptReminderRuleNum) {
-				return true;
-			}
-			if(patientPortalInvite.ApptNum != oldPatientPortalInvite.ApptNum) {
-				return true;
-			}
-			if(patientPortalInvite.ApptDateTime != oldPatientPortalInvite.ApptDateTime) {
-				return true;
-			}
-			if(patientPortalInvite.TSPrior != oldPatientPortalInvite.TSPrior) {
 				return true;
 			}
 			return false;

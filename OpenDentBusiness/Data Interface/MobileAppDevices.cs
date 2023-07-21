@@ -32,13 +32,13 @@ namespace OpenDentBusiness{
 			return Crud.MobileAppDeviceCrud.SelectMany(command);
 		}
 
-		public static List<MobileAppDevice> GetForUser(Userod user,bool doIncludeHQ=false) {
+		public static List<MobileAppDevice> GetForUser(Userod user) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<MobileAppDevice>>(MethodBase.GetCurrentMethod(),user,doIncludeHQ);
+				return Meth.GetObject<List<MobileAppDevice>>(MethodBase.GetCurrentMethod(),user);
 			}
 			string command=$"SELECT * FROM mobileappdevice ";
 			if(PrefC.HasClinicsEnabled) {
-				List<Clinic> listClinicsForUser=Clinics.GetForUserod(user,doIncludeHQ);
+				List<Clinic> listClinicsForUser=Clinics.GetForUserod(user);
 				if(listClinicsForUser.Count==0) {
 					return new List<MobileAppDevice>();
 				}
@@ -58,14 +58,6 @@ namespace OpenDentBusiness{
 			}
 			return Crud.MobileAppDeviceCrud.SelectOne(command);
 		}
-
-		public static List<MobileAppDevice> GetForClinic(long clinicNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<MobileAppDevice>>(MethodBase.GetCurrentMethod(),clinicNum);
-			}
-			string command=$"SELECT * FROM mobileappdevice WHERE ClinicNum={POut.Long(clinicNum)}";
-			return Crud.MobileAppDeviceCrud.SelectMany(command);
-		}
 		#endregion Get Methods
 
 		#region Update
@@ -76,15 +68,6 @@ namespace OpenDentBusiness{
 				return;
 			}
 			Crud.MobileAppDeviceCrud.Update(device);			
-			Signalods.SetInvalid(InvalidType.EClipboard);
-		}
-
-		public static void Update(MobileAppDevice mobileAppDeviceNew,MobileAppDevice mobileAppDeviceOld) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),mobileAppDeviceNew,mobileAppDeviceOld);
-				return;
-			}
-			Crud.MobileAppDeviceCrud.Update(mobileAppDeviceNew,mobileAppDeviceOld);
 			Signalods.SetInvalid(InvalidType.EClipboard);
 		}
 
@@ -156,50 +139,25 @@ namespace OpenDentBusiness{
 
 		#region Delete
 
-		public static void Delete(MobileAppDevice mobileAppDevice) {
+		public static void Delete(long mobileAppDeviceNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),mobileAppDevice);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),mobileAppDeviceNum);
 				return;
 			}
-			if(IsClinicSignedUpForEClipboard(mobileAppDevice.ClinicNum)) {
-				MobileNotifications.IsAllowedChanged(mobileAppDevice.MobileAppDeviceNum,EnumAppTarget.eClipboard,false);//deleting so always false
-			}
-			if(ClinicPrefs.IsODTouchAllowed(mobileAppDevice.ClinicNum)) {
-				MobileNotifications.IsAllowedChanged(mobileAppDevice.MobileAppDeviceNum,EnumAppTarget.ODTouch,false);
-			}
-			Crud.MobileAppDeviceCrud.Delete(mobileAppDevice.MobileAppDeviceNum);
-			Signalods.SetInvalid(InvalidType.EClipboard);
-		}
-
-		public static void DeleteMany(List<MobileAppDevice> listMobileAppDevices) {
-			if(listMobileAppDevices.IsNullOrEmpty()) {
-				return;
-			}
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),listMobileAppDevices);
-				return;
-			}
-			for(int i=0;i<listMobileAppDevices.Count;i++) {
-				if(IsClinicSignedUpForEClipboard(listMobileAppDevices[i].ClinicNum)) {
-					MobileNotifications.IsAllowedChanged(listMobileAppDevices[i].MobileAppDeviceNum,EnumAppTarget.eClipboard,false); //deleting so always false
-				}
-				if(ClinicPrefs.IsODTouchAllowed(listMobileAppDevices[i].ClinicNum)) {
-					MobileNotifications.IsAllowedChanged(listMobileAppDevices[i].MobileAppDeviceNum,EnumAppTarget.ODTouch,false); //deleting so always false
-				}
-			}
-			Crud.MobileAppDeviceCrud.DeleteMany(listMobileAppDevices.Select(x => x.MobileAppDeviceNum).ToList());
+			WebTypes.PushNotificationUtils.CI_IsAllowedChanged(mobileAppDeviceNum,false); //deleting so always false
+			Crud.MobileAppDeviceCrud.Delete(mobileAppDeviceNum);
 			Signalods.SetInvalid(InvalidType.EClipboard);
 		}
 
 		#endregion Delete
 
 		///<summary>For any device whose clinic num is not in the list passed in, sets IsAllowed to false.</summary>
-		public static void UpdateIsEClipboardAllowed(List<long> listClinicNums) {
+		public static void UpdateIsAllowed(List<long> listClinicNums) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				Meth.GetVoid(MethodBase.GetCurrentMethod(),listClinicNums);
 				return;
 			}
-			string command="UPDATE mobileappdevice SET IsEclipboardEnabled=0";
+			string command="UPDATE mobileappdevice SET IsAllowed=0";
 			if(!listClinicNums.IsNullOrEmpty()) {
 				command+=" WHERE ClinicNum NOT IN("+string.Join(",",listClinicNums)+")";
 			}
@@ -253,12 +211,11 @@ namespace OpenDentBusiness{
 			return PIn.Long(Db.GetCount(command))>0;
 		}
 
-		/// <summary>Gets the most recently used device that has the passed in patient set. If UserNum is set or device does not exist, returns false, should not create mboile
-		/// notification. If no user is set or device row does not exist, create mobile notification. Also fills in passed in MobileAppDevice object so that the caller does not
-		/// have to do the same code to get it. Centralizes all of the code needed to answer this question and provides the needed data to take action (ie. creating a mobile
-		/// notification for a given device). When result is true we know that the out paramater device is not null, so it is safe to use. If not creating a mobile notification
-		/// no need for the device.</summary>
-		public static bool ShouldCreateMobileNotification(long patNum, out MobileAppDevice device) {
+		/// <summary>Gets the most recently used device that has the passed in patient set. If UserNum is set or device does not exist, returns false, should not send push. If no user is set or 
+		/// device row does not exist, send push. Also fills in passed in MobileAppDevice object so that the caller does not have to do the same code to get it.
+		/// Centralizes all of the code needed to answer this question and provides the needed data to take action (ie. sending a push to a given device). When result is
+		/// true we know that the out paramater device is not null, so it is safe to use. If not sending a push, no need for the device.</summary>
+		public static bool ShouldSendPush(long patNum, out MobileAppDevice device) {
 			List<MobileAppDevice> listMobileAppDevices = MobileAppDevices.GetAll(patNum);
 			device = listMobileAppDevices.OrderByDescending(x => x.LastCheckInActivity).FirstOrDefault();
 			if(device != null && device.LastCheckInActivity>DateTime.Now.AddHours(-1) && device.UserNum == 0) {

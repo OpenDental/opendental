@@ -18,47 +18,6 @@ namespace OpenDentBusiness {
 		///<summary>This lock object is used to lock all static _listJob... entities in this class.</summary>
 		private static object _lock=new object();
 
-		///<summary>Returns a list of permissions based on the current user logged in.</summary>
-		public static List<string> CategoryList {
-			get {
-				List<string> categoryList=Enum.GetNames(typeof(JobCategory)).ToList();
-				if(!JobPermissions.IsAuthorized(JobPerm.QueryTech,true)) {
-					//Queries can't be created from here
-					categoryList.Remove("Query");
-				}
-				if(!JobPermissions.IsAuthorized(JobPerm.DesignTech,true)) {
-					//Marketing Jobs can't be created from here
-					categoryList.Remove("MarketingDesign");
-				}
-				if(!JobPermissions.IsAuthorized(JobPerm.SpecialProject,true)) {
-					//SpecialProjects can't be created from here
-					categoryList.Remove("SpecialProject");
-				}
-				if(!JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
-					//NeedNoApproval can't be created from here
-					categoryList.Remove("NeedNoApproval");
-				}
-				if(!JobPermissions.IsAuthorized(JobPerm.UnresolvedIssues,true)) {
-					//NeedNoApproval can't be created from here
-					categoryList.Remove("UnresolvedIssue");
-				}
-				if(!JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
-					//Project can't be created from here
-					categoryList.Remove("Project");
-				}
-				if(!JobPermissions.IsAuthorized(JobPerm.Concept,true)) {
-					categoryList.Remove("Feature");
-					categoryList.Remove("Bug");
-					categoryList.Remove("Enhancement");
-					categoryList.Remove("ProgramBridge");
-					categoryList.Remove("InternalRequest");
-					categoryList.Remove("Conversion");
-					categoryList.Remove("Research");
-				}
-				return categoryList;
-			}
-		}
-
 		///<summary>List of all the jobs in the cache. By default, it is missing completed and cancelled jobs.</summary>
 		public static List<Job> ListJobsAll {
 			get {
@@ -245,17 +204,14 @@ namespace OpenDentBusiness {
 			if(listJobsForTree.IsNullOrEmpty()) {
 				return;
 			}
-			List<Job> listJobsToAdd=new List<Job>();
-			for (int i=0;i<listJobsForTree.Count; i++) {
-				if(ListJobsAll.Find(x => x.JobNum==listJobsForTree[i].JobNum) is Job job) {
-					listJobsForTree[i]=job;
-				}
-				else {
-					listJobsToAdd.Add(listJobsForTree[i]);
-				}
+			List<Job> listJobs;
+			lock(_lock) {
+   				listJobs=new List<Job>(_listJobsAll);
 			}
+			List<long> listJobNums=ListJobNumsAll;
 			//Fill the in-memory lists from the database
-			Jobs.FillInMemoryLists(listJobsToAdd);
+			Jobs.FillInMemoryLists(listJobsForTree.FindAll(x => !listJobNums.Exists(y => x.JobNum==y)).ToList());
+			List<Job> listJobsToAdd=listJobsForTree.Where(x => !listJobs.Select(x => x.JobNum).Contains(x.JobNum)).ToList();
 			lock(_lock) {
 				_listJobsAll.AddRange(listJobsToAdd);
 			}

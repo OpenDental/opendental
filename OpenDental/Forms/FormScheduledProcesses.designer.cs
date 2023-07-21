@@ -26,6 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormScheduledProcesses));
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupBoxInsVerifyChecks = new OpenDental.UI.GroupBox();
 			this.checkChangeEffectiveDates = new OpenDental.UI.CheckBox();
 			this.checkChangeInsHist = new OpenDental.UI.CheckBox();
@@ -62,6 +63,16 @@ namespace OpenDental{
 			this.gridMain.Title = null;
 			this.gridMain.TranslationName = "TableScheduledProcess";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.GridMain_CellDoubleClick);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(656, 509);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// groupBoxInsVerifyChecks
 			// 
@@ -129,6 +140,7 @@ namespace OpenDental{
 			this.Controls.Add(this.groupBoxInsVerifyChecks);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -142,6 +154,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private UI.Button butAdd;
 		private UI.GroupBox groupBoxInsVerifyChecks;

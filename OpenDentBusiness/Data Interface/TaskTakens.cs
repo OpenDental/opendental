@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Text;
-using DataConnectionBase;
 using MySql.Data.MySqlClient;
-using Newtonsoft.Json;
 
 namespace OpenDentBusiness{
 	///<summary></summary>
@@ -13,47 +11,30 @@ namespace OpenDentBusiness{
 		#region Insert
 
 		///<summary>Throws exceptions. Inserts a row into the tasktaken table that resides on the 'TriageHQ' database for the TaskNum passed in.
-		///Set retryInsert to true in order to recursively call this method one more time in the event of an "unable to connect" MySQL UE.
+		///Set doRetry to true in order to recursively call this method one more time in the event of an "unable to connect" MySQL UE.
 		///Throws an exception if the insert failed. Otherwise, no excpetion will be thrown thus indicating success.</summary>
-		public static void InsertForTaskNum(long taskNum,bool retryInsert=true) {
+		public static void InsertForTaskNum(long taskNum,bool doRetry=true) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),taskNum,retryInsert);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),taskNum,doRetry);
 				return;
 			}
 			try {
-				string prefCustomersHQServer=PrefC.GetString(PrefName.CustomersHQServer);
-				string prefCustomersHQMySqlUser=PrefC.GetString(PrefName.CustomersHQMySqlUser);
-				DataAction.RunTriageHQ(() => {
-					CentralConnectionBase cn=ConnectionStoreBase.GetTriageHQ();
-					string logJson=JsonConvert.SerializeObject(new TaskTakenLogJson() {
-						DateTimeWorkstation=DateTime.Now,
-						WorkstationName=Environment.MachineName,
-						DataConUser=DataConnection.GetMysqlUser(),
-						MysqlHostName=Db.GetScalar("SELECT @@hostname"),
-						MysqlCurUser=Db.GetScalar("SELECT CURRENT_USER()"),
-						PrefCustomersHQServer=prefCustomersHQServer,
-						PrefCustomersHQMySqlUser=prefCustomersHQMySqlUser,
-						ConStoreServerName=cn?.ServerName??"NULL",
-						ConStoreMySqlUser=cn?.MySqlUser??"NULL",
-						RetryInsert=retryInsert,
-					});
-					Crud.TaskTakenCrud.Insert(new TaskTaken { TaskNum=taskNum,LogJson=logJson });
-				});
+				DataAction.RunTriageHQ(() => Crud.TaskTakenCrud.Insert(new TaskTaken { TaskNum=taskNum }));
 			}
 			catch(Exception ex) {
-				MySqlException mysqlException=null;
+				MySqlException mysqlEx=null;
 				if(ex is MySqlException) {
-					mysqlException=(MySqlException)ex;
+					mysqlEx=(MySqlException)ex;
 				}
 				else if(ex.InnerException is MySqlException) {
-					mysqlException=(MySqlException)ex.InnerException;
+					mysqlEx=(MySqlException)ex.InnerException;
 				}
-				if(mysqlException!=null && mysqlException.Number==1062 && mysqlException.Message.ToLower().Contains("duplicate entry")) {
+				if(mysqlEx!=null && mysqlEx.Number==1062 && mysqlEx.Message.ToLower().Contains("duplicate entry")) {
 					//Someone else has already taken this task so there is already a row in the tasktaken table for this task.
 					throw new Exception("Not allowed to save changes because the task has been claimed by someone else.");
 				}
-				if(mysqlException!=null && mysqlException.Number==1042 && mysqlException.Message.ToLower().Contains("unable to connect")) {
-					if(retryInsert) {
+				if(mysqlEx!=null && mysqlEx.Number==1042 && mysqlEx.Message.ToLower().Contains("unable to connect")) {
+					if(doRetry) {
 						//Could be a network hiccup so try inserting the tasktaken once more.
 						InsertForTaskNum(taskNum,false);
 						return;
@@ -68,14 +49,14 @@ namespace OpenDentBusiness{
 
 		#region Delete
 		///<summary>Deletes any TaskTaken for the given taskNum. Runs on the primary customers database.</summary>
-		public static void DeleteForTask(long taskNum,bool runOnPrimaryCustomers=true,bool retryOnLocal=true) {
+		public static void DeleteForTask(long taskNum,bool doRunOnPrimaryCustomers=true,bool doRetryOnLocal=true) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),taskNum,runOnPrimaryCustomers,retryOnLocal);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),taskNum,doRunOnPrimaryCustomers,doRetryOnLocal);
 				return;
 			}
 			string command="DELETE FROM tasktaken WHERE TaskNum="+POut.Long(taskNum);			
 			try {
-				if(runOnPrimaryCustomers) {
+				if(doRunOnPrimaryCustomers) {
 					DataAction.RunTriageHQ(() => Db.NonQ(command));
 				}
 				else {
@@ -90,7 +71,7 @@ namespace OpenDentBusiness{
 				else if(ex.InnerException is MySqlException) {
 					mysqlEx=(MySqlException)ex.InnerException;
 				}
-				if(mysqlEx!=null && mysqlEx.Number==1042 && mysqlEx.Message.ToLower().Contains("unable to connect") && retryOnLocal) {
+				if(mysqlEx!=null && mysqlEx.Number==1042 && mysqlEx.Message.ToLower().Contains("unable to connect") && doRetryOnLocal) {
 					//Unable to connect to the primary customers database. We will still delete the tasktaken on the local database.
 					DeleteForTask(taskNum,false,false);
 					return;
@@ -112,7 +93,6 @@ namespace OpenDentBusiness{
 			return Crud.TaskTakenCrud.SelectOne(taskTakenNum);
 		}
 		#endregion
-
 		#region Modification Methods
 			#region Update
 		///<summary></summary>
@@ -126,28 +106,5 @@ namespace OpenDentBusiness{
 			#endregion
 		#endregion
 		*/
-	}
-
-	public class TaskTakenLogJson {
-		public DateTime DateTimeWorkstation;
-		///<summary>The name of the workstation from which the insert command was issued, usually a tech name.</summary>
-		public string WorkstationName;
-		///<summary>The name of the MySQL user OD according to the OD DataConnection.</summary>
-		public string DataConUser;
-		///<summary>The name of the server from which the insert command was executed.
-		///This data comes from the @@hostname variable directly through the MySQL connection.</summary>
-		public string MysqlHostName;
-		///<summary>The name of the MySQL user from the MySQL connection, according to the MySQL server.
-		///This data comes from the CURRENT_USER() function directly through the MySQL connection.</summary>
-		public string MysqlCurUser;
-		///<summary>The value of the CustomersHQServer pref at the time the TriageHQ connection was created.</summary>
-		public string PrefCustomersHQServer;
-		///<summary>The value of the CustomersHQServer pref at the time the TriageHQ connection was created.</summary>
-		public string PrefCustomersHQMySqlUser;
-		///<summary>The value inside the ConnectionStoreBase.GetTriageHQ().ServerName</summary>
-		public string ConStoreServerName;
-		///<summary>The value inside the ConnectionStoreBase.GetTriageHQ().MySqlName</summary>
-		public string ConStoreMySqlUser;
-		public bool RetryInsert;
 	}
 }

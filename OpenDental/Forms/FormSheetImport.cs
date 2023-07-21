@@ -1,16 +1,17 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using OpenDentBusiness;
 using OpenDental.UI;
+using Acrobat;
+using AFORMAUTLib;//Acrobat forms
 using System.Linq;
 using CodeBase;
-using Newtonsoft.Json;
-using System.IO;
-using System.Text.RegularExpressions;
 using System.Globalization;
 
 namespace OpenDental {
@@ -39,11 +40,6 @@ namespace OpenDental {
 		private List<InsSub> _listInsSubs;
 		private InsSub _insSub1;
 		private InsSub _insSub2;
-		private OcrInsScanResponse _ocrResponsePrimaryFront;
-		private OcrInsScanResponse _ocrResponsePrimaryBack;
-		private OcrInsScanResponse _ocrResponseSecondaryFront;
-		private OcrInsScanResponse _ocrResponseSecondaryBack;
-
 		///<summary>In order to import insurance plans the sheet must contain Relationship, Subscriber, SubscriberID, CarrierName, and CarrierPhone.  This variable gets set when the sheet loads and will indicate if all fields are present for primary OR for secondary insurance.  Insurance should not attempt to import if this is false.</summary>
 		private bool _hasRequiredInsFields;
 		private bool _isPatTransferSheet;
@@ -53,11 +49,6 @@ namespace OpenDental {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
-			//Hide borders so that images that are not set are totally invisible. Do so programatically so we can see them in the designer.
-			pictureBoxPrimaryInsuranceFront.HasBorder=false;
-			pictureBoxPrimaryInsuranceBack.HasBorder=false;
-			pictureBoxSecondaryInsuranceFront.HasBorder=false;
-			pictureBoxSecondaryInsuranceBack.HasBorder=false;
 		}
 
 		private void FormSheetImport_Load(object sender,EventArgs e) {
@@ -140,32 +131,6 @@ namespace OpenDental {
 				acroApp=null;
 				*/
 				#endregion
-			}
-			//pre-initialize ocrData to blank. Do this even if we dont have ocr docs. Its easier than adding null checks.
-			_ocrResponsePrimaryFront=CreateBlankOcrInsScanResponse();
-			_ocrResponsePrimaryBack=CreateBlankOcrInsScanResponse();
-			_ocrResponseSecondaryFront=CreateBlankOcrInsScanResponse();
-			_ocrResponseSecondaryBack=CreateBlankOcrInsScanResponse();
-			//Get list documents for patient Documents.GetPatientData Order by date descending
-			List<Document> listDocumentsForInsScans=Documents.GetOcrDocumentsForPat(_patient.PatNum);
-			if(!listDocumentsForInsScans.IsNullOrEmpty()) {
-				Document documentPrimaryInsFront=listDocumentsForInsScans.Find(x=>x.ImageCaptureType==EnumOcrCaptureType.PrimaryInsFront);
-				Document documentPrimaryInsBack=listDocumentsForInsScans.Find(x=>x.ImageCaptureType==EnumOcrCaptureType.PrimaryInsBack);
-				Document documentSecondaryInsFront=listDocumentsForInsScans.Find(x=>x.ImageCaptureType==EnumOcrCaptureType.SecondaryInsFront);
-				Document documentSecondaryInsBack=listDocumentsForInsScans.Find(x=>x.ImageCaptureType==EnumOcrCaptureType.SecondaryInsBack);
-				//Get the images for the OcrData. its fine if we fail to get them.
-				if(documentPrimaryInsFront!=null){
-					_ocrResponsePrimaryFront=LoadOcrDataFromDocHelper(documentPrimaryInsFront);
-				}
-				if(documentPrimaryInsBack!=null){
-					_ocrResponsePrimaryBack=LoadOcrDataFromDocHelper(documentPrimaryInsBack);
-				}
-				if(documentSecondaryInsFront!=null){
-					_ocrResponseSecondaryFront=LoadOcrDataFromDocHelper(documentSecondaryInsFront);
-				}
-				if(documentSecondaryInsBack!=null){
-					_ocrResponseSecondaryBack=LoadOcrDataFromDocHelper(documentSecondaryInsBack);
-				}
 			}
 			_family=Patients.GetFamily(_patient.PatNum);
 			_isAddressSameForFam=true;
@@ -738,14 +703,6 @@ namespace OpenDental {
 					row.OldValDisplay=_patient.State;
 					row.OldValObj=_patient.State;
 					row.NewValDisplay=fieldVal;
-					string pattern="^"//start of string
-						+"[a-zA-Z][a-zA-Z]"//exactly two letters
-						+"$";//end of string
-					if(Regex.IsMatch(fieldVal,pattern)) {
-						if(CultureInfo.CurrentCulture.Name.EndsWith("US") || CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
-							row.NewValDisplay=fieldVal.ToUpper();
-						}
-					}
 					row.NewValObj=row.NewValDisplay;
 					row.ImpValDisplay=row.NewValDisplay;
 					row.ImpValObj=row.NewValObj;
@@ -1594,115 +1551,8 @@ namespace OpenDental {
 			gridMain.ScrollValue=scrollVal;
 		}
 
-		/// <summary> This tries to get the value from the sheet for the field name passed in. If it's an insurnace related field and it was not found on the sheet it pulls the value from Ocr data instead. If null is returned, the row for that field will not be added to the form. </summary>
-		private string GetInputValue(string fieldName) {
-			string result=GetSheetInputValue(fieldName);
-			if(!fieldName.StartsWith("ins")) {
-				return result;
-			}
-			if(result==null || result!="") {
-				//If null was returned by GetSheetInputValue, preserve the null.
-				//If a value was found on the sheet prefer the sheet value to ocrData.
-				return result;
-			}
-			switch(fieldName) {
-				case "ins1SubscriberNameF":
-					result=_ocrResponsePrimaryFront.Member.Name;
-					if(result.IsNullOrEmpty()) {
-						result=_ocrResponsePrimaryBack.Member.Name;
-					}
-					break;
-				case "ins1SubscriberID":
-					result=_ocrResponsePrimaryFront.IdNumber.Prefix+_ocrResponsePrimaryFront.IdNumber.Number;
-					if(result.IsNullOrEmpty()) {
-						result=_ocrResponsePrimaryBack.IdNumber.Prefix+_ocrResponsePrimaryBack.IdNumber.Number;
-					}
-					break;
-				case "ins1CarrierName":
-					result=_ocrResponsePrimaryFront.Insurer;
-					if(result.IsNullOrEmpty()) {
-						result=_ocrResponsePrimaryBack.Insurer;
-					}
-					break;
-				case "ins1CarrierPhone":
-					result=_ocrResponsePrimaryFront.Payer.PhoneNumber;
-					if(result.IsNullOrEmpty()) {
-						result=_ocrResponsePrimaryBack.Payer.PhoneNumber;
-					}
-					break;
-				case "ins1EmployerName":
-					result=_ocrResponsePrimaryFront.Member.Employer;
-					if(result.IsNullOrEmpty()) {
-						result=_ocrResponsePrimaryBack.Member.Employer;
-					}
-					break;
-				case "ins1GroupName":
-					result=_ocrResponsePrimaryFront.Member.Employer;
-					if(result.IsNullOrEmpty()) {
-						result=_ocrResponsePrimaryBack.Member.Employer;
-					}
-					break;
-				case "ins1GroupNum":
-					result=_ocrResponsePrimaryFront.GroupNumber;
-					if(result.IsNullOrEmpty()) {
-						result=_ocrResponsePrimaryBack.GroupNumber;
-					}
-					break;
-				case "ins2SubscriberNameF":
-					result=_ocrResponseSecondaryFront.Member.Name;
-					if(result.IsNullOrEmpty()) {
-						result=_ocrResponseSecondaryBack.Member.Name;
-					}
-					break;
-				case "ins2SubscriberID":
-					result=_ocrResponseSecondaryFront.IdNumber.Prefix+_ocrResponseSecondaryFront.IdNumber.Number;
-					if(result.IsNullOrEmpty()) {
-						result=_ocrResponseSecondaryBack.IdNumber.Prefix+_ocrResponseSecondaryBack.IdNumber.Number;
-					}
-					break;
-				case "ins2CarrierName":
-					result=_ocrResponseSecondaryFront.Insurer;
-					if(result.IsNullOrEmpty()) {
-						result=_ocrResponseSecondaryBack.Insurer;
-					}
-					break;
-				case "ins2CarrierPhone":
-					result=_ocrResponseSecondaryFront.Payer.PhoneNumber;
-					if(result.IsNullOrEmpty()) {
-						result=_ocrResponseSecondaryBack.Payer.PhoneNumber;
-					}
-					break;
-				case "ins2EmployerName":
-					result=_ocrResponseSecondaryFront.Member.Employer;
-					if(result.IsNullOrEmpty()) {
-						result=_ocrResponseSecondaryBack.Member.Employer;
-					}
-					break;
-				case "ins2GroupName":
-					result=_ocrResponseSecondaryFront.Member.Employer;
-					if(result.IsNullOrEmpty()) {
-						result=_ocrResponseSecondaryBack.Member.Employer;
-					}
-					break;
-				case "ins2GroupNum":
-					result=_ocrResponseSecondaryFront.GroupNumber;
-					if(result.IsNullOrEmpty()) {
-						result=_ocrResponseSecondaryBack.GroupNumber;
-					}
-					break;
-				default: break;
-			}
-			//Turn null into empty if we got in here. The field exists on the sheet, but didnt have a value, neither does OcrData.
-			//If we return null, the field wont be added to the grid. We know it should be there because GetSheetInputValue didnt return null.
-			if(result==null) {
-				result="";
-			}
-			return result;
-		}
-
 		///<summary>If the specified fieldName does not exist, returns null</summary>
-		private string GetSheetInputValue(string fieldName) {
-			//Get ocr vals here Make a wrapper method to call this then an ocr version.
+		private string GetInputValue(string fieldName) {
 			return SheetCur?.SheetFields?.FirstOrDefault(x => x.FieldType==SheetFieldType.InputField && x.FieldName==fieldName)?.FieldValue;
 		}
 
@@ -1860,13 +1710,13 @@ namespace OpenDental {
 				return;
 			}
 			if(_listSheetImportRows[e.Row].FieldName=="referredFrom") {
-				FrmReferralSelect frmReferralSelect=new FrmReferralSelect();
-				frmReferralSelect.IsSelectionMode=true;
-				frmReferralSelect.ShowDialog();
-				if(frmReferralSelect.IsDialogCancel) {
+				using FormReferralSelect formReferralSelect=new FormReferralSelect();
+				formReferralSelect.IsSelectionMode=true;
+				formReferralSelect.ShowDialog();
+				if(formReferralSelect.DialogResult!=DialogResult.OK) {
 					return;
 				}
-				Referral referralSelected=frmReferralSelect.ReferralSelected;
+				Referral referralSelected=formReferralSelect.ReferralSelected;
 				_listSheetImportRows[e.Row].DoImport=true;
 				_listSheetImportRows[e.Row].IsFlaggedImp=false;
 				_listSheetImportRows[e.Row].ImpValDisplay=referralSelected.GetNameFL();
@@ -1876,43 +1726,40 @@ namespace OpenDental {
 			else if(_listSheetImportRows[e.Row].ObjType==typeof(string)) {
 				InputBox inputBox;
 				if(_listSheetImportRows[e.Row].FieldName.In("WkPhone","WirelessPhone","HmPhone","ins1CarrierPhone","ins2CarrierPhone","ICEPhone")) {
-					InputBoxParam inputBoxParam=new InputBoxParam();
-					inputBoxParam.InputBoxType_=InputBoxType.ValidPhone;
-					inputBoxParam.LabelText=_listSheetImportRows[e.Row].FieldName;
-					inputBoxParam.Text=_listSheetImportRows[e.Row].ImpValDisplay;
-					inputBox=new InputBox(inputBoxParam);
+					InputBoxParam inputBoxParam = new InputBoxParam(InputBoxType.ValidPhone,_listSheetImportRows[e.Row].FieldName,"",new Size(100,20));
+					inputBox=new InputBox(null,inputBoxParam);
 				}
 				else {
-					InputBoxParam inputBoxParam=new InputBoxParam();
-					inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-					inputBoxParam.LabelText=_listSheetImportRows[e.Row].FieldName;
-					inputBoxParam.Text=_listSheetImportRows[e.Row].ImpValDisplay;
-					inputBox=new InputBox(inputBoxParam);
+					inputBox=new InputBox(_listSheetImportRows[e.Row].FieldName);
 				}
+				inputBox.textResult.Text=_listSheetImportRows[e.Row].ImpValDisplay;
 				inputBox.ShowDialog();
-				if(inputBox.IsDialogCancel) {
+				if(inputBox.DialogResult!=DialogResult.OK) {
+					inputBox.Dispose();
 					return;
 				}
 				if(_listSheetImportRows[e.Row].FieldName=="addressAndHmPhoneIsSameEntireFamily") {
-					if(inputBox.StringResult=="") {
+					if(inputBox.textResult.Text=="") {
 						_isAddressSameForFam=false;
 					}
-					else if(inputBox.StringResult!="X") {
+					else if(inputBox.textResult.Text!="X") {
 						_isAddressSameForFam=true;
 					}
 					else {
 						MsgBox.Show(this,"The only allowed values are X or blank.");
+						inputBox.Dispose();
 						return;
 					}
 				}
-				if(_listSheetImportRows[e.Row].OldValDisplay==inputBox.StringResult) {//value is now same as original
+				if(_listSheetImportRows[e.Row].OldValDisplay==inputBox.textResult.Text) {//value is now same as original
 					_listSheetImportRows[e.Row].DoImport=false;
 				}
 				else {
 					_listSheetImportRows[e.Row].DoImport=true;
 				}
-				_listSheetImportRows[e.Row].ImpValDisplay=inputBox.StringResult;
-				_listSheetImportRows[e.Row].ImpValObj=inputBox.StringResult;
+				_listSheetImportRows[e.Row].ImpValDisplay=inputBox.textResult.Text;
+				_listSheetImportRows[e.Row].ImpValObj=inputBox.textResult.Text;
+				inputBox.Dispose();
 			}
 			#endregion
 			#region Enum
@@ -1955,22 +1802,21 @@ namespace OpenDental {
 			#endregion
 			#region DateTime
 			else if(_listSheetImportRows[e.Row].ObjType==typeof(DateTime)) {//this is only for one field so far: Birthdate
-				InputBoxParam inputBoxParam=new InputBoxParam();
-				inputBoxParam.InputBoxType_=InputBoxType.ValidDate;
-				inputBoxParam.LabelText=_listSheetImportRows[e.Row].FieldName;
+				List<InputBoxParam> listInputBoxParams=new List<InputBoxParam>();
+				listInputBoxParams.Add(new InputBoxParam(InputBoxType.ValidDate,_listSheetImportRows[e.Row].FieldName));
+				using InputBox inputBox=new InputBox(listInputBoxParams);//Display the date format that the current computer will use when parsing the date.
 				//Display the importing date if valid, otherwise display the invalid date from the form.
 				if(_listSheetImportRows[e.Row].ImpValDisplay==INVALID_DATE){
-					inputBoxParam.Text=_listSheetImportRows[e.Row].NewValDisplay;
+					inputBox.textResult.Text=_listSheetImportRows[e.Row].NewValDisplay;
 				}
 				else {
-					inputBoxParam.Text=_listSheetImportRows[e.Row].ImpValDisplay;
+					inputBox.textResult.Text=_listSheetImportRows[e.Row].ImpValDisplay;
 				}
-				InputBox inputBox=new InputBox(inputBoxParam);//Display the date format that the current computer will use when parsing the date.
 				inputBox.ShowDialog();
-				if(inputBox.IsDialogCancel) {
+				if(inputBox.DialogResult!=DialogResult.OK) {
 					return;
 				}
-				DateTime dateTimeEntered=inputBox.DateResult;
+				DateTime dateTimeEntered=inputBox.DateEntered;
 				if(dateTimeEntered==DateTime.MinValue) {
 					_listSheetImportRows[e.Row].ImpValDisplay="";
 				}
@@ -2261,22 +2107,23 @@ namespace OpenDental {
 			//Have user pick a plan------------------------------------------------------------------------------------------------------------
 			bool isPlanNew=false;
 			List<InsSub> listInsSubs=InsSubs.GetListForSubscriber(patientSubscriber.PatNum);
-			FrmInsPlanSelect frmInsPlanSelect=new FrmInsPlanSelect();
-			frmInsPlanSelect.carrierText=sheetImportRowCarrierName.ImpValDisplay;
+			using FormInsPlans formInsPlans=new FormInsPlans();
+			formInsPlans.carrierText=sheetImportRowCarrierName.ImpValDisplay;
 			if(sheetImportRowEmployerName!=null) {
-				frmInsPlanSelect.empText=sheetImportRowEmployerName.ImpValDisplay;
+				formInsPlans.empText=sheetImportRowEmployerName.ImpValDisplay;
 			}
 			if(sheetImportRowGroupName!=null) {
-				frmInsPlanSelect.groupNameText=sheetImportRowGroupName.ImpValDisplay;
+				formInsPlans.groupNameText=sheetImportRowGroupName.ImpValDisplay;
 			}
 			if(sheetImportRowGroupNum!=null) {
-				frmInsPlanSelect.groupNumText=sheetImportRowGroupNum.ImpValDisplay;
+				formInsPlans.groupNumText=sheetImportRowGroupNum.ImpValDisplay;
 			}
-			frmInsPlanSelect.ShowDialog();
-			if(!frmInsPlanSelect.IsDialogOK) {
+			formInsPlans.IsSelectMode=true;
+			formInsPlans.ShowDialog();
+			if(formInsPlans.DialogResult!=DialogResult.OK) {
 				return false;
 			}
-			insPlan=frmInsPlanSelect.InsPlanSelected;
+			insPlan=formInsPlans.InsPlanSelected;
 			if(insPlan.PlanNum==0) {
 				//User clicked blank plan, so a new plan will be created using the import values.
 				isPlanNew=true;
@@ -2459,7 +2306,7 @@ namespace OpenDental {
 			}
 			MessageBoxButtons msgBoxButton=MessageBoxButtons.OKCancel;
 			string createNewPlanMsg="";
-			if(Security.IsAuthorized(EnumPermType.InsPlanEdit,true)) {
+			if(Security.IsAuthorized(Permissions.InsPlanEdit,true)) {
 				msgBoxButton=MessageBoxButtons.YesNoCancel;
 				createNewPlanMsg=$"\r\n\r\n{Lan.g(this,"No will create a new plan using all of the import values.")}";
 			}
@@ -2481,7 +2328,6 @@ namespace OpenDental {
 			if(SheetCur.SheetType==SheetTypeEnum.PatientForm) {
 				bool isImportingPriIns=false;
 				bool isImportingSecIns=false;
-				List<RefAttach> listRefAttaches=new List<RefAttach>();
 				for(int i=0;i<_listSheetImportRows.Count;i++) {
 					if(!_listSheetImportRows[i].DoImport) {
 						continue;
@@ -2546,7 +2392,8 @@ namespace OpenDental {
 							refAttach.PatNum=_patient.PatNum;
 							refAttach.RefDate=DateTime.Today;
 							refAttach.ReferralNum=((Referral)_listSheetImportRows[i].ImpValObj).ReferralNum;
-							listRefAttaches.Add(refAttach);
+							RefAttaches.Insert(refAttach);//no security to block this action.
+							SecurityLogs.MakeLogEntry(Permissions.RefAttachAdd,_patient.PatNum,"Referred From "+Referrals.GetNameFL(refAttach.ReferralNum));
 							break;
 						#endregion
 						#region Address and Home Phone
@@ -2611,17 +2458,12 @@ namespace OpenDental {
 				//Patient information updating---------------------------------------------------------------------------------------------------------
 				Patients.Update(_patient,_patientOld);
 				if(_isAddressSameForFam) {
-					bool isAuthArchivedEdit=Security.IsAuthorized(EnumPermType.ArchivedPatientEdit,true);
+					bool isAuthArchivedEdit=Security.IsAuthorized(Permissions.ArchivedPatientEdit,true);
 					if(!isAuthArchivedEdit && _family.HasArchivedMember()) {
-						MessageBox.Show(Lans.g("Security","Not authorized for")+"\r\n"+GroupPermissions.GetDesc(EnumPermType.ArchivedPatientEdit)+"\r\n"
+						MessageBox.Show(Lans.g("Security","Not authorized for")+"\r\n"+GroupPermissions.GetDesc(Permissions.ArchivedPatientEdit)+"\r\n"
 							+Lans.g(this,"Archived patients in the family will not be updated.  All other family members will be updated as usual."));
 					}
 					Patients.UpdateAddressForFam(_patient,false,isAuthArchivedEdit);
-				}
-				//Import the refattaches
-				for(int i=0;i<listRefAttaches.Count;i++) {
-					RefAttaches.Insert(listRefAttaches[i]);//no security to block this action.
-					SecurityLogs.MakeLogEntry(EnumPermType.RefAttachAdd,_patient.PatNum,"Referred From "+Referrals.GetNameFL(listRefAttaches[i].ReferralNum));
 				}
 			}
 			#endregion
@@ -2768,56 +2610,10 @@ namespace OpenDental {
 			#endregion
 			string logText=SecurityLogHelper();
 			if(logText!="") {
-				SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,_patient.PatNum,logText,0,LogSources.None,DateTime.Now);
+				SecurityLogs.MakeLogEntry(Permissions.SheetEdit,_patient.PatNum,logText,0,LogSources.None,DateTime.Now);
 			}
 			MsgBox.Show(this,"Done.");
 			DialogResult=DialogResult.OK;
-		}
-
-
-		/// <summary> Loads the Image and sets it in the appropriate PictureBox in the ui if able, and parses stored OcrInsScanResponse. If image fails to load, returned value will be an empty OcrInsScanResponse.</summary>
-		private OcrInsScanResponse LoadOcrDataFromDocHelper(Document doc) {
-			Bitmap bitmap=null;
-			try {
-				bitmap=ImageHelper.GetBitmapOfDocumentFromDb(doc.DocNum);
-			}
-			catch(Exception e) {
-				Logger.WriteException(new Exception("FormSheetImport - Could not find Image for document with docNum: "+doc.DocNum, innerException:e), "EClipboard");
-			}
-			OcrInsScanResponse response=null;
-			ODPictureBox pictureBox;
-			switch(doc.ImageCaptureType) {
-				case EnumOcrCaptureType.PrimaryInsFront:
-					pictureBox=pictureBoxPrimaryInsuranceFront;
-					break;
-				case EnumOcrCaptureType.PrimaryInsBack:
-					pictureBox=pictureBoxPrimaryInsuranceBack;
-					break;
-				case EnumOcrCaptureType.SecondaryInsFront:
-					pictureBox=pictureBoxSecondaryInsuranceFront;
-					break;
-				case EnumOcrCaptureType.SecondaryInsBack:
-					pictureBox=pictureBoxSecondaryInsuranceBack;
-					break;
-				default:
-					return CreateBlankOcrInsScanResponse();
-			}
-			if(!doc.OcrResponseData.IsNullOrEmpty()){
-				try {
-					response=JsonConvert.DeserializeObject<OcrInsScanResponse>(doc.OcrResponseData);
-				}
-				catch(Exception e) { 
-					Logger.WriteException(new Exception("FormSheetImport - Could not de-serialize OcrInsScanResponse from docNum: "+doc.DocNum, innerException:e), "EClipboard");	
-				}
-			}
-			if(bitmap==null||response==null) {
-				//If the image was not loaded, or the OcrInsScanResponse was not loaded, create and return a blank OcrInsScanResposne.
-				response=CreateBlankOcrInsScanResponse();
-			}
-			else {
-				pictureBox.Image= bitmap;
-			}
-			return response;
 		}
 
 		///<summary>Returns a string that will be empty if nothing is imported, or if there are no edited fields. Compares 'Current Value' and 'Import Value'
@@ -2841,18 +2637,6 @@ namespace OpenDental {
 				stringBuilder.Append($" to '{listGridRowsEdited[i].Cells[indexImportValue].Text}'\r\n");
 			}
 			return stringBuilder.ToString();
-		}
-
-		private OcrInsScanResponse CreateBlankOcrInsScanResponse() {
-			OcrInsScanResponse result= new OcrInsScanResponse();
-			result.Member=new Member();
-			result.Dependents=new Dependent[0];
-			result.IdNumber=new IdNumber();
-			result.PrescriptionInfo=new PrescriptionInfo();
-			result.Copays=new Copay[0];
-			result.Payer=new Payer();
-			result.Plan=new Plan();
-			return result;
 		}
 
 		private bool DoImport(string fieldName) {
@@ -2893,6 +2677,10 @@ namespace OpenDental {
 			return "";
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		///<summary>Returns a separator and sets the FieldName to the passed in string.</summary>
 		private SheetImportRow CreateSeparator(string displayText) {
 			SheetImportRow sheetImportRow=new SheetImportRow();
@@ -2921,5 +2709,10 @@ namespace OpenDental {
 			public bool IsFlaggedImp;
 		}
 
+		
+
+		
 	}
+
+	
 }

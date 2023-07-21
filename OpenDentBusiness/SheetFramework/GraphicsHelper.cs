@@ -165,10 +165,6 @@ namespace OpenDentBusiness {
 			//The remaining imperfection will only be noticeable when a tall section of text spills down too close to the next element.
 			RectangleF rectangleActual=new RectangleF(rectangle.X,rectangle.Y,(rectangle.Width/0.96f),(rectangle.Height/0.96f));
 			StringFormat stringFormat=new StringFormat();
-			//The overload for DrawString that takes a StringFormat will cause the tabs '\t' to be ignored.
-			//In order for the tabs to not get ignored, we have to tell StringFormat how many pixels each tab should be.
-			//50.0f is the closest to our Fill Sheet Edit preview.
-			stringFormat.SetTabStops(0.0f,new float[] { 50.0f });
 			stringFormat.Alignment=StringAlignment.Near;
 			if(align==HorizontalAlignment.Center){
 				stringFormat.Alignment=StringAlignment.Center;
@@ -209,7 +205,6 @@ namespace OpenDentBusiness {
 			}
 			SizeF sizeLayout=new SizeF(rectangleF.Width,font.Height);
 			StringFormat stringFormat=new StringFormat();
-			stringFormat.SetTabStops(0.0f, new float[] {50.0f});//helps with measurement further down.
 			stringFormat.Trimming=StringTrimming.Word;
 			float pixelsPerLine=font.GetHeight();
 			XStringFormat xStringFormat=new XStringFormat();//or maybe XStringFormats.Default
@@ -222,27 +217,13 @@ namespace OpenDentBusiness {
 			}
 			float lineIdx=0;
 			int chars;
-			//this loop adds chars each time, which is one line's worth of text.
 			for(int i=0;i<str.Length;i+=chars) {
-				//Example. We have drawn 1 line and we are getting ready to draw the second line.
-				//For this example, with text wrap, this text will only be two lines high, so this is also the last line.
-				//lineIdx=1. if(rect.Y+(heightRow*2)>rect.Bottom) then no room so kick out.
-				//Skips checking the first line.
-				if(lineIdx!=0 && rectangleF.Y+pixelsPerLine*(lineIdx+1)>rectangleF.Bottom) {//Check if rectangleF is tall enough to show next line.
+				if(rectangleF.Y+pixelsPerLine*lineIdx>rectangleF.Bottom) {
 					break;
 				}
 				//pixels:
 				//TextRenderer.MeasureText(str.Substring(i),font, //no overload for measuring line by line
-				//sizeLayout is a rectangle one line high, so we are measuring how much will fit in one line.
-				//_lines variable below is thrown away.
 				g.MeasureString(str.Substring(i),font,sizeLayout,stringFormat,out chars,out int _lines);
-				//Newline characters \r\n, \r, and \n will not be recognized in Unicode PDF and will create rectangles on the screen, so since g.MeasureString has
-				//already calculated the next new line that will appear on the screen, we can remove the unneeded newline characters from the current substring.
-				string substring=str.Substring(i,chars);
-				substring=substring.Replace("\r\n","");
-				substring=substring.Replace("\r","");
-				substring=substring.Replace("\n","");
-				substring=substring.Replace("\t","    ");
 				//use points here:
 				double x=PixelsToPoints(rectangleF.X);
 				if(horizontalAlignment==HorizontalAlignment.Right){
@@ -252,7 +233,7 @@ namespace OpenDentBusiness {
 					x=PixelsToPoints(rectangleF.X+rectangleF.Width/2f);
 				}
 				double y=PixelsToPoints(rectangleF.Y+pixelsPerLine*lineIdx);
-				xg.DrawString(substring,xfont,xbrush,x,y,xStringFormat);
+				xg.DrawString(str.Substring(i,chars),xfont,xbrush,x,y,xStringFormat);
 				lineIdx+=1;
 			}
 			g.Dispose();
@@ -391,27 +372,18 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>This function is critical for measuring dynamic text fields on sheets when displaying or printing. Measures the size of a text string when displayed on screen.  This also differs from the regular MeasureString in that it will correctly measure trailing carriage returns as requiring additional lines.</summary>
-		public static HeightAndChars MeasureStringH(string text,Font font,int width,int heightAvail,HorizontalAlignment align) {
-			Bitmap bitmap=new Bitmap(100,100);//only used for measurements.
-			bitmap.SetResolution(96,96);
-			Graphics g=Graphics.FromImage(bitmap);
-			SizeF sizeF=new SizeF(width,heightAvail);
-			StringFormat stringFormat=new StringFormat();
-			stringFormat.Trimming=StringTrimming.Word;
-			stringFormat.Alignment=StringAlignment.Near;
-			if(align==HorizontalAlignment.Center) {
-				stringFormat.Alignment=StringAlignment.Center;
+		public static int MeasureStringH(string text,Font font,int width,HorizontalAlignment align) {
+			if(!text.EndsWith("\n")) {
+				//Add an extra line of text so that we can calculate the top of that last fake line to figure out where the bottom of the last real line is.
+				text+="\n";
 			}
-			else if(align==HorizontalAlignment.Right) {
-				stringFormat.Alignment=StringAlignment.Far;
-			}
-			SizeF sizeFFit=g.MeasureString(text,font,sizeF,stringFormat,out int charactersFitted,out int linesFilled);//don't care about linesFilled
-			bitmap.Dispose();
-			g.Dispose();
-			HeightAndChars heightAndChars= new HeightAndChars();
-			heightAndChars.Chars=charactersFitted;
-			heightAndChars.Height=(int)Math.Floor(sizeFFit.Height);
-			return heightAndChars;
+			text+="*";
+			//Assume height of font.Height+2 to force multi-line.
+			RichTextBox richTextBox=CreateTextBoxForSheetDisplay(text,font,width,font.Height+2,align,false);
+			int h=richTextBox.GetPositionFromCharIndex(richTextBox.Text.Length-1).Y;//The top of the fake line is the bottom of the last real line.
+			richTextBox.Font.Dispose();//This font was dynamically created when the textbox was created.
+			richTextBox.Dispose();
+			return h;
 		}
 
 		/// <summary>Returns whether a given RichTextBox is multiline or not. Considers single line textBoxes with GrowthBehavior to be multiline. Expects either a SheetField or a SheetDef, not both. </summary>
@@ -484,14 +456,6 @@ namespace OpenDentBusiness {
 			return text.Substring(listLines[lineIndex].FirstCharIndex,listLines[lineIndex+1].FirstCharIndex-listLines[lineIndex].FirstCharIndex);
 		}
 
-	}
-
-	/// <summary>Container class used to encapsulate the results of Graphics.MeasureString.</summary>
-	public class HeightAndChars{
-		/// <summary>The height of the text that will fit in the SizeF used by Graphics.MeasureString.</summary>
-		public int Height;
-		/// <summary>The number of characters that fit in the SizeF used by Graphics.MeasureString.</summary>
-		public int Chars;
 	}
 
 }

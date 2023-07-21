@@ -25,8 +25,8 @@ namespace OpenDental {
 		}
 
 		private void FormTrojanCollectSetup_Load(object sender,EventArgs e) {
-			if(ODEnvironment.IsCloudServer) {
-				MsgBox.Show(this,"This program is not available while using Open Dental Cloud.");
+			if(ODBuild.IsWeb()) {
+				MsgBox.Show(this,"This program is not available in web mode.");
 				Close();
 				return;
 			}
@@ -83,7 +83,7 @@ namespace OpenDental {
 			return true;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!Validation()) {
 				return;
 			}
@@ -106,6 +106,5 @@ namespace OpenDental {
 			}
 			DialogResult=DialogResult.OK;
 		}
-
 	}
 }

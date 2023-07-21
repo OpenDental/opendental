@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -17,7 +16,6 @@ namespace OpenDental{
 		private MenuItemOD _menuItemCareCreditTransactions;
 		private MenuItemOD _menuItemClinicsMain;
 		private MenuItemOD _menuItemClinics;
-		private MenuItemOD _menuItemCloudUsers;
 		private MenuItemOD _menuItemCounties;
 		///<summary>Not available if in Unix.</summary>
 		private MenuItemOD _menuItemCreateAtoZ;
@@ -47,7 +45,7 @@ namespace OpenDental{
 		private MenuItemOD _menuItemNewCropBilling;
 		private MenuItemOD _menuItemNoAlerts;
 		private MenuItemOD _menuItemPatDashboards;
-		private MenuItemOD _menuItemERouting;
+		private MenuItemOD _menuItemPatientFlow;
 		private MenuItemOD _menuItemPatPortalTransactions;
 		private MenuItemOD _menuItemPayloadMonitor;
 		private MenuItemOD _menuItemOnlinePayments;
@@ -188,11 +186,9 @@ namespace OpenDental{
 			menuItemSetup.Add("Auto Codes",menuItemAutoCodes_Click);
 			menuItemSetup.Add("Automation",menuItemAutomation_Click);
 			menuItemSetup.Add("Auto Notes",menuItemAutoNotes_Click);
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				menuItemSetup.Add("Cloud Management",menuItemCloudManagement_Click);
 			}
-			_menuItemCloudUsers=new MenuItemOD("Cloud Users",menuItemCloudUsers_Click);
-			menuItemSetup.Add(_menuItemCloudUsers);
 			menuItemSetup.Add("Code Groups",menuItemCodeGroups_Click);
 			menuItemSetup.Add("Data Paths",menuItemDataPath_Click);
 			menuItemSetup.Add("Definitions",menuItemDefinitions_Click);
@@ -205,6 +201,7 @@ namespace OpenDental{
 			_menuItemFeeSchedGroups=new MenuItemOD("Fee Schedule Groups",menuFeeSchedGroups_Click);
 			menuItemSetup.Add(_menuItemFeeSchedGroups);
 			menuItemSetup.Add("Laboratories",menuItemLaboratories_Click);
+			menuItemSetup.Add("Miscellaneous",menuItemMisc_Click);
 			menuItemSetup.Add("Ortho",menuItemOrtho_Click);
 			menuItemSetup.Add("Practice",menuItemPractice_Click);
 			menuItemSetup.Add("Program Links",menuItemLinks_Click);
@@ -259,7 +256,6 @@ namespace OpenDental{
 			menuItemAccount.Add("Allocations",menuItemAllocations_Click);
 			_menuItemDefaultCCProcs=new MenuItemOD("Default CC Procedures",menuItemDefaultCCProcs_Click);
 			menuItemAccount.Add(_menuItemDefaultCCProcs);
-			menuItemAccount.Add("Pay Plan Templates",menuItemPayPlanTemplates_Click);
 		}
 
 		///<summary>Setup: Chart</summary>
@@ -339,12 +335,7 @@ namespace OpenDental{
 			_menuItemSites=new MenuItemOD("Sites",menuItemSites_Click);
 			menuItemLists.Add(_menuItemSites);
 			menuItemLists.Add("State Abbreviations",menuItemStateAbbrs_Click);
-			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
-				menuItemLists.Add("Postal Codes",menuItemZipCodes_Click);
-			}
-			else{
-				menuItemLists.Add("&Zip Codes",menuItemZipCodes_Click);
-			}
+			menuItemLists.Add("&Zip Codes",menuItemZipCodes_Click);
 		}
 		#endregion Lists
 
@@ -411,14 +402,14 @@ namespace OpenDental{
 			menuItemTools.Add(_menuItemTranslation);
 			_menuItemLateCharges=new MenuItemOD("Late Charges",menuItemLateCharges_Click);
 			menuItemTools.Add(_menuItemLateCharges);
-			menuItemTools.Add("Mobile Sync",menuItemMobileSetup_Click);
+			menuItemTools.Add("Mobile Synch",menuItemMobileSetup_Click);
 			_menuItemNewCropBilling=new MenuItemOD("NewCrop Billing",menuItemNewCropBilling_Click);
 			menuItemTools.Add(_menuItemNewCropBilling);
 			menuItemTools.Add("Ortho Auto Claims",menuItemOrthoAuto_Click);
 			_menuItemPatDashboards=new MenuItemOD("Patient Dashboards");
 			menuItemTools.Add(_menuItemPatDashboards);
-			_menuItemERouting = new MenuItemOD("eRouting", _menuItemERouting_Click);
-			menuItemTools.Add(_menuItemERouting);
+			_menuItemPatientFlow = new MenuItemOD("eRouting", _menuItemPatientFlow_Click);
+			menuItemTools.Add(_menuItemPatientFlow);
 			_menuItemPatPortalTransactions =new MenuItemOD("Patient Portal Transactions",menuItemXWebTrans_Click);
 			menuItemTools.Add(_menuItemPatPortalTransactions);
 			_menuItemOnlinePayments=new MenuItemOD("&Online Payments",menuItemOnlinePayments_Click);

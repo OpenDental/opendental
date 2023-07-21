@@ -366,9 +366,9 @@ namespace OpenDental {
 				MsgBox.Show(this,"No additional languages available.");
 				return;
 			}
-			InputBox inputBoxlanguageSelect=new InputBox(Lan.g(this,"Select language for template: "),listLanguagesDisplay,0);
+			using InputBox inputBoxlanguageSelect=new InputBox(Lan.g(this,"Select language for template: "),listLanguagesDisplay,0);
 			inputBoxlanguageSelect.ShowDialog();
-			if(inputBoxlanguageSelect.IsDialogCancel) {
+			if(inputBoxlanguageSelect.DialogResult!=DialogResult.OK) {
 				return;
 			}
 			ApptReminderRule apptReminderRule=GenericTools.DeepCopy<ApptReminderRule,ApptReminderRule>(ApptReminderRuleCur);
@@ -425,16 +425,13 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOk_Click(object sender,EventArgs e) {
 			bool hasValidNums=UIHelper.GetAllControls(this).OfType<ValidNum>().All(x => x.IsValid());
 			if(!hasValidNums) {
 				MsgBox.Show(this,"Fix data entry errors first.");
 				return;
 			}
 			if(!ValidateRule()) {
-				return;
-			}
-			if(ContainsShortURLs()) {
 				return;
 			}
 			TimeSpan timeSpanPrior=new TimeSpan(PIn.Int(textDays.Text,false),PIn.Int(textHours.Text,false),0,0);
@@ -524,16 +521,16 @@ namespace OpenDental {
 			if(PIn.Int(textDays.Text,false)>=366) {
 				errors.Add(Lan.g(this,"Lead time must 365 days or less."));
 			}
-			//ScheduleThankYou, NewPatientThankYou, and GeneralMessage can be 0, meaning send immediately. ConfirmationFutureDay has a separate check so exclude it here.
+			//ScheduleThankYou, NewPatientThankYou, and GeneralMessage can be 0, meaning send immediately.
 			if(checkEnabled.Checked && PIn.Int(textHours.Text,false)==0 
 				&& PIn.Int(textDays.Text,false)==0 
-				&& !ApptReminderRuleCur.TypeCur.In(ApptReminderType.ScheduleThankYou,ApptReminderType.NewPatientThankYou,ApptReminderType.GeneralMessage,ApptReminderType.ConfirmationFutureDay))
+				&& !ApptReminderRuleCur.TypeCur.In(ApptReminderType.ScheduleThankYou,ApptReminderType.NewPatientThankYou,ApptReminderType.GeneralMessage))
 			{
 				errors.Add(Lan.g(this,"Lead time must be greater than 0 hours."));
 			}
 			if(ApptReminderRuleCur.TypeCur==ApptReminderType.ConfirmationFutureDay) {
 				if(PIn.Int(textDays.Text,false)==0) {
-					errors.Add(Lan.g(this,"Lead time must be greater than or equal to 1 day for confirmations."));
+					errors.Add(Lan.g(this,"Lead time must 1 day or more for confirmations."));
 				}
 			}
 			if(radioBeforeAppt.Checked || ApptReminderRules.IsReminderTypeAlwaysSendBefore(ApptReminderRuleCur.TypeCur)) {
@@ -549,19 +546,6 @@ namespace OpenDental {
 				MessageBox.Show(Lan.g(this,"You must fix the following errors before continuing.")+"\r\n\r\n-"+string.Join("\r\n-",errors));
 				return false;
 			}
-			return true;
-		}
-
-		private bool ContainsShortURLs() {
-			List<UserControlReminderMessage> listUserControlReminderMessages=tabControl.TabPages.Select(x=>x.Controls).OfType<UserControlReminderMessage>().ToList();
-			List<string> listMessages=listUserControlReminderMessages.Select(x => x.TemplateSms).ToList();
-			string aggMessages=string.Join(" ",listMessages);
-			string firstShortURL=PrefC.GetFirstShortURL(aggMessages);
-			if(string.IsNullOrWhiteSpace(firstShortURL)) {
-				return false;
-			}
-			string errorMessage=Lan.g(this,"Message cannot contain the URL")+$" {firstShortURL} "+Lan.g(this,"as these are only allowed for eServices.");
-			MessageBox.Show(errorMessage);
 			return true;
 		}
 

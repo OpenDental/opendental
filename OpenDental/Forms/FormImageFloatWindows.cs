@@ -12,7 +12,6 @@ namespace OpenDental {
 	///<summary>This is a menu-style window.  No title bar.  Hovers in place until the user clicks on an action or until it loses focus.</summary>
 	public partial class FormImageFloatWindows:Form {
 		public LayoutManagerForms LayoutManager;
-		public Form FormOwner;
 		///<summary>These are the lower two points of the button that launched this window, in screen coordinates.  This window will roughly center its top edge on these anchor points and will also omit the outline between these two points so that it looks more like a menu.</summary>
 		public Point PointAnchor1;
 		public Point PointAnchor2;
@@ -87,14 +86,14 @@ namespace OpenDental {
 		}
 
 		private void FormImageFloatWindows_Load(object sender, EventArgs e){
-			_formImageFloat=(FormImageFloat)FormOwner;
+			_formImageFloat=(FormImageFloat)Owner;
 			System.Windows.Forms.Screen[] screenArray=System.Windows.Forms.Screen.AllScreens;
 			if(screenArray.Length==1){
 				_screen2=null;
 			}
 			else{
 				_screen2=screenArray[0];
-				System.Windows.Forms.Screen screenThis=System.Windows.Forms.Screen.FromControl(FormOwner);
+				System.Windows.Forms.Screen screenThis=System.Windows.Forms.Screen.FromControl(this);
 				if(_screen2.Bounds==screenThis.Bounds){
 					_screen2=screenArray[1];
 				}
@@ -179,10 +178,10 @@ namespace OpenDental {
 			labelActions.Size=new Size(LayoutManager.Scale(100),LayoutManager.Scale(18));
 			y+=LayoutManager.Scale(20);
 			listBoxActions.Location=new Point(x,y);
-			listBoxActions.Size=new Size(LayoutManager.Scale(120),LayoutManager.Scale(47));
+			listBoxActions.Size=new Size(LayoutManager.Scale(120),LayoutManager.Scale(43));
 			listBoxActions.LayoutManager=LayoutManager;
 			listBoxActions.Font=new Font(LayoutManagerForms.FontInitial.FontFamily,LayoutManager.ScaleFontODZoom(8.25f));
-			y+=LayoutManager.Scale(50);
+			y+=LayoutManager.Scale(46);
 			labelWindows.Location=new Point(x,y);
 			labelWindows.Font=new Font(LayoutManagerForms.FontInitial.FontFamily,LayoutManager.ScaleFontODZoom(8.25f));
 			labelWindows.Size=new Size(LayoutManager.Scale(100),LayoutManager.Scale(18));
@@ -198,13 +197,13 @@ namespace OpenDental {
 					listBoxWindows.SetSelected(i);
 				}
 			}
-			listBoxWindows.Height=(int)LayoutManager.ScaleMS(font.Height)*listFormImageFloats.Count+5;//pulled from ListBoxOD.IntegralHeight.
+			listBoxWindows.Height=(int)LayoutManager.ScaleMS(font.Height)*listFormImageFloats.Count+4;//pulled from ListBoxOD.IntegralHeight.
 			//Size and Location of form==========================================================================
 			x=_marginOuter*4+_sizeScreen.Width*3;
 			y=listBoxWindows.Bottom+_marginOuter;
 			Size=new Size(x,y);
 			x=(PointAnchor1.X+PointAnchor2.X)/2-Width/2;
-			Rectangle rectangleWorking=System.Windows.Forms.Screen.FromHandle(FormOwner.Handle).WorkingArea;
+			Rectangle rectangleWorking=System.Windows.Forms.Screen.FromHandle(this.Handle).WorkingArea;
 			if(x+Width>rectangleWorking.Right-10){
 				x=rectangleWorking.Right-Width-10;
 			}
@@ -233,7 +232,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"PDFs cannot be undocked.  Double click to open in PDF viewer.");
 				return;
 			}
-			System.Windows.Forms.Screen screen=System.Windows.Forms.Screen.FromHandle(FormOwner.Handle);
+			System.Windows.Forms.Screen screen=System.Windows.Forms.Screen.FromHandle(this.Handle);
 			Rectangle rectangleWorking=screen.WorkingArea;//In screen coords
 			if(ClickSecondScreen(e)){
 				return;
@@ -327,7 +326,7 @@ namespace OpenDental {
 			if(_screen2 is null){
 				return false;
 			}
-			System.Windows.Forms.Screen screen=System.Windows.Forms.Screen.FromHandle(FormOwner.Handle);
+			System.Windows.Forms.Screen screen=System.Windows.Forms.Screen.FromHandle(this.Handle);
 			//Once the window shows up on the other screen, windows will resize it due different dpi.
 			//Position won't change, but size will.
 			//Example: new size 100x100, will change to 200x200 on the 4k monitor.

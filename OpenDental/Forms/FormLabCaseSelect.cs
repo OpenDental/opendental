@@ -6,18 +6,15 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using OpenDentBusiness;
 using OpenDental.UI;
-using System.Linq;
 
 namespace OpenDental{
 	/// <summary></summary>
 	public partial class FormLabCaseSelect : FormODBase {
 		public long PatNum;
 		///<summary>This only has a value when DialogResult=OK.</summary>
-		public List<long> ListLabCaseNumsSelected;
-		public bool IsPlanned;
-		public bool IsSelectingUnattached;
-		public long AptNum;
+		public long LabCaseNumSelected;
 		private List<LabCase> _listLabCases;
+		public bool IsPlanned;
 
 		///<summary></summary>
 		public FormLabCaseSelect(){
@@ -30,13 +27,6 @@ namespace OpenDental{
 		}
 
 		private void FormLabCaseSelect_Load(object sender, System.EventArgs e) {
-			if(IsSelectingUnattached) {
-				labelInfo.Text="Select a lab case from the list below or create a new one.  This list will not show lab cases that are already attached to other appointments.";
-			}
-			else {
-				Text="Lab Cases for Appointment";
-				labelInfo.Text="";
-			}
 			FillGrid();
 			if(_listLabCases.Count>0){
 				gridMain.SetSelected(0,true);
@@ -44,15 +34,7 @@ namespace OpenDental{
 		}
 
 		private void FillGrid(){
-			if(IsSelectingUnattached) {
-				_listLabCases=LabCases.GetForPat(PatNum,IsPlanned);
-			}
-			else if(IsPlanned) {
-				_listLabCases=LabCases.GetForPlanned(AptNum);
-			}
-			else {
-				_listLabCases=LabCases.GetForApt(AptNum);
-			}
+			_listLabCases=LabCases.GetForPat(PatNum,IsPlanned);
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			GridColumn col=new GridColumn(Lan.g("TableLabCaseSelect","Date Created"),80);
@@ -88,74 +70,73 @@ namespace OpenDental{
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
-			if(IsSelectingUnattached) {
-				LabCase labCase=new LabCase();
-				labCase.PatNum=PatNum;
-				Patient patient=Patients.GetPat(PatNum);
-				labCase.ProvNum=Patients.GetProvNum(patient);
-				labCase.DateTimeCreated=MiscData.GetNowDateTime();
-				LabCases.Insert(labCase);
-				using FormLabCaseEdit formLabCaseEdit=new FormLabCaseEdit();
-				formLabCaseEdit.LabCaseCur=labCase;
-				formLabCaseEdit.IsNew=true;
-				formLabCaseEdit.ShowDialog();
-				if(formLabCaseEdit.DialogResult!=DialogResult.OK){
-					return;
-				}
-				ListLabCaseNumsSelected=new List<long>() { formLabCaseEdit.LabCaseCur.LabCaseNum };
-				DialogResult=DialogResult.OK;
+			LabCase labCase=new LabCase();
+			labCase.PatNum=PatNum;
+			Patient patient=Patients.GetPat(PatNum);
+			labCase.ProvNum=Patients.GetProvNum(patient);
+			labCase.DateTimeCreated=MiscData.GetNowDateTime();
+			LabCases.Insert(labCase);
+			using FormLabCaseEdit formLabCaseEdit=new FormLabCaseEdit();
+			formLabCaseEdit.LabCaseCur=labCase;
+			formLabCaseEdit.IsNew=true;
+			formLabCaseEdit.ShowDialog();
+			if(formLabCaseEdit.DialogResult!=DialogResult.OK){
+				return;
 			}
-			else {
-				//so let user pick one to add
-				using FormLabCaseSelect formLabCaseSelect=new FormLabCaseSelect();
-				formLabCaseSelect.PatNum=PatNum;
-				formLabCaseSelect.IsPlanned=IsPlanned;
-				formLabCaseSelect.IsSelectingUnattached=true;
-				formLabCaseSelect.ShowDialog();
-				if(formLabCaseSelect.DialogResult!=DialogResult.OK) {
-					return;
-				}
-				if(IsPlanned) {
-					LabCases.AttachToPlannedAppt(formLabCaseSelect.ListLabCaseNumsSelected,AptNum);
-				}
-				else {
-					LabCases.AttachToAppt(formLabCaseSelect.ListLabCaseNumsSelected,AptNum);
-				}
-				FillGrid();
-			}
+			LabCaseNumSelected=formLabCaseEdit.LabCaseCur.LabCaseNum;
+			DialogResult=DialogResult.OK;
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			LabCase labCaseSelected=gridMain.SelectedTag<LabCase>();
-			if(IsSelectingUnattached) {
-				ListLabCaseNumsSelected=new List<long>() { labCaseSelected.LabCaseNum };
-				DialogResult=DialogResult.OK;
-			}
-			else {
-				using FormLabCaseEdit formLabCaseEdit=new FormLabCaseEdit();
-				formLabCaseEdit.LabCaseCur=labCaseSelected;
-				formLabCaseEdit.ShowDialog();
-				if(formLabCaseEdit.DialogResult!=DialogResult.OK) {
-					return;
-				}
-				//Deleting or detaching labcase would have been done from in that window
-				FillGrid();
-			}
+			LabCaseNumSelected=gridMain.SelectedTag<LabCase>().LabCaseNum;
+			DialogResult=DialogResult.OK;
 		}
 
 		private void butOK_Click(object sender, System.EventArgs e) {
-			if(IsSelectingUnattached) {
-				if(gridMain.GetSelectedIndex()==-1){
-					MsgBox.Show(this,"Please select an item first.");
-					return;
-				}
-				ListLabCaseNumsSelected=gridMain.SelectedTags<LabCase>().Select(x => x.LabCaseNum).ToList();
-				DialogResult=DialogResult.OK;
+			if(gridMain.GetSelectedIndex()==-1){
+				MsgBox.Show(this,"Please select an item first.");
+				return;
 			}
-			else {
-				DialogResult=DialogResult.OK;
-			}
+			LabCaseNumSelected=gridMain.SelectedTag<LabCase>().LabCaseNum;
+			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+	
+
+		
+
+		
+
+		
+
+		
+
 
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

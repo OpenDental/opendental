@@ -26,6 +26,7 @@ namespace OpenDental{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormOrthoAutoClaims));
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butSelectAll = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.butGenerate = new OpenDental.UI.Button();
 			this.comboClinics = new OpenDental.UI.ComboBoxClinicPicker();
 			this.SuspendLayout();
@@ -54,6 +55,16 @@ namespace OpenDental{
 			this.butSelectAll.Text = "Select All";
 			this.butSelectAll.Click += new System.EventHandler(this.butSelectAll_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(853, 474);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butGenerate
 			// 
 			this.butGenerate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -80,6 +91,7 @@ namespace OpenDental{
 			this.Controls.Add(this.comboClinics);
 			this.Controls.Add(this.butSelectAll);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butGenerate);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormOrthoAutoClaims";
@@ -90,6 +102,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butGenerate;
 		private UI.GridOD gridMain;
 		private UI.Button butSelectAll;

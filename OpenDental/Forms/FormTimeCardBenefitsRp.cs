@@ -197,7 +197,7 @@ namespace OpenDental{
 			stringBuilder.AppendLine(string.Join(",",gridMain.Columns.Select(x => x.Heading)));
 			gridMain.ListGridRows
 				.ForEach(row => stringBuilder.AppendLine(string.Join(",",row.Cells.Select(cell => cell.Text.Replace(',','-').Replace('\t',',')))));
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				string exportFilename="BenefitsRpt_"+_dateNow.ToString("yyyyMMdd")+"_"+DateTime.Now.ToString("hhmm")+".csv";
 				string dataString=stringBuilder.ToString();
 				ThinfinityUtils.ExportForDownload(exportFilename,dataString);
@@ -218,5 +218,29 @@ namespace OpenDental{
 			}
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

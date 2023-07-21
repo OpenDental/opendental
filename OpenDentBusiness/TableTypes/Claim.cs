@@ -148,7 +148,7 @@ namespace OpenDentBusiness{
 		public string PatientStatusCode;
 		///<summary>FK to definition.DefNum. Most users will leave this blank.  Some offices may set up tracking statuses such as 'review', 'hold', 'riskmanage', etc.</summary>
 		public long CustomTracking;
-		///<summary>Used for historical purposes only, not sent electronically. Automatically set when CorrectionType is original and the claim is resent.</summary>
+		///<summary>Used for historical purposes only, not sent electronically. Automatically set when CorrectionType is not original and the claim is resent.</summary>
 		public DateTime DateResent;
 		///<summary>Enum:ClaimCorrectionType X12 CLM05-3. Usually set to original, but can be used to resubmit claims.  Also used in 1500 Medical Claim Form field 22.</summary>
 		public ClaimCorrectionType CorrectionType;
@@ -193,11 +193,6 @@ namespace OpenDentBusiness{
 		public DateOtherQualifier DateOtherQualifier;
 		///<summary>Used in 1500 Medical Claim Form field 20.  Place an 'X' the 'Yes' if true and the 'No' if false.</summary>
 		public bool IsOutsideLab;
-		///<summary>Holds the salted hash of the following claim fields: ClaimFee, ClaimStatus, InsPayEst, InsPayAmt.</summary>
-		public string SecurityHash;
-		///<summary>A note that pertains to all attachments on the claim. Currently only applies to DentalXChange, but could be expanded. 2000 character limit put in place by DentalXChange.</summary>
-		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
-		public string Narrative;
 
 		///<summary>Not a data column.</summary>
 		[CrudColumn(IsNotDbColumn=true)]

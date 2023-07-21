@@ -52,13 +52,10 @@ namespace OpenDental{
 			this.textWidth = new OpenDental.ValidNum();
 			this.textYPos = new OpenDental.ValidNum();
 			this.textXPos = new OpenDental.ValidNum();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.labelTextH = new System.Windows.Forms.Label();
 			this.checkIncludeInMobile = new OpenDental.UI.CheckBox();
-			this.butCalcWidth = new OpenDental.UI.Button();
-			this.butCalcHeight = new OpenDental.UI.Button();
-			this.label11 = new System.Windows.Forms.Label();
-			this.label12 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -75,7 +72,7 @@ namespace OpenDental{
 			// 
 			this.labelTextW.Location = new System.Drawing.Point(201, 555);
 			this.labelTextW.Name = "labelTextW";
-			this.labelTextW.Size = new System.Drawing.Size(86, 16);
+			this.labelTextW.Size = new System.Drawing.Size(109, 16);
 			this.labelTextW.TabIndex = 104;
 			this.labelTextW.Text = "TextW: ";
 			this.labelTextW.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -99,6 +96,7 @@ namespace OpenDental{
 			this.listFields.Size = new System.Drawing.Size(198, 640);
 			this.listFields.TabIndex = 0;
 			this.listFields.TabStop = false;
+			this.listFields.SelectionChangeCommitted += new System.EventHandler(this.listFields_SelectionChangeCommitted);
 			this.listFields.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ListFields_MouseDown);
 			// 
 			// textFieldValue
@@ -297,7 +295,7 @@ namespace OpenDental{
 			// 
 			this.textHeight.Location = new System.Drawing.Point(126, 579);
 			this.textHeight.MaxVal = 2000;
-			this.textHeight.MinVal = 1;
+			this.textHeight.MinVal = -100;
 			this.textHeight.Name = "textHeight";
 			this.textHeight.Size = new System.Drawing.Size(69, 20);
 			this.textHeight.TabIndex = 97;
@@ -306,7 +304,7 @@ namespace OpenDental{
 			// 
 			this.textWidth.Location = new System.Drawing.Point(126, 553);
 			this.textWidth.MaxVal = 2000;
-			this.textWidth.MinVal = 1;
+			this.textWidth.MinVal = -100;
 			this.textWidth.Name = "textWidth";
 			this.textWidth.Size = new System.Drawing.Size(69, 20);
 			this.textWidth.TabIndex = 95;
@@ -329,21 +327,31 @@ namespace OpenDental{
 			this.textXPos.Size = new System.Drawing.Size(69, 20);
 			this.textXPos.TabIndex = 91;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(779, 664);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(712, 664);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(802, 664);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// labelTextH
 			// 
 			this.labelTextH.Location = new System.Drawing.Point(201, 581);
 			this.labelTextH.Name = "labelTextH";
-			this.labelTextH.Size = new System.Drawing.Size(86, 16);
+			this.labelTextH.Size = new System.Drawing.Size(109, 16);
 			this.labelTextH.TabIndex = 238;
 			this.labelTextH.Text = "TextH: ";
 			this.labelTextH.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -357,51 +365,9 @@ namespace OpenDental{
 			this.checkIncludeInMobile.TabIndex = 239;
 			this.checkIncludeInMobile.Text = "Include In Mobile";
 			// 
-			// butCalcWidth
-			// 
-			this.butCalcWidth.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butCalcWidth.Location = new System.Drawing.Point(289, 550);
-			this.butCalcWidth.Name = "butCalcWidth";
-			this.butCalcWidth.Size = new System.Drawing.Size(98, 24);
-			this.butCalcWidth.TabIndex = 240;
-			this.butCalcWidth.Text = "Calculate Width";
-			this.butCalcWidth.Click += new System.EventHandler(this.butCalcWidth_Click);
-			// 
-			// butCalcHeight
-			// 
-			this.butCalcHeight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butCalcHeight.Location = new System.Drawing.Point(289, 576);
-			this.butCalcHeight.Name = "butCalcHeight";
-			this.butCalcHeight.Size = new System.Drawing.Size(98, 24);
-			this.butCalcHeight.TabIndex = 241;
-			this.butCalcHeight.Text = "Calculate Height";
-			this.butCalcHeight.Click += new System.EventHandler(this.butCalcHeight_Click);
-			// 
-			// label11
-			// 
-			this.label11.Location = new System.Drawing.Point(392, 554);
-			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(86, 16);
-			this.label11.TabIndex = 242;
-			this.label11.Text = "from Height";
-			this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// label12
-			// 
-			this.label12.Location = new System.Drawing.Point(392, 580);
-			this.label12.Name = "label12";
-			this.label12.Size = new System.Drawing.Size(86, 16);
-			this.label12.TabIndex = 243;
-			this.label12.Text = "from Width";
-			this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
 			// FormSheetFieldStatic
 			// 
-			this.ClientSize = new System.Drawing.Size(866, 696);
-			this.Controls.Add(this.label12);
-			this.Controls.Add(this.label11);
-			this.Controls.Add(this.butCalcHeight);
-			this.Controls.Add(this.butCalcWidth);
+			this.ClientSize = new System.Drawing.Size(889, 696);
 			this.Controls.Add(this.checkIncludeInMobile);
 			this.Controls.Add(this.labelTextH);
 			this.Controls.Add(this.checkIsLocked);
@@ -423,7 +389,8 @@ namespace OpenDental{
 			this.Controls.Add(this.textXPos);
 			this.Controls.Add(this.label5);
 			this.Controls.Add(this.groupBox1);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormSheetFieldStatic";
 			this.Text = "Edit Static Text Field";
@@ -437,7 +404,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label label3;
 		private OpenDental.UI.ComboBox comboFontName;
@@ -468,9 +436,5 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelTextH;
 		private OpenDental.UI.CheckBox checkIncludeInMobile;
 		private System.Windows.Forms.TextBox textFontSize;
-		private UI.Button butCalcWidth;
-		private UI.Button butCalcHeight;
-		private System.Windows.Forms.Label label11;
-		private System.Windows.Forms.Label label12;
 	}
 }

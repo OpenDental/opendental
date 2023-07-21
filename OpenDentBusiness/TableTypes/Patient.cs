@@ -103,7 +103,7 @@ namespace OpenDentBusiness{
 		public double Bal_61_90;
 		/// <summary>Aged balance over 90 days old. Aging numbers are for entire family.  Only stored with guarantor.</summary>
 		public double BalOver90;
-		/// <summary>Insurance Estimate for entire family. Only stored with guarantor.</summary>
+		/// <summary>Insurance Estimate for entire family.</summary>
 		public double InsEst;
 		/// <summary>Total balance for entire family before insurance estimate.  Not the same as the sum of the 4 aging balances because this can be 
 		/// negative.  Only stored with guarantor.</summary>

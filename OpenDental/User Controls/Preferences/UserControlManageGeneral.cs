@@ -78,29 +78,6 @@ namespace OpenDental {
 				.ToList();
 			comboEraAutomation.Items.AddListEnum(listEraAutomationModes);
 		}
-
-		private void FillComboEraWriteOff () {
-			List<EnumEraAutoPostWriteOff> listEraAutoPostWriteOffModes=typeof(EnumEraAutoPostWriteOff).GetEnumValues()
-				.AsEnumerable<EnumEraAutoPostWriteOff>()
-				.ToList();
-			comboEraWriteoff.Items.AddListEnum(listEraAutoPostWriteOffModes);
-		}
-
-		/// <summary>Fills the CHK, ACH, FWT, and ERADefault comboboxes. If no def is chosen yet "None" is put in there</summary>
-		private void FillEraPaymentTypeCombos(){
-			//Add each of the defs and set the default for each ERA combobox
-			FillComboEraPaymentTypeHelper(comboEraCheckPaymentType, PrefName.EraChkPaymentType);
-			FillComboEraPaymentTypeHelper(comboAchPaymentType, PrefName.EraAchPaymentType);
-			FillComboEraPaymentTypeHelper(comboFwtPaymentType, PrefName.EraFwtPaymentType);
-			FillComboEraPaymentTypeHelper(comboEraDefaultPaymentType, PrefName.EraDefaultPaymentType);
-		}
-
-		private void FillComboEraPaymentTypeHelper(UI.ComboBox comboBox, PrefName prefName){
-			comboBox.Items.Clear();
-			comboBox.Items.AddDefNone();
-			comboBox.Items.AddDefs(Defs.GetDefsForCategory(DefCat.InsurancePaymentType,true));
-			comboBox.SetSelectedDefNum(PrefC.GetLong(prefName:prefName));
-		}
 		#endregion Methods - Private
 
 		#region Methods - Public
@@ -129,16 +106,11 @@ namespace OpenDental {
 			comboDepositSoftware.SetSelectedEnum(PrefC.GetEnum<AccountingSoftware>(PrefName.AccountingSoftware));
 			checkRxHideProvsWithoutDEA.Checked=PrefC.GetBool(PrefName.RxHideProvsWithoutDEA);
 			checkAccountingInvoiceAttachmentsSaveInDatabase.Checked=PrefC.GetBool(PrefName.AccountingInvoiceAttachmentsSaveInDatabase);
-			FillComboEraWriteOff();
-			comboEraWriteoff.SetSelectedEnum(PrefC.GetEnum<EnumEraAutoPostWriteOff>(PrefName.EraAutoPostWriteOff));
-			checkTimeCardUseLocal.Checked=PrefC.GetBool(PrefName.LocalTimeOverridesServerTime);
-			FillEraPaymentTypeCombos();
-			textEraNoAutoProcessCarcCodes.Text=PrefC.GetString(PrefName.EraNoAutoProcessCarcCodes);
 		}
 
 		public bool SaveManageGeneral() {
 			if(!textClaimsReceivedDays.IsValid()) {
-				MsgBox.Show(this,"Show claims received after days must be a positive integer (max 50,000) or blank.");
+				MsgBox.Show(this,"Show claims received after days must be a positive integer or blank.");
 				return false;
 			}
 			Changed|=Prefs.UpdateBool(PrefName.RxSendNewToQueue,checkRxSendNewToQueue.Checked);
@@ -157,13 +129,6 @@ namespace OpenDental {
 			Changed|=Prefs.UpdateInt(PrefName.AccountingSoftware,(int)comboDepositSoftware.GetSelected<AccountingSoftware>());
 			Changed|=Prefs.UpdateBool(PrefName.RxHideProvsWithoutDEA,checkRxHideProvsWithoutDEA.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.AccountingInvoiceAttachmentsSaveInDatabase,checkAccountingInvoiceAttachmentsSaveInDatabase.Checked);
-			Changed|=Prefs.UpdateLong(PrefName.EraChkPaymentType, comboEraCheckPaymentType.GetSelectedDefNum());
-			Changed|=Prefs.UpdateLong(PrefName.EraAchPaymentType, comboAchPaymentType.GetSelectedDefNum());
-			Changed|=Prefs.UpdateLong(PrefName.EraFwtPaymentType, comboFwtPaymentType.GetSelectedDefNum());
-			Changed|=Prefs.UpdateLong(PrefName.EraDefaultPaymentType, comboEraDefaultPaymentType.GetSelectedDefNum());
-			Changed|=Prefs.UpdateInt(PrefName.EraAutoPostWriteOff,(int)comboEraWriteoff.GetSelected<EnumEraAutoPostWriteOff>());
-			Changed|=Prefs.UpdateBool(PrefName.LocalTimeOverridesServerTime,checkTimeCardUseLocal.Checked);
-			Changed|=Prefs.UpdateString(PrefName.EraNoAutoProcessCarcCodes,textEraNoAutoProcessCarcCodes.Text);
 			return true;
 		}
 		#endregion Methods - Public

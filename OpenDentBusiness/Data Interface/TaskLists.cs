@@ -33,32 +33,32 @@ namespace OpenDentBusiness{
 				return Meth.GetObject<List<TaskList>>(MethodBase.GetCurrentMethod(),userNum,filterClinicFkey,filterRegionFkey);
 			}
 			string command=@"SELECT tasklist.*,COALESCE(unreadtasks.Count,0) 'NewTaskCount',t2.Descript 'ParentDesc1',t3.Descript 'ParentDesc2'
-				FROM tasklist
-				LEFT JOIN tasksubscription ON tasksubscription.TaskListNum=tasklist.TaskListNum
-				LEFT JOIN tasklist t2 ON t2.TaskListNum=tasklist.Parent 
-				LEFT JOIN tasklist t3 ON t3.TaskListNum=t2.Parent 
-				LEFT JOIN (
-				SELECT taskancestor.TaskListNum,COUNT(*) 'Count'
-				FROM taskancestor
-				INNER JOIN task ON task.TaskNum=taskancestor.TaskNum
-				AND NOT(COALESCE(task.ReminderGroupId,'') != '' AND task.DateTimeEntry > "+DbHelper.Now()+") ";//no future reminders
+					FROM tasklist
+					LEFT JOIN tasksubscription ON tasksubscription.TaskListNum=tasklist.TaskListNum
+					LEFT JOIN tasklist t2 ON t2.TaskListNum=tasklist.Parent 
+					LEFT JOIN tasklist t3 ON t3.TaskListNum=t2.Parent 
+					LEFT JOIN (
+						SELECT taskancestor.TaskListNum,COUNT(*) 'Count'
+						FROM taskancestor
+						INNER JOIN task ON task.TaskNum=taskancestor.TaskNum
+							AND NOT(COALESCE(task.ReminderGroupId,'') != '' AND task.DateTimeEntry > "+DbHelper.Now()+") ";//no future reminders
 			command+=BuildFilterJoins(filterClinicFkey);
 			if(PrefC.GetBool(PrefName.TasksNewTrackedByUser)) {
 				command+=@"
-					INNER JOIN taskunread ON taskunread.TaskNum=task.TaskNum 
-					WHERE taskunread.UserNum = "+POut.Long(userNum)+@"
-					AND task.TaskStatus!="+POut.Int((int)TaskStatusEnum.Done);
+						INNER JOIN taskunread ON taskunread.TaskNum=task.TaskNum 
+						WHERE taskunread.UserNum = "+POut.Long(userNum)+@"
+						AND task.TaskStatus!="+POut.Int((int)TaskStatusEnum.Done);
 			}
 			else {
 				command+=@"
-					WHERE task.TaskStatus="+POut.Int((int)TaskStatusEnum.New);
+						WHERE task.TaskStatus="+POut.Int((int)TaskStatusEnum.New);
 			}
 			command+=BuildFilterWhereClause(userNum,filterClinicFkey,filterRegionFkey);
 			command+=@"
-				GROUP BY taskancestor.TaskListNum) unreadtasks ON unreadtasks.TaskListNum = tasklist.TaskListNum 
-				WHERE tasksubscription.UserNum="+POut.Long(userNum)+@"
-				AND tasksubscription.TaskListNum!=0 
-				ORDER BY tasklist.Descript,tasklist.DateTimeEntry";
+						GROUP BY taskancestor.TaskListNum) unreadtasks ON unreadtasks.TaskListNum = tasklist.TaskListNum 
+					WHERE tasksubscription.UserNum="+POut.Long(userNum)+@"
+					AND tasksubscription.TaskListNum!=0 
+					ORDER BY tasklist.Descript,tasklist.DateTimeEntry";
 			return TableToList(Db.GetTable(command));
 		}
 
@@ -72,9 +72,9 @@ namespace OpenDentBusiness{
 			string command=@"SELECT tasklist.*,COALESCE(unreadtasks.Count,0) 'NewTaskCount' 
 				FROM tasklist 
 				LEFT JOIN (SELECT tasklist.TaskListNum,COUNT(*) Count 
-				FROM tasklist
-				INNER JOIN taskancestor ON taskancestor.TaskListNum = tasklist.TaskListNum
-				INNER JOIN task ON task.TaskNum = taskancestor.TaskNum ";
+					FROM tasklist
+					INNER JOIN taskancestor ON taskancestor.TaskListNum = tasklist.TaskListNum
+					INNER JOIN task ON task.TaskNum = taskancestor.TaskNum ";
 			if(taskType==TaskType.Reminder) {
 				command+="AND COALESCE(task.ReminderGroupId,'') != '' ";//reminders only
 			}
@@ -147,7 +147,8 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<TaskList>>(MethodBase.GetCurrentMethod(),parent,userNum,userNumInbox,taskType,filterClinicFkey,filterRegionFkey);
 			}
-			string command="SELECT tasklist.*,"
+			string command=
+				"SELECT tasklist.*,"
 				+"(SELECT COUNT(*) FROM taskancestor INNER JOIN task ON task.TaskNum=taskancestor.TaskNum ";
 			command+=BuildFilterJoins(filterClinicFkey);
 			command+="WHERE taskancestor.TaskListNum=tasklist.TaskListNum ";
@@ -188,10 +189,10 @@ namespace OpenDentBusiness{
 
 		///<summary>All repeating items for one date type with no heirarchy.  filterClinicFkey and filterRegionFkey are only used for NewTaskCount and do
 		///not affect which TaskLists are returned by this method.  Pass filterClinicFkey=0 and filterRegionFkey=0 to intentionally bypass filtering.</summary>
-		public static List<TaskList> RefreshRepeating(TaskDateType taskDateType,long userNum,long filterClinicFkey=0,long filterRegionFkey=0)
+		public static List<TaskList> RefreshRepeating(TaskDateType dateType,long userNum,long filterClinicFkey=0,long filterRegionFkey=0)
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<TaskList>>(MethodBase.GetCurrentMethod(),taskDateType,userNum,filterClinicFkey,filterRegionFkey);
+				return Meth.GetObject<List<TaskList>>(MethodBase.GetCurrentMethod(),dateType,userNum,filterClinicFkey,filterRegionFkey);
 			}
 			string command=
 				"SELECT tasklist.*,"
@@ -205,29 +206,29 @@ namespace OpenDentBusiness{
 				//See the note in RefreshRepeatingTrunk.  Behavior needs to be tested.
 				+"FROM tasklist "
 				+"WHERE IsRepeating=1 "
-				+"AND DateType="+POut.Long((int)taskDateType)+" "
+				+"AND DateType="+POut.Long((int)dateType)+" "
 				+"ORDER BY tasklist.Descript,tasklist.DateTimeEntry";
 			return TableToList(Db.GetTable(command));
 		}
 
 		///<summary>Gets all task lists for one of the 3 dated trunks.  filterClinicFkey and filterRegionFkey are only used for NewTaskCount and do not 
 		///affect which TaskLists are returned by this method.  Pass filterClinicFkey=0 and filterRegionFkey=0 to intentionally bypass filtering.</summary>
-		public static List<TaskList> RefreshDatedTrunk(DateTime date,TaskDateType taskDateType,long userNum,long filterClinicFkey=0,long filterRegionFkey=0)
+		public static List<TaskList> RefreshDatedTrunk(DateTime date,TaskDateType dateType,long userNum,long filterClinicFkey=0,long filterRegionFkey=0)
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<TaskList>>(MethodBase.GetCurrentMethod(),date,taskDateType,userNum,filterClinicFkey,filterRegionFkey);
+				return Meth.GetObject<List<TaskList>>(MethodBase.GetCurrentMethod(),date,dateType,userNum,filterClinicFkey,filterRegionFkey);
 			}
 			DateTime dateFrom=DateTime.MinValue;
 			DateTime dateTo=DateTime.MaxValue;
-			if(taskDateType==TaskDateType.Day) {
+			if(dateType==TaskDateType.Day) {
 				dateFrom=date;
 				dateTo=date;
 			}
-			else if(taskDateType==TaskDateType.Week) {
+			else if(dateType==TaskDateType.Week) {
 				dateFrom=date.AddDays(-(int)date.DayOfWeek);
 				dateTo=dateFrom.AddDays(6);
 			}
-			else if(taskDateType==TaskDateType.Month) {
+			else if(dateType==TaskDateType.Month) {
 				dateFrom=new DateTime(date.Year,date.Month,1);
 				dateTo=dateFrom.AddMonths(1).AddDays(-1);
 			}
@@ -249,7 +250,7 @@ namespace OpenDentBusiness{
 				+"FROM tasklist "
 				+"WHERE DateTL >= "+POut.Date(dateFrom)
 				+" AND DateTL <= "+POut.Date(dateTo)
-				+" AND DateType="+POut.Long((int)taskDateType)
+				+" AND DateType="+POut.Long((int)dateType)
 				+" ORDER BY tasklist.Descript,tasklist.DateTimeEntry";
 			return TableToList(Db.GetTable(command));
 		}
@@ -259,7 +260,7 @@ namespace OpenDentBusiness{
 		public static string BuildFilterJoins(long filterClinicFkey) {
 			string command=string.Empty;
 			//Only add JOINs if filtering.  Filtering will never happen if clinics are turned off, because regions link via clinics.
-			if((EnumTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType)==EnumTaskFilterType.Disabled || filterClinicFkey==0 
+			if((GlobalTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType)==GlobalTaskFilterType.Disabled || filterClinicFkey==0 
 				|| !PrefC.HasClinicsEnabled) 
 			{
 				return command;
@@ -272,36 +273,35 @@ namespace OpenDentBusiness{
 
 		///<summary>Builds WHERE clauses appropriate to the type of GlobalFilterType.  Returns empty string if not filtering.  Pass filterClinicFkey=0 
 		///and filterRegionFkey=0 to intentionally bypass filtering.</summary>
-		public static string BuildFilterWhereClause(long userNum,long filterClinicFkey,long filterRegionFkey) {
+		public static string BuildFilterWhereClause(long currentUserNum,long filterClinicFkey,long filterRegionFkey) {
 			string command=string.Empty;
 			//Only add WHERE clauses if filtering.  Filtering will never happen if clinics are turned off, because regions link via clinics.
-			if((EnumTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType)==EnumTaskFilterType.Disabled 
+			if((GlobalTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType)==GlobalTaskFilterType.Disabled 
 				|| (filterClinicFkey==0 && filterRegionFkey==0) || !PrefC.HasClinicsEnabled) 
 			{
 				return command;
 			}
-			List<Clinic> listClinicsUnrestricted=Clinics.GetAllForUserod(Userods.GetUser(userNum));
+			List<Clinic> listUnrestrictedClinics=Clinics.GetAllForUserod(Userods.GetUser(currentUserNum));
 			List<long> listClinicNums=new List<long>() { 0 };//All users can see Tasks associated to HQ clinic or "0" region.
 			List<long> listClinicNumsInRegion=new List<long>() { 0 };//All users can see Tasks associated to HQ clinic or "0" region.
-			List<long> listClinicNumsUnrestricted=listClinicsUnrestricted.Select(x => x.ClinicNum).ToList();//User can view these clinicnums.
-			List<long> listClinicNumsUnrestrictedInRegion=listClinicsUnrestricted.FindAll(x => x.Region==filterRegionFkey).Select(x => x.ClinicNum).ToList();
-			if(listClinicNumsUnrestricted.Contains(filterClinicFkey)) {//Make sure user is not restricted for this clinic.
+			List<long> listUnrestrictedClinicNums=listUnrestrictedClinics.Select(x => x.ClinicNum).ToList();//User can view these clinicnums.
+			List<long> listUnrestrictedClinicNumsInRegion=listUnrestrictedClinics.FindAll(x => x.Region==filterRegionFkey).Select(x => x.ClinicNum).ToList();
+			if(listUnrestrictedClinicNums.Contains(filterClinicFkey)) {//Make sure user is not restricted for this clinic.
 				listClinicNums.Add(filterClinicFkey);
 			}
-			listClinicNumsInRegion.AddRange(listClinicNumsUnrestrictedInRegion);
+			listClinicNumsInRegion.AddRange(listUnrestrictedClinicNumsInRegion);
 			string strClinicFilterNums=string.Join(",",listClinicNums.Select(x => POut.Long(x)));
 			string strRegionFilterNums=string.Join(",",listClinicNumsInRegion.Select(x => POut.Long(x)));
 			//Clause for TaskLists that have Default filter.
-			string cmdFilterTaskListByDefault="(tasklistfortask.GlobalTaskFilterType IN ("
-				+POut.Long((long)EnumTaskFilterType.Disabled)+","+POut.Long((long)EnumTaskFilterType.Default)+")"//Disabled is treated as Default for tasklists.
-				+GetDefaultFilterTypeString((EnumTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType),strClinicFilterNums,strRegionFilterNums)+") ";
+			string cmdFilterTaskListByDefault="(tasklistfortask.GlobalTaskFilterType="+POut.Long((long)GlobalTaskFilterType.Default)
+				+GetDefaultFilterTypeString((GlobalTaskFilterType)PrefC.GetInt(PrefName.TasksGlobalFilterType),strClinicFilterNums,strRegionFilterNums)+") ";
 			//Clause for TaskLists that have None filter.
-			string cmdFilterTaskListByNone="(tasklistfortask.GlobalTaskFilterType="+POut.Long((long)EnumTaskFilterType.None)+")";
+			string cmdFilterTaskListByNone="(tasklistfortask.GlobalTaskFilterType="+POut.Long((long)GlobalTaskFilterType.None)+")";
 			//Clause for TaskLists that have Clinic filter.
-			string cmdFilterTaskListByClinic="(tasklistfortask.GlobalTaskFilterType="+POut.Long((long)EnumTaskFilterType.Clinic)
+			string cmdFilterTaskListByClinic="(tasklistfortask.GlobalTaskFilterType="+POut.Long((long)GlobalTaskFilterType.Clinic)
 				+" AND (patient.ClinicNum IN ("+strClinicFilterNums+") OR appointment.ClinicNum IN ("+strClinicFilterNums+"))) ";
 			//Clause for TaskLists that have Region filter.
-			string cmdFilterTaskListByRegion="(tasklistfortask.GlobalTaskFilterType="+POut.Long((long)EnumTaskFilterType.Region)
+			string cmdFilterTaskListByRegion="(tasklistfortask.GlobalTaskFilterType="+POut.Long((long)GlobalTaskFilterType.Region)
 				+" AND (patient.ClinicNum IN ("+strRegionFilterNums+") OR appointment.ClinicNum IN ("+strRegionFilterNums+"))) ";
 			//Clause for Tasks that are not connected to a patient or clinic.
 			string cmdTaskClinicIsNull="((patient.ClinicNum IS NULL) AND (appointment.ClinicNum IS NULL))";
@@ -312,16 +312,16 @@ namespace OpenDentBusiness{
 
 		///<summary>Builds a short section of the GlobalTaskFilterType WHERE clause.  Determines which clinics to filter by depending on the global 
 		///default GlobalTaskFilterType.</summary>
-		private static string GetDefaultFilterTypeString(EnumTaskFilterType globalTaskFilterTypeDefault,string strClinicNums,string strClinicNumsInRegion) {
+		private static string GetDefaultFilterTypeString(GlobalTaskFilterType defaultFilterType,string strClinicNums,string strClinicNumsInRegion) {
 			string command="";
-			switch(globalTaskFilterTypeDefault) {
-				case EnumTaskFilterType.Clinic:
+			switch(defaultFilterType) {
+				case GlobalTaskFilterType.Clinic:
 					command=" AND (patient.ClinicNum IN ("+strClinicNums+") OR appointment.ClinicNum IN ("+strClinicNums+"))";
 					break;
-				case EnumTaskFilterType.Region:
+				case GlobalTaskFilterType.Region:
 					command=" AND (patient.ClinicNum IN ("+strClinicNumsInRegion+") OR appointment.ClinicNum IN ("+strClinicNumsInRegion+"))";
 					break;
-				case EnumTaskFilterType.None:
+				case GlobalTaskFilterType.None:
 				default:
 					break;
 			}
@@ -351,13 +351,13 @@ namespace OpenDentBusiness{
 
 		///<summary>Gets all task lists from the database for a certain DateType.
 		///If doIncludeArchived is false, also excludes child lists of archived lists.</summary>
-		public static List<TaskList> GetForDateType(TaskDateType taskDateType,bool doIncludeArchived) {
+		public static List<TaskList> GetForDateType(TaskDateType dateType,bool doIncludeArchived) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<TaskList>>(MethodBase.GetCurrentMethod(),taskDateType,doIncludeArchived);
+				return Meth.GetObject<List<TaskList>>(MethodBase.GetCurrentMethod(),dateType,doIncludeArchived);
 			}
 			List<TaskList> listTaskLists=GetAll();
 			Dictionary<long,TaskList> dictAllTaskLists=listTaskLists.ToDictionary(x => x.TaskListNum);
-			listTaskLists.RemoveAll(x => x.DateType!=taskDateType ||
+			listTaskLists.RemoveAll(x => x.DateType!=dateType ||
 				//We are excluding archived lists AND The current task list or any of its ancestors are archived
 				(!doIncludeArchived && (x.TaskListStatus==TaskListStatusEnum.Archived || IsAncestorTaskListArchived(ref dictAllTaskLists,x,true))));
 			return listTaskLists;
@@ -383,11 +383,11 @@ namespace OpenDentBusiness{
 		///when getting a list of task lists for trunks.</summary>
 		private static List<TaskList> TableToList(DataTable table){
 			//No need to check MiddleTierRole; no call to db.
-			List<TaskList> listTaskLists=Crud.TaskListCrud.TableToList(table);
+			List<TaskList> retVal=Crud.TaskListCrud.TableToList(table);
 			string desc;
 			//Check if the table passed in contains any of the special columns used to fill task lists for trunks.  If not, simply return.
 			if(!table.Columns.Contains("NewTaskCount")) {
-				return listTaskLists;
+				return retVal;
 			}
 			//The following ParentDesc columns are optional.
 			bool hasParentDesc=false;
@@ -398,61 +398,59 @@ namespace OpenDentBusiness{
 			}
 			//There were special non db columns passed in that need to be set.
 			//Loop through the entire list of task lists and set their corresponding non db columns to the values of the table passed in.
-			for(int i=0;i<listTaskLists.Count;i++) {
+			for(int i=0;i<retVal.Count;i++) {
 				//We know at this point that the table passed in contains a NewTaskCount column.
-				listTaskLists[i].NewTaskCount=PIn.Int(table.Rows[i]["NewTaskCount"].ToString());
-				if(!hasParentDesc) {
-					continue;
-				}
-				//Check for optional parent descriptions.
-				//Create visual heirarchy of tasklists
-				desc=PIn.String(table.Rows[i]["ParentDesc1"].ToString());
-				if(desc!="") {
-					listTaskLists[i].ParentDesc=desc+"/";
-				}
-				desc=PIn.String(table.Rows[i]["ParentDesc2"].ToString());
-				if(desc!="") {
-					listTaskLists[i].ParentDesc=desc+"/"+listTaskLists[i].ParentDesc;
+				retVal[i].NewTaskCount=PIn.Int(table.Rows[i]["NewTaskCount"].ToString());
+				if(hasParentDesc) {//Check for optional parent descriptions.
+					//Create visual heirarchy of tasklists
+					desc=PIn.String(table.Rows[i]["ParentDesc1"].ToString());
+					if(desc!="") {
+						retVal[i].ParentDesc=desc+"/";
+					}
+					desc=PIn.String(table.Rows[i]["ParentDesc2"].ToString());
+					if(desc!="") {
+						retVal[i].ParentDesc=desc+"/"+retVal[i].ParentDesc;
+					}
 				}
 			}
-			return listTaskLists;
+			return retVal;
 		}
 
 		/// <summary>Gets all task lists with the given object type.
 		/// Used in TaskListSelect when assigning an object to a task list. If doIncludeArchived is false, also excludes child lists of archived lists.
 		/// </summary>
-		public static List<TaskList> GetForObjectType(TaskObjectType taskObjectType,bool doIncludeArchived) {
+		public static List<TaskList> GetForObjectType(TaskObjectType objectType,bool doIncludeArchived) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<TaskList>>(MethodBase.GetCurrentMethod(),taskObjectType,doIncludeArchived);
+				return Meth.GetObject<List<TaskList>>(MethodBase.GetCurrentMethod(),objectType,doIncludeArchived);
 			}
 			List<TaskList> listTaskLists=GetAll();
 			Dictionary<long,TaskList> dictAllTaskLists=listTaskLists.ToDictionary(x => x.TaskListNum);
-			listTaskLists.RemoveAll(x => x.ObjectType!=taskObjectType ||
+			listTaskLists.RemoveAll(x => x.ObjectType!=objectType ||
 				//We are excluding archived lists AND The current task list or any of its ancestors are archived
 				(!doIncludeArchived && (x.TaskListStatus==TaskListStatusEnum.Archived || IsAncestorTaskListArchived(ref dictAllTaskLists,x,true))));
 			return listTaskLists.OrderBy(x => x.Descript).ToList();
 		}
 
-		private static void ValidateTaskList(TaskList taskList) {
-			if(taskList.IsRepeating && taskList.DateTL.Year>1880) {
+		private static void ValidateTaskList(TaskList tlist) {
+			if(tlist.IsRepeating && tlist.DateTL.Year>1880) {
 				throw new Exception(Lans.g("TaskLists","TaskList cannot be tagged repeating and also have a date."));
 			}
-			if(taskList.Parent==0 && taskList.DateTL.Year>1880 && taskList.DateType==TaskDateType.None) {//it would not show anywhere, so it would be 'lost'
+			if(tlist.Parent==0 && tlist.DateTL.Year>1880 && tlist.DateType==TaskDateType.None) {//it would not show anywhere, so it would be 'lost'
 				throw new Exception(Lans.g("TaskLists","A TaskList with a date must also have a type selected."));
 			}
-			if(taskList.IsRepeating && taskList.Parent!=0 && taskList.DateType!=TaskDateType.None) {//In repeating, children not allowed to repeat.
+			if(tlist.IsRepeating && tlist.Parent!=0 && tlist.DateType!=TaskDateType.None) {//In repeating, children not allowed to repeat.
 				throw new Exception(Lans.g("TaskLists","In repeating tasklists, only the main parents can have a task status."));
 			}
 		}
 
 		///<summary></summary>
-		public static void Update(TaskList taskList){
+		public static void Update(TaskList tlist){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),taskList);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),tlist);
 				return;
 			}
-			ValidateTaskList(taskList);
-			Crud.TaskListCrud.Update(taskList);
+			ValidateTaskList(tlist);
+			Crud.TaskListCrud.Update(tlist);
 		}
 
 		public static void Update(TaskList taskList,TaskList taskListOld) {
@@ -465,38 +463,38 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static long Insert(TaskList taskList) {
+		public static long Insert(TaskList tlist) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				taskList.TaskListNum=Meth.GetLong(MethodBase.GetCurrentMethod(),taskList);
-				return taskList.TaskListNum;
+				tlist.TaskListNum=Meth.GetLong(MethodBase.GetCurrentMethod(),tlist);
+				return tlist.TaskListNum;
 			}
-			ValidateTaskList(taskList);
-			return Crud.TaskListCrud.Insert(taskList);
+			ValidateTaskList(tlist);
+			return Crud.TaskListCrud.Insert(tlist);
 		}
 
 		///<summary>Throws exception if any child tasklists or tasks.</summary>
-		public static void Delete(TaskList taskList){
+		public static void Delete(TaskList tlist){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),taskList);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),tlist);
 				return;
 			}
-			string command="SELECT COUNT(*) FROM tasklist WHERE Parent="+POut.Long(taskList.TaskListNum);
+			string command="SELECT COUNT(*) FROM tasklist WHERE Parent="+POut.Long(tlist.TaskListNum);
 			DataTable table=Db.GetTable(command);
 			if(table.Rows[0][0].ToString()!="0"){
 				throw new Exception(Lans.g("TaskLists","Not allowed to delete task list because it still has child lists attached."));
 			}
-			command="SELECT COUNT(*) FROM task WHERE TaskListNum="+POut.Long(taskList.TaskListNum);
+			command="SELECT COUNT(*) FROM task WHERE TaskListNum="+POut.Long(tlist.TaskListNum);
 			table=Db.GetTable(command);
 			if(table.Rows[0][0].ToString()!="0"){
 				throw new Exception(Lans.g("TaskLists","Not allowed to delete task list because it still has child tasks attached."));
 			}
-			command="SELECT COUNT(*) FROM userod WHERE TaskListInBox="+POut.Long(taskList.TaskListNum);
+			command="SELECT COUNT(*) FROM userod WHERE TaskListInBox="+POut.Long(tlist.TaskListNum);
 			table=Db.GetTable(command);
 			if(table.Rows[0][0].ToString()!="0"){
 				throw new Exception(Lans.g("TaskLists","Not allowed to delete task list because it is attached to a user inbox."));
 			}
 			command= "DELETE from tasklist WHERE TaskListNum = '"
-				+POut.Long(taskList.TaskListNum)+"'";
+				+POut.Long(tlist.TaskListNum)+"'";
  			Db.NonQ(command);
 		}
 
@@ -511,20 +509,20 @@ namespace OpenDentBusiness{
 				if(parentNum==0) {
 					return false;//Got to the top level of the tree for this list and it is the main list.
 				}
-				if(parentNum==taskListNum) {
+				else if(parentNum==taskListNum) {
 					return true;//Got to the TaskList whose parent is the one we are looking for.
 				}
 			}
 		}
 
 		///<summary>Returns true if taskList or one of its children TaskLists have a GlobalFilterType.</summary>
-		public static bool HasGlobalFilterTypeInTree(TaskList taskList,List<TaskList> listTaskListsAll=null) {
-			if(taskList.GlobalTaskFilterType!=EnumTaskFilterType.None) {
+		public static bool HasGlobalFilterTypeInTree(TaskList taskList,List<TaskList> listAllTaskLists=null) {
+			if(taskList.GlobalTaskFilterType!=GlobalTaskFilterType.None) {
 				return true;
 			}
-			List<TaskList> listTaskListsChild=(listTaskListsAll??GetAll()).FindAll(x => x.Parent==taskList.TaskListNum).ToList();
-			for(int i=0;i<listTaskListsAll.Count;i++) {
-				return HasGlobalFilterTypeInTree(listTaskListsAll[i],listTaskListsAll);
+			List<TaskList> listChildTaskLists=(listAllTaskLists??GetAll()).FindAll(x => x.Parent==taskList.TaskListNum).ToList();
+			foreach(TaskList childTL in listAllTaskLists) {
+				return HasGlobalFilterTypeInTree(childTL,listAllTaskLists);
 			}
 			return false;
 		}
@@ -552,34 +550,31 @@ namespace OpenDentBusiness{
 		///<summary>Build the full path to the passed in task list.  Returns the string in the standard Windows path format.</summary>
 		public static string GetFullPath(long tasklistNum,List<TaskList> listTaskLists=null) {
 			//No need to check MiddleTierRole; no call to db.
-			StringBuilder stringBuilder=new StringBuilder();
-			TaskList taskList=null;
+			StringBuilder taskListPath=new StringBuilder();
+			TaskList curTaskList=null;
 			if(listTaskLists!=null && listTaskLists.Count>0) {
-				taskList=listTaskLists.FirstOrDefault(x => x.TaskListNum==tasklistNum);
+				curTaskList=listTaskLists.FirstOrDefault(x => x.TaskListNum==tasklistNum);
 			}
 			else {
-				taskList=GetOne(tasklistNum);
+				curTaskList=GetOne(tasklistNum);
 			}
-			if(taskList==null) {
+			if(curTaskList==null) {
 				return "";
 			}
-			stringBuilder.Append(taskList.Descript);
-			while(true) {
-				if(taskList.Parent==0) {
-					break;
-				}
+			taskListPath.Append(curTaskList.Descript);
+			while(curTaskList.Parent!=0) {
 				if(listTaskLists!=null) {
-					taskList=listTaskLists.FirstOrDefault(x => x.TaskListNum==taskList.Parent);
+					curTaskList=listTaskLists.FirstOrDefault(x => x.TaskListNum==curTaskList.Parent);
 				}
 				else {
-					taskList=GetOne(taskList.Parent);
+					curTaskList=GetOne(curTaskList.Parent);
 				}
-				if(taskList==null) {
+				if(curTaskList==null) {
 					break;
 				}
-				stringBuilder.Insert(0,taskList.Descript+"/");
+				taskListPath.Insert(0,curTaskList.Descript+"/");
 			}
-			return stringBuilder.ToString();
+			return taskListPath.ToString();
 		}
 
 		///<summary>TaskListStatus to 1 - Archived, and set all Task List Inboxes that reference this Task List to 0.</summary>
@@ -611,7 +606,6 @@ namespace OpenDentBusiness{
 		/// <summary>False if taskList has no parent, all of taskList's ancestors are not archived, or taskList ancestor can't be found.</summary>
 		public static bool IsAncestorTaskListArchived(ref Dictionary<long,TaskList> dictAllTaskLists,TaskList taskList,bool isDictionaryRefreshed=false) {
 			//No need to check MiddleTierRole; no call to db.
-			//==Jordan This is a bad pattern. Should be done without dictionary or ref.
 			if(taskList.Parent==0) {//If list has no parent return false.
 				return false;
 			}

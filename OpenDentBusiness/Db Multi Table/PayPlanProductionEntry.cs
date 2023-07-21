@@ -88,7 +88,7 @@ namespace OpenDentBusiness {
 			AmountOverride=(decimal)credit.AmountOverride;
 			AmountRemaining=(AmountOverride==0)?AmountOriginal:AmountOverride;
 			CreditDate=credit.SecDateTEntry;
-			Description=$"{ProcedureCodes.GetStringProcCode(proc.CodeNum)}: {Procedures.GetDescription(proc)} - Procedure Status: {proc.ProcStatus}";
+			Description=$"{ProcedureCodes.GetStringProcCode(proc.CodeNum)} - {ProcedureCodes.GetLaymanTerm(proc.CodeNum)} - Procedure Status: {proc.ProcStatus}";
 			IsProcedureCompleted=ProcStat.C==proc.ProcStatus;
 			LinkType=PayPlanLinkType.Procedure;
 		}

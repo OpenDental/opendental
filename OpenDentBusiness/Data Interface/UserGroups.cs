@@ -55,13 +55,13 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Always refreshes the ClientWeb's cache.</summary>
-		public static DataTable GetTableFromCache(bool refreshCache) {
+		public static DataTable GetTableFromCache(bool doRefreshCache) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),refreshCache);
+				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),doRefreshCache);
 				_userGroupCache.FillCacheFromTable(table);
 				return table;
 			}
-			return _userGroupCache.GetTableFromCache(refreshCache);
+			return _userGroupCache.GetTableFromCache(doRefreshCache);
 		}
 
 		public static void ClearCache() {
@@ -80,25 +80,13 @@ namespace OpenDentBusiness{
 			return GetWhere(x => includeCEMT || x.UserGroupNumCEMT==0);
 		}
 
-		///<summary>Gets a list of usergroups for the API. Set doIncludeCEMT true to include CEMT usergroups.</summary>
-		public static List<UserGroup> GetListForApi(bool doIncludeCEMT) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<UserGroup>>(MethodBase.GetCurrentMethod(),doIncludeCEMT);
-			}
-			string command="SELECT * FROM usergroup ";
-			if(!doIncludeCEMT) {
-				command+=" WHERE UserGroupNumCEMT=0";
-			}
-			return Crud.UserGroupCrud.SelectMany(command);
-		}
-
 		///<summary></summary>
-		public static void Update(UserGroup userGroup){
+		public static void Update(UserGroup group){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),userGroup);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),group);
 				return;
 			}
-			Crud.UserGroupCrud.Update(userGroup);
+			Crud.UserGroupCrud.Update(group);
 		}
 
 		///<summary>Only called from the CEMT in order to update a remote database with changes.  
@@ -127,65 +115,65 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<UserGroup>>(MethodBase.GetCurrentMethod());
 			}
-			List<UserGroup> listUserGroups=new List<UserGroup>();
+			List<UserGroup> retVal=new List<UserGroup>();
 			string command="SELECT * FROM usergroup WHERE UserGroupNumCEMT!=0";
 			DataTable tableUserGroups=Db.GetTable(command);
-			listUserGroups=Crud.UserGroupCrud.TableToList(tableUserGroups);
-			return listUserGroups;
+			retVal=Crud.UserGroupCrud.TableToList(tableUserGroups);
+			return retVal;
 		}
 
 		///<summary></summary>
-		public static long Insert(UserGroup userGroup) {
+		public static long Insert(UserGroup group) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				userGroup.UserGroupNum=Meth.GetLong(MethodBase.GetCurrentMethod(),userGroup);
-				return userGroup.UserGroupNum;
+				group.UserGroupNum=Meth.GetLong(MethodBase.GetCurrentMethod(),group);
+				return group.UserGroupNum;
 			}
-			return Crud.UserGroupCrud.Insert(userGroup);
+			return Crud.UserGroupCrud.Insert(group);
 		}
 
 		///<summary>Insertion logic that doesn't use the cache. Has special cases for generating random PK's and handling Oracle insertions.</summary>
-		public static long InsertNoCache(UserGroup userGroup) {
+		public static long InsertNoCache(UserGroup group) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				return Meth.GetLong(MethodBase.GetCurrentMethod(),userGroup);
+				return Meth.GetLong(MethodBase.GetCurrentMethod(),group);
 			}
-			return Crud.UserGroupCrud.InsertNoCache(userGroup);
+			return Crud.UserGroupCrud.InsertNoCache(group);
 		}
 
 		///<summary>Checks for dependencies first</summary>
-		public static void Delete(UserGroup userGroup){
+		public static void Delete(UserGroup group){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),userGroup);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),group);
 				return;
 			}
 			string command="SELECT COUNT(*) FROM usergroupattach WHERE UserGroupNum='"
-				+POut.Long(userGroup.UserGroupNum)+"'";
+				+POut.Long(group.UserGroupNum)+"'";
 			DataTable table=Db.GetTable(command);
 			if(table.Rows[0][0].ToString()!="0"){
 				throw new Exception(Lans.g("UserGroups","Must move users to another group first."));
 			}
-			if(PrefC.GetLong(PrefName.SecurityGroupForStudents)==userGroup.UserGroupNum) {
+			if(PrefC.GetLong(PrefName.SecurityGroupForStudents)==group.UserGroupNum) {
 				throw new Exception(Lans.g("UserGroups","Group is the default group for students and cannot be deleted.  Change the default student group before deleting."));
 			}
-			if(PrefC.GetLong(PrefName.SecurityGroupForInstructors)==userGroup.UserGroupNum) {
+			if(PrefC.GetLong(PrefName.SecurityGroupForInstructors)==group.UserGroupNum) {
 				throw new Exception(Lans.g("UserGroups","Group is the default group for instructors and cannot be deleted.  Change the default instructors group before deleting."));
 			}
 			command= "DELETE FROM usergroup WHERE UserGroupNum='"
-				+POut.Long(userGroup.UserGroupNum)+"'";
+				+POut.Long(group.UserGroupNum)+"'";
 			Db.NonQ(command);
 			command="DELETE FROM grouppermission WHERE UserGroupNum='"
-				+POut.Long(userGroup.UserGroupNum)+"'";
+				+POut.Long(group.UserGroupNum)+"'";
 			Db.NonQ(command);
 		}
 		
 		///<summary>Deletes without using the cache.  Doesn't check dependencies.  Useful for multithreaded connections.</summary>
-		public static void DeleteNoCache(UserGroup userGroup) {
+		public static void DeleteNoCache(UserGroup group) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),userGroup);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),group);
 				return;
 			}
-			string command="DELETE FROM usergroup WHERE UserGroupNum="+POut.Long(userGroup.UserGroupNum);
+			string command="DELETE FROM usergroup WHERE UserGroupNum="+POut.Long(group.UserGroupNum);
 			Db.NonQ(command);
-			command="DELETE FROM grouppermission WHERE UserGroupNum="+POut.Long(userGroup.UserGroupNum);
+			command="DELETE FROM grouppermission WHERE UserGroupNum="+POut.Long(group.UserGroupNum);
 			Db.NonQ(command);
 		}
 
@@ -198,7 +186,7 @@ namespace OpenDentBusiness{
 		///<summary>Returns a list of usergroups given a list of usergroupnums.</summary>
 		public static List<UserGroup> GetList(List<long> listUserGroupNums, bool includeCEMT) {
 			//No need to check MiddleTierRole; no call to db.
-			List<UserGroup> listUserGroupsRet = new List<UserGroup>();
+			List<UserGroup> retVal = new List<UserGroup>();
 			List<UserGroup> listUserGroups;
 			if(includeCEMT) {
 				listUserGroups=GetDeepCopy(false);
@@ -206,24 +194,24 @@ namespace OpenDentBusiness{
 			else {
 				listUserGroups=GetList();
 			}
-			for(int i=0;i<listUserGroupNums.Count;i++) {
-				UserGroup userGroup = listUserGroups.FirstOrDefault(x => x.UserGroupNum == listUserGroupNums[i]);
-				if(userGroup != null) { //should never be null.
-					listUserGroupsRet.Add(listUserGroups.FirstOrDefault(x => x.UserGroupNum == listUserGroupNums[i]));
+			foreach(long userGroupNum in listUserGroupNums) {
+				UserGroup userGroupCur = listUserGroups.FirstOrDefault(x => x.UserGroupNum == userGroupNum);
+				if(userGroupCur != null) { //should never be null.
+					retVal.Add(listUserGroups.FirstOrDefault(x => x.UserGroupNum == userGroupNum));
 				}
 			}
-			return listUserGroupsRet;
+			return retVal;
 		}
 
 		///<summary>Returns a list of UserGroups that are associated to the permission passed in.</summary>
-		public static List<UserGroup> GetForPermission(EnumPermType permissions) {
+		public static List<UserGroup> GetForPermission(Permissions permission) {
 			//No need to check MiddleTierRole; no call to db.
-			List<long> listUserGroupNums=GroupPermissions.GetWhere(x => x.PermType==permissions)
+			List<long> listUserGroupNums=GroupPermissions.GetWhere(x => x.PermType==permission)
 				.Select(x => x.UserGroupNum)
 				.Distinct()
 				.ToList();
 			return GetWhere(x => listUserGroupNums.Contains(x.UserGroupNum));
-		}
+    }
 
 		///<summary>Returns a list of usergroups for a given user. 
 		///Returns an empty list if the user is not associated to any user groups. (should never happen)</summary>
@@ -236,8 +224,8 @@ namespace OpenDentBusiness{
 		///<summary>Returns true if at least one of the usergroups passed in has the SecurityAdmin permission.</summary>
 		public static bool IsAdminGroup(List<long> listUserGroupNums) {
 			//No need to check MiddleTierRole; no call to db.
-			List<GroupPermission> listGroupPermissionsAdmin=GroupPermissions.GetWhere(x => x.PermType==EnumPermType.SecurityAdmin);
-			if(listUserGroupNums.Any(x => listGroupPermissionsAdmin.Select(y => y.UserGroupNum).Contains(x))) {
+			List<GroupPermission> listAdminPerms=GroupPermissions.GetWhere(x => x.PermType==Permissions.SecurityAdmin);
+			if(listUserGroupNums.Any(x => listAdminPerms.Select(y => y.UserGroupNum).Contains(x))) {
 				return true;
 			}
 			return false;

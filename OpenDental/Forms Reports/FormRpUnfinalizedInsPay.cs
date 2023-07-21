@@ -51,7 +51,7 @@ namespace OpenDental {
 		private void FillGrid() {
 			//get the user-entered filter values.
 			//carrier filter is already taken care of in LoadData()
-			List<long> listClinicNums=comboClinics.ListClinicNumsSelected;//Only clinics this person has access to.
+			List<long> listClinicNums=comboClinics.ListSelectedClinicNums;//Only clinics this person has access to.
 			//fill the grid
 			gridMain.BeginUpdate();
 			//columns
@@ -158,7 +158,7 @@ namespace OpenDental {
 
 		/// <summary>Creates a check for the claim selected. Copied logic from FormClaimEdit.cs</summary>
 		private void createCheckToolStripMenuItem_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPayCreate)) {//date not checked here, but it will be checked when saving the check to prevent backdating
+			if(!Security.IsAuthorized(Permissions.InsPayCreate)) {//date not checked here, but it will be checked when saving the check to prevent backdating
 				return;
 			}
 			if(PrefC.GetBool(PrefName.ClaimPaymentBatchOnly)) {
@@ -213,7 +213,7 @@ namespace OpenDental {
 
 		/// <summary>Opens the current selected claim.</summary>
 		private void openClaimToolStripMenuItem_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ClaimView)) {
+			if(!Security.IsAuthorized(Permissions.ClaimView)) {
 				return;
 			}
 			RpUnfinalizedInsPay.UnfinalizedInsPay unfinalPay=(RpUnfinalizedInsPay.UnfinalizedInsPay)gridMain.ListGridRows[gridMain.SelectedIndices[0]].Tag;
@@ -234,12 +234,12 @@ namespace OpenDental {
 		/// <summary>Go to the selected patient's account.</summary>
 		private void goToAccountToolStripMenuItem_Click(object sender,EventArgs e) {
 			RpUnfinalizedInsPay.UnfinalizedInsPay unfinalPay=(RpUnfinalizedInsPay.UnfinalizedInsPay)gridMain.ListGridRows[gridMain.SelectedIndices[0]].Tag;
-			GlobalFormOpenDental.GotoAccount(unfinalPay.PatientCur.PatNum);
+			GotoModule.GotoAccount(unfinalPay.PatientCur.PatNum);
 		}
 
 		/// <summary>Opens the selected insurance payment.</summary>
 		private void openEOBToolStripMenuItem_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPayCreate)) {
+			if(!Security.IsAuthorized(Permissions.InsPayCreate)) {
 				return;
 			}
 			RpUnfinalizedInsPay.UnfinalizedInsPay unfinalPay=(RpUnfinalizedInsPay.UnfinalizedInsPay)gridMain.ListGridRows[gridMain.SelectedIndices[0]].Tag;
@@ -262,7 +262,7 @@ namespace OpenDental {
 			}
 			//Most likely this claim payment is marked as partial. Everyone should have permission to delete a partial payment.
 			//Added a check to make sure user has permission and claimpayment is not partial.
-			if(!Security.IsAuthorized(EnumPermType.InsPayEdit,unfinalPay.ClaimPaymentCur.CheckDate) && !unfinalPay.ClaimPaymentCur.IsPartial) {
+			if(!Security.IsAuthorized(Permissions.InsPayEdit,unfinalPay.ClaimPaymentCur.CheckDate) && !unfinalPay.ClaimPaymentCur.IsPartial) {
 				return;
 			}
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete this insurance check?")) {
@@ -270,7 +270,7 @@ namespace OpenDental {
 			}
 			try {
 				ClaimPayments.Delete(unfinalPay.ClaimPaymentCur);
-				SecurityLogs.MakeLogEntry(EnumPermType.InsPayEdit,0,"Claim Payment Deleted: "+unfinalPay.ClaimPaymentCur.ClaimPaymentNum);
+				SecurityLogs.MakeLogEntry(Permissions.InsPayEdit,0,"Claim Payment Deleted: "+unfinalPay.ClaimPaymentCur.ClaimPaymentNum);
 			}
 			catch(ApplicationException ex) {
 				MessageBox.Show(ex.Message);
@@ -349,8 +349,8 @@ namespace OpenDental {
 		private void butExport_Click(object sender,System.EventArgs e) {
 			string fileName=Lan.g(this,"Unfinalized Insurance Payments");
 			string filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
-			if(ODEnvironment.IsCloudServer) {
-				//Thinfinity: file download dialog will come up later, after file is created. AppStream: File will be created in client's Downloads folder.
+			if(ODBuild.IsWeb()) {
+				//file download dialog will come up later, after file is created.
 				filePath+=".txt";//Provide the filepath an extension so that Thinfinity can offer as a download.
 			}
 			else {
@@ -400,16 +400,20 @@ namespace OpenDental {
 				MessageBox.Show(Lan.g(this,"File in use by another program.  Close and try again."));
 				return;
 			}
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.ExportForDownload(filePath);
-			}
-			else if(ODCloudClient.IsAppStream) {
-				CloudClientL.ExportForCloud(filePath);
 			}
 			else {
 				MessageBox.Show(Lan.g(this,"File created successfully"));
 			}
 		}
 		
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
+		
 	}
+
+
 }

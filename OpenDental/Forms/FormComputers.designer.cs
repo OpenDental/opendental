@@ -24,6 +24,7 @@ namespace OpenDental {
 		private void InitializeComponent(){
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormComputers));
 			this.listComputer = new OpenDental.UI.ListBox();
+			this.butClose = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butDelete = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
@@ -58,6 +59,17 @@ namespace OpenDental {
 			this.listComputer.Size = new System.Drawing.Size(282, 277);
 			this.listComputer.TabIndex = 2;
 			this.listComputer.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listComputer_MouseDoubleClick);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(448, 613);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// label1
 			// 
@@ -256,9 +268,12 @@ namespace OpenDental {
 			// 
 			// FormComputers
 			// 
-			this.ClientSize = new System.Drawing.Size(535, 598);
+			this.AcceptButton = this.butClose;
+			this.CancelButton = this.butClose;
+			this.ClientSize = new System.Drawing.Size(535, 651);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.listComputer);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox3);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -277,6 +292,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.ListBox listComputer;
 		private OpenDental.UI.Button butDelete;

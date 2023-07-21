@@ -52,7 +52,6 @@ namespace OpenDentBusiness.Crud{
 				resellerService.CodeNum           = PIn.Long  (row["CodeNum"].ToString());
 				resellerService.Fee               = PIn.Double(row["Fee"].ToString());
 				resellerService.HostedUrl         = PIn.String(row["HostedUrl"].ToString());
-				resellerService.FeeRetail         = PIn.Double(row["FeeRetail"].ToString());
 				retVal.Add(resellerService);
 			}
 			return retVal;
@@ -69,7 +68,6 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("CodeNum");
 			table.Columns.Add("Fee");
 			table.Columns.Add("HostedUrl");
-			table.Columns.Add("FeeRetail");
 			foreach(ResellerService resellerService in listResellerServices) {
 				table.Rows.Add(new object[] {
 					POut.Long  (resellerService.ResellerServiceNum),
@@ -77,7 +75,6 @@ namespace OpenDentBusiness.Crud{
 					POut.Long  (resellerService.CodeNum),
 					POut.Double(resellerService.Fee, decimalPlaces:4),
 					            resellerService.HostedUrl,
-					POut.Double(resellerService.FeeRetail, decimalPlaces:4),
 				});
 			}
 			return table;
@@ -97,7 +94,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="ResellerServiceNum,";
 			}
-			command+="ResellerNum,CodeNum,Fee,HostedUrl,FeeRetail) VALUES(";
+			command+="ResellerNum,CodeNum,Fee,HostedUrl) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(resellerService.ResellerServiceNum)+",";
 			}
@@ -105,8 +102,7 @@ namespace OpenDentBusiness.Crud{
 				     POut.Long  (resellerService.ResellerNum)+","
 				+    POut.Long  (resellerService.CodeNum)+","
 				+		 POut.Double(resellerService.Fee, decimalPlaces:4)+","
-				+"'"+POut.String(resellerService.HostedUrl)+"',"
-				+		 POut.Double(resellerService.FeeRetail, decimalPlaces:4)+")";
+				+"'"+POut.String(resellerService.HostedUrl)+"')";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
@@ -131,7 +127,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="ResellerServiceNum,";
 			}
-			command+="ResellerNum,CodeNum,Fee,HostedUrl,FeeRetail) VALUES(";
+			command+="ResellerNum,CodeNum,Fee,HostedUrl) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(resellerService.ResellerServiceNum)+",";
 			}
@@ -139,8 +135,7 @@ namespace OpenDentBusiness.Crud{
 				     POut.Long  (resellerService.ResellerNum)+","
 				+    POut.Long  (resellerService.CodeNum)+","
 				+	   POut.Double(resellerService.Fee, decimalPlaces:4)+","
-				+"'"+POut.String(resellerService.HostedUrl)+"',"
-				+	   POut.Double(resellerService.FeeRetail, decimalPlaces:4)+")";
+				+"'"+POut.String(resellerService.HostedUrl)+"')";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
@@ -156,8 +151,7 @@ namespace OpenDentBusiness.Crud{
 				+"ResellerNum       =  "+POut.Long  (resellerService.ResellerNum)+", "
 				+"CodeNum           =  "+POut.Long  (resellerService.CodeNum)+", "
 				+"Fee               =  "+POut.Double(resellerService.Fee, decimalPlaces:4)+", "
-				+"HostedUrl         = '"+POut.String(resellerService.HostedUrl)+"', "
-				+"FeeRetail         =  "+POut.Double(resellerService.FeeRetail, decimalPlaces:4)+" "
+				+"HostedUrl         = '"+POut.String(resellerService.HostedUrl)+"' "
 				+"WHERE ResellerServiceNum = "+POut.Long(resellerService.ResellerServiceNum);
 			Db.NonQ(command);
 		}
@@ -181,10 +175,6 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="HostedUrl = '"+POut.String(resellerService.HostedUrl)+"'";
 			}
-			if(resellerService.FeeRetail != oldResellerService.FeeRetail) {
-				if(command!="") { command+=",";}
-				command+="FeeRetail = "+POut.Double(resellerService.FeeRetail, decimalPlaces:4)+"";
-			}
 			if(command=="") {
 				return false;
 			}
@@ -207,9 +197,6 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(resellerService.HostedUrl != oldResellerService.HostedUrl) {
-				return true;
-			}
-			if(resellerService.FeeRetail != oldResellerService.FeeRetail) {
 				return true;
 			}
 			return false;

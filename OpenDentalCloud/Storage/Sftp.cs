@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using CodeBase;
@@ -31,12 +29,13 @@ namespace OpenDentalCloud {
 				bool hadToConnect=_client.ConnectIfNeeded();
 				_client.CreateDirectoriesIfNeeded(Folder);
 				string fullFilePath=ODFileUtils.CombinePaths(Folder,FileName,'/');
-				using(MemoryStream uploadStream=new MemoryStream(ByteArray)) {
+				using(MemoryStream uploadStream=new MemoryStream(FileContent)) {
 					SftpUploadAsyncResult res=(SftpUploadAsyncResult)_client.BeginUploadFile(uploadStream,fullFilePath);
 					while(!res.AsyncWaitHandle.WaitOne(100)) {
 						if(DoCancel) {
 							res.IsUploadCanceled=true;
 						}
+						OnProgress((double)res.UploadedBytes/(double)1024/(double)1024,"?currentVal MB of ?maxVal MB uploaded",(double)FileContent.Length/(double)1024/(double)1024,"");
 					}
 					_client.EndUploadFile(res);
 					if(res.IsUploadCanceled) {
@@ -44,7 +43,7 @@ namespace OpenDentalCloud {
 							_client=this._client,
 							Path=fullFilePath
 						};
-						state.Execute();
+						state.Execute(false);
 					}
 				}
 				_client.DisconnectIfNeeded(hadToConnect);
@@ -53,8 +52,6 @@ namespace OpenDentalCloud {
 		}
 
 		public class Download : TaskStateDownload {
-			private static string _stashRootFolderPath=ODFileUtils.CombinePaths(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),"OpenDental","Stash");
-			private static string _stashInstanceFolderPath=ODFileUtils.CombinePaths(_stashRootFolderPath,Process.GetCurrentProcess().Id.ToString());
 			internal SftpClient _client;
 
 			public Download(string host,string user,string pass,int port=22) {
@@ -69,35 +66,6 @@ namespace OpenDentalCloud {
 				bool hadToConnect=_client.ConnectIfNeeded();
 				string fullFilePath=ODFileUtils.CombinePaths(Folder,FileName,'/');
 				SftpFileAttributes attribute=_client.GetAttributes(fullFilePath);
-				string stashFilePath=null;
-				try {
-					stashFilePath=ODFileUtils.CombinePaths(_stashInstanceFolderPath,fullFilePath);
-					string stashFileParentDir=Directory.GetParent(stashFilePath).FullName;
-					if(!Directory.Exists(stashFileParentDir)) {
-						Directory.CreateDirectory(stashFileParentDir);
-					}
-					if(File.Exists(stashFilePath)) {
-						FileInfo stashFileInfo=new FileInfo(stashFilePath);
-						while((DateTime.Now-stashFileInfo.CreationTime).TotalSeconds < 15) {//while recently created (currently being written to)
-							if(stashFileInfo.LastWriteTime==attribute.LastWriteTime) {
-								break;
-							}
-							Thread.Sleep(10);
-						}
-						if(stashFileInfo.LastWriteTime==attribute.LastWriteTime) {
-							ByteArray=ProtectedData.Unprotect(File.ReadAllBytes(stashFilePath),null,DataProtectionScope.CurrentUser);
-							return;
-						}
-					}
-					else {
-						//Create immediately as an empty file so that any read attempts will know that the file is in the process of being downloaded.
-						FileStream fileStream=File.Create(stashFilePath);
-						fileStream.Dispose();
-					}
-				}
-				catch(Exception ex) {
-					ex.DoNothing();//If anything goes wrong, use SFTP normally without relying on the stash.
-				}
 				using(MemoryStream stream=new MemoryStream()) {
 					SftpDownloadAsyncResult res=(SftpDownloadAsyncResult)_client.BeginDownloadFile(fullFilePath,stream);
 					while(!res.AsyncWaitHandle.WaitOne(100)) {
@@ -106,62 +74,14 @@ namespace OpenDentalCloud {
 							_client.DisconnectIfNeeded(hadToConnect);
 							return;
 						}
+						OnProgress((double)res.DownloadedBytes/(double)1024/(double)1024,"?currentVal MB of ?maxVal MB downloaded",(double)attribute.Size/(double)1024/(double)1024,"");
 					}
 					_client.EndDownloadFile(res);
-					ByteArray=stream.ToArray();
-					if(!stashFilePath.IsNullOrEmpty()) {
-						File.WriteAllBytes(stashFilePath,ProtectedData.Protect(ByteArray,null,DataProtectionScope.CurrentUser));
-						File.SetLastWriteTime(stashFilePath,attribute.LastWriteTime);//Must be last operation
-					}
+					FileContent=stream.ToArray();
 				}
 				_client.DisconnectIfNeeded(hadToConnect);
 				await Task.Run(() => { });//Gets rid of a compiler warning and does nothing.
 			}
-
-			public static void CleanupStashes(bool canCleanCurrentInstance) {
-				try {
-					if(!Directory.Exists(_stashRootFolderPath)) {
-						return;
-					}
-					string[] arrayStashInstanceFolderPaths=Directory.GetDirectories(_stashRootFolderPath,"*",SearchOption.TopDirectoryOnly);
-					List<string> listCleanupStashInstanceFolderPaths=new List<string>();
-					if(canCleanCurrentInstance) {
-						listCleanupStashInstanceFolderPaths.Add(_stashInstanceFolderPath);//Always cleanup current instance stash first.
-					}
-					foreach(string stashInstanceFolderPath in arrayStashInstanceFolderPaths) {
-						DirectoryInfo stashInstanceFolderPathInfo=new DirectoryInfo(stashInstanceFolderPath);
-						if(!int.TryParse(stashInstanceFolderPathInfo.Name,out int processId)) {
-							continue;
-						}
-						bool isRunning=false;
-						try {
-							Process process=Process.GetProcessById(processId);//This line throws an exception if there is no such process running.
-							if(process!=null && process.ProcessName.StartsWith("OpenDental")) {//The process for this stash instance folder is still running.
-								isRunning=true;
-							}
-						}
-						catch(Exception ex) {
-							ex.DoNothing();
-						}
-						if(!isRunning) {
-							listCleanupStashInstanceFolderPaths.Add(stashInstanceFolderPath);
-						}
-					}
-					foreach(string stashInstanceFolderPath in listCleanupStashInstanceFolderPaths) {
-						try {
-							//Could fail for two main reasons: 1) File(s) still in use. 2) Stash instance folder was created by another user.
-							Directory.Delete(stashInstanceFolderPath,true);//Recursive. Deletes subfolders.
-						}
-						catch(Exception ex) {
-							ex.DoNothing();
-						}
-					}
-				}
-				catch(Exception ex) {
-					ex.DoNothing();//Not an issue because we will try again when closing or opening the application next.
-				}
-			}
-
 		}
 
 		public class Delete : TaskStateDelete {
@@ -195,8 +115,8 @@ namespace OpenDentalCloud {
 					Folder=this.Folder,
 					FileName=this.FileName
 				};
-				stateDownload.Execute();//We could get cute later and make this match isAsync to update the main thread if they are downloading a large file.
-				ByteArray=stateDownload.ByteArray;
+				stateDownload.Execute(false);//We could get cute later and make this match isAsync to update the main thread if they are downloading a large file.
+				FileContent=stateDownload.FileContent;
 				await Task.Run(() => { });//This gets rid of a compiler warning.
 			}
 		}
@@ -278,9 +198,10 @@ namespace OpenDentalCloud {
 								TaskStateDownload stateDown=new Download(_host,_user,_pass) {
 									Folder=Path.GetDirectoryName(fromPathFull).Replace('\\','/'),
 									FileName=Path.GetFileName(fromPathFull),
+									ProgressHandler=ProgressHandler,
 									HasExceptions=HasExceptions
 								};
-								stateDown.Execute();
+								stateDown.Execute(ProgressHandler!=null);
 								while(!stateDown.IsDone) {
 									stateDown.DoCancel=DoCancel;
 								}
@@ -291,10 +212,11 @@ namespace OpenDentalCloud {
 								TaskStateUpload stateUp=new Upload(_host,_user,_pass) {
 									Folder=Path.GetDirectoryName(toPathFull).Replace('\\','/'),
 									FileName=Path.GetFileName(toPathFull),
-									ByteArray=stateDown.ByteArray,
+									FileContent=stateDown.FileContent,
+									ProgressHandler=ProgressHandler,
 									HasExceptions=HasExceptions
 								};
-								stateUp.Execute();
+								stateUp.Execute(ProgressHandler!=null);
 								while(!stateUp.IsDone) {
 									stateUp.DoCancel=DoCancel;
 								}
@@ -316,6 +238,14 @@ namespace OpenDentalCloud {
 					catch(Exception) {
 						CountFailed++;
 					}
+					finally {
+						if(IsCopy) {
+							OnProgress(i+1,"?currentVal files of ?maxVal files copied",CountTotal,"");
+						}
+						else {
+							OnProgress(i+1,"?currentVal files of ?maxVal files moved",CountTotal,"");
+						}
+					}
 				}
 				_client.DisconnectIfNeeded(hadToConnect);
 			}
@@ -333,7 +263,8 @@ namespace OpenDentalCloud {
 			protected override async Task PerformIO() {
 				_stateMove.FromPath=FromPath;
 				_stateMove.ToPath=ToPath;
-				_stateMove.Execute(isAsync:true);
+				_stateMove.ProgressHandler=ProgressHandler;
+				_stateMove.Execute(true);
 				while(!_stateMove.IsDone) {
 					Thread.Sleep(10);
 					if(DoCancel) {

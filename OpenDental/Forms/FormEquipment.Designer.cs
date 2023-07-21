@@ -37,6 +37,7 @@ namespace OpenDental{
 			this.butPrint = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -171,9 +172,20 @@ namespace OpenDental{
 			this.gridMain.TranslationName = "TableEquipment";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(887, 550);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormEquipment
 			// 
 			this.ClientSize = new System.Drawing.Size(974, 585);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.textSnDesc);
 			this.Controls.Add(this.label7);
 			this.Controls.Add(this.radioAll);
@@ -196,6 +208,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GridOD gridMain;
 		private OpenDental.UI.Button butAdd;
 		private System.Windows.Forms.Label label1;

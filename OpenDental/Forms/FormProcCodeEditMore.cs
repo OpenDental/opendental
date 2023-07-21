@@ -111,5 +111,12 @@ namespace OpenDental {
 			}
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			if(_isFeeChanged) {
+				DialogResult=DialogResult.OK;
+				return;
+			}
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

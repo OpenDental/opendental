@@ -42,7 +42,7 @@ namespace OpenDental{
 		}
 
 		private void FormSheetDefs_Load(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup,true)){
+			if(!Security.IsAuthorized(Permissions.Setup,true)){
 				butNew.Enabled=false;
 				butCopy.Enabled=false;
 				butCopy2.Enabled=false;
@@ -137,6 +137,7 @@ namespace OpenDental{
 			//what about parameters?
 			sheetDef.SheetFieldDefs=new List<SheetFieldDef>();
 			sheetDef.IsNew=true;
+			FormHelpBrowser.InitializeIfNull();
 			using FormSheetDefEdit formSheetDefEdit=new FormSheetDefEdit(sheetDef);
 			formSheetDefEdit.ShowDialog();//It will be saved to db inside this form.
 			FillGrid2(sheetDef.SheetDefNum);
@@ -181,6 +182,7 @@ namespace OpenDental{
 		}
 
 		private void grid1_CellDoubleClick(object sender,ODGridClickEventArgs e) {
+			FormHelpBrowser.InitializeIfNull();
 			using FormSheetDefEdit formSheetDefEdit=new FormSheetDefEdit(grid1.SelectedTag<SheetDef>());
 			formSheetDefEdit.IsInternal=true;
 			formSheetDefEdit.ShowDialog();
@@ -195,6 +197,7 @@ namespace OpenDental{
 		private void grid2_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			SheetDef sheetDef=grid2.SelectedTag<SheetDef>();
 			SheetDefs.GetFieldsAndParameters(sheetDef);
+			FormHelpBrowser.InitializeIfNull();
 			using FormSheetDefEdit formSheetDefEdit=new FormSheetDefEdit(sheetDef);
 			formSheetDefEdit.ShowDialog();
 			FillGrid2(sheetDef.SheetDefNum);
@@ -220,11 +223,39 @@ namespace OpenDental{
 			}
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 		private void FormSheetDefs_FormClosing(object sender,FormClosingEventArgs e) {
 			if(_isChanged){
 				DataValid.SetInvalid(InvalidType.Sheets);
 			}
 		}
 
+
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

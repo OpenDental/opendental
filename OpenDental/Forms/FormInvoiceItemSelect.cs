@@ -48,9 +48,6 @@ namespace OpenDental {
 			GridRow row;
 			List<ProcedureCode> listProcedureCodes=ProcedureCodes.GetAllCodes();
 			for(int i=0;i<_tableSuperFamAcct.Rows.Count;i++) {
-				if(checkIsFilteringZeroAmount.Checked && PIn.Double(_tableSuperFamAcct.Rows[i]["Amount"].ToString())==0){
-					continue;
-				}
 				row=new GridRow();
 				row.Cells.Add(PIn.DateT(_tableSuperFamAcct.Rows[i]["Date"].ToString()).ToShortDateString());
 				row.Cells.Add(_tableSuperFamAcct.Rows[i]["PatName"].ToString());
@@ -88,10 +85,6 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void checkIsFilteringZeroAmount_Click(object sender,EventArgs e) {
-			FillGrid();
-		}
-
 		private void butAll_Click(object sender,System.EventArgs e) {
 			_gridMain.SetAll(true);
 		}
@@ -113,5 +106,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

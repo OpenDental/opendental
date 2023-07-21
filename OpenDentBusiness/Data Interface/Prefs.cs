@@ -148,15 +148,6 @@ namespace OpenDentBusiness{
 			return GetTableFromCache(true);
 		}
 
-		public static void RemoveFlagNoCache<T>(PrefName prefName,T enumFlag) where T : Enum {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),prefName,enumFlag);
-				return;
-			}
-			string command=$"UPDATE preference SET ValueString=Valuestring&~{POut.Long((int)(object)enumFlag)} WHERE PrefName='{POut.String(prefName.ToString())}'";
-			Db.NonQ(command);
-		}
-
 		///<summary>Fills the local cache with the passed in DataTable.</summary>
 		public static void FillCacheFromTable(DataTable table) {
 			_prefCache.FillCacheFromTable(table);
@@ -189,39 +180,6 @@ namespace OpenDentBusiness{
 			}
 			string command="SELECT ValueString FROM preference WHERE PrefName = '"+POut.String(prefName.ToString())+"'";
 			return PIn.Bool(Db.GetScalar(command));
-		}
-
-		///<summary>Gets a pref of type int without using the cache.</summary>
-		public static int GetIntNoCache(PrefName prefName) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetInt(MethodBase.GetCurrentMethod(),prefName);
-			}
-			string command="SELECT ValueString FROM preference WHERE PrefName = '"+POut.String(prefName.ToString())+"'";
-			return PIn.Int(Db.GetScalar(command));
-		}
-
-		///<summary>Gets the bool value for a YN pref without using the cache.</summary>
-		public static bool GetYNNoCache(PrefName prefName) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),prefName);
-			}
-			string command="SELECT ValueString FROM preference WHERE PrefName = '"+POut.String(prefName.ToString())+"'";
-			YN yn=(YN)PIn.Int(Db.GetScalar(command));
-			if(yn==YN.Yes) {
-				return true;
-			}
-			if(yn==YN.No) {
-				return false;
-			}
-			//unknown, so use the default
-			PrefValueType prefValueType=prefName.GetValueType();
-			if(prefValueType==PrefValueType.YN_DEFAULT_FALSE) {
-				return false;
-			}
-			if(prefValueType==PrefValueType.YN_DEFAULT_TRUE) {
-				return true;
-			}
-			throw new ArgumentException("Invalid type");
 		}
 
 		///<summary></summary>
@@ -633,8 +591,6 @@ namespace OpenDentBusiness{
 	public enum EnumPrefInfoCategory{
 		///<summary>0- This value is never stored in db</summary>
 		None,
-		MainWindowGeneral,
-		MainWindowMisc,
 		ApptGeneral,
 		ApptAppearance,
 		FamilyGeneral,

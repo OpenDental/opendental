@@ -56,13 +56,15 @@ namespace OpenDental{
 				}
 			}
 			butSort.Enabled=false;
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin,true)){
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin,true)){
 				butCleanUp.Visible=false;
 				labelCleanUp.Visible=false;
 				butHideUnused.Visible=false;
 				labelHideUnused.Visible=false;
 			}
 			if(_isSelectionMode) {
+				butOK.Visible=true;
+				butClose.Text="Cancel";
 				butUp.Visible=false;
 				butDown.Visible=false;
 				butSort.Visible=false;
@@ -76,9 +78,6 @@ namespace OpenDental{
 				butSetOrder.Visible=false;
 				labelSetOrder.Visible=false;
 				checkBoxShowHidden.Visible=false;
-			}
-			else{
-				butOK.Visible=false;
 			}
 			FillGrid();
 		}
@@ -113,7 +112,7 @@ namespace OpenDental{
 			_listFeeSchedsForType.Sort(CompareItemOrder);
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
-			GridColumn col=new GridColumn(Lan.g("TableFeeScheds","Description"),200);
+			GridColumn col=new GridColumn(Lan.g("TableFeeScheds","Description"),145);
 			gridMain.Columns.Add(col);
 			col=new GridColumn(Lan.g("TableFeeScheds","Type"),70);
 			gridMain.Columns.Add(col);
@@ -329,7 +328,7 @@ namespace OpenDental{
 			{
 				return;
 			}
-			Action actionProgress=ODProgress.Show(startingMessage:Lans.g(this,"Backing up database..."));
+			Action actionProgress=ODProgress.Show(ODEventType.ProgressBar,startingMessage:Lans.g(this,"Backing up database..."));
 			try {
 				MiscData.MakeABackup();
 			} 
@@ -361,14 +360,42 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			//also cancel button
+			SelectedFeeSchedNum=0;
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormFeeSchedules_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult==DialogResult.Cancel) {
-				SelectedFeeSchedNum=0;
-			}
 			if(_hasChanged){
 				DataValid.SetInvalid(InvalidType.FeeScheds);
 			}
 		}
-
 	}
+
+	
+		
+
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

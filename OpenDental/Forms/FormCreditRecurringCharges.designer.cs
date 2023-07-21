@@ -43,6 +43,7 @@ namespace OpenDental{
 			this.butAll = new OpenDental.UI.Button();
 			this.butRefresh = new OpenDental.UI.Button();
 			this.butSend = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.textDate = new OpenDental.ValidDate();
 			this.butToday = new OpenDental.UI.Button();
 			this.groupDateFilter = new OpenDental.UI.GroupBox();
@@ -216,12 +217,22 @@ namespace OpenDental{
 			// butSend
 			// 
 			this.butSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSend.Location = new System.Drawing.Point(967, 498);
+			this.butSend.Location = new System.Drawing.Point(879, 498);
 			this.butSend.Name = "butSend";
 			this.butSend.Size = new System.Drawing.Size(75, 24);
 			this.butSend.TabIndex = 1;
 			this.butSend.Text = "&Send";
 			this.butSend.Click += new System.EventHandler(this.butSend_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(967, 498);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// textDate
 			// 
@@ -299,6 +310,7 @@ namespace OpenDental{
 			this.Controls.Add(this.groupCounts);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butSend);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.groupClinics);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormCreditRecurringCharges";
@@ -316,6 +328,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butSend;
+		private OpenDental.UI.Button butCancel;
 		private UI.GridOD gridMain;
 		private OpenDental.UI.GroupBox groupCounts;
 		private System.Windows.Forms.Label labelFailed;

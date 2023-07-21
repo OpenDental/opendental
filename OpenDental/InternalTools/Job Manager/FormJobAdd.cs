@@ -29,13 +29,6 @@ namespace OpenDental {
 		}
 
 		private void FormJobAdd_Load(object sender,EventArgs e) {
-			UpdateTabVisibilityByJobCategory(_jobNew.Category);
-			comboProposedVersion.Visible=true;
-			labelVersion.Visible=true;
-			if(_jobNew.Category==JobCategory.Project) {
-				comboProposedVersion.Visible=false;
-				labelVersion.Visible=false;
-			}
 			_listCategoryNames=Enum.GetNames(typeof(JobCategory)).ToList();
 			_listCategoryNamesFiltered=_listCategoryNames.Where(x => !x.In(JobCategory.Query.ToString(),JobCategory.MarketingDesign.ToString())).ToList();
 			if(!JobPermissions.IsAuthorized(JobPerm.ProjectManager,true)) {
@@ -47,18 +40,11 @@ namespace OpenDental {
 			if(!JobPermissions.IsAuthorized(JobPerm.UnresolvedIssues,true)) {
 				_listCategoryNamesFiltered.Remove(JobCategory.UnresolvedIssue.ToString());
 			}
-			if(!JobPermissions.IsAuthorized(JobPerm.ProjectManager,true) || (_jobNew.ParentNum>0 && Jobs.GetOne(_jobNew.ParentNum).Category!=JobCategory.Project)) {
-				_listCategoryNamesFiltered.Remove(JobCategory.Project.ToString());
-			}
 			_listCategoryNamesFiltered.ForEach(x=>comboCategory.Items.Add(x));
 			comboCategory.SelectedIndex=_listCategoryNamesFiltered.IndexOf(_jobNew.Category.ToString());
 			_listPriorities=Defs.GetDefsForCategory(DefCat.JobPriorities,true).OrderBy(x => x.ItemOrder).ToList();
-			_listPriorities.ForEach(x => comboPriority.Items.Add(x.ItemName));
+			_listPriorities.ForEach(x=>comboPriority.Items.Add(x.ItemName,x));
 			comboPriority.SelectedIndex=_listPriorities.Select(x => x.DefNum).ToList().IndexOf(_jobNew.Priority);
-			List<JobTeam> listJobTeams=JobTeams.GetDeepCopy();
-			comboJobTeam.Items.Add("None", new JobTeam(){JobTeamNum=-1});
-			comboJobTeam.Items.AddList(listJobTeams,x => x.TeamName);
-			comboJobTeam.SelectedIndex=0;
 			Enum.GetNames(typeof(JobProposedVersion)).ToList().ForEach(x => comboProposedVersion.Items.Add(x));
 			comboProposedVersion.SelectedIndex=(int)JobProposedVersion.Current;
 		}
@@ -413,7 +399,7 @@ namespace OpenDental {
 		}
 
 		private void comboPriority_SelectionChangeCommitted(object sender,EventArgs e) {
-			long priorityNum=_listPriorities[comboPriority.SelectedIndex].DefNum;
+			long priorityNum=comboPriority.GetSelected<Def>().DefNum;
 			_jobNew.Priority=priorityNum;
 		}
 
@@ -428,13 +414,6 @@ namespace OpenDental {
 				comboPriority.SelectedIndex=_listPriorities.IndexOf(bugDef);
 				_jobNew.Priority=bugDef.DefNum;
 			}
-			comboProposedVersion.Visible=true;
-			labelVersion.Visible=true;
-			if(jobCategoryNew==JobCategory.Project) {
-				comboProposedVersion.Visible=false;
-				labelVersion.Visible=false;
-			}
-			UpdateTabVisibilityByJobCategory(jobCategoryNew);
 			_jobNew.Category=jobCategoryNew;
 		}
 
@@ -450,86 +429,27 @@ namespace OpenDental {
 			return true;
 		}
 
-		private void UpdateTabVisibilityByJobCategory(JobCategory jobCategory) {
-			//If jobCategory is not set to Project, show all tabs except Concept.
-			if(jobCategory!=JobCategory.Project) {
-				if(!tabControlExtra.TabPages.Contains(tabCustomers)) {
-					tabControlExtra.TabPages.Add(tabCustomers);
-				}
-				if(!tabControlExtra.TabPages.Contains(tabSubscribers)) {
-					tabControlExtra.TabPages.Add(tabSubscribers);
-				}
-				if(!tabControlExtra.TabPages.Contains(tabRequests)) {
-					tabControlExtra.TabPages.Add(tabRequests);
-				}
-				if(!tabControlExtra.TabPages.Contains(tabBugs)) {
-					tabControlExtra.TabPages.Add(tabBugs);
-				}
-				if(!tabControlExtra.TabPages.Contains(tabTasks)) {
-					tabControlExtra.TabPages.Add(tabTasks);
-				}
-				if(!tabControlExtra.TabPages.Contains(tabQuotes)) {
-					tabControlExtra.TabPages.Add(tabQuotes);
-				}
-				tabConcept.Text="Concept";
-			}
-			else {
-				//If jobCategory is set to Project, remove all tabs except Concept.
-				if(tabControlExtra.TabPages.Contains(tabCustomers)) {
-					tabControlExtra.TabPages.Remove(tabCustomers);
-				}
-				if(tabControlExtra.TabPages.Contains(tabSubscribers)) {
-					tabControlExtra.TabPages.Remove(tabSubscribers);
-				}
-				if(tabControlExtra.TabPages.Contains(tabRequests)) {
-					tabControlExtra.TabPages.Remove(tabRequests);
-				}
-				if(tabControlExtra.TabPages.Contains(tabBugs)) {
-					tabControlExtra.TabPages.Remove(tabBugs);
-				}
-				if(tabControlExtra.TabPages.Contains(tabTasks)) {
-					tabControlExtra.TabPages.Remove(tabTasks);
-				}
-				if(tabControlExtra.TabPages.Contains(tabQuotes)) {
-					tabControlExtra.TabPages.Remove(tabQuotes);
-				}
-				tabConcept.Text="Project Description";
-				//Clear all job links and anything not required
-			}
-		}
-
 		private void butOK_Click(object sender,EventArgs e) {
 			if(!ValidateJob()) {
 				return;
 			}
-			long jobTeamNum=comboJobTeam.GetSelected<JobTeam>().JobTeamNum;
-			if(jobTeamNum>-1){
-				JobLink jobLink=new JobLink();
-				jobLink.FKey=jobTeamNum;
-				jobLink.LinkType=JobLinkType.JobTeam;
-				_listJobLinks.Add(jobLink);
-			}
-			if(_jobNew.Category!=JobCategory.Project) {
-				JobProposedVersion proposedVersion=(JobProposedVersion)comboProposedVersion.SelectedIndex;
-				_jobNew.ProposedVersion=proposedVersion;
-			}
+			JobProposedVersion proposedVersion=(JobProposedVersion)comboProposedVersion.SelectedIndex;
+			_jobNew.ProposedVersion=proposedVersion;
 			_jobNew.Requirements=textConcept.MainRtf;
 			long jobNum=Jobs.Insert(_jobNew);
 			foreach(JobLink link in _listJobLinks) {
-				if(_jobNew.Category==JobCategory.Project && link.LinkType!=JobLinkType.JobTeam) {
-					continue;
-				}
 				link.JobNum=jobNum;
 				JobLinks.Insert(link);
 			}
-			if(_jobNew.Category!=JobCategory.Project) {
-				foreach(JobQuote quote in _listJobQuotes) {
-					quote.JobNum=jobNum;
-					JobQuotes.Insert(quote);
-				}
+			foreach(JobQuote quote in _listJobQuotes) {
+				quote.JobNum=jobNum;
+				JobQuotes.Insert(quote);
 			}
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

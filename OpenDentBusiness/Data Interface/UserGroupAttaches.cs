@@ -51,14 +51,14 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns the cache in the form of a DataTable. Always refreshes the ClientWeb's cache.</summary>
-		///<param name="refreshCache">If true, will refresh the cache if RemotingRole is ClientDirect or ServerWeb.</param> 
-		public static DataTable GetTableFromCache(bool refreshCache) {
+		///<param name="doRefreshCache">If true, will refresh the cache if RemotingRole is ClientDirect or ServerWeb.</param> 
+		public static DataTable GetTableFromCache(bool doRefreshCache) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),refreshCache);
+				DataTable table=Meth.GetTable(MethodBase.GetCurrentMethod(),doRefreshCache);
 				_userGroupAttachCache.FillCacheFromTable(table);
 				return table;
 			}
-			return _userGroupAttachCache.GetTableFromCache(refreshCache);
+			return _userGroupAttachCache.GetTableFromCache(doRefreshCache);
 		}
 
 		public static void ClearCache() {
@@ -77,27 +77,9 @@ namespace OpenDentBusiness{
 			return GetWhere(x => x.UserNum == userNum);
 		}
 
-		public static List<UserGroupAttach> GetForUserGroup(long userGroupNum) {
+		public static List<UserGroupAttach> GetForUserGroup(long usergroupNum) {
 			//No need to check MiddleTierRole; no call to db.
-			return GetWhere(x => x.UserGroupNum== userGroupNum);
-		}
-
-		///<summary>Gets a list of UserGroupAttaches from the database with filters for userGroupNum and userNum. 
-		///This method is for use by the API, please notify the API team before changing.</summary>
-		public static List<UserGroupAttach> GetGroupAttachesForApi(int limit,int offset,long userGroupNum,long userNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<UserGroupAttach>>(MethodBase.GetCurrentMethod(),limit,offset,userGroupNum,userNum);
-			}
-			string command="SELECT * FROM usergroupattach ";
-			if(userGroupNum>0) {
-				command+="WHERE UserGroupNum="+POut.Long(userGroupNum)+" ";
-			}
-			if(userNum>0) {
-				command+="WHERE UserNum="+POut.Long(userNum)+" ";
-			}
-			command+="ORDER BY UserGroupAttachNum "
-				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
-			return Crud.UserGroupAttachCrud.SelectMany(command);
+			return GetWhere(x => x.UserGroupNum== usergroupNum);
 		}
 
 		///<summary>Gets all UserGroupAttaches from the database where the associated users or usergroups' CEMTNums are not 0.</summary>
@@ -114,35 +96,36 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Pass in a list of CEMT usergroupattaches, and this will return a list of corresponding local usergroupattaches.</summary>
-		public static List<UserGroupAttach> TranslateCEMTToLocal(List<UserGroupAttach> listUserGroupAttachesCEMT) {
-			List<UserGroupAttach> listUserGroupAttaches = new List<UserGroupAttach>();
-			List<Userod> listUserodsRemote = Userods.GetUsersNoCache();
-			List<UserGroup> listUserGroupsRemote = UserGroups.GetCEMTGroupsNoCache();
-			for(int i=0;i<listUserGroupAttachesCEMT.Count;i++) {
-				Userod userod = listUserodsRemote.FirstOrDefault(x => listUserGroupAttachesCEMT[i].UserNum == x.UserNumCEMT);
-				UserGroup userGroup = listUserGroupsRemote.FirstOrDefault(x => listUserGroupAttachesCEMT[i].UserGroupNum == x.UserGroupNumCEMT);
-				if(userod == null || userGroup == null) {
+		public static List<UserGroupAttach> TranslateCEMTToLocal(List<UserGroupAttach> listUserGroupAttachCEMT) {
+			List<UserGroupAttach> retVal = new List<UserGroupAttach>();
+			List<Userod> listRemoteUsers = Userods.GetUsersNoCache();
+			List<UserGroup> listRemoteGroups = UserGroups.GetCEMTGroupsNoCache();
+			foreach(UserGroupAttach attachCur in listUserGroupAttachCEMT) {
+				Userod userCur = listRemoteUsers.FirstOrDefault(x => attachCur.UserNum == x.UserNumCEMT);
+				UserGroup userGroupCur = listRemoteGroups.FirstOrDefault(x => attachCur.UserGroupNum == x.UserGroupNumCEMT);
+				if(userCur == null || userGroupCur == null) {
 					continue;
 				}
-				UserGroupAttach userGroupAttachNew = new UserGroupAttach(); 
-				userGroupAttachNew.UserNum = userod.UserNum;
-				userGroupAttachNew.UserGroupNum = userGroup.UserGroupNum;
-				listUserGroupAttaches.Add(userGroupAttachNew);
+				UserGroupAttach userGroupAttachNew = new UserGroupAttach() {
+					UserNum = userCur.UserNum,
+					UserGroupNum = userGroupCur.UserGroupNum
+				};
+				retVal.Add(userGroupAttachNew);
 			}
-			return listUserGroupAttaches;
+			return retVal;
 		}
 
 		///<summary>Pass in a list of UserGroups and return a distinct list of longs for the UserNums</summary>
 		public static List<long> GetUserNumsForUserGroups(List<UserGroup> listUserGroups) {
 			//No need to check MiddleTierRole; no call to db.
 			return GetUserNumsForUserGroups(listUserGroups.Select(x => x.UserGroupNum).ToList());
-		}
+    }
 
 		///<summary>Pass in a list of UserGroupNums and return a distinct list of longs for the UserNums</summary>
 		public static List<long> GetUserNumsForUserGroups(List<long> listUserGroupNums) {
 			//No need to check MiddleTierRole; no call to db.
 			return GetWhere(x => listUserGroupNums.Contains(x.UserGroupNum)).Select(x => x.UserNum).Distinct().ToList();
-		}
+    }
 
 		#endregion
 
@@ -161,50 +144,47 @@ namespace OpenDentBusiness{
 		///<summary>Manually sync the database on the lists passed in. This does not check the PKs of the items in either list.
 		///Instead, it only cares about info in the UserGroupNum and UserNum columns.
 		///Returns the number of rows that were changed. Currently only used in the CEMT tool.</summary>
-		public static long SyncCEMT(List<UserGroupAttach> listUserGroupAttachesNew,List<UserGroupAttach> listUseGroupAttachesOld) {
+		public static long SyncCEMT(List<UserGroupAttach> listNew,List<UserGroupAttach> listOld) {
 			//This remoting role check isn't necessary but will save on network traffic
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetLong(MethodBase.GetCurrentMethod(),listUserGroupAttachesNew,listUseGroupAttachesOld);
+				return Meth.GetLong(MethodBase.GetCurrentMethod(),listNew,listOld);
 			}
 			//the users and usergroups in listNew correspond to UserNumCEMTs and UserGroupNumCEMTs.
+
 			// - If a row with the same UserGroupNum and UserNum exists in ListNew that does not exist in list Old, add it to listAdd.
 			// - If a row with the same UserGroupNum and UserNum exists in ListOld that does not exist in ListNew, add it to listDel.
-			List<UserGroupAttach> listUserGroupAttachesAdd = new List<UserGroupAttach>();
-			List<UserGroupAttach> listUserGroupAttachesDel = new List<UserGroupAttach>();
+			List<UserGroupAttach> listAdd = new List<UserGroupAttach>();
+			List<UserGroupAttach> listDel = new List<UserGroupAttach>();
 			long rowsChanged = 0;
-			for(int i=0;i<listUserGroupAttachesNew.Count;i++) {
-				if(!listUseGroupAttachesOld.Exists(x => x.UserGroupNum == listUserGroupAttachesNew[i].UserGroupNum 
-					&& x.UserNum == listUserGroupAttachesNew[i].UserNum)) 
-				{
-					listUserGroupAttachesAdd.Add(listUserGroupAttachesNew[i]);
+			foreach(UserGroupAttach userGroupAtt in listNew) {
+				if(!listOld.Exists(x => x.UserGroupNum == userGroupAtt.UserGroupNum && x.UserNum == userGroupAtt.UserNum)) {
+					listAdd.Add(userGroupAtt);
 				}
 			}
-			for(int i=0;i<listUseGroupAttachesOld.Count;i++) {
-				if(!listUserGroupAttachesNew.Exists(x => x.UserGroupNum == listUseGroupAttachesOld[i].UserGroupNum 
-					&& x.UserNum == listUseGroupAttachesOld[i].UserNum))
-				{
-					listUserGroupAttachesDel.Add(listUseGroupAttachesOld[i]);
+			foreach(UserGroupAttach userGroupAtt in listOld) {
+				if(!listNew.Exists(x => x.UserGroupNum == userGroupAtt.UserGroupNum && x.UserNum == userGroupAtt.UserNum)) {
+					listDel.Add(userGroupAtt);
 				}
 			}
 			//make sure that there is only one unique (UserGroup, UserGroupNum) row in the add list. (this is precautionary)
-			listUserGroupAttachesAdd = listUserGroupAttachesAdd.GroupBy(x => new { x.UserNum,x.UserGroupNum }).Select(x => x.First()).ToList();
+			listAdd = listAdd.GroupBy(x => new { x.UserNum,x.UserGroupNum }).Select(x => x.First()).ToList();
 			//Get users and user groups from remote db to compare against for log entrys
-			List<Userod> listUserodsRemote = Userods.GetUsersNoCache();
-			List<UserGroup> listUserGroupsRemote = UserGroups.GetCEMTGroupsNoCache();
-			for(int i=0;i<listUserGroupAttachesAdd.Count;i++) {
+			List<Userod> listRemoteUsers = Userods.GetUsersNoCache();
+			List<UserGroup> listRemoteGroups = UserGroups.GetCEMTGroupsNoCache();
+			foreach(UserGroupAttach userGroupAdd in listAdd) {
 				rowsChanged++;
-				UserGroupAttaches.Insert(listUserGroupAttachesAdd[i]);
-				Userod userod=listUserodsRemote.FirstOrDefault(x => x.UserNum==listUserGroupAttachesAdd[i].UserNum);
-				UserGroup userGroup=listUserGroupsRemote.FirstOrDefault(x => x.UserGroupNum==listUserGroupAttachesAdd[i].UserGroupNum);
-				SecurityLogs.MakeLogEntryNoCache(EnumPermType.SecurityAdmin,0,"User: "+userod.UserName+" added to user group: "
+				UserGroupAttaches.Insert(userGroupAdd);
+				Userod user=listRemoteUsers.FirstOrDefault(x => x.UserNum==userGroupAdd.UserNum);
+				UserGroup userGroup=listRemoteGroups.FirstOrDefault(x => x.UserGroupNum==userGroupAdd.UserGroupNum);
+				SecurityLogs.MakeLogEntryNoCache(Permissions.SecurityAdmin,0,"User: "+user.UserName+" added to user group: "
 					+userGroup.Description+" by CEMT user: "+Security.CurUser.UserName);
 			}
-			for(int i=0;i<listUserGroupAttachesDel.Count;i++) {
+			foreach(UserGroupAttach userGroupDel in listDel) {
 				rowsChanged++;
-				UserGroupAttaches.Delete(listUserGroupAttachesDel[i]);
-				Userod userod=listUserodsRemote.FirstOrDefault(x => x.UserNum==listUserGroupAttachesDel[i].UserNum);
-				UserGroup userGroup=listUserGroupsRemote.FirstOrDefault(x => x.UserGroupNum==listUserGroupAttachesDel[i].UserGroupNum);
-				SecurityLogs.MakeLogEntryNoCache(EnumPermType.SecurityAdmin,0,"User: "+userod.UserName+" removed from user group: "
+				UserGroupAttaches.Delete(userGroupDel);
+				Userod user=listRemoteUsers.FirstOrDefault(x => x.UserNum==userGroupDel.UserNum);
+				UserGroup userGroup=listRemoteGroups.FirstOrDefault(x => x.UserGroupNum==userGroupDel.UserGroupNum);
+				SecurityLogs.MakeLogEntryNoCache(Permissions.SecurityAdmin,0,"User: "+user.UserName+" removed from user group: "
 					+userGroup.Description+" by CEMT user: "+Security.CurUser.UserName);
 			}
 			return rowsChanged;
@@ -222,15 +202,15 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Does not add a new usergroupattach if the passed-in userCur is already attached to userGroup.</summary>
-		public static void AddForUser(Userod userod,long userGroupNum) {
+		public static void AddForUser(Userod userCur,long userGroupNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),userod,userGroupNum);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),userCur,userGroupNum);
 				return;
 			}
-			if(!userod.IsInUserGroup(userGroupNum)) {
+			if(!userCur.IsInUserGroup(userGroupNum)) {
 				UserGroupAttach userGroupAttach = new UserGroupAttach();
 				userGroupAttach.UserGroupNum = userGroupNum;
-				userGroupAttach.UserNum = userod.UserNum;
+				userGroupAttach.UserNum = userCur.UserNum;
 				Crud.UserGroupAttachCrud.Insert(userGroupAttach);
 			}
 		}
@@ -238,24 +218,23 @@ namespace OpenDentBusiness{
 		///<summary>Pass in the user and all of the userGroups that the user should be attached to.
 		///Detaches the userCur from any usergroups that are not in the given list.
 		///Returns a count of how many user group attaches were affected.</summary>
-		public static long SyncForUser(Userod userod,List<long> listUserGroupNums) {
+		public static long SyncForUser(Userod userCur,List<long> listUserGroupNums) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetLong(MethodBase.GetCurrentMethod(),userod,listUserGroupNums);
+				return Meth.GetLong(MethodBase.GetCurrentMethod(),userCur,listUserGroupNums);
 			}
 			long rowsChanged=0;
-			for(int i=0;i<listUserGroupNums.Count;i++) {
-				if(!userod.IsInUserGroup(listUserGroupNums[i])) {
+			foreach(long userGroupNum in listUserGroupNums) {
+				if(!userCur.IsInUserGroup(userGroupNum)) {
 					UserGroupAttach userGroupAttach = new UserGroupAttach();
-					userGroupAttach.UserGroupNum = listUserGroupNums[i];
-					userGroupAttach.UserNum = userod.UserNum;
+					userGroupAttach.UserGroupNum = userGroupNum;
+					userGroupAttach.UserNum = userCur.UserNum;
 					Crud.UserGroupAttachCrud.Insert(userGroupAttach);
 					rowsChanged++;
 				}
 			}
-			List<UserGroupAttach> listUserGroupAttaches=UserGroupAttaches.GetForUser(userod.UserNum);
-			for(int i=0;i<listUserGroupAttaches.Count;i++) {
-				if(!listUserGroupNums.Contains(listUserGroupAttaches[i].UserGroupNum)) {
-					Crud.UserGroupAttachCrud.Delete(listUserGroupAttaches[i].UserGroupAttachNum);
+			foreach(UserGroupAttach userGroupAttach in UserGroupAttaches.GetForUser(userCur.UserNum)) {
+				if(!listUserGroupNums.Contains(userGroupAttach.UserGroupNum)) {
+					Crud.UserGroupAttachCrud.Delete(userGroupAttach.UserGroupAttachNum);
 					rowsChanged++;
 				}
 			}

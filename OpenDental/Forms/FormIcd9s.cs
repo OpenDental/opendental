@@ -20,7 +20,10 @@ namespace OpenDental {
 		}
 
 		private void FormIcd9s_Load(object sender,EventArgs e) {
-			if(!IsSelectionMode) {
+			if(IsSelectionMode) {
+				butClose.Text=Lan.g(this,"Cancel");
+			}
+			else {
 				butOK.Visible=false;
 			}
 		}
@@ -90,6 +93,12 @@ namespace OpenDental {
 			ICD9Selected=_listICD9s[listMain.SelectedIndex];
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+	
 
 	}
 }

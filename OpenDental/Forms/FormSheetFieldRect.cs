@@ -27,7 +27,7 @@ namespace OpenDental {
 		private void FormSheetFieldRect_Load(object sender,EventArgs e) {
 			textYPos.MaxVal=SheetDefCur.HeightTotal-1;//The maximum y-value of the sheet field must be within the page vertically.
 			if(IsReadOnly){
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 			}
 			textXPos.Text=SheetFieldDefCur.XPos.ToString();
@@ -42,7 +42,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textXPos.IsValid()
 				|| !textYPos.IsValid()
 				|| !textWidth.IsValid()
@@ -59,6 +59,10 @@ namespace OpenDental {
 			//don't save to database here.
 			SheetFieldDefCur.IsNew=false;
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void butColor_Click(object sender,EventArgs e) {

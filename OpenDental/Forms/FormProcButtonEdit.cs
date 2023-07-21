@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using OpenDentBusiness;
 using System.Collections.Generic;
-using CodeBase;
 
 namespace OpenDental{
 ///<summary></summary>
@@ -71,23 +70,13 @@ namespace OpenDental{
 		}
 
 		private void butImport_Click(object sender,EventArgs e) {
-			string importFilePath;
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				importFilePath=ODCloudClient.ImportFileForCloud();
-				if(importFilePath.IsNullOrEmpty()) {
-					return; //User cancelled out of OpenFileDialog
-				}
-			}
-			else {
-				using OpenFileDialog openFileDialog=new OpenFileDialog();
-				if(openFileDialog.ShowDialog()!=DialogResult.OK){
-					return;
-				}
-				importFilePath=openFileDialog.FileName;
+			using OpenFileDialog openFileDialog=new OpenFileDialog();
+			if(openFileDialog.ShowDialog()!=DialogResult.OK){
+				return;
 			}
 			Image imageImported;
 			try{
-				imageImported=Image.FromFile(importFilePath);
+				imageImported=Image.FromFile(openFileDialog.FileName);
 			}
 			catch{
 				MsgBox.Show(this,"Error loading file.");
@@ -152,7 +141,7 @@ namespace OpenDental{
 			listADA.Items.RemoveAt(listADA.SelectedIndex);
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(textDescript.Text==""){
 				MessageBox.Show(Lan.g(this,"You must type in a description."));
 				return; 
@@ -204,6 +193,10 @@ namespace OpenDental{
 				ProcButtonItems.Insert(procButtonItem);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

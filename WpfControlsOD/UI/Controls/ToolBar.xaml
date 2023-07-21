@@ -5,21 +5,25 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 		xmlns:local="clr-namespace:WpfControls.UI"
 		mc:Ignorable="d" 
-		d:DesignWidth="100" d:DesignHeight="24" >
+		d:DesignHeight="24" d:DesignWidth="100">
 	<UserControl.Style>
 		<Style>
-			<Setter Property="local:ToolBar.HorizontalAlignment" Value="Left"/>
-			<Setter Property="local:ToolBar.VerticalAlignment" Value="Top"/>
+			<Setter Property="local:Menu.HorizontalAlignment" Value="Left"/>
+			<Setter Property="local:Menu.VerticalAlignment" Value="Top"/>
 		</Style>
 	</UserControl.Style>
-	
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../../Themes/ToolBarDict.xaml"/>
+			</ResourceDictionary.MergedDictionaries>
+			<local:DesignerVisibilityConverter x:Key="designerVisibilityConverter" />
+		</ResourceDictionary>
+	</UserControl.Resources>
 	<Grid>
-		<Border Name="border" x:FieldModifier="internal" BorderBrush="Silver" BorderThickness="0,0,0,1" Background="#FFEEF5FD"/>
-		<StackPanel Name="stackPanel" x:FieldModifier="internal" Orientation="Horizontal">
-			<TextBlock Margin="6,4,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">ToolBar</TextBlock>
-		</StackPanel>
-		
-	
-
+		<ToolBar Name="toolBar" Style="{DynamicResource ToolBarStyleOD}"/>
+		<TextBlock Margin="7,3,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource designerVisibilityConverter}}">
+			ToolBar
+		</TextBlock>
 	</Grid>
 </UserControl>

@@ -125,7 +125,7 @@ namespace OpenDentBusiness{
 		///<summary>0</summary>
 		[Description("None")]
 		None=0,
-		///<summary>1- Deprecated in 23.3.1. Dynamic Payment Plans will be the new Patient Payment Plans. </summary>
+		///<summary>1</summary>
 		[Description("Patient")]
 		Patient=1,
 		///<summary>2</summary>
@@ -142,10 +142,10 @@ namespace OpenDentBusiness{
 		[Description("None")]
 		None,
 		///<summary>1</summary>
-		[Description("Optional mode for Payment Plans that sets Pay Plan Charges to 0 until the attached planned procedure is complete.")]
+		[Description("Optional mode for Dynamic Payment Plans that sets Pay Plan Charges to 0 until the attached planned procedure is complete.")]
 		AwaitComplete,
 		///<summary>2</summary>
-		[Description("Optional mode for Payment Plans that treats Treatment Planned Procedures as if they were complete.")]
+		[Description("Optional mode for Dynamic Payment Plans that treats Treatment Planned Procedures as if they were complete.")]
 		TreatAsComplete,
 	}
 

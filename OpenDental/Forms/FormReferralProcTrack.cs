@@ -101,10 +101,10 @@ namespace OpenDental {
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			FrmRefAttachEdit frmRefAttachEdit=new FrmRefAttachEdit();
+			using FormRefAttachEdit formRefAttachEdit=new FormRefAttachEdit();
 			RefAttach refAttach=_listRefAttaches[e.Row].Copy();
-			frmRefAttachEdit.RefAttachCur=refAttach;
-			frmRefAttachEdit.ShowDialog();
+			formRefAttachEdit.RefAttachCur=refAttach;
+			formRefAttachEdit.ShowDialog();
 			FillGrid();
 			//reselect
 			for(int i=0;i<_listRefAttaches.Count;i++){
@@ -125,7 +125,7 @@ namespace OpenDental {
 		private void butPrint_Click(object sender,EventArgs e) {
 			_pagesPrinted=0;
 			_isHeadPrinted=false;
-			PrinterL.TryPrintOrDebugRpPreview(pd_PrintPage,Lan.g(this,"Referred procedure tracking list printed"));
+			PrinterL.TryPrintOrDebugRpPreview(pd_PrintPage,Lan.g(this,"Referred procedure tracking list printed"),PrintoutOrientation.Portrait);
 		}
 
 		private void pd_PrintPage(object sender,System.Drawing.Printing.PrintPageEventArgs e) {
@@ -169,5 +169,8 @@ namespace OpenDental {
 			g.Dispose();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

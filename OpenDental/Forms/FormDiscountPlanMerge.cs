@@ -62,13 +62,17 @@ namespace OpenDental {
 			Cursor=Cursors.WaitCursor;
 			DiscountPlans.MergeTwoPlans(_discountPlanInto,_discountPlanFrom);
 			Cursor=Cursors.Default;
-			SecurityLogs.MakeLogEntry(EnumPermType.DiscountPlanMerge,0,$"{_discountPlanFrom.Description} merged into {_discountPlanInto.Description}");
+			SecurityLogs.MakeLogEntry(Permissions.DiscountPlanMerge,0,$"{_discountPlanFrom.Description} merged into {_discountPlanInto.Description}");
 			MsgBox.Show(this,"Plans merged successfully.");
 			_discountPlanFrom=null;
 			textDescriptionFrom.Text="";
 			textFeeSchedFrom.Text="";
 			textAdjTypeFrom.Text="";
 			CheckUIState();
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
 		}
 
 	}

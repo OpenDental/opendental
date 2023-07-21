@@ -28,6 +28,7 @@ namespace OpenDental{
 			this.butCopy = new OpenDental.UI.Button();
 			this.gridInternal = new OpenDental.UI.GridOD();
 			this.gridCustom = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// butDuplicate
@@ -35,7 +36,7 @@ namespace OpenDental{
 			this.butDuplicate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butDuplicate.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butDuplicate.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDuplicate.Location = new System.Drawing.Point(780, 565);
+			this.butDuplicate.Location = new System.Drawing.Point(700, 565);
 			this.butDuplicate.Name = "butDuplicate";
 			this.butDuplicate.Size = new System.Drawing.Size(89, 24);
 			this.butDuplicate.TabIndex = 13;
@@ -78,6 +79,16 @@ namespace OpenDental{
 			this.gridCustom.TranslationName = "TableCustom";
 			this.gridCustom.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridCustom_CellDoubleClick);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(794, 565);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 14;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// FormAlertCategorySetup
 			// 
 			this.ClientSize = new System.Drawing.Size(881, 601);
@@ -85,6 +96,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butCopy);
 			this.Controls.Add(this.gridInternal);
 			this.Controls.Add(this.gridCustom);
+			this.Controls.Add(this.butClose);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormAlertCategorySetup";
@@ -100,5 +112,6 @@ namespace OpenDental{
 		private UI.Button butCopy;
 		private UI.GridOD gridInternal;
 		private UI.GridOD gridCustom;
+		private UI.Button butClose;
 	}
 }

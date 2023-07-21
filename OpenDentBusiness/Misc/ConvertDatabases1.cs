@@ -784,7 +784,7 @@ namespace OpenDentBusiness{
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+programNum.ToString()+"', "
-					+"'"+((int)EnumToolBar.ChartModule).ToString()+"', "
+					+"'"+((int)ToolBarsAvail.ChartModule).ToString()+"', "
 					+"'Sirona')";
 				Db.NonQ32(command);
 				//convert recall
@@ -1106,7 +1106,7 @@ namespace OpenDentBusiness{
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+programNum.ToString()+"', "
-					+"'"+((int)EnumToolBar.ChartModule).ToString()+"', "
+					+"'"+((int)ToolBarsAvail.ChartModule).ToString()+"', "
 					+"'HouseCalls')";
 				Db.NonQ32(command);
 				//Delete program links for WebClaim and Renaissance--------------------------------------
@@ -1170,7 +1170,7 @@ namespace OpenDentBusiness{
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+programNum.ToString()+"', "
-					+"'"+((int)EnumToolBar.ChartModule).ToString()+"', "
+					+"'"+((int)ToolBarsAvail.ChartModule).ToString()+"', "
 					+"'Planmeca')";
 				Db.NonQ32(command);
 				command=
@@ -1285,7 +1285,7 @@ namespace OpenDentBusiness{
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+programNum.ToString()+"', "
-					+"'"+((int)EnumToolBar.ChartModule).ToString()+"', "
+					+"'"+((int)ToolBarsAvail.ChartModule).ToString()+"', "
 					+"'ImageFX')";
 				Db.NonQ32(command);
 				//fix the provider ID field----------------------------------------------------------------
@@ -1338,7 +1338,7 @@ namespace OpenDentBusiness{
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+programNum.ToString()+"', "
-					+"'"+((int)EnumToolBar.ChartModule).ToString()+"', "
+					+"'"+((int)ToolBarsAvail.ChartModule).ToString()+"', "
 					+"'DentForms')";
 				Db.NonQ32(command);
 				command="UPDATE tasklist SET DateType=0 WHERE Parent !=0";
@@ -1916,7 +1916,7 @@ namespace OpenDentBusiness{
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+programNum.ToString()+"', "
-					+"'"+((int)EnumToolBar.ChartModule).ToString()+"', "
+					+"'"+((int)ToolBarsAvail.ChartModule).ToString()+"', "
 					+"'DBSWin')";
 				Db.NonQ32(command);
 				command="UPDATE preference SET ValueString = '3.9.2.0' WHERE PrefName = 'DataBaseVersion'";
@@ -2043,7 +2043,7 @@ namespace OpenDentBusiness{
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+programNum.ToString()+"', "
-					+"'"+((int)EnumToolBar.ChartModule).ToString()+"', "
+					+"'"+((int)ToolBarsAvail.ChartModule).ToString()+"', "
 					+"'DentX')";
 				Db.NonQ32(command);
 				//Lightyear bridge--------------------------------------------------------------------------
@@ -2065,7 +2065,7 @@ namespace OpenDentBusiness{
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+programNum.ToString()+"', "
-					+"'"+((int)EnumToolBar.ChartModule).ToString()+"', "
+					+"'"+((int)ToolBarsAvail.ChartModule).ToString()+"', "
 					+"'Lightyear')";
 				Db.NonQ32(command);
 				command="UPDATE preference SET ValueString = '3.9.8.0' WHERE PrefName = 'DataBaseVersion'";
@@ -2114,7 +2114,7 @@ namespace OpenDentBusiness{
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+programNum.ToString()+"', "
-					+"'"+((int)EnumToolBar.ChartModule).ToString()+"', "
+					+"'"+((int)ToolBarsAvail.ChartModule).ToString()+"', "
 					+"'VixWin')";
 				Db.NonQ32(command);
 				command="UPDATE preference SET ValueString = '3.9.17.0' WHERE PrefName = 'DataBaseVersion'";
@@ -2359,7 +2359,7 @@ namespace OpenDentBusiness{
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+programNum.ToString()+"', "
-					+"'"+((int)EnumToolBar.ChartModule).ToString()+"', "
+					+"'"+((int)ToolBarsAvail.ChartModule).ToString()+"', "
 					+"'Trophy')";
 				Db.NonQ32(command);
 				//Add DentalEye bridge----------------------------------------------------------------------------------------
@@ -2381,7 +2381,7 @@ namespace OpenDentBusiness{
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+programNum.ToString()+"', "
-					+"'"+((int)EnumToolBar.ChartModule).ToString()+"', "
+					+"'"+((int)ToolBarsAvail.ChartModule).ToString()+"', "
 					+"'DentalEye')";
 				Db.NonQ32(command);
 				//Add lab fee fields to Canadian claim form
@@ -2493,16 +2493,16 @@ namespace OpenDentBusiness{
 				Db.NonQ32(command);
 				//add accounting permission to each admin group------------------------------------------------------
 				command="SELECT UserGroupNum FROM grouppermission "
-					+"WHERE PermType="+POut.Long((int)EnumPermType.SecurityAdmin);
+					+"WHERE PermType="+POut.Long((int)Permissions.SecurityAdmin);
 				DataTable table=Db.GetTable(command);
 				int groupNum;
 				for(int i=0;i<table.Rows.Count;i++) {
 					groupNum=PIn.Int(table.Rows[i][0].ToString());
 					command="INSERT INTO grouppermission (UserGroupNum,PermType) "
-						+"VALUES("+POut.Long(groupNum)+","+POut.Long((int)EnumPermType.AccountingCreate)+")";
+						+"VALUES("+POut.Long(groupNum)+","+POut.Long((int)Permissions.AccountingCreate)+")";
 					Db.NonQ32(command);
 					command="INSERT INTO grouppermission (UserGroupNum,PermType) "
-						+"VALUES("+POut.Long(groupNum)+","+POut.Long((int)EnumPermType.AccountingEdit)+")";
+						+"VALUES("+POut.Long(groupNum)+","+POut.Long((int)Permissions.AccountingEdit)+")";
 					Db.NonQ32(command);
 				}
 				//fix the planned appointment 'done' feature--------------------------------------------------------------
@@ -2948,7 +2948,7 @@ namespace OpenDentBusiness{
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+programNum.ToString()+"', "
-					+"'"+((int)EnumToolBar.ChartModule).ToString()+"', "
+					+"'"+((int)ToolBarsAvail.ChartModule).ToString()+"', "
 					+"'Florida Probe')";
 				Db.NonQ32(command);
 				//Add Dr Ceph bridge----------------------------------------------------------------------------------------
@@ -2970,7 +2970,7 @@ namespace OpenDentBusiness{
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+programNum.ToString()+"', "
-					+"'"+((int)EnumToolBar.ChartModule).ToString()+"', "
+					+"'"+((int)ToolBarsAvail.ChartModule).ToString()+"', "
 					+"'Dr Ceph')";
 				Db.NonQ32(command);
 				command="UPDATE preference SET ValueString = '4.2.9.0' WHERE PrefName = 'DataBaseVersion'";
@@ -3011,7 +3011,7 @@ namespace OpenDentBusiness{
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+programNum.ToString()+"', "
-					+"'"+((int)EnumToolBar.ImagingModule).ToString()+"', "
+					+"'"+((int)ToolBarsAvail.ImagesModule).ToString()+"', "
 					+"'NewPatientForm')";
 				Db.NonQ32(command);
 				command="UPDATE preference SET ValueString = '4.3.0.0' WHERE PrefName = 'DataBaseVersion'";
@@ -3084,7 +3084,7 @@ namespace OpenDentBusiness{
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+programNum.ToString()+"', "
-					+"'"+((int)EnumToolBar.ChartModule).ToString()+"', "
+					+"'"+((int)ToolBarsAvail.ChartModule).ToString()+"', "
 					+"'PerioPal')";
 				Db.NonQ32(command);
 				//add MediaDent bridge
@@ -3112,7 +3112,7 @@ namespace OpenDentBusiness{
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+programNum.ToString()+"', "
-					+"'"+((int)EnumToolBar.ChartModule).ToString()+"', "
+					+"'"+((int)ToolBarsAvail.ChartModule).ToString()+"', "
 					+"'MediaDent')";
 				Db.NonQ32(command);
 
@@ -3287,7 +3287,7 @@ namespace OpenDentBusiness{
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+programNum.ToString()+"', "
-					+"'"+((int)EnumToolBar.ChartModule).ToString()+"', "
+					+"'"+((int)ToolBarsAvail.ChartModule).ToString()+"', "
 					+"'XDR')";
 				Db.NonQ32(command);
 				command="ALTER TABLE insplan ADD FilingCode tinyint unsigned NOT NULL";
@@ -3902,7 +3902,7 @@ namespace OpenDentBusiness{
 				command = "INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+ "VALUES ("
 					+ "'" + POut.Long(programNum) + "', "
-					+ "'" + POut.Long((int)EnumToolBar.ChartModule) + "', "
+					+ "'" + POut.Long((int)ToolBarsAvail.ChartModule) + "', "
 					+ "'Owandy')";
 				Db.NonQ32(command);
 				//Vipersoft bridge:
@@ -3924,7 +3924,7 @@ namespace OpenDentBusiness{
 				command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+"VALUES ("
 					+"'"+programNum.ToString()+"', "
-					+"'"+((int)EnumToolBar.ChartModule).ToString()+"', "
+					+"'"+((int)ToolBarsAvail.ChartModule).ToString()+"', "
 					+"'Vipersoft')";
 				Db.NonQ32(command);
 				if(DataConnection.DBtype==DatabaseType.MySql){
@@ -4058,7 +4058,7 @@ namespace OpenDentBusiness{
 				command = "INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 					+ "VALUES ("
 					+ "'" + POut.Long(programNum) + "', "
-					+ "'" + POut.Long((int)EnumToolBar.ChartModule) + "', "
+					+ "'" + POut.Long((int)ToolBarsAvail.ChartModule) + "', "
 					+ "'DXIS')";
 				Db.NonQ32(command);
 				//Added after r25:
@@ -6569,7 +6569,7 @@ namespace OpenDentBusiness{
 					command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 						+"VALUES ("
 						+"'"+POut.Long(programNum)+"', "
-						+"'"+POut.Long((int)EnumToolBar.FamilyModule)+"', "
+						+"'"+POut.Long((int)ToolBarsAvail.FamilyModule)+"', "
 						+"'PT Dental')";
 					Db.NonQ32(command);
 					command="INSERT INTO program (ProgName,ProgDesc,Enabled,Path,CommandLine,Note"
@@ -6584,7 +6584,7 @@ namespace OpenDentBusiness{
 					command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 						+"VALUES ("
 						+"'"+POut.Long(programNum)+"', "
-						+"'"+POut.Long((int)EnumToolBar.FamilyModule)+"', "
+						+"'"+POut.Long((int)ToolBarsAvail.FamilyModule)+"', "
 						+"'PT Update')";
 					Db.NonQ32(command);
 					command="ALTER TABLE patient ADD Title VARCHAR(15)";
@@ -6678,7 +6678,7 @@ namespace OpenDentBusiness{
 						+"VALUES ("
 						+"(SELECT MAX(ToolButItemNum)+1 FROM toolbutitem),"
 						+"(SELECT MAX(ProgramNum) FROM program), "
-						+"'"+POut.Long((int)EnumToolBar.FamilyModule)+"', "
+						+"'"+POut.Long((int)ToolBarsAvail.FamilyModule)+"', "
 						+"'PT Dental')";
 					Db.NonQ32(command);
 					command="INSERT INTO program (ProgramNum,ProgName,ProgDesc,Enabled,Path,CommandLine,Note"
@@ -6695,7 +6695,7 @@ namespace OpenDentBusiness{
 						+"VALUES ("
 						+"(SELECT MAX(ToolButItemNum)+1 FROM toolbutitem),"
 						+"(SELECT MAX(ProgramNum) FROM program), "
-						+"'"+POut.Long((int)EnumToolBar.FamilyModule)+"', "
+						+"'"+POut.Long((int)ToolBarsAvail.FamilyModule)+"', "
 						+"'PT Update')";
 					Db.NonQ32(command);
 					command="ALTER TABLE patient ADD Title VARCHAR2(15)";
@@ -7409,7 +7409,7 @@ namespace OpenDentBusiness{
 					command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 						+"VALUES ("
 						+"'"+POut.Long(programNum)+"', "
-						+"'"+POut.Long((int)EnumToolBar.ChartModule)+"', "
+						+"'"+POut.Long((int)ToolBarsAvail.ChartModule)+"', "
 						+"'Digora')";
 					Db.NonQ32(command);
 				} else {//oracle
@@ -7434,7 +7434,7 @@ namespace OpenDentBusiness{
 						+"VALUES ("
 						+"(SELECT MAX(ToolButItemNum)+1 FROM toolbutitem),"
 						+"(SELECT MAX(ProgramNum) FROM program), "
-						+"'"+POut.Long((int)EnumToolBar.ChartModule)+"', "
+						+"'"+POut.Long((int)ToolBarsAvail.ChartModule)+"', "
 						+"'Digora')";
 					Db.NonQ32(command);
 				}
@@ -7992,7 +7992,7 @@ namespace OpenDentBusiness{
 					command="INSERT INTO toolbutitem (ProgramNum,ToolBar,ButtonText) "
 						+"VALUES ("
 						+"'"+POut.Long(programNum)+"', "
-						+"'"+POut.Long((int)EnumToolBar.ChartModule)+"', "
+						+"'"+POut.Long((int)ToolBarsAvail.ChartModule)+"', "
 						+"'Dolphin')";
 					Db.NonQ32(command);
 					command="ALTER TABLE appointment ADD DateTimeArrived DateTime NOT NULL";
@@ -8539,7 +8539,7 @@ namespace OpenDentBusiness{
 				ODEvent.Fire(ODEventType.ConvertDatabases,"Upgrading database to version: 6.1.8");//No translation in convert script.
 				string command="UPDATE userod SET IsHidden=0 WHERE IsHidden=1 "
 					+"AND EXISTS(SELECT * FROM grouppermission "
-					+"WHERE PermType='"+POut.Long((int)EnumPermType.SecurityAdmin)+"' "//24
+					+"WHERE PermType='"+POut.Long((int)Permissions.SecurityAdmin)+"' "//24
 					+"AND grouppermission.UserGroupNum=userod.UserGroupNum)";
 				Db.NonQ32(command);
 				command="UPDATE preference SET ValueString = '6.1.8.0' WHERE PrefName = 'DataBaseVersion'";

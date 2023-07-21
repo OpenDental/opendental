@@ -35,6 +35,7 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpPPOwriteoffs));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.date2 = new System.Windows.Forms.MonthCalendar();
 			this.date1 = new System.Windows.Forms.MonthCalendar();
@@ -51,10 +52,21 @@ namespace OpenDental {
 			this.groupBox3.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(597, 330);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(596, 330);
+			this.butOK.Location = new System.Drawing.Point(597, 298);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 1;
@@ -137,12 +149,13 @@ namespace OpenDental {
 			this.radioWriteoffClaimDate.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
 			this.radioWriteoffClaimDate.Location = new System.Drawing.Point(9, 62);
 			this.radioWriteoffClaimDate.Name = "radioWriteoffClaimDate";
-			this.radioWriteoffClaimDate.Size = new System.Drawing.Size(270, 35);
+			this.radioWriteoffClaimDate.Size = new System.Drawing.Size(244, 40);
 			this.radioWriteoffClaimDate.TabIndex = 3;
 			this.radioWriteoffClaimDate.Text = "Using initial claim date for write-off estimates, insurance pay date for write-of" +
-    "f adjustments";
+			"f adjustments";
 			this.radioWriteoffClaimDate.TextAlign = System.Drawing.ContentAlignment.TopLeft;
 			this.radioWriteoffClaimDate.UseVisualStyleBackColor = true;
+			this.radioWriteoffClaimDate.CheckedChanged += new System.EventHandler(this.radioWriteoffClaimDate_CheckedChanged);
 			// 
 			// label5
 			// 
@@ -178,6 +191,7 @@ namespace OpenDental {
 			// 
 			// FormRpPPOwriteoffs
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(697, 379);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.label1);
@@ -188,6 +202,7 @@ namespace OpenDental {
 			this.Controls.Add(this.date1);
 			this.Controls.Add(this.labelTO);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -201,6 +216,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private MonthCalendar date2;
 		private MonthCalendar date1;

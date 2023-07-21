@@ -27,12 +27,24 @@ namespace OpenDental {
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEligibilityResponseDisplay));
+			this.butClose = new OpenDental.UI.Button();
 			this.LblPatientName = new System.Windows.Forms.Label();
 			this.dataGridView1 = new System.Windows.Forms.DataGridView();
 			this.MyPrintDocument = new System.Drawing.Printing.PrintDocument();
-			this.butPrintPreview = new OpenDental.UI.Button();
+			this.btnPrintPreview = new OpenDental.UI.Button();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.butClose.Location = new System.Drawing.Point(736, 407);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 23);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// LblPatientName
 			// 
@@ -88,29 +100,31 @@ namespace OpenDental {
 			this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle4;
 			this.dataGridView1.RowTemplate.ReadOnly = true;
 			this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.dataGridView1.Size = new System.Drawing.Size(807, 388);
+			this.dataGridView1.Size = new System.Drawing.Size(807, 368);
 			this.dataGridView1.TabIndex = 11;
 			// 
 			// MyPrintDocument
 			// 
 			this.MyPrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.MyPrintDocument_PrintPage);
 			// 
-			// butPrintPreview
+			// btnPrintPreview
 			// 
-			this.butPrintPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butPrintPreview.Location = new System.Drawing.Point(709, 427);
-			this.butPrintPreview.Name = "butPrintPreview";
-			this.butPrintPreview.Size = new System.Drawing.Size(93, 23);
-			this.butPrintPreview.TabIndex = 14;
-			this.butPrintPreview.Text = "&Print Preview";
-			this.butPrintPreview.UseVisualStyleBackColor = true;
-			this.butPrintPreview.Click += new System.EventHandler(this.butPrintPreview_Click);
+			this.btnPrintPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.btnPrintPreview.Location = new System.Drawing.Point(641, 407);
+			this.btnPrintPreview.Name = "btnPrintPreview";
+			this.btnPrintPreview.Size = new System.Drawing.Size(93, 23);
+			this.btnPrintPreview.TabIndex = 14;
+			this.btnPrintPreview.Text = "&Print Preview";
+			this.btnPrintPreview.UseVisualStyleBackColor = true;
+			this.btnPrintPreview.Click += new System.EventHandler(this.btnPrintPreview_Click);
 			// 
 			// FormEligibilityResponseDisplay
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(814, 462);
-			this.Controls.Add(this.butPrintPreview);
+			this.Controls.Add(this.butClose);
+			this.Controls.Add(this.btnPrintPreview);
 			this.Controls.Add(this.LblPatientName);
 			this.Controls.Add(this.dataGridView1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -128,9 +142,11 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private Label LblPatientName;
 		private DataGridView dataGridView1;
-		private OpenDental.UI.Button butPrintPreview;
+		private OpenDental.UI.Button btnPrintPreview;
 		private System.Drawing.Printing.PrintDocument MyPrintDocument;
 	}
 }

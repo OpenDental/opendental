@@ -360,7 +360,7 @@ namespace OpenDental {
 		}
 		
 		private void butOverride_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPayCreate)) {
+			if(!Security.IsAuthorized(Permissions.InsPayCreate)) {
 				return;
 			}
 			//The following 2 checks mimic logic found in Canadian.EOBImportHelper(...)
@@ -400,7 +400,7 @@ namespace OpenDental {
 				eraBehaviors=EraBehaviors.DownloadDoNotReceive;
 			}
 			Canadian.EOBImportHelper(_ccdReceived,_listClaimProcs,listProcedures,listClaimProcs,_claim,false,FormClaimEdit.ShowProviderTransferWindow,eraBehaviors,_patient);
-			SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,_etrans.PatNum
+			SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,_etrans.PatNum
 				,"Claim for service date "+POut.Date(_claim.DateService)+" amounts overwritten manually using received EOB amounts.");
 			MsgBox.Show(this,"Done");
 		}
@@ -2544,7 +2544,7 @@ namespace OpenDental {
 
 		private SizeF PrintDentistPhone(Graphics g,float X,float Y){
 			_text=PrefC.GetString(PrefName.PracticePhone);
-			if(_text.Length==10 && TelephoneNumbers.IsFormattingAllowed()) {//May need to format for nice appearance.
+			if(_text.Length==10 && TelephoneNumbers.IsFormattingAllowed) {//May need to format for nice appearance.
 				_text=_text.Substring(0,3)+"-"+_text.Substring(3,3)+"-"+_text.Substring(6,4);
 			}
 			return _documentGenerator.DrawField(g,_isFrench?"NO DE TÉLÉPHONE":"TELEPHONE",_text,true,X,Y);

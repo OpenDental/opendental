@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.Configuration;
 using CodeBase;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenDentBusiness;
@@ -958,56 +957,6 @@ namespace UnitTests.Patients_Tests {
 			Assert.IsTrue(listMatchingPatNums.Contains(patA.PatNum));
 			Assert.IsTrue(listMatchingPatNums.Contains(patB.PatNum));
 		}
-
-		///<summary>B47528, starting in iOS 11, the iOS keyboard has the Smart Punctuation feature.
-		///It enters a curly single quote when the single quote key is pressed.
-		///This is counter to the majority of other operating systems that use a straight single quote.
-		///So, when an iOS user enters "O’Brien", it will fail to match "O'Brien" in the DB.
-		///It is also possible for the name in the DB to contain a curly quote.
-		///To avoid both problems, we replace all curly single quotes with straight quotes for both sides of the comparison.///</summary>	
-		[TestMethod]
-		public void Patients_GetListPatNumsByNameAndBirthday_FindPatsWithDifferentSingleQuoteTypes() {
-			string lName="O’Brien";
-			DateTime birthDate=new DateTime(2000,1,14);
-			List<string> listExactMatchFNames=new List<string>(){ "D'Wayne","D‘Wayne","D’Wayne" };
-			List<string> listPartialMatchFNames=new List<string>() { "abcD'Wayne","D‘Waynexyz","abcD’Waynexyz" };
-			List<string> listAllFNames=listExactMatchFNames.Concat(listPartialMatchFNames).ToList();
-			List<Patient> listPatients=new List<Patient>();
-			//Add six patients to the patient table, all with the same last name and birthdate, but with different variations of the first name D'Wayne.
-			for(int i=0;i<listAllFNames.Count;i++) {
-				Patient patient=PatientT.CreatePatient(lName:lName,fName:listAllFNames[i],birthDate:birthDate,clinicNum:1);
-				listPatients.Add(patient);
-			}
-			List<long>listPatNumsExactMatch=listPatients
-				.Where(x => listExactMatchFNames.Contains(x.FName))
-				.Select(x => x.PatNum)
-				.OrderBy(x => x)
-				.ToList();
-			List<long>listAllPatNums=listPatients
-				.Select(x => x.PatNum)
-				.OrderBy(x => x)
-				.ToList();
-			//Performing each variation of query to make sure there are no typos in combining WHERE and AND clauses when single quotes are involved.
-			for(int i=0;i<listExactMatchFNames.Count;i++) {
-				List<long> listPatNums=Patients.GetListPatNumsByNameAndBirthday(lName,listExactMatchFNames[i],birthDate,isExactMatch:true,isPreferredMatch:false,clinicNum:-1).OrderBy(x => x).ToList();
-				//Assert searching for exact match with name D'Wayne, D‘Wayne, or D’Wayne returns all three of those patients but no partial matches.
-				CollectionAssert.AreEqual(listPatNumsExactMatch,listPatNums);
-				listPatNums=Patients.GetListPatNumsByNameAndBirthday(lName,listExactMatchFNames[i],birthDate,isExactMatch:true,isPreferredMatch:true,clinicNum:-1).OrderBy(x => x).ToList();
-				CollectionAssert.AreEqual(listPatNumsExactMatch,listPatNums);
-				listPatNums=Patients.GetListPatNumsByNameAndBirthday(lName,listExactMatchFNames[i],birthDate,isExactMatch:true,isPreferredMatch:false,clinicNum:1).OrderBy(x => x).ToList();
-				CollectionAssert.AreEqual(listPatNumsExactMatch,listPatNums);
-				listPatNums=Patients.GetListPatNumsByNameAndBirthday(lName,listExactMatchFNames[i],birthDate,isExactMatch:true,isPreferredMatch:true,clinicNum:1).OrderBy(x => x).ToList();
-				CollectionAssert.AreEqual(listPatNumsExactMatch,listPatNums);
-				listPatNums=Patients.GetListPatNumsByNameAndBirthday(lName,listExactMatchFNames[i],birthDate,isExactMatch:false,isPreferredMatch:false,clinicNum:-1).OrderBy(x => x).ToList();
-				//Assert searching for partial match with name D'Wayne, D‘Wayne, or D’Wayne returns all six patients (exact and partial matches).
-				CollectionAssert.AreEqual(listAllPatNums,listPatNums);
-				listPatNums=Patients.GetListPatNumsByNameAndBirthday(lName,listExactMatchFNames[i],birthDate,isExactMatch:false,isPreferredMatch:true,clinicNum:-1).OrderBy(x => x).ToList();
-				CollectionAssert.AreEqual(listAllPatNums,listPatNums);
-				listPatNums=Patients.GetListPatNumsByNameAndBirthday(lName,listExactMatchFNames[i],birthDate,isExactMatch:false,isPreferredMatch:false,clinicNum:1).OrderBy(x => x).ToList();
-				CollectionAssert.AreEqual(listAllPatNums,listPatNums);
-				listPatNums=Patients.GetListPatNumsByNameAndBirthday(lName,listExactMatchFNames[i],birthDate,isExactMatch:false,isPreferredMatch:true,clinicNum:1).OrderBy(x => x).ToList();
-			}
-		}
 		#endregion
 		#endregion
 
@@ -1569,7 +1518,6 @@ namespace UnitTests.Patients_Tests {
 				"medicationpat.MedicationPatNum",
 				"oidexternal.IDInternal",
 				"orthochart.PatNum",
-				"orthochartlog.PatNum",
 				"patfield.PatNum",
 				"patient.PatNum",
 				"patient.Guarantor",
@@ -1610,93 +1558,6 @@ namespace UnitTests.Patients_Tests {
 			}
 			string message=string.Join($", ",listTablePatNumMissing);
 			Assert.AreEqual(0,listTablePatNumMissing.Count,message);
-		}
-		#endregion
-
-		#region FilterPatientsByPatNumOrGuarantorNum
-		[TestMethod]
-		public void Patients_FilterPatientsByPatNumOrGuarantorNum_FiltersPatientsWithSameInfoInDifferentFamilies() {
-			string fName=nameof(Patients_FilterPatientsByPatNumOrGuarantorNum_FiltersPatientsWithSameInfoInDifferentFamilies);
-			string lName=Guid.NewGuid().ToString();
-			DateTime birthdate=DateTime.Now.AddYears(-18);
-			Patient pat1=PatientT.CreatePatient(fName:fName,lName:lName,birthDate:birthdate);
-			Patient pat2=PatientT.CreatePatient(fName:fName,lName:lName,birthDate:birthdate);
-			Patient pat3=PatientT.CreatePatient(fName:fName,lName:lName,birthDate:birthdate);
-			List<Patient> filteredPats=Patients.FilterDuplicatePatientsByPatNumOrGuarantorNum(new List<Patient>() { pat1,pat2,pat3 },pat1.PatNum);
-			Assert.AreEqual(filteredPats.Count,1);
-			Assert.AreEqual(filteredPats[0].PatNum,pat1.PatNum);
-		}
-		
-		[TestMethod]
-		public void Patients_FilterPatientsByPatNumOrGuarantorNum_FiltersToSpecificPatientInFamily() {
-			string fName=nameof(Patients_FilterPatientsByPatNumOrGuarantorNum_FiltersToSpecificPatientInFamily);
-			string lName=Guid.NewGuid().ToString();
-			DateTime birthdate=DateTime.Now.AddYears(-18);
-			Patient pat1=PatientT.CreatePatient(fName:fName+"Guarantor",lName:lName,birthDate:birthdate);
-			Patient pat2=PatientT.CreatePatient(fName:fName,lName:lName,birthDate:birthdate,guarantor:pat1.PatNum);
-			Patient pat3=PatientT.CreatePatient(fName:fName,lName:lName,birthDate:birthdate,guarantor:pat1.PatNum);
-			//In this case we assume that Pat2 has received a statement with their actual PatNum on it instead of the Guarantor's PatNum.
-			List<Patient> filteredPats=Patients.FilterDuplicatePatientsByPatNumOrGuarantorNum(new List<Patient>() { pat2,pat3 },pat2.PatNum);
-			Assert.AreEqual(filteredPats.Count,1);
-			Assert.IsTrue(filteredPats.Any(x => x.PatNum==pat2.PatNum));
-		}
-
-		[TestMethod]
-		public void Patients_FilterPatientsByPatNumOrGuarantorNum_FiltersClonesWithinSameFamily() {
-			string fName=nameof(Patients_FilterPatientsByPatNumOrGuarantorNum_FiltersClonesWithinSameFamily);
-			string lName=Guid.NewGuid().ToString();
-			DateTime birthdate=DateTime.Now.AddYears(-18);
-			Patient pat1=PatientT.CreatePatient(fName:fName+"Guarantor",lName:lName,birthDate:birthdate);
-			Patient pat2=PatientT.CreatePatient(fName:fName,lName:lName,birthDate:birthdate,guarantor:pat1.PatNum);
-			Patient pat3=Patients.CreateClone(pat2);
-			//Provide the Guarantor patnum in this because that is what usually displays on a statement
-			List<Patient> filteredPats=Patients.FilterDuplicatePatientsByPatNumOrGuarantorNum(new List<Patient>() { pat2,pat3 },pat1.PatNum);
-			Assert.AreEqual(filteredPats.Count,1);
-			Assert.AreEqual(filteredPats[0].PatNum,pat2.PatNum);
-		}
-
-		[TestMethod]
-		public void Patients_FilterPatientsByPatNumOrGuarantorNum_FiltersToClonesOutsideOfFamily() {
-			string fName=nameof(Patients_FilterPatientsByPatNumOrGuarantorNum_FiltersToClonesOutsideOfFamily);
-			string lName=Guid.NewGuid().ToString();
-			DateTime birthdate=DateTime.Now.AddYears(-18);
-			Patient pat1=PatientT.CreatePatient(fName:fName+"Guarantor",lName:lName,birthDate:birthdate);
-			Patient pat2=PatientT.CreatePatient(fName:fName,lName:lName,birthDate:birthdate,guarantor:pat1.PatNum);
-			Patient pat3=Patients.CreateClone(pat2);
-			PatientT.SetGuarantor(pat3,pat3.PatNum);
-			//The Guarantor num would be the clone in this case because we would assume the user receive a statement for the clone account.
-			List<Patient> filteredPats=Patients.FilterDuplicatePatientsByPatNumOrGuarantorNum(new List<Patient>() { pat2,pat3 },pat3.PatNum);
-			Assert.AreEqual(filteredPats.Count,1);
-			Assert.AreEqual(filteredPats[0].PatNum,pat3.PatNum);
-		}
-
-		[TestMethod]
-		public void Patients_FilterPatientsByPatNumOrGuarantorNum_ReturnsLowestPatNumPatientIfAllMatchingPatsHaveSameGuarantor() {
-			string fName=nameof(Patients_FilterPatientsByPatNumOrGuarantorNum_ReturnsLowestPatNumPatientIfAllMatchingPatsHaveSameGuarantor);
-			string lName=Guid.NewGuid().ToString();
-			DateTime birthdate=DateTime.Now.AddYears(-18);
-			Patient pat1=PatientT.CreatePatient(fName:fName+"Guarantor",lName:lName,birthDate:birthdate);
-			Patient pat2=PatientT.CreatePatient(fName:fName,lName:lName,birthDate:birthdate,guarantor:pat1.PatNum);
-			Patient pat3=PatientT.CreatePatient(fName:fName,lName:lName,birthDate:birthdate,guarantor:pat1.PatNum);
-			List<Patient> listPats=new List<Patient>() { pat2,pat3 };
-			//Provide the Guarantor patnum in this because that is what usually displays on a statement. In this case, we cannot distinguish between patients because neither are clones so we simply expect to get the patient with the lowest patnum.
-			List<Patient> filteredPats=Patients.FilterDuplicatePatientsByPatNumOrGuarantorNum(listPats,pat1.PatNum);
-			long lowestPatNum=listPats.Min(x => x.PatNum);
-			Assert.AreEqual(filteredPats.Count,1);
-			Assert.AreEqual(filteredPats[0].PatNum,lowestPatNum);
-		}
-
-		[TestMethod]
-		public void Patients_FilterPatientsByPatNumOrGuarantorNum_ReturnsEmptyListIfMultiplePatientsFoundDoNotMatchPatNum() {
-			string fName=nameof(Patients_FilterPatientsByPatNumOrGuarantorNum_ReturnsEmptyListIfMultiplePatientsFoundDoNotMatchPatNum);
-			string lName=Guid.NewGuid().ToString();
-			DateTime birthdate=DateTime.Now.AddYears(-18);
-			Patient pat1=PatientT.CreatePatient(fName:fName+"Guarantor",lName:lName,birthDate:birthdate);
-			Patient pat2=PatientT.CreatePatient(fName:fName,lName:lName,birthDate:birthdate,guarantor:pat1.PatNum);
-			Patient pat3=PatientT.CreatePatient(fName:fName,lName:lName,birthDate:birthdate,guarantor:pat1.PatNum);
-			long invalidPatNum=(new List<Patient>() { pat1, pat2, pat3 }).Max(x => x.PatNum)+1; //Get 1 more than the max patnum to guarantee that there is no matching patnum for this test
-			List<Patient> filteredPats=Patients.FilterDuplicatePatientsByPatNumOrGuarantorNum(new List<Patient>() { pat2,pat3 },invalidPatNum);
-			Assert.AreEqual(filteredPats.Count,0);
 		}
 		#endregion
 

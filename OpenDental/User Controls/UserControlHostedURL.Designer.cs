@@ -184,7 +184,7 @@
 			this.checkExistingPatEmail.Size = new System.Drawing.Size(60, 17);
 			this.checkExistingPatEmail.TabIndex = 13;
 			this.checkExistingPatEmail.Text = "Email";
-			this.checkExistingPatEmail.Click += new System.EventHandler(this.checkExistingPatEmail_Click);
+			this.checkExistingPatEmail.CheckedChanged += new System.EventHandler(this.checkExistingPatEmail_CheckedChanged);
 			// 
 			// checkExistingPatText
 			// 
@@ -193,7 +193,7 @@
 			this.checkExistingPatText.Size = new System.Drawing.Size(60, 17);
 			this.checkExistingPatText.TabIndex = 14;
 			this.checkExistingPatText.Text = "Text";
-			this.checkExistingPatText.Click += new System.EventHandler(this.checkExistingPatText_Click);
+			this.checkExistingPatText.CheckedChanged += new System.EventHandler(this.checkExistingPatText_CheckedChanged);
 			// 
 			// groupNewPat
 			// 
@@ -213,7 +213,6 @@
 			this.checkNewPatEmail.Size = new System.Drawing.Size(102, 17);
 			this.checkNewPatEmail.TabIndex = 324;
 			this.checkNewPatEmail.Text = "Email";
-			this.checkNewPatEmail.Click += new System.EventHandler(this.checkNewPatEmail_Click);
 			// 
 			// checkNewPatText
 			// 
@@ -222,7 +221,6 @@
 			this.checkNewPatText.Size = new System.Drawing.Size(102, 17);
 			this.checkNewPatText.TabIndex = 12;
 			this.checkNewPatText.Text = "Text";
-			this.checkNewPatText.Click += new System.EventHandler(this.checkNewPatText_Click);
 			// 
 			// UserControlHostedURL
 			// 

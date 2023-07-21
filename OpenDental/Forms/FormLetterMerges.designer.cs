@@ -35,6 +35,7 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormLetterMerges));
+			this.butCancel = new OpenDental.UI.Button();
 			this.listCategories = new OpenDental.UI.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butAdd = new OpenDental.UI.Button();
@@ -52,6 +53,17 @@ namespace OpenDental {
 			this.butPreview = new OpenDental.UI.Button();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(462, 405);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(79, 24);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// listCategories
 			// 
@@ -201,6 +213,7 @@ namespace OpenDental {
 			this.Controls.Add(this.listLetters);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.listCategories);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butAdd);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -218,6 +231,7 @@ namespace OpenDental {
 
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.Button butAdd;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.ListBox listCategories;
 		private System.Windows.Forms.Label label3;
 		private OpenDental.UI.ListBox listLetters;

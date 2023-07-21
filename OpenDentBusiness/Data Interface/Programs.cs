@@ -15,28 +15,6 @@ namespace OpenDentBusiness {
 
 	///<summary></summary>
 	public class Programs{
-
-		/// <summary>List of the ini fields for the TigerView bridge that contain PHI.</summary>
-		private static readonly List<string> LIST_TIGERVIEW_PHI_FIELDS=new List<string>{
-			"PatientID",
-			"FirstName",
-			"LastName",
-			"MiddleName",
-			"DOB",
-			"Gender",
-			"PatientSSN",
-			"SubscriberSSN",
-			"Email",
-			"phHome",
-			"phWork",
-			"addrStreetNo",
-			"addrStreetName",
-			"addrSuiteNo",
-			"addrCity",
-			"addrState",
-			"addrZip",
-		};
-
 		#region Cache Pattern
 		private class ProgramCache : CacheListAbs<Program> {
 			protected override List<Program> GetCacheFromDb() {
@@ -126,14 +104,6 @@ namespace OpenDentBusiness {
 						err=prog.CustErr;
 					}
 				}
-			}
-			//Delete all programs disabled by HQ
-			if(!retVal) {
-				List<ProgramProperty> listProgramProperties=ProgramProperties.GetForProgram(progCur.ProgramNum);
-				for(int i=0;i<listProgramProperties.Count;i++) {
-					ProgramProperties.Delete(listProgramProperties[i]);
-				}
-				Programs.Delete(progCur);
 			}
 			if(!retVal && string.IsNullOrWhiteSpace(err)) {//if the CustErr wasn't set at HQ then we assume a customer is not able to use this program because they are not on support
 				err=Lans.g("Program","You must be on support to use this program.");
@@ -253,16 +223,40 @@ namespace OpenDentBusiness {
 			return (program==null ? 0 : program.ProgramNum);
 		}
 
-		///<summary>These programs do not work in THINFINITY mode for various reasons. We will restore them as our THINFINITY customers request them.</summary>
+		///<summary>These programs do not work in WEB mode for various reasons. We will restore them as our WEB customers request them.</summary>
 		public static List<ProgramName> GetListDisabledForWeb() {
-			string[] arrayProgNames=PrefC.GetString(PrefName.ProgramLinksDisabledForWeb).Split(new[] { "," },StringSplitOptions.RemoveEmptyEntries);
-			List<ProgramName> retval=new List<ProgramName>();
-			for(int i=0;i<arrayProgNames.Length;i++) {
-				if(Enum.TryParse(arrayProgNames[i],out ProgramName progName)) {
-					retval.Add(progName);
-				}
-			}
-			return retval;
+			return new List<ProgramName> {
+				ProgramName.Apixia,
+				ProgramName.AudaxCeph,
+				ProgramName.CADI,
+				ProgramName.DBSWin,
+				ProgramName.DemandForce,
+				ProgramName.DentalEye,
+				ProgramName.DentalTekSmartOfficePhone,
+				ProgramName.DentX,
+				ProgramName.Dolphin,
+				ProgramName.EvaSoft,
+				ProgramName.iCat,
+				ProgramName.IAP,
+				ProgramName.Guru,
+				ProgramName.HouseCalls,
+				ProgramName.MediaDent,
+				ProgramName.Owandy,
+				ProgramName.PandaPerioAdvanced,
+				ProgramName.Patterson,
+				ProgramName.PT,
+				ProgramName.PTupdate,
+				ProgramName.Schick,
+				ProgramName.Trojan,
+				ProgramName.TigerView,
+				ProgramName.TrophyEnhanced,
+				ProgramName.UAppoint,
+				ProgramName.Vipersoft,
+				ProgramName.VixWinOld,
+				ProgramName.Xcharge,
+				ProgramName.PreXionAcquire,
+				ProgramName.PreXionViewer,
+			};
 		}
 
 		/// <summary>Using eClinicalWorks tight integration.</summary>
@@ -385,7 +379,6 @@ namespace OpenDentBusiness {
 			//MiPACS: Has no file paths containing outgoing patient data from Open Dental.
 			//Mountainside: Has no file paths containing outgoing patient data from Open Dental.
 			//NewCrop: Has no file paths containing outgoing patient data from Open Dental.
-			ScrubFileForProperty(ProgramName.One2,"XML output file path","",true);//C:\osstem\onevision\one2\one2.exe
 			//Orion: Has no file paths containing outgoing patient data from Open Dental.
 			//OrthoPlex: Has no file paths containing outgoing patient data from Open Dental.
 			//Owandy: Has no file paths containing outgoing patient data from Open Dental.
@@ -422,35 +415,7 @@ namespace OpenDentBusiness {
 			//SteriSimple: Has no file paths containing outgoing patient data from Open Dental.
 			//ThreeShape: Has no file paths containing outgoing patient data from Open Dental.
 			//TigerView:
-			program=Programs.GetCur(ProgramName.TigerView);//C:\Program Files\PDI\Shared files\Imaging.ini.  TigerView complains if the file is not present.
-			if(program.Enabled) {
-				ProgramProperty programProperty=ProgramProperties.GetPropForProgByDesc(program.ProgramNum,"Tiger1.ini path");
-				if(File.Exists(programProperty.PropertyValue)) {
-					List<string> listLines=new List<string>();
-					try {
-						listLines=File.ReadAllLines(programProperty.PropertyValue).ToList();
-					}
-					catch {
-						//Another instance of OD might be closing at the same time, in which case the delete will fail. Could also be a permission issue or a concurrency issue. Ignore.
-					}
-					int index;
-					for(int i=0;i<LIST_TIGERVIEW_PHI_FIELDS.Count;i++) {//Clear out all fields that contain PHI rather that clearing the whole file.
-						index=listLines.FindIndex(x => x.ToLower().TrimStart().StartsWith(LIST_TIGERVIEW_PHI_FIELDS[i].ToLower()));
-						if(index < 0) {
-							continue;
-						}
-						listLines[index]=$"{LIST_TIGERVIEW_PHI_FIELDS[i]}=";
-					}
-					if(!listLines.IsNullOrEmpty()) {//Only try to write if the read was successful above.
-						try {
-							File.WriteAllLines(programProperty.PropertyValue,listLines);
-						}
-						catch {
-							//Another instance of OD might be closing at the same time, in which case the delete will fail. Could also be a permission issue or a concurrency issue. Ignore.
-						}
-					}
-				}
-			}
+			ScrubFileForProperty(ProgramName.TigerView,"Tiger1.ini path","",false);//C:\Program Files\PDI\Shared files\Imaging.ini.  TigerView complains if the file is not present.
 			//Trojan: Has no file paths containing outgoing patient data from Open Dental.
 			//Trophy: Has no file paths containing outgoing patient data from Open Dental.
 			//TrophyEnhanced: Has no file paths containing outgoing patient data from Open Dental.

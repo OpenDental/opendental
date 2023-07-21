@@ -23,14 +23,17 @@ namespace OpenDental {
 		private bool _isHeadingPrinted;
 		private int _heightHeadingPrint;
 		private int _pagesPrinted;
+		///<summary>Used in the Activated event.</summary>
+		private bool _isPrinting=false;
 		private DataTable _table;
 		private bool _isInitial=true;
-		public List<long> ClinicNumsSelectedInitial=new List<long>();
-		/// <summary>Determined based upon choice made in comboClinic from formBillingOptions</summary>
-		public bool IsAllSelected=false;
+		private bool _ignoreRefreshOnce;
+		public long ClinicNumInitial;
+		///<summary>Do not pass a list of clinics in.  This list gets filled on load based on the user logged in.  ListClinics is used in other forms so it is public.</summary>
+		public List<Clinic> ListClinics;
+		private bool _isActivateFillDisabled;
 		private List<long> _listStatementNumsSent;
-		///<summary>If progress is paused and then resumed, it checks db for any that got deleted and puts in this variable.</summary>
-		private List<long> _listStatementNumsToSkipAfterPause=new List<long>();
+		private List<long> _listStatementNumsToSkip;
 		///<summary>This can be used to interact with FormProgressExtended.</summary>
 		private ODProgressExtended _progExtended;
 		private bool _hasToShowPdf=false;
@@ -63,34 +66,55 @@ namespace OpenDental {
 			comboOrder.Items.Add(Lan.g(this,"BillingType"));
 			comboOrder.Items.Add(Lan.g(this,"PatientName"));
 			comboOrder.SelectedIndex=0;
-			if(IsAllSelected) {
+			//ListClinics can be called even when Clinics is not turned on, therefore it needs to be set to something to avoid a null reference.
+			ListClinics=new List<Clinic>();
+			_listStatementNumsToSkip=new List<long>();
+			if(Clinics.ClinicNum==0) {
 				comboClinic.IsAllSelected=true;
 			}
 			else {
-				comboClinic.ListClinicNumsSelected=ClinicNumsSelectedInitial;
+				comboClinic.SelectedClinicNum=Clinics.ClinicNum;
 			}
 			FillComboEmail();
-			FillGrid();
+			_isActivateFillDisabled=false;
 		}
 
-		public override void ProcessSignalODs(List<Signalod> listSignalods) {
-			if(listSignalods.Any(x=>x.IType==InvalidType.BillingList)){
-				FillGrid();//Signals refresh about every 6 seconds so the data validation for the dates shouldn't be an issue here
+		private void FormBilling_Activated(object sender,EventArgs e) {
+			if(IsDisposed) {//Attempted bug fix for an exception which occurred in FillGrid() when the grid was already disposed.
+				return;
 			}
+			_progExtended?.Fire(new ODEventArgs(ODEventType.Billing,new ProgressBarHelper("",progressBarEventType:ProgBarEventType.BringToFront)));
+			//this gets fired very frequently, including right in the middle of printing a batch.
+			if(_isPrinting){
+				return;
+			}
+			if(_ignoreRefreshOnce) {
+				_ignoreRefreshOnce=false;
+				return;
+			}
+			if(_isActivateFillDisabled) {
+				return;
+			}
+			FillGrid();
 		}
 
 		///<summary>We will always try to preserve the selected bills as well as the scroll postition.</summary>
 		private void FillGrid() {
+			if(!textDateStart.IsValid() || !textDateEnd.IsValid()) {
+				_ignoreRefreshOnce=true;
+				MsgBox.Show(this,"Please fix data entry errors first.");
+				return;
+			}
 			int scrollPos=gridBill.ScrollValue;
 			List<long> selectedKeys=gridBill.SelectedIndices.OfType<int>().Select(x => PIn.Long(((DataRow)gridBill.ListGridRows[x].Tag)["StatementNum"].ToString())).ToList();
 			DateTime dateFrom=PIn.Date(textDateStart.Text);
 			DateTime dateTo=new DateTime(2200,1,1);
-			if(textDateEnd.Text!="" && textDateEnd.IsValid()){
+			if(textDateEnd.Text!=""){
 				dateTo=PIn.Date(textDateEnd.Text);
 			}
 			List<long> clinicNums=new List<long>();//an empty list indicates to Statements.GetBilling to run for all clinics
-			if(PrefC.HasClinicsEnabled && comboClinic.ListClinicNumsSelected.Count>0) {
-				clinicNums.AddRange(comboClinic.ListClinicNumsSelected);
+			if(PrefC.HasClinicsEnabled && comboClinic.SelectedClinicNum>0) {
+				clinicNums.Add(comboClinic.SelectedClinicNum);
 			}
 			_table=Statements.GetBilling(radioSent.Checked,comboOrder.SelectedIndex,dateFrom,dateTo,clinicNums);
 			gridBill.BeginUpdate();
@@ -202,6 +226,7 @@ namespace OpenDental {
 
 		private void butRefresh_Click(object sender,EventArgs e) {
 			if(!textDateStart.IsValid() || !textDateEnd.IsValid()) {
+				_ignoreRefreshOnce=true;
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
 			}
@@ -229,8 +254,8 @@ namespace OpenDental {
 				return;
 			}
 			long patNum=PIn.Long(((DataRow)gridBill.ListGridRows[gridBill.GetSelectedIndex()].Tag)["PatNum"].ToString());
-			GlobalFormOpenDental.PatientSelected(Patients.GetPat(patNum),false);
-			GlobalFormOpenDental.GotoAccount(0);
+			FormOpenDental.S_Contr_PatientSelected(Patients.GetPat(patNum),false);
+			GotoModule.GotoAccount(0);
 			SendToBack();
 		}
 
@@ -249,7 +274,6 @@ namespace OpenDental {
 				ShowStatementOptions(listStatementsSelected[0]);
 				return;
 			}
-			//At least 2 statements selected
 			int countSkipped=listStatementsSelected.RemoveAll(x => x.LimitedCustomFamily!=EnumLimitedCustomFamily.None);
 			string stringWarning=Lan.g(this,"Limited (Custom) Statements must be edited individually.");
 			if(listStatementsSelected.IsNullOrEmpty()) {
@@ -266,9 +290,7 @@ namespace OpenDental {
 			}
 			FormStatementOptions.ListStatements=listStatementsSelected;
 			FormStatementOptions.ShowDialog();
-			if(FormStatementOptions.DialogResult==DialogResult.OK){
-				FillGrid();
-			}
+			//FillGrid happens automatically through Activated event.
 		}
 
 		private void butPrintList_Click(object sender,EventArgs e) {
@@ -310,14 +332,14 @@ namespace OpenDental {
 		}
 
 		private void butSend_Click(object sender,System.EventArgs e) {
-			if(ODEnvironment.IsCloudServer && PrefC.GetEnum<BillingUseElectronicEnum>(PrefName.BillingUseElectronic).In(
+			if(ODBuild.IsWeb() && PrefC.GetEnum<BillingUseElectronicEnum>(PrefName.BillingUseElectronic).In(
 					BillingUseElectronicEnum.ClaimX,
 					BillingUseElectronicEnum.EDS,
 					BillingUseElectronicEnum.POS
 				)) 
 			{
 				MsgBox.Show(this,$"Electronic statements using {PrefC.GetEnum<BillingUseElectronicEnum>(PrefName.BillingUseElectronic).GetDescription()} "
-					+"are not available while using Open Dental Cloud.");
+					+"are not available while viewing through the web.");
 				return;
 			}
 			_listStatementNumsSent=new List<long>();
@@ -331,12 +353,6 @@ namespace OpenDental {
 			labelTexted.Text=Lan.g(this,"Texted=")+"0";
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Please be prepared to wait up to ten minutes while all the bills get processed.\r\nOnce complete, the pdf print preview will be launched in Adobe Reader.  You will print from that program.  Continue?")){
 				return;
-			}
-			if(string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.BillingDefaultsSmsTemplate))) {
-				if(MessageBox.Show(Lan.g(this,"Cannot send blank text messages. Please update the SMS Statements template in Billing Defaults. Statements will still be printed and sent electronically.  Continue?"),Lan.g(this,"Send Statements - Warning"),MessageBoxButtons.OKCancel)!=DialogResult.OK)
-				{
-					return;
-				}
 			}
 			PdfDocument pdfDocumentOutput= new PdfDocument();
 			_hasToShowPdf=false;
@@ -361,7 +377,7 @@ namespace OpenDental {
 			if(_hasToShowPdf) {
 				string tempFileOutputDocument = PrefC.GetRandomTempFile(".pdf");
 				pdfDocumentOutput.Save(tempFileOutputDocument);
-				if(ODBuild.IsThinfinity()) {
+				if(ODBuild.IsWeb()) {
 					ThinfinityUtils.HandleFile(tempFileOutputDocument);
 				}
 				else {
@@ -410,32 +426,29 @@ namespace OpenDental {
 				MsgBox.Show(this,message);
 			}
 			Cursor=Cursors.Default;
-			FillGrid();
+			_isPrinting=false;
+			FillGrid();//not automatic
 		}
 
-		///<summary>Includes a FillGrid().</summary>
 		private void ShowStatementOptions(Statement statement) {
 			using FormStatementOptions formStatementOptions=new FormStatementOptions(true);
 			if(statement==null) {
 				MsgBox.Show(this,"The statement has been deleted.");
-				FillGrid();
 				return;
 			}
 			formStatementOptions.StatementCur=statement;
 			formStatementOptions.ShowBillTransSinceZero=ShowBillTransSinceZero;
 			formStatementOptions.ShowDialog();
-			//Could be changes even if not hit OK. Example: printing.
-			FillGrid();
 		}
 
-		///<summary>No FillGrid needed in here or in any called method because that always happens one level up.</summary>
 		public void SendStatements(List<Dictionary<long,string>> listDictPatnumsSkipped,ref int emailed,ref int printed,ref int sentElect,
 			ref PdfDocument outputDocument,ref int skippedDeleted,ref int texted) 
 		{
-			_progExtended=new ODProgressExtended(this,tag: new ProgressBarHelper(("Billing Progress")
+			_progExtended=new ODProgressExtended(ODEventType.Billing,new BillingEvent(),this,tag: new ProgressBarHelper(("Billing Progress")
 				,progressBarEventType:ProgBarEventType.Header));
 			_progExtended.Fire(new ODEventArgs(ODEventType.Billing,new ProgressBarHelper("",progressBarEventType:ProgBarEventType.BringToFront)));
 			Cursor=Cursors.WaitCursor;
+			_isPrinting=true;
 			//FormProgressExtended will insert new bars on top. Statment is on bottom, batch middle, and overall on top. 
 			_progExtended.Fire(new ODEventArgs(ODEventType.Billing,new ProgressBarHelper(Lan.g(this,"Statement")+"\r\n0 / 0","0%",0,100
 				,ProgBarStyle.Blocks,"3",isTopHidden:true)));
@@ -452,11 +465,10 @@ namespace OpenDental {
 			//In case the user didn't come directly from FormBillingOptions check the DateRangeFrom on an electronic statement to see if we need to
 			//display the warning message. Spot checking to save time. 
 			if(popUpCheck!=null && (IsHistoryStartMinDate || popUpCheck.DateRangeFrom.Year<1880)) {
-				if(MessageBox.Show(Lan.g(this,"Sending statements electronically for all account history could result in many pages. Continue?"),"",MessageBoxButtons.YesNo)==DialogResult.No) {
-					//use a MessageBox for now until MsgBox hiding behind things is fixed
+				if(!MsgBox.Show(MsgBoxButtons.YesNo,"Sending statements electronically for all account history could result in many pages. Continue?")) {
 					return;
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.Billing,0,"User proceeded with electronic billing for all dates.");
+				SecurityLogs.MakeLogEntry(Permissions.Billing,0,"User proceeded with electronic billing for all dates.");
 			}
 			if(!PrefC.HasClinicsEnabled) {
 				//If clinics are enabled, the practice has the option to order statements alphabetically. This would have happened in 
@@ -469,48 +481,45 @@ namespace OpenDental {
 			}
 			_dictionaryFamilies=Statements.GetFamiliesForStatements(listStatements);
 			Statements.AddInstallmentPlansToStatements(listStatements,_dictionaryFamilies);
-			List<Patient> listPatients=_dictionaryFamilies.Values.SelectMany(x => x.ListPats).Distinct().ToList();
-			Dictionary<int,List<Statement>> dictionaryStatementsForSend=Statements.GetBatchesForStatements(listStatements,out List<long> listClinicNums,listPatients);
+			Dictionary<int,List<Statement>> dictionaryStatementsForSend=Statements.GetBatchesForStatements(listStatements,out List<long> listClinicNums,_dictionaryFamilies);
+			int numOfBatchesSent=1;//Start at 1 so that it is better looking in the UI.
 			int numOfBatchesTotal=dictionaryStatementsForSend.Count;
+			int curStatementsProcessed=0;
+			int numOfStatementsInBatch=0;
+			string selectedFile=null;
+			int curStatementIdx=0;//starting index to display on progress bar
 			//TODO: Query the database to get an updated list of unsent bills and compare them to the local list to make sure that we do not resend statements that have already been sent by another user.
-			//get a list of clinics from list of statements
-			//Loop through the clinics
-			//  Filter to get a list of statements for that clinic
-			for(int i=1;i<=numOfBatchesTotal;i++) {//i represents batch currently being sent and starts at 1 for UI purposes
-				//somewhere in here is where you would "batch"
+			while(numOfBatchesSent<=numOfBatchesTotal) {
 				if(!BillingProgressPause()) {
 					return;
 				}
-				int curStatementsProcessed=0;
-				int numOfStatementsInBatch=0;
-				int curStatementIdx=0;//starting index to display on progress bar
+				curStatementsProcessed = 0;
 				_progExtended.Fire(new ODEventArgs(ODEventType.Billing,new ProgressBarHelper(Lan.g(this,"Overall"),Math.Ceiling(((double)curStatementIdx/gridBill.SelectedIndices.Length)*100)+"%",curStatementIdx,gridBill.SelectedIndices.Length,ProgBarStyle.Blocks,"1")));
-				_progExtended.Fire(new ODEventArgs(ODEventType.Billing,new ProgressBarHelper(Lan.g(this,"Preparing Batch")+" "+i
+				_progExtended.Fire(new ODEventArgs(ODEventType.Billing,new ProgressBarHelper(Lan.g(this,"Preparing Batch")+" "+numOfBatchesSent
 					,progressBarEventType:ProgBarEventType.TextMsg)));
 				Dictionary<long,StatementData> dictionaryStatementData=new Dictionary<long,StatementData>();
 				List<EbillStatement> listEbillStatements=new List<EbillStatement>();
-				List<Statement> listStatementsToSend=dictionaryStatementsForSend[i-1]; //-1 because we start on +1 for the batch number
+				List<Statement> listStatementsToSend=dictionaryStatementsForSend[numOfBatchesSent-1]; //-1 because we start on +1 for the batch number
 				numOfStatementsInBatch=listStatementsToSend.Count;
 				long clinicNum=0;
 				if(PrefC.HasClinicsEnabled) {
-					clinicNum=listClinicNums[i-1]; //-1 because we start on +1 for the batch number
+					clinicNum=listClinicNums[numOfBatchesSent-1]; //-1 because we start on +1 for the batch number
 				}
-				//Now to print, send eBills, and text messages.  If any return false, the user canceled during execution OR aging was supposed to run and didn't OR an office knowingly clicked to continue to send statements with out the BillingDefaultsSmsTemplate pref set
-				if(!PrintBatch(i,numOfBatchesTotal,listDictPatnumsSkipped,ref emailed,ref printed,ref listEbillStatements
+				//Now to print, send eBills, and text messages.  If any return false, the user canceled during execution.
+				if(!PrintBatch(numOfBatchesSent,numOfBatchesTotal,listDictPatnumsSkipped,ref emailed,ref printed,ref listEbillStatements
 						,ref outputDocument,ref curStatementIdx,ref curStatementsProcessed,ref skippedDeleted,ref listStatementsToSend,ref dictionaryStatementData)
-					|| !SendEBills(i,numOfBatchesTotal,numOfStatementsInBatch,clinicNum,selectedFile:null,listDictPatnumsSkipped,ref sentElect,ref listEbillStatements
+					|| !SendEBills(numOfBatchesSent,numOfBatchesTotal,numOfStatementsInBatch,clinicNum,selectedFile,listDictPatnumsSkipped,ref sentElect,ref listEbillStatements
 						,ref curStatementIdx,ref curStatementsProcessed,ref skippedDeleted)
 					|| !SendTextMessages(listDictPatnumsSkipped,ref listStatementsToSend,ref texted)) 
 				{
-					List<StatementData> listStatementDatasCanceled=dictionaryStatementData.Values.ToList();
-					Statements.SyncStatementProdsForMultipleStatements(listStatementDatasCanceled);
+					Statements.SyncStatementProdsForMultipleStatements(dictionaryStatementData);
 					return;
 				}
-				List<StatementData> listStatementDatas=dictionaryStatementData.Values.ToList();
-				Statements.SyncStatementProdsForMultipleStatements(listStatementDatas);
+				Statements.SyncStatementProdsForMultipleStatements(dictionaryStatementData);
 				_progExtended.Fire(new ODEventArgs(ODEventType.Billing,new ProgressBarHelper(Lan.g(this,"Batch Completed")+"..."
 					,progressBarEventType:ProgBarEventType.TextMsg)));
-			}
+				numOfBatchesSent++;
+			}//End while loop
 		}
 
 		///<summary>Concat all the pdf's together to create one print job. Returns false if the printing was canceled. Changes to this method will also need to be made to OpenDentalService.ProcessStatements.SendEmails().</summary>
@@ -537,7 +546,6 @@ namespace OpenDental {
 			if(PrefC.GetDate(PrefName.DateLastAging).Date!=MiscData.GetNowDateTime().Date && !RunAgingEnterprise()) {//run aging for all patients
 				return false;//if aging fails, don't generate and print statements
 			}
-			List<EmailAutograph> listEmailAutographs=EmailAutographs.GetDeepCopy();
 			foreach(Statement statement in listStatements) {
 				if(!BillingProgressPause()) {
 					return false;
@@ -551,11 +559,9 @@ namespace OpenDental {
 						+numOfBatchesTotal,Math.Ceiling(((double)curStatementsProcessed/numOfStatementsInBatch)*100)+"%",curStatementsProcessed,numOfStatementsInBatch,ProgBarStyle.Blocks,"2")));
 					continue;
 				}
-				if(_listStatementNumsToSkipAfterPause.Contains(statement.StatementNum) || statement.IsSent) {
-					//The statement was deleted or marked sent elsewhere.
+				if(_listStatementNumsToSkip.Contains(statement.StatementNum)) {
+					//The user never selected this statement, so we don't need to note why we skipped it.
 					curStatementsProcessed++;
-					//2 means misc error
-					listDictionariesPatnumsSkipped[2][statement.PatNum]=Lan.g(this, "Statement was adjusted elsewhere.");
 					_progExtended.Fire(new ODEventArgs(ODEventType.Billing,new ProgressBarHelper(Lan.g(this,"Overall"),Math.Ceiling(((double)curStatementIdx/gridBill.SelectedIndices.Length)*100)+"%",curStatementIdx,gridBill.SelectedIndices.Length,ProgBarStyle.Blocks,"1")));
 					_progExtended.Fire(new ODEventArgs(ODEventType.Billing,new ProgressBarHelper(Lan.g(this,"Batch")+"\r\n"+numOfBatchesSent+" / "
 						+numOfBatchesTotal,Math.Ceiling(((double)curStatementsProcessed/numOfStatementsInBatch)*100)+"%",curStatementsProcessed,numOfStatementsInBatch,ProgBarStyle.Blocks,"2")));
@@ -584,6 +590,8 @@ namespace OpenDental {
 						_progExtended.Close();
 						MsgBox.Show(this,"You need to enter an SMTP server name in e-mail setup before you can send e-mail.");
 						Cursor=Cursors.Default;
+						_isPrinting=false;
+						//FillGrid();//automatic
 						return false;
 					}
 					if(patient.Email=="") {
@@ -637,6 +645,7 @@ namespace OpenDental {
 						_progExtended.Close();
 						MsgBox.Show(this,"Failed to save PDF.  In Setup, DataPaths, please make sure the top radio button is checked.");
 						Cursor=Cursors.Default;
+						_isPrinting=false;
 						return false;
 					}
 					dictionaryStatementData.Add(statement.StatementNum,new StatementData(dataSet,statement.DocNum));
@@ -701,7 +710,7 @@ namespace OpenDental {
 					}
 					//Process.Start(filePathAndName);
 					_progExtended.Fire(new ODEventArgs(ODEventType.Billing,new ProgressBarHelper(Lan.g(this,"Statement")+"\r\n"+curStatementIdx+" / "+gridBill.SelectedIndices.Length,"40%",40,100,ProgBarStyle.Blocks,"3")));
-					message=Statements.GetEmailMessageForStatement(statement,patient,emailAddress);
+					message=Statements.GetEmailMessageForStatement(statement,patient);
 					_progExtended.Fire(new ODEventArgs(ODEventType.Billing,new ProgressBarHelper(Lan.g(this,"Statement")+"\r\n"+curStatementIdx+" / "+gridBill.SelectedIndices.Length,"70%",70,100,ProgBarStyle.Blocks,"3")));
 					emailAttach=new EmailAttach();
 					emailAttach.DisplayedFileName="Statement.pdf";
@@ -722,20 +731,6 @@ namespace OpenDental {
 							EmailSecures.InsertMessageThenSend(message,emailAddress,message.ToAddress,clinicNumPat);
 						}
 						else {
-							if(PrefC.GetBool(PrefName.BillingEmailIncludeAutograph)) {
-								EmailAutograph emailAutograph=EmailAutographs.GetForOutgoing(listEmailAutographs,emailAddress);
-								//Always set the BodyText, we will additionally set HtmlText below if necessary (mimics FormEmailMessageEdit).
-								message.BodyText=EmailMessages.InsertAutograph(message.BodyText,emailAutograph);
-								if(MarkupEdit.ContainsOdHtmlTags(emailAutograph.AutographText)) {
-									//Attempt to convert entire message to html to accomodate for html autograph.
-									ODException.SwallowAnyException(() => {
-										string markup=MarkupEdit.TranslateToXhtml(EmailMessages.InsertAutograph(message.BodyText,emailAutograph),false,isEmail:true);
-										//We got this far so change the message body and html type.
-										message.HtmlText=markup;
-										message.HtmlType=EmailType.Html;
-									});
-								}
-							}
 							//If IsCloudStorage==true, then we will end up downloading the file again in EmailMessages.SendEmailUnsecure.
 							EmailMessages.SendEmail(message,emailAddress);
 						}
@@ -797,8 +792,8 @@ namespace OpenDental {
 						continue;
 					}
 					EbillStatement ebillStatement = new EbillStatement();
-					ebillStatement.Family=family;
-					ebillStatement.Statement=statement;
+					ebillStatement.family=family;
+					ebillStatement.statement=statement;
 					long clinicNum = 0;//If clinics are disabled, then all bills will go into the same "bucket"
 					if(PrefC.HasClinicsEnabled) {
 						clinicNum=family.Guarantor.ClinicNum;
@@ -875,7 +870,7 @@ namespace OpenDental {
 				if(!BillingProgressPause()) {
 					return false;
 				}
-				Statement statementCur = listEbillStatements[j].Statement;
+				Statement statementCur = listEbillStatements[j].statement;
 				if(statementCur==null) {//The statement was probably deleted by another user.
 					skippedDeleted++;
 					curStatementsProcessed++;
@@ -884,17 +879,15 @@ namespace OpenDental {
 						+numOfBatchesTotal,Math.Ceiling(((double)curStatementsProcessed/numOfStatementsInBatch)*100)+"%",curStatementsProcessed,numOfStatementsInBatch,ProgBarStyle.Blocks,"2")));
 					continue;
 				}
-				if(_listStatementNumsToSkipAfterPause.Contains(statementCur.StatementNum)) {
-					//The statement was deleted or marked sent elsewhere.
+				if(_listStatementNumsToSkip.Contains(statementCur.StatementNum)) {
+					//The user never selected this statement, so we don't need to note why we skipped it.
 					curStatementsProcessed++;
-					//2 means misc error
-					listDictionariesPatnumsSkipped[2][statementCur.PatNum]=Lan.g(this, "Statement was adjusted elsewhere.");
 					_progExtended.Fire(new ODEventArgs(ODEventType.Billing,new ProgressBarHelper(Lan.g(this,"Overall"),Math.Ceiling(((double)curStatementIdx/gridBill.SelectedIndices.Length)*100)+"%",curStatementIdx,gridBill.SelectedIndices.Length,ProgBarStyle.Blocks,"1")));
 					_progExtended.Fire(new ODEventArgs(ODEventType.Billing,new ProgressBarHelper(Lan.g(this,"Batch")+"\r\n"+numOfBatchesSent+" / "
 						+numOfBatchesTotal,Math.Ceiling(((double)curStatementsProcessed/numOfStatementsInBatch)*100)+"%",curStatementsProcessed,numOfStatementsInBatch,ProgBarStyle.Blocks,"2")));
 					continue;
 				}
-				family=listEbillStatements[j].Family;
+				family=listEbillStatements[j].family;
 				listEbillStatements.RemoveAt(j);//Remove the statement from our list so that we do not send it again in the next batch.
 				patient=family.GetPatient(statementCur.PatNum);
 				dataSet=AccountModules.GetStatementDataSet(statementCur,isComputeAging:false,doIncludePatLName:PrefC.IsODHQ);
@@ -1112,9 +1105,6 @@ namespace OpenDental {
 
 		///<summary>Sends text messages to the current batch of statements. Changes to this method will also need to be made to OpenDentalService.ScheduledProcessThread.SendTextMessages().</summary>
 		private bool SendTextMessages(List<Dictionary<long,string>> listDictionariesPatnumsSkipped,ref List<Statement> listStatements,ref int texted) {
-			if(string.IsNullOrWhiteSpace(PrefC.GetString(PrefName.BillingDefaultsSmsTemplate))) {
-				return false;
-			}
 			List<SmsToMobile> listTextsToSend=new List<SmsToMobile>();
 			//Tuple<GuidMessage,StatementNum>
 			List<Tuple<string,long>> listStmtNumsToUpdate=new List<Tuple<string,long>>();
@@ -1168,7 +1158,7 @@ namespace OpenDental {
 			try {
 				_progExtended.Fire(new ODEventArgs(ODEventType.Billing,new ProgressBarHelper(Lan.g(this,"Sending text messages")+"..."
 					,progressBarEventType: ProgBarEventType.TextMsg)));
-				List<SmsToMobile> listSmsToMobiles=SmsToMobiles.SendSmsMany(listTextsToSend,userod:Security.CurUser);
+				List<SmsToMobile> listSmsToMobiles=SmsToMobiles.SendSmsMany(listTextsToSend,user:Security.CurUser);
 				//listDictPatnumsSkipped[2] tracks errors for patients skipped due to Misc reasons.
 				Statements.HandleSmsSent(listSmsToMobiles,listStmtNumsToUpdate,listDictionariesPatnumsSkipped[2]);
 				texted+=listSmsToMobiles.Where(x => x.SmsStatus!=SmsDeliveryStatus.FailNoCharge).Count();
@@ -1194,24 +1184,25 @@ namespace OpenDental {
 				return true;//already ran aging for this date, just move on
 			}
 			Prefs.RefreshCache();
-			if(!PrefC.IsAgingAllowedToStart()) {
+			DateTime dateTAgingBeganPref=PrefC.GetDateT(PrefName.AgingBeginDateTime);
+			if(dateTAgingBeganPref>DateTime.MinValue) {
 				MessageBox.Show(this,Lan.g(this,"In order to print or send statments, aging must be re-calculated, but you cannot run aging until it has "
-					+"finished the current calculations which began on")+" "+PrefC.GetDateT(PrefName.AgingBeginDateTime).ToString()+".\r\n"+Lans.g(this,"If you believe the current "
+					+"finished the current calculations which began on")+" "+dateTAgingBeganPref.ToString()+".\r\n"+Lans.g(this,"If you believe the current "
 					+"aging process has finished, a user with SecurityAdmin permission can manually clear the date and time by going to Setup | Preferences | Account - General "
 					+"and pressing the 'Clear' button."));
 				return false;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.AgingRan,0,"Starting Aging - Billing");
+			SecurityLogs.MakeLogEntry(Permissions.AgingRan,0,"Starting Aging - Billing");
 			Prefs.UpdateString(PrefName.AgingBeginDateTime,POut.DateT(dateTimeNow,false));//get lock on pref to block others
 			Signalods.SetInvalid(InvalidType.Prefs);//signal a cache refresh so other computers will have the updated pref as quickly as possible
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				Ledgers.ComputeAging(0,dateTimeToday);
 				Prefs.UpdateString(PrefName.DateLastAging,POut.Date(dateTimeToday,false));
 			};
 			progressOD.StartingMessage=Lan.g(this,"Calculating enterprise aging for all patients as of")+" "+dateTimeToday.ToShortDateString()+"...";
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
 				Ledgers.AgingExceptionHandler(ex,this);
@@ -1221,7 +1212,7 @@ namespace OpenDental {
 			if(progressOD.IsCancelled){
 				return false;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.AgingRan,0,"Aging complete - Billing");
+			SecurityLogs.MakeLogEntry(Permissions.AgingRan,0,"Aging complete - Billing");
 			return progressOD.IsSuccess;
 		}
 
@@ -1229,7 +1220,7 @@ namespace OpenDental {
 		public bool BillingProgressPause() {
 			//Check to see if the user wants to pause the sending of statements.  If so, wait until they decide to resume.
 			List<long> listStatementNumsUnsent=new List<long>();
-			_listStatementNumsToSkipAfterPause=new List<long>();
+			_listStatementNumsToSkip=new List<long>();
 			bool hasEventFired=false;
 			DateTime dateFrom=PIn.Date(textDateStart.Text);
 			DateTime dateTo=new DateTime(2200,1,1);
@@ -1242,7 +1233,6 @@ namespace OpenDental {
 				}
 				Thread.Sleep(100);
 				if(!_progExtended.IsPaused) {
-					//Jordan the row below is wrong. It's getting statementNums from all rows, not just the selected ones.
 					List<long> listStatementNumsSelected=gridBill.ListGridRows.OfType<GridRow>()
 						.Select(x =>PIn.Long(((DataRow)x.Tag)["StatementNum"].ToString())).ToList();
 					listStatementNumsUnsent=listStatementNumsSelected.FindAll(x => !_listStatementNumsSent.Contains(x)).ToList();
@@ -1251,16 +1241,14 @@ namespace OpenDental {
 					if(textDateEnd.Text!=""){
 						dateTo=PIn.Date(textDateEnd.Text);
 					}
-					if(PrefC.HasClinicsEnabled && comboClinic.ClinicNumSelected>0) {
-						clinicNums.Add(comboClinic.ClinicNumSelected);
+					if(PrefC.HasClinicsEnabled && comboClinic.SelectedClinicNum>0) {
+						clinicNums.Add(comboClinic.SelectedClinicNum);
 					}
 					DataTable table=Statements.GetBilling(radioSent.Checked,comboOrder.SelectedIndex,dateFrom,dateTo,clinicNums);
 					List<long> listStatementNums=table.Select().Select(x => PIn.Long(x["StatementNum"].ToString())).ToList();
-					//If another instance of OD deleted a statement while this billing progress was paused.
-					//Loop through the remaining statements that we're about to send when we unpause.
 					for(int i = 0;i<listStatementNumsUnsent.Count;++i) {
-						if(!listStatementNums.Contains(listStatementNumsUnsent[i])) {//not in db anymore
-							_listStatementNumsToSkipAfterPause.Add(listStatementNumsUnsent[i]);
+						if(!listStatementNums.Contains(listStatementNumsUnsent[i])) {
+							_listStatementNumsToSkip.Add(listStatementNumsUnsent[i]);
 						}
 					}
 				}
@@ -1275,20 +1263,23 @@ namespace OpenDental {
 			return true;
 		}
 
-		private void FormBilling_FormClosing(object sender,FormClosingEventArgs e) {
-			if(radioSent.Checked || gridBill.ListGridRows.Count==0){
-				return;
+		private void FormBilling_CloseXClicked(object sender,CancelEventArgs e) {
+			//butClose_Click
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			if(gridBill.ListGridRows.Count==0){
+				Close();
 			}
-			//this MessageBox will activate every time the window is closed.
-			//If the OD shutdown signal causes this window to close, the msgbox will show for a second or two and then forcefully close anyway.
-			//In that case, it will not delete unsent bills.
+			_isActivateFillDisabled=true;
 			DialogResult result=MessageBox.Show(Lan.g(this,"You may leave this window open while you work.  If you do close it, do you want to delete all unsent bills?"),
 				"",MessageBoxButtons.YesNoCancel);
 			if(result==DialogResult.No){
+				Close();
 				return;
 			}
 			else if(result==DialogResult.Cancel){
-				e.Cancel=true;
+				_isActivateFillDisabled=false;
 				return;
 			}
 			//else yes:
@@ -1300,21 +1291,21 @@ namespace OpenDental {
 				.ToDictionary(x => x.Key,x => x.ToList());
 			totalCount=dictionaryClinicStatmentsToDelete.Values.Sum(x => x.Count);
 			int runningTotal=0;
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => { 
 				foreach(long clinicNum in dictionaryClinicStatmentsToDelete.Keys) {
-					ODEvent.Fire(ODEventType.ProgressBar,
+					ProgressBarEvent.Fire(ODEventType.ProgressBar,
 						Lan.g(this,"Deleting")+" "+dictionaryClinicStatmentsToDelete[clinicNum].Count+" "+Lan.g(this,"statements.")+"\r\n"
 						+Lan.g(this,"Processed")+" "+runningTotal+" "+Lan.g(this,"out of")+" "+totalCount);
 					Statements.DeleteAll(dictionaryClinicStatmentsToDelete[clinicNum]);
 					runningTotal+=dictionaryClinicStatmentsToDelete[clinicNum].Count;
 				}
 				//This is not an accurate permission type.
-				SecurityLogs.MakeLogEntry(EnumPermType.Accounting,0,"Billing: Unsent statements were deleted.");
+				SecurityLogs.MakeLogEntry(Permissions.Accounting,0,"Billing: Unsent statements were deleted.");
 			};
 			progressOD.StartingMessage="Deleting Statements...";
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
 				FriendlyException.Show(Lan.g(this,"Error deleting statements."),ex);
@@ -1326,7 +1317,7 @@ namespace OpenDental {
 			if(progressOD.IsCancelled){
 				return;
 			}
-			return;
+			Close();
 		}
 
 		private void butDefaults_Click(object sender,EventArgs e) {
@@ -1357,3 +1348,20 @@ namespace OpenDental {
 		
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

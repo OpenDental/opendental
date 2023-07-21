@@ -40,12 +40,12 @@ namespace OpenDental {
 
 		#region Methods - Private
 		private bool SyncPhoneNums() {
-			UI.ProgressWin progressOD=new UI.ProgressWin();
+			UI.ProgressOD progressOD=new UI.ProgressOD();
 			progressOD.ShowCancelButton=false;
 			progressOD.ActionMain=PhoneNumbers.SyncAllPats;
 			progressOD.StartingMessage=Lan.g(this,"Syncing all patient phone numbers to the phonenumber table")+"...";
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
 				MsgBox.Show(Lan.g(this,"The patient phone number sync failed with the message")+":\r\n"+ex.Message+"\r\n"+Lan.g(this,"Please try again."));
@@ -83,7 +83,9 @@ namespace OpenDental {
 			if(PIn.Enum<ClaimSnapshotTrigger>(PrefC.GetString(PrefName.ClaimSnapshotTriggerType),true) == ClaimSnapshotTrigger.ClaimCreate) {
 				groupBoxClaimSnapshot.Visible=false;
 			}
-			comboClaimSnapshotTrigger.Items.AddEnums<ClaimSnapshotTrigger>();
+			foreach(ClaimSnapshotTrigger trigger in Enum.GetValues(typeof(ClaimSnapshotTrigger))) {
+				comboClaimSnapshotTrigger.Items.Add(trigger.GetDescription());
+			}
 			comboClaimSnapshotTrigger.SelectedIndex=(int)PIn.Enum<ClaimSnapshotTrigger>(PrefC.GetString(PrefName.ClaimSnapshotTriggerType),true);
 			textClaimSnapshotRunTime.Text=PrefC.GetDateT(PrefName.ClaimSnapshotRunTime).ToShortTimeString();
 			checkPreferredReferrals.Checked=PrefC.GetBool(PrefName.ShowPreferedReferrals);
@@ -138,8 +140,14 @@ namespace OpenDental {
 			Changed|=Prefs.UpdateBool(PrefName.PatientDOBMasked,checkPatientDOBMasked.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.SameForFamilyCheckboxesUnchecked,checkSameForFamily.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.ShowPreferredPronounsForPats,checkPreferredPronouns.Checked);
-			ClaimSnapshotTrigger claimSnapshotTrigger=comboClaimSnapshotTrigger.GetSelected<ClaimSnapshotTrigger>();
-			Changed|=Prefs.UpdateString(PrefName.ClaimSnapshotTriggerType,claimSnapshotTrigger.ToString());
+			foreach(ClaimSnapshotTrigger trigger in Enum.GetValues(typeof(ClaimSnapshotTrigger))) {
+				if(trigger.GetDescription()==comboClaimSnapshotTrigger.Text) {
+					if(Prefs.UpdateString(PrefName.ClaimSnapshotTriggerType,trigger.ToString())) {
+						Changed=true;
+					}
+					break;
+				}
+			}
 			return true;
 		}
 		#endregion Methods - Public

@@ -1,104 +1,170 @@
-﻿#region using
-using CodeBase;
-using ImagingDeviceManager;
-using OpenDental.Thinfinity;
-using OpenDental.UI;
-using OpenDentBusiness;
+#region using
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Drawing.Design;
 using System.Drawing.Text;
+using System.Drawing.Drawing2D;
+using System.Drawing.Printing;
 using System.IO;
-using System.Linq;
 using System.Net;
+using System.Resources;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using OpenDental.UI;
+using OpenDentBusiness;
+using Tao.OpenGl;
+using CodeBase;
+using xImageDeviceManager;
+using System.Text.RegularExpressions;
+using System.Linq;
+using OpenDental.Bridges;
+using OpenDental.Thinfinity;
+using ImagingDeviceManager;
+using CodeBase.Controls;
 #endregion using
 
-namespace OpenDental
-{
-	///<summary>The Imaging Module.</summary>
-	public partial class ControlImages : UserControl{
+namespace OpenDental {
+
+	///<summary></summary>
+	public partial class ControlImages:System.Windows.Forms.UserControl {
 		#region Fields - Public
 		public LayoutManagerForms LayoutManager=new LayoutManagerForms();
 		#endregion Fields - Public
 
 		#region Fields - Private
-		///<summary>Color for drawing lines and text. This allows color selection to stay consistent for one session as the user switches images. Used for images and mounts. Each mount also internally stores its own colors, which cause this to change when loading a mount.</summary>
-		private Color _colorFore=Color.Black;
-		///<summary>Color for background of text. Only for images, not mounts (not sure why now. Maybe because that's pulled from the mount, whereas images don't have a field to pull from). Transparent (no background) can be selected and is supported.</summary>
-		private Color _colorTextBack=Color.White;
-		///<summary>One of these 3 states is active at any time.</summary>
-		private EnumCropPanAdj _cropPanAdj;
-		private DeviceController _deviceController; 
-		///<summary>If the draw toolbar is showing, then one of these 5 modes will be active.</summary>
-		private EnumDrawMode _drawMode;
-		private Family _familyCur=null;
-		private FileSystemWatcher _fileSystemWatcher;
-		private FormLauncher _formLauncherVideo;
-		private WpfControls.UI.ImageSelector imageSelector;
-		///<summary>A list of the forms that are currently floating. Can be empty.  When a form is closed, it is removed from the list.</summary>
-		private List<FormImageFloat> _listFormImageFloats=new List<FormImageFloat>();
-		private bool _initializedOnStartup=false;
-		///<summary>Gets set to true when acquiring so that the unmounted bar will show.  Once you click on an image in the tree, this is set back to false.</summary>
-		private bool _isAcquiring;
-		///<summary>Collapse is toggled with the triangle on the sizer.  Always starts out not collapsed.</summary>
-		private bool _isTreeDockerCollapsed=false;
-		///<summary>Collapsing while the mouse is down triggers another mouse move, so this prevents taking action on that phantom mouse move.</summary>
-		private bool _isTreeDockerCollapsing=false;
-		private Patient _patient=null;
-		///<summary>Set with each RefreshModuleData, and that's where it's set if it doesn't yet exist.  For now, we are not using _patCur.ImageFolder, because we haven't tested whether it properly updates the patient object.  We don't want to risk using an outdated patient folder path.  And we don't want to waste time refreshing PatCur after every ImageStore.GetPatientFolder().</summary>
-		private string _patFolder="";
+		///<summary>Locker for _listImageDownload</summary>
+		private object _apteryxLocker=new object();
+		///<summary>In-memory copies of the images being viewed/edited. No changes are made to these images in memory, they are just kept resident to avoid having to reload the images from disk each time the screen needs to be redrawn.  If no mount, this will just be one image.  A mount will contain a series of images.</summary>
+		private Bitmap[] _bitmapArrayRaw=new Bitmap[1];
+		///<summary>The image currently on the screen.  If a mount, this will be an image representing the entire mount.</summary>
+		private Bitmap _bitmapShowing=null;
+		///<summary>Indicates which documents to update in the image worker thread. This variable must be locked before accessing it and it must also be the same length as DocsInMount at all times.</summary>
+		private bool[] _boolArrayIdxsFlaggedForUpdate=null;
+		///<summary>If this is not zero, then this indicates a different mode special for claimpayment.</summary>
+		private long _claimPaymentNum;
+		///<summary>Tracker to keep track of how many pages are loaded on our webBrowser object.</summary>
+		private int _countWebBrowserLoads=0;
+		DateTime _dateTimeMouseMoved=new DateTime(1,1,1);
+		//private List<Def> DefListExpandedCats=new List<Def>();
+		///<summary>List of documents within the currently selected mount (if any).</summary>
+		private Document[] _documentArrayInMount=null;
+		///<summary>Edited by the main thread to reflect selection changes. Read by worker thread.</summary>
+		private Document _documentForSettings=null;
+		///<summary>Keeps track of the document settings for the currently selected document or mount.</summary>
+		private Document _documentShowing=new Document();
+		///<summary>If this is not null, then this indicates a different mode special for amendments.</summary>
+		private EhrAmendment _ehrAmendment;
+		///<summary>Used as a thread-safe communication device between the main and worker threads.</summary>
+		private EventWaitHandle _eventWaitHandle=new EventWaitHandle(false,EventResetMode.AutoReset);
+		private Family _family;
+		///<summary>Used to flag when filling tree and also ImagesModuleTreeIsCollapsed=2. This lets us ignore the expand and collapse commands temporarily.</summary>
+		private bool _isFillingTreeWithPref;
+		///<summary>The idxSelectedInMount when it is copied.</summary>
+		private int _idxDocToCopy=-1;
+		///<summary>The index of the currently selected item within a mount.</summary>
+		private int _idxSelectedInMount=0;
+		///<summary>Edited by the main thread to reflect selection changes. Read by worker thread.</summary>
+		private EnumNodeType _enumNodeTypeForSettings;
+		///<summary>Set by the main thread and read by the image worker thread. Specifies which image processing tasks are to be performed by the worker thread.</summary>
+		private ImageSettingFlags _imageSettingFlags=ImageSettingFlags.NONE;
+		private ImageSettingFlags _imageSettingFlagsInvalidated;
+		private bool _initializedOnStartup;
+		///<summary>Used to prevent concurrent access to the current images by multiple threads.  Each item in array corresponds to an image in a mount.</summary>
+		private int[] _intArrayWidthsImagesCur=new int[1];
+		///<summary>Used to prevent concurrent access to the current images by multiple threads.  Each item in array corresponds to an image in a mount.</summary>
+		private int[] _intArrayHeightsImagesCur=new int[1];
+		///<summary>Starts out as false. It's only used when repainting the toolbar, not to test mode.</summary>
+		private bool _isCropMode;
+		/// <summary>Keep track of if image module is being refreshed so we know when to query the images again and refill the list.</summary>
+		private bool _isFillingXVWebFromThread=true;
+		private bool _isMouseDown;
+		///<summary>Set to true when the image in the picture box is currently being translated.</summary>
+		private bool _isDragging;
+		/// <summary>Copy of the image information that was recieved. Needed so we can refresh the image module and not have to query again.</summary>
+		private List<ApteryxImage>_listApteryxImagesDownload;
+		//<summary>A list of primary keys (defNums) of the ImageNodeIds that should be expanded when the image module is loaded.</summary>
+		private List<long> _listDefNumsExpandedCats=new List<long>();
+		///<summary>If a mount is currently selected, this is the list of the mount items on it.</summary>
+		private List<MountItem> _listMountItems=null;
+		///<summary>Keeps track of the currently selected mount object (only when a mount is selected).</summary>
+		private Mount _mountShowing=new Mount();
+		///<summary>Used to perform mouse selections in the treeDocuments list.</summary>
+		private NodeIdTag _nodeIdTagDown;
+		///<summary>Used to keep track of the old document selection by document number (the only guaranteed unique idenifier). This is to help the code be compatible with both Windows and MONO.</summary>
+		private NodeIdTag _nodeIdTagOld;
+		///<summary></summary>
+		private Patient _patient;
+		///<summary>Set with each module refresh, and that's where it's set if it doesn't yet exist.  For now, we are not using ImageStore.GetPatientFolder(), because we haven't tested whether it properly updates the patient object.  We don't want to risk using an outdated patient folder path.  And we don't want to waste time refreshing PatCur after every ImageStore.GetPatientFolder().</summary>
+		private string _patFolder;
 		///<summary>Prevents too many security logs for this patient.</summary>
-		private long _patNumLastSecurityLog=0;
-		///<summary>For moving the splitter</summary>
-		private Point _pointMouseDown=new Point(0,0);
-		///<summary>Maintains same state for the entire session, even as user changes to different images. Does not control showing drawings for Pearl or any other external source.</summary>
-		private bool _showDrawingsOD=true;
-		///<summary>Maintains same state for the entire session, even as user changes to different images.</summary>
-		private bool? _showDrawingsPearlToothParts=null;
-		///<summary>Maintains same state for the entire session, even as user changes to different images.</summary>
-		private bool? _showDrawingsPearlPolyAnnotations=null;
-		///<summary>Maintains same state for the entire session, even as user changes to different images.</summary>
-		private bool? _showDrawingsPearlBoxAnnotations=null;
-		///<summary>Maintains same state for the entire session, even as user changes to different images.</summary>
-		private bool? _showDrawingsPearlMeasurements=null;
-		///<summary>Used to display Topaz signatures on Windows.</summary>
+		private long _patNumLastSecurityLog;
+		private long _patNumPrev=0;
+		///<summary>When dragging on Picturebox, this is the starting point in PictureBox coordinates.</summary>
+		private Point _pointMouseDown;
+		///<summary>Used as a basis for calculating image translations.</summary>
+		private PointF _pointFTranslationOld;
+		///<summary>The true offset of the document image or mount image.</summary>
+		private PointF _pointFTranslation;
+		private Rectangle _rectangleCrop=new Rectangle(0,0,-1,-1);
+		///<summary>Used to display Topaz signatures on Windows. Is added dynamically to avoid native code references crashing MONO.</summary>
 		private Control _sigBoxTopaz;
-		///<summary>User can control width of tree.  This is stored as the 96dpi equivalent as float for conversion accuracy.  When tree is minimized, this doesn't change, allowing restoration to previous width.  It does not remember width between sessions.  Minimum 0, max 500.</summary>
-		private float _widthTree96=228;
-		private float _widthTree96StartDrag;
-		private WpfControls.UI.UnmountedBar unmountedBar;
-		private WpfControls.UI.WindowingSlider windowingSlider;
-		private WpfControls.UI.ZoomSlider zoomSlider;
-		private WpfControls.UI.ToolBar toolBarMain;
+		///<summary>Used for performing an xRay image capture on an imaging device.</summary>
+		private SuniDeviceControl _suniDeviceControl=null;
+		///<summary>Used to download images from Apterxy</summary>
+		private ODThread _threadImageRequest;
+		///<summary>Thread to handle updating the graphical image to the screen when the current document is an image.</summary>
+		private Thread _threadImageUpdate=null;
+		///<summary>Tracks the last user to load ContrImages</summary>
+		private long _userNumPrev=-1;
+		///<summary>Displays PDFs.</summary>
+		private ODWebView2 _odWebView2=null;
+		///<summary>The location of the file that <see cref="_odWebView2" /> has navigated to.</summary>
+		private string _odWebView2FilePath=null;
+		///<summary>The current zoom of the currently loaded image/mount. 1 implies normal size, less than 1 implies the image is shrunk, greater than 1 imples the image/mount is blown-up.</summary>
+		private float _zoomImage=1;
+		///<summary>The zoom level is 0 after the current image/mount is loaded.  User changes the zoom in integer increments.  ZoomOverall is then (initial image/mount zoom)*(2^ZoomLevel).</summary>
+		private int _zoomLevel=0;
+		///<summary>Represents the current factor for level of zoom from the initial zoom of the currently loaded image/mount. This is calculated directly as 2^ZoomLevel every time a zoom occurs. Recalculated from ZoomLevel each time, so that ZoomOverall always hits the exact same values for the exact same zoom levels (no loss of data).</summary>
+		private float _zoomOverall=1;
+		///<summary>Displays PDFs on ODCloud.</summary>
+		private CloudIframe _cloudIframe=null;
+		///<summary>True of current item selected in tree can be exported.</summary>
+		private bool _isExportable=false;
 		#endregion Fields - Private
 
 		#region Constructor
-		public ControlImages(){
+		///<summary></summary>
+		public ControlImages() {
+			_zoomImage=1;
 			Logger.LogToPath("Ctor",LogPath.Startup,LogPhase.Start);
-			Logger.LogToPath("InitializeComponent",LogPath.Startup,LogPhase.Start);
 			InitializeComponent();
 			Font=LayoutManagerForms.FontInitial;
-			Logger.LogToPath("InitializeComponent",LogPath.Startup,LogPhase.End);
-			imageSelector=new WpfControls.UI.ImageSelector();
-			elementHostImageSelector.Child=imageSelector;
-			//imageSelector.ContextMenu=menuTree;
-			imageSelector.MenuClick+=menuTree_Click2;
-			imageSelector.DragDropImport+=imageSelector_DragDropImport;
-			imageSelector.DraggedToCategory+=imageSelector_DraggedToCategory;
-			imageSelector.ItemDoubleClick+=imageSelector_ItemDoubleClick;
-			imageSelector.ItemReselected+=imageSelector_ItemReselected;
-			imageSelector.SelectionChangeCommitted+=imageSelector_SelectionChangeCommitted;
+			//The context menu causes strange bugs in MONO when performing selections on the tree.
+			//Perhaps when MONO is more developed we can remove this check.
+			//Also, the SigPlusNet() object cannot be instantiated on 64-bit machines, because
+			//the code for instantiation exists in a 32-bit native dll. Therefore, we have put
+			//the creation code for the topaz box in TopazWrapper.GetTopaz() so that
+			//the native code does not exist or get called anywhere in the program unless we are running on a 
+			//32-bit version of Windows.
+			//bool is64=CodeBase.ODEnvironment.Is64BitOperatingSystem();
+			bool platformUnix=Environment.OSVersion.Platform==PlatformID.Unix;
+			//allowTopaz=(!platformUnix && !is64);
+			if(platformUnix) {
+				treeMain.ContextMenu=null;
+			}
+			//if(allowTopaz){//Windows OS
 			try {
 				_sigBoxTopaz=TopazWrapper.GetTopaz();
-				LayoutManager.Add(_sigBoxTopaz,panelNote);
+				panelNote.Controls.Add(_sigBoxTopaz);
 				_sigBoxTopaz.Location=sigBox.Location;//new System.Drawing.Point(437,15);
 				_sigBoxTopaz.Name="sigBoxTopaz";
 				_sigBoxTopaz.Size=new System.Drawing.Size(362,79);
@@ -107,356 +173,1273 @@ namespace OpenDental
 				_sigBoxTopaz.DoubleClick+=new System.EventHandler(this.sigBoxTopaz_DoubleClick);
 				TopazWrapper.SetTopazState(_sigBoxTopaz,0);
 			}
-			catch (Exception ex){
-				Logger.LogToPath("ControlImagesJ Ctor failed: "+ex.Message,LogPath.Startup,LogPhase.Unspecified);
-			}
-			unmountedBar=new WpfControls.UI.UnmountedBar();
-			elementHostUnmountedBar.Child=unmountedBar;
-			unmountedBar.HorizontalAlignment=System.Windows.HorizontalAlignment.Stretch;
-			unmountedBar.VerticalAlignment=System.Windows.VerticalAlignment.Stretch;
-			unmountedBar.EventClose+=unmountedBar_Close;
-			unmountedBar.EventRefreshParent+=unmountedBar_RefreshParent;
-			unmountedBar.EventRemount+=unmountedBar_Remount;
-			unmountedBar.EventRetake+=unmountedBar_Retake;
-			windowingSlider=new WpfControls.UI.WindowingSlider();
-			elementHostWindowingSlider.Child=windowingSlider;
-			windowingSlider.Width=154;
-			windowingSlider.IsEnabled=false;
-			windowingSlider.Scroll+=windowingSlider_Scroll;
-			windowingSlider.ScrollComplete+=windowingSlider_ScrollComplete;
-			zoomSlider=new WpfControls.UI.ZoomSlider();
-			elementHostZoomSlider.Child=zoomSlider;
-			zoomSlider.FitPressed+=zoomSlider_FitPressed;
-			zoomSlider.Zoomed+=zoomSlider_Zoomed;
-			toolBarMain=new WpfControls.UI.ToolBar();
-			elementHostToolBarMain.Child=toolBarMain;
+			catch { }
+			//}
+			//We always capture with a Suni device for now.
+			//TODO: In the future use a device locator in the xImagingDeviceManager
+			//project to return the appropriate general device control.
+			_suniDeviceControl=new SuniDeviceControl();
+			this._suniDeviceControl.OnCaptureReady+=new System.EventHandler(this.CaptureReady);
+			this._suniDeviceControl.OnCaptureComplete+=new System.EventHandler(this.CaptureComplete);
+			this._suniDeviceControl.OnCaptureFinalize+=new System.EventHandler(this.CaptureFinalize);
 			Logger.LogToPath("Ctor",LogPath.Startup,LogPhase.End);
 		}
 		#endregion Constructor
 
-		#region Events
-		///<summary>For Ctrl-P for select patient. Won't fire if handled instead by Adobe for print.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public event EventHandler<KeyEventArgs> EventKeyDown=null;
-		#endregion
+		#region Delegates
+		///<summary>Used to safe-guard against multi-threading issues when an image capture is completed.</summary>
+		private delegate void CaptureCallback(object sender,EventArgs e);
 
-		#region Enums
-		///<summary>ToolBarButton enumeration instead of strings. For all three toolBars combined. These are used much less than in the past and many of these are no longer used at all.</summary>
-		private enum TB{
-			Print,
-			Delete,
-			Info,
-			Sign,
-			//ScanDoc,
-			//ScanMultiDoc,
-			//ScanXRay,
-			//ScanPhoto,
-			//MountAcquire,
-			Video,
-			Import,
-			Export,
-			Copy,
-			Paste,
-			Forms,
-			ZoomOne,
-			Crop,
-			Pan,
-			Flip,
-			RotateL,
-			RotateR,
-			Rotate180,
-			Adj,
-			Size,
-			Unmount,
-			DrawTool,
-			Color,
-			Text,
-			Line,
-			Pen,
-			Polygon,
-			Eraser,
-			ChangeColor,
-			EditPoints,
-			Measure,
-			SetScale,
-			Filter,
-			Close
+		///<summary>Used to protect against multi-threading issues when refreshing a mount during an image capture.</summary>
+		private delegate void InvalidateSettingsCallback(ImageSettingFlags settings,bool reloadZoomTransCrop);
+
+		///<summary>Used for Invoke() calls in RenderCurrentImage() to safely handle multi-thread access to the picture box.</summary>
+		private delegate void RenderImageCallback(Document docCopy,int originalWidth,int originalHeight,float zoom,PointF translation);
+
+		private delegate void ToolBarClick();
+		#endregion Delegates
+
+		#region Events - Raise
+		///<summary></summary>
+		[Category("Action"),Description("Occurs when the close button is clicked in the toolbar.")]
+		public event EventHandler CloseClick=null;
+		#endregion Events - Raise
+
+		#region Methods - Events Handlers - TreeDocuments
+		private void TreeDocuments_AfterCollapse(object sender,TreeViewEventArgs e) {
+			NodeIdTag nodeIdTag=(NodeIdTag)e.Node.Tag;
+			_listDefNumsExpandedCats.RemoveAll(x => x==nodeIdTag.PriKey);
+			//UpdateUserOdPrefForImageCat(nodeIdTag.PriKey,false);
 		}
 
+		private void TreeDocuments_AfterExpand(object sender,TreeViewEventArgs e) {
+			NodeIdTag nodeIdTag=(NodeIdTag)e.Node.Tag;
+			if(!_listDefNumsExpandedCats.Contains(nodeIdTag.PriKey)) {
+				_listDefNumsExpandedCats.Add(nodeIdTag.PriKey);
+			}
+			//UpdateUserOdPrefForImageCat(nodeIdTag.PriKey,true);
+		}
+
+		private void treeDocuments_DragDrop(object sender,DragEventArgs e) {
+			TreeNode treeNodeOver=treeMain.GetNodeAt(treeMain.PointToClient(Cursor.Position));
+			if(treeNodeOver==null) {
+				return;
+			}
+			NodeIdTag nodeIdTagOver=(NodeIdTag)treeNodeOver.Tag;
+			long defNumNodeOverCategory=0;
+			if(nodeIdTagOver.NodeType==EnumNodeType.Category) {
+				defNumNodeOverCategory=Defs.GetDefsForCategory(DefCat.ImageCats,true)[treeNodeOver.Index].DefNum;
+			}
+			else {
+				defNumNodeOverCategory=Defs.GetDefsForCategory(DefCat.ImageCats,true)[treeNodeOver.Parent.Index].DefNum;
+			}
+			Document docSave=new Document();
+			NodeIdTag nodeIdTag=new NodeIdTag();
+			string[] arrayFiles = (string[])e.Data.GetData(DataFormats.FileDrop);
+			string errorMessage="";
+			for(int i=0;i<arrayFiles.Length;i++) {
+				string draggedFilePath=arrayFiles[i];
+				string fileName=draggedFilePath.Substring(draggedFilePath.LastIndexOf("\\")+1);
+				if(Directory.Exists(draggedFilePath)) {
+					errorMessage+="\r\n"+fileName;
+					continue;
+				}
+				docSave=ImageStore.Import(draggedFilePath,defNumNodeOverCategory,_patient);
+				FillTree(false);
+				SelectTreeNode(GetTreeNode(MakeIdDoc(docSave.DocNum)));
+				using FormDocInfo FormD=new FormDocInfo(_patient,docSave,GetCurrentFolderName(treeMain.SelectedNode),isDocCreate:true);
+				FormD.ShowDialog(this);//some of the fields might get changed, but not the filename
+				if(FormD.DialogResult!=DialogResult.OK) {
+					DeleteSelection(false,false,docSave);
+				}
+				else {
+					nodeIdTag=MakeIdDoc(docSave.DocNum);
+					_documentShowing=docSave.Copy();
+				}
+			}
+			if(docSave!=null && !MakeIdDoc(docSave.DocNum).Equals(nodeIdTag)) {
+				SelectTreeNode(GetTreeNode(MakeIdDoc(docSave.DocNum)));
+			}
+			FillTree(true);
+			if(errorMessage!="") {
+				MessageBox.Show(Lan.g(this,"The following items are directories and were not copied into the images folder for this patient.")+errorMessage);
+			}
+		}
+
+		private void treeDocuments_DragEnter(object sender,DragEventArgs e) {
+			if(e.Data.GetDataPresent(DataFormats.FileDrop)) {
+				e.Effect=DragDropEffects.Copy;//Fills the DragEventArgs for DragDrop
+			}
+		}
+
+		private void TreeDocuments_MouseDoubleClick(object sender,MouseEventArgs e) {
+			TreeNode clickedNode=treeMain.GetNodeAt(e.Location);
+			if(clickedNode==null) {
+				return;
+			}
+			NodeIdTag nodeId=(NodeIdTag)clickedNode.Tag;
+			if(nodeId.NodeType==EnumNodeType.None) {
+				return;
+			}
+			if(ODBuild.IsWeb()) {//Not necessary for ODWebView2 control as user can both view the pdf inside of OD and outside of OD simultaneously.
+				_cloudIframe.HideIframe();
+			}
+			if(PrefC.AtoZfolderUsed==DataStorageType.InDatabase) {
+				MsgBox.Show(this,"Images stored directly in database. Export file in order to open with external program.");
+				return;//Documents must be stored in the A to Z Folder to open them outside of Open Dental.  Users can use the export button for now.
+			}
+			if(nodeId.NodeType==EnumNodeType.Mount) {
+				//Do nothing.  Must be consistent with how Docs are edited, so must use the Info button.
+				//using FormMountEdit fme=new FormMountEdit(_mountSelected);
+				//fme.ShowDialog();//Edits the MountSelected object directly and updates and changes to the database as well.
+				//FillDocList(true);//Refresh tree in case description for the mount changed.
+				//return;
+			}
+			else if(nodeId.NodeType==EnumNodeType.Doc || nodeId.NodeType==EnumNodeType.Eob) {
+				Document nodeDoc=new Document();
+				string fullFilePath="";//Complete path of the file
+				string fileName="";//File's name only
+				string extension="";//File's extension
+				if(nodeId.NodeType==EnumNodeType.Doc) {
+					nodeDoc=Documents.GetByNum(nodeId.PriKey);
+					extension=ImageStore.GetExtension(nodeDoc);
+					fullFilePath=ImageStore.GetFilePath(nodeDoc,_patFolder);
+					fileName=nodeDoc.FileName;
+				}
+				else {//Is EnumNodeType.Eob
+					EobAttach eobAttach=EobAttaches.GetOne(nodeId.PriKey);
+					extension=Path.GetExtension(eobAttach.FileName);
+					fullFilePath=Path.Combine(ImageStore.GetEobFolder(),eobAttach.FileName);
+					fileName=eobAttach.FileName;
+				}
+				if(extension.ToLower()==".jpg" || extension.ToLower()==".jpeg" || extension.ToLower()==".gif") {
+					return;
+				}
+				//We allow anything which ends with a different extention to be viewed in the windows fax viewer.
+				//Specifically, multi-page faxes can be viewed more easily by one of our customers using the fax
+				//viewer. On Unix systems, it is imagined that an equivalent viewer will launch to allow the image
+				//to be viewed.
+				if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
+					if(ODBuild.IsWeb()) {
+						ThinfinityUtils.HandleFile(fullFilePath);
+					} 
+					else {
+						try {
+							Process.Start(fullFilePath);
+						} 
+						catch(Exception ex) {
+							MessageBox.Show(ex.Message);
+						}
+					}
+				}
+				else {//Cloud
+					//Download document into temp directory for displaying.
+					using FormProgress FormP=new FormProgress();
+					FormP.DisplayText="Downloading Document...";
+					FormP.NumberFormat="F";
+					FormP.NumberMultiplication=1;
+					FormP.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+					FormP.TickMS=1000;
+					string folderLocation=_patFolder;
+					if(nodeId.NodeType==EnumNodeType.Eob) {
+						folderLocation=ImageStore.GetEobFolder();
+					}
+					OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.DownloadAsync(folderLocation.Replace("\\","/")
+						,fileName
+						,new OpenDentalCloud.ProgressHandler(FormP.UpdateProgress));
+					FormP.ShowDialog();
+					if(FormP.DialogResult==DialogResult.Cancel) {
+						state.DoCancel=true;
+					}
+					else {
+						string tempFile=PrefC.GetRandomTempFile(Path.GetExtension(fileName));
+						File.WriteAllBytes(tempFile,state.FileContent);
+						if(ODBuild.IsWeb()) {
+							ThinfinityUtils.HandleFile(tempFile);
+						}
+						else {
+							Process.Start(tempFile);
+						}
+					}
+				}
+			}
+		}
+
+		///<summary></summary>
+		private void TreeDocuments_MouseDown(object sender,MouseEventArgs e) {
+			_nodeIdTagDown=new NodeIdTag();
+			TreeNode treeNodeOver=treeMain.GetNodeAt(e.Location);
+			if(treeNodeOver==null) {
+				return;
+			}
+			NodeIdTag nodeIdTagDown=(NodeIdTag)treeNodeOver.Tag;
+			if(nodeIdTagDown.NodeType==EnumNodeType.Doc
+				|| nodeIdTagDown.NodeType==EnumNodeType.Mount) {
+				//These are the only types that can be dragged.
+				_nodeIdTagDown=nodeIdTagDown;
+				_dateTimeMouseMoved=new DateTime(1,1,1);//For time delay. This will be set the moment the mouse actually starts moving
+			}
+			if(nodeIdTagDown.NodeType==EnumNodeType.Category) {
+				treeNodeOver.SelectedImageIndex=treeNodeOver.ImageIndex;
+			}
+			//Always select the node on a mouse-down press for either right or left buttons.
+			//If the left button is pressed, then the document is either being selected or dragged, so
+			//setting the image at the beginning of the drag will either display the image as expected, or
+			//automatically display the image while the document is being dragged (since it is in a different thread).
+			//If the right button is pressed, then the user wants to view the properties of the image they are
+			//clicking on, so displaying the image (in a different thread) will give the user a chance to view
+			//the image corresponding to a delete, info display, etc...
+			SelectTreeNode(treeNodeOver);
+		}
+
+		private void TreeDocuments_MouseLeave(object sender,EventArgs e) {
+			treeMain.Cursor=Cursors.Default;
+			_nodeIdTagDown=new NodeIdTag();
+		}
+
+		private void TreeDocuments_MouseMove(object sender,System.Windows.Forms.MouseEventArgs e) {
+			if(_nodeIdTagDown.NodeType==EnumNodeType.None) {
+				treeMain.Cursor=Cursors.Default;
+				return;
+			}
+			TreeNode treeNodeOver=treeMain.GetNodeAt(e.Location);
+			if(treeNodeOver==null) {//unknown malfunction
+				treeMain.Cursor=Cursors.Default;
+				return;
+			}
+			if(_nodeIdTagDown.Equals((NodeIdTag)treeNodeOver.Tag)) {//Over the original node
+				treeMain.Cursor=Cursors.Default;
+				return;
+			}
+			//Show drag
+			//Cursor cursorDrag=new System.Windows.Forms.Cursor();
+			treeMain.Cursor=Cursors.Hand;//need a better cursor than this
+			if(_dateTimeMouseMoved.Year==1) {
+				_dateTimeMouseMoved=DateTime.Now;
+			}
+		}
+
+		///<summary></summary>
+		private void TreeDocuments_MouseUp(object sender,System.Windows.Forms.MouseEventArgs e) {
+			treeMain.Cursor=Cursors.Default;
+			if(_nodeIdTagDown.NodeType==EnumNodeType.None) {
+				return;
+			}
+			if(e.Button!=MouseButtons.Left) {
+				return;//Dragging can only happen with the left mouse button.
+			}
+			if(_dateTimeMouseMoved.Year==1) {//No valid mouse movements occurred after the mouse down event and before the mouse up event.
+				//If the user moused down, then immediately moused up or moved slightly then moused up on the original source node before moving elsewhere.
+				return;//Do not move the document.
+				//This fixed a bug where users were able to accidentally move images while they were loading.  The user would mouse down, then mouse up
+				//(to select the image), then start moving the mouse to do something else and the image would unexpectedly move to another image category.
+				//NOTE: For some reason, if the user tries to move an image while it is loading, then the move action will be ignored, because the 
+				//mouse events fire out of order (mouse down, then mouse up, then mouse move).  However, this seems like a minor issue, because
+				//users typically intuitively know that certain commands are ignored while loading is in progress.  If this situation occurs to a user,
+				//they will probably know that they need to try again.  The second time they try to move the image it will move, because once the image
+				//is loaded, clicking on the image will not cause it to reload.  Also, the move will work the first time if the mouse up event happens
+				//after loading is completed.  Therefore, this minor issue can only happen on very slow computers or very large images.
+				//To fix the minor issue in the future, we might consider somehow forcing the mouse events to fire in order, even when images are loading.
+			}
+			//TimeSpan timeSpanDrag=(TimeSpan)(DateTime.Now-TimeMouseMoved);
+			//if(timeSpanDrag.Milliseconds < 200) { //js 3/31/2012. Was 250
+			//	return;//Too short of a drag and drop.  Probably human error
+			//}
+			TreeNode treeNodeOver=treeMain.GetNodeAt(e.Location);
+			if(treeNodeOver==null) {
+				return;
+			}
+			NodeIdTag nodeIdTagOver=(NodeIdTag)treeNodeOver.Tag;
+			long nodeOverCategoryDefNum=0;
+			List<Def> listDefs=Defs.GetDefsForCategory(DefCat.ImageCats,true);
+			if(nodeIdTagOver.NodeType==EnumNodeType.Category) {
+				nodeOverCategoryDefNum=listDefs[treeNodeOver.Index].DefNum;
+			}
+			else {
+				nodeOverCategoryDefNum=listDefs[treeNodeOver.Parent.Index].DefNum;
+			}
+			TreeNode nodeOriginal=GetTreeNode(_nodeIdTagDown);
+			long nodeOriginalCategoryDefNum=0;
+			if(_nodeIdTagDown.NodeType==EnumNodeType.Category) {
+				nodeOriginalCategoryDefNum=listDefs[nodeOriginal.Index].DefNum;
+			}
+			else {
+				nodeOriginalCategoryDefNum=listDefs[nodeOriginal.Parent.Index].DefNum;
+			}
+			if(nodeOverCategoryDefNum==nodeOriginalCategoryDefNum) {
+				return;//category hasn't changed
+			}
+			if(_nodeIdTagDown.NodeType==EnumNodeType.Mount) {
+				Mount mount=Mounts.GetByNum(_nodeIdTagDown.PriKey);
+				string mountSourceCat=Defs.GetDef(DefCat.ImageCats,mount.DocCategory).ItemName;
+				string mountDestCat=Defs.GetDef(DefCat.ImageCats,nodeOverCategoryDefNum).ItemName;
+				mount.DocCategory=nodeOverCategoryDefNum;
+				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,mount.PatNum,Lan.g(this,"Mount moved from")+" "+mountSourceCat+" "
+					+Lan.g(this,"to")+" "+mountDestCat);
+				Mounts.Update(mount);
+			}
+			else if(_nodeIdTagDown.NodeType==EnumNodeType.Doc) {
+				Document doc=Documents.GetByNum(_nodeIdTagDown.PriKey);
+				string docSourceCat=Defs.GetDef(DefCat.ImageCats,doc.DocCategory).ItemName;
+				string docDestCat=Defs.GetDef(DefCat.ImageCats,nodeOverCategoryDefNum).ItemName;
+				doc.DocCategory=nodeOverCategoryDefNum;
+				string logText=Lan.g(this,"Document moved")+": "+doc.FileName;
+				if(doc.Description!="") {
+					string docDescript=doc.Description;
+					if(docDescript.Length>50) {
+						docDescript=docDescript.Substring(0,50);
+					}
+					logText+=" "+Lan.g(this,"with description")+" "+docDescript;
+				}
+				logText+=" "+Lan.g(this,"from category")+" "+docSourceCat+" "+Lan.g(this,"to category")+" "+docDestCat;
+				SecurityLogs.MakeLogEntry(Permissions.ImageEdit,doc.PatNum,logText,doc.DocNum,doc.DateTStamp);
+				Documents.Update(doc);
+			}
+			FillTree(true);
+			_nodeIdTagDown=new NodeIdTag();
+		}
+		#endregion Methods - Event Handlers - TreeDocuments
+
+		#region Methods - Event Handlers
+		private void windowingSlider_Scroll(object sender,EventArgs e) {
+			if(_documentShowing==null) {
+				return;
+			}
+			_documentShowing.WindowingMin=windowingSlider.MinVal;
+			_documentShowing.WindowingMax=windowingSlider.MaxVal;
+			InvalidateSettings(ImageSettingFlags.COLORFUNCTION,false);
+		}
+
+		private void windowingSlider_ScrollComplete(object sender,EventArgs e) {
+			if(_documentShowing==null) {
+				return;
+			}
+			Documents.Update(_documentShowing);
+			DeleteThumbnailImage(_documentShowing);
+			InvalidateSettings(ImageSettingFlags.COLORFUNCTION,false);
+		}
+
+		///<summary>Called on successful capture of image.</summary>
+		private void CaptureComplete(object sender,EventArgs e) {
+			if(this.InvokeRequired) {
+				CaptureCallback c=new CaptureCallback(CaptureComplete);
+				Invoke(c,new object[] { sender,e });
+				return;
+			}
+			if(_idxSelectedInMount<0 || _documentArrayInMount[_idxSelectedInMount]!=null) {//Mount is full.
+				_suniDeviceControl.KillXRayThread();
+				return;
+			}
+			//Depending on the device being captured from, we need to rotate the images returned from the device by a certain
+			//angle, and we need to place the returned images in a specific order within the mount slots. Later, we will allow
+			//the user to define the rotations and slot orders, but for now, they will be hard-coded.
+			short rotationAngle=0;
+			switch(_idxSelectedInMount) {
+				case (0):
+					rotationAngle=90;
+					break;
+				case (1):
+					rotationAngle=90;
+					break;
+				case (2):
+					rotationAngle=270;
+					break;
+				default://3
+					rotationAngle=270;
+					break;
+			}
+			//Create the document object in the database for this mount image.
+			Bitmap capturedImage=_suniDeviceControl.capturedImage;
+			Document doc=ImageStore.ImportImageToMount(capturedImage,rotationAngle,_listMountItems[_idxSelectedInMount].MountItemNum,GetCurrentCategory(),_patient);
+			_bitmapArrayRaw[_idxSelectedInMount]=capturedImage;
+			_intArrayWidthsImagesCur[_idxSelectedInMount]=capturedImage.Width;
+			_intArrayHeightsImagesCur[_idxSelectedInMount]=capturedImage.Height;
+			_documentArrayInMount[_idxSelectedInMount]=doc;
+			_documentShowing=doc;
+			SetWindowingSlider();
+			//Refresh image in in picture box.
+			InvalidateSettings(ImageSettingFlags.ALL,false);
+			//This capture was successful. Keep capturing more images until the capture is manually aborted.
+			//This will cause calls to OnCaptureBegin(), then OnCaptureFinalize().
+			_suniDeviceControl.CaptureXRay();
+		}
+
+		///<summary>Called when the entire sequence of image captures is complete (possibly because of failure, or a full mount among other things).</summary>
+		private void CaptureFinalize(object sender,EventArgs e) {
+			if(this.InvokeRequired) {
+				CaptureCallback c=new CaptureCallback(CaptureFinalize);
+				Invoke(c,new object[] { sender,e });
+				return;
+			}
+			ToolBarMain.Buttons["Capture"].IsTogglePushed=false;
+			ToolBarMain.Invalidate();
+			EnableToolBarsPatient(true);
+			if(_idxSelectedInMount>0 && _documentArrayInMount[_idxSelectedInMount]!=null) {//The capture finished in a state where a mount item is selected.
+				EnableToolBarButtons(true,true,false,true,false,true,false,true,true,true,true,true,true,true);
+			}
+			else {//The capture finished without a mount item selected (so the mount itself is considered to be selected).
+				EnableToolBarButtons(true,true,true,true,false,false,false,true,true,true,false,false,false,true);
+			}
+		}
+
+		///<summary>Called when the image capture device is ready for exposure.</summary>
+		private void CaptureReady(object sender,EventArgs e) {
+			GetNextUnusedMountItem();
+			InvalidateSettings(ImageSettingFlags.NONE,false);//Refresh the selection box change (does not do any image processing here).
+		}
+
+		private void ContrImages_Resize(object sender,EventArgs e) {
+			LayoutAll();
+		}
+
+		private void label1_DoubleClick(object sender,EventArgs e) {
+			ToolBarSign_Click();
+		}
+
+		private void label15_DoubleClick(object sender,EventArgs e) {
+			ToolBarSign_Click();
+		}
+
+		private void labelInvalidSig_DoubleClick(object sender,EventArgs e) {
+			ToolBarSign_Click();
+		}
+
+		private void menuTree_Click(object sender,System.EventArgs e) {
+			if(treeMain.SelectedNode==null) {
+				return;//Probably the user has no patient selected
+			}
+			switch(((MenuItem)sender).Index) {
+				case 0://print
+					ToolBarPrint_Click();
+					break;
+				case 1://delete
+					ToolBarDelete_Click();
+					break;
+				case 2://info
+					ToolBarInfo_Click();
+					break;
+			}
+		}
+
+		private void menuForms_Click(object sender,System.EventArgs e) {
+			string formName = ((MenuItem)sender).Text;
+			Document doc = null;
+			try {
+				doc=ImageStore.ImportForm(formName,GetCurrentCategory(),_patient);
+			}
+			catch(Exception ex) {
+				MessageBox.Show(ex.Message);
+				return;
+			}
+			FillTree(false);
+			SelectTreeNode(GetTreeNode(MakeIdDoc(doc.DocNum)));
+			using FormDocInfo FormD=new FormDocInfo(_patient,doc,GetCurrentFolderName(treeMain.SelectedNode),isDocCreate:true);
+			FormD.ShowDialog(this);//some of the fields might get changed, but not the filename
+			if(FormD.DialogResult!=DialogResult.OK) {
+				DeleteSelection(false,false,doc);
+			}
+			else {
+				FillTree(true);
+			}
+		}
+
+		private void menuMounts_Click(object sender,System.EventArgs e) {
+			int idx = ((MenuItem)sender).Index;
+			List<MountDef> listMountDefs=MountDefs.GetDeepCopy();
+			//MsgBox.Show(listMountDefs[idx].Description);
+			Mount mount=Mounts.CreateMountFromDef(listMountDefs[idx],_patient.PatNum,GetCurrentCategory());
+			FillTree(false);
+			SelectTreeNode(GetTreeNode(MakeIdMount(mount.MountNum)));
+		}
+
+		private void panelNote_DoubleClick(object sender,EventArgs e) {
+			ToolBarSign_Click();
+		}
+
+		///<summary></summary>
+		private void pictureBoxMain_MouseDown(object sender,System.Windows.Forms.MouseEventArgs e) {
+			_pointMouseDown=new Point(e.X,e.Y);
+			_isMouseDown=true;
+			_pointFTranslationOld=new PointF(_pointFTranslation.X,_pointFTranslation.Y);
+		}
+
+		private void pictureBoxMain_MouseHover(object sender,EventArgs e) {
+			if(ToolBarPaint.Buttons["Hand"]==null) {
+				pictureBoxMain.Cursor=Cursors.Hand;
+				return;
+			}
+			if(ToolBarPaint.Buttons["Hand"].IsTogglePushed) {//Hand mode.
+				pictureBoxMain.Cursor=Cursors.Hand;
+			}
+			else {
+				pictureBoxMain.Cursor=Cursors.Default;
+			}
+		}
+
+		private void pictureBoxMain_MouseMove(object sender,System.Windows.Forms.MouseEventArgs e) {
+			if(!_isMouseDown) {
+				return;
+			}
+			_isDragging=true;
+			if(treeMain.SelectedNode==null) {
+				return;
+			}
+			if(((NodeIdTag)treeMain.SelectedNode.Tag).NodeType==EnumNodeType.None) {
+				return;
+			}
+			if(ToolBarPaint.Buttons["Hand"]==null//when hand button is not visible, it's always hand mode
+				|| ToolBarPaint.Buttons["Hand"].IsTogglePushed)//Hand mode.
+			{
+				_pointFTranslation=new PointF(_pointFTranslationOld.X+(e.Location.X-_pointMouseDown.X),_pointFTranslationOld.Y+(e.Location.Y-_pointMouseDown.Y));
+			}
+			else if(ToolBarPaint.Buttons["Crop"]!=null && ToolBarPaint.Buttons["Crop"].IsTogglePushed) {
+				float[] intersect=ODMathLib.IntersectRectangles(Math.Min(e.Location.X,_pointMouseDown.X),
+					Math.Min(e.Location.Y,_pointMouseDown.Y),Math.Abs(e.Location.X-_pointMouseDown.X),
+					Math.Abs(e.Location.Y-_pointMouseDown.Y),pictureBoxMain.ClientRectangle.X,pictureBoxMain.ClientRectangle.Y,
+					pictureBoxMain.ClientRectangle.Width-1,pictureBoxMain.ClientRectangle.Height-1);
+				if(intersect.Length<0) {
+					_rectangleCrop=new Rectangle(0,0,-1,-1);
+				}
+				else {
+					_rectangleCrop=new Rectangle((int)intersect[0],(int)intersect[1],(int)intersect[2],(int)intersect[3]);
+				}
+			}
+			InvalidateSettings(ImageSettingFlags.NONE,false);//Refresh display.
+		}
+
+		private void pictureBoxMain_MouseUp(object sender,System.Windows.Forms.MouseEventArgs e) {
+			bool wasDragging=_isDragging;
+			_isMouseDown=false;
+			_isDragging=false;
+			if(treeMain.SelectedNode==null) {
+				return;
+			}
+			NodeIdTag nodeIdTag=(NodeIdTag)treeMain.SelectedNode.Tag;
+			if(nodeIdTag.NodeType==EnumNodeType.None) {
+				return;
+			}
+			if(ToolBarPaint.Buttons["Hand"]==null//if button is not visible, it's always hand mode.
+				|| ToolBarPaint.Buttons["Hand"].IsTogglePushed) {
+				if(e.Button!=MouseButtons.Left || wasDragging) {
+					return;
+				}
+				if(nodeIdTag.NodeType==EnumNodeType.Mount) {
+					//Do nothing, mounts are no longer supported in this module.
+					return;
+				//	_idxSelectedInMount=GetIdxAtMountLocation(_pointMouseDown);
+				//	//Assume no item will be selected and enable tools again if an item was actually selected.
+				//	EnableToolBarButtons(true,true,true,true,false,false,false,true,true,true,false,false,false,true);
+				//	for(int j=0;j<_listMountItems.Count;j++) {
+				//		if(_listMountItems[j].ItemOrder==_idxSelectedInMount) {
+				//			if(_arrayDocumentsInMount[j]!=null) {
+				//				_documentShowing=_arrayDocumentsInMount[j];
+				//				SetWindowingSlider();
+				//				EnableToolBarButtons(true,true,false,true,false,true,false,true,true,true,true,true,true,true);
+				//			}
+				//		}
+				//	}
+				//	ToolBarPaint.Invalidate();
+				//	if(_idxSelectedInMount<0) {//The current selection was unselected.
+				//		_suniDeviceControl.KillXRayThread();//Stop xray capture, because it relies on the current selection to place images.
+				//	}
+				//	InvalidateSettings(ImageSettingFlags.ALL,false);
+				}
+			}
+			else {//crop mode
+				if(_rectangleCrop.Width<=0 || _rectangleCrop.Height<=0) {
+					return;
+				}
+				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Crop to Rectangle?")) {
+					_rectangleCrop=new Rectangle(0,0,-1,-1);
+					InvalidateSettings(ImageSettingFlags.NONE,false);//Refresh display (since message box was covering).
+					return;
+				}
+				float zoomCrop=_zoomImage*_zoomOverall;
+				PointF pointTrans=_pointFTranslation;
+				PointF point1=ControlPointToRawImagePoint(_rectangleCrop.Location,_documentShowing,
+					_intArrayWidthsImagesCur[_idxSelectedInMount],_intArrayHeightsImagesCur[_idxSelectedInMount],zoomCrop,pointTrans);
+				PointF point2=ControlPointToRawImagePoint(new Point(_rectangleCrop.Location.X+_rectangleCrop.Width,
+					_rectangleCrop.Location.Y+_rectangleCrop.Height),_documentShowing,_intArrayWidthsImagesCur[_idxSelectedInMount],_intArrayHeightsImagesCur[_idxSelectedInMount],
+					zoomCrop,pointTrans);
+				//cropPoint1 and cropPoint2 together define an axis-aligned bounding area, or our crop area. 
+				//However, the two points have no guaranteed order, thus we must sort them using Math.Min.
+				Rectangle rawCropRect=new Rectangle(
+					(int)Math.Round((decimal)Math.Min(point1.X,point2.X)),
+					(int)Math.Round((decimal)Math.Min(point1.Y,point2.Y)),
+					(int)Math.Ceiling((decimal)Math.Abs(point1.X-point2.X)),
+					(int)Math.Ceiling((decimal)Math.Abs(point1.Y-point2.Y)));
+				//We must also intersect the old cropping rectangle with the new cropping rectangle, so that part of
+				//the image does not come back as a result of multiple crops.
+				Rectangle oldCropRect=DocCropRect(_documentShowing,_intArrayWidthsImagesCur[_idxSelectedInMount],_intArrayHeightsImagesCur[_idxSelectedInMount]);
+				float[] finalCropRect=ODMathLib.IntersectRectangles(rawCropRect.X,rawCropRect.Y,rawCropRect.Width,
+					rawCropRect.Height,oldCropRect.X,oldCropRect.Y,oldCropRect.Width,oldCropRect.Height);
+				//Will return a null intersection when the user chooses a crop rectangle which is
+				//entirely outside the current visible portion of the image. Can also return a zero-area rect,
+				//if the entire image is cropped away.
+				if(finalCropRect.Length!=4 || finalCropRect[2]<=0 || finalCropRect[3]<=0) {
+					_rectangleCrop=new Rectangle(0,0,-1,-1);
+					InvalidateSettings(ImageSettingFlags.NONE,false);//Refresh display (since message box was covering).
+					return;
+				}
+				Rectangle prevCropRect=DocCropRect(_documentShowing,_intArrayWidthsImagesCur[_idxSelectedInMount],_intArrayHeightsImagesCur[_idxSelectedInMount]);
+				_documentShowing.CropX=(int)finalCropRect[0];
+				_documentShowing.CropY=(int)finalCropRect[1];
+				_documentShowing.CropW=(int)Math.Ceiling(finalCropRect[2]);
+				_documentShowing.CropH=(int)Math.Ceiling(finalCropRect[3]);
+				Documents.Update(_documentShowing);
+				if(nodeIdTag.NodeType==EnumNodeType.Doc) {
+					DeleteThumbnailImage(_documentShowing);
+					Rectangle newCropRect=DocCropRect(_documentShowing,_intArrayWidthsImagesCur[_idxSelectedInMount],_intArrayHeightsImagesCur[_idxSelectedInMount]);
+					//Update the location of the image so that the cropped portion of the image does not move in screen space.
+					PointF pointPrevCropCenter=new PointF(prevCropRect.X+prevCropRect.Width/2.0f,prevCropRect.Y+prevCropRect.Height/2.0f);
+					PointF pointNewCropCenter=new PointF(newCropRect.X+newCropRect.Width/2.0f,newCropRect.Y+newCropRect.Height/2.0f);
+					PointF[] arrayPoints=new PointF[] {
+						pointPrevCropCenter,
+						pointNewCropCenter
+					};
+					Matrix matrix=GetDocumentFlippedRotatedMatrix(_documentShowing);
+					matrix.Scale(zoomCrop,zoomCrop);
+					matrix.TransformPoints(arrayPoints);
+					_pointFTranslation=new PointF(_pointFTranslation.X+(arrayPoints[1].X-arrayPoints[0].X),
+																			_pointFTranslation.Y+(arrayPoints[1].Y-arrayPoints[0].Y));
+				}
+				_rectangleCrop=new Rectangle(0,0,-1,-1);
+				InvalidateSettings(ImageSettingFlags.CROP,false);
+			}
+		}
+
+		///<summary>Keeps the back buffer for the picture box to be the same in dimensions as the picture box itself.</summary>
+		private void pictureBoxMain_SizeChanged(object sender,EventArgs e) {
+			if(this.DesignMode) {
+				return;
+			}
+			InvalidateSettings(ImageSettingFlags.NONE,false);//Refresh display.
+		}
+
+		private void printDocument_PrintPage(object sender,System.Drawing.Printing.PrintPageEventArgs e) {
+			//Keep a local pointer to the ImageRenderingNow so that the print results cannot be messed up by the current rendering thread (by changing the ImageRenderingNow).
+			if(_bitmapShowing==null) {
+				e.HasMorePages=false;
+				return;
+			}
+			Bitmap bitmapCloned=(Bitmap)_bitmapShowing.Clone();
+			if(bitmapCloned.Width<1 || bitmapCloned.Height<1 || treeMain.SelectedNode==null || treeMain.SelectedNode.Tag==null) {
+				bitmapCloned.Dispose();
+				bitmapCloned=null;
+				e.HasMorePages=false;
+				return;
+			}
+			Bitmap bitmapPrint=null;
+			NodeIdTag nodeIdTag=(NodeIdTag)treeMain.SelectedNode.Tag;
+			if(nodeIdTag.NodeType==EnumNodeType.Category) {
+				bitmapCloned.Dispose();
+				bitmapCloned=null;
+				e.HasMorePages=false;
+				return;
+			}
+			if(nodeIdTag.NodeType==EnumNodeType.Mount) {
+				if(_idxSelectedInMount>=0 && _documentArrayInMount[_idxSelectedInMount]!=null) {//mount item only
+					bitmapPrint=ImageHelper.ApplyDocumentSettingsToImage(_documentArrayInMount[_idxSelectedInMount],_bitmapArrayRaw[_idxSelectedInMount],ImageSettingFlags.ALL);
+				}
+				else {//Entire mount. Individual images are already rendered onto mount with correct settings.
+					bitmapPrint=bitmapCloned;
+				}
+			}
+			else if(nodeIdTag.NodeType==EnumNodeType.Doc) {
+				//Crop and color function have already been applied to the render image, now do the rest.
+				bitmapPrint=ImageHelper.ApplyDocumentSettingsToImage(Documents.GetByNum(nodeIdTag.PriKey),bitmapCloned,ImageSettingFlags.FLIP | ImageSettingFlags.ROTATE);
+			}
+			else if(nodeIdTag.NodeType==EnumNodeType.Eob) {
+				bitmapPrint=(Bitmap)bitmapCloned.Clone();
+			}
+			else if(nodeIdTag.NodeType==EnumNodeType.EhrAmend) {
+				bitmapPrint=(Bitmap)bitmapCloned.Clone();
+			}
+			RectangleF rectf=e.MarginBounds;
+			float ratio=Math.Min(rectf.Width/(float)bitmapPrint.Width,rectf.Height/(float)bitmapPrint.Height);
+			Graphics g=e.Graphics;
+			g.InterpolationMode=InterpolationMode.HighQualityBicubic;
+			g.CompositingQuality=CompositingQuality.HighQuality;
+			g.SmoothingMode=SmoothingMode.HighQuality;
+			g.PixelOffsetMode=PixelOffsetMode.HighQuality;
+			g.DrawImage(bitmapPrint,0,0,(int)(bitmapPrint.Width*ratio),(int)(bitmapPrint.Height*ratio));
+			bitmapCloned.Dispose();
+			bitmapCloned=null;
+			bitmapPrint.Dispose();
+			bitmapPrint=null;
+			e.HasMorePages=false;
+		}
+
+		private void menuMountItem_Opening(object sender,CancelEventArgs e) {
+			if(treeMain.SelectedNode==null) {
+				e.Cancel=true;
+				return;
+			}
+			NodeIdTag nodeIdTag=(NodeIdTag)treeMain.SelectedNode.Tag;
+			if(nodeIdTag.NodeType!=EnumNodeType.Mount) {
+				e.Cancel=true;
+				return;//No mount is currently selected so cancel the menu.
+			}
+			_idxSelectedInMount=GetIdxAtMountLocation(_pointMouseDown);
+			if(_idxSelectedInMount<0) {
+				e.Cancel=true;
+				return;//No mount item was clicked on, so cancel the menu.
+			}
+			System.Windows.IDataObject clipboard=null;
+			try {
+				clipboard=System.Windows.Clipboard.GetDataObject();//System.Windows.Forms.Clipboard fails for Thinfinity
+			}
+			catch(Exception ex) {
+				clipboard=null;
+				ex.DoNothing();
+			}
+			menuMountItem.Items.Clear();
+			//Only show the copy option in the mount menu if the item in the mount selected contains an image.
+			if(_documentArrayInMount[_idxSelectedInMount]!=null) {
+				menuMountItem.Items.Add("Copy",null,new System.EventHandler(MountMenuCopy_Click));
+			}
+			//Only show the paste option in the menu if an item is currently on the clipboard.
+			if(clipboard != null && clipboard.GetDataPresent(DataFormats.Bitmap)) {
+				menuMountItem.Items.Add("Paste",null,new System.EventHandler(MountMenuPaste_Click));
+			}
+			//Only show the swap item in the menu if the item on the clipboard exists in the current mount.
+			if(_idxDocToCopy>=0 && _documentArrayInMount[_idxSelectedInMount]!=null && _idxSelectedInMount!=_idxDocToCopy) {
+				menuMountItem.Items.Add("Swap",null,new System.EventHandler(MountMenuSwap_Click));
+			}
+			//Cancel the menu if no items have been added into it.
+			if(menuMountItem.Items.Count<1) {
+				e.Cancel=true;
+				return;
+			}
+			//Refresh the mount image, since the IdxSelectedInMount may have changed.
+			InvalidateSettings(ImageSettingFlags.ALL,false);
+		}
+
+		private void MountMenuCopy_Click(object sender,EventArgs e) {
+			ToolBarCopy_Click();
+			_idxDocToCopy=_idxSelectedInMount;
+		}
+
+		private void MountMenuPaste_Click(object sender,EventArgs e) {
+			ToolBarPaste_Click();
+		}
+
+		private void MountMenuSwap_Click(object sender,EventArgs e) {
+			long mountItemNum=_documentArrayInMount[_idxSelectedInMount].MountItemNum;
+			_documentArrayInMount[_idxSelectedInMount].MountItemNum=_documentArrayInMount[_idxDocToCopy].MountItemNum;
+			_documentArrayInMount[_idxDocToCopy].MountItemNum=mountItemNum;
+			Document doc=_documentArrayInMount[_idxSelectedInMount];
+			_documentArrayInMount[_idxSelectedInMount]=_documentArrayInMount[_idxDocToCopy];
+			_documentArrayInMount[_idxDocToCopy]=doc;
+			MountItem mountItem=_listMountItems[_idxSelectedInMount];
+			_listMountItems[_idxSelectedInMount]=_listMountItems[_idxDocToCopy];
+			_listMountItems[_idxDocToCopy]=mountItem;
+			Documents.Update(_documentArrayInMount[_idxSelectedInMount]);
+			Documents.Update(_documentArrayInMount[_idxDocToCopy]);
+			bool[] idxDocsToUpdate=new bool[_documentArrayInMount.Length];
+			idxDocsToUpdate[_idxSelectedInMount]=true;
+			idxDocsToUpdate[_idxDocToCopy]=true;
+			//Make it so that another swap cannot be done without first copying.
+			_idxDocToCopy=-1;
+			//Update the mount image to reflect the swapped images.
+			InvalidateSettings(ImageSettingFlags.ALL,false,idxDocsToUpdate);
+		}		
+
+		private void sigBox_DoubleClick(object sender,EventArgs e) {
+			ToolBarSign_Click();
+		}
+
+		private void sigBoxTopaz_DoubleClick(object sender,EventArgs e) {
+			ToolBarSign_Click();
+		}
+
+		private void textNote_DoubleClick(object sender,EventArgs e) {
+			ToolBarSign_Click();
+		}
+
+		private void textNote_MouseHover(object sender,EventArgs e) {
+			textNote.Cursor=Cursors.IBeam;
+		}
+
+		private void ToolBarMain_ButtonClick(object sender,OpenDental.UI.ODToolBarButtonClickEventArgs e) {
+			if(e.Button.Tag.GetType()==typeof(string)) {
+				switch(e.Button.Tag.ToString()) {
+					case "Print":
+						//The reason we are using a delegate and BeginInvoke() is because of a Microsoft bug that causes the Print Dialog window to not be in focus			
+						//when it comes from a toolbar click.
+						//https://social.msdn.microsoft.com/Forums/windows/en-US/681a50b4-4ae3-407a-a747-87fb3eb427fd/first-mouse-click-after-showdialog-hits-the-parent-form?forum=winforms
+						ToolBarClick toolClick=ToolBarPrint_Click;
+						this.BeginInvoke(toolClick);
+						break;
+					case "Delete":
+						ToolBarDelete_Click();
+						break;
+					case "Info":
+						ToolBarInfo_Click();
+						break;
+					case "Sign":
+						ToolBarSign_Click();
+						break;
+					case "ScanDoc":
+						ToolBarScan_Click("doc");
+						break;
+					case "ScanMultiDoc":
+						ToolBarScanMulti_Click();
+						break;
+					case "ScanXRay":
+						ToolBarScan_Click("xray");
+						break;
+					case "ScanPhoto":
+						ToolBarScan_Click("photo");
+						break;
+					case "Import":
+						ToolBarImport_Click();
+						break;
+					case "Export":
+						ToolBarExport_Click();
+						break;
+					case "Copy":
+						ToolBarCopy_Click();
+						break;
+					case "Paste":
+						ToolBarPaste_Click();
+						break;
+					case "Forms":
+						MsgBox.Show(this,"Use the dropdown list.  Add forms to the list by copying image files into your A-Z folder, Forms.  Restart the program to see newly added forms.");
+						break;
+					case "Mounts"://future
+						MsgBox.Show(this,"Use the dropdown list.  Manage Mounts from the Setup/Images menu.");
+						break;
+					case "Capture":
+						ToolBarCapture_Click();
+						break;
+					case "Close":
+						ToolBarClose_Click();
+						break;
+				}
+			}
+			else if(e.Button.Tag.GetType()==typeof(Program)) {
+				ProgramL.Execute(((Program)e.Button.Tag).ProgramNum,_patient);
+			}
+		}
+
+		private void toolBarPaint_ButtonClick(object sender,ODToolBarButtonClickEventArgs e) {
+			if(e.Button.Tag.GetType()==typeof(string)) {
+				switch(e.Button.Tag.ToString()) {
+					case "Crop":
+						ToolBarCrop_Click();
+						break;
+					case "Hand":
+						ToolBarHand_Click();
+						break;
+					case "ZoomIn":
+						ToolBarZoomIn_Click();
+						break;
+					case "ZoomOut":
+						ToolBarZoomOut_Click();
+						break;
+					case "Zoom100":
+						ToolBarZoom100_Click();
+						break;
+					case "Flip":
+						ToolBarFlip_Click();
+						break;
+					case "RotateL":
+						ToolBarRotateL_Click();
+						break;
+					case "RotateR":
+						ToolBarRotateR_Click();
+						break;
+				}
+			}
+			else if(e.Button.Tag.GetType()==typeof(Program)) {//bad
+				ProgramL.Execute(((Program)e.Button.Tag).ProgramNum,_patient);
+			}
+		}
+		#endregion Methods - Events Handlers
+
+		#region Enums
+		///<summary>None,Category,Doc,Mount,Eob,EhrAmend,ApteryxImage</summary>
+		private enum EnumNodeType {
+			///<summary>This is the initial empty id.  Used instead of a null ImageNodeId</summary>
+			None,
+			///<summary>PriKey is DefNum</summary>
+			Category,
+			///<summary>PriKey is DocNum</summary>
+			Doc,
+			///<summary>PriKey is MountNum</summary>
+			Mount,
+			///<summary>PriKey is EobAttachNum</summary>
+			Eob,
+			///<summary>PriKey is EhrAmendmentNum</summary>
+			EhrAmend,
+			///<summary>PriKey is 0. The ImgDownload field will have store any information needed.</summary>
+			ApteryxImage,
+		}
 		#endregion Enums
 
 		#region Methods - Public
+		///<summary>doc may be null if eob.</summary>
+		public static Rectangle DocCropRect(Document doc,int widthOriginalImage,int heightOriginalImage) {
+			if(doc==null) {//no cropping
+				return new Rectangle(0,0,widthOriginalImage,heightOriginalImage);
+			}
+			if(doc.CropW==0 && doc.CropH==0) {//Crop rectangles of 0 area are considered non-existant (i.e. no cropping).
+				return new Rectangle(0,0,widthOriginalImage,heightOriginalImage);
+			}
+			return new Rectangle(doc.CropX,doc.CropY,doc.CropW,doc.CropH);
+		}
+
 		///<summary>Refreshes list from db, then fills the treeview.  Set keepSelection to true in order to keep the current selection active.</summary>
-		public void FillImageSelector(bool keepSelection) {
-			if(_patient==null) {
-				imageSelector.ClearAll();
+		public void FillTree(bool keepSelection) {
+			NodeIdTag nodeIdTagSelection=new NodeIdTag();
+			if(keepSelection && treeMain.SelectedNode!=null) {
+				nodeIdTagSelection=(NodeIdTag)treeMain.SelectedNode.Tag;
+			}
+			//(keepSelection?GetNodeIdentifier(treeDocuments.SelectedNode):"");
+			//Clear current tree contents.
+			treeMain.SelectedNode=null;
+			treeMain.Nodes.Clear();
+			if(_claimPaymentNum!=0) {
+				List<EobAttach> listEobs=EobAttaches.Refresh(_claimPaymentNum);
+				for(int i=0;i<listEobs.Count;i++) {
+					TreeNode node=new TreeNode(listEobs[i].FileName);
+					node.Tag=MakeIdEob(listEobs[i].EobAttachNum);
+					node.ImageIndex=2;
+					node.SelectedImageIndex=node.ImageIndex;//redundant?
+					treeMain.Nodes.Add(node);
+					if(((NodeIdTag)node.Tag).Equals(nodeIdTagSelection)) {
+						SelectTreeNode(node);
+					}
+				}
 				return;
 			}
-			int scrollVal=imageSelector.ScrollValue;
+			else if(_ehrAmendment!=null) {
+				if(_ehrAmendment.FileName!=null && _ehrAmendment.FileName!="") {
+					TreeNode treeNode=new TreeNode(_ehrAmendment.FileName);
+					treeNode.Tag=MakeIdAmd(_ehrAmendment.EhrAmendmentNum);
+					treeNode.ImageIndex=2;
+					treeNode.SelectedImageIndex=treeNode.ImageIndex;//redundant?
+					treeMain.Nodes.Add(treeNode);
+					if(((NodeIdTag)treeNode.Tag).Equals(nodeIdTagSelection)) {
+						SelectTreeNode(treeNode);
+					}
+				}
+				return;
+			}
+			//the rest of this is for normal images module-------------------------------------------------------------------------------------------------
+			if(_patient==null) {
+				return;
+			}
 			List<Def> listDefsImageCats=Defs.GetDefsForCategory(DefCat.ImageCats,true);
-			imageSelector.SetCategories(listDefsImageCats);
+			//Add all predefined folder names to the tree.
+			for(int i=0;i<listDefsImageCats.Count;i++) {
+				treeMain.Nodes.Add(new TreeNode(listDefsImageCats[i].ItemName));
+				treeMain.Nodes[i].Tag=MakeIdDef(listDefsImageCats[i].DefNum);
+				if(listDefsImageCats[i].ItemValue.Contains("L")) { //Patient Portal Folder
+					treeMain.Nodes[i].SelectedImageIndex=7;
+					treeMain.Nodes[i].ImageIndex=7;
+				}
+				else {
+					treeMain.Nodes[i].SelectedImageIndex=1;
+					treeMain.Nodes[i].ImageIndex=1;
+				}
+			}
+			//Add all relevant documents and mounts as stored in the database to the tree for the current patient.
 			DataSet dataSet=Documents.RefreshForPatient(new string[] { _patient.PatNum.ToString() });
-			imageSelector.SetData(_patient,dataSet.Tables["DocumentList"],keepSelection,_patFolder);
-			imageSelector.LoadExpandedPrefs();
-			if(keepSelection){
-				imageSelector.ScrollValue=scrollVal;
+			DataRowCollection rows=dataSet.Tables["DocumentList"].Rows;
+			for(int i=0;i<rows.Count;i++) {
+				TreeNode treeNode=new TreeNode(PIn.Date(rows[i]["DateCreated"].ToString()).ToString("d")+": "+rows[i]["description"].ToString());
+				int idxParentFolder=PIn.Int(rows[i]["idxCategory"].ToString());
+				treeMain.Nodes[idxParentFolder].Nodes.Add(treeNode);
+				if(rows[i]["DocNum"].ToString()=="0") {//must be a mount
+					treeNode.Tag=MakeIdMount(PIn.Long(rows[i]["MountNum"].ToString()));
+					treeNode.ImageIndex=6;
+				}
+				else {//doc
+					treeNode.Tag=MakeIdDoc(PIn.Long(rows[i]["DocNum"].ToString()));
+					treeNode.ImageIndex=2+Convert.ToInt32(rows[i]["ImgType"].ToString());
+				}
+				treeNode.SelectedImageIndex=treeNode.ImageIndex;
+				if(((NodeIdTag)treeNode.Tag).Equals(nodeIdTagSelection)) {
+					SelectTreeNode(treeNode);
+				}
+			}
+			/*
+			if(PrefC.GetInt(PrefName.ImagesModuleTreeIsCollapsed)==0) {//Expand the document tree each time the Images module is visited
+					treeMain.ExpandAll();//Invalidates tree too.
+			}
+			else if(PrefC.GetInt(PrefName.ImagesModuleTreeIsCollapsed)==1) {//Document tree collapses when patient changes*/
+			TreeNode treeNodeSelected=treeMain.SelectedNode;//Save the selection so we can reselect after collapsing.
+			treeMain.CollapseAll();//Invalidates tree and clears selection too.
+			treeMain.SelectedNode=treeNodeSelected;//This will expand any category/folder nodes necessary to show the selection.
+			//if(_patNumPrev==_patCur.PatNum) {//Maintain previously expanded nodes when patient not changed.
+			for(int i=0;i<_listDefNumsExpandedCats.Count;i++) {
+				for(int j=0;j<treeMain.Nodes.Count;j++) {//Enumerate the image categories.
+					if(_listDefNumsExpandedCats[i]==((NodeIdTag)treeMain.Nodes[j].Tag).PriKey) {
+						treeMain.Nodes[j].Expand();
+						break;
+					}
+				}
+			}
+				//}
+				/*else {//Patient changed.
+					_listExpandedCats.Clear();
+				}
+				_patNumPrev=_patCur.PatNum;
+			}
+			else {//Document tree folders persistent expand/collapse per user
+				_isFillingTreeWithPref=true;//Initialize flag so that we don't run into duplication of the UserOdPref overrides rows.
+				if(_userNumPrev==Security.CurUser.UserNum) {//User has not changed.  Maintain expanded nodes.
+					TreeNode selectedNode=treeMain.SelectedNode;//Save the selection so we can reselect after collapsing.
+					treeMain.CollapseAll();//Invalidates tree and clears selection too.
+					treeMain.SelectedNode=selectedNode;//This will expand any category/folder nodes necessary to show the selection.
+					for(int i=0;i<_listExpandedCats.Count;i++) {
+						for(int j=0;j<treeMain.Nodes.Count;j++) {//Enumerate the image categories.
+							NodeIdTag nodeIdTagCategory=(NodeIdTag)treeMain.Nodes[j].Tag;//Get current tree document node.
+							if(nodeIdTagCategory.PriKey==_listExpandedCats[i]){
+								treeMain.Nodes[j].Expand();
+								break;
+							}
+						}
+					}
+				}
+				else {//User has changed.  Expand image categories based on user preference.
+					_listExpandedCats.Clear();
+					List<UserOdPref> _listUserOdPrefImageCats=UserOdPrefs.GetByUserAndFkeyType(Security.CurUser.UserNum,UserOdFkeyType.Definition);//Update override list.
+					foreach(Def curDef in listDefsImageCats) {
+						//Should only be one value with associated Fkey.
+						UserOdPref userOdPrefTemp=_listUserOdPrefImageCats.FirstOrDefault(x => x.Fkey==curDef.DefNum);
+						if(userOdPrefTemp!=null) {//User has a preference for this image category.
+							if(!userOdPrefTemp.ValueString.Contains("E")) {//The user's preference is to collapse this category.
+								continue;
+							}
+							for(int j=0;j<treeMain.Nodes.Count;j++) {//Enumerate the image categories.
+								NodeIdTag nodeIdTagCategory=(NodeIdTag)treeMain.Nodes[j].Tag;//Get current tree document node.
+								if(nodeIdTagCategory.PriKey==userOdPrefTemp.Fkey) {
+									treeMain.Nodes[j].Expand();//Expand folder.
+									break;
+								}
+							}
+						}
+						else {//User doesn't have a preference for this image category.
+							if(!curDef.ItemValue.Contains("E")) {//The default preference is to collapse this category.
+								continue;
+							}
+							for(int j=0;j<treeMain.Nodes.Count;j++) {//Enumerate the image categories.
+								NodeIdTag nodeIdTagCategory=(NodeIdTag)treeMain.Nodes[j].Tag;//Get current tree document node.
+								if(nodeIdTagCategory.PriKey==curDef.DefNum) {
+									treeMain.Nodes[j].Expand();
+									break;
+								}
+							}
+						}
+					}
+				}
+				_userNumPrev=Security.CurUser.UserNum;//Update the Previous user num.
+				_isFillingTreeWithPref=false;//Disable flag
+			}*/
+			if(XVWeb.IsDisplayingImagesInProgram && !_isFillingXVWebFromThread) {//list was already added if this is from module refresh
+				FillTreeXVWebItems(_patient.PatNum);
 			}
 		}
 
-		///<summary>Also does LayoutToolBars. Doesn't do much, be we want to have one for each module.</summary>
-		public void InitializeOnStartup(){
+		///<summary>The screen matrix of the image is relative to the upper left of the image, but our calculations are from the center of the image (since the calculations are easier everywhere else if taken from the center). This function converts our calculation matrix into an equivalent screen matrix for display. Assumes document rotations are in 90 degree multiples.</summary>
+		public static Matrix GetScreenMatrix(Document doc,int docOriginalImageWidth,int docOriginalImageHeight,float imageScale,PointF imageTranslation) {
+			Matrix matrixDoc=GetDocumentFlippedRotatedMatrix(doc);
+			matrixDoc.Scale(imageScale,imageScale);
+			Rectangle rectCrop=DocCropRect(doc,docOriginalImageWidth,docOriginalImageHeight);
+			//The screen matrix of a GDI image is always relative to the upper left hand corner of the image.
+			PointF pointPreOrigin=new PointF(-rectCrop.Width/2.0f,-rectCrop.Height/2.0f);
+			PointF[] pointsMatrixScreen=new PointF[]{
+				pointPreOrigin,
+				new PointF(pointPreOrigin.X+1 ,pointPreOrigin.Y  ),
+				new PointF(pointPreOrigin.X		,pointPreOrigin.Y+1),
+			};
+			matrixDoc.TransformPoints(pointsMatrixScreen);
+			Matrix matrixScreen=new Matrix(
+				pointsMatrixScreen[1].X-pointsMatrixScreen[0].X,//X.X
+				pointsMatrixScreen[1].Y-pointsMatrixScreen[0].Y,//X.Y
+				pointsMatrixScreen[2].X-pointsMatrixScreen[0].X,//Y.X
+				pointsMatrixScreen[2].Y-pointsMatrixScreen[0].Y,//Y.Y
+				pointsMatrixScreen[0].X+imageTranslation.X,	//Dx
+				pointsMatrixScreen[0].Y+imageTranslation.Y);	//Dy
+			return matrixScreen;
+		}
+
+		///<summary>Also does LayoutToolBar.</summary>
+		public void InitializeOnStartup() {
 			if(_initializedOnStartup) {
 				return;
 			}
 			_initializedOnStartup=true;
-			LayoutToolBars();
+			_pointMouseDown=new Point();
+			Lan.C(this,new System.Windows.Forms.Control[] {
+				//this.button1,
+			});
+			LayoutToolBar();
+			if(!ODBuild.IsWeb()) {
+				_odWebView2=new ODWebView2();//Include a webBrowser object for loading .pdf files.
+				_odWebView2.Visible=false;
+				_odWebView2.Bounds=pictureBoxMain.Bounds;
+				LayoutManager.Add(_odWebView2,this);
+			}
+			else if(ODBuild.IsWeb()) {
+				_cloudIframe=new CloudIframe();
+				_cloudIframe.Initialize();
+				_cloudIframe.HideIframe();
+				_cloudIframe.Bounds=pictureBoxMain.Bounds;
+				LayoutManager.Add(_cloudIframe,this);
+			}
+			contextTree.MenuItems.Clear();
+			contextTree.MenuItems.Add("Print",new System.EventHandler(menuTree_Click));
+			contextTree.MenuItems.Add("Delete",new System.EventHandler(menuTree_Click));
+			if(_claimPaymentNum==0 && _ehrAmendment==null) {//not an eob and not an amendment
+				contextTree.MenuItems.Add("Info",new System.EventHandler(menuTree_Click));
+			}
 		}
 
-		///<summary>Key down from FormOpenDental is passed in to allow some keys to work here.  As long as this module is open, all key down events are sent here.</summary>
-		public void ControlImagesJ_KeyDown(Keys keys){
-			if(_formLauncherVideo!=null && !_formLauncherVideo.IsNullOrDisposedOrNotVis()){
-				_formLauncherVideo.MethodGetVoid("Parent_KeyDown",keys);
-			}
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat!=null){
-				formImageFloat.Parent_KeyDown(keys);
-			}
-		}
-		
-		///<summary>Layout the Main and Paint toolbars.</summary>
-		public void LayoutToolBars() {
-			toolBarMain.Clear();
-			toolBarMain.Add(Lan.g(this,"Print"),ToolBarPrint_Click,WpfControls.UI.EnumIcons.Print,tag:TB.Print.ToString());
-			toolBarMain.Add(Lan.g(this,"Delete"),ToolBarDelete_Click,WpfControls.UI.EnumIcons.DeleteX,tag:TB.Delete.ToString());
-			toolBarMain.Add(Lan.g(this,"Info"),ToolBarInfo_Click,WpfControls.UI.EnumIcons.Info,tag:TB.Info.ToString());
-			toolBarMain.Add(Lan.g(this,"Sign"),ToolBarSign_Click,tag:TB.Sign.ToString());
-			toolBarMain.AddSeparator();
-			toolBarMain.Add(Lan.g(this,"Scan:"),null);
-			toolBarMain.Add("",ToolBarScanDoc_Click,WpfControls.UI.EnumIcons.ImageSelectorDoc,toolTipText:Lan.g(this,"Scan Document"));
-			toolBarMain.Add("",ToolBarScanMulti_Click,WpfControls.UI.EnumIcons.ScanMulti,toolTipText:Lan.g(this,"Scan Multi-Page Document"));
-			toolBarMain.Add("",ToolBarScanXRay_Click,WpfControls.UI.EnumIcons.ScanXray,toolTipText:Lan.g(this,"Scan Radiograph"));
-			toolBarMain.Add("",ToolBarScanPhoto_Click,WpfControls.UI.EnumIcons.ScanPhoto,toolTipText:Lan.g(this,"Scan Photo"));
-			toolBarMain.AddSeparator();
-			toolBarMain.Add(Lan.g(this,"Mount / Acquire"),ToolBarMountAcquire_Click,WpfControls.UI.EnumIcons.Acquire,toolTipText:Lan.g(this,"Create Mount and/or Acquire from device"));
-			toolBarMain.Add(Lan.g(this,"Video"),ToolBarVideo_Click,WpfControls.UI.EnumIcons.Video,toolTipText:Lan.g(this,"Intraoral Video Camera"));
-			toolBarMain.AddSeparator();
-			WpfControls.UI.ContextMenu contextMenuImport = new WpfControls.UI.ContextMenu();
-			contextMenuImport.Add(new WpfControls.UI.MenuItem(Lan.g(this,"Import Automatically"),ToolBarImportAuto));
-			//toolStripMenuItem.ToolTipText="Import files as they are created in a folder.";//todo? no tooltip available for menus
-			toolBarMain.Add(Lan.g(this,"Import"),ToolBarImport_Click,WpfControls.UI.EnumIcons.Import,WpfControls.UI.ToolBarButtonStyle.DropDownButton,Lan.g(this,"Import From File"),contextMenuImport);
-			WpfControls.UI.ContextMenu contextMenuExport = new WpfControls.UI.ContextMenu();
-			contextMenuExport.Add(new WpfControls.UI.MenuItem(Lan.g(this,"Move to Patient..."),ToolBarMoveToPatient));
-			contextMenuExport.Add(new WpfControls.UI.MenuItem(Lan.g(this,"Export TIFF"),ToolBarExportTIFF));
-			toolBarMain.Add(Lan.g(this,"Export"),ToolBarExport_Click,WpfControls.UI.EnumIcons.Export,WpfControls.UI.ToolBarButtonStyle.DropDownButton,Lan.g(this,"Export to File"),contextMenuExport,TB.Export.ToString());
-			toolBarMain.Add(Lan.g(this,"Copy"),ToolBarCopy_Click,WpfControls.UI.EnumIcons.Copy,toolTipText:Lan.g(this,"Copy displayed image to clipboard"),tag:TB.Copy.ToString());
-			toolBarMain.Add(Lan.g(this,"Paste"),ToolBarPaste_Click,WpfControls.UI.EnumIcons.Paste,toolTipText:Lan.g(this,"Paste From Clipboard"));
-			WpfControls.UI.ContextMenu contextMenuForms = new WpfControls.UI.ContextMenu();
-			string formDir=FileAtoZ.CombinePaths(ImageStore.GetPreferredAtoZpath(),"Forms");
-			if(CloudStorage.IsCloudStorage) {
-				//Running this asynchronously to not slowdown start up time.
-				ODThread odThreadTemplate=new ODThread((o) => {
-					List<string> listFiles=CloudStorage.ListFolderContents(formDir);
-					foreach(string fileName in listFiles) {
-						if(InvokeRequired) {
-							Invoke((Action)delegate () {
-								contextMenuForms.Add(Path.GetFileName(fileName),new EventHandler(menuForms_Click));
-							});
-						}
-					}
-				});
-				//Swallow all exceptions and allow thread to exit gracefully.
-				odThreadTemplate.AddExceptionHandler(new ODThread.ExceptionDelegate((Exception ex) => { }));
-				odThreadTemplate.Start(true);
-			}
-			else {//Not cloud
-				if(Directory.Exists(formDir)) {
-					DirectoryInfo dirInfo=new DirectoryInfo(formDir);
-					FileInfo[] fileInfos=dirInfo.GetFiles();
-					for(int i=0;i<fileInfos.Length;i++) {
-						if(Documents.IsAcceptableFileName(fileInfos[i].FullName)) {
-							contextMenuForms.Add(fileInfos[i].Name,menuForms_Click);
-						}
-					}
-				}
-			}
-			toolBarMain.Add(Lan.g(this,"Forms"),ToolBarForms_Click,toolBarButtonStyle:WpfControls.UI.ToolBarButtonStyle.DropDownButton,contextMenuDropDown:contextMenuForms);
-			WpfControls.ProgramL.LoadToolBar(toolBarMain,EnumToolBar.ImagingModule,ToolBarProgram_Click);
-			//ToolbarPaint-------------------------------------------------------------------------------------
-			#region toolbarPaint
-			toolBarPaint.Buttons.Clear();
+		///<summary>Toolbar Layout for Amendments</summary>
+		public void LayoutAmendmentToolBar() {
+			ToolBarMain.Buttons.Clear();
+			ToolBarPaint.Buttons.Clear();
 			ODToolBarButton button;
-			toolBarPaint.Buttons.Add(new ODToolBarButton(Lan.g(this,"Fit 1"),-1,Lan.g(this,"Zoom to fit one image"),TB.ZoomOne));
-			toolBarPaint.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
-			button=new ODToolBarButton(Lan.g(this,"Crop"),7,"",TB.Crop);
-			button.Style=ODToolBarButtonStyle.ToggleButton;
-			toolBarPaint.Buttons.Add(button);
-			if(_cropPanAdj==EnumCropPanAdj.Crop){
-				toolBarPaint.Buttons[TB.Crop.ToString()].IsTogglePushed=true;
-			}
-			button=new ODToolBarButton(Lan.g(this,"Pan"),10,"",TB.Pan);
-			button.Style=ODToolBarButtonStyle.ToggleButton;
-			toolBarPaint.Buttons.Add(button);
-			if(_cropPanAdj==EnumCropPanAdj.Pan){
-				toolBarPaint.Buttons[TB.Pan.ToString()].IsTogglePushed=true;
-			}
-			button=new ODToolBarButton(Lan.g(this,"Adj"),20,Lan.g(this,"Adjust position"),TB.Adj);
-			button.Style=ODToolBarButtonStyle.ToggleButton;
-			toolBarPaint.Buttons.Add(button);
-			if(_cropPanAdj==EnumCropPanAdj.Adj){
-				toolBarPaint.Buttons[TB.Adj.ToString()].IsTogglePushed=true;
-			}
-			toolBarPaint.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
-			toolBarPaint.Buttons.Add(new ODToolBarButton(Lan.g(this,"Size/Rotation"),-1,Lan.g(this,"Set Size and Rotation"),TB.Size));
-			toolBarPaint.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
-			toolBarPaint.Buttons.Add(new ODToolBarButton(Lan.g(this,"FlipH"),11,Lan.g(this,"Flip Horizontally"),TB.Flip));
-			toolBarPaint.Buttons.Add(new ODToolBarButton(Lan.g(this,"-90"),12,Lan.g(this,"Rotate Left"),TB.RotateL));
-			toolBarPaint.Buttons.Add(new ODToolBarButton(Lan.g(this,"+90"),13,Lan.g(this,"Rotate Right"),TB.RotateR));
-			toolBarPaint.Buttons.Add(new ODToolBarButton(Lan.g(this,"180"),-1,Lan.g(this,"Rotate 180"),TB.Rotate180));
-			toolBarPaint.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
-			toolBarPaint.Buttons.Add(new ODToolBarButton(Lan.g(this,"Draw"),-1,Lan.g(this,"Lines and text"),TB.DrawTool));
-			toolBarPaint.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
-			toolBarPaint.Buttons.Add(new ODToolBarButton(Lan.g(this,"Unmount"),-1,Lan.g(this,"Move selected image to unmounted area"),TB.Unmount));
-			toolBarPaint.Invalidate();
-			#endregion toolbarPaint
-			UpdateToolbarButtons();
+			ToolBarMain.Buttons.Add(new ODToolBarButton("",1,Lan.g(this,"Print"),"Print"));
+			ToolBarMain.Buttons.Add(new ODToolBarButton("",2,Lan.g(this,"Delete"),"Delete"));
+			ToolBarMain.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
+			button=new ODToolBarButton(Lan.g(this,"Scan:"),-1,"","");
+			button.Style=ODToolBarButtonStyle.Label;
+			ToolBarMain.Buttons.Add(button);
+			ToolBarMain.Buttons.Add(new ODToolBarButton("",14,Lan.g(this,"Scan Document"),"ScanDoc"));
+			ToolBarMain.Buttons.Add(new ODToolBarButton("",18,Lan.g(this,"Scan Multi-Page Document"),"ScanMultiDoc"));
+			ToolBarMain.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
+			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Import"),5,Lan.g(this,"Import From File"),"Import"));
+			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Export"),19,Lan.g(this,"Export To File"),"Export"));
+			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Copy"),17,Lan.g(this,"Copy displayed image to clipboard"),"Copy"));
+			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Paste"),6,Lan.g(this,"Paste From Clipboard"),"Paste"));
+			ToolBarMain.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
+			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Close"),-1,Lan.g(this,"Close window"),"Close"));
+			ToolBarPaint.Buttons.Add(new ODToolBarButton("",8,Lan.g(this,"Zoom In"),"ZoomIn"));
+			ToolBarPaint.Buttons.Add(new ODToolBarButton("",9,Lan.g(this,"Zoom Out"),"ZoomOut"));
+			ToolBarPaint.Buttons.Add(new ODToolBarButton("100",-1,Lan.g(this,"Zoom 100"),"Zoom100"));
+			ToolBarMain.Invalidate();
+			ToolBarPaint.Invalidate();
 		}
 
-		///<summary>Layout the Draw toolbar only.</summary>
-		public void LayoutToolBarDraw() {
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return;
-			}
-			formImageFloat.ColorFore=_colorFore;
-			formImageFloat.ColorTextBack=_colorTextBack;
-			if(_showDrawingsPearlToothParts is null){//happens once on startup
-				if(Programs.IsEnabled(ProgramName.Pearl)){
-					long programNum=Programs.GetProgramNum(ProgramName.Pearl);
-					ProgramProperty programProperty=ProgramProperties.GetFirstOrDefault(x => x.ProgramNum==programNum && x.PropertyDesc=="Show Pearl annotations by default");
-					if(programProperty==null) {
-						_showDrawingsPearlToothParts=false;
-						_showDrawingsPearlPolyAnnotations=false;
-						_showDrawingsPearlBoxAnnotations=false;
-						_showDrawingsPearlMeasurements=false;
-					}
-					else{
-						_showDrawingsPearlToothParts=programProperty.PropertyValue=="true";
-						_showDrawingsPearlPolyAnnotations=programProperty.PropertyValue=="true";
-						_showDrawingsPearlBoxAnnotations=programProperty.PropertyValue=="true";
-						_showDrawingsPearlMeasurements=programProperty.PropertyValue=="true";
-					}
-				}
-				else{
-					_showDrawingsPearlToothParts=false;
-					_showDrawingsPearlPolyAnnotations=false;
-					_showDrawingsPearlBoxAnnotations=false;
-					_showDrawingsPearlMeasurements=false;
-				}
-			}
-			formImageFloat.SetShowDrawings(_showDrawingsOD,_showDrawingsPearlToothParts.Value,_showDrawingsPearlPolyAnnotations.Value,_showDrawingsPearlBoxAnnotations.Value,_showDrawingsPearlMeasurements.Value);
-			Bitmap bitmapColor=new Bitmap(22,22);//no using. Pass bitmap to toolbar, which will handle disposing the old one.
-			using Graphics g=Graphics.FromImage(bitmapColor);
-			g.SmoothingMode=SmoothingMode.HighQuality;
-			if(_colorTextBack.ToArgb()==Color.Transparent.ToArgb()){
-				if(IsMountShowing()){
-					g.Clear(GetMountShowing().ColorBack);
-				}
-				else{
-					//There is no background color for images
-					g.Clear(Color.White);
-				}
-			}
-			else{
-				g.Clear(_colorTextBack);
-			}
-			using SolidBrush solidBrush=new SolidBrush(_colorFore);
-			RectangleF rectangleF=new RectangleF(0,0,22,22);
-			StringFormat stringFormat=new StringFormat();
-			stringFormat.Alignment=StringAlignment.Center;
-			stringFormat.LineAlignment=StringAlignment.Center;
-			Font font=new Font(FontFamily.GenericSansSerif,LayoutManager.ScaleF(12),FontStyle.Bold);
-			g.DrawString("A",font,solidBrush,rectangleF,stringFormat);
-			stringFormat.Dispose();
-			//Toolbar itself------------------------------------------------------------------------
-			toolBarDraw.Buttons.Clear();
+		///<summary>Causes the toolbar to be laid out again.</summary>
+		public void LayoutToolBar() {
+			ToolBarMain.Buttons.Clear();
+			ToolBarPaint.Buttons.Clear();
 			ODToolBarButton button;
-			button=new ODToolBarButton(Lan.g(this,"Color"),-1,"",TB.Color);
-			button.Style=ODToolBarButtonStyle.ToggleButton;
-			button.Bitmap=bitmapColor;
-			toolBarDraw.Buttons.Add(button);
-			//toolBarDraw.Buttons[TB.Color.ToString()].Bitmap=bitmapColor;
-			button=new ODToolBarButton(Lan.g(this,"Text"),-1,"",TB.Text);
-			button.Style=ODToolBarButtonStyle.ToggleButton;
-			toolBarDraw.Buttons.Add(button);
-			if(_drawMode==EnumDrawMode.Text){
-				toolBarDraw.Buttons[TB.Text.ToString()].IsTogglePushed=true;
+			ToolBarMain.Buttons.Add(new ODToolBarButton("",1,Lan.g(this,"Print"),"Print"));
+			ToolBarMain.Buttons.Add(new ODToolBarButton("",2,Lan.g(this,"Delete"),"Delete"));
+			if(_claimPaymentNum==0) {
+				ToolBarMain.Buttons.Add(new ODToolBarButton("",3,Lan.g(this,"Item Info"),"Info"));
+				ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Sign"),-1,Lan.g(this,"Sign this document"),"Sign"));
 			}
-			button=new ODToolBarButton(Lan.g(this,"Pen"),-1,"",TB.Pen);
-			button.Style=ODToolBarButtonStyle.ToggleButton;
-			toolBarDraw.Buttons.Add(button);
-			if(_drawMode==EnumDrawMode.Pen){
-				toolBarDraw.Buttons[TB.Pen.ToString()].IsTogglePushed=true;
+			ToolBarMain.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
+			button=new ODToolBarButton(Lan.g(this,"Scan:"),-1,"","");
+			button.Style=ODToolBarButtonStyle.Label;
+			ToolBarMain.Buttons.Add(button);
+			ToolBarMain.Buttons.Add(new ODToolBarButton("",14,Lan.g(this,"Scan Document"),"ScanDoc"));
+			ToolBarMain.Buttons.Add(new ODToolBarButton("",18,Lan.g(this,"Scan Multi-Page Document"),"ScanMultiDoc"));
+			if(_claimPaymentNum==0) {
+				ToolBarMain.Buttons.Add(new ODToolBarButton("",16,Lan.g(this,"Scan Radiograph"),"ScanXRay"));
+				ToolBarMain.Buttons.Add(new ODToolBarButton("",15,Lan.g(this,"Scan Photo"),"ScanPhoto"));
 			}
-			button=new ODToolBarButton(Lan.g(this,"Line"),-1,"",TB.Line);
-			button.Style=ODToolBarButtonStyle.ToggleButton;
-			toolBarDraw.Buttons.Add(button);
-			if(_drawMode==EnumDrawMode.Line){
-				toolBarDraw.Buttons[TB.Line.ToString()].IsTogglePushed=true;
-			}
-			button=new ODToolBarButton(Lan.g(this,"Polygon"),-1,"",TB.Polygon);
-			button.Style=ODToolBarButtonStyle.ToggleButton;
-			toolBarDraw.Buttons.Add(button);
-			if(_drawMode==EnumDrawMode.Polygon){
-				toolBarDraw.Buttons[TB.Polygon.ToString()].IsTogglePushed=true;
-			}
-			toolBarDraw.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
-			if(_drawMode==EnumDrawMode.Line
-				|| _drawMode==EnumDrawMode.LineEditPoints
-				|| _drawMode==EnumDrawMode.LineMeasure
-				|| _drawMode==EnumDrawMode.LineSetScale)
-			{
-				button=new ODToolBarButton(Lan.g(this,"Edit Points"),-1,"",TB.EditPoints);
+			ToolBarMain.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
+			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Import"),5,Lan.g(this,"Import From File"),"Import"));
+			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Export"),19,Lan.g(this,"Export To File"),"Export"));
+			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Copy"),17,Lan.g(this,"Copy displayed image to clipboard"),"Copy"));
+			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Paste"),6,Lan.g(this,"Paste From Clipboard"),"Paste"));
+			if(_claimPaymentNum==0) {
+				button=new ODToolBarButton(Lan.g(this,"Templates"),-1,"","Forms");
+				button.Style=ODToolBarButtonStyle.DropDownButton;
+				menuForms=new ContextMenu();
+				string formDir=FileAtoZ.CombinePaths(ImageStore.GetPreferredAtoZpath(),"Forms");
+				if(CloudStorage.IsCloudStorage) {
+					//Running this asynchronously to not slowdown start up time.
+					ODThread odThreadTemplate=new ODThread((o) => {
+						OpenDentalCloud.Core.TaskStateListFolders state=CloudStorage.ListFolderContents(formDir);
+						foreach(string fileName in state.ListFolderPathsDisplay) {
+							if(InvokeRequired) {
+								Invoke((Action)delegate () {
+									menuForms.MenuItems.Add(Path.GetFileName(fileName),new EventHandler(menuForms_Click));
+								});
+							}
+						}
+					});
+					//Swallow all exceptions and allow thread to exit gracefully.
+					odThreadTemplate.AddExceptionHandler(new ODThread.ExceptionDelegate((Exception ex) => { }));
+					odThreadTemplate.Start(true);
+				}
+				else {//Not cloud
+					if(Directory.Exists(formDir)) {
+						DirectoryInfo dirInfo=new DirectoryInfo(formDir);
+						FileInfo[] fileInfos=dirInfo.GetFiles();
+						for(int i=0;i<fileInfos.Length;i++) {
+							if(Documents.IsAcceptableFileName(fileInfos[i].FullName)) {
+								menuForms.MenuItems.Add(fileInfos[i].Name,menuForms_Click);
+							}
+						}
+					}
+				}
+				button.DropDownMenu=menuForms;
+				ToolBarMain.Buttons.Add(button);
+				button=new ODToolBarButton(Lan.g(this,"Mounts"),-1,"","Mounts");
+				button.Style=ODToolBarButtonStyle.DropDownButton;
+				menuMounts=new ContextMenu();
+				List<MountDef> listMountDefs=MountDefs.GetDeepCopy();
+				for(int i=0;i<listMountDefs.Count;i++){
+					menuMounts.MenuItems.Add(listMountDefs[i].Description,menuMounts_Click);
+				}
+				button.DropDownMenu=menuMounts;
+				//ToolBarMain.Buttons.Add(button);//future
+				button=new ODToolBarButton(Lan.g(this,"Capture"),-1,"Capture Image From Device","Capture");
 				button.Style=ODToolBarButtonStyle.ToggleButton;
-				toolBarDraw.Buttons.Add(button);
-				button=new ODToolBarButton(Lan.g(this,"Measure"),-1,"",TB.Measure);
+				ToolBarMain.Buttons.Add(button);
+				//Program links:
+				ProgramL.LoadToolbar(ToolBarMain,ToolBarsAvail.ImagesModule);
+			}
+			else {//claimpayment
+				ToolBarMain.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
+				ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Close"),-1,Lan.g(this,"Close window"),"Close"));
+			}
+			if(_claimPaymentNum==0) {
+				button=new ODToolBarButton("",7,Lan.g(this,"Crop Tool"),"Crop");
 				button.Style=ODToolBarButtonStyle.ToggleButton;
-				toolBarDraw.Buttons.Add(button);
-				button=new ODToolBarButton(Lan.g(this,"Set Scale"),-1,"",TB.SetScale);
+				button.IsTogglePushed=_isCropMode;
+				ToolBarPaint.Buttons.Add(button);
+				button=new ODToolBarButton("",10,Lan.g(this,"Hand Tool"),"Hand");
 				button.Style=ODToolBarButtonStyle.ToggleButton;
-				toolBarDraw.Buttons.Add(button);
-				toolBarDraw.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
+				button.IsTogglePushed=!_isCropMode;
+				ToolBarPaint.Buttons.Add(button);
+				ToolBarPaint.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
 			}
-			if(_drawMode==EnumDrawMode.LineEditPoints){
-				toolBarDraw.Buttons[TB.EditPoints.ToString()].IsTogglePushed=true;
+			ToolBarPaint.Buttons.Add(new ODToolBarButton("",8,Lan.g(this,"Zoom In"),"ZoomIn"));
+			ToolBarPaint.Buttons.Add(new ODToolBarButton("",9,Lan.g(this,"Zoom Out"),"ZoomOut"));
+			ToolBarPaint.Buttons.Add(new ODToolBarButton("100",-1,Lan.g(this,"Zoom 100"),"Zoom100"));
+			if(_claimPaymentNum==0) {
+				ToolBarPaint.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
+				button=new ODToolBarButton(Lan.g(this,"Rotate:"),-1,"","");
+				button.Style=ODToolBarButtonStyle.Label;
+				ToolBarPaint.Buttons.Add(button);
+				ToolBarPaint.Buttons.Add(new ODToolBarButton("",11,Lan.g(this,"Flip"),"Flip"));
+				ToolBarPaint.Buttons.Add(new ODToolBarButton("",12,Lan.g(this,"Rotate Left"),"RotateL"));
+				ToolBarPaint.Buttons.Add(new ODToolBarButton("",13,Lan.g(this,"Rotate Right"),"RotateR"));
 			}
-			if(_drawMode==EnumDrawMode.LineMeasure){
-				toolBarDraw.Buttons[TB.Measure.ToString()].IsTogglePushed=true;
-			}
-			if(_drawMode==EnumDrawMode.LineSetScale){
-				toolBarDraw.Buttons[TB.SetScale.ToString()].IsTogglePushed=true;
-			}
-			button=new ODToolBarButton(Lan.g(this,"Eraser"),-1,"",TB.Eraser);
-			button.Style=ODToolBarButtonStyle.ToggleButton;
-			toolBarDraw.Buttons.Add(button);
-			if(_drawMode==EnumDrawMode.Eraser){
-				toolBarDraw.Buttons[TB.Eraser.ToString()].IsTogglePushed=true;
-			}
-			button=new ODToolBarButton(Lan.g(this,"Change Color"),-1,"",TB.ChangeColor);
-			button.Style=ODToolBarButtonStyle.ToggleButton;
-			toolBarDraw.Buttons.Add(button);
-			if(_drawMode==EnumDrawMode.ChangeColor){
-				toolBarDraw.Buttons[TB.ChangeColor.ToString()].IsTogglePushed=true;
-			}
-			button=new ODToolBarButton(Lan.g(this,"Filter"),-1,"",TB.Filter);
-			toolBarDraw.Buttons.Add(button);
-			toolBarDraw.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
-			toolBarDraw.Buttons.Add(new ODToolBarButton(Lan.g(this,"Close"),-1,"",TB.Close));
-			toolBarDraw.Invalidate();
+			ToolBarMain.Invalidate();
+			ToolBarPaint.Invalidate();
+			Plugins.HookAddCode(this,"ContrDocs.LayoutToolBar_end",_patient);
 		}
-		
-		///<summary></summary>
-		public void ModuleSelected(long patNum,long docNum=0){
+
+		///<summary>One of two overloads.</summary>
+		public void ModuleSelected(long patNum) {
+			ModuleSelected(patNum,0);
+		}
+
+		///<summary>This overload is needed when jumping to a specific image from FormPatientForms.</summary>
+		public void ModuleSelected(long patNum,long docNum) {
 			try {
 				RefreshModuleData(patNum);
 			}
@@ -466,16 +1449,7 @@ namespace OpenDental
 			if(_patient!=null && _patient.PatStatus==PatientStatus.Deleted) {
 				MsgBox.Show("Selected patient has been deleted by another workstation.");
 				PatientL.RemoveFromMenu(_patient.PatNum);
-				GlobalFormOpenDental.PatientSelected(new Patient(),false);
-				try {
-					RefreshModuleData(0);
-				}
-				catch(Exception ex) {//Exception should never get thrown because RefreshModuleData() will return when PatNum is zero.
-					FriendlyException.Show(Lan.g(this,"Error accessing images."),ex);
-				}
-			}
-			if(_patient!=null && _patient.PatStatus==PatientStatus.Archived && !Security.IsAuthorized(EnumPermType.ArchivedPatientSelect,suppressMessage:true)) {
-				GlobalFormOpenDental.PatientSelected(new Patient(),false);
+				FormOpenDental.S_Contr_PatientSelected(new Patient(),false);
 				try {
 					RefreshModuleData(0);
 				}
@@ -484,1396 +1458,1005 @@ namespace OpenDental
 				}
 			}
 			RefreshModuleScreen();
+			if(panelNote.Visible) {//Notes and sig box may have been visible previously, with info from another image/patient
+				panelNote.Visible=false;
+				LayoutAll();//Resize pictureboxmain to fit the whole screen
+			}
 			if(docNum!=0) {
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,docNum));
+				SelectTreeNode(GetTreeNode(MakeIdDoc(docNum)));
 			}
-			if(_patient!=null && DatabaseIntegrities.DoShowPopup(_patient.PatNum,EnumModuleType.Imaging)) {
-				List<Claim> listClaims=Claims.GetForPat(_patient.PatNum);
-				List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(new List<long>(){_patient.PatNum});
-				bool areHashesValid=Patients.AreAllHashesValid(_patient,new List<Appointment>(),new List<PayPlan>(),new List<PaySplit>(),listClaims,listClaimProcs);
-				if(!areHashesValid) {
-					DatabaseIntegrities.AddPatientModuleToCache(_patient.PatNum,EnumModuleType.Imaging); //Add to cached list for next time
-					//show popup
-					DatabaseIntegrity databaseIntegrity=DatabaseIntegrities.GetModule();
-					FrmDatabaseIntegrity frmDatabaseIntegrity=new FrmDatabaseIntegrity();
-					frmDatabaseIntegrity.MessageToShow=databaseIntegrity.Message;
-					frmDatabaseIntegrity.ShowDialog();
-				}
-			}
-			float scaleZoom=LayoutManager.ScaleMyFont();
-			imageSelector.LayoutTransform=new System.Windows.Media.ScaleTransform(scaleZoom,scaleZoom);
-			windowingSlider.LayoutTransform=new System.Windows.Media.ScaleTransform(scaleZoom,scaleZoom);
-			zoomSlider.LayoutTransform=new System.Windows.Media.ScaleTransform(scaleZoom,scaleZoom);
-			toolBarMain.LayoutTransform=new System.Windows.Media.ScaleTransform(scaleZoom,scaleZoom);
-			unmountedBar.LayoutTransform=new System.Windows.Media.ScaleTransform(scaleZoom,scaleZoom);
 			Plugins.HookAddCode(this,"ContrImages.ModuleSelected_end",patNum,docNum);
 		}
-		
-		///<summary></summary>
-		public void ModuleUnselected(){
-			_familyCur=null;
-			if(_listFormImageFloats.Count>0 && _listFormImageFloats[0].IsImageFloatDocked){
-				//Close the docked window
-				_listFormImageFloats[0].Close();//removal from list happens automatically here
-				//but we will not close any undocked.
-				//So _listFormImageFloats remains valid and still has all the floaters in it, even when we are in the Chart module. 
-				//In CloseFloaters below, we close the floaters when changing patients.
+
+		///<summary>This overload is for amendment images.  Loads the one image for this amendment.</summary>
+		public void ModuleSelectedAmendment(EhrAmendment amendment) {
+			_ehrAmendment=amendment;
+			//Just in case this control has not been initialized yet.  Does not hurt to call multiple times.  Simply returns if already initilized.
+			InitializeOnStartup();
+			LayoutAmendmentToolBar();
+			windowingSlider.Visible=false;
+			//ToolBarPaint.Location=new Point(pictureBoxMain.Left,ToolBarPaint.Top);//happens in ResizeAll().
+			LayoutAll();
+			//RefreshModuleData-----------------------------------------------------------------------
+			SelectTreeNode(null);//Clear selection and image and reset visibilities.
+			//PatFolder=ImageStore.GetPatientFolder(PatCur);//This is where the pat folder gets created if it does not yet exist.
+			//RefreshModuleScreen---------------------------------------------------------------------
+			EnableToolBarsPatient(true);
+			EnableAllTreeItemTools(false);
+			ToolBarMain.Invalidate();
+			ToolBarPaint.Invalidate();
+			FillTree(false);
+			if(treeMain.Nodes.Count>0) {
+				SelectTreeNode(treeMain.Nodes[0]);
 			}
+		}
+
+		///<summary>This overload is for batch claim payment (EOB) images.</summary>
+		public void ModuleSelectedClaimPayment(long claimPaymentNum) {
+			_claimPaymentNum=claimPaymentNum;
+			//Just in case this control has not been initialized yet.  Does not hurt to call multiple times.  Simply returns if already initilized.
+			InitializeOnStartup();
+			LayoutToolBar();//again
+			windowingSlider.Visible=false;
+			//ToolBarPaint.Location=new Point(pictureBoxMain.Left,ToolBarPaint.Top);//happens in ResizeAll().
+			LayoutAll();
+			//RefreshModuleData-----------------------------------------------------------------------
+			SelectTreeNode(null);//Clear selection and image and reset visibilities.
+			//PatFolder=ImageStore.GetPatientFolder(PatCur);//This is where the pat folder gets created if it does not yet exist.
+			//RefreshModuleScreen---------------------------------------------------------------------
+			EnableToolBarsPatient(true);
+			EnableAllTreeItemTools(false);
+			ToolBarMain.Invalidate();
+			ToolBarPaint.Invalidate();
+			FillTree(false);
+			if(treeMain.Nodes.Count>0) {
+				SelectTreeNode(treeMain.Nodes[0]);
+			}
+			//SelectTreeNode(GetNodeById(MakeIdentifier(docNum.ToString(),"0")));
+		}
+
+		///<summary></summary>
+		public void ModuleUnselected() {
+			_family=null;
+			//foreach(Control c in this.Controls) {
+			//	if(c.GetType()==typeof(WebBrowser)) {//_webBrowserDocument
+			//		Controls.Remove(c);
+			//		c.Dispose();
+			//	}
+			//}
+			//Cancel current image capture.
+			_suniDeviceControl.KillXRayThread();
 			_patNumLastSecurityLog=0;//Clear out the last pat num so that a security log gets entered that the module was "visited" or "refreshed".
 			Plugins.HookAddCode(this,"ContrImages.ModuleUnselected_end");
 		}
 
-		///<summary>Called when changing patients by any means.  Closes the undocked floating image windows.</summary>
-		public void CloseFloaters(){
-			for(int i=_listFormImageFloats.Count-1;i>=0;i--){//go backwards
-				//Actually, it also closes the docked window. No problem.
-				if(!_listFormImageFloats[i].IsDisposed){
-					_listFormImageFloats[i].Close();//remove gets handled automatically here
-				}
+		///<summary>Selection doesn't only happen by the tree and mouse clicks, but can also happen by automatic processes, such as image import, image paste, etc... localPathCloud will be set only if using Cloud storage and an image was imported.  We want to use the local version instead of re-downloading what was just uploaded.</summary>
+		public void SelectTreeNode(TreeNode treeNode,string localPathCloud="") {
+			//Select the node always, but perform additional tasks when necessary (i.e. load an image, or mount).
+			treeMain.SelectedNode=treeNode;
+			treeMain.Invalidate();
+			//Clear the copy document number for mount item swapping whenever a new mount is potentially selected.
+			_idxDocToCopy=-1;
+			//We only perform a load if the new selection is different than the old selection.
+			NodeIdTag nodeIdTag=new NodeIdTag();
+			if(treeNode!=null) {
+				nodeIdTag=(NodeIdTag)treeNode.Tag;
 			}
-		}
-
-		///<summary>Called externally. Example, Chart module double click on a thumbnail. Specify either mountNum or docNum.</summary>
-		public void LaunchFloater(long patNum,long docNum,long mountNum){
-			FormImageFloat formImageFloat=CreateFloater();
-			_familyCur=Patients.GetFamily(patNum);
-			_patient=_familyCur.GetPatient(patNum);
-			_patFolder=ImageStore.GetPatientFolder(_patient,ImageStore.GetPreferredAtoZpath());
-			formImageFloat.PatientCur=_patient;
-			formImageFloat.PatFolder=_patFolder;
-			formImageFloat.ZoomSliderValue=zoomSlider.Value;
-			formImageFloat.IsImageFloatDocked=false;
-			formImageFloat.DidLaunchFromChartModule=true;
-			_listFormImageFloats.Add(formImageFloat);
-			System.Windows.Forms.Screen[] screenArray=System.Windows.Forms.Screen.AllScreens;
-			Size size=new Size();
-			Point location=new Point();
-			if(screenArray.Length==1){
-				System.Windows.Forms.Screen screen=screenArray[0];
-				//show on this screen.
-				//I would rather calculate the ratio of the image so that I can make the window the same size.
-				//But to do that, I would need to load the bitmap, rotate as needed, and then do the calc.  Maybe later.
-				//So make it square, about 50% of height. Push it to the right.  They can resize.
-				size=new Size(screen.WorkingArea.Height/2,screen.WorkingArea.Height/2);
-				location=new Point(screen.WorkingArea.Right-size.Width,screen.WorkingArea.Top+screen.WorkingArea.Height/4);//centered up and down
-				formImageFloat.SetDesktopBounds(location.X,location.Y,size.Width,size.Height);
-			}
-			else{
-				//show on other screen, maximized
-				System.Windows.Forms.Screen screen=screenArray[0];
-				if(screen==System.Windows.Forms.Screen.FromControl(this)){
-					screen=screenArray[1];
-				}
-				//set a moderate size in case they unmaximize
-				size=new Size(screen.WorkingArea.Width/2,screen.WorkingArea.Height/2);
-				location=new Point(screen.WorkingArea.Left+screen.WorkingArea.Width/4,screen.WorkingArea.Top+screen.WorkingArea.Height/4);//centered
-				//but set the size to the full screen so that the zoom will be correct.
-				formImageFloat.SetDesktopBounds(screen.WorkingArea.X,screen.WorkingArea.Y,screen.WorkingArea.Width,screen.WorkingArea.Height);
-			}
-			//SelectTreeNode must come before show, because that will trigger Activated, then imageSelector.SetSelected
-			//But it must come after bounds are set for the zoom to be correct.
-			NodeTypeAndKey nodeTypeAndKey=null;
-			if(docNum>0){
-				nodeTypeAndKey=new NodeTypeAndKey(EnumImageNodeType.Document,docNum);
-			}
-			if(mountNum>0){
-				nodeTypeAndKey=new NodeTypeAndKey(EnumImageNodeType.Mount,mountNum);
-			}
-			formImageFloat.SelectTreeNode(nodeTypeAndKey);
-			formImageFloat.Show();
-			formImageFloat.SetDesktopBounds(location.X,location.Y,size.Width,size.Height);//#2
-			//the above line can trigger a resize due to dpi change, so once more:
-			formImageFloat.SetDesktopBounds(location.X,location.Y,size.Width,size.Height);//#3
-			if(screenArray.Length>1){
-				formImageFloat.WindowState=FormWindowState.Maximized;
-			}
-		}
-
-		///<summary>Fired when user clicks on tree and also for automated selection that's not by mouse, such as image import, image paste, etc.  Can pass in NULL.  localPathImported will be set only if using Cloud storage and an image was imported.  We want to use the local version instead of re-downloading what was just uploaded.  nodeObjTag does not need to be same object, but must match type and priKey.</summary>
-		public void SelectTreeNode(NodeTypeAndKey nodeTypeAndKey,string localPathImportedCloud="") {
-			//Select the node always, but perform additional tasks when necessary (i.e. load an image, or mount).	
-			if(nodeTypeAndKey!=null && nodeTypeAndKey.NodeType!=EnumImageNodeType.None){	
-				imageSelector.SetSelected(nodeTypeAndKey.NodeType,nodeTypeAndKey.PriKey);//this is redundant when user is clicking, but harmless 
-			}
-			FormImageFloat formImageFloat=_listFormImageFloats.FirstOrDefault(x=>x.GetNodeTypeAndKey().IsMatching(nodeTypeAndKey));
-			if(formImageFloat!=null && !formImageFloat.IsDisposed){//found the doc/mount we're after already showing in a floater.
-				formImageFloat.Select();
-				//This triggers FormImageFloat_Activated which enables toolbar buttons, etc
-				if(formImageFloat.WindowState==FormWindowState.Minimized){
-					formImageFloat.Restore();
-				}
-				//if(forceRefresh){
-				SetDrawMode(EnumDrawMode.None);
-				panelDraw.Visible=false;
-				formImageFloat.SelectTreeNode(nodeTypeAndKey,localPathImportedCloud);
-				if(formImageFloat.IsDisposed){
-					//see note 35 lines down
-					return;
-				}
-				formImageFloat.Select();
-				if(IsMountShowing()){
-					unmountedBar.SetObjects(formImageFloat.GetUmountedObjs());
-					unmountedBar.SetColorBack(ColorOD.ToWpf(GetMountShowing().ColorBack));
-				}
-				SetPanelNoteVisibility();
-				_isAcquiring=false;
-				SetUnmountedBarVisibility();
-				LayoutControls();
-				//SetZoomSlider();
-				FillSignature();
-				formImageFloat.EnableToolBarButtons();
-				EnableMenuItemTreePrintHelper(formImageFloat);
-				//}
+			if(nodeIdTag.Equals(_nodeIdTagOld)) {
 				return;
 			}
-			bool reuseExistingForm=false;
-			if(_listFormImageFloats.Count>0 && _listFormImageFloats[0].IsImageFloatDocked && !_listFormImageFloats[0].IsDisposed){
-				reuseExistingForm=true;
-				formImageFloat=_listFormImageFloats[0];
-				//close the draw panel because we are going to change to a different image in the window
-				SetDrawMode(EnumDrawMode.None);
-				panelDraw.Visible=false;
-				//LayoutControls();//happens below
+			pictureBoxMain.Visible=true;
+			_cloudIframe?.HideIframe();
+			if(_odWebView2!=null) {
+				_odWebView2.Visible=false;
 			}
-			else{
-				formImageFloat=CreateFloater();
+			_documentShowing=new Document();
+			bool isNodeOldDoc=(_nodeIdTagOld.NodeType==EnumNodeType.Doc);
+			long docNumOld=_nodeIdTagOld.PriKey;
+			_nodeIdTagOld=nodeIdTag;
+			//Disable all item tools until the currently selected node is loaded properly in the picture box.
+			EnableAllTreeItemTools(false);
+			if(ToolBarPaint.Buttons["Hand"]!=null) {
+				ToolBarPaint.Buttons["Hand"].IsTogglePushed=true;
 			}
-			formImageFloat.PatientCur=_patient;
-			formImageFloat.PatFolder=_patFolder;
-			formImageFloat.ZoomSliderValue=zoomSlider.Value;
-			if(reuseExistingForm){
-				formImageFloat.SelectTreeNode(nodeTypeAndKey,localPathImportedCloud);
-				if(formImageFloat.IsDisposed){
-					//We have reports of many UEs here and a few lines down.
-					//These are two completely different impossible ways to end up with a disposed form.
-					//Unclear how the form is disposed, but we must handle it.
+			if(ToolBarPaint.Buttons["Crop"]!=null) {
+				ToolBarPaint.Buttons["Crop"].IsTogglePushed=false;
+			}
+			//Stop any current image processing. This will avoid having the ImageRenderingNow set to a valid image after
+			//the current image has been erased. This will also avoid concurrent access to the the currently loaded images by
+			//the main and worker threads.
+			EraseCurrentImages();
+			if(isNodeOldDoc) {//We are no longer using the previously saved image, try to delete it if it is in the temp directory.
+				DeleteTempPdf(docNumOld);//Clean up the temp storage copy of Pdf.
+			}
+			if(nodeIdTag.NodeType==EnumNodeType.ApteryxImage) {
+				ShowApteryxImage(treeNode); //Display image in our own special way. 
+			}
+			if(nodeIdTag.NodeType==EnumNodeType.Category) {
+				//A folder was selected (or unselection, but I am not sure unselection would be possible here).
+				//The panel note control is made invisible to start and then made visible for the appropriate documents. This
+				//line prevents the possibility of showing a signature box after selecting a folder node.
+				panelNote.Visible=false;
+				//Make sure the controls are sized properly in the image module since the visibility of the panel note might
+				//have just changed.
+				LayoutAll();
+			}
+			else if(nodeIdTag.NodeType==EnumNodeType.Eob) {
+				EobAttach eob=EobAttaches.GetOne(nodeIdTag.PriKey);
+				Action actionCloseDownloadProgress=null;
+				if(CloudStorage.IsCloudStorage) {
+					actionCloseDownloadProgress=ODProgress.Show(ODEventType.ContrImages,startingMessage:Lan.g("ContrImages","Downloading..."));
+				}
+				try {
+					_bitmapArrayRaw=ImageStore.OpenImagesEob(eob,localPathCloud);
+					actionCloseDownloadProgress?.Invoke();
+				}
+				catch(ApplicationException ex) {
+					actionCloseDownloadProgress?.Invoke();
+					FriendlyException.Show(ex.Message,(ex.InnerException==null ? ex : ex.InnerException));
+				}
+				_isExportable=pictureBoxMain.Visible;
+				if(_bitmapArrayRaw[0]==null) {
+					if(Path.GetExtension(eob.FileName).ToLower()==".pdf") {//Adobe acrobat file.
+						try {
+							LoadPdf(ImageStore.GetEobFolder(),eob.FileName,localPathCloud,"Downloading EOB...");
+						}
+						catch(ApplicationException ex) {
+							actionCloseDownloadProgress?.Invoke();
+							FriendlyException.Show(ex.Message,ex);
+						}
+					}
+				}
+				EnableToolBarButtons(pictureBoxMain.Visible,true,true,pictureBoxMain.Visible,true,pictureBoxMain.Visible,pictureBoxMain.Visible,pictureBoxMain.Visible,
+					pictureBoxMain.Visible,pictureBoxMain.Visible,pictureBoxMain.Visible,pictureBoxMain.Visible,pictureBoxMain.Visible,_isExportable);
+			}
+			else if(nodeIdTag.NodeType==EnumNodeType.Doc) {
+				//Reload the doc from the db. We don't just keep reusing the tree data, because it will become more and 
+				//more stale with age if the program is left open in the image module for long periods of time.
+				_documentShowing=Documents.GetByNum(nodeIdTag.PriKey,doReturnNullIfNotFound:true);
+				if(_documentShowing==null) {
+					MsgBox.Show(this,"Document has been deleted.");
+					FillTree(false);
 					return;
 				}
-				formImageFloat.Select();
-			}
-			else{
-				_listFormImageFloats.Insert(0,formImageFloat);//docked form must always be at idx 0 
-				formImageFloat.Bounds=new Rectangle(PointToScreen(panelMain.Location),panelMain.Size);
-				//SelectTreeNode must come before show, because that will trigger Activated, then imageSelector.SetSelected
-				//But it must come after bounds are set for the zoom to be correct.
-				formImageFloat.SelectTreeNode(nodeTypeAndKey,localPathImportedCloud);
-				if(formImageFloat.IsDisposed){
-					//See the comments 13 lines up
-					return;
+				_idxSelectedInMount=0;
+				Action actionCloseDownloadProgress=null;
+				if(CloudStorage.IsCloudStorage) {
+					actionCloseDownloadProgress=ODProgress.Show(ODEventType.ContrImages,startingMessage:Lan.g("ContrImages","Downloading..."));
 				}
-				formImageFloat.Show(this);
+				//ImagesCur contains BitMaps of selected images if they are found.  ImagesCur is used to display images in the main window in a later method.
+				//PDF files will always return null.
+				List<Document> listDocs=new List<Document>() { _documentShowing };
+				_bitmapArrayRaw=ImageStore.OpenImages(listDocs.ToArray(),_patFolder,localPathCloud);
+				//Diverges slightly from the normal use of this event, in that it is fired from SelectTreeNode() rather than ModuleSelected.  Appropriate
+				//here because this is the only data in ContrImages that might affect the PatientDashboard, and there is no "LoadData" in this Module.
+				PatientDashboardDataEvent.Fire(ODEventType.ModuleSelected
+					,new PatientDashboardDataEventArgs() {
+						Pat=_patient,
+						ListDocuments=listDocs,
+						BitmapImagesModule=_bitmapArrayRaw[0],
+					}
+				);
+				actionCloseDownloadProgress?.Invoke();
+				_isExportable=pictureBoxMain.Visible;
+				if(_bitmapArrayRaw[0]==null) {
+					if(ImageHelper.HasImageExtension(_documentShowing.FileName)) {
+						string srcFileName = ODFileUtils.CombinePaths(_patFolder,_documentShowing.FileName);
+						if(File.Exists(srcFileName)) {
+							MessageBox.Show(Lan.g(this,"File found but cannot be opened")+": " + _documentShowing.FileName);
+						}
+						else {
+							MessageBox.Show(Lan.g(this,"File not found")+": " + _documentShowing.FileName);
+						}
+					}
+					else if(Path.GetExtension(_documentShowing.FileName).ToLower()==".pdf") {//Adobe acrobat file.
+						LoadPdf(_patFolder,_documentShowing.FileName,localPathCloud,"Downloading Document...");
+					}
+				}
+				SetWindowingSlider();
+				bool doShowPrint=pictureBoxMain.Visible;
+				EnableToolBarButtons(print:doShowPrint,delete:true,info:true,copy:pictureBoxMain.Visible, sign:true, brightAndContrast:pictureBoxMain.Visible, crop:pictureBoxMain.Visible, hand:pictureBoxMain.Visible, zoomIn:pictureBoxMain.Visible, zoomOut:pictureBoxMain.Visible, flip:pictureBoxMain.Visible, rotateL:pictureBoxMain.Visible, rotateR:pictureBoxMain.Visible, export:_isExportable);
 			}
-			if(IsMountShowing()){
-				unmountedBar.SetObjects(formImageFloat.GetUmountedObjs());
-				unmountedBar.SetColorBack(ColorOD.ToWpf(GetMountShowing().ColorBack));
+			else if(nodeIdTag.NodeType==EnumNodeType.Mount) {
+				//not supported here
 			}
-			SetPanelNoteVisibility();
-			_isAcquiring=false;
-			SetUnmountedBarVisibility();
-			LayoutControls();
-			//SetZoomSlider();
-			FillSignature();
-			formImageFloat.EnableToolBarButtons();
-			EnableMenuItemTreePrintHelper(formImageFloat);
+			else if(nodeIdTag.NodeType==EnumNodeType.EhrAmend) {
+				EhrAmendment amd=EhrAmendments.GetOne(nodeIdTag.PriKey);
+				try {
+					_bitmapArrayRaw=ImageStore.OpenImagesAmd(amd);
+				}
+				catch(ApplicationException ex) {
+					FriendlyException.Show(ex.Message,(ex.InnerException==null ? ex : ex.InnerException));
+				}
+				_isExportable=pictureBoxMain.Visible;
+				if(_bitmapArrayRaw[0]==null) {
+					if(Path.GetExtension(amd.FileName).ToLower()==".pdf") {//Adobe acrobat file.
+						LoadPdf(ImageStore.GetAmdFolder(),amd.FileName,localPathCloud,"Downloading Amendment...");
+					}
+				}
+				EnableToolBarButtons(pictureBoxMain.Visible,true,true,pictureBoxMain.Visible,true,pictureBoxMain.Visible,pictureBoxMain.Visible,pictureBoxMain.Visible,
+					pictureBoxMain.Visible,pictureBoxMain.Visible,pictureBoxMain.Visible,pictureBoxMain.Visible,pictureBoxMain.Visible,_isExportable);
+			}
+			if(nodeIdTag.NodeType.In(EnumNodeType.Doc,EnumNodeType.Mount,EnumNodeType.Eob,EnumNodeType.EhrAmend,EnumNodeType.ApteryxImage)) {
+				_intArrayWidthsImagesCur=new int[_bitmapArrayRaw.Length];
+				_intArrayHeightsImagesCur=new int[_bitmapArrayRaw.Length];
+				for(int i=0;i<_bitmapArrayRaw.Length;i++) {
+					if(_bitmapArrayRaw[i]!=null) {
+						_intArrayWidthsImagesCur[i]=_bitmapArrayRaw[i].Width;
+						_intArrayHeightsImagesCur[i]=_bitmapArrayRaw[i].Height;
+					}
+				}
+				//Adjust visibility of panel note control based on if the new document has a signature.
+				SetPanelNoteVisibility(_documentShowing);
+				//Resize controls in our window to adjust for a possible change in the visibility of the panel note control.
+				LayoutAll();
+				//Refresh the signature and note in case the last document also had a signature.
+				FillSignature();
+			}
+			if(nodeIdTag.NodeType==EnumNodeType.Mount) {
+				//Do nothing, mounts are no longer supported in this module.
+				//ResetZoomTrans(_bitmapShowing.Width,_bitmapShowing.Height,new Document(),
+				//	new Rectangle(0,0,pictureBoxMain.Width,pictureBoxMain.Height),out _zoomImage,
+				//	out _zoomLevel,out _zoomOverall,out _pointTranslation);
+				//RenderCurrentImage(new Document(),_bitmapShowing.Width,_bitmapShowing.Height,_zoomImage,_pointTranslation);
+		}
+			if(nodeIdTag.NodeType.In(EnumNodeType.Doc,EnumNodeType.Eob,EnumNodeType.EhrAmend,EnumNodeType.ApteryxImage)) {
+				//Render the initial image within the current bounds of the picturebox (if the document is an image).
+				InvalidateSettings(ImageSettingFlags.ALL,true);
+			}
 		}
 		#endregion Methods - Public
 
-		#region Methods - Event Handlers
-		private void butBrowse_Click(object sender,EventArgs e) {
-			FolderBrowserDialog folderBrowserDialog=new FolderBrowserDialog();
-			if(Directory.Exists(textImportAuto.Text)){
-				folderBrowserDialog.SelectedPath=textImportAuto.Text;
-			}
-			else{
-				folderBrowserDialog.SelectedPath=@"C:\";
-			}
-			DialogResult dialogResult=folderBrowserDialog.ShowDialog();
-			if(dialogResult!=DialogResult.OK){
+		#region Methods - ToolBar
+		///<summary>Handles a change in selection of the xRay capture button.</summary>
+		private void ToolBarCapture_Click() {
+			if(treeMain.SelectedNode==null) {
 				return;
 			}
-			if(textImportAuto.Text==""){
-				if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Set as default?")){
-					Prefs.UpdateString(PrefName.AutoImportFolder,folderBrowserDialog.SelectedPath);
-					DataValid.SetInvalid(InvalidType.Prefs);
-				}
-			}
-			textImportAuto.Text=folderBrowserDialog.SelectedPath;
-		}
-
-		private void butColor_Click(object sender,EventArgs e) {
-			
-		}
-
-		private void butGoTo_Click(object sender,EventArgs e) {
-			if(!Directory.Exists(textImportAuto.Text)){
-				MsgBox.Show(this,"Folder does not exist.");
-				return;
-			}
-			Process.Start(textImportAuto.Text);
-		}
-
-		private void butImportClose_Click(object sender,EventArgs e) {
-			panelImportAuto.Visible=false;
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat==null){
-				return;
-			}
-			_isAcquiring=false;
-			SetUnmountedBarVisibility();
-			LayoutControls();
-			if(_fileSystemWatcher!=null){
-				_fileSystemWatcher.EnableRaisingEvents=false;
-			}
-		}
-
-		private void butImportStart_Click(object sender,EventArgs e) {
-			if(textImportAuto.Text==""){
-				MsgBox.Show(this,"Please enter a folder name.");
-				return;
-			}
-			if(!Directory.Exists(textImportAuto.Text)){
-				MsgBox.Show(this,"Folder does not exist.");
-				return;
-			}
-			PreselectFirstItem();//We already did this when clicking toolbar button, but user might have selected a mount after clicking that.
-			if(IsMountShowing()){
-				List<MountItem> listAvail=GetAvailSlots(1);
-				if(listAvail is null){
-					//no more available slots, so start saving in unmounted area
-				}
-				else if(IsMountItemSelected() || GetIdxSelectedInMount()==-1){
-					MsgBox.Show(this,"Please select an empty position in the mount, first.");
+			if(ToolBarMain.Buttons["Capture"].IsTogglePushed) {
+				NodeIdTag nodeIdTag=(NodeIdTag)treeMain.SelectedNode.Tag;
+				if(nodeIdTag.NodeType==EnumNodeType.ApteryxImage) {
+					MsgBox.Show(this,"Cannot capture a read-only image. Please copy/paste or export/import the image you are trying to capture.");
 					return;
 				}
-			}
-			textImportAuto.ReadOnly=true;
-			textImportAuto.BackColor=Color.White;
-			butBrowse.Visible=false;
-			butGoTo.Visible=false;
-			butImportStart.Visible=false;
-			butImportClose.Text=Lan.g(this,"Stop");
-			if(_fileSystemWatcher==null){
-				_fileSystemWatcher=new FileSystemWatcher(textImportAuto.Text);
-				_fileSystemWatcher.Created+=_fileSystemWatcher_FileCreated;
-			}
-			else{
-				_fileSystemWatcher.Path=textImportAuto.Text;
-			}
-			_fileSystemWatcher.EnableRaisingEvents=true;
-			_isAcquiring=true;
-			SetUnmountedBarVisibility();
-			LayoutControls();
-		}
-		
-		private void butStart_Click(object sender, EventArgs e){	
-			
-		}
-
-		private void ContrImages_Resize(object sender, EventArgs e){
-			LayoutControls();
-		}
-
-		private void imageSelector_DragDropImport(object sender,DragDropImportEventArgs e) {
-			//We already asked the user to confirm.
-			//This part will be silent, without additional popups.
-			if(e.ListFileNames.Count==0){
-				return;
-			}
-			Document document=null;
-			for(int i=0;i<e.ListFileNames.Count;i++){
-				document=ImageStore.Import(e.ListFileNames[i],e.DefNumNew,_patient);//Makes log
-			}
-			FillImageSelector(false);
-			NodeTypeAndKey nodeTypeAndKey=new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum);
-			SelectTreeNode(nodeTypeAndKey);
-		}
-
-		private void imageSelector_DraggedToCategory(object sender,DragEventArgsOD e) {
-			if(e.DocNum!=0){
-				//keep in mind that no change as been made to the selection
-				Document document=GetDocumentShowing(0);
-				//Get the document from the database if the selected FormImageFloat is no longer available or is for a different document.
-				if(document==null || document.DocNum!=e.DocNum) {
-					document=Documents.GetByNum(e.DocNum,doReturnNullIfNotFound:true);
-					if(document==null) {//The document being moved was deleted by another instance of the program
-						MsgBox.Show(this,"Document was previously deleted.");
-						return;
-					}
+				//ComputerPref computerPrefs=ComputerPrefs.GetForLocalComputer();
+				_suniDeviceControl.SensorType=ComputerPrefs.LocalComputer.SensorType;
+				_suniDeviceControl.PortNumber=ComputerPrefs.LocalComputer.SensorPort;
+				_suniDeviceControl.Binned=ComputerPrefs.LocalComputer.SensorBinned;
+				_suniDeviceControl.ExposureLevel=ComputerPrefs.LocalComputer.SensorExposure;
+				if(nodeIdTag.NodeType!=EnumNodeType.Mount) {//No mount is currently selected.
+					//Show the user that they are performing an image capture by generating a new mount.
+					Mount mount=new Mount();
+					mount.DateCreated=DateTime.Today;
+					mount.Description="unnamed capture";
+					mount.DocCategory=GetCurrentCategory();
+					mount.PatNum=_patient.PatNum;
+					int border=Math.Max(_suniDeviceControl.SensorSize.Width,_suniDeviceControl.SensorSize.Height)/24;
+					mount.Width=4*_suniDeviceControl.SensorSize.Width+5*border;
+					mount.Height=_suniDeviceControl.SensorSize.Height+2*border;
+					mount.MountNum=Mounts.Insert(mount);
+					MountItem mountItem=new MountItem();
+					mountItem.MountNum=mount.MountNum;
+					mountItem.Width=_suniDeviceControl.SensorSize.Width;
+					mountItem.Height=_suniDeviceControl.SensorSize.Height;
+					mountItem.Ypos=border;
+					mountItem.ItemOrder=1;
+					mountItem.Xpos=border;
+					MountItems.Insert(mountItem);
+					mountItem.ItemOrder=0;
+					mountItem.Xpos=mountItem.Width+2*border;
+					MountItems.Insert(mountItem);
+					mountItem.ItemOrder=2;
+					mountItem.Xpos=2*mountItem.Width+3*border;
+					MountItems.Insert(mountItem);
+					mountItem.ItemOrder=3;
+					mountItem.Xpos=3*mountItem.Width+4*border;
+					MountItems.Insert(mountItem);
+					FillTree(false);
+					SelectTreeNode(GetTreeNode(MakeIdMount(mount.MountNum)));
+					windowingSlider.MinVal=PrefC.GetInt(PrefName.ImageWindowingMin);
+					windowingSlider.MaxVal=PrefC.GetInt(PrefName.ImageWindowingMax);
 				}
-				string docOldCat=Defs.GetDef(DefCat.ImageCats,document.DocCategory).ItemName;
-				string docNewCat=Defs.GetDef(DefCat.ImageCats,e.DefNumNew).ItemName;
-				string logText=Lan.g(this,"Document moved")+": "+document.FileName;
-				if(document.Description!="") {
-					string docDescript=document.Description;
-					if(docDescript.Length>50) {
-						docDescript=docDescript.Substring(0,50);
-					}
-					logText+=" "+Lan.g(this,"with description")+" "+docDescript;
+				else if(nodeIdTag.NodeType==EnumNodeType.Mount) {//A mount is currently selected. We must allow the user to insert new images into partially complete mounts.
+					//not supported
 				}
-				logText+=" "+Lan.g(this,"from category")+" "+docOldCat+" "+Lan.g(this,"to category")+" "+docNewCat;
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageEdit,document.PatNum,logText,document.DocNum,document.DateTStamp);
-				Document docOld=document.Copy();
-				document.DocCategory=e.DefNumNew;
-				Documents.Update(document,docOld);
+				//Here we can only allow access to the capture button during a capture, because it is too complicated and hard for a 
+				//user to follow what is going on if they use the other tools when a capture is taking place.
+				EnableToolBarsPatient(false);
+				ToolBarMain.Buttons["Capture"].Enabled=true;
+				ToolBarMain.Invalidate();
+				_suniDeviceControl.CaptureXRay();
 			}
-			else if(e.MountNum!=0){
-				Mount mountShowing=GetMountShowing();
-				string mountOriginalCat=Defs.GetDef(DefCat.ImageCats,mountShowing.DocCategory).ItemName;
-				string mountNewCat=Defs.GetDef(DefCat.ImageCats,e.DefNumNew).ItemName;
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageEdit,mountShowing.PatNum,Lan.g(this,"Mount moved from")+" "+mountOriginalCat+" "
-					+Lan.g(this,"to")+" "+mountNewCat);
-				mountShowing.DocCategory=e.DefNumNew;
-				Mounts.Update(mountShowing);
-				Documents.UpdateDocCategoryForMountItems(mountShowing.MountNum,mountShowing.DocCategory);
+			else {//The user unselected the image capture button, so cancel the current image capture.
+				_suniDeviceControl.KillXRayThread();//Stop current xRay capture and call OnCaptureFinalize() when done.
 			}
-			FillImageSelector(true);
 		}
 
-		private void imageSelector_ItemDoubleClick(object sender,EventArgs e) {
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(!formImageFloat.HideWebBrowser()) {
-				MsgBox.Show(this,"The PDF viewer is busy loading the document and cannot be opened in its default program yet. Please try again.");
+		///<summary>Handles a change in selection of the xRay capture button.</summary>
+		private void ToolBarClose_Click() {
+			EventArgs args=new EventArgs();
+			SelectTreeNode(null);
+			this.Dispose();
+			if(CloseClick!=null) {
+				CloseClick(this,args);
+			}
+		}
+
+		private void ToolBarCopy_Click() {
+			if(treeMain.SelectedNode==null || treeMain.SelectedNode.Tag==null) {
+				MsgBox.Show(this,"Please select a document before copying");
 				return;
 			}
-			if(imageSelector.GetSelectedType()==EnumImageNodeType.None
-				|| imageSelector.GetSelectedType()==EnumImageNodeType.Category)
-			{
-				return;
+			Bitmap bitmapCopy=null;
+			Cursor=Cursors.WaitCursor;
+			NodeIdTag nodeIdTag=new NodeIdTag();
+			nodeIdTag = (NodeIdTag)treeMain.SelectedNode.Tag;
+			if(nodeIdTag.NodeType==EnumNodeType.Mount) {
+				if(_idxSelectedInMount>=0 && _documentArrayInMount[_idxSelectedInMount]!=null) {//A mount item is currently selected.
+					bitmapCopy=ImageHelper.ApplyDocumentSettingsToImage(_documentArrayInMount[_idxSelectedInMount],_bitmapArrayRaw[_idxSelectedInMount],ImageSettingFlags.ALL);
+				}
+				else {//Assume the copy is for the entire mount.
+					bitmapCopy=(Bitmap)_bitmapShowing.Clone();
+				}
 			}
-			if(imageSelector.GetSelectedType()==EnumImageNodeType.Mount) {
-				FrmMountEdit frmMountEdit=new FrmMountEdit();
-				frmMountEdit.MountCur=GetMountShowing();
-				frmMountEdit.ShowDialog();//Edits the MountSelected object directly and updates and changes to the database as well.
-				//Always reload because layout could have changed
-				FillImageSelector(true);//in case description for the mount changed.
-				imageSelector.SetSelected(EnumImageNodeType.Mount,GetMountShowing().MountNum);//Need to update _nodeObjTagSelected in case category changed
-				NodeTypeAndKey nodeTypeAndKey=formImageFloat.GetNodeTypeAndKey();
-				formImageFloat.SelectTreeNode(nodeTypeAndKey);
-				unmountedBar.SetObjects(formImageFloat.GetUmountedObjs());
-				unmountedBar.SetColorBack(ColorOD.ToWpf(GetMountShowing().ColorBack));
-				return;			
+			else if(nodeIdTag.NodeType==EnumNodeType.Doc) {
+				//Crop and color function has already been applied to the render image.
+				bitmapCopy=ImageHelper.ApplyDocumentSettingsToImage(Documents.GetByNum(nodeIdTag.PriKey),_bitmapShowing,
+					ImageSettingFlags.FLIP | ImageSettingFlags.ROTATE);
 			}
-			//From here down is Document=================================================================================================
-			Document document=GetDocumentShowing(0);
-			if(document==null){
-				return;//Unexplained error
+			else if(nodeIdTag.NodeType.In(EnumNodeType.Eob,EnumNodeType.EhrAmend,EnumNodeType.ApteryxImage)) {
+				bitmapCopy=(Bitmap)_bitmapShowing.Clone();
 			}
-			string ext=ImageStore.GetExtension(document);
-			if(ext==".jpg" || ext==".jpeg" || ext==".gif" 
-				|| document.ImgType==ImageType.Radiograph || document.ImgType==ImageType.Photo) 
-			{
-				FrmDocInfo frmDocInfo=new FrmDocInfo(_patient,GetDocumentShowing(0));
-				frmDocInfo.ShowDialog();
-				if(frmDocInfo.IsDialogCancel) {
+			if(bitmapCopy!=null) {
+				try {
+					System.Windows.Clipboard.SetDataObject(bitmapCopy);//System.Windows.Forms.Clipboard fails for Thinfinity
+				}
+				catch(Exception ex) {
+					MsgBox.Show(this,"Could not copy contents to the clipboard.  Please try again.");
+					ex.DoNothing();
 					return;
 				}
-				FillImageSelector(true);
-				imageSelector.SetSelected(EnumImageNodeType.Document,GetDocumentShowing(0).DocNum);//Need to update _nodeObjTagSelected in case category changed
-				return;
+				//Can't do this, or the clipboard object goes away.
+				//bitmapCopy.Dispose();
+				//bitmapCopy=null;
 			}
-			//from here down is attempting to launch document in separate external software=========================================================
-			if(PrefC.AtoZfolderUsed==DataStorageType.InDatabase) {
-				MsgBox.Show(this,"Images stored directly in database. Export file in order to open with external program.");
-				return;//Documents must be stored in the A to Z Folder to open them outside of Open Dental.  Users can use the export button for now.
+			long patNum=0;
+			if(_patient!=null) {
+				patNum=_patient.PatNum;
 			}
-			//We allow anything which ends with a different extention to be viewed in the windows fax viewer.
-			//Specifically, multi-page faxes can be viewed more easily by one of our customers using the fax viewer.
-			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
-				string tempFile=ImageStore.GetFilePath(document,_patFolder);
-				if(ODBuild.IsThinfinity()) {
-					ThinfinityUtils.HandleFile(tempFile);
-				}
-				else if(ODCloudClient.IsAppStream) {
-					CloudClientL.ExportForCloud(tempFile,doPromptForName:false);
-				}
-				else {
-					try {
-						string filePath=ImageStore.GetFilePath(document,_patFolder);
-						Process.Start(filePath);
-					}
-					catch(Exception ex) {
-						MessageBox.Show(ex.Message);
-					}
-				}
-			}
-			else {//Cloud
-				//Download document into temp directory for displaying.
-				string tempFile=PrefC.GetRandomTempFile(Path.GetExtension(GetDocumentShowing(0).FileName));
-				ProgressWin progressWin=new UI.ProgressWin();
-				progressWin.StartingMessage="Downloading...";
-				progressWin.ActionMain=() => {
-					byte[] byteArray=CloudStorage.Download(_patFolder.Replace("\\","/"),GetDocumentShowing(0).FileName);
-					File.WriteAllBytes(tempFile,byteArray);
-				};
-				progressWin.ShowDialog();
-				if(progressWin.IsCancelled){
-					return;
-				}	
-				if(ODBuild.IsThinfinity()) {
-					ThinfinityUtils.HandleFile(tempFile);
-				}
-				else if(ODCloudClient.IsAppStream){
-					CloudClientL.ExportForCloud(tempFile,doPromptForName:false);
-				}
-				else {
-					Process.Start(tempFile);
-				}
-			}
-		}
-
-		private void FormImageFloat_Activated(object sender, EventArgs e){
-			FormImageFloat formImageFloat=(FormImageFloat)sender;
-			//Debug.WriteLine(DateTime.Now.ToString()+" IsImageFloatSelected:"+formImageFloat.IsImageFloatSelected.ToString());
-			//Based on the above debug testing, this gets hit fairly frequently: every time you use a button in the toolbar and then go back into the floater.
-			//We want to SetDrawMode(EnumDrawMode.None) and hide the draw toobar, but only if we change the selected floater.
-			if(!formImageFloat.IsImageFloatSelected){
-				SetCropPanAdj(EnumCropPanAdj.Pan);
-				SetDrawMode(EnumDrawMode.None);
-				panelDraw.Visible=false;
-				LayoutControls();
-			}
-			for(int i=0;i<_listFormImageFloats.Count;i++){
-				//deactivate all other floaters
-				if(_listFormImageFloats[i]!=sender){
-					_listFormImageFloats[i].IsImageFloatSelected=false;
-				}
-			}
-			formImageFloat.IsImageFloatSelected=true;
-			formImageFloat.EnableToolBarButtons();
-			EnumImageNodeType imageNodeType=formImageFloat.GetSelectedType();
-			long priKey=formImageFloat.GetSelectedPriKey();
-			imageSelector.SetSelected(imageNodeType,priKey);
-			ZoomSliderState zoomSliderState=formImageFloat.ZoomSliderStateInitial;
-			if(zoomSliderState!=null){
-				zoomSlider.SetValueInitialFit(zoomSliderState.SizeCanvas,zoomSliderState.SizeImage,zoomSliderState.DegreesRotated);
-				zoomSlider.SetValueAndMax(formImageFloat.ZoomSliderValue);
-			}
-			formImageFloat.SetWindowingSlider();
-		}
-
-		private void FormImageFloat_KeyDown(KeyEventArgs e) {
-			EventKeyDown?.Invoke(this,e);
-		}
-
-		private void FormImageFloat_FormClosed(object sender, FormClosedEventArgs e){
-			FormImageFloat formImageFloat=(FormImageFloat)sender;
-			SetDrawMode(EnumDrawMode.None);
-			panelDraw.Visible=false;
-			LayoutControls();
-			for(int i=0;i<_listFormImageFloats.Count;i++){
-				if(_listFormImageFloats[i]==formImageFloat){
-					_listFormImageFloats.RemoveAt(i);
-					break;
-				}
-			}
-			DisableAllToolBarButtons();
-			FillImageSelector(false);
-			//In case the image had a signature or note:
-			SetPanelNoteVisibility();
-			SetUnmountedBarVisibility();
-			LayoutControls();
-			FillSignature();
-		}
-
-		private void FormImageFloat_IsImageFloatDockedChanged(object sender,EventArgs e) {
-			SetPanelNoteVisibility();
-			SetUnmountedBarVisibility();
-			LayoutControls();
-			FillSignature();
-		}
-
-		private void FormImageFloat_SetWindowingSlider(object sender,WindowingEventArgs windowingEventArgs){
-			windowingSlider.MinVal=windowingEventArgs.MinVal;
-			windowingSlider.MaxVal=windowingEventArgs.MaxVal;
-		}
-
-		private void FormImageFloat_SetZoomSlider(object sender,ZoomSliderState zoomSliderState){
-			zoomSlider.SetValueInitialFit(zoomSliderState.SizeCanvas,zoomSliderState.SizeImage,zoomSliderState.DegreesRotated);
-			((FormImageFloat)sender).ZoomSliderValue=zoomSlider.Value;
-		}
-
-		private void FormImageFloat_ZoomSliderSetByWheel(object sender,float deltaZoom){
-			zoomSlider.SetByWheel(deltaZoom);
-			((FormImageFloat)sender).ZoomSliderValue=zoomSlider.Value;
-		}
-
-		private void FormImageFloat_WindowClicked(object sender, int idx){
-			if(idx>_listFormImageFloats.Count-1){
-				return;
-			}
-			if(_listFormImageFloats[idx].WindowState==FormWindowState.Minimized){
-			_listFormImageFloats[idx].Restore();
-			}
-			_listFormImageFloats[idx].BringToFront();
-			_listFormImageFloats[idx].Select();
-		}
-
-		private void FormImageFloat_WindowCloseOthers(object sender, EventArgs e){
-			if(_listFormImageFloats.Count==0){
-				return;
-			}
-			for(int i=_listFormImageFloats.Count-1;i>=0;i--){//go backwards
-				if(_listFormImageFloats[i]==(FormImageFloat)sender){
-					continue;
-				}
-				if(!_listFormImageFloats[i].IsDisposed){
-					_listFormImageFloats[i].Close();//remove gets handled automatically here
-				}
-			}
-		}
-
-		private void FormImageFloat_WindowDockThis(object sender, EventArgs e){
-			FormImageFloat formImageFloat=(FormImageFloat)sender;
-			if(formImageFloat.IsImageFloatDocked){
-				MessageBox.Show(this,Lan.g(this,"Already docked."));//must specify different owner because FormImageFloatWindows will close.
-				return;
-			}
-			if(_listFormImageFloats[0].IsImageFloatDocked){
-				if(MessageBox.Show(this,Lan.g(this,"Another image is already docked. Dock this one instead?"),"",MessageBoxButtons.YesNo)!=DialogResult.Yes){
-					return;
-				}
-				//Delete the other docked window
-				_listFormImageFloats[0].Close();//removal from list happens automatically here
-			}
-			formImageFloat.IsImageFloatDocked=true;
-			formImageFloat.Bounds=new Rectangle(PointToScreen(panelMain.Location),panelMain.Size);
-			//but then, if moving from the other screen with different dpi, the form will resize, so:
-			Application.DoEvents();
-			formImageFloat.Bounds=new Rectangle(PointToScreen(panelMain.Location),panelMain.Size);
-			formImageFloat.SetZoomSlider();
-			int idx=_listFormImageFloats.IndexOf(formImageFloat);
-			if(idx!=0){
-				_listFormImageFloats.RemoveAt(idx);
-				_listFormImageFloats.Insert(0,formImageFloat);
-			}
-			NodeTypeAndKey nodeTypeAndKey=formImageFloat.GetNodeTypeAndKey();
-			SelectTreeNode(nodeTypeAndKey);//This is necessary when this window replaces an old docked window
-		}
-
-		private void FormImageFloat_WindowShowAll(object sender, EventArgs e){
-			for(int i=0;i<_listFormImageFloats.Count;i++){
-				_listFormImageFloats[i].Show();
-				if(_listFormImageFloats[i].WindowState==FormWindowState.Minimized){
-					_listFormImageFloats[i].Restore();
-				}
-				_listFormImageFloats[i].BringToFront();
-			}
-			FormImageFloat formImageFloat=(FormImageFloat)sender;
-			formImageFloat.BringToFront();
-		}
-
-		private void imageSelector_ItemReselected(object sender,EventArgs e) {
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return;
-			}
-			NodeTypeAndKey nodeTypeAndKey=formImageFloat.GetNodeTypeAndKey();
-			formImageFloat.SelectTreeNode(nodeTypeAndKey);
-			if(imageSelector.GetSelectedType()==EnumImageNodeType.Mount) {
-				unmountedBar.SetObjects(formImageFloat.GetUmountedObjs());
-				unmountedBar.SetColorBack(ColorOD.ToWpf(GetMountShowing().ColorBack));
-			}
-			//this resets zoom and pan
-		}
-
-		private void imageSelector_SelectionChangeCommitted(object sender,EventArgs e) {
-			EnumImageNodeType nodeType=imageSelector.GetSelectedType();
-			long priKey=imageSelector.GetSelectedKey();
-			NodeTypeAndKey nodeTypeAndKey=new NodeTypeAndKey(nodeType,priKey);
-			SelectTreeNode(nodeTypeAndKey);
-		}
-
-		private void _fileSystemWatcher_FileCreated(object sender,FileSystemEventArgs e) {
-			//This event fires in a worker thread even though the MS documentation does not say so.
-			if(InvokeRequired){
-				Invoke(new MethodInvoker(()=>{_fileSystemWatcher_FileCreated(sender,e);}));
-				return;
-			}
-			if(!File.Exists(e.FullPath)) {
-				//When saving a file into the directory being watched, windows may perform multiple operations to save the file, resulting in _fileSystemWatcher detecting mulitple events.
-				//In this case, two create events are detected by _fileSystemWatcher when savings screenshots using 'Save As', so this method attempts to import one file twice.
-				//The first time passing through this method, this file will exist and if it fails to save in open dental, we will get an error message stating so later in the method.
-				//The second time, e.FullPath will not exist because we remove the file from the folder being watched later on in this method after we have saved the image in AtoZ and DB.
-				//By this logic we can assume that if e.FullPath no longer exists, we have successfully saved the file and can exit out of this method.
-				return;
-			}
-			bool isFileAvailable=false;
-			int maxAttempts=30;//try for 3 seconds
-			var attemptsMade=0;
-			while(!isFileAvailable && attemptsMade<=maxAttempts){
-				try{
-					using (File.Open(e.FullPath, FileMode.Open, FileAccess.ReadWrite)){
-						isFileAvailable = true;
-					}
-				}
-				catch{
-
-				}
-				attemptsMade++;
-				Thread.Sleep(100);
-			}
-			Document document = null;
-			try{
-				document=ImageStore.Import(e.FullPath,GetCurrentCategory(),_patient);
-			}
-			catch(Exception ex) {
-				panelImportAuto.Visible=false;
-				_fileSystemWatcher.EnableRaisingEvents=false;//will never be null
-				MessageBox.Show(Lan.g(this,"Unable to import ")+e.FullPath+": "+ex.Message);
-				return;
-			}
-			if(!IsMountShowing()){//single
-				File.Delete(e.FullPath);
-				FillImageSelector(false);//Reload and keep new document selected.
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
-				return;//user can take another single
-			}
-			//From here down is mount-----------------------------------------------------------------------------
-			Bitmap bitmap=(Bitmap)Bitmap.FromFile(e.FullPath);
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();//will always succeed because we verified floater idxSelected in IsMountShowing()
-			if(IsMountItemSelected()){
-				//They shouldn't have selected an item, but we will try to find an unoccupied spot.
-				List<MountItem> listAvail2=GetAvailSlots(1);
-				if(listAvail2 is null){//no more available slots, so start saving in unmounted area
-					SetIdxSelectedInMount(-1);
-				}
-				else{
-					MountItem mountItem2=formImageFloat.GetListMountItems().FirstOrDefault(x=>x.MountItemNum==listAvail2[0].MountItemNum);
-					if(mountItem2==null){//should not be possible
-						return;
-					}
-					SetIdxSelectedInMount(formImageFloat.GetListMountItems().IndexOf(mountItem2));
-				}
-			}
-			int idxSelectedInMount=GetIdxSelectedInMount();
-			MountItem mountItem=null;
-			if(idxSelectedInMount==-1){
-				mountItem=new MountItem();
-				mountItem.MountNum=GetMountShowing().MountNum;
-				mountItem.ItemOrder=-1;//unmounted
-				mountItem.Width=100;//arbitrary; it will scale
-				mountItem.Height=100;
-				MountItems.Insert(mountItem);
-				WpfControls.UI.UnmountedObj unmountedObj=new WpfControls.UI.UnmountedObj();
-				unmountedObj.MountItem_=mountItem;
-				unmountedObj.Document_=document;
-				unmountedObj.SetBitmap(new Bitmap(bitmap));
-				unmountedBar.AddObject(unmountedObj);
-			}
-			else{
-				mountItem=formImageFloat.GetListMountItems()[idxSelectedInMount];
-			}
-			formImageFloat.DocumentAcquiredForMount(document,bitmap,mountItem,GetMountShowing().FlipOnAcquire);
-			bitmap?.Dispose();
-			File.Delete(e.FullPath);
-			//Select next slot position, in preparation for next image.-------------------------------------------------
-			List<MountItem> listAvail=GetAvailSlots(1);
-			if(listAvail is null){//no more available slots, so start saving in unmounted area
-				SetIdxSelectedInMount(-1);
-				//panelImportAuto.Visible=false;
-				//_fileSystemWatcher.EnableRaisingEvents=false;//will never be null
-				//MessageBox.Show(Lan.g(this,"No more available mount positions."));
-				return;
-			}
-			mountItem=formImageFloat.GetListMountItems().FirstOrDefault(x=>x.MountItemNum==listAvail[0].MountItemNum);
-			if(mountItem==null){//should not be possible
-				return;
-			}
-			SetIdxSelectedInMount(formImageFloat.GetListMountItems().IndexOf(mountItem));
-			//wait for next event to fire
-		}
-
-		private void formVideo_BitmapCaptured(object sender, Bitmap bitmap){
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return;
-			}
-			formImageFloat.formVideo_BitmapCaptured(sender,bitmap);
-		}
-
-		private void menuForms_Click(object sender,System.EventArgs e) {
-			string formName=((WpfControls.UI.MenuItem)sender).Text;
-			Document doc;
-			try {
-				doc=ImageStore.ImportForm(formName,GetCurrentCategory(),_patient);
-			}
-			catch(Exception ex) {
-				MessageBox.Show(ex.Message);
-				return;
-			}
-			FillImageSelector(false);
-			SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			FrmDocInfo frmDocInfo=new FrmDocInfo(_patient,doc,isDocCreate:true);
-			frmDocInfo.ShowDialog();//some of the fields might get changed, but not the filename
-			if(frmDocInfo.IsDialogCancel) {
-				DeleteDocument(false,false,doc);
+			if(nodeIdTag.NodeType==EnumNodeType.ApteryxImage) {
+				SecurityLogs.MakeLogEntry(Permissions.Copy,patNum,"Patient image "+nodeIdTag.ApteryxImgDownload.AcquisitionDate.ToShortDateString()+" "
+					+nodeIdTag.ApteryxImgDownload.AdultTeeth.ToString()+nodeIdTag.ApteryxImgDownload.DeciduousTeeth.ToString()+" copied to clipboard");
 			}
 			else {
-				FillImageSelector(true);//Refresh possible changes in the document due to FormD.
-			}	
-		}
-
-		///<summary>This is the one for WinForms.</summary>
-		private void menuTree_Click(object sender,System.EventArgs e) {
-			if(imageSelector.GetSelectedType()==EnumImageNodeType.None || imageSelector.GetSelectedType()==EnumImageNodeType.Category){
-				return;//Probably the user has no patient selected
+				SecurityLogs.MakeLogEntry(Permissions.Copy,patNum,"Patient image "+Documents.GetByNum(nodeIdTag.PriKey).FileName+" copied to clipboard");
 			}
-			//Categories mostly blocked at the click
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return;
-			}
-			switch(((MenuItem)sender).Index) {
-				case 0://print
-					ToolBarPrint_Click(this,new EventArgs());
-					break;
-				case 1://delete
-					formImageFloat.ToolBarDelete_Click(this,new EventArgs());
-					break;
-				case 2://info
-					formImageFloat.ToolBarInfo_Click(this,new EventArgs());
-					break;
-			}
-		}
-
-		///<summary>This is the one for WPF</summary>
-		private void menuTree_Click2(object sender,System.EventArgs e) {
-			if(imageSelector.GetSelectedType()==EnumImageNodeType.None || imageSelector.GetSelectedType()==EnumImageNodeType.Category){
-				return;//Probably the user has no patient selected
-			}
-			//Categories mostly blocked at the click
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return;
-			}
-
-			switch(((WpfControls.UI.MenuItem)sender).Name) {
-				case "Print":
-					ToolBarPrint_Click(this,new EventArgs());
-					break;
-				case "Delete":
-					formImageFloat.ToolBarDelete_Click(this,new EventArgs());
-					break;
-				case "Info":
-					formImageFloat.ToolBarInfo_Click(this,new EventArgs());
-					break;
-			}
-		}
-
-		private void panelMain_Paint(object sender,PaintEventArgs e) {
-			e.Graphics.Clear(Color.White);
-		}
-
-		private void panelNote_DoubleClick(object sender, EventArgs e){
-			ToolBarSign_Click(this,new EventArgs());
-		}
-
-		private void panelSplitter_MouseDown(object sender,MouseEventArgs e) {
-			_pointMouseDown=Control.MousePosition;
-			_widthTree96StartDrag=_widthTree96;
-			int yCenter=panelSplitter.Height/2;
-			int buttonHeight=25;
-			if(e.Y<yCenter-buttonHeight/2 || e.Y>yCenter+buttonHeight/2){
-				return;
-			}
-			//clicked on the triangle
-			_isTreeDockerCollapsing=true;//this won't toggle back until mouse up
-			if(_isTreeDockerCollapsed){
-				_isTreeDockerCollapsed=false;
-			}
-			else{
-				_isTreeDockerCollapsed=true;
-			}
-			LayoutControls();
-			panelSplitter.Invalidate();
-		}
-
-		private void panelSplitter_MouseLeave(object sender,EventArgs e) {
 			Cursor=Cursors.Default;
 		}
-		
-		private void panelSplitter_MouseMove(object sender,MouseEventArgs e) {
-			int yCenter=panelSplitter.Height/2;
-			int buttonHeight=25;
-			if(e.Y<yCenter-buttonHeight/2 || e.Y>yCenter+buttonHeight/2){
-				Cursor=Cursors.SizeWE;
-			}
-			else{
-				Cursor=Cursors.Default;
-			}
-			if(Control.MouseButtons!=MouseButtons.Left){
-				return;
-			}
-			#region Dragging
-			if(_isTreeDockerCollapsing){
-				return;
-			}
-			if(_isTreeDockerCollapsed){
-				_isTreeDockerCollapsed=false;//undock
-				_widthTree96StartDrag=0;
-				panelSplitter.Invalidate();
-			}
-			Point pointDelta =new Point(Control.MousePosition.X-_pointMouseDown.X,Control.MousePosition.Y-_pointMouseDown.Y);
-			float xDelta96=LayoutManager.UnscaleF(pointDelta.X);
-			float widthNew=_widthTree96StartDrag+xDelta96;
-			if(widthNew<0){
-				widthNew=0;
-			}
-			//if(widthNew>500){
-			//	widthNew=500;
-			//}
-			//No more limit
-			_widthTree96=widthNew;
-			LayoutControls();
-			#endregion Dragging
-		}
 
-		private void panelSplitter_MouseUp(object sender,MouseEventArgs e) {
-			_isTreeDockerCollapsing=false;
-			Point pointDelta =new Point(Control.MousePosition.X-_pointMouseDown.X,Control.MousePosition.Y-_pointMouseDown.Y);
-			if(pointDelta.X<0 //moved to left any amount
-				&& _widthTree96==0 //until tree width collapsed
-				&& !_isTreeDockerCollapsed) //and was not previously collapsed
-			{//then collapse
-				_isTreeDockerCollapsed=true;//auto collapse
-				_widthTree96=_widthTree96StartDrag;//remember the width before the drag
-				LayoutControls();
-				panelSplitter.Invalidate();
-			}
-			//Save to db.  This happens for every single mouse up.
-			//It does not save collapsed/expanded state, but only the expanded width.
-			//Saves for this user only.
-			UserOdPref userOdPref=UserOdPrefs.GetFirstOrDefault(x=>x.FkeyType==UserOdFkeyType.ImageSelectorWidth && x.UserNum==Security.CurUser.UserNum);
-			if(userOdPref is null){
-				userOdPref=new UserOdPref();
-				userOdPref.UserNum=Security.CurUser.UserNum;
-				userOdPref.FkeyType=UserOdFkeyType.ImageSelectorWidth;
-			}
-			userOdPref.ValueString=_widthTree96.ToString();
-			UserOdPrefs.Upsert(userOdPref);
-			DataValid.SetInvalid(InvalidType.UserOdPrefs);
-		}
-
-		private void panelSplitter_Paint(object sender,PaintEventArgs e) {
-			e.Graphics.SmoothingMode=SmoothingMode.HighQuality;
-			PointF[] points=new PointF[3];
-			float lengthSide=15;//LayoutManager.ScaleF(15f);
-			float xCenter=panelSplitter.Width/2f;
-			float yCenter=panelSplitter.Height/2f;
-			if(_isTreeDockerCollapsed){
-				xCenter+=0.5f;
-				points[0]=new PointF(xCenter-lengthSide/4,yCenter-lengthSide/2);//top
-				points[1]=new PointF(xCenter-lengthSide/4,yCenter+lengthSide/2);//bottom
-				points[2]=new PointF(xCenter+lengthSide/4,yCenter);//right
-			}
-			else{
-				xCenter-=1f;
-				points[0]=new PointF(xCenter+lengthSide/4,yCenter-lengthSide/2);//top
-				points[1]=new PointF(xCenter+lengthSide/4,yCenter+lengthSide/2);//bottom
-				points[2]=new PointF(xCenter-lengthSide/4,yCenter);//left
-			}
-			e.Graphics.Clear(ColorOD.Control);
-			using SolidBrush brush=new SolidBrush(ColorOD.Gray(70));
-			e.Graphics.FillPolygon(brush,points);
-		}
-
-		private void printDocument_PrintPage(object sender,System.Drawing.Printing.PrintPageEventArgs e) {
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return;
-			}
-			formImageFloat.printDocument_PrintPage(sender,e);
-		}
-
-		private void sigBox_DoubleClick(object sender, EventArgs e){
-			ToolBarSign_Click(this,new EventArgs());
-		}
-
-		private void sigBoxTopaz_DoubleClick(object sender,EventArgs e) {
-			ToolBarSign_Click(this,new EventArgs());
-		}
-
-		private void textNote_DoubleClick(object sender, EventArgs e){
-			ToolBarSign_Click(this,new EventArgs());
-		}
-
-		private void unmountedBar_Close(object sender, EventArgs e){
-			_isAcquiring=false;
-			SetUnmountedBarVisibility();
-			LayoutControls();
-		}
-
-		private void unmountedBar_RefreshParent(object sender, EventArgs e){
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return;
-			}
-			NodeTypeAndKey nodeTypeAndKey=formImageFloat.GetNodeTypeAndKey();
-			SelectTreeNode(nodeTypeAndKey);
-		}
-
-		private void unmountedBar_Remount(object sender, WpfControls.UI.UnmountedObj e){
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return;
-			}
-			int idx=formImageFloat.GetIdxSelectedInMount();
-			if(idx==-1){
-				List<MountItem> listAvail=GetAvailSlots(1);
-				if(listAvail is null){//no more available slots
-					MsgBox.Show(this,"Please select an item in the mount first.");
-					return;
-				}
-				else{
-					idx=formImageFloat.GetListMountItems().IndexOf(listAvail[0]);
-					SetIdxSelectedInMount(idx);
-				}
-			}
-			Document document=formImageFloat.GetDocumentShowing(idx);
-			if(document!=null){
-				//unmount the old document
-				MountItem mountItemCopy=formImageFloat.GetListMountItems()[idx].Copy();
-				mountItemCopy.ItemOrder=-1;
-				MountItems.Insert(mountItemCopy);//it will now have a new PK
-				document.MountItemNum=mountItemCopy.MountItemNum;
-				Documents.Update(document);
-			}
-			e.Document_.MountItemNum=formImageFloat.GetListMountItems()[idx].MountItemNum;
-			Documents.Update(e.Document_);
-			MountItems.Delete(e.MountItem_);
-			NodeTypeAndKey nodeTypeAndKey=formImageFloat.GetNodeTypeAndKey();
-			SelectTreeNode(nodeTypeAndKey);
-		}
-
-		private void unmountedBar_Retake(object sender, EventArgs e){
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return;//should never happen
-			}
-			int idx=formImageFloat.GetIdxSelectedInMount();
-			if(idx==-1){
-				MsgBox.Show(this,"This is intended to be used in the middle of a series of image acquisitions.");
-				return;
-			}
-			List<MountItem> listMountItems=formImageFloat.GetListMountItems();
-			MountItem mountItem=listMountItems[idx];
-			if(idx==0 && mountItem.ItemOrder==0){
-				MsgBox.Show(this,"There is no previous image to retake.");
-				return;
-			}
-			Document document=formImageFloat.GetDocumentShowing(idx);
-			if(document==null){
-				//this is normal. Retake the previous
-				if(idx>0) {
-					idx--;
-				}
-				//Test for the previous item being a text(mountItem.ItemOrder=0) or unmounted(mountItem.ItemOrder=-1)
-				//This has nothing to do with idx
-				mountItem=listMountItems[idx];
-				if(mountItem.ItemOrder==0//text
-					|| mountItem.ItemOrder==-1)//unmounted
-				{
-					MsgBox.Show(this,"There is no previous image to retake.");
-					return;
-				}
-				formImageFloat.SetIdxSelectedInMount(idx);
-				document=formImageFloat.GetDocumentShowing(idx);
-				if(document==null) {
-					MsgBox.Show(this,"There is no previous image to retake.");
-					return;
-				}
-			}
-			else{
-				//this means they clicked on the one that they want to retake
-			}
-			MountItem mountItemUnmounted=formImageFloat.GetListMountItems()[idx].Copy();
-			mountItemUnmounted.ItemOrder=-1;
-			MountItems.Insert(mountItemUnmounted);//it will now have a new PK
-			document.MountItemNum=mountItemUnmounted.MountItemNum;
-			Documents.Update(document);
-			NodeTypeAndKey nodeTypeAndKey=formImageFloat.GetNodeTypeAndKey();
-			SelectTreeNode(nodeTypeAndKey);
-			//There is now a new mountItem in the unmounted list, so we have to add 1 to the idx just to keep it in the same spot as it already is.
-			formImageFloat.SetIdxSelectedInMount(idx+1);
-			idx=formImageFloat.GetIdxSelectedInMount();
-			butStart_Click(this,new EventArgs());
-		}
-
-		///<summary>Occurs when the slider moves.  UI is typically updated here.  Also see ScrollComplete.</summary>
-		private void windowingSlider_Scroll(object sender,EventArgs e) {
-			if(IsDocumentShowing()) {
-				GetDocumentShowing(0).WindowingMin=windowingSlider.MinVal;
-				GetDocumentShowing(0).WindowingMax=windowingSlider.MaxVal;
-				InvalidateSettingsColor();
-			}
-			if(IsMountItemSelected()) {
-				int idx=GetIdxSelectedInMount();
-				Document document=GetDocumentShowing(idx);
-				document.WindowingMin=windowingSlider.MinVal;
-				document.WindowingMax=windowingSlider.MaxVal;
-				InvalidateSettingsColor();
-			}
-		}
-
-		///<summary>Occurs when user releases slider after moving.  Database is typically updated here.  Also see Scroll event.</summary>
-		private void windowingSlider_ScrollComplete(object sender,EventArgs e) {
-			if(IsDocumentShowing()) {
-				Documents.Update(GetDocumentShowing(0));
-				ImageStore.DeleteThumbnailImage(GetDocumentShowing(0),_patFolder);
-				InvalidateSettingsColor();
-				ThumbnailRefresh();
-			}
-			if(IsMountItemSelected()) {
-				Documents.Update(GetDocumentShowing(GetIdxSelectedInMount()));
-				ImageStore.DeleteThumbnailImage(GetDocumentShowing(GetIdxSelectedInMount()),_patFolder);
-				InvalidateSettingsColor();
-				//We will not update the mount thumbnail for such a minor change
-			}
-		}
-
-		private void zoomSlider_FitPressed(object sender, EventArgs e){
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return;
-			}
-			formImageFloat.ZoomSliderFitPressed();
-		}
-
-		private void zoomSlider_Zoomed(object sender, EventArgs e){
-			//fires repeatedly while dragging
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return;
-			}
-			formImageFloat.ZoomSliderValue=zoomSlider.Value;
-		}
-		#endregion Methods - Event Handlers
-
-		#region Methods - Event Handlers Toolbars
-		private void ToolBarForms_Click(object sender, EventArgs e){
-			MsgBox.Show(this,"Use the dropdown list.  Add forms to the list by copying image files into your A-Z folder, Forms.  Restart the program to see newly added forms.");
-		}
-
-		private void toolBarPaint_ButtonClick(object sender, ODToolBarButtonClickEventArgs e){
-			if(e.Button.Tag.GetType()!=typeof(TB)) {
-				return;
-			}
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return;
-			}
-			switch((TB)e.Button.Tag) {
-				case TB.ZoomOne:
-					formImageFloat.ToolBarZoomOne_Click();
-					break;
-				case TB.Crop:
-					SetDrawMode(EnumDrawMode.None);
-					SetCropPanAdj(EnumCropPanAdj.Crop);
-					break;
-				case TB.Pan:
-					SetDrawMode(EnumDrawMode.None);
-					SetCropPanAdj(EnumCropPanAdj.Pan);
-					break;
-				case TB.Adj:
-					SetDrawMode(EnumDrawMode.None);
-					SetCropPanAdj(EnumCropPanAdj.Adj);
-					break;
-				case TB.Size:
-					formImageFloat.ToolBarSize_Click();
-					break;
-				case TB.Flip:
-					formImageFloat.ToolBarFlip_Click();
-					break;
-				case TB.RotateL:
-					formImageFloat.ToolBarRotateL_Click();
-					break;
-				case TB.RotateR:
-					formImageFloat.ToolBarRotateR_Click();
-					break;
-				case TB.Rotate180:
-					formImageFloat.ToolBarRotate180_Click();
-					break;
-				case TB.DrawTool:
-					ToolBarDraw_Click();
-					break;
-				case TB.Unmount:
-					ToolBarUnmount_Click();
-					break;
-			}
-		}
-
-		private void ToolBarCopy_Click(object sender, EventArgs e){
-			GetOrMakeFloater().ToolBarCopy_Click(sender,e);
-		}
-
-		private void ToolBarDelete_Click(object sender, EventArgs e){
-			GetOrMakeFloater().ToolBarDelete_Click(sender,e);
-		}
-
-		private void toolBarDraw_ButtonClick(object sender, ODToolBarButtonClickEventArgs e){
-			if(e.Button.Tag.GetType()!=typeof(TB)) {
-				return;
-			}
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return;
-			}
-			switch((TB)e.Button.Tag) {
-				case TB.Color:
-					ToolBarColor_Click();
-					break;
-				case TB.Text:
-					SetDrawMode(EnumDrawMode.Text);
-					break;
-				case TB.Line:
-					SetDrawMode(EnumDrawMode.Line);					
-					break;
-				case TB.Pen:
-					SetDrawMode(EnumDrawMode.Pen);	
-					break;
-				case TB.Polygon:
-					SetDrawMode(EnumDrawMode.Polygon);	
-					break;
-				case TB.Eraser:
-					SetDrawMode(EnumDrawMode.Eraser);	
-					break;
-				case TB.ChangeColor:
-					SetDrawMode(EnumDrawMode.ChangeColor);	
-					break;
-				case TB.EditPoints:
-					SetDrawMode(EnumDrawMode.LineEditPoints);
-					break;
-				case TB.Measure:
-					SetDrawMode(EnumDrawMode.LineMeasure);
-					break;
-				case TB.SetScale:
-					SetDrawMode(EnumDrawMode.LineSetScale);
-					break;
-				case TB.Filter:
-					ShowFilterWindow();
-					break;
-				case TB.Close:
-					SetDrawMode(EnumDrawMode.None);
-					panelDraw.Visible=false;
-					LayoutControls();
-					break;
-			}
-		}
-
-		private void ToolBarExport_Click(object sender, EventArgs e){
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				MsgBox.Show(this,"Please select an item first.");
-				return;
-			}
-			formImageFloat.ToolBarExport_Click();
-		}
-
-		private void ToolBarExportTIFF(object sender, EventArgs e){
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				MsgBox.Show(this,"Please select an item first.");
-				return;
-			}
-			formImageFloat.ToolBarExport_Click(doExportAsTiff:true);
-		}
-
-		private void ToolBarImport_Click(object sender, EventArgs e){
-			GetOrMakeFloater().ToolBarImport_Click(sender,e);
-		}
-		
-		private void ToolBarInfo_Click(object sender, EventArgs e){
-			GetOrMakeFloater().ToolBarInfo_Click(sender,e);
-		}
-
-		private void ToolBarMoveToPatient(object sender, EventArgs e){
-			if(ODBuild.IsThinfinity()) {
-				MsgBox.Show(this,"Not yet implemented for Open Dental Cloud.");
-				return;
-			}
-			if(!IsDocumentShowing() && !IsMountShowing()){
-				MsgBox.Show(this,"Please select an item first.");
-				return;
-			}
-			if(IsMountShowing()) {
-				if(!Security.IsAuthorized(EnumPermType.ImageDelete,GetMountShowing().DateCreated)) {
-					return;
-				}
+		private void ToolBarCrop_Click() {
+			//remember it's testing after the push has been completed
+			if(ToolBarPaint.Buttons["Crop"].IsTogglePushed) { //Crop Mode
+				ToolBarPaint.Buttons["Hand"].IsTogglePushed=false;
+				pictureBoxMain.Cursor=Cursors.Default;
 			}
 			else {
-				if(!Security.IsAuthorized(EnumPermType.ImageDelete,GetDocumentShowing(0).DateCreated)) {
-					return;
-				}
+				ToolBarPaint.Buttons["Crop"].IsTogglePushed=true;
 			}
-			FrmPatientSelect frmPatientSelect=new FrmPatientSelect();
-			frmPatientSelect.ShowDialog();
-			if(frmPatientSelect.IsDialogCancel){
+			_isCropMode=true;
+			ToolBarPaint.Invalidate();
+		}
+
+		///<summary>If the node does not correspond to a valid document or mount, nothing happens. Otherwise the document/mount record and its corresponding file(s) are deleted.</summary>
+		private void ToolBarDelete_Click() {
+			DeleteSelection(true,true);
+		}
+
+		private void ToolBarExport_Click() {
+			if(treeMain.SelectedNode==null) {
+				MsgBox.Show(this,"Please select an item first.");
 				return;
 			}
-			string patFolderOld=ImageStore.GetPatientFolder(_patient,ImageStore.GetPreferredAtoZpath());
-			Document document=null;
-			Mount mount=null;
-			NodeTypeAndKey nodeTypeAndKeyOriginal=null;
-			if(IsDocumentShowing()){
-				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Move selected item to the other patient?")){
-					return;
-				}
-				document=GetDocumentShowing(0).Copy();
-				nodeTypeAndKeyOriginal=new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum);
+			Document apteryxDoc=null;
+			NodeIdTag nodeIdTag=(NodeIdTag)treeMain.SelectedNode.Tag;
+			if(nodeIdTag.NodeType==EnumNodeType.ApteryxImage) {
+				string imageCat=ProgramProperties.GetPropVal(Programs.GetProgramNum(ProgramName.XVWeb),XVWeb.ProgramProps.ImageCategory);
+				//save copy to db for temp storage
+				apteryxDoc=ImageStore.Import(_bitmapShowing,(Defs.GetDef(DefCat.ImageCats,PIn.Long(imageCat)).DefNum),ImageType.Photo,_patient); 
 			}
-			if(IsMountShowing()){
-				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Move the entire mount to the other patient?")){
-					return;
-				}
-				mount=GetMountShowing().Copy();
-				nodeTypeAndKeyOriginal=new NodeTypeAndKey(EnumImageNodeType.Mount,mount.MountNum);
-			}
-			if(GetIdxSelectedInMount()>-1){
-				SetIdxSelectedInMount(-1);
-			}
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			GlobalFormOpenDental.GotoImage(frmPatientSelect.PatNumSelected,0);
-			//The line above will close all undocked floaters and will clear any docked floater.
-			//When we select a document/mount, then we could be dealing with a different floater than before.
-			NodeTypeAndKey nodeTypeAndKeyCat;
-			if(document!=null){
-				nodeTypeAndKeyCat=new NodeTypeAndKey(EnumImageNodeType.Category,document.DocCategory);
-				SelectTreeNode(nodeTypeAndKeyCat);
-			}
-			if(mount!=null){
-				nodeTypeAndKeyCat=new NodeTypeAndKey(EnumImageNodeType.Category,mount.DocCategory);
-				SelectTreeNode(nodeTypeAndKeyCat);
-			}
-			//Get the new docked floater for this patient
-			formImageFloat=GetFormImageFloatSelected();
-			formImageFloat.ToolBarPasteTypeAndKey(nodeTypeAndKeyOriginal);
-			imageSelector.SetSelected(nodeTypeAndKeyOriginal.NodeType,nodeTypeAndKeyOriginal.PriKey);
-			//Delete Old=====================================================================================
-			if(document!=null){
-				try {
-					formImageFloat.ClearPDFBrowser();//Dispose of the web browser control that has a hold on the PDF that is showing.
-					ImageStore.DeleteDocuments(new List<Document> {document},patFolderOld);
-				}
-				catch(Exception ex) { 
-					MsgBox.Show(Lan.g(this,"Could not delete original. ")+ex.Message);
-				}
+			if(nodeIdTag.NodeType==EnumNodeType.Category || nodeIdTag.NodeType==EnumNodeType.Mount || nodeIdTag.NodeType==EnumNodeType.None) {
+				MsgBox.Show(this,"Not allowed.");
 				return;
 			}
-			if(mount!=null){
-				List<MountItem> listMountItems=MountItems.GetItemsForMount(mount.MountNum);
-				Document[] documentArray=Documents.GetDocumentsForMountItems(listMountItems);
-				try {
-					ImageStore.DeleteDocuments(documentArray,patFolderOld);
+			string fileName="";
+			if(ODBuild.IsWeb()) {
+				ToolBarWebExport(nodeIdTag,apteryxDoc);
+				return;
+			}
+			SaveFileDialog dlg=new SaveFileDialog();
+			dlg.Title="Export a Document";
+			if(nodeIdTag.NodeType.In(EnumNodeType.Doc,EnumNodeType.ApteryxImage)) {
+				Document doc;
+				if(nodeIdTag.NodeType==EnumNodeType.Doc) {
+					doc=Documents.GetByNum(nodeIdTag.PriKey);
 				}
-				catch(Exception ex) { 
-					MsgBox.Show(Lan.g(this,"Could not delete original. ")+ex.Message);
+				else {
+					doc=apteryxDoc;
+				}
+				dlg.FileName=doc.FileName;
+				dlg.DefaultExt=Path.GetExtension(doc.FileName);
+				if(dlg.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
-				Mounts.Delete(mount);
-				Def defDocCategory = Defs.GetDef(DefCat.ImageCats,mount.DocCategory);
-				string logText = "Mount Deleted: "+mount.Description+" with category "
-					+defDocCategory.ItemName;
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageDelete,_patient.PatNum,logText);
+				fileName=dlg.FileName;
+				if(fileName.Length<1) {
+					MsgBox.Show(this,"You must enter a file name.");
+					return;
+				}
+				try {
+					ImageStore.Export(fileName,doc,_patient);
+				}
+				catch(Exception ex) {
+					MessageBox.Show(Lan.g(this,"Unable to export file, May be in use")+": " + ex.Message + ": " + fileName);
+					return;
+				}
+			}
+			if(nodeIdTag.NodeType==EnumNodeType.Eob) {
+				EobAttach eob=EobAttaches.GetOne(nodeIdTag.PriKey);
+				dlg.FileName=eob.FileName;
+				dlg.DefaultExt=Path.GetExtension(eob.FileName);
+				if(dlg.ShowDialog()!=DialogResult.OK) {
+					return;
+				}
+				fileName=dlg.FileName;
+				if(fileName.Length<1) {
+					MsgBox.Show(this,"You must enter a file name.");
+					return;
+				}
+				try {
+					ImageStore.ExportEobAttach(fileName,eob);
+				}
+				catch(Exception ex) {
+					MessageBox.Show(Lan.g(this,"Unable to export file, May be in use")+": " + ex.Message + ": " + fileName);
+					return;
+				}
+			}
+			else if(nodeIdTag.NodeType==EnumNodeType.EhrAmend) {
+				EhrAmendment amd=EhrAmendments.GetOne(nodeIdTag.PriKey);
+				dlg.FileName=amd.FileName;
+				dlg.DefaultExt=Path.GetExtension(amd.FileName);
+				if(dlg.ShowDialog()!=DialogResult.OK) {
+					return;
+				}
+				fileName=dlg.FileName;
+				if(fileName.Length<1) {
+					MsgBox.Show(this,"You must enter a file name.");
+					return;
+				}
+				try {
+					ImageStore.ExportAmdAttach(fileName,amd);
+				}
+				catch(Exception ex) {
+					MessageBox.Show(Lan.g(this,"Unable to export file, May be in use")+": " + ex.Message + ": " + fileName);
+					return;
+				}
+			}
+			MessageBox.Show(Lan.g(this,"Successfully exported to ")+fileName);
+			if(nodeIdTag.NodeType==EnumNodeType.ApteryxImage && apteryxDoc!=null) {
+				try {
+					ImageStore.DeleteDocuments(new List<Document> { apteryxDoc },_patFolder);
+				}
+				catch(Exception ex) {  //Image could not be deleted, in use.
+					ex.DoNothing();//The user doesn't even know this document exists, so there's not any point in telling them we couldn't delete it.
+				}
 			}
 		}
 
-		private void ToolBarPaste_Click(object sender, EventArgs e){
-			GetOrMakeFloater().ToolBarPaste_Click(sender,e);
+		private void ToolBarFlip_Click() {
+			if(((NodeIdTag)treeMain.SelectedNode.Tag).NodeType==EnumNodeType.None || _documentShowing==null) {
+				return;
+			}
+			_documentShowing.IsFlipped=!_documentShowing.IsFlipped;
+			//Since the document is always flipped and then rotated in the mathematical functions below, and since we
+			//always want the selected image to rotate left to right no matter what orientation the image is in,
+			//we must modify the document settings so that the document will always be flipped left to right, but
+			//in such a way that the flipping always happens before the rotation.
+			if(_documentShowing.DegreesRotated==90||_documentShowing.DegreesRotated==270) {
+				_documentShowing.DegreesRotated*=-1;
+				while(_documentShowing.DegreesRotated<0) {
+					_documentShowing.DegreesRotated+=360;
+				}
+				_documentShowing.DegreesRotated=(short)(_documentShowing.DegreesRotated%360);
+			}
+			Documents.Update(_documentShowing);
+			DeleteThumbnailImage(_documentShowing);
+			InvalidateSettings(ImageSettingFlags.FLIP,false);//Refresh display.
 		}
-		
-		private void ToolBarPrint_Click(object sender,EventArgs e){
-			if(!IsDocumentShowing() && !IsMountShowing()){
+
+		private void ToolBarHand_Click() {
+			if(ToolBarPaint.Buttons["Hand"].IsTogglePushed) {//Hand Mode
+				ToolBarPaint.Buttons["Crop"].IsTogglePushed=false;
+				pictureBoxMain.Cursor=Cursors.Hand;
+			}
+			else {
+				ToolBarPaint.Buttons["Hand"].IsTogglePushed=true;
+			}
+			_isCropMode=false;
+			ToolBarPaint.Invalidate();
+		}
+
+		private void ToolBarImport_Click() {
+			if(Plugins.HookMethod(this,"ContrImages.ToolBarImport_Click_Start",_patient)) {
+				FillTree(true);
+				return;
+			}
+			if(_ehrAmendment!=null) {
+				if(_ehrAmendment.FileName!=null && _ehrAmendment.FileName!="") {
+					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"This will delete your old file. Proceed?")) {
+						return;
+					}
+				}
+			}
+			OpenFileDialog openFileDialog=new OpenFileDialog();
+			openFileDialog.Multiselect=true;
+			if(Prefs.GetContainsKey(nameof(PrefName.UseAlternateOpenFileDialogWindow)) && PrefC.GetBool(PrefName.UseAlternateOpenFileDialogWindow)){//Hidden pref, almost always false.
+				//We don't know why this makes any difference but people have mentioned this will stop some hanging issues.
+				//https://stackoverflow.com/questions/6718148/windows-forms-gui-hangs-when-calling-openfiledialog-showdialog
+				openFileDialog.ShowHelp=true;
+			}
+			if(_ehrAmendment!=null) {
+				openFileDialog.Multiselect=false;//this image module control is reused in formEHR for amendments. If so, EhrAmendmentCur!=null and we should only allow single select.
+			}
+			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+				return;
+			}
+			string[] fileNames=openFileDialog.FileNames;
+			if(fileNames.Length<1) {
+				return;
+			}
+			NodeIdTag nodeIdTag=new NodeIdTag();
+			bool copied=true;
+			if(_claimPaymentNum!=0) {//eob
+				EobAttach eob=null;
+				Action actionCloseUploadProgress=null;
+				if(CloudStorage.IsCloudStorage) {
+					actionCloseUploadProgress=ODProgress.Show(ODEventType.ContrImages,startingMessage:Lan.g("ContrImages","Uploading..."));
+				}
+				for(int i=0;i<fileNames.Length;i++) {
+					try {
+						eob=ImageStore.ImportEobAttach(fileNames[i],_claimPaymentNum);
+					}
+					catch(Exception ex) {
+						actionCloseUploadProgress?.Invoke();
+						MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ")+ex.Message+": "+openFileDialog.FileName);
+						copied = false;
+					}
+				}
+				actionCloseUploadProgress?.Invoke();
+				if(copied) {
+					FillTree(false);
+				}
+				if(eob!=null) {
+					SelectTreeNode(GetTreeNode(MakeIdEob(eob.EobAttachNum)),fileNames[fileNames.Length-1]);
+				}
+			}
+			else if(_ehrAmendment!=null) {
+				string amdFilename=_ehrAmendment.FileName;
+				Action actionCloseUploadProgress=null;
+				if(CloudStorage.IsCloudStorage) {
+					actionCloseUploadProgress=ODProgress.Show(ODEventType.ContrImages,startingMessage:Lan.g("ContrImages","Uploading..."));
+				}
+				for(int i=0;i<fileNames.Length;i++) {
+					try {
+						_ehrAmendment=ImageStore.ImportAmdAttach(fileNames[i],_ehrAmendment);
+						SelectTreeNode(null);
+						ImageStore.CleanAmdAttach(amdFilename);
+					}
+					catch(Exception ex) {
+						actionCloseUploadProgress?.Invoke();
+						MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ")+ex.Message+": "+openFileDialog.FileName);
+						copied = false;
+					}
+				}
+				actionCloseUploadProgress?.Invoke();
+				if(copied) {
+					FillTree(false);
+				}
+				if(_ehrAmendment!=null) {
+					SelectTreeNode(GetTreeNode(MakeIdAmd(_ehrAmendment.EhrAmendmentNum)),fileNames[fileNames.Length-1]);
+				}
+			}
+			else {//regular Images module
+				Document doc=null;
+				Action actionCloseUploadProgress=null;
+				if(CloudStorage.IsCloudStorage) {
+					actionCloseUploadProgress=ODProgress.Show(ODEventType.ContrImages,startingMessage:Lan.g("ContrImages","Uploading..."));
+				}
+				for(int i=0;i<fileNames.Length;i++) {
+					try {
+						doc=ImageStore.Import(fileNames[i],GetCurrentCategory(),_patient);//Makes log
+					}
+					catch(Exception ex) {
+						actionCloseUploadProgress?.Invoke();
+						MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ")+ex.Message+": "+openFileDialog.FileName);
+						copied = false;
+					}
+					if(copied) {
+						FillTree(false);
+						SelectTreeNode(GetTreeNode(MakeIdDoc(doc.DocNum)),fileNames[i]);
+						using FormDocInfo FormD=new FormDocInfo(_patient,doc,GetCurrentFolderName(treeMain.SelectedNode),isDocCreate:true);
+						FormD.TopMost=true;
+						FormD.ShowDialog(this);//some of the fields might get changed, but not the filename
+						if(FormD.DialogResult!=DialogResult.OK) {
+							DeleteSelection(false,false,doc);
+						}
+						else {
+							if(doc.ImgType==ImageType.Photo) {
+								PatientEvent.Fire(ODEventType.Patient,_patient);//Possibly updated the patient picture.
+							}
+							nodeIdTag=MakeIdDoc(doc.DocNum);
+							_documentShowing=doc.Copy();
+						}
+					}
+				}
+				actionCloseUploadProgress?.Invoke();
+				//Reselect the last successfully added node when necessary.
+				if(doc!=null && !MakeIdDoc(doc.DocNum).Equals(nodeIdTag)) {
+					SelectTreeNode(GetTreeNode(MakeIdDoc(doc.DocNum)),fileNames[fileNames.Length-1]);
+				}
+				FillTree(true);
+			}
+		}
+
+		private void ToolBarInfo_Click() {
+			NodeIdTag nodeIdTag=(NodeIdTag)treeMain.SelectedNode.Tag;
+			if(nodeIdTag.NodeType==EnumNodeType.None) {
+				return;
+			}
+			if(nodeIdTag.NodeType==EnumNodeType.Mount) {
+				//Do nothing, mounts are not supported in this module so we shouldn't be making edits to the mount object.
+				return;
+				//using FormMountEdit formMountEdit=new FormMountEdit();
+				//formMountEdit.MountCur=_mountShowing;
+				//formMountEdit.ShowDialog();//Edits the MountSelected object directly and updates and changes to the database as well.
+				//FillTree(true);//Refresh tree in case description for the mount changed.}
+			}
+			if(nodeIdTag.NodeType==EnumNodeType.ApteryxImage) {
+				Document doc=new Document();
+				doc.DateCreated=nodeIdTag.ApteryxImgDownload.AcquisitionDate;
+				doc.ToothNumbers=string.Join(",",nodeIdTag.ApteryxImgDownload.AdultTeeth,nodeIdTag.ApteryxImgDownload.DeciduousTeeth);
+				using FormDocInfo fdi=new FormDocInfo(_patient,doc,GetCurrentFolderName(treeMain.SelectedNode),true);//disable ok button, they can't save anything. Image is just temp.
+				fdi.ShowDialog(this);
+				if(fdi.DialogResult!=DialogResult.OK) {
+					return;
+				}
+				FillTree(false);
+			}
+			else if(nodeIdTag.NodeType==EnumNodeType.Doc) {
+				//The FormDocInfo object updates the DocSelected and stores the changes in the database as well.
+				using FormDocInfo formDocInfo2=new FormDocInfo(_patient,_documentShowing,GetCurrentFolderName(treeMain.SelectedNode));
+				formDocInfo2.ShowDialog(this);
+				if(formDocInfo2.DialogResult!=DialogResult.OK) {
+					return;
+				}
+				FillTree(true);
+			}
+		}
+
+		private void ToolBarPaste_Click() {
+			Bitmap bitmapPaste;
+			try {
+				bitmapPaste=ODClipboard.GetImage();
+			}
+			catch(Exception ex) {
+				MsgBox.Show(this,"Could not paste contents from the clipboard.  Please try again.");
+				ex.DoNothing();
+				return;
+			}
+			if(bitmapPaste==null) {
+				MessageBox.Show(Lan.g(this,"No bitmap present on clipboard"));
+				return;
+			}
+			Document doc;
+			NodeIdTag nodeIdTag=new NodeIdTag();
+			if(treeMain.SelectedNode!=null && treeMain.SelectedNode.Tag!=null) {
+				nodeIdTag=(NodeIdTag)treeMain.SelectedNode.Tag;
+			}
+			Cursor=Cursors.WaitCursor;
+			if(_claimPaymentNum!=0) {
+				EobAttach eob=null;
+				try {
+					eob=ImageStore.ImportEobAttach(bitmapPaste,_claimPaymentNum);
+				}
+				catch {
+					MessageBox.Show(Lan.g(this,"Error saving eob."));
+					Cursor=Cursors.Default;
+					return;
+				}
+				FillTree(false);
+				SelectTreeNode(GetTreeNode(MakeIdEob(eob.EobAttachNum)));
+			}
+			else if(_ehrAmendment!=null) {
+				EhrAmendment amd=null;
+				try {
+					amd=ImageStore.ImportAmdAttach(bitmapPaste,_ehrAmendment);
+				}
+				catch {
+					MessageBox.Show(Lan.g(this,"Error saving amendment."));
+					Cursor=Cursors.Default;
+					return;
+				}
+				FillTree(false);
+				SelectTreeNode(GetTreeNode(MakeIdAmd(amd.EhrAmendmentNum)));
+			}
+			else if(nodeIdTag.NodeType==EnumNodeType.Mount && _idxSelectedInMount>=0) {//Pasting into the mount item of the currently selected mount.
+				if(_documentArrayInMount[_idxSelectedInMount]!=null) {
+					if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Do you want to replace the existing item in this mount location?")) {
+						this.Cursor=Cursors.Default;
+						return;
+					}
+					DeleteSelection(false,true);
+				}
+				try {
+					doc=ImageStore.ImportImageToMount(bitmapPaste,0,_listMountItems[_idxSelectedInMount].MountItemNum,GetCurrentCategory(),_patient);//Makes log entry				
+					doc.WindowingMax=255;
+					doc.WindowingMin=0;
+					Documents.Update(doc);
+				}
+				catch {
+					MessageBox.Show(Lan.g(this,"Error saving document."));
+					Cursor=Cursors.Default;
+					return;
+				}
+				_documentArrayInMount[_idxSelectedInMount]=doc;
+				_bitmapArrayRaw[_idxSelectedInMount]=bitmapPaste;
+			}
+			else {//Paste the image as its own unique document.
+				try {
+					doc=ImageStore.Import(bitmapPaste,GetCurrentCategory(),ImageType.Photo,_patient);//Makes log entry
+				}
+				catch {
+					MessageBox.Show(Lan.g(this,"Error saving document."));
+					Cursor=Cursors.Default;
+					return;
+				}
+				FillTree(false);
+				SelectTreeNode(GetTreeNode(MakeIdDoc(doc.DocNum)));
+				using FormDocInfo formD=new FormDocInfo(_patient,doc,GetCurrentFolderName(treeMain.SelectedNode),isDocCreate:true);
+				formD.ShowDialog(this);
+				if(formD.DialogResult!=DialogResult.OK) {
+					DeleteSelection(false,false,doc);
+				}
+				else {
+					_documentShowing=doc.Copy();
+					FillTree(true);
+				}
+			}
+			InvalidateSettings(ImageSettingFlags.ALL,true);
+			Cursor=Cursors.Default;
+		}
+
+		private void ToolBarPrint_Click() {
+			if(treeMain.SelectedNode==null || treeMain.SelectedNode.Tag==null) {
 				MsgBox.Show(this,"Cannot print. No document currently selected.");
 				return;
 			}
-			if(IsDocumentShowing()){
-				if(Path.GetExtension(GetDocumentShowing(0).FileName).ToLower()==".pdf") {//Selected document is PDF, we handle differently than documents that aren't pdf.
-					FormImageFloat formImageFloat=GetFormImageFloatSelected();//Will always work because we used IsDocumentShowing
-					formImageFloat.PdfPrintPreview();
+			try {
+				string fileName=null;
+				string description=null;
+				NodeIdTag nodeIdTag=(NodeIdTag)treeMain.SelectedNode.Tag;
+				if(nodeIdTag.NodeType==EnumNodeType.ApteryxImage) {
+					MsgBox.Show(this,"Cannot print a read only file. Copy/paste or export/import the file for printing.");
 					return;
 				}
+				if(nodeIdTag.NodeType==EnumNodeType.Eob) {
+					fileName=EobAttaches.GetOne(nodeIdTag.PriKey).FileName;
+					description="";
+				}
+				else if(nodeIdTag.NodeType==EnumNodeType.EhrAmend) {
+					EhrAmendment ehrAmendment=EhrAmendments.GetOne(nodeIdTag.PriKey);
+					fileName=ehrAmendment.FileName;
+					description=ehrAmendment.Description;
+				}
+				else if(nodeIdTag.NodeType==EnumNodeType.Mount) {
+					//Do nothing, mounts are no longer supported in this module.
+					return;
+				}
+				else {
+					fileName=_documentShowing.FileName;
+					description=_documentShowing.Description;
+				}
+				if(Path.GetExtension(fileName).ToLower()==".pdf") {//Selected document is PDF, we handle differently than documents that aren't pdf.
+					if(ODBuild.IsWeb()) {
+						ThinfinityUtils.HandleFile(_odWebView2FilePath);//This will do a PDF preview. _webBrowserDocument.ShowPrintPreviewDialog() doesn't work.
+					}
+					//Not needed for _odWebView2 as WebView2 will automatically show a print preview when printing
+				}
+				else {
+					PrintDocument pd=new PrintDocument();//TODO: Implement ODprintout pattern
+					pd.PrintPage+=new PrintPageEventHandler(printDocument_PrintPage);
+					PrintDialog dlg=new PrintDialog();
+					dlg.AllowCurrentPage=false;
+					dlg.AllowPrintToFile=true;
+					dlg.AllowSelection=false;
+					dlg.AllowSomePages=false;
+					dlg.Document=pd;
+					dlg.PrintToFile=false;
+					dlg.ShowHelp=true;
+					dlg.ShowNetwork=true;
+					dlg.UseEXDialog=true; //needed because PrintDialog was not showing on 64 bit Vista systems
+					if(dlg.ShowDialog()==DialogResult.OK) {
+						if(pd.DefaultPageSettings.PrintableArea.Width==0||
+							pd.DefaultPageSettings.PrintableArea.Height==0) {
+							pd.DefaultPageSettings.PaperSize=new PaperSize("default",850,1100);
+						}
+						pd.OriginAtMargins=true;
+						pd.DefaultPageSettings.Margins=new Margins(50,50,50,50);//Half-inch all around
+						pd.Print();
+						if(((NodeIdTag)treeMain.SelectedNode.Tag).NodeType==EnumNodeType.Eob) { //This happens when printing an EOB from the Batch Ins Claim
+							SecurityLogs.MakeLogEntry(Permissions.Printing,0,"EOB printed");
+						}
+						else if(description=="") {
+							SecurityLogs.MakeLogEntry(Permissions.Printing,_patient.PatNum,"Patient image "+fileName+" printed");
+						}
+						else {
+							SecurityLogs.MakeLogEntry(Permissions.Printing,_patient.PatNum,"Patient image "+description+" printed");
+						}
+					}
+				}
 			}
-			PrinterL.TryPrintOrDebugClassicPreview(printDocument_PrintPage,Lan.g(this,"Image printed."));
-			if(IsDocumentShowing()){
-				SecurityLogs.MakeLogEntry(EnumPermType.Printing,_patient.PatNum,"Patient image "+GetDocumentShowing(0).FileName+" "+GetDocumentShowing(0).Description+" printed");
-			}
-			if(IsMountShowing()){
-				SecurityLogs.MakeLogEntry(EnumPermType.Printing,_patient.PatNum,"Patient mount "+GetMountShowing().Description+" printed");
+			catch(Exception ex) {
+				MessageBox.Show(Lan.g(this,"An error occurred while printing")+"\r\n"+ex.ToString());
 			}
 		}
 
-		private void ToolBarProgram_Click(object sender,EventArgs e){
-			Program program=(Program)(((WpfControls.UI.ToolBarButton)sender).Tag);
-			if(program.ProgName==ProgramName.Pearl.ToString()){
-				//The Pearl button can only work from the Imaging module, so we handle it here.
-				//these first few ifs are copied from ProgramL, because we are skipping that and doing our own here.
-				//if(patient!=null && PrefC.GetBool(PrefName.ShowFeaturePatientClone)) {
-				//	patient=Patients.GetOriginalPatientForClone(patient);//not sure if this is needed for Imaging. Doesn't seem right.
-				//}
-				if(!Programs.IsEnabledByHq(program,out string err)) {
-					MessageBox.Show(err);
-					return;
-				}
-				if(ODBuild.IsThinfinity() && Programs.GetListDisabledForWeb().Select(x => x.ToString()).Contains(program.ProgName)) {
-					MsgBox.Show("ProgramLinks","Bridge is not available while viewing through the web.");
-					return;//bridge is not available for web users at this time. 
-				}
-				if(_showDrawingsPearlToothParts==false
-					&& _showDrawingsPearlPolyAnnotations==false
-					&& _showDrawingsPearlBoxAnnotations==false
-					&& _showDrawingsPearlMeasurements==false)
-				{//if no Pearl annotations are set to show right now
-					//turn them all on so that user can see result
-					_showDrawingsPearlToothParts=true;
-					_showDrawingsPearlPolyAnnotations=true;
-					_showDrawingsPearlBoxAnnotations=true;
-					_showDrawingsPearlMeasurements=true;
-				}
-				OpenDentBusiness.Bridges.Pearl pearl=new OpenDentBusiness.Bridges.Pearl();
-				//some items in these two lists can be null if mount has empty spots in it. The null will exist in the same place in both lists.
-				FormImageFloat formImageFloat=GetOrMakeFloater();
-				pearl.ListBitmaps=formImageFloat.GetListBitmaps();
-				if(IsMountShowing()){
-					pearl.DocNum=0;
-					pearl.ListMountItems=formImageFloat.GetListMountItems();
-					pearl.MountNum=GetMountShowing().MountNum;
-				}
-				else{//one doc
-					pearl.DocNum=GetDocumentShowing(0).DocNum;
-					pearl.MountNum=0;
-				}
-				UI.ProgressWin progressOD=new UI.ProgressWin();
-				progressOD.ActionMain=pearl.SendOnThread;//not sure how to pass in bitmap as a parameter
-				//todo: some math if we want to give user a better idea of how long to wait.
-				progressOD.StartingMessage="Communicating with Pearl server. This will take a few moments.";
-				progressOD.ShowDialog();
-				EnumImageNodeType enumImageNodeType=imageSelector.GetSelectedType();
-				long priKey=imageSelector.GetSelectedKey();
-				NodeTypeAndKey nodeTypeAndKey=new NodeTypeAndKey(enumImageNodeType,priKey);
-				SelectTreeNode(nodeTypeAndKey);
+		private void ToolBarRotateL_Click() {
+			if(((NodeIdTag)treeMain.SelectedNode.Tag).NodeType==EnumNodeType.None || _documentShowing==null) {
+				return;
 			}
-			else{
-				WpfControls.ProgramL.Execute(program.ProgramNum,_patient);
+			_documentShowing.DegreesRotated-=90;
+			while(_documentShowing.DegreesRotated<0) {
+				_documentShowing.DegreesRotated+=360;
+			}
+			Documents.Update(_documentShowing);
+			DeleteThumbnailImage(_documentShowing);
+			InvalidateSettings(ImageSettingFlags.ROTATE,false);//Refresh display.
+		}
+
+		private void ToolBarRotateR_Click() {
+			if(((NodeIdTag)treeMain.SelectedNode.Tag).NodeType==EnumNodeType.None || _documentShowing==null) {
+				return;
+			}
+			_documentShowing.DegreesRotated+=90;
+			_documentShowing.DegreesRotated%=360;
+			Documents.Update(_documentShowing);
+			DeleteThumbnailImage(_documentShowing);
+			InvalidateSettings(ImageSettingFlags.ROTATE,false);//Refresh display.
+		}
+
+		private void ToolbarScanWeb(string scanType) {
+			if(!CloudClientL.IsCloudClientRunning()) {
+				return;
+			}
+			Bitmap bitmapScanned=null;
+			try {
+				//Ask the ODCloudClient to use a scanner on the client's computer
+				bitmapScanned=ODCloudClient.GetImageFromScanner(
+					ComputerPrefs.LocalComputer.ScanDocSelectSource,
+					ComputerPrefs.LocalComputer.ScanDocShowOptions,
+					ComputerPrefs.LocalComputer.ScanDocDuplex,
+					ComputerPrefs.LocalComputer.ScanDocGrayscale,
+					ComputerPrefs.LocalComputer.ScanDocResolution,
+					ComputerPrefs.LocalComputer.ScanDocQuality
+				);
+			}
+			catch (ODException ex) {
+				MessageBox.Show(ex.Message);
+				return;
+			}
+			catch (Exception ex) {
+				MessageBox.Show(ex.Message);
+				return;
+			}
+			if(bitmapScanned==null) {//The scan was probably cancelled.
+				return;
+			}
+			ImageType imgType;
+			if(scanType=="xray") {
+				imgType=ImageType.Radiograph;
+			}
+			else if(scanType=="photo") {
+				imgType=ImageType.Photo;
+			}
+			else {//Assume document
+				imgType=ImageType.Document;
+			}
+			bool saved=true;
+			if(_claimPaymentNum!=0) {//eob
+				EobAttach eob=null;
+				try {
+					eob=ImageStore.ImportEobAttach(bitmapScanned,_claimPaymentNum);
+				}
+				catch(Exception ex) {
+					saved=false;
+					MessageBox.Show(Lan.g(this,"Error saving eob")+": "+ex.Message);
+				}
+				if(bitmapScanned!=null) {
+					bitmapScanned.Dispose();
+					bitmapScanned=null;
+				}
+				if(saved) {
+					FillTree(false);
+					SelectTreeNode(GetTreeNode(MakeIdEob(eob.EobAttachNum)));
+				}
+			}
+			else if(_ehrAmendment!=null) {
+				//We only allow users to scan in one amendment at a time.  Keep track of the old file name.
+				string fileNameOld=_ehrAmendment.FileName;
+				try {
+					ImageStore.ImportAmdAttach(bitmapScanned,_ehrAmendment);
+					SelectTreeNode(null);
+					ImageStore.CleanAmdAttach(fileNameOld);//Delete the old scanned document.
+				}
+				catch(Exception ex) {
+					saved=false;
+					MessageBox.Show(Lan.g(this,"Error saving amendment")+": "+ex.Message);
+				}
+				if(bitmapScanned!=null) {
+					bitmapScanned.Dispose();
+					bitmapScanned=null;
+				}
+				if(saved) {
+					FillTree(false);
+					SelectTreeNode(GetTreeNode(MakeIdAmd(_ehrAmendment.EhrAmendmentNum)));
+				}
+			}
+			else {//regular Images module
+				Document doc = null;
+				try {//Create corresponding image file.
+					doc=ImageStore.Import(bitmapScanned,GetCurrentCategory(),imgType,_patient);
+				}
+				catch(Exception ex) {
+					saved=false;
+					MessageBox.Show(Lan.g(this,"Unable to save document")+": "+ex.Message);
+				}
+				if(bitmapScanned!=null) {
+					bitmapScanned.Dispose();
+					bitmapScanned=null;
+				}
+				if(saved) {
+					FillTree(false);//Reload and keep new document selected.
+					SelectTreeNode(GetTreeNode(MakeIdDoc(doc.DocNum)));
+					using FormDocInfo formDocInfo=new FormDocInfo(_patient,_documentShowing,GetCurrentFolderName(treeMain.SelectedNode),isDocCreate:true);
+					formDocInfo.ShowDialog(this);
+					if(formDocInfo.DialogResult!=DialogResult.OK) {
+						DeleteSelection(false,false,doc);
+					}
+					else {
+						FillTree(true);//Update tree, in case the new document's icon or category were modified in formDocInfo.
+					}
+				}
 			}
 		}
 
 		///<summary>Valid values for scanType are "doc","xray",and "photo"</summary>
-		private void ToolBarScan_Click(ImageType imgType){
-			if(!Security.IsAuthorized(EnumPermType.ImageCreate)) {
-				return;
-			}	
-			if(ODEnvironment.IsCloudServer) {
-				if(CloudClientL.IsCloudClientRunning()) {
-					ToolbarScanWeb(imgType);
+		private void ToolBarScan_Click(string scanType) {
+			if(_ehrAmendment!=null) {
+				if(_ehrAmendment.FileName!=null && _ehrAmendment.FileName!="") {
+					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"This will delete your old file. Proceed?")) {
+						return;
+					}
 				}
+			}
+			if(ODBuild.IsWeb()) {
+				ToolbarScanWeb(scanType);
 				return;
 			}
 			Cursor=Cursors.WaitCursor;
 			Bitmap bitmapScanned=null;
-			IntPtr handleDIB=IntPtr.Zero;
+			IntPtr hdib=IntPtr.Zero;
 			try {
-				Twain.ActivateEZTwain();
+				ImagingDeviceManager.Twain.ActivateEZTwain();
 			}
 			catch {
 				Cursor=Cursors.Default;
@@ -1905,47 +2488,44 @@ namespace OpenDental
 			EZTwain.SetJpegQuality(ComputerPrefs.LocalComputer.ScanDocQuality);
 			EZTwain.SetXferMech(EZTwain.XFERMECH_MEMORY);
 			Cursor=Cursors.Default;
-			handleDIB=EZTwain.Acquire(this.Handle);//This is where the options dialog would come up. The settings above will not populate this window.
+			hdib=EZTwain.Acquire(this.Handle);//This is where the options dialog would come up. The settings above will not populate this window.
 			int errorCode=EZTwain.LastErrorCode();
 			if(errorCode!=0) {
+				string message="";
 				if(errorCode==(int)EZTwainErrorCode.EZTEC_USER_CANCEL) {//19
 					//message="\r\nScanning cancelled.";//do nothing
 					return;
 				}
 				else if(errorCode==(int)EZTwainErrorCode.EZTEC_JPEG_DLL) {//22
-					MessageBox.Show("Missing dll\r\n\r\nRequired file EZJpeg.dll is missing.");
-					return;
+					message="Missing dll\r\n\r\nRequired file EZJpeg.dll is missing.";
 				}
 				else if(errorCode==(int)EZTwainErrorCode.EZTEC_0_PAGES) {//38
 					//message="\r\nScanning cancelled.";//do nothing
 					return;
 				}
 				else if(errorCode==(int)EZTwainErrorCode.EZTEC_NO_PDF) {//43
-					MessageBox.Show("Missing dll\r\n\r\nRequired file EZPdf.dll is missing.");
-					return;
+					message="Missing dll\r\n\r\nRequired file EZPdf.dll is missing.";
 				}
 				else if(errorCode==(int)EZTwainErrorCode.EZTEC_DEVICE_PAPERJAM) {//76
-					MessageBox.Show("Paper jam\r\n\r\nPlease check the scanner document feeder and ensure there path is clear of any paper jams.");
-					return;
+					message="Paper jam\r\n\r\nPlease check the scanner document feeder and ensure there path is clear of any paper jams.";
 				}
-				//else if(errorCode==(int)EZTwainErrorCode.EZTEC_DS_FAILURE) {//5
-					//message="Duplex failure\r\n\r\nDuplex mode without scanner options window failed. Try enabling the scanner options window or disabling duplex mode.";
-					//The error message above is flat out wrong, at least sometimes.  In many cases, it's a harmless failure to disable, and scan was actually successful.
-				//}
-				//return;//Error messages should not normally block continuation.
-			}
-			if(handleDIB==(IntPtr)0) {
-				MsgBox.Show(EZTwain.LastErrorText());
+				else {
+					message=errorCode+" "+((EZTwainErrorCode)errorCode).ToString();
+				}
+				MessageBox.Show(Lan.g(this,"Unable to scan. Please make sure you can scan using other software. Error: "+message));
 				return;
 			}
-			double xdpi=EZTwain.DIB_XResolution(handleDIB);
-			double ydpi=EZTwain.DIB_XResolution(handleDIB);
-			IntPtr handleBitmap=EZTwain.DIB_ToDibSection(handleDIB);
+			if(hdib==(IntPtr)0) {//This is down here because there might also be an informative error code that we would like to use above.
+				return;//User cancelled
+			}
+			double xdpi=EZTwain.DIB_XResolution(hdib);
+			double ydpi=EZTwain.DIB_XResolution(hdib);
+			IntPtr hbitmap=EZTwain.DIB_ToDibSection(hdib);
 			try {
-				bitmapScanned=Bitmap.FromHbitmap(handleBitmap);//Sometimes throws 'A generic error occurred in GDI+.'
+				bitmapScanned=Bitmap.FromHbitmap(hbitmap);//Sometimes throws 'A generic error occurred in GDI+.'
 			}
 			catch(Exception ex) {
-				FriendlyException.Show(Lan.g(this,"Error scanning")+": "+ex.Message,ex);
+				FriendlyException.Show(Lan.g(this,"Error importing eob")+": "+ex.Message,ex);
 				return;
 			}			
 			bitmapScanned.SetResolution((float)xdpi,(float)ydpi);
@@ -1955,60 +2535,203 @@ namespace OpenDental
 			catch {
 				//Rarely, setting the clipboard image fails, in which case we should ignore the failure because most people do not use this feature.
 			}
+			ImageType imgType;
+			if(scanType=="xray") {
+				imgType=ImageType.Radiograph;
+			}
+			else if(scanType=="photo") {
+				imgType=ImageType.Photo;
+			}
+			else {//Assume document
+				imgType=ImageType.Document;
+			}
 			bool saved=true;
-			Document doc = null;
-			try {//Create corresponding image file.
-				bool doPrintHeading=false;
-				if(imgType==ImageType.Radiograph) {
-					doPrintHeading=true;
+			if(_claimPaymentNum!=0) {//eob
+				EobAttach eob=null;
+				try {
+					eob=ImageStore.ImportEobAttach(bitmapScanned,_claimPaymentNum);
 				}
-				doc=ImageStore.Import(bitmapScanned,GetCurrentCategory(),imgType,_patient,doPrintHeading:doPrintHeading);
-			}
-			catch(Exception ex) {
-				saved=false;
+				catch(Exception ex) {
+					saved=false;
+					Cursor=Cursors.Default;
+					MessageBox.Show(Lan.g(this,"Error saving eob")+": "+ex.Message);
+				}
+				if(bitmapScanned!=null) {
+					bitmapScanned.Dispose();
+					bitmapScanned=null;
+				}
+				if(hdib!=IntPtr.Zero) {
+					EZTwain.DIB_Free(hdib);
+				}
 				Cursor=Cursors.Default;
-				MessageBox.Show(Lan.g(this,"Unable to save document")+": "+ex.Message);
-			}
-			if(bitmapScanned!=null) {
-				bitmapScanned.Dispose();
-				bitmapScanned=null;
-			}
-			if(handleDIB!=IntPtr.Zero) {
-				EZTwain.DIB_Free(handleDIB);
-			}
-			Cursor=Cursors.Default;
-			if(saved) {
-				FillImageSelector(false);//Reload and keep new document selected.
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
-				FormImageFloat formImageFloat=GetFormImageFloatSelected();
-				FrmDocInfo frmDocInfo=new FrmDocInfo(_patient,GetDocumentShowing(0),isDocCreate:true);
-				frmDocInfo.ShowDialog();
-				if(frmDocInfo.IsDialogCancel) {
-					DeleteDocument(false,false,doc);
+				if(saved) {
+					FillTree(false);
+					SelectTreeNode(GetTreeNode(MakeIdEob(eob.EobAttachNum)));
 				}
-				else {
-					FillImageSelector(true);//Update tree, in case the new document's icon or category were modified in formDocInfo.
+			}
+			else if(_ehrAmendment!=null) {
+				//We only allow users to scan in one amendment at a time.  Keep track of the old file name.
+				string fileNameOld=_ehrAmendment.FileName;
+				try {
+					ImageStore.ImportAmdAttach(bitmapScanned,_ehrAmendment);
+					SelectTreeNode(null);
+					ImageStore.CleanAmdAttach(fileNameOld);//Delete the old scanned document.
+				}
+				catch(Exception ex) {
+					saved=false;
+					Cursor=Cursors.Default;
+					MessageBox.Show(Lan.g(this,"Error saving amendment")+": "+ex.Message);
+				}
+				if(bitmapScanned!=null) {
+					bitmapScanned.Dispose();
+					bitmapScanned=null;
+				}
+				if(hdib!=IntPtr.Zero) {
+					EZTwain.DIB_Free(hdib);
+				}
+				Cursor=Cursors.Default;
+				if(saved) {
+					FillTree(false);
+					SelectTreeNode(GetTreeNode(MakeIdAmd(_ehrAmendment.EhrAmendmentNum)));
+				}
+			}
+			else {//regular Images module
+				Document doc = null;
+				try {//Create corresponding image file.
+					doc=ImageStore.Import(bitmapScanned,GetCurrentCategory(),imgType,_patient);
+				}
+				catch(Exception ex) {
+					saved=false;
+					Cursor=Cursors.Default;
+					MessageBox.Show(Lan.g(this,"Unable to save document")+": "+ex.Message);
+				}
+				if(bitmapScanned!=null) {
+					bitmapScanned.Dispose();
+					bitmapScanned=null;
+				}
+				if(hdib!=IntPtr.Zero) {
+					EZTwain.DIB_Free(hdib);
+				}
+				Cursor=Cursors.Default;
+				if(saved) {
+					FillTree(false);//Reload and keep new document selected.
+					SelectTreeNode(GetTreeNode(MakeIdDoc(doc.DocNum)));
+					using FormDocInfo formDocInfo=new FormDocInfo(_patient,_documentShowing,GetCurrentFolderName(treeMain.SelectedNode),isDocCreate:true);
+					formDocInfo.ShowDialog(this);
+					if(formDocInfo.DialogResult!=DialogResult.OK) {
+						DeleteSelection(false,false,doc);
+					}
+					else {
+						FillTree(true);//Update tree, in case the new document's icon or category were modified in formDocInfo.
+					}
 				}
 			}
 		}
 
-		private void ToolBarScanDoc_Click(object sender,EventArgs e){
-			ToolBarScan_Click(ImageType.Document);
-		}
-
-		private void ToolBarScanMulti_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ImageCreate)) {
+		private void ToolbarScanMultiWeb() {
+			if(!CloudClientL.IsCloudClientRunning()) {
 				return;
 			}
-			if(ODEnvironment.IsCloudServer) {
-				if(CloudClientL.IsCloudClientRunning()) {
-					ToolbarScanMultiWeb();
+			//Ask the ODCloudClient to use a scanner on the client's computer
+			string tempFile=ODCloudClient.GetImageMultiFromScanner(
+				ComputerPrefs.LocalComputer.ScanDocSelectSource,
+				ComputerPrefs.LocalComputer.ScanDocShowOptions,
+				ComputerPrefs.LocalComputer.ScanDocDuplex,
+				ComputerPrefs.LocalComputer.ScanDocGrayscale,
+				ComputerPrefs.LocalComputer.ScanDocResolution,
+				ComputerPrefs.LocalComputer.ScanDocQuality
+			);
+			if(tempFile==null) {
+				return;//The scan was probably cancelled
+			}
+			NodeIdTag nodeIdTag=new NodeIdTag();
+			bool copied=true;
+			if(_claimPaymentNum!=0) {//eob
+				EobAttach eob=null;
+				try {
+					eob=ImageStore.ImportEobAttach(tempFile,_claimPaymentNum);
 				}
+				catch(Exception ex) {
+					MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ") + ex.Message + ": " + tempFile);
+					copied = false;
+				}
+				if(copied) {
+					FillTree(false);
+					SelectTreeNode(GetTreeNode(MakeIdEob(eob.EobAttachNum)));
+				}
+				ImageStore.TryDeleteFile(tempFile
+					,actInUseException:(msg) => MsgBox.Show(msg)//Informs user when a 'file is in use' exception occurs.
+				);
+			}
+			else if(_ehrAmendment!=null) {//amendment
+				string fileNameOld=_ehrAmendment.FileName;
+				try {
+					ImageStore.ImportAmdAttach(tempFile,_ehrAmendment);
+					SelectTreeNode(null);
+					ImageStore.CleanAmdAttach(fileNameOld);
+				}
+				catch(Exception ex) {
+					MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ") + ex.Message + ": " + tempFile);
+					copied = false;
+				}
+				if(copied) {
+					FillTree(false);
+					SelectTreeNode(GetTreeNode(MakeIdAmd(_ehrAmendment.EhrAmendmentNum)));
+				}
+				ImageStore.TryDeleteFile(tempFile
+					,actInUseException:(msg) => MsgBox.Show(msg)//Informs user when a 'file is in use' exception occurs.
+				);
+			}
+			else {//regular Images module
+				Document doc=null;
+				try {
+					doc=ImageStore.Import(tempFile,GetCurrentCategory(),_patient);
+				}
+				catch(Exception ex) {
+					MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ") + ex.Message + ": " + tempFile);
+					copied = false;
+				}
+				if(copied) {
+					FillTree(false);
+					SelectTreeNode(GetTreeNode(MakeIdDoc(doc.DocNum)));
+					using FormDocInfo FormD=new FormDocInfo(_patient,doc,GetCurrentFolderName(treeMain.SelectedNode),isDocCreate:true);
+					FormD.ShowDialog(this);//some of the fields might get changed, but not the filename 
+					//Customer complained this window was showing up behind OD.  We changed above line to add a parent form as an attempted fix.
+					//If this doesn't solve it we can also try adding FormD.BringToFront to see if it does anything.
+					if(FormD.DialogResult!=DialogResult.OK) {
+						DeleteSelection(false,false,doc);
+					}
+					else {
+						nodeIdTag=MakeIdDoc(doc.DocNum);
+						_documentShowing=doc.Copy();
+					}
+				}
+				ImageStore.TryDeleteFile(tempFile
+					,actInUseException:(msg) => MsgBox.Show(msg)//Informs user when a 'file is in use' exception occurs.
+				);
+				//Reselect the last successfully added node when necessary. js This code seems to be copied from import multi.  Simplify it.
+				if(doc!=null && !MakeIdDoc(doc.DocNum).Equals(nodeIdTag)) {
+					SelectTreeNode(GetTreeNode(MakeIdDoc(doc.DocNum)));
+				}
+				FillTree(true);
+			}
+		}
+
+		private void ToolBarScanMulti_Click() {
+			if(_ehrAmendment!=null) {
+				if(_ehrAmendment.FileName!=null && _ehrAmendment.FileName!="") {
+					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"This will delete your old file. Proceed?")) {
+						return;
+					}
+				}
+			}
+			if(ODBuild.IsWeb()) {
+				ToolbarScanMultiWeb();
 				return;
 			}
 			string tempFile=PrefC.GetRandomTempFile(".pdf");
 			try {
-				Twain.ActivateEZTwain();
+				ImagingDeviceManager.Twain.ActivateEZTwain();
 			}
 			catch {
 				Cursor=Cursors.Default;
@@ -2042,394 +2765,568 @@ namespace OpenDental
 			EZTwain.AcquireMultipageFile(this.Handle,tempFile);//This is where the options dialog will come up if enabled. This will ignore and override the settings above.
 			int errorCode=EZTwain.LastErrorCode();
 			if(errorCode!=0) {
+				string message="";
 				if(errorCode==(int)EZTwainErrorCode.EZTEC_USER_CANCEL) {//19
 					//message="\r\nScanning cancelled.";//do nothing
 					return;
 				}
 				else if(errorCode==(int)EZTwainErrorCode.EZTEC_JPEG_DLL) {//22
-					MessageBox.Show("Missing dll\r\n\r\nRequired file EZJpeg.dll is missing.");
-					return;
+					message="Missing dll\r\n\r\nRequired file EZJpeg.dll is missing.";
 				}
 				else if(errorCode==(int)EZTwainErrorCode.EZTEC_0_PAGES) {//38
 					//message="\r\nScanning cancelled.";//do nothing
 					return;
 				}
 				else if(errorCode==(int)EZTwainErrorCode.EZTEC_NO_PDF) {//43
-					MessageBox.Show("Missing dll\r\n\r\nRequired file EZPdf.dll is missing.");
-					return;
+					message="Missing dll\r\n\r\nRequired file EZPdf.dll is missing.";
 				}
 				else if(errorCode==(int)EZTwainErrorCode.EZTEC_DEVICE_PAPERJAM) {//76
-					MessageBox.Show("Paper jam\r\n\r\nPlease check the scanner document feeder and ensure the path is clear of any paper jams.");
-					return;
+					message="Paper jam\r\n\r\nPlease check the scanner document feeder and ensure there path is clear of any paper jams.";
 				}
-				//else if(errorCode==(int)EZTwainErrorCode.EZTEC_DS_FAILURE) {//5
-					//message="Duplex failure\r\n\r\nDuplex mode without scanner options window failed. Try enabling the scanner options window or disabling duplex mode.";
-					//The error message above is flat out wrong, at least sometimes.  In many cases, it's a harmless failure to disable, and scan was actually successful.
-				//}
-				MessageBox.Show(Lan.g(this,"Unable to scan. Please make sure you can scan using other software. Error: "+errorCode+" "+EZTwain.LastErrorText()));
-				//return;//Error messages should not normally block continuation.
-			}
-			NodeTypeAndKey nodeTypeAndKey=null;
-			bool copied=true;
-			Document doc=null;
-			try {
-				doc=ImageStore.Import(tempFile,GetCurrentCategory(),_patient);
-			}
-			catch(Exception ex) {
-				MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ") + ex.Message + ": " + tempFile);
-				copied = false;
-			}
-			if(copied) {
-				FillImageSelector(false);
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
-				FormImageFloat formImageFloat=GetFormImageFloatSelected();
-				FrmDocInfo frmDocInfo=new FrmDocInfo(_patient,doc,isDocCreate:true);
-				frmDocInfo.ShowDialog();//some of the fields might get changed, but not the filename 
-				if(frmDocInfo.IsDialogCancel) {
-					DeleteDocument(false,false,doc);
+				else if(errorCode==(int)EZTwainErrorCode.EZTEC_DS_FAILURE) {//5
+					message="Duplex failure\r\n\r\nDuplex mode without scanner options window failed. Try enabling the scanner options window or disabling duplex mode.";
 				}
 				else {
-					nodeTypeAndKey=new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum);
-					SetDocumentShowing(0,doc.Copy());
+					message=errorCode+" "+((EZTwainErrorCode)errorCode).ToString();
 				}
-			}
-			ImageStore.TryDeleteFile(tempFile
-				,actInUseException:(msg) => MsgBox.Show(msg)//Informs user when a 'file is in use' exception occurs.
-			);
-			//Reselect the last successfully added node when necessary. js This code seems to be copied from import multi.  Simplify it.
-			if(doc!=null && !new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum).Equals(nodeTypeAndKey)) {
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
-			}
-			FillImageSelector(true);
-		}
-
-		///<summary>Handles the scan multi click for ODCloud using similar logic to ToolbarScanMulti_Click()</summary>
-		private void ToolbarScanMultiWeb() {
-			if(!CloudClientL.IsCloudClientRunning()) {
+				MessageBox.Show(Lan.g(this,"Unable to scan. Please make sure you can scan using other software. Error: "+message));
 				return;
 			}
-			//Ask the ODCloudClient to use a scanner on the client's computer
-			string tempFile=ODCloudClient.GetImageMultiFromScanner(
-				ComputerPrefs.LocalComputer.ScanDocSelectSource,
-				ComputerPrefs.LocalComputer.ScanDocShowOptions,
-				ComputerPrefs.LocalComputer.ScanDocDuplex,
-				ComputerPrefs.LocalComputer.ScanDocGrayscale,
-				ComputerPrefs.LocalComputer.ScanDocResolution,
-				ComputerPrefs.LocalComputer.ScanDocQuality
-			);
-			if(tempFile==null) {
-				return;//The scan was probably cancelled
-			}
-			NodeTypeAndKey nodeTypeAndKey=null;
+			NodeIdTag nodeIdTag=new NodeIdTag();
 			bool copied=true;
-			Document doc=null;
-			try {
-				doc=ImageStore.Import(tempFile,GetCurrentCategory(),_patient);
-			}
-			catch(Exception ex) {
-				MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ") + ex.Message + ": " + tempFile);
-				copied = false;
-			}
-			if(copied) {
-				FillImageSelector(false);
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
-				FormImageFloat formImageFloat=GetFormImageFloatSelected();
-				FrmDocInfo frmDocInfo=new FrmDocInfo(_patient,doc,isDocCreate:true);
-				frmDocInfo.ShowDialog();//some of the fields might get changed, but not the filename 
-				if(frmDocInfo.IsDialogCancel) {
-					DeleteDocument(false,false,doc);
+			if(_claimPaymentNum!=0) {//eob
+				EobAttach eob=null;
+				try {
+					eob=ImageStore.ImportEobAttach(tempFile,_claimPaymentNum);
 				}
-				else {
-					nodeTypeAndKey=new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum);
-					SetDocumentShowing(0,doc.Copy());
+				catch(Exception ex) {
+					MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ") + ex.Message + ": " + tempFile);
+					copied = false;
 				}
-			}
-			ImageStore.TryDeleteFile(tempFile
-				,actInUseException:(msg) => MsgBox.Show(msg)//Informs user when a 'file is in use' exception occurs.
-			);
-			//Reselect the last successfully added node when necessary. js This code seems to be copied from import multi.  Simplify it.
-			if(doc!=null && !new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum).Equals(nodeTypeAndKey)) {
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
-			}
-			FillImageSelector(true);
-		}
-
-		private void ToolBarScanPhoto_Click(object sender,EventArgs e){
-			ToolBarScan_Click(ImageType.Photo);
-		}
-
-		///<summary>Handles the scan click for ODCloud using similar logic to ToolbarScan_Click()</summary>
-		private void ToolbarScanWeb(ImageType imgType) {
-			if(!CloudClientL.IsCloudClientRunning()) {
-				return;
-			}
-			Bitmap bitmapScanned=null;
-			try {
-				//Ask the ODCloudClient to use a scanner on the client's computer
-				bitmapScanned=ODCloudClient.GetImageFromScanner(
-					ComputerPrefs.LocalComputer.ScanDocSelectSource,
-					ComputerPrefs.LocalComputer.ScanDocShowOptions,
-					ComputerPrefs.LocalComputer.ScanDocDuplex,
-					ComputerPrefs.LocalComputer.ScanDocGrayscale,
-					ComputerPrefs.LocalComputer.ScanDocResolution,
-					ComputerPrefs.LocalComputer.ScanDocQuality
+				if(copied) {
+					FillTree(false);
+					SelectTreeNode(GetTreeNode(MakeIdEob(eob.EobAttachNum)));
+				}
+				ImageStore.TryDeleteFile(tempFile
+					,actInUseException:(msg) => MsgBox.Show(msg)//Informs user when a 'file is in use' exception occurs.
 				);
 			}
-			catch (ODException ex) {
-				MessageBox.Show(ex.Message);
-				return;
-			}
-			catch (Exception ex) {
-				MessageBox.Show(ex.Message);
-				return;
-			}
-			if(bitmapScanned==null) {//The scan was probably cancelled.
-				return;
-			}
-			bool saved=true;
-			Document doc = null;
-			try {//Create corresponding image file.
-				bool doPrintHeading=false;
-				if(imgType==ImageType.Radiograph) {
-					doPrintHeading=true;
+			else if(_ehrAmendment!=null) {//amendment
+				string fileNameOld=_ehrAmendment.FileName;
+				try {
+					ImageStore.ImportAmdAttach(tempFile,_ehrAmendment);
+					SelectTreeNode(null);
+					ImageStore.CleanAmdAttach(fileNameOld);
 				}
-				doc=ImageStore.Import(bitmapScanned,GetCurrentCategory(),imgType,_patient,doPrintHeading:doPrintHeading);
-			}
-			catch(Exception ex) {
-				saved=false;
-				MessageBox.Show(Lan.g(this,"Unable to save document")+": "+ex.Message);
-			}
-			if(bitmapScanned!=null) {
-				bitmapScanned.Dispose();
-				bitmapScanned=null;
-			}//===========================
-			if(saved) {
-				FillImageSelector(false);//Reload and keep new document selected.
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,doc.DocNum));
-				FormImageFloat formImageFloat=GetFormImageFloatSelected();
-				FrmDocInfo frmDocInfo=new FrmDocInfo(_patient,GetDocumentShowing(0),isDocCreate:true);
-				frmDocInfo.ShowDialog();
-				if(frmDocInfo.IsDialogCancel) {
-					DeleteDocument(false,false,doc);
+				catch(Exception ex) {
+					MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ") + ex.Message + ": " + tempFile);
+					copied = false;
 				}
-				else {
-					FillImageSelector(true);//Update tree, in case the new document's icon or category were modified in formDocInfo.
+				if(copied) {
+					FillTree(false);
+					SelectTreeNode(GetTreeNode(MakeIdAmd(_ehrAmendment.EhrAmendmentNum)));
 				}
+				ImageStore.TryDeleteFile(tempFile
+					,actInUseException:(msg) => MsgBox.Show(msg)//Informs user when a 'file is in use' exception occurs.
+				);
+			}
+			else {//regular Images module
+				Document doc=null;
+				try {
+					doc=ImageStore.Import(tempFile,GetCurrentCategory(),_patient);
+				}
+				catch(Exception ex) {
+					MessageBox.Show(Lan.g(this,"Unable to copy file, May be in use: ") + ex.Message + ": " + tempFile);
+					copied = false;
+				}
+				if(copied) {
+					FillTree(false);
+					SelectTreeNode(GetTreeNode(MakeIdDoc(doc.DocNum)));
+					using FormDocInfo FormD=new FormDocInfo(_patient,doc,GetCurrentFolderName(treeMain.SelectedNode),isDocCreate:true);
+					FormD.ShowDialog(this);//some of the fields might get changed, but not the filename 
+					//Customer complained this window was showing up behind OD.  We changed above line to add a parent form as an attempted fix.
+					//If this doesn't solve it we can also try adding FormD.BringToFront to see if it does anything.
+					if(FormD.DialogResult!=DialogResult.OK) {
+						DeleteSelection(false,false,doc);
+					}
+					else {
+						nodeIdTag=MakeIdDoc(doc.DocNum);
+						_documentShowing=doc.Copy();
+					}
+				}
+				ImageStore.TryDeleteFile(tempFile
+					,actInUseException:(msg) => MsgBox.Show(msg)//Informs user when a 'file is in use' exception occurs.
+				);
+				//Reselect the last successfully added node when necessary. js This code seems to be copied from import multi.  Simplify it.
+				if(doc!=null && !MakeIdDoc(doc.DocNum).Equals(nodeIdTag)) {
+					SelectTreeNode(GetTreeNode(MakeIdDoc(doc.DocNum)));
+				}
+				FillTree(true);
 			}
 		}
 
-		private void ToolBarScanXRay_Click(object sender,EventArgs e){
-			ToolBarScan_Click(ImageType.Radiograph);
-		}
-
-		private void ToolBarSign_Click(object sender,EventArgs e){
-			if(_listFormImageFloats.Count==0){
-				MsgBox.Show(this,"No image selected.");//just in case
-				return;
-			}
-			if(!_listFormImageFloats[0].IsImageFloatDocked || !_listFormImageFloats[0].IsImageFloatSelected){
-				MsgBox.Show(this,"Signature and note only works if the docked image is selected first.");
-				return;
-			}
-			if(imageSelector.GetSelectedType()!=EnumImageNodeType.Document){
+		private void ToolBarSign_Click() {
+			if(treeMain.SelectedNode==null ||				//No selection
+				treeMain.SelectedNode.Tag==null ||			//Internal error
+				treeMain.SelectedNode.Parent==null) {		//This is a folder node.
 				return;
 			}
 			//Show the underlying panel note box while the signature is being filled.
 			panelNote.Visible=true;
-			LayoutControls();
+			LayoutAll();
 			//Display the document signature form.
-			FrmDocSign frmDocSign=new FrmDocSign(GetDocumentShowing(0),_patient);//Updates our local document and saves changes to db also.
-			Point pointLocal=new Point(panelSplitter.Left,Height);
-			Point pointScreen=PointToScreen(pointLocal);
-			frmDocSign.PointLLStart=pointScreen;
-			frmDocSign.ShowDialog();
-			FillImageSelector(true);
+			using FormDocSign docSignForm=new FormDocSign(_documentShowing,_patient);//Updates our local document and saves changes to db also.
+			int signLeft=treeMain.Left;
+			docSignForm.Location=PointToScreen(new Point(signLeft,this.ClientRectangle.Bottom-docSignForm.Height));
+			docSignForm.Width=Math.Max(0,Math.Min(docSignForm.Width,pictureBoxMain.Right-signLeft));
+			docSignForm.ShowDialog();
+			FillTree(true);
 			//Adjust visibility of panel note based on changes made to the signature above.
-			SetPanelNoteVisibility();
+			SetPanelNoteVisibility(_documentShowing);
 			//Resize controls in our window to adjust for a possible change in the visibility of the panel note control.
-			LayoutControls();
+			LayoutAll();
 			//Update the signature and note with the new data.
 			FillSignature();
 		}
 
-		public void ToolBarUnmount_Click(){
-			if(!IsMountShowing()){
-				//should never happen
-				MsgBox.Show(this,"Only for mounts.");
-				return;
-			}
-			if(!IsMountItemSelected()){
-				MsgBox.Show(this,"Please select an image in the mount first.");
-				return;
-			}
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return;//shouldn't happen
-			}
-			int idx=formImageFloat.GetIdxSelectedInMount();
-			MountItem mountItemCopy=formImageFloat.GetListMountItems()[idx].Copy();
-			mountItemCopy.ItemOrder=-1;
-			MountItems.Insert(mountItemCopy);//it will now have a new PK
-			Document document=formImageFloat.GetDocumentShowing(idx);
-			document.MountItemNum=mountItemCopy.MountItemNum;
-			Documents.Update(document);
-			NodeTypeAndKey nodeTypeAndKey=formImageFloat.GetNodeTypeAndKey();
-			SelectTreeNode(nodeTypeAndKey);
+		///<summary>This button is disabled for mounts, in which case this code is never called.</summary>
+		private void ToolBarZoom100_Click() {
+			_zoomLevel=0;
+			_zoomOverall=1;
+			_zoomImage=1;
+			InvalidateSettings(ImageSettingFlags.NONE,false);//Refresh display.
 		}
 
-		private void ToolBarVideo_Click(object sender,EventArgs e){
-			if(ODBuild.IsThinfinity()) {
-				MsgBox.Show(this,"This feature is not available in Open Dental Cloud.");
-				return;
-			}
-			//If no patient selected, then this button is disabled
-			if(!Security.IsAuthorized(EnumPermType.ImageCreate)) {
-				return;
-			}
-			if(!ODBuild.IsTrial()
-				&& !OpenDentalHelp.ODHelp.IsEncryptedKeyValid())//always true in debug
-			{
-				MsgBox.Show(this,"This feature requires an active support plan.");
-				return;
-			}
-			if(_formLauncherVideo is null){
-				_formLauncherVideo=new FormLauncher(EnumFormName.FormVideo);
-				_formLauncherVideo.SetEvent("BitmapCaptured",formVideo_BitmapCaptured);
-			}
-			if(_formLauncherVideo.IsNullOrDisposedOrNotVis()){
-				PreselectFirstItem();
-				//still might not be one selected, so test each time
-				_formLauncherVideo.Show();
-				LayoutControls();
-				return;
-			}
-			_formLauncherVideo.RestoreAndFront();
+		///<summary>This button is disabled for mounts, in which case this code is never called.</summary>
+		private void ToolBarZoomIn_Click() {
+			_zoomLevel++;
+			PointF c=new PointF(pictureBoxMain.ClientRectangle.Width/2.0f,pictureBoxMain.ClientRectangle.Height/2.0f);
+			PointF p=new PointF(c.X-_pointFTranslation.X,c.Y-_pointFTranslation.Y);
+			_pointFTranslation=new PointF(_pointFTranslation.X-p.X,_pointFTranslation.Y-p.Y);
+			_zoomOverall=(float)Math.Pow(2,_zoomLevel);
+			InvalidateSettings(ImageSettingFlags.NONE,false);//Refresh display.
 		}
-		#endregion Methods - Event Handlers Toolbars
+
+		///<summary>This button is disabled for mounts, in which case this code is never called.</summary>
+		private void ToolBarZoomOut_Click() {
+			_zoomLevel--;
+			PointF c=new PointF(pictureBoxMain.ClientRectangle.Width/2.0f,pictureBoxMain.ClientRectangle.Height/2.0f);
+			PointF p=new PointF(c.X-_pointFTranslation.X,c.Y-_pointFTranslation.Y);
+			_pointFTranslation=new PointF(_pointFTranslation.X+p.X/2.0f,_pointFTranslation.Y+p.Y/2.0f);
+			_zoomOverall=(float)Math.Pow(2,_zoomLevel);
+			InvalidateSettings(ImageSettingFlags.NONE,false);//Refresh display.
+		}
+		#endregion Methods - ToolBarMain
 
 		#region Methods - Private
-		public static EnumImgDeviceControlType ConvertToImgDeviceControlType(EnumImgDeviceType imgDeviceType){
-			switch(imgDeviceType){
-				default:
-				case EnumImgDeviceType.TwainRadiograph:
-					return EnumImgDeviceControlType.Twain;
-				case EnumImgDeviceType.XDR:
-					return EnumImgDeviceControlType.XDR;
-				case EnumImgDeviceType.TwainMulti:
-					return EnumImgDeviceControlType.TwainMulti;
+		///<summary>Resizes all controls in the image module to fit inside the current window, including controls which have varying visibility.</summary>
+		private void LayoutAll() {
+			LayoutManager.Move(ToolBarMain,new Rectangle(0,0,Width,LayoutManager.Scale(25)));
+			LayoutManager.Move(treeMain,new Rectangle(0,ToolBarMain.Bottom+4,LayoutManager.Scale(228),Height-(ToolBarMain.Height+6)));
+			if(_claimPaymentNum!=0 || _ehrAmendment!=null) {//eob or amendment
+				LayoutManager.Move(ToolBarPaint,new Rectangle(treeMain.Right+5,ToolBarMain.Bottom,Width-(treeMain.Width+5),LayoutManager.Scale(25)));
 			}
+			else {//ordinary images module
+				LayoutManager.Move(ToolBarPaint,new Rectangle(windowingSlider.Location.X+windowingSlider.Width+4,ToolBarMain.Bottom,
+					Width-windowingSlider.Width-(treeMain.Width+5),LayoutManager.Scale(25)));
+			}
+			int panelNoteHeight=(panelNote.Visible?panelNote.Height:0);
+			LayoutManager.Move(pictureBoxMain,new Rectangle(treeMain.Right+5,ToolBarPaint.Bottom+4,Width-(treeMain.Width+8),
+				Height-panelNoteHeight-(ToolBarPaint.Bottom+4)));
+			LayoutManager.Move(panelNote,new Rectangle(pictureBoxMain.Left,Height-panelNoteHeight-1,pictureBoxMain.Width,
+				(int)Math.Min(114,Height-pictureBoxMain.Location.Y)));
+			if(ODBuild.IsWeb() && _cloudIframe!=null && _cloudIframe.Visible) {
+				LayoutManager.Move(_cloudIframe,pictureBoxMain.Bounds);
+			}
+			if(_odWebView2!=null && _odWebView2.Visible) {
+				LayoutManager.Move(_odWebView2,pictureBoxMain.Bounds);
+			}
+			LayoutManager.Move(panelUnderline,new Rectangle(treeMain.Right+6,ToolBarPaint.Bottom-1,Width-(treeMain.Width+6),2));
+			LayoutManager.Move(panelVertLine,new Rectangle(treeMain.Right+5,ToolBarMain.Bottom,2,LayoutManager.Scale(25)));
 		}
 
-		private FormImageFloat CreateFloater(){
-			FormImageFloat formImageFloat=new FormImageFloat();
-			formImageFloat.IsImageFloatDocked=true;
-			formImageFloat.IsImageFloatSelected=true;
-			formImageFloat.ListFormImageFloats=_listFormImageFloats;
-			formImageFloat.ImageSelector_=imageSelector;
-			formImageFloat.Activated += FormImageFloat_Activated;
-			formImageFloat.FormClosed += FormImageFloat_FormClosed;
-			formImageFloat.EventEnableToolBarButtons+=(sender,toolBarButtonState)=>EnableToolBarButtons(toolBarButtonState);
-			formImageFloat.EventFillTree+=(sender,keepSelection)=>FillImageSelector(keepSelection);
-			formImageFloat.EventKeyDown+=(sender,e)=>FormImageFloat_KeyDown(e);
-			formImageFloat.EventSelectTreeNode+=(sender,nodeTypeAndKey)=>{
-				if(nodeTypeAndKey is null){
-					nodeTypeAndKey=formImageFloat.GetNodeTypeAndKey();
-				}
-				SelectTreeNode(nodeTypeAndKey);
-			};
-			formImageFloat.EventSetCropPanEditAdj+=(sender,cropPanAdj)=>SetCropPanAdj(cropPanAdj);
-			formImageFloat.EventSetDrawMode+=(sender,drawMode)=>SetDrawMode(drawMode);
-			formImageFloat.EventSetWindowingSlider+=FormImageFloat_SetWindowingSlider;
-			formImageFloat.EventThumbnailNeedsRefresh+=(sender,e)=>ThumbnailRefresh();
-			formImageFloat.EventWindowClicked+=FormImageFloat_WindowClicked;
-			formImageFloat.EventWindowCloseOthers += FormImageFloat_WindowCloseOthers;
-			formImageFloat.EventWindowDockThis += FormImageFloat_WindowDockThis;
-			formImageFloat.EventWindowShowAll += FormImageFloat_WindowShowAll;
-			formImageFloat.EventSetZoomSlider+=FormImageFloat_SetZoomSlider;
-			formImageFloat.EventZoomSliderSetByWheel+=FormImageFloat_ZoomSliderSetByWheel;
-			formImageFloat.EventZoomSliderSetValueAndMax+=(sender,newVal)=>zoomSlider.SetValueAndMax(newVal);
-			formImageFloat.IsImageFloatDockedChanged+=FormImageFloat_IsImageFloatDockedChanged;
-			return formImageFloat;
-		}
-
-		///<summary>Deletes the specified document from the database and refreshes the tree view. Set securityCheck false when creating a new document that might get cancelled.  Document is passed in because it might not be in the tree if the image folder it belongs to is now hidden.</summary>
-		private void DeleteDocument(bool isVerbose,bool doSecurityCheck,Document document) {
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
+		///<summary>Sets the panelnote visibility based on the given document's signature data and the current operating system.</summary>
+		private void SetPanelNoteVisibility(Document doc) {
+			if(doc==null){
+				panelNote.Visible=false;
 				return;
 			}
-			formImageFloat.DeleteDocument(isVerbose,doSecurityCheck,document);
+			if(!doc.Note.IsNullOrEmpty()){
+				panelNote.Visible=true;
+				return;
+			}
+			if(!doc.Signature.IsNullOrEmpty()){
+				panelNote.Visible=true;
+				return;
+			}
+			panelNote.Visible=false;
+			//Old logic is too hard to read and we don't support Linux
+			//panelNote.Visible=(doc!=null) && (((doc.Note!=null && doc.Note!="") || (doc.Signature!=null && doc.Signature!="")) && 
+			//	(Environment.OSVersion.Platform!=PlatformID.Unix || !doc.SigIsTopaz));
 		}
 
-		///<summary>Enables or disables all the buttons in both toolbars to handle situation where no patient is selected.</summary>
+		///<summary></summary>
+		private void RefreshModuleData(long patNum) {
+			SelectTreeNode(null);//Clear selection and image and reset visibilities.
+			if(patNum==0) {
+				_family=null;
+				_patient=null;
+				return;
+			}
+			_family=Patients.GetFamily(patNum);
+			_patient=_family.GetPatient(patNum);
+			_patFolder=ImageStore.GetPatientFolder(_patient,ImageStore.GetPreferredAtoZpath());//This is where the pat folder gets created if it does not yet exist.
+			if(_patNumLastSecurityLog!=patNum) {
+				SecurityLogs.MakeLogEntry(Permissions.ImagingModule,patNum,"");
+				_patNumLastSecurityLog=patNum;
+			}
+			Action actionClosing=null;
+			if(CloudStorage.IsCloudStorage) {
+				actionClosing=ODProgress.Show(ODEventType.ContrImages,startingMessage:Lan.g(this,"Loading..."));
+			}
+			ImageStore.AddMissingFilesToDatabase(_patient);
+			actionClosing?.Invoke();
+		}
+
+		private void RefreshModuleScreen() {
+			if(this.Enabled && _patient!=null) {
+				//Enable tools which must always be accessible when a valid patient is selected.
+				EnableToolBarsPatient(true);
+				//Item specific tools disabled until item chosen.
+				EnableAllTreeItemTools(false);
+			}
+			else {
+				EnableToolBarsPatient(false);//Disable entire menu (besides select patient).
+			}
+			//get the program properties for XVWeb from the cache.
+			if(XVWeb.IsDisplayingImagesInProgram && _patient!=null)
+			{
+				//start thread to load all apteryx images into OD. 
+				_threadImageRequest?.QuitAsync();//If an old thread is still running, we want to make it stop so the new one can run.
+				_threadImageRequest=new ODThread(ImagesOnThreadStart,_patient.Copy());
+				_threadImageRequest.AddExceptionHandler(new ODThread.ExceptionDelegate((ex) => {
+					if(InvokeRequired) {
+						Invoke((Action)(() => FriendlyException.Show(Lan.g(this,"Unable to display Apteryx Images"),ex)));
+					}
+					else {
+						FriendlyException.Show(Lan.g(this,"Unable to display Apteryx Images"),ex);
+					}
+				}));
+				_threadImageRequest.Name="ImageRequestThread";
+				_threadImageRequest.GroupName="ImageRequestThread";
+				_threadImageRequest.Start(true); //run it once
+			}
+			ToolBarMain.Invalidate();
+			ToolBarPaint.Invalidate();
+			FillTree(false);
+		}
+
+		private void ImagesOnThreadStart(ODThread workerThread) {
+			Patient patient=(Patient)workerThread.Parameters[0];
+			_isFillingXVWebFromThread=true;
+			List<ApteryxImage> listAI=new List<ApteryxImage>();
+			listAI=XVWeb.GetImagesList(_patient);
+			lock(_apteryxLocker) {
+				_listApteryxImagesDownload=listAI;
+			}
+			//put images into desired image category folder from property value
+			FillTreeXVWebItems(patient.PatNum);
+			_isFillingXVWebFromThread=false;
+		}	
+
+		///<summary></summary>
 		private void EnableToolBarsPatient(bool enable) {
-			toolBarMain.SetEnabledAll(enable);
-			//Acquire button?
-			for(int i=0;i<toolBarPaint.Buttons.Count;i++) {
-				toolBarPaint.Buttons[i].Enabled=enable;
+			for(int i=0;i<ToolBarMain.Buttons.Count;i++) {
+				ToolBarMain.Buttons[i].Enabled=enable;
 			}
-			toolBarPaint.Invalidate();
-			windowingSlider.IsEnabled=enable;
-			zoomSlider.IsEnabled=enable;
-			windowingSlider.Draw();
-		}
-
-		///<summary>Not technically all.  There are some buttons that we never disable such as import, scan, acquire, etc.</summary>
-		private void DisableAllToolBarButtons() {
-			bool enable=false;
-			ToolBarButtonState toolBarButtonState=new ToolBarButtonState(print:enable, delete:enable, info:enable, sign:enable, export:enable, copy:enable, brightAndContrast:enable, zoom:enable, zoomOne:enable, crop:enable, pan:enable, adj:enable, size:enable, flip:enable, rotateL:enable, rotateR:enable, rotate180:enable,draw:enable, unmount:enable);
-			EnableToolBarButtons(toolBarButtonState);
-		}
-
-		///<summary>Defined this way to force future programming to consider which tools are enabled and disabled for every possible tool in the menu.  To prevent bugs, you must always use named arguments.  Called when user clicks on Crop/Pan/Mount buttons, clicks Tree, or clicks around on a mount.</summary>
-		private void EnableToolBarButtons(ToolBarButtonState toolBarButtonState){
-			//bool print, bool delete, bool info, bool sign, bool export, bool copy, bool brightAndContrast, bool zoom, bool zoomOne, bool crop, bool pan, bool adj, bool size, bool flip, bool rotateL,bool rotateR, bool rotate180) {
-			//Some buttons don't show here because they are always enabled as long as there is a patient,
-			//including Scan, Import, Paste, Templates, Mounts
-			toolBarMain.SetEnabled(TB.Print.ToString(),toolBarButtonState.Print);
-			toolBarMain.SetEnabled(TB.Delete.ToString(),toolBarButtonState.Delete);
-			toolBarMain.SetEnabled(TB.Info.ToString(),toolBarButtonState.Info);
-			toolBarMain.SetEnabled(TB.Sign.ToString(),toolBarButtonState.Sign);
-			toolBarMain.SetEnabled(TB.Export.ToString(),toolBarButtonState.Export);
-			toolBarMain.SetEnabled(TB.Copy.ToString(),toolBarButtonState.Copy);
-			windowingSlider.IsEnabled=toolBarButtonState.BrightAndContrast;
-			windowingSlider.Draw();
-			zoomSlider.IsEnabled=toolBarButtonState.Zoom;
-			if(toolBarPaint.Buttons.Count==0) {
-				return;//must be launching a floater from ControlChart prior to initializing this module.
+			if(ToolBarMain.Buttons["Capture"]!=null) {
+				ToolBarMain.Buttons["Capture"].Enabled=(ToolBarMain.Buttons["Capture"].Enabled && Environment.OSVersion.Platform!=PlatformID.Unix);
 			}
-			toolBarPaint.Buttons[TB.ZoomOne.ToString()].Enabled=toolBarButtonState.ZoomOne;
-			toolBarPaint.Buttons[TB.Crop.ToString()].Enabled=toolBarButtonState.Crop;
-			toolBarPaint.Buttons[TB.Pan.ToString()].Enabled=toolBarButtonState.Pan;
-			toolBarPaint.Buttons[TB.Adj.ToString()].Enabled=toolBarButtonState.Adj;
-			toolBarPaint.Buttons[TB.Size.ToString()].Enabled=toolBarButtonState.Size;
-			toolBarPaint.Buttons[TB.Flip.ToString()].Enabled=toolBarButtonState.Flip;
-			toolBarPaint.Buttons[TB.RotateR.ToString()].Enabled=toolBarButtonState.RotateR;
-			toolBarPaint.Buttons[TB.RotateL.ToString()].Enabled=toolBarButtonState.RotateL;
-			toolBarPaint.Buttons[TB.Rotate180.ToString()].Enabled=toolBarButtonState.Rotate180;
-			toolBarPaint.Buttons[TB.DrawTool.ToString()].Enabled=toolBarButtonState.Draw;
-			toolBarPaint.Buttons[TB.Unmount.ToString()].Enabled=toolBarButtonState.Unmount;
-			toolBarPaint.Invalidate();
-			//toolBarMount buttons are always visible
+			ToolBarMain.Invalidate();
+			for(int i=0;i<ToolBarPaint.Buttons.Count;i++) {
+				ToolBarPaint.Buttons[i].Enabled=enable;
+			}
+			ToolBarPaint.Enabled=enable;
+			ToolBarPaint.Invalidate();
+			windowingSlider.Enabled=enable;
+			windowingSlider.Invalidate();
 		}
 
-		///<summary>Fills the panelnote control with the current document signature when the panelnote is visible and when a valid document is currently selected.</summary>
-		private void FillSignature() {
-			if(!IsDocumentShowing()){
+		///<summary>Defined this way to force future programming to consider which tools are enabled and disabled for every possible tool in the menu.</summary>
+		private void EnableToolBarButtons(bool print,bool delete,bool info,bool copy,bool sign,bool brightAndContrast,bool crop,bool hand,bool zoomIn,bool zoomOut,bool flip,bool rotateL,bool rotateR,bool export) {
+			ToolBarMain.Buttons["Print"].Enabled=print;
+			ToolBarMain.Buttons["Delete"].Enabled=delete;
+			if(ToolBarMain.Buttons["Info"]!=null) {
+				ToolBarMain.Buttons["Info"].Enabled=info;
+			}
+			ToolBarMain.Buttons["Copy"].Enabled=copy;
+			if(ToolBarMain.Buttons["Sign"]!=null) {
+				ToolBarMain.Buttons["Sign"].Enabled=sign;
+			}
+			ToolBarMain.Buttons["Export"].Enabled=export;
+			ToolBarMain.Invalidate();
+			if(ToolBarPaint.Buttons[""]!=null) {
+				ToolBarPaint.Buttons["Crop"].Enabled=crop;
+			}
+			if(ToolBarPaint.Buttons["Hand"]!=null) {
+				ToolBarPaint.Buttons["Hand"].Enabled=hand;
+			}
+			ToolBarPaint.Buttons["ZoomIn"].Enabled=zoomIn;
+			ToolBarPaint.Buttons["ZoomOut"].Enabled=zoomOut;
+			ToolBarPaint.Buttons["Zoom100"].Enabled=zoomOut;
+			if(ToolBarPaint.Buttons["Flip"]!=null) {
+				ToolBarPaint.Buttons["Flip"].Enabled=flip;
+			}
+			if(ToolBarPaint.Buttons["RotateR"]!=null) {
+				ToolBarPaint.Buttons["RotateR"].Enabled=rotateR;
+			}
+			if(ToolBarPaint.Buttons["RotateL"]!=null) {
+				ToolBarPaint.Buttons["RotateL"].Enabled=rotateL;
+			}
+			//Enabled if one tool inside is enabled.
+			ToolBarPaint.Enabled=(brightAndContrast||crop||hand||zoomIn||zoomOut||flip||rotateL||rotateR);
+			ToolBarPaint.Invalidate();
+			windowingSlider.Enabled=brightAndContrast;
+			windowingSlider.Invalidate();
+		}
+
+		private void EnableAllTreeItemTools(bool enable) {
+			EnableToolBarButtons(enable,enable,enable,enable,enable,enable,enable,enable,enable,enable,enable,enable,enable,enable);
+		}
+
+		///<summary>Displays the PDF in a web browser. Downloads the PDF file from the cloud if necessary.</summary>
+		private async void LoadPdf(string atoZFolder,string atoZFileName,string localPath,string downloadMessage) {
+			try {
+				if(_odWebView2!=null) {
+					_odWebView2.Visible=true;
+				}
+				string pdfFilePath="";
+				if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {
+					pdfFilePath=ODFileUtils.CombinePaths(atoZFolder,atoZFileName);
+				}
+				else if(CloudStorage.IsCloudStorage) {
+					if(localPath!="") {
+						pdfFilePath=localPath;
+					}
+					else {
+						//Download PDF into temp directory for displaying.
+						pdfFilePath=ODFileUtils.CombinePaths(PrefC.GetTempFolderPath(),_documentShowing.DocNum+(_patient!=null ? _patient.PatNum.ToString() : "")+".pdf");
+						FileAtoZ.Download(FileAtoZ.CombinePaths(atoZFolder,atoZFileName),pdfFilePath,downloadMessage);
+					}
+				}
+				else {
+					pdfFilePath=ODFileUtils.CombinePaths(PrefC.GetTempFolderPath(),_documentShowing.DocNum+(_patient!=null ? _patient.PatNum.ToString() : "")+".pdf");
+					File.WriteAllBytes(pdfFilePath,Convert.FromBase64String(_documentShowing.RawBase64));
+				}
+				if(!File.Exists(pdfFilePath)) {
+					MessageBox.Show(Lan.g(this,"File not found")+": " + atoZFileName);
+				}
+				else {
+					_odWebView2FilePath=pdfFilePath;
+					if(ODBuild.IsWeb()) {
+						_cloudIframe.ShowIframe();
+						_cloudIframe.DisplayFile(_odWebView2FilePath);
+						_isExportable=true;
+						return;
+					}
+					//Set these fields before calling _odWebView2.Init() because the calling function will continue its execution while the Init() below is awaiting. And the calling
+					//function expects these fields to have already been set to their correct value.
+					pictureBoxMain.Visible=false;
+					_isExportable=true;
+					Application.DoEvents();//Show the browser control before loading, in case loading a large PDF, so the user can see the preview has started without
+					if(_odWebView2.CoreWebView2==null) {
+						await _odWebView2.Init();//Throws exception if Microsoft WebView2 Runtime is not installed so need to have in try-catch.
+					}
+					_odWebView2.CoreWebView2.Navigate(_odWebView2FilePath);//The return status of this function doesn't seem to be helpful.
+				}
+			}
+			catch(Exception ex) {
+				ex.DoNothing();
+				//An exception can happen if they do not have Microsoft WebView2 Runtime installed.
+			}
+		}
+
+		///<summary>When storing PDFs directly in DB/Cloud, we download a temp file to display. This could cause local temp storage bloat if not cleaned 
+		///up when tree selection changes. Need to delete the temp file associated to NodeIdentifierOld, which persists even across module changes, so 
+		///while changing module will not cause the temp file to delete, returning to the image module or closing OpenDental cleans it up.</summary>
+		private void DeleteTempPdf(long docNum) {
+			Document doc=Documents.GetByNum(docNum,doReturnNullIfNotFound:true);//Get old document.
+			if(doc!=null && Path.GetExtension(doc.FileName).ToLower()==".pdf") {//Adobe acrobat file.
+				string pdfFilePath=ODFileUtils.CombinePaths(PrefC.GetTempFolderPath(),doc.DocNum+(_patient!=null ? _patient.PatNum.ToString() : "")+".pdf");
+				if(!_suniDeviceControl.IsDisposed){
+					_suniDeviceControl.Dispose();
+				}
+				if(File.Exists(pdfFilePath)){
+					try {
+						File.Delete(pdfFilePath);//Delete temp file
+					}
+					catch (Exception ex) {
+						ex.DoNothing();
+						//Can happen if user is clicking around very quickly and EraseCurrentImages() hasn't quite freed up the file.
+						//Do nothing, worst case we orphan a temp pdf that will clean up next time it's previewed.
+					}
+				}
+			}
+		}
+
+		/// <summary>Special way of selecting and displaying XVWeb downloaded images</summary>
+		private void ShowApteryxImage(TreeNode treeNodeOver) {
+			ApteryxImage apteryxImage=((NodeIdTag)treeNodeOver.Tag).ApteryxImgDownload; //cast back to an image to access id,width,height
+			Bitmap bitmapApiImage=null;
+			double fileSizeMB=(double)apteryxImage.FileSize / 1024 / 1024;
+			using FormProgress FormP=new FormProgress(maxVal:fileSizeMB);
+			FormP.DisplayText="?currentVal MB of ?maxVal MB copied";
+			//start the thread that will perform the download
+			ODThread threadGetBitmap=new ODThread(new ODThread.WorkerDelegate((o) => {
+				bitmapApiImage=XVWeb.GetBitmap(apteryxImage,FormP);
+			}));
+			threadGetBitmap.AddExceptionHandler(new ODThread.ExceptionDelegate((ex) => {
+				if(InvokeRequired) {
+						Invoke((Action)(() => FriendlyException.Show(Lan.g(this,"Unable to download image."),ex)));
+					}
+					else {
+						FriendlyException.Show(Lan.g(this,"Unable to download image."),ex);
+					}
+			}));
+			//display the progress dialog to the user:
+			threadGetBitmap.Name="DownloadApteryxImage"+apteryxImage.Id;
+			threadGetBitmap.Start(true);
+			FormP.ShowDialog();
+			if(FormP.DialogResult==DialogResult.Cancel) {
+				threadGetBitmap.QuitAsync();
 				return;
 			}
+			threadGetBitmap.Join(2000);//give thread some time to finish before trying to display the image. 
+			Document newDoc=XVWeb.SaveApteryxImageToDoc(apteryxImage,bitmapApiImage,_patient);
+			if(newDoc!=null) {
+				treeNodeOver.Tag=MakeIdDoc(newDoc.DocNum);
+				treeNodeOver.ImageIndex=2+(int)newDoc.ImgType;
+				treeNodeOver.SelectedImageIndex=treeNodeOver.ImageIndex;
+				SelectTreeNode(treeNodeOver);
+			}
+			else {
+				treeMain.SelectedNode=treeNodeOver;
+				treeMain.Invalidate();
+				pictureBoxMain.Visible=true;
+				EnableAllTreeItemTools(false);
+				panelNote.Visible=false;
+				LayoutAll();
+				_bitmapArrayRaw=new Bitmap[] { bitmapApiImage };
+				EnableToolBarButtons(true,false,true,true,false,false,false,true,true,true,false,false,false,true);
+			}
+		}
+
+		///<summary>Gets the category folder name for the given document node.</summary>
+		private string GetCurrentFolderName(TreeNode treeNode) {
+			if(treeNode!=null) {
+				while(treeNode.Parent!=null) {//Find the corresponding root level node.
+					treeNode=treeNode.Parent;
+				}
+				return treeNode.Text;
+			}
+			//We must always return a category if one is available, so that new documents can be properly added.
+			if(treeMain.Nodes.Count>0) {
+				return treeMain.Nodes[0].Text;
+			}
+			return "";
+		}
+
+		///<summary>Gets the document category of the current selection. The current selection can be a folder itself, or a document within a folder.</summary>
+		private long GetCurrentCategory() {
+			//If it's a document category, return the def's primary key so we can differentiate between categories of same name.
+			if(treeMain.SelectedNode!=null && ((NodeIdTag)treeMain.SelectedNode.Tag).NodeType==EnumNodeType.Doc) {
+				TreeNode treeNode=treeMain.SelectedNode;
+				while(treeNode.Parent!=null) {//Find the corresponding root level node.
+					treeNode=treeNode.Parent;
+				}
+				return ((NodeIdTag)treeNode.Tag).PriKey;
+			}
+			else { 
+				return Defs.GetByExactName(DefCat.ImageCats,GetCurrentFolderName(treeMain.SelectedNode));
+			}
+		}
+
+		///<summary>Returns the current tree node with the given node id.</summary>
+		private TreeNode GetTreeNode(NodeIdTag nodeIdTag) {
+			return GetTreeNode(nodeIdTag,treeMain.Nodes);//This defines the root node.
+		}
+
+		///<summary>Searches the current object tree for a row which has the given unique document number. This will work for a tree with any number of nested folders, as long as tags are defined only for items which correspond to data rows.</summary>
+		private TreeNode GetTreeNode(NodeIdTag nodeIdTag,TreeNodeCollection treeNodeCollection) {
+			if(treeNodeCollection==null) {
+				return null;
+			}
+			foreach(TreeNode treeNode in treeNodeCollection) {
+				if(treeNode==null) {
+					continue;
+				}
+				if(((NodeIdTag)treeNode.Tag).Equals(nodeIdTag)) {
+					return treeNode;
+				}
+				//Check the child nodes.
+				TreeNode treeNodeChild=GetTreeNode(nodeIdTag,treeNode.Nodes);
+				if(treeNodeChild!=null) {
+					return treeNodeChild;
+				}
+			}
+			return null;
+		}
+
+		///<summary></summary>
+		private NodeIdTag MakeIdDoc(long docNum) {
+			NodeIdTag nodeIdTag=new NodeIdTag();
+			nodeIdTag.NodeType=EnumNodeType.Doc;
+			nodeIdTag.PriKey=docNum;
+			return nodeIdTag;
+			//return docNum+"*"+mountNum;
+		}
+
+		///<summary></summary>
+		private NodeIdTag MakeIdMount(long mountNum) {
+			NodeIdTag nodeIdTag=new NodeIdTag();
+			nodeIdTag.NodeType=EnumNodeType.Mount;
+			nodeIdTag.PriKey=mountNum;
+			return nodeIdTag;
+		}
+
+		///<summary></summary>
+		private NodeIdTag MakeIdDef(long defNum) {
+			NodeIdTag nodeIdTag=new NodeIdTag();
+			nodeIdTag.NodeType=EnumNodeType.Category;
+			nodeIdTag.PriKey=defNum;
+			return nodeIdTag;
+		}
+
+		///<summary></summary>
+		private NodeIdTag MakeIdEob(long eobAttachNum) {
+			NodeIdTag nodeIdTag=new NodeIdTag();
+			nodeIdTag.NodeType=EnumNodeType.Eob;
+			nodeIdTag.PriKey=eobAttachNum;
+			return nodeIdTag;
+		}
+
+		///<summary></summary>
+		private NodeIdTag MakeIdAmd(long ehrAmendmentNum) {
+			NodeIdTag nodeIdTag=new NodeIdTag();
+			nodeIdTag.NodeType=EnumNodeType.EhrAmend;
+			nodeIdTag.PriKey=ehrAmendmentNum;
+			return nodeIdTag;
+		}
+
+		///<summary>DO NOT CALL UNLESS THE CURRENTLY SELECTED NODE IS A DOCUMENT NODE. Fills the panelnote control with the current document signature when the panelnote is visible and when a valid document is currently selected.</summary>
+		private void FillSignature() {
 			textNote.Text="";
 			sigBox.ClearTablet();
 			if(!panelNote.Visible) {
 				return;
 			}
-			textNote.Text=GetDocumentShowing(0).Note;
+			textNote.Text=_documentShowing.Note;
 			labelInvalidSig.Visible=false;
 			sigBox.Visible=true;
 			sigBox.SetTabletState(0);//never accepts input here
 			//Topaz box is not supported in Unix, since the required dll is Windows native.
-			if(GetDocumentShowing(0).SigIsTopaz) {
-				if(GetDocumentShowing(0).Signature!=null && GetDocumentShowing(0).Signature!="") {
+			if(_documentShowing.SigIsTopaz) {
+				if(_documentShowing.Signature!=null && _documentShowing.Signature!="") {
 					//if(allowTopaz) {	
 					sigBox.Visible=false;
 					_sigBoxTopaz.Visible=true;
@@ -2437,30 +3334,22 @@ namespace OpenDental
 					TopazWrapper.SetTopazCompressionMode(_sigBoxTopaz,0);
 					TopazWrapper.SetTopazEncryptionMode(_sigBoxTopaz,0);
 					TopazWrapper.SetTopazKeyString(_sigBoxTopaz,"0000000000000000");//Clear out the key string
-					string keystring=GetHashString(GetDocumentShowing(0));
+					string keystring=GetHashString(_documentShowing);
 					TopazWrapper.SetTopazAutoKeyData(_sigBoxTopaz,keystring);
 					TopazWrapper.SetTopazEncryptionMode(_sigBoxTopaz,2);//high encryption
 					TopazWrapper.SetTopazCompressionMode(_sigBoxTopaz,2);//high compression
-					TopazWrapper.SetTopazSigString(_sigBoxTopaz,GetDocumentShowing(0).Signature);
+					TopazWrapper.SetTopazSigString(_sigBoxTopaz,_documentShowing.Signature);
 					_sigBoxTopaz.Refresh();
 					//If sig is not showing, then setting the Key String to the hashed data. This is the way we used to handle signatures.
 					if(TopazWrapper.GetTopazNumberOfTabletPoints(_sigBoxTopaz)==0) {
 						TopazWrapper.SetTopazKeyString(_sigBoxTopaz,"0000000000000000");//Clear out the key string
 						TopazWrapper.SetTopazKeyString(_sigBoxTopaz,keystring);
-						TopazWrapper.SetTopazSigString(_sigBoxTopaz,GetDocumentShowing(0).Signature);
+						TopazWrapper.SetTopazSigString(_sigBoxTopaz,_documentShowing.Signature);
 					}
 					//If sig is not showing, then try encryption mode 3 for signatures signed with old SigPlusNet.dll.
 					if(TopazWrapper.GetTopazNumberOfTabletPoints(_sigBoxTopaz)==0) {
 						TopazWrapper.SetTopazEncryptionMode(_sigBoxTopaz,3);//Unknown mode (told to use via TopazSystems)
-						TopazWrapper.SetTopazSigString(_sigBoxTopaz,GetDocumentShowing(0).Signature);
-					}
-					//If sig not showing, then try the ANSI paradigm.
-					if(TopazWrapper.GetTopazNumberOfTabletPoints(_sigBoxTopaz)==0) {
-						TopazWrapper.FillSignatureANSI(_sigBoxTopaz,keystring,GetDocumentShowing(0).Signature,SignatureBoxWrapper.SigMode.Document);
-					}
-					//Try reading in the signature using different encodings for keyData.
-					if(TopazWrapper.GetTopazNumberOfTabletPoints(_sigBoxTopaz)==0) {
-						TopazWrapper.FillSignatureEncodings(_sigBoxTopaz,keystring,GetDocumentShowing(0).Signature,SignatureBoxWrapper.SigMode.Document);
+						TopazWrapper.SetTopazSigString(_sigBoxTopaz,_documentShowing.Signature);
 					}
 					if(TopazWrapper.GetTopazNumberOfTabletPoints(_sigBoxTopaz)==0) {
 						labelInvalidSig.Visible=true;
@@ -2469,12 +3358,20 @@ namespace OpenDental
 				}
 			}
 			else {//not topaz
-				if(GetDocumentShowing(0).Signature!=null && GetDocumentShowing(0).Signature!="") {
+				if(_documentShowing.Signature!=null && _documentShowing.Signature!="") {
 					sigBox.Visible=true;
+					//if(allowTopaz) {	
 					_sigBoxTopaz.Visible=false;
+					//}
 					sigBox.ClearTablet();
-					sigBox.SetKeyString(GetHashString(GetDocumentShowing(0)));
-					sigBox.SetSigString(GetDocumentShowing(0).Signature);
+					//sigBox.SetSigCompressionMode(0);
+					//sigBox.SetEncryptionMode(0);
+					sigBox.SetKeyString(GetHashString(_documentShowing));
+					//"0000000000000000");
+					//sigBox.SetAutoKeyData(ProcCur.Note+ProcCur.UserNum.ToString());
+					//sigBox.SetEncryptionMode(2);//high encryption
+					//sigBox.SetSigCompressionMode(2);//high compression
+					sigBox.SetSigString(_documentShowing.Signature);
 					if(sigBox.NumberOfTabletPoints()==0) {
 						labelInvalidSig.Visible=true;
 					}
@@ -2483,944 +3380,657 @@ namespace OpenDental
 			}
 		}
 
-		///<summary>Returns a list of available slots, starting with the one selected.  It will loop back around at the end to fill remaining slots.  Will return null if not enough slots.  But if you supply countNeed -1, then it will give you a list of all available.</summary>
-		private List<MountItem> GetAvailSlots(int countNeed=-1){
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return null;
-			}
-			return formImageFloat.GetAvailSlots(countNeed);
-		}
-
-		///<summary>Specify 0 when a single document is selected, or specify the idx within a mount.  Pulls from _arrayBitmapsShowing of the selected floater. Can return null.</summary>
-		private Bitmap GetBitmapShowing(int idx) {
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return null;
-			}
-			return formImageFloat.GetBitmapShowing(idx);
-		}
-
-		///<summary>Gets the DefNum category of the current selection. The current selection can be a folder itself, or a document within a folder. If nothing selected, then it returns the DefNum of first in the list.</summary>
-		private long GetCurrentCategory() {
-			return imageSelector.GetSelectedCategory();
-		}
-
-		///<summary>Specify 0 when a single document is selected, or specify the idx within a mount.  Pulls from _arrayDocumentsShowing of the selected floater. Can return null.</summary>
-		private Document GetDocumentShowing(int idx) {
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return null;
-			}
-			return formImageFloat.GetDocumentShowing(idx);
-		}
-
 		private string GetHashString(Document doc) {
 			return ImageStore.GetHashString(doc,_patFolder);
 		}
 
-		/// <summary>Can return null.</summary>
-		private FormImageFloat GetFormImageFloatDocked(){
-			FormImageFloat formImageFloat=_listFormImageFloats.FirstOrDefault(x=>x.IsImageFloatDocked);
-			return formImageFloat;
-		}
-
-		/// <summary>Can return null.</summary>
-		private FormImageFloat GetFormImageFloatSelected(){
-			FormImageFloat formImageFloat=_listFormImageFloats.FirstOrDefault(x=>x.IsImageFloatSelected);
-			return formImageFloat;
-		}
-
-		///<summary>This is generally within IsMountItemSelected.  Gets _idxSelectedInMount from selected floater.</summary>
-		private int GetIdxSelectedInMount(){
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return -1;//shouldn't happen
-			}
-			return formImageFloat.GetIdxSelectedInMount();
-		}
-
-		///<summary>Pulls _mountShowing from the selected floater. Can return null.</summary>
-		private Mount GetMountShowing() {
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return null;
-			}
-			return formImageFloat.GetMountShowing();
-		}
-		
-		/// <summary>Gets an existing floater or makes a new one. Always returns a valid floater.</summary>
-		private FormImageFloat GetOrMakeFloater(){
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat!=null){
-				return formImageFloat;
-			}
-			//If no floater is selected, assume that they want to use the docked floater.
-			formImageFloat=GetFormImageFloatDocked();
-			if(formImageFloat!=null){
-				return formImageFloat;
-			}
-			//make one
-			SelectTreeNode(null);
-			formImageFloat=GetFormImageFloatSelected();
-			return formImageFloat;
-		}
-
-		///<summary>Invalidates the color image setting and recalculates.  This is not on a separate thread.  Instead, it's just designed to run no more than about every 300ms, which completely avoids any lockup.</summary>
-		private void InvalidateSettingsColor() {
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
+		/*
+		private void UpdateUserOdPrefForImageCat(long defNum,bool isExpand) {
+			if(PrefC.GetInt(PrefName.ImagesModuleTreeIsCollapsed)!=2) {//Document tree folders persistent expand/collapse per user.
 				return;
 			}
-			formImageFloat.InvalidateSettingsColor();
-		}
-
-		///<summary>Returns true if a valid document is showing.  This is very different from testing the property _documentShowing, which would return true for mounts.</summary>
-		private bool IsDocumentShowing(){
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return false;
+			//Calls to Expand() and Collapse() in code cause the TreeDocuments_AfterExpand() and TreeDocuments_AfterCollapse() events to fire.
+			//This flag helps us ignore these two events when initializing the tree.
+			if(_isFillingTreeWithPref) {
+				return;
 			}
-			return formImageFloat.IsDocumentShowing();
-		}
-
-		///<summary>Returns true if a valid mount is showing.</summary>
-		private bool IsMountShowing(){
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return false;
+			Def defImageCatCur=Defs.GetDefsForCategory(DefCat.ImageCats,true).FirstOrDefault(x => x.DefNum==defNum);
+			if(defImageCatCur==null) {
+				return;//Should never happen, but if it does, there was something wrong with the treeDocument list, and thus nothing should be changed.
 			}
-			return formImageFloat.IsMountShowing();
-		}
-
-		///<summary>Returns true if a valid mountitem is selected and there's a valid bitmap in that location.</summary>
-		private bool IsMountItemSelected(){
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return false;
+			string defaultValue=defImageCatCur.ItemValue;//Stores the default ItemValue of the definition from the catList.
+			string curValue=defaultValue;//Stores the current edited ImageCats to compare to the default.
+			if(isExpand && !curValue.Contains("E")) {//Since we are expanding we would like to see if the expand flag is present.
+				curValue+="E";//If it is not, add expanded flag.
 			}
-			return formImageFloat.IsMountItemSelected();
-		}
-
-		private void labelInvalidSig_DoubleClick(object sender, EventArgs e){
-			ToolBarSign_Click(this,new EventArgs());
-		}
-
-		private void label15_DoubleClick(object sender, EventArgs e){
-			ToolBarSign_Click(this,new EventArgs());
-		}
-
-		private void label1_DoubleClick(object sender, EventArgs e){
-			ToolBarSign_Click(this,new EventArgs());
-		}
-
-		///<summary>Resizes all controls in the image module to fit inside the current window, including controls which have varying visibility.</summary>
-		public void LayoutControls(){
-			LayoutManager.Move(elementHostToolBarMain,new Rectangle(0,0,Width,LayoutManager.Scale(25)));
-			LayoutManager.Move(elementHostWindowingSlider,new Rectangle(4,elementHostToolBarMain.Bottom+2,LayoutManager.Scale(154),LayoutManager.Scale(20)));
-			LayoutManager.Move(elementHostZoomSlider,new Rectangle(elementHostWindowingSlider.Right+4,elementHostToolBarMain.Bottom,LayoutManager.Scale(231),LayoutManager.Scale(25)));
-			LayoutManager.Move(toolBarPaint,new Rectangle(elementHostZoomSlider.Right+1,elementHostToolBarMain.Bottom,Width-(elementHostZoomSlider.Right+1),LayoutManager.Scale(25)));
-			if(_isTreeDockerCollapsed){
-				imageSelector.Visible=false;
-				LayoutManager.Move(panelSplitter,new Rectangle(0,toolBarPaint.Bottom,10,Height-toolBarPaint.Bottom));
-				panelSplitter.Invalidate();
+			else if(!isExpand && curValue.Contains("E")) {//Since we are collapsing we want to see if the expand flag is present.
+				curValue=curValue.Replace("E","");//If it is, remove expanded flag.
 			}
-			else{
-				imageSelector.Visible=true;
-				if(LayoutManager.Scale(_widthTree96)>Width-LayoutManager.Scale(150)){//this is the min set in FormODBase for FormImageFloat
-					_widthTree96=Width-LayoutManager.Scale(150);
+			//Always delete to remove previous value (prevents duplicates).
+			UserOdPrefs.DeleteForFkey(Security.CurUser.UserNum,UserOdFkeyType.Definition,defImageCatCur.DefNum);
+			if(defaultValue!=curValue) {//Insert an override in the UserOdPref table, only if the chosen value is different than the default.
+				UserOdPref userPrefCur=new UserOdPref();//Preference to be inserted to override.
+				userPrefCur.UserNum=Security.CurUser.UserNum;
+				userPrefCur.Fkey=defImageCatCur.DefNum;
+				userPrefCur.FkeyType=UserOdFkeyType.Definition;
+				userPrefCur.ValueString=curValue;
+				UserOdPrefs.Insert(userPrefCur);
+			}
+		}*/
+
+		///<summary>Invalidates some or all of the image settings.  This will cause those settings to be recalculated, either immediately, or when the current ApplySettings thread is finished.  If supplied settings is ApplySettings.NONE, then that part will be skipped.</summary>
+		private void InvalidateSettings(ImageSettingFlags settings,bool reloadZoomTransCrop) {
+			bool[] mountIdxsToUpdate=new bool[this._bitmapArrayRaw.Length];
+			if(_bitmapArrayRaw.Length==1) {//An image is currently showing.
+				mountIdxsToUpdate[0]=true;//Mark the document to be updated.
+			}
+			else if(_bitmapArrayRaw.Length==4) {//4 bite-wing mount is currently selected.
+				if(_idxSelectedInMount>=0) {
+					//The current active document will be updated.
+					mountIdxsToUpdate[_idxSelectedInMount]=true;
 				}
-				LayoutManager.Move(elementHostImageSelector,new Rectangle(0,toolBarPaint.Bottom,LayoutManager.Scale(_widthTree96),Height-toolBarPaint.Bottom));
-				LayoutManager.Move(panelSplitter,new Rectangle(elementHostImageSelector.Width+1,toolBarPaint.Bottom,10,Height-toolBarPaint.Bottom));
-				panelSplitter.Invalidate();
 			}
-			int heightPanelNote=Math.Min(114,Height-toolBarPaint.Bottom);
-			if(!panelNote.Visible){
-				heightPanelNote=0;
+			InvalidateSettings(settings,reloadZoomTransCrop,mountIdxsToUpdate);
+		}
+
+		///<summary>Invalidates some or all of the image settings.  This will cause those settings to be recalculated, either immediately, or when the current ApplySettings thread is finished.  If supplied settings is ApplySettings.NONE, then that part will be skipped.</summary>
+		private void InvalidateSettings(ImageSettingFlags settings,bool resetZoomTrans,bool[] mountIdxsToUpdate) {
+			if(this.InvokeRequired) {
+				InvalidateSettingsCallback c=new InvalidateSettingsCallback(InvalidateSettings);
+				Invoke(c,new object[] { settings,resetZoomTrans });
+				return;
 			}
-			LayoutManager.Move(panelNote,new Rectangle(
-				panelSplitter.Right+1,
-				Height-heightPanelNote-1,
-				Width-panelSplitter.Right-1,
-				heightPanelNote
-				));
-			int heightUnmountedBar=Math.Min(LayoutManager.Scale(200),Height-toolBarPaint.Bottom-heightPanelNote);
-			if(!elementHostUnmountedBar.Visible){
-				heightUnmountedBar=0;
+			//Do not allow image rendering when the paint tools are disabled. This will disable the display image when a folder or non-image document is selected, or when no document is currently selected. The ToolBarPaint.Enabled boolean is controlled in SelectTreeNode() and is set to true only if a valid image is currently being displayed.
+			if(treeMain.SelectedNode==null || treeMain.SelectedNode.Tag==null) {
+				EraseCurrentImages();
+				return;
 			}
-			LayoutManager.Move(elementHostUnmountedBar,new Rectangle(
-				panelSplitter.Right+1,
-				Height-heightPanelNote-heightUnmountedBar-1,
-				Width-panelSplitter.Right-1,
-				heightUnmountedBar
-				));
-			int panelMainTop=toolBarPaint.Bottom;
-			if(panelImportAuto.Visible){
-				LayoutManager.Move(panelImportAuto,new Rectangle(
-					panelSplitter.Right+1,
-					toolBarPaint.Bottom,
-					Width-panelSplitter.Right-1,
-					LayoutManager.Scale(44)));	
-				panelMainTop=panelImportAuto.Bottom;
+			NodeIdTag nodeIdTag=(NodeIdTag)treeMain.SelectedNode.Tag;
+			if(nodeIdTag.NodeType==EnumNodeType.None || nodeIdTag.NodeType==EnumNodeType.Category) {
+				EraseCurrentImages();
+				return;
 			}
-			if(panelDraw.Visible){
-				LayoutManager.Move(panelDraw,new Rectangle(
-					panelSplitter.Right+1,
-					toolBarPaint.Bottom,
-					Width-panelSplitter.Right-1,
-					LayoutManager.Scale(25)));	
-				panelMainTop=panelDraw.Bottom;
-			}
-			LayoutManager.Move(panelMain,new Rectangle(
-				panelSplitter.Right+1,
-				panelMainTop,//used to sit under panelAcquire, but now gets resized
-				Width-panelSplitter.Right-1,
-				elementHostUnmountedBar.Top-panelMainTop-2));
-			//FormOpenDental has minimized, in this case do not set the bounds for FormImageFloat so that it will restore from the taskbar. However, when there is a zoom scale setting in place, we adjust ControlImageJ's font but the parent is not set yet, so this will be null and cause OD to crash.  A null check prevents this.
-			if(FindForm()!=null) {
-				if(FindForm().WindowState==FormWindowState.Minimized) {
+			if(nodeIdTag.NodeType==EnumNodeType.Doc) {
+				if(!ToolBarPaint.Enabled) {
+					EraseCurrentImages();
 					return;
 				}
 			}
-			FormImageFloat formImageFloat=GetFormImageFloatDocked();
-			if(formImageFloat!=null){
-				formImageFloat.Bounds=new Rectangle(PointToScreen(panelMain.Location),panelMain.Size);
+			if(nodeIdTag.NodeType.In(EnumNodeType.Doc,EnumNodeType.Eob,EnumNodeType.EhrAmend,EnumNodeType.ApteryxImage)) {
+				if(resetZoomTrans) {
+					//Resetting the image settings only happens when a new image is selected, pasted, scanned, etc...
+					//Therefore, the is no need for any current image processing anymore (it would be on a stale image).
+					KillThreadImageUpdate();
+					ResetZoomTrans(_intArrayWidthsImagesCur[0],_intArrayHeightsImagesCur[0],_documentShowing,
+						new Rectangle(0,0,pictureBoxMain.Width,pictureBoxMain.Height),
+						out _zoomImage,out _zoomLevel,out _zoomOverall,out _pointFTranslation);
+					_rectangleCrop=new Rectangle(0,0,-1,-1);
+				}
 			}
+			_imageSettingFlagsInvalidated |= settings;
+			//DocSelected is an individual document instance. Assigning a new document to DocForSettings here does not 
+			//negatively effect our image application thread, because the thread either will keep its current 
+			//reference to the old document, or will apply the settings with this newly assigned document. In either
+			//case, the output is either what we expected originally, or is a more accurate image for more recent 
+			//settings. We lock here so that we are sure that the resulting document and setting tuple represent
+			//a single point in time.
+			lock(_eventWaitHandle) {//Does not actually lock the EventWaitHandleSettings object, but rather locks the variables in the block.
+				_boolArrayIdxsFlaggedForUpdate=(bool[])mountIdxsToUpdate.Clone();
+				_imageSettingFlags=_imageSettingFlagsInvalidated;
+				_enumNodeTypeForSettings=((NodeIdTag)treeMain.SelectedNode.Tag).NodeType;
+				if(_enumNodeTypeForSettings==EnumNodeType.Doc
+					|| _enumNodeTypeForSettings==EnumNodeType.Mount) 
+				{
+					_documentForSettings=_documentShowing.Copy();
+				}
+			}
+			//Tell the thread to start processing (as soon as the thread is created, or as soon as otherwise 
+			//possible). Set() has no effect if the handle is already signaled.
+			_eventWaitHandle.Set();
+			if(_threadImageUpdate==null) {//Create the thread if it has not been created, or if it was killed for some reason.
+				_threadImageUpdate=new Thread((ThreadStart)(delegate { Worker(); }));
+				_threadImageUpdate.IsBackground=true;
+				_threadImageUpdate.Start();
+			}
+			_imageSettingFlagsInvalidated=ImageSettingFlags.NONE;
 		}
 
-		protected override void OnHandleDestroyed(EventArgs e){
-		
-		}
-
-		///<summary>If a mount is showing, and if no item is selected, then this will select the first open item. If one is already selected, but it's occupied, this does not check that.  There is also no guarantee that one will be selected after this because all positions could be full.</summary>
-		private void PreselectFirstItem(){
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
+		///<summary>Handles rendering to the PictureBox of the image in its current state. The image calculations are not performed here, only rendering of the image is performed here, so that we can guarantee a fast display.</summary>
+		private void RenderCurrentImage(Document docCopy,int originalWidth,int originalHeight,float zoom,PointF translation) {
+			if(!this.Visible) {
 				return;
 			}
-			formImageFloat.PreselectFirstItem();
-		}
-
-		///<summary></summary>
-		private void RefreshModuleData(long patNum) {
-			if(patNum==0) {
-				_familyCur=null;
-				_patient=null;
-				SelectTreeNode(null);//Clear selection and image and reset visibilities. Example: clear PDF when switching patients.
+			//Helps protect against simultaneous access to the picturebox in both the main and render worker threads.
+			if(pictureBoxMain.InvokeRequired) {
+				RenderImageCallback c=new RenderImageCallback(RenderCurrentImage);
+				Invoke(c,new object[] { docCopy,originalWidth,originalHeight,zoom,translation });
 				return;
 			}
-			_familyCur=Patients.GetFamily(patNum);
-			_patient=_familyCur.GetPatient(patNum);
-			_patFolder=ImageStore.GetPatientFolder(_patient,ImageStore.GetPreferredAtoZpath());//This is where the pat folder gets created if it does not yet exist.
-			SelectTreeNode(null);//needs _patCur, etc.
-			if(_patNumLastSecurityLog!=patNum) {
-				SecurityLogs.MakeLogEntry(EnumPermType.ImagingModule,patNum,"");
-				_patNumLastSecurityLog=patNum;
+			int width=pictureBoxMain.Bounds.Width;
+			int height=pictureBoxMain.Bounds.Height;
+			if(width<=0 || height<=0) {
+				return;
 			}
-			if(CloudStorage.IsCloudStorage) {
-				ProgressWin progressOD=new ProgressWin();
-				progressOD.ActionMain=() =>ImageStore.AddMissingFilesToDatabase(_patient);
-				progressOD.ShowDialog();
+			Bitmap backBuffer=new Bitmap(width,height);
+			Graphics g=Graphics.FromImage(backBuffer);
+			try {
+				g.Clear(pictureBoxMain.BackColor);
+				g.Transform=GetScreenMatrix(docCopy,originalWidth,originalHeight,zoom,translation);
+				g.DrawImage(_bitmapShowing,0,0);
+				if(_rectangleCrop.Width>0 && _rectangleCrop.Height>0) {//Must be drawn last so it is on top.
+					g.ResetTransform();
+					g.DrawRectangle(Pens.Blue,_rectangleCrop);
+				}
+				g.Dispose();
+				//Cleanup old back-buffer.
+				if(pictureBoxMain.Image!=null) {
+					pictureBoxMain.Image.Dispose();	//Make sure that the calling thread performs the memory cleanup, instead of relying
+					//on the memory-manager in the main thread (otherwise the graphics get spotty sometimes).
+				}
+				pictureBoxMain.Image=backBuffer;
+				pictureBoxMain.Refresh();
 			}
-			else{
-				ImageStore.AddMissingFilesToDatabase(_patient);
+			catch(Exception) {
+				g.Dispose();
+			}
+			//Tried this.  Program crashes when any small window is dragged across the picturebox.
+			//backBuffer.Dispose();
+			//backBuffer=null;
+		}
+
+		private void DeleteThumbnailImage(Document doc) {
+			ImageStore.DeleteThumbnailImage(doc,_patFolder);
+		}
+
+		private void SetWindowingSlider() {
+			if(_documentShowing.WindowingMax==0) {
+				//The document brightness/contrast settings have never been set. By default, we use settings
+				//which do not alter the original image.
+				windowingSlider.MinVal=0;
+				windowingSlider.MaxVal=255;
+			}
+			else {
+				windowingSlider.MinVal=_documentShowing.WindowingMin;
+				windowingSlider.MaxVal=_documentShowing.WindowingMax;
 			}
 		}
 
-		private void RefreshModuleScreen() {
-			UpdateToolbarButtons();
-			//ClearObjects();
-			for(int i=0;i<_listFormImageFloats.Count;i++){
-				_listFormImageFloats[i].Font=Font;
-				_listFormImageFloats[i].Invalidate();
+		private void GetNextUnusedMountItem() {
+			//Advance selection box to the location where the next image will capture to.
+			if(_idxSelectedInMount<0) {
+				_idxSelectedInMount=0;
 			}
-			UserOdPref userOdPref=UserOdPrefs.GetFirstOrDefault(x=>x.FkeyType==UserOdFkeyType.ImageSelectorWidth && x.UserNum==Security.CurUser.UserNum);
-			if(userOdPref is null){
-				_widthTree96=228;
+			int hotStart=_idxSelectedInMount;
+			int d=_idxSelectedInMount;
+			do {
+				if(_documentArrayInMount[_idxSelectedInMount]==null) {
+					return;//Found an open frame in the mount.
+				}
+				_idxSelectedInMount=(_idxSelectedInMount+1)%_documentArrayInMount.Length;
 			}
-			else{
-				_widthTree96=PIn.Float(userOdPref.ValueString);
-			}
-			LayoutControls();//to handle dpi changes
-			toolBarPaint.Invalidate();
-			FillImageSelector(false);
+			while(_idxSelectedInMount!=hotStart);
+			_idxSelectedInMount=-1;
 		}
-		
-		///<summary>Sets cursor, sets pushed, sets toolBarMount visible/invisible, and hides panelDraw if not Pan. This is called when user clicks on one of these buttons or an event from a floater can trigger it.</summary>
-		private void SetCropPanAdj(EnumCropPanAdj cropPanAdj){
-			_cropPanAdj=cropPanAdj;
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat!=null){
-				formImageFloat.SetCropPanAdj(cropPanAdj);
-			}
-			if(toolBarPaint.Buttons.Count==0){
-				return;//must be launching a floater from ControlChart prior to initializing this module.
-			}
-			toolBarPaint.Buttons[TB.Crop.ToString()].IsTogglePushed=false;
-			toolBarPaint.Buttons[TB.Pan.ToString()].IsTogglePushed=false;
-			toolBarPaint.Buttons[TB.Adj.ToString()].IsTogglePushed=false;
-			switch(cropPanAdj){
-				case EnumCropPanAdj.Crop:
-					toolBarPaint.Buttons[TB.Crop.ToString()].IsTogglePushed=true;
-					if(panelDraw.Visible){
-						panelDraw.Visible=false;
-						LayoutControls();
+
+		///<summary>Kills ImageApplicationThread.  Disposes of both currentImages and ImageRenderingNow.  Does not actually trigger a refresh of the Picturebox, though.</summary>
+		private void EraseCurrentImages() {
+			KillThreadImageUpdate();//Stop any current access to the current image and render image so we can dispose them.
+			pictureBoxMain.Image=null;
+			_imageSettingFlagsInvalidated=ImageSettingFlags.NONE;
+			if(_bitmapArrayRaw!=null) {
+				for(int i=0;i<_bitmapArrayRaw.Length;i++) {
+					if(_bitmapArrayRaw[i]!=null) {
+						_bitmapArrayRaw[i].Dispose();
+						_bitmapArrayRaw[i]=null;
 					}
-					break;
-				case EnumCropPanAdj.Pan:
-					toolBarPaint.Buttons[TB.Pan.ToString()].IsTogglePushed=true;
-					break;
-				case EnumCropPanAdj.Adj:
-					toolBarPaint.Buttons[TB.Adj.ToString()].IsTogglePushed=true;
-					if(panelDraw.Visible){
-						panelDraw.Visible=false;
-						LayoutControls();
-					}
-					break;
-			}
-			toolBarPaint.Invalidate();
-		}
-
-		///<summary>Specify 0 when a single document is selected, or specify the idx within a mount.  Sets the element in _arrayDocumentsShowing of the selected floater.</summary>
-		private void SetDocumentShowing(int idx,Document document){
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return;
-			}
-			formImageFloat.SetDocumentShowing(idx,document);
-		}
-
-		///<summary>Sets cursor, sets which button is pushed, and sets color control. This is called when user clicks on one of these buttons or an event from a floater can trigger it. When using this, always consider that you may also need to call SetCropPanAdj(EnumCropPanAdj.Pan) which also hides panelDraw.</summary>
-		private void SetDrawMode(EnumDrawMode drawMode){
-			_drawMode=drawMode;
-			LayoutToolBarDraw();
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat!=null){
-				formImageFloat.SetDrawMode(drawMode);
-			}
-		}
-
-		///<summary>This is generally within IsMountItemSelected.  Sets _idxSelectedInMount within selected floater.</summary>
-		private void SetIdxSelectedInMount(int idx){
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return;//shouldn't happen
-			}
-			formImageFloat.SetIdxSelectedInMount(idx);
-		}
-
-		///<summary>Sets the panelnote visibility based on the docked image, and whether it has any note or signature data.</summary>
-		private void SetPanelNoteVisibility() {
-			if(_listFormImageFloats.Count<1){
-				panelNote.Visible=false;
-				return;
-			}
-			FormImageFloat formImageFloat=_listFormImageFloats[0];
-			if(!formImageFloat.IsImageFloatDocked){//no image is docked.
-				panelNote.Visible=false;
-				return;
-			}
-			if(!formImageFloat.IsDocumentShowing()){
-				panelNote.Visible=false;
-				return;
-			}
-			if(!formImageFloat.GetDocumentShowing(0).Note.IsNullOrEmpty()){
-				panelNote.Visible=true;
-				return;
-			}
-			if(!formImageFloat.GetDocumentShowing(0).Signature.IsNullOrEmpty()){
-				panelNote.Visible=true;
-				return;
-			}
-			panelNote.Visible=false;
-		}
-
-		///<summary>Sets panelUnmounted visibility based on the docked mount, whether it has any unmounted items, and whether we are in the middle of an acquire.</summary>
-		private void SetUnmountedBarVisibility(){
-			if(_listFormImageFloats.Count<1){
-				elementHostUnmountedBar.Visible=false;
-				return;
-			}
-			FormImageFloat formImageFloat=_listFormImageFloats[0];
-			if(!formImageFloat.IsImageFloatDocked){//not docked.
-				elementHostUnmountedBar.Visible=false;
-				return;
-			}
-			if(!formImageFloat.IsMountShowing()){
-				elementHostUnmountedBar.Visible=false;
-				return;
-			}
-			if(_isAcquiring){
-				elementHostUnmountedBar.Visible=true;
-				return;
-			}
-			List<WpfControls.UI.UnmountedObj> unmountedObjs=formImageFloat.GetUmountedObjs();
-			if(unmountedObjs.Count>0){
-				elementHostUnmountedBar.Visible=true;
-				return;
-			}
-			elementHostUnmountedBar.Visible=false;
-		}
-
-		private void ShowFilterWindow(){
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return;
-			}
-			FrmImageFilter frmImageFilter=new FrmImageFilter();
-			frmImageFilter.ShowOD=_showDrawingsOD;
-			frmImageFilter.ShowPearlToothParts=_showDrawingsPearlToothParts==true;
-			frmImageFilter.ShowPearlPolyAnnotations=_showDrawingsPearlPolyAnnotations==true;
-			frmImageFilter.ShowPearlBoxAnnotations=_showDrawingsPearlBoxAnnotations==true;
-			frmImageFilter.ShowPearlMeasurements=_showDrawingsPearlMeasurements==true;
-			frmImageFilter.ShowDialog();
-			if(!frmImageFilter.IsDialogOK){
-				return;
-			}
-			_showDrawingsOD=frmImageFilter.ShowOD;
-			_showDrawingsPearlToothParts=frmImageFilter.ShowPearlToothParts;
-			_showDrawingsPearlPolyAnnotations=frmImageFilter.ShowPearlPolyAnnotations;
-			_showDrawingsPearlBoxAnnotations=frmImageFilter.ShowPearlBoxAnnotations;
-			_showDrawingsPearlMeasurements=frmImageFilter.ShowPearlMeasurements;
-			formImageFloat.SetShowDrawings(_showDrawingsOD,_showDrawingsPearlToothParts.Value,_showDrawingsPearlPolyAnnotations.Value,_showDrawingsPearlBoxAnnotations.Value,_showDrawingsPearlMeasurements.Value);
-		}
-
-		private void ThumbnailRefresh(){
-			if(IsDocumentShowing()){
-				Bitmap bitmapThumb=Documents.CreateNewThumbnail(GetDocumentShowing(0),GetBitmapShowing(0));
-				imageSelector.SetThumbnail(bitmapThumb);
-			}
-			if(IsMountShowing()){
-				Bitmap bitmapThumb=Mounts.GetThumbnail(GetMountShowing().MountNum,_patFolder);
-				imageSelector.SetThumbnail(bitmapThumb);
-			}
-		}
-
-		private void ToolBarColor_Click(){
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();
-			if(formImageFloat is null){
-				return;
-			}
-			using FormImageDrawColor formImageDrawColor=new FormImageDrawColor();
-			//Color colorBack=Color.White;
-			if(IsMountShowing()){
-				formImageDrawColor.IsMount=true;
-				formImageDrawColor.ColorBack=GetMountShowing().ColorBack;
-			}
-			else{
-				formImageDrawColor.ColorBack=Color.White;
-			}
-			formImageDrawColor.ColorFore=_colorFore;
-			formImageDrawColor.ColorTextBack=_colorTextBack;//can be transparent
-			formImageDrawColor.ShowDialog();
-			if(formImageDrawColor.DialogResult!=DialogResult.OK){
-				return;
-			}
-			_colorFore=formImageDrawColor.ColorFore;
-			_colorTextBack=formImageDrawColor.ColorTextBack;//can be transparent
-			formImageFloat.ColorFore=_colorFore;
-			formImageFloat.ColorTextBack=_colorTextBack;
-			LayoutToolBarDraw();//to show the colors to user
-		}
-
-		private void ToolBarDraw_Click(){
-			//This is not enabled unless formImageFloat.PanelMain is visible (bitmap is showing)
-			//or unless a mount is showing.
-			if(panelDraw.Visible){//close it, like a toggle
-				SetDrawMode(EnumDrawMode.None);
-				panelDraw.Visible=false;
-				LayoutControls();
-				return;
-			}
-			if(panelImportAuto.Visible){
-				panelImportAuto.Visible=false;
-				if(_fileSystemWatcher!=null){
-					_fileSystemWatcher.EnableRaisingEvents=false;
 				}
 			}
-			SetCropPanAdj(EnumCropPanAdj.Pan);
-			panelDraw.Visible=true;
-			if(IsMountShowing()){
-				_colorFore=GetMountShowing().ColorFore;
-				_colorTextBack=GetMountShowing().ColorTextBack;//can be transparent
+			if(_bitmapShowing!=null) {
+				_bitmapShowing.Dispose();
+				_bitmapShowing=null;
 			}
-			SetDrawMode(EnumDrawMode.Text);//This does LayoutToolBarDraw(), which also sets button colors
-			LayoutControls();
+			System.GC.Collect();
 		}
 
-		private void ToolBarImportAuto(object sender, EventArgs e){
-			if(!Security.IsAuthorized(EnumPermType.ImageCreate)) {
+		/*
+		///<summary>Takes in a mount object and finds all the images pertaining to the mount, then concatonates them together into one large, unscaled image and returns that image. For use in other modules.</summary>
+		public Bitmap CreateMountImage(Mount mount) {
+			List<MountItem> mountItems=MountItems.GetItemsForMount(mount.MountNum);
+			Document[] documents=Documents.GetDocumentsForMountItems(mountItems);
+			Bitmap[] originalImages=ImageStore.OpenImages(documents,_patFolder);
+			Bitmap mountImage=new Bitmap(mount.Width,mount.Height);
+			ImageHelper.RenderMountImage(mountImage,originalImages,mountItems,documents,-1);
+			return mountImage;
+		}*/
+
+		/// <summary>Used with XVWeb bridge to dispaly images in images module</summary>
+		private void FillTreeXVWebItems(long patNum) {
+			if(InvokeRequired) {
+				Invoke((Action)(() => { FillTreeXVWebItems(patNum); }));
 				return;
 			}
-			if(panelDraw.Visible){
-				SetDrawMode(EnumDrawMode.None);
-				panelDraw.Visible=false;
+			if(patNum!=_patient.PatNum) {
+				return;//The patient was changed while the thread was getting the images.
 			}
-			PreselectFirstItem();
-			textImportAuto.Text=PrefC.GetString(PrefName.AutoImportFolder);
-			textImportAuto.ReadOnly=false;
-			butBrowse.Visible=true;
-			butGoTo.Visible=true;
-			butImportStart.Visible=true;
-			butImportClose.Text=Lan.g(this,"Close");
-			panelImportAuto.Visible=true;
-			LayoutControls();
+			string imageCat=ProgramProperties.GetPropVal(Programs.GetProgramNum(ProgramName.XVWeb),XVWeb.ProgramProps.ImageCategory);
+			if(_listApteryxImagesDownload==null || string.IsNullOrEmpty(imageCat)) {
+				return;
+			}
+			TreeNode treeNodeApteryxFolder=treeMain.Nodes[Defs.GetOrder(DefCat.ImageCats,Defs.GetDef(DefCat.ImageCats,PIn.Long(imageCat)).DefNum)];
+			List<TreeNode> listTreeNodesApteryx=new List<TreeNode>();
+			foreach(TreeNode treeNode in treeNodeApteryxFolder.Nodes) {
+				NodeIdTag nodeIdTag=((NodeIdTag)treeNode.Tag);
+				if(nodeIdTag.NodeType==EnumNodeType.ApteryxImage) {
+					listTreeNodesApteryx.Add(treeNode);
+				}
+			}
+			listTreeNodesApteryx.ForEach(x => treeNodeApteryxFolder.Nodes.Remove(x));
+			List<ApteryxImage> listAI=new List<ApteryxImage>();
+			lock(_apteryxLocker) {
+				listAI=ListTools.DeepCopy<ApteryxImage,ApteryxImage>(_listApteryxImagesDownload);
+			}
+			foreach(ApteryxImage image in listAI) {
+				if(Documents.DocExternalExists(image.Id.ToString(),ExternalSourceType.XVWeb)) {
+					continue;//don't add the image if it was already saved to the database
+				}
+				//manually add api image nodes
+				TreeNode treeNodeApi = new TreeNode(image.AcquisitionDate.ToShortDateString()+": "+image.FormattedTeeth);
+				NodeIdTag nodeIdTag=new NodeIdTag();
+				nodeIdTag.NodeType=EnumNodeType.ApteryxImage;
+				nodeIdTag.ApteryxImgDownload=image;
+				treeNodeApi.Tag=nodeIdTag;
+				treeNodeApi.Name="xvweb"+image.Id;
+				treeNodeApteryxFolder.Nodes.Add(treeNodeApi);
+			}
 		}
 
-		private void ToolBarMountAcquire_Click(object sender, EventArgs e){
-			//If no patient selected, then this button is disabled
-			if(!Security.IsAuthorized(EnumPermType.ImageCreate)) {
-				return;
-			}	
-			FrmMountAndAcquire frmMountAndAcquire=new FrmMountAndAcquire();
-			frmMountAndAcquire.ShowDialog();
-			if(frmMountAndAcquire.IsDialogCancel){
-				return;
-			}
-			MountDef mountDef=frmMountAndAcquire.MountDefSelected;
-			if(mountDef!=null){
-				long defNumCategory;
-				if(mountDef.DefaultCat==0){
-					//Normal behavior of adding any image: selected or first category
-					defNumCategory=GetCurrentCategory();
+		///<summary>Deletes the current selection from the database and refreshes the tree view. Set securityCheck false when creating a new document that might get cancelled. If available, pass in the document to be deleted. It is sometimes necessary to use this if the document is no longer selected, e.g. the image folder it belongs to is now hidden.</summary>
+		private void DeleteSelection(bool verbose,bool securityCheck,Document docToDelete=null) {
+			NodeIdTag nodeIdTag;
+			if(docToDelete==null) {
+				if(treeMain.SelectedNode==null) {
+					MsgBox.Show(this,"No item is currently selected");
+					return;//No current selection, or some kind of internal error somehow.
 				}
-				else{
-					//always use this category no matter what they have selected
-					defNumCategory=mountDef.DefaultCat;
+				nodeIdTag=(NodeIdTag)treeMain.SelectedNode.Tag;
+				if(nodeIdTag.NodeType==EnumNodeType.None) {
+					MsgBox.Show(this,"No item is currently selected");
+					return;//No current selection, or some kind of internal error somehow.
 				}
-				Mount mount=Mounts.CreateMountFromDef(mountDef,_patient.PatNum,defNumCategory);
-				Def defDocCategory=Defs.GetDef(DefCat.ImageCats,mount.DocCategory);
-				string logText="Mount Created: "+mount.Description+" with category "
-					+defDocCategory.ItemName;
-				SecurityLogs.MakeLogEntry(EnumPermType.ImageCreate,_patient.PatNum,logText);
-				FillImageSelector(false);
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Mount,mount.MountNum));
-			}
-			ImagingDevice imagingDevice=frmMountAndAcquire.ImagingDeviceSelected;
-			if(imagingDevice is null){
-				return;
-			}
-			//Acquire from here down--------------------------------------------------------------------------------------------
-			PreselectFirstItem();
-			//Might still not be one selected
-			_isAcquiring=true;
-			SetUnmountedBarVisibility();
-			LayoutControls();
-			//Below here was previously in the Start button--------------------------------------------------------------------
-			if(imagingDevice.DeviceType==EnumImgDeviceType.TwainMulti){
-				if(!IsMountShowing()){
-					MessageBox.Show(Lan.g(this,"Please create an empty mount first."));
+				if(nodeIdTag.NodeType==EnumNodeType.Category) {
+					MsgBox.Show(this,"Cannot delete folders");
+					return;
+				}
+				if(nodeIdTag.NodeType==EnumNodeType.Mount) {
+					//Do nothing, mounts are no longer supported in this module.
 					return;
 				}
 			}
-			_deviceController=new DeviceController();
-			_deviceController.ImgDeviceControlType=ConvertToImgDeviceControlType(imagingDevice.DeviceType);
-			_deviceController.HandleWindow=Handle;
-			_deviceController.ShowTwainUI=imagingDevice.ShowTwainUI;
-			_deviceController.TwainName=imagingDevice.TwainName;
-			if(ODEnvironment.IsCloudServer) {
-				if(!CloudClientL.IsCloudClientRunning()) {
-					return;
-				}
-				if(_deviceController.ImgDeviceControlType==EnumImgDeviceControlType.Twain){
-					try{
-						ODCloudClient.TwainInitializeDevice(_deviceController.ShowTwainUI);
-					}
-					catch(Exception ex){
-						MsgBox.Show(ex.Message);
-						_deviceController=null;
+			else {
+				nodeIdTag=new NodeIdTag {
+					NodeType=EnumNodeType.Doc,
+					PriKey=docToDelete.DocNum,
+				};
+			}
+			Document doc=null;
+			if(nodeIdTag.NodeType==EnumNodeType.Doc) {
+				doc=docToDelete??Documents.GetByNum(nodeIdTag.PriKey);
+				if(securityCheck) {
+					if(!Security.IsAuthorized(Permissions.ImageDelete,doc.DateCreated)) {
 						return;
 					}
-					GlobalFormOpenDental.LockODForMountAcquire(isEnabled:false);
-					ProgressWin progressWin=new ProgressWin();
-					progressWin.ActionMain=() => {
-						while(true) {
-							ODCloudClient.TwainAcquireBitmapStart(_deviceController.TwainName,doThrowException: true,doShowProgressBar: false);
-							Bitmap bitmap=null;
-							string scannerState="scanning";
-							while(scannerState=="scanning" || scannerState=="setup") {
-									//Scan is "setup" when starting up or currently "scanning"
-									scannerState=ODCloudClient.CheckBitmapIsAcquired();
-									Thread.Sleep(100);
-							}
-							if(scannerState=="done") {
-									//Scan was successful and retrieving the bitmap
-									bitmap=ODCloudClient.TwainGetAcquiredBitmap();
-							}
-							else if(scannerState=="cancelled") {
-									//Scan was cancelled
-									bitmap?.Dispose();
-									bitmap=null;
-									break;
-							}
-							else {
-									//Scan had an error and was not successful retrieving the bitmap
-									Exception exception=new Exception(scannerState);
-									throw exception;
-							}
-							Thread.Sleep(100);
-							if(bitmap==null) {
-									break; //Cancel the scanning task
-							}
-							if(!(bool)this.Invoke((Func<bool>)(()=>PlaceAcquiredBitmapInUI(bitmap)))) {
-								break;
-							}
-							if(!IsMountShowing()) {//single
-								break;
-							}
-						}
-						if(!IsMountShowing()) {
+				}
+				TaskAttachment taskAttachment=TaskAttachments.GetOneByDocNum(doc.DocNum);
+				if(taskAttachment!=null) {
+					MessageBox.Show(Lan.g(this,"This document is attached to task ")+taskAttachment.TaskNum+". "+Lan.g(this,"Detach document from this task before deleting the document."));
+					return;
+				}
+				EhrLab lab=EhrLabImages.GetFirstLabForDocNum(doc.DocNum);
+				if(lab!=null) {
+					string dateSt=lab.ObservationDateTimeStart.PadRight(8,'0').Substring(0,8);//stored in DB as yyyyMMddhhmmss-zzzz
+					DateTime dateT=PIn.Date(dateSt.Substring(4,2)+"/"+dateSt.Substring(6,2)+"/"+dateSt.Substring(0,4));
+					MessageBox.Show(Lan.g(this,"This image is attached to a lab order for this patient on "+dateT.ToShortDateString()+". "+Lan.g(this,"Detach image from this lab order before deleting the image.")));
+					return;
+				}
+			}
+			else if(nodeIdTag.NodeType==EnumNodeType.Mount) {
+				//no security yet for mounts.
+			}
+			EnableAllTreeItemTools(false);
+			Document[] docs=null;
+			bool refreshTree=true;
+			if(nodeIdTag.NodeType==EnumNodeType.Mount) {
+				//Delete the mount object.
+				long mountNum=nodeIdTag.PriKey;
+				Mount mount=Mounts.GetByNum(mountNum);
+				//Delete the mount items attached to the mount object.
+				List<MountItem> mountItems=MountItems.GetItemsForMount(mountNum);
+				if(_idxSelectedInMount>=0 && _documentArrayInMount[_idxSelectedInMount]!=null) {
+					if(verbose) {
+						if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete mount xray image?")) {
 							return;
 						}
-						if(GetMountShowing().AdjModeAfterSeries) {
-							this.Invoke(()=> {
-								SetCropPanAdj(EnumCropPanAdj.Adj);
-								LayoutControls();
-							});
+					}
+					_documentShowing=new Document();
+					docs=new Document[1] { _documentArrayInMount[_idxSelectedInMount] };
+					_documentArrayInMount[_idxSelectedInMount]=null;
+					//Release access to current image so it may be properly deleted.
+					if(_bitmapArrayRaw[_idxSelectedInMount]!=null) {
+						_bitmapArrayRaw[_idxSelectedInMount].Dispose();
+						_bitmapArrayRaw[_idxSelectedInMount]=null;
+					}
+					InvalidateSettings(ImageSettingFlags.ALL,false);
+					refreshTree=false;
+				}
+				else {
+					if(verbose) {
+						if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete entire mount?")) {
+							return;
 						}
-					};
-					progressWin.ActionCancel=ODCloudClient.TwainCloseScanner;
-					progressWin.StartingMessage=Lan.g(this,"Getting Scanned Image(s)")+"...";
-					try{
-						progressWin.ShowDialog();
 					}
-					catch(Exception ex){
-						if(!ex.Message.Contains("Thread was being aborted.")){
-							MessageBox.Show(this, "An error occurred: " + ex.Message);
-						}
+					docs=_documentArrayInMount;
+					Mounts.Delete(mount);
+					Def defDocCategory = Defs.GetDef(DefCat.ImageCats,mount.DocCategory);
+					string logText = "Mount Deleted: "+mount.Description+" with category "
+						+defDocCategory.ItemName;
+					SecurityLogs.MakeLogEntry(Permissions.ImageDelete,_patient.PatNum,logText);
+					for(int i=0;i<mountItems.Count;i++) {
+						MountItems.Delete(mountItems[i]);
 					}
-					finally{
-						ODCloudClient.TwainCloseScanner();
-						GlobalFormOpenDental.LockODForMountAcquire(isEnabled:true);
-						LayoutControls();//To refresh the mount after acquiring images.
-					}
-					if(progressWin.IsCancelled) {
-						GlobalFormOpenDental.LockODForMountAcquire(isEnabled:true);
-						LayoutControls();//To refresh the mount after acquiring images.
+					SelectTreeNode(null);//Release access to current image so it may be properly deleted.
+				}
+			}
+			else if(nodeIdTag.NodeType==EnumNodeType.Doc) {
+				if(verbose) {
+					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete document?")) {
+						return;
 					}
 				}
-				return;
+				docs=new Document[1] { doc };
+				//Since documents can be associated to a statement we need to detach this document from any statements linked to it to avoid orphaned FKs.
+				//If this doucment is not linked to a statement, this method will not alter any statements.
+				Statements.DetachDocFromStatements(docs[0].DocNum);
+				SelectTreeNode(null);//Release access to current image so it may be properly deleted.
 			}
-			//Below here NOT Thinfinity
-			try{
-				_deviceController.InitializeDevice();
-			}
-			catch(Exception ex){
-				MsgBox.Show(ex.Message);
-				_deviceController=null;
-				return;
-			}
-			if(_deviceController.ImgDeviceControlType==EnumImgDeviceControlType.TwainMulti){
-				AcquireMulti();
-				if(GetMountShowing().AdjModeAfterSeries) {
-					SetCropPanAdj(EnumCropPanAdj.Adj);
-					LayoutControls();
-				}
-				return;
-			}
-			while(true){
-				Bitmap bitmap=null;
-				try{
-					bitmap=_deviceController.AcquireBitmap();
-				}
-				catch(ImagingDeviceException ex){
-					if(ex.Message!=""){//If user cancels, there is no text.  We could test e.DeviceStatus instead
-						MessageBox.Show(ex.Message);
+			else if(nodeIdTag.NodeType==EnumNodeType.Eob) {
+				if(verbose) {
+					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete EOB?")) {
+						return;
 					}
-					//when user cancels, we will keep panelUnmounted open so that they can do things like retake
-					break;
 				}
-				if(!PlaceAcquiredBitmapInUI(bitmap)){
-					break;
+				EobAttach eob=EobAttaches.GetOne(nodeIdTag.PriKey);
+				SelectTreeNode(null);//release access
+				ImageStore.DeleteEobAttach(eob);
+			}
+			else if(nodeIdTag.NodeType==EnumNodeType.EhrAmend) {
+				if(verbose) {
+					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete amendment?")) {
+						return;
+					}
 				}
-				if(!IsMountShowing()){//single
-					break;
+				if(_ehrAmendment==null) {
+					return;
+				}
+				SelectTreeNode(null);//release access
+				ImageStore.DeleteAmdAttach(_ehrAmendment);
+			}
+			if(nodeIdTag.NodeType==EnumNodeType.Doc || nodeIdTag.NodeType==EnumNodeType.Mount) {
+				//Delete all documents involved in deleting this object.
+				//ImageStoreBase.verbose=verbose;				
+				try {
+					ImageStore.DeleteDocuments(docs,_patFolder);
+				}
+				catch(Exception ex) {  //Image could not be deleted, in use.
+					MessageBox.Show(this,ex.Message);
 				}
 			}
-			if(!IsMountShowing()){
-				return;
-			}
-			if(GetMountShowing().AdjModeAfterSeries){
-				SetCropPanAdj(EnumCropPanAdj.Adj);
-				LayoutControls();
+			if(refreshTree) {
+				FillTree(false);
 			}
 		}
 
-		///<summary></summary>
-		private void AcquireMulti(){
-			if(!EZTwain.OpenSource(_deviceController.TwainName)){
-				return; 
-			}
-			EZTwain.SetMultiTransfer(true);
-			if(!_deviceController.ShowTwainUI){
-				EZTwain.SetHideUI(true);
-			}
-			do{
-				IntPtr hdib=EZTwain.Acquire(ParentForm.Handle);
-				if(hdib==IntPtr.Zero) {
-					break;
+		private void ToolBarWebExport(NodeIdTag nodeIdTag,Document apteryxDoc) {
+			string tempFilePath="";
+			string docPath="";
+			if(nodeIdTag.NodeType.In(EnumNodeType.Doc,EnumNodeType.ApteryxImage)) {
+				Document doc;
+				if(nodeIdTag.NodeType==EnumNodeType.Doc) {
+					doc=Documents.GetByNum(nodeIdTag.PriKey);
 				}
-				Bitmap bitmap=(Bitmap)EZTwain.DIB_ToImage(hdib);
-				PlaceAcquiredBitmapInUI(bitmap);
-				EZTwain.DIB_Free(hdib);
-			} 
-			while(!EZTwain.IsDone());
-			EZTwain.CloseSource();
-			_deviceController=null;
-			//when user cancels, we will keep panelAcquire open so that they can do things like retake
-			LayoutControls();
-		}
-		
-		///<summary>Returns true if successful. Returns false if it failed or if no more images should be acquired.</summary>
-		private bool PlaceAcquiredBitmapInUI(Bitmap bitmap){
-			Document document=null;
-			if(bitmap is null){
-				return false;
-			}
-			try {
-				document=ImageStore.Import(bitmap,GetCurrentCategory(),ImageType.Radiograph,_patient,mimeType:"image/tiff",doPrintHeading:true);
-			}
-			catch(Exception ex) {
-				bitmap?.Dispose();
-				MessageBox.Show(Lan.g(this,"Unable to save")+": "+ex.Message);
-				return false;
-			}
-			if(!IsMountShowing()){//single
-				FillImageSelector(false);//Reload and keep new document selected.
-				SelectTreeNode(new NodeTypeAndKey(EnumImageNodeType.Document,document.DocNum));
-				bitmap?.Dispose();
-				return true;
-			}
-			//From here down is mount======================================================================================
-			FormImageFloat formImageFloat=GetFormImageFloatSelected();//will always succeed because we verified in IsMountShowing
-			if(IsMountItemSelected() //They shouldn't have selected an occupied spot.
-				|| GetIdxSelectedInMount()==-1)
-			{
-				//We will try to find an unoccupied spot.
-				List<MountItem> listMountItemsAvail2=GetAvailSlots(1);
-				if(listMountItemsAvail2 is null){//no more available slots, so start saving in unmounted area
-					SetIdxSelectedInMount(-1);
+				else {
+					doc=apteryxDoc;
 				}
-				else{
-					MountItem mountItem2=formImageFloat.GetListMountItems().FirstOrDefault(x=>x.MountItemNum==listMountItemsAvail2[0].MountItemNum);
-					if(mountItem2==null){//should not be possible
-						return false;
-					}
-					SetIdxSelectedInMount(formImageFloat.GetListMountItems().IndexOf(mountItem2));
-				}
+				tempFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),doc.FileName);
+				docPath=FileAtoZ.CombinePaths(ImageStore.GetPatientFolder(_patient,ImageStore.GetPreferredAtoZpath()),doc.FileName);
 			}
-			MountItem mountItem=null;
-			if(GetIdxSelectedInMount()==-1){
-				mountItem=new MountItem();
-				mountItem.MountNum=GetMountShowing().MountNum;
-				mountItem.ItemOrder=-1;//unmounted
-				mountItem.Width=100;//arbitrary; it will scale
-				mountItem.Height=100;
-				MountItems.Insert(mountItem);
-				WpfControls.UI.UnmountedObj unmountedObj=new WpfControls.UI.UnmountedObj();
-				unmountedObj.MountItem_=mountItem;
-				unmountedObj.Document_=document;
-				unmountedObj.SetBitmap(new Bitmap(bitmap));
-				unmountedBar.AddObject(unmountedObj);
+			else if(nodeIdTag.NodeType==EnumNodeType.Eob) {
+				EobAttach eob=EobAttaches.GetOne(nodeIdTag.PriKey);
+				tempFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),eob.FileName);
+				docPath=ODFileUtils.CombinePaths(ImageStore.GetEobFolder(),eob.FileName);
 			}
-			else{
-				mountItem=formImageFloat.GetListMountItems()[GetIdxSelectedInMount()];
+			else if(nodeIdTag.NodeType==EnumNodeType.EhrAmend) {
+				EhrAmendment amd=EhrAmendments.GetOne(nodeIdTag.PriKey);
+				tempFilePath=ODFileUtils.CombinePaths(Path.GetTempPath(),amd.FileName);
+				docPath=ODFileUtils.CombinePaths(ImageStore.GetAmdFolder(),amd.FileName);
 			}
-			formImageFloat.DocumentAcquiredForMount(document,bitmap,mountItem,GetMountShowing().FlipOnAcquire);
-			bitmap?.Dispose();
-			//Decide if we are done----------------------------------------------------------------
-			if(_deviceController.ImgDeviceControlType==EnumImgDeviceControlType.TwainMulti){
-				//any extras will go in unmounted.  Take them all.
-				return true;
-			}
-			List<MountItem> listMountItemsAvail=GetAvailSlots(1);
-			if(listMountItemsAvail is null){
-				//no more available slots, so we are done
-				SetIdxSelectedInMount(-1);
-				//unmounted bar will stay visible, so no change to _isAquiring
-				LayoutControls();
-				return false;
-			}
-			return true;//ready for another
-		}
-
-		/// <summary>Enables or disables menuItemTreePrint depending if the showing document is a PDF or not</summary>
-		private void EnableMenuItemTreePrintHelper(FormImageFloat formImageFloat) {
-			if(formImageFloat==null || formImageFloat.GetDocumentShowing(0)==null) {
-				return;
-			}
-			if(Path.GetExtension(GetDocumentShowing(0).FileName).ToLower()==".pdf"){ 
-				menuItemTreePrint.Enabled=false; //pdf printing is handled in Adobe, so users don't need the menu option
+			if(!string.IsNullOrEmpty(docPath)) {
+				FileAtoZ.Copy(docPath,tempFilePath,FileAtoZSourceDestination.AtoZToLocal,"Exporting file...",doOverwrite:true);
+				ThinfinityUtils.ExportForDownload(tempFilePath);
 			}
 			else {
-				menuItemTreePrint.Enabled=true;
+				MessageBox.Show("Unable to export file");
 			}
 		}
 
-		///<summary>Enables toolbar buttons if a patient is selected, otherwise disables them.</summary>
-		private void UpdateToolbarButtons() {
-			if(this.Enabled && _patient!=null) {
-				//Enable tools which must always be accessible when a valid patient is selected.
-				EnableToolBarsPatient(true);
-				DisableAllToolBarButtons();//Disable item specific tools until item chosen.
+		///<summary>Returns the index in the DocsInMount array of the given location (relative to the upper left-hand corner of the pictureBoxMain control) or -1 if the location is outside all documents in the current mount. A mount must be currently selected to call this function.</summary>
+		private int GetIdxAtMountLocation(Point location) {
+			PointF relativeLocation=new PointF(
+				(location.X-_pointFTranslation.X)/(_zoomImage*_zoomOverall)+_mountShowing.Width/2,
+				(location.Y-_pointFTranslation.Y)/(_zoomImage*_zoomOverall)+_mountShowing.Height/2);
+			//Enumerate the image locations.
+			for(int i=0;i<_listMountItems.Count;i++) {
+				RectangleF itemLocation=new RectangleF(_listMountItems[i].Xpos,_listMountItems[i].Ypos,
+					_listMountItems[i].Width,_listMountItems[i].Height);
+				if(itemLocation.Contains(relativeLocation)) {
+					return i;
+				}
 			}
-			else {
-				EnableToolBarsPatient(false);//Disable entire menu (besides select patient).
+			return -1;//No document selected in the current mount.
+		}
+
+		/*
+		private PointF MountSpaceToScreenSpace(PointF p) {
+			PointF relvec=new PointF(p.X/_mountSelected.Width-0.5f,p.Y/_mountSelected.Height-0.5f);
+			return new PointF(_pointTranslation.X+relvec.X*_mountSelected.Width*_zoomImage*_zoomOverall,
+				_pointTranslation.Y+relvec.Y*_mountSelected.Height*_zoomImage*_zoomOverall);
+		}*/
+
+		///<summary>Applies crop and colors. Then, paints _bitmapRenderingNow onto pictureBoxMain.</summary>
+		private void Worker() {
+			while(true) {
+				try {
+					//Wait indefinitely for a signal to start processing again. Since the OS handles this function,
+					//this thread will not run even a single process cycle until a signal is received. This is ideal,
+					//since it means that we do not waste any CPU cycles when image processing is not currently needed.
+					//At the same time, this function allows us to keep a single thread for as long as possible, so
+					//that we do not need to destroy and recreate this thread (except in rare circumstances, such as
+					//the deletion of the current image).
+					_eventWaitHandle.WaitOne(-1,false);
+					//The DocForSettings may have been reset several times at this point by calls to InvalidateSettings(), but that cannot hurt
+					//us here because it simply means that we are getting even more current information than we had when this thread was
+					//signaled to start. We lock here so that we are sure that the resulting document and setting tuple represent
+					//a single point in time.
+					Document docForSettings;
+					ImageSettingFlags imageSettingFlags;
+					bool[] idxsFlaggedForUpdate;
+					lock(_eventWaitHandle) {//Does not actually lock the EventWaitHandleSettings object.
+						docForSettings=_documentForSettings;
+						imageSettingFlags=_imageSettingFlags;
+						idxsFlaggedForUpdate=_boolArrayIdxsFlaggedForUpdate;
+					}
+					if(_enumNodeTypeForSettings==EnumNodeType.Doc) {
+						//Perform cropping and colorfunction here if one of the two flags is set. Rotation, flip, zoom and translation are
+						//taken care of in RenderCurrentImage().
+						if((imageSettingFlags & ImageSettingFlags.COLORFUNCTION)!=ImageSettingFlags.NONE || 
+								(imageSettingFlags & ImageSettingFlags.CROP)!=ImageSettingFlags.NONE) {
+							//Ensure that memory management for the _bitmapShowing is performed in the worker thread, otherwise the main thread
+							//will be slowed when it has to cleanup dozens of old _bitmapShowing, which causes a temporary pause in operation.
+							if(_bitmapShowing!=null) {
+								//Done like this so that the _bitmapShowing is cleared in a single atomic line of code (in case the thread is
+								//killed during this step), so that we don't end up with a pointer to a disposed image in _bitmapShowing.
+								Bitmap bitmapShowingOld=_bitmapShowing;
+								_bitmapShowing=null;
+								bitmapShowingOld.Dispose();
+								bitmapShowingOld=null;
+							}
+							//currentImages[] is guaranteed to exist and be the current. If currentImages gets updated, this thread 
+							//gets aborted with a call to KillMyThread(). The only place currentImages[] is invalid is in a call to 
+							//EraseCurrentImage(), but at that point, this thread has been terminated.
+							_bitmapShowing=ImageHelper.ApplyDocumentSettingsToImage(docForSettings,_bitmapArrayRaw[_idxSelectedInMount],
+								ImageSettingFlags.CROP | ImageSettingFlags.COLORFUNCTION);
+						}
+						//Make the current _bitmapRenderingNow visible in the picture box, and perform rotation, flip, zoom, and translation on
+						//the _bitmapRenderingNow.
+						RenderCurrentImage(docForSettings,_intArrayWidthsImagesCur[_idxSelectedInMount],_intArrayHeightsImagesCur[_idxSelectedInMount],_zoomImage*_zoomOverall,_pointFTranslation);
+					}
+					else if(_enumNodeTypeForSettings==EnumNodeType.Mount) {
+						//not supported
+					}
+					else if(_enumNodeTypeForSettings==EnumNodeType.Eob || _enumNodeTypeForSettings==EnumNodeType.EhrAmend) {
+						if((imageSettingFlags & ImageSettingFlags.COLORFUNCTION)!=ImageSettingFlags.NONE || 
+							(imageSettingFlags & ImageSettingFlags.CROP)!=ImageSettingFlags.NONE) {
+							if(_bitmapShowing!=null) {
+								Bitmap oldRenderImage=_bitmapShowing;
+								_bitmapShowing=null;
+								oldRenderImage.Dispose();
+								oldRenderImage=null;
+							}
+							_bitmapShowing=ImageHelper.ApplyDocumentSettingsToImage(docForSettings,_bitmapArrayRaw[_idxSelectedInMount],
+								ImageSettingFlags.CROP | ImageSettingFlags.COLORFUNCTION);
+							//ImageRenderingNow=ImagesCur[IdxSelectedInMount];//no crop or color settings in an eob
+						}
+						RenderCurrentImage(null,_intArrayWidthsImagesCur[_idxSelectedInMount],_intArrayHeightsImagesCur[_idxSelectedInMount],_zoomImage*_zoomOverall,_pointFTranslation);
+					}
+					else if(_enumNodeTypeForSettings==EnumNodeType.ApteryxImage) {
+						_bitmapShowing=_bitmapArrayRaw[_idxSelectedInMount];//no crop or color settings in an Apteryx image
+						RenderCurrentImage(new Document(),_bitmapShowing.Width,_bitmapShowing.Height,_zoomImage*_zoomOverall,_pointFTranslation);
+					}
+				}
+				catch(ThreadAbortException) {
+					return;	//Exit as requested. This can happen when the current document is being deleted, 
+					//or during shutdown of the program.
+				}
+				catch(Exception) {
+					//We don't draw anyting on error (because most of the time it will be due to the current selection state).
+				}
 			}
+		}
+
+		///<summary>Kills the image processing thread if it is currently running.</summary>
+		private void KillThreadImageUpdate() {
+			_suniDeviceControl.KillXRayThread();//Stop the current xRay image thread if it is running.
+			if(_threadImageUpdate!=null) {//Clear any previous image processing.
+				if(_threadImageUpdate.IsAlive) {
+					_threadImageUpdate.Abort();//this is not recommended because it results in an exception.  But it seems to work.
+					_threadImageUpdate.Join();//Wait for thread to stop execution.
+				}
+				_threadImageUpdate=null;
+			}
+		}
+
+		//Static Functions------------------------------------------------------------------------------------------------------------------------------------------------------
+		///<summary>Sets global variables: Zoom and translation to initial starting values where the image fits perfectly within the box.</summary>
+		private static void ResetZoomTrans(int docImageWidth,int docImageHeight,Document doc,Rectangle viewport,
+			out float zoom,out int zoomLevel,out float zoomFactor,out PointF translation) {
+			//Choose an initial zoom so that the image is scaled to fit the destination box size.
+			//Keep in mind that bitmaps are not allowed to have either a width or height of 0,
+			//so the following equations will always work. The following subtracts from the 
+			//destination box width and height to force a little extra white space.
+			RectangleF imageRect=CalcImageDims(docImageWidth,docImageHeight,doc);
+			float matchWidth=(int)(viewport.Width*0.975f);
+			matchWidth=(matchWidth<=0?1:matchWidth);
+			float matchHeight=(int)(viewport.Height*0.975f);
+			matchHeight=(matchHeight<=0?1:matchHeight);
+			zoom=(float)Math.Min(matchWidth/imageRect.Width,matchHeight/imageRect.Height);
+			zoomLevel=0;
+			zoomFactor=1;
+			translation=new PointF(viewport.Left+viewport.Width/2.0f,viewport.Top+viewport.Height/2.0f);
+		}
+
+		///<summary>Calculates the image dimensions after factoring flip and rotation of the given document.</summary>
+		private static RectangleF CalcImageDims(int imageWidth,int imageHeight,Document doc) {
+			Matrix orientation=GetScreenMatrix(doc,imageWidth,imageHeight,1,new PointF(0,0));
+			PointF[] corners=new PointF[] {
+				new PointF(-imageWidth/2,-imageHeight/2),
+				new PointF(imageWidth/2,-imageHeight/2),
+				new PointF(-imageWidth/2,imageHeight/2),
+				new PointF(imageWidth/2,imageHeight/2),
+			};
+			orientation.TransformPoints(corners);
+			float minx=corners[0].X;
+			float maxx=minx;
+			float miny=corners[0].Y;
+			float maxy=miny;
+			for(int i=1;i<corners.Length;i++) {
+				if(corners[i].X<minx) {
+					minx=corners[i].X;
+				}
+				else if(corners[i].X>maxx) {
+					maxx=corners[i].X;
+				}
+				if(corners[i].Y<miny) {
+					miny=corners[i].Y;
+				}
+				else if(corners[i].Y>maxy) {
+					maxy=corners[i].Y;
+				}
+			}
+			return new RectangleF(0,0,maxx-minx,maxy-miny);
+		}
+
+		///<summary>Converts a point in the picturebox into a point in the original raw image in its unrotated/unflipped/unscaled/untranslated state.</summary>
+		private static PointF ControlPointToRawImagePoint(PointF pointScreen,Document doc,
+			int widthOriginalImage,int widthOriginalHeight,float scaleImage,PointF pointTranslation) {
+			Matrix matrix=GetDocumentFlippedRotatedMatrix(doc);
+			matrix.Scale(scaleImage,scaleImage);
+			//Now we have a matrix representing the image in its current state-space.
+			float[] docMatAxes=matrix.Elements;
+			float px=pointScreen.X-pointTranslation.X;
+			float py=pointScreen.Y-pointTranslation.Y;
+			//The origin of our internal image axis is always relative to the center of the crop rectangle.
+			Rectangle rectangleCrop=DocCropRect(doc,widthOriginalImage,widthOriginalHeight);
+			PointF cropRectCenter=new PointF(rectangleCrop.X+rectangleCrop.Width/2.0f,
+				rectangleCrop.Y+rectangleCrop.Height/2.0f);
+			return new PointF(
+				(cropRectCenter.X+(px*docMatAxes[0]+py*docMatAxes[1])/(scaleImage*scaleImage)),
+				(cropRectCenter.Y+(px*docMatAxes[2]+py*docMatAxes[3])/(scaleImage*scaleImage)));
+		}
+
+		///<summary>Returns a matrix for the given document which represents flipping over the Y-axis before rotating. Of course, if doc.IsFlipped is false, then no flipping is performed, and if doc.DegreesRotated is a multiple of 360 then no rotation is performed.  doc may be null if eob.</summary>
+		private static Matrix GetDocumentFlippedRotatedMatrix(Document doc) {
+			if(doc==null) {
+				return new Matrix(1,0,0,1,0,0);
+			}
+			Matrix result=new Matrix(
+				doc.IsFlipped?-1:1,0,//X-axis
+				0,1,//Y-axis
+				0,0);//Offset/Translation(dx,dy)
+			result.Rotate(doc.IsFlipped?-doc.DegreesRotated:doc.DegreesRotated);
+			return result;
 		}
 		#endregion Methods - Private
 
-		#region Methods - Native
-		[DllImport("user32.dll", SetLastError=true)]
-		private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
-
-		[DllImport("user32.dll")]
-		private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
-
-		[DllImport("user32.dll")] 
-		static extern bool MoveWindow(IntPtr Handle, int x, int y, int w, int h, bool repaint);
-
-		[DllImport("user32.dll")]
-		static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-
-		#endregion Methods - Native
-	}
-
-	#region External
-	public class ToolBarButtonState{
-		public bool Print;
-		public bool Delete;
-		public bool Info;
-		public bool Sign;
-		public bool Export;
-		public bool Copy;
-		public bool BrightAndContrast;
-		public bool Zoom;
-		public bool ZoomOne;
-		public bool Crop;
-		public bool Pan;
-		public bool Adj;
-		public bool Size;
-		public bool Flip;
-		public bool RotateL;
-		public bool RotateR;
-		public bool Rotate180;
-		public bool Draw;
-		public bool Unmount;
-
-		public ToolBarButtonState(bool print, bool delete, bool info, bool sign, bool export, bool copy, bool brightAndContrast, bool zoom, bool zoomOne, bool crop, bool pan, bool adj, bool size, bool flip, bool rotateL,bool rotateR, bool rotate180, bool draw,bool unmount)
-			{
-				Print=print;
-				Delete=delete;
-				Info=info;
-				Sign=sign;
-				Export=export;
-				Copy=copy;
-				BrightAndContrast=brightAndContrast;
-				Zoom=zoom;
-				ZoomOne=zoomOne;
-				Crop=crop;
-				Pan=pan;
-				Adj=adj;
-				Size=size;
-				Flip=flip;
-				RotateL=rotateL;
-				RotateR=rotateR;
-				Rotate180=rotate180;
-				Draw=draw;
-				Unmount=unmount;
+		#region Structs
+		///<summary>This is the struct that gets assigned to each tree node Tag.  Because this is a struct, equivalency is based on values, not references.</summary>
+		private struct NodeIdTag {
+			public EnumNodeType NodeType;
+			///<summary>The table to which the primary key refers will differ based on the node type.</summary>
+			public long PriKey;
+			public ApteryxImage ApteryxImgDownload;
+			//could use an == overload here, but don't know syntax right now.
 		}
+		#endregion Structs
 	}
 
-	public class ZoomSliderState{
-		public System.Windows.Size SizeCanvas;
-		public System.Windows.Size SizeImage;
-		public float DegreesRotated;
-
-		public ZoomSliderState(System.Windows.Size sizeCanvas,System.Windows.Size sizeImage,float degreesRotated){
-			SizeCanvas=sizeCanvas;
-			SizeImage=sizeImage;
-			DegreesRotated=degreesRotated;
-		}
-	}
-
-	public class EventArgsImageClick{
-		public long PatNum;
-		public long MountNum;
-		public long DocNum;
-
-		public EventArgsImageClick(long patNum,long mountNum,long docNum){
-			PatNum=patNum;
-			MountNum=mountNum;
-			DocNum=docNum;
-		}
-	}
-
-	///<summary>3 States.</summary>
-	public enum EnumCropPanAdj{
-		///<summary>Looks like arrow. Only for docs, not mounts.</summary>
-		Crop,
-		///<summary>Looks like a hand.</summary>
-		Pan,
-		///<summary>Cursor is 4 arrows.</summary>
-		Adj
-	}
-
-	///<summary></summary>
-	public enum EnumDrawMode{
-		///<summary>This is used in FormImageFloat to indicate that the draw toolbar is not present.  By setting to none, we can accurately test the others without also checking toolbar visibility. Unlike ToothChart, there is no Pointer because we don't generally select objects in images.</summary>
-		None,
-		///<summary>We allow dragging. User can double click on a text object to edit/delete and single click on an empty spot to add.</summary>
-		Text,
-		///<summary>No dialog or selection of lines. Eraser and change color affect lines. Click to start a line, second click to end a line.  Or, click and drag, with mouse up finishing the line. To extend a line, click on the last point, then second click to end. No other way to extend a line or add points.</summary>
-		Line,
-		///<summary>This is a sub-mode of Line. This allows dragging points instead of creating a new line. It also allows adding new points in the middle of a line. The shift key changes the hover cursor to indicate "delete" when over a point.</summary>
-		LineEditPoints,
-		///<summary>Freehand.</summary>
-		Pen,
-		///<summary></summary>
-		Eraser,
-		///<summary></summary>
-		ChangeColor,
-		///<summary>A sub-mode of Line.</summary>
-		LineMeasure,
-		///<summary>A sub-mode of Line.</summary>
-		LineSetScale,
-		///<summary>Always filled. Works just like pen.</summary>
-		Polygon
-	}
-
-	public enum EnumLoadBitmapType{
-		///<summary>Load into _arrayBitmapsShowing[idx] for each item in mount when SelectTreeNode.</summary>
-		OnlyIdx,
-		///<summary>Load into _arrayBitmapsShowing[idx] and _bitmapRaw when mount image is resized. When using single images rather than mounts, this is the only enum option used, including for SelectTreeNode and cropping.</summary>
-		IdxAndRaw,
-		///<summary>Load image into _bitmapRaw every time user selects new mount item, but not from disk if no bright/contr yet.</summary>
-		OnlyRaw
-	}
-	#endregion External
-
+	
 }
-
-
-//2022-03-26 Todo:
-
-
-
-//Bug?
-//Mount thumbnails not refreshing?
-
-//Need to document how XVWeb and Suni use the old Images module. (might be done)
-
-//This new Imaging module will never support the following features:
-//ClaimPayment/EOB mode.  Old Images module will continue to be used for that.
-//EhrAmendment mode.  Can use old images module if it's still required.
-
-//Features that we might add soon:
-//Drag mount item, check mouse position to allow longer drags within single position.
-//context menu in main panel (see ContrImages.menuMountItem_Opening)
-//Yellow outline pixel width could be better: fixed instead of variable
-//Switch to Direct2D for hardware speed and effects
-
-
-

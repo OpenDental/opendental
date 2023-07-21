@@ -17,8 +17,6 @@ using OpenDentBusiness;
 
 namespace OpenDentBusiness {
 	public class RemotingClient {
-		///<summary>Set to true if this application is ready to automatically wait for Middle Tier connectivity to come back after being lost.</summary>
-		public static bool HasAutomaticConnectionLostRetry=false;
 		///<summary>This dll will be in one of these three roles.  There can be a dll on the client and a dll on the server, both involved in the logic.  This keeps track of which one is which.</summary>
 		private static MiddleTierRole _middleTierRole;
 		///<summary>If ClientWeb, then this is the URL to the server.</summary>
@@ -31,13 +29,13 @@ namespace OpenDentBusiness {
 		public static string MidTierProxyPassword;
 		///<summary>Thread static version of RemotingRole</summary>
 		[ThreadStatic]
-		private static MiddleTierRole _middleTierRoleT;
+		public static MiddleTierRole _middleTierRoleT;
 		///<summary>Thread static string version of RemotingRole because enums cannot be null thus we never know what value to trust.</summary>
 		[ThreadStatic]
-		private static string _middleTierRoleTStr;
+		public static string _middleTierRoleTStr;
 		///<summary>Thread static version of ServerURI</summary>
 		[ThreadStatic]
-		private static string _serverUriT;
+		public static string _serverUriT;
 		private static bool _hasLoginFailed;
 		private static bool _hasRemoteConnectionFailed;
 		private static ReaderWriterLockSlim _lockLoginFailed=new ReaderWriterLockSlim();
@@ -351,19 +349,11 @@ namespace OpenDentBusiness {
 				return QueryMonitor.Monitor.ProcessMonitoredPayload(service.ProcessRequest,dtoString);
 			}
 			catch(WebException wex) {
-				//Check the global setting for automatically retrying the sending of payloads after a web connection failure.
-				if(!HasAutomaticConnectionLostRetry) {
-					throw;
-				}
-				//Check the local setting for automatically retrying. E.g. This will be false when a user is trying to log in for the first time.
-				if(!hasConnectionLost) {
-					throw;
-				}
-				//Check that this is a WebException that indicates a connection failure.
+				//If no connection monitoring desired or this is a WebException that we aren't explicitly looking for then bubble up the exception.
 				//WebException class: https://docs.microsoft.com/en-us/dotnet/api/system.net.webexception?view=netframework-4.7.2
 				//WebException.Status property: https://docs.microsoft.com/en-us/dotnet/api/system.net.webexception.status?view=netframework-4.7.2
 				//Handling WebExceptions: https://docs.microsoft.com/en-us/dotnet/framework/network-programming/handling-errors?view=netframework-4.7.2
-				if(wex.Status!=WebExceptionStatus.ConnectFailure) {
+				if(!hasConnectionLost || wex.Status!=WebExceptionStatus.ConnectFailure) {
 					throw;
 				}
 				//The calling method wants to automatically retry connecting to the Middle Tier until it comes back.

@@ -45,6 +45,7 @@ namespace OpenDental{
 			this.butVoiceMails = new OpenDental.UI.Button();
 			this.labelFieldType = new System.Windows.Forms.Label();
 			this.comboTriageCoordinator = new OpenDental.UI.ComboBox();
+			this.butMapPhones = new OpenDental.UI.Button();
 			this.butTriage = new OpenDental.UI.Button();
 			this.butPhoneList = new OpenDental.UI.Button();
 			this.labelWaitTime = new System.Windows.Forms.Label();
@@ -151,6 +152,7 @@ namespace OpenDental{
 			this.panelPhoneSmall.Controls.Add(this.butVoiceMails);
 			this.panelPhoneSmall.Controls.Add(this.labelFieldType);
 			this.panelPhoneSmall.Controls.Add(this.comboTriageCoordinator);
+			this.panelPhoneSmall.Controls.Add(this.butMapPhones);
 			this.panelPhoneSmall.Controls.Add(this.butTriage);
 			this.panelPhoneSmall.Controls.Add(this.butPhoneList);
 			this.panelPhoneSmall.Controls.Add(this.labelWaitTime);
@@ -162,11 +164,13 @@ namespace OpenDental{
 			// 
 			// butNewMap
 			// 
-			this.butNewMap.Location = new System.Drawing.Point(0, 27);
+			this.butNewMap.Location = new System.Drawing.Point(61, 27);
 			this.butNewMap.Name = "butNewMap";
 			this.butNewMap.Size = new System.Drawing.Size(50, 24);
 			this.butNewMap.TabIndex = 93;
 			this.butNewMap.Text = "Map";
+			this.toolTipMap.SetToolTip(this.butNewMap, "Do not normally use the old map.\r\nBut if the new map has a bug,\r\nyou can always s" +
+        "witch to the old\r\nmap while waiting for the bug fix.\r\n");
 			this.butNewMap.Click += new System.EventHandler(this.butNewMap_Click);
 			// 
 			// labelMsg
@@ -233,6 +237,17 @@ namespace OpenDental{
 			this.comboTriageCoordinator.Size = new System.Drawing.Size(213, 21);
 			this.comboTriageCoordinator.TabIndex = 87;
 			this.comboTriageCoordinator.SelectionChangeCommitted += new System.EventHandler(this.comboTriageCoordinator_SelectionChangeCommitted);
+			// 
+			// butMapPhones
+			// 
+			this.butMapPhones.Location = new System.Drawing.Point(-5, 21);
+			this.butMapPhones.Name = "butMapPhones";
+			this.butMapPhones.Size = new System.Drawing.Size(74, 34);
+			this.butMapPhones.TabIndex = 54;
+			this.butMapPhones.Text = "Old Map\r\n(do not use)";
+			this.toolTipMap.SetToolTip(this.butMapPhones, "Do not normally use the old map.\r\nBut if the new map has a bug,\r\nyou can always s" +
+        "witch to the old\r\nmap while waiting for the bug fix.\r\n");
+			this.butMapPhones.Click += new System.EventHandler(this.butMapPhones_Click);
 			// 
 			// butTriage
 			// 
@@ -351,7 +366,6 @@ namespace OpenDental{
 			this.splitContainer.Controls.Add(this.splitterPanel1);
 			this.splitContainer.Controls.Add(this.splitterPanel2);
 			this.splitContainer.Cursor = System.Windows.Forms.Cursors.Default;
-			this.splitContainer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.splitContainer.Location = new System.Drawing.Point(297, 67);
 			this.splitContainer.Name = "splitContainer";
 			this.splitContainer.Panel1 = this.splitterPanel1;
@@ -428,8 +442,8 @@ namespace OpenDental{
 		private ControlAccount controlAccount;
 		private ControlTreat controlTreat;
 		private ControlChart controlChart;
-		private ControlImagesOld controlImagesOld;
 		private ControlImages controlImages;
+		private ControlImagesJ controlImagesJ;
 		private ControlManage controlManage;
 		private ModuleBar moduleBar;
 		private OpenDental.UI.ToolBarOD ToolBarMain;
@@ -440,6 +454,7 @@ namespace OpenDental{
 		private Label labelWaitTime;
 		private Label labelTriage;
 		private Label labelMsg;
+		private UI.Button butMapPhones;
 		private UI.ComboBox comboTriageCoordinator;
 		private Label labelFieldType;
 		private MenuItem menuItem14;

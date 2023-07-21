@@ -15,19 +15,11 @@ namespace OpenDental {
 
 		public FrmEmailMasterTemplate() {
 			InitializeComponent();
-			Load+=FrmEmailMasterTemplate_Load;
-			PreviewKeyDown+=FrmEmailMasterTemplate_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmEmailMasterTemplate_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmEmailMasterTemplate_Loaded(object sender,RoutedEventArgs e) {
 			textMaster.Text=PrefC.GetString(PrefName.EmailMasterTemplate);
-		}
-
-		private void FrmEmailMasterTemplate_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {
@@ -36,6 +28,5 @@ namespace OpenDental {
 			}
 			IsDialogOK=true;
 		}
-
 	}
 }

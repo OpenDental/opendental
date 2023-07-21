@@ -32,7 +32,8 @@
 			this.butMedicationSelect = new System.Windows.Forms.Button();
 			this.label3 = new System.Windows.Forms.Label();
 			this.textLabResultsID = new System.Windows.Forms.TextBox();
-			this.butSave = new System.Windows.Forms.Button();
+			this.butCancel = new System.Windows.Forms.Button();
+			this.butOk = new System.Windows.Forms.Button();
 			this.butDelete = new System.Windows.Forms.Button();
 			this.label4 = new System.Windows.Forms.Label();
 			this.textUrl = new System.Windows.Forms.TextBox();
@@ -126,16 +127,27 @@
 			this.textLabResultsID.TabStop = false;
 			this.textLabResultsID.Click += new System.EventHandler(this.textLabResults_Click);
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(533, 348);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 23);
-			this.butSave.TabIndex = 7;
-			this.butSave.Text = "&Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(536, 348);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 23);
+			this.butCancel.TabIndex = 8;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOk
+			// 
+			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOk.Location = new System.Drawing.Point(455, 348);
+			this.butOk.Name = "butOk";
+			this.butOk.Size = new System.Drawing.Size(75, 23);
+			this.butOk.TabIndex = 7;
+			this.butOk.Text = "Ok";
+			this.butOk.UseVisualStyleBackColor = true;
+			this.butOk.Click += new System.EventHandler(this.butOk_Click);
 			// 
 			// butDelete
 			// 
@@ -314,7 +326,8 @@
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.textUrl);
 			this.Controls.Add(this.butDelete);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOk);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.textMedication);
 			this.Controls.Add(this.butMedicationSelect);
@@ -342,7 +355,8 @@
 		private System.Windows.Forms.Button butMedicationSelect;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox textLabResultsID;
-		private System.Windows.Forms.Button butSave;
+		private System.Windows.Forms.Button butCancel;
+		private System.Windows.Forms.Button butOk;
 		private System.Windows.Forms.Button butDelete;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.TextBox textUrl;

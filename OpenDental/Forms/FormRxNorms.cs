@@ -26,6 +26,7 @@ namespace OpenDental {
 			if(!IsSelectionMode && !IsMultiSelectMode) {
 				butNone.Visible=false;
 				butOK.Visible=false;
+				butCancel.Text="Close";
 			}
 			if(IsMultiSelectMode) {
 				gridMain.SelectionMode=GridSelectionMode.MultiExtended;
@@ -51,8 +52,7 @@ namespace OpenDental {
 				+"If you intend to use RxNorm codes, you can download them now by clicking OK.  "
 				+"The RxNorm codes will add about 10 MB to your database size.  Download RxNorm codes?"))
 			{
-				using FormCodeSystemsImport formCodeSystemsImport=new FormCodeSystemsImport();
-				formCodeSystemsImport.listEnumCodeSystemNames=new List<EnumCodeSystemName>(){EnumCodeSystemName.RXNORM};
+				using FormCodeSystemsImport formCodeSystemsImport=new FormCodeSystemsImport(CodeSystemName.RXNORM);
 				formCodeSystemsImport.ShowDialog();
 			}
 		}
@@ -147,6 +147,10 @@ namespace OpenDental {
 				ListSelectedRxNorms.Add(_listRxNorms[gridMain.SelectedIndices[i]]);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

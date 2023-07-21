@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,65 +18,41 @@ namespace WpfControls.UI{
 	public partial class ToolBarButton : UserControl{
 		//public object Tag;//already has one
 		private EnumIcons _icon;
-		//private string _bitmapFileName;
-		///<summary>If the button is a dropdown, then this is the context menu that will show.</summary>
-		public ContextMenu ContextMenuDropDown;
-		///<summary>This adds a slightly darker wash and a gray border.</summary>
-		private bool _isHover;
-		///<summary>Only used if style is ToggleButton. Light blue wash with blue border. No hover effect when a toggle is pushed.</summary>
-		public bool IsTogglePushed;
-		private LinearGradientBrush linearGradientBrush=new LinearGradientBrush(Color.FromRgb(255,255,255),Color.FromRgb(171, 181, 209),angle:90);//#ABB5D1
-		private LinearGradientBrush linearGradientBrushToggled=new LinearGradientBrush(Color.FromRgb(255,255,255),Color.FromRgb(191,220,255),angle:90);
+		private string _bitmapFileName;
+
+		private ToolBarButtonState _toolBarButtonState;
+		//private LinearGradientBrush _linearGradientBrushMain;
 		private SolidColorBrush _solidColorBrushHoverBackground=new SolidColorBrush(Color.FromArgb(10,0,100,255));//20% blue wash
-		private ToolBarButtonStyle _toolBarButtonStyle;
-		private ToolTip _toolTip;
-		private string _toolTipText;
 
 		public ToolBarButton(){
 			InitializeComponent();
-			grid.ColumnDefinitions[2].Width=new GridLength(0);//hide the dropdown button
-			polygonTriangle.Visibility=Visibility.Collapsed;
-			IsEnabledChanged+=This_IsEnabledChanged;
-		}
-
-		public ToolBarButton(string text,EventHandler eventHandlerClick,EnumIcons icon=EnumIcons.None,ToolBarButtonStyle toolBarButtonStyle=ToolBarButtonStyle.NormalButton,
-			string toolTipText=null,ContextMenu contextMenuDropDown=null,object tag=null)
-			:this()
-		{
-			Text=text;
-			Click+=eventHandlerClick;
-			Icon=icon;
-			ToolBarButtonStyle=toolBarButtonStyle;
-			SetToolTipText(toolTipText);
-			ContextMenuDropDown=contextMenuDropDown;
-			Tag=tag;
+			//Color colorStart=Color.FromRgb(255,255,255);
+			//Color colorEnd=Color.FromRgb(225,232,235);
+			//_linearGradientBrushMain=new LinearGradientBrush(colorStart,colorEnd,90);
+			//_solidColorBrushHoverBackground
 		}
 
 		public event EventHandler Click;
 
 		#region Properties
-		//<summary>There's no need for this. All icons should be actual icons.</summary>
-		//public string BitmapFileName {
-		//	get {
-		//		return _bitmapFileName;
-		//	}
-		//	set {
-		//		_bitmapFileName=value;
-		//		gridImage.Children.Clear();
-		//		if(string.IsNullOrEmpty(_bitmapFileName)) {
-		//			SetMargins();
-		//			return;
-		//		}
-		//		Uri uri = new Uri("pack://application:,,,/WPFControlsOD;component/Resources/"+_bitmapFileName);
-		//		BitmapImage bitmapImage = new BitmapImage(uri);
-		//		Image image = new Image();
-		//		image.Source=bitmapImage;
-		//		gridImage.Children.Add(image);
-		//		gridImage.Width=22;
-		//		gridImage.Height=22;
-		//		SetMargins();
-		//	}
-		//}
+		public string BitmapFileName{
+			get{
+				return _bitmapFileName;
+			}
+			set{
+				_bitmapFileName=value;
+				Uri uri=new Uri("pack://application:,,,/WPFControlsOD;component/Resources/"+_bitmapFileName);
+				BitmapImage bitmapImage = new BitmapImage(uri);
+
+
+				//BitmapImage bitmapImage = new BitmapImage();
+				//bitmapImage.BeginInit();
+				//bitmapImage.UriSource = new Uri("/Resources/"+_bitmapFileName,UriKind.Relative);
+				//bitmapImage.EndInit();
+				//ImageSource imageSource = new BitmapImage(new Uri("/Resources/editPencil.gif",UriKind.Relative));
+				image.Source=bitmapImage;
+			}
+		}
 
 		public EnumIcons Icon{
 			get{
@@ -85,15 +60,8 @@ namespace WpfControls.UI{
 			}
 			set{
 				_icon=value;
-				gridImage.Children.Clear();
-				if(_icon==EnumIcons.None){
-					SetMargins();
-					return;
-				}
-				gridImage.Width=22;
-				gridImage.Height=22;
-				IconLibrary.DrawWpf(_icon,gridImage);
-				SetMargins();
+				BitmapImage bitmapImage=UI.IconLibrary.DrawWpf(_icon);
+				image.Source=bitmapImage;
 			}
 		}
 
@@ -103,116 +71,28 @@ namespace WpfControls.UI{
 			}
 			set{
 				textBlock.Text=value;
-				SetMargins();
 			}
 		}
 
-		public ToolBarButtonStyle ToolBarButtonStyle {
-			get => _toolBarButtonStyle;
+		public string ToolTipText{
+			get{
+				if(this.ToolTip is ToolTip toolTip){
+					return toolTip.Content.ToString();
+				}
+				return null;
+			}
 			set{
-				_toolBarButtonStyle=value;
-				if(_toolBarButtonStyle==ToolBarButtonStyle.DropDownButton){
-					grid.ColumnDefinitions[2].Width=new GridLength(14);
-					polygonTriangle.Visibility=Visibility.Visible;
-				}
-				else{
-					grid.ColumnDefinitions[2].Width=new GridLength(0);
-					polygonTriangle.Visibility=Visibility.Collapsed;
-				}
+				ToolTip toolTip=new ToolTip();
+				toolTip.Content=value;
+				this.ToolTip=toolTip;
 			}
 		}
 		#endregion Properties
 
-		public void SetBitmap(System.Drawing.Bitmap bitmap){
-			using MemoryStream memoryStream = new MemoryStream();
-			bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
-			memoryStream.Position = 0;
-			BitmapImage bitmapImage=new BitmapImage();
-			bitmapImage.BeginInit();
-			bitmapImage.StreamSource = memoryStream;
-			bitmapImage.CacheOption = BitmapCacheOption.OnLoad;//makes it load into memory during EndInit
-			bitmapImage.EndInit();
-			bitmapImage.Freeze(); //for use in another thread
-			Image image=new Image();
-			image.Source=bitmapImage;
-			gridImage.Children.Clear();
-			gridImage.Width=22;
-			gridImage.Height=22;
-			image.Width=22;
-			image.Height=22;
-			gridImage.Children.Add(image);
-			SetMargins();
-		}
-
-		public void SetToolTipText(string toolTipText){
-			if(string.IsNullOrEmpty(toolTipText)){
-				return;
-			}
-			_toolTipText=toolTipText;
-			_toolTip=new ToolTip();
-			_toolTip.SetControlAndAction(this,ToolTipSetString);
-			_toolTip.TimeSpanDelay=TimeSpan.FromSeconds(0.3);
-		}
-
-		///<summary></summary>
-		private void ToolTipSetString(FrameworkElement frameworkElement,Point point) {
-			if(point.X>grid.ColumnDefinitions[0].ActualWidth+grid.ColumnDefinitions[1].ActualWidth){
-				//in dropdown area
-				_toolTip.SetString(this,"");
-				return;
-			}
-			_toolTip.SetString(this,_toolTipText);
-		}
-
-		private void SetMargins(){
-			if(gridImage.Children.Count==0){//no icon
-				gridImage.Margin=new Thickness(0);
-				if(string.IsNullOrEmpty(textBlock.Text)){//neither icon nor text is not a likely scenario
-					textBlock.Margin=new Thickness(4,0,4,0);//I guess leave some space so it doesn't completely collapse
-					//this is also the default in the designer
-				}
-				else{
-					//just text
-					textBlock.Margin=new Thickness(4,0,4,0);
-				}
-			}
-			else{
-				//icon present
-				if(string.IsNullOrEmpty(textBlock.Text)){
-					//just icon
-					gridImage.Margin=new Thickness(1,0,1,0);
-					textBlock.Margin=new Thickness(0);
-				}
-				else{
-					//both icon and text
-					gridImage.Margin=new Thickness(2,0,2,0);
-					textBlock.Margin=new Thickness(0,0,4,0);
-				}
-			}
-		}
-
 		protected override void OnMouseDown(MouseButtonEventArgs e) {
 			base.OnMouseDown(e);
-			if(_isHover){
-				_isHover=false;
-				SetColors();
-			}
-			if(ToolBarButtonStyle==ToolBarButtonStyle.DropDownButton){
-				if(e.GetPosition(this).X>=grid.ColumnDefinitions[0].ActualWidth+grid.ColumnDefinitions[1].ActualWidth){
-					if(ContextMenuDropDown!=null){//there is a dropdown menu to display
-						//default Placement is mouse point with no offset.
-						ContextMenuDropDown.PlacementTarget=this;//relative to this button
-						ContextMenuDropDown.Placement=System.Windows.Controls.Primitives.PlacementMode.Bottom;//Also aligns to left edge. No right align available. It looks good.
-						ContextMenuDropDown.IsOpen=true;
-					}
-					return;
-				}
-			}
-			if(ToolBarButtonStyle==ToolBarButtonStyle.ToggleButton){
-				IsTogglePushed=!IsTogglePushed;
-				SetColors();
-				//Click will fire below
-			}
+			_toolBarButtonState=ToolBarButtonState.Normal;
+			SetColors();
 			Click?.Invoke(this,new EventArgs());
 		}
 
@@ -225,13 +105,7 @@ namespace WpfControls.UI{
 				return;
 			}
 			//mouse is not down
-			if(Click is null){
-				//if no click event, then we don't show any hover effect. It's just a label.
-				_isHover=false;
-			}
-			else{
-				_isHover=true;
-			}
+			_toolBarButtonState=ToolBarButtonState.Hover;
 			SetColors();
 		}
 
@@ -245,44 +119,33 @@ namespace WpfControls.UI{
 				return;
 			}
 			//mouse is not down
-			_isHover=false;
-			SetColors();
-		}
-
-		private void This_IsEnabledChanged(object sender,DependencyPropertyChangedEventArgs e) {
-			//This is nice because it gets hit when changing the property in the designer.
+			_toolBarButtonState=ToolBarButtonState.Normal;
 			SetColors();
 		}
 
 		private void SetColors(){
-			grid.Background=linearGradientBrush;
-			borderOverlay.BorderThickness=new Thickness(1);
-			borderOverlay.BorderBrush=Brushes.Transparent;
-			borderOverlay.Background=Brushes.Transparent;
-			borderDropDown.BorderBrush=Brushes.Transparent;
-			borderDropDown.Background=Brushes.Transparent;
-			//image?
-			textBlock.Foreground=Brushes.Black;
-			polygonTriangle.Fill=Brushes.Black;
-			if(!IsEnabled){
-				textBlock.Foreground=new SolidColorBrush(OpenDental.ColorOD.Gray_Wpf(100));
-				polygonTriangle.Fill=new SolidColorBrush(OpenDental.ColorOD.Gray_Wpf(100));
-				return;
+			if(_toolBarButtonState==ToolBarButtonState.Hover){
+				border.BorderBrush=Brushes.SlateGray;
+				border.Background=_solidColorBrushHoverBackground;
 			}
-			if(ToolBarButtonStyle==ToolBarButtonStyle.ToggleButton && IsTogglePushed){
-				//if toggled on, it will not respond to hover
-				grid.Background=linearGradientBrushToggled;
-				borderOverlay.BorderBrush=new SolidColorBrush(Color.FromRgb(50,120,200));
-				borderOverlay.BorderThickness=new Thickness(1.5);
-				return;
-			}
-			if(_isHover){
-				borderOverlay.BorderBrush=Brushes.SlateGray;
-				borderOverlay.Background=_solidColorBrushHoverBackground;
-				borderDropDown.BorderBrush=Brushes.SlateGray;
-				borderDropDown.Background=_solidColorBrushHoverBackground;
+			else{
+				border.BorderBrush=Brushes.Transparent;
+				border.Background=Brushes.Transparent;
 			}
 		}
+
+	}
+
+	///<summary>IsTogglePushed, Enabled, and isRed are handled separately</summary>
+	public enum ToolBarButtonState{
+		///<summary>0.</summary>
+		Normal,
+		///<summary>Mouse is hovering over the button and the mouse button is not pressed.</summary>
+		Hover,
+		///<summary>Mouse was pressed over this button and is still down, even if it has moved off this button or off the toolbar.</summary>
+		Pressed,
+		///<summary>In a dropdown button, only the dropdown portion is pressed. For hover, the entire button acts as one, but for pressing, the dropdown can be pressed separately.</summary>
+		DropPressed
 	}
 
 	///<summary>Just like Forms.ToolBarButtonStyle, except includes some extras.</summary>
@@ -291,13 +154,13 @@ namespace WpfControls.UI{
 		NormalButton,
 		///<summary>A button with a dropdown menu list on the right.</summary>
 		DropDownButton,
-		///<summary>Toggles between pushed and not pushed when clicked.</summary>
+		///<summary></summary>
+		Separator,
+		///<summary>Toggles between pushed and not pushed when clicked on.</summary>
 		ToggleButton,
-		//<summary></summary>
-		//Separator,//no need for this
-		//<summary>Not clickable. Just text where a button would normally be. Can also include an image.</summary>
-		//Label,//not yet implemented
-		//<summary>Editable textbox that fires page nav events. Includes a label after the textbox to show total pages.</summary>
-		//PageNav,//not yet implemented
+		///<summary>Not clickable. Just text where a button would normally be. Can also include an image.</summary>
+		Label,
+		///<summary>Editable textbox that fires page nav events. Includes a label after the textbox to show total pages.</summary>
+		PageNav,
 	}
 }

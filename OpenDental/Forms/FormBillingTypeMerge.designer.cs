@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormBillingTypeMerge));
 			this.butMerge = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupBoxInto = new OpenDental.UI.GroupBox();
 			this.textItemValueInto = new System.Windows.Forms.TextBox();
 			this.labelItemValueInto = new System.Windows.Forms.Label();
@@ -49,12 +50,23 @@ namespace OpenDental{
 			// 
 			this.butMerge.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butMerge.Enabled = false;
-			this.butMerge.Location = new System.Drawing.Point(510, 202);
+			this.butMerge.Location = new System.Drawing.Point(419, 200);
 			this.butMerge.Name = "butMerge";
 			this.butMerge.Size = new System.Drawing.Size(75, 24);
 			this.butMerge.TabIndex = 2;
 			this.butMerge.Text = "Merge";
 			this.butMerge.Click += new System.EventHandler(this.butMerge_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(503, 200);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// groupBoxInto
 			// 
@@ -214,10 +226,12 @@ namespace OpenDental{
 			// 
 			// FormBillingTypeMerge
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(607, 238);
 			this.Controls.Add(this.groupBoxFrom);
 			this.Controls.Add(this.groupBoxInto);
 			this.Controls.Add(this.butMerge);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormBillingTypeMerge";
 			this.Text = "Merge Billing Types";
@@ -232,6 +246,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butMerge;
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GroupBox groupBoxInto;
 		private UI.Button butChangeInto;
 		private System.Windows.Forms.TextBox textDefNumInto;

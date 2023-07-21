@@ -121,10 +121,5 @@ namespace UnitTestsCore {
 			DataCore.NonQ(command);
     }
 
-		///<summary>Deletes everything from the payment table. Does not truncate the table so that PKs are not reused on accident.</summary>
-		public static void ClearPaymentTable() {
-			string command="DELETE FROM payment";
-			DataCore.NonQ(command);
-		}
 	}
 }

@@ -7,7 +7,7 @@ namespace UnitTestsCore {
 	public class ClinicT {
 
 		///<summary>Inserts the new clinic, refreshes the cache and then returns the clinic.</summary>
-		public static Clinic CreateClinic(string description="",long emailAddressNum=0,string address="",Def regionDef=null,bool isHidden=false,bool createClinicGuid=false) {
+		public static Clinic CreateClinic(string description="",long emailAddressNum=0,string address="",Def regionDef=null) {
 			Clinic clinic=new Clinic();
 			clinic.Description=description;
 			clinic.Abbr=description;
@@ -23,16 +23,11 @@ namespace UnitTestsCore {
 			clinic.Zip="97302-1288";
 			clinic.Phone="5033635432";
 			clinic.Region=regionDef?.DefNum??0;
-			clinic.IsHidden=isHidden;
 			Clinics.Insert(clinic);
 			if(description=="") {
 				clinic.Description="Clinic "+clinic.ClinicNum.ToString();
 				clinic.Abbr="Clinic "+clinic.ClinicNum.ToString();
 				Clinics.Update(clinic);
-			}
-			if(createClinicGuid) {
-				ClinicPrefs.InsertPref(PrefName.WebAppClinicGuid,clinic.ClinicNum,Guid.NewGuid().ToString());
-				ClinicPrefs.RefreshCache();
 			}
 			Clinics.RefreshCache();
 			return clinic;

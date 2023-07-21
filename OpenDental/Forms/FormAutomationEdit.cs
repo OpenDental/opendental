@@ -42,7 +42,7 @@ namespace OpenDental{
 			AppointmentTypes.GetWhere(x => !x.IsHidden || x.AppointmentTypeNum==_automation.AppointmentTypeNum)
 				.ForEach(x => _listAppointmentTypes.Add(x));
 			_listAppointmentTypes=_listAppointmentTypes.OrderBy(x => x.AppointmentTypeNum>0).ThenBy(x => x.ItemOrder).ToList();
-			Enum.GetNames(typeof(EnumAutomationTrigger)).ToList().ForEach(x => comboTrigger.Items.Add(x));
+			Enum.GetNames(typeof(AutomationTrigger)).ToList().ForEach(x => comboTrigger.Items.Add(x));
 			comboTrigger.SelectedIndex=(int)_automation.Autotrigger;
 			textProcCodes.Text=_automation.ProcCodes;//although might not be visible.
 			textMessage.Text=_automation.MessageContent;
@@ -66,12 +66,12 @@ namespace OpenDental{
 			comboAction.Items.Clear();
 			_listAutomationActions=Enum.GetValues(typeof(AutomationAction)).OfType<AutomationAction>().ToList();
 			//only add the SetApptASAP and SetApptType actions if the triggers CreateAppt or CreateApptNewPat are selected
-			if(!comboTrigger.SelectedIndex.In((int)EnumAutomationTrigger.ApptCreate,(int)EnumAutomationTrigger.ApptNewPatCreate)) {
+			if(!comboTrigger.SelectedIndex.In((int)AutomationTrigger.CreateAppt,(int)AutomationTrigger.CreateApptNewPat)) {
 				_listAutomationActions.Remove(AutomationAction.SetApptASAP);
 				_listAutomationActions.Remove(AutomationAction.SetApptType);
 			}
 			//only add the PrintRxInstructions actions if the trigger RxCreate is selected
-			if(!comboTrigger.SelectedIndex.In((int)EnumAutomationTrigger.RxCreate)) {
+			if(!comboTrigger.SelectedIndex.In((int)AutomationTrigger.RxCreate)) {
 				_listAutomationActions.Remove(AutomationAction.PrintRxInstruction);
 			}
 			_listAutomationActions.ForEach(x => comboAction.Items.Add(x.GetDescription()));
@@ -81,7 +81,7 @@ namespace OpenDental{
 			else {
 				comboAction.SelectedIndex=0;//default to first in the list
 			}
-			if(comboTrigger.SelectedIndex.In((int)EnumAutomationTrigger.ProcedureComplete,(int)EnumAutomationTrigger.ProcSchedule)) {
+			if(comboTrigger.SelectedIndex.In((int)AutomationTrigger.CompleteProcedure,(int)AutomationTrigger.ScheduleProcedure)) {
 				labelProcCodes.Visible=true;
 				textProcCodes.Visible=true;
 				butProcCode.Visible=true;
@@ -217,7 +217,7 @@ namespace OpenDental{
 			}
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(textDescription.Text==""){
 				MsgBox.Show(this,"Description not allowed to be blank.");
 				return;
@@ -227,10 +227,10 @@ namespace OpenDental{
 				return;
 			}
 			_automation.Description=textDescription.Text;
-			_automation.Autotrigger=(EnumAutomationTrigger)comboTrigger.SelectedIndex;//should never be <0
+			_automation.Autotrigger=(AutomationTrigger)comboTrigger.SelectedIndex;//should never be <0
 			#region ProcCodes
 			_automation.ProcCodes="";//set to correct proc code string below if necessary
-			if(new[] { EnumAutomationTrigger.ProcedureComplete,EnumAutomationTrigger.ProcSchedule }.Contains(_automation.Autotrigger)) {
+			if(new[] { AutomationTrigger.CompleteProcedure,AutomationTrigger.ScheduleProcedure }.Contains(_automation.Autotrigger)) {
 				if(textProcCodes.Text.Contains(" ")){
 					MsgBox.Show(this,"Procedure codes cannot contain any spaces.");
 					return;
@@ -304,6 +304,10 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormAutomationEdit_FormClosing(object sender,FormClosingEventArgs e) {
 			if(DialogResult==DialogResult.OK) {
 				return;
@@ -317,3 +321,24 @@ namespace OpenDental{
 
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

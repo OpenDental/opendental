@@ -26,6 +26,7 @@ namespace OpenDental {
 			_timeCardRule=new TimeCardRule();//Allows Load(...) to set empty values.
 			_isInsertMode=true;
 			listEmp.SelectionMode=OpenDental.UI.SelectionMode.MultiExtended;//When adding new entries allow the user to insert many new rows.
+			label1.Text=Lan.g(this,"Employee (can select multiple)"); //Change label to reflect new selection mode
 		}
 
 		private void FormTimeCardRuleEdit_Load(object sender,EventArgs e) {
@@ -50,9 +51,6 @@ namespace OpenDental {
 			checkUseRate3.Checked=_timeCardRule.HasWeekendRate3;
 			checkIsOvertimeExempt.Checked=_timeCardRule.IsOvertimeExempt;
 			textClockInMin.Text=_timeCardRule.MinClockInTime.ToStringHmm();
-			if(!_isInsertMode) {
-				label1.Text=Lan.g(this,"Employee"); //Change label to reflect new selection mode
-			}
 		}
 
 		private void but5pm_Click(object sender,EventArgs e) {
@@ -99,7 +97,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			//Verify Data.
 			if(listEmp.SelectedIndices.Count==0){
 				MsgBox.Show(this,"Please select an employee.");
@@ -216,5 +214,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

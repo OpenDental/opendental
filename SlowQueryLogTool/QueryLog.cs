@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -26,15 +25,9 @@ namespace SlowQueryTool {
 		public Test Grade;
 		public List<Query> ListQueries=new List<Query>();
 		public List<QueryGroup> ListQueryGroups=new List<QueryGroup>();
-		public Action<ProgressFillQueries> OnProgress=null;
+		public Action<double> OnProgress=null;
 		private bool _isInterrupted=false;
-		private ProgressFillQueries _progressFillQueries=null;
-		private List<QueryGroup> _listQueryGroupsDELETE=new List<QueryGroup>();
-		private List<QueryGroup> _listQueryGroupsINSERT=new List<QueryGroup>();
-		private List<QueryGroup> _listQueryGroupsSELECT=new List<QueryGroup>();
-		private List<QueryGroup> _listQueryGroupsUPDATE=new List<QueryGroup>();
-		private List<QueryGroup> _listQueryGroupsNonCRUD=new List<QueryGroup>();
-
+		
 		public void Stop() {
 			_isInterrupted=true;
 		}
@@ -139,47 +132,86 @@ namespace SlowQueryTool {
 
 		///<summary>Fills the information for the individual queries being run.</summary>
 		public void FillQueries() {
-			StringBuilder unformattedQuery=new StringBuilder();
+			string unformattedQuery="";
 			string administratorCommand="";
 			Query query=null;
 			DateTime timeQueryRan=new DateTime();
-			bool isQueryBetweenBusinessHours=true;
+			bool skipEntry=true;
 			long lineNum=0;
 			DateTime dateTimeLower=DateFrom.Date.Add(HourOpen);
 			DateTime dateTimeUpper=DateTo.Date.Add(HourClose);
+			double curPercentDone=0;
 			if(!IsFileValid(FilePath)) {
 				throw new Exception("Cannot access file.");
 			}
-			_progressFillQueries=new ProgressFillQueries();
-			using(StreamReader streamReader=new StreamReader(FilePath)) {
-				if(streamReader.Peek() < 0) {
+			void addQueryIfNecessary(){
+				if(query==null) {
+					return;
+				}
+				//Add the last query
+				query.FormatQuery(unformattedQuery);
+				if(query.FormattedQuery.Trim()!="" && query.TimeRan.TimeOfDay.Between(HourOpen,HourClose)) {
+					//1-based counting.
+					query.QueryNum=ListQueries.Count+1;
+					ListQueries.Add(query);
+				}				
+			}
+			bool getMySqlVersion(string line){
+				if(lineNum!=1) {
+					return false;
+				}
+				//Extract SQL version.
+				if(line.Contains("5.5")) {
+					MySqlVersion="5.5";
+				}
+				else if(line.Contains("5.6")) {
+					MySqlVersion="5.6";
+				}
+				else {
+					MySqlVersion="";
+				}
+				return true;				
+			}
+			using(var sr = new StreamReader(FilePath)) {
+				if(sr.Peek() < 0){
 					throw new Exception("File is empty");
 				}
-				long fileLength=streamReader.BaseStream.Length;
-				while(streamReader.Peek()>=0) {
+				long fileLength=sr.BaseStream.Length;
+				while(sr.Peek()>=0){
 					if(_isInterrupted) {
 						throw new Exception("Analyzer stopped prematurely!");
 					}
 					++lineNum;
-					string line=streamReader.ReadLine();
-					if(lineNum==1) {
-						SetMySqlVersion(line);
+					string line=sr.ReadLine();
+					if(getMySqlVersion(line)){
 						continue;
 					}
-					double percentDone=(streamReader.BaseStream.Position/(double)fileLength)*100;
-					_progressFillQueries.PercentParsing=percentDone;
-					OnProgress?.Invoke(_progressFillQueries);
-					bool isTimeLine=line.StartsWith("# Time:");
-					if(isTimeLine) {
-						timeQueryRan=ExtractTimeRan(line);
-						isQueryBetweenBusinessHours=(timeQueryRan.Between(dateTimeLower,dateTimeUpper) && timeQueryRan.TimeOfDay.Between(HourOpen,HourClose));
+					double actualPercentDone=(sr.BaseStream.Position/(double)fileLength)*100;
+					if(Math.Ceiling(actualPercentDone)!=Math.Ceiling(curPercentDone)) { //Throttle to prevent choking out the UI handler.
+						curPercentDone=actualPercentDone;
+						OnProgress?.Invoke(curPercentDone);
 					}
-					//Skip over any slow query that didn't run between business hours.
-					if(!isQueryBetweenBusinessHours) {
-						continue;
+
+					if(skipEntry) {
+						if(line.StartsWith("# Time:")) {
+							timeQueryRan=ExtractTimeRan(line);
+							if(!timeQueryRan.Between(dateTimeLower,dateTimeUpper)){ //Not in time range, keep skipping.
+								continue;
+							}
+							//Time is in range so stop skipping and let this line fall through below.
+							skipEntry=false;
+						}
+						else {//keep skipping.
+							continue;
+						}
 					}
 					//We found a # Time header.
-					if(isTimeLine) {
+					if(line.StartsWith("# Time:")) {
+						timeQueryRan=ExtractTimeRan(line);
+						if(!timeQueryRan.Between(dateTimeLower,dateTimeUpper)) { //Not in time range, start skipping.
+							skipEntry=true;
+							continue;
+						}
 						if(FirstQueryDate==null || FirstQueryDate.Year < 1880) {
 							FirstQueryDate=timeQueryRan;
 						}
@@ -187,11 +219,10 @@ namespace SlowQueryTool {
 					}
 					else if(line.StartsWith("# User@Host:")) {
 						//It is the beginning of a new query, add the old one to the list
-						AddQueryIfNecessary(query,unformattedQuery.ToString());
+						addQueryIfNecessary();
 						//We got this far for an entry so it is within our time range. Create new Query object and record datetime with current "timeQueryRan".
 						query=new Query();
-						unformattedQuery.Clear();
-						unformattedQuery.Append(administratorCommand);
+						unformattedQuery=administratorCommand;
 						administratorCommand="";
 						query.TimeRan=timeQueryRan;
 						query.ComputerName=ExtractComputerName(line);
@@ -210,159 +241,30 @@ namespace SlowQueryTool {
 						administratorCommand=ExtractAdministratorCommand(line);
 					}
 					else if(!line.StartsWith("#")) {//Filters unnecessary # line. Grabs the rest of the formatted queries.
-						if(unformattedQuery.Length > 0) {
-							unformattedQuery.Append("\r\n");
-						}
-						unformattedQuery.Append(line);
+						unformattedQuery+=(unformattedQuery=="" ? "" : "\r\n")+line;
 					}
 				}
 			}
 			//Add the last query.
-			AddQueryIfNecessary(query,unformattedQuery.ToString());
-			_progressFillQueries.PercentParsing=100;
-			OnProgress?.Invoke(_progressFillQueries);
-			//Queries have already been filtered out at this point unless the filters are blank.
-			if(DateFrom.Year < 1880 && DateTo.Year < 1880) {
-				//Show up to two weeks prior to the LastQueryDate.
+			addQueryIfNecessary();
+			if(DateFrom.Year < 1880 && DateTo.Year < 1880) {//if both are blank, show last two week only.
 				DateTo=LastQueryDate.Date;
 				DateFrom=(FirstQueryDate.Date < LastQueryDate.AddDays(-14).Date ? LastQueryDate.AddDays(-14).Date : FirstQueryDate.Date);
-				ListQueries=ListQueries.FindAll(x => x.TimeRan.Date.Between(DateFrom,DateTo));
 			}
-		}
-
-		private void SetMySqlVersion(string line) {
-			//Extract SQL version.
-			if(line.Contains("5.5")) {
-				MySqlVersion="5.5";
-			}
-			else if(line.Contains("5.6")) {
-				MySqlVersion="5.6";
-			}
-			else {
-				MySqlVersion="";
-			}
-		}
-
-		private void AddQueryIfNecessary(Query query,string unformattedQuery) {
-			if(query==null) {
-				return;
-			}
-			//Add the last query
-			query.SetUnformattedQuery(unformattedQuery);
-			if(query.UnformattedQuery.Trim()!="") {
-				//1-based counting.
-				query.QueryNum=ListQueries.Count+1;
-				ListQueries.Add(query);
-			}
+			ListQueries=ListQueries.Where(x => x.TimeRan.Date.Between(DateFrom,DateTo)).ToList();
+			CalculateIsVictim();		
 		}
 
 		///<summary>Groups the queries by similar queries. Then it calculate statistics and weights for each group.</summary>
 		public void AnalyzeGroups() {
-			CalculateGroupStatistics();
-			CalculateGroupWeight();
+			ListQueries.ForEach(x => x.QueryGroupNum=FindQueryGroup(x));
+			CalculateGroupStatistics(ListQueryGroups);
+			CalculateGroupWeight(ListQueryGroups);
 			ListQueryGroups=ListQueryGroups.OrderByDescending(x => x.GroupWeightRaw).ToList();
 			for(int i=0;i<ListQueryGroups.Count;i++) {
 				ListQueryGroups[i].GroupWeightRank=i+1;
 			}
 			CalculateGrade();
-		}
-
-		private bool AreQueriesSimilar(Query queryA,Query queryB) {
-			//The closer the distance is to 0, the closer the strings are to each other.
-			//The SlowQueryLog tool considers queries 'similar' if the first 100 characters are within a Levenshtein distance of 15.
-			int threshold=15;
-			//Create temporary variables that can be swapped around depending on which array is shorter.
-			//C# is much faster at comparing integers than characters so we convert the SimilarityString into a SimilarityArray (of ints).
-			int[] sourceArray=queryA.SimilarityArray;
-			int[] targetArray=queryB.SimilarityArray;
-			int sourceArrayLength=sourceArray.Length;
-			int targetArrayLength=targetArray.Length;
-			//Compare the lengths of the two queries.
-			//If the strings (aka similarty arrays) differ by more than the allotted threshold then these queries are NOT similar.
-			//This is because it would take at least 15 'insert' steps to get the strings to match up.
-			if(Math.Abs(sourceArrayLength - targetArrayLength) > threshold) {
-				return false;
-			}
-			//For speed purposes, always utilize the shorter query as the 'source' array.
-			if(sourceArrayLength > targetArrayLength) {
-				//Swap the arrays around and update the length variables.
-				int[] tempArray=targetArray;
-				targetArray=sourceArray;
-				sourceArray=tempArray;
-				sourceArrayLength=sourceArray.Length;
-				targetArrayLength=targetArray.Length;
-			}
-			//Levenshtein distance algorithm moves along a matrix in order to determine the minimum number of steps it takes to make two strings equate.
-			//Horizontally movements imply 'insertions', vertical movements imply 'deletions', and diagonal movements imply 'substitutions'.
-			//Finally, in the bottom right of the matrix will be a number that yields how similar the two strings are (the lower the number, the more similar).
-			/********************
-			     M|E|N|T|O|R
-			   0|1|2|3|4|5|6
-			 C 1|1|2|3|4|5|6
-			 E 2|2|1|2|3|4|5
-			 N 3|3|2|1|2|3|4
-			 T 4|4|3|2|1|2|3
-			 E 5|5|4|3|2|2|3
-			 R 6|6|5|4|3|3|2
-			 S 7|7|6|5|4|4|3
-			 ********************/
-			//Initialize integer arrays for the Levenshtein distance algorithm.
-			int[] distanceArrayCurrent=new int[sourceArrayLength + 1];
-			int[] distanceArrayMinus1=new int[sourceArrayLength + 1];
-			int[] distanceArrayMinus2=new int[sourceArrayLength + 1];
-			int[] distanceArraySwap;
-			//Set the top of the horizontal array from zero to the length of the array (number of characters in the first query).
-			for(int i=0;i<=sourceArrayLength;i++) {
-				distanceArrayCurrent[i]=i;
-			}
-			int indexTarget=0;
-			int indexSourceMinus1=0;
-			int indexSourceMinus2=-1;
-			for(int j=1;j<=targetArrayLength;j++) {
-				//For speed purposes, use a rotating set of three arrays rather than a massive matrix as visualized above (which is easier to understand, but slower).
-				distanceArraySwap=distanceArrayMinus2;
-				distanceArrayMinus2=distanceArrayMinus1;
-				distanceArrayMinus1=distanceArrayCurrent;
-				distanceArrayCurrent=distanceArraySwap;
-				int minimumDistance=int.MaxValue;
-				distanceArrayCurrent[0]=j;
-				indexSourceMinus1=0;
-				indexSourceMinus2=-1;
-				//Calculate the minimum number of instructions it would take to turn the source query into the target query.
-				for(int i=1;i<=sourceArrayLength;i++) {
-					int cost=(sourceArray[indexSourceMinus1]==targetArray[indexTarget] ? 0 : 1);
-					//Figure out which instruction is the quickest to make.
-					int delete=distanceArrayCurrent[indexSourceMinus1] + 1;
-					int insert=distanceArrayMinus1[i] + 1;
-					int substitute=distanceArrayMinus1[indexSourceMinus1] + cost;
-					//The fastest instruction is the one with the minimum value out of the three instructions.
-					int min=(delete > insert)
-						? (insert > substitute ? substitute : insert)
-						: (delete > substitute ? substitute : delete);
-					if(i > 1 && j > 1 && sourceArray[indexSourceMinus2]==targetArray[indexTarget] && sourceArray[indexSourceMinus1]==targetArray[j - 2]) {
-						min=Math.Min(min,distanceArrayMinus2[indexSourceMinus2] + cost);
-					}
-					distanceArrayCurrent[i]=min;
-					//Keep track of the overall minimum distance while crawling through the queries.
-					if(min < minimumDistance) {
-						minimumDistance=min;
-					}
-					indexSourceMinus1++;
-					indexSourceMinus2++;
-				}
-				indexTarget++;
-				//At this point, if we have already exceeded the threshold allotted; these strings are not similar enough.
-				if(minimumDistance > threshold) {
-					return false;
-				}
-			}
-			//The closer the distance is to 0, the closer the strings are to each other.
-			//The SlowQueryLog tool considers queries 'similar' if the first 100 characters are within a Levenshtein distance of 15.
-			int result=distanceArrayCurrent[sourceArrayLength];
-			if(result<=threshold) {
-				return true;
-			}
-			return false;
 		}
 
 		private void CalculateGrade() {
@@ -412,49 +314,46 @@ namespace SlowQueryTool {
 		}
 
 		///<summary>Determines the victim queries within the list. listQueries should be ordered by TimeRan before being passed in.</summary>
-		public void CalculateIsVictim() {
-			double countTotalQueries=ListQueries.Count;
-			double countProcessedQueries=0;
-			for(int i=0;i<ListQueries.Count;i++) {
-				if(_isInterrupted) {
-					throw new Exception("Analyzer stopped prematurely!");
-				}
-				Query query=ListQueries[i];
-				countProcessedQueries=(i + 1);
-				double percentDone=((countProcessedQueries / countTotalQueries) * 100);
-				_progressFillQueries.PercentVictim=percentDone;
+		private void CalculateIsVictim() {
+			foreach(Query query in ListQueries) {
 				if(query.RowsExamined > 1000 || query.QueryExecutionTime < 3) {//not small enough or did not take long enough to be a victim
-					OnProgress?.Invoke(_progressFillQueries);
 					continue;
 				}
 				//Find queries ran 0-10 seconds after this query.
-				List<Query> listQueriesInRange=new List<Query>();
-				DateTime lowerBound=query.TimeRan;
-				DateTime upperBound=query.TimeRan.AddSeconds(10);
-				for(int j=i;j<ListQueries.Count;j++) {
-					Query queryInRange=ListQueries[j];
-					if(queryInRange.QueryNum==query.QueryNum) {
-						continue;//The first one should always match, move onto the next query if there is one.
-					}
-					if(!queryInRange.TimeRan.Between(lowerBound,upperBound)) {
-						break;//The list of queries should be ordered by TimeRan so there is no reason to keep considering queries later in the list.
-					}
-					listQueriesInRange.Add(queryInRange);
-				}
-				//Look for a victim query that took awhile to run.
-				Query queryVictim=listQueriesInRange.FirstOrDefault(x => x.RowsExamined > 100000 && x.QueryExecutionTime > 5);
-				query.IsVictim=false;
-				if(queryVictim!=null) {
-					query.IsVictim=true;
-					query.Perpetrator=queryVictim.QueryNum;
-				}
-				OnProgress?.Invoke(_progressFillQueries);
+				List<Query> listQueriesInRange=ListQueries.Where(x => x.QueryNum!=query.QueryNum).
+					Where(x => x.TimeRan.Between(query.TimeRan,query.TimeRan.AddSeconds(10))).ToList();
+				//if there is a large victim that took awhile to run, this one is a victim query
+				query.IsVictim=listQueriesInRange.Any(x => x.RowsExamined > 100000 && x.QueryExecutionTime > 5);
+				if(query.IsVictim) {
+					query.Perpetrator=listQueriesInRange.First(x => x.RowsExamined > 100000 && x.QueryExecutionTime > 5).QueryNum;
+				}			
 			}
-			_progressFillQueries.PercentVictim=100;
-			OnProgress?.Invoke(_progressFillQueries);
 		}
 
-		private void CalculateGroupWeight() {
+		///<summary>Finds the appropriate query group to insert the query into.</summary>
+		private long FindQueryGroup(Query query) {
+			foreach(QueryGroup queryGroup in ListQueryGroups) {
+				List<Query>listQueriesInGroup=queryGroup.ListQueriesInGroup;
+				//Check the first three queries in the group (if there are 3)
+				int lengthOfQueryInGroup=listQueriesInGroup[0].FormattedQuery.Length;
+				int lengthOfQuery=query.FormattedQuery.Length;
+				if(ComputeSimilarity(listQueriesInGroup[0].FormattedQuery.Substring(0,(lengthOfQueryInGroup > 100 ? 100 : lengthOfQueryInGroup)),
+					query.FormattedQuery.Substring(0,(lengthOfQuery > 100 ? 100 : lengthOfQuery))) < 15)  
+				{
+					//if the first 100 characters (for efficiency) are close in similarity
+					listQueriesInGroup.Add(query);
+					return queryGroup.QueryGroupNum;
+				}
+			}
+			//No match was found. Create a new group and insert the group
+			QueryGroup queryGroupNew=new QueryGroup();
+			queryGroupNew.ListQueriesInGroup.Add(query);
+			queryGroupNew.QueryGroupNum=ListQueryGroups.Count+1;
+			ListQueryGroups.Add(queryGroupNew);
+			return queryGroupNew.QueryGroupNum;//Inserted into the group at the end
+		}
+
+		private void CalculateGroupWeight(List<QueryGroup> listQueryGroups) {
 			//Ranking is done by weighting. The higher this weight is, the "worse" the query is. We rank the query groups as these contain queries that
 			//are essentialy the same. The ranking takes into account the number of queries and the average execution time.
 			//Higher number of queries increases the weight.
@@ -470,8 +369,8 @@ namespace SlowQueryTool {
 			}
 		}
 
-		private void CalculateGroupStatistics() {
-			foreach(QueryGroup queryGroup in ListQueryGroups) {
+		private static void CalculateGroupStatistics(List<QueryGroup> listQueryGroups) {
+			foreach(QueryGroup queryGroup in listQueryGroups) {
 				//Execution Time Stats
 				queryGroup.ExecutionTimeMax=(decimal)Math.Round(queryGroup.ListQueriesInGroup.Max(x => x.QueryExecutionTime),2);
 				queryGroup.ExecutionTimeMin=(decimal)Math.Round(queryGroup.ListQueriesInGroup.Min(x => x.QueryExecutionTime),2);
@@ -533,53 +432,6 @@ namespace SlowQueryTool {
 			}
 		}
 
-		public void CalculateThirdParyScores() {
-			double countTotalQueries=ListQueries.Count;
-			double countProcessedQueries=0;
-			for(int i=0;i<ListQueries.Count;i++) {
-				if(_isInterrupted) {
-					throw new Exception("Analyzer stopped prematurely!");
-				}
-				countProcessedQueries=(i + 1);
-				double percentDone=((countProcessedQueries / countTotalQueries) * 100);
-				_progressFillQueries.PercentThirdPartyScoring=percentDone;
-				ListQueries[i].CalculateThirdParyScore();
-				OnProgress?.Invoke(_progressFillQueries);
-			}
-			_progressFillQueries.PercentThirdPartyScoring=100;
-			OnProgress?.Invoke(_progressFillQueries);
-		}
-
-		///<summary>Finds the appropriate query group to insert the query into.</summary>
-		public void CreateQueryGroups() {
-			ListQueryGroups.Clear();
-			_listQueryGroupsDELETE.Clear();
-			_listQueryGroupsINSERT.Clear();
-			_listQueryGroupsSELECT.Clear();
-			_listQueryGroupsUPDATE.Clear();
-			_listQueryGroupsNonCRUD.Clear();
-			Dictionary<string,List<Query>> dictSimilarityStringQueries=ListQueries.GroupBy(x => x.SimilarityString)
-				.ToDictionary(x => x.Key,x => x.ToList());
-			double countTotalQueries=dictSimilarityStringQueries.Count;
-			double countGroupedQueries=0;
-			foreach(var kvp in dictSimilarityStringQueries) {
-				if(_isInterrupted) {
-					throw new Exception("Analyzer stopped prematurely!");
-				}
-				countGroupedQueries++;
-				double percentDone=((countGroupedQueries / countTotalQueries) * 100);
-				_progressFillQueries.PercentGrouping=percentDone;
-				QueryGroup queryGroup=GetQueryGroup(kvp.Value.First());
-				foreach(Query query in kvp.Value) {
-					queryGroup.ListQueriesInGroup.Add(query);
-					query.QueryGroupNum=queryGroup.QueryGroupNum;
-				}
-				OnProgress?.Invoke(_progressFillQueries);
-			}
-			_progressFillQueries.PercentGrouping=100;
-			OnProgress?.Invoke(_progressFillQueries);
-		}
-
 		///<summary>Extracts the time the query was run.</summary>
 		private DateTime ExtractTimeRan(string line) {
 			try {
@@ -611,9 +463,9 @@ namespace SlowQueryTool {
 			}
 		}
 
-		private string ExtractUserName(string line) {
+		private string ExtractUserName(string line){
 			try { 
-				return line.Substring(line.IndexOf(":")+1, line.IndexOf("[") - (line.IndexOf(":")+1)).Trim();
+				return line.Substring(line.IndexOf(":")+1, line.IndexOf("[") - line.IndexOf(":")+1).Trim();
 			}
 			catch {
 				throw new Exception("Could not parse user name for one of the queries.");
@@ -684,66 +536,7 @@ namespace SlowQueryTool {
 			}
 		}
 
-		public void FormatQueries() {
-			double countTotalQueries=ListQueries.Count;
-			double countProcessedQueries=0;
-			for(int i=0;i<ListQueries.Count;i++) {
-				if(_isInterrupted) {
-					throw new Exception("Analyzer stopped prematurely!");
-				}
-				countProcessedQueries=(i + 1);
-				double percentDone=((countProcessedQueries / countTotalQueries) * 100);
-				_progressFillQueries.PercentFormatting=percentDone;
-				ListQueries[i].FormatQuery();
-				OnProgress?.Invoke(_progressFillQueries);
-			}
-			_progressFillQueries.PercentFormatting=100;
-			OnProgress?.Invoke(_progressFillQueries);
-		}
-
-		private QueryGroup GetQueryGroup(Query query) {
-			List<QueryGroup> listQueryGroupsSubGroup;
-			string similarityStringToUpper=query.SimilarityString.ToUpper();
-			if(similarityStringToUpper.StartsWith("SELECT")) {
-				listQueryGroupsSubGroup=_listQueryGroupsSELECT;
-			}
-			else if(similarityStringToUpper.StartsWith("INSERT")) {
-				listQueryGroupsSubGroup=_listQueryGroupsINSERT;
-			}
-			else if(similarityStringToUpper.StartsWith("DELETE")) {
-				listQueryGroupsSubGroup=_listQueryGroupsDELETE;
-			}
-			else if(similarityStringToUpper.StartsWith("UPDATE")) {
-				listQueryGroupsSubGroup=_listQueryGroupsUPDATE;
-			}
-			else {
-				listQueryGroupsSubGroup=_listQueryGroupsNonCRUD;
-			}
-			QueryGroup queryGroup=GetSimilarQueryGroup(query,listQueryGroupsSubGroup);
-			if(queryGroup==null) {
-				//No match was found. Create a new group and insert the group.
-				queryGroup=new QueryGroup();
-				queryGroup.QueryGroupNum=ListQueryGroups.Count+1;
-				listQueryGroupsSubGroup.Add(queryGroup);
-				ListQueryGroups.Add(queryGroup);
-			}
-			return queryGroup;
-		}
-
-		private QueryGroup GetSimilarQueryGroup(Query query,List<QueryGroup> listQueryGroups) {
-			//Loop through every QueryGroup object and compute similarity on the similarity string passed in until a match is found.
-			foreach(QueryGroup queryGroup in listQueryGroups) {
-				if(_isInterrupted) {
-					throw new Exception("Analyzer stopped prematurely!");
-				}
-				if(AreQueriesSimilar(queryGroup.ListQueriesInGroup.First(),query)) {
-					return queryGroup;
-				}
-			}
-			return null;
-		}
-
-		private bool IsFileValid(string filePath) {
+		private static bool IsFileValid(string filePath) {
 			try {
 				var file=File.Open(filePath,FileMode.Open);
 				file.Close();
@@ -753,14 +546,35 @@ namespace SlowQueryTool {
 				return false;
 			}
 		}
-	}
 
-	public class ProgressFillQueries {
-		public double PercentParsing;
-		public double PercentVictim;
-		public double PercentGrouping;
-		public double PercentFormatting;
-		public double PercentThirdPartyScoring;
+		///<summary>Computes similarity between two strings. It returns a number representing their similarity. The closer to 0 the return value is,
+		///the closer the strings are. The scale is from 0-100.</summary>
+		public static int ComputeSimilarity(string s,string t) {
+			if(string.IsNullOrEmpty(s)) {
+				if(string.IsNullOrEmpty(t))
+					return 0;
+				return t.Length;
+			}
+			if(string.IsNullOrEmpty(t)) {
+				return s.Length;
+			}
+			int n=s.Length;
+			int m=t.Length;
+			int[,] d=new int[n+1,m+1];
+			// initialize the top and right of the table to 0, 1, 2, ...
+			for(int i=0;i<=n;d[i,0]=i++);
+			for(int j=1;j<=m;d[0,j]=j++);
+			for(int i=1;i<=n;i++) {
+				for(int j=1;j<=m;j++) {
+					int cost=(t[j-1]==s[i-1]) ? 0 : 1;
+					int min1=d[i-1,j]+1;
+					int min2=d[i,j-1]+1;
+					int min3=d[i-1,j-1]+cost;
+					d[i,j]=Math.Min(Math.Min(min1,min2),min3);
+				}
+			}
+			return d[n,m];
+		}
 	}
 
 	public class Test {
@@ -781,26 +595,11 @@ namespace SlowQueryTool {
 	}
 
 	///<summary>A structure to hold ML model prediction scores to determine if a query is third party or not.</summary>
-	public class ThirdPartyScore {
+	public struct ThirdPartyScore {
 		private float _isOpenDentalQuery;
 		private float _isThirdPartyQuery;
-
-		public float IsOpenDentalQueryScore {
-			get {
-				return (float)Math.Round(_isOpenDentalQuery * 100,2);
-			}
-		}
-
-		public float IsThirdPartyQueryScore {
-			get {
-				return (float)Math.Round(_isThirdPartyQuery * 100,2);
-			}
-		}
-
-		public ThirdPartyScore(float isOpenDentalQuery,float isThirdPartyQuery) {
-			_isOpenDentalQuery=isOpenDentalQuery;
-			_isThirdPartyQuery=isThirdPartyQuery;
-		}
+		public float IsOpenDentalQueryScore { get => (float)Math.Round(_isOpenDentalQuery * 100,2); set => _isOpenDentalQuery = value; }
+		public float IsThirdPartyQueryScore { get => (float)Math.Round(_isThirdPartyQuery * 100,2); set=> _isThirdPartyQuery = value; }
 	}
 
 	public class QueryGroup {
@@ -843,116 +642,47 @@ namespace SlowQueryTool {
 		public float LockTime;
 		public long RowsSent;
 		public long RowsExamined;
+		public bool IsLikelyThirdParty;
+		public ThirdPartyScore ThirdPartyScore;
+		public bool IsLikelyUserQuery;
 		public bool IsVictim;
 		public long Perpetrator;
 		public string UnformattedQuery="";
-
-		private string _formattedQuery=null;
-		public string FormattedQuery {
-			get {
-				if(_formattedQuery==null) {
-					FormatQuery();
-				}
-				return _formattedQuery;
-			}
-		}
-
-		private string _similarityString=null;
-		public string SimilarityString {
-			get {
-				if(_similarityString==null) {
-					_similarityString=FormattedQuery.Substring(0,(FormattedQuery.Length > 100 ? 100 : FormattedQuery.Length));
-				}
-				return _similarityString;
-			}
-		}
-
-		private int[] _similarityArray=null;
-		public int[] SimilarityArray {
-			get {
-				if(_similarityArray==null) {
-					_similarityArray=SimilarityString.Select(x => Convert.ToInt32(x)).ToArray();
-				}
-				return _similarityArray;
-			}
-		}
-
-		public bool IsLikelyUserQuery {
-			get {
-				return UnformattedQuery.Contains("@") || UnformattedQuery.Contains("Modified By");
-			}
-		}
-
-		public bool IsLikelyThirdParty {
-			get {
-				return ThirdPartyScore.IsThirdPartyQueryScore > 70;
-			}
-		}
+		public string FormattedQuery="";
 		
-		private ThirdPartyScore _thirdPartyScore=null;
-		public ThirdPartyScore ThirdPartyScore {
-			get {
-				if(_thirdPartyScore==null) {
-					CalculateThirdParyScore();
-				}
-				return _thirdPartyScore;
-			}
-		}
+		private static List<string> listQueryKeywords=new List<string> { "select ","where ","in ","from ","left join ","inner join","order by",
+			"group by","having "};
 
-		public void CalculateThirdParyScore() {
-			ThirdPartyQueryModel.ModelInput modelInput=new ThirdPartyQueryModel.ModelInput();
-			modelInput.Query_Text=UnformattedQuery;
-			ThirdPartyQueryModel.ModelOutput modelOutput=new ThirdPartyQueryModel.ModelOutput();
-			modelOutput=ThirdPartyQueryModel.Predict(modelInput);
-			_thirdPartyScore=new ThirdPartyScore(modelOutput.Score[0],modelOutput.Score[1]);
-		}
-
-		public void FormatQuery() {
-			TSqlStandardFormatter tSqlStandardFormatter=new TSqlStandardFormatter("\t",
-				spacesPerTab: 1,
-				maxLineWidth: 1000,
-				expandCommaLists: false,
-				trailingCommas: true,
-				spaceAfterExpandedComma: false,
-				expandBooleanExpressions: true,
-				expandCaseStatements: true,
-				expandBetweenConditions: false,
-				breakJoinOnSections: true,
-				uppercaseKeywords: true,
-				htmlColoring: false,
-				keywordStandardization: false);
-			SqlFormattingManager sqlFormatter=new SqlFormattingManager(tokenizer: new TSqlStandardTokenizer(),
-				parser: new TSqlStandardParser(),
-				formatter: tSqlStandardFormatter);
-			sqlFormatter.Formatter.ErrorOutputPrefix="";
-			_formattedQuery=sqlFormatter.Format(UnformattedQuery);
-		}
-
-		///<summary>Manipuilates the unformatted query passed in in order to set the UnformattedQuery field on this query object.</summary>
-		public void SetUnformattedQuery(string unformattedQuery) {
+		public void FormatQuery(string unformattedQuery) {
 			//Remove all new lines and tabs
 			unformattedQuery=unformattedQuery.Replace("\r\n"," ");
 			unformattedQuery=unformattedQuery.Replace("\t","");
 			//Break seperate queries into lines by ;
-			//Not every string in the following list will be a query (some content within a string column could simply utilize the ';' char).
-			//However, we want to explicitly look for common queries that can be removed (e.g. 'SET timestamp=1694571362;').
-			List<string> listQueries=unformattedQuery.Split(new char[] { ';' },StringSplitOptions.RemoveEmptyEntries).ToList();
-			//Loop through these 'queries' backwards and remove entries that start in an extremely specific manner.
-			for(int i=listQueries.Count-1;i>=0;i--) {
-				string queryToLower=listQueries[i].Trim().ToLower();
-				if(queryToLower.StartsWith("set timestamp=")
-					|| queryToLower.StartsWith("use "))
-				{
-					listQueries.RemoveAt(i);
-				}
+			unformattedQuery=unformattedQuery.Replace("; ",";\r\n");
+			if(unformattedQuery.ToLower().Contains("use ")) {
+				unformattedQuery=unformattedQuery.Substring(unformattedQuery.IndexOf(";",unformattedQuery.ToLower().IndexOf("use "))+1).Trim();
 			}
-			//Remove the Init DB query when there are other queries involved.
-			//Preserve the Init DB query when it is by itself.
-			//This means there is an issue with the server outside of MySQL that is causing slowness (hardware, antivirus, backups, windows, etc).
-			if(listQueries.Count > 1) {
-				listQueries.Remove("Init DB");
+			if(unformattedQuery.Contains("SET timestamp=")){
+				unformattedQuery=(unformattedQuery.Substring(0,unformattedQuery.IndexOf("SET timestamp="))
+					+unformattedQuery.Substring(unformattedQuery.IndexOf(";",unformattedQuery.IndexOf("SET timestamp="))+1)).Trim();
 			}
-			UnformattedQuery=string.Join(";\r\n",listQueries.Select(x => x.Trim()));
+			if(unformattedQuery.Trim()!="Init DB;") {//if this is a part of another query, just remove it. It's not the important slow part.
+				unformattedQuery=unformattedQuery.Replace("Init DB;","").Trim();
+			}
+			unformattedQuery=unformattedQuery.Substring(0,unformattedQuery.LastIndexOf(";") + 1); // remove anything trailing after last semi colon
+			UnformattedQuery=unformattedQuery;
+			IsLikelyUserQuery=UnformattedQuery.Contains("@") || UnformattedQuery.Contains("Modified By");
+			ThirdPartyQueryModel.ModelInput modelInput=new ThirdPartyQueryModel.ModelInput();
+			modelInput.Query_Text=unformattedQuery;
+			ThirdPartyQueryModel.ModelOutput modelOutput=new ThirdPartyQueryModel.ModelOutput();
+			modelOutput=ThirdPartyQueryModel.Predict(modelInput);
+			IsLikelyThirdParty = modelOutput.Score[1] > .70 ? true : false;
+			this.ThirdPartyScore.IsOpenDentalQueryScore = modelOutput.Score[0];
+			this.ThirdPartyScore.IsThirdPartyQueryScore = modelOutput.Score[1];
+			SqlFormattingManager sqlFormatter=new SqlFormattingManager(new TSqlStandardTokenizer(),new TSqlStandardParser(),
+				new TSqlStandardFormatter("\t",1,1000,false,true,false,true,true,false,true,true,false,false));
+			sqlFormatter.Formatter.ErrorOutputPrefix="";
+			FormattedQuery=sqlFormatter.Format(UnformattedQuery);
 		}
 
 		///<summary>Converts a string into a list of its lines.</summary>

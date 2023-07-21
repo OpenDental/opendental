@@ -15,18 +15,11 @@ namespace OpenDental {
 
 		public FrmPayPlansClose() {
 			InitializeComponent();
-			Lang.F(this);
-			PreviewKeyDown+=FrmPayPlansClose_PreviewKeyDown;
-		}
-
-		private void FrmPayPlansClose_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
+			//Lan.F(this);
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {
-			long plansClosed=PayPlans.AutoClose(checkOldPaymentPlans.Checked==true,checkInsPaymentPlans.Checked==true);
+			long plansClosed=PayPlans.AutoClose((bool)checkDynamic.Checked);
 			string msgText;
 			if(plansClosed>0) {
 				msgText=Lans.g(this,"Success.")+"  "+plansClosed+" "+Lans.g(this,"plan(s) closed.");
@@ -37,6 +30,5 @@ namespace OpenDental {
 			MsgBox.Show(msgText);
 			IsDialogOK=true;
 		}
-
 	}
 }

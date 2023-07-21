@@ -251,17 +251,16 @@ namespace OpenDental.UI {
 		}
 		
 		private void butAddCategory_Click(object sender,EventArgs e) {
-			InputBox inputBox=new InputBox("Please enter a category tag");
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			using InputBox input=new InputBox("Please enter a category tag");
+			if(input.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
-			BugSubmission bugSubmissionOld=_subCur.Copy();
-			List<string> listCats=bugSubmissionOld.ListCategoryTags;
-			string categoryNew=inputBox.StringResult;
+			BugSubmission subOld=_subCur.Copy();
+			List<string> listCats=subOld.ListCategoryTags;
+			string categoryNew=input.ListTextEntered[0];
 			listCats.Add(categoryNew);
 			_subCur.CategoryTags=string.Join(",",listCats);
-			BugSubmissions.Update(_subCur,bugSubmissionOld);
+			BugSubmissions.Update(_subCur,subOld);
 			RefreshViews();
 		}
 		
@@ -306,7 +305,7 @@ namespace OpenDental.UI {
 				return;
 			}
 			//Button is only enabled if _patCur is not null.
-			GlobalFormOpenDental.GotoAccount(_patCur.PatNum);
+			GotoModule.GotoAccount(_patCur.PatNum);
 		}
 
 		private void butBugTask_Click(object sender,EventArgs e) {
@@ -317,15 +316,11 @@ namespace OpenDental.UI {
 		}
 		
 		private void butCompare_Click(object sender,EventArgs e) {
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.TextBoxMultiLine;
-			inputBoxParam.LabelText="Please copy/paste your stack trace to compare to this bug."; 
-			InputBox input=new InputBox(inputBoxParam);
-			input.ShowDialog();
-			if(input.IsDialogCancel) {
+			using InputBox input=new InputBox("Please copy/paste your stack trace to compare to this bug.",true);
+			if(input.ShowDialog()!=DialogResult.OK) {
 				return;
 			}
-			string perct=POut.Double(BugSubmissionL.CalculateSimilarity(textStack.Text,input.StringResult));
+			string perct=POut.Double(BugSubmissionL.CalculateSimilarity(textStack.Text,input.textResult.Text));
 			MsgBox.Show(this,perct+"%");
 		}
 		

@@ -31,6 +31,7 @@
 			this.label3 = new System.Windows.Forms.Label();
 			this.textMessage = new System.Windows.Forms.TextBox();
 			this.butTransmit = new System.Windows.Forms.Button();
+			this.butClose = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// textHash
@@ -95,7 +96,7 @@
 			// butTransmit
 			// 
 			this.butTransmit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butTransmit.Location = new System.Drawing.Point(474, 251);
+			this.butTransmit.Location = new System.Drawing.Point(386, 250);
 			this.butTransmit.Name = "butTransmit";
 			this.butTransmit.Size = new System.Drawing.Size(75, 23);
 			this.butTransmit.TabIndex = 6;
@@ -103,10 +104,22 @@
 			this.butTransmit.UseVisualStyleBackColor = true;
 			this.butTransmit.Click += new System.EventHandler(this.butTransmit_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(474, 250);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 23);
+			this.butClose.TabIndex = 8;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormEhrHash
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(561, 281);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butTransmit);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.label2);
@@ -132,6 +145,7 @@
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox textMessage;
 		private System.Windows.Forms.Button butTransmit;
+		private System.Windows.Forms.Button butClose;
 
 	}
 }

@@ -21,10 +21,13 @@ namespace OpenDental {
 			textBox1.Text=CountCur.ToString();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			CountCur=PIn.Int(textBox1.Text);
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

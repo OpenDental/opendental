@@ -32,7 +32,6 @@ namespace OpenDental{
 			FillCategories();
 			FillButtons();
 			SetVisibility(); 
-			columnHeader1.Width=listViewButtons.Width-10;//listViewButtons has already been scaled at this point, scale the columnHeader.width slightly shorter to avoid a horizontal scrollbar
 		}
 
 		private void SetVisibility() {
@@ -172,7 +171,7 @@ namespace OpenDental{
 		}
 
 		private void butEdit_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.DefEdit)) {
+			if(!Security.IsAuthorized(Permissions.DefEdit)) {
 				return;
 			}
 			using FormDefinitions formDefinitions=new FormDefinitions(DefCat.ProcButtonCats);
@@ -251,6 +250,10 @@ namespace OpenDental{
 			FillButtons();
 		}
 
+		private void butClose_Click(object sender,System.EventArgs e) {
+			Close();
+		}
+
 		private void FormProcButtons_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
 			if(_isChanged){
 				DataValid.SetInvalid(InvalidType.ProcButtons);
@@ -284,6 +287,13 @@ namespace OpenDental{
 			}
 			fillPanelQuickButtons();
 		}
+
+		
+
+		
+
+		
+		
 
 	}
 }

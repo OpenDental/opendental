@@ -33,7 +33,7 @@ namespace OpenDental {
 		}
 
 		private void FormEServicesWebSchedRecall_Load(object sender,EventArgs e) {
-			bool allowEdit=Security.IsAuthorized(EnumPermType.EServicesSetup,true);
+			bool allowEdit=Security.IsAuthorized(Permissions.EServicesSetup,true);
 			textWebSchedRecallApptSearchDays.Enabled=allowEdit;
 			butRecallSchedSetup.Enabled=allowEdit;
 			butWebSchedRecallBlockouts.Enabled=allowEdit;
@@ -237,14 +237,14 @@ namespace OpenDental {
 			List<TimeSlot> listTimeSlots=new List<TimeSlot>();
 			//This throws exceptions when the selected clinic does not have a operatory with it.
 			//Takes a few minutes with the nadg database.
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				//Get the next 30 days of open time schedules with the current settings.
-				listTimeSlots=TimeSlots.GetAvailableWebSchedTimeSlots(recallType,listProviders,clinic,dateStart,dateStart.AddDays(30),isFromWebSched:false);
+				listTimeSlots=TimeSlots.GetAvailableWebSchedTimeSlots(recallType,listProviders,clinic,dateStart,dateStart.AddDays(30));
 			};
 			progressOD.StartingMessage=Lan.g(this,"Loading available time slots. This can take a few minutes on large databases.");
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
 				MsgBox.Show(ex.Message);
@@ -286,7 +286,7 @@ namespace OpenDental {
 		}
 
 		private void FillListboxWebSchedProviderRule() {
-			ClinicPref clinicPrefProviderRule=ClinicPrefs.GetPref(PrefName.WebSchedProviderRule,comboClinicProvRule.ClinicNumSelected,isDefaultIncluded:true);
+			ClinicPref clinicPrefProviderRule=ClinicPrefs.GetPref(PrefName.WebSchedProviderRule,comboClinicProvRule.SelectedClinicNum,isDefaultIncluded:true);
 			checkUseDefaultProvRule.Visible=(!comboClinicProvRule.IsUnassignedSelected);//"Use Defaults" checkbox visible when actual clinic is selected.
 			checkUseDefaultProvRule.Checked=(clinicPrefProviderRule==null);
 			if(checkUseDefaultProvRule.Visible) {
@@ -310,7 +310,7 @@ namespace OpenDental {
 		///<summary>Shows the Operatories window and allows the user to edit them.  Does not show the window if user does not have Setup permission.
 		///Refreshes all corresponding grids within the Web Sched tab that display Operatory information.  Feel free to add to this method.</summary>
 		private void ShowOperatoryEditAndRefreshGrids() {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			using FormOperatories formOperatories=new FormOperatories();
@@ -322,18 +322,18 @@ namespace OpenDental {
 			}
 			FillGridWebSchedOperatories();
 			FillGridWebSchedTimeSlots();
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Operatories accessed via EServices Setup window.");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Operatories accessed via EServices Setup window.");
 		}
 
 		private void EditRecallTypes() {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			using FormRecallTypes formRecallTypes=new FormRecallTypes();
 			formRecallTypes.ShowDialog();
 			FillGridWebSchedRecallTypes();
 			FillBlockoutTypeListboxes();
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Recall Types accessed via EServices Setup window.");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Recall Types accessed via EServices Setup window.");
 		}
 		#endregion Methods - Private
 
@@ -357,7 +357,7 @@ namespace OpenDental {
 			if(formClinics.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboClinicProvRule.ClinicNumSelected=formClinics.ClinicNumSelected;
+			comboClinicProvRule.SelectedClinicNum=formClinics.ClinicNumSelected;
 			FillListboxWebSchedProviderRule();
 		}
 
@@ -377,16 +377,16 @@ namespace OpenDental {
 		}
 
 		private void butWebSchedPickProv_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick=new FrmProviderPick();
+			using FormProviderPick formProviderPick=new FormProviderPick();
 			if(comboWebSchedProviders.SelectedIndex>0) {
-				frmProviderPick.ProvNumSelected=_provNum;
+				formProviderPick.ProvNumSelected=_provNum;
 			}
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboWebSchedProviders.SelectedIndex=_listProvidersAll.FindIndex(x => x.ProvNum==frmProviderPick.ProvNumSelected)+1;//+1 for 'All'
-			_provNum=frmProviderPick.ProvNumSelected;
+			comboWebSchedProviders.SelectedIndex=_listProvidersAll.FindIndex(x => x.ProvNum==formProviderPick.ProvNumSelected)+1;//+1 for 'All'
+			_provNum=formProviderPick.ProvNumSelected;
 		}
 
 		private void butWebSchedRecallBlockouts_Click(object sender,EventArgs e) {
@@ -417,12 +417,12 @@ namespace OpenDental {
 		}
 
 		private void butWebSchedSetup_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			using FormRecallSetup formRecallSetup=new FormRecallSetup();
 			formRecallSetup.ShowDialog();
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Recall Setup accessed via EServices Setup window.");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Recall Setup accessed via EServices Setup window.");
 		}
 
 		private void butWebSchedToday_Click(object sender,EventArgs e) {
@@ -431,22 +431,22 @@ namespace OpenDental {
 
 		private void checkUseDefaultProvRule_Click(object sender,EventArgs e) {
 			listBoxWebSchedProviderPref.Enabled=(!checkUseDefaultProvRule.Checked);
-			ClinicPref clinicPrefProviderRule=ClinicPrefs.GetPref(PrefName.WebSchedProviderRule,comboClinicProvRule.ClinicNumSelected,isDefaultIncluded:true);
+			ClinicPref clinicPrefProviderRule=ClinicPrefs.GetPref(PrefName.WebSchedProviderRule,comboClinicProvRule.SelectedClinicNum,isDefaultIncluded:true);
 			if(checkUseDefaultProvRule.Checked) {
-				if(ClinicPrefs.DeletePrefs(comboClinicProvRule.ClinicNumSelected,new List<PrefName>() { PrefName.WebSchedProviderRule })>0) {
+				if(ClinicPrefs.DeletePrefs(comboClinicProvRule.SelectedClinicNum,new List<PrefName>() { PrefName.WebSchedProviderRule })>0) {
 					DataValid.SetInvalid(InvalidType.ClinicPrefs);//Checking "Use Defaults", delete ClinicPref is exists.
 				}
 			}
 			else if(!comboClinicProvRule.IsUnassignedSelected) {
 				//Unchecking "Use Defaults" and on a clinic that doesn't have a ClinicPref yet, create new ClinicPref with default value
 				if(clinicPrefProviderRule!=null) {
-					ClinicPrefs.DeletePrefs(comboClinicProvRule.ClinicNumSelected,new List<PrefName>() { PrefName.WebSchedProviderRule });
+					ClinicPrefs.DeletePrefs(comboClinicProvRule.SelectedClinicNum,new List<PrefName>() { PrefName.WebSchedProviderRule });
 				}
-				ClinicPrefs.InsertPref(PrefName.WebSchedProviderRule,comboClinicProvRule.ClinicNumSelected
+				ClinicPrefs.InsertPref(PrefName.WebSchedProviderRule,comboClinicProvRule.SelectedClinicNum
 					,POut.Int(PrefC.GetInt(PrefName.WebSchedProviderRule)));
 				DataValid.SetInvalid(InvalidType.ClinicPrefs);
 			}
-			clinicPrefProviderRule=ClinicPrefs.GetPref(PrefName.WebSchedProviderRule,comboClinicProvRule.ClinicNumSelected,isDefaultIncluded: true);
+			clinicPrefProviderRule=ClinicPrefs.GetPref(PrefName.WebSchedProviderRule,comboClinicProvRule.SelectedClinicNum,isDefaultIncluded: true);
 			SetListBoxWebSchedProviderPref(clinicPrefProviderRule);
 		}
 
@@ -474,7 +474,7 @@ namespace OpenDental {
 				DataValid.SetInvalid(InvalidType.Prefs);
 			}
 			else if(!comboClinicProvRule.IsUnassignedSelected && !checkUseDefaultProvRule.Checked
-				&& ClinicPrefs.Upsert(PrefName.WebSchedProviderRule,comboClinicProvRule.ClinicNumSelected,POut.Int(listBoxWebSchedProviderPref.SelectedIndex))) 
+				&& ClinicPrefs.Upsert(PrefName.WebSchedProviderRule,comboClinicProvRule.SelectedClinicNum,POut.Int(listBoxWebSchedProviderPref.SelectedIndex))) 
 			{//Clinic not set to use defaults.
 				DataValid.SetInvalid(InvalidType.ClinicPrefs);
 			}
@@ -569,7 +569,7 @@ namespace OpenDental {
 			}
 			WebSchedAutomaticSend webSchedAutomaticSendOld=(WebSchedAutomaticSend)PrefC.GetInt(PrefName.WebSchedAutomaticSendSetting);
 			if(Prefs.UpdateInt(PrefName.WebSchedAutomaticSendSetting,(int)webSchedAutomaticSendNew)) {
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"WebSched automated email preference changed from "+webSchedAutomaticSendOld.ToString()+" to "+webSchedAutomaticSendNew.ToString()+".");
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,"WebSched automated email preference changed from "+webSchedAutomaticSendOld.ToString()+" to "+webSchedAutomaticSendNew.ToString()+".");
 			}
 			WebSchedAutomaticSend webSchedAutomaticSendTextNew=WebSchedAutomaticSend.SendToText;
 			if(radioDoNotSendText.Checked) {
@@ -577,12 +577,12 @@ namespace OpenDental {
 			}
 			WebSchedAutomaticSend webSchedAutomaticSendTextOld=(WebSchedAutomaticSend)PrefC.GetInt(PrefName.WebSchedAutomaticSendTextSetting);
 			if(Prefs.UpdateInt(PrefName.WebSchedAutomaticSendTextSetting,(int)webSchedAutomaticSendTextNew)) {
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"WebSched automated text preference changed from "+webSchedAutomaticSendTextOld.ToString()+" to "+webSchedAutomaticSendTextNew.ToString()+".");
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,"WebSched automated text preference changed from "+webSchedAutomaticSendTextOld.ToString()+" to "+webSchedAutomaticSendTextNew.ToString()+".");
 			}
 			int textsPerBatchOld=PrefC.GetInt(PrefName.WebSchedTextsPerBatch);
 			int textsPerBatchNew=PIn.Int(textWebSchedPerBatch.Text,false);
 			if(Prefs.UpdateInt(PrefName.WebSchedTextsPerBatch,textsPerBatchNew)) {
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"WebSched batch size preference changed from "+textsPerBatchOld.ToString()+" to "+textsPerBatchNew.ToString()+".");
+				SecurityLogs.MakeLogEntry(Permissions.Setup,0,"WebSched batch size preference changed from "+textsPerBatchOld.ToString()+" to "+textsPerBatchNew.ToString()+".");
 			}
 			int recallApptDays=PIn.Int(textWebSchedRecallApptSearchDays.Text);
 			Prefs.UpdateInt(PrefName.WebSchedRecallApptSearchAfterDays,recallApptDays);
@@ -595,7 +595,7 @@ namespace OpenDental {
 			Prefs.UpdateInt(PrefName.WebSchedRecallApptSearchMaximumMonths,PIn.Int(textNumMonthsCheck.Text,false));
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!AreSettingsValid()) {
 				return;
 			}
@@ -603,5 +603,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

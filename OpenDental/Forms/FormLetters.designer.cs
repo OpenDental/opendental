@@ -35,6 +35,7 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormLetters));
+			this.butCancel = new OpenDental.UI.Button();
 			this.listLetters = new OpenDental.UI.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.butEdit = new OpenDental.UI.Button();
@@ -43,6 +44,17 @@ namespace OpenDental {
 			this.butDelete = new OpenDental.UI.Button();
 			this.textBody = new OpenDental.ODtextBox();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(758, 633);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(79, 26);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// listLetters
 			// 
@@ -113,15 +125,17 @@ namespace OpenDental {
 			this.textBody.DetectUrls = false;
 			this.textBody.Location = new System.Drawing.Point(206, 133);
 			this.textBody.Name = "textBody";
-			this.textBody.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Letter;
+			this.textBody.QuickPasteType = OpenDentBusiness.QuickPasteType.Letter;
 			this.textBody.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-			this.textBody.Size = new System.Drawing.Size(630, 470);
+			this.textBody.Size = new System.Drawing.Size(630, 486);
 			this.textBody.TabIndex = 18;
 			this.textBody.Text = "";
 			// 
 			// FormLetters
 			// 
-			this.ClientSize = new System.Drawing.Size(858, 615);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(858, 674);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.textBody);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.label2);
@@ -135,6 +149,7 @@ namespace OpenDental {
 			this.Name = "FormLetters";
 			this.ShowInTaskbar = false;
 			this.Text = "Letters";
+			this.Closing += new System.ComponentModel.CancelEventHandler(this.FormLetters_Closing);
 			this.Load += new System.EventHandler(this.FormLetterSetup_Load);
 			this.ResumeLayout(false);
 
@@ -147,6 +162,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label label2;
 		private OpenDental.UI.Button butEdit;
 		private OpenDental.UI.Button butDelete;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.ODtextBox textBody;
 	}
 }

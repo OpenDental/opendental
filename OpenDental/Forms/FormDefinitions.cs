@@ -140,6 +140,10 @@ namespace OpenDental{
 			FillGridDefs();
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 		private void FormDefinitions_Closing(object sender,System.ComponentModel.CancelEventArgs e) {
 			//Correct the item orders of all definition categories.
 			List<Def> listDefsUpdates=new List<Def>();

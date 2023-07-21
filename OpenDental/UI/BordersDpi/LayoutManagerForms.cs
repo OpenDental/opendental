@@ -31,7 +31,7 @@ DPI: Your code must work even at different dpi.  For example, a control that was
 
 Fonts: Fonts are very tricky.  Our basic strategy is to manually scale all fonts by the zoom amount.  We use that size to actually draw the fonts because MS automatically scales the additional 50% in this example which is entirely out of our control.		When using LayoutManager.Add(), the font should already be scaled by the zoom amount, but not the MS amount.  Fonts are an ambient property, so they normally just use the parent control font.  But the LayoutManager stores the 96dpi version of each font and then explicitly sets each font to the zoom amount.
 
-More on Fonts: Fonts has been by far the hardest part of scaling.  MS will not give us direct control of font size, but insists on scaling our fonts by the Windows amount.  But there are a huge number of variables that go into their decision on how much to automatically scale.  It depends on Win10 vs 11, the registry entry for fixing blurry apps, whether this is primary or secondary monitor, CreateGraphics vs e.Graphics vs TextRenderer, printer vs screen, etc.  For example, if primary monitor is 100% and secondary is 150%, I can do some math and make it work. But if they are switched, then MS chooses a different scaling strategy and I would need to surround every font size with (more) if statements to handle that scenario.  I did go to that extreme for the window title font, but it was a lot of work. It's insane.  It's why I finally decided to move to WPF, where everything is scaled automatically.  Until that's done, I think we will have the limitation that the primary monitor should either be 100% or all monitors should be the same.  We're getting better at the scenario of all monitors the same, even with WinForms.
+More on Fonts: Fonts has been by far the hardest part of scaling.  MS will not give us direct control of font size, but insists on scaling our fonts by the Windows amount.  But there are a huge number of variables that go into their decision on how much to automatically scale.  It depends on Win10 vs 11, the registry entry for fixing blurry apps, whether this is primary or secondary monitor, CreateGraphics vs e.Graphics vs TextRenderer, printer vs screen, etc.  For example, if primary is 100% and secondary is 150%, I can do some math and make it work. But if they are switched, then MS chooses a different scaling strategy and I would need to surround every font size with (more) if statements to handle that scenario.  I did go to that extreme for the window title font, but it was a lot of work. It's insane.  It's why I finally decided to move to WPF, where everything is scaled automatically.  Until that's done, I think we will have the limitation that the primary monitor should either be 100% or all monitors should be the same.  We're getting better at the scenario of all monitors the same, even with WinForms.
 
 Long example of font math:
 OD zoom=20.
@@ -271,11 +271,6 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 				sizeParentClientOriginal96=control96InfoParent.ClientSize96Orig;
 			}
 			SizeF sizeParentClientNow96=new SizeF(UnscaleF(controlParent.ClientSize.Width),UnscaleF(controlParent.ClientSize.Height));
-			if(controlParent is UI.TabPage tabPage2) {
-				//See LayoutChildren, we manually remove additional scaled height from UI.Tab contols.  This is because their tab buttons gain height and we need to remove that height difference from the tabControl and all of it's children.  When manually moving any control via the LayoutManager.Move method (which calls this), we need to check to see if the parent is a UI.TabPage.  If so, we need to remove the same height adjustment so that the control itself knows about the height of the tabcontrol adjustment for it's own placement. 
-				int adj=(int)ScaleFontODZoom(20)-20;//There will be no height change at 100% zoom.
-				sizeParentClientNow96.Height=sizeParentClientNow96.Height-adj;
-			}
 			//but the bounds are wrong.  It must be calculated backward to the original position it would be in if the parent had not resized.
 			float x=UnscaleF(boundsScaled.Left);
 			float y=UnscaleF(boundsScaled.Top);
@@ -448,7 +443,7 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 			}
 			formODBase.Controls.Add(formODBase.PanelClient);
 			_listControl96Infos.Add(new Control96Info(formODBase.PanelClient));
-			formODBase.PanelBorders=new PanelSubclassBorder();
+			formODBase.PanelBorders=new PanelOD();
 			formODBase.PanelBorders.Name="PanelBorders";
 			//formODBase.PanelBorders.Bounds=new Rectangle(new Point(0,0),formODBase.Size);
 			if(FormODBase.AreBordersMS){
@@ -740,18 +735,10 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 			else if(formODBase.WindowState==FormWindowState.Maximized){
 				formODBase.PanelClient.Bounds=new Rectangle(
 					x: 0,
-					y: hTitle+widthBorder,//26+8=34 Title+8 top
+					y: hTitle+widthBorder,
 					width: formODBase.Width-widthBorder*2,
-					height: formODBase.Height-hTitle-widthBorder*2-1); 
-				//FormODBase window height - title 26 - 8 top/bottom - 1
-				//The 1 pixel must be exposed for PanelBorders_MouseMove to get hit.
-				//130 lines into that method, there is a section that allows an autohide taskbar to be activated.
-				//Jordan-I don't understand this math, but the comments are here for future use.
-				//FormODBase.PanelClient was covering the entire screen, this Z axis overlap was preventing formODBase.PanelBorders.Bounds's event PanelBorders_MouseMove from firing.  So we first need to remove 1 pixel from formODBase.PanelClient's height, then we need to ensure that formODBase.PanelBorders is at least 1 pixel taller so that the bottom pixel is exposed and therefore hoverable for the event.
-				//Equation=PanelClient.Height 1053 + y (starting location of title 26 + 8) = 1087 bottom location
-				//PanelBorders starting location equals widthborder 8-1 or 7
-				//PanelBorders needs a bottom of 1088. Set height equal to PanelBorders bottom 1087 - 6 pixles since PanelBorders starts at y=7 and needs to be 1 pixel taller than PanelClient 1081+7=1088 bottom location.  Now PanelBorders and FormODBase share the same bottom location.
-				formODBase.PanelBorders.Bounds=new Rectangle(-1,widthBorder-1,formODBase.Width-widthBorder*2+1,formODBase.PanelClient.Bounds.Bottom-6);
+					height: formODBase.Height-hTitle-widthBorder*2);
+				formODBase.PanelBorders.Bounds=new Rectangle(-1,widthBorder-1,formODBase.Width-widthBorder*2+1,formODBase.Height-widthBorder);
 			}
 			else{
 				formODBase.PanelClient.Bounds=new Rectangle(
@@ -814,17 +801,6 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 				//So, we must handle tabPage size specially. No support here for autoscroll, with bigger clientSize.
 				Size sizeTabPage =((System.Windows.Forms.TabControl)tabPage.Parent).DisplayRectangle.Size;
 				sizeParentClientNow96=new SizeF(UnscaleF(sizeTabPage.Width),UnscaleF(sizeTabPage.Height));
-			}
-			if(control is UI.TabPage tabPage2){
-				//The buttons of our TabControl grow with zoom increase.
-				//This changes the clientSize height available for the tabpage.
-				//This is subtle and only noticeable at high zoom, which users shouldn't even be using anyway (use MS scale instead)
-				//The result is controls within tabpages getting slightly cut off at the bottom.
-				//Tab height at 96dpi is 20
-				//Example 150% zoom, we need to subtract 10 from client size. Scale(20)-20=10;
-				//We will only use the OD zoom component, not the MS scale component.
-				int adj=(int)ScaleFontODZoom(20)-20;//There will be no height change at 100% zoom.
-				sizeParentClientNow96.Height=sizeParentClientNow96.Height-adj;
 			}
 			//control.SuspendLayout();//no, this would prevent things from resizing
 			List<Control> listControlsDocked=new List<Control>();
@@ -891,11 +867,6 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 					//But most controls only get zoomed by us, and then MS automatically does their own MS scaling.
 					scaledFont=ScaleFontODZoom(control96Info.FontSize96);
 					//Bad info: This group also includes RichTextBoxes, which adapt their own font to the current dpi, except OD zoom portion which we set.
-				}
-				if(control.Controls[i] is System.Windows.Forms.Label
-					|| control.Controls[i] is System.Windows.Forms.RadioButton)
-				{
-					scaledFont*=0.96f;//We've been at .92 in the past. This keeps controls from growing significantly bigger than at 100%.
 				}
 				if(control.Controls[i].Font.Bold){
 					control.Controls[i].Font=new Font(control.Controls[i].Font.FontFamily,scaledFont,FontStyle.Bold);
@@ -1065,6 +1036,10 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 				gridOld.SetScaleAndFont(_scaleMS,_zoomLocal);
 				return true;
 			}
+			if(control is UI.ImageSelector){
+				//The scrollbar is handled internally
+				return true;
+			}
 			if(control is UI.ListBox){
 				//The vScroll is handled internally.
 				return true;
@@ -1073,10 +1048,10 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 				signatureBoxWrapper.SetScaleAndZoom(_scaleMS,_zoomLocal);//grids are over in OpenDentBusiness, so this is instead of a ref to LayoutManager.
 				return true;//ignore the child SignatureBox and TopazWrapper
 			}
-			//if(control is UI.TextBox){
-			//	//The vScroll is handled internally.
-			//	return true;
-			//}
+			if(control is UI.TextBox){
+				//The vScroll is handled internally.
+				return true;
+			}
 			if(control is SparksToothChart.ToothChartWrapper){
 				return true;//ignore the 3 toothchart controls contained within: ToothChartDirectX, ToothChart2D, and ToothChartOpenGL.
 			}
@@ -1205,12 +1180,12 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 				controlFamily.LayoutManager=this;
 				return;
 			}
-			if(control is ControlImagesOld controlImagesOld){
-				controlImagesOld.LayoutManager=this;
-				return;
-			}
 			if(control is ControlImages controlImages){
 				controlImages.LayoutManager=this;
+				return;
+			}
+			if(control is ControlImagesJ controlImagesJ){
+				controlImagesJ.LayoutManager=this;
 				return;
 			}
 			if(control is ControlTreat controlTreat){
@@ -1260,12 +1235,24 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 				groupBoxOD.LayoutManager=this;
 				return;
 			}
+			if(control is UI.ImageSelector imageSelector){
+				imageSelector.SetLayoutManager(this);
+				return;
+			}
 			if(control is UI.LightSignalGrid lightSignalGrid){
 				lightSignalGrid.LayoutManager=this;
 				return;
 			}
 			if(control is UI.ListBox listBoxOD){
 				listBoxOD.LayoutManager=this;
+				return;
+			}
+			if(control is MapAreaPanel mapAreaPanel){
+				mapAreaPanel.LayoutManager=this;
+				return;
+			}
+			if(control is MapCubicle mapAreaRoomControl){
+				mapAreaRoomControl.LayoutManager=this;
 				return;
 			}
 			if(control is InternalTools.Phones.MapNumber mapNumber){
@@ -1332,10 +1319,10 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 				tabPage.LayoutManager=this;
 				return;
 			}
-			//if(control is UI.TextBox textBox){
-			//	textBox.LayoutManager=this;
-			//	return;
-			//}
+			if(control is UI.TextBox textBox){
+				textBox.LayoutManager=this;
+				return;
+			}
 			if(control is UI.ToggleDayWeek toggleDayWeek){
 				toggleDayWeek.LayoutManager=this;
 				return;
@@ -1374,6 +1361,10 @@ Scrollable Control: For example, a panel that's set to AutoScroll=true.  These c
 			}
 			if(control is UI.WindowingSlider windowingSlider){
 				windowingSlider.LayoutManager=this;
+				return;
+			}
+			if(control is UI.ZoomSlider zoomSlider){
+				zoomSlider.SetLayoutManager(this);
 				return;
 			}
 		}

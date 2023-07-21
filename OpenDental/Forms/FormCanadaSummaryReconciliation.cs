@@ -54,7 +54,7 @@ namespace OpenDental {
 			listCarriers.SelectedIndex=-1;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!checkGetForAllCarriers.Checked) {
 				if(listCarriers.SelectedIndex<0 && listNetworks.SelectedIndex<0) {
 					MsgBox.Show(this,"You must first choose one carrier or one network.");
@@ -108,6 +108,10 @@ namespace OpenDental {
 				MessageBox.Show(Lan.g(this,"Request failed: ")+ex.Message);
 			}			
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

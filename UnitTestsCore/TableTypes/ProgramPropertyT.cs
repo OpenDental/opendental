@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -39,19 +38,6 @@ namespace UnitTestsCore {
 			ProgramProperties.RefreshCache();
 		}
 
-		///<summary>Deletes CareCredit properties only.</summary>
-		public static void ClearCareCreditProgamProperties() {
-			List<string> listProgPropToDelete=typeof(ProgramProperties.PropertyDescs.CareCredit)
-				.GetFields(BindingFlags.Public|BindingFlags.Static|BindingFlags.FlattenHierarchy)
-				.Where(fi => fi.IsLiteral && !fi.IsInitOnly)
-				.Select(x => x.GetValue(null).ToString())
-				.ToList();
-			string command=$"DELETE FROM programproperty "+
-				$"WHERE PropertyDesc IN({string.Join(",",listProgPropToDelete.Select(x => "'"+x+"'"))})";
-			DataCore.NonQ(command);
-			ProgramProperties.RefreshCache();
-		}
-
 		public static void UpdateProgramProperty(ProgramName progName,string propertyDesc,string propertyValue,long clinicNum=0) {
 			Program prog=Programs.GetProgram(Programs.GetProgramNum(progName));
 			ProgramProperty progProp=ProgramProperties.GetFirstOrDefault(x => x.ProgramNum==prog.ProgramNum && x.PropertyDesc==propertyDesc 
@@ -59,14 +45,13 @@ namespace UnitTestsCore {
 			if(progProp is null) {
 				progProp=new ProgramProperty() {
 					ProgramNum=prog.ProgramNum,
-					PropertyDesc=propertyDesc,
-					ClinicNum=clinicNum
+					PropertyDesc=propertyDesc
 				};
 				ProgramProperties.Insert(progProp);
+				ProgramProperties.RefreshCache();
 			}
 			progProp.PropertyValue=propertyValue;
 			ProgramProperties.Update(progProp);
-			ProgramProperties.RefreshCache();
 		}
 	}
 }

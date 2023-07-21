@@ -121,7 +121,7 @@
     <value>17, 17</value>
   </metadata>
   <data name="labelDefEnabledWarning.Text" xml:space="preserve">
-    <value>An HL7Def is enabled.  The HL7 Server, HL7 Service Name, and HL7 Sync Folders are set in that definition.  Message generating and processing is also handled using the specifications in that definition.</value>
+    <value>An HL7Def is enabled.  The HL7 Server, HL7 Service Name, and HL7 Synch Folders are set in that definition.  Message generating and processing is also handled using the specifications in that definition.</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

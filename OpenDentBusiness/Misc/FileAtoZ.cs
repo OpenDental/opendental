@@ -83,8 +83,8 @@ namespace OpenDentBusiness.FileIO {
 		///<summary>Returns the string contents of the file. Sychronous for cloud storage.</summary>
 		public static string ReadAllText(string fileFullPath) {
 			if(CloudStorage.IsCloudStorage) {
-				byte[] byteArray=CloudStorage.Download(Path.GetDirectoryName(fileFullPath),Path.GetFileName(fileFullPath));
-				return Encoding.UTF8.GetString(byteArray);
+				OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.Download(Path.GetDirectoryName(fileFullPath),Path.GetFileName(fileFullPath));
+				return Encoding.UTF8.GetString(state.FileContent);
 			}
 			else {//Not cloud
 				return File.ReadAllText(fileFullPath);
@@ -94,8 +94,8 @@ namespace OpenDentBusiness.FileIO {
 		///<summary>Returns the byte contents of the file. Sychronous for cloud storage.</summary>
 		public static byte[] ReadAllBytes(string fileFullPath) {
 			if(CloudStorage.IsCloudStorage) {
-				byte[] byteArray=CloudStorage.Download(Path.GetDirectoryName(fileFullPath),Path.GetFileName(fileFullPath));
-				return byteArray;
+				OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.Download(Path.GetDirectoryName(fileFullPath),Path.GetFileName(fileFullPath));
+				return state.FileContent;
 			}
 			else {//Not cloud
 				return File.ReadAllBytes(fileFullPath);
@@ -133,7 +133,7 @@ namespace OpenDentBusiness.FileIO {
 		///<summary>Gets a list of the files in the specified directory.  Throws exceptions.</summary>
 		public static List<string> GetFilesInDirectory(string folderFullPath) {
 			if(CloudStorage.IsCloudStorage) {
-				return CloudStorage.ListFolderContents(folderFullPath);
+				return CloudStorage.ListFolderContents(folderFullPath).ListFolderPathsDisplay;
 			}
 			return Directory.GetFiles(folderFullPath).ToList();
 		}
@@ -178,19 +178,22 @@ namespace OpenDentBusiness.FileIO {
 			if(CloudStorage.IsCloudStorage) {
 				sourceFileName=CloudStorage.PathTidy(sourceFileName);
 				destinationFileName=CloudStorage.PathTidy(destinationFileName);
+				OpenDentalCloud.TaskState state;
 				if(sourceDestination==FileAtoZSourceDestination.AtoZToAtoZ) {
-					CloudStorage.Copy(sourceFileName,destinationFileName);
+					state=CloudStorage.Copy(sourceFileName,destinationFileName);
 				}
 				else if(sourceDestination==FileAtoZSourceDestination.LocalToAtoZ) {
-					CloudStorage.Upload(Path.GetDirectoryName(destinationFileName),Path.GetFileName(destinationFileName),
+					state=CloudStorage.Upload(Path.GetDirectoryName(destinationFileName),Path.GetFileName(destinationFileName),
 						File.ReadAllBytes(sourceFileName));
 				}
 				else if(sourceDestination==FileAtoZSourceDestination.AtoZToLocal) {
-					byte[] byteArray=CloudStorage.Download(Path.GetDirectoryName(sourceFileName),Path.GetFileName(sourceFileName));
-					File.WriteAllBytes(destinationFileName,byteArray);
+					state=CloudStorage.Download(Path.GetDirectoryName(sourceFileName),Path.GetFileName(sourceFileName));
 				}
 				else {
 					throw new Exception("Unsupported "+nameof(FileAtoZSourceDestination)+": "+sourceDestination);
+				}
+				if(sourceDestination==FileAtoZSourceDestination.AtoZToLocal) {
+					File.WriteAllBytes(destinationFileName,((OpenDentalCloud.Core.TaskStateDownload)state).FileContent);
 				}
 			}
 			else {//Not cloud
@@ -236,11 +239,11 @@ namespace OpenDentBusiness.FileIO {
 		///<summary>Returns null if the the image could not be downloaded. Sychronous.</summary>
 		public static Bitmap GetImage(string imagePath) {
 			if(CloudStorage.IsCloudStorage) {
-				byte[] byteArray=CloudStorage.Download(Path.GetDirectoryName(imagePath),Path.GetFileName(imagePath));
-				if(byteArray==null || byteArray.Length<2){
+				OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.Download(Path.GetDirectoryName(imagePath),Path.GetFileName(imagePath));
+				if(state==null || state.FileContent==null || state.FileContent.Length < 2) {
 					return null;
 				}
-				using(MemoryStream stream=new MemoryStream(byteArray)) {
+				using(MemoryStream stream=new MemoryStream(state.FileContent)) {
 					return new Bitmap(stream);
 				}
 			}
@@ -251,11 +254,11 @@ namespace OpenDentBusiness.FileIO {
 		///<summary>Returns null if the the image could not be downloaded. Sychronous.</summary>
 		public static Bitmap GetBitmap128(string imagePath) {
 			if(CloudStorage.IsCloudStorage) {
-				Byte[] byteArray=CloudStorage.GetThumbnail(Path.GetDirectoryName(imagePath),Path.GetFileName(imagePath));
-				if(byteArray==null || byteArray.Length < 2) {
+				OpenDentalCloud.Core.TaskStateThumbnail state=CloudStorage.GetThumbnail(Path.GetDirectoryName(imagePath),Path.GetFileName(imagePath));
+				if(state==null || state.FileContent==null || state.FileContent.Length < 2) {
 					return null;
 				}
-				using(MemoryStream stream=new MemoryStream(byteArray)) {
+				using(MemoryStream stream=new MemoryStream(state.FileContent)) {
 					return ImageHelper.GetBitmapSquare((Bitmap)Image.FromStream(stream),128);
 				}
 			}

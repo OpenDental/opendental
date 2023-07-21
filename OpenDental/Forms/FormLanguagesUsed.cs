@@ -11,7 +11,7 @@ using System.Linq;
 namespace OpenDental{
 	/// <summary></summary>
 	public partial class FormLanguagesUsed:FormODBase {
-		private List<CultureInfo> _listCultureInfo;
+		private CultureInfo[] _cultureInfoArray;
 		private List<string> _listLangsUsed;
 
 		///<summary></summary>
@@ -25,8 +25,15 @@ namespace OpenDental{
 		}
 
 		private void FormLanguagesUsed_Load(object sender,EventArgs e) {
-			_listCultureInfo=CultureInfo.GetCultures(CultureTypes.NeutralCultures).OrderBy(x=>x.DisplayName).ToList();
-			listAvailable.Items.AddStrings(_listCultureInfo.Select(x=>x.DisplayName));
+			_cultureInfoArray=CultureInfo.GetCultures(CultureTypes.NeutralCultures);
+			string[] stringArrayCultureDescripts=new string[_cultureInfoArray.Length];
+			for(int i=0;i<_cultureInfoArray.Length;i++) {
+				stringArrayCultureDescripts[i]=_cultureInfoArray[i].DisplayName;
+			}
+			Array.Sort(stringArrayCultureDescripts,_cultureInfoArray);//sort based on descriptions
+			for(int i=0;i<_cultureInfoArray.Length;i++) {
+				listAvailable.Items.Add(_cultureInfoArray[i].DisplayName);
+			}
 			if(PrefC.GetString(PrefName.LanguagesUsedByPatients)=="") {
 				_listLangsUsed=new List<string>();
 				FillListUsed();
@@ -76,7 +83,7 @@ namespace OpenDental{
 				MsgBox.Show(this,"Please select a language first");
 				return;
 			}
-			string lang=_listCultureInfo[listAvailable.SelectedIndex].ThreeLetterISOLanguageName;//eng,spa etc
+			string lang=_cultureInfoArray[listAvailable.SelectedIndex].ThreeLetterISOLanguageName;//eng,spa etc
 			if(_listLangsUsed.Contains(lang)) {
 				MsgBox.Show(this,"Language already added.");
 				return;
@@ -142,7 +149,7 @@ namespace OpenDental{
 			FillListUsed();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			string str="";
 			for(int i=0;i<_listLangsUsed.Count;i++) {
 				if(i>0) {
@@ -161,6 +168,10 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormLanguagesUsed_FormClosing(object sender,FormClosingEventArgs e) {
 			//if LanguagesUsedByPatients does not contain LanguagesIndicateNone clear LanguagesIndicateNone
 			if(!PrefC.GetString(PrefName.LanguagesUsedByPatients).Contains(PrefC.GetString(PrefName.LanguagesIndicateNone))) {
@@ -170,3 +181,24 @@ namespace OpenDental{
 
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

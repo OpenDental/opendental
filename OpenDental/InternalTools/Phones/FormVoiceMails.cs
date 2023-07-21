@@ -265,10 +265,10 @@ namespace OpenDental {
 				FillGrid();
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.ChartModule)) {
+			if(!Security.IsAuthorized(Permissions.ChartModule)) {
 				return;
 			}
-			GlobalFormOpenDental.GotoChart(voiceMailCur.PatNum);
+			GotoModule.GotoChart(voiceMailCur.PatNum);
 		}
 
 		///<summary>Returns true if the VM was successfully sent to self.</summary>
@@ -392,6 +392,10 @@ namespace OpenDental {
 			FillGrid();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 		private void FormVoiceMails_FormClosing(object sender,FormClosingEventArgs e) {
 			//Change the ClockStatus to Available if the logged on user is clocked in and the same user as the extension.
 			if(FormOpenDental.PhoneTile.PhoneCur!=null
@@ -407,6 +411,5 @@ namespace OpenDental {
 			public string TaskListPath;
 			public List<VoiceMail> ListVoiceMails;
 		}
-
 	}
 }

@@ -34,7 +34,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textExtension.IsValid() || !textButtonIndex.IsValid()) {
 				MsgBox.Show(this,"Fix data errors first.");
 				return;
@@ -68,6 +68,10 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void butDelete_Click(object sender,EventArgs e) {
 			if(_phoneConf.IsNew) {
 				DialogResult=DialogResult.Cancel;
@@ -79,6 +83,5 @@ namespace OpenDental {
 			PhoneConfs.Delete(_phoneConf.PhoneConfNum);
 			DialogResult=DialogResult.OK;
 		}
-
 	}
 }

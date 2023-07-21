@@ -31,19 +31,14 @@ namespace OpenDentBusiness{
 				return Meth.GetObject<TreatPlanParam>(MethodBase.GetCurrentMethod(),treatPlanNum);
 			}
 			string command=$"SELECT * FROM treatplanparam WHERE TreatPlanNum={treatPlanNum}";
-			TreatPlanParam treatPlanParam=Crud.TreatPlanParamCrud.SelectOne(command);
-			if(treatPlanParam!=null) {
-				return treatPlanParam;
-			}
-			treatPlanParam=new TreatPlanParam();
-			treatPlanParam.ShowCompleted=PrefC.GetBool(PrefName.TreatPlanShowCompleted);
-			treatPlanParam.ShowDiscount=true;
-			treatPlanParam.ShowFees=true;
-			treatPlanParam.ShowIns=!PrefC.GetBool(PrefName.EasyHideInsurance);
-			treatPlanParam.ShowMaxDed=true;
-			treatPlanParam.ShowSubTotals=true;
-			treatPlanParam.ShowTotals=true;
-			return treatPlanParam;
+			return Crud.TreatPlanParamCrud.SelectOne(command)??new TreatPlanParam() { 
+				ShowCompleted=PrefC.GetBool(PrefName.TreatPlanShowCompleted),
+				ShowDiscount=true,
+				ShowFees=true,
+				ShowIns=!PrefC.GetBool(PrefName.EasyHideInsurance),
+				ShowMaxDed=true,
+				ShowSubTotals=true,
+				ShowTotals=true};
 		}
 		#endregion Methods - Get
 		#region Methods - Modify

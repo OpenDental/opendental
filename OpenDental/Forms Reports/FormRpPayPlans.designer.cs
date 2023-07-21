@@ -25,6 +25,7 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpPayPlans));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.checkHideCompletePlans = new OpenDental.UI.CheckBox();
 			this.checkAllProv = new OpenDental.UI.CheckBox();
@@ -46,10 +47,21 @@ namespace OpenDental {
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(501, 325);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 44;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(499, 325);
+			this.butOK.Location = new System.Drawing.Point(420, 325);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 43;
@@ -214,6 +226,7 @@ namespace OpenDental {
 			// 
 			this.AcceptButton = this.butOK;
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(586, 361);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.label2);
@@ -229,6 +242,7 @@ namespace OpenDental {
 			this.Controls.Add(this.listProv);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.checkHideCompletePlans);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormRpPayPlans";
@@ -240,6 +254,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.CheckBox checkHideCompletePlans;
 		private OpenDental.UI.CheckBox checkAllProv;

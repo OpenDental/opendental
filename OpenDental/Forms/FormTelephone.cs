@@ -25,6 +25,10 @@ namespace OpenDental{
 		private void FormTelephone_Load(object sender, System.EventArgs e) {
 		
 		}
+		
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
 
 		private void butReformat_Click(object sender, System.EventArgs e) {
 			if(CultureInfo.CurrentCulture.Name!="en-US"){
@@ -36,8 +40,21 @@ namespace OpenDental{
 			//refresh carriers:
 			DataValid.SetInvalid(InvalidType.Carriers);
 			MessageBox.Show(Lan.g(this,"Telephone numbers reformatted."));
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Telephone");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Telephone");
 		}
+			
+		
+		
 
 	}
 }
+
+
+
+
+
+
+
+
+
+

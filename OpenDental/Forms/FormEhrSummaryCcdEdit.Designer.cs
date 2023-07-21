@@ -24,6 +24,7 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrSummaryCcdEdit));
+			this.butClose = new System.Windows.Forms.Button();
 			this.webBrowser1 = new System.Windows.Forms.WebBrowser();
 			this.butPrint = new System.Windows.Forms.Button();
 			this.butReconcileMedications = new System.Windows.Forms.Button();
@@ -32,6 +33,17 @@
 			this.butReconcileAllergies = new System.Windows.Forms.Button();
 			this.butShowXml = new System.Windows.Forms.Button();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(804, 610);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 23);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// webBrowser1
 			// 
@@ -121,6 +133,7 @@
 			this.Controls.Add(this.butReconcileMedications);
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.webBrowser1);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrSummaryCcdEdit";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -132,6 +145,8 @@
 		}
 
 		#endregion
+
+		private System.Windows.Forms.Button butClose;
 		private System.Windows.Forms.WebBrowser webBrowser1;
 		private System.Windows.Forms.Button butPrint;
 		private System.Windows.Forms.Button butReconcileMedications;

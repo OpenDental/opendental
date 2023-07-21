@@ -18,17 +18,15 @@ namespace OpenDental {
 		///<summary>Returns the string contents of the file.</summary>
 		public static string ReadAllText(string fileName) {
 			if(CloudStorage.IsCloudStorage) {
-				UI.ProgressWin progressWin=new UI.ProgressWin();
-				progressWin.StartingMessage="Downloading...";
-				byte[] byteArray=null;
-				progressWin.ActionMain=() => {
-					byteArray=CloudStorage.Download(Path.GetDirectoryName(fileName),Path.GetFileName(fileName));
-				};
-				progressWin.ShowDialog();
-				if(progressWin.IsCancelled){//user clicked cancel
+				FormProgress FormP=CreateFormProgress("Downloading...");
+				OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.DownloadAsync(Path.GetDirectoryName(fileName),Path.GetFileName(fileName),
+					new OpenDentalCloud.ProgressHandler(FormP.UpdateProgress));
+				FormP.ShowDialog();
+				if(FormP.DialogResult==DialogResult.Cancel) {
+					state.DoCancel=true;
 					return "";
 				}
-				return Encoding.UTF8.GetString(byteArray);
+				return Encoding.UTF8.GetString(state.FileContent);
 			}
 			else {//Not cloud
 				return File.ReadAllText(fileName);
@@ -38,13 +36,12 @@ namespace OpenDental {
 		///<summary>Writes or uploads the text to the specified file name.</summary>
 		public static void WriteAllText(string fileName,string textForFile,string uploadMessage="Uploading file") {
 			if(CloudStorage.IsCloudStorage) {
-				UI.ProgressWin progressWin=new UI.ProgressWin();
-				progressWin.StartingMessage="Uploading...";
-				progressWin.ActionMain=() => {
-					CloudStorage.Upload(Path.GetDirectoryName(fileName),Path.GetFileName(fileName),Encoding.UTF8.GetBytes(textForFile));
-				};
-				progressWin.ShowDialog();
-				if(progressWin.IsCancelled){
+				FormProgress FormP=CreateFormProgress(uploadMessage);
+				OpenDentalCloud.Core.TaskStateUpload state=CloudStorage.UploadAsync(Path.GetDirectoryName(fileName),Path.GetFileName(fileName),
+					Encoding.UTF8.GetBytes(textForFile),new OpenDentalCloud.ProgressHandler(FormP.UpdateProgress));
+				FormP.ShowDialog();
+				if(FormP.DialogResult==DialogResult.Cancel) {
+					state.DoCancel=true;
 					return;
 				}
 			}
@@ -79,17 +76,15 @@ namespace OpenDental {
 					tempFile=ODFileUtils.CombinePaths(PrefC.GetTempFolderPath(),displayedFileName);
 				}
 				if(CloudStorage.IsCloudStorage) {
-					UI.ProgressWin progressWin=new UI.ProgressWin();
-					progressWin.StartingMessage="Downloading...";
-					byte[] byteArray=null;
-					progressWin.ActionMain=() => {
-						byteArray=CloudStorage.Download(Path.GetDirectoryName(actualFilePath),Path.GetFileName(actualFilePath));
-					};
-					progressWin.ShowDialog();
-					if(progressWin.IsCancelled){//user clicked cancel
+					FormProgress FormP=CreateFormProgress("Downloading...");
+					OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.DownloadAsync(Path.GetDirectoryName(actualFilePath),
+						Path.GetFileName(actualFilePath),new OpenDentalCloud.ProgressHandler(FormP.UpdateProgress));
+					FormP.ShowDialog();
+					if(FormP.DialogResult==DialogResult.Cancel) {
+						state.DoCancel=true;
 						return;
 					}
-					File.WriteAllBytes(tempFile,byteArray);
+					File.WriteAllBytes(tempFile,state.FileContent);
 				}
 				else { //Not Cloud
 					//We have to create a copy of the file because the name is different.
@@ -98,7 +93,7 @@ namespace OpenDental {
 					//placed in the temporary directory.			
 					File.Copy(actualFilePath,tempFile,true);
 				}
-				if(ODBuild.IsThinfinity()) {
+				if(ODBuild.IsWeb()) {
 					ThinfinityUtils.HandleFile(tempFile);
 				}
 				else {
@@ -106,7 +101,7 @@ namespace OpenDental {
 				}
 			}
 			catch(Exception ex) {
-				MsgBox.Show(ex.Message);
+				MessageBox.Show(ex.Message);
 			}
 		}
 
@@ -128,18 +123,20 @@ namespace OpenDental {
 		///<summary>Returns null if the the image could not be downloaded or the user canceled the download.</summary>
 		public static Bitmap GetImage(string imagePath) {
 			if(CloudStorage.IsCloudStorage) {
-				UI.ProgressWin progressWin=new UI.ProgressWin();
-				progressWin.StartingMessage="Downloading...";
-				byte[] byteArray=null;
-				progressWin.ActionMain=() => {
-					byteArray=CloudStorage.Download(Path.GetDirectoryName(imagePath),Path.GetFileName(imagePath));
-				};
-				progressWin.ShowDialog();
-				if(byteArray==null || byteArray.Length<2){
+				FormProgress FormP=CreateFormProgress("Downloading...");
+				OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.DownloadAsync(Path.GetDirectoryName(imagePath),Path.GetFileName(imagePath),
+					new OpenDentalCloud.ProgressHandler(FormP.UpdateProgress));
+				if(FormP.ShowDialog()==DialogResult.Cancel) {
+					state.DoCancel=true;
 					return null;
 				}
-				using(MemoryStream stream=new MemoryStream(byteArray)) {
-					return new Bitmap(stream);
+				if(state==null || state.FileContent==null || state.FileContent.Length < 2) {
+						return null;
+				}
+				else {
+					using(MemoryStream stream=new MemoryStream(state.FileContent)) {
+						return new Bitmap(stream);
+					}
 				}
 			}
 			else {//Not cloud
@@ -152,23 +149,21 @@ namespace OpenDental {
 		public static void StartProcess(string fileFullPath) {
 			string filePathToOpen;
 			if(CloudStorage.IsCloudStorage) {
-				UI.ProgressWin progressWin=new UI.ProgressWin();
-				progressWin.StartingMessage="Downloading...";
-				byte[] byteArray=null;
-				progressWin.ActionMain=() => {
-					byteArray=CloudStorage.Download(Path.GetDirectoryName(fileFullPath),Path.GetFileName(fileFullPath));
-				};
-				progressWin.ShowDialog();
-				if(progressWin.IsCancelled){//user clicked cancel
+				FormProgress FormP=CreateFormProgress("Downloading...");
+				OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.DownloadAsync(Path.GetDirectoryName(fileFullPath),Path.GetFileName(fileFullPath),
+					new OpenDentalCloud.ProgressHandler(FormP.UpdateProgress));
+				FormP.ShowDialog();
+				if(FormP.DialogResult==DialogResult.Cancel) {
+					state.DoCancel=true;
 					return;
 				}
 				filePathToOpen=PrefC.GetRandomTempFile(Path.GetExtension(fileFullPath));
-				File.WriteAllBytes(filePathToOpen,byteArray);
+				File.WriteAllBytes(filePathToOpen,state.FileContent);
 			}
 			else {
 				filePathToOpen=fileFullPath;
 			}
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				ThinfinityUtils.HandleFile(filePathToOpen);
 			}
 			else {
@@ -190,34 +185,30 @@ namespace OpenDental {
 		{
 			if(CloudStorage.IsCloudStorage) {
 				sourceFileName=CloudStorage.PathTidy(sourceFileName);
-				destinationFileName=CloudStorage.PathTidy(destinationFileName);
-				UI.ProgressWin progressWin = new UI.ProgressWin();
-				progressWin.StartingMessage=uploadMessage;
+				destinationFileName=CloudStorage.PathTidy(destinationFileName);				
+				FormProgress FormP=CreateFormProgress(uploadMessage,isFolder);
 				OpenDentalCloud.TaskState state;
 				if(sourceDestination==FileAtoZSourceDestination.AtoZToAtoZ) {
-					progressWin.ActionMain=() => CloudStorage.Copy(sourceFileName,destinationFileName);
-					progressWin.ShowDialog();
-					return;
+					state=CloudStorage.CopyAsync(sourceFileName,destinationFileName,new OpenDentalCloud.ProgressHandler(FormP.UpdateProgress));
 				}
 				else if(sourceDestination==FileAtoZSourceDestination.LocalToAtoZ) {
-					progressWin.ActionMain=() => CloudStorage.Upload(Path.GetDirectoryName(destinationFileName),Path.GetFileName(destinationFileName),File.ReadAllBytes(sourceFileName));
-					progressWin.ShowDialog();
-					return;
+					state=CloudStorage.UploadAsync(Path.GetDirectoryName(destinationFileName),Path.GetFileName(destinationFileName),
+						File.ReadAllBytes(sourceFileName),new OpenDentalCloud.ProgressHandler(FormP.UpdateProgress));
 				}
 				else if(sourceDestination==FileAtoZSourceDestination.AtoZToLocal) {
-					byte[] byteArray = null;
-					progressWin.ActionMain=() => {
-						byteArray=CloudStorage.Download(Path.GetDirectoryName(sourceFileName),Path.GetFileName(sourceFileName));
-					};
-					progressWin.ShowDialog();
-					if(progressWin.IsCancelled){//user clicked cancel
-						return;
-					}
-					File.WriteAllBytes(destinationFileName,byteArray);
-					return;
+					state=CloudStorage.DownloadAsync(Path.GetDirectoryName(sourceFileName),Path.GetFileName(sourceFileName),
+						new OpenDentalCloud.ProgressHandler(FormP.UpdateProgress));
 				}
 				else {
 					throw new Exception("Unsupported "+nameof(FileAtoZSourceDestination)+": "+sourceDestination);
+				}
+				FormP.ShowDialog();
+				if(FormP.DialogResult==DialogResult.Cancel) {
+					state.DoCancel=true;
+					return;
+				}
+				if(sourceDestination==FileAtoZSourceDestination.AtoZToLocal) {
+					File.WriteAllBytes(destinationFileName,((OpenDentalCloud.Core.TaskStateDownload)state).FileContent);
 				}
 			}
 			else {//Not cloud
@@ -249,7 +240,23 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>Downloads an A to Z file to the local machine.</summary>
+		///<summary>Method to create a FormProgress. Set isSingleFile to false if copying or moving a folder.</summary>
+		private static FormProgress CreateFormProgress(string displayMessage,bool isFolder=false) {
+			FormProgress FormP=new FormProgress();
+			FormP.DisplayText=Lan.g(CloudStorage.LanThis,displayMessage);
+			if(isFolder) {
+				FormP.NumberFormat="";//Display whole numbers
+			}
+			else {
+				FormP.NumberFormat="F";//Display decimal places
+			}
+			FormP.NumberMultiplication=1;
+			FormP.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+			FormP.TickMS=1000;
+			return FormP;
+		}
+
+		///<summary>Uploads an A to Z file to the local machine.</summary>
 		public static void Download(string AtoZFilePath,string localFilePath,string downloadMessage="Downloading file...") {
 			Copy(AtoZFilePath,localFilePath,FileAtoZSourceDestination.AtoZToLocal,downloadMessage);
 		}

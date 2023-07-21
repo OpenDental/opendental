@@ -48,7 +48,7 @@ namespace OpenDentBusiness.Crud{
 			foreach(DataRow row in table.Rows) {
 				securityLog=new SecurityLog();
 				securityLog.SecurityLogNum= PIn.Long  (row["SecurityLogNum"].ToString());
-				securityLog.PermType      = (OpenDentBusiness.EnumPermType)PIn.Int(row["PermType"].ToString());
+				securityLog.PermType      = (OpenDentBusiness.Permissions)PIn.Int(row["PermType"].ToString());
 				securityLog.UserNum       = PIn.Long  (row["UserNum"].ToString());
 				securityLog.LogDateTime   = PIn.DateT (row["LogDateTime"].ToString());
 				securityLog.LogText       = PIn.String(row["LogText"].ToString());

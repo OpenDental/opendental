@@ -25,6 +25,7 @@
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrLabOrderEdit2014));
+			this.butCancel = new System.Windows.Forms.Button();
 			this.butOk = new System.Windows.Forms.Button();
 			this.butDelete = new System.Windows.Forms.Button();
 			this.butAdd = new System.Windows.Forms.Button();
@@ -144,16 +145,27 @@
 			this.groupBox8.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(887, 661);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 10;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOk
 			// 
 			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOk.Location = new System.Drawing.Point(881, 661);
+			this.butOk.Location = new System.Drawing.Point(806, 661);
 			this.butOk.Name = "butOk";
 			this.butOk.Size = new System.Drawing.Size(75, 24);
 			this.butOk.TabIndex = 9;
 			this.butOk.Text = "Save";
 			this.butOk.UseVisualStyleBackColor = true;
-			this.butOk.Click += new System.EventHandler(this.butSave_Click);
+			this.butOk.Click += new System.EventHandler(this.butOk_Click);
 			// 
 			// butDelete
 			// 
@@ -1303,6 +1315,7 @@
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.butOk);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.gridMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrLabOrderEdit2014";
@@ -1331,6 +1344,7 @@
 		#endregion
 
 		private OpenDental.UI.GridOD gridMain;
+		private System.Windows.Forms.Button butCancel;
 		private System.Windows.Forms.Button butOk;
 		private System.Windows.Forms.Button butDelete;
 		private System.Windows.Forms.Button butAdd;

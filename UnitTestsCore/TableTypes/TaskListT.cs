@@ -6,7 +6,7 @@ using OpenDentBusiness;
 namespace UnitTestsCore {
 	public class TaskListT {
 		///<summary>Creates a TaskList.  If parent is not 0, then a parentDesc must also be provided.</summary>
-		public static TaskList CreateTaskList(string descript="",long parent=0,bool isRepeating=false,TaskDateType dateType=TaskDateType.None,long fromNum=0,TaskObjectType objectType=TaskObjectType.None,string parentDesc="",EnumTaskFilterType globalTaskFilterType=EnumTaskFilterType.None)
+		public static TaskList CreateTaskList(string descript="",long parent=0,bool isRepeating=false,TaskDateType dateType=TaskDateType.None,long fromNum=0,TaskObjectType objectType=TaskObjectType.None,string parentDesc="",GlobalTaskFilterType globalTaskFilterType=GlobalTaskFilterType.None)
 		{
 			TaskList taskList=new TaskList
 			{

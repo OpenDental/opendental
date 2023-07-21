@@ -232,7 +232,7 @@ namespace OpenDental {
 			if(prefName==PrefName.TextPaymentLinkAppointmentBalance && saveToDB) {
 				statement=Statements.CreateLimitedStatement(
 					new List<long>{ _patient.PatNum },
-					_patient.Guarantor,
+					_patient.PatNum,
 					listClaimPayNumsForAppt,
 					listAdjNumsForAppt,
 					listPaymentNumsForAppt,
@@ -311,7 +311,7 @@ namespace OpenDental {
 			SheetPrinting.CreatePdf(sheet,filePath,statement,dataSet:dataSetStatement);
 			if(isPreview) {
 				try {
-					if(ODBuild.IsThinfinity()) {
+					if(ODBuild.IsWeb()) {
 						ThinfinityUtils.HandleFile(filePath);
 					}
 					else {
@@ -417,6 +417,10 @@ namespace OpenDental {
 			Message=Statements.ReplaceVarsForSms(_clinicPrefHelper.GetStringVal(GetSelectedTemplate(),GetClinicNumSelected()),_patient,statement,_clinic,checkIncludeInsurance.Checked);
 			StatementCur=statement;
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 		#endregion
 	}

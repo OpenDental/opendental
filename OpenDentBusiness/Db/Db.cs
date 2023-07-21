@@ -76,11 +76,11 @@ namespace OpenDentBusiness {
 			catch {
 				throw new ApplicationException("Validation failed. Please remove mid-query comments and try again.");
 			}
-			if(isCommand && (ODEnvironment.IsCloudServer || !Security.IsAuthorized(EnumPermType.CommandQuery,suppressMessage))) {
+			if(isCommand && (ODBuild.IsWeb() || !Security.IsAuthorized(Permissions.CommandQuery,suppressMessage))) {
 				return false;
 			}
 			if(isCommand) {
-				SecurityLogs.MakeLogEntry(EnumPermType.CommandQuery,0,"Command query run.");
+				SecurityLogs.MakeLogEntry(Permissions.CommandQuery,0,"Command query run.");
 			}
 			return true;
 		}

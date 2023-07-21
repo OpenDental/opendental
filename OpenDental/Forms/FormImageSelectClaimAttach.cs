@@ -24,8 +24,6 @@ namespace OpenDental{
 		public bool CanAttachTxt=false;
 		///<summary>Set to true to allow DOC/DOCX files.</summary>
 		public bool CanAttachDoc=false;
-		/// <summary>Set to true to allow PDF files.</summary>
-		public bool CanAttachPdf=false;
 		private static readonly string _snipSketchURI="ms-screensketch";
 		///<summary> Keeps track of how long we've been trying to kill all running Snip Tool processes </summary>
 		private Stopwatch _stopwatchKillSnipToolProcesses=new Stopwatch();
@@ -70,8 +68,8 @@ namespace OpenDental{
 		}
 
 		///<summary>Returns an image from the clipboard. If no image is found or there was an error, then returns with a popup message.</summary>
-		private Bitmap GetImageFromClipboard(bool isSilent=false, bool doShowProgressBar=true) {
-			Bitmap bitmapClipboard=ODClipboard.GetImage(doShowProgressBar:doShowProgressBar);
+		private Bitmap GetImageFromClipboard(bool isSilent=false) {
+			Bitmap bitmapClipboard=ODClipboard.GetImage();
 			if(bitmapClipboard!=null || isSilent) {
 				return bitmapClipboard;
 			}
@@ -157,8 +155,6 @@ namespace OpenDental{
 				}
 				else if(CanAttachDoc && Path.GetExtension(document.FileName).ToLower().In(".doc",".docx")) {
 				}
-				else if(CanAttachPdf && Path.GetExtension(document.FileName).ToLower()==".pdf") {
-				}
 				else {
 					List<string> listAllowedFormats=new List<string>() { "images" };
 					if(CanAttachTxt) {
@@ -167,10 +163,7 @@ namespace OpenDental{
 					if(CanAttachDoc) {
 						listAllowedFormats.Add("Microsoft Word (doc/docx)");
 					}
-					if(CanAttachPdf) {
-						listAllowedFormats.Add("PDF");
-					}
-					MsgBox.Show(this,"Invalid file. Only "+string.Join(", ",listAllowedFormats)+" may be attached, no other file formats.");
+					MsgBox.Show(this,"Invalid file.  Only "+string.Join(",",listAllowedFormats)+" may be attached, no other file formats.");
 					return;
 				}
 			}
@@ -246,20 +239,34 @@ namespace OpenDental{
 			}
 			//IsCloudStorage from here down--------------------------------------------------------------------
 			//First, download the file. 
-			UI.ProgressWin progressWin=new UI.ProgressWin();
-			progressWin.StartingMessage="Downloading...";
-			byte[] byteArray=null;
-			progressWin.ActionMain=() => byteArray=CloudStorage.Download(patientfolder,document.FileName);
-			progressWin.ShowDialog();
-			if(byteArray==null || byteArray.Length==0){
+			using FormProgress formProgress=new FormProgress();
+			formProgress.DisplayText="Downloading Image...";
+			formProgress.NumberFormat="F";
+			formProgress.NumberMultiplication=1;
+			formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+			formProgress.TickMS=1000;
+			OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.DownloadAsync(patientfolder
+				,document.FileName
+				,new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
+			formProgress.ShowDialog();
+			if(formProgress.DialogResult==DialogResult.Cancel) {
+				state.DoCancel=true;
 				return;
 			}
-			//Successfully downloaded, now do stuff with byteArray
-			progressWin=new UI.ProgressWin();
-			progressWin.StartingMessage="Uploading Image for Claim Attach...";
-			progressWin.ActionMain=() => CloudStorage.Upload(attachPath,newName,byteArray);
-			progressWin.ShowDialog();
-			if(progressWin.IsCancelled){
+			//Successfully downloaded, now do stuff with state.FileContent
+			using FormProgress formProgress2=new FormProgress();
+			formProgress2.DisplayText="Uploading Image for Claim Attach...";
+			formProgress2.NumberFormat="F";
+			formProgress2.NumberMultiplication=1;
+			formProgress2.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+			formProgress2.TickMS=1000;
+			OpenDentalCloud.Core.TaskStateUpload state2=CloudStorage.UploadAsync(attachPath
+				,newName
+				,state.FileContent
+				,new OpenDentalCloud.ProgressHandler(formProgress2.UpdateProgress));
+			formProgress2.ShowDialog(); 
+			if(formProgress2.DialogResult==DialogResult.Cancel) {
+				state2.DoCancel=true;
 				return;
 			}
 			//Upload was successful
@@ -283,24 +290,17 @@ namespace OpenDental{
 
 		private void timerMonitorClipboard_Tick(object sender,EventArgs e) {
 			timerMonitorClipboard.Stop();
-			bool hasRunningProcess;
-			if(ODEnvironment.IsCloudServer) {
-				hasRunningProcess=ODCloudClient.GetProcessesSnipTool();
-			}
-			else {
 			List<Process> listProcesses=GetProcessesSnipTool();
-				hasRunningProcess=listProcesses.Count>0;
-			}
-			if(!hasRunningProcess) {
+      if(listProcesses.Count==0) {
 				WindowState=FormWindowState.Normal;
 				BringToFront();
 				MsgBox.Show(this,"The snipping tool was closed while waiting for a snip. Stopping snip.");
 				EndSnipping();
 				return;
-			}
-			Bitmap bitmapClipboard=GetImageFromClipboard(isSilent:true,doShowProgressBar:false);
-			if(bitmapClipboard==null) {
+      }
 			timerMonitorClipboard.Start();
+			Bitmap bitmapClipboard=GetImageFromClipboard(isSilent:true);
+			if(bitmapClipboard==null) {
 				return;
 			}
 			EndSnipping();
@@ -314,15 +314,8 @@ namespace OpenDental{
 		///<summary>100ms. Monitor the list of running processes for Snip & Sketch and Snipping Tool, for a short duration,
 		///and kill any matching processes.  Doesn't stop trying until the duration is over. </summary>
 		private void timerKillSnipToolProcesses_Tick(object sender,EventArgs e) {
-			if(ODEnvironment.IsCloudServer) {
-				if(ODCloudClient.GetProcessesSnipTool()) { 
-					ODCloudClient.KillProcesses(); 
-				}
-			}
-			else {
-				List<Process> listProcesses=GetProcessesSnipTool();
-				KillProcesses(listProcesses);
-			}
+			List<Process> listProcesses=GetProcessesSnipTool();
+			KillProcesses(listProcesses);
 			if(_stopwatchKillSnipToolProcesses.Elapsed>TimeSpan.FromSeconds(3)) {
 				timerKillSnipToolProcesses.Stop();
 				_stopwatchKillSnipToolProcesses.Reset();
@@ -382,9 +375,6 @@ namespace OpenDental{
 
 		///<summary>Attempts to start Snip & Sketch, then Snipping Tool if that fails. Returns true if either started, false if neither did.</summary>
 		public static bool StartSnipAndSketchOrSnippingTool() {
-			if(ODEnvironment.IsCloudServer) {
-				return ODCloudClient.StartSnipAndSketchOrSnippingTool(_snipSketchURI);
-			}
 			//Determine if the screensketch protocol is in the registry; if not, we assume Snip & Sketch is not installed.
 			if(DoesSnipAndSketchExist()) {
 				Process processSnipAndSketch=new Process();
@@ -402,7 +392,7 @@ namespace OpenDental{
 			if(DoesSnippingToolExist()) {
 				Process processSnippingTool=new Process();
 				string pathToSnippingTool;
-				if(!Environment.Is64BitOperatingSystem) {
+				if(!Environment.Is64BitProcess) {
 					pathToSnippingTool="sysnative";
 				}
 				else {
@@ -423,25 +413,14 @@ namespace OpenDental{
 
 		///<summary>Mimics FormClaimAttachmentDXC.StartSnipping()</summary>
 		private void StartSnipping() {
-			if(!ODClipboard.Clear()) {
-				MsgBox.Show(this,"Couldn't access clipboard, try again.");
-				return;
-			}
+			ODClipboard.Clear();
 			//If we're in the middle of trying to kill Snip Tool processes, stop for now.
 			timerKillSnipToolProcesses.Stop();
 			_stopwatchKillSnipToolProcesses.Reset();
-			if(ODEnvironment.IsCloudServer) {
-				if(ODCloudClient.GetProcessesSnipTool()) { 
-						ODCloudClient.KillProcesses();
-						Thread.Sleep(100);
-					}
-				}
-			else {
-				List<Process> listProcesses=GetProcessesSnipTool();
-				if(KillProcesses(listProcesses)) {
-					//Wait a short time before launching, since otherwise the Win32Exception "The remote procedure call failed and did not execute" can happen
-					Thread.Sleep(100);
-				}
+			List<Process> listProcesses=GetProcessesSnipTool();
+			if(KillProcesses(listProcesses)) {
+				//Wait a short time before launching, since otherwise the Win32Exception "The remote procedure call failed and did not execute" can happen
+				Thread.Sleep(100);
 			}
 			if(!StartSnipAndSketchOrSnippingTool()) {
 				MsgBox.Show(this,"Neither the Snip & Sketch tool nor the Snipping Tool could be launched.  Copy an image to the clipboard, then use the Paste Image button to add it as an attachment.  If you are on a Remote Desktop connection, launch your local system's Snip & Sketch or Snipping Tool, and make snips using either of those, which will be automatically copied to the clipboard.  If neither tool is available on your system, use the Print Screen keyboard key, or other screenshot software, to copy screenshots to the clipboard.");
@@ -454,31 +433,19 @@ namespace OpenDental{
 			butPasteImage.Enabled=false;
 			//Wait half a second before minimizing, otherwise Snip & Sketch can end up behind Open Dental
 			Thread.Sleep(500);
-			if(!ODEnvironment.IsCloudServer) {
-				WindowState=FormWindowState.Minimized;
-			}
+			WindowState=FormWindowState.Minimized;
 			//begin monitoring the clipboard for results
 			timerMonitorClipboard.Start();
 		}
 		#endregion
 
 		private void butImport_Click(object sender,EventArgs e) {
-			string importFilePath;
-			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				importFilePath=ODCloudClient.ImportFileForCloud();
-				if(importFilePath.IsNullOrEmpty()) {
-					return; //User cancelled out of OpenFileDialog
-				}
+			using OpenFileDialog openFileDialog=new OpenFileDialog();
+			openFileDialog.Multiselect=false;
+			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+				return;
 			}
-			else {
-				using OpenFileDialog openFileDialog=new OpenFileDialog();
-				openFileDialog.Multiselect=false;
-				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-					return;
-				}
-				importFilePath=openFileDialog.FileName;
-			}
-			string selectedFilePath=importFilePath;
+			string selectedFilePath=openFileDialog.FileName;
 			try {
 				Bitmap bitmap=(Bitmap)Image.FromFile(selectedFilePath);
 				bitmap.Dispose();
@@ -494,8 +461,6 @@ namespace OpenDental{
 				if(CanAttachTxt && extension.ToLower()==".txt") {
 				}
 				else if(CanAttachDoc && extension.ToLower().In(".doc",".docx")) {
-				}
-				else if(CanAttachPdf && extension.ToLower()==".pdf") {
 				}
 				else {
 					MsgBox.Show(Lan.g(this,"The file does not have a valid format. Please try again or call support."));
@@ -516,12 +481,7 @@ namespace OpenDental{
 		}
 
 		private void butSnipTool_Click(object sender,EventArgs e) {
-			if(ODEnvironment.IsCloudServer) {
-					ODProgress.ShowAction(()=>StartSnipping(),"Opening snipping tool...");
-			}
-			else {
-				StartSnipping();
-			}
+			StartSnipping();
 		}
 
 		private void gridMain_CellDoubleClick(object sender,ODGridClickEventArgs e) {
@@ -539,5 +499,8 @@ namespace OpenDental{
 			SaveAttachment(_documentArray[gridMain.GetSelectedIndex()]);
 		}
 
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

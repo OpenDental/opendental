@@ -1,7 +1,8 @@
 ﻿namespace OpenDental {
 	public partial class FormPayment {
 		#region UI Elements
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
@@ -30,6 +31,7 @@
 		private System.Windows.Forms.TextBox textDeposit;
 		private System.Windows.Forms.Label labelDeposit;
 		private OpenDental.UI.CheckBox checkPayTypeNone;
+		private OpenDental.UI.Button butPayConnect;
 		private System.Windows.Forms.ContextMenu contextMenuPayConnect;
 		private System.Windows.Forms.MenuItem menuPayConnect;
 		private UI.ComboBox comboCreditCards;
@@ -56,7 +58,7 @@
 		private UI.Button butClear;
 		private UI.Button butDelete;
 		private OpenDental.UI.ComboBox comboGroupBy;
-		private System.Windows.Forms.Label labelGroupBy;
+		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.TextBox textChargeTotal;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.TextBox textFilterProcCodes;
@@ -116,8 +118,9 @@
 			this.menuPayConnect = new System.Windows.Forms.MenuItem();
 			this._pd2 = new System.Drawing.Printing.PrintDocument();
 			this.label9 = new System.Windows.Forms.Label();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.butDeletePayment = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butPrintReceipt = new OpenDental.UI.Button();
 			this.butEmailReceipt = new OpenDental.UI.Button();
 			this.butCareCredit = new System.Windows.Forms.Panel();
@@ -125,6 +128,7 @@
 			this.butShowHide = new OpenDental.UI.Button();
 			this.comboClinic = new OpenDental.UI.ComboBoxClinicPicker();
 			this.textDeposit = new System.Windows.Forms.TextBox();
+			this.butPayConnect = new OpenDental.UI.Button();
 			this.labelDepositAccount = new System.Windows.Forms.Label();
 			this.labelDeposit = new System.Windows.Forms.Label();
 			this.textDepositAccount = new System.Windows.Forms.TextBox();
@@ -159,23 +163,20 @@
 			this.tabControlCharges = new OpenDental.UI.TabControl();
 			this.tabPageOutstanding = new OpenDental.UI.TabPage();
 			this.checkShowSuperfamily = new OpenDental.UI.CheckBox();
-			this.gridCharges = new OpenDental.UI.GridOD();
 			this.checkIncludeExplicitCreditsOnly = new OpenDental.UI.CheckBox();
 			this.checkShowAll = new OpenDental.UI.CheckBox();
 			this.tabPageTreatPlan = new OpenDental.UI.TabPage();
 			this.labelTPProcWarning = new System.Windows.Forms.Label();
-			this.gridTreatPlan = new OpenDental.UI.GridOD();
 			this.butPay = new OpenDental.UI.Button();
 			this.labelPayPlan = new System.Windows.Forms.Label();
 			this.tabControlSplits = new OpenDental.UI.TabControl();
 			this.tabPageSplits = new OpenDental.UI.TabPage();
-			this.gridSplits = new OpenDental.UI.GridOD();
 			this.textChargeTotal = new System.Windows.Forms.TextBox();
 			this.butCreatePartial = new OpenDental.UI.Button();
 			this.label8 = new System.Windows.Forms.Label();
 			this.butDelete = new OpenDental.UI.Button();
 			this.comboGroupBy = new OpenDental.UI.ComboBox();
-			this.labelGroupBy = new System.Windows.Forms.Label();
+			this.label7 = new System.Windows.Forms.Label();
 			this.groupBoxFilteringOutstanding = new OpenDental.UI.GroupBox();
 			this.comboProviderOutstandingFilter = new OpenDental.UI.ComboBox();
 			this.datePickTo = new System.Windows.Forms.DateTimePicker();
@@ -203,13 +204,12 @@
 			this.menuPaySimple = new System.Windows.Forms.MenuItem();
 			this.panelSplits = new System.Windows.Forms.Panel();
 			this.groupBoxFilteringPaySplits = new OpenDental.UI.GroupBox();
-			this.labelIncludesNegativeEntries = new System.Windows.Forms.Label();
 			this.comboProviderPaySplitsFilter = new OpenDental.UI.ComboBox();
 			this.labelMaxPaySplitsFilter = new System.Windows.Forms.Label();
 			this.labelMinPaySplitsFilter = new System.Windows.Forms.Label();
 			this.labelClinicsPaySplitsFilter = new System.Windows.Forms.Label();
-			this.amtMinPaySplits = new System.Windows.Forms.NumericUpDown();
-			this.amtMaxPaySplits = new System.Windows.Forms.NumericUpDown();
+			this.amtMinEndPaySplits = new System.Windows.Forms.NumericUpDown();
+			this.amtMaxEndPaySplits = new System.Windows.Forms.NumericUpDown();
 			this.butRefreshPaySplits = new OpenDental.UI.Button();
 			this.comboPatientPaySplitsFilter = new OpenDental.UI.ComboBox();
 			this.comboClinicsPaySplitsFilter = new OpenDental.UI.ComboBox();
@@ -220,7 +220,9 @@
 			this.labelTransactionCompleted = new System.Windows.Forms.Label();
 			this.labelSurchargeFee = new System.Windows.Forms.Label();
 			this.textSurcharge = new System.Windows.Forms.TextBox();
-			this.butPayConnect = new System.Windows.Forms.Panel();
+			this.gridCharges = new OpenDental.UI.GridOD();
+			this.gridTreatPlan = new OpenDental.UI.GridOD();
+			this.gridSplits = new OpenDental.UI.GridOD();
 			this.groupXWeb.SuspendLayout();
 			this.tabControlCharges.SuspendLayout();
 			this.tabPageOutstanding.SuspendLayout();
@@ -232,8 +234,8 @@
 			((System.ComponentModel.ISupportInitialize)(this.amtMaxEndOutstanding)).BeginInit();
 			this.panelSplits.SuspendLayout();
 			this.groupBoxFilteringPaySplits.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.amtMinPaySplits)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.amtMaxPaySplits)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.amtMinEndPaySplits)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.amtMaxEndPaySplits)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// contextMenuXcharge
@@ -268,15 +270,15 @@
 			this.label9.Text = "Deletes entire payment \r\nand all splits";
 			this.label9.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(1031, 664);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 998;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(943, 664);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 998;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butDeletePayment
 			// 
@@ -289,6 +291,17 @@
 			this.butDeletePayment.TabIndex = 997;
 			this.butDeletePayment.Text = "&Delete";
 			this.butDeletePayment.Click += new System.EventHandler(this.butDeletePayment_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(1022, 664);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 999;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butPrintReceipt
 			// 
@@ -369,6 +382,16 @@
 			this.textDeposit.ReadOnly = true;
 			this.textDeposit.Size = new System.Drawing.Size(100, 20);
 			this.textDeposit.TabIndex = 125;
+			// 
+			// butPayConnect
+			// 
+			this.butPayConnect.Location = new System.Drawing.Point(958, 17);
+			this.butPayConnect.Name = "butPayConnect";
+			this.butPayConnect.Size = new System.Drawing.Size(75, 26);
+			this.butPayConnect.TabIndex = 129;
+			this.butPayConnect.Text = "PayConnect";
+			this.butPayConnect.Visible = false;
+			this.butPayConnect.Click += new System.EventHandler(this.butPayConnect_Click);
 			// 
 			// labelDepositAccount
 			// 
@@ -602,7 +625,7 @@
 			this.textNote.Location = new System.Drawing.Point(104, 156);
 			this.textNote.MaxLength = 4000;
 			this.textNote.Name = "textNote";
-			this.textNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Payment;
+			this.textNote.QuickPasteType = OpenDentBusiness.QuickPasteType.Payment;
 			this.textNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNote.Size = new System.Drawing.Size(361, 83);
 			this.textNote.SpellCheckIsEnabled = false;
@@ -875,15 +898,15 @@
 			this.comboGroupBy.TabIndex = 153;
 			this.comboGroupBy.SelectionChangeCommitted += new System.EventHandler(this.comboGroupBy_SelectionChangeCommitted);
 			// 
-			// labelGroupBy
+			// label7
 			// 
-			this.labelGroupBy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.labelGroupBy.Location = new System.Drawing.Point(717, 387);
-			this.labelGroupBy.Name = "labelGroupBy";
-			this.labelGroupBy.Size = new System.Drawing.Size(77, 18);
-			this.labelGroupBy.TabIndex = 154;
-			this.labelGroupBy.Text = "Group By";
-			this.labelGroupBy.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.label7.Location = new System.Drawing.Point(717, 387);
+			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size(77, 18);
+			this.label7.TabIndex = 154;
+			this.label7.Text = "Group By";
+			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// groupBoxFilteringOutstanding
 			// 
@@ -976,7 +999,7 @@
 			// 
 			// labelTypeOutstandingFilter
 			// 
-			this.labelTypeOutstandingFilter.Location = new System.Drawing.Point(295, 14);
+			this.labelTypeOutstandingFilter.Location = new System.Drawing.Point(199, 14);
 			this.labelTypeOutstandingFilter.Name = "labelTypeOutstandingFilter";
 			this.labelTypeOutstandingFilter.Size = new System.Drawing.Size(60, 18);
 			this.labelTypeOutstandingFilter.TabIndex = 202;
@@ -1054,7 +1077,7 @@
 			// comboTypeOutstandingFilter
 			// 
 			this.comboTypeOutstandingFilter.BackColor = System.Drawing.SystemColors.Window;
-			this.comboTypeOutstandingFilter.Location = new System.Drawing.Point(292, 33);
+			this.comboTypeOutstandingFilter.Location = new System.Drawing.Point(199, 33);
 			this.comboTypeOutstandingFilter.Name = "comboTypeOutstandingFilter";
 			this.comboTypeOutstandingFilter.SelectionModeMulti = true;
 			this.comboTypeOutstandingFilter.Size = new System.Drawing.Size(100, 21);
@@ -1064,7 +1087,7 @@
 			// comboClinicOutstandingFilter
 			// 
 			this.comboClinicOutstandingFilter.BackColor = System.Drawing.SystemColors.Window;
-			this.comboClinicOutstandingFilter.Location = new System.Drawing.Point(199, 33);
+			this.comboClinicOutstandingFilter.Location = new System.Drawing.Point(302, 33);
 			this.comboClinicOutstandingFilter.Name = "comboClinicOutstandingFilter";
 			this.comboClinicOutstandingFilter.SelectionModeMulti = true;
 			this.comboClinicOutstandingFilter.Size = new System.Drawing.Size(90, 21);
@@ -1082,7 +1105,7 @@
 			// 
 			// labelClinicOutstandingFilter
 			// 
-			this.labelClinicOutstandingFilter.Location = new System.Drawing.Point(198, 14);
+			this.labelClinicOutstandingFilter.Location = new System.Drawing.Point(302, 14);
 			this.labelClinicOutstandingFilter.Name = "labelClinicOutstandingFilter";
 			this.labelClinicOutstandingFilter.Size = new System.Drawing.Size(60, 18);
 			this.labelClinicOutstandingFilter.TabIndex = 194;
@@ -1169,7 +1192,7 @@
 			this.panelSplits.Controls.Add(this.textChargeTotal);
 			this.panelSplits.Controls.Add(this.groupBoxFilteringOutstanding);
 			this.panelSplits.Controls.Add(this.butCreatePartial);
-			this.panelSplits.Controls.Add(this.labelGroupBy);
+			this.panelSplits.Controls.Add(this.label7);
 			this.panelSplits.Controls.Add(this.label8);
 			this.panelSplits.Controls.Add(this.comboGroupBy);
 			this.panelSplits.Controls.Add(this.butDelete);
@@ -1180,13 +1203,12 @@
 			// 
 			// groupBoxFilteringPaySplits
 			// 
-			this.groupBoxFilteringPaySplits.Controls.Add(this.labelIncludesNegativeEntries);
 			this.groupBoxFilteringPaySplits.Controls.Add(this.comboProviderPaySplitsFilter);
 			this.groupBoxFilteringPaySplits.Controls.Add(this.labelMaxPaySplitsFilter);
 			this.groupBoxFilteringPaySplits.Controls.Add(this.labelMinPaySplitsFilter);
 			this.groupBoxFilteringPaySplits.Controls.Add(this.labelClinicsPaySplitsFilter);
-			this.groupBoxFilteringPaySplits.Controls.Add(this.amtMinPaySplits);
-			this.groupBoxFilteringPaySplits.Controls.Add(this.amtMaxPaySplits);
+			this.groupBoxFilteringPaySplits.Controls.Add(this.amtMinEndPaySplits);
+			this.groupBoxFilteringPaySplits.Controls.Add(this.amtMaxEndPaySplits);
 			this.groupBoxFilteringPaySplits.Controls.Add(this.butRefreshPaySplits);
 			this.groupBoxFilteringPaySplits.Controls.Add(this.comboPatientPaySplitsFilter);
 			this.groupBoxFilteringPaySplits.Controls.Add(this.comboClinicsPaySplitsFilter);
@@ -1197,15 +1219,6 @@
 			this.groupBoxFilteringPaySplits.Size = new System.Drawing.Size(493, 80);
 			this.groupBoxFilteringPaySplits.TabIndex = 208;
 			this.groupBoxFilteringPaySplits.Text = "Filtering Current Payment Splits";
-			// 
-			// labelIncludesNegativeEntries
-			// 
-			this.labelIncludesNegativeEntries.Location = new System.Drawing.Point(163, 58);
-			this.labelIncludesNegativeEntries.Name = "labelIncludesNegativeEntries";
-			this.labelIncludesNegativeEntries.Size = new System.Drawing.Size(246, 16);
-			this.labelIncludesNegativeEntries.TabIndex = 1001;
-			this.labelIncludesNegativeEntries.Text = "(Includes negative entries in the same range)";
-			this.labelIncludesNegativeEntries.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// comboProviderPaySplitsFilter
 			// 
@@ -1223,7 +1236,7 @@
 			this.labelMaxPaySplitsFilter.Name = "labelMaxPaySplitsFilter";
 			this.labelMaxPaySplitsFilter.Size = new System.Drawing.Size(89, 18);
 			this.labelMaxPaySplitsFilter.TabIndex = 198;
-			this.labelMaxPaySplitsFilter.Text = "Amt Max";
+			this.labelMaxPaySplitsFilter.Text = "Amt End Max";
 			this.labelMaxPaySplitsFilter.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelMinPaySplitsFilter
@@ -1232,7 +1245,7 @@
 			this.labelMinPaySplitsFilter.Name = "labelMinPaySplitsFilter";
 			this.labelMinPaySplitsFilter.Size = new System.Drawing.Size(87, 18);
 			this.labelMinPaySplitsFilter.TabIndex = 200;
-			this.labelMinPaySplitsFilter.Text = "Amt Min";
+			this.labelMinPaySplitsFilter.Text = "Amt End Min.";
 			this.labelMinPaySplitsFilter.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelClinicsPaySplitsFilter
@@ -1244,45 +1257,45 @@
 			this.labelClinicsPaySplitsFilter.Text = "Clinics";
 			this.labelClinicsPaySplitsFilter.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
-			// amtMinPaySplits
+			// amtMinEndPaySplits
 			// 
-			this.amtMinPaySplits.DecimalPlaces = 2;
-			this.amtMinPaySplits.Location = new System.Drawing.Point(305, 33);
-			this.amtMinPaySplits.Maximum = new decimal(new int[] {
+			this.amtMinEndPaySplits.DecimalPlaces = 2;
+			this.amtMinEndPaySplits.Location = new System.Drawing.Point(305, 33);
+			this.amtMinEndPaySplits.Maximum = new decimal(new int[] {
             9999999,
             0,
             0,
             0});
-			this.amtMinPaySplits.Minimum = new decimal(new int[] {
+			this.amtMinEndPaySplits.Minimum = new decimal(new int[] {
             99999999,
             0,
             0,
             -2147483648});
-			this.amtMinPaySplits.Name = "amtMinPaySplits";
-			this.amtMinPaySplits.Size = new System.Drawing.Size(90, 20);
-			this.amtMinPaySplits.TabIndex = 199;
-			this.amtMinPaySplits.ThousandsSeparator = true;
-			this.amtMinPaySplits.ValueChanged += new System.EventHandler(this.FilterChangeCommittedPaySplits);
+			this.amtMinEndPaySplits.Name = "amtMinEndPaySplits";
+			this.amtMinEndPaySplits.Size = new System.Drawing.Size(90, 20);
+			this.amtMinEndPaySplits.TabIndex = 199;
+			this.amtMinEndPaySplits.ThousandsSeparator = true;
+			this.amtMinEndPaySplits.ValueChanged += new System.EventHandler(this.FilterChangeCommittedPaySplits);
 			// 
-			// amtMaxPaySplits
+			// amtMaxEndPaySplits
 			// 
-			this.amtMaxPaySplits.DecimalPlaces = 2;
-			this.amtMaxPaySplits.Location = new System.Drawing.Point(401, 33);
-			this.amtMaxPaySplits.Maximum = new decimal(new int[] {
+			this.amtMaxEndPaySplits.DecimalPlaces = 2;
+			this.amtMaxEndPaySplits.Location = new System.Drawing.Point(401, 33);
+			this.amtMaxEndPaySplits.Maximum = new decimal(new int[] {
             999999,
             0,
             0,
             0});
-			this.amtMaxPaySplits.Minimum = new decimal(new int[] {
+			this.amtMaxEndPaySplits.Minimum = new decimal(new int[] {
             99999999,
             0,
             0,
             -2147483648});
-			this.amtMaxPaySplits.Name = "amtMaxPaySplits";
-			this.amtMaxPaySplits.Size = new System.Drawing.Size(90, 20);
-			this.amtMaxPaySplits.TabIndex = 197;
-			this.amtMaxPaySplits.ThousandsSeparator = true;
-			this.amtMaxPaySplits.ValueChanged += new System.EventHandler(this.FilterChangeCommittedPaySplits);
+			this.amtMaxEndPaySplits.Name = "amtMaxEndPaySplits";
+			this.amtMaxEndPaySplits.Size = new System.Drawing.Size(90, 20);
+			this.amtMaxEndPaySplits.TabIndex = 197;
+			this.amtMaxEndPaySplits.ThousandsSeparator = true;
+			this.amtMaxEndPaySplits.ValueChanged += new System.EventHandler(this.FilterChangeCommittedPaySplits);
 			// 
 			// butRefreshPaySplits
 			// 
@@ -1378,21 +1391,39 @@
 			this.textSurcharge.TabIndex = 1005;
 			this.textSurcharge.Visible = false;
 			// 
-			// butPayConnect
+			// gridCharges
 			// 
-			this.butPayConnect.BackgroundImage = global::OpenDental.Properties.Resources.payconnect_btn_26;
-			this.butPayConnect.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-			this.butPayConnect.Location = new System.Drawing.Point(958, 17);
-			this.butPayConnect.Name = "butPayConnect";
-			this.butPayConnect.Size = new System.Drawing.Size(75, 26);
-			this.butPayConnect.TabIndex = 141;
-			this.butPayConnect.Visible = false;
-			this.butPayConnect.Click += new System.EventHandler(this.butPayConnect_Click);
+			this.gridCharges.AllowSortingByColumn = true;
+			this.gridCharges.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.gridCharges.Location = new System.Drawing.Point(1, 22);
+			this.gridCharges.Name = "gridCharges";
+			this.gridCharges.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
+			this.gridCharges.Size = new System.Drawing.Size(602, 249);
+			this.gridCharges.TabIndex = 144;
+			this.gridCharges.Title = "Outstanding Charges";
+			this.gridCharges.TranslationName = "TableOutstandingCharges";
+			this.gridCharges.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridCharges_CellClick);
 			// 
+			// gridTreatPlan
+			// 
+			this.gridTreatPlan.AllowSortingByColumn = true;
+			this.gridTreatPlan.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.gridTreatPlan.Location = new System.Drawing.Point(1, 22);
+			this.gridTreatPlan.Name = "gridTreatPlan";
+			this.gridTreatPlan.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
+			this.gridTreatPlan.Size = new System.Drawing.Size(602, 245);
+			this.gridTreatPlan.TabIndex = 145;
+			this.gridTreatPlan.Title = "Treatment Planned Procedures";
+			this.gridTreatPlan.TranslationName = "TableOutstandingCharges";
+			this.gridTreatPlan.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridTreatPlan_CellClick);
+			//
 			// FormPayment
 			// 
 			this.ClientSize = new System.Drawing.Size(1111, 696);
-			this.Controls.Add(this.butPayConnect);
 			this.Controls.Add(this.textSurcharge);
 			this.Controls.Add(this.labelSurchargeFee);
 			this.Controls.Add(this.labelTransactionCompleted);
@@ -1403,10 +1434,12 @@
 			this.Controls.Add(this.butPaySimple);
 			this.Controls.Add(this.label9);
 			this.Controls.Add(this.butShowHide);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.comboClinic);
 			this.Controls.Add(this.textDeposit);
 			this.Controls.Add(this.butDeletePayment);
+			this.Controls.Add(this.butPayConnect);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.labelDepositAccount);
 			this.Controls.Add(this.butPrintReceipt);
 			this.Controls.Add(this.labelDeposit);
@@ -1460,8 +1493,8 @@
 			this.panelSplits.ResumeLayout(false);
 			this.panelSplits.PerformLayout();
 			this.groupBoxFilteringPaySplits.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.amtMinPaySplits)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.amtMaxPaySplits)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.amtMinEndPaySplits)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.amtMaxEndPaySplits)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -1478,8 +1511,8 @@
 		private System.Windows.Forms.Label labelMaxPaySplitsFilter;
 		private System.Windows.Forms.Label labelMinPaySplitsFilter;
 		private System.Windows.Forms.Label labelClinicsPaySplitsFilter;
-		private System.Windows.Forms.NumericUpDown amtMinPaySplits;
-		private System.Windows.Forms.NumericUpDown amtMaxPaySplits;
+		private System.Windows.Forms.NumericUpDown amtMinEndPaySplits;
+		private System.Windows.Forms.NumericUpDown amtMaxEndPaySplits;
 		private UI.Button butRefreshPaySplits;
 		private UI.ComboBox comboPatientPaySplitsFilter;
 		private UI.ComboBox comboClinicsPaySplitsFilter;
@@ -1487,7 +1520,5 @@
 		private System.Windows.Forms.Label labelProvPaySplitsFilter;
 		private System.Windows.Forms.Label labelSurchargeFee;
 		private System.Windows.Forms.TextBox textSurcharge;
-		private System.Windows.Forms.Label labelIncludesNegativeEntries;
-		private System.Windows.Forms.Panel butPayConnect;
 	}
 }

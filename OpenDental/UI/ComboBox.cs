@@ -58,7 +58,7 @@ namespace OpenDental.UI{
 //Or, rarely: comboArea.Items.Add(Lan.g("enumArea","First Item"),EnumArea.FirstItem);
 //Or, to exclude an enum:
 //List<EraAutomationMode> listEraAutomationModeValues=typeof(EraAutomationMode).GetEnumValues()
-//				.Cast<EraAutomationMode>()
+//				.AsEnumerable<EraAutomationMode>()
 //				.Where(x => x!=EraAutomationMode.UseGlobal)
 //				.ToList();
 //comboEraAutomation.Items.AddListEnum(listEraAutomationModeValues);
@@ -88,6 +88,9 @@ namespace OpenDental.UI{
 		#region Fields - Private Static
 		//Colors etc are static and shared among all comboboxes for life of program. Not disposed
 		///<summary></summary>
+		private static SolidBrush _brushBack=new SolidBrush(Color.White);
+			//Color.FromArgb(240,240,240));//lighter than built-in color of 225
+		///<summary></summary>
 		private static SolidBrush _brushDisabledBack=new SolidBrush(Color.FromArgb(204,204,204));//copied built-in color
 		///<summary></summary>
 		private static SolidBrush _brushDisabledText=new SolidBrush(Color.FromArgb(109,109,109));
@@ -113,9 +116,6 @@ namespace OpenDental.UI{
 		#endregion Fields - Private
 
 		#region Fields - Private for Properties
-		///<summary></summary>
-		private Color _colorBack=Color.White;
-			//Color.FromArgb(240,240,240));//lighter than built-in color of 225
 		private bool _includeAll=false;
 		private bool _isAllSelected=false;
 		///<summary>This is the only internal storage for tracking selected indices.  All properties refer to this same list. This list never includes the All option.</summary>
@@ -152,7 +152,6 @@ namespace OpenDental.UI{
 			Graphics g=e.Graphics;
 			g.SmoothingMode=SmoothingMode.AntiAlias;
 			Rectangle rectangle=new Rectangle(0,0,Width-1,Height-1);
-			using SolidBrush brushBack=new SolidBrush(_colorBack);
 			Brush brush;//don't dispose of aliases
 			Pen pen;
 			if(Enabled){
@@ -161,11 +160,11 @@ namespace OpenDental.UI{
 					pen=_penHoverOutline;
 				}
 				else if(Focused) {
-					brush=brushBack;
+					brush=_brushBack;
 					pen=_penHoverOutline;
 				}
 				else{
-					brush=brushBack;
+					brush=_brushBack;
 					pen=_penOutline;
 				}
 			}
@@ -412,20 +411,6 @@ namespace OpenDental.UI{
 		#endregion Properties - Public Browsable
 
 		#region Properties - Public not Browsable
-		/// <summary>Gets/Sets the background color for the combobox</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[DefaultValue(false)]
-		public Color ColorBack{
-			get{
-				return _colorBack;
-			}
-			set{
-				_colorBack=value;
-				Invalidate();
-			}
-		}
-
 		///<summary>Set to true to include 'All' as a selection option at the top. 'All' can sometimes be intended to indicate more items than are actually showing in list.  Test IsAllSelected separately if this is the case.  This works for both single and multi selection mode.  This extra row is never part of the Items or internal _listSelectedIndices.  But, if you get SelectedIndices, and the user has selected All, then indices for all the items in the list will be returned.</summary>
 		[Browsable(false)]//because it's better to see this in the code than to only see it in the designer.  Intentionally different than ComboBoxClinicPicker.
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -845,9 +830,6 @@ namespace OpenDental.UI{
 		private void ComboBoxJ_Scroll(object sender,ScrollEventArgs e) {
 			if(SelectionModeMulti) {
 				return;//only for single select
-			}
-			if(Items.Count==0) {
-				return;
 			}
 			if(_listSelectedIndices.Count==0) {
 				SetSelected(0);

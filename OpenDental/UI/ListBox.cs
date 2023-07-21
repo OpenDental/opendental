@@ -64,6 +64,7 @@ namespace OpenDental.UI {
 		#region Fields - Private Static
 		//These colors etc are static and shared among all listboxes for life of program. Not disposed
 		///<summary>A compromise between the absurd MS blue and boring gray.  This looks great for enabled and disabled.</summary>
+		private static SolidBrush _brushSelectedBack=new SolidBrush(Color.FromArgb(186,199,219));//#BAC7DB,   grid default was Silver: C0C0C0 (192 gray)
 		private static SolidBrush _brushHover=new SolidBrush(ColorOD.Hover);
 		#endregion Fields - Private Static
 
@@ -89,8 +90,6 @@ namespace OpenDental.UI {
 		private string[] _itemStrings=null;
 		///<summary>This is the only internal storage for tracking selected indices.  All properties refer to this same list.</summary>
 		private List<int> _listSelectedIndices=new List<int>();
-		private Color _colorSelectedBack=Color.FromArgb(186,199,219);//#BAC7DB, grid default was Silver: C0C0C0 (192 gray)
-		private Color _colorBack=Color.White;
 		#endregion Fields - Private for Properties
 
 		#region Constructors
@@ -161,32 +160,6 @@ namespace OpenDental.UI {
 		#endregion Properties - Public Browsable
 
 		#region Properties - Public not Browsable
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		///Sets the background color for the entire listbox.
-		public Color ColorBack{
-			get{
-				return _colorBack;
-			}
-			set{
-				_colorBack=value;
-				Invalidate();
-			}
-		}
-
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		///Sets the highlight color for the selected item in that listbox.
-		public Color ColorSelectedBack{
-			get{
-				return _colorSelectedBack;
-			}
-			set{
-				_colorSelectedBack=value;
-				Invalidate();
-			}
-		}
-
 		///<summary>This is the list of Items to show.</summary>
 		[Browsable(false)]
 		//[Description("This is the list of Items to show.")]
@@ -390,8 +363,7 @@ namespace OpenDental.UI {
 			g.Clear(Color.White);
 			//we must ignore the Font because of accumulated rounding errors.
 			using Font font=new Font(FontFamily.GenericSansSerif,LayoutManager.ScaleFontODZoom(8.25f));
-			//_heightLine=(int)Math.Ceiling(font.GetHeight()+1);//bottoms of characters were getting cut off in rare cases due to font rounding.
-			_heightLine=(int)Math.Ceiling(LayoutManager.ScaleMS(font.GetHeight()))+1;//bottoms of characters were getting cut off in rare cases due to font rounding.
+			_heightLine=(int)Math.Ceiling(font.GetHeight()+1);//bottoms of characters were getting cut off in rare cases due to font rounding.
 			if(DesignMode){
 				if(_itemStrings==null || _itemStrings.Length==0){
 					g.DrawString(this.Name,font,Brushes.Black,2,2);
@@ -443,13 +415,10 @@ namespace OpenDental.UI {
 					isSelected=true;
 				}
 				if(isSelected) { //Draw the selected index with gray background
-					g.FillRectangle(new SolidBrush(_colorSelectedBack),new Rectangle(2,(int)((i-_indexTopShowing)*_heightLine)+2,this.Width-4,(int)_heightLine));
+					g.FillRectangle(_brushSelectedBack,new Rectangle(2,(int)((i-_indexTopShowing)*_heightLine)+2,this.Width-4,(int)_heightLine));
 				}
 				else if(_hoverIndex==i) { //Draw the hovered index with a light blue background (only when being moused over)
 					g.FillRectangle(_brushHover,new Rectangle(2,(int)((i-_indexTopShowing)*_heightLine)+2,this.Width-4,(int)_heightLine));
-				}
-				else if(Enabled){//normal colorBack, usually white
-					g.FillRectangle(new SolidBrush(_colorBack),new Rectangle(2,(int)((i-_indexTopShowing)*_heightLine)+2,this.Width-4,(int)_heightLine));
 				}
 				Rectangle rectangle=new Rectangle(2,(int)((i-_indexTopShowing)*_heightLine)+2,Width-2,(int)_heightLine);
 				g.DrawString(Items.GetTextShowingAt(i),font,brushText,rectangle);

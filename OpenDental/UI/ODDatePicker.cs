@@ -40,7 +40,7 @@ namespace OpenDental.UI {
 		[Category("OD")]
 		[DefaultValue(EnumCalendarLocation.Below)]
 		[Description("Location where calendar appears relative to the date box.")]
-		public EnumCalendarLocation CalendarLocation {//deprecate this
+		public EnumCalendarLocation CalendarLocation {
 			get {
 				return _calendarLocation;
 			}
@@ -54,7 +54,7 @@ namespace OpenDental.UI {
 		[Category("OD")]
 		[DefaultValue(typeof(Point),"0,0")]
 		[Description("Allows adustment of the calendar location.  Starting location is based on the CalendarLocation property.")]
-		public Point AdjustCalendarLocation {//deprecate this
+		public Point AdjustCalendarLocation {
 			get {
 				return _pointAdjustCalendarLoc;
 			}
@@ -68,7 +68,7 @@ namespace OpenDental.UI {
 		[Category("OD")]
 		[DefaultValue(true)]
 		[Description("Set whether the calendar will be hidden when leaving focus from the control.")]
-		public bool HideCalendarOnLeave {//deprecate this
+		public bool HideCalendarOnLeave {
 			get {
 				return _hideCalendarOnLeave;
 			}
@@ -81,7 +81,7 @@ namespace OpenDental.UI {
 		#region Properties - Not Browsable
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public DateTime DefaultDateTime {//deprecate this
+		public DateTime DefaultDateTime {
 			get {
 				return _dateTimeDefault;
 			}
@@ -96,7 +96,7 @@ namespace OpenDental.UI {
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int DateBoxWidth {//deprecate this
+		public int DateBoxWidth {
 			get {
 				return textDate.Width;
 			}
@@ -104,7 +104,7 @@ namespace OpenDental.UI {
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public Point DateBoxLocation {//deprecate this
+		public Point DateBoxLocation {
 			get {
 				return textDate.Location;
 			}
@@ -122,15 +122,15 @@ namespace OpenDental.UI {
 
 		#region Events - Public Raise
 		///<summary>Event is fired when the calendar is closed.</summary>
-		public event EventHandler CalendarClosed=null;//deprecate
+		public event EventHandler CalendarClosed=null;
 		///<summary>Event is fired when the calendar is opened.</summary>
-		public event EventHandler CalendarOpened=null;//deprecate
+		public event EventHandler CalendarOpened=null;
 		///<summary>Event is fired when either calendar has made a selection.</summary>
 		public event EventHandler CalendarSelectionChanged=null;
 		///<summary>Event is fired when the text in textDate changes.</summary>
-		public event EventHandler DateTextChanged=null;//deprecate either this or the event above.
+		public event EventHandler DateTextChanged=null;
 		///<summary>Hiding Control.Leave because the Leave event is fired whenever the user clicks on the calendar. This control will fire this Leave event when the user truly leaves this control.</summary>
-		public new event EventHandler Leave;//deprecate?
+		public new event EventHandler Leave;
 		#endregion Events - Public Raise
 
 		#region Enumerations
@@ -241,11 +241,21 @@ namespace OpenDental.UI {
 		#endregion Methods - Event Handlers
 
 		#region Methods
-		public DateTime GetDateTime() {//good
+		public DateTime GetDateTime() {
 			return PIn.Date(textDate.Text);
 		}
 
-		public void SetDateTime(DateTime dateTime) {//good
+		// allows pulling the masked date, if date is masked.
+		public string GetTextDate() {
+			return textDate.Text;
+		}
+
+		//allow the date to show the masked value rather than actual date
+		public void SetMaskedDate(string maskedDate) {
+			textDate.Text=maskedDate;
+		}
+
+		public void SetDateTime(DateTime dateTime) {
 			if(dateTime==DateTime.MinValue) {
 				textDate.Text="";
 			}

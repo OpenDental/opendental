@@ -25,7 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEServicesPatientPortal));
 			this.label37 = new System.Windows.Forms.Label();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.label5 = new System.Windows.Forms.Label();
 			this.groupBox4 = new OpenDental.UI.GroupBox();
 			this.comboPPClinicUrl = new OpenDental.UI.ComboBoxClinicPicker();
@@ -48,6 +48,7 @@ namespace OpenDental{
 			this.label1 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
 			this.textPatientFacingUrlPortal = new System.Windows.Forms.TextBox();
+			this.butCancel = new OpenDental.UI.Button();
 			this.groupBox4.SuspendLayout();
 			this.groupBoxNotification.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -60,22 +61,22 @@ namespace OpenDental{
 			this.label37.Size = new System.Drawing.Size(100, 23);
 			this.label37.TabIndex = 0;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(475, 586);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 23);
-			this.butSave.TabIndex = 500;
-			this.butSave.Text = "&Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(392, 589);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 23);
+			this.butOK.TabIndex = 500;
+			this.butOK.Text = "OK";
+			this.butOK.UseVisualStyleBackColor = true;
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// label5
 			// 
 			this.label5.Location = new System.Drawing.Point(12, 555);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(536, 18);
+			this.label5.Size = new System.Drawing.Size(536, 32);
 			this.label5.TabIndex = 502;
 			this.label5.Text = "All setup for Patient Portal Invites is now done in eServices Automated Messaging" +
     ".";
@@ -143,9 +144,9 @@ namespace OpenDental{
 			// 
 			this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.label3.Location = new System.Drawing.Point(15, 21);
+			this.label3.Location = new System.Drawing.Point(15, 27);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(504, 48);
+			this.label3.Size = new System.Drawing.Size(504, 30);
 			this.label3.TabIndex = 45;
 			this.label3.Text = resources.GetString("label3.Text");
 			// 
@@ -166,7 +167,7 @@ namespace OpenDental{
 			// 
 			// butEditWebMailNotificationBody
 			// 
-			this.butEditWebMailNotificationBody.Location = new System.Drawing.Point(435, 226);
+			this.butEditWebMailNotificationBody.Location = new System.Drawing.Point(449, 220);
 			this.butEditWebMailNotificationBody.Name = "butEditWebMailNotificationBody";
 			this.butEditWebMailNotificationBody.Size = new System.Drawing.Size(70, 20);
 			this.butEditWebMailNotificationBody.TabIndex = 320;
@@ -177,7 +178,7 @@ namespace OpenDental{
 			// browserWebMailNotificatonBody
 			// 
 			this.browserWebMailNotificatonBody.AllowWebBrowserDrop = false;
-			this.browserWebMailNotificatonBody.Location = new System.Drawing.Point(79, 126);
+			this.browserWebMailNotificatonBody.Location = new System.Drawing.Point(93, 120);
 			this.browserWebMailNotificatonBody.MinimumSize = new System.Drawing.Size(20, 20);
 			this.browserWebMailNotificatonBody.Name = "browserWebMailNotificatonBody";
 			this.browserWebMailNotificatonBody.Size = new System.Drawing.Size(426, 94);
@@ -190,15 +191,15 @@ namespace OpenDental{
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label9.Location = new System.Drawing.Point(15, 16);
 			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(504, 63);
+			this.label9.Size = new System.Drawing.Size(504, 56);
 			this.label9.TabIndex = 52;
 			this.label9.Text = resources.GetString("label9.Text");
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(76, 105);
+			this.label7.Location = new System.Drawing.Point(90, 100);
 			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(458, 16);
+			this.label7.Size = new System.Drawing.Size(440, 15);
 			this.label7.TabIndex = 48;
 			this.label7.Text = "[URL] will be replaced with the value of \'Patient Facing URL\' as entered above.";
 			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -207,25 +208,25 @@ namespace OpenDental{
 			// 
 			this.textBoxNotificationSubject.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxNotificationSubject.Location = new System.Drawing.Point(79, 81);
+			this.textBoxNotificationSubject.Location = new System.Drawing.Point(93, 75);
 			this.textBoxNotificationSubject.Name = "textBoxNotificationSubject";
 			this.textBoxNotificationSubject.Size = new System.Drawing.Size(426, 20);
 			this.textBoxNotificationSubject.TabIndex = 45;
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(2, 126);
+			this.label6.Location = new System.Drawing.Point(12, 120);
 			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(77, 17);
+			this.label6.Size = new System.Drawing.Size(75, 17);
 			this.label6.TabIndex = 47;
 			this.label6.Text = "Body";
 			this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(2, 82);
+			this.label4.Location = new System.Drawing.Point(9, 76);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(77, 17);
+			this.label4.Size = new System.Drawing.Size(78, 17);
 			this.label4.TabIndex = 44;
 			this.label4.Text = "Subject";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -266,9 +267,9 @@ namespace OpenDental{
 			// label1
 			// 
 			this.label1.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.label1.Location = new System.Drawing.Point(15, 21);
+			this.label1.Location = new System.Drawing.Point(15, 24);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(504, 33);
+			this.label1.Size = new System.Drawing.Size(504, 30);
 			this.label1.TabIndex = 51;
 			this.label1.Text = "This will be the link that patients will use to reach your office\'s patient porta" +
     "l. This is also the URL that will be on the printout given to patients.";
@@ -292,12 +293,24 @@ namespace OpenDental{
 			this.textPatientFacingUrlPortal.Size = new System.Drawing.Size(501, 20);
 			this.textPatientFacingUrlPortal.TabIndex = 50;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(473, 589);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 501;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// FormEServicesPatientPortal
 			// 
-			this.ClientSize = new System.Drawing.Size(562, 618);
+			this.ClientSize = new System.Drawing.Size(562, 627);
 			this.Controls.Add(this.label5);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.groupBox4);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.groupBoxNotification);
 			this.Controls.Add(this.groupBox1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -325,7 +338,7 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textPatientFacingUrlPortal;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label9;
-		private UI.Button butSave;
+		private UI.Button butOK;
 		private System.Windows.Forms.Label label37;
 		private OpenDental.UI.GroupBox groupBox4;
 		private System.Windows.Forms.TextBox textHostedUrlPortal;
@@ -336,6 +349,7 @@ namespace OpenDental{
 		private UI.ComboBoxClinicPicker comboPPClinicUrl;
 		private UI.Button butEditWebMailNotificationBody;
 		private System.Windows.Forms.WebBrowser browserWebMailNotificatonBody;
+		private UI.Button butCancel;
 		private UI.Button butCustomUrl;
 		private System.Windows.Forms.Label label5;
 		private UI.Button butUseHosted;

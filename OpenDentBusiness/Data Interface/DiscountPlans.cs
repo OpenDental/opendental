@@ -32,20 +32,6 @@ namespace OpenDentBusiness{
 			return Crud.DiscountPlanCrud.SelectMany(command);
 		}
 
-		///<summary>Returns a list of DiscountPlans for a list of passed in DiscountPlanNums.</summary>
-		public static List<DiscountPlan> GetDiscountPlansByPlanNum(List<long> listDiscountPlanNums){
-			if(listDiscountPlanNums.Count==0) {
-				return new List<DiscountPlan>();
-			}
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<DiscountPlan>>(MethodBase.GetCurrentMethod(),listDiscountPlanNums);
-			}
-			string command=@$"SELECT * 
-												FROM discountplan
-												WHERE discountplan.DiscountPlanNum IN ({string.Join(",",listDiscountPlanNums)}) ";
-			return Crud.DiscountPlanCrud.SelectMany(command);
-		}
-
 		///<summary>Returns a list of discountplans for a list of passed in patnums. There is no guarantee that a patnum will have a discount plan.</summary>
 		public static List<DiscountPlan> GetForPats(List<long> listPatNums) {
 			if(listPatNums.Count<1) {
@@ -202,42 +188,12 @@ namespace OpenDentBusiness{
 			}
 			List<DiscountPlanProc> listDiscountPlanProcs=new List<DiscountPlanProc>();
 			List<Procedure> listHistProcs=new List<Procedure>();
-			List<double> listAnnualTots=Adjustments.GetAnnualTotalsForPatByDiscountPlan(discountPlanSub.PatNum,discountPlanSub.DateEffective,discountPlanSub.DateTerm,discountPlan,listProcs.Max(x=>x.ProcDate),listAdjustments:listAdjustments);
+			List<double> listAnnualTots=Adjustments.GetAnnualTotalsForPatByDiscountPlanSub(discountPlanSub,discountPlan,listProcs.Max(x=>x.ProcDate),listAdjustments:listAdjustments);
 			for(int i=0;i<listProcs.Count;i++) {
-				int annualBucketIndex=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub.DateEffective,discountPlanSub.DateTerm,listProcs[i].ProcDate);
+				int annualBucketIndex=Adjustments.GetAnnualMaxSegmentIndex(discountPlanSub,listProcs[i].ProcDate);
 				double discountPlanAmt=0;
 				if(annualBucketIndex!=-1 && listAnnualTots.Count > annualBucketIndex) {
-					discountPlanAmt=Procedures.GetDiscountAmountForDiscountPlanAndValidate(listProcs[i],discountPlanSub:discountPlanSub,discountPlan:discountPlan,runningTotal:listAnnualTots[annualBucketIndex],listAddHistProcs:listHistProcs);
-					listAnnualTots[annualBucketIndex]+=discountPlanAmt;
-				}
-				listDiscountPlanProcs.Add(new DiscountPlanProc() {
-					DiscountPlanAmt=discountPlanAmt,
-					doesExceedAnnualMax=Procedures.ExceedsAnnualMax,
-					doesExceedFreqLimit=Procedures.ExceedsFreqLimitation,
-					ProcNum=listProcs[i].ProcNum,
-				});
-				listHistProcs.Add(listProcs[i]);
-			}
-			return listDiscountPlanProcs;
-		}
-
-		///<summary>Returns a DiscountPlanProc object for every procedure passed in. It is assumed that all procedures are for the same patient. Passing in an empty list of Adjustments will assume
-		///no prior adjustments of the discountPlan.DefNum had been applied.</summary>
-		public static List<DiscountPlanProc> GetDiscountPlanProcEstimate(List<Procedure> listProcs,long patNum,DateTime dateEffective,DateTime dateTerm,DiscountPlan discountPlan=null,List<Adjustment> listAdjustments=null) {
-			if(listProcs.IsNullOrEmpty() || discountPlan==null) {
-				return new List<DiscountPlanProc>();
-			}
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {//Remoting role check here to reduce round-trips to the server.
-				return Meth.GetObject<List<DiscountPlanProc>>(MethodBase.GetCurrentMethod(),listProcs,patNum,dateEffective,dateTerm,discountPlan,listAdjustments);
-			}
-			List<DiscountPlanProc> listDiscountPlanProcs=new List<DiscountPlanProc>();
-			List<Procedure> listHistProcs=new List<Procedure>();
-			List<double> listAnnualTots=Adjustments.GetAnnualTotalsForPatByDiscountPlan(patNum,dateEffective,dateTerm,discountPlan,listProcs.Max(x=>x.ProcDate),listAdjustments:listAdjustments);
-			for(int i=0;i<listProcs.Count;i++) {
-				int annualBucketIndex=Adjustments.GetAnnualMaxSegmentIndex(dateEffective,dateTerm,listProcs[i].ProcDate);
-				double discountPlanAmt=0;
-				if(annualBucketIndex!=-1 && listAnnualTots.Count > annualBucketIndex) {
-					discountPlanAmt=Procedures.GetDiscountAmountForDiscountPlanEstimate(listProcs[i],patNum,dateEffective,dateTerm,discountPlan:discountPlan,runningTotal:listAnnualTots[annualBucketIndex],listAddHistProcs:listHistProcs);
+					discountPlanAmt=Procedures.GetDiscountAmountForDiscountPlan(listProcs[i], discountPlanSub:discountPlanSub,discountPlan:discountPlan,runningTotal:listAnnualTots[annualBucketIndex],listAddHistProcs:listHistProcs);
 					listAnnualTots[annualBucketIndex]+=discountPlanAmt;
 				}
 				listDiscountPlanProcs.Add(new DiscountPlanProc() {
@@ -284,12 +240,15 @@ namespace OpenDentBusiness{
 		///Returns empty string if there are no conflicts, new line delimited list of proc codes if there are ANY frequency limitations exceeded. 
 		///Optionally add procedures to the list of historic procedures. Throws exceptions. listProcs should not contain any completed procs, 
 		///as those get pulled from the db.</summary>
-		public static string CheckDiscountFrequencyAndValidateDiscountPlanSub(List<Procedure> listProcs,long patNum,DateTime aptDateTime,DiscountPlanSub discountPlanSub=null,
+		public static string CheckDiscountFrequency(List<Procedure> listProcs,long patNum,DateTime aptDateTime,DiscountPlanSub discountPlanSub=null,
 			List<Procedure> listAddHistProcs=null)
 		{
 			//Doesnt need a Remoting Role Check. No call to DB
 			//Note: If the passed in list contains procs in categories that have already exceeded limits, then this method will
 			//return 0;
+			if(listProcs.IsNullOrEmpty()) {
+				return "";
+			}
 			Patient pat=Patients.GetPat(patNum);
 			if(pat==null) {
 				throw new ArgumentException("Patient not found in database.",nameof(patNum));
@@ -297,6 +256,7 @@ namespace OpenDentBusiness{
 			if(aptDateTime==null) {
 				throw new ArgumentException("Appointment Date not present.",nameof(aptDateTime));
 			}
+			string frequencyConflicts="";
 			if(discountPlanSub==null) {
 				discountPlanSub=DiscountPlanSubs.GetSubForPat(pat.PatNum);
 			}
@@ -308,32 +268,19 @@ namespace OpenDentBusiness{
 			if(discountPlan==null) {
 				return "";
 			}
-			return CheckDiscountFrequency(listProcs,pat.PatNum,aptDateTime,discountPlanSub.DateEffective,discountPlanSub.DateTerm,discountPlan,listAddHistProcs);
-		}
-
-		///<summary>Checks for frequency conflicts with the passed-in list of procedures.
-		///Returns empty string if there are no conflicts, new line delimited list of proc codes if there are ANY frequency limitations exceeded. 
-		///Optionally add procedures to the list of historic procedures. Throws exceptions. listProcs should not contain any completed procs, 
-		///as those get pulled from the db.</summary>
-		public static string CheckDiscountFrequency(List<Procedure> listProcs,long patNum,DateTime aptDateTime,DateTime dateEffective,DateTime dateTerm,DiscountPlan discountPlan,
-			List<Procedure> listAddHistProcs=null)
-		{
 			//if aptDateTime out of Discount plan range, bounce outta this bad boyo with no conflict/
-			if((aptDateTime<dateEffective) || (dateTerm.Year>=1880 && aptDateTime>dateTerm)) {
-				return "";
-			}
-			if(listProcs.IsNullOrEmpty()) {
+			if(!discountPlanSub.IsValidForDate(aptDateTime)) {
 				return "";
 			}
 			//get completed procs for date range of discount plan
-			DateTime termDate=dateTerm;
+			DateTime termDate=discountPlanSub.DateTerm;
 			if(termDate==DateTime.MinValue) {
 				termDate=DateTime.MaxValue;
 			}
 			List<Procedure> listSortedProcs=Procedures.SortListByTreatPlanPriority(listProcs).ToList();
 			listSortedProcs.RemoveAll(x => x.ProcStatus==ProcStat.C);
 			listSortedProcs.InsertRange(0,listProcs.FindAll(x => x.ProcStatus==ProcStat.C));
-			List<Procedure> listHistProcs=Procedures.GetCompletedForDateRange(dateEffective,termDate,listPatNums:ListTools.FromSingle(patNum));
+			List<Procedure> listHistProcs=Procedures.GetCompletedForDateRange(discountPlanSub.DateEffective,termDate,listPatNums:ListTools.FromSingle(pat.PatNum));
 			if(listAddHistProcs!=null) {
 				listHistProcs.AddRange(listAddHistProcs);
 			}
@@ -346,13 +293,12 @@ namespace OpenDentBusiness{
 				out List<ProcedureCode> listPerioCodes,
 				out List<ProcedureCode> listLimitedExamCodes,
 				out List<ProcedureCode> listPACodes);
-			string frequencyConflicts="";
 			//Iterates over the passed in list of procedures, and checks if adding them will exceed frequency limitations.
 			for(int i=0;i<listSortedProcs.Count;i++) {
 				if(!listAllCodes.Contains(listSortedProcs[i].CodeNum)) {
 					continue;
 				}
-				string frequencyConflict=HasMetDiscountFrequencyLimitation(listSortedProcs[i],discountPlan,dateEffective,dateTerm,listHistProcs,listExamCodes,listXrayCodes,listProphyCodes,
+				string frequencyConflict=HasMetDiscountFrequencyLimitation(listSortedProcs[i],discountPlan,discountPlanSub,listHistProcs,listExamCodes,listXrayCodes,listProphyCodes,
 					listFluorideCodes,listPerioCodes,listLimitedExamCodes,listPACodes);
 				if(!frequencyConflict.IsNullOrEmpty()) {
 					frequencyConflicts+=frequencyConflict+"\r\n";
@@ -364,18 +310,18 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns an empty string if there is no limitation met for the given proc, otherwise the CodeNum is returned.</summary>
-		public static string HasMetDiscountFrequencyLimitation(Procedure proc,DiscountPlan discountPlan,DateTime dateEffective,DateTime dateTerm,
+		public static string HasMetDiscountFrequencyLimitation(Procedure proc,DiscountPlan discountPlan,DiscountPlanSub discountPlanSub,
 			List<Procedure> listProcHist,List<ProcedureCode> listExamCodes,List<ProcedureCode> listXrayCodes,List<ProcedureCode> listProphyCodes,
 			List<ProcedureCode> listFluorideCodes,List<ProcedureCode> listPerioCodes,List<ProcedureCode> listLimitedExamCodes,List<ProcedureCode> listPACodes)
 		{
 			//Doesnt need a Remoting Role Check. No call to DB
-			if(HasMetFrequencyLimitForCategory(proc,listProcHist,listExamCodes,discountPlan.ExamFreqLimit,dateEffective,dateTerm)
-				|| HasMetFrequencyLimitForCategory(proc,listProcHist,listXrayCodes,discountPlan.XrayFreqLimit,dateEffective,dateTerm)
-				|| HasMetFrequencyLimitForCategory(proc,listProcHist,listProphyCodes,discountPlan.ProphyFreqLimit,dateEffective,dateTerm)
-				|| HasMetFrequencyLimitForCategory(proc,listProcHist,listFluorideCodes,discountPlan.FluorideFreqLimit,dateEffective,dateTerm)
-				|| HasMetFrequencyLimitForCategory(proc,listProcHist,listPerioCodes,discountPlan.PerioFreqLimit,dateEffective,dateTerm)
-				|| HasMetFrequencyLimitForCategory(proc,listProcHist,listLimitedExamCodes,discountPlan.LimitedExamFreqLimit,dateEffective,dateTerm)
-				|| HasMetFrequencyLimitForCategory(proc,listProcHist,listPACodes,discountPlan.PAFreqLimit,dateEffective,dateTerm)
+			if(HasMetFrequencyLimitForCategory(proc,listProcHist,listExamCodes,discountPlan.ExamFreqLimit,discountPlanSub)
+				|| HasMetFrequencyLimitForCategory(proc,listProcHist,listXrayCodes,discountPlan.XrayFreqLimit,discountPlanSub)
+				|| HasMetFrequencyLimitForCategory(proc,listProcHist,listProphyCodes,discountPlan.ProphyFreqLimit,discountPlanSub)
+				|| HasMetFrequencyLimitForCategory(proc,listProcHist,listFluorideCodes,discountPlan.FluorideFreqLimit,discountPlanSub)
+				|| HasMetFrequencyLimitForCategory(proc,listProcHist,listPerioCodes,discountPlan.PerioFreqLimit,discountPlanSub)
+				|| HasMetFrequencyLimitForCategory(proc,listProcHist,listLimitedExamCodes,discountPlan.LimitedExamFreqLimit,discountPlanSub)
+				|| HasMetFrequencyLimitForCategory(proc,listProcHist,listPACodes,discountPlan.PAFreqLimit,discountPlanSub)
 				) 
 			{
 				return ProcedureCodes.GetProcCode(proc.CodeNum).ProcCode;
@@ -384,12 +330,12 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns false when procCode is not in listCodesForCategory, or when procCode would not exceed the frequencyLimit for the passed in listCodesForCategory. Returns true otherwise</summary>
-		public static bool HasMetFrequencyLimitForCategory(Procedure proc,List<Procedure> listProcHist,List<ProcedureCode> listCodesForCategory,int frequencyLimit,DateTime dateEffective,DateTime dateTerm) {
+		public static bool HasMetFrequencyLimitForCategory(Procedure proc,List<Procedure> listProcHist,List<ProcedureCode> listCodesForCategory,int frequencyLimit,DiscountPlanSub discountPlanSub) {
 			//Doesnt need a Remoting Role Check. No call to DB
 			if(frequencyLimit==-1 || !listCodesForCategory.Any(x=>x.CodeNum==proc.CodeNum)) {
 				return false;
 			}
-			if(!DiscountPlanSubs.GetAnnualDateRangeSegmentForGivenDate(proc.ProcDate,dateEffective,dateTerm,out DateTime startDate,out DateTime stopDate)) {
+			if(!DiscountPlanSubs.GetAnnualDateRangeSegmentForGivenDate(discountPlanSub,proc.ProcDate,out DateTime startDate,out DateTime stopDate)) {
 				return false;
 			}
 			int count=listProcHist.Count(x=> listCodesForCategory.Select(y => y.CodeNum).Contains(x.CodeNum) && x.ProcDate >= startDate && x.ProcDate <= stopDate);

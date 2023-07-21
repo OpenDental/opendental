@@ -59,9 +59,6 @@ namespace OpenDentBusiness{
 			return _chartViewCache.GetTableFromCache(doRefreshCache);
 		}
 
-		public static void ClearCache() {
-			_chartViewCache.ClearCache();
-		}
 		#endregion
 
 		///<summary></summary>

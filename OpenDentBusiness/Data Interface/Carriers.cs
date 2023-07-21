@@ -204,15 +204,15 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Surround with try/catch.</summary>
-		public static void Update(Carrier carrier,Carrier carrierOld) {
-			Update(carrier,carrierOld,Security.CurUser.UserNum);
+		public static void Update(Carrier carrier,Carrier oldCarrier) {
+			Update(carrier,oldCarrier,Security.CurUser.UserNum);
 		}
 
 		///<summary>Surround with try/catch.
 		///No need to pass in usernum, it is set before the remoting role and passed in for logging.</summary>
-		public static void Update(Carrier carrier,Carrier carrierOld,long userNum) {
+		public static void Update(Carrier carrier,Carrier oldCarrier,long userNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),carrier,carrierOld,userNum);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),carrier,oldCarrier,userNum);
 				return;
 			}
 			string command;
@@ -240,8 +240,8 @@ namespace OpenDentBusiness{
 					}
 				}
 			}
-			Crud.CarrierCrud.Update(carrier,carrierOld);
-			InsEditLogs.MakeLogEntry(carrier,carrierOld,InsEditLogType.Carrier,userNum);
+			Crud.CarrierCrud.Update(carrier,oldCarrier);
+			InsEditLogs.MakeLogEntry(carrier,oldCarrier,InsEditLogType.Carrier,userNum);
 		}
 
 		///<summary>Surround with try/catch if possibly adding a Canadian carrier.</summary>
@@ -278,16 +278,16 @@ namespace OpenDentBusiness{
 
 		///<summary>Surround with try/catch.  If there are any dependencies, then this will throw an exception.  
 		///This is currently only called from FormCarrierEdit.</summary>
-		public static void Delete(Carrier carrier) {
+		public static void Delete(Carrier Cur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),carrier);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),Cur);
 				return;
 			}
 			//look for dependencies in insplan table.
 			string command="SELECT insplan.PlanNum,CONCAT(CONCAT(LName,', '),FName) FROM insplan "
 				+"LEFT JOIN inssub ON insplan.PlanNum=inssub.PlanNum "
 				+"LEFT JOIN patient ON inssub.Subscriber=patient.PatNum " 
-				+"WHERE insplan.CarrierNum = "+POut.Long(carrier.CarrierNum)+" "
+				+"WHERE insplan.CarrierNum = "+POut.Long(Cur.CarrierNum)+" "
 				+"ORDER BY LName,FName";
 			DataTable table=Db.GetTable(command);
 			string strInUse;
@@ -302,8 +302,8 @@ namespace OpenDentBusiness{
 				throw new ApplicationException(Lans.g("Carriers","Not allowed to delete carrier because it is in use.  Subscribers using this carrier include ")+strInUse);
 			}
 			//look for dependencies in etrans table.
-			command="SELECT DateTimeTrans FROM etrans WHERE CarrierNum="+POut.Long(carrier.CarrierNum)
-				+" OR CarrierNum2="+POut.Long(carrier.CarrierNum);
+			command="SELECT DateTimeTrans FROM etrans WHERE CarrierNum="+POut.Long(Cur.CarrierNum)
+				+" OR CarrierNum2="+POut.Long(Cur.CarrierNum);
 			table=Db.GetTable(command);
 			if(table.Rows.Count>0){
 				strInUse="";
@@ -315,28 +315,28 @@ namespace OpenDentBusiness{
 				}
 				throw new ApplicationException(Lans.g("Carriers","Not allowed to delete carrier because it is in use in the etrans table.  Dates of claim sent history include ")+strInUse);
 			}
-			command="DELETE from carrier WHERE CarrierNum = "+POut.Long(carrier.CarrierNum);
+			command="DELETE from carrier WHERE CarrierNum = "+POut.Long(Cur.CarrierNum);
 			Db.NonQ(command);
 			//Security.CurUser.UserNum gets set on MT by the DtoProcessor so it matches the user from the client WS.
-			InsEditLogs.MakeLogEntry(null,carrier,InsEditLogType.Carrier,Security.CurUser.UserNum);
+			InsEditLogs.MakeLogEntry(null,Cur,InsEditLogType.Carrier,Security.CurUser.UserNum);
 		}
 
 		///<summary>Returns a list of insplans that are dependent on the Cur carrier. Used to display in carrier edit.</summary>
-		public static List<string> DependentPlans(Carrier carrier){
+		public static List<string> DependentPlans(Carrier Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<string>>(MethodBase.GetCurrentMethod(),carrier);
+				return Meth.GetObject<List<string>>(MethodBase.GetCurrentMethod(),Cur);
 			}
 			string command="SELECT CONCAT(CONCAT(LName,', '),FName) FROM patient,insplan,inssub" 
 				+" WHERE patient.PatNum=inssub.Subscriber"
 				+" AND insplan.PlanNum=inssub.PlanNum"
-				+" AND insplan.CarrierNum = '"+POut.Long(carrier.CarrierNum)+"'"
+				+" AND insplan.CarrierNum = '"+POut.Long(Cur.CarrierNum)+"'"
 				+" ORDER BY LName,FName";
 			DataTable table=Db.GetTable(command);
-			List<string> listStrings=new List<string>();
+			List<string> retStr=new List<string>();
 			for(int i=0;i<table.Rows.Count;i++) {
-				listStrings.Add(PIn.String(table.Rows[i][0].ToString()));
+				retStr.Add(PIn.String(table.Rows[i][0].ToString()));
 			}
-			return listStrings;
+			return retStr;
 		}
 
 		///<summary>Gets the name of a carrier based on the carrierNum.  
@@ -377,16 +377,16 @@ namespace OpenDentBusiness{
 		///This also refreshes the list if necessary, so it will work even if the list has not been refreshed recently.</summary>
 		public static Carrier GetCarrier(long carrierNum) {
 			//No need to check MiddleTierRole; no call to db.
-			Carrier carrier=new Carrier() { CarrierName="" };
+			Carrier retVal=new Carrier() { CarrierName="" };
 			//This is an uncommon pre-check because places throughout the program explicitly did not correctly send out a cache refresh signal.
 			if(!GetContainsKey(carrierNum)) {
 				RefreshCache();
 			}
 			ODException.SwallowAnyException(() => {
-				carrier=GetOne(carrierNum);
+				retVal=GetOne(carrierNum);
 			});
 			//New and empty carrier can only happen if corrupted.
-			return carrier;
+			return retVal;
 		}
 
 		private static string GetSecurityLogMessage(Carrier carrier,Carrier carrierOld) {
@@ -427,7 +427,7 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<Carrier>(MethodBase.GetCurrentMethod(),carrier,carrierOld);
 			}
-			Carrier carrierRetVal=carrier.Copy();
+			Carrier retVal=carrier.Copy();
 			string command="SELECT CarrierNum,Phone FROM carrier WHERE " 
 				+"CarrierName = '"    +POut.String(carrier.CarrierName)+"' "
 				+"AND Address = '"    +POut.String(carrier.Address)+"' "
@@ -452,8 +452,8 @@ namespace OpenDentBusiness{
 				string phone=PIn.String(table.Rows[i]["Phone"].ToString());
 				if(StringTools.StripNonDigits(phone)==carrierPhoneStripped){
 					//A matching carrier was found in the database, so we will use it.
-					carrierRetVal.CarrierNum=PIn.Long(table.Rows[i][0].ToString());
-					return carrierRetVal;
+					retVal.CarrierNum=PIn.Long(table.Rows[i][0].ToString());
+					return retVal;
 				}
 			}
 			//No match found.  Decide what to do.  Usually add carrier.--------------------------------------------------------------
@@ -465,9 +465,9 @@ namespace OpenDentBusiness{
 			carrier.SecUserNumEntry=Security.CurUser.UserNum;
 			Insert(carrier,carrierOld); //insert function takes care of logging.
 			string message=GetSecurityLogMessage(carrier,carrierOld);
-			SecurityLogs.MakeLogEntry(EnumPermType.CarrierCreate,0,message);
-			carrierRetVal.CarrierNum=carrier.CarrierNum;
-			return carrierRetVal;
+			SecurityLogs.MakeLogEntry(Permissions.CarrierCreate,0,message);
+			retVal.CarrierNum=carrier.CarrierNum;
+			return retVal;
 		}
 
 		///<summary>Returns true if all fields for one carrier match all fields for another carrier.  
@@ -522,9 +522,9 @@ namespace OpenDentBusiness{
 			string strCarrierNums=string.Join(",",listCarrierNumsToCombine.Select(x => POut.Long(x)));
 			//Create InsEditLogs============================================================================================================
 			//Get all of the related insplan objects from the database.
-			List<InsPlan> listInsPlans=InsPlans.GetAllByCarrierNums(listCarrierNumsToCombine.ToArray());
+			List<InsPlan> listInsPlan=InsPlans.GetAllByCarrierNums(listCarrierNumsToCombine.ToArray());
 			//Create an InsEditLog out of each InsPlan returned that will be inserted into the database later.
-			List<InsEditLog> listInsEditLogs=listInsPlans.Select(x => 
+			List<InsEditLog> listInsEditLogs=listInsPlan.Select(x => 
 				InsEditLogs.MakeLogEntry("CarrierNum",
 					Security.CurUser.UserNum,//Security.CurUser.UserNum gets set on MT by the DtoProcessor so it matches the user from the client WS.
 					POut.Long(x.CarrierNum),
@@ -557,15 +557,13 @@ namespace OpenDentBusiness{
 			Db.NonQ(command);
 			//Make an InsEditLog for each carrier that was just deleted.
 			//Security.CurUser.UserNum gets set on MT by the DtoProcessor so it matches the user from the client WS.
-			for(int i=0;i<listCarriersToCombine.Count;i++){
-				InsEditLogs.MakeLogEntry(null,listCarriersToCombine[i],InsEditLogType.Carrier,Security.CurUser.UserNum);
-			}
+			listCarriersToCombine.ForEach(x => InsEditLogs.MakeLogEntry(null,x,InsEditLogType.Carrier,Security.CurUser.UserNum));
 		}
 
 		///<summary>Used in the FormCarrierCombine window.</summary>
-		public static List<Carrier> GetCarriers(List<long> listCarrierNums) {
+		public static List<Carrier> GetCarriers(List<long> carrierNums) {
 			//No need to check MiddleTierRole; no call to db.
-			return GetWhere(x => listCarrierNums.Contains(x.CarrierNum));
+			return GetWhere(x => carrierNums.Contains(x.CarrierNum));
 		}
 
 		///<summary>If listInsPlans is empty, returns an empty list. Gets all carriers for InsPlans.</summary>
@@ -595,12 +593,12 @@ namespace OpenDentBusiness{
 				.Cast<EtransType>()
 				.ToList();
 			//Get all of the carriers flagged as IsCDA that have had at least one etrans request in the past.
-			string command="SELECT carrier.* "
-				+"FROM carrier "
-				+"INNER JOIN etrans ON carrier.CarrierNum=etrans.CarrierNum "
-				+"AND etrans.Etype IN("+string.Join(",",listEtransRequestTypes.Select(x => POut.Enum(x)))+") "
-				+"WHERE carrier.IsCDA=1 "
-				+"GROUP BY carrier.CarrierNum ";
+			string command=$@"SELECT carrier.* 
+				FROM carrier
+				INNER JOIN etrans ON carrier.CarrierNum=etrans.CarrierNum 
+					AND etrans.Etype IN({string.Join(",",listEtransRequestTypes.Select(x => POut.Enum(x)))})
+				WHERE carrier.IsCDA=1
+				GROUP BY carrier.CarrierNum";
 			return Crud.CarrierCrud.SelectMany(command);
 		}
 
@@ -708,20 +706,6 @@ namespace OpenDentBusiness{
 			}
 			string command="SELECT * FROM carrier WHERE CarrierName='"+POut.String(carrierName)+"'";
 			return Crud.CarrierCrud.SelectOne(command);
-		}
-
-		/// <summary>Returns the list of carriers associated with the given claim. Currently only used by the EDS attachment bridge to fill in data required by the EDS API.</summary>
-		public static List<Carrier> GetForClaim(Claim claim) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Carrier>>(MethodBase.GetCurrentMethod(),claim);
-			}
-			string command="SELECT c.* " +
-				"FROM claimproc cp " +
-				"INNER JOIN insplan p ON cp.PlanNum=p.PlanNum " +
-				"INNER JOIN carrier c ON c.CarrierNum=p.CarrierNum " +
-				"WHERE cp.ClaimNum="+POut.Long(claim.ClaimNum)+" " +
-				"GROUP BY c.CarrierNum";
-			return Crud.CarrierCrud.SelectMany(command);
 		}
 
 		public static bool IsMedicaid(Carrier carrier) {

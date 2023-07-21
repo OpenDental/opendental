@@ -42,14 +42,14 @@ namespace OpenDental{
 		private void FormProviderSetup_Load(object sender, System.EventArgs e) {
 			SetFilterControlsAndAction(() => FillGrid(false),textSearch);
 			//There are two permissions which allow access to this window: Providers and AdminDentalStudents.  SecurityAdmin allows some extra functions.
-			if(!Security.IsAuthorized(EnumPermType.ProviderAlphabetize,true)) {
+			if(!Security.IsAuthorized(Permissions.ProviderAlphabetize,true)) {
 				butAlphabetize.Enabled=false;
 			}
-			if(!Security.IsAuthorized(EnumPermType.ProviderAdd,suppressMessage:true)) {
+			if(!Security.IsAuthorized(Permissions.ProviderAdd,suppressMessage:true)) {
 				butAdd.Enabled=false;
 			}
 			_listProviders=Providers.GetDeepCopy();
-			if(Security.IsAuthorized(EnumPermType.SecurityAdmin,true)){
+			if(Security.IsAuthorized(Permissions.SecurityAdmin,true)){
 				_listUserGroups=UserGroups.GetList();
 				for(int i=0;i<_listUserGroups.Count;i++){
 					comboUserGroup.Items.Add(_listUserGroups[i].Description,_listUserGroups[i]);
@@ -77,10 +77,10 @@ namespace OpenDental{
 				butDown.Visible=false;
 			}
 			checkShowHidden.Checked=PrefC.GetBool(PrefName.EasyHideDentalSchools);
-			if(Security.IsAuthorized(EnumPermType.PatPriProvEdit,DateTime.MinValue,true,true)){
+			if(Security.IsAuthorized(Permissions.PatPriProvEdit,DateTime.MinValue,true,true)){
 				return;
 			}
-			string strToolTip=Lan.g("Security","Not authorized for")+" "+GroupPermissions.GetDesc(EnumPermType.PatPriProvEdit);
+			string strToolTip=Lan.g("Security","Not authorized for")+" "+GroupPermissions.GetDesc(Permissions.PatPriProvEdit);
 			_toolTipPriProvEdit.SetToolTip(butReassign,strToolTip);
 			_toolTipPriProvEdit.SetToolTip(butMovePri,strToolTip);
 		}
@@ -122,18 +122,18 @@ namespace OpenDental{
 		private void FillGrid(bool needsRefresh=true) {
 			if(needsRefresh) {
 				int selectedIndex=comboClass.SelectedIndex;
-				ProgressWin progressOD=new ProgressWin();
+				ProgressOD progressOD=new ProgressOD();
 				progressOD.ActionMain=() => RefreshTable(selectedIndex);
 				progressOD.StartingMessage="Refreshing data...";
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 				if(progressOD.IsCancelled){
 					return;
 				}
 			}
 			List<long> listProvNumsSelected=gridMain.SelectedIndices.OfType<int>().Select(x => ((Provider)gridMain.ListGridRows[x].Tag).ProvNum).ToList();
 			int scroll=gridMain.ScrollValue;
-			int indexSortCol=gridMain.GetSortedByColumnIdx();
-			bool isSortAsc=gridMain.IsSortedAscending();
+			int indexSortCol=gridMain.SortedByColumnIdx;
+			bool isSortAsc=gridMain.SortedIsAscending;
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			if(!PrefC.GetBool(PrefName.EasyHideDentalSchools)) {
@@ -240,7 +240,7 @@ namespace OpenDental{
 		}
 
 		private void butAdd_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ProviderAdd)) {
+			if(!Security.IsAuthorized(Permissions.ProviderAdd)) {
 				return;//Should not be possible, button should be disabled. This is just in case.
 			}
 			using FormProvEdit formProvEdit=new FormProvEdit();
@@ -253,7 +253,7 @@ namespace OpenDental{
 			if(groupDentalSchools.Visible) {
 				//Dental schools do not worry about item orders.
 				if(radioStudents.Checked) {
-					if(!Security.IsAuthorized(EnumPermType.AdminDentalStudents)) {
+					if(!Security.IsAuthorized(Permissions.AdminDentalStudents)) {
 						return;
 					}
 					if(comboClass.SelectedIndex==0) {
@@ -264,7 +264,7 @@ namespace OpenDental{
 					formProvStudentEdit.ProviderStudent.FName=textFirstName.Text;
 					formProvStudentEdit.ProviderStudent.LName=textLastName.Text;
 				}
-				if(radioInstructors.Checked && !Security.IsAuthorized(EnumPermType.AdminDentalInstructors)) {
+				if(radioInstructors.Checked && !Security.IsAuthorized(Permissions.AdminDentalInstructors)) {
 					return;
 				}
 				formProvEdit.ProviderCur.IsInstructor=radioInstructors.Checked;
@@ -293,7 +293,7 @@ namespace OpenDental{
 					return;
 				}
 				provider=formProvEdit.ProviderCur;
-				SecurityLogs.MakeLogEntry(EnumPermType.ProviderAdd,0,"Provider: "+formProvEdit.ProviderCur.Abbr+" added.");
+				SecurityLogs.MakeLogEntry(Permissions.ProviderAdd,0,"Provider: "+formProvEdit.ProviderCur.Abbr+" added.");
 			}
 			else {
 				if(radioStudents.Checked && PrefC.GetLong(PrefName.SecurityGroupForStudents)==0) {
@@ -322,7 +322,7 @@ namespace OpenDental{
 		}
 
 		private void butStudBulkEdit_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.AdminDentalStudents)) {
+			if(!Security.IsAuthorized(Permissions.AdminDentalStudents)) {
 				return;
 			}
 			using FormProvStudentBulkEdit formProvStudentBulkEdit=new FormProvStudentBulkEdit();
@@ -395,13 +395,13 @@ namespace OpenDental{
 			Provider providerSelected=(Provider)gridMain.ListGridRows[e.Row].Tag;
 			if(!PrefC.GetBool(PrefName.EasyHideDentalSchools) && Providers.IsAttachedToUser(providerSelected.ProvNum)) {//Dental schools is turned on and the provider selected is attached to a user.
 				//provSelected could be a student, an instructor, or other provider at this point.
-				if(!providerSelected.IsInstructor && providerSelected.SchoolClassNum!=0 && !Security.IsAuthorized(EnumPermType.AdminDentalStudents)) {//student
+				if(!providerSelected.IsInstructor && providerSelected.SchoolClassNum!=0 && !Security.IsAuthorized(Permissions.AdminDentalStudents)) {//student
 					return;
 				}
-				if(providerSelected.IsInstructor && !Security.IsAuthorized(EnumPermType.AdminDentalInstructors)) {//instructor
+				if(providerSelected.IsInstructor && !Security.IsAuthorized(Permissions.AdminDentalInstructors)) {//instructor
 					return;
 				}
-				if(!providerSelected.IsInstructor && providerSelected.SchoolClassNum==0 && !Security.IsAuthorized(EnumPermType.ProviderEdit)) {//other provider
+				if(!providerSelected.IsInstructor && providerSelected.SchoolClassNum==0 && !Security.IsAuthorized(Permissions.ProviderEdit)) {//other provider
 					return;
 				}
 				if(!radioStudents.Checked) {
@@ -411,8 +411,8 @@ namespace OpenDental{
 					if(formProvEdit.DialogResult!=DialogResult.OK) {
 						return;
 					}
-					if(Security.IsAuthorized(EnumPermType.ProviderEdit,suppressMessage:true)) {//Other provider. Dental schools specific permissions do not log.
-						SecurityLogs.MakeLogEntry(EnumPermType.ProviderEdit,0,"Provider: "+formProvEdit.ProviderCur.Abbr+" edited.",formProvEdit.ProviderCur.ProvNum,SecurityLogs.LogSource,DateTime.MinValue);
+					if(Security.IsAuthorized(Permissions.ProviderEdit,suppressMessage:true)) {//Other provider. Dental schools specific permissions do not log.
+						SecurityLogs.MakeLogEntry(Permissions.ProviderEdit,0,"Provider: "+formProvEdit.ProviderCur.Abbr+" edited.",formProvEdit.ProviderCur.ProvNum,SecurityLogs.LogSource,DateTime.MinValue);
 					}
 				}
 				else {
@@ -425,7 +425,7 @@ namespace OpenDental{
 				}
 			}
 			else {//No Dental Schools or provider is not attached to a user
-				if(!Security.IsAuthorized(EnumPermType.ProviderEdit)) {
+				if(!Security.IsAuthorized(Permissions.ProviderEdit)) {
 					return;
 				}
 				using FormProvEdit formProvEdit=new FormProvEdit();
@@ -434,7 +434,7 @@ namespace OpenDental{
 				if(formProvEdit.DialogResult!=DialogResult.OK) {
 					return;
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.ProviderEdit,0,"Provider: "+formProvEdit.ProviderCur.Abbr+" edited.",formProvEdit.ProviderCur.ProvNum,SecurityLogs.LogSource,DateTime.MinValue);
+				SecurityLogs.MakeLogEntry(Permissions.ProviderEdit,0,"Provider: "+formProvEdit.ProviderCur.Abbr+" edited.",formProvEdit.ProviderCur.ProvNum,SecurityLogs.LogSource,DateTime.MinValue);
 			}
 			_hasChanged=true;
 			Cache.Refresh(InvalidType.Providers);
@@ -444,13 +444,13 @@ namespace OpenDental{
 
 		private void butProvPick_Click(object sender,EventArgs e) {
 			//This button is used instead of a dropdown because the order of providers can frequently change in the grid.
-			FrmProviderPick frmProviderPick=new FrmProviderPick();
-			frmProviderPick.IsNoneAvailable=true;
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick=new FormProviderPick();
+			formProviderPick.IsNoneAvailable=true;
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			_provNumMoveTo=frmProviderPick.ProvNumSelected;
+			_provNumMoveTo=formProviderPick.ProvNumSelected;
 			if(_provNumMoveTo>0) {
 				Provider provider=_listProviders.Find(x => x.ProvNum==_provNumMoveTo);
 				textMoveTo.Text=provider.GetLongDesc();
@@ -461,7 +461,7 @@ namespace OpenDental{
 
 		///<summary>Not possible if no security admin or no PatPriProvEdit permission.</summary>
 		private void butMovePri_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.PatPriProvEdit)) {//shouldn't be possible, button should be disabled if not authorized, just in case
+			if(!Security.IsAuthorized(Permissions.PatPriProvEdit)) {//shouldn't be possible, button should be disabled if not authorized, just in case
 				return;
 			}
 			if(gridMain.SelectedIndices.Length<1) {
@@ -483,7 +483,7 @@ namespace OpenDental{
 				return;
 			}
 			Lookup<long,long> lookupPriProvPats = null;
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				//get pats with original (from) priprov
 				List<long> listProvNums=listProvidersFrom.Select(x => x.ProvNum).ToList();
@@ -493,7 +493,7 @@ namespace OpenDental{
 				lookupPriProvPats= (Lookup<long,long>)dataRowArray.ToLookup(x => PIn.Long(x["PriProv"].ToString()),x => PIn.Long(x["PatNum"].ToString()));
 			};
 			progressOD.StartingMessage=Lan.g(this,"Gathering patient data")+"...";
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled){
 				return;
 			}
@@ -513,20 +513,20 @@ namespace OpenDental{
 				return;
 			}
 			int patsMoved=0;
-			progressOD=new ProgressWin();
+			progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				List<Action> listActions = lookupPriProvPats.Select(x => new Action(() => {
 					patsMoved+=x.Count();
-					ODEvent.Fire(ODEventType.ProgressBar,Lan.g(this,"Moving patients")+": "+patsMoved+" out of "+patCountTotal);
+					ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g(this,"Moving patients")+": "+patsMoved+" out of "+patCountTotal);
 					Patients.ChangePrimaryProviders(x.Key,provider.ProvNum);//update all priprovs to new provider
-					SecurityLogs.MakeLogEntry(EnumPermType.PatPriProvEdit,0,"Primary provider changed for "+x.Count()+" patients from "
+					SecurityLogs.MakeLogEntry(Permissions.PatPriProvEdit,0,"Primary provider changed for "+x.Count()+" patients from "
 						+Providers.GetLongDesc(x.Key)+" to "+provider.GetLongDesc()+".");
 				})).ToList();
 				ODThread.RunParallel(listActions,TimeSpan.FromMinutes(2));
 			};
 			progressOD.StartingMessage=Lan.g(this,"Moving patients")+"...";
 			progressOD.TestSleep=true;
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			//if(!progressOD.IsSuccess){//it might be partly done, so we will continue.
 			_hasChanged=true;
 			FillGrid();
@@ -555,7 +555,7 @@ namespace OpenDental{
 			if(MessageBox.Show(msg,"",MessageBoxButtons.OKCancel)!=DialogResult.OK) {
 				return;
 			}
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => { 
 				List<Action> listActions=listProvidersFrom.Select(x => new Action(() => { Patients.ChangeSecondaryProviders(x.ProvNum,
 					provider?.ProvNum??0); })).ToList();
@@ -563,7 +563,7 @@ namespace OpenDental{
 			};
 			progressOD.StartingMessage=Lan.g(this,"Reassigning patients")+"...";
 			progressOD.TestSleep=true;
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			_hasChanged=true;
 			FillGrid();
 		}
@@ -575,7 +575,7 @@ namespace OpenDental{
 		}
 
 		private void butReassign_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.PatPriProvEdit)) {//shouldn't be possible, button should be disabled if not authorized, just in case
+			if(!Security.IsAuthorized(Permissions.PatPriProvEdit)) {//shouldn't be possible, button should be disabled if not authorized, just in case
 				return;
 			}
 			if(gridMain.SelectedIndices.Length==0){
@@ -604,7 +604,8 @@ namespace OpenDental{
 			//This will contain one row per patient.
 			//Excludes patients that we don't want to reassign because they are already set to the correct provider.
 			List<PatProv> listPatProvsSeen=new List<PatProv>();
-			ProgressWin progressOD=new ProgressWin();
+			List<PatProv> listPatProvsDistinct=new List<PatProv>();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				List<long> listPatNums=listPatProvsFrom.Select(x => x.PatNum).ToList();
 				DataTable table = Procedures.GetTablePatProvUsed(listPatNums);//big list getting passed in.
@@ -614,7 +615,7 @@ namespace OpenDental{
 					PatProv patProv=new PatProv();
 					patProv.PatNum=PIn.Long(table.Rows[i]["PatNum"].ToString());
 					patProv.ProvNum=PIn.Long(table.Rows[i]["ProvNum"].ToString());
-					if(listPatProvsSeen.Any(x => x.PatNum==patProv.PatNum)) {
+					if(listPatProvsSeen.Contains(patProv)){ 
 						continue;// exclude Patients already added
 					}
 					PatProv patProvOld=listPatProvsFrom.Find(x=>x.PatNum==patProv.PatNum);//guaranteed to work
@@ -626,7 +627,7 @@ namespace OpenDental{
 				}
 			};
 			progressOD.StartingMessage=Lan.g(this,"Gathering patient and provider details")+"...";
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			Cursor=Cursors.Default;
 			if(listPatProvsSeen.Count==0){
 				MsgBox.Show(this,"No patients to reassign.");
@@ -638,7 +639,7 @@ namespace OpenDental{
 			}
 			//display the progress bar, updated by odThread.ProgressLog.UpdateProgress()
 			Cursor=Cursors.WaitCursor;
-			progressOD=new ProgressWin();
+			progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				for(int i=0;i<listPatProvsSeen.Count;i++){
 					long patNum=listPatProvsSeen[i].PatNum;
@@ -647,7 +648,7 @@ namespace OpenDental{
 				}
 			};
 			progressOD.StartingMessage=Lan.g(this,"Reassigning patients")+"...";
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			Cursor=Cursors.Default;
 			//changed=true;//We didn't change any providers
 			FillGrid();
@@ -730,7 +731,7 @@ namespace OpenDental{
 		}
 
 		private void butAlphabetize_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ProviderAlphabetize,false)) {
+			if(!Security.IsAuthorized(Permissions.ProviderAlphabetize,false)) {
 				return;//should not be possible, button should be disabled. This is just in case.
 			}
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Alphabetize all providers (by Abbrev) and move hidden providers to the bottom, followed by all non-person providers? This cannot be undone.")) {
@@ -761,6 +762,10 @@ namespace OpenDental{
 			FillGrid();
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 		private void FormProviderSelect_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
 			string duplicates=Providers.GetDuplicateAbbrs();
 			if(duplicates!="" && PrefC.GetBool(PrefName.EasyHideDentalSchools)) {
@@ -776,6 +781,7 @@ namespace OpenDental{
 			}
 			//SecurityLogs.MakeLogEntry("Providers","Altered Providers",user);
 		}
-
 	}
+
+	
 }

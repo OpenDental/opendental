@@ -76,7 +76,7 @@ namespace OpenDental{
 		private void FormTimeCard_Load(object sender, System.EventArgs e){
 			Initialize(DateTime.Today);
 			SortEmployeeList();
-			if(Security.IsAuthorized(EnumPermType.TimecardsEditAll,true)) {
+			if(Security.IsAuthorized(Permissions.TimecardsEditAll,true)) {
 				groupEmployee.Visible=true;
 			}
 		}
@@ -679,7 +679,7 @@ namespace OpenDental{
 				MsgBox.Show("You do not have permission to modify your past pay periods.");
 				return;
 			}
-			if(Security.CurUser.EmployeeNum!=EmployeeCur.EmployeeNum && !Security.IsAuthorized(EnumPermType.TimecardsEditAll)) {
+			if(Security.CurUser.EmployeeNum!=EmployeeCur.EmployeeNum && !Security.IsAuthorized(Permissions.TimecardsEditAll)) {
 				return;
 			}
 			timerUpdateBreak.Enabled=false;
@@ -688,7 +688,7 @@ namespace OpenDental{
 				//Only users with the ProtectedLeaveAdjustmentEdit permission can edit other user's UPL Time Card Adjustments.
 				if(adjust.IsUnpaidProtectedLeave 
 					&& Security.CurUser.EmployeeNum!=EmployeeCur.EmployeeNum
-					&& !Security.IsAuthorized(EnumPermType.ProtectedLeaveAdjustmentEdit))
+					&& !Security.IsAuthorized(Permissions.ProtectedLeaveAdjustmentEdit))
 				{
 					timerUpdateBreak.Enabled=true;
 					return;
@@ -697,7 +697,7 @@ namespace OpenDental{
 				if(PrefC.IsODHQ
 					&& !adjust.IsUnpaidProtectedLeave
 					&& adjust.PtoDefNum==0
-					&& !Security.IsAuthorized(EnumPermType.TimecardsEditAll,suppressMessage:true))
+					&& !Security.IsAuthorized(Permissions.TimecardsEditAll,suppressMessage:true))
 				{
 					MsgBox.Show(this,"HQ users without the Edit All Time Cards permission can only edit Time Card Adjustments for PTO or Protected Leave.");
 					timerUpdateBreak.Enabled=true;
@@ -716,7 +716,7 @@ namespace OpenDental{
 		}
 
 		private void butAdj_Click(object sender,EventArgs e) {
-			if(Security.CurUser.EmployeeNum!=EmployeeCur.EmployeeNum && !Security.IsAuthorized(EnumPermType.TimecardsEditAll)) {
+			if(Security.CurUser.EmployeeNum!=EmployeeCur.EmployeeNum && !Security.IsAuthorized(Permissions.TimecardsEditAll)) {
 				return;
 			}
 			if(_cannotEditOwnTimecard) {
@@ -754,7 +754,7 @@ namespace OpenDental{
 				MsgBox.Show("You do not have permission to modify your past pay periods.");
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.TimecardsEditAll)) {
+			if(!Security.IsAuthorized(Permissions.TimecardsEditAll)) {
 				return;
 			}
 			TimeCardRule timeCardRule=TimeCardRules.GetTimeCardRule(EmployeeCur);
@@ -782,7 +782,7 @@ namespace OpenDental{
 				MsgBox.Show("You do not have permission to modify your past pay periods.");
 				return;
 			}
-			else if(!PrefC.GetBool(PrefName.TimecardSecurityEnabled) && !Security.IsAuthorized(EnumPermType.TimecardsEditAll)) {
+			else if(!PrefC.GetBool(PrefName.TimecardSecurityEnabled) && !Security.IsAuthorized(Permissions.TimecardsEditAll)) {
 				//Security.IsAuthorized() shows the error to the user already.
 				return;
 			}
@@ -1008,8 +1008,9 @@ namespace OpenDental{
 			}
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butClose_Click(object sender, System.EventArgs e) {
 			SaveNoteToDb();
+			Close();
 		}
 
 		///<summary>This timer updates break times so that you can see your break timer counting.</summary>
@@ -1027,5 +1028,51 @@ namespace OpenDental{
 			timerUpdateBreak.Enabled=false;  //This timer was never being disabled, so it would just keep ticking after the form was closed.
 		}
 
+		
+
+		
+
+	
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

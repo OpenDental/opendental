@@ -29,6 +29,7 @@ namespace OpenDental {
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpProcNote));
+			this.butClose = new OpenDental.UI.Button();
 			this.checkNoNotes = new OpenDental.UI.CheckBox();
 			this.checkUnsignedNote = new OpenDental.UI.CheckBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -51,6 +52,17 @@ namespace OpenDental {
 			this.groupBox1.SuspendLayout();
 			this.contextMenuStrip.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(796, 524);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 4;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// checkNoNotes
 			// 
@@ -152,7 +164,7 @@ namespace OpenDental {
 			this.comboClinics.IncludeUnassigned = true;
 			this.comboClinics.Location = new System.Drawing.Point(431, 17);
 			this.comboClinics.Name = "comboClinics";
-			this.comboClinics.IsMultiSelect = true;
+			this.comboClinics.SelectionModeMulti = true;
 			this.comboClinics.Size = new System.Drawing.Size(197, 21);
 			this.comboClinics.TabIndex = 3;
 			this.comboClinics.SelectionChangeCommitted += new System.EventHandler(this.comboClinics_SelectionChangeCommitted);
@@ -241,11 +253,13 @@ namespace OpenDental {
 			// 
 			// FormRpProcNote
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(891, 572);
 			this.Controls.Add(this.butExport);
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.groupFilter);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -259,6 +273,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.CheckBox checkNoNotes;
 		private OpenDental.UI.CheckBox checkUnsignedNote;
 		private Label label1;

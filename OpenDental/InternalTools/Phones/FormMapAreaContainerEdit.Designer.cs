@@ -38,6 +38,7 @@ namespace OpenDental{
 			this.butEdit = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.mapPanel = new OpenDental.InternalTools.Phones.MapPanel();
+			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// label3
@@ -167,7 +168,7 @@ namespace OpenDental{
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butDelete.Icon = OpenDental.UI.EnumIcons.DeleteX;
 			this.butDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butDelete.Location = new System.Drawing.Point(1015, 625);
+			this.butDelete.Location = new System.Drawing.Point(1026, 623);
 			this.butDelete.Name = "butDelete";
 			this.butDelete.Size = new System.Drawing.Size(75, 24);
 			this.butDelete.TabIndex = 111;
@@ -183,6 +184,16 @@ namespace OpenDental{
 			this.mapPanel.Name = "mapPanel";
 			this.mapPanel.Size = new System.Drawing.Size(996, 744);
 			this.mapPanel.TabIndex = 106;
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(1026, 716);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// FormMapAreaContainerEdit
 			// 
@@ -201,6 +212,7 @@ namespace OpenDental{
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.textDescription);
 			this.Controls.Add(this.butDelete);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormMapAreaContainerEdit";
 			this.Text = "Map Area Container Edit";
@@ -213,6 +225,7 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butClose;
 		private OpenDental.InternalTools.Phones.MapPanel mapPanel;
 		private UI.Button butDelete;
 		private System.Windows.Forms.Label label4;

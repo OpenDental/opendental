@@ -62,7 +62,7 @@ namespace OpenDental {
 			this.butPrint = new OpenDental.UI.Button();
 			this.butCalcWeekOT = new OpenDental.UI.Button();
 			this.butAdj = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupEmployee = new OpenDental.UI.GroupBox();
 			this.butPrevEmp = new OpenDental.UI.Button();
 			this.butNextEmp = new OpenDental.UI.Button();
@@ -83,7 +83,7 @@ namespace OpenDental {
 			// textTotal
 			// 
 			this.textTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textTotal.Location = new System.Drawing.Point(491, 572);
+			this.textTotal.Location = new System.Drawing.Point(491, 603);
 			this.textTotal.Name = "textTotal";
 			this.textTotal.Size = new System.Drawing.Size(66, 20);
 			this.textTotal.TabIndex = 3;
@@ -93,7 +93,7 @@ namespace OpenDental {
 			// 
 			this.labelRegularTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelRegularTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelRegularTime.Location = new System.Drawing.Point(385, 573);
+			this.labelRegularTime.Location = new System.Drawing.Point(385, 604);
 			this.labelRegularTime.Name = "labelRegularTime";
 			this.labelRegularTime.Size = new System.Drawing.Size(100, 17);
 			this.labelRegularTime.TabIndex = 4;
@@ -221,7 +221,7 @@ namespace OpenDental {
 			// 
 			this.labelOvertime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelOvertime.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelOvertime.Location = new System.Drawing.Point(385, 593);
+			this.labelOvertime.Location = new System.Drawing.Point(385, 624);
 			this.labelOvertime.Name = "labelOvertime";
 			this.labelOvertime.Size = new System.Drawing.Size(100, 17);
 			this.labelOvertime.TabIndex = 17;
@@ -231,7 +231,7 @@ namespace OpenDental {
 			// textOvertime
 			// 
 			this.textOvertime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textOvertime.Location = new System.Drawing.Point(491, 592);
+			this.textOvertime.Location = new System.Drawing.Point(491, 623);
 			this.textOvertime.Name = "textOvertime";
 			this.textOvertime.Size = new System.Drawing.Size(66, 20);
 			this.textOvertime.TabIndex = 16;
@@ -272,7 +272,7 @@ namespace OpenDental {
 			// textOvertime2
 			// 
 			this.textOvertime2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textOvertime2.Location = new System.Drawing.Point(563, 592);
+			this.textOvertime2.Location = new System.Drawing.Point(563, 623);
 			this.textOvertime2.Name = "textOvertime2";
 			this.textOvertime2.Size = new System.Drawing.Size(66, 20);
 			this.textOvertime2.TabIndex = 22;
@@ -281,7 +281,7 @@ namespace OpenDental {
 			// textTotal2
 			// 
 			this.textTotal2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textTotal2.Location = new System.Drawing.Point(563, 572);
+			this.textTotal2.Location = new System.Drawing.Point(563, 603);
 			this.textTotal2.Name = "textTotal2";
 			this.textTotal2.Size = new System.Drawing.Size(66, 20);
 			this.textTotal2.TabIndex = 21;
@@ -294,7 +294,7 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridMain.Location = new System.Drawing.Point(18, 80);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(939, 488);
+			this.gridMain.Size = new System.Drawing.Size(939, 515);
 			this.gridMain.TabIndex = 13;
 			this.gridMain.Title = "Time Card";
 			this.gridMain.TranslationName = "TableTimeCard";
@@ -303,7 +303,7 @@ namespace OpenDental {
 			// textRateTwo2
 			// 
 			this.textRateTwo2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textRateTwo2.Location = new System.Drawing.Point(563, 612);
+			this.textRateTwo2.Location = new System.Drawing.Point(563, 643);
 			this.textRateTwo2.Name = "textRateTwo2";
 			this.textRateTwo2.Size = new System.Drawing.Size(66, 20);
 			this.textRateTwo2.TabIndex = 26;
@@ -313,7 +313,7 @@ namespace OpenDental {
 			// 
 			this.labelRateTwo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelRateTwo.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelRateTwo.Location = new System.Drawing.Point(385, 613);
+			this.labelRateTwo.Location = new System.Drawing.Point(385, 644);
 			this.labelRateTwo.Name = "labelRateTwo";
 			this.labelRateTwo.Size = new System.Drawing.Size(100, 17);
 			this.labelRateTwo.TabIndex = 25;
@@ -323,7 +323,7 @@ namespace OpenDental {
 			// textRateTwo
 			// 
 			this.textRateTwo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textRateTwo.Location = new System.Drawing.Point(491, 612);
+			this.textRateTwo.Location = new System.Drawing.Point(491, 643);
 			this.textRateTwo.Name = "textRateTwo";
 			this.textRateTwo.Size = new System.Drawing.Size(66, 20);
 			this.textRateTwo.TabIndex = 24;
@@ -333,7 +333,7 @@ namespace OpenDental {
 			// 
 			this.butCalcDaily.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butCalcDaily.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butCalcDaily.Location = new System.Drawing.Point(139, 662);
+			this.butCalcDaily.Location = new System.Drawing.Point(139, 681);
 			this.butCalcDaily.Name = "butCalcDaily";
 			this.butCalcDaily.Size = new System.Drawing.Size(78, 24);
 			this.butCalcDaily.TabIndex = 23;
@@ -345,7 +345,7 @@ namespace OpenDental {
 			this.butPrint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butPrint.Image = ((System.Drawing.Image)(resources.GetObject("butPrint.Image")));
 			this.butPrint.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butPrint.Location = new System.Drawing.Point(779, 662);
+			this.butPrint.Location = new System.Drawing.Point(779, 681);
 			this.butPrint.Name = "butPrint";
 			this.butPrint.Size = new System.Drawing.Size(86, 24);
 			this.butPrint.TabIndex = 19;
@@ -356,7 +356,7 @@ namespace OpenDental {
 			// 
 			this.butCalcWeekOT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butCalcWeekOT.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butCalcWeekOT.Location = new System.Drawing.Point(223, 662);
+			this.butCalcWeekOT.Location = new System.Drawing.Point(223, 681);
 			this.butCalcWeekOT.Name = "butCalcWeekOT";
 			this.butCalcWeekOT.Size = new System.Drawing.Size(90, 24);
 			this.butCalcWeekOT.TabIndex = 18;
@@ -368,23 +368,23 @@ namespace OpenDental {
 			this.butAdj.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butAdj.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAdj.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAdj.Location = new System.Drawing.Point(18, 662);
+			this.butAdj.Location = new System.Drawing.Point(18, 681);
 			this.butAdj.Name = "butAdj";
 			this.butAdj.Size = new System.Drawing.Size(115, 24);
 			this.butAdj.TabIndex = 15;
 			this.butAdj.Text = "Add Adjustment";
 			this.butAdj.Click += new System.EventHandler(this.butAdj_Click);
 			// 
-			// butSave
+			// butClose
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butSave.Location = new System.Drawing.Point(882, 662);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 0;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(882, 681);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// groupEmployee
 			// 
@@ -420,7 +420,7 @@ namespace OpenDental {
 			// 
 			this.labelPTO.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelPTO.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelPTO.Location = new System.Drawing.Point(385, 653);
+			this.labelPTO.Location = new System.Drawing.Point(385, 684);
 			this.labelPTO.Name = "labelPTO";
 			this.labelPTO.Size = new System.Drawing.Size(100, 17);
 			this.labelPTO.TabIndex = 122;
@@ -430,7 +430,7 @@ namespace OpenDental {
 			// textPTO
 			// 
 			this.textPTO.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textPTO.Location = new System.Drawing.Point(491, 652);
+			this.textPTO.Location = new System.Drawing.Point(491, 683);
 			this.textPTO.Name = "textPTO";
 			this.textPTO.Size = new System.Drawing.Size(66, 20);
 			this.textPTO.TabIndex = 123;
@@ -439,7 +439,7 @@ namespace OpenDental {
 			// textPTO2
 			// 
 			this.textPTO2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textPTO2.Location = new System.Drawing.Point(563, 652);
+			this.textPTO2.Location = new System.Drawing.Point(563, 683);
 			this.textPTO2.Name = "textPTO2";
 			this.textPTO2.Size = new System.Drawing.Size(66, 20);
 			this.textPTO2.TabIndex = 124;
@@ -448,7 +448,7 @@ namespace OpenDental {
 			// textUnpaidProtectedLeave
 			// 
 			this.textUnpaidProtectedLeave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textUnpaidProtectedLeave.Location = new System.Drawing.Point(491, 672);
+			this.textUnpaidProtectedLeave.Location = new System.Drawing.Point(491, 703);
 			this.textUnpaidProtectedLeave.Name = "textUnpaidProtectedLeave";
 			this.textUnpaidProtectedLeave.Size = new System.Drawing.Size(66, 20);
 			this.textUnpaidProtectedLeave.TabIndex = 126;
@@ -457,7 +457,7 @@ namespace OpenDental {
 			// textUnpaidProtectedLeave2
 			// 
 			this.textUnpaidProtectedLeave2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textUnpaidProtectedLeave2.Location = new System.Drawing.Point(563, 672);
+			this.textUnpaidProtectedLeave2.Location = new System.Drawing.Point(563, 703);
 			this.textUnpaidProtectedLeave2.Name = "textUnpaidProtectedLeave2";
 			this.textUnpaidProtectedLeave2.Size = new System.Drawing.Size(66, 20);
 			this.textUnpaidProtectedLeave2.TabIndex = 127;
@@ -467,7 +467,7 @@ namespace OpenDental {
 			// 
 			this.labelUnpaidProtectedLeave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelUnpaidProtectedLeave.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelUnpaidProtectedLeave.Location = new System.Drawing.Point(334, 673);
+			this.labelUnpaidProtectedLeave.Location = new System.Drawing.Point(334, 704);
 			this.labelUnpaidProtectedLeave.Name = "labelUnpaidProtectedLeave";
 			this.labelUnpaidProtectedLeave.Size = new System.Drawing.Size(151, 17);
 			this.labelUnpaidProtectedLeave.TabIndex = 125;
@@ -477,7 +477,7 @@ namespace OpenDental {
 			// textRateThree2
 			// 
 			this.textRateThree2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textRateThree2.Location = new System.Drawing.Point(563, 632);
+			this.textRateThree2.Location = new System.Drawing.Point(563, 663);
 			this.textRateThree2.Name = "textRateThree2";
 			this.textRateThree2.Size = new System.Drawing.Size(66, 20);
 			this.textRateThree2.TabIndex = 130;
@@ -487,7 +487,7 @@ namespace OpenDental {
 			// 
 			this.labelRateThree.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelRateThree.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelRateThree.Location = new System.Drawing.Point(385, 633);
+			this.labelRateThree.Location = new System.Drawing.Point(385, 664);
 			this.labelRateThree.Name = "labelRateThree";
 			this.labelRateThree.Size = new System.Drawing.Size(100, 17);
 			this.labelRateThree.TabIndex = 129;
@@ -497,7 +497,7 @@ namespace OpenDental {
 			// textRateThree
 			// 
 			this.textRateThree.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textRateThree.Location = new System.Drawing.Point(491, 632);
+			this.textRateThree.Location = new System.Drawing.Point(491, 663);
 			this.textRateThree.Name = "textRateThree";
 			this.textRateThree.Size = new System.Drawing.Size(66, 20);
 			this.textRateThree.TabIndex = 128;
@@ -505,8 +505,8 @@ namespace OpenDental {
 			// 
 			// FormTimeCard
 			// 
-			this.CancelButton = this.butSave;
-			this.ClientSize = new System.Drawing.Size(979, 696);
+			this.CancelButton = this.butClose;
+			this.ClientSize = new System.Drawing.Size(979, 723);
 			this.Controls.Add(this.textRateThree2);
 			this.Controls.Add(this.labelRateThree);
 			this.Controls.Add(this.textRateThree);
@@ -533,7 +533,7 @@ namespace OpenDental {
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.labelRegularTime);
 			this.Controls.Add(this.textTotal);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -555,7 +555,7 @@ namespace OpenDental {
 		private System.Windows.Forms.Label labelRegularTime;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.TextBox textTotal;
 		private System.Windows.Forms.Timer timerUpdateBreak;
 		private OpenDental.UI.GridOD gridMain;

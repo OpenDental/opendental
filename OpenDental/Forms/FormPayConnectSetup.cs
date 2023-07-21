@@ -10,8 +10,6 @@ using CodeBase;
 using Ionic.Zip;
 using OpenDental.UI;
 using OpenDentBusiness;
-using static OpenDentBusiness.PayConnect2;
-using Newtonsoft.Json.Linq;
 
 namespace OpenDental{
 	/// <summary>
@@ -164,7 +162,6 @@ namespace OpenDental{
 				labelPassword.Text=Lan.g(this,"Password");
 				label2.Text=Lan.g(this,"Username");
 				checkForceRecurring.Visible=true;
-				butMerchantInfo.Visible=false;
 			}
 			//version 2
 			else {
@@ -181,7 +178,6 @@ namespace OpenDental{
 				checkSurcharge.Visible=true;
 				labelPassword.Visible=false;
 				checkForceRecurring.Visible=false;
-				butMerchantInfo.Visible=true;
 				FillGridTerminals();
 			}
 		}
@@ -388,24 +384,26 @@ namespace OpenDental{
 			WebClient webClient=new WebClient();
 			//The VeriFone driver is necessary for PayConnect users to process payments on the VeriFone terminal.
 			string zipFileName=ODFileUtils.CombinePaths(PrefC.GetTempFolderPath(),"VeriFoneUSBUARTDriver_Vx_1.0.0.52_B5.zip");
+			if(ODBuild.IsWeb()) {
+				try {
+					webClient.DownloadFile(@"http://www.opendental.com/download/drivers/VeriFoneUSBUARTDriver_Vx_1.0.0.52_B5.zip",zipFileName);
+				}
+				catch(Exception ex) {
+					Cursor=Cursors.Default;
+					MessageBox.Show(Lan.g(this,"Unable to download driver. Error message")+": "+ex.Message);
+					return;
+				}
+				//ODCloud, send the installer to the client computer instead of installing it here on the server computer.
+				Thinfinity.ThinfinityUtils.ExportForDownload(zipFileName);
+				MessageBox.Show(Lans.g(this,"Download complete. Run the Setup.exe file in the downloaded zip file."));
+				return;
+			}
 			try {
 				webClient.DownloadFile(@"http://www.opendental.com/download/drivers/VeriFoneUSBUARTDriver_Vx_1.0.0.52_B5.zip",zipFileName);
 			}
 			catch(Exception ex) {
 				Cursor=Cursors.Default;
 				MessageBox.Show(Lan.g(this,"Unable to download driver. Error message")+": "+ex.Message);
-				return;
-			}
-			if(ODEnvironment.IsCloudServer) {
-				//ODCloud, send the installer to the client computer instead of installing it here on the server computer.
-				if(ODBuild.IsThinfinity()) {
-					Thinfinity.ThinfinityUtils.ExportForDownload(zipFileName);
-				}
-				else {//Is AppStream
-					CloudClientL.ExportForCloud(zipFileName,doPromptForName:false);
-				}
-				Cursor=Cursors.Default;
-				MessageBox.Show(Lans.g(this,"Download complete. Run the Setup.exe file in the downloaded zip file."));
 				return;
 			}
 			MemoryStream memoryStream=new MemoryStream();
@@ -430,45 +428,7 @@ namespace OpenDental{
 				+Lans.g(this,"if it does not start automatically."));
 		}
 
-		private void butMerchantInfo_Click(object sender,EventArgs e) {
-			if(textAPISecret.Text.IsNullOrEmpty()) {
-				MsgBox.Show(this,"You must first enter the secret.");
-				return;
-			}
-			long clinicNum=0;
-			if(PrefC.HasClinicsEnabled) {
-				clinicNum=_listUserClinicNums[comboClinic.SelectedIndex];
-			}
-			PayConnect2Response payConnect2Response=null;
-			try {
-				payConnect2Response=PayConnect2.GetMerchantInfo(clinicNum,textAPISecret.Text);
-			}
-			catch(Exception ex) {
-				ex.DoNothing();
-			}
-			if(payConnect2Response.ResponseType==PayConnect2.ResponseType.Error) {
-				JObject err=JObject.Parse(payConnect2Response.ErrorResponse.Error.ToString());
-				MsgBox.Show(err["message"].ToString());
-				return;
-			}
-			string data=Lan.g(this,"Merchant ID")+$": {payConnect2Response.GetMerchantInfoResponse.MerchantId}\n"+
-									Lan.g(this,"Name")+$": {payConnect2Response.GetMerchantInfoResponse.Name}\n"+
-									Lan.g(this,"Status")+$": {payConnect2Response.GetMerchantInfoResponse.Status}\n"+
-									Lan.g(this,"Address 1")+$": {payConnect2Response.GetMerchantInfoResponse.Address1}\n"+
-									Lan.g(this,"Address 2")+$": {payConnect2Response.GetMerchantInfoResponse.Address2}\n"+
-									Lan.g(this,"City")+$": {payConnect2Response.GetMerchantInfoResponse.City}\n"+
-									Lan.g(this,"State")+$": {payConnect2Response.GetMerchantInfoResponse.State}\n"+
-									Lan.g(this,"Zip Code")+$": {payConnect2Response.GetMerchantInfoResponse.ZipCode}\n"+
-									Lan.g(this,"Phone Number")+$": {TelephoneNumbers.ReFormat(payConnect2Response.GetMerchantInfoResponse.PhoneNumber)}\n"+
-									Lan.g(this,"Email")+$": {payConnect2Response.GetMerchantInfoResponse.Email}\n"+
-									Lan.g(this,"DXC Group ID")+$": {payConnect2Response.GetMerchantInfoResponse.DxcGroupId}\n"+
-									Lan.g(this,"Reporting Emails")+$": {string.Join(", ",payConnect2Response.GetMerchantInfoResponse.ReportingEmails??new string[0])}\n"+
-									Lan.g(this,"Refund Without Reference Enabled")+$": {payConnect2Response.GetMerchantInfoResponse.RefundWithoutReferenceEnabled}\n"+
-									Lan.g(this,"Text 2 Pay Enabled")+$": {payConnect2Response.GetMerchantInfoResponse.Text2PayEnabled}\n";
-			MsgBox.Show(data);
-		}
-
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			#region Validation
 			//if this program has been disabled at HQ and someone is trying to enable it, block them
 			//if clinics are not enabled and the PayConnect program link is enabled, make sure there is a username and password set
@@ -571,12 +531,15 @@ namespace OpenDental{
 						}
 					}
 					stringBuilderLogText.Append(" was altered.");
-					SecurityLogs.MakeLogEntry(EnumPermType.ManageHighSecurityProgProperties,0,stringBuilderLogText.ToString(),_program.ProgramNum,DateTime.Now);
+					SecurityLogs.MakeLogEntry(Permissions.ManageHighSecurityProgProperties,0,stringBuilderLogText.ToString(),_program.ProgramNum,DateTime.Now);
 				}
 			}
 			DataValid.SetInvalid(InvalidType.Programs);
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

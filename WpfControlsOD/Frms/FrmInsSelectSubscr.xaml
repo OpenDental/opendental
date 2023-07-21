@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="420" Height="263" 
-             Text="Select Insurance Plan" MinMaxBoxes="False" >
+             Text="Select Insurance Plan" Loaded="FrmInsSelectSubscr_Loaded" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:Button x:Name="butOK" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,28,26" Text="_OK" Click="butOK_Click" />
 		<ui:Button x:Name="butNew" Width="85" VerticalAlignment="Bottom" Height="26" Margin="26,0,0,26" Text="New Plan" Click="butNew_Click" />

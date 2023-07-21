@@ -122,7 +122,7 @@ namespace OpenDentBusiness{
 			return Crud.SmsToMobileCrud.SelectMany(command);
 		}
 
-		///<summary>Convert a phone number to international format and remove all punctuation. Validates input number format. Throws exceptions.</summary>
+		///<summary>Convert a phone number to internation format and remove all punctuation. Validates input number format. Throws exceptions.</summary>
 		public static string ConvertPhoneToInternational(string phoneRaw,string countryCodeLocalMachine,string countryCodeSmsPhone) {
 			//No need to check MiddleTierRole; no call to db.
 			if(string.IsNullOrWhiteSpace(phoneRaw)) {
@@ -130,17 +130,16 @@ namespace OpenDentBusiness{
 			}
 			bool isUSorCanada=(countryCodeLocalMachine.ToUpper().In("US","CA") || countryCodeSmsPhone.ToUpper().In("US","CA"));
 			//Remove non-numeric.
-			string phoneRetVal=new string(phoneRaw.Where(x => char.IsDigit(x)).ToArray());
-			if(!isUSorCanada || IsShortCodeFormat(phoneRetVal)) {
-				return phoneRetVal;
-			}
-			if(!phoneRetVal.StartsWith("1")) { //Add a "1" if US or Canada
-				phoneRetVal="1"+phoneRetVal;
-			}
-			if(phoneRetVal.Length!=11) {
-				throw new Exception("Input phone number cannot be properly formatted for country code: "+countryCodeLocalMachine);
-			}
-			return phoneRetVal;
+			string ret=new string(phoneRaw.Where(x => char.IsDigit(x)).ToArray());			
+			if(isUSorCanada && !IsShortCodeFormat(ret)) {
+				if(!ret.StartsWith("1")) { //Add a "1" if US or Canada
+					ret="1"+ret;
+				}
+				if(ret.Length!=11) {
+					throw new Exception("Input phone number cannot be properly formatted for country code: "+countryCodeLocalMachine);
+				}
+			}			
+			return ret;
 		}
 
 		///<summary>A 5 or 6 digit phone nubmer is likely a Short Code phone number.</summary>
@@ -150,9 +149,7 @@ namespace OpenDentBusiness{
 		}
 		
 		///<summary>Surround with Try/Catch.  Sent as time sensitive message. Returns an instance of the new SmsToMobile row.</summary>
-		public static SmsToMobile SendSmsSingle(long patNum,string wirelessPhone,string message,long clinicNum,SmsMessageSource smsMessageSource,
-			bool makeCommLog=true,Userod userod=null,bool canCheckBal=true) 
-		{
+		public static SmsToMobile SendSmsSingle(long patNum,string wirelessPhone,string message,long clinicNum,SmsMessageSource smsMessageSource,bool makeCommLog=true,Userod user=null,bool canCheckBal=true) {
 			//No need to check MiddleTierRole; no call to db.
 			if(Plugins.HookMethod(null,"SmsToMobiles.SendSmsSingle_start",patNum,wirelessPhone,message,clinicNum)) {
 				return null;
@@ -173,7 +170,7 @@ namespace OpenDentBusiness{
 			smsToMobile.MsgText=message;
 			smsToMobile.MsgType=smsMessageSource;
 			List<SmsToMobile> listSmsToMobiles=SmsToMobiles.SendSms(ListTools.FromSingle(smsToMobile));//Can throw if failed
-			HandleSentSms(listSmsToMobiles,makeCommLog,userod);
+			HandleSentSms(listSmsToMobiles,makeCommLog,user);
 			smsToMobile=listSmsToMobiles.FirstOrDefault(x => x.GuidMessage==smsToMobile.GuidMessage);
 			if(smsToMobile !=null && smsToMobile.SmsStatus==SmsDeliveryStatus.FailNoCharge) {
 				throw new ODException(smsToMobile.CustErrorText);
@@ -182,105 +179,102 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Surround with try/catch. Returns true if all messages succeded, throws exception if it failed.</summary>
-		public static List<SmsToMobile> SendSmsMany(List<SmsToMobile> listSmsToMobilesMessages,bool makeCommLog=true,Userod userod=null,bool canCheckBal=true) {
+		public static List<SmsToMobile> SendSmsMany(List<SmsToMobile> listMessages,bool makeCommLog=true,Userod user=null,bool canCheckBal=true) {
 			//No need to check MiddleTierRole; no call to db.
-			if(listSmsToMobilesMessages==null || listSmsToMobilesMessages.Count==0) {
+			if(listMessages==null || listMessages.Count==0) {
 				return new List<SmsToMobile>();
 			}
 			if(canCheckBal) {
-				List<long> listClinicNums=listSmsToMobilesMessages.Select(x => x.ClinicNum).ToList();
-				for(int i=0;i<listClinicNums.Count;i++) {
-					double balance=SmsPhones.GetClinicBalance(listClinicNums[i]);
-					if(balance-(CHARGE_PER_MSG*listSmsToMobilesMessages.Count(x => x.ClinicNum==listClinicNums[i])) < 0) { 
+				foreach(long clinicNum in listMessages.Select(x => x.ClinicNum)) {
+					double balance=SmsPhones.GetClinicBalance(clinicNum);
+					if(balance-(CHARGE_PER_MSG*listMessages.Count(x => x.ClinicNum==clinicNum)) < 0) { 
 						//ODException.ErrorCode 1 will be processed specially by caller.
 						throw new ODException("To send these messages first increase spending limit for integrated texting from eServices Setup.",1);
 					}
 				}
 			}
-			listSmsToMobilesMessages=SendSms(listSmsToMobilesMessages);
-			HandleSentSms(listSmsToMobilesMessages,makeCommLog,userod);
-			return listSmsToMobilesMessages;
+			listMessages=SendSms(listMessages);
+			HandleSentSms(listMessages,makeCommLog,user);
+			return listMessages;
 		}
 
 		///<summary>Inserts the SmsToMobile to the database and creates a commlog if necessary.</summary>
-		private static void HandleSentSms(List<SmsToMobile> listSmsToMobiles,bool makeCommLog,Userod userod) {
+		private static void HandleSentSms(List<SmsToMobile> listSmsToMobiles,bool makeCommLog,Userod user) {
 			//No need to check MiddleTierRole; no call to db.
-			for(int i=0;i<listSmsToMobiles.Count;i++) {
-				listSmsToMobiles[i].DateTimeSent=DateTime.Now;
-				if(listSmsToMobiles[i].PatNum==0 || !makeCommLog) {
-					continue;
+			foreach(SmsToMobile smsToMobile in listSmsToMobiles) {
+				smsToMobile.DateTimeSent=DateTime.Now;
+				if(smsToMobile.PatNum!=0 && makeCommLog) {  //Patient specified and calling code won't make commlog, make it here.
+					long userNum=0;
+					if(user!=null) {
+						userNum=user.UserNum;
+					}
+					if(smsToMobile.SmsStatus==SmsDeliveryStatus.FailNoCharge) {
+						continue;
+					}
+					Commlogs.Insert(new Commlog() {
+						CommDateTime=smsToMobile.DateTimeSent,
+						Mode_=CommItemMode.Text,
+						Note="Text message sent: "+smsToMobile.MsgText,
+						PatNum=smsToMobile.PatNum,
+						CommType=Commlogs.GetTypeAuto(CommItemTypeAuto.TEXT),
+						SentOrReceived=CommSentOrReceived.Sent,
+						UserNum=userNum
+					});
 				}
-				//Patient specified and calling code won't make commlog, make it here.
-				long userNum=0;
-				if(userod!=null) {
-					userNum=userod.UserNum;
-				}
-				if(listSmsToMobiles[i].SmsStatus==SmsDeliveryStatus.FailNoCharge) {
-					continue;
-				}
-				Commlog commlog=new Commlog();
-				commlog.CommDateTime=listSmsToMobiles[i].DateTimeSent;
-				commlog.Mode_=CommItemMode.Text;
-				commlog.Note="Text message sent: "+listSmsToMobiles[i].MsgText;
-				commlog.PatNum=listSmsToMobiles[i].PatNum;
-				commlog.CommType=Commlogs.GetTypeAuto(CommItemTypeAuto.TEXT);
-				commlog.SentOrReceived=CommSentOrReceived.Sent;
-				commlog.UserNum=userNum;
-				Commlogs.Insert(commlog);
 			}
 			InsertMany(listSmsToMobiles);
 		}
 
 		///<summary></summary>
-		public static void Update(SmsToMobile smsToMobile,SmsToMobile smsToMobileOld) {
+		public static void Update(SmsToMobile smsToMobile,SmsToMobile oldSmsToMobile) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),smsToMobile,smsToMobileOld);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),smsToMobile,oldSmsToMobile);
 				return;
 			}
-			Crud.SmsToMobileCrud.Update(smsToMobile,smsToMobileOld);
+			Crud.SmsToMobileCrud.Update(smsToMobile,oldSmsToMobile);
 		}
 
 		///<summary>Surround with try/catch. Returns list of SmsToMobiles that were sent, (some may have failed), throws exception if no messages sent. 
 		///All Integrated Texting should use this method, CallFire texting does not use this method.</summary>
-		public static List<SmsToMobile> SendSms(List<SmsToMobile> listSmsToMobileMessages) {
+		public static List<SmsToMobile> SendSms(List<SmsToMobile> listMessages) {
 			//No need to check MiddleTierRole; no call to db.
-			if(Plugins.HookMethod(null,"SmsToMobiles.SendSms_start",listSmsToMobileMessages)) {
+			if(Plugins.HookMethod(null,"SmsToMobiles.SendSms_start",listMessages)) {
 				return new List<SmsToMobile>();
 			}
-			if(listSmsToMobileMessages==null || listSmsToMobileMessages.Count==0) {
+			if(listMessages==null || listMessages.Count==0) {
 				throw new Exception("No messages to send.");
 			}
 			System.Xml.Serialization.XmlSerializer xmlListSmsToMobileSerializer=new System.Xml.Serialization.XmlSerializer(typeof(List<SmsToMobile>));
-			StringBuilder stringBuilder=new StringBuilder();
-			using XmlWriter xmlWriter=XmlWriter.Create(stringBuilder,WebSerializer.CreateXmlWriterSettings(true));
-			xmlWriter.WriteStartElement("Payload");
-			xmlWriter.WriteStartElement("ListSmsToMobile");
-			xmlListSmsToMobileSerializer.Serialize(xmlWriter,listSmsToMobileMessages);
-			xmlWriter.WriteEndElement(); //ListSmsToMobile
-			xmlWriter.WriteEndElement(); //Payload
-			xmlWriter.Close();
+			StringBuilder strbuild=new StringBuilder();
+			using(XmlWriter writer=XmlWriter.Create(strbuild,WebSerializer.CreateXmlWriterSettings(true))){
+				writer.WriteStartElement("Payload");
+				writer.WriteStartElement("ListSmsToMobile");
+				xmlListSmsToMobileSerializer.Serialize(writer,listMessages);
+				writer.WriteEndElement(); //ListSmsToMobile	
+				writer.WriteEndElement(); //Payload	
+			}	
 			string result = "";
 			try {
 				result=WebServiceMainHQProxy.GetWebServiceMainHQInstance()
-					.SmsSend(PayloadHelper.CreatePayload(stringBuilder.ToString(),eServiceCode.IntegratedTexting));
+					.SmsSend(PayloadHelper.CreatePayload(strbuild.ToString(),eServiceCode.IntegratedTexting));
 			}
 			catch(Exception ex) {
 				ex.DoNothing();
 				throw new Exception("Unable to send using web service.");
 			}
-			XmlDocument xmlDocument=new XmlDocument();
-			xmlDocument.LoadXml(result);
-			XmlNode xmlNodeError=xmlDocument.SelectSingleNode("//Error");
-			XmlNode xmlNodeSmsToMobiles=xmlDocument.SelectSingleNode("//ListSmsToMobile");
-			if(xmlNodeSmsToMobiles is null) {
-				throw new Exception(xmlNodeError?.InnerText??"Output node not found: ListSmsToMobile");
+			XmlDocument doc=new XmlDocument();
+			doc.LoadXml(result);
+			XmlNode nodeError=doc.SelectSingleNode("//Error");
+			XmlNode nodeSmsToMobiles=doc.SelectSingleNode("//ListSmsToMobile");
+			if(nodeSmsToMobiles is null) {
+				throw new Exception(nodeError?.InnerText??"Output node not found: ListSmsToMobile");
 			}
-			using XmlReader xmlReader=XmlReader.Create(new System.IO.StringReader(xmlNodeSmsToMobiles.InnerXml));
-			listSmsToMobileMessages=(List<SmsToMobile>)xmlListSmsToMobileSerializer.Deserialize(xmlReader);			
-			if(listSmsToMobileMessages is null) { //List should always be there even if it's empty.
-				throw new Exception(xmlNodeError?.InnerText??"Output node not found: Error");
+			using XmlReader reader=XmlReader.Create(new System.IO.StringReader(nodeSmsToMobiles.InnerXml));
+			listMessages=(List<SmsToMobile>)xmlListSmsToMobileSerializer.Deserialize(reader);			
+			if(listMessages is null) { //List should always be there even if it's empty.
+				throw new Exception(nodeError?.InnerText??"Output node not found: Error");
 			}
-			return listSmsToMobileMessages;
+			return listMessages;
 		}
 	}
 }

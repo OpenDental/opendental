@@ -17,12 +17,10 @@ namespace OpenDental {
 
 		public FrmDrugUnitEdit() {
 			InitializeComponent();
-			Load+=FrmDrugUnitEdit_Load;
-			PreviewKeyDown+=FrmDrugUnitEdit_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmDrugUnitEdit_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmDrugUnitEdit_Loaded(object sender,RoutedEventArgs e) {
 			textUnitIdentifier.Text=DrugUnitCur.UnitIdentifier;
 			textUnitText.Text=DrugUnitCur.UnitText;
 		}
@@ -45,12 +43,6 @@ namespace OpenDental {
 			IsDialogOK=true;
 		}
 
-		private void FrmDrugUnitEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
-		}
-
 		private void butSave_Click(object sender,EventArgs e) {
 			if(textUnitIdentifier.Text=="" || textUnitText.Text=="") {
 				MsgBox.Show(this,"Bank fields are not allowed.");
@@ -70,6 +62,5 @@ namespace OpenDental {
 			}
 			IsDialogOK=true;
 		}
-
 	}
 }

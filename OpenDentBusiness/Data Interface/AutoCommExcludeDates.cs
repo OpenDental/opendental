@@ -7,8 +7,8 @@ using System.Text;
 namespace OpenDentBusiness{
 	///<summary></summary>
 	public class AutoCommExcludeDates{
-		//If this table type will exist as cached data, uncomment the Cache Pattern region below and edit.
-		/*
+        //If this table type will exist as cached data, uncomment the Cache Pattern region below and edit.
+        /*
 		#region Cache Pattern
 		//This region can be eliminated if this is not a table type with cached data.
 		//If leaving this region in place, be sure to add GetTableFromCache and FillCacheFromTable to the Cache.cs file with all the other Cache types.
@@ -101,20 +101,20 @@ namespace OpenDentBusiness{
 		#region Methods - Get
 		///<summary></summary>
 		public static List<AutoCommExcludeDate> Refresh(long clinicNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<AutoCommExcludeDate>>(MethodBase.GetCurrentMethod(),clinicNum);
-			}
-			string command = $"SELECT * FROM autocommexcludedate WHERE ClinicNum = {POut.Long(clinicNum)} ORDER BY autocommexcludedate.DateExclude ASC";
-			return Crud.AutoCommExcludeDateCrud.SelectMany(command);
-		}
+            if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+                return Meth.GetObject<List<AutoCommExcludeDate>>(MethodBase.GetCurrentMethod(),clinicNum);
+            }
+            string command = $"SELECT * FROM autocommexcludedate WHERE ClinicNum = {POut.Long(clinicNum)} ORDER BY autocommexcludedate.DateExclude ASC";
+            return Crud.AutoCommExcludeDateCrud.SelectMany(command);
+        }
 
-		///<summary>Gets one AutoCommExcludeDate from the db.</summary>
-		public static AutoCommExcludeDate GetOne(long autoCommExcludeDateNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<AutoCommExcludeDate>(MethodBase.GetCurrentMethod(),autoCommExcludeDateNum);
-			}
-			return Crud.AutoCommExcludeDateCrud.SelectOne(autoCommExcludeDateNum);
-		}
+        ///<summary>Gets one AutoCommExcludeDate from the db.</summary>
+        public static AutoCommExcludeDate GetOne(long autoCommExcludeDateNum) {
+            if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+                return Meth.GetObject<AutoCommExcludeDate>(MethodBase.GetCurrentMethod(),autoCommExcludeDateNum);
+            }
+            return Crud.AutoCommExcludeDateCrud.SelectOne(autoCommExcludeDateNum);
+        }
 
 		/// <summary>Clinic 0 is used for HQ Clinic or when clinics are turned off. </summary>
 		public static List<AutoCommExcludeDate> GetFutureForClinic(long clinicNum) {
@@ -137,25 +137,31 @@ namespace OpenDentBusiness{
 		#region Methods - Modify
 		///<summary></summary>
 		public static long Insert(AutoCommExcludeDate autoCommExcludeDate) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				autoCommExcludeDate.AutoCommExcludeDateNum=Meth.GetLong(MethodBase.GetCurrentMethod(),autoCommExcludeDate);
-				return autoCommExcludeDate.AutoCommExcludeDateNum;
-			}
-			return Crud.AutoCommExcludeDateCrud.Insert(autoCommExcludeDate);
-		}
+            if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+                autoCommExcludeDate.AutoCommExcludeDateNum=Meth.GetLong(MethodBase.GetCurrentMethod(),autoCommExcludeDate);
+                return autoCommExcludeDate.AutoCommExcludeDateNum;
+            }
+            return Crud.AutoCommExcludeDateCrud.Insert(autoCommExcludeDate);
+        }
 
-		///<summary></summary>
-		public static void Delete(long autoCommExcludeDateNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),autoCommExcludeDateNum);
-				return;
-			}
-			Crud.AutoCommExcludeDateCrud.Delete(autoCommExcludeDateNum);
-		}
-		#endregion Methods - Modify
+        ///<summary></summary>
+        public static void Delete(long autoCommExcludeDateNum) {
+            if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+                Meth.GetVoid(MethodBase.GetCurrentMethod(),autoCommExcludeDateNum);
+                return;
+            }
+            Crud.AutoCommExcludeDateCrud.Delete(autoCommExcludeDateNum);
+        }
+        #endregion Methods - Modify
 
-		#region Methods - Misc
+        #region Methods - Misc
 
-		#endregion Methods - Misc
-	}
+
+
+        #endregion Methods - Misc
+
+
+
+
+    }
 }

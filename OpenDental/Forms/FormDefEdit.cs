@@ -252,7 +252,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(checkHidden.Checked && !IsNew) {
 				if(!DefL.CanHideDef(_def,_defCatOptions)) {
 					return;//CanHideDef() shows error message if def cannot be hidden, then we kick out here.
@@ -470,5 +470,8 @@ namespace OpenDental {
 			Prefs.UpdateString(prefName,strExcludeNums);
 		}
 
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

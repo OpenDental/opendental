@@ -29,6 +29,7 @@ namespace OpenDental {
 			this.butEdit = new OpenDental.UI.Button();
 			this.textContent = new OpenDental.TextBoxWiki();
 			this.webBrowserWiki = new System.Windows.Forms.WebBrowser();
+			this.butClose = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
@@ -101,6 +102,16 @@ namespace OpenDental {
 			this.webBrowserWiki.WebBrowserShortcutsEnabled = false;
 			this.webBrowserWiki.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.webBrowserWiki_Navigated);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(1067, 602);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butDelete
 			// 
 			this.butDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -122,6 +133,7 @@ namespace OpenDental {
 			this.Controls.Add(this.textNumbers);
 			this.Controls.Add(this.webBrowserWiki);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormWikiDrafts";
 			this.Text = "Wiki Drafts";
@@ -133,6 +145,8 @@ namespace OpenDental {
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private System.Windows.Forms.WebBrowser webBrowserWiki;
 		private TextBoxWiki textContent;

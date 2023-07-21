@@ -53,6 +53,7 @@ namespace OpenDental {
 			this.listPublicHealth = new OpenDental.UI.ListBox();
 			this.listLists = new OpenDental.UI.ListBox();
 			this.listMonthly = new OpenDental.UI.ListBox();
+			this.butClose = new OpenDental.UI.Button();
 			this.menuMain = new OpenDental.UI.MenuOD();
 			this.groupBusiness.SuspendLayout();
 			this.groupPatientReviews.SuspendLayout();
@@ -265,6 +266,17 @@ namespace OpenDental {
 			this.listMonthly.TabIndex = 8;
 			this.listMonthly.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listMonthly_MouseDown);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(583, 618);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// menuMain
 			// 
 			this.menuMain.Dock = System.Windows.Forms.DockStyle.Top;
@@ -275,6 +287,7 @@ namespace OpenDental {
 			// 
 			// FormReportsMore
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(680, 665);
 			this.Controls.Add(this.groupBusiness);
 			this.Controls.Add(this.groupPatientReviews);
@@ -296,6 +309,7 @@ namespace OpenDental {
 			this.Controls.Add(this.labelMonthly);
 			this.Controls.Add(this.labelLists);
 			this.Controls.Add(this.labelPublicHealth);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.menuMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -310,6 +324,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private Label labelPublicHealth;
 		private Label labelLists;
 		private Label labelMonthly;

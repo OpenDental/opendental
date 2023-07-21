@@ -57,33 +57,6 @@ namespace UnitTests.Prefs_Tests {
 			}
 		}
 
-		/// <summary></summary>
-		[TestMethod]
-		public void PrefC_AgingAllowedToStart_AgingBeginTimeNotSet() {
-			Prefs.UpdateDateT(PrefName.AgingBeginDateTime,DateTime.MinValue);
-			Assert.IsTrue(PrefC.IsAgingAllowedToStart());
-		}
-
-		[TestMethod]
-		public void PrefC_AgingAllowedToStart_AgingBEnginTimeIsSet_LessThan24Hours() {
-			DateTime_.SetNow(() => new DateTime(2024,3,20,10,0,0));
-			Prefs.UpdateDateT(PrefName.AgingBeginDateTime,new DateTime(2024,3,19,12,0,0));
-			Assert.IsFalse(PrefC.IsAgingAllowedToStart());
-		}
-
-		[TestMethod]
-		public void PrefC_AgingAllowedToStart_AgingBEnginTimeIsSet_Equal24Hours() {
-			DateTime_.SetNow(() => new DateTime(2024,3,20,10,0,0));
-			Prefs.UpdateDateT(PrefName.AgingBeginDateTime,new DateTime(2024,3,19,10,0,0));
-			Assert.IsTrue(PrefC.IsAgingAllowedToStart());
-		}
-
-		[TestMethod]
-		public void PrefC_AgingAllowedToStart_AgingBEnginTimeIsSet_GreaterThan24Hours() {
-			DateTime_.SetNow(() => new DateTime(2024,3,20,10,0,0));
-			Prefs.UpdateDateT(PrefName.AgingBeginDateTime,new DateTime(2024,3,19,8,0,0));
-			Assert.IsTrue(PrefC.IsAgingAllowedToStart());
-		}
 		/************************************************************************************************************************************************
 
 		///<summary>Duplicate native preferences are not allowed and should throw an exception when filling the cache.</summary>

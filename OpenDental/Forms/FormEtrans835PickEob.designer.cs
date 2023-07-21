@@ -24,9 +24,20 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEtrans835PickEob));
+			this.butClose = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.gridEobs = new OpenDental.UI.GridOD();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(245, 295);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// label1
 			// 
@@ -44,7 +55,7 @@ namespace OpenDental{
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridEobs.Location = new System.Drawing.Point(15, 30);
 			this.gridEobs.Name = "gridEobs";
-			this.gridEobs.Size = new System.Drawing.Size(305, 271);
+			this.gridEobs.Size = new System.Drawing.Size(305, 259);
 			this.gridEobs.TabIndex = 5;
 			this.gridEobs.Title = "EOB List";
 			this.gridEobs.TranslationName = "TableEOB";
@@ -52,10 +63,11 @@ namespace OpenDental{
 			// 
 			// FormEtrans835PickEob
 			// 
-			this.ClientSize = new System.Drawing.Size(332, 313);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(332, 331);
 			this.Controls.Add(this.gridEobs);
 			this.Controls.Add(this.label1);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEtrans835PickEob";
 			this.Text = "EOBs";
@@ -65,6 +77,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label label1;
 		private UI.GridOD gridEobs;
 	}

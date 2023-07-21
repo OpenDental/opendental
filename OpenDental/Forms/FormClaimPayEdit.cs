@@ -52,12 +52,12 @@ namespace OpenDental{
 			} 
 			else {
 				textCheckNum.Select();//If new, then the amount would have been selected.
-				if(!IsFinalizePayment && !Security.IsAuthorized(EnumPermType.InsPayEdit,ClaimPaymentCur.CheckDate)){
-					butSave.Enabled=false;
+				if(!IsFinalizePayment && !Security.IsAuthorized(Permissions.InsPayEdit,ClaimPaymentCur.CheckDate)){
+					butOK.Enabled=false;
 				}
 			}
 			if(PrefC.HasClinicsEnabled) {
-				comboClinic.ClinicNumSelected=ClaimPaymentCur.ClinicNum;
+				comboClinic.SelectedClinicNum=ClaimPaymentCur.ClinicNum;
 			}
 			else {
 				labelClinic.Visible=false;
@@ -262,7 +262,7 @@ namespace OpenDental{
 			if(!PrefC.HasClinicsEnabled) {
 				return 0;
 			}
-			return comboClinic.ClinicNumSelected;
+			return comboClinic.SelectedClinicNum;
 		}
 
 		private void butCarrierSelect_Click(object sender,EventArgs e) {
@@ -596,7 +596,7 @@ namespace OpenDental{
 		private void SetRequiredComboBoxClinicPicker(Label labelCur,ComboBoxClinicPicker comboBoxClinicPickerCur,bool areConditionsMet,int disallowedIdx,string errorMsg) {
 			if(areConditionsMet) {
 				labelCur.Text=labelCur.Text.Replace("*","")+"*";
-				if(comboBoxClinicPickerCur.ClinicNumSelected==disallowedIdx) {
+				if(comboBoxClinicPickerCur.SelectedClinicNum==disallowedIdx) {
 					_isMissingRequiredFields=true;
 					if(_isValidating) {
 						MsgBox.Show(this,errorMsg);
@@ -608,7 +608,7 @@ namespace OpenDental{
 			}
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			SetRequiredFields();//Required field validation
 			if(textDate.Text=="") {
 				MsgBox.Show(this,"Please enter a date.");
@@ -649,7 +649,7 @@ namespace OpenDental{
 					SetRequiredFields();
 					return;
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.RequiredFields,ClaimPaymentCur.ClaimPaymentNum,"Saved claim payment with required fields missing.");
+				SecurityLogs.MakeLogEntry(Permissions.RequiredFields,ClaimPaymentCur.ClaimPaymentNum,"Saved claim payment with required fields missing.");
 			}
 			//Purposefully get the selected DefNum which could be a PK for a hidden def.
 			long defNumPaymentType=comboPayType.GetSelectedDefNum();
@@ -670,11 +670,11 @@ namespace OpenDental{
 					MsgBox.Show(this,"Please enter a valid Auto Deposit Date.");
 					return;
 				}
-				if(!Security.IsAuthorized(EnumPermType.DepositSlips,depositCur.DateDeposit)) {
+				if(!Security.IsAuthorized(Permissions.DepositSlips,depositCur.DateDeposit)) {
 					return;
 				}
 				ClaimPaymentCur.DepositNum=Deposits.Insert(depositCur);
-				SecurityLogs.MakeLogEntry(EnumPermType.DepositSlips,0
+				SecurityLogs.MakeLogEntry(Permissions.DepositSlips,0
 					,Lan.g(this,"Auto Deposit created via the Edit Insurance Payment window:")+" "+depositCur.DateDeposit.ToShortDateString()
 					+" "+Lan.g(this,"New")+" "+depositCur.Amount.ToString("c"));
 			}
@@ -682,7 +682,7 @@ namespace OpenDental{
 			double amt=PIn.Double(textAmount.Text);
 			if(IsNew){
 				//prevents backdating of initial check
-				if(!Security.IsAuthorized(EnumPermType.InsPayCreate,PIn.Date(textDate.Text))){
+				if(!Security.IsAuthorized(Permissions.InsPayCreate,PIn.Date(textDate.Text))){
 					return;
 				}
 				//prevents attaching claimprocs with a date that is older than allowed by security.
@@ -691,12 +691,12 @@ namespace OpenDental{
 				//Editing an old entry will already be blocked if the date was too old, and user will not be able to click OK button.
 				//This catches it if user changed the date to be older.
 				if(IsFinalizePayment) {//finalizing a claim payment should use the InsPayCreate permission, not InsPayEdit
-					if(!Security.IsAuthorized(EnumPermType.InsPayCreate,PIn.Date(textDate.Text))) {
+					if(!Security.IsAuthorized(Permissions.InsPayCreate,PIn.Date(textDate.Text))) {
 						return;
 					}
 				}
 				else {
-					if(!Security.IsAuthorized(EnumPermType.InsPayEdit,PIn.Date(textDate.Text))) {
+					if(!Security.IsAuthorized(Permissions.InsPayEdit,PIn.Date(textDate.Text))) {
 						return;
 					}
 				}
@@ -726,7 +726,7 @@ namespace OpenDental{
 				Deposits.Update(GetDepositCur());
 			}
 			if(PrefC.HasClinicsEnabled) {
-				ClaimPaymentCur.ClinicNum=comboClinic.ClinicNumSelected;
+				ClaimPaymentCur.ClinicNum=comboClinic.SelectedClinicNum;
 			}
 			ClaimPaymentCur.PayType=defPaymentType.DefNum;
 			if(comboPayGroup.SelectedIndex!=-1) {//If they didn't select anything, leave what was originally there
@@ -747,7 +747,7 @@ namespace OpenDental{
 					MessageBox.Show(ex.Message);
 					return;
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,0,
+				SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,0,
 					Lan.g(this,"Carrier Name: ")+ClaimPaymentCur.CarrierName+", "
 					+Lan.g(this,"Total Amount: ")+ClaimPaymentCur.CheckAmt.ToString("c")+", "
 					+Lan.g(this,"Check Date: ")+ClaimPaymentCur.CheckDate.ToShortDateString()+", "//Date the check is entered in the system (i.e. today)
@@ -762,14 +762,14 @@ namespace OpenDental{
 					return;
 				}
 				if(IsCreateLogEntry) { //need a InsPayCreate Log entry because it just was pre-inserted.
-					SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,0,
+					SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,0,
 						Lan.g(this,"Carrier Name: ")+ClaimPaymentCur.CarrierName+", "
 						+Lan.g(this,"Total Amount: ")+ClaimPaymentCur.CheckAmt.ToString("c")+", "
 						+Lan.g(this,"Check Date: ")+ClaimPaymentCur.CheckDate.ToShortDateString()+", "//Date the check is entered in the system (i.e. today)
 						+"ClaimPaymentNum: "+ClaimPaymentCur.ClaimPaymentNum);//Column name, not translated.
 				}
 				else {
-					SecurityLogs.MakeLogEntry(EnumPermType.InsPayEdit,0,
+					SecurityLogs.MakeLogEntry(Permissions.InsPayEdit,0,
 						Lan.g(this,"Carrier Name: ")+ClaimPaymentCur.CarrierName+", "
 						+Lan.g(this,"Previous Amount: ")+_claimPaymentOld.CheckAmt.ToString("c")+", "
 						+Lan.g(this,"New Amount: ")+ClaimPaymentCur.CheckAmt.ToString("c")+", "
@@ -781,12 +781,10 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void FormClaimPayEdit_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult!=DialogResult.Cancel){
-				return;
-			}
+		private void butCancel_Click(object sender,System.EventArgs e) {
 			ClaimPaymentCur=_claimPaymentOld;
+			DialogResult=DialogResult.Cancel;
 		}
-
 	}
+
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace OpenDentBusiness{
 	///<summary></summary>
@@ -36,10 +35,6 @@ namespace OpenDentBusiness{
 			return _emailAutographCache.GetDeepCopy(isShort);
 		}
 
-		public static EmailAutograph GetFirstOrDefault(Func<EmailAutograph,bool> match,bool isShort=false) {
-			return _emailAutographCache.GetFirstOrDefault(match,isShort);
-		}
-
 		///<summary>Refreshes the cache and returns it as a DataTable. This will refresh the ClientWeb's cache and the ServerWeb's cache.</summary>
 		public static DataTable RefreshCache() {
 			return GetTableFromCache(true);
@@ -64,34 +59,6 @@ namespace OpenDentBusiness{
 			_emailAutographCache.ClearCache();
 		}
 		#endregion
-
-		///<summary>Searches the cache of EmailAutographs and returns the first match, otherwise null.</summary>
-		public static EmailAutograph GetForOutgoing(List<EmailAutograph> listAutographs,EmailAddress emailAddressOutgoing) {
-			string emailUsername=EmailMessages.GetAddressSimple(emailAddressOutgoing.EmailUsername);
-			if(string.IsNullOrWhiteSpace(emailUsername)) {
-				return null;
-			}
-			string emailSender=EmailMessages.GetAddressSimple(emailAddressOutgoing.SenderAddress);
-			if(string.IsNullOrWhiteSpace(emailSender)) {
-				return null;
-			}
-			string autographEmail;
-			for(int i=0;i<listAutographs.Count;i++) {
-				autographEmail=EmailMessages.GetAddressSimple(listAutographs[i].EmailAddress.Trim());
-				//Use Contains() because an autograph can theoretically have multiple email addresses associated with it.
-				if(autographEmail.Contains(emailUsername)	|| autographEmail.Contains(emailSender)) {
-					return listAutographs[i];
-				}
-			}
-			return null;
-		}
-
-		///<summary>Gets the first autograph that matches the EmailAddress.SenderAddress if it has one, otherwise
-		///the first that matches EmailAddress.EmailUserName. Returns null if neither yield a match.</summary>
-		public static EmailAutograph GetFirstOrDefaultForEmailAddress(EmailAddress emailAddress) {
-			string addressToMatch=emailAddress.GetFrom();
-			return GetFirstOrDefault(x => emailAddress.GetFrom()==x.EmailAddress);
-		}
 	
 		/////<summary>Gets one EmailAutograph from the db.</summary>
 		//public static EmailAutograph GetOne(long emailAutographNum){
@@ -100,7 +67,7 @@ namespace OpenDentBusiness{
 		//	}
 		//	return Crud.EmailAutographCrud.SelectOne(emailAutographNum);
 		//}
-
+		
 		///<summary>Insert one EmailAutograph in the database.</summary>
 		public static long Insert(EmailAutograph emailAutograph){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){

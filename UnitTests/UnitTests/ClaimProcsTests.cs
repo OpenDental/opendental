@@ -268,7 +268,7 @@ namespace UnitTests.ClaimProcs_Tests {
 			List<PatPlan> patPlans=PatPlans.Refresh(pat.PatNum);
 			List<Benefit> benefitList=Benefits.Refresh(patPlans,subList);
 			List<Procedure> ProcList=Procedures.Refresh(pat.PatNum);
-			ProcedureLogic.SortProcedures(ProcList);//To order by Priority
+			ProcedureLogic.SortProcedures(ref ProcList);//To order by Priority
 			Claim claim=ClaimT.CreateClaim("P",patPlans,planList,claimProcs,ProcList,pat,ProcList,benefitList,subList);//Creates the claim in the same manner as the account module, including estimates.
 			Claim claimOld=claim.Copy();
 			claim.ClaimStatus="W";
@@ -750,7 +750,7 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 			List<PatPlan> patPlans=PatPlans.Refresh(pat.PatNum);
 			List<Benefit> benefitList=Benefits.Refresh(patPlans,subList);
 			List<Procedure> ProcList=Procedures.Refresh(pat.PatNum);
-			ProcedureLogic.SortProcedures(ProcList);//To order by Priority
+			ProcedureLogic.SortProcedures(ref ProcList);//To order by Priority
 			Claim claim=ClaimT.CreateClaim("P",patPlans,planList,claimProcs,ProcList,pat,ProcList,benefitList,subList);//Creates the claim in the same manner as the account module, including estimates.
 			claimProcs=ClaimProcs.Refresh(pat.PatNum);
 			//Validate the estimates as they would appear inside of the Claim Proc Edit window when opened from inside of the Edit Claim window by passing in the null histlist and null looplist that the Claim Edit window would send in.
@@ -1254,7 +1254,7 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 			Assert.AreEqual(1,ins.ListAllClaimProcs.FindAll(x => x.ProcNum==0 && x.InsPayAmt==100).Count);//1 as total
 			Assert.AreEqual(1,ins.ListAllClaimProcs.FindAll(x => x.ProcNum==proc.ProcNum && x.InsPayAmt==0).Count);
 			//Transfer
-			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListClaimProcsInserted;
+			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListInsertedClaimProcs;
 			//listValid will contain the changes that were just made. 
 			Assert.AreEqual(2,listValid.Count);
 			Assert.AreEqual(0,listValid.FindAll(x => x.IsTransfer==false).Count);
@@ -1281,10 +1281,10 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 			Procedures.ComputeEstimatesForAll(pat.PatNum,ins.ListAllClaimProcs,ins.ListAllProcs,ins.ListInsPlans,ins.ListPatPlans,ins.ListBenefits,pat.Age,
 				ins.ListInsSubs);
 			//Transfer
-			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListClaimProcsInserted;
+			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListInsertedClaimProcs;
 			Assert.AreEqual(2,listValid.Count);//listValid will contain the changes that were just made.
 			//attempt to transfer again, and verify that none are made.
-			listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListClaimProcsInserted;
+			listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListInsertedClaimProcs;
 			Assert.AreEqual(0,listValid.Count);
 		}
 
@@ -1306,7 +1306,7 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 			ClaimProcs.Update(asTotal);
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(ins.Pat.PatNum);
 			//Transfer
-			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListClaimProcsInserted;
+			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListInsertedClaimProcs;
 			Assert.AreEqual(0,listValid.Count);//nothing should have transferred
 		}
 
@@ -1324,19 +1324,17 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(ins.Pat.PatNum);
 			ClaimT.ReceiveClaim(claim,ins.ListAllClaimProcs);
 			//create new as total claim proc payment.
-			ClaimProcT.AddInsPaidAsTotal(pat.PatNum,ins.PriInsPlan.PlanNum,provNum,100,ins.PriInsSub.InsSubNum,0,0,claim.ClaimNum);
-			//create another as total payment but it is negative (the user is correcting something maybe?).
 			ClaimProcT.AddInsPaidAsTotal(pat.PatNum,ins.PriInsPlan.PlanNum,provNum,-50,ins.PriInsSub.InsSubNum,0,0,claim.ClaimNum);
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(ins.Pat.PatNum);
 			Procedures.ComputeEstimatesForAll(pat.PatNum,ins.ListAllClaimProcs,ins.ListAllProcs,ins.ListInsPlans,ins.ListPatPlans,ins.ListBenefits,pat.Age,
 				ins.ListInsSubs);
 			//Transfer
-			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListClaimProcsInserted;
+			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListInsertedClaimProcs;
 			Assert.AreEqual(2,listValid.Count);//listValid will contain the changes that were just made.
-			Assert.AreEqual(1,listValid.Count(x => x.ProcNum==0 && x.InsPayAmt==-50));//offset for transfer
-			Assert.AreEqual(1,listValid.Count(x => x.ProcNum==proc.ProcNum && x.InsPayAmt==50));//allocation to claim procedure
+			Assert.AreEqual(1,listValid.FindAll(x => x.ProcNum==0 && x.InsPayAmt==50).Count);//offset for transfer
+			Assert.AreEqual(1,listValid.FindAll(x => x.ProcNum==proc.ProcNum && x.InsPayAmt==-50).Count);//allocation to claim procedure
 			decimal patPortion=ClaimProcs.GetPatPortion(proc,ClaimProcs.Refresh(ins.Pat.PatNum));
-			Assert.AreEqual(50,patPortion);
+			Assert.AreEqual(150,patPortion);
 		}
 
 		[TestMethod]
@@ -1363,7 +1361,7 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 			Assert.AreEqual(1,ins.ListAllClaimProcs.FindAll(x => x.ProcNum==0 && x.InsPayAmt==100).Count);//1 as total
 			Assert.AreEqual(1,ins.ListAllClaimProcs.FindAll(x => x.ProcNum==proc.ProcNum && x.InsPayAmt==0).Count);
 			//Transfer
-			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListClaimProcsInserted;
+			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListInsertedClaimProcs;
 			Assert.AreEqual(2,listValid.Count);
 			Assert.AreEqual(1,listValid.FindAll(x => x.InsPayAmt==100 && x.ProcNum==proc.ProcNum).Count);
 		}
@@ -1390,11 +1388,11 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 			Assert.AreEqual(1,ins.ListAllClaimProcs.FindAll(x => x.ProcNum==0 && x.InsPayAmt==90 && x.WriteOff==20).Count);//1 as total
 			Assert.AreEqual(1,ins.ListAllClaimProcs.FindAll(x => x.ProcNum==proc.ProcNum && x.InsPayAmt==0).Count);
 			//Transfer
-			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListClaimProcsInserted;
+			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListInsertedClaimProcs;
 			//listTransferred will contain the changes that were just made.
 			Assert.AreEqual(2,listValid.Count);
-			Assert.AreEqual(1,listValid.FindAll(x => x.ProcNum==0 && x.InsPayAmt==-90 && x.WriteOff==0).Count);//offset for transfer
-			Assert.AreEqual(1,listValid.FindAll(x => x.ProcNum==proc.ProcNum && x.InsPayAmt==90 && x.WriteOff==0).Count);//allocation to claim procedure
+			Assert.AreEqual(1,listValid.FindAll(x => x.ProcNum==0 && x.InsPayAmt==-90 && x.WriteOff==-20).Count);//offset for transfer
+			Assert.AreEqual(1,listValid.FindAll(x => x.ProcNum==proc.ProcNum && x.InsPayAmt==90 && x.WriteOff==20).Count);//allocation to claim procedure
 		}
 
 		[TestMethod]
@@ -1426,62 +1424,12 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(ins.Pat.PatNum);
 			Procedures.ComputeEstimatesForAll(pat.PatNum,ins.ListAllClaimProcs,ins.ListAllProcs,ins.ListInsPlans,ins.ListPatPlans,ins.ListBenefits,pat.Age,
 				ins.ListInsSubs);
-			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListClaimProcsInserted;
-			Assert.AreEqual(1,listValid.FindAll(x => x.ProcNum==proc1.ProcNum && x.InsPayAmt==100).Count);
-			Assert.AreEqual(1,listValid.FindAll(x => x.ProcNum==proc2.ProcNum && x.InsPayAmt==100).Count);
-			Assert.AreEqual(1,listValid.FindAll(x => x.ProcNum==proc3.ProcNum && x.InsPayAmt==100).Count);
-		}
-
-		[TestMethod]
-		public void ClaimProcs_TransferClaimsAsTotalToProcedures_MultipleProcsOutlandishAsTotal() {
-			//Create two procedures and one claim where insurance has already paid a little bit of the 2nd procedure.
-			//Make an outlandish As Total payment which should transfer up to the Max(InsPayEst,ProcFee) - InsPayAmt on the 2nd procedure.
-			//The first procedure on the claim should have the rest of the outlandish amount.
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			Patient patient=PatientT.CreatePatient(suffix);
-			Family family=Patients.GetFamily(patient.PatNum);
-			long provNum=ProviderT.CreateProvider(suffix);
-			Carrier carrier=CarrierT.CreateCarrier(suffix);
-			//Create two procedures that primary ins should cover 50% and secondary will cover them at 40%.
-			Procedure procedureFirst=ProcedureT.CreateProcedure(patient,"MPOAS1",ProcStat.C,"",100,DateTime.Today,provNum:provNum);
-			Procedure procedureSecond=ProcedureT.CreateProcedure(patient,"MPOAS2",ProcStat.C,"",200,DateTime.Today,provNum:provNum);
-			//Create insurance and make sure both procedures are covered.
-			InsuranceInfo insuranceInfo=InsuranceT.AddInsurance(patient,suffix);
-			insuranceInfo.AddBenefit(BenefitT.CreatePercentForProc(insuranceInfo.PriInsPlan.PlanNum,procedureFirst.CodeNum,100));
-			insuranceInfo.AddBenefit(BenefitT.CreatePercentForProc(insuranceInfo.PriInsPlan.PlanNum,procedureSecond.CodeNum,100));
-			//Create a claim for both procedures.
-			Claim claim=ClaimT.CreateClaim(new List<Procedure>{ procedureFirst,procedureSecond },insuranceInfo);
-			insuranceInfo.ListAllClaimProcs=ClaimProcs.Refresh(insuranceInfo.Pat.PatNum);
-			//Receive a little bit of money via "pay by procedure" for the 2nd procedure.
-			insuranceInfo.ListAllClaimProcs.First(x => x.ProcNum==procedureSecond.ProcNum).InsPayAmt=22;
-			ClaimT.ReceiveClaim(claim,insuranceInfo.ListAllClaimProcs.FindAll(x => x.ClaimNum==claim.ClaimNum));
-			//Add an outlandish Total Payment to the claim that overpays the entire claim.
-			ClaimProcT.AddInsPaidAsTotal(patient.PatNum,insuranceInfo.PriInsPlan.PlanNum,provNum,1000,insuranceInfo.PriInsSub.InsSubNum,0,0,claim.ClaimNum);
-			insuranceInfo.ListAllClaimProcs=ClaimProcs.Refresh(insuranceInfo.Pat.PatNum);
-			Procedures.ComputeEstimatesForAll(patient.PatNum,insuranceInfo.ListAllClaimProcs,insuranceInfo.ListAllProcs,insuranceInfo.ListInsPlans,insuranceInfo.ListPatPlans,insuranceInfo.ListBenefits,patient.Age,
-				insuranceInfo.ListInsSubs);
-			//Assert the insurance estimates are as desired prior to making the 'Txfr' supplemental payments for the as total payment on the sec claim.
-			Assert.AreEqual(3,insuranceInfo.ListAllClaimProcs.Count);
-			Assert.AreEqual(1,insuranceInfo.ListAllClaimProcs.Count(x => x.ProcNum==procedureFirst.ProcNum 
-				&& x.ClaimNum==claim.ClaimNum
-				&& x.InsPayEst==100
-				&& x.InsPayAmt==0));
-			Assert.AreEqual(1,insuranceInfo.ListAllClaimProcs.Count(x => x.ProcNum==procedureSecond.ProcNum
-				&& x.ClaimNum==claim.ClaimNum
-				&& x.InsPayEst==200
-				&& x.InsPayAmt==22));
-			Assert.AreEqual(1,insuranceInfo.ListAllClaimProcs.Count(x => x.ProcNum==0
-				&& x.ClaimNum==claim.ClaimNum
-				&& x.InsPayEst==0
-				&& x.InsPayAmt==1000));
-			//Invoke the method that will automatically make supplemental 'Txfr' claimprocs in order to distribute the As Total payment to claimprocs.
-			List<ClaimProc> listClaimProcsInserted=ClaimProcs.TransferClaimsAsTotalToProcedures(family.GetPatNums()).ListClaimProcsInserted;
-			//Assert that the supplemental payments were created correctly.
-			Assert.AreEqual(3,listClaimProcsInserted.Count);
-			Assert.IsTrue(listClaimProcsInserted.All(x => x.IsTransfer));
-			Assert.AreEqual(1,listClaimProcsInserted.Count(x => x.ProcNum==0 && x.InsPayAmt==-1000));//offset for transfer
-			Assert.AreEqual(1,listClaimProcsInserted.Count(x => x.ProcNum==procedureFirst.ProcNum && x.InsPayAmt==822));//allocation to claim procedure 1
-			Assert.AreEqual(1,listClaimProcsInserted.Count(x => x.ProcNum==procedureSecond.ProcNum && x.InsPayAmt==178));//allocation to claim procedure 2
+			//Assert.AreEqual(1,ins.ListAllClaimProcs.FindAll(x => x.ProcNum==proc1.ProcNum && x.InsPayEst==100).Count);
+			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListInsertedClaimProcs;
+			//Should have transferred no money to the incorrect provider, 225 to proc 1 and 150 to proc 3.
+			Assert.AreEqual(1,listValid.FindAll(x => x.ProcNum==proc1.ProcNum && x.InsPayAmt==100 && x.WriteOff==0).Count);
+			Assert.AreEqual(1,listValid.FindAll(x => x.ProcNum==proc2.ProcNum && x.InsPayAmt==100 && x.WriteOff==25).Count);
+			Assert.AreEqual(1,listValid.FindAll(x => x.ProcNum==proc3.ProcNum && x.InsPayAmt==100 && x.WriteOff==50).Count);
 		}
 
 		[TestMethod]
@@ -1514,10 +1462,12 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(ins.Pat.PatNum);
 			Procedures.ComputeEstimatesForAll(pat.PatNum,ins.ListAllClaimProcs,ins.ListAllProcs,ins.ListInsPlans,ins.ListPatPlans,ins.ListBenefits,pat.Age,
 				ins.ListInsSubs);
-			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListClaimProcsInserted;
-			Assert.AreEqual(1,listValid.FindAll(x => x.ProcNum==proc1.ProcNum && x.InsPayAmt==100).Count);
-			Assert.AreEqual(1,listValid.FindAll(x => x.ProcNum==proc2.ProcNum && x.InsPayAmt==100).Count);
-			Assert.AreEqual(1,listValid.FindAll(x => x.ProcNum==proc3.ProcNum && x.InsPayAmt==100).Count);
+			//Assert.AreEqual(1,ins.ListAllClaimProcs.FindAll(x => x.ProcNum==proc1.ProcNum && x.InsPayEst==100).Count);
+			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums).ListInsertedClaimProcs;
+			//Should have transferred no money to the incorrect provider, 225 to proc 1 and 150 to proc 3.
+			Assert.AreEqual(1,listValid.FindAll(x => x.ProcNum==proc1.ProcNum && x.InsPayAmt==100 && x.WriteOff==0).Count);
+			Assert.AreEqual(1,listValid.FindAll(x => x.ProcNum==proc2.ProcNum && x.InsPayAmt==100 && x.WriteOff==25).Count);
+			Assert.AreEqual(1,listValid.FindAll(x => x.ProcNum==proc3.ProcNum && x.InsPayAmt==100 && x.WriteOff==50).Count);
 		}
 
 		[TestMethod]
@@ -1540,7 +1490,7 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 			claim.ProvBill=provNum;
 			claim.ProvTreat=provNum;
 			Claims.Insert(claim);
-			//Create As Total payments with write-offs. The write-off values should do absolutely nothing since they don't mean anything.
+			//create new as total claim proc payment. This one has a write off which will put the procedure as overpaid, but that is fine.
 			ClaimProcT.AddInsPaidAsTotal(pat.PatNum,ins.PriInsPlan.PlanNum,provNum,200,ins.PriInsSub.InsSubNum,0,25,claim.ClaimNum);
 			ClaimProcT.AddInsPaidAsTotal(pat.PatNum,ins.PriInsPlan.PlanNum,otherProvider,100,ins.PriInsSub.InsSubNum,0,50,claim.ClaimNum);
 			ins.ListAllClaimProcs=ClaimProcs.Refresh(ins.Pat.PatNum);
@@ -1548,10 +1498,10 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 				ins.ListInsSubs);
 			ClaimTransferResult results=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums);
 			//Should have made negative supplementals to the pay as totals and then created unearned money
-			Assert.AreEqual(1,results.ListPaySplitsInserted.FindAll(x => x.UnearnedType!=0 && x.ProvNum==provNum && x.SplitAmt==200).Count);
-			Assert.AreEqual(1,results.ListPaySplitsInserted.FindAll(x => x.UnearnedType!=0 && x.ProvNum==otherProvider && x.SplitAmt==100).Count);
-			Assert.AreEqual(2,results.ListClaimProcsInserted.Count);
-			Assert.AreEqual(2,results.ListClaimProcsInserted.FindAll(x => x.InsPayAmt<0).Count);//only claimprocs inserted should be offsets.
+			Assert.AreEqual(1,results.ListInsertedPaySplits.FindAll(x => x.UnearnedType!=0 && x.ProvNum==provNum && x.SplitAmt==225).Count);
+			Assert.AreEqual(1,results.ListInsertedPaySplits.FindAll(x => x.UnearnedType!=0 && x.ProvNum==otherProvider && x.SplitAmt==150).Count);
+			Assert.AreEqual(2,results.ListInsertedClaimProcs.Count);
+			Assert.AreEqual(2,results.ListInsertedClaimProcs.FindAll(x => x.InsPayAmt<0).Count);//only claimprocs inserted should be offsets.
 		}
 
 		[TestMethod]
@@ -1575,10 +1525,10 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 				ins.ListInsSubs);
 			ClaimTransferResult results=ClaimProcs.TransferClaimsAsTotalToProcedures(listFamilyPatNums);
 			//Should have made a prepayment not attached to a provider
-			Assert.AreEqual(1,results.ListPaySplitsInserted.Count);
-			Assert.AreNotEqual(0,results.ListPaySplitsInserted[0].UnearnedType);
-			Assert.AreEqual(0,results.ListPaySplitsInserted[0].ProvNum);
-			Assert.AreEqual(200,results.ListPaySplitsInserted[0].SplitAmt);
+			Assert.AreEqual(1,results.ListInsertedPaySplits.Count);
+			Assert.AreNotEqual(0,results.ListInsertedPaySplits[0].UnearnedType);
+			Assert.AreEqual(0,results.ListInsertedPaySplits[0].ProvNum);
+			Assert.AreEqual(200,results.ListInsertedPaySplits[0].SplitAmt);
 		}
 
 		[TestMethod]
@@ -1638,116 +1588,13 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 				&& x.InsPayEst==0
 				&& x.InsPayAmt==183.50));
 			//Invoke the method that will automatically make supplemental 'Txfr' claimprocs in order to distribute the As Total payment to claimprocs.
-			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(fam.GetPatNums()).ListClaimProcsInserted;
+			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(fam.GetPatNums()).ListInsertedClaimProcs;
 			//Assert that the supplemental payments were created correctly.
 			Assert.AreEqual(3,listValid.Count);
 			Assert.IsTrue(listValid.All(x => x.IsTransfer));
 			Assert.AreEqual(1,listValid.Count(x => x.ProcNum==0 && x.InsPayAmt==-183.50));//offset for transfer
 			Assert.AreEqual(1,listValid.Count(x => x.ProcNum==proc.ProcNum && x.InsPayAmt==63));//allocation to claim procedure 1
 			Assert.AreEqual(1,listValid.Count(x => x.ProcNum==proc2.ProcNum && x.InsPayAmt==120.50));//allocation to claim procedure 2
-		}
-
-		[TestMethod]
-		public void ClaimProcs_TransferClaimsAsTotalToProcedures_SecondaryClaimWithOutlandishInsPayEst() {
-			//Create two procedures and two claims where both claims are paid by total.
-			//Primary will cover a portion of each procedure.
-			//Secondary will have estimates for outlandish amounts (more than the procedures).
-			//The 'Txfr' supplementals that are created should be smart enough to use the smallest value between ProcFee and InsPayEst.
-			//The bug that required this unit test was that the first procedure was getting 'overpaid' due to assuming InsPayEst was accurate.
-			/************************************************************************
-			 * Scenario provided by TaskNum:5611801
-			 * Proc1 $161
-			 * Proc2 $161
-			 * PriClaimProc1 $96
-			 * PriClaimProc2 $96
-			 * PriClaimProcPayAsTotal $192
-			 * SecClaimProc1 $96 (InsEstTotalOverride used)
-			 * SecClaimProc1 $96 (InsEstTotalOverride used)
-			 * SecClaimProcPayAsTotal $130
-			 *   ^The above scenario was overpaying Proc1 on the secondary claim.
-			 *   ^$161 - $94 = $67
-			 *   ^$67 - $94 = ($27) => due secondary InsPayEst being $96 (too much).
-			 ************************************************************************/
-			string suffix=MethodBase.GetCurrentMethod().Name;
-			Patient patient=PatientT.CreatePatient(suffix);
-			Family family=Patients.GetFamily(patient.PatNum);
-			long provNum=ProviderT.CreateProvider(suffix);
-			Carrier carrier=CarrierT.CreateCarrier(suffix);
-			//Create two procedures.
-			Procedure procedure=ProcedureT.CreateProcedure(patient,"SCWOIPE",ProcStat.C,"",161,DateTime.Today,provNum:provNum);
-			Procedure procedure2=ProcedureT.CreateProcedure(patient,"SCWOIPE2",ProcStat.C,"",161,DateTime.Today,provNum:provNum);
-			//Create primary and secondary insurance. 
-			InsuranceInfo insuranceInfo=InsuranceT.AddInsurance(patient,$"Pri-{suffix}",ordinal:1);
-			insuranceInfo.ListAllProcs=new List<Procedure>() { procedure,procedure2 };
-			insuranceInfo.AddInsurance(patient,$"Sec-{suffix}",ordinal:2);
-			insuranceInfo.AddBenefit(BenefitT.CreatePercentForProc(insuranceInfo.PriInsPlan.PlanNum,procedure.CodeNum,60));
-			insuranceInfo.AddBenefit(BenefitT.CreatePercentForProc(insuranceInfo.PriInsPlan.PlanNum,procedure2.CodeNum,60));
-			insuranceInfo.AddBenefit(BenefitT.CreatePercentForProc(insuranceInfo.SecInsPlan.PlanNum,procedure.CodeNum,60));
-			insuranceInfo.AddBenefit(BenefitT.CreatePercentForProc(insuranceInfo.SecInsPlan.PlanNum,procedure2.CodeNum,60));
-			//Create primary and secondary claims.
-			Claim claimPri=ClaimT.CreateClaim(new List<Procedure>{ procedure,procedure2 },insuranceInfo);
-			insuranceInfo.ListAllClaimProcs=ClaimProcs.Refresh(insuranceInfo.Pat.PatNum);
-			Claim claimSec=ClaimT.CreateClaim(new List<Procedure>{ procedure,procedure2 },insuranceInfo,claimType:"S");
-			insuranceInfo.ListAllClaimProcs=ClaimProcs.Refresh(insuranceInfo.Pat.PatNum);
-			//Set the InsEstTotalOverride on the secondary claimprocs to an outlandish amount.
-			for(int i=0;i<insuranceInfo.ListAllClaimProcs.Count;i++) {
-				if(insuranceInfo.ListAllClaimProcs[i].ClaimNum!=claimSec.ClaimNum) {
-					continue;
-				}
-				ClaimProc claimProcOld=insuranceInfo.ListAllClaimProcs[i].Copy();
-				insuranceInfo.ListAllClaimProcs[i].InsEstTotalOverride=1_000_000;
-				ClaimProcs.Update(insuranceInfo.ListAllClaimProcs[i],claimProcOld);
-			}
-			//Compute estimates so that the InsEstTotalOverride takes over InsPayEst correctly.
-			insuranceInfo.ComputeEstimates();
-			//Receive primary and pay by total.
-			ClaimT.ReceiveClaim(claimPri,insuranceInfo.ListAllClaimProcs.FindAll(x => x.ClaimNum==claimPri.ClaimNum),doSetInsPayAmt:false);
-			ClaimProcT.AddInsPaidAsTotal(patient.PatNum,insuranceInfo.PriInsPlan.PlanNum,provNum,192,insuranceInfo.PriInsSub.InsSubNum,0,0,claimPri.ClaimNum);
-			//Receive secondary and pay by total.
-			ClaimT.ReceiveClaim(claimSec,insuranceInfo.ListAllClaimProcs.FindAll(x => x.ClaimNum==claimSec.ClaimNum),doSetInsPayAmt:false);
-			ClaimProcT.AddInsPaidAsTotal(patient.PatNum,insuranceInfo.SecInsPlan.PlanNum,provNum,130,insuranceInfo.SecInsSub.InsSubNum,0,0,claimSec.ClaimNum);
-			insuranceInfo.ListAllClaimProcs=ClaimProcs.Refresh(insuranceInfo.Pat.PatNum);
-			//Assert the insurance estimates are as desired prior to making the 'Txfr' supplemental payments for the as total payment on the sec claim.
-			Assert.AreEqual(6,insuranceInfo.ListAllClaimProcs.Count);
-			Assert.AreEqual(1,insuranceInfo.ListAllClaimProcs.Count(x => x.ProcNum==procedure.ProcNum 
-				&& x.ClaimNum==claimPri.ClaimNum
-				&& x.InsPayEst==96.6
-				&& x.InsPayAmt==0
-				&& x.InsEstTotalOverride==-1));
-			Assert.AreEqual(1,insuranceInfo.ListAllClaimProcs.Count(x => x.ProcNum==procedure2.ProcNum
-				&& x.ClaimNum==claimPri.ClaimNum
-				&& x.InsPayEst==96.6
-				&& x.InsPayAmt==0
-				&& x.InsEstTotalOverride==-1));
-			Assert.AreEqual(1,insuranceInfo.ListAllClaimProcs.Count(x => x.ProcNum==0
-				&& x.ClaimNum==claimPri.ClaimNum
-				&& x.InsPayEst==0
-				&& x.InsPayAmt==192));
-			Assert.AreEqual(1,insuranceInfo.ListAllClaimProcs.Count(x => x.ProcNum==procedure.ProcNum
-				&& x.ClaimNum==claimSec.ClaimNum
-				&& x.InsPayEst==1_000_000
-				&& x.InsPayAmt==0
-				&& x.InsEstTotalOverride==1_000_000));
-			Assert.AreEqual(1,insuranceInfo.ListAllClaimProcs.Count(x => x.ProcNum==procedure2.ProcNum
-				&& x.ClaimNum==claimSec.ClaimNum
-				&& x.InsPayEst==1_000_000
-				&& x.InsPayAmt==0
-				&& x.InsEstTotalOverride==1_000_000));
-			Assert.AreEqual(1,insuranceInfo.ListAllClaimProcs.Count(x => x.ProcNum==0
-				&& x.ClaimNum==claimSec.ClaimNum
-				&& x.InsPayEst==0
-				&& x.InsPayAmt==130));
-			//Invoke the method that will automatically make supplemental 'Txfr' claimprocs in order to distribute the As Total payment to claimprocs.
-			List<ClaimProc> listClaimProcsInserted=ClaimProcs.TransferClaimsAsTotalToProcedures(family.GetPatNums()).ListClaimProcsInserted;
-			//Assert that the supplemental payments were created correctly.
-			Assert.AreEqual(6,listClaimProcsInserted.Count);
-			Assert.IsTrue(listClaimProcsInserted.All(x => x.IsTransfer));
-			Assert.AreEqual(1,listClaimProcsInserted.Count(x => x.ProcNum==0 && x.InsPayAmt==-192));//offset for claim1 transfer
-			Assert.AreEqual(1,listClaimProcsInserted.Count(x => x.ProcNum==procedure.ProcNum && x.InsPayAmt==96.6));//allocation to claim1 procedure 1
-			Assert.AreEqual(1,listClaimProcsInserted.Count(x => x.ProcNum==procedure2.ProcNum && x.InsPayAmt==95.4));//allocation to claim1 procedure 2
-			Assert.AreEqual(1,listClaimProcsInserted.Count(x => x.ProcNum==0 && x.InsPayAmt==-130));//offset for claim2 transfer
-			Assert.AreEqual(1,listClaimProcsInserted.Count(x => x.ProcNum==procedure.ProcNum && x.InsPayAmt==64.4));//allocation to claim2 procedure 1
-			Assert.AreEqual(1,listClaimProcsInserted.Count(x => x.ProcNum==procedure2.ProcNum && x.InsPayAmt==65.6));//allocation to claim2 procedure 2
 		}
 
 		[TestMethod]
@@ -1808,7 +1655,7 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 				&& x.InsPayEst==0
 				&& x.InsPayAmt==200));
 			//Invoke the method that will automatically make supplemental 'Txfr' claimprocs in order to distribute the As Total payment to claimprocs.
-			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(fam.GetPatNums()).ListClaimProcsInserted;
+			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(fam.GetPatNums()).ListInsertedClaimProcs;
 			//Assert that the supplemental payments were created correctly.
 			Assert.AreEqual(3,listValid.Count);
 			Assert.IsTrue(listValid.All(x => x.IsTransfer));
@@ -1877,7 +1724,7 @@ The patient has one insurance plan, category percentage, subscriber self. Benefi
 				&& x.InsPayEst==0
 				&& x.InsPayAmt==183.50));
 			//Invoke the method that will automatically make supplemental 'Txfr' claimprocs in order to distribute the As Total payment to claimprocs.
-			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(fam.GetPatNums()).ListClaimProcsInserted;
+			List<ClaimProc> listValid=ClaimProcs.TransferClaimsAsTotalToProcedures(fam.GetPatNums()).ListInsertedClaimProcs;
 			//Assert that the supplemental payments were created correctly.
 			Assert.AreEqual(6,listValid.Count);
 			Assert.IsTrue(listValid.All(x => x.IsTransfer));

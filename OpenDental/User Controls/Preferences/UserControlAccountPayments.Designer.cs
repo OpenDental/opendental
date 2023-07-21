@@ -30,7 +30,6 @@ namespace OpenDental {
 			this.comboUnallocatedSplits = new OpenDental.UI.ComboBox();
 			this.label28 = new System.Windows.Forms.Label();
 			this.groupBoxPayPlans = new OpenDental.UI.GroupBox();
-			this.checkPayPlanRequireLockForAPR = new OpenDental.UI.CheckBox();
 			this.checkPayPlansExcludePastActivity = new OpenDental.UI.CheckBox();
 			this.labelTermsAndConditions = new System.Windows.Forms.Label();
 			this.butPayPlanTermsAndConditions = new OpenDental.UI.Button();
@@ -63,7 +62,7 @@ namespace OpenDental {
 			this.groupBoxUnearnedIncome.Controls.Add(this.checkAllowPrepayProvider);
 			this.groupBoxUnearnedIncome.Controls.Add(this.comboUnallocatedSplits);
 			this.groupBoxUnearnedIncome.Controls.Add(this.label28);
-			this.groupBoxUnearnedIncome.Location = new System.Drawing.Point(20, 443);
+			this.groupBoxUnearnedIncome.Location = new System.Drawing.Point(20, 425);
 			this.groupBoxUnearnedIncome.Name = "groupBoxUnearnedIncome";
 			this.groupBoxUnearnedIncome.Size = new System.Drawing.Size(450, 87);
 			this.groupBoxUnearnedIncome.TabIndex = 323;
@@ -109,7 +108,6 @@ namespace OpenDental {
 			// 
 			// groupBoxPayPlans
 			// 
-			this.groupBoxPayPlans.Controls.Add(this.checkPayPlanRequireLockForAPR);
 			this.groupBoxPayPlans.Controls.Add(this.checkPayPlansExcludePastActivity);
 			this.groupBoxPayPlans.Controls.Add(this.labelTermsAndConditions);
 			this.groupBoxPayPlans.Controls.Add(this.butPayPlanTermsAndConditions);
@@ -124,19 +122,9 @@ namespace OpenDental {
 			this.groupBoxPayPlans.Controls.Add(this.textDynamicPayPlan);
 			this.groupBoxPayPlans.Location = new System.Drawing.Point(20, 205);
 			this.groupBoxPayPlans.Name = "groupBoxPayPlans";
-			this.groupBoxPayPlans.Size = new System.Drawing.Size(450, 232);
+			this.groupBoxPayPlans.Size = new System.Drawing.Size(450, 214);
 			this.groupBoxPayPlans.TabIndex = 322;
 			this.groupBoxPayPlans.Text = "Pay Plans";
-			// 
-			// checkPayPlanRequireLockForAPR
-			// 
-			this.checkPayPlanRequireLockForAPR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.checkPayPlanRequireLockForAPR.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkPayPlanRequireLockForAPR.Location = new System.Drawing.Point(13, 210);
-			this.checkPayPlanRequireLockForAPR.Name = "checkPayPlanRequireLockForAPR";
-			this.checkPayPlanRequireLockForAPR.Size = new System.Drawing.Size(427, 17);
-			this.checkPayPlanRequireLockForAPR.TabIndex = 322;
-			this.checkPayPlanRequireLockForAPR.Text = "Require full lock to save a Payment Plan if there is an APR entered";
 			// 
 			// checkPayPlansExcludePastActivity
 			// 
@@ -182,11 +170,11 @@ namespace OpenDental {
 			// 
 			this.checkPayPlanSaveSignedPdf.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.checkPayPlanSaveSignedPdf.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkPayPlanSaveSignedPdf.Location = new System.Drawing.Point(3, 56);
+			this.checkPayPlanSaveSignedPdf.Location = new System.Drawing.Point(122, 56);
 			this.checkPayPlanSaveSignedPdf.Name = "checkPayPlanSaveSignedPdf";
-			this.checkPayPlanSaveSignedPdf.Size = new System.Drawing.Size(437, 17);
+			this.checkPayPlanSaveSignedPdf.Size = new System.Drawing.Size(318, 17);
 			this.checkPayPlanSaveSignedPdf.TabIndex = 312;
-			this.checkPayPlanSaveSignedPdf.Text = "In eClipboard and ODTouch, save signed Payment Plans as PDF";
+			this.checkPayPlanSaveSignedPdf.Text = "In eClipboard, save signed Payment Plans as PDF";
 			// 
 			// label39
 			// 
@@ -195,7 +183,7 @@ namespace OpenDental {
 			this.label39.Name = "label39";
 			this.label39.Size = new System.Drawing.Size(215, 17);
 			this.label39.TabIndex = 320;
-			this.label39.Text = "Payment plan unearned type";
+			this.label39.Text = "Dynamic payment plan unearned type";
 			this.label39.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// comboPayPlansVersion
@@ -233,7 +221,7 @@ namespace OpenDental {
 			this.label59.Name = "label59";
 			this.label59.Size = new System.Drawing.Size(170, 17);
 			this.label59.TabIndex = 319;
-			this.label59.Text = "Pay Plan run time";
+			this.label59.Text = "Dynamic Pay Plan run time";
 			this.label59.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label27
@@ -357,7 +345,7 @@ namespace OpenDental {
 			this.Controls.Add(this.groupBoxPayPlans);
 			this.Controls.Add(this.groupBoxPayments);
 			this.Name = "UserControlAccountPayments";
-			this.Size = new System.Drawing.Size(494, 660);
+			this.Size = new System.Drawing.Size(494, 624);
 			this.groupBoxUnearnedIncome.ResumeLayout(false);
 			this.groupBoxPayPlans.ResumeLayout(false);
 			this.groupBoxPayPlans.PerformLayout();
@@ -394,6 +382,5 @@ namespace OpenDental {
 		private OpenDental.UI.CheckBox checkShowAllocateUnearnedPaymentPrompt;
 		private UI.GroupBox groupBoxUnearnedIncome;
 		private OpenDental.UI.CheckBox checkOnlinePaymentsMarkAsProcessed;
-		private UI.CheckBox checkPayPlanRequireLockForAPR;
 	}
 }

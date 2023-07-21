@@ -643,7 +643,6 @@
 			this.tabControlProc.Size = new System.Drawing.Size(524, 259);
 			this.tabControlProc.TabIndex = 190;
 			this.tabControlProc.Selecting += new System.EventHandler<int>(this.tabControlProc_Selecting);
-			this.tabControlProc.Resize += new System.EventHandler(this.tabControlProc_Resize);
 			// 
 			// tabEnterTx
 			// 
@@ -742,7 +741,7 @@
 			// 
 			this.radioEntryCn.Location = new System.Drawing.Point(2, 91);
 			this.radioEntryCn.Name = "radioEntryCn";
-			this.radioEntryCn.Size = new System.Drawing.Size(80, 17);
+			this.radioEntryCn.Size = new System.Drawing.Size(75, 16);
 			this.radioEntryCn.TabIndex = 5;
 			this.radioEntryCn.Text = "Condition";
 			this.radioEntryCn.CheckedChanged += new System.EventHandler(this.radioEntryCn_CheckedChanged);
@@ -751,7 +750,7 @@
 			// 
 			this.radioEntryR.Location = new System.Drawing.Point(2, 76);
 			this.radioEntryR.Name = "radioEntryR";
-			this.radioEntryR.Size = new System.Drawing.Size(80, 17);
+			this.radioEntryR.Size = new System.Drawing.Size(75, 16);
 			this.radioEntryR.TabIndex = 4;
 			this.radioEntryR.Text = "Referred";
 			this.radioEntryR.CheckedChanged += new System.EventHandler(this.radioEntryR_CheckedChanged);
@@ -760,7 +759,7 @@
 			// 
 			this.radioEntryC.Location = new System.Drawing.Point(2, 31);
 			this.radioEntryC.Name = "radioEntryC";
-			this.radioEntryC.Size = new System.Drawing.Size(80, 17);
+			this.radioEntryC.Size = new System.Drawing.Size(74, 16);
 			this.radioEntryC.TabIndex = 3;
 			this.radioEntryC.Text = "Complete";
 			this.radioEntryC.CheckedChanged += new System.EventHandler(this.radioEntryC_CheckedChanged);
@@ -769,7 +768,7 @@
 			// 
 			this.radioEntryEO.Location = new System.Drawing.Point(2, 61);
 			this.radioEntryEO.Name = "radioEntryEO";
-			this.radioEntryEO.Size = new System.Drawing.Size(80, 17);
+			this.radioEntryEO.Size = new System.Drawing.Size(72, 16);
 			this.radioEntryEO.TabIndex = 2;
 			this.radioEntryEO.Text = "ExstOther";
 			this.radioEntryEO.CheckedChanged += new System.EventHandler(this.radioEntryEO_CheckedChanged);
@@ -778,7 +777,7 @@
 			// 
 			this.radioEntryEC.Location = new System.Drawing.Point(2, 46);
 			this.radioEntryEC.Name = "radioEntryEC";
-			this.radioEntryEC.Size = new System.Drawing.Size(84, 17);
+			this.radioEntryEC.Size = new System.Drawing.Size(84, 16);
 			this.radioEntryEC.TabIndex = 1;
 			this.radioEntryEC.Text = "ExstCurProv";
 			this.radioEntryEC.CheckedChanged += new System.EventHandler(this.radioEntryEC_CheckedChanged);
@@ -788,7 +787,7 @@
 			this.radioEntryTP.Checked = true;
 			this.radioEntryTP.Location = new System.Drawing.Point(2, 16);
 			this.radioEntryTP.Name = "radioEntryTP";
-			this.radioEntryTP.Size = new System.Drawing.Size(80, 17);
+			this.radioEntryTP.Size = new System.Drawing.Size(77, 16);
 			this.radioEntryTP.TabIndex = 0;
 			this.radioEntryTP.TabStop = true;
 			this.radioEntryTP.Text = "TreatPlan";
@@ -1021,15 +1020,15 @@
 			this.groupBox1.Controls.Add(this.butHidden);
 			this.groupBox1.Location = new System.Drawing.Point(12, 6);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(210, 99);
+			this.groupBox1.Size = new System.Drawing.Size(201, 99);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.Text = "Set Selected Teeth";
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(91, 75);
+			this.label7.Location = new System.Drawing.Point(95, 75);
 			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(116, 17);
+			this.label7.Size = new System.Drawing.Size(103, 17);
 			this.label7.TabIndex = 20;
 			this.label7.Text = "(including numbers)";
 			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1851,7 +1850,7 @@
 			this.textSearch.Location = new System.Drawing.Point(47, 213);
 			this.textSearch.Multiline = false;
 			this.textSearch.Name = "textSearch";
-			this.textSearch.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.TreatPlan;
+			this.textSearch.QuickPasteType = OpenDentBusiness.QuickPasteType.TreatPlan;
 			this.textSearch.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textSearch.Size = new System.Drawing.Size(241, 20);
 			this.textSearch.SpellCheckIsEnabled = false;
@@ -2880,7 +2879,7 @@
 			this.textTreatmentNotes.DetectUrls = false;
 			this.textTreatmentNotes.Location = new System.Drawing.Point(0, 362);
 			this.textTreatmentNotes.Name = "textTreatmentNotes";
-			this.textTreatmentNotes.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.ChartTreatment;
+			this.textTreatmentNotes.QuickPasteType = OpenDentBusiness.QuickPasteType.ChartTreatment;
 			this.textTreatmentNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textTreatmentNotes.Size = new System.Drawing.Size(412, 69);
 			this.textTreatmentNotes.TabIndex = 187;

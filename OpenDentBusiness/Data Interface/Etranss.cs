@@ -147,24 +147,6 @@ namespace OpenDentBusiness{
 			return Crud.EtransCrud.SelectMany(command);
 		}
 
-		///<summary>Gets all Etrans for a Patient for the API. Also has filters for CarrierNum and ClaimNum. 
-		///Results can be truncated with the use of limit and offset. Please notify the API team if you change this code.</summary>
-		public static List<Etrans> GetEtransForApi(int limit,int offset,long patNum,long carrierNum=0,long claimNum=0) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Etrans>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,carrierNum,claimNum);
-			}
-			string command="SELECT * FROM etrans WHERE PatNum="+POut.Long(patNum);
-			if(carrierNum!=0) {
-				command+=" AND CarrierNum="+POut.Long(carrierNum);
-			}
-			if(claimNum!=0) {
-				command+=" AND ClaimNum="+POut.Long(claimNum);
-			}
-			command+=" ORDER BY DateTimeTrans "
-				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
-			return Crud.EtransCrud.SelectMany(command);
-		}
-
 		///<summary>Gets all X12 835 etrans entries relating to a specific claim.</summary>
 		public static List<Etrans> GetErasOneClaim(string claimIdentifier,DateTime dateClaimService) {
 			//The main goal of this check is to prevent null claimIdentifiers from causing an exception.
@@ -460,16 +442,8 @@ namespace OpenDentBusiness{
 			//future Canadian check will go here
 
 			//Change the claim back to W.
-			Claim claimOld=Claims.GetClaim(claimNum);
 			command="UPDATE claim SET ClaimStatus='W' WHERE ClaimNum="+POut.Long(claimNum);
 			Db.NonQ(command);
-			if(claimOld!=null && Claims.IsClaimHashValid(claimOld)) { //Should never be null. Only rehash claims that are already valid.
-				Claim claim=Claims.GetClaim(claimNum);
-				claim.SecurityHash=Claims.HashFields(claim);
-				if(claimOld.SecurityHash!=claim.SecurityHash) { //Only bother updating if the SecurityHash is different.
-					Crud.ClaimCrud.Update(claim);
-				}
-			}
 		}
 
 		///<summary>Deletes the etrans entry.  Mostly used when the etrans entry was created, but then the communication with the clearinghouse failed.
@@ -489,18 +463,14 @@ namespace OpenDentBusiness{
 			Etrans835Attaches.DeleteMany(-1,etrans.EtransNum);
 		}
 
-		///<summary>Sets the status of the claim to sent (if not already received), usually as part of printing.  Also makes an entry in etrans.  If this is Canadian eclaims, then this function gets run first.  If the claim is to be sent elecronically, then the messagetext is created after this method and an attempt is made to send the claim.  Finally, the messagetext is added to the etrans.  This is necessary because the transaction numbers must be incremented and assigned to each claim before creating the message and attempting to send.  For Canadians, it will always record the attempt as an etrans even if claim is not set to status of sent.</summary>
-		public static Etrans SetClaimSentOrPrinted(long claimNum,string claimStatus,long patNum,long clearinghouseNum,EtransType etype,int batchNumber,long userNum) {
+		///<summary>Sets the status of the claim to sent, usually as part of printing.  Also makes an entry in etrans.  If this is Canadian eclaims, then this function gets run first.  If the claim is to be sent elecronically, then the messagetext is created after this method and an attempt is made to send the claim.  Finally, the messagetext is added to the etrans.  This is necessary because the transaction numbers must be incremented and assigned to each claim before creating the message and attempting to send.  For Canadians, it will always record the attempt as an etrans even if claim is not set to status of sent.</summary>
+		public static Etrans SetClaimSentOrPrinted(long claimNum,long patNum,long clearinghouseNum,EtransType etype,int batchNumber,long userNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<Etrans>(MethodBase.GetCurrentMethod(),claimNum,claimStatus,patNum,clearinghouseNum,etype,batchNumber,userNum);
+				return Meth.GetObject<Etrans>(MethodBase.GetCurrentMethod(),claimNum,patNum,clearinghouseNum,etype,batchNumber,userNum);
 			}
 			Etrans etrans=CreateEtransForClaim(claimNum,patNum,clearinghouseNum,etype,batchNumber,userNum);
 			etrans=SetCanadianEtransFields(etrans);//etrans.CarrierNum, etrans.CarrierNum2 and etrans.EType all set prior to calling this.
-			string claimStatusReceived=ClaimStatus.Received.GetDescription(useShortVersionIfAvailable:true);
-			string claimStatusInProcess=ClaimStatus.HoldForInProcess.GetDescription(useShortVersionIfAvailable:true);
-			if(claimStatus!=claimStatusReceived && claimStatus!=claimStatusInProcess) { //We don't want to change the claim's status unnecessarily when printing / viewing
-				Claims.SetClaimSent(claimNum);
-			}
+			Claims.SetClaimSent(claimNum);
 			Insert(etrans);
 			return GetEtrans(etrans.EtransNum);//Since the DateTimeTrans is set upon insert, we need to read the record again in order to get the date.
 		}
@@ -819,12 +789,10 @@ namespace OpenDentBusiness{
 				List<string> listTranSetIds=x12.GetTranSetIds();
 				X835 x835=new X835(listEtrans[i],messageText835,listEtrans[i].TranSetId835,listAttaches);
 				X835Status overallStatus=X835Status.Finalized;
-				int countProcessedClaimsWithNameMismatches=0;
 				//If TranSetId835 is blank and we have multiple TranSetIds in the list, we know we are dealing with an Etrans from 14.2 or an older version
 				//that represents multiple transactions from a single 835. We loop through the transactions and process each of them separately.
 				if(listTranSetIds.Count>=2 && listEtrans[i].TranSetId835=="") {
 					List<EraAutomationResult> listAutomationResults=AutoProcessMultiTransactionEtrans(listEtrans[i],messageText835,listTranSetIds,listAttaches,isFullyAutomatic);
-					countProcessedClaimsWithNameMismatches=listAutomationResults.Sum(x=>x.CountProcessedClaimsWithNameMismatch);
 					listAllAutomationResults.AddRange(listAutomationResults);
 					if(listAutomationResults.Any(x => x.Status!=X835Status.Finalized)) {
 						overallStatus=X835Status.Partial;
@@ -834,7 +802,6 @@ namespace OpenDentBusiness{
 					EraAutomationResult automationResult=TryAutoProcessEraEob(x835,listAttaches,isFullyAutomatic);
 					listAllAutomationResults.Add(automationResult);
 					overallStatus=automationResult.Status;
-					countProcessedClaimsWithNameMismatches=automationResult.CountProcessedClaimsWithNameMismatch;
 				}
 				X835AutoProcessed autoProcessedStatus;
 				if(overallStatus!=X835Status.Finalized) {
@@ -857,7 +824,7 @@ namespace OpenDentBusiness{
 				//We make a single Etrans835 for etrans with multiple transactions, using the X835 for the first transaction.
 				Etrans835s.Upsert(etrans835,x835,newAutoProcessedStatus:autoProcessedStatus);
 				Etrans etransOld=listEtrans[i].Copy();
-				listEtrans[i].Note=EraAutomationResult.CreateEtransNote(overallStatus,listEtrans[i].Note,countProcessedClaimsWithNameMismatches);
+				listEtrans[i].Note=EraAutomationResult.CreateEtransNote(overallStatus,listEtrans[i].Note);
 				if(overallStatus==X835Status.Finalized) {
 					listEtrans[i].AckCode="Recd";
 				}
@@ -931,7 +898,7 @@ namespace OpenDentBusiness{
 			List<ClaimProc> listClaimProcsAll=ClaimProcs.RefreshForClaims(listClaimNums);
 			List<Hx835_ShortClaimProc>listShortClaimProcsAll=listClaimProcsAll.Select(x => new Hx835_ShortClaimProc(x)).ToList();
 			List<Hx835_ShortClaim> listShortClaims=listMatchedClaims.Select(x => new Hx835_ShortClaim(x)).ToList();
-			X835Status status=x835.GetStatus(x835.GetClaimDataList(listShortClaims),listShortClaimProcsAll,listAttaches);
+			X835Status status=x835.GetStatus(listShortClaims,listShortClaimProcsAll,listAttaches);
 			if(!status.In(X835Status.Unprocessed,X835Status.Partial,X835Status.NotFinalized)) {
 				automationResult.DidEraStartAsFinalized=true;
 				return automationResult;
@@ -977,9 +944,6 @@ namespace OpenDentBusiness{
 					listClaimProcsAll.RemoveAll(x => x.ClaimNum==listClaimsToProcess[i].ClaimNum);
 					listClaimProcsAll.AddRange(listClaimProcsForClaimCopy);
 					listReceivedClaimProcs.AddRange(listClaimProcsForClaimCopy);
-					if(!listClaimsPaidToProcess[i].DoesPatientNameMatch(patient)) {
-						automationResult.CountProcessedClaimsWithNameMismatch++;
-					}
 				}
 			}
 			if(listReceivedClaimProcs.Count > 0) {
@@ -987,13 +951,7 @@ namespace OpenDentBusiness{
 				for(int i=0;i<listSecondaryClaims.Count;i++) {
 					Claim claimOld=listSecondaryClaims[i].Copy();
 					listSecondaryClaims[i].ClaimStatus="W";//Waiting to send.
-					//We don't need to update the secondary claims twice
-					if(!PrefC.GetBool(PrefName.ClaimPrimaryReceivedRecalcSecondary)) {
-						Claims.Update(listSecondaryClaims[i],claimOld);
-					}
-				}
-				if(PrefC.GetBool(PrefName.ClaimPrimaryReceivedRecalcSecondary) && listSecondaryClaims.Count>0) {
-					Claims.CalculateAndUpdateSecondaries(listSecondaryClaims);
+					Claims.Update(listSecondaryClaims[i],claimOld);
 				}
 			}
 			if(automationResult.AreAllClaimsReceived()) {//Only attempt to finalize the payment if automation has processed all of the claims.
@@ -1076,15 +1034,7 @@ namespace OpenDentBusiness{
 			cpByTotal.AllowedOverride=(double)(listNotDetachedPaidClaims.Sum(x => x.AllowedAmt));
 			cpByTotal.InsPayAmt=(double)(listNotDetachedPaidClaims.Sum(x => x.InsPaid));
 			cpByTotal.WriteOff=0;
-			bool isForPrimary=false;
-			if(PrefC.GetEnum<EnumEraAutoPostWriteOff>(PrefName.EraAutoPostWriteOff)==EnumEraAutoPostWriteOff.PriFromERA) {
-				isForPrimary=claimPaid.CodeClp02.In("1","19");//"Processed as Primary", "Processed as Primary, Forwarded to Additional Payer(s)"
-			}
-			else if(PrefC.GetEnum<EnumEraAutoPostWriteOff>(PrefName.EraAutoPostWriteOff)==EnumEraAutoPostWriteOff.PriFromPlan) {
-				isForPrimary=(claim.ClaimType=="P");
-			}
-			bool canWriteOff=!isSupplementalPay && (isForPrimary || PrefC.GetEnum<EnumEraAutoPostWriteOff>(PrefName.EraAutoPostWriteOff)==EnumEraAutoPostWriteOff.Always);
-			if(canWriteOff) {
+			if(!isSupplementalPay) {
 				cpByTotal.WriteOff=(double)(listNotDetachedPaidClaims.Sum(x => x.WriteoffAmt));
 			}
 			List<ClaimProc> listClaimProcsToEdit=new List<ClaimProc>();
@@ -1225,12 +1175,12 @@ namespace OpenDentBusiness{
 						claimProc.AllowedOverride+=(double)procPaidPartial.AllowedAmt;
 					}
 					if(claimProc.Status==ClaimProcStatus.Preauth) {
-						claimProc.InsPayEst+=(double)procPaidPartial.PreAuthInsEst;
+						claimProc.InsPayEst+=(double)procPaidPartial.InsPaid;
 					}
 					else {
 						claimProc.InsPayAmt+=(double)procPaidPartial.InsPaid;
 					}
-					if(canWriteOff) {
+					if(!isSupplementalPay) {
 						claimProc.WriteOff+=(double)procPaidPartial.WriteoffAmt;
 					}
 					if(sb.Length>0) {
@@ -1272,7 +1222,7 @@ namespace OpenDentBusiness{
 				cpByTotal.DedApplied-=claimProc.DedApplied;
 				cpByTotal.AllowedOverride-=claimProc.AllowedOverride;
 				cpByTotal.InsPayAmt-=claimProc.InsPayAmt;
-				if(canWriteOff) {
+				if(!isSupplementalPay) {
 					cpByTotal.WriteOff-=claimProc.WriteOff;//May cause cpByTotal.Writeoff to go negative if the user typed in the value for claimProc.Writeoff.
 				}
 				if(isAutomatic) {
@@ -1404,15 +1354,12 @@ namespace OpenDentBusiness{
 				MakeEraClaimAutomationLog(claimOld,claim);
 			}
                         else {
-                                SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,0,"ERA claim payment received");
+                                SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,0,"ERA claim payment received");
                         }
 			Claims.Update(claim);
 			ClaimProcs.RemoveSupplementalTransfersForClaims(claim.ClaimNum);
 			InsBlueBooks.SynchForClaimNums(claim.ClaimNum);
-			if(PrefC.GetBool(PrefName.ClaimPrimaryReceivedRecalcSecondary) && claim.ClaimStatus=="R" && claimOld.ClaimStatus!="R" && claim.ClaimType=="P") {
-				Claims.CalculateAndUpdateSecondariesFromPrimaries(new List<Claim>{ claim });
-			}
-			if(isAutomatic || Security.IsAuthorized(EnumPermType.PaymentCreate,DateTime.Today,true)) {
+			if(isAutomatic || Security.IsAuthorized(Permissions.PaymentCreate,DateTime.Today,true)) {
 				PaymentEdit.MakeIncomeTransferForClaimProcs(claim.PatNum,listClaimProcsForClaim);
 			}
 		}
@@ -1440,7 +1387,7 @@ namespace OpenDentBusiness{
 					$"{strNew} {writeoff} {claimNew.WriteOff.ToString("c")}.");
 			}
 			string stringLog=stringBuilderLog.ToString();
-			SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,claimNew.PatNum,stringLog,claimNew.ClaimNum,claimNew.SecDateTEdit);
+			SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,claimNew.PatNum,stringLog,claimNew.ClaimNum,claimNew.SecDateTEdit);
 		}
 
 		///<summary>Returns false if an error is encountered and payment is not finalized.
@@ -1453,7 +1400,7 @@ namespace OpenDentBusiness{
 			//No need to check MiddleTierRole; no call to db.
 			//Date not considered here, but it will be considered when saving the claimpayment to prevent backdating.
 			//When isAutomatic is true this check should be done in the forms that lead to this method being called.
-			if(!isAutomatic && !Security.IsAuthorized(EnumPermType.InsPayCreate)) { 
+			if(!isAutomatic && !Security.IsAuthorized(Permissions.InsPayCreate)) { 
 				return false;
 			}
 			if(listClaims.Count==0) {
@@ -1486,7 +1433,17 @@ namespace OpenDentBusiness{
 			claimPay.CarrierName=x835.PayerName;
 			claimPay.CheckAmt=listClaimProcsAll.Where(x => x.ClaimPaymentNum==0).Sum(x => x.InsPayAmt);//Ignore claimprocs associated to previously finalized payments.
 			claimPay.CheckNum=x835.TransRefNum;
-			claimPay.PayType=X835.GetInsurancePaymentTypeDefNum(x835.PaymentMethodCode);
+			long defNum=0;
+			if(x835._paymentMethodCode=="CHK") {//Physical check
+				defNum=Defs.GetByExactName(DefCat.InsurancePaymentType,"Check");
+			}
+			else if(x835._paymentMethodCode=="ACH") {//Electronic check
+				defNum=Defs.GetByExactName(DefCat.InsurancePaymentType,"EFT");
+			}
+			else if(x835._paymentMethodCode=="FWT") {//Wire transfer
+				defNum=Defs.GetByExactName(DefCat.InsurancePaymentType,"Wired");
+			}
+			claimPay.PayType=defNum;
 			claimPay.IsPartial=true;//This flag is changed to "false" when the payment is finalized from inside FormClaimPayBatch.
 			if(isAutomatic) {
 				//We shouldn't automatically make payments that don't match the amount on the ERA.
@@ -1526,13 +1483,13 @@ namespace OpenDentBusiness{
 				deposit.DateDeposit=claimPay.CheckDate;
 				claimPay.DepositNum=Deposits.Insert(deposit);
 				//Log deposit
-				SecurityLogs.MakeLogEntry(EnumPermType.DepositSlips,0
+				SecurityLogs.MakeLogEntry(Permissions.DepositSlips,0
 					,Lans.g("FormClaimPayEdit","Auto Deposit created during automatic processing of ERA:")+" "+deposit.DateDeposit.ToShortDateString()
 					+" "+Lans.g("FormClaimPayEdit","New")+" "+deposit.Amount.ToString("c"));
 			}
 			//Insert ClaimPayment and make log that would normally be made in FormClaimPayEdit.butOK_Click()
 			ClaimPayments.Insert(claimPay);
-			SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,0,
+			SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,0,
 				Lans.g("FormClaimPayEdit","Insurance Payment created during automatic processing of ERA.")+" "
 				+Lans.g("FormClaimPayEdit","Carrier Name: ")+claimPay.CarrierName+", "
 				+Lans.g("FormClaimPayEdit","Total Amount: ")+claimPay.CheckAmt.ToString("c")+", "

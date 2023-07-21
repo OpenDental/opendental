@@ -172,7 +172,7 @@ namespace OpenDental {
 				width: tabControlCharges.ClientSize.Width-2,height: tabControlCharges.ClientSize.Height-LayoutManager.Scale(23)));
 			if(IsNew) {
 				checkPayTypeNone.Enabled=true;
-				if(!Security.IsAuthorized(EnumPermType.PaymentCreate,_payment.PayDate)) {//to prevent backdating of payments, check for date when this form is loaded
+				if(!Security.IsAuthorized(Permissions.PaymentCreate,_payment.PayDate)) {//to prevent backdating of payments, check for date when this form is loaded
 					DialogResult=DialogResult.Cancel;
 					return;
 				}
@@ -180,8 +180,8 @@ namespace OpenDental {
 			}
 			else {
 				bool isAccountingTransaction=AccountingAutoPays.GetDeepCopy().Exists(x => x.PayType==_payment.PayType);
-				//If the payment is attached to a deposit, or the payment type is already 'None', or the payment is attached to an accounting transaction, or the payment is not for $0, or the payment is a declined credit card payment, disable the 'None' checkbox. 
-				if(_payment.DepositNum!=0 || _payment.PayType==0 || isAccountingTransaction || _payment.PayAmt!=0 || _payment.PaymentSource!=CreditCardSource.None) {
+				//If the payment is attached to a deposit, or the payment type is already 'None', or the payment is attached to an accounting transaction, or the payment is not for $0, disable the 'None' checkbox. 
+				if(_payment.DepositNum!=0 || _payment.PayType==0 || isAccountingTransaction || _payment.PayAmt!=0) {
 					checkPayTypeNone.Enabled=false;
 				}
 				checkRecurring.Checked=_payment.IsRecurringCC;
@@ -193,8 +193,8 @@ namespace OpenDental {
 					labelRecurringChargeWarning.Visible=false;
 					comboCreditCards.Enabled=true;
 				}
-				if(!Security.IsAuthorized(EnumPermType.PaymentEdit,_payment.PayDate)) {
-					butSave.Enabled=false;
+				if(!Security.IsAuthorized(Permissions.PaymentEdit,_payment.PayDate)) {
+					butOK.Enabled=false;
 					butDeletePayment.Enabled=false;
 					butAddManual.Enabled=false;
 					gridSplits.Enabled=false;
@@ -206,9 +206,9 @@ namespace OpenDental {
 					panelXcharge.Enabled=false;
 					butPayConnect.Enabled=false;
 					butPaySimple.Enabled=false;
-					if(Security.IsAuthorized(EnumPermType.SplitCreatePastLockDate,true)) {
+					if(Security.IsAuthorized(Permissions.SplitCreatePastLockDate,true)) {
 						//Since we are enabling the OK button, we need to make sure everything else is disabled (except for Add).
-						butSave.Enabled=true;
+						butOK.Enabled=true;
 						butAddManual.Enabled=true;
 						comboClinic.Enabled=false;
 						textDate.ReadOnly=true;
@@ -233,14 +233,12 @@ namespace OpenDental {
 			string careCreditMerchantNum=PIn.String(ProgramProperties.GetPropValFromList(listProgramProperties,
 				ProgramProperties.PropertyDescs.CareCredit.CareCreditMerchantNumber,0));//Practice merchant num
 			if(PrefC.HasClinicsEnabled) {
-				comboClinic.ClinicNumSelected=_payment.ClinicNum;
+				comboClinic.SelectedClinicNum=_payment.ClinicNum;
 				_listClinics=Clinics.GetDeepCopy();
 			}
 			else {//clinics not enabled
 				comboClinicOutstandingFilter.Visible=false;
 				labelClinicOutstandingFilter.Visible=false;
-				comboClinicsPaySplitsFilter.Visible=false;
-				labelClinicsPaySplitsFilter.Visible=false;
 			}
 			if(_payment.ProcessStatus==ProcessStat.OfficeProcessed) {
 				checkProcessed.Visible=false;//This checkbox will only show if the payment originated online.
@@ -496,19 +494,15 @@ namespace OpenDental {
 			}
 			if(IsCareCreditTransStatusCompleted(careCreditWebResponse)) {
 				if(careCreditWebResponse.TransType==CareCreditTransType.Purchase) {
-					if(_payment.PayNote!=""){
-						_payment.PayNote+="\r\n";
-					}
-					_payment.PayNote+=CareCredit.GetFormattedNote(careCreditWebResponse);
+					_payment.PayNote=_payment.PayNote+"\r\n"+CareCredit.GetFormattedNote(careCreditWebResponse);
 					_payment.PaymentSource=CreditCardSource.CareCredit;
 					_payment.IsCcCompleted=true;
-					_payment.MerchantFee=CareCredit.GetMerchantFee(careCreditWebResponse);
 					Payments.Update(_payment,true);
 					DisablePaymentControls();
 				}
 			}
 			else {
-				MsgBox.Show("CareCredit transaction could not be completed or was sent to the patient. This payment will not be associated to the CareCredit Transactions.");
+				MsgBox.Show("CareCredit transaction could not be completed. This payment will not be associated to the CareCredit Transactions.");
 				CareCreditWebResponses.ClearPayment(careCreditWebResponse.CareCreditWebResponseNum);
 				return;
 			}
@@ -526,7 +520,7 @@ namespace OpenDental {
 		}
 
 		private void butEmailReceipt_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.EmailSend)) {
+			if(!Security.IsAuthorized(Permissions.EmailSend)) {
 				return;
 			}
 			if(string.IsNullOrWhiteSpace(_payment.Receipt)) {
@@ -811,7 +805,7 @@ namespace OpenDental {
 		private void gridSplits_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			PaySplit paySplitOld=(PaySplit)gridSplits.ListGridRows[e.Row].Tag;
 			PaySplit paySplit=paySplitOld.Copy();
-			if(paySplit.DateEntry!=DateTime.MinValue && !Security.IsAuthorized(EnumPermType.PaymentEdit,paySplit.DatePay,false)) {
+			if(paySplit.DateEntry!=DateTime.MinValue && !Security.IsAuthorized(Permissions.PaymentEdit,paySplit.DatePay,false)) {
 				return;
 			}
 			using FormPaySplitEdit formPaySplitEdit=new FormPaySplitEdit(GetFamilyOrSuperFamily());
@@ -862,7 +856,7 @@ namespace OpenDental {
 		}
 
 		private void menuPayConnect_Click(object sender,EventArgs e) {
-			if(Security.IsAuthorized(EnumPermType.Setup)) {
+			if(Security.IsAuthorized(Permissions.Setup)) {
 				using FormPayConnectSetup formPayConnectSetup=new FormPayConnectSetup();
 				formPayConnectSetup.ShowDialog();
 				CheckUIState();
@@ -870,7 +864,7 @@ namespace OpenDental {
 		}
 
 		private void menuPaySimple_Click(object sender,EventArgs e) {
-			if(Security.IsAuthorized(EnumPermType.Setup)) {
+			if(Security.IsAuthorized(Permissions.Setup)) {
 				using FormPaySimpleSetup formPaySimpleSetup=new FormPaySimpleSetup();
 				formPaySimpleSetup.ShowDialog();
 				CheckUIState();
@@ -878,7 +872,7 @@ namespace OpenDental {
 		}
 
 		private void menuXcharge_Click(object sender,EventArgs e) {
-			if(Security.IsAuthorized(EnumPermType.Setup)) {
+			if(Security.IsAuthorized(Permissions.Setup)) {
 				using FormXchargeSetup formXchargeSetup=new FormXchargeSetup();
 				formXchargeSetup.ShowDialog();
 				CheckUIState();
@@ -939,13 +933,11 @@ namespace OpenDental {
 			if(checkPayTypeNone.Checked) {
 				listPayType.Visible=false;
 				butPay.Text=Lan.g(this,"Transfer");
-				if(tabControlCharges.SelectedTab==tabPageOutstanding) {
-					if(PrefC.HasClinicsEnabled) {
-						comboGroupBy.SelectedIndex=2;
-					}
-					else {
-						comboGroupBy.SelectedIndex=1;
-					}
+				if(PrefC.HasClinicsEnabled) {
+					comboGroupBy.SelectedIndex=2;
+				}
+				else {
+					comboGroupBy.SelectedIndex=1;
 				}
 				butCreatePartial.Visible=false;
 				checkIncludeExplicitCreditsOnly.Enabled=false;
@@ -971,7 +963,7 @@ namespace OpenDental {
 
 		private void comboClinic_SelectionChangeCommitted(object sender,EventArgs e) {
 			//_listUserClinicNums contains all clinics the user has access to as well as ClinicNum 0 for 'none'
-			_payment.ClinicNum=comboClinic.ClinicNumSelected;
+			_payment.ClinicNum=comboClinic.SelectedClinicNum;
 			if(_listPaySplits.Count>0) {
 				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Change clinic for all splits?")) {
 					return;
@@ -1037,15 +1029,14 @@ namespace OpenDental {
 					MsgBox.Show(this,"No providers found.");
 					return -1;
 				}
-				FrmProviderPick frmProviderPick=new FrmProviderPick(listProviders);
+				using FormProviderPick formProviderPick=new FormProviderPick(listProviders);
 				if(listProvNums.Contains(_patient.PriProv)) {
-					frmProviderPick.ProvNumSelected=_patient.PriProv;
+					formProviderPick.ProvNumSelected=_patient.PriProv;
 				}
-				frmProviderPick.ShowDialog();
-				if(!frmProviderPick.IsDialogOK) {
+				if(formProviderPick.ShowDialog()!=DialogResult.OK) {
 					return -1;
 				}
-				return frmProviderPick.ProvNumSelected;
+				return formProviderPick.ProvNumSelected;
 			}
 			return listProvNums.First();//default provNum to the first provider
 		}
@@ -1343,7 +1334,7 @@ namespace OpenDental {
 
 		///<summary>A method which, for a given grid, allows the user to split a payment between procedures on it.</summary>
 		private void CreatePartialSplitClickHelper(GridOD grid) {
-			if(comboGroupBy.Visible && comboGroupBy.SelectedIndex > 0) {
+			if(comboGroupBy.SelectedIndex > 0) {
 				List<List<AccountEntry>> listListsAccountEntriesSelected=grid.SelectedTags<List<AccountEntry>>();
 				for(int i = 0;i<listListsAccountEntriesSelected.Count;i++) {
 					CreatPartialSplitForAccountEntries(listListsAccountEntriesSelected[i].ToArray());
@@ -1410,7 +1401,7 @@ namespace OpenDental {
 			bool suppressMessage=false;
 			List<PaySplit> listPaySplits=gridSplits.SelectedTags<PaySplit>();
 			for(int i = 0;i<listPaySplits.Count;i++) {
-				if(listPaySplits[i].DateEntry!=DateTime.MinValue && !Security.IsAuthorized(EnumPermType.PaymentEdit,listPaySplits[i].DatePay,suppressMessage)) {
+				if(listPaySplits[i].DateEntry!=DateTime.MinValue && !Security.IsAuthorized(Permissions.PaymentEdit,listPaySplits[i].DatePay,suppressMessage)) {
 					suppressMessage=true;
 					continue;//Don't delete this paysplit
 				}
@@ -1501,9 +1492,9 @@ namespace OpenDental {
 		private bool DoHighlightPaySplit(PaySplit paySplit) {
 			if(comboPatientPaySplitsFilter.IsAllSelected==true
 				&& comboProviderPaySplitsFilter.IsAllSelected==true
-				&& (!PrefC.HasClinicsEnabled || comboClinicsPaySplitsFilter.IsAllSelected==true)
-				&& amtMinPaySplits.Value==0
-				&& amtMaxPaySplits.Value==0)
+				&& comboClinicsPaySplitsFilter.IsAllSelected==true
+				&& amtMinEndPaySplits.Value==0
+				&& amtMaxEndPaySplits.Value==0)
 			{
 				return false;
 			}
@@ -1520,11 +1511,11 @@ namespace OpenDental {
 				return false;
 			}
 			//Charge Amount Filter
-			if(amtMaxPaySplits.Value!=0 && Math.Abs((decimal)paySplit.SplitAmt) > amtMaxPaySplits.Value) {
+			if(amtMaxEndPaySplits.Value!=0 && (decimal)paySplit.SplitAmt > amtMaxEndPaySplits.Value) {
 				return false;
 			}
 			//Charge Amount Filter
-			if(amtMinPaySplits.Value!=0 && Math.Abs((decimal)paySplit.SplitAmt) < amtMinPaySplits.Value) {
+			if(amtMinEndPaySplits.Value!=0 && (decimal)paySplit.SplitAmt < amtMinEndPaySplits.Value) {
 				return false;
 			}
 			return true;
@@ -1639,8 +1630,8 @@ namespace OpenDental {
 			if(doPreserveValues) {
 				return;//It's fine to have values set in these amount boxes that fall outside of the range of the current account entries.
 			}
-			amtMinPaySplits.Value=0;
-			amtMaxPaySplits.Value=0;
+			amtMinEndPaySplits.Value=0;
+			amtMaxEndPaySplits.Value=0;
 		}
 
 		private void FillFilterPatientsChargesTreatPlan(bool doPreserveValues) {
@@ -1708,7 +1699,7 @@ namespace OpenDental {
 			comboProviderPaySplitsFilter.Items.Clear();
 			comboProviderPaySplitsFilter.IncludeAll=true;
 			comboProviderPaySplitsFilter.Items.AddProvNone();
-			List<Provider> listProviders=Providers.GetProvsByProvNums(_listPaySplits.Select(x=>x.ProvNum).Distinct()
+			List<Provider> listProviders=Providers.GetProvsByProvNums(_listAccountEntriesCharges.Select(x=>x.ProvNum).Distinct()
 				.ToList());
 			comboProviderPaySplitsFilter.Items.AddProvsAbbr(listProviders);
 			if(!wasAllSelected && doPreserveValues) {
@@ -2021,7 +2012,6 @@ namespace OpenDental {
 				}
 				listPaySplitsFiltered.Add(listPaySplits[i]);
 			}
-			listPaySplitsFiltered=listPaySplitsFiltered.OrderBy(x => Math.Abs(x.SplitAmt)).ThenBy(x => x.SplitAmt).ToList();
 			for(int i=0;i<listPaySplitsFiltered.Count;i++) {
 				row=new GridRow();
 				row=FillGridsSplitsHelper(listPaySplitsFiltered[i]);
@@ -2029,7 +2019,6 @@ namespace OpenDental {
 				gridSplits.ListGridRows.Add(row);
 			}
 			listPaySplits.RemoveAll(x => listPaySplitsFiltered.Contains(x));
-			listPaySplits=listPaySplits.OrderBy(x => Math.Abs(x.SplitAmt)).ThenBy(x => x.SplitAmt).ToList();
 			for(int i=0;i<listPaySplits.Count;i++) {
 				row=new GridRow();
 				row=FillGridsSplitsHelper(listPaySplits[i]);
@@ -2221,7 +2210,7 @@ namespace OpenDental {
 			if(!hasSelectedIndices) {
 				grid.SetAll(true);//Artificially select every row in the grid.
 			}
-			if(comboGroupBy.SelectedIndex > 0 && tabControlCharges.SelectedTab==tabPageOutstanding) {
+			if(comboGroupBy.SelectedIndex > 0) {
 				List<List<AccountEntry>> listListsAccountEntries=grid.SelectedTags<List<AccountEntry>>();
 				for(int i = 0;i<listListsAccountEntries.Count;i++) {
 					listListsAccountEntriesSelectedCharges.Add(listListsAccountEntries[i]);
@@ -2386,7 +2375,7 @@ namespace OpenDental {
 			if(_doPrintReceipt && receipt!="") {
 				PrintReceipt(receipt,Lan.g(this,creditCardSource==CreditCardSource.EdgeExpressRCM ? "EdgeExpress receipt printed" : "X-Charge receipt printed"));
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,paymentVoid.PatNum,Patients.GetLim(paymentVoid.PatNum).GetNameLF()+", "
+			SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,paymentVoid.PatNum,Patients.GetLim(paymentVoid.PatNum).GetNameLF()+", "
 				+paymentVoid.PayAmt.ToString("c"));
 		}
 
@@ -2425,7 +2414,7 @@ namespace OpenDental {
 				return false;
 			}
 			if(isSetupRequired) {
-				if(!Security.IsAuthorized(EnumPermType.Setup)) {
+				if(!Security.IsAuthorized(Permissions.Setup)) {
 					return false;
 				}
 				using FormPayConnectSetup formPayConnectSetup=new FormPayConnectSetup();
@@ -2460,7 +2449,7 @@ namespace OpenDental {
 				return false;
 			}
 			if(isSetupRequired) {
-				if(!Security.IsAuthorized(EnumPermType.Setup)) {
+				if(!Security.IsAuthorized(Permissions.Setup)) {
 					return false;
 				}
 				using FormPaySimpleSetup formPaySimpleSetup=new FormPaySimpleSetup();
@@ -2505,7 +2494,7 @@ namespace OpenDental {
 				isSetupRequired=true;
 			}
 			//if setup is required and the user is authorized for setup, load the X-Charge setup form, but return false so the validation can happen again
-			if(isSetupRequired && Security.IsAuthorized(EnumPermType.Setup)) {
+			if(isSetupRequired && Security.IsAuthorized(Permissions.Setup)) {
 				using FormXchargeSetup formXchargeSetup=new FormXchargeSetup();
 				formXchargeSetup.ShowDialog();
 				CheckUIState();//user may have made a change in setup that affects the state of the UI, e.g. X-Charge is no longer enabled for this clinic
@@ -2595,7 +2584,7 @@ namespace OpenDental {
 					_doPromptSignature,doCreateToken,aliasToken,transactionId,cashBackAmt);
 			}
 			catch(Exception ex) {
-				SecurityLogs.MakeLogEntry(EnumPermType.CreditCardTerminal,_patient.PatNum,"No response received.");
+				SecurityLogs.MakeLogEntry(Permissions.CreditCardTerminal,_patient.PatNum,"No response received.");
 				FriendlyException.Show(Lans.g(this,"A payment was initiated but no response was received. The payment may "
 					+"or may not have processed. Verify payment with your Credit Card merchant."),ex);
 				return payNote;
@@ -2674,14 +2663,11 @@ namespace OpenDental {
 					_payment.Receipt=EdgeExpress.CNP.BuildReceiptString(xWebResponseProcessed,false);
 					if(xWebResponseProcessed.XWebResponseCode==XWebResponseCodes.Approval) {
 						_payment.IsCcCompleted=true;
+						textNote.Text+=payNote;
 						if(_doPrintReceipt) {
 							PrintReceipt(_payment.Receipt,Lan.g(this,"EdgeExpress receipt printed"));
 						}
 					}
-					else{
-						_isCCDeclined=true;
-					}
-					textNote.Text+=payNote;
 					break;
 				case EdgeExpressTransType.CreditAuth:
 					xWebResponse=EdgeExpress.CNP.GetUrlForCreditCardAlias(_patient.PatNum,CreditCardSource.EdgeExpressCNP,false,amt,doCreateToken);
@@ -2696,14 +2682,11 @@ namespace OpenDental {
 					_payment.Receipt=EdgeExpress.CNP.BuildReceiptString(xWebResponseProcessed,false);
 					if(xWebResponseProcessed.XWebResponseCode==XWebResponseCodes.Approval) {// only print receipt if its an approved transaction
 						_payment.IsCcCompleted=true;
+						textNote.Text+=payNote;
 						if(_doPrintReceipt) {
 							PrintReceipt(_payment.Receipt,Lan.g(this,"EdgeExpress receipt printed"));
 						}
 					}
-					else{
-						_isCCDeclined=true;
-					}
-					textNote.Text+=payNote;
 					break;
 				case EdgeExpressTransType.CreditReturn:
 					xWebResponse=EdgeExpress.CNP.ReturnTransaction(_patient.PatNum,transactionId,amt,false);
@@ -2717,10 +2700,6 @@ namespace OpenDental {
 						if(_doPrintReceipt) {
 							PrintReceipt(_payment.Receipt,Lan.g(this,"EdgeExpress receipt printed"));
 						}
-					}
-					else {
-						//error processing return
-						throw new ODException($"Error processing return: '{xWebResponse.XWebResponseCode}'");
 					}
 					break;
 				case EdgeExpressTransType.CreditVoid:
@@ -2752,14 +2731,11 @@ namespace OpenDental {
 					}
 					if(xWebResponseProcessed.XWebResponseCode==XWebResponseCodes.Approval) {// only print receipt if its an approved transaction
 						_payment.IsCcCompleted=true;
+						textNote.Text+=payNote;
 						if(_doPrintReceipt) {
 							PrintReceipt(_payment.Receipt,Lan.g(this,"EdgeExpress receipt printed"));
 						}
 					}
-					else{
-						_isCCDeclined=true;
-					}
-					textNote.Text+=payNote;
 					break;
 			}
 			return payNote;
@@ -2854,7 +2830,7 @@ namespace OpenDental {
 			if(!PayPlanEdit.AreAnyPayPlansOverpaid(listPaySplitsPayPlanDynamic)) {
 				return true;
 			}
-			DialogResult dialogResult=MessageBox.Show(Lan.g(this,"One or more Current Payment Splits are overpaying interest or principal for payment plan charges."
+			DialogResult dialogResult=MessageBox.Show(Lan.g(this,"One or more Current Payment Splits are overpaying interest or principal for dynamic payment plan charges."
 				+"\r\n\r\nDo you want to re-apply the overpayment to principal?"
 				+"\r\n\r\nYes pays on principal, No makes a prepayment, and Cancel returns to the Payment window."),Lan.g(this,"Payment Plan Overpayment Detected"),MessageBoxButtons.YesNoCancel);
 			if(dialogResult==DialogResult.Cancel) {
@@ -2951,7 +2927,7 @@ namespace OpenDental {
 			}
 			if(IsNew) {
 				//prevents backdating of initial payment
-				if(!Security.IsAuthorized(EnumPermType.PaymentCreate,PIn.Date(textDate.Text))) {
+				if(!Security.IsAuthorized(Permissions.PaymentCreate,PIn.Date(textDate.Text))) {
 					return false;
 				}
 			}
@@ -2959,9 +2935,9 @@ namespace OpenDental {
 				//Editing an old entry will already be blocked if the date was too old, and user will not be able to click OK button
 				//This catches it if user changed the date to be older. If user has SplitCreatePastLockDate permission and has not changed the date, then
 				//it is okay to save the payment.
-				if((!Security.IsAuthorized(EnumPermType.SplitCreatePastLockDate,true)
+				if((!Security.IsAuthorized(Permissions.SplitCreatePastLockDate,true)
 					|| _paymentOld.PayDate!=PIn.Date(textDate.Text))
-					&& !Security.IsAuthorized(EnumPermType.PaymentEdit,PIn.Date(textDate.Text))) {
+					&& !Security.IsAuthorized(Permissions.PaymentEdit,PIn.Date(textDate.Text))) {
 					return false;
 				}
 			}
@@ -3100,7 +3076,7 @@ namespace OpenDental {
 			bool hasChanged=PaySplits.Sync(_listPaySplits,_payment.PayNum);
 			for(int i = 0;i<_listPaySplitsForSecLog.Count;i++) {
 				//Split was deleted. Add Securitylog Entry
-				SecurityLogs.MakeLogEntry(EnumPermType.PaymentEdit,_listPaySplitsForSecLog[i].PatNum,PaySplits.GetSecurityLogMsgDelete(_listPaySplitsForSecLog[i],_payment),0,
+				SecurityLogs.MakeLogEntry(Permissions.PaymentEdit,_listPaySplitsForSecLog[i].PatNum,PaySplits.GetSecurityLogMsgDelete(_listPaySplitsForSecLog[i],_payment),0,
 					_listPaySplitsForSecLog[i].SecDateTEdit);
 			}
 			//Accounting synch is done here.  All validation was done further up
@@ -3110,10 +3086,10 @@ namespace OpenDental {
 					GetFamilyOrSuperFamily().GetNameInFamFL(_payment.PatNum));
 			}
 			if(IsNew) {
-				SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,_payment.PatNum,Payments.GetSecuritylogEntryText(_payment,_paymentOld,IsNew,_listDefsPaymentType));
+				SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,_payment.PatNum,Payments.GetSecuritylogEntryText(_payment,_paymentOld,IsNew,_listDefsPaymentType));
 			}
 			else {
-				SecurityLogs.MakeLogEntry(EnumPermType.PaymentEdit,_payment.PatNum,Payments.GetSecuritylogEntryText(_payment,_paymentOld,IsNew,_listDefsPaymentType),
+				SecurityLogs.MakeLogEntry(Permissions.PaymentEdit,_payment.PatNum,Payments.GetSecuritylogEntryText(_payment,_paymentOld,IsNew,_listDefsPaymentType),
 					0,_paymentOld.SecDateTEdit);
 			}
 			if(hasChanged) {
@@ -3201,13 +3177,9 @@ namespace OpenDental {
 			//Thus, on the first FillGridTreatPlan() during load, the vScroll is not taken into account when computing column widths, causing some visual differences.
 			//Forcing the grid to re-fill and draw when we change tabs will compute the column widths again, but with vScroll.Visible updated to being true.
 			if(tabControlCharges.SelectedTab==tabPageOutstanding) {
-				labelGroupBy.Visible=true;
-				comboGroupBy.Visible=true;
 				FillGridCharges();
 			}
 			else {//Treat' Plan
-				labelGroupBy.Visible=false;
-				comboGroupBy.Visible=false;
 				FillGridTreatPlan();
 			}
 			UpdateChargeTotalWithSelectedEntries();
@@ -3349,7 +3321,7 @@ namespace OpenDental {
 			PayConnectResponse payConnectResponse=null;
 			string receiptStr="";
 			if(_creditCardRequestPayConnect==null || payconnectVersion=="2") {//The payment was made through the terminal or by PayConnect v2.
-				ProgressWin progressOD=new ProgressWin();
+				ProgressOD progressOD=new ProgressOD();
 				progressOD.ActionMain=() => {
 					if(payconnectVersion=="1") {
 						PosRequest posRequest=PosRequest.CreateVoidByReference(refNum);
@@ -3367,7 +3339,7 @@ namespace OpenDental {
 				progressOD.StartingMessage=Lan.g(this,"Processing void on terminal.");
 				progressOD.StopNotAllowedMessage=Lan.g(this,"Not allowed to stop. Please wait up to 2 minutes.");
 				try {
-					progressOD.ShowDialog();
+					progressOD.ShowDialogProgress();
 				}
 				catch(Exception ex) {
 					MessageBox.Show(Lan.g(this,"Error voiding payment:")+" "+ex.Message);
@@ -3387,7 +3359,7 @@ namespace OpenDental {
 				Cursor=Cursors.Default;
 			}
 			if(payConnectResponse==null || payConnectResponse.StatusCode!="0") {//error in transaction
-				SecurityLogs.MakeLogEntry(EnumPermType.CreditCardTerminal,_patient.PatNum,"Invalid response, or error communicating with, PayConnect.");
+				SecurityLogs.MakeLogEntry(Permissions.CreditCardTerminal,_patient.PatNum,"Invalid response, or error communicating with, PayConnect.");
 				MsgBox.Show(this,"This credit card payment has already been processed and will have to be voided manually through the web interface.");
 				return;
 			}
@@ -3402,7 +3374,7 @@ namespace OpenDental {
 				+Lan.g(this,"Auth Code")+": "+payConnectResponse.AuthCode+Environment.NewLine
 				+Lan.g(this,"Ref Number")+": "+payConnectResponse.RefNumber;
 			Payment paymentVoid=Payments.InsertVoidPayment(_payment,_listPaySplits,receiptStr,payNote,CreditCardSource.PayConnect,payAmt:amountCharged);
-			SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,paymentVoid.PatNum,
+			SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,paymentVoid.PatNum,
 				Patients.GetLim(paymentVoid.PatNum).GetNameLF()+", "+paymentVoid.PayAmt.ToString("c"));
 		}
 
@@ -3456,7 +3428,7 @@ namespace OpenDental {
 			receiptStr=apiResponse.TransactionReceipt;
 			Cursor=Cursors.Default;
 			Payment paymentVoid=Payments.InsertVoidPayment(_payment,_listPaySplits,receiptStr,apiResponse.ToNoteString(),CreditCardSource.PaySimple);
-			SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,paymentVoid.PatNum,
+			SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,paymentVoid.PatNum,
 				Patients.GetLim(paymentVoid.PatNum).GetNameLF()+", "+paymentVoid.PayAmt.ToString("c"));
 		}
 
@@ -3587,7 +3559,7 @@ namespace OpenDental {
 			Payment paymentReturn=Payments.InsertReturnXWebPayment(_payment,formXWeb.XWebResponse_.GetFormattedNote(false),(-formXWeb.XWebResponse_.Amount));
 			formXWeb.XWebResponse_.PaymentNum=paymentReturn.PayNum;
 			XWebResponses.Update(formXWeb.XWebResponse_);
-			SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,paymentReturn.PatNum,
+			SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,paymentReturn.PatNum,
 				Patients.GetLim(paymentReturn.PatNum).GetNameLF() + ", " + paymentReturn.PayAmt.ToString("c"));
 			butVoid.Visible=true;
 			LayoutManager.MoveHeight(groupXWeb,85);
@@ -3596,7 +3568,7 @@ namespace OpenDental {
 
 		private void XWebVoid() {
 			//Uses DateTime.Today because a void is a new transaction that is created upon entering this function
-			if(!Security.IsAuthorized(EnumPermType.PaymentCreate,DateTime.Today)) {
+			if(!Security.IsAuthorized(Permissions.PaymentCreate,DateTime.Today)) {
 				return;
 			}
 			double amount=_xWebResponse.Amount;
@@ -3691,9 +3663,6 @@ namespace OpenDental {
 				//User canceled or just didn't run a transaction - nothing to process.
 				if(payConnectResponse.RefNumber.IsNullOrEmpty()) {
 					textNote.Text=Lan.g(this,"Response from PayConnect:\r\nStatus: ")+(payConnectResponse.StatusCode??"")+Lan.g(this,"\r\nDescription: ")+payConnectResponse.Description??"";
-					if(formPayConnect2.WasPaymentAttempted){
-						_isCCDeclined=true;
-					}
 					return null;
 				}
 				//iFrame was opened and closed without attempting a transaction.
@@ -3705,9 +3674,6 @@ namespace OpenDental {
 					textNote.Text=Lan.g(this,"Response from PayConnect:\r\nStatus: Error ")+(payConnectResponse.StatusCode??"")
 						+Lan.g(this,"\r\nDescription: ")+(payConnectResponse.Description??"")
 						+Lan.g(this,"\r\nRef Number: ")+(payConnectResponse.RefNumber??"");
-					if(formPayConnect2.WasPaymentAttempted){
-						_isCCDeclined=true;
-					}
 					return null;
 				}
 				CardPaymentMethod cardPaymentMethod=statusResponse.GetStatusResponse.PaymentMethod.CardPaymentMethod;
@@ -3767,9 +3733,6 @@ namespace OpenDental {
 					if(payConnectResponse!=null && payConnectResponse.StatusCode=="0") { //The transaction succeeded.
 						_payment.IsCcCompleted=true;
 						return resultNote;
-					}
-					if(wasPaymentAttempted){
-						_isCCDeclined=true;
 					}
 					return null;
 				}
@@ -3995,8 +3958,8 @@ namespace OpenDental {
 		///If prepaidAmt is not zero, then will show the xcharge window with the given prepaid amount and let the user enter card # and exp.
 		///A patient is not required for prepaid cards.</summary>
 		public string MakeXChargeTransaction(double prepaidAmt = 0) {
-			if(ODEnvironment.IsCloudServer) {
-				MsgBox.Show(this,"XCharge is not available while using Open Dental Cloud.");
+			if(ODBuild.IsWeb()) {
+				MsgBox.Show(this,"XCharge is not available while viewing through the web.");
 				return null;
 			}
 			//Need to refresh this list locally in case we are coming from another form
@@ -4189,7 +4152,7 @@ namespace OpenDental {
 				textReader=new StreamReader(resultfile);
 			}
 			catch {
-				SecurityLogs.MakeLogEntry(EnumPermType.CreditCardTerminal,_patient.PatNum,"Invalid response, an exception was thrown while reading the file.");
+				SecurityLogs.MakeLogEntry(Permissions.CreditCardTerminal,_patient.PatNum,"Invalid response, an exception was thrown while reading the file.");
 				MessageBox.Show(Lan.g(this,"There was a problem charging the card.  Please run the credit card report from inside X-Charge to verify that "
 					+"the card was not actually charged.")+"\r\n"+Lan.g(this,"If the card was charged, you need to make sure that the payment amount matches.")
 					+"\r\n"+Lan.g(this,"If the card was not charged, please try again."));
@@ -4435,8 +4398,8 @@ namespace OpenDental {
 					note=MakeEdgeExpressTransactionCNP(edgeExpressTransType,amt,doCreateToken,aliasToken,transactionId,prepaidAmt,clinicNum);
 				}
 				catch(Exception ex) {
-					FrmFriendlyException frmFriendlyException=new FrmFriendlyException("Error processing EdgeExpress request",ex,false);
-					frmFriendlyException.ShowDialog();
+					FormFriendlyException formFriendlyException=new FormFriendlyException("Error processing EdgeExpress request",ex,false);
+					formFriendlyException.ShowDialog();
 					return null;
 				}
 				_payment.PaymentSource=CreditCardSource.EdgeExpressCNP;
@@ -4499,11 +4462,10 @@ namespace OpenDental {
 				return;
 			}
 			if(!IsNew) {
-				SecurityLogs.MakeLogEntry(EnumPermType.PaymentEdit,_payment.PatNum,"Delete for: "+Patients.GetLim(_payment.PatNum).GetNameLF()+", "
+				SecurityLogs.MakeLogEntry(Permissions.PaymentEdit,_payment.PatNum,"Delete for: "+Patients.GetLim(_payment.PatNum).GetNameLF()+", "
 					+_paymentOld.PayAmt.ToString("c")+", with payment type '"+Payments.GetPaymentTypeDesc(_paymentOld,_listDefsPaymentType)+"'",
 					0,_paymentOld.SecDateTEdit);
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 		}
 
@@ -4511,21 +4473,22 @@ namespace OpenDental {
 			DeleteSelected();
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			if(!SavePaymentToDb()) {
 				return;
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
 			DialogResult=DialogResult.OK;
 			Plugins.HookAddCode(this,"FormPayment.butOK_Click_end",_payment,_listPaySplits);
+		}
+
+		private void butCancel_Click(object sender,System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+			Plugins.HookAddCode(this,"FormPayment.butCancel_Click_end");
 		}
 
 		private void FormPayment_FormClosing(object sender,FormClosingEventArgs e) {
 			if(DialogResult==DialogResult.OK) {
 				return;
-			}
-			if(Security.IsAuthorized(EnumPermType.PaymentCreate,_payment.PayDate)) {//In the Load there's a DialogResult.Cancel that only happens when this is false, so for X Click it must be true
-				Plugins.HookAddCode(this,"FormPayment.butCancel_Click_end");//only happens on X Click
 			}
 			//make additional logging so user knows changes they had just made to any paysplits were rolled back.
 			//individual audit trails for splits
@@ -4535,7 +4498,7 @@ namespace OpenDental {
 				string changesMade="";
 				if(paySplit==null) {//null when splits are new
 					secLogText="New paysplit canceled.";
-					SecurityLogs.MakeLogEntry(EnumPermType.PaymentEdit,_listPaySplits[i].PatNum,secLogText,0);
+					SecurityLogs.MakeLogEntry(Permissions.PaymentEdit,_listPaySplits[i].PatNum,secLogText,0);
 					continue;
 				}
 				changesMade+=SecurityLogEntryHelper(Providers.GetAbbr(paySplit.ProvNum),Providers.GetAbbr(_listPaySplits[i].ProvNum),"Provider");
@@ -4543,7 +4506,7 @@ namespace OpenDental {
 				changesMade+=SecurityLogEntryHelper(paySplit.SplitAmt.ToString("F"),_listPaySplits[i].SplitAmt.ToString("F"),"Amount");
 				changesMade+=SecurityLogEntryHelper(paySplit.PatNum.ToString(),_listPaySplits[i].PatNum.ToString(),"Patient number");
 				if(changesMade!="") {
-					SecurityLogs.MakeLogEntry(EnumPermType.PaymentEdit,_listPaySplits[i].PatNum,secLogText+changesMade,0,paySplit.SecDateTEdit);
+					SecurityLogs.MakeLogEntry(Permissions.PaymentEdit,_listPaySplits[i].PatNum,secLogText+changesMade,0,paySplit.SecDateTEdit);
 				}
 			}
 			if(!IsNew && !_wasCreditCardSuccessful) {
@@ -4627,11 +4590,11 @@ namespace OpenDental {
 			}
 			bool hasChanged=PaySplits.Sync(_listPaySplits,_payment.PayNum);
 			if(IsNew) {
-				SecurityLogs.MakeLogEntry(EnumPermType.PaymentCreate,_payment.PatNum,Payments.GetSecuritylogEntryText(_payment,_paymentOld,IsNew,
+				SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,_payment.PatNum,Payments.GetSecuritylogEntryText(_payment,_paymentOld,IsNew,
 					_listDefsPaymentType));
 			}
 			else {
-				SecurityLogs.MakeLogEntry(EnumPermType.PaymentEdit,_payment.PatNum,Payments.GetSecuritylogEntryText(_payment,_paymentOld,IsNew,
+				SecurityLogs.MakeLogEntry(Permissions.PaymentEdit,_payment.PatNum,Payments.GetSecuritylogEntryText(_payment,_paymentOld,IsNew,
 					_listDefsPaymentType),0,_paymentOld.SecDateTEdit);
 			}
 			if(hasChanged) {
@@ -4732,6 +4695,7 @@ namespace OpenDental {
 				return SplitGUID.GetHashCode();
 			}
 		}
+
 
 	}
 }

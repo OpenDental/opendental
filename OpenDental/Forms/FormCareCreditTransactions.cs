@@ -54,6 +54,7 @@ namespace OpenDental {
 				e.Cancel=true;
 				return;
 			}
+			menuItemGoTo.Available=(_patient?.PatNum??0)==0;
 			if(tabControl.SelectedTab==tabTrans) { 
 				CareCreditWebResponse careCreditWebResponseSelected=getGrid().SelectedTag<CareCreditWebResponse>();
 				acknowledgeToolStripMenuItem.Available=false; 
@@ -89,10 +90,10 @@ namespace OpenDental {
 		}
 
 		private void menuItemGoTo_Click(object sender,EventArgs e) {
-			if(getGrid().SelectedIndices.Length<1 || !Security.IsAuthorized(EnumPermType.AccountModule)) {
+			if(getGrid().SelectedIndices.Length<1 || !Security.IsAuthorized(Permissions.AccountModule)) {
 				return;
 			}
-			GlobalFormOpenDental.GotoAccount(getGrid().SelectedTag<CareCreditWebResponse>().PatNum);
+			GotoModule.GotoAccount(getGrid().SelectedTag<CareCreditWebResponse>().PatNum);
 		}
 
 		private void openPaymentToolStripMenuItem_Click(object sender,EventArgs e) {
@@ -120,7 +121,7 @@ namespace OpenDental {
 		}
 
 		private void processReturnToolStripMenuItem_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.PaymentCreate,DateTime.Today)) {//CreateFromPrefill(...) date defaults to MiscData.GetNowDateTime(); 
+			if(!Security.IsAuthorized(Permissions.PaymentCreate,DateTime.Today)) {//CreateFromPrefill(...) date defaults to MiscData.GetNowDateTime(); 
 				return;
 			}
 			if(getGrid().SelectedIndices.Length<1) {
@@ -175,10 +176,10 @@ namespace OpenDental {
 		}
 
 		private void gridCur_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			if(e.Row<0 || !Security.IsAuthorized(EnumPermType.AccountModule)) {
+			if(e.Row<0 || !Security.IsAuthorized(Permissions.AccountModule)) {
 				return;
 			}
-			GlobalFormOpenDental.GotoAccount(getGrid().SelectedTag<CareCreditWebResponse>().PatNum);
+			GotoModule.GotoAccount(getGrid().SelectedTag<CareCreditWebResponse>().PatNum);
 		}
 
 		private void tabControl_SelectedIndexChanged(object sender,EventArgs e) {
@@ -241,7 +242,7 @@ namespace OpenDental {
 
 		private void FillGridMain() {
 			long patNum=_patient?.PatNum??0;
-			List<CareCreditWebResponse> listCareCreditWebResponses=CareCreditWebResponses.GetApprovedTransactions(comboClinic.ListClinicNumsSelected,
+			List<CareCreditWebResponse> listCareCreditWebResponses=CareCreditWebResponses.GetApprovedTransactions(comboClinic.ListSelectedClinicNums,
 				dateRangePicker.GetDateTimeFrom(),dateRangePicker.GetDateTimeTo(),patNum);
 			List<long> listPatNums=listCareCreditWebResponses.Select(x => x.PatNum).ToList();
 			_listPatientNames=Patients.GetPatientNameList(listPatNums).Distinct().ToList();
@@ -276,7 +277,7 @@ namespace OpenDental {
 
 		private void FillGridQSBatchTrans() {
 			long patNum=_patient?.PatNum??0;
-			List<CareCreditWebResponse> listCareCreditWebResponseQsBatchTrans=CareCreditWebResponses.GetBatchQSTransactions(comboClinic.ListClinicNumsSelected,
+			List<CareCreditWebResponse> listCareCreditWebResponseQsBatchTrans=CareCreditWebResponses.GetBatchQSTransactions(comboClinic.ListSelectedClinicNums,
 				comboStatuses.GetListSelected<CareCreditWebStatus>(),dateRangePicker.GetDateTimeFrom(),dateRangePicker.GetDateTimeTo(),patNum);
 			List<long> listPatNums=listCareCreditWebResponseQsBatchTrans.Select(x => x.PatNum).ToList();
 			_listPatientNames=Patients.GetPatientNameList(listPatNums).Distinct().ToList();
@@ -319,7 +320,7 @@ namespace OpenDental {
 
 		private void FillGridError() {
 			long patNum=_patient?.PatNum??0;
-			List<CareCreditWebResponse> listCareCreditWebResponsesErrors=CareCreditWebResponses.GetBatchErrors(comboClinic.ListClinicNumsSelected,
+			List<CareCreditWebResponse> listCareCreditWebResponsesErrors=CareCreditWebResponses.GetBatchErrors(comboClinic.ListSelectedClinicNums,
 				dateRangePicker.GetDateTimeFrom(),dateRangePicker.GetDateTimeTo(),checkIncludeAck.Checked,patNum);
 			tabErrors.Text=$"Errors({listCareCreditWebResponsesErrors.Count})";
 			List<long> listPatNumsSelected=listCareCreditWebResponsesErrors.Select(x => x.PatNum).ToList();
@@ -381,7 +382,9 @@ namespace OpenDental {
 		}
 
 		private void butClose_Click(object sender,EventArgs e) {
-
+			DialogResult=DialogResult.OK;
+			Close();
 		}
+
 	}
 }

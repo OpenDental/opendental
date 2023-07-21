@@ -28,6 +28,7 @@ namespace OpenDental {
 			this.butExport = new OpenDental.UI.Button();
 			this.comboBoxMultiProv = new OpenDental.UI.ComboBox();
 			this.butPrint = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.checkIgnoreCustom = new OpenDental.UI.CheckBox();
 			this.textCarrier = new System.Windows.Forms.TextBox();
@@ -159,6 +160,17 @@ namespace OpenDental {
 			this.butPrint.Text = "&Print";
 			this.butPrint.Click += new System.EventHandler(this.butPrint_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(1143, 691);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 45;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// gridMain
 			// 
 			this.gridMain.AllowSortingByColumn = true;
@@ -235,7 +247,7 @@ namespace OpenDental {
 			this.comboClinics.IncludeUnassigned = true;
 			this.comboClinics.Location = new System.Drawing.Point(583, 38);
 			this.comboClinics.Name = "comboClinics";
-			this.comboClinics.IsMultiSelect = true;
+			this.comboClinics.SelectionModeMulti = true;
 			this.comboClinics.Size = new System.Drawing.Size(197, 21);
 			this.comboClinics.TabIndex = 267;
 			// 
@@ -449,9 +461,9 @@ namespace OpenDental {
 			// 
 			// labelClaimCount
 			// 
-			this.labelClaimCount.Location = new System.Drawing.Point(166, 65);
+			this.labelClaimCount.Location = new System.Drawing.Point(186, 65);
 			this.labelClaimCount.Name = "labelClaimCount";
-			this.labelClaimCount.Size = new System.Drawing.Size(100, 24);
+			this.labelClaimCount.Size = new System.Drawing.Size(60, 24);
 			this.labelClaimCount.TabIndex = 250;
 			this.labelClaimCount.Text = "claims";
 			this.labelClaimCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -681,6 +693,7 @@ namespace OpenDental {
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.butRefresh);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.gridMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormRpOutstandingIns";
@@ -705,6 +718,7 @@ namespace OpenDental {
 		#region Designer Variables
 		private UI.GridOD gridMain;
 		private Label labelProv;
+		private UI.Button butCancel;
 		private UI.Button butPrint;
 		private UI.ComboBox comboBoxMultiProv;
 		private Label label2;

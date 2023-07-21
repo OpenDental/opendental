@@ -59,8 +59,6 @@ namespace OpenDentBusiness{
 		public bool HasMobileLayout;
 		///<summary>Revision ID. Used to determine in conjunction with PrefillMode for eClipboard to determine whether to show a patient a new form or have them update their last filled out form. Must match up with SheetDef RevID to show a previously filled out form.</summary>
 		public int RevID;
-		///<summary>Only set when this sheet was created from a Web Form. FK to webforms_sheet.SheetID within the Web Forms server. Used to determine if this particular Web Form has been retrieved before in order to avoid creating duplicate sheet entries for a single Web Form.</summary>
-		public long WebFormSheetID;
 
 		public Sheet Copy(){
 			Sheet retVal=(Sheet)this.MemberwiseClone();

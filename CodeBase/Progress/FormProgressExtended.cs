@@ -21,7 +21,7 @@ namespace CodeBase {
 		///<summary>Do not instatiate this class.  It is not meant for public use.  Use ODProgress.ShowProgressExtended() instead.
 		///Launches a progress window that will constantly spin and display status updates for global ODEvents with corresponding name.
 		///eventType must be a Type that contains an event called Fired.</summary>
-		public FormProgressExtended(bool hasHistory=false,string cancelButtonText=null) {
+		public FormProgressExtended(ODEventType odEventType,Type eventType,bool hasHistory=false,string cancelButtonText=null) : base(odEventType,eventType) {
 			InitializeComponent();
 			if(!string.IsNullOrEmpty(cancelButtonText)) {
 				butCancel.Text=cancelButtonText;
@@ -45,7 +45,7 @@ namespace CodeBase {
 		}
 
 		private void UpdateProgressBar(ODProgressBar progBar, ProgressBarHelper progHelper) {
-			progBar.ODProgUpdate(progHelper.LabelValue, progHelper.LabelTop, progHelper.PercentValue, (int)progHelper.BlockValue,(int)progHelper.BlockMax, 
+			progBar.ODProgUpdate(progHelper.LabelValue, progHelper.LabelTop, progHelper.PercentValue, progHelper.BlockValue,progHelper.BlockMax, 
 				progHelper.TagString,progHelper.ProgressStyle,progHelper.MarqueeSpeed,progHelper.IsValHidden,progHelper.IsTopHidden,progHelper.IsPercentHidden);
 		}
 
@@ -90,8 +90,8 @@ namespace CodeBase {
 					case ProgBarEventType.ProgressBar:
 					default:
 						if(!_listProgressBars.Exists(x => x.TagString.ToLower()==progHelper.TagString.ToLower())) {//if not already added
-							ODProgressBar progBar=AddNewProgressBar(progHelper.LabelValue,progHelper.LabelTop,progHelper.PercentValue,(int)progHelper.BlockValue,
-								(int)progHelper.BlockMax,progHelper.TagString,progHelper.ProgressStyle,progHelper.MarqueeSpeed,progHelper.IsValHidden,progHelper.IsTopHidden,
+							ODProgressBar progBar=AddNewProgressBar(progHelper.LabelValue,progHelper.LabelTop,progHelper.PercentValue,progHelper.BlockValue,
+								progHelper.BlockMax,progHelper.TagString,progHelper.ProgressStyle,progHelper.MarqueeSpeed,progHelper.IsValHidden,progHelper.IsTopHidden,
 								progHelper.IsPercentHidden);
 							if(progBar==null) {
 								break;

@@ -40,6 +40,7 @@ namespace OpenDental{
 			this.butColumnLeft = new OpenDental.UI.Button();
 			this.checkBoxIncludeHiddenColumns = new OpenDental.UI.CheckBox();
 			this.gridMain = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.butAdvSearch = new OpenDental.UI.Button();
 			this.butClearAdvSearch = new OpenDental.UI.Button();
 			this.radioButHighlight = new System.Windows.Forms.RadioButton();
@@ -216,6 +217,16 @@ namespace OpenDental{
 			this.gridMain.TabIndex = 5;
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(869, 592);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(71, 24);
+			this.butClose.TabIndex = 10;
+			this.butClose.Text = "Close";
+			// 
 			// butAdvSearch
 			// 
 			this.butAdvSearch.Location = new System.Drawing.Point(408, 12);
@@ -260,6 +271,7 @@ namespace OpenDental{
 			// 
 			// FormWikiListEdit
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(952, 628);
 			this.Controls.Add(this.radioButFilter);
 			this.Controls.Add(this.checkBoxIncludeHiddenColumns);
@@ -273,6 +285,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormWikiListEdit";
 			this.Text = "Edit Wiki List";
@@ -287,6 +300,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private UI.Button butClose;
 		private UI.GridOD gridMain;
 		private OpenDental.UI.GroupBox groupBox1;
 		private UI.Button butHeaders;

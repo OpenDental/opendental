@@ -23,13 +23,10 @@ namespace OpenDental {
 		{
 			InitializeComponent();
 			KeyDown+=Frm_KeyDown;
-			PreviewKeyDown+=FrmApptFieldDefEdit_PreviewKeyDown;
-			Load+=FrmApptFieldDefEdit_Load;
-			comboFieldType.SelectedIndexChanged+=comboFieldType_SelectedIndexChanged;
+			//Lan.F(this);
 		}
 
-		private void FrmApptFieldDefEdit_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmApptFieldDefEdit_Loaded(object sender,RoutedEventArgs e) {
 			textName.Text=ApptFieldDef.FieldName;
 			textPickList.Visible=false;
 			labelWarning.Visible=false;
@@ -55,21 +52,6 @@ namespace OpenDental {
 			}
 		}
 
-		private void Frm_KeyDown(object sender,KeyEventArgs e) {
-			if(e.Key==Key.Enter) {
-				butSave_Click(this,new EventArgs());
-			}
-		}
-
-		private void FrmApptFieldDefEdit_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(buttonDelete.IsAltKey(Key.D,e)) {
-				buttonDelete_Click(this,new EventArgs());
-			}
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
-		}
-
 		private void buttonDelete_Click(object sender,EventArgs e) {
 			if(IsNew){
 				IsDialogOK=false;
@@ -84,6 +66,12 @@ namespace OpenDental {
 			}
 			catch(ApplicationException ex){
 				MessageBox.Show(ex.Message);
+			}
+		}
+
+		private void Frm_KeyDown(object sender,KeyEventArgs e) {
+			if(e.Key==Key.Enter) {
+				butSave_Click(this,new EventArgs());
 			}
 		}
 
@@ -112,6 +100,26 @@ namespace OpenDental {
 			ApptFieldDefs.RefreshCache();
 			IsDialogOK=true;
 		}
-
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

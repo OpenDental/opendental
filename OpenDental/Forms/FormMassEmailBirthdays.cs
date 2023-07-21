@@ -59,8 +59,8 @@ namespace OpenDental {
 			}
 			FillForClinic();
 			#endregion
-			if(!Security.IsAuthorized(EnumPermType.EServicesSetup,true)) {
-				DisableAllExcept();
+			if(!Security.IsAuthorized(Permissions.EServicesSetup,true)) {
+				DisableAllExcept(butCancel);
 			}
 			_isLoading=false;
 		}
@@ -70,21 +70,21 @@ namespace OpenDental {
 			if(IsClinicsUsingDefaults()){
 				return 0;
 			}
-			return comboClinic.ClinicNumSelected;
+			return comboClinic.SelectedClinicNum;
 		}
 
 		private bool IsClinicsUsingDefaults(){
-			ClinicPref clinicPref=_listClinicPrefsDefaultNew.Find(x => x.ClinicNum==comboClinic.ClinicNumSelected);
+			ClinicPref clinicPref=_listClinicPrefsDefaultNew.Find(x => x.ClinicNum==comboClinic.SelectedClinicNum);
 				return clinicPref==null || clinicPref.ValueString=="1";
 		}
 	
 		private void SetClinicsUsingDefaults(bool isUsingDefaults){
-			if(!PrefC.HasClinicsEnabled || comboClinic.ClinicNumSelected==0) {
+			if(!PrefC.HasClinicsEnabled || comboClinic.SelectedClinicNum==0) {
 					return;//if not using clinics, defaults do not exist, and 'Defaults' do not exist for the default clinic. 
 				}
-				ClinicPref clinicPref=_listClinicPrefsDefaultNew.Find(x => x.ClinicNum==comboClinic.ClinicNumSelected);
+				ClinicPref clinicPref=_listClinicPrefsDefaultNew.Find(x => x.ClinicNum==comboClinic.SelectedClinicNum);
 				if(clinicPref==null) {
-					clinicPref=new ClinicPref(comboClinic.ClinicNumSelected,PrefName.BirthdayPromotionsUseDefaults,isUsingDefaults);
+					clinicPref=new ClinicPref(comboClinic.SelectedClinicNum,PrefName.BirthdayPromotionsUseDefaults,isUsingDefaults);
 					_listClinicPrefsDefaultNew.Add(clinicPref);
 				}
 				clinicPref.ValueString=POut.Bool(isUsingDefaults);
@@ -96,7 +96,7 @@ namespace OpenDental {
 			if(!_isLoading) {
 				string errors=ValidateCurrentSelection();
 				if(!string.IsNullOrEmpty(errors)) {//if there were problems, do not change clinics.
-					comboClinic.ClinicNumSelected=clinicNumPrevious;
+					comboClinic.SelectedClinicNum=clinicNumPrevious;
 					MessageBox.Show(this,errors);
 					return;
 				}
@@ -138,16 +138,16 @@ namespace OpenDental {
 		///<summary>Fills all necessary data for the clinic.</summary>
 		private void FillForClinic() {
 			labelNotActivated.Visible=!Clinics.IsMassEmailSignedUp(ClinicNumEffective()) && !Clinics.IsSecureEmailSignedUp(ClinicNumEffective());
-			checkUseDefaultsBirthday.Checked=comboClinic.ClinicNumSelected>0 && IsClinicsUsingDefaults();
-			if(!PrefC.HasClinicsEnabled || comboClinic.ClinicNumSelected==0) {
+			checkUseDefaultsBirthday.Checked=comboClinic.SelectedClinicNum>0 && IsClinicsUsingDefaults();
+			if(!PrefC.HasClinicsEnabled || comboClinic.SelectedClinicNum==0) {
 				checkIsEnabled.Checked=_isEnabled;
 			}
 			else {
-				ClinicPref clinicPref=_listClinicPrefsEnabledNew.Find(x => x.ClinicNum==comboClinic.ClinicNumSelected);
+				ClinicPref clinicPref=_listClinicPrefsEnabledNew.Find(x => x.ClinicNum==comboClinic.SelectedClinicNum);
 				checkIsEnabled.Checked=clinicPref!=null && PIn.Bool(clinicPref.ValueString);
 			}
-			bool allowEdit=Security.IsAuthorized(EnumPermType.EServicesSetup,true);
-			if(comboClinic.ClinicNumSelected>0) {
+			bool allowEdit=Security.IsAuthorized(Permissions.EServicesSetup,true);
+			if(comboClinic.SelectedClinicNum>0) {
 				checkUseDefaultsBirthday.Visible=true;
 				checkUseDefaultsBirthday.Enabled=allowEdit;
 				labelDefaults.Visible=false;
@@ -210,8 +210,8 @@ namespace OpenDental {
 				LayoutManager.Add(tabPage,tabControlLanguages);		
 			}
 			LayoutManager.LayoutControlBoundsAndFonts(tabControlLanguages);
-			if(comboClinic.ClinicNumSelected > 0 && IsClinicsUsingDefaults()) {
-				DisableAllExcept(butSave,comboClinic,checkIsEnabled,checkUseDefaultsBirthday,tabControlLanguages);
+			if(comboClinic.SelectedClinicNum > 0 && IsClinicsUsingDefaults()) {
+				DisableAllExcept(butOK,butCancel,comboClinic,checkIsEnabled,checkUseDefaultsBirthday,tabControlLanguages);
 			}
 		}
 
@@ -241,9 +241,9 @@ namespace OpenDental {
 				MsgBox.Show(this,"No additional languages available.");
 				return;
 			}
-			InputBox inputBoxLanguageSelect=new InputBox(Lan.g(this,"Select language for template: "),listLanguagesDisplay,0);
+			using InputBox inputBoxLanguageSelect=new InputBox(Lan.g(this,"Select language for template: "),listLanguagesDisplay,0);
 			inputBoxLanguageSelect.ShowDialog();
-			if(inputBoxLanguageSelect.IsDialogCancel) {
+			if(inputBoxLanguageSelect.DialogResult!=DialogResult.OK) {
 				return;
 			}
 			ApptReminderRule apptReminderRule=_listApptReminderRules
@@ -290,7 +290,7 @@ namespace OpenDental {
 		}
 
 		private bool CanUseMassEmail() {
-			if(!Clinics.IsMassEmailEnabled(comboClinic.ClinicNumSelected)) {
+			if(!Clinics.IsMassEmailEnabled(comboClinic.SelectedClinicNum)) {
 				MsgBox.Show(this,"Mass Email first needs to be activated and enabled for this clinic in the eServices Mass Email Setup window.");
 				return false;
 			}
@@ -317,7 +317,7 @@ namespace OpenDental {
 					return;
 				}
 				string errors=ValidateCurrentSelection();
-				if(!string.IsNullOrEmpty(errors) || !Security.IsAuthorized(EnumPermType.EServicesSetup,true)) {
+				if(!string.IsNullOrEmpty(errors) || !Security.IsAuthorized(Permissions.EServicesSetup,true)) {
 					checkIsEnabled.Checked=false;
 					MessageBox.Show(this,errors);
 					return;
@@ -329,13 +329,13 @@ namespace OpenDental {
 					return;
 				}
 			}
-			if(!PrefC.HasClinicsEnabled || comboClinic.ClinicNumSelected==0) {
+			if(!PrefC.HasClinicsEnabled || comboClinic.SelectedClinicNum==0) {
 				_isEnabled=checkIsEnabled.Checked;
 				return;//pref will be set upon saving based only on checkbox status.
 			}
-			ClinicPref clinicPref=_listClinicPrefsEnabledNew.Find(x => x.ClinicNum==comboClinic.ClinicNumSelected);
+			ClinicPref clinicPref=_listClinicPrefsEnabledNew.Find(x => x.ClinicNum==comboClinic.SelectedClinicNum);
 			if(clinicPref==null) {
-				clinicPref=new ClinicPref(comboClinic.ClinicNumSelected,PrefName.BirthdayPromotionsEnabled,checkIsEnabled.Checked);
+				clinicPref=new ClinicPref(comboClinic.SelectedClinicNum,PrefName.BirthdayPromotionsEnabled,checkIsEnabled.Checked);
 				_listClinicPrefsEnabledNew.Add(clinicPref);
 			}
 			clinicPref.ValueString=POut.Bool(checkIsEnabled.Checked);
@@ -343,11 +343,11 @@ namespace OpenDental {
 		}
 
 		private void checkUseDefaultsBirthday_Click(object sender,EventArgs e) {
-			if(!checkUseDefaultsBirthday.Checked && comboClinic.ClinicNumSelected>0) {
+			if(!checkUseDefaultsBirthday.Checked && comboClinic.SelectedClinicNum>0) {
 				SwitchFromDefaultsBirthday();//turning defaults off
 				return;
 			}
-			if(checkUseDefaultsBirthday.Checked && comboClinic.ClinicNumSelected>0) {
+			if(checkUseDefaultsBirthday.Checked && comboClinic.SelectedClinicNum>0) {
 				SwitchToDefaultsBirthday();//turning defaults on
 			}
 		}
@@ -359,13 +359,13 @@ namespace OpenDental {
 		///<summary>Switches the currently selected clinic over to using non-defaults. Also prompts user before continuing. 
 		///Returns false if user cancelled or if there is no need to have switched to defaults.</summary>
 		private bool SwitchFromDefaultsBirthday() {
-			if(!PrefC.HasClinicsEnabled || comboClinic.ClinicNumSelected==0) {
+			if(!PrefC.HasClinicsEnabled || comboClinic.SelectedClinicNum==0) {
 				return false;//somehow editing default clinic anyways, no need to switch.
 			}
 			SetClinicsUsingDefaults(false);
 			List<ApptReminderRule> listApptReminderRules=_listApptReminderRules.FindAll(x => x.ClinicNum==0);
 			for(int i=0;i<listApptReminderRules.Count;i++){
-				CopyRule(listApptReminderRules[i],comboClinic.ClinicNumSelected);
+				CopyRule(listApptReminderRules[i],comboClinic.SelectedClinicNum);
 			}
 			FillForClinic();
 			return true;
@@ -395,16 +395,16 @@ namespace OpenDental {
 		///<summary>Switches the currently selected clinic over to using defaults. Also prompts user before continuing. 
 		///Returns false if user cancelled or if there is no need to have switched to defaults.</summary>
 		private bool SwitchToDefaultsBirthday() {
-			if(comboClinic.ClinicNumSelected==0) {
+			if(comboClinic.SelectedClinicNum==0) {
 				return false;//somehow editing default clinic anyways, no need to switch.
 			}
-			if(_listApptReminderRules.FindAll(x => x.ClinicNum==comboClinic.ClinicNumSelected).Count>0 && 
+			if(_listApptReminderRules.FindAll(x => x.ClinicNum==comboClinic.SelectedClinicNum).Count>0 && 
 				!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete custom rules for this clinic and switch to using defaults? This cannot be undone.")) 
 			{
 				checkUseDefaultsBirthday.Checked=false;//undo checking of box.
 				return false;
 			}
-			RemoveRules(_listApptReminderRules.Where(x => x.ClinicNum==comboClinic.ClinicNumSelected).ToArray());
+			RemoveRules(_listApptReminderRules.Where(x => x.ClinicNum==comboClinic.SelectedClinicNum).ToArray());
 			//The corresponding EmailHostingTemplates will be deleted at save/sync
 			SetClinicsUsingDefaults(true);
 			FillForClinic();
@@ -458,7 +458,7 @@ namespace OpenDental {
 			thread.Start();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			string errors=ValidateCurrentSelection();
 			if(!string.IsNullOrEmpty(errors)) {
 				MessageBox.Show(this,errors);
@@ -478,6 +478,10 @@ namespace OpenDental {
 				DataValid.SetInvalid(InvalidType.ClinicPrefs);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

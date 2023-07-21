@@ -38,7 +38,7 @@ namespace OpenDental {
 			checkBoxBillShowTransSinceZero.Checked=PrefC.GetBool(PrefName.BillingShowTransSinceBalZero);
 			checkIncludeAdjust.Checked=PrefC.GetBool(PrefName.BillingElectIncludeAdjustDescript);
 			checkIncludeClinicNum.Checked=PrefC.GetBool(PrefName.BillingElectIncludeClinicNums);
-			listElectBilling.Items.AddList(new string[] { "No electronic billing","DentalXChange","Output to file","ClaimX / ExtraDent","EDS" }, x => x);
+			listElectBilling.Items.AddList(new string[] { "No electronic billing","Dental X Change","Output to file","ClaimX / ExtraDent","EDS" }, x => x);
 			listElectBilling.SelectedIndex=0;
 			int billingUseElectronicIdx=PrefC.GetInt(PrefName.BillingUseElectronic);
 			if(billingUseElectronicIdx==1) {
@@ -80,7 +80,6 @@ namespace OpenDental {
 			}
 			textBillingEmailSubject.Text=PrefC.GetString(PrefName.BillingEmailSubject);
 			textBillingEmailBody.Text=PrefC.GetString(PrefName.BillingEmailBodyText);
-			checkBillingEmailIncludeAutograph.Checked=PrefC.GetBool(PrefName.BillingEmailIncludeAutograph);
 			textInvoiceNote.Text=PrefC.GetString(PrefName.BillingDefaultsInvoiceNote);
 			_listEbills=Ebills.GetDeepCopy();
 			_listEbillsOld=_listEbills.Select(x => x.Copy()).ToList();
@@ -118,13 +117,13 @@ namespace OpenDental {
 				labelPassword.Font=new Font(labelPassword.Font,FontStyle.Bold);
 				labelPracticeAddr.Font=new Font(labelPracticeAddr.Font,FontStyle.Bold);
 				labelRemitAddr.Font=new Font(labelRemitAddr.Font,FontStyle.Bold);
-				comboClinic.ClinicNumSelected=Clinics.ClinicNum;
+				comboClinic.SelectedClinicNum=Clinics.ClinicNum;
 				Ebill eBill=null;
 				if(Clinics.ClinicNum==0) {//Use the default Ebill if OD has Headquarters selected or if clinics are disabled.
 					eBill=_eBillDefault;
 				}
 				else {
-					eBill=_listEbills.FirstOrDefault(x => x.ClinicNum==comboClinic.ClinicNumSelected);//Can be null.
+					eBill=_listEbills.FirstOrDefault(x => x.ClinicNum==comboClinic.SelectedClinicNum);//Can be null.
 				}
 				//_eBillCur will be the default Ebill, the clinic's Ebill, or null if there are no existing ebills for OD's selected clinic.
 				_eBillCur=eBill;
@@ -163,7 +162,7 @@ namespace OpenDental {
 		private void LoadEbill(Ebill eBill) {
 			if(eBill==null) {//Matching Ebill entry not found.  Make a new entry with default values.
 				eBill=new Ebill();
-				eBill.ClinicNum=comboClinic.ClinicNumSelected;
+				eBill.ClinicNum=comboClinic.SelectedClinicNum;
 				eBill.ClientAcctNumber="";
 				eBill.ElectUserName="";
 				eBill.ElectPassword="";
@@ -218,7 +217,8 @@ namespace OpenDental {
 			if(IsUserPasswordOnly) {
 				this.PanelClient.Controls.OfType<Control>().ToList().ForEach(x => x.Enabled=false);
 				groupBoxBilling.Enabled=true;
-				butSave.Enabled=true;
+				butOK.Enabled=true;
+				butCancel.Enabled=true;
 				this.Text=Lan.g(this,"Billing Defaults")+" - {"+Lan.g(this,"Limited")+"}";
 			}
 		}
@@ -260,7 +260,7 @@ namespace OpenDental {
 		
 		private void listElectBilling_SelectedIndexChanged(object sender,EventArgs e) {
 			//In Web mode do not allow ClaimX or EDS to be selected, provide warning if they are.
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				string disabledBillingProvider="";
 				if(listElectBilling.SelectedIndex==3) {
 					disabledBillingProvider+="ClaimX";
@@ -269,7 +269,7 @@ namespace OpenDental {
 					disabledBillingProvider+="Electronic Dental Services";
 				}
 				if(!string.IsNullOrEmpty(disabledBillingProvider)) {
-					MsgBox.Show(this,disabledBillingProvider+" is not available while using Open Dental Cloud.");
+					MsgBox.Show(this,disabledBillingProvider+" is not available while viewing through the web.");
 					//Reset to previous default selection if pref wasn't set to ClaimX or EDS
 					int prefBillingtype=PrefC.GetInt(PrefName.BillingUseElectronic);
 					if(prefBillingtype>=0 && prefBillingtype<=2) {
@@ -323,7 +323,7 @@ namespace OpenDental {
 			}
 			else {//Otherwise locate the Ebill from the cache.
 				for(int i=0;i<_listEbills.Count;i++) {
-					if(_listEbills[i].ClinicNum==comboClinic.ClinicNumSelected) {//Check for existing Ebill entry
+					if(_listEbills[i].ClinicNum==comboClinic.SelectedClinicNum) {//Check for existing Ebill entry
 						eBill=_listEbills[i];
 						break;
 					}
@@ -332,7 +332,7 @@ namespace OpenDental {
 			LoadEbill(eBill);//Could be null if user switches to a clinic which has not Ebill entry yet.
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textDays.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
@@ -379,7 +379,6 @@ namespace OpenDental {
 				| Prefs.UpdateString(PrefName.BillingUseElectronic,billingUseElectronic)
 				| Prefs.UpdateString(PrefName.BillingEmailSubject,textBillingEmailSubject.Text)
 				| Prefs.UpdateString(PrefName.BillingEmailBodyText,textBillingEmailBody.Text)
-				| Prefs.UpdateBool(PrefName.BillingEmailIncludeAutograph,checkBillingEmailIncludeAutograph.Checked)
 				| Prefs.UpdateString(PrefName.BillingElectVendorId,textVendorId.Text)
 				| Prefs.UpdateString(PrefName.BillingElectVendorPMSCode,textVendorPMScode.Text)
 				| Prefs.UpdateString(PrefName.BillingElectCreditCardChoices,creditCard)
@@ -404,5 +403,10 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+	
 	}
 }

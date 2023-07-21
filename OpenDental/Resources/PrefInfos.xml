@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-16"?>
 <ArrayOfPrefInf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <PrefInf>
     <PrefName>SalesTaxDoAutomate</PrefName>
@@ -51,7 +51,7 @@
     <Category>AccountAdjustments</Category>
     <ControlName>labelNegativeAdjustments</ControlName>
     <ControlText>Negative Adjustments</ControlText>
-    <Details>when adjustment amount exceed remaining patient portion</Details>
+    <Details>when adjustment amount exceeds remaining</Details>
     <WidthWindow>0</WidthWindow>
     <HeightWindow>0</HeightWindow>
   </PrefInf>
@@ -485,7 +485,7 @@ Usually blank</ControlText>
     <PrefName />
     <Category>AccountPayments</Category>
     <ControlName>checkPayPlanSaveSignedPdf</ControlName>
-    <ControlText>In eClipboard and ODTouch, save signed Payment Plans as PDF</ControlText>
+    <ControlText>In eClipboard, save signed Payment Plans as PDF</ControlText>
     <Details />
     <WidthWindow>0</WidthWindow>
     <HeightWindow>0</HeightWindow>
@@ -1657,115 +1657,7 @@ Checked: Blank entries are treated as 0.&lt;br/&gt;Example: UCR =$200, PPO Fee =
     <Category>ImagingGeneral</Category>
     <ControlName>checkImagesModuleUsesOld2020</ControlName>
     <ControlText>Use old Imaging module interface, pre 2020</ControlText>
-    <Details>not recommended. Only used with Apteryx XV Web.</Details>
-    <WidthWindow>0</WidthWindow>
-    <HeightWindow>0</HeightWindow>
-  </PrefInf>
-  <PrefInf>
-    <PrefName />
-    <Category>MainWindowGeneral</Category>
-    <ControlName>groupSelectPatient</ControlName>
-    <ControlText>Select Patient Window</ControlText>
-    <Details>see &lt;a href='https://opendental.com/manual/patientselect.html' target='_blank'&gt;Select Patient&lt;/a&gt;</Details>
-    <WidthWindow>0</WidthWindow>
-    <HeightWindow>0</HeightWindow>
-  </PrefInf>
-  <PrefInf>
-    <PrefName>ShowIDinTitleBar</PrefName>
-    <Category>MainWindowGeneral</Category>
-    <ControlName>label17</ControlName>
-    <ControlText>Show ID in title bar</ControlText>
-    <Details>None: No ID will show in Title Bar &lt;br/&gt;&lt;br/&gt;PatNum: Patient's primary key in patient table &lt;br/&gt;&lt;br/&gt;ChartNumber: Usually blank. Alternative and supplement to PatNum. Can be alphanumeric.  Usually set during conversion or when bridging to imaging software. &lt;br/&gt;&lt;br/&gt;Birthdate:Patient's date of birth</Details>
-    <WidthWindow>400</WidthWindow>
-    <HeightWindow>350</HeightWindow>
-  </PrefInf>
-  <PrefInf>
-    <PrefName>TitleBarShowSite</PrefName>
-    <Category>MainWindowGeneral</Category>
-    <ControlName>checkTitleBarShowSite</ControlName>
-    <ControlText>Show Site (public health must also be turned on)</ControlText>
-    <Details>see &lt;a href='https://opendental.com/manual/publichealth.html' target='_blank'&gt;Public Health&lt;/a&gt;</Details>
-    <WidthWindow>0</WidthWindow>
-    <HeightWindow>0</HeightWindow>
-  </PrefInf>
-  <PrefInf>
-    <PrefName>TitleBarClinicUseAbbr</PrefName>
-    <Category>MainWindowGeneral</Category>
-    <ControlName>checkUseClinicAbbr</ControlName>
-    <ControlText>Use clinic abbreviation in main title bar (clinics must be turned on)</ControlText>
-    <Details>Turn on clinics in the &lt;a href='https://opendental.com/manual/showfeatures.html' target='_blank'&gt;Show Features&lt;/a&gt; window</Details>
-    <WidthWindow>0</WidthWindow>
-    <HeightWindow>0</HeightWindow>
-  </PrefInf>
-  <PrefInf>
-    <PrefName>SendUnhandledExceptionsToHQ</PrefName>
-    <Category>MainWindowMisc</Category>
-    <ControlName>checkSubmitExceptions</ControlName>
-    <ControlText>Automatically submit unhandled exceptions</ControlText>
-    <Details>Unhandled Exception errors will automatically be sent to Open Dental headquarters.  This is done in the background securely and no PHI is sent. Errors are only sent for offices on the latest stable version or using any beta version.&lt;br/&gt;&lt;br/&gt;</Details>
-    <WidthWindow>0</WidthWindow>
-    <HeightWindow>0</HeightWindow>
-  </PrefInf>
-  <PrefInf>
-    <PrefName>AlertInactiveMinutes</PrefName>
-    <Category>MainWindowMisc</Category>
-    <ControlName>label10</ControlName>
-    <ControlText>Disable alert interval after this many minutes of user inactivity</ControlText>
-    <Details>Leave this blank to disable</Details>
-    <WidthWindow>0</WidthWindow>
-    <HeightWindow>0</HeightWindow>
-  </PrefInf>
-  <PrefInf>
-    <PrefName>SignalInactiveMinutes</PrefName>
-    <Category>MainWindowMisc</Category>
-    <ControlName>label5</ControlName>
-    <ControlText>Disable signal interval after this many minutes of user inactivity</ControlText>
-    <Details>Leave blank to disable.  This setting is designed to limit the load on database from idle users. Enter the minutes of workstation inactivity that will cause Open Dental to stop sending automatic signals to refresh information.  If an office sets this and want users viewing the appointment book to stay updated despite an idle workstation, set the preference, 'Refresh every 60 Seconds' to true.</Details>
-    <WidthWindow>0</WidthWindow>
-    <HeightWindow>0</HeightWindow>
-  </PrefInf>
-  <PrefInf>
-    <PrefName>ProcessSigsIntervalInSecs</PrefName>
-    <Category>MainWindowMisc</Category>
-    <ControlName>label3</ControlName>
-    <ControlText>Process signal interval in seconds.  </ControlText>
-    <Details> The interval, in seconds, that Open Dental will automatically refresh the Appointments module, task lists, and text notifications.  This is usually every 6 to 20 seconds.</Details>
-    <WidthWindow>0</WidthWindow>
-    <HeightWindow>0</HeightWindow>
-  </PrefInf>
-  <PrefInf>
-    <PrefName>CentralManagerSyncCode</PrefName>
-    <Category>MainWindowMisc</Category>
-    <ControlName>label8</ControlName>
-    <ControlText>Sync code for CEMT</ControlText>
-    <Details>Indicates the Sync Code of the Central Enterprise Management Tool (CEMT) database this database is associated with. All database connections which are affected by a CEMT sync have a code listed here. If the code is cleared, CEMT users can sync from any database, but this is not recommended.</Details>
-    <WidthWindow>0</WidthWindow>
-    <HeightWindow>0</HeightWindow>
-  </PrefInf>
-  <PrefInf>
-    <PrefName>ImeCompositionCompatibility</PrefName>
-    <Category>MainWindowMisc</Category>
-    <ControlName>checkImeCompositionCompatibility</ControlName>
-    <ControlText>Text boxes use foreign language Input Method Editor (IME) composition</ControlText>
-    <Details>Determines composition if users are typing in a foreign language that uses an IME keyboard (e.g. Korean, Arabic).  This will dsable Spell Check when checked.</Details>
-    <WidthWindow>0</WidthWindow>
-    <HeightWindow>0</HeightWindow>
-  </PrefInf>
-  <PrefInf>
-    <PrefName>ClinicTrackLast</PrefName>
-    <Category>MainWindowMisc</Category>
-    <ControlName>labelTrackClinic</ControlName>
-    <ControlText>Track Last Clinic By</ControlText>
-    <Details>For Clinics only. Affects which clinic is selected in the Main Menu, Clinics when a user logs on to a workstation.&lt;br/&gt;&lt;br/&gt;None: Select the user's default clinic.&lt;br/&gt;&lt;br/&gt;Workstation: Select the clinic last selected on the workstation, if the user has access to it. If not, select the user's default clinic.&lt;br/&gt;&lt;br/&gt;User: Select the clinic that was active the last time the user logged off.</Details>
-    <WidthWindow>350</WidthWindow>
-    <HeightWindow>300</HeightWindow>
-  </PrefInf>
-  <PrefInf>
-    <PrefName>WebServiceServerName</PrefName>
-    <Category>MainWindowMisc</Category>
-    <ControlName>label2</ControlName>
-    <ControlText>Update Server: </ControlText>
-    <Details>This is the name of the Update Server machine.  Version updates can only be performed from this computer, and the eConnector can only be installed on this computer.  For Middle Tier, this identifies which computer is running the middle tier.  If the server name exceeds 15 characters, users may receive an error when attempting check for updates or install services. If the server name exceeds 15 characters, only type the first 15 characters.</Details>
+    <Details>not recommended</Details>
     <WidthWindow>0</WidthWindow>
     <HeightWindow>0</HeightWindow>
   </PrefInf>
@@ -1964,7 +1856,7 @@ Checked: Blank entries are treated as 0.&lt;br/&gt;Example: UCR =$200, PPO Fee =
     <PrefName>ShowAutoDeposit</PrefName>
     <Category>ManageGeneral</Category>
     <ControlName>checkShowAutoDeposit</ControlName>
-    <ControlText>Insurance payments create auto deposit</ControlText>
+    <ControlText>Insurance payments show auto deposit</ControlText>
     <Details>when &lt;a href='https://opendental.com/manual/claimpayfinalize.html' target='_blank'&gt;Finalizing an Insurance Payment&lt;/a&gt;, automatically create deposits.</Details>
     <WidthWindow>0</WidthWindow>
     <HeightWindow>0</HeightWindow>
@@ -1993,7 +1885,8 @@ Checked: Blank entries are treated as 0.&lt;br/&gt;Example: UCR =$200, PPO Fee =
     <Category>ManageGeneral</Category>
     <ControlName>labelClaimsReceivedDays</ControlName>
     <ControlText>Show claims received after days (blank to disable)</ControlText>
-    <Details>Blank field hides $0 claim payments from the Outstanding Claims area of the &lt;a href='https://www.opendental.com/manual/claimpaymentbatch.html' target='_blank'&gt;Batch Insurance Payment&lt;/a&gt; window. When a number of days is entered, $0 claims show until the entered number of days has passed.</Details>
+    <Details>for $0 payments, how many days that it should appear in the Outstanding Claims area of the 
+&lt;a href='https://www.opendental.com/manual/claimpaymentbatch.html' target='_blank'&gt;Batch Insurance Payment&lt;/a&gt; window</Details>
     <WidthWindow>0</WidthWindow>
     <HeightWindow>0</HeightWindow>
   </PrefInf>

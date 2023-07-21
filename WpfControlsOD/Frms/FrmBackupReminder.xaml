@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="612" Height="487" 
-             Text="Backup Reminder">
+             Text="Backup Reminder" Loaded="FrmBackupReminder_Loaded" >
 	<Grid Background="#FFFCFDFE" >
 		<ui:Label x:Name="labelSupplementalBackupPath" Width="463" Height="32" Margin="42,429,0,0" ColorText="#FFFF0000" Text="Warning:  your Supplemental Backup Network Path is not set. It must be set in order to store Supplemental Backups locally." />
 		<ui:Label x:Name="labelSupplementalBackupDisabled" Width="463" Height="32" Margin="42,392,0,0" ColorText="#FFFF0000" Text="Warning:  your Supplemental Backups are disabled, using Supplemental Backups in addition to your own backups is strongly recommended." />
@@ -30,6 +30,6 @@ You will be seeing this window once every month as a reminder of the importance 
 If someone else is in charge of backups, ask them for the answers.
 If your supervisor is not available, and you need to get through this window, it's OK to guess.
 But in that case, you must followup with your supervisor to ensure they are making good backups." />
-		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="_Save" Click="butSave_Click" />
+		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,12,12" Text="Save" Click="butSave_Click" />
 	</Grid>
 </local:FrmODBase>

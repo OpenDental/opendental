@@ -44,36 +44,36 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary></summary>
-		public static void Update(TerminalActive terminalActive) {
+		public static void Update(TerminalActive te) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),terminalActive);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),te);
 				return;
 			}
-			Crud.TerminalActiveCrud.Update(terminalActive);
+			Crud.TerminalActiveCrud.Update(te);
 		}
 
 		///<summary>Used to set the patient for a kiosk, to either load a patient or pass in patNum==0 to clear a patient.  Does nothing if termNum is not
 		///a valid TerminalActiveNum.</summary>
-		public static void SetPatNum(long terminalActiveNum,long patNum) {
+		public static void SetPatNum(long termNum,long patNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),terminalActiveNum,patNum);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),termNum,patNum);
 				return;
 			}
-			if(terminalActiveNum<1) {
+			if(termNum<1) {
 				return;//invalid TerminalActiveNum, just return
 			}
-			string command="UPDATE terminalactive SET PatNum="+POut.Long(patNum)+" WHERE TerminalActiveNum="+POut.Long(terminalActiveNum);
+			string command="UPDATE terminalactive SET PatNum="+POut.Long(patNum)+" WHERE TerminalActiveNum="+POut.Long(termNum);
 			Db.NonQ(command);
 			Signalods.SetInvalid(InvalidType.EClipboard);
 		}
 
 		///<summary></summary>
-		public static long Insert(TerminalActive terminalActive) {
+		public static long Insert(TerminalActive te) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				terminalActive.TerminalActiveNum=Meth.GetLong(MethodBase.GetCurrentMethod(),terminalActive);
-				return terminalActive.TerminalActiveNum;
+				te.TerminalActiveNum=Meth.GetLong(MethodBase.GetCurrentMethod(),te);
+				return te.TerminalActiveNum;
 			}
-			return Crud.TerminalActiveCrud.Insert(terminalActive);
+			return Crud.TerminalActiveCrud.Insert(te);
 		}
 		
 		///<summary>DEPRECATED.  Use DeleteForCompAndSession.  Only kept for FormTerminalOld references, which is never displayed.</summary>
@@ -120,19 +120,19 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns true if a terminal is already in the database with ComputerName=compName and ClientName=clientName or if either names are null
 		///or whitespace.  Otherwise false.  Case-insensitive name comparison.  Allow the same ClientName for different computers.</summary>
-		public static bool IsCompClientNameInUse(string computerName,string clientName) {
+		public static bool IsCompClientNameInUse(string compName,string clientName) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),computerName,clientName);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),compName,clientName);
 			}
-			if(string.IsNullOrWhiteSpace(computerName) || string.IsNullOrWhiteSpace(clientName)) {
+			if(string.IsNullOrWhiteSpace(compName) || string.IsNullOrWhiteSpace(clientName)) {
 				return true;//this will prevent them from using blank or null for the client name
 			}
 			string command="SELECT COUNT(*) FROM terminalactive "
-				+"WHERE ComputerName='"+POut.String(computerName)+"' "
+				+"WHERE ComputerName='"+POut.String(compName)+"' "
 				+"AND SessionName='"+POut.String(clientName)+"'";
 			return Db.GetCount(command)!="0";
 		}		
-		}
+	}
 
 		
 

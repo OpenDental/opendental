@@ -72,7 +72,7 @@ namespace OpenDentBusiness {
 		///<summary>18 - Stores the Dynamic Chart Layout SheetDef.SheetDefNum selected by a user.</summary>
 		DynamicChartLayout,
 		///<summary>19 - Whether or not to set the perio auto advance to custom.</summary>
-		PerioAutoAdvanceFacialsFirst,
+		PerioAutoAdvanceCustom,
 		///<summary>20 - Stores the value (in minutes) of when the user should be auto logged off.</summary>
 		LogOffTimerOverride,
 		///<summary>21 - Whether or not we check the "Show received" checkbox when loading the supply order history.</summary>

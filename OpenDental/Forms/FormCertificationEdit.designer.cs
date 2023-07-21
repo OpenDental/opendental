@@ -24,9 +24,10 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormCertificationEdit));
+			this.butCancel = new OpenDental.UI.Button();
 			this.listBoxCategories = new OpenDental.UI.ListBox();
 			this.labelCategories = new System.Windows.Forms.Label();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.labelDescription = new System.Windows.Forms.Label();
 			this.textDescription = new System.Windows.Forms.TextBox();
 			this.labelWikiPage = new System.Windows.Forms.Label();
@@ -34,6 +35,17 @@ namespace OpenDental{
 			this.butDelete = new OpenDental.UI.Button();
 			this.checkIsHidden = new OpenDental.UI.CheckBox();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(339, 310);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 7;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// listBoxCategories
 			// 
@@ -53,15 +65,15 @@ namespace OpenDental{
 			this.labelCategories.Text = "Category";
 			this.labelCategories.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(332, 312);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 6;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(258, 310);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 6;
+			this.butOK.Text = "OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// labelDescription
 			// 
@@ -118,8 +130,10 @@ namespace OpenDental{
 			// 
 			// FormCertificationEdit
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(426, 348);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.butDelete);
 			this.Controls.Add(this.labelDescription);
 			this.Controls.Add(this.textDescription);
@@ -138,9 +152,10 @@ namespace OpenDental{
 		}
 
 		#endregion
+		private OpenDental.UI.Button butCancel;
 		private UI.ListBox listBoxCategories;
 		private System.Windows.Forms.Label labelCategories;
-		private UI.Button butSave;
+		private UI.Button butOK;
 		private System.Windows.Forms.Label labelDescription;
 		private System.Windows.Forms.TextBox textDescription;
 		private System.Windows.Forms.Label labelWikiPage;

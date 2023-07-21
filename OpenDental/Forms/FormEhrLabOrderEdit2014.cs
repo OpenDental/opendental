@@ -35,6 +35,8 @@ namespace OpenDental {
 				gridMain.Enabled=true;
 				gridNotes.Enabled=true;
 				gridSpecimen.Enabled=true;
+				butCancel.Text="Close";
+				butCancel.Enabled=true;
 				//butAddNote.Enabled=false;
 				//butAddCopyTo.Enabled=false;
 				//butAddClinicalInfo.Enabled=false;
@@ -480,12 +482,12 @@ namespace OpenDental {
 		}
 
 		private void butProvPicker_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick=new FrmProviderPick();
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick FormPP=new FormProviderPick();
+			FormPP.ShowDialog();
+			if(FormPP.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			Provider prov=Providers.GetProv(frmProviderPick.ProvNumSelected);
+			Provider prov=Providers.GetProv(FormPP.ProvNumSelected);
 			if(prov.NationalProvID!="") {
 				textOrderingProvIdentifier.Text=prov.NationalProvID;
 				comboOrderingProvIdType.SelectedIndex=(int)HL70203.NPI+1;
@@ -519,7 +521,11 @@ namespace OpenDental {
 			textUsiTextOriginal.Text=FormL.LoincSelected.NameLongCommon;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butLastUpdate_Click(object sender,EventArgs e) {
+
+		}
+
+		private void butOk_Click(object sender,EventArgs e) {
 			if(IsImport || IsViewOnly) {
 				DialogResult=DialogResult.OK;
 				return;
@@ -609,11 +615,19 @@ namespace OpenDental {
 				if(CDSPermissions.GetForUser(Security.CurUser.UserNum).ShowCDS && CDSPermissions.GetForUser(Security.CurUser.UserNum).LabTestCDS) {
 					using FormCDSIntervention FormCDSI=new FormCDSIntervention();
 					FormCDSI.ListCDSInterventions=EhrTriggers.TriggerMatch(EhrLabCur.ListEhrLabResults[i],patCur);
-					FormCDSI.ShowIfRequired();
+					FormCDSI.ShowIfRequired(false);
 				}
 			}
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
 
 	}
 }

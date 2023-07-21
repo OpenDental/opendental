@@ -102,7 +102,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns a list of all categories for a single type. Will return an empty list if no type is selected.</summary>
-		public static List<QuickPasteCat> GetCategoriesForType(EnumQuickPasteType type) {
+		public static List<QuickPasteCat> GetCategoriesForType(QuickPasteType type) {
 			//No need to check MiddleTierRole; no call to db.
 			List<QuickPasteCat> listQuickCats=GetWhere(x => x.ListDefaultForTypes.Contains(type));
 			if(listQuickCats.Count==0) {
@@ -115,12 +115,12 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Called from FormQuickPaste and from QuickPasteNotes.Substitute(). Returns the index of the default category for the specified type. If user has entered more than one, only one is returned.</summary>
-		public static int GetDefaultType(EnumQuickPasteType type){
+		public static int GetDefaultType(QuickPasteType type){
 			//No need to check MiddleTierRole; no call to db.
 			if(GetCount()==0) {
 				return -1;
 			}
-			if(type==EnumQuickPasteType.None) {
+			if(type==QuickPasteType.None) {
 				return 0;//default to first line
 			}
 			string[] types;

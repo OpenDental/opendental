@@ -92,5 +92,52 @@ namespace OpenDental{
 			//}
 		}
 
+		//private void butOK_Click(object sender, System.EventArgs e) {
+			//not accessible
+			/*if(IsSelectionMode){
+				if(gridMain.GetSelectedIndex()==-1){
+					MsgBox.Show(this,"Please select a requirement first.");
+					return;
+				}
+				if(table.Rows[gridMain.GetSelectedIndex()]["appointment"].ToString()!="") {
+					MsgBox.Show(this,"Selected requirement is already attached to an appointment.");
+					return;
+				}
+				SelectedReqStudentNum=PIn.PInt(table.Rows[gridMain.GetSelectedIndex()]["ReqStudentNum"].ToString());
+				DialogResult=DialogResult.OK;
+			}*/
+			//should never get to here.
+		//}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

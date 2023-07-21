@@ -64,8 +64,8 @@ namespace OpenDental {
 
 		///<summary>Gets all claims for the patient selected.  Fills gridClaims and tags each row with its corrisponding claim object.</summary>
 		private void FillGridClaims() {
-			int sortByColIdx=gridClaims.GetSortedByColumnIdx();  //Keep previous sorting
-			bool isSortAsc=gridClaims.IsSortedAscending();
+			int sortByColIdx=gridClaims.SortedByColumnIdx;  //Keep previous sorting
+			bool isSortAsc=gridClaims.SortedIsAscending;
 			if(sortByColIdx==-1) {
 				sortByColIdx=0;
 				isSortAsc=false;
@@ -303,7 +303,7 @@ namespace OpenDental {
 		}
 
 		private void gridClaims_CellDoubleClick(object sender,UI.ODGridClickEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ClaimView)) {
+			if(!Security.IsAuthorized(Permissions.ClaimView)) {
 				return;
 			}
 			Claim claim=Claims.GetClaim(((Claim)gridClaims.ListGridRows[e.Row].Tag).ClaimNum);//This is the easiest way to determine if the claim was deleted.
@@ -405,6 +405,10 @@ namespace OpenDental {
 			}
 			ClaimSelected=claimSelected;
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

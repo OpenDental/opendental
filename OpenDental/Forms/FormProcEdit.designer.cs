@@ -156,7 +156,7 @@
 			this.checkIsEmergency = new OpenDental.UI.CheckBox();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.butPickOrderProvInternal = new OpenDental.UI.Button();
-			this.textOrderingProviderOverride = new System.Windows.Forms.TextBox();
+			this.textOrderingProviderOverride = new OpenDental.ODtextBox();
 			this.butPickOrderProvReferral = new OpenDental.UI.Button();
 			this.butNoneOrderProv = new OpenDental.UI.Button();
 			this.labelIcdVersionUncheck = new System.Windows.Forms.Label();
@@ -203,7 +203,8 @@
 			this.butSetComplete = new OpenDental.UI.Button();
 			this.butEditAnyway = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.signatureBoxWrapper = new OpenDental.UI.SignatureBoxWrapper();
 			this.butChangeUser = new OpenDental.UI.Button();
 			this.labelPermAlert = new System.Windows.Forms.Label();
@@ -352,7 +353,7 @@
 			this.groupQuadrant.Controls.Add(this.radioUR);
 			this.groupQuadrant.Location = new System.Drawing.Point(104, 134);
 			this.groupQuadrant.Name = "groupQuadrant";
-			this.groupQuadrant.Size = new System.Drawing.Size(114, 56);
+			this.groupQuadrant.Size = new System.Drawing.Size(108, 56);
 			this.groupQuadrant.TabIndex = 36;
 			this.groupQuadrant.Text = "Quadrant";
 			this.groupQuadrant.Visible = false;
@@ -361,7 +362,7 @@
 			// 
 			this.radioLR.Location = new System.Drawing.Point(12, 36);
 			this.radioLR.Name = "radioLR";
-			this.radioLR.Size = new System.Drawing.Size(47, 18);
+			this.radioLR.Size = new System.Drawing.Size(41, 16);
 			this.radioLR.TabIndex = 3;
 			this.radioLR.Text = "LR";
 			this.radioLR.Click += new System.EventHandler(this.radioLR_Click);
@@ -370,7 +371,7 @@
 			// 
 			this.radioLL.Location = new System.Drawing.Point(64, 36);
 			this.radioLL.Name = "radioLL";
-			this.radioLL.Size = new System.Drawing.Size(47, 18);
+			this.radioLL.Size = new System.Drawing.Size(41, 16);
 			this.radioLL.TabIndex = 1;
 			this.radioLL.Text = "LL";
 			this.radioLL.Click += new System.EventHandler(this.radioLL_Click);
@@ -379,7 +380,7 @@
 			// 
 			this.radioUL.Location = new System.Drawing.Point(64, 16);
 			this.radioUL.Name = "radioUL";
-			this.radioUL.Size = new System.Drawing.Size(47, 18);
+			this.radioUL.Size = new System.Drawing.Size(41, 16);
 			this.radioUL.TabIndex = 0;
 			this.radioUL.Text = "UL";
 			this.radioUL.Click += new System.EventHandler(this.radioUL_Click);
@@ -388,7 +389,7 @@
 			// 
 			this.radioUR.Location = new System.Drawing.Point(12, 16);
 			this.radioUR.Name = "radioUR";
-			this.radioUR.Size = new System.Drawing.Size(47, 18);
+			this.radioUR.Size = new System.Drawing.Size(41, 16);
 			this.radioUR.TabIndex = 0;
 			this.radioUR.Text = "UR";
 			this.radioUR.Click += new System.EventHandler(this.radioUR_Click);
@@ -525,7 +526,7 @@
 			// 
 			this.radioS6.Location = new System.Drawing.Point(12, 36);
 			this.radioS6.Name = "radioS6";
-			this.radioS6.Size = new System.Drawing.Size(45, 18);
+			this.radioS6.Size = new System.Drawing.Size(36, 16);
 			this.radioS6.TabIndex = 5;
 			this.radioS6.Text = "6";
 			this.radioS6.Click += new System.EventHandler(this.radioS6_Click);
@@ -534,7 +535,7 @@
 			// 
 			this.radioS5.Location = new System.Drawing.Point(60, 36);
 			this.radioS5.Name = "radioS5";
-			this.radioS5.Size = new System.Drawing.Size(45, 18);
+			this.radioS5.Size = new System.Drawing.Size(36, 16);
 			this.radioS5.TabIndex = 4;
 			this.radioS5.Text = "5";
 			this.radioS5.Click += new System.EventHandler(this.radioS5_Click);
@@ -543,7 +544,7 @@
 			// 
 			this.radioS4.Location = new System.Drawing.Point(108, 36);
 			this.radioS4.Name = "radioS4";
-			this.radioS4.Size = new System.Drawing.Size(45, 18);
+			this.radioS4.Size = new System.Drawing.Size(36, 16);
 			this.radioS4.TabIndex = 1;
 			this.radioS4.Text = "4";
 			this.radioS4.Click += new System.EventHandler(this.radioS4_Click);
@@ -552,7 +553,7 @@
 			// 
 			this.radioS2.Location = new System.Drawing.Point(60, 16);
 			this.radioS2.Name = "radioS2";
-			this.radioS2.Size = new System.Drawing.Size(45, 18);
+			this.radioS2.Size = new System.Drawing.Size(36, 16);
 			this.radioS2.TabIndex = 2;
 			this.radioS2.Text = "2";
 			this.radioS2.Click += new System.EventHandler(this.radioS2_Click);
@@ -561,7 +562,7 @@
 			// 
 			this.radioS3.Location = new System.Drawing.Point(108, 16);
 			this.radioS3.Name = "radioS3";
-			this.radioS3.Size = new System.Drawing.Size(45, 18);
+			this.radioS3.Size = new System.Drawing.Size(36, 16);
 			this.radioS3.TabIndex = 0;
 			this.radioS3.Text = "3";
 			this.radioS3.Click += new System.EventHandler(this.radioS3_Click);
@@ -570,7 +571,7 @@
 			// 
 			this.radioS1.Location = new System.Drawing.Point(12, 16);
 			this.radioS1.Name = "radioS1";
-			this.radioS1.Size = new System.Drawing.Size(45, 18);
+			this.radioS1.Size = new System.Drawing.Size(36, 16);
 			this.radioS1.TabIndex = 0;
 			this.radioS1.Text = "1";
 			this.radioS1.Click += new System.EventHandler(this.radioS1_Click);
@@ -1032,9 +1033,9 @@
 			// 
 			this.labelClaim.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelClaim.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelClaim.Location = new System.Drawing.Point(89, 663);
+			this.labelClaim.Location = new System.Drawing.Point(111, 652);
 			this.labelClaim.Name = "labelClaim";
-			this.labelClaim.Size = new System.Drawing.Size(524, 32);
+			this.labelClaim.Size = new System.Drawing.Size(480, 44);
 			this.labelClaim.TabIndex = 50;
 			this.labelClaim.Text = "This procedure is attached to a claim, so certain fields should not be edited.  Y" +
     "ou should reprint the claim if any significant changes are made.";
@@ -1408,9 +1409,9 @@
 			this.tabControl.Controls.Add(this.tabPageMedical);
 			this.tabControl.Controls.Add(this.tabPageMisc);
 			this.tabControl.Controls.Add(this.tabPageCanada);
-			this.tabControl.Location = new System.Drawing.Point(1, 423);
+			this.tabControl.Location = new System.Drawing.Point(1, 424);
 			this.tabControl.Name = "tabControl";
-			this.tabControl.Size = new System.Drawing.Size(982, 244);
+			this.tabControl.Size = new System.Drawing.Size(960, 244);
 			this.tabControl.TabIndex = 175;
 			this.tabControl.SizeChanged += new System.EventHandler(this.tabControl_SizeChanged);
 			// 
@@ -1428,7 +1429,7 @@
 			this.tabPageFinancial.Location = new System.Drawing.Point(2, 21);
 			this.tabPageFinancial.Name = "tabPageFinancial";
 			this.tabPageFinancial.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageFinancial.Size = new System.Drawing.Size(978, 221);
+			this.tabPageFinancial.Size = new System.Drawing.Size(956, 221);
 			this.tabPageFinancial.TabIndex = 0;
 			this.tabPageFinancial.Text = "Financial";
 			// 
@@ -1449,7 +1450,7 @@
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.gridPay.Location = new System.Drawing.Point(3, 137);
 			this.gridPay.Name = "gridPay";
-			this.gridPay.Size = new System.Drawing.Size(460, 79);
+			this.gridPay.Size = new System.Drawing.Size(449, 79);
 			this.gridPay.TabIndex = 117;
 			this.gridPay.Title = "Patient Payments";
 			this.gridPay.TranslationName = "TableProcPay";
@@ -1461,9 +1462,9 @@
 			this.gridAdj.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.gridAdj.Location = new System.Drawing.Point(469, 137);
+			this.gridAdj.Location = new System.Drawing.Point(458, 137);
 			this.gridAdj.Name = "gridAdj";
-			this.gridAdj.Size = new System.Drawing.Size(507, 79);
+			this.gridAdj.Size = new System.Drawing.Size(496, 79);
 			this.gridAdj.TabIndex = 116;
 			this.gridAdj.Title = "Adjustments";
 			this.gridAdj.TranslationName = "TableProcAdj";
@@ -1473,7 +1474,7 @@
 			// label20
 			// 
 			this.label20.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.label20.Location = new System.Drawing.Point(831, 12);
+			this.label20.Location = new System.Drawing.Point(809, 12);
 			this.label20.Name = "label20";
 			this.label20.Size = new System.Drawing.Size(75, 16);
 			this.label20.TabIndex = 114;
@@ -1483,7 +1484,7 @@
 			// textDiscount
 			// 
 			this.textDiscount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.textDiscount.Location = new System.Drawing.Point(907, 9);
+			this.textDiscount.Location = new System.Drawing.Point(885, 9);
 			this.textDiscount.MaxVal = 100000000D;
 			this.textDiscount.MinVal = -100000000D;
 			this.textDiscount.Name = "textDiscount";
@@ -1518,7 +1519,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridIns.Location = new System.Drawing.Point(3, 32);
 			this.gridIns.Name = "gridIns";
-			this.gridIns.Size = new System.Drawing.Size(973, 102);
+			this.gridIns.Size = new System.Drawing.Size(951, 102);
 			this.gridIns.TabIndex = 113;
 			this.gridIns.Title = "Insurance Estimates and Payments";
 			this.gridIns.TranslationName = "TableProcIns";
@@ -1574,7 +1575,7 @@
 			this.tabPageMedical.Location = new System.Drawing.Point(2, 21);
 			this.tabPageMedical.Name = "tabPageMedical";
 			this.tabPageMedical.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageMedical.Size = new System.Drawing.Size(978, 221);
+			this.tabPageMedical.Size = new System.Drawing.Size(956, 221);
 			this.tabPageMedical.TabIndex = 3;
 			this.tabPageMedical.Text = "Medical";
 			// 
@@ -1613,10 +1614,15 @@
 			// 
 			this.textOrderingProviderOverride.AcceptsTab = true;
 			this.textOrderingProviderOverride.BackColor = System.Drawing.SystemColors.Control;
+			this.textOrderingProviderOverride.DetectLinksEnabled = false;
+			this.textOrderingProviderOverride.DetectUrls = false;
 			this.textOrderingProviderOverride.Location = new System.Drawing.Point(6, 39);
 			this.textOrderingProviderOverride.Name = "textOrderingProviderOverride";
+			this.textOrderingProviderOverride.QuickPasteType = OpenDentBusiness.QuickPasteType.ReadOnly;
 			this.textOrderingProviderOverride.ReadOnly = true;
+			this.textOrderingProviderOverride.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textOrderingProviderOverride.Size = new System.Drawing.Size(266, 21);
+			this.textOrderingProviderOverride.SpellCheckIsEnabled = false;
 			this.textOrderingProviderOverride.TabIndex = 299;
 			this.textOrderingProviderOverride.Text = "";
 			// 
@@ -1845,7 +1851,7 @@
 			this.tabPageMisc.Controls.Add(this.labelPlaceService);
 			this.tabPageMisc.Location = new System.Drawing.Point(2, 21);
 			this.tabPageMisc.Name = "tabPageMisc";
-			this.tabPageMisc.Size = new System.Drawing.Size(978, 221);
+			this.tabPageMisc.Size = new System.Drawing.Size(956, 221);
 			this.tabPageMisc.TabIndex = 4;
 			this.tabPageMisc.Text = "Misc";
 			// 
@@ -1886,7 +1892,7 @@
 			this.tabPageCanada.Location = new System.Drawing.Point(2, 21);
 			this.tabPageCanada.Name = "tabPageCanada";
 			this.tabPageCanada.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageCanada.Size = new System.Drawing.Size(978, 221);
+			this.tabPageCanada.Size = new System.Drawing.Size(956, 221);
 			this.tabPageCanada.TabIndex = 1;
 			this.tabPageCanada.Text = "Canada";
 			// 
@@ -1985,7 +1991,7 @@
 			this.textClaimNote.Location = new System.Drawing.Point(106, 364);
 			this.textClaimNote.MaxLength = 80;
 			this.textClaimNote.Name = "textClaimNote";
-			this.textClaimNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Procedure;
+			this.textClaimNote.QuickPasteType = OpenDentBusiness.QuickPasteType.Procedure;
 			this.textClaimNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textClaimNote.Size = new System.Drawing.Size(277, 43);
 			this.textClaimNote.TabIndex = 173;
@@ -2027,7 +2033,7 @@
 			this.textNotes.HasAutoNotes = true;
 			this.textNotes.Location = new System.Drawing.Point(504, 157);
 			this.textNotes.Name = "textNotes";
-			this.textNotes.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Procedure;
+			this.textNotes.QuickPasteType = OpenDentBusiness.QuickPasteType.Procedure;
 			this.textNotes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNotes.Size = new System.Drawing.Size(450, 164);
 			this.textNotes.TabIndex = 1;
@@ -2046,7 +2052,7 @@
 			// butEditAnyway
 			// 
 			this.butEditAnyway.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butEditAnyway.Location = new System.Drawing.Point(616, 671);
+			this.butEditAnyway.Location = new System.Drawing.Point(594, 671);
 			this.butEditAnyway.Name = "butEditAnyway";
 			this.butEditAnyway.Size = new System.Drawing.Size(104, 24);
 			this.butEditAnyway.TabIndex = 51;
@@ -2066,15 +2072,26 @@
 			this.butDelete.Text = "&Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(902, 670);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(76, 24);
-			this.butSave.TabIndex = 12;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(870, 671);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(76, 24);
+			this.butCancel.TabIndex = 13;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(779, 671);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(76, 24);
+			this.butOK.TabIndex = 12;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// signatureBoxWrapper
 			// 
@@ -2119,7 +2136,7 @@
 			// 
 			// FormProcEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(984, 696);
+			this.ClientSize = new System.Drawing.Size(962, 696);
 			this.Controls.Add(this.butEditAutoNote);
 			this.Controls.Add(this.labelPermAlert);
 			this.Controls.Add(this.butChangeUser);
@@ -2157,7 +2174,8 @@
 			this.Controls.Add(this.butSetComplete);
 			this.Controls.Add(this.butEditAnyway);
 			this.Controls.Add(this.butDelete);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.labelSetComplete);
 			this.Controls.Add(this.labelClaim);
 			this.Controls.Add(this.panel1);
@@ -2203,7 +2221,8 @@
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.TextBox textDesc;
 		private System.Windows.Forms.Label label7;
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butDelete;
 		private System.Windows.Forms.TextBox textRange;
 		private System.Windows.Forms.Label labelTooth;
@@ -2354,7 +2373,7 @@
 		private UI.Button butChangeUser;
 		private UI.Button butAddExistAdj;
 		private ValidDate textOrigDateComp;
-		private System.Windows.Forms.TextBox textOrderingProviderOverride;
+		private ODtextBox textOrderingProviderOverride;
 		private UI.Button butPickOrderProvReferral;
 		private UI.Button butNoneOrderProv;
 		private UI.Button butPickOrderProvInternal;

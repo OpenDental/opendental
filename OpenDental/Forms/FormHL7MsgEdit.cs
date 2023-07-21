@@ -35,11 +35,14 @@ namespace OpenDental {
 			textNote.Text=HL7MsgCur.Note;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			HL7MsgCur.Note=textNote.Text;
 			HL7Msgs.Update(HL7MsgCur);
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

@@ -84,5 +84,9 @@ namespace OpenDental {
 		private void FormWikiCompare_SizeChange(object sender,EventArgs e) {
 			ResizeControls();
 		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

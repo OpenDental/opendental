@@ -62,11 +62,5 @@ namespace UnitTestsCore {
 			return offSetCharge;
 		}
 
-		///<summary>Deletes everything from the payplancharge table.</summary>
-		public static void ClearPayPlanChargeTable() {
-			string command="DELETE FROM payplancharge WHERE PayPlanChargeNum > 0";
-			DataCore.NonQ(command);
-		}
-
 	}
 }

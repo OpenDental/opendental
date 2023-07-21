@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using OpenDentBusiness;
 using CodeBase;
 using PdfSharp.Drawing;
-using System.Linq;
 
 namespace OpenDental {
 	public partial class FormSheetFieldInput:FormODBase {
@@ -20,7 +19,6 @@ namespace OpenDental {
 		private List<SheetFieldDef> _listSheetFieldDefsAvail;
 		public bool IsEditMobile;
 		public bool IsReadOnly;
-		public long AutoNoteNum=0;
 
 		public FormSheetFieldInput() {
 			InitializeComponent();
@@ -43,7 +41,7 @@ namespace OpenDental {
 				textTabOrder.Enabled=false;
 			}
 			if(IsReadOnly){
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 			}
 			textUiLabelMobile.Visible=SheetDefs.IsMobileAllowed(SheetDefCur.SheetType);
@@ -82,31 +80,6 @@ namespace OpenDental {
 			if(!string.IsNullOrEmpty(SheetFieldDefCur.UiLabelMobile)) { //Already has a value that user has setup previously.
 				textUiLabelMobile.Text=SheetFieldDefCur.UiLabelMobile;
 			}
-			if(AutoNoteNum!=0) { //This value will only be set if using an AutoNote.
-				textAutoNote.Text=AutoNotes.GetWhere(x => x.AutoNoteNum==AutoNoteNum).FirstOrDefault().AutoNoteName;
-			}
-		}
-
-		private void butAutoNote_Click(object sender,EventArgs e) {
-			using FormAutoNotes formAutoNotes=new FormAutoNotes();
-			formAutoNotes.IsSelectionMode=true;
-			if(formAutoNotes.ShowDialog()!=DialogResult.OK) {
-				return;
-			}
-			AutoNoteNum=formAutoNotes.AutoNoteCur.AutoNoteNum;
-			textAutoNote.Text=formAutoNotes.AutoNoteCur.AutoNoteName;
-			if(listFields.SelectedIndex>-1 && _listSheetFieldDefsAvail[listFields.SelectedIndex].FieldName=="misc") {
-				labelReportableName.Visible=false;
-				textReportableName.Visible=false;
-				textReportableName.Text="";
-			}
-			listFields.SetAll(false);
-			textUiLabelMobile.Text="";
-		}
-
-		private void butClearAutoNote_Click(object sender,EventArgs e) {
-			AutoNoteNum=0;
-			textAutoNote.Text="";
 		}
 
 		private void listFields_DoubleClick(object sender,EventArgs e) {
@@ -162,8 +135,6 @@ namespace OpenDental {
 			else {
 				textUiLabelMobile.Text=_listSheetFieldDefsAvail[listFields.SelectedIndex].FieldName;
 			}
-			AutoNoteNum=0;
-			textAutoNote.Text="";
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
@@ -171,7 +142,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			SaveAndClose();
 		}
 
@@ -185,7 +156,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
 			}
-			if(listFields.SelectedIndex==-1 && AutoNoteNum==0){
+			if(listFields.SelectedIndex==-1){
 				MsgBox.Show(this,"Please select a field name first.");
 				return;
 			}
@@ -219,14 +190,7 @@ namespace OpenDental {
 				MsgBox.Show(Lan.g(this,$"Unsupported font: {comboFontName.GetSelected<string>()}. Please choose another font."));
 				return;
 			}
-			if(listFields.SelectedIndex==-1) {
-				SheetFieldDefCur.FieldName="AutoNote: "+textAutoNote.Text;
-				SheetFieldDefCur.FieldValue="AutoNoteNum:"+AutoNoteNum.ToString();
-			}
-			else{
-				SheetFieldDefCur.FieldName=_listSheetFieldDefsAvail[listFields.SelectedIndex].FieldName;
-				SheetFieldDefCur.FieldValue="";
-			}
+			SheetFieldDefCur.FieldName=_listSheetFieldDefsAvail[listFields.SelectedIndex].FieldName;
 			SheetFieldDefCur.ReportableName=textReportableName.Text;//always safe even if not a misc field or if textReportableName is blank.
 			SheetFieldDefCur.FontName=comboFontName.GetSelected<string>();
 			SheetFieldDefCur.FontSize=fontSize;
@@ -244,5 +208,14 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+
+		
 	}
 }

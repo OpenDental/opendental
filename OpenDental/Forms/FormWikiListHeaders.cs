@@ -116,10 +116,9 @@ namespace OpenDental {
 				return;
 			}
 			//Get input from user
-			InputBox inputBox=new InputBox(Lan.g(this,"New Pick List Option"));
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogOK) {
-				_listStringPicks.Add(inputBox.StringResult);
+			using InputBox inputBox=new InputBox(Lan.g(this,"New Pick List Option"));
+			if(inputBox.ShowDialog()==DialogResult.OK) {
+				_listStringPicks.Add(inputBox.textResult.Text);
 				_idxPickList=_listStringPicks.Count-1;
 				FillGridPickList();
 			}
@@ -134,7 +133,7 @@ namespace OpenDental {
 			FillGridPickList();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(_pointCellSelected.Y>0 && _pointCellSelected.Y<_listWikiListHeaderWidths.Count) {//no pick list option for the PK col
 				_listWikiListHeaderWidths[_pointCellSelected.Y].PickList=string.Join("\r\n",_listStringPicks);
 			}
@@ -202,6 +201,10 @@ namespace OpenDental {
 			#endregion Try Update DB
 			DataValid.SetInvalid(InvalidType.Wiki);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 	}
 }

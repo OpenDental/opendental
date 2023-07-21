@@ -32,7 +32,8 @@ namespace OpenDental {
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMedical));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.butAddDisease = new OpenDental.UI.Button();
 			this.gridMeds = new OpenDental.UI.GridOD();
@@ -116,15 +117,26 @@ namespace OpenDental {
 			this.tabPage2.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(720, 462);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 25);
-			this.butSave.TabIndex = 1;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(624, 461);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 25);
+			this.butOK.TabIndex = 1;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(717, 461);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 25);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butAdd
 			// 
@@ -360,7 +372,7 @@ namespace OpenDental {
 			this.textMedical.DetectUrls = false;
 			this.textMedical.Location = new System.Drawing.Point(6, 147);
 			this.textMedical.Name = "textMedical";
-			this.textMedical.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.MedicalSummary;
+			this.textMedical.QuickPasteType = OpenDentBusiness.QuickPasteType.MedicalSummary;
 			this.textMedical.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textMedical.Size = new System.Drawing.Size(275, 77);
 			this.textMedical.TabIndex = 2;
@@ -387,7 +399,7 @@ namespace OpenDental {
 			this.textService.DetectUrls = false;
 			this.textService.Location = new System.Drawing.Point(288, 53);
 			this.textService.Name = "textService";
-			this.textService.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.ServiceNotes;
+			this.textService.QuickPasteType = OpenDentBusiness.QuickPasteType.ServiceNotes;
 			this.textService.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textService.Size = new System.Drawing.Size(490, 171);
 			this.textService.TabIndex = 3;
@@ -403,7 +415,7 @@ namespace OpenDental {
 			this.textMedUrgNote.ForeColor = System.Drawing.Color.Red;
 			this.textMedUrgNote.Location = new System.Drawing.Point(7, 53);
 			this.textMedUrgNote.Name = "textMedUrgNote";
-			this.textMedUrgNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.MedicalUrgent;
+			this.textMedUrgNote.QuickPasteType = OpenDentBusiness.QuickPasteType.MedicalUrgent;
 			this.textMedUrgNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textMedUrgNote.Size = new System.Drawing.Size(275, 72);
 			this.textMedUrgNote.TabIndex = 1;
@@ -470,7 +482,7 @@ namespace OpenDental {
 			this.textMedicalComp.DetectUrls = false;
 			this.textMedicalComp.Location = new System.Drawing.Point(9, 246);
 			this.textMedicalComp.Name = "textMedicalComp";
-			this.textMedicalComp.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.MedicalHistory;
+			this.textMedicalComp.QuickPasteType = OpenDentBusiness.QuickPasteType.MedicalHistory;
 			this.textMedicalComp.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textMedicalComp.Size = new System.Drawing.Size(769, 173);
 			this.textMedicalComp.TabIndex = 4;
@@ -919,10 +931,12 @@ namespace OpenDental {
 			// 
 			// FormMedical
 			// 
-			this.AcceptButton = this.butSave;
+			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(802, 494);
 			this.Controls.Add(this.tabControlFormMedical);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -950,7 +964,8 @@ namespace OpenDental {
 		}
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.Button butAddDisease;// Required designer variable.
 		private OpenDental.UI.GridOD gridMeds;

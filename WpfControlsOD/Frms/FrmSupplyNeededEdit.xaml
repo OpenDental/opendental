@@ -7,9 +7,9 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="628" Height="291" 
-             Text="Supply Needed" >
+             Text="Supply Needed" Loaded="FrmSupplyNeededEdit_Loaded" >
 	<Grid Background="#FFFCFDFE" >
-		<ui:Button x:Name="butsave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,25,25" Text="_Save" Click="butSave_Click" />
+		<ui:Button x:Name="butsave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,25,25" Text="Save" Click="butSave_Click" />
 		<ui:Label x:Name="label3" Width="217" VerticalAlignment="Bottom" Height="33" Margin="114,0,0,18" Text="Once the supply is added to an order, delete it from this list." />
 		<ui:Label x:Name="label2" Width="132" Height="18" Margin="2,40,0,0" Text="Date" HAlign="Right" VAlign="Center" />
 		<ui:TextVDate x:Name="textVDate" Width="100" Height="20" Margin="135,39,0,0" />

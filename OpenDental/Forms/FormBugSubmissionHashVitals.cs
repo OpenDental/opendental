@@ -266,20 +266,15 @@ namespace OpenDental {
 		
 		///<summary>When clicked, allows user to past stacktrace and enter version to attempt to find hash and matched info.</summary>
 		private void butCheckHash_Click(object sender,EventArgs e) {
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.TextBoxMultiLine;
-			inputBoxParam.LabelText="Please paste a stack trace"; 
-			InputBox inputBox=new InputBox(inputBoxParam);
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel){
+			using InputBox inputBox=new InputBox("Please paste a stack trace",true);
+			if(inputBox.ShowDialog()!=DialogResult.OK){
 				return;
 			}
 			BugSubmission bugSubmission=new BugSubmission(){ 
-				ExceptionStackTrace=inputBox.StringResult.Replace("\r\n","\n"),
+				ExceptionStackTrace=inputBox.textResult.Text.Replace("\r\n","\n"),
 			};
-			InputBox inputBox2=new InputBox("Please enter a version like: 19.2.1.0");
-			inputBox2.ShowDialog();
-			if(inputBox2.IsDialogCancel || !Version.TryParse(inputBox2.StringResult,out Version version)){
+			using InputBox inputBox2=new InputBox("Please enter a version like: 19.2.1.0");
+			if(inputBox2.ShowDialog()!=DialogResult.OK || !Version.TryParse(inputBox2.textResult.Text,out Version version)){
 				return;
 			}
 			BugSubmissionHashes.ProcessSubmission(bugSubmission

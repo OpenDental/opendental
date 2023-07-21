@@ -382,38 +382,34 @@ namespace OpenDental {
 			//21611-7 = Estimated
 			//21612-7 = Reported
 			//29553-5 = Calculated
-			InputBox inputBox=new InputBox(Lan.g(this,"Input age criterion as (operand)(value). Examples: <18, >55, =22, <=35."));
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel || string.IsNullOrEmpty(inputBox.StringResult)) {
+			using InputBox inputBox=new InputBox(Lan.g(this,"Input age criterion as (operand)(value). Examples: <18, >55, =22, <=35."));
+			if(inputBox.ShowDialog()!=DialogResult.OK || string.IsNullOrEmpty(inputBox.textResult.Text)) {
 				return;
 			}
-			if(!Regex.IsMatch(inputBox.StringResult,@"^(<|<=|>|>=|=)\d+$")) {//Starts with <,>,=,<=, or >= followed by numbers, and nothing else.
+			if(!Regex.IsMatch(inputBox.textResult.Text,@"^(<|<=|>|>=|=)\d+$")) {//Starts with <,>,=,<=, or >= followed by numbers, and nothing else.
 				MsgBox.Show(this,"Invalid format.");
 				return;
 			}
-			EhrTriggerCur.DemographicsList+= " age,"+inputBox.StringResult.Trim()+" ";
+			EhrTriggerCur.DemographicsList+= " age,"+inputBox.textResult.Text.Trim()+" ";
 			FillGrid();
 		}
 
 		private void butAddGender_Click(object sender,EventArgs e) {
 			//46098-0 = Gender. There are 3 other age LOINCS that should also be checked.  Stored as " Age(Operand)(Value) "
 			//Other Gender LoincCodes include 21840-4,46607-8,54131-8, and 72143-1
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-			inputBoxParam.LabelText=Lan.g(this,"Input genders.  Example: male,female,unknown");
+			using InputBox inputBox=new InputBox(Lan.g(this,"Input genders.  Example: male,female,unknown"));
 			//Fill inputBox with current gender codes.---------------------------------------------------------
 			if(EhrTriggerCur.DemographicsList.Contains("gender")) {
 				string[] arrayString=EhrTriggerCur.DemographicsList.Split(new string[] { " " },StringSplitOptions.RemoveEmptyEntries);
 				for(int i=0;i<arrayString.Length;i++) {
 					if(arrayString[i].StartsWith("gender")) {
-						inputBoxParam.Text=arrayString[i].Replace("gender,","");
+						inputBox.textResult.Text=arrayString[i].Replace("gender,","");
 						break;
 					}
 				}
 			}//end if gender
-			InputBox inputBox=new InputBox(inputBoxParam);
 			inputBox.ShowDialog();
-			if(inputBox.StringResult!="" && !Regex.IsMatch(inputBox.StringResult,@"^(male|female|unknown)(,(male|female|unknown)){0,2}$")) {//m,f,u optionally followed by a comma delimited list with optional white space after comma.
+			if(inputBox.textResult.Text!="" && !Regex.IsMatch(inputBox.textResult.Text,@"^(male|female|unknown)(,(male|female|unknown)){0,2}$")) {//m,f,u optionally followed by a comma delimited list with optional white space after comma.
 				MsgBox.Show(this,"Invalid format.");
 				return;
 			}
@@ -427,12 +423,12 @@ namespace OpenDental {
 					}
 				}
 			}
-			if(inputBox.StringResult=="") {
+			if(inputBox.textResult.Text=="") {
 				FillGrid();
 				return;
 			}
 			//Add new gender codes.
-			EhrTriggerCur.DemographicsList+= " gender,"+inputBox.StringResult.Trim()+" ";
+			EhrTriggerCur.DemographicsList+= " gender,"+inputBox.textResult.Text.Trim()+" ";
 			FillGrid();
 		}
 
@@ -448,31 +444,29 @@ namespace OpenDental {
 
 		private void butAddHeight_Click(object sender,EventArgs e) {
 			//8302-2 = height
-			InputBox inputBox=new InputBox(Lan.g(this,"Input height criterion as (operand)(value in inches). Examples: >80, <=48.5"));
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel || string.IsNullOrEmpty(inputBox.StringResult)) {
+			using InputBox inputBox=new InputBox(Lan.g(this,"Input height criterion as (operand)(value in inches). Examples: >80, <=48.5"));
+			if(inputBox.ShowDialog()!=DialogResult.OK || string.IsNullOrEmpty(inputBox.textResult.Text)) {
 				return;
 			}
-			if(!Regex.IsMatch(inputBox.StringResult,@"^^(<|<=|>|>=|=)(\d)+(.(\d)+)*$")) {//Starts with <,>,=,<=, or >= followed by a float, and nothing else.
+			if(!Regex.IsMatch(inputBox.textResult.Text,@"^^(<|<=|>|>=|=)(\d)+(.(\d)+)*$")) {//Starts with <,>,=,<=, or >= followed by a float, and nothing else.
 				MsgBox.Show(this,"Invalid format.");
 				return;
 			}
-			EhrTriggerCur.VitalLoincList+= " height,"+inputBox.StringResult.Trim()+" ";
+			EhrTriggerCur.VitalLoincList+= " height,"+inputBox.textResult.Text.Trim()+" ";
 			FillGrid();
 		}
 
 		private void butAddWeight_Click(object sender,EventArgs e) {
 			//29463-7 = weight
-			InputBox inputBox=new InputBox(Lan.g(this,"Input weight criterion as (operand)(value). Examples: <=99.5, >=300"));
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel || string.IsNullOrEmpty(inputBox.StringResult)) {
+			using InputBox inputBox=new InputBox(Lan.g(this,"Input weight criterion as (operand)(value). Examples: <=99.5, >=300"));
+			if(inputBox.ShowDialog()!=DialogResult.OK || string.IsNullOrEmpty(inputBox.textResult.Text)) {
 				return;
 			}
-			if(!Regex.IsMatch(inputBox.StringResult,@"^(<|<=|>|>=|=)(\d)+(.(\d)+)*$")) {//Starts with <,>,=,<=, or >= followed by a float, and nothing else.
+			if(!Regex.IsMatch(inputBox.textResult.Text,@"^(<|<=|>|>=|=)(\d)+(.(\d)+)*$")) {//Starts with <,>,=,<=, or >= followed by a float, and nothing else.
 				MsgBox.Show(this,"Invalid format.");
 				return;
 			}
-			EhrTriggerCur.VitalLoincList+= " weight,"+inputBox.StringResult.Trim()+" ";
+			EhrTriggerCur.VitalLoincList+= " weight,"+inputBox.textResult.Text.Trim()+" ";
 			FillGrid();
 		}
 
@@ -490,16 +484,15 @@ namespace OpenDental {
 
 		private void butAddBMI_Click(object sender,EventArgs e) {
 			//39156-5 = BMI
-			InputBox inputBox=new InputBox(Lan.g(this,"Input BMI criterion. Examples: <5, >=27.5%"));
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel || string.IsNullOrEmpty(inputBox.StringResult)) {
+			using InputBox inputBox=new InputBox(Lan.g(this,"Input BMI criterion. Examples: <5, >=27.5%"));
+			if(inputBox.ShowDialog()!=DialogResult.OK || string.IsNullOrEmpty(inputBox.textResult.Text)) {
 				return;
 			}
-			if(!Regex.IsMatch(inputBox.StringResult,@"^(<|<=|>|>=|=)(\d)+(.(\d)+)*(%){0,1}$")) {//operand followed by valid float followed by an optional percent sign.
+			if(!Regex.IsMatch(inputBox.textResult.Text,@"^(<|<=|>|>=|=)(\d)+(.(\d)+)*(%){0,1}$")) {//operand followed by valid float followed by an optional percent sign.
 				MsgBox.Show(this,"Invalid format.");
 				return;
 			}
-			EhrTriggerCur.VitalLoincList+= " BMI,"+inputBox.StringResult.Trim()+" ";
+			EhrTriggerCur.VitalLoincList+= " BMI,"+inputBox.textResult.Text.Trim()+" ";
 			FillGrid();
 		}
 
@@ -518,7 +511,7 @@ namespace OpenDental {
 			return true;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			EhrTriggerCur.Description=textDescription.Text;
 			EhrTriggerCur.Instructions=textInstruction.Text;
 			EhrTriggerCur.Bibliography=textBibliography.Text;
@@ -532,6 +525,10 @@ namespace OpenDental {
 				EhrTriggers.Update(EhrTriggerCur);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

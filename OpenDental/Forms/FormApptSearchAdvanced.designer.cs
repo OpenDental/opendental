@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormApptSearchAdvanced));
 			this.butSearch = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.comboBlockout = new OpenDental.UI.ComboBox();
 			this.butMore = new OpenDental.UI.Button();
@@ -66,6 +67,17 @@ namespace OpenDental{
 			this.butSearch.TabIndex = 3;
 			this.butSearch.Text = "&Search";
 			this.butSearch.Click += new System.EventHandler(this.butSearch_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(490, 298);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridMain
 			// 
@@ -185,9 +197,9 @@ namespace OpenDental{
 			// 
 			// radioBeforePM
 			// 
-			this.radioBeforePM.Location = new System.Drawing.Point(204, 72);
+			this.radioBeforePM.Location = new System.Drawing.Point(196, 72);
 			this.radioBeforePM.Name = "radioBeforePM";
-			this.radioBeforePM.Size = new System.Drawing.Size(42, 20);
+			this.radioBeforePM.Size = new System.Drawing.Size(39, 20);
 			this.radioBeforePM.TabIndex = 86;
 			this.radioBeforePM.Text = "pm";
 			// 
@@ -204,7 +216,7 @@ namespace OpenDental{
 			this.radioBeforeAM.Checked = true;
 			this.radioBeforeAM.Location = new System.Drawing.Point(155, 72);
 			this.radioBeforeAM.Name = "radioBeforeAM";
-			this.radioBeforeAM.Size = new System.Drawing.Size(42, 20);
+			this.radioBeforeAM.Size = new System.Drawing.Size(39, 20);
 			this.radioBeforeAM.TabIndex = 85;
 			this.radioBeforeAM.TabStop = true;
 			this.radioBeforeAM.Text = "am";
@@ -222,23 +234,25 @@ namespace OpenDental{
 			this.panel1.Controls.Add(this.radioAfterPM);
 			this.panel1.Location = new System.Drawing.Point(155, 99);
 			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(102, 20);
+			this.panel1.Size = new System.Drawing.Size(84, 20);
 			this.panel1.TabIndex = 86;
 			// 
 			// radioAfterAM
 			// 
+			this.radioAfterAM.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.radioAfterAM.Location = new System.Drawing.Point(0, 0);
 			this.radioAfterAM.Name = "radioAfterAM";
-			this.radioAfterAM.Size = new System.Drawing.Size(42, 20);
+			this.radioAfterAM.Size = new System.Drawing.Size(39, 20);
 			this.radioAfterAM.TabIndex = 89;
 			this.radioAfterAM.Text = "am";
 			// 
 			// radioAfterPM
 			// 
+			this.radioAfterPM.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.radioAfterPM.Checked = true;
-			this.radioAfterPM.Location = new System.Drawing.Point(49, 0);
+			this.radioAfterPM.Location = new System.Drawing.Point(41, 0);
 			this.radioAfterPM.Name = "radioAfterPM";
-			this.radioAfterPM.Size = new System.Drawing.Size(42, 20);
+			this.radioAfterPM.Size = new System.Drawing.Size(39, 20);
 			this.radioAfterPM.TabIndex = 90;
 			this.radioAfterPM.TabStop = true;
 			this.radioAfterPM.Text = "pm";
@@ -345,12 +359,14 @@ namespace OpenDental{
 			// 
 			// FormApptSearchAdvanced
 			// 
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(577, 334);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.butMore);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butSearch);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormApptSearchAdvanced";
 			this.Text = "Advanced Appointment Search";
@@ -366,6 +382,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butSearch;
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private UI.ComboBox comboBlockout;
 		private UI.Button butMore;

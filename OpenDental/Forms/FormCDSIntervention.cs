@@ -6,7 +6,6 @@ using System.Text;
 using System.Windows.Forms;
 using OpenDentBusiness;
 using OpenDental.UI;
-using CodeBase;
 
 namespace OpenDental {
 	public partial class FormCDSIntervention:FormODBase {
@@ -70,11 +69,15 @@ namespace OpenDental {
 			formInfobutton.ShowDialog();
 		}
 
-		///<summary>Run after assigning value to DictEhrTriggerResults.  FormCDSIntervention will display if needed, otherwise Dialogresult will be null.</summary>
 		public void ShowIfRequired() {
-			if(ListCDSInterventions.IsNullOrEmpty()) {
+			ShowIfRequired(true);
+		}
+
+		///<summary>Run after assigning value to DictEhrTriggerResults.  FormCDSIntervention will display if needed, otherwise Dialogresult will be null.</summary>
+		public void ShowIfRequired(bool showCancelButton) {
+			if(ListCDSInterventions==null || ListCDSInterventions.Count==0) {
 				DialogResult=DialogResult.Cancel;
-				return;//No interventions found
+				return;//No interventions matched.
 			}
 			_table=new DataTable();
 			_table.Columns.Add("");//infobutton
@@ -95,11 +98,17 @@ namespace OpenDental {
 				DialogResult=DialogResult.Cancel;
 				return;//should never happen
 			}
+			butCancel.Visible=showCancelButton;
 			this.ShowDialog();
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Abort;
+		}
+
 	}
 }

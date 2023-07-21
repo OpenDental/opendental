@@ -22,8 +22,6 @@ namespace OpenDentBusiness.WebTypes.WebForms {
 		public long RegistrationKeyNum;
 		///<summary>FK to customers.patient.PatNum.</summary>
 		public long DentalOfficeID;
-		///<summary>True causes webforms_log entries to be made for this customer regardless of the log level on the servers at HQ.</summary>
-		public bool IsLogging;
 
 		///<summary>Used only for serialization purposes</summary>
 		[XmlElement("ColorBorder",typeof(int))]

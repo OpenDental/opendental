@@ -30,7 +30,7 @@ namespace OpenDental {
 		private void FormSheetFieldPatImage_Load(object sender,EventArgs e) {
 			textYPos.MaxVal=SheetDefCur.HeightTotal-1;//The maximum y-value of the sheet field must be within the page vertically.
 			if(IsReadOnly){
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 			}
 			FillCombo();
@@ -56,7 +56,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textXPos.IsValid()
 				|| !textYPos.IsValid()
 				|| !textWidth.IsValid()
@@ -79,5 +79,27 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+		
+
+		
+
+	
+
+		
+
+		
+
+		
+
+		
+
+		
 	}
 }

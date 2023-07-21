@@ -540,7 +540,7 @@ namespace OpenDentBusiness.SheetFramework{
 			switch(sequenceType) {
 				default:
 					throw new ApplicationException("PerioSequenceType not allowed.");
-				case PerioSequenceType.BleedSupPlaqCalc:
+				case PerioSequenceType.Bleeding:
 					return Sparks3D.PerioSequenceType.Bleeding;
 				case PerioSequenceType.CAL:
 					return Sparks3D.PerioSequenceType.CAL;

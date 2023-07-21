@@ -136,7 +136,7 @@ namespace OpenDental {
 			}
 			if(_patient==null || formPatientSelect.PatNumSelected!=_patient.PatNum) {//if the patient was changed
 				RefreshModuleDataPatient(formPatientSelect.PatNumSelected);
-				GlobalFormOpenDental.PatientSelected(_patient,true,false);
+				FormOpenDental.S_Contr_PatientSelected(_patient,true,false);
 			}
 			if(_patient!=null && PatRestrictionL.IsRestricted(_patient.PatNum,PatRestrict.ApptSchedule)) {
 				return;
@@ -145,7 +145,7 @@ namespace OpenDental {
 			if(patientMerged!=null) {
 				_patient=patientMerged;
 				RefreshModuleDataPatient(_patient.PatNum);
-				GlobalFormOpenDental.PatientSelected(_patient,isRefreshCurModule: true,isApptRefreshDataPat: false);
+				FormOpenDental.S_Contr_PatientSelected(_patient,isRefreshCurModule: true,isApptRefreshDataPat: false);
 			}
 			if(_patient!=null && _patient.PatStatus.In(PatientStatus.Archived,PatientStatus.Deceased)) {
 				MsgBox.Show(Lan.g(this,"Appointments cannot be scheduled for ")+_patient.PatStatus.ToString().ToLower()+Lan.g(this," patients."));
@@ -173,7 +173,7 @@ namespace OpenDental {
 						Patients.Update(_patient,patientOld);
 						string logEntry=Lan.g(this,"Patient's status changed from ")+patientOld.PatStatus.GetDescription()+Lan.g(this," to ")
 							+_patient.PatStatus.GetDescription()+Lan.g(this," by creating an appointment in a prospective operatory.");
-						SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,_patient.PatNum,logEntry);
+						SecurityLogs.MakeLogEntry(Permissions.PatientEdit,_patient.PatNum,logEntry);
 					}
 				}
 				using FormApptEdit formApptEdit=new FormApptEdit(appointment.AptNum);//this is where security log entry is made
@@ -181,11 +181,11 @@ namespace OpenDental {
 				formApptEdit.ShowDialog();
 				if(formApptEdit.DialogResult==DialogResult.OK) {
 					if(appointment.IsNewPatient) {
-						AutomationL.Trigger(EnumAutomationTrigger.ApptNewPatCreate,null,appointment.PatNum,appointment.AptNum);
+						AutomationL.Trigger(AutomationTrigger.CreateApptNewPat,null,appointment.PatNum,appointment.AptNum);
 					}
-					AutomationL.Trigger(EnumAutomationTrigger.ApptCreate,null,appointment.PatNum,appointment.AptNum);
+					AutomationL.Trigger(AutomationTrigger.CreateAppt,null,appointment.PatNum,appointment.AptNum);
 					RefreshModuleDataPatient(_patient.PatNum);
-					GlobalFormOpenDental.PatientSelected(_patient,true,false);
+					FormOpenDental.S_Contr_PatientSelected(_patient,true,false);
 					if(!HasValidStartTime(appointment)) {
 						Appointment appointmentOld2=appointment.Copy();
 						MsgBox.Show(this,"Appointment start time would overlap another appointment.  Moving appointment to pinboard.");
@@ -305,13 +305,13 @@ namespace OpenDental {
 				toolStripItemClearForDay=FindBlockoutToolStripItem(MenuItemNames.ClearAllBlockoutsForDay);
 				toolStripItemClearForDayOp=FindBlockoutToolStripItem(MenuItemNames.ClearAllBlockoutsForDayOpOnly);
 			}
-			if(!Security.IsAuthorized(EnumPermType.Blockouts,true)) {
+			if(!Security.IsAuthorized(Permissions.Blockouts,true)) {
 				toolStripItemCutCopyPaste.Enabled=false;
 				toolStripItemClearForDay.Enabled=false;
 				toolStripItemClearForDayOp.Enabled=false;
 				toolStripItemClearForDayClinics.Enabled=false;
 			}
-			else if(Security.IsAuthorized(EnumPermType.Blockouts,true)) {
+			else if(Security.IsAuthorized(Permissions.Blockouts,true)) {
 				toolStripItemCutCopyPaste.Enabled=true;
 				toolStripItemClearForDay.Enabled=true;
 				toolStripItemClearForDayOp.Enabled=true;
@@ -353,13 +353,13 @@ namespace OpenDental {
 				}
 				else if(blockoutFlags.Contains(BlockoutType.NoSchedule.GetDescription())) {
 					//users without blockout permission are still allowed to add and edit this blockout.
-					if(!Security.IsAuthorized(EnumPermType.Blockouts,true)) {
+					if(!Security.IsAuthorized(Permissions.Blockouts,true)) {
 						toolStripItemCut.Enabled=false;
 						toolStripItemCopy.Enabled=false;
 					}
 				}
 				else { //this is not a blockout type that this user is allowed to edit. 
-					if(!Security.IsAuthorized(EnumPermType.Blockouts,true)) {
+					if(!Security.IsAuthorized(Permissions.Blockouts,true)) {
 						toolStripItemEdit.Enabled=false;
 						toolStripItemCopy.Enabled=false;
 						toolStripItemCut.Enabled=false;
@@ -367,9 +367,7 @@ namespace OpenDental {
 					}
 				}
 				if(clickedOnBlockCount>1) {
-					string message=Lan.g(this,"There are multiple blockouts in this slot.  You should try to delete or move one of them.");
-					FormPopupFade formPopupFade=new FormPopupFade(message);
-					formPopupFade.Show();
+					FormPopupFade.ShowMessage(this,"There are multiple blockouts in this slot.  You should try to delete or move one of them.");
 				}
 			}
 			else {//Not clicked on blockout
@@ -393,7 +391,7 @@ namespace OpenDental {
 				else {
 					textASAPContextMenuHelper(true,"Text ASAP List");
 				}
-				if(Security.IsAuthorized(EnumPermType.Blockouts)) {
+				if(Security.IsAuthorized(Permissions.Blockouts)) {
 					Schedule schedule=GetClickedSchedule(ScheduleType.WebSchedASAP);
 					if(schedule!=null) {
 						isDeleteAsapBlockoutVisible=true;
@@ -446,10 +444,10 @@ namespace OpenDental {
 			}
 			Procedures.SetProvidersInAppointment(appointment,listProceduresOld,isUpdatingFees,procFeeHelper);//to update fees to db
 			RefreshModuleDataPatient(appointment.PatNum);
-			GlobalFormOpenDental.PatientSelected(_patient,true,false);
+			FormOpenDental.S_Contr_PatientSelected(_patient,true,false);
 			RefreshPeriod();				
 			Recalls.SynchScheduledApptFull(appointment.PatNum);
-			ODEvent.Fire(ODEventType.AppointmentEdited,appointment);
+			AppointmentEvent.Fire(ODEventType.AppointmentEdited,appointment);
 			#endregion Update UI and cache
 			//The first hook's naming convention was maintained to allow it to continue to function.
 			//Plugin developers should use the "ContrAppt.contrApptPanel_ApptMoved_end" hook instead.
@@ -472,9 +470,9 @@ namespace OpenDental {
 
 		private void contrApptPanel_ApptResized(object sender,UI.ApptEventArgs e) {
 			RefreshModuleDataPatient(e.Appt.PatNum);
-			GlobalFormOpenDental.PatientSelected(_patient,true,false);
+			FormOpenDental.S_Contr_PatientSelected(_patient,true,false);
 			RefreshPeriod();
-			ODEvent.Fire(ODEventType.AppointmentEdited,e.Appt);
+			AppointmentEvent.Fire(ODEventType.AppointmentEdited,e.Appt);
 		}
 
 		private void ContrApptPanel_ApptRightClicked(object sender, UI.ApptRightClickEventArgs e){
@@ -490,11 +488,6 @@ namespace OpenDental {
 				menuJobs.DropDownItems.AddRange(listJobs.Select(x => new ToolStripMenuItem(x.ToString(),null,menuJobs_GoToJob) { Tag=x.JobNum }).ToArray());
 				menuApt.Items.Add(menuJobs);
 			}
-			menuApt.Items.RemoveByKey(MenuItemNames.Tasks);
-			menuApt.Items.RemoveByKey(MenuItemNames.TasksSpacer);
-			menuApt.Items.Add(new ToolStripSeparator() { Name=MenuItemNames.TasksSpacer });
-			ToolStripMenuItem menuTasks=new ToolStripMenuItem(Lan.g(this,"Appointment Tasks"),null,menuTasks_Click,MenuItemNames.Tasks);
-			menuApt.Items.Add(menuTasks);
 			menuApt.Items.RemoveByKey(MenuItemNames.PhoneDiv);
 			menuApt.Items.RemoveByKey(MenuItemNames.HomePhone);
 			menuApt.Items.RemoveByKey(MenuItemNames.WorkPhone);
@@ -604,9 +597,7 @@ namespace OpenDental {
 					menuApt.Items.Add(new ToolStripSeparator() { Name=MenuItemNames.CareCreditDiv });
 					menuApt.Items.Add(new ToolStripMenuItem(Lan.g(this,MenuItemNames.CareCreditAcceptDeclineOffer),null,menuApt_Click,MenuItemNames.CareCreditAcceptDeclineOffer));
 				}
-				if(careCreditStatus.ToLower()==CareCreditWebStatus.Declined.GetDescription().ToLower()
-					||careCreditStatus.ToLower()==CareCreditWebStatus.AccountNotFoundQS.GetDescription().ToLower())
-				{
+				if(careCreditStatus.ToLower()==CareCreditWebStatus.Declined.GetDescription().ToLower()) {
 					menuApt.Items.Add(new ToolStripSeparator() { Name=MenuItemNames.CareCreditDiv });
 					menuApt.Items.Add(new ToolStripMenuItem(Lan.g(this,MenuItemNames.CareCreditApplicationNeeded),null,menuApt_Click,MenuItemNames.CareCreditApplicationNeeded));
 				}
@@ -639,19 +630,13 @@ namespace OpenDental {
 						MsgBox.Show("Patient has been set to archived because they were deleted by another user while making this appointment.");
 					}
 				}
-				GlobalFormOpenDental.PatientSelected(_patient,true,false);
+				FormOpenDental.S_Contr_PatientSelected(_patient,true,false);
 				Plugins.HookAddCode(this,"ContrAppt.contrApptPanel_SelectedApptChanged_patientchanged_end");
 				return;
 			}
 			//patient not changed
 			if(e.AptNumNew!=e.AptNumOld){
 				RefreshModuleScreenButtonsRight();//otherwise included above in RefreshModuleDataPatient
-			}
-		}
-
-		private void contrApptPanel_MouseMoved(object sender,MouseEventArgs e) {
-			if(e.Button==MouseButtons.None) {
-				MouseUpForced();
 			}
 		}
 
@@ -703,7 +688,7 @@ namespace OpenDental {
 				listFormInsVerificationLists[0].BringToFront();
 				return;
 			}
-			if(Security.IsAuthorized(EnumPermType.InsuranceVerification)) {
+			if(Security.IsAuthorized(Permissions.InsuranceVerification)) {
 				FormInsVerificationList formInsVerificationList=new FormInsVerificationList();
 				formInsVerificationList.FormClosing+=FormIVL_FormClosing;
 				formInsVerificationList.FormClosed+=FormIVL_FormClosed;
@@ -835,7 +820,7 @@ namespace OpenDental {
 				if(_patient!=null) {
 					patient=Patients.GetPat(_patient.PatNum);
 				}
-				WpfControls.ProgramL.Execute(((Program)e.Button.Tag).ProgramNum,patient);
+				ProgramL.Execute(((Program)e.Button.Tag).ProgramNum,patient);
 			}
 		}
 
@@ -979,10 +964,10 @@ namespace OpenDental {
 				return;
 			}
 			Patient patient=Patients.GetPat(appointment.PatNum);
-			if(appointment.AptStatus!=ApptStatus.Complete && !Security.IsAuthorized(EnumPermType.AppointmentEdit)) {//separate permissions for completed appts.
+			if(appointment.AptStatus!=ApptStatus.Complete && !Security.IsAuthorized(Permissions.AppointmentEdit)) {//separate permissions for completed appts.
 				return;
 			}
-			if(appointment.AptStatus==ApptStatus.Complete && !Security.IsAuthorized(EnumPermType.AppointmentCompleteEdit)) {
+			if(appointment.AptStatus==ApptStatus.Complete && !Security.IsAuthorized(Permissions.AppointmentCompleteEdit)) {
 				return;
 			}
 			if(appointment.AptStatus == ApptStatus.PtNote || appointment.AptStatus == ApptStatus.PtNoteCompleted) {
@@ -1032,7 +1017,7 @@ namespace OpenDental {
 		}
 
 		private void butComplete_Click() {
-			if(!Security.IsAuthorized(EnumPermType.AppointmentEdit)) {
+			if(!Security.IsAuthorized(Permissions.AppointmentEdit)) {
 				return;
 			}
 			if(contrApptPanel.SelectedAptNum==-1) {
@@ -1068,12 +1053,12 @@ namespace OpenDental {
 			}
 			if(ProcedureCodes.DoAnyBypassLockDate()) {
 				for(int i=0;i<listProcedures.Count;i++) {
-					if(!Security.IsAuthorized(EnumPermType.ProcComplCreate,appointment.AptDateTime,listProcedures[i].CodeNum,listProcedures[i].ProcFee)) {
+					if(!Security.IsAuthorized(Permissions.ProcComplCreate,appointment.AptDateTime,listProcedures[i].CodeNum,listProcedures[i].ProcFee)) {
 						return;
 					}
 				}
 			}
-			else if(!Security.IsAuthorized(EnumPermType.ProcComplCreate,appointment.AptDateTime)) {
+			else if(!Security.IsAuthorized(Permissions.ProcComplCreate,appointment.AptDateTime)) {
 				return;
 			}
 			if(listProcedures.Count>0 && appointment.AptDateTime.Date>DateTime.Today.Date && !PrefC.GetBool(PrefName.FutureTransDatesAllowed)) {
@@ -1089,24 +1074,19 @@ namespace OpenDental {
 			}
 			#endregion Provider Term Date Check
 			bool removeCompletedProcs=ProcedureL.DoRemoveCompletedProcs(appointment,listProcedures.FindAll(x => x.ProcStatus==ProcStat.C));
-			ApptStatus apptStatusOld=appointment.AptStatus;
 			ODTuple<Appointment,List<Procedure>> result=Appointments.CompleteClick(appointment,listProcedures,removeCompletedProcs);
 			appointment=result.Item1;
 			listProcedures=result.Item2;
-			if(apptStatusOld!=ApptStatus.Complete && appointment.AptStatus==ApptStatus.Complete) {
-				AutomationL.Trigger(EnumAutomationTrigger.ApptComplete,null,appointment.PatNum);
-			}
 			if(appointment.AptStatus!=ApptStatus.PtNote) {
-				AutomationL.Trigger(EnumAutomationTrigger.ProcedureComplete,listProcedures.Select(x => ProcedureCodes.GetStringProcCode(x.CodeNum)).ToList(),appointment.PatNum);
+				AutomationL.Trigger(AutomationTrigger.CompleteProcedure,listProcedures.Select(x => ProcedureCodes.GetStringProcCode(x.CodeNum)).ToList(),appointment.PatNum);
 			}
 			List<Procedure> listProceduresForAppt=Procedures.GetProcsForSingle(appointment.AptNum,false); //The procedures were never updated, fetch from db.
 			Procedures.AfterProcsSetComplete(listProcedures);
 			ModuleSelected(appointment.PatNum);
-			ODEvent.Fire(ODEventType.AppointmentEdited,appointment);
+			AppointmentEvent.Fire(ODEventType.AppointmentEdited,appointment);
 			//If necessary, prompt the user to ask the patient to opt in to using Short Codes.
-			FrmShortCodeOptIn.PromptIfNecessary(patient,appointment.ClinicNum);
+			FormShortCodeOptIn.PromptIfNecessary(patient,appointment.ClinicNum);
 			Plugins.HookAddCode(this,"ContrAppt.OnComplete_Click_end",appointment,_patient);
-			Signalods.SetInvalid(InvalidType.BillingList);
 		}
 
 		private void butDelete_Click(bool showPrompt) {
@@ -1116,8 +1096,8 @@ namespace OpenDental {
 			}
 			Appointment appointment = Appointments.GetOneApt(contrApptPanel.SelectedAptNum);
 			if(ApptIsNull(appointment)) { return; }
-			if((appointment.AptStatus!=ApptStatus.Complete && !Security.IsAuthorized(EnumPermType.AppointmentDelete))
-				|| (appointment.AptStatus==ApptStatus.Complete && !Security.IsAuthorized(EnumPermType.AppointmentCompleteDelete))) 
+			if((appointment.AptStatus!=ApptStatus.Complete && !Security.IsAuthorized(Permissions.AppointmentDelete))
+				|| (appointment.AptStatus==ApptStatus.Complete && !Security.IsAuthorized(Permissions.AppointmentCompleteDelete))) 
 			{
 				return;
 			}
@@ -1146,7 +1126,7 @@ namespace OpenDental {
 						Commlogs.Insert(commlog);
 					}
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.AppointmentEdit,_patient.PatNum,
+				SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit,_patient.PatNum,
 					dataRow["procs"].ToString()+", "+dataRow["AptDateTime"].ToString()+", "+Lan.g(this,"NOTE Deleted"),
 					appointment.AptNum,appointment.DateTStamp);
 			}
@@ -1171,12 +1151,12 @@ namespace OpenDental {
 					}
 				}
 				if(appointment.AptStatus==ApptStatus.Complete) {// seperate log entry for editing completed appointments.
-					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentCompleteDelete,_patient.PatNum,
+					SecurityLogs.MakeLogEntry(Permissions.AppointmentCompleteDelete,_patient.PatNum,
 						dataRow["procs"].ToString()+", "+dataRow["AptDateTime"].ToString()+", "+Lan.g(this,"Deleted"),
 						appointment.AptNum,appointment.DateTStamp);
 				}
 				else {
-					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentDelete,_patient.PatNum,
+					SecurityLogs.MakeLogEntry(Permissions.AppointmentDelete,_patient.PatNum,
 						dataRow["procs"].ToString()+", "+dataRow["AptDateTime"].ToString()+", "+Lan.g(this,"Deleted"),
 						appointment.AptNum,appointment.DateTStamp);
 				}
@@ -1205,7 +1185,7 @@ namespace OpenDental {
 				return;
 			}
 			Appointments.Delete(contrApptPanel.SelectedAptNum,true);//Appointments S-Class handles Signalods
-			ODEvent.Fire(ODEventType.AppointmentEdited,appointment);
+			AppointmentEvent.Fire(ODEventType.AppointmentEdited,appointment);
 			contrApptPanel.SelectedAptNum=-1;
 			pinBoard.SelectedIndex=-1;
 			for(int i=0;i<pinBoard.ListPinBoardItems.Count;i++) {
@@ -1278,7 +1258,7 @@ namespace OpenDental {
 			Appointments.SetConfirmed(appointment,newStatus);//Appointments S-Class handles Signalods
 			if(newStatus!=appointmentOld.Confirmed) {
 				//Log confirmation status changes.
-				SecurityLogs.MakeLogEntry(EnumPermType.ApptConfirmStatusEdit,appointment.PatNum,Lan.g(this,"Appointment confirmation status changed from")+" "
+				SecurityLogs.MakeLogEntry(Permissions.ApptConfirmStatusEdit,appointment.PatNum,Lan.g(this,"Appointment confirmation status changed from")+" "
 					+Defs.GetName(DefCat.ApptConfirmed,appointmentOld.Confirmed)+" "+Lan.g(this,"to")+" "+Defs.GetName(DefCat.ApptConfirmed,newStatus)
 					+" "+Lans.g(this,"from the appointment module")+".",contrApptPanel.SelectedAptNum,appointmentOld.DateTStamp);
 			}
@@ -1293,7 +1273,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please select a patient first.");
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.AppointmentCreate)) {
+			if(!Security.IsAuthorized(Permissions.AppointmentCreate)) {
 				return;
 			}
 			if(Appointments.HasOutstandingAppts(_patient.PatNum)) {
@@ -1323,7 +1303,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please select a patient first.");
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.AppointmentCreate)) {
+			if(!Security.IsAuthorized(Permissions.AppointmentCreate)) {
 				return;
 			}
 			if(PatRestrictionL.IsRestricted(_patient.PatNum,PatRestrict.ApptSchedule)) {
@@ -1333,7 +1313,7 @@ namespace OpenDental {
 			if(patient!=null) {
 				_patient=patient;
 				RefreshModuleDataPatient(_patient.PatNum);
-				GlobalFormOpenDental.PatientSelected(_patient,isRefreshCurModule: true,isApptRefreshDataPat: false);
+				FormOpenDental.S_Contr_PatientSelected(_patient,isRefreshCurModule: true,isApptRefreshDataPat: false);
 			}
 			if(_patient!=null && _patient.PatStatus.In(PatientStatus.Archived,PatientStatus.Deceased)) {
 				MsgBox.Show(Lans.g(this,"Appointments cannot be scheduled for")+" "+_patient.PatStatus.ToString().ToLower()+" "+Lans.g(this,"patients."));
@@ -1356,7 +1336,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please select a patient first.");
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.AppointmentCreate)) {
+			if(!Security.IsAuthorized(Permissions.AppointmentCreate)) {
 				return;
 			}
 			if(PatRestrictionL.IsRestricted(_patient.PatNum,PatRestrict.ApptSchedule)) {
@@ -1366,7 +1346,7 @@ namespace OpenDental {
 			if(patient!=null) {
 				_patient=patient;
 				RefreshModuleDataPatient(_patient.PatNum);
-				GlobalFormOpenDental.PatientSelected(_patient,isRefreshCurModule: true,isApptRefreshDataPat: false);
+				FormOpenDental.S_Contr_PatientSelected(_patient,isRefreshCurModule: true,isApptRefreshDataPat: false);
 			}
 			if(_patient!=null && _patient.PatStatus.In(PatientStatus.Archived,PatientStatus.Deceased)) {
 				MsgBox.Show(Lans.g(this,"Appointments cannot be scheduled for")+" "+_patient.PatStatus.ToString().ToLower()+" "+Lans.g(this,"patients."));
@@ -1472,7 +1452,7 @@ namespace OpenDental {
 			ApptStatus apptStatus=(ApptStatus)PIn.Int(e.DataRowAppt["AptStatus"].ToString());
 			long patNum=PIn.Long(e.DataRowAppt["PatNum"].ToString());
 			if(apptStatus==ApptStatus.Planned) {//if Planned appt is on pinboard
-				if(!Security.IsAuthorized(EnumPermType.AppointmentCreate)) {//and no permission to create a new appt
+				if(!Security.IsAuthorized(Permissions.AppointmentCreate)) {//and no permission to create a new appt
 					pinBoard_ApptMovedFromPinboard_Cleanup();
 					return;
 				}
@@ -1495,7 +1475,7 @@ namespace OpenDental {
 			Plugins.HookAddCode(this, "ContrAppt.pinBoard_MouseUp_validation_end",appointment);//hook name is historical
 			Appointment appointmentOld=appointment.Copy();
 			RefreshModuleDataPatient(appointment.PatNum);//This is to change _patCur.
-			GlobalFormOpenDental.PatientSelected(_patient,true,false);//especially to change name showing in title bar
+			FormOpenDental.S_Contr_PatientSelected(_patient,true,false);//especially to change name showing in title bar
 			if(appointment.IsNewPatient && contrApptPanel.DateSelected!=appointment.AptDateTime.Date) {
 				Procedures.SetDateFirstVisit(contrApptPanel.DateSelected,4,_patient);
 			}
@@ -1586,7 +1566,7 @@ namespace OpenDental {
 						bool doMake5Minute=procsForSingleApt.Count>0;//Appointments without procs are already returned in 5 minute increments.
 						string calcPattern=Appointments.CalculatePattern(appointment.ProvNum,appointment.ProvHyg,codeNums,doMake5Minute);
 						if(appointment.Pattern!=calcPattern) {
-							if(Security.IsAuthorized(EnumPermType.AppointmentResize,suppressMessage:true) && !appointment.TimeLocked) {
+							if(Security.IsAuthorized(Permissions.AppointmentResize,suppressMessage:true) && !appointment.TimeLocked) {
 								//User is authorized, and appt time not locked. Do not give popup for users without resizing permissions or for Timelocked appointments.
 								if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Change length for new provider?")) {
 									appointment.Pattern=calcPattern;
@@ -1651,7 +1631,7 @@ namespace OpenDental {
 				procsForSingleApt=Procedures.GetProcsForSingle(appointment.AptNum,appointment.AptStatus==ApptStatus.Planned);
 				string frequencyDiscountConflicts="";
 				try {
-					frequencyDiscountConflicts=DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(procsForSingleApt,appointment.PatNum,appointment.AptDateTime);
+					frequencyDiscountConflicts=DiscountPlans.CheckDiscountFrequency(procsForSingleApt,appointment.PatNum,appointment.AptDateTime);
 				}
 				catch(Exception ex) {
 					MessageBox.Show(Lan.g(this,"There was an error checking discount frequencies:")
@@ -1679,7 +1659,7 @@ namespace OpenDental {
 						Patients.Update(_patient,patientOld);
 						string logEntry=Lan.g(this,"Patient's status changed from ")+patientOld.PatStatus.GetDescription()+Lan.g(this," to ")
 							+_patient.PatStatus.GetDescription()+Lan.g(this," by moving the patient appointment to a prospective operatory.");
-						SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,_patient.PatNum,logEntry);
+						SecurityLogs.MakeLogEntry(Permissions.PatientEdit,_patient.PatNum,logEntry);
 					}
 				}
 				else if(!operatory.SetProspective && _patient.PatStatus==PatientStatus.Prospective) {
@@ -1691,7 +1671,7 @@ namespace OpenDental {
 						Patients.Update(_patient,patientOld);
 						string logEntry=Lan.g(this,"Patient's status changed from ")+patientOld.PatStatus.GetDescription()+Lan.g(this," to ")
 							+_patient.PatStatus.GetDescription()+Lan.g(this," by moving the patient appointment from a prospective operatory.");
-						SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,_patient.PatNum,logEntry);
+						SecurityLogs.MakeLogEntry(Permissions.PatientEdit,_patient.PatNum,logEntry);
 					}
 				}
 			}
@@ -1749,7 +1729,7 @@ namespace OpenDental {
 					}
 				}
 				else {
-					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentCreate,appointment.PatNum,
+					SecurityLogs.MakeLogEntry(Permissions.AppointmentCreate,appointment.PatNum,
 						appointment.AptDateTime.ToString()+", "+appointment.ProcDescript,
 						appointment.AptNum,appointmentOld.DateTStamp);
 				}
@@ -1762,13 +1742,13 @@ namespace OpenDental {
 				Appointments.Update(appointment,appointmentOld);//Appointments S-Class handles Signalods
 				Appointments.TryAddPerVisitProcCodesToAppt(appointment,appointmentOld.AptStatus);
 				if(appointmentOld.AptStatus==ApptStatus.UnschedList&&appointmentOld.AptDateTime==DateTime.MinValue) { //If new appt is being added to schedule from pinboard
-					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentCreate,appointment.PatNum,
+					SecurityLogs.MakeLogEntry(Permissions.AppointmentCreate,appointment.PatNum,
 						appointment.AptDateTime.ToString()+", "+appointment.ProcDescript,
 						appointment.AptNum,appointmentOld.DateTStamp);
 					isCreate=true;
 				}
 				else { //If existing appt is being moved
-					SecurityLogs.MakeLogEntry(EnumPermType.AppointmentMove,appointment.PatNum,
+					SecurityLogs.MakeLogEntry(Permissions.AppointmentMove,appointment.PatNum,
 						appointment.ProcDescript+", from "+appointmentOld.AptDateTime.ToString()+", to "+appointment.AptDateTime.ToString(),
 						appointment.AptNum,appointmentOld.DateTStamp);
 					if(appointmentOld.AptStatus==ApptStatus.UnschedList) {
@@ -1777,7 +1757,7 @@ namespace OpenDental {
 				}
 				if(appointment.Confirmed!=appointmentOld.Confirmed) {
 						//Log confirmation status changes.
-						SecurityLogs.MakeLogEntry(EnumPermType.ApptConfirmStatusEdit,appointment.PatNum,
+						SecurityLogs.MakeLogEntry(Permissions.ApptConfirmStatusEdit,appointment.PatNum,
 							Lan.g(this,"Appointment confirmation status automatically changed from ")
 							+Defs.GetName(DefCat.ApptConfirmed,appointmentOld.Confirmed)+" to "+Defs.GetName(DefCat.ApptConfirmed,appointment.Confirmed)
 							+Lan.g(this," from the appointment module")+".",appointment.AptNum,appointmentOld.DateTStamp);
@@ -1836,9 +1816,9 @@ namespace OpenDental {
 			RefreshModuleScreenButtonsRight();
 			if(isCreate) {//new appointment is being added to the schedule from the pinboard, trigger ScheduleProcedure automation
 				List<string> procCodes=procsForSingleApt.Select(x => ProcedureCodes.GetProcCode(x.CodeNum).ProcCode).ToList();					
-				AutomationL.Trigger(EnumAutomationTrigger.ProcSchedule,procCodes,appointment.PatNum);
+				AutomationL.Trigger(AutomationTrigger.ScheduleProcedure,procCodes,appointment.PatNum);
 			}
-			ODEvent.Fire(ODEventType.AppointmentEdited,appointment);
+			AppointmentEvent.Fire(ODEventType.AppointmentEdited,appointment);
 			Recalls.SynchScheduledApptFull(appointment.PatNum);
 			Plugins.HookAddCode(this,"ContrAppt.pinBoard_MouseUp_end",appointment,_patient);//hook name is historical
 			#endregion Update UI and cache
@@ -1898,13 +1878,13 @@ namespace OpenDental {
 				MsgBox.Show(this,"Not available in weekly view");
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.Schedules)) {
+			if(!Security.IsAuthorized(Permissions.Schedules)) {
 				return;
 			}
 			using FormScheduleDayEdit formScheduleDayEdit=new FormScheduleDayEdit(contrApptPanel.DateSelected,Clinics.ClinicNum);
 			formScheduleDayEdit.ShowOkSchedule=true;
 			formScheduleDayEdit.ShowDialog();
-			SecurityLogs.MakeLogEntry(EnumPermType.Schedules,0,"");
+			SecurityLogs.MakeLogEntry(Permissions.Schedules,0,"");
 			RefreshPeriod();
 			if(formScheduleDayEdit.GotoScheduleOnClose) {
 				using FormSchedule formSchedule = new FormSchedule();
@@ -2225,7 +2205,7 @@ namespace OpenDental {
 				case MenuItemNames.SendText:
 					appointment=Appointments.GetOneApt(contrApptPanel.SelectedAptNum);
 					if(ApptIsNull(appointment)) { return; }
-					if(!Security.IsAuthorized(EnumPermType.TextMessageSend)) {
+					if(!Security.IsAuthorized(Permissions.TextMessageSend)) {
 						return;
 					}
 					FormOpenDental.S_TxtMsg_Click(appointment.PatNum,"");
@@ -2235,14 +2215,14 @@ namespace OpenDental {
 					if(ApptIsNull(appointment)) { return; }
 					Appointment aptOld=appointment.Copy();
 					Patient patient=Patients.GetPat(appointment.PatNum);
-					string message=PatComm.BuildConfirmMessage(ContactMethod.TextMessage,patient,appointment.DateTimeAskedToArrive,appointment.AptDateTime,appointment.ClinicNum);
+					string message=PatComm.BuildConfirmMessage(ContactMethod.TextMessage,patient,appointment.DateTimeAskedToArrive,appointment.AptDateTime);
 					bool wasTextSent=FormOpenDental.S_TxtMsg_Click(patient.PatNum,message);
 					if(wasTextSent) {
 						long newStatus=PrefC.GetLong(PrefName.ConfirmStatusTextMessaged);
 						Appointments.SetConfirmed(appointment,newStatus);
 						appointment.Confirmed=newStatus; //SetConfirmed doesn't set the appt status in memory
 						if(appointment.Confirmed!=aptOld.Confirmed) { 
-							SecurityLogs.MakeLogEntry(EnumPermType.ApptConfirmStatusEdit,appointment.PatNum,Lans.g(this,"Appointment confirmation status changed from")+" "
+							SecurityLogs.MakeLogEntry(Permissions.ApptConfirmStatusEdit,appointment.PatNum,Lans.g(this,"Appointment confirmation status changed from")+" "
 								+Defs.GetName(DefCat.ApptConfirmed,aptOld.Confirmed)+" "+Lans.g(this,"to")+" "+Defs.GetName(DefCat.ApptConfirmed,appointment.Confirmed)
 								+" "+Lans.g(this,"from the appointment module")+".",appointment.AptNum,aptOld.DateTStamp);
 						}
@@ -2330,11 +2310,11 @@ namespace OpenDental {
 		private void menuBlockAdd_Click(object sender,EventArgs e) {
 			//Pre-calculate the list of Blockout Types to show in FormScheduleBlockEdit
 			List<Def> listDefsBlockoutTypes=Defs.GetDefsForCategory(DefCat.BlockoutTypes, true);	
-			if(!Security.IsAuthorized(EnumPermType.Blockouts,true)) {
+			if(!Security.IsAuthorized(Permissions.Blockouts,true)) {
 				//This is a special case, so we only keep blockouts that are marked as NoSchedule or DontCopy
 				listDefsBlockoutTypes.RemoveAll(x => !x.ItemValue.Contains(BlockoutType.DontCopy.GetDescription()) 
 					&& !x.ItemValue.Contains(BlockoutType.NoSchedule.GetDescription()));
-				if(listDefsBlockoutTypes.Count==0 && !Security.IsAuthorized(EnumPermType.Blockouts)) {//Intentional for error message
+				if(listDefsBlockoutTypes.Count==0 && !Security.IsAuthorized(Permissions.Blockouts)) {//Intentional for error message
 					//Security.IsAuthorized(...) will display the "Not authorized message."
 					return;
 				}
@@ -2356,7 +2336,7 @@ namespace OpenDental {
 		}
 
 		private void menuBlockClearClinic_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Blockouts)) {
+			if(!Security.IsAuthorized(Permissions.Blockouts)) {
 				return;
 			}
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Clear all blockouts for day for this clinic?")) {
@@ -2369,7 +2349,7 @@ namespace OpenDental {
 		}
 
 		private void menuBlockClearDay_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Blockouts)) {
+			if(!Security.IsAuthorized(Permissions.Blockouts)) {
 				return;
 			}
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Clear all blockouts for day? (This may include blockouts not shown in the current appointment view)")) {
@@ -2381,7 +2361,7 @@ namespace OpenDental {
 		}
 
 		private void menuBlockClearOp_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Blockouts)) {
+			if(!Security.IsAuthorized(Permissions.Blockouts)) {
 				return;
 			}
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Clear all blockouts for day in this operatory?")) {
@@ -2393,7 +2373,7 @@ namespace OpenDental {
 		}
 
 		private void menuBlockCopy_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Blockouts)) {
+			if(!Security.IsAuthorized(Permissions.Blockouts)) {
 				return;
 			}
 			//not even enabled if not right click on a blockout
@@ -2406,7 +2386,7 @@ namespace OpenDental {
 		}
 
 		private void menuBlockCut_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Blockouts)) {
+			if(!Security.IsAuthorized(Permissions.Blockouts)) {
 				return;
 			}
 			//not even enabled if not right click on a blockout
@@ -2422,7 +2402,7 @@ namespace OpenDental {
 		}
 
 		private void menuBlockCutCopyPaste_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Blockouts)) {
+			if(!Security.IsAuthorized(Permissions.Blockouts)) {
 				return;
 			}
 			using FormBlockoutCutCopyPaste formBlockoutCutCopyPaste=new FormBlockoutCutCopyPaste();
@@ -2453,7 +2433,7 @@ namespace OpenDental {
 		private void menuBlockEdit_Click(object sender,EventArgs e) {
 			//Pre-calculate the list of blockouts to show.  If the user doesn't have the permission then a modified list is shown.
 			List<Def> listDefsUserBlockout=Defs.GetDefsForCategory(DefCat.BlockoutTypes, true);	
-			if(!Security.IsAuthorized(EnumPermType.Blockouts,true)) {
+			if(!Security.IsAuthorized(Permissions.Blockouts,true)) {
 				//The modified list will only show blockouts marked as "DontCopy" or "NoSchedule"
 				listDefsUserBlockout.RemoveAll(x => !x.ItemValue.Contains(BlockoutType.DontCopy.GetDescription()) 
 					&& !x.ItemValue.Contains(BlockoutType.NoSchedule.GetDescription()));
@@ -2470,7 +2450,7 @@ namespace OpenDental {
 		}
 
 		private void menuBlockPaste_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Blockouts)) {
+			if(!Security.IsAuthorized(Permissions.Blockouts)) {
 				return;
 			}
 			Schedule schedule=_scheduleBlockoutClipboard.Copy();
@@ -2502,12 +2482,12 @@ namespace OpenDental {
 		}
 
 		private void menuBlockTypes_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.DefEdit)) {
+			if(!Security.IsAuthorized(Permissions.DefEdit)) {
 				return;
 			}
 			using FormDefinitions formDefinitions=new FormDefinitions(DefCat.BlockoutTypes);
 			formDefinitions.ShowDialog();
-			SecurityLogs.MakeLogEntry(EnumPermType.DefEdit,0,"Definitions.");
+			SecurityLogs.MakeLogEntry(Permissions.DefEdit,0,"Definitions.");
 			RefreshPeriodSchedules();
 		}
 		
@@ -2613,7 +2593,6 @@ namespace OpenDental {
 			}
 			//Atach new job
 			using FormJobSearch formJobSearch = new FormJobSearch();
-			formJobSearch.DoBlockProjects=true;
 			formJobSearch.ShowDialog();
 			if(formJobSearch.DialogResult!=DialogResult.OK || formJobSearch.SelectedJobNum==0) {
 				return;
@@ -2631,13 +2610,6 @@ namespace OpenDental {
 				FormOpenDental.S_GoToJob(((long)((ToolStripMenuItem)sender).Tag));
 		}
 		#endregion Methods - Event Handlers Menu Jobs
-
-		#region Methods - Event Handlers Menu Tasks
-		private void menuTasks_Click(object sender,System.EventArgs e) {
-			using FormTasksForAppt formTasksForAppt=new FormTasksForAppt(contrApptPanel.SelectedAptNum);
-			formTasksForAppt.ShowDialog();
-		}
-		#endregion Methods - Event Handlers Menu Tasks
 
 		#region Methods - Event Handlers Search
 		private void ButAdvSearch_Click(object sender, EventArgs e){
@@ -2670,9 +2642,8 @@ namespace OpenDental {
 				//	PatientSelected(this,eArgs);
 				//}
 				//Contr_PatientSelected(this,eArgs);
-				RefreshModuleDataPatient(patient.PatNum);
-				GlobalFormOpenDental.PatientSelected(patient,false,false);
-				GlobalFormOpenDental.GotoAppointment(appointment.AptDateTime,appointment.AptNum);
+				FormOpenDental.S_Contr_PatientSelected(patient,false,false);
+				GotoModule.GotoAppointment(appointment.AptDateTime,appointment.AptNum);
 			}
 		}
 
@@ -2886,7 +2857,7 @@ namespace OpenDental {
 				butSearchNext);
 			LayoutToolBar();
 			SetWeeklyView(PrefC.GetBool(PrefName.ApptModuleDefaultToWeek));
-			ODEvent.Fired+=HandlePinClicked;
+			SendToPinboardEvent.Fired+=HandlePinClicked;
 			_hasInitializedOnStartup=true;
 		}
 
@@ -2912,10 +2883,9 @@ namespace OpenDental {
 				toolBarMain.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
 				toolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Rapid Call"),2,"","RapidCall"));
 			}
-			ProgramL.LoadToolBar(toolBarMain,EnumToolBar.ApptModule);
+			ProgramL.LoadToolbar(toolBarMain,ToolBarsAvail.ApptModule);
 			toolBarMain.Invalidate();
 			Plugins.HookAddCode(this,"ContrAppt.LayoutToolBar_end",_patient);
-			UpdateToolbarButtons();
 		}
 		#endregion Methods - Public Initialize
 
@@ -2965,11 +2935,7 @@ namespace OpenDental {
 			if(_patient!=null && _patient.PatStatus==PatientStatus.Deleted) {
 				MsgBox.Show("Selected patient has been deleted by another workstation.");
 				PatientL.RemoveFromMenu(_patient.PatNum);
-				GlobalFormOpenDental.PatientSelected(new Patient(),false);
-				RefreshModuleDataPatient(0);
-			}
-			if(_patient!=null && _patient.PatStatus==PatientStatus.Archived && !Security.IsAuthorized(EnumPermType.ArchivedPatientSelect,suppressMessage:true)) {
-				GlobalFormOpenDental.PatientSelected(new Patient(),false);
+				FormOpenDental.S_Contr_PatientSelected(new Patient(),false);
 				RefreshModuleDataPatient(0);
 			}
 			RefreshModuleDataPeriod(listPinApptNums,listOpNums,listProvNums,forceRefreshSchedules:true);
@@ -2978,7 +2944,7 @@ namespace OpenDental {
 			SetInitialStartTime();//only runs once
 			contrApptPanel.EndUpdate();
 			//There is no "LoadData" in this Module, so at least pass _patCur.
-			ODEvent.Fire(ODEventType.ModuleSelected,_patient);
+			PatientDashboardDataEvent.Fire(ODEventType.ModuleSelected,_patient);
 			Plugins.HookAddCode(this,"ContrAppt.ModuleSelected_end",patNum);
 		}
 
@@ -3257,20 +3223,6 @@ namespace OpenDental {
 			}
 			//We have to go to the db because we need to get the most recent patient info, mainly the AskedToArriveEarly time.
 			_patient=Patients.GetPat(patNum);
-			if(_patient!=null && DatabaseIntegrities.DoShowPopup(_patient.PatNum,EnumModuleType.Appointments)) {
-				List<Appointment> listAppointments=Appointments.GetAppointmentsForPat(_patient.PatNum);
-				List<Claim> listClaims=Claims.GetForPat(_patient.PatNum);
-				List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(new List<long>(){_patient.PatNum});
-				bool areHashesValid=Patients.AreAllHashesValid(_patient,listAppointments,new List<PayPlan>(),new List<PaySplit>(),listClaims,listClaimProcs);
-				if(!areHashesValid) {
-					DatabaseIntegrities.AddPatientModuleToCache(_patient.PatNum,EnumModuleType.Appointments); //Add to cached list for next time
-					//show popup
-					DatabaseIntegrity databaseIntegrity=DatabaseIntegrities.GetModule();
-					FrmDatabaseIntegrity frmDatabaseIntegrity=new FrmDatabaseIntegrity();
-					frmDatabaseIntegrity.MessageToShow=databaseIntegrity.Message;
-					frmDatabaseIntegrity.ShowDialog();
-				}
-			}
 			Plugins.HookAddCode(this, "ContrAppt.RefreshModuleDataPatient_end");
 		}
 
@@ -3563,7 +3515,33 @@ namespace OpenDental {
 			for(int i=0;i<listDefs.Count;i++) {
 				this.listConfirmed.Items.Add(listDefs[i].ItemValue);
 			}
-			UpdateToolbarButtons();
+			DataRow dataRow=contrApptPanel.GetDataRowForSelected();
+			if(dataRow!=null) {
+				toolBarMain.Buttons["Unsched"].Enabled=true;
+				toolBarMain.Buttons["Break"].Enabled=true;
+				toolBarMain.Buttons["Complete"].Enabled=true;
+				toolBarMain.Buttons["Delete"].Enabled=true;
+				string confirmed=dataRow["Confirmed"].ToString();
+				listConfirmed.SelectedIndex=Defs.GetOrder(DefCat.ApptConfirmed,PIn.Long(confirmed));//could be -1
+				if(!Security.IsAuthorized(Permissions.ApptConfirmStatusEdit,true)) {//Suppress message because it would be very annoying to users.
+					listConfirmed.Enabled=false;
+				}
+				else {
+					listConfirmed.Enabled=true;
+				}
+			}
+			else {//even if an appt on the pinboard is selected, these are all grayed out
+				toolBarMain.Buttons["Unsched"].Enabled=false;
+				toolBarMain.Buttons["Break"].Enabled=false;
+				toolBarMain.Buttons["Complete"].Enabled=false;
+				toolBarMain.Buttons["Delete"].Enabled=false;
+				listConfirmed.Enabled=false;
+				if(pinBoard.SelectedIndex!=-1){
+					dataRow=pinBoard.ListPinBoardItems[pinBoard.SelectedIndex].DataRowAppt;
+					listConfirmed.SelectedIndex=Defs.GetOrder(DefCat.ApptConfirmed,PIn.Long(dataRow["Confirmed"].ToString()));//could be -1
+				}
+			}
+			toolBarMain.Invalidate();
 		}
 
 		///<summary>Redraws screen based on data already gathered.  RefreshModuleDataPeriod will have already retrieved the data from the db.</summary>
@@ -3583,7 +3561,7 @@ namespace OpenDental {
 			FillProductionGoal(contrApptPanel.DateStart,contrApptPanel.DateEnd);
 			bool hasNotes=true;
 			if(PrefC.IsODHQ){
-				hasNotes=Security.IsAuthorized(EnumPermType.Schedules,true);
+				hasNotes=Security.IsAuthorized(Permissions.Schedules,true);
 			}
 			FillProvSched(hasNotes);
 			FillEmpSched(hasNotes);
@@ -3628,7 +3606,7 @@ namespace OpenDental {
 					//Calling Signalods.RefreshTimed() was causing issues for large customers. This resulted in 100,000+ rows of signalod's returned.
 					//Now we only query for the specific signals we care about. Instead of using Signalods.SignalLastRefreshed we now use Signalods.ApptSignalLastRefreshed.
 					//Signalods.ApptSignalLastRefreshed mimics the behavior of Signalods.SignalLastRefreshed but is guaranteed to not be stale from inactive sessions.
-					List<Signalod> listSignals=Signalods.RefreshTimed(Signalods.DateTApptSignalLastRefreshed,new List<InvalidType>(){ InvalidType.Appointment,InvalidType.Schedules });
+					List<Signalod> listSignals=Signalods.RefreshTimed(Signalods.ApptSignalLastRefreshed,new List<InvalidType>(){ InvalidType.Appointment,InvalidType.Schedules });
 					List<long> listOpNumsVisible = contrApptPanel.ListOpsVisible.Select(x => x.OperatoryNum).ToList();
 					List<long> listProvNumsVisible = contrApptPanel.ListProvsVisible.Select(x => x.ProvNum).ToList();
 					bool isApptRefresh=Signalods.IsApptRefreshNeeded(contrApptPanel.DateStart,contrApptPanel.DateEnd,listSignals,listOpNumsVisible,listProvNumsVisible);
@@ -3640,39 +3618,8 @@ namespace OpenDental {
 			else {
 				contrApptPanel.RedrawAsNeeded();//just for the red time line
 			}
-			Signalods.DateTApptSignalLastRefreshed=MiscData.GetNowDateTime();
+			Signalods.ApptSignalLastRefreshed=MiscData.GetNowDateTime();
 			//GC.Collect();	
-		}
-
-		///<summary>Enables toolbar buttons if a patient is selected, otherwise disables them.</summary>
-		private void UpdateToolbarButtons() {
-			DataRow dataRow=contrApptPanel.GetDataRowForSelected();
-			if(dataRow!=null) {
-				toolBarMain.Buttons["Unsched"].Enabled=true;
-				toolBarMain.Buttons["Break"].Enabled=true;
-				toolBarMain.Buttons["Complete"].Enabled=true;
-				toolBarMain.Buttons["Delete"].Enabled=true;
-				string confirmed=dataRow["Confirmed"].ToString();
-				listConfirmed.SelectedIndex=Defs.GetOrder(DefCat.ApptConfirmed,PIn.Long(confirmed));//could be -1
-				if(!Security.IsAuthorized(EnumPermType.ApptConfirmStatusEdit,true)) {//Suppress message because it would be very annoying to users.
-					listConfirmed.Enabled=false;
-				}
-				else {
-					listConfirmed.Enabled=true;
-				}
-			}
-			else {//even if an appt on the pinboard is selected, these are all grayed out
-				toolBarMain.Buttons["Unsched"].Enabled=false;
-				toolBarMain.Buttons["Break"].Enabled=false;
-				toolBarMain.Buttons["Complete"].Enabled=false;
-				toolBarMain.Buttons["Delete"].Enabled=false;
-				listConfirmed.Enabled=false;
-				if(pinBoard.SelectedIndex!=-1) {
-					dataRow=pinBoard.ListPinBoardItems[pinBoard.SelectedIndex].DataRowAppt;
-					listConfirmed.SelectedIndex=Defs.GetOrder(DefCat.ApptConfirmed,PIn.Long(dataRow["Confirmed"].ToString()));//could be -1
-				}
-			}
-			toolBarMain.Invalidate();
 		}
 		#endregion Methods - Private Refresh Screen
 
@@ -3836,7 +3783,7 @@ namespace OpenDental {
 		}
 
 		private void ASAP_Click() {
-			if(!Security.IsAuthorized(EnumPermType.AppointmentEdit)) {
+			if(!Security.IsAuthorized(Permissions.AppointmentEdit)) {
 				return;
 			}
 			Appointment appointment=Appointments.GetOneApt(contrApptPanel.SelectedAptNum);
@@ -3903,7 +3850,7 @@ namespace OpenDental {
 		}
 
 		private void CopyToPin_Click() {
-			if(!Security.IsAuthorized(EnumPermType.AppointmentMove)) {
+			if(!Security.IsAuthorized(Permissions.AppointmentMove)) {
 				return;
 			}
 			//cannot allow moving completed procedure because it could cause completed procs to change date.  Security must block this.
@@ -4120,9 +4067,6 @@ namespace OpenDental {
 		}
 
 		private void HandlePinClicked(ODEventArgs e) {//What to do if a user double clicks an appointment in DashApptGrid, then clicks 'Send to Pinboard'.
-			if(e.EventType!=ODEventType.SendToPinboard){
-				return;
-			}
 			if(e==null||e.Tag==null||e.Tag.GetType()!=typeof(PinBoardArgs)) {
 				return;
 			}
@@ -4218,12 +4162,8 @@ namespace OpenDental {
 			LayoutManager.Move(contrApptPanel,new Rectangle(0,toolBarMain.Height,panelCalendar.Left,Height-toolBarMain.Height));
 		}
 
-		///<summary>Used for the UpdateProvs tool to reassign all future appointments for one op to another prov.
-		///Returns true if appointments were updated successfully.</summary>
-		public bool MoveAppointments(List<Appointment> listAppts,List<Appointment> listApptsOld,Operatory operatoryCur){
-			if(listAppts.Count==0) {//no appointments to update, so we're done
-				return true;
-			}
+		///<summary>Used for the UpdateProvs tool to reassign all future appointments for one op to another prov. </summary>
+		public void MoveAppointments(List<Appointment> listAppts,List<Appointment> listApptsOld,Operatory operatoryCur){
 			List<Schedule> listSchedulesForOp=Schedules.GetSchedsForOp(operatoryCur,listAppts.Select(x => x.AptDateTime).ToList());
 			List<Operatory> listOperatoriesForClinic=contrApptPanel.ListOpsVisible.Select(x => x.Copy()).ToList();
 			if(((ApptSchedEnforceSpecialty)PrefC.GetInt(PrefName.ApptSchedEnforceSpecialty)).In(
@@ -4231,23 +4171,11 @@ namespace OpenDental {
 				//if specialties are enforced, don't auto-move appt into an op assigned to a different clinic than the curOp's clinic
 				listOperatoriesForClinic.RemoveAll(x => x.ClinicNum!=operatoryCur.ClinicNum);
 			}
-			List<long> listProvNumsScheduled=listSchedulesForOp.Select(x => x.ProvNum).ToList();
-			listProvNumsScheduled.Add(operatoryCur.ProvDentist);//Check default provs for operatory.
-			listProvNumsScheduled.Add(operatoryCur.ProvHygienist);
-			//Consider any providers term'd before the appt with the furthest date as invalid.
-			List<long> listProvNumsInvalid=Providers.GetInvalidProvsByTermDate(listProvNumsScheduled,listAppts.Max(x=>x.AptDateTime));
-			if(listProvNumsInvalid.Count>0) {
-				string message=Lan.g("FormOperatoryEdit","Cannot update appointments. This operatory has default or scheduled providers with a Term Date prior to a future appointment's date:")+"\r\n"
-					+string.Join("\r\n",listProvNumsInvalid.Select(x=>Providers.GetLongDesc(x)));
-				MsgBox.Show(message);
-				return false;
-			}
 			for(int i=0;i<listAppts.Count;i++) {
 				Appointment appointment=listAppts[i];
 				Appointment appointmentOld=listApptsOld[i];
 				MoveAppointment(appointment,appointmentOld,listSchedulesForOp,true);
 			}
-			return true;
 		}
 
 		///<summary>Mostly for moving a single appointment.  Similar to the logic which runs in pinBoard_MouseUp(), but pinBoard_MouseUp() has additional things that are done.  This is also used for the UpdateProvs tool to reassign all future appointments for one op to another prov.</summary>
@@ -4342,7 +4270,7 @@ namespace OpenDental {
 							bool doMake5Minute=listProceduresForSingleApt.Count>0;//Appointments without procs are already returned in 5 minute increments.
 							string calcPattern=Appointments.CalculatePattern(appointment.ProvNum,appointment.ProvHyg,codeNums,doMake5Minute);
 							if(appointment.Pattern!=calcPattern) {//Updating op provs will not change apt lengths.
-								if(Security.IsAuthorized(EnumPermType.AppointmentResize,suppressMessage:true) && !appointment.TimeLocked) {
+								if(Security.IsAuthorized(Permissions.AppointmentResize,suppressMessage:true) && !appointment.TimeLocked) {
 									//User is authorized, and appt time not locked. Do not give popup for users without resizing permissions or for Timelocked appointments.
 									if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Change length for new provider?")) {
 										appointment.Pattern=calcPattern;
@@ -4413,7 +4341,7 @@ namespace OpenDental {
 				listProceduresForSingleApt=Procedures.GetProcsForSingle(appointment.AptNum,appointment.AptStatus==ApptStatus.Planned);
 				string frequencyConflicts="";
 				try {
-					frequencyConflicts=DiscountPlans.CheckDiscountFrequencyAndValidateDiscountPlanSub(listProceduresForSingleApt,appointment.PatNum,appointment.AptDateTime);
+					frequencyConflicts=DiscountPlans.CheckDiscountFrequency(listProceduresForSingleApt,appointment.PatNum,appointment.AptDateTime);
 				}
 				catch(Exception e) {
 					MessageBox.Show(Lan.g(this,"There was an error checking discount frequencies:")
@@ -4440,7 +4368,7 @@ namespace OpenDental {
 							Patients.Update(patient,patientOld);
 							string logEntry=Lan.g(this,"Patient's status changed from ")+patientOld.PatStatus.GetDescription()+Lan.g(this," to ")
 								+patient.PatStatus.GetDescription()+Lan.g(this," by moving the patient appointment to a prospective operatory.");
-							SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,patient.PatNum,logEntry);
+							SecurityLogs.MakeLogEntry(Permissions.PatientEdit,patient.PatNum,logEntry);
 						}
 					}
 					else if(!operatory2.SetProspective&&patient.PatStatus==PatientStatus.Prospective) {
@@ -4452,7 +4380,7 @@ namespace OpenDental {
 							Patients.Update(patient,patientOld);
 							string logEntry=Lan.g(this,"Patient's status changed from ")+patientOld.PatStatus.GetDescription()+Lan.g(this," to ")
 								+patient.PatStatus.GetDescription()+Lan.g(this," by moving the patient appointment from a prospective operatory.");
-							SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,patient.PatNum,logEntry);
+							SecurityLogs.MakeLogEntry(Permissions.PatientEdit,patient.PatNum,logEntry);
 						}
 					}
 				}
@@ -4688,7 +4616,7 @@ namespace OpenDental {
 					}
 					SendToPinBoardAptNums(listSelectedAptNums);
 					//RefreshModuleDataPatient(patNum);//Do we need this it gets called at the end of SendToPinBoardAptNums
-					GlobalFormOpenDental.PatientSelected(_patient,true,false);
+					FormOpenDental.S_Contr_PatientSelected(_patient,true,false);
 					RefreshPeriod(listPinApptNums:listSelectedAptNums);
 					break;
 				case OtherResult.PinboardAndSearch:
@@ -4707,7 +4635,7 @@ namespace OpenDental {
 				case OtherResult.CreateNew:
 					contrApptPanel.SelectedAptNum=aptNumArray[0];
 					RefreshModuleDataPatient(patNum);
-					GlobalFormOpenDental.PatientSelected(_patient,true,false);
+					FormOpenDental.S_Contr_PatientSelected(_patient,true,false);
 					Appointment appointment=Appointments.GetOneApt(contrApptPanel.SelectedAptNum);
 					if(appointment==null) {//apt has been deleted
 						return;
@@ -4746,7 +4674,7 @@ namespace OpenDental {
 						//ModuleSelected->RefreshModuleScreenPeriod, Appt won't be selected if PatCur.PatNum!=Appt.PatNum
 						_patient=Patients.GetPat(patNum);
 					}
-					GlobalFormOpenDental.PatientSelected(_patient,true,false,true);
+					FormOpenDental.S_Contr_PatientSelected(_patient,true,false,true);
 					long apptViewNum=comboView.GetSelected<ApptView>()?.ApptViewNum??0; //default to 'none' view
 					long apptViewNumGoTo=GetApptViewNumGoTo(listApptViewNums,apptViewNum);
 					if(apptViewNum!=apptViewNumGoTo && apptViewNumGoTo>0) {
@@ -4776,7 +4704,7 @@ namespace OpenDental {
 
 		///<summary>Brings up the window to send text messagse to the patients.</summary>
 		private void SendTextMessages(List<long> listPatNums) {
-			if(!Security.IsAuthorized(EnumPermType.TextMessageSend)) {
+			if(!Security.IsAuthorized(Permissions.TextMessageSend)) {
 				return;
 			}
 			if(listPatNums.Count==0) {
@@ -4883,7 +4811,7 @@ namespace OpenDental {
 			}
 			RefreshModuleDataPatient(patNum); 
 			if(_patient!=null) {
-				GlobalFormOpenDental.PatientSelected(_patient,true,false);
+				FormOpenDental.S_Contr_PatientSelected(_patient,true,false);
 			}
 		}
 
@@ -4908,7 +4836,7 @@ namespace OpenDental {
 			bitmap.Dispose();//?
 			long patNum=PIn.Long(dataRow["PatNum"].ToString());
 			RefreshModuleDataPatient(patNum); 
-			GlobalFormOpenDental.PatientSelected(_patient,true,false);
+			FormOpenDental.S_Contr_PatientSelected(_patient,true,false);
 		}
 
 		/// <summary>Called from ModuleSelected.  Just runs once for the purpose of setting start time.</summary>
@@ -5026,13 +4954,13 @@ namespace OpenDental {
 			//if the weekly view doesn't change, then use SetDateSelected or RefreshPeriod
 			if(isWeeklyView) {
 				toggleDayWeek.SetWeek();
-				//butFwd.Enabled=false;//jordan 2023-11-29-This wasn't working very well
-				//butBack.Enabled=false;
+				butFwd.Enabled=false;
+				butBack.Enabled=false;
 			}
 			else {
 				toggleDayWeek.SetDay();
-				//butFwd.Enabled=true;
-				//butBack.Enabled=true;
+				butFwd.Enabled=true;
+				butBack.Enabled=true;
 			}
 			contrApptPanel.IsWeeklyView=isWeeklyView;
 			if(!_hasInitializedOnStartup) {
@@ -5116,8 +5044,6 @@ namespace OpenDental {
 		public const string OrthoChart="Ortho Chart";
 		public const string Jobs="Jobs";
 		public const string JobsSpacer="Jobs Spacer";
-		public const string Tasks="Tasks";
-		public const string TasksSpacer="Tasks Spacer";
 		public const string TextApptsForDayOp="Text Appointments for Day, Op only";
 		public const string TextApptsForDayView="Text Appointments for Day, Current View only";
 		public const string TextApptsForDay="Text Appointments for Day";

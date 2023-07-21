@@ -24,10 +24,21 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrAptObses));
+			this.butCancel = new OpenDental.UI.Button();
 			this.gridObservations = new OpenDental.UI.GridOD();
 			this.butAdd = new OpenDental.UI.Button();
 			this.butExportHL7 = new OpenDental.UI.Button();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(558, 447);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridObservations
 			// 
@@ -70,6 +81,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butExportHL7);
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.gridObservations);
+			this.Controls.Add(this.butCancel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrAptObses";
@@ -80,6 +92,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private UI.GridOD gridObservations;
 		private UI.Button butAdd;
 		private UI.Button butExportHL7;

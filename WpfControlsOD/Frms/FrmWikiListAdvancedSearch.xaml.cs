@@ -24,17 +24,15 @@ namespace OpenDental {
 		public FrmWikiListAdvancedSearch(List<WikiListHeaderWidth> listWikiListHeaderWidths):base() {
 			InitializeComponent();
 			_listWikiListHeaderWidths=listWikiListHeaderWidths;
-			Load+=FrmWikiListAdvancedSearch_Load;
-			PreviewKeyDown+=FrmWikiListAdvancedSearch_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmWikiListAdvancedSearch_Load(object sender,EventArgs e) {
+		private void FrmWikiListAdvancedSearch_Loaded(object sender,RoutedEventArgs e) {
 			FillGrid();
 		}
 
 		/// <summary>Populates the grid with the current Wiki's column headers</summary>
 		private void FillGrid() {
-			Lang.F(this);
 //Unable to select items in grid
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
@@ -51,12 +49,6 @@ namespace OpenDental {
 			gridMain.EndUpdate();
 			if(IntArrayColumnIndicesSelected.Length>0) {
 				gridMain.SetSelected(IntArrayColumnIndicesSelected,true);
-			}
-		}
-
-		private void FrmWikiListAdvancedSearch_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butOK.IsAltKey(Key.O,e)) {
-				butOK_Click(this,new EventArgs());
 			}
 		}
 

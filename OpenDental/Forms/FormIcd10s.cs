@@ -22,7 +22,10 @@ namespace OpenDental {
 		}
 
 		private void FormIcd10s_Load(object sender,EventArgs e) {
-			if(!IsSelectionMode) {
+			if(IsSelectionMode) {
+				butClose.Text=Lan.g(this,"Cancel");
+			}
+			else {
 				butOK.Visible=false;
 			}
 			ActiveControl=textCode;
@@ -119,6 +122,12 @@ namespace OpenDental {
 			Icd10Selected=(Icd10)gridMain.ListGridRows[gridMain.GetSelectedIndex()].Tag;
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+	
 
 	}
 }

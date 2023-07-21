@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Text;
-using System.Linq;
 
 namespace OpenDentBusiness{
 	///<summary></summary>
@@ -119,13 +118,13 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<string>>(MethodBase.GetCurrentMethod());
 			}
-			List<string> listCvxCodes=new List<string>();
+			List<string> retVal=new List<string>();
 			string command="SELECT CvxCode FROM cvx";
 			DataTable table=DataCore.GetTable(command);
 			for(int i=0;i<table.Rows.Count;i++){
-				listCvxCodes.Add(table.Rows[i][0].ToString());
+				retVal.Add(table.Rows[i][0].ToString());
 			}
-			return listCvxCodes;
+			return retVal;
 		}
 
 		///<summary>Gets one Cvx object directly from the database by CodeValue.  If code does not exist, returns null.</summary>
@@ -172,13 +171,10 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<Cvx>>(MethodBase.GetCurrentMethod(),searchText);
 			}
-			List<string> listSearchTokens=searchText.Split(' ').ToList();
-			string command=@"SELECT * FROM cvx WHERE ";
-			for(int i=0;i<listSearchTokens.Count;i++) {
-				if(i>0){
-					command+="AND ";
-				}
-				command+="(CvxCode LIKE '%"+POut.String(listSearchTokens[i])+"%' OR Description LIKE '%"+POut.String(listSearchTokens[i])+"%') ";
+			string[] searchTokens=searchText.Split(' ');
+			string command=@"SELECT * FROM cvx ";
+			for(int i=0;i<searchTokens.Length;i++) {
+				command+=(i==0?"WHERE ":"AND ")+"(CvxCode LIKE '%"+POut.String(searchTokens[i])+"%' OR Description LIKE '%"+POut.String(searchTokens[i])+"%') ";
 			}
 			return Crud.CvxCrud.SelectMany(command);
 		}

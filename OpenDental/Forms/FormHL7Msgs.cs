@@ -105,18 +105,23 @@ namespace OpenDental {
 		}
 
 		private void butFind_Click(object sender,EventArgs e) {
-			FrmPatientSelect frmPatientSelect=new FrmPatientSelect();
-			frmPatientSelect.ShowDialog();
-			if(frmPatientSelect.IsDialogCancel) {
+			using FormPatientSelect formPatientSelect=new FormPatientSelect();
+			formPatientSelect.IsSelectionModeOnly=true;
+			formPatientSelect.ShowDialog();
+			if(formPatientSelect.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			_patNumSelected=frmPatientSelect.PatNumSelected;
+			_patNumSelected=formPatientSelect.PatNumSelected;
 			FillGrid();
 		}
 
 		private void butAll_Click(object sender,EventArgs e) {
 			_patNumSelected=0;
 			FillGrid();
+		}
+		
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
 		}
 
 	}

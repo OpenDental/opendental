@@ -43,6 +43,7 @@ namespace OpenDental {
 			this.labelClin = new System.Windows.Forms.Label();
 			this.checkAllProv = new OpenDental.UI.CheckBox();
 			this.checkAllClin = new OpenDental.UI.CheckBox();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.groupPayrollReportType = new OpenDental.UI.GroupBox();
 			this.radioTransactionalToday = new System.Windows.Forms.RadioButton();
@@ -204,10 +205,20 @@ namespace OpenDental {
 			this.checkAllClin.Text = "All (includes hidden)";
 			this.checkAllClin.Click += new System.EventHandler(this.checkAllClin_Click);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(692, 287);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 4;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(695, 285);
+			this.butOK.Location = new System.Drawing.Point(692, 255);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 3;
@@ -263,6 +274,7 @@ namespace OpenDental {
 			// FormRpNetProdDetail
 			// 
 			this.ClientSize = new System.Drawing.Size(791, 323);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.labelSpecialReport);
 			this.Controls.Add(this.groupPayrollReportType);
@@ -289,6 +301,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.ListBox listProv;

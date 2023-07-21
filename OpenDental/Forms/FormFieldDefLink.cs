@@ -212,10 +212,14 @@ namespace OpenDental {
 			FillGridHidden();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			FieldDefLinks.Sync(_listFieldDefLinks);
 			DataValid.SetInvalid(InvalidType.PatFields);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

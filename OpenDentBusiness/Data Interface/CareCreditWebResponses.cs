@@ -12,8 +12,6 @@ using Newtonsoft.Json;
 namespace OpenDentBusiness{
 	///<summary></summary>
 	public class CareCreditWebResponses {
-		public const string MERCHANT_ID_PROG_PROPERTY="MerchantIDs";
-
 		#region Get Methods
 		///<summary></summary>
 		public static CareCreditWebResponse GetOne(long ccWebResponse) {
@@ -104,11 +102,11 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns all responses with completed ProcessingStatus.</summary>
-		public static List<CareCreditWebResponse> GetBatchQSTransactions(List<long> listClinicNums,List<CareCreditWebStatus> listCareCreditWebStatuses,DateTime dateFrom,
+		public static List<CareCreditWebResponse> GetBatchQSTransactions(List<long> listClinicNums,List<CareCreditWebStatus> listStatuses,DateTime dateFrom,
 			DateTime dateTo,long patNum) 
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<CareCreditWebResponse>>(MethodBase.GetCurrentMethod(),listClinicNums,listCareCreditWebStatuses,dateFrom,dateTo,patNum);
+				return Meth.GetObject<List<CareCreditWebResponse>>(MethodBase.GetCurrentMethod(),listClinicNums,listStatuses,dateFrom,dateTo,patNum);
 			}
 			string clinicFilter="";
 			string patNumFilter="";
@@ -119,14 +117,14 @@ namespace OpenDentBusiness{
 				patNumFilter=$"AND PatNum={POut.Long(patNum)}";
 			}
 			string processStatusStr="";
-			if(listCareCreditWebStatuses.IsNullOrEmpty()) {
-				listCareCreditWebStatuses=ListQSBatchTransactions;
+			if(listStatuses.IsNullOrEmpty()) {
+				listStatuses=ListQSBatchTransactions;
 			}
-			for(int i=0;i<listCareCreditWebStatuses.Count;i++) {
+			for(int i=0;i<listStatuses.Count;i++) {
 				if(i > 0) {
 					processStatusStr+=" OR ";
 				}
-				CareCreditWebStatus processingStatus=listCareCreditWebStatuses[i];
+				CareCreditWebStatus processingStatus=listStatuses[i];
 				processStatusStr+=$"(ProcessingStatus='{processingStatus}' AND {DbHelper.BetweenDates(GetDateTimeColumnForStatus(processingStatus),dateFrom,dateTo)}) ";
 			}
 			string command="SELECT * FROM carecreditwebresponse "
@@ -169,13 +167,13 @@ namespace OpenDentBusiness{
 					+$"{patNumFilter} "
 				+$"GROUP BY PatNum) groupccw ON groupccw.PatNum=ccw.PatNum AND groupccw.DateTimeLastError=ccw.DateTimeLastError "
 				+$"AND ccw.ProcessingStatus='{CareCreditWebStatus.BatchError}' {includeAckError} ";
-			List<CareCreditWebResponse> listCareCreditWebResponses=Crud.CareCreditWebResponseCrud.SelectMany(command);
+			List<CareCreditWebResponse> listWebResponses=Crud.CareCreditWebResponseCrud.SelectMany(command);
 			command="SELECT PatNum " 
 				+"FROM carecreditwebresponse "
 				+$"WHERE ProcessingStatus IN({string.Join(",",ListWebStatusCompleted.Select(x => "'"+x.ToString()+"'").ToList())}) "
 				+$"AND {DbHelper.BetweenDates("DateTimeCompleted",dateFrom,dateTo)} {clinicFilter} {patNumFilter}";
 			List<long> listPatNumToExclude=Db.GetListLong(command);
-			return listCareCreditWebResponses.FindAll(x => !listPatNumToExclude.Contains(x.PatNum));
+			return listWebResponses.Where(x => !listPatNumToExclude.Contains(x.PatNum)).ToList();
 		}
 
 		///<summary></summary>
@@ -188,7 +186,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns a distinct list of PatNums that should be excluded from running a batch request. Patient that should be excluded have
-		///some sort of pending transaction or have been confirmed a CareCredit cardholder or declined as a cardholder. Uses DateTimeEntry.</summary>
+		///some sort of pending transaction or have been confirmed a CareCredit cardholder or declinded as a cardholder. Uses DateTimeEntry.</summary>
 		public static List<long> GetPatNumsForDateRangeToExclude(DateTime dateFrom,DateTime dateTo) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<long>>(MethodBase.GetCurrentMethod(),dateFrom,dateTo);
@@ -202,39 +200,39 @@ namespace OpenDentBusiness{
 			//Also exclude Invalid Input Errors and responses with closed merchant nums that match any in the DB.
 			//We have to run a second query to get Batch Errors in the date range so we can use c# to evalute the LastResponseStr column 
 			//The LastResponseStr contains a  JSON object and we only want to exclude patients with Invalid Input errors.
-			List<CareCreditWebResponse> listCareCreditWebResponsesBatchErrors=GetBatchErrors(null,dateFrom,dateTo,false);
+			List<CareCreditWebResponse> listBatchErrors=GetBatchErrors(null,dateFrom,dateTo,false);
 			List<string> listMerchantNumsAllDb=CareCredit.GetMerchantNumsAll();
-			for(int i=0;i<listCareCreditWebResponsesBatchErrors.Count;i++) {
-				CareCreditQSBatchResponse careCreditQSBatch=CareCreditQSBatchResponse.From(listCareCreditWebResponsesBatchErrors[i]);
+			for(int i=0;i<listBatchErrors.Count;i++) {
+				CareCreditQSBatchResponse careCreditQSBatch=CareCreditQSBatchResponse.From(listBatchErrors[i]);
 				if(careCreditQSBatch==null) {
 					continue;
 				}
 				if(careCreditQSBatch.IsInvalidInput 
-					|| CareCredit.IsMerchantNumClosed(listCareCreditWebResponsesBatchErrors[i].MerchantNumber,listMerchantNumsAllDb))
+					|| CareCredit.IsMerchantNumClosed(listBatchErrors[i].MerchantNumber,listMerchantNumsAllDb))
 				{
-					listPatNumsToExclude.Add(listCareCreditWebResponsesBatchErrors[i].PatNum);
+					listPatNumsToExclude.Add(listBatchErrors[i].PatNum);
 				}
 			}
 			return listPatNumsToExclude.Distinct().ToList();
 		}
 
 		///<summary>Returns the original completed or expired batch CareCredtWebResonse for the patnum in the last 60 Days. If the patient is a minor, it will use the patient's guarantor.</summary>
-		public static CareCreditWebResponse GetOriginalCompletedBatchForPatNum(Patient patient) {
+		public static CareCreditWebResponse GetOriginalCompletedBatchForPatNum(Patient pat) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<CareCreditWebResponse>(MethodBase.GetCurrentMethod(),patient);
+				return Meth.GetObject<CareCreditWebResponse>(MethodBase.GetCurrentMethod(),pat);
 			}
-			long patNum=patient.PatNum;
-			if(CareCredit.IsPatAMinor(patient)) {
+			long patNum=pat.PatNum;
+			if(CareCredit.IsPatAMinor(pat)) {
 				//If the patient is a minor, look for the guarantor. 
-				patNum=patient.Guarantor;
+				patNum=pat.Guarantor;
 			}
-			List<CareCreditWebStatus> listCareCreditWebStatusesCompleted=ListWebStatusCompleted;
-			listCareCreditWebStatusesCompleted.RemoveAll(x => x==CareCreditWebStatus.DupQS);
-			listCareCreditWebStatusesCompleted.Add(CareCreditWebStatus.ExpiredBatch);
+			List<CareCreditWebStatus> listCompletedStatuses=ListWebStatusCompleted;
+			listCompletedStatuses.RemoveAll(x => x==CareCreditWebStatus.DupQS);
+			listCompletedStatuses.Add(CareCreditWebStatus.ExpiredBatch);
 			string command="SELECT * FROM carecreditwebresponse "
 				+$"WHERE PatNum={POut.Long(patNum)} "
 				+$"AND ServiceType='{CareCreditServiceType.Batch}' "
-				+$"AND ProcessingStatus IN({string.Join(",",listCareCreditWebStatusesCompleted.Select(x => $"'{x}'"))}) "
+				+$"AND ProcessingStatus IN({string.Join(",",listCompletedStatuses.Select(x => $"'{x}'"))}) "
 				+"ORDER BY DateTimeEntry DESC "
 				+"LIMIT 1" ;
 			return Crud.CareCreditWebResponseCrud.SelectOne(command);
@@ -245,26 +243,26 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<CareCreditWebResponse>>(MethodBase.GetCurrentMethod());
 			}
-			List<CareCreditWebStatus> listCareCreditWebStatusesToLog=ListWebStatusCompleted;
-			listCareCreditWebStatusesToLog.Add(CareCreditWebStatus.ExpiredBatch);
+			List<CareCreditWebStatus> listCareCreditWebStatusToLog=ListWebStatusCompleted;
+			listCareCreditWebStatusToLog.Add(CareCreditWebStatus.ExpiredBatch);
 			string command=$"SELECT * "
 				+$"FROM carecreditwebresponse "
 				+$"WHERE HasLogged={POut.Bool(false)} "
-				+$"AND ProcessingStatus IN({string.Join(",",listCareCreditWebStatusesToLog.Select(x => "'"+x.ToString()+"'").ToList())}) "
+				+$"AND ProcessingStatus IN({string.Join(",",listCareCreditWebStatusToLog.Select(x => "'"+x.ToString()+"'").ToList())}) "
 				+$"LIMIT 50";
 			return Crud.CareCreditWebResponseCrud.SelectMany(command);
 		}
 
 		///<summary>Gets the DateTime column name for the status passed in.</summary>
-		private static string GetDateTimeColumnForStatus(CareCreditWebStatus careCreditWebStatus) {
+		private static string GetDateTimeColumnForStatus(CareCreditWebStatus status) {
 			//No remoting role check; no call to db
-			if(ListWebStatusAcknowledge.Contains(careCreditWebStatus) || ListWebStatusCompleted.Contains(careCreditWebStatus)) {
+			if(ListWebStatusAcknowledge.Contains(status) || ListWebStatusCompleted.Contains(status)) {
 				return nameof(CareCreditWebResponse.DateTimeCompleted);
 			}
-			else if(ListWebStatusError.Contains(careCreditWebStatus)) {
+			else if(ListWebStatusError.Contains(status)) {
 				return nameof(CareCreditWebResponse.DateTimeLastError);
 			}
-			else if(ListWebStatusExpired.Contains(careCreditWebStatus)) {
+			else if(ListWebStatusExpired.Contains(status)) {
 				return nameof(CareCreditWebResponse.DateTimeExpired);
 			}
 			else {
@@ -286,19 +284,12 @@ namespace OpenDentBusiness{
 
 		#region Update
 		///<summary></summary>
-		public static void Update(CareCreditWebResponse careCreditWebResponse) {
+		public static void Update(CareCreditWebResponse ccWebResponse) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),careCreditWebResponse);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),ccWebResponse);
 				return;
 			}
-			Crud.CareCreditWebResponseCrud.Update(careCreditWebResponse);
-		}
-
-		public static bool Update(CareCreditWebResponse careCreditWebResponse,CareCreditWebResponse careCreditWebResponseOld) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),careCreditWebResponse,careCreditWebResponseOld);
-			}
-			return Crud.CareCreditWebResponseCrud.Update(careCreditWebResponse,careCreditWebResponseOld);
+			Crud.CareCreditWebResponseCrud.Update(ccWebResponse);
 		}
 
 		///<summary>Updates the HasLogged column to true for all CareCreditWebResponseNums passed in.</summary>
@@ -315,33 +306,33 @@ namespace OpenDentBusiness{
 			Db.NonQ(command);
 		}
 
-		public static void UpdateProcessingWebStatus(CareCreditWebResponse careCreditWebResponse,CareCreditWebStatus careCreditWebStatus) {
+		public static void UpdateProcessingWebStatus(CareCreditWebResponse webResponse,CareCreditWebStatus status) {
 			//No remoting role check; no call to db
-			UpdateProcessingWebStatus(new List<CareCreditWebResponse>() { careCreditWebResponse },careCreditWebStatus);
+			UpdateProcessingWebStatus(new List<CareCreditWebResponse>() { webResponse },status);
 		}
 
 		///<summary>Updates the CareCreditWebStatus to expired CareCreditWebResponses passed in.</summary>
-		public static void UpdateProcessingWebStatus(List<CareCreditWebResponse> listCareCreditWebResponses,CareCreditWebStatus careCreditWebStatus) {
+		public static void UpdateProcessingWebStatus(List<CareCreditWebResponse> listCareCreditWebResponses,CareCreditWebStatus status) {
 			//No remoting role check; no call to db
 			if(listCareCreditWebResponses.IsNullOrEmpty()) {
 				return;
 			}
-			for(int i=0;i<listCareCreditWebResponses.Count;i++){
-				listCareCreditWebResponses[i].ProcessingStatus=careCreditWebStatus;
+			foreach(CareCreditWebResponse webRes in listCareCreditWebResponses) {
+				webRes.ProcessingStatus=status;
 				DateTime dateTimeNow=MiscData.GetNowDateTime();
-				if(ListWebStatusAcknowledge.Contains(careCreditWebStatus) || ListWebStatusCompleted.Contains(careCreditWebStatus)) {
-					listCareCreditWebResponses[i].DateTimeCompleted=dateTimeNow;
+				if(ListWebStatusAcknowledge.Contains(status) || ListWebStatusCompleted.Contains(status)) {
+					webRes.DateTimeCompleted=dateTimeNow;
 				}
-				else if(ListWebStatusError.Contains(careCreditWebStatus)) {
-					listCareCreditWebResponses[i].DateTimeLastError=dateTimeNow;
+				else if(ListWebStatusError.Contains(status)) {
+					webRes.DateTimeLastError=dateTimeNow;
 				}
-				else if(ListWebStatusExpired.Contains(careCreditWebStatus)) {
-					listCareCreditWebResponses[i].DateTimeExpired=dateTimeNow;
+				else if(ListWebStatusExpired.Contains(status)) {
+					webRes.DateTimeExpired=dateTimeNow;
 				}
 				else {
-					listCareCreditWebResponses[i].DateTimePending=dateTimeNow;
+					webRes.DateTimePending=dateTimeNow;
 				}
-				Update(listCareCreditWebResponses[i]);
+				Update(webRes);
 			}
 		}
 		#endregion Update
@@ -367,7 +358,7 @@ namespace OpenDentBusiness{
 		///<summary>Returns a list of CareCreditWebStatuses that we consider completed. We update their DateTimeCompleted field when completed.</summary>
 		public static List<CareCreditWebStatus> ListWebStatusCompleted => new List<CareCreditWebStatus>() { CareCreditWebStatus.AccountFound,
 			CareCreditWebStatus.CallForAuth,CareCreditWebStatus.Completed,CareCreditWebStatus.Declined,CareCreditWebStatus.DupQS,
-			CareCreditWebStatus.PreApproved,CareCreditWebStatus.AccountNotFoundQS };
+			CareCreditWebStatus.PreApproved };
 
 		///<summary>Returns a list of CareCreditWebStatuses that we consider had errors at some point. We update their DateTimeLastError field when failure.</summary>
 		public static List<CareCreditWebStatus> ListWebStatusError => new List<CareCreditWebStatus>() {   CareCreditWebStatus.BatchError,
@@ -383,121 +374,31 @@ namespace OpenDentBusiness{
 
 		///<summary>Returns a list of CareCreditWebStatuses that we consider quickscreen batch transactions (with the exception of MerchantClosed). We updated their DateTimePending field.</summary>
 		public static List<CareCreditWebStatus> ListQSBatchTransactions => new List<CareCreditWebStatus>() { CareCreditWebStatus.Created,
-			CareCreditWebStatus.Pending,CareCreditWebStatus.AccountFound,CareCreditWebStatus.PreApproved,CareCreditWebStatus.Declined,CareCreditWebStatus.ExpiredBatch,CareCreditWebStatus.AccountNotFoundQS, };
+			CareCreditWebStatus.Pending,CareCreditWebStatus.AccountFound,CareCreditWebStatus.PreApproved,CareCreditWebStatus.Declined,CareCreditWebStatus.ExpiredBatch, };
 
 		///<summary></summary>
 		public static List<CareCreditWebStatus> GetExclusionStatuses() {
 			//No remoting role check; no call to db
-			List<CareCreditWebStatus> listCareCreditWebStatusesExclusion=ListWebStatusCompleted;
+			List<CareCreditWebStatus> listExclusionStatuses=ListWebStatusCompleted;
 			//Expired batches means we already sent a request to CC. Exclude these patients.
-			listCareCreditWebStatusesExclusion.Add(CareCreditWebStatus.ExpiredBatch);
-			return listCareCreditWebStatusesExclusion;
+			listExclusionStatuses.Add(CareCreditWebStatus.ExpiredBatch);
+			return listExclusionStatuses;
 		}
 
 		///<summary>Handles the responses by setting correct error status.</summary>
-		public static void HandleResponseError(CareCreditWebResponse careCreditWebResponse,string resStr) {
+		public static void HandleResponseError(CareCreditWebResponse ccWebResponse,string resStr) {
 			//No remoting role check; no call to db
-			careCreditWebResponse.LastResponseStr=resStr;
-			if(careCreditWebResponse.ProcessingStatus==CareCreditWebStatus.Created) {
-				careCreditWebResponse.ProcessingStatus=CareCreditWebStatus.CreatedError;
+			ccWebResponse.LastResponseStr=resStr;
+			if(ccWebResponse.ProcessingStatus==CareCreditWebStatus.Created) {
+				ccWebResponse.ProcessingStatus=CareCreditWebStatus.CreatedError;
 			}
-			else if(careCreditWebResponse.ProcessingStatus==CareCreditWebStatus.Pending) {
-				careCreditWebResponse.ProcessingStatus=CareCreditWebStatus.PendingError;
+			else if(ccWebResponse.ProcessingStatus==CareCreditWebStatus.Pending) {
+				ccWebResponse.ProcessingStatus=CareCreditWebStatus.PendingError;
 			}
 			else {
-				careCreditWebResponse.ProcessingStatus=CareCreditWebStatus.UnknownError;
+				ccWebResponse.ProcessingStatus=CareCreditWebStatus.UnknownError;
 			}
-			careCreditWebResponse.DateTimeLastError=MiscData.GetNowDateTime();
-		}
-
-		public static void AddPatFieldsForMinors(long patNum) {
-			PatFieldDef patFieldCC=PatFieldDefs.GetPatFieldCareCredit();
-			if(patFieldCC==null) {
-				return;
-			}
-			PatField patField=PatFields.GetByName(patFieldCC.FieldName,PatFields.Refresh(patNum));
-			UpsertPatFieldForMinors(patNum,patField);
-		}
-
-		///<summary></summary>
-		public static void UpdateCareCreditPatField(string status,long patNum,bool isBatch) {
-			PatFieldDef patFieldCC=PatFieldDefs.GetPatFieldCareCredit();
-			if(patFieldCC==null) {
-				return;
-			}
-			PatField patField=PatFields.GetByName(patFieldCC.FieldName,PatFields.Refresh(patNum));
-			if(patField==null) {
-				patField=new PatField();
-				patField.PatNum=patNum;
-			}
-			patField.FieldName=patFieldCC.FieldName;
-			patField.FieldValue=status;
-			PatFields.Upsert(patField);
-			if(isBatch) {
-				UpsertPatFieldForMinors(patNum,patField);
-			}
-		}
-
-		private static void UpsertPatFieldForMinors(long patNum,PatField patField) {
-			if(patField==null) {
-				return;
-			}
-			List<long> listMinorPatNums=Patients.GetAllPatientsForGuarantor(patNum).FindAll(x => x.Birthdate.Year>1880 && x.Age<18).Select(x => x.PatNum).ToList();
-			if(listMinorPatNums.IsNullOrEmpty()) {
-				return;
-			}
-			foreach(long patNumMinor in listMinorPatNums) {
-				PatField patFieldMinor=PatFields.GetByName(patField.FieldName,PatFields.Refresh(patNumMinor));
-				if(patFieldMinor==null) {
-					patFieldMinor=new PatField();
-					patFieldMinor.PatNum=patNumMinor;
-				}
-				patFieldMinor.FieldName=patField.FieldName;
-				patFieldMinor.FieldValue=patField.FieldValue;
-				PatFields.Upsert(patFieldMinor);
-			}
-		}
-
-		public static void UpsertPreApprovalAmt(double amount,long patNum) {
-			PatFieldDef patFieldDef=PatFieldDefs.GetPatFieldCareCredit(PatFieldType.CareCreditPreApprovalAmt);
-			if(patFieldDef==null) {
-				return;
-			}
-			PatField patField=PatFields.GetByName(patFieldDef.FieldName,PatFields.Refresh(patNum));
-			if(patField==null) {
-				patField=new PatField();
-				patField.FieldName=patFieldDef.FieldName;
-				patField.PatNum=patNum;
-			}
-			patField.FieldValue=amount.ToString("C");
-			if(amount==-1){//Sent by UpsertAvailableCredit()
-				patField.FieldValue="N/A";//Only PreApprovalAmt or AvailableCredit should have a value, not both.
-			}
-			else{
-				UpsertAvailableCredit(-1,patNum);
-			}
-			PatFields.Upsert(patField);
-		}
-
-		public static void UpsertAvailableCredit(double amount,long patNum) {
-			PatFieldDef patFieldDef=PatFieldDefs.GetPatFieldCareCredit(PatFieldType.CareCreditAvailableCredit);
-			if(patFieldDef==null) {
-				return;
-			}
-			PatField patField=PatFields.GetByName(patFieldDef.FieldName,PatFields.Refresh(patNum));
-			if(patField==null) {
-				patField=new PatField();
-				patField.FieldName=patFieldDef.FieldName;
-				patField.PatNum=patNum;
-			}
-			patField.FieldValue=amount.ToString("C");
-			if(amount==-1){//Sent by UpsertPreApprovalAmt()
-				patField.FieldValue="N/A";//Only PreApprovalAmt or AvailableCredit should have a value, not both.
-			}
-			else{
-				UpsertPreApprovalAmt(-1,patNum);
-			}
-			PatFields.Upsert(patField);
+			ccWebResponse.DateTimeLastError=MiscData.GetNowDateTime();
 		}
 
 		#endregion Misc Methods

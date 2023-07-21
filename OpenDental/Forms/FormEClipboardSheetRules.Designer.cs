@@ -38,7 +38,8 @@ namespace OpenDental {
 			this.textFrequency = new System.Windows.Forms.TextBox();
 			this.labelSheet = new System.Windows.Forms.Label();
 			this.textSheet = new System.Windows.Forms.TextBox();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butSelectSheetsToIgnore = new OpenDental.UI.Button();
 			this.labelSheetsToIgnore = new System.Windows.Forms.Label();
 			this.listSheetsToIgnore = new OpenDental.UI.ListBox();
@@ -155,21 +156,32 @@ namespace OpenDental {
 			this.textSheet.Size = new System.Drawing.Size(144, 20);
 			this.textSheet.TabIndex = 12;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(278, 328);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 13;
-			this.butSave.Text = "&Save";
-			this.butSave.UseVisualStyleBackColor = true;
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(241, 332);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 13;
+			this.butOK.Text = "OK";
+			this.butOK.UseVisualStyleBackColor = true;
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(322, 332);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 14;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.UseVisualStyleBackColor = true;
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butSelectSheetsToIgnore
 			// 
 			this.butSelectSheetsToIgnore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSelectSheetsToIgnore.Location = new System.Drawing.Point(325, 221);
+			this.butSelectSheetsToIgnore.Location = new System.Drawing.Point(322, 223);
 			this.butSelectSheetsToIgnore.Name = "butSelectSheetsToIgnore";
 			this.butSelectSheetsToIgnore.Size = new System.Drawing.Size(28, 24);
 			this.butSelectSheetsToIgnore.TabIndex = 20;
@@ -197,12 +209,13 @@ namespace OpenDental {
 			// 
 			// FormEClipboardSheetRules
 			// 
-			this.ClientSize = new System.Drawing.Size(365, 364);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.ClientSize = new System.Drawing.Size(409, 364);
 			this.Controls.Add(this.listSheetsToIgnore);
 			this.Controls.Add(this.butSelectSheetsToIgnore);
 			this.Controls.Add(this.labelSheetsToIgnore);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.textSheet);
 			this.Controls.Add(this.labelSheet);
 			this.Controls.Add(this.textFrequency);
@@ -242,7 +255,8 @@ namespace OpenDental {
 		private System.Windows.Forms.TextBox textFrequency;
 		private System.Windows.Forms.Label labelSheet;
 		private System.Windows.Forms.TextBox textSheet;
-		private UI.Button butSave;
+		private UI.Button butOK;
+		private UI.Button butCancel;
 		private UI.Button butSelectSheetsToIgnore;
 		private System.Windows.Forms.Label labelSheetsToIgnore;
 		private UI.ListBox listSheetsToIgnore;

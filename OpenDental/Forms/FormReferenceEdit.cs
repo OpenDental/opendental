@@ -66,7 +66,7 @@ namespace OpenDental {
 			textRecentDate.Text=DateTime.Now.ToShortDateString();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textRecentDate.IsValid()) {
 				MsgBox.Show(this,"Please enter a valid date.");
 			}
@@ -77,5 +77,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

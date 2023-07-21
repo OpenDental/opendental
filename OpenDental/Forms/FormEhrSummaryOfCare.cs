@@ -57,15 +57,14 @@ namespace OpenDental {
 		}
 
 		private void gridSent_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			FrmReferralsPatient FrmReferralsPatient=new FrmReferralsPatient();
-			FrmReferralsPatient.DefaultRefAttachNum=_listHistorySent[gridSent.GetSelectedIndex()].FKey;
-			FrmReferralsPatient.PatNum=PatCur.PatNum;
-			FrmReferralsPatient.IsSelectionMode=true;
-			FrmReferralsPatient.ShowDialog();
-			if(FrmReferralsPatient.IsDialogCancel) {
+			using FormReferralsPatient FormRP=new FormReferralsPatient();
+			FormRP.DefaultRefAttachNum=_listHistorySent[gridSent.GetSelectedIndex()].FKey;
+			FormRP.PatNum=PatCur.PatNum;
+			FormRP.IsSelectionMode=true;
+			if(FormRP.ShowDialog()==DialogResult.Cancel) {
 				return;
 			}
-			_listHistorySent[gridSent.GetSelectedIndex()].FKey=FrmReferralsPatient.RefAttachNum;
+			_listHistorySent[gridSent.GetSelectedIndex()].FKey=FormRP.RefAttachNum;
 			EhrMeasureEvents.Update(_listHistorySent[gridSent.GetSelectedIndex()]);
 			FillGridSent();
 		}
@@ -123,7 +122,7 @@ namespace OpenDental {
 			if(doc.DocumentElement.Name.ToLower()=="clinicaldocument") {//CCD, CCDA, and C32.
 				xmlFileName="ccd.xml";
 				xslFileName="ccd.xsl";
-				xslContents=EhrSummaryCcds.GetEhrResource("CCD");
+				xslContents=FormEHR.GetEhrResource("CCD");
 				if(xslContents=="") { //XSL load from EHR dll failed so see if caller provided an alternative
 					if(strAlterateFilPathXslCCD!="") { //alternative XSL file was provided so use that for our stylesheet
 						xslContents=FileAtoZ.ReadAllText(strAlterateFilPathXslCCD);
@@ -136,7 +135,7 @@ namespace OpenDental {
 			else if(doc.DocumentElement.Name.ToLower()=="continuityofcarerecord" || doc.DocumentElement.Name.ToLower()=="ccr:continuityofcarerecord") {//CCR
 				xmlFileName="ccr.xml";
 				xslFileName="ccr.xsl";
-				xslContents=EhrSummaryCcds.GetEhrResource("CCR");
+				xslContents=FormEHR.GetEhrResource("CCR");
 			}
 			else {
 				MessageBox.Show("This is not a valid CCD, CCDA, CCR, or C32 message.  Only the raw text will be shown");
@@ -176,7 +175,8 @@ namespace OpenDental {
 			try {
 				ccd=EhrCCD.GenerateSummaryOfCare(PatCur,out string warnings);
 				if(!string.IsNullOrEmpty(warnings)) {
-					if(MessageBox.Show(warnings,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+					string warningMsg=Lan.g(this,"Click OK to ignore warnings and continue, or click Cancel.")+"\r\n"+warnings;
+					if(MessageBox.Show(warningMsg,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
 						return;
 					}
 				}
@@ -185,11 +185,10 @@ namespace OpenDental {
 				MessageBox.Show(ex.Message);
 				return;
 			}
-			FrmReferralsPatient FrmReferralsPatient=new FrmReferralsPatient();
-			FrmReferralsPatient.PatNum=PatCur.PatNum;
-			FrmReferralsPatient.IsSelectionMode=true;
-			FrmReferralsPatient.ShowDialog();
-			if(FrmReferralsPatient.IsDialogCancel) {
+			using FormReferralsPatient FormRP=new FormReferralsPatient();
+			FormRP.PatNum=PatCur.PatNum;
+			FormRP.IsSelectionMode=true;
+			if(FormRP.ShowDialog()==DialogResult.Cancel) {
 				MessageBox.Show("Summary of Care not exported.");
 				return;
 			}
@@ -205,26 +204,26 @@ namespace OpenDental {
 				}
 			}
 			File.WriteAllText(Path.Combine(dlg.SelectedPath,"ccd.xml"),ccd);
-			File.WriteAllText(Path.Combine(dlg.SelectedPath,"ccd.xsl"),EhrSummaryCcds.GetEhrResource("CCD"));
+			File.WriteAllText(Path.Combine(dlg.SelectedPath,"ccd.xsl"),FormEHR.GetEhrResource("CCD"));
 			EhrMeasureEvent newMeasureEvent = new EhrMeasureEvent();
 			newMeasureEvent.DateTEvent = DateTime.Now;
 			newMeasureEvent.EventType = EhrMeasureEventType.SummaryOfCareProvidedToDr;
 			newMeasureEvent.PatNum = PatCur.PatNum;
-			newMeasureEvent.FKey=FrmReferralsPatient.RefAttachNum;//Can be 0 if user didn't pick a referral for some reason.
+			newMeasureEvent.FKey=FormRP.RefAttachNum;//Can be 0 if user didn't pick a referral for some reason.
 			long fkey=EhrMeasureEvents.Insert(newMeasureEvent);
 			newMeasureEvent=new EhrMeasureEvent();
 			newMeasureEvent.DateTEvent=DateTime.Now;
 			newMeasureEvent.FKey=fkey;
 			newMeasureEvent.EventType=EhrMeasureEventType.SummaryOfCareProvidedToDrElectronic;
 			newMeasureEvent.PatNum=PatCur.PatNum;
-			newMeasureEvent.FKey=FrmReferralsPatient.RefAttachNum;//Can be 0 if user didn't pick a referral for some reason.
+			newMeasureEvent.FKey=FormRP.RefAttachNum;//Can be 0 if user didn't pick a referral for some reason.
 			EhrMeasureEvents.Insert(newMeasureEvent);
 			FillGridSent();
 			MessageBox.Show("Exported");
 		}
 
 		private void butSendEmail_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.EmailSend)) {
+			if(!Security.IsAuthorized(Permissions.EmailSend)) {
 				return;
 			}
 			//Generate the CCD first so that any validation errors are apparent and up front.
@@ -233,7 +232,8 @@ namespace OpenDental {
 			try {
 				ccd=EhrCCD.GenerateSummaryOfCare(PatCur,out string warnings);
 				if(!string.IsNullOrEmpty(warnings)) {
-					if(MessageBox.Show(warnings,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+					string warningMsg=Lan.g(this,"Click OK to ignore warnings and continue, or click Cancel.")+"\r\n"+warnings;
+					if(MessageBox.Show(warningMsg,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
 						return;
 					}
 				}
@@ -242,11 +242,10 @@ namespace OpenDental {
 				MessageBox.Show(ex.Message);
 				return;
 			}
-			FrmReferralsPatient FrmReferralsPatient=new FrmReferralsPatient();
-			FrmReferralsPatient.PatNum=PatCur.PatNum;
-			FrmReferralsPatient.IsSelectionMode=true;
-			FrmReferralsPatient.ShowDialog();
-			if(FrmReferralsPatient.IsDialogCancel) {
+			using FormReferralsPatient FormRP=new FormReferralsPatient();
+			FormRP.PatNum=PatCur.PatNum;
+			FormRP.IsSelectionMode=true;
+			if(FormRP.ShowDialog()==DialogResult.Cancel) {
 				MessageBox.Show("Summary of Care not exported.");
 				return;
 			}
@@ -263,7 +262,7 @@ namespace OpenDental {
 			emailMessage.MsgType=EmailMessageSource.EHR;
 			try {
 				emailMessage.Attachments.Add(EmailAttaches.CreateAttach("ccd.xml",Encoding.UTF8.GetBytes(ccd)));
-				emailMessage.Attachments.Add(EmailAttaches.CreateAttach("ccd.xsl",Encoding.UTF8.GetBytes(EhrSummaryCcds.GetEhrResource("CCD"))));
+				emailMessage.Attachments.Add(EmailAttaches.CreateAttach("ccd.xsl",Encoding.UTF8.GetBytes(FormEHR.GetEhrResource("CCD"))));
 			}
 			catch(Exception ex) {
 				Cursor=Cursors.Default;
@@ -277,13 +276,13 @@ namespace OpenDental {
 				newMeasureEvent.DateTEvent=DateTime.Now;
 				newMeasureEvent.EventType=EhrMeasureEventType.SummaryOfCareProvidedToDr;
 				newMeasureEvent.PatNum=PatCur.PatNum;
-				newMeasureEvent.FKey=FrmReferralsPatient.RefAttachNum;//Can be 0 if user didn't pick a referral for some reason.
+				newMeasureEvent.FKey=FormRP.RefAttachNum;//Can be 0 if user didn't pick a referral for some reason.
 				EhrMeasureEvents.Insert(newMeasureEvent);
 				newMeasureEvent=new EhrMeasureEvent();
 				newMeasureEvent.DateTEvent=DateTime.Now;
 				newMeasureEvent.EventType=EhrMeasureEventType.SummaryOfCareProvidedToDrElectronic;
 				newMeasureEvent.PatNum=PatCur.PatNum;
-				newMeasureEvent.FKey=FrmReferralsPatient.RefAttachNum;//Can be 0 if user didn't pick a referral for some reason.
+				newMeasureEvent.FKey=FormRP.RefAttachNum;//Can be 0 if user didn't pick a referral for some reason.
 				EhrMeasureEvents.Insert(newMeasureEvent);
 				FillGridSent();
 			}
@@ -291,11 +290,10 @@ namespace OpenDental {
 		}
 
 		private void butShowXhtml_Click(object sender,EventArgs e) {
-			FrmReferralsPatient FrmReferralsPatient=new FrmReferralsPatient();
-			FrmReferralsPatient.PatNum=PatCur.PatNum;
-			FrmReferralsPatient.IsSelectionMode=true;
-			FrmReferralsPatient.ShowDialog();
-			if(FrmReferralsPatient.IsDialogCancel) {
+			using FormReferralsPatient FormRP=new FormReferralsPatient();
+			FormRP.PatNum=PatCur.PatNum;
+			FormRP.IsSelectionMode=true;
+			if(FormRP.ShowDialog()==DialogResult.Cancel) {
 				MessageBox.Show("Summary of Care not shown.");
 				return;
 			}
@@ -303,7 +301,8 @@ namespace OpenDental {
 			try {
 				ccd=EhrCCD.GenerateSummaryOfCare(PatCur,out string warnings);
 				if(!string.IsNullOrEmpty(warnings)) {
-					if(MessageBox.Show(warnings,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+					string warningMsg=Lan.g(this,"Click OK to ignore warnings and continue, or click Cancel.")+"\r\n"+warnings;
+					if(MessageBox.Show(warningMsg,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
 						return;
 					}
 				}
@@ -318,7 +317,7 @@ namespace OpenDental {
 				EhrMeasureEvent measureEvent = new EhrMeasureEvent();
 				measureEvent.DateTEvent = DateTime.Now;
 				measureEvent.EventType = EhrMeasureEventType.SummaryOfCareProvidedToDr;
-				measureEvent.FKey=FrmReferralsPatient.RefAttachNum;
+				measureEvent.FKey=FormRP.RefAttachNum;
 				measureEvent.PatNum = PatCur.PatNum;
 				EhrMeasureEvents.Insert(measureEvent);
 				FillGridSent();
@@ -330,7 +329,8 @@ namespace OpenDental {
 			try {
 				ccd=EhrCCD.GenerateSummaryOfCare(PatCur,out string warnings);
 				if(!string.IsNullOrEmpty(warnings)) {
-					if(MessageBox.Show(warnings,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+					string warningMsg=Lan.g(this,"Click OK to ignore warnings and continue, or click Cancel.")+"\r\n"+warnings;
+					if(MessageBox.Show(warningMsg,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
 						return;
 					}
 				}
@@ -375,8 +375,29 @@ namespace OpenDental {
 			FillGridSent();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
+		
+
+		
+
+		
+	
+
+		
+
+	
+
+	
+
+
 	}
 }
+
+
+
 
 #region OldCode
 /*
@@ -819,3 +840,4 @@ namespace OpenDental {
 			}
 		}*/
 #endregion OldCode
+

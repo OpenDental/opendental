@@ -740,6 +740,26 @@ namespace OpenDental.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        public static byte[] en_US_aff {
+            get {
+                object obj = ResourceManager.GetObject("en_US_aff", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        public static byte[] en_US_dic {
+            get {
+                object obj = ResourceManager.GetObject("en_US_dic", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         public static byte[] EraseCircle {
             get {
                 object obj = ResourceManager.GetObject("EraseCircle", resourceCulture);
@@ -1180,16 +1200,6 @@ namespace OpenDental.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap payconnect_btn_26 {
-            get {
-                object obj = ResourceManager.GetObject("payconnect-btn-26", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
@@ -1276,9 +1286,9 @@ namespace OpenDental.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Podium_logo_Black {
+        public static System.Drawing.Bitmap Practice_Booster_Icon_22x22 {
             get {
-                object obj = ResourceManager.GetObject("Podium_logo_Black", resourceCulture);
+                object obj = ResourceManager.GetObject("Practice_Booster_Icon_22x22", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1286,9 +1296,9 @@ namespace OpenDental.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Practice_Booster_Icon_22x22 {
+        public static System.Drawing.Bitmap Podium_logo_Black {
             get {
-                object obj = ResourceManager.GetObject("Practice_Booster_Icon_22x22", resourceCulture);
+                object obj = ResourceManager.GetObject("Podium_logo_Black", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1487,7 +1497,7 @@ namespace OpenDental.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Sparks3D is a DirectX 11 plugin for Open Dental that is licensed separately.  Open Dental will still work fine without this plugin, but the older 3D &quot;SparksToothChart&quot; will require the user to install the DirectX 9 SDK.  To make the newer Sparks3D plugin work, the following two files must be present in the Sparks3D folder within the application folder:  Sparks3D.dll and Sparks3DXEngine.dll.  To disable the plugin for troubleshooting, rename the folder temporarily.
         ///
-        ///License:---------------------------------- [rest of string was truncated]&quot;;.
+        ///License:-------------------------------- [rest of string was truncated]&quot;;.
         /// </summary>
         public static string Sparks3D {
             get {

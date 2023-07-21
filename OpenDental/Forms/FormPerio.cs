@@ -14,30 +14,33 @@ using OpenDental.UI;
 using OpenDental.UI.Voice;
 using OpenDentBusiness;
 using SparksToothChart;
+using OpenDental.UI;
 using WpfControls.UI;
 
 namespace OpenDental{
-	/// <summary></summary>
+	/// <summary>
+	/// Summary description for FormBasicTemplate.
+	/// </summary>
 	public partial class FormPerio : FormODBase {
-		#region Fields - private
-		private bool _isExamInUse;
+		#region Fields
 		private bool _isLocalDefsChanged;
 		private bool _isTenDown;
-		private List<Def> _listDefsMiscColors;
+		//private int pagesPrinted;
 		///<summary>Gets a list of missing teeth as strings on load. Includes "1"-"32", and "A"-"Z".</summary>
 		private List<string> _listMissingTeeth;
+		private Patient _patient;
 		///<summary>This is not a list of valid procedures.  The only values to be trusted in this list are the ToothNum and CodeNum.  Never used.</summary>
 		private List<Procedure> _listProcedures;
-		private Patient _patient;
-		//private int pagesPrinted;
-		private PerioCell _perioCellCurLocation;
-		private PerioCell _perioCellPrevLocation;
 		private PerioExam _perioExam;
 		private UserOdPref _userOdPrefCurrentOnly;
+		private UserOdPref _userOdPrefCustomAdvance;
 		private VoiceController _voiceController;
-		#endregion Fields - private
+		private PerioCell _perioCellPrevLocation;
+		private PerioCell _perioCellCurLocation;
+		private List<Def> _listDefsMiscColors;
+		private bool _isExamInUse;
+		#endregion Fields
 
-		#region Constructor
 		///<summary></summary>
 		public FormPerio(Patient patient,List<Procedure> listProcedures)
 		{
@@ -51,156 +54,288 @@ namespace OpenDental{
 			_listProcedures=listProcedures;
 			Lan.F(this);
 		}
-		#endregion Constructor
 
-		#region Methods - private
-		///<summary>Checks if perio is active on a MAD row with the current patient. If it is, locks editing.</summary>
-		private void CheckMobileActivity() {
-			if(!ClinicPrefs.IsODTouchAllowed(Clinics.ClinicNum)) {
-				labelIsMobileActive.Enabled=false;
-				labelIsMobileActive.Visible=false;
-				butUnlockEClip.Enabled=false;
-				butUnlockEClip.Visible=false;
+		private void FormPerio_Load(object sender, System.EventArgs e) {
+			_listDefsMiscColors=Defs.GetDefsForCategory(DefCat.MiscColors,true);
+			butColorBleed.BackColor=_listDefsMiscColors[(int)DefCatMiscColors.PerioBleeding].ItemColor;
+			butColorPus.BackColor=_listDefsMiscColors[(int)DefCatMiscColors.PerioSuppuration].ItemColor;
+			butColorPlaque.BackColor=_listDefsMiscColors[(int)DefCatMiscColors.PerioPlaque].ItemColor;
+			butColorCalculus.BackColor=_listDefsMiscColors[(int)DefCatMiscColors.PerioCalculus].ItemColor;
+			textRedProb.Text=PrefC.GetString(PrefName.PerioRedProb);
+			textRedMGJ.Text =PrefC.GetString(PrefName.PerioRedMGJ);
+			textRedGing.Text=PrefC.GetString(PrefName.PerioRedGing);
+			textRedCAL.Text =PrefC.GetString(PrefName.PerioRedCAL);
+			textRedFurc.Text=PrefC.GetString(PrefName.PerioRedFurc);
+			textRedMob.Text =PrefC.GetString(PrefName.PerioRedMob);
+			//Procedure[] procList=Procedures.Refresh(PatCur.PatNum);
+			List<ToothInitial> listToothInitials=ToothInitials.GetPatientData(_patient.PatNum);
+			_listMissingTeeth=ToothInitials.GetMissingOrHiddenTeeth(listToothInitials);
+			RefreshListExams();
+			gridODExam.SetSelected(PerioExams.ListExams.Count-1,true);//this works even if no items.
+			_userOdPrefCurrentOnly=UserOdPrefs.GetByUserAndFkeyType(Security.CurUser.UserNum,UserOdFkeyType.PerioCurrentExamOnly).FirstOrDefault();
+			if(_userOdPrefCurrentOnly != null && PIn.Bool(_userOdPrefCurrentOnly.ValueString)) {
+				checkShowCurrent.Checked=true;
+			}
+			_userOdPrefCustomAdvance=UserOdPrefs.GetByUserAndFkeyType(Security.CurUser.UserNum,UserOdFkeyType.PerioAutoAdvanceCustom).FirstOrDefault();
+			if(_userOdPrefCustomAdvance!=null && PIn.Bool(_userOdPrefCustomAdvance.ValueString)) {
+				radioFacialsFirst.Checked=true;
+				contrPerio.AutoAdvanceDirection_=AutoAdvanceDirection.Custom;
+			}
+			FillGrid();
+			CheckMobileActivity();
+			Plugins.HookAddCode(this,"FormPerio.Load_end");
+		}
+
+		private void LayoutMenu(){
+			menuMain.BeginUpdate();
+			//Setup----------------------------------------------------------------------------------------------------------
+			menuMain.Add(new MenuItemOD("Setup",menuItemSetup_Click));
+			menuMain.EndUpdate();
+		}
+
+		private void menuItemSetup_Click(Object sender,EventArgs e) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
-			//If someone is currently using this patients exams in eClipboard, ask if this user would like to kick off the other user.
-			bool isExamInUse=MobileAppDevices.IsInUse(_patient.PatNum,MADPage.PerioExamEditPage,MADPage.PerioExamListPage,MADPage.PerioExamOverviewPage,MADPage.FileViewerPage,MADPage.Undefined);
-			bool hasUIChanged=!(_isExamInUse && isExamInUse); //This checks if the state has changed, we don't want to keep refreshing UI if it hasn't.
-			if(!hasUIChanged) {
+			using FormPerioSetup formPerioSetup=new FormPerioSetup();
+			formPerioSetup.ShowDialog();
+		}
+
+		public override void ProcessSignalODs(List<Signalod> listSignals) {
+			if(listSignals.Any(x => x.IType==InvalidType.EClipboard)) {
+				CheckMobileActivity();
+			}
+			//This signal comes in for every action taken by a user on eClipboard - Perio.
+			if(_perioExam!=null && listSignals.Any(x=>x.FKeyType==KeyType.PatNum && x.FKey==_perioExam.PatNum && x.IType==InvalidType.PerioExams)) {
+				RefreshListExams(false);
+				if(gridODExam.ListGridRows.Count>0) {
+					gridODExam.SetSelected(gridODExam.ListGridRows.Count-1);
+				}
+				FillGrid(true);
+				//Since FillGrid can re-enable the GridPerio editing.
+				SetEClipBoardEditing(_isExamInUse);
+			}
+		}
+
+		private void timerEClipCheck_Tick(object sender,EventArgs e) {
+			CheckMobileActivity();
+		}
+
+		///<summary>Goes to the first cell in the grid for this tooth.</summary>
+		///<param name="isFacial">When false, equivalent to lingual.</param>
+		private void GoToTooth(int toothNum,bool isFacial) {
+			ColRow colRowForTooth=GetColRowForTooth(toothNum,isFacial);
+			contrPerio.SetNewCell(colRowForTooth.Col,colRowForTooth.Row);
+		}
+
+		private void GoToToothSurface(int toothNum,bool isFacial,PerioSurface perioSurface) {
+			ColRow colRowForTooth=GetSurfaceColRowForTooth(toothNum,isFacial,perioSurface);
+			contrPerio.SetNewCell(colRowForTooth.Col,colRowForTooth.Row);
+		}
+
+		///<summary>Sets the cursor to the first available open perio slot. The path used in this method follows the autoadvance i.e. 1-16 F,16-1 L,32-17 F, and 17-32 L</summary>
+		private void ResumePath() {
+			List<int> listSkippedTeeth=new List<int>();//int 1-32
+			if(PerioExams.ListExams.Count > 0) {
+				//set skipped teeth based on the last exam in the list: 
+				listSkippedTeeth=PerioMeasures.GetSkipped(PerioExams.ListExams[PerioExams.ListExams.Count-1].PerioExamNum);
+			}
+			List<AutoAdvanceCustom> listAutoAdvanceCustoms=AutoAdvanceCustom.GetDefaultPath();
+			if(radioFacialsFirst.Checked) {
+				listAutoAdvanceCustoms=AutoAdvanceCustom.GetCustomPaths();
+			}
+			ColRow colRowNextAvailable;
+			for(int i=0;i<listAutoAdvanceCustoms.Count;i++) {
+				if(listAutoAdvanceCustoms[i]==null || listSkippedTeeth.Contains(listAutoAdvanceCustoms[i].ToothNum)) {
+					continue;
+				}
+				if(radioFacialsFirst.Checked) {//Auto advance custom.
+					colRowNextAvailable=GetNextAvailableColRowForToothCustom(listAutoAdvanceCustoms[i],ContrPerio.GetNext(listAutoAdvanceCustoms[i],listAutoAdvanceCustoms),
+						ContrPerio.GetPrevious(listAutoAdvanceCustoms[i],listAutoAdvanceCustoms));
+					if(colRowNextAvailable.Col==-1 || colRowNextAvailable.Row==-1) {
+						continue;
+					}
+				}
+				else {//Auto advance NOT custom.
+					colRowNextAvailable=TryGetNextAvailableColRowForTooth(listAutoAdvanceCustoms[i].ToothNum,listAutoAdvanceCustoms[i].Surface==PerioSurface.Facial);
+					if(colRowNextAvailable.Col==-1 || colRowNextAvailable.Row==-1) {
+						continue;
+					}
+					if(listAutoAdvanceCustoms[i].Surface==PerioSurface.Facial) {
+						contrPerio.AutoAdvanceDirection_=AutoAdvanceDirection.Left;
+						radioLeft.Checked=true;
+					}
+					else {//lingual
+						contrPerio.AutoAdvanceDirection_=AutoAdvanceDirection.Right;
+						radioRight.Checked=true;
+					}
+				}
+				contrPerio.SetNewCell(colRowNextAvailable.Col,colRowNextAvailable.Row);
 				return;
 			}
-			_isExamInUse=isExamInUse;
-			if(_isExamInUse) { //Answered No, they would not like to force eClip to checkin, or this method got called by the timer.
-				timerEClipCheck.Start();
-				SetEClipBoardEditing(true);
+		}
+
+		///<summary>Returns the next available ColRow for tooth custom if the current tooth passed in is empty. Checks the tooth's 3 positions to find out if the tooth is empty. Otherwise returns a ColRow with value (-1,-1) to indicate 'none'. This method should only used if Auto Advance Custom is True.</summary>
+		private ColRow GetNextAvailableColRowForToothCustom(AutoAdvanceCustom autoAdvanceCustom,AutoAdvanceCustom autoAdvanceCustomNext,AutoAdvanceCustom autoAdvanceCustomPrev) {
+			ColRow colRowNextAvailable;
+			if(autoAdvanceCustom==null) {//This shouldn't happen.
+				return new ColRow(-1,-1);
+			}
+			//Get the default colrow for the current tooth.
+			ColRow colRowForTooth=GetColRowForTooth(autoAdvanceCustom.ToothNum,autoAdvanceCustom.Surface==PerioSurface.Facial);
+			PerioSequenceType perioSequenceType=contrPerio.GetSequenceForColRow(colRowForTooth);
+			//Get the first position(mesial or distal) for the tooth passed in. We need this because the first position for a custom path will not be the 
+			//same as the default(not custom).
+			colRowForTooth=contrPerio.GetAutoAdvanceCustomColRow(autoAdvanceCustom.ToothNum,autoAdvanceCustom.Surface,perioSequenceType,isReverse:false);
+			//Check all three positions for the tooth. It will return either an empty position or the last position of the tooth.
+			colRowNextAvailable=new ColRow(FirstEmptyPositionX(colRowForTooth),colRowForTooth.Row);
+			//Check the position that was returned above for measurements. This will be the last position of the current tooth.
+			if(string.IsNullOrEmpty(contrPerio.GetCellText(colRowNextAvailable.Col,colRowNextAvailable.Row))) {
+				return colRowNextAvailable;//we found a colrow
+			}
+			return new ColRow(-1,-1);//couldn't find colrow
+		}
+
+		///<summary>Sets bleeding flag on the specified surface for the current tooth. If the cursor is on a blank space and the previous tooth has 
+		///probing entries, it will put the bleeding flag on the previous tooth.</summary>
+		private void SetBleedingFlagForSurface(PerioSurface perioSurface,BleedingFlags bleedingFlags) {
+			int toothNum=_perioCellCurLocation.ToothNum;
+			bool isFacial=_perioCellCurLocation.Surface==PerioSurface.Facial;
+			ColRow colRowForTooth=GetColRowForTooth(toothNum,isFacial);
+			if(contrPerio.IsCellTextEmpty(colRowForTooth)) {
+				//Get the previous tooth. Skipped teeth will get considered. 
+				colRowForTooth=GetPreviousToothColRow(toothNum,isFacial,false);
+				isFacial=IsFacialFromColRow(colRowForTooth);
+				toothNum=GetToothNumFromColRow(colRowForTooth);
+			}
+			if(perioSurface==PerioSurface.Facial) {
+				//User specified the facial colrow of the tooth.
+				isFacial=true;
+			}
+			else if(perioSurface==PerioSurface.Lingual) {
+				//User specified the lingual colrow of the tooth.
+				isFacial=false;
+			}
+			//Get the colrow for the surface passed in. 
+			colRowForTooth=GetSurfaceColRowForTooth(toothNum,isFacial,perioSurface);
+			contrPerio.SetBleedingFlagForColRow(colRowForTooth,bleedingFlags);
+		}
+
+		///<summary>Sets the approprate Auto Advance radio button.</summary>
+		private void SetAutoAdvance() {
+			if(contrPerio.AutoAdvanceDirection_==AutoAdvanceDirection.Custom) {
 				return;
+			}
+			if(_perioCellPrevLocation.Surface==PerioSurface.Facial && _perioCellCurLocation.Surface==PerioSurface.Lingual) {
+				contrPerio.AutoAdvanceDirection_=AutoAdvanceDirection.Right;
+				radioRight.Checked=true;
+			}
+			if(_perioCellPrevLocation.Surface==PerioSurface.Lingual && _perioCellCurLocation.Surface==PerioSurface.Facial) {
+				contrPerio.AutoAdvanceDirection_=AutoAdvanceDirection.Left;
+				radioLeft.Checked=true;
+			}
+		}
+
+		///<summary>Marks the tooth as skipped.</summary>
+		///<param name="doVerifyByVoice">If true, will verbally ask the user if they want to skip the tooth.</param>
+		///<returns>True if the user does choose to skip the tooth.</returns>
+		private bool SkipTooth(int toothNum,bool doVerifyByVoice=true) {
+			if(doVerifyByVoice) {
+				_voiceController?.StopListening();
+				if(!VoiceMsgBox.Show("Mark tooth "+toothNum+" as skipped?",MsgBoxButtons.YesNo)) {
+					this.BeginInvoke(() => _voiceController?.StartListening());//Invoking because recognition events will run when the main thread is free.
+					return false;
+				}
+				this.BeginInvoke(() => _voiceController?.StartListening());//Invoking because recognition events will run when the main thread is free.
+			}
+			ColRow colRowTooth=contrPerio.ColRowSelected;
+			bool isRadioRightChecked=radioRight.Checked;
+			contrPerio.SaveCurExam(_perioExam);
+			int selectedExam=contrPerio.IdxExamSelected;
+			List<int> listSkippedTeeth=new List<int>();//int 1-32
+			if(PerioExams.ListExams.Count > 0) {
+				//set skipped teeth based on the last exam in the list: 
+				listSkippedTeeth=PerioMeasures.GetSkipped(PerioExams.ListExams[PerioExams.ListExams.Count-1].PerioExamNum);
+			}
+			if(!listSkippedTeeth.Contains(toothNum)) {
+				listSkippedTeeth.Add(toothNum);
+			}
+			PerioMeasures.SetSkipped(_perioExam.PerioExamNum,listSkippedTeeth);
+			RefreshListExams();
+			gridODExam.SetSelected(selectedExam,true);
+			FillGrid();
+			if(_perioCellCurLocation.ToothNum==toothNum) {//Go to the next tooth if the _perioCellCurLocation is on the tooth being skipped. 
+				ColRow colRowNextTooth=GetNextToothColRow(toothNum,_perioCellCurLocation.Surface==PerioSurface.Facial);
+				contrPerio.SetNewCell(colRowNextTooth.Col,colRowNextTooth.Row);
 			}
 			else {
-				timerEClipCheck.Stop();
-				SetEClipBoardEditing(false);
+				contrPerio.SetNewCell(colRowTooth.Col,colRowTooth.Row);
 			}
-		}
-
-		private string ConvertListToString(List<string> listStringsTeeth){
-			if(listStringsTeeth.Count==0){
-				return "none";
-			}
-			string retVal="";
-			for(int i=0;i<listStringsTeeth.Count;i++){
-				if(i>0)
-					retVal+=",";
-				retVal+=listStringsTeeth[i];
-			}
-			return retVal;
-		}
-
-		///<summary>Creates a new perio chart and marks any teeth missing as necessary.</summary>
-		private void CreateNewPerioChart() {
-			_perioExam=new PerioExam();
-			_perioExam.PatNum=_patient.PatNum;
-			_perioExam.ExamDate=DateTime.Today;
-			_perioExam.ProvNum=_patient.PriProv;
-			_perioExam.DateTMeasureEdit=MiscData.GetNowDateTime();
-			PerioExams.Insert(_perioExam);
-			PerioMeasures.SetSkipped(_perioExam.PerioExamNum,GetSkippedTeeth());
-		}
-
-		private void FillCounts(){
-			textCountProb.Text=contrPerio.CountTeeth(PerioSequenceType.Probing).Count.ToString();
-			textCountMGJ.Text=contrPerio.CountTeeth(PerioSequenceType.MGJ).Count.ToString();
-			textCountGing.Text=contrPerio.CountTeeth(PerioSequenceType.GingMargin).Count.ToString();
-			textCountCAL.Text=contrPerio.CountTeeth(PerioSequenceType.CAL).Count.ToString();
-			textCountFurc.Text=contrPerio.CountTeeth(PerioSequenceType.Furcation).Count.ToString();
-			textCountMob.Text=contrPerio.CountTeeth(PerioSequenceType.Mobility).Count.ToString();
-		}
-
-		///<summary>Usually set the selected index first</summary>
-		private void FillGrid(bool selectCell=true) {
-			if(gridODExam.GetSelectedIndex()!=-1){
-				contrPerio.AllowPerioEdit=true;
-				if(!Security.IsAuthorized(EnumPermType.PerioEdit,contrPerio.ListPerioExams[gridODExam.GetSelectedIndex()].ExamDate,suppressMessage:true)) {
-					contrPerio.AllowPerioEdit=false;
+			if(contrPerio.AutoAdvanceDirection_!=AutoAdvanceDirection.Custom) {
+				radioRight.Checked=isRadioRightChecked;
+				contrPerio.AutoAdvanceDirection_=AutoAdvanceDirection.Left;
+				if(isRadioRightChecked) {
+					contrPerio.AutoAdvanceDirection_=AutoAdvanceDirection.Right;
 				}
-				_perioExam=contrPerio.ListPerioExams[gridODExam.GetSelectedIndex()];
 			}
-			contrPerio.IdxExamSelected=gridODExam.GetSelectedIndex();
-			contrPerio.SetShowCurrentExamOnly(checkShowCurrent.Checked);
-			contrPerio.LoadData(selectCell);
-			FillIndexes();
-			FillCounts();
-			contrPerio.Invalidate();
-			contrPerio.Focus();//this still doesn't seem to work to enable first arrow click to move
-			if(_perioExam!=null) {
-				textExamNotes.Text=_perioExam.Note;
-			}
+			return true;
 		}
 
-		private void FillIndexes(){
-			textIndexPlaque.Text=contrPerio.ComputeIndex(BleedingFlags.Plaque);
-			textIndexCalculus.Text=contrPerio.ComputeIndex(BleedingFlags.Calculus);
-			textIndexBleeding.Text=contrPerio.ComputeIndex(BleedingFlags.Blood);
-			textIndexSupp.Text=contrPerio.ComputeIndex(BleedingFlags.Suppuration);
-		}
-
-		///<summary>Returns the first non-empty cell for the tooth. If all cells in the tooth are filled, returns the last cell of the tooth.</summary>
-		private int FirstEmptyPositionX(int toothNum,int yVal) {
-			int xVal;
-			if(_perioCellCurLocation.IsFacial) {
-				if(toothNum<=16) {
-					xVal=(toothNum-1)*3+1;
+		///<summary>Moves the cursor to the probing row for the current tooth.</summary>
+		private void GoToProbing() {
+			int yVal;
+			if(_perioCellCurLocation.Surface==PerioSurface.Facial) {
+				if(_perioCellCurLocation.ToothNum<=16) {
+					if(checkShowCurrent.Checked) {
+						yVal=5;
+					}
+					else {
+						yVal=6-Math.Min(6,contrPerio.IdxExamSelected+1);
+					}
 				}
 				else {//ToothNum >= 17
-					xVal=46-(toothNum-17)*3;
+					if(checkShowCurrent.Checked) {
+						yVal=37;
+					}
+					else {
+						yVal=36+Math.Min(6,contrPerio.IdxExamSelected+1);
+					}
 				}
-				if(string.IsNullOrEmpty(contrPerio.GetCellText(xVal,yVal))) {
-					return xVal;
-				}
-				xVal++;
-				if(string.IsNullOrEmpty(contrPerio.GetCellText(xVal,yVal))) {
-					return xVal;
-				}
-				return ++xVal;
 			}
 			else {//Lingual
-				if(toothNum<=16) {
-					xVal=(toothNum-1)*3+3;
+				if(_perioCellCurLocation.ToothNum<=16) {
+					if(checkShowCurrent.Checked) {
+						yVal=15;
+					}
+					else {
+						yVal=14+Math.Min(6,contrPerio.IdxExamSelected+1);
+					}
 				}
 				else {//ToothNum >= 17
-					xVal=48-(toothNum-17)*3;
+					if(checkShowCurrent.Checked) {
+						yVal=26;
+					}
+					else {
+						yVal=27-Math.Min(6,contrPerio.IdxExamSelected+1);
+					}
 				}
-				if(string.IsNullOrEmpty(contrPerio.GetCellText(xVal,yVal))) {
-					return xVal;
-				}
-				xVal--;
-				if(string.IsNullOrEmpty(contrPerio.GetCellText(xVal,yVal))) {
-					return xVal;
-				}
-				return --xVal;
 			}
+			contrPerio.SetNewCell(FirstEmptyPositionX(_perioCellCurLocation.ToothNum,yVal),yVal);
 		}
 
-		///<summary>Returns the first non-empty cell for the ColRow passed in.</summary>
-		private int FirstEmptyPositionX(ColRow colRow) {
-			int xVal=colRow.Col;
-			int yVal=colRow.Row;
-			if(string.IsNullOrEmpty(contrPerio.GetCellText(xVal,yVal))) {
-				return xVal;
+		///<summary>Moves the cursor to the mobility row for the current tooth.</summary>
+		private void GoToMobility() {
+			PerioCell perioCell=contrPerio.GetCurrentCell();
+			int toothNum=perioCell.ToothNum;
+			bool isFacial=_perioCellCurLocation.Surface==PerioSurface.Facial;
+			if(contrPerio.IsCellTextEmpty(GetColRowForTooth(toothNum,isFacial))) {
+				toothNum=GetToothNumFromColRow(GetPreviousToothColRow(toothNum,isFacial));
 			}
-			//First position is not empty. Get the 2nd position of the colrow passed in.
-			ColRow colRowNextAvailable=contrPerio.TryFindNextCell(colRow,isReverse:false,setDirection:false);
-			if(colRowNextAvailable==null) {
-				return xVal;
+			ColRow colRowForMobility=GetColRowForMobility(toothNum);
+			if(!contrPerio.IsCellTextEmpty(colRowForMobility)) {
+				colRowForMobility=GetColRowForMobility(perioCell.ToothNum);
 			}
-			xVal=colRowNextAvailable.Col;
-			if(string.IsNullOrEmpty(contrPerio.GetCellText(xVal,yVal))) {
-				return xVal;
-			}
-			//The section position is not empty. Get the last position of the colrow passed in.
-			colRowNextAvailable=contrPerio.TryFindNextCell(colRowNextAvailable,isReverse:false,setDirection:false);
-			if(colRowNextAvailable==null){
-				return xVal;
-			}
-			return colRowNextAvailable.Col;//this should be the last position of the colrow passed in.
+			contrPerio.SetNewCell(colRowForMobility.Col,colRowForMobility.Row);
 		}
 
 		private ColRow GetColRowForMobility(int toothNum) {
@@ -215,6 +350,133 @@ namespace OpenDental{
 				yVal=32;
 			}
 			return new ColRow(xVal,yVal);
+		}
+
+		///<summary>Moves the cursor to the gingival margin row for the current tooth.</summary>
+		private void GoToGingivalMargin() {
+			GoToSequenceType(PerioSequenceType.GingMargin);
+		}
+
+		///<summary>Moves the cursor to the furcation row for the current tooth.</summary>
+		private void GoToFurcation() {
+			GoToSequenceType(PerioSequenceType.Furcation);
+		}
+
+		///<summary>Moves the cursor to the muco gingival junction row for the current tooth.</summary>
+		private void GoToMGJ() {
+			GoToSequenceType(PerioSequenceType.MGJ);
+		}
+
+		///<summary>Moves the cursor to the passed in SequenceType for the current tooth.</summary>
+		private void GoToSequenceType(PerioSequenceType perioSequenceType) {
+			int toothNum=_perioCellCurLocation.ToothNum;
+			AutoAdvanceDirection autoAdvanceDirectionOld=contrPerio.AutoAdvanceDirection_;
+			bool isFacial=_perioCellCurLocation.Surface==PerioSurface.Facial;
+			ColRow colRowForTooth=GetColRowForTooth(toothNum,isFacial);
+			if(contrPerio.IsCellTextEmpty(colRowForTooth)) {
+				colRowForTooth=GetPreviousToothColRow(toothNum,isFacial);
+				isFacial=IsFacialFromColRow(colRowForTooth);
+				toothNum=GetToothNumFromColRow(colRowForTooth);
+			}
+			int yPos=-1;
+			switch(perioSequenceType) {
+				case PerioSequenceType.Furcation:
+					if(toothNum<=16) {
+						yPos=(isFacial ? 9 : 12);
+					}
+					else {//ToothNum >= 17
+						yPos=(isFacial ? 33 : 30);
+					}
+					break;
+				case PerioSequenceType.GingMargin:
+					if(toothNum<=16) {
+						yPos=(isFacial ? 7 : 14);
+					}
+					else {//ToothNum >= 17
+						yPos=(isFacial ? 35 : 28);
+					}
+					break;
+				case PerioSequenceType.MGJ:
+					if(toothNum<=16) {
+						yPos=6;
+					}
+					else {//ToothNum >= 17
+						yPos=(isFacial ? 36 : 27);
+					}
+					break;
+			}
+			int xPos;
+			//create a new colrow with the updated Y pos for the passed in sequence type. 
+			ColRow colRowForSequenceType=new ColRow(colRowForTooth.Col,yPos);
+			//Teeth 1-32 F isReverse=false, Teeth 1-32 L isReverse=true;
+			//Find the next available colrow for the sequence type.
+			ColRow colRowNextAvailable=TryGetNextEmptyColRow(colRowForSequenceType,!isFacial);
+			if(toothNum!=GetToothNumFromColRow(colRowNextAvailable)) 
+			{
+				//No positions are empty or the next available colrow is on a new tooth,. Use the xPos from the toothOld.
+				xPos=GetColRowForTooth(_perioCellCurLocation.ToothNum,_perioCellCurLocation.Surface==PerioSurface.Facial).Col;
+				contrPerio.AutoAdvanceDirection_=autoAdvanceDirectionOld;//change this value back just in case we changed it above.
+			}
+			else {
+				//The new colrow for the sequence was changed. Set the new xPos.
+				xPos=FirstEmptyPositionX(toothNum,yPos);
+			}
+			//Set the cursor with the new colrows for the sequence.
+			contrPerio.SetNewCell(xPos,yPos);
+		}
+
+		private bool IsFacialFromColRow(ColRow colRow) {
+			return contrPerio.GetPerioCellFromColRow(colRow).Surface==PerioSurface.Facial;
+		}
+
+		///<summary>Gets the previous tooth colrow. Takes into account skipped teeth.</summary>
+		private ColRow GetPreviousToothColRow(int toothOld,bool isFacial,bool doSetDirection=true) {
+			contrPerio.TryFindNextCell(GetColRowForTooth(toothOld,isFacial),true,out ColRow colRowPrev,doSetDirection);
+			return colRowPrev;
+		}
+
+		///<summary>Gets the next tooth colrow.  Takes into account skipped teeth.</summary>
+		private ColRow GetNextToothColRow(int toothOld,bool isFacial) {
+			contrPerio.TryFindNextCell(GetColRowForTooth(toothOld,isFacial),false,out ColRow colRowNext);
+			return colRowNext;
+		}
+
+		///<summary>Returns a colrow for the tooth's surface passed in.</summary>
+		private ColRow GetSurfaceColRowForTooth(int toothNum,bool isFacial,PerioSurface perioSurface) {
+			ColRow colRowForTooth=GetColRowForTooth(toothNum,isFacial);
+			//Get set to either the right(Lingual) or left(Facial) position.
+			int xPos=colRowForTooth.Col;
+			//Midline=Looking at the Perio Chart(FormPerio.cs designer), this is the vertial line down the middle.
+			//Facial and Lingual= will always be the middle cell of each of the cells in the perio chart.
+			//Mesial=This is the position closest to the Midline. Teeth 1-8 and 25-32 right cell, teeth 9-24 left cell.
+			//Distal=This is the postion furthest away from the midline. Teeth 1-8 and 25-32 left cell, teeth 9-24 right cell.
+			switch(perioSurface) {
+				case PerioSurface.Distal:
+					if(toothNum.Between(9,24)) {
+						//Get the right position.
+						xPos=xPos + (isFacial ? 2 : 0);
+					}
+					else {
+						//Teeth 1-8 and 25-32. Get the left position.
+						xPos=xPos + (isFacial ? 0 : -2);
+					}
+					break;
+				case PerioSurface.Facial:
+				case PerioSurface.Lingual:
+					xPos=xPos + (isFacial ? 1 : -1);//middle position
+					break;
+				case PerioSurface.Mesial:
+					if(toothNum.Between(9,24)) {
+						//Get the left position.
+						xPos=xPos + (isFacial ? 0 : -2);
+					}
+					else {
+						//Teeth 1-8 and 25-32 right position
+						xPos=xPos + (isFacial ? 2 : 0);
+					}
+					break;
+			}
+			return new ColRow(xPos,colRowForTooth.Row);
 		}
 
 		///<summary>Returns a colrow for the tooth's passed in.</summary>
@@ -261,6 +523,148 @@ namespace OpenDental{
 			return new ColRow(x,y);
 		}
 
+		private int GetToothNumFromColRow(ColRow colRow) {
+			PerioCell perioCell=contrPerio.GetPerioCellFromColRow(colRow);
+			return perioCell.ToothNum;
+		}
+
+		///<summary>Gets the next available tooth(ColRow) if there is an empty cell. Returns a ColRow with value (-1,-1) if all cells are filled.</summary>
+		private ColRow TryGetNextAvailableColRowForTooth(int toothNum,bool isFacial) {
+			//Get the first colrow for the tooth passed in.
+			ColRow colRowForTooth=GetColRowForTooth(toothNum,isFacial);
+			//Check all three positions for the tooth. It will return either an empty position or the last position of the tooth.
+			ColRow colRowNextAvailable=new ColRow(FirstEmptyPositionX(colRowForTooth),colRowForTooth.Row);
+			//Check the position that was returned above for measurements.
+			if(!string.IsNullOrEmpty(contrPerio.GetCellText(colRowNextAvailable.Col,colRowNextAvailable.Row))) {
+				return new ColRow(-1,-1);//Tooth is not empty.
+			}
+			return colRowNextAvailable;
+		}
+
+		///<summary>Gets the next available colrow.</summary>
+		private ColRow TryGetNextEmptyColRow(ColRow colRowForTooth,bool isReverse) {
+			if(string.IsNullOrEmpty(contrPerio.GetCellText(colRowForTooth.Col,colRowForTooth.Row))) {
+				return colRowForTooth;//Tooth is not empty.
+			}
+			return NextEmptyColRowHelper(colRowForTooth,isReverse);
+		}
+
+		///<summary>Uses the AdvanceCell method to figure out the.</summary>
+		private ColRow NextEmptyColRowHelper(ColRow colRowForTooth,bool isReverse) {
+			contrPerio.TryFindNextCell(colRowForTooth,isReverse,out ColRow colRowNextAvailable);
+			if(string.IsNullOrEmpty(contrPerio.GetCellText(colRowNextAvailable.Col,colRowNextAvailable.Row))) {
+				return colRowNextAvailable;//Tooth is not empty.
+			}
+			int toothNum=GetToothNumFromColRow(colRowNextAvailable);
+			if(toothNum<1 || toothNum>32) {//I think we need <=1 and >=32
+				return colRowForTooth;
+			}
+			if(colRowForTooth.IsEquivalentTo(colRowNextAvailable)) {
+				return colRowForTooth;//We are probably trying to advance into a skipped tooth that's the last tooth.
+			}
+			return NextEmptyColRowHelper(colRowNextAvailable,isReverse);
+		}
+
+		///<summary>Returns the first non-empty cell for the tooth. If all cells in the tooth are filled, returns the last cell of the tooth.</summary>
+		private int FirstEmptyPositionX(int toothNum,int yVal) {
+			int xVal;
+			if(_perioCellCurLocation.Surface==PerioSurface.Facial) {
+				if(toothNum<=16) {
+					xVal=(toothNum-1)*3+1;
+				}
+				else {//ToothNum >= 17
+					xVal=46-(toothNum-17)*3;
+				}
+				if(string.IsNullOrEmpty(contrPerio.GetCellText(xVal,yVal))) {
+					return xVal;
+				}
+				xVal++;
+				if(string.IsNullOrEmpty(contrPerio.GetCellText(xVal,yVal))) {
+					return xVal;
+				}
+				return ++xVal;
+			}
+			else {//Lingual
+				if(toothNum<=16) {
+					xVal=(toothNum-1)*3+3;
+				}
+				else {//ToothNum >= 17
+					xVal=48-(toothNum-17)*3;
+				}
+				if(string.IsNullOrEmpty(contrPerio.GetCellText(xVal,yVal))) {
+					return xVal;
+				}
+				xVal--;
+				if(string.IsNullOrEmpty(contrPerio.GetCellText(xVal,yVal))) {
+					return xVal;
+				}
+				return --xVal;
+			}
+		}
+
+		///<summary>Returns the first non-empty cell for the ColRow passed in.</summary>
+		private int FirstEmptyPositionX(ColRow colRow) {
+			int xVal=colRow.Col;
+			int yVal=colRow.Row;
+			if(string.IsNullOrEmpty(contrPerio.GetCellText(xVal,yVal))) {
+				return xVal;
+			}
+			//First position is not empty. Get the 2nd position of the colrow passed in.
+			ColRow colRowNextAvailable;
+			if(!contrPerio.TryFindNextCell(colRow,false,out colRowNextAvailable,setDirection: false)) {
+				return xVal;
+			}
+			xVal=colRowNextAvailable.Col;
+			if(string.IsNullOrEmpty(contrPerio.GetCellText(xVal,yVal))) {
+				return xVal;
+			}
+			//The section position is not empty. Get the last position of the colrow passed in.
+			contrPerio.TryFindNextCell(colRowNextAvailable,false,out colRowNextAvailable,setDirection: false);
+			return colRowNextAvailable.Col;//this should be the last position of the colrow passed in.
+		}
+
+		/// <summary>Used to force focus to the hidden textbox when showing this form.</summary>
+		private void FormPerio_Shown(object sender,EventArgs e) {
+			textInputBox.Focus();//This cannot go into load because focus must come after window has been shown.
+		}
+
+		///<summary>After this method runs, the selected index is usually set.</summary>
+		private void RefreshListExams(bool doSkipRefreshMeasures=false) {
+			//most recent date at the bottom
+			PerioExams.Refresh(_patient.PatNum);
+			if(!doSkipRefreshMeasures) {
+				PerioMeasures.Refresh(_patient.PatNum,PerioExams.ListExams);
+			}
+			gridODExam.BeginUpdate();
+			gridODExam.Columns.Clear();
+			gridODExam.ListGridRows.Clear();
+			OpenDental.UI.GridColumn col;
+			col=new OpenDental.UI.GridColumn(Lan.g("TablePerioExam","Exam Date"),75,HorizontalAlignment.Center);
+			gridODExam.Columns.Add(col);
+			col=new OpenDental.UI.GridColumn(Lan.g("TablePerioExam","Provider"),75,HorizontalAlignment.Center);
+			gridODExam.Columns.Add(col);
+			col=new OpenDental.UI.GridColumn(Lan.g("TablePerioExam","Exam Notes"),150,HorizontalAlignment.Center);
+			gridODExam.Columns.Add(col);
+			for(int i=0;i<PerioExams.ListExams.Count;i++) {
+				OpenDental.UI.GridRow row=new OpenDental.UI.GridRow();
+				row.Cells.Add(PerioExams.ListExams[i].ExamDate.ToShortDateString());
+				row.Cells.Add(Providers.GetAbbr(PerioExams.ListExams[i].ProvNum));
+				int index5thNewLine=GetIndexCount(PerioExams.ListExams[i].Note,"\n",5);//Our goal is to get no more than 5 lines into the text box.
+				int noteEnd=90;//90 characters is about what it takes to get most strings to fit the 5 lines.
+				if(PerioExams.ListExams[i].Note.Length > noteEnd || index5thNewLine > -1) {
+					if(index5thNewLine > -1) {
+						noteEnd=Math.Min(noteEnd,index5thNewLine);
+					}
+					row.Cells.Add(PerioExams.ListExams[i].Note.Substring(0,noteEnd)+"(...)");
+				} 
+				else {
+					row.Cells.Add(PerioExams.ListExams[i].Note);
+				}
+				gridODExam.ListGridRows.Add(row);
+			}
+			gridODExam.EndUpdate();
+		}
+
 		///<summary>Gets the index of the given target string, within the value string, where the count is the number of matched iterations. Returns -1 if there are no matches or less than count matches.</summary>
 		private int GetIndexCount(string value,string target,int count) {
 			int countOccurrences=0;
@@ -275,174 +679,137 @@ namespace OpenDental{
 			return -1;
 		}
 
-		///<summary>Gets the next tooth colrow.  Takes into account skipped teeth.</summary>
-		private ColRow GetNextToothColRow(int toothOld,bool isFacial) {
-			ColRow colRow=GetColRowForTooth(toothOld,isFacial);
-			ColRow colRowNext=contrPerio.TryFindNextCell(colRow,isReverse:false);
-			if(colRowNext==null){
-				return colRow;
+		///<summary>Orion only.</summary>
+		private void RefreshListPlaque() {
+			PerioExams.Refresh(_patient.PatNum);
+			PerioMeasures.Refresh(_patient.PatNum,PerioExams.ListExams);
+			listPlaqueHistory.Items.Clear();
+			for(int i=0;i<PerioExams.ListExams.Count;i++) {
+				string ph="";
+				ph=PerioExams.ListExams[i].ExamDate.ToShortDateString()+"\t";
+				contrPerio.IdxExamSelected=i;
+				contrPerio.LoadData();
+				ph+=contrPerio.ComputeOrionPlaqueIndex();
+				listPlaqueHistory.Items.Add(ph);
 			}
-			return colRowNext;
+			//Not sure if necessary but set it back to what it was
+			contrPerio.IdxExamSelected=gridODExam.GetSelectedIndex();
 		}
 
-		///<summary>Gets the previous tooth colrow. Takes into account skipped teeth.</summary>
-		private ColRow GetPreviousToothColRow(int toothOld,bool isFacial,bool doSetDirection=true) {
-			ColRow colRow=GetColRowForTooth(toothOld,isFacial);
-			ColRow colRowPrev=contrPerio.TryFindNextCell(colRow,isReverse:true,doSetDirection);
-			if(colRowPrev==null){
-				return colRow;
-			}
-			return colRowPrev;
-		}
-
-		///<summary>Returns a list of skipped teeth.</summary>
-		private List<int> GetSkippedTeeth() {
-			List<int> listSkippedTeeth=new List<int>();
-			if(contrPerio.ListPerioExams.Count > 0) {
-				//set skipped teeth based on the last exam in the list: 
-				listSkippedTeeth=PerioMeasures.GetSkipped(contrPerio.ListPerioExams[contrPerio.ListPerioExams.Count-1].PerioExamNum);
-			}
-			//For patient's first perio chart, any teeth marked missing are automatically marked skipped.
-			if(contrPerio.ListPerioExams.Count != 0 && !PrefC.GetBool(PrefName.PerioSkipMissingTeeth)) {
-				return listSkippedTeeth.Distinct().ToList();
-			}
-			for(int i=0;i<_listMissingTeeth.Count;i++) {
-				if(_listMissingTeeth[i].CompareTo("A") >= 0 && _listMissingTeeth[i].CompareTo("Z") <= 0) {//if is a letter (not a number)
-					continue;//Skipped teeth are only recorded by tooth number within the perio exam.
-				}
-				int toothNum=PIn.Int(_listMissingTeeth[i]);
-				//Check if this tooth has had an implant done AND the office has the preference to SHOW implants
-				if(PrefC.GetBool(PrefName.PerioTreatImplantsAsNotMissing) && ContrPerio.IsImplant(toothNum)) {
-					listSkippedTeeth.RemoveAll(x => x==toothNum);//Remove the tooth from the list of skipped teeth if it exists.
-					continue;//We do note want to add it back to the list below.
-				}
-				//This tooth is missing and we know it is not an implant OR the office has the preference to ignore implants.
-				//Simply add it to our list of skipped teeth.
-				listSkippedTeeth.Add(toothNum);
-			}
-			return listSkippedTeeth.Distinct().ToList();
-		}
-
-		///<summary>Returns a colrow for the tooth's surface passed in.</summary>
-		private ColRow GetSurfaceColRowForTooth(int toothNum,bool isFacial,EnumPerioMMidD perioSurface) {
-			ColRow colRowForTooth=GetColRowForTooth(toothNum,isFacial);
-			//Get set to either the right(Lingual) or left(Facial) position.
-			int xPos=colRowForTooth.Col;
-			//Midline=Looking at the Perio Chart(FormPerio.cs designer), this is the vertial line down the middle.
-			//Middle= will always be the middle cell of each triplet of cells in the perio chart.
-			//Mesial=This is the position closest to the Midline. Teeth 1-8 and 25-32 right cell, teeth 9-24 left cell.
-			//Distal=This is the postion furthest away from the midline. Teeth 1-8 and 25-32 left cell, teeth 9-24 right cell.
-			switch(perioSurface) {
-				case EnumPerioMMidD.Distal:
-					if(toothNum.Between(9,24)) {
-						//Get the right position.
-						xPos=xPos + (isFacial ? 2 : 0);
-					}
-					else {
-						//Teeth 1-8 and 25-32. Get the left position.
-						xPos=xPos + (isFacial ? 0 : -2);
-					}
-					break;
-				case EnumPerioMMidD.Middle:
-					xPos=xPos + (isFacial ? 1 : -1);//middle position
-					break;
-				case EnumPerioMMidD.Mesial:
-					if(toothNum.Between(9,24)) {
-						//Get the left position.
-						xPos=xPos + (isFacial ? 0 : -2);
-					}
-					else {
-						//Teeth 1-8 and 25-32 right position
-						xPos=xPos + (isFacial ? 2 : 0);
-					}
-					break;
-			}
-			return new ColRow(xPos,colRowForTooth.Row);
-		}
-
-		private int GetToothNumFromColRow(ColRow colRow) {
-			PerioCell perioCell=contrPerio.GetPerioCellFromColRow(colRow);
-			return perioCell.ToothNum;
-		}
-
-		private void LayoutMenu(){
-			menuMain.BeginUpdate();
-			//Setup----------------------------------------------------------------------------------------------------------
-			menuMain.Add(new MenuItemOD("Setup",menuItemSetup_Click));
-			menuMain.EndUpdate();
-		}
-
-		///<summary>Uses the AdvanceCell method to figure out the.</summary>
-		private ColRow NextEmptyColRowHelper(ColRow colRowForTooth,bool isReverse) {
-			ColRow colRowNextAvailable=contrPerio.TryFindNextCell(colRowForTooth,isReverse);
-			if(colRowNextAvailable==null){
-				colRowNextAvailable=colRowForTooth;
-			}
-			if(string.IsNullOrEmpty(contrPerio.GetCellText(colRowNextAvailable.Col,colRowNextAvailable.Row))) {
-				return colRowNextAvailable;//Tooth is not empty.
-			}
-			int toothNum=GetToothNumFromColRow(colRowNextAvailable);
-			if(toothNum<1 || toothNum>32) {//I think we need <=1 and >=32
-				return colRowForTooth;
-			}
-			if(colRowForTooth.IsEquivalentTo(colRowNextAvailable)) {
-				return colRowForTooth;//We are probably trying to advance into a skipped tooth that's the last tooth.
-			}
-			return NextEmptyColRowHelper(colRowNextAvailable,isReverse);
-		}
-
-		///<summary>The only valid numbers are 0 through 9</summary>
-		private void NumberClicked(int number){
-			if(contrPerio.IdxExamSelected==-1) {
-				MessageBox.Show(Lan.g(this,"Please add or select an exam first in the list to the left."));
+		///<summary>Checks if perio is active on a MAD row with the current patient. If it is, locks editing.</summary>
+		private void CheckMobileActivity() {
+			if(!LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.ODTouch,Clinics.ClinicNum)) {
+				groupEClip.Enabled=false;
+				groupEClip.Visible=false;
 				return;
 			}
-			if(_isTenDown) {
-				contrPerio.ButtonPressed(10+number);
+			//If someone is currently using this patients exams in eClipboard, ask if this user would like to kick off the other user.
+			bool isExamInUse=MobileAppDevices.IsInUse(_patient.PatNum,MADPage.PerioExamEditPage,MADPage.PerioExamListPage,MADPage.PerioExamOverviewPage,MADPage.FileViewerPage,MADPage.Undefined);
+			bool hasUIChanged=!(_isExamInUse && isExamInUse); //This checks if the state has changed, we don't want to keep refreshing UI if it hasn't.
+			if(!hasUIChanged) {
+				return;
+			}
+			_isExamInUse=isExamInUse;
+			if(_isExamInUse) { //Answered No, they would not like to force eClip to checkin, or this method got called by the timer.
+				timerEClipCheck.Start();
+				SetEClipBoardEditing(true);
+				return;
 			}
 			else {
-				contrPerio.ButtonPressed(number);
+				timerEClipCheck.Stop();
+				SetEClipBoardEditing(false);
 			}
-			_isTenDown=false;
-			SetLabelFwdReverse();
-			contrPerio.Focus();
 		}
 
-		///<summary>After this method runs, the selected index is usually set.</summary>
-		private void RefreshListExams(bool skipRefreshMeasures=false) {
-			//most recent date at the bottom
-			contrPerio.ListPerioExams=PerioExams.Refresh(_patient.PatNum);
-			if(!skipRefreshMeasures) {
-				contrPerio.ListPerioMeasures=PerioMeasures.GetForPatient(_patient.PatNum);
-			}
-			gridODExam.BeginUpdate();
-			gridODExam.Columns.Clear();
-			gridODExam.ListGridRows.Clear();
-			OpenDental.UI.GridColumn gridColumn;
-			gridColumn=new OpenDental.UI.GridColumn(Lan.g("TablePerioExam","Exam Date"),75,HorizontalAlignment.Center);
-			gridODExam.Columns.Add(gridColumn);
-			gridColumn=new OpenDental.UI.GridColumn(Lan.g("TablePerioExam","Provider"),75,HorizontalAlignment.Center);
-			gridODExam.Columns.Add(gridColumn);
-			gridColumn=new OpenDental.UI.GridColumn(Lan.g("TablePerioExam","Exam Notes"),150,HorizontalAlignment.Center);
-			gridODExam.Columns.Add(gridColumn);
-			for(int i=0;i<contrPerio.ListPerioExams.Count;i++) {
-				OpenDental.UI.GridRow gridRow=new OpenDental.UI.GridRow();
-				gridRow.Cells.Add(contrPerio.ListPerioExams[i].ExamDate.ToShortDateString());
-				gridRow.Cells.Add(Providers.GetAbbr(contrPerio.ListPerioExams[i].ProvNum));
-				int index5thNewLine=GetIndexCount(contrPerio.ListPerioExams[i].Note,"\n",5);//Our goal is to get no more than 5 lines into the text box.
-				int noteEnd=90;//90 characters is about what it takes to get most strings to fit the 5 lines.
-				if(contrPerio.ListPerioExams[i].Note.Length > noteEnd || index5thNewLine > -1) {
-					if(index5thNewLine > -1) {
-						noteEnd=Math.Min(noteEnd,index5thNewLine);
-					}
-					gridRow.Cells.Add(contrPerio.ListPerioExams[i].Note.Substring(0,noteEnd)+"(...)");
-				} 
-				else {
-					gridRow.Cells.Add(contrPerio.ListPerioExams[i].Note);
+		///<summary>Unique to when eClipboard is viewing / editing this patients perio exams. Starts the eClipboard timer check.</summary>
+		private void SetEClipBoardEditing(bool isEditingOnEClipBoard) {
+			contrPerio.AllowPerioEdit=!isEditingOnEClipBoard;
+			gridODExam.Enabled=!isEditingOnEClipBoard;
+			butAdd.Enabled=!isEditingOnEClipBoard;
+			butCopyNote.Enabled=!isEditingOnEClipBoard;
+			butCopyPrevious.Enabled=!isEditingOnEClipBoard;
+			butDelete.Enabled=!isEditingOnEClipBoard;
+			butEClipboard.Enabled=!isEditingOnEClipBoard;
+			butAllExamsEclip.Enabled=!isEditingOnEClipBoard;
+			butListen.Enabled=!isEditingOnEClipBoard;
+			butDefault.Enabled=!isEditingOnEClipBoard;
+			butUnlockEClip.Enabled=isEditingOnEClipBoard;
+			labelIsMobileActive.Visible=isEditingOnEClipBoard;
+		}
+
+		///<summary>Usually set the selected index first</summary>
+		private void FillGrid(bool doSelectCell=true) {
+			if(gridODExam.GetSelectedIndex()!=-1){
+				contrPerio.AllowPerioEdit=true;
+				if(!Security.IsAuthorized(Permissions.PerioEdit,PerioExams.ListExams[gridODExam.GetSelectedIndex()].ExamDate,true)) {
+					contrPerio.AllowPerioEdit=false;
 				}
-				gridODExam.ListGridRows.Add(gridRow);
+				_perioExam=PerioExams.ListExams[gridODExam.GetSelectedIndex()];
 			}
-			gridODExam.EndUpdate();
+			contrPerio.IdxExamSelected=gridODExam.GetSelectedIndex();
+			contrPerio.ShowCurrentExamOnly=checkShowCurrent.Checked;
+			contrPerio.LoadData(doSelectCell);
+			FillIndexes();
+			FillCounts();
+			contrPerio.Invalidate();
+			contrPerio.Focus();//this still doesn't seem to work to enable first arrow click to move
+			if(_perioExam!=null) {
+				textExamNotes.Text=_perioExam.Note;
+			}
+		}
+		
+		private void gridODExam_CellClick(object sender,UI.ODGridClickEventArgs e) {
+			if(gridODExam.GetSelectedIndex()==contrPerio.IdxExamSelected) { 
+				return;
+			}
+			//Only continues if clicked on other than current exam
+			contrPerio.SaveCurExam(_perioExam);
+			//no need to RefreshListExams because it has not changed
+			PerioExams.Refresh(_patient.PatNum);//refresh instead
+			PerioMeasures.Refresh(_patient.PatNum,PerioExams.ListExams);
+			FillGrid();
+		}
+
+		private void gridODExam_CellDoubleClick(object sender,UI.ODGridClickEventArgs e) {
+			//remember that the first click may not have triggered the mouse down routine
+			//and the second click will never trigger it.
+			if(gridODExam.GetSelectedIndex()==-1) {
+				return;
+			}
+			if(!Security.IsAuthorized(Permissions.PerioEdit,PerioExams.ListExams[gridODExam.GetSelectedIndex()].ExamDate)) {
+				return;
+			}
+			//a PerioExam.Cur will always have been set through mousedown(or similar),then FillGrid
+			contrPerio.SaveCurExam(_perioExam);
+			PerioExams.Refresh(_patient.PatNum);//list will not change
+			PerioMeasures.Refresh(_patient.PatNum,PerioExams.ListExams);
+			using FormPerioEdit formPerioEdit=new FormPerioEdit();
+			formPerioEdit.PerioExamCur=_perioExam;
+			formPerioEdit.ShowDialog();
+			int index=gridODExam.GetSelectedIndex();
+			RefreshListExams();
+			gridODExam.SetSelected(index,true);
+			FillGrid();
+		}
+
+		private void butDefault_Click(object sender,EventArgs e) {
+			if(!Security.IsAuthorized(Permissions.PerioEdit,MiscData.GetNowDateTime())){
+				return;
+			}
+			string prefProbeDepths=PrefC.GetString(PrefName.PerioDefaultProbeDepths);
+			if(prefProbeDepths.Length!=192) {
+				MsgBox.Show(this,"You have not set up a default exam. Please click Setup to set up a default exam.");
+				return;
+			}
+			if(gridODExam.GetSelectedIndex()!=-1){
+				contrPerio.SaveCurExam(_perioExam);
+			}
+			CreateNewPerioChart();
+			SetDefault(prefProbeDepths);
+			RefreshListExams();
+			gridODExam.SetSelected(gridODExam.ListGridRows.Count-1,true);
+			FillGrid();
+			SecurityLogs.MakeLogEntry(Permissions.PerioEdit,_patient.PatNum,"Default perio exam created");
 		}
 
 		///<summary>Inserts a perio measure for each tooth using the PerioDefaultProbeDepths preference. Does not insert values for skipped teeth</summary>
@@ -514,172 +881,587 @@ namespace OpenDental{
 			PerioMeasures.InsertMany(listPerioMeasures);
 		}
 
-		///<summary>Unique to when eClipboard is viewing / editing this patients perio exams. Starts the eClipboard timer check.</summary>
-		private void SetEClipBoardEditing(bool isEditingOnEClipBoard) {
-			contrPerio.AllowPerioEdit=!isEditingOnEClipBoard;
-			gridODExam.Enabled=!isEditingOnEClipBoard;
-			butAdd.Enabled=!isEditingOnEClipBoard;
-			butCopyNote.Enabled=!isEditingOnEClipBoard;
-			butCopyPrevious.Enabled=!isEditingOnEClipBoard;
-			butDelete.Enabled=!isEditingOnEClipBoard;
-			butListen.Enabled=!isEditingOnEClipBoard;
-			butDefault.Enabled=!isEditingOnEClipBoard;
-			butUnlockEClip.Enabled=isEditingOnEClipBoard;
-			labelIsMobileActive.Visible=isEditingOnEClipBoard;
-		}
-
-		///<summary>Sets Forward/Reverse label in Current Direction groupbox based on expected direction from the path and the current direction</summary>
-		private void SetLabelFwdReverse(){
-			PerioCell perioCell=contrPerio.GetCurrentCell() ;
-			List<PerioAdvancePos> listPerioAdvancePoss=PerioAdvancePos.GetPath(contrPerio.EnumAdvanceSequence_);
-			PerioAdvancePos perioAdvancePos=listPerioAdvancePoss.Find(x => x.ToothNum==perioCell.ToothNum && x.IsFacial==perioCell.IsFacial);
-			if(perioAdvancePos is null){
+		private void butAdd_Click(object sender, System.EventArgs e) {
+			if(!Security.IsAuthorized(Permissions.PerioEdit,MiscData.GetNowDateTime())){
 				return;
-			}
-			labelFwdReverse.Text="Forward";
-			if(perioAdvancePos.EnumCurrentDirection2!=contrPerio.EnumCurrentDirection_){//Direction expected by the path and current direction do not match
-				labelFwdReverse.Text="Reverse";
-			}
-		}
-
-		///<summary>Gets the next available tooth(ColRow) if there is an empty cell. Returns a ColRow with value (-1,-1) if all cells are filled.</summary>
-		private ColRow TryGetNextAvailableColRowForTooth(int toothNum,bool isFacial) {
-			//Get the first colrow for the tooth passed in.
-			ColRow colRowForTooth=GetColRowForTooth(toothNum,isFacial);
-			//Check all three positions for the tooth. It will return either an empty position or the last position of the tooth.
-			ColRow colRowNextAvailable=new ColRow(FirstEmptyPositionX(colRowForTooth),colRowForTooth.Row);
-			//Check the position that was returned above for measurements.
-			if(!string.IsNullOrEmpty(contrPerio.GetCellText(colRowNextAvailable.Col,colRowNextAvailable.Row))) {
-				return new ColRow(-1,-1);//Tooth is not empty.
-			}
-			return colRowNextAvailable;
-		}
-
-		///<summary>Gets the next available colrow.</summary>
-		private ColRow TryGetNextEmptyColRow(ColRow colRowForTooth,bool isReverse) {
-			if(string.IsNullOrEmpty(contrPerio.GetCellText(colRowForTooth.Col,colRowForTooth.Row))) {
-				return colRowForTooth;//Tooth is not empty.
-			}
-			return NextEmptyColRowHelper(colRowForTooth,isReverse);
-		}
-		#endregion Methods - private
-
-		#region Methods - Event Handlers public
-		public override void ProcessSignalODs(List<Signalod> listSignals) {
-			if(listSignals.Any(x => x.IType==InvalidType.EClipboard)) {
-				CheckMobileActivity();
-			}
-			//This signal comes in for every action taken by a user on eClipboard - Perio.
-			if(_perioExam!=null && listSignals.Any(x=>x.FKeyType==KeyType.PatNum && x.FKey==_perioExam.PatNum && x.IType==InvalidType.PerioExams)) {
-				RefreshListExams(false);
-				if(gridODExam.ListGridRows.Count>0) {
-					gridODExam.SetSelected(gridODExam.ListGridRows.Count-1);
-				}
-				FillGrid(selectCell:true);
-				//Since FillGrid can re-enable the GridPerio editing.
-				SetEClipBoardEditing(_isExamInUse);
-			}
-		}
-		#endregion Methods - Event Handlers public
-
-		#region Methods - Event Handlers private
-		private void FormPerio_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-			//There is no OK vs Cancel. It just always saves.
-			if(_perioExam!=null) { //When no Exam is selected or ExamList is empty we don't want to save ExamNotes.
-				PerioExam perioExamOld=_perioExam.Copy();
-				_perioExam.Note=textExamNotes.Text;
-				PerioExams.Update(_perioExam,perioExamOld);
 			}
 			if(gridODExam.GetSelectedIndex()!=-1){
 				contrPerio.SaveCurExam(_perioExam);
 			}
-			_voiceController?.Dispose();
-			if(_isLocalDefsChanged){
-				DataValid.SetInvalid(InvalidType.Defs, InvalidType.Prefs);
-			}
-			if(_userOdPrefCurrentOnly==null) {
-				UserOdPrefs.Insert(new UserOdPref() {
-					UserNum=Security.CurUser.UserNum,
-					FkeyType=UserOdFkeyType.PerioCurrentExamOnly,
-					ValueString=POut.Bool(checkShowCurrent.Checked)
-				});
-				DataValid.SetInvalid(InvalidType.UserOdPrefs);
-			}
-			else {
-				UserOdPref userOdPrefOld=_userOdPrefCurrentOnly.Clone();
-				_userOdPrefCurrentOnly.ValueString=POut.Bool(checkShowCurrent.Checked);
-				if(UserOdPrefs.Update(_userOdPrefCurrentOnly,userOdPrefOld)) {
-					//Only need to signal cache refresh on change.
-					DataValid.SetInvalid(InvalidType.UserOdPrefs);
-				}
-			}
-			UserOdPref userOdPrefAdvance=UserOdPrefs.GetByUserAndFkeyType(Security.CurUser.UserNum,UserOdFkeyType.PerioAutoAdvanceFacialsFirst).FirstOrDefault();
-			if(userOdPrefAdvance==null) {
-				UserOdPrefs.Insert(new UserOdPref() {
-					UserNum=Security.CurUser.UserNum,
-					FkeyType=UserOdFkeyType.PerioAutoAdvanceFacialsFirst,
-					ValueString=POut.Bool(radioFacialsFirst.Checked)
-				});
-				DataValid.SetInvalid(InvalidType.UserOdPrefs);
-			}
-			else {
-				UserOdPref userOdPrefOld=userOdPrefAdvance.Clone();
-				userOdPrefAdvance.ValueString=POut.Bool(radioFacialsFirst.Checked);//0=MaxFirst, 1=FacialsFirst
-				if(UserOdPrefs.Update(userOdPrefAdvance,userOdPrefOld)) {
-					//Only need to signal cache refresh on change.
-					DataValid.SetInvalid(InvalidType.UserOdPrefs);
-				}
-			}
-			Plugins.HookAddCode(this,"FormPerio.Closing_end");
-		}
-
-		private void FormPerio_Load(object sender, System.EventArgs e) {
-			labelListening.Visible=false;
-			_listDefsMiscColors=Defs.GetDefsForCategory(DefCat.MiscColors,isShort:true);
-			butColorBleed.BackColor=_listDefsMiscColors[(int)DefCatMiscColors.PerioBleeding].ItemColor;
-			butColorPus.BackColor=_listDefsMiscColors[(int)DefCatMiscColors.PerioSuppuration].ItemColor;
-			butColorPlaque.BackColor=_listDefsMiscColors[(int)DefCatMiscColors.PerioPlaque].ItemColor;
-			butColorCalculus.BackColor=_listDefsMiscColors[(int)DefCatMiscColors.PerioCalculus].ItemColor;
-			textRedProb.Text=PrefC.GetString(PrefName.PerioRedProb);
-			textRedMGJ.Text =PrefC.GetString(PrefName.PerioRedMGJ);
-			textRedGing.Text=PrefC.GetString(PrefName.PerioRedGing);
-			textRedCAL.Text =PrefC.GetString(PrefName.PerioRedCAL);
-			textRedFurc.Text=PrefC.GetString(PrefName.PerioRedFurc);
-			textRedMob.Text =PrefC.GetString(PrefName.PerioRedMob);
-			//Procedure[] procList=Procedures.Refresh(PatCur.PatNum);
-			List<ToothInitial> listToothInitials=ToothInitials.GetPatientData(_patient.PatNum);
-			_listMissingTeeth=ToothInitials.GetMissingOrHiddenTeeth(listToothInitials);
+			CreateNewPerioChart();
 			RefreshListExams();
-			gridODExam.SetSelected(contrPerio.ListPerioExams.Count-1,true);//this works even if no items.
-			_userOdPrefCurrentOnly=UserOdPrefs.GetByUserAndFkeyType(Security.CurUser.UserNum,UserOdFkeyType.PerioCurrentExamOnly).FirstOrDefault();
-			if(_userOdPrefCurrentOnly != null && PIn.Bool(_userOdPrefCurrentOnly.ValueString)) {
-				checkShowCurrent.Checked=true;
-			}
-			UserOdPref userOdPrefAdvance=UserOdPrefs.GetByUserAndFkeyType(Security.CurUser.UserNum,UserOdFkeyType.PerioAutoAdvanceFacialsFirst).FirstOrDefault();
-			if(userOdPrefAdvance!=null && PIn.Bool(userOdPrefAdvance.ValueString)) {
-				radioFacialsFirst.Checked=true;
-				contrPerio.EnumAdvanceSequence_=EnumAdvanceSequence.FacialsFirst;
-			}
+			gridODExam.SetSelected(gridODExam.ListGridRows.Count-1,true);
 			FillGrid();
-			CheckMobileActivity();
-			Plugins.HookAddCode(this,"FormPerio.Load_end");
+			SecurityLogs.MakeLogEntry(Permissions.PerioEdit,_patient.PatNum,"Perio exam created");
 		}
 
-		/// <summary>Used to force focus to the hidden textbox when showing this form.</summary>
-		private void FormPerio_Shown(object sender,EventArgs e) {
-			textInputBox.Focus();//This cannot go into load because focus must come after window has been shown.
+		private void butCopyNote_Click(object sender,EventArgs e) {
+			if(gridODExam.GetSelectedIndex()!=-1) {
+				ODClipboard.SetClipboard(textExamNotes.Text);
+			}
 		}
 
-		private void menuItemSetup_Click(Object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+		///<summary>Creates a new perio chart and marks any teeth missing as necessary.</summary>
+		private void CreateNewPerioChart() {
+			_perioExam=new PerioExam();
+			_perioExam.PatNum=_patient.PatNum;
+			_perioExam.ExamDate=DateTime.Today;
+			_perioExam.ProvNum=_patient.PriProv;
+			_perioExam.DateTMeasureEdit=MiscData.GetNowDateTime();
+			PerioExams.Insert(_perioExam);
+			PerioMeasures.SetSkipped(_perioExam.PerioExamNum,GetSkippedTeeth());
+		}
+
+		///<summary>Returns a list of skipped teeth.</summary>
+		private List<int> GetSkippedTeeth() {
+			List<int> listSkippedTeeth=new List<int>();
+			if(PerioExams.ListExams.Count > 0) {
+				//set skipped teeth based on the last exam in the list: 
+				listSkippedTeeth=PerioMeasures.GetSkipped(PerioExams.ListExams[PerioExams.ListExams.Count-1].PerioExamNum);
+			}
+			//For patient's first perio chart, any teeth marked missing are automatically marked skipped.
+			if(PerioExams.ListExams.Count != 0 && !PrefC.GetBool(PrefName.PerioSkipMissingTeeth)) {
+				return listSkippedTeeth.Distinct().ToList();
+			}
+			for(int i=0;i<_listMissingTeeth.Count;i++) {
+				if(_listMissingTeeth[i].CompareTo("A") >= 0 && _listMissingTeeth[i].CompareTo("Z") <= 0) {//if is a letter (not a number)
+					continue;//Skipped teeth are only recorded by tooth number within the perio exam.
+				}
+				int toothNum=PIn.Int(_listMissingTeeth[i]);
+				//Check if this tooth has had an implant done AND the office has the preference to SHOW implants
+				if(PrefC.GetBool(PrefName.PerioTreatImplantsAsNotMissing) && ContrPerio.IsImplant(toothNum)) {
+					listSkippedTeeth.RemoveAll(x => x==toothNum);//Remove the tooth from the list of skipped teeth if it exists.
+					continue;//We do note want to add it back to the list below.
+				}
+				//This tooth is missing and we know it is not an implant OR the office has the preference to ignore implants.
+				//Simply add it to our list of skipped teeth.
+				listSkippedTeeth.Add(toothNum);
+			}
+			return listSkippedTeeth.Distinct().ToList();
+		}
+
+		private void butCopyPrevious_Click(object sender,EventArgs e) {
+			if(!Security.IsAuthorized(Permissions.PerioEdit,MiscData.GetNowDateTime())) {
 				return;
 			}
-			using FormPerioSetup formPerioSetup=new FormPerioSetup();
-			formPerioSetup.ShowDialog();
+			if(PerioExams.ListExams.Count==0){
+				MsgBox.Show(this,"Please use the Add button to create an initial exam.");
+				return;
+			}
+			if(gridODExam.GetSelectedIndex()==-1) {
+				//with the current code, this will never actually get hit because we don't allow deselecting.
+				MsgBox.Show(this,"Please select an existing exam first.");
+				return;
+			}
+			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"A copy will be made of the previous exam.  Continue?")){
+				return;
+			}
+			contrPerio.SaveCurExam(_perioExam);
+			CreateNewPerioChart();
+			//get meaures from last exam
+			List<PerioMeasure> listPerioMeasures=PerioMeasures.GetAllForExam(PerioExams.ListExams[PerioExams.ListExams.Count-1].PerioExamNum);
+			for(int i=0;i<listPerioMeasures.Count;i++) { //add all of the previous exam's measures to this perio exam.
+				listPerioMeasures[i].PerioExamNum=_perioExam.PerioExamNum;
+				PerioMeasures.Insert(listPerioMeasures[i]);
+			}
+			RefreshListExams();
+			gridODExam.SetSelected(PerioExams.ListExams.Count-1,true); //select the exam that was just inserted.
+			FillGrid();
+			SecurityLogs.MakeLogEntry(Permissions.PerioEdit,_patient.PatNum,"Perio exam copied.");
 		}
 
-		private void pd2_PrintPage(object sender, PrintPageEventArgs printPageEventArgs){//raised for each page to be printed.
-			Graphics g=printPageEventArgs.Graphics;
+		private void butDelete_Click(object sender, System.EventArgs e) {
+			if(gridODExam.GetSelectedIndex()==-1){
+				MessageBox.Show(Lan.g(this,"Please select an item first."));
+				return;
+			}
+			if(!Security.IsAuthorized(Permissions.PerioEdit,PerioExams.ListExams[gridODExam.GetSelectedIndex()].ExamDate)) {
+				return;
+			}
+			if(MessageBox.Show(Lan.g(this,"Delete Exam?"),"",MessageBoxButtons.OKCancel)!=DialogResult.OK){
+				return;
+			}
+			int selectedIndex=gridODExam.GetSelectedIndex();
+			PerioExams.Delete(_perioExam);
+			RefreshListExams();
+			if(selectedIndex < gridODExam.ListGridRows.Count) {
+				gridODExam.SetSelected(selectedIndex,true);
+			}
+			else {
+				gridODExam.SetSelected(PerioExams.ListExams.Count-1,true);
+			}	
+			FillGrid();
+			if(gridODExam.ListGridRows.Count==0) {
+				textExamNotes.Text="";
+			}
+			SecurityLogs.MakeLogEntry(Permissions.PerioEdit,_patient.PatNum,"Perio exam deleted");
+		}
+
+		private void butListen_Click(object sender,EventArgs e) {
+			if(ODBuild.IsWeb()) {
+				MsgBox.Show(this,"Voice Perio is not available for the Web version at this time.");
+				return;
+			}
+			if(_voiceController!=null && _voiceController.IsListening) {
+				_voiceController.StopListening();
+				labelListening.Visible=false;
+				return;
+			}
+			if(_voiceController==null) {
+				try{
+					_voiceController=new VoiceController(VoiceCommandArea.PerioChart);
+				}
+				catch(PlatformNotSupportedException) {
+					MsgBox.Show(this,"The Voice Command feature does not work over server RDP sessions.");
+					return;
+				}
+				catch(Exception ex) {
+					FriendlyException.Show(Lan.g(this,"Unable to initialize audio input. Try plugging a different microphone into the computer."),ex);
+					return;
+				}
+				_voiceController.SpeechRecognized+=VoiceController_SpeechRecognized;
+			}
+			_voiceController.StartListening();
+			labelListening.Visible=true;
+		}
+
+		private void checkShowCurrent_Click(object sender,EventArgs e) {
+			if(gridODExam.GetSelectedIndex()==-1) {
+				return;
+			}
+			contrPerio.SaveCurExam(_perioExam);
+			PerioExams.Refresh(_patient.PatNum);
+			PerioMeasures.Refresh(_patient.PatNum,PerioExams.ListExams);
+			FillGrid();
+		}
+
+		private void radioRight_Click(object sender, System.EventArgs e) {
+			contrPerio.AutoAdvanceDirection_=AutoAdvanceDirection.Right;
+			contrPerio.Focus();
+		}
+
+		private void radioLeft_Click(object sender, System.EventArgs e) {
+			contrPerio.AutoAdvanceDirection_=AutoAdvanceDirection.Left;
+			contrPerio.Focus();
+		}
+
+		private void RadioFacialsFirst_Click(object sender,EventArgs e) {
+			contrPerio.AutoAdvanceDirection_=AutoAdvanceDirection.Custom;
+			contrPerio.Focus();
+		}
+
+		private void gridP_DirectionChangedRight(object sender, System.EventArgs e) {
+			radioRight.Checked=true;
+		}
+
+		private void gridP_DirectionChangedLeft(object sender, System.EventArgs e) {
+			radioLeft.Checked=true;
+		}
+
+		private void checkThree_Click(object sender, System.EventArgs e) {
+			contrPerio.ThreeAtATime=checkThree.Checked;
+		}
+		
+		private void but0_Click(object sender, System.EventArgs e) {
+			NumberClicked(0);
+		}
+
+		private void but1_Click(object sender, System.EventArgs e) {
+			NumberClicked(1);
+		}
+
+		private void but2_Click(object sender, System.EventArgs e) {
+			NumberClicked(2);
+		}
+
+		private void but3_Click(object sender, System.EventArgs e) {
+			NumberClicked(3);
+		}
+
+		private void but4_Click(object sender, System.EventArgs e) {
+			NumberClicked(4);
+		}
+
+		private void but5_Click(object sender, System.EventArgs e) {
+			NumberClicked(5);
+		}
+
+		private void but6_Click(object sender, System.EventArgs e) {
+			NumberClicked(6);
+		}
+
+		private void but7_Click(object sender, System.EventArgs e) {
+			NumberClicked(7);
+		}
+
+		private void but8_Click(object sender, System.EventArgs e) {
+			NumberClicked(8);
+		}
+
+		private void but9_Click(object sender, System.EventArgs e) {
+			NumberClicked(9);
+		}
+
+		///<summary>The only valid numbers are 0 through 9</summary>
+		private void NumberClicked(int number){
+			if(contrPerio.IdxExamSelected==-1) {
+				MessageBox.Show(Lan.g(this,"Please add or select an exam first in the list to the left."));
+				return;
+			}
+			if(_isTenDown) {
+				contrPerio.ButtonPressed(10+number);
+			}
+			else {
+				contrPerio.ButtonPressed(number);
+			}
+			_isTenDown=false;
+			contrPerio.Focus();
+		}
+
+		private void but10_Click(object sender, System.EventArgs e) {
+			_isTenDown=true;
+		}
+
+		private void butCalcIndex_Click(object sender, System.EventArgs e) {
+			FillIndexes();
+			if(!listPlaqueHistory.Visible) {
+				return;
+			}
+			contrPerio.SaveCurExam(_perioExam);
+			RefreshListPlaque();
+			FillGrid();
+		}
+
+		private void FillIndexes(){
+			textIndexPlaque.Text=contrPerio.ComputeIndex(BleedingFlags.Plaque);
+			textIndexCalculus.Text=contrPerio.ComputeIndex(BleedingFlags.Calculus);
+			textIndexBleeding.Text=contrPerio.ComputeIndex(BleedingFlags.Blood);
+			textIndexSupp.Text=contrPerio.ComputeIndex(BleedingFlags.Suppuration);
+		}
+
+		private void butBleed_Click(object sender, System.EventArgs e) {
+			_isTenDown=false;
+			contrPerio.ButtonPressed("b");
+			contrPerio.Focus();
+		}
+
+		private void butPus_Click(object sender, System.EventArgs e) {
+			_isTenDown=false;
+			contrPerio.ButtonPressed("s");
+			contrPerio.Focus();
+		}
+
+		private void butPlaque_Click(object sender, System.EventArgs e) {
+			_isTenDown=false;
+			contrPerio.ButtonPressed("p");
+			contrPerio.Focus();
+		}
+
+		private void butCalculus_Click(object sender, System.EventArgs e) {
+			_isTenDown=false;
+			contrPerio.ButtonPressed("c");
+			contrPerio.Focus();
+		}
+
+		private void butColorBleed_Click(object sender, System.EventArgs e) {
+			if(!Security.IsAuthorized(Permissions.DefEdit)) {
+				return;
+			}
+			colorDialog1.Color=butColorBleed.BackColor;
+			if(colorDialog1.ShowDialog()!=DialogResult.OK){
+				colorDialog1?.Dispose();
+				return;
+			}
+			butColorBleed.BackColor=colorDialog1.Color;
+			Def defMiscColors=_listDefsMiscColors[(int)DefCatMiscColors.PerioBleeding].Copy();
+			defMiscColors.ItemColor=colorDialog1.Color;
+			DefL.Update(defMiscColors);
+			Cache.Refresh(InvalidType.Defs);
+			_isLocalDefsChanged=true;
+			contrPerio.SetColors();
+			contrPerio.Invalidate();
+			contrPerio.Focus();
+			colorDialog1?.Dispose();
+		}
+
+		private void butColorPus_Click(object sender, System.EventArgs e) {
+			if(!Security.IsAuthorized(Permissions.DefEdit)) {
+				return;
+			}
+			colorDialog1.Color=butColorPus.BackColor;
+			if(colorDialog1.ShowDialog()!=DialogResult.OK){
+				colorDialog1?.Dispose();
+				return;
+			}
+			butColorPus.BackColor=colorDialog1.Color;
+			Def defMiscColors=_listDefsMiscColors[(int)DefCatMiscColors.PerioSuppuration].Copy();
+			defMiscColors.ItemColor=colorDialog1.Color;
+			DefL.Update(defMiscColors);
+			Cache.Refresh(InvalidType.Defs);
+			_isLocalDefsChanged=true;
+			contrPerio.SetColors();
+			contrPerio.Invalidate();
+			contrPerio.Focus();
+			colorDialog1?.Dispose();
+		}
+
+		private void butColorPlaque_Click(object sender, System.EventArgs e) {
+			if(!Security.IsAuthorized(Permissions.DefEdit)) {
+				return;
+			}
+			colorDialog1.Color=butColorPlaque.BackColor;
+			if(colorDialog1.ShowDialog()!=DialogResult.OK){
+				colorDialog1?.Dispose();
+				return;
+			}
+			butColorPlaque.BackColor=colorDialog1.Color;
+			Def defMiscColors=_listDefsMiscColors[(int)DefCatMiscColors.PerioPlaque].Copy();
+			defMiscColors.ItemColor=colorDialog1.Color;
+			DefL.Update(defMiscColors);
+			Cache.Refresh(InvalidType.Defs);
+			_isLocalDefsChanged=true;
+			contrPerio.SetColors();
+			contrPerio.Invalidate();
+			contrPerio.Focus();
+			colorDialog1?.Dispose();
+		}
+
+		private void butColorCalculus_Click(object sender, System.EventArgs e) {
+			if(!Security.IsAuthorized(Permissions.DefEdit)) {
+				return;
+			}
+			colorDialog1.Color=butColorCalculus.BackColor;
+			if(colorDialog1.ShowDialog()!=DialogResult.OK){
+				colorDialog1?.Dispose();
+				return;
+			}
+			butColorCalculus.BackColor=colorDialog1.Color;
+			Def defMiscColors=_listDefsMiscColors[(int)DefCatMiscColors.PerioCalculus].Copy();
+			defMiscColors.ItemColor=colorDialog1.Color;
+			DefL.Update(defMiscColors);
+			Cache.Refresh(InvalidType.Defs);
+			_isLocalDefsChanged=true;
+			contrPerio.SetColors();
+			contrPerio.Invalidate();
+			contrPerio.Focus();
+			colorDialog1?.Dispose();
+		}
+
+		private void butSkip_Click(object sender, System.EventArgs e) {
+			if(gridODExam.GetSelectedIndex()<0){//PerioExamCur could still be set to a deleted exam and would not be null even if there is no exam.
+				MessageBox.Show(Lan.g(this,"Please select an exam first."));
+				return;
+			}
+			contrPerio.ToggleSkip(_perioExam.PerioExamNum);
+		}
+
+		private void updownRed_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
+				return;
+			}
+			//this is necessary because Microsoft's updown control is too buggy to be useful
+			Cursor=Cursors.WaitCursor;
+			PrefName prefname=PrefName.PerioRedProb;
+			if(sender==updownProb){
+				prefname=PrefName.PerioRedProb;
+			}
+			else if(sender==updownMGJ) {
+				prefname=PrefName.PerioRedMGJ;
+			}
+			else if(sender==updownGing) {
+				prefname=PrefName.PerioRedGing;
+			}
+			else if(sender==updownCAL) {
+				prefname=PrefName.PerioRedCAL;
+			}
+			else if(sender==updownFurc) {
+				prefname=PrefName.PerioRedFurc;
+			}
+			else if(sender==updownMob) {
+				prefname=PrefName.PerioRedMob;
+			}
+			int val=PrefC.GetInt(prefname);
+			if(e.Y<8){//up
+				val++;
+			}
+			else{//down
+				if(val==0){
+					Cursor=Cursors.Default;
+					return;
+				}
+				val--;
+			}
+			Prefs.UpdateLong(prefname,val);
+			//pref.ValueString=currentValue.ToString();
+			//Prefs.Update(pref);
+			_isLocalDefsChanged=true;
+			Cache.Refresh(InvalidType.Prefs);
+			if(sender==updownProb){
+				textRedProb.Text=val.ToString();
+				textCountProb.Text=contrPerio.CountTeeth(PerioSequenceType.Probing).Count.ToString();
+			}
+			else if(sender==updownMGJ){
+				textRedMGJ.Text=val.ToString();
+				textCountMGJ.Text=contrPerio.CountTeeth(PerioSequenceType.MGJ).Count.ToString();
+			}
+			else if(sender==updownGing){
+				textRedGing.Text=val.ToString();
+				textCountGing.Text=contrPerio.CountTeeth(PerioSequenceType.GingMargin).Count.ToString();
+			}
+			else if(sender==updownCAL){
+				textRedCAL.Text=val.ToString();
+				textCountCAL.Text=contrPerio.CountTeeth(PerioSequenceType.CAL).Count.ToString();
+			}
+			else if(sender==updownFurc){
+				textRedFurc.Text=val.ToString();
+				textCountFurc.Text=contrPerio.CountTeeth(PerioSequenceType.Furcation).Count.ToString();
+			}
+			else if(sender==updownMob){
+				textRedMob.Text=val.ToString();
+				textCountMob.Text=contrPerio.CountTeeth(PerioSequenceType.Mobility).Count.ToString();
+			}
+			contrPerio.Invalidate();
+			Cursor=Cursors.Default;
+			contrPerio.Focus();
+		}
+
+		private void butCount_Click(object sender, System.EventArgs e) {
+			FillCounts();
+			contrPerio.Focus();
+		}
+
+		private void FillCounts(){
+			textCountProb.Text=contrPerio.CountTeeth(PerioSequenceType.Probing).Count.ToString();
+			textCountMGJ.Text=contrPerio.CountTeeth(PerioSequenceType.MGJ).Count.ToString();
+			textCountGing.Text=contrPerio.CountTeeth(PerioSequenceType.GingMargin).Count.ToString();
+			textCountCAL.Text=contrPerio.CountTeeth(PerioSequenceType.CAL).Count.ToString();
+			textCountFurc.Text=contrPerio.CountTeeth(PerioSequenceType.Furcation).Count.ToString();
+			textCountMob.Text=contrPerio.CountTeeth(PerioSequenceType.Mobility).Count.ToString();
+		}
+
+		private void butPrint_Click(object sender, System.EventArgs e) {
+			if(this.gridODExam.GetSelectedIndex()<0) {
+				MsgBox.Show(this,"Please select an exam first.");
+				return;
+			}
+			//Store Font and Size information for the control so that we can adjust temporarily for printing.
+			Font fontOriginal=contrPerio.Font;
+			Size sizeContrOriginal=contrPerio.Size;
+			contrPerio.LayoutManager.Is96dpi=true;//Tells the layoutManager not to scale the size and font again when the ContrPerio.OnResize event is called.
+			contrPerio.Font=new Font("Microsoft Sans Serif", 8.25f);
+			LayoutManager.MoveSize(contrPerio,new Size(602, 642));//Revert to default drawn grid size for printing, be sure to adjust this if the default size is changed on ContrPerio.cs, this will then trigger the ContrPerio.OnResize Event adjusting all of the formatting necessary for printing.
+			PrinterL.TryPrint(pd2_PrintPage,
+				Lan.g(this,"Perio chart from")+" "+_perioExam.ExamDate+" "+Lan.g(this,"printed"),
+				_patient.PatNum,
+				PrintSituation.TPPerio,
+				new Margins(0,0,0,0),
+				PrintoutOrigin.AtMargin
+			);
+			contrPerio.LayoutManager.Is96dpi=false;
+			contrPerio.Font=fontOriginal;
+			LayoutManager.MoveSize(contrPerio,sizeContrOriginal);
+			contrPerio.Focus();
+		}
+
+		private void butSave_Click(object sender,EventArgs e) {
+			if(this.gridODExam.GetSelectedIndex()<0){
+				MessageBox.Show(Lan.g(this,"Please select an exam first."));
+				return;
+			}
+			contrPerio.SaveCurExam(_perioExam);
+			PerioExams.Refresh(_patient.PatNum);
+			PerioMeasures.Refresh(_patient.PatNum,PerioExams.ListExams);
+			FillGrid(!_isExamInUse);
+			//Document doc=new Document();
+			//try {
+			using Bitmap bitmapPerioPrintImage=new Bitmap(LayoutManager.Scale(750),LayoutManager.Scale(1000));
+			bitmapPerioPrintImage.SetResolution(96,96);
+			using Graphics g=Graphics.FromImage(bitmapPerioPrintImage);
+			g.Clear(Color.White);
+			g.CompositingQuality=System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+			g.InterpolationMode=System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+			g.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+			g.TextRenderingHint=System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+			string clinicName="";
+			//This clinic name could be more accurate here in the future if we make perio exams clinic specific.
+			//Perhaps if there were a perioexam.ClinicNum column.
+			if(_patient.ClinicNum!=0) {
+				Clinic clinic=Clinics.GetClinic(_patient.ClinicNum);
+				clinicName=clinic.Description;
+			} 
+			else {
+				clinicName=PrefC.GetString(PrefName.PracticeTitle);
+			}
+			float y=50f;
+			SizeF sizeF;
+			//Title
+			using Font fontTitle=new Font("Arial",LayoutManager.Scale(15));
+			string title=Lan.g(this,"Periodontal Charting");
+			sizeF=g.MeasureString(title,fontTitle);
+			g.DrawString(title,fontTitle,Brushes.Black,new PointF(bitmapPerioPrintImage.Width/2f-sizeF.Width/2f,y));
+			y+=sizeF.Height;
+			//Clinic Name
+			using Font font=new Font("Arial",LayoutManager.Scale(11));
+			sizeF=g.MeasureString(clinicName,font);
+			g.DrawString(clinicName,font,Brushes.Black,
+				new PointF(bitmapPerioPrintImage.Width/2f-sizeF.Width/2f,y));
+			y+=sizeF.Height;
+			//Patient name
+			string patName=_patient.GetNameFLFormal();
+			sizeF=g.MeasureString(patName,font);
+			g.DrawString(patName,font,Brushes.Black,new PointF(bitmapPerioPrintImage.Width/2f-sizeF.Width/2f,y));
+			y+=sizeF.Height;
+			//Date
+			//We put the current datetime here because the specific exam dates are listed in the form.
+			string time=MiscData.GetNowDateTime().ToShortDateString();
+			sizeF=g.MeasureString(time,font);
+			g.DrawString(time,font,Brushes.Black,new PointF(bitmapPerioPrintImage.Width/2f-sizeF.Width/2f,y));
+			y+=sizeF.Height;
+			//Now draw the grid
+			using Bitmap bitmapGrid=new Bitmap(contrPerio.RectangleBoundsShowing.Width,contrPerio.RectangleBoundsShowing.Height);
+			contrPerio.DrawToBitmap(bitmapGrid,contrPerio.RectangleBoundsShowing);
+			g.DrawImageUnscaled(bitmapGrid,(int)((bitmapPerioPrintImage.Width-bitmapGrid.Width)/2f),(int)y);
+			long defNumCategory=Defs.GetImageCat(ImageCategorySpecial.T);
+			if(defNumCategory==0) {
+				MsgBox.Show(this,"No image category set for tooth charts in definitions.");
+				return;
+			}
+			try {
+				ImageStore.Import(bitmapPerioPrintImage,defNumCategory,ImageType.Photo,_patient);
+			}
+			catch(Exception ex) {
+				MessageBox.Show(Lan.g(this,"Unable to save file. ") + ex.Message);
+				return;
+			}
+			MsgBox.Show(this,"Saved.");
+			/*
+			string patImagePath=ImageStore.GetPatientFolder(PatCur);
+			string filePath="";
+			do {
+				doc.DateCreated=MiscData.GetNowDateTime();
+				doc.FileName="perioexam_"+doc.DateCreated.ToString("yyyy_MM_dd_hh_mm_ss")+".png";
+				filePath=ODFileUtils.CombinePaths(patImagePath,doc.FileName);
+			} while(File.Exists(filePath));//if a file with this name already exists, then it will stay in this loop
+			doc.PatNum=PatCur.PatNum;
+			doc.ImgType=ImageType.Photo;
+			doc.DocCategory=Defs.GetByExactName(DefCat.ImageCats,"Tooth Charts");
+			doc.Description="Perio Exam";
+			Documents.Insert(doc,PatCur);
+			docCreated=true;
+			bitmapPerioPrintImage.Save(filePath,System.Drawing.Imaging.ImageFormat.Png);
+			MessageBox.Show(Lan.g(this,"Image saved."));*/
+			/*} 
+			catch(Exception ex) {
+				MessageBox.Show(Lan.g(this,"Image failed to save: "+Environment.NewLine+ex.ToString()));
+				if(docCreated) {
+					Documents.Delete(doc);
+				}
+			}
+			*/
+		}
+
+		private void pd2_PrintPage(object sender, PrintPageEventArgs ev){//raised for each page to be printed.
+			Graphics g=ev.Graphics;
 			//MessageBox.Show(grfx.
 			float yPos=67+25+20+20+20+6;
 			float xPos=100;
@@ -759,288 +1541,23 @@ namespace OpenDental{
 				+ConvertListToString(contrPerio.CountTeeth(PerioSequenceType.Mobility))
 				,font,Brushes.Black,xPos,yPos);
 			//pagesPrinted++;
-			printPageEventArgs.HasMorePages=false;
+			ev.HasMorePages=false;
 		}
 
-		private void timerEClipCheck_Tick(object sender,EventArgs e) {
-			CheckMobileActivity();
+		private string ConvertListToString(List<string> listStringsTeeth){
+			if(listStringsTeeth.Count==0){
+				return "none";
+			}
+			string retVal="";
+			for(int i=0;i<listStringsTeeth.Count;i++){
+				if(i>0)
+					retVal+=",";
+				retVal+=listStringsTeeth[i];
+			}
+			return retVal;
 		}
 
-		private void updownRed_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
-				return;
-			}
-			//this is necessary because Microsoft's updown control is too buggy to be useful
-			Cursor=Cursors.WaitCursor;
-			PrefName prefName=PrefName.PerioRedProb;
-			if(sender==updownProb){
-				prefName=PrefName.PerioRedProb;
-			}
-			else if(sender==updownMGJ) {
-				prefName=PrefName.PerioRedMGJ;
-			}
-			else if(sender==updownGing) {
-				prefName=PrefName.PerioRedGing;
-			}
-			else if(sender==updownCAL) {
-				prefName=PrefName.PerioRedCAL;
-			}
-			else if(sender==updownFurc) {
-				prefName=PrefName.PerioRedFurc;
-			}
-			else if(sender==updownMob) {
-				prefName=PrefName.PerioRedMob;
-			}
-			int val=PrefC.GetInt(prefName);
-			if(e.Y<8){//up
-				val++;
-			}
-			else{//down
-				if(val==0){
-					Cursor=Cursors.Default;
-					return;
-				}
-				val--;
-			}
-			Prefs.UpdateLong(prefName,val);
-			//pref.ValueString=currentValue.ToString();
-			//Prefs.Update(pref);
-			_isLocalDefsChanged=true;
-			Cache.Refresh(InvalidType.Prefs);
-			if(sender==updownProb){
-				textRedProb.Text=val.ToString();
-				textCountProb.Text=contrPerio.CountTeeth(PerioSequenceType.Probing).Count.ToString();
-			}
-			else if(sender==updownMGJ){
-				textRedMGJ.Text=val.ToString();
-				textCountMGJ.Text=contrPerio.CountTeeth(PerioSequenceType.MGJ).Count.ToString();
-			}
-			else if(sender==updownGing){
-				textRedGing.Text=val.ToString();
-				textCountGing.Text=contrPerio.CountTeeth(PerioSequenceType.GingMargin).Count.ToString();
-			}
-			else if(sender==updownCAL){
-				textRedCAL.Text=val.ToString();
-				textCountCAL.Text=contrPerio.CountTeeth(PerioSequenceType.CAL).Count.ToString();
-			}
-			else if(sender==updownFurc){
-				textRedFurc.Text=val.ToString();
-				textCountFurc.Text=contrPerio.CountTeeth(PerioSequenceType.Furcation).Count.ToString();
-			}
-			else if(sender==updownMob){
-				textRedMob.Text=val.ToString();
-				textCountMob.Text=contrPerio.CountTeeth(PerioSequenceType.Mobility).Count.ToString();
-			}
-			contrPerio.Invalidate();
-			Cursor=Cursors.Default;
-			contrPerio.Focus();
-		}
-		#endregion Methods - Event Handlers private
-
-		#region Methods - Events Handlers button clicks
-		private void butAdd_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.PerioEdit,MiscData.GetNowDateTime())){
-				return;
-			}
-			if(gridODExam.GetSelectedIndex()!=-1){
-				contrPerio.SaveCurExam(_perioExam);
-			}
-			CreateNewPerioChart();
-			RefreshListExams();
-			gridODExam.SetSelected(gridODExam.ListGridRows.Count-1,true);
-			FillGrid();
-			SecurityLogs.MakeLogEntry(EnumPermType.PerioEdit,_patient.PatNum,"Perio exam created");
-		}
-
-		private void butBleed_Click(object sender, System.EventArgs e) {
-			_isTenDown=false;
-			contrPerio.ButtonPressed("b");
-			contrPerio.Focus();
-		}
-
-		private void butCalcIndex_Click(object sender, System.EventArgs e) {
-			FillIndexes();
-		}
-
-		private void butCalculus_Click(object sender, System.EventArgs e) {
-			_isTenDown=false;
-			contrPerio.ButtonPressed("c");
-			contrPerio.Focus();
-		}
-
-		private void butColorBleed_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.DefEdit)) {
-				return;
-			}
-			colorDialog1.Color=butColorBleed.BackColor;
-			if(colorDialog1.ShowDialog()!=DialogResult.OK){
-				colorDialog1?.Dispose();
-				return;
-			}
-			butColorBleed.BackColor=colorDialog1.Color;
-			Def defMiscColors=_listDefsMiscColors[(int)DefCatMiscColors.PerioBleeding].Copy();
-			defMiscColors.ItemColor=colorDialog1.Color;
-			DefL.Update(defMiscColors);
-			Cache.Refresh(InvalidType.Defs);
-			_isLocalDefsChanged=true;
-			contrPerio.SetColors();
-			contrPerio.Invalidate();
-			contrPerio.Focus();
-			colorDialog1?.Dispose();
-		}
-
-		private void butColorCalculus_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.DefEdit)) {
-				return;
-			}
-			colorDialog1.Color=butColorCalculus.BackColor;
-			if(colorDialog1.ShowDialog()!=DialogResult.OK){
-				colorDialog1?.Dispose();
-				return;
-			}
-			butColorCalculus.BackColor=colorDialog1.Color;
-			Def defMiscColors=_listDefsMiscColors[(int)DefCatMiscColors.PerioCalculus].Copy();
-			defMiscColors.ItemColor=colorDialog1.Color;
-			DefL.Update(defMiscColors);
-			Cache.Refresh(InvalidType.Defs);
-			_isLocalDefsChanged=true;
-			contrPerio.SetColors();
-			contrPerio.Invalidate();
-			contrPerio.Focus();
-			colorDialog1?.Dispose();
-		}
-
-		private void butColorPlaque_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.DefEdit)) {
-				return;
-			}
-			colorDialog1.Color=butColorPlaque.BackColor;
-			if(colorDialog1.ShowDialog()!=DialogResult.OK){
-				colorDialog1?.Dispose();
-				return;
-			}
-			butColorPlaque.BackColor=colorDialog1.Color;
-			Def defMiscColors=_listDefsMiscColors[(int)DefCatMiscColors.PerioPlaque].Copy();
-			defMiscColors.ItemColor=colorDialog1.Color;
-			DefL.Update(defMiscColors);
-			Cache.Refresh(InvalidType.Defs);
-			_isLocalDefsChanged=true;
-			contrPerio.SetColors();
-			contrPerio.Invalidate();
-			contrPerio.Focus();
-			colorDialog1?.Dispose();
-		}
-
-		private void butColorPus_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.DefEdit)) {
-				return;
-			}
-			colorDialog1.Color=butColorPus.BackColor;
-			if(colorDialog1.ShowDialog()!=DialogResult.OK){
-				colorDialog1?.Dispose();
-				return;
-			}
-			butColorPus.BackColor=colorDialog1.Color;
-			Def defMiscColors=_listDefsMiscColors[(int)DefCatMiscColors.PerioSuppuration].Copy();
-			defMiscColors.ItemColor=colorDialog1.Color;
-			DefL.Update(defMiscColors);
-			Cache.Refresh(InvalidType.Defs);
-			_isLocalDefsChanged=true;
-			contrPerio.SetColors();
-			contrPerio.Invalidate();
-			contrPerio.Focus();
-			colorDialog1?.Dispose();
-		}
-
-		private void butCopyNote_Click(object sender,EventArgs e) {
-			if(gridODExam.GetSelectedIndex()!=-1) {
-				ODClipboard.SetClipboard(textExamNotes.Text);
-			}
-		}
-
-		private void butCopyPrevious_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.PerioEdit,MiscData.GetNowDateTime())) {
-				return;
-			}
-			if(contrPerio.ListPerioExams.Count==0){
-				MsgBox.Show(this,"Please use the Add button to create an initial exam.");
-				return;
-			}
-			if(gridODExam.GetSelectedIndex()==-1) {
-				//with the current code, this will never actually get hit because we don't allow deselecting.
-				MsgBox.Show(this,"Please select an existing exam first.");
-				return;
-			}
-			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"A copy will be made of the previous exam.  Continue?")){
-				return;
-			}
-			contrPerio.SaveCurExam(_perioExam);
-			CreateNewPerioChart();
-			//get meaures from last exam
-			List<PerioMeasure> listPerioMeasures=PerioMeasures.GetAllForExam(contrPerio.ListPerioExams[contrPerio.ListPerioExams.Count-1].PerioExamNum);
-			for(int i=0;i<listPerioMeasures.Count;i++) { //add all of the previous exam's measures to this perio exam.
-				listPerioMeasures[i].PerioExamNum=_perioExam.PerioExamNum;
-				PerioMeasures.Insert(listPerioMeasures[i]);
-			}
-			RefreshListExams();
-			gridODExam.SetSelected(contrPerio.ListPerioExams.Count-1,true); //select the exam that was just inserted.
-			FillGrid();
-			SecurityLogs.MakeLogEntry(EnumPermType.PerioEdit,_patient.PatNum,"Perio exam copied.");
-		}
-
-		private void butCount_Click(object sender, System.EventArgs e) {
-			FillCounts();
-			contrPerio.Focus();
-		}
-
-		private void butDefault_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.PerioEdit,MiscData.GetNowDateTime())){
-				return;
-			}
-			string prefProbeDepths=PrefC.GetString(PrefName.PerioDefaultProbeDepths);
-			if(prefProbeDepths.Length!=192) {
-				MsgBox.Show(this,"You have not set up a default exam. Please click Setup to set up a default exam.");
-				return;
-			}
-			if(gridODExam.GetSelectedIndex()!=-1){
-				contrPerio.SaveCurExam(_perioExam);
-			}
-			CreateNewPerioChart();
-			SetDefault(prefProbeDepths);
-			RefreshListExams();
-			gridODExam.SetSelected(gridODExam.ListGridRows.Count-1,true);
-			FillGrid();
-			SecurityLogs.MakeLogEntry(EnumPermType.PerioEdit,_patient.PatNum,"Default perio exam created");
-		}
-
-		private void butDelete_Click(object sender, System.EventArgs e) {
-			if(gridODExam.GetSelectedIndex()==-1){
-				MessageBox.Show(Lan.g(this,"Please select an item first."));
-				return;
-			}
-			if(!Security.IsAuthorized(EnumPermType.PerioEdit,contrPerio.ListPerioExams[gridODExam.GetSelectedIndex()].ExamDate)) {
-				return;
-			}
-			if(MessageBox.Show(Lan.g(this,"Delete Exam?"),"",MessageBoxButtons.OKCancel)!=DialogResult.OK){
-				return;
-			}
-			int selectedIndex=gridODExam.GetSelectedIndex();
-			PerioExams.Delete(_perioExam);
-			RefreshListExams();
-			if(selectedIndex < gridODExam.ListGridRows.Count) {
-				gridODExam.SetSelected(selectedIndex,true);
-			}
-			else {
-				gridODExam.SetSelected(contrPerio.ListPerioExams.Count-1,true);
-			}	
-			FillGrid();
-			if(gridODExam.ListGridRows.Count==0) {
-				textExamNotes.Text="";
-			}
-			SecurityLogs.MakeLogEntry(EnumPermType.PerioEdit,_patient.PatNum,"Perio exam deleted");
-		}
-
-		//		private void butEditNotes_Click(object sender,EventArgs e) {
+//		private void butEditNotes_Click(object sender,EventArgs e) {
 //			int examIndex=gridODExam.GetSelectedIndex();
 //			if(examIndex==-1) {
 //				return;
@@ -1059,6 +1576,70 @@ namespace OpenDental{
 //			gridODExam.SetSelected(examIndex,true);
 //		}
 
+		private void butAllExamsEclip_Click(object sender,EventArgs e) {
+			if(_patient==null) {
+				return;
+			}
+			contrPerio.SaveCurExam(_perioExam);
+			MobileDataByte funcInsertDataForUnlockCode(string unlockCode) {
+				if(MobileDataBytes.TryInsertPatientPerio(_patient,unlockCode,0,out string errorMsg,out MobileDataByte mobileDataByte)) {
+					return mobileDataByte;
+				}
+				MsgBox.Show(errorMsg);
+				return null;
+			};
+			using FormMobileCode formMobileCode=new FormMobileCode(funcInsertDataForUnlockCode);
+			formMobileCode.ShowDialog();
+			if(formMobileCode.HasMobileCodeBeenReceived) {
+				SetEClipBoardEditing(true);
+			}
+		}
+
+		private void butEClipboard_Click(object sender,EventArgs e) {
+			if(_perioExam==null || gridODExam.GetSelectedIndex()==-1) {
+				MsgBox.Show("No Perio exam selected, please select an exam first.");
+				return;
+			}
+			contrPerio.SaveCurExam(_perioExam);
+			Func<string,MobileDataByte> funcUnlock=InsertDataForUnlockCode;
+			using FormMobileCode formMobileCode=new FormMobileCode(funcUnlock);
+			formMobileCode.ShowDialog();
+			if(formMobileCode.HasMobileCodeBeenReceived) {
+				SetEClipBoardEditing(true);
+			}
+		}
+
+		private MobileDataByte InsertDataForUnlockCode(string unlockCode) {
+			if(MobileDataBytes.TryInsertPatientPerio(_patient,unlockCode,_perioExam.PerioExamNum,out string errorMsg,out MobileDataByte mobileDataByte)) {
+				return mobileDataByte;
+			}
+			MsgBox.Show(errorMsg);
+			return null;
+		}
+
+		private void butUnlockEClip_Click(object sender,EventArgs e) {
+			bool isExamInUse=MobileAppDevices.IsInUse(_patient.PatNum,MADPage.PerioExamEditPage,MADPage.PerioExamListPage);
+			bool isAllowingEdit=false;
+			if(isExamInUse) {
+				isAllowingEdit=MsgBox.Show(MsgBoxButtons.YesNo,"This patients exam(s) are currently being edited in eClipboard. Would you like to edit this exam and close the eClipboard session?");
+			}
+			else {
+				SetEClipBoardEditing(false);
+				return;
+			}
+			if(isAllowingEdit) {
+				MobileAppDevice mobileAppDevice=MobileAppDevices.GetForPat(_patient.PatNum);
+				if(mobileAppDevice==null) {
+					return;
+				}
+				OpenDentBusiness.WebTypes.PushNotificationUtils.CI_GoToCheckin(mobileAppDevice.MobileAppDeviceNum);
+				mobileAppDevice.DevicePage=MADPage.CheckinPage;
+				MobileAppDevices.Update(mobileAppDevice);
+				SetEClipBoardEditing(false);
+			}
+			return;
+		}
+
 		private void butGraphical_Click(object sender,EventArgs e) {
 			if(!ToothChartRelay.IsSparks3DPresent){
 				if(ComputerPrefs.LocalComputer.GraphicsSimple!=DrawingMode.DirectX) {
@@ -1075,358 +1656,39 @@ namespace OpenDental{
 			}
 			//if(listExams.SelectedIndex!=-1) {
 			contrPerio.SaveCurExam(_perioExam);
-			contrPerio.ListPerioExams=PerioExams.Refresh(_patient.PatNum);//refresh instead
-			contrPerio.ListPerioMeasures=PerioMeasures.GetForPatient(_patient.PatNum);
+			PerioExams.Refresh(_patient.PatNum);//refresh instead
+			PerioMeasures.Refresh(_patient.PatNum,PerioExams.ListExams);
 			FillGrid();
-			using FormPerioGraphical formPerioGraphical=new FormPerioGraphical(contrPerio.ListPerioExams[gridODExam.GetSelectedIndex()],_patient);
+			using FormPerioGraphical formPerioGraphical=new FormPerioGraphical(PerioExams.ListExams[gridODExam.GetSelectedIndex()],_patient);
 			formPerioGraphical.ShowDialog();
 		}
 
-		private void butListen_Click(object sender,EventArgs e) {
-			if(ODBuild.IsThinfinity()) {
-				MsgBox.Show(this,"Voice Perio is not available for the Web version at this time.");
-				return;
-			}
-			if(_voiceController!=null && _voiceController.IsListening) {
-				_voiceController.StopListening();
-				labelListening.Visible=false;
-				return;
-			}
-			if(_voiceController==null) {
-				try{
-					_voiceController=new VoiceController(VoiceCommandArea.PerioChart);
-				}
-				catch(PlatformNotSupportedException) {
-					MsgBox.Show(this,"The Voice Command feature does not work over server RDP sessions.");
-					return;
-				}
-				catch(Exception ex) {
-					FriendlyException.Show(Lan.g(this,"Unable to initialize audio input. Try plugging a different microphone into the computer."),ex);
-					return;
-				}
-				_voiceController.SpeechRecognized+=VoiceController_SpeechRecognized;
-			}
-			_voiceController.StartListening();
-			labelListening.Visible=true;
-		}
-
-		private void butPrint_Click(object sender, System.EventArgs e) {
-			if(this.gridODExam.GetSelectedIndex()<0) {
-				MsgBox.Show(this,"Please select an exam first.");
-				return;
-			}
-			//Store Font and Size information for the control so that we can adjust temporarily for printing.
-			Font fontOriginal=contrPerio.Font;
-			Size sizeContrOriginal=contrPerio.Size;
-			contrPerio.LayoutManager.Is96dpi=true;//Tells the layoutManager not to scale the size and font again when the ContrPerio.OnResize event is called.
-			contrPerio.Font=new Font("Microsoft Sans Serif", 8.25f);
-			LayoutManager.MoveSize(contrPerio,new Size(602, 642));//Revert to default drawn grid size for printing, be sure to adjust this if the default size is changed on ContrPerio.cs, this will then trigger the ContrPerio.OnResize Event adjusting all of the formatting necessary for printing.
-			PrinterL.TryPrint(pd2_PrintPage,
-				Lan.g(this,"Perio chart from")+" "+_perioExam.ExamDate+" "+Lan.g(this,"printed"),
-				_patient.PatNum,
-				PrintSituation.TPPerio,
-				new Margins(0,0,0,0),
-				PrintoutOrigin.AtMargin
-			);
-			contrPerio.LayoutManager.Is96dpi=false;
-			contrPerio.Font=fontOriginal;
-			LayoutManager.MoveSize(contrPerio,sizeContrOriginal);
-			contrPerio.Focus();
-		}
-
-		private void butPlaque_Click(object sender, System.EventArgs e) {
-			_isTenDown=false;
-			contrPerio.ButtonPressed("p");
-			contrPerio.Focus();
-		}
-
-		private void butPus_Click(object sender, System.EventArgs e) {
-			_isTenDown=false;
-			contrPerio.ButtonPressed("s");
-			contrPerio.Focus();
-		}
-
-		private void butSave_Click(object sender,EventArgs e) {
-			if(this.gridODExam.GetSelectedIndex()<0){
-				MessageBox.Show(Lan.g(this,"Please select an exam first."));
-				return;
-			}
-			contrPerio.SaveCurExam(_perioExam);
-			contrPerio.ListPerioExams=PerioExams.Refresh(_patient.PatNum);
-			contrPerio.ListPerioMeasures=PerioMeasures.GetForPatient(_patient.PatNum);
-			FillGrid(!_isExamInUse);
-			//Document doc=new Document();
-			//try {
-			using Bitmap bitmapPerioPrintImage=new Bitmap(LayoutManager.Scale(750),LayoutManager.Scale(1000));
-			bitmapPerioPrintImage.SetResolution(96,96);
-			using Graphics g=Graphics.FromImage(bitmapPerioPrintImage);
-			g.Clear(Color.White);
-			g.CompositingQuality=System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-			g.InterpolationMode=System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			g.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-			g.TextRenderingHint=System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
-			string clinicName="";
-			//This clinic name could be more accurate here in the future if we make perio exams clinic specific.
-			//Perhaps if there were a perioexam.ClinicNum column.
-			if(_patient.ClinicNum!=0) {
-				Clinic clinic=Clinics.GetClinic(_patient.ClinicNum);
-				clinicName=clinic.Description;
-			} 
-			else {
-				clinicName=PrefC.GetString(PrefName.PracticeTitle);
-			}
-			float y=50f;
-			SizeF sizeF;
-			//Title
-			using Font fontTitle=new Font("Arial",LayoutManager.Scale(15));
-			string title=Lan.g(this,"Periodontal Charting");
-			sizeF=g.MeasureString(title,fontTitle);
-			g.DrawString(title,fontTitle,Brushes.Black,new PointF(bitmapPerioPrintImage.Width/2f-sizeF.Width/2f,y));
-			y+=sizeF.Height;
-			//Clinic Name
-			using Font font=new Font("Arial",LayoutManager.Scale(11));
-			sizeF=g.MeasureString(clinicName,font);
-			g.DrawString(clinicName,font,Brushes.Black,
-				new PointF(bitmapPerioPrintImage.Width/2f-sizeF.Width/2f,y));
-			y+=sizeF.Height;
-			//Patient name
-			string patName=_patient.GetNameFLFormal();
-			sizeF=g.MeasureString(patName,font);
-			g.DrawString(patName,font,Brushes.Black,new PointF(bitmapPerioPrintImage.Width/2f-sizeF.Width/2f,y));
-			y+=sizeF.Height;
-			//Date
-			//We put the current datetime here because the specific exam dates are listed in the form.
-			string time=MiscData.GetNowDateTime().ToShortDateString();
-			sizeF=g.MeasureString(time,font);
-			g.DrawString(time,font,Brushes.Black,new PointF(bitmapPerioPrintImage.Width/2f-sizeF.Width/2f,y));
-			y+=sizeF.Height;
-			//Now draw the grid
-			Rectangle rectangle=contrPerio.GetRectangleBoundsShowing();
-			using Bitmap bitmapGrid=new Bitmap(rectangle.Width,rectangle.Height);
-			contrPerio.DrawToBitmap(bitmapGrid,rectangle);
-			g.DrawImageUnscaled(bitmapGrid,(int)((bitmapPerioPrintImage.Width-bitmapGrid.Width)/2f),(int)y);
-			long defNumCategory=Defs.GetImageCat(ImageCategorySpecial.T);
-			if(defNumCategory==0) {
-				MsgBox.Show(this,"No image category set for tooth charts in definitions.");
-				return;
-			}
-			try {
-				ImageStore.Import(bitmapPerioPrintImage,defNumCategory,ImageType.Photo,_patient);
-			}
-			catch(Exception ex) {
-				MessageBox.Show(Lan.g(this,"Unable to save file. ") + ex.Message);
-				return;
-			}
-			MsgBox.Show(this,"Saved.");
-			/*
-			string patImagePath=ImageStore.GetPatientFolder(PatCur);
-			string filePath="";
-			do {
-				doc.DateCreated=MiscData.GetNowDateTime();
-				doc.FileName="perioexam_"+doc.DateCreated.ToString("yyyy_MM_dd_hh_mm_ss")+".png";
-				filePath=ODFileUtils.CombinePaths(patImagePath,doc.FileName);
-			} while(File.Exists(filePath));//if a file with this name already exists, then it will stay in this loop
-			doc.PatNum=PatCur.PatNum;
-			doc.ImgType=ImageType.Photo;
-			doc.DocCategory=Defs.GetByExactName(DefCat.ImageCats,"Tooth Charts");
-			doc.Description="Perio Exam";
-			Documents.Insert(doc,PatCur);
-			docCreated=true;
-			bitmapPerioPrintImage.Save(filePath,System.Drawing.Imaging.ImageFormat.Png);
-			MessageBox.Show(Lan.g(this,"Image saved."));*/
-			/*} 
-			catch(Exception ex) {
-				MessageBox.Show(Lan.g(this,"Image failed to save: "+Environment.NewLine+ex.ToString()));
-				if(docCreated) {
-					Documents.Delete(doc);
-				}
-			}
-			*/
-		}
-
-		private void butSkip_Click(object sender, System.EventArgs e) {
-			if(gridODExam.GetSelectedIndex()<0){//PerioExamCur could still be set to a deleted exam and would not be null even if there is no exam.
-				MessageBox.Show(Lan.g(this,"Please select an exam first."));
-				return;
-			}
-			contrPerio.ToggleSkip(_perioExam.PerioExamNum);
-		}
-
-		private void butUnlockEClip_Click(object sender,EventArgs e) {
-			bool isExamInUse=MobileAppDevices.IsInUse(_patient.PatNum,MADPage.PerioExamEditPage,MADPage.PerioExamListPage);
-			bool isAllowingEdit=false;
-			if(isExamInUse) {
-				isAllowingEdit=MsgBox.Show(MsgBoxButtons.YesNo,Lans.g(this, "This patient has a perio exam currently being edited in ODTouch. Would you like to edit anyway? (Not recommended)."));
-			}
-			else {
-				SetEClipBoardEditing(false);
-				return;
-			}
-			if(isAllowingEdit) {
-				MobileAppDevice mobileAppDevice=MobileAppDevices.GetForPat(_patient.PatNum);
-				if(mobileAppDevice==null) {
-					return;
-				}
-				MobileNotifications.CI_GoToCheckin(mobileAppDevice.MobileAppDeviceNum);
-				mobileAppDevice.DevicePage=MADPage.CheckinPage;
-				MobileAppDevices.Update(mobileAppDevice);
-				SetEClipBoardEditing(false);
-			}
-			return;
-		}
-
-		private void but0_Click(object sender, System.EventArgs e) {
-			NumberClicked(0);
-		}
-
-		private void but1_Click(object sender, System.EventArgs e) {
-			NumberClicked(1);
-		}
-
-		private void but2_Click(object sender, System.EventArgs e) {
-			NumberClicked(2);
-		}
-
-		private void but3_Click(object sender, System.EventArgs e) {
-			NumberClicked(3);
-		}
-
-		private void but4_Click(object sender, System.EventArgs e) {
-			NumberClicked(4);
-		}
-
-		private void but5_Click(object sender, System.EventArgs e) {
-			NumberClicked(5);
-		}
-
-		private void but6_Click(object sender, System.EventArgs e) {
-			NumberClicked(6);
-		}
-
-		private void but7_Click(object sender, System.EventArgs e) {
-			NumberClicked(7);
-		}
-
-		private void but8_Click(object sender, System.EventArgs e) {
-			NumberClicked(8);
-		}
-
-		private void but9_Click(object sender, System.EventArgs e) {
-			NumberClicked(9);
-		}
-
-		private void but10_Click(object sender, System.EventArgs e) {
-			_isTenDown=true;
-		}
-		#endregion Methods - Events Handlers button clicks
-
-		#region Methods - Event Handlers checkboxes
 		private void checkGingMarg_CheckedChanged(object sender,EventArgs e) {
 			contrPerio.GingMargPlus=checkGingMarg.Checked;
 			contrPerio.Focus();
 		}
 
-		private void checkShowCurrent_Click(object sender,EventArgs e) {
-			if(gridODExam.GetSelectedIndex()==-1) {
-				return;
+		///<summary>This ensures that the textbox will always have focus when using FormPerio.</summary>
+		private void textInputBox_Leave(object sender,EventArgs e) {
+			if(!textExamNotes.Focused) {
+				textInputBox.Focus();
 			}
-			contrPerio.SaveCurExam(_perioExam);
-			contrPerio.ListPerioExams=PerioExams.Refresh(_patient.PatNum);
-			contrPerio.ListPerioMeasures=PerioMeasures.GetForPatient(_patient.PatNum);
-			FillGrid();
 		}
 
-		private void checkThree_Click(object sender, System.EventArgs e) {
-			contrPerio.ThreeAtATime=checkThree.Checked;
-		}
-		#endregion Methods - Event Handlers checkboxes
-
-		#region Methods - Event Handlers grids
-		private void gridP_Click(object sender,EventArgs e) {
-			textInputBox.Focus();
-			SetLabelFwdReverse();
-		}
-
-		private void gridP_DirectionChangedLeft(object sender, System.EventArgs e) {
-			radioLeft.Checked=true;
-		}
-
-		private void gridP_DirectionChangedRight(object sender, System.EventArgs e) {
-			radioRight.Checked=true;
-		}
-
-		private void gridODExam_CellClick(object sender,UI.ODGridClickEventArgs e) {
-			if(gridODExam.GetSelectedIndex()==contrPerio.IdxExamSelected) { 
-				return;
-			}
-			//Only continues if clicked on other than current exam
-			contrPerio.SaveCurExam(_perioExam);
-			//no need to RefreshListExams because it has not changed
-			contrPerio.ListPerioExams=PerioExams.Refresh(_patient.PatNum);//refresh instead
-			contrPerio.ListPerioMeasures=PerioMeasures.GetForPatient(_patient.PatNum);
-			FillGrid();
-		}
-
-		private void gridODExam_CellDoubleClick(object sender,UI.ODGridClickEventArgs e) {
-			//remember that the first click may not have triggered the mouse down routine
-			//and the second click will never trigger it.
-			if(gridODExam.GetSelectedIndex()==-1) {
-				return;
-			}
-			if(!Security.IsAuthorized(EnumPermType.PerioEdit,contrPerio.ListPerioExams[gridODExam.GetSelectedIndex()].ExamDate)) {
-				return;
-			}
-			//a PerioExam.Cur will always have been set through mousedown(or similar),then FillGrid
-			contrPerio.SaveCurExam(_perioExam);
-			contrPerio.ListPerioExams=PerioExams.Refresh(_patient.PatNum);//list will not change
-			contrPerio.ListPerioMeasures=PerioMeasures.GetForPatient(_patient.PatNum);
-			using FormPerioEdit formPerioEdit=new FormPerioEdit();
-			formPerioEdit.PerioExamCur=_perioExam;
-			formPerioEdit.ShowDialog();
-			int index=gridODExam.GetSelectedIndex();
-			RefreshListExams();
-			gridODExam.SetSelected(index,true);
-			FillGrid();
-		}
-		#endregion Methods - Event Handlers grids
-
-		#region Methods - Event Handlers radio buttons
-		private void radioRight_Click(object sender, System.EventArgs e) {
-			contrPerio.EnumCurrentDirection_=EnumCurrentDirection.Right;
-			SetLabelFwdReverse();
-			contrPerio.Focus();
-		}
-
-		private void radioLeft_Click(object sender, System.EventArgs e) {
-			contrPerio.EnumCurrentDirection_=EnumCurrentDirection.Left;
-			SetLabelFwdReverse();
-			contrPerio.Focus();
-		}
-
-		private void radioFacialsFirst_Click(object sender,EventArgs e) {
-			contrPerio.EnumAdvanceSequence_=EnumAdvanceSequence.FacialsFirst;
-			SetLabelFwdReverse();
-			contrPerio.Focus();
-		}
-
-		private void radioMaxFirst_Click(object sender,EventArgs e) {
-			contrPerio.EnumAdvanceSequence_=EnumAdvanceSequence.MaxFirst;
-			SetLabelFwdReverse();
-			contrPerio.Focus();
-		}
-		#endregion Methods - Event Handlers radio buttons
-
-		#region Methods - Event Handlers text
 		private void textExamNotes_Leave(object sender,EventArgs e) {
 			if(_perioExam!=null) { 
 				PerioExam perioExamOld=_perioExam.Copy();
 				_perioExam.Note=textExamNotes.Text;
 				if(PerioExams.Update(_perioExam,perioExamOld)) {
 					int selectionOld=gridODExam.GetSelectedIndex();
-					RefreshListExams(skipRefreshMeasures:true);
+					RefreshListExams(doSkipRefreshMeasures:true);
 					gridODExam.SetSelected(selectionOld);
 				}
 			}
+			textInputBox.Focus();
+		}
+
+		private void gridP_Click(object sender,EventArgs e) {
 			textInputBox.Focus();
 		}
 
@@ -1441,13 +1703,6 @@ namespace OpenDental{
 				|| e.Modifiers==Keys.Control) 
 			{
 				contrPerio.KeyPressed(e);
-			}
-		}
-
-		///<summary>This ensures that the textbox will always have focus when using FormPerio.</summary>
-		private void textInputBox_Leave(object sender,EventArgs e) {
-			if(!textExamNotes.Focused) {
-				textInputBox.Focus();
 			}
 		}
 
@@ -1476,296 +1731,78 @@ namespace OpenDental{
 			}
 			textInputBox.Clear();
 		}
-		#endregion Methods - Event Handlers text
 
-		#region Methods - Voice Perio
-		///<summary>Used for Voice Perio. Returns the next available ColRow for tooth if the current tooth passed in is empty. Checks the tooth's 3 positions to find out if the tooth is empty. Otherwise returns a ColRow with value (-1,-1) to indicate 'none'. This method should only be used if Auto Advance Sequence is Facials First.</summary>
-		private ColRow GetNextAvailableColRowForTooth(PerioAdvancePos perioAdvancePos,PerioAdvancePos perioAdvancePosNext,PerioAdvancePos perioAdvancePosPrev) {
-			ColRow colRowNextAvailable;
-			if(perioAdvancePos==null) {//This shouldn't happen.
-				return new ColRow(-1,-1);
-			}
-			//Get the default colrow for the current tooth.
-			ColRow colRowForTooth=GetColRowForTooth(perioAdvancePos.ToothNum,perioAdvancePos.IsFacial);
-			PerioSequenceType perioSequenceType=contrPerio.GetSequenceForColRow(colRowForTooth);
-			//Get the first position(mesial or distal) for the tooth passed in. We need this because the first position for a Facials First path will not be the same as the default.
-			colRowForTooth=contrPerio.GetAutoAdvanceColRow(perioAdvancePos.ToothNum,perioAdvancePos.IsFacial,perioSequenceType,isReverse:false);
-			//Check all three positions for the tooth. It will return either an empty position or the last position of the tooth.
-			colRowNextAvailable=new ColRow(FirstEmptyPositionX(colRowForTooth),colRowForTooth.Row);
-			//Check the position that was returned above for measurements. This will be the last position of the current tooth.
-			if(string.IsNullOrEmpty(contrPerio.GetCellText(colRowNextAvailable.Col,colRowNextAvailable.Row))) {
-				return colRowNextAvailable;//we found a colrow
-			}
-			return new ColRow(-1,-1);//couldn't find colrow
-		}
-
-		///<summary>Moves the cursor to the furcation row for the current tooth.</summary>
-		private void GoToFurcation() {
-			GoToSequenceType(PerioSequenceType.Furcation);
-		}
-
-		///<summary>Moves the cursor to the gingival margin row for the current tooth.</summary>
-		private void GoToGingivalMargin() {
-			GoToSequenceType(PerioSequenceType.GingMargin);
-		}
-
-		///<summary>Moves the cursor to the muco gingival junction row for the current tooth.</summary>
-		private void GoToMGJ() {
-			GoToSequenceType(PerioSequenceType.MGJ);
-		}
-
-		///<summary>Moves the cursor to the mobility row for the current tooth.</summary>
-		private void GoToMobility() {
-			PerioCell perioCell=contrPerio.GetCurrentCell();
-			int toothNum=perioCell.ToothNum;
-			bool isFacial=_perioCellCurLocation.IsFacial;
-			if(contrPerio.IsCellTextEmpty(GetColRowForTooth(toothNum,isFacial))) {
-				toothNum=GetToothNumFromColRow(GetPreviousToothColRow(toothNum,isFacial));
-			}
-			ColRow colRowForMobility=GetColRowForMobility(toothNum);
-			if(!contrPerio.IsCellTextEmpty(colRowForMobility)) {
-				colRowForMobility=GetColRowForMobility(perioCell.ToothNum);
-			}
-			contrPerio.SetNewCell(colRowForMobility.Col,colRowForMobility.Row);
-		}
-
-		///<summary>Moves the cursor to the probing row for the current tooth.</summary>
-		private void GoToProbing() {
-			int yVal;
-			if(_perioCellCurLocation.IsFacial) {
-				if(_perioCellCurLocation.ToothNum<=16) {
-					if(checkShowCurrent.Checked) {
-						yVal=5;
-					}
-					else {
-						yVal=6-Math.Min(6,contrPerio.IdxExamSelected+1);
-					}
-				}
-				else {//ToothNum >= 17
-					if(checkShowCurrent.Checked) {
-						yVal=37;
-					}
-					else {
-						yVal=36+Math.Min(6,contrPerio.IdxExamSelected+1);
-					}
-				}
-			}
-			else {//Lingual
-				if(_perioCellCurLocation.ToothNum<=16) {
-					if(checkShowCurrent.Checked) {
-						yVal=15;
-					}
-					else {
-						yVal=14+Math.Min(6,contrPerio.IdxExamSelected+1);
-					}
-				}
-				else {//ToothNum >= 17
-					if(checkShowCurrent.Checked) {
-						yVal=26;
-					}
-					else {
-						yVal=27-Math.Min(6,contrPerio.IdxExamSelected+1);
-					}
-				}
-			}
-			contrPerio.SetNewCell(FirstEmptyPositionX(_perioCellCurLocation.ToothNum,yVal),yVal);
-		}
-
-		///<summary>Moves the cursor to the passed in SequenceType for the current tooth.</summary>
-		private void GoToSequenceType(PerioSequenceType perioSequenceType) {
-			int toothNum=_perioCellCurLocation.ToothNum;
-			EnumCurrentDirection enumCurrentDirectionOld=contrPerio.EnumCurrentDirection_;
-			bool isFacial=_perioCellCurLocation.IsFacial;
-			ColRow colRowForTooth=GetColRowForTooth(toothNum,isFacial);
-			if(contrPerio.IsCellTextEmpty(colRowForTooth)) {
-				colRowForTooth=GetPreviousToothColRow(toothNum,isFacial);
-				isFacial=IsFacialFromColRow(colRowForTooth);
-				toothNum=GetToothNumFromColRow(colRowForTooth);
-			}
-			int yPos=-1;
-			switch(perioSequenceType) {
-				case PerioSequenceType.Furcation:
-					if(toothNum<=16) {
-						yPos=(isFacial ? 9 : 12);
-					}
-					else {//ToothNum >= 17
-						yPos=(isFacial ? 33 : 30);
-					}
-					break;
-				case PerioSequenceType.GingMargin:
-					if(toothNum<=16) {
-						yPos=(isFacial ? 7 : 14);
-					}
-					else {//ToothNum >= 17
-						yPos=(isFacial ? 35 : 28);
-					}
-					break;
-				case PerioSequenceType.MGJ:
-					if(toothNum<=16) {
-						yPos=6;
-					}
-					else {//ToothNum >= 17
-						yPos=(isFacial ? 36 : 27);
-					}
-					break;
-			}
-			int xPos;
-			//create a new colrow with the updated Y pos for the passed in sequence type. 
-			ColRow colRowForSequenceType=new ColRow(colRowForTooth.Col,yPos);
-			//Teeth 1-32 F isReverse=false, Teeth 1-32 L isReverse=true;
-			//Find the next available colrow for the sequence type.
-			ColRow colRowNextAvailable=TryGetNextEmptyColRow(colRowForSequenceType,!isFacial);
-			if(toothNum==GetToothNumFromColRow(colRowNextAvailable)){
-				//The new colrow for the sequence was changed. Set the new xPos.
-				xPos=FirstEmptyPositionX(toothNum,yPos);				
-			}
-			else{
-				//No positions are empty or the next available colrow is on a new tooth,. Use the xPos from the toothOld.
-				xPos=GetColRowForTooth(_perioCellCurLocation.ToothNum,_perioCellCurLocation.IsFacial).Col;
-				contrPerio.EnumCurrentDirection_=enumCurrentDirectionOld;//change this value back just in case we changed it above.
-			}
-			//Set the cursor with the new colrows for the sequence.
-			contrPerio.SetNewCell(xPos,yPos);
-		}
-
-		///<summary>Used for Voice Perio. Goes to the first cell in the grid for this tooth.</summary>
-		///<param name="isFacial">When false, equivalent to lingual.</param>
-		private void GoToTooth(int toothNum,bool isFacial) {
-			ColRow colRowForTooth=GetColRowForTooth(toothNum,isFacial);
-			contrPerio.SetNewCell(colRowForTooth.Col,colRowForTooth.Row);
-		}
-
-		/// <summary>Used for Voice Perio. Goes to the cell in the grid for the specified tooth and surface.</summary>
-		private void GoToToothSurface(int toothNum,bool isFacial,EnumPerioMMidD perioSurface) {
-			ColRow colRowForTooth=GetSurfaceColRowForTooth(toothNum,isFacial,perioSurface);
-			contrPerio.SetNewCell(colRowForTooth.Col,colRowForTooth.Row);
-		}
-		
-		private bool IsFacialFromColRow(ColRow colRow) {
-			return contrPerio.GetPerioCellFromColRow(colRow).IsFacial;
-		}
-
-		///<summary>Used for Voice Perio. Sets the cursor to the first available open perio slot. The path used in this method follows the autoadvance i.e. 1-16 F,16-1 L,32-17 F, and 17-32 L</summary>
-		private void ResumePath() {
-			List<int> listSkippedTeeth=new List<int>();//int 1-32
-			if(contrPerio.ListPerioExams.Count > 0) {
-				//set skipped teeth based on the last exam in the list: 
-				listSkippedTeeth=PerioMeasures.GetSkipped(contrPerio.ListPerioExams[contrPerio.ListPerioExams.Count-1].PerioExamNum);
-			}
-			List<PerioAdvancePos> listPerioAdvancePoss=PerioAdvancePos.GetPath(contrPerio.EnumAdvanceSequence_);
-			ColRow colRowNextAvailable;
-			for(int i=0;i<listPerioAdvancePoss.Count;i++) {
-				if(listPerioAdvancePoss[i]==null || listSkippedTeeth.Contains(listPerioAdvancePoss[i].ToothNum)) {
-					continue;
-				}
-				if(radioFacialsFirst.Checked) {//Auto advance Facials First.
-					colRowNextAvailable=GetNextAvailableColRowForTooth(listPerioAdvancePoss[i],ContrPerio.GetNext(listPerioAdvancePoss[i],listPerioAdvancePoss),
-						ContrPerio.GetPrevious(listPerioAdvancePoss[i],listPerioAdvancePoss));
-					if(colRowNextAvailable.Col==-1 || colRowNextAvailable.Row==-1) {
-						continue;
-					}
-				}
-				else {//Auto advance NOT Facials First.
-					colRowNextAvailable=TryGetNextAvailableColRowForTooth(listPerioAdvancePoss[i].ToothNum,listPerioAdvancePoss[i].IsFacial);
-					if(colRowNextAvailable.Col==-1 || colRowNextAvailable.Row==-1) {
-						continue;
-					}
-					if(listPerioAdvancePoss[i].IsFacial) {
-						contrPerio.EnumCurrentDirection_=EnumCurrentDirection.Left;
-						radioLeft.Checked=true;
-					}
-					else {//lingual
-						contrPerio.EnumCurrentDirection_=EnumCurrentDirection.Right;
-						radioRight.Checked=true;
-					}
-				}
-				contrPerio.SetNewCell(colRowNextAvailable.Col,colRowNextAvailable.Row);
-				return;
-			}
-		}
-
-		///<summary>Used for Voice Perio. Sets bleeding flag on the specified surface for the current tooth. If the cursor is on a blank space and the previous tooth has probing entries, it will put the bleeding flag on the previous tooth.</summary>
-		private void SetBleedingFlagForSurface(EnumPerioMMidD perioSurface,BleedingFlags bleedingFlags,bool isFacial) {
-			int toothNum=_perioCellCurLocation.ToothNum;
-			ColRow colRowForTooth=GetColRowForTooth(toothNum,isFacial);
-			if(contrPerio.IsCellTextEmpty(colRowForTooth)) {
-				//Get the previous tooth. Skipped teeth will get considered. 
-				colRowForTooth=GetPreviousToothColRow(toothNum,isFacial,doSetDirection:false);
-				isFacial=IsFacialFromColRow(colRowForTooth);
-				toothNum=GetToothNumFromColRow(colRowForTooth);
-			}
-			//Get the colrow for the surface passed in. 
-			colRowForTooth=GetSurfaceColRowForTooth(toothNum,isFacial,perioSurface);
-			contrPerio.SetBleedingFlagForColRow(colRowForTooth,bleedingFlags);
-		}
-
-		///<summary>Used for Voice Perio. Sets the appropriate Current Direction radio button.</summary>
-		private void SetCurrentDirection() {
-			if(contrPerio.EnumAdvanceSequence_==EnumAdvanceSequence.FacialsFirst) {
-				contrPerio.EnumCurrentDirection_=EnumCurrentDirection.Left;
-				radioLeft.Checked=true;
-				if(_perioCellCurLocation.IsFacial && _perioCellCurLocation.ToothNum>=17) {
-					contrPerio.EnumCurrentDirection_=EnumCurrentDirection.Right;
-					radioRight.Checked=true;
-				}
-				else if(!_perioCellCurLocation.IsFacial && _perioCellCurLocation.ToothNum<=16) {
-					contrPerio.EnumCurrentDirection_=EnumCurrentDirection.Right;
-					radioRight.Checked=true;
-				}
-				return;
-			}
-			if(_perioCellPrevLocation.IsFacial && !_perioCellCurLocation.IsFacial) {
-				contrPerio.EnumCurrentDirection_=EnumCurrentDirection.Right;
-				radioRight.Checked=true;
-			}
-			if(!_perioCellPrevLocation.IsFacial && _perioCellCurLocation.IsFacial) {
-				contrPerio.EnumCurrentDirection_=EnumCurrentDirection.Left;
-				radioLeft.Checked=true;
-			}
-		}
-		
-		///<summary>Marks the tooth as skipped.</summary>
-		///<param name="doVerifyByVoice">If true, will verbally ask the user if they want to skip the tooth.</param>
-		///<returns>True if the user does choose to skip the tooth.</returns>
-		private bool SkipTooth(int toothNum,bool doVerifyByVoice=true) {
-			if(doVerifyByVoice) {
-				_voiceController?.StopListening();
-				if(!VoiceMsgBox.Show("Mark tooth "+toothNum+" as skipped?",MsgBoxButtons.YesNo)) {
-					this.BeginInvoke(() => _voiceController?.StartListening());//Invoking because recognition events will run when the main thread is free.
-					return false;
-				}
-				this.BeginInvoke(() => _voiceController?.StartListening());//Invoking because recognition events will run when the main thread is free.
-			}
-			ColRow colRowTooth=contrPerio.ColRowSelected;
-			bool isRadioRightChecked=radioRight.Checked;
-			contrPerio.SaveCurExam(_perioExam);
-			int selectedExam=contrPerio.IdxExamSelected;
-			List<int> listSkippedTeeth=new List<int>();//int 1-32
-			if(contrPerio.ListPerioExams.Count > 0) {
-				//set skipped teeth based on the last exam in the list: 
-				listSkippedTeeth=PerioMeasures.GetSkipped(contrPerio.ListPerioExams[contrPerio.ListPerioExams.Count-1].PerioExamNum);
-			}
-			if(!listSkippedTeeth.Contains(toothNum)) {
-				listSkippedTeeth.Add(toothNum);
-			}
-			PerioMeasures.SetSkipped(_perioExam.PerioExamNum,listSkippedTeeth);
-			RefreshListExams();
-			gridODExam.SetSelected(selectedExam,true);
-			FillGrid();
-			if(_perioCellCurLocation.ToothNum==toothNum) {//Go to the next tooth if the _perioCellCurLocation is on the tooth being skipped. 
-				ColRow colRowNextTooth=GetNextToothColRow(toothNum,_perioCellCurLocation.IsFacial);
-				contrPerio.SetNewCell(colRowNextTooth.Col,colRowNextTooth.Row);
+		private void butClose_Click(object sender,System.EventArgs e) {
+			if(_userOdPrefCurrentOnly==null) {
+				UserOdPrefs.Insert(new UserOdPref() {
+					UserNum=Security.CurUser.UserNum,
+					FkeyType=UserOdFkeyType.PerioCurrentExamOnly,
+					ValueString=POut.Bool(checkShowCurrent.Checked)
+				});
+				DataValid.SetInvalid(InvalidType.UserOdPrefs);
 			}
 			else {
-				contrPerio.SetNewCell(colRowTooth.Col,colRowTooth.Row);
+				UserOdPref userOdPrefOld=_userOdPrefCurrentOnly.Clone();
+				_userOdPrefCurrentOnly.ValueString=POut.Bool(checkShowCurrent.Checked);
+				if(UserOdPrefs.Update(_userOdPrefCurrentOnly,userOdPrefOld)) {
+					//Only need to signal cache refresh on change.
+					DataValid.SetInvalid(InvalidType.UserOdPrefs);
+				}
 			}
-			contrPerio.EnumCurrentDirection_=EnumCurrentDirection.Left;
-			if(isRadioRightChecked) {
-				contrPerio.EnumCurrentDirection_=EnumCurrentDirection.Right;
+			if(_userOdPrefCustomAdvance==null) {
+				UserOdPrefs.Insert(new UserOdPref() {
+					UserNum=Security.CurUser.UserNum,
+					FkeyType=UserOdFkeyType.PerioAutoAdvanceCustom,
+					ValueString=POut.Bool(radioFacialsFirst.Checked)
+				});
+				DataValid.SetInvalid(InvalidType.UserOdPrefs);
 			}
-			return true;
+			else {
+				UserOdPref userOdPrefOld=_userOdPrefCustomAdvance.Clone();
+				_userOdPrefCustomAdvance.ValueString=POut.Bool(radioFacialsFirst.Checked);
+				if(UserOdPrefs.Update(_userOdPrefCustomAdvance,userOdPrefOld)) {
+					//Only need to signal cache refresh on change.
+					DataValid.SetInvalid(InvalidType.UserOdPrefs);
+				}
+			}
+			Close();
 		}
-		#endregion Methods - Voice Perio
 
+		private void FormPerio_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+			if(_perioExam!=null) { //When no Exam is selected or ExamList is empty we don't want to save ExamNotes.
+				PerioExam perioExamOld=_perioExam.Copy();
+				_perioExam.Note=textExamNotes.Text;
+				PerioExams.Update(_perioExam,perioExamOld);
+			}
+			if(_isLocalDefsChanged){
+				DataValid.SetInvalid(InvalidType.Defs, InvalidType.Prefs);
+			}
+			if(gridODExam.GetSelectedIndex()!=-1){
+				contrPerio.SaveCurExam(_perioExam);
+			}
+			_voiceController?.Dispose();
+			Plugins.HookAddCode(this,"FormPerio.Closing_end");
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

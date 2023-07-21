@@ -54,6 +54,7 @@
 			this.listBoxClockOut = new OpenDental.UI.ListBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.listBoxQueues = new OpenDental.UI.ListBox();
+			this.butClose = new OpenDental.UI.Button();
 			this.label7 = new System.Windows.Forms.Label();
 			this.listBoxQueueFilter = new OpenDental.UI.ListBox();
 			this.groupBox1.SuspendLayout();
@@ -357,6 +358,16 @@
 			this.listBoxQueues.Text = "listBox1";
 			this.listBoxQueues.SelectionChangeCommitted += new System.EventHandler(this.listBoxQueues_SelectionChangeCommitted);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(1153, 668);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(72, 24);
+			this.butClose.TabIndex = 46;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// label7
 			// 
 			this.label7.Location = new System.Drawing.Point(46, 86);
@@ -384,6 +395,7 @@
 			// 
 			this.ClientSize = new System.Drawing.Size(1230, 696);
 			this.Controls.Add(this.label7);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.listBoxQueueFilter);
 			this.Controls.Add(this.textNameOrExt);
 			this.Controls.Add(this.panelGrid2);
@@ -442,6 +454,7 @@
 		private System.Windows.Forms.Label label5;
 		private UI.Button butEditDefaults;
 		private System.Windows.Forms.Label label6;
+		private UI.Button butClose;
 		private System.Windows.Forms.Label label7;
 		private UI.ListBox listBoxQueueFilter;
 	}

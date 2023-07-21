@@ -53,13 +53,13 @@ namespace OpenDental {
 					else{
 						//doesn't matter if the existing fee is an override or not.
 						Fees.Delete(fee);
-						SecurityLogs.MakeLogEntry(EnumPermType.ProcFeeEdit,0,"Procedure: "+fields[0]+", "
+						SecurityLogs.MakeLogEntry(Permissions.ProcFeeEdit,0,"Procedure: "+fields[0]+", "
 							+feeOldStr
 							//+", Deleted Fee: "+fee.Amount.ToString("c")+", "
 							+"Fee Schedule: "+FeeScheds.GetDescription(feeSchedNum)+". "
 							+"Fee deleted using the Import button in the Fee Tools window.",codeNum,
 							DateTime.MinValue);
-						SecurityLogs.MakeLogEntry(EnumPermType.LogFeeEdit,0,"Fee deleted",fee.FeeNum,datePrevious);
+						SecurityLogs.MakeLogEntry(Permissions.LogFeeEdit,0,"Fee deleted",fee.FeeNum,datePrevious);
 					}
 				}
 				else {//value found
@@ -77,17 +77,17 @@ namespace OpenDental {
 						fee.Amount=PIn.Double(fields[1]);
 						Fees.Update(fee);
 					}
-					SecurityLogs.MakeLogEntry(EnumPermType.ProcFeeEdit,0,"Procedure: "+fields[0]+", "
+					SecurityLogs.MakeLogEntry(Permissions.ProcFeeEdit,0,"Procedure: "+fields[0]+", "
 						+feeOldStr
 						+", New Fee: "+fee.Amount.ToString("c")+", "
 						+"Fee Schedule: "+FeeScheds.GetDescription(feeSchedNum)+". "
 						+"Fee changed using the Import button in the Fee Tools window.",codeNum,
 						DateTime.MinValue);
-					SecurityLogs.MakeLogEntry(EnumPermType.LogFeeEdit,0,"Fee changed",fee.FeeNum,datePrevious);
+					SecurityLogs.MakeLogEntry(Permissions.LogFeeEdit,0,"Fee changed",fee.FeeNum,datePrevious);
 				}
 				double percent=(double)counter*100d/(double)lineCount;
 				counter++;
-				ODEvent.Fire(ODEventType.ProgressBar,new ProgressBarHelper(
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,new ProgressBarHelper(
 					"Importing fees...",((int)percent).ToString(),blockValue:(int)percent,progressStyle:ProgBarStyle.Blocks));
 				line=streamReader.ReadLine();
 			}
@@ -97,11 +97,11 @@ namespace OpenDental {
 		///Shows a MessageBox if user is not allowed to edit.</summary>
 		public static bool CanEditFee(FeeSched feeSched,long provNum,long clinicNum) {
 			//User doesn't have permission
-			if(!Security.IsAuthorized(EnumPermType.FeeSchedEdit)) {
+			if(!Security.IsAuthorized(Permissions.FeeSchedEdit)) {
 				return false;
 			}
 			//Check if a provider fee schedule is selected and if the current user has permissions to edit provider fees.
-			if(provNum!=0 && !Security.IsAuthorized(EnumPermType.ProviderFeeEdit)) {
+			if(provNum!=0 && !Security.IsAuthorized(Permissions.ProviderFeeEdit)) {
 				return false;
 			}
 			//Make sure the user has permission to edit the clinic of the fee schedule being edited.
@@ -120,7 +120,7 @@ namespace OpenDental {
 		///<summary>The list of ClaimProcs passed in must all be for the same insurance plan.
 		///Updates fee schedules with the AllowedOverrides from the list of ClaimProcs.</summary>
 		public static void SaveAllowedFeesFromClaimPayment(List<ClaimProc> listClaimProcs,List<InsPlan> listInsPlans) {
-			if(!Security.IsAuthorized(EnumPermType.FeeSchedEdit,true) && !Security.IsAuthorized(EnumPermType.AllowFeeEditWhileReceivingClaim,true)) {
+			if(!Security.IsAuthorized(Permissions.FeeSchedEdit,true) && !Security.IsAuthorized(Permissions.AllowFeeEditWhileReceivingClaim,true)) {
 				return;
 			}
 			if(listClaimProcs.IsNullOrEmpty()) {
@@ -173,10 +173,10 @@ namespace OpenDental {
 					datePrevious=fee.SecDateTEdit;
 					Fees.Update(fee);
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.ProcFeeEdit,0,Lan.g("FormClaimPayTotal","Procedure")+": "+ProcedureCodes.GetStringProcCode(fee.CodeNum)
+				SecurityLogs.MakeLogEntry(Permissions.ProcFeeEdit,0,Lan.g("FormClaimPayTotal","Procedure")+": "+ProcedureCodes.GetStringProcCode(fee.CodeNum)
 					+", "+Lan.g("FormClaimPayTotal","Fee")+": "+fee.Amount.ToString("c")+", "+Lan.g("FormClaimPayTotal","Fee Schedule")+" "+FeeScheds.GetDescription(fee.FeeSched)
 					+". "+Lan.g("FormClaimPayTotal","Automatic change to allowed fee in Enter Payment window.  Confirmed by user."),fee.CodeNum,DateTime.MinValue);
-				SecurityLogs.MakeLogEntry(EnumPermType.LogFeeEdit,0,Lan.g("FormClaimPayTotal","Fee Updated"),fee.FeeNum,datePrevious);
+				SecurityLogs.MakeLogEntry(Permissions.LogFeeEdit,0,Lan.g("FormClaimPayTotal","Fee Updated"),fee.FeeNum,datePrevious);
 			}
 		}
 

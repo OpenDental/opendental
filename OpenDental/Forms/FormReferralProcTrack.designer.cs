@@ -30,6 +30,7 @@ namespace OpenDental{
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butPrint = new OpenDental.UI.Button();
 			this.butRefresh = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.textDateFrom = new OpenDental.ValidDate();
 			this.textDateTo = new OpenDental.ValidDate();
 			this.SuspendLayout();
@@ -97,6 +98,16 @@ namespace OpenDental{
 			this.butRefresh.Text = "Refresh";
 			this.butRefresh.Click += new System.EventHandler(this.butRefresh_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(710, 488);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 6;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// textDateFrom
 			// 
 			this.textDateFrom.Location = new System.Drawing.Point(110, 19);
@@ -115,6 +126,7 @@ namespace OpenDental{
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(810, 534);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.textDateTo);
 			this.Controls.Add(this.textDateFrom);
 			this.Controls.Add(this.butPrint);
@@ -133,6 +145,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private OpenDental.UI.CheckBox checkComplete;
 		private System.Windows.Forms.Label label1;

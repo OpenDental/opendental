@@ -130,7 +130,6 @@ namespace OpenDentBusiness{
 			}
 			List<OrthoChartRow> listOrthChartRowsForPat=OrthoChartRows.GetAllForPatient(patCur.PatNum,doIncludeOrthoCharts:false);
 			List<OrthoChart> listDB=GetByOrthoChartRowNums(listOrthChartRowsForPat.Select(x => x.OrthoChartRowNum).ToList());
-			OrthoChartLogs.Log("OrthoCharts.Sync() - orthocharts after getting from the database.",listDB,0,Environment.MachineName,patCur.PatNum,Security.CurUser.UserNum);
 			//This code is mostly a copy of the Crud sync.  Differences include sort and logging.
 			//Inserts, updates, or deletes database rows to match supplied list.
 			//Adding items to lists changes the order of operation. All inserts are completed first, then updates, then deletes.
@@ -150,9 +149,7 @@ namespace OpenDentBusiness{
 			}
 			listNew=listNew.FindAll(x => listColNames.Contains(x.FieldName));
 			listNew.Sort(OrthoCharts.Sort);
-			OrthoChartLogs.Log("OrthoCharts.Sync() - orthocharts passed into method after sorting.",listNew,0,Environment.MachineName,patCur.PatNum,Security.CurUser.UserNum);
 			listDB.Sort(OrthoCharts.Sort);
-			OrthoChartLogs.Log("OrthoCharts.Sync() - orthocharts from db after sorting.",listDB,0,Environment.MachineName,patCur.PatNum,Security.CurUser.UserNum);
 			int idxNew=0;
 			int idxDB=0;
 			OrthoChart fieldNew;
@@ -179,12 +176,12 @@ namespace OpenDentBusiness{
 					idxDB++;
 					continue;
 				}
-				else if(fieldNew.OrthoChartNum<fieldDB.OrthoChartNum) {//newPK less than dbPK, newItem is 'next'
+				else if(fieldNew.OrthoChartRowNum<fieldDB.OrthoChartRowNum) {//newPK less than dbPK, newItem is 'next'
 					listIns.Add(fieldNew);
 					idxNew++;
 					continue;
 				}
-				else if(fieldNew.OrthoChartNum>fieldDB.OrthoChartNum) {//dbPK less than newPK, dbItem is 'next'
+				else if(fieldNew.OrthoChartRowNum>fieldDB.OrthoChartRowNum) {//dbPK less than newPK, dbItem is 'next'
 					listDel.Add(fieldDB);
 					idxDB++;
 					continue;
@@ -200,7 +197,6 @@ namespace OpenDentBusiness{
 				if(listIns[i].FieldValue=="") {//do not insert new blank values. This happens when fields from today are not used.
 					continue;
 				}
-				OrthoChartLogs.LogDb("Sync orthochart.Insert(), FieldName:"+listIns[i].FieldName+", FieldValue:"+listIns[i].FieldValue,Environment.MachineName,listIns[i].OrthoChartRowNum,Security.CurUser.UserNum);
 				Insert(listIns[i]);
 			}
 			for(int i=0;i<listUpdNew.Count;i++) {
@@ -208,11 +204,9 @@ namespace OpenDentBusiness{
 					continue;//values equal. do not update/create log entry.
 				}
 				if(listUpdNew[i].FieldValue!="") {//Actually update rows that have a new value.
-					OrthoChartLogs.LogDb("Sync orthochart.Update(), FieldName:"+listUpdNew[i].FieldName+", FieldValue:"+listUpdNew[i].FieldValue,Environment.MachineName,listUpdNew[i].OrthoChartRowNum,Security.CurUser.UserNum);
 					Update(listUpdNew[i],listUpdDB[i]);
 				}
 				else {//instead of updating to a blank value, we delete the row from the DB.
-					OrthoChartLogs.LogDb("Sync orthochart.Add(), FieldName:"+listUpdNew[i].FieldName+", FieldValue:"+listUpdNew[i].FieldValue,Environment.MachineName,listUpdNew[i].OrthoChartRowNum,Security.CurUser.UserNum);
 					listDel.Add(listUpdDB[i]);
 				}
 				#region security log entry
@@ -226,7 +220,7 @@ namespace OpenDentBusiness{
 				if(orthoChartRow!=null) {
 					logText+=orthoChartRow.DateTimeService.ToString("yyyyMMdd");
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.OrthoChartEditFull,patCur.PatNum,logText);
+				SecurityLogs.MakeLogEntry(Permissions.OrthoChartEditFull,patCur.PatNum,logText);
 				#endregion
 			}
 			for(int i=0;i<listDel.Count;i++) {//All logging should have been performed above in the "Update block"
@@ -300,7 +294,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Gets the key data string needed to create a hashstring to be used later when filling the signature.
-		///This is done separate from the hashing so that new line replacements can be done when validating signatures before hashing.
+		///This is done seperate of the hashing so that new line replacements can be done when validating signatures before hashing.
 		///The reason for the doUsePatName parameter is that we originally hashed ortho charts using the patient name. Later we switched to not use
 		///the patient name. For ortho charts that existed before we made the switch, we have to use the patient name when hashing.</summary>
 		public static string GetKeyDataForSignatureHash(Patient pat,List<OrthoChart> listOrthoCharts,DateTime dateService,bool doUsePatName=false) {

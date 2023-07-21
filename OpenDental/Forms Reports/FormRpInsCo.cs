@@ -44,8 +44,25 @@ namespace OpenDental{
 			report.AddFooterText("Total","Total: "+report.TotalRows.ToString(),fontMain,10,ContentAlignment.MiddleRight);
 			using FormReportComplex FormR=new FormReportComplex(report);
 			FormR.ShowDialog();
-			DialogResult=DialogResult.OK;
+			DialogResult=DialogResult.OK;		
 		}
-
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

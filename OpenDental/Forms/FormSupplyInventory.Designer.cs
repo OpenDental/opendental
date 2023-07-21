@@ -26,6 +26,7 @@ namespace OpenDental {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSupplyInventory));
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butAddNeeded = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.butEquipment = new OpenDental.UI.Button();
 			this.butPrint = new OpenDental.UI.Button();
 			this.butOrders = new OpenDental.UI.Button();
@@ -61,6 +62,16 @@ namespace OpenDental {
 			this.butAddNeeded.TabIndex = 5;
 			this.butAddNeeded.Text = "Add";
 			this.butAddNeeded.Click += new System.EventHandler(this.butAddNeeded_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(387, 602);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butEquipment
 			// 
@@ -159,6 +170,7 @@ namespace OpenDental {
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butAddNeeded);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butEquipment);
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.butOrders);
@@ -173,6 +185,8 @@ namespace OpenDental {
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butAddNeeded;
 		private OpenDental.UI.Button butPrint;
 		private UI.Button butSupplies;

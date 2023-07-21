@@ -66,6 +66,8 @@ namespace OpenDental{
 		private List<PatientStatus> _listPatientStatuses=new List<PatientStatus> ();
 		///<summary>Used to keep track of what masked SSN was shown when the form was loaded, and stop us from storing masked SSNs on accident.</summary>
 		private string _maskedSSNOld="";
+		///<summary>Used to keep track of what masked DOB was shown when the form was loaded, and stop us from storing masked DOBs on accident.</summary>
+		private string _maskedDOBOld="";
 		///<summary>Used to display the available billing types. Will contain hidden billing types.</summary>
 		private List<Def> _listDefsBillingType;
 		private bool _isBirthdayMasked;
@@ -157,7 +159,7 @@ namespace OpenDental{
 		private void FormPatientEdit_Load(object sender, System.EventArgs e) {
 			_isLoad=true;
 			if(_listRequiredFields==null) {
-				_listRequiredFields=RequiredFields.GetRequiredFields();
+				FillRequiredFieldsListHelper();
 			}
 			tabEHR.Show();
 			tabICE.Show();
@@ -170,9 +172,9 @@ namespace OpenDental{
 			checkNotesSame.Checked=true;
 			checkEmailPhoneSame.Checked=true;
 			checkArriveEarlySame.Checked=true;
-			checkSuperBilling.Enabled=(Security.IsAuthorized(EnumPermType.PatientBillingEdit,true));
+			checkSuperBilling.Enabled=(Security.IsAuthorized(Permissions.PatientBillingEdit,true));
 			warningIntegrity1.SetTypeAndVisibility(EnumWarningIntegrityType.Patient,Patients.IsPatientHashValid(_patient));
-			bool isAuthArchivedEdit=Security.IsAuthorized(EnumPermType.ArchivedPatientEdit,true);
+			bool isAuthArchivedEdit=Security.IsAuthorized(Permissions.ArchivedPatientEdit,true);
 			List<Patient> listPatientsFamily=_family.ListPats.ToList();
 			if(!isAuthArchivedEdit) {
 				//Exclude Archived pats if user does not have permission.  If user doesn't have the permission and all non-Archived patients pass the
@@ -264,7 +266,7 @@ namespace OpenDental{
 				textMotherMaidenLname.Visible=true;
 				textMotherMaidenLname.Text=_ehrPatient.MotherMaidenLname;
 				labelDeceased.Visible=true;
-				textDateTimeDeceased.Visible=true;
+				dateTimePickerDateDeceased.Visible=true;
 			}
 			else {
 				tabControlPatInfo.TabPages.Remove(tabEHR);
@@ -280,38 +282,66 @@ namespace OpenDental{
 					checkDoseSpotConsent.Enabled=false;
 				}
 			}
-			_listPatientStatuses=Patients.GetPatientStatuses(_patient);
-			listStatus.Items.AddList(_listPatientStatuses,x => Lan.g("enumPatientStatus", x.ToString()));
-			listStatus.SetSelectedEnum(_patient.PatStatus);
-			listGender.Items.AddEnums<PatientGender>();
-			listGender.SetSelectedEnum(_patient.Gender);
-			listPosition.Items.AddEnums<PatientPosition>();
-			listPosition.SetSelectedEnum(_patient.Position);
+			string[] stringArrayNames=Enum.GetNames(typeof(PatientStatus));
+			for(int i=0;i<stringArrayNames.Length;i++) {
+				if((PatientStatus)i==PatientStatus.Deleted && _patient.PatStatus!=PatientStatus.Deleted) {
+					continue;//Only display 'Deleted' if PatCur is 'Deleted'.  Shouldn't happen, but has been observed.
+				}
+				_listPatientStatuses.Add((PatientStatus)i);
+				listStatus.Items.Add(Lan.g("enumPatientStatus", stringArrayNames[i]));//Not using .GetDescription() because of prior behavior.
+			}
+			listGender.Items.Add(Lan.g("enumPatientGender","Male"));
+			listGender.Items.Add(Lan.g("enumPatientGender","Female"));
+			listGender.Items.Add(Lan.g("enumPatientGender","Other"));
+			listGender.Items.Add(Lan.g("enumPatientGender","Unknown"));
+			listPosition.Items.Add(Lan.g("enumPatientPosition","Single"));
+			listPosition.Items.Add(Lan.g("enumPatientPosition","Married"));
+			listPosition.Items.Add(Lan.g("enumPatientPosition","Child"));
+			listPosition.Items.Add(Lan.g("enumPatientPosition","Widowed"));
+			listPosition.Items.Add(Lan.g("enumPatientPosition","Divorced"));
+			listStatus.SetSelected(_listPatientStatuses.IndexOf(_patient.PatStatus),true);//using _listPatStatuses because it is 1:1 with listStatus.
+			switch (_patient.Gender){
+				case PatientGender.Male : listGender.SelectedIndex=0; break;
+				case PatientGender.Female : listGender.SelectedIndex=1; break;
+				case PatientGender.Other : listGender.SelectedIndex=2; break;
+				case PatientGender.Unknown : listGender.SelectedIndex=3; break;
+			}
+			switch (_patient.Position){
+				case PatientPosition.Single : listPosition.SelectedIndex=0; break;
+				case PatientPosition.Married : listPosition.SelectedIndex=1; break;
+				case PatientPosition.Child : listPosition.SelectedIndex=2; break;
+				case PatientPosition.Widowed : listPosition.SelectedIndex=3; break;
+				case PatientPosition.Divorced : listPosition.SelectedIndex=4; break;
+			}
 			FillGuardians();
 			_listGuardiansForFamOld=_family.ListPats.SelectMany(x => Guardians.Refresh(x.PatNum)).ToList();
-			odDatePickerBirthDate.SetDateTime(_patient.Birthdate);
-			textBirthdateMask.Text=Patients.DOBFormatHelper(_patient.Birthdate,doMask:true);//If birthdate is not set this will set text to empty string.
-			if(PrefC.GetBool(PrefName.PatientDOBMasked) || !Security.IsAuthorized(EnumPermType.PatientDOBView,true)) {
+			if(PrefC.GetBool(PrefName.PatientDOBMasked) || !Security.IsAuthorized(Permissions.PatientDOBView,true)) {
 				//turn off validation until the user unmasks DOB.
-				if(!odDatePickerBirthDate.IsEmptyDateTime()) {
-					_isBirthdayMasked=true;
+				odDatePickerBirthDate.SetMaskedDate(Patients.DOBFormatHelper(_patient.Birthdate,true));//If birthdate is not set this will return ""
+				_isBirthdayMasked = true;
+				_maskedDOBOld=odDatePickerBirthDate.GetTextDate();
+				if(odDatePickerBirthDate.GetTextDate()!="") {
 					odDatePickerBirthDate.ReadOnly=true;
-					odDatePickerBirthDate.Visible=false;
-					textBirthdateMask.Visible=true;
 				}
-				//Disable View button if no DOB
-				if(!Security.IsAuthorized(EnumPermType.PatientDOBView,true) || odDatePickerBirthDate.IsEmptyDateTime()) {
+				//Disable if no DOB
+				if(!Security.IsAuthorized(Permissions.PatientDOBView,true) || odDatePickerBirthDate.GetTextDate()=="") {
 					hideButViewBirthDate();
 				}
 			}
 			else {
+				odDatePickerBirthDate.SetDateTime(_patient.Birthdate);
 				hideButViewBirthDate();
 			}
 			if(_patient.DateTimeDeceased.Year > 1880) {
-				textDateTimeDeceased.Text=_patient.DateTimeDeceased.ToShortDateString()+" "+_patient.DateTimeDeceased.ToShortTimeString();
+				dateTimePickerDateDeceased.Value=_patient.DateTimeDeceased;
+			}
+			else {
+				//if there is no datetime deceased, used to show blank instead of the default of todays date.
+				dateTimePickerDateDeceased.CustomFormat=" ";
+				dateTimePickerDateDeceased.Format=DateTimePickerFormat.Custom;
 			}
 			textAge.Text=PatientLogic.DateToAgeString(_patient.Birthdate,_patient.DateTimeDeceased);
-			if(PrefC.GetBool(PrefName.PatientSSNMasked) || !Security.IsAuthorized(EnumPermType.PatientSSNView,true)) {
+			if(PrefC.GetBool(PrefName.PatientSSNMasked) || !Security.IsAuthorized(Permissions.PatientSSNView,true)) {
 				//turn off validation until the user unmasks SSN.
 				textSSN.Text=Patients.SSNFormatHelper(_patient.SSN,true);//If PatCur.SSN is null or empty, returns empty string.
 				if(textSSN.Text!="") {
@@ -319,7 +349,7 @@ namespace OpenDental{
 				}
 				_maskedSSNOld=textSSN.Text;
 				//Hide button if no SSN entered
-				if(Security.IsAuthorized(EnumPermType.PatientSSNView,true) && textSSN.Text!="") {
+				if(Security.IsAuthorized(Permissions.PatientSSNView,true) && textSSN.Text!="") {
 					butViewSSN.Visible=true;
 				}
 			}
@@ -354,7 +384,19 @@ namespace OpenDental{
 			textChartNumber.Text=_patient.ChartNumber;
 			textEmployer.Text=Employers.GetName(_patient.EmployerNum);
 			//textEmploymentNote.Text=PatCur.EmploymentNote;
-			_listLanguages=Patients.GetLanguages(_patient);
+			_listLanguages=new List<string>();
+			if(PrefC.GetString(PrefName.LanguagesUsedByPatients)!="") {
+				string[] stringArrayLanguages=PrefC.GetString(PrefName.LanguagesUsedByPatients).Split(',');
+				for(int i=0;i<stringArrayLanguages.Length;i++) {
+					if(stringArrayLanguages[i]=="") {
+						continue;
+					}
+					_listLanguages.Add(stringArrayLanguages[i]);
+				}
+			}
+			if(_patient.Language!="" && _patient.Language!=null && !_listLanguages.Contains(_patient.Language)) {
+				_listLanguages.Add(_patient.Language);
+			}
 			comboLanguage.Items.Add(Lan.g(this,"None"));//regardless of how many languages are listed, the first item is "none"
 			comboLanguage.SelectedIndex=0;
 			for(int i=0;i<_listLanguages.Count;i++) {
@@ -398,25 +440,25 @@ namespace OpenDental{
 					return;
 				}
 			}
-			if(!Security.IsAuthorized(EnumPermType.PatientBillingEdit,true)){
+			if(!Security.IsAuthorized(Permissions.PatientBillingEdit,true)){
 				//labelBillType.Visible=true;
 				comboBillType.Enabled=false;
 			}
-			if(!Security.IsAuthorized(EnumPermType.PatientApptRestrict,true)) {
+			if(!Security.IsAuthorized(Permissions.PatientApptRestrict,true)) {
 				checkRestrictSched.Enabled=false;
 			}
-			if(_patient.PatStatus==PatientStatus.Archived && !Security.IsAuthorized(EnumPermType.ArchivedPatientEdit,false)) {
+			if(_patient.PatStatus==PatientStatus.Archived && !Security.IsAuthorized(Permissions.ArchivedPatientEdit,false)) {
 				butReferredFrom.Enabled=false;
 				textReferredFrom.Enabled=false;
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 			}
-			comboClinic.ClinicNumSelected=_patient.ClinicNum;
+			comboClinic.SelectedClinicNum=_patient.ClinicNum;
 			FillCombosProv();
 			comboPriProv.SetSelectedProvNum(_patient.PriProv);
 			comboSecProv.SetSelectedProvNum(_patient.SecProv);
-			if(!Security.IsAuthorized(EnumPermType.PatPriProvEdit,DateTime.MinValue,true,true) && _patient.PriProv>0) {
+			if(!Security.IsAuthorized(Permissions.PatPriProvEdit,DateTime.MinValue,true,true) && _patient.PriProv>0) {
 				//user not allowed to change existing prov.  Warning messages are suppressed here.
-				string strToolTip=Lan.g("Security","Not authorized for")+" "+GroupPermissions.GetDesc(EnumPermType.PatPriProvEdit);
+				string strToolTip=Lan.g("Security","Not authorized for")+" "+GroupPermissions.GetDesc(Permissions.PatPriProvEdit);
 				_priProvEditToolTip.SetToolTip(butPickPrimary,strToolTip);
 				_priProvEditToolTip.SetToolTip(comboPriProv,strToolTip);
 				comboPriProv.Enabled=false;
@@ -464,10 +506,18 @@ namespace OpenDental{
 				textRace.Visible=false;
 				textEthnicity.Visible=false;
 				butRaceEthnicity.Visible=false;
-				List<string> listMultiRaces=Patients.GetMultiRaces();
-				comboBoxMultiRace.Items.AddList(listMultiRaces,x => Lan.g("enumPatRace", x.ToString()));
-				List<string> listEthnicities=Patients.GetEthinicities();
-				comboEthnicity.Items.AddList(listEthnicities,x => Lan.g(this, x.ToString()));
+				comboBoxMultiRace.Items.Add(Lan.g("enumPatRace","None"));//0
+				comboBoxMultiRace.Items.Add(Lan.g("enumPatRace","AfricanAmerican"));//1
+				comboBoxMultiRace.Items.Add(Lan.g("enumPatRace","AmericanIndian"));//2
+				comboBoxMultiRace.Items.Add(Lan.g("enumPatRace","Asian"));//3
+				comboBoxMultiRace.Items.Add(Lan.g("enumPatRace","DeclinedToSpecify"));//4
+				comboBoxMultiRace.Items.Add(Lan.g("enumPatRace","HawaiiOrPacIsland"));//5
+				comboBoxMultiRace.Items.Add(Lan.g("enumPatRace","Other"));//6
+				comboBoxMultiRace.Items.Add(Lan.g("enumPatRace","White"));//7
+				comboEthnicity.Items.Add(Lan.g(this,"None"));//0 
+				comboEthnicity.Items.Add(Lan.g(this,"DeclinedToSpecify"));//1
+				comboEthnicity.Items.Add(Lan.g(this,"Not Hispanic"));//2
+				comboEthnicity.Items.Add(Lan.g(this,"Hispanic"));//3
 				List<PatientRace> listPatientRaces=PatientRaces.GetForPatient(_patient.PatNum);
 				comboEthnicity.SelectedIndex=0;//none
 				for(int i=0;i<listPatientRaces.Count;i++) {
@@ -545,12 +595,14 @@ namespace OpenDental{
 				//textAdmitDate.Visible=false;
 				//labelAdmitDate.Visible=false;
 			}
-			comboContact.Items.AddEnums<ContactMethod>();
-			comboConfirm.Items.AddEnums<ContactMethod>();
-			comboRecall.Items.AddEnums<ContactMethod>();
-			comboContact.SetSelectedEnum(_patient.PreferContactMethod);
-			comboConfirm.SetSelectedEnum(_patient.PreferConfirmMethod);
-			comboRecall.SetSelectedEnum(_patient.PreferRecallMethod);
+			for(int i=0;i<Enum.GetNames(typeof(ContactMethod)).Length;i++){
+				comboContact.Items.Add(Lan.g("enumContactMethod",Enum.GetNames(typeof(ContactMethod))[i]));
+				comboConfirm.Items.Add(Lan.g("enumContactMethod",Enum.GetNames(typeof(ContactMethod))[i]));
+				comboRecall.Items.Add(Lan.g("enumContactMethod",Enum.GetNames(typeof(ContactMethod))[i]));
+			}
+			comboContact.SelectedIndex=(int)_patient.PreferContactMethod;
+			comboConfirm.SelectedIndex=(int)_patient.PreferConfirmMethod;
+			comboRecall.SelectedIndex=(int)_patient.PreferRecallMethod;
 			_commOptOut=CommOptOuts.Refresh(_patient.PatNum);
 			int idx=1; //Starts at 1 to account for "None"
 			comboExcludeECR.Items.Add("None");
@@ -572,7 +624,7 @@ namespace OpenDental{
 			FillReferrals();
 			if(HL7Defs.IsExistingHL7Enabled()) {
 				if(HL7Defs.GetOneDeepEnabled().ShowDemographics==HL7ShowDemographics.Show) {//If show, then not edit so disable OK button
-					butSave.Enabled=false;
+					butOK.Enabled=false;
 				}
 			}
 			if(PrefC.GetBool(PrefName.ShowFeatureGoogleMaps)) {
@@ -630,8 +682,7 @@ namespace OpenDental{
 		}
 
 		private void butShortCodeOptIn_Click(object sender,EventArgs e) {
-			FrmShortCodeOptIn frmShortCodeOptIn=new FrmShortCodeOptIn();
-			frmShortCodeOptIn.PatientCur=_patient;
+			using FormShortCodeOptIn formShortCodeOptIn=new FormShortCodeOptIn(_patient);
 			YN yn=YN.Unknown;
 			if(checkTextingY.Checked){
 				yn=YN.Yes;
@@ -639,8 +690,7 @@ namespace OpenDental{
 			if(checkTextingN.Checked){
 				yn=YN.No;
 			}
-			frmShortCodeOptIn.ShowDialog();
-			if(frmShortCodeOptIn.IsDialogOK) {
+			if(formShortCodeOptIn.ShowDialog()==DialogResult.OK) {
 				FillShortCodes(yn);
 			}
 		}
@@ -652,20 +702,24 @@ namespace OpenDental{
 			bool isShortCodeInfoNeeded=patComm?.IsPatientShortCodeEligible(patient.ClinicNum)??false;
 			butShortCodeOptIn.Visible=isShortCodeInfoNeeded;
 			labelApptTexts.Visible=isShortCodeInfoNeeded;
-			textOptIn.Visible=isShortCodeInfoNeeded;
+			listBoxApptTexts.Visible=isShortCodeInfoNeeded;
 			if(isShortCodeInfoNeeded) {
+				string optIn;
 				switch(patient.ShortCodeOptIn) {
 					case YN.Yes:
-						textOptIn.Text="Yes";
+						optIn="Yes";
 						break;
 					case YN.No:
-						textOptIn.Text="No";
+						optIn="No";
 						break;
 					case YN.Unknown:
 					default:
-						textOptIn.Text="??";
+						optIn="??";
 						break;
 				}
+				listBoxApptTexts.Items.Clear();
+				listBoxApptTexts.Items.Add(optIn);
+				listBoxApptTexts.SelectedIndex=0;
 			}
 		}
 
@@ -685,32 +739,32 @@ namespace OpenDental{
 		}
 
 		private void butPickPrimary_Click(object sender,EventArgs e) {
-			if(_patient.PriProv>0 && !Security.IsAuthorized(EnumPermType.PatPriProvEdit)) {
+			if(_patient.PriProv>0 && !Security.IsAuthorized(Permissions.PatPriProvEdit)) {
 				return;
 			}
-			FrmProviderPick frmProviderPick = new FrmProviderPick(comboPriProv.Items.GetAll<Provider>());
-			frmProviderPick.ProvNumSelected=comboPriProv.GetSelectedProvNum();
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick = new FormProviderPick(comboPriProv.Items.GetAll<Provider>());
+			formProviderPick.ProvNumSelected=comboPriProv.GetSelectedProvNum();
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboPriProv.SetSelectedProvNum(frmProviderPick.ProvNumSelected);
+			comboPriProv.SetSelectedProvNum(formProviderPick.ProvNumSelected);
 		}
 
 		private void butPickSecondary_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick = new FrmProviderPick(comboSecProv.Items.GetAll<Provider>());
-			frmProviderPick.ProvNumSelected=comboSecProv.GetSelectedProvNum();
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick = new FormProviderPick(comboSecProv.Items.GetAll<Provider>());
+			formProviderPick.ProvNumSelected=comboSecProv.GetSelectedProvNum();
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboSecProv.SetSelectedProvNum(frmProviderPick.ProvNumSelected);
+			comboSecProv.SetSelectedProvNum(formProviderPick.ProvNumSelected);
 		}
 
 		///<summary>Fills combo provider based on which clinic is selected and attempts to preserve provider selection if any.</summary>
 		private void FillCombosProv() {
 			long provNum=comboPriProv.GetSelectedProvNum();
-			List<Provider> listProviders=Providers.GetProvsForClinic(comboClinic.ClinicNumSelected);
+			List<Provider> listProviders=Providers.GetProvsForClinic(comboClinic.SelectedClinicNum);
 			comboPriProv.Items.Clear();
 			if(PrefC.GetBool(PrefName.PriProvDefaultToSelectProv)) {
 				comboPriProv.Items.AddProvNone("Select Provider");
@@ -737,7 +791,7 @@ namespace OpenDental{
 		private void checkBillProvSame_Click(object sender,EventArgs e) {
 			if(checkBillProvSame.Checked //check box has been checked
 				&& _family.ListPats.Any(x => x.PatNum!=_patient.PatNum && x.PriProv!=comboPriProv.GetSelectedProvNum()) //a family member has a different PriProv
-				&& !Security.IsAuthorized(EnumPermType.PatPriProvEdit)) //user is not authorized to change PriProv, warning message displays
+				&& !Security.IsAuthorized(Permissions.PatPriProvEdit)) //user is not authorized to change PriProv, warning message displays
 			{
 				checkBillProvSame.Checked=false;//uncheck the box
 			}
@@ -757,7 +811,50 @@ namespace OpenDental{
 		private void FillGuardians(){
 			_listGuardians=Guardians.Refresh(_patient.PatNum);
 			listRelationships.Items.Clear();
-			listRelationships.Items.AddList(Patients.GetRelationships(_family,_listGuardians),x => x);
+			for(int i=0;i<_listGuardians.Count;i++){
+				listRelationships.Items.Add(_family.GetNameInFamFirst(_listGuardians[i].PatNumGuardian)+" "
+					+Guardians.GetGuardianRelationshipStr(_listGuardians[i].Relationship));
+			}
+		}
+
+		///<summary>Fills _listRequiredFields from the cache with required fields that are visible on this form.</summary>
+		private void FillRequiredFieldsListHelper() {
+			_listRequiredFields=RequiredFields.GetWhere(x => x.FieldType==RequiredFieldType.PatientInfo);
+			//Remove the RequiredFields that are only on the Add Family window
+			_listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.InsuranceSubscriber);
+			_listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.InsuranceSubscriberID);
+			_listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.Carrier);
+			_listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.InsurancePhone);
+			_listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.GroupName);
+			_listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.GroupNum);
+			//Remove RequiredFields where the text field is invisible.
+			if(!PrefC.GetBool(PrefName.ShowFeatureEhr)) {
+				_listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.MothersMaidenFirstName);
+				_listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.MothersMaidenLastName);
+				_listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.DateTimeDeceased);
+			}
+			if(!Programs.IsEnabled(Programs.GetProgramNum(ProgramName.TrophyEnhanced))) {
+				_listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.TrophyFolder);
+			}
+			if(PrefC.GetBool(PrefName.EasyHideHospitals)) {
+				_listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.Ward);
+				_listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.AdmitDate);
+				_listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.DischargeDate);
+			}
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) { //Canadian. en-CA or fr-CA
+				_listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.StudentStatus);
+			}
+			else {//Not Canadian
+				_listRequiredFields.RemoveAll(x => x.FieldName==RequiredFieldName.EligibilityExceptCode);
+			}
+			//Remove Required Fields if the Public Health Tab(tabPublicHealth) is hidden
+			if(PrefC.GetBool(PrefName.EasyHidePublicHealth)) {
+				_listRequiredFields.RemoveAll(x => x.FieldName.In(
+						RequiredFieldName.Race,RequiredFieldName.Ethnicity,RequiredFieldName.County,
+						RequiredFieldName.Site,RequiredFieldName.GradeLevel,RequiredFieldName.TreatmentUrgency,
+						RequiredFieldName.ResponsibleParty,RequiredFieldName.SexualOrientation,RequiredFieldName.GenderIdentity
+				));
+			}
 		}
 
 		///<summary>Puts an asterisk next to the label and highlights the textbox/listbox/combobox/radiobutton background for all RequiredFields that
@@ -767,7 +864,7 @@ namespace OpenDental{
 			bool areAnyConditionsMet=false;
 			bool areConditionsMet;
 			if(_listRequiredFields==null) {
-				_listRequiredFields=RequiredFields.GetRequiredFields();
+				FillRequiredFieldsListHelper();
 			}
 			for(int i=0;i<_listRequiredFields.Count;i++) {
 				areConditionsMet=ConditionsAreMet(_listRequiredFields[i]);
@@ -839,7 +936,7 @@ namespace OpenDental{
 						SetRequiredControl(labelDateFirstVisit,odDatePickerDateFirstVisit,areConditionsMet,-1,new List<int>(),"Date First Visit must be selected.");
 						break;
 					case RequiredFieldName.DateTimeDeceased:
-						SetRequiredControl(labelDeceased,textDateTimeDeceased,areConditionsMet,-1,new List<int>(),"Date-Time deceased must be entered.");
+						SetRequiredControl(labelDeceased,dateTimePickerDateDeceased,areConditionsMet,-1,new List<int>(),"Date-Time deceased must be entered.");
 						break;
 					case RequiredFieldName.DischargeDate:
 						SetRequiredControl(labelDischargeDate,odDatePickerDischargeDate,areConditionsMet,-1,new List<int>(),"Hospital discharge date must be selected.");
@@ -920,7 +1017,7 @@ namespace OpenDental{
 								_errorProvider.SetError(textMedicaidState,Lan.g(this,"Invalid state abbreviation"));
 							}
 						}
-						CheckMedicaidIDLength();
+						CheckMedicaidIDLength();						
 						break;
 					case RequiredFieldName.MiddleInitial:
 						SetRequiredTextBox(labelPreferredAndMiddleI,textMiddleI,areConditionsMet);
@@ -1082,28 +1179,28 @@ namespace OpenDental{
 				areConditionsMet=false;
 				switch(listRequiredFieldConditions[i].ConditionType) {
 					case RequiredFieldName.AdmitDate:
-						areConditionsMet=RequiredFieldConditions.CheckDateConditions(odDatePickerAdmitDate.GetDateTime().ToString(),i,listRequiredFieldConditions);
+						if(PrefC.GetBool(PrefName.EasyHideHospitals)) {
+							areConditionsMet=true;
+							break;
+						}
+						areConditionsMet=CheckDateConditions(odDatePickerAdmitDate.GetDateTime().ToString(),i,listRequiredFieldConditions);
 						break;
 					case RequiredFieldName.BillingType:
 						//Conditions of type BillingType store the DefNum as the ConditionValue.
-						areConditionsMet=RequiredFieldConditions.ConditionComparerHelper(comboBillType.GetSelectedDefNum().ToString(),i,listRequiredFieldConditions);
+						areConditionsMet=ConditionComparerHelper(comboBillType.GetSelectedDefNum().ToString(),i,listRequiredFieldConditions);
 						break;
 					case RequiredFieldName.Birthdate://But actually using Age for calculations						
 						if(textAge.Text=="") {
 							areConditionsMet=false;
 							break;
 						}
-						DateTime dateBirth=DateTime.MinValue;
-						if(!_isBirthdayMasked) { //if not masked
-							if(!IsBirthdateValid()) {  
-								areConditionsMet=false;
-								break;
-							}
-							dateBirth=odDatePickerBirthDate.GetDateTime();
+						if(!odDatePickerBirthDate.ReadOnly //if not masked
+							&& !IsBirthdateValid()) 
+						{
+							areConditionsMet=false;
+							break;
 						}
-						else {//birthdate is masked
-							dateBirth=_patientOld.Birthdate;
-						}
+						DateTime dateBirth=PIn.Date(odDatePickerBirthDate.GetDateTime().ToString());
 						int ageEntered=DateTime.Today.Year-dateBirth.Year;
 						if(dateBirth>DateTime.Today.AddYears(-ageEntered)) {
 							ageEntered--;
@@ -1112,7 +1209,7 @@ namespace OpenDental{
 						//There should be no more than 2 conditions of type Birthdate
 						List<bool> listAreCondsMet=new List<bool>();
 						for(int j=0;j<listRequiredFieldConditionsAge.Count;j++) {
-							listAreCondsMet.Add(RequiredFieldConditions.CondOpComparer(ageEntered,listRequiredFieldConditionsAge[j].Operator,PIn.Int(listRequiredFieldConditionsAge[j].ConditionValue)));
+							listAreCondsMet.Add(CondOpComparer(ageEntered,listRequiredFieldConditionsAge[j].Operator,PIn.Int(listRequiredFieldConditionsAge[j].ConditionValue)));
 						}
 						if(listAreCondsMet.Count<2 || listRequiredFieldConditionsAge[1].ConditionRelationship==LogicalOperator.And) {
 							areConditionsMet=!listAreCondsMet.Contains(false);
@@ -1121,38 +1218,66 @@ namespace OpenDental{
 						areConditionsMet=listAreCondsMet.Contains(true);
 						break;
 					case RequiredFieldName.Clinic:
-						areConditionsMet=RequiredFieldConditions.ConditionComparerHelper(comboClinic.ClinicNumSelected.ToString(),i,listRequiredFieldConditions);//includes none clinic
+						if(!PrefC.HasClinicsEnabled) {
+							areConditionsMet=true;
+							break;
+						}
+						areConditionsMet=ConditionComparerHelper(comboClinic.SelectedClinicNum.ToString(),i,listRequiredFieldConditions);//includes none clinic
 						break;								
 					case RequiredFieldName.DateTimeDeceased:
-						areConditionsMet=RequiredFieldConditions.CheckDateConditions(textDateTimeDeceased.Text,i,listRequiredFieldConditions);
+						if(!PrefC.GetBool(PrefName.ShowFeatureEhr)) {
+							areConditionsMet=true;
+							break;
+						}
+						areConditionsMet=CheckDateConditions(dateTimePickerDateDeceased.Text,i,listRequiredFieldConditions);
 						break;
 					case RequiredFieldName.DischargeDate:
-						areConditionsMet=RequiredFieldConditions.CheckDateConditions(odDatePickerDischargeDate.GetDateTime().ToString(),i,listRequiredFieldConditions);
+						if(PrefC.GetBool(PrefName.EasyHideHospitals)) {
+							areConditionsMet=true;
+							break;
+						}
+						areConditionsMet=CheckDateConditions(odDatePickerDischargeDate.GetDateTime().ToString(),i,listRequiredFieldConditions);
 						break;
 					case RequiredFieldName.Gender:
-						areConditionsMet=RequiredFieldConditions.ConditionComparerHelper(listGender.Items.GetTextShowingAt(listGender.SelectedIndex),i,listRequiredFieldConditions);
+						areConditionsMet=ConditionComparerHelper(listGender.Items.GetTextShowingAt(listGender.SelectedIndex),i,listRequiredFieldConditions);
 						break;
 					case RequiredFieldName.Language:
-						areConditionsMet=RequiredFieldConditions.ConditionComparerHelper(comboLanguage.Items.GetTextShowingAt(comboLanguage.SelectedIndex),i,listRequiredFieldConditions);
+						areConditionsMet=ConditionComparerHelper(comboLanguage.Items.GetTextShowingAt(comboLanguage.SelectedIndex),i,listRequiredFieldConditions);
 						break;
 					case RequiredFieldName.MedicaidID:
-						areConditionsMet=RequiredFieldConditions.CheckMedicaidConditions(textMedicaidID.Text,i,listRequiredFieldConditions);
+						if(PrefC.GetBool(PrefName.EasyHideMedicaid)) {
+							areConditionsMet=true;
+							break;
+						}
+						//The only possible value for ConditionValue is 'Blank'
+						if((listRequiredFieldConditions[i].Operator==ConditionOperator.Equals && textMedicaidID.Text=="")
+							|| (listRequiredFieldConditions[i].Operator==ConditionOperator.NotEquals && textMedicaidID.Text!="")) {
+							areConditionsMet=true;
+						}
 						break;
 					case RequiredFieldName.MedicaidState:
-						areConditionsMet=RequiredFieldConditions.CheckMedicaidConditions(textMedicaidState.Text,i,listRequiredFieldConditions);
+						if(PrefC.GetBool(PrefName.EasyHideMedicaid)) {
+							areConditionsMet=true;
+							break;
+						}
+						//The only possible value for ConditionValue is '' (an empty string)
+						if((listRequiredFieldConditions[i].Operator==ConditionOperator.Equals && textMedicaidState.Text=="")
+							|| (listRequiredFieldConditions[i].Operator==ConditionOperator.NotEquals && textMedicaidState.Text!="")) {
+							areConditionsMet=true;
+						}
 						break;
 					case RequiredFieldName.PatientStatus:
-						areConditionsMet=RequiredFieldConditions.ConditionComparerHelper(listStatus.Items.GetTextShowingAt(listStatus.SelectedIndex),i,listRequiredFieldConditions);
+						areConditionsMet=ConditionComparerHelper(listStatus.Items.GetTextShowingAt(listStatus.SelectedIndex),i,listRequiredFieldConditions);
 						break;
 					case RequiredFieldName.Position:
-						areConditionsMet=RequiredFieldConditions.ConditionComparerHelper(listPosition.Items.GetTextShowingAt(listPosition.SelectedIndex),i,listRequiredFieldConditions);
+						areConditionsMet=ConditionComparerHelper(listPosition.Items.GetTextShowingAt(listPosition.SelectedIndex),i,listRequiredFieldConditions);
 						break;
 					case RequiredFieldName.PrimaryProvider:
 						//Conditions of type PrimaryProvider store the ProvNum as the ConditionValue.
-						areConditionsMet=RequiredFieldConditions.ConditionComparerHelper(comboPriProv.GetSelectedProvNum().ToString(),i,listRequiredFieldConditions);
+						areConditionsMet=ConditionComparerHelper(comboPriProv.GetSelectedProvNum().ToString(),i,listRequiredFieldConditions);
 						break;							
 					case RequiredFieldName.StudentStatus:
-						areConditionsMet=RequiredFieldConditions.CheckStudentStatusConditions(i,listRequiredFieldConditions,radioStudentN.Checked,radioStudentF.Checked,radioStudentP.Checked);
+						areConditionsMet=CheckStudentStatusConditions(i,listRequiredFieldConditions);
 						break;
 				}
 				previousFieldName=(int)listRequiredFieldConditions[i].ConditionType;
@@ -1160,16 +1285,99 @@ namespace OpenDental{
 			return areConditionsMet;
 		}
 
+		///<summary>Returns true if the operator is Equals and the value is in the list of conditions or if the operator is NotEquals and the value is 
+		///not in the list of conditions.</summary>
+		private bool ConditionComparerHelper(string val,int condCurIndex,List<RequiredFieldCondition> listRequiredFieldConditions) {
+			RequiredFieldCondition requiredFieldCondition = listRequiredFieldConditions[condCurIndex];//Variable for convenience
+			switch(requiredFieldCondition.Operator) {
+				case ConditionOperator.Equals:
+					return listRequiredFieldConditions.Any(x => x.ConditionType==requiredFieldCondition.ConditionType && x.ConditionValue==val);
+				case ConditionOperator.NotEquals:
+					return !listRequiredFieldConditions.Any(x => x.ConditionType==requiredFieldCondition.ConditionType && x.ConditionValue==val);
+				default:
+					return false;
+			}
+		}
+
+		///<summary>Returns true if the conditions for this date condition are true.</summary>
+		private bool CheckDateConditions(string dateStr,int condCurIndex,List<RequiredFieldCondition> listRequiredFieldConditions) {
+			DateTime dateTime=DateTime.MinValue;
+			if(dateStr=="" || !DateTime.TryParse(dateStr,out dateTime)) {
+				return false;
+			}
+			List<RequiredFieldCondition> listRequiredFieldConditionDate=listRequiredFieldConditions.FindAll(x => x.ConditionType==listRequiredFieldConditions[condCurIndex].ConditionType);
+			if(listRequiredFieldConditionDate.Count<1) {
+				return false;
+			}
+			//There should be no more than 2 conditions of a date type
+			List<bool> listAreCondsMet=new List<bool>();
+			for(int i=0;i<listRequiredFieldConditionDate.Count;i++) {
+				listAreCondsMet.Add(CondOpComparer(dateTime,listRequiredFieldConditionDate[i].Operator,PIn.Date(listRequiredFieldConditionDate[i].ConditionValue)));
+			}
+			if(listAreCondsMet.Count<2 || listRequiredFieldConditionDate[1].ConditionRelationship==LogicalOperator.And) {
+				return !listAreCondsMet.Contains(false);
+			}
+			return listAreCondsMet.Contains(true);
+		}
+
+		///<summary>Returns true if the conditions for StudentStatus are true.</summary>
+		private bool CheckStudentStatusConditions(int condCurIndex,List<RequiredFieldCondition> listRequiredFieldConditions) {
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) { //Canadian. en-CA or fr-CA
+				return true;
+			}
+			if(listRequiredFieldConditions[condCurIndex].Operator==ConditionOperator.Equals) {
+				if((radioStudentN.Checked && listRequiredFieldConditions[condCurIndex].ConditionValue==Lan.g(this,"Nonstudent"))
+					|| (radioStudentF.Checked && listRequiredFieldConditions[condCurIndex].ConditionValue==Lan.g(this,"Fulltime"))
+					|| (radioStudentP.Checked && listRequiredFieldConditions[condCurIndex].ConditionValue==Lan.g(this,"Parttime")))
+				{
+					return true;
+				}
+				return false;
+			}
+			//condCur.Operator==ConditionOperator.NotEquals
+			List<RequiredFieldCondition> listRequiredFieldConditionsStudent=listRequiredFieldConditions.FindAll(x => x.ConditionType==RequiredFieldName.StudentStatus);
+			if((radioStudentN.Checked && listRequiredFieldConditionsStudent.Any(x => x.ConditionValue==Lan.g(this,"Nonstudent")))
+				|| (radioStudentF.Checked && listRequiredFieldConditionsStudent.Any(x => x.ConditionValue==Lan.g(this,"Fulltime")))
+				|| (radioStudentP.Checked && listRequiredFieldConditionsStudent.Any(x => x.ConditionValue==Lan.g(this,"Parttime"))))
+			{
+				return false;
+			}
+			return true;
+		}
+
+		///<summary>Evaluates two dates using the provided operator.</summary>
+		private bool CondOpComparer(DateTime dateTime1,ConditionOperator conditionOperator,DateTime dateTime2) {
+			return CondOpComparer(DateTime.Compare(dateTime1,dateTime2),conditionOperator,0);
+		}
+
+		///<summary>Evaluates two integers using the provided operator.</summary>
+		private bool CondOpComparer(int value1,ConditionOperator conditionOperator,int value2) {
+			switch(conditionOperator) {
+				case ConditionOperator.Equals:
+					return value1==value2;
+				case ConditionOperator.NotEquals:
+					return value1!=value2;
+				case ConditionOperator.GreaterThan:
+					return value1>value2;
+				case ConditionOperator.GreaterThanOrEqual:
+					return value1>=value2;
+				case ConditionOperator.LessThan:
+					return value1<value2;
+				case ConditionOperator.LessThanOrEqual:
+					return value1<=value2;
+			}
+			return false;
+		}
+
 		///<summary>Checks to see if the Medicaid ID is the proper number of digits for the Medicaid State.</summary>
 		private void CheckMedicaidIDLength() {
-			string reqLength=RequiredFieldConditions.CheckMedicaidIDLength(textMedicaidState.Text,textMedicaidID.Text);
-			if(reqLength.IsNullOrEmpty()) {
-				_errorProvider.SetError(textMedicaidID,"");
+			int reqLength=StateAbbrs.GetMedicaidIDLength(textMedicaidState.Text);
+			if(reqLength==0 || reqLength==textMedicaidID.Text.Length) {
 				return;
 			}
 			_isMissingRequiredFields=true;
 			if(_isValidating) {
-				_errorProvider.SetError(textMedicaidID,Lan.g(this,"Medicaid ID length must be ")+reqLength+Lan.g(this," digits for the state of ")
+				_errorProvider.SetError(textMedicaidID,Lan.g(this,"Medicaid ID length must be ")+reqLength.ToString()+Lan.g(this," digits for the state of ")
 					+textMedicaidState.Text+".");
 			}
 		}
@@ -1200,7 +1408,7 @@ namespace OpenDental{
 				// Birthdate field is not the only ODDatePicker field, so we have to treat it differently. GetDateTime() will return DateTime.MinValue if blank
 				bool showBirthdate=false;
 				if(control is ODDatePicker odDatePicker) { 
-					if(_isBirthdayMasked && control.Name=="odDatePickerBirthDate" && !odDatePicker.IsEmptyDateTime()) {
+					if(_isBirthdayMasked && control.Name=="odDatePickerBirthDate" && !String.IsNullOrEmpty(((ODDatePicker)control).GetTextDate())) {
 						showBirthdate=false; // Birthdate is masked and has a value, don't trigger required field.
 					}
 					else {
@@ -1248,7 +1456,7 @@ namespace OpenDental{
 		private void SetRequiredClinic(bool areConditionsMet){
 			//no easy way to show clinic is required. We don't add and remove star from label.
 			if(areConditionsMet) {
-				if(comboClinic.ClinicNumSelected==0){
+				if(comboClinic.SelectedClinicNum==0){
 					_isMissingRequiredFields=true;
 					if(_isValidating) {
 						_errorProvider.SetError(comboClinic,Lan.g(this,"Selection cannot be 'Unassigned'."));
@@ -1264,14 +1472,6 @@ namespace OpenDental{
 		}
 		
 		private void textBox_Leave(object sender,System.EventArgs e) {
-			SetRequiredFields();
-		}
-
-		///<summary>TextZip needs it's own event to fill zip codes in the case where the zip code field is left blank.</summary>
-		private void textZip_Leave(object sender,EventArgs e) {
-			if(string.IsNullOrEmpty(textZip.Text)) {
-				FillComboZip();
-			}
 			SetRequiredFields();
 		}
 		
@@ -1304,7 +1504,7 @@ namespace OpenDental{
 				return;
 			}
 			Def defBillingTypeSelected=comboBillType.GetSelected<Def>();
-			long defNumClinicDefaultBillingType=PIn.Long(ClinicPrefs.GetPrefValue(PrefName.PracticeDefaultBillType,comboClinic.ClinicNumSelected));
+			long defNumClinicDefaultBillingType=PIn.Long(ClinicPrefs.GetPrefValue(PrefName.PracticeDefaultBillType,comboClinic.SelectedClinicNum));
 			//If patient is new and the selected billing type is not the selected clinics default billing type.
 			if(IsNew && defBillingTypeSelected.DefNum!=defNumClinicDefaultBillingType) {
 				string clinicDefaultBillingTypeName=_listDefsBillingType.Find(x => x.DefNum==defNumClinicDefaultBillingType)?.ItemName;
@@ -1399,7 +1599,7 @@ namespace OpenDental{
 			if(textSSN.Text==""){
 				return;
 			}
-			if(PrefC.GetBool(PrefName.PatientSSNMasked) || !Security.IsAuthorized(EnumPermType.PatientSSNView, true)) {
+			if(PrefC.GetBool(PrefName.PatientSSNMasked) || !Security.IsAuthorized(Permissions.PatientSSNView, true)) {
 				if(textSSN.Text==_maskedSSNOld) {//If SSN hasn't changed, don't validate.  It is masked.
 					return;
 				}
@@ -1433,36 +1633,41 @@ namespace OpenDental{
 			CalcAge();
 		}
 
-		private void textDateTimeDeceased_Validated(object sender,EventArgs e) {
+		private void textDateDeceased_Validated(object sender,EventArgs e) {
 			CalcAge();
 		}
 
 		private bool IsBirthdateValid() {
 			//We do it this way to maintain the very useful behavior where it adds /'s for you when leaving.
-			//But this will not be needed when moving to wpf, because WpfControls.UI.DatePicker already does this.
-			if(odDatePickerBirthDate.IsValid()) {
-				return true;
+			ValidDate textBirthdateCheck=new ValidDate();
+			textBirthdateCheck.Text=odDatePickerBirthDate.GetTextDate();//Use text date for slash validation and formatting
+			textBirthdateCheck.Validate();
+			if(!textBirthdateCheck.IsValid()) {
+				return false;
 			}
-			return false;
+			odDatePickerBirthDate.Text=textBirthdateCheck.Text;
+			return true;
 		}
 
 		private void CalcAge() {
-			if(_isBirthdayMasked) {//showing xx/xx/xxxx
+			if(odDatePickerBirthDate.ReadOnly) {//showing xx/xx/xxxx
 				return;
 			}
 			textAge.Text="";
-			if(odDatePickerBirthDate.IsEmptyDateTime()) {
+			if(odDatePickerBirthDate.GetTextDate()=="") {
 				return;
 			}
 			if(!IsBirthdateValid()) {
 				MsgBox.Show(this,"Patient's Birthdate is not a valid or allowed date.");
+				_errorProvider.SetError(odDatePickerBirthDate,"Valid dates between 1880 and 2100.");
 				return;
 			}
-			DateTime dateBirth=odDatePickerBirthDate.GetDateTime();
+			DateTime dateBirth=PIn.Date(odDatePickerBirthDate.Text);
+			odDatePickerBirthDate.SetDateTime(dateBirth);//Need to update UI because odDatePickerBirthDate is what is used in OK click to fill column.
 			DateTime dateTimeTo=DateTime.Now;
-			if(!string.IsNullOrWhiteSpace(textDateTimeDeceased.Text)) { 
+			if(!string.IsNullOrWhiteSpace(dateTimePickerDateDeceased.Text)) { 
 				try {
-					dateTimeTo=DateTime.Parse(textDateTimeDeceased.Text);
+					dateTimeTo=DateTime.Parse(dateTimePickerDateDeceased.Text);
 				}
 				catch {
 					return;
@@ -1609,16 +1814,33 @@ namespace OpenDental{
 			Plugins.HookAddCode(sender,"FormPatientEdit.textAnyPhoneNumber_TextChanged_end");
 		}
 
-		///<summary>Offers the user, if necessary, the opportunity to send a text message to the patient when changes have been made to texting settings.</summary>
-		private void PromptForSmsIfNecessary(Patient patientNew,Patient patientOld) {
-			if(!Patients.DoPromptForSms(patientNew,patientOld)) {
-				return;
+		///<summary>Offers the user, if necessary, the opportunity to send a text message to the patient when changes have been made to texting settings.
+		///</summary>
+		private void PromptForSmsIfNecessary(Patient patientOriginal,Patient patientNew) {
+			if(!Clinics.IsTextingEnabled(patientNew.ClinicNum)) {
+				return;//Office doesn't use texting.
+			}
+			if(!ClinicPrefs.GetBool(PrefName.ShortCodeOptInOnApptComplete,patientNew.ClinicNum)) {
+				return;//Office has turned off this prompt.
+			}
+			if(patientNew.TxtMsgOk!=YN.Yes || string.IsNullOrWhiteSpace(PhoneNumbers.RemoveNonDigitsAndTrimStart(patientNew.WirelessPhone))) {
+				return;//Not set to YES or no phone number, so no need to send a test message.
+			}
+			if(!HasPhoneChanged(patientOriginal.WirelessPhone,patientNew.WirelessPhone) && patientOriginal.TxtMsgOk==YN.Yes) {
+				return;//Phone number hasn't changed and TxtMsgOK was already YES => No changes, no need to prompt.
 			}
 			if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Texting settings have changed.  Would you like to send a message now?","Send a message?")) {
 				string message=PrefC.GetString(PrefName.ShortCodeOptInScript);
-				message=FrmShortCodeOptIn.FillInTextTemplate(message,patientNew);
+				message=FormShortCodeOptIn.FillInTextTemplate(message,patientNew);
 				FormOpenDental.S_TxtMsg_Click(patientNew.PatNum,message);
-			}
+			}	
+		}
+
+		///<summary>Returns true if the given phone number has changed.  Comparison is made with a normalized formatting.</summary>
+		private bool HasPhoneChanged(string phoneOriginal,string phoneNew) {
+			string phoneOriginalNormalized=PhoneNumbers.RemoveNonDigitsAndTrimStart(phoneOriginal);
+			string phoneNewNormalized=PhoneNumbers.RemoveNonDigitsAndTrimStart(phoneNew);
+			return phoneOriginalNormalized!=phoneNewNormalized;
 		}
 
 		private void butAuto_Click(object sender, System.EventArgs e) {
@@ -1902,32 +2124,27 @@ namespace OpenDental{
 			_isMouseInListSites=false;
 		}
 
-		private void butNow_Click(object sender,EventArgs e) {
-			textDateTimeDeceased.Text=DateTime.Now.ToShortDateString()+" "+DateTime.Now.ToShortTimeString();
-			CalcAge();
-		}
-
 		private void butPickSite_Click(object sender,EventArgs e) {
-			FrmSites frmSites=new FrmSites();
-			frmSites.IsSelectionMode=true;
-			frmSites.SiteNumSelected=_patient.SiteNum;
-			frmSites.ShowDialog();
-			if(!frmSites.IsDialogOK) {
+			using FormSites formSites=new FormSites();
+			formSites.IsSelectionMode=true;
+			formSites.SiteNumSelected=_patient.SiteNum;
+			formSites.ShowDialog();
+			if(formSites.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			_patient.SiteNum=frmSites.SiteNumSelected;
+			_patient.SiteNum=formSites.SiteNumSelected;
 			textSite.Text=Sites.GetDescription(_patient.SiteNum);
 			SetRequiredFields();
 		}
 
 		private void butPickResponsParty_Click(object sender,EventArgs e) {
 			UpdateLocalNameHelper();
-			FrmFamilyMemberSelect frmFamilyMemberSelect=new FrmFamilyMemberSelect(_family);
-			frmFamilyMemberSelect.ShowDialog();
-			if(frmFamilyMemberSelect.IsDialogCancel) {
+			using FormFamilyMemberSelect formFamilyMemberSelect=new FormFamilyMemberSelect(_family);
+			formFamilyMemberSelect.ShowDialog();
+			if(formFamilyMemberSelect.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			_patient.ResponsParty=frmFamilyMemberSelect.SelectedPatNum;
+			_patient.ResponsParty=formFamilyMemberSelect.SelectedPatNum;
 			//saves a call to the db if this pat's responsible party is self and name in db could be different than local PatCur name
 			if(_patient.PatNum==_patient.ResponsParty) {
 				textResponsParty.Text=_patient.GetNameLF();
@@ -2257,9 +2474,8 @@ namespace OpenDental{
 				return;
 			}
 			UpdateLocalNameHelper();
-			FrmGuardianEdit frmGuardianEdit=new FrmGuardianEdit(_listGuardians[listRelationships.SelectedIndex],_family);
-			frmGuardianEdit.ShowDialog();
-			if(frmGuardianEdit.IsDialogOK) {
+			using FormGuardianEdit formGuardianEdit=new FormGuardianEdit(_listGuardians[listRelationships.SelectedIndex],_family);
+			if(formGuardianEdit.ShowDialog()==DialogResult.OK) {
 				FillGuardians();
 			}
 		}
@@ -2270,9 +2486,8 @@ namespace OpenDental{
 			guardian.IsNew=true;
 			guardian.PatNumChild=_patient.PatNum;
 			//no patnumGuardian set
-			FrmGuardianEdit frmGuardianEdit=new FrmGuardianEdit(guardian,_family);
-			frmGuardianEdit.ShowDialog();
-			if(frmGuardianEdit.IsDialogOK) {
+			using FormGuardianEdit formGuardianEdit=new FormGuardianEdit(guardian,_family);
+			if(formGuardianEdit.ShowDialog()==DialogResult.OK) {
 				_hasGuardiansChanged=true;
 				FillGuardians();
 			}
@@ -2286,22 +2501,94 @@ namespace OpenDental{
 				//don't delete existing guardians for family until we are certain we can replace them with the defaults
 				//Guardians.DeleteForFamily(PatCur.Guarantor);
 			}
-			Result result=Patients.SetDefaultRelationships(_patient,_family,(PatientPosition)listPosition.SelectedIndex);
-			if(result.IsFailure()) {
-				MsgBox.Show(this,result.Msg);
+			List<Patient> listPatientsAdults=new List<Patient>();
+			List<Patient> listPatientsChildren=new List<Patient>();
+			PatientPosition patientPosition;
+			for(int p=0;p<_family.ListPats.Length;p++){
+				if(_family.ListPats[p].PatNum==_patient.PatNum) {
+					patientPosition=(PatientPosition)listPosition.SelectedIndex;
+				}
+				else {
+					patientPosition=_family.ListPats[p].Position;
+				}
+				if(patientPosition==PatientPosition.Child){
+					listPatientsChildren.Add(_family.ListPats[p]);
+				}
+				else{
+					listPatientsAdults.Add(_family.ListPats[p]);
+				}
+			}
+			Patient patientEldestMaleAdult=null;
+			Patient patientEldestFemaleAdult=null;
+			for(int i=0;i<listPatientsAdults.Count;i++) {
+				if(listPatientsAdults[i].Gender==PatientGender.Male 
+					&& (patientEldestMaleAdult==null || listPatientsAdults[i].Age>patientEldestMaleAdult.Age)) 
+				{
+						patientEldestMaleAdult=listPatientsAdults[i];
+				}
+				if(listPatientsAdults[i].Gender==PatientGender.Female
+					&& (patientEldestFemaleAdult==null || listPatientsAdults[i].Age>patientEldestFemaleAdult.Age)) 
+				{
+					patientEldestFemaleAdult=listPatientsAdults[i];
+				}
+				//Do not do anything for the other genders.
+			}
+			if(listPatientsAdults.Count<1) {
+				MsgBox.Show(this,"No adults found.\r\nFamily relationships will not be changed.");
+				return;
+			}
+			if(listPatientsChildren.Count<1) {
+				MsgBox.Show(this,"No children found.\r\nFamily relationships will not be changed.");
+				return;
+			}
+			if(patientEldestFemaleAdult==null && patientEldestMaleAdult==null) {
+				MsgBox.Show(this,"No male or female adults found.\r\nFamily relationships will not be changed.");
 				return;
 			}
 			_hasGuardiansChanged=true;
+			if(Guardians.ExistForFamily(_patient.Guarantor)) {
+				//delete all guardians for the family, original family relationships are saved on load so this can be undone if the user presses cancel.
+				Guardians.DeleteForFamily(_patient.Guarantor);
+			}
+			for(int i=0;i<listPatientsChildren.Count;i++) {
+				if(patientEldestFemaleAdult!=null) {
+					//Create Parent=>Child relationship
+					Guardian guardianMother=new Guardian();
+					guardianMother.PatNumChild=patientEldestFemaleAdult.PatNum;
+					guardianMother.PatNumGuardian=listPatientsChildren[i].PatNum;
+					guardianMother.Relationship=GuardianRelationship.Child;
+					Guardians.Insert(guardianMother);
+					//Create Child=>Parent relationship
+					Guardian guardianChild=new Guardian();
+					guardianChild.PatNumChild=listPatientsChildren[i].PatNum;
+					guardianChild.PatNumGuardian=patientEldestFemaleAdult.PatNum;
+					guardianChild.Relationship=GuardianRelationship.Mother;
+					guardianChild.IsGuardian=true;
+					Guardians.Insert(guardianChild);
+				}
+				if(patientEldestMaleAdult!=null) {
+					//Create Parent=>Child relationship
+					Guardian guardianFather=new Guardian();
+					guardianFather.PatNumChild=patientEldestMaleAdult.PatNum;
+					guardianFather.PatNumGuardian=listPatientsChildren[i].PatNum;
+					guardianFather.Relationship=GuardianRelationship.Child;
+					Guardians.Insert(guardianFather);
+					//Create Child=>Parent relationship
+					Guardian guardianChild=new Guardian();
+					guardianChild.PatNumChild=listPatientsChildren[i].PatNum;
+					guardianChild.PatNumGuardian=patientEldestMaleAdult.PatNum;
+					guardianChild.Relationship=GuardianRelationship.Father;
+					guardianChild.IsGuardian=true;
+					Guardians.Insert(guardianChild);
+				}
+			}
 			FillGuardians();
 		}
 
 		private void butRaceEthnicity_Click(object sender,EventArgs e) {
-			FrmPatientRaceEthnicity frmPatientRaceEthnicity=new FrmPatientRaceEthnicity();
-			frmPatientRaceEthnicity.PatientCur=_patient;
-			frmPatientRaceEthnicity.ListPatientRacesAll=_listPatientRaces;
-			frmPatientRaceEthnicity.ShowDialog();
-			if(frmPatientRaceEthnicity.IsDialogOK) {
-				_listPatientRaces=frmPatientRaceEthnicity.GetPatientRaces();
+			using FormPatientRaceEthnicity formPatientRaceEthnicity=new FormPatientRaceEthnicity(_patient,_listPatientRaces);
+			if(formPatientRaceEthnicity.ShowDialog()==DialogResult.OK) {
+				_listPatientRaces=formPatientRaceEthnicity.PatientRaces();
 				textRace.Text=PatientRaces.GetRaceDescription(_listPatientRaces);
 				textEthnicity.Text=PatientRaces.GetEthnicityDescription(_listPatientRaces);
 				SetRequiredFields();
@@ -2421,41 +2708,42 @@ namespace OpenDental{
 		}
 
 		private void butReferredFrom_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.RefAttachAdd)) {
+			if(!Security.IsAuthorized(Permissions.RefAttachAdd)) {
 				return;
 			}
 			Referral referral=new Referral();
 			if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Is the referral source an existing patient?")) {
-				FrmPatientSelect frmPatientSelect=new FrmPatientSelect();
-				frmPatientSelect.ShowDialog();
-				if(frmPatientSelect.IsDialogCancel) {
+				using FormPatientSelect formPatientSelect=new FormPatientSelect();
+				formPatientSelect.IsSelectionModeOnly=true;
+				formPatientSelect.ShowDialog();
+				if(formPatientSelect.DialogResult!=DialogResult.OK) {
 					return;
 				}
-				referral.PatNum=frmPatientSelect.PatNumSelected;
+				referral.PatNum=formPatientSelect.PatNumSelected;
 				bool isReferralNew=true;
-				Referral referralMatch=Referrals.GetFirstOrDefault(x => x.PatNum==frmPatientSelect.PatNumSelected);
+				Referral referralMatch=Referrals.GetFirstOrDefault(x => x.PatNum==formPatientSelect.PatNumSelected);
 				if(referralMatch!=null) {
 					referral=referralMatch;
 					isReferralNew=false;
 				}
-				FrmReferralEdit frmReferralEdit=new FrmReferralEdit(referral);//the ReferralNum must be added here
-				frmReferralEdit.IsNew=isReferralNew;
-				frmReferralEdit.ShowDialog();
-				if(!frmReferralEdit.IsDialogOK) {
+				using FormReferralEdit formReferralEdit=new FormReferralEdit(referral);//the ReferralNum must be added here
+				formReferralEdit.IsNew=isReferralNew;
+				formReferralEdit.ShowDialog();
+				if(formReferralEdit.DialogResult!=DialogResult.OK) {
 					return;
 				}
-				referral=frmReferralEdit.ReferralCur;//not needed, but it makes it clear that we are editing the ref in FormRefEdit
+				referral=formReferralEdit.ReferralCur;//not needed, but it makes it clear that we are editing the ref in FormRefEdit
 			}
 			else {//not a patient referral, must be a doctor or marketing/other so show the referral select window with doctor and other check boxes checked
-				FrmReferralSelect frmReferralSelect=new FrmReferralSelect();
-				frmReferralSelect.IsSelectionMode=true;
-				frmReferralSelect.IsShowPat=false;
-				frmReferralSelect.ShowDialog();
-				if(frmReferralSelect.IsDialogCancel) {
+				using FormReferralSelect formReferralSelect=new FormReferralSelect();
+				formReferralSelect.IsSelectionMode=true;
+				formReferralSelect.IsShowPat=false;
+				formReferralSelect.ShowDialog();
+				if(formReferralSelect.DialogResult!=DialogResult.OK) {
 					FillReferrals();//the user may have edited a referral and then cancelled attaching to the patient, refill the text box to reflect any changes
 					return;
 				}
-				referral=frmReferralSelect.ReferralSelected;
+				referral=formReferralSelect.ReferralSelected;
 			}
 			RefAttach refAttach=new RefAttach();
 			refAttach.ReferralNum=referral.ReferralNum;
@@ -2467,7 +2755,7 @@ namespace OpenDental{
 			}
 			refAttach.ItemOrder=_listRefAttaches.Select(x => x.ItemOrder).DefaultIfEmpty().Max()+1;
 			RefAttaches.Insert(refAttach);
-			SecurityLogs.MakeLogEntry(EnumPermType.RefAttachAdd,_patient.PatNum,"Referred From "+Referrals.GetNameFL(refAttach.ReferralNum));
+			SecurityLogs.MakeLogEntry(Permissions.RefAttachAdd,_patient.PatNum,"Referred From "+Referrals.GetNameFL(refAttach.ReferralNum));
 			FillReferrals();
 		}
 
@@ -2482,7 +2770,7 @@ namespace OpenDental{
 			if(refAttach==null) {
 				return;
 			}
-			Referral referral=WpfControls.ReferralL.GetReferral(refAttach.ReferralNum);
+			Referral referral=ReferralL.GetReferral(refAttach.ReferralNum);
 			if(referral==null) {
 				return;
 			}
@@ -2520,10 +2808,10 @@ namespace OpenDental{
 		}
 
 		private void ShowPatientEditEmail() {
-			FrmPatientEditEmail frmPatientEditEmail=new FrmPatientEditEmail(textEmail.Text);
-			frmPatientEditEmail.ShowDialog();
-			if(frmPatientEditEmail.IsDialogOK) {
-				textEmail.Text=frmPatientEditEmail.PatientEmails;
+			using FormPatientEditEmail formPatientEditEmail=new FormPatientEditEmail(textEmail.Text);
+			formPatientEditEmail.ShowDialog();
+			if(formPatientEditEmail.DialogResult==DialogResult.OK) {
+				textEmail.Text=formPatientEditEmail.PatientEmails;
 			}
 		}
 
@@ -2538,9 +2826,9 @@ namespace OpenDental{
 		}
 
 		private void textReferredFrom_DoubleClick(object sender,EventArgs e) {
-			FrmReferralsPatient frmReferralsPatient=new FrmReferralsPatient();
-			frmReferralsPatient.PatNum=_patient.PatNum;
-			frmReferralsPatient.ShowDialog();
+			using FormReferralsPatient formReferralsPatient=new FormReferralsPatient();
+			formReferralsPatient.PatNum=_patient.PatNum;
+			formReferralsPatient.ShowDialog();
 			FillReferrals();
 			SetRequiredFields();
 		}
@@ -2560,31 +2848,36 @@ namespace OpenDental{
 				logtext="Social Security Number";
 			}
 			logtext+=" unmasked in Patient Edit";
-			SecurityLogs.MakeLogEntry(EnumPermType.PatientSSNView,_patient.PatNum,logtext);
+			SecurityLogs.MakeLogEntry(Permissions.PatientSSNView,_patient.PatNum,logtext);
 		}
 
 		private void butViewBirthdate_Click(object sender,EventArgs e) {
 			//Button not visible unless Birthdate is masked
-			if(odDatePickerBirthDate.GetDateTime()!=_patientOld.Birthdate) {
+			if(odDatePickerBirthDate.GetDateTime()!=_patientOld.Birthdate && odDatePickerBirthDate.GetTextDate()!=_maskedDOBOld) {
 				//Birthdate text field has changed since form was loaded and would be "unmasked" already. return.
 				return;
 			}
 			odDatePickerBirthDate.SetDateTime(_patientOld.Birthdate);
 			string logtext="Date of birth unmasked in Patient Edit";
-			SecurityLogs.MakeLogEntry(EnumPermType.PatientDOBView,_patient.PatNum,logtext);
-			textBirthdateMask.Visible=false;
+			SecurityLogs.MakeLogEntry(Permissions.PatientDOBView,_patient.PatNum,logtext);
 			odDatePickerBirthDate.ReadOnly=false;
-			odDatePickerBirthDate.Visible=true;
-			_isBirthdayMasked=false;
+			_isBirthdayMasked = false;
 			odDatePickerBirthDate.Focus();//Force the validation to happen again when losing focus in case our stored birthdate is already invalid.
+		}
+
+		//used when adding a date to the date time picker, changes from blank to show a date time.
+		private void dateTimePickerDateDeceased_ValueChanged(object sender, EventArgs e) {
+			dateTimePickerDateDeceased.CustomFormat=System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern+" hh:mm tt";
+			dateTimePickerDateDeceased.Format=DateTimePickerFormat.Custom;
 		}
 
 		//clear out deceased date time in case it was entered by mistake
 		private void butClearDateTimeDeceased_Click(object sender,EventArgs e) {
-			textDateTimeDeceased.Text=""; 
+			dateTimePickerDateDeceased.CustomFormat= " ";
+			dateTimePickerDateDeceased.Format=DateTimePickerFormat.Custom;
 		}
 
-		private void butSave_Click(object sender ,System.EventArgs e) {
+		private void butOK_Click(object sender ,System.EventArgs e) {
 			bool isValid=true;
 			SetRequiredFields();
 			object[] objectArrayParameters=new object[] { isValid,_patient };
@@ -2593,11 +2886,10 @@ namespace OpenDental{
 			if((bool)objectArrayParameters[0]==false) {//Didn't pass plug-in validation
 				return;
 			}
-			//Place all UI validation in here. Data validation should go in Patients.ValidatePatientEdit(). Even if a field has both UI and data validation, it still needs to be separated.
-			#region UI Validation
-			if(!odDatePickerBirthDate.IsEmptyDateTime()//If not blank
+			bool isCDSinterventionCheckRequired=false;//checks selected values
+			if(odDatePickerBirthDate.GetTextDate()!=""//If not blank
 				&& !IsBirthdateValid()//Check for a valid date
-				&& !_isBirthdayMasked)//If not masked
+				&& !odDatePickerBirthDate.ReadOnly)//If not masked
 			{
 				MsgBox.Show(this,"Patient's Birthdate is not a valid or allowed date.");
 				return;
@@ -2610,12 +2902,25 @@ namespace OpenDental{
 				return;
 			}
 			DateTime dateTimeDeceased=DateTime.MinValue;
-			if(textDateTimeDeceased.Text!="") {
+			if(dateTimePickerDateDeceased.Text!=" ") {
 				try {
-					dateTimeDeceased=DateTime.Parse(textDateTimeDeceased.Text);
+						dateTimeDeceased=DateTime.Parse(dateTimePickerDateDeceased.Text);
 				}
 				catch {
 					MsgBox.Show(this,"Date time deceased is invalid.");
+					return;
+				}
+			}
+			if(textLName.Text==""){
+				MsgBox.Show(this,"Last Name must be entered.");
+				return;
+			}
+			//see if chartNum is a duplicate
+			if(textChartNumber.Text!=""){
+				//the patNum will be 0 for new
+				string usedBy=Patients.ChartNumUsedBy(textChartNumber.Text,_patient.PatNum);
+				if(usedBy!=""){
+					MessageBox.Show(Lan.g(this,"This chart number is already in use by:")+" "+usedBy);
 					return;
 				}
 			}
@@ -2625,6 +2930,44 @@ namespace OpenDental{
 			catch{
 				MsgBox.Show(this,"Ask To Arrive Early invalid.");
 				return;
+			}
+			if(textCounty.Text != "" && !Counties.DoesExist(textCounty.Text)){
+				MessageBox.Show(Lan.g(this,"County name invalid. The County entered is not present in the list of Counties. Please add the new County."));
+				return;
+			}
+			if((SexOrientation)comboSexOrientation.SelectedIndex==SexOrientation.AdditionalOrientation
+				&& textSpecifySexOrientation.Text.Trim()=="") 
+				
+			{
+				MsgBox.Show(this,"Sexual orientation must be specified.");
+				return;
+			}
+			if((GenderId)comboGenderIdentity.SelectedIndex==GenderId.AdditionalGenderCategory
+				&& textSpecifyGender.Text.Trim()=="") 
+			{
+				MsgBox.Show(this,"Gender identity must be specified.");
+				return;
+			}
+			if(textSite.Text=="") {
+				_patient.SiteNum=0;
+			}
+			if(textSite.Text != "" && textSite.Text != Sites.GetDescription(_patient.SiteNum)) {
+				long matchingSite=Sites.FindMatchSiteNum(textSite.Text);
+				if(matchingSite==-1) {
+					MessageBox.Show(Lan.g(this,"Invalid Site description."));
+					return;
+				}
+				else {
+					_patient.SiteNum=matchingSite;
+				}
+			}
+			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
+				if(comboCanadianEligibilityCode.SelectedIndex==1//FT student
+					&& textSchool.Text=="" && PIn.Date(odDatePickerBirthDate.GetDateTime().ToString()).AddYears(18)<=DateTime.Today)
+				{
+					MsgBox.Show(this,"School should be entered if full-time student and patient is 18 or older.");
+					return;
+				}
 			}
 			//If public health is enabled and the combo box is in an invalid state, warn the user.
 			if(!PrefC.GetBool(PrefName.EasyHidePublicHealth) && comboGradeLevel.SelectedIndex < 0) {
@@ -2637,6 +2980,22 @@ namespace OpenDental{
 				_isValidating=true;
 				SetRequiredFields();
 				return;
+			}
+			else {
+				_patient.PriProv=comboPriProv.GetSelectedProvNum();
+			}
+			//Don't allow changing status from Archived if this is a merged patient.
+			if(_patientOld.PatStatus!=_listPatientStatuses[listStatus.SelectedIndex] && _patientOld.PatStatus==PatientStatus.Archived && 
+				PatientLinks.WasPatientMerged(_patientOld.PatNum)) 
+			{
+				MsgBox.Show(this,"Not allowed to change the status of a merged patient.");
+				return;
+			}
+			if(IsNew && PrefC.HasClinicsEnabled) {
+				if(!PrefC.GetBool(PrefName.ClinicAllowPatientsAtHeadquarters) && comboClinic.SelectedClinicNum==0) {
+					MsgBox.Show(this,"Current settings for clinics do not allow patients to be added to the 'Unassigned' clinic. Please select a clinic.");
+					return;
+				}
 			}
 			//Check SSN for US Formatting.  If SSN is masked, don't check.  Similar checks to textSSN_Validating()
 			if(CultureInfo.CurrentCulture.Name=="en-US" && textSSN.Text!=""//Only validate if US and SSN is not blank
@@ -2657,10 +3016,8 @@ namespace OpenDental{
 					SetRequiredFields();
 					return;
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.RequiredFields,_patient.PatNum,"Saved patient with required fields missing.");
+				SecurityLogs.MakeLogEntry(Permissions.RequiredFields,_patient.PatNum,"Saved patient with required fields missing.");
 			}
-			#endregion UI Validation
-			#region FillFromUI
 			_patient.LName=textLName.Text;
 			_patient.FName=textFName.Text;
 			_patient.MiddleI=textMiddleI.Text;
@@ -2693,14 +3050,31 @@ namespace OpenDental{
 					}
 				}
 			}
-			_patient.Gender=listGender.GetSelected<PatientGender>();
+			switch(listGender.SelectedIndex){
+				case 0: _patient.Gender=PatientGender.Male; break;
+				case 1: _patient.Gender=PatientGender.Female; break;
+				case 2: _patient.Gender=PatientGender.Other; break;
+				case 3: _patient.Gender=PatientGender.Unknown; break;
+			}
 			if(PrefC.GetBool(PrefName.ShowPreferredPronounsForPats)) {//Only set when preference is enabled.
 				_patientNote.Pronoun=comboPreferredPronouns.GetSelected<PronounPreferred>();
 			}
-			_patient.Position=listPosition.GetSelected<PatientPosition>();
+			switch(comboPreferredPronouns.SelectedIndex) {
+				case 0: _patientNote.Pronoun=PronounPreferred.None; break;
+				case 1: _patientNote.Pronoun=PronounPreferred.HeHim; break;
+				case 2: _patientNote.Pronoun=PronounPreferred.SheHer; break;
+				case 3: _patientNote.Pronoun=PronounPreferred.TheyThem; break;
+			}
+			switch(listPosition.SelectedIndex){
+				case 0: _patient.Position=PatientPosition.Single; break;
+				case 1: _patient.Position=PatientPosition.Married; break;
+				case 2: _patient.Position=PatientPosition.Child; break;
+				case 3: _patient.Position=PatientPosition.Widowed; break;
+				case 4: _patient.Position=PatientPosition.Divorced; break;
+			}
 			//Only update birthdate if it was changed, shouldn't be masked.
-			if(!_isBirthdayMasked && _patientOld.Birthdate.Date!=odDatePickerBirthDate.GetDateTime().Date) {
-				_patient.Birthdate=odDatePickerBirthDate.GetDateTime();
+			if(!odDatePickerBirthDate.ReadOnly && _patientOld.Birthdate.ToShortDateString()!=odDatePickerBirthDate.GetTextDate()) {
+				_patient.Birthdate=PIn.Date(odDatePickerBirthDate.GetDateTime().ToString());
 			}
 			_patient.DateTimeDeceased=dateTimeDeceased;
 			if(!textSSN.ReadOnly && Patients.SSNRemoveDashes(textSSN.Text)!=_patientOld.SSN) { //Only update SSN if it was changed, readonly must be false to edit, meaning it is also unmasked.
@@ -2818,7 +3192,6 @@ namespace OpenDental{
 			_patient.AddrNote=textAddrNotes.Text;
 			_patient.DateFirstVisit=PIn.Date(odDatePickerDateFirstVisit.GetDateTime().ToString());
 			_patient.AskToArriveEarly=PIn.Int(textAskToArriveEarly.Text);
-			_patient.PriProv=comboPriProv.GetSelectedProvNum();
 			_patient.SecProv=comboSecProv.GetSelectedProvNum();
 			if(comboFeeSched.SelectedIndex==0){
 				_patient.FeeSched=0;
@@ -2827,7 +3200,7 @@ namespace OpenDental{
 				_patient.FeeSched=comboFeeSched.GetSelected<FeeSched>().FeeSchedNum;
 			}
 			_patient.BillingType=comboBillType.GetSelectedDefNum();
-			_patient.ClinicNum=comboClinic.ClinicNumSelected;
+			_patient.ClinicNum=comboClinic.SelectedClinicNum;
 			if(!_isUsingNewRaceFeature) {
 				_listPatientRaces=new List<PatientRace>();
 				for(int i=0;i<comboBoxMultiRace.SelectedIndices.Count;i++) {
@@ -2923,39 +3296,140 @@ namespace OpenDental{
 			if(_patient.Guarantor==0){
 				_patient.Guarantor=_patient.PatNum;
 			}
-			if(textSite.Text=="") {
-				_patient.SiteNum=0;
-			}
-			else if(textSite.Text!="" && textSite.Text!=Sites.GetDescription(_patient.SiteNum)) {
-				_patient.SiteNum=Sites.FindMatchSiteNum(textSite.Text);
-			}
 			_patientNote.ICEName=textIceName.Text;
 			_patientNote.ICEPhone=textIcePhone.Text;
 			_patient.HasSignedTil=checkBoxSignedTil.Checked;//Update Signed Truth in Lending State
-			#endregion FillFromUI
-			#region ValidateData
-			Result result=Patients.ValidatePatientEdit(_patient,_ehrPatient,_patientOld,IsNew,textSite.Text);
-			if(result.IsFailure()) {
-				MsgBox.Show(Lan.g(this,result.Msg)+result.Msg2);
-				return;
+			Patients.Update(_patient,_patientOld);
+			PatientNotes.Update(_patientNote,_patient.Guarantor);
+			EhrPatients.Update(_ehrPatient);
+			string strPatPriProvDesc=Providers.GetLongDesc(_patient.PriProv);
+			Patients.InsertPrimaryProviderChangeSecurityLogEntry(_patientOld,_patient);
+			bool isApptSchedRestricted=PatRestrictions.IsRestricted(_patient.PatNum,PatRestrict.ApptSchedule);
+			if(checkRestrictSched.Checked) {
+				PatRestrictions.Upsert(_patient.PatNum,PatRestrict.ApptSchedule);//will only insert if one does not already exist in the db.
 			}
-			#endregion
-			#region Save
-			result=Patients.SavePatientEdit(Security.CurUser,_patient,_patientOld,_patientNote,_ehrPatient,_family,IsNew,checkRestrictSched.Checked,checkArriveEarlySame.Checked,
-				checkAddressSame.Checked,checkAddressSameForSuperFam.Checked,checkBillProvSame.Checked,checkNotesSame.Checked,checkEmailPhoneSame.Checked,
-				_defLinkPatient,comboSpecialty.GetSelectedDefNum());
-			if(!string.IsNullOrWhiteSpace(result.Msg)) {
-				MsgBox.Show(this,result.Msg);
+			else {
+				PatRestrictions.RemovePatRestriction(_patient.PatNum,PatRestrict.ApptSchedule);
 			}
-			#endregion Save
+			PatRestrictions.InsertPatRestrictApptChangeSecurityLog(_patient.PatNum,isApptSchedRestricted,PatRestrictions.IsRestricted(_patient.PatNum,PatRestrict.ApptSchedule));
+			if(_patient.Birthdate!=_patientOld.Birthdate || _patient.Gender!=_patientOld.Gender) {
+				isCDSinterventionCheckRequired=true;
+			}
+			if(isCDSinterventionCheckRequired && CDSPermissions.GetForUser(Security.CurUser.UserNum).ShowCDS && CDSPermissions.GetForUser(Security.CurUser.UserNum).LabTestCDS) {
+				using FormCDSIntervention formCDSIntervention=new FormCDSIntervention();
+				formCDSIntervention.ListCDSInterventions=EhrTriggers.TriggerMatch(_patient,_patient);//both should be patCur.
+				formCDSIntervention.ShowIfRequired(false);
+			}
+			#region 'Same' Checkboxes
+			bool isAuthArchivedEdit=Security.IsAuthorized(Permissions.ArchivedPatientEdit,true);
+			if(checkArriveEarlySame.Checked){
+				Patients.UpdateArriveEarlyForFam(_patient,isAuthArchivedEdit);
+			}
+			//Only family checked.
+			if(checkAddressSame.Checked && !checkAddressSameForSuperFam.Checked){
+				//might want to include a mechanism for comparing fields to be overwritten
+				Patients.UpdateAddressForFam(_patient,false,isAuthArchivedEdit);
+			}
+			//SuperFamily is checked, family could be checked or unchecked.
+			else if(checkAddressSameForSuperFam.Checked) {
+				Patients.UpdateAddressForFam(_patient,true,isAuthArchivedEdit);
+			}
+			if(checkBillProvSame.Checked) {
+				List<Patient> listPatientsForPriProvEdit=_family.ListPats.ToList().FindAll(x => x.PatNum!=_patient.PatNum && x.PriProv!=_patient.PriProv);
+				if(!isAuthArchivedEdit) {//Remove Archived patients if not allowed to edit so we don't create a log for them.
+					listPatientsForPriProvEdit.RemoveAll(x => x.PatStatus==PatientStatus.Archived);
+				}
+				//true if any family member has a different PriProv and the user is authorized for PriProvEdit
+				bool isChangePriProvs=(listPatientsForPriProvEdit.Count>0 && Security.IsAuthorized(Permissions.PatPriProvEdit,DateTime.MinValue,true,true));
+				Patients.UpdateBillingProviderForFam(_patient,isChangePriProvs,isAuthArchivedEdit);//if user is not authorized this will not update PriProvs for fam
+			}
+			if(checkNotesSame.Checked){
+				Patients.UpdateNotesForFam(_patient,isAuthArchivedEdit);
+			}
+			if(checkEmailPhoneSame.Checked) {
+				Patients.UpdateEmailPhoneForFam(_patient,isAuthArchivedEdit);
+			}
+			#endregion 'Same' Checkboxes
 			if(_patient.BillingType!=_patientOld.BillingType) {
-				AutomationL.Trigger(EnumAutomationTrigger.BillingTypeSet,null,_patient.PatNum);
+				AutomationL.Trigger(AutomationTrigger.SetBillingType,null,_patient.PatNum);
+				Patients.InsertBillTypeChangeSecurityLogEntry(_patientOld,_patient);
+			}
+			//If this patient is also a referral source,
+			//keep address info synched:
+			Referral referral=Referrals.GetFirstOrDefault(x => x.PatNum==_patient.PatNum);
+			if(referral!=null) {
+				referral.LName=_patient.LName;
+				referral.FName=_patient.FName;
+				referral.MName=_patient.MiddleI;
+				referral.Address=_patient.Address;
+				referral.Address2=_patient.Address2;
+				referral.City=_patient.City;
+				referral.ST=_patient.State;
+				referral.SSN=_patient.SSN;
+				referral.Zip=_patient.Zip;
+				referral.Telephone=TelephoneNumbers.FormatNumbersExactTen(_patient.HmPhone);
+				referral.EMail=_patient.Email;
+				Referrals.Update(referral);
+				Referrals.RefreshCache();
+			}
+			//if patient is inactive, deceased, etc., then disable any recalls
+			Patients.UpdateRecalls(_patient,_patientOld,"Edit Patient Window");
+			//If there is an existing HL7 def enabled, send an ADT message if there is an outbound ADT message defined
+			if(HL7Defs.IsExistingHL7Enabled()) {
+				//new patients get the A04 ADT, updating existing patients we send an A08
+				MessageHL7 messageHL7=null;
+				if(IsNew) {
+					messageHL7=MessageConstructor.GenerateADT(_patient,Patients.GetPat(_patient.Guarantor),EventTypeHL7.A04);
+				}
+				else {
+					messageHL7=MessageConstructor.GenerateADT(_patient,Patients.GetPat(_patient.Guarantor),EventTypeHL7.A08);
+				}
+				//Will be null if there is no outbound ADT message defined, so do nothing
+				if(messageHL7!=null) {
+					HL7Msg hl7Msg=new HL7Msg();
+					hl7Msg.AptNum=0;
+					hl7Msg.HL7Status=HL7MessageStatus.OutPending;//it will be marked outSent by the HL7 service.
+					hl7Msg.MsgText=messageHL7.ToString();
+					hl7Msg.PatNum=_patient.PatNum;
+					HL7Msgs.Insert(hl7Msg);
+					if(ODBuild.IsDebug()) {
+						MessageBox.Show(this,messageHL7.ToString());
+					}
+				}
+			}
+			if(HieClinics.IsEnabled()) {
+				HieQueues.Insert(new HieQueue(_patient.PatNum));
+			}
+			long defNum=comboSpecialty.GetSelectedDefNum();
+			if(_defLinkPatient!=null) {
+				if(defNum==0) {
+					DefLinks.Delete(_defLinkPatient.DefLinkNum);
+				}
+				else {
+					_defLinkPatient.DefNum=defNum;
+					DefLinks.Update(_defLinkPatient);
+				}
+			}
+			else if(defNum!=0){//if the patient does not have a specialty and "Unspecified" is not selected. 
+				DefLink defLink=new DefLink();
+				defLink.DefNum=defNum;
+				defLink.FKey=_patient.PatNum;
+				defLink.LinkType=DefLinkType.Patient;
+				DefLinks.Insert(defLink);
 			}
 			//The specialty could have changed so invalidate the cached specialty on the currently selected patient object in PatientL.cs
 			PatientL.InvalidateSelectedPatSpecialty();
-			PromptForSmsIfNecessary(_patient,patientOld);
+			if(!IsNew) {
+				Patients.InsertAddressChangeSecurityLogEntry(_patientOld,_patient);
+				PatientEvent.Fire(ODEventType.Patient,_patient);
+			}
+			PromptForSmsIfNecessary(patientOld,_patient);
 			Plugins.HookAddCode(this,"FormPatientEdit.butOK_Click_end",_patient,_patientOld);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void FormPatientEdit_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -2972,7 +3446,7 @@ namespace OpenDental{
 					Patients.Update(_patient,_patientOld);
 				}
 				Patients.Delete(_patient);
-				SecurityLogs.MakeLogEntry(EnumPermType.PatientEdit,_patient.PatNum,Lan.g(this,"Canceled creating new patient. Deleting patient record."));
+				SecurityLogs.MakeLogEntry(Permissions.PatientEdit,_patient.PatNum,Lan.g(this,"Canceled creating new patient. Deleting patient record."));
 			}
 			if(_hasGuardiansChanged) {  //If guardian information was changed, and user canceled.
 				//revert any changes to the guardian list for all family members
@@ -2980,5 +3454,15 @@ namespace OpenDental{
 			}
 		}
 
+	
 	}
 }
+
+
+
+
+
+
+
+
+

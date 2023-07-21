@@ -66,9 +66,6 @@ namespace OpenDental{
 		private BlueBookEstimateData _blueBookEstimateData;
 		///<summary>Clearinghouse for current claim set in load method and then used to skip any unneccessary flag setting logic in UpdateClaim()</summary>
 		private Clearinghouse _clearinghouse;
-		///<summary>Used to adjust the height of the window so that we show as much of the Form as possible with larger screens. In some cases, such as with zoom, the window will have it's height shortened in order to fit into the screen more efficiently. We needed a variable so that we could do these calculations within the constructor and then change the height within the load method.</summary>
-		private int _heightCalculated=0;
-		private FormClaimAttachment _formClaimAttachment;
 
 		private List<SubstitutionLink> ListSubstitutionLinks {
 			get {
@@ -80,12 +77,12 @@ namespace OpenDental{
 		}
 
 		///<summary>The permissions that logs should be made under. Uses the status of the claim when entering the window.</summary>
-		private EnumPermType PermissionClaimEdit {
+		private Permissions PermissionClaimEdit {
 			get {
 				if(_claimOld==null) {
-					return EnumPermType.ClaimEdit;
+					return Permissions.ClaimEdit;
 				}
-				return _claimOld.ClaimStatus.In("S","R") ? EnumPermType.ClaimSentEdit : EnumPermType.ClaimEdit;
+				return _claimOld.ClaimStatus.In("S","R") ? Permissions.ClaimSentEdit : Permissions.ClaimEdit;
 			}
 		}
 
@@ -108,11 +105,8 @@ namespace OpenDental{
 			_claim=claim;
 			_claimOld=claim.Copy();
 			_isForOrthoAutoPay=isForOrthoAutoPay;
-			//setting to empty list to prevent a UE claiming this was used while null
-			_listClaimProcsForClaim=new List<ClaimProc>();
 			InitializeComponent();// Required for Windows Form Designer support
 			InitializeLayoutManager();
-			SetBounds();//this calculates the height but does not set it.
 			//tbPay.CellDoubleClicked += new OpenDental.ContrTable.CellEventHandler(tbPay_CellDoubleClicked);
 			//tbProc.CellClicked += new OpenDental.ContrTable.CellEventHandler(tbProc_CellClicked);
 			//tbPay.CellClicked += new OpenDental.ContrTable.CellEventHandler(tbPay_CellClicked);
@@ -122,32 +116,15 @@ namespace OpenDental{
 				listCanadianAttachments.ContextMenu=contextMenuAttachments;
 			}
 			gridProc.ContextMenu=contextAdjust;
-			DoCalculateClientArea=false;
 		}
 
 		private void FormClaimEdit_Shown(object sender,EventArgs e) {
-			List<ClaimProc> listClaimProcsForClaim=_listClaimProcsForClaim.ToList();
-			EnumAutomationTrigger automationTrigger=EnumAutomationTrigger.ClaimOpen;
-			if(IsNew) {
-				automationTrigger=EnumAutomationTrigger.ClaimCreate;
-			}
-			AutomationL.Trigger(automationTrigger,null,_claim.PatNum,triggerObj:listClaimProcsForClaim);
-			List<Procedure> listProcedures=Procedures.GetManyProc(_listClaimProcsForClaim.Select(x => x.ProcNum).ToList(),false);
-			List<Procedure> listProceduresIncomplete=listProcedures.FindAll(x => x.ProcStatus!=ProcStat.C 
-				&& Procedures.IsAttachedToClaim(x,listClaimProcsForClaim,isPreauthIncluded:false));
-			if(!listProceduresIncomplete.IsNullOrEmpty() && IsNew) {//Only block the creation of new claims for incomplete procedures.
-				MsgBox.Show("One or more procedures attached to this claim are not complete. Cannot create claim for incomplete procedures.");
-				//Remove the claim procs for this claim since that is how we determine if a procedure is attached to a claim.
-				ClaimProcs.DeleteMany(_listClaimProcsForClaim.FindAll(x => x.ProcNum.In(listProceduresIncomplete.Select(x => x.ProcNum).ToArray())));
-				DialogResult=DialogResult.OK;//Prevent the warning message in the FormClosing event from showing.
-				this.Close();
-				return;
-			}
 			if(!_isForOrthoAutoPay) {
 				return;
 			}
 			//Automatically show the supplemental payment window after automatically selecting all ortho banding codes.
 			List<long> listCodeNums = ProcedureCodes.GetOrthoBandingCodeNums();
+			List<Procedure> listProcedures=Procedures.GetManyProc(_listClaimProcsForClaim.Select(x => x.ProcNum).ToList(),false);
 			for(int i = 0;i < _listClaimProcsForClaim.Count;i++) {
 				ClaimProc claimProc = _listClaimProcsForClaim[i];
 				Procedure procedure = listProcedures.Find(x => x.ProcNum==claimProc.ProcNum);
@@ -164,20 +141,11 @@ namespace OpenDental{
 		}
 		
 		private void FormClaimEdit_Load(object sender, System.EventArgs e) {
-			DoCalculateClientArea=true;
-			if(Height!=_heightCalculated) {
-				Height=_heightCalculated;
-			}
-			else {
-				//This is just here to make sure that we set the client area of the window in either case by adjusting the height of the window. See "DoCalculateClientArea" in FormODBase.
-				Height=Height-1;
-			}
 			_loadData=ClaimEdit.GetLoadData(_patient,_family,_claim);
 			textPatResp.Visible=_loadData.DoShowPatResp;
 			if(IsFromBatchWindow) {
 				groupFinalizePayment.Visible=false;
 			}
-			warningIntegrity.SetTypeAndVisibility(EnumWarningIntegrityType.Claim,Claims.IsClaimHashValid(_claim));
 			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
 				labelPredeterm.Text=Lan.g(this,"Predeterm Num");
 				labelPriorAuth.Visible=false;
@@ -207,10 +175,10 @@ namespace OpenDental{
 				groupEnterPayment.Enabled=false;
 			}
 			else if(_claim.ClaimStatus.In(ClaimStatus.Sent.GetDescription(true),ClaimStatus.Received.GetDescription(true))){//sent or received
-				if((_claim.ClaimType=="PreAuth" && !Security.IsAuthorized(EnumPermType.PreAuthSentEdit,_claim.DateSent))
-					|| (_claim.ClaimType!="PreAuth" && !Security.IsAuthorized(EnumPermType.ClaimSentEdit,_claim.DateSent))) 
+				if((_claim.ClaimType=="PreAuth" && !Security.IsAuthorized(Permissions.PreAuthSentEdit,_claim.DateSent))
+					|| (_claim.ClaimType!="PreAuth" && !Security.IsAuthorized(Permissions.ClaimSentEdit,_claim.DateSent))) 
 				{ 
-					butSave.Enabled=false;
+					butOK.Enabled=false;
 					butDelete.Enabled=false;
 					//butPrint.Enabled=false;//allowed to print, but just won't save changes.
 					_isNotAuthorized=true;
@@ -220,7 +188,7 @@ namespace OpenDental{
 					//butCheckAdd.Enabled=false; //button was removed.
 				}
 			}
-			if(!IsNew && ((_claim.ClaimType!="PreAuth" && !Security.IsAuthorized(EnumPermType.ClaimDelete,_claim.SecDateEntry,true)))) { 
+			if(!IsNew && ((_claim.ClaimType!="PreAuth" && !Security.IsAuthorized(Permissions.ClaimDelete,_claim.SecDateEntry,true)))) { 
 				butDelete.Enabled=false;
 			}
 			if(_claim.ClaimType=="PreAuth"){
@@ -239,7 +207,6 @@ namespace OpenDental{
 				groupEnterPayment.Text=Lan.g(this,"Enter Estimate");
 				this.Text=Lan.g(this,"Edit Preauthorization");
 				groupBoxPendingPayment.Visible=false;
-				labelWorkflowMsg.Text="Use right-click options on Preauthorization";
 			}
 			comboClaimType.Items.Add(Lan.g(this,"Primary"));
 			comboClaimType.Items.Add(Lan.g(this,"Secondary"));
@@ -324,7 +291,7 @@ namespace OpenDental{
 			//medical data
 			_listClaimValCodeLogs=_loadData.ListClaimValCodes;
 			_claimCondCodeLog=_loadData.ClaimCondCodeLogCur;
-			comboClinic.ClinicNumSelected=_claim.ClinicNum;
+			comboClinic.SelectedClinicNum=_claim.ClinicNum;
 			SetOrderingProvider(null);//Clears both the internal ordering and referral ordering providers.
 			if(_claim.ProvOrderOverride!=0) {
 				SetOrderingProvider(Providers.GetProv(_claim.ProvOrderOverride));
@@ -348,35 +315,13 @@ namespace OpenDental{
 			else{
 				comboProvTreat.SetSelectedProvNum(_claim.ProvTreat);
 			}
-			if(Clinics.IsMedicalPracticeOrClinic(comboClinic.ClinicNumSelected)) {
+			if(Clinics.IsMedicalPracticeOrClinic(comboClinic.SelectedClinicNum)) {
 				groupProsth.Visible=false;
 				groupOrtho.Visible=false;
 				labelOralImages.Visible=false;
 				textAttachImages.Visible=false;
 				checkAttachPerio.Visible=false;
 				butAttachPerio.Visible=false;
-			}
-			//Show the claim attachment button if the office is using ClaimConnect or EDS
-			ClaimSendQueueItem[] claimSendQueueItemsArray=Claims.GetQueueList(_claim.ClaimNum,_claim.ClinicNum,0);
-			if(claimSendQueueItemsArray==null || claimSendQueueItemsArray.Length==0) {
-				//Similar to how we handle clicking Payment As Total button when claim no longer exists in the database.
-				MsgBox.Show(this,"Claim has been deleted by another user.");
-				DialogResult=DialogResult.Cancel;
-				return;
-			}
-			Clearinghouse clearinghouseHq=ClearinghouseL.GetClearinghouseHq(claimSendQueueItemsArray[0].ClearinghouseNum);
-			_clearinghouse=Clearinghouses.OverrideFields(clearinghouseHq,_claim.ClinicNum);
-			if(_clearinghouse!=null && _clearinghouse.IsAttachmentSendAllowed && _clearinghouse.CommBridge==EclaimsCommBridge.ClaimConnect) {
-				//Disabling and hiding UI elements that don't make sense when using the ClaimConnect attachment service.
-				tabNEA.Enabled=false;
-				tabEDS.Enabled=false;
-				tabControlAttach.SelectedTab=tabDXC;
-			}
-			else if(_clearinghouse!=null && _clearinghouse.IsAttachmentSendAllowed && _clearinghouse.CommBridge==EclaimsCommBridge.EDS) {
-				tabDXC.Enabled=false;
-				tabNEA.Enabled=false;
-				FillGridSentAttachments(gridEDSSent);
-				tabControlAttach.SelectedTab=tabEDS;
 			}
 			FillForm();
 			//_listClaimProcsForClaim gets filled within FillGrids() which gets called at the end of FillForm().
@@ -403,10 +348,33 @@ namespace OpenDental{
 			if(!PrefC.GetBool(PrefName.AllowProcAdjFromClaim)) {
 				contextAdjust.MenuItems.Remove(menuItemAddAdj);
 			}
+			//Show the claim attachment button if the office is using ClaimConnect
+			ClaimSendQueueItem[] claimSendQueueItemsArray=Claims.GetQueueList(_claim.ClaimNum,_claim.ClinicNum,0);
+			if(claimSendQueueItemsArray==null || claimSendQueueItemsArray.Length==0) {
+				//Similar to how we handle clicking Payment As Total button when claim no longer exists in the database.
+				MsgBox.Show(this,"Claim has been deleted by another user.");
+				DialogResult=DialogResult.Cancel;
+				return;
+			}
+			Clearinghouse clearinghouseHq=ClearinghouseL.GetClearinghouseHq(claimSendQueueItemsArray[0].ClearinghouseNum);
+			_clearinghouse=Clearinghouses.OverrideFields(clearinghouseHq,_claim.ClinicNum);
+			if(_clearinghouse!=null && _clearinghouse.IsAttachmentSendAllowed && _clearinghouse.CommBridge==EclaimsCommBridge.ClaimConnect) {
+				//Disabling and hiding UI elements that don't make sense when using the ClaimConnect attachment service.
+				tabNEA.Enabled=false;
+				fillGridSentAttachments();
+				tabControlAttach.SelectedTab=tabDXC;
+			}
+			SetBounds();
+			List<ClaimProc> listClaimProcsForClaim=_listClaimProcsForClaim.ToList();
+			AutomationTrigger automationTrigger=AutomationTrigger.OpenClaim;
+			if(IsNew) {
+				automationTrigger=AutomationTrigger.CreateClaim;
+			}
+			AutomationL.Trigger(automationTrigger,null,_claim.PatNum,triggerObj:listClaimProcsForClaim);
 		}
 
 		private void SetBounds(){
-			Rectangle rectangleWorkingArea=System.Windows.Forms.Screen.FromPoint(MousePosition).WorkingArea;
+			Rectangle rectangleWorkingArea=System.Windows.Forms.Screen.FromControl(this).WorkingArea;
 			//Window must start at 735 tall as a fail safe for compatibility with remote app.
 			//We can adjust bigger if there is space.
 			//But this adjustment cannot happen in the constructor because of the layout manager.
@@ -414,16 +382,12 @@ namespace OpenDental{
 			if(heightAvail>LayoutManager.Scale(871)){
 				heightAvail=LayoutManager.Scale(871);
 			}
-			_heightCalculated=Height;
-			if(_heightCalculated<heightAvail){
-				_heightCalculated=heightAvail;
-			}
-			//As we are changing the location before the load method, we need to consider the fact that zoom will adjust the size of this window.
-			//As a result, we also need to move the starting location by the top of the form's size change divdied by 2 to center.
-			int heightChangeZoom=(LayoutManager.Scale(Height)-Height)/2;
+			if(Height<heightAvail){
+				Height=heightAvail;
+			}	
 			//Center the window on the parent.
 			Location=new Point(rectangleWorkingArea.Left+rectangleWorkingArea.Width/2-Width/2,
-				y:rectangleWorkingArea.Top+rectangleWorkingArea.Height/2-_heightCalculated/2+heightChangeZoom);
+				y:rectangleWorkingArea.Top+rectangleWorkingArea.Height/2-Height/2);
 		}
 		
 		private void FormClaimEdit_Paint(object sender,PaintEventArgs e) {
@@ -450,7 +414,7 @@ namespace OpenDental{
 				}
 				try {
 					//Controls we wish to keep enabled for navigation purposes.
-					if(controlsInput.Controls[i]==tabControlMain) {
+					if(controlsInput.Controls[i]==butCancel || controlsInput.Controls[i]==tabControlMain) {
 						continue;
 					}
 					controlsInput.Controls[i].Enabled=false;
@@ -483,27 +447,27 @@ namespace OpenDental{
 		}
 
 		private void butPickOrderProvInternal_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick = new FrmProviderPick(comboProvBill.Items.GetAll<Provider>());
-			frmProviderPick.ProvNumSelected=_provNumOrdering;
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick = new FormProviderPick(comboProvBill.Items.GetAll<Provider>());
+			formProviderPick.ProvNumSelected=_provNumOrdering;
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			SetOrderingProvider(Providers.GetProv(frmProviderPick.ProvNumSelected));
+			SetOrderingProvider(Providers.GetProv(formProviderPick.ProvNumSelected));
 		}
 
 		private void butPickOrderProvReferral_Click(object sender,EventArgs e) {
-			FrmReferralSelect frmReferralSelect=new FrmReferralSelect();
-			frmReferralSelect.IsSelectionMode=true;
-			frmReferralSelect.IsDoctorSelectionMode=true;
-			frmReferralSelect.IsShowPat=false;
-			frmReferralSelect.IsShowDoc=true;
-			frmReferralSelect.IsShowOther=false;
-			frmReferralSelect.ShowDialog();
-			if(frmReferralSelect.IsDialogCancel) {
+			using FormReferralSelect formReferralSelect=new FormReferralSelect();
+			formReferralSelect.IsSelectionMode=true;
+			formReferralSelect.IsDoctorSelectionMode=true;
+			formReferralSelect.IsShowPat=false;
+			formReferralSelect.IsShowDoc=true;
+			formReferralSelect.IsShowOther=false;
+			formReferralSelect.ShowDialog();
+			if(formReferralSelect.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			SetOrderingReferral(frmReferralSelect.ReferralSelected);
+			SetOrderingReferral(formReferralSelect.ReferralSelected);
 		}
 
 		private void butNoneOrderProv_Click(object sender,EventArgs e) {
@@ -534,28 +498,28 @@ namespace OpenDental{
 		}
 
 		private void butPickProvBill_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick = new FrmProviderPick(comboProvBill.Items.GetAll<Provider>());
-			frmProviderPick.ProvNumSelected=comboProvBill.GetSelectedProvNum();
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick = new FormProviderPick(comboProvBill.Items.GetAll<Provider>());
+			formProviderPick.ProvNumSelected=comboProvBill.GetSelectedProvNum();
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboProvBill.SetSelectedProvNum(frmProviderPick.ProvNumSelected);
+			comboProvBill.SetSelectedProvNum(formProviderPick.ProvNumSelected);
 		}
 
 		private void butPickProvTreat_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick = new FrmProviderPick(comboProvTreat.Items.GetAll<Provider>());
-			frmProviderPick.ProvNumSelected=comboProvTreat.GetSelectedProvNum();
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick = new FormProviderPick(comboProvTreat.Items.GetAll<Provider>());
+			formProviderPick.ProvNumSelected=comboProvTreat.GetSelectedProvNum();
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			comboProvTreat.SetSelectedProvNum(frmProviderPick.ProvNumSelected);
+			comboProvTreat.SetSelectedProvNum(formProviderPick.ProvNumSelected);
 		}
 
 		///<summary>Fills combo provider based on which clinic is selected and attempts to preserve provider selection if any.</summary>
 		private void FillCombosProv() {
-			List<Provider> listProvidersForClinics=Providers.GetProvsForClinic(comboClinic.ClinicNumSelected);
+			List<Provider> listProvidersForClinics=Providers.GetProvsForClinic(comboClinic.SelectedClinicNum);
 			long providerNum=comboProvBill.GetSelectedProvNum();
 			comboProvBill.Items.Clear();
 			comboProvBill.Items.AddProvsAbbr(listProvidersForClinics);
@@ -663,7 +627,7 @@ namespace OpenDental{
 					comboClaimForm.SelectedIndex=i+1;
 				}
 			}
-			comboClinic.ClinicNumSelected=_claim.ClinicNum;
+			comboClinic.SelectedClinicNum=_claim.ClinicNum;
 			if(Defs.GetDefsForCategory(DefCat.ClaimCustomTracking,true).Count==0) {  // Disable Add button if all defs are hidden (nothing to add)
 				butAdd.Enabled=false;
 				labelHistoryNone.Visible=true;
@@ -818,8 +782,8 @@ namespace OpenDental{
 						break;
 				}
 			}
-			if(tabControlAttach.SelectedTab==tabEDS) {
-				textEDSAttachmentID.Text=_claim.AttachmentID;
+			if(_claim.AttachmentID.ToLower().StartsWith("dxc")) {
+				textAttachmentID.Text=_claim.AttachmentID;
 			}
 			else {
 				textAttachID.Text=_claim.AttachmentID;
@@ -1123,7 +1087,7 @@ namespace OpenDental{
 					for(int j=0;j<listClaimProcsForLab.Count;j++) {
 						//The following 'continue' logic does not skip adding the parent lab rows to gridProc.
 						//Instead it ensures that received or unreceived parent claimProcs show above their associated received or unreceived lab claimProcs.
-						if(_listClaimProcsForClaim[i].Status != listClaimProcsForLab[j].Status || _listClaimProcsForClaim[i].IsOverpay!=listClaimProcsForLab[j].IsOverpay) {
+						if(_listClaimProcsForClaim[i].Status != listClaimProcsForLab[j].Status) {
 							continue;
 						}	
 						//Needed for supplemental payments. When there are supplemental payments we want the associated supplemental lab payment to show under the supplemental parent claimProc, not received.
@@ -1193,34 +1157,25 @@ namespace OpenDental{
 			FillStatusHistory(doRefreshData);
 		}
 
-		private void FillGridSentAttachments(GridOD gridODAttachments) {
-			gridODAttachments.BeginUpdate();
-			gridODAttachments.Columns.Clear();
-			gridODAttachments.ListGridRows.Clear();
+		private void fillGridSentAttachments() {
+			gridSent.BeginUpdate();
+			gridSent.Columns.Clear();
+			gridSent.ListGridRows.Clear();
 			GridColumn col;
 			col=new GridColumn("File",200);
-			gridODAttachments.Columns.Add(col);
+			gridSent.Columns.Add(col);
 			GridRow row;
 			for(int i=0;i<_claim.Attachments.Count;i++) {
 				row=new GridRow();
 				row.Cells.Add(_claim.Attachments[i].DisplayedFileName);
 				row.Tag=_claim.Attachments[i];
-				gridODAttachments.ListGridRows.Add(row);
+				gridSent.ListGridRows.Add(row);
 			}
-			gridODAttachments.EndUpdate();
+			gridSent.EndUpdate();
 		}
 
 		private void gridSent_CellDoubleClick(object sender,ODGridClickEventArgs e) {
-			ClaimAttach claimAttach=new ClaimAttach();
-			bool doSaveToImagingModule=false;
-			if(tabControlAttach.SelectedTab==tabEDS) {
-				claimAttach=(ClaimAttach)gridEDSSent.ListGridRows[e.Row].Tag;
-				doSaveToImagingModule=PrefC.GetBool(PrefName.SaveEDSAttachments);
-			}
-			if(!doSaveToImagingModule) {
-				MsgBox.Show(this,$"Not allowed to view attachment. Attachments can only be viewed when the 'Save Attachments to Imaging Module' preference is set.");
-				return;
-			}
+			ClaimAttach claimAttach=(ClaimAttach)gridSent.ListGridRows[e.Row].Tag;
 			string patFolder=ImageStore.GetPatientFolder(_patient,ImageStore.GetPreferredAtoZpath());
 			if(CloudStorage.IsCloudStorage) {
 				string pathAndFileName=ODFileUtils.CombinePaths(patFolder,claimAttach.ActualFileName,'/');
@@ -1231,19 +1186,21 @@ namespace OpenDental{
 				}
 				//found it, download and display
 				//This chunk of code was pulled from FormFilePicker.cs
-				UI.ProgressWin progressWin=new UI.ProgressWin();
-				progressWin.StartingMessage="Downloading...";
-				byte[] byteArray=null;
-				progressWin.ActionMain=() => {
-					byteArray=CloudStorage.Download(patFolder,claimAttach.ActualFileName);
-				};
-				progressWin.ShowDialog();
-				if(progressWin.IsCancelled){//user clicked cancel
+				using FormProgress formProgress=new FormProgress();
+				formProgress.DisplayText="Downloading...";
+				formProgress.NumberFormat="F";
+				formProgress.NumberMultiplication=1;
+				formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+				formProgress.TickMS=1000;
+				TaskStateDownload taskStateDownload=CloudStorage.DownloadAsync(patFolder,claimAttach.ActualFileName,
+					new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
+				if(formProgress.ShowDialog()==DialogResult.Cancel) {
+					taskStateDownload.DoCancel=true;
 					return;
 				}
 				string tempFile=PrefC.GetRandomTempFile(Path.GetExtension(pathAndFileName));
-				File.WriteAllBytes(tempFile,byteArray);
-				if(ODBuild.IsThinfinity()) {
+				File.WriteAllBytes(tempFile,taskStateDownload.FileContent);
+				if(ODBuild.IsWeb()) {
 					ThinfinityUtils.HandleFile(tempFile);
 				}
 				else {
@@ -1252,7 +1209,7 @@ namespace OpenDental{
 			}
 			else {//Local storage
 				string pathAndFileName=ODFileUtils.CombinePaths(patFolder,claimAttach.ActualFileName);
-				if(ODBuild.IsThinfinity()) {
+				if(ODBuild.IsWeb()) {
 					ThinfinityUtils.HandleFile(pathAndFileName);
 				}
 				else {
@@ -1424,8 +1381,8 @@ namespace OpenDental{
 
 		private void gridProc_CellClick(object sender,ODGridClickEventArgs e) {
 			if(_claim.ClaimStatus.In(ClaimStatus.Sent.GetDescription(true),ClaimStatus.Received.GetDescription(true))) {//sent or received
-				if((_claim.ClaimType!="PreAuth" && !Security.IsAuthorized(EnumPermType.ClaimSentEdit,_claim.DateSent,true))
-					|| (_claim.ClaimType=="PreAuth" && !Security.IsAuthorized(EnumPermType.PreAuthSentEdit,_claim.DateSent,true))) 
+				if((_claim.ClaimType!="PreAuth" && !Security.IsAuthorized(Permissions.ClaimSentEdit,_claim.DateSent,true))
+					|| (_claim.ClaimType=="PreAuth" && !Security.IsAuthorized(Permissions.PreAuthSentEdit,_claim.DateSent,true))) 
 				{
 					return;
 				}
@@ -1495,20 +1452,19 @@ namespace OpenDental{
 		
 		private void gridProc_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			if(_claim.ClaimStatus.In(ClaimStatus.Sent.GetDescription(true),ClaimStatus.Received.GetDescription(true))) {//sent or received
-				if((_claim.ClaimType!="PreAuth" && !Security.IsAuthorized(EnumPermType.ClaimSentEdit,_claim.DateSent,true))
-					|| (_claim.ClaimType=="PreAuth" && !Security.IsAuthorized(EnumPermType.PreAuthSentEdit,_claim.DateSent,true)))
+				if((_claim.ClaimType!="PreAuth" && !Security.IsAuthorized(Permissions.ClaimSentEdit,_claim.DateSent,true))
+					|| (_claim.ClaimType=="PreAuth" && !Security.IsAuthorized(Permissions.PreAuthSentEdit,_claim.DateSent,true)))
 				{
 					return;
 				}
 			}
-			ClaimProc claimProc=_listClaimProcsForClaim[e.Row];
-			bool isPendingSupplemental=claimProc.IsOverpay && claimProc.Status==ClaimProcStatus.NotReceived;
-			if(!_hasDoubleClickWarningAlreadyBeenDisplayed && !isPendingSupplemental){
+			if(!_hasDoubleClickWarningAlreadyBeenDisplayed){
 				_hasDoubleClickWarningAlreadyBeenDisplayed=true;
 				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"If you are trying to enter payment information, please use the payments buttons at the upper right.\r\nThen, don't forget to finish by creating the check using the button below this section.\r\nYou should probably click cancel unless you are just editing estimates.\r\nContinue anyway?")){
 					return;
 				}
 			}
+			ClaimProc claimProc=_listClaimProcsForClaim[e.Row];
 			if(!CheckRecalcEstimates(claimProc)) {
 				return;
 			}
@@ -1627,7 +1583,7 @@ namespace OpenDental{
 		}
 
 		private void butOtherCovChange_Click(object sender, System.EventArgs e) {
-			using FormInsPlanSelectFam formInsPlanSelect=new FormInsPlanSelectFam(_patient.PatNum);
+			using FormInsPlanSelect formInsPlanSelect=new FormInsPlanSelect(_patient.PatNum);
 			formInsPlanSelect.ShowDialog();
 			if(formInsPlanSelect.DialogResult!=DialogResult.OK){
 				return;
@@ -1655,16 +1611,12 @@ namespace OpenDental{
 		}
 
 		private void butPayTotal_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPayCreate)){//date not checked here, but it will be checked when actually creating the check
+			if(!Security.IsAuthorized(Permissions.InsPayCreate)){//date not checked here, but it will be checked when actually creating the check
 				return;
 			}
 			//preauths are only allowed "payment" entry by procedure since a total would be meaningless
 			if(_claim.ClaimType=="PreAuth"){
 				MessageBox.Show(Lan.g(this,"PreAuthorizations can only be entered by procedure."));
-				return;
-			}
-			if(_claim.ClaimStatus=="I") {
-				MsgBox.Show(this,"Cannot receive a claim with a status of 'Hold for In Process'.");
 				return;
 			}
 			if(DoConsolidateOrthoPayments()) {
@@ -1704,9 +1656,7 @@ namespace OpenDental{
 
 		private bool PayAsTotalToClaimProcsExplicitly() { 
 			List<InputBoxParam> listInputBoxParams=new List<InputBoxParam>();
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.ValidDouble;
-			inputBoxParam.LabelText=Lan.g(this,"Please enter an amount: ");
+			InputBoxParam inputBoxParam=new InputBoxParam(InputBoxType.ValidDouble,Lan.g(this,"Please enter an amount: "));
 			listInputBoxParams.Add(inputBoxParam);
 			Func<string, bool> funcOkClick=new Func<string, bool>((text) => {
 				if(PIn.Double(text)<0) {
@@ -1715,42 +1665,17 @@ namespace OpenDental{
 				}
 				return true;//Allow user to the payment window.
 			});
-			InputBox inputBox=new InputBox(listInputBoxParams);
-			inputBox.FuncOkClick=funcOkClick;
-			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			using InputBox inputBox=new InputBox(listInputBoxParams,funcOkClick);
+			if(inputBox.ShowDialog()!=DialogResult.OK) {
 				return false;
 			}
-			double result=PIn.Double(inputBox.StringResult);
+			double result=PIn.Double(inputBox.textResult.Text);
 			List<ClaimProc> listClaimProcs=new List<ClaimProc>();
 			for(int i=0;i<_listClaimProcsForClaim.Count;i++) {
 				listClaimProcs.Add(_listClaimProcsForClaim[i].Copy());
 			}
-			List<ClaimProc> listClaimProcsForPayTotal=_listClaimProcsForClaim.FindAll(x => x.Status==ClaimProcStatus.NotReceived || x.Status==ClaimProcStatus.Supplemental).ToList(); //Filter list down to only procs that expect payments
-			for(int i=0;i<listClaimProcsForPayTotal.Count;i++) {
-				if(i==0) {
-					//Automatically set PayPlanNum if there is a payplan with matching PatNum, PlanNum, and InsSubNum that has not been paid in full.
-					//By sending in ClaimNum, we ensure that we only get the payplan a claimproc from this claim was already attached to or payplans with no claimprocs attached.
-					List<PayPlan> listPayPlans=PayPlans.GetValidInsPayPlans(_claim.PatNum,_claim.PlanNum,_claim.InsSubNum,_claim.ClaimNum);
-					if(listPayPlans.Count==1) {
-						listClaimProcsForPayTotal[i].PayPlanNum=listPayPlans[0].PayPlanNum;
-					}
-					else if(listPayPlans.Count>1) {
-						//more than one valid PayPlan
-						using FormPayPlanSelect formPayPlanSelect=new FormPayPlanSelect(listPayPlans);
-						formPayPlanSelect.ShowDialog();
-						if(formPayPlanSelect.DialogResult==DialogResult.OK) {
-							listClaimProcsForPayTotal[i].PayPlanNum=formPayPlanSelect.PayPlanNumSelected;
-						}
-					}
-				}
-				else {
-					listClaimProcsForPayTotal[i].PayPlanNum=listClaimProcsForPayTotal[0].PayPlanNum; //set all procs to the same payplan, they can change it later if not correct for each claimproc that is different
-				}
-				listClaimProcsForPayTotal[i].DateCP=DateTime.Today;
-			}
 			using FormClaimPayTotal formClaimPayTotal=new FormClaimPayTotal(_patient,_family,_listInsPlans,_listPatPlans,_listInsSubs,GetBlueBookEstimateData(),totalPayAmt:result);
-			formClaimPayTotal.ClaimProcArray=listClaimProcsForPayTotal.ToArray();
+			formClaimPayTotal.ClaimProcArray=_listClaimProcsForClaim.FindAll(x => x.Status==ClaimProcStatus.NotReceived || x.Status==ClaimProcStatus.Supplemental).ToArray(); //Filter list down to only procs that expect payments
 			if(formClaimPayTotal.ClaimProcArray.IsNullOrEmpty()){
 				MsgBox.Show(this,"There are no procedures to be paid on this claim.");
 				return false;
@@ -1852,11 +1777,7 @@ namespace OpenDental{
 		}
 
 		private void butPayProc_Click(object sender, System.EventArgs e) {
-			if(_claim.ClaimType!="PreAuth" && !Security.IsAuthorized(EnumPermType.InsPayCreate)){//date not checked here, but it will be checked when actually creating the check
-				return;
-			}
-			if(_claim.ClaimStatus=="I") {
-				MsgBox.Show(this,"Cannot receive a claim with a status of 'Hold for In Process'.");
+			if(_claim.ClaimType!="PreAuth" && !Security.IsAuthorized(Permissions.InsPayCreate)){//date not checked here, but it will be checked when actually creating the check
 				return;
 			}
 			//this will work for regular claims and for preauths.
@@ -1939,7 +1860,7 @@ namespace OpenDental{
 							+"\r\nPlease manually add the payment to that claim.");
 					}
 					else {//Show the claim edit window and have the insurance payment window automatically show.
-						if(!Security.IsAuthorized(EnumPermType.ClaimView)) {//this should ever get hit if this permission is not granted, but just in case
+						if(!Security.IsAuthorized(Permissions.ClaimView)) {//this should ever get hit if this permission is not granted, but just in case
 							return;
 						}
 						using FormClaimEdit formClaimEdit=new FormClaimEdit(claimBanding,_patient,_family,true);
@@ -2081,7 +2002,7 @@ namespace OpenDental{
 		}
 
 		private void MakeSuppPayment() {
-			if(!Security.IsAuthorized(EnumPermType.InsPayCreate)){//date not checked here, but it will be checked when actually creating the check
+			if(!Security.IsAuthorized(Permissions.InsPayCreate)){//date not checked here, but it will be checked when actually creating the check
 				return;
 			}
 			if(gridProc.SelectedIndices.Length==0){
@@ -2164,27 +2085,20 @@ namespace OpenDental{
 				return;
 			}
 			//Selection validation logic ensures these are only procs that are eligible to split from this claim.
-			List<ClaimProc> listClaimProcsToSplit=gridProc.SelectedTags<ClaimProc>().ToList();
-			Claim claimSplit=Claims.InsertSplitClaim(_claim,listClaimProcsToSplit);
+			Claims.InsertSplitClaim(_claim,gridProc.SelectedTags<ClaimProc>());
 			_listClaimProcs=ClaimProcs.Refresh(_patient.PatNum);
-			List<ClaimProc> listClaimProcsOriginal=_listClaimProcs.Where(x => x.ClaimNum==_claim.ClaimNum).ToList();
+			List<long> listModifiedClaimNums=new List<long>();
 			//Update the multi-visit groups
 			for(int i=0;i<_listClaimProcs.Count;i++) {
-				if(_listClaimProcs[i].ProcNum==0) {
-					continue;//Not strictly necessary, because GetOneProc() would return an empty object. However, more efficient to skip.
-				}
 				Procedure procedure=Procedures.GetOneProc(_listClaimProcs[i].ProcNum,false);
-				ProcMultiVisits.UpdateGroupForProc(procedure.ProcNum,procedure.ProcStatus);
+				List<long> listGroupModifiedClaimNums=ProcMultiVisits.UpdateGroupForProc(procedure.ProcNum,procedure.ProcStatus);
+				listModifiedClaimNums.AddRange(listGroupModifiedClaimNums);
 			}
-			if(!listClaimProcsOriginal.Exists(x => ProcMultiVisits.IsProcInProcess(x.ProcNum)) && _claim.ClaimStatus=="I") {
-				_claim.ClaimStatus="W";
-			}
-			if(!listClaimProcsToSplit.Exists(x => ProcMultiVisits.IsProcInProcess(x.ProcNum)) && claimSplit.ClaimStatus=="I") {
-				claimSplit.ClaimStatus="W";
-			}
-			Claims.Update(claimSplit);
-			ClaimStatus claimStatus=_listClaimStatuses.Where(x=>x.GetDescription(useShortVersionIfAvailable:true)==_claim.ClaimStatus).FirstOrDefault();
-			comboClaimStatus.SelectedIndex=_listClaimStatuses.IndexOf(claimStatus);
+			if(listModifiedClaimNums.Contains(_claim.ClaimNum)) {
+				Claim claim=Claims.GetClaim(_claim.ClaimNum);//Refresh claim from database to get current status since it might have changed.
+				ClaimStatus claimStatus=_listClaimStatuses.Where(x=>x.GetDescription(useShortVersionIfAvailable:true)==claim.ClaimStatus).FirstOrDefault();
+				comboClaimStatus.SelectedIndex=_listClaimStatuses.IndexOf(claimStatus);
+			}	
 			FillGrids();
 		}
 
@@ -2283,7 +2197,7 @@ namespace OpenDental{
 		}
 
 		private void FinalizePayment(bool isThisClaimOnly) {
-			if(!Security.IsAuthorized(EnumPermType.InsPayCreate)) {//date not checked here, but it will be checked when saving the check to prevent backdating
+			if(!Security.IsAuthorized(Permissions.InsPayCreate)) {//date not checked here, but it will be checked when saving the check to prevent backdating
 				return;
 			}
 			if(comboClaimStatus.SelectedIndex==_listClaimStatuses.IndexOf(ClaimStatus.HoldForInProcess)) {
@@ -2335,8 +2249,7 @@ namespace OpenDental{
 				return;
 			}
 			FormFinalizePaymentHelper(claimPayment,_claim,_patient,_family,onlyOneClaimNum);
-			Signalods.SetInvalid(InvalidType.BillingList);
-			SaveCleanup();
+			DialogResult=DialogResult.OK;
 		}
 
 		///<summary>Called after finalizing an insurance payment to bring up various forms for the user.
@@ -2427,29 +2340,29 @@ namespace OpenDental{
 		}
 
 		private void butReferralSelect_Click(object sender,EventArgs e) {
-			FrmReferralSelect frmReferralSelect=new FrmReferralSelect();
-			frmReferralSelect.IsSelectionMode=true;
-			frmReferralSelect.ShowDialog();
-			if(frmReferralSelect.IsDialogCancel) {
+			using FormReferralSelect formReferralSelect=new FormReferralSelect();
+			formReferralSelect.IsSelectionMode=true;
+			formReferralSelect.ShowDialog();
+			if(formReferralSelect.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			_claim.ReferringProv=frmReferralSelect.ReferralSelected.ReferralNum;
-			textRefProv.Text=Referrals.GetNameLF(frmReferralSelect.ReferralSelected.ReferralNum);
+			_claim.ReferringProv=formReferralSelect.ReferralSelected.ReferralNum;
+			textRefProv.Text=Referrals.GetNameLF(formReferralSelect.ReferralSelected.ReferralNum);
 			butReferralEdit.Enabled=true;
 		}
 
 		private void butReferralEdit_Click(object sender,EventArgs e) {
 			//only enabled if ClaimCur.ReferringProv!=0
-			Referral referral=WpfControls.ReferralL.GetReferral(_claim.ReferringProv);
+			Referral referral=ReferralL.GetReferral(_claim.ReferringProv);
 			if(referral==null) {
 				textRefProv.Text="";
 				_claim.ReferringProv=0;
 				butReferralEdit.Enabled=false;
 				return;
 			}
-			FrmReferralEdit frmReferralEdit=new FrmReferralEdit(referral);
-			frmReferralEdit.ShowDialog();
-			if(frmReferralEdit.IsDialogOK){
+			using FormReferralEdit formReferralEdit=new FormReferralEdit(referral);
+			formReferralEdit.ShowDialog();
+			if(formReferralEdit.DialogResult==DialogResult.OK){
 				//it's impossible to delete referral from that window.
 				Referrals.RefreshCache();
 				textRefProv.Text=Referrals.GetNameLF(referral.ReferralNum);
@@ -2482,9 +2395,9 @@ namespace OpenDental{
 			ContrPerio contrPerioGrid=new ContrPerio();
 			contrPerioGrid.BackColor = System.Drawing.SystemColors.Window;
 			contrPerioGrid.Size = new System.Drawing.Size(602,665);
-			contrPerioGrid.ListPerioExams=PerioExams.Refresh(_patient.PatNum);
-			contrPerioGrid.ListPerioMeasures=PerioMeasures.GetForPatient(_patient.PatNum);
-			contrPerioGrid.IdxExamSelected=contrPerioGrid.ListPerioExams.Count-1;
+			PerioExams.Refresh(_patient.PatNum);
+			PerioMeasures.Refresh(_patient.PatNum,PerioExams.ListExams);
+			contrPerioGrid.IdxExamSelected=PerioExams.ListExams.Count-1;
 			contrPerioGrid.LoadData();
 			using Bitmap bitmap=new Bitmap(602,665);
 			Graphics g=Graphics.FromImage(bitmap);
@@ -2506,21 +2419,29 @@ namespace OpenDental{
 			string attachPath=EmailAttaches.GetAttachPath();
 			string newPath=ODFileUtils.CombinePaths(attachPath,newName);
 			if(CloudStorage.IsCloudStorage) {
-				UI.ProgressWin progressWin=new UI.ProgressWin();
-				progressWin.StartingMessage="Uploading...";
+				using FormProgress formProgress=new FormProgress();
+				formProgress.DisplayText="Uploading...";
+				formProgress.NumberFormat="F";
+				formProgress.NumberMultiplication=1;
+				formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+				formProgress.TickMS=1000;
+				OpenDentalCloud.Core.TaskStateUpload taskStateUpload=null;
 				using MemoryStream memoryStream=new MemoryStream();
-				progressWin.ActionMain=() => {
+				try {
 					bitmapBig.Save(memoryStream,System.Drawing.Imaging.ImageFormat.Bmp);
-					CloudStorage.Upload(CloudStorage.AtoZPath+"/EmailAttachments",newName,memoryStream.ToArray());
-				};
-				try{
-					progressWin.ShowDialog();
+					taskStateUpload=CloudStorage.UploadAsync(
+						CloudStorage.AtoZPath+"/EmailAttachments"
+						,newName
+						,memoryStream.ToArray()
+						,new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
 				}
-				catch(Exception ex) {//this would only catch memorystream isues. UploadSync won't throw an exception.
+				catch(Exception ex) {
 					MessageBox.Show(ex.Message);
 					return;
 				}
-				if(progressWin.IsCancelled){
+				formProgress.ShowDialog();
+				if(formProgress.DialogResult==DialogResult.Cancel) {
+					taskStateUpload.DoCancel=true;
 					return;
 				}
 				//Upload was successful, so continue attaching
@@ -2542,18 +2463,13 @@ namespace OpenDental{
 		}
 
 		private void butExportHelper() {
-			if(ODEnvironment.IsCloudServer) {
+			if(ODBuild.IsWeb()) {
 				for(int i=0;i<_claim.Attachments.Count;i++) {
 					string fileName=_patient.FName+_patient.LName+_patient.PatNum+"_"+i+Path.GetExtension(_claim.Attachments[i].ActualFileName);
 					string tempPath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
 					string currentPath=FileAtoZ.CombinePaths(EmailAttaches.GetAttachPath(),_claim.Attachments[i].ActualFileName);
 					FileAtoZ.Copy(currentPath,tempPath,FileAtoZSourceDestination.AtoZToLocal,"Exporting attachment...");
-					if(ODBuild.IsThinfinity()) {
-						ThinfinityUtils.ExportForDownload(tempPath);
-					}
-					else if(ODCloudClient.IsAppStream) {
-						CloudClientL.ExportForCloud(tempPath,doPromptForName:false);
-					}
+					ThinfinityUtils.ExportForDownload(tempPath);
 				}
 				return;
 			}
@@ -2619,7 +2535,6 @@ namespace OpenDental{
 			formImageSelectClaimAttach.PatNum=_claim.PatNum;
 			formImageSelectClaimAttach.CanAttachTxt=true;
 			formImageSelectClaimAttach.CanAttachDoc=true;
-			formImageSelectClaimAttach.CanAttachPdf=true;
 			formImageSelectClaimAttach.ShowDialog();
 			if(formImageSelectClaimAttach.DialogResult!=DialogResult.OK) {
 				return;
@@ -2667,16 +2582,13 @@ namespace OpenDental{
 			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {
 				selectedIndex=listCanadianAttachments.SelectedIndex;
 			}
-			InputBoxParam inputBoxParam=new InputBoxParam();
-			inputBoxParam.InputBoxType_=InputBoxType.TextBox;
-			inputBoxParam.LabelText=Lan.g(this,"Filename");
-			inputBoxParam.Text=_claim.Attachments[selectedIndex].DisplayedFileName;
-			InputBox inputBox=new InputBox(inputBoxParam);
+			using InputBox inputBox=new InputBox(Lan.g(this,"Filename"));
+			inputBox.textResult.Text=_claim.Attachments[selectedIndex].DisplayedFileName;
 			inputBox.ShowDialog();
-			if(inputBox.IsDialogCancel) {
+			if(inputBox.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			_claim.Attachments[selectedIndex].DisplayedFileName=inputBox.StringResult;
+			_claim.Attachments[selectedIndex].DisplayedFileName=inputBox.textResult.Text;
 			FillAttachments();
 		}
 
@@ -2743,7 +2655,7 @@ namespace OpenDental{
 		}
 
 		private void butPreview_Click(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ClaimSend)) {
+			if(!Security.IsAuthorized(Permissions.ClaimSend)) {
 				return;
 			}
 			if(!ClaimIsValid()) {
@@ -2757,10 +2669,11 @@ namespace OpenDental{
 			formClaimPrint.ClaimNum=_claim.ClaimNum;
 			formClaimPrint.DoPrintImmediately=false;
 			formClaimPrint.ShowDialog();
-			_claim=Claims.GetClaim(_claim.ClaimNum);//status will have changed to sent.
-			if(_claim is null){
-				//if claim has been deleted, close out of current form.
-				MsgBox.Show(this,"Claim has been deleted by another user.");
+			if(formClaimPrint.DialogResult==DialogResult.OK) {
+				//status will have changed to sent.
+				_claim=Claims.GetClaim(_claim.ClaimNum);
+			}
+			else if(formClaimPrint.DialogResult==DialogResult.Abort) {//if claim has been deleted, close out of current form.
 				DialogResult=DialogResult.Cancel;
 				return;
 			}
@@ -2770,7 +2683,7 @@ namespace OpenDental{
 		}
 
 		private void ButPrint_Click(object sender,System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ClaimSend)) {
+			if(!Security.IsAuthorized(Permissions.ClaimSend)) {
 				return;
 			}
 			if(!ClaimIsValid()){
@@ -2791,18 +2704,18 @@ namespace OpenDental{
 			}
 			if(!_isNotAuthorized) {//if already sent, we want to block users from changing sent date without permission.
 				//also changes claimstatus to sent, and date:
-				Etranss.SetClaimSentOrPrinted(_claim.ClaimNum,_claim.ClaimStatus,_claim.PatNum,0,EtransType.ClaimPrinted,0,Security.CurUser.UserNum);
+				Etranss.SetClaimSentOrPrinted(_claim.ClaimNum,_claim.PatNum,0,EtransType.ClaimPrinted,0,Security.CurUser.UserNum);
 			}
 			//ClaimCur.ClaimStatus="S";
 			//ClaimCur.DateSent=DateTime.Today;
 			//Claims.Update(ClaimCur);
-			SecurityLogs.MakeLogEntry(EnumPermType.ClaimSend,_claim.PatNum,Lan.g(this,"Claim printed from Claim Edit window."),
+			SecurityLogs.MakeLogEntry(Permissions.ClaimSend,_claim.PatNum,Lan.g(this,"Claim printed from Claim Edit window."),
 				_claim.ClaimNum,dateTimeClaimCurSectDateTEdit);
-			SaveCleanup();
+			DialogResult=DialogResult.OK;
 		}
 
 		private void butSend_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ClaimSend)) {
+			if(!Security.IsAuthorized(Permissions.ClaimSend)) {
 				return;
 			}
 			//Check provider terms here instead of SendClaim or ClaimIsValid as we only want to check 
@@ -2814,7 +2727,7 @@ namespace OpenDental{
 		}
 
 		private void butSendCanadaAttachments_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ClaimSend)) {
+			if(!Security.IsAuthorized(Permissions.ClaimSend)) {
 				return;
 			}
 			DateTime dateTimeClaimCurSectEdit=_claim.SecDateTEdit;//Preserve the date prior to any claim updates effecting it.
@@ -2839,8 +2752,8 @@ namespace OpenDental{
 			finally {
 				Cursor=Cursors.Default;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.ClaimSend,_patient.PatNum,Lan.g(this,"Claim attachments sent from Claim Edit Window."),_claim.ClaimNum,dateTimeClaimCurSectEdit);
-			SaveCleanup();
+			SecurityLogs.MakeLogEntry(Permissions.ClaimSend,_patient.PatNum,Lan.g(this,"Claim attachments sent from Claim Edit Window."),_claim.ClaimNum,dateTimeClaimCurSectEdit);
+			DialogResult=DialogResult.OK;
 		}
 
 		///<summary>Checks the providers' term dates to see if a claim should be sent.
@@ -2931,8 +2844,8 @@ namespace OpenDental{
 			}
 			Clearinghouse clearinghouseHq=ClearinghouseL.GetClearinghouseHq(claimSendQueueItemsArrayCA[0].ClearinghouseNum);
 			Clearinghouse clearinghouseClin=Clearinghouses.OverrideFields(clearinghouseHq,clinicNum);
-			if(ODEnvironment.IsCloudServer && Clearinghouses.IsDisabledForWeb(clearinghouseClin)) {
-				MessageBox.Show(Lans.g("Eclaims","This clearinghouse is not available while using Open Dental Cloud."));
+			if(ODBuild.IsWeb() && Clearinghouses.IsDisabledForWeb(clearinghouseClin)) {
+				MessageBox.Show(Lans.g("Eclaims","This clearinghouse is not available while viewing through the web."));
 				return;
 			}
 			//string warnings;
@@ -2964,19 +2877,18 @@ namespace OpenDental{
 				if(validateClaimResponse!=null //the catches above don't alway return
 					&& validateClaimResponse.IsAttachmentRequired) 
 				{
-					//Do not open Claim Attachment window for ClaimConnect
-					//if(MsgBox.Show(this,MsgBoxButtons.YesNo,"An attachment is required for this claim. Would you like to open the claim attachment form?")) {
-					//	FormClaimAttachment formClaimAttachment=new FormClaimAttachment(_claim,EclaimsCommBridge.ClaimConnect);
-					//	formClaimAttachment.Show();
-					//	SaveCleanup();
-					//	return;
-					//}
-					if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"An attachment is required for this claim. Use the right click attachment workflows to add an attachment to this claim. Would you like to continue sending the claim?")) {
+					if(MsgBox.Show(this,MsgBoxButtons.YesNo,"An attachment is required for this claim. Would you like to open the claim attachment form?")) {
+						FormClaimAttachmentDXC formClaimAttachmentDXC=new FormClaimAttachmentDXC(_claim);
+						formClaimAttachmentDXC.Show();
+						DialogResult=DialogResult.OK;
+						return;
+					}
+					else if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Would you like to continue sending the claim?")) {
 						return;
 					}
 				}
 			}
-			Cursor=Cursors.WaitCursor;
+			Cursor=Cursors.WaitCursor;			
 			if(clearinghouseHq.Eformat==ElectronicClaimFormat.Canadian) {
 				if(!SendClaimCanadian(clearinghouseClin,claimSendQueueItemsArrayCA[0])) {
 					return;
@@ -2991,8 +2903,8 @@ namespace OpenDental{
 					FormClaimPrint.FillRenaissance,new FormTerminalConnection());//this also calls SetClaimSentOrPrinted which creates the etrans entry.
 			}
 			Cursor=Cursors.Default;
-			SecurityLogs.MakeLogEntry(EnumPermType.ClaimSend,_patient.PatNum,Lan.g(this,"Claim sent from Claim Edit Window."),_claim.ClaimNum,dateTimeClaimCurSectEdit);
-			SaveCleanup();
+			SecurityLogs.MakeLogEntry(Permissions.ClaimSend,_patient.PatNum,Lan.g(this,"Claim sent from Claim Edit Window."),_claim.ClaimNum,dateTimeClaimCurSectEdit);
+			DialogResult=DialogResult.OK;
 		}
 
 		///<summary>Helper method that only allows one Canadian claim to be sent at a time. Returns true if the claim was sent, otherwise false.</summary>
@@ -3059,7 +2971,7 @@ namespace OpenDental{
 		}
 
 		private void butResend_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ClaimSend)) {
+			if(!Security.IsAuthorized(Permissions.ClaimSend)) {
 				return;
 			}
 			using FormClaimResend formClaimResend=new FormClaimResend();
@@ -3132,20 +3044,8 @@ namespace OpenDental{
 			FillStatusHistory();
 		}
 
-		///<summary>This button has beeen removed from the UI to force users to use the right click attachment workflows. Opens FormClaimAttachmentDXC. This form is used for managing attachments to send to DentalXChange.</summary>
-		//private void buttonDXCClaimAttachment_Click(object sender,EventArgs e) {
-		//	FormClaimAttachment formClaimAttachment=new FormClaimAttachment(_claim,EclaimsCommBridge.ClaimConnect);
-		//	OpenAttachmentForm(formClaimAttachment);
-		//}
-
-		///<summary>Opens FormClaimAttachmentEDS. This form is used for managing attachments to send to EDS.</summary>
-		private void butEDSClaimAttachment_Click(object sender,EventArgs e) {
-			FormClaimAttachment formClaimAttachment=new FormClaimAttachment(_claim,EclaimsCommBridge.EDS);
-			OpenAttachmentForm(formClaimAttachment);
-		}
-
-		/// <summary>Helper method to centralize code for opening DXC and EDS attachment forms.</summary>
-		private void OpenAttachmentForm(FormClaimAttachment formClaimAttachment) {
+		///<summary>Opens FormClaimAttachment. This form is used for managing attachments to send to DentalXChange.</summary>
+		private void buttonClaimAttachment_Click(object sender,EventArgs e) {
 			if(IsNew) {//Must have a claim object to do claim attachments
 				MsgBox.Show(this,"The claim must be saved before you can start adding attachments.");
 				return;
@@ -3172,28 +3072,11 @@ namespace OpenDental{
 					return;
 				}
 			}
-			_formClaimAttachment=formClaimAttachment;
-			formClaimAttachment.FormClosed+=FormClaimAttachment_FormClosed;
-			formClaimAttachment.Show();
-			MsgBox.Show(this,"The Claim Attachments window will be hidden if you close the Edit Claim window. Go to your taskbar and click on the Claim Attachments window to bring it back into focus.");
-			//if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"This will close the claim edit window without saving any changes. Continue?")) {
-			//	formClaimAttachment.Show();
-			//	DialogResult=DialogResult.Cancel;
-			//}
-		}
-
-		private void FormClaimAttachment_FormClosed(object sender,EventArgs e) {
-			if(_formClaimAttachment.DialogResult!=DialogResult.OK) {
-				return;
+			if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"This will close the claim edit window without saving any changes. Continue?")) {
+				FormClaimAttachmentDXC formClaimAttachmentDXC=new FormClaimAttachmentDXC(_claim);
+				formClaimAttachmentDXC.Show();
+				DialogResult=DialogResult.Cancel;
 			}
-			//No longer used for the DXC attachment workflow
-			//if(_formClaimAttachment.GetEclaimsCommBridge()==EclaimsCommBridge.ClaimConnect) {
-			//	textDXCAttachmentID.Text=_claim.AttachmentID;
-			//	FillGridSentAttachments(gridDXCSent);
-			//	textNarrative.Text=_claim.Narrative;
-			//}
-			textEDSAttachmentID.Text=_claim.AttachmentID;
-			FillGridSentAttachments(gridEDSSent);
 		}
 
 		private void EditOverpay(bool isOverpaid) {
@@ -3236,7 +3119,7 @@ namespace OpenDental{
 
 		private void gridStatusHistory_CellDoubleClick(object sender,ODGridClickEventArgs e) {
 			ClaimTracking claimTracking=(ClaimTracking)gridStatusHistory.ListGridRows[e.Row].Tag;
-			if(Security.IsAuthorized(EnumPermType.ClaimHistoryEdit,claimTracking.DateTimeEntry)){
+			if(Security.IsAuthorized(Permissions.ClaimHistoryEdit,claimTracking.DateTimeEntry)){
 				using FormClaimCustomTrackingUpdate formClaimCustomTrackingUpdate=new FormClaimCustomTrackingUpdate(_claim,claimTracking);
 				formClaimCustomTrackingUpdate.ShowDialog();
 				if(formClaimCustomTrackingUpdate.DialogResult==DialogResult.OK) {
@@ -3550,7 +3433,7 @@ namespace OpenDental{
 			}
 			//AccidentDate is further down
 			_claim.AccidentST=textAccidentST.Text;
-			_claim.ClinicNum=comboClinic.ClinicNumSelected;
+			_claim.ClinicNum=comboClinic.SelectedClinicNum;
 			_claim.CorrectionType=(ClaimCorrectionType)Enum.GetValues(typeof(ClaimCorrectionType)).GetValue(comboCorrectionType.SelectedIndex);
 			_claim.ClaimIdentifier=string.IsNullOrWhiteSpace(textClaimIdentifier.Text) ? Claims.ConvertClaimId(_claim,_patient) : textClaimIdentifier.Text;
 			_claim.OrigRefNum=textOrigRefNum.Text;
@@ -3595,10 +3478,7 @@ namespace OpenDental{
 			#endregion
 			//Use the DXC attachmentID if it is not blank, otherwise use the NEA attachmentID. In the case they are both blank it does not matter,
 			//but users can have DXC attachments enabled with old NEA numbers attached. This will preserve those.
-			_claim.AttachmentID=textAttachID.Text;
-			if(!textEDSAttachmentID.Text.IsNullOrEmpty()) {
-				_claim.AttachmentID=textEDSAttachmentID.Text;
-			}
+			_claim.AttachmentID=textAttachmentID.Text!="" ? textAttachmentID.Text : textAttachID.Text;
 			//Canadian---------------------------------------------------------------------------------
 			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
 				_claim.CanadianMaterialsForwarded="";
@@ -3821,28 +3701,17 @@ namespace OpenDental{
 					+"\r\nand the associated ERA will need to be edited before it can be Finalized."
 					+"\r\n";
 				}
-				if(CultureInfo.CurrentCulture.Name.EndsWith("CA")) {//Canadian. en-CA or fr-CA
-					if(MessageBox.Show(msgAttaches
-						+Lan.g(this,"Warning, try reversing this claim before deleting it. "
-						+"If this is a primary claim, you may also need to reverse and delete the secondary claim. "
-						+"Delete this claim now?"),"",MessageBoxButtons.OKCancel)!=DialogResult.OK)
-					{
-						return;
-					}
-				}
-				else{
-					if(MessageBox.Show(msgAttaches+Lan.g(this,"Delete Claim?"),"",MessageBoxButtons.OKCancel)!=DialogResult.OK){
-						return;
-					}
+				if(MessageBox.Show(msgAttaches+Lan.g(this,"Delete Claim?"),"",MessageBoxButtons.OKCancel)!=DialogResult.OK){
+					return;
 				}
 			}
 			DeleteClaimHelper(listETrans835Attaches);
-			SecurityLogs.MakeLogEntry(EnumPermType.ClaimDelete,_claim.PatNum,_patient.GetNameLF()
+			SecurityLogs.MakeLogEntry(Permissions.ClaimDelete,_claim.PatNum,_patient.GetNameLF()
 				+", "+Lan.g(this,"Date Entry")+": "+_claim.SecDateEntry.ToShortDateString()
 				+", "+Lan.g(this,"Date of Service")+": "+_claim.DateService.ToShortDateString(),
 				_claim.ClaimNum,dateTimeClaimCurSectEdit);
 			_isDeleting=true;
-			SaveCleanup();
+			DialogResult=DialogResult.OK;
 		}
 
 		///<summary>This window is complicated and can do many things. Therefore, we pre-insert the claim and other associated entities.
@@ -3963,14 +3832,13 @@ namespace OpenDental{
 		}
 
 		///<summary>If InsAutoReceiveNoAssign pref is on, can automatically receive the claim displayed in the form if its status has changed to Sent.
-		///If a Canadian claim was sent, this may receive it and any automatically sent secondary claims.
-		///Returns true if claim ends up received.</summary>
-		private bool ReceiveAsNoPaymentIfNeeded() {
+		///If a Canadian claim was sent, this may receive it and any automatically sent secondary claims.</summary>
+		private void ReceiveAsNoPaymentIfNeeded() {
 			//Refresh because _claim and UI may not be updated.
 			Claim claim=Claims.GetClaim(_claim.ClaimNum);
 			//Kick out if status hasn't changed to "Sent" from some other status.
 			if(_claimOld.ClaimStatus=="S" || claim.ClaimStatus!="S") {
-				return false;
+				return;
 			}
 			if(Claims.ReceiveAsNoPaymentIfNeeded(claim.ClaimNum)) {
 				//The method above changes and updates the claim and claimprocs.
@@ -3982,12 +3850,10 @@ namespace OpenDental{
 				_isPaymentEntered=true;
 				comboClaimStatus.SelectedIndex=_listClaimStatuses.IndexOf(ClaimStatus.Received);
 				textDateRec.Text=DateTime.Today.ToShortDateString();
-				return true;
 			}
 			if(_canadianSecondaryClaimNum!=0) {
-				return Claims.ReceiveAsNoPaymentIfNeeded(_canadianSecondaryClaimNum);
+				Claims.ReceiveAsNoPaymentIfNeeded(_canadianSecondaryClaimNum);
 			}
-			return false;
 		}
 
 		///<summary>We have to set _blueBookEstimateData to null when _listClaimProcsForClaim is assigned because we may not have all of the
@@ -3997,7 +3863,7 @@ namespace OpenDental{
 			_blueBookEstimateData=null;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!ClaimIsValid()){
 				return;
 			}
@@ -4013,11 +3879,6 @@ namespace OpenDental{
 						return;
 					}
 					MarkAllReceived();
-				}
-				if(!IsFromBatchWindow && PrefC.GetBool(PrefName.ClaimFinalizeWarning) && _dataTablePayments.Rows.Count==0) {
-					if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"The received claim has not been finalized. Are you sure you want to continue?")) {
-						return;
-					}
 				}
 			}
 			else{//claim is any status except received
@@ -4044,7 +3905,7 @@ namespace OpenDental{
 			if(comboClaimStatus.SelectedIndex==_listClaimStatuses.IndexOf(ClaimStatus.WaitingToSend)){//waiting to send
 				ClaimSendQueueItem[] claimSendQueueItemsArray=updateData.ListSendQueueItems;
 				if(claimSendQueueItemsArray.Length==0 || !claimSendQueueItemsArray[0].CanSendElect) {//listQueue can be empty if another workstation deleted the claim
-					SaveCleanup();
+					DialogResult=DialogResult.OK;
 					return;
 				}
 				//string warnings;
@@ -4060,7 +3921,7 @@ namespace OpenDental{
 					if(MessageBox.Show(Lan.g(this,"Cannot send claim until missing/invalid data is fixed:")+"\r\n"+claimSendQueueItemsArray[0].MissingData+"\r\n\r\nContinue anyway?",
 						"",MessageBoxButtons.OKCancel)==DialogResult.OK)
 					{
-						SaveCleanup();
+						DialogResult=DialogResult.OK;
 					}
 					return;
 				}
@@ -4083,12 +3944,10 @@ namespace OpenDental{
 							_claim.AttachedFlags="Misc";
 							Claims.Update(_claim);
 						}
-						//Do not open Claim Attachment window for ClaimConnect
-						//if(MsgBox.Show(this,MsgBoxButtons.YesNo,"An attachment is required for this claim. Would you like to open the claim attachment form?")) {
-						//	FormClaimAttachment formClaimAttachment=new FormClaimAttachment(_claim,EclaimsCommBridge.ClaimConnect);
-						//	formClaimAttachment.Show();
-						//}
-						MsgBox.Show(this,"An attachment is required for this claim. Use the right click attachment workflow to add an attachment to this claim.");
+						if(MsgBox.Show(this,MsgBoxButtons.YesNo,"An attachment is required for this claim. Would you like to open the claim attachment form?")) {
+							FormClaimAttachmentDXC formClaimAttachmentDXC=new FormClaimAttachmentDXC(_claim);
+							formClaimAttachmentDXC.Show();
+						}
 					}
 					else if(_claim.Attachments.Count==0 && _claim.AttachedFlags!="Mail") {//Don't set to 'Mail' on claims with attachments or make unneccessary DB trips.
 						_claim.AttachedFlags="Mail";
@@ -4112,60 +3971,50 @@ namespace OpenDental{
 				ShowProviderTransferWindow(_claim,_patient,_family);
 			}
 			Plugins.HookAddCode(this,"FormClaimEdit.butOK_Click_end",_claim);
-			SaveCleanup();
-		}
-
-		private void SaveCleanup(){
-			DateTime dateTimeClaimSecEdit=_claim.SecDateTEdit;//Preserve the date prior to any claim updates effecting it.
-			if(_isDeleting) {
-				InsBlueBooks.DeleteByClaimNums(_claim.ClaimNum);
-				DialogResult=DialogResult.OK;
-				return;
-			}
-			InsBlueBooks.SynchForClaimNums(_claim.ClaimNum);
-			if(IsNew) {
-				SecurityLogs.MakeLogEntry(PermissionClaimEdit,_patient.PatNum,"New claim created for "+_patient.LName+","+_patient.FName,
-					_claim.ClaimNum,dateTimeClaimSecEdit);
-			}
-			else {//save for all except Delete
-				SecurityLogs.MakeLogEntry(PermissionClaimEdit,_patient.PatNum,"Claim saved for "+_patient.LName+","+_patient.FName,
-					_claim.ClaimNum,dateTimeClaimSecEdit);
-			}
-			bool receivedAsNoPay=ReceiveAsNoPaymentIfNeeded();
-			//Claim is flagged as Received and the user entered payment information while the window was open.
-			if(comboClaimStatus.SelectedIndex==_listClaimStatuses.IndexOf(ClaimStatus.Received) && _isPaymentEntered) {
-				if(PrefC.GetBool(PrefName.PromptForSecondaryClaim) && Security.IsAuthorized(EnumPermType.ClaimSend,true)) {
-					//We currenlty require that payment be entered in this instance of the form.
-					//We might later decide that we want to check for secondary whenever the primary is recieved and there is financial values entered
-					//regardless of when they were entered.
-					ClaimL.PromptForSecondaryClaim(_listClaimProcsForClaim);
-				}
-				//Try to transfer any patient payment around on the procedures associated to this claim if necessary (e.g. if Open Dental guessed deductible incorrectly).
-				if(Security.IsAuthorized(EnumPermType.PaymentCreate,DateTime.Today,true)) {
-					PaymentEdit.MakeIncomeTransferForClaimProcs(_patient.PatNum,_listClaimProcsForClaim);
-				}
-				if(PrefC.GetBool(PrefName.ClaimPrimaryReceivedRecalcSecondary) && !receivedAsNoPay && _claim.ClaimType=="P") {
-					List<Claim> listClaims=Claims.GetSecondaryClaimsNotReceived(_listClaimProcsForClaim);
-					List<Benefit> listBenefits=Benefits.GetAllForPatPlans(_listPatPlans,_listInsSubs);
-					for(int i=0;i<listClaims.Count;i++) {
-						List<Procedure> listProcedures=Procedures.GetProcsForClaimNum(listClaims[i].ClaimNum);
-						Claims.CalculateAndUpdate(listProcedures,_listInsPlans,listClaims[i],_listPatPlans,listBenefits,_patient,_listInsSubs);
-					}
-				}
-			}
 			DialogResult=DialogResult.OK;
 		}
 
-		private void FormClaimEdit_FormClosing(object sender, CancelEventArgs e) {
-			if(DialogResult==DialogResult.OK) {
-				return;
-			}
-			if(_claim==null) {
-				return;
-			}
-			DateTime dateTimeClaimSecEdit=_claim.SecDateTEdit;//Preserve the date prior to any claim updates effecting it.
-			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Changes will be lost.  Continue anyway?")) {
+		//cancel does not cancel in some circumstances because cur gets updated in some areas.
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void FormClaimEdit_CloseXClicked(object sender, CancelEventArgs e){
+			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Changes will be lost.  Continue anyway?")){
 				e.Cancel=true;
+			}
+		}
+
+		private void FormClaimEdit_Closing(object sender,System.ComponentModel.CancelEventArgs e) {
+			DateTime dateTimeClaimSecEdit=_claim.SecDateTEdit;//Preserve the date prior to any claim updates effecting it.
+			if(DialogResult==DialogResult.OK) {
+				if(_isDeleting) {
+					InsBlueBooks.DeleteByClaimNums(_claim.ClaimNum);
+					return;
+				}
+				InsBlueBooks.SynchForClaimNums(_claim.ClaimNum);
+				if(IsNew) {
+					SecurityLogs.MakeLogEntry(PermissionClaimEdit,_patient.PatNum,"New claim created for "+_patient.LName+","+_patient.FName,
+						_claim.ClaimNum,dateTimeClaimSecEdit);
+				}
+				else {//save for all except Delete
+					SecurityLogs.MakeLogEntry(PermissionClaimEdit,_patient.PatNum,"Claim saved for "+_patient.LName+","+_patient.FName,
+						_claim.ClaimNum,dateTimeClaimSecEdit);
+				}
+				ReceiveAsNoPaymentIfNeeded();
+				//Claim is flagged as Received and the user entered payment information while the window was open.
+				if(comboClaimStatus.SelectedIndex==_listClaimStatuses.IndexOf(ClaimStatus.Received) && _isPaymentEntered) {
+					if(PrefC.GetBool(PrefName.PromptForSecondaryClaim) && Security.IsAuthorized(Permissions.ClaimSend,true)) {
+						//We currenlty require that payment be entered in this instance of the form.
+						//We might later decide that we want to check for secondary whenever the primary is recieved and there is financial values entered
+						//regardless of when they were entered.
+						ClaimL.PromptForSecondaryClaim(_listClaimProcsForClaim);
+					}
+					//Try to transfer any patient payment around on the procedures associated to this claim if necessary (e.g. if Open Dental guessed deductible incorrectly).
+					if(Security.IsAuthorized(Permissions.PaymentCreate,DateTime.Today,true)) {
+						PaymentEdit.MakeIncomeTransferForClaimProcs(_patient.PatNum,_listClaimProcsForClaim);
+					}
+				}
 				return;
 			}
 			if(!IsNew) {
@@ -4189,7 +4038,7 @@ namespace OpenDental{
 				return;
 			}
 			//This is a new claim where they clicked "Cancel".
-			SecurityLogs.MakeLogEntry(EnumPermType.ClaimEdit,_patient.PatNum,"New claim cancelled for "+_patient.LName+","+_patient.FName,
+			SecurityLogs.MakeLogEntry(Permissions.ClaimEdit,_patient.PatNum,"New claim cancelled for "+_patient.LName+","+_patient.FName,
 				_claim.ClaimNum,dateTimeClaimSecEdit);
 			DeleteClaimHelper();
 			InsBlueBooks.DeleteByClaimNums(_claim.ClaimNum);

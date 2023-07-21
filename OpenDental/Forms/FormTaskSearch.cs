@@ -36,6 +36,9 @@ namespace OpenDental {
 		}
 
 		private void FormTaskSearch_Load(object sender,EventArgs e) {
+			if(IsSelectionMode) {
+				butClose.Text="Cancel";
+			}
 			//Note: DateTime strings that are empty actually are " " due to how the empty datetime control behaves.
 			_listDefsTaskPriorities=Defs.GetDefsForCategory(DefCat.TaskPriorities);
 			long userNum=0;
@@ -418,6 +421,11 @@ namespace OpenDental {
 			}
 			TaskNumSelected=task.TaskNum;
 			DialogResult=DialogResult.OK;
+			Close();
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 			Close();
 		}
 

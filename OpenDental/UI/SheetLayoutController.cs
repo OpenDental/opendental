@@ -91,11 +91,10 @@ namespace OpenDental {
 			}
 			else {//Try to use the practice default.
 				//If there is a Clinic default, get it.
-				long sheetDefNum=ClinicPrefs.GetLong(PrefName.SheetsDefaultChartModule,Clinics.ClinicNum);
-				if(!PrefC.HasClinicsEnabled //clinics are off
-					|| Clinics.ClinicNum==0 //HQ is selected
-					|| sheetDefNum==0) //ClinicPref did not exist
+				if(!PrefC.HasClinicsEnabled || Clinics.ClinicNum==0 
+					|| !ClinicPrefs.TryGetLong(PrefName.SheetsDefaultChartModule,Clinics.ClinicNum,out long sheetDefNum)) 
 				{
+					//Either, clinics are off, HQ is selected, or ClinicPref did not exist.
 					if(_hasUserLoggedOff) {//Currently the cache is not loaded fast enough after logging back on to trust.
 						sheetDefNum=PIn.Long(PrefC.GetStringNoCache(PrefName.SheetsDefaultChartModule));
 					}
@@ -168,11 +167,12 @@ namespace OpenDental {
 		private void UpdateChartLayoutUserPref() {
 			UserOdPref userPref=UserOdPrefs.GetFirstOrNewByUserAndFkeyType(Security.CurUser.UserNum,UserOdFkeyType.DynamicChartLayout);
 			userPref.Fkey=_sheetDefDynamicLayoutCur.SheetDefNum;
-			long sheetDefNumDefault=ClinicPrefs.GetLong(PrefName.SheetsDefaultChartModule,Clinics.ClinicNum);
-			if(!PrefC.HasClinicsEnabled || Clinics.ClinicNum==0 || sheetDefNumDefault==0) {
-				sheetDefNumDefault=PrefC.GetLong(PrefName.SheetsDefaultChartModule);
+			if(!PrefC.HasClinicsEnabled || Clinics.ClinicNum==0 
+				|| !ClinicPrefs.TryGetLong(PrefName.SheetsDefaultChartModule,Clinics.ClinicNum,out long defaultSheetDefNum)) 
+			{
+				defaultSheetDefNum=PrefC.GetLong(PrefName.SheetsDefaultChartModule);
 			}
-			if(userPref.Fkey==sheetDefNumDefault) {
+			if(userPref.Fkey==defaultSheetDefNum) {
 				if(!userPref.IsNew) {
 					UserOdPrefs.Delete(userPref.UserOdPrefNum);//Delete old entry, this will cause user to view any newly selected practice or clinic defaults.
 					DataValid.SetInvalid(InvalidType.UserOdPrefs);

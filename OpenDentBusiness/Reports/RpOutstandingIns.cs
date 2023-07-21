@@ -121,20 +121,7 @@ namespace OpenDentBusiness {
 			return listOutstandingInsClaims;
 		}
 
-		///<summary>Called from FormRpOutstandingIns. Calls RpOutstandingIns.ZeroClaim() on list of claims. 
-		///Also recalculates all related secondary claims' estimates if ClaimPrimaryReceivedRecalcSecondary pref is on.</summary>
-		public static void ZeroClaims(List<Claim> listClaims) {
-			for(int i=0;i<listClaims.Count;i++) {
-				ZeroClaim(listClaims[i]);
-			}
-			if(!PrefC.GetBool(PrefName.ClaimPrimaryReceivedRecalcSecondary)) {
-				return;
-			}
-			listClaims=listClaims.FindAll(x=>x.ClaimType=="P");
-			Claims.CalculateAndUpdateSecondariesFromPrimaries(listClaims);
-		}
-
-		/// <summary>Only to be called in RpOutstandingIns.ZeroClaims(). Sets the claim as received today. For all claim procs associated with the claim, if they are 'Not Received' or 'Preauth' and they do not have a claim payment attached marks them as received. Also zeros the inspayamt,inspayest,and writeoff for those claimprocs.</summary>
+		/// <summary>Called from FormRpOutstandingIns. Sets the claim as received today. For all claim procs associated with the claim, if they are 'Not Received' or 'Preauth' and they do not have a claim payment attached marks them as received. Also zeros the inspayamt,inspayest,and writeoff for those claimprocs.</summary>
 		public static void ZeroClaim(Claim claim) {
 			if(claim==null) {
 				return;
@@ -159,7 +146,7 @@ namespace OpenDentBusiness {
 			Claims.Update(claim);
 			ClaimProcs.UpdateMany(listClaimProcs);
 			string logText=$"Claim on Date Entry: {claim.SecDateEntry.ToShortDateString()} and Date of Service: {claim.DateService.ToShortDateString()} has been zeroed out.";
-			SecurityLogs.MakeLogEntry(EnumPermType.ClaimSentEdit,claim.PatNum,logText,claim.ClaimNum,claim.SecDateTEdit);
+			SecurityLogs.MakeLogEntry(Permissions.ClaimSentEdit,claim.PatNum,logText,claim.ClaimNum,claim.SecDateTEdit);
 		}
 
 		[Serializable]

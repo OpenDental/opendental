@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAllocationsSetup));
 			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.checkClaimPayByTotalSplitsAuto = new OpenDental.UI.CheckBox();
 			this.checkShowIncomeTransferManager = new OpenDental.UI.CheckBox();
 			this.label40 = new System.Windows.Forms.Label();
@@ -65,12 +66,23 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(770, 536);
+			this.butOK.Location = new System.Drawing.Point(719, 536);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
 			this.butOK.TabIndex = 3;
-			this.butOK.Text = "&Save";
-			this.butOK.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(805, 536);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// checkClaimPayByTotalSplitsAuto
 			// 
@@ -300,7 +312,7 @@ namespace OpenDental{
 			// 
 			this.labelPermission.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.labelPermission.ForeColor = System.Drawing.Color.DarkRed;
-			this.labelPermission.Location = new System.Drawing.Point(649, 542);
+			this.labelPermission.Location = new System.Drawing.Point(598, 542);
 			this.labelPermission.Name = "labelPermission";
 			this.labelPermission.Size = new System.Drawing.Size(116, 16);
 			this.labelPermission.TabIndex = 318;
@@ -407,6 +419,7 @@ namespace OpenDental{
 			// 
 			// FormAllocationsSetup
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(892, 572);
 			this.Controls.Add(this.checkAdjustmentsOffset);
 			this.Controls.Add(this.labelIncomeTransfersMadeUponClaimReceivedDesc);
@@ -420,6 +433,7 @@ namespace OpenDental{
 			this.Controls.Add(this.checkClaimPayByTotalSplitsAuto);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.checkShowIncomeTransferManager);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.label40);
 			this.Controls.Add(this.butLineItem);
 			this.Controls.Add(this.checkHidePaysplits);
@@ -438,6 +452,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.CheckBox checkClaimPayByTotalSplitsAuto;
 		private OpenDental.UI.CheckBox checkShowIncomeTransferManager;
 		private System.Windows.Forms.Label label40;

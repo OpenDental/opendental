@@ -28,8 +28,8 @@ namespace OpenDental {
 			comboSnomedAllergyType.SelectedIndex=(int)AllergyDefCur.SnomedType;
 			textMedication.Text=Medications.GetDescription(AllergyDefCur.MedicationNum);
 			textUnii.Text=AllergyDefCur.UniiCode;
-			if(!Security.IsAuthorized(EnumPermType.AllergyDefEdit)) {
-				butSave.Enabled=false;
+			if(!Security.IsAuthorized(Permissions.AllergyDefEdit)) {
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 			}
 		}
@@ -64,7 +64,7 @@ namespace OpenDental {
 			textMedication.Text="";
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(textDescription.Text.Trim()=="") {
 				MsgBox.Show(this,"Description cannot be blank.");
 				return;
@@ -118,6 +118,10 @@ namespace OpenDental {
 			}
 			AllergyDefs.Delete(AllergyDefCur.AllergyDefNum);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

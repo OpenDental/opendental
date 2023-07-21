@@ -35,11 +35,22 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDeposits));
+			this.butClose = new OpenDental.UI.Button();
 			this.grid = new OpenDental.UI.GridOD();
 			this.butAdd = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.comboClinics = new OpenDental.UI.ComboBoxClinicPicker();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(365, 574);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// grid
 			// 
@@ -70,7 +81,7 @@ namespace OpenDental {
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(363, 575);
+			this.butOK.Location = new System.Drawing.Point(365, 542);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 2;
@@ -83,7 +94,7 @@ namespace OpenDental {
 			this.comboClinics.IncludeUnassigned = true;
 			this.comboClinics.Location = new System.Drawing.Point(72, 7);
 			this.comboClinics.Name = "comboClinics";
-			this.comboClinics.IsMultiSelect = true;
+			this.comboClinics.SelectionModeMulti = true;
 			this.comboClinics.Size = new System.Drawing.Size(200, 21);
 			this.comboClinics.TabIndex = 131;
 			this.comboClinics.SelectionChangeCommitted += new System.EventHandler(this.ComboClinics_SelectionChangeCommitted);
@@ -95,6 +106,7 @@ namespace OpenDental {
 			this.Controls.Add(this.comboClinics);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.grid);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butAdd);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -107,6 +119,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.GridOD grid;
 		private OpenDental.UI.Button butOK;

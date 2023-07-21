@@ -36,7 +36,7 @@ namespace OpenDental {
 				textNote.Text=HL7DefSegmentCur.Note;
 			}
 			if(IsHL7DefInternal || HL7InternalType_==HL7InternalType.MedLabv2_3) {
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 				labelDelete.Visible=true;
 				butAdd.Enabled=false;
@@ -111,7 +111,7 @@ namespace OpenDental {
 			FillGrid();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			//not enabled if internal
 			if(!textItemOrder.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry error first.");
@@ -141,6 +141,10 @@ namespace OpenDental {
 				HL7DefSegments.Update(HL7DefSegmentCur);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

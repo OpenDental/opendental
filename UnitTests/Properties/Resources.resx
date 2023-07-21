@@ -151,7 +151,4 @@
   <data name="canadianprocedurecodes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\canadianprocedurecodes.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="JustinSmithERA_NoAutoProcessCARCs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\JustinSmithERA_NoAutoProcessCARCs.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
 </root>

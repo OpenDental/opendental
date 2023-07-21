@@ -122,7 +122,7 @@ namespace OpenDentBusiness {
 		public static void InsertPatRestrictApptChangeSecurityLog(long patNum,bool isPatRestrictedOld,bool isPatRestrictedNew) {
 			//No need to check MiddleTierRole; no call to db.
 			if(isPatRestrictedOld!=isPatRestrictedNew) {
-				SecurityLogs.MakeLogEntry(EnumPermType.PatientApptRestrict,patNum,"Patient restriction type changed from " +isPatRestrictedOld +" to " +isPatRestrictedNew);
+				SecurityLogs.MakeLogEntry(Permissions.PatientApptRestrict,patNum,"Patient restriction type changed from " +isPatRestrictedOld +" to " +isPatRestrictedNew);
 			}
 		}
 

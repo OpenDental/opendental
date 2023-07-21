@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormCloneAdd));
 			this.butClone = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.labelSpecialty = new System.Windows.Forms.Label();
 			this.labelClinic = new System.Windows.Forms.Label();
 			this.comboClinic = new OpenDental.UI.ComboBox();
@@ -49,12 +50,23 @@ namespace OpenDental{
 			// butClone
 			// 
 			this.butClone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butClone.Location = new System.Drawing.Point(434, 212);
+			this.butClone.Location = new System.Drawing.Point(353, 212);
 			this.butClone.Name = "butClone";
 			this.butClone.Size = new System.Drawing.Size(75, 24);
 			this.butClone.TabIndex = 3;
 			this.butClone.Text = "Clone";
 			this.butClone.Click += new System.EventHandler(this.butClone_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(434, 212);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// labelSpecialty
 			// 
@@ -231,6 +243,7 @@ namespace OpenDental{
 			// FormCloneAdd
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(521, 248);
 			this.Controls.Add(this.comboPriProv);
 			this.Controls.Add(this.butPickPrimary);
@@ -241,6 +254,7 @@ namespace OpenDental{
 			this.Controls.Add(this.labelClinic);
 			this.Controls.Add(this.labelSpecialty);
 			this.Controls.Add(this.butClone);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormCloneAdd";
 			this.Text = "Clone Add";
@@ -254,6 +268,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butClone;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label labelSpecialty;
 		private System.Windows.Forms.Label labelClinic;
 		private OpenDental.UI.ComboBox comboClinic;

@@ -264,7 +264,7 @@
 			this.textStack.DetectUrls = false;
 			this.textStack.Location = new System.Drawing.Point(0, 0);
 			this.textStack.Name = "textStack";
-			this.textStack.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.JobManager;
+			this.textStack.QuickPasteType = OpenDentBusiness.QuickPasteType.JobManager;
 			this.textStack.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textStack.Size = new System.Drawing.Size(399, 332);
 			this.textStack.SpellCheckIsEnabled = false;
@@ -292,7 +292,7 @@
 			this.textODStack.DetectUrls = false;
 			this.textODStack.Location = new System.Drawing.Point(0, 0);
 			this.textODStack.Name = "textODStack";
-			this.textODStack.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.JobManager;
+			this.textODStack.QuickPasteType = OpenDentBusiness.QuickPasteType.JobManager;
 			this.textODStack.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textODStack.Size = new System.Drawing.Size(399, 332);
 			this.textODStack.SpellCheckIsEnabled = false;
@@ -320,7 +320,7 @@
 			this.textStrippedStack.DetectUrls = false;
 			this.textStrippedStack.Location = new System.Drawing.Point(0, 0);
 			this.textStrippedStack.Name = "textStrippedStack";
-			this.textStrippedStack.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.JobManager;
+			this.textStrippedStack.QuickPasteType = OpenDentBusiness.QuickPasteType.JobManager;
 			this.textStrippedStack.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textStrippedStack.Size = new System.Drawing.Size(399, 332);
 			this.textStrippedStack.SpellCheckIsEnabled = false;
@@ -385,7 +385,7 @@
 			this.textDevNote.DetectUrls = false;
 			this.textDevNote.Location = new System.Drawing.Point(3, 363);
 			this.textDevNote.Name = "textDevNote";
-			this.textDevNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.JobManager;
+			this.textDevNote.QuickPasteType = OpenDentBusiness.QuickPasteType.JobManager;
 			this.textDevNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textDevNote.Size = new System.Drawing.Size(407, 35);
 			this.textDevNote.SpellCheckIsEnabled = false;

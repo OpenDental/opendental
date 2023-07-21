@@ -49,11 +49,15 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			_schoolCourse.CourseID=textCourseID.Text;
 			_schoolCourse.Descript=textDescript.Text;
 			SchoolCourses.InsertOrUpdate(_schoolCourse,IsNew);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void FormSchoolCourseEdit_FormClosing(object sender,FormClosingEventArgs e) {
@@ -61,6 +65,26 @@ namespace OpenDental{
 				DataValid.SetInvalid(InvalidType.DentalSchools);
 			}
 		}
-
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

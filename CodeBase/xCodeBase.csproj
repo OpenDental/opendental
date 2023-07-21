@@ -32,7 +32,7 @@
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <ResGenToolArchitecture>Managed32Bit</ResGenToolArchitecture>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -62,7 +62,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <LangVersion>8.0</LangVersion>
@@ -172,6 +172,7 @@
     <Compile Include="Progress\FormProgressStatus.designer.cs">
       <DependentUpon>FormProgressStatus.cs</DependentUpon>
     </Compile>
+    <Compile Include="Progress\IODEvent.cs" />
     <Compile Include="Progress\IODProgressExtended.cs" />
     <Compile Include="Progress\ODProgress.cs" />
     <Compile Include="Progress\ODProgressBar.cs">
@@ -190,7 +191,6 @@
     <Compile Include="Utilities\DateTime_.cs" />
     <Compile Include="Utilities\DrCephArgs.cs" />
     <Compile Include="Utilities\Environment_.cs" />
-    <Compile Include="Utilities\JavaScriptUtil.cs" />
     <Compile Include="Utilities\ODClipboard.cs" />
     <Compile Include="Utilities\ODCloudClient.cs" />
     <Compile Include="Utilities\PayConnectResponse.cs" />

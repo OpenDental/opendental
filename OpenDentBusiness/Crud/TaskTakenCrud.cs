@@ -49,7 +49,6 @@ namespace OpenDentBusiness.Crud{
 				taskTaken=new TaskTaken();
 				taskTaken.TaskTakenNum= PIn.Long  (row["TaskTakenNum"].ToString());
 				taskTaken.TaskNum     = PIn.Long  (row["TaskNum"].ToString());
-				taskTaken.LogJson     = PIn.String(row["LogJson"].ToString());
 				retVal.Add(taskTaken);
 			}
 			return retVal;
@@ -63,12 +62,10 @@ namespace OpenDentBusiness.Crud{
 			DataTable table=new DataTable(tableName);
 			table.Columns.Add("TaskTakenNum");
 			table.Columns.Add("TaskNum");
-			table.Columns.Add("LogJson");
 			foreach(TaskTaken taskTaken in listTaskTakens) {
 				table.Rows.Add(new object[] {
 					POut.Long  (taskTaken.TaskTakenNum),
 					POut.Long  (taskTaken.TaskNum),
-					            taskTaken.LogJson,
 				});
 			}
 			return table;
@@ -88,22 +85,17 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="TaskTakenNum,";
 			}
-			command+="TaskNum,LogJson) VALUES(";
+			command+="TaskNum) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(taskTaken.TaskTakenNum)+",";
 			}
 			command+=
-				     POut.Long  (taskTaken.TaskNum)+","
-				+    DbHelper.ParamChar+"paramLogJson)";
-			if(taskTaken.LogJson==null) {
-				taskTaken.LogJson="";
-			}
-			OdSqlParameter paramLogJson=new OdSqlParameter("paramLogJson",OdDbType.Text,POut.StringParam(taskTaken.LogJson));
+				     POut.Long  (taskTaken.TaskNum)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
-				Db.NonQ(command,paramLogJson);
+				Db.NonQ(command);
 			}
 			else {
-				taskTaken.TaskTakenNum=Db.NonQ(command,true,"TaskTakenNum","taskTaken",paramLogJson);
+				taskTaken.TaskTakenNum=Db.NonQ(command,true,"TaskTakenNum","taskTaken");
 			}
 			return taskTaken.TaskTakenNum;
 		}
@@ -123,22 +115,17 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="TaskTakenNum,";
 			}
-			command+="TaskNum,LogJson) VALUES(";
+			command+="TaskNum) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(taskTaken.TaskTakenNum)+",";
 			}
 			command+=
-				     POut.Long  (taskTaken.TaskNum)+","
-				+    DbHelper.ParamChar+"paramLogJson)";
-			if(taskTaken.LogJson==null) {
-				taskTaken.LogJson="";
-			}
-			OdSqlParameter paramLogJson=new OdSqlParameter("paramLogJson",OdDbType.Text,POut.StringParam(taskTaken.LogJson));
+				     POut.Long  (taskTaken.TaskNum)+")";
 			if(useExistingPK || isRandomKeys) {
-				Db.NonQ(command,paramLogJson);
+				Db.NonQ(command);
 			}
 			else {
-				taskTaken.TaskTakenNum=Db.NonQ(command,true,"TaskTakenNum","taskTaken",paramLogJson);
+				taskTaken.TaskTakenNum=Db.NonQ(command,true,"TaskTakenNum","taskTaken");
 			}
 			return taskTaken.TaskTakenNum;
 		}
@@ -146,14 +133,9 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Updates one TaskTaken in the database.</summary>
 		public static void Update(TaskTaken taskTaken) {
 			string command="UPDATE tasktaken SET "
-				+"TaskNum     =  "+POut.Long  (taskTaken.TaskNum)+", "
-				+"LogJson     =  "+DbHelper.ParamChar+"paramLogJson "
+				+"TaskNum     =  "+POut.Long  (taskTaken.TaskNum)+" "
 				+"WHERE TaskTakenNum = "+POut.Long(taskTaken.TaskTakenNum);
-			if(taskTaken.LogJson==null) {
-				taskTaken.LogJson="";
-			}
-			OdSqlParameter paramLogJson=new OdSqlParameter("paramLogJson",OdDbType.Text,POut.StringParam(taskTaken.LogJson));
-			Db.NonQ(command,paramLogJson);
+			Db.NonQ(command);
 		}
 
 		///<summary>Updates one TaskTaken in the database.  Uses an old object to compare to, and only alters changed fields.  This prevents collisions and concurrency problems in heavily used tables.  Returns true if an update occurred.</summary>
@@ -163,20 +145,12 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="TaskNum = "+POut.Long(taskTaken.TaskNum)+"";
 			}
-			if(taskTaken.LogJson != oldTaskTaken.LogJson) {
-				if(command!="") { command+=",";}
-				command+="LogJson = "+DbHelper.ParamChar+"paramLogJson";
-			}
 			if(command=="") {
 				return false;
 			}
-			if(taskTaken.LogJson==null) {
-				taskTaken.LogJson="";
-			}
-			OdSqlParameter paramLogJson=new OdSqlParameter("paramLogJson",OdDbType.Text,POut.StringParam(taskTaken.LogJson));
 			command="UPDATE tasktaken SET "+command
 				+" WHERE TaskTakenNum = "+POut.Long(taskTaken.TaskTakenNum);
-			Db.NonQ(command,paramLogJson);
+			Db.NonQ(command);
 			return true;
 		}
 
@@ -184,9 +158,6 @@ namespace OpenDentBusiness.Crud{
 		///Does not make any changes to the database and can be called before remoting role is checked.</summary>
 		public static bool UpdateComparison(TaskTaken taskTaken,TaskTaken oldTaskTaken) {
 			if(taskTaken.TaskNum != oldTaskTaken.TaskNum) {
-				return true;
-			}
-			if(taskTaken.LogJson != oldTaskTaken.LogJson) {
 				return true;
 			}
 			return false;

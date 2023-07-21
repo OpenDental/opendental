@@ -80,18 +80,7 @@ namespace OpenDentBusiness{
 						field.Height=0;//Set height to zero so that it will not cause extra pages to print.
 					}
 				}
-				int printableHeight=sheet.Height-topMargin-bottomMargin;
-				if((field.FieldType==SheetFieldType.SigBox || field.FieldType==SheetFieldType.SigBoxPractice) && field.Height<=printableHeight) {//if Sigbox and can fit a single page
-					int currentPageNum=Convert.ToInt32(Math.Ceiling((double)(field.YPos-topMargin)/printableHeight));
-					int pageMaxY=(currentPageNum*printableHeight)+topMargin;
-					if(field.YPos<=pageMaxY && field.YPos+field.Height>pageMaxY) {//Field is split between 2 pages.
-						int yPosNew=(currentPageNum*printableHeight)+topMargin+1;//Set to top of next page, plus 1 for padding.
-						int amountChanged=yPosNew-field.YPos;
-						MoveAllDownWhichIntersect(sheet,field,amountChanged);
-						field.YPos=yPosNew;//Update signature box y position after moving other fields down
-					}
-				}
-				if(field.GrowthBehavior==GrowthBehaviorEnum.None){//Images or SigBoxes don't have growth behavior, so they are excluded below this point.
+				if(field.GrowthBehavior==GrowthBehaviorEnum.None){//Images don't have growth behavior, so images are excluded below this point.
 					continue;
 				}
 				fontstyle=FontStyle.Regular;
@@ -110,6 +99,7 @@ namespace OpenDentBusiness{
 							DataTable tableClaimsPaid=SheetDataTableUtil.GetDataTableForGridType(sheet,dataSet,field.FieldName,stmt,medLab);
 							DataTable tableCodes=SheetDataTableUtil.GetDataTableForGridType(sheet,dataSet,"EraClaimsPaidCodes",stmt,medLab);
 							SheetDef gridHeaderSheetDef=SheetDefs.GetInternalOrCustom(SheetInternalType.ERAGridHeader);
+							int printableHeight=sheet.Height-topMargin-bottomMargin;
 							calcH=0;
 							foreach(Hx835_Claim claim in era.ListClaimsPaid) {
 								int pageMaxY=printableHeight*((calcH/printableHeight)+1);
@@ -152,18 +142,13 @@ namespace OpenDentBusiness{
 						break;
 					default:
 						using(Font font=new Font(field.FontName,field.FontSize,fontstyle)) {
-							int bottomCurPage=SheetPrinting.BottomCurPage(field.YPos,sheet,out int pageCount);
-							int textBoxHeight=bottomCurPage-field.YPos;
-							HeightAndChars heightAndChars=GraphicsHelper.MeasureStringH(field.FieldValue,font,field.Width,textBoxHeight,field.TextAlign);
-							calcH=heightAndChars.Height;
+							calcH=GraphicsHelper.MeasureStringH(field.FieldValue,font,field.Width,field.TextAlign);
 						}
 						break;
 				}
 				if(calcH<=field.Height //calc height is smaller
-					&& field.FieldName!="StatementPayPlanOld" //allow this grid to shrink and disappear.
 					&& field.FieldName!="StatementPayPlan" //allow this grid to shrink and disappear.
 					&& field.FieldName!="StatementDynamicPayPlan" //allow this grid to shrink and disappear.
-					&& field.FieldName!="StatementPayPlanGrid" //allow this grid to shrink and disappear.
 					&& field.FieldName!="TreatPlanBenefitsFamily" //allow this grid to shrink and disappear.
 					&& field.FieldName!="TreatPlanBenefitsIndividual") //allow this grid to shrink and disappear.
 				{
@@ -254,8 +239,6 @@ namespace OpenDentBusiness{
 			newSheet.ClinicNum=webFormsSheet.ClinicNum;
 			newSheet.SheetDefNum=webFormsSheet.SheetDefNum;
 			newSheet.HasMobileLayout=webFormsSheet.HasMobileLayout;
-			newSheet.RevID=webFormsSheet.RevID;
-			newSheet.WebFormSheetID=webFormsSheet.SheetID;
 			//loop through each variable in a single sheetfield
 			foreach(WebForms_SheetField field in webFormsSheet.SheetFields) {
 				SheetField sheetfieldCopy=new SheetField();
@@ -326,10 +309,8 @@ namespace OpenDentBusiness{
 					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="Age90plus",Description="over 90",ColumnWidth=75,ItemOrder=++i });
 					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="AcctTotal",Description="Total",ColumnWidth=75,ItemOrder=++i });
 					break;
-				case "StatementPayPlan":
-				case "StatementPayPlanOld":
 				case "StatementDynamicPayPlan":
-				case "StatementPayPlanGrid":
+				case "StatementPayPlan":
 					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="date",Description="Date",ColumnWidth=80,ItemOrder=++i });
 					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="description",Description="Description",ColumnWidth=250,ItemOrder=++i });
 					retVal.Add(new DisplayField { Category=DisplayFieldCategory.None,InternalName="charges",Description="Charges",ColumnWidth=60,ItemOrder=++i });
@@ -471,8 +452,8 @@ namespace OpenDentBusiness{
 					retVal.Add("StatementAging");
 					retVal.Add("StatementEnclosed");
 					retVal.Add("StatementMain");
-					retVal.Add("StatementPayPlanOld");
-					retVal.Add("StatementPayPlanGrid");
+					retVal.Add("StatementPayPlan");
+					retVal.Add("StatementDynamicPayPlan");
 					retVal.Add("StatementInvoicePayment");
 					break;
 				case SheetTypeEnum.MedLabResults:
@@ -658,14 +639,12 @@ namespace OpenDentBusiness{
 			Rectangle boundsCur=sheetField.Bounds;
 			boundsCur.Height+=amountOfGrowth+1;//Add 1 to the height because Rectangle.IntersectsWith() does not include when the the boundaries touch but do not overlap.
 			List<SheetField> affectedFields=sheet.SheetFields.FindAll(field => field!=sheetField 
-				&& sheetField.YPos<field.YPos //only fields which are below the one with growth behavior should be effected
 				&& field.FieldType!=SheetFieldType.Drawing 
 				&& boundsCur.IntersectsWith(field.Bounds));
 			for(int i=0;i<affectedFields.Count;i++){
 				boundsCur=affectedFields[i].Bounds;
 				boundsCur.Height+=amountOfGrowth+1;//Add 1 to the height because Rectangle.IntersectsWith() does not include when the the boundaries touch but do not overlap.
 				affectedFields.AddRange(sheet.SheetFields.Where(field => field!=sheetField 
-					&& sheetField.YPos<field.YPos
 					&& field.FieldType!=SheetFieldType.Drawing 
 					&& field.Bounds.IntersectsWith(boundsCur) 
 					&& !affectedFields.Contains(field)));
@@ -903,13 +882,12 @@ namespace OpenDentBusiness{
 				fontstyle=FontStyle.Bold;
 			}
 			Font font=new Font(field.FontName,field.FontSize,fontstyle);
-			int bottomCurPage=SheetPrinting.BottomCurPage(field.YPos,sheet,out int pageCount);
-			int textBoxHeight=bottomCurPage-field.YPos;//the max height that the new text box can be in order to fit on the current page.
-			HeightAndChars heightAndChars=GraphicsHelper.MeasureStringH(field.FieldValue,font,field.Width,textBoxHeight,field.TextAlign);
+			string text=field.FieldValue.Replace("\r\n","\n");//The RichTextBox control converts \r\n to \n.  We need to mimic so we can substring() below.
 			//adjust the height of the text box to accomodate PDFs if the field has a growth behavior other than None
+			int calcH=GraphicsHelper.MeasureStringH(text,font,field.Width,field.TextAlign);
 			//If "field.Height < calcH" is ever removed then MoveAllUpBelowThis() would need to be considered below.
-			if(field.GrowthBehavior!=GrowthBehaviorEnum.None && field.Height < heightAndChars.Height) {
-				int amtGrowth=heightAndChars.Height-field.Height;
+			if(field.GrowthBehavior!=GrowthBehaviorEnum.None && field.Height < calcH) {
+				int amtGrowth=calcH-field.Height;
 				field.Height+=amtGrowth;
 				if(field.GrowthBehavior==GrowthBehaviorEnum.DownLocal) {
 					MoveAllDownWhichIntersect(sheet,field,amtGrowth);
@@ -922,19 +900,23 @@ namespace OpenDentBusiness{
 			if(sheet.SheetType==SheetTypeEnum.MedLabResults) {
 				topMargin=120;
 			}
+			int pageCount;
+			int bottomCurPage=SheetPrinting.BottomCurPage(field.YPos,sheet,out pageCount);
 			//recursion base case, the field now fits on the current page, break out of recursion
 			if(field.YPos+field.Height<=bottomCurPage) {
 				return;
 			}
 			//field extends beyond the bottom of the current page, so we will split the text box in between lines, not through the middle of text
 			//if the height of one line is greater than the printable height of the page, don't try to split between lines (only for huge fonts)
-			if(font.Height+2 > (sheet.HeightPage-60-topMargin) || field.FieldValue.Length==0) {
+			if(font.Height+2 > (sheet.HeightPage-60-topMargin) || text.Length==0) {
 				return;
 			}
+			int textBoxHeight=bottomCurPage-field.YPos;//the max height that the new text box can be in order to fit on the current page.
 			//figure out how many lines of text will fit on the current page
-			heightAndChars=GraphicsHelper.MeasureStringH(field.FieldValue,font,field.Width,textBoxHeight,field.TextAlign);
+			RichTextBox textboxClip=GraphicsHelper.CreateTextBoxForSheetDisplay(text,font,field.Width,textBoxHeight,field.TextAlign);
+			List <RichTextLineInfo> listClipTextLines=GraphicsHelper.GetTextSheetDisplayLines(textboxClip);
 			//if no lines of text will fit on current page or textboxClip's height is smaller than one line, move the entire text box to the next page
-			if(heightAndChars.Chars==0 || textBoxHeight < (font.Height+2)) {
+			if(listClipTextLines.Count==0 || textBoxHeight < (font.Height+2)) {
 				int moveAmount=bottomCurPage+1-field.YPos;
 				field.Height+=moveAmount;
 				MoveAllDownWhichIntersect(sheet,field,moveAmount);
@@ -944,14 +926,19 @@ namespace OpenDentBusiness{
 				CalculateHeightsPageBreakForText(field,sheet);
 				return;
 			}
+			//prepare to split the text box into two text boxes, one with the lines that will fit on the current page, the other with all other lines
+			int fieldH=GraphicsHelper.MeasureStringH(textboxClip.Text,textboxClip.Font,textboxClip.Width,textboxClip.SelectionAlignment);
 			//get ready to copy text from the current field to a copy of the field that will be moved down.
+			//find the character in the text box that makes the text box taller than the calculated max line height and split the text box at that line
 			SheetField fieldNew;
 			fieldNew=field.Copy();
-			field.Height=heightAndChars.Height;
-			fieldNew.Height-=heightAndChars.Height;//reduce the size of the new text box by the height of the text removed
-			fieldNew.YPos+=heightAndChars.Height;//move the new field down the amount of the removed text to maintain the distance between all fields below
-			fieldNew.FieldValue=field.FieldValue.Substring(heightAndChars.Chars);
-			field.FieldValue=field.FieldValue.Substring(0,heightAndChars.Chars);
+			field.Height=fieldH;
+			fieldNew.Height-=fieldH;//reduce the size of the new text box by the height of the text removed
+			fieldNew.YPos+=fieldH;//move the new field down the amount of the removed text to maintain the distance between all fields below
+			fieldNew.FieldValue=text.Substring(textboxClip.Text.Length);
+			field.FieldValue=textboxClip.Text;
+			textboxClip.Font.Dispose();
+			textboxClip.Dispose();
 			int moveAmountNew=bottomCurPage+1-fieldNew.YPos;
 			fieldNew.Height+=moveAmountNew;
 			MoveAllDownWhichIntersect(sheet,fieldNew,moveAmountNew);

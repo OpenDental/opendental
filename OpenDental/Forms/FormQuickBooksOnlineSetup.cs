@@ -357,7 +357,7 @@ namespace OpenDental {
 			FillListBoxesWithClassRefs();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			_progCur.Enabled=checkEnabled.Checked;
 			bool changed=false;
 			changed|=Programs.Update(_progCur,_progOld);
@@ -379,5 +379,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

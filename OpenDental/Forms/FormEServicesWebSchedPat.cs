@@ -41,7 +41,7 @@ namespace OpenDental {
 				SignupOut=FormEServicesSetup.GetSignupOut();
 			}
 			SetPreferences();
-			bool allowEdit=Security.IsAuthorized(EnumPermType.EServicesSetup,suppressMessage:true);
+			bool allowEdit=Security.IsAuthorized(Permissions.EServicesSetup,suppressMessage:true);
 			butWebSchedBlockouts.Enabled=allowEdit;
 			textApptSearchDays.Enabled=allowEdit;
 			int searchAfterDays=PrefC.GetInt(_prefNameSearchAfterDays);
@@ -225,13 +225,13 @@ namespace OpenDental {
 			List<TimeSlot> listTimeSlots=new List<TimeSlot>();
 			//This throws exceptions when the selected clinic does not have a operatory with it.
 			//Takes a few minutes with the nadg database.
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				listTimeSlots=TimeSlots.GetAvailableWebSchedTimeSlotsForNewOrExistingPat(dateStart,dateStart.AddDays(30),signupOutEService.ClinicNum,comboDefApptType.GetSelected<Def>().DefNum,_isNewPat);
 			};
 			progressOD.StartingMessage=Lan.g(this,"Loading available time slots. This can take a few minutes on large databases.");
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
 				MsgBox.Show(ex.Message);
@@ -402,7 +402,7 @@ namespace OpenDental {
 		}
 
 		private void butRestrictedToReasonsEdit_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.DefEdit)) {
+			if(!Security.IsAuthorized(Permissions.DefEdit)) {
 				return;
 			}
 			using FormDefinitions formDefinitions=new FormDefinitions(_defCatApptTypes);
@@ -410,9 +410,13 @@ namespace OpenDental {
 			FillBlockoutTypes();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			SaveWebSchedPat();
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void checkWebSchedNewPatForcePhoneFormatting_Click(object sender,EventArgs e) {
@@ -420,7 +424,7 @@ namespace OpenDental {
 		}
 
 		private void butEditOps_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.Setup)) {
+			if(!Security.IsAuthorized(Permissions.Setup)) {
 				return;
 			}
 			using FormOperatories formOperatories=new FormOperatories();
@@ -432,11 +436,11 @@ namespace OpenDental {
 			}
 			FillGridApptOps();
 			FillGridApptTimeSlots();
-			SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Operatories accessed via EServices Setup window.");
+			SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Operatories accessed via EServices Setup window.");
 		}
 
 		private void butEditReasons_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.DefEdit)) {
+			if(!Security.IsAuthorized(Permissions.DefEdit)) {
 				return;
 			}
 			using FormDefinitions formDefinitions=new FormDefinitions(_defCatApptTypes);

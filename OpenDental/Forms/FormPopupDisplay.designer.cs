@@ -48,7 +48,7 @@ namespace OpenDental {
 			this.textUser = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.textCreateDate = new System.Windows.Forms.TextBox();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.textEditDate = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.textDescription = new OpenDental.ODtextBox();
@@ -174,16 +174,16 @@ namespace OpenDental {
 			this.textCreateDate.Size = new System.Drawing.Size(147, 20);
 			this.textCreateDate.TabIndex = 12;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butSave.Location = new System.Drawing.Point(323, 195);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 1;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butOK.Location = new System.Drawing.Point(323, 195);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 1;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// textEditDate
 			// 
@@ -211,7 +211,7 @@ namespace OpenDental {
 			this.textDescription.DetectUrls = false;
 			this.textDescription.Location = new System.Drawing.Point(53, 98);
 			this.textDescription.Name = "textDescription";
-			this.textDescription.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Popup;
+			this.textDescription.QuickPasteType = OpenDentBusiness.QuickPasteType.Popup;
 			this.textDescription.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textDescription.Size = new System.Drawing.Size(271, 91);
 			this.textDescription.TabIndex = 2;
@@ -219,7 +219,7 @@ namespace OpenDental {
 			// 
 			// FormPopupDisplay
 			// 
-			this.CancelButton = this.butSave;
+			this.CancelButton = this.butOK;
 			this.ClientSize = new System.Drawing.Size(425, 240);
 			this.Controls.Add(this.textDescription);
 			this.Controls.Add(this.label6);
@@ -229,7 +229,7 @@ namespace OpenDental {
 			this.Controls.Add(this.textUser);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.groupBox1);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -243,7 +243,7 @@ namespace OpenDental {
 		}
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.Button butMinutes;
 		private OpenDental.UI.Button butHours;

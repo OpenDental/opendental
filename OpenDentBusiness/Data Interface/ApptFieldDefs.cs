@@ -73,9 +73,9 @@ namespace OpenDentBusiness{
 		#endregion
 
 		///<summary>Must supply the old field name so that the apptFields attached to appointments can be updated.  Will throw exception if new FieldName is already in use.</summary>
-		public static void Update(ApptFieldDef apptFieldDef,string fieldNameOld) {
+		public static void Update(ApptFieldDef apptFieldDef,string oldFieldName) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),apptFieldDef,fieldNameOld);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),apptFieldDef,oldFieldName);
 				return;
 			}
 			string command="SELECT COUNT(*) FROM apptfielddef WHERE FieldName='"+POut.String(apptFieldDef.FieldName)+"' "
@@ -85,7 +85,7 @@ namespace OpenDentBusiness{
 			}
 			Crud.ApptFieldDefCrud.Update(apptFieldDef);
 			command="UPDATE apptfield SET FieldName='"+POut.String(apptFieldDef.FieldName)+"' "
-				+"WHERE FieldName='"+POut.String(fieldNameOld)+"'";
+				+"WHERE FieldName='"+POut.String(oldFieldName)+"'";
 			Db.NonQ(command);
 		}
 
@@ -131,13 +131,13 @@ namespace OpenDentBusiness{
 			Db.NonQ(command);
 		}
 
-		public static bool Sync(List<ApptFieldDef> listApptFieldDefsNew) {
+		public static bool Sync(List<ApptFieldDef> listNew) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),listApptFieldDefsNew);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),listNew);
 			}
 			string command="SELECT * FROM apptfielddef";
-			List<ApptFieldDef> listApptFieldDefsDB=Crud.ApptFieldDefCrud.SelectMany(command);
-			return Crud.ApptFieldDefCrud.Sync(listApptFieldDefsNew,listApptFieldDefsDB);
+			List<ApptFieldDef> listDB=Crud.ApptFieldDefCrud.SelectMany(command);
+			return Crud.ApptFieldDefCrud.Sync(listNew,listDB);
 		}
 		
 		/*
@@ -164,16 +164,14 @@ namespace OpenDentBusiness{
 		public static string GetFieldName(long apptFieldDefNum) {
 			//No need to check MiddleTierRole; no call to db.
 			ApptFieldDef apptFieldDef=GetFirstOrDefault(x => x.ApptFieldDefNum==apptFieldDefNum);
-			string fieldName=apptFieldDef==null ? "" : apptFieldDef.FieldName;
-			return fieldName;
+			return (apptFieldDef==null ? "" : apptFieldDef.FieldName);
 		}
 
 		/// <summary>GetPickListByFieldName returns the pick list identified by the field name passed as a parameter.</summary>
-		public static string GetPickListByFieldName(string fieldName) {
+		public static string GetPickListByFieldName(string FieldName) {
 			//No need to check MiddleTierRole; no call to db.
-			ApptFieldDef apptFieldDef=GetFirstOrDefault(x => x.FieldName==fieldName);
-			string pickList=apptFieldDef==null ? "" : apptFieldDef.PickList;
-			return pickList;
+			ApptFieldDef apptFieldDef =GetFirstOrDefault(x => x.FieldName==FieldName);
+			return (apptFieldDef==null ? "" : apptFieldDef.PickList);
 		}
 
 		///<summary>Returns true if there are any duplicate field names in the entire apptfielddef table.</summary>

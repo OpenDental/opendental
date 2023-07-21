@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <?xml-stylesheet type='text/xsl' href='OpenDentalDocumentation.xsl'?>
-<database version="24.1.0.0">
+<database version="23.2.0.0">
   <table name="account">
     <summary>Used in the accounting section in chart of accounts.  Not related to patient accounts in any way.</summary>
     <column order="0" name="AccountNum" type="bigint(20)">
@@ -71,8 +71,7 @@
         <summary></summary>
         <EnumValue name="Direct">0 - Direct</EnumValue>
         <EnumValue name="MiddleTier">1 - MiddleTier</EnumValue>
-        <EnumValue name="Thinfinity">2 - Thinfinity</EnumValue>
-        <EnumValue name="AppStream">3 - AppStream</EnumValue>
+        <EnumValue name="ODCloud">2 - ODCloud</EnumValue>
       </Enumeration>
     </column>
   </table>
@@ -197,7 +196,6 @@
         <EnumValue name="EConnectorRedistributableMissing">37 - Alert that is created when an eClipboard/ODM/ODT device tries to get a tooth chart image, but their eConn server is missing 
             a specific redistributable that allows the creation of the image.</EnumValue>
         <EnumValue name="SMSThread">38 - Alert that is created when the SMSQueuer is turned on but no Broadcaster Servers are configured to send out text messages. Requires Engineers to update BroadcasterThreadSettings.</EnumValue>
-        <EnumValue name="SignatureCleared">39 - Alert that is created when a procedure or group note's signature is cleared by another user editing that note.</EnumValue>
       </Enumeration>
     </column>
   </table>
@@ -261,7 +259,6 @@
         <EnumValue name="EConnectorRedistributableMissing">37 - Alert that is created when an eClipboard/ODM/ODT device tries to get a tooth chart image, but their eConn server is missing 
             a specific redistributable that allows the creation of the image.</EnumValue>
         <EnumValue name="SMSThread">38 - Alert that is created when the SMSQueuer is turned on but no Broadcaster Servers are configured to send out text messages. Requires Engineers to update BroadcasterThreadSettings.</EnumValue>
-        <EnumValue name="SignatureCleared">39 - Alert that is created when a procedure or group note's signature is cleared by another user editing that note.</EnumValue>
       </Enumeration>
     </column>
     <column order="4" name="Severity" type="tinyint(4)">
@@ -776,7 +773,7 @@
     </column>
   </table>
   <table name="apptreminderrule">
-    <summary>This is called eServices Automated Messaging Rules in the UI. These are used to track the automated generation and sending of appointment reminders and confirmations. 
+    <summary> Appointment Reminder Rules are used to track the automated generation and sending of appointment reminders and confirmations. 
              Users are allowed to define up to two reminders and one confirmation (per clinic.) These can be sent out any number of Days, Hours, and/or 
              Minutes before a scheduled appointment.
              PRACTICE - Appointment Reminder Rules will be saved and edited with clinicNum=0. This denotes the "Defaults" when using clinics, 
@@ -806,7 +803,6 @@
         <EnumValue name="GeneralMessage">7 - General Message. Defines rules for sending out automated messages after an appointment is set complete.</EnumValue>
         <EnumValue name="WebSchedRecall">8 - WebSchedRecall. (Note, not yet used in db, but could be if we ever want clinic specific templates) Defines rules for sending out automated messages for Recalls.</EnumValue>
         <EnumValue name="NewPatientThankYou">9 - NewPatientThankYou, Thank you for New Patient which is able to send with a new patient web form URL.</EnumValue>
-        <EnumValue name="PayPortalMsgToPay">10 - PaymentPortal Msg-To-Pay, used to send msg-to-pay messages to patients. Currently not an AutoComm feature but doing this now so functionality can be easier added in the future.</EnumValue>
       </Enumeration>
     </column>
     <column order="2" name="TSPrior" type="bigint(20)">
@@ -1012,7 +1008,7 @@
       <summary>Description of this view.  Gets displayed in Appt module.</summary>
     </column>
     <column order="2" name="ItemOrder" type="smallint">
-      <summary>0-based order to display in lists. This is unique per clinic. So this does allow duplicate numbers if they are in different clinics.</summary>
+      <summary>0-based order to display in lists. Every view must have a unique itemorder, but it is acceptable to have some missing itemorders in the sequence.</summary>
     </column>
     <column order="3" name="RowsPerIncr" type="tinyint">
       <summary>Number of rows per time increment.  Usually 1 or 2.  Programming note: Value updated to ApptDrawing.RowsPerIncr to track current state.</summary>
@@ -1314,20 +1310,19 @@
       <summary>.</summary>
     </column>
     <column order="2" name="Autotrigger" type="tinyint(4)">
-      <summary>Enum:EnumAutomationTrigger What triggers this automation</summary>
-      <Enumeration name="EnumAutomationTrigger">
+      <summary>Enum:AutomationTrigger What triggers this automation</summary>
+      <Enumeration name="AutomationTrigger">
         <summary></summary>
-        <EnumValue name="ProcedureComplete">0</EnumValue>
-        <EnumValue name="ApptBreak">1</EnumValue>
-        <EnumValue name="ApptNewPatCreate">2</EnumValue>
-        <EnumValue name="PatientOpen">3. Regardless of module.  Usually only used with conditions.</EnumValue>
-        <EnumValue name="ApptCreate">4</EnumValue>
-        <EnumValue name="ProcSchedule">5. Attaching a procedure to a scheduled appointment.</EnumValue>
-        <EnumValue name="BillingTypeSet">6</EnumValue>
-        <EnumValue name="RxCreate">7</EnumValue>
-        <EnumValue name="ClaimCreate">8</EnumValue>
-        <EnumValue name="ClaimOpen">9</EnumValue>
-        <EnumValue name="ApptComplete">10</EnumValue>
+        <EnumValue name="CompleteProcedure"></EnumValue>
+        <EnumValue name="BreakAppointment"></EnumValue>
+        <EnumValue name="CreateApptNewPat"></EnumValue>
+        <EnumValue name="OpenPatient">Regardless of module.  Usually only used with conditions.</EnumValue>
+        <EnumValue name="CreateAppt"></EnumValue>
+        <EnumValue name="ScheduleProcedure">Attaching a procedure to a scheduled appointment.</EnumValue>
+        <EnumValue name="SetBillingType"></EnumValue>
+        <EnumValue name="RxCreate">Creating a new Rx</EnumValue>
+        <EnumValue name="CreateClaim">Creating a new Claim</EnumValue>
+        <EnumValue name="OpenClaim">Opening an existing Claim</EnumValue>
       </Enumeration>
     </column>
     <column order="3" name="ProcCodes" type="text">
@@ -1555,20 +1550,6 @@
     <column order="14" name="CodeGroupNum" type="bigint(20)" fk="codegroup">
       <summary>FK to codegroup.CodeGroupNum  The group of procedure codes that apply to this frequency limitation benefit.</summary>
     </column>
-    <column order="15" name="TreatArea" type="tinyint(4)">
-      <summary>Enum:TreatmentArea . Only for frequency limitations, ignored for all other benefits. Enforced by the UI. Example 3 fillings per year [mouth]. Tests: 140 through 147. 0 means default.</summary>
-      <Enumeration name="TreatmentArea">
-        <summary>Used in procedurecode setup to specify the treatment area for a procedure.  This determines what fields are available when editing an appointment.</summary>
-        <EnumValue name="None">0-goes on claims as blank.</EnumValue>
-        <EnumValue name="Surf">1</EnumValue>
-        <EnumValue name="Tooth">2</EnumValue>
-        <EnumValue name="Mouth">3-goes on claims as 00.</EnumValue>
-        <EnumValue name="Quad">4</EnumValue>
-        <EnumValue name="Sextant">5</EnumValue>
-        <EnumValue name="Arch">6</EnumValue>
-        <EnumValue name="ToothRange">7</EnumValue>
-      </Enumeration>
-    </column>
   </table>
   <table name="canadiannetwork">
     <summary>Not user-editable.</summary>
@@ -1630,7 +1611,6 @@
         <EnumValue name="UnknownError">14.</EnumValue>
         <EnumValue name="ErrorAcknowledged">15.</EnumValue>
         <EnumValue name="ExpiredBatch">16.</EnumValue>
-        <EnumValue name="AccountNotFoundQS">17.</EnumValue>
       </Enumeration>
     </column>
     <column order="7" name="DateTimeEntry" type="datetime">
@@ -2290,7 +2270,7 @@
       <summary>FK to definition.DefNum. Most users will leave this blank.  Some offices may set up tracking statuses such as 'review', 'hold', 'riskmanage', etc.</summary>
     </column>
     <column order="66" name="DateResent" type="date">
-      <summary>Used for historical purposes only, not sent electronically. Automatically set when CorrectionType is original and the claim is resent.</summary>
+      <summary>Used for historical purposes only, not sent electronically. Automatically set when CorrectionType is not original and the claim is resent.</summary>
     </column>
     <column order="67" name="CorrectionType" type="tinyint(4)">
       <summary>Enum:ClaimCorrectionType X12 CLM05-3. Usually set to original, but can be used to resubmit claims.  Also used in 1500 Medical Claim Form field 22.</summary>
@@ -2373,12 +2353,6 @@
     <column order="82" name="IsOutsideLab" type="tinyint(4)">
       <summary>Used in 1500 Medical Claim Form field 20.  Place an 'X' the 'Yes' if true and the 'No' if false.</summary>
     </column>
-    <column order="83" name="SecurityHash" type="varchar(255)">
-      <summary>Holds the salted hash of the following claim fields: ClaimFee, ClaimStatus, InsPayEst, InsPayAmt.</summary>
-    </column>
-    <column order="84" name="Narrative" type="text">
-      <summary>A note that pertains to all attachments on the claim. Currently only applies to DentalXChange, but could be expanded. 2000 character limit put in place by DentalXChange.</summary>
-    </column>
   </table>
   <table name="claimattach">
     <summary>Keeps track of one image file attached to a claim.  Multiple files can be attached to a claim using this method.</summary>
@@ -2393,9 +2367,6 @@
     </column>
     <column order="3" name="ActualFileName" type="varchar(255)">
       <summary>The actual file is stored in the A-Z folder in EmailAttachments.  (yes, even though it's not actually an email attachment)  The files are named automatically based on Date/time along with a random number.  This ensures that they will be sequential as well as unique.</summary>
-    </column>
-    <column order="4" name="ImageReferenceId" type="int(11)">
-      <summary>This is the image Id that DentalXChange gives back after calling addImage(). Storing this will allow users to delete images they sent to DentalXChange.</summary>
     </column>
   </table>
   <table name="claimcondcodelog">
@@ -2720,10 +2691,7 @@
       <summary>Holds a comma delimited list of Claim Adjustment Reason Codes from an ERA. https://x12.org/codes/claim-adjustment-reason-codes </summary>
     </column>
     <column order="47" name="IsOverpay" type="tinyint(4)">
-      <summary>Bool, defaults to false. When true, Status is NotReceived and indicates that the claimproc represents an insurance overpayment OR underpayment.</summary>
-    </column>
-    <column order="48" name="SecurityHash" type="varchar(255)">
-      <summary>Holds the salted hash of the following claimproc fields: ClaimNum, Status, InsPayEst, InsPayAmt. </summary>
+      <summary></summary>
     </column>
   </table>
   <table name="claimsnapshot">
@@ -2957,9 +2925,6 @@
     </column>
     <column order="29" name="IsAttachmentSendAllowed" type="tinyint(4)">
       <summary>Currently only used for DentalXChange's attachment service. This indicates that the user has set up the attachment service and would like to use it in Open Dental.</summary>
-    </column>
-    <column order="30" name="LocationID" type="varchar(255)">
-      <summary>A unique identifier provided by the clearinghouse to identify the practice in their system. This is separate from the issue of clinics, where we already enforce only one clinic per clearinghouse.</summary>
     </column>
   </table>
   <table name="clinic">
@@ -3257,7 +3222,7 @@
     </column>
   </table>
   <table name="codegroup">
-    <summary>These groups of procedure codes are used in Benefit Frequencies (and Insurance History?). We can't use CovCats because those spans are frequently far too broad.  We often need specific codes. Cached.</summary>
+    <summary>These groups of procedure codes are used in Benefit Frequencies and Insurance History. We can't use CovCats because those spans are frequently far too broad.  We often need specific codes. Cached.</summary>
     <column order="0" name="CodeGroupNum" type="bigint(20)">
       <summary>Primary key.</summary>
     </column>
@@ -3268,10 +3233,10 @@
       <summary>list of D codes. Comma delimited, no spaces.</summary>
     </column>
     <column order="3" name="ItemOrder" type="int(11)">
-      <summary>Zero-based. CodeGroups that don't show in either list (IsHidden=true and ShowInAgeLimit=false) get higher ItemOrders so that then are at the bottom of the setup list.</summary>
+      <summary>0-based.</summary>
     </column>
     <column order="4" name="CodeGroupFixed" type="tinyint(4)">
-      <summary>Enum:EnumCodeGroupFixed 0=None,BW,PanoFMX,Exam,Perio,Prophy,SRP,FMDebride,Fluoride,Sealant. Six are used in sheet static text fields (example StaticTextField.dateLastBW), and seven are used in Ins History Window.</summary>
+      <summary>Enum:EnumCodeGroupFixed 0=None,BW,PanoFMX,Exam,Perio,Prophy,SRP,FMDebride,Fluoride,Sealant. This allows five groups to be shown in the Simplified View of Edit Benefits Window, six are used in sheet static text fields (example StaticTextField.dateLastBW), and seven are used in Ins History Window.</summary>
       <Enumeration name="EnumCodeGroupFixed">
         <summary>This enum replaces the FrequencyType enum at bottom of Benefits.cs.  See description in CodeGroup.CodeGroupFixed.</summary>
         <EnumValue name="None">0</EnumValue>
@@ -3287,10 +3252,7 @@
       </Enumeration>
     </column>
     <column order="5" name="IsHidden" type="tinyint(4)">
-      <summary>If true, this codegroup will be hidden from the frequency limitations grid. Control of showing in age limitations grid is done separately using ShowInAgeLimit.</summary>
-    </column>
-    <column order="6" name="ShowInAgeLimit" type="tinyint(4)">
-      <summary> If true, this codegroup will show in Age Limitations grid. Control of showing in Freq Lim is done separately using IsHidden.</summary>
+      <summary>.</summary>
     </column>
   </table>
   <table name="codesystem">
@@ -3382,7 +3344,6 @@
         <EnumValue name="ApptThankYou">6</EnumValue>
         <EnumValue name="FHIR">7 - Includes non-FHIR API.</EnumValue>
         <EnumValue name="NewPatThankYou">8</EnumValue>
-        <EnumValue name="MsgToPay">9</EnumValue>
       </Enumeration>
     </column>
     <column order="13" name="ProgramNum" type="bigint(20)" fk="program">
@@ -3428,7 +3389,6 @@
         <EnumValue name="Arrivals"></EnumValue>
         <EnumValue name="Birthdays"></EnumValue>
         <EnumValue name="GeneralMessages"></EnumValue>
-        <EnumValue name="MsgToPay"></EnumValue>
       </Enumeration>
     </column>
     <column order="3" name="OptOutEmail" type="int(11)">
@@ -3447,7 +3407,6 @@
         <EnumValue name="Arrivals"></EnumValue>
         <EnumValue name="Birthdays"></EnumValue>
         <EnumValue name="GeneralMessages"></EnumValue>
-        <EnumValue name="MsgToPay"></EnumValue>
       </Enumeration>
     </column>
   </table>
@@ -3879,8 +3838,6 @@
         <EnumValue name="PaySimplePaymentPortal">18 - PaySimple payment taken through the Payment Portal.</EnumValue>
         <EnumValue name="PaySimplePaymentPortalGuest">19 - PaySimple payment taken through the Payment Portal as a guest.</EnumValue>
         <EnumValue name="PaySimplePaymentPortalACH">20 - PaySimple ACH Payment taken through the Payment Portal.</EnumValue>
-        <EnumValue name="XWebPaymentPortal">21 - XWeb payment taken through the Payment Portal.</EnumValue>
-        <EnumValue name="XWebPaymentPortalGuest">22 - XWeb payment taken through the Payment Portal as a guest.</EnumValue>
       </Enumeration>
     </column>
     <column order="17" name="ClinicNum" type="bigint(20)" fk="clinic">
@@ -4472,13 +4429,13 @@
       <summary>Primary key.</summary>
     </column>
     <column order="1" name="InternalName" type="varchar(255)">
-      <summary>This is the internal name that OD uses to identify the field within this category. This will be the default description if the user doesn't specify an alternate in Description. For Ortho chart, this column will be "Signature", "Provider", or blank. For SuperFamilyGridCols, if this is a patfield column, then this will be blank.</summary>
+      <summary>This is the internal name that OD uses to identify the field within this category.  This will be the default description if the user doesn't specify an alternate.  For Ortho chart, this column will be blank, "Signature", or "Provider".</summary>
     </column>
     <column order="2" name="ItemOrder" type="int(11)">
       <summary>Order to display in the grid or list. Every entry must have a unique itemorder.</summary>
     </column>
     <column order="3" name="Description" type="varchar(255)">
-      <summary>Optional alternate description to display for field. Can be in another language. For Ortho, this is the 'key', since InternalName is blank sometimes. For SuperFamilyGridCols, if this is a patfield column, then this will be the name of the patfield.FieldName.</summary>
+      <summary>Optional alternate description to display for field.  Can be in another language.  For Ortho, this is the 'key', since InternalName is blank.</summary>
     </column>
     <column order="4" name="ColumnWidth" type="int(11)">
       <summary>For grid columns, this lets user override the column width.  Especially useful for foreign languages.</summary>
@@ -4508,7 +4465,6 @@
         <EnumValue name="ArManagerUnsentGrid">18 - A/R Manager Unsent Grid</EnumValue>
         <EnumValue name="ArManagerExcludedGrid">19 - A/R Manager Excluded Grid</EnumValue>
         <EnumValue name="LimitedCustomStatement">20 - Statement Limited Custom SuperFamily</EnumValue>
-        <EnumValue name="SuperFamilyGridCols">21 - SuperFamily Grid</EnumValue>
       </Enumeration>
     </column>
     <column order="6" name="ChartViewNum" type="bigint(20)" fk="chartview">
@@ -4518,7 +4474,7 @@
       <summary>Newline delimited string which contains the selectable options in combo box dropdowns.  Specifically for the Ortho chart.</summary>
     </column>
     <column order="8" name="DescriptionOverride" type="varchar(255)">
-      <summary>Only used in Ortho and SuperFamilyGridCols (PatField). Ortho chart display fields utilize the InternalName field for Signature and Provider indicators, this field is here to override description. Some users want to use different fields but use the same description for multiple tabs. Example: The display field of WeightWeekly shows as "Weight" and in another tab the field for WeightMonthly can also show as "Weight".</summary>
+      <summary>Only used in Ortho. Because ortho chart display fields utilize the InternalName field for Signature and Provider indicators, this field is here to override description. Some users want to use different fields but use the same description for multiple tabs. Example: The display field of WeightWeekly shows as "Weight" and in another tab the field for WeightMonthly can also show as "Weight".</summary>
     </column>
   </table>
   <table name="displayreport">
@@ -4596,7 +4552,7 @@
       <summary>The name of the file. Does not include any directory info.</summary>
     </column>
     <column order="6" name="ImgType" type="tinyint">
-      <summary>Enum:ImageType Document, Radiograph, Photo, File, Attachment.</summary>
+      <summary>Enum:ImageType Document, Radiograph, Photo, File</summary>
       <Enumeration name="ImageType">
         <summary>The type of image for images module.</summary>
         <EnumValue name="Document">0- Includes scanned documents and screenshots.</EnumValue>
@@ -4671,23 +4627,6 @@
     </column>
     <column order="26" name="IsCropOld" type="tinyint">
       <summary>Set to true as part of conversion to 21.4. Set back to false once the crop is converted to the new scheme. It would take too long to do this conversion in the normal script because it involves loading each image to obtain width and height. So this is a lazy conversion.</summary>
-    </column>
-    <column order="27" name="OcrResponseData" type="text">
-      <summary>Stores a JSON serialized OcrInsScanResponse object. The type of this object is defined by the OcrCaptureType.</summary>
-    </column>
-    <column order="28" name="ImageCaptureType" type="tinyint(4)">
-      <summary>Enum:EnumOcrCaptureType 0=Miscellaneous, 1=PrimaryInsFront, 2=PrimaryInsBack, 3=SecondaryInsFront, 4=SecondaryInsBack. Only used when patient scans their insurance card from eClipboard.</summary>
-      <Enumeration name="EnumOcrCaptureType">
-        <summary> The type of image. Miscelllaneuous is for all images without special behavior. </summary>
-        <EnumValue name="Miscellaneous">0- Catch-All type for imageCaptures without unique behavior </EnumValue>
-        <EnumValue name="PrimaryInsFront">1</EnumValue>
-        <EnumValue name="PrimaryInsBack">2</EnumValue>
-        <EnumValue name="SecondaryInsFront">3</EnumValue>
-        <EnumValue name="SecondaryInsBack">4</EnumValue>
-      </Enumeration>
-    </column>
-    <column order="29" name="PrintHeading" type="tinyint(4)">
-      <summary>Set true by default for radiographs and tooth charts. When set to true, it will print additional heading text including patient name, DOB, and today's date.</summary>
     </column>
   </table>
   <table name="documentmisc">
@@ -4855,17 +4794,6 @@
     <column order="5" name="DocNum" type="bigint(20)" fk="document">
       <summary>FK to document.DocNum. If a document is deleted, need to also delete any record from this table with the same DocNum.</summary>
     </column>
-    <column order="6" name="OcrCaptureType" type="tinyint(4)">
-      <summary>Enum:EnumOcrCaptureType 0=Miscellaneous, 1=PrimaryInsFront, 2=PrimaryInsBack, 3=SecondaryInsFront, 4=SecondaryInsBack </summary>
-      <Enumeration name="EnumOcrCaptureType">
-        <summary> The type of image. Miscelllaneuous is for all images without special behavior. </summary>
-        <EnumValue name="Miscellaneous">0- Catch-All type for imageCaptures without unique behavior </EnumValue>
-        <EnumValue name="PrimaryInsFront">1</EnumValue>
-        <EnumValue name="PrimaryInsBack">2</EnumValue>
-        <EnumValue name="SecondaryInsFront">3</EnumValue>
-        <EnumValue name="SecondaryInsBack">4</EnumValue>
-      </Enumeration>
-    </column>
   </table>
   <table name="eclipboardimagecapturedef">
     <summary>Used to set rules for how often a patient should submit an image when checking in for their appointment via eClipboard. This is the grid on the right in eClipboard Images window.</summary>
@@ -4883,17 +4811,6 @@
     </column>
     <column order="4" name="ClinicNum" type="bigint(20)" fk="clinic">
       <summary>FK to clinic.ClinicNum. Clinic the rule pertains to.</summary>
-    </column>
-    <column order="5" name="OcrCaptureType" type="tinyint(4)">
-      <summary>Enum:EnumOcrCaptureType 0=Miscellaneous, 1=PrimaryInsFront, 2=PrimaryInsBack, 3=SecondaryInsFront, 4=SecondaryInsBack </summary>
-      <Enumeration name="EnumOcrCaptureType">
-        <summary> The type of image. Miscelllaneuous is for all images without special behavior. </summary>
-        <EnumValue name="Miscellaneous">0- Catch-All type for imageCaptures without unique behavior </EnumValue>
-        <EnumValue name="PrimaryInsFront">1</EnumValue>
-        <EnumValue name="PrimaryInsBack">2</EnumValue>
-        <EnumValue name="SecondaryInsFront">3</EnumValue>
-        <EnumValue name="SecondaryInsBack">4</EnumValue>
-      </Enumeration>
     </column>
   </table>
   <table name="eclipboardsheetdef">
@@ -6245,7 +6162,7 @@
         <EnumValue name="EmailInbox">1 - Hide email from EmailInbox grids</EnumValue>
         <EnumValue name="ApptEdit">2 - Hide email from Appointment Edit grid</EnumValue>
         <EnumValue name="ChartProgNotes">4 - Hide email from ContrChart ProgNotes grid</EnumValue>
-        <EnumValue name="AccountProgNotes">8 - No Longer Used - Was used to hide email from ContrAcount ProgNotes grid</EnumValue>
+        <EnumValue name="AccountProgNotes">8 - Hide email from ContrAccount gridProg grid</EnumValue>
         <EnumValue name="AccountCommLog">16 - Hide email from ContrAcount CommLog grid</EnumValue>
       </Enumeration>
     </column>
@@ -6302,7 +6219,6 @@
         <EnumValue name="WebSchedRecall">Auto websched recall messages.</EnumValue>
         <EnumValue name="GeneralMessage">Appointment General Message.</EnumValue>
         <EnumValue name="NewPatThankYou">New patient web form thank you message.</EnumValue>
-        <EnumValue name="MsgToPay">Payment Portal Msg-To-Pay message</EnumValue>
       </Enumeration>
     </column>
     <column order="21" name="FailReason" type="varchar(255)">
@@ -6788,8 +6704,6 @@
         <EnumValue name="WSGeneral">9. This means the action done was for unspecified WebSched.</EnumValue>
         <EnumValue name="Arrivals">10. This means the action done was for Arrivals.</EnumValue>
         <EnumValue name="IntegratedTexting">11. This means the action done was for Integrated Texting.</EnumValue>
-        <EnumValue name="ODTouch">12. This means the action done was for the mobile app ODTouch.</EnumValue>
-        <EnumValue name="PaymentPortal">13. This means the action done was for the Payment Portal.</EnumValue>
       </Enumeration>
     </column>
     <column order="4" name="EServiceAction" type="smallint(6)">
@@ -6888,32 +6802,6 @@
         <EnumValue name="ECCreditCardErrorMakingPaymentWithAlias">89 - eClipboard - Error: error making payment</EnumValue>
         <EnumValue name="ECCreditCardErrorMakingPaymentPatientNotFound">90 - eClipboard - Error: Making Payment, patient not found</EnumValue>
         <EnumValue name="ECCreditCardErrorMakingPaymentInvalidAmount">91 - eClipboard - Error: Making Payment, invalid amount </EnumValue>
-        <EnumValue name="ECQRScanAttempt">92 - EClipboard - QR scan window activated</EnumValue>
-        <EnumValue name="ECQRScanCancel">93 - EClipboard - QR scan window cancelled</EnumValue>
-        <EnumValue name="ECQRScanOk">94 - EClipboard - QR scan window success</EnumValue>
-        <EnumValue name="ECSubmitSheetFailed">95 - EClipboard - Error: Failed to submit sheet</EnumValue>
-        <EnumValue name="WFDownloadedForm">96 - Web Forms Form Downloaded.</EnumValue>
-        <EnumValue name="WFDiscardedForm">97 - Web Forms Form Discarded.</EnumValue>
-        <EnumValue name="WFSkippedForm">98 - Web Forms Form Skipped.</EnumValue>
-        <EnumValue name="WFDeletedForm">99 - Web Forms Form Deleted.</EnumValue>
-        <EnumValue name="WFError">100 - Web Forms Error.</EnumValue>
-        <EnumValue name="WFCancelled">101 - Web Forms Cancelled Import.</EnumValue>
-        <EnumValue name="PayPortalArrived">102 - Payment Portal - Unverified user arrived at the payment portal</EnumValue>
-        <EnumValue name="PayPortalArrivedWithSessionToken">103 - Payment Portal - Verified user arrived at the payment portal</EnumValue>
-        <EnumValue name="PayPortalArrivedWithPayGuid">104 - Payment Portal - User arrived at the payment portal via message-to-pay</EnumValue>
-        <EnumValue name="PayPortalSelectedPatient">105 - Payment Portal - User provided patient information on patient information view</EnumValue>
-        <EnumValue name="PayPortalSwitchedToCorrectClinic">106 - Payment Portal - Switched to selected patient's clinic</EnumValue>
-        <EnumValue name="PayPortalRequestedCodeViaEmail">107 - Payment Portal - User requested an email authentication code</EnumValue>
-        <EnumValue name="PayPortalRequestedCodeViaSms">108 - Payment Portal - User requested a text authentication code</EnumValue>
-        <EnumValue name="PayPortalAuthenticatedViaEmail">109 - Payment Portal - User verfied identity with an email authentication code</EnumValue>
-        <EnumValue name="PayPortalAuthenticatedViaSms">110 - Payment Portal - User verfied identity with an SMS authentication code</EnumValue>
-        <EnumValue name="PayPortalUseAmountDue">111 - Payment Portal - User opted to pay amount due</EnumValue>
-        <EnumValue name="PayPortalEnteredPayAmount">112 - Payment Portal - User entered a custom amount to pay</EnumValue>
-        <EnumValue name="PayPortalSelectedPaymentMethod">113 - Payment Portal - User selected an existing payment method</EnumValue>
-        <EnumValue name="PayPortalHostedFormLoaded">114 - Payment Portal - The make payment window was loaded</EnumValue>
-        <EnumValue name="PayPortalPaymentSucceeded">115 - Payment Portal - The payment was processed successfully</EnumValue>
-        <EnumValue name="PayPortalClickedPrint">116 - Payment Portal - The user printed their receipt</EnumValue>
-        <EnumValue name="PayPortalPaymentPortalError">117 - Payment Portal - The user received an error</EnumValue>
       </Enumeration>
     </column>
     <column order="5" name="KeyType" type="smallint(6)">
@@ -6925,7 +6813,6 @@
         <EnumValue name="PayNum">2 Payment Number.</EnumValue>
         <EnumValue name="SheetNum">3 Sheet Number.</EnumValue>
         <EnumValue name="UtmNum">4 Utm Number.</EnumValue>
-        <EnumValue name="WebFormSheetID">5 Web Form Sheet Number.</EnumValue>
       </Enumeration>
     </column>
     <column order="6" name="LogGuid" type="varchar(36)">
@@ -7007,7 +6894,6 @@
         <EnumValue name="PaymentPortalApi">44 - Payment Portal Api.</EnumValue>
         <EnumValue name="EServiceApi">45 - EService Api.</EnumValue>
         <EnumValue name="AuthApi">46 - Auth Api.</EnumValue>
-        <EnumValue name="ODTSurplus">47 - ODTouch Mobile application surcharge for additional devices that exceed the ODTouchDeviceLimitDefault pref.</EnumValue>
       </Enumeration>
     </column>
     <column order="2" name="ShortGuid" type="varchar(255)">
@@ -7035,13 +6921,13 @@
       <summary>Primary key.</summary>
     </column>
     <column order="1" name="ServiceCode" type="int(11)">
-      <summary>Enum eServiceCode. Service which this signal applies to.</summary>
+      <summary>Service which this signal applies to. Defined by eServiceCodes.</summary>
     </column>
     <column order="2" name="ReasonCategory" type="int(11)">
-      <summary>The enum is at HQ as OpenDentalWebCore.BroadcasterThreadDefs. Can be zero if no grouping is necessary per a given service.</summary>
+      <summary>Category defined by ReasonCodeCategories. Can be zero if no grouping is necessary per a given service. Stored as an int for forward compatibility.</summary>
     </column>
     <column order="3" name="ReasonCode" type="int(11)">
-      <summary>The enum is at HQ as OpenDentalWebCore.BroadcasterErrorCodes. This code is used to determine what actions to take and how to process this message. 
+      <summary>The reason for the eServiceSignal. This code is used to determine what actions to take and how to process this message. 
             It is a function of ReasonCategory. It will most likely be defined by an enum that lives on HQ-only closed source.</summary>
     </column>
     <column order="4" name="Severity" type="tinyint(4)">
@@ -7049,12 +6935,12 @@
       <Enumeration name="eServiceSignalSeverity">
         <summary>Used to determine that status of the entire service.  Order of enum is important, from lowest to highest importance.</summary>
         <EnumValue name="None">Service is not in use and is not supposed to be in use.</EnumValue>
-        <EnumValue name="NotEnabled">0-Service is not in use and is not supposed to be in use.</EnumValue>
-        <EnumValue name="Info">1-Used to convey information. Does not change the "working" status of the service. Will always be inserted with IsProcess=true.</EnumValue>
-        <EnumValue name="Working">2-Service is operational and working as designed. Typcially used for heartbeat and initialization.</EnumValue>
-        <EnumValue name="Warning">3-Recoverable error has has occurred and no user intervention is required. Typically requires user acknowledgement only.</EnumValue>
-        <EnumValue name="Error">4-Recoverable error has has occurred and user intervention is probably required in addition to user acknowledgement only.</EnumValue>
-        <EnumValue name="Critical">5-Unrecoverable error and the service has shut itself off. Immediate user intervention is required.</EnumValue>
+        <EnumValue name="NotEnabled">Service is not in use and is not supposed to be in use.</EnumValue>
+        <EnumValue name="Info">Used to convey information. Does not change the "working" status of the service. Will always be inserted with IsProcess=true.</EnumValue>
+        <EnumValue name="Working">Service is operational and working as designed. Typcially used for heartbeat and initialization.</EnumValue>
+        <EnumValue name="Warning">Recoverable error has has occurred and no user intervention is required. Typically requires user acknowledgement only.</EnumValue>
+        <EnumValue name="Error">Recoverable error has has occurred and user intervention is probably required in addition to user acknowledgement only.</EnumValue>
+        <EnumValue name="Critical">Unrecoverable error and the service has shut itself off. Immediate user intervention is required.</EnumValue>
       </Enumeration>
     </column>
     <column order="5" name="Description" type="text">
@@ -7085,8 +6971,8 @@
       <summary>Enum:EtransType</summary>
       <Enumeration name="EtransType">
         <summary>The _CA of some types should get stripped off when displaying to users.</summary>
-        <EnumValue name="ClaimSent">0 X12-837.</EnumValue>
-        <EnumValue name="ClaimPrinted">1 claim physically printed.</EnumValue>
+        <EnumValue name="ClaimSent">0 X12-837.  Should we differenitate between different kinds of 837s and 4010 vs 5010?</EnumValue>
+        <EnumValue name="ClaimPrinted">1 claim</EnumValue>
         <EnumValue name="Claim_CA">2 Canada. Type 01</EnumValue>
         <EnumValue name="Claim_Ren">3 Renaissance</EnumValue>
         <EnumValue name="ClaimAck_CA">4 Canada. Type 11</EnumValue>
@@ -7731,8 +7617,8 @@
       <summary>FK to usergroup.UserGroupNum.  The user group for which this permission is granted.  If not authorized, then this groupPermission will have been deleted.</summary>
     </column>
     <column order="4" name="PermType" type="tinyint">
-      <summary>Enum:EnumPermType Some permissions will treat a zero FKey differently. Some denote it as having access to everything for that PermType. I.e. Reports.</summary>
-      <Enumeration name="EnumPermType">
+      <summary>Enum:Permissions Some permissions will treat a zero FKey differently. Some denote it as having access to everything for that PermType. I.e. Reports.</summary>
+      <Enumeration name="Permissions">
         <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
         <EnumValue name="None">0</EnumValue>
         <EnumValue name="AppointmentsModule">1</EnumValue>
@@ -7869,7 +7755,7 @@
         <EnumValue name="ProviderAlphabetize">124 - Allows users to use the Alphabetize Provider button from FormProviderSetup to permanently re-order providers.</EnumValue>
         <EnumValue name="ClaimProcReceivedEdit">125 - Allows editing of claimprocs that are marked as received status.</EnumValue>
         <EnumValue name="StatementPatNumMismatch">126 - Used to diagnose an error in statement creation. Audit Trail Permission Only</EnumValue>
-        <EnumValue name="MobileWeb">127 - User has access to ODTouch.</EnumValue>
+        <EnumValue name="MobileWeb">127 - User has access to Mobile Web.</EnumValue>
         <EnumValue name="PatPlanCreate">128 - For logging purposes only.  Used when PatPlans are created and not otherwise logged.</EnumValue>
         <EnumValue name="PatPriProvEdit">129 - Allows the user to change a patient's primary provider, with audit trail logging.</EnumValue>
         <EnumValue name="ReferralEdit">130</EnumValue>
@@ -7986,7 +7872,7 @@
         <EnumValue name="AppointmentDelete">237 - Allows user to delete appointments.</EnumValue>
         <EnumValue name="AppointmentCompleteDelete">238 - Allows user to delete completed appointments.</EnumValue>
         <EnumValue name="AppointmentTypeEdit">239 - Logs when Appointment Types are edited. For audit trails only.</EnumValue>
-        <EnumValue name="TextingAccountEdit">240 - Only used at OD HQ. Allows users to make high level changes in regards to texting.</EnumValue>
+        <EnumValue name="TextingAccountEdit">240 - Allows users to edit tendlc brand information </EnumValue>
         <EnumValue name="WebChatEdit">241 - Logs when web chat sessions are edited. For audit trails only.</EnumValue>
         <EnumValue name="SupplierEdit">242 - Allows users to access FormSuppliers</EnumValue>
         <EnumValue name="SupplyPurchases">243 - Logs when any supply purchases are created, placed, or deleted.</EnumValue>
@@ -7996,7 +7882,6 @@
         <EnumValue name="ViewAppointmentAuditTrail">247 - Only for viewing the audit trail in FormEditAppointment</EnumValue>
         <EnumValue name="PayPlanChargeEdit">248 - Logs when a user edits a payment plan charge.</EnumValue>
         <EnumValue name="ArchivedPatientSelect">249 - Also see ArchivedPatientEdit. Blocking user from patient selection prevents changes to all the other tables besides the patient table.  It's more rigorous.</EnumValue>
-        <EnumValue name="CloudCustomerEdit">250 - Only used at OD HQ. Ability to edit Cloud tab info via Broadcast Monitor.</EnumValue>
       </Enumeration>
     </column>
     <column order="5" name="FKey" type="bigint(20)">
@@ -8567,7 +8452,7 @@
     </column>
   </table>
   <table name="imagedraw">
-    <summary>Image text, lines. drawings, and scales. Attached to either a document or a mount. Drawings are in pixel coordinates of original image prior to any cropping or rotating. For a mount, coordinates are relative to the entire mount. Drawings do not get changed when cropping or rotating are changed. The result is that drawings always stay on the image in exactly the original location, and they move with the image.</summary>
+    <summary>Image text, lines. drawings, and scales. Attached to either a document or a mount.</summary>
     <column order="0" name="ImageDrawNum" type="bigint(20)">
       <summary>Primary key.</summary>
     </column>
@@ -8578,7 +8463,7 @@
       <summary>FK to mount.MountNum</summary>
     </column>
     <column order="3" name="ColorDraw" type="int(11)">
-      <summary>For text, this is the foreground color. For lines, this is the color, and ColorBack is not used. For polygons, this is the fill color. No transparency component.</summary>
+      <summary>For text, this is the foreground color. For lines, this is the color, and ColorBack is not used.</summary>
     </column>
     <column order="4" name="ColorBack" type="int(11)">
       <summary>Background color for text. Can be Transparent (0,255,255,255)=16777215.</summary>
@@ -8590,7 +8475,7 @@
       <summary>The location of the text in pixels is incorporated into this string.  Example: 25,123;This shows.  Carriage returns etc are not supported.  ColorDraw and FontSize are also used.  Unlike tooth initial, this does not support floats.</summary>
     </column>
     <column order="7" name="FontSize" type="float">
-      <summary>This could vary significantly based on the size of the image.  It's always relative to orginal image or mount pixels. Always 0 for Pearl.</summary>
+      <summary>This could vary significantly based on the size of the image.  It's always relative to orginal image or mount pixels.</summary>
     </column>
     <column order="8" name="DrawType" type="tinyint(4)">
       <summary>Enum:ImageDrawType</summary>
@@ -8600,19 +8485,7 @@
         <EnumValue name="Line">1 - A series of straight lines, stored the same as a pen drawing.</EnumValue>
         <EnumValue name="Pen">2 - One continuous segment of a drawing.</EnumValue>
         <EnumValue name="ScaleValue">3 - Stores a float, decimals, and units in the drawing segement. Only one of this type is allowed per image or mount.</EnumValue>
-        <EnumValue name="Polygon">4 - A series of connected points forming the outline of a closed polygon. Stored same as pen drawing. Polygons only have a fill color, not any outline color.</EnumValue>
       </Enumeration>
-    </column>
-    <column order="9" name="ImageAnnotVendor" type="tinyint(4)">
-      <summary>Enum:EnumImageAnnotVendor 0: Open Dental drawings and text, 1:Pearl AI annotations.</summary>
-      <Enumeration name="EnumImageAnnotVendor">
-        <summary></summary>
-        <EnumValue name="OpenDental">0 - Open Dental drawings and text.</EnumValue>
-        <EnumValue name="Pearl">1 - Pearl AI annotations.</EnumValue>
-      </Enumeration>
-    </column>
-    <column order="10" name="Details" type="text">
-      <summary>Extra space for any text. Currently only used for Pearl annotation categories, relationship properties, and relationship values, which are all stored as a single chunk of user readable text drawn straight to screen when hovering.</summary>
     </column>
   </table>
   <table name="imagingdevice">
@@ -8908,7 +8781,7 @@
       <summary>FK to insfilingcode.InsFilingCodeNum.  Used for e-claims.  Also used for some complex reports in public health.  The e-claim usage might become obsolete when PlanID implemented by HIPAA.  Can be 0 to indicate none.  Then 'CI' will go out on claims.</summary>
     </column>
     <column order="17" name="DentaideCardSequence" type="tinyint">
-      <summary>Canadian e-claim field. D11 and E07.  Zero indicates empty.  Mandatory value for Dentaide.  Not used for all others.  2 digit.  DEPRECATED - See CDAnet Message Formats+Standards 4.2_2021.</summary>
+      <summary>Canadian e-claim field. D11 and E07.  Zero indicates empty.  Mandatory value for Dentaide.  Not used for all others.  2 digit.</summary>
     </column>
     <column order="18" name="ShowBaseUnits" type="tinyint(1)">
       <summary>If checked, the units Qty will show the base units assigned to a procedure on the claim form.</summary>
@@ -9128,7 +9001,7 @@
       <summary>The date of the last successful verification.</summary>
     </column>
     <column order="2" name="UserNum" type="bigint(20)" fk="userod">
-      <summary>FK to userod.UserNum. Typically 0. There is an optional feature that lets an office "assign" users to a verification so that they can split the load of verifying between different users.</summary>
+      <summary>FK to userod.UserNum.  This is the assigned user for this verification.</summary>
     </column>
     <column order="3" name="VerifyType" type="tinyint(4)">
       <summary>Enum:VerifyTypes either InsuranceBenefits or PatientEnrollment</summary>
@@ -9301,7 +9174,7 @@
       <summary>FK to laboratory.LaboratoryNum. The lab that the case gets sent to.  Required.</summary>
     </column>
     <column order="3" name="AptNum" type="bigint(20)" fk="appointment">
-      <summary>FK to appointment.AptNum. This is how a lab case is attached to a scheduled appointment. Multiple labcases can be attached to any appointment. Labcase can exist without being attached to any appointments at all, making this zero.</summary>
+      <summary>FK to appointment.AptNum.  This is how a lab case is attached to a scheduled appointment. 1:1 relationship for now.  Only one labcase per appointment, and (obviously) only one appointment per labcase.  Labcase can exist without being attached to any appointments at all, making this zero.</summary>
     </column>
     <column order="4" name="PlannedAptNum" type="bigint(20)" fk="appointment">
       <summary>FK to appointment.AptNum.  This is how a lab case is attached to a planned appointment in addition to the scheduled appointment.</summary>
@@ -10112,15 +9985,15 @@
     <column order="3" name="UniqueID" type="varchar(255)">
       <summary>The unique identifier of the device. Platform specific.</summary>
     </column>
-    <column order="4" name="IsEclipboardEnabled" type="tinyint(4)">
+    <column order="4" name="IsAllowed" type="tinyint(4)">
       <summary>Indicates whether the device is allowed to operate the checkin app. 
             For BYOD sessions will always be true because BYOD is authenticated by a unique URL link in a text message.</summary>
     </column>
-    <column order="5" name="EclipboardLastAttempt" type="datetime">
-      <summary>The date and time of the last attempted login for Eclipboard.</summary>
+    <column order="5" name="LastAttempt" type="datetime">
+      <summary>The date and time of the last attempted login.</summary>
     </column>
-    <column order="6" name="EclipboardLastLogin" type="datetime">
-      <summary>The date and time of the last successful login for Eclipboard.</summary>
+    <column order="6" name="LastLogin" type="datetime">
+      <summary>The date and time of the last succesful login.</summary>
     </column>
     <column order="7" name="PatNum" type="bigint(20)" fk="patient">
       <summary>FK to patient.PatNum. Indicates which patient is currently using the device. 0 indicates the device is not in use. -1 indicates
@@ -10137,15 +10010,6 @@
     </column>
     <column order="11" name="UserNum" type="bigint(20)" fk="userod">
       <summary>FK to userod.UserNum. Indicates which user is currently logged into the device. 0 indicates this device is not logged into.</summary>
-    </column>
-    <column order="12" name="IsODTouchEnabled" type="tinyint(4)">
-      <summary>Indicates whether this device is being used for ODTouch or not.</summary>
-    </column>
-    <column order="13" name="ODTouchLastLogin" type="datetime">
-      <summary>The date and time of the last successful login for ODTouch.</summary>
-    </column>
-    <column order="14" name="ODTouchLastAttempt" type="datetime">
-      <summary>The date and time of the last attempted login for ODTouch.</summary>
     </column>
   </table>
   <table name="mobilebrandingprofile">
@@ -10167,7 +10031,7 @@
     </column>
   </table>
   <table name="mobiledatabyte">
-    <summary>Table used to send various types of objects as bytes to ODXam applications. Example is a PDF for TxPlan or PaymentPlan. Row gets added here, sent to mobile device, and then consumed. Old rows are ignored.</summary>
+    <summary>Table used to send various types of objects as bytes to ODXam applications.</summary>
     <column order="0" name="MobileDataByteNum" type="bigint(20)">
       <summary>Primary key.</summary>
     </column>
@@ -10181,7 +10045,7 @@
       <summary>Misc data in Base64</summary>
     </column>
     <column order="4" name="PatNum" type="bigint(20)">
-      <summary>Can start out as 0.</summary>
+      <summary>Can be 0.</summary>
     </column>
     <column order="5" name="ActionType" type="tinyint(4)">
       <summary>Enum:eActionType Stores the intended action associated to this rows data.</summary>
@@ -10201,82 +10065,6 @@
     </column>
     <column order="7" name="DateTimeExpires" type="datetime">
       <summary>The DateTime that this row should be removed.</summary>
-    </column>
-  </table>
-  <table name="mobilenotification">
-    <summary>Mobile App devices periodically poll this table and retrieve any records that are relevant to the device itself, the user using the device, or the clinic
-            the device belongs to. The mobile apps will then perform an action based on the mobile notification type.</summary>
-    <column order="0" name="MobileNotificationNum" type="bigint(20)">
-      <summary>Primary key.</summary>
-    </column>
-    <column order="1" name="NotificationType" type="tinyint(4)">
-      <summary>Enum:MobileNotificationType The type of notification. Example: TP. This will determine what actions the mobile app will perform upon retrieving this notification.</summary>
-      <Enumeration name="MobileNotificationType">
-        <summary>The different types of mobile notifications. Preserve order. CI = Checkin portion of app (eClipboard). ODM = ODMobile</summary>
-        <EnumValue name="None">Default.</EnumValue>
-        <EnumValue name="CI_CheckinPatient">Check-in a patient on a given device. For this type, the tag will have 3 items: the first name, last name, and birthdate of the patient in that order. 
-            The birthdate will be in DateTime.Ticks.</EnumValue>
-        <EnumValue name="CI_AddSheet">Tells the device that is currently filling out sheets to add a sheet to the list. For this type, the list of primary keys will have two items: the patnum and
-            the SheetNum in that order.</EnumValue>
-        <EnumValue name="CI_RemoveSheet">Tells the device that is currently fillout out sheets to remove a sheet from the list. For this type, the list of primary keys will have two items: the patnum
-            and the SheetNum in that order.</EnumValue>
-        <EnumValue name="CI_GoToCheckin">This mobile notification tells the device to stop whatever it is doing and go to a fresh checkin page. This may be a blank self-checkin or may be waiting for a mobile notification. This
-            allows users from OD to "clear" the device of a stale patient. No primary keys or tags needed.</EnumValue>
-        <EnumValue name="CI_NewEClipboardPrefs">This mobile notification occurs when the preferences for this device's clinic changes. The tags for this mobile notification will be the EClipboardAllowSelfCheckIn(bool), EClipboardMessageComplete(string), 
-            EClipboardAllowSelfPortraitOnCheckIn(bool), and EClipboardPresentAvailableFormsOnCheckIn(bool) in that order.</EnumValue>
-        <EnumValue name="IsAllowedChanged">This mobile notification occurs when the MobileAppDevice.IsAllowed changed for this device. The tag for this mobile notification will be IsAllowed (bool).
-            If true then device which is currently awaiting in 'Not Allowed' state will try another login, should work this time. If false then force signout. Used for eClipboard and ODTouch.</EnumValue>
-        <EnumValue name="ODM_LogoutODUser">This mobile notification occurs when a permission has changed for a given OD user and they are no longer allowed to use OD Mobile. 
-            The ListPrimaryKeys may contain the UserNum of the user who is no longer allowed. This session will then be logged out of versioned OD Mobile.
-            If ListPrimaryKeys IsNullOrEmpty() then assume all users for the given ClinicNum should be logged out. No UserNum filter necessary in this case.</EnumValue>
-        <EnumValue name="CI_TreatmentPlan">This mobile notification occurs when a OD proper user sends a patients treatment plan to a specific device to show the user.
-            ListPrimaryKeys =&gt; [MobileDataByteNum, PatNum, TreatPlanNum].
-            ListTags Keys =&gt; The treatPlan.Heading, hasPracticeSig(Obsolete; based on if TP sheet has SigBoxPractice) .</EnumValue>
-        <EnumValue name="CI_RemoveTreatmentPlan">
-            This mobile notification occurs when a TreatmentPlan is deleted in OD and we want to tell a specific device so that they can remove it when viewing TreatmentPlans.
-            ListPrimaryKeys =&gt; [TreatPlan.PatNum,TreatPlan.TreatPlanNum]
-            </EnumValue>
-        <EnumValue name="CI_SendPayment">This mobile notification occurs when a payment needs to be made on an eClip device. This either adds the Make Payment action item to the checkin checklist
-            or it will open the QR code to scan from OD.
-            ListPrimaryKeys =&gt; [TreatPlan.PatNum]</EnumValue>
-        <EnumValue name="CI_RefreshPayment">This mobile notification occurs when a patient is currently on the device, when a payment is made, when a new card is added (XWeb only), and when a new 
-            statement is created in OD.
-            ListPrimaryKeys =&gt; [PatNum]</EnumValue>
-        <EnumValue name="CI_PaymentPlan">This mobile notification occurs when an OD proper user sends a payment plan to a specific device.
-            ListPrimaryKeys =&gt; [MobileDataByte.MobileDataByteNum,PayPlan.PatNum,PayPlan.PayPlanNum]
-            ListTags =&gt; [PayPlan.PayPlanDate]</EnumValue>
-        <EnumValue name="CI_RemovePaymentPlan">This mobile notification occurs when a payment plan is removed from the associated eClip device or when a payment plan is removed from OD proper.
-            This will remove a payment plan from user view on eClip.
-            ListPrimaryKeys =&gt; [PayPlan.PatNum,PayPlan.PayPlanNum]</EnumValue>
-        <EnumValue name="ODT_ExamSheetsAll"></EnumValue>
-        <EnumValue name="ODT_ExamSheet"></EnumValue>
-      </Enumeration>
-    </column>
-    <column order="2" name="DeviceId" type="varchar(255)">
-      <summary>The device id for the mobile notification. Example is random string of 10-12 characters. Only the device with this DeviceId will retrieve this record.</summary>
-    </column>
-    <column order="3" name="PrimaryKeys" type="text">
-      <summary>A comma-delimited list of primary keys associated with the mobile notification. See MobileNotificationType for what is included with each type. 
-            Can include MobileDataByteNums, TreatPlanNum, SheetNums, and others.</summary>
-    </column>
-    <column order="4" name="Tags" type="text">
-      <summary>A comma-delimited list of tags for this mobile notification. Can be anything. Different for each MobileNotificationType. See MobileNotificationType for what is included with each type.</summary>
-    </column>
-    <column order="5" name="DateTimeEntry" type="datetime">
-      <summary>DateTime notification was entered into Db. Should not be edited.</summary>
-    </column>
-    <column order="6" name="DateTimeExpires" type="datetime">
-      <summary>DateTime notification expires and becomes invalid.</summary>
-    </column>
-    <column order="7" name="AppTarget" type="tinyint(4)">
-      <summary>Enum:EnumAppTarget Stores the mobile app that this notification is targeting. Prohibits a device running one app from consuming mobile 
-            notifications intended for a different app.</summary>
-      <Enumeration name="EnumAppTarget">
-        <summary>The mobile apps that support mobile notifications. Must stay synched 1:1 with the ODXamBusiness.ApplicationTarget enum.</summary>
-        <EnumValue name="eClipboard">0</EnumValue>
-        <EnumValue name="ODMobile">1</EnumValue>
-        <EnumValue name="ODTouch">2</EnumValue>
-      </Enumeration>
     </column>
   </table>
   <table name="mount">
@@ -10306,7 +10094,7 @@
       <summary>The height of the mount, in pixels.</summary>
     </column>
     <column order="8" name="ColorBack" type="int(11)">
-      <summary>Color of the mount background.  Typically white for photos and black for radiographs. Transparency not allowed.</summary>
+      <summary>Color of the mount background.  Typically white for photos and black for radiographs.</summary>
     </column>
     <column order="9" name="ProvNum" type="bigint(20)" fk="provider">
       <summary>FK to provider.ProvNum. Optional. Used for radiographs.</summary>
@@ -10433,57 +10221,6 @@
     </column>
     <column order="10" name="FontSize" type="float">
       <summary>This could vary significantly based on the size of the mount.  It's always relative to mount pixels.</summary>
-    </column>
-  </table>
-  <table name="msgtopaysent">
-    <summary>AUtoComm object for MsgToPay messages that have been queued or sent by the eConnector. The HQ version of this object is MsgToPayActive where a record is kept for ShortGuid/redirect purposes.</summary>
-    <column order="0" name="MsgToPaySentNum" type="bigint(20)">
-      <summary>PK. Generated by HQ.</summary>
-    </column>
-    <column order="1" name="PatNum" type="bigint(20)" fk="patient">
-      <summary>FK to patient.PatNum for the corresponding patient.</summary>
-    </column>
-    <column order="2" name="ClinicNum" type="bigint(20)" fk="patient">
-      <summary>FK to patient.ClinicNum for the corresponding patient.</summary>
-    </column>
-    <column order="3" name="SendStatus" type="tinyint(4)">
-      <summary>Indicates status of message.</summary>
-    </column>
-    <column order="4" name="Source" type="tinyint(4)">
-      <summary>Source of this object. Can be Manual (implemented) or EConnectorAutoComm (not yet implemented).</summary>
-    </column>
-    <column order="5" name="MessageType" type="tinyint(4)">
-      <summary></summary>
-    </column>
-    <column order="6" name="MessageFk" type="bigint(20)" fk="primary key of appropriate table">
-      <summary>FK to primary key of appropriate table.</summary>
-    </column>
-    <column order="7" name="Subject" type="text">
-      <summary>Subject of the message.</summary>
-    </column>
-    <column order="8" name="Message" type="text">
-      <summary>Content of the message.</summary>
-    </column>
-    <column order="9" name="EmailType" type="tinyint(4)">
-      <summary>Only used for manually sent emails.</summary>
-    </column>
-    <column order="10" name="DateTimeEntry" type="datetime">
-      <summary>Generated by OD. Timestamp when row is created.</summary>
-    </column>
-    <column order="11" name="DateTimeSent" type="datetime">
-      <summary>DateTime the message was sent.</summary>
-    </column>
-    <column order="12" name="ResponseDescript" type="text">
-      <summary>Generated by OD in some cases and HQ in others. Any human readable error message generated by either HQ or EConnector. Used for debugging.</summary>
-    </column>
-    <column order="13" name="ApptReminderRuleNum" type="bigint(20)" fk="apptreminderrule">
-      <summary>FK to apptreminderrule.ApptReminderRuleNum. Allows us to look up the rules to determine how to send this apptcomm out.</summary>
-    </column>
-    <column order="14" name="ShortGUID" type="varchar(255)">
-      <summary>Generated by HQ. Identifies this AutoCommGuid in future transactions between HQ and OD.</summary>
-    </column>
-    <column order="15" name="DateTimeSendFailed" type="datetime">
-      <summary></summary>
     </column>
   </table>
   <table name="oidexternal">
@@ -10744,36 +10481,6 @@
       <summary>FK to orthochartrow.OrthoChartRowNum.</summary>
     </column>
   </table>
-  <table name="orthochartlog">
-    <summary>This stores log entries for debugging the orthochart.  Logging gets turned on and off with the pref. This table will go away once the bug is found. </summary>
-    <column order="0" name="OrthoChartLogNum" type="bigint(20)">
-      <summary>Primary key.</summary>
-    </column>
-    <column order="1" name="PatNum" type="bigint(20)" fk="patient">
-      <summary>FK to patient.PatNum.</summary>
-    </column>
-    <column order="2" name="ComputerName" type="varchar(255)">
-      <summary></summary>
-    </column>
-    <column order="3" name="DateTimeLog" type="datetime">
-      <summary>DateTime that this log entry was made</summary>
-    </column>
-    <column order="4" name="DateTimeService" type="datetime">
-      <summary>DateTime of the chart row.</summary>
-    </column>
-    <column order="5" name="UserNum" type="bigint(20)" fk="userod">
-      <summary>FK to userod.UserNum.  The user that created or last edited an ortho chart field.</summary>
-    </column>
-    <column order="6" name="ProvNum" type="bigint(20)" fk="provider">
-      <summary>FK to provider.ProvNum.</summary>
-    </column>
-    <column order="7" name="OrthoChartRowNum" type="bigint(20)" fk="orthochartrow">
-      <summary>FK to orthochartrow.OrthoChartRowNum.</summary>
-    </column>
-    <column order="8" name="LogData" type="mediumtext">
-      <summary>This can be long and complex -- whatever you want. MediumText, so max length=16M.</summary>
-    </column>
-  </table>
   <table name="orthochartrow">
     <summary>Represent a row in the ortho chart UI grid.</summary>
     <column order="0" name="OrthoChartRowNum" type="bigint(20)">
@@ -10792,7 +10499,7 @@
       <summary>FK to provider.ProvNum.</summary>
     </column>
     <column order="5" name="Signature" type="text">
-      <summary>Examples: "0:ritwq/wV8vlrgUYahhK+RH5UeBFA6W4jCkZdo0cDWd63aZb1S/W3Z4eW5LmchqfgniG23" and "1:52222559445999975122111500485555". The 1st character is whether or not the signature is Topaz. The 2nd character is a separator. The rest of the string is the hashed signature data. Raw signature data is the concatenation of the FieldName and FieldValue of all cells (orthocharts), ordered by FieldName.</summary>
+      <summary>Signature.</summary>
     </column>
   </table>
   <table name="orthocharttab">
@@ -10919,7 +10626,7 @@
     </column>
   </table>
   <table name="orthoproclink">
-    <summary>Used to attach procedures to an OrthoCase. Multiple procs are typically attached to one OrthoCase.</summary>
+    <summary>Used to attach procedures to an OrthoCase.</summary>
     <column order="0" name="OrthoProcLinkNum" type="bigint(20)">
       <summary>Primary key</summary>
     </column>
@@ -10991,7 +10698,7 @@
     </column>
   </table>
   <table name="patfield">
-    <summary>These are custom fields added and managed by the user. Each row here is a field value for one patient.</summary>
+    <summary>These are custom fields added and managed by the user.</summary>
     <column order="0" name="PatFieldNum" type="bigint(20)">
       <summary>Primary key.</summary>
     </column>
@@ -11021,7 +10728,7 @@
       <summary>Primary key.</summary>
     </column>
     <column order="1" name="FieldName" type="varchar(255)">
-      <summary>This is treated as the key. The name of the field that the user will be allowed to fill in the patient info window.</summary>
+      <summary>The name of the field that the user will be allowed to fill in the patient info window.</summary>
     </column>
     <column order="2" name="FieldType" type="tinyint(4)">
       <summary>Enum:PatFieldType Text=0,PickList=1,Date=2,Checkbox=3,Currency=4</summary>
@@ -11034,39 +10741,16 @@
         <EnumValue name="Currency">4-Numbers only.</EnumValue>
         <EnumValue name="InCaseOfEmergency">5 - DEPRECATED. (Only used 16.3.1, deprecated by 16.3.4)</EnumValue>
         <EnumValue name="CareCreditStatus">6 - CareCredit pre-approval status. For example, FieldValue string="Pre-Approved", from CareCreditWebStatus enum.</EnumValue>
-        <EnumValue name="CareCreditPreApprovalAmt">7 - CareCredit pre-approval amount.</EnumValue>
-        <EnumValue name="CareCreditAvailableCredit">8 - CareCredit - Remaining available Credit for CareCredit cardholders.</EnumValue>
       </Enumeration>
     </column>
     <column order="3" name="PickList" type="text">
-      <summary>Deprecated. Use patfieldpickitem.</summary>
+      <summary>The text that contains pick list values.</summary>
     </column>
     <column order="4" name="ItemOrder" type="int(11)">
       <summary></summary>
     </column>
     <column order="5" name="IsHidden" type="tinyint(4)">
-      <summary>Hides this PatField for any patient where it's currently blank. If already in use by a patient, then it still shows.</summary>
-    </column>
-  </table>
-  <table name="patfieldpickitem">
-    <summary>Each row is an item in a PatFieldDef picklist. Not used unless the PatFieldDef is a Picklist type. These objects are created and managed by user.</summary>
-    <column order="0" name="PatFieldPickItemNum" type="bigint(20)">
-      <summary>Primary key.</summary>
-    </column>
-    <column order="1" name="PatFieldDefNum" type="bigint(20)" fk="patfielddef">
-      <summary>FK to patfielddef.PatFieldDefNum</summary>
-    </column>
-    <column order="2" name="Name" type="varchar(255)">
-      <summary>Full text of PickList item.</summary>
-    </column>
-    <column order="3" name="Abbreviation" type="varchar(255)">
-      <summary>Abbr to show when PickList item is displayed in cramped spaces like columns. Only implemented in Superfamily grid so far.</summary>
-    </column>
-    <column order="4" name="IsHidden" type="tinyint(4)">
-      <summary>False for normal PickList items. Even if true/hidden, this item will still show in all the various windows where patient fields show. A hidden item will not normally show when picking from list for a patient unless the patient has already been assigned this item.</summary>
-    </column>
-    <column order="5" name="ItemOrder" type="int(11)">
-      <summary>0-based.</summary>
+      <summary></summary>
     </column>
   </table>
   <table name="patient">
@@ -11222,7 +10906,7 @@
       <summary>Aged balance over 90 days old. Aging numbers are for entire family.  Only stored with guarantor.</summary>
     </column>
     <column order="40" name="InsEst" type="double">
-      <summary>Insurance Estimate for entire family. Only stored with guarantor.</summary>
+      <summary>Insurance Estimate for entire family.</summary>
     </column>
     <column order="41" name="BalTotal" type="double">
       <summary>Total balance for entire family before insurance estimate.  Not the same as the sum of the 4 aging balances because this can be 
@@ -11475,7 +11159,7 @@
         <EnumValue name="Undefined">0</EnumValue>
         <EnumValue name="Merge">1 - The two patients have been merged into each other.</EnumValue>
         <EnumValue name="Clone">2 - A clone has been made of the From patient.  PatNumFrom is the original or master and PatNumTo is the clone.</EnumValue>
-        <EnumValue name="PaySimple">3 - The PatNumFrom column will hold the ID for PaySimple.  This should not be used in OpenDental to get a patient.</EnumValue>
+        <EnumValue name="PaySimple">3 - The PatFromTo column will hold the ID for PaySimple.  This should not be used in OpenDental to get a patient.</EnumValue>
       </Enumeration>
     </column>
     <column order="4" name="DateTimeLink" type="datetime">
@@ -11762,8 +11446,6 @@
         <EnumValue name="PaySimplePaymentPortal">18 - PaySimple payment taken through the Payment Portal.</EnumValue>
         <EnumValue name="PaySimplePaymentPortalGuest">19 - PaySimple payment taken through the Payment Portal as a guest.</EnumValue>
         <EnumValue name="PaySimplePaymentPortalACH">20 - PaySimple ACH Payment taken through the Payment Portal.</EnumValue>
-        <EnumValue name="XWebPaymentPortal">21 - XWeb payment taken through the Payment Portal.</EnumValue>
-        <EnumValue name="XWebPaymentPortalGuest">22 - XWeb payment taken through the Payment Portal as a guest.</EnumValue>
       </Enumeration>
     </column>
     <column order="13" name="Amount" type="double">
@@ -11870,8 +11552,6 @@
         <EnumValue name="PaySimplePaymentPortal">18 - PaySimple payment taken through the Payment Portal.</EnumValue>
         <EnumValue name="PaySimplePaymentPortalGuest">19 - PaySimple payment taken through the Payment Portal as a guest.</EnumValue>
         <EnumValue name="PaySimplePaymentPortalACH">20 - PaySimple ACH Payment taken through the Payment Portal.</EnumValue>
-        <EnumValue name="XWebPaymentPortal">21 - XWeb payment taken through the Payment Portal.</EnumValue>
-        <EnumValue name="XWebPaymentPortalGuest">22 - XWeb payment taken through the Payment Portal as a guest.</EnumValue>
       </Enumeration>
     </column>
     <column order="17" name="ProcessStatus" type="tinyint(4)">
@@ -12143,59 +11823,6 @@
       <summary>DateTime. Date the link was created.  </summary>
     </column>
   </table>
-  <table name="payplantemplate">
-    <summary>A template of payplan terms that can be copied to a payment plan.  Only used for dynamic payment plans, not patient payment plans.</summary>
-    <column order="0" name="PayPlanTemplateNum" type="bigint(20)">
-      <summary>Primary key</summary>
-    </column>
-    <column order="1" name="PayPlanTemplateName" type="varchar(255)">
-      <summary>The name of the Pay Plan Template.</summary>
-    </column>
-    <column order="2" name="ClinicNum" type="bigint(20)" fk="clinic">
-      <summary>FK to clinic.ClinicNum. Can be 0.</summary>
-    </column>
-    <column order="3" name="APR" type="double">
-      <summary>Annual percentage rate.  eg 18.</summary>
-    </column>
-    <column order="4" name="InterestDelay" type="int(11)">
-      <summary>The number of payments before interest is applied.</summary>
-    </column>
-    <column order="5" name="PayAmt" type="double">
-      <summary>The total payment amount due for each period.</summary>
-    </column>
-    <column order="6" name="NumberOfPayments" type="int(11)">
-      <summary>The total number of periods for the payment plan. If the Pay Plan is dynamic and NumberOfPayments is not 0 then this is only used to calculate the PayAmt. After the PayAmt is calculated, NumberOfPayments is set to 0.</summary>
-    </column>
-    <column order="7" name="ChargeFrequency" type="tinyint(4)">
-      <summary>Enum:PayPlanFrequency How often charges are created for the payment plan. Monthly, weekly, etc.  Only for Dynamic Payment Plans.</summary>
-      <Enumeration name="PayPlanFrequency">
-        <summary></summary>
-        <EnumValue name="Weekly">0 - Weekly </EnumValue>
-        <EnumValue name="EveryOtherWeek">1 - Every Other Week</EnumValue>
-        <EnumValue name="OrdinalWeekday">2 - Specific day of month </EnumValue>
-        <EnumValue name="Monthly">3 - Monthly</EnumValue>
-        <EnumValue name="Quarterly">4 - Quarterly</EnumValue>
-      </Enumeration>
-    </column>
-    <column order="8" name="DownPayment" type="double">
-      <summary>The amount paid toward the payment plan when it was first opened.</summary>
-    </column>
-    <column order="9" name="DynamicPayPlanTPOption" type="tinyint(4)">
-      <summary>Enum:DynamicPayPlanTPOptions Indicates the selected mode for how treatment planned procedures are handled by a dynamic payment plan.  None, AwaitComplete, or TreatAsComplete.</summary>
-      <Enumeration name="DynamicPayPlanTPOptions">
-        <summary>Enum that changes how treatment planned procedures are handled in dynamic payment plans.</summary>
-        <EnumValue name="None">0</EnumValue>
-        <EnumValue name="AwaitComplete">1</EnumValue>
-        <EnumValue name="TreatAsComplete">2</EnumValue>
-      </Enumeration>
-    </column>
-    <column order="10" name="Note" type="varchar(255)">
-      <summary>A detailed note of the terms shows for future reference. Any changes made to the terms will be added to the note. Other notes can be added as needed.</summary>
-    </column>
-    <column order="11" name="IsHidden" type="tinyint(4)">
-      <summary>Templates can not be deleted, but can be hidden if not needed any more.</summary>
-    </column>
-  </table>
   <table name="paysplit">
     <summary>Always attached to a payment.  Always affects exactly one patient account and one provider.</summary>
     <column order="0" name="SplitNum" type="bigint(20)">
@@ -12324,7 +11951,7 @@
         <EnumValue name="MGJ">3-MucoGingivalJunction- the division between attached and unattached mucosa.</EnumValue>
         <EnumValue name="Probing">4</EnumValue>
         <EnumValue name="SkipTooth">5-For the skiptooth type, set surf to none, and ToothValue to 1.</EnumValue>
-        <EnumValue name="BleedSupPlaqCalc">6. Sum of flags for bleeding(1), suppuration(2), plaque(4), and calculus(8).</EnumValue>
+        <EnumValue name="Bleeding">6. Sum of flags for bleeding(1), suppuration(2), plaque(4), and calculus(8).</EnumValue>
         <EnumValue name="CAL">7. But this type is never saved to the db. It is always calculated on the fly.</EnumValue>
       </Enumeration>
     </column>
@@ -12814,9 +12441,6 @@
     <column order="35" name="AreaAlsoToothRange" type="tinyint(4)">
       <summary>This is an adjunct to TreatArea. If Quad or Arch, then this allows users to also specify a tooth or tooth range.  Required by some insurance.</summary>
     </column>
-    <column order="36" name="DiagnosticCodes" type="varchar(255)">
-      <summary>Text to store up to 4 ICD-10 codes. Codes are comma-separated with no whitespace. Used to set the default DiagnosticCode, DiagnosticCode2, DiagnosticCode3, and DiagnosticCode4 fields for new procedures linked to the procedure code. When this field is not empty or null, it will override the ICD9DefaultForNewProcs preference. Example: M26.31,K08.401,K02.51</summary>
-    </column>
   </table>
   <table name="procedurelog">
     <summary>Database table is procedurelog.  A procedure for a patient.  Can be treatment planned or completed.  Once it's completed, it gets tracked more closely by the security portion of the program.  A procedure can NEVER be deleted.  Status can just be changed to "deleted".</summary>
@@ -13305,7 +12929,7 @@
             Many bridges use this description as an "internal description". This way it can act like a FK in order to look up this particular property.  Users cannot edit.</summary>
     </column>
     <column order="3" name="PropertyValue" type="text">
-      <summary>The value. Could contain FK to other tables.</summary>
+      <summary>The value.  </summary>
     </column>
     <column order="4" name="ComputerName" type="varchar(255)">
       <summary>The human-readable name of the computer on the network (not the IP address).  Only used when overriding program path.  Blank for typical Program Properties.</summary>
@@ -13735,10 +13359,10 @@
       <summary>The order of this category within the list. 0-based.</summary>
     </column>
     <column order="3" name="DefaultForTypes" type="text">
-      <summary>Enum:EnumQuickPasteType  Each Category can be set to be the default category for multiple types of notes. Stored as integers separated by commas.</summary>
-      <Enumeration name="EnumQuickPasteType">
-        <summary>Each item in the enum should uniquely describe the location of a single TextBoxOD.  No sharing.  In many cases, this is tied to QuickPasteCat to determine which category to default to when opening.</summary>
-        <EnumValue name="None">0 - If None is used for a TextRich, then QuickPasteNotes will be disabled.</EnumValue>
+      <summary>Enum:QuickPasteType  Each Category can be set to be the default category for multiple types of notes. Stored as integers separated by commas.</summary>
+      <Enumeration name="QuickPasteType">
+        <summary>Used by QuickPasteCat to determine which category to default to when opening.</summary>
+        <EnumValue name="None">0 - None should never be used.  It is simply used as a "default" when adding a new control.  Searching for usage of "None" is an easy way to find spots where our pattern was not followed correctly.</EnumValue>
         <EnumValue name="Procedure">1</EnumValue>
         <EnumValue name="Appointment">2</EnumValue>
         <EnumValue name="CommLog">3</EnumValue>
@@ -13769,19 +13393,18 @@
         <EnumValue name="Schedule">28</EnumValue>
         <EnumValue name="TreatPlan">29</EnumValue>
         <EnumValue name="ClaimCustomTrack">30</EnumValue>
-        <EnumValue name="AutoNotePrompt">31</EnumValue>
+        <EnumValue name="AutoNote">31</EnumValue>
         <EnumValue name="JobManager">32</EnumValue>
-        <EnumValue name="ReadOnly">33 - Do not use</EnumValue>
+        <EnumValue name="ReadOnly">33 - Only to be used if the ReadOnly property is set to true.</EnumValue>
         <EnumValue name="Lab">34</EnumValue>
         <EnumValue name="Equipment">35</EnumValue>
-        <EnumValue name="Etrans834Import">36</EnumValue>
-        <EnumValue name="InCaseOfEmergency">37</EnumValue>
-        <EnumValue name="ProviderSearchFilter">38</EnumValue>
+        <EnumValue name="FilePath">36</EnumValue>
+        <EnumValue name="ContactInfo">37</EnumValue>
+        <EnumValue name="Office">38</EnumValue>
         <EnumValue name="ProgramLink">39</EnumValue>
-        <EnumValue name="PhoneEmpDefaultStatus">40</EnumValue>
+        <EnumValue name="EmployeeStatus">40</EnumValue>
         <EnumValue name="WebChat">41</EnumValue>
         <EnumValue name="FAQ">42</EnumValue>
-        <EnumValue name="Sheets">43-Just autonotes, not quickpaste.</EnumValue>
       </Enumeration>
     </column>
   </table>
@@ -14389,7 +14012,7 @@
       <summary>Enum:RequiredFieldType . The area of the program that uses this field.</summary>
       <Enumeration name="RequiredFieldType">
         <summary>The part of the program where this required field is used.</summary>
-        <EnumValue name="PatientInfo">0 - Edit Patient Information window and Add Family (FormPatientAddAll) window.</EnumValue>
+        <EnumValue name="PatientInfo">0 - Edit Patient Information window and Add Family window.</EnumValue>
         <EnumValue name="InsPayEdit">1 - Edit Claim Payment window.</EnumValue>
       </Enumeration>
     </column>
@@ -15108,8 +14731,8 @@
       <summary>Primary key.</summary>
     </column>
     <column order="1" name="PermType" type="tinyint">
-      <summary>Enum:EnumPermType</summary>
-      <Enumeration name="EnumPermType">
+      <summary>Enum:Permissions</summary>
+      <Enumeration name="Permissions">
         <summary>A hard-coded list of permissions which may be granted to usergroups.</summary>
         <EnumValue name="None">0</EnumValue>
         <EnumValue name="AppointmentsModule">1</EnumValue>
@@ -15246,7 +14869,7 @@
         <EnumValue name="ProviderAlphabetize">124 - Allows users to use the Alphabetize Provider button from FormProviderSetup to permanently re-order providers.</EnumValue>
         <EnumValue name="ClaimProcReceivedEdit">125 - Allows editing of claimprocs that are marked as received status.</EnumValue>
         <EnumValue name="StatementPatNumMismatch">126 - Used to diagnose an error in statement creation. Audit Trail Permission Only</EnumValue>
-        <EnumValue name="MobileWeb">127 - User has access to ODTouch.</EnumValue>
+        <EnumValue name="MobileWeb">127 - User has access to Mobile Web.</EnumValue>
         <EnumValue name="PatPlanCreate">128 - For logging purposes only.  Used when PatPlans are created and not otherwise logged.</EnumValue>
         <EnumValue name="PatPriProvEdit">129 - Allows the user to change a patient's primary provider, with audit trail logging.</EnumValue>
         <EnumValue name="ReferralEdit">130</EnumValue>
@@ -15363,7 +14986,7 @@
         <EnumValue name="AppointmentDelete">237 - Allows user to delete appointments.</EnumValue>
         <EnumValue name="AppointmentCompleteDelete">238 - Allows user to delete completed appointments.</EnumValue>
         <EnumValue name="AppointmentTypeEdit">239 - Logs when Appointment Types are edited. For audit trails only.</EnumValue>
-        <EnumValue name="TextingAccountEdit">240 - Only used at OD HQ. Allows users to make high level changes in regards to texting.</EnumValue>
+        <EnumValue name="TextingAccountEdit">240 - Allows users to edit tendlc brand information </EnumValue>
         <EnumValue name="WebChatEdit">241 - Logs when web chat sessions are edited. For audit trails only.</EnumValue>
         <EnumValue name="SupplierEdit">242 - Allows users to access FormSuppliers</EnumValue>
         <EnumValue name="SupplyPurchases">243 - Logs when any supply purchases are created, placed, or deleted.</EnumValue>
@@ -15373,7 +14996,6 @@
         <EnumValue name="ViewAppointmentAuditTrail">247 - Only for viewing the audit trail in FormEditAppointment</EnumValue>
         <EnumValue name="PayPlanChargeEdit">248 - Logs when a user edits a payment plan charge.</EnumValue>
         <EnumValue name="ArchivedPatientSelect">249 - Also see ArchivedPatientEdit. Blocking user from patient selection prevents changes to all the other tables besides the patient table.  It's more rigorous.</EnumValue>
-        <EnumValue name="CloudCustomerEdit">250 - Only used at OD HQ. Ability to edit Cloud tab info via Broadcast Monitor.</EnumValue>
       </Enumeration>
     </column>
     <column order="2" name="UserNum" type="bigint(20)" fk="userod">
@@ -15589,9 +15211,6 @@
     <column order="20" name="RevID" type="int(11)">
       <summary>Revision ID. Used to determine in conjunction with PrefillMode for eClipboard to determine whether to show a patient a new form or have them update their last filled out form. Must match up with SheetDef RevID to show a previously filled out form.</summary>
     </column>
-    <column order="21" name="WebFormSheetID" type="bigint(20)">
-      <summary>Only set when this sheet was created from a Web Form. FK to webforms_sheet.SheetID within the Web Forms server. Used to determine if this particular Web Form has been retrieved before in order to avoid creating duplicate sheet entries for a single Web Form.</summary>
-    </column>
   </table>
   <table name="sheetdef">
     <summary>A definition (template) for a sheet.  Can be pulled from the database, or it can be internally defined.</summary>
@@ -15725,7 +15344,7 @@
       <summary>Mostly for OutputText and InputField types.  Each sheet typically has a main datatable type.OutputText: FieldName is usually the string representation of the database column for the main table.  For other tables, it can be of the form table.Column.  There may also be extra fields available that are not strictly pulled from the database.  Extra fields will start with lowercase to indicate that they are not pure database fields.  The list of available fields for each type in SheetFieldsAvailable.  Users can pick from that list.  InputField: are internally tied to actions to persist the data.  So they are also hard coded and are available in SheetFieldsAvailable.  Static images: this is the full file name including extension, but without path.  Static images paths are reconstructed by looking in the AtoZ folder, SheetImages folder.  PatImage: Either the DefNum for the default document category or "Patient Info.gif" to indicate our baked-in patient info form. DefNum is used in SheetFiller to find a document num, this is translated in FormSheetFillEdit to a human readable name. Example: 113 (if 113 is the defnum for photos). In FormSheetFillEdit,  this will display as PatImg:photos.Parameter: the FieldName stores the name of the parameter.</summary>
     </column>
     <column order="4" name="FieldValue" type="text">
-      <summary>For OutputText, this value is set before printing.  This is the data obtained from the database and ready to print.  For StaticText, this is copied from the sheetFieldDef, but in-line fields like [this] will have been filled.  For an archived sheet retrieved from the database (all SheetField rows), this value will have been saved and will not be filled again automatically.For InputField, this is the filled value. If an an AutoNote attached, then this field will start out like AutoNoteNum:### until they click to fill out the autonote.Parameter fieldtype: this will store the value of the parameter. FKs are numbers. Two of the parameters allow multiple ProcNums, which are stored here as comma list.Drawing fieldtype: this will be the point data for the lines.  The format would look similar to this: 45,68;48,70;49,72;0,0;55,88;etc.  It's simply a sequence of points, separated by semicolons.CheckBox: it will either be an X or empty.SigBox: the first char will be 0 or 1 to indicate SigIsTopaz, and all subsequent chars will be the Signature itself.PatImage: FK to document.DocNum, or blank, or "MountNum:####" to indicate mount instead of document.ComboBox: The chosen option, semicolon, then a pipe delimited list of options such as: March;January|February|March|AprilScreenChart: Contains a semicolon delimited list of a single number followed by groups of comma separated surfaces.
+      <summary>For OutputText, this value is set before printing.  This is the data obtained from the database and ready to print.  For StaticText, this is copied from the sheetFieldDef, but in-line fields like [this] will have been filled.  For an archived sheet retrieved from the database (all SheetField rows), this value will have been saved and will not be filled again automatically.Parameter fieldtype: this will store the value of the parameter. FKs are numbers. Two of the parameters allow multiple ProcNums, which are stored here as comma list.Drawing fieldtype: this will be the point data for the lines.  The format would look similar to this: 45,68;48,70;49,72;0,0;55,88;etc.  It's simply a sequence of points, separated by semicolons.CheckBox: it will either be an X or empty.SigBox: the first char will be 0 or 1 to indicate SigIsTopaz, and all subsequent chars will be the Signature itself.PatImage: FK to document.DocNum, or blank, or "MountNum:####" to indicate mount instead of document.ComboBox: The chosen option, semicolon, then a pipe delimited list of options such as: March;January|February|March|AprilScreenChart: Contains a semicolon delimited list of a single number followed by groups of comma separated surfaces.
             The first digit represents what type of ScreenChart it is.  0 = Permanent, 1 = Primary
             It may look like 0;S,P,N;S,S,S;... etc.</summary>
     </column>
@@ -15852,7 +15471,7 @@
     </column>
     <column order="4" name="FieldValue" type="text">
       <summary>For StaticText, this text can include bracketed fields, like [nameLF].
-            For OutputText and InputField, this will be blank.  If an InputField has an AutoNote attached, then this field will be AutoNoteNum:'value'. Example AutoNoteNum:268.For CheckBoxes, either X or blank.  Even if the checkbox is set to behave like a radio button.  For Pat Images, this is blank.  The filename of a PatImage will later be stored in SheetField.FieldValue.For ComboBoxes, the chosen option, semicolon, then a pipe delimited list of options such as: March;January|February|March|AprilFor ScreenCharts, a semicolon delimited list of comma separated surfaces.  It may look like S,P,N;S,S,S;... etc.</summary>
+            For OutputText and InputField, this will be blank.  For CheckBoxes, either X or blank.  Even if the checkbox is set to behave like a radio button.  For Pat Images, this is blank.  The filename of a PatImage will later be stored in SheetField.FieldValue.For ComboBoxes, the chosen option, semicolon, then a pipe delimited list of options such as: March;January|February|March|AprilFor ScreenCharts, a semicolon delimited list of comma separated surfaces.  It may look like S,P,N;S,S,S;... etc.</summary>
     </column>
     <column order="5" name="FontSize" type="float">
       <summary>The fontSize for this field regardless of the default for the sheet.  The actual font must be saved with each sheetField.</summary>
@@ -16070,23 +15689,23 @@
       <summary>Enum:KeyType Describes the type of object referenced by the FKey.</summary>
       <Enumeration name="KeyType">
         <summary>Do not combine with SignalType, they must be seperate. Stored as string, safe to reorder enum values.</summary>
-        <EnumValue name="Undefined">Probably represented by empty string, but possibly by "Undefined".</EnumValue>
-        <EnumValue name="FeeSched"></EnumValue>
-        <EnumValue name="Job"></EnumValue>
-        <EnumValue name="Operatory"></EnumValue>
-        <EnumValue name="PhoneExtension">HQ only.  FKey will be the extension of the corresponding phone that is invalid.
+        <EnumValue name="Undefined">0</EnumValue>
+        <EnumValue name="FeeSched">1</EnumValue>
+        <EnumValue name="Job">2</EnumValue>
+        <EnumValue name="Operatory">3</EnumValue>
+        <EnumValue name="PhoneExtension">4 - HQ only.  FKey will be the extension of the corresponding phone that is invalid.
             Specifically used to talk to the PhoneTrackingServer in order to let it know that an extension has changed (e.g. queue change).</EnumValue>
-        <EnumValue name="Provider"></EnumValue>
-        <EnumValue name="SigMessage"></EnumValue>
-        <EnumValue name="SmsMsgUnreadCount">Special KeyType that does not use a FK but instead will set FKey to a count of unread messages.
+        <EnumValue name="Provider">5</EnumValue>
+        <EnumValue name="SigMessage">6</EnumValue>
+        <EnumValue name="SmsMsgUnreadCount">7 - Special KeyType that does not use a FK but instead will set FKey to a count of unread messages.
             Used along side the SmsTextMsgReceivedUnreadCount InvalidType.</EnumValue>
-        <EnumValue name="Task"></EnumValue>
-        <EnumValue name="ProcessId">Used to identify which signals a form can ignore.  If the FKey==Process.GetCurrentProcess().Id then this process sent it so ignore
+        <EnumValue name="Task">8</EnumValue>
+        <EnumValue name="ProcessId">9 - Used to identify which signals a form can ignore.  If the FKey==Process.GetCurrentProcess().Id then this process sent it so ignore
             it.  Used in FormTerminal, FormTerminalManager, and FormSheetFillEdit (for forms being filled at a kiosk).</EnumValue>
-        <EnumValue name="ConfKick">Used to notify the phone tracking server to kick all users out of a conference room.</EnumValue>
-        <EnumValue name="PatNum">Used in AccModule, TPModule, and PerioExams.</EnumValue>
-        <EnumValue name="UserOd">Indicates Signalod pertains to a specific UserOd.</EnumValue>
-        <EnumValue name="EmailAddress">Used to indicate that this specific email address is what this signal is for</EnumValue>
+        <EnumValue name="ConfKick">10 - Used to notify the phone tracking server to kick all users out of a conference room.</EnumValue>
+        <EnumValue name="PatNum"></EnumValue>
+        <EnumValue name="UserOd">12 - Indicates Signalod pertains to a specific UserOd.</EnumValue>
+        <EnumValue name="EmailAddress">13 - Used to indicate that this specific email address is what this signal is for</EnumValue>
       </Enumeration>
     </column>
     <column order="5" name="IType" type="tinyint(4)">
@@ -16129,8 +15748,8 @@
         <EnumValue name="FeeScheds">33</EnumValue>
         <EnumValue name="PhoneNumbers">34. This is used internally by OD, Inc with the phonenumber table and the phone server.</EnumValue>
         <EnumValue name="Signals">35. Deprecated, use SigMessages instead.  Old summary: Signal/message defs</EnumValue>
-        <EnumValue name="DisplayFields">36. And ChartViews.</EnumValue>
-        <EnumValue name="PatFields">37. And ApptFields and PatFieldPickItems.</EnumValue>
+        <EnumValue name="DisplayFields">36</EnumValue>
+        <EnumValue name="PatFields">37. And ApptFields.</EnumValue>
         <EnumValue name="AccountingAutoPays">38</EnumValue>
         <EnumValue name="ProcButtons">39</EnumValue>
         <EnumValue name="Diseases">40.  Includes ICD9s.</EnumValue>
@@ -16192,23 +15811,20 @@
         <EnumValue name="ProcMultiVisits">94. Used for refreshing "In Process" pseudo procedure statuses.</EnumValue>
         <EnumValue name="ProviderClinicLink">95. Used for refreshing the ProviderClinicLink cache.</EnumValue>
         <EnumValue name="EClipboard">96. Used for refreshing the KioskManager with eClipboard information.</EnumValue>
-        <EnumValue name="TPModule">97. Used for refreshing the TP module for a specific patient. PatNum used in FKey.</EnumValue>
+        <EnumValue name="TPModule">97. Used for refreshing the TP module for a specific patient.</EnumValue>
         <EnumValue name="ActiveInstance">98. Used for closing Cloud sessions. ActiveInstanceNum is the Fkey.</EnumValue>
         <EnumValue name="PhoneEmpDefaults">99. Used internally by OD HQ.</EnumValue>
         <EnumValue name="UserOdPrefs">100. Used for refreshing user preferences.</EnumValue>
         <EnumValue name="JobTeams">101. Used internally by OD HQ.</EnumValue>
-        <EnumValue name="AccModule">102. Used to refresh the Account Module for a specific patient. PatNum used in FKey.</EnumValue>
+        <EnumValue name="AccModule">102. Used to refresh the Account Module for a specific patient.</EnumValue>
         <EnumValue name="LimitedBetaFeature">103. Used for limitedBetaFeature Cache.</EnumValue>
-        <EnumValue name="PerioExams">104. Used to refresh Perio Chart. patient.PatNum used in FKey.</EnumValue>
+        <EnumValue name="PerioExams">104. Used to refresh Perio Chart.</EnumValue>
         <EnumValue name="EmailInboxRetrieve">105. </EnumValue>
         <EnumValue name="ApiSubscriptions">106. Table in db is apisubscriptions. Small and changes rarely, but all workstations must know about the change.</EnumValue>
         <EnumValue name="ERoutingDef">107. Used as template for Patient eRouting</EnumValue>
         <EnumValue name="FlowActionDef">108. Used as template for Patient eRouting Actions</EnumValue>
         <EnumValue name="FlowDefLink">109. Used to link PatientFlowDefs with other objects: appointments, appt types, billing types, etc. </EnumValue>
         <EnumValue name="CodeGroups">110. Group of codes used with frequency limitations.</EnumValue>
-        <EnumValue name="BillingList">111. Used to refresh the billing list when it's open and a patient's account was adjusted. Works immediately on the current computer and at the signal interval of about 10 seconds on other computers.</EnumValue>
-        <EnumValue name="ConnectionStoreClear">112. Indicates that database connection settings have changed and the cached connections should be reinitialized.</EnumValue>
-        <EnumValue name="Children">113. Used internally by OD HQ for the daycare.</EnumValue>
       </Enumeration>
     </column>
     <column order="6" name="RemoteRole" type="tinyint(4)">
@@ -16472,10 +16088,7 @@
         <EnumValue name="ByodToken">23. Used for 2 factor authentication in mobile apps.</EnumValue>
         <EnumValue name="GeneralMessage">24. Used when sending appointment general messages.</EnumValue>
         <EnumValue name="ApptNewPatThankYou">25. Used when sending webforms for new patients on appointment schedule.</EnumValue>
-        <EnumValue name="VerifyPaymentPortal">26. Used when sending verification codes for the Payment Portal web app.
-            Short Code Supported: NO</EnumValue>
-        <EnumValue name="MsgToPay">27. Used for Payment Portal Msg-To-Pay messages.
-            Short Code Supported: NO</EnumValue>
+        <EnumValue name="VerifyPaymentPortal">26. Used when sending verification codes for the Payment Portal web app.</EnumValue>
       </Enumeration>
     </column>
     <column order="8" name="MsgText" type="text">
@@ -16732,7 +16345,6 @@
         <EnumValue name="ClaimPay">3 - ClaimPay</EnumValue>
         <EnumValue name="PayPlanCharge">4 - Pay plan charge</EnumValue>
         <EnumValue name="PatNum">5 - Patient </EnumValue>
-        <EnumValue name="MsgToPaySent">6 - MsgToPaySent </EnumValue>
       </Enumeration>
     </column>
     <column order="3" name="FKey" type="bigint(20)" fk="type of pk of another object depending on stmtlinktype value">
@@ -17146,9 +16758,14 @@
     </column>
     <column order="9" name="GlobalTaskFilterType" type="tinyint(4)">
       <summary>Enum:GlobalTaskFilterType 0=Disabled, 1=Default, 2=None, 3=Clinic, 4=Region.  If a type is selected, then tasks in this tasklist will be filtered by default 
-            such that only tasks that match the tasklist's GlobalFilterType will show in the view. Disabled is not valid for tasklists and will be treated as Default if applied to a tasklist; it is only valid on the TasksGlobalFilterType preference.</summary>
+            such that only tasks that match the tasklist's GlobalFilterType will show in the view.</summary>
       <Enumeration name="GlobalTaskFilterType">
-        <summary></summary>
+        <summary>Used to determine which tasks should be filtered to show in a tasklist.</summary>
+        <EnumValue name="Disabled">0 - Disabled.</EnumValue>
+        <EnumValue name="Default">1 - Default.</EnumValue>
+        <EnumValue name="None">2 - None.</EnumValue>
+        <EnumValue name="Clinic">3 - Clinic.</EnumValue>
+        <EnumValue name="Region">4 - Region.</EnumValue>
       </Enumeration>
     </column>
     <column order="10" name="TaskListStatus" type="tinyint(4)">
@@ -17319,13 +16936,13 @@
       <summary>FK to program.ProgramNum.</summary>
     </column>
     <column order="2" name="ToolBar" type="smallint">
-      <summary>Enum:EnumToolBar The toolbar to show the button on.</summary>
-      <Enumeration name="EnumToolBar">
+      <summary>Enum:ToolBarsAvail The toolbar to show the button on.</summary>
+      <Enumeration name="ToolBarsAvail">
         <summary></summary>
         <EnumValue name="AccountModule">0</EnumValue>
         <EnumValue name="ApptModule">1</EnumValue>
         <EnumValue name="ChartModule">2</EnumValue>
-        <EnumValue name="ImagingModule">3</EnumValue>
+        <EnumValue name="ImagesModule">3</EnumValue>
         <EnumValue name="FamilyModule">4</EnumValue>
         <EnumValue name="TreatmentPlanModule">5</EnumValue>
         <EnumValue name="ClaimsSend">6</EnumValue>
@@ -17933,9 +17550,6 @@
     <column order="22" name="EClipboardClinicalPin" type="varchar(128)">
       <summary>Pin for ODT. This is the hashed value of the pin. Not used in OD proper.</summary>
     </column>
-    <column order="23" name="BadgeId" type="varchar(255)">
-      <summary>A unique number that corresponds to the number on an employee badge. The last numbers on an employee badge. Will be 1 to 4 digits. These numbers are assigned to the badges by the factory. We order a specific range of badges, such as 1801-2000, which are assigned in order and not reused to avoid duplicates. The first four digits on the badges are not used by the Lenel OnGuard software, so we do not use them here either.</summary>
-    </column>
   </table>
   <table name="userodapptview">
     <summary>Keeps track of the last appointment view used on a per user basis.  Users can have multiple rows in this table when using clinics.</summary>
@@ -17989,7 +17603,7 @@
         <EnumValue name="Dashboard">16 - Stores user specific dashboard to open on load. FKey points to the SheetDef.SheetDefNum that the user last had open.</EnumValue>
         <EnumValue name="UserTheme">17 - Deprecated. </EnumValue>
         <EnumValue name="DynamicChartLayout">18 - Stores the Dynamic Chart Layout SheetDef.SheetDefNum selected by a user.</EnumValue>
-        <EnumValue name="PerioAutoAdvanceFacialsFirst">19 - Whether or not to set the perio auto advance to custom.</EnumValue>
+        <EnumValue name="PerioAutoAdvanceCustom">19 - Whether or not to set the perio auto advance to custom.</EnumValue>
         <EnumValue name="LogOffTimerOverride">20 - Stores the value (in minutes) of when the user should be auto logged off.</EnumValue>
         <EnumValue name="ReceivedSupplyOrders">21 - Whether or not we check the "Show received" checkbox when loading the supply order history.</EnumValue>
         <EnumValue name="ToothChartUsesDiffColorByProv">22 - Color defs can be used for different proc statuses when the user's provider doesn't match the procedure's provider.</EnumValue>
@@ -18813,8 +18427,6 @@
         <EnumValue name="PaySimplePaymentPortal">18 - PaySimple payment taken through the Payment Portal.</EnumValue>
         <EnumValue name="PaySimplePaymentPortalGuest">19 - PaySimple payment taken through the Payment Portal as a guest.</EnumValue>
         <EnumValue name="PaySimplePaymentPortalACH">20 - PaySimple ACH Payment taken through the Payment Portal.</EnumValue>
-        <EnumValue name="XWebPaymentPortal">21 - XWeb payment taken through the Payment Portal.</EnumValue>
-        <EnumValue name="XWebPaymentPortalGuest">22 - XWeb payment taken through the Payment Portal as a guest.</EnumValue>
       </Enumeration>
     </column>
     <column order="34" name="OrderId" type="varchar(255)">

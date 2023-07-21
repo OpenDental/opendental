@@ -33,7 +33,7 @@ namespace OpenDental {
 				checkPmtOpt.Enabled=false;
 			}
 			if(IsReadOnly){
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 			}
 			if(SheetDefCur.SheetType!=SheetTypeEnum.Statement) {
@@ -145,7 +145,7 @@ namespace OpenDental {
 			if(checkFontIsBold.Checked) {
 				fontStyle=FontStyle.Bold;
 			}
-			using Font font=new Font(comboFontName.GetSelected<string>(),fontSize,fontStyle);
+			using Font font=new Font(comboFontName.Text,fontSize,fontStyle);
 			using Graphics g=this.CreateGraphics();
 			g.TextRenderingHint=TextRenderingHint.ClearTypeGridFit;
 			SizeF sizeF=g.MeasureString(textFieldValue.Text,font);//for some reason, this is not off by the MS amount
@@ -178,59 +178,12 @@ namespace OpenDental {
 			butColor.BackColor=colorDialog1.Color;
 		}
 
-		private void butCalcWidth_Click(object sender,EventArgs e) {
-			if(!textHeight.IsValid()){
-				MsgBox.Show(this,"Please enter a valid height.");
-				return;
-			}
-			FontStyle fontStyle=FontStyle.Regular;
-			if(checkFontIsBold.Checked) {
-				fontStyle=FontStyle.Bold;
-			}
-			using Graphics g=CreateGraphics();
-			using Font font=new Font(comboFontName.GetSelected<string>(),float.Parse(textFontSize.Text),fontStyle);
-			using StringFormat stringFormat=new StringFormat(StringFormatFlags.NoClip) {Trimming=StringTrimming.None};
-			int heightEntered=PIn.Int(textHeight.Text);
-			int initialTextWidth=(int)Math.Ceiling(g.MeasureString(textFieldValue.Text,font).Width);
-			// If heightEntered is smaller than 2 lines of text, just return the string width
-			if(heightEntered<(int)Math.Floor(font.GetHeight()*2)) {
-				textWidth.Text=initialTextWidth.ToString();
-				return;
-			}
-			int newWidth=initialTextWidth/(int)Math.Ceiling(heightEntered/font.GetHeight());
-			// Increase width until all text fits inside the proposed height or we hit the upper bound
-			while (newWidth<textWidth.MaxVal) {
-				SizeF sizeFNew=g.MeasureString(textFieldValue.Text,font,newWidth,stringFormat);
-				if ((int)Math.Floor(sizeFNew.Height)<=heightEntered) {
-					break;
-				}
-				newWidth++;
-			}
-			textWidth.Text=Math.Min(newWidth,textWidth.MaxVal).ToString();
-		}
-
-		private void butCalcHeight_Click(object sender,EventArgs e) {
-			if(!textWidth.IsValid()){
-				MsgBox.Show(this,"Please enter a valid width.");
-				return;
-			}
-			FontStyle fontStyle=FontStyle.Regular;
-			if (checkFontIsBold.Checked) {
-				fontStyle=FontStyle.Bold;
-			}
-			using Graphics g=CreateGraphics();
-			using Font font=new Font(comboFontName.GetSelected<string>(),float.Parse(textFontSize.Text),fontStyle);
-			using StringFormat stringFormat=new StringFormat(StringFormatFlags.NoClip) {Trimming=StringTrimming.None};
-			SizeF sizeFNew=g.MeasureString(textFieldValue.Text,font,PIn.Int(textWidth.Text),stringFormat);
-			textHeight.Text=Math.Min(Math.Ceiling(sizeFNew.Height),textHeight.MaxVal).ToString();
-		}
-
 		private void butDelete_Click(object sender,EventArgs e) {
 			SheetFieldDefCur=null;
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textXPos.IsValid()
 				|| !textYPos.IsValid()
 				|| !textWidth.IsValid()
@@ -302,5 +255,12 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void listFields_SelectionChangeCommitted(object sender,EventArgs e) {
+
+		}
 	}
 }

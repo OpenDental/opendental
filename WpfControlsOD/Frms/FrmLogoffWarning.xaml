@@ -7,7 +7,8 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="424" Height="115" 
-             Text="Logoff Warning" MinMaxBoxes="False" >
+             Text="Logoff Warning" Loaded="FrmLogoffWarning_Loaded" 
+             FormClosed="FrmLogoffWarning_Closed">
 	<Grid Background="#FFFCFDFE" >
 		<ui:Label x:Name="label1" Width="400" Height="23" Margin="12,34,0,0" Text="Open Dental will log off from this workstation in 10 seconds due to inactivity." />
 		<ui:Button x:Name="butCancel" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,29,18" Text="_Cancel" Click="butCancel_Click" />

@@ -25,6 +25,7 @@
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormEhrAmendments));
 			this.gridMain = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.label3 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
@@ -41,6 +42,16 @@
 			this.gridMain.Title = "Amendments";
 			this.gridMain.TranslationName = "TableAmendments";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(501, 246);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 28;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butAdd
 			// 
@@ -69,6 +80,7 @@
 			this.ClientSize = new System.Drawing.Size(588, 282);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.butAdd);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.gridMain);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrAmendments";
@@ -82,6 +94,7 @@
 		#endregion
 
 		private UI.GridOD gridMain;
+		private UI.Button butClose;
 		private UI.Button butAdd;
 		private System.Windows.Forms.Label label3;
 

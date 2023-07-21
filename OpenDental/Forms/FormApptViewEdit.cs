@@ -74,7 +74,7 @@ namespace OpenDental{
 			if(ApptViewCur.OnlySchedAfterTime > new TimeSpan(0,0,0)) {
 				textAfterTime.Text=(DateTime.Today+ApptViewCur.OnlySchedAfterTime).ToShortTimeString();
 			}
-			comboClinic.ClinicNumSelected=ClinicNumInitial;
+			comboClinic.SelectedClinicNum=ClinicNumInitial;
 			UpdateDisplayFilterGroup();
 			_listApptViewItems=ApptViewItems.GetWhere(x => x.ApptViewNum==ApptViewCur.ApptViewNum && !x.IsMobile);
 			_listMobileApptViewItems=ApptViewItems.GetWhere(x => x.ApptViewNum==ApptViewCur.ApptViewNum && x.IsMobile);
@@ -260,8 +260,8 @@ namespace OpenDental{
 			List<Operatory> listOperatories=Operatories.GetDeepCopy(true);
 			for(int i=0;i<listOperatories.Count;i++) {
 				if(!PrefC.HasClinicsEnabled //add op to list of ops available for the view if the clinics show feature is turned off
-					|| comboClinic.ClinicNumSelected==0 //or this view is not assigned to a clinic
-					|| listOperatories[i].ClinicNum==comboClinic.ClinicNumSelected) //or the operatory is assigned to same clinic as this view
+					|| comboClinic.SelectedClinicNum==0 //or this view is not assigned to a clinic
+					|| listOperatories[i].ClinicNum==comboClinic.SelectedClinicNum) //or the operatory is assigned to same clinic as this view
 				{
 					listOps.Items.Add(listOperatories[i].OpName);
 					_listOpNums.Add(listOperatories[i].OperatoryNum);
@@ -630,7 +630,7 @@ namespace OpenDental{
 		///<summary>This will remove operatories from the list of ops available to assign to this view and fill the list with ops assigned to the same clinic or unassigned.  If the current view has operatories selected that are assigned to a different view.</summary>
 		private void comboClinic_SelectionChangeCommitted(object sender,EventArgs e) {
 			FillOperatories();
-			butMobileView.Visible=MobileAppDevices.IsClinicSignedUpForMobileWeb(comboClinic.ClinicNumSelected);
+			butMobileView.Visible=MobileAppDevices.IsClinicSignedUpForMobileWeb(comboClinic.SelectedClinicNum);
 		}
 
 		private void butDelete_Click(object sender, System.EventArgs e) {
@@ -645,7 +645,7 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(listProv.SelectedIndices.Count==0){
 				MsgBox.Show(this,"At least one provider must be selected.");
 				return;
@@ -710,7 +710,7 @@ namespace OpenDental{
 			ApptViewItems.DeleteAllForView(ApptViewCur);
 			ApptViewItems.DeleteAllForView(ApptViewCur,isMobile:true);
 			ApptViewItem apptViewItem;
-			bool isClinicMobile=MobileAppDevices.IsClinicSignedUpForMobileWeb(comboClinic.ClinicNumSelected);
+			bool isClinicMobile=MobileAppDevices.IsClinicSignedUpForMobileWeb(comboClinic.SelectedClinicNum);
 			for(int i=0;i<_listOpNums.Count;i++){
 				if(listOps.SelectedIndices.Contains(i)){
 					apptViewItem=new ApptViewItem();
@@ -794,7 +794,7 @@ namespace OpenDental{
 				//_listUserClinicNums will contain only a 0 if the clinics show feature is disabled.
 				//If the user is not restricted to a clinic, the list will contain 0 in the first position since comboClinic will contain 'All' as the first option.
 				//Restricted users (Security.CurUser.ClinicsIsRestricted=true && Security.CurUser.ClinicNum>0) won't have access to the unassigned views (AssignedClinic=0)
-				ApptViewCur.ClinicNum=comboClinic.ClinicNumSelected;
+				ApptViewCur.ClinicNum=comboClinic.SelectedClinicNum;
 			}
 			//User just moved this appointment view to a different clinic and this view was associated to the current Computer. Clear it out.
 			if(ApptViewCur.ClinicNum!=clinicOld && ComputerPrefs.LocalComputer.ApptViewNum==ApptViewCur.ApptViewNum) {
@@ -804,6 +804,10 @@ namespace OpenDental{
 			}
 			ApptViews.Update(ApptViewCur);//same whether isnew or not
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void FormApptViewEdit_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -818,3 +822,24 @@ namespace OpenDental{
 		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

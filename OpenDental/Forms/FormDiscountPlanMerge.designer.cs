@@ -41,6 +41,7 @@ namespace OpenDental{
 			this.label4 = new System.Windows.Forms.Label();
 			this.textDescriptionFrom = new System.Windows.Forms.TextBox();
 			this.butMerge = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
@@ -205,12 +206,22 @@ namespace OpenDental{
 			// 
 			this.butMerge.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butMerge.Enabled = false;
-			this.butMerge.Location = new System.Drawing.Point(576, 214);
+			this.butMerge.Location = new System.Drawing.Point(479, 213);
 			this.butMerge.Name = "butMerge";
 			this.butMerge.Size = new System.Drawing.Size(75, 24);
 			this.butMerge.TabIndex = 3;
 			this.butMerge.Text = "Merge";
 			this.butMerge.Click += new System.EventHandler(this.butMerge_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(563, 213);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Close";
+			this.butCancel.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// FormDiscountPlanMerge
 			// 
@@ -219,6 +230,7 @@ namespace OpenDental{
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.butMerge);
+			this.Controls.Add(this.butCancel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormDiscountPlanMerge";
@@ -235,6 +247,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butMerge;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.TextBox textFeeSchedInto;
 		private System.Windows.Forms.Label label2;

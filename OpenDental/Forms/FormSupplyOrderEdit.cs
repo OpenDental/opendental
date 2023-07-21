@@ -52,12 +52,12 @@ namespace OpenDental {
 				return;
 			}
 			String supplierName=Suppliers.GetName(ListSuppliersAll,SupplyOrderCur.SupplierNum);
-			SecurityLogs.MakeLogEntry(EnumPermType.SupplyPurchases,patNum:0,"Order Deleted - Supplier: "+supplierName);
+			SecurityLogs.MakeLogEntry(Permissions.SupplyPurchases,patNum:0,"Order Deleted - Supplier: "+supplierName);
 			SupplyOrders.DeleteObject(SupplyOrderCur);
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!textDatePlaced.IsValid()
 				|| !textAmountTotal.IsValid()
 				|| !textShippingCharge.IsValid()
@@ -81,7 +81,7 @@ namespace OpenDental {
 			if(_supplyOrderOld.IsPending() && !SupplyOrderCur.IsPending()) {
 				String supplierName=Suppliers.GetName(ListSuppliersAll,SupplyOrderCur.SupplierNum);
 				SecurityLogs.MakeLogEntry(
-					EnumPermType.SupplyPurchases,
+					Permissions.SupplyPurchases,
 					patNum:0,
 					"Order Placed - Date Placed: "+SupplyOrderCur.DatePlaced.ToShortDateString()+", Amount: $"+SupplyOrderCur.AmountTotal+", Shipping: $"+SupplyOrderCur.ShippingCharge+", Supplier: "+supplierName
 				);
@@ -89,6 +89,15 @@ namespace OpenDental {
 			SupplyOrders.Update(SupplyOrderCur);//never new
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+
+
+
+
 
 	}
 }

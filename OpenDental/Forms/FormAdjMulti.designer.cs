@@ -30,6 +30,7 @@ namespace OpenDental {
 			this.comboProv = new OpenDental.UI.ComboBox();
 			this.labelAdjDate = new System.Windows.Forms.Label();
 			this.gridMain = new OpenDental.UI.GridOD();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOk = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
@@ -48,7 +49,6 @@ namespace OpenDental {
 			this.labelSubtractions = new System.Windows.Forms.Label();
 			this.listTypeNeg = new OpenDental.UI.ListBox();
 			this.groupBox3 = new OpenDental.UI.GroupBox();
-			this.checkOnlyTsiExcludedAdjTypes = new OpenDental.UI.CheckBox();
 			this.radioIncludeAll = new System.Windows.Forms.RadioButton();
 			this.radioAllocatedOnly = new System.Windows.Forms.RadioButton();
 			this.radioExcludeAll = new System.Windows.Forms.RadioButton();
@@ -119,15 +119,25 @@ namespace OpenDental {
 			this.gridMain.TranslationName = "TableMultiAdjs";
 			this.gridMain.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellClick);
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(780, 577);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 53;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOk
 			// 
 			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOk.Location = new System.Drawing.Point(780, 572);
+			this.butOk.Location = new System.Drawing.Point(780, 547);
 			this.butOk.Name = "butOk";
 			this.butOk.Size = new System.Drawing.Size(75, 24);
 			this.butOk.TabIndex = 52;
-			this.butOk.Text = "&Save";
-			this.butOk.Click += new System.EventHandler(this.butSave_Click);
+			this.butOk.Text = "&OK";
+			this.butOk.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butAdd
 			// 
@@ -163,7 +173,7 @@ namespace OpenDental {
 			this.textNote.DetectUrls = false;
 			this.textNote.Location = new System.Drawing.Point(33, 531);
 			this.textNote.Name = "textNote";
-			this.textNote.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Adjustment;
+			this.textNote.QuickPasteType = OpenDentBusiness.QuickPasteType.Adjustment;
 			this.textNote.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textNote.Size = new System.Drawing.Size(446, 70);
 			this.textNote.SpellCheckIsEnabled = false;
@@ -295,7 +305,6 @@ namespace OpenDental {
 			// 
 			// groupBox3
 			// 
-			this.groupBox3.Controls.Add(this.checkOnlyTsiExcludedAdjTypes);
 			this.groupBox3.Controls.Add(this.listTypePos);
 			this.groupBox3.Controls.Add(this.listTypeNeg);
 			this.groupBox3.Controls.Add(this.dateAdjustment);
@@ -309,16 +318,6 @@ namespace OpenDental {
 			this.groupBox3.Size = new System.Drawing.Size(853, 214);
 			this.groupBox3.TabIndex = 168;
 			this.groupBox3.Text = "Adjustment Info";
-			// 
-			// checkOnlyTsiExcludedAdjTypes
-			// 
-			this.checkOnlyTsiExcludedAdjTypes.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkOnlyTsiExcludedAdjTypes.Location = new System.Drawing.Point(185, 21);
-			this.checkOnlyTsiExcludedAdjTypes.Name = "checkOnlyTsiExcludedAdjTypes";
-			this.checkOnlyTsiExcludedAdjTypes.Size = new System.Drawing.Size(214, 20);
-			this.checkOnlyTsiExcludedAdjTypes.TabIndex = 172;
-			this.checkOnlyTsiExcludedAdjTypes.Text = "Only TSI excluded adjustment types";
-			this.checkOnlyTsiExcludedAdjTypes.CheckedChanged += new System.EventHandler(this.checkOnlyTsiExcludedAdjTypes_Checked);
 			// 
 			// radioIncludeAll
 			// 
@@ -382,6 +381,7 @@ namespace OpenDental {
 			this.Controls.Add(this.butUpdate);
 			this.Controls.Add(this.groupCreditLogic);
 			this.Controls.Add(this.groupBox3);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOk);
 			this.Controls.Add(this.textNote);
 			this.Controls.Add(this.label5);
@@ -417,6 +417,7 @@ namespace OpenDental {
 		private ODtextBox textNote;
 		private System.Windows.Forms.Label label5;
 		private UI.Button butOk;
+		private UI.Button butCancel;
 		private ValidDate dateAdjustment;
 		private System.Windows.Forms.RadioButton radioPercentRemBal;
 		private ValidDouble textAmt;
@@ -435,6 +436,5 @@ namespace OpenDental {
 		private System.Windows.Forms.RadioButton radioExcludeAll;
 		private OpenDental.UI.GroupBox groupCreditLogic;
 		private UI.Button butUpdate;
-		private UI.CheckBox checkOnlyTsiExcludedAdjTypes;
 	}
 }

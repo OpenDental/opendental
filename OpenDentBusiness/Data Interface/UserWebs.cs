@@ -14,11 +14,11 @@ namespace OpenDentBusiness{
 		#region Get Methods
 
 		///<summary>Gets all UserWebs from the db for the passed in type.</summary>
-		public static List<UserWeb> GetAllByType(UserWebFKeyType userWebFKeyType) {
+		public static List<UserWeb> GetAllByType(UserWebFKeyType fkeyType) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<UserWeb>>(MethodBase.GetCurrentMethod(),userWebFKeyType);
+				return Meth.GetObject<List<UserWeb>>(MethodBase.GetCurrentMethod(),fkeyType);
 			}
-			string command=$"SELECT * FROM userweb WHERE FKeyType={POut.Int((int)userWebFKeyType)}";
+			string command=$"SELECT * FROM userweb WHERE FKeyType={POut.Int((int)fkeyType)}";
 			return Crud.UserWebCrud.SelectMany(command);
 		}
 
@@ -45,34 +45,34 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Gets the UserWeb associated to the passed in username and hashed password.  Must provide the FKeyType.  Returns null if not found.</summary>
-		public static UserWeb GetByUserNameAndPassword(string userName,string passwordHashed,UserWebFKeyType userWebFKeyType) {
+		public static UserWeb GetByUserNameAndPassword(string userName,string passwordHashed,UserWebFKeyType fkeyType) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				return Meth.GetObject<UserWeb>(MethodBase.GetCurrentMethod(),userName,passwordHashed,userWebFKeyType);
+				return Meth.GetObject<UserWeb>(MethodBase.GetCurrentMethod(),userName,passwordHashed,fkeyType);
 			}
 			string command="SELECT * "
 				+"FROM userweb "
 				+"WHERE Password='"+passwordHashed+"' "
 				+"AND UserName='"+OpenDentBusiness.POut.String(userName)+"' "
-				+"AND FKeyType="+OpenDentBusiness.POut.Int((int)userWebFKeyType)+"";
+				+"AND FKeyType="+OpenDentBusiness.POut.Int((int)fkeyType)+"";
 			return Crud.UserWebCrud.SelectOne(command);
 		}
 
 		///<summary>Gets the UserWeb associated to the passed in username.  Must provide the FKeyType.  Returns null if not found.</summary>
-		public static UserWeb GetByUserName(string userName,UserWebFKeyType userWebFKeyType) {
+		public static UserWeb GetByUserName(string userName,UserWebFKeyType fkeyType) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				return Meth.GetObject<UserWeb>(MethodBase.GetCurrentMethod(),userName,userWebFKeyType);
+				return Meth.GetObject<UserWeb>(MethodBase.GetCurrentMethod(),userName,fkeyType);
 			}
 			string command="SELECT * "
 				+"FROM userweb "
 				+"WHERE UserName='"+OpenDentBusiness.POut.String(userName)+"' "
-				+"AND FKeyType="+OpenDentBusiness.POut.Int((int)userWebFKeyType)+"";
+				+"AND FKeyType="+OpenDentBusiness.POut.Int((int)fkeyType)+"";
 			return Crud.UserWebCrud.SelectOne(command);
 		}
 
 		///<summary>Gets the UserWeb associated to the passed in username and reset code.  Must provide the FKeyType.  Returns null if not found.</summary>
-		public static UserWeb GetByUserNameAndResetCode(string userName,string resetCode,UserWebFKeyType userWebFKeyType) {
+		public static UserWeb GetByUserNameAndResetCode(string userName,string resetCode,UserWebFKeyType fkeyType) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				return Meth.GetObject<UserWeb>(MethodBase.GetCurrentMethod(),userName,resetCode,userWebFKeyType);
+				return Meth.GetObject<UserWeb>(MethodBase.GetCurrentMethod(),userName,resetCode,fkeyType);
 			}
 			string command="SELECT * "
 				+"FROM userweb "
@@ -82,12 +82,12 @@ namespace OpenDentBusiness{
 			return Crud.UserWebCrud.SelectOne(command);
 		}
 
-		public static UserWeb GetByFKeyAndType(long fKey,UserWebFKeyType userWebFKeyType,bool checkOnlineStatus=false) {
+		public static UserWeb GetByFKeyAndType(long fkey,UserWebFKeyType fkeyType,bool doCheckOnlineStatus=false) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				return Meth.GetObject<UserWeb>(MethodBase.GetCurrentMethod(),fKey,userWebFKeyType,checkOnlineStatus);
+				return Meth.GetObject<UserWeb>(MethodBase.GetCurrentMethod(),fkey,fkeyType,doCheckOnlineStatus);
 			}
-			string command="SELECT * FROM userweb WHERE FKey="+POut.Long(fKey)+" AND FKeyType="+POut.Int((int)userWebFKeyType)+" ";
-			if(checkOnlineStatus) {//Check to see if the user no longer has Patient Portal access.  Only the PW salt will remain as the PW.
+			string command="SELECT * FROM userweb WHERE FKey="+POut.Long(fkey)+" AND FKeyType="+POut.Int((int)fkeyType)+" ";
+			if(doCheckOnlineStatus) {//Check to see if the user no longer has Patient Portal access.  Only the PW salt will remain as the PW.
 				command+="AND Password!='None$$'";
 			}
 			return Crud.UserWebCrud.SelectOne(command);
@@ -156,30 +156,30 @@ namespace OpenDentBusiness{
 
 		///<summary>Creates a username that is not yet in use. Should typically call UserWebs.GetNewPatientPortalCredentials() instead.
 		///If you are not inserting the name into UserWeb immediately then listExcludedNames should persist across multiple calls.</summary>
-		public static string CreateUserNameFromPat(Patient patient,UserWebFKeyType userWebFKeyType,List<string> listExcludedNames) {
+		public static string CreateUserNameFromPat(Patient pat,UserWebFKeyType fkeyType,List<string> listExcludedNames) {
 			//No need to check MiddleTierRole; no call to db.
-			string userName="";
+			string retVal="";
+			bool isUserNameOk=false;
 			int i=0;
-			while(true) {
+			while(!isUserNameOk) {
+				retVal=pat.FName+ODRandom.Next(100,100000);
+				if(!UserWebs.UserNameExists(retVal,fkeyType)) {
+					if(!listExcludedNames.Contains(retVal)) {
+						isUserNameOk=true;
+					}
+				}
 				if(i>1000) {
 					throw new CodeBase.ODException(Lans.g("UserWebs","Unable to create username for patient."));
 				}
-				userName=patient.FName+ODRandom.Next(100,100000);
-				if(!UserWebs.UserNameExists(userName,userWebFKeyType)) {
-					if(!listExcludedNames.Contains(userName)) {
-						break;//New userName found 
-					}
-				}
 				i++;
 			}
-			return userName;
+			return retVal;
 		}
 
 		///<summary>Generates a random password 8 char long containing at least one uppercase, one lowercase, and one number.</summary>
-		public static string PassGen(int length) {
-			//No need to check MiddleTierRole; no call to db.
-			if(length<0) {
-				length=0;
+		public static string PassGen(int len) {
+			if(len<0) {
+				len=0;
 			}
 			//Leave out characters that can cause confusion (o,O,0,l,1,I).
 			string lowerCase="abcdefgijkmnopqrstwxyz";
@@ -188,55 +188,54 @@ namespace OpenDentBusiness{
 			string allChars=lowerCase+upperCase+numbers;
 			string passChars="";
 			//Grab a letter from each so know we have one of each.
-			string[] stringArrayAllChars=new string[] { lowerCase,upperCase,numbers };
-			for(int i=0;i<stringArrayAllChars.Length;i++) {
-				passChars+=stringArrayAllChars[i][CryptUtil.Random<int>()%stringArrayAllChars[i].Length];
+			foreach(string s in new string[] { lowerCase,upperCase,numbers }) {
+				passChars+=s[CryptUtil.Random<int>()%s.Length];
 			}
 			//Start at 3 because we already added 3 characters
-			for(int i=3;i<length;i++) {
+			for(int i=3;i<len;i++) {
 				passChars+=allChars[ODCrypt.CryptUtil.Random<int>()%allChars.Length];
 			}
 			//Now that we have our character set, now we do a Fisher-Yates shuffle.
-			char[] charArray=passChars.ToCharArray();
-			int arraySize = charArray.Length;
-			int intRandom;
-			char charTemp;
-			for (int i = 0; i < arraySize; i++) {
-				intRandom = i + (int)(CryptUtil.Random<int>()%(arraySize - i));
-				charTemp = charArray[intRandom];
-				charArray[intRandom] = charArray[i];
-				charArray[i] = charTemp;
+			char[] chars=passChars.ToCharArray();
+			int arraysize = chars.Length;
+			int random;
+			char temp;
+			for (int i = 0; i < arraysize; i++) {
+				random = i + (int)(CryptUtil.Random<int>()%(arraysize - i));
+				temp = chars[random];
+				chars[random] = chars[i];
+				chars[i] = temp;
 			}
 			//Take a substring in case the requested length is 1 or 2 characters.
-			return new string(charArray).Substring(0,length);
+			return new string(chars).Substring(0,len);
 		}
 
 		///<summary>Generates a random password 8 char long containing at least one uppercase, one lowercase, and one number.</summary>
 		public static string GenerateRandomPassword(int length) {
 			//No need to check MiddleTierRole; no call to db.
 			//Chracters like o(letter O), 0 (Zero), l (letter l), 1 (one) etc are avoided because they can be ambigious.
-			string passwordCharsLCase="abcdefgijkmnopqrstwxyz";
-			string passwordCharsUCase="ABCDEFGHJKLMNPQRSTWXYZ";
-			string passwordCharsNumeric="23456789";
+			string PASSWORD_CHARS_LCASE="abcdefgijkmnopqrstwxyz";
+			string PASSWORD_CHARS_UCASE="ABCDEFGHJKLMNPQRSTWXYZ";
+			string PASSWORD_CHARS_NUMERIC="23456789";
 			//Create a local array containing supported password characters grouped by types.
-			char[][] charArrayGroups=new char[3][];
-			charArrayGroups[0]=passwordCharsLCase.ToCharArray();
-			charArrayGroups[1]=passwordCharsUCase.ToCharArray();
-			charArrayGroups[2]=passwordCharsNumeric.ToCharArray();
+			char[][] charGroups=new char[][]{
+						PASSWORD_CHARS_LCASE.ToCharArray(),
+						PASSWORD_CHARS_UCASE.ToCharArray(),
+						PASSWORD_CHARS_NUMERIC.ToCharArray(),};
 			//Use this array to track the number of unused characters in each character group.
-			int[] charsLeftInGroup=new int[charArrayGroups.Length];
+			int[] charsLeftInGroup=new int[charGroups.Length];
 			//Initially, all characters in each group are not used.
 			for(int i = 0;i<charsLeftInGroup.Length;i++) {
-				charsLeftInGroup[i]=charArrayGroups[i].Length;
+				charsLeftInGroup[i]=charGroups[i].Length;
 			}
 			//Use this array to track (iterate through) unused character groups.
-			int[] leftGroupsOrder=new int[charArrayGroups.Length];
+			int[] leftGroupsOrder=new int[charGroups.Length];
 			//Initially, all character groups are not used.
 			for(int i = 0;i<leftGroupsOrder.Length;i++) {
 				leftGroupsOrder[i]=i;
 			}
 			//This array will hold password characters.
-			char[] charArrayPassword=new char[length];
+			char[] password=new char[length];
 			//Index of the next character to be added to password.
 			int nextCharIdx;
 			//Index of the next character group to be processed.
@@ -248,7 +247,7 @@ namespace OpenDentBusiness{
 			//Index of the last non-processed group.
 			int lastLeftGroupsOrderIdx=leftGroupsOrder.Length - 1;
 			//Generate password characters one at a time.
-			for(int i = 0;i<charArrayPassword.Length;i++) {
+			for(int i = 0;i<password.Length;i++) {
 				//If only one character group remained unprocessed, process it;
 				//otherwise, pick a random character group from the unprocessed
 				//group list. To allow a special character to appear in the
@@ -274,10 +273,10 @@ namespace OpenDentBusiness{
 					nextCharIdx=ODRandom.Next(0,lastCharIdx+1);
 				}
 				//Add this character to the password.
-				charArrayPassword[i]=charArrayGroups[nextGroupIdx][nextCharIdx];
+				password[i]=charGroups[nextGroupIdx][nextCharIdx];
 				//If we processed the last character in this group, start over.
 				if(lastCharIdx==0) {
-					charsLeftInGroup[nextGroupIdx]=charArrayGroups[nextGroupIdx].Length;
+					charsLeftInGroup[nextGroupIdx]=charGroups[nextGroupIdx].Length;
 					//There are more unprocessed characters left.
 				}
 				else {
@@ -285,9 +284,9 @@ namespace OpenDentBusiness{
 					//so that we don't pick it until we process all characters in
 					//this group.
 					if(lastCharIdx !=nextCharIdx) {
-						char charTemp=charArrayGroups[nextGroupIdx][lastCharIdx];
-						charArrayGroups[nextGroupIdx][lastCharIdx]=charArrayGroups[nextGroupIdx][nextCharIdx];
-						charArrayGroups[nextGroupIdx][nextCharIdx]=charTemp;
+						char temp=charGroups[nextGroupIdx][lastCharIdx];
+						charGroups[nextGroupIdx][lastCharIdx]=charGroups[nextGroupIdx][nextCharIdx];
+						charGroups[nextGroupIdx][nextCharIdx]=temp;
 					}
 					//Decrement the number of unprocessed characters in
 					//this group.
@@ -302,46 +301,48 @@ namespace OpenDentBusiness{
 					//Swap processed group with the last unprocessed group
 					//so that we don't pick it until we process all groups.
 					if(lastLeftGroupsOrderIdx !=nextLeftGroupsOrderIdx) {
-						int intTemp=leftGroupsOrder[lastLeftGroupsOrderIdx];
-						leftGroupsOrder[lastLeftGroupsOrderIdx]=leftGroupsOrder[nextLeftGroupsOrderIdx];
-						leftGroupsOrder[nextLeftGroupsOrderIdx]=intTemp;
+						int temp=leftGroupsOrder[lastLeftGroupsOrderIdx];
+						leftGroupsOrder[lastLeftGroupsOrderIdx]=
+																leftGroupsOrder[nextLeftGroupsOrderIdx];
+						leftGroupsOrder[nextLeftGroupsOrderIdx]=temp;
 					}
 					//Decrement the number of unprocessed groups.
 					lastLeftGroupsOrderIdx--;
 				}
 			}
 			//Convert password characters into a string and return the result.
-			return new string(charArrayPassword);
+			return new string(password);
 		}
 
-		public static string ValidatePatientAccess(Patient patient) {
+		public static bool ValidatePatientAccess(Patient pat,out string strErrors) {
 			//No need to check MiddleTierRole; no call to db.
-			StringBuilder stringBuilderErrors=new StringBuilder();
-			if(patient.FName.Trim()=="") {
-				stringBuilderErrors.AppendLine(Lans.g("PatientPortal","Missing patient first name."));
+			StringBuilder strbErrors=new StringBuilder();
+			if(pat.FName.Trim()=="") {
+				strbErrors.AppendLine(Lans.g("PatientPortal","Missing patient first name."));
 			}
-			if(patient.LName.Trim()=="") {
-				stringBuilderErrors.AppendLine(Lans.g("PatientPortal","Missing patient last name."));
+			if(pat.LName.Trim()=="") {
+				strbErrors.AppendLine(Lans.g("PatientPortal","Missing patient last name."));
 			}
-			if(patient.Address.Trim()=="") {
-				stringBuilderErrors.AppendLine(Lans.g("PatientPortal","Missing patient address line 1."));
+			if(pat.Address.Trim()=="") {
+				strbErrors.AppendLine(Lans.g("PatientPortal","Missing patient address line 1."));
 			}
-			if(patient.City.Trim()=="") {
-				stringBuilderErrors.AppendLine(Lans.g("PatientPortal","Missing patient city."));
+			if(pat.City.Trim()=="") {
+				strbErrors.AppendLine(Lans.g("PatientPortal","Missing patient city."));
 			}
-			if(CultureInfo.CurrentCulture.Name.EndsWith("US") && patient.State.Trim().Length!=2) {
-				stringBuilderErrors.AppendLine(Lans.g("PatientPortal","Invalid patient state.  Must be two letters."));
+			if(CultureInfo.CurrentCulture.Name.EndsWith("US") && pat.State.Trim().Length!=2) {
+				strbErrors.AppendLine(Lans.g("PatientPortal","Invalid patient state.  Must be two letters."));
 			}
-			if(patient.Birthdate.Year<1880) {
-				stringBuilderErrors.AppendLine(Lans.g("PatientPortal","Missing patient birth date."));
+			if(pat.Birthdate.Year<1880) {
+				strbErrors.AppendLine(Lans.g("PatientPortal","Missing patient birth date."));
 			}
-			if(patient.HmPhone.Trim()=="" && patient.WirelessPhone.Trim()=="" && patient.WkPhone.Trim()=="") {
-				stringBuilderErrors.AppendLine(Lans.g("PatientPortal","Missing patient phone;  Must have home, wireless, or work phone."));
+			if(pat.HmPhone.Trim()=="" && pat.WirelessPhone.Trim()=="" && pat.WkPhone.Trim()=="") {
+				strbErrors.AppendLine(Lans.g("PatientPortal","Missing patient phone;  Must have home, wireless, or work phone."));
 			}
-			if(patient.Email.Trim()=="") {
-				stringBuilderErrors.AppendLine(Lans.g("PatientPortal","Missing patient email."));
+			if(pat.Email.Trim()=="") {
+				strbErrors.AppendLine(Lans.g("PatientPortal","Missing patient email."));
 			}
-			return stringBuilderErrors.ToString();
+			strErrors=strbErrors.ToString();
+			return strErrors=="";
 		}
 
 		///<summary>Updates password info in db for given inputs if PlainTextPassword (Item2) is not empty.
@@ -353,20 +354,20 @@ namespace OpenDentBusiness{
 				return false;
 			}
 			UserWeb userWeb=patientPortalCredential.UserWeb;
-			PasswordContainer passwordContainer=patientPortalCredential.PasswordContainer;
+			PasswordContainer loginDetails=patientPortalCredential.PasswordContainer;
 			if(userWeb!=null && !patientPortalCredential.HasAccessedPatientPortal) {
 				//Only insert an EHR event if the password was previously blank (meaning they don't currently have access).
 				if(string.IsNullOrEmpty(userWeb.PasswordHash)) {
-					EhrMeasureEvent ehrMeasureEvent=new EhrMeasureEvent();
-					ehrMeasureEvent.DateTEvent=DateTime.Now;
-					ehrMeasureEvent.EventType=EhrMeasureEventType.OnlineAccessProvided;
-					ehrMeasureEvent.PatNum=userWeb.FKey; //PatNum.
-					ehrMeasureEvent.MoreInfo="";
-					EhrMeasureEvents.Insert(ehrMeasureEvent);
+					EhrMeasureEvents.Insert(new EhrMeasureEvent() {
+						DateTEvent=DateTime.Now,
+						EventType=EhrMeasureEventType.OnlineAccessProvided,
+						PatNum=userWeb.FKey, //PatNum.
+						MoreInfo="",
+					});
 				}
 				//New password was created so set the flag for the user to change on next login and update the db accordingly.
 				userWeb.RequirePasswordChange=true;
-				userWeb.LoginDetails=passwordContainer;
+				userWeb.LoginDetails=loginDetails;
 				UserWebs.Update(userWeb);
 				return true;
 			}
@@ -380,31 +381,32 @@ namespace OpenDentBusiness{
 		///Call UpdateNewPatientPortalCredentials() using results of this method if you want to save password to db.</summary>
 		///<param name="passwordOverride">If a password has already been generated for this patient, pass it in here so that the password returned
 		///will match.</param>
-		public static PatientPortalCredential GetNewPatientPortalCredentials(Patient patient,string passwordOverride="") {
+		public static PatientPortalCredential GetNewPatientPortalCredentials(Patient pat,string passwordOverride="") {
 			//No need to check MiddleTierRole; no call to db.
 			if(string.IsNullOrEmpty(PrefC.GetString(PrefName.PatientPortalURL))) {
 				return null;//Haven't set up patient portal yet.
 			}
-			string errors=UserWebs.ValidatePatientAccess(patient);
-			if(!string.IsNullOrEmpty(errors)) {
+			string errors;
+			if(!UserWebs.ValidatePatientAccess(pat,out errors)) {
 				return null;//Patient is missing necessary fields.
 			}
-			UserWeb userWeb=UserWebs.GetByFKeyAndType(patient.PatNum,UserWebFKeyType.PatientPortal);			
+			UserWeb userWeb=UserWebs.GetByFKeyAndType(pat.PatNum,UserWebFKeyType.PatientPortal);			
 			if(userWeb==null) {
-				userWeb=new UserWeb(); 
-				userWeb.UserName=UserWebs.CreateUserNameFromPat(patient,UserWebFKeyType.PatientPortal,new List<string>());
-				userWeb.FKey=patient.PatNum;
-				userWeb.FKeyType=UserWebFKeyType.PatientPortal;
-				userWeb.RequireUserNameChange=true;
-				userWeb.LoginDetails=new PasswordContainer(HashTypes.None,"","");
-				userWeb.IsNew=true;		
+				userWeb=new UserWeb() {
+					UserName=UserWebs.CreateUserNameFromPat(pat,UserWebFKeyType.PatientPortal,new List<string>()),
+					FKey=pat.PatNum,
+					FKeyType=UserWebFKeyType.PatientPortal,
+					RequireUserNameChange=true,
+					LoginDetails=new PasswordContainer(HashTypes.None,"",""),
+					IsNew=true,
+				};				
 				//Always insert here. We may not ever end up updating UserWeb.PasswordHash if an email is not sent to this patient.
 				//This will leave a UserWeb row with a UserName (for next time) but no password. This row will be updated with a password at the appropriate time.
 				UserWebs.Insert(userWeb);
 			}
 			bool isNewPasswordRequired=false;			
 			if(string.IsNullOrEmpty(userWeb.UserName)) { //Fixing B11013 so new UserName and Password should be generated.
-				userWeb.UserName=UserWebs.CreateUserNameFromPat(patient,UserWebFKeyType.PatientPortal,new List<string>());
+				userWeb.UserName=UserWebs.CreateUserNameFromPat(pat,UserWebFKeyType.PatientPortal,new List<string>());
 				userWeb.RequireUserNameChange=true;
 				//UserName fields have been changed so update db.
 				UserWebs.Update(userWeb);
@@ -417,33 +419,30 @@ namespace OpenDentBusiness{
 				isNewPasswordRequired=true;
 			}
 			string passwordPlainText="";
-			PasswordContainer passwordContainer=userWeb.LoginDetails;
+			PasswordContainer loginDetails=userWeb.LoginDetails;
 			if(isNewPasswordRequired) {
 				//PP invites will often times call this method and get this far but not actually want to save the new creds to the db.
 				//For that reason we won't actually update the db with the new password here. 
 				//The caller of this method will need to call ProcessNewPatientPortalCredentialsOut() if they really want this new password to persist to the db.
-				passwordPlainText=passwordOverride;
-				if(passwordOverride=="") {
-					passwordPlainText=UserWebs.GenerateRandomPassword(8);
-				}
-				passwordContainer=Authentication.GenerateLoginDetails(passwordPlainText,HashTypes.SHA3_512);
-			}
-			return new PatientPortalCredential(userWeb,passwordPlainText,passwordContainer);
+				passwordPlainText=passwordOverride=="" ? UserWebs.GenerateRandomPassword(8) : passwordOverride;
+				loginDetails=Authentication.GenerateLoginDetails(passwordPlainText,HashTypes.SHA3_512);
+			}			
+			return new PatientPortalCredential(userWeb,passwordPlainText,loginDetails);
 		}
 
-		public static bool UserNameExists(string userName,UserWebFKeyType userWebFKeyType) {
+		public static bool UserNameExists(string userName,UserWebFKeyType fkeyType) {
 			//No need to check MiddleTierRole; no call to db.
-			if(GetUserNameCount(userName,userWebFKeyType)!=0) {
+			if(GetUserNameCount(userName,fkeyType)!=0) {
 				return true;
 			}
 			return false;
 		}
 
-		public static int GetUserNameCount(string userName,UserWebFKeyType userWebFKeyType) {
+		public static int GetUserNameCount(string userName,UserWebFKeyType fkeyType) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetInt(MethodBase.GetCurrentMethod(),userName,userWebFKeyType);
+				return Meth.GetInt(MethodBase.GetCurrentMethod(),userName,fkeyType);
 			}
-			string command="SELECT COUNT(*) FROM userweb WHERE UserName='"+POut.String(userName)+"' AND FKeyType="+POut.Int((int)userWebFKeyType);
+			string command="SELECT COUNT(*) FROM userweb WHERE UserName='"+POut.String(userName)+"' AND FKeyType="+POut.Int((int)fkeyType);
 			return PIn.Int(Db.GetCount(command));
 		}
 

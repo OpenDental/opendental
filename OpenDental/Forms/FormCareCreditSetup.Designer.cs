@@ -24,20 +24,20 @@
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormCareCreditSetup));
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.checkEnabled = new OpenDental.UI.CheckBox();
 			this.groupClinicSettings = new OpenDental.UI.GroupBox();
-			this.labelQSBatch = new System.Windows.Forms.Label();
-			this.listBoxQSOptions = new OpenDental.UI.ListBox();
 			this.labelMerchantNumberClinic = new System.Windows.Forms.Label();
 			this.textMerchantNumberClinic = new System.Windows.Forms.TextBox();
 			this.groupQSBatch = new OpenDental.UI.GroupBox();
 			this.comboBoxDaysOut = new OpenDental.UI.ComboBox();
-			this.labelQSDays = new System.Windows.Forms.Label();
+			this.labelBatchDays = new System.Windows.Forms.Label();
 			this.comboPaymentType = new OpenDental.UI.ComboBox();
 			this.labelPaymentType = new System.Windows.Forms.Label();
 			this.groupPromotions = new OpenDental.UI.GroupBox();
 			this.butPromotions = new OpenDental.UI.Button();
+			this.checkQSBatch = new OpenDental.UI.CheckBox();
 			this.comboClinics = new OpenDental.UI.ComboBoxClinicPicker();
 			this.comboPatFieldDef = new OpenDental.UI.ComboBox();
 			this.labelPatFieldType = new System.Windows.Forms.Label();
@@ -46,24 +46,31 @@
 			this.checkMerchantNumByProv = new OpenDental.UI.CheckBox();
 			this.checkHideAdvertising = new OpenDental.UI.CheckBox();
 			this.labelMerchantClosedDescription = new System.Windows.Forms.Label();
-			this.comboPatFieldPreApprvAmt = new OpenDental.UI.ComboBox();
-			this.labelPreApprvAmt = new System.Windows.Forms.Label();
-			this.comboPatFieldAvailableCredit = new OpenDental.UI.ComboBox();
-			this.labelAvailableCredit = new System.Windows.Forms.Label();
 			this.groupClinicSettings.SuspendLayout();
 			this.groupQSBatch.SuspendLayout();
 			this.groupPromotions.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(515, 495);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 7;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(430, 437);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 7;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(515, 437);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 8;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// checkEnabled
 			// 
@@ -76,37 +83,18 @@
 			// 
 			// groupClinicSettings
 			// 
-			this.groupClinicSettings.Controls.Add(this.labelQSBatch);
-			this.groupClinicSettings.Controls.Add(this.listBoxQSOptions);
 			this.groupClinicSettings.Controls.Add(this.labelMerchantNumberClinic);
 			this.groupClinicSettings.Controls.Add(this.textMerchantNumberClinic);
 			this.groupClinicSettings.Controls.Add(this.groupQSBatch);
 			this.groupClinicSettings.Controls.Add(this.comboPaymentType);
 			this.groupClinicSettings.Controls.Add(this.labelPaymentType);
 			this.groupClinicSettings.Controls.Add(this.groupPromotions);
-			this.groupClinicSettings.Location = new System.Drawing.Point(24, 240);
+			this.groupClinicSettings.Controls.Add(this.checkQSBatch);
+			this.groupClinicSettings.Location = new System.Drawing.Point(24, 185);
 			this.groupClinicSettings.Name = "groupClinicSettings";
 			this.groupClinicSettings.Size = new System.Drawing.Size(566, 238);
 			this.groupClinicSettings.TabIndex = 6;
 			this.groupClinicSettings.Text = "Clinic Settings";
-			// 
-			// labelQSBatch
-			// 
-			this.labelQSBatch.Location = new System.Drawing.Point(6, 139);
-			this.labelQSBatch.Name = "labelQSBatch";
-			this.labelQSBatch.Size = new System.Drawing.Size(160, 16);
-			this.labelQSBatch.TabIndex = 276;
-			this.labelQSBatch.Text = "Quickscreen Feature";
-			this.labelQSBatch.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// listBoxQSBatch
-			// 
-			this.listBoxQSOptions.Location = new System.Drawing.Point(9, 158);
-			this.listBoxQSOptions.Name = "listBoxQSBatch";
-			this.listBoxQSOptions.Size = new System.Drawing.Size(92, 64);
-			this.listBoxQSOptions.TabIndex = 277;
-			this.listBoxQSOptions.Text = "listQSBatch";
-			this.listBoxQSOptions.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listQSBatch_SelectionChanged);
 			// 
 			// labelMerchantNumberClinic
 			// 
@@ -128,29 +116,29 @@
 			// groupQSBatch
 			// 
 			this.groupQSBatch.Controls.Add(this.comboBoxDaysOut);
-			this.groupQSBatch.Controls.Add(this.labelQSDays);
-			this.groupQSBatch.Location = new System.Drawing.Point(104, 158);
+			this.groupQSBatch.Controls.Add(this.labelBatchDays);
+			this.groupQSBatch.Location = new System.Drawing.Point(12, 158);
 			this.groupQSBatch.Name = "groupQSBatch";
-			this.groupQSBatch.Size = new System.Drawing.Size(459, 64);
+			this.groupQSBatch.Size = new System.Drawing.Size(538, 64);
 			this.groupQSBatch.TabIndex = 6;
-			this.groupQSBatch.Text = "Quickscreen Settings";
+			this.groupQSBatch.Text = "Batch Quickscreen Settings";
 			// 
 			// comboBoxDaysOut
 			// 
 			this.comboBoxDaysOut.Location = new System.Drawing.Point(8, 24);
 			this.comboBoxDaysOut.Name = "comboBoxDaysOut";
-			this.comboBoxDaysOut.Size = new System.Drawing.Size(38, 21);
+			this.comboBoxDaysOut.Size = new System.Drawing.Size(121, 21);
 			this.comboBoxDaysOut.TabIndex = 0;
 			this.comboBoxDaysOut.Text = "comboBoxPlus1";
 			// 
 			// labelBatchDays
 			// 
-			this.labelQSDays.Location = new System.Drawing.Point(52, 26);
-			this.labelQSDays.Name = "labelQSDays";
-			this.labelQSDays.Size = new System.Drawing.Size(404, 19);
-			this.labelQSDays.TabIndex = 208;
-			this.labelQSDays.Text = "Number of days out to check for pre-approvals for future appointments.";
-			this.labelQSDays.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.labelBatchDays.Location = new System.Drawing.Point(133, 26);
+			this.labelBatchDays.Name = "labelBatchDays";
+			this.labelBatchDays.Size = new System.Drawing.Size(400, 17);
+			this.labelBatchDays.TabIndex = 208;
+			this.labelBatchDays.Text = "Number of days out to check for pre-approvals for future appointments.";
+			this.labelBatchDays.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// comboPaymentType
 			// 
@@ -189,11 +177,20 @@
 			this.butPromotions.Text = "Manage";
 			this.butPromotions.Click += new System.EventHandler(this.butPromotions_Click);
 			// 
+			// checkQSBatch
+			// 
+			this.checkQSBatch.Location = new System.Drawing.Point(6, 136);
+			this.checkQSBatch.Name = "checkQSBatch";
+			this.checkQSBatch.Size = new System.Drawing.Size(296, 18);
+			this.checkQSBatch.TabIndex = 5;
+			this.checkQSBatch.Text = "Enable Batch Quickscreen processing";
+			this.checkQSBatch.CheckedChanged += new System.EventHandler(this.checkQSBatch_CheckedChanged);
+			// 
 			// comboClinics
 			// 
 			this.comboClinics.HqDescription = "Headquarters";
 			this.comboClinics.IncludeUnassigned = true;
-			this.comboClinics.Location = new System.Drawing.Point(139, 211);
+			this.comboClinics.Location = new System.Drawing.Point(139, 156);
 			this.comboClinics.Name = "comboClinics";
 			this.comboClinics.Size = new System.Drawing.Size(251, 21);
 			this.comboClinics.TabIndex = 2;
@@ -235,7 +232,7 @@
 			// 
 			// checkMerchantNumByProv
 			// 
-			this.checkMerchantNumByProv.Location = new System.Drawing.Point(177, 185);
+			this.checkMerchantNumByProv.Location = new System.Drawing.Point(177, 130);
 			this.checkMerchantNumByProv.Name = "checkMerchantNumByProv";
 			this.checkMerchantNumByProv.Size = new System.Drawing.Size(213, 18);
 			this.checkMerchantNumByProv.TabIndex = 4;
@@ -255,7 +252,7 @@
 			// 
 			this.labelMerchantClosedDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelMerchantClosedDescription.ForeColor = System.Drawing.Color.Red;
-			this.labelMerchantClosedDescription.Location = new System.Drawing.Point(21, 485);
+			this.labelMerchantClosedDescription.Location = new System.Drawing.Point(21, 434);
 			this.labelMerchantClosedDescription.Name = "labelMerchantClosedDescription";
 			this.labelMerchantClosedDescription.Size = new System.Drawing.Size(392, 31);
 			this.labelMerchantClosedDescription.TabIndex = 275;
@@ -263,47 +260,10 @@
     " the manual for more information.";
 			this.labelMerchantClosedDescription.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
-			// comboPatFieldPreApprvAmt
-			// 
-			this.comboPatFieldPreApprvAmt.Location = new System.Drawing.Point(177, 129);
-			this.comboPatFieldPreApprvAmt.Name = "comboPatFieldPreApprvAmt";
-			this.comboPatFieldPreApprvAmt.Size = new System.Drawing.Size(213, 21);
-			this.comboPatFieldPreApprvAmt.TabIndex = 276;
-			this.comboPatFieldPreApprvAmt.Text = "comboBoxPlus1";
-			// 
-			// labelPreApprvAmt
-			// 
-			this.labelPreApprvAmt.Location = new System.Drawing.Point(5, 130);
-			this.labelPreApprvAmt.Name = "labelPreApprvAmt";
-			this.labelPreApprvAmt.Size = new System.Drawing.Size(169, 16);
-			this.labelPreApprvAmt.TabIndex = 277;
-			this.labelPreApprvAmt.Text = "Pre-Approval Amount Patient Field";
-			this.labelPreApprvAmt.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// comboPatFieldAvailableCredit
-			// 
-			this.comboPatFieldAvailableCredit.Location = new System.Drawing.Point(177, 157);
-			this.comboPatFieldAvailableCredit.Name = "comboPatFieldAvailableCredit";
-			this.comboPatFieldAvailableCredit.Size = new System.Drawing.Size(213, 21);
-			this.comboPatFieldAvailableCredit.TabIndex = 278;
-			this.comboPatFieldAvailableCredit.Text = "comboBoxPlus1";
-			// 
-			// labelAvailableCredit
-			// 
-			this.labelAvailableCredit.Location = new System.Drawing.Point(5, 158);
-			this.labelAvailableCredit.Name = "labelAvailableCredit";
-			this.labelAvailableCredit.Size = new System.Drawing.Size(169, 16);
-			this.labelAvailableCredit.TabIndex = 279;
-			this.labelAvailableCredit.Text = "Available Credit Patient Field";
-			this.labelAvailableCredit.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
 			// FormCareCreditSetup
 			// 
-			this.ClientSize = new System.Drawing.Size(613, 531);
-			this.Controls.Add(this.comboPatFieldAvailableCredit);
-			this.Controls.Add(this.labelAvailableCredit);
-			this.Controls.Add(this.comboPatFieldPreApprvAmt);
-			this.Controls.Add(this.labelPreApprvAmt);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(613, 480);
 			this.Controls.Add(this.labelMerchantClosedDescription);
 			this.Controls.Add(this.checkHideAdvertising);
 			this.Controls.Add(this.checkMerchantNumByProv);
@@ -314,7 +274,8 @@
 			this.Controls.Add(this.comboClinics);
 			this.Controls.Add(this.groupClinicSettings);
 			this.Controls.Add(this.checkEnabled);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormCareCreditSetup";
 			this.Text = "CareCredit Setup";
@@ -330,16 +291,18 @@
 
 		#endregion
 
-		private UI.Button butSave;
+		private UI.Button butOK;
+		private UI.Button butCancel;
 		private OpenDental.UI.CheckBox checkEnabled;
 		private OpenDental.UI.GroupBox groupClinicSettings;
+		private OpenDental.UI.CheckBox checkQSBatch;
 		private UI.ComboBoxClinicPicker comboClinics;
 		private System.Windows.Forms.Label labelPaymentType;
 		private UI.ComboBox comboPaymentType;
 		private OpenDental.UI.GroupBox groupPromotions;
 		private UI.Button butPromotions;
 		private OpenDental.UI.GroupBox groupQSBatch;
-		private System.Windows.Forms.Label labelQSDays;
+		private System.Windows.Forms.Label labelBatchDays;
 		private UI.ComboBox comboBoxDaysOut;
 		private UI.ComboBox comboPatFieldDef;
 		private System.Windows.Forms.Label labelPatFieldType;
@@ -350,11 +313,5 @@
 		private System.Windows.Forms.Label labelMerchantNumberClinic;
 		private System.Windows.Forms.TextBox textMerchantNumberClinic;
 		private System.Windows.Forms.Label labelMerchantClosedDescription;
-		private UI.ComboBox comboPatFieldPreApprvAmt;
-		private System.Windows.Forms.Label labelPreApprvAmt;
-		private UI.ComboBox comboPatFieldAvailableCredit;
-		private System.Windows.Forms.Label labelAvailableCredit;
-		private UI.ListBox listBoxQSOptions;
-		private System.Windows.Forms.Label labelQSBatch;
 	}
 }

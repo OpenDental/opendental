@@ -103,7 +103,7 @@ namespace OpenDental {
 				return;
 			}
 			using FormReportComplex FormR=new FormReportComplex(report);
-			FormR.ShowDialog();
+			FormR.ShowDialog();		
 			DialogResult=DialogResult.OK;
 		}
 

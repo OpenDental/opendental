@@ -150,7 +150,7 @@ namespace OpenDental {
 				if(selected==0) {
 					return;
 				}
-				SigElementDefs.MoveUp(selected,listToFrom.Items.GetAll<SigElementDef>());
+				SigElementDefs.MoveUp(selected,listToFrom.Items.GetAll<SigElementDef>().ToArray());
 				FillLists();
 				listToFrom.SelectedIndex=selected-1;
 			}
@@ -159,7 +159,7 @@ namespace OpenDental {
 				if(selected==0) {
 					return;
 				}
-				SigElementDefs.MoveUp(selected,listExtras.Items.GetAll<SigElementDef>());
+				SigElementDefs.MoveUp(selected,listExtras.Items.GetAll<SigElementDef>().ToArray());
 				FillLists();
 				listExtras.SelectedIndex=selected-1;
 			}
@@ -168,7 +168,7 @@ namespace OpenDental {
 				if(selected==0) {
 					return;
 				}
-				SigElementDefs.MoveUp(selected,listMessages.Items.GetAll<SigElementDef>());
+				SigElementDefs.MoveUp(selected,listMessages.Items.GetAll<SigElementDef>().ToArray());
 				FillLists();
 				listMessages.SelectedIndex=selected-1;
 			}
@@ -187,7 +187,7 @@ namespace OpenDental {
 				if(selected==listToFrom.Items.Count-1) {
 					return;
 				}
-				SigElementDefs.MoveDown(selected,listToFrom.Items.GetAll<SigElementDef>());
+				SigElementDefs.MoveDown(selected,listToFrom.Items.GetAll<SigElementDef>().ToArray());
 				FillLists();
 				listToFrom.SelectedIndex=selected+1;
 			}
@@ -196,7 +196,7 @@ namespace OpenDental {
 				if(selected==listExtras.Items.Count-1) {
 					return;
 				}
-				SigElementDefs.MoveDown(selected,listExtras.Items.GetAll<SigElementDef>());
+				SigElementDefs.MoveDown(selected,listExtras.Items.GetAll<SigElementDef>().ToArray());
 				FillLists();
 				listExtras.SelectedIndex=selected+1;
 			}
@@ -205,15 +205,49 @@ namespace OpenDental {
 				if(selected==listMessages.Items.Count-1) {
 					return;
 				}
-				SigElementDefs.MoveDown(selected,listMessages.Items.GetAll<SigElementDef>());
+				SigElementDefs.MoveDown(selected,listMessages.Items.GetAll<SigElementDef>().ToArray());
 				FillLists();
 				listMessages.SelectedIndex=selected+1;
 			}
+		}
+
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
 		}
 
 		private void FormMessagingSetup_FormClosing(object sender,FormClosingEventArgs e) {
 			DataValid.SetInvalid(InvalidType.SigMessages);
 		}
 
+		
+
+		
+
+	
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

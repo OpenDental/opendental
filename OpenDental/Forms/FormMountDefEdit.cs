@@ -509,7 +509,7 @@ namespace OpenDental{
 			}
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(textDescription.Text==""){
 				MessageBox.Show(Lan.g(this,"Description cannot be blank."));
 				return;
@@ -559,6 +559,12 @@ namespace OpenDental{
 			}
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+
 		#endregion Methods - EventHandlers - DeleteOkCancel
 
 		#region Methods
@@ -666,3 +672,24 @@ namespace OpenDental{
 		
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

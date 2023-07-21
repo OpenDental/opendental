@@ -7,28 +7,20 @@ using System.Threading.Tasks;
 
 namespace OpenDental {
 	public class ColorOD {
-/*
-The plan here is to move to our own version of colors similar to SystemColors.
-Some colors will be named according to how they are to be used, and we will be able to find where they are all used.
-This is not a move toward themes, but rather a move away from MS themes.
-One downside is that these colors will not be available in the designer (yet).
-Here are some reference colors. Stored in db as int:
-Black=-16777216
-White=-1
-SlateGray=#708090 = (112,128,144)
-Gray=128
-Silver=192 (#C0C0C0)
-LightGray=211
-Control=240
-Transparent=16777215 (0,255,255,255) which would be white, except for 0 alpha. 
-Empty=0 (0,0,0,0) which would be black, except for 0 alpha, so it's also transparent. Not present in WPF, so generally use Transparent.
-You can test for either by testing for A=0.
-Both Transparent and Empty are heavily used and either one is fine as long as it is well documented.
-You can't compare two colors directly. Here's how to test a color:
-if(color.ToArgb()==Color.Transparent.ToArgb()){
-if(color.ToArgb()==Color.Empty.ToArgb()){
-Or, in WPF, test if(color.ToString()==Color.Transparent.ToString()){  //this works because ToString always give the hex value (#1FA313)
-*/
+		//The plan here is to move to our own version of colors similar to SystemColors.
+		//Some colors will be named according to how they are to be used, and we will be able to find where they are all used.
+		//This is not a move toward themes, but rather a move away from MS themes.
+		//One downside is that these colors will not be available in the designer (yet).
+		//Here are some int colors as stored in db:
+		//Black=-16777216
+		//White=-1
+		//Transparent=16777215 (0,255,255,255) which would be white, except for 0 alpha. 
+		//Empty=0 (0,0,0,0) which would be black, except for 0 alpha, so it's also transparent. Not present in WPF, so generally use Transparent.
+		//Both Transparent and Empty are heavily used and either one is fine as long as it is well documented.
+		//You can't compare two colors directly. Here's how to test a color:
+		//if(color.ToArgb()==Color.Transparent.ToArgb()){
+		//if(color.ToArgb()==Color.Empty.ToArgb()){
+		//Or, in WPF, test if(color.ToString()==Color.Transparent.ToString()){  //this works because ToString always give the hex value (#1FA313)
 
 		#region Fields - Public
 		//Yes, these are public static fields, an exception to the rule because they are unchanging and truly globally used.
@@ -70,10 +62,6 @@ Or, in WPF, test if(color.ToString()==Color.Transparent.ToString()){  //this wor
 		#endregion Methods
 
 		#region WPF
-		public static System.Windows.Media.Color FromString(string str){
-			return (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(str);
-		}
-
 		public static Color FromWpf(System.Windows.Media.Color w_color){
 			Color color=Color.FromArgb(w_color.A, w_color.R, w_color.G, w_color.B);
 			return color;
@@ -94,7 +82,7 @@ Or, in WPF, test if(color.ToString()==Color.Transparent.ToString()){  //this wor
 		}
 
 		public static System.Windows.Media.Color ToWpf(Color color){
-			System.Windows.Media.Color w_color=System.Windows.Media.Color.FromArgb(color.A,color.R,color.G,color.B);
+			System.Windows.Media.Color w_color=System.Windows.Media.Color.FromRgb(color.R,color.G,color.B);
 			return w_color;
 		}
 		#endregion WPF

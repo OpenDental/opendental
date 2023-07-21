@@ -47,6 +47,7 @@ namespace OpenDental{
 			this.gridSmsSummary = new OpenDental.UI.GridOD();
 			this.butFwdMonth = new OpenDental.UI.Button();
 			this.butThisMonth = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.menuWebSchedVerifyTextTemplate.SuspendLayout();
 			this.groupShortCode.SuspendLayout();
 			this.SuspendLayout();
@@ -116,7 +117,7 @@ namespace OpenDental{
 			this.groupShortCode.Controls.Add(this.textShortCodeOptInClinicTitle);
 			this.groupShortCode.Controls.Add(this.checkOptInPrompt);
 			this.groupShortCode.Controls.Add(this.comboShortCodeClinic);
-			this.groupShortCode.Location = new System.Drawing.Point(15, 496);
+			this.groupShortCode.Location = new System.Drawing.Point(15, 512);
 			this.groupShortCode.Name = "groupShortCode";
 			this.groupShortCode.Size = new System.Drawing.Size(375, 85);
 			this.groupShortCode.TabIndex = 270;
@@ -176,7 +177,7 @@ namespace OpenDental{
 			this.comboShortCodeClinic.IncludeUnassigned = true;
 			this.comboShortCodeClinic.Location = new System.Drawing.Point(137, 12);
 			this.comboShortCodeClinic.Name = "comboShortCodeClinic";
-			this.comboShortCodeClinic.IsMultiSelect = true;
+			this.comboShortCodeClinic.SelectionModeMulti = true;
 			this.comboShortCodeClinic.Size = new System.Drawing.Size(235, 21);
 			this.comboShortCodeClinic.TabIndex = 0;
 			this.comboShortCodeClinic.SelectionChangeCommitted += new System.EventHandler(this.comboShortCodeClinic_SelectionChangeCommitted);
@@ -184,7 +185,7 @@ namespace OpenDental{
 			// butDefaultClinicClear
 			// 
 			this.butDefaultClinicClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butDefaultClinicClear.Location = new System.Drawing.Point(992, 502);
+			this.butDefaultClinicClear.Location = new System.Drawing.Point(992, 518);
 			this.butDefaultClinicClear.Name = "butDefaultClinicClear";
 			this.butDefaultClinicClear.Size = new System.Drawing.Size(81, 23);
 			this.butDefaultClinicClear.TabIndex = 269;
@@ -195,7 +196,7 @@ namespace OpenDental{
 			// butDefaultClinic
 			// 
 			this.butDefaultClinic.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butDefaultClinic.Location = new System.Drawing.Point(1079, 502);
+			this.butDefaultClinic.Location = new System.Drawing.Point(1079, 518);
 			this.butDefaultClinic.Name = "butDefaultClinic";
 			this.butDefaultClinic.Size = new System.Drawing.Size(81, 23);
 			this.butDefaultClinic.TabIndex = 262;
@@ -210,7 +211,7 @@ namespace OpenDental{
 			this.butBackMonth.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.butBackMonth.Image = ((System.Drawing.Image)(resources.GetObject("butBackMonth.Image")));
 			this.butBackMonth.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butBackMonth.Location = new System.Drawing.Point(502, 505);
+			this.butBackMonth.Location = new System.Drawing.Point(502, 521);
 			this.butBackMonth.Name = "butBackMonth";
 			this.butBackMonth.Size = new System.Drawing.Size(32, 22);
 			this.butBackMonth.TabIndex = 268;
@@ -222,7 +223,7 @@ namespace OpenDental{
 			this.dateTimePickerSms.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.dateTimePickerSms.CustomFormat = "MMM yyyy";
 			this.dateTimePickerSms.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-			this.dateTimePickerSms.Location = new System.Drawing.Point(534, 505);
+			this.dateTimePickerSms.Location = new System.Drawing.Point(534, 521);
 			this.dateTimePickerSms.Name = "dateTimePickerSms";
 			this.dateTimePickerSms.Size = new System.Drawing.Size(113, 20);
 			this.dateTimePickerSms.TabIndex = 258;
@@ -236,7 +237,7 @@ namespace OpenDental{
 			this.gridSmsSummary.HasMultilineHeaders = true;
 			this.gridSmsSummary.Location = new System.Drawing.Point(12, 12);
 			this.gridSmsSummary.Name = "gridSmsSummary";
-			this.gridSmsSummary.Size = new System.Drawing.Size(1150, 478);
+			this.gridSmsSummary.Size = new System.Drawing.Size(1150, 500);
 			this.gridSmsSummary.TabIndex = 252;
 			this.gridSmsSummary.Title = "Text Messaging Phone Number and Usage Summary";
 			this.gridSmsSummary.TranslationName = "FormEServicesSetup";
@@ -249,7 +250,7 @@ namespace OpenDental{
 			this.butFwdMonth.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.butFwdMonth.Image = ((System.Drawing.Image)(resources.GetObject("butFwdMonth.Image")));
 			this.butFwdMonth.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.butFwdMonth.Location = new System.Drawing.Point(647, 505);
+			this.butFwdMonth.Location = new System.Drawing.Point(647, 521);
 			this.butFwdMonth.Name = "butFwdMonth";
 			this.butFwdMonth.Size = new System.Drawing.Size(29, 22);
 			this.butFwdMonth.TabIndex = 267;
@@ -261,16 +262,28 @@ namespace OpenDental{
 			// 
 			this.butThisMonth.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butThisMonth.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.butThisMonth.Location = new System.Drawing.Point(553, 530);
+			this.butThisMonth.Location = new System.Drawing.Point(553, 546);
 			this.butThisMonth.Name = "butThisMonth";
 			this.butThisMonth.Size = new System.Drawing.Size(75, 22);
 			this.butThisMonth.TabIndex = 262;
 			this.butThisMonth.Text = "This Month";
 			this.butThisMonth.Click += new System.EventHandler(this.butThisMonth_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(1085, 602);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 501;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormEServicesTexting
 			// 
-			this.ClientSize = new System.Drawing.Size(1176, 589);
+			this.ClientSize = new System.Drawing.Size(1176, 638);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.groupShortCode);
 			this.Controls.Add(this.butDefaultClinicClear);
 			this.Controls.Add(this.butDefaultClinic);
@@ -313,5 +326,6 @@ namespace OpenDental{
 		private System.Windows.Forms.TextBox textShortCodeOptInClinicTitle;
 		private UI.Button butSaveShortCodes;
 		private System.Windows.Forms.Label labelUnsavedShortCodeChanges;
+		private UI.Button butClose;
 	}
 }

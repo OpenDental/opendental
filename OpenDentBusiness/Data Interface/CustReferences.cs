@@ -45,23 +45,23 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Used only from FormReferenceSelect to get the list of references.</summary>
-		public static DataTable GetReferenceTable(bool limit,List<long> listBillingTypes,bool showBadRefs,bool showUsed,bool showGuarOnly,string city,string state,string zip,
+		public static DataTable GetReferenceTable(bool limit,long[] billingTypes,bool showBadRefs,bool showUsed,bool showGuarOnly,string city,string state,string zip,
 			string areaCode,string specialty,int superFam,string lname,string fname,string patnum,int age,string country) 
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetTable(MethodBase.GetCurrentMethod(),limit,listBillingTypes,showBadRefs,showUsed,showGuarOnly,city,state,zip,areaCode,specialty,superFam,lname,fname,patnum,age,country);
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),limit,billingTypes,showBadRefs,showUsed,showGuarOnly,city,state,zip,areaCode,specialty,superFam,lname,fname,patnum,age,country);
 			}
 			string billingSnippet="";
-			if(listBillingTypes.Count!=0){
-				for(int i=0;i<listBillingTypes.Count;i++) {
+			if(billingTypes.Length!=0){
+				for(int i=0;i<billingTypes.Length;i++) {
 					if(i==0) {
 						billingSnippet+="AND (";
 					}
 					else {
 						billingSnippet+="OR ";
 					}
-					billingSnippet+="BillingType="+POut.Long(listBillingTypes[i])+" ";
-					if(i==listBillingTypes.Count-1) {
+					billingSnippet+="BillingType="+POut.Long(billingTypes[i])+" ";
+					if(i==billingTypes.Length-1) {
 						billingSnippet+=") ";
 					}
 				}
@@ -80,7 +80,7 @@ namespace OpenDentBusiness{
 				regexp+=phonedigits[i]+"[^0-9]*";
 			}
 			DataTable table=new DataTable();
-			DataRow dataRow;
+			DataRow row;
 			//columns that start with lowercase are altered for display rather than being raw data.
 			table.Columns.Add("CustReferenceNum");
 			table.Columns.Add("PatNum");
@@ -97,7 +97,7 @@ namespace OpenDentBusiness{
 			table.Columns.Add("DateMostRecent");
 			table.Columns.Add("TimesUsed");
 			table.Columns.Add("IsBadRef");
-			List<DataRow> listDataRows=new List<DataRow>();
+			List<DataRow> rows=new List<DataRow>();
 			string command=@"SELECT cr.*,p.LName,p.FName,p.HmPhone,p.State,p.City,p.Zip,p.Birthdate,pf.FieldValue,
 					(SELECT COUNT(*) FROM patient tempp WHERE tempp.SuperFamily=p.SuperFamily AND tempp.SuperFamily<>0) AS SuperFamily,
 					(SELECT COUNT(*) FROM custrefentry tempcre WHERE tempcre.PatNumRef=cr.PatNum) AS TimesUsed,p.Country
@@ -113,37 +113,17 @@ namespace OpenDentBusiness{
 			if(regexp!="") {
 				command+="AND (p.HmPhone REGEXP '"+POut.String(regexp)+"' )";
 			}
-			if(lname.Length>0){
-				command+="AND (p.LName LIKE '"+POut.String(lname)+"%' OR p.Preferred LIKE '"+POut.String(lname)+"%') ";
-			}
-			if(fname.Length>0){
-				command+="AND (p.FName LIKE '"+POut.String(fname)+"%' OR p.Preferred LIKE '"+POut.String(fname)+"%') ";
-			}
-			if(city.Length>0){
-				command+="AND p.City LIKE '"+POut.String(city)+"%' ";
-			}
-			if(state.Length>0){
-				command+="AND p.State LIKE '"+POut.String(state)+"%' ";
-			}
-			if(zip.Length>0){
-				command+="AND p.Zip LIKE '"+POut.String(zip)+"%' ";
-			}
-			if(country.Length>0){
-				command+="AND p.Country LIKE '"+POut.String(country)+"%' ";
-			}
-			if(patnum.Length>0){
-				command+="AND p.PatNum LIKE '"+POut.String(patnum)+"%' ";
-			}
-			if(specialty.Length>0){
-				command+="AND pf.FieldValue LIKE '"+POut.String(specialty)+"%' ";
-			}
-			if(!showBadRefs){
-				command+="AND cr.IsBadRef=0 ";
-			}
-			if(showGuarOnly){
-				command+="AND p.Guarantor=p.PatNum ";
-			}
-			command+="HAVING TRUE ";//Once again just making AND statements brainless.
+			command+=(lname.Length>0?"AND (p.LName LIKE '"+POut.String(lname)+"%' OR p.Preferred LIKE '"+POut.String(lname)+"%') ":"")
+					+(fname.Length>0?"AND (p.FName LIKE '"+POut.String(fname)+"%' OR p.Preferred LIKE '"+POut.String(fname)+"%') ":"")
+					+(city.Length>0?"AND p.City LIKE '"+POut.String(city)+"%' ":"")
+					+(state.Length>0?"AND p.State LIKE '"+POut.String(state)+"%' ":"")
+					+(zip.Length>0?"AND p.Zip LIKE '"+POut.String(zip)+"%' ":"")
+					+(country.Length>0?"AND p.Country LIKE '"+POut.String(country)+"%' ":"")
+					+(patnum.Length>0?"AND p.PatNum LIKE '"+POut.String(patnum)+"%' ":"")
+					+(specialty.Length>0?"AND pf.FieldValue LIKE '"+POut.String(specialty)+"%' ":"")
+					+(showBadRefs?"":"AND cr.IsBadRef=0 ")
+					+(showGuarOnly?"AND p.Guarantor=p.PatNum ":"")
+					+"HAVING TRUE ";//Once again just making AND statements brainless.
 			if(superFam>0) {
 				command+="AND SuperFamily>"+POut.Int(superFam)+" ";
 			}
@@ -153,32 +133,32 @@ namespace OpenDentBusiness{
 			if(limit) {
 				command=DbHelper.LimitOrderBy(command,40);
 			}
-			DataTable tableRaws=Db.GetTable(command);
-			for(int i=0;i<tableRaws.Rows.Count;i++) {
-				dataRow=table.NewRow();
-				dataRow["CustReferenceNum"]=tableRaws.Rows[i]["CustReferenceNum"].ToString();
-				dataRow["PatNum"]=tableRaws.Rows[i]["PatNum"].ToString();
-				dataRow["FName"]=tableRaws.Rows[i]["FName"].ToString();
-				dataRow["LName"]=tableRaws.Rows[i]["LName"].ToString();
-				dataRow["HmPhone"]=tableRaws.Rows[i]["HmPhone"].ToString();
-				dataRow["State"]=tableRaws.Rows[i]["State"].ToString();
-				dataRow["City"]=tableRaws.Rows[i]["City"].ToString();
-				dataRow["Zip"]=tableRaws.Rows[i]["Zip"].ToString();
-				dataRow["Country"]=tableRaws.Rows[i]["Country"].ToString();
-				dataRow["Specialty"]=tableRaws.Rows[i]["FieldValue"].ToString();
-				dataRow["age"]=Patients.DateToAge(PIn.Date(tableRaws.Rows[i]["Birthdate"].ToString())).ToString();
-				dataRow["SuperFamily"]=tableRaws.Rows[i]["SuperFamily"].ToString();
-				DateTime recentDate=PIn.DateT(tableRaws.Rows[i]["DateMostRecent"].ToString());
-				dataRow["DateMostRecent"]="";
+			DataTable rawtable=Db.GetTable(command);
+			for(int i=0;i<rawtable.Rows.Count;i++) {
+				row=table.NewRow();
+				row["CustReferenceNum"]=rawtable.Rows[i]["CustReferenceNum"].ToString();
+				row["PatNum"]=rawtable.Rows[i]["PatNum"].ToString();
+				row["FName"]=rawtable.Rows[i]["FName"].ToString();
+				row["LName"]=rawtable.Rows[i]["LName"].ToString();
+				row["HmPhone"]=rawtable.Rows[i]["HmPhone"].ToString();
+				row["State"]=rawtable.Rows[i]["State"].ToString();
+				row["City"]=rawtable.Rows[i]["City"].ToString();
+				row["Zip"]=rawtable.Rows[i]["Zip"].ToString();
+				row["Country"]=rawtable.Rows[i]["Country"].ToString();
+				row["Specialty"]=rawtable.Rows[i]["FieldValue"].ToString();
+				row["age"]=Patients.DateToAge(PIn.Date(rawtable.Rows[i]["Birthdate"].ToString())).ToString();
+				row["SuperFamily"]=rawtable.Rows[i]["SuperFamily"].ToString();
+				DateTime recentDate=PIn.DateT(rawtable.Rows[i]["DateMostRecent"].ToString());
+				row["DateMostRecent"]="";
 				if(recentDate.Year>1880) {
-					dataRow["DateMostRecent"]=recentDate.ToShortDateString();
+					row["DateMostRecent"]=recentDate.ToShortDateString();
 				}
-				dataRow["TimesUsed"]=tableRaws.Rows[i]["TimesUsed"].ToString();
-				dataRow["IsBadRef"]=tableRaws.Rows[i]["IsBadRef"].ToString();
-				listDataRows.Add(dataRow);
+				row["TimesUsed"]=rawtable.Rows[i]["TimesUsed"].ToString();
+				row["IsBadRef"]=rawtable.Rows[i]["IsBadRef"].ToString();
+				rows.Add(row);
 			}
-			for(int i=0;i<listDataRows.Count;i++) {
-				table.Rows.Add(listDataRows[i]);
+			for(int i=0;i<rows.Count;i++) {
+				table.Rows.Add(rows[i]);
 			}
 			return table;
 		}
@@ -186,8 +166,8 @@ namespace OpenDentBusiness{
 		///<summary>Returns FName 'Preferred' M LName.  This is here because I get names by patnum a lot with references.</summary>
 		public static string GetCustNameFL(long patNum) {
 			//Calls to the db happen in the other s classes.
-			Patient patient=Patients.GetLim(patNum);
-			return Patients.GetNameFL(patient.LName,patient.FName,patient.Preferred,patient.MiddleI);
+			Patient pat=Patients.GetLim(patNum);
+			return Patients.GetNameFL(pat.LName,pat.FName,pat.Preferred,pat.MiddleI);
 		}
 
 		///<summary>Gets the most recent CustReference entry for that patient.  Returns null if none found.  There should be only one entry for each patient, but there was a bug before 14.3 that could have created multiple so we only get the more relevant entry.</summary>
@@ -199,11 +179,13 @@ namespace OpenDentBusiness{
 						+"FROM custreference "
 						+"WHERE PatNum="+POut.Long(patNum)+" "
 						+"ORDER BY DateMostRecent DESC";
-			List<CustReference> listCustReferences=Crud.CustReferenceCrud.SelectMany(command);
-			if(listCustReferences.Count==0) {
+			List<CustReference> custRefList=Crud.CustReferenceCrud.SelectMany(command);
+			if(custRefList.Count==0) {
 				return null;
 			}
-			return listCustReferences[0];
+			else {
+				return custRefList[0];
+			}
 		}
 	}
 }

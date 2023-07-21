@@ -16,7 +16,6 @@ using OpenDentBusiness.WebTypes;
 using System.Text;
 using OpenDentBusiness.WebTypes.Shared.XWeb;
 using PdfSharp.Pdf;
-using OpenDentBusiness.Eclaims;
 
 namespace OpenDental {
 
@@ -63,10 +62,6 @@ namespace OpenDental {
 		private decimal _patientPortionBalanceTotal;
 		private string _famUrgFinNoteOnLoad;
 		private string _famFinNoteOnLoad;
-		///<summary>Used to track status of split panel visibility to avoid flicker from changing status too often.</summary>
-		private bool _showGridPayPlan;
-		///<summary>Used to track status of split panel visibility to avoid flicker from changing status too often.</summary>
-		private bool _showGridRepeating;
 		#endregion Fields - Private	
 	
 		#region Constructor
@@ -306,53 +301,13 @@ namespace OpenDental {
 				menuItemAddRefund.Enabled=false;
 				menuItemAddRefundWorkNotPerformed.Enabled=false;
 			}
-			//DentalXChange Attachments-----------------------------------------------------------------------------------
-			menuItemSnipAttachment.Enabled=true;
-			menuItemSelectImage.Enabled=true;
-			menuItemPasteAttachment.Enabled=true;
-			menuItemAttachmentHistory.Enabled=true;
-			Clearinghouse clearingHouse=new Clearinghouse();
-			int countClaim=listIdxRowsSelected.Select(x => table.Rows[x]["ClaimNum"].ToString()).Count(y => y!="0");
-			//Must be exactly 1 claim selected.
-			if(countClaim==1) {
-				clearingHouse=GetClearingHouseForClaim();
-			}
-			else{
-				menuItemSnipAttachment.Enabled=false;
-				menuItemSelectImage.Enabled=false;
-				menuItemPasteAttachment.Enabled=false;
-				menuItemAttachmentHistory.Enabled=false;
-			}
-			//Are attachments allowed to be sent and is the office using ClaimConnect
-			if(clearingHouse==null || !clearingHouse.IsAttachmentSendAllowed || clearingHouse.CommBridge!=EclaimsCommBridge.ClaimConnect){
-				menuItemSnipAttachment.Enabled=false;
-				menuItemSelectImage.Enabled=false;
-				menuItemPasteAttachment.Enabled=false;
-				menuItemAttachmentHistory.Enabled=false;
-			}
-			// Edit PayPlan Charge --------------------------------------------------------------------------------------------
-			menuItemEditPayPlanCharge.Visible=false;
-			menuItemEditPayPlanCharge.Enabled=false;
-			if(!Security.IsAuthorized(EnumPermType.PayPlanEdit,suppressMessage:true)){
-				return;
-			}
-			// Only one row should be selected, and it should be a PayPlanCharge.
-			long payPlanChargeNum=0;
-			if(listIdxRowsSelected.Count==1) {
-				payPlanChargeNum=PIn.Long(table.Rows[listIdxRowsSelected[0]]["PayPlanChargeNum"].ToString());
-			}
-			if(payPlanChargeNum!=0) {
-				menuItemEditPayPlanCharge.Visible=true;
-				// Enabled if not a down payment.
-				string description=table.Rows[listIdxRowsSelected[0]]["description"].ToString();
-				if(!description.Contains("Down Payment")) { // Logic used to determine 'IsDownPayment' in FormPayPlanDynamic
-					menuItemEditPayPlanCharge.Enabled=true;
-				}
-			}
 			//Delete PayPlan Charge--------------------------------------------------------------------------------------------
 			menuItemDeletePayPlanCharge.Visible=false;
+			if(!Security.IsAuthorized(Permissions.PayPlanEdit,suppressMessage:true)){
+				return;
+			}
 			for(int i=0;i<listIdxRowsSelected.Count;i++) {
-				payPlanChargeNum=PIn.Long(table.Rows[listIdxRowsSelected[i]]["PayPlanChargeNum"].ToString());
+				long payPlanChargeNum=PIn.Long(table.Rows[listIdxRowsSelected[i]]["PayPlanChargeNum"].ToString());
 				if(payPlanChargeNum==0) {
 					continue;
 				}
@@ -451,9 +406,6 @@ namespace OpenDental {
 				}
 			}
 			for(int i=0;i<gridAccount.SelectedIndices.Count();i++) {
-				if(gridAccount.SelectedIndices[i]>=table.Rows.Count) {
-					continue;//An office was getting an exception here, but we're not sure how grid and table could be out of sync and can't duplicate.
-				}
 				DataRow dataRow=table.Rows[gridAccount.SelectedIndices[i]];
 				if(dataRow["ClaimNum"].ToString()!="0") {//claims and claimpayments
 					//Since we removed all selected items above, we need to reselect the claim the user just clicked on at the very least.
@@ -585,7 +537,7 @@ namespace OpenDental {
 				formPayment.ShowDialog();
 			}
 			else if(table.Rows[e.Row]["ClaimNum"].ToString()!="0"){//claims and claimpayments
-				if(!Security.IsAuthorized(EnumPermType.ClaimView)) {
+				if(!Security.IsAuthorized(Permissions.ClaimView)) {
 					return;
 				}
 				Claim claim=Claims.GetClaim(PIn.Long(table.Rows[e.Row]["ClaimNum"].ToString()));
@@ -621,7 +573,7 @@ namespace OpenDental {
 					using FormPayPlanDynamic formPayPlanDynamic=new FormPayPlanDynamic(payplan);
 					formPayPlanDynamic.ShowDialog();
 					if(formPayPlanDynamic.PatNumGoto!=0) {
-						GlobalFormOpenDental.PatientSelected(Patients.GetPat(formPayPlanDynamic.PatNumGoto),false);
+						FormOpenDental.S_Contr_PatientSelected(Patients.GetPat(formPayPlanDynamic.PatNumGoto),false);
 						ModuleSelected(formPayPlanDynamic.PatNumGoto,false);
 						return;
 					}
@@ -630,7 +582,7 @@ namespace OpenDental {
 					using FormPayPlan formPayPlan=new FormPayPlan(payplan);
 					formPayPlan.ShowDialog();
 					if(formPayPlan.PatNumGoto!=0) {
-						GlobalFormOpenDental.PatientSelected(Patients.GetPat(formPayPlan.PatNumGoto),false);
+						FormOpenDental.S_Contr_PatientSelected(Patients.GetPat(formPayPlan.PatNumGoto),false);
 						ModuleSelected(formPayPlan.PatNumGoto,false);
 						return;
 					}
@@ -641,7 +593,7 @@ namespace OpenDental {
 
 		private void gridAcctPat_CellClick(object sender,ODGridClickEventArgs e) {			
 			if(e.Row==gridAcctPat.ListGridRows.Count-1) {//last row
-				GlobalFormOpenDental.PatientSelected(_family.ListPats[0],false);
+				FormOpenDental.S_Contr_PatientSelected(_family.ListPats[0],false);
 				ModuleSelected(_family.ListPats[0].PatNum,true);
 				return;
 			}
@@ -650,7 +602,7 @@ namespace OpenDental {
 			if(patient==null) {
 				return;
 			}
-			GlobalFormOpenDental.PatientSelected(patient,false);
+			FormOpenDental.S_Contr_PatientSelected(patient,false);
 			ModuleSelected(patNum);
 		}
 
@@ -680,9 +632,8 @@ namespace OpenDental {
 					ModuleSelected(_patient.PatNum);
 					return;
 				}
-				FrmCommItem frmCommItem=new FrmCommItem(commlog);
-				frmCommItem.ShowDialog();
-				if(frmCommItem.IsDialogOK) {
+				using FormCommItem formCommItem=new FormCommItem(commlog);
+				if(formCommItem.ShowDialog()==DialogResult.OK) {
 					ModuleSelected(_patient.PatNum);
 				}
 				return;
@@ -753,14 +704,14 @@ namespace OpenDental {
 				ModuleSelected(_patient.PatNum);
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.PatientEdit)) {
+			if(!Security.IsAuthorized(Permissions.PatientEdit)) {
 				return;
 			}
 			using FormPatientEdit formPatientEdit=new FormPatientEdit(_patient,_family);
 			formPatientEdit.IsNew=false;
 			formPatientEdit.ShowDialog();
 			if(formPatientEdit.DialogResult==DialogResult.OK) {
-				GlobalFormOpenDental.PatientSelected(_patient,false);
+				FormOpenDental.S_Contr_PatientSelected(_patient,false);
 			}
 			ModuleSelected(_patient.PatNum);
 		}
@@ -782,7 +733,7 @@ namespace OpenDental {
 				return;
 			}
 			if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Would you like to recall this payment plan from the mobile device?")) {
-				MobileNotifications.CI_RemovePaymentPlan(payPlan.MobileAppDeviceNum,payPlan);
+				PushNotificationUtils.CI_RemovePaymentPlan(payPlan.MobileAppDeviceNum,payPlan);
 				//Signalods.SetInvalid(InvalidType.AccModule,KeyType.PatNum,payPlan.PatNum);
 				return;
 			}
@@ -809,7 +760,7 @@ namespace OpenDental {
 				using FormPayPlanDynamic formPayPlanDynamic=new FormPayPlanDynamic(payPlan);
 				formPayPlanDynamic.ShowDialog();
 				if(formPayPlanDynamic.PatNumGoto!=0) {
-					GlobalFormOpenDental.PatientSelected(Patients.GetPat(formPayPlanDynamic.PatNumGoto),false);
+					FormOpenDental.S_Contr_PatientSelected(Patients.GetPat(formPayPlanDynamic.PatNumGoto),false);
 					ModuleSelected(formPayPlanDynamic.PatNumGoto,false);
 					return;
 				}
@@ -819,7 +770,7 @@ namespace OpenDental {
 			using FormPayPlan formPayPlan=new FormPayPlan(payPlan);
 			formPayPlan.ShowDialog();
 			if(formPayPlan.PatNumGoto!=0) {
-				GlobalFormOpenDental.PatientSelected(Patients.GetPat(formPayPlan.PatNumGoto),false);
+				FormOpenDental.S_Contr_PatientSelected(Patients.GetPat(formPayPlan.PatNumGoto),false);
 				ModuleSelected(formPayPlan.PatNumGoto,false);
 				return;
 			}
@@ -899,7 +850,7 @@ namespace OpenDental {
 
 		#region Methods - Event Handlers Menus
 		private void menuInsMedical_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ClaimView)) {
+			if(!Security.IsAuthorized(Permissions.ClaimView)) {
 				return;
 			}
 			if(!ClaimL.CheckClearinghouseDefaults()) {
@@ -959,10 +910,6 @@ namespace OpenDental {
 				ListCreateClaimItems=GetCreateClaimItemsFromUI(),
 				CreateClaimData_=claimData,
 			};
-			//Block users for creating claims where the procedure can be associated with duplicate claim procs
-			if(ClaimL.WarnUsersForDuplicateClaimProcs(createClaimDataWrapper))  {
-				return;
-			}
 			Claim claim=new Claim();
 			claim.ClaimStatus="W";
 			claim.DateSent=DateTime.Today;
@@ -1160,37 +1107,6 @@ namespace OpenDental {
 			toolBarButPay_Click(0,isPrePay:true,isIncomeTransfer:true);
 		}
 
-		private void menuItemEditPayPlanCharge_Click(object sender,EventArgs e) {
-			DataTable table=_dataSetMain.Tables["account"];
-			int indexSelected = gridAccount.GetSelectedIndex();
-			long payPlanChargeNum=PIn.Long(table.Rows[indexSelected]["PayPlanChargeNum"].ToString());
-			List<PaySplit> listPaySplits=PaySplits.GetForPayPlanCharges(new List<long>{ payPlanChargeNum });
-			if(listPaySplits.Count>0) {
-				MsgBox.Show(Lan.g(this,"Charges with payments attached cannot be edited."));
-				return;
-			}
-			PayPlanCharge payPlanCharge = PayPlanCharges.GetOne(payPlanChargeNum);
-			PayPlan payPlan = PayPlans.GetOne(payPlanCharge.PayPlanNum);
-			using FormPayPlanChargeEdit formPayPlanChargeEdit = new FormPayPlanChargeEdit(payPlanCharge, payPlan);
-			formPayPlanChargeEdit.ShowDialog();
-			if(formPayPlanChargeEdit.DialogResult==DialogResult.Cancel) {
-				return;
-			}
-			//FormPayPlanChargeEdit sets PayPlanChargeCur to null when the user clicks the delete button on the form.
-			if(formPayPlanChargeEdit.PayPlanChargeCur==null) {
-				PayPlanCharges.Delete(payPlanCharge);
-				SecurityLogs.MakeLogEntry(EnumPermType.PayPlanChargeEdit,payPlanCharge.PatNum,"Deleted.");
-			}
-			else {
-				if(!formPayPlanChargeEdit.ListChangeLog.IsNullOrEmpty()) {
-					string log=PayPlans.GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
-					SecurityLogs.MakeLogEntry(EnumPermType.PayPlanChargeEdit,payPlanCharge.PatNum,log);
-				}
-				PayPlanCharges.Update(payPlanCharge);
-			}
-			ModuleSelected(_patient.PatNum);
-		}
-
 		private void menuItemDeletePayPlanCharge_Click(object sender,EventArgs e) {
 			DataTable table=_dataSetMain.Tables["account"];
 			List<long> listSelectedPayPlanChargeNums=new List<long>();
@@ -1205,16 +1121,7 @@ namespace OpenDental {
 			List<PayPlanCharge> listPayPlanCharges=PayPlanCharges.GetMany(listSelectedPayPlanChargeNums);
 			List<PayPlanCharge> listPayPlanChargesNotDeleted=PayPlanCharges.DeleteDebitsWithoutPayments(listPayPlanCharges);
 			if(listPayPlanChargesNotDeleted.Count > 0) {
-				string msgString="Cannot delete";
-				if(listPayPlanChargesNotDeleted.Exists(x=>x.Note.ToLower().Contains("down payment"))){
-					msgString+=" down payment charges, or";
-				}
-				msgString+=" charges with payments attached.";
-				MsgBox.Show(Lans.g(this,msgString));
-			}
-			if(listPayPlanCharges.Count!=listPayPlanChargesNotDeleted.Count) {
-				//at least one payplan charge was deleted.
-				SecurityLogs.MakeLogEntry(EnumPermType.PayPlanChargeEdit,_patient.PatNum,"Deleted.");
+				MsgBox.Show(Lan.g(this,"One or more of the selected charges couldn't be deleted. Only debit charges without payments were deleted."));
 			}
 			ModuleSelected(_patient.PatNum);
 		}
@@ -1267,7 +1174,7 @@ namespace OpenDental {
 						}
 						if(payPlanCharge.StatementNum!=0) {
 							continue;
-						}
+						}					
 					}
 					else {//item must be adjustment
 						Adjustment adjustment=Adjustments.GetOne(PIn.Long(table.Rows[i]["AdjNum"].ToString()));
@@ -1433,7 +1340,6 @@ namespace OpenDental {
 			if(formStatementOptions.DialogResult!=DialogResult.OK) {
 				Statements.DeleteStatements(new List<Statement> { statement });//detached from adjustments, procedurelogs, and paysplits as well
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
 			ModuleSelected(_patient.PatNum);
 		}
 
@@ -1507,11 +1413,7 @@ namespace OpenDental {
 			List<long> listPayPlanChargeNums=gridAccount.SelectedIndices
 				.Where(x => table.Rows[x]["PayPlanChargeNum"].ToString()!="0")
 				.Select(x => PIn.Long(table.Rows[x]["PayPlanChargeNum"].ToString())).ToList();//Debits attached to insurance payplans do not get shown in the account module.
-			long patNumStatement=_patient.Guarantor;
-			if(listPatNums.Count==1) {//If only one patient is selected
-				patNumStatement=_patient.PatNum; //Use the patient's info on statement instead of the guarantor's.
-			}
-			Statement statement=Statements.CreateLimitedStatement(listPatNums,patNumStatement,listPayClaimNums,listAdjNums,listPayNums,listProcNums,listPayPlanChargeNums);
+			Statement statement=Statements.CreateLimitedStatement(listPatNums,_patient.PatNum,listPayClaimNums,listAdjNums,listPayNums,listProcNums,listPayPlanChargeNums);
 			//All printing and emailing will be done from within the form:
 			using FormStatementOptions formStatementOptions=new FormStatementOptions();
 			formStatementOptions.StatementCur=statement;
@@ -1621,7 +1523,7 @@ namespace OpenDental {
 					.SelectMany(x => x.Value).ToList();
 				listPatients.AddRange(listPatientsSuperFamily);
 			}
-			else if(isFamMember) {
+			else if(isFamMember) { 
 				statement.LimitedCustomFamily=EnumLimitedCustomFamily.Family;
 			}
 			listPatients=listPatients.DistinctBy(x=>x.PatNum).ToList();
@@ -1659,11 +1561,11 @@ namespace OpenDental {
 				//If any patnums are selected that are not in the family, it must be a super family.
 				if(listPatNums.Any(x => !x.In(_family.GetPatNums().ToArray())))	{
 					isSuperFamLimitedStatement=true;
-				}
+				} 
 			}
-			EnumLimitedCustomFamily limitedCustomFamily=EnumLimitedCustomFamily.Family;
-			//Figure out which patient deserves to be the PatNum associated to this statement. Start with assumption we will be using the guarantor.
-			long patNumStatement=_patient.Guarantor;
+			EnumLimitedCustomFamily limitedCustomFamily=EnumLimitedCustomFamily.Patient;
+			//Figure out which patient deserves to be the PatNum associated to this statement.
+			long patNumStatement=_patient.PatNum;
 			long superFamNum=0;
 			if(isSuperFamLimitedStatement) {
 				//Only set SuperFamNum if we selected superfam entries.
@@ -1671,15 +1573,10 @@ namespace OpenDental {
 				patNumStatement=_patient.SuperFamily;
 				superFamNum=_patient.SuperFamily;
 			}
-			else if(listPatNums.Count==1) {
-				if(listPatNums[0]==_patient.Guarantor) {
-					//This is NOT a super family statement. Therefore, if the patient is the guarantor this is a patient statement.
-					limitedCustomFamily=EnumLimitedCustomFamily.Patient;
-				}
-				else if(listPatNums[0]==_patient.PatNum) {
-					//Use patient name on statement.
-					patNumStatement=_patient.PatNum;
-				}
+			else if(listPatNums.Count>1 || (listPatNums.Count==1 && listPatNums[0]!=_patient.PatNum)) {
+				//This is NOT a super family statement. Therefore, it is considered a family statement when multiple patients are selected OR the current patient isn't selected.
+				limitedCustomFamily=EnumLimitedCustomFamily.Family;
+				patNumStatement=_patient.Guarantor;
 			}
 			statementLimited=Statements.CreateLimitedStatement(listPatNums,patNumStatement,listPayClaimNums,listAdjNums,listPayNums,listProcNums,listPayPlanChargeNums,superFamily:superFamNum,limitedCustomFamily:limitedCustomFamily);
 			//All printing and emailing will be done from within the form:
@@ -1692,8 +1589,12 @@ namespace OpenDental {
 			ModuleSelected(_patient.PatNum);
 		}
 
+		private void menuItemPatPayPlan_Click(object sender,EventArgs e) {
+			PayPlanHelper(PayPlanModes.Patient);
+		}
+
 		private void menuItemQuickProcs_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.AccountProcsQuickAdd)) {
+			if(!Security.IsAuthorized(Permissions.AccountProcsQuickAdd)) {
 				return;
 			}
 			//One of the QuickCharge menu items was clicked.
@@ -1719,7 +1620,7 @@ namespace OpenDental {
 				}
 			}
 			if(listProcCodesAdded.Count>0) {
-				SecurityLogs.MakeLogEntry(EnumPermType.AccountProcsQuickAdd,_patient.PatNum
+				SecurityLogs.MakeLogEntry(Permissions.AccountProcsQuickAdd,_patient.PatNum
 					,Lan.g(this,"The following procedures were added via the Quick Charge button from the Account module")
 						+": "+string.Join(",",listProcCodesAdded));
 				ModuleSelected(_patient.PatNum);
@@ -1767,7 +1668,7 @@ namespace OpenDental {
 			repeatCharge.DateStop=DateTime.Today.AddMonths(11);
 			repeatCharge.IsEnabled=true;
 			repeatCharge.RepeatChargeNum=RepeatCharges.Insert(repeatCharge);
-			RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatCharge,EnumPermType.RepeatChargeCreate,_patient,isAutomated:false);
+			RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatCharge,Permissions.RepeatChargeCreate,_patient,isAutomated:false);
 			repeatCharge=new RepeatCharge();
 			repeatCharge.PatNum=_patient.PatNum;
 			repeatCharge.ProcCode="001";
@@ -1775,7 +1676,7 @@ namespace OpenDental {
 			repeatCharge.DateStart=DateTime.Today.AddYears(1);
 			repeatCharge.IsEnabled=true;
 			repeatCharge.RepeatChargeNum=RepeatCharges.Insert(repeatCharge);
-			RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatCharge,EnumPermType.RepeatChargeCreate,_patient,isAutomated:false);
+			RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatCharge,Permissions.RepeatChargeCreate,_patient,isAutomated:false);
 			ModuleSelected(_patient.PatNum);
 		}
 
@@ -1791,7 +1692,7 @@ namespace OpenDental {
 			repeatCharge.DateStart=DateTime.Today;
 			repeatCharge.IsEnabled=true;
 			repeatCharge.RepeatChargeNum=RepeatCharges.Insert(repeatCharge);
-			RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatCharge,EnumPermType.RepeatChargeCreate,_patient,isAutomated:false);
+			RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatCharge,Permissions.RepeatChargeCreate,_patient,isAutomated:false);
 			ModuleSelected(_patient.PatNum);
 		}
 
@@ -1824,9 +1725,8 @@ namespace OpenDental {
 					}
 					listKeysDisplayed.Add(str);
 				}
-				InputBox inputBox=new InputBox("Select a registration key to load into the Signup Portal",listKeysDisplayed);
-				inputBox.ShowDialog();
-				if(inputBox.IsDialogCancel) {
+				using InputBox inputBox=new InputBox("Select a registration key to load into the Signup Portal",listKeysDisplayed);
+				if(inputBox.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
 				registrationKey=listRegistrationKeys[inputBox.SelectedIndex];
@@ -1858,7 +1758,7 @@ namespace OpenDental {
 			repeatCharge.DateStop=DateTime.Today.AddMonths(11);
 			repeatCharge.IsEnabled=true;
 			repeatCharge.RepeatChargeNum=RepeatCharges.Insert(repeatCharge);
-			RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatCharge,EnumPermType.RepeatChargeCreate,_patient,isAutomated:false);
+			RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatCharge,Permissions.RepeatChargeCreate,_patient,isAutomated:false);
 			repeatCharge=new RepeatCharge();
 			repeatCharge.PatNum=_patient.PatNum;
 			repeatCharge.ProcCode="001";
@@ -1866,7 +1766,7 @@ namespace OpenDental {
 			repeatCharge.DateStart=DateTime.Today.AddYears(1);
 			repeatCharge.IsEnabled=true;
 			repeatCharge.RepeatChargeNum=RepeatCharges.Insert(repeatCharge);
-			RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatCharge,EnumPermType.RepeatChargeCreate,_patient,isAutomated:false);
+			RepeatCharges.InsertRepeatChargeChangeSecurityLogEntry(repeatCharge,Permissions.RepeatChargeCreate,_patient,isAutomated:false);
 			ModuleSelected(_patient.PatNum);
 		}
 
@@ -1894,12 +1794,11 @@ namespace OpenDental {
 			for(int i=0;i<listProcedures.Count;i++) {
 				Adjustments.CreateAdjustmentForSalesTax(listProcedures[i],true);
 			}
-			Signalods.SetInvalid(InvalidType.BillingList);
 			ModuleSelected(_patient.PatNum);
 		}
 
 		private void menuItemStatementEmail_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.EmailSend)) {
+			if(!Security.IsAuthorized(Permissions.EmailSend)) {
 				Cursor=Cursors.Default;
 				return;
 			}
@@ -2036,93 +1935,11 @@ namespace OpenDental {
 				MsgBox.Show(error);
 				return;
 			}
-			if(MobileAppDevices.ShouldCreateMobileNotification(_patient.PatNum, out MobileAppDevice mobileAppDevice)) {
+			if(MobileAppDevices.ShouldSendPush(_patient.PatNum, out MobileAppDevice mobileAppDevice)) {
 				PushPaymentToEclipboard(mobileAppDevice);
 				return;
 			}
 			OpenUnlockCodeForPayment();
-		}
-
-		private void menuItemSendMessageToPay_Click(object sender,EventArgs e) {
-			if(_patient==null) {
-				MsgBox.Show("Please select a patient first.");
-				return;
-			}
-			FormMessageToPayEdit formMessageToPayEdit=new FormMessageToPayEdit(_patient.PatNum);
-			formMessageToPayEdit.ShowDialog();
-			ModuleSelected(_patient.PatNum);
-		}
-
-		private void menuItemSnipAttachment_Click(object sender,EventArgs e) {
-			DataTable table=_dataSetMain.Tables["account"];
-			//Guaranteed to be exactly one claim selected (among possible other selections)
-			int idxClaimSelected=gridAccount.SelectedIndices.ToList().Find(x => table.Rows[x]["ClaimNum"].ToString()!="0");
-			long claimNum=PIn.Long(table.Rows[idxClaimSelected]["ClaimNum"].ToString());
-			if(claimNum==0) {
-				return;
-			}
-			Claim claim=Claims.GetClaim(claimNum);
-			if(!ValidateRightClickDXC(claim)) {
-				return;
-			}
-			FormClaimAttachSnipDXC formClaimAttachSnipDXC=new FormClaimAttachSnipDXC();
-			formClaimAttachSnipDXC.ClaimCur=claim;
-			formClaimAttachSnipDXC.Patient=_patient;
-			formClaimAttachSnipDXC.Show();
-		}
-
-		private void menuItemSelectImage_Click(object sender,EventArgs e) {
-			DataTable table=_dataSetMain.Tables["account"];
-			//Guaranteed to be exactly one claim selected (among possible other selections)
-			int idxClaimSelected=gridAccount.SelectedIndices.ToList().Find(x => table.Rows[x]["ClaimNum"].ToString()!="0");
-			long claimNum=PIn.Long(table.Rows[idxClaimSelected]["ClaimNum"].ToString());
-			if(claimNum==0) {
-				return;
-			}
-			Claim claim=Claims.GetClaim(claimNum);
-			if(!ValidateRightClickDXC(claim)) {
-				return;
-			}
-			using FormImagePickerDXC formImagePickerDXC=new FormImagePickerDXC();
-			formImagePickerDXC.PatientCur=_patient;
-			formImagePickerDXC.ClaimCur=claim;
-			formImagePickerDXC.ShowDialog();
-		}
-
-		private void menuItemPasteAttachment_Click(object sender,EventArgs e) {
-			DataTable table=_dataSetMain.Tables["account"];
-			//Guaranteed to be exactly one claim selected (among possible other selections)
-			int idxClaimSelected=gridAccount.SelectedIndices.ToList().Find(x => table.Rows[x]["ClaimNum"].ToString()!="0");
-			long claimNum=PIn.Long(table.Rows[idxClaimSelected]["ClaimNum"].ToString());
-			if(claimNum==0) {
-				return;
-			}
-			Claim claim=Claims.GetClaim(claimNum);
-			if(!ValidateRightClickDXC(claim)) {
-				return;
-			}
-			FormClaimAttachPasteDXC formClaimAttachPasteDXC=new FormClaimAttachPasteDXC();
-			formClaimAttachPasteDXC.ClaimCur=claim;
-			formClaimAttachPasteDXC.PatientCur=_patient;
-			formClaimAttachPasteDXC.Show();
-		}
-
-		private void menuItemAttachmentHistory_Click(object sender,EventArgs e) {
-			DataTable table=_dataSetMain.Tables["account"];
-			//Guaranteed to be exactly one claim selected (among possible other selections)
-			int idxClaimSelected=gridAccount.SelectedIndices.ToList().Find(x => table.Rows[x]["ClaimNum"].ToString()!="0");
-			long claimNum=PIn.Long(table.Rows[idxClaimSelected]["ClaimNum"].ToString());
-			if(claimNum==0) {
-				return;
-			}
-			Claim claim=Claims.GetClaim(claimNum);
-			if(!ValidateRightClickDXC(claim)) {//Validation now needed for sending Narratives
-				return;
-			}
-			using FormClaimAttachHistory formClaimAttachHistory=new FormClaimAttachHistory();
-			formClaimAttachHistory.ClaimCur=claim;
-			formClaimAttachHistory.PatientCur=_patient;
-			formClaimAttachHistory.ShowDialog();
 		}
 		#endregion Methods - Event Handlers MenuItem
 
@@ -2145,7 +1962,7 @@ namespace OpenDental {
 			if(taskObjectType==TaskObjectType.Patient) {
 				if(keyNum!=0) {
 					Patient patient=Patients.GetPat(keyNum);
-					GlobalFormOpenDental.PatientSelected(patient,false);
+					FormOpenDental.S_Contr_PatientSelected(patient,false);
 					ModuleSelected(patient.PatNum);
 					return;
 				}
@@ -2206,7 +2023,7 @@ namespace OpenDental {
 			}
 			Provider provider=Providers.GetProv(_patient.PriProv);
 			if(AddProcAndValidate(quickProcText,provider)) {
-				SecurityLogs.MakeLogEntry(EnumPermType.AccountProcsQuickAdd,_patient.PatNum
+				SecurityLogs.MakeLogEntry(Permissions.AccountProcsQuickAdd,_patient.PatNum
 					,Lan.g(this,"The following procedures were added via the Quick Charge button from the Account module")
 						+": "+string.Join(",",quickProcText));
 				ModuleSelected(_patient.PatNum);
@@ -2255,16 +2072,10 @@ namespace OpenDental {
 								+"Yes - this payment is directly from the debtor/guarantor\r\n\r\n"
 								+"No - this payment is from TSI"));
 						List<InputBoxParam> listInputBoxParams=new List<InputBoxParam>();
-						InputBoxParam inputBoxParam=new InputBoxParam();
-						inputBoxParam.InputBoxType_=InputBoxType.ValidDouble;
-						inputBoxParam.LabelText=Lan.g(this,"Please enter an amount: ");
-						listInputBoxParams.Add(inputBoxParam);
+						listInputBoxParams.Add(new InputBoxParam(InputBoxType.ValidDouble,Lan.g(this,"Please enter an amount: ")));
 						if(_family.ListPats.Length>1){
-							inputBoxParam=new InputBoxParam();
-							inputBoxParam.SizeParam=new System.Windows.Size(120,20);
-							inputBoxParam.InputBoxType_=InputBoxType.CheckBox;
-							inputBoxParam.Text=Lan.g(this," - Prefer this patient");
-							listInputBoxParams.Add(inputBoxParam);
+							listInputBoxParams.Add(new InputBoxParam(InputBoxType.CheckBox,"",Lan.g(this," - Prefer this patient"),
+								new Size(LayoutManager.Scale(120),20)));
 						}
 						Func<string, bool> funcOkClick=new Func<string, bool>((text) => {
 							if(text=="") {
@@ -2273,19 +2084,15 @@ namespace OpenDental {
 							}
 							return true;//Allow user to the payment window.
 							});
-						InputBox inputBox=new InputBox(listInputBoxParams);
-						inputBox.FuncOkClick=funcOkClick;
+						InputBox inputBox=new InputBox(listInputBoxParams,funcOkClick);
 						Plugins.HookAddCode(this,"ContrAccount.ToolBarMain_ButtonClick_paymentInputBox",inputBox,_patient);
-						inputBox.ShowDialog();
-						if(inputBox.IsDialogCancel) {
+						if(inputBox.ShowDialog()!=DialogResult.OK) {
+							inputBox.Dispose();
 							break;
 						}
 						Plugins.HookAddCode(this,"ControlAccount.ToolBarMain_ButtonClick_afterPaymentInputBox",inputBox,_patient);
-						bool preferCurrentPat=false;
-						if(inputBox.BoolResult){
-							preferCurrentPat=true;
-						}
-						toolBarButPay_Click(PIn.Double(inputBox.StringResult),preferCurrentPat:preferCurrentPat,isTsiPayment:isTsiPayment);
+						toolBarButPay_Click(PIn.Double(inputBox.textResult.Text),preferCurrentPat:(inputBox.checkBoxResult?.Checked??false),isTsiPayment:isTsiPayment);
+						inputBox.Dispose();
 						break;
 					case "Adjustment":
 						toolBarButAdj_Click();
@@ -2322,7 +2129,7 @@ namespace OpenDental {
 				}
 			}
 			else if(e.Button.Tag.GetType()==typeof(Program)) {
-				WpfControls.ProgramL.Execute(((Program)e.Button.Tag).ProgramNum,_patient);
+				ProgramL.Execute(((Program)e.Button.Tag).ProgramNum,_patient);
 			}
 			Plugins.HookAddCode(this,"ContrAccount.ToolBarMain_ButtonClick_end",_patient,e);
 		}
@@ -2396,10 +2203,10 @@ namespace OpenDental {
 			textQuickProcs.MouseDown+=textQuickCharge_MouseClick;
 			textQuickProcs.MouseCaptureChanged+=textQuickCharge_CaptureChange;
 			textQuickProcs.LostFocus+=textQuickCharge_FocusLost;
+			splitContainerAccountCommLog.SplitterDistance=splitContainerParent.Panel2.Height * 3/5;//Make Account grid slightly bigger than commlog
 			//This just makes the patient information grid show up or not.
 			_listDisplayFieldsPatInfo=DisplayFields.GetForCategory(DisplayFieldCategory.AccountPatientInformation);
 			LayoutPanels();//Only place that we call this outside of LayoutPanelsAndRefreshMainGrids() since no grid data has been loaded yet
-			splitContainerAccountCommLog.SplitterDistance=splitContainerParent.Panel2.Height * 3/5;//Make Account grid slightly bigger than commlog
 			checkShowFamilyComm.Checked=PrefC.GetBoolSilent(PrefName.ShowAccountFamilyCommEntries,true);
 			checkShowCompletePayPlans.Checked=PrefC.GetBool(PrefName.AccountShowCompletedPaymentPlans);
 			Plugins.HookAddCode(this,"ContrAccount.InitializeOnStartup_end");
@@ -2447,10 +2254,9 @@ namespace OpenDental {
 			toolBarButton.Style=ODToolBarButtonStyle.DropDownButton;
 			toolBarButton.DropDownMenu=contextMenuStatement;
 			ToolBarMain.Buttons.Add(toolBarButton);
-			ProgramL.LoadToolBar(ToolBarMain,EnumToolBar.AccountModule);
+			ProgramL.LoadToolbar(ToolBarMain,ToolBarsAvail.AccountModule);
 			ToolBarMain.Invalidate();
 			Plugins.HookAddCode(this,"ContrAccount.LayoutToolBar_end",_patient);
-			UpdateToolbarButtons();
 		}
 
 		///<summary></summary>
@@ -2478,59 +2284,11 @@ namespace OpenDental {
 			if(_patient!=null && _patient.PatStatus==PatientStatus.Deleted) {
 				MsgBox.Show("Selected patient has been deleted by another workstation.");
 				PatientL.RemoveFromMenu(_patient.PatNum);
-				GlobalFormOpenDental.PatientSelected(new Patient(),false);
+				FormOpenDental.S_Contr_PatientSelected(new Patient(),false);
 				RefreshModuleData(0,isSelectingFamily);
-			}
-			if(_patient!=null && _patient.PatStatus==PatientStatus.Archived && !Security.IsAuthorized(EnumPermType.ArchivedPatientSelect,suppressMessage:true)) {
-				GlobalFormOpenDental.PatientSelected(new Patient(),false);
-				RefreshModuleData(0,isSelectingFamily);
-			}
-			if(_patient!=null) {//Only when a patient is selected
-				//This section could be improved to use objects once we switch from DataSet to lists.
-				DataTable dataTable=_loadData.DataSetMain.Tables["account"];
-				List<DataRow> listDataRowsClaims=dataTable.Select().ToList().FindAll(x => x["ClaimNum"].ToString()!="0");
-				//Get a list of procnums of procedures that do not have a status of complete. Since the logic that fills the account
-				//table only selects completed procedures, any procnums not in the account table must have a different procstatus.
-				List<long> listProcNumsAll=dataTable.Select().Select(x => PIn.Long(x["ProcNum"].ToString())).ToList();
-				List<long> listProcNumsIncompleteClaims=string.Join(",",listDataRowsClaims.Select(x => x["procsOnObj"]))//All procNums on the all claims in account
-					.Split(",",StringSplitOptions.RemoveEmptyEntries)
-					.Distinct()
-					.Select(x => PIn.Long(x))
-					.ToList()
-					//get procNums that are on claim but not in account
-					.FindAll(y => !y.In(listProcNumsAll.ToArray()));
-				//Warn the user if they have any incomplete procs attached to claims.
-				if(!listProcNumsIncompleteClaims.IsNullOrEmpty()) {
-					StringBuilder stringBuilder=new StringBuilder(Lans.g(this,"The following procedure(s) are incomplete and attached to claim(s). It is recommended that all procedures attached to claims be completed")+":\r\n");
-					//These extra queries should not be executed very often, and they will only return a small dataset in most cases
-					List<Procedure> listProcedures=Procedures.GetManyProc(listProcNumsIncompleteClaims,includeNote:false);
-					for(int i=0;i<listProcedures.Count;i++) {
-						stringBuilder.AppendLine(listProcedures[i].ProcDate.ToShortDateString()+"\t"+Procedures.GetDescription(listProcedures[i],forAccount:true));
-					}
-					MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(stringBuilder.ToString());
-					msgBoxCopyPaste.Show();
-				}
 			}
 			Logger.LogAction("RefreshModuleScreen",LogPath.AccountModule,() => RefreshModuleScreen(isSelectingFamily));
-			ODEvent.Fire(ODEventType.ModuleSelected,_loadData);
-			if(_patient!=null && DatabaseIntegrities.DoShowPopup(_patient.PatNum,EnumModuleType.Account)) {
-				List<PayPlan> listPayPlans=PayPlans.GetForPatNum(_patient.PatNum);
-				DataTable tableAccount=_dataSetMain.Tables["account"];
-				List<long> listPayNums=tableAccount.Select().Select(x => PIn.Long(x["PayNum"].ToString())).ToList();
-				listPayNums.RemoveAll(x => x==0); //remove all non payment PKs
-				List<PaySplit> listPaySplits=PaySplits.GetForPayments(listPayNums);
-				List<Claim> listClaims=new List<Claim>(_loadData.ListClaims);
-				List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(new List<long>(){_patient.PatNum});
-				bool areHashesValid=Patients.AreAllHashesValid(_patient,new List<Appointment>(),listPayPlans,listPaySplits,listClaims,listClaimProcs);
-				if(!areHashesValid) {
-					DatabaseIntegrities.AddPatientModuleToCache(_patient.PatNum,EnumModuleType.Account); //Add to cached list for next time
-					//show popup
-					DatabaseIntegrity databaseIntegrity=DatabaseIntegrities.GetModule();
-					FrmDatabaseIntegrity frmDatabaseIntegrity=new FrmDatabaseIntegrity();
-					frmDatabaseIntegrity.MessageToShow=databaseIntegrity.Message;
-					frmDatabaseIntegrity.ShowDialog();
-				}
-			}
+			PatientDashboardDataEvent.Fire(ODEventType.ModuleSelected,_loadData);
 			Plugins.HookAddCode(this,"ContrAccount.ModuleSelected_end",patNum,isSelectingFamily);
 		}
 
@@ -2750,11 +2508,11 @@ namespace OpenDental {
 		}
 
 		private void toolBarButQuickProcs_Click() {
-			if(!Security.IsAuthorized(EnumPermType.AccountProcsQuickAdd)) {
+			if(!Security.IsAuthorized(Permissions.AccountProcsQuickAdd)) {
 				return;
 			}
 			//Main QuickCharge button was clicked.  Create a textbox that can be entered so users can insert manually entered proc codes.
-			if(!Security.IsAuthorized(EnumPermType.ProcComplCreate,DateTime.Today,true)) {//Button doesn't show up unless they have AccountQuickCharge permission. 
+			if(!Security.IsAuthorized(Permissions.ProcComplCreate,true)) {//Button doesn't show up unless they have AccountQuickCharge permission. 
 				//user can still use dropdown, just not type in codes.
 				contextMenuQuickProcs.Show(this,new Point(_butQuickProcs.Bounds.X,_butQuickProcs.Bounds.Y+_butQuickProcs.Bounds.Height));
 				return; 
@@ -2777,15 +2535,51 @@ namespace OpenDental {
 		}
 
 		private void toolBarButStatement_Click() {
-			DateTime dateStop=DateTime.MinValue;
+			Statement statement=new Statement();
+			statement.PatNum=_patient.Guarantor;
+			statement.DateSent=DateTime.Today;
+			statement.IsSent=true;
+			statement.Mode_=StatementMode.InPerson;
+			statement.HidePayment=false;
+			statement.SinglePatient=false;
+			statement.Intermingled=PrefC.GetBool(PrefName.IntermingleFamilyDefault);
+			statement.StatementType=StmtType.NotSet;
+			statement.DateRangeTo=DateTime.Today;//This is needed for payment plan accuracy.//new DateTime(2200,1,1);
 			if(textDateEnd.IsValid() && textDateEnd.Text!="") {
-				dateStop=PIn.Date(textDateEnd.Text);
+				statement.DateRangeTo=PIn.Date(textDateEnd.Text);
 			}
-			DateTime dateStart=DateTime.MinValue;
+			statement.DateRangeFrom=DateTime.MinValue;
 			if(textDateStart.IsValid() && textDateStart.Text!="") {//textDateStart has ultimate precedence. User may have intentionally set the date range for statement.
-				dateStart=PIn.Date(textDateStart.Text);
+				statement.DateRangeFrom=PIn.Date(textDateStart.Text);
 			}
-			Statement statement=Statements.GenerateStatement(_patient,dateStart,dateStop,StatementMode.InPerson);
+			else {//Use preferences to determine the "from" date.
+				long billingDefaultsLastDaysPref=PrefC.GetLong(PrefName.BillingDefaultsLastDays);
+				if(billingDefaultsLastDaysPref > 0) {//0 days means ignore preference and show everything.
+					statement.DateRangeFrom=DateTime.Today.AddDays(-billingDefaultsLastDaysPref);
+				}
+				if(PrefC.GetBool(PrefName.BillingShowTransSinceBalZero)) {
+					Patient patient=Patients.GetPat(statement.PatNum);
+					List<PatAging> listPatAgings=Patients.GetAgingListSimple(new List<long> {}, new List<long> { patient.Guarantor },true);
+					DataTable tableBals=Ledgers.GetDateBalanceBegan(listPatAgings,isSuperBills:false);//More Options selection has a super family option. We would need new checkbox here.
+					if(tableBals.Rows.Count > 0) {
+						DateTime dateTimeFrom=PIn.Date(tableBals.Rows[0]["DateZeroBal"].ToString());
+						if(dateTimeFrom > statement.DateRangeFrom) {//Zero balance date range has precedence if it's more recent than billing default date range.
+							statement.DateRangeFrom=dateTimeFrom;
+						}
+					}
+				}
+			}
+			statement.Note="";
+			statement.NoteBold="";
+			Patient patientGuarantor=null;
+			if(_patient!=null) {
+				patientGuarantor=Patients.GetPat(_patient.Guarantor);
+			}
+			if(patientGuarantor!=null) {
+				statement.IsBalValid=true;
+				statement.BalTotal=patientGuarantor.BalTotal;
+				statement.InsEst=patientGuarantor.InsEst;
+			}
 			PrintStatement(statement);
 			ModuleSelected(_patient.PatNum);
 		}
@@ -2800,7 +2594,6 @@ namespace OpenDental {
 				_patient=null;
 				_family=null;
 				_dataSetMain=null;
-				_listPaySplitsHidden.Clear();
 				Plugins.HookAddCode(this,"ContrAccount.RefreshModuleData_null");
 				return;
 			}
@@ -2848,7 +2641,47 @@ namespace OpenDental {
 		}
 
 		private void RefreshModuleScreen(bool isSelectingFamily) {
-			UpdateToolbarButtons();
+			if(_patient==null){
+				tabControlAccount.Enabled=false;
+				ToolBarMain.Buttons["Payment"].Enabled=false;
+				ToolBarMain.Buttons["Adjustment"].Enabled=false;
+				ToolBarMain.Buttons["Insurance"].Enabled=false;
+				ToolBarMain.Buttons["PayPlan"].Enabled=false;
+				ToolBarMain.Buttons["InstallPlan"].Enabled=false;
+				if(ToolBarMain.Buttons["QuickProcs"]!=null) {
+					ToolBarMain.Buttons["QuickProcs"].Enabled=false;
+				}
+				if(ToolBarMain.Buttons["RepeatCharge"]!=null) {
+					ToolBarMain.Buttons["RepeatCharge"].Enabled=false;
+				}
+				ToolBarMain.Buttons["Statement"].Enabled=false;
+				ToolBarMain.Invalidate();
+				textUrgFinNote.Enabled=false;
+				textFinNote.Enabled=false;
+				//butComm.Enabled=false;
+				tabControlShow.Enabled=false;
+				Plugins.HookAddCode(this,"ContrAccount.RefreshModuleScreen_null");
+			}
+			else{
+				tabControlAccount.Enabled=true;
+				ToolBarMain.Buttons["Payment"].Enabled=true;
+				ToolBarMain.Buttons["Adjustment"].Enabled=true;
+				ToolBarMain.Buttons["Insurance"].Enabled=true;
+				ToolBarMain.Buttons["PayPlan"].Enabled=true;
+				ToolBarMain.Buttons["InstallPlan"].Enabled=true;
+				if(ToolBarMain.Buttons["QuickProcs"]!=null) {
+					ToolBarMain.Buttons["QuickProcs"].Enabled=true;
+				}
+				if(ToolBarMain.Buttons["RepeatCharge"]!=null) {
+					ToolBarMain.Buttons["RepeatCharge"].Enabled=true;
+				} 
+				ToolBarMain.Buttons["Statement"].Enabled=true;
+				ToolBarMain.Invalidate();
+				textUrgFinNote.Enabled=true;
+				textFinNote.Enabled=true;
+				//butComm.Enabled=true;
+				tabControlShow.Enabled=true;
+			}
 			Logger.LogAction("FillPats",LogPath.AccountModule,() => FillPats(isSelectingFamily));
 			Logger.LogAction("FillMisc",LogPath.AccountModule,() => FillMisc());
 			Logger.LogAction("FillAging",LogPath.AccountModule,() => FillAging(isSelectingFamily));
@@ -2957,52 +2790,6 @@ namespace OpenDental {
 			}
 			gridOrthoCases.EndUpdate();
 		}
-
-		///<summary>Enables toolbar buttons if a patient is selected, otherwise disables them.</summary>
-		private void UpdateToolbarButtons() {
-			if(_patient==null) {
-				tabControlAccount.Enabled=false;
-				ToolBarMain.Buttons["Payment"].Enabled=false;
-				ToolBarMain.Buttons["Adjustment"].Enabled=false;
-				ToolBarMain.Buttons["Insurance"].Enabled=false;
-				ToolBarMain.Buttons["PayPlan"].Enabled=false;
-				ToolBarMain.Buttons["InstallPlan"].Enabled=false;
-				if(ToolBarMain.Buttons["QuickProcs"]!=null) {
-					ToolBarMain.Buttons["QuickProcs"].Enabled=false;
-				}
-				if(ToolBarMain.Buttons["RepeatCharge"]!=null) {
-					ToolBarMain.Buttons["RepeatCharge"].Enabled=false;
-				}
-				ToolBarMain.Buttons["Statement"].Enabled=false;
-				ToolBarMain.Invalidate();
-				textUrgFinNote.Enabled=false;
-				textFinNote.Enabled=false;
-				//butComm.Enabled=false;
-				tabControlShow.Enabled=false;
-				Plugins.HookAddCode(this,"ContrAccount.RefreshModuleScreen_null");
-			}
-			else {
-				tabControlAccount.Enabled=true;
-				ToolBarMain.Buttons["Payment"].Enabled=true;
-				ToolBarMain.Buttons["Adjustment"].Enabled=true;
-				ToolBarMain.Buttons["Insurance"].Enabled=true;
-				ToolBarMain.Buttons["PayPlan"].Enabled=true;
-				ToolBarMain.Buttons["InstallPlan"].Enabled=true;
-				if(ToolBarMain.Buttons["QuickProcs"]!=null) {
-					ToolBarMain.Buttons["QuickProcs"].Enabled=true;
-				}
-				if(ToolBarMain.Buttons["RepeatCharge"]!=null) {
-					ToolBarMain.Buttons["RepeatCharge"].Enabled=true;
-				}
-				ToolBarMain.Buttons["Statement"].Enabled=true;
-				ToolBarMain.Invalidate();
-				textUrgFinNote.Enabled=true;
-				textFinNote.Enabled=true;
-				//butComm.Enabled=true;
-				tabControlShow.Enabled=true;
-			}
-			ToolBarMain.Invalidate();
-		}
 		#endregion Methods - Private Refresh
 
 		#region Methods - Private Fill
@@ -3110,8 +2897,8 @@ namespace OpenDental {
 				gridUnearnedBreakdown.ListGridRows.Add(row);
 			}
 			gridUnearnedBreakdown.EndUpdate();
-			int gridWidth=LayoutManager.Scale(gridUnearnedBreakdown.Columns.Sum(x => x.ColWidth));
-			LayoutManager.MoveSize(gridUnearnedBreakdown,new Size(gridWidth,gridUnearnedBreakdown.ListGridRows.Sum(x => x.State.HeightTotal)+24));//+24 for header height 15 plus 3 extra pixels for line spacing + 6 for font increments that would cause a scrollbar
+			LayoutManager.MoveSize(gridUnearnedBreakdown,new Size(gridUnearnedBreakdown.Columns.Sum(x => x.ColWidth),
+				gridUnearnedBreakdown.ListGridRows.Sum(x => x.State.HeightTotal)+18));//+18 for header height 15 plus 3 extra pixels for line spacing
 			LayoutManager.MoveLocation(gridUnearnedBreakdown,new Point(groupBoxFamilyIns.Left-1,groupBoxFamilyIns.Top-1));
 			gridUnearnedBreakdown.BringToFront();
 		}
@@ -3643,7 +3430,10 @@ namespace OpenDental {
 
 		private void FillPaymentPlans() {
 			_patientPortionBalanceTotal=0;
-			_showGridPayPlan=false;
+			//Uncollapse the first panel just in case. If this is left collapsed, setting visible properties on controls within it will have no effect
+			splitContainerParent.Panel1Collapsed=false;
+			gridPayPlan.Visible=false;
+			splitContainerRepChargesPP.Panel2Collapsed=true;
 			if(_patient==null) {
 				return;
 			}
@@ -3670,7 +3460,8 @@ namespace OpenDental {
 					return;//no need to do anything else.
 				}
 			}
-			_showGridPayPlan=true;
+			splitContainerRepChargesPP.Panel2Collapsed=false;
+			gridPayPlan.Visible=true;
 			gridPayPlan.BeginUpdate();
 			gridPayPlan.Columns.Clear();
 			GridColumn col=new GridColumn(Lan.g("TablePaymentPlans","Date"),65);
@@ -3713,21 +3504,20 @@ namespace OpenDental {
 				}
 				row=new GridRow();
 				row.Cells.Add(table.Rows[i]["date"].ToString());
-				if(table.Rows[i]["InstallmentPlanNum"].ToString()!="0" && table.Rows[i]["PatNum"].ToString()!=_patient.Guarantor.ToString()) {//Installment plan and not on guar
+                if(table.Rows[i]["InstallmentPlanNum"].ToString()!="0" && table.Rows[i]["PatNum"].ToString()!=_patient.Guarantor.ToString()) {//Installment plan and not on guar
 					cell=new GridCell(((string)"Invalid Guarantor"));
 					cell.Bold=YN.Yes;
 					cell.ColorText=Color.Red;
 				}
 				else {
-					long payPlanNum=PIn.Long(table.Rows[i]["PayPlanNum"].ToString());
-					PayPlan payPlan=PayPlans.GetOne(payPlanNum);
-					cell=new GridCell("");
-					//Installment Plans have no payPlanNum so we must skip this next if-statement if we do not receive one.
-					if(payPlan!=null && payPlan.PlanNum==0) {//Only test via PlanNum for Insurance PayPlans as per RPPayPlan.cs' logic.
-						cell=new GridCell(table.Rows[i]["guarantor"].ToString());//If not an Insurance PayPlan set guarantor as per usual.
-					}
+                    long payPlanNum=PIn.Long(table.Rows[i]["PayPlanNum"].ToString());
+                    PayPlan payPlan=PayPlans.GetOne(payPlanNum);
+                    cell=new GridCell("");
+                    if(payPlan.PlanNum==0) {//Only test via PlanNum for Insurance PayPlans as per RPPayPlan.cs' logic.
+                        cell=new GridCell(table.Rows[i]["guarantor"].ToString());//If not an Insurance PayPlan set guarantor as per usual.
+                    }
 				}
-				row.Cells.Add(cell);
+                row.Cells.Add(cell);
 				row.Cells.Add(table.Rows[i]["patient"].ToString());
 				row.Cells.Add(table.Rows[i]["type"].ToString());
 				long planCategory=PIn.Long(table.Rows[i]["PlanCategory"].ToString());
@@ -3779,7 +3569,10 @@ namespace OpenDental {
 
 		///<summary></summary>
 		private void FillRepeatCharges() {
-			_showGridRepeating=false;
+			//Uncollapse the first panel just in case. If this is left collapsed, setting visible properties on controls within it will have no effect
+			splitContainerParent.Panel1Collapsed=false;
+			gridRepeat.Visible=false;
+			splitContainerRepChargesPP.Panel1Collapsed=true;
 			if(_patient==null) {
 				return;
 			}
@@ -3793,7 +3586,8 @@ namespace OpenDental {
 			else {
 				gridRepeat.Title=Lan.g(gridRepeat,"Repeat Charges");
 			}
-			_showGridRepeating=true;
+			splitContainerRepChargesPP.Panel1Collapsed=false;
+			gridRepeat.Visible=true;
 			gridRepeat.BeginUpdate();
 			gridRepeat.Columns.Clear();
 			GridColumn col=new GridColumn(Lan.g("TableRepeatCharges","Description"),150);
@@ -4105,7 +3899,7 @@ namespace OpenDental {
 				return false;
 			}
 			if(procedure.ProcStatus==ProcStat.C) {
-				AutomationL.Trigger(EnumAutomationTrigger.ProcedureComplete,new List<string>() { ProcedureCodes.GetStringProcCode(procedure.CodeNum) },_patient.PatNum);
+				AutomationL.Trigger(AutomationTrigger.CompleteProcedure,new List<string>() { ProcedureCodes.GetStringProcCode(procedure.CodeNum) },_patient.PatNum);
 				Procedures.AfterProcsSetComplete(new List<Procedure>() { procedure });
 			}
 			return true;
@@ -4143,25 +3937,17 @@ namespace OpenDental {
 			LayoutManager.MoveLocation(splitContainerParent,new Point(0,LayoutManager.Scale(63)));
 			LayoutManager.MoveSize(splitContainerParent,new Size(tabControlShow.Left-1,Height-splitContainerParent.Top-1));
 			//If the two top grids are not visible, collapse the entire parent panel 1 so it does not show extra white space.
-			splitContainerParent.Panel1Collapsed=!_showGridPayPlan && !_showGridRepeating;
-			if(!splitContainerParent.Panel1Collapsed) {
-				if(_showGridRepeating) {
-					splitContainerRepChargesPP.Panel1Collapsed=false;
-				}
-				else {
-					splitContainerRepChargesPP.Panel1Collapsed=true;
-					splitContainerParent.Panel1MinSize=LayoutManager.Scale(20);
-				}
-				if(_showGridPayPlan) {
-					splitContainerRepChargesPP.Panel2Collapsed=false;
-				}
-				else{
-					splitContainerRepChargesPP.Panel2Collapsed=true;
-					splitContainerParent.Panel1MinSize=LayoutManager.Scale(20);
-				}
+			splitContainerParent.Panel1Collapsed=!gridRepeat.Visible && !gridPayPlan.Visible;
+			if(!gridRepeat.Visible) {
+				splitContainerRepChargesPP.Panel1Collapsed=true;
+				splitContainerParent.Panel1MinSize=LayoutManager.Scale(20);
+			}
+			if(!gridPayPlan.Visible) {
+				splitContainerRepChargesPP.Panel2Collapsed=true;
+				splitContainerParent.Panel1MinSize=LayoutManager.Scale(20);
 			}
 			//If both visible, make sure the minimum size is set back to orignal value.
-			if(_showGridPayPlan && _showGridRepeating) {
+			if(gridPayPlan.Visible && gridRepeat.Visible) {
 				splitContainerParent.Panel1MinSize=LayoutManager.Scale(45);
 			}
 			if(gridAccount.HScrollVisible){
@@ -4219,7 +4005,7 @@ namespace OpenDental {
 		}
 
 		///<summary>Returns true if the payment plan should be displayed.</summary>
-		private bool DoShowPayPlan(bool doShowCompletedPlans,bool isClosed,double balance) {
+		private bool DoShowPayPlan(bool doShowCompletedPlans,bool isClosed,double balance) {	
 			if(doShowCompletedPlans) {
 				return true;
 			}		
@@ -4277,7 +4063,7 @@ namespace OpenDental {
 			List<MobileAppDevice> listMobileAppDevices=MobileAppDevices.GetAll();
 			MobileAppDevice mobileAppDevice=listMobileAppDevices.FirstOrDefault(x => x.PatNum==_patient.PatNum);
 			if(mobileAppDevice!=null && mobileAppDevice.LastCheckInActivity>DateTime.Now.AddHours(-1)) {
-				MobileNotifications.CI_RefreshPayment(mobileAppDevice.MobileAppDeviceNum,_patient.PatNum, out string errorMsg);
+				PushNotificationUtils.CI_RefreshPayment(mobileAppDevice.MobileAppDeviceNum,_patient.PatNum, out string errorMsg);
 			}
 			SheetDef sheetDef=SheetUtil.GetStatementSheetDef(statement);
 			Sheet sheet=SheetUtil.CreateSheet(sheetDef,statement.PatNum,statement.HidePayment);
@@ -4331,11 +4117,21 @@ namespace OpenDental {
 			string guarFolder=ImageStore.GetPatientFolder(patientGuarantor,ImageStore.GetPreferredAtoZpath());
 			//OpenDental.Imaging.ImageStoreBase imageStore = OpenDental.Imaging.ImageStore.GetImageStore(guar);
 			if(statement.Mode_==StatementMode.Email) {
-				if(!Security.IsAuthorized(EnumPermType.EmailSend)) {
+				if(!Security.IsAuthorized(Permissions.EmailSend)) {
 					Cursor=Cursors.Default;
 					return;
 				}
-				EmailMessage emailMessage=EmailMessages.CreateEmailMessageForStatement(statement,patientGuarantor,guarFolder);
+				string attachPath=EmailAttaches.GetAttachPath();
+				Random random=new Random();
+				string fileName=DateTime.Now.ToString("yyyyMMdd")+DateTime.Now.TimeOfDay.Ticks.ToString()+random.Next(1000).ToString()+".pdf";
+				string filePathAndName=FileAtoZ.CombinePaths(attachPath,fileName);
+				FileAtoZ.Copy(ImageStore.GetFilePath(Documents.GetByNum(statement.DocNum),guarFolder),filePathAndName,FileAtoZSourceDestination.AtoZToAtoZ);
+				//Process.Start(filePathAndName);
+				EmailMessage emailMessage=Statements.GetEmailMessageForStatement(statement,patientGuarantor);
+				EmailAttach emailAttach=new EmailAttach();
+				emailAttach.DisplayedFileName="Statement.pdf";
+				emailAttach.ActualFileName=fileName;
+				emailMessage.Attachments.Add(emailAttach);
 				using FormEmailMessageEdit formEmailMessageEdit=new FormEmailMessageEdit(emailMessage,EmailAddresses.GetByClinic(patientGuarantor.ClinicNum));
 				formEmailMessageEdit.IsNew=true;
 				formEmailMessageEdit.ShowDialog();
@@ -4392,6 +4188,7 @@ namespace OpenDental {
 				Statements.SyncStatementProdsForStatement(dataSet,statement.StatementNum,statement.DocNum);
 			}
 			Cursor=Cursors.Default;
+
 		}
 
 		///<summary>Call this before inserting new repeat charge to update patient.BillingCycleDay if no other repeat charges exist.
@@ -4454,7 +4251,7 @@ namespace OpenDental {
 					}
 					long procNum=PIn.Long(tableAcct.Rows[gridAccount.SelectedIndices[0]]["ProcNum"].ToString());
 					Procedure procedure=Procedures.GetOneProc(procNum,false);
-					if(!Security.IsAuthorized(EnumPermType.ProcCompleteAddAdj,Procedures.GetDateForPermCheck(procedure))) {
+					if(!Security.IsAuthorized(Permissions.ProcCompleteAddAdj,Procedures.GetDateForPermCheck(procedure))) {
 						return;
 					}
 					adjustment.ProcNum=procNum;
@@ -4473,32 +4270,6 @@ namespace OpenDental {
 				//Shared.ComputeBalances();
 			}
 			ModuleSelected(_patient.PatNum);
-		}
-
-		/// <summary>Return the clinic specific ClearningHouse based on the claim the user clicked on. Can return null.</summary>
-		private Clearinghouse GetClearingHouseForClaim() {
-			DataTable table=_dataSetMain.Tables["account"];
-			//Guaranteed to be exactly one claim selected (among possible other selections) when called from contextMenuAcctGrid_Popup()
-			int idxClaimSelected=gridAccount.SelectedIndices.ToList().Find(x => table.Rows[x]["ClaimNum"].ToString()!="0");
-			long claimNum=PIn.Long(table.Rows[idxClaimSelected]["ClaimNum"].ToString());
-			Claim claim=Claims.GetClaim(claimNum);
-			//Finding the clearing settings for the selected claim's clinic is from ClaimConnect.cs GetClearingHouseForClaim(). This method is private so the code was copied.
-			InsPlan insPlan=InsPlans.GetPlan(claim.PlanNum,null);
-			if(insPlan==null) {
-				return null;
-			}
-			Carrier carrier=Carriers.GetCarrier(insPlan.CarrierNum);
-			if(carrier==null) {
-				return null;
-			}
-			if(carrier.ElectID.Length<2) {
-				return null;
-			}
-			//Fill clearing house with HQ fields
-			long clearingHouseNum=Clearinghouses.AutomateClearinghouseHqSelection(carrier.ElectID,claim.MedType);
-			Clearinghouse clearingHouse=Clearinghouses.GetClearinghouse(clearingHouseNum);
-			//Refill clearingHouse with clinic specific fields
-			return Clearinghouses.OverrideFields(clearingHouse,claim.ClinicNum);
 		}
 
 		///<summary>Returns true if XCharge or PayConnect payments are allowed to be made for the currently selected clinic.</summary>
@@ -4529,17 +4300,17 @@ namespace OpenDental {
 		}
 
 		private void PayPlanHelper(PayPlanModes payPlanMode) {
-			if(!Security.IsAuthorized(EnumPermType.PayPlanEdit)) {
+			if(!Security.IsAuthorized(Permissions.PayPlanEdit)) {
 				return;
 			}
 			bool isTsiPayplan=TsiTransLogs.IsTransworldEnabled(_family.Guarantor.ClinicNum) && Patients.IsGuarCollections(_patient.Guarantor,false);
 			string msg="";
 			if(isTsiPayplan) {
-				if(!Security.IsAuthorized(EnumPermType.Billing,true)) {
+				if(!Security.IsAuthorized(Permissions.Billing,true)) {
 					msg=Lan.g(this,"The guarantor of this family has been sent to TSI for a past due balance.")+"\r\n"
 						+Lan.g(this,"Creating a payment plan for this guarantor would cause the account to be suspended in the TSI system but you are not "
 							+"authorized for")+"\r\n"
-						+GroupPermissions.GetDesc(EnumPermType.Billing);
+						+GroupPermissions.GetDesc(Permissions.Billing);
 					MessageBox.Show(this,msg);
 					return;
 				}
@@ -4578,12 +4349,12 @@ namespace OpenDental {
 				using FormPayPlan formPayPlan=new FormPayPlan(payPlan);
 				formPayPlan.TotalAmt=_patient.EstBalance;
 				formPayPlan.IsNew=true;
-				formPayPlan.IsInsPayPlan=true;
+				formPayPlan.IsInsPayPlan=payPlanMode.HasFlag(PayPlanModes.Insurance);
 				formPayPlan.ShowDialog();
 				patNumGoto=formPayPlan.PatNumGoto;
 			}
 			if(patNumGoto!=0) {
-				GlobalFormOpenDental.PatientSelected(Patients.GetPat(patNumGoto),false);
+				FormOpenDental.S_Contr_PatientSelected(Patients.GetPat(patNumGoto),false);
 				ModuleSelected(patNumGoto);//switches to other patient.
 			}
 			else{
@@ -4597,9 +4368,10 @@ namespace OpenDental {
 			}
 		}
 
+		
 		///<summary>If the "Make Payment" action item in eClip isn't present, this will add it.</summary>
 		private void PushPaymentToEclipboard(MobileAppDevice mobileAppDevice){
-			if(MobileNotifications.CI_SendPayment(mobileAppDevice.MobileAppDeviceNum,_patient.PatNum, out string errorMsg)) 
+			if(PushNotificationUtils.CI_SendPayment(mobileAppDevice.MobileAppDeviceNum,_patient.PatNum, out string errorMsg)) 
 			{
 				MsgBox.Show($"Payment option sent to: {mobileAppDevice.DeviceName}");
 			}
@@ -4624,25 +4396,6 @@ namespace OpenDental {
 			using(FormMobileCode formMobileCode=new FormMobileCode(funcInsertDataForUnlockCode)) {
 				formMobileCode.ShowDialog();
 			}
-		}
-
-		///<summary>Centralize validation for the DXC right click options. Validation logic taken from the FormClaimEdit.cs OpenAttachmentForm method.</summary>
-		private bool ValidateRightClickDXC(Claim claim) {
-			if(claim.ClaimStatus=="W") {
-				ClaimSendQueueItem[] claimSendQueueItemsArray=Claims.GetQueueList(claim.ClaimNum,claim.ClinicNum,0);
-				if(!claimSendQueueItemsArray[0].CanSendElect) {
-					MsgBox.Show(this,"Carrier is not set to Send Claims Electronically.");
-					return false;
-				}
-				Clearinghouse clearinghouseHq=ClearinghouseL.GetClearinghouseHq(claimSendQueueItemsArray[0].ClearinghouseNum);
-				Clearinghouse clearinghouseClin=Clearinghouses.OverrideFields(clearinghouseHq,Clinics.ClinicNum);
-				claimSendQueueItemsArray[0]=Eclaims.GetMissingData(clearinghouseClin,claimSendQueueItemsArray[0]);
-				if(claimSendQueueItemsArray[0].MissingData!="") {
-					MessageBox.Show("Cannot add attachments until missing data is fixed:"+"\r\n"+claimSendQueueItemsArray[0].MissingData);
-					return false;
-				}
-			}
-			return true;
 		}
 		#endregion Methods - Helpers
 

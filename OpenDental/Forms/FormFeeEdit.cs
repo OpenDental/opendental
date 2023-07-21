@@ -37,7 +37,7 @@ namespace OpenDental {
 			textFee.Text=FeeCur.Amount.ToString("F");
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textFee.IsValid()) {
 				MessageBox.Show(Lan.g(this,"Please fix data entry error first."));
 				return;
@@ -55,11 +55,15 @@ namespace OpenDental {
 				FeeCur.Amount=PIn.Double(textFee.Text);
 				Fees.Update(FeeCur,feeOld);//Fee object always created and inserted externally first
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.ProcFeeEdit,0,Lan.g(this,"Procedure")+": "+ProcedureCodes.GetStringProcCode(FeeCur.CodeNum)
+			SecurityLogs.MakeLogEntry(Permissions.ProcFeeEdit,0,Lan.g(this,"Procedure")+": "+ProcedureCodes.GetStringProcCode(FeeCur.CodeNum)
 				+", "+Lan.g(this,"Fee: ")+""+FeeCur.Amount.ToString("c")+", "+Lan.g(this,"Fee Schedule")+": "+FeeScheds.GetDescription(FeeCur.FeeSched)
 				+". "+Lan.g(this,"Manual edit in Edit Fee window."),FeeCur.CodeNum,DateTime.MinValue);
-			SecurityLogs.MakeLogEntry(EnumPermType.LogFeeEdit,0,Lan.g(this,"Fee Updated"),FeeCur.FeeNum,datePrevious);
+			SecurityLogs.MakeLogEntry(Permissions.LogFeeEdit,0,Lan.g(this,"Fee Updated"),FeeCur.FeeNum,datePrevious);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void FormFeeEdit_Closing(object sender, System.ComponentModel.CancelEventArgs e) {

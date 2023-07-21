@@ -13,10 +13,7 @@ namespace OpenDental {
 		public WikiPage WikiPageCur=new WikiPage();
 		///<summary>Need a reference to the form where this was launched from so that we can tell it to refresh later.</summary>
 		public FormWiki FormWiki_;
-		///<summary>Used to differentiate what action caused the form to close. Public so it can be checked in FormWikiDrafts</summary>
-		public bool HasSaved;
-		///<summary>Used to differentiate what action caused the form to close.</summary>
-		private bool _hasSavedDraft;
+		public bool HasSaved;//used to differentiate what action caused the form to close.
 		private int _scrollTop;
 		private bool _isInvalidPreview;
 		private Action<string> _actionWikiSaved;
@@ -26,7 +23,7 @@ namespace OpenDental {
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
-			ODEvent.Fired+=WikiSaveEvent_Fired;
+			WikiSaveEvent.Fired+=WikiSaveEvent_Fired;
 			_actionWikiSaved=actionWikiSaved;
 		}
 
@@ -179,6 +176,7 @@ namespace OpenDental {
 			//Refresh no longer needed.
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Save"),1,"","Save"));
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Save as Draft"),18,"","SaveDraft"));
+			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Cancel"),2,"","Cancel"));
 			ToolBarMain.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Int Link"),7,"","Int Link"));
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Bookmark"),7,"","Bookmark"));
@@ -193,7 +191,7 @@ namespace OpenDental {
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Table"),15,"","Table"));
 			ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Image"),16,"","Image"));
 			ToolBarMain.Buttons.Add(new ODToolBarButton(ODToolBarButtonStyle.Separator));
-			if(Security.IsAuthorized(EnumPermType.WikiAdmin,true)) {
+			if(Security.IsAuthorized(Permissions.WikiAdmin,true)) {
 				if(WikiPageCur.IsLocked) {
 					ToolBarMain.Buttons.Add(new ODToolBarButton(Lan.g(this,"Unlock"),19,"","Lock"));
 				}
@@ -226,6 +224,9 @@ namespace OpenDental {
 				case "SaveDraft":
 					SaveDraft_Click();
 					break;
+				case "Cancel":
+					Cancel_Click();
+					break;
 				case "Int Link": 
 					Int_Link_Click(); 
 					break;
@@ -257,7 +258,7 @@ namespace OpenDental {
 					Image_Click();
 					break;
 				case "Lock":
-					if(!Security.IsAuthorized(EnumPermType.WikiAdmin,true)) {
+					if(!Security.IsAuthorized(Permissions.WikiAdmin,true)) {
 						return;
 					}
 					WikiPageCur.IsLocked=!WikiPageCur.IsLocked;
@@ -322,14 +323,13 @@ namespace OpenDental {
 		}
 
 		private void WikiSaveEvent_Fired(ODEventArgs e) {
-			if(e.EventType!=ODEventType.WikiSave) {
-				return;
+			if(e.EventType==ODEventType.WikiSave) {
+				if(WikiPageCur.IsNew) {
+					Save_Click(showMsgBox:false);
+					return;
+				}
+				SaveDraft_Click(showMsgBox:false);
 			}
-			if(WikiPageCur.IsNew) {
-				Save_Click(showMsgBox:false);
-				return;
-			}
-			SaveDraft_Click(showMsgBox:false);
 		}
 
 		private void Save_Click(bool showMsgBox=true) {
@@ -427,9 +427,13 @@ namespace OpenDental {
 				WikiPageCur.IsDraft=true;
 				WikiPages.InsertAsDraft(WikiPageCur);
 			}
-			_hasSavedDraft=true;//Used instead of HasSaved so that the user will stay in FormWikiDrafts when this window closes, causing the grid to update.
 			//HasSaved not set so that the user will stay in FormWikiDrafts when this window closes, causing the grid to update.
 			DialogResult=DialogResult.OK;
+			Close();
+		}
+
+		private void Cancel_Click() {
+			DialogResult=DialogResult.Cancel;
 			Close();
 		}
 
@@ -628,12 +632,11 @@ namespace OpenDental {
 
 		private void FormWikiEdit_FormClosing(object sender,FormClosingEventArgs e) {
 			//handles both the Cancel button and the user clicking on the x, and also the save button.
-			ODEvent.Fired-=WikiSaveEvent_Fired;
+			WikiSaveEvent.Fired-=WikiSaveEvent_Fired;
 			if(HasSaved) {
 				return;
 			}
-			bool doCheckUnsavedChanges=!WikiPageCur.IsNew && !_hasSavedDraft;
-			if(doCheckUnsavedChanges && textContent.Text!=WikiPages.GetWikiPageContentWithWikiPageTitles(WikiPageCur.PageContent)) {
+			if(!WikiPageCur.IsNew && textContent.Text!=WikiPages.GetWikiPageContentWithWikiPageTitles(WikiPageCur.PageContent)){
 				if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Unsaved changes will be lost. Would you like to continue?")) {
 					e.Cancel=true;
 				}

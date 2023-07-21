@@ -46,5 +46,9 @@ namespace OpenDental {
 			EtransL.ViewFormForEra(_listEtrans[gridEras.SelectedIndices[0]],this,_specificClaimNum);
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 	}
 }

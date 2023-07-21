@@ -119,7 +119,7 @@ namespace OpenDental {
 			FillGrid();
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textDaysPast.IsValid()
 				|| !textMaxReminders.IsValid()
 				|| !textDaysContactInterval.IsValid()) 
@@ -174,5 +174,9 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
+
 }

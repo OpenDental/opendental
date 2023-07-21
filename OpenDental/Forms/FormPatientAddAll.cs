@@ -27,50 +27,53 @@ namespace OpenDental {
 		private string _emailOld5="";
 		private string _phoneOld1="";
 		/// <summary>displayed from within code, not designer</summary>
-		private OpenDental.UI.ListBox listEmps1;
+		private System.Windows.Forms.ListBox listEmps1;
 		private bool _isMouseInListEmps1;
 		private string _empOriginal1;
 		/// <summary>displayed from within code, not designer</summary>
-		private OpenDental.UI.ListBox listEmps2;
+		private System.Windows.Forms.ListBox listEmps2;
 		private bool _isMouseInListEmps2;
 		private string _empOriginal2;
 		private List<Carrier> _listCarriersSimilar1;
 		private string _carOriginal1;
-		private OpenDental.UI.ListBox listCars1;
+		private System.Windows.Forms.ListBox listCars1;
 		private bool _isMouseInListCars1;
 		private Carrier _carrierSelected1;
 		private List<Carrier> _listCarriersSimilar2;
 		private string _carOriginal2;
-		private OpenDental.UI.ListBox listCars2;
+		private System.Windows.Forms.ListBox listCars2;
 		private bool _isMouseInListCars2;
 		private Carrier _carrierSelected2;
 		///<summary>If user picks a plan from list, but then changes one of the critical fields, this will be ignored.  Keep in mind that the plan here is just a copy.  It can't be updated, but must instead be inserted.</summary>
 		private InsPlan _insPlanSelected1;
 		private InsPlan _insPlanSelected2;
+		private ToolTip _toolTipReferred;
 		private Referral _referral;
-		/// <summary>displayed from within code, not designer</summary>
-		private OpenDental.UI.ListBox listStates;
-		/// <summary>used in the medicaidState dropdown logic</summary>
-		private string _stateOriginal;
+		private System.Windows.Forms.ListBox listStates;//displayed from within code, not designer
+		private string _stateOriginal;//used in the medicaidState dropdown logic
 		private bool _isMouseInListStates;
 		private List<RequiredField> _listRequiredFields;
 		private bool _isMissingRequiredFields;
+		private bool _isLoad;//To keep track if ListBoxes' selected index is changed by the user
+		private ErrorProvider _errorProvider=new ErrorProvider();
 		private bool _isValidating=false;
 		private Commlog _commlog;
 		private List<Provider> _listProviders;
 		private List<ZipCode> _listZipCodes;
 		private List<Def> _listDefsBillingType;
-		/// <summary>Used to replace error provider. This will show a tooltip over boxes that have an error that needs to be resolved, along with highlighting said boxes.</summary>
-		private ToolTipOD _toolTip = new ToolTipOD();
 
 		public FormPatientAddAll() {
 			InitializeComponent();
 			InitializeLayoutManager();
+			InitializeControls();
 			Lan.F(this);
 		}
 
-		private void FormPatientAddAll_Load(object sender,EventArgs e) {
-			listEmps1=new OpenDental.UI.ListBox();
+		private void InitializeControls() {
+			_toolTipReferred=new ToolTip();
+			_toolTipReferred.InitialDelay=500;
+			_toolTipReferred.ReshowDelay=100;
+			listEmps1=new System.Windows.Forms.ListBox();
 			listEmps1.Location=new Point(groupIns1.Left+textEmployer1.Left,groupIns1.Top+textEmployer1.Bottom);
 			listEmps1.Size=new Size(254,100);
 			listEmps1.Visible=false;
@@ -80,7 +83,7 @@ namespace OpenDental {
 			listEmps1.MouseLeave += new System.EventHandler(listEmps1_MouseLeave);
 			LayoutManager.Add(listEmps1,this);
 			listEmps1.BringToFront();
-			listEmps2=new OpenDental.UI.ListBox();
+			listEmps2=new System.Windows.Forms.ListBox();
 			listEmps2.Location=new Point(groupIns2.Left+textEmployer2.Left,
 				groupIns2.Top+textEmployer2.Bottom);
 			listEmps2.Size=new Size(254,100);
@@ -91,11 +94,10 @@ namespace OpenDental {
 			listEmps2.MouseLeave += new System.EventHandler(listEmps2_MouseLeave);
 			LayoutManager.Add(listEmps2,this);
 			listEmps2.BringToFront();
-			listCars1=new OpenDental.UI.ListBox();
+			listCars1=new System.Windows.Forms.ListBox();
 			listCars1.Location=new Point(groupIns1.Left+textCarrier1.Left,groupIns1.Top+textCarrier1.Bottom);
 			listCars1.Size=new Size(700,100);
-//todo:
-			//listCars1.HorizontalScrollbar=true;
+			listCars1.HorizontalScrollbar=true;
 			listCars1.Visible=false;
 			listCars1.Click += new System.EventHandler(listCars1_Click);
 			listCars1.DoubleClick += new System.EventHandler(listCars1_DoubleClick);
@@ -103,11 +105,10 @@ namespace OpenDental {
 			listCars1.MouseLeave += new System.EventHandler(listCars1_MouseLeave);
 			LayoutManager.Add(listCars1,this);
 			listCars1.BringToFront();
-			listCars2=new OpenDental.UI.ListBox();
+			listCars2=new System.Windows.Forms.ListBox();
 			listCars2.Location=new Point(groupIns2.Left+textCarrier2.Left,groupIns2.Top+textCarrier2.Bottom);
 			listCars2.Size=new Size(700,100);
-//todo:
-			//listCars2.HorizontalScrollbar=true;
+			listCars2.HorizontalScrollbar=true;
 			listCars2.Visible=false;
 			listCars2.Click += new System.EventHandler(listCars2_Click);
 			listCars2.DoubleClick += new System.EventHandler(listCars2_DoubleClick);
@@ -115,7 +116,7 @@ namespace OpenDental {
 			listCars2.MouseLeave += new System.EventHandler(listCars2_MouseLeave);
 			LayoutManager.Add(listCars2,this);
 			listCars2.BringToFront();
-			listStates=new OpenDental.UI.ListBox();
+			listStates=new System.Windows.Forms.ListBox();
 			listStates.Location=new Point(textState.Left+groupBox1.Left,textState.Bottom+groupBox1.Top);
 			listStates.Size=new Size(textState.Width,100);
 			listStates.Visible=false;
@@ -125,7 +126,7 @@ namespace OpenDental {
 			Controls.Add(listStates);
 			LayoutManager.Add(listStates,this);
 			listStates.BringToFront();
-			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit,true)) {
+			if(!Security.IsAuthorized(Permissions.InsPlanEdit,true)) {
 				textEmployer1.ReadOnly=true;
 				textEmployer2.ReadOnly=true;
 				textPhone1.ReadOnly=true;
@@ -137,6 +138,10 @@ namespace OpenDental {
 				textGroupNum1.ReadOnly=true;
 				textGroupNum2.ReadOnly=true;
 			}
+		}
+
+		private void FormPatientAddAll_Load(object sender,EventArgs e) {
+			_isLoad=true;
 			textLName1.Text=LName;
 			textFName1.Text=FName;
 			if(Birthdate.Year<1880) {
@@ -220,7 +225,7 @@ namespace OpenDental {
 				comboClinic4.IncludeUnassigned=true;
 				comboClinic5.IncludeUnassigned=true;
 			}
-			if(!Security.IsAuthorized(EnumPermType.RefAttachAdd,true)) {
+			if(!Security.IsAuthorized(Permissions.RefAttachAdd,true)) {
 				butClearReferralSource.Enabled=false;
 				butReferredFrom.Enabled=false;
 			}
@@ -244,82 +249,9 @@ namespace OpenDental {
 			ResetSubscriberLists();
 			_listRequiredFields=RequiredFields.GetWhere(x => x.FieldType==RequiredFieldType.PatientInfo);
 			RemoveUnnecessaryRequiredFields();
-			ValidateFields();
-			#region Setting Tooltip
-			//Textboxes
-			_toolTip.SetControlAndAction(textLName1,ToolTipSetString);
-			_toolTip.SetControlAndAction(textLName2,ToolTipSetString);
-			_toolTip.SetControlAndAction(textLName3,ToolTipSetString);
-			_toolTip.SetControlAndAction(textLName4,ToolTipSetString);
-			_toolTip.SetControlAndAction(textLName5,ToolTipSetString);
-			_toolTip.SetControlAndAction(textFName1,ToolTipSetString);
-			_toolTip.SetControlAndAction(textFName2,ToolTipSetString);
-			_toolTip.SetControlAndAction(textFName3,ToolTipSetString);
-			_toolTip.SetControlAndAction(textFName4,ToolTipSetString);
-			_toolTip.SetControlAndAction(textFName5,ToolTipSetString);
-			_toolTip.SetControlAndAction(textBirthdate1,ToolTipSetString);
-			_toolTip.SetControlAndAction(textBirthdate2,ToolTipSetString);
-			_toolTip.SetControlAndAction(textBirthdate3,ToolTipSetString);
-			_toolTip.SetControlAndAction(textBirthdate4,ToolTipSetString);
-			_toolTip.SetControlAndAction(textBirthdate5,ToolTipSetString);
-			_toolTip.SetControlAndAction(textEmail1,ToolTipSetString);
-			_toolTip.SetControlAndAction(textEmail2,ToolTipSetString);
-			_toolTip.SetControlAndAction(textEmail3,ToolTipSetString);
-			_toolTip.SetControlAndAction(textEmail4,ToolTipSetString);
-			_toolTip.SetControlAndAction(textEmail5,ToolTipSetString);
-			_toolTip.SetControlAndAction(textWirelessPhone1,ToolTipSetString);
-			_toolTip.SetControlAndAction(textWirelessPhone2,ToolTipSetString);
-			_toolTip.SetControlAndAction(textWirelessPhone3,ToolTipSetString);
-			_toolTip.SetControlAndAction(textWirelessPhone4,ToolTipSetString);
-			_toolTip.SetControlAndAction(textWirelessPhone5,ToolTipSetString);
-			_toolTip.SetControlAndAction(textSSN1,ToolTipSetString);
-			_toolTip.SetControlAndAction(textSSN2,ToolTipSetString);
-			_toolTip.SetControlAndAction(textSSN3,ToolTipSetString);
-			_toolTip.SetControlAndAction(textSSN4,ToolTipSetString);
-			_toolTip.SetControlAndAction(textSSN5,ToolTipSetString);
-			_toolTip.SetControlAndAction(textHmPhone,ToolTipSetString);
-			_toolTip.SetControlAndAction(textAddress,ToolTipSetString);
-			_toolTip.SetControlAndAction(textAddress2,ToolTipSetString);
-			_toolTip.SetControlAndAction(textCity,ToolTipSetString);
-			_toolTip.SetControlAndAction(textState,ToolTipSetString);
-			_toolTip.SetControlAndAction(textCountry,ToolTipSetString);
-			_toolTip.SetControlAndAction(textAddrNotes,ToolTipSetString);
-			_toolTip.SetControlAndAction(textSubscriberID1,ToolTipSetString);
-			_toolTip.SetControlAndAction(textEmployer1,ToolTipSetString);
-			_toolTip.SetControlAndAction(textCarrier1,ToolTipSetString);
-			_toolTip.SetControlAndAction(textPhone1,ToolTipSetString);
-			_toolTip.SetControlAndAction(textGroupName1,ToolTipSetString);
-			_toolTip.SetControlAndAction(textGroupNum1,ToolTipSetString);
-			//Checkboxes
-			_toolTip.SetControlAndAction(checkTextingY1,ToolTipSetString);
-			_toolTip.SetControlAndAction(checkTextingN1,ToolTipSetString);
-			_toolTip.SetControlAndAction(checkTextingY2,ToolTipSetString);
-			_toolTip.SetControlAndAction(checkTextingN2,ToolTipSetString);
-			_toolTip.SetControlAndAction(checkTextingY3,ToolTipSetString);
-			_toolTip.SetControlAndAction(checkTextingN3,ToolTipSetString);
-			_toolTip.SetControlAndAction(checkTextingY4,ToolTipSetString);
-			_toolTip.SetControlAndAction(checkTextingN4,ToolTipSetString);
-			_toolTip.SetControlAndAction(checkTextingY5,ToolTipSetString);
-			_toolTip.SetControlAndAction(checkTextingN5,ToolTipSetString);
-			//Comboboxes
-			_toolTip.SetControlAndAction(comboPriProv1,ToolTipSetString);
-			_toolTip.SetControlAndAction(comboPriProv2,ToolTipSetString);
-			_toolTip.SetControlAndAction(comboPriProv3,ToolTipSetString);
-			_toolTip.SetControlAndAction(comboPriProv4,ToolTipSetString);
-			_toolTip.SetControlAndAction(comboPriProv5,ToolTipSetString);
-			_toolTip.SetControlAndAction(comboSecProv1,ToolTipSetString);
-			_toolTip.SetControlAndAction(comboSecProv2,ToolTipSetString);
-			_toolTip.SetControlAndAction(comboSecProv3,ToolTipSetString);
-			_toolTip.SetControlAndAction(comboSecProv4,ToolTipSetString);
-			_toolTip.SetControlAndAction(comboSecProv5,ToolTipSetString);
-			_toolTip.SetControlAndAction(comboSubscriber1,ToolTipSetString);
-			//Listboxes
-			_toolTip.SetControlAndAction(listGender1,ToolTipSetString);
-			_toolTip.SetControlAndAction(listGender2,ToolTipSetString);
-			_toolTip.SetControlAndAction(listGender3,ToolTipSetString);
-			_toolTip.SetControlAndAction(listGender4,ToolTipSetString);
-			_toolTip.SetControlAndAction(listGender5,ToolTipSetString);
-			#endregion
+			_errorProvider.BlinkStyle=ErrorBlinkStyle.NeverBlink;
+			SetRequiredFields();
+			_isLoad=false;
 			Plugins.HookAddCode(this,"FormPatientAddAll.FormPatientAddAll_Load_end");
 		}
 
@@ -378,7 +310,7 @@ namespace OpenDental {
 
 		//<summary>Puts an asterisk next to the label and highlights the textbox/listbox/combobox/radiobutton background for all RequiredFields that
 		///have their conditions met.</summary>butok_
-		private void ValidateFields() {
+		private void SetRequiredFields() {
 			_isMissingRequiredFields=false;
 			bool areConditionsMet;
 			if(_listRequiredFields==null) {
@@ -404,18 +336,18 @@ namespace OpenDental {
 							if(textAddrNotes.Text=="") {
 								_isMissingRequiredFields=true;
 								if(_isValidating) {
-									SetError(textAddrNotes,Lan.g(this,"Text box cannot be blank"));
+									_errorProvider.SetError(textAddrNotes,Lan.g(this,"Text box cannot be blank"));
 								}
 							}
 							else {
-								SetError(textAddrNotes,"");
+								_errorProvider.SetError(textAddrNotes,"");
 							}
 						}
 						else {
 							if(labelAddrNotes.Text.Contains("*")) {
 								labelAddrNotes.Text=labelAddrNotes.Text.Replace("*","");
 							}
-							SetError(textAddrNotes,"");
+							_errorProvider.SetError(textAddrNotes,"");
 						}
 						break;
 					case RequiredFieldName.BillingType:
@@ -461,35 +393,34 @@ namespace OpenDental {
 							SetRequiredTextBox(labelFName,textFName2,areConditionsMet);
 						}
 						else {
-							SetError(textFName2,"");
+							_errorProvider.SetError(textFName2,"");
 						}
 						if(textLName3.Text!="") {
 							SetRequiredTextBox(labelFName,textFName3,areConditionsMet);
 						}
 						else {
-							SetError(textFName3,"");
+							_errorProvider.SetError(textFName3,"");
 						}
 						if(textLName4.Text!="") {
 							SetRequiredTextBox(labelFName,textFName4,areConditionsMet);
 						}
 						else {
-							SetError(textFName4,"");
+							_errorProvider.SetError(textFName4,"");
 						}
 						if(textLName5.Text!="") {
 							SetRequiredTextBox(labelFName,textFName5,areConditionsMet);
 						}
 						else {
-							SetError(textFName5,"");
+							_errorProvider.SetError(textFName5,"");
 						}
 						break;
 					case RequiredFieldName.Gender:
 						string strErrorMsg=Lan.g(this,"Gender cannot be 'Unknown'.");
-						int disallowedIdx=3;//Unknown (the listbox is out of order)
-						SetRequiredListBoxOD(labelGenPos,listGender1,areConditionsMet,disallowedIdx,strErrorMsg,ErrorIconAlignment.BottomLeft);
-						SetRequiredListBoxODNonGuarantor(labelGenPos,textFName2,textLName2,listGender2,areConditionsMet,disallowedIdx,strErrorMsg,ErrorIconAlignment.BottomLeft);
-						SetRequiredListBoxODNonGuarantor(labelGenPos,textFName3,textLName3,listGender3,areConditionsMet,disallowedIdx,strErrorMsg,ErrorIconAlignment.BottomLeft);
-						SetRequiredListBoxODNonGuarantor(labelGenPos,textFName4,textLName4,listGender4,areConditionsMet,disallowedIdx,strErrorMsg,ErrorIconAlignment.BottomLeft);
-						SetRequiredListBoxODNonGuarantor(labelGenPos,textFName5,textLName5,listGender5,areConditionsMet,disallowedIdx,strErrorMsg,ErrorIconAlignment.BottomLeft);
+						SetRequiredListBoxOD(labelGenPos,listGender1,areConditionsMet,2,strErrorMsg,ErrorIconAlignment.BottomLeft);
+						SetRequiredListBoxODNonGuarantor(labelGenPos,textFName2,textLName2,listGender2,areConditionsMet,2,strErrorMsg,ErrorIconAlignment.BottomLeft);
+						SetRequiredListBoxODNonGuarantor(labelGenPos,textFName3,textLName3,listGender3,areConditionsMet,2,strErrorMsg,ErrorIconAlignment.BottomLeft);
+						SetRequiredListBoxODNonGuarantor(labelGenPos,textFName4,textLName4,listGender4,areConditionsMet,2,strErrorMsg,ErrorIconAlignment.BottomLeft);
+						SetRequiredListBoxODNonGuarantor(labelGenPos,textFName5,textLName5,listGender5,areConditionsMet,2,strErrorMsg,ErrorIconAlignment.BottomLeft);
 						break;
 					case RequiredFieldName.GroupName:
 						SetRequiredTextBox(labelGroupName1,textGroupName1,areConditionsMet);
@@ -515,25 +446,25 @@ namespace OpenDental {
 							SetRequiredTextBox(labelLName,textLName2,areConditionsMet);
 						}
 						else {
-							SetError(textLName2,"");
+							_errorProvider.SetError(textLName2,"");
 						}
 						if(textFName3.Text!="") {
 							SetRequiredTextBox(labelLName,textLName3,areConditionsMet);
 						}
 						else {
-							SetError(textLName3,"");
+							_errorProvider.SetError(textLName3,"");
 						}
 						if(textFName4.Text!="") {
 							SetRequiredTextBox(labelLName,textLName4,areConditionsMet);
 						}
 						else {
-							SetError(textLName4,"");
+							_errorProvider.SetError(textLName4,"");
 						}
 						if(textFName5.Text!="") {
 							SetRequiredTextBox(labelLName,textLName5,areConditionsMet);
 						}
 						else {
-							SetError(textLName5,"");
+							_errorProvider.SetError(textLName5,"");
 						}
 						break;
 					case RequiredFieldName.PrimaryProvider:
@@ -567,7 +498,7 @@ namespace OpenDental {
 						if(textState.Text!=""	&& !StateAbbrs.IsValidAbbr(textState.Text)) {
 							_isMissingRequiredFields=true;
 							if(_isValidating) {
-								SetError(textState,Lan.g(this,"Invalid state abbreviation"));
+								_errorProvider.SetError(textState,Lan.g(this,"Invalid state abbreviation"));
 							}
 						}
 						break;
@@ -659,7 +590,7 @@ namespace OpenDental {
 						listComboBoxClinicPickers.Add(comboClinic4);
 						listComboBoxClinicPickers.Add(comboClinic5);
 						for(int j = 0;j<listComboBoxClinicPickers.Count;j++) {
-							long selectedClinicNum=listComboBoxClinicPickers[j].ClinicNumSelected;
+							long selectedClinicNum=listComboBoxClinicPickers[j].SelectedClinicNum;
 							if(selectedClinicNum<0) {
 								continue;
 							}
@@ -744,72 +675,6 @@ namespace OpenDental {
 			return areConditionsMet;
 		}
 
-		/// <summary>This is a replacement for ErrorProvider. Takes in a control and error message, and sets a tooltip on the control with the message. Also turns the background color of it yellow if there is an error message, and switches back to white when a blank string is passed in.</summary>
-		private void SetError(Control control,string msg){
-			//This is so we don't clear out the Referred From textbox's message.
-			if(control is TextBox textbox && textbox.Name=="textReferredFrom"){
-				if(textbox.Text.IsNullOrEmpty()){
-					textbox.BackColor=Color.Yellow;
-					return;
-				}
-				textbox.BackColor=Color.White;
-				return;
-			}
-			if(control is UI.ComboBox comboBox){
-				comboBox.Tag=msg;
-				if(msg==""){
-					comboBox.ColorBack=Color.White;
-					return;
-				}
-				comboBox.ColorBack=Color.Yellow;
-				return;
-			}
-			if(control is UI.ListBox listBox){
-				listBox.Tag=msg;
-				if(msg==""){
-					listBox.ColorBack=Color.White;
-					//Not normally white like most colors, this one is a grayish color since it's the highlight color
-					listBox.ColorSelectedBack=Color.FromArgb(186,199,219);
-					return;
-				}
-				//This message will only trigger if the user hits save and there is no gender selected.
-				if(listBox.SelectedIndex==-1){
-					listBox.ColorBack=Color.Yellow;
-					return;
-				}
-				//Only highlight color, keep background the same.
-				listBox.ColorBack=Color.White;
-				listBox.ColorSelectedBack=Color.Yellow;
-				return;
-			}
-			if(control is TextBox || control is RichTextBox){
-				control.Tag=msg;
-				if(msg==""){
-					control.BackColor=Color.White;
-					return;
-				}
-				control.BackColor=Color.Yellow;
-				return;
-			}
-			if(control is UI.CheckBox){
-				control.Tag=msg;
-				if(msg==""){
-					control.BackColor=Color.White;
-					return;
-				}
-				control.BackColor=Color.Yellow;
-				return;
-			}
-		}
-
-		///<summary></summary>
-		private void ToolTipSetString(Control control,Point point) {
-			if(control.Tag is null){
-				return;
-			}
-			_toolTip.SetString(control, control.Tag.ToString(),control.Font);
-		}
-
 		///<summary>Puts an asterisk next to the label if the field is required and the conditions are met. If it also blank, highlights the textbox
 		///background.</summary>
 		private void SetRequiredTextBox(Label label,System.Windows.Forms.TextBox textBox,bool areConditionsMet) {
@@ -818,16 +683,22 @@ namespace OpenDental {
 				if(textBox.Text=="") {
 					_isMissingRequiredFields=true;
 					if(_isValidating) {
-						SetError(textBox,"Text box cannot be blank.");
+						_errorProvider.SetError(textBox,"Text box cannot be blank.");
 					}
 				}
 				else {
-					SetError(textBox,"");
+					_errorProvider.SetError(textBox,"");
 				}
 			}
 			else {
 				label.Text=label.Text.Replace("*","");
-				SetError(textBox,"");
+				_errorProvider.SetError(textBox,"");
+			}
+			if(textBox.Name==textReferredFrom.Name) {
+				_errorProvider.SetIconPadding(textBox,44);//Width of the pick and remove buttons
+			}
+			else if(textBox.Name==textZip.Name) {
+				_errorProvider.SetIconPadding(textBox,21);//Width of the drop down button
 			}
 		}
 
@@ -838,7 +709,7 @@ namespace OpenDental {
 				SetRequiredTextBox(label,textBoxRequired,areConditionsMet);
 			}
 			else {
-				SetError(textBoxRequired,"");
+				_errorProvider.SetError(textBoxRequired,"");
 			}
 		}
 
@@ -852,16 +723,17 @@ namespace OpenDental {
 				if(listControl.SelectedIndex==disallowedIdx) {
 					_isMissingRequiredFields=true;
 					if(_isValidating) {
-						SetError(listControl,errorMsg);
+						_errorProvider.SetError(listControl,errorMsg);
+						_errorProvider.SetIconAlignment(listControl,errorIconAlignment);
 					}
 				}
 				else {
-					SetError(listControl,"");
+					_errorProvider.SetError(listControl,"");
 				}
 			}
 			else {
 				label.Text=label.Text.Replace("*","");
-				SetError(listControl,"");
+				_errorProvider.SetError(listControl,"");
 			} 
 		}
 
@@ -875,16 +747,17 @@ namespace OpenDental {
 				if(comboBox.SelectedIndex==disallowedIdx) {
 					_isMissingRequiredFields=true;
 					if(_isValidating) {
-						SetError(comboBox,errorMsg);
+						_errorProvider.SetError(comboBox,errorMsg);
+						_errorProvider.SetIconAlignment(comboBox,errorIconAlignment);
 					}
 				}
 				else {
-					SetError(comboBox,"");
+					_errorProvider.SetError(comboBox,"");
 				}
 			}
 			else {
 				label.Text=label.Text.Replace("*","");
-				SetError(comboBox,"");
+				_errorProvider.SetError(comboBox,"");
 			} 
 		}
 
@@ -897,20 +770,17 @@ namespace OpenDental {
 				if(listBox.SelectedIndex==disallowedIdx) {
 					_isMissingRequiredFields=true;
 					if(_isValidating) {
-						SetError(listBox,errorMsg);
+						_errorProvider.SetError(listBox,errorMsg);
+						_errorProvider.SetIconAlignment(listBox,errorIconAlignment);
 					}
 				}
-				//This will only trigger if the user hits save and they don't have a patient gender selected.
-				else if(listBox.SelectedIndex==-1 && _isValidating){
-					SetError(listBox, "Please select a patient gender");
-				}
 				else {
-					SetError(listBox,"");
+					_errorProvider.SetError(listBox,"");
 				}
 			}
 			else {
 				label.Text=label.Text.Replace("*","");
-				SetError(listBox,"");
+				_errorProvider.SetError(listBox,"");
 			}
 		}
 
@@ -920,20 +790,17 @@ namespace OpenDental {
 			if(areConditionsMet) {
 				label.Text=label.Text+"*";
 				if(checkBoxY.Checked || checkBoxN.Checked) {
-					SetError(checkBoxY,"");
-					SetError(checkBoxN,"");
+					_errorProvider.SetError(checkBoxN,"");
 				}
 				else{
 					_isMissingRequiredFields=true;
 					if(_isValidating) {
-						SetError(checkBoxY,Lan.g(this,errorMsg));
-						SetError(checkBoxN,Lan.g(this,errorMsg));
+						_errorProvider.SetError(checkBoxN,Lan.g(this,errorMsg));
 					}
 				}
 			}
 			else {
-				SetError(checkBoxY,"");
-				SetError(checkBoxN,"");
+				_errorProvider.SetError(checkBoxN,"");
 			}
 		}
 
@@ -942,19 +809,20 @@ namespace OpenDental {
 		private void SetRequiredComboClinicPicker(Label label,ComboBoxClinicPicker comboBoxClinicPicker,bool areConditionsMet,int disallowedClinicNum,string errorMsg){
 			if(areConditionsMet) {
 				label.Text=label.Text.Replace("*","")+"*";
-				if(comboBoxClinicPicker.ClinicNumSelected==disallowedClinicNum) {
+				if(comboBoxClinicPicker.SelectedClinicNum==disallowedClinicNum) {
 					_isMissingRequiredFields=true;
 					if(_isValidating) {
-						SetError(comboBoxClinicPicker,errorMsg);
+						_errorProvider.SetError(comboBoxClinicPicker,errorMsg);
+						_errorProvider.SetIconAlignment(comboBoxClinicPicker,ErrorIconAlignment.MiddleRight);
 					}
 				}
 				else {
-					SetError(comboBoxClinicPicker,"");
+					_errorProvider.SetError(comboBoxClinicPicker,"");
 				}
 			}
 			else {
 				label.Text=label.Text.Replace("*","");
-				SetError(comboBoxClinicPicker,"");
+				_errorProvider.SetError(comboBoxClinicPicker,"");
 			} 
 		}
 
@@ -962,11 +830,11 @@ namespace OpenDental {
 			bool areConditionsMet,int disallowedIdx,string errorMsg,ErrorIconAlignment errorIconAlignment=ErrorIconAlignment.MiddleRight)
 		{
 			if(string.IsNullOrWhiteSpace(textBoxFName.Text) && string.IsNullOrWhiteSpace(textBoxLName.Text)) {
-				SetError(controlRequired,"");
+				_errorProvider.SetError(controlRequired,"");
 				return;
 			}
 			//Either ListBox or ComboBoxOD.
-			if(controlRequired is OpenDental.UI.ListBox) {
+			if(controlRequired is System.Windows.Forms.ListBox) {
 				SetRequiredListControl(label,(ListControl)controlRequired,areConditionsMet,disallowedIdx,errorMsg,errorIconAlignment);
 			}
 			else {
@@ -982,7 +850,7 @@ namespace OpenDental {
 				SetRequiredListBoxOD(label,listBoxRequired,areConditionsMet,disallowedIdx,errorMsg,errorIconAlignment);
 			}
 			else {
-				SetError(listBoxRequired,"");
+				_errorProvider.SetError(listBoxRequired,"");
 			}
 		}
 
@@ -994,8 +862,7 @@ namespace OpenDental {
 				SetRequiredCheckBoxYN(label,checkBoxY,checkBoxN,areConditionsMet,errorMsg);
 			}
 			else {
-				SetError(checkBoxY,"");
-				SetError(checkBoxN,"");
+				_errorProvider.SetError(checkBoxN,"");
 			}
 		}
 
@@ -1019,15 +886,18 @@ namespace OpenDental {
 		}
 		
 		private void textBox_Leave(object sender,System.EventArgs e) {
-			ValidateFields();
+			SetRequiredFields();
 		}
 		
-		private void ListBox_SelectionChangeCommitted(object sender,System.EventArgs e) {
-			ValidateFields();
+		private void ListBox_SelectedIndexChanged(object sender,System.EventArgs e) {
+			if(_isLoad) {
+				return;
+			}
+			SetRequiredFields();
 		}
 
-		private void ComboBox_SelectionChangeCommitted(object sender,System.EventArgs e) {
-			ValidateFields();
+		private void ComboBox_SelectionChangeCommited(object sender,System.EventArgs e) {
+			SetRequiredFields();
 		}
 		
 		private void butAddComm_Click(object sender,EventArgs e) {
@@ -1039,9 +909,8 @@ namespace OpenDental {
 				_commlog.UserNum=Security.CurUser.UserNum;
 				_commlog.IsNew=true;
 			}
-			FrmCommItem frmCommItem=new FrmCommItem(_commlog);
-			frmCommItem.ShowDialog();
-			if(frmCommItem.IsDialogOK) {
+			using FormCommItem formCommItem=new FormCommItem(_commlog);
+			if(formCommItem.ShowDialog()==DialogResult.OK) {
 				//if the commlog was deleted, clear the stored object
 				if(_commlog==null || Commlogs.GetOne(_commlog.CommlogNum)==null) {
 					_commlog=null;
@@ -1300,7 +1169,7 @@ namespace OpenDental {
 			comboPriProv3.SelectedIndex=comboPriProv1.SelectedIndex;
 			comboPriProv4.SelectedIndex=comboPriProv1.SelectedIndex;
 			comboPriProv5.SelectedIndex=comboPriProv1.SelectedIndex;
-			ValidateFields();
+			SetRequiredFields();
 		}
 
 		private void comboSecProv1_SelectionChangeCommitted(object sender,EventArgs e) {
@@ -1308,7 +1177,7 @@ namespace OpenDental {
 			comboSecProv3.SelectedIndex=comboSecProv1.SelectedIndex;
 			comboSecProv4.SelectedIndex=comboSecProv1.SelectedIndex;
 			comboSecProv5.SelectedIndex=comboSecProv1.SelectedIndex;
-			ValidateFields();
+			SetRequiredFields();
 		}
 
 		private void comboBillType1_SelectionChangeCommitted(object sender,EventArgs e) {
@@ -1316,34 +1185,34 @@ namespace OpenDental {
 			comboBillType3.SelectedIndex=comboBillType1.SelectedIndex;
 			comboBillType4.SelectedIndex=comboBillType1.SelectedIndex;
 			comboBillType5.SelectedIndex=comboBillType1.SelectedIndex;
-			ValidateFields();
+			SetRequiredFields();
 		}
 		private void comboClinic_SelectionChangeCommitted(object sender,EventArgs e) {
 			if(sender==comboClinic1) {
-				if(comboClinic1.ClinicNumSelected>-1) {
-					comboClinic2.ClinicNumSelected=comboClinic1.ClinicNumSelected;
-					comboClinic3.ClinicNumSelected=comboClinic1.ClinicNumSelected;
-					comboClinic4.ClinicNumSelected=comboClinic1.ClinicNumSelected;
-					comboClinic5.ClinicNumSelected=comboClinic1.ClinicNumSelected;
+				if(comboClinic1.SelectedClinicNum>-1) {
+					comboClinic2.SelectedClinicNum=comboClinic1.SelectedClinicNum;
+					comboClinic3.SelectedClinicNum=comboClinic1.SelectedClinicNum;
+					comboClinic4.SelectedClinicNum=comboClinic1.SelectedClinicNum;
+					comboClinic5.SelectedClinicNum=comboClinic1.SelectedClinicNum;
 				}
 				//Also pre-select the default billing type for all patients since guarantor's clinic has changed.
-				FillComboBillTypes(comboBillType1,comboClinic1.ClinicNumSelected);
+				FillComboBillTypes(comboBillType1,comboClinic1.SelectedClinicNum);
 				comboBillType2.SelectedIndex=comboBillType1.SelectedIndex;
 				comboBillType3.SelectedIndex=comboBillType1.SelectedIndex;
 				comboBillType4.SelectedIndex=comboBillType1.SelectedIndex;
 				comboBillType5.SelectedIndex=comboBillType1.SelectedIndex;
 			}
 			else if(sender==comboClinic2) {
-				FillComboBillTypes(comboBillType2,comboClinic2.ClinicNumSelected);
+				FillComboBillTypes(comboBillType2,comboClinic2.SelectedClinicNum);
 			}
 			else if(sender==comboClinic3) {
-				FillComboBillTypes(comboBillType3,comboClinic3.ClinicNumSelected);
+				FillComboBillTypes(comboBillType3,comboClinic3.SelectedClinicNum);
 			}
 			else if(sender==comboClinic4) {
-				FillComboBillTypes(comboBillType4,comboClinic4.ClinicNumSelected);
+				FillComboBillTypes(comboBillType4,comboClinic4.SelectedClinicNum);
 			}
 			else if(sender==comboClinic5) {
-				FillComboBillTypes(comboBillType5,comboClinic5.ClinicNumSelected);
+				FillComboBillTypes(comboBillType5,comboClinic5.SelectedClinicNum);
 			}
 		}
 		#endregion InsCheckProvAutomation
@@ -1437,7 +1306,7 @@ namespace OpenDental {
 				checkTextingY5.Checked=true;
 				checkTextingN5.Checked=false;
 			}
-			ValidateFields();
+			SetRequiredFields();
 		}
 
 		private void checkTextingN1_Click(object sender,EventArgs e) {
@@ -1454,63 +1323,63 @@ namespace OpenDental {
 				checkTextingN5.Checked=true;
 				checkTextingY5.Checked=false;
 			}
-			ValidateFields();
+			SetRequiredFields();
 		}
 
 		private void checkTextingY2_Click(object sender,EventArgs e) {
 			if(checkTextingN2.Checked && checkTextingY2.Checked) {
 				checkTextingN2.Checked=false;
 			}
-			ValidateFields();
+			SetRequiredFields();
 		}
 
 		private void checkTextingN2_Click(object sender,EventArgs e) {
 			if(checkTextingN2.Checked && checkTextingY2.Checked) {
 				checkTextingY2.Checked=false;
 			}
-			ValidateFields();
+			SetRequiredFields();
 		}
 
 		private void checkTextingY3_Click(object sender,EventArgs e) {
 			if(checkTextingN3.Checked && checkTextingY3.Checked) {
 				checkTextingN3.Checked=false;
 			}
-			ValidateFields();
+			SetRequiredFields();
 		}
 
 		private void checkTextingN3_Click(object sender,EventArgs e) {
 			if(checkTextingN3.Checked && checkTextingY3.Checked) {
 				checkTextingY3.Checked=false;
 			}
-			ValidateFields();
+			SetRequiredFields();
 		}
 
 		private void checkTextingY4_Click(object sender,EventArgs e) {
 			if(checkTextingN4.Checked && checkTextingY4.Checked) {
 				checkTextingN4.Checked=false;
 			}
-			ValidateFields();
+			SetRequiredFields();
 		}
 
 		private void checkTextingN4_Click(object sender,EventArgs e) {
 			if(checkTextingN4.Checked && checkTextingY4.Checked) {
 				checkTextingY4.Checked=false;
 			}
-			ValidateFields();
+			SetRequiredFields();
 		}
 
 		private void checkTextingY5_Click(object sender,EventArgs e) {
 			if(checkTextingN5.Checked && checkTextingY5.Checked) {
 				checkTextingN5.Checked=false;
 			}
-			ValidateFields();
+			SetRequiredFields();
 		}
 
 		private void checkTextingN5_Click(object sender,EventArgs e) {
 			if(checkTextingN5.Checked && checkTextingY5.Checked) {
 				checkTextingY5.Checked=false;
 			}
-			ValidateFields();
+			SetRequiredFields();
 		}
 		#endregion
 
@@ -1603,13 +1472,13 @@ namespace OpenDental {
 			//this happens when a zipcode is selected from the combobox of frequent zips.
 			//The combo box is tucked under textZip because Microsoft makes stupid controls.
 			if(comboZip.SelectedIndex==-1) {
-				ValidateFields();
+				SetRequiredFields();
 				return;
 			}
 			textCity.Text=(_listZipCodes[comboZip.SelectedIndex]).City;
 			textState.Text=(_listZipCodes[comboZip.SelectedIndex]).State;
 			textZip.Text=(_listZipCodes[comboZip.SelectedIndex]).ZipCodeDigits;
-			ValidateFields();
+			SetRequiredFields();
 		}
 
 		private void textZip_Validating(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -1750,7 +1619,7 @@ namespace OpenDental {
 				return;
 			}
 			listStates.Visible=false;
-			ValidateFields();
+			SetRequiredFields();
 		}
 
 		private void listStates_Click(object sender,System.EventArgs e) {
@@ -1773,35 +1642,36 @@ namespace OpenDental {
 		private void butReferredFrom_Click(object sender,EventArgs e) {
 			Referral referral=new Referral();
 			if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Is the referral source an existing patient?")) {//patient referral
-				FrmPatientSelect frmPatientSelect=new FrmPatientSelect();
-				frmPatientSelect.ShowDialog();
-				if(frmPatientSelect.IsDialogCancel) {
+				using FormPatientSelect formPatientSelect=new FormPatientSelect();
+				formPatientSelect.IsSelectionModeOnly=true;
+				formPatientSelect.ShowDialog();
+				if(formPatientSelect.DialogResult!=DialogResult.OK) {
 					return;
 				}
-				referral.PatNum=frmPatientSelect.PatNumSelected;
+				referral.PatNum=formPatientSelect.PatNumSelected;
 				bool isReferralNew=true;
-				Referral referralMatch=Referrals.GetFirstOrDefault(x => x.PatNum==frmPatientSelect.PatNumSelected);
+				Referral referralMatch=Referrals.GetFirstOrDefault(x => x.PatNum==formPatientSelect.PatNumSelected);
 				if(referralMatch!=null) {
 					referral=referralMatch;
 					isReferralNew=false;
 				}
-				FrmReferralEdit frmReferralEdit=new FrmReferralEdit(referral);//the ReferralNum must be added here
-				frmReferralEdit.IsNew=isReferralNew;
-				frmReferralEdit.ShowDialog();
-				if(!frmReferralEdit.IsDialogOK) {
+				using FormReferralEdit formReferralEdit=new FormReferralEdit(referral);//the ReferralNum must be added here
+				formReferralEdit.IsNew=isReferralNew;
+				formReferralEdit.ShowDialog();
+				if(formReferralEdit.DialogResult!=DialogResult.OK) {
 					return;
 				}
-				referral=frmReferralEdit.ReferralCur;//not needed, but it makes it clear that we are editing the ref in FormRefEdit
+				referral=formReferralEdit.ReferralCur;//not needed, but it makes it clear that we are editing the ref in FormRefEdit
 				_referral=referral;
 				FillReferredFrom();
 				return;
 			}
 			//not a patient referral, must be a doctor or marketing/other so show the referral select window with doctor and other check boxes checked
-			FrmReferralSelect frmReferralSelect=new FrmReferralSelect();
-			frmReferralSelect.IsSelectionMode=true;
-			frmReferralSelect.IsShowPat=false;
-			frmReferralSelect.ShowDialog();
-			if(frmReferralSelect.IsDialogCancel) {
+			using FormReferralSelect formReferralSelect=new FormReferralSelect();
+			formReferralSelect.IsSelectionMode=true;
+			formReferralSelect.IsShowPat=false;
+			formReferralSelect.ShowDialog();
+			if(formReferralSelect.DialogResult!=DialogResult.OK) {
 				if(_referral!=null && _referral.ReferralNum>0) {
 					//_refCur.ReferralNum could be invalid if user deleted from FormReferralSelect, _refCur will be null
 					_referral=Referrals.GetFromList(_referral.ReferralNum);
@@ -1809,7 +1679,7 @@ namespace OpenDental {
 				}
 				return;
 			}
-			referral=frmReferralSelect.ReferralSelected;
+			referral=formReferralSelect.ReferralSelected;
 			_referral=referral;
 			FillReferredFrom();
 		}
@@ -1817,7 +1687,7 @@ namespace OpenDental {
 		private void butClearReferralSource_Click(object sender,EventArgs e) {
 			_referral=null;
 			textReferredFrom.Clear();
-			ValidateFields();
+			SetRequiredFields();
 		}
 
 		///<summary>Fills the Referred From text box with the name and referral type from the private classwide variable _refCur.</summary>
@@ -1827,7 +1697,7 @@ namespace OpenDental {
 			string firstRefFullName="";
 			if(_referral==null) {
 				textReferredFrom.Clear();
-				ValidateFields();
+				SetRequiredFields();
 				return;
 			}
 			firstRefFullName=Referrals.GetNameLF(_referral.ReferralNum);
@@ -1849,8 +1719,8 @@ namespace OpenDental {
 			//Example: Schmidt, John Jacob Jingleheimer, DDS (doctor) (+5 more) 
 			//might be shortened to : Schmidt, John Jaco (doctor) (+5 more) 
 			textReferredFrom.Text=firstRefNameTypeAbbr;//text box might be something like: Schmidt, John Jaco (doctor) (+5 more)
-			textReferredFrom.Tag=firstRefFullName+firstRefType;
-			_toolTip.SetControlAndAction(textReferredFrom, ToolTipSetString);//tooltip will be: Schmidt, John Jacob Jingleheimer, DDS 
+			_toolTipReferred.SetToolTip(textReferredFrom,firstRefFullName+firstRefType);//tooltip will be: Schmidt, John Jacob Jingleheimer, DDS (doctor)
+			_errorProvider.SetError(textReferredFrom,"");
 		}
 		#endregion Referral
 
@@ -1904,7 +1774,7 @@ namespace OpenDental {
 		#region Employer
 		private void textEmployer1_KeyUp(object sender,System.Windows.Forms.KeyEventArgs e) {
 			//key up is used because that way it will trigger AFTER the textBox has been changed.
-			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit,true)) {
+			if(!Security.IsAuthorized(Permissions.InsPlanEdit,true)) {
 				return;
 			}
 			if(e.KeyCode==Keys.Return) {
@@ -1977,7 +1847,7 @@ namespace OpenDental {
 				return;
 			}
 			listEmps1.Visible=false;
-			ValidateFields();
+			SetRequiredFields();
 		}
 
 		private void listEmps1_Click(object sender,System.EventArgs e) {
@@ -2005,7 +1875,7 @@ namespace OpenDental {
 
 		private void textEmployer2_KeyUp(object sender,System.Windows.Forms.KeyEventArgs e) {
 			//key up is used because that way it will trigger AFTER the textBox has been changed.
-			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit,true)) {
+			if(!Security.IsAuthorized(Permissions.InsPlanEdit,true)) {
 				return;
 			}
 			if(e.KeyCode==Keys.Return) {
@@ -2113,7 +1983,7 @@ namespace OpenDental {
 		}
 
 		private void textCarrier1_KeyUp(object sender,System.Windows.Forms.KeyEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit,true)) {
+			if(!Security.IsAuthorized(Permissions.InsPlanEdit,true)) {
 				return;
 			}
 			if(e.KeyCode==Keys.Return) {
@@ -2232,7 +2102,7 @@ namespace OpenDental {
 		}
 
 		private void textCarrier2_KeyUp(object sender,System.Windows.Forms.KeyEventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit,true)) {
+			if(!Security.IsAuthorized(Permissions.InsPlanEdit,true)) {
 				return;
 			}
 			if(e.KeyCode==Keys.Return) {
@@ -2346,14 +2216,15 @@ namespace OpenDental {
 
 		#region InsPlanPick
 		private void butPick1_Click(object sender,EventArgs e) {
-			FrmInsPlanSelect frmInsPlanSelect=new FrmInsPlanSelect();
-			frmInsPlanSelect.empText=textEmployer1.Text;
-			frmInsPlanSelect.carrierText=textCarrier1.Text;
-			frmInsPlanSelect.ShowDialog();
-			if(!frmInsPlanSelect.IsDialogOK) {
+			using FormInsPlans formInsPlans=new FormInsPlans();
+			formInsPlans.empText=textEmployer1.Text;
+			formInsPlans.carrierText=textCarrier1.Text;
+			formInsPlans.IsSelectMode=true;
+			formInsPlans.ShowDialog();
+			if(formInsPlans.DialogResult==DialogResult.Cancel) {
 				return;
 			}
-			_insPlanSelected1=frmInsPlanSelect.InsPlanSelected.Copy();
+			_insPlanSelected1=formInsPlans.InsPlanSelected.Copy();
 			//Non-synched fields:
 			//selectedPlan1.SubscriberID=textSubscriberID.Text;//later
 			//selectedPlan1.DateEffective=DateTime.MinValue;
@@ -2366,18 +2237,19 @@ namespace OpenDental {
 			FillCarrier1(_insPlanSelected1.CarrierNum);
 			textGroupName1.Text=_insPlanSelected1.GroupName;
 			textGroupNum1.Text=_insPlanSelected1.GroupNum;
-			ValidateFields();
+			SetRequiredFields();
 		}
 
 		private void butPick2_Click(object sender,EventArgs e) {
-			FrmInsPlanSelect frmInsPlanSelect=new FrmInsPlanSelect();
-			frmInsPlanSelect.empText=textEmployer2.Text;
-			frmInsPlanSelect.carrierText=textCarrier2.Text;
-			frmInsPlanSelect.ShowDialog();
-			if(!frmInsPlanSelect.IsDialogOK) {
+			using FormInsPlans formInsPlans=new FormInsPlans();
+			formInsPlans.empText=textEmployer2.Text;
+			formInsPlans.carrierText=textCarrier2.Text;
+			formInsPlans.IsSelectMode=true;
+			formInsPlans.ShowDialog();
+			if(formInsPlans.DialogResult==DialogResult.Cancel) {
 				return;
 			}
-			_insPlanSelected2=frmInsPlanSelect.InsPlanSelected.Copy();
+			_insPlanSelected2=formInsPlans.InsPlanSelected.Copy();
 			//Non-synched fields:
 			//selectedPlan2.SubscriberID=textSubscriberID.Text;//later
 			//selectedPlan2.DateEffective=DateTime.MinValue;
@@ -2413,28 +2285,28 @@ namespace OpenDental {
 			long clinicNum;
 			switch(index) {
 				case 0://guarantor
-					clinicNum=comboClinic1.ClinicNumSelected;
+					clinicNum=comboClinic1.SelectedClinicNum;
 					break;
 				case 1:
-					clinicNum=comboClinic2.ClinicNumSelected;
+					clinicNum=comboClinic2.SelectedClinicNum;
 					break;
 				case 2:
-					clinicNum=comboClinic3.ClinicNumSelected;
+					clinicNum=comboClinic3.SelectedClinicNum;
 					break;
 				case 3:
-					clinicNum=comboClinic4.ClinicNumSelected;
+					clinicNum=comboClinic4.SelectedClinicNum;
 					break;
 				case 4:
-					clinicNum=comboClinic5.ClinicNumSelected;
+					clinicNum=comboClinic5.SelectedClinicNum;
 					break;
 				default:
-					clinicNum=comboClinic1.ClinicNumSelected;
+					clinicNum=comboClinic1.SelectedClinicNum;
 					break;
 			}
 			return clinicNum;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(Plugins.HookMethod(this,"FormPatientAddAll.butOK_Click_start")) {
 				return;
 			}
@@ -2579,11 +2451,11 @@ namespace OpenDental {
 			#endregion Validate Insurance Subscriptions
 			#region Validate Clinics
 			if(PrefC.HasClinicsEnabled && !PrefC.GetBool(PrefName.ClinicAllowPatientsAtHeadquarters)) {
-				if((comboClinic1.ClinicNumSelected==0 && textLName1.Text!="" && textFName1.Text!="")
-					|| (comboClinic2.ClinicNumSelected==0 && textLName2.Text!="" && textFName2.Text!="")
-					|| (comboClinic3.ClinicNumSelected==0 && textLName3.Text!="" && textFName3.Text!="")
-					|| (comboClinic4.ClinicNumSelected==0 && textLName4.Text!="" && textFName4.Text!="")
-					|| (comboClinic5.ClinicNumSelected==0 && textLName5.Text!="" && textFName5.Text!="")) 
+				if((comboClinic1.SelectedClinicNum==0 && textLName1.Text!="" && textFName1.Text!="")
+					|| (comboClinic2.SelectedClinicNum==0 && textLName2.Text!="" && textFName2.Text!="")
+					|| (comboClinic3.SelectedClinicNum==0 && textLName3.Text!="" && textFName3.Text!="")
+					|| (comboClinic4.SelectedClinicNum==0 && textLName4.Text!="" && textFName4.Text!="")
+					|| (comboClinic5.SelectedClinicNum==0 && textLName5.Text!="" && textFName5.Text!="")) 
 				{
 					MsgBox.Show(this,"Current settings for clinics do not allow patients to be added to the 'Unassigned' clinic. Please select a clinic.");
 					return;
@@ -2606,7 +2478,7 @@ namespace OpenDental {
 				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Required fields are missing or incorrect.  Click OK to save anyway or Cancel to return and "
 						+"finish editing patient information.")) {
 					_isValidating=true;
-					ValidateFields();
+					SetRequiredFields();
 					return;
 				}
 				else {
@@ -2616,11 +2488,11 @@ namespace OpenDental {
 			}
 			//check for duplicate patients
 			List<Patient> listPatientsAdding = new List<Patient>();
-			AddPatToList(textLName1.Text.Trim(),textFName1.Text.Trim(),textBirthdate1.Text,comboClinic1.ClinicNumSelected,listPatientsAdding);
-			AddPatToList(textLName2.Text.Trim(),textFName2.Text.Trim(),textBirthdate2.Text,comboClinic2.ClinicNumSelected,listPatientsAdding);
-			AddPatToList(textLName3.Text.Trim(),textFName3.Text.Trim(),textBirthdate3.Text,comboClinic3.ClinicNumSelected,listPatientsAdding);
-			AddPatToList(textLName4.Text.Trim(),textFName4.Text.Trim(),textBirthdate4.Text,comboClinic4.ClinicNumSelected,listPatientsAdding);
-			AddPatToList(textLName5.Text.Trim(),textFName5.Text.Trim(),textBirthdate5.Text,comboClinic5.ClinicNumSelected,listPatientsAdding);
+			AddPatToList(textLName1.Text.Trim(),textFName1.Text.Trim(),textBirthdate1.Text,comboClinic1.SelectedClinicNum,listPatientsAdding);
+			AddPatToList(textLName2.Text.Trim(),textFName2.Text.Trim(),textBirthdate2.Text,comboClinic2.SelectedClinicNum,listPatientsAdding);
+			AddPatToList(textLName3.Text.Trim(),textFName3.Text.Trim(),textBirthdate3.Text,comboClinic3.SelectedClinicNum,listPatientsAdding);
+			AddPatToList(textLName4.Text.Trim(),textFName4.Text.Trim(),textBirthdate4.Text,comboClinic4.SelectedClinicNum,listPatientsAdding);
+			AddPatToList(textLName5.Text.Trim(),textFName5.Text.Trim(),textBirthdate5.Text,comboClinic5.SelectedClinicNum,listPatientsAdding);
 			for(int i=0;i<listPatientsAdding.Count;i++) {//Check all the patients that we're trying to add.
 				//get a list of all current patients that have the same name. PatNum here will be 0 which is fine.
 				List<Patient> listPatients = Patients.GetListByName(listPatientsAdding[i].LName,listPatientsAdding[i].FName,listPatientsAdding[i].PatNum);
@@ -2826,7 +2698,7 @@ namespace OpenDental {
 				long patNum=Patients.Insert(patient,false);
 				EhrPatients.Refresh(patNum);
 				ImageStore.GetPatientFolder(patient,ImageStore.GetPreferredAtoZpath());
-				SecurityLogs.MakeLogEntry(EnumPermType.PatientCreate,patient.PatNum,"Created from Add Family window.");
+				SecurityLogs.MakeLogEntry(Permissions.PatientCreate,patient.PatNum,"Created from Add Family window.");
 				//if this is the first family member it is the guarantor, so set pat.Guarantor=pat.PatNum and update
 				//if this is not the first family member, the guarantor has been inserted and pat.Guarantor will already be set before inserting
 				if(i==0) {
@@ -2843,7 +2715,7 @@ namespace OpenDental {
 				if(_referral!=null) {
 					refAttach.PatNum=patient.PatNum;
 					RefAttaches.Insert(refAttach);
-					SecurityLogs.MakeLogEntry(EnumPermType.RefAttachAdd,patient.PatNum,"Referred From "+Referrals.GetNameFL(refAttach.ReferralNum));
+					SecurityLogs.MakeLogEntry(Permissions.RefAttachAdd,patient.PatNum,"Referred From "+Referrals.GetNameFL(refAttach.ReferralNum));
 				}
 				CustReference custReference=new CustReference();
 				custReference.PatNum=patient.PatNum;
@@ -3142,13 +3014,13 @@ namespace OpenDental {
 				}
 			}
 			if(hasPatPlanAdded) {
-				SecurityLogs.MakeLogEntry(EnumPermType.PatPlanCreate,patientArrayInFam[0].PatNum,"Multiple PatPlans created when adding multiple patients.");
+				SecurityLogs.MakeLogEntry(Permissions.PatPlanCreate,patientArrayInFam[0].PatNum,"Multiple PatPlans created when adding multiple patients.");
 			}
 			#endregion Create PatPlans
 			#endregion Insurance
 			PatNumSelected=patientArrayInFam[0].PatNum;//Guarantor
 			if(hasSavedMissingFields) {
-				SecurityLogs.MakeLogEntry(EnumPermType.RequiredFields,PatNumSelected,"Saved patient with required fields missing.");
+				SecurityLogs.MakeLogEntry(Permissions.RequiredFields,PatNumSelected,"Saved patient with required fields missing.");
 			}
 			#region Send HL7 if Applicable
 			//If there is an existing HL7 def enabled, send an ADT message for each patient inserted if there is an outbound ADT message defined
@@ -3189,6 +3061,10 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormPatientAddAll_FormClosing(object sender,FormClosingEventArgs e) {
 			if(DialogResult==DialogResult.OK) {
 				return;
@@ -3203,6 +3079,7 @@ namespace OpenDental {
 				MessageBox.Show(ex.Message);
 			}
 		}
+
 
 	}
 }

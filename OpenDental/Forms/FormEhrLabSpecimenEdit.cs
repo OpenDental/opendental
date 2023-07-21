@@ -28,6 +28,8 @@ namespace OpenDental {
 				foreach(Control c in Controls) {
 					c.Enabled=false;
 				}
+				butCancel.Text="Close";
+				butCancel.Enabled=true;
 			}
 			FillGridCondition();
 			FillGridReject();
@@ -100,6 +102,17 @@ namespace OpenDental {
 		private void butSave_Click(object sender,EventArgs e) {
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+
+
+
+
 
 	}
 }

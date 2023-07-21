@@ -7,7 +7,6 @@ using OpenDentBusiness;
 namespace UnitTestsCore {
 	public class PerioMeasureT {
 
-		///<summary>Creates and inserts a PerioMeasure into the database for testing.</summary>
 		public static PerioMeasure CreatePerioMeasure(long perioExamNum,PerioSequenceType perioSequenceType,int intTooth,
 			int toothValue=-1,int mbValue=-1,int bValue=-1,int dbValue=-1,int mlValue=-1,int lValue=-1,int dlValue=-1)
 		{

@@ -18,88 +18,55 @@ namespace UnitTests {
 		}
 
 		private void butConvert_Click(object sender,EventArgs e) {
-			if(textTabIndex.Text==""){
-				MsgBox.Show("Please enter tab index.");
-				return;
-			}
-			int tabIndex=int.MaxValue;
-			if(textTabIndex.Text!="-"){
-				try{
-					tabIndex=int.Parse(textTabIndex.Text);
-				}
-				catch{
-					MsgBox.Show("TabIndex invalid.");
-					return;
-				} 
-			}
-			Type type= Type.GetType("OpenDental."+textName.Text+", OpenDental");
+			Type type = Type.GetType("OpenDental."+textName.Text+", OpenDental");
 			if(type is null){
 				MsgBox.Show("Type not found.  Check spelling.");
 				return;
 			}
 			//type.GetConstructor(BindingFlags.Instance | BindingFlags.Public,null,CallingConventions.HasThis,
 			ConstructorInfo[] constructorInfoArray=type.GetConstructors();
-			ParameterInfo[] parameterInfoArray;
-			if(type==typeof(InputBox)){
-				//no warning. Takes constructor 0
-			}
-			else if(constructorInfoArray.Length!=1){
+			if(constructorInfoArray.Length!=1){
 				throw new Exception("More than one constructor found.  You will need to consolidate them into a single constructor, hopefully without parameters.");
 			}
-			parameterInfoArray=constructorInfoArray[0].GetParameters();
-			FormODBase formODBase;
+			ParameterInfo[] parameterInfoArray=constructorInfoArray[0].GetParameters();
 			if(parameterInfoArray.Length==0){
-				formODBase=(FormODBase)Activator.CreateInstance(type);
+				FormODBase formODBase=(FormODBase)Activator.CreateInstance(type);
+				WpfConverter wpfConverter=new WpfConverter();
+				wpfConverter.ConvertToWpf(formODBase,checkOverwrite.Checked);
+				Close();
+				return;
 			}
-			else{
-				object[] objectArray=new object[parameterInfoArray.Length];
-				for(int i=0;i<parameterInfoArray.Length;i++){
-					Type typeParam=parameterInfoArray[i].GetType();
-					if(typeParam.IsValueType){
-						objectArray[i]=Activator.CreateInstance(typeParam);
-					}
-					else{
-						objectArray[i]=null;
-					}
+			object[] objectArray=new object[parameterInfoArray.Length];
+			for(int i=0;i<parameterInfoArray.Length;i++){
+				Type typeParam=parameterInfoArray[i].GetType();
+				if(typeParam.IsValueType){
+					objectArray[i]=Activator.CreateInstance(typeParam);
 				}
-				formODBase=(FormODBase)Activator.CreateInstance(type,objectArray);
+				else{
+					objectArray[i]=null;
+				}
 			}
-			WpfConverter wpfConverter=new WpfConverter();
-			wpfConverter.TabIndex=tabIndex;
-			wpfConverter.ConvertToWpf(formODBase,checkOverwrite.Checked);
+			FormODBase formODBase2=(FormODBase)Activator.CreateInstance(type,objectArray);
+			WpfConverter wpfConverter2=new WpfConverter();
+			wpfConverter2.ConvertToWpf(formODBase2,checkOverwrite.Checked);
 			Close();
 		}
 
 		private void butConvert2_Click(object sender,EventArgs e) {
-			if(textTabIndex.Text==""){
-				MsgBox.Show("Please enter tab index.");
-				return;
-			}
-			int tabIndex=int.MaxValue;
-			if(textTabIndex.Text!="-"){
-				try{
-					tabIndex=int.Parse(textTabIndex.Text);
-				}
-				catch{
-					MsgBox.Show("TabIndex invalid.");
-					return;
-				} 
-			}
-			FormTestAllControls formTestAllControls=new FormTestAllControls();
+			FormUIManagerTests formUIManagerTests=new FormUIManagerTests();
 			WpfConverter wpfConverter=new WpfConverter();
-			wpfConverter.TabIndex=tabIndex;
-			wpfConverter.ConvertToWpf(formTestAllControls,true);
+			wpfConverter.ConvertToWpf(formUIManagerTests,true);
 			Close();
 		}
 
 		private void butShowTest_Click(object sender,EventArgs e) {
-			FrmTestAllControls frmTestAllControls=new FrmTestAllControls();
-			frmTestAllControls.ShowDialog();
+			FrmUIManagerTests frmUIManagerTests=new FrmUIManagerTests();
+			frmUIManagerTests.ShowDialog();
 		}
 
 		private void butWPFgrid_Click(object sender,EventArgs e) {
-			FrmTestGrid frmTestGrid=new FrmTestGrid();
-			frmTestGrid.ShowDialog();
+			FrmGridTest frmGridTest=new FrmGridTest();
+			frmGridTest.ShowDialog();
 		}
 
 		private void butGridOD_Click(object sender,EventArgs e) {
@@ -108,53 +75,8 @@ namespace UnitTests {
 		}
 
 		private void button1_Click(object sender,EventArgs e) {
-			FormTestAllControls formTestAllControls=new FormTestAllControls();
-			formTestAllControls.ShowDialog();
-		}
-
-		private void butShowFocus_Click(object sender,EventArgs e) {
-			FrmTestFocusTabbing frmTestFocusTabbing=new FrmTestFocusTabbing();
-			frmTestFocusTabbing.ShowDialog();
-		}
-
-		private void butFilterActs_Click(object sender,EventArgs e) {
-			FrmTestFilters frmTestFilters=new FrmTestFilters();
-			frmTestFilters.ShowDialog();
-		}
-
-		private void buttonSplitTests_Click(object sender,EventArgs e) {
-			FormSplitContainerTests formSplitContainerTests=new FormSplitContainerTests();
-			formSplitContainerTests.ShowDialog();
-		}
-
-		private void butSplitsWPF_Click(object sender,EventArgs e) {
-			FrmTestSplitters frmTestSplitters=new FrmTestSplitters();
-			frmTestSplitters.ShowDialog();
-		}
-
-		private void butCombosWPF_Click(object sender,EventArgs e) {
-			FrmTestCombos frmTestCombos=new FrmTestCombos();
-			frmTestCombos.ShowDialog();
-		}
-
-		private void butDatePickerTests_Click(object sender,EventArgs e) {
-			FormDatePickerTests formDatePickerTests=new FormDatePickerTests();
-			formDatePickerTests.ShowDialog();
-		}
-
-		private void butGraphics_Click(object sender,EventArgs e) {
-			FormGraphicsTests formGraphicsTests=new FormGraphicsTests();
-			formGraphicsTests.ShowDialog();
-		}
-
-		private void butMsgBox_Click(object sender,EventArgs e) {
-			FrmMsgBoxCopyPaste frmMsgBoxCopyPaste=new FrmMsgBoxCopyPaste("This is some text to show in the box. I hope it's long enough to wrap to the next line. Maybe it won't be. This is some text to show in the box. I hope it's long enough to wrap to the next line. Maybe it won't be. This is some text to show in the box. I hope it's long enough to wrap to the next line. Maybe it won't be. This is some text to show in the box. I hope it's long enough to wrap to the next line. Maybe it won't be.");
-			frmMsgBoxCopyPaste.ShowDialog();
-		}
-
-		private void butButtonTests_Click(object sender,EventArgs e) {
-			FormButtonTest formButtonTest=new FormButtonTest();
-			formButtonTest.ShowDialog();
+			FormUIManagerTests formUIManagerTests=new FormUIManagerTests();
+			formUIManagerTests.ShowDialog();
 		}
 	}
 }

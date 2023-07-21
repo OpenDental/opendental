@@ -222,7 +222,6 @@ namespace OpenDental {
 				MessageBox.Show(ex.Message);
 				return false;
 			}
-			Userods.SetIsCacheAllowed(true);
 			return true;
 		}
 

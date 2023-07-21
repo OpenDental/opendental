@@ -27,6 +27,7 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDefinitions));
+			this.butClose = new OpenDental.UI.Button();
 			this.label14 = new System.Windows.Forms.Label();
 			this.textGuide = new System.Windows.Forms.TextBox();
 			this.groupEdit = new OpenDental.UI.GroupBox();
@@ -40,6 +41,17 @@ namespace OpenDental {
 			this.gridDefs = new OpenDental.UI.GridOD();
 			this.groupEdit.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(717, 670);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 3;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// label14
 			// 
@@ -161,7 +173,9 @@ namespace OpenDental {
 			// 
 			// FormDefinitions
 			// 
-			this.ClientSize = new System.Drawing.Size(711, 707);
+			this.CancelButton = this.butClose;
+			this.ClientSize = new System.Drawing.Size(806, 707);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.gridDefs);
 			this.Controls.Add(this.label14);
 			this.Controls.Add(this.textGuide);
@@ -182,6 +196,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label label14;
 		private System.Windows.Forms.TextBox textGuide;
 		private OpenDental.UI.GroupBox groupEdit;

@@ -64,7 +64,7 @@ namespace OpenDentBusiness{
 #if !DISABLE_MICROSOFT_OFFICE
 		private static Word.Application wordApp;
 
-		///<summary>This is a static reference to a word application. That way, we can reuse it instead of having to reopen Word each time. Surround with try/catch. Will throw exception if Word is not installed.</summary>
+		///<summary>This is a static reference to a word application.  That way, we can reuse it instead of having to reopen Word each time.</summary>
 		public static Word.Application WordApp {
 			//No need to check MiddleTierRole; no call to db.
 			get {

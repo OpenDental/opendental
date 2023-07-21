@@ -71,12 +71,11 @@ namespace OpenDental {
 			}
 			Job job=new Job();
 			job.Category=JobCategory.Bug;
-			InputBox inputBoxTitle=new InputBox("Provide a brief title for the job.");
-			inputBoxTitle.ShowDialog();
-			if(inputBoxTitle.IsDialogCancel) {
+			using InputBox inputBoxTitle=new InputBox("Provide a brief title for the job.");
+			if(inputBoxTitle.ShowDialog()!=DialogResult.OK) {
 				return null;
 			}
-			if(String.IsNullOrEmpty(inputBoxTitle.StringResult)) {
+			if(String.IsNullOrEmpty(inputBoxTitle.textResult.Text)) {
 				MsgBox.Show(formODBase,"You must type a title to create a job.");
 				return null;
 			}
@@ -85,7 +84,7 @@ namespace OpenDental {
 				MsgBox.Show(formODBase,"You have no priorities setup in definitions.");
 				return null;
 			}
-			job.Title=inputBoxTitle.StringResult;
+			job.Title=inputBoxTitle.textResult.Text;
 			long priorityNum=0;
 			priorityNum=listDefsJobPriorities.FirstOrDefault(x => x.ItemValue.Contains("BugDefault")).DefNum;
 			job.Priority=priorityNum==0?listDefsJobPriorities.First().DefNum:priorityNum;
@@ -93,12 +92,11 @@ namespace OpenDental {
 			job.UserNumConcept=Security.CurUser.UserNum;
 			Bug bug=new Bug();
 			bug=Bugs.GetNewBugForUser();
-			InputBox inputBoxBugDescription=new InputBox("Provide a brief description for the bug. This will appear in the bug tracker.",job.Title);
-			inputBoxBugDescription.ShowDialog();
-			if(inputBoxBugDescription.IsDialogCancel) {
+			using InputBox inputBoxBugDescription=new InputBox("Provide a brief description for the bug. This will appear in the bug tracker.",job.Title);
+			if(inputBoxBugDescription.ShowDialog()!=DialogResult.OK) {
 				return null;
 			}
-			if(String.IsNullOrEmpty(inputBoxBugDescription.StringResult)) {
+			if(String.IsNullOrEmpty(inputBoxBugDescription.textResult.Text)) {
 				MsgBox.Show(formODBase,"You must type a description to create a bug.");
 				return null;
 			}
@@ -110,7 +108,7 @@ namespace OpenDental {
 			}
 			bug.Status_=BugStatus.Accepted;
 			bug.VersionsFound=formVersionPrompt.VersionText;
-			bug.Description=inputBoxBugDescription.StringResult;
+			bug.Description=inputBoxBugDescription.textResult.Text;
 			BugSubmission sub=listBugSubmissionsSelected.First();
 			job.Requirements=BugSubmissions.GetSubmissionDescription(patient,sub);
 			Jobs.Insert(job);

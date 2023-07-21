@@ -459,7 +459,7 @@ namespace OpenDental {
 			FillReconcileGrid();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(_listAllergiesReconcile.Count==0) {
 				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"The reconcile list is empty which will cause all existing allergies to be removed.  Continue?")) {
 					return;
@@ -538,11 +538,14 @@ namespace OpenDental {
 					AllergyDef allergyDefInter=AllergyDefs.GetOne(_listAllergiesReconcile[i].AllergyDefNum);
 					using FormCDSIntervention formCDSIntervention=new FormCDSIntervention();
 					formCDSIntervention.ListCDSInterventions=EhrTriggers.TriggerMatch(allergyDefInter,_patient);
-					formCDSIntervention.ShowIfRequired();
+					formCDSIntervention.ShowIfRequired(false);
 				}
 			}
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

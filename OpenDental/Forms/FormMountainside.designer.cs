@@ -32,7 +32,8 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMountainside));
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.checkEnabled = new OpenDental.UI.CheckBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.textProgName = new System.Windows.Forms.TextBox();
@@ -45,71 +46,82 @@ namespace OpenDental {
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(475, 189);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 1;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(524,224);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75,24);
+			this.butCancel.TabIndex = 0;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(443,224);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75,24);
+			this.butOK.TabIndex = 1;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// checkEnabled
 			// 
 			this.checkEnabled.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkEnabled.Location = new System.Drawing.Point(161, 60);
+			this.checkEnabled.Location = new System.Drawing.Point(161,60);
 			this.checkEnabled.Name = "checkEnabled";
-			this.checkEnabled.Size = new System.Drawing.Size(98, 18);
+			this.checkEnabled.Size = new System.Drawing.Size(98,18);
 			this.checkEnabled.TabIndex = 41;
 			this.checkEnabled.Text = "Enabled";
 			this.checkEnabled.Click += new System.EventHandler(this.checkEnabled_Click);
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(58, 10);
+			this.label1.Location = new System.Drawing.Point(58,10);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(187, 18);
+			this.label1.Size = new System.Drawing.Size(187,18);
 			this.label1.TabIndex = 44;
 			this.label1.Text = "Internal Name";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textProgName
 			// 
-			this.textProgName.Location = new System.Drawing.Point(246, 9);
+			this.textProgName.Location = new System.Drawing.Point(246,9);
 			this.textProgName.Name = "textProgName";
 			this.textProgName.ReadOnly = true;
-			this.textProgName.Size = new System.Drawing.Size(275, 20);
+			this.textProgName.Size = new System.Drawing.Size(275,20);
 			this.textProgName.TabIndex = 45;
 			// 
 			// textProgDesc
 			// 
-			this.textProgDesc.Location = new System.Drawing.Point(246, 34);
+			this.textProgDesc.Location = new System.Drawing.Point(246,34);
 			this.textProgDesc.Name = "textProgDesc";
-			this.textProgDesc.Size = new System.Drawing.Size(275, 20);
+			this.textProgDesc.Size = new System.Drawing.Size(275,20);
 			this.textProgDesc.TabIndex = 47;
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(57, 35);
+			this.label2.Location = new System.Drawing.Point(57,35);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(187, 18);
+			this.label2.Size = new System.Drawing.Size(187,18);
 			this.label2.TabIndex = 46;
 			this.label2.Text = "Description";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textHL7FolderOut
 			// 
-			this.textHL7FolderOut.Location = new System.Drawing.Point(234, 48);
+			this.textHL7FolderOut.Location = new System.Drawing.Point(234,48);
 			this.textHL7FolderOut.Name = "textHL7FolderOut";
-			this.textHL7FolderOut.Size = new System.Drawing.Size(275, 20);
+			this.textHL7FolderOut.Size = new System.Drawing.Size(275,20);
 			this.textHL7FolderOut.TabIndex = 51;
 			// 
 			// labelHL7FolderOut
 			// 
-			this.labelHL7FolderOut.Location = new System.Drawing.Point(6, 49);
+			this.labelHL7FolderOut.Location = new System.Drawing.Point(6,49);
 			this.labelHL7FolderOut.Name = "labelHL7FolderOut";
-			this.labelHL7FolderOut.Size = new System.Drawing.Size(226, 18);
+			this.labelHL7FolderOut.Size = new System.Drawing.Size(226,18);
 			this.labelHL7FolderOut.TabIndex = 50;
 			this.labelHL7FolderOut.Text = "Out from Mountainside";
 			this.labelHL7FolderOut.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -119,37 +131,43 @@ namespace OpenDental {
 			this.groupBox1.Controls.Add(this.label5);
 			this.groupBox1.Controls.Add(this.textHL7FolderOut);
 			this.groupBox1.Controls.Add(this.labelHL7FolderOut);
-			this.groupBox1.Location = new System.Drawing.Point(12, 93);
+			this.groupBox1.Location = new System.Drawing.Point(12,93);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(538, 86);
+			this.groupBox1.Size = new System.Drawing.Size(538,86);
 			this.groupBox1.TabIndex = 52;
-			this.groupBox1.Text = "HL7 Sync Folder";
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "HL7 Synch Folder";
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(6, 19);
+			this.label5.Location = new System.Drawing.Point(6,19);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(478, 18);
+			this.label5.Size = new System.Drawing.Size(478,18);
 			this.label5.TabIndex = 45;
 			this.label5.Text = "Folder locations must be valid on the computer where the HL7 process is running";
 			// 
 			// FormMountainside
 			// 
-			this.ClientSize = new System.Drawing.Size(562, 225);
+			this.AutoScaleBaseSize = new System.Drawing.Size(5,13);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(611,260);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.textProgDesc);
 			this.Controls.Add(this.textProgName);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.checkEnabled);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "FormMountainside";
 			this.ShowInTaskbar = false;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Mountainside Setup";
 			this.Load += new System.EventHandler(this.FormEClinicalWorks_Load);
+			this.Closing += new System.ComponentModel.CancelEventHandler(this.FormProgramLinkEdit_Closing);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
 			this.ResumeLayout(false);
@@ -157,7 +175,9 @@ namespace OpenDental {
 
 		}
 		#endregion
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.CheckBox checkEnabled;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textProgName;

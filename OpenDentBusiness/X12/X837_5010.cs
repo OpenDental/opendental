@@ -505,7 +505,6 @@ namespace OpenDentBusiness
 					//2000B PAT: (medical) Patient Information. Situational. Required when the patient is the subscriber or considered to be the subscriber and at least one of the element requirements are met. Element requirements include: when the patient is deceased and the date of death is available; or when the claim involves Medicare Durable Medical Equipment Regional Carriers Certificate of Medical Necessity (DMERC CMN) 02.03, 10.02, or DMA MAC 10.03; or when law requires to know if the patient is pregnant or not. We do not use, because we do not track death date, durable medical equipment information, nor do we know weather or not the patient is pregnant. Some of these fields may be necessary in the future, but not likely since our medical claims are usually pretty simple.
 				}
 				//2010BA NM1: IL (medical,institutional,dental) Subscriber Name.
-				string subsOrPatID=GetSubscriberIDorPatID(patPlans,sub);
 				sw.Write("NM1"+s
 					+"IL"+s//NM101 2/3 Entity Identifier Code: IL=Insured or Subscriber.
 					+"1"+s//NM102 1/1 Entity Type Qualifier: 1=Person, 2=Non-Person Entity.
@@ -515,7 +514,7 @@ namespace OpenDentBusiness
 					+s//NM106 1/10 Name Prefix: Not Used.
 					+s//NM107 1/10 Name Suffix: Situational. Not present in Open Dental yet so we leave blank.
 					+"MI"+s//NM108 1/2 Identification Code Qualifier: MI=Member Identification Number.
-					+Sout(subsOrPatID.Replace("-",""),80,2));//NM109 2/80 Identification Code: Situational. Required when NM102=1.
+					+Sout(sub.SubscriberID.Replace("-",""),80,2));//NM109 2/80 Identification Code: Situational. Required when NM102=1.
 				EndSegment(sw);//NM110 through NM112 are not used.
 				//In 4010s, at the request of Emdeon, we always include N3,N4,and DMG even if patient is not subscriber.  This did not make the transaction non-compliant, and they found it useful.
 				//In 5010s, we will follow the X12 specification for most clearinghouses and only include subsc address when subscriber=patient.
@@ -1037,7 +1036,7 @@ namespace OpenDentBusiness
 				for(int j=0;j<Math.Min(maxNoteLength,note.Length);j+=80) {
 					sw.Write("NTE"+s
 						+"ADD"+s//NTE01 3/3 Note Reference Code: ADD=Additional information.
-						+Sout(note.Substring(j),80,trimWhiteSpace:false));//NTE02 1/80 Description:
+						+Sout(note.Substring(j),80));//NTE02 1/80 Description:
 					EndSegment(sw);
 				}
 				//2300 NTE: (institutional) Billing Note. Situational. We do not use.
@@ -1281,7 +1280,7 @@ namespace OpenDentBusiness
 						//2310B PRV: PE (dental) Rendering Provider Specialty Information.
 						WritePRV_PE(sw,provTreat);
 						//2310B REF: (dental) Rendering Provider Secondary Identification. Situational. Not required because we always send NPI. Max repeat of 4.
-						if(IsClaimConnect(clearinghouseClin) || IsEmdeonDental(clearinghouseClin) || IsTesia(clearinghouseClin) || IsEDS(clearinghouseClin) || IsVyneDental(clearinghouseClin)) {
+						if(IsClaimConnect(clearinghouseClin) || IsEmdeonDental(clearinghouseClin) || IsTesia(clearinghouseClin) || IsEDS(clearinghouseClin)) {
 							//The state licence number can be anywhere between 4 and 14 characters depending on state, and most states have more than one state license format. 
 							//Therefore, we only validate that the state license is present or not.
 							if(provClinicTreat!=null && !provClinicTreat.StateLicense.IsNullOrEmpty()) { 
@@ -1443,7 +1442,7 @@ namespace OpenDentBusiness
 						EndSegment(sw);//AMT03 Not used.
 						//2320 AMT: A8 (medical,institutional,dental) COB Total Non-Covered Amount. Situational. Can be set when primary claim was not adjudicated. We do not use.
 					}
-					if(IsClaimConnect(clearinghouseClin) || IsOfficeAlly(clearinghouseClin) || IsEDS(clearinghouseClin) || IsApex(clearinghouseClin)) {
+					if(IsClaimConnect(clearinghouseClin) || IsOfficeAlly(clearinghouseClin)) {
 						//2320 DMG: Other subscriber demographics. This segment is not allowed in X12. ClaimConnect requires this information anyway. They will fix their validator later.
 						sw.Write("DMG"+s
 							+"D8"+s//DMG01 2/3 Date Time Period Format Qualifier: D8=Date Expressed in Format CCYYMMDD.
@@ -1464,7 +1463,6 @@ namespace OpenDentBusiness
 					//2320 MOA: (medical,institutional,dental) Outpatient Adjudication Information. Situational. For reporting remark codes from ERAs. We don't support.
 					#endregion 2320 Other subscriber information
 					#region 2330A Other subscriber Name
-					subsOrPatID=GetSubscriberIDorPatID(patPlans,otherSub);
 					//2330A NM1: IL (medical,institutional,dental) Other Subscriber Name.
 					sw.Write("NM1"+s
 						+"IL"+s//NM101 2/3 Entity Identifier Code: IL=Insured or Subscriber.
@@ -1475,7 +1473,7 @@ namespace OpenDentBusiness
 						+s//NM106 1/10 Name Prefix: Not used.
 						+s//NM107 1/10 Name Suffix: Situational. No corresponding field in OD.
 						+"MI"+s//NM108 1/2 Identification Code Qualifier: MI=Member Identification Number.
-						+Sout(subsOrPatID,80));//NM109 2/80 Identification Code:
+						+Sout(otherSub.SubscriberID,80));//NM109 2/80 Identification Code:
 					EndSegment(sw);//NM110 through NM112 are not used.
 					//2330A N3: Other Subscriber Address.
 					sw.Write("N3"+s+Sout(otherSubsc.Address,55));//N301 1/55 Address Information:
@@ -2721,23 +2719,11 @@ namespace OpenDentBusiness
 			return provOrderProc;
 		}
 
-		///<summary>When the EclaimsSubscIDUsesPatID preference is enabled, uses Optional Patient ID ("PatID") in place of SubscriberID if PatID is not whitespace.</summary>
-		public static string GetSubscriberIDorPatID(List<PatPlan> listPatPlans,InsSub insSub) {
-			if(!PrefC.GetBool(PrefName.EclaimsSubscIDUsesPatID)) {
-				return insSub.SubscriberID;
-			}
-			PatPlan patPlanMatching=listPatPlans.FirstOrDefault(x=>x.InsSubNum==insSub.InsSubNum);
-			if(patPlanMatching!=null && !string.IsNullOrWhiteSpace(patPlanMatching.PatID)) {
-				return patPlanMatching.PatID;
-			}
-			return insSub.SubscriberID;
-		}
-
 		///<summary>X12 "String" output scrubber, for data element type "AN".  Converts any string to an acceptable format for X12.
 		///Converts to all caps and strips off all invalid characters.
 		///Optionally shortens the string to the specified length
 		///and/or makes sure the string is long enough by padding with spaces.</summary>
-		private static string Sout(string inputStr,int maxL=-1,int minL=-1,bool hasUnderscores=false,bool trimWhiteSpace=true) {
+		private static string Sout(string inputStr,int maxL=-1,int minL=-1,bool hasUnderscores=false) {
 			//The "Basic Character Set" is described in the standard on page 387 as: A...Z 0...9 ! & ( ) + * , - . / : ; ? = (space)
 			//The "Extended Character Set" is described in the standard on page 387 as: a...z % ~ @ [ ] _ { } \ | < > # $
 			//An X12 "String" is defined on page 393 as: "A string data element is a sequence of any characters from the basic or extended character sets."
@@ -2756,9 +2742,7 @@ namespace OpenDentBusiness
 			if(!hasUnderscores) {
 				retStr=Regex.Replace(retStr,"[_]","");//replaces _
 			}
-			if(trimWhiteSpace) {
-				retStr=retStr.Trim();//removes leading and trailing spaces.
-			}
+			retStr=retStr.Trim();//removes leading and trailing spaces.
 			if(maxL!=-1) {
 				if(retStr.Length>maxL) {
 					retStr=retStr.Substring(0,maxL);
@@ -2980,11 +2964,9 @@ namespace OpenDentBusiness
 			}
 			Carrier carrier=Carriers.GetCarrier(insPlan.CarrierNum);
 			PatPlan patPlan=PatPlans.GetFromList(patPlans,claim.InsSubNum);//can be null
-			bool hasWarnedPatID=false;
-			if(patPlan!=null && patPlan.PatID!="" && !PrefC.GetBool(PrefName.EclaimsSubscIDUsesPatID)) {
+			if(patPlan!=null && patPlan.PatID!="") {
 				Comma(strb);
-				strb.Append("Cannot use Optional Patient ID unless the preference 'On e-claims, use Optional Patient ID instead of Subscriber ID' is checked");
-				hasWarnedPatID=true;
+				strb.Append("Create a new insurance plan instead of using the optional patient ID");
 			}
 			if(IsDentiCal(clearinghouseClin)) {
 				if(GetFilingCode(insPlan)!="MC") {
@@ -3014,12 +2996,10 @@ namespace OpenDentBusiness
 				strb.Append("BillProv Medicaid ID");
 			}
 			Patient patient=Patients.GetPat(claim.PatNum);
-			string subsOrPatID;
 			if(claim.PlanNum2>0) {
 				InsPlan insPlan2=InsPlans.GetPlan(claim.PlanNum2,new List<InsPlan>());
 				InsSub sub2=InsSubs.GetSub(claim.InsSubNum2,null);
-				subsOrPatID=GetSubscriberIDorPatID(patPlans,sub2);
-				if(subsOrPatID.Length<2) {
+				if(sub2.SubscriberID.Length<2) {
 					Comma(strb);
 					strb.Append("Other Insurance SubscriberID");
 				}
@@ -3041,9 +3021,9 @@ namespace OpenDentBusiness
 					strb.Append("Other Insurance Relationship");
 				}
 				PatPlan patPlan2=PatPlans.GetFromList(patPlans,claim.InsSubNum2);//can be null
-				if(patPlan2!=null && patPlan2.PatID!="" && !PrefC.GetBool(PrefName.EclaimsSubscIDUsesPatID) && !hasWarnedPatID) {
+				if(patPlan2!=null && patPlan2.PatID!="") {
 					Comma(strb);
-					strb.Append("Cannot use Optional Patient ID unless the preference 'On e-claims, use Optional Patient ID instead of Subscriber ID' is checked");
+					strb.Append("Create a new insurance plan instead of using the optional patient ID for the other insurance plan");
 				}
 			}
 			else { //other insurance not specified
@@ -3062,8 +3042,7 @@ namespace OpenDentBusiness
 					strb.Append("Billing Prov Supplemental ID:"+providerIdents[i].ToString();
 				}
 			}*/
-			subsOrPatID=GetSubscriberIDorPatID(patPlans,sub);
-			if(subsOrPatID.Length<2) {
+			if(sub.SubscriberID.Length<2) {
 				Comma(strb);
 				strb.Append("SubscriberID");
 			}

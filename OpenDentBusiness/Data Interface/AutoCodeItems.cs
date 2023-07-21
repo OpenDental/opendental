@@ -82,31 +82,31 @@ namespace OpenDentBusiness{
 		#endregion Cache Pattern
 
 		///<summary></summary>
-		public static long Insert(AutoCodeItem autoCodeItem) {
+		public static long Insert(AutoCodeItem Cur) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				autoCodeItem.AutoCodeItemNum=Meth.GetLong(MethodBase.GetCurrentMethod(),autoCodeItem);
-				return autoCodeItem.AutoCodeItemNum;
+				Cur.AutoCodeItemNum=Meth.GetLong(MethodBase.GetCurrentMethod(),Cur);
+				return Cur.AutoCodeItemNum;
 			}
-			return Crud.AutoCodeItemCrud.Insert(autoCodeItem);
+			return Crud.AutoCodeItemCrud.Insert(Cur);
 		}
 
 		///<summary></summary>
-		public static void Update(AutoCodeItem autoCodeItem){
+		public static void Update(AutoCodeItem Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),autoCodeItem);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),Cur);
 				return;
 			}
-			Crud.AutoCodeItemCrud.Update(autoCodeItem);
+			Crud.AutoCodeItemCrud.Update(Cur);
 		}
 
 		///<summary></summary>
-		public static void Delete(AutoCodeItem autoCodeItem){
+		public static void Delete(AutoCodeItem Cur){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),autoCodeItem);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),Cur);
 				return;
 			}
 			string command= "DELETE FROM autocodeitem WHERE AutoCodeItemNum = '"
-				+POut.Long(autoCodeItem.AutoCodeItemNum)+"'";
+				+POut.Long(Cur.AutoCodeItemNum)+"'";
 			Db.NonQ(command);
 		}
 
@@ -132,33 +132,34 @@ namespace OpenDentBusiness{
 		///<summary>Only called from ContrChart.listProcButtons_Click.  Called once for each tooth selected and for each autocode item attached to the button.</summary>
 		public static long GetCodeNum(long autoCodeNum,string toothNum,string surf,bool isAdditional,long patNum,int age,bool willBeMissing) {
 			//No need to check MiddleTierRole; no call to db.
-			bool areAllCondsMet;
-			List<AutoCodeItem> listAutoCodeItemsForCode=AutoCodeItems.GetListForCode(autoCodeNum);
-			if(listAutoCodeItemsForCode.Count==0) {
+			bool allCondsMet;
+			List<AutoCodeItem> listForCode=AutoCodeItems.GetListForCode(autoCodeNum);
+			if(listForCode.Count==0) {
 				return 0;
 			}
 			//bool willBeMissing=Procedures.WillBeMissing(toothNum,patNum);//moved this out so that this method has no db call
-			List<AutoCodeCond> listAutoCodeConds;
-			for(int i=0;i<listAutoCodeItemsForCode.Count;i++) {
-				listAutoCodeConds=AutoCodeConds.GetListForItem(listAutoCodeItemsForCode[i].AutoCodeItemNum);
-				areAllCondsMet=true;
-				for(int j=0;j<listAutoCodeConds.Count;j++) {
-					if(!AutoCodeConds.ConditionIsMet(listAutoCodeConds[j].Cond,toothNum,surf,isAdditional,willBeMissing,age)) {
-						areAllCondsMet=false;
+			List<AutoCodeCond> condList;
+			for(int i=0;i<listForCode.Count;i++) {
+				condList=AutoCodeConds.GetListForItem(listForCode[i].AutoCodeItemNum);
+				allCondsMet=true;
+				for(int j=0;j<condList.Count;j++) {
+					if(!AutoCodeConds.ConditionIsMet(condList[j].Cond,toothNum,surf,isAdditional,willBeMissing,age)) {
+						allCondsMet=false;
 					}
 				}
-				if(areAllCondsMet) {
-					return listAutoCodeItemsForCode[i].CodeNum;
+				if(allCondsMet) {
+					return listForCode[i].CodeNum;
 				}
 			}
-			return listAutoCodeItemsForCode[0].CodeNum;//if couldn't find a better match
+			return listForCode[0].CodeNum;//if couldn't find a better match
 		}
 
 		///<summary>Only called when closing the procedure edit window. Usually returns the supplied CodeNum, unless a better match is found.</summary>
-		public static long VerifyCode(long codeNum,string toothNum,string surf,bool isAdditional,long patNum,int age) {
+		public static long VerifyCode(long codeNum,string toothNum,string surf,bool isAdditional,long patNum,int age,
+			out AutoCode autoCode) {
 			//No need to check MiddleTierRole; no call to db.
-			bool areAllCondsMet;
-			AutoCode autoCode;
+			bool allCondsMet;
+			autoCode=null;
 			if(!GetContainsKey(codeNum)) {
 				return codeNum;
 			}
@@ -174,57 +175,59 @@ namespace OpenDentBusiness{
 			List<AutoCodeCond> listAutoCodeConds;
 			for(int i=0;i<listAutoCodeItems.Count;i++) {
 				listAutoCodeConds=AutoCodeConds.GetListForItem(listAutoCodeItems[i].AutoCodeItemNum);
-				areAllCondsMet=true;
+				allCondsMet=true;
 				for(int j=0;j<listAutoCodeConds.Count;j++) {
 					if(!AutoCodeConds.ConditionIsMet(listAutoCodeConds[j].Cond,toothNum,surf,isAdditional,willBeMissing,age)) {
-						areAllCondsMet=false;
+						allCondsMet=false;
 					}
 				}
-				if(areAllCondsMet) {
+				if(allCondsMet) {
 					return listAutoCodeItems[i].CodeNum;
 				}
 			}
 			return codeNum;//if couldn't find a better match
 		}
 
-		///<summary>Checks inputs and returns either the same code or a slightly different code that is a better fit for the situation.</summary>
-		public static long GetRecommendedCodeNum(Procedure procedure,ProcedureCode procedureCode,Patient patient,bool isMandibular,
-			List<ClaimProc> claimProcsForProc) 
+		///<summary>Checks inputs and determines if user should be prompted to pick a more applicable procedure code.</summary>
+		///<param name="verifyCode">This is the recommended code based on input. If it matches procCode return value will be false.</param>
+		public static bool ShouldPromptForCodeChange(Procedure procedure,ProcedureCode procedureCode,Patient patient,bool isMandibular,
+			List<ClaimProc> claimProcsForProc,out long verifyCode) 
 		{
-			//No remoting role check; no call to db.
-			long codeNumRecommended=procedure.CodeNum;
+			//No remoting role check; no call to db and method utilizes an out parameter.
+			verifyCode=procedure.CodeNum;
 			//these areas have no autocodes
 			if(procedureCode.TreatArea==TreatmentArea.Mouth
 				|| procedureCode.TreatArea==TreatmentArea.None
 				|| procedureCode.TreatArea==TreatmentArea.Quad
 				|| procedureCode.TreatArea==TreatmentArea.Sextant
 				|| Procedures.IsAttachedToClaim(procedure,claimProcsForProc)) {
-				return codeNumRecommended;
+				return false;
 			}
 			//this represents the suggested code based on the autocodes set up.
+			AutoCode autoCode=null;
 			if(procedureCode.TreatArea==TreatmentArea.Arch) {
 				if(string.IsNullOrEmpty(procedure.Surf)) {
-					return codeNumRecommended;
+					return false;
 				}
 				if(procedure.Surf=="U") {
-					codeNumRecommended=AutoCodeItems.VerifyCode(procedureCode.CodeNum,"1","",procedure.IsAdditional,patient.PatNum,patient.Age);//max
+					verifyCode=AutoCodeItems.VerifyCode(procedureCode.CodeNum,"1","",procedure.IsAdditional,patient.PatNum,patient.Age,out autoCode);//max
 				}
 				else {
-					codeNumRecommended=AutoCodeItems.VerifyCode(procedureCode.CodeNum,"32","",procedure.IsAdditional,patient.PatNum,patient.Age);//mand
+					verifyCode=AutoCodeItems.VerifyCode(procedureCode.CodeNum,"32","",procedure.IsAdditional,patient.PatNum,patient.Age,out autoCode);//mand
 				}
 			}
 			else if(procedureCode.TreatArea==TreatmentArea.ToothRange) {
 				if(string.IsNullOrEmpty(procedure.ToothRange)) {
-					return codeNumRecommended;
+					return false;
 				}
 				//test for max or mand.
-				codeNumRecommended=AutoCodeItems.VerifyCode(procedureCode.CodeNum,(isMandibular) ? "32" : "1","",procedure.IsAdditional,patient.PatNum,patient.Age);
+				verifyCode=AutoCodeItems.VerifyCode(procedureCode.CodeNum,(isMandibular) ? "32" : "1","",procedure.IsAdditional,patient.PatNum,patient.Age,out autoCode);
 			}
 			else {//surf or tooth
 				string claimSurf=Tooth.SurfTidyForClaims(procedure.Surf,procedure.ToothNum);
-				codeNumRecommended=AutoCodeItems.VerifyCode(procedureCode.CodeNum,procedure.ToothNum,claimSurf,procedure.IsAdditional,patient.PatNum,patient.Age);
+				verifyCode=AutoCodeItems.VerifyCode(procedureCode.CodeNum,procedure.ToothNum,claimSurf,procedure.IsAdditional,patient.PatNum,patient.Age,out autoCode);
 			}
-			return codeNumRecommended;
+			return procedureCode.CodeNum!=verifyCode;
 		}
 	}
 }

@@ -23,6 +23,7 @@ namespace OpenDental {
 
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpPatients));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.tabPatients = new OpenDental.UI.TabControl();
 			this.tabData = new OpenDental.UI.TabPage();
@@ -34,7 +35,6 @@ namespace OpenDental {
 			this.labelPatient = new System.Windows.Forms.Label();
 			this.listPatientSelect = new OpenDental.UI.ListBox();
 			this.tabFilters = new OpenDental.UI.TabPage();
-			this.label2 = new System.Windows.Forms.Label();
 			this.labelHelp = new System.Windows.Forms.Label();
 			this.listBoxColumns = new OpenDental.UI.ListBox();
 			this.TextDate = new OpenDental.ValidDate();
@@ -46,16 +46,28 @@ namespace OpenDental {
 			this.TextBox = new System.Windows.Forms.TextBox();
 			this.DropListFilter = new OpenDental.UI.ComboBox();
 			this.TextSQL = new System.Windows.Forms.TextBox();
+			this.label2 = new System.Windows.Forms.Label();
 			this.tabPatients.SuspendLayout();
 			this.tabData.SuspendLayout();
 			this.tabFilters.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(876, 664);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 3;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butOK.Enabled = false;
-			this.butOK.Location = new System.Drawing.Point(875, 662);
+			this.butOK.Location = new System.Drawing.Point(876, 630);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 2;
@@ -68,7 +80,6 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.tabPatients.Controls.Add(this.tabData);
 			this.tabPatients.Controls.Add(this.tabFilters);
-			this.tabPatients.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.tabPatients.Location = new System.Drawing.Point(16, 6);
 			this.tabPatients.Name = "tabPatients";
 			this.tabPatients.Size = new System.Drawing.Size(840, 544);
@@ -115,7 +126,7 @@ namespace OpenDental {
 			this.textBox1.Location = new System.Drawing.Point(220, 20);
 			this.textBox1.Multiline = true;
 			this.textBox1.Name = "textBox1";
-			this.textBox1.Size = new System.Drawing.Size(613, 38);
+			this.textBox1.Size = new System.Drawing.Size(556, 38);
 			this.textBox1.TabIndex = 13;
 			this.textBox1.Text = resources.GetString("textBox1.Text");
 			// 
@@ -174,15 +185,6 @@ namespace OpenDental {
 			this.tabFilters.Size = new System.Drawing.Size(836, 521);
 			this.tabFilters.TabIndex = 0;
 			this.tabFilters.Text = "WHERE";
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(7, 19);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(123, 18);
-			this.label2.TabIndex = 14;
-			this.label2.Text = "WHERE";
-			this.label2.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
 			// labelHelp
 			// 
@@ -293,11 +295,22 @@ namespace OpenDental {
 			this.TextSQL.Size = new System.Drawing.Size(840, 128);
 			this.TextSQL.TabIndex = 38;
 			// 
+			// label2
+			// 
+			this.label2.Location = new System.Drawing.Point(7, 19);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(123, 18);
+			this.label2.TabIndex = 14;
+			this.label2.Text = "WHERE";
+			this.label2.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+			// 
 			// FormRpPatients
 			// 
 			this.AcceptButton = this.butOK;
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(962, 700);
 			this.Controls.Add(this.tabPatients);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.TextSQL);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -326,6 +339,7 @@ namespace OpenDental {
 		private OpenDental.UI.ListBox listReferredToSelect;
 		private OpenDental.UI.ListBox listConditions;
 		private OpenDental.UI.ComboBox DropListFilter;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butAddFilter;
 		private OpenDental.UI.Button butDeleteFilter;

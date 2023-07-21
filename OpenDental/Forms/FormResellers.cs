@@ -78,11 +78,11 @@ namespace OpenDental {
 				MsgBox.Show(this,"Please select a reseller first.");
 				return;
 			}
-			GlobalFormOpenDental.GotoAccount(PIn.Long(_tableResellers.Rows[gridMain.GetSelectedIndex()]["PatNum"].ToString()));
+			GotoModule.GotoAccount(PIn.Long(_tableResellers.Rows[gridMain.GetSelectedIndex()]["PatNum"].ToString()));
 		}
 
 		private void butAdd_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.SecurityAdmin)) {
+			if(!Security.IsAuthorized(Permissions.SecurityAdmin)) {
 				return;
 			}
 			using FormPatientSelect formPatientSelect=new FormPatientSelect();
@@ -109,5 +109,8 @@ namespace OpenDental {
 			FillGrid();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+		}
 	}
 }

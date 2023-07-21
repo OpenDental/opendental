@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormLateCharges));
 			this.butRun = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.textDateLastRun = new OpenDental.ValidDate();
 			this.labelDateLastRun = new System.Windows.Forms.Label();
 			this.textDateNewCharges = new OpenDental.ValidDate();
@@ -64,12 +65,23 @@ namespace OpenDental{
 			// butRun
 			// 
 			this.butRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butRun.Location = new System.Drawing.Point(515, 372);
+			this.butRun.Location = new System.Drawing.Point(434, 407);
 			this.butRun.Name = "butRun";
 			this.butRun.Size = new System.Drawing.Size(75, 24);
 			this.butRun.TabIndex = 5;
 			this.butRun.Text = "Run";
 			this.butRun.Click += new System.EventHandler(this.butRun_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(515, 407);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 6;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// textDateLastRun
 			// 
@@ -382,7 +394,8 @@ namespace OpenDental{
 			// 
 			// FormLateCharges
 			// 
-			this.ClientSize = new System.Drawing.Size(602, 408);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(602, 443);
 			this.Controls.Add(this.groupLateCharge);
 			this.Controls.Add(this.groupBoxAssignCharge);
 			this.Controls.Add(this.groupBoxUndo);
@@ -391,6 +404,7 @@ namespace OpenDental{
 			this.Controls.Add(this.textDateNewCharges);
 			this.Controls.Add(this.labelDateNewCharges);
 			this.Controls.Add(this.butRun);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormLateCharges";
 			this.Text = "Late Charges";
@@ -409,6 +423,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butRun;
+		private OpenDental.UI.Button butCancel;
 		private ValidDate textDateLastRun;
 		private System.Windows.Forms.Label labelDateLastRun;
 		private ValidDate textDateNewCharges;

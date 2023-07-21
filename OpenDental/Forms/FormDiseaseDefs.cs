@@ -61,6 +61,7 @@ namespace OpenDental{
 			_listSecurityLogMsgs=new List<string>();
 			if(IsSelectionMode){
 				//Hide and change UI buttons
+				butClose.Text=Lan.g(this,"Cancel");
 				butDown.Visible=false;
 				butUp.Visible=false;
 				labelAlphabetize.Visible=false;
@@ -220,7 +221,7 @@ namespace OpenDental{
 		///<summary>Adds a new disease. New diseases get blank (not null) fields for ICD9, ICD10, and SnoMedCodes 
 		///if they are not specified from FormDiseaseDefEdit so that we can do string searches on them.</summary>
 		private void butAdd_Click(object sender,System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ProblemDefEdit)) {
+			if(!Security.IsAuthorized(Permissions.ProblemDefEdit)) {
 				return;
 			}
 			//initialise the new DiseaseDef with blank fields instead of null so we can filter on them.
@@ -262,7 +263,7 @@ namespace OpenDental{
 		///<summary>Only visible when !IsSelectionMode, and disabled if any filtering has been done via the search boxes. 
 		///Resets ALL the DiseaseDefs' ItemOrders to be in alphabetical order. Not reversible once done.</summary>
 		private void butAlphabetize_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ProblemDefEdit)) {
+			if(!Security.IsAuthorized(Permissions.ProblemDefEdit)) {
 				return;
 			}
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Problems will be ordered alphabetically by description.  This cannot be undone.  Continue?")) {
@@ -278,7 +279,7 @@ namespace OpenDental{
 
 		///<summary>Only visible when !IsSelectionMode, and disabled if any filtering has been done via the search boxes. </summary>
 		private void butUp_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ProblemDefEdit)) {
+			if(!Security.IsAuthorized(Permissions.ProblemDefEdit)) {
 				return;
 			}
 			if(gridMain.SelectedIndices.Length==0) {
@@ -300,7 +301,7 @@ namespace OpenDental{
 
 		///<summary>Only visible when !IsSelectionMode, and disabled if any filtering has been done via the search boxes. </summary>
 		private void butDown_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.ProblemDefEdit)) {
+			if(!Security.IsAuthorized(Permissions.ProblemDefEdit)) {
 				return;
 			}
 			if(gridMain.SelectedIndices.Length==0) {
@@ -341,11 +342,15 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void FormDiseaseDefs_FormClosing(object sender,FormClosingEventArgs e) {
 			if(_isChanged) {
 				DiseaseDefs.Sync(_listDiseaseDefs,_listDiseaseDefsOld);//Update if anything has changed, even in selection mode.
 				//old securitylog pattern pasted from FormDiseaseDefEdit
-				_listSecurityLogMsgs.FindAll(x => !string.IsNullOrEmpty(x)).ForEach(x => SecurityLogs.MakeLogEntry(EnumPermType.ProblemDefEdit,0,x));
+				_listSecurityLogMsgs.FindAll(x => !string.IsNullOrEmpty(x)).ForEach(x => SecurityLogs.MakeLogEntry(Permissions.ProblemDefEdit,0,x));
 				DiseaseDefs.FixItemOrders();
 				DataValid.SetInvalid(InvalidType.Diseases);//refreshes cache
 			}
@@ -362,6 +367,32 @@ namespace OpenDental{
 			ICD10,
 			SNOMED,
 		}
-
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

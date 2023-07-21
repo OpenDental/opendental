@@ -28,7 +28,8 @@ namespace OpenDental{
 			this.label15 = new System.Windows.Forms.Label();
 			this.butRemoveProc = new OpenDental.UI.Button();
 			this.butAddProc = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.butSync = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
@@ -76,15 +77,25 @@ namespace OpenDental{
 			this.butAddProc.Text = "Add";
 			this.butAddProc.Click += new System.EventHandler(this.butAddProc_Click);
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(241, 437);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(78, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(241, 411);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(78, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(241, 441);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(78, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// butSync
 			// 
@@ -104,8 +115,9 @@ namespace OpenDental{
 			this.Controls.Add(this.listProcs);
 			this.Controls.Add(this.butRemoveProc);
 			this.Controls.Add(this.butAddProc);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.label15);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormDefaultCCProcs";
 			this.Text = "Default Procedures";
@@ -116,7 +128,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.ListBox listProcs;
 		private UI.Button butRemoveProc;
 		private System.Windows.Forms.Label label15;

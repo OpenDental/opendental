@@ -21,11 +21,9 @@ namespace OpenDentBusiness.SheetFramework {
 					retVal=GetTable_StatementAging(stmt,patGuar);
 					break;
 				case "StatementPayPlan":
-				case "StatementPayPlanOld":
 					retVal=GetTable_StatementPayPlan(dataSet,false);
 					break;
 				case "StatementDynamicPayPlan":
-				case "StatementPayPlanGrid":
 					retVal=GetTable_StatementPayPlan(dataSet,true);
 					break;
 				case "StatementEnclosed":
@@ -332,9 +330,9 @@ namespace OpenDentBusiness.SheetFramework {
 					text=statementTotal.ToString("c");
 				}
 				else {
-					double patInsEst=tableMisc.Rows.OfType<DataRow>()
-						.Where(x=>x["descript"].ToString()=="patInsEst")
-						.Sum(x=>PIn.Double(x["value"].ToString()));
+					double patInsEst=PIn.Double(tableMisc.Rows.OfType<DataRow>()
+						.Where(x => x["descript"].ToString()=="patInsEst")
+						.Select(x => x["value"].ToString()).FirstOrDefault());//safe, if string is blank or null PIn.Double will return 0
 					text=(statementTotal-patInsEst).ToString("c");
 				}
 			}

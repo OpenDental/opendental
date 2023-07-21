@@ -22,16 +22,16 @@ namespace OpenDental {
 		///<summary></summary>
 		public FrmInsSelectSubscr(long subscriber, long patNum)
 		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
+			//Lan.F(this);
 			_subscriber=subscriber;
 			_patNum=patNum;
-			Load+=FrmInsSelectSubscr_Load;
-			MouseDoubleClick+=listPlans_DoubleClick;
-			PreviewKeyDown+=FrmInsSelectSubscr_PreviewKeyDown;
 		}
 
-		private void FrmInsSelectSubscr_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmInsSelectSubscr_Loaded(object sender,RoutedEventArgs e) {
 			_listInsSubs=InsSubs.GetListForSubscriber(_subscriber);
 			List<InsPlan> listInsPlans=InsPlans.RefreshForSubList(_listInsSubs);
 			//PatPlan[] patPlanArray;
@@ -66,7 +66,7 @@ namespace OpenDental {
 			return true;
 		} 
 
-		private void listPlans_DoubleClick(object sender, MouseButtonEventArgs e) {
+		private void listPlans_DoubleClick(object sender, System.EventArgs e) {
 			if(listPlans.SelectedIndex==-1){
 				return;
 			}
@@ -86,12 +86,6 @@ namespace OpenDental {
 			IsDialogOK=true;
 		}
 
-		private void FrmInsSelectSubscr_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butOK.IsAltKey(Key.O,e)) {
-				butOK_Click(this,new EventArgs());
-			}
-		}
-
 		private void butOK_Click(object sender, System.EventArgs e) {
 			if(listPlans.SelectedIndex==-1){
 				MsgBox.Show(this,"Please select a plan first.");
@@ -108,5 +102,33 @@ namespace OpenDental {
 			IsDialogOK=true;
 		}
 
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -87,21 +87,19 @@ namespace OpenDentBusiness{
 			}
 			string command="SELECT COUNT(*) FROM computer WHERE CompName ='"+POut.String(clientComputerName)+"'";
 			long count=Db.GetLong(command);
-			if(count!=0) {
-				return;
-			}
-			Computer computer=new Computer();
-			computer.CompName=clientComputerName;
-			long computerNum=Computers.Insert(computer);
-			//Never copy the printer rows for Thinfinity or AppStream
-			if(ODEnvironment.IsCloudServer) {
-				return;
-			}
-			if(clientComputerName.ToLower()!=hostComputerName.ToLower()) {
-				CopyPrinterRowsForComputer(computerNum,hostComputerName);//This computer is an RDP remote client. Copy the host computer's printer settings for the new computer.
-			}
-			else if(PrefC.GetBool(PrefName.EasyHidePrinters)) {
-				Printers.PutForSit(PrintSituation.Default,clientComputerName,"",true);
+			if(count == 0) {
+				Computer Cur=new Computer();
+				Cur.CompName=clientComputerName;
+				long computerNum = Computers.Insert(Cur);
+				//Never copy the printer rows for ODCloud
+				if(!ODBuild.IsWeb()) {
+					if(clientComputerName.ToLower()!=hostComputerName.ToLower()) {
+						CopyPrinterRowsForComputer(computerNum,hostComputerName);//This computer is an RDP remote client. Copy the host computer's printer settings for the new computer.
+					}
+					else if(PrefC.GetBool(PrefName.EasyHidePrinters)) {
+						Printers.PutForSit(PrintSituation.Default,clientComputerName,"",true);
+					}
+				}
 			}
 		}
 
@@ -117,23 +115,23 @@ namespace OpenDentBusiness{
 			}
 			//computerName is the client computer of a remote connection.
 			string command=$"SELECT ComputerNum FROM computer WHERE CompName='{POut.String(hostComputerName)}'";
-			long computerNumHost=Db.GetLong(command);
-			if(computerNumHost == 0) {
+			long hostComputerNum=Db.GetLong(command);
+			if(hostComputerNum == 0) {
 				return;//Could not find the host computer in the database, no printer settings to copy.
 			}
 			//Copy the host computer's printer settings for the client computer.
 			command="INSERT INTO printer (ComputerNum,PrintSit,PrinterName,DisplayPrompt) " +
-				$"SELECT {POut.Long(computerNum)},PrintSit,PrinterName,DisplayPrompt FROM printer WHERE ComputerNum={POut.Long(computerNumHost)}";
+				$"SELECT {POut.Long(computerNum)},PrintSit,PrinterName,DisplayPrompt FROM printer WHERE ComputerNum={POut.Long(hostComputerNum)}";
 			Db.NonQ(command);
 		}
 
 		///<summary>ONLY use this if compname is not already present</summary>
-		public static long Insert(Computer computer) {
+		public static long Insert(Computer comp) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				computer.ComputerNum=Meth.GetLong(MethodBase.GetCurrentMethod(),computer);
-				return computer.ComputerNum;
+				comp.ComputerNum=Meth.GetLong(MethodBase.GetCurrentMethod(),comp);
+				return comp.ComputerNum;
 			}
-			return Crud.ComputerCrud.Insert(computer);
+			return Crud.ComputerCrud.Insert(comp);
 		}
 
 		/*
@@ -149,15 +147,15 @@ namespace OpenDentBusiness{
 		}*/
 
 		///<summary></summary>
-		public static void Delete(Computer computer){
+		public static void Delete(Computer comp){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),computer);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),comp);
 				return;
 			}
 			//Delete any accociated printer settings from the printer table
-			string command=$"DELETE FROM printer WHERE ComputerNum={POut.Long(computer.ComputerNum)}";
+			string command=$"DELETE FROM printer WHERE ComputerNum={POut.Long(comp.ComputerNum)}";
  			Db.NonQ(command);
-			command=$"DELETE FROM computer WHERE ComputerNum={POut.Long(computer.ComputerNum)}";
+			command=$"DELETE FROM computer WHERE ComputerNum={POut.Long(comp.ComputerNum)}";
  			Db.NonQ(command);
 		}
 
@@ -187,19 +185,16 @@ namespace OpenDentBusiness{
 				return;
 			}
 			string command;
-			if(isStartup) {
-				command="UPDATE computer SET LastHeartBeat="+DbHelper.Now()+" WHERE CompName = '"+POut.String(computerName)+"'";
-				Db.NonQ(command);
-				return;
-			}
-			if(_computerCache.ListIsNull() || !_computerCache.GetExists(x => x.CompName==computerName)) {
-				//RefreshCache if computer name doesn't exist in cache. Happens in cloud when a new computer connects to the db and is assigned the "UNKNOWN" name that is later updated
-				//when the ODCloudClient sets the ODEnvironment.MachineName property.   RefreshCache will insert the new computer row with CompName=ODEnvironment.MachineName.
-				RefreshCache();//adds new computer to list
-			}
-			command="SELECT LastHeartBeat<"+DbHelper.DateAddMinute(DbHelper.Now(),"-3")+" FROM computer WHERE CompName='"+POut.String(computerName)+"'";
-			if(!PIn.Bool(Db.GetScalar(command))) {//no need to update if LastHeartBeat is already within the last 3 mins
-				return;//remote app servers with multiple connections would fight over the lock on a single row to update the heartbeat unnecessarily
+			if(!isStartup) {
+				if(_computerCache.ListIsNull() || !_computerCache.GetExists(x => x.CompName==computerName)) {
+					//RefreshCache if computer name doesn't exist in cache. Happens in cloud when a new computer connects to the db and is assigned the "UNKNOWN" name that is later updated
+					//when the ODCloudClient sets the ODEnvironment.MachineName property.   RefreshCache will insert the new computer row with CompName=ODEnvironment.MachineName.
+					RefreshCache();//adds new computer to list
+				}
+				command="SELECT LastHeartBeat<"+DbHelper.DateAddMinute(DbHelper.Now(),"-3")+" FROM computer WHERE CompName='"+POut.String(computerName)+"'";
+				if(!PIn.Bool(Db.GetScalar(command))) {//no need to update if LastHeartBeat is already within the last 3 mins
+					return;//remote app servers with multiple connections would fight over the lock on a single row to update the heartbeat unnecessarily
+				}
 			}
 			command="UPDATE computer SET LastHeartBeat="+DbHelper.Now()+" WHERE CompName = '"+POut.String(computerName)+"'";
 			Db.NonQ(command);
@@ -234,52 +229,48 @@ namespace OpenDentBusiness{
 			if(DataConnection.DBtype==DatabaseType.Oracle) {
 				throw new Exception(Lans.g("Computer","Currently not Oracle compatible.  Please call support."));
 			}
-			List<string> listStringsServiceInfo=new List<string>();
+			List<string> retVal=new List<string>();
 			DataTable table=Db.GetTable("SHOW VARIABLES WHERE Variable_name='socket'");//service name
 			if(table.Rows.Count>0) {
-				listStringsServiceInfo.Add(table.Rows[0]["VALUE"].ToString());
+				retVal.Add(table.Rows[0]["VALUE"].ToString());
 			}
 			else {
-				listStringsServiceInfo.Add("Not Found");
+				retVal.Add("Not Found");
 			}
 			table=Db.GetTable("SHOW VARIABLES WHERE Variable_name='version_comment'");//service comment
 			if(table.Rows.Count>0) {
-				listStringsServiceInfo.Add(table.Rows[0]["VALUE"].ToString());
+				retVal.Add(table.Rows[0]["VALUE"].ToString());
 			}
 			else {
-				listStringsServiceInfo.Add("Not Found");
+				retVal.Add("Not Found");
 			}
-			table=null;
 			try { 
 				table=Db.GetTable("SELECT @@hostname");//server name
-			}
-			catch {
-				listStringsServiceInfo.Add("Not Found");//hostname variable doesn't exist
-			}
-			if(table!=null){
 				if(table.Rows.Count>0) {
-					listStringsServiceInfo.Add(table.Rows[0][0].ToString());
+					retVal.Add(table.Rows[0][0].ToString());
 				}
 				else {
-					listStringsServiceInfo.Add("Not Found");
+					retVal.Add("Not Found");
 				}
 			}
-			listStringsServiceInfo.Add(MiscData.GetMySqlVersion());
-			string dbName="";
+			catch {
+				retVal.Add("Not Found");//hostname variable doesn't exist
+			}
+			retVal.Add(MiscData.GetMySqlVersion());
 			try {
+				string dbName="";
 				dbName=MiscData.GetCurrentDatabase();//database name
+				if(string.IsNullOrEmpty(dbName)) {
+					retVal.Add("Not Found");
+				}
+				else {
+					retVal.Add(dbName);
+				}
 			}
 			catch {
-				listStringsServiceInfo.Add("Not Found.");//database variable doesn't exist
-				return listStringsServiceInfo;
+				retVal.Add("Not Found.");//database variable doesn't exist
 			}
-			if(string.IsNullOrEmpty(dbName)) {
-				listStringsServiceInfo.Add("Not Found");
-			}
-			else {
-				listStringsServiceInfo.Add(dbName);
-			}
-			return listStringsServiceInfo;
+			return retVal;
 		}
 	}
 }

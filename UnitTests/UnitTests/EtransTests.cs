@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using CodeBase;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NHunspell;
 using OpenDental;
 using OpenDentBusiness;
 using UnitTestsCore;
@@ -35,30 +34,8 @@ namespace UnitTests.Etrans_Tests {
 			_x271=new X271(Properties.Resources.x271Test);
 		}
 
-		[TestCleanup]
-		public void TearDownTest() {
-			BenefitT.ClearBenefitTable();
-			CarrierT.ClearCarrierTable();
-			ClaimT.ClearClaimTable();
-			ClaimProcT.ClearClaimProcTable();
-			EtransT.ClearEtransTable();
-			InsPlanT.ClearInsPlanTable();
-			InsSubT.ClearInsSubTable();
-			PatientT.ClearPatientTable();
-			PatPlanT.ClearPatPlanTable();
-			ProcedureT.ClearProcedureTable();
-			SubstitutionLinkT.ClearSubstitutionLinkTable();
-		}
-
-		[ClassCleanup]
-		public static void TearDownClass() {
-			//Add anything here that you want to run after all the tests in this class have been run.
-		}
-
-		public void SetupTest(string eraResourceName=null) {
-			if(string.IsNullOrWhiteSpace(eraResourceName)) {
-				eraResourceName=Properties.Resources.JustinSmithERA;
-			}
+		[TestInitialize]
+		public void SetupTest() {
 			#region Create Patient and claim: Justin Smith
 			Patient patJustinSmith=PatientT.CreatePatient(lName: "Smith",fName: "Justin");
 			List<EraTestProcCodeData> listProcData=new List<EraTestProcCodeData>();
@@ -85,13 +62,13 @@ namespace UnitTests.Etrans_Tests {
 			_claimPrimaryStephanieMayer=EtransT.SetupEraClaim(patStephanieMayer,listProcData,"P","217439125",out List<InsuranceInfo> _listStephanieMayerInsuranceInfo);
 			#endregion
 			//Create and insert etrans entry
-			Etrans etrans835=EtransT.Insert835Etrans(eraResourceName,new DateTime(2017,09,30));//Spoof etrans imported 4 days after claim sent.
+			Etrans etrans835=EtransT.Insert835Etrans(Properties.Resources.JustinSmithERA,new DateTime(2017,09,30));//Spoof etrans imported 4 days after claim sent.
 			List<ODTuple<Patient,long>> listPats=new List<ODTuple<Patient,long>>() {
 				new ODTuple<Patient, long>(patJustinSmith,_claimPrimaryJustinSmith.ClaimNum),
 				new ODTuple<Patient, long>(patJacobJones,_claimPrimaryJacobJones.ClaimNum),
 				new ODTuple<Patient, long>(patStephanieMayer,_claimPrimaryStephanieMayer.ClaimNum)
 			};
-			_x835=EtransT.Construct835(etrans835,eraResourceName,listPats,out _listEtrans835Attaches);
+			_x835=EtransT.Construct835(etrans835,Properties.Resources.JustinSmithERA,listPats,out _listEtrans835Attaches);
 			foreach(Hx835_Claim eraClaim in _x835.ListClaimsPaid) {
 				switch(eraClaim.PatientName.Fname.ToLower()) {
 					case "justin":
@@ -107,17 +84,35 @@ namespace UnitTests.Etrans_Tests {
 			}
 		}
 
+		[TestCleanup]
+		public void TearDownTest() {
+			BenefitT.ClearBenefitTable();
+			CarrierT.ClearCarrierTable();
+			ClaimT.ClearClaimTable();
+			ClaimProcT.ClearClaimProcTable();
+			EtransT.ClearEtransTable();
+			InsPlanT.ClearInsPlanTable();
+			InsSubT.ClearInsSubTable();
+			PatientT.ClearPatientTable();
+			PatPlanT.ClearPatPlanTable();
+			ProcedureT.ClearProcedureTable();
+			SubstitutionLinkT.ClearSubstitutionLinkTable();
+		}
+
+		[ClassCleanup]
+		public static void TearDownClass() {
+			//Add anything here that you want to run after all the tests in this class have been run.
+		}
+
 		#region X835
 		[TestMethod]
 		public void X835_ClaimMatching_ClaimIdentifier() {
-			SetupTest();
 			List<long> listClaimNums=Claims.GetClaimFromX12(_x835.GetClaimMatches(new List<Hx835_Claim>() { _eraJustinSmithClaim }));
 			Assert.AreEqual(_eraJustinSmithClaim.ClaimNum,listClaimNums[0]);
 		}
 
 		[TestMethod]
 		public void X835_TryGetMatchedClaimProc_AllProcsMatched() {
-			SetupTest();
 			//Will return if payment already entered.
 			//Must enter payment to match claim procs since they consider financial information.
 			TryEnterPayment(_x835,_eraJustinSmithClaim,_claimPrimaryJustinSmith,true);
@@ -138,7 +133,6 @@ namespace UnitTests.Etrans_Tests {
 
 		[TestMethod]
 		public void X835_IsProcessed_NoSupplemental() {
-			SetupTest();
 			//Must enter payment to match claim procs since they consider financial information.
 			TryEnterPayment(_x835,_eraJustinSmithClaim,_claimPrimaryJustinSmith,true);//Will return if payment already entered.
 			Assert.AreEqual(true,_eraJustinSmithClaim.IsProcessed(ClaimProcs.Refresh(_claimPrimaryJustinSmith.PatNum).Select(x => new Hx835_ShortClaimProc(x)).ToList(),_listEtrans835Attaches));
@@ -146,7 +140,6 @@ namespace UnitTests.Etrans_Tests {
 
 		[TestMethod]
 		public void X835_IsProcessed_WithPartialSupplemental() {
-			SetupTest();
 			TryEnterPayment(_x835,_eraJustinSmithClaim,_claimPrimaryJustinSmith,true);//Will return if payment already entered.
 			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(_claimPrimaryJustinSmith.PatNum);
 			List<ClaimProc> listSupplementalClaimProcs=ClaimProcs.CreateSuppClaimProcs(listClaimProcs);
@@ -157,7 +150,6 @@ namespace UnitTests.Etrans_Tests {
 
 		[TestMethod]
 		public void X835_TryGetMatchedClaimProc_SpecificSupplemental() {
-			SetupTest();
 			TryEnterPayment(_x835,_eraJustinSmithClaim,_claimPrimaryJustinSmith,true);//Will return if payment already entered.
 			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(_claimPrimaryJustinSmith.PatNum);//TODO: limit list to claimProcs for primary claim only.
 			listClaimProcs.AddRange(ClaimProcs.CreateSuppClaimProcs(listClaimProcs));
@@ -188,7 +180,6 @@ namespace UnitTests.Etrans_Tests {
 
 		[TestMethod]
 		public void X835_GetIsSupplemental_FalsePossitive() {
-			SetupTest();
 			TryEnterPayment(_x835,_eraJustinSmithClaim,_claimPrimaryJustinSmith,true);//Will return if payment already entered.
 			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(_claimPrimaryJustinSmith.PatNum);
 			List<ClaimProc> listSupplementalClaimProcs=ClaimProcs.CreateSuppClaimProcs(listClaimProcs);
@@ -200,7 +191,6 @@ namespace UnitTests.Etrans_Tests {
 		
 		[TestMethod]
 		public void X835_GetStatus_Unprocessed() {
-			SetupTest();
 			//Unprocessed => All ERA claims are one of the following; not attached, do not have financial information entered or are manually detached.
 			_claimPrimaryJustinSmith.ClaimStatus="W";//Other methods have entered payment already, spoof matched but not recieved claims.
 			_x835.ListClaimsPaid[0].IsAttachedToClaim=true;
@@ -211,14 +201,13 @@ namespace UnitTests.Etrans_Tests {
 			_x835.ListClaimsPaid[2].ClaimNum=0;
 			List<Hx835_ShortClaim> listClaims=new[] { _claimPrimaryJustinSmith, _claimPrimaryJacobJones, _claimPrimaryStephanieMayer }.Select(x => new Hx835_ShortClaim(x)).ToList();
 			List<long> listPatNums=new List<long>() { _claimPrimaryJustinSmith.PatNum,_claimPrimaryJacobJones.PatNum,_claimPrimaryStephanieMayer.PatNum };
-			X835Status status=_x835.GetStatus(_x835.GetClaimDataList(listClaims),ClaimProcs.Refresh(listPatNums).Select(x => new Hx835_ShortClaimProc(x)).ToList(),_listEtrans835Attaches);
+			X835Status status=_x835.GetStatus(listClaims,ClaimProcs.Refresh(listPatNums).Select(x => new Hx835_ShortClaimProc(x)).ToList(),_listEtrans835Attaches);
 			_claimPrimaryJustinSmith.ClaimStatus="R";//Revert value back to what it was, this value was determined by TryEnterPayment(...)
 			Assert.AreEqual(X835Status.Unprocessed,status);
 		}
 
 		[TestMethod]
 		public void X835_GetStatus_Partial() {
-			SetupTest();
 			//Partial => Some ERA claims are attached with financial info, no claim payment.
 			//All others are one of the following; not attached, do not have financial information or are manually detached.
 			_x835.ListClaimsPaid[0].IsAttachedToClaim=true;
@@ -229,13 +218,12 @@ namespace UnitTests.Etrans_Tests {
 			_x835.ListClaimsPaid[2].ClaimNum=0;
 			TryEnterPayment(_x835,_eraJustinSmithClaim,_claimPrimaryJustinSmith,true);//Will return if payment already entered.
 			List<Hx835_ShortClaim> listClaims=new List<Hx835_ShortClaim>() { new Hx835_ShortClaim(_claimPrimaryJustinSmith) };
-			X835Status status=_x835.GetStatus(_x835.GetClaimDataList(listClaims),ClaimProcs.Refresh(_claimPrimaryJustinSmith.PatNum).Select(x => new Hx835_ShortClaimProc(x)).ToList(),_listEtrans835Attaches);
+			X835Status status=_x835.GetStatus(listClaims,ClaimProcs.Refresh(_claimPrimaryJustinSmith.PatNum).Select(x => new Hx835_ShortClaimProc(x)).ToList(),_listEtrans835Attaches);
 			Assert.AreEqual(X835Status.Partial,status);
 		}
 
 		[TestMethod]
 		public void X835_GetStatus_NotFinalized() {
-			SetupTest();
 			//NotFinalized => Some or all ERA claims attached with financial payment, no claim payment.
 			//All un-attached ERA claims must be manually detached.
 			_x835.ListClaimsPaid[0].IsAttachedToClaim=true;
@@ -246,13 +234,12 @@ namespace UnitTests.Etrans_Tests {
 			_x835.ListClaimsPaid[2].ClaimNum=0;
 			TryEnterPayment(_x835,_eraJustinSmithClaim,_claimPrimaryJustinSmith,true);//Will return if payment already entered.
 			List<Hx835_ShortClaim> listClaim=new List<Hx835_ShortClaim>() { new Hx835_ShortClaim(_claimPrimaryJustinSmith), new Hx835_ShortClaim(),new Hx835_ShortClaim() };
-			X835Status status=_x835.GetStatus(_x835.GetClaimDataList(listClaim),ClaimProcs.Refresh(_claimPrimaryJustinSmith.PatNum).Select(x => new Hx835_ShortClaimProc(x)).ToList(),_listEtrans835Attaches);
+			X835Status status=_x835.GetStatus(listClaim,ClaimProcs.Refresh(_claimPrimaryJustinSmith.PatNum).Select(x => new Hx835_ShortClaimProc(x)).ToList(),_listEtrans835Attaches);
 			Assert.AreEqual(X835Status.NotFinalized,status);
 		}
 
 		[TestMethod]
 		public void X835_GetStatus_FinalizedSomeDetached() {
-			SetupTest();
 			//FinalizedSomeDetached => Some ERA claims has financial information entered and claim payment.
 			//Others are manually detached.
 			_x835.ListClaimsPaid[0].IsAttachedToClaim=true;
@@ -273,13 +260,12 @@ namespace UnitTests.Etrans_Tests {
 			//}
 			List<Hx835_ShortClaim> listClaims=new List<Hx835_ShortClaim>() { new Hx835_ShortClaim(_claimPrimaryJustinSmith), new Hx835_ShortClaim(),new Hx835_ShortClaim() };//Spoof manually detached claims.
 			List<Hx835_ShortClaimProc> listClaimProcs=ClaimProcs.Refresh(_claimPrimaryJustinSmith.PatNum).Select(x => new Hx835_ShortClaimProc(x)).ToList();
-			X835Status status=_x835.GetStatus(_x835.GetClaimDataList(listClaims),listClaimProcs,_listEtrans835Attaches);
+			X835Status status=_x835.GetStatus(listClaims,listClaimProcs,_listEtrans835Attaches);
 			Assert.AreEqual(X835Status.FinalizedSomeDetached,status);
 		}
 		
 		[TestMethod]
 		public void X835_GetStatus_FinalizedAllDetached() {
-			SetupTest();
 			//FinalizedAllDetached => All ERA claims are manually detached.
 			_x835.ListClaimsPaid[0].IsAttachedToClaim=true;
 			_x835.ListClaimsPaid[0].ClaimNum=0;
@@ -292,13 +278,12 @@ namespace UnitTests.Etrans_Tests {
 			//}
 			List<Hx835_ShortClaim> listClaims=new List<Hx835_ShortClaim>() { new Hx835_ShortClaim(),new Hx835_ShortClaim(),new Hx835_ShortClaim() };//Spoof manually detached claims.
 			List<Hx835_ShortClaimProc> listClaimProcs=ClaimProcs.Refresh(_claimPrimaryJustinSmith.PatNum).Select(x => new Hx835_ShortClaimProc(x)).ToList();
-			X835Status status=_x835.GetStatus(_x835.GetClaimDataList(listClaims),listClaimProcs,_listEtrans835Attaches);
+			X835Status status=_x835.GetStatus(listClaims,listClaimProcs,_listEtrans835Attaches);
 			Assert.AreEqual(X835Status.FinalizedAllDetached,status);
 		}
 
 		[TestMethod]
 		public void X835_GetStatus_Finalized() {
-			SetupTest();
 			//Finalized => Some or all ERA claims are attached and have financial payment entered with claim payment.
 			//Other claims must be manually detached.
 			_x835.ListClaimsPaid[0].IsAttachedToClaim=true;
@@ -321,7 +306,7 @@ namespace UnitTests.Etrans_Tests {
 			else {
 				List<Hx835_ShortClaim> listClaims=new[] { _claimPrimaryJustinSmith, _claimPrimaryJacobJones, _claimPrimaryStephanieMayer }.Select(x => new Hx835_ShortClaim(x)).ToList();
 				List<long> listPatNums=new List<long>() { _claimPrimaryJustinSmith.PatNum,_claimPrimaryJacobJones.PatNum,_claimPrimaryStephanieMayer.PatNum };
-				status=_x835.GetStatus(_x835.GetClaimDataList(listClaims),ClaimProcs.Refresh(listPatNums).Select(x => new Hx835_ShortClaimProc(x)).ToList(),_listEtrans835Attaches);
+				status=_x835.GetStatus(listClaims,ClaimProcs.Refresh(listPatNums).Select(x => new Hx835_ShortClaimProc(x)).ToList(),_listEtrans835Attaches);
 			}
 			Assert.AreEqual(X835Status.Finalized,status);
 		}
@@ -329,7 +314,6 @@ namespace UnitTests.Etrans_Tests {
 		///<summary>Claims within an ERA EOB should not be considered as 'split claims' when they have different payer control numbers.</summary>
 		[TestMethod]
 		public void X835_DiscoverSplitClaims_PayerControlNumber() {
-			SetupTest();
 			X12object x835=new X12object(Properties.Resources.x835PayerControlNumber);
 			List<string> listTranSetIds=x835.GetTranSetIds();
 			Assert.AreEqual(5,listTranSetIds.Count);
@@ -345,7 +329,6 @@ namespace UnitTests.Etrans_Tests {
 		///<summary>Claims within an ERA EOB from Massachussetts Health are always split up so that every claim only has one procedure attached.</summary>
 		[TestMethod]
 		public void X835_DiscoverSplitClaims_MassHealthMedicaid() {
-			SetupTest();
 			X12object x835=new X12object(Properties.Resources.x835MassHealth);
 			List<string> listTranSetIds=x835.GetTranSetIds();
 			Assert.AreEqual(1,listTranSetIds.Count);
@@ -403,144 +386,12 @@ namespace UnitTests.Etrans_Tests {
 			Patient pat=Patients.GetPat(claim.PatNum);
 			Etranss.TryImportEraClaimData(x835,claimPaid,claim,pat,isAutomatic,listClaimProcsForClaim,insPayPlanNum:0);
 		}
-
-		/// <summary>Tests what happens when all the insurance payment type defs are hidden and we try to get one of those hidden defnums.</summary>
-		[TestMethod]
-		public void X835_InsurancePaymentTypeDefsHidden(){
-			SetupTest();
-			Defs.RefreshCache();
-			//Get the list of defs for the insurance payment type and hide all of them.
-			List<Def> listDefs=Defs.GetDefsForCategory(DefCat.InsurancePaymentType);
-			//Make a list of defs we're checking.
-			List<string> listDefNamesToCheck=new List<string>(){"Check","EFT","Wired"};
-			//Grab the defs that already exist.
-			List<string> listDefNamesExisting=listDefs.Select(x => x.ItemName).ToList();
-			//Find the defs that don't exist.
-			List<string> listMissingDefNames=listDefNamesToCheck.FindAll(x=>!listDefNamesExisting.Contains(x));
-			//Create any defs that don't exist and add them to the list.
-			for(int i=0;i<listMissingDefNames.Count;i++) {
-				Def def=DefT.CreateDefinition(DefCat.InsurancePaymentType,listMissingDefNames[i],isHidden:true);
-				listDefs.Add(def);
-			}
-			//Set the prefs to 0 in case they're not 0 already. This forces GetInsurancePaymentTypeDefNum() to use paymentMethodCode.
-			Prefs.UpdateIntNoCache(PrefName.EraChkPaymentType,0);
-			Prefs.UpdateIntNoCache(PrefName.EraAchPaymentType,0);
-			Prefs.UpdateIntNoCache(PrefName.EraFwtPaymentType,0);
-			Prefs.UpdateIntNoCache(PrefName.EraDefaultPaymentType,0);
-			//Hide all the defs in the list
-			for(int i=0;i<listDefs.Count;i++){
-				Defs.HideDef(listDefs[i]);
-			}
-			Defs.RefreshCache();
-			Prefs.RefreshCache();
-			//defNum should be 0 since if all the defs are hidden it should not find a defnum and default to 0.
-			long defNum=X835.GetInsurancePaymentTypeDefNum("CHK");
-			Assert.AreEqual(0,defNum);
-			//Reset the defnum and try EFT
-			defNum=X835.GetInsurancePaymentTypeDefNum("ACH");
-			Assert.AreEqual(0,defNum);
-			//Reset the defnum and try Wired
-			defNum=X835.GetInsurancePaymentTypeDefNum("FWT");
-			Assert.AreEqual(0,defNum);
-			//Cleanup of unhiding the defs for other unit tests.
-			for(int i=0;i<listDefs.Count;i++){
-				listDefs[i].IsHidden=false;
-				Defs.Update(listDefs[i]);
-			}
-			Defs.RefreshCache();
-		}
-
-		///<summary>Auto-processing should not process any claims for which ERA payment information has attached any
-		///of the CARCs listed in the EraNoAutoProcessCarcCodes preference.</summary>
-		[TestMethod]
-		public void Etranss_TryAutoProcessEraEob_SkipClaimsWithCodesFromEraNoAutoProcessCarcCodesPref() {
-			SetupTest(Properties.Resources.JustinSmithERA_NoAutoProcessCARCs);
-			//Setting codes for pref to ones we want to test in the JustSmitERA_NoAutoProcessCARCs.txt resource file.
-			PrefT.UpdateInt(PrefName.EraAutomationBehavior,(int)EraAutomationMode.FullyAutomatic);
-			PrefT.UpdateString(PrefName.EraNoAutoProcessCarcCodes,"16,242,251,50");
-			Etranss.TryAutoProcessEraEob(_x835,_listEtrans835Attaches,isFullyAutomatic:true);
-			Claim claimJustinSmith=Claims.GetClaim(_eraJustinSmithClaim.ClaimNum);
-			List<string> listJustinSmithClaimLevelCarcs=_eraJustinSmithClaim.ListClaimAdjustments.Select(x => x.ReasonCode).ToList();
-			List<string> listJustinSmithProcLevelCarcs=_eraJustinSmithClaim.ListProcs
-				.SelectMany(x => x.ListProcAdjustments)
-				.Select(x => x.ReasonCode)
-				.ToList();
-			Claim claimJacobJones=Claims.GetClaim(_eraJacobJonesClaim.ClaimNum);
-			List<string> listJacobJonesClaimLevelCarcs=_eraJacobJonesClaim.ListClaimAdjustments.Select(x => x.ReasonCode).ToList();
-			List<string> listJacobJonesProcLevelCarcs=_eraJacobJonesClaim.ListProcs
-				.SelectMany(x => x.ListProcAdjustments)
-				.Select(x => x.ReasonCode)
-				.ToList();
-			Claim claimStephanieMayer=Claims.GetClaim(_eraStephanieMayerClaim.ClaimNum);
-			List<string> listStephanieMayerClaimLevelCarcs=_eraStephanieMayerClaim.ListClaimAdjustments.Select(x => x.ReasonCode).ToList();
-			List<string> listStephanieMayerProcLevelCarcs=_eraStephanieMayerClaim.ListProcs
-				.SelectMany(x => x.ListProcAdjustments)
-				.Select(x => x.ReasonCode)
-				.ToList();
-			//Assert that Justin Smith only has a claim level CARC from the preference and the claim is not received.
-			Assert.IsTrue(listJustinSmithClaimLevelCarcs.Count==1 && listJustinSmithClaimLevelCarcs.Contains("16"));
-			Assert.IsTrue(listJustinSmithProcLevelCarcs.Count==0);
-			Assert.IsTrue(claimJustinSmith.ClaimStatus!=ClaimStatus.Received.GetDescription(useShortVersionIfAvailable:true));
-			//Assert that Jacob Jones only has a claim level CARC from the preference and the claim is not received.
-			Assert.IsTrue(listJacobJonesClaimLevelCarcs.Count==0);
-			Assert.IsTrue(listJacobJonesProcLevelCarcs.Count==1 && listJacobJonesProcLevelCarcs.Contains("242"));
-			Assert.IsTrue(claimJacobJones.ClaimStatus!=ClaimStatus.Received.GetDescription(useShortVersionIfAvailable:true));
-			//Assert that Stephanie Mayer has both claim and proc level CARCs from the preference and the claim is not received.
-			Assert.IsTrue(listStephanieMayerClaimLevelCarcs.Count==1 && listStephanieMayerClaimLevelCarcs.Contains("251"));
-			Assert.IsTrue(listStephanieMayerProcLevelCarcs.Count==1 && listStephanieMayerProcLevelCarcs.Contains("50"));
-			Assert.IsTrue(claimStephanieMayer.ClaimStatus!=ClaimStatus.Received.GetDescription(useShortVersionIfAvailable:true));
-		}
-
-		///<summary>Auto-processing should still process claims that have CARC codes that aren't listed in the preference.</summary>
-		[TestMethod]
-		public void Etranss_TryAutoProcessEraEob_ProcessClaimsWithCodesNotFromEraNoAutoProcessCarcCodesPref() {
-			SetupTest();
-			//Setting codes for pref to ones we want to test in the JustSmitERA_NoAutoProcessCARCs.txt resource file.
-			PrefT.UpdateInt(PrefName.EraAutomationBehavior,(int)EraAutomationMode.FullyAutomatic);
-			string noAutoProcessCarcCodes="16,242,251,50";
-			List<string> listNoAutoProcessCarcCodes=noAutoProcessCarcCodes.Split(',').ToList();
-			PrefT.UpdateString(PrefName.EraNoAutoProcessCarcCodes,noAutoProcessCarcCodes);
-			var result=Etranss.TryAutoProcessEraEob(_x835,_listEtrans835Attaches,isFullyAutomatic:true);
-			Claim claimJustinSmith=Claims.GetClaim(_eraJustinSmithClaim.ClaimNum);
-			List<string> listJustinSmithClaimLevelCarcs=_eraJustinSmithClaim.ListClaimAdjustments.Select(x => x.ReasonCode).ToList();
-			List<string> listJustinSmithProcLevelCarcs=_eraJustinSmithClaim.ListProcs
-				.SelectMany(x => x.ListProcAdjustments)
-				.Select(x => x.ReasonCode)
-				.ToList();
-			Claim claimJacobJones=Claims.GetClaim(_eraJacobJonesClaim.ClaimNum);
-			List<string> listJacobJonesClaimLevelCarcs=_eraJacobJonesClaim.ListClaimAdjustments.Select(x => x.ReasonCode).ToList();
-			List<string> listJacobJonesProcLevelCarcs=_eraJacobJonesClaim.ListProcs
-				.SelectMany(x => x.ListProcAdjustments)
-				.Select(x => x.ReasonCode)
-				.ToList();
-			Claim claimStephanieMayer=Claims.GetClaim(_eraStephanieMayerClaim.ClaimNum);
-			List<string> listStephanieMayerClaimLevelCarcs=_eraStephanieMayerClaim.ListClaimAdjustments.Select(x => x.ReasonCode).ToList();
-			List<string> listStephanieMayerProcLevelCarcs=_eraStephanieMayerClaim.ListProcs
-				.SelectMany(x => x.ListProcAdjustments)
-				.Select(x => x.ReasonCode)
-				.ToList();
-			List<string> listCarcCodesFromClaims=listJustinSmithClaimLevelCarcs
-				.Concat(listJustinSmithProcLevelCarcs)
-				.Concat(listJacobJonesClaimLevelCarcs)
-				.Concat(listJacobJonesProcLevelCarcs)
-				.Concat(listStephanieMayerClaimLevelCarcs)
-				.Concat(listStephanieMayerProcLevelCarcs)
-				.ToList();
-			//Assert that we have CARC codes on one or more claims, but non from our preference
-			Assert.IsTrue(listCarcCodesFromClaims.Count > 0);
-			Assert.IsFalse(listNoAutoProcessCarcCodes.Any(x => listCarcCodesFromClaims.Contains(x)));
-			//Assert that each claim was received during auto-processing.
-			Assert.AreEqual(claimJustinSmith.ClaimStatus,ClaimStatus.Received.GetDescription(useShortVersionIfAvailable:true));
-			Assert.AreEqual(claimJacobJones.ClaimStatus,ClaimStatus.Received.GetDescription(useShortVersionIfAvailable:true));
-			Assert.AreEqual(claimStephanieMayer.ClaimStatus,ClaimStatus.Received.GetDescription(useShortVersionIfAvailable:true));
-		}
 		#endregion
 
 		#region x834 Tests
 		///<summary>Tests to see that when the user does not want to replace a patients existing plan, a different plan is added as a secondary.</summary>
 		[TestMethod]
 		public void X834_ImportInsurancePlans_DoNotReplacePatPlan() {
-			SetupTest();
 			Patient patient=Createx834Patient();
 			string suffix=MethodBase.GetCurrentMethod().Name;
 			//Create old insurance plan and associate it to them.
@@ -564,7 +415,6 @@ namespace UnitTests.Etrans_Tests {
 		///added.</summary>
 		[TestMethod]
 		public void X834_ImportInsurancePlans_ReplacePatPlan() {
-			SetupTest();
 			Patient patient=Createx834Patient();
 			string suffix=MethodBase.GetCurrentMethod().Name;
 			//Create old insurance plan and associate it to them.
@@ -589,7 +439,6 @@ namespace UnitTests.Etrans_Tests {
 		///replaced while the primary, which is in the 834, remains untouched.</summary>
 		[TestMethod]
 		public void X834_ImportInsurancePlans_ReplaceSecondaryPatPlan() {
-			SetupTest();
 			Patient patient=Createx834Patient();
 			string suffix=MethodBase.GetCurrentMethod().Name;
 			//Create primary insurance plan that appears in the 834.  Both the carrier name and subscriberID need to match.
@@ -616,7 +465,6 @@ namespace UnitTests.Etrans_Tests {
 
 		///<summary>Drops the existing patient that matches the patient in the x834 test if there is one. Creates a fresh patient and returns that.</summary>
 		private Patient Createx834Patient() {
-			SetupTest();
 			Patient patient=Patients.GetPatientsByPartialName("Testx834").FirstOrDefault();
 			if(patient!=null) {
 				//A patient exists from an old test. Remove it to avoid conflicting information.
@@ -628,7 +476,6 @@ namespace UnitTests.Etrans_Tests {
 
 		[TestMethod]
 		public void X271_EB271_SetInsuranceHistoryDates(){
-			SetupTest();
 			Patient patient=PatientT.CreatePatient(lName:"Doe",fName:"John");
 			Carrier carrier=CarrierT.CreateCarrier("X271Test");
 			InsPlan insPlan=InsPlanT.CreateInsPlan(carrier.CarrierNum);
@@ -636,15 +483,6 @@ namespace UnitTests.Etrans_Tests {
 			List<EB271> listEB271=_x271.GetListEB(true,carrier.IsCoinsuranceInverted);
 			int countValidInsHist=EB271.SetInsuranceHistoryDates(listEB271,patient.PatNum,insSub);
 			Assert.AreEqual(3,countValidInsHist);//There are 4 valid fields but 1 has an invalid date.
-		}
-
-		[TestMethod]
-		public void X271HSDQuantityValueTest(){
-			SetupTest();
-			//If this test fails, then creation of the x271 failed. This test is mainly to test for the HSD segment quantity being larger than a byte.
-			X271 x271=new X271(Properties.Resources.x271Test);
-			x271.GetListEB(true, false);
-			Assert.IsNotNull(x271);
 		}
 
 	}

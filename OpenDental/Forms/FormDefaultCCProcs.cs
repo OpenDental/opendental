@@ -64,12 +64,16 @@ namespace OpenDental {
 			FillProcs();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			_defaultCCProcs=string.Join(",",_listStrCCProcs);
 			if(Prefs.UpdateString(PrefName.DefaultCCProcs,_defaultCCProcs)) {
 				DataValid.SetInvalid(InvalidType.Prefs);
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

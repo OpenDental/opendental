@@ -18,18 +18,6 @@ namespace OpenDentBusiness{
 			return Crud.EobAttachCrud.SelectMany(command);
 		}
 
-		///<summary>Gets all EobAttaches for a given claimpaymentnum. For used by Api Team, please notify before changing.
-		///Returns an empty list if not found.</summary>
-		public static List<EobAttach> GetEobAttachesForApi(int limit,int offset,long claimPaymentNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<EobAttach>>(MethodBase.GetCurrentMethod(),limit,offset,claimPaymentNum);
-			}
-			string command="SELECT * FROM eobattach WHERE ClaimPaymentNum="+POut.Long(claimPaymentNum)+" "
-				+"ORDER BY ClaimPaymentNum "
-				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
-			return Crud.EobAttachCrud.SelectMany(command);
-		}
-
 		///<summary>Gets one EobAttach from the db.</summary>
 		public static EobAttach GetOne(long eobAttachNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -38,31 +26,7 @@ namespace OpenDentBusiness{
 			return Crud.EobAttachCrud.SelectOne(eobAttachNum);
 		}
 
-		///<summary>Returns the filepath of the eobattach if using AtoZfolder. If storing files in DB or third party storage, saves eobattach to local temp file and returns its filepath.
-		///Empty string if not found. This is used by the API Team, please notify before modifying.</summary>
-		public static string GetPath(long eobAttachNum) {
-			EobAttach eobAttach=EobAttaches.GetOne(eobAttachNum);
-			string fileExt=Path.GetExtension(eobAttach.FileName);
-			string eobFolderPath=ImageStore.GetEobFolder();
-			string filePath;
-			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {//EOBs/filename in AtoZ
-				filePath=CodeBase.ODFileUtils.CombinePaths(eobFolderPath,eobAttach.FileName);
-			}
-			else if(PrefC.AtoZfolderUsed==DataStorageType.InDatabase) {//Use RawBase64
-				//Some programs require a file on disk and cannot open in memory files. Save to temp file from DB.
-				filePath=PrefC.GetRandomTempFile(fileExt);
-				File.WriteAllBytes(filePath,Convert.FromBase64String(eobAttach.RawBase64));
-			}
-			else {//Cloud storage
-				//Download file to temp directory
-				byte[] byteArray=CloudStorage.Download(eobFolderPath,eobAttach.FileName);
-				filePath=PrefC.GetRandomTempFile(fileExt);
-				File.WriteAllBytes(filePath,byteArray);
-			}
-			return filePath;
-		}
-
-		///<summary>Tests to see whether an attachment exists on this claimpayment.</summary>
+		/// <summary>Tests to see whether an attachment exists on this claimpayment.</summary>
 		public static bool Exists(long claimPaymentNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetBool(MethodBase.GetCurrentMethod(),claimPaymentNum);

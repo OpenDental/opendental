@@ -6,12 +6,12 @@ using System.Reflection;
 namespace OpenDentBusiness{
 	///<summary></summary>
 	public class ClaimAttaches{
-		public static long Insert(ClaimAttach claimAttach) {
+		public static long Insert(ClaimAttach attach) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				claimAttach.ClaimAttachNum=Meth.GetLong(MethodBase.GetCurrentMethod(),claimAttach);
-				return claimAttach.ClaimAttachNum;
+				attach.ClaimAttachNum=Meth.GetLong(MethodBase.GetCurrentMethod(),attach);
+				return attach.ClaimAttachNum;
 			}
-			return Crud.ClaimAttachCrud.Insert(claimAttach);
+			return Crud.ClaimAttachCrud.Insert(attach);
 		}
 	}
 

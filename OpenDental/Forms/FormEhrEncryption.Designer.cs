@@ -30,6 +30,7 @@
 			this.textResult = new System.Windows.Forms.TextBox();
 			this.labelInput = new System.Windows.Forms.Label();
 			this.labelOutput = new System.Windows.Forms.Label();
+			this.butClose = new System.Windows.Forms.Button();
 			this.butTransmit = new System.Windows.Forms.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
@@ -94,10 +95,21 @@
 			this.labelOutput.Text = "Result";
 			this.labelOutput.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(586, 278);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(73, 24);
+			this.butClose.TabIndex = 7;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// butTransmit
 			// 
 			this.butTransmit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butTransmit.Location = new System.Drawing.Point(574, 283);
+			this.butTransmit.Location = new System.Drawing.Point(484, 278);
 			this.butTransmit.Name = "butTransmit";
 			this.butTransmit.Size = new System.Drawing.Size(85, 24);
 			this.butTransmit.TabIndex = 8;
@@ -120,6 +132,7 @@
 			this.ClientSize = new System.Drawing.Size(680, 319);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.butTransmit);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.labelOutput);
 			this.Controls.Add(this.labelInput);
 			this.Controls.Add(this.textResult);
@@ -144,6 +157,7 @@
 		private System.Windows.Forms.TextBox textResult;
 		private System.Windows.Forms.Label labelInput;
 		private System.Windows.Forms.Label labelOutput;
+		private System.Windows.Forms.Button butClose;
 		private System.Windows.Forms.Button butTransmit;
 		private System.Windows.Forms.Label label2;
 

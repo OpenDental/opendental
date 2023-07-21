@@ -28,6 +28,10 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		private void butBrowse_Click(object sender,EventArgs e) {
 			if(folderEligibilityPath.ShowDialog()==DialogResult.OK){
 				textEligibilityFolder.Text=folderEligibilityPath.SelectedPath;

@@ -31,6 +31,7 @@
 			this.butLoad = new OpenDental.UI.Button();
 			this.butBrowse = new OpenDental.UI.Button();
 			this.butProcess = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.label2 = new System.Windows.Forms.Label();
 			this.textBillingYearMonth = new System.Windows.Forms.TextBox();
 			this.labelDuplicateProviders = new System.Windows.Forms.Label();
@@ -106,6 +107,17 @@
 			this.butProcess.UseVisualStyleBackColor = true;
 			this.butProcess.Click += new System.EventHandler(this.butProcess_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(947, 669);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 23);
+			this.butClose.TabIndex = 2;
+			this.butClose.Text = "Close";
+			this.butClose.UseVisualStyleBackColor = true;
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// label2
 			// 
 			this.label2.Location = new System.Drawing.Point(9, 55);
@@ -140,6 +152,7 @@
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(1034, 707);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butProcess);
 			this.Controls.Add(this.labelDuplicateProviders);
 			this.Controls.Add(this.textBillingYearMonth);
@@ -163,6 +176,7 @@
 		#endregion
 
 		private OpenDental.UI.GridOD gridBillingList;
+		private UI.Button butClose;
 		private UI.Button butProcess;
 		private UI.Button butBrowse;
 		private System.Windows.Forms.TextBox textBillingFilePath;

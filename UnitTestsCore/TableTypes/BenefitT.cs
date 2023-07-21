@@ -161,13 +161,12 @@ namespace UnitTestsCore {
 		}
 
 		public static Benefit CreateFrequencyCategory(long planNum,EbenefitCategory category,BenefitQuantity quantityQualifier,Byte quantity,
-			BenefitCoverageLevel coverageLevel=BenefitCoverageLevel.None,long codeNum=0,long codeGroupNum=0) 
+			BenefitCoverageLevel coverageLevel=BenefitCoverageLevel.None,long codeNum=0) 
 		{
 			Benefit ben=new Benefit();
 			ben.PlanNum=planNum;
 			ben.BenefitType=InsBenefitType.Limitations;
 			ben.CodeNum=codeNum;
-			ben.CodeGroupNum=codeGroupNum;
 			ben.CovCatNum=CovCats.GetForEbenCat(category)?.CovCatNum??0;
 			ben.CoverageLevel=coverageLevel;
 			ben.TimePeriod=BenefitTimePeriod.None;
@@ -177,9 +176,7 @@ namespace UnitTestsCore {
 			return ben;
 		}
 
-		public static Benefit CreateFrequencyCodeGroup(long planNum,long codeGroupNum,BenefitQuantity quantityQualifier,Byte quantity,
-			BenefitTimePeriod timePeriod=BenefitTimePeriod.None,TreatmentArea treatArea=TreatmentArea.None)
-		{
+		public static Benefit CreateFrequencyCodeGroup(long planNum,long codeGroupNum,BenefitQuantity quantityQualifier,Byte quantity,BenefitTimePeriod timePeriod=BenefitTimePeriod.None) {
 			Benefit benefit=new Benefit();
 			benefit.PlanNum=planNum;
 			benefit.BenefitType=InsBenefitType.Limitations;
@@ -190,15 +187,14 @@ namespace UnitTestsCore {
 			benefit.TimePeriod=timePeriod;
 			benefit.Quantity=quantity;
 			benefit.QuantityQualifier=quantityQualifier;
-			benefit.TreatArea=treatArea;
 			Benefits.Insert(benefit);
 			return benefit;
 		}
 
 		public static Benefit CreateAgeLimitation(long planNum,EbenefitCategory category,int ageThrough,
-			BenefitCoverageLevel coverageLevel=BenefitCoverageLevel.None,long codeNum=0,long codeGroupNum=0) 
+			BenefitCoverageLevel coverageLevel=BenefitCoverageLevel.None,long codeNum=0) 
 		{
-			return CreateFrequencyCategory(planNum,category,BenefitQuantity.AgeLimit,(byte)ageThrough,coverageLevel,codeNum,codeGroupNum);
+			return CreateFrequencyCategory(planNum,category,BenefitQuantity.AgeLimit,(byte)ageThrough,coverageLevel,codeNum);
 		}
 
 		public static void CreateOrthoMax(long planNum,double amt) {
@@ -271,9 +267,9 @@ namespace UnitTestsCore {
 		}
 
 		public static Benefit CreateFrequencyLimitation(string procCode,byte quantity,BenefitQuantity quantityQualifier,long planNum,
-			BenefitTimePeriod timePeriod,long PatPlanNum=0,TreatmentArea treatArea=TreatmentArea.None) 
+			BenefitTimePeriod timePeriod,long PatPlanNum=0) 
 		{
-			Benefit ben=Benefits.CreateFrequencyBenefit(ProcedureCodeT.CreateProcCode(procCode).CodeNum,quantity,quantityQualifier,planNum,timePeriod,treatArea);
+			Benefit ben=Benefits.CreateFrequencyBenefit(ProcedureCodeT.CreateProcCode(procCode).CodeNum,quantity,quantityQualifier,planNum,timePeriod);
 			if(PatPlanNum!=0) {
 				ben.PatPlanNum=PatPlanNum;
 				ben.PlanNum=0;

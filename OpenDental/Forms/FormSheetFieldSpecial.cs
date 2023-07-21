@@ -35,7 +35,7 @@ namespace OpenDental {
 			base.SetFilterControlsAndAction(()=>SheetFilterChanged(),0,textWidth);
 			textYPos.MaxVal=SheetDefCur.HeightTotal-1;//The maximum y-value of the sheet field must be within the page vertically.
 			if(IsReadOnly){
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butDelete.Enabled=false;
 			}
 			_listSheetFieldDefsAvailable=SheetFieldsAvailable.GetSpecial(SheetDefCur.SheetType,LayoutMode);
@@ -128,7 +128,7 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			SaveAndClose();
 		}
 
@@ -151,5 +151,14 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+
+		
 	}
 }

@@ -30,7 +30,7 @@ namespace OpenDental{
 			checkIsPromptSetup.Checked=UserQueryCur.IsPromptSetup;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(textTitle.Text==""){
 				MessageBox.Show(Lan.g(this,"Please enter a title first."));
 				return;
@@ -48,6 +48,10 @@ namespace OpenDental{
 			}
 			DataValid.SetInvalid(InvalidType.UserQueries);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+		
 		}
 
 	}

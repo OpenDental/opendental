@@ -26,7 +26,7 @@ namespace OpenDental{
 		}
 
 		private void FormApptViews_Load(object sender, System.EventArgs e) {
-			comboClinic.ClinicNumSelected=Clinics.ClinicNum;
+			comboClinic.SelectedClinicNum=Clinics.ClinicNum;
 			FillViewList();
 			if(PrefC.GetInt(PrefName.AppointmentTimeIncrement)==5){
 				radioFive.Checked=true;
@@ -40,28 +40,19 @@ namespace OpenDental{
 		}
 
 		private void FillViewList(){
-			ApptViews.RefreshCache();
-			ApptViewItems.RefreshCache();
+			Cache.Refresh(InvalidType.Views);
 			listViews.Items.Clear();
 			_listApptViews=new List<ApptView>();
 			List<ApptView> listApptViews=ApptViews.GetDeepCopy();
 			string F;
-			listApptViews=listApptViews.FindAll(x => x.ClinicNum==comboClinic.ClinicNumSelected);
 			for(int i=0;i<listApptViews.Count;i++){
-				if(listApptViews[i].ItemOrder!=i){
-					listApptViews[i].ItemOrder=i;
-					ApptViews.Update(listApptViews[i]);
-					_changed=true; //update other computers
-				}
-				if(PrefC.HasClinicsEnabled && comboClinic.ClinicNumSelected!=listApptViews[i].ClinicNum) {
+				if(PrefC.HasClinicsEnabled && comboClinic.SelectedClinicNum!=listApptViews[i].ClinicNum) {
 					continue;//only add views assigned to the clinic selected
 				}
-				if(listViews.Items.Count<12){
+				if(listViews.Items.Count<12)
 					F="F"+(listViews.Items.Count+1).ToString()+"-";
-				}
-				else{
+				else
 					F="";
-				}
 				listViews.Items.Add(F+listApptViews[i].Description);
 				_listApptViews.Add(listApptViews[i]);
 			}
@@ -85,7 +76,7 @@ namespace OpenDental{
 			using FormApptViewEdit formApptViewEdit=new FormApptViewEdit();
 			formApptViewEdit.ApptViewCur=apptView;
 			formApptViewEdit.IsNew=true;
-			formApptViewEdit.ClinicNumInitial=comboClinic.ClinicNumSelected;
+			formApptViewEdit.ClinicNumInitial=comboClinic.SelectedClinicNum;
 			formApptViewEdit.ShowDialog();
 			if(formApptViewEdit.DialogResult!=DialogResult.OK){
 				return;
@@ -103,7 +94,7 @@ namespace OpenDental{
 			ApptView apptView=_listApptViews[listViews.SelectedIndex];
 			using FormApptViewEdit formApptViewEdit=new FormApptViewEdit();
 			formApptViewEdit.ApptViewCur=apptView;
-			formApptViewEdit.ClinicNumInitial=comboClinic.ClinicNumSelected;
+			formApptViewEdit.ClinicNumInitial=comboClinic.SelectedClinicNum;
 			formApptViewEdit.ShowDialog();
 			if(formApptViewEdit.DialogResult!=DialogResult.OK){
 				return;
@@ -166,6 +157,10 @@ namespace OpenDental{
 			DialogResult=DialogResult.None;//This is required to prevent FormApptViews from closing.
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
 		private void FormApptViews_FormClosing(object sender,FormClosingEventArgs e) {
 			int newIncrement=15;
 			if(radioFive.Checked) {
@@ -182,5 +177,34 @@ namespace OpenDental{
 			}
 		}
 
+		
+
+
+	
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

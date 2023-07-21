@@ -18,26 +18,33 @@ namespace OpenDental{
 		private List<PhoneEmpDefault> _listPhoneEmpDefaults;
 
 		///<summary></summary>
-		public FormPhoneEmpDefaults() {
+		public FormPhoneEmpDefaults()
+		{
+			//
+			// Required for Windows Form Designer support
+			//
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
 		}
 
 		private void FormPhoneEmpDefaults_Load(object sender,EventArgs e) {
-			if(Security.IsAuthorized(EnumPermType.Setup,true)) {
+			if(Security.IsAuthorized(Permissions.Setup,true)) {
 				butPhoneComps.Visible=true;
 			}
 			FillGrid();
 			gridMain.SortForced(1,true);
-			if(!IsSelectionMode){
+			if(IsSelectionMode){
+				butClose.Text="Cancel";
+			}
+			else{
 				butOK.Visible=false;
 			}
 		}
 
 		private void FillGrid(){
-			int sortedColumnIdx=gridMain.GetSortedByColumnIdx();
-			bool isSortAsc=gridMain.IsSortedAscending();
+			int sortedColumnIdx=gridMain.SortedByColumnIdx;
+			bool isSortAsc=gridMain.SortedIsAscending;
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			GridColumn col;
@@ -124,5 +131,32 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			if(IsSelectionMode){
+				DialogResult=DialogResult.Cancel;
+			}
+			Close();
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

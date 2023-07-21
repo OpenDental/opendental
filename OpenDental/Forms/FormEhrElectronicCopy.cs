@@ -98,7 +98,8 @@ namespace OpenDental {
 			try {
 				ccd=EhrCCD.GenerateElectronicCopy(PatCur,out string warnings);
 				if(!string.IsNullOrEmpty(warnings)) {
-					if(MessageBox.Show(warnings,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+					string warningMsg=Lan.g(this,"Click OK to ignore warnings and continue, or click Cancel.")+"\r\n"+warnings;
+					if(MessageBox.Show(warningMsg,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
 						return;
 					}
 				}
@@ -119,7 +120,7 @@ namespace OpenDental {
 				}
 			}
 			File.WriteAllText(Path.Combine(dlg.SelectedPath,"ccd.xml"),ccd);
-			File.WriteAllText(Path.Combine(dlg.SelectedPath,"ccd.xsl"),EhrSummaryCcds.GetEhrResource("CCD"));
+			File.WriteAllText(Path.Combine(dlg.SelectedPath,"ccd.xsl"),FormEHR.GetEhrResource("CCD"));
 			RecordRequestAndProvide();
 			MessageBox.Show("Exported");
 		}
@@ -136,7 +137,8 @@ namespace OpenDental {
 			try {
 				ccd=EhrCCD.GenerateElectronicCopy(PatCur,out string warnings);
 				if(!string.IsNullOrEmpty(warnings)) {
-					if(MessageBox.Show(warnings,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+					string warningMsg=Lan.g(this,"Click OK to ignore warnings and continue, or click Cancel.")+"\r\n"+warnings;
+					if(MessageBox.Show(warningMsg,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
 						return;
 					}
 				}
@@ -153,7 +155,8 @@ namespace OpenDental {
 			try {
 				ccd=EhrCCD.GenerateElectronicCopy(PatCur,out string warnings);
 				if(!string.IsNullOrEmpty(warnings)) {
-					if(MessageBox.Show(warnings,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+					string warningMsg=Lan.g(this,"Click OK to ignore warnings and continue, or click Cancel.")+"\r\n"+warnings;
+					if(MessageBox.Show(warningMsg,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
 						return;
 					}
 				}
@@ -176,6 +179,24 @@ namespace OpenDental {
 			}
 			FillGrid();
 		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
+		
+
+		
+
+		
+	
+
+		
+
+	
+
+	
+
 
 	}
 }

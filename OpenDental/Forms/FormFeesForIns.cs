@@ -184,12 +184,12 @@ namespace OpenDental{
 		}
 
 		private bool GetPasswordFromUser() {
-			InputBox inputBoxPassword=new InputBox("To prevent accidental changes, please enter password.  It can be found in our manual.");
+			using InputBox inputBoxPassword=new InputBox("To prevent accidental changes, please enter password.  It can be found in our manual.");
 			inputBoxPassword.ShowDialog();
-			if(inputBoxPassword.IsDialogCancel) {
+			if(inputBoxPassword.DialogResult!=DialogResult.OK) {
 				return false;
 			}
-			if(inputBoxPassword.StringResult!="fee") {
+			if(inputBoxPassword.textResult.Text!="fee") {
 				MsgBox.Show(this,"Incorrect password.");
 				return false;
 			}
@@ -233,7 +233,7 @@ namespace OpenDental{
 		private void butPrint_Click(object sender,EventArgs e) {
 			_pagesPrinted=0;
 			_hasHeadingPrinted=false;
-			PrinterL.TryPrintOrDebugRpPreview(pd_PrintPage,Lan.g(this,"Check Insurance Plan Fees list printed"));
+			PrinterL.TryPrintOrDebugRpPreview(pd_PrintPage,Lan.g(this,"Check Insurance Plan Fees list printed"),PrintoutOrientation.Portrait);
 		}
 
 		private void pd_PrintPage(object sender,System.Drawing.Printing.PrintPageEventArgs e) {
@@ -290,9 +290,6 @@ namespace OpenDental{
 		}
 
 		private void butChange_Click(object sender,System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPlanEdit)) {
-				return;
-			}
 			if(gridMain.SelectedIndices.Length==0) {
 				gridMain.SetAll(true);
 			}
@@ -329,6 +326,10 @@ namespace OpenDental{
 			MessageBox.Show(Lan.g(this,"Plans changed: ")+rowsChanged.ToString());
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 		///<summary>Holds InsPlan data needed in this form.</summary>
 		private class InsPlanRow {
 			public long PlanNum;
@@ -345,5 +346,39 @@ namespace OpenDental{
 			}
 		}
 
+		
+
+		
+
+		
+
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

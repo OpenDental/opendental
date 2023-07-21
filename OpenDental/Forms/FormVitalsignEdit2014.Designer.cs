@@ -70,7 +70,8 @@
 			this.label2 = new System.Windows.Forms.Label();
 			this.textPulse = new System.Windows.Forms.TextBox();
 			this.butDelete = new OpenDental.UI.Button();
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOk = new OpenDental.UI.Button();
 			this.groupExclusion.SuspendLayout();
 			this.groupInterventions.SuspendLayout();
 			this.SuspendLayout();
@@ -511,20 +512,32 @@
 			this.butDelete.Text = "Delete";
 			this.butDelete.Click += new System.EventHandler(this.butDelete_Click);
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(513, 579);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 11;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(513, 579);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 12;
+			this.butCancel.Text = "Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOk
+			// 
+			this.butOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOk.Location = new System.Drawing.Point(432, 579);
+			this.butOk.Name = "butOk";
+			this.butOk.Size = new System.Drawing.Size(75, 24);
+			this.butOk.TabIndex = 11;
+			this.butOk.Text = "&OK";
+			this.butOk.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// FormVitalsignEdit2014
 			// 
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(602, 614);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butCancel);
+			this.Controls.Add(this.butOk);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.textPulse);
 			this.Controls.Add(this.butDelete);
@@ -614,7 +627,8 @@
 		private System.Windows.Forms.TextBox textPregCodeDescript;
 		private UI.Button butChangeDefault;
 		private UI.Button butAdd;
-		private UI.Button butSave;
+		private UI.Button butOk;
+		private UI.Button butCancel;
 		private UI.Button butDelete;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox textPulse;

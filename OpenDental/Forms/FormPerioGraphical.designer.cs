@@ -28,6 +28,7 @@
 			this.butPrint = new OpenDental.UI.Button();
 			this.butSave = new OpenDental.UI.Button();
 			this.butSetup = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -79,6 +80,16 @@
 			this.butSetup.Text = "Setup Colors";
 			this.butSetup.Click += new System.EventHandler(this.butSetup_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(681, 660);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 222;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// label1
 			// 
 			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -95,6 +106,7 @@
 			// 
 			this.ClientSize = new System.Drawing.Size(768, 696);
 			this.Controls.Add(this.label1);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butSetup);
 			this.Controls.Add(this.butPrint);
 			this.Controls.Add(this.butSave);
@@ -115,6 +127,7 @@
 		private OpenDental.UI.Button butSave;
 		private OpenDental.UI.Button butSetup;
 		private OpenDental.UI.Button butPrint;
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label label1;
 	}
 }

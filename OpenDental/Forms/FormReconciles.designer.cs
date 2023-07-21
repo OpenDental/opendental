@@ -36,6 +36,7 @@ namespace OpenDental {
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormReconciles));
 			this.grid = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.butAdd = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
@@ -46,18 +47,28 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.grid.Location = new System.Drawing.Point(18, 13);
 			this.grid.Name = "grid";
-			this.grid.Size = new System.Drawing.Size(196, 482);
+			this.grid.Size = new System.Drawing.Size(191, 450);
 			this.grid.TabIndex = 1;
 			this.grid.Title = "Existing Reconciles";
 			this.grid.TranslationName = "TableReconciles";
 			this.grid.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.grid_CellDoubleClick);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(242, 509);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// butAdd
 			// 
 			this.butAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.butAdd.Icon = OpenDental.UI.EnumIcons.Add;
 			this.butAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.butAdd.Location = new System.Drawing.Point(18, 511);
+			this.butAdd.Location = new System.Drawing.Point(18, 475);
 			this.butAdd.Name = "butAdd";
 			this.butAdd.Size = new System.Drawing.Size(77, 26);
 			this.butAdd.TabIndex = 98;
@@ -66,7 +77,8 @@ namespace OpenDental {
 			// 
 			// FormReconciles
 			// 
-			this.ClientSize = new System.Drawing.Size(226, 549);
+			this.ClientSize = new System.Drawing.Size(346, 546);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.grid);
 			this.Controls.Add(this.butAdd);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -80,6 +92,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.Button butAdd;
 		private OpenDental.UI.GridOD grid;
 	}

@@ -28,7 +28,6 @@ namespace OpenDental {
 			this.userControlJobEdit = new OpenDental.InternalTools.Job_Manager.UserControlJobEdit();
 			this.userControlMarketingEdit = new OpenDental.InternalTools.Job_Manager.UserControlMarketingEdit();
 			this.userControlQueryEdit = new OpenDental.InternalTools.Job_Manager.UserControlQueryEdit();
-			this.userControlProjectEdit = new OpenDental.InternalTools.Job_Manager.UserControlProjectEdit();
 			this.SuspendLayout();
 			// 
 			// userControlJobEdit
@@ -61,17 +60,6 @@ namespace OpenDental {
 			this.userControlQueryEdit.Size = new System.Drawing.Size(1220, 623);
 			this.userControlQueryEdit.TabIndex = 2;
 			this.userControlQueryEdit.SaveClick += new System.EventHandler(this.userControlQueryEdit_SaveClick);
-			this.userControlQueryEdit.RequestJob += new OpenDental.InternalTools.Job_Manager.UserControlQueryEdit.RequestJobEvent(this.userControlJobEdit_RequestJob);
-			// 
-			// userControlProjectEdit
-			// 
-			this.userControlProjectEdit.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.userControlProjectEdit.IsOverride = false;
-			this.userControlProjectEdit.Location = new System.Drawing.Point(0, 0);
-			this.userControlProjectEdit.Name = "userControlQueryEdit";
-			this.userControlProjectEdit.Size = new System.Drawing.Size(1220, 623);
-			this.userControlProjectEdit.TabIndex = 3;
-			this.userControlProjectEdit.RequestJob += new OpenDental.InternalTools.Job_Manager.UserControlProjectEdit.RequestJobEvent(this.userControlProjectEdit_RequestJob);
 			// 
 			// UserControlJobManagerEditor
 			// 
@@ -79,7 +67,6 @@ namespace OpenDental {
 			this.Controls.Add(this.userControlJobEdit);
 			this.Controls.Add(this.userControlQueryEdit);
 			this.Controls.Add(this.userControlMarketingEdit);
-			this.Controls.Add(this.userControlProjectEdit);
 			this.Name = "UserControlJobManagerEditor";
 			this.Size = new System.Drawing.Size(1220, 623);
 			this.ResumeLayout(false);
@@ -91,6 +78,5 @@ namespace OpenDental {
 		private UserControlJobEdit userControlJobEdit;
 		private UserControlMarketingEdit userControlMarketingEdit;
 		private UserControlQueryEdit userControlQueryEdit;
-		private UserControlProjectEdit userControlProjectEdit;
 	}
 }

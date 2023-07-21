@@ -31,7 +31,7 @@ namespace OpenDental{
 		//private int _idxHotControl;
 		///<summary>This is true if user has added NoDpi.txt. This turns off the UIManager completely.</summary>
 		public bool IsDpiSystem;
-		public FrmODBase FrmODBaseHosted;
+		public UserControl FrmODBaseHosted;
 
 		#region Fields - Drawing, Border, Dpi
 		public Color ColorBorder=Color.FromRgb(65,94,154);//the same dark blue color as the grid titles
@@ -47,17 +47,6 @@ namespace OpenDental{
 		public UIManager(FormFrame formODBase,FrmODBase frmODBase){
 			//for FormMaker
 			FormFrame_=formODBase;
-			FormFrame_.HasHelpButton=frmODBase.HasHelpButton;
-			FormFrame_.MinimizeBox=frmODBase.MinMaxBoxes;
-			FormFrame_.MaximizeBox=frmODBase.MinMaxBoxes;
-			string classType=frmODBase.GetType().Name;
-			if(classType.StartsWith("Frm")){
-				classType="Form"+classType.Substring(3);
-			}
-			FormFrame_.Name=classType;
-			if(frmODBase.StartMaximized){
-				FormFrame_.WindowState=System.Windows.Forms.FormWindowState.Maximized;
-			}
 			FormFrame_.Text=frmODBase.Text;
 			SizeClientOriginal=new System.Drawing.Size((int)frmODBase.Width,(int)frmODBase.Height);
 			FrmODBaseHosted=frmODBase;
@@ -73,7 +62,7 @@ namespace OpenDental{
 			//Don't do this here because it will be done after this method exits to handle windows scale and zoom
 			//_formODBase.Width=_sizeClientOriginal.Width+16;//Warning: this triggers resize event
 			//_formODBase.Height=_sizeClientOriginal.Height+8+_heightTitleBar96;//GetHeightTitleBar();
-			FormFrame_.PanelBorders=new PanelSubclassBorder();
+			FormFrame_.PanelBorders=new FormFrame.PanelDoubleBuffered();
 			FormFrame_.PanelBorders.Name="PanelBorders";
 			if(FormFrame.AreBordersMS){
 				FormFrame_.PanelBorders.Visible=false;
@@ -191,7 +180,7 @@ namespace OpenDental{
 			return (int)Math.Round(val);
 		}
 
-		///<summary>Converts a float or int from 96dpi to current scale, a combination of MS scale and local zoom.  Rounds to nearest int.</summary>
+		///<summary>Converts a float or int from 96dpi to current scale.  Rounds to nearest int.</summary>
 		public int Scale(float val96){
 			return Round(val96*ScaleMy());
 		}
@@ -259,16 +248,8 @@ namespace OpenDental{
 					x: 0,
 					y: hTitle+widthBorder,
 					width: FormFrame_.Width-widthBorder*2,
-					height: FormFrame_.Height-hTitle-widthBorder*2-1);
-				//FormFrame window height - title 26 - 8 top/bottom - 1
-				//The 1 pixel must be exposed for PanelBorders_MouseMove to get hit.
-				//130 lines into that method, there is a section that allows an autohide taskbar to be activated.
-				//Jordan-I don't understand this math, but the comments are here for future use.
-				//FormFrame_.PanelClient was covering the entire screen, this Z axis overlap was preventing FormFrame_.PanelBorders.Bounds's event PanelBorders_MouseMove from firing.  So we first need to remove 1 pixel from FormFrame_.PanelClient's height, then we need to ensure that FormFrame_.PanelBorders is at least 1 pixel taller so that the bottom pixel is exposed and therefore hoverable for the event.
-				//Equation=PanelClient.Height 1053 + y (starting location of title 26 + 8) = 1087 bottom location
-				//PanelBorders starting location equals widthborder 8-1 or 7
-				//PanelBorders needs a bottom of 1088. Set height equal to PanelBorders bottom 1087 - 6 pixles since PanelBorders starts at y=7 and needs to be 1 pixel taller than PanelClient 1081+7=1088 bottom location.  Now PanelBorders and FormODBase share the same bottom location.
-				FormFrame_.PanelBorders.Bounds=new System.Drawing.Rectangle(-1,widthBorder-1,FormFrame_.Width-widthBorder*2+1,FormFrame_.ElementHostUI.Bounds.Bottom-6);//FormODBase_.Height-widthBorder);
+					height: FormFrame_.Height-hTitle-widthBorder*2);
+				FormFrame_.PanelBorders.Bounds=new System.Drawing.Rectangle(-1,widthBorder-1,FormFrame_.Width-widthBorder*2+1,100);//FormODBase_.Height-widthBorder);
 			}
 			else{
 				FormFrame_.ElementHostUI.Bounds=new System.Drawing.Rectangle(

@@ -29,6 +29,7 @@ namespace OpenDental {
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDatabaseMaintenance));
+			this.butClose = new OpenDental.UI.Button();
 			this.textChecks = new System.Windows.Forms.TextBox();
 			this.butCheck = new OpenDental.UI.Button();
 			this.checkShow = new OpenDental.UI.CheckBox();
@@ -76,6 +77,17 @@ namespace OpenDental {
 			this.tabTools.SuspendLayout();
 			this.groupBoxUpdateInProg.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butClose.Location = new System.Drawing.Point(747, 654);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 1;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// textChecks
 			// 
@@ -189,11 +201,11 @@ namespace OpenDental {
 			this.textNoneChecks.Multiline = true;
 			this.textNoneChecks.Name = "textNoneChecks";
 			this.textNoneChecks.ReadOnly = true;
-			this.textNoneChecks.Size = new System.Drawing.Size(365, 32);
+			this.textNoneChecks.Size = new System.Drawing.Size(365, 26);
 			this.textNoneChecks.TabIndex = 99;
 			this.textNoneChecks.TabStop = false;
 			this.textNoneChecks.Text = "No selections will cause all database methods to run.\r\nOtherwise only selected me" +
-    "thods will run.";
+    "thods will run.\r\n";
 			this.textNoneChecks.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// tabControlDBM
@@ -519,11 +531,11 @@ namespace OpenDental {
 			// 
 			this.textTools.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
 			this.textTools.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.textTools.Location = new System.Drawing.Point(6, 78);
+			this.textTools.Location = new System.Drawing.Point(6, 84);
 			this.textTools.Multiline = true;
 			this.textTools.Name = "textTools";
 			this.textTools.ReadOnly = true;
-			this.textTools.Size = new System.Drawing.Size(790, 46);
+			this.textTools.Size = new System.Drawing.Size(790, 40);
 			this.textTools.TabIndex = 51;
 			this.textTools.TabStop = false;
 			this.textTools.Text = resources.GetString("textTools.Text");
@@ -543,7 +555,9 @@ namespace OpenDental {
 			// FormDatabaseMaintenance
 			// 
 			this.AcceptButton = this.butCheck;
+			this.CancelButton = this.butClose;
 			this.ClientSize = new System.Drawing.Size(834, 692);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.labelSkipCheckTable);
 			this.Controls.Add(this.tabControlDBM);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -570,6 +584,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.TextBox textChecks;
 		private OpenDental.UI.Button butCheck;
 		private OpenDental.UI.CheckBox checkShow;

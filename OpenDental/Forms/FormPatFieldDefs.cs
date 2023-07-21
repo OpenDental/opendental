@@ -10,23 +10,29 @@ using System.Linq;
 using CodeBase;
 
 namespace OpenDental{
-	/// <summary></summary>
+	/// <summary>
+	/// </summary>
 	public partial class FormPatFieldDefs:FormODBase {
-		public PatFieldDef PatFieldDefSelected;
-		///<summary>This is not for tracking the pref.</summary>
 		private bool _hasChanged;
 		private List<PatFieldDef> _listPatFieldDefs;
 		private bool _isSelectionMode;
+		public PatFieldDef PatFieldDefSelected;
 
+		///<summary>Stale deep copy of _listPatFieldDefs to use with sync.</summary>
+		private List<PatFieldDef> _listPatFieldDefsOld;
 		///<summary></summary>
-		public FormPatFieldDefs(bool isSelectionModeOnly=false) {
+		public FormPatFieldDefs(bool isSelectionModeOnly=false)
+		{
+			//
+			// Required for Windows Form Designer support
+			//
 			_isSelectionMode=isSelectionModeOnly;
 			InitializeComponent();
 			InitializeLayoutManager();
 			Lan.F(this);
 		}
 
-		private void FormPatFieldDefs_Load(object sender, EventArgs e) {
+		private void FormPatFieldDefs_Load(object sender, System.EventArgs e) {
 			_listPatFieldDefs=PatFieldDefs.GetDeepCopy();
 			checkDisplayRenamed.Checked=PrefC.GetBool(PrefName.DisplayRenamedPatFields);
 			if(_isSelectionMode) {
@@ -35,10 +41,10 @@ namespace OpenDental{
 				butUp.Visible=false;
 				butDown.Visible=false;
 			}
+			_listPatFieldDefsOld=_listPatFieldDefs.Select(x => x.Copy()).ToList();
 			LayoutMenu();
 			FillGrid();
 		}
-
 		private void LayoutMenu() {
 			menuMain.BeginUpdate();
 			menuMain.Add(new MenuItemOD("Setup",menuItemSetup_Click));
@@ -46,29 +52,28 @@ namespace OpenDental{
 		}
 
 		private void FillGrid() {
-			_listPatFieldDefs=PatFieldDefs.GetDeepCopy();
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
-			GridColumn gridColumn;
-			gridColumn=new GridColumn(Lan.g(this,"Field Name"),200);
-			gridMain.Columns.Add(gridColumn);
-			gridColumn=new GridColumn(Lan.g(this,"Field Type"),100);
-			gridMain.Columns.Add(gridColumn);
+			GridColumn col;
+			gridMain.AllowSortingByColumn=true;
+			col=new GridColumn(Lan.g(this,"Field Name"),200);
+			gridMain.Columns.Add(col);
+			col=new GridColumn(Lan.g(this,"Field Type"),100);
+			gridMain.Columns.Add(col);
 			if(!_isSelectionMode) {
-				gridColumn=new GridColumn(Lan.g(this,"Hidden"),150,HorizontalAlignment.Center);
-				gridMain.Columns.Add(gridColumn);
+				col=new GridColumn(Lan.g(this,"Hidden"),150,HorizontalAlignment.Center);
+				gridMain.Columns.Add(col);
 			}
 			gridMain.ListGridRows.Clear();
-			GridRow gridRow;
+			GridRow row;
 			for(int i=0;i<_listPatFieldDefs.Count;i++) {
-				gridRow=new GridRow();
-				gridRow.Cells.Add(_listPatFieldDefs[i].FieldName);
-				gridRow.Cells.Add(_listPatFieldDefs[i].FieldType.GetDescription());
+				row=new GridRow();
+				row.Cells.Add(_listPatFieldDefs[i].FieldName);
+				row.Cells.Add(_listPatFieldDefs[i].FieldType.GetDescription());
 				if(!_isSelectionMode) {
-					gridRow.Cells.Add(_listPatFieldDefs[i].IsHidden?"X":"");
+					row.Cells.Add(_listPatFieldDefs[i].IsHidden?"X":"");
 				}
-				gridRow.Tag=_listPatFieldDefs[i];
-				gridMain.ListGridRows.Add(gridRow);
+				gridMain.ListGridRows.Add(row);
 			}
 			gridMain.EndUpdate();
 		}
@@ -80,11 +85,16 @@ namespace OpenDental{
 				return;
 			}
 			using FormPatFieldDefEdit formPatFieldDefEdit=new FormPatFieldDefEdit();
-			formPatFieldDefEdit.PatFieldDefCur=(PatFieldDef)gridMain.ListGridRows[e.Row].Tag;
+			formPatFieldDefEdit.PatFieldDefCur=_listPatFieldDefs[e.Row];
 			formPatFieldDefEdit.ShowDialog();
 			if(formPatFieldDefEdit.DialogResult==DialogResult.OK) {
-				PatFieldDefs.RefreshCache();
-				_hasChanged|=formPatFieldDefEdit.HasChanged;
+				if(formPatFieldDefEdit.PatFieldDefCur==null) {
+					_listPatFieldDefs.Remove(_listPatFieldDefs[e.Row]);
+				}
+				else {
+					_listPatFieldDefs[e.Row]=formPatFieldDefEdit.PatFieldDefCur;
+				}
+				_hasChanged=true;
 				FillGrid();
 			}
 		}
@@ -95,74 +105,83 @@ namespace OpenDental{
 		}
 
 		private void butUp_Click(object sender,EventArgs e) {
-			int idx=gridMain.GetSelectedIndex();
-			if(idx<0) {
+			if(gridMain.SelectedIndices.Length==0) {
 				MsgBox.Show(this,"Please select an item in the grid first.");
 				return;
 			}
-			if(idx==0) { //Can't go up anymore
+			int[] intArraySelected=new int[gridMain.SelectedIndices.Length];
+			Array.Copy(gridMain.SelectedIndices,intArraySelected,gridMain.SelectedIndices.Length);
+			if(intArraySelected[0]==0) {
 				return;
 			}
-			_listPatFieldDefs[idx].ItemOrder--;
-			_listPatFieldDefs[idx-1].ItemOrder++;
-			PatFieldDefs.Update(_listPatFieldDefs[idx]);
-			PatFieldDefs.Update(_listPatFieldDefs[idx-1]);
-			PatFieldDefs.RefreshCache();
-			_hasChanged=true;
+			for(int i=0;i<intArraySelected.Length;i++) {
+				_listPatFieldDefs.Reverse(intArraySelected[i]-1,2);
+			}
+			for(int i=0;i<_listPatFieldDefs.Count;i++) {
+				_listPatFieldDefs[i].ItemOrder=i;//change itemOrder to reflect order changes.
+			}
 			FillGrid();
-			gridMain.SetSelected(idx-1);
+			for(int i=0;i<intArraySelected.Length;i++) {
+				gridMain.SetSelected(intArraySelected[i]-1,true);
+			}
+			_hasChanged=true;
 		}
 
 		private void butDown_Click(object sender,EventArgs e) {
-			int idx = gridMain.GetSelectedIndex();
-			if(idx<0) {
+			if(gridMain.SelectedIndices.Length==0) {
 				MsgBox.Show(this,"Please select an item in the grid first.");
 				return;
 			}
-			if(idx>=_listPatFieldDefs.Count-1) { //Can't go down anymore
+			int[] intArraySelected=new int[gridMain.SelectedIndices.Length];
+			Array.Copy(gridMain.SelectedIndices,intArraySelected,gridMain.SelectedIndices.Length);
+			if(intArraySelected[intArraySelected.Length-1]==_listPatFieldDefs.Count-1) {
 				return;
 			}
-			_listPatFieldDefs[idx].ItemOrder++;
-			_listPatFieldDefs[idx+1].ItemOrder--;
-			PatFieldDefs.Update(_listPatFieldDefs[idx]);
-			PatFieldDefs.Update(_listPatFieldDefs[idx+1]);
-			PatFieldDefs.RefreshCache();
-			_hasChanged=true;
+			for(int i=intArraySelected.Length-1;i>=0;i--) {//go backwards
+				_listPatFieldDefs.Reverse(intArraySelected[i],2);
+			}
+			for(int i=0;i<_listPatFieldDefs.Count;i++) {
+				_listPatFieldDefs[i].ItemOrder=i;//change itemOrder to reflect order changes.
+			}
 			FillGrid();
-			gridMain.SetSelected(idx+1);
+			for(int i=0;i<intArraySelected.Length;i++) {
+				gridMain.SetSelected(intArraySelected[i]+1,true);
+			}
+			_hasChanged=true;
 		}
 
-		private void butAdd_Click(object sender, EventArgs e) {
-			PatFieldDef patFieldDef = new PatFieldDef();
+		private void butAdd_Click(object sender, System.EventArgs e) {
+			//Employers.Cur=new Employer();
+			PatFieldDef patFieldDef=new PatFieldDef();
 			patFieldDef.ItemOrder=_listPatFieldDefs.Count;
-			PatFieldDefs.Insert(patFieldDef);//because the patFieldDef will have child objects and we need a valid FK
-			using FormPatFieldDefEdit formPatFieldDefEdit = new FormPatFieldDefEdit();
+			using FormPatFieldDefEdit formPatFieldDefEdit=new FormPatFieldDefEdit();
 			formPatFieldDefEdit.PatFieldDefCur=patFieldDef;
 			formPatFieldDefEdit.IsNew=true;
 			formPatFieldDefEdit.ShowDialog();
-			if(formPatFieldDefEdit.DialogResult!=DialogResult.OK) {
-				PatFieldDefs.Delete(formPatFieldDefEdit.PatFieldDefCur);
-				return;
+			if(formPatFieldDefEdit.DialogResult==DialogResult.OK) {
+				_hasChanged=true;
+				_listPatFieldDefs.Add(formPatFieldDefEdit.PatFieldDefCur);
+				FillGrid();
 			}
-			PatFieldDefs.RefreshCache();
-			_hasChanged=true;
-			FillGrid();
 		}
 
-		private void FormPatFieldDefs_FormClosing(object sender,FormClosingEventArgs e) {
+		private void butClose_Click(object sender, System.EventArgs e) {
 			if(Prefs.UpdateBool(PrefName.DisplayRenamedPatFields,checkDisplayRenamed.Checked)) {
 				DataValid.SetInvalid(InvalidType.Prefs);
 			}
+			Close();
+		}
+
+		private void FormPatFieldDefs_FormClosing(object sender,FormClosingEventArgs e) {
 			//Fix the item order just in case there was a duplicate.
 			for(int i=0;i<_listPatFieldDefs.Count;i++) {
 				if(_listPatFieldDefs[i].ItemOrder!=i) {
-					_listPatFieldDefs[i].ItemOrder=i;
-					PatFieldDefs.Update(_listPatFieldDefs[i]);
-					PatFieldDefs.RefreshCache();
 					_hasChanged=true;
 				}
+				_listPatFieldDefs[i].ItemOrder=i;
 			}
 			if(_hasChanged) {
+				PatFieldDefs.Sync(_listPatFieldDefs,_listPatFieldDefsOld);//Update if anything has changed
 				DataValid.SetInvalid(InvalidType.PatFields);
 			}
 		}

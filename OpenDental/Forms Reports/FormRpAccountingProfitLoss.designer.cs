@@ -27,6 +27,7 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormRpAccountingProfitLoss));
+			this.butCancel = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.monthCalendarStart = new OpenDental.UI.MonthCalendarOD();
 			this.monthCalendarEnd = new OpenDental.UI.MonthCalendarOD();
@@ -34,10 +35,20 @@ namespace OpenDental {
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(451, 251);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 26);
+			this.butCancel.TabIndex = 4;
+			this.butCancel.Text = "&Cancel";
+			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(444, 243);
+			this.butOK.Location = new System.Drawing.Point(370, 251);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 3;
@@ -80,11 +91,12 @@ namespace OpenDental {
 			// 
 			// FormRpAccountingProfitLoss
 			// 
-			this.ClientSize = new System.Drawing.Size(530, 278);
+			this.ClientSize = new System.Drawing.Size(566, 290);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.labelTO);
 			this.Controls.Add(this.monthCalendarEnd);
 			this.Controls.Add(this.monthCalendarStart);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
@@ -97,6 +109,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.Button butOK;
 		private UI.MonthCalendarOD monthCalendarStart;
 		private UI.MonthCalendarOD monthCalendarEnd;

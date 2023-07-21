@@ -24,7 +24,8 @@ namespace OpenDental{
 		/// </summary>
 		private void InitializeComponent() {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAdvertisingPostcardsSend));
-			this.butSave = new OpenDental.UI.Button();
+			this.butUploadPatients = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.labelEmail = new System.Windows.Forms.Label();
 			this.textNumberOfRecipients = new System.Windows.Forms.TextBox();
 			this.labelRecipients = new System.Windows.Forms.Label();
@@ -36,15 +37,26 @@ namespace OpenDental{
 			this.menuAccountSetup = new OpenDental.UI.MenuOD();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butUploadPatients
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(180, 179);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(98, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butUploadPatients.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butUploadPatients.Location = new System.Drawing.Point(208, 179);
+			this.butUploadPatients.Name = "butUploadPatients";
+			this.butUploadPatients.Size = new System.Drawing.Size(98, 24);
+			this.butUploadPatients.TabIndex = 3;
+			this.butUploadPatients.Text = "&Upload List";
+			this.butUploadPatients.Click += new System.EventHandler(this.butUploadPatients_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(312, 179);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// labelEmail
 			// 
@@ -104,7 +116,7 @@ namespace OpenDental{
 			// 
 			// butViewAccount
 			// 
-			this.butViewAccount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.butViewAccount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butViewAccount.Location = new System.Drawing.Point(15, 179);
 			this.butViewAccount.Name = "butViewAccount";
 			this.butViewAccount.Size = new System.Drawing.Size(121, 24);
@@ -122,7 +134,8 @@ namespace OpenDental{
 			// 
 			// FormAdvertisingPostcardsSend
 			// 
-			this.ClientSize = new System.Drawing.Size(291, 215);
+			this.CancelButton = this.butCancel;
+			this.ClientSize = new System.Drawing.Size(399, 215);
 			this.Controls.Add(this.menuAccountSetup);
 			this.Controls.Add(this.butViewAccount);
 			this.Controls.Add(this.comboPostcardAccount);
@@ -132,7 +145,8 @@ namespace OpenDental{
 			this.Controls.Add(this.textNumberOfRecipients);
 			this.Controls.Add(this.labelRecipients);
 			this.Controls.Add(this.labelEmail);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butUploadPatients);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormAdvertisingPostcardsSend";
 			this.Text = "Upload Postcard Recipients";
@@ -144,7 +158,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butUploadPatients;
+		private OpenDental.UI.Button butCancel;
 		private System.Windows.Forms.Label labelEmail;
 		private System.Windows.Forms.TextBox textNumberOfRecipients;
 		private System.Windows.Forms.Label labelRecipients;

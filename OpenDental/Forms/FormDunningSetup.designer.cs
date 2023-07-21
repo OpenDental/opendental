@@ -27,6 +27,7 @@ namespace OpenDental{
 			this.butAdd = new OpenDental.UI.Button();
 			this.butDuplicate = new OpenDental.UI.Button();
 			this.gridDunning = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
 			this.groupBox2 = new OpenDental.UI.GroupBox();
 			this.radioY = new System.Windows.Forms.RadioButton();
@@ -83,6 +84,16 @@ namespace OpenDental{
 			this.gridDunning.Title = "Messages";
 			this.gridDunning.TranslationName = "TableMessages";
 			this.gridDunning.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridDunning_CellDoubleClick);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(1024, 384);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 19;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// groupBox1
 			// 
@@ -248,6 +259,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butAdd);
 			this.Controls.Add(this.butDuplicate);
 			this.Controls.Add(this.gridDunning);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormDunningSetup";
 			this.Text = "Dunning Msg Setup";
@@ -265,6 +277,7 @@ namespace OpenDental{
 		private UI.Button butAdd;
 		private UI.Button butDuplicate;
 		private UI.GridOD gridDunning;
+		private UI.Button butClose;
 		private OpenDental.UI.GroupBox groupBox1;
 		private OpenDental.UI.GroupBox groupBox2;
 		private System.Windows.Forms.RadioButton radioY;

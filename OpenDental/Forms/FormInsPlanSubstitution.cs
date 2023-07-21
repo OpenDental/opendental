@@ -261,7 +261,7 @@ namespace OpenDental {
 		}
 
 		///<summary>Syncs _listDbSubstLinks and _listDbSubstLinksOld. Does not modify any of the procedure level SubstitutionCodes.</summary>
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			string msgText=Lan.g(this,"You have chosen to exclude all substitution codes.  "
 				+"The checkbox option named 'Don't Substitute Codes (e.g. posterior composites)' "
 				+"in the Other Ins Info tab of the Edit Insurance Plan window can be used to exclude all substitution codes.\r\n"
@@ -296,6 +296,11 @@ namespace OpenDental {
 			SubstitutionLinks.Sync(listSubstitutionLinks,_listSubstitutionLinks);
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 	
 	}
 }

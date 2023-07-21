@@ -14,9 +14,6 @@ namespace OpenDentBusiness {
 		public long TaskTakenNum;
 		///<summary>FK to task.TaskNum. This value should be unique in the table at any one time.</summary>
 		public long TaskNum;
-		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
-		///<summary>JSON text. Information regarding the user who inserted the tasktaken record as well as which server the insert command was run on.</summary>
-		public string LogJson;
 
 		///<summary></summary>
 		public TaskTaken Copy() {
@@ -27,13 +24,10 @@ namespace OpenDentBusiness {
 
 /*
 CREATE TABLE tasktaken (
-  TaskTakenNum bigint NOT NULL auto_increment PRIMARY KEY,
-  TaskNum bigint NOT NULL,
-  LogJson TEXT,
-  UNIQUE INDEX(TaskNum),
-  INDEX(LogJson(100))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
-
+	TaskTakenNum bigint NOT NULL auto_increment PRIMARY KEY,
+	TaskNum bigint NOT NULL,
+	UNIQUE INDEX(TaskNum)
+) DEFAULT CHARSET=utf8;
 INSERT INTO preference(PrefName,ValueString) VALUES
 ('CustomersHQDatabase','customers'),
 ('CustomersHQMySqlPassHash','FJ3SlA1plN/SDEczWeaEUg=='),

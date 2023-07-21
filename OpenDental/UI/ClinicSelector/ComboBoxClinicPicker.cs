@@ -38,17 +38,17 @@ namespace OpenDental.UI {
 //In the UI, set these properties:
 //   IncludeUnassigned=true
 //   HqDescription="None" //depending on situation
-//comboClinic.ClinicNumSelected=adj.ClinicNum;
+//comboClinic.SelectedClinicNum=adj.ClinicNum;
 //...
-//adj.ClinicNum=comboClinic.ClinicNumSelected;
+//adj.ClinicNum=comboClinic.SelectedClinicNum;
 //
 //Common Pattern#2, Clinic as report filter----------------------------------------------------------------------------
 //In the UI, set these properties:
 //   IncludeAll=true
 //   IncludeUnassigned=true
-//   IsMultiSelect=true
+//   SelectionModeMulti=true
 //string stringDisplayClinics=comboClinics.GetStringSelectedClinics();
-//List<long> listClinicNums=comboClinics.ListClinicNumsSelected;
+//List<long> listClinicNums=comboClinics.ListSelectedClinicNums;
 //RunReport(listClinicNums,stringDisplayClinics);
 	
 	///<summary>A Clinic comboBox that can scale up to thousands of Clinics.  Also handles multi select.  Fills itself with a filtered list of clinics that includes only clinics that the current user has permission to access.  Automatically handles Visibility, based on PrefC.HasClinicsEnabled.  Notice that you have no access to the selected indices, which are instead handled with ClinicNums.</summary>
@@ -74,8 +74,6 @@ namespace OpenDental.UI {
 		private bool _includeAll=false;
 		///<summary>Property backer.</summary>
 		private bool _includeUnassigned=false;
-		///<summary>Not exposed as public property. Must stay synched with _listIndicesSelected.</summary>
-		private int _indexSelected=-1;
 		///<summary>Property backer.</summary>
 		private bool _forceShowUnassigned=false;
 		///<summary>This is the part that comes up as a "list" to pick from.</summary>
@@ -88,8 +86,8 @@ namespace OpenDental.UI {
 		public LayoutManagerForms LayoutManager=new LayoutManagerForms();
 		///<summary>Not exposed as public property.</summary>
 		private List<Clinic> _listClinics=new List<Clinic>();
-		///<summary>Not exposed as public property. Must stay synched with _indexSelected.</summary>
-		private List<int> _listIndicesSelected=new List<int>();
+		///<summary>Not exposed as public property. Must stay synched with _selectedIndex.</summary>
+		private List<int> _listSelectedIndices=new List<int>();
 		///<summary>Disposed</summary>
 		private Pen _penArrow=new Pen(Color.FromArgb(20,20,20),1.5f);
 		///<summary>Disposed</summary>
@@ -97,9 +95,11 @@ namespace OpenDental.UI {
 		///<summary>Disposed</summary>
 		private Pen _penOutline=new Pen(Color.FromArgb(173,173,173),1);
 		///<summary>If the SelectedClinicNum gets set to a clinic that's not in the list because the user has no permission, then this is where that info is stored.  If this is null, then it instead behaves normally.</summary>
-		private Clinic _clinicSelectedNoPermission;
+		private Clinic _selectedClinicNoPermission;
+		///<summary>Not exposed as public property. Must stay synched with _listSelectedIndices.</summary>
+		private int _selectedIndex=-1;
 		///<summary>Property backer.</summary>
-		private bool _isMultiSelect=false;
+		private bool _selectionModeMulti=false;
 		///<summary>Property backer.</summary>
 		private bool _showLabel=true;
 		///<summary>As this combo is initialized, the user defaults to CurUser. Can be changed.</summary>
@@ -117,7 +117,7 @@ namespace OpenDental.UI {
 		}
 		#endregion Constructor
 
-		#region Events 
+		#region Events - Public Raise
 		///<summary></summary>
 		private void OnSelectionChangeCommitted(object sender,EventArgs e){
 			SelectionChangeCommitted?.Invoke(sender,e);
@@ -131,350 +131,9 @@ namespace OpenDental.UI {
 		}
 		[Category("OD"),Description("Try not to use this. The preferred technique is to use SelectionChangeCommitted to react to each user click. In contrast, this event will fire even if the selection programmatically changes.")]
 		public event EventHandler SelectedIndexChanged;
-		#endregion Events 
+		#endregion Events - Public Raise
 
-		#region Properties - Public browsable
-		[Category("OD")]
-		[Description("This will be set to true if we always need to show Unassigned/0, regardless of user permissions.")]
-		[DefaultValue(false)]
-		public bool ForceShowUnassigned {
-			get {
-				return _forceShowUnassigned;
-			}
-			set {
-				_forceShowUnassigned=value;
-				FillClinics();
-			}
-		}
-
-		///<summary>The display value for ClinicNum 0. Default is 'Unassigned', but might want 'Default', 'HQ', 'None', 'Practice', etc.  Do not specify 'All' here, because that is not accurate.  Only used when 'DoIncludeUnassigned'</summary>
-		[Category("OD")]
-		[Description("The display value for ClinicNum 0. Default is 'Unassigned', but might want 'Default', 'HQ', 'None', 'Practice', etc.  Do not specify 'All' here, because that is not accurate.  Only used when 'DoIncludeUnassigned'")]
-		[DefaultValue("Unassigned")]
-		public string HqDescription {
-			get {
-				return _hqDescription;
-			}
-			set {
-				_hqDescription=value;
-				List<long> listSelectedClinicNums=ListClinicNumsSelected;
-				FillClinics();//this wipes out the selected clinic(s), which can rarely be a problem.
-				_listIndicesSelected=new List<int>();
-				for(int i=0;i<_listClinics.Count;i++) {
-					if(listSelectedClinicNums.Contains(_listClinics[i].ClinicNum)) {
-						_indexSelected=i;
-						_listIndicesSelected.Add(i);
-					}
-				}
-			}
-		}
-
-		[Category("OD")]
-		[Description("Set to true to include 'All' as a selection option. 'All' can sometimes (e.g. FormOperatories) be intended to included more clinics than are actually showing in list.")]
-		[DefaultValue(false)]
-		//This is browsable, unlike ComboBoxPlus.  It's because this comboBox is intentionally slightly more automated. 
-		//You never have to load the clinics manually, so there's no logcical place in the code where you might also want to specify all.
-		public bool IncludeAll {
-			get {
-				return _includeAll;
-			}
-			set {
-				_includeAll=value;
-				FillClinics();
-			}
-		}
-
-		[Category("OD")]
-		[Description("Set to true to include hidden clinics in ListSelectedClinicNums when 'All' is selected.  This also causes (includes hidden) to show next to All.  Used for reports where we don't want to miss any entries.  List will always include 'unassigned/0' clinic.")]
-		[DefaultValue(false)]
-		public bool IncludeHiddenInAll{ get; set; } = false;
-
-		///<summary>Set to true to include 'Unassigned' as a selection option. The word 'Unassigned' can be changed with the HqDescription property.  This is ClinicNum=0.</summary>
-		[Category("OD")]
-		[Description("Set to true to include 'Unassigned' as a selection option. The word 'Unassigned' can be changed with the HqDescription property.  This is ClinicNum=0.")]
-		[DefaultValue(false)]//yes, true might be slightly better default, but then this could not be a drop-in replacement for ComboBoxClinic without causing bugs -- many bugs.
-		public bool IncludeUnassigned {
-			get {
-				return _includeUnassigned;
-			}
-			set {
-				_includeUnassigned=value;
-				FillClinics();
-			}
-		}
-
-		[Category("OD")]
-		[Description("Set true for multi-select, false for single-select.")]
-		[DefaultValue(false)]
-		public bool IsMultiSelect{
-			get{
-				return _isMultiSelect;
-			}
-			set{
-				if(_isMultiSelect==value){
-					return;
-				}
-				_isMultiSelect=value;
-				if(_isMultiSelect){
-					labelFake.Text="Clinics";
-				}
-			}
-		}
-
-		///<summary></summary>
-		[Category("OD")]
-		[Description("Normally true to show label on left.  Set to false if not enough space and you want to do your own separate label.  Make sure to manually set visibility of that label, based on whether Clinic feature is turned on.")]
-		[DefaultValue(true)]
-		public bool ShowLabel {
-			get {
-				return _showLabel;
-			}
-			set {
-				if(_showLabel==value){
-					return;
-				}
-				_showLabel=value; 
-				//if(_showLabel){
-				//	labelFake.Visible=true;
-				//}
-				//else{
-				//	labelFake.Visible=false;
-				//}
-				Invalidate();
-			}
-		}
-		#endregion Properties - Public browsable
-
-		#region Properties - Public not browsable
-		///<summary>Getter returns -1 if no clinic is selected. The setter is special.  If you set it to a clinicNum that this user does not have permission for, then the combobox displays that and becomes read-only to prevent changing it. It will also remember such a clinicNum and return it back in subsequent get.  0 (Unassigned) can also be set from here if it's present. This is common if pulling zero from the database.  But if you need to manually set to 0 in other situations, you should use the property IsUnassignedSelected.  You are not allowed to manually set to -2 (All) or -1 (none) from here.  Instead, set IsAllSelected=true or IsNothingSelected=true.  On initial load, this control will automatically select the current clinic, which you can of course change by setting a different clinic.  For example, you must manually set All.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public long ClinicNumSelected {
-			get {
-				if(!DesignMode && !IsTestModeNoDb) {
-					if(!PrefC.HasClinicsEnabled) {
-						return 0; //when clinics are turned off, this control doesn't appear and the 0 clinic is implicitly always selected
-					}
-				}
-				if(_clinicSelectedNoPermission!=null){
-					return _clinicSelectedNoPermission.ClinicNum;
-				}
-				if(_indexSelected==-1) {
-					return -1;
-				}
-				return _listClinics[_indexSelected].ClinicNum;
-			}
-			set {
-				if(value==CLINIC_NUM_ALL){
-					throw new ApplicationException("Clinic num cannot be set to -2.  Instead, use IsAllSelected.");
-				}
-				if(value==-1){
-					throw new ApplicationException("Clinic num cannot be set to -1.  Instead, set IsNothingSelected.");
-				}
-				SetSelectedClinicNum(value);				
-			}
-		}
-
-		///<summary>True if the special dummy 'All' option is selected (regardless of any other additional selections). All needs to have been added, first.  The intent of All can vary, and the processing logic would be in the calling form.  On start, setting All would be done manually, not automatically.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public bool IsAllSelected{
-			get{
-				return ClinicNumSelected==CLINIC_NUM_ALL;
-			}
-			set{
-				SetSelectedClinicNum(CLINIC_NUM_ALL);//bypasses the Property that would not allow this externally.
-			}
-		}
-
-				///<summary>True if SelectedIndex==-1.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public bool IsNothingSelected {
-			get{
-				return _indexSelected==-1;//this could be true if _selectedClinicNoPermission was set to some value that user did not have permission for
-			}
-			set{
-				//not going to check permission here because it's coming from code rather than user.
-				_clinicSelectedNoPermission=null;
-				_indexSelected=-1;
-				_listIndicesSelected=new List<int>();
-				OnSelectedIndexChanged(this,new EventArgs());
-				Invalidate();
-			}
-		}
-
-		///<summary>True if we are testing and db connection makes no sense.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[DefaultValue(false)]
-		public bool IsTestModeNoDb { get; set; } = false;
-
-		///<summary>True if the 'unassigned'/default/hq/none/all clinic with ClinicNum=0 is selected.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public bool IsUnassignedSelected {
-			get{
-				return ClinicNumSelected==CLINIC_NUM_UNASSIGNED;
-			}
-			set{
-				ClinicNumSelected=CLINIC_NUM_UNASSIGNED;
-			}
-		}
-
-		///<summary>Also can used when IsMultiSelect=false.  In the case where "All" is selected (regardless of any other additional selection), this will return a list of all clinicNums in the list.  This is not technically the same as All clinics in the database, because some clinics might be hidden from this user.  If unassigned(=0) is in the list when All is selected, then it will be included here.  If the calling form wishes to instead test All, and use other logic, it should test IsAllSelected. When setting, this isn't as rigorous as setting SelectedClinicNum.  This property will simply skip setting any clinics that aren't present because of no permission, but it will not disable the control to prevent changes. If !PrefC.HasClinicsEnabled, then this will return an empty list.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public List<long> ListClinicNumsSelected {
-			//This control only internally keeps track of selected indices, so there's no local field for this.
-			//The local indices need to be converted to/from ClinicNums.
-			get{
-				if(!DesignMode && !IsTestModeNoDb) {
-					try{
-						if(!PrefC.HasClinicsEnabled) {//this fails during WPF conversion
-							return new List<long>(); //when clinics are turned off this control doesn't appear and selected clinics is always empty list
-						}
-					}
-					catch{
-						return new List<long>();
-					}
-				}
-				List<long> listClinicNumsSelected=new List<long>();
-				if(_clinicSelectedNoPermission!=null){
-					listClinicNumsSelected.Add(_clinicSelectedNoPermission.ClinicNum);
-					return listClinicNumsSelected;
-				}
-				if(_listIndicesSelected.Count==0) {
-					return listClinicNumsSelected;
-				}
-				if(_includeAll && _listIndicesSelected.Contains(0)){
-					//The "All" item was selected
-					if(IncludeHiddenInAll){
-						List<Clinic> listClinicsAll=Clinics.GetAllForUserod(_userod);
-						List<long> listClinicNums=listClinicsAll.Select(x=>x.ClinicNum).ToList();
-						listClinicNums.Add(0);
-						return listClinicNums;
-					}
-					foreach(Clinic clinic in _listClinics){
-						if(clinic.ClinicNum==CLINIC_NUM_ALL){
-							continue;
-						}
-						//seems to include the "unassigned/default/hq/none/all" clinicNum=0, if present
-						listClinicNumsSelected.Add(clinic.ClinicNum);
-					}
-					return listClinicNumsSelected;
-				}
-				foreach(int idx in _listIndicesSelected){
-					listClinicNumsSelected.Add(_listClinics[idx].ClinicNum);
-				}
-				return listClinicNumsSelected;
-			}
-			set{
-				_clinicSelectedNoPermission=null;
-				_listIndicesSelected=new List<int>();
-				for(int i=0;i<_listClinics.Count;i++) {
-					if(value.Contains(_listClinics[i].ClinicNum)) {
-						_indexSelected=i;//this only works when there is one, but it's still important to try to stay synched
-						_listIndicesSelected.Add(i);
-					}
-				}
-				OnSelectedIndexChanged(this,new EventArgs());
-				Invalidate();
-			}
-		}
-
-				///<summary>Sometimes, you need a list of clinics to pass to a clinic picker window. This returns a copy, not a reference to the internal list.</summary>
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public List<Clinic> ListClinics {
-			get{
-				List<Clinic> listClinics=new List<Clinic>(_listClinics);//copy
-				return listClinics;
-			}
-		}
-		#endregion Properties - Public not browsable
-
-		#region Properties - Protected
-		protected override Size DefaultSize{
-			get{
-				return new Size(200,21);
-			}
-		}
-
-		public override string Text { 
-			get{
-				int widthMax=Width-1-15;
-				if(ShowLabel){
-					widthMax-=LayoutManager.Scale(_widthLabelArea);
-				}
-				return GetDisplayText(widthMax); 
-			}
-		}
-		#endregion Properties - Protected
-
-		#region Methods - Public
-		///<summary>Returns empty string if no clinic is selected.  Can return "All" or the "Unassigned" override abbreviation.</summary>
-		public string GetSelectedAbbr() {
-			if(_indexSelected==-1) {
-				return "";
-			}
-			return _listClinics[_indexSelected].Abbr;
-		}
-
-		///<summary>Returns null if no clinic selected.</summary>
-		public Clinic GetSelectedClinic() {
-			if(_indexSelected==-1) {
-				return null;
-			}
-			return _listClinics[_indexSelected];
-		}
-
-		///<summary>Gets a string of all selected clinic Abbr's, separated by commas.  If "All" is selected, then it simply returns "All Clinics", which might not be techinically true.  If ListSelectedClinicNums was used instead of testing IsAllSelected, then it could only include clinics that user has permission for.</summary>
-		public string GetStringSelectedClinics() {
-			List<Clinic> listSelectedClinics=_listIndicesSelected.Select(x => _listClinics[x]).ToList();
-			if(listSelectedClinics.Any(x => x.ClinicNum==CLINIC_NUM_ALL)) {
-				return "All Clinics";
-			}
-			return string.Join(",",listSelectedClinics.Select(clinic => clinic.Abbr));
-		}
-
-		///<summary>Lets you change which user is used to load the allowed clinics.</summary>
-		public void SetUser(Userod userod){
-			_userod=userod;
-			FillClinics();
-		}
-
-		///<summary>If the calling code set this combo to a clinic that the user does not have permission to, then the user will already be blocked from changing the clinic by clicking on this combo.  But if you want them to also be blocked from doing other things, use this method to see if the combo is currently giving them permission to change clinics, and then take action accordingly.</summary>
-		public bool UserHasPermission(){
-			if(_clinicSelectedNoPermission==null){
-				return true;// a normal situation
-			}
-			return false;//user does not have permission
-		}
-		#endregion Methods - Public
-
-		#region Methods - Protected
-		///<summary>We have to intercept the mouse scroll event, because there are no actual controls on the screen so there is no way to actually scroll as there is no content</summary>
-		protected override void WndProc(ref Message m) {
-			base.WndProc(ref m);
-			if(m.Msg==0x020A) { //Check for scrolling
-				int delta;//direction
-				if((long)m.WParam>=(long)Int32.MaxValue) { //Just in case the param is larger than the max
-					var wParam=new IntPtr((long)m.WParam << 32 >> 32);
-					delta=wParam.ToInt32() >> 16;
-				}
-				else {
-					delta=m.WParam.ToInt32() >> 16;
-				}
-				delta*=-1;
-				//If true, then scroll up, otherwise scroll down
-				ScrollEventArgs sarg=delta > 0 ? new ScrollEventArgs(ScrollEventType.EndScroll,0,1) : new ScrollEventArgs(ScrollEventType.EndScroll,1,0);
-				ComboBoxClinicPicker_Scroll(this, sarg);
-			}
-		}
-		#endregion Methods - Protected
-
-		#region Methods - Event Handlers protected
+		#region Methods - Event Handlers
 		protected override void OnHandleDestroyed(EventArgs e){
 			//prevents an orphaned form from hanging around
 			base.OnHandleDestroyed(e);
@@ -491,8 +150,8 @@ namespace OpenDental.UI {
 				charKey=e.KeyCode.ToString().Replace("NumPad","")[0];
 			}
 			bool foundMatch=false;
-			if(char.IsLetterOrDigit(charKey) && !IsMultiSelect) {//alpha character down
-				if(_listIndicesSelected.Count<1) {
+			if(char.IsLetterOrDigit(charKey) && !SelectionModeMulti) {//alpha character down
+				if(_listSelectedIndices.Count<1) {
 					foundMatch=SetSearchedIndex(0,charKey);
 					if(foundMatch) {
 						OnSelectedIndexChanged(this,new EventArgs());
@@ -501,7 +160,7 @@ namespace OpenDental.UI {
 					Invalidate();
 					return;
 				}
-				foundMatch=SetSearchedIndex(_listIndicesSelected[0]+1,charKey);
+				foundMatch=SetSearchedIndex(_listSelectedIndices[0]+1,charKey);
 				if(!foundMatch) {//if nothing is found, then start the search from the beginning
 					foundMatch=SetSearchedIndex(0,charKey);
 				}
@@ -526,8 +185,8 @@ namespace OpenDental.UI {
 			if(ShowLabel && e.X<LayoutManager.Scale(_widthLabelArea)){
 				return;
 			}
-			if(_clinicSelectedNoPermission!=null){
-				if(Security.IsAuthorized(EnumPermType.UnrestrictedSearch,true)) {
+			if(_selectedClinicNoPermission!=null){
+				if(Security.IsAuthorized(Permissions.UnrestrictedSearch,true)) {
 					//Clinic is hidden, but user is allowed to move this object (e.g. patient) to different clinic
 					//FormComboPicker will come up, and the displayed Abbr will disappear because form has no access to the hidden clinic.  That's ok.
 					//If user then selects a non-hidden clinic, _selectedClinicNoPermission will get set to null.
@@ -554,12 +213,12 @@ namespace OpenDental.UI {
 				_formComboPicker.Width=this.Width;
 			}
 			//SelectedIndices and SelectedIndex effectively set each other
-			if(IsMultiSelect){
+			if(SelectionModeMulti){
 				_formComboPicker.IsMultiSelect=true;
-				_formComboPicker.SelectedIndices=_listIndicesSelected;
+				_formComboPicker.SelectedIndices=_listSelectedIndices;
 			}
 			else{
-				_formComboPicker.SelectedIndex=_indexSelected;
+				_formComboPicker.SelectedIndex=_selectedIndex;
 			}
 			_formComboPicker.Show();
 		}
@@ -626,7 +285,7 @@ namespace OpenDental.UI {
 			int widthMax=rectangleCombo.Width-15;
 			//"label" always shows the same, whether enabled or not
 			if(ShowLabel){
-				if(IsMultiSelect){//"Clinics" is a tight fit
+				if(SelectionModeMulti){//"Clinics" is a tight fit
 					//float widthText=g.MeasureString(labelFake.Text,Font).Width;//the only two possibilities are Clinic and Clinics.  
 					//Lang trans would mess things up unless short, and it's not currently supported
 					g.DrawString(labelFake.Text,Font,Brushes.Black,-2,LayoutManager.Scale(4));
@@ -649,9 +308,9 @@ namespace OpenDental.UI {
 			base.OnResize(e);
 			Invalidate();
 		}
-		#endregion Methods - Event Handlers protected
+		#endregion Methods - Event Handlers
 
-		#region Methods - Event Handlers private
+		#region Events -  Private
 		private void _formComboPicker_FormClosing(object sender, FormClosingEventArgs e) {
 			//This is designed to fire whether or not changed. For example, FormPatientAddAll.ComboClinic1 needs to change the others even if it doesn't change.
 			//important to set both _selectedIndex and _listSelectedIndices
@@ -659,38 +318,373 @@ namespace OpenDental.UI {
 			//again, e.g. Application.DoEvents will trigger the _formComboPicker.Deactivate event which calls _formComboPicker.Close() and this code would
 			//run twice if we stayed subscribed to the FormClosing event.
 			//_formComboPicker.FormClosing-=_formComboPicker_FormClosing;
-			_indexSelected=_formComboPicker.SelectedIndex;
-			_listIndicesSelected=_formComboPicker.SelectedIndices;
-			if(_listIndicesSelected.Count>0) {//this needs to be set to null if a hidden clinic is no longer selected.  See OnMouseDown.
-				_clinicSelectedNoPermission=null;
+			_selectedIndex=_formComboPicker.SelectedIndex;
+			_listSelectedIndices=_formComboPicker.SelectedIndices;
+			if(_listSelectedIndices.Count>0) {//this needs to be set to null if a hidden clinic is no longer selected.  See OnMouseDown.
+				_selectedClinicNoPermission=null;
 			}
 			OnSelectionChangeCommitted(this,e);
 			OnSelectedIndexChanged(this,e);
 			Refresh();//to get rid of flickering when selecting after select and after dropdown closes.
 		}
-		#endregion Methods - Event Handlers private
+		#endregion Events -  Private
+
+		#region Properties - Public
+		[Category("OD")]
+		[Description("This will be set to true if we always need to show Unassigned/0, regardless of user permissions.")]
+		[DefaultValue(false)]
+		public bool ForceShowUnassigned {
+			get {
+				return _forceShowUnassigned;
+			}
+			set {
+				_forceShowUnassigned=value;
+				FillClinics();
+			}
+		}
+
+		[Category("OD")]
+		[Description("Set to true to include 'All' as a selection option. 'All' can sometimes (e.g. FormOperatories) be intended to included more clinics than are actually showing in list.")]
+		[DefaultValue(false)]
+		//This is browsable, unlike ComboBoxPlus.  It's because this comboBox is intentionally slightly more automated. 
+		//You never have to load the clinics manually, so there's no logcical place in the code where you might also want to specify all.
+		public bool IncludeAll {
+			get {
+				return _includeAll;
+			}
+			set {
+				_includeAll=value;
+				FillClinics();
+			}
+		}
+
+		[Category("OD")]
+		[Description("Set to true to include hidden clinics in ListSelectedClinicNums when 'All' is selected.  This also causes (includes hidden) to show next to All.  Used for reports where we don't want to miss any entries.  List will always include 'unassigned/0' clinic.")]
+		[DefaultValue(false)]
+		public bool IncludeHiddenInAll{ get; set; } = false;
+
+		///<summary>Set to true to include 'Unassigned' as a selection option. The word 'Unassigned' can be changed with the HqDescription property.  This is ClinicNum=0.</summary>
+		[Category("OD")]
+		[Description("Set to true to include 'Unassigned' as a selection option. The word 'Unassigned' can be changed with the HqDescription property.  This is ClinicNum=0.")]
+		[DefaultValue(false)]//yes, true might be slightly better default, but then this could not be a drop-in replacement for ComboBoxClinic without causing bugs -- many bugs.
+		public bool IncludeUnassigned {
+			get {
+				return _includeUnassigned;
+			}
+			set {
+				_includeUnassigned=value;
+				FillClinics();
+			}
+		}
+
+		///<summary>The display value for ClinicNum 0. Default is 'Unassigned', but might want 'Default', 'HQ', 'None', 'Practice', etc.  Do not specify 'All' here, because that is not accurate.  Only used when 'DoIncludeUnassigned'</summary>
+		[Category("OD")]
+		[Description("The display value for ClinicNum 0. Default is 'Unassigned', but might want 'Default', 'HQ', 'None', 'Practice', etc.  Do not specify 'All' here, because that is not accurate.  Only used when 'DoIncludeUnassigned'")]
+		[DefaultValue("Unassigned")]
+		public string HqDescription {
+			get {
+				return _hqDescription;
+			}
+			set {
+				_hqDescription=value;
+				List<long> listSelectedClinicNums=ListSelectedClinicNums;
+				FillClinics();//this wipes out the selected clinic(s), which can rarely be a problem.
+				_listSelectedIndices=new List<int>();
+				for(int i=0;i<_listClinics.Count;i++) {
+					if(listSelectedClinicNums.Contains(_listClinics[i].ClinicNum)) {
+						_selectedIndex=i;
+						_listSelectedIndices.Add(i);
+					}
+				}
+			}
+		}
+
+		///<summary>True if the special dummy 'All' option is selected (regardless of any other additional selections). All needs to have been added, first.  The intent of All can vary, and the processing logic would be in the calling form.  On start, setting All would be done manually, not automatically.</summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool IsAllSelected{
+			get{
+				return SelectedClinicNum==CLINIC_NUM_ALL;
+			}
+			set{
+				SetSelectedClinicNum(CLINIC_NUM_ALL);//bypasses the Property that would not allow this externally.
+			}
+		}
+
+		///<summary>True if we are testing and db connection makes no sense.</summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[DefaultValue(false)]
+		public bool IsTestModeNoDb { get; set; } = false;
+
+		///<summary>True if the 'unassigned'/default/hq/none/all clinic with ClinicNum=0 is selected.</summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool IsUnassignedSelected {
+			get{
+				return SelectedClinicNum==CLINIC_NUM_UNASSIGNED;
+			}
+			set{
+				SelectedClinicNum=CLINIC_NUM_UNASSIGNED;
+			}
+		}
+
+		///<summary>True if SelectedIndex==-1.</summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool IsNothingSelected {
+			get{
+				return _selectedIndex==-1;//this could be true if _selectedClinicNoPermission was set to some value that user did not have permission for
+			}
+			set{
+				//not going to check permission here because it's coming from code rather than user.
+				_selectedClinicNoPermission=null;
+				_selectedIndex=-1;
+				_listSelectedIndices=new List<int>();
+				OnSelectedIndexChanged(this,new EventArgs());
+				Invalidate();
+			}
+		}
+
+		///<summary>Sometimes, you need a list of clinics to pass to a clinic picker window. This returns a copy, not a reference to the internal list.</summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public List<Clinic> ListClinics {
+			get{
+				List<Clinic> listClinics=new List<Clinic>(_listClinics);//copy
+				return listClinics;
+			}
+		}
+
+		///<summary>Also can used when IsMultiSelect=false.  In the case where "All" is selected (regardless of any other additional selection), this will return a list of all clinicNums in the list.  This is not technically the same as All clinics in the database, because some clinics might be hidden from this user.  If unassigned(=0) is in the list when All is selected, then it will be included here.  If the calling form wishes to instead test All, and use other logic, it should test IsAllSelected. When setting, this isn't as rigorous as setting SelectedClinicNum.  This property will simply skip setting any clinics that aren't present because of no permission, but it will not disable the control to prevent changes. If !PrefC.HasClinicsEnabled, then this will return an empty list.</summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public List<long> ListSelectedClinicNums {
+			//This control only internally keeps track of selected indices, so there's no local field for this.
+			//The local indices need to be converted to/from ClinicNums.
+			get{
+				if(!DesignMode && !IsTestModeNoDb) {
+					if(!PrefC.HasClinicsEnabled) {
+						return new List<long>(); //when clinics are turned off this control doesn't appear and selected clinics is always empty list
+					}
+				}
+				List<long> listSelectedClinicNums=new List<long>();
+				if(_selectedClinicNoPermission!=null){
+					listSelectedClinicNums.Add(_selectedClinicNoPermission.ClinicNum);
+					return listSelectedClinicNums;
+				}
+				if(_listSelectedIndices.Count==0) {
+					return listSelectedClinicNums;
+				}
+				if(_includeAll && _listSelectedIndices.Contains(0)){
+					//The "All" item was selected
+					if(IncludeHiddenInAll){
+						List<Clinic> listClinicsAll=Clinics.GetAllForUserod(_userod);
+						List<long> listClinicNums=listClinicsAll.Select(x=>x.ClinicNum).ToList();
+						listClinicNums.Add(0);
+						return listClinicNums;
+					}
+					foreach(Clinic clinic in _listClinics){
+						if(clinic.ClinicNum==CLINIC_NUM_ALL){
+							continue;
+						}
+						//seems to include the "unassigned/default/hq/none/all" clinicNum=0, if present
+						listSelectedClinicNums.Add(clinic.ClinicNum);
+					}
+					return listSelectedClinicNums;
+				}
+				foreach(int idx in _listSelectedIndices){
+					listSelectedClinicNums.Add(_listClinics[idx].ClinicNum);
+				}
+				return listSelectedClinicNums;
+			}
+			set{
+				_selectedClinicNoPermission=null;
+				_listSelectedIndices=new List<int>();
+				for(int i=0;i<_listClinics.Count;i++) {
+					if(value.Contains(_listClinics[i].ClinicNum)) {
+						_selectedIndex=i;//this only works when there is one, but it's still important to try to stay synched
+						_listSelectedIndices.Add(i);
+					}
+				}
+				OnSelectedIndexChanged(this,new EventArgs());
+				Invalidate();
+			}
+		}
+
+		///<summary>Getter returns -1 if no clinic is selected. The setter is special.  If you set it to a clinicNum that this user does not have permission for, then the combobox displays that and becomes read-only to prevent changing it. It will also remember such a clinicNum and return it back in subsequent get.  0 (Unassigned) can also be set from here if it's present. This is common if pulling zero from the database.  But if you need to manually set to 0 in other situations, you should use the property IsUnassignedSelected.  You are not allowed to manually set to -2 (All) or -1 (none) from here.  Instead, set IsAllSelected=true or IsNothingSelected=true.  On initial load, this control will automatically select the current clinic, which you can of course change by setting a different clinic.  For example, you must manually set All.</summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public long SelectedClinicNum {
+			get {
+				if(!DesignMode && !IsTestModeNoDb) {
+					if(!PrefC.HasClinicsEnabled) {
+						return 0; //when clinics are turned off, this control doesn't appear and the 0 clinic is implicitly always selected
+					}
+				}
+				if(_selectedClinicNoPermission!=null){
+					return _selectedClinicNoPermission.ClinicNum;
+				}
+				if(_selectedIndex==-1) {
+					return -1;
+				}
+				return _listClinics[_selectedIndex].ClinicNum;
+			}
+			set {
+				if(value==CLINIC_NUM_ALL){
+					throw new ApplicationException("Clinic num cannot be set to -2.  Instead, use IsAllSelected.");
+				}
+				if(value==-1){
+					throw new ApplicationException("Clinic num cannot be set to -1.  Instead, set IsNothingSelected.");
+				}
+				SetSelectedClinicNum(value);				
+			}
+		}
+
+		[Category("OD")]
+		[Description("Set true for multi-select, false for single-select.")]
+		[DefaultValue(false)]
+		public bool SelectionModeMulti{
+			get{
+				return _selectionModeMulti;
+			}
+			set{
+				if(_selectionModeMulti==value){
+					return;
+				}
+				_selectionModeMulti=value;
+				if(_selectionModeMulti){
+					labelFake.Text="Clinics";
+				}
+			}
+		}
+
+		///<summary></summary>
+		[Category("OD")]
+		[Description("Normally true to show label on left.  Set to false if not enough space and you want to do your own separate label.  Make sure to manually set visibility of that label, based on whether Clinic feature is turned on.")]
+		[DefaultValue(true)]
+		public bool ShowLabel {
+			get {
+				return _showLabel;
+			}
+			set {
+				if(_showLabel==value){
+					return;
+				}
+				_showLabel=value; 
+				//if(_showLabel){
+				//	labelFake.Visible=true;
+				//}
+				//else{
+				//	labelFake.Visible=false;
+				//}
+				Invalidate();
+			}
+		}
+
+		#endregion Properties - Public
+
+		#region Properties - Protected
+		protected override Size DefaultSize{
+			get{
+				return new Size(200,21);
+			}
+		}
+
+		public override string Text { 
+			get{
+				int widthMax=Width-1-15;
+				if(ShowLabel){
+					widthMax-=LayoutManager.Scale(_widthLabelArea);
+				}
+				return GetDisplayText(widthMax); 
+			}
+		}
+		#endregion Properties - Protected
+
+		#region Methods - Public
+		///<summary>Returns empty string if no clinic is selected.  Can return "All" or the "Unassigned" override abbreviation.</summary>
+		public string GetSelectedAbbr() {
+			if(_selectedIndex==-1) {
+				return "";
+			}
+			return _listClinics[_selectedIndex].Abbr;
+		}
+
+		///<summary>Returns null if no clinic selected.</summary>
+		public Clinic GetSelectedClinic() {
+			if(_selectedIndex==-1) {
+				return null;
+			}
+			return _listClinics[_selectedIndex];
+		}
+
+		///<summary>Gets a string of all selected clinic Abbr's, separated by commas.  If "All" is selected, then it simply returns "All Clinics", which might not be techinically true.  If ListSelectedClinicNums was used instead of testing IsAllSelected, then it could only include clinics that user has permission for.</summary>
+		public string GetStringSelectedClinics() {
+			List<Clinic> listSelectedClinics=_listSelectedIndices.Select(x => _listClinics[x]).ToList();
+			if(listSelectedClinics.Any(x => x.ClinicNum==CLINIC_NUM_ALL)) {
+				return "All Clinics";
+			}
+			return string.Join(",",listSelectedClinics.Select(clinic => clinic.Abbr));
+		}
+
+		///<summary>Lets you change which user is used to load the allowed clinics.</summary>
+		public void SetUser(Userod userod){
+			_userod=userod;
+			FillClinics();
+		}
+
+		///<summary>If the calling code set this combo to a clinic that the user does not have permission to, then the user will already be blocked from changing the clinic by clicking on this combo.  But if you want them to also be blocked from doing other things, use this method to see if the combo is currently giving them permission to change clinics, and then take action accordingly.</summary>
+		public bool UserHasPermission(){
+			if(_selectedClinicNoPermission==null){
+				return true;// a normal situation
+			}
+			return false;//user does not have permission
+		}
+		#endregion Methods - Public
+
+		#region Methods - Protected
+		///<summary>We have to intercept the mouse scroll event, because there are no actual controls on the screen so there is no way to actually scroll as there is no content</summary>
+		protected override void WndProc(ref Message m) {
+			base.WndProc(ref m);
+			if(m.Msg==0x020A) { //Check for scrolling
+				int delta;//direction
+				if((long)m.WParam>=(long)Int32.MaxValue) { //Just in case the param is larger than the max
+					var wParam=new IntPtr((long)m.WParam << 32 >> 32);
+					delta=wParam.ToInt32() >> 16;
+				}
+				else {
+					delta=m.WParam.ToInt32() >> 16;
+				}
+				delta*=-1;
+				//If true, then scroll up, otherwise scroll down
+				ScrollEventArgs sarg=delta > 0 ? new ScrollEventArgs(ScrollEventType.EndScroll,0,1) : new ScrollEventArgs(ScrollEventType.EndScroll,1,0);
+				ComboBoxClinicPicker_Scroll(this, sarg);
+			}
+		}
+		#endregion Methods - Protected
 
 		#region Methods - Private
 		private void ComboBoxClinicPicker_Scroll(object sender,ScrollEventArgs e) {
-			if(IsMultiSelect) {
+			if(SelectionModeMulti) {
 				return;//only for single select
 			}
-			if(_listIndicesSelected.Count==0) {
-				_indexSelected=0;
-				_listIndicesSelected.Clear();
-				_listIndicesSelected.Add(0);
+			if(_listSelectedIndices.Count==0) {
+				_selectedIndex=0;
+				_listSelectedIndices.Clear();
+				_listSelectedIndices.Add(0);
 				Invalidate();
 				return;
 			}
 			if(e.OldValue>e.NewValue) { //Scroll up
-				int index=_listIndicesSelected[0]-1<0? _listIndicesSelected[0] : _listIndicesSelected[0]-1;
-				_indexSelected=index;
-				_listIndicesSelected[0]=index;
+				int index=_listSelectedIndices[0]-1<0? _listSelectedIndices[0] : _listSelectedIndices[0]-1;
+				_selectedIndex=index;
+				_listSelectedIndices[0]=index;
 			}
 			else { //Scroll down
-				int index=_listIndicesSelected[0]+1>=_listClinics.Count? _listIndicesSelected[0] : _listIndicesSelected[0]+1;
-				_indexSelected=index;
-				_listIndicesSelected[0]=index;
+				int index=_listSelectedIndices[0]+1>=_listClinics.Count? _listSelectedIndices[0] : _listSelectedIndices[0]+1;
+				_selectedIndex=index;
+				_listSelectedIndices[0]=index;
 			}
 			OnSelectedIndexChanged(this,new EventArgs());
 			OnSelectionChangeCommitted(this,new EventArgs());
@@ -757,7 +751,7 @@ namespace OpenDental.UI {
 				//Setting selected---------------------------------------------------------------------------------------------------------------
 				if(Clinics.ClinicNum==0) {
 					if(IncludeUnassigned) {
-						ClinicNumSelected=CLINIC_NUM_UNASSIGNED;
+						SelectedClinicNum=CLINIC_NUM_UNASSIGNED;
 					}
 					else if(IncludeAll) {
 						SetSelectedClinicNum(CLINIC_NUM_ALL);
@@ -765,7 +759,7 @@ namespace OpenDental.UI {
 				}
 				else {
 					//if Security.CurUser.ClinicIsRestricted, there will be only one clinic in the list, and it will not include default (0).
-					ClinicNumSelected=Clinics.ClinicNum;
+					SelectedClinicNum=Clinics.ClinicNum;
 				}
 			}
 			catch(Exception e){
@@ -776,31 +770,31 @@ namespace OpenDental.UI {
 
 		///<summary>If multiple items are selected, we string them together with commas.  But if the string is wider than widthMax, we instead show "Multiple".</summary>
 		private string GetDisplayText(int widthMax){
-			if(_clinicSelectedNoPermission!=null){
-				if(_clinicSelectedNoPermission.IsHidden) {
-					return _clinicSelectedNoPermission.Abbr+Lan.g(this," (hidden)");
+			if(_selectedClinicNoPermission!=null){
+				if(_selectedClinicNoPermission.IsHidden) {
+					return _selectedClinicNoPermission.Abbr+Lan.g(this," (hidden)");
 				}
-				return _clinicSelectedNoPermission.Abbr;
+				return _selectedClinicNoPermission.Abbr;
 			}
-			if(_listIndicesSelected.Count==0){
+			if(_listSelectedIndices.Count==0){
 				return "";
 			}
-			if(_listIndicesSelected.Contains(0) && _listClinics[0].ClinicNum==CLINIC_NUM_ALL){
+			if(_listSelectedIndices.Contains(0) && _listClinics[0].ClinicNum==CLINIC_NUM_ALL){
 				return _listClinics[0].Abbr;//All
 			}
 			string str="";
-			for(int i=0;i<_listIndicesSelected.Count;i++){
+			for(int i=0;i<_listSelectedIndices.Count;i++){
 				//impossible: if(_listClinics[_listSelectedIndices[i]].ClinicNum==CLINIC_NUM_ALL){
 				if(i>0){
 					str+=",";
 				}
-				if(_listIndicesSelected[i]>_listClinics.Count-1){
+				if(_listSelectedIndices[i]>_listClinics.Count-1){
 					//this prevents out of range UE on the following line that a customer had, although we can't duplicate and we can't figure out how it's possible.
 					continue;
 				}
-				str+=_listClinics[_listIndicesSelected[i]].Abbr;//automatically handles CLINIC_NUM_UNASSIGNED
+				str+=_listClinics[_listSelectedIndices[i]].Abbr;//automatically handles CLINIC_NUM_UNASSIGNED
 			}
-			if(_listIndicesSelected.Count>1){
+			if(_listSelectedIndices.Count>1){
 				if(TextRenderer.MeasureText(str,this.Font).Width>widthMax){
 					return "Multiple";
 				}
@@ -813,9 +807,9 @@ namespace OpenDental.UI {
 			List<string> listStrings=_listClinics.Select(x => x.Abbr).ToList();
 			for(int i=startIdx;i<listStrings.Count;i++) {//loop through all of the items and only add the item if it is found
 				if(listStrings[i].ToUpper().StartsWith(charKey.ToString())) {//charKey is already uppercased
-					_indexSelected=i;
-					_listIndicesSelected.Clear();
-					_listIndicesSelected.Add(i);
+					_selectedIndex=i;
+					_listSelectedIndices.Clear();
+					_listSelectedIndices.Add(i);
 					return true;
 				}
 			}
@@ -832,24 +826,24 @@ namespace OpenDental.UI {
 				}
 				else{
 					//this user does not have permission for the selected clinic
-					_indexSelected=-1;
-					_listIndicesSelected=new List<int>();
+					_selectedIndex=-1;
+					_listSelectedIndices=new List<int>();
 					if(IsTestModeNoDb){
-						_clinicSelectedNoPermission=new Clinic{Abbr=value.ToString(), Description=value.ToString(),ClinicNum=value };
+						_selectedClinicNoPermission=new Clinic{Abbr=value.ToString(), Description=value.ToString(),ClinicNum=value };
 					}
 					else{
-						_clinicSelectedNoPermission=Clinics.GetClinic(value);
+						_selectedClinicNoPermission=Clinics.GetClinic(value);
 						//could still possibly be null in a corrupted db.  In that case, we still need to be able to return what was set.
-						if(_clinicSelectedNoPermission==null){
-							_clinicSelectedNoPermission=new Clinic{Abbr=value.ToString(), Description=value.ToString(),ClinicNum=value };
+						if(_selectedClinicNoPermission==null){
+							_selectedClinicNoPermission=new Clinic{Abbr=value.ToString(), Description=value.ToString(),ClinicNum=value };
 						}
 					}
 				}
 			}
 			else{
-				_clinicSelectedNoPermission=null;
-				_indexSelected=idx;
-				_listIndicesSelected=new List<int>(){ idx };
+				_selectedClinicNoPermission=null;
+				_selectedIndex=idx;
+				_listSelectedIndices=new List<int>(){ idx };
 			}
 			OnSelectedIndexChanged(this,new EventArgs());
 			Invalidate();

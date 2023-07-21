@@ -60,12 +60,7 @@ namespace OpenDentBusiness {
 			//Converting the datetime to a string because DataConnection.GetScalar calls ToString() which loses microsecond precision on DateTimes.
 			string command="SELECT DATE_FORMAT(CURRENT_TIMESTAMP(6),'%Y-%m-%d %H:%i:%s.%f')";
 			string dbtime=Db.GetScalar(command);
-			DateTime ret=PIn.DateT(dbtime);
-			if(ODBuild.IsUnitTest) {
-				//MySql 5.5 does not use micro seconds to allow unit tests to mock in an offset if needed.
-				DateTime_.Offset(ref ret);
-			}			
-			return ret;
+			return PIn.DateT(dbtime);
 		}
 
 		///<summary>Returns specific information regarding the current version of Windows that is running.</summary>
@@ -131,12 +126,12 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Backs up the database to the same directory as the original just in case the user did not have sense enough to do a backup first.  Surround with try/catch.</summary>
-		public static string MakeABackup(string serverName="",string user="",string pass="",bool doVerify=false,bool isAutoBackup=true,string sslCa="") {
+		public static string MakeABackup(string serverName="",string user="",string pass="",bool doVerify=false,bool isAutoBackup=true) {
 			//This function should always make the backup on the server itself, and since no directories are
 			//referred to (all handled with MySQL), this function will always be referred to the server from
 			//client machines.
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetString(MethodBase.GetCurrentMethod(),serverName,user,pass,doVerify,isAutoBackup,sslCa);
+				return Meth.GetString(MethodBase.GetCurrentMethod(),serverName,user,pass,doVerify,isAutoBackup);
 			}
 			//UpdateStreamLinePassword is purposefully named poorly and used in an odd fashion to sort of obfuscate it from our users.
 			//GetStringNoCache() will return blank if pref does not exist.
@@ -166,7 +161,7 @@ namespace OpenDentBusiness {
 			//we have to be careful to throw an exception if the backup is failing.
 			using DataConnection dcon=new DataConnection();
 			//if they provided a different server where they want their backup to be, we need a separate connection for that
-			using DataConnection dconBackupServer=useSameServer?new DataConnection():new DataConnection(serverName,"",user,pass,DatabaseType.MySql,sslCa);
+			using DataConnection dconBackupServer=useSameServer?new DataConnection():new DataConnection(serverName,"",user,pass,DatabaseType.MySql);
 			//Check that the backup server does not already contain this database
 			string command="SELECT database()";
 			DataTable table=dcon.GetTable(command);
@@ -191,11 +186,11 @@ namespace OpenDentBusiness {
 			//Set the connection to the new database now that it has been created
 			DataConnection.CommandTimeout=43200;//12 hours, because backup commands may take longer to run.
 			try {
-				using DataConnection dconBackupServerNoTimout=useSameServer?new DataConnection(newDb):new DataConnection(serverName,newDb,user,pass,DatabaseType.MySql,sslCa);
+				using DataConnection dconBackupServerNoTimout=useSameServer?new DataConnection(newDb):new DataConnection(serverName,newDb,user,pass,DatabaseType.MySql);
 				foreach(DataRow row in table.Rows) {
 					string tableName=row[0].ToString();
 					//First create the table on the new db
-					ODEvent.Fire(ODEventType.ProgressBar,$"Backing up table: {tableName}");
+					ProgressBarEvent.Fire(ODEventType.ProgressBar,$"Backing up table: {tableName}");
 					//also works with views. Added backticks around table name for unusual characters.
 					command=$"SHOW CREATE TABLE `{oldDb}`.`{tableName}`;";
 					if(doTurnOffBinLogging) {
@@ -244,7 +239,7 @@ namespace OpenDentBusiness {
 					List<string> listTablesFailed=new List<string>();
 					foreach(DataRow dbTable in table.Rows) {
 						string tableName=dbTable[0].ToString();
-						ODEvent.Fire(ODEventType.ProgressBar,$"Verifying backup: {tableName}");
+						ProgressBarEvent.Fire(ODEventType.ProgressBar,$"Verifying backup: {tableName}");
 						int ctOld=PIn.Int(dcon.GetCount($"SELECT COUNT(*) FROM `{oldDb}`.`{tableName}`"));
 						int ctNew=PIn.Int(dconBackupServerNoTimout.GetCount($"SELECT COUNT(*) FROM `{newDb}`.`{tableName}`"));
 						if(ctOld!=ctNew) {
@@ -520,12 +515,12 @@ namespace OpenDentBusiness {
 
 		public static void SetSqlMode() {
 			try {
-				if(PrefC.GetBool(PrefName.DatabaseGlobalVariablesDontSet)) {
+				if(PrefC.IsCloudMode) {
 					return;
 				}
 			}
 			catch(Exception ex) {
-				ex.DoNothing();//This method might get called before the DatabaseGlobalVariablesDontSet preference is added.
+				ex.DoNothing();//This method might get called before the DatabaseMode preference is added.
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				Meth.GetVoid(MethodBase.GetCurrentMethod());
@@ -549,25 +544,6 @@ namespace OpenDentBusiness {
 			string command="SELECT ENGINE FROM information_schema.ENGINES WHERE Support='DEFAULT'";
 			DataTable table=Db.GetTable(command);
 			return PIn.String(table.Rows[0][0].ToString());
-		}
-
-		///<summary>Returns an approximate size of the current database in bytes.</summary>
-		public static long GetDatabaseSize() {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetLong(MethodBase.GetCurrentMethod());
-			}
-			string database=GetCurrentDatabase();
-			string command=$"SELECT SUM(DATA_LENGTH + INDEX_LENGTH) FROM information_schema.TABLES WHERE TABLE_SCHEMA = '{database}' AND TABLE_TYPE = 'BASE TABLE' GROUP BY TABLE_SCHEMA";
-			return Db.GetLong(command);
-		}
-
-		///<summary>Runs the 'FLUSH TABLES;' command.</summary>
-		public static void FlushTables() {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod());
-				return;
-			}
-			Db.NonQ("FLUSH TABLES");
 		}
 	}
 

@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using CodeBase;
-using DataConnectionBase;
 
 namespace OpenDentBusiness {
 	///<summary>Handles database commands for the language table in the database.</summary>
@@ -89,14 +88,20 @@ namespace OpenDentBusiness {
 		///<summary>Converts a string to the current language.</summary>
 		public static string g(string classType,string text) {
 			//No need to check MiddleTierRole; no call to db.
-			string retVal=ConvertString(classType,text);
+			string retVal=Lans.ConvertString(classType,text);
+			//if(ItemInserted) {
+			//	RefreshCache();
+			//}
 			return retVal;
 		}
 
 		///<summary>Converts a string to the current language.</summary>
-		public static string g(object sender,string text) {
+		public static string g(System.Object sender,string text) {
 			//No need to check MiddleTierRole; no call to db.
-			string retVal=ConvertString(sender.GetType().Name,text);
+			string retVal=Lans.ConvertString(sender.GetType().Name,text);
+			//if(ItemInserted) {
+			//	RefreshCache();
+			//}
 			return retVal;
 		}
 
@@ -108,16 +113,13 @@ namespace OpenDentBusiness {
 			if(classType==null || text==null) {
 				return "";
 			}
-			if(classType.StartsWith("Frm")){
-				classType="Form"+classType.Substring(3);
-			}
 			if(CultureInfo.CurrentCulture.Name=="en-US") {
 				return text;
 			}
 			if(text.Trim()=="") {
 				return "";
 			}
-			if(!DataConnection.HasDatabaseConnection) {//Use this just in case this check is happening before the db connection is established (e.g. Splash Screen)
+			if(DictIsNull()) {//Use this just in case this check is happening before the db connection is established (e.g. Splash Screen)
 				return text;
 			}
 			Language mylan=new Language();

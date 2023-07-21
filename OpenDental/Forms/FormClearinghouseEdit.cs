@@ -61,7 +61,7 @@ namespace OpenDental{
 				string translatedCommBridgeName=Lan.g("enumEclaimsCommBridge",Enum.GetNames(typeof(EclaimsCommBridge))[i]);
 				comboCommBridge.Items.Add(translatedCommBridgeName,(EclaimsCommBridge)i);
 			}
-			comboClinic.ClinicNumSelected=ClinicNum;
+			comboClinic.SelectedClinicNum=ClinicNum;
 			_clinicNumLastSelected=ClinicNum;
 			FillFields();
 		}
@@ -85,7 +85,6 @@ namespace OpenDental{
 			textSeparatorData.Text=ClearinghouseCur.SeparatorData;
 			textISA16.Text=ClearinghouseCur.ISA16;
 			textSeparatorSegment.Text=ClearinghouseCur.SeparatorSegment;
-			textLocationID.Text=ClearinghouseCur.LocationID;
 			textLoginID.Text=ClearinghouseCur.LoginID;
 			textPassword.Text=ClearinghouseCur.Password;
 			textExportPath.Text=ClearinghouseCur.ExportPath;
@@ -166,31 +165,23 @@ namespace OpenDental{
 				checkIsClaimExportAllowed.Enabled=true;
 				checkIsClaimExportAllowed.Checked=ClearinghouseCur.IsClaimExportAllowed;
 			}
-			if(ClearinghouseCur.CommBridge.In(EclaimsCommBridge.EDS,EclaimsCommBridge.ClaimConnect)) {
-				checkAllowAttachSend.Enabled=true;
-				checkAllowAttachSend.Checked=ClearinghouseCur.IsAttachmentSendAllowed;
-				if(ClearinghouseCur.CommBridge==EclaimsCommBridge.ClaimConnect) {
-					checkSaveAttachments.Checked=PrefC.GetBool(PrefName.SaveDXCAttachments);
-					checkSaveDXCSoap.Visible=true;
-					checkSaveDXCSoap.Checked=PrefC.GetBool(PrefName.SaveDXCSOAPAsXML);
-				}
-				else {//EDS
-					checkSaveAttachments.Checked=PrefC.GetBool(PrefName.SaveEDSAttachments);
-					checkSaveDXCSoap.Visible=false;
-				}
+			//Uncheck and disable if not ClaimConnect as this checkbox only applies to ClaimConnect.
+			checkSaveDXC.Checked=PrefC.GetBool(PrefName.SaveDXCAttachments);
+			checkSaveDXCSoap.Checked=PrefC.GetBool(PrefName.SaveDXCSOAPAsXML);
+			if(ClearinghouseCur.CommBridge!=EclaimsCommBridge.ClaimConnect) {
+				checkAllowAttachSend.Enabled=false;
+				checkAllowAttachSend.Checked=false;
+				checkSaveDXC.Visible=false;
+				checkSaveDXCSoap.Visible=false;
 			}
 			else {
-				checkAllowAttachSend.Checked=false;
-				checkAllowAttachSend.Enabled=false;
-				//Uncheck and disable if not ClaimConnect as this checkbox only applies to ClaimConnect.
-				checkSaveDXCSoap.Checked=false;
-				checkSaveDXCSoap.Visible=false;
+				checkAllowAttachSend.Enabled=true;
+				checkAllowAttachSend.Checked=ClearinghouseCur.IsAttachmentSendAllowed;
+				checkSaveDXCSoap.Visible=true;
 			}
 			//Invisible by default, so only need to check if we should make visible on load, rest of checks are handled by CheckChanged event.
 			if(checkAllowAttachSend.Checked) {
-				if(ClearinghouseCur.CommBridge.In(EclaimsCommBridge.EDS,EclaimsCommBridge.ClaimConnect)) {
-					checkSaveAttachments.Visible=true;
-				}
+				checkSaveDXC.Visible=true;
 			}
 			UpdateClientProgramLabel();
 			Plugins.HookAddCode(this,"FormClearingHouseEdit.FillFields_end",ClearinghouseCur);
@@ -209,10 +200,10 @@ namespace OpenDental{
 			bool isCanadaEraClearinghouse= comboCommBridge.GetSelected<EclaimsCommBridge>()
 				.In(EclaimsCommBridge.Claimstream,EclaimsCommBridge.ITRANS,EclaimsCommBridge.ITRANS2);
 			if(!isCanadaEraClearinghouse) {//If US
-				LayoutManager.MoveHeight(listBoxEraBehavior,LayoutManager.Scale(30));
+				LayoutManager.MoveHeight(listBoxEraBehavior,30);
 			}
 			else {
-				LayoutManager.MoveHeight(listBoxEraBehavior,LayoutManager.Scale(43));
+				LayoutManager.MoveHeight(listBoxEraBehavior,43);
 			}
 			listBoxEraBehavior.Items.Clear();
 			List<EraBehaviors> listEraBehaviors=new List<EraBehaviors>((EraBehaviors[])Enum.GetValues(typeof(EraBehaviors)));
@@ -298,7 +289,6 @@ namespace OpenDental{
 				ClearinghouseHq.IsClaimExportAllowed=checkIsClaimExportAllowed.Checked;
 				ClearinghouseHq.IsEraDownloadAllowed=listBoxEraBehavior.GetSelected<EraBehaviors>();
 				ClearinghouseHq.IsAttachmentSendAllowed=checkAllowAttachSend.Checked;
-				ClearinghouseHq.LocationID=textLocationID.Text;
 				#endregion
 			}
 			else { 
@@ -312,7 +302,6 @@ namespace OpenDental{
 				_clearinghouseClin.IsClaimExportAllowed=checkIsClaimExportAllowed.Checked;
 				_clearinghouseClin.IsEraDownloadAllowed=listBoxEraBehavior.GetSelected<EraBehaviors>();
 				_clearinghouseClin.IsAttachmentSendAllowed=checkAllowAttachSend.Checked;
-				_clearinghouseClin.LocationID=textLocationID.Text;
 				if(textExportPath.Text==ClearinghouseHq.ExportPath) {
 					_clearinghouseClin.ExportPath="";//The value is the same as the default.  Save blank so that default can be updated dynamically.
 				}
@@ -393,10 +382,10 @@ namespace OpenDental{
 				MsgBox.Show(this,"Invalid Comm Bridge.");
 				return false;
 			}
-			if(ODEnvironment.IsCloudServer 
+			if(ODBuild.IsWeb() 
 				&& Clearinghouses.IsDisabledForWeb(comboFormat.GetSelected<ElectronicClaimFormat>(),comboCommBridge.GetSelected<EclaimsCommBridge>())) 
 			{
-				MsgBox.Show(this,"This clearinghouse is not available while using Open Dental Cloud.");
+				MsgBox.Show(this,"This clearinghouse is not available while viewing through the web.");
 				return false;
 			}
 			if(ClinicNum==0) {//HQ
@@ -490,13 +479,13 @@ namespace OpenDental{
 			
 			//todo: Check all parts of program to allow either trailing slash or not
 			if(checkIsClaimExportAllowed.Checked && textExportPath.Text!="") {
-				bool hasResult=CheckOrCreateDirectory(textExportPath.Text,pathName:"Export");
+				bool hasResult=CheckOrCreateDirectory(textExportPath.Text);
 				if(!hasResult) {
 					return false;
 				}
 			}
 			if(textResponsePath.Text!="") {//Clinic
-				bool hasResult=CheckOrCreateDirectory(textResponsePath.Text,pathName:"Report");
+				bool hasResult=CheckOrCreateDirectory(textResponsePath.Text);
 				if(!hasResult) {
 					return false;
 				}
@@ -519,20 +508,20 @@ namespace OpenDental{
 			return true;
 		}
 
-		private bool CheckOrCreateDirectory(string directoryName,string pathName) {
+		private bool CheckOrCreateDirectory(string directoryName) {
 			bool isUsingODCloudClient=x837Controller.DoSendBatchToCloudClient(ClearinghouseCur);
 			bool didDirectoryExist=false;
-			if(isUsingODCloudClient && ODEnvironment.IsCloudServer) {
+			if(isUsingODCloudClient && ODBuild.IsWeb()) {
 				didDirectoryExist=ODCloudClient.CheckOrCreateWithODCloudClient(directoryName,ODCloudClient.CloudClientAction.CheckForDirectory)=="Success";
 			}
 			else {
 				didDirectoryExist=Directory.Exists(directoryName);
 			}
-			if(didDirectoryExist || !MsgBox.Show(this,MsgBoxButtons.YesNo,pathName+" path does not exist. Attempt to create?")) {
+			if(didDirectoryExist || !MsgBox.Show(this,MsgBoxButtons.YesNo,"Export path does not exist. Attempt to create?")) {
 				return true;//Nothing to create.
 			}
 			try {
-				if(isUsingODCloudClient && ODEnvironment.IsCloudServer) {
+				if(isUsingODCloudClient && ODBuild.IsWeb()) {
 					ODCloudClient.CheckOrCreateWithODCloudClient(directoryName,ODCloudClient.CloudClientAction.CreateDirectory);
 				}
 				else {
@@ -550,14 +539,14 @@ namespace OpenDental{
 		}
 
 		private void comboClinic_SelectionChangeCommitted(object sender,EventArgs e) {
-			if(_clinicNumLastSelected==comboClinic.ClinicNumSelected) {
+			if(_clinicNumLastSelected==comboClinic.SelectedClinicNum) {
 				return;//Selection did not change.
 			}
 			if(!SaveToCache()) {//Validation failed.
-				comboClinic.ClinicNumSelected=_clinicNumLastSelected;//Revert selection.
+				comboClinic.SelectedClinicNum=_clinicNumLastSelected;//Revert selection.
 				return;
 			}
-			_clinicNumLastSelected=comboClinic.ClinicNumSelected;
+			_clinicNumLastSelected=comboClinic.SelectedClinicNum;
 			ClinicNum=_clinicNumLastSelected;
 			FillFields();
 		}
@@ -600,9 +589,7 @@ namespace OpenDental{
 		}
 
 		private void checkAllowAttachSend_CheckedChanged(object sender,EventArgs e) {
-			if(ClearinghouseCur.CommBridge.In(EclaimsCommBridge.EDS,EclaimsCommBridge.ClaimConnect)) {
-				checkSaveAttachments.Visible=checkAllowAttachSend.Checked;
-			}
+			checkSaveDXC.Visible=checkAllowAttachSend.Checked;
 		}
 
 		private void butDelete_Click(object sender, System.EventArgs e) {
@@ -622,7 +609,7 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,System.EventArgs e) {
+		private void butOK_Click(object sender,System.EventArgs e) {
 			if(!SaveToCache()) {//Validation failed.
 				return;//Block user from leaving.
 			}
@@ -656,18 +643,37 @@ namespace OpenDental{
 				RevealClearinghousePass(ListClearinghousesClinOld[i]);
 			}
 			//If the DXC attachment saving preferences changed send a signal to have all clients update their preference cache.
-			bool hasPrefChanged=Prefs.UpdateBool(PrefName.SaveDXCSOAPAsXML,checkSaveDXCSoap.Checked);//Can't do this in the if check or we risk not running the right side of the OR.
-			if(ClearinghouseCur.CommBridge==EclaimsCommBridge.ClaimConnect) {
-				hasPrefChanged|=Prefs.UpdateBool(PrefName.SaveDXCAttachments,checkSaveAttachments.Checked);
-			}
-			else if(ClearinghouseCur.CommBridge==EclaimsCommBridge.EDS) {
-				hasPrefChanged|=Prefs.UpdateBool(PrefName.SaveEDSAttachments,checkSaveAttachments.Checked);
-			}
-  		if(hasPrefChanged) {
+			bool hasSOAPPrefChanged=Prefs.UpdateBool(PrefName.SaveDXCSOAPAsXML,checkSaveDXCSoap.Checked);//Can't do this in the if check or we risk not running the right side of the OR.
+			if(Prefs.UpdateBool(PrefName.SaveDXCAttachments,checkSaveDXC.Checked) || hasSOAPPrefChanged) {
 				DataValid.SetInvalid(InvalidType.Prefs);
 			}
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

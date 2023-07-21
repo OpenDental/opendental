@@ -29,18 +29,20 @@ namespace OpenDental {
 		private void butReplacementText_Click(object sender,EventArgs e) {
 			List<MessageReplaceType> listMessageReplaceTypes=new List<MessageReplaceType>();
 			listMessageReplaceTypes.Add(MessageReplaceType.PaymentPlan);
-			FrmMessageReplacements frmMessageReplacements=new FrmMessageReplacements(listMessageReplaceTypes,false);
-			frmMessageReplacements.ShowDialog();
-			if(frmMessageReplacements.IsDialogCancel){
+			using FormMessageReplacements formMessageReplacements=new FormMessageReplacements(listMessageReplaceTypes,false);
+			if(formMessageReplacements.ShowDialog()!=DialogResult.OK){
 				return;
 			}
-			textBoxEditor.SelectedText=frmMessageReplacements.ReplacementTextSelected;
+			textBoxEditor.SelectedText=formMessageReplacements.Replacement;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			TextEditorText=textBoxEditor.Text;
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

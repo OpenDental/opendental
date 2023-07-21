@@ -185,11 +185,14 @@ namespace OpenDental {
 			}
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		private void butOK_Click(object sender,EventArgs e) {
 			//ProgramProperties will only sync in the case of the OK click, on a cancel they will not be saved.
 			SyncHiddenProgramProperties();
 			DialogResult=DialogResult.OK;
 		}
-
 	}
 }

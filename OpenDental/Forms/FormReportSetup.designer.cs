@@ -29,8 +29,6 @@ namespace OpenDental{
 			this.userControlReportSetup = new OpenDental.User_Controls.UserControlReportSetup();
 			this.tabReportPermissions = new OpenDental.UI.TabPage();
 			this.tabReportServer = new OpenDental.UI.TabPage();
-			this.label8 = new System.Windows.Forms.Label();
-			this.textSkySQL = new System.Windows.Forms.TextBox();
 			this.checkUseReportServer = new OpenDental.UI.CheckBox();
 			this.radioReportServerMiddleTier = new System.Windows.Forms.RadioButton();
 			this.radioReportServerDirect = new System.Windows.Forms.RadioButton();
@@ -67,7 +65,8 @@ namespace OpenDental{
 			this.checkReportPIClinicInfo = new OpenDental.UI.CheckBox();
 			this.checkReportPrintWrapColumns = new OpenDental.UI.CheckBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
 			this.tabControl1.SuspendLayout();
 			this.tabDisplaySettings.SuspendLayout();
 			this.tabReportServer.SuspendLayout();
@@ -120,8 +119,6 @@ namespace OpenDental{
 			// tabReportServer
 			// 
 			this.tabReportServer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
-			this.tabReportServer.Controls.Add(this.label8);
-			this.tabReportServer.Controls.Add(this.textSkySQL);
 			this.tabReportServer.Controls.Add(this.checkUseReportServer);
 			this.tabReportServer.Controls.Add(this.radioReportServerMiddleTier);
 			this.tabReportServer.Controls.Add(this.radioReportServerDirect);
@@ -135,22 +132,6 @@ namespace OpenDental{
 			this.tabReportServer.TabIndex = 2;
 			this.tabReportServer.Text = "Report Server";
 			// 
-			// label8
-			// 
-			this.label8.Location = new System.Drawing.Point(69, 319);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(386, 17);
-			this.label8.TabIndex = 224;
-			this.label8.Text = "(only if using MariaDB SkySQL) PEM path";
-			this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// textSkySQL
-			// 
-			this.textSkySQL.Location = new System.Drawing.Point(67, 338);
-			this.textSkySQL.Name = "textSkySQL";
-			this.textSkySQL.Size = new System.Drawing.Size(386, 20);
-			this.textSkySQL.TabIndex = 229;
-			// 
 			// checkUseReportServer
 			// 
 			this.checkUseReportServer.Location = new System.Drawing.Point(14, 43);
@@ -162,7 +143,7 @@ namespace OpenDental{
 			// 
 			// radioReportServerMiddleTier
 			// 
-			this.radioReportServerMiddleTier.Location = new System.Drawing.Point(38, 368);
+			this.radioReportServerMiddleTier.Location = new System.Drawing.Point(38, 320);
 			this.radioReportServerMiddleTier.Name = "radioReportServerMiddleTier";
 			this.radioReportServerMiddleTier.Size = new System.Drawing.Size(219, 20);
 			this.radioReportServerMiddleTier.TabIndex = 228;
@@ -270,7 +251,7 @@ namespace OpenDental{
 			this.groupMiddleTier.Controls.Add(this.textMiddleTierURI);
 			this.groupMiddleTier.Controls.Add(this.label11);
 			this.groupMiddleTier.Controls.Add(this.label9);
-			this.groupMiddleTier.Location = new System.Drawing.Point(61, 391);
+			this.groupMiddleTier.Location = new System.Drawing.Point(61, 340);
 			this.groupMiddleTier.Name = "groupMiddleTier";
 			this.groupMiddleTier.Size = new System.Drawing.Size(405, 90);
 			this.groupMiddleTier.TabIndex = 224;
@@ -287,7 +268,7 @@ namespace OpenDental{
 			// 
 			this.label11.Location = new System.Drawing.Point(6, 56);
 			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(386, 33);
+			this.label11.Size = new System.Drawing.Size(386, 26);
 			this.label11.TabIndex = 14;
 			this.label11.Text = "The currently logged in user\'s credentials will be used to when accessing the Mid" +
     "dle Tier database.";
@@ -306,7 +287,7 @@ namespace OpenDental{
 			// 
 			this.label2.Location = new System.Drawing.Point(0, 3);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(541, 37);
+			this.label2.Size = new System.Drawing.Size(534, 37);
 			this.label2.TabIndex = 213;
 			this.label2.Text = resources.GetString("label2.Text");
 			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -366,7 +347,7 @@ namespace OpenDental{
 			this.textIncompleteProcsExcludeCodes.Location = new System.Drawing.Point(20, 302);
 			this.textIncompleteProcsExcludeCodes.Multiline = false;
 			this.textIncompleteProcsExcludeCodes.Name = "textIncompleteProcsExcludeCodes";
-			this.textIncompleteProcsExcludeCodes.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.Adjustment;
+			this.textIncompleteProcsExcludeCodes.QuickPasteType = OpenDentBusiness.QuickPasteType.Adjustment;
 			this.textIncompleteProcsExcludeCodes.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
 			this.textIncompleteProcsExcludeCodes.Size = new System.Drawing.Size(475, 21);
 			this.textIncompleteProcsExcludeCodes.TabIndex = 218;
@@ -495,21 +476,32 @@ namespace OpenDental{
 			this.label1.TabIndex = 217;
 			this.label1.Text = "Default selected date for PPO write-offs";
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(476, 648);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(388, 649);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(469, 649);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// FormReportSetup
 			// 
 			this.ClientSize = new System.Drawing.Size(556, 681);
 			this.Controls.Add(this.tabControl1);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormReportSetup";
 			this.Text = "Report Setup";
@@ -517,7 +509,6 @@ namespace OpenDental{
 			this.tabControl1.ResumeLayout(false);
 			this.tabDisplaySettings.ResumeLayout(false);
 			this.tabReportServer.ResumeLayout(false);
-			this.tabReportServer.PerformLayout();
 			this.groupConnectionSettings.ResumeLayout(false);
 			this.groupConnectionSettings.PerformLayout();
 			this.groupMiddleTier.ResumeLayout(false);
@@ -529,7 +520,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.CheckBox checkReportProdWO;
 		private OpenDental.UI.CheckBox checkReportsShowPatNum;
 		private OpenDental.UI.CheckBox checkReportPIClinic;
@@ -571,7 +563,5 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label7;
 		private ODtextBox textIncompleteProcsExcludeCodes;
 		private UI.Button butIncompleteProcsExcludeCodes;
-		private System.Windows.Forms.Label label8;
-		private System.Windows.Forms.TextBox textSkySQL;
 	}
 }

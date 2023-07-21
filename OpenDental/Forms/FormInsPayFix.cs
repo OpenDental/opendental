@@ -62,5 +62,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;//Close the window because there is nothing else to do
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

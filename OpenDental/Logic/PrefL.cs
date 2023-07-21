@@ -14,7 +14,6 @@ using MySql.Data.MySqlClient;
 using OpenDentBusiness;
 using OpenDental.UI;
 using System.Net;
-using OpenDentBusiness.Misc;
 
 namespace OpenDental {
 	public class PrefL {
@@ -82,10 +81,10 @@ namespace OpenDental {
 				hasCopiedFiles=CopyFilesToDatabase(hasAtoZ,isSilent,versionCurrent,hasConcatFiles);
 			}
 			else {//otherwise show progress bar, run on separate thread
-				ProgressWin progressOD=new ProgressWin();
+				ProgressOD progressOD=new ProgressOD();
 				progressOD.ActionMain=() => hasCopiedFiles=CopyFilesToDatabase(hasAtoZ,isSilent,versionCurrent,hasConcatFiles);
 				//progressOD.ODEventType=ODEventType.PrefL;
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 				if(progressOD.IsCancelled){
 					return false;
 				}
@@ -104,7 +103,7 @@ namespace OpenDental {
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ && hasAtoZ) {
 				folderAtoZUpdateFiles=ODFileUtils.CombinePaths(ImageStore.GetPreferredAtoZpath(),"UpdateFiles");
 			}
-			ODEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Removing old update files..."));
+			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Removing old update files..."));
 			Thread.Sleep(300);
 			//Try to delete the UpdateFiles folder from both the AtoZ share and the local TEMP dir.
 			if(!DeleteFolder(folderAtoZUpdateFiles) | !DeleteFolder(folderTempUpdateFiles)) {//Logical OR to prevent short circuit.
@@ -116,7 +115,7 @@ namespace OpenDental {
 			}
 			#endregion
 			#region Copy Current Installation Directory To UpdateFiles Folders
-			ODEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Backing up new update files..."));
+			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Backing up new update files..."));
 			Thread.Sleep(300);
 			//Copy the installation directory files to the UpdateFiles share and a TEMP dir that we just created which we will zip up and insert into the db.
 			//When PrefC.AtoZfolderUsed is true and we're upgrading from a version prior to 15.3.10, this copy that we are about to make allows backwards 
@@ -135,7 +134,7 @@ namespace OpenDental {
 			int maxAllowedPacket=0;
 			int maxDefaultAllowedPacketSize=41943040;//40MB
 			if(DataConnection.DBtype==DatabaseType.MySql) {
-				ODEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Getting MySQL max allowed packet setting..."));
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Getting MySQL max allowed packet setting..."));
 				Thread.Sleep(300);
 				maxAllowedPacket=MiscData.GetMaxAllowedPacket();
 				//If trying to get the max_allowed_packet value for MySQL failed, assume they can handle 40MB of data.
@@ -173,7 +172,7 @@ namespace OpenDental {
 			using MemoryStream memoryStream=new MemoryStream();
 			using ZipFile zipFile=new ZipFile();
 			//Take the entire directory in the temp dir that we just created and zip it up.
-			ODEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Compressing new update files..."));
+			ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Compressing new update files..."));
 			Thread.Sleep(300);
 			zipFile.AddDirectory(folderTempUpdateFiles);//This adds any sub directories as well.
 			try {
@@ -198,12 +197,12 @@ namespace OpenDental {
 				//Converting the file to Base64String bloats the size by approximately 30% so we need to make sure that the chunk size is wellbelow 40MB
 				//Old code used 15MB and that seemed to work very well for the majority of users.
 				charsPerPayload=Math.Min(charsPerPayload,15728640);//15728640 is divisible by 3 which is important for Base64 "appending" logic.
-				ODEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Deleting old update files row..."));
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Deleting old update files row..."));
 				Thread.Sleep(300);
 				DocumentMiscs.DeleteAllForType(DocumentMiscType.UpdateFiles);
 				byte[] byteArrayZipFile=new byte[charsPerPayload];
 				memoryStream.Position=0;//Start at the beginning of the stream.
-				ODEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Inserting new update files into database row..."));
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Inserting new update files into database row..."));
 				Thread.Sleep(300);
 				DocumentMisc documentMiscUpdateFiles=new DocumentMisc();
 				documentMiscUpdateFiles.DateCreated=DateTime.Today;
@@ -217,7 +216,7 @@ namespace OpenDental {
 				}
 				catch(Exception ex) {
 					//Only log the error, do not stop the update process.  The above code is known to fail for various reasons and we abandoned it.
-					ODEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Error inserting new update files into database row..."));
+					ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Error inserting new update files into database row..."));
 					Thread.Sleep(300);
 					ODException.SwallowAnyException(() => {
 						EventLog.WriteEntry("OpenDental","Error inserting new update files into database row:\r\n"+ex.Message,
@@ -232,13 +231,13 @@ namespace OpenDental {
 			charsPerPayload=Math.Min(charsPerPayload,1048575);//1048575 is divisible by 3 which is important for Base64 "appending" logic.
 			try {
 				//Clear and prep the current UpdateFiles row in the documentmisc table for the updated binaries.
-				ODEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Deleting old update files segments..."));
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Deleting old update files segments..."));
 				Thread.Sleep(300);
 				DocumentMiscs.DeleteAllForType(DocumentMiscType.UpdateFilesSegment);
 				byte[] byteArrayZipFile=new byte[charsPerPayload];
 				memoryStream.Position=0;//Start at the beginning of the stream.
 				//Convert the zipped up bytes into Base64 and instantly insert it into the database little by little.
-				ODEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Inserting new update files segments into database..."));
+				ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Inserting new update files segments into database..."));
 				Thread.Sleep(300);
 				try {
 					int count=1;
@@ -251,7 +250,7 @@ namespace OpenDental {
 						DocumentMiscs.Insert(documentMiscUpdateFilesSegment);
 						count++;
 					}
-					ODEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Done..."));
+					ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g("Prefs","Done..."));
 					Thread.Sleep(300);
 				}
 				catch(MySqlException myEx) {
@@ -472,8 +471,7 @@ namespace OpenDental {
 			//Push update to server if client version > server version and either the WebServiceServerName is blank or the current computer ID is the same as the WebServiceServerName
 			//At this point we know 100% it's going to be an upgrade
 			else if(versionStored<versionCurrent 
-				&& (updateServerName=="" || ODEnvironment.IdIsThisComputer(updateServerName.ToLower()))) 
-			{
+				&& (updateServerName=="" || ODEnvironment.IdIsThisComputer(updateServerName.ToLower()))) {
 				if(ODBuild.IsTrial() && PrefC.GetString(PrefName.RegistrationKey)!="") {//Allow databases with no reg key to continue.  Needed by our conversion department.
 					//Trial users should never be able to update a database, not even the ProgramVersion preference.
 					MsgBox.Show("PrefL","Trial versions cannot connect to live databases.  Please run the Setup.exe in the AtoZ folder to reinstall your original version.");
@@ -520,7 +518,6 @@ namespace OpenDental {
 					Environment.Exit(FormOpenDental.ExitCode);
 					return false;
 				}
-				SecurityHash.UpdateHashing();
 				Prefs.UpdateString(PrefName.ProgramVersion,versionCurrent.ToString());
 				UpdateHistory updateHistory=new UpdateHistory(versionCurrent.ToString());
 				UpdateHistories.Insert(updateHistory);
@@ -531,8 +528,7 @@ namespace OpenDental {
 				//In addition to the service installing, there will also be a new OpenDentalServiceConfig.xml file that the service will use.  
 				//The config data is defaulted to the current connection settings in DataConnection. 
 				TryInstallOpenDentalService(isSilent);
-				bool webServiceServerNameCanBeBlank=PrefC.GetBoolSilent(PrefName.WebServiceServerNameCanBeBlank,silentDefault:false);
-				UpgradeOrInstallEConnector(isSilent:true,updateServerName:updateServerName,doOverrideBlankUpdateServerName:!webServiceServerNameCanBeBlank);
+				UpgradeOrInstallEConnector(isSilent:true,updateServerName:updateServerName,doOverrideBlankUpdateServerName:true);
 				TryInstallOpenDentalApiService(isSilent:true);
 			}
 			if(versionCurrent < versionDB) {
@@ -783,11 +779,11 @@ namespace OpenDental {
 				formShutdown.ShowDialog();
 				if(formShutdown.DialogResult==DialogResult.OK) {
 					//turn off signal reception for 5 seconds so this workstation will not shut down.
-					Signalods.DateTSignalLastRefreshed=MiscData.GetNowDateTime().AddSeconds(5);
+					Signalods.SignalLastRefreshed=MiscData.GetNowDateTime().AddSeconds(5);
 					Signalod signalod=new Signalod();
 					signalod.IType=InvalidType.ShutDownNow;
 					Signalods.Insert(signalod);
-					Computers.ClearAllHeartBeats(Environment.MachineName);//always assume success
+					Computers.ClearAllHeartBeats(ODEnvironment.MachineName);//always assume success
 					isShutdownWindowNeeded=false;
 					//SecurityLogs.MakeLogEntry(Permissions.Setup,0,"Shutdown all workstations.");//can't do this because sometimes no user.
 				}
@@ -798,7 +794,7 @@ namespace OpenDental {
 					continue;
 				}
 				//no other workstation will be able to start up until this value is reset.
-				Prefs.UpdateString(PrefName.UpdateInProgressOnComputerName,Environment.MachineName);
+				Prefs.UpdateString(PrefName.UpdateInProgressOnComputerName,ODEnvironment.MachineName);
 			}
 			MiscData.LockWorkstationsForDbs(stringArrayDBList);//lock workstations for other db's.
 			try {
@@ -823,20 +819,20 @@ namespace OpenDental {
 				return;
 			}
 			int fileSize=(int)webResponse.ContentLength/1024;
-			UI.ProgressWin progressWin=new UI.ProgressWin();
-			progressWin.ActionMain=() => DownloadInstallPatchWorker(downloadUri,destinationPath,webResponse.ContentLength);
-			try{
-				progressWin.ShowDialog();
-			}
-			catch{
-				try {
-					File.Delete(destinationPath);//Try to clean up after ourselves.
-				}
-				catch(Exception ex) {
-					ex.DoNothing();
-				}
-			}
-			if(progressWin.IsCancelled){
+			FormProgress formProgress=new FormProgress();
+			//start the thread that will perform the download
+			ThreadStart threadStartDownload= ()=> DownloadInstallPatchWorker(downloadUri,destinationPath,webResponse.ContentLength,ref formProgress);
+			Thread threadWorker=new Thread(threadStartDownload);
+			threadWorker.Start();
+			//display the progress dialog to the user:
+			formProgress.MaxVal=(double)fileSize/1024;
+			formProgress.NumberMultiplication=100;
+			formProgress.DisplayText="?currentVal MB of ?maxVal MB copied";
+			formProgress.NumberFormat="F";
+			formProgress.ShowDialog();
+			if(formProgress.DialogResult==DialogResult.Cancel) {
+				formProgress.Dispose();
+				threadWorker.Abort();
 				MiscData.UnlockWorkstationsForDbs(stringArrayDBList);//unlock workstations since nothing was actually done.
 				Prefs.UpdateString(PrefName.UpdateInProgressOnComputerName,"");
 				return;
@@ -845,21 +841,39 @@ namespace OpenDental {
 			if(CloudStorage.IsCloudStorage) {
 				OpenDentalCloud.Core.TaskStateUpload taskStateUpload=null;
 				byte[] byteArray=File.ReadAllBytes(destinationPath);
-				progressWin=new UI.ProgressWin();
-				progressWin.StartingMessage=Lan.g("FormUpdate","Uploading Setup File...");//Upload unversioned setup file to AtoZ main folder.
-				progressWin.ActionMain=() => CloudStorage.Upload(CloudStorage.AtoZPath,Path.GetFileName(destinationPath),byteArray);
-				progressWin.ShowDialog();
-				if(progressWin.IsCancelled){
+				formProgress=new FormProgress();
+				formProgress.DisplayText=Lan.g("FormUpdate","Uploading Setup File...");//Upload unversioned setup file to AtoZ main folder.
+				formProgress.NumberFormat="F";
+				formProgress.NumberMultiplication=1;
+				formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+				formProgress.TickMS=1000;
+				taskStateUpload=CloudStorage.UploadAsync(
+					CloudStorage.AtoZPath
+					,Path.GetFileName(destinationPath)
+					,byteArray
+					,new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
+				if(formProgress.ShowDialog()==DialogResult.Cancel) {
+					formProgress.Dispose();
+					taskStateUpload.DoCancel=true;
 					MiscData.UnlockWorkstationsForDbs(stringArrayDBList);//unlock workstations since nothing was actually done.
 					Prefs.UpdateString(PrefName.UpdateInProgressOnComputerName,"");
 					return;
 				}
 				if(destinationPath2!=null && destinationPath2!="") {//Upload a copy of the Setup.exe to a versioned setup file to SetupFiles folder.  Not always used.
-					progressWin=new UI.ProgressWin();
-					progressWin.StartingMessage=Lan.g("FormUpdate","Uploading Setup File SetupFiles folder...");
-					progressWin.ActionMain=() => CloudStorage.Upload(ODFileUtils.CombinePaths(CloudStorage.AtoZPath,"SetupFiles"),Path.GetFileName(destinationPath2),byteArray);
-					progressWin.ShowDialog();
-					if(progressWin.IsCancelled){
+					formProgress=new FormProgress();
+					formProgress.DisplayText=Lan.g("FormUpdate","Uploading Setup File SetupFiles folder...");
+					formProgress.NumberFormat="F";
+					formProgress.NumberMultiplication=1;
+					formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+					formProgress.TickMS=1000;
+					taskStateUpload=CloudStorage.UploadAsync(
+						ODFileUtils.CombinePaths(CloudStorage.AtoZPath,"SetupFiles")
+						,Path.GetFileName(destinationPath2)
+						,byteArray
+						,new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
+					if(formProgress.ShowDialog()==DialogResult.Cancel) {
+						formProgress.Dispose();
+						taskStateUpload.DoCancel=true;
 						MiscData.UnlockWorkstationsForDbs(stringArrayDBList);//unlock workstations since nothing was actually done.
 						Prefs.UpdateString(PrefName.UpdateInProgressOnComputerName,"");
 						return;
@@ -873,6 +887,7 @@ namespace OpenDental {
 							File.Delete(destinationPath2);
 						}
 						catch(Exception ex) {
+							formProgress.Dispose();
 							FriendlyException.Show(Lan.g("FormUpdate","Error deleting file:")+"\r\n"+ex.Message,ex);
 							MiscData.UnlockWorkstationsForDbs(stringArrayDBList);//unlock workstations since nothing was actually done.
 							Prefs.UpdateString(PrefName.UpdateInProgressOnComputerName,"");
@@ -895,6 +910,7 @@ namespace OpenDental {
 				}
 			}
 			if(!runSetupAfterDownload) {
+				formProgress.Dispose();
 				return;
 			}
 			string msg=Lan.g("FormUpdate","Download succeeded.  Setup program will now begin.  When done, restart the program on this computer, then on the other computers.");
@@ -904,13 +920,14 @@ namespace OpenDental {
 			if(MessageBox.Show(msg,"",MessageBoxButtons.OKCancel) !=DialogResult.OK) {
 				//Clicking cancel gives the user a chance to avoid running the setup program,
 				Prefs.UpdateString(PrefName.UpdateInProgressOnComputerName,"");//unlock workstations, since nothing was actually done.
+				formProgress.Dispose();
 				return;
 			}
 			#region Stop OpenDent Services
 			//If the update has been initiated from the designated update server then try and stop all "OpenDent..." services.
 			//They will be automatically restarted once Open Dental has successfully upgraded.
 			if(PrefC.GetString(PrefName.WebServiceServerName)!="" && ODEnvironment.IdIsThisComputer(PrefC.GetString(PrefName.WebServiceServerName))) {
-				Action actionCloseStopServicesProgress=ODProgress.Show("Stopping services...");
+				Action actionCloseStopServicesProgress=ODProgress.Show(ODEventType.MiscData,typeof(MiscDataEvent),"Stopping services...");
 				List<ServiceController> listServiceControllersOpenDent=ServicesHelper.GetAllOpenDentServices();
 				//Newer versions of Windows have heightened security measures for managing services.
 				//We get lots of calls where users do not have the correct permissions to start and stop Open Dental services.
@@ -933,25 +950,46 @@ namespace OpenDental {
 			}
 			catch{
 				Prefs.UpdateString(PrefName.UpdateInProgressOnComputerName,"");//unlock workstations, since nothing was actually done.
-				MsgBox.Show("FormProgress","Could not launch setup");
+				MsgBox.Show(formProgress,"Could not launch setup");
 			}
+			formProgress.Dispose();
 		}
 
 		///<summary>This is the function that the worker thread uses to actually perform the download.
 		///Can also call this method in the ordinary way if the file to be transferred is short.</summary>
-		private static void DownloadInstallPatchWorker(string downloadUri,string destinationPath,long contentLength) {
+		private static void DownloadInstallPatchWorker(string downloadUri,string destinationPath,long contentLength,ref FormProgress formProgressIndicator) {
 			using WebClient webClient=new WebClient();
 			using Stream streamRead=webClient.OpenRead(downloadUri);
 			using FileStream fileStream=new FileStream(destinationPath,FileMode.Create);
 			int bytesRead;
-			//long position=0;
+			long position=0;
 			byte[] byteArray=new byte[10 * 1024];
-			while((bytesRead=streamRead.Read(byteArray,0,byteArray.Length)) > 0) {
-				//position+=bytesRead;
-				//if(position!=contentLength) {
-				//	formProgressIndicator.CurrentVal=((double)position / 1024) / 1024;
-				//}
-				fileStream.Write(byteArray,0,bytesRead);
+			try {
+				while((bytesRead=streamRead.Read(byteArray,0,byteArray.Length)) > 0) {
+					position+=bytesRead;
+					if(position!=contentLength) {
+						formProgressIndicator.CurrentVal=((double)position / 1024) / 1024;
+					}
+					fileStream.Write(byteArray,0,bytesRead);
+				}
+			}
+			catch(Exception ex) {
+				//Set the error message so that the user can call in and complain and we can get more information about what went wrong.
+				//This error message will NOT show if the user hit the Cancel button and a random exception happened (because the window will have closed).
+				formProgressIndicator.ErrorMessage=ex.Message;
+			}
+			//If the file was successfully downloaded, set the progress indicator to maximum so that it closes the progress window.
+			//Otherwise leave the window open so that the error message can be displayed to the user in red text.
+			if(string.IsNullOrEmpty(formProgressIndicator.ErrorMessage)) {
+				formProgressIndicator.CurrentVal=(double)contentLength / 1024;
+			}
+			else {//There was an unexpected error.
+				try {
+					File.Delete(destinationPath);//Try to clean up after ourselves.
+				}
+				catch(Exception ex) {
+					ex.DoNothing();
+				}
 			}
 		}
 
@@ -1176,7 +1214,7 @@ namespace OpenDental {
 			try {
 				ListenerServiceType listenerServiceType=WebServiceMainHQProxy.SetEConnectorOn();
 				string logText=Lan.g("PrefL","eConnector status automatically set to")+" "+listenerServiceType.ToString()+".";
-				SecurityLogs.MakeLogEntry(EnumPermType.EServicesSetup,0,logText);
+				SecurityLogs.MakeLogEntry(Permissions.EServicesSetup,0,logText);
 			}
 			catch(Exception) {
 				//Only notify the customer if they upgraded from the CustListener service and was unable to communicate with HQ.

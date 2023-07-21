@@ -40,12 +40,13 @@ namespace OpenDental {
 			this.label1 = new System.Windows.Forms.Label();
 			this.textNote = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
+			this.butCancel = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(581,621);
+			this.butOK.Location = new System.Drawing.Point(473,623);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75,26);
 			this.butOK.TabIndex = 1;
@@ -98,10 +99,21 @@ namespace OpenDental {
 			this.label2.Text = "This is the final note that will be saved for all similar plans.";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(581,623);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75,26);
+			this.butCancel.TabIndex = 6;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
 			// FormNotePick
 			// 
-			this.ClientSize = new System.Drawing.Size(692, 656);
 			this.AutoScaleBaseSize = new System.Drawing.Size(5,13);
+			this.ClientSize = new System.Drawing.Size(692,656);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.textNote);
 			this.Controls.Add(this.label1);
@@ -125,5 +137,6 @@ namespace OpenDental {
 		private Label label1;
 		private TextBox textNote;
 		private Label label2;
+		private OpenDental.UI.Button butCancel;
 	}
 }

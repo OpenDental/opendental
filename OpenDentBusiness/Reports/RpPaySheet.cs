@@ -128,7 +128,7 @@ namespace OpenDentBusiness {
 			if(hasClinicsEnabled) {
 				queryPat+="IF(clinic.IsHidden,CONCAT(clinic.Abbr,'("+POut.String(Lans.g("FormRpPaySheet","hidden"))+")'),clinic.Abbr) clinicAbbr,";
 			}
-			queryPat+="payment.CheckNum,SUM(COALESCE(paysplit.SplitAmt,0)) amt,payment.PayNum,ItemName,payment.PayType,MerchantFee,PaymentSource "
+			queryPat+="payment.CheckNum,SUM(COALESCE(paysplit.SplitAmt,0)) amt,payment.PayNum,ItemName,payment.PayType "
 				+"FROM payment "
 				+"LEFT JOIN paysplit ON payment.PayNum=paysplit.PayNum "
 				+"LEFT JOIN patient ON payment.PatNum=patient.PatNum "

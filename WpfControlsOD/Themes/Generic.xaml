@@ -32,7 +32,9 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type local:Panel}">
 					<Border Name="border" BorderThickness="1" Background="White">
-						<ItemsPresenter/>
+						<ScrollViewer Name="scrollViewer">
+							<ItemsPresenter/>
+						</ScrollViewer>
 					</Border>
 				</ControlTemplate>
 			</Setter.Value>
@@ -44,31 +46,5 @@
 				</ItemsPanelTemplate>
 			</Setter.Value>
 		</Setter>
-	</Style>
-	<Style TargetType="{x:Type local:PanelAutoScroll}">
-	<Setter Property="HorizontalAlignment" Value="Left"/>
-	<Setter Property="VerticalAlignment" Value="Top"/>
-	<Setter Property="Template">
-		<Setter.Value>
-			<ControlTemplate TargetType="{x:Type local:PanelAutoScroll}">
-				<Border Name="border" BorderThickness="1" Background="White">
-					<ScrollViewer Name="scrollViewer">
-						<ItemsPresenter/>
-					</ScrollViewer>
-				</Border>
-			</ControlTemplate>
-		</Setter.Value>
-	</Setter>
-	<Setter Property="ItemsPanel">
-		<Setter.Value>
-			<ItemsPanelTemplate>
-				<Grid/>
-			</ItemsPanelTemplate>
-		</Setter.Value>
-	</Setter>
-</Style>
-	<Style TargetType="{x:Type local:SplitContainer}">
-		<Setter Property="HorizontalAlignment" Value="Left"/>
-		<Setter Property="VerticalAlignment" Value="Top"/>
 	</Style>
 </ResourceDictionary>

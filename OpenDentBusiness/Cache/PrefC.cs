@@ -10,7 +10,6 @@ using OpenDentBusiness;
 using CodeBase;
 using System.IO;
 using System.Net;
-using System.Diagnostics;
 
 namespace OpenDentBusiness {
 	public class PrefC {
@@ -96,10 +95,8 @@ namespace OpenDentBusiness {
 				return prefString.Split(',').Select(long.Parse).ToList();
 			}
 		}
-
 		///<summary>True if a) Computer name of this session is included in the HasVerboseLogging PrefValue OR b) OD program directory includes (blank) Verbose.txt file.</summary>
-		public static bool IsVerboseLoggingSession() {
-			YN ynIsVerboseLoggingSession=_isVerboseLoggingSession;
+		public static bool IsVerboseLoggingSession() {			
 			try {
 				if(_isVerboseLoggingSession!=YN.Unknown) {
 					//Pref flag is already set so return it.
@@ -131,27 +128,12 @@ namespace OpenDentBusiness {
 					_isVerboseLoggingSession=YN.No;
 				}
 				//Pref flag was just set so return it.
-				return _isVerboseLoggingSession==YN.Yes;
+				return _isVerboseLoggingSession==YN.Yes;				
 			}
 			catch(Exception e) {
 				e.DoNothing();
 				return false;
-			}
-			finally {
-				if(ynIsVerboseLoggingSession!=_isVerboseLoggingSession) {
-					string message = "Logging Verbosity has changed from " + ynIsVerboseLoggingSession.ToString() + " to " + _isVerboseLoggingSession.ToString();
-					ODException.SwallowAnyException(() => { Logger.WriteLine(message, "Meta"+"\\"+Process.GetCurrentProcess().Id.ToString() ); });
-				}
-			}
-		}
-
-		/// <summary>Returns whethere or not aging is allowed to run. AgingBeginDateTime must be minval or older than 24 hours.</summary>
-		public static bool IsAgingAllowedToStart() {
-			DateTime dateTime=PrefC.GetDateT(PrefName.AgingBeginDateTime);
-			if(dateTime == DateTime.MinValue || DateTime_.Now >= dateTime.AddHours(24)) {
-				return true;
-			}
-			return false;
+			}			
 		}
 
 		///<summary>Returns the credentials (user name and password) used to access the voicemail share via SMB2.
@@ -354,44 +336,34 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns true if either the XCharge program or PayConnect program is enabled and at least one clinic has online payments enabled.
 		///progEnabledForPayments will return the program that is enabled for online payments if it is allowed.  Both programs cannot be enabled at the same time</summary>
-		public static bool HasOnlinePaymentEnabled(out ProgramName progEnabledForPayments,bool isForMobile=false) {
+		public static bool HasOnlinePaymentEnabled(out ProgramName progEnabledForPayments) {
 			progEnabledForPayments=ProgramName.None;
 			Program progXCharge=Programs.GetCur(ProgramName.Xcharge);
 			Program progEdgeExpress=Programs.GetCur(ProgramName.EdgeExpress);
 			Program progPayConnect=Programs.GetCur(ProgramName.PayConnect);
-			Program progCareCredit=Programs.GetCur(ProgramName.CareCredit);
-			Program progPaySimple=Programs.GetCur(ProgramName.PaySimple);
+			if(!progXCharge.Enabled && !progPayConnect.Enabled && !progEdgeExpress.Enabled) {
+				return false;
+			}
 			if(progEdgeExpress.Enabled) {
-				List<ProgramProperty> listEdgeExpressProps=ProgramProperties.GetForProgram(progEdgeExpress.ProgramNum);
-				if(listEdgeExpressProps.Exists(x => x.PropertyDesc==ProgramProperties.PropertyDescs.EdgeExpress.IsOnlinePaymentsEnabled && x.PropertyValue=="1")) {
+				List<ProgramProperty> listXChargeProps=ProgramProperties.GetForProgram(progEdgeExpress.ProgramNum);
+				if(listXChargeProps.Any(x => x.PropertyDesc==ProgramProperties.PropertyDescs.EdgeExpress.IsOnlinePaymentsEnabled && x.PropertyValue=="1")) {
 					progEnabledForPayments=ProgramName.EdgeExpress;
 					return true;
 				}
 			}
-			if(progXCharge.Enabled) {
+			else if(progXCharge.Enabled) {
 				List<ProgramProperty> listXChargeProps=ProgramProperties.GetForProgram(progXCharge.ProgramNum);
-				if(listXChargeProps.Exists(x => x.PropertyDesc=="IsOnlinePaymentsEnabled" && x.PropertyValue=="1")) {
+				if(listXChargeProps.Any(x => x.PropertyDesc=="IsOnlinePaymentsEnabled" && x.PropertyValue=="1")) {
 					progEnabledForPayments=ProgramName.Xcharge;
 					return true;
 				}
 			}
 			if(progPayConnect.Enabled) {
 				List<ProgramProperty> listPayConnectProps=ProgramProperties.GetForProgram(progPayConnect.ProgramNum);
-				if(listPayConnectProps.Exists(x => x.PropertyDesc==PayConnect.ProgramProperties.PatientPortalPaymentsEnabled && x.PropertyValue=="1")) {
+				if(listPayConnectProps.Any(x => x.PropertyDesc==PayConnect.ProgramProperties.PatientPortalPaymentsEnabled && x.PropertyValue=="1")) {
 					progEnabledForPayments=ProgramName.PayConnect;
 					return true;
 				}
-			}
-			if(progPaySimple.Enabled && !isForMobile) {
-				List<ProgramProperty> listPaySimpleProps=ProgramProperties.GetForProgram(progPaySimple.ProgramNum);
-				if (listPaySimpleProps.Exists(x => x.PropertyDesc==PaySimple.PropertyDescs.PaySimpleIsOnlinePaymentsEnabled && x.PropertyValue=="1")) {
-					progEnabledForPayments=ProgramName.PaySimple;
-					return true;
-				}
-			}
-			if(progCareCredit.Enabled && !isForMobile) {
-				progEnabledForPayments=ProgramName.CareCredit;
-				return true;
 			}
 			return false;
 		}
@@ -470,20 +442,10 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		private static YN _isAppStream=YN.Unknown;
-		public static bool IsAppStream {
+		///<summary>Returns true if the database hosted by Open Dental.</summary>
+		public static bool IsCloudMode {
 			get {
-				try {
-					if(GetBool(PrefName.CloudIsAppStream) && _isAppStream==YN.Unknown) {
-						_isAppStream=string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AppStream_UserName"))?YN.No:YN.Yes;
-					}
-					ODCloudClient.IsAppStream=_isAppStream==YN.Yes;
-					return ODCloudClient.IsAppStream;
-				}
-				catch(Exception ex) {
-					ex.DoNothing();
-					return false;
-				}
+				return PrefC.GetInt(PrefName.DatabaseMode)==(int)DatabaseModeEnum.Cloud;
 			}
 		}
 
@@ -513,25 +475,7 @@ namespace OpenDentBusiness {
 				return GetInt(PrefName.SecurityLogOffAfterMinutes);
 			}
 		}
-
-		/// <summary>Returns the first short-URL found in the supplied message, or an empty string if none are found.</summary>
-		public static string GetFirstShortURL(string msgBodyText) {
-			if(string.IsNullOrWhiteSpace(msgBodyText)) {
-				return "";
-			}
-			List<string> listRedirectShortURLs=PrefC.GetString(PrefName.RedirectShortURLsFromHQ).Split(',').ToList();
-			return listRedirectShortURLs.Find(x=>msgBodyText.Contains(x))??"";
-		}
-
-		/// <summary>Returns a list of all short-URLs found in the supplied message, or an empty list if none are found.</summary>
-		public static List<string> GetListShortURLs(string msgBodyText) {
-			if(string.IsNullOrWhiteSpace(msgBodyText)) {
-				return new List<string>();
-			}
-			List<string> listRedirectShortURLs=PrefC.GetString(PrefName.RedirectShortURLsFromHQ).Split(',').ToList();
-			return listRedirectShortURLs.FindAll(x=>msgBodyText.Contains(x)).ToList();
-		}
-
+		
 		///<summary>A helper class to get Reporting Server preferences.</summary>
 		public static class ReportingServer {
 			public static string DisplayStr {
@@ -586,12 +530,6 @@ namespace OpenDentBusiness {
 					return "";//Connection string is not currently supported for ReportingServers.
 				}
 			}
-
-			public static string SslCa {
-				get {
-					return PrefC.GetStringSilent(PrefName.ReportingServerSslCa);
-				}
-			}
 		}
 
 		///<summary>A helper class to get Read-Only Server preferences.</summary>
@@ -623,7 +561,7 @@ namespace OpenDentBusiness {
 			}
 			public static string SslCa {
 				get {
-					return PrefC.GetStringSilent(PrefName.ReadOnlyServerSslCa);
+					return PrefC.GetString(PrefName.ReadOnlyServerSslCa);
 				}
 			}
 			public static string Database {
@@ -654,5 +592,6 @@ namespace OpenDentBusiness {
 				}
 			}
 		}
+
 	}
 }

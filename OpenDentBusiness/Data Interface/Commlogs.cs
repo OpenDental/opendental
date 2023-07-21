@@ -15,10 +15,9 @@ namespace OpenDentBusiness{
 
 		///<summary>Returns the list of CommItemTypeAutos. Filters out the IsODHQ-only CommItemTypeAuto when the user is not in HQ.</summary>
 		public static List<CommItemTypeAuto> GetCommItemTypes() {
-			//No need to check MiddleTierRole; no call to db.
-			List<CommItemTypeAuto> listCommonItemTypeAutos=Enum.GetValues(typeof(CommItemTypeAuto)).Cast<CommItemTypeAuto>().ToList();
-			listCommonItemTypeAutos.RemoveAll(x => !PrefC.IsODHQ && GenericTools.IsODHQ(x)); //only remove the HQ commlog type(s) if we are not in HQ
-			return listCommonItemTypeAutos;
+			List<CommItemTypeAuto> listRet=Enum.GetValues(typeof(CommItemTypeAuto)).Cast<CommItemTypeAuto>().ToList();
+			listRet.RemoveAll(x => !PrefC.IsODHQ && GenericTools.IsODHQ(x)); //only remove the HQ commlog type(s) if we are not in HQ
+			return listRet;
 		}
 
 		#endregion
@@ -86,7 +85,7 @@ namespace OpenDentBusiness{
 			}
 			string command=
 				"SELECT * FROM commlog"
-				+" WHERE PatNum = '"+POut.Long(patNum)+"'"
+				+" WHERE PatNum = '"+patNum+"'"
 				+" ORDER BY CommDateTime";
 			return Crud.CommlogCrud.SelectMany(command);
 		}
@@ -115,142 +114,135 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary></summary>
-		public static long Insert(Commlog commlog) {
+		public static long Insert(Commlog comm) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				commlog.CommlogNum=Meth.GetLong(MethodBase.GetCurrentMethod(),commlog);
-				return commlog.CommlogNum;
+				comm.CommlogNum=Meth.GetLong(MethodBase.GetCurrentMethod(),comm);
+				return comm.CommlogNum;
 			}
-			return Crud.CommlogCrud.Insert(commlog);
+			return Crud.CommlogCrud.Insert(comm);
 		}
 
 		///<summary></summary>
-		public static void Update(Commlog commlog) {
+		public static void Update(Commlog comm) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),commlog);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),comm);
 				return;
 			}
-			Crud.CommlogCrud.Update(commlog);
+			Crud.CommlogCrud.Update(comm);
 		}
 
 		///<summary>Updates only the changed fields (if any).</summary>
-		public static bool Update(Commlog commlog,Commlog commlogOld) {
+		public static bool Update(Commlog comm,Commlog oldCommlog) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),commlog,commlogOld);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),comm,oldCommlog);
 			}
-			return Crud.CommlogCrud.Update(commlog,commlogOld);
+			return Crud.CommlogCrud.Update(comm,oldCommlog);
 		}
 
 		///<summary></summary>
-		public static void Delete(Commlog commlog) {
+		public static void Delete(Commlog comm) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),commlog);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),comm);
 				return;
 			}
-			string command="SELECT COUNT(*) FROM smsfrommobile WHERE CommlogNum="+POut.Long(commlog.CommlogNum);
+			string command="SELECT COUNT(*) FROM smsfrommobile WHERE CommlogNum="+POut.Long(comm.CommlogNum);
 			if(Db.GetCount(command)!="0") {
 				throw new Exception(Lans.g("CommLogs","Not allowed to delete a commlog attached to a text message."));
 			}
-			Crud.CommlogCrud.Delete(commlog.CommlogNum);
+			Crud.CommlogCrud.Delete(comm.CommlogNum);
 		}
 
 		///<summary>Used when printing or emailing recall to make a commlog entry without any display.</summary>
-		public static void InsertForRecallOrReactivation(long patNum,CommItemMode commItemMode,int numberOfReminders,long defNumNewStatus,CommItemTypeAuto commonItemTypeAuto=CommItemTypeAuto.RECALL) {
+		public static void InsertForRecallOrReactivation(long patNum,CommItemMode _mode,int numberOfReminders,long defNumNewStatus,CommItemTypeAuto type=CommItemTypeAuto.RECALL) {
 			//No need to check MiddleTierRole; no call to db.
-			InsertForRecallOrReactivation(patNum,commItemMode,numberOfReminders,defNumNewStatus,CommItemSource.User,Security.CurUser.UserNum//Recall commlog not associated to the Web Sched app.
-				,DateTime.Now,commonItemTypeAuto);
+			InsertForRecallOrReactivation(patNum,_mode,numberOfReminders,defNumNewStatus,CommItemSource.User,Security.CurUser.UserNum//Recall commlog not associated to the Web Sched app.
+				,DateTime.Now,type);
 		}
 
 		///<summary>Used when printing or emailing recall to make a commlog entry without any display.  
 		///Set commSource to the corresponding entity that is making this recall.  E.g. Web Sched.
 		///If the commSource is a 3rd party, set it to ProgramLink and make an overload that accepts the ProgramNum.</summary>
-		public static Commlog InsertForRecallOrReactivation(long patNum,CommItemMode commItemMode,int numberOfReminders,long defNumNewStatus,CommItemSource commItemSource,long userNum,DateTime dateTimeNow,CommItemTypeAuto commItemTypeAuto=CommItemTypeAuto.RECALL,string message="") 
+		public static Commlog InsertForRecallOrReactivation(long patNum,CommItemMode _mode,int numberOfReminders,long defNumNewStatus,CommItemSource commSource,long userNum,DateTime dateTimeNow,CommItemTypeAuto type=CommItemTypeAuto.RECALL,string message="") 
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<Commlog>(MethodBase.GetCurrentMethod(),patNum,commItemMode,numberOfReminders,defNumNewStatus,commItemSource,userNum,
-					dateTimeNow,commItemTypeAuto,message);
+				return Meth.GetObject<Commlog>(MethodBase.GetCurrentMethod(),patNum,_mode,numberOfReminders,defNumNewStatus,commSource,userNum,
+					dateTimeNow,type,message);
 			}
-			long commType=Commlogs.GetTypeAuto(commItemTypeAuto);
-			string commTypeStr="Reactivation";
-			if(commItemTypeAuto==CommItemTypeAuto.RECALL){
-				commTypeStr="Recall";
+			long commType=Commlogs.GetTypeAuto(type);
+			string commTypeStr=type==CommItemTypeAuto.RECALL?"Recall":"Reactivation";
+			Commlog com=GetTodayCommlog(patNum,_mode,type);
+			if(com!=null) {
+				return com;
 			}
-			Commlog commlog=GetTodayCommlog(patNum,commItemMode,commItemTypeAuto);
-			if(commlog!=null) {
-				return commlog;
-			}
-			commlog=new Commlog();
-			commlog.PatNum=patNum;
-			commlog.CommDateTime=dateTimeNow;
-			commlog.CommType=commType;
-			commlog.Mode_=commItemMode;
-			commlog.SentOrReceived=CommSentOrReceived.Sent;
-			commlog.Note="";
+			com=new Commlog();
+			com.PatNum=patNum;
+			com.CommDateTime=dateTimeNow;
+			com.CommType=commType;
+			com.Mode_=_mode;
+			com.SentOrReceived=CommSentOrReceived.Sent;
+			com.Note="";
 			if(numberOfReminders==0){
-				commlog.Note=Lans.g("FormRecallList",$"{commTypeStr} reminder.");
+				com.Note=Lans.g("FormRecallList",$"{commTypeStr} reminder.");
 			}
 			else if(numberOfReminders==1) {
-				commlog.Note=Lans.g("FormRecallList",$"Second {commTypeStr} reminder.");
+				com.Note=Lans.g("FormRecallList",$"Second {commTypeStr} reminder.");
 			}
 			else if(numberOfReminders==2) {
-				commlog.Note=Lans.g("FormRecallList",$"Third {commTypeStr} reminder.");
+				com.Note=Lans.g("FormRecallList",$"Third {commTypeStr} reminder.");
 			}
 			else {
-				commlog.Note=Lans.g("FormRecallList",$"{commTypeStr} reminder:")+" "+(numberOfReminders+1).ToString();
+				com.Note=Lans.g("FormRecallList",$"{commTypeStr} reminder:")+" "+(numberOfReminders+1).ToString();
 			}
 			if(defNumNewStatus==0) {
-				commlog.Note+="  "+Lans.g("Commlogs","Status None");
+				com.Note+="  "+Lans.g("Commlogs","Status None");
 			}
 			else {
-				commlog.Note+="  "+Defs.GetName(DefCat.RecallUnschedStatus,defNumNewStatus);
+				com.Note+="  "+Defs.GetName(DefCat.RecallUnschedStatus,defNumNewStatus);
 			}
 			if(!string.IsNullOrWhiteSpace(message)) {
-				commlog.Note+="\r\n"+message;
+				com.Note+="\r\n"+message;
 			}
-			commlog.UserNum=userNum;
-			commlog.CommSource=commItemSource;
-			commlog.CommlogNum=Insert(commlog);
-			EhrMeasureEvent ehrMeasureEventNew=new EhrMeasureEvent();
-			ehrMeasureEventNew.DateTEvent=commlog.CommDateTime;
-			ehrMeasureEventNew.EventType=EhrMeasureEventType.ReminderSent;
-			ehrMeasureEventNew.PatNum=commlog.PatNum;
-			string moreInfo=commlog.Note;
-			if(moreInfo.Length>200) {
-				moreInfo=moreInfo.Substring(0,199)+"...";
-			}
-			ehrMeasureEventNew.MoreInfo=moreInfo;
-			EhrMeasureEvents.Insert(ehrMeasureEventNew);
-			return commlog;
+			com.UserNum=userNum;
+			com.CommSource=commSource;
+			com.CommlogNum=Insert(com);
+			EhrMeasureEvent newMeasureEvent=new EhrMeasureEvent();
+			newMeasureEvent.DateTEvent=com.CommDateTime;
+			newMeasureEvent.EventType=EhrMeasureEventType.ReminderSent;
+			newMeasureEvent.PatNum=com.PatNum;
+			newMeasureEvent.MoreInfo=com.Note;
+			EhrMeasureEvents.Insert(newMeasureEvent);
+			return com;
 		}
 
 		///<summary>Gets an existing Commlog sent today for patNum, _mode, and type.  Returns null if not found or no defs are setup for type.</summary>
-		public static Commlog GetTodayCommlog(long patNum,CommItemMode commItemMode,CommItemTypeAuto commItemTypeAuto) {
+		public static Commlog GetTodayCommlog(long patNum,CommItemMode _mode,CommItemTypeAuto type) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<Commlog>(MethodBase.GetCurrentMethod(),patNum,commItemMode,commItemTypeAuto);
+				return Meth.GetObject<Commlog>(MethodBase.GetCurrentMethod(),patNum,_mode,type);
 			}
-			long commType=Commlogs.GetTypeAuto(commItemTypeAuto);
+			long commType=Commlogs.GetTypeAuto(type);
 			string command;
-			string dateSQL="CURDATE()";
-			if(ODBuild.IsUnitTest) {
-				dateSQL=POut.Date(DateTime_.Today,true);
+			string datesql="CURDATE()";
+			if(ODInitialize.IsRunningInUnitTest) {
+				datesql=POut.Date(DateTime_.Today,true);
 			}
 			if(commType==0) {
 				return null;
 			}
 			command="SELECT * FROM commlog WHERE ";
-			command+=DbHelper.DtimeToDate("CommDateTime")+" = "+dateSQL;
+			command+=DbHelper.DtimeToDate("CommDateTime")+" = "+datesql;
 			command+=" AND PatNum="+POut.Long(patNum)+" AND CommType="+POut.Long(commType)
-				+" AND Mode_="+POut.Long((int)commItemMode)
+				+" AND Mode_="+POut.Long((int)_mode)
 				+" AND SentOrReceived=1";
-			List<Commlog> listCommlogs=Crud.CommlogCrud.SelectMany(command).OrderByDescending(x => x.CommDateTime).ToList();
-			return listCommlogs.FirstOrDefault();
+			List<Commlog> listComms=Crud.CommlogCrud.SelectMany(command).OrderByDescending(x => x.CommDateTime).ToList();
+			return listComms.FirstOrDefault();
 		}
 
 		///<Summary>Returns a defnum.  If no match, then it returns the first one in the list in that category.
 		///If there are no defs in the category, 0 is returned.</Summary>
-		public static long GetTypeAuto(CommItemTypeAuto commItemTypeAuto) {
+		public static long GetTypeAuto(CommItemTypeAuto typeauto) {
 			//No need to check MiddleTierRole; no call to db.
 			List<Def> listDefs=Defs.GetDefsForCategory(DefCat.CommLogTypes);
-			Def def=listDefs.Find(x => x.ItemValue==commItemTypeAuto.ToString());
+			Def def=listDefs.FirstOrDefault(x => x.ItemValue==typeauto.ToString());
 			if(def!=null) {
 				return def.DefNum;
 			}
@@ -285,31 +277,25 @@ namespace OpenDentBusiness{
 		public static string GetDeleteApptCommlogMessage(string noteText,ApptStatus apptStatus) {
 			//No need to check MiddleTierRole; no call to db.
 			string commlogMsgText="";
-			if(noteText=="") {
-				return commlogMsgText;
-			}
-			if(apptStatus==ApptStatus.PtNote || apptStatus==ApptStatus.PtNoteCompleted){
-				commlogMsgText=Lans.g("Commlogs","Save patient note in CommLog?")+"\r\n"+"\r\n";
-			}
-			else{
-				commlogMsgText=Lans.g("Commlogs","Save appointment note in CommLog?")+"\r\n"+"\r\n";
-			}
-			//Show up to 30 characters of the note because they can get rather large thus pushing the buttons off the screen.
-			commlogMsgText+=noteText.Substring(0,Math.Min(noteText.Length,30));
-			if(noteText.Length>30){//Append ... to the end of the message so that they know there is more to the note than what is displayed.
-				commlogMsgText+="...";
+			if(noteText!="") {
+				if(apptStatus==ApptStatus.PtNote || apptStatus==ApptStatus.PtNoteCompleted){
+					commlogMsgText=Lans.g("Commlogs","Save patient note in CommLog?")+"\r\n"+"\r\n";
+				}
+				else{
+					commlogMsgText=Lans.g("Commlogs","Save appointment note in CommLog?")+"\r\n"+"\r\n";
+				}
+				//Show up to 30 characters of the note because they can get rather large thus pushing the buttons off the screen.
+				commlogMsgText+=noteText.Substring(0,Math.Min(noteText.Length,30));
+				commlogMsgText+=(noteText.Length>30)?"...":"";//Append ... to the end of the message so that they know there is more to the note than what is displayed.
 			}
 			return commlogMsgText;
 		}
 
 		/// <summary>Returns up to the first 30 characters of the note that will be saved into a new Commlog.</summary>
 		public static string GetCommlogMessageText(string noteText) {
-			//No need to check MiddleTierRole; no call to db.
 			string commlogMsgText="";
 			commlogMsgText+=noteText.Substring(0,Math.Min(noteText.Length,30));
-			if(noteText.Length>30){//Append ... to the end of the message so that they know there is more to the note than what is displayed.
-				commlogMsgText+="...";
-			}
+			commlogMsgText+=(noteText.Length>30)?"...":"";//Append ... to the end of the message so that they know there is more to the note than what is displayed.
 			return commlogMsgText;
 		}
 
@@ -326,30 +312,27 @@ namespace OpenDentBusiness{
 
 		///<summary>This returns whether the commlog is an automated type that should be shortened in display.</summary>
 		public static bool IsAutomated(string commType,CommItemSource commItemSource) {
-			//No need to check MiddleTierRole; no call to db.
-			CommItemTypeAuto commItemTypeAuto;
-			try{
-				commItemTypeAuto=(CommItemTypeAuto)Enum.Parse(typeof(CommItemTypeAuto),commType,ignoreCase:true);
-			}
-			catch{
+			if(!Enum.TryParse(commType,true,out CommItemTypeAuto type)) {
 				return false;
 			}
-			bool isAutomated=commItemSource!=CommItemSource.User || commItemTypeAuto==CommItemTypeAuto.FHIR;
-			return isAutomated;
+			CommItemTypeAuto[] filterTypes=new[] {CommItemTypeAuto.FHIR};
+			return commItemSource!=CommItemSource.User || filterTypes.Contains(type);
 		}
 
 		///<summary>Returns the first line in a note, trimmed to 38 characters if there is no newline.</summary>
 		public static string GetNoteFirstLine(string value) {
-			//No need to check MiddleTierRole; no call to db.
 			int index=value.IndexOf(Environment.NewLine);
-			if(index!=-1 && index<=38) {//If there is a newline within bounds
-				//Trim at the newline.
+			if(index==-1 || index>38) {//If there is no newline within bounds
+				if(value.Length>38) {
+					return value.Substring(0,38) + "(...)";
+				}
+				else {
+					return value;
+				}
+			}
+			else {//Trim at the newline.
 				return value.Substring(0,index) + "(...)";
 			}
-			if(value.Length>38) {
-				return value.Substring(0,38) + "(...)";
-			}
-			return value;
 		}
 	}
 

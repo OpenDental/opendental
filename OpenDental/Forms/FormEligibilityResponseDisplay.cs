@@ -169,6 +169,10 @@ namespace OpenDental {
 			//this.dataGridView1.AutoResizeColumns();
 		}
 
+		private void butClose_Click(object sender,System.EventArgs e) {
+			Close();
+		}
+
 		private bool SetupThePrinting() {//TODO: Implement ODprintout pattern
 			PrintDialog printDialog = new PrintDialog();
 			printDialog.AllowCurrentPage = false;
@@ -191,7 +195,7 @@ namespace OpenDental {
 			return true;
 		}
 
-		private void butPrintPreview_Click(object sender,EventArgs e) {
+		private void btnPrintPreview_Click(object sender,EventArgs e) {
 			if(!SetupThePrinting()) { 
 				return; 
 			}

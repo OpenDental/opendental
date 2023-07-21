@@ -1,5 +1,4 @@
-﻿using CodeBase;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -75,7 +74,7 @@ namespace OpenDentBusiness {
 		public string Nickname;
 
 		public bool IsXWeb() {
-			return CCSource.In(CreditCardSource.XWeb, CreditCardSource.XWebPortalLogin, CreditCardSource.XWebPaymentPortal, CreditCardSource.XWebPaymentPortalGuest);
+			return CCSource==CreditCardSource.XWeb || CCSource==CreditCardSource.XWebPortalLogin;
 		}
 
 		//TODO: hook this up to FormPayment for returns and voiding.
@@ -83,25 +82,19 @@ namespace OpenDentBusiness {
 			return CCSource==CreditCardSource.PayConnectPortal || CCSource==CreditCardSource.PayConnectPortalLogin;
 		}
 
-		///<summary>Currently checks for the following "CreditCardSource" enum values: PaySimpleACH, PaySimplePaymentPortalACH</summary>
-		public bool IsPaySimpleACH() {
-			return	CCSource==CreditCardSource.PaySimpleACH ||
-						CCSource==CreditCardSource.PaySimplePaymentPortalACH;
-		}
-
 		///<summary>Gets a string of the companies the credit cards has tokens for.</summary>
 		public string GetTokenString() {
 			if(!Programs.HasMultipleCreditCardProgramsEnabled()
 				|| (string.IsNullOrEmpty(XChargeToken) && string.IsNullOrEmpty(PayConnectToken) && string.IsNullOrEmpty(PaySimpleToken))) 
 			{
-				if(IsPaySimpleACH()) {
+				if(CCSource==CreditCardSource.PaySimpleACH) {
 					return "("+Lans.g(this,"ACH")+")";
 				}
 				return "";
 			}
 			List<string> listTokens=new List<string>();
 			if(!string.IsNullOrEmpty(XChargeToken)) {
-				if(CCSource.In(CreditCardSource.EdgeExpressRCM,CreditCardSource.EdgeExpressCNP,CreditCardSource.EdgeExpressPaymentPortal)) {
+				if(CCSource==CreditCardSource.EdgeExpressRCM || CCSource==CreditCardSource.EdgeExpressCNP) {
 					listTokens.Add("EdgeExpress");
 				}
 				else {
@@ -112,7 +105,7 @@ namespace OpenDentBusiness {
 				listTokens.Add("PayConnect"+(IsPayConnectPortal() ? " Portal" : ""));
 			}
 			if(!string.IsNullOrEmpty(PaySimpleToken)) {
-				listTokens.Add("PaySimple"+(IsPaySimpleACH() ? " "+Lans.g(this,"ACH") : ""));
+				listTokens.Add("PaySimple"+(CCSource==CreditCardSource.PaySimpleACH ? " "+Lans.g(this,"ACH") : ""));
 			}
 			return "("+string.Join(", ",listTokens)+")";
 		}
@@ -156,6 +149,7 @@ namespace OpenDentBusiness {
 		[OnlinePaymentMethod]
 		CareCredit,
 		///<summary>11 - EdgeExpress Cloud when calling the RCM program.</summary>
+		[OnlinePaymentMethod]
 		EdgeExpressRCM,
 		///<summary>12 - EdgeExpress Card Not Present API.</summary>
 		[OnlinePaymentMethod]
@@ -183,12 +177,6 @@ namespace OpenDentBusiness {
 		///<summary>20 - PaySimple ACH Payment taken through the Payment Portal.</summary>
 		[OnlinePaymentMethod]
 		PaySimplePaymentPortalACH,
-		///<summary>21 - XWeb payment taken through the Payment Portal.</summary>
-		[OnlinePaymentMethod]
-		XWebPaymentPortal,
-		///<summary>22 - XWeb payment taken through the Payment Portal as a guest.</summary>
-		[OnlinePaymentMethod]
-		XWebPaymentPortalGuest,
 	}
 
 	public enum ChargeFrequencyType {

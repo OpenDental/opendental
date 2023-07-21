@@ -158,7 +158,7 @@ namespace OpenDental {
 			gridMain.EndUpdate();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOk_Click(object sender,EventArgs e) {
 			for(int i=0;i<_listCDSPermissions.Count;i++) {
 				//TODO:instead of updating all permissions. Update only the permissions neccesary.
 				if(_listCDSPermissions[i].UserNum!=_listCDSPermissionsOld[i].UserNum) {
@@ -196,10 +196,17 @@ namespace OpenDental {
 					+(_listCDSPermissions[i].LabTestCDS					?"T":"F")
 					+(_listCDSPermissions[i].VitalCDS						?"T":"F")
 					;
-				SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,cdsLog);//Log entry example: CDSPermChanged,33,TTTFFFFFF
+				SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,cdsLog);//Log entry example: CDSPermChanged,33,TTTFFFFFF
 			}
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+
+		
 
 	}
 }

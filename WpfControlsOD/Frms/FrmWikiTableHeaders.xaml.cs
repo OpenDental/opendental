@@ -25,18 +25,15 @@ namespace OpenDental {
 
 		public FrmWikiTableHeaders() {
 			InitializeComponent();
-			Load+=FrmWikiTableHeaders_Load;
-			PreviewKeyDown+=FrmWikiTableHeaders_PreviewKeyDown;
+			//Lan.F(this);
 		}
 
-		private void FrmWikiTableHeaders_Load(object sender,EventArgs e) {
-			Lang.F(this);
+		private void FrmWikiTableHeaders_Loaded(object sender,RoutedEventArgs e) {
 			gridMain.BeginUpdate();
 			gridMain.Columns.Clear();
 			GridColumn gridColumn;
 			for(int i=1;i<ListColNames.Count+1;i++) {
-				gridColumn=new GridColumn("",75);
-				gridColumn.IsEditable=true;
+				gridColumn=new GridColumn("",75);//needs to be editable
 				gridMain.Columns.Add(gridColumn);
 			}
 			gridMain.ListGridRows.Clear();
@@ -50,12 +47,6 @@ namespace OpenDental {
 			gridMain.ListGridRows.Add(gridRow0);
 			gridMain.ListGridRows.Add(gridRow1);
 			gridMain.EndUpdate();
-		}
-
-		private void FrmWikiTableHeaders_PreviewKeyDown(object sender,KeyEventArgs e) {
-			if(butSave.IsAltKey(Key.S,e)) {
-				butSave_Click(this,new EventArgs());
-			}
 		}
 
 		private void butSave_Click(object sender,EventArgs e) {
@@ -75,6 +66,27 @@ namespace OpenDental {
 			}
 			IsDialogOK=true;
 		}
+
+		
+
+		
+
+		
+
+		
+
+		
+	
+
+	
+
+		
+
+		
+
+		
+
+	
 
 	}
 }

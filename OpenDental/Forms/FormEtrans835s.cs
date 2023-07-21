@@ -24,7 +24,7 @@ namespace OpenDental {
 		
 		private void FormEtrans835s_Load(object sender,EventArgs e) {
 			base.SetFilterControlsAndAction((() => FilterAndFillGrid()),
-				textRangeMin,textRangeMax,textControlId,textCarrier,textCheckTrace,comboClinics,checkShowFinalizedOnly,checkAutomatableCarriersOnly,dateRangePicker
+				textRangeMin,textRangeMax,textControlId,textCarrier,textCheckTrace,comboClinics,checkShowFinalizedOnly,listStatus,checkAutomatableCarriersOnly,dateRangePicker
 			);
 			dateRangePicker.SetDateTimeFrom(DateTime.Today.AddDays(-7));
 			dateRangePicker.SetDateTimeTo(DateTime.Today);
@@ -64,7 +64,7 @@ namespace OpenDental {
 			if(PrefC.GetBool(PrefName.EraRefreshOnLoad)) {
 				//This must be in Shown due to the progress bar forcing this window behind other windows.
 				FilterAndFillGrid();
-				SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,0,"Window 'Electronic EOBs - ERA 835s' opened.");
+				SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,0,"Window 'Electronic EOBs - ERA 835s' opened.");
 			}
 		}
 
@@ -78,16 +78,16 @@ namespace OpenDental {
 			bool showStatusAndClinics=PrefC.GetBool(PrefName.EraShowStatusAndClinic);
 			_dateFrom=dateRangePicker.GetDateTimeFrom();
 			_dateTo=dateRangePicker.GetDateTimeTo(isDefaultMaxDateT:true);
-			UI.ProgressWin progressOD=new UI.ProgressWin();
+			UI.ProgressOD progressOD=new UI.ProgressOD();
 			progressOD.ActionMain=() => {
 				EtransL.AddMissingEtrans835s(_dateFrom,_dateTo);
 			};
-			progressOD.ShowDialog();
-			progressOD=new UI.ProgressWin();
+			progressOD.ShowDialogProgress();
+			progressOD=new UI.ProgressOD();
 			progressOD.ActionMain=() => {
 #region Filters
 				if(PrefC.HasClinicsEnabled) {
-					if(comboClinics.ListClinicNumsSelected.Count==0){
+					if(comboClinics.ListSelectedClinicNums.Count==0){
 						comboClinics.IsAllSelected=true;//All clinics.
 					}
 				}
@@ -138,7 +138,7 @@ namespace OpenDental {
 #region Fill Rows
 				gridMain.ListGridRows.Clear();
 				for(int i=0;i<eraDataFiltered.ListEtrans.Count;i++) {
-					ODEvent.Fire(ODEventType.ProgressBar,Lan.g(this,"Filling grid rows ")+(i+1)+"/"+eraDataFiltered.ListEtrans.Count);
+					ProgressBarEvent.Fire(ODEventType.ProgressBar,Lan.g(this,"Filling grid rows ")+(i+1)+"/"+eraDataFiltered.ListEtrans.Count);
 					Etrans835 etrans835=eraDataFiltered.ListEtrans835s[i];
 					GridRow row=new GridRow();
 					row.Cells.Add(etrans835.PatientName);
@@ -179,7 +179,7 @@ namespace OpenDental {
 #endregion Fill Rows
 				gridMain.Invoke(gridMain.EndUpdate);
 			};
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			Cursor=Cursors.Default;
 		}
 
@@ -187,7 +187,7 @@ namespace OpenDental {
 		private void FilterAndFillGrid() {
 			List<long> listClinicNums=null;//A null signifies that clinics are disabled.
 			if(PrefC.HasClinicsEnabled) {
-				listClinicNums=comboClinics.ListClinicNumsSelected;
+				listClinicNums=comboClinics.ListSelectedClinicNums;
 			}
 			FillGrid(
 				listSelectedClinicNums:					listClinicNums,
@@ -226,10 +226,6 @@ namespace OpenDental {
 			Cursor=Cursors.Default;
 		}
 
-		private void listStatus_MouseUp(object sender,MouseEventArgs e) {
-			FilterAndFillGrid();
-		}
-
 		///<summary>User will be blocked if they don't have permission to access the EraAutoProcessed report.</summary>
 		private void butAutoProcessedEras_Click(object sender,EventArgs e) {
 			DisplayReport displayReportEraAutoProcessed=DisplayReports.GetByInternalName(DisplayReports.ReportNames.EraAutoProcessed);
@@ -237,12 +233,18 @@ namespace OpenDental {
 				MsgBox.Show(this,"The "+DisplayReports.ReportNames.EraAutoProcessed+" report could not be found.");
 				return;
 			}
-			if(!Security.IsAuthorized(EnumPermType.Reports,displayReportEraAutoProcessed.DisplayReportNum,suppressMessage:false)) {
+			if(!Security.IsAuthorized(Permissions.Reports,displayReportEraAutoProcessed.DisplayReportNum,suppressMessage:false)) {
 				return;
 			}
 			FormRpEraAutoProcessed formRpEraAutoProcessed=new FormRpEraAutoProcessed();
 			formRpEraAutoProcessed.Show();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+			Close();
+		}
+
 	}
+
 }

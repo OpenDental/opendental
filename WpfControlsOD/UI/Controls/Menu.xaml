@@ -6,7 +6,7 @@
 		xmlns:local="clr-namespace:WpfControls.UI"
 		xmlns:system="clr-namespace:System;assembly=mscorlib"
 		mc:Ignorable="d" 
-		d:DesignWidth="100" d:DesignHeight="24" >
+		d:DesignHeight="24" d:DesignWidth="100">
 	<UserControl.Style>
 		<Style>
 			<Setter Property="local:Menu.HorizontalAlignment" Value="Left"/>

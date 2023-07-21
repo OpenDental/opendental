@@ -11,8 +11,17 @@ using OpenDentalCloud.Core;
 namespace OpenDentBusiness{
 	///<summary></summary>
 	public class TsiTransLogs{
+		/// <summary>Adjustment types that are excluded from being sent to TransWorld and from balance calculations.</summary>
+		public static List<string> ExcludeAdjustTypes {
+			get {
+				return new List<string> { 
+					ProgramProperties.PropertyDescs.TransWorld.SyncExcludePosAdjType,
+					ProgramProperties.PropertyDescs.TransWorld.SyncExcludeNegAdjType 
+				};
+			}
+		}
 
-	#region Get Methods
+		#region Get Methods
 
 		///<summary>Returns all tsitranslogs for the patients in listPatNums.  Returns empty list if listPatNums is empty or null.</summary>
 		public static List<TsiTransLog> SelectMany(List<long> listPatNums){
@@ -43,19 +52,13 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<long>>(MethodBase.GetCurrentMethod());
 			}
-			List<int> listStatusTransTypes=new List<int>();
-			listStatusTransTypes.Add((int)TsiTransType.SS);
-			listStatusTransTypes.Add((int)TsiTransType.CN);
-			listStatusTransTypes.Add((int)TsiTransType.RI);
-			listStatusTransTypes.Add((int)TsiTransType.PF);
-			listStatusTransTypes.Add((int)TsiTransType.PT);
-			listStatusTransTypes.Add((int)TsiTransType.PL);
+			int[] arrayStatusTransTypes=new[] { (int)TsiTransType.SS,(int)TsiTransType.CN,(int)TsiTransType.RI,(int)TsiTransType.PF,(int)TsiTransType.PT,(int)TsiTransType.PL };
 			string command="SELECT DISTINCT tsitranslog.PatNum "
 				+"FROM tsitranslog "
 				+"INNER JOIN ("
 					+"SELECT PatNum,MAX(TransDateTime) transDateTime "
 					+"FROM tsitranslog "
-					+"WHERE TransType IN("+string.Join(",",listStatusTransTypes)+") "
+					+"WHERE TransType IN("+string.Join(",",arrayStatusTransTypes)+") "
 					+"AND TransDateTime>"+POut.DateT(DateTime.Now.AddDays(-50))+" "
 					+"GROUP BY PatNum"
 				+") mostRecentTrans ON tsitranslog.PatNum=mostRecentTrans.PatNum "
@@ -68,20 +71,14 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetBool(MethodBase.GetCurrentMethod(),guarNum);
 			}
-			List<int> listStatusTransTypes=new List<int>();
-			listStatusTransTypes.Add((int)TsiTransType.SS);
-			listStatusTransTypes.Add((int)TsiTransType.CN);
-			listStatusTransTypes.Add((int)TsiTransType.RI);
-			listStatusTransTypes.Add((int)TsiTransType.PF);
-			listStatusTransTypes.Add((int)TsiTransType.PT);
-			listStatusTransTypes.Add((int)TsiTransType.PL);
+			int[] arrayStatusTransTypes=new[] { (int)TsiTransType.SS,(int)TsiTransType.CN,(int)TsiTransType.RI,(int)TsiTransType.PF,(int)TsiTransType.PT,(int)TsiTransType.PL };
 			string command="SELECT (CASE WHEN tsitranslog.TransType="+(int)TsiTransType.SS+" THEN 1 ELSE 0 END) isGuarSuspended "
 				+"FROM tsitranslog "
 				+"INNER JOIN ("
 					+"SELECT PatNum,MAX(TransDateTime) transDateTime "
 					+"FROM tsitranslog "
 					+"WHERE PatNum="+POut.Long(guarNum)+" " 
-					+"AND TransType IN("+string.Join(",",listStatusTransTypes)+") "
+					+"AND TransType IN("+string.Join(",",arrayStatusTransTypes)+") "
 					+"AND TransDateTime>"+POut.DateT(DateTime.Now.AddDays(-50))+" "
 					+"GROUP BY PatNum"
 				+") mostRecentLog ON tsitranslog.PatNum=mostRecentLog.PatNum AND tsitranslog.TransDateTime=mostRecentLog.transDateTime";
@@ -108,87 +105,75 @@ namespace OpenDentBusiness{
 			Crud.TsiTransLogCrud.InsertMany(listTsiTransLogs);
 		}
 
-		private static void InsertTsiLogsForAdjustment(long patGuar,Adjustment adjustment,string msgText,TsiTransType tsiTransType) {
-			//No need to check MiddleTierRole; no call to db.
+		private static void InsertTsiLogsForAdjustment(long patGuar,Adjustment adj,string msgText,TsiTransType transType) {
 			//insert tsitranslog for this transaction so the ODService won't send it to Transworld.  _isTsiAdj means Transworld received a payment on
 			//behalf of this guar and took a percentage and send the rest to the office for the account.  This will result in a payment being entered
 			//into the account, having been received from Transworld, and an adjustment to account for Transorld's cut.
-			PatAging patAging=Patients.GetAgingListFromGuarNums(new List<long>() { patGuar }).FirstOrDefault();//should only ever be 1
-			if(patAging==null) {
+			PatAging patAgingCur=Patients.GetAgingListFromGuarNums(new List<long>() { patGuar }).FirstOrDefault();//should only ever be 1
+			if(patAgingCur==null) {
 				return;
 			}
-			double offsetAmt=adjustment.AdjAmt-patAging.ListTsiLogs.FindAll(x => x.FKeyType==TsiFKeyType.Adjustment && x.FKey==adjustment.AdjNum).Sum(x => x.TransAmt);
+			double offsetAmt=adj.AdjAmt-patAgingCur.ListTsiLogs.FindAll(x => x.FKeyType==TsiFKeyType.Adjustment && x.FKey==adj.AdjNum).Sum(x => x.TransAmt);
 			if(CompareDouble.IsZero(offsetAmt)) {
 				return;
 			}
-			double balFromMsgs=GetBalFromMsgs(patAging);
+			double balFromMsgs=GetBalFromMsgs(patAgingCur);
 			if(CompareDouble.IsZero(balFromMsgs)) {
 				return;
 			}
-			TsiTransLog tsiTransLog=new TsiTransLog();
-			tsiTransLog.PatNum=patAging.PatNum;
-			tsiTransLog.UserNum=Security.CurUser.UserNum;
-			tsiTransLog.TransType=tsiTransType;
-			//tsiTransLog.TransDateTime=DateTime.Now;//set on insert, not editable by user
-			//tsiTransLog.ServiceType=TsiServiceType.Accelerator;//only valid for placement msgs
-			//tsiTransLog.ServiceCode=TsiServiceCode.Diplomatic;//only valid for placement msgs
-			tsiTransLog.ClientId=patAging.ListTsiLogs.FirstOrDefault()?.ClientId??"";//can be blank, not used since this isn't really sent to Transworld
-			tsiTransLog.TransAmt=offsetAmt;
-			tsiTransLog.AccountBalance=balFromMsgs+offsetAmt;
-			if(tsiTransType==TsiTransType.Excluded) {
-				tsiTransLog.AccountBalance=balFromMsgs;
-			}
-			tsiTransLog.FKeyType=TsiFKeyType.Adjustment;
-			tsiTransLog.FKey=adjustment.AdjNum;
-			tsiTransLog.RawMsgText=msgText;
-			//tsi.Translog.TransJson="";//only valid for placement msgs
-			tsiTransLog.ClinicNum=0;
-			if(PrefC.HasClinicsEnabled) {
-				tsiTransLog.ClinicNum=patAging.ClinicNum;
-			}
-			Insert(tsiTransLog);
+			Insert(new TsiTransLog() {
+				PatNum=patAgingCur.PatNum,
+				UserNum=Security.CurUser.UserNum,
+				TransType=transType,
+				//TransDateTime=DateTime.Now,//set on insert, not editable by user
+				//ServiceType=TsiServiceType.Accelerator,//only valid for placement msgs
+				//ServiceCode=TsiServiceCode.Diplomatic,//only valid for placement msgs
+				ClientId=patAgingCur.ListTsiLogs.FirstOrDefault()?.ClientId??"",//can be blank, not used since this isn't really sent to Transworld
+				TransAmt=offsetAmt,
+				AccountBalance=balFromMsgs+(transType==TsiTransType.Excluded?0:offsetAmt),
+				FKeyType=TsiFKeyType.Adjustment,
+				FKey=adj.AdjNum,
+				RawMsgText=msgText,
+				//TransJson=""//only valid for placement msgs
+				ClinicNum=(PrefC.HasClinicsEnabled?patAgingCur.ClinicNum:0)
+			});
 		}
 
 		/// <summary>Inserts a TsiTransLog for the adjustment if necessary.</summary>
-		public static void CheckAndInsertLogsIfAdjTypeExcluded(Adjustment adjustment,bool isFromTsi=false) {
-			//No need to check MiddleTierRole; no call to db.
-			Program program=Programs.GetCur(ProgramName.Transworld);
-			if(program==null || !program.Enabled) {
+		public static void CheckAndInsertLogsIfAdjTypeExcluded(Adjustment adj,bool isFromTsi=false) {
+			Program progCur=Programs.GetCur(ProgramName.Transworld);
+			if(progCur==null || !progCur.Enabled) {
 				return;
 			}
-			Patient patientGuar=Patients.GetGuarForPat(adjustment.PatNum);
-			if(patientGuar==null || !IsTransworldEnabled(patientGuar.ClinicNum) || !Patients.IsGuarCollections(patientGuar.PatNum)) {
+			Patient guar=Patients.GetGuarForPat(adj.PatNum);
+			if(guar==null || !IsTransworldEnabled(guar.ClinicNum) || !Patients.IsGuarCollections(guar.PatNum)) {
 				return;
 			}
 			string msgText="This was not a message sent to Transworld.  This adjustment was entered due to a payment received from Transworld.";
-			TsiTransType tsiTransType=TsiTransType.None;
-			List<ProgramProperty> listProgramProperties=ProgramProperties
-				.GetWhere(x => x.ProgramNum==program.ProgramNum 
-					&& (x.PropertyDesc==ProgramProperties.PropertyDescs.TransWorld.SyncExcludePosAdjType
-						|| x.PropertyDesc==ProgramProperties.PropertyDescs.TransWorld.SyncExcludeNegAdjType));
+			TsiTransType typeCur=TsiTransType.None;
+			Dictionary<long,List<ProgramProperty>> dictClinicProps=ProgramProperties
+				.GetWhere(x => x.ProgramNum==progCur.ProgramNum && ExcludeAdjustTypes.Contains(x.PropertyDesc) && x.ClinicNum.In(0,guar.ClinicNum))
+				.GroupBy(x => x.ClinicNum)
+				.ToDictionary(x => x.Key,x => x.ToList());
 			//use guar's clinic if clinics are enabled and props for that clinic exist, otherwise use ClinicNum 0
-			List<ProgramProperty> listProgramPropertiesForClinic=listProgramProperties.FindAll(x=>x.ClinicNum==patientGuar.ClinicNum);
-			long clinicNum=0;
-			if(PrefC.HasClinicsEnabled && listProgramPropertiesForClinic.Count>0){
-				clinicNum=patientGuar.ClinicNum;
-			}
-			else{
-				listProgramPropertiesForClinic=listProgramProperties.FindAll(x=>x.ClinicNum==0);
-			}
-			if(listProgramPropertiesForClinic.Count!=0//should always be props for ClinicNum 0
-				&& listProgramPropertiesForClinic.Any(x => PIn.Long(x.PropertyValue,false)==adjustment.AdjType))
+			long clinicNum=(PrefC.HasClinicsEnabled && dictClinicProps.ContainsKey(guar.ClinicNum))?guar.ClinicNum:0;
+			if(!dictClinicProps.TryGetValue(clinicNum,out List<ProgramProperty> listPropsCur)//should always be props for ClinicNum 0
+				|| listPropsCur.All(x => PIn.Long(x.PropertyValue,false)!=adj.AdjType))
 			{
+				if(!isFromTsi) {
+					return;//if this adjustment is not an excluded type and not from TSI, return
+				}
+				//if this adjustment is not an excluded type but is from TSI, use TsiTransType.None
+			}
+			else {
 				//If this adjustment is an excluded type, mark it excluded regardless of if the adjustment is from TSI.
 				//This means if an adjustment is created for a Collections patient using the "No - this adjustment is the result
 				//of a payment received from TSI" option and the adjustment is marked as an excluded type then the previous
 				//decision will be effectively overridden to to behave as though the adjustment was applied by the office.
 				msgText="Adjustment type is set to excluded type from transworld program properties.";
-				tsiTransType=TsiTransType.Excluded;
+				typeCur=TsiTransType.Excluded;
 			}
-			else if(!isFromTsi) {
-				return;//if this adjustment is not an excluded type and not from TSI, return
-			}
-			InsertTsiLogsForAdjustment(patientGuar.PatNum,adjustment,msgText,tsiTransType);
+			InsertTsiLogsForAdjustment(guar.PatNum,adj,msgText,typeCur);
 		}
 		
 		#endregion Insert
@@ -228,131 +213,115 @@ namespace OpenDentBusiness{
 		
 		/// <summary>Getting the balance from the messages from the patAging object using logs.</summary>
 		public static double GetBalFromMsgs(PatAging patAging) {
-			//No need to check MiddleTierRole; no call to db.
-			TsiTransLog tsiTransLog=patAging.ListTsiLogs.FirstOrDefault(x => x.TransType==TsiTransType.PL);
-			if(tsiTransLog==null) {
+			TsiTransLog placeLog=patAging.ListTsiLogs.FirstOrDefault(x => x.TransType==TsiTransType.PL);
+			if(placeLog==null) {
 				return 0;//should never happen, this is a collection guarantor so there must be a placement log
 			}
-			double balFromMsgs=tsiTransLog.AccountBalance
-				+patAging.ListTsiLogs
-					.Where(x => x.TransDateTime>tsiTransLog.TransDateTime
+			return placeLog.AccountBalance+
+				patAging.ListTsiLogs
+					.Where(x => x.TransDateTime>placeLog.TransDateTime
 						&& !x.TransType.In(TsiTransType.PL,TsiTransType.RI,TsiTransType.SS,TsiTransType.CN,TsiTransType.Agg,TsiTransType.Excluded))
 					.Sum(x => x.TransAmt);
-			return balFromMsgs;
 		}
 
 		///<summary>Returns true if the guarantor has been sent to TSI and has not been canceled or paid in full.</summary>
-		public static bool HasGuarBeenSentToTSI(Patient patient) {
-			//No need to check MiddleTierRole; no call to db.
-			if(patient==null || !IsTransworldEnabled(patient.ClinicNum)) {
+		public static bool HasGuarBeenSentToTSI(Patient guar) {
+			if(guar==null || !IsTransworldEnabled(guar.ClinicNum)) {
 				return false;
 			}
-			List<TsiTransType> listTsiTransTypes=new List<TsiTransType>();
-			listTsiTransTypes.Add(TsiTransType.SS);
-			listTsiTransTypes.Add(TsiTransType.CN);
-			listTsiTransTypes.Add(TsiTransType.RI);
-			listTsiTransTypes.Add(TsiTransType.PF);
-			listTsiTransTypes.Add(TsiTransType.PT);
-			listTsiTransTypes.Add(TsiTransType.PL);
-			TsiTransLog tsiTransLogRecent=SelectMany(new List<long>(){ patient.Guarantor }).FindAll(x => listTsiTransTypes.Contains(x.TransType))
+			TsiTransType[] arrayStatusTransTypes=new[] { TsiTransType.SS,TsiTransType.CN,TsiTransType.RI,TsiTransType.PF,TsiTransType.PT,TsiTransType.PL };
+			TsiTransLog mostRecentTransStatusChangeLog=SelectMany(new List<long>(){ guar.Guarantor }).FindAll(x => x.TransType.In(arrayStatusTransTypes))
 				.OrderBy(x => x.TransDateTime).LastOrDefault();
-			if(tsiTransLogRecent==null) {
+			if(mostRecentTransStatusChangeLog==null) {
 				return false;//Not being managed by TSI
 			}
 			//Check if the most recent log is of type SS, PL, or RI. 
-			return tsiTransLogRecent.TransType.In(new[] { TsiTransType.SS,TsiTransType.PL,TsiTransType.RI });
+			return mostRecentTransStatusChangeLog.TransType.In(new[] { TsiTransType.SS,TsiTransType.PL,TsiTransType.RI });
 		}
 
-		public static bool ValidateClinicSftpDetails(List<ProgramProperty> listProgramProperties,bool hasConnection=true) {
-			//No need to check MiddleTierRole; no call to db.
-			if(listProgramProperties==null || listProgramProperties.Count==0) {
+		public static bool ValidateClinicSftpDetails(List<ProgramProperty> listPropsForClinic,bool doTestConnection=true) {
+			//No need to check MiddleTierRole;no call to db.
+			if(listPropsForClinic==null || listPropsForClinic.Count==0) {
 				return false;
 			}
-			string sftpAddress=listProgramProperties.Find(x => x.PropertyDesc=="SftpServerAddress")?.PropertyValue;
+			string sftpAddress=listPropsForClinic.Find(x => x.PropertyDesc=="SftpServerAddress")?.PropertyValue;
 			int sftpPort;
-			if(!int.TryParse(listProgramProperties.Find(x => x.PropertyDesc=="SftpServerPort")?.PropertyValue,out sftpPort)
+			if(!int.TryParse(listPropsForClinic.Find(x => x.PropertyDesc=="SftpServerPort")?.PropertyValue,out sftpPort)
 				|| sftpPort<ushort.MinValue//0
 				|| sftpPort>ushort.MaxValue)//65,535
 			{
 				sftpPort=22;//default to port 22
 			}
-			string userName=listProgramProperties.Find(x => x.PropertyDesc=="SftpUsername")?.PropertyValue;
-			string userPassword=CDT.Class1.TryDecrypt(listProgramProperties.Find(x => x.PropertyDesc=="SftpPassword")?.PropertyValue);
+			string userName=listPropsForClinic.Find(x => x.PropertyDesc=="SftpUsername")?.PropertyValue;
+			string userPassword=CDT.Class1.TryDecrypt(listPropsForClinic.Find(x => x.PropertyDesc=="SftpPassword")?.PropertyValue);
 			if(string.IsNullOrWhiteSpace(sftpAddress) || string.IsNullOrWhiteSpace(userName) || string.IsNullOrWhiteSpace(userPassword)) {
 				return false;
 			}
-			string[] stringArraySelectedServices=listProgramProperties.FirstOrDefault(x => x.PropertyDesc=="SelectedServices")
+			string[] selectedServices=listPropsForClinic.FirstOrDefault(x => x.PropertyDesc=="SelectedServices")
 				?.PropertyValue
 				?.Split(new[] { ',' },StringSplitOptions.RemoveEmptyEntries);
-			if(stringArraySelectedServices.IsNullOrEmpty()) {//must have at least one service selected, i.e. Accelerator, Profit Recovery, and/or Collection
+			if(selectedServices.IsNullOrEmpty()) {//must have at least one service selected, i.e. Accelerator, Profit Recovery, and/or Collection
 				return false;
 			}
-			if(hasConnection) {
+			if(doTestConnection) {
 				return Sftp.IsConnectionValid(sftpAddress,userName,userPassword,sftpPort);
 			}
 			return true;
 		}
 
 		public static bool IsTransworldEnabled(long clinicNum) {
-			//No need to check MiddleTierRole; no call to db.
-			Program program=Programs.GetCur(ProgramName.Transworld);
-			if(program==null || !program.Enabled) {
+			//No need to check MiddleTierRole;no call to db.
+			Program progCur=Programs.GetCur(ProgramName.Transworld);
+			if(progCur==null || !progCur.Enabled) {
 				return false;
 			}
-			List<ProgramProperty> listProgramProperties=ProgramProperties.GetForProgram(program.ProgramNum);
-			if(listProgramProperties.Count==0) {
+			Dictionary<long,List<ProgramProperty>> dictAllProps=ProgramProperties.GetForProgram(progCur.ProgramNum)
+				.GroupBy(x => x.ClinicNum)
+				.ToDictionary(x => x.Key,x => x.ToList());
+			if(dictAllProps.Count==0) {
 				return false;
 			}
-			List<ProgramProperty> listProgramPropertiesForClinic=listProgramProperties.FindAll(x=>x.ClinicNum==clinicNum);
-			if(PrefC.HasClinicsEnabled && listProgramPropertiesForClinic.Count>0) {
-				return TsiTransLogs.ValidateClinicSftpDetails(listProgramPropertiesForClinic,false);
+			if(PrefC.HasClinicsEnabled && dictAllProps.ContainsKey(clinicNum)) {
+				return TsiTransLogs.ValidateClinicSftpDetails(dictAllProps[clinicNum],false);
 			}
-			listProgramPropertiesForClinic=listProgramProperties.FindAll(x=>x.ClinicNum==0);
-			if(listProgramPropertiesForClinic.Count>0) {
-				return TsiTransLogs.ValidateClinicSftpDetails(listProgramPropertiesForClinic,false);
+			else if(dictAllProps.ContainsKey(0)) {
+				return TsiTransLogs.ValidateClinicSftpDetails(dictAllProps[0],false);
 			}
 			return false;
 		}
 
 		///<summary>Sends an SFTP message to TSI to suspend the account for the guarantor passed in.  Returns empty string if successful.
 		///Returns a translated error message that should be displayed to the user if anything goes wrong.</summary>
-		public static string SuspendGuar(Patient patient) {
-			//No need to check MiddleTierRole; no call to db.
-			PatAging patAging=Patients.GetAgingListFromGuarNums(new List<long>() { patient.PatNum }).FirstOrDefault();
+		public static string SuspendGuar(Patient guar) {
+			PatAging patAging=Patients.GetAgingListFromGuarNums(new List<long>() { guar.PatNum }).FirstOrDefault();
 			if(patAging==null) {//this would only happen if the patient was not in the db??, just in case
 				return Lans.g("TsiTransLogs","An error occurred when trying to send a suspend message to TSI.");
 			}
-			long clinicNum=0;
-			if(PrefC.HasClinicsEnabled) {
-				clinicNum=patient.ClinicNum;
-			}
-			Program program=Programs.GetCur(ProgramName.Transworld);
-			if(program==null) {//shouldn't be possible, the program link should always exist, just in case
+			long clinicNum=(PrefC.HasClinicsEnabled?guar.ClinicNum:0);
+			Program prog=Programs.GetCur(ProgramName.Transworld);
+			if(prog==null) {//shouldn't be possible, the program link should always exist, just in case
 				return Lans.g("TsiTransLogs","The Transworld program link does not exist.  Contact support.");
 			}
-			List<ProgramProperty> listProgramPropertiesAll=ProgramProperties.GetForProgram(program.ProgramNum);
-			if(listProgramPropertiesAll.Count==0) {//shouldn't be possible, there should always be a set of props for ClinicNum 0 even if disabled, just in case
+			Dictionary<long,List<ProgramProperty>> dictAllProps=ProgramProperties.GetForProgram(prog.ProgramNum)
+				.GroupBy(x => x.ClinicNum)
+				.ToDictionary(x => x.Key,x => x.ToList());
+			if(dictAllProps.Count==0) {//shouldn't be possible, there should always be a set of props for ClinicNum 0 even if disabled, just in case
 				return Lans.g("TsiTransLogs","The Transworld program link is not setup properly.");
 			}
-			List<ProgramProperty> listProgramPropertiesClinic=listProgramPropertiesAll.FindAll(x=>x.ClinicNum==clinicNum);
-			List<ProgramProperty> listProgramPropertiesClinicZero=listProgramPropertiesAll.FindAll(x=>x.ClinicNum==0);
-			if(PrefC.HasClinicsEnabled && listProgramPropertiesClinic.Count==0 && listProgramPropertiesClinicZero.Count>0) {
+			if(PrefC.HasClinicsEnabled && !dictAllProps.ContainsKey(clinicNum) && dictAllProps.ContainsKey(0)) {
 				clinicNum=0;
-				listProgramPropertiesClinic=listProgramPropertiesClinicZero;
 			}
-			string clinicDesc=Clinics.GetDesc(clinicNum);
-			if(clinicNum==0) {
-				clinicDesc="Headquarters";
-			}
-			if(listProgramPropertiesClinic.Count==0
-				||  !ValidateClinicSftpDetails(listProgramPropertiesClinic,true)) //the props should be valid, but this will test the connection using the props
+			string clinicDesc=clinicNum==0?"Headquarters":Clinics.GetDesc(clinicNum);
+			if(!dictAllProps.ContainsKey(clinicNum)
+				||  !ValidateClinicSftpDetails(dictAllProps[clinicNum],true)) //the props should be valid, but this will test the connection using the props
 			{
 				return Lans.g("TsiTransLogs","The Transworld program link is not enabled")+" "
 					+(PrefC.HasClinicsEnabled?(Lans.g("TsiTransLogs","for the guarantor's clinic")+", "+clinicDesc+", "):"")
 					+Lans.g("TsiTransLogs","or is not setup properly.");
 			}
-			Def defBillTypeNew=Defs.GetDef(DefCat.BillingTypes,PrefC.GetLong(PrefName.TransworldPaidInFullBillingType));
-			if(defBillTypeNew==null) {
+			List<ProgramProperty> listProps=dictAllProps[clinicNum];
+			Def newBillType=Defs.GetDef(DefCat.BillingTypes,PrefC.GetLong(PrefName.TransworldPaidInFullBillingType));
+			if(newBillType==null) {
 				return Lans.g("TsiTransLogs","The default paid in full billing type is not set.  An automated suspend message cannot be sent until the "
 					+"default paid in full billing type is set in the Transworld program link")
 					+(PrefC.HasClinicsEnabled?(" "+Lans.g("TsiTransLogs","for the guarantor's clinic")+", "+clinicDesc):"")+".";
@@ -362,35 +331,36 @@ namespace OpenDentBusiness{
 				clientId=patAging.ListTsiLogs[0].ClientId;
 			}
 			if(string.IsNullOrEmpty(clientId)) {
-				clientId=listProgramPropertiesClinic.Find(x => x.PropertyDesc=="ClientIdAccelerator")?.PropertyValue;
+				clientId=listProps.Find(x => x.PropertyDesc=="ClientIdAccelerator")?.PropertyValue;
 			}
 			if(string.IsNullOrEmpty(clientId)) {
-				clientId=listProgramPropertiesClinic.Find(x => x.PropertyDesc=="ClientIdCollection")?.PropertyValue;
+				clientId=listProps.Find(x => x.PropertyDesc=="ClientIdCollection")?.PropertyValue;
 			}
 			if(string.IsNullOrEmpty(clientId)) {
 				return Lans.g("TsiTransLogs","There is no client ID in the Transworld program link")
 					+(PrefC.HasClinicsEnabled?(" "+Lans.g("TsiTransLogs","for the guarantor's clinic")+", "+clinicDesc):"")+".";
 			}
-			string sftpAddress=listProgramPropertiesClinic.Find(x => x.PropertyDesc=="SftpServerAddress")?.PropertyValue??"";
+			string sftpAddress=listProps.Find(x => x.PropertyDesc=="SftpServerAddress")?.PropertyValue??"";
 			int sftpPort;
-			if(!int.TryParse(listProgramPropertiesClinic.Find(x => x.PropertyDesc=="SftpServerPort")?.PropertyValue??"",out sftpPort)) {
+			if(!int.TryParse(listProps.Find(x => x.PropertyDesc=="SftpServerPort")?.PropertyValue??"",out sftpPort)) {
 				sftpPort=22;//default to port 22
 			}
-			string userName=listProgramPropertiesClinic.Find(x => x.PropertyDesc=="SftpUsername")?.PropertyValue??"";
-			string userPassword=CDT.Class1.TryDecrypt(listProgramPropertiesClinic.Find(x => x.PropertyDesc=="SftpPassword")?.PropertyValue??"");
+			string userName=listProps.Find(x => x.PropertyDesc=="SftpUsername")?.PropertyValue??"";
+			string userPassword=CDT.Class1.TryDecrypt(listProps.Find(x => x.PropertyDesc=="SftpPassword")?.PropertyValue??"");
 			if(new[] { sftpAddress,userName,userPassword }.Any(x => string.IsNullOrEmpty(x))) {
 				return Lans.g("TsiTransLogs","The SFTP address, username, or password for the Transworld program link")+" "
 					+(PrefC.HasClinicsEnabled?(Lans.g("TsiTransLogs","for the guarantor's clinic")+", "+clinicDesc+", "):"")+Lans.g("TsiTransLogs","is blank.");
 			}
 			string msg=TsiMsgConstructor.GenerateUpdate(patAging.PatNum,clientId,TsiTransType.SS,0.00,patAging.AmountDue);
-			byte[] byteArrayFileContents=Encoding.ASCII.GetBytes(TsiMsgConstructor.GetUpdateFileHeader()+"\r\n"+msg);
-			TaskStateUpload taskStateUpload=new Sftp.Upload(sftpAddress,userName,userPassword,sftpPort);
-			taskStateUpload.Folder="/xfer/incoming";
-			taskStateUpload.FileName="TsiUpdates_"+DateTime.Now.ToString("yyyyMMddhhmmss")+".txt";
-			taskStateUpload.ByteArray=byteArrayFileContents;
-			taskStateUpload.HasExceptions=true;
 			try {
-				taskStateUpload.Execute();
+				byte[] fileContents=Encoding.ASCII.GetBytes(TsiMsgConstructor.GetUpdateFileHeader()+"\r\n"+msg);
+				TaskStateUpload state=new Sftp.Upload(sftpAddress,userName,userPassword,sftpPort) {
+					Folder="/xfer/incoming",
+					FileName="TsiUpdates_"+DateTime.Now.ToString("yyyyMMddhhmmss")+".txt",
+					FileContent=fileContents,
+					HasExceptions=true
+				};
+				state.Execute(false);
 			}
 			catch(Exception ex) {
 				return Lans.g("TsiTransLogs","There was an error sending the update message to Transworld")
@@ -398,32 +368,33 @@ namespace OpenDentBusiness{
 					+ex.Message;
 			}
 			//Upload was successful
-			TsiTransLog tsiTransLog=new TsiTransLog(); 
-			tsiTransLog.PatNum=patAging.PatNum;
-			tsiTransLog.UserNum=Security.CurUser.UserNum;
-			tsiTransLog.TransType=TsiTransType.SS;
-			//tsiTransLog.TransDateTime=DateTime.Now;//set on insert, not editable by user
-			//tsiTransLog.ServiceType=TsiServiceType.Accelerator;//only valid for placement msgs
-			//tsiTransLog.ServiceCode=TsiServiceCode.Diplomatic;//only valid for placement msgs
-			tsiTransLog.ClientId=clientId;
-			tsiTransLog.TransAmt=0.00;
-			tsiTransLog.AccountBalance=patAging.AmountDue;
-			tsiTransLog.FKeyType=TsiFKeyType.None;//only used for account trans updates
-			tsiTransLog.FKey=0;//only used for account trans updates
-			tsiTransLog.RawMsgText=msg;
-			tsiTransLog.ClinicNum=clinicNum;
-			//tsiTransLog.TransJson="";//only valid for placement msgs
-			TsiTransLogs.Insert(tsiTransLog);
+			TsiTransLog log=new TsiTransLog() {
+				PatNum=patAging.PatNum,
+				UserNum=Security.CurUser.UserNum,
+				TransType=TsiTransType.SS,
+				//TransDateTime=DateTime.Now,//set on insert, not editable by user
+				//ServiceType=TsiServiceType.Accelerator,//only valid for placement msgs
+				//ServiceCode=TsiServiceCode.Diplomatic,//only valid for placement msgs
+				ClientId=clientId,
+				TransAmt=0.00,
+				AccountBalance=patAging.AmountDue,
+				FKeyType=TsiFKeyType.None,//only used for account trans updates
+				FKey=0,//only used for account trans updates
+				RawMsgText=msg,
+				ClinicNum=clinicNum
+				//,TransJson=""//only valid for placement msgs
+			};
+			TsiTransLogs.Insert(log);
 			//update family billing type to the paid in full billing type pref
-			List<Patient> listPatientsAll=Patients.GetFamily(patAging.Guarantor).ListPats.ToList();
-			Patients.UpdateFamilyBillingType(defBillTypeNew.DefNum,patAging.PatNum);
-			for(int i=0;i<listPatientsAll.Count;i++) {
-				if(listPatientsAll[i].BillingType==defBillTypeNew.DefNum) {
+			List<Patient> listAllPats=Patients.GetFamily(patAging.Guarantor).ListPats.ToList();
+			Patients.UpdateFamilyBillingType(newBillType.DefNum,patAging.PatNum);
+			foreach(Patient pat in listAllPats) {
+				if(pat.BillingType==newBillType.DefNum) {
 					continue;
 				}
-				string logTxt="Patient billing type changed from '"+Defs.GetName(DefCat.BillingTypes,listPatientsAll[i].BillingType)+"' to '"+defBillTypeNew.ItemName 
+				string logTxt="Patient billing type changed from '"+Defs.GetName(DefCat.BillingTypes,pat.BillingType)+"' to '"+newBillType.ItemName
 					+"' due to a status update message being sent to Transworld from the account module.";
-				SecurityLogs.MakeLogEntry(EnumPermType.PatientBillingEdit,listPatientsAll[i].PatNum,logTxt);
+				SecurityLogs.MakeLogEntry(Permissions.PatientBillingEdit,pat.PatNum,logTxt);
 			}
 			return "";
 		}

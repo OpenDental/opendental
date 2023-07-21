@@ -303,7 +303,7 @@ namespace OpenDentBusiness {
 			return retVal.ToString();
 		}
 
-		///<summary>Returns a date>= AND date<= clause that is capable of using the index on colName. 
+		///<summary>Returns a BETWEEN clause that is capable of using the index on colName. 
 		///Note that the time portions of the dates are ignored.</summary>
 		public static string BetweenDates(string colName,DateTime dateTimeFrom,DateTime dateTimeTo) {
 			return DateTConditionColumn(colName,ConditionOperator.GreaterThanOrEqual,dateTimeFrom)+" AND "

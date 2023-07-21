@@ -14,9 +14,7 @@ namespace OpenDental{
 	public partial class FormBillingOptions : FormODBase {
 		//private FormQuery FormQuery2;
 		private List<Dunning> _listDunnings;
-		public List<long> ListClinicNumsSelected=new List<long>();
-		/// <summary>This is used to pass information from comboClinic to formBilling</summary>
-		public bool IsAllSelected=false;
+		public long ClinicNum;
 		///<summary>Key: ClinicNum, Value: List of ClinicPrefs for clinic.
 		///List contains all existing ClinicPrefs.</summary>
 		private Dictionary<long,List<ClinicPref>> _dictionaryClinicPrefsOld;
@@ -350,7 +348,7 @@ namespace OpenDental{
 			if(comboAge.SelectedIndex.In(1,2,3)) {
 				ageOfAccount=(30*comboAge.SelectedIndex).ToString();//ageOfAccount is 30, 60, or 90
 			}
-			List<long> listClinicNums = comboClinic.ListClinicNumsSelected;
+			List<long> listClinicNums = comboClinic.ListSelectedClinicNums;
 			if(listClinicNums.Count != 1 || listClinicNums.Contains(0))//Clinics not enabled (count 0) or multiple selected(>1) or 'Unassigned' selected.
 			{
 				if(Prefs.UpdateBool(PrefName.BillingIncludeChanged,checkIncludeChanged.Checked)
@@ -414,7 +412,7 @@ namespace OpenDental{
 		}
 
 		private void SetClinicFilters() {
-			List<long> listSelectedClinicNums=comboClinic.ListClinicNumsSelected;
+			List<long> listSelectedClinicNums=comboClinic.ListSelectedClinicNums;
 			if(listSelectedClinicNums.Count > 1) {
 				butSaveDefault.Enabled=false;
 			}
@@ -436,11 +434,11 @@ namespace OpenDental{
 		}
 		
 		private void checkUseClinicDefaults_CheckedChanged(object sender,EventArgs e) {
-			UpdateGenMsgUI(comboClinic.ListClinicNumsSelected);
+			UpdateGenMsgUI(comboClinic.ListSelectedClinicNums);
 		}
 
 		private void FillDunning(){
-			List<long> listClinicNums=comboClinic.ListClinicNumsSelected;
+			List<long> listClinicNums=comboClinic.ListSelectedClinicNums;
 			if(comboClinic.IsAllSelected) {
 				listClinicNums=new List<long>();//Empty list to allow query to run for all clinics.
 			}
@@ -538,9 +536,7 @@ namespace OpenDental{
 			checkIntermingled.Checked=PrefC.GetBool(PrefName.BillingDefaultsIntermingle);
 			checkSinglePatient.Checked=PrefC.GetBool(PrefName.BillingDefaultsSinglePatient);
 			checkBoxBillShowTransSinceZero.Checked=PrefC.GetBool(PrefName.BillingShowTransSinceBalZero);
-			textNote.Text=PrefC.GetString(PrefName.BillingDefaultsNote);
 			if(SmsPhones.IsIntegratedTextingEnabled()) {
-				listModeToText.ClearSelected();
 				string[] stringArrayBillingDefaultsModesToText=PrefC.GetString(PrefName.BillingDefaultsModesToText)
 					.Split(new string[] { "," },StringSplitOptions.RemoveEmptyEntries);
 				for(int i = 0;i<stringArrayBillingDefaultsModesToText.Length;++i) {
@@ -626,24 +622,25 @@ namespace OpenDental{
 				return true;//already ran aging for this date, just move on
 			}
 			Prefs.RefreshCache();
-			if(!PrefC.IsAgingAllowedToStart()) {
+			DateTime dateTAgingBeganPref=PrefC.GetDateT(PrefName.AgingBeginDateTime);
+			if(dateTAgingBeganPref>DateTime.MinValue) {
 				MessageBox.Show(this,Lan.g(this,"In order to create statments, aging must be calculated, but you cannot run aging until it has finished the "
-					+"current calculations which began on")+" "+PrefC.GetDateT(PrefName.AgingBeginDateTime).ToString()+".\r\n"+Lans.g(this,"If you believe the current aging process "
+					+"current calculations which began on")+" "+dateTAgingBeganPref.ToString()+".\r\n"+Lans.g(this,"If you believe the current aging process "
 					+"has finished, a user with SecurityAdmin permission can manually clear the date and time by going to Setup | Preferences | Account - General and pressing "
 					+"the 'Clear' button."));
 				return false;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.AgingRan,0,"Starting Aging - Billing Options");
+			SecurityLogs.MakeLogEntry(Permissions.AgingRan,0,"Starting Aging - Billing Options");
 			Prefs.UpdateString(PrefName.AgingBeginDateTime,POut.DateT(dateTimeNow,false));//get lock on pref to block others
 			Signalods.SetInvalid(InvalidType.Prefs);//signal a cache refresh so other computers will have the updated pref as quickly as possible
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				Ledgers.ComputeAging(0,dateTimeToday);
 				Prefs.UpdateString(PrefName.DateLastAging,POut.Date(dateTimeToday,false));
 			};
 			progressOD.StartingMessage=Lan.g(this,"Calculating enterprise aging for all patients as of")+" "+dateTimeToday.ToShortDateString()+"...";
 			try{
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch(Exception ex){
 				Ledgers.AgingExceptionHandler(ex,this);
@@ -653,7 +650,7 @@ namespace OpenDental{
 			if(progressOD.IsCancelled){
 				return false;
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.AgingRan,0,"Aging completed - Billing Options");
+			SecurityLogs.MakeLogEntry(Permissions.AgingRan,0,"Aging completed - Billing Options");
 			return progressOD.IsSuccess;
 		}
 
@@ -676,18 +673,16 @@ namespace OpenDental{
 				return;
 			}
 			int countCreated;
-			if(comboClinic.ListClinicNumsSelected.Count > 1) { 
-				countCreated=CreateManyHelper(comboClinic.ListClinicNumsSelected);
+			if(comboClinic.ListSelectedClinicNums.Count > 1) { 
+				countCreated=CreateManyHelper(comboClinic.ListSelectedClinicNums);
 			}
-			else if(comboClinic.ListClinicNumsSelected.Count == 1) { 
-				countCreated=CreateHelper(comboClinic.ListClinicNumsSelected[0]);
+			else if(comboClinic.ListSelectedClinicNums.Count == 1) { 
+				countCreated=CreateHelper(comboClinic.ListSelectedClinicNums[0]);
 			}
 			else { //Clinics are not enabled.
 				countCreated=CreateHelper(-2);
 			}
 			if(countCreated>0){
-				ListClinicNumsSelected=comboClinic.ListClinicNumsSelected; 
-				IsAllSelected=comboClinic.IsAllSelected;
 				DialogResult=DialogResult.OK;
 			}
 		}
@@ -826,7 +821,7 @@ namespace OpenDental{
 					}
 				}
 			}
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				List<long> listPatNumsToExclude=PatPlans.GetPatNumsByInsFilingCodes(listInsFilingCodeNums);
 				listPatAgings=Patients.GetAgingList(getAge,lastStatement,billingNums,checkBadAddress.Checked,!checkShowNegative.Checked,
@@ -834,7 +829,7 @@ namespace OpenDental{
 					checkSinglePatient.Checked,listPendingInsPatNums,listUnsentPatNums,dictionaryPatAgingTransactions,listPatNumsToExclude: listPatNumsToExclude);
 			};
 			try {
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 			}
 			catch (Exception ex){
 				string text=Lan.g(this,"Error getting list:")+" "+ex.Message+"\r\n\n\n"+ex.StackTrace;
@@ -1008,9 +1003,6 @@ namespace OpenDental{
 						+"APR: "+(installmentPlan.APR/100).ToString("P")+"\r\n"
 						+"Note: "+installmentPlan.Note);
 				}
-				else {
-					statement.Note=textNote.Text.Replace("[InstallmentPlanTerms]","");
-				}
 				PatAgingData patAgingData;
 				dictionaryPatAgingData.TryGetValue(listPatAgings[i].PatNum,out patAgingData);
 				//appointment reminders are not handled here since it would be too slow.
@@ -1052,10 +1044,10 @@ namespace OpenDental{
 				listStatementsForInsert.Add(statement);
 			}
 			if(listStatementsForInsert.Count>0) {
-				progressOD=new ProgressWin();
+				progressOD=new ProgressOD();
 				progressOD.StartingMessage=Lan.g(this,"Inserting Statements to database")+"...";
 				progressOD.ActionMain=() => Statements.InsertMany(listStatementsForInsert);
-				progressOD.ShowDialog();
+				progressOD.ShowDialogProgress();
 				if(progressOD.IsCancelled){
 					return -1;//don't close window
 				}
@@ -1063,5 +1055,14 @@ namespace OpenDental{
 			return listStatementsForInsert.Count;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
 	}
+
+
+
+
 }

@@ -15,7 +15,7 @@ namespace OpenDentBusiness{
 
 		private class ERoutingActionDefCache : CacheListAbs<ERoutingActionDef> {
 			protected override List<ERoutingActionDef> GetCacheFromDb() {
-				string command= "SELECT * FROM eroutingactiondef";
+				string command= "SELECT * FROM eRoutingactiondef";
 				return Crud.ERoutingActionDefCrud.SelectMany(command);
 			}
 			protected override List<ERoutingActionDef> TableToList(DataTable table) {

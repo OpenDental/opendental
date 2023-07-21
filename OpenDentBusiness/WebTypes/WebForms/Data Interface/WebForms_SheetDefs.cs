@@ -1,9 +1,12 @@
-﻿using CodeBase;
-using DataConnectionBase;
-using OpenDentBusiness.WebTypes.WebForms.Crud;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using CodeBase;
+using OpenDentBusiness;
 using WebServiceSerializer;
 
 namespace OpenDentBusiness.WebTypes.WebForms {
@@ -139,168 +142,5 @@ namespace OpenDentBusiness.WebTypes.WebForms {
 			}
 			return PayloadHelper.CreatePayloadContent(fileName,"FileName");
 		}
-
-		#region WebHostSynch
-
-		///<summary>Returns a WebForms_SheetDef object comprised from the values found from the sheetDef passed in.
-		///Mainly used for backwards compatibility with the old web methods.  Throws exceptions.</summary>
-		private static WebForms_SheetDef CopySheetDefToWebForms(SheetDef sheetDef,long dentalOfficeID,long webSheetDefID,long registrationKeyNum) {
-			//Convert ODBiz SheetDef to WebForms SheetDef.
-			WebForms_SheetDef ret=new WebForms_SheetDef() {
-				DentalOfficeID=dentalOfficeID,
-				//Retain the original primary key.
-				WebSheetDefID=webSheetDefID,
-				Description=sheetDef.Description,
-				FontName=sheetDef.FontName,
-				SheetType=(SheetTypeEnum)sheetDef.SheetType,
-				FontSize=sheetDef.FontSize,
-				Width=sheetDef.Width,
-				Height=sheetDef.Height,
-				IsLandscape=sheetDef.IsLandscape,
-				SheetDefNum=sheetDef.SheetDefNum,
-				HasMobileLayout=sheetDef.HasMobileLayout,
-				SheetFieldDefs=new List<WebForms_SheetFieldDef>(),
-				RegistrationKeyNum=registrationKeyNum,
-				RevID=sheetDef.RevID,
-			};
-			//Convert ODBiz SheetFieldDefs to WebForms SheetFieldDefs.
-			foreach(SheetFieldDef sheetFieldDef in sheetDef.SheetFieldDefs) {//assign several webforms_sheetfielddef
-				WebForms_SheetFieldDef sheetFieldDefWebForms=new WebForms_SheetFieldDef();
-				sheetFieldDefWebForms.WebSheetDefID=ret.WebSheetDefID;
-				ret.SheetFieldDefs.Add(sheetFieldDefWebForms);
-				// assign each property of a single webforms_sheetfielddef with corresponding values.
-				foreach(FieldInfo sheetFieldDef_fieldInfo in sheetFieldDef.GetType().GetFields()) {
-					foreach(FieldInfo webFormFieldDef_fieldInfo in sheetFieldDefWebForms.GetType().GetFields()) {
-						if(sheetFieldDef_fieldInfo.Name!=webFormFieldDef_fieldInfo.Name) {
-							continue;
-						}
-						if(sheetFieldDef_fieldInfo.GetValue(sheetFieldDef)==null) {
-							webFormFieldDef_fieldInfo.SetValue(sheetFieldDefWebForms,"");
-						}
-						else {
-							webFormFieldDef_fieldInfo.SetValue(sheetFieldDefWebForms,sheetFieldDef_fieldInfo.GetValue(sheetFieldDef));
-						}
-					}//foreach webFormFieldDef_propertyinfo
-				}//foreach sheetFieldDef_fieldinfo
-			}
-			return ret;
-		}
-
-		///<summary></summary>
-		public static void Delete(long webSheetDefID) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),webSheetDefID);
-				return;
-			}
-			DataAction.Run(() => WebForms_SheetDefCrud.Delete(webSheetDefID),ConnectionNames.WebForms);
-		}
-
-		public static void DeleteSheetDef(long dentalOfficeID,long registrationKeyNum,string officeData) {
-			long sheetDefNum=WebSerializer.DeserializeTag<long>(officeData,"WebSheetDefID");
-			//Delete fields defs first.
-			WebForms_SheetFieldDefs.DeleteForWebSheetDefID(sheetDefNum);
-			//It is now safe to delete the sheet.
-			Delete(sheetDefNum);
-		}
-
-		public static List<WebForms_SheetDef> DownloadSheetDefs(long dentalOfficeID,long registrationKeyNum,string officeData) {
-			//We intentionally retrieve all sheet defs for the provided regkey AND all sheet defs without a regkey set
-			List<WebForms_SheetDef> listSheetDefs=RefreshForRegistrationKeyNum(registrationKeyNum);
-			listSheetDefs.AddRange(RefreshForDentalOfficeID(dentalOfficeID).FindAll(x => x.RegistrationKeyNum==0));
-			if(listSheetDefs.Count==0) {//We're assuming this means they are either on an old version or have not setup RKID yet.
-				//Only get SheetDefs without a RegistrationKeyNum set, at this point we know anything with RegistrationKeyNum > 0 is not for this office.
-				listSheetDefs=RefreshForDentalOfficeID(dentalOfficeID).FindAll(x => x.RegistrationKeyNum==0);
-			}
-			return listSheetDefs;
-		}
-
-		///<summary>Gets one WebForms_SheetDef from the db.</summary>
-		public static WebForms_SheetDef GetOne(long webSheetDefID) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<WebForms_SheetDef>(MethodBase.GetCurrentMethod(),webSheetDefID);
-			}
-			return DataAction.GetT(() => WebForms_SheetDefCrud.SelectOne(webSheetDefID),ConnectionNames.WebForms);
-		}
-
-		///<summary></summary>
-		public static long Insert(WebForms_SheetDef webForms_SheetDef) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				webForms_SheetDef.WebSheetDefID=Meth.GetLong(MethodBase.GetCurrentMethod(),webForms_SheetDef);
-				return webForms_SheetDef.WebSheetDefID;
-			}
-			return DataAction.GetT(() => WebForms_SheetDefCrud.Insert(webForms_SheetDef),ConnectionNames.WebForms);
-		}
-
-		public static void InsertSheetDef(long dentalOfficeID,long registrationKeyNum,string officeData) {
-			//Client sent us the new version.
-			SheetDef sheetDef=WebSerializer.DeserializeTag<SheetDef>(officeData,"SheetDef");
-			//Convert to WebForms object. This will not set FK of field defs (we don't have it yet). 
-			//That needs to be done after insert of the Sheet below.
-			WebForms_SheetDef sheetDefWebForms=CopySheetDefToWebForms(sheetDef,dentalOfficeID,0,registrationKeyNum);
-			//Always an insert.
-			Insert(sheetDefWebForms);
-			//Insert new field defs.
-			sheetDefWebForms.SheetFieldDefs.ForEach(x => {
-				//FK was not available when these were created above so set it now.
-				x.WebSheetDefID=sheetDefWebForms.WebSheetDefID;
-			});
-			WebForms_SheetFieldDefs.InsertMany(sheetDefWebForms.SheetFieldDefs);
-		}
-
-		///<summary></summary>
-		public static List<WebForms_SheetDef> RefreshForDentalOfficeID(long dentalOfficeID) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<WebForms_SheetDef>>(MethodBase.GetCurrentMethod(),dentalOfficeID);
-			}
-			return DataAction.GetT(() => {
-				string command="SELECT * FROM webforms_sheetdef WHERE DentalOfficeID = "+POut.Long(dentalOfficeID);
-				return WebForms_SheetDefCrud.SelectMany(command);
-			},ConnectionNames.WebForms);
-		}
-
-		///<summary></summary>
-		public static List<WebForms_SheetDef> RefreshForRegistrationKeyNum(long RegistrationKeyNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<WebForms_SheetDef>>(MethodBase.GetCurrentMethod(),RegistrationKeyNum);
-			}
-			return DataAction.GetT(() => {
-				string command="SELECT * FROM webforms_sheetdef WHERE RegistrationKeyNum = "+POut.Long(RegistrationKeyNum);
-				return WebForms_SheetDefCrud.SelectMany(command);
-			},ConnectionNames.WebForms);
-		}
-
-		///<summary></summary>
-		public static void Update(WebForms_SheetDef webForms_SheetDef) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),webForms_SheetDef);
-				return;
-			}
-			DataAction.Run(() => WebForms_SheetDefCrud.Update(webForms_SheetDef),ConnectionNames.WebForms);
-		}
-
-		public static void UpdateSheetDef(long dentalOfficeID,long registrationKeyNum,string officeData) {
-			long webSheetDefID=WebSerializer.DeserializeTag<long>(officeData,"WebSheetDefID");
-			WebForms_SheetDef sheetDefWebForms=GetOne(webSheetDefID);
-			if(sheetDefWebForms==null) {
-				throw new ApplicationException("Corresponding Web Form not found.");
-			}
-			//The WebForm SheetDef is already associated to a regkey and its not this one.
-			if(sheetDefWebForms.RegistrationKeyNum>0 && sheetDefWebForms.RegistrationKeyNum!=registrationKeyNum) {
-				throw new ApplicationException("Corresponding Web Form is associated to a different Registration Key.  Please create and upload a new Sheet Def.");
-			}
-			//Client sent us the new version.
-			SheetDef sheetDef=WebSerializer.DeserializeTag<SheetDef>(officeData,"SheetDef");
-			//Delete existing defs associated to the WebSheetDefID.
-			WebForms_SheetFieldDefs.DeleteForWebSheetDefID(sheetDefWebForms.WebSheetDefID);
-			//It is important that we retain the original WebSheetDefID so copy in all new fields but retain the original db row and PK.
-			//This PK is baked into the WebForm URL that the customer has likely already published.
-			sheetDefWebForms=CopySheetDefToWebForms(sheetDef,dentalOfficeID,sheetDefWebForms.WebSheetDefID,registrationKeyNum);
-			//Always an update.
-			Update(sheetDefWebForms);
-			//Original field defs were deleted above so insert all new ones.
-			WebForms_SheetFieldDefs.InsertMany(sheetDefWebForms.SheetFieldDefs);
-		}
-
-		#endregion
 	}
 }

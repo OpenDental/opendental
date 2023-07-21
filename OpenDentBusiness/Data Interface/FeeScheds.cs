@@ -84,14 +84,6 @@ namespace OpenDentBusiness{
 			}
 			return retVal;
 		}
-
-		///<summary>Gets one FeeSched object from the database using the primary key. Returns null if not found.</summary>
-		public static FeeSched GetOneFeeSched(long feeSchedNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<FeeSched>(MethodBase.GetCurrentMethod(),feeSchedNum);
-			}
-			return Crud.FeeSchedCrud.SelectOne(feeSchedNum);
-		}
 		#endregion
 
 		#region Misc Methods
@@ -125,7 +117,7 @@ namespace OpenDentBusiness{
 					if(listNewFees.IsNullOrEmpty()) {
 						securityLogText="Fee Schedule \""+fromFeeSched.Description+"\" copied to Fee Schedule \""+toFeeSched.Description+"\".\r\n";
 						securityLogText+="  Note: Fee Schedule \""+fromFeeSched.Description+"\" was empty and has overwritten Fee Schedule \""+toFeeSched.Description+"\".";
-						SecurityLogs.MakeLogEntry(EnumPermType.FeeSchedEdit,0,securityLogText);
+						SecurityLogs.MakeLogEntry(Permissions.FeeSchedEdit,0,securityLogText);
 					}
 					foreach(Fee fee in listNewFees) {
 						bool isReplacementFee=false;
@@ -153,8 +145,8 @@ namespace OpenDentBusiness{
 						if(isReplacementFee) { 
 							securityLogText+="Replacing Previous Fee \""+oldFee.Amount+"\"";
 						}
-						SecurityLogs.MakeLogEntry(EnumPermType.FeeSchedEdit,0,securityLogText);
-						ODEvent.Fire(ODEventType.ProgressBar,
+						SecurityLogs.MakeLogEntry(Permissions.FeeSchedEdit,0,securityLogText);
+						ProgressBarEvent.Fire(ODEventType.ProgressBar,
 							new ProgressBarHelper(Lans.g("FormFeeSchedTools","Copying fees, please wait")+"...",blockValue:blockValue,blockMax:blockMax,
 							progressStyle:ProgBarStyle.Blocks));
 						lock(locker) {
@@ -214,7 +206,7 @@ namespace OpenDentBusiness{
 					else {
 						numSkipped++;
 					}
-					ODEvent.Fire(ODEventType.FeeSched,
+					FeeSchedEvent.Fire(ODEventType.FeeSched,
 					new ProgressBarHelper(Lans.g("FeeScheds","Processing fees, please wait")+"...","",(numImported+numSkipped),feeLines.Length,
 					ProgBarStyle.Continuous));
 				}
@@ -243,7 +235,7 @@ namespace OpenDentBusiness{
 					sr.Write(procCode.AbbrDesc+"\t");
 					sr.WriteLine(procCode.Descript);
 					double percent=((rowNum*1.0)/listProcCodes.Count*100);
-					ODEvent.Fire(ODEventType.ProgressBar,new ProgressBarHelper(
+					ProgressBarEvent.Fire(ODEventType.ProgressBar,new ProgressBarHelper(
 						"Exporting fees, please wait...",percent.ToString(),blockValue:(int)percent,progressStyle:ProgBarStyle.Blocks));
 					rowNum++;
 				}
@@ -276,7 +268,6 @@ namespace OpenDentBusiness{
 				Meth.GetVoid(MethodBase.GetCurrentMethod());
 				return;
 			}
-			//Jordan Bad pattern
 			string command=@"UPDATE feesched,(SELECT @neworder:=-1) a,
 				(SELECT FeeSchedNum,(@neworder := @neworder+1) AS NewOrderCol
 				FROM feesched
@@ -292,7 +283,6 @@ namespace OpenDentBusiness{
 				Meth.GetVoid(MethodBase.GetCurrentMethod());
 				return;
 			}
-			//Jordan Bad pattern
 			string command=@"UPDATE feesched,(SELECT @neworder:=-1) a,
 				(SELECT FeeSchedNum,(@neworder := @neworder+1) AS NewOrderCol
 				FROM feesched

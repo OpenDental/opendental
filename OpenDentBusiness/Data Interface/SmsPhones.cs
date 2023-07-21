@@ -175,55 +175,55 @@ namespace OpenDentBusiness{
 			return Crud.SmsPhoneCrud.SelectMany(command);
 		}
 
-		public static DataTable GetSmsUsageLocal(List<long> listClinicNums, DateTime dateMonth,List<SmsPhone> listSmsPhones) {
+		public static DataTable GetSmsUsageLocal(List<long> listClinicNums, DateTime dateMonth,List<SmsPhone> listPhones) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetTable(MethodBase.GetCurrentMethod(),listClinicNums,dateMonth,listSmsPhones);
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),listClinicNums,dateMonth,listPhones);
 			}
-			#region Initialize tableSmsUsageLocal DataTable
+			#region Initialize retVal DataTable
 			string strNoActivePhones="No Active Phones";
-			List<SmsPhone> listSmsPhonesClinicNum=listSmsPhones.FindAll(x => listClinicNums.Contains(x.ClinicNum));
+			List<SmsPhone> listSmsPhones=listPhones.Where(x => listClinicNums.Contains(x.ClinicNum)).ToList();
 			DateTime dateStart=dateMonth.Date.AddDays(1-dateMonth.Day);//remove time portion and day of month portion. Remainder should be midnight of the first of the month
 			DateTime dateEnd=dateStart.AddMonths(1);//This should be midnight of the first of the following month.
 			//This query builds the data table that will be filled from several other queries, instead of writing one large complex query.
 			//It is written this way so that the queries are simple to write and understand, and makes Oracle compatibility easier to maintain.
 			string command=@"SELECT 
-				CAST(0 AS DECIMAL(25,0)) ClinicNum,
-				' ' PhoneNumber,
-				' ' CountryCode,
-				0 SentMonth,
-				0.0 SentCharge,
-				0.0 SentDiscount,
-				0.0 SentPreDiscount,
-				0 ReceivedMonth,
-				0.0 ReceivedCharge 
-				FROM
-				DUAL";//this is a cute way to get a data table with the correct layout without having to query any real data.
-			DataTable tableSmsUsageLocal=Db.GetTable(command).Clone();//use .Clone() to get schema only, with no rows.
-			tableSmsUsageLocal.TableName="SmsUsageLocal";
+							 CAST(0 AS DECIMAL(25,0)) ClinicNum,
+							  ' ' PhoneNumber,
+							  ' ' CountryCode,
+							  0 SentMonth,
+							  0.0 SentCharge,
+								0.0 SentDiscount,
+								0.0 SentPreDiscount,
+							  0 ReceivedMonth,
+							  0.0 ReceivedCharge 
+							FROM
+							  DUAL";//this is a cute way to get a data table with the correct layout without having to query any real data.
+			DataTable retVal=Db.GetTable(command).Clone();//use .Clone() to get schema only, with no rows.
+			retVal.TableName="SmsUsageLocal";
 			for(int i=0;i<listClinicNums.Count;i++) {
-				DataRow dataRow=tableSmsUsageLocal.NewRow();
-				dataRow["ClinicNum"]=listClinicNums[i];
-				dataRow["PhoneNumber"]=strNoActivePhones;
-				SmsPhone smsPhoneFirstActive=listSmsPhonesClinicNum
-					.FindAll(x => x.ClinicNum==listClinicNums[i])//phones for this clinic
-					.FindAll(x => x.DateTimeInactive.Year<1880)//that are active
+				DataRow row=retVal.NewRow();
+				row["ClinicNum"]=listClinicNums[i];
+				row["PhoneNumber"]=strNoActivePhones;
+				SmsPhone firstActivePhone=listSmsPhones
+					.Where(x => x.ClinicNum==listClinicNums[i])//phones for this clinic
+					.Where(x => x.DateTimeInactive.Year<1880)//that are active
 					.OrderByDescending(x => x.IsPrimary)
 					.ThenBy(x => x.DateTimeActive)
 					.FirstOrDefault();
-				if(smsPhoneFirstActive!=null) {
-					dataRow["PhoneNumber"]=smsPhoneFirstActive.PhoneNumber;
-					dataRow["CountryCode"]=smsPhoneFirstActive.CountryCode;
+				if(firstActivePhone!=null) {
+					row["PhoneNumber"]=firstActivePhone.PhoneNumber;
+					row["CountryCode"]=firstActivePhone.CountryCode;
 				}
-				dataRow["SentMonth"]=0;
-				dataRow["SentCharge"]=0.0;
-				dataRow["SentDiscount"]=0.0;
-				dataRow["SentPreDiscount"]=0.0;
-				dataRow["ReceivedMonth"]=0;
-				dataRow["ReceivedCharge"]=0.0;
-				tableSmsUsageLocal.Rows.Add(dataRow);
+				row["SentMonth"]=0;
+				row["SentCharge"]=0.0;
+				row["SentDiscount"]=0.0;
+				row["SentPreDiscount"]=0.0;
+				row["ReceivedMonth"]=0;
+				row["ReceivedCharge"]=0.0;
+				retVal.Rows.Add(row);
 			}
 			#endregion
-			#region Fill tableSmsUsageLocal DataTable
+			#region Fill retVal DataTable
 			//Sent Last Month
 			command="SELECT ClinicNum, COUNT(*), ROUND(SUM(MsgChargeUSD),2),ROUND(SUM(MsgDiscountUSD),2)"
 				+",SUM(CASE SmsPhoneNumber WHEN '"+POut.String(SmsPhones.SHORTCODE)+"' THEN 1 ELSE 0 END) FROM smstomobile "
@@ -232,17 +232,17 @@ namespace OpenDentBusiness{
 				+"AND MsgChargeUSD>0 GROUP BY ClinicNum";
 			DataTable table=Db.GetTable(command);
 			for(int i=0;i<table.Rows.Count;i++) {
-				for(int j=0;j<tableSmsUsageLocal.Rows.Count;j++) {
-					if(tableSmsUsageLocal.Rows[j]["ClinicNum"].ToString()!=table.Rows[i]["ClinicNum"].ToString()) {
+				for(int j=0;j<retVal.Rows.Count;j++) {
+					if(retVal.Rows[j]["ClinicNum"].ToString()!=table.Rows[i]["ClinicNum"].ToString()) {
 						continue;
 					}
-					tableSmsUsageLocal.Rows[j]["SentMonth"]=table.Rows[i][1];//.ToString();
-					tableSmsUsageLocal.Rows[j]["SentCharge"]=table.Rows[i][2];//.ToString();
-					tableSmsUsageLocal.Rows[j]["SentDiscount"]=table.Rows[i][3];
-					tableSmsUsageLocal.Rows[j]["SentPreDiscount"]=PIn.Double(tableSmsUsageLocal.Rows[j]["SentCharge"].ToString())+PIn.Double(tableSmsUsageLocal.Rows[j]["SentDiscount"].ToString());
+					retVal.Rows[j]["SentMonth"]=table.Rows[i][1];//.ToString();
+					retVal.Rows[j]["SentCharge"]=table.Rows[i][2];//.ToString();
+					retVal.Rows[j]["SentDiscount"]=table.Rows[i][3];
+					retVal.Rows[j]["SentPreDiscount"]=PIn.Double(retVal.Rows[j]["SentCharge"].ToString())+PIn.Double(retVal.Rows[j]["SentDiscount"].ToString());
 					//No active phone but at least one of these messages sent from Short Code
-					if(tableSmsUsageLocal.Rows[j]["PhoneNumber"].ToString()==strNoActivePhones && PIn.Long(table.Rows[i][4].ToString())>0) {
-						tableSmsUsageLocal.Rows[j]["PhoneNumber"]=POut.String(SmsPhones.SHORTCODE);//display "SHORTCODE" as primary number.
+					if(retVal.Rows[j]["PhoneNumber"].ToString()==strNoActivePhones && PIn.Long(table.Rows[i][4].ToString())>0) {
+						retVal.Rows[j]["PhoneNumber"]=POut.String(SmsPhones.SHORTCODE);//display "SHORTCODE" as primary number.
 					}
 					break;
 				}
@@ -254,62 +254,57 @@ namespace OpenDentBusiness{
 				+"GROUP BY ClinicNum";
 			table=Db.GetTable(command);
 			for(int i=0;i<table.Rows.Count;i++) {
-				for(int j=0;j<tableSmsUsageLocal.Rows.Count;j++) {
-					if(tableSmsUsageLocal.Rows[j]["ClinicNum"].ToString()!=table.Rows[i]["ClinicNum"].ToString()) {
+				for(int j=0;j<retVal.Rows.Count;j++) {
+					if(retVal.Rows[j]["ClinicNum"].ToString()!=table.Rows[i]["ClinicNum"].ToString()) {
 						continue;
 					}
-					tableSmsUsageLocal.Rows[j]["ReceivedMonth"]=table.Rows[i][1].ToString();
-					tableSmsUsageLocal.Rows[j]["ReceivedCharge"]="0";
+					retVal.Rows[j]["ReceivedMonth"]=table.Rows[i][1].ToString();
+					retVal.Rows[j]["ReceivedCharge"]="0";
 					//No active phone but at least one of these messages sent from Short Code
-					if(tableSmsUsageLocal.Rows[j]["PhoneNumber"].ToString()==strNoActivePhones && PIn.Long(table.Rows[i][2].ToString())>0) {
-						tableSmsUsageLocal.Rows[j]["PhoneNumber"]=POut.String(SmsPhones.SHORTCODE);//display "SHORTCODE" as primary number.
+					if(retVal.Rows[j]["PhoneNumber"].ToString()==strNoActivePhones && PIn.Long(table.Rows[i][2].ToString())>0) {
+						retVal.Rows[j]["PhoneNumber"]=POut.String(SmsPhones.SHORTCODE);//display "SHORTCODE" as primary number.
 					}
 					break;
 				}
 			}
 			#endregion
-			return tableSmsUsageLocal;
+			return retVal;
 		}
 		
 		///<summary>Find all phones in the db (by PhoneNumber) and sync with listPhonesSync. If a given PhoneNumber does not already exist then insert the SmsPhone.
 		///If a given PhoneNumber exists in the local db but does not exist in the HQ-provided listPhoneSync, then deacitvate that phone locallly.
 		///Return true if a change has been made to the database.</summary>
-		public static bool UpdateOrInsertFromList(List<SmsPhone> listSmsPhonesSync) {
+		public static bool UpdateOrInsertFromList(List<SmsPhone> listPhonesSync) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),listSmsPhonesSync);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),listPhonesSync);
 			}
 			//Get all phones so we can filter as needed below.
 			string command="SELECT * FROM smsphone";
-			List<SmsPhone> listSmsPhonesDb=Crud.SmsPhoneCrud.SelectMany(command);
-			List<SmsPhone> listSmsPhonesFiltered=new List<SmsPhone>();
+			List<SmsPhone> listPhonesDb=Crud.SmsPhoneCrud.SelectMany(command);
 			bool isChanged=false;
 			//Deal with phones that occur in the HQ-supplied list.
-			for(int i=0;i<listSmsPhonesSync.Count;i++) {
-				listSmsPhonesFiltered=listSmsPhonesDb.FindAll(x => x.PhoneNumber==listSmsPhonesSync[i].PhoneNumber);
-				if(listSmsPhonesFiltered.IsNullOrEmpty()) {//This phone does not yet exist in the DB.
-					Insert(listSmsPhonesSync[i]);
-					isChanged=true;
-					continue;
+			foreach(SmsPhone phoneSync in listPhonesSync) {
+				SmsPhone phoneOld=listPhonesDb.FirstOrDefault(x => x.PhoneNumber==phoneSync.PhoneNumber);
+				//Upsert.
+				if(phoneOld!=null) { //This phone already exists. Update it to look like the phone we are trying to insert.
+					phoneOld.ClinicNum=phoneSync.ClinicNum; //The clinic may have changed so set it to the new clinic.
+					phoneOld.CountryCode=phoneSync.CountryCode;
+					phoneOld.DateTimeActive=phoneSync.DateTimeActive;
+					phoneOld.DateTimeInactive=phoneSync.DateTimeInactive;
+					phoneOld.InactiveCode=phoneSync.InactiveCode;
+					Update(phoneOld);
 				}
-				//We don't expect this to happen often and if it does the list would be short.
-				for(int j = 0;j < listSmsPhonesFiltered.Count;j++) {
-					//This phone already exists. Update it to look like the phone we are trying to insert.
-					listSmsPhonesFiltered[j].ClinicNum=listSmsPhonesSync[i].ClinicNum; //The clinic may have changed so set it to the new clinic.
-					listSmsPhonesFiltered[j].CountryCode=listSmsPhonesSync[i].CountryCode;
-					listSmsPhonesFiltered[j].DateTimeActive=listSmsPhonesSync[i].DateTimeActive;
-					listSmsPhonesFiltered[j].DateTimeInactive=listSmsPhonesSync[i].DateTimeInactive;
-					listSmsPhonesFiltered[j].InactiveCode=listSmsPhonesSync[i].InactiveCode;
-					Update(listSmsPhonesFiltered[j]);
-					isChanged=true;
+				else { //This phone is new so insert it.
+					Insert(phoneSync);
 				}
+				isChanged=true;
 			}
 			//Deal with phones which are in the local db but that do not occur in the HQ-supplied list.
-			List<SmsPhone> listSmsPhones=listSmsPhonesDb.FindAll(x => !listSmsPhonesSync.Any(y => y.PhoneNumber==x.PhoneNumber));
-			for(int i=0;i<listSmsPhones.Count;i++) {
+			foreach(SmsPhone phoneNotFound in listPhonesDb.FindAll(x => !listPhonesSync.Any(y => y.PhoneNumber==x.PhoneNumber))) {
 				//This phone not found at HQ so deactivate it.
-				listSmsPhones[i].DateTimeInactive=DateTime.Now;
-				listSmsPhones[i].InactiveCode="Phone not found at HQ";
-				Update(listSmsPhones[i]);
+				phoneNotFound.DateTimeInactive=DateTime.Now;
+				phoneNotFound.InactiveCode="Phone not found at HQ";
+				Update(phoneNotFound);
 				isChanged=true;
 			}
 			return isChanged;
@@ -321,24 +316,24 @@ namespace OpenDentBusiness{
 				return Meth.GetDouble(MethodBase.GetCurrentMethod(),clinicNum);
 			}
 			double limit=0;
-			if(PrefC.HasClinicsEnabled) {
-				if(clinicNum==0 && Clinics.GetCount(true) > 0) {//Sending text for "Unassigned" patient. Use the first non-hidden clinic. (for now)
-					clinicNum=Clinics.GetFirst(true).ClinicNum;
-				}
-				Clinic clinic=Clinics.GetClinic(clinicNum);
-				if(clinic!=null && clinic.SmsContractDate.Year>1880) {
-					limit=clinic.SmsMonthlyLimit;
-				}
-			}
-			else { 
+			if(!PrefC.HasClinicsEnabled) {
 				if(PrefC.GetDate(PrefName.SmsContractDate).Year>1880) {
 					limit=PrefC.GetDouble(PrefName.SmsMonthlyLimit,doUseEnUSFormat:true);
 				}
 			}
-			DateTime dateStart=new DateTime(DateTime.Today.Year,DateTime.Today.Month,1);
-			DateTime dateEnd=dateStart.AddMonths(1);
+			else { 
+				if(clinicNum==0 && Clinics.GetCount(true) > 0) {//Sending text for "Unassigned" patient.  Use the first non-hidden clinic. (for now)
+					clinicNum=Clinics.GetFirst(true).ClinicNum;
+				}
+				Clinic clinicCur=Clinics.GetClinic(clinicNum);
+				if(clinicCur!=null && clinicCur.SmsContractDate.Year>1880) {
+					limit=clinicCur.SmsMonthlyLimit;
+				}
+			}
+			DateTime dtStart=new DateTime(DateTime.Today.Year,DateTime.Today.Month,1);
+			DateTime dtEnd=dtStart.AddMonths(1);
 			string command="SELECT SUM(MsgChargeUSD) FROM smstomobile WHERE ClinicNum="+POut.Long(clinicNum)+" "
-				+"AND DateTimeSent>="+POut.Date(dateStart)+" AND DateTimeSent<"+POut.Date(dateEnd);
+				+"AND DateTimeSent>="+POut.Date(dtStart)+" AND DateTimeSent<"+POut.Date(dtEnd);
 			limit-=PIn.Double(Db.GetScalar(command));
 			return limit;
 		}
@@ -349,10 +344,10 @@ namespace OpenDentBusiness{
 			if(Plugins.HookMethod(null,"SmsPhones.IsIntegratedTextingEnabled_start")) {
 				return true;
 			}
-			if(PrefC.HasClinicsEnabled) {
-				return (Clinics.GetFirstOrDefault(x => x.SmsContractDate.Year > 1880)!=null);
+			if(!PrefC.HasClinicsEnabled) {
+				return PrefC.GetDateT(PrefName.SmsContractDate).Year>1880;
 			}
-			return PrefC.GetDateT(PrefName.SmsContractDate).Year>1880;
+			return (Clinics.GetFirstOrDefault(x => x.SmsContractDate.Year > 1880)!=null);
 		}
 
 		///<summary>Returns 0 if clinics not in use, or patient.ClinicNum if assigned to a clinic, or ClinicNum of the default texting clinic.</summary>
@@ -369,14 +364,14 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns true if there is an active phone for the country code.</summary>
-		public static bool IsTextingForCountry(params string[] stringArrayCountryCodes) {
-			if(stringArrayCountryCodes==null || stringArrayCountryCodes.Length==0) {
+		public static bool IsTextingForCountry(params string[] countryCodes) {
+			if(countryCodes==null || countryCodes.Length==0) {
 				return false;
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),stringArrayCountryCodes);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),countryCodes);
 			}
-			string command = "SELECT COUNT(*) FROM smsphone WHERE CountryCode IN ("+string.Join(",",stringArrayCountryCodes.Select(x=>"'"+POut.String(x)+"'"))+") AND "+DbHelper.Year("DateTimeInactive")+"<1880";
+			string command = "SELECT COUNT(*) FROM smsphone WHERE CountryCode IN ("+string.Join(",",countryCodes.Select(x=>"'"+POut.String(x)+"'"))+") AND "+DbHelper.Year("DateTimeInactive")+"<1880";
 			return Db.GetScalar(command)!="0";
 		}
 
@@ -397,34 +392,38 @@ namespace OpenDentBusiness{
 			if(countBytesForWholeMessage<=countBytesPerMessagePart) {
 				return 1;
 			}
-			countBytesPerMessagePart-=countHeaderBytes;
-			if(countBytesPerMessagePart<=0) {//safe guard in case we try to divide by 0
-				return 1;
+			else {
+				countBytesPerMessagePart-=countHeaderBytes;
+				if(countBytesPerMessagePart<=0) {//safe guard in case we try to divide by 0
+					return 1;
+				}
+				double value=countBytesForWholeMessage/countBytesPerMessagePart;
+				return (int)Math.Ceiling(value);
 			}
-			double value=countBytesForWholeMessage/countBytesPerMessagePart;
-			return (int)Math.Ceiling(value);
 		}
 
 		public static double GetCountBytesForMessage(string text, string charsGsm, string charsGsmExtended) {
-			MessageCharSet messageCharSetType=GetMessageCharSet(text,charsGsm,charsGsmExtended);
+			MessageCharSet msgType=GetMessageCharSet(text,charsGsm,charsGsmExtended);
 			double countBytesForMessage;
-			if(messageCharSetType==MessageCharSet.Unicode) {
+			if(msgType==MessageCharSet.Unicode) {
 				countBytesForMessage=text.Length*2;
-				return countBytesForMessage;
 			}
-			double bitsForMessage=0;
-			for(int i=0;i<text.Length;i++) {
-				if(charsGsm.Contains(text[i])) {
-					bitsForMessage+=7;//standard gsm char set uses 7 bits
-					continue;
+			else {
+				double bitsForMessage=0;
+				for(int i=0;i<text.Length;i++) {
+					if(charsGsm.Contains(text[i])) {
+						bitsForMessage+=7;//standard gsm char set uses 7 bits
+					}
+					else if(charsGsmExtended.Contains(text[i])) {
+						bitsForMessage+=14;//extended gsm char set uses 14 bits
+					}
+					else {
+						bitsForMessage+=7;//Couldn't find the correct value but as this method is an estimate, we want to at least add one more character
+					}
 				}
-				if(charsGsmExtended.Contains(text[i])) {
-					bitsForMessage+=14;//extended gsm char set uses 14 bits
-					continue;
-				}
-				bitsForMessage+=7;//Couldn't find the correct value but as this method is an estimate, we want to at least add one more character
+				countBytesForMessage=Math.Ceiling(bitsForMessage/8.0);
 			}
-			countBytesForMessage=Math.Ceiling(bitsForMessage/8.0);
+			
 			return countBytesForMessage;
 		}
 

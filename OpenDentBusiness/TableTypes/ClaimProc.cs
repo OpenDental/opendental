@@ -115,10 +115,8 @@ namespace OpenDentBusiness{
 		public bool IsTransfer;
 		///<summary>Holds a comma delimited list of Claim Adjustment Reason Codes from an ERA. https://x12.org/codes/claim-adjustment-reason-codes </summary>
 		public string ClaimAdjReasonCodes;
-		///<summary>Bool, defaults to false. When true, Status is NotReceived and indicates that the claimproc represents an insurance overpayment OR underpayment.</summary>
+		///<summary>Bool, defaults to false. When true, indicates that a claimproc represents an insurance overpayment OR underpayment./summary>
 		public bool IsOverpay;
-		///<summary>Holds the salted hash of the following claimproc fields: ClaimNum, Status, InsPayEst, InsPayAmt. </summary>
-		public string SecurityHash;
 
 		///<summary>Returns a copy of this ClaimProc.</summary>
 		public ClaimProc Copy(){

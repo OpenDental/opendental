@@ -55,8 +55,12 @@ namespace OpenDentBusiness{
 					return GetSheetFromResource(Properties.Resources.FinancialAgreement);
 				case SheetInternalType.HIPAA:
 					return GetSheetFromResource(Properties.Resources.HIPAA);
-				case SheetInternalType.MedicalHist:
-					return GetSheetFromResource(Properties.Resources.MedicalHist);
+				case SheetInternalType.MedicalHistSimple:
+					return GetSheetFromResource(Properties.Resources.MedicalHistSimple);
+				case SheetInternalType.MedicalHistNewPat:
+					return GetSheetFromResource(Properties.Resources.MedicalHistNewPat);
+				case SheetInternalType.MedicalHistUpdate:
+					return GetSheetFromResource(Properties.Resources.MedicalHistUpdate);
 				case SheetInternalType.LabSlip:
 					return GetSheetFromResource(Properties.Resources.LabSlip);
 				case SheetInternalType.ExamSheet:

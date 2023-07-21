@@ -293,17 +293,17 @@ namespace OpenDental {
 		}
 
 		private void butProvSelect_Click(object sender,EventArgs e) {
-			FrmProviderPick frmProviderPick=new FrmProviderPick();
-			frmProviderPick.ShowDialog();
-			if(!frmProviderPick.IsDialogOK) {
+			using FormProviderPick formProviderPick=new FormProviderPick();
+			formProviderPick.ShowDialog();
+			if(formProviderPick.DialogResult!=DialogResult.OK) {
 				return;
 			}
-			if(frmProviderPick.ProvNumSelected!=_medLab.ProvNum) {
+			if(formProviderPick.ProvNumSelected!=_medLab.ProvNum) {
 				if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Update all lab tests and results for this specimen with the selected ordering provider?")) {
 					return;
 				}
 			}
-			Provider provider=Providers.GetProv(frmProviderPick.ProvNumSelected);
+			Provider provider=Providers.GetProv(formProviderPick.ProvNumSelected);
 			for(int i=0;i<ListMedLabs.Count;i++) {
 				ListMedLabs[i].OrderingProvLName=provider.LName;
 				ListMedLabs[i].OrderingProvFName=provider.FName;
@@ -373,29 +373,33 @@ namespace OpenDental {
 				filePathAndName=ODFileUtils.CombinePaths(patFolder,document.FileName);
 			}
 			else if(CloudStorage.IsCloudStorage) {
-				UI.ProgressWin progressWin=new UI.ProgressWin();
-				progressWin.StartingMessage="Downloading...";
-				byte[] byteArray=null;
-				progressWin.ActionMain=() => {
-					byteArray=CloudStorage.Download(ImageStore.GetPatientFolder(Patients.GetPat(_medLab.PatNum),ImageStore.GetPreferredAtoZpath()),document.FileName);
-				};
-				progressWin.ShowDialog();
-				if(byteArray==null || byteArray.Length==0){
+				using FormProgress formProgress=new FormProgress();
+				formProgress.DisplayText="Downloading...";
+				formProgress.NumberFormat="F";
+				formProgress.NumberMultiplication=1;
+				formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+				formProgress.TickMS=1000;
+				OpenDentalCloud.Core.TaskStateDownload state=CloudStorage.DownloadAsync(
+					ImageStore.GetPatientFolder(Patients.GetPat(_medLab.PatNum),ImageStore.GetPreferredAtoZpath())
+					,document.FileName
+					,new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
+				if(formProgress.ShowDialog()==DialogResult.Cancel) {
+					state.DoCancel=true;
 					return;
 				}
 				filePathAndName=PrefC.GetRandomTempFile(Path.GetExtension(document.FileName));
-				File.WriteAllBytes(filePathAndName,byteArray);
+				File.WriteAllBytes(filePathAndName,state.FileContent);
 			}
 			Cursor=Cursors.Default;
 			if(filePathAndName!="") {
-				if(ODBuild.IsThinfinity()) {
+				if(ODBuild.IsWeb()) {
 					ThinfinityUtils.HandleFile(filePathAndName);
 				}
 				else {
 					Process.Start(filePathAndName);
 				}
 			}
-			SecurityLogs.MakeLogEntry(EnumPermType.SheetEdit,sheet.PatNum,sheet.Description+" from "+sheet.DateTimeSheet.ToShortDateString()+" pdf was created");
+			SecurityLogs.MakeLogEntry(Permissions.SheetEdit,sheet.PatNum,sheet.Description+" from "+sheet.DateTimeSheet.ToShortDateString()+" pdf was created");
 			DialogResult=DialogResult.OK;
 		}
 
@@ -511,12 +515,16 @@ namespace OpenDental {
 				}
 				else if(CloudStorage.IsCloudStorage) {
 					//move files around in the cloud
-					UI.ProgressWin progressWin=new UI.ProgressWin();
-					progressWin.ShowCancelButton=false;
-					//We do not allow users to cancel from here due to the limitations of the current feature for figuring out which files were moved successfully.
-					progressWin.StartingMessage="Uploading...";
-					progressWin.ActionMain=() => CloudStorage.Move(atozFrom,atozTo);
-					progressWin.ShowDialog();
+					using FormProgress formProgress=new FormProgress(false);
+					formProgress.DisplayText="Uploading...";
+					formProgress.NumberFormat="F";
+					formProgress.NumberMultiplication=1;
+					formProgress.MaxVal=100;//Doesn't matter what this value is as long as it is greater than 0
+					formProgress.TickMS=1000;
+					OpenDentalCloud.Core.TaskStateMove state=CloudStorage.MoveAsync(atozFrom
+						,atozTo
+						,new OpenDentalCloud.ProgressHandler(formProgress.UpdateProgress));
+					formProgress.ShowDialog();//Don't allow users to cancel from here due to the limitations of the current feature for figuring out which files were moved successfully.
 				}
 				//if we get here the file was copied successfully or not storing images in the database, so update the document row
 				//Safe to update the document FileName and PatNum to PatCur and new file name
@@ -551,11 +559,15 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(PatCur!=null && PatCur.PatNum>0 && _medLab.PatNum!=PatCur.PatNum) {
 				MoveLabsAndImagesHelper();
 			}
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 	}

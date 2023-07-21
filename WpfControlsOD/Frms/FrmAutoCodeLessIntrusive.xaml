@@ -7,7 +7,7 @@
              xmlns:ui="clr-namespace:WpfControls.UI"
              mc:Ignorable="d"
              Width="511" Height="211" 
-             Text="Change Code?" MinMaxBoxes="False">
+             Text="Change Code?" Loaded="FrmAutoCodeLessIntrusive_Loaded" >
     <Grid Background="#FFFCFDFE" >
         <ui:Button x:Name="butYes" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,30,57" Text="_Yes" Click="butYes_Click" />
         <ui:Button x:Name="butNo" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="26" Margin="0,0,30,16" Text="_No" Click="butNo_Click" />

@@ -128,7 +128,7 @@ namespace OpenDental{
 		}
 
 		private void butCombine_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.RxMerge)) {
+			if(!Security.IsAuthorized(Permissions.RxMerge)) {
 				return;
 			}
 			if(gridMain.SelectedIndices.Length<2){
@@ -170,11 +170,15 @@ namespace OpenDental{
 			}
 			//Prescriptions were combined successfully. Loop through and make a securitylog entry for each one that was changed.
 			for(int i=0;i<listRxDefNames.Count;i++) {
-				SecurityLogs.MakeLogEntry(EnumPermType.RxMerge,0,Lan.g(this,"Prescription with name")+" "+listRxDefNames[i]+" "
+				SecurityLogs.MakeLogEntry(Permissions.RxMerge,0,Lan.g(this,"Prescription with name")+" "+listRxDefNames[i]+" "
 					+Lan.g(this,"was merged with")+" "+rxDefTo);
 			}
 			MsgBox.Show(this,"Merge complete.");
 			FillGrid();
+		}
+
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
 		}
 
 	}

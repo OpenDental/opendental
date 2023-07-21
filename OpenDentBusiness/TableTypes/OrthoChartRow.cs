@@ -20,7 +20,7 @@ namespace OpenDentBusiness {
 		public long UserNum;
 		///<summary>FK to provider.ProvNum.</summary>
 		public long ProvNum;
-		///<summary>Examples: "0:ritwq/wV8vlrgUYahhK+RH5UeBFA6W4jCkZdo0cDWd63aZb1S/W3Z4eW5LmchqfgniG23" and "1:52222559445999975122111500485555". The 1st character is whether or not the signature is Topaz. The 2nd character is a separator. The rest of the string is the hashed signature data. Raw signature data is the concatenation of the FieldName and FieldValue of all cells (orthocharts), ordered by FieldName.</summary>
+		///<summary>Signature.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
 		public string Signature;
 

@@ -21,7 +21,11 @@ namespace OpenDental{
 		private List<PayPeriod> _listPayPeriodsNonInserted;
 
 		///<summary></summary>
-		public FormPayPeriodEdit(PayPeriod payPeriod,List<PayPeriod> listPayPeriods=null) {
+		public FormPayPeriodEdit(PayPeriod payPeriod,List<PayPeriod> listPayPeriods=null)
+		{
+			//
+			// Required for Windows Form Designer support
+			//
 			_payPeriod=payPeriod;
 			_payPeriodOld=payPeriod.Copy();
 			if(listPayPeriods!=null) { 
@@ -53,7 +57,7 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			if(!textDateStart.IsValid()
 				|| !textDateStop.IsValid()
 				|| !textDatePaycheck.IsValid())
@@ -102,14 +106,42 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private void FormPayPeriodEdit_FormClosing(object sender,FormClosingEventArgs e) {
-			if(DialogResult!=DialogResult.Cancel) {
-				return;
-			}
+		private void butCancel_Click(object sender, System.EventArgs e) {
 			_payPeriod.DateStart=_payPeriodOld.DateStart;
 			_payPeriod.DateStop=_payPeriodOld.DateStop;
 			_payPeriod.DatePaycheck=_payPeriodOld.DatePaycheck;
+			DialogResult=DialogResult.Cancel;
 		}
+
+	
+
+		
+
+		
+
+		
+
 
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

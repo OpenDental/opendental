@@ -25,6 +25,7 @@ namespace OpenDental{
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormPaySimple));
+			this.butCancel = new OpenDental.UI.Button();
 			this.checkOneTimePayment = new OpenDental.UI.CheckBox();
 			this.labelRefNumber = new System.Windows.Forms.Label();
 			this.textRefNumber = new System.Windows.Forms.TextBox();
@@ -45,7 +46,7 @@ namespace OpenDental{
 			this.label3 = new System.Windows.Forms.Label();
 			this.textAmount = new System.Windows.Forms.TextBox();
 			this.labelAmount = new System.Windows.Forms.Label();
-			this.butSave = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.pd2 = new System.Drawing.Printing.PrintDocument();
 			this.tabControl = new OpenDental.UI.TabControl();
 			this.tabCredit = new OpenDental.UI.TabPage();
@@ -71,6 +72,17 @@ namespace OpenDental{
 			this.tabACH.SuspendLayout();
 			this.groupBankAccountType.SuspendLayout();
 			this.SuspendLayout();
+			// 
+			// butCancel
+			// 
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.butCancel.Location = new System.Drawing.Point(352, 343);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 2;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// checkOneTimePayment
 			// 
@@ -253,21 +265,20 @@ namespace OpenDental{
 			this.labelAmount.Text = "Amount";
 			this.labelAmount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
-			// butSave
+			// butOK
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(367, 343);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(261, 343);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// tabControl
 			// 
 			this.tabControl.Controls.Add(this.tabCredit);
 			this.tabControl.Controls.Add(this.tabACH);
-			this.tabControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
 			this.tabControl.Location = new System.Drawing.Point(24, 12);
 			this.tabControl.Name = "tabControl";
 			this.tabControl.Size = new System.Drawing.Size(420, 315);
@@ -446,9 +457,11 @@ namespace OpenDental{
 			// 
 			// FormPaySimple
 			// 
+			this.CancelButton = this.butCancel;
 			this.ClientSize = new System.Drawing.Size(456, 379);
 			this.Controls.Add(this.tabControl);
-			this.Controls.Add(this.butSave);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormPaySimple";
 			this.Text = "PaySimple Payment Information";
@@ -467,7 +480,8 @@ namespace OpenDental{
 
 		#endregion
 
-		private OpenDental.UI.Button butSave;
+		private OpenDental.UI.Button butOK;
+		private OpenDental.UI.Button butCancel;
 		private OpenDental.UI.CheckBox checkOneTimePayment;
 		private System.Windows.Forms.Label labelRefNumber;
 		private System.Windows.Forms.TextBox textRefNumber;

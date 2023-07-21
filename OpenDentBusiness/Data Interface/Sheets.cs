@@ -45,39 +45,23 @@ namespace OpenDentBusiness{
 			return Crud.SheetCrud.SelectMany(command);
 		}
 
-		///<summary>Returns true if a sheet with the WebFormSheetID passed in already exists in the database. Otherwise; false.
-		///Multiple entities can be retrieving the same web forms from HQ at the same time so it is important to check the sheet table to see if the SheetID has been retrieved before.
-		///Typically called before invoking SaveNewSheet() to avoid making duplicate sheets.</summary>
-		public static bool HasWebFormSheetID(long webFormSheetID) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),webFormSheetID);
-			}
-			string command="SELECT COUNT(*) FROM sheet WHERE WebFormSheetID = "+POut.Long(webFormSheetID);
-			if(Db.GetCount(command)=="0") {
-				return false;
-			}
-			string note="Duplicate SheetID detected. This web form will not be inserted into the sheet table since a row with this SheetID is already present.";
-			EServiceLogs.MakeLogEntryWebForms(eServiceAction.WFError,FKey:webFormSheetID,note:note);
-			return true;
-		}
-
 		///<Summary>This is normally done in FormSheetFillEdit, but if we bypass that window for some reason, we can also save a new sheet here. Signature
 		///fields are inserted as they are, so they must be keyed to the field values already. Saves the sheet and sheetfields exactly as they are. Used by
 		///webforms, for example, when a sheet is retrieved from the web server and the sheet signatures have already been keyed to the field values and
-		///need to be inserted as-is into the user's db. Return the SheetNum in case we need to use it locally when using middle tier.</Summary>
-		public static long SaveNewSheet(Sheet sheet) {
+		///need to be inserted as-is into the user's db.</Summary>
+		public static void SaveNewSheet(Sheet sheet) {
 			//This remoting role check is technically unnecessary but it significantly speeds up the retrieval process for Middle Tier users due to looping.
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				sheet.SheetNum=Meth.GetLong(MethodBase.GetCurrentMethod(),sheet);
-				return sheet.SheetNum;
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),sheet);
+				return;
 			}
 			if(!sheet.IsNew) {
 				throw new ApplicationException("Only new sheets allowed");
 			}
 			Insert(sheet);
 			//insert 'blank' sheetfields to get sheetfieldnums assigned, then use ordered sheetfieldnums with actual field data to update 'blank' db fields
-			List<SheetField> listSheetFieldsBlank=sheet.SheetFields.Select(x => new SheetField() { SheetNum=sheet.SheetNum }).ToList();
-			SheetFields.InsertMany(listSheetFieldsBlank);
+			List<SheetField> listBlankSheetFields=sheet.SheetFields.Select(x => new SheetField() { SheetNum=sheet.SheetNum }).ToList();
+			SheetFields.InsertMany(listBlankSheetFields);
 			List<SheetField> listSheetFieldsDb=SheetFields.GetListForSheet(sheet.SheetNum);
 			//The count can be off for offices that read and write to separate servers when we get objects that were just inserted so we try twice.
 			if(listSheetFieldsDb.Count!=sheet.SheetFields.Count) {
@@ -91,12 +75,11 @@ namespace OpenDentBusiness{
 			List<long> listSheetFieldNums=listSheetFieldsDb.Select(x => x.SheetFieldNum).OrderBy(x => x).ToList();
 			//now that we have an ordered list of sheetfieldnums, update db blank fields with all field data from field in memory
 			for(int i=0;i<sheet.SheetFields.Count;i++) {
-				SheetField sheetField=sheet.SheetFields[i];
-				sheetField.SheetFieldNum=listSheetFieldNums[i];
-				sheetField.SheetNum=sheet.SheetNum;
-				SheetFields.Update(sheetField);
+				SheetField fld=sheet.SheetFields[i];
+				fld.SheetFieldNum=listSheetFieldNums[i];
+				fld.SheetNum=sheet.SheetNum;
+				SheetFields.Update(fld);
 			}
-			return sheet.SheetNum;
 		}
 
 		///<summary>Gets sheets with PatNum=0 and IsDeleted=0. Sheets with no PatNums were most likely transferred from CEMT tool.
@@ -111,12 +94,12 @@ namespace OpenDentBusiness{
 				+"WHERE PatNum=0 AND IsDeleted=0 "
 				+"AND sheetfield.FieldName='isTransfer' "
 				+$"AND SheetType={POut.Int((int)SheetTypeEnum.PatientForm)}";
-			List<Sheet> listSheets=Crud.SheetCrud.SelectMany(command);
+			List<Sheet> retVal=Crud.SheetCrud.SelectMany(command);
 			//Get the Sheetfields and parameters for each of the CEMT sheets
-			for(int i=0;i<listSheets.Count;i++) {
-				SheetFields.GetFieldsAndParameters(listSheets[i]);
+			foreach(Sheet sheet in retVal) {
+				SheetFields.GetFieldsAndParameters(sheet);
 			}
-			return listSheets;
+			return retVal;
 		}
 
 		///<Summary>Saves a list of sheets to the Database. Only saves new sheets, ignores sheets that are not new.</Summary>
@@ -130,11 +113,10 @@ namespace OpenDentBusiness{
 					continue;
 				}
 				Crud.SheetCrud.Insert(listSheets[i]);
-				List<SheetField> listSheetFields=listSheets[i].SheetFields;
-				for(int j=0;j<listSheetFields.Count;j++) {
-					listSheetFields[j].SheetNum=listSheets[i].SheetNum;
+				foreach(SheetField fld in listSheets[i].SheetFields) {
+					fld.SheetNum=listSheets[i].SheetNum;
+					Crud.SheetFieldCrud.Insert(fld);
 				}
-				Crud.SheetFieldCrud.InsertMany(listSheetFields);
 			}
 		}
 
@@ -208,38 +190,37 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Trys to set the out params with sheet fields valus for LName,FName,DOB,PhoneNumbers, and email. Used when importing CEMT patient transfers.</summary>
-		public static void ParseTransferSheet(Sheet sheet,out string lName,out string fName,out DateTime dateBirth,out List<string> listPhoneNumbers,
+		public static void ParseTransferSheet(Sheet sheet,out string lName,out string fName,out DateTime birthdate,out List<string> listPhoneNumbers,
 			out string email) 
 		{
 			lName="";
 			fName="";
-			dateBirth=new DateTime();
+			birthdate=new DateTime();
 			listPhoneNumbers=new List<string>();
 			email="";
-			List<SheetField> listSheetFields=sheet.SheetFields;
-			for(int i=0;i<listSheetFields.Count;i++) {
-				switch(listSheetFields[i].FieldName.ToLower()) {
+			foreach(SheetField field in sheet.SheetFields) {//Loop through each field.
+				switch(field.FieldName.ToLower()) {
 					case "lname":
 					case "lastname":
-						lName=listSheetFields[i].FieldValue;
+						lName=field.FieldValue;
 						break;
 					case "fname":
 					case "firstname":
-						fName=listSheetFields[i].FieldValue;
+						fName=field.FieldValue;
 						break;
 					case "bdate":
 					case "birthdate":
-						dateBirth=PIn.Date(listSheetFields[i].FieldValue);
+						birthdate=PIn.Date(field.FieldValue);
 						break;
 					case "hmphone":
 					case "wkphone":
 					case "wirelessphone":
-						if(listSheetFields[i].FieldValue!="") {
-							listPhoneNumbers.Add(listSheetFields[i].FieldValue);
+						if(field.FieldValue!="") {
+							listPhoneNumbers.Add(field.FieldValue);
 						}
 						break;
 					case "email":
-						email=listSheetFields[i].FieldValue;
+						email=field.FieldValue;
 						break;
 				}
 			}
@@ -249,26 +230,26 @@ namespace OpenDentBusiness{
 		public static List<long> FindSheetsForPat(Sheet sheetToMatch,List<Sheet> listSheets) {
 			string lName;
 			string fName;
-			DateTime dateBirth;
+			DateTime birthdate;
 			List<string> listPhoneNumbers;
 			string email;
-			ParseTransferSheet(sheetToMatch,out lName,out fName,out dateBirth,out listPhoneNumbers,out email);
-			List<long> listSheetNumsIdMatch=new List<long>();
-			for(int i=0;i<listSheets.Count;i++) {
+			ParseTransferSheet(sheetToMatch,out lName,out fName,out birthdate,out listPhoneNumbers,out email);
+			List<long> listSheetIdMatch=new List<long>();
+			foreach(Sheet sheet in listSheets) {
 				string lNameSheet="";
 				string fNameSheet="";
-				DateTime dateBirthSheet=new DateTime();
+				DateTime birthdateSheet=new DateTime();
 				List<string> listPhoneNumbersSheet=new List<string>();
 				string emailSheet="";
-				ParseTransferSheet(listSheets[i],out lNameSheet,out fNameSheet,out dateBirthSheet,out listPhoneNumbersSheet,out emailSheet);
-				if(lName==lNameSheet && fName==fNameSheet && dateBirth==dateBirthSheet && email==emailSheet 
+				ParseTransferSheet(sheet,out lNameSheet,out fNameSheet,out birthdateSheet,out listPhoneNumbersSheet,out emailSheet);
+				if(lName==lNameSheet && fName==fNameSheet && birthdate==birthdateSheet && email==emailSheet 
 					//All phone numbers must match in both.
 					&& listPhoneNumbers.Except(listPhoneNumbersSheet).Count()==0 && listPhoneNumbersSheet.Except(listPhoneNumbers).Count()==0) 
 				{
-					listSheetNumsIdMatch.Add(listSheets[i].SheetNum);
+					listSheetIdMatch.Add(sheet.SheetNum);
 				}
 			}
-			return listSheetNumsIdMatch;
+			return listSheetIdMatch;
 		}
 
 		///<summary>Get all sheets for a patient for today.</summary>
@@ -276,12 +257,12 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<Sheet>>(MethodBase.GetCurrentMethod(),patNum);
 			}
-			string dateSQL="CURDATE()";
+			string datesql="CURDATE()";
 			if(DataConnection.DBtype==DatabaseType.Oracle){
-				dateSQL="(SELECT CURRENT_DATE FROM dual)";
+				datesql="(SELECT CURRENT_DATE FROM dual)";
 			}
 			string command="SELECT * FROM sheet WHERE PatNum="+POut.Long(patNum)+" "
-				+"AND "+DbHelper.DtimeToDate("DateTimeSheet")+" = "+dateSQL+" "
+				+"AND "+DbHelper.DtimeToDate("DateTimeSheet")+" = "+datesql+" "
 				+"AND IsDeleted=0";
 			return Crud.SheetCrud.SelectMany(command);
 		}
@@ -302,18 +283,31 @@ namespace OpenDentBusiness{
 				return Meth.GetObject<List<Sheet>>(MethodBase.GetCurrentMethod(),docNum);
 			}
 			string command="";
-			command="SELECT sheet.* FROM sheetfield "
-				+"LEFT JOIN sheet ON sheet.SheetNum = sheetfield.SheetNum "
-				+"WHERE IsDeleted=0 "
-				+"AND FieldType = 10 "//PatImage
-				+"AND FieldValue = '"+POut.Long(docNum)+"' "//FieldName == DocCategory, which we do not care about here.
-				+"GROUP BY sheet.SheetNum "
-				+"UNION "
-				+"SELECT sheet.* "
-				+"FROM sheet "
-				+"WHERE sheet.SheetType="+POut.Int((int)SheetTypeEnum.ReferralLetter)+" "
-				+"AND sheet.IsDeleted=0 "
-				+"AND sheet.DocNum="+POut.Long(docNum);
+			if(DataConnection.DBtype==DatabaseType.MySql) {
+				command="SELECT sheet.* FROM sheetfield "
+					+"LEFT JOIN sheet ON sheet.SheetNum = sheetfield.SheetNum "
+					+"WHERE IsDeleted=0 "
+					+"AND FieldType = 10 "//PatImage
+					+"AND FieldValue = '"+POut.Long(docNum)+"' "//FieldName == DocCategory, which we do not care about here.
+					+"GROUP BY sheet.SheetNum "
+					+"UNION "
+					+"SELECT sheet.* "
+					+"FROM sheet "
+					+"WHERE sheet.SheetType="+POut.Int((int)SheetTypeEnum.ReferralLetter)+" "
+					+"AND sheet.IsDeleted=0 "
+					+"AND sheet.DocNum="+POut.Long(docNum);
+			}
+			else {//Oracle
+				//This query has so much unique Oracle problems that it made more sense to just rewrite it.
+				command="SELECT sheet.SheetNum,sheet.SheetType,sheet.PatNum,sheet.DateTimeSheet,sheet.FontSize,sheet.FontName,sheet.Width"
+					+",sheet.Height,sheet.IsLandscape,DBMS_LOB.SUBSTR(sheet.InternalNote,1000,1),sheet.Description,sheet.ShowInTerminal,sheet.IsWebForm FROM sheet "
+					+"LEFT JOIN sheetfield ON sheet.SheetNum = sheetfield.SheetNum "
+					+"WHERE IsDeleted=0 "
+					+"AND FieldType = 10 "//PatImage
+					+"AND TO_CHAR(FieldValue) = '"+POut.Long(docNum)+"' "//FieldName == DocCategory, which we do not care about here.
+					+"GROUP BY sheet.SheetNum,sheet.SheetType,sheet.PatNum,sheet.DateTimeSheet,sheet.FontSize,sheet.FontName,sheet.Width"
+					+",sheet.Height,sheet.IsLandscape,DBMS_LOB.SUBSTR(sheet.InternalNote,1000,1),sheet.Description,sheet.ShowInTerminal,sheet.IsWebForm";
+			}
 			return Crud.SheetCrud.SelectMany(command);
 		}
 
@@ -334,80 +328,79 @@ namespace OpenDentBusiness{
 
 		///<summary>Called by eClipboard check-in once an appointment has been moved to the waiting room and the patient is ready to fill out forms.
 		///Returns number of new sheets created and inserted into Sheet table.</summary>
-		public static int CreateSheetsForCheckIn(Appointment appointment) {
+		public static int CreateSheetsForCheckIn(Appointment appt) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetInt(MethodBase.GetCurrentMethod(),appointment);
+				return Meth.GetInt(MethodBase.GetCurrentMethod(),appt);
 			}
-			if(!MobileAppDevices.IsClinicSignedUpForEClipboard(PrefC.HasClinicsEnabled?appointment.ClinicNum:0)) { //this clinic isn't signed up for this feature
+			if(!MobileAppDevices.IsClinicSignedUpForEClipboard(PrefC.HasClinicsEnabled?appt.ClinicNum:0)) { //this clinic isn't signed up for this feature
 				return 0;
 			}
-			if(!ClinicPrefs.GetBool(PrefName.EClipboardCreateMissingFormsOnCheckIn,appointment.ClinicNum)) { //This feature is turned off
+			if(!ClinicPrefs.GetBool(PrefName.EClipboardCreateMissingFormsOnCheckIn,appt.ClinicNum)) { //This feature is turned off
 				return 0;
 			}
-			bool useDefault=ClinicPrefs.GetBool(PrefName.EClipboardUseDefaults,appointment.ClinicNum);
-			List<EClipboardSheetDef> listEClipboardSheetDefsToCreate=EClipboardSheetDefs.GetForClinic(useDefault ? 0 : appointment.ClinicNum);
-			if(listEClipboardSheetDefsToCreate.Count==0) { //There aren't any sheets to create here
+			bool useDefault=ClinicPrefs.GetBool(PrefName.EClipboardUseDefaults,appt.ClinicNum);
+			List<EClipboardSheetDef> listSheetsToCreate=EClipboardSheetDefs.GetForClinic(useDefault ? 0 : appt.ClinicNum);
+			if(listSheetsToCreate.Count==0) { //There aren't any sheets to create here
 				return 0;
 			}
-			List<Sheet> listSheetsAlreadyCompleted=Sheets.GetForPatient(appointment.PatNum);
-			List<Sheet> listSheetsAlreadyInTerminal=Sheets.GetForTerminal(appointment.PatNum);
+			List<Sheet> listAlreadyCompleted=Sheets.GetForPatient(appt.PatNum);
+			List<Sheet> listAlreadyInTerminal=Sheets.GetForTerminal(appt.PatNum);
 			//if we already have sheets queued for the patient don't add duplicates
-			if(listSheetsAlreadyInTerminal.Count>0) {
-				listSheetsAlreadyCompleted.RemoveAll(x => listSheetsAlreadyInTerminal.Select(y => y.SheetNum).Contains(x.SheetNum));
-				listEClipboardSheetDefsToCreate.RemoveAll(x => listSheetsAlreadyInTerminal.Select(y => y.SheetDefNum).Contains(x.SheetDefNum));
+			if(listAlreadyInTerminal.Count>0) {
+				listAlreadyCompleted.RemoveAll(x => listAlreadyInTerminal.Select(y => y.SheetNum).Contains(x.SheetNum));
+				listSheetsToCreate.RemoveAll(x => listAlreadyInTerminal.Select(y => y.SheetDefNum).Contains(x.SheetDefNum));
 			}
-			Patient patient=Patients.GetPat(appointment.PatNum);
+			Patient pat=Patients.GetPat(appt.PatNum);
 			//Remove any sheets that the patient shouldn't see based on age. A value of -1 means ignore.
-			listEClipboardSheetDefsToCreate.RemoveAll(x => x.MinAge!=-1 && patient.Age<x.MinAge);
-			listEClipboardSheetDefsToCreate.RemoveAll(x => x.MaxAge!=-1 && patient.Age>x.MaxAge);
-			listEClipboardSheetDefsToCreate=EClipboardSheetDefs.FilterPrefillStatuses(listEClipboardSheetDefsToCreate,listSheetsAlreadyCompleted, clinicNum:appointment.ClinicNum, listSheetsInTerminal:listSheetsAlreadyInTerminal)
-				.OrderBy(x => x.ItemOrder).ToList();
-			byte showInTerminal=GetBiggestShowInTerminal(appointment.PatNum);
-			List<Sheet> listSheetsNew=new List<Sheet>();
-			for(int i=0;i<listEClipboardSheetDefsToCreate.Count;i++) {
+			listSheetsToCreate.RemoveAll(x => x.MinAge!=-1 && pat.Age<x.MinAge);
+			listSheetsToCreate.RemoveAll(x => x.MaxAge!=-1 && pat.Age>x.MaxAge);
+			listSheetsToCreate=EClipboardSheetDefs.FilterPrefillStatuses(listSheetsToCreate,listAlreadyCompleted);
+			byte showInTerminal=GetBiggestShowInTerminal(appt.PatNum);
+			List<Sheet> listNewSheets=new List<Sheet>();
+			foreach(EClipboardSheetDef sheetInsert in listSheetsToCreate.OrderBy(x => x.ItemOrder)) {
 				//First check if we've already completed this form against our resubmission interval rules
-				Sheet sheetLastCompleted=listSheetsAlreadyCompleted
-					.Where(x => x.SheetDefNum==listEClipboardSheetDefsToCreate[i].SheetDefNum)
+				Sheet lastCompleted=listAlreadyCompleted
+					.Where(x => x.SheetDefNum==sheetInsert.SheetDefNum)
 					.OrderBy(x => x.DateTimeSheet)
 					.LastOrDefault()??new Sheet();
-				if(sheetLastCompleted.DateTimeSheet > DateTime.MinValue) {
-					if(listEClipboardSheetDefsToCreate[i].ResubmitInterval.Days==0 && sheetLastCompleted.RevID >= listEClipboardSheetDefsToCreate[i].PrefillStatusOverride) {//Once should always equal 0 but in case check both
+				if(lastCompleted.DateTimeSheet > DateTime.MinValue) {
+					if(sheetInsert.ResubmitInterval.Days==0 && lastCompleted.RevID >= sheetInsert.PrefillStatusOverride) {//Once should always equal 0 but in case check both
 						continue; //If this interval is set to 0 and they've already completed this form once, we never want to create it automatically again
 					}
-					int elapsed=(DateTime.Today - sheetLastCompleted.DateTimeSheet.Date).Days;
-					if(elapsed < listEClipboardSheetDefsToCreate[i].ResubmitInterval.Days) {
+					int elapsed=(DateTime.Today - lastCompleted.DateTimeSheet.Date).Days;
+					if(elapsed < sheetInsert.ResubmitInterval.Days) {
 						continue; //The interval hasn't elapsed yet so we don't want to create this sheet
 					}
 				}
-				SheetDef sheetDef=SheetDefs.GetSheetDef(listEClipboardSheetDefsToCreate[i].SheetDefNum);
-				Sheet sheetNew=new Sheet();
+				SheetDef def=SheetDefs.GetSheetDef(sheetInsert.SheetDefNum);
+				Sheet newSheet=new Sheet();
 				//Look up the most recent sheet filledout by this patients wth this def num
-				Sheet sheet=Sheets.GetForPatient(appointment.PatNum).Where(x=>x.SheetDefNum==sheetDef.SheetDefNum).OrderByDescending(x=>x.DateTimeSheet).FirstOrDefault();
-				if(listEClipboardSheetDefsToCreate[i].PrefillStatus==PrefillStatuses.PreFill && sheet!=null && sheet.RevID==sheetDef.RevID) {
+				Sheet sheet=Sheets.GetForPatient(appt.PatNum).Where(x=>x.SheetDefNum==def.SheetDefNum).OrderByDescending(x=>x.DateTimeSheet).FirstOrDefault();
+				if(sheetInsert.PrefillStatus==PrefillStatuses.PreFill && sheet!=null && sheet.RevID==def.RevID) {
 					//do the pre-fill thing from  the other method here.
-					sheetNew=PreFillSheetFromPreviousAndDatabase(sheetDef,sheet);
-					sheetNew.IsNew=true; //Setting this to true because we want to insert this new sheet not update an old one
-					sheetNew.DateTimeSheet=DateTime.Now;
+					newSheet=PreFillSheetFromPreviousAndDatabase(def,sheet);
+					newSheet.IsNew=true; //Setting this to true because we want to insert this new sheet not update an old one
+					newSheet.DateTimeSheet=DateTime.Now;
 				}
 				else {
-					sheetNew=CreateSheetFromSheetDef(sheetDef,appointment.PatNum);
-					SheetParameter.SetParameter(sheetNew,"PatNum",appointment.PatNum);//must come before sheet filler
-					SheetFiller.FillFields(sheetNew);
+					newSheet=CreateSheetFromSheetDef(def,appt.PatNum);
+					SheetParameter.SetParameter(newSheet,"PatNum",appt.PatNum);//must come before sheet filler
+					SheetFiller.FillFields(newSheet);
 				}
 				//Counting starts at 1 in this case and we don't want to ovewrite the previous number so increment first
-				sheetNew.ShowInTerminal=++showInTerminal;
-				listSheetsNew.Add(sheetNew);
-				SecurityLogs.MakeLogEntry(EnumPermType.FormAdded,sheetNew.PatNum,$"{sheetNew.Description} Created in EClipboard");
-				EServiceLogs.MakeLogEntry(eServiceAction.ECAddedForm,eServiceType.EClipboard,FKeyType.SheetNum,patNum:sheetNew.PatNum,FKey:sheetNew.SheetNum,clinicNum: appointment.ClinicNum);
+				newSheet.ShowInTerminal=++showInTerminal;
+				listNewSheets.Add(newSheet);
+				SecurityLogs.MakeLogEntry(Permissions.FormAdded,newSheet.PatNum,$"{newSheet.Description} Created in EClipboard");
+				EServiceLogs.MakeLogEntry(eServiceAction.ECAddedForm,eServiceType.EClipboard,FKeyType.SheetNum,patNum:newSheet.PatNum,FKey:newSheet.SheetNum,clinicNum: appt.ClinicNum);
 			}
-			SaveNewSheetList(listSheetsNew);
-			return listSheetsNew.Count;
+			SaveNewSheetList(listNewSheets);
+			return listNewSheets.Count;
 		}
 
 		///<summary>Creates a new sheet instance based on sheetDefOriginal, and fills it with values from the db, and then fills remaining with values from sheet. Returns the new, pre-filled sheet.</summary>
 		public static Sheet PreFillSheetFromPreviousAndDatabase(SheetDef sheetDefOriginal,Sheet sheet) {
 			//No need to check MiddleTierRole; no call to db
-			Sheet sheetNew=SheetUtil.CreateSheet(sheetDefOriginal,sheet.PatNum);
+			Sheet sheetNew=SheetUtil.CreateSheet(sheetDefOriginal);
 			sheetNew.DateTimeSheet=DateTime.Now;
 			sheetNew.PatNum=sheet.PatNum;
 			//Only setting the PatNum sheet parameter was what the Add button was doing from the "Patient Forms and Medical Histories" window.
@@ -418,30 +411,26 @@ namespace OpenDentBusiness{
 				SheetFields.GetFieldsAndParameters(sheet);
 			}
 			//If there are current medications in the DB, display them on the prefilled sheet. If there are not, use the previous sheet.
-			bool doUseMedsFromPrevSheet=!MedicationPats.GetPatientData(sheet.PatNum).Any(x=>MedicationPats.IsMedActive(x));
-			bool doUseProblemFromPrevSheet=!Diseases.Refresh(sheet.PatNum,false).Any();
-			bool doUseAllergyFromPrevSheet=!Allergies.GetAll(sheet.PatNum,true).Any();
+			bool doUseMedicationsFromPreviousSheet=!MedicationPats.GetPatientData(sheet.PatNum).Any(x=>MedicationPats.IsMedActive(x));
 			//Get the fields that we want to fill from previous sheet.
 			//Always skip insurance fields, skip medications if they have active medications in the DB.
 			//Always exclude static text. Allow combo or check boxes if the fieldName is misc
-			List<SheetField> listSheetFieldsNewEmpty=sheetNew.SheetFields.FindAll(x => x.FieldType!=(SheetFieldType.StaticText)
-				&& (!x.FieldType.In(SheetFieldType.CheckBox) || x.FieldName=="misc"
-					|| (x.FieldName.StartsWith("problem") && doUseProblemFromPrevSheet) 
-					|| (x.FieldName.StartsWith("allergy") && doUseAllergyFromPrevSheet))
-				&& (x.FieldValue.IsNullOrEmpty() || x.FieldType.In(SheetFieldType.ComboBox))
+			List<SheetField> listSheetNewFieldsEmpty=sheetNew.SheetFields.FindAll(x => x.FieldType!=(SheetFieldType.StaticText) 
+				&& (!x.FieldType.In(SheetFieldType.CheckBox,SheetFieldType.ComboBox) || x.FieldName=="misc")
+				&& x.FieldValue.IsNullOrEmpty()
 				&& !x.FieldName.StartsWith("ins1")	
 				&& !x.FieldName.StartsWith("ins2")	
-				&& (!x.FieldName.StartsWith("inputMed")	|| doUseMedsFromPrevSheet)
+				&& (!x.FieldName.StartsWith("inputMed")	|| doUseMedicationsFromPreviousSheet)
 			);
 			//Find the fields that were passed in that can be used with pre-fill logic.
-			List<SheetField> listSheetFieldsOrig=sheet.SheetFields.FindAll(x => x.SheetFieldDefNum > 0 && !x.FieldValue.IsNullOrEmpty());
+			List<SheetField> listSheetFieldsOriginal=sheet.SheetFields.FindAll(x => x.SheetFieldDefNum > 0 && !x.FieldValue.IsNullOrEmpty());
 			//Loop through fields on the new sheet, find their matching fields on the passed in sheet by sheetFieldDefNum.
-			for(int i=0;i<listSheetFieldsNewEmpty.Count;i++) {
-				for(int j=0;j<listSheetFieldsOrig.Count;j++) {
-					if(listSheetFieldsNewEmpty[i].SheetFieldDefNum!=listSheetFieldsOrig[j].SheetFieldDefNum) {
+			for(int i=0;i<listSheetNewFieldsEmpty.Count;i++) {
+				for(int j=0;j<listSheetFieldsOriginal.Count;j++) {
+					if(listSheetNewFieldsEmpty[i].SheetFieldDefNum!=listSheetFieldsOriginal[j].SheetFieldDefNum) {
 						continue;
 					}
-					listSheetFieldsNewEmpty[i].FieldValue=listSheetFieldsOrig[j].FieldValue;
+					listSheetNewFieldsEmpty[i].FieldValue=listSheetFieldsOriginal[j].FieldValue;
 				}	
 			}
 			//Clear signiture boxes.
@@ -465,74 +454,77 @@ namespace OpenDentBusiness{
 				}
 				return false;
 			}
-			List<SheetField> CreateFieldList(List<SheetFieldDef> listSheetFieldDefs,string language) {
-				List<SheetField> listSheetFields=new List<SheetField>();
+			List<SheetField> CreateFieldList(List<SheetFieldDef> sheetFieldDefList,string language) {
+				List<SheetField> retVal=new List<SheetField>();
+				SheetField field;
 				//SheetDefs that are not setup with the desired language translation SheetFieldDefs should default to the non-translated SheetFieldDefs.
-				bool hasTranslationForLanguage=listSheetFieldDefs.Any(x => x.Language==language);
-				for(int i=0;i<listSheetFieldDefs.Count;i++) {
+				bool hasTranslationForLanguage=sheetFieldDefList.Any(x => x.Language==language);
+				foreach(SheetFieldDef sheetFieldDef in sheetFieldDefList) {
 					//Only use the SheetFieldDefs for the specified language if available.
 					if(hasTranslationForLanguage) {
-						if(listSheetFieldDefs[i].Language!=language) {
+						if(sheetFieldDef.Language!=language) {
 							continue;
 						}
 					}
 					//Otherwise, only use the SheetFieldDefs for the default language.
-					else if(!string.IsNullOrWhiteSpace(listSheetFieldDefs[i].Language)) {
+					else if(!string.IsNullOrWhiteSpace(sheetFieldDef.Language)) {
 						continue;
 					}
-					if(hidePaymentOptions && FieldIsPaymentOptionHelper(listSheetFieldDefs[i])) {
+					if(hidePaymentOptions && FieldIsPaymentOptionHelper(sheetFieldDef)) {
 						continue;
 					}
-					SheetField sheetField=new SheetField(); 
-					sheetField.IsNew=true;
-					sheetField.FieldName=listSheetFieldDefs[i].FieldName;
-					sheetField.FieldType=listSheetFieldDefs[i].FieldType;
-					sheetField.FieldValue=listSheetFieldDefs[i].FieldValue;
-					sheetField.FontIsBold=listSheetFieldDefs[i].FontIsBold;
-					sheetField.FontName=listSheetFieldDefs[i].FontName;
-					sheetField.FontSize=listSheetFieldDefs[i].FontSize;
-					sheetField.GrowthBehavior=listSheetFieldDefs[i].GrowthBehavior;
-					sheetField.Height=listSheetFieldDefs[i].Height;
-					sheetField.RadioButtonValue=listSheetFieldDefs[i].RadioButtonValue;
-					//field.SheetNum=sheetFieldDef.SheetNum;//set later
-					sheetField.Width=listSheetFieldDefs[i].Width;
-					sheetField.XPos=listSheetFieldDefs[i].XPos;
-					sheetField.YPos=listSheetFieldDefs[i].YPos;
-					sheetField.RadioButtonGroup=listSheetFieldDefs[i].RadioButtonGroup;
-					sheetField.IsRequired=listSheetFieldDefs[i].IsRequired;
-					sheetField.TabOrder=listSheetFieldDefs[i].TabOrder;
-					sheetField.ReportableName=listSheetFieldDefs[i].ReportableName;
-					sheetField.SheetFieldDefNum=listSheetFieldDefs[i].SheetFieldDefNum;
-					sheetField.TextAlign=listSheetFieldDefs[i].TextAlign;
-					sheetField.ItemColor=listSheetFieldDefs[i].ItemColor;
-					sheetField.IsLocked=listSheetFieldDefs[i].IsLocked;
-					sheetField.TabOrderMobile=listSheetFieldDefs[i].TabOrderMobile;
-					sheetField.UiLabelMobile=listSheetFieldDefs[i].UiLabelMobile;
-					sheetField.UiLabelMobileRadioButton=listSheetFieldDefs[i].UiLabelMobileRadioButton;
-					sheetField.CanElectronicallySign=listSheetFieldDefs[i].CanElectronicallySign;
-					sheetField.IsSigProvRestricted=listSheetFieldDefs[i].IsSigProvRestricted;
-					listSheetFields.Add(sheetField);
+					field=new SheetField {
+						IsNew=true,
+						FieldName=sheetFieldDef.FieldName,
+						FieldType=sheetFieldDef.FieldType,
+						FieldValue=sheetFieldDef.FieldValue,
+						FontIsBold=sheetFieldDef.FontIsBold,
+						FontName=sheetFieldDef.FontName,
+						FontSize=sheetFieldDef.FontSize,
+						GrowthBehavior=sheetFieldDef.GrowthBehavior,
+						Height=sheetFieldDef.Height,
+						RadioButtonValue=sheetFieldDef.RadioButtonValue,
+						//field.SheetNum=sheetFieldDef.SheetNum;//set later
+						Width=sheetFieldDef.Width,
+						XPos=sheetFieldDef.XPos,
+						YPos=sheetFieldDef.YPos,
+						RadioButtonGroup=sheetFieldDef.RadioButtonGroup,
+						IsRequired=sheetFieldDef.IsRequired,
+						TabOrder=sheetFieldDef.TabOrder,
+						ReportableName=sheetFieldDef.ReportableName,
+						SheetFieldDefNum=sheetFieldDef.SheetFieldDefNum,
+						TextAlign=sheetFieldDef.TextAlign,
+						ItemColor=sheetFieldDef.ItemColor,
+						IsLocked=sheetFieldDef.IsLocked,
+						TabOrderMobile=sheetFieldDef.TabOrderMobile,
+						UiLabelMobile=sheetFieldDef.UiLabelMobile,
+						UiLabelMobileRadioButton=sheetFieldDef.UiLabelMobileRadioButton,
+						CanElectronicallySign=sheetFieldDef.CanElectronicallySign,
+						IsSigProvRestricted=sheetFieldDef.IsSigProvRestricted
+					};
+					retVal.Add(field);
 				}
-				return listSheetFields;
+				return retVal;
 			}
 			string language=(patNum==0?"":Patients.GetPat(patNum).Language);//Blank string will use 'Default' translation.
-			Sheet sheet=new Sheet();
-			sheet.IsNew=true;
-			sheet.DateTimeSheet=DateTime.Now;
-			sheet.FontName=sheetDef.FontName;
-			sheet.FontSize=sheetDef.FontSize;
-			sheet.Height=sheetDef.Height;
-			sheet.SheetType=sheetDef.SheetType;
-			sheet.Width=sheetDef.Width;
-			sheet.PatNum=patNum;
-			sheet.Description=sheetDef.Description;
-			sheet.IsLandscape=sheetDef.IsLandscape;
-			sheet.IsMultiPage=sheetDef.IsMultiPage;
-			sheet.SheetFields=CreateFieldList(sheetDef.SheetFieldDefs,language);//Blank fields with no values. Values filled later from SheetFiller.FillFields()
-			sheet.Parameters=sheetDef.Parameters;
-			sheet.SheetDefNum=sheetDef.SheetDefNum;
-			sheet.HasMobileLayout=sheetDef.HasMobileLayout;
-			sheet.RevID=sheetDef.RevID;
+			Sheet sheet = new Sheet {
+				IsNew=true,
+				DateTimeSheet=DateTime.Now,
+				FontName=sheetDef.FontName,
+				FontSize=sheetDef.FontSize,
+				Height=sheetDef.Height,
+				SheetType=sheetDef.SheetType,
+				Width=sheetDef.Width,
+				PatNum=patNum,
+				Description=sheetDef.Description,
+				IsLandscape=sheetDef.IsLandscape,
+				IsMultiPage=sheetDef.IsMultiPage,
+				SheetFields=CreateFieldList(sheetDef.SheetFieldDefs,language),//Blank fields with no values. Values filled later from SheetFiller.FillFields()
+				Parameters=sheetDef.Parameters,
+				SheetDefNum=sheetDef.SheetDefNum,
+				HasMobileLayout=sheetDef.HasMobileLayout,
+				RevID=sheetDef.RevID
+			};
 			return sheet;
 		}
 
@@ -568,8 +560,8 @@ namespace OpenDentBusiness{
 					+"AND IsDeleted=0 "
 					+"AND ShowInTerminal>"+POut.Byte(showInTerminal);//decrement ShowInTerminal for all sheets with a bigger ShowInTerminal than the one deleted
 				Db.NonQ(command);
-				//Create mobile notification for deleted sheet to eClipboard.
-				MobileNotifications.CI_RemoveSheet(patNum,sheetNum);
+				//Push deleted sheet to eClipboard.
+				WebTypes.PushNotificationUtils.CI_RemoveSheet(patNum,sheetNum);
 			}
 		}
 
@@ -578,7 +570,7 @@ namespace OpenDentBusiness{
 		///It ignores PatNum parameters, since those are already part of the sheet itself.</summary>
 		public static void SaveParameters(Sheet sheet){
 			//No need to check MiddleTierRole; no call to db
-			List<SheetField> listSheetFields=new List<SheetField>();
+			List<SheetField> listFields=new List<SheetField>();
 			for(int i=0;i<sheet.Parameters.Count;i++){
 				if(sheet.Parameters[i].ParamName.In("PatNum",
 					//These types are not primitives so they cannot be saved to the database.
@@ -589,30 +581,30 @@ namespace OpenDentBusiness{
 				if(!sheet.Parameters[i].IsRequired && sheet.Parameters[i].ParamValue==null) {
 					continue;
 				}
-				SheetField sheetField=new SheetField();
-				sheetField.IsNew=true;
-				sheetField.SheetNum=sheet.SheetNum;
-				sheetField.FieldType=SheetFieldType.Parameter;
-				sheetField.FieldName=sheet.Parameters[i].ParamName;
+				SheetField field=new SheetField();
+				field.IsNew=true;
+				field.SheetNum=sheet.SheetNum;
+				field.FieldType=SheetFieldType.Parameter;
+				field.FieldName=sheet.Parameters[i].ParamName;
 				if(sheet.Parameters[i].ParamName=="ListProcNums") {//Save this parameter as a comma delimited list
 					List<long> listProcNums=(List<long>)SheetParameter.GetParamByName(sheet.Parameters,"ListProcNums").ParamValue;
-					sheetField.FieldValue=String.Join(",",listProcNums);
+					field.FieldValue=String.Join(",",listProcNums);
 				}
 				else {
-					sheetField.FieldValue=sheet.Parameters[i].ParamValue.ToString();//the object will be an int. Stored as a string.
+					field.FieldValue=sheet.Parameters[i].ParamValue.ToString();//the object will be an int. Stored as a string.
 				}
-				sheetField.FontSize=0;
-				sheetField.FontName="";
-				sheetField.FontIsBold=false;
-				sheetField.XPos=0;
-				sheetField.YPos=0;
-				sheetField.Width=0;
-				sheetField.Height=0;
-				sheetField.GrowthBehavior=GrowthBehaviorEnum.None;
-				sheetField.RadioButtonValue="";
-				listSheetFields.Add(sheetField);
+				field.FontSize=0;
+				field.FontName="";
+				field.FontIsBold=false;
+				field.XPos=0;
+				field.YPos=0;
+				field.Width=0;
+				field.Height=0;
+				field.GrowthBehavior=GrowthBehaviorEnum.None;
+				field.RadioButtonValue="";
+				listFields.Add(field);
 			}
-			SheetFields.InsertMany(listSheetFields);
+			SheetFields.InsertMany(listFields);
 		}
 
 		///<summary>Loops through all the fields in the sheet and appends together all the FieldValues.  It obviously excludes all SigBox fieldtypes.  It does include Drawing fieldtypes, so any change at all to any drawing will invalidate the signature.  It does include Image fieldtypes, although that's just a filename and does not really have any meaningful data about the image itself.  The order is absolutely critical.</summary>
@@ -620,14 +612,14 @@ namespace OpenDentBusiness{
 			//No need to check MiddleTierRole; no call to db
 			//The order of sheet fields is absolutely critical when it comes to the signature key.
 			//Therefore, we will make a local copy of the sheet fields and sort them how we want them here just in case their order has changed for any other reason.
-			List<SheetField> listSheetFieldsCopy=new List<SheetField>();
+			List<SheetField> sheetFieldsCopy=new List<SheetField>();
 			for(int i=0;i<sheet.SheetFields.Count;i++) {
-				listSheetFieldsCopy.Add(sheet.SheetFields[i]);
+				sheetFieldsCopy.Add(sheet.SheetFields[i]);
 			}
-			if(listSheetFieldsCopy.All(x => x.SheetFieldNum > 0)) {//the sheet has not been loaded into the db, so it has no primary keys to sort on
-				listSheetFieldsCopy.Sort(SheetFields.SortPrimaryKey);
+			if(sheetFieldsCopy.All(x => x.SheetFieldNum > 0)) {//the sheet has not been loaded into the db, so it has no primary keys to sort on
+				sheetFieldsCopy.Sort(SheetFields.SortPrimaryKey);
 			}
-			return UI.SigBox.GetSignatureKeySheets(listSheetFieldsCopy);
+			return UI.SigBox.GetSignatureKeySheets(sheetFieldsCopy);
 		}
 
 		public static DataTable GetPatientFormsTable(long patNum) {
@@ -636,12 +628,11 @@ namespace OpenDentBusiness{
 			}
 			//DataConnection dcon=new DataConnection();
 			DataTable table=new DataTable("");
-			DataRow dataRow;
+			DataRow row;
 			//columns that start with lowercase are altered for display rather than being raw data.
 			table.Columns.Add("date");
 			table.Columns.Add("dateOnly",typeof(DateTime));//to help with sorting
 			table.Columns.Add("dateTime",typeof(DateTime));
-			table.Columns.Add("DateTSheetEdited",typeof(DateTime));
 			table.Columns.Add("description");
 			table.Columns.Add("DocNum");
 			table.Columns.Add("imageCat");
@@ -650,9 +641,9 @@ namespace OpenDentBusiness{
 			table.Columns.Add("time");
 			table.Columns.Add("timeOnly",typeof(TimeSpan));//to help with sorting
 			//but we won't actually fill this table with rows until the very end.  It's more useful to use a List<> for now.
-			List<DataRow> listDataRows=new List<DataRow>();
+			List<DataRow> rows=new List<DataRow>();
 			//sheet---------------------------------------------------------------------------------------
-			string command="SELECT DateTimeSheet,SheetNum,Description,ShowInTerminal,DateTSheetEdited "
+			string command="SELECT DateTimeSheet,SheetNum,Description,ShowInTerminal "
 				+"FROM sheet WHERE IsDeleted=0 "
 				+"AND PatNum ="+POut.Long(patNum)+" "
 				+"AND (SheetType="+POut.Long((int)SheetTypeEnum.PatientForm)+" OR SheetType="+POut.Long((int)SheetTypeEnum.MedicalHistory);
@@ -661,73 +652,71 @@ namespace OpenDentBusiness{
 			}
 			command+=")";
 				//+"ORDER BY ShowInTerminal";//DATE(DateTimeSheet),ShowInTerminal,TIME(DateTimeSheet)";
-			DataTable tableRawSheet=Db.GetTable(command);
+			DataTable rawSheet=Db.GetTable(command);
 			DateTime dateT;
-			for(int i=0;i<tableRawSheet.Rows.Count;i++) {
-				dataRow=table.NewRow();
-				dateT=PIn.DateT(tableRawSheet.Rows[i]["DateTimeSheet"].ToString());
-				dataRow["date"]=dateT.ToShortDateString();
-				dataRow["dateOnly"]=dateT.Date;
-				dataRow["dateTime"]=dateT;
-				dataRow["DateTSheetEdited"]=PIn.DateT(tableRawSheet.Rows[i]["DateTSheetEdited"].ToString());
-				dataRow["description"]=tableRawSheet.Rows[i]["Description"].ToString();
-				dataRow["DocNum"]="0";
-				dataRow["imageCat"]="";
-				dataRow["SheetNum"]=tableRawSheet.Rows[i]["SheetNum"].ToString();
-				if(tableRawSheet.Rows[i]["ShowInTerminal"].ToString()=="0") {
-					dataRow["showInTerminal"]="";
+			for(int i=0;i<rawSheet.Rows.Count;i++) {
+				row=table.NewRow();
+				dateT=PIn.DateT(rawSheet.Rows[i]["DateTimeSheet"].ToString());
+				row["date"]=dateT.ToShortDateString();
+				row["dateOnly"]=dateT.Date;
+				row["dateTime"]=dateT;
+				row["description"]=rawSheet.Rows[i]["Description"].ToString();
+				row["DocNum"]="0";
+				row["imageCat"]="";
+				row["SheetNum"]=rawSheet.Rows[i]["SheetNum"].ToString();
+				if(rawSheet.Rows[i]["ShowInTerminal"].ToString()=="0") {
+					row["showInTerminal"]="";
 				}
 				else {
-					dataRow["showInTerminal"]=tableRawSheet.Rows[i]["ShowInTerminal"].ToString();
+					row["showInTerminal"]=rawSheet.Rows[i]["ShowInTerminal"].ToString();
 				}
 				if(dateT.TimeOfDay!=TimeSpan.Zero) {
-					dataRow["time"]=dateT.ToString("h:mm")+dateT.ToString("%t").ToLower();
+					row["time"]=dateT.ToString("h:mm")+dateT.ToString("%t").ToLower();
 				}
-				dataRow["timeOnly"]=dateT.TimeOfDay;
-				listDataRows.Add(dataRow);
+				row["timeOnly"]=dateT.TimeOfDay;
+				rows.Add(row);
 			}
 			//document---------------------------------------------------------------------------------------
-			command="SELECT DateCreated,DocCategory,DocNum,Description,document.DateTStamp "
+			command="SELECT DateCreated,DocCategory,DocNum,Description "
 				+"FROM document,definition "
 				+"WHERE document.DocCategory=definition.DefNum"
 				+" AND PatNum ="+POut.Long(patNum)
 				+" AND definition.ItemValue LIKE '%F%'";
 				//+" ORDER BY DateCreated";
-			DataTable tableRawDoc=Db.GetTable(command);
+			DataTable rawDoc=Db.GetTable(command);
 			long docCat;
-			for(int i=0;i<tableRawDoc.Rows.Count;i++) {
-				dataRow=table.NewRow();
-				dateT=PIn.DateT(tableRawDoc.Rows[i]["DateCreated"].ToString());
-				dataRow["date"]=dateT.ToShortDateString();
-				dataRow["dateOnly"]=dateT.Date;
-				dataRow["dateTime"]=dateT;
-				dataRow["DateTSheetEdited"]=PIn.DateT(tableRawDoc.Rows[i]["DateTStamp"].ToString());
-				dataRow["description"]=tableRawDoc.Rows[i]["Description"].ToString();
-				dataRow["DocNum"]=tableRawDoc.Rows[i]["DocNum"].ToString();
-				docCat=PIn.Long(tableRawDoc.Rows[i]["DocCategory"].ToString());
-				dataRow["imageCat"]=Defs.GetName(DefCat.ImageCats,docCat);
-				dataRow["SheetNum"]="0";
-				dataRow["showInTerminal"]="";
+			for(int i=0;i<rawDoc.Rows.Count;i++) {
+				row=table.NewRow();
+				dateT=PIn.DateT(rawDoc.Rows[i]["DateCreated"].ToString());
+				row["date"]=dateT.ToShortDateString();
+				row["dateOnly"]=dateT.Date;
+				row["dateTime"]=dateT;
+				row["description"]=rawDoc.Rows[i]["Description"].ToString();
+				row["DocNum"]=rawDoc.Rows[i]["DocNum"].ToString();
+				docCat=PIn.Long(rawDoc.Rows[i]["DocCategory"].ToString());
+				row["imageCat"]=Defs.GetName(DefCat.ImageCats,docCat);
+				row["SheetNum"]="0";
+				row["showInTerminal"]="";
 				if(dateT.TimeOfDay!=TimeSpan.Zero) {
-					dataRow["time"]=dateT.ToString("h:mm")+dateT.ToString("%t").ToLower();
+					row["time"]=dateT.ToString("h:mm")+dateT.ToString("%t").ToLower();
 				}
-				dataRow["timeOnly"]=dateT.TimeOfDay;
-				listDataRows.Add(dataRow);
+				row["timeOnly"]=dateT.TimeOfDay;
+				rows.Add(row);
 			}
 			//Sorting
-			for(int i=0;i<listDataRows.Count;i++) {
-				table.Rows.Add(listDataRows[i]);
+			for(int i=0;i<rows.Count;i++) {
+				table.Rows.Add(rows[i]);
 			}
-			DataView dataView = table.DefaultView;
-			dataView.Sort = "dateOnly,showInTerminal,timeOnly";
-			table = dataView.ToTable();
+			DataView view = table.DefaultView;
+			view.Sort = "dateOnly,showInTerminal,timeOnly";
+			table = view.ToTable();
 			return table;
 		}
 
 		///<summary>Returns all sheets for the given patient in the given date range which have a description matching the examDescript in a case insensitive manner. If examDescript is blank, then sheets with any description are returned.</summary>
-		public static List<Sheet> GetExamSheetsTable(long patNum,DateTime dateStart,DateTime dateEnd,long sheetDefNum=-1) {
+		public static List<Sheet> GetExamSheetsTable(long patNum,DateTime startDate,DateTime endDate,long sheetDefNum=-1) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Sheet>>(MethodBase.GetCurrentMethod(),patNum,dateStart,dateEnd,sheetDefNum);
+				return Meth.GetObject<List<Sheet>>(MethodBase.GetCurrentMethod(),patNum,startDate,endDate,sheetDefNum);
 			}
 			string command="SELECT * "
 				+"FROM sheet WHERE IsDeleted=0 "
@@ -736,7 +725,7 @@ namespace OpenDentBusiness{
 			if(sheetDefNum!=-1){
 				command+="AND SheetDefNum = "+POut.Long(sheetDefNum)+" ";
 			}
-			command+="AND "+DbHelper.DtimeToDate("DateTimeSheet")+">="+POut.Date(dateStart)+" AND "+DbHelper.DtimeToDate("DateTimeSheet")+"<="+POut.Date(dateEnd)+" "
+			command+="AND "+DbHelper.DtimeToDate("DateTimeSheet")+">="+POut.Date(startDate)+" AND "+DbHelper.DtimeToDate("DateTimeSheet")+"<="+POut.Date(endDate)+" "
 				+"ORDER BY DateTimeSheet";
 			return Crud.SheetCrud.SelectMany(command);
 		}
@@ -752,12 +741,12 @@ namespace OpenDentBusiness{
 				+"AND IsWebForm = "+POut.Bool(true)+ " "
 				+"AND (SheetType="+POut.Long((int)SheetTypeEnum.PatientForm)+" OR SheetType="+POut.Long((int)SheetTypeEnum.MedicalHistory)+") "
 				+(PrefC.HasClinicsEnabled ? "AND ClinicNum IN ("+string.Join(",", listClinicNums)+") " : "");
-			List<Sheet> listSheets=Crud.SheetCrud.SelectMany(command);
+			List<Sheet> retVal=Crud.SheetCrud.SelectMany(command);
 			//Get the Sheetfields and parameters for each of the auto downloaded sheets
-			for(int i=0;i<listSheets.Count;i++) {
-				SheetFields.GetFieldsAndParameters(listSheets[i]);
+			foreach(Sheet sheet in retVal) {
+				SheetFields.GetFieldsAndParameters(sheet);
 			}
-			return listSheets;
+			return retVal;
 		}
 
 		///<summary>Used to get the count of sheets that are going to be downloaded by the Open Dental Service. Used for creating AlertItems.</summary>
@@ -783,7 +772,7 @@ namespace OpenDentBusiness{
 				listClinicNums=new List<long>() { 0 };//To ensure we filter on at least one clinic (HQ).
 			}
 			DataTable table=new DataTable("");
-			DataRow dataRow;
+			DataRow row;
 			//columns that start with lowercase are altered for display rather than being raw data.
 			table.Columns.Add("date");
 			table.Columns.Add("dateOnly",typeof(DateTime));//to help with sorting
@@ -795,49 +784,48 @@ namespace OpenDentBusiness{
 			table.Columns.Add("SheetNum");
 			table.Columns.Add("IsDeleted");
 			table.Columns.Add("ClinicNum");
-			List<DataRow> listDataRows=new List<DataRow>();
+			List<DataRow> rows=new List<DataRow>();
 			string command="SELECT DateTimeSheet,Description,PatNum,SheetNum,IsDeleted,ClinicNum "
 				+"FROM sheet WHERE " 
 				+"DateTimeSheet >= "+POut.Date(dateFrom)+" AND DateTimeSheet <= "+POut.Date(dateTo.AddDays(1))+ " "
 				+"AND IsWebForm = "+POut.Bool(true)+ " "
 				+"AND (SheetType="+POut.Long((int)SheetTypeEnum.PatientForm)+" OR SheetType="+POut.Long((int)SheetTypeEnum.MedicalHistory)+") "
 				+(PrefC.HasClinicsEnabled ? "AND ClinicNum IN ("+string.Join(",", listClinicNums)+") " : "");
-			DataTable tableRawSheet=Db.GetTable(command);
+			DataTable rawSheet=Db.GetTable(command);
 			DateTime dateT;
-			for(int i=0;i<tableRawSheet.Rows.Count;i++) {
-				dataRow=table.NewRow();
-				dateT=PIn.DateT(tableRawSheet.Rows[i]["DateTimeSheet"].ToString());
-				dataRow["date"]=dateT.ToShortDateString();
-				dataRow["dateOnly"]=dateT.Date;
-				dataRow["dateTime"]=dateT;
-				dataRow["description"]=tableRawSheet.Rows[i]["Description"].ToString();
-				dataRow["PatNum"]=tableRawSheet.Rows[i]["PatNum"].ToString();
-				dataRow["SheetNum"]=tableRawSheet.Rows[i]["SheetNum"].ToString();
+			for(int i=0;i<rawSheet.Rows.Count;i++) {
+				row=table.NewRow();
+				dateT=PIn.DateT(rawSheet.Rows[i]["DateTimeSheet"].ToString());
+				row["date"]=dateT.ToShortDateString();
+				row["dateOnly"]=dateT.Date;
+				row["dateTime"]=dateT;
+				row["description"]=rawSheet.Rows[i]["Description"].ToString();
+				row["PatNum"]=rawSheet.Rows[i]["PatNum"].ToString();
+				row["SheetNum"]=rawSheet.Rows[i]["SheetNum"].ToString();
 				if(dateT.TimeOfDay!=TimeSpan.Zero) {
-					dataRow["time"]=dateT.ToString("h:mm")+dateT.ToString("%t").ToLower();
+					row["time"]=dateT.ToString("h:mm")+dateT.ToString("%t").ToLower();
 				}
-				dataRow["timeOnly"]=dateT.TimeOfDay;
-				dataRow["IsDeleted"]=tableRawSheet.Rows[i]["IsDeleted"].ToString();
-				dataRow["ClinicNum"]=PIn.Long(tableRawSheet.Rows[i]["ClinicNum"].ToString());
-				listDataRows.Add(dataRow);
+				row["timeOnly"]=dateT.TimeOfDay;
+				row["IsDeleted"]=rawSheet.Rows[i]["IsDeleted"].ToString();
+				row["ClinicNum"]=PIn.Long(rawSheet.Rows[i]["ClinicNum"].ToString());
+				rows.Add(row);
 			}
-			for(int i=0;i<listDataRows.Count;i++) {
-				table.Rows.Add(listDataRows[i]);
+			for(int i=0;i<rows.Count;i++) {
+				table.Rows.Add(rows[i]);
 			}
-			DataView dataView = table.DefaultView;
-			dataView.Sort = "dateOnly,timeOnly";
-			table = dataView.ToTable();
+			DataView view = table.DefaultView;
+			view.Sort = "dateOnly,timeOnly";
+			table = view.ToTable();
 			return table;
 		}
 
 		public static bool ContainsStaticField(Sheet sheet,string fieldName) {
 			//No need to check MiddleTierRole; no call to db
-			List<SheetField> listSheetFields=sheet.SheetFields;
-			for(int i=0;i<listSheetFields.Count;i++) {
-				if(listSheetFields[i].FieldType!=SheetFieldType.StaticText) {
+			foreach(SheetField field in sheet.SheetFields) {
+				if(field.FieldType!=SheetFieldType.StaticText) {
 					continue;
 				}
-				if(listSheetFields[i].FieldValue.Contains("["+fieldName+"]")) {
+				if(field.FieldValue.Contains("["+fieldName+"]")) {
 					return true;
 				}
 			}
@@ -864,7 +852,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>This gives the number of pages required to print all fields. This must be calculated ahead of time when creating multi page pdfs.</summary>
-		public static int CalculatePageCount(Sheet sheet,System.Drawing.Printing.Margins margins) {
+		public static int CalculatePageCount(Sheet sheet,System.Drawing.Printing.Margins m) {
 			//HeightPage is the value of Width/Length depending on Landscape/Portrait.
 			int bottomLastField=0;
 			if(sheet.SheetFields.Count>0) {
@@ -876,8 +864,8 @@ namespace OpenDentBusiness{
 			if(SheetTypeIsSinglePage(sheet.SheetType)) {
 				return 1;//labels and RX forms are always single pages
 			}
-			SetPageMargin(sheet,margins);
-			int printableHeightPerPage=(sheet.HeightPage-(margins.Top+margins.Bottom));
+			SetPageMargin(sheet,m);
+			int printableHeightPerPage=(sheet.HeightPage-(m.Top+m.Bottom));
 			if(printableHeightPerPage<1) {
 				return 1;//otherwise we get negative, infinite, or thousands of pages.
 			}
@@ -886,26 +874,27 @@ namespace OpenDentBusiness{
 				maxY=Math.Max(maxY,sheet.SheetFields[i].Bounds.Bottom);
 			}
 			int pageCount=1;
-			maxY-=margins.Top;//adjust for ignoring the top margin of the first page.
+			maxY-=m.Top;//adjust for ignoring the top margin of the first page.
 			pageCount=Convert.ToInt32(Math.Ceiling((double)maxY/printableHeightPerPage));
 			pageCount=Math.Max(pageCount,1);//minimum of at least one page.
 			return pageCount;
 		}
 
-		public static void SetPageMargin(Sheet sheet,System.Drawing.Printing.Margins margins) {
-			margins.Left=0;
-			margins.Right=0;
+		public static void SetPageMargin(Sheet sheet,System.Drawing.Printing.Margins m) {
+			m.Left=0;
+			m.Right=0;
 			if(SheetTypeIsSinglePage(sheet.SheetType)) {
-				margins.Top=0;
-				margins.Bottom=0;
+				m.Top=0;
+				m.Bottom=0;
 				//m=new System.Drawing.Printing.Margins(0,0,0,0); //does not work, creates new reference.
-				return;
 			}
-			margins.Top=40;
-			if(sheet.SheetType==SheetTypeEnum.MedLabResults) {
-				margins.Top=120;
+			else {
+				m.Top=40;
+				if(sheet.SheetType==SheetTypeEnum.MedLabResults) {
+					m.Top=120;
+				}
+				m.Bottom=60;
 			}
-			margins.Bottom=60;
 			return;
 		}
 
@@ -916,10 +905,8 @@ namespace OpenDentBusiness{
 				List<SheetField> listSheetFieldsForSheet=listSheetFields.FindAll(x => x.SheetNum==listSheets[i].SheetNum);
 				listSheetFieldsForSheet.Sort(SheetFields.SortDrawingOrderLayers);
 				SheetFields.GetFieldsAndParameters(listSheets[i],listSheetFieldsForSheet);
-				List<SheetField> listSheetFieldsSigBox=listSheets[i].SheetFields
-					.FindAll(x => x.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice));
-				for(int j=0;j<listSheetFieldsSigBox.Count;j++) {
-					listSheetFieldsSigBox[j].SigKey=Sheets.GetSignatureKey(listSheets[i]);
+				foreach(SheetField field in listSheets[i].SheetFields.FindAll(x => x.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice))) {
+					field.SigKey=Sheets.GetSignatureKey(listSheets[i]);
 				}
 			}
 		}
@@ -957,21 +944,15 @@ namespace OpenDentBusiness{
 			string tempFile=PrefC.GetRandomTempFile(".pdf");
 			string rawBase64="";
 			//Create a PDF with the given sheet and file. The other parameters can remain null, because they aren't used for TreatPlan sheets.
-			PdfDocument pdfDocument=sheetDrawingJob.CreatePdf(sheet);
-			SheetDrawingJob.SavePdfToFile(pdfDocument, tempFile);
+			PdfDocument pdf=sheetDrawingJob.CreatePdf(sheet);
+			SheetDrawingJob.SavePdfToFile(pdf, tempFile);
 			//Convert the pdf into its raw bytes
 			rawBase64=Convert.ToBase64String(System.IO.File.ReadAllBytes(tempFile));
 			return Convert.ToBase64String(System.IO.File.ReadAllBytes(tempFile));
 		}
 
 		public static Sheet CreateExamSheet(long patNum,long sheetDefNum) {
-			SheetDef sheetDef=null;
-			if(sheetDefNum==0) {
-				sheetDef=SheetDefs.GetSheetsDefault(SheetTypeEnum.ExamSheet);
-			}
-			else {
-				sheetDef=SheetDefs.GetSheetDef(sheetDefNum);
-			}
+			SheetDef sheetDef=SheetDefs.GetSheetDef(sheetDefNum);
 			Sheet sheet=SheetUtil.CreateSheet(sheetDef,patNum);
 			SheetParameter.SetParameter(sheet,"PatNum",patNum);
 			SheetFiller.FillFields(sheet);

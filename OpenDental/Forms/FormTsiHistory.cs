@@ -200,7 +200,7 @@ namespace OpenDental {
 				if(_listTsiTransLogs[i].TransDateTime.Date<=dateEnd
 					&& _listTsiTransLogs[i].TransDateTime.Date>=dateStart
 					&& (_listPatNumsFam.Count==0 || _listPatNumsFam.Contains(_listTsiTransLogs[i].PatNum))
-					&& (comboClinics.ListClinicNumsSelected.Count==0 || comboClinics.ListClinicNumsSelected.Contains(clinicNum))
+					&& (comboClinics.ListSelectedClinicNums.Count==0 || comboClinics.ListSelectedClinicNums.Contains(clinicNum))
 					&& (listClientIDs.Count==0 || listClientIDs.Contains(_listTsiTransLogs[i].ClientId))
 					&& (listSelectedTransTypes.Count==0 || listSelectedTransTypes.Contains(_listTsiTransLogs[i].TransType))
 					&& (listSelectedAcctStatuses.Count==0
@@ -468,9 +468,12 @@ namespace OpenDental {
 				return;
 			}
 			//FormOpenDental.S_Contr_PatientSelected(Patients.GetPat(_listTsiTransLogsAll[(int)logIndex].PatNum),false);
-			GlobalFormOpenDental.GotoAccount(_listTsiTransLogs[(int)logIndex].PatNum);
+			GotoModule.GotoAccount(_listTsiTransLogs[(int)logIndex].PatNum);
 			SendToBack();
 		}
 
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
 	}
 }

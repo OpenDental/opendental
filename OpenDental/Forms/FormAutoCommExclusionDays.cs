@@ -26,7 +26,7 @@ namespace OpenDental {
 		}
 
 		private void FormAutoCommExclusionDays_Load(object sender,EventArgs e) {
-			comboBoxClinicPicker.ClinicNumSelected = _clinicNum;
+			comboBoxClinicPicker.SelectedClinicNum = _clinicNum;
 			Reload();
 		}
 
@@ -67,11 +67,11 @@ namespace OpenDental {
 
 		private void ComboBoxClinicPicker_SelectionChangeCommitted(object sender,EventArgs e) {
 			if(!ExcludeDaysSelectionOK()) {
-				comboBoxClinicPicker.ClinicNumSelected = _clinicNum;
+				comboBoxClinicPicker.SelectedClinicNum = _clinicNum;
 				return;
 			}
 			Save();
-			_clinicNum=comboBoxClinicPicker.ClinicNumSelected;
+			_clinicNum=comboBoxClinicPicker.SelectedClinicNum;
 			Reload();
 		}
 
@@ -151,7 +151,7 @@ namespace OpenDental {
 			Reload();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			if(!ExcludeDaysSelectionOK()) {
 				return;
 			}
@@ -160,5 +160,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

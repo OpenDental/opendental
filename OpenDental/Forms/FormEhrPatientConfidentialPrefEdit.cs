@@ -26,11 +26,25 @@ namespace OpenDental {
 			comboConfidentialContact.SelectedIndex=(int)PatCur.PreferContactConfidential;	
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			PatCur.PreferContactConfidential=(ContactMethod)comboConfidentialContact.SelectedIndex;
 			Patients.Update(PatCur,PatOld);
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+
+		
+
+	
+
+	
+
 
 	}
 }

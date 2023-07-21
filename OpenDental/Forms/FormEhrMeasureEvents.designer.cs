@@ -33,6 +33,7 @@ namespace OpenDental{
 			this.textDateEnd = new OpenDental.ValidDate();
 			this.gridMain = new OpenDental.UI.GridOD();
 			this.butRefresh = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// labelType
@@ -119,6 +120,16 @@ namespace OpenDental{
 			this.butRefresh.Text = "Refresh";
 			this.butRefresh.Click += new System.EventHandler(this.butRefresh_Click);
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(683, 405);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 5;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormEhrMeasureEvents
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -132,6 +143,7 @@ namespace OpenDental{
 			this.Controls.Add(this.comboType);
 			this.Controls.Add(this.gridMain);
 			this.Controls.Add(this.butRefresh);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormEhrMeasureEvents";
 			this.Text = "EHR Measure Events";
@@ -144,6 +156,7 @@ namespace OpenDental{
 		#endregion
 
 		private OpenDental.UI.Button butRefresh;
+		private OpenDental.UI.Button butClose;
 		private System.Windows.Forms.Label labelType;
 		private System.Windows.Forms.ComboBox comboType;
 		private System.Windows.Forms.Label labelEndDate;

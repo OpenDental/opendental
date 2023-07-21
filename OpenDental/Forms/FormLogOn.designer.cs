@@ -35,6 +35,7 @@ namespace OpenDental {
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormLogOn));
+			this.butExit = new OpenDental.UI.Button();
 			this.butOK = new OpenDental.UI.Button();
 			this.listUser = new OpenDental.UI.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -45,13 +46,22 @@ namespace OpenDental {
 			this.timerShutdownInstance = new System.Windows.Forms.Timer(this.components);
 			this.labelFilterName = new System.Windows.Forms.Label();
 			this.textFilterName = new System.Windows.Forms.TextBox();
-			this.labelSwipeBadge = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+			// 
+			// butExit
+			// 
+			this.butExit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butExit.Location = new System.Drawing.Point(445, 329);
+			this.butExit.Name = "butExit";
+			this.butExit.Size = new System.Drawing.Size(75, 26);
+			this.butExit.TabIndex = 2;
+			this.butExit.Text = "Exit";
+			this.butExit.Click += new System.EventHandler(this.butExit_Click);
 			// 
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(445, 328);
+			this.butOK.Location = new System.Drawing.Point(445, 288);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 1;
@@ -102,7 +112,7 @@ namespace OpenDental {
 			// 
 			// checkShowCEMTUsers
 			// 
-			this.checkShowCEMTUsers.Location = new System.Drawing.Point(291, 95);
+			this.checkShowCEMTUsers.Location = new System.Drawing.Point(291, 64);
 			this.checkShowCEMTUsers.Name = "checkShowCEMTUsers";
 			this.checkShowCEMTUsers.Size = new System.Drawing.Size(213, 24);
 			this.checkShowCEMTUsers.TabIndex = 9;
@@ -132,26 +142,17 @@ namespace OpenDental {
 			this.textFilterName.TabIndex = 27;
 			this.textFilterName.TextChanged += new System.EventHandler(this.textFilterName_TextChanged);
 			// 
-			// labelSwipeBadge
-			// 
-			this.labelSwipeBadge.Location = new System.Drawing.Point(288, 60);
-			this.labelSwipeBadge.Name = "labelSwipeBadge";
-			this.labelSwipeBadge.Size = new System.Drawing.Size(214, 18);
-			this.labelSwipeBadge.TabIndex = 28;
-			this.labelSwipeBadge.Text = "or swipe your badge";
-			this.labelSwipeBadge.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
 			// FormLogOn
 			// 
 			this.AcceptButton = this.butOK;
 			this.ClientSize = new System.Drawing.Size(532, 367);
-			this.Controls.Add(this.labelSwipeBadge);
 			this.Controls.Add(this.textFilterName);
 			this.Controls.Add(this.labelFilterName);
 			this.Controls.Add(this.checkShowCEMTUsers);
 			this.Controls.Add(this.textUser);
 			this.Controls.Add(this.textPassword);
 			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butExit);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.listUser);
@@ -161,12 +162,13 @@ namespace OpenDental {
 			this.Name = "FormLogOn";
 			this.Text = "Log On";
 			this.Load += new System.EventHandler(this.FormLogOn_Load);
-			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormLogOn_KeyDown);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butExit;
 		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.ListBox listUser;
 		private System.Windows.Forms.Label label1;
@@ -177,6 +179,5 @@ namespace OpenDental {
 		private System.Windows.Forms.Timer timerShutdownInstance;
 		private System.Windows.Forms.Label labelFilterName;
 		private System.Windows.Forms.TextBox textFilterName;
-		private System.Windows.Forms.Label labelSwipeBadge;
 	}
 }

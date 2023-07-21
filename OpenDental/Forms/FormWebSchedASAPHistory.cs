@@ -32,18 +32,18 @@ namespace OpenDental {
 			Cursor=Cursors.WaitCursor;
 			List<long> listClinicNums=null;
 			if(PrefC.HasClinicsEnabled) {
-				listClinicNums=comboClinic.ListClinicNumsSelected;
+				listClinicNums=comboClinic.ListSelectedClinicNums;
 			}
 			_listAsapCommHists=AsapComms.GetHist(datePicker.GetDateTimeFrom(),datePicker.GetDateTimeTo(),listClinicNums:listClinicNums);
 			_datePrevFrom=datePicker.GetDateTimeFrom();
 			_datePrevTo=datePicker.GetDateTimeTo();
-			_listClinicNumsPrevSelected=new List<long>(comboClinic.ListClinicNumsSelected);
+			_listClinicNumsPrevSelected=new List<long>(comboClinic.ListSelectedClinicNums);
 			Cursor=Cursors.Default;
 		}
 
 		private void FillGrid() {
 			if(_listAsapCommHists==null || datePicker.GetDateTimeFrom() < _datePrevFrom || datePicker.GetDateTimeTo() > _datePrevTo
-				|| comboClinic.ListClinicNumsSelected.Any(x => !_listClinicNumsPrevSelected.Contains(x))) 
+				|| comboClinic.ListSelectedClinicNums.Any(x => !_listClinicNumsPrevSelected.Contains(x))) 
 			{
 				//The user is asking for data that we have not fetched yet.
 				GetData();
@@ -51,7 +51,7 @@ namespace OpenDental {
 			bool isClinicsEnabled=PrefC.HasClinicsEnabled;
 			List<AsapComms.AsapCommHist> listAsapCommHists=_listAsapCommHists.Where(x => x.AsapComm.DateTimeEntry
 				.Between(datePicker.GetDateTimeFrom(),datePicker.GetDateTimeTo()))
-				.Where(x => !isClinicsEnabled || comboClinic.ListClinicNumsSelected.Contains(x.AsapComm.ClinicNum)).ToList();
+				.Where(x => !isClinicsEnabled || comboClinic.ListSelectedClinicNums.Contains(x.AsapComm.ClinicNum)).ToList();
 			gridHistory.BeginUpdate();
 			gridHistory.Columns.Clear();
 			GridColumn col;
@@ -138,5 +138,10 @@ namespace OpenDental {
 		private void datePicker_CalendarClosed(object sender,EventArgs e) {
 			FillGrid();
 		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			Close();
+		}
+
 	}
 }

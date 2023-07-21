@@ -42,7 +42,7 @@ namespace OpenDental {
 			_listTreatPlanAttachesAll=TreatPlanAttaches.GetAllForPatNum(TreatPlanCur.PatNum);
 			_listTreatPlanAttaches=_listTreatPlanAttachesAll.FindAll(x => x.TreatPlanNum==TreatPlanCur.TreatPlanNum);
 			_listProceduresAll=Procedures.GetProcsByStatusForPat(TreatPlanCur.PatNum,new[] { ProcStat.TP,ProcStat.TPi });
-			ProcedureLogic.SortProcedures(_listProceduresAll);
+			ProcedureLogic.SortProcedures(ref _listProceduresAll);
 			_listProcedures=_listProceduresAll.FindAll(x => _listTreatPlanAttaches.Any(y => x.ProcNum==y.ProcNum) 
 				|| (TreatPlanCur.TPStatus==TreatPlanStatus.Active && (x.AptNum>0 || x.PlannedAptNum>0)));
 			_listAppointments=Appointments.GetMultApts(_listProceduresAll.SelectMany(x => new[] { x.AptNum,x.PlannedAptNum }).Distinct().Where(x => x>0).ToList());
@@ -58,7 +58,7 @@ namespace OpenDental {
 				gridAll.Visible=false;
 				butLeft.Visible=false;
 				butRight.Visible=false;
-				butSave.Enabled=false;
+				butOK.Enabled=false;
 				butDelete.Visible=false;
 			}
 			if(TreatPlanCur.TPStatus==TreatPlanStatus.Active) {
@@ -271,7 +271,7 @@ namespace OpenDental {
 			gridAll.Visible=true;
 			butLeft.Visible=true;
 			butRight.Visible=true;
-			butSave.Enabled=true;
+			butOK.Enabled=true;
 			butDelete.Visible=true;
 			butDelete.Enabled=false;
 			_listProcedures.RemoveAll(x => x.AptNum>0 || x.PlannedAptNum>0); //to prevent duplicate additions
@@ -279,13 +279,7 @@ namespace OpenDental {
 			FillGrids();
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
-			#region Validation
-			if(string.IsNullOrWhiteSpace(textHeading.Text)) {
-				MsgBox.Show(this,"Header name cannot be empty.");
-				return;
-			}
-			#endregion Validation
+		private void butOK_Click(object sender,EventArgs e) {
 			TreatPlanCur.Heading=textHeading.Text;
 			TreatPlanCur.Note=textNote.Text;
 			TreatPlanCur.UserNumPresenter=0;
@@ -298,6 +292,10 @@ namespace OpenDental {
 			}
 			TreatPlans.SyncTreatPlanStatusWithProcs(TreatPlanCur,_makeActive,_listTreatPlanAttaches,_listTreatPlanAttachesAll,_listProcedures);
 			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {
@@ -316,6 +314,5 @@ namespace OpenDental {
 			}
 			DialogResult=DialogResult.OK;
 		}
-
 	}
 }

@@ -68,7 +68,6 @@ namespace OpenDentBusiness.Crud{
 				sheet.DateTSheetEdited= PIn.DateT (row["DateTSheetEdited"].ToString());
 				sheet.HasMobileLayout = PIn.Bool  (row["HasMobileLayout"].ToString());
 				sheet.RevID           = PIn.Int   (row["RevID"].ToString());
-				sheet.WebFormSheetID  = PIn.Long  (row["WebFormSheetID"].ToString());
 				retVal.Add(sheet);
 			}
 			return retVal;
@@ -101,7 +100,6 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("DateTSheetEdited");
 			table.Columns.Add("HasMobileLayout");
 			table.Columns.Add("RevID");
-			table.Columns.Add("WebFormSheetID");
 			foreach(Sheet sheet in listSheets) {
 				table.Rows.Add(new object[] {
 					POut.Long  (sheet.SheetNum),
@@ -125,7 +123,6 @@ namespace OpenDentBusiness.Crud{
 					POut.DateT (sheet.DateTSheetEdited,false),
 					POut.Bool  (sheet.HasMobileLayout),
 					POut.Int   (sheet.RevID),
-					POut.Long  (sheet.WebFormSheetID),
 				});
 			}
 			return table;
@@ -145,7 +142,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="SheetNum,";
 			}
-			command+="SheetType,PatNum,DateTimeSheet,FontSize,FontName,Width,Height,IsLandscape,InternalNote,Description,ShowInTerminal,IsWebForm,IsMultiPage,IsDeleted,SheetDefNum,DocNum,ClinicNum,DateTSheetEdited,HasMobileLayout,RevID,WebFormSheetID) VALUES(";
+			command+="SheetType,PatNum,DateTimeSheet,FontSize,FontName,Width,Height,IsLandscape,InternalNote,Description,ShowInTerminal,IsWebForm,IsMultiPage,IsDeleted,SheetDefNum,DocNum,ClinicNum,DateTSheetEdited,HasMobileLayout,RevID) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(sheet.SheetNum)+",";
 			}
@@ -169,8 +166,7 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Long  (sheet.ClinicNum)+","
 				+    DbHelper.Now()+","
 				+    POut.Bool  (sheet.HasMobileLayout)+","
-				+    POut.Int   (sheet.RevID)+","
-				+    POut.Long  (sheet.WebFormSheetID)+")";
+				+    POut.Int   (sheet.RevID)+")";
 			if(sheet.InternalNote==null) {
 				sheet.InternalNote="";
 			}
@@ -199,7 +195,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="SheetNum,";
 			}
-			command+="SheetType,PatNum,DateTimeSheet,FontSize,FontName,Width,Height,IsLandscape,InternalNote,Description,ShowInTerminal,IsWebForm,IsMultiPage,IsDeleted,SheetDefNum,DocNum,ClinicNum,DateTSheetEdited,HasMobileLayout,RevID,WebFormSheetID) VALUES(";
+			command+="SheetType,PatNum,DateTimeSheet,FontSize,FontName,Width,Height,IsLandscape,InternalNote,Description,ShowInTerminal,IsWebForm,IsMultiPage,IsDeleted,SheetDefNum,DocNum,ClinicNum,DateTSheetEdited,HasMobileLayout,RevID) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(sheet.SheetNum)+",";
 			}
@@ -223,8 +219,7 @@ namespace OpenDentBusiness.Crud{
 				+    POut.Long  (sheet.ClinicNum)+","
 				+    DbHelper.Now()+","
 				+    POut.Bool  (sheet.HasMobileLayout)+","
-				+    POut.Int   (sheet.RevID)+","
-				+    POut.Long  (sheet.WebFormSheetID)+")";
+				+    POut.Int   (sheet.RevID)+")";
 			if(sheet.InternalNote==null) {
 				sheet.InternalNote="";
 			}
@@ -260,8 +255,7 @@ namespace OpenDentBusiness.Crud{
 				+"ClinicNum       =  "+POut.Long  (sheet.ClinicNum)+", "
 				+"DateTSheetEdited=  "+POut.DateT (sheet.DateTSheetEdited)+", "
 				+"HasMobileLayout =  "+POut.Bool  (sheet.HasMobileLayout)+", "
-				+"RevID           =  "+POut.Int   (sheet.RevID)+", "
-				+"WebFormSheetID  =  "+POut.Long  (sheet.WebFormSheetID)+" "
+				+"RevID           =  "+POut.Int   (sheet.RevID)+" "
 				+"WHERE SheetNum = "+POut.Long(sheet.SheetNum);
 			if(sheet.InternalNote==null) {
 				sheet.InternalNote="";
@@ -353,10 +347,6 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="RevID = "+POut.Int(sheet.RevID)+"";
 			}
-			if(sheet.WebFormSheetID != oldSheet.WebFormSheetID) {
-				if(command!="") { command+=",";}
-				command+="WebFormSheetID = "+POut.Long(sheet.WebFormSheetID)+"";
-			}
 			if(command=="") {
 				return false;
 			}
@@ -431,9 +421,6 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(sheet.RevID != oldSheet.RevID) {
-				return true;
-			}
-			if(sheet.WebFormSheetID != oldSheet.WebFormSheetID) {
 				return true;
 			}
 			return false;

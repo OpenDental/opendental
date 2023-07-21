@@ -18,16 +18,19 @@ namespace OpenDentBusiness {
 	public class Signalods {
 		#region Fields - Public
 		///<summary>This is not the actual date/time last refreshed.  It is really the server based date/time of the last item in the database retrieved on previous refreshes.  That way, the local workstation time is irrelevant.</summary>
-		public static DateTime DateTSignalLastRefreshed;
-		///<summary>Mimics the behavior of DateSignalLastRefreshed, but is used exclusively in ContrAppt.TickRefresh(). The root issue was that when a client came back from being inactive
-		///ContrAppt.TickRefresh() was using DateSignalLastRefreshed, which is only set after we process signals. Therefore, when a client went inactive, we could potentially query the 
+		public static DateTime SignalLastRefreshed;
+		///<summary>Mimics the behavior of SignalLastRefreshed, but is used exclusively in ContrAppt.TickRefresh(). The root issue was that when a client came back from being inactive
+		///ContrAppt.TickRefresh() was using SignalLastRefreshed, which is only set after we process signals. Therefore, when a client went inactive, we could potentially query the 
 		///SignalOD table for a much larger dataset than intended. E.g.- Client goes inactive for 3 hours, comes back, ContrAppt.TickRefresh() is called and calls RefreshTimed() with a 3 hour old datetime.</summary>
-		public static DateTime DateTApptSignalLastRefreshed;
+		public static DateTime ApptSignalLastRefreshed;
 		///<summary>Track the last time that the web service refreshed it's cache. 
 		///The cache is shared by all consumers of this web service for this app pool. 
 		///Yes this goes against best practice and yes this could lead to occasional collisions. 
 		///But the risk of these things happening is very low given the low frequency of traffic and the low frequency of cache-eligible changes being made.</summary>
-		public static DateTime DateTSignalLastRefreshedWeb=DateTime.MinValue;
+		public static DateTime SignalLastRefreshedWeb {
+			get;
+			private set;
+		} = DateTime.MinValue;
 		#endregion
 
 		#region Fields - Private
@@ -55,31 +58,31 @@ namespace OpenDentBusiness {
 		///Remeber that the supplied dateTime is server time.  This has to be accounted for.
 		///ListITypes is an optional parameter for querying specific signal types.
 		///ServerMT instances will always be given a chance to process signals being returned from this method.</summary>
-		public static List<Signalod> RefreshTimed(DateTime dateTSince,List<InvalidType> listInvalidTypes=null) {
+		public static List<Signalod> RefreshTimed(DateTime sinceDateT,List<InvalidType> listITypes=null) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<Signalod>>(MethodBase.GetCurrentMethod(),dateTSince,listInvalidTypes);
+				return Meth.GetObject<List<Signalod>>(MethodBase.GetCurrentMethod(),sinceDateT,listITypes);
 			}
 			//This command was written to take into account the fact that MySQL truncates seconds to the the whole second on DateTime columns. (newer versions support fractional seconds)
 			//By selecting signals less than Now() we avoid missing signals the next time this function is called. Without the addition of Now() it was possible
 			//to miss up to ((N-1)/N)% of the signals generated in the worst case scenario.
 			string command="SELECT * FROM signalod "
-				+"WHERE (SigDateTime>"+POut.DateT(dateTSince)+" AND SigDateTime< "+DbHelper.Now()+") ";
-			if(!listInvalidTypes.IsNullOrEmpty()) {
-				command+="AND IType IN("+String.Join(",",listInvalidTypes.Select(x => (int)x))+") ";
+				+"WHERE (SigDateTime>"+POut.DateT(sinceDateT)+" AND SigDateTime< "+DbHelper.Now()+") ";
+			if(!listITypes.IsNullOrEmpty()) {
+				command+="AND IType IN("+String.Join(",",listITypes.Select(x => (int)x))+") ";
 			}
 			command+="ORDER BY SigDateTime";
 			//note: this might return an occasional row that has both times newer.
-			List<Signalod> listSignalods=new List<Signalod>();
+			List<Signalod> listSignals=new List<Signalod>();
 			try {
-				listSignalods=Crud.SignalodCrud.SelectMany(command);
+				listSignals=Crud.SignalodCrud.SelectMany(command);
 			} 
 			catch {
 				//we don't want an error message to show, because that can cause a cascade of a large number of error messages.
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ServerMT) {
-				ProcessSignalsForServerMT(listSignalods);
+				ProcessSignalsForServerMT(listSignals);
 			}
-			return listSignalods;
+			return listSignals;
 		}
 
 		///<summary>ServerMT instances keep track of every SignalNum they have processed and will only process new signals that are passed in.</summary>
@@ -110,17 +113,17 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary></summary>
-		public static List<SignalodForApi> GetSignalOdsForApi(int limit,int offset,DateTime dateTSince,List<InvalidType> listInvalidTypes=null){
+		public static List<SignalodForApi> GetSignalOdsForApi(int limit,int offset,DateTime sinceDateT,List<InvalidType> listITypes=null){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<SignalodForApi>>(MethodBase.GetCurrentMethod(),limit,offset,dateTSince,listInvalidTypes);
+				return Meth.GetObject<List<SignalodForApi>>(MethodBase.GetCurrentMethod(),limit,offset,sinceDateT,listITypes);
 			}
 			//This command was written to take into account the fact that MySQL truncates seconds to the the whole second on DateTime columns. (newer versions support fractional seconds)
 			//By selecting signals less than Now() we avoid missing signals the next time this function is called. Without the addition of Now() it was possible
 			//to miss up to ((N-1)/N)% of the signals generated in the worst case scenario.
 			string command="SELECT * FROM signalod "
-				+"WHERE (SigDateTime>"+POut.DateT(dateTSince)+" AND SigDateTime< "+DbHelper.Now()+") ";
-			if(!listInvalidTypes.IsNullOrEmpty()) {
-				command+="AND IType IN("+String.Join(",",listInvalidTypes.Select(x => (int)x))+") ";
+				+"WHERE (SigDateTime>"+POut.DateT(sinceDateT)+" AND SigDateTime< "+DbHelper.Now()+") ";
+			if(!listITypes.IsNullOrEmpty()) {
+				command+="AND IType IN("+String.Join(",",listITypes.Select(x => (int)x))+") ";
 			}
 			command+="ORDER BY SignalNum "
 				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
@@ -137,7 +140,7 @@ namespace OpenDentBusiness {
 			List<SignalodForApi> listSignalodForApis=new List<SignalodForApi>();
 			for(int i=0;i<listSignalods.Count;i++) {//list can be empty
 				SignalodForApi signalodForApi=new SignalodForApi();
-				signalodForApi.Signalod=listSignalods[i];
+				signalodForApi.SignalodCur=listSignalods[i];
 				signalodForApi.DateTimeServer=dateTimeServer;
 				listSignalodForApis.Add(signalodForApi);
 			}
@@ -152,24 +155,24 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Queries the database and returns true if we found a Sites signal</summary>
-		public static bool DoesNeedToRefreshSitesCache(DateTime dateTSinceLastChecked) {
+		public static bool DoesNeedToRefreshSitesCache(DateTime dateTimeSinceLastChecked) {
 			//No need to check MiddleTierRole; no call to db.
-			int numSitesSignals=GetCountForTypes(dateTSinceLastChecked,InvalidType.Sites);
+			int numSitesSignals=GetCountForTypes(dateTimeSinceLastChecked,InvalidType.Sites);
 			return numSitesSignals>0;
 		}
 
-		public static int GetCountForTypes(DateTime dateTimeSinceLastChecked,params InvalidType[] invalidTypeArray) {
-			if(invalidTypeArray.IsNullOrEmpty()) {
+		public static int GetCountForTypes(DateTime dateTimeSinceLastChecked,params InvalidType[] arrayITypes) {
+			if(arrayITypes.IsNullOrEmpty()) {
 				return 0;
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetInt(MethodBase.GetCurrentMethod(),dateTimeSinceLastChecked,invalidTypeArray);
+				return Meth.GetInt(MethodBase.GetCurrentMethod(),dateTimeSinceLastChecked,arrayITypes);
 			}
 			//string[] array=;
 			string command=$"SELECT COUNT(*) FROM signalod "
 				+$"WHERE SigDateTime>{POut.DateT(dateTimeSinceLastChecked)} "
 				+$"AND SigDateTime<{DbHelper.Now()} "
-				+$"AND IType IN({string.Join(",",invalidTypeArray.Select(x => POut.Int((int)x)))})";
+				+$"AND IType IN({string.Join(",",arrayITypes.Select(x => POut.Int((int)x)))})";
 			int numSitesSignals=PIn.Int(Db.GetCount(command));
 			return numSitesSignals;
 		}
@@ -178,22 +181,22 @@ namespace OpenDentBusiness {
 		///Returns latest valid signal Date/Time and the list of InvalidTypes that were refreshed.
 		///Can throw exception.</summary>
 		public static List<InvalidType> RefreshForWeb() {
-			InvalidType[] invalidTypeArray=new InvalidType[0];
-			List<Signalod>listSignalods=new List<Signalod>();
+			InvalidType[] arrayInvalidTypes=new InvalidType[0];
+			List<Signalod>listSignals=new List<Signalod>();
 			try {
-				listSignalods=GetInvalidSignalsForWeb();
-				invalidTypeArray=Signalods.GetInvalidTypesForWeb(listSignalods);
+				listSignals=GetInvalidSignalsForWeb();
+				arrayInvalidTypes=Signalods.GetInvalidTypesForWeb(listSignals);
 				//Get all invalid types since given time and refresh the cache for those given invalid types.
-				Cache.Refresh(invalidTypeArray);
+				Cache.Refresh(arrayInvalidTypes);
 			}
 			catch(Exception ex) {
 				//Most likely cause for an exception here would be a thread collision between 2 consumers trying to refresh the cache at the exact same instant.
-				//There is a chance that performing a subsequent refresh here would cause yet another collision but it's the best we can do without redesigning the entire cache pattern.
+				//There is a chance that performing as subsequent refresh here would cause yet another collision but it's the best we can do without redesigning the entire cache pattern.
 				Cache.Refresh(InvalidType.AllLocal);
 				throw new Exception("Server cache may be invalid. Please try again. Error: "+ex.Message);
 			}
-			InvalidTypeHistory.UpdateStatus(DateTSignalLastRefreshedWeb,listSignalods,invalidTypeArray);
-			return invalidTypeArray.ToList();
+			InvalidTypeHistory.UpdateStatus(SignalLastRefreshedWeb,listSignals,arrayInvalidTypes);
+			return arrayInvalidTypes.ToList();
 		}
 
 		///<summary>Gets all Signals since SignalLastRefreshedWeb. Returns empty list if it is not yet time to process signals again. Can throw exception.</summary>
@@ -202,75 +205,77 @@ namespace OpenDentBusiness {
 				InvalidTypeHistory.InitIfNecessary();
 				int defaultProcessSigsIntervalInSecs=7;
 				ODException.SwallowAnyException(() => defaultProcessSigsIntervalInSecs=PrefC.GetInt(PrefName.ProcessSigsIntervalInSecs));
-				if(DateTime.Now.Subtract(DateTSignalLastRefreshedWeb)<=TimeSpan.FromSeconds(defaultProcessSigsIntervalInSecs)) {
+				if(DateTime.Now.Subtract(SignalLastRefreshedWeb)<=TimeSpan.FromSeconds(defaultProcessSigsIntervalInSecs)) {
 					return new List<Signalod>();
 				}
 				//No need to check MiddleTierRole; no call to db.
-				List<Signalod> listSignalods=new List<Signalod>();
-				if(DateTSignalLastRefreshedWeb.Year<1880) { //First signals for this session so go back in time a bit.
-					DateTSignalLastRefreshedWeb=MiscData.GetNowDateTime().AddSeconds(-1);
+				List<Signalod> listSignals=new List<Signalod>();
+				if(SignalLastRefreshedWeb.Year<1880) { //First signals for this session so go back in time a bit.
+					SignalLastRefreshedWeb=MiscData.GetNowDateTime().AddSeconds(-1);
 				}
-				listSignalods=RefreshTimed(DateTSignalLastRefreshedWeb);
-				if(listSignalods.Count > 0) { //Next lower bound is current upper bound.
-					DateTSignalLastRefreshedWeb=listSignalods.Max(x => x.SigDateTime);
+				listSignals=RefreshTimed(SignalLastRefreshedWeb);
+				if(listSignals.Count > 0) { //Next lower bound is current upper bound.
+					SignalLastRefreshedWeb=listSignals.Max(x => x.SigDateTime);
 				}
-				return listSignalods;
+				return listSignals;
 			}
 			catch(Exception) {
 				//Reset the last signal process time if there was an error.
 				DateTime dateTimeLastRefreshed=DateTime.Now;
 				ODException.SwallowAnyException(() => dateTimeLastRefreshed=OpenDentBusiness.MiscData.GetNowDateTime());
-				DateTSignalLastRefreshedWeb=dateTimeLastRefreshed;
+				SignalLastRefreshedWeb=dateTimeLastRefreshed;
 				throw;
 			}
 		}
 
 		///<summary>Returns the PK of the signal inserted if only one signal was passed in; Otherwise, returns 0.</summary>
-		public static long Insert(params Signalod[] signalodArray) {
-			if(signalodArray==null || signalodArray.Length < 1) {
+		public static long Insert(params Signalod[] arraySignals) {
+			if(arraySignals==null || arraySignals.Length < 1) {
 				return 0;
 			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				long signalNum=Meth.GetLong(MethodBase.GetCurrentMethod(),signalodArray);
-				if(signalodArray.Length==1) {
-					signalodArray[0].SignalNum=signalNum;
+				long signalNum=Meth.GetLong(MethodBase.GetCurrentMethod(),arraySignals);
+				if(arraySignals.Length==1) {
+					arraySignals[0].SignalNum=signalNum;
 				}
 				return signalNum;
 			}
-			for(int i=0;i<signalodArray.Length;i++) {
-				signalodArray[i].RemoteRole=RemotingClient.MiddleTierRole;
+			foreach(Signalod signal in arraySignals) {
+				signal.RemoteRole=RemotingClient.MiddleTierRole;
 			}
-			if(signalodArray.Length==1) {
-				return Crud.SignalodCrud.Insert(signalodArray[0]);
+			if(arraySignals.Length==1) {
+				return Crud.SignalodCrud.Insert(arraySignals[0]);
 			}
-			Crud.SignalodCrud.InsertMany(signalodArray.ToList());
+			Crud.SignalodCrud.InsertMany(arraySignals.ToList());
 			return 0;
 		}
 
 		///<summary>Simplest way to use the new fKey and FKeyType. Set isBroadcast=true to process signals immediately on workstation.</summary>
-		public static long SetInvalid(InvalidType invalidType,KeyType fKeyType,long fKey) {
+		public static long SetInvalid(InvalidType iType,KeyType fKeyType,long fKey) {
 			//Remoting role check performed in the Insert.
-			Signalod signalod=new Signalod();
-			signalod.IType=invalidType;
-			signalod.DateViewing=DateTime.MinValue;
-			signalod.FKey=fKey;
-			signalod.FKeyType=fKeyType;
-			return Insert(signalod);
+			Signalod sig=new Signalod();
+			sig.IType=iType;
+			sig.DateViewing=DateTime.MinValue;
+			sig.FKey=fKey;
+			sig.FKeyType=fKeyType;
+			return Insert(sig);
 		}
 
 		///<summary>Creates up to 3 signals for each supplied appt.  The signals are needed for many different kinds of changes to the appointment, but the signals only specify Provs and Ops because that's what's needed to tell workstations which views to refresh.  Always call a refresh of the appointment module before calling this method.  apptNew cannot be null.  apptOld is only used when making changes to an existing appt and Provs or Ops have changed. Generally should not be called outside of Appointments.cs</summary>
-		public static void SetInvalidAppt(Appointment appointmentNew,Appointment appointmentOld = null) {
-			if(appointmentNew==null) {
-				if(appointmentOld==null) {
-					return;//should never happen. Both apptNew and apptOld are null in this scenario
-				}
+		public static void SetInvalidAppt(Appointment apptNew,Appointment apptOld = null) {
+			if(apptNew==null) {
 				//If apptOld is not null then use it as the apptNew so we can send signals
 				//Most likely occurred due to appointment delete.
-				appointmentNew=appointmentOld;
-				appointmentOld=null;
+				if(apptOld!=null) {
+					apptNew=apptOld;
+					apptOld=null;
+				}
+				else {
+					return;//should never happen. Both apptNew and apptOld are null in this scenario
+				}
 			}
-			bool addSigForNewApt=IsApptInRefreshRange(appointmentNew);
-			bool addSignForOldAppt=IsApptInRefreshRange(appointmentOld);
+			bool addSigForNewApt=IsApptInRefreshRange(apptNew);
+			bool addSignForOldAppt=IsApptInRefreshRange(apptOld);
 			//The eight possible signals are:
 			//  1.New Provider
 			//  2.New Hyg
@@ -281,92 +286,98 @@ namespace OpenDentBusiness {
 			//  7.New Appt
 			//  8.Old Appt
 			//If there is no change between new and old, or if there is not an old appt provided, then fewer than 8 signals may be generated.
-			List<Signalod> listSignalods=new List<Signalod>();
+			List<Signalod> listSignals=new List<Signalod>();
 			if(addSigForNewApt) {
 				//  1.New Provider
-				Signalod signalodProv=new Signalod();
-				signalodProv.DateViewing=appointmentNew.AptDateTime;
-				signalodProv.IType=InvalidType.Appointment;
-				signalodProv.FKey=appointmentNew.ProvNum;
-				signalodProv.FKeyType=KeyType.Provider;
-				listSignalods.Add(signalodProv);
+				listSignals.Add(
+					new Signalod() {
+						DateViewing=apptNew.AptDateTime,
+						IType=InvalidType.Appointment,
+						FKey=apptNew.ProvNum,
+						FKeyType=KeyType.Provider,
+					});
 				//  2.New Hyg
-				if(appointmentNew.ProvHyg>0) {
-					Signalod signalodHyg=new Signalod();
-					signalodHyg.DateViewing=appointmentNew.AptDateTime;
-					signalodHyg.IType=InvalidType.Appointment;
-					signalodHyg.FKey=appointmentNew.ProvHyg;
-					signalodHyg.FKeyType=KeyType.Provider;
-					listSignalods.Add(signalodHyg);
+				if(apptNew.ProvHyg>0) {
+					listSignals.Add(
+						new Signalod() {
+							DateViewing=apptNew.AptDateTime,
+							IType=InvalidType.Appointment,
+							FKey=apptNew.ProvHyg,
+							FKeyType=KeyType.Provider,
+						});
 				}
 				//  3.New Op
-				if(appointmentNew.Op>0) {
-					Signalod signalodOp=new Signalod();
-					signalodOp.DateViewing=appointmentNew.AptDateTime;
-					signalodOp.IType=InvalidType.Appointment;
-					signalodOp.FKey=appointmentNew.Op;
-					signalodOp.FKeyType=KeyType.Operatory;
-					listSignalods.Add(signalodOp);
+				if(apptNew.Op>0) {
+					listSignals.Add(
+						new Signalod() {
+							DateViewing=apptNew.AptDateTime,
+							IType=InvalidType.Appointment,
+							FKey=apptNew.Op,
+							FKeyType=KeyType.Operatory,
+						});
 				}
 				//  7.New Appt
-				if(appointmentNew!=null) {
-					Signalod signalodAppt=new Signalod();
-					signalodAppt.DateViewing=appointmentNew.AptDateTime;
-					signalodAppt.IType=InvalidType.Appointment;
-					signalodAppt.FKey=appointmentNew.PatNum;
-					signalodAppt.FKeyType=KeyType.PatNum;
-					listSignalods.Add(signalodAppt);
+				if(apptNew!=null) {
+					listSignals.Add(
+						new Signalod {
+							DateViewing=apptNew.AptDateTime,
+							IType=InvalidType.Appointment,
+							FKey=apptNew.PatNum,
+							FKeyType=KeyType.PatNum,
+						});
 				}
 			}
 			if(addSignForOldAppt) {
 				//  4.Old Provider
-				if(appointmentOld!=null && appointmentOld.ProvNum>0 && (appointmentOld.AptDateTime.Date!=appointmentNew.AptDateTime.Date || appointmentOld.ProvNum!=appointmentNew.ProvNum)) {
-					Signalod signalodProvOld=new Signalod();
-					signalodProvOld.DateViewing=appointmentOld.AptDateTime;
-					signalodProvOld.IType=InvalidType.Appointment;
-					signalodProvOld.FKey=appointmentOld.ProvNum;
-					signalodProvOld.FKeyType=KeyType.Provider;
-					listSignalods.Add(signalodProvOld);
+				if(apptOld!=null && apptOld.ProvNum>0 && (apptOld.AptDateTime.Date!=apptNew.AptDateTime.Date || apptOld.ProvNum!=apptNew.ProvNum)) {
+					listSignals.Add(
+						new Signalod() {
+							DateViewing=apptOld.AptDateTime,
+							IType=InvalidType.Appointment,
+							FKey=apptOld.ProvNum,
+							FKeyType=KeyType.Provider,
+						});
 				}
 				//  5.Old Hyg
-				if(appointmentOld!=null && appointmentOld.ProvHyg>0 && (appointmentOld.AptDateTime.Date!=appointmentNew.AptDateTime.Date || appointmentOld.ProvHyg!=appointmentNew.ProvHyg)) {
-					Signalod signalodHygOld=new Signalod();
-					signalodHygOld.DateViewing=appointmentOld.AptDateTime;
-					signalodHygOld.IType=InvalidType.Appointment;
-					signalodHygOld.FKey=appointmentOld.ProvHyg;
-					signalodHygOld.FKeyType=KeyType.Provider;
-					listSignalods.Add(signalodHygOld);
+				if(apptOld!=null && apptOld.ProvHyg>0 && (apptOld.AptDateTime.Date!=apptNew.AptDateTime.Date || apptOld.ProvHyg!=apptNew.ProvHyg)) {
+					listSignals.Add(
+						new Signalod() {
+							DateViewing=apptOld.AptDateTime,
+							IType=InvalidType.Appointment,
+							FKey=apptOld.ProvHyg,
+							FKeyType=KeyType.Provider,
+						});
 				}
 				//  6.Old Op
-				if(appointmentOld!=null && appointmentOld.Op>0 && (appointmentOld.AptDateTime.Date!=appointmentNew.AptDateTime.Date || appointmentOld.Op!=appointmentNew.Op)) {
-					Signalod signalodOpOld=new Signalod();
-					signalodOpOld.DateViewing=appointmentOld.AptDateTime;
-					signalodOpOld.IType=InvalidType.Appointment;
-					signalodOpOld.FKey=appointmentOld.Op;
-					signalodOpOld.FKeyType=KeyType.Operatory;
-					listSignalods.Add(signalodOpOld);
+				if(apptOld!=null && apptOld.Op>0 && (apptOld.AptDateTime.Date!=apptNew.AptDateTime.Date || apptOld.Op!=apptNew.Op)) {
+					listSignals.Add(
+						new Signalod() {
+							DateViewing=apptOld.AptDateTime,
+							IType=InvalidType.Appointment,
+							FKey=apptOld.Op,
+							FKeyType=KeyType.Operatory,
+						});
 				}
 				//  8.Old Appt
-				if(appointmentOld!=null && (appointmentOld.AptDateTime.Date!=appointmentNew.AptDateTime.Date)) {
-					Signalod signalodApptOld=new Signalod();
-					signalodApptOld.DateViewing=appointmentOld.AptDateTime;
-					signalodApptOld.IType=InvalidType.Appointment;
-					signalodApptOld.FKey=appointmentOld.PatNum;
-					signalodApptOld.FKeyType=KeyType.PatNum;
-					listSignalods.Add(signalodApptOld);
+				if(apptOld!=null && (apptOld.AptDateTime.Date!=apptNew.AptDateTime.Date)) {
+					listSignals.Add(
+						new Signalod {
+							DateViewing=apptOld.AptDateTime,
+							IType=InvalidType.Appointment,
+							FKey=apptOld.PatNum,
+							FKeyType=KeyType.PatNum,
+						});
 				}
 			}
-			for(int i=0;i<listSignalods.Count;i++) {
-				Insert(listSignalods[i]);
-			}
+			listSignals.ForEach(x=>Insert(x));
 			//There was a delay when using this method to refresh the appointment module due to the time it takes to loop through the signals that iSignalProcessors need to loop through.
 			//BroadcastSignals(listSignals);//for immediate update. Signals will be processed again at next tick interval.
 		}
 
 		///<summary>Returns true if the Apppointment.AptDateTime is between DateTime.Today and the number of ApptAutoRefreshRange preference days. </summary>
-		public static bool IsApptInRefreshRange(Appointment appointment) {
+		public static bool IsApptInRefreshRange(Appointment appt) {
 			//No need to check MiddleTierRole; no call to db.
-			if(appointment==null) {
+			if(appt==null) {
 				return false;
 			}
 			int days=PrefC.GetInt(PrefName.ApptAutoRefreshRange);
@@ -375,72 +386,66 @@ namespace OpenDentBusiness {
 				return true;
 			}
 			//Returns true if the appointment is between today and today + the auto refresh day range preference.
-			return appointment.AptDateTime.Between(DateTime.Today,DateTime.Today.AddDays(days));
+			return appt.AptDateTime.Between(DateTime.Today,DateTime.Today.AddDays(days));
 		}
 
 		///<summary>The given dateStart must be less than or equal to dateEnd. Both dates must be valid dates (not min date, etc).</summary>
-		public static void SetInvalidSchedForOps(List<Schedule> listSchedules) {
+		public static void SetInvalidSchedForOps(Dictionary<DateTime,List<long>> dictOpNumsForDates) {
 			//No need to check MiddleTierRole; no call to db.
-			List<Signalod> listSignalods=new List<Signalod>();
-			for(int i=0;i<listSchedules.Count;i++) {
-				//All three places that call this just use a single op in their op list.
-				//But this is a little more future proof.
-				for(int j=0;j<listSchedules[i].Ops.Count;j++) {
-					Signalod signalodForOp=new Signalod();
-					signalodForOp.IType=InvalidType.Schedules;
-					signalodForOp.DateViewing=listSchedules[i].SchedDate;
-					signalodForOp.FKey=listSchedules[i].Ops[j];
-					signalodForOp.FKeyType=KeyType.Operatory;
-					listSignalods.Add(signalodForOp);
+			List <Signalod> listOpSignals=new List<Signalod>();
+			foreach(DateTime date in dictOpNumsForDates.Keys) {
+				long[] arrayUniqueOpNums=dictOpNumsForDates[date].Distinct().ToArray();
+				foreach(long opNum in arrayUniqueOpNums) {
+					Signalod signalForOp=new Signalod();
+					signalForOp.IType=InvalidType.Schedules;
+					signalForOp.DateViewing=date;
+					signalForOp.FKey=opNum;
+					signalForOp.FKeyType=KeyType.Operatory;
+					listOpSignals.Add(signalForOp);
 				}
 			}
-			Insert(listSignalods.ToArray());
+			Insert(listOpSignals.ToArray());
 		}
 
 		///<summary>Inserts a signal for each operatory in the schedule that has been changed, and for the provider the schedule is for. This only
 		///inserts a signal for today's schedules. Generally should not be called outside of Schedules.cs</summary>
-		public static void SetInvalidSched(params Schedule[] scheduleArray) {
+		public static void SetInvalidSched(params Schedule[] arraySchedules) {
 			//No need to check MiddleTierRole; no call to db.
 			//Per Nathan, we are only going to insert signals for today's schedules. Most workstations will not be looking at other days for extended
 			//lengths of time.
-			//Make a list of signals for every operatory involved.
-			DateTime dateTimeServer=MiscData.GetNowDateTime();
-			List<Schedule> listSchedules=scheduleArray.ToList();
-			List<Schedule> listSchedulesToday=listSchedules.Where(x => x.SchedDate.Date==DateTime.Today || x.SchedDate.Date==dateTimeServer.Date).ToList();
-			List<Signalod> listSignalods= new List<Signalod>();
-			for(int i=0;i<listSchedulesToday.Count;i++) {
-				List<long> listOpNums=listSchedulesToday[i].Ops;
-				for(int j=0;j<listOpNums.Count;j++) {
-					Signalod signalodOp=new Signalod();
-					signalodOp.IType=InvalidType.Schedules;
-					signalodOp.DateViewing=listSchedulesToday[i].SchedDate;
-					signalodOp.FKey=listOpNums[j];
-					signalodOp.FKeyType=KeyType.Operatory;
-					listSignalods.Add(signalodOp);
-				}
-			}
-			//Make a list of signals for every provider involved.
-			List<Schedule> listSchedulesProvider=scheduleArray
-				.Where(x => x.ProvNum > 0 && (x.SchedDate.Date==DateTime.Today || x.SchedDate.Date==dateTimeServer.Date)).ToList();
-			List<Signalod> listSignalodsProvider=new List<Signalod>();
-			for(int i=0;i<listSchedulesProvider.Count;i++) {
-				Signalod signalodProvider=new Signalod();
-				signalodProvider.IType=InvalidType.Schedules;
-				signalodProvider.DateViewing=listSchedulesProvider[i].SchedDate;
-				signalodProvider.FKey=listSchedulesProvider[i].ProvNum;
-				signalodProvider.FKeyType=KeyType.Provider;
-				listSignalodsProvider.Add(signalodProvider);
-			}
-			List<Signalod> listSignalodsUnique=listSignalods.Union(listSignalodsProvider).ToList();
-			if(listSignalodsUnique.Count <= 1000) {
-				Insert(listSignalodsUnique.ToArray());
+			//Make an array of signals for every operatory involved.
+			DateTime serverTime=MiscData.GetNowDateTime();
+			Signalod[] arrayOpSignals=arraySchedules
+				.Where(x => x.SchedDate.Date==DateTime.Today || x.SchedDate.Date==serverTime.Date)
+				.SelectMany(x => x.Ops.Select(y => new Signalod() {
+					IType=InvalidType.Schedules,
+					DateViewing=x.SchedDate,
+					FKey=y,
+					FKeyType=KeyType.Operatory,
+				}))
+				.ToArray();
+			//Make a array of signals for every provider involved.
+			Schedule[] arrayProviderSchedules=arraySchedules.Where(x => x.ProvNum > 0).ToArray();
+			Signalod[] arrayProviderSignals=arrayProviderSchedules
+				.Where(x => x.SchedDate.Date==DateTime.Today || x.SchedDate.Date==serverTime.Date)
+				.Select(x => new Signalod() {
+					IType=InvalidType.Schedules,
+					DateViewing=x.SchedDate,
+					FKey=x.ProvNum,
+					FKeyType=KeyType.Provider,
+				})
+				.ToArray();
+			Signalod[] arrayUniqueSignals=arrayOpSignals.Union(arrayProviderSignals).ToArray();
+			if(arrayUniqueSignals.Length > 1000) {
+				//We've had offices insert tens of thousands of signals at once which severely slowed down their database.
+				Signalod signal=new Signalod {
+					IType=InvalidType.Schedules,
+					DateViewing=DateTime.MinValue,//This will cause every workstation to refresh regardless of what they're viewing.
+				};
+				Insert(signal);
 				return;
 			}
-			//We've had offices insert tens of thousands of signals at once which severely slowed down their database.
-			Signalod signalod=new Signalod();
-			signalod.IType=InvalidType.Schedules;
-			signalod.DateViewing=DateTime.MinValue;//This will cause every workstation to refresh regardless of what they're viewing.
-			Insert(signalod);
+			Insert(arrayUniqueSignals);
 		}
 
 		///<summary>Schedules, when we don't have a specific FKey and want to set an invalid for the entire type. 
@@ -451,10 +456,11 @@ namespace OpenDentBusiness {
 			if(dateViewing==DateTime.MinValue) {
 				return;//A dateViewing of 01-01-0001 will be ignored because it would otherwise cause a full refresh for all connected client workstations.
 			}
-			Signalod signalod=new Signalod();
-			signalod.IType=InvalidType.Schedules;
-			signalod.DateViewing=dateViewing;
-			Insert(signalod);
+			Signalod sig=new Signalod() {
+				IType=InvalidType.Schedules,
+				DateViewing=dateViewing
+			};
+			Insert(sig);
 		}
 
 		///<summary>Upserts the InvalidType.SmsTextMsgReceivedUnreadCount signal which tells all client machines to update the received unread SMS 
@@ -465,62 +471,55 @@ namespace OpenDentBusiness {
 			}
 			string command="SELECT ClinicNum,COUNT(*) AS CountUnread FROM smsfrommobile WHERE SmsStatus=0 AND IsHidden=0 GROUP BY ClinicNum "
 				+"ORDER BY ClinicNum";
-			DataTable tableSmsFromMobile=Db.GetTable(command);
-			List<SmsFromMobiles.SmsNotification> listSmsNotifications=new List<SmsFromMobiles.SmsNotification>();
-			for(int i=0;i<tableSmsFromMobile.Rows.Count;i++) {
-				SmsFromMobiles.SmsNotification smsNotification=new SmsFromMobiles.SmsNotification();
-				smsNotification.ClinicNum=PIn.Long(tableSmsFromMobile.Rows[i]["ClinicNum"].ToString());
-				smsNotification.Count=PIn.Int(tableSmsFromMobile.Rows[i]["CountUnread"].ToString());
-				listSmsNotifications.Add(smsNotification);
-			}
+			List<SmsFromMobiles.SmsNotification> ret=Db.GetTable(command).AsEnumerable()
+				.Select(x => new SmsFromMobiles.SmsNotification() {
+					ClinicNum=PIn.Long(x["ClinicNum"].ToString()),
+					Count=PIn.Int(x["CountUnread"].ToString()),
+				}).ToList();
 			//Insert as structured data signal so all workstations won't have to query the db to get the counts. They will get it directly from Signalod.MsgValue.
-			string json=SmsFromMobiles.SmsNotification.GetJsonFromList(listSmsNotifications);
+			string json=SmsFromMobiles.SmsNotification.GetJsonFromList(ret);
 			//FKeyType SmsMsgUnreadCount is written to db as a string. 
 			command="SELECT * FROM signalod WHERE IType="+POut.Int((int)InvalidType.SmsTextMsgReceivedUnreadCount)
 				+" AND FKeyType='"+POut.String(KeyType.SmsMsgUnreadCount.ToString())+"' ORDER BY SigDateTime DESC LIMIT 1";
 			DataTable table=Db.GetTable(command);
-			Signalod signalod=Crud.SignalodCrud.TableToList(table).FirstOrDefault();
-			if(signalod!=null && signalod.MsgValue==json) {//No changes, not need to insert a new signal.
-				return listSmsNotifications;//Return the list of notifications, but do not update the existing signal.
+			Signalod sig=Crud.SignalodCrud.TableToList(table).FirstOrDefault();
+			if(sig!=null && sig.MsgValue==json) {//No changes, not need to insert a new signal.
+				return ret;//Return the list of notifications, but do not update the existing signal.
 			}
-			Signalod signalodNew=new Signalod();
-			signalodNew.IType=InvalidType.SmsTextMsgReceivedUnreadCount;
-			signalodNew.FKeyType=KeyType.SmsMsgUnreadCount;
-			signalodNew.MsgValue=json;
-			signalodNew.RemoteRole=RemotingClient.MiddleTierRole;
-			Signalods.Insert(signalodNew);
-			return listSmsNotifications;
+			Signalods.Insert(new Signalod() {
+				IType=InvalidType.SmsTextMsgReceivedUnreadCount,
+				FKeyType=KeyType.SmsMsgUnreadCount,
+				MsgValue=json,
+				RemoteRole=RemotingClient.MiddleTierRole
+			});
+			return ret;
 		}
 
 		/// <summary>Check for appointment signals for a single date.</summary>
-		public static bool IsApptRefreshNeeded(DateTime dateTimeShowing,List<Signalod> listSignalods,List<long> listOpNumsVisible,
-			List<long> listProvNumsVisible) 
-		{
+		public static bool IsApptRefreshNeeded(DateTime dateTimeShowing,List<Signalod> signalList,List<long> listOpNumsVisible,List<long> listProvNumsVisible) {
 			//No need to check MiddleTierRole; no call to db.
-			return IsApptRefreshNeeded(dateTimeShowing,dateTimeShowing,listSignalods,listOpNumsVisible,listProvNumsVisible);
+			return IsApptRefreshNeeded(dateTimeShowing,dateTimeShowing,signalList,listOpNumsVisible,listProvNumsVisible);
 		}
 
 		///<summary>After a refresh, this is used to determine whether the Appt Module needs to be refreshed. Returns true if there are any signals
 		///with InvalidType=Appointment where the DateViewing time of the signal falls within the provided daterange, and the signal matches either
 		///the list of visible operatories or visible providers in the current Appt Module View. Always returns true if any signals have
 		///DateViewing=DateTime.MinVal.</summary>
-		public static bool IsApptRefreshNeeded(DateTime dateStart,DateTime dateEnd,List<Signalod> listSignalods,List<long> listOpNumsVisible,
-			List<long> listProvNumsVisible) 
-		{
+		public static bool IsApptRefreshNeeded(DateTime startDate,DateTime endDate,List<Signalod> signalList,List<long> listOpNumsVisible,List<long> listProvNumsVisible) {
 			//No need to check MiddleTierRole; no call to db.
 			//A date range was refreshed.  Easier to refresh all without checking.
-			if(listSignalods.Exists(x => (x.DateViewing.Date==DateTime.MinValue.Date || x.FKeyType==KeyType.PatNum) && x.IType==InvalidType.Appointment)) {
+			if(signalList.Exists(x => (x.DateViewing.Date==DateTime.MinValue.Date || x.FKeyType==KeyType.PatNum) && x.IType==InvalidType.Appointment)) {
 				return true;
 			}
-			List<Signalod> listSignalodsAppt=listSignalods.FindAll(x => x.IType==InvalidType.Appointment &&
-				x.DateViewing.Date >= dateStart.Date && x.DateViewing.Date <= dateEnd.Date);
-			if(listSignalodsAppt.Count==0) {
+			List<Signalod> listApptSignals=signalList.FindAll(x => x.IType==InvalidType.Appointment &&
+				x.DateViewing.Date >= startDate.Date && x.DateViewing.Date <= endDate.Date);
+			if(listApptSignals.Count==0) {
 				return false;
 			}
 			//List<long> visibleOps = ApptDrawing.VisOps.Select(x => x.OperatoryNum).ToList();
 			//List<long> visibleProvs = ApptDrawing.VisProvs.Select(x => x.ProvNum).ToList();
-			if(listSignalodsAppt.Any(x=> x.FKeyType==KeyType.Operatory && listOpNumsVisible.Contains(x.FKey))
-				|| listSignalodsAppt.Any(x=> x.FKeyType==KeyType.Provider && listProvNumsVisible.Contains(x.FKey))) 
+			if(listApptSignals.Any(x=> x.FKeyType==KeyType.Operatory && listOpNumsVisible.Contains(x.FKey))
+				|| listApptSignals.Any(x=> x.FKeyType==KeyType.Provider && listProvNumsVisible.Contains(x.FKey))) 
 			{
 				return true;
 			}
@@ -528,33 +527,33 @@ namespace OpenDentBusiness {
 		}
 
 		/// <summary>Check for schedule signals for a single date.</summary>
-		public static bool IsSchedRefreshNeeded(DateTime dateTimeShowing,List<Signalod> listSignalods,List<long> listOpNumsVisible,
+		public static bool IsSchedRefreshNeeded(DateTime dateTimeShowing,List<Signalod> signalList,List<long> listOpNumsVisible,
 			List<long> listProvNumsVisible) 
 		{
 			//No need to check MiddleTierRole; no call to db.
-			return IsSchedRefreshNeeded(dateTimeShowing,dateTimeShowing,listSignalods,listOpNumsVisible,listProvNumsVisible);
+			return IsSchedRefreshNeeded(dateTimeShowing,dateTimeShowing,signalList,listOpNumsVisible,listProvNumsVisible);
 		}
 
 		///<summary>After a refresh, this is used to determine whether the Appt Module needs to be refreshed.  Returns true if there are any signals
 		///with InvalidType=Appointment where the DateViewing time of the signal falls within the provided daterange, and the signal matches either
 		///the list of visible operatories or visible providers in the current Appt Module View.  Always returns true if any signals have
 		///DateViewing=DateTime.MinVal.</summary>
-		public static bool IsSchedRefreshNeeded(DateTime dateStart,DateTime dateEnd,List<Signalod> listSignalods,List<long> listOpNumsVisible,
+		public static bool IsSchedRefreshNeeded(DateTime startDate,DateTime endDate,List<Signalod> signalList,List<long> listOpNumsVisible,
 			List<long> listProvNumsVisible) 
 		{
 			//No need to check MiddleTierRole; no call to db.
 			//A date range was refreshed.  Easier to refresh all without checking.
-			if(listSignalods.Exists(x => x.DateViewing.Date==DateTime.MinValue.Date && x.IType==InvalidType.Schedules)) {
+			if(signalList.Exists(x => x.DateViewing.Date==DateTime.MinValue.Date && x.IType==InvalidType.Schedules)) {
 				return true;
 			}
-			List<Signalod> listSignalodsSched=listSignalods.FindAll(x => x.IType==InvalidType.Schedules && 
-				x.DateViewing.Date >= dateStart.Date && x.DateViewing.Date <= dateEnd.Date);
-			if(listSignalodsSched.Count==0) {
+			List<Signalod> listSchedSignals=signalList.FindAll(x => x.IType==InvalidType.Schedules && 
+				x.DateViewing.Date >= startDate.Date && x.DateViewing.Date <= endDate.Date);
+			if(listSchedSignals.Count==0) {
 				return false;
 			}
-			if(listSignalodsSched.Any(x=> x.FKeyType==KeyType.Operatory && listOpNumsVisible.Contains(x.FKey))
-				|| listSignalodsSched.Any(x=> x.FKeyType==KeyType.Provider && listProvNumsVisible.Contains(x.FKey))
-				|| listSignalodsSched.Any(x => x.FKeyType==KeyType.Undefined))//For blockouts cleared on a single day.
+			if(listSchedSignals.Any(x=> x.FKeyType==KeyType.Operatory && listOpNumsVisible.Contains(x.FKey))
+				|| listSchedSignals.Any(x=> x.FKeyType==KeyType.Provider && listProvNumsVisible.Contains(x.FKey))
+				|| listSchedSignals.Any(x => x.FKeyType==KeyType.Undefined))//For blockouts cleared on a single day.
 			{
 				return true;
 			}
@@ -563,8 +562,8 @@ namespace OpenDentBusiness {
 	
 		///<summary>After a refresh, this is used to determine whether the buttons and listboxes need to be refreshed on the ContrApptPanel. 
 		///Will return true with InvalidType==Defs.</summary>
-		public static bool IsContrApptButtonRefreshNeeded(List<Signalod> listSignalods) {
-			if(listSignalods.Exists(x => x.IType==InvalidType.Defs)) {
+		public static bool IsContrApptButtonRefreshNeeded(List<Signalod> signalList) {
+			if(signalList.Exists(x => x.IType==InvalidType.Defs)) {
 				return true;
 			}
 			return false;
@@ -572,63 +571,61 @@ namespace OpenDentBusiness {
 
 		///<summary>After a refresh, this is used to get a list containing all flags of types that need to be refreshed. The FKey must be 0 and the
 		///FKeyType must Undefined. Types of Task and SmsTextMsgReceivedUnreadCount are not included.</summary>
-		public static InvalidType[] GetInvalidTypes(List<Signalod> listSignalods) {
+		public static InvalidType[] GetInvalidTypes(List<Signalod> signalodList) {
 			//No need to check MiddleTierRole; no call to db.
-			InvalidType[] invalidTypeArray=listSignalods.FindAll(x => x.IType!=InvalidType.Task
+			return signalodList.FindAll(x => x.IType!=InvalidType.Task
 					&& x.IType!=InvalidType.TaskPopup
 					&& x.IType!=InvalidType.SmsTextMsgReceivedUnreadCount
 					&& x.FKey==0
 					&& x.FKeyType==KeyType.Undefined)
 				.Select(x => x.IType).ToArray();
-			return invalidTypeArray;
 		}
 
 
 		///<summary>Our eServices have not been refactored yet to handle granular refreshes yet. This method does include signals that have a FKey. 
 		///Ideally this method will be deprecated once eServices uses FKeys in cache refreshes.</summary>
-		public static InvalidType[] GetInvalidTypesForWeb(List<Signalod> listSignalods) {
+		public static InvalidType[] GetInvalidTypesForWeb(List<Signalod> signalodList) {
 			//No need to check MiddleTierRole; no call to db.
-			InvalidType[] invalidTypeArray=listSignalods.FindAll(x => x.IType!=InvalidType.Task
+			return signalodList.FindAll(x => x.IType!=InvalidType.Task
 					&& x.IType!=InvalidType.TaskPopup
 					&& x.IType!=InvalidType.SmsTextMsgReceivedUnreadCount)
 					//TODO: Future enhancement is to rejoin this method with GetInvalidTypes. To do that we will need to have our eServices refresh parts of 
 					//caches based on FKey.
 				.Select(x => x.IType).ToArray();
-			return invalidTypeArray;
 		}
 
 		/// <summary>Won't work with InvalidType.Date, InvalidType.Task, or InvalidType.TaskPopup  yet.</summary>
-		public static void SetInvalid(params InvalidType[] invalidTypeArray) {
+		public static void SetInvalid(params InvalidType[] arrayITypes) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),invalidTypeArray);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),arrayITypes);
 				return;
 			}
-			for(int i=0;i<invalidTypeArray.Length;i++) {
-				Signalod signalod=new Signalod();
-				signalod.IType=invalidTypeArray[i];
-				signalod.DateViewing=DateTime.MinValue;
-				switch(invalidTypeArray[i]) {
+			foreach(InvalidType iType in arrayITypes) {
+				Signalod sig=new Signalod();
+				sig.IType=iType;
+				sig.DateViewing=DateTime.MinValue;
+				switch(iType) {
 					case InvalidType.UserOdPrefs:
-						signalod.FKey=Security.CurUser?.UserNum??0;
-						signalod.FKeyType=KeyType.UserOd;
+						sig.FKey=Security.CurUser?.UserNum??0;
+						sig.FKeyType=KeyType.UserOd;
 						break;
 				}
-				Insert(signalod);
+				Insert(sig);
 			}
 		}
 
 		///<summary>Insertion logic that doesn't use the cache. Has special cases for generating random PK's and handling Oracle insertions.</summary>
-		public static void SetInvalidNoCache(params InvalidType[] invalidTypeArray) {
+		public static void SetInvalidNoCache(params InvalidType[] itypes) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),invalidTypeArray);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),itypes);
 				return;
 			}
-			for(int i=0;i<invalidTypeArray.Length;i++) {
-				Signalod signalod=new Signalod();
-				signalod.IType=invalidTypeArray[i];
-				signalod.DateViewing=DateTime.MinValue;
-				signalod.RemoteRole=RemotingClient.MiddleTierRole;
-				Crud.SignalodCrud.InsertNoCache(signalod);
+			foreach(InvalidType iType in itypes) {
+				Signalod sig=new Signalod();
+				sig.IType=iType;
+				sig.DateViewing=DateTime.MinValue;
+				sig.RemoteRole=RemotingClient.MiddleTierRole;
+				Crud.SignalodCrud.InsertNoCache(sig);
 			}
 		}
 
@@ -639,25 +636,28 @@ namespace OpenDentBusiness {
 				Meth.GetVoid(MethodBase.GetCurrentMethod());
 				return;
 			}
-			DateTime dateTimeServer=MiscData.GetNowDateTime();
-			if(Prefs.GetContainsKey(PrefName.SignalLastClearedDate.ToString())
-				&& PrefC.GetDateT(PrefName.SignalLastClearedDate)>dateTimeServer.AddDays(-7) //Has already been run in the past week. This is all server based time.
-				&& PrefC.GetDateT(PrefName.SignalLastClearedDate) < dateTimeServer) //SignalLastClearedDate isn't in the future job 46490
-			{
-				return;//Do not run this process again.
+			try {
+				if(Prefs.GetContainsKey(PrefName.SignalLastClearedDate.ToString())
+					&& PrefC.GetDateT(PrefName.SignalLastClearedDate)>MiscData.GetNowDateTime().AddDays(-7)) //Has already been run in the past week. This is all server based time.
+				{
+					return;//Do not run this process again.
+				}
+				Prefs.UpdateDateT(PrefName.SignalLastClearedDate,MiscData.GetNowDateTime());//Set Last cleared to now.
+				string command="";
+				if(DataConnection.DBtype==DatabaseType.MySql) {//easier to read that using the DbHelper Functions and it also matches the ConvertDB3 script
+					command="DELETE FROM signalod WHERE SigDateTime < DATE_ADD(NOW(),INTERVAL -2 DAY)";//Itypes only older than 2 days
+					Db.NonQ(command);
+				}
+				else {//oracle
+					command="DELETE FROM signalod WHERE SigDateTime < CURRENT_TIMESTAMP -2";//Itypes only older than 2 days
+					Db.NonQ(command);
+				}
+				SigMessages.ClearOldSigMessages();//Clear messaging buttons which use to be stored in the signal table.
+				//SigElements.DeleteOrphaned();
 			}
-			Prefs.UpdateDateT(PrefName.SignalLastClearedDate,dateTimeServer);//Set Last cleared to now.
-			string command="";
-			if(DataConnection.DBtype==DatabaseType.MySql) {//easier to read that using the DbHelper Functions and it also matches the ConvertDB3 script
-				command="DELETE FROM signalod WHERE SigDateTime < DATE_ADD(NOW(),INTERVAL -2 DAY)";//Itypes only older than 2 days
-				Db.NonQ(command);
+			catch(Exception) {
+				//fail silently
 			}
-			else {//oracle
-				command="DELETE FROM signalod WHERE SigDateTime < CURRENT_TIMESTAMP -2";//Itypes only older than 2 days
-				Db.NonQ(command);
-			}
-			SigMessages.ClearOldSigMessages();//Clear messaging buttons which use to be stored in the signal table.
-			//SigElements.DeleteOrphaned();
 		}
 
 		///<summary>A helper class that locks access to a HashSet for thread safety.</summary>
@@ -666,10 +666,10 @@ namespace OpenDentBusiness {
 			private HashSet<T> _hashSet=new HashSet<T>();
 
 			///<summary>Adds the specified element to a set. Returns true if the element is added or false if the element is already present.</summary>
-			public bool Add(T tItem) {
+			public bool Add(T item) {
 				_readerWriterLockSlim.EnterWriteLock();
 				try {
-					return _hashSet.Add(tItem);
+					return _hashSet.Add(item);
 				}
 				finally {
 					_readerWriterLockSlim.ExitWriteLock();
@@ -677,10 +677,10 @@ namespace OpenDentBusiness {
 			}
 
 			///<summary>Returns true if the specified element is already present in the set; otherwise, false.</summary>
-			public bool Contains(T tItem) {
+			public bool Contains(T item) {
 				_readerWriterLockSlim.EnterReadLock();
 				try {
-					return _hashSet.Contains(tItem);
+					return _hashSet.Contains(item);
 				}
 				finally {
 					_readerWriterLockSlim.ExitReadLock();
@@ -712,7 +712,7 @@ namespace OpenDentBusiness {
 	}
 
 	public class SignalodForApi {
-		public Signalod Signalod;
+		public Signalod SignalodCur;
 		public DateTime DateTimeServer;
 	}
 
@@ -720,3 +720,23 @@ namespace OpenDentBusiness {
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

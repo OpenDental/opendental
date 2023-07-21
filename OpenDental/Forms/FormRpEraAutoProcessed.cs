@@ -101,11 +101,11 @@ namespace OpenDental {
 			#region Get data
 			DateTime dateFrom=dateRangePicker.GetDateTimeFrom();
 			DateTime dateTo=dateRangePicker.GetDateTimeTo(true);
-			ProgressWin progressOD=new ProgressWin();
+			ProgressOD progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				EtransL.AddMissingEtrans835s(dateFrom,dateTo);
 			};
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled) {
 				gridEras.EndUpdate();
 				MsgBox.Show(this,"Cancel was clicked before the ERA table could finish loading. Click Refresh to load ERAs.");
@@ -119,7 +119,7 @@ namespace OpenDental {
 			bool areAllClinicsSelected=comboClinics.IsAllSelected;
 			EraData eraData=new EraData();
 			List<Hx835_ShortClaimProc> listHx835_ShortClaimProcs=new List<Hx835_ShortClaimProc>();
-			progressOD=new ProgressWin();
+			progressOD=new ProgressOD();
 			progressOD.ActionMain=() => {
 				eraData=EtransL.GetEraDataFiltered(showStatusAndClinics,_listX835Statuses,listClinicNumsSelected,
 					amountMin:"",amountMax:"",dateFrom,dateTo,carrierName,checkTraceNum,controlId:"",includeAutomatableCarriersOnly:false,
@@ -127,7 +127,7 @@ namespace OpenDental {
 				List<long> listClaimNums=eraData.ListAttached.Select(x => x.ClaimNum).ToList();
 				listHx835_ShortClaimProcs=Hx835_ShortClaimProc.RefreshForClaims(listClaimNums);
 			};
-			progressOD.ShowDialog();
+			progressOD.ShowDialogProgress();
 			if(progressOD.IsCancelled) {
 				gridEras.EndUpdate();
 				MsgBox.Show(this,"Cancel was clicked before the ERA table could finish loading. Click Refresh to load ERAs.");
@@ -173,10 +173,10 @@ namespace OpenDental {
 		private List<long> GetSelectedClinicNums() {
 			List<long> listClinicNums=new List<long>();
 			if(PrefC.HasClinicsEnabled) {
-				if(comboClinics.ListClinicNumsSelected.Count==0) {
+				if(comboClinics.ListSelectedClinicNums.Count==0) {
 					comboClinics.IsAllSelected=true;//All clinics.
 				}
-				listClinicNums=comboClinics.ListClinicNumsSelected;
+				listClinicNums=comboClinics.ListSelectedClinicNums;
 			}
 			return listClinicNums;
 		}
@@ -469,10 +469,6 @@ namespace OpenDental {
 
 		///<summary>Goes to the patients account for the selected claim.</summary>
 		private void MenuItemGoToAccount_Click(object sender,EventArgs e) {
-			if(gridClaims.GetSelectedIndex()==-1) {
-				MsgBox.Show(this,"No claim is selected.");
-				return;
-			}
 			Hx835_Claim hx835_Claim=gridClaims.SelectedTag<ClaimRowData>().Hx835_Claim_;
 			if(hx835_Claim==null) {
 				MsgBox.Show(this,"No claim is selected.");
@@ -520,7 +516,7 @@ namespace OpenDental {
 				MsgBox.Show(this,"The selected claim payment is not attached to a claim.");
 				return;
 			}
-			else if(Security.IsAuthorized(EnumPermType.ClaimView)) {
+			else if(Security.IsAuthorized(Permissions.ClaimView)) {
 				Patient patient=Patients.GetPat(claim.PatNum);
 				Family family=Patients.GetFamily(claim.PatNum);
 				using FormClaimEdit formClaimEdit=new FormClaimEdit(claim,patient,family);
@@ -587,6 +583,12 @@ namespace OpenDental {
 			gridClaimProcedureAdjustments.EndUpdate();
 		}
 
+		///<summary></summary>
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
+			Close();
+		}
+
 		///<summary>Holds data for the rows of the ERA grid.</summary>
 		private class EraRowData {
 			public Etrans835 Etrans835ForRow;
@@ -616,8 +618,7 @@ namespace OpenDental {
 		}
 
 		private void FormRpEraAutoProcessed_Shown(object sender,EventArgs e) {
-			SecurityLogs.MakeLogEntry(EnumPermType.InsPayCreate,0,"Window 'ERA's Automatically Processed' opened.");
+			SecurityLogs.MakeLogEntry(Permissions.InsPayCreate,0,"Window 'ERA's Automatically Processed' opened.");
 		}
-
 	}
 }

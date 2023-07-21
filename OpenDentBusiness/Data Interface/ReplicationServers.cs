@@ -14,7 +14,20 @@ namespace OpenDentBusiness{
 		///<summary>This value is only retrieved once upon startup.  This variable is a long because Google's cloud services have server id's that
 		///are of a higher value than a signed int can contained.  Additionally, 0 is a valid server id based on MySQL so we need to use -1 and can't
 		///use a uint data type.</summary>
-		private static long _serverId=-1;
+		private static long server_id=-1;
+
+		/// <summary>The first time this is accessed, the value is obtained using a query.  Will be 0 unless a server id was set in my.ini.</summary>
+		public static long Server_id {
+			get{
+				if(server_id==-1) {
+					server_id=GetServer_id();
+				}
+				return server_id;
+			}
+			set{
+				server_id=value;
+			}
+		}
 
 		#region CachePattern
 
@@ -82,21 +95,21 @@ namespace OpenDentBusiness{
 		#endregion
 
 		///<summary></summary>
-		public static long Insert(ReplicationServer replicationServer) {
+		public static long Insert(ReplicationServer serv) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				replicationServer.ReplicationServerNum=Meth.GetLong(MethodBase.GetCurrentMethod(),replicationServer);
-				return replicationServer.ReplicationServerNum;
+				serv.ReplicationServerNum=Meth.GetLong(MethodBase.GetCurrentMethod(),serv);
+				return serv.ReplicationServerNum;
 			}
-			return Crud.ReplicationServerCrud.Insert(replicationServer);
+			return Crud.ReplicationServerCrud.Insert(serv);
 		}
 
 		///<summary></summary>
-		public static void Update(ReplicationServer replicationServer) {
+		public static void Update(ReplicationServer serv) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),replicationServer);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),serv);
 				return;
 			}
-			Crud.ReplicationServerCrud.Update(replicationServer);
+			Crud.ReplicationServerCrud.Update(serv);
 		}
 
 		public static void DeleteObject(long replicationServerNum){
@@ -106,23 +119,9 @@ namespace OpenDentBusiness{
 			}
 			Crud.ReplicationServerCrud.Delete(replicationServerNum);
 		}
-		
-		/// <summary>The first time this is accessed, the value is obtained using a query.  Will be 0 unless a server id was set in my.ini.</summary>
-		public static long GetServerId() {
-			//No need to check MiddleTierRole; no call to db.
-			if(_serverId==-1) {
-				_serverId=GetServerIdFromDb();
-			}
-			return _serverId;
-		}
-
-		public static void SetServerId(long serverId) {
-			//No need to check MiddleTierRole; no call to db.
-			_serverId=serverId;
-		}
 
 		///<summary>Gets the MySQL server_id variable for the current connection.</summary>
-		public static long GetServerIdFromDb() {
+		public static long GetServer_id() {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetLong(MethodBase.GetCurrentMethod());
 			}
@@ -135,61 +134,55 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Generates a random primary key.  Tests to see if that key already exists before returning it for use.  The range of returned values is greater than 0, and less than or equal to 9223372036854775807.</summary>
-		public static long GetKey(string tableName,string field) {
+		public static long GetKey(string tablename,string field) {
 			//No need to check MiddleTierRole; no call to db.
 			//establish the range for this server
 			long rangeStart=10000;
 			long rangeEnd=long.MaxValue;
 			//the following line triggers a separate call to db if server_id=-1.  Must be cap.
-			if(GetServerId()!=0) {//if it IS 0, then there is no server_id set.
-				ReplicationServer replicationServer=GetFirstOrDefault(x => x.ServerId==GetServerId());
-				if(replicationServer!=null) {//a ReplicationServer row was found for this server_id
-					if(replicationServer.RangeEnd-replicationServer.RangeStart >= 999999){//and a valid range was entered that was at least 1,000,000
-						rangeStart=replicationServer.RangeStart;
-						rangeEnd=replicationServer.RangeEnd;
+			if(Server_id!=0) {//if it IS 0, then there is no server_id set.
+				ReplicationServer thisServer=GetFirstOrDefault(x => x.ServerId==Server_id);
+				if(thisServer!=null) {//a ReplicationServer row was found for this server_id
+					if(thisServer.RangeEnd-thisServer.RangeStart >= 999999){//and a valid range was entered that was at least 1,000,000
+						rangeStart=thisServer.RangeStart;
+						rangeEnd=thisServer.RangeEnd;
 					}
 				}
 			}
-			long key;
+			long rndLong;
 			long span=rangeEnd-rangeStart;
-			while(true) {
-				key=(long)(ODRandom.NextDouble()*span) + rangeStart;
-				if (key!=0
-					&& key > rangeStart
-					&& key < rangeEnd
-					&& !KeyInUse(tableName,field,key)) 
-				{
-					break;
-				}
+			do {
+				rndLong=(long)(ODRandom.NextDouble()*span) + rangeStart;
 			}
-			return key;
+			while(rndLong==0  
+				|| rndLong < rangeStart
+				|| rndLong > rangeEnd
+				|| KeyInUse(tablename,field,rndLong));
+			return rndLong;
 		}
 
 		///<summary>Generates a random primary key without using the cache.</summary>
-		public static long GetKeyNoCache(string tableName,string field) {
+		public static long GetKeyNoCache(string tablename,string field) {
 			long rangeStart=10000;
 			long rangeEnd=long.MaxValue;
-			long server_id=GetServerIdFromDb();
+			long server_id=GetServer_id();
 			if(server_id!=0) {
-				ReplicationServer replicationServer=ReplicationServers.GetServer(server_id);
-				if(replicationServer!=null && replicationServer.RangeEnd-replicationServer.RangeStart >= 999999) {
-					rangeStart=replicationServer.RangeStart;
-					rangeEnd=replicationServer.RangeEnd;
+				ReplicationServer thisServer=ReplicationServers.GetServer(server_id);
+				if(thisServer!=null && thisServer.RangeEnd-thisServer.RangeStart >= 999999) {
+					rangeStart=thisServer.RangeStart;
+					rangeEnd=thisServer.RangeEnd;
 				}
 			}
 			long span=rangeEnd-rangeStart;
-			long key=(long)(ODRandom.NextDouble()*span)+rangeStart;
-			while(true) {
-				if (key!=0 
-					&& key>rangeStart 
-					&& key<rangeEnd
-					&& !KeyInUse(tableName,field,key)) 
-				{
-					break;
-				}
-				key=(long)(ODRandom.NextDouble()*span)+rangeStart;
+			long rndLong=(long)(ODRandom.NextDouble()*span)+rangeStart;
+			while(rndLong==0 
+				|| rndLong<rangeStart 
+				|| rndLong>rangeEnd
+				|| KeyInUse(tablename,field,rndLong))
+			{
+				rndLong=(long)(ODRandom.NextDouble()*span)+rangeStart;
 			}
-			return key;
+			return rndLong;
 		}
 
 		///<summary>Gets a single ReplicationServer based on server_id.  Used to avoid cache issues.</summary>
@@ -201,11 +194,11 @@ namespace OpenDentBusiness{
 			return Crud.ReplicationServerCrud.SelectOne(command);
 		}
 
-		public static bool KeyInUse(string tableName,string field,long keynum) {
+		public static bool KeyInUse(string tablename,string field,long keynum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),tableName,field,keynum);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),tablename,field,keynum);
 			}
-			string command="SELECT COUNT(*) FROM "+tableName+" WHERE "+field+"="+keynum.ToString();
+			string command="SELECT COUNT(*) FROM "+tablename+" WHERE "+field+"="+keynum.ToString();
 			if(Db.GetCount(command)=="0") {
 				return false;
 			}
@@ -215,17 +208,14 @@ namespace OpenDentBusiness{
 		///<summary>If this server id is 0, or if no AtoZ entered for this server, then returns empty string.</summary>
 		public static string GetAtoZpath() {
 			//No need to check MiddleTierRole; no call to db.
-			ReplicationServer replicationServer=GetFirstOrDefault(x => x.ServerId==GetServerId());
-			if (replicationServer==null) {
-				return "";
-			}
-			return replicationServer.AtoZpath;
+			ReplicationServer replicationServer=GetFirstOrDefault(x => x.ServerId==Server_id);
+			return (replicationServer==null ? "" : replicationServer.AtoZpath);
 		}
 
 		///<summary>If this server id is 0, this returns null.  Or if there is no ReplicationServer object for this server id, then this returns null.</summary>
 		public static ReplicationServer GetForLocalComputer() {
 			//No need to check MiddleTierRole; no call to db.
-			return GetFirstOrDefault(x => x.ServerId==GetServerId());
+			return GetFirstOrDefault(x => x.ServerId==Server_id);
 		}
 
 		///<summary>Used during database maint and from update window. We cannot use objects.</summary>
@@ -234,11 +224,15 @@ namespace OpenDentBusiness{
 				//even though we are supposed to be guaranteed to not be a web client
 				return true;
 			}
-			string command="SELECT COUNT(*) FROM replicationserver WHERE ServerId="+POut.Long(GetServerId())//does trigger another query if during startup
+			string command="SELECT COUNT(*) FROM replicationserver WHERE ServerId="+POut.Long(Server_id)//does trigger another query if during startup
 				+" AND UpdateBlocked=1";
 			try {
-				bool isServerBlocked=Db.GetScalar(command)!="0";
-				return isServerBlocked;
+				if(Db.GetScalar(command)=="0") {
+					return false;
+				}
+				else {
+					return true;
+				}
 			}
 			catch {
 				return false;
@@ -251,8 +245,8 @@ namespace OpenDentBusiness{
 			if(PrefC.GetLong(PrefName.ReplicationUserQueryServer)==0) {//Report server not set up.
 				return false;
 			}
-			ReplicationServer replicationServer=GetForLocalComputer();
-			if(replicationServer==null || replicationServer.ReplicationServerNum!=PrefC.GetLong(PrefName.ReplicationUserQueryServer)) {
+			ReplicationServer repServer=GetForLocalComputer();
+			if(repServer==null || repServer.ReplicationServerNum!=PrefC.GetLong(PrefName.ReplicationUserQueryServer)) {
 				return false;
 			}
 			return true;
@@ -272,13 +266,8 @@ namespace OpenDentBusiness{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetBool(MethodBase.GetCurrentMethod());
 			}
-			//Thinfinity and AppStream do not use replication
-			if(ODEnvironment.IsCloudServer) {
-				return false;
-			}
-			//For the majority of calling methods, they should treat the program as if replication is not being used. 
-			//For the few places in the program that the database is cloud hosted it needs to check DatabaseGlobalVariablesDontSet to know if replication should be skipped.
-			if(PrefC.GetBoolSilent(PrefName.DatabaseGlobalVariablesDontSet,false)) {
+			//ODCloud does not use replication
+			if(ODBuild.IsWeb()) {
 				return false;
 			}
 			//First ask OD

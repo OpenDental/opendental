@@ -60,175 +60,175 @@ namespace OpenDental {
 			node=SetNode("Main Menu");
 				#region File
 				node2=SetNode("File");
-					node3=SetNode(EnumPermType.GraphicsEdit);
+					node3=SetNode(Permissions.GraphicsEdit);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.ChooseDatabase);
+					node3=SetNode(Permissions.ChooseDatabase);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.PrinterSetup);
+					node3=SetNode(Permissions.PrinterSetup);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
 				#endregion
 				#region Setup
-				node2=SetNode(EnumPermType.Setup);
+				node2=SetNode(Permissions.Setup);
 					#region EHR
 					node3=SetNode("Chart - EHR");
-						node4=SetNode(EnumPermType.EhrEmergencyAccess);
+						node4=SetNode(Permissions.EhrEmergencyAccess);
 						node3.Nodes.Add(node4);
-						node4=SetNode(EnumPermType.EhrMeasureEventEdit);
+						node4=SetNode(Permissions.EhrMeasureEventEdit);
 						node3.Nodes.Add(node4);
 					node2.Nodes.Add(node3);
 					#endregion
 					node3=SetNode("Advanced Setup");
-						node4=SetNode(EnumPermType.ReplicationSetup);
+						node4=SetNode(Permissions.ReplicationSetup);
 						node3.Nodes.Add(node4);
-						node4=SetNode(EnumPermType.ShowFeatures);
+						node4=SetNode(Permissions.ShowFeatures);
 						node3.Nodes.Add(node4);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.AutoNoteQuickNoteEdit);
+					node3=SetNode(Permissions.AutoNoteQuickNoteEdit);
 					node2.Nodes.Add(node3);
-					if(ODBuild.IsThinfinity()) {
-						node3=SetNode(EnumPermType.CloseOtherSessions);
+					if(ODBuild.IsWeb()) {
+						node3=SetNode(Permissions.CloseOtherSessions);
 						node2.Nodes.Add(node3);
 					}
 					node3=SetNode("Definitions");
-						node4=SetNode(EnumPermType.DefEdit);
+						node4=SetNode(Permissions.DefEdit);
 						node3.Nodes.Add(node4);
 					node2.Nodes.Add(node3);
 					#region Dental School
 					node3=SetNode("Dental School");
-						node4=SetNode(EnumPermType.AdminDentalInstructors);
+						node4=SetNode(Permissions.AdminDentalInstructors);
 						node3.Nodes.Add(node4);
-						node4=SetNode(EnumPermType.AdminDentalStudents);
+						node4=SetNode(Permissions.AdminDentalStudents);
 						node3.Nodes.Add(node4);
-						node4=SetNode(EnumPermType.AdminDentalEvaluations);
+						node4=SetNode(Permissions.AdminDentalEvaluations);
 						node3.Nodes.Add(node4);
 					node2.Nodes.Add(node3);
 					#endregion
-					node3=SetNode(EnumPermType.Schedules);
+					node3=SetNode(Permissions.Schedules);
 					node2.Nodes.Add(node3);
 					node3=SetNode("Security");
-						node4=SetNode(EnumPermType.SecurityAdmin);
+						node4=SetNode(Permissions.SecurityAdmin);
 						node3.Nodes.Add(node4);
-						node4=SetNode(EnumPermType.AddNewUser);
+						node4=SetNode(Permissions.AddNewUser);
 						node3.Nodes.Add(node4);
-						node4=SetNode(EnumPermType.ManageHighSecurityProgProperties);
+						node4=SetNode(Permissions.ManageHighSecurityProgProperties);
 						node3.Nodes.Add(node4);
-						node4=SetNode(EnumPermType.UpdateInstall);
+						node4=SetNode(Permissions.UpdateInstall);
 						node3.Nodes.Add(node4);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
 				#endregion
 				#region Lists
 				node2=SetNode("Lists");
-					node3=SetNode(EnumPermType.ProcCodeEdit);
+					node3=SetNode(Permissions.ProcCodeEdit);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.FeeSchedEdit);
+					node3=SetNode(Permissions.FeeSchedEdit);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.AllowFeeEditWhileReceivingClaim);
+					node3=SetNode(Permissions.AllowFeeEditWhileReceivingClaim);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.ProviderFeeEdit);
+					node3=SetNode(Permissions.ProviderFeeEdit);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.MedicationDefEdit);
+					node3=SetNode(Permissions.MedicationDefEdit);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.AllergyDefEdit);
+					node3=SetNode(Permissions.AllergyDefEdit);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.ProblemDefEdit);
+					node3=SetNode(Permissions.ProblemDefEdit);
 					node2.Nodes.Add(node3);
 					node3=SetNode("Providers");
-						node4=SetNode(EnumPermType.ProviderAdd);
+						node4=SetNode(Permissions.ProviderAdd);
 						node3.Nodes.Add(node4);
-						node4=SetNode(EnumPermType.ProviderEdit);
+						node4=SetNode(Permissions.ProviderEdit);
 						node3.Nodes.Add(node4);
-						node4=SetNode(EnumPermType.ProviderAlphabetize);
+						node4=SetNode(Permissions.ProviderAlphabetize);
 						node3.Nodes.Add(node4);
 					node2.Nodes.Add(node3);
 					#region Clinics
 					node3=SetNode("Clinics");
-						node4=SetNode(EnumPermType.ClinicEdit);
+						node4=SetNode(Permissions.ClinicEdit);
 						node3.Nodes.Add(node4);
-						node4=SetNode(EnumPermType.UnrestrictedSearch);
+						node4=SetNode(Permissions.UnrestrictedSearch);
 						node3.Nodes.Add(node4);
 					node2.Nodes.Add(node3);
 					#endregion
 					#region Referrals
 					node3=SetNode("Referrals");
-						node4=SetNode(EnumPermType.ReferralAdd);
+						node4=SetNode(Permissions.ReferralAdd);
 						node3.Nodes.Add(node4);
-						node4=SetNode(EnumPermType.ReferralEdit);
+						node4=SetNode(Permissions.ReferralEdit);
 						node3.Nodes.Add(node4);
-						node4=SetNode(EnumPermType.RefAttachAdd);
+						node4=SetNode(Permissions.RefAttachAdd);
 						node3.Nodes.Add(node4);
-						node4=SetNode(EnumPermType.RefAttachDelete);
+						node4=SetNode(Permissions.RefAttachDelete);
 						node3.Nodes.Add(node4);
 					node2.Nodes.Add(node3);
 					#endregion
 				node.Nodes.Add(node2);
 				#endregion
 				#region Reports
-				node2=SetNode(EnumPermType.Reports);
-					node3=SetNode(EnumPermType.ReportProdIncAllProviders);
+				node2=SetNode(Permissions.Reports);
+					node3=SetNode(Permissions.ReportProdIncAllProviders);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.ReportDailyAllProviders);
+					node3=SetNode(Permissions.ReportDailyAllProviders);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.GraphicalReportSetup);
+					node3=SetNode(Permissions.GraphicalReportSetup);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.GraphicalReports);
+					node3=SetNode(Permissions.GraphicalReports);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.UserQuery);
+					node3=SetNode(Permissions.UserQuery);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.UserQueryAdmin);
+					node3=SetNode(Permissions.UserQueryAdmin);
 					node2.Nodes.Add(node3);
-					if(!ODEnvironment.IsCloudServer) {
-						node3=SetNode(EnumPermType.CommandQuery);
+					if(!ODBuild.IsWeb()) {
+						node3=SetNode(Permissions.CommandQuery);
 						node2.Nodes.Add(node3);
 					}
-					node3=SetNode(EnumPermType.NewClaimsProcNotBilled);
+					node3=SetNode(Permissions.NewClaimsProcNotBilled);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
 				#endregion
 				#region Tools
 				node2=SetNode("Tools");
 					node3=SetNode("Misc Tools");
-						node4=SetNode(EnumPermType.MedicationMerge);
+						node4=SetNode(Permissions.MedicationMerge);
 						node3.Nodes.Add(node4);
-						node4=SetNode(EnumPermType.PatientMerge);
+						node4=SetNode(Permissions.PatientMerge);
 						node3.Nodes.Add(node4);
-						node4=SetNode(EnumPermType.ProviderMerge);
+						node4=SetNode(Permissions.ProviderMerge);
 						node3.Nodes.Add(node4);
-						node4=SetNode(EnumPermType.ReferralMerge);
+						node4=SetNode(Permissions.ReferralMerge);
 						node3.Nodes.Add(node4);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.Advertising);
+					node3=SetNode(Permissions.Advertising);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.AuditTrail);
+					node3=SetNode(Permissions.AuditTrail);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.CertificationEmployee);
+					node3=SetNode(Permissions.CertificationEmployee);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.CertificationSetup);
+					node3=SetNode(Permissions.CertificationSetup);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.RepeatChargeTool);
+					node3=SetNode(Permissions.RepeatChargeTool);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.SetupWizard);
+					node3=SetNode(Permissions.SetupWizard);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.WikiAdmin);
+					node3=SetNode(Permissions.WikiAdmin);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.WikiListSetup);
+					node3=SetNode(Permissions.WikiListSetup);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.WebFormAccess);
+					node3=SetNode(Permissions.WebFormAccess);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.Zoom);
+					node3=SetNode(Permissions.Zoom);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
 				#endregion
 				#region eServices
 				node2=SetNode("eServices");
-					node3=SetNode(EnumPermType.EServicesSetup);
+					node3=SetNode(Permissions.EServicesSetup);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
 				#endregion
 				#region Help
 				node2=SetNode("Help");
-					node3=SetNode(EnumPermType.QueryMonitor);
+					node3=SetNode(Permissions.QueryMonitor);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
 				#endregion
@@ -236,290 +236,290 @@ namespace OpenDental {
 			#endregion
 			#region Main Toolbar
 			node=SetNode("Main Toolbar");
-				node2=SetNode(EnumPermType.CommlogCreate);
+				node2=SetNode(Permissions.CommlogCreate);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.CommlogEdit);
+				node2=SetNode(Permissions.CommlogEdit);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.EmailSend);
+				node2=SetNode(Permissions.EmailSend);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.TextMessageView);
+				node2=SetNode(Permissions.TextMessageView);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.TextMessageSend);
+				node2=SetNode(Permissions.TextMessageSend);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.WebMailSend);
+				node2=SetNode(Permissions.WebMailSend);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.SheetEdit);
+				node2=SetNode(Permissions.SheetEdit);
 				node.Nodes.Add(node2);
-					node3=SetNode(EnumPermType.SheetDelete);
+					node3=SetNode(Permissions.SheetDelete);
 					node2.Nodes.Add(node3);
-				node2=SetNode(EnumPermType.TaskEdit);
+				node2=SetNode(Permissions.TaskEdit);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.TaskNoteEdit);
+				node2=SetNode(Permissions.TaskNoteEdit);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.TaskDelete);
+				node2=SetNode(Permissions.TaskDelete);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.TaskListCreate);
+				node2=SetNode(Permissions.TaskListCreate);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.PopupEdit);
+				node2=SetNode(Permissions.PopupEdit);
 				node.Nodes.Add(node2);
 			treePermissions.Nodes.Add(node);
 			#endregion
 			#region Appts Module
-			node=SetNode(EnumPermType.AppointmentsModule);
-				node2=SetNode(EnumPermType.AppointmentCreate);
+			node=SetNode(Permissions.AppointmentsModule);
+				node2=SetNode(Permissions.AppointmentCreate);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.AppointmentMove);
+				node2=SetNode(Permissions.AppointmentMove);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.AppointmentResize);
+				node2=SetNode(Permissions.AppointmentResize);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.AppointmentEdit);
+				node2=SetNode(Permissions.AppointmentEdit);
 				node.Nodes.Add(node2);
-					node3=SetNode(EnumPermType.AppointmentDelete);
+					node3=SetNode(Permissions.AppointmentDelete);
 					node2.Nodes.Add(node3);
-				node2=SetNode(EnumPermType.AppointmentCompleteEdit);
+				node2=SetNode(Permissions.AppointmentCompleteEdit);
 				node.Nodes.Add(node2);
-					node3=SetNode(EnumPermType.AppointmentCompleteDelete);
+					node3=SetNode(Permissions.AppointmentCompleteDelete);
 					node2.Nodes.Add(node3);
-				node2=SetNode(EnumPermType.ViewAppointmentAuditTrail);
+				node2=SetNode(Permissions.ViewAppointmentAuditTrail);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.EcwAppointmentRevise);
+				node2=SetNode(Permissions.EcwAppointmentRevise);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.InsPlanVerifyList);
+				node2=SetNode(Permissions.InsPlanVerifyList);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.ApptConfirmStatusEdit);
+				node2=SetNode(Permissions.ApptConfirmStatusEdit);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.Blockouts);
+				node2=SetNode(Permissions.Blockouts);
 				node.Nodes.Add(node2);
 			treePermissions.Nodes.Add(node);
 			#endregion
 			#region Family Module
-			node=SetNode(EnumPermType.FamilyModule);
-				node2=SetNode(EnumPermType.InsPlanEdit);
+			node=SetNode(Permissions.FamilyModule);
+				node2=SetNode(Permissions.InsPlanEdit);
 				node.Nodes.Add(node2);
-					node3=SetNode(EnumPermType.InsPlanPickListExisting);
+					node3=SetNode(Permissions.InsPlanPickListExisting);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.InsuranceVerification);
+					node3=SetNode(Permissions.InsuranceVerification);
 					node2.Nodes.Add(node3);
-				node2=SetNode(EnumPermType.InsPlanChangeAssign);
+				node2=SetNode(Permissions.InsPlanChangeAssign);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.InsPlanChangeSubsc);
+				node2=SetNode(Permissions.InsPlanChangeSubsc);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.InsPlanOrthoEdit);
+				node2=SetNode(Permissions.InsPlanOrthoEdit);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.CarrierCreate);
+				node2=SetNode(Permissions.CarrierCreate);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.CarrierEdit);
+				node2=SetNode(Permissions.CarrierEdit);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.PatientBillingEdit);
+				node2=SetNode(Permissions.PatientBillingEdit);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.PatPriProvEdit);
+				node2=SetNode(Permissions.PatPriProvEdit);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.PatientApptRestrict);
+				node2=SetNode(Permissions.PatientApptRestrict);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.ArchivedPatientSelect);
+				node2=SetNode(Permissions.ArchivedPatientSelect);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.ArchivedPatientEdit);
+				node2=SetNode(Permissions.ArchivedPatientEdit);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.PatientSSNView);
+				node2=SetNode(Permissions.PatientSSNView);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.PatientDOBView);
+				node2=SetNode(Permissions.PatientDOBView);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.PatientEdit);
+				node2=SetNode(Permissions.PatientEdit);
 				node.Nodes.Add(node2);
 			treePermissions.Nodes.Add(node);
 			#endregion
 			#region Account Module
-			node=SetNode(EnumPermType.AccountModule);
+			node=SetNode(Permissions.AccountModule);
 				node2=SetNode("Claim");
-					node3=SetNode(EnumPermType.ClaimSend);
+					node3=SetNode(Permissions.ClaimSend);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.ClaimSentEdit);
+					node3=SetNode(Permissions.ClaimSentEdit);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.ClaimDelete);
+					node3=SetNode(Permissions.ClaimDelete);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.ClaimHistoryEdit);
+					node3=SetNode(Permissions.ClaimHistoryEdit);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.ClaimView);
+					node3=SetNode(Permissions.ClaimView);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.ClaimProcClaimAttachedProvEdit);
+					node3=SetNode(Permissions.ClaimProcClaimAttachedProvEdit);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.ClaimProcReceivedEdit);
+					node3=SetNode(Permissions.ClaimProcReceivedEdit);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.UpdateCustomTracking);
+					node3=SetNode(Permissions.UpdateCustomTracking);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.PreAuthSentEdit);
+					node3=SetNode(Permissions.PreAuthSentEdit);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.AccountProcsQuickAdd);
+				node2=SetNode(Permissions.AccountProcsQuickAdd);
 				node.Nodes.Add(node2);
 				node2=SetNode("Insurance Payment");
-					node3=SetNode(EnumPermType.InsPayCreate);
+					node3=SetNode(Permissions.InsPayCreate);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.InsPayEdit);
+					node3=SetNode(Permissions.InsPayEdit);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.InsWriteOffEdit);
+					node3=SetNode(Permissions.InsWriteOffEdit);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
 				node2=SetNode("Payment");
-					node3=SetNode(EnumPermType.PaymentCreate);
+					node3=SetNode(Permissions.PaymentCreate);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.PaymentEdit);
+					node3=SetNode(Permissions.PaymentEdit);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.SplitCreatePastLockDate);
+					node3=SetNode(Permissions.SplitCreatePastLockDate);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
 				node2=SetNode("Payment Plan");
-					node3=SetNode(EnumPermType.PayPlanEdit);
+					node3=SetNode(Permissions.PayPlanEdit);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.PayPlanChargeDateEdit);
+					node3=SetNode(Permissions.PayPlanChargeDateEdit);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
 				node2=SetNode("Adjustment");
-					node3=SetNode(EnumPermType.AdjustmentCreate);
+					node3=SetNode(Permissions.AdjustmentCreate);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.AdjustmentEdit);
+					node3=SetNode(Permissions.AdjustmentEdit);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.AdjustmentEditZero);
+					node3=SetNode(Permissions.AdjustmentEditZero);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.AdjustmentTypeDeny);
+					node3=SetNode(Permissions.AdjustmentTypeDeny);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
 				node2=SetNode("Statement");
-					node3=SetNode(EnumPermType.StatementCSV);
+					node3=SetNode(Permissions.StatementCSV);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
 			treePermissions.Nodes.Add(node);
 			#endregion
 			#region Treat Plan Module
-			node=SetNode(EnumPermType.TPModule);
-				node2=SetNode(EnumPermType.TreatPlanEdit);
+			node=SetNode(Permissions.TPModule);
+				node2=SetNode(Permissions.TreatPlanEdit);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.TreatPlanPresenterEdit);
+				node2=SetNode(Permissions.TreatPlanPresenterEdit);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.TreatPlanSign);
+				node2=SetNode(Permissions.TreatPlanSign);
 				node.Nodes.Add(node2);
 			treePermissions.Nodes.Add(node);
 			#endregion
 			#region Chart Module
-			node=SetNode(EnumPermType.ChartModule);
+			node=SetNode(Permissions.ChartModule);
 				node2=SetNode("Procedure");
-					node3=SetNode(EnumPermType.ProcExistingEdit);
+					node3=SetNode(Permissions.ProcExistingEdit);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.ProcEditShowFee);
+					node3=SetNode(Permissions.ProcEditShowFee);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.ProcDelete);
+					node3=SetNode(Permissions.ProcDelete);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.ProcedureNoteFull);
+					node3=SetNode(Permissions.ProcedureNoteFull);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.ProcedureNoteUser);
+					node3=SetNode(Permissions.ProcedureNoteUser);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.GroupNoteEditSigned);
+					node3=SetNode(Permissions.GroupNoteEditSigned);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
 				node2=SetNode("Completed Procedure");
-						node3=SetNode(EnumPermType.ProcComplCreate);
+						node3=SetNode(Permissions.ProcComplCreate);
 						node2.Nodes.Add(node3);
-						node3=SetNode(EnumPermType.ProcCompleteEdit);
+						node3=SetNode(Permissions.ProcCompleteEdit);
 						node2.Nodes.Add(node3);
-						node3=SetNode(EnumPermType.ProcCompleteStatusEdit);
+						node3=SetNode(Permissions.ProcCompleteStatusEdit);
 						node2.Nodes.Add(node3);
-						node3=SetNode(EnumPermType.ProcCompleteNote);
+						node3=SetNode(Permissions.ProcCompleteNote);
 						node2.Nodes.Add(node3);
-						node3=SetNode(EnumPermType.ProcCompleteAddAdj);
+						node3=SetNode(Permissions.ProcCompleteAddAdj);
 						node2.Nodes.Add(node3);
-						node3=SetNode(EnumPermType.ProcCompleteEditMisc);
+						node3=SetNode(Permissions.ProcCompleteEditMisc);
 						node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
 				node2=SetNode("Rx");
-					node3=SetNode(EnumPermType.RxCreate);
+					node3=SetNode(Permissions.RxCreate);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.RxEdit);
+					node3=SetNode(Permissions.RxEdit);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.OrthoChartEditFull);
+				node2=SetNode(Permissions.OrthoChartEditFull);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.OrthoChartEditUser);
+				node2=SetNode(Permissions.OrthoChartEditUser);
 				node.Nodes.Add(node2);
 				if(!Clinics.IsMedicalPracticeOrClinic(Clinics.ClinicNum)) {
-					node2=SetNode(EnumPermType.PerioEdit);
+					node2=SetNode(Permissions.PerioEdit);
 					node.Nodes.Add(node2);
 				}
 				node2=SetNode("Anesthesia");
-					node3=SetNode(EnumPermType.AnesthesiaIntakeMeds);
+					node3=SetNode(Permissions.AnesthesiaIntakeMeds);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.AnesthesiaControlMeds);
+					node3=SetNode(Permissions.AnesthesiaControlMeds);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.PatMedicationListEdit);
+				node2=SetNode(Permissions.PatMedicationListEdit);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.PatAllergyListEdit);
+				node2=SetNode(Permissions.PatAllergyListEdit);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.PatProblemListEdit);
+				node2=SetNode(Permissions.PatProblemListEdit);
 				node.Nodes.Add(node2);
 			treePermissions.Nodes.Add(node);
 			#endregion
 			#region Imaging Module
-			node=SetNode(EnumPermType.ImagingModule);
-				node2=SetNode(EnumPermType.ImageCreate);
+			node=SetNode(Permissions.ImagingModule);
+				node2=SetNode(Permissions.ImageCreate);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.ImageDelete);
+				node2=SetNode(Permissions.ImageDelete);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.ImageEdit);
+				node2=SetNode(Permissions.ImageEdit);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.ImageExport);
+				node2=SetNode(Permissions.ImageExport);
 				node.Nodes.Add(node2);
 			treePermissions.Nodes.Add(node);
 			#endregion
 			#region Manage Module
-			node=SetNode(EnumPermType.ManageModule);
-				node2=SetNode(EnumPermType.Accounting);
-					node3=SetNode(EnumPermType.AccountingCreate);
+			node=SetNode(Permissions.ManageModule);
+				node2=SetNode(Permissions.Accounting);
+					node3=SetNode(Permissions.AccountingCreate);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.AccountingEdit);
+					node3=SetNode(Permissions.AccountingEdit);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.Billing);
+				node2=SetNode(Permissions.Billing);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.DepositSlips);
+				node2=SetNode(Permissions.DepositSlips);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.Backup);
+				node2=SetNode(Permissions.Backup);
 				node.Nodes.Add(node2);
 				node2=SetNode("Time Card");
-					node3=SetNode(EnumPermType.TimecardsEditAll);
+					node3=SetNode(Permissions.TimecardsEditAll);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.TimecardDeleteEntry);
+					node3=SetNode(Permissions.TimecardDeleteEntry);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.ProtectedLeaveAdjustmentEdit);
+					node3=SetNode(Permissions.ProtectedLeaveAdjustmentEdit);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
 				node2=SetNode("Supply Inventory");
 					node3=SetNode("Equipment");
-						node4=SetNode(EnumPermType.EquipmentSetup);
+						node4=SetNode(Permissions.EquipmentSetup);
 						node3.Nodes.Add(node4);			
-						node4=SetNode(EnumPermType.EquipmentDelete);
+						node4=SetNode(Permissions.EquipmentDelete);
 						node3.Nodes.Add(node4);
 					node2.Nodes.Add(node3);
-					node3=SetNode(EnumPermType.SupplierEdit);
+					node3=SetNode(Permissions.SupplierEdit);
 					node2.Nodes.Add(node3);
 				node.Nodes.Add(node2);
 			treePermissions.Nodes.Add(node);
 			#endregion
 			node=SetNode("Merge Tools");
-				node2=SetNode(EnumPermType.InsCarrierCombine);
+				node2=SetNode(Permissions.InsCarrierCombine);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.InsPlanMerge);
+				node2=SetNode(Permissions.InsPlanMerge);
 				node.Nodes.Add(node2);
-				node2=SetNode(EnumPermType.RxMerge);
+				node2=SetNode(Permissions.RxMerge);
 				node.Nodes.Add(node2);
 			treePermissions.Nodes.Add(node);
 			node=SetNode("Web Applications");
-				node2=SetNode(EnumPermType.MobileWeb);
+				node2=SetNode(Permissions.MobileWeb);
 				node.Nodes.Add(node2);
 			treePermissions.Nodes.Add(node);
 			#region ODCloud Only Permissions
-			if(ODBuild.IsThinfinity()) {
+			if(ODBuild.IsWeb()) {
 				node=SetNode("Cloud");
-					node2=SetNode(EnumPermType.AllowLoginFromAnyLocation);
+					node2=SetNode(Permissions.AllowLoginFromAnyLocation);
 					node.Nodes.Add(node2);
 				treePermissions.Nodes.Add(node);
 			}
@@ -527,26 +527,24 @@ namespace OpenDental {
 			#region HQ Only Permissions
 			if(PrefC.IsODHQ) {
 				node=SetNode("HQ Only");
-					node2=SetNode(EnumPermType.CommlogPersistent);
+					node2=SetNode(Permissions.CommlogPersistent);
 					node.Nodes.Add(node2);
-					node2=SetNode(EnumPermType.SalesTaxAdjEdit);
+					node2=SetNode(Permissions.SalesTaxAdjEdit);
 					node.Nodes.Add(node2);
-					node2=SetNode(EnumPermType.HeadmasterSetup);
+					node2=SetNode(Permissions.HeadmasterSetup);
 					node.Nodes.Add(node2);
-					node2=SetNode(EnumPermType.FAQEdit);
+					node2=SetNode(Permissions.FAQEdit);
 					node.Nodes.Add(node2);
-					node2=SetNode(EnumPermType.FeatureRequestEdit);
+					node2=SetNode(Permissions.FeatureRequestEdit);
 					node.Nodes.Add(node2);
-					node2=SetNode(EnumPermType.EditReadOnlyTasks);
+					node2=SetNode(Permissions.EditReadOnlyTasks);
 					node.Nodes.Add(node2);
-					node2=SetNode(EnumPermType.ApiAccountEdit);
+					node2=SetNode(Permissions.ApiAccountEdit);
 					node.Nodes.Add(node2);
-					node2=SetNode(EnumPermType.TextingAccountEdit);
+					node2=SetNode(Permissions.TextingAccountEdit);
 					node.Nodes.Add(node2);
-					node2=SetNode(EnumPermType.PreferenceEditBroadcastMonitor);
+					node2=SetNode(Permissions.PreferenceEditBroadcastMonitor);
 					node.Nodes.Add(node2);
-					node2=SetNode(EnumPermType.CloudCustomerEdit);
-				  node.Nodes.Add(node2);
 				treePermissions.Nodes.Add(node);
 			}
 			#endregion
@@ -573,14 +571,14 @@ namespace OpenDental {
 		private TreeNode SetNode(string text) {
 			TreeNode retVal = new TreeNode();
 			retVal.Text=Lan.g(this,text);
-			retVal.Tag=EnumPermType.None;
+			retVal.Tag=Permissions.None;
 			retVal.ImageIndex=0;
 			retVal.SelectedImageIndex=0;
 			return retVal;
 		}
 
 		///<summary>This just keeps FillTreePermissionsInitial looking cleaner.</summary>
-		private TreeNode SetNode(EnumPermType perm) {
+		private TreeNode SetNode(Permissions perm) {
 			TreeNode retVal = new TreeNode();
 			retVal.Text=GroupPermissions.GetDesc(perm);
 			retVal.Tag=perm;
@@ -590,7 +588,7 @@ namespace OpenDental {
 		}
 
 		///<summary>Returns an integer associated to the TreeNode.ImageIndex for the passed in PermType. Determined by the amount of FKeys.</summary>
-		private int GetNodeStatusForPerm(EnumPermType permission,List<GroupPermission> listGroupPerms,List<long> listUserGroupNums) {
+		private int GetNodeStatusForPerm(Permissions permission,List<GroupPermission> listGroupPerms,List<long> listUserGroupNums) {
 			List<GroupPermission> listAllPermsForGroup=listGroupPerms.FindAll(x => x.PermType==permission && listUserGroupNums.Contains(x.UserGroupNum) && x.FKey==0);
 			List<GroupPermission> listIndividualPermsForGroup=listGroupPerms.FindAll(x => x.PermType==permission && listUserGroupNums.Contains(x.UserGroupNum) && x.FKey!=0);
 			//If user group(s) have all FKey of 0, they have all permissions.
@@ -618,7 +616,7 @@ namespace OpenDental {
 				return;
 			}
 			node.ImageIndex=1;
-			node.Text=GroupPermissions.GetDesc((EnumPermType)node.Tag);
+			node.Text=GroupPermissions.GetDesc((Permissions)node.Tag);
 			//get all grouppermissions for the passed-in usergroups
 			List<GroupPermission> listGroupPerms = GroupPermissions.GetForUserGroups(listUserGroupNums);
 			//group by permtype, preferring newerdays/newerdate that are further back in the past.
@@ -637,7 +635,7 @@ namespace OpenDental {
 			//display the correct newerdays/newerdate that was found for each permission.
 			for(int i = 0;i<listGroupPerms.Count;i++) {
 				if(listUserGroupNums.Contains(listGroupPerms[i].UserGroupNum)
-					&& listGroupPerms[i].PermType==(EnumPermType)node.Tag) 
+					&& listGroupPerms[i].PermType==(Permissions)node.Tag) 
 				{
 					node.ImageIndex=2;
 					if(listGroupPerms[i].NewerDate.Year>1880) {
@@ -646,7 +644,7 @@ namespace OpenDental {
 					else if(listGroupPerms[i].NewerDays>0) {
 						node.Text+=" ("+Lan.g(this,"if days newer than")+" "+listGroupPerms[i].NewerDays.ToString()+")";
 					}
-					if((EnumPermType)node.Tag==EnumPermType.AdjustmentTypeDeny) {
+					if((Permissions)node.Tag==Permissions.AdjustmentTypeDeny) {
 						List<GroupPermission> listGroupPermAdjustmentTypesDenied=GroupPermissions.GetAdjustmentTypeDenyPermsForUserGroup(listGroupPerms[i].UserGroupNum);
 						string countAdjustmentTypesDeniedStr=listGroupPermAdjustmentTypesDenied.Count.ToString();
 						if(listGroupPermAdjustmentTypesDenied.Any(x => x.FKey==0)) {//All
@@ -657,12 +655,12 @@ namespace OpenDental {
 				}
 			}
 			//Special cases that need to check the FKeys to determine the node status.
-			List<EnumPermType> listPermissionsSpecial=new List<EnumPermType>() {
-				EnumPermType.AdjustmentTypeDeny,
-				EnumPermType.Reports
+			List<Permissions> listPermissionsSpecial=new List<Permissions>() {
+				Permissions.AdjustmentTypeDeny,
+				Permissions.Reports
 			};
-			if(listPermissionsSpecial.Contains((EnumPermType)node.Tag)) {
-				node.ImageIndex=GetNodeStatusForPerm((EnumPermType)node.Tag,listGroupPerms,listUserGroupNums);
+			if(listPermissionsSpecial.Contains((Permissions)node.Tag)) {
+				node.ImageIndex=GetNodeStatusForPerm((Permissions)node.Tag,listGroupPerms,listUserGroupNums);
 			}
 		}
 
@@ -681,12 +679,12 @@ namespace OpenDental {
 			}
 			long userGroupNum=_listUserGroupNums.First();
 			GroupPermission perm;
-			for(int i = 0;i<Enum.GetNames(typeof(EnumPermType)).Length;i++) {
-				EnumPermType permType=(EnumPermType)i;
-				if(permType==EnumPermType.SecurityAdmin
-					|| permType==EnumPermType.StartupMultiUserOld
-					|| permType==EnumPermType.StartupSingleUserOld
-					|| permType==EnumPermType.EhrKeyAdd) 
+			for(int i = 0;i<Enum.GetNames(typeof(Permissions)).Length;i++) {
+				Permissions permType=(Permissions)i;
+				if(permType==Permissions.SecurityAdmin
+					|| permType==Permissions.StartupMultiUserOld
+					|| permType==Permissions.StartupSingleUserOld
+					|| permType==Permissions.EhrKeyAdd) 
 				{
 					continue;
 				}
@@ -718,12 +716,12 @@ namespace OpenDental {
 			}
 			long userGroupNum=_listUserGroupNums.First();
 			GroupPermission perm;
-			for(int i = 0;i<Enum.GetNames(typeof(EnumPermType)).Length;i++) {
-				EnumPermType permType=(EnumPermType)i;
-				if(permType==EnumPermType.SecurityAdmin
-					|| permType==EnumPermType.StartupMultiUserOld
-					|| permType==EnumPermType.StartupSingleUserOld
-					|| permType==EnumPermType.EhrKeyAdd) 
+			for(int i = 0;i<Enum.GetNames(typeof(Permissions)).Length;i++) {
+				Permissions permType=(Permissions)i;
+				if(permType==Permissions.SecurityAdmin
+					|| permType==Permissions.StartupMultiUserOld
+					|| permType==Permissions.StartupSingleUserOld
+					|| permType==Permissions.EhrKeyAdd) 
 				{
 					continue;
 				}
@@ -732,7 +730,7 @@ namespace OpenDental {
 				//When a user clicks 'Set None', they do not want the user group to have any permissions, they want to restrict all access. For AdjustmentTypeDeny permission, this means they
 				//do NOT want the user group to have access to any adjustment type. So we need to delete all existing adjustment type deny permissions for this user group, which we do above. 
 				//And we want to create a 0 FKey AdjustmentTypeDeny perm because that will indicate the user group does not have access to any adjusment type.
-				if(permType==EnumPermType.AdjustmentTypeDeny) {
+				if(permType==Permissions.AdjustmentTypeDeny) {
 					//Insert a new permission with a zero FKey.
 					GroupPermission groupPermission=new GroupPermission();
 					groupPermission.NewerDate=DateTime.MinValue;
@@ -763,7 +761,7 @@ namespace OpenDental {
 			//Call an event that bubbles back up to the calling Form. The event returns a dialog result so we know how to continue here.
 			DialogResult result=securityTreeEventHandler?.Invoke(sender,securityEventArgs)??DialogResult.Cancel;
 			if(result==DialogResult.OK) {
-				SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,"Permission '"+_clickedPermNode.Tag+"' changes made for '"+UserGroups.GetGroup(perm.UserGroupNum).Description+"'");
+				SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,"Permission '"+_clickedPermNode.Tag+"' changes made for '"+UserGroups.GetGroup(perm.UserGroupNum).Description+"'");
 			}
 			FillTreePerm();
 		}
@@ -797,24 +795,24 @@ namespace OpenDental {
 					return;
 				}
 			}
-			List<EnumPermType> listLimitedPermissions=new List<EnumPermType> { 
-				EnumPermType.ProcCompleteNote, 
-				EnumPermType.ProcCompleteAddAdj,
-				EnumPermType.ProcCompleteEditMisc
+			List<Permissions> listLimitedPermissions=new List<Permissions> { 
+				Permissions.ProcCompleteNote, 
+				Permissions.ProcCompleteAddAdj,
+				Permissions.ProcCompleteEditMisc
 			};
 			GroupPermission perm = new GroupPermission();
-			perm.PermType=(EnumPermType)_clickedPermNode.Tag;
+			perm.PermType=(Permissions)_clickedPermNode.Tag;
 			perm.UserGroupNum=_listUserGroupNums.First();
-			EnumPermType permEcEo=EnumPermType.ProcExistingEdit;
+			Permissions permEcEo=Permissions.ProcExistingEdit;
 			SecurityEventArgs securityEventArgs=new SecurityEventArgs(perm);
 			//User clicked on a check box.  Do stuff.
 			//Reports permission does not toggle and is instead determined by whether the user group has permissions.
-			if(perm.PermType==EnumPermType.Reports) {//Reports permission is being checked.
+			if(perm.PermType==Permissions.Reports) {//Reports permission is being checked.
 				CheckFKeyPermissions(perm,ReportPermissionChecked,sender,securityEventArgs);
 				return;
 			}
 			//CEMT mode AdjustmentTypeDeny permission toggles between all or no permissions selected. Non-CEMT mode does not toggle and instead opens a Definition Picker window.
-			else if(perm.PermType==EnumPermType.AdjustmentTypeDeny) { //AdjustmentTypeDeny permission is being checked
+			else if(perm.PermType==Permissions.AdjustmentTypeDeny) { //AdjustmentTypeDeny permission is being checked
 				CheckFKeyPermissions(perm,AdjustmentTypeDenyPermissionChecked,sender,securityEventArgs);
 				return;
 			}
@@ -831,7 +829,7 @@ namespace OpenDental {
 				else {
 					try {
 						GroupPermissions.Insert(perm);
-						SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,"Permission '"+perm.PermType+"' granted to '"
+						SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,"Permission '"+perm.PermType+"' granted to '"
 							+UserGroups.GetGroup(perm.UserGroupNum).Description+"'");
 					}
 					catch(Exception ex) {
@@ -841,7 +839,7 @@ namespace OpenDental {
 				}
 				if(perm.PermType==permEcEo) {
 					//Adding ProcExistingEdit, so add ProcComplNote, ProcComplAddAdj, and ProcComplEditMisc.
-					foreach(EnumPermType permission in listLimitedPermissions) {
+					foreach(Permissions permission in listLimitedPermissions) {
 						//We used to have one "limited edit" permission, but this was split into three distinct permissions.  Previously, if a usergroup was granted
 						//"full edit"(deprecated) or ProcExistingEdit, the group automatically inherited "limited edit".  Maintain this behavior for the three new
 						//distinct permissions.
@@ -858,7 +856,7 @@ namespace OpenDental {
 						permLimited.PermType=permission;
 						try {
 							GroupPermissions.Insert(permLimited);
-							SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,Lans.g(this,"Permission ")+"'"+permLimited.PermType+"' "
+							SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,Lans.g(this,"Permission ")+"'"+permLimited.PermType+"' "
 								+Lans.g(this,"granted to")+" '"+UserGroups.GetGroup(perm.UserGroupNum).Description+"'");
 						}
 						catch(Exception ex) {
@@ -867,14 +865,14 @@ namespace OpenDental {
 						}
 					}
 				}
-				else if(perm.PermType==EnumPermType.FeeSchedEdit) {
+				else if(perm.PermType==Permissions.FeeSchedEdit) {
 					//When giving a user group the full FeeSchedEdit permission, they get the AllowFeeEditWhileRecivingClaim by default
 					GroupPermission permFeeSchedLimited=new GroupPermission();
-					permFeeSchedLimited.PermType=EnumPermType.AllowFeeEditWhileReceivingClaim;
+					permFeeSchedLimited.PermType=Permissions.AllowFeeEditWhileReceivingClaim;
 					permFeeSchedLimited.UserGroupNum=_listUserGroupNums.First();
 					try {
 						GroupPermissions.Insert(permFeeSchedLimited);
-						SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,Lans.g(this,"Permission ")+"'"+permFeeSchedLimited.PermType+"' "
+						SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,Lans.g(this,"Permission ")+"'"+permFeeSchedLimited.PermType+"' "
 							+Lans.g(this,"granted to")+" '"+UserGroups.GetGroup(permFeeSchedLimited.UserGroupNum).Description+"'");
 					}
 					catch(Exception ex) {
@@ -885,28 +883,28 @@ namespace OpenDental {
 			}
 			else if(_clickedPermNode.ImageIndex==2) {//checked, so need to delete the perm
 				try {
-					if((EnumPermType)_clickedPermNode.Tag==EnumPermType.AllowFeeEditWhileReceivingClaim && GroupPermissions.HasPermission(_listUserGroupNums.First(),EnumPermType.FeeSchedEdit,0)) {
+					if((Permissions)_clickedPermNode.Tag==Permissions.AllowFeeEditWhileReceivingClaim && GroupPermissions.HasPermission(_listUserGroupNums.First(),Permissions.FeeSchedEdit,0)) {
 						//As it stands now, the AllowFeeEditWhileReceivingClaim permission is automatically given if a a user has the full FeeSchedEdit permission.
 						//Allowing users to uncheck this permission while stil having the full permission it would lead to confusion
 						//Using MsgBox with autotranslate as the descriptions of the permissions should never change, and if they do we would them to be translated.
-						MsgBox.Show(this,$"{GroupPermissions.GetDesc(EnumPermType.AllowFeeEditWhileReceivingClaim)} " +
-							$"cannot be removed from a user who has {GroupPermissions.GetDesc(EnumPermType.FeeSchedEdit)}. Please remove this permission first.");
+						MsgBox.Show(this,$"{GroupPermissions.GetDesc(Permissions.AllowFeeEditWhileReceivingClaim)} " +
+							$"cannot be removed from a user who has {GroupPermissions.GetDesc(Permissions.FeeSchedEdit)}. Please remove this permission first.");
 						return;
 					}
-					GroupPermissions.RemovePermission(_listUserGroupNums.First(),(EnumPermType)_clickedPermNode.Tag);
-					SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,"Permission '"+_clickedPermNode.Tag+"' revoked from '"
+					GroupPermissions.RemovePermission(_listUserGroupNums.First(),(Permissions)_clickedPermNode.Tag);
+					SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,"Permission '"+_clickedPermNode.Tag+"' revoked from '"
 						+UserGroups.GetGroup(_listUserGroupNums.First()).Description+"'");
 				}
 				catch(Exception ex) {
 					MessageBox.Show(ex.Message);
 					return;
 				}
-				if(listLimitedPermissions.Contains(((EnumPermType)_clickedPermNode.Tag))) {
+				if(listLimitedPermissions.Contains(((Permissions)_clickedPermNode.Tag))) {
 					//Deselecting one of the new limited permissions so deselect ProcExistingEdit permissions if present.
 					if(GroupPermissions.HasPermission(_listUserGroupNums.First(),permEcEo,0)) {
 						try {
 							GroupPermissions.RemovePermission(_listUserGroupNums.First(),permEcEo);
-							SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,Lans.g(this,"Permission")+" '"+permEcEo+"' "
+							SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,Lans.g(this,"Permission")+" '"+permEcEo+"' "
 								+Lans.g(this,"revoked from")+" '"+UserGroups.GetGroup(_listUserGroupNums.First()).Description+"'");
 						}
 						catch(Exception ex) {
@@ -918,8 +916,8 @@ namespace OpenDental {
 			}
 			else if(_clickedPermNode.ImageIndex==3) {//Partially checked (currently only applies to Reports permission)
 				try {
-					GroupPermissions.RemovePermission(_listUserGroupNums.First(),(EnumPermType)_clickedPermNode.Tag);
-					SecurityLogs.MakeLogEntry(EnumPermType.SecurityAdmin,0,"Permission '"+_clickedPermNode.Tag+"' revoked from '"
+					GroupPermissions.RemovePermission(_listUserGroupNums.First(),(Permissions)_clickedPermNode.Tag);
+					SecurityLogs.MakeLogEntry(Permissions.SecurityAdmin,0,"Permission '"+_clickedPermNode.Tag+"' revoked from '"
 						+UserGroups.GetGroup(_listUserGroupNums.First()).Description+"'");
 				}
 				catch(Exception ex) {
@@ -943,17 +941,17 @@ namespace OpenDental {
 			if(_clickedPermNode==null) {
 				return;
 			}
-			EnumPermType permType = (EnumPermType)_clickedPermNode.Tag;
+			Permissions permType = (Permissions)_clickedPermNode.Tag;
 			//If perm doesn't take a date, or the perm isn't AdjustmentTypeDeny, then the double click should not do anything so we just return.
-			if(!GroupPermissions.PermTakesDates(permType) && permType!=EnumPermType.AdjustmentTypeDeny) {
+			if(!GroupPermissions.PermTakesDates(permType) && permType!=Permissions.AdjustmentTypeDeny) {
 				return;
 			}
-			GroupPermission perm = GroupPermissions.GetPerm(_listUserGroupNums.First(),(EnumPermType)_clickedPermNode.Tag);
+			GroupPermission perm = GroupPermissions.GetPerm(_listUserGroupNums.First(),(Permissions)_clickedPermNode.Tag);
 			if(perm==null) {
 				return;
 			}
 			DialogResult result;
-			if(perm.PermType==EnumPermType.AdjustmentTypeDeny) {
+			if(perm.PermType==Permissions.AdjustmentTypeDeny) {
 				//Call an event that bubbles back up to the calling Form. The event returns a dialog result so we know how to continue here.
 				result=AdjustmentTypeDenyPermissionChecked?.Invoke(sender,new SecurityEventArgs(perm))??DialogResult.Cancel;
 			}

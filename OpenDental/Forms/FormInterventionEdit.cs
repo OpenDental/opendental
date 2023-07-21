@@ -170,7 +170,7 @@ namespace OpenDental {
 			DialogResult=DialogResult.Cancel;
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			//validate--------------------------------------
 			DateTime date;
 			if(textDate.Text=="") {
@@ -244,16 +244,15 @@ namespace OpenDental {
 						}
 					}
 					if(listVSFound.Count>1) {//Selected code found in more than one value set, ask the user which InterventionCodeSet to assign to this intervention
-						InputBox inputBox=new InputBox(Lan.g(this,"The selected code belongs to more than one intervention code set.  Select the code set to assign to this intervention from the list below."),listVSFound);
-						inputBox.ShowDialog();
-						if(inputBox.IsDialogCancel) {
+						using InputBox inputBox=new InputBox(Lan.g(this,"The selected code belongs to more than one intervention code set.  Select the code set to assign to this intervention from the list below."),listVSFound);
+						if(inputBox.ShowDialog()!=DialogResult.OK) {
 							return;
 						}
-						if(inputBox.SelectedIndex==-1) {
+						if(inputBox.comboSelection.SelectedIndex==-1) {
 							MsgBox.Show(this,"You must select an intervention code set for the selected code.");
 							return;
 						}
-						selectedCodeSet=listVSFound[inputBox.SelectedIndex].Split(new char[] { ' ' },StringSplitOptions.RemoveEmptyEntries)[0];
+						selectedCodeSet=inputBox.comboSelection.GetSelected<string>().Split(new char[] { ' ' },StringSplitOptions.RemoveEmptyEntries)[0];
 					}
 					else {//the code must belong to at least one value set, since count in listVSFound is not greater than 1, it must be a code from exactly one set, use that for the InterventionCodeSet
 						selectedCodeSet=listVSFound[0].Split(new char[] { ' ' },StringSplitOptions.RemoveEmptyEntries)[0];
@@ -287,5 +286,8 @@ namespace OpenDental {
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

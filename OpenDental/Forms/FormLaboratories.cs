@@ -71,5 +71,44 @@ namespace OpenDental{
 			FillGrid();
 		}
 
+		private void butClose_Click(object sender, System.EventArgs e) {
+			Close();
+		}
+
+		private void FormLaboratories_FormClosing(object sender,FormClosingEventArgs e) {
+			//if(changed){
+				//Labs are not global.
+				//DataValid.SetInvalid(InvalidTypes.Providers);
+			//}
+		}
+
+		
+
+		
+
+		
+
+
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -39,6 +39,7 @@ namespace OpenDental {
 			this.menuItemGoTo = new System.Windows.Forms.MenuItem();
 			this.label1 = new System.Windows.Forms.Label();
 			this.gridMain = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// contextMain
@@ -68,16 +69,27 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridMain.Location = new System.Drawing.Point(12, 31);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(685, 623);
+			this.gridMain.Size = new System.Drawing.Size(666, 623);
 			this.gridMain.TabIndex = 2;
 			this.gridMain.Title = "Customers";
 			this.gridMain.TranslationName = "TableCustomers";
 			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(714, 628);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 26);
+			this.butClose.TabIndex = 0;
+			this.butClose.Text = "Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
+			// 
 			// FormCustomerManagement
 			// 
-			this.ClientSize = new System.Drawing.Size(709, 666);
+			this.ClientSize = new System.Drawing.Size(801, 666);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -89,6 +101,8 @@ namespace OpenDental {
 
 		}
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private OpenDental.UI.GridOD gridMain;
 		private ContextMenu contextMain;
 		private MenuItem menuItemGoTo;

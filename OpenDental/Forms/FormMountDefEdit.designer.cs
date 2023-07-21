@@ -34,7 +34,8 @@ namespace OpenDental {
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMountDefEdit));
-			this.butSave = new OpenDental.UI.Button();
+			this.butCancel = new OpenDental.UI.Button();
+			this.butOK = new OpenDental.UI.Button();
 			this.butDelete = new OpenDental.UI.Button();
 			this.textDescription = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -79,15 +80,25 @@ namespace OpenDental {
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// butSave
+			// butCancel
 			// 
-			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(126, 665);
-			this.butSave.Name = "butSave";
-			this.butSave.Size = new System.Drawing.Size(75, 24);
-			this.butSave.TabIndex = 3;
-			this.butSave.Text = "&Save";
-			this.butSave.Click += new System.EventHandler(this.butSave_Click);
+			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butCancel.Location = new System.Drawing.Point(1151, 666);
+			this.butCancel.Name = "butCancel";
+			this.butCancel.Size = new System.Drawing.Size(75, 24);
+			this.butCancel.TabIndex = 9;
+			this.butCancel.Text = "&Cancel";
+			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+			// 
+			// butOK
+			// 
+			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butOK.Location = new System.Drawing.Point(1151, 634);
+			this.butOK.Name = "butOK";
+			this.butOK.Size = new System.Drawing.Size(75, 24);
+			this.butOK.TabIndex = 3;
+			this.butOK.Text = "&OK";
+			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butDelete
 			// 
@@ -175,7 +186,7 @@ namespace OpenDental {
 			this.butGenerate.Text = "Generate";
 			this.butGenerate.Click += new System.EventHandler(this.butGenerate_Click);
 			// 
-			// panelRight
+			// panelSplitter
 			// 
 			this.panelRight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -186,7 +197,6 @@ namespace OpenDental {
 			this.panelRight.Controls.Add(this.comboDefaultCat);
 			this.panelRight.Controls.Add(this.label13);
 			this.panelRight.Controls.Add(this.groupBoxOD1);
-			this.panelRight.Controls.Add(this.butSave);
 			this.panelRight.Controls.Add(this.groupBox1);
 			this.panelRight.Controls.Add(this.butAdd);
 			this.panelRight.Controls.Add(this.butColorTextBack);
@@ -202,7 +212,7 @@ namespace OpenDental {
 			this.panelRight.Controls.Add(this.label5);
 			this.panelRight.Controls.Add(this.labelWarning);
 			this.panelRight.Location = new System.Drawing.Point(1022, 0);
-			this.panelRight.Name = "panelRight";
+			this.panelRight.Name = "panelSplitter";
 			this.panelRight.Size = new System.Drawing.Size(208, 696);
 			this.panelRight.TabIndex = 31;
 			// 
@@ -470,7 +480,7 @@ namespace OpenDental {
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(122, 49);
 			this.label5.TabIndex = 43;
-			this.label5.Text = "Items get saved as they are changed, not when clicking Save here";
+			this.label5.Text = "Items get saved as they are changed, not when clicking OK here";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelWarning
@@ -491,7 +501,7 @@ namespace OpenDental {
 			this.controlDrawing.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.controlDrawing.Location = new System.Drawing.Point(1, 0);
+			this.controlDrawing.Location = new System.Drawing.Point(0, 0);
 			this.controlDrawing.Name = "controlDrawing";
 			this.controlDrawing.Size = new System.Drawing.Size(1021, 694);
 			this.controlDrawing.TabIndex = 43;
@@ -523,6 +533,8 @@ namespace OpenDental {
 			this.Controls.Add(this.textWidth);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.textDescription);
+			this.Controls.Add(this.butOK);
+			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.panelRight);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.ImeMode = System.Windows.Forms.ImeMode.On;
@@ -542,7 +554,9 @@ namespace OpenDental {
 			this.PerformLayout();
 
 		}
-		private OpenDental.UI.Button butSave;
+
+		private OpenDental.UI.Button butCancel;
+		private OpenDental.UI.Button butOK;
 		private OpenDental.UI.Button butDelete;
 		private TextBox textDescription;
 		private Label label1;

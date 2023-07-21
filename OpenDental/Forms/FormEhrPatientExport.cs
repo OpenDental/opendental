@@ -202,7 +202,8 @@ namespace OpenDental {
 					ccd=EhrCCD.GeneratePatientExport(patCur,out string warnings);
 					if(!string.IsNullOrEmpty(warnings)) {
 						this.Cursor=Cursors.Default;
-						if(MessageBox.Show(warnings,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+						string warningMsg=Lan.g(this,"Click OK to ignore warnings and continue, or click Cancel.")+"\r\n"+warnings;
+						if(MessageBox.Show(warningMsg,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
 							return;
 						}
 					}
@@ -226,7 +227,7 @@ namespace OpenDental {
 				return;//Don't display "Exported" to the user because the CCD was not exported.
 			}
 			try {
-				File.WriteAllText(ODFileUtils.CombinePaths(folderPath,"CCD.xsl"),EhrSummaryCcds.GetEhrResource("CCD"));
+				File.WriteAllText(ODFileUtils.CombinePaths(folderPath,"CCD.xsl"),FormEHR.GetEhrResource("CCD"));
 			}
 			catch {
 				MessageBox.Show("Error, Could not create stylesheet file");
@@ -241,6 +242,14 @@ namespace OpenDental {
 				MessageBox.Show(strMsg);
 			}
 			this.Cursor=Cursors.Default;
+		}
+
+		private void butExportAll_Click(object sender,EventArgs e) {
+			//Export all active patients
+		}
+
+		private void butClose_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.OK;
 		}
 
 	}

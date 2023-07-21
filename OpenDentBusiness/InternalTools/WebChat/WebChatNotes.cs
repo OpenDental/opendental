@@ -64,9 +64,6 @@ namespace OpenDentBusiness {
 		}
 
 		public static List<WebChatNote> GetAllForSessions(List<long> listWebChatSessionNums) {
-			if(listWebChatSessionNums.Count==0) {//Before remoting role check. Do not call the middle tier just to return an empty list.
-				return new List<WebChatNote>();//This happens when loading the Chart Module for an account which has no webchatsessions.
-			}
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<WebChatNote>>(MethodBase.GetCurrentMethod(),listWebChatSessionNums);
 			}

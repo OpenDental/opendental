@@ -18,8 +18,25 @@ using CodeBase;
 namespace OpenDental{
 ///<summary></summary>
 	public partial class FormInsPlans:FormODBase {
+		//private InsTemplates InsTemplates;
+		//<summary>Set to true if we are only using the list to select a template to link to rather than creating a new plan. If this is true, then IsSelectMode will be ignored.</summary>
+		//public bool IsLinkMode;
+		///<summary>Set to true when selecting a plan for a patient and we want SelectedPlan to be filled upon closing.</summary>
+		public bool IsSelectMode;
+		///<summary>After closing this form, if IsSelectMode, then this will contain the selected Plan.</summary>
+		public InsPlan InsPlanSelected;
+		//private InsPlan[] ListAll;
+		///<summary>Supply a string here to start off the search with filtered employers.</summary>
+		public string empText;
+		///<summary>Supply a string here to start off the search with filtered carriers.</summary>
+		public string carrierText;
 		private DataTable _table;
 		private bool trojan;
+		///<summary>Supply a string here to start off the search with filtered group names.</summary>
+		public string groupNameText;
+
+		///<summary>Supply a string here to start off the search with filtered group nums.</summary>
+		public string groupNumText;
 
 		///<summary></summary>
 		public FormInsPlans(){
@@ -36,6 +53,11 @@ namespace OpenDental{
 			else {
 				labelGroupNum.Text=Lan.g(this,"Group Num");
 			}
+
+			if(!IsSelectMode){
+				butCancel.Text=Lan.g(this,"Close");
+				butOK.Visible=false;
+			}
 			Program program=Programs.GetCur(ProgramName.Trojan);
 			if(program!=null && program.Enabled) {
 				trojan=true;
@@ -44,6 +66,10 @@ namespace OpenDental{
 				labelTrojanID.Visible=false;
 				textTrojanID.Visible=false;
 			}
+			textEmployer.Text=empText;
+			textCarrier.Text=carrierText;
+			textGroupName.Text=groupNameText;
+			textGroupNum.Text=groupNumText;
 			FillGrid();
 		}
 
@@ -51,6 +77,10 @@ namespace OpenDental{
 			Cursor=Cursors.WaitCursor;
 			_table=InsPlans.GetBigList(radioOrderEmp.Checked,textEmployer.Text,textCarrier.Text,
 				textGroupName.Text,textGroupNum.Text,textPlanNum.Text,textTrojanID.Text,checkShowHidden.Checked,isGetAll);
+			if(IsSelectMode){
+				butBlank.Visible=true;
+				butBlank.Enabled=Security.IsAuthorized(Permissions.InsPlanEdit,true);
+			}
 			int selectedRow;//preserves the selected row.
 			if(gridMain.SelectedIndices.Length==1){
 				selectedRow=gridMain.SelectedIndices[0];
@@ -76,14 +106,8 @@ namespace OpenDental{
 			col=new GridColumn(Lans.g("TableInsurancePlans","City"),80);
 			gridMain.Columns.Add(col);
 			col=new GridColumn(Lans.g("TableInsurancePlans","ST"),25);
-			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")){//Canadian. en-CA or fr-CA
-				col=new GridColumn(Lans.g("TableInsurancePlans","Prov"),40);
-			}
 			gridMain.Columns.Add(col);
 			col=new GridColumn(Lans.g("TableInsurancePlans","Zip"),50);
-			if(CultureInfo.CurrentCulture.Name.EndsWith("CA")){
-				col=new GridColumn(Lans.g("TableInsurancePlans","Postal"),50);
-			}
 			gridMain.Columns.Add(col);
 			col=new GridColumn(Lans.g("TableInsurancePlans",groupNum),70);
 			gridMain.Columns.Add(col);
@@ -148,6 +172,11 @@ namespace OpenDental{
 			if(!InsPlanExists(insPlan)) {
 				return;
 			}
+			if(IsSelectMode) {
+				InsPlanSelected=insPlan.Copy();
+				DialogResult=DialogResult.OK;
+				return;
+			}
 			using FormInsPlan formInsPlan=new FormInsPlan(insPlan,null,null);
 			formInsPlan.ShowDialog();
 			if(formInsPlan.DialogResult!=DialogResult.OK) {
@@ -197,7 +226,7 @@ namespace OpenDental{
 		}
 
 		private void butMerge_Click(object sender,EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.InsPlanMerge)) {
+			if(!Security.IsAuthorized(Permissions.InsPlanMerge)) {
 				return;
 			}
 			string insPlanMergeComputerName=PrefC.GetStringNoCache(PrefName.InsPlanMergeInProgress);
@@ -263,7 +292,7 @@ namespace OpenDental{
 				}
 				catch (ApplicationException ex){
 					stringBuilder.AppendLine(ex.Message);
-					SecurityLogs.MakeLogEntry(EnumPermType.InsPlanEdit,0,
+					SecurityLogs.MakeLogEntry(Permissions.InsPlanEdit,0,
 						Lan.g(this,"InsPlan Combine delete validation failed.  Plan was not deleted."),
 						insPlanSelectedArray[i].PlanNum,insPlanSelectedArray[i].SecDateTEdit); //new plan, no date needed.
 					//Since we already deleted/changed all of the other dependencies, 
@@ -284,7 +313,7 @@ namespace OpenDental{
 			//merge complete
 			if(didMerge) {
 				string logText=Lan.g(this,"Merged the following PlanNum(s): ")+string.Join(", ",listMergedPlanNums)+" "+Lan.g(this,"into")+" "+insPlanToMergeTo.PlanNum;
-				SecurityLogs.MakeLogEntry(EnumPermType.InsPlanMerge,0,logText);
+				SecurityLogs.MakeLogEntry(Permissions.InsPlanMerge,0,logText);
 			}
 			FillGrid();
 			//highlight the merged plan
@@ -312,6 +341,12 @@ namespace OpenDental{
 			return planCount;
 		}
 
+		private void butBlank_Click(object sender, System.EventArgs e) {
+			//this button is normally not visible.  It's only set visible when IsSelectMode.
+			InsPlanSelected=new InsPlan();
+			DialogResult=DialogResult.OK;
+		}
+
 		private void butHide_Click(object sender,EventArgs e) {
 			int unusedCount=InsPlans.UnusedGetCount();
 			if(unusedCount==0) {
@@ -327,5 +362,44 @@ namespace OpenDental{
 			MsgBox.Show(this,"Done.");
 		}
 
+		private void butOK_Click(object sender, System.EventArgs e) {
+			//only visible if IsSelectMode
+			if(gridMain.SelectedIndices.Length==0){
+				MessageBox.Show(Lan.g(this,"Please select an item first."));
+				return;
+			}
+			if(gridMain.SelectedIndices.Length>1) {
+				MessageBox.Show(Lan.g(this,"Please select only one item first."));
+				return;
+			}
+			InsPlan insPlan=InsPlans.GetPlan(PIn.Long(_table.Rows[gridMain.SelectedIndices[0]]["PlanNum"].ToString()),null);
+			if(!InsPlanExists(insPlan)) {
+				return;
+			}
+			InsPlanSelected=insPlan;
+			DialogResult=DialogResult.OK;
+		}
+
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -31,6 +31,7 @@ namespace OpenDental{
 			this.labelCheckTrace = new System.Windows.Forms.Label();
 			this.labelCarrier = new System.Windows.Forms.Label();
 			this.butRefresh = new OpenDental.UI.Button();
+			this.butClose = new OpenDental.UI.Button();
 			this.gridEras = new OpenDental.UI.GridOD();
 			this.gridClaims = new OpenDental.UI.GridOD();
 			this.butAcknowledge = new OpenDental.UI.Button();
@@ -68,7 +69,7 @@ namespace OpenDental{
 			this.textCarrier.Location = new System.Drawing.Point(599, 5);
 			this.textCarrier.Multiline = false;
 			this.textCarrier.Name = "textCarrier";
-			this.textCarrier.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.InsPlan;
+			this.textCarrier.QuickPasteType = OpenDentBusiness.QuickPasteType.InsPlan;
 			this.textCarrier.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textCarrier.Size = new System.Drawing.Size(161, 21);
 			this.textCarrier.TabIndex = 1;
@@ -83,7 +84,7 @@ namespace OpenDental{
 			this.textCheckTrace.Location = new System.Drawing.Point(599, 26);
 			this.textCheckTrace.Multiline = false;
 			this.textCheckTrace.Name = "textCheckTrace";
-			this.textCheckTrace.QuickPasteType = OpenDentBusiness.EnumQuickPasteType.FinancialNotes;
+			this.textCheckTrace.QuickPasteType = OpenDentBusiness.QuickPasteType.FinancialNotes;
 			this.textCheckTrace.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 			this.textCheckTrace.Size = new System.Drawing.Size(161, 21);
 			this.textCheckTrace.TabIndex = 2;
@@ -117,6 +118,16 @@ namespace OpenDental{
 			this.butRefresh.Text = "Refresh";
 			this.butRefresh.UseVisualStyleBackColor = true;
 			this.butRefresh.Click += new System.EventHandler(this.butRefresh_Click);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(1137, 666);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 12;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// gridEras
 			// 
@@ -163,7 +174,7 @@ namespace OpenDental{
 			this.comboClinics.IncludeUnassigned = true;
 			this.comboClinics.Location = new System.Drawing.Point(562, 47);
 			this.comboClinics.Name = "comboClinics";
-			this.comboClinics.IsMultiSelect = true;
+			this.comboClinics.SelectionModeMulti = true;
 			this.comboClinics.Size = new System.Drawing.Size(198, 21);
 			this.comboClinics.TabIndex = 3;
 			// 
@@ -203,7 +214,7 @@ namespace OpenDental{
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridClaimProcedureAdjustments.Location = new System.Drawing.Point(12, 536);
 			this.gridClaimProcedureAdjustments.Name = "gridClaimProcedureAdjustments";
-			this.gridClaimProcedureAdjustments.Size = new System.Drawing.Size(1200, 154);
+			this.gridClaimProcedureAdjustments.Size = new System.Drawing.Size(1119, 154);
 			this.gridClaimProcedureAdjustments.TabIndex = 11;
 			this.gridClaimProcedureAdjustments.Title = "Claim Procedure Adjustments";
 			this.gridClaimProcedureAdjustments.TranslationName = "TableEtrans835s";
@@ -219,6 +230,7 @@ namespace OpenDental{
 			this.Controls.Add(this.butAcknowledge);
 			this.Controls.Add(this.gridClaims);
 			this.Controls.Add(this.gridEras);
+			this.Controls.Add(this.butClose);
 			this.Controls.Add(this.butRefresh);
 			this.Controls.Add(this.textCarrier);
 			this.Controls.Add(this.textCheckTrace);
@@ -242,6 +254,7 @@ namespace OpenDental{
 		private System.Windows.Forms.Label labelCheckTrace;
 		private System.Windows.Forms.Label labelCarrier;
 		private UI.Button butRefresh;
+		private UI.Button butClose;
 		private UI.GridOD gridEras;
 		private UI.GridOD gridClaims;
 		private UI.Button butAcknowledge;

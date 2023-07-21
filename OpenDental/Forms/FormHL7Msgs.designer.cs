@@ -38,6 +38,7 @@ namespace OpenDental{
 			this.labelStartDate = new System.Windows.Forms.Label();
 			this.butRefresh = new OpenDental.UI.Button();
 			this.gridMain = new OpenDental.UI.GridOD();
+			this.butClose = new OpenDental.UI.Button();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -173,12 +174,22 @@ namespace OpenDental{
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridMain.Location = new System.Drawing.Point(21, 74);
 			this.gridMain.Name = "gridMain";
-			this.gridMain.Size = new System.Drawing.Size(902, 577);
+			this.gridMain.Size = new System.Drawing.Size(902, 543);
 			this.gridMain.TabIndex = 8;
 			this.gridMain.TabStop = false;
 			this.gridMain.Title = "HL7 Message Log";
 			this.gridMain.TranslationName = "TableMessageLog";
 			this.gridMain.CellDoubleClick += new OpenDental.UI.ODGridClickEventHandler(this.gridMain_CellDoubleClick);
+			// 
+			// butClose
+			// 
+			this.butClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.butClose.Location = new System.Drawing.Point(848, 623);
+			this.butClose.Name = "butClose";
+			this.butClose.Size = new System.Drawing.Size(75, 24);
+			this.butClose.TabIndex = 7;
+			this.butClose.Text = "&Close";
+			this.butClose.Click += new System.EventHandler(this.butClose_Click);
 			// 
 			// FormHL7Msgs
 			// 
@@ -186,6 +197,7 @@ namespace OpenDental{
 			this.ClientSize = new System.Drawing.Size(939, 663);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.gridMain);
+			this.Controls.Add(this.butClose);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormHL7Msgs";
 			this.Text = "HL7 Messages";
@@ -197,6 +209,8 @@ namespace OpenDental{
 		}
 
 		#endregion
+
+		private OpenDental.UI.Button butClose;
 		private UI.GridOD gridMain;
 		private OpenDental.UI.GroupBox groupBox1;
 		private System.Windows.Forms.Label labelPatient;

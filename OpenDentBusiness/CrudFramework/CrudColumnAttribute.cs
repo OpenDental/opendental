@@ -98,8 +98,7 @@ namespace OpenDentBusiness {
 		TinyIntSigned=64,
 		///<summary>We do not want this column updated except as part of a separate routine.  Warning! The logic fails if this is used on the last column in a table.</summary>
 		ExcludeFromUpdate=128,
-		///<summary>Instead of storing this enum as an int in the db, it is stored as a string. This is used in approx 60 places, and we probably need to refactor all of them to store the enum in the normal way as a tinyint. It can cause extreme slowness to run queries matching strings. As usual, Jordan would be involved. We would add a new column and deprecate the old column in order to facilitate converting each value and to not crash queries, API, etc.</summary>
-		[Obsolete("Do not use")]
+		///<summary>Instead of storing this enum as an int in the db, it is stored as a string.  Very rarely used.</summary>
 		EnumAsString=256,
 		///<summary>DEPRECATED. See TimeSpanLong. For most C# TimeSpans, the default db type is TimeOfDay.  But for the few that need to use negative values or values greater than 24 hours, they get marked as this special type.  Handled differently in MySQL vs Oracle.</summary>
 		TimeSpanNeg=512,

@@ -29,7 +29,7 @@ namespace OpenDental{
 		}
 
 		private void FormClockEventEdit_Load(object sender, System.EventArgs e) {
-			if(!Security.IsAuthorized(EnumPermType.TimecardDeleteEntry,_clockEvent.TimeEntered1,true)) {
+			if(!Security.IsAuthorized(Permissions.TimecardDeleteEntry,_clockEvent.TimeEntered1,true)) {
 				butDelete.Enabled=false;
 				butClear.Enabled=false;
 				butNow1.Enabled=false;
@@ -43,7 +43,7 @@ namespace OpenDental{
 				checkIsWorkingHome.Visible=false;
 			}
 			if(PrefC.HasClinicsEnabled) {
-				comboClinic.ClinicNumSelected=_clockEvent.ClinicNum;
+				comboClinic.SelectedClinicNum=_clockEvent.ClinicNum;
 			}
       if(PrefC.IsODHQ) {
 				checkIsWorkingHome.Visible=true;
@@ -84,7 +84,7 @@ namespace OpenDental{
 			//Users were complaining that their employees were altering breaks / "lunch" clock events which was causing problems.
 			//We will disable listStatus for any user that does not have the ability to edit all time cards (even if it is their own time card).
 			//This is so that the user is forced to use the buttons within the Manage module which is more predictable.
-			if(!Security.IsAuthorized(EnumPermType.TimecardsEditAll,true)) {
+			if(!Security.IsAuthorized(Permissions.TimecardsEditAll,true)) {
 				listStatus.Enabled=false;
 			}
 			//Time Spans -----------------------------------------------------------------------------
@@ -356,12 +356,12 @@ namespace OpenDental{
 			}
 			ClockEvents.Delete(_clockEvent.ClockEventNum);
 			Employees.UpdateClockStatus(_clockEvent.EmployeeNum);
-			SecurityLogs.MakeLogEntry(EnumPermType.TimecardDeleteEntry,0,
+			SecurityLogs.MakeLogEntry(Permissions.TimecardDeleteEntry,0,
 				"Original entry: "+_clockEvent.TimeEntered1.ToString());
 			DialogResult=DialogResult.OK;
 		}
 
-		private void butSave_Click(object sender, System.EventArgs e) {
+		private void butOK_Click(object sender, System.EventArgs e) {
 			//if(textAmountBonus.errorProvider1.GetError(textAmountBonus)!="") {
 			//  MsgBox.Show(this,"Please enter in a valid dollar amount for Bonus.");
 			//  return;
@@ -511,12 +511,15 @@ namespace OpenDental{
 			_clockEvent.Note=textNote.Text;
 			_clockEvent.IsWorkingHome=checkIsWorkingHome.Checked;
 			if(PrefC.HasClinicsEnabled) {
-				_clockEvent.ClinicNum=comboClinic.ClinicNumSelected;
+				_clockEvent.ClinicNum=comboClinic.SelectedClinicNum;
 			}
 			ClockEvents.Update(_clockEvent);
 			Employees.UpdateClockStatus(_clockEvent.EmployeeNum);
 			DialogResult=DialogResult.OK;
 		}
 
+		private void butCancel_Click(object sender, System.EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
 	}
 }

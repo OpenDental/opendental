@@ -468,7 +468,7 @@ namespace OpenDental {
 			gridMain.SetSelected(point);
 		}
 
-		private void butSave_Click(object sender,EventArgs e) {
+		private void butOK_Click(object sender,EventArgs e) {
 			//PumpGridIntoTable();
 			for(int h=0;h<gridMain.Columns.Count;h++) {//loops through every header in the main grid
 				string s=gridMain.Columns[h].Heading.ToString();
@@ -507,6 +507,31 @@ namespace OpenDental {
 			Markup=GenerateMarkup();
 			DialogResult=DialogResult.OK;
 		}
+
+		private void butCancel_Click(object sender,EventArgs e) {
+			DialogResult=DialogResult.Cancel;
+		}
+
+		
+
+		
+
+		
+
+		
+
+		
+	
+
+	
+
+		
+
+		
+
+		
+
+	
 
 	}
 }
