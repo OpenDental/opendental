@@ -2289,6 +2289,31 @@ namespace OpenDental
 			LayoutControls();
 		}
 
+		private void LockODForMountAcquire(bool doLockOD=true){
+			// Get the forms instance from the Application.OpenForms collection
+			FormOpenDental formOpenDental=Application.OpenForms.OfType<FormOpenDental>().FirstOrDefault();
+			List<Form> listForms=Application.OpenForms.Cast<Form>().Where(f=>!f.Modal && f.GetType()!=typeof(FormImageFloat)).ToList();
+			if(doLockOD){
+				if(formOpenDental!=null){
+					// Access and modify properties or call methods on the main form
+					formOpenDental.Enabled=false;
+				}
+				this.Enabled=false;
+				for(int i=0;i<listForms.Count();i++){
+					listForms[i].Enabled=false;
+				}
+			}
+			else {
+				if(formOpenDental!=null){
+					formOpenDental.Enabled=true;
+				}
+				this.Enabled=true;
+				for(int i=0;i<listForms.Count();i++){
+					listForms[i].Enabled=true;
+				}
+			}
+		}
+
 		private void ToolBarMountAcquire_Click(){
 			//If no patient selected, then this button is disabled
 			if(!Security.IsAuthorized(Permissions.ImageCreate)) {
@@ -2353,12 +2378,34 @@ namespace OpenDental
 						_deviceController=null;
 						return;
 					}
-					Bitmap bitmap2=ODCloudClient.TwainAcquireBitmap(_deviceController.TwainName);
-					while(PlaceAcquiredBitmapInUI(bitmap2) && IsMountShowing()) {
-						bitmap2=ODCloudClient.TwainAcquireBitmap(_deviceController.TwainName);
-					}
+					LockODForMountAcquire(true);
+					ODThread thread=new ODThread(o=>{
+						bool continueScanning=true;
+						try{
+							while(IsMountShowing() && continueScanning){
+								Bitmap bitmap2=ODCloudClient.TwainAcquireBitmap(_deviceController.TwainName,doThrowException:true,timeoutSecs:60);
+								if(bitmap2==null){
+									continueScanning=false; //Cancel the scanning task
+								}
+								else{
+									this.Invoke(()=>PlaceAcquiredBitmapInUI(bitmap2));
+								}
+							}
+						}
+						catch(Exception ex){
+							this.Invoke(()=>{
+								MessageBox.Show(this, "An error occurred: " + ex.Message);
+							});
+						}
+						finally{
+							this.Invoke(()=>{
+								LockODForMountAcquire(false);
+								LayoutControls();//To refresh the mount after acquiring images.
+							});
+						}
+					});
+					thread.Start();
 				}
-				LayoutControls();//To refresh the mount after acquiring images.
 				return;
 			}
 			//Below here NOT web

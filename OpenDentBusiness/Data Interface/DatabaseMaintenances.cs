@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -9436,6 +9437,38 @@ namespace OpenDentBusiness {
 					}
 					break;
 			}
+			return log;
+		}
+
+		[DbmMethodAttr]
+		public static string SheetFieldsWithEmptyItemColor(bool verbose,DbmMode modeCur){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+			return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,modeCur);
+			}
+		 	string command=$@"SELECT SUM(c) FROM (SELECT COUNT(*) c FROM sheetfield WHERE ItemColor={POut.Int(Color.Empty.ToArgb())} 
+				UNION ALL
+				SELECT COUNT(*) FROM sheetfielddef  WHERE ItemColor={POut.Int(Color.Empty.ToArgb())}) a";
+			string count=Db.GetCount(command);
+			string log="";
+			//Place any other variables which are used for the check and fix here.
+			switch(modeCur){
+				case DbmMode.Check:
+					if(count!="0" || verbose){
+						log+=Lans.g("FormDatabaseMaintenance","SheetFields found with invalid color")+": "+count+"\r\n";
+					}
+					break;
+				case DbmMode.Fix:
+					if(count!="0"){
+						command=$"UPDATE sheetfield SET ItemColor={POut.Int(Color.Black.ToArgb())} WHERE ItemColor={POut.Int(Color.Empty.ToArgb())}";
+						Db.NonQ(command);
+						command=$"UPDATE sheetfielddef SET ItemColor={POut.Int(Color.Black.ToArgb())} WHERE ItemColor={POut.Int(Color.Empty.ToArgb())}";
+						Db.NonQ(command); 
+					}
+					if(count!="0" || verbose){
+						log+=Lans.g("FormDatabaseMaintenance","SheetFields fixed with invalid color")+": "+count+"\r\n";
+					}
+					break;
+				}
 			return log;
 		}
 

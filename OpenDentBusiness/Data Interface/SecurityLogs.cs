@@ -42,6 +42,22 @@ namespace OpenDentBusiness{
 			return Crud.SecurityLogCrud.SelectMany(command);
 		}
 
+		///<summary>Gets a list of all securitylogs for a specific API developer.</summary>
+		public static List<SecurityLog> GetManyForApi(int limit,int offset,int permType,string apiDeveloperName) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<SecurityLog>>(MethodBase.GetCurrentMethod(),limit,offset,permType,apiDeveloperName);
+			}
+			string command="SELECT * FROM securitylog "
+				+"WHERE LogText LIKE '%by "+apiDeveloperName+" through%' ";
+			if(permType>-1) {//0 is 'None' and is valid.
+				command+="AND PermType='"+POut.Long(permType)+"' ";
+			}
+			command+="AND LogSource='"+POut.Int((int)LogSources.API)+"' "//23 is LogSources.API
+				+"ORDER BY SecurityLogNum DESC "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.SecurityLogCrud.SelectMany(command);
+		}
+
 		#endregion
 
 		#region Delete

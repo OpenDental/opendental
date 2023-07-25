@@ -379,5 +379,14 @@ namespace OpenDental {
 		private void butCancel_Click(object sender,EventArgs e) {
 			DialogResult=DialogResult.Cancel;
 		}
+
+		///<summary>Not able to save a card during a void or refund</summary>
+		private void transactionTypeCheckedChanged(object sender,EventArgs e) {
+			if(radioVoid.Checked || radioRefund.Checked) {
+				checkSaveToken.Visible=false;
+				return;
+			}
+			checkSaveToken.Visible=true;
+		}
 	}
 }

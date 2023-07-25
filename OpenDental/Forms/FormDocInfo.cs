@@ -93,8 +93,7 @@ namespace OpenDental{
 			}
 			textDate.Text=_document.DateCreated.ToShortDateString();
 			textTime.Text=_document.DateCreated.ToLongTimeString();
-			comboProv.Items.AddProvNone();
-			comboProv.Items.AddProvsAbbr(Providers.GetDeepCopy(true));
+			FillComboProv();
 			comboProv.SetSelectedProvNum(_document.ProvNum);
 			listType.Items.Clear();
 			listType.Items.AddEnums<ImageType>();
@@ -188,6 +187,20 @@ namespace OpenDental{
 					System.Diagnostics.Process.Start(tempFile);
 				}
 			}
+		}
+
+		private void FillComboProv(){
+			long provNum=comboProv.GetSelectedProvNum();
+			List<Provider> listProviders=Providers.GetProvsForClinic(Clinics.ClinicNum);
+			comboProv.Items.Clear();
+			comboProv.Items.AddProvNone();
+			if(PrefC.GetBool(PrefName.EasyHideDentalSchools)) {//not dental school
+				comboProv.Items.AddProvsAbbr(listProviders);
+			}
+			else{
+				comboProv.Items.AddProvsFull(listProviders);
+			}
+			comboProv.SetSelectedProvNum(provNum);
 		}
 
 		private void butAudit_Click(object sender,EventArgs e) {

@@ -88,17 +88,9 @@ namespace OpenDental {
 					listSheetFieldDefsUnsupported.Add(sheetFieldDef);
 					sheetDef.SheetFieldDefs.Remove(sheetFieldDef);
 				}
-				//Users might be importing a sheet that was developed in an older version that does not support ItemColor.  Default them to black if necessary.
-				//Static text, lines, and rectangles are the only field types that support ItemColor.
-				if(sheetFieldDef.FieldType!=SheetFieldType.StaticText 
-					&& sheetFieldDef.FieldType!=SheetFieldType.Line 
-					&& sheetFieldDef.FieldType!=SheetFieldType.Rectangle)  
-				{
-					continue;
-				}
 				//ItemColor will be set to "Empty" if this is a sheet that was exported from a previous version that didn't support ItemColor.
 				//Color.Empty will actually draw but will be 'invisible' to the user.  For this reason, we considered this a bug and defaulted the color to black.
-				if(sheetFieldDef.ItemColor==Color.Empty) {
+				if(sheetFieldDef.ItemColor.Equals(Color.FromArgb(0, 0, 0, 0))) {
 					sheetFieldDef.ItemColor=Color.Black;//Old sheet behavior was to always draw these field types in black.
 				}
 			}

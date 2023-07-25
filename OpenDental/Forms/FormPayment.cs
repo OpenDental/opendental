@@ -257,6 +257,7 @@ namespace OpenDental {
 			textCheckNum.Text=_payment.CheckNum;
 			textBankBranch.Text=_payment.BankBranch;
 			if(_payment.MerchantFee>0) {
+				labelSurchargeFee.Visible=true;
 				textSurcharge.Visible=true;
 			}
 			textSurcharge.Text=_payment.MerchantFee.ToString("F");
@@ -1249,9 +1250,9 @@ namespace OpenDental {
 					if(programVersion=="2") {
 						groupXWeb.Visible=false;//All voids/refunds should be done through the PayConnect window.
 						string integrationType=ProgramProperties.GetPropVal(programPayConnect.ProgramNum,"PayConnect2.0 Integration Type: 0 for normal, 1 for surcharge",_payment.ClinicNum);
-						if(integrationType=="1") {//surcharge
+						if(integrationType=="1" || _payment.MerchantFee>0) {//surcharge
 							labelSurchargeFee.Visible=true;
-							textSurcharge.Visible=true;
+							textSurcharge.Visible=true;//needs to show no matter what any time MerchantFee has a non-zero value
 						}
 						else {
 							labelSurchargeFee.Visible=false;

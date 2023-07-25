@@ -134,6 +134,7 @@ namespace OpenDental{
 			this.radioRefund.TabIndex = 0;
 			this.radioRefund.Text = "Refund";
 			this.radioRefund.UseVisualStyleBackColor = true;
+			this.radioRefund.CheckedChanged += new System.EventHandler(this.transactionTypeCheckedChanged);
 			// 
 			// radioAuthorization
 			// 
@@ -154,6 +155,7 @@ namespace OpenDental{
 			this.radioVoid.TabIndex = 0;
 			this.radioVoid.Text = "Void";
 			this.radioVoid.UseVisualStyleBackColor = true;
+			this.radioVoid.CheckedChanged += new System.EventHandler(this.transactionTypeCheckedChanged);
 			// 
 			// labelAmount
 			// 
