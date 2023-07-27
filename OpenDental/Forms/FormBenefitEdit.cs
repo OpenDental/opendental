@@ -148,8 +148,18 @@ namespace OpenDental {
 				MsgBox.Show(this,"Waiting period must have a category or a procedure code.");
 				return;
 			}
-			//Validate seven extremely specific fields from the UI for limitation benefits.
+			long patPlanNum;
+			long planNum;
+			if(checkPat.Checked) {
+				patPlanNum=_patPlanNum;
+				planNum=0;
+			}
+			else {
+				patPlanNum=0;
+				planNum=_planNum;
+			}
 			//Create a new benefit object out of the fields from the UI in order to invoke helper methods.
+			//Validate seven extremely specific fields from the UI for limitation benefits in general.
 			Benefit benefit=new Benefit();
 			benefit.BenefitType=benefitType;
 			benefit.MonetaryAmt=monetaryAmt;
@@ -158,6 +168,10 @@ namespace OpenDental {
 			benefit.TimePeriod=timePeriod;
 			benefit.CoverageLevel=coverageLevel;
 			benefit.Quantity=quantity;
+			//Fluoride and sealant age limitations need to validate the code, code group, and patPlanNum.
+			benefit.CodeGroupNum=codeGroupNum;
+			benefit.CodeNum=codeNum;
+			benefit.PatPlanNum=patPlanNum;
 			if(Benefits.IsFrequencyLimitation(benefit)
 				|| Benefits.IsFluorideAgeLimit(benefit)
 				|| Benefits.IsSealantAgeLimit(benefit))
@@ -175,14 +189,8 @@ namespace OpenDental {
 				}
 			}
 			//End of validation. Manipulate BenefitCur with the values from the UI.
-			if(checkPat.Checked) {
-				BenefitCur.PatPlanNum=_patPlanNum;
-				BenefitCur.PlanNum=0;
-			}
-			else{
-				BenefitCur.PatPlanNum=0;
-				BenefitCur.PlanNum=_planNum;
-			}
+			BenefitCur.PatPlanNum=patPlanNum;
+			BenefitCur.PlanNum=planNum;
 			BenefitCur.CovCatNum=covCatNum;
 			BenefitCur.CodeNum=codeNum;
 			BenefitCur.CodeGroupNum=codeGroupNum;

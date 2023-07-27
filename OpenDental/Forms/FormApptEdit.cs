@@ -1136,6 +1136,9 @@ namespace OpenDental{
 			if(Plugins.HookMethod(this,"FormApptEdit.butText_Click_start",_patient,_appointment,this)) {
 				return;
 			}
+			if(!Security.IsAuthorized(Permissions.TextMessageSend)) {
+				return;
+			}
 			bool updateTextYN=false;
 			if(_patient.TxtMsgOk==YN.No) {
 				if(MsgBox.Show(this,MsgBoxButtons.YesNo,"This patient is marked to not receive text messages. "

@@ -637,12 +637,14 @@ namespace OpenDentBusiness {
 				return;
 			}
 			try {
+				DateTime serverDateTime=MiscData.GetNowDateTime();
 				if(Prefs.GetContainsKey(PrefName.SignalLastClearedDate.ToString())
-					&& PrefC.GetDateT(PrefName.SignalLastClearedDate)>MiscData.GetNowDateTime().AddDays(-7)) //Has already been run in the past week. This is all server based time.
+					&& PrefC.GetDateT(PrefName.SignalLastClearedDate)>serverDateTime.AddDays(-7) //Has already been run in the past week. This is all server based time.
+					&& PrefC.GetDateT(PrefName.SignalLastClearedDate) < serverDateTime) //SignalLastClearedDate isn't in the future job 46490
 				{
 					return;//Do not run this process again.
 				}
-				Prefs.UpdateDateT(PrefName.SignalLastClearedDate,MiscData.GetNowDateTime());//Set Last cleared to now.
+				Prefs.UpdateDateT(PrefName.SignalLastClearedDate,serverDateTime);//Set Last cleared to now.
 				string command="";
 				if(DataConnection.DBtype==DatabaseType.MySql) {//easier to read that using the DbHelper Functions and it also matches the ConvertDB3 script
 					command="DELETE FROM signalod WHERE SigDateTime < DATE_ADD(NOW(),INTERVAL -2 DAY)";//Itypes only older than 2 days

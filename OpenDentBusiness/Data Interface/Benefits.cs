@@ -1513,7 +1513,8 @@ namespace OpenDentBusiness {
 					|| newBenefit.QuantityQualifier != oldBenefitList[i].QuantityQualifier
 					|| newBenefit.Quantity != oldBenefitList[i].Quantity
 					|| newBenefit.CodeNum != oldBenefitList[i].CodeNum
-					|| newBenefit.CoverageLevel != oldBenefitList[i].CoverageLevel)
+					|| newBenefit.CoverageLevel != oldBenefitList[i].CoverageLevel
+					|| newBenefit.CodeGroupNum != oldBenefitList[i].CodeGroupNum)
 				{
 					Benefits.Update(newBenefit,oldBenefitList[i]); //logging taken care of in update
 				}

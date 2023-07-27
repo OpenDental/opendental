@@ -11,7 +11,7 @@
     <Grid Background="#FFFCFDFE" >
         <ui:ListBox x:Name="listAlignment" Width="120" Height="43" Margin="139,97,0,0" />
         <ui:Label x:Name="label2" Width="117" Height="17" Margin="14,97,0,0" Text="Alignment" HAlign="Right" VAlign="Bottom" />
-        <ui:TextBox x:Name="textDesc" Width="264" Height="20" Margin="139,23,0,0" ColorBack="#FFF0F0F0" />
+        <ui:TextBox x:Name="textDesc" Width="264" Height="20" Margin="139,23,0,0" ColorBack="#FFF0F0F0" ReadOnly="True" />
         <ui:Label x:Name="label1" Width="117" Height="17" Margin="14,23,0,0" Text="Description" HAlign="Right" VAlign="Bottom" />
         <ui:Button x:Name="butColor" Width="75" Height="24" Margin="176,57,0,0" Text="Change" Click="butColor_Click" />
         <ui:Panel x:Name="panelColor" Width="24" Height="24" Margin="139,57,0,0" ColorBack="#FF404040" >

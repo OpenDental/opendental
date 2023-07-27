@@ -1033,9 +1033,9 @@
 			// 
 			this.labelClaim.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.labelClaim.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.labelClaim.Location = new System.Drawing.Point(111, 652);
+			this.labelClaim.Location = new System.Drawing.Point(89, 665);
 			this.labelClaim.Name = "labelClaim";
-			this.labelClaim.Size = new System.Drawing.Size(480, 44);
+			this.labelClaim.Size = new System.Drawing.Size(524, 32);
 			this.labelClaim.TabIndex = 50;
 			this.labelClaim.Text = "This procedure is attached to a claim, so certain fields should not be edited.  Y" +
     "ou should reprint the claim if any significant changes are made.";
@@ -1411,7 +1411,7 @@
 			this.tabControl.Controls.Add(this.tabPageCanada);
 			this.tabControl.Location = new System.Drawing.Point(1, 424);
 			this.tabControl.Name = "tabControl";
-			this.tabControl.Size = new System.Drawing.Size(960, 244);
+			this.tabControl.Size = new System.Drawing.Size(982, 244);
 			this.tabControl.TabIndex = 175;
 			this.tabControl.SizeChanged += new System.EventHandler(this.tabControl_SizeChanged);
 			// 
@@ -1429,7 +1429,7 @@
 			this.tabPageFinancial.Location = new System.Drawing.Point(2, 21);
 			this.tabPageFinancial.Name = "tabPageFinancial";
 			this.tabPageFinancial.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageFinancial.Size = new System.Drawing.Size(956, 221);
+			this.tabPageFinancial.Size = new System.Drawing.Size(978, 221);
 			this.tabPageFinancial.TabIndex = 0;
 			this.tabPageFinancial.Text = "Financial";
 			// 
@@ -1450,7 +1450,7 @@
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.gridPay.Location = new System.Drawing.Point(3, 137);
 			this.gridPay.Name = "gridPay";
-			this.gridPay.Size = new System.Drawing.Size(449, 79);
+			this.gridPay.Size = new System.Drawing.Size(460, 79);
 			this.gridPay.TabIndex = 117;
 			this.gridPay.Title = "Patient Payments";
 			this.gridPay.TranslationName = "TableProcPay";
@@ -1462,9 +1462,9 @@
 			this.gridAdj.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.gridAdj.Location = new System.Drawing.Point(458, 137);
+			this.gridAdj.Location = new System.Drawing.Point(469, 137);
 			this.gridAdj.Name = "gridAdj";
-			this.gridAdj.Size = new System.Drawing.Size(496, 79);
+			this.gridAdj.Size = new System.Drawing.Size(507, 79);
 			this.gridAdj.TabIndex = 116;
 			this.gridAdj.Title = "Adjustments";
 			this.gridAdj.TranslationName = "TableProcAdj";
@@ -1474,7 +1474,7 @@
 			// label20
 			// 
 			this.label20.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.label20.Location = new System.Drawing.Point(809, 12);
+			this.label20.Location = new System.Drawing.Point(831, 12);
 			this.label20.Name = "label20";
 			this.label20.Size = new System.Drawing.Size(75, 16);
 			this.label20.TabIndex = 114;
@@ -1484,7 +1484,7 @@
 			// textDiscount
 			// 
 			this.textDiscount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.textDiscount.Location = new System.Drawing.Point(885, 9);
+			this.textDiscount.Location = new System.Drawing.Point(907, 9);
 			this.textDiscount.MaxVal = 100000000D;
 			this.textDiscount.MinVal = -100000000D;
 			this.textDiscount.Name = "textDiscount";
@@ -1519,7 +1519,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.gridIns.Location = new System.Drawing.Point(3, 32);
 			this.gridIns.Name = "gridIns";
-			this.gridIns.Size = new System.Drawing.Size(951, 102);
+			this.gridIns.Size = new System.Drawing.Size(973, 102);
 			this.gridIns.TabIndex = 113;
 			this.gridIns.Title = "Insurance Estimates and Payments";
 			this.gridIns.TranslationName = "TableProcIns";
@@ -1575,7 +1575,7 @@
 			this.tabPageMedical.Location = new System.Drawing.Point(2, 21);
 			this.tabPageMedical.Name = "tabPageMedical";
 			this.tabPageMedical.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageMedical.Size = new System.Drawing.Size(956, 221);
+			this.tabPageMedical.Size = new System.Drawing.Size(978, 221);
 			this.tabPageMedical.TabIndex = 3;
 			this.tabPageMedical.Text = "Medical";
 			// 
@@ -1851,7 +1851,7 @@
 			this.tabPageMisc.Controls.Add(this.labelPlaceService);
 			this.tabPageMisc.Location = new System.Drawing.Point(2, 21);
 			this.tabPageMisc.Name = "tabPageMisc";
-			this.tabPageMisc.Size = new System.Drawing.Size(956, 221);
+			this.tabPageMisc.Size = new System.Drawing.Size(978, 221);
 			this.tabPageMisc.TabIndex = 4;
 			this.tabPageMisc.Text = "Misc";
 			// 
@@ -1892,7 +1892,7 @@
 			this.tabPageCanada.Location = new System.Drawing.Point(2, 21);
 			this.tabPageCanada.Name = "tabPageCanada";
 			this.tabPageCanada.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPageCanada.Size = new System.Drawing.Size(956, 221);
+			this.tabPageCanada.Size = new System.Drawing.Size(978, 221);
 			this.tabPageCanada.TabIndex = 1;
 			this.tabPageCanada.Text = "Canada";
 			// 
@@ -2052,7 +2052,7 @@
 			// butEditAnyway
 			// 
 			this.butEditAnyway.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.butEditAnyway.Location = new System.Drawing.Point(594, 671);
+			this.butEditAnyway.Location = new System.Drawing.Point(616, 671);
 			this.butEditAnyway.Name = "butEditAnyway";
 			this.butEditAnyway.Size = new System.Drawing.Size(104, 24);
 			this.butEditAnyway.TabIndex = 51;
@@ -2076,7 +2076,7 @@
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.butCancel.Location = new System.Drawing.Point(870, 671);
+			this.butCancel.Location = new System.Drawing.Point(892, 671);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(76, 24);
 			this.butCancel.TabIndex = 13;
@@ -2086,7 +2086,7 @@
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(779, 671);
+			this.butOK.Location = new System.Drawing.Point(801, 671);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(76, 24);
 			this.butOK.TabIndex = 12;
@@ -2136,7 +2136,7 @@
 			// 
 			// FormProcEdit
 			// 
-			this.ClientSize = new System.Drawing.Size(962, 696);
+			this.ClientSize = new System.Drawing.Size(984, 696);
 			this.Controls.Add(this.butEditAutoNote);
 			this.Controls.Add(this.labelPermAlert);
 			this.Controls.Add(this.butChangeUser);

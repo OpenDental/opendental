@@ -9,7 +9,7 @@
              Width="349" Height="463" 
              Text="Edit Appointment Field Def" Loaded="FrmApptFieldDefEdit_Loaded" >
 	<Grid Background="#FFFCFDFE" >
-		<ui:Label x:Name="labelWarning" Width="101" Height="14" Margin="228,78,0,0" Text="One Per Line" VAlign="Bottom" HAlign="Right" />
+		<ui:Label x:Name="labelWarning" Width="101" Height="14" Margin="202,72,0,0" Text="One Per Line" VAlign="Bottom" HAlign="Left" />
 		<ui:TextBox x:Name="textPickList" Width="309" Height="301" Margin="20,96,0,0" IsMultiline="True" />
 		<ui:Label x:Name="labelFieldType" Width="143" Height="15" Margin="17,50,0,0" Text="Field Type" VAlign="Bottom" />
         <ui:ComboBox x:Name="comboFieldType" Width="177" Height="21" Margin="20,68,0,0" SelectedIndexChanged="comboFieldType_SelectedIndexChanged"/>

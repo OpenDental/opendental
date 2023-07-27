@@ -108,7 +108,7 @@ namespace OpenDental {
 			FillList();
 		}
 
-		private void listMatches_DoubleClick(object sender, System.EventArgs e) {
+		private void listMatches_DoubleClick(object sender, MouseButtonEventArgs e) {
 			if(listMatches.SelectedIndex==-1){
 				return;
 			}

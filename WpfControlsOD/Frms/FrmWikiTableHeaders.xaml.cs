@@ -33,7 +33,8 @@ namespace OpenDental {
 			gridMain.Columns.Clear();
 			GridColumn gridColumn;
 			for(int i=1;i<ListColNames.Count+1;i++) {
-				gridColumn=new GridColumn("",75);//needs to be editable
+				gridColumn=new GridColumn("",75);
+				gridColumn.IsEditable=true;
 				gridMain.Columns.Add(gridColumn);
 			}
 			gridMain.ListGridRows.Clear();

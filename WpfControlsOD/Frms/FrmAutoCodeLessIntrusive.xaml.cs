@@ -12,9 +12,7 @@ using OpenDentBusiness;
 using WpfControls.UI;
 
 namespace OpenDental {
-	/// <summary>
-	/// Summary description for FormBasicTemplate.
-	/// </summary>
+	/// <summary></summary>
 	public partial class FrmAutoCodeLessIntrusive:FrmODBase {
 		///<summary>The text to display in this dialog</summary>
 		public string StrMain;

@@ -1309,7 +1309,7 @@ namespace OpenDental {
 			_claimProc.Remarks=textRemarks.Text;
 			//if status was changed to received, then set DateEntry
 			if(_claimProcOld.Status!=ClaimProcStatus.Received && _claimProcOld.Status!=ClaimProcStatus.Supplemental){
-				if(_claimProc.Status==ClaimProcStatus.Received || _claimProcOld.Status==ClaimProcStatus.Supplemental){
+				if(_claimProc.Status==ClaimProcStatus.Received || _claimProc.Status==ClaimProcStatus.Supplemental){
 					_claimProc.DateEntry=DateTime.Now;
 				}
 			}

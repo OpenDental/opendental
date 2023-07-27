@@ -39,7 +39,7 @@ namespace OpenDental {
 			listGroups.Items.AddList(listUserGroups,x => x.Description);
 		}
 
-		private void listGroups_DoubleClick(object sender,EventArgs e) {
+		private void listGroups_DoubleClick(object sender,MouseButtonEventArgs e) {
 			if(listGroups.SelectedIndex==-1) {
 				return;
 			}

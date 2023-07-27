@@ -131,7 +131,7 @@ namespace OpenDental{
 			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.label1.Location = new System.Drawing.Point(776, 252);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(117, 18);
+			this.label1.Size = new System.Drawing.Size(132, 18);
 			this.label1.TabIndex = 9;
 			this.label1.Text = "(Delete or Mark Read)";
 			// 

@@ -70,7 +70,7 @@ namespace OpenDentBusiness.Crud{
 				payment.ExternalId         = PIn.String(row["ExternalId"].ToString());
 				payment.PaymentStatus      = (OpenDentBusiness.PaymentStatus)PIn.Int(row["PaymentStatus"].ToString());
 				payment.IsCcCompleted      = PIn.Bool  (row["IsCcCompleted"].ToString());
-				payment.MerchantFee     = PIn.Double(row["MerchantFee"].ToString());
+				payment.MerchantFee        = PIn.Double(row["MerchantFee"].ToString());
 				retVal.Add(payment);
 			}
 			return retVal;
@@ -352,7 +352,7 @@ namespace OpenDentBusiness.Crud{
 				+"ExternalId         = '"+POut.String(payment.ExternalId)+"', "
 				+"PaymentStatus      =  "+POut.Int   ((int)payment.PaymentStatus)+", "
 				+"IsCcCompleted      =  "+POut.Bool  (payment.IsCcCompleted)+", "
-				+"MerchantFee     =  "+POut.Double(payment.MerchantFee)+" "
+				+"MerchantFee        =  "+POut.Double(payment.MerchantFee)+" "
 				+"WHERE PayNum = "+POut.Long(payment.PayNum);
 			if(payment.PayNote==null) {
 				payment.PayNote="";
