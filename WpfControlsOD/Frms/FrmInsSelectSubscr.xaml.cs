@@ -66,7 +66,7 @@ namespace OpenDental {
 			return true;
 		} 
 
-		private void listPlans_DoubleClick(object sender, System.EventArgs e) {
+		private void listPlans_DoubleClick(object sender, MouseButtonEventArgs e) {
 			if(listPlans.SelectedIndex==-1){
 				return;
 			}

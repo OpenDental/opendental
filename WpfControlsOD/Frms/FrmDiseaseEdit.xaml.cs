@@ -98,7 +98,6 @@ namespace OpenDental {
 			}
 			comboEhrFunctionalStatus.SelectedIndex=(int)_disease.FunctionStatus;//The default value is 'Problem'
 			if(!Security.IsAuthorized(Permissions.PatProblemListEdit)) {
-				//When disabled they are not faded
 				butSave.IsEnabled=false;
 				butDelete.IsEnabled=false;
 			}

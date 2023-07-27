@@ -13,7 +13,7 @@
 		<ui:Button x:Name="butTerminal" HorizontalAlignment="Right" Width="75" Height="24" Margin="0,175,35,0" Text="To Kiosk" Click="butTerminal_Click" />
 		<ui:Label x:Name="label2" Width="301" Height="40" Margin="29,9,0,0" Text="Sheets can be added and edited from Setup Sheets." />
 		<ui:Label x:Name="labelSheetType" Width="239" Height="14" Margin="29,62,0,0" Text="Patient Forms and Medical Histories" VAlign="Bottom" />
-		<ui:ListBox x:Name="listMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="30,81,128,26" />
+		<ui:ListBox x:Name="listMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="30,81,128,26" MouseDoubleClick="listMain_DoubleClick"/>
 		<ui:Button x:Name="butOK" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,35,27" Text="_OK" Click="butOK_Click" />
 	</Grid>
 </local:FrmODBase>

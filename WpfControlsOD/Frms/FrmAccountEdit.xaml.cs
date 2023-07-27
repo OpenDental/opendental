@@ -41,7 +41,6 @@ namespace OpenDental {
 			if(_account.IsRetainedEarnings){
 				checkRetainedEarnings.Visible=true;
 				checkRetainedEarnings.Checked=true;
-//todo: IsEnabled not showing properly
 				checkRetainedEarnings.IsEnabled=false;
 				labelRetainedEarnings.Visible=true;
 				listAcctType.IsEnabled=false;

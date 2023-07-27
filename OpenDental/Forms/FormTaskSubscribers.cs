@@ -31,7 +31,7 @@ namespace OpenDental {
 			List<long> listUserNums=TaskSubscriptions.GetSubscribersForTask(TaskForSubscribers);
 			List<TaskUnread> listTaskUnreads=TaskUnreads.GetForTask(TaskForSubscribers.TaskNum);
 			for(int i=0;i<listUserNums.Count;i++) {
-				if(TaskForSubscribers.UserNum==listUserNums[i]) {
+				if(TaskForSubscribers.UserNum==listUserNums[i] || Userods.GetUser(listUserNums[i]).IsHidden) {
 					continue;//Skip the creator of the task.
 				}
 				GridRow gridRow=new GridRow();

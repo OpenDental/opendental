@@ -55,7 +55,6 @@ namespace OpenDentBusiness.Crud{
 				webSchedRecall.DateTimeSendFailed = PIn.DateT (row["DateTimeSendFailed"].ToString());
 				webSchedRecall.Source             = (OpenDentBusiness.WebSchedRecallSource)PIn.Int(row["Source"].ToString());
 				webSchedRecall.CommlogNum         = PIn.Long  (row["CommlogNum"].ToString());
-				webSchedRecall.ShortGUID          = PIn.String(row["ShortGUID"].ToString());
 				webSchedRecall.PatNum             = PIn.Long  (row["PatNum"].ToString());
 				webSchedRecall.ClinicNum          = PIn.Long  (row["ClinicNum"].ToString());
 				webSchedRecall.SendStatus         = (OpenDentBusiness.AutoCommStatus)PIn.Int(row["SendStatus"].ToString());
@@ -65,6 +64,7 @@ namespace OpenDentBusiness.Crud{
 				webSchedRecall.DateTimeSent       = PIn.DateT (row["DateTimeSent"].ToString());
 				webSchedRecall.ResponseDescript   = PIn.String(row["ResponseDescript"].ToString());
 				webSchedRecall.ApptReminderRuleNum= PIn.Long  (row["ApptReminderRuleNum"].ToString());
+				webSchedRecall.ShortGUID          = PIn.String(row["ShortGUID"].ToString());
 				retVal.Add(webSchedRecall);
 			}
 			return retVal;
@@ -83,7 +83,6 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("DateTimeSendFailed");
 			table.Columns.Add("Source");
 			table.Columns.Add("CommlogNum");
-			table.Columns.Add("ShortGUID");
 			table.Columns.Add("PatNum");
 			table.Columns.Add("ClinicNum");
 			table.Columns.Add("SendStatus");
@@ -93,6 +92,7 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("DateTimeSent");
 			table.Columns.Add("ResponseDescript");
 			table.Columns.Add("ApptReminderRuleNum");
+			table.Columns.Add("ShortGUID");
 			foreach(WebSchedRecall webSchedRecall in listWebSchedRecalls) {
 				table.Rows.Add(new object[] {
 					POut.Long  (webSchedRecall.WebSchedRecallNum),
@@ -102,7 +102,6 @@ namespace OpenDentBusiness.Crud{
 					POut.DateT (webSchedRecall.DateTimeSendFailed,false),
 					POut.Int   ((int)webSchedRecall.Source),
 					POut.Long  (webSchedRecall.CommlogNum),
-					            webSchedRecall.ShortGUID,
 					POut.Long  (webSchedRecall.PatNum),
 					POut.Long  (webSchedRecall.ClinicNum),
 					POut.Int   ((int)webSchedRecall.SendStatus),
@@ -112,6 +111,7 @@ namespace OpenDentBusiness.Crud{
 					POut.DateT (webSchedRecall.DateTimeSent,false),
 					            webSchedRecall.ResponseDescript,
 					POut.Long  (webSchedRecall.ApptReminderRuleNum),
+					            webSchedRecall.ShortGUID,
 				});
 			}
 			return table;
@@ -131,7 +131,7 @@ namespace OpenDentBusiness.Crud{
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="WebSchedRecallNum,";
 			}
-			command+="RecallNum,DateDue,ReminderCount,DateTimeSendFailed,Source,CommlogNum,ShortGUID,PatNum,ClinicNum,SendStatus,MessageType,MessageFk,DateTimeEntry,DateTimeSent,ResponseDescript,ApptReminderRuleNum) VALUES(";
+			command+="RecallNum,DateDue,ReminderCount,DateTimeSendFailed,Source,CommlogNum,PatNum,ClinicNum,SendStatus,MessageType,MessageFk,DateTimeEntry,DateTimeSent,ResponseDescript,ApptReminderRuleNum,ShortGUID) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+=POut.Long(webSchedRecall.WebSchedRecallNum)+",";
 			}
@@ -142,7 +142,6 @@ namespace OpenDentBusiness.Crud{
 				+    POut.DateT (webSchedRecall.DateTimeSendFailed)+","
 				+    POut.Int   ((int)webSchedRecall.Source)+","
 				+    POut.Long  (webSchedRecall.CommlogNum)+","
-				+"'"+POut.String(webSchedRecall.ShortGUID)+"',"
 				+    POut.Long  (webSchedRecall.PatNum)+","
 				+    POut.Long  (webSchedRecall.ClinicNum)+","
 				+    POut.Int   ((int)webSchedRecall.SendStatus)+","
@@ -151,7 +150,8 @@ namespace OpenDentBusiness.Crud{
 				+    DbHelper.Now()+","
 				+    POut.DateT (webSchedRecall.DateTimeSent)+","
 				+    DbHelper.ParamChar+"paramResponseDescript,"
-				+    POut.Long  (webSchedRecall.ApptReminderRuleNum)+")";
+				+    POut.Long  (webSchedRecall.ApptReminderRuleNum)+","
+				+"'"+POut.String(webSchedRecall.ShortGUID)+"')";
 			if(webSchedRecall.ResponseDescript==null) {
 				webSchedRecall.ResponseDescript="";
 			}
@@ -191,7 +191,7 @@ namespace OpenDentBusiness.Crud{
 						if(useExistingPK) {
 							sbCommands.Append("WebSchedRecallNum,");
 						}
-						sbCommands.Append("RecallNum,DateDue,ReminderCount,DateTimeSendFailed,Source,CommlogNum,ShortGUID,PatNum,ClinicNum,SendStatus,MessageType,MessageFk,DateTimeEntry,DateTimeSent,ResponseDescript,ApptReminderRuleNum) VALUES ");
+						sbCommands.Append("RecallNum,DateDue,ReminderCount,DateTimeSendFailed,Source,CommlogNum,PatNum,ClinicNum,SendStatus,MessageType,MessageFk,DateTimeEntry,DateTimeSent,ResponseDescript,ApptReminderRuleNum,ShortGUID) VALUES ");
 						countRows=0;
 					}
 					else {
@@ -206,7 +206,6 @@ namespace OpenDentBusiness.Crud{
 					sbRow.Append(POut.DateT(webSchedRecall.DateTimeSendFailed)); sbRow.Append(",");
 					sbRow.Append(POut.Int((int)webSchedRecall.Source)); sbRow.Append(",");
 					sbRow.Append(POut.Long(webSchedRecall.CommlogNum)); sbRow.Append(",");
-					sbRow.Append("'"+POut.String(webSchedRecall.ShortGUID)+"'"); sbRow.Append(",");
 					sbRow.Append(POut.Long(webSchedRecall.PatNum)); sbRow.Append(",");
 					sbRow.Append(POut.Long(webSchedRecall.ClinicNum)); sbRow.Append(",");
 					sbRow.Append(POut.Int((int)webSchedRecall.SendStatus)); sbRow.Append(",");
@@ -215,7 +214,8 @@ namespace OpenDentBusiness.Crud{
 					sbRow.Append(DbHelper.Now()); sbRow.Append(",");
 					sbRow.Append(POut.DateT(webSchedRecall.DateTimeSent)); sbRow.Append(",");
 					sbRow.Append("'"+POut.String(webSchedRecall.ResponseDescript)+"'"); sbRow.Append(",");
-					sbRow.Append(POut.Long(webSchedRecall.ApptReminderRuleNum)); sbRow.Append(")");
+					sbRow.Append(POut.Long(webSchedRecall.ApptReminderRuleNum)); sbRow.Append(",");
+					sbRow.Append("'"+POut.String(webSchedRecall.ShortGUID)+"'"); sbRow.Append(")");
 					if(sbCommands.Length+sbRow.Length+1 > TableBase.MaxAllowedPacketCount && countRows > 0) {
 						Db.NonQ(sbCommands.ToString());
 						sbCommands=null;
@@ -250,7 +250,7 @@ namespace OpenDentBusiness.Crud{
 			if(isRandomKeys || useExistingPK) {
 				command+="WebSchedRecallNum,";
 			}
-			command+="RecallNum,DateDue,ReminderCount,DateTimeSendFailed,Source,CommlogNum,ShortGUID,PatNum,ClinicNum,SendStatus,MessageType,MessageFk,DateTimeEntry,DateTimeSent,ResponseDescript,ApptReminderRuleNum) VALUES(";
+			command+="RecallNum,DateDue,ReminderCount,DateTimeSendFailed,Source,CommlogNum,PatNum,ClinicNum,SendStatus,MessageType,MessageFk,DateTimeEntry,DateTimeSent,ResponseDescript,ApptReminderRuleNum,ShortGUID) VALUES(";
 			if(isRandomKeys || useExistingPK) {
 				command+=POut.Long(webSchedRecall.WebSchedRecallNum)+",";
 			}
@@ -261,7 +261,6 @@ namespace OpenDentBusiness.Crud{
 				+    POut.DateT (webSchedRecall.DateTimeSendFailed)+","
 				+    POut.Int   ((int)webSchedRecall.Source)+","
 				+    POut.Long  (webSchedRecall.CommlogNum)+","
-				+"'"+POut.String(webSchedRecall.ShortGUID)+"',"
 				+    POut.Long  (webSchedRecall.PatNum)+","
 				+    POut.Long  (webSchedRecall.ClinicNum)+","
 				+    POut.Int   ((int)webSchedRecall.SendStatus)+","
@@ -270,7 +269,8 @@ namespace OpenDentBusiness.Crud{
 				+    DbHelper.Now()+","
 				+    POut.DateT (webSchedRecall.DateTimeSent)+","
 				+    DbHelper.ParamChar+"paramResponseDescript,"
-				+    POut.Long  (webSchedRecall.ApptReminderRuleNum)+")";
+				+    POut.Long  (webSchedRecall.ApptReminderRuleNum)+","
+				+"'"+POut.String(webSchedRecall.ShortGUID)+"')";
 			if(webSchedRecall.ResponseDescript==null) {
 				webSchedRecall.ResponseDescript="";
 			}
@@ -293,7 +293,6 @@ namespace OpenDentBusiness.Crud{
 				+"DateTimeSendFailed =  "+POut.DateT (webSchedRecall.DateTimeSendFailed)+", "
 				+"Source             =  "+POut.Int   ((int)webSchedRecall.Source)+", "
 				+"CommlogNum         =  "+POut.Long  (webSchedRecall.CommlogNum)+", "
-				+"ShortGUID          = '"+POut.String(webSchedRecall.ShortGUID)+"', "
 				+"PatNum             =  "+POut.Long  (webSchedRecall.PatNum)+", "
 				+"ClinicNum          =  "+POut.Long  (webSchedRecall.ClinicNum)+", "
 				+"SendStatus         =  "+POut.Int   ((int)webSchedRecall.SendStatus)+", "
@@ -302,7 +301,8 @@ namespace OpenDentBusiness.Crud{
 				//DateTimeEntry not allowed to change
 				+"DateTimeSent       =  "+POut.DateT (webSchedRecall.DateTimeSent)+", "
 				+"ResponseDescript   =  "+DbHelper.ParamChar+"paramResponseDescript, "
-				+"ApptReminderRuleNum=  "+POut.Long  (webSchedRecall.ApptReminderRuleNum)+" "
+				+"ApptReminderRuleNum=  "+POut.Long  (webSchedRecall.ApptReminderRuleNum)+", "
+				+"ShortGUID          = '"+POut.String(webSchedRecall.ShortGUID)+"' "
 				+"WHERE WebSchedRecallNum = "+POut.Long(webSchedRecall.WebSchedRecallNum);
 			if(webSchedRecall.ResponseDescript==null) {
 				webSchedRecall.ResponseDescript="";
@@ -338,10 +338,6 @@ namespace OpenDentBusiness.Crud{
 				if(command!="") { command+=",";}
 				command+="CommlogNum = "+POut.Long(webSchedRecall.CommlogNum)+"";
 			}
-			if(webSchedRecall.ShortGUID != oldWebSchedRecall.ShortGUID) {
-				if(command!="") { command+=",";}
-				command+="ShortGUID = '"+POut.String(webSchedRecall.ShortGUID)+"'";
-			}
 			if(webSchedRecall.PatNum != oldWebSchedRecall.PatNum) {
 				if(command!="") { command+=",";}
 				command+="PatNum = "+POut.Long(webSchedRecall.PatNum)+"";
@@ -374,6 +370,10 @@ namespace OpenDentBusiness.Crud{
 			if(webSchedRecall.ApptReminderRuleNum != oldWebSchedRecall.ApptReminderRuleNum) {
 				if(command!="") { command+=",";}
 				command+="ApptReminderRuleNum = "+POut.Long(webSchedRecall.ApptReminderRuleNum)+"";
+			}
+			if(webSchedRecall.ShortGUID != oldWebSchedRecall.ShortGUID) {
+				if(command!="") { command+=",";}
+				command+="ShortGUID = '"+POut.String(webSchedRecall.ShortGUID)+"'";
 			}
 			if(command=="") {
 				return false;
@@ -409,9 +409,6 @@ namespace OpenDentBusiness.Crud{
 			if(webSchedRecall.CommlogNum != oldWebSchedRecall.CommlogNum) {
 				return true;
 			}
-			if(webSchedRecall.ShortGUID != oldWebSchedRecall.ShortGUID) {
-				return true;
-			}
 			if(webSchedRecall.PatNum != oldWebSchedRecall.PatNum) {
 				return true;
 			}
@@ -435,6 +432,9 @@ namespace OpenDentBusiness.Crud{
 				return true;
 			}
 			if(webSchedRecall.ApptReminderRuleNum != oldWebSchedRecall.ApptReminderRuleNum) {
+				return true;
+			}
+			if(webSchedRecall.ShortGUID != oldWebSchedRecall.ShortGUID) {
 				return true;
 			}
 			return false;

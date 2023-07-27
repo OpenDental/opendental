@@ -121,8 +121,13 @@ namespace OpenDentBusiness.Crud{
 			return medication.MedicationNum;
 		}
 
+		///<summary>Inserts many Medications into the database.</summary>
+		public static void InsertMany(List<Medication> listMedications) {
+			InsertMany(listMedications,false);
+		}
+
 		///<summary>Inserts many Medications into the database.  Provides option to use the existing priKey.</summary>
-		public static void InsertMany(List<Medication> listMedications,bool useExistingPK=false) {
+		public static void InsertMany(List<Medication> listMedications,bool useExistingPK) {
 			if(!useExistingPK && PrefC.RandomKeys) {
 				foreach(Medication medication in listMedications) {
 					Insert(medication);

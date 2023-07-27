@@ -358,6 +358,11 @@ namespace OpenDental{
 			List<UserOdPref> listUserOdPrefsNotEmpty=listUserOdPrefs.FindAll(x => !x.ValueString.IsNullOrEmpty()
 				&& x.UserNum!=UserodCur.UserNum);//Allow user to reuse their ID at the different clinics
 			List<string> listValueStrings=listUserOdPrefsNotEmpty.Select(x => x.ValueString).ToList();
+			//if the default DoseSpotID is changed not from the FormUserPrefAdditional, check that textDoseSpotUserID.Text is not a duplicate
+			//and change the _userOdPrefDoseSpotDefault.ValueString
+			if(textDoseSpotUserID.Text!=_userOdPrefDoseSpotDefault.ValueString && !listValueStrings.Contains(textDoseSpotUserID.Text)) {
+				_userOdPrefDoseSpotDefault.ValueString=textDoseSpotUserID.Text;
+			}
 			List<UserOdPref> listUserOdPrefsDuplicateIDs=_listUserOdPrefsDoseSpotNew.FindAll(x => listValueStrings.Contains(x.ValueString));
 			if((textDoseSpotUserID.Text!=_userOdPrefDoseSpotDefault.ValueString || _userOdPrefDoseSpotDefault.IsNew)
 				&& listValueStrings.Contains(textDoseSpotUserID.Text)
@@ -383,11 +388,6 @@ namespace OpenDental{
 					if(listValueStrings.Contains(_listUserOdPrefsDoseSpotNew[i].ValueString) && !_listUserOdPrefsDoseSpotNew[i].IsNew) {
 						_listUserOdPrefsDoseSpotNew[i].ValueString=_listUserOdPrefsDoseSpotOld[i].ValueString;//change _listUserOdPrefsDoseSpotNew back to what it was previously
 					}
-				}
-				//if the default DoseSpotID is changed not from the FormUserPrefAdditional, check that textDoseSpotUserID.Text is not a duplicate
-				//and change the _userOdPrefDoseSpotDefault.ValueString
-				if(textDoseSpotUserID.Text!=_userOdPrefDoseSpotDefault.ValueString && !listValueStrings.Contains(textDoseSpotUserID.Text)) {
-					_userOdPrefDoseSpotDefault.ValueString=textDoseSpotUserID.Text;
 				}
 				textDoseSpotUserID.Text=_userOdPrefDoseSpotDefault.ValueString;
 				return;

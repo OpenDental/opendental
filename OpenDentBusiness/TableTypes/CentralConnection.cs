@@ -26,8 +26,6 @@ namespace OpenDentBusiness{
 		public string OdUser;
 		///<summary>Deprecated.  If connecting to the web service.  Symmetrically encrypted.</summary>
 		public string OdPassword;
-		///<summary>Used for MariaDB SkySql</summary>
-		public string SslCA;
 		///<summary>When being used by ConnectionStore xml file, must deserialize to a ConnectionNames enum value. Otherwise just used as a generic notes field.</summary>
 		[CrudColumn(SpecialType=CrudSpecialColType.IsText)]
 		public string Note;
@@ -39,6 +37,9 @@ namespace OpenDentBusiness{
 		public string ConnectionStatus;
 		///<summary>If set to True, display clinic breakdown in reports, else only show practice totals.</summary>
 		public bool HasClinicBreakdownReports;
+		///<summary>Used for MariaDB SkySql</summary>
+		[CrudColumn(IsNotDbColumn=true)]
+		public string SslCA;
 		///<summary>Set when reading from the config file. Not an actual DB column.</summary>
 		[CrudColumn(IsNotDbColumn=true)]
 		public bool IsAutomaticLogin;

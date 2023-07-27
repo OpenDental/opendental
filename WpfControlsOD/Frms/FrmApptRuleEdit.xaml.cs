@@ -70,24 +70,3 @@ namespace OpenDental {
 
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

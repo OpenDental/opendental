@@ -62,7 +62,7 @@ namespace OpenDental {
 			listUser.SelectedIndex=listUserods.FindIndex(x => x.UserNum==UserNumSuggested);
 		}
 
-		private void listUser_DoubleClick(object sender,EventArgs e) {
+		private void listUser_DoubleClick(object sender,MouseButtonEventArgs e) {
 			if(listUser.SelectedIndex==-1) {
 				return;
 			}

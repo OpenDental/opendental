@@ -9511,13 +9511,14 @@ namespace OpenDental {
 			return false;
 		}
 
+		/// <summary>Determines whether or not the procedure is pre-inserted as deleted by checking if treatment areas selections are valid.</summary>
 		private bool IsToothSelectionValidForTxArea(Procedure proc) {
 			ProcedureCode code=ProcedureCodes.GetProcCode(proc.CodeNum);
 			switch(code.TreatArea) {
 				case TreatmentArea.None:
 					return true;
 				case TreatmentArea.Surf:
-					return !(proc.Surf.IsNullOrEmpty()||proc.ToothRange.IsNullOrEmpty());
+					return !(proc.Surf.IsNullOrEmpty()||proc.ToothNum.IsNullOrEmpty());
 				case TreatmentArea.Tooth:
 					return !proc.ToothNum.IsNullOrEmpty();
 				case TreatmentArea.Mouth:
@@ -9527,11 +9528,8 @@ namespace OpenDental {
 				case TreatmentArea.Sextant:
 					return !proc.Surf.IsNullOrEmpty(); 
 				case TreatmentArea.Arch:
-					//no arch proc added from chart module can meet this requirement, but if it ever becomes possible this should work.
-					if(code.AreaAlsoToothRange) {
-						return !(proc.Surf.IsNullOrEmpty()&&proc.ToothRange.IsNullOrEmpty());
-					}
-					return !proc.Surf.IsNullOrEmpty();
+					//Consider all arch selections invalid. FormProcEdit will always show.
+					return false;
 				case TreatmentArea.ToothRange:
 					return !proc.ToothRange.IsNullOrEmpty();
 				default: return false;

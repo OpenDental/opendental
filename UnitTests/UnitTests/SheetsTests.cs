@@ -170,7 +170,7 @@ namespace UnitTests {
 			MedicationPats.Update(medpat);
 			Medications.RefreshCache();
 			//Sheets
-			SheetDef sheetDef=SheetDefT.CreateCustomSheet(SheetInternalType.MedicalHistNewPat);
+			SheetDef sheetDef=SheetDefT.CreateCustomSheet(SheetInternalType.MedicalHist);
 			SheetDefs.GetFieldsAndParameters(sheetDef);
 			Sheet sheet=Sheets.CreateSheetFromSheetDef(sheetDef, patNum:pat.PatNum);
 			Sheet sheetNew;

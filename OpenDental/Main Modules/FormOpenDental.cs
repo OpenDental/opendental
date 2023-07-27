@@ -2907,6 +2907,9 @@ namespace OpenDental{
 				Patients.Update(patient,patientOld);
 				Patients.InsertAddressChangeSecurityLogEntry(patientOld,patient);// track change in securitylog for TxtOK Field
 			}
+			if(!Security.IsAuthorized(Permissions.TextMessageSend)) {
+				return false;
+			}
 			using FormTxtMsgEdit formTxtMsgEdit2=new FormTxtMsgEdit();
 			formTxtMsgEdit2.Message=startingText;
 			formTxtMsgEdit2.PatNum=patNum;
