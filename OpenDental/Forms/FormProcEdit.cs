@@ -1826,12 +1826,14 @@ namespace OpenDental {
 					procNoteDefault+="\r\n";
 				}
 			}
-			procNoteDefault+=ProcCodeNotes.GetNote(comboProv.GetSelectedProvNum(),_procedure.CodeNum,ProcStat.C);
-			if(textNotes.Text!="" && procNoteDefault!="") { //check to see if a default note is defined.
-				textNotes.Text+="\r\n"; //add a new line if there was already a ProcNote on the procedure.
-			}
-			if(!string.IsNullOrEmpty(procNoteDefault)) {
-				textNotes.Text+=procNoteDefault;
+			if(_procedureOld.ProcStatus!=ProcStat.C && _procedure.ProcStatus==ProcStat.C) {//Only append the default note if the procedure changed status to Completed
+				procNoteDefault+=ProcCodeNotes.GetNote(comboProv.GetSelectedProvNum(),_procedure.CodeNum,ProcStat.C);
+				if(textNotes.Text!="" && procNoteDefault!="") { //check to see if a default note is defined.
+					textNotes.Text+="\r\n"; //add a new line if there was already a ProcNote on the procedure.
+				}
+				if(!string.IsNullOrEmpty(procNoteDefault)) {
+					textNotes.Text+=procNoteDefault;
+				}
 			}
 			if(!PrefC.GetBool(PrefName.ProcPromptForAutoNote)) {
 				//Users do not want to be prompted for auto notes, so remove them all from the procedure note.
