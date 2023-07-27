@@ -10,9 +10,9 @@ using System.Linq;
 namespace OpenDentBusiness.Crud{
 	public class ERoutingCrud {
 		///<summary>Gets one ERouting object from the database using the primary key.  Returns null if not found.</summary>
-		public static ERouting SelectOne(long ERoutingNum) {
-			string command="SELECT * FROM ERouting "
-				+"WHERE ERoutingNum = "+POut.Long(ERoutingNum);
+		public static ERouting SelectOne(long eRoutingNum) {
+			string command="SELECT * FROM erouting "
+				+"WHERE ERoutingNum = "+POut.Long(eRoutingNum);
 			List<ERouting> list=TableToList(Db.GetTable(command));
 			if(list.Count==0) {
 				return null;
@@ -44,16 +44,16 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Converts a DataTable to a list of objects.</summary>
 		public static List<ERouting> TableToList(DataTable table) {
 			List<ERouting> retVal=new List<ERouting>();
-			ERouting ERouting;
+			ERouting eRouting;
 			foreach(DataRow row in table.Rows) {
-				ERouting=new ERouting();
-				ERouting.ERoutingNum      = PIn.Long  (row["ERoutingNum"].ToString());
-				ERouting.Description  = PIn.String(row["Description"].ToString());
-				ERouting.PatNum       = PIn.Long  (row["PatNum"].ToString());
-				ERouting.ClinicNum    = PIn.Long  (row["ClinicNum"].ToString());
-				ERouting.SecDateTEntry= PIn.DateT (row["SecDateTEntry"].ToString());
-				ERouting.IsComplete   = PIn.Bool  (row["IsComplete"].ToString());
-				retVal.Add(ERouting);
+				eRouting=new ERouting();
+				eRouting.ERoutingNum  = PIn.Long  (row["ERoutingNum"].ToString());
+				eRouting.Description  = PIn.String(row["Description"].ToString());
+				eRouting.PatNum       = PIn.Long  (row["PatNum"].ToString());
+				eRouting.ClinicNum    = PIn.Long  (row["ClinicNum"].ToString());
+				eRouting.SecDateTEntry= PIn.DateT (row["SecDateTEntry"].ToString());
+				eRouting.IsComplete   = PIn.Bool  (row["IsComplete"].ToString());
+				retVal.Add(eRouting);
 			}
 			return retVal;
 		}
@@ -70,150 +70,150 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("ClinicNum");
 			table.Columns.Add("SecDateTEntry");
 			table.Columns.Add("IsComplete");
-			foreach(ERouting ERouting in listERoutings) {
+			foreach(ERouting eRouting in listERoutings) {
 				table.Rows.Add(new object[] {
-					POut.Long  (ERouting.ERoutingNum),
-					            ERouting.Description,
-					POut.Long  (ERouting.PatNum),
-					POut.Long  (ERouting.ClinicNum),
-					POut.DateT (ERouting.SecDateTEntry,false),
-					POut.Bool  (ERouting.IsComplete),
+					POut.Long  (eRouting.ERoutingNum),
+					            eRouting.Description,
+					POut.Long  (eRouting.PatNum),
+					POut.Long  (eRouting.ClinicNum),
+					POut.DateT (eRouting.SecDateTEntry,false),
+					POut.Bool  (eRouting.IsComplete),
 				});
 			}
 			return table;
 		}
 
 		///<summary>Inserts one ERouting into the database.  Returns the new priKey.</summary>
-		public static long Insert(ERouting ERouting) {
-			return Insert(ERouting,false);
+		public static long Insert(ERouting eRouting) {
+			return Insert(eRouting,false);
 		}
 
 		///<summary>Inserts one ERouting into the database.  Provides option to use the existing priKey.</summary>
-		public static long Insert(ERouting ERouting,bool useExistingPK) {
+		public static long Insert(ERouting eRouting,bool useExistingPK) {
 			if(!useExistingPK && PrefC.RandomKeys) {
-				ERouting.ERoutingNum=ReplicationServers.GetKey("ERouting","ERoutingNum");
+				eRouting.ERoutingNum=ReplicationServers.GetKey("erouting","ERoutingNum");
 			}
-			string command="INSERT INTO ERouting (";
+			string command="INSERT INTO erouting (";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="ERoutingNum,";
 			}
 			command+="Description,PatNum,ClinicNum,SecDateTEntry,IsComplete) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
-				command+=POut.Long(ERouting.ERoutingNum)+",";
+				command+=POut.Long(eRouting.ERoutingNum)+",";
 			}
 			command+=
-				 "'"+POut.String(ERouting.Description)+"',"
-				+    POut.Long  (ERouting.PatNum)+","
-				+    POut.Long  (ERouting.ClinicNum)+","
+				 "'"+POut.String(eRouting.Description)+"',"
+				+    POut.Long  (eRouting.PatNum)+","
+				+    POut.Long  (eRouting.ClinicNum)+","
 				+    DbHelper.Now()+","
-				+    POut.Bool  (ERouting.IsComplete)+")";
+				+    POut.Bool  (eRouting.IsComplete)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
 			else {
-				ERouting.ERoutingNum=Db.NonQ(command,true,"ERoutingNum","ERouting");
+				eRouting.ERoutingNum=Db.NonQ(command,true,"ERoutingNum","eRouting");
 			}
-			return ERouting.ERoutingNum;
+			return eRouting.ERoutingNum;
 		}
 
 		///<summary>Inserts one ERouting into the database.  Returns the new priKey.  Doesn't use the cache.</summary>
-		public static long InsertNoCache(ERouting ERouting) {
-			return InsertNoCache(ERouting,false);
+		public static long InsertNoCache(ERouting eRouting) {
+			return InsertNoCache(eRouting,false);
 		}
 
 		///<summary>Inserts one ERouting into the database.  Provides option to use the existing priKey.  Doesn't use the cache.</summary>
-		public static long InsertNoCache(ERouting ERouting,bool useExistingPK) {
+		public static long InsertNoCache(ERouting eRouting,bool useExistingPK) {
 			bool isRandomKeys=Prefs.GetBoolNoCache(PrefName.RandomPrimaryKeys);
-			string command="INSERT INTO ERouting (";
+			string command="INSERT INTO erouting (";
 			if(!useExistingPK && isRandomKeys) {
-				ERouting.ERoutingNum=ReplicationServers.GetKeyNoCache("ERouting","ERoutingNum");
+				eRouting.ERoutingNum=ReplicationServers.GetKeyNoCache("erouting","ERoutingNum");
 			}
 			if(isRandomKeys || useExistingPK) {
 				command+="ERoutingNum,";
 			}
 			command+="Description,PatNum,ClinicNum,SecDateTEntry,IsComplete) VALUES(";
 			if(isRandomKeys || useExistingPK) {
-				command+=POut.Long(ERouting.ERoutingNum)+",";
+				command+=POut.Long(eRouting.ERoutingNum)+",";
 			}
 			command+=
-				 "'"+POut.String(ERouting.Description)+"',"
-				+    POut.Long  (ERouting.PatNum)+","
-				+    POut.Long  (ERouting.ClinicNum)+","
+				 "'"+POut.String(eRouting.Description)+"',"
+				+    POut.Long  (eRouting.PatNum)+","
+				+    POut.Long  (eRouting.ClinicNum)+","
 				+    DbHelper.Now()+","
-				+    POut.Bool  (ERouting.IsComplete)+")";
+				+    POut.Bool  (eRouting.IsComplete)+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
 			else {
-				ERouting.ERoutingNum=Db.NonQ(command,true,"ERoutingNum","ERouting");
+				eRouting.ERoutingNum=Db.NonQ(command,true,"ERoutingNum","eRouting");
 			}
-			return ERouting.ERoutingNum;
+			return eRouting.ERoutingNum;
 		}
 
 		///<summary>Updates one ERouting in the database.</summary>
-		public static void Update(ERouting ERouting) {
-			string command="UPDATE ERouting SET "
-				+"Description  = '"+POut.String(ERouting.Description)+"', "
-				+"PatNum       =  "+POut.Long  (ERouting.PatNum)+", "
-				+"ClinicNum    =  "+POut.Long  (ERouting.ClinicNum)+", "
+		public static void Update(ERouting eRouting) {
+			string command="UPDATE erouting SET "
+				+"Description  = '"+POut.String(eRouting.Description)+"', "
+				+"PatNum       =  "+POut.Long  (eRouting.PatNum)+", "
+				+"ClinicNum    =  "+POut.Long  (eRouting.ClinicNum)+", "
 				//SecDateTEntry not allowed to change
-				+"IsComplete   =  "+POut.Bool  (ERouting.IsComplete)+" "
-				+"WHERE ERoutingNum = "+POut.Long(ERouting.ERoutingNum);
+				+"IsComplete   =  "+POut.Bool  (eRouting.IsComplete)+" "
+				+"WHERE ERoutingNum = "+POut.Long(eRouting.ERoutingNum);
 			Db.NonQ(command);
 		}
 
 		///<summary>Updates one ERouting in the database.  Uses an old object to compare to, and only alters changed fields.  This prevents collisions and concurrency problems in heavily used tables.  Returns true if an update occurred.</summary>
-		public static bool Update(ERouting ERouting,ERouting oldERouting) {
+		public static bool Update(ERouting eRouting,ERouting oldERouting) {
 			string command="";
-			if(ERouting.Description != oldERouting.Description) {
+			if(eRouting.Description != oldERouting.Description) {
 				if(command!="") { command+=",";}
-				command+="Description = '"+POut.String(ERouting.Description)+"'";
+				command+="Description = '"+POut.String(eRouting.Description)+"'";
 			}
-			if(ERouting.PatNum != oldERouting.PatNum) {
+			if(eRouting.PatNum != oldERouting.PatNum) {
 				if(command!="") { command+=",";}
-				command+="PatNum = "+POut.Long(ERouting.PatNum)+"";
+				command+="PatNum = "+POut.Long(eRouting.PatNum)+"";
 			}
-			if(ERouting.ClinicNum != oldERouting.ClinicNum) {
+			if(eRouting.ClinicNum != oldERouting.ClinicNum) {
 				if(command!="") { command+=",";}
-				command+="ClinicNum = "+POut.Long(ERouting.ClinicNum)+"";
+				command+="ClinicNum = "+POut.Long(eRouting.ClinicNum)+"";
 			}
 			//SecDateTEntry not allowed to change
-			if(ERouting.IsComplete != oldERouting.IsComplete) {
+			if(eRouting.IsComplete != oldERouting.IsComplete) {
 				if(command!="") { command+=",";}
-				command+="IsComplete = "+POut.Bool(ERouting.IsComplete)+"";
+				command+="IsComplete = "+POut.Bool(eRouting.IsComplete)+"";
 			}
 			if(command=="") {
 				return false;
 			}
-			command="UPDATE ERouting SET "+command
-				+" WHERE ERoutingNum = "+POut.Long(ERouting.ERoutingNum);
+			command="UPDATE erouting SET "+command
+				+" WHERE ERoutingNum = "+POut.Long(eRouting.ERoutingNum);
 			Db.NonQ(command);
 			return true;
 		}
 
 		///<summary>Returns true if Update(ERouting,ERouting) would make changes to the database.
 		///Does not make any changes to the database and can be called before remoting role is checked.</summary>
-		public static bool UpdateComparison(ERouting ERouting,ERouting oldERouting) {
-			if(ERouting.Description != oldERouting.Description) {
+		public static bool UpdateComparison(ERouting eRouting,ERouting oldERouting) {
+			if(eRouting.Description != oldERouting.Description) {
 				return true;
 			}
-			if(ERouting.PatNum != oldERouting.PatNum) {
+			if(eRouting.PatNum != oldERouting.PatNum) {
 				return true;
 			}
-			if(ERouting.ClinicNum != oldERouting.ClinicNum) {
+			if(eRouting.ClinicNum != oldERouting.ClinicNum) {
 				return true;
 			}
 			//SecDateTEntry not allowed to change
-			if(ERouting.IsComplete != oldERouting.IsComplete) {
+			if(eRouting.IsComplete != oldERouting.IsComplete) {
 				return true;
 			}
 			return false;
 		}
 
 		///<summary>Deletes one ERouting from the database.</summary>
-		public static void Delete(long ERoutingNum) {
-			string command="DELETE FROM ERouting "
-				+"WHERE ERoutingNum = "+POut.Long(ERoutingNum);
+		public static void Delete(long eRoutingNum) {
+			string command="DELETE FROM erouting "
+				+"WHERE ERoutingNum = "+POut.Long(eRoutingNum);
 			Db.NonQ(command);
 		}
 
@@ -222,7 +222,7 @@ namespace OpenDentBusiness.Crud{
 			if(listERoutingNums==null || listERoutingNums.Count==0) {
 				return;
 			}
-			string command="DELETE FROM ERouting "
+			string command="DELETE FROM erouting "
 				+"WHERE ERoutingNum IN("+string.Join(",",listERoutingNums.Select(x => POut.Long(x)))+")";
 			Db.NonQ(command);
 		}

@@ -10,9 +10,9 @@ using System.Linq;
 namespace OpenDentBusiness.Crud{
 	public class ERoutingActionCrud {
 		///<summary>Gets one ERoutingAction object from the database using the primary key.  Returns null if not found.</summary>
-		public static ERoutingAction SelectOne(long eroutingActionNum) {
+		public static ERoutingAction SelectOne(long eRoutingActionNum) {
 			string command="SELECT * FROM eroutingaction "
-				+"WHERE ERoutingActionNum = "+POut.Long(eroutingActionNum);
+				+"WHERE ERoutingActionNum = "+POut.Long(eRoutingActionNum);
 			List<ERoutingAction> list=TableToList(Db.GetTable(command));
 			if(list.Count==0) {
 				return null;
@@ -44,17 +44,17 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Converts a DataTable to a list of objects.</summary>
 		public static List<ERoutingAction> TableToList(DataTable table) {
 			List<ERoutingAction> retVal=new List<ERoutingAction>();
-			ERoutingAction eroutingAction;
+			ERoutingAction eRoutingAction;
 			foreach(DataRow row in table.Rows) {
-				eroutingAction=new ERoutingAction();
-				eroutingAction.ERoutingActionNum   = PIn.Long  (row["ERoutingActionNum"].ToString());
-				eroutingAction.ERoutingNum         = PIn.Long  (row["ERoutingNum"].ToString());
-				eroutingAction.ItemOrder       = PIn.Int   (row["ItemOrder"].ToString());
-				eroutingAction.ERoutingActionType  = (OpenDentBusiness.EnumERoutingActionType)PIn.Int(row["ERoutingActionType"].ToString());
-				eroutingAction.UserNum         = PIn.Long  (row["UserNum"].ToString());
-				eroutingAction.IsComplete      = PIn.Bool  (row["IsComplete"].ToString());
-				eroutingAction.DateTimeComplete= PIn.DateT (row["DateTimeComplete"].ToString());
-				retVal.Add(eroutingAction);
+				eRoutingAction=new ERoutingAction();
+				eRoutingAction.ERoutingActionNum = PIn.Long  (row["ERoutingActionNum"].ToString());
+				eRoutingAction.ERoutingNum       = PIn.Long  (row["ERoutingNum"].ToString());
+				eRoutingAction.ItemOrder         = PIn.Int   (row["ItemOrder"].ToString());
+				eRoutingAction.ERoutingActionType= (OpenDentBusiness.EnumERoutingActionType)PIn.Int(row["ERoutingActionType"].ToString());
+				eRoutingAction.UserNum           = PIn.Long  (row["UserNum"].ToString());
+				eRoutingAction.IsComplete        = PIn.Bool  (row["IsComplete"].ToString());
+				eRoutingAction.DateTimeComplete  = PIn.DateT (row["DateTimeComplete"].ToString());
+				retVal.Add(eRoutingAction);
 			}
 			return retVal;
 		}
@@ -72,29 +72,29 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("UserNum");
 			table.Columns.Add("IsComplete");
 			table.Columns.Add("DateTimeComplete");
-			foreach(ERoutingAction eroutingAction in listERoutingActions) {
+			foreach(ERoutingAction eRoutingAction in listERoutingActions) {
 				table.Rows.Add(new object[] {
-					POut.Long  (eroutingAction.ERoutingActionNum),
-					POut.Long  (eroutingAction.ERoutingNum),
-					POut.Int   (eroutingAction.ItemOrder),
-					POut.Int   ((int)eroutingAction.ERoutingActionType),
-					POut.Long  (eroutingAction.UserNum),
-					POut.Bool  (eroutingAction.IsComplete),
-					POut.DateT (eroutingAction.DateTimeComplete,false),
+					POut.Long  (eRoutingAction.ERoutingActionNum),
+					POut.Long  (eRoutingAction.ERoutingNum),
+					POut.Int   (eRoutingAction.ItemOrder),
+					POut.Int   ((int)eRoutingAction.ERoutingActionType),
+					POut.Long  (eRoutingAction.UserNum),
+					POut.Bool  (eRoutingAction.IsComplete),
+					POut.DateT (eRoutingAction.DateTimeComplete,false),
 				});
 			}
 			return table;
 		}
 
 		///<summary>Inserts one ERoutingAction into the database.  Returns the new priKey.</summary>
-		public static long Insert(ERoutingAction eroutingAction) {
-			return Insert(eroutingAction,false);
+		public static long Insert(ERoutingAction eRoutingAction) {
+			return Insert(eRoutingAction,false);
 		}
 
 		///<summary>Inserts one ERoutingAction into the database.  Provides option to use the existing priKey.</summary>
-		public static long Insert(ERoutingAction eroutingAction,bool useExistingPK) {
+		public static long Insert(ERoutingAction eRoutingAction,bool useExistingPK) {
 			if(!useExistingPK && PrefC.RandomKeys) {
-				eroutingAction.ERoutingActionNum=ReplicationServers.GetKey("eroutingaction","ERoutingActionNum");
+				eRoutingAction.ERoutingActionNum=ReplicationServers.GetKey("eroutingaction","ERoutingActionNum");
 			}
 			string command="INSERT INTO eroutingaction (";
 			if(useExistingPK || PrefC.RandomKeys) {
@@ -102,136 +102,136 @@ namespace OpenDentBusiness.Crud{
 			}
 			command+="ERoutingNum,ItemOrder,ERoutingActionType,UserNum,IsComplete,DateTimeComplete) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
-				command+=POut.Long(eroutingAction.ERoutingActionNum)+",";
+				command+=POut.Long(eRoutingAction.ERoutingActionNum)+",";
 			}
 			command+=
-				     POut.Long  (eroutingAction.ERoutingNum)+","
-				+    POut.Int   (eroutingAction.ItemOrder)+","
-				+    POut.Int   ((int)eroutingAction.ERoutingActionType)+","
-				+    POut.Long  (eroutingAction.UserNum)+","
-				+    POut.Bool  (eroutingAction.IsComplete)+","
-				+    POut.DateT (eroutingAction.DateTimeComplete)+")";
+				     POut.Long  (eRoutingAction.ERoutingNum)+","
+				+    POut.Int   (eRoutingAction.ItemOrder)+","
+				+    POut.Int   ((int)eRoutingAction.ERoutingActionType)+","
+				+    POut.Long  (eRoutingAction.UserNum)+","
+				+    POut.Bool  (eRoutingAction.IsComplete)+","
+				+    POut.DateT (eRoutingAction.DateTimeComplete)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
 			else {
-				eroutingAction.ERoutingActionNum=Db.NonQ(command,true,"ERoutingActionNum","eroutingAction");
+				eRoutingAction.ERoutingActionNum=Db.NonQ(command,true,"ERoutingActionNum","eRoutingAction");
 			}
-			return eroutingAction.ERoutingActionNum;
+			return eRoutingAction.ERoutingActionNum;
 		}
 
 		///<summary>Inserts one ERoutingAction into the database.  Returns the new priKey.  Doesn't use the cache.</summary>
-		public static long InsertNoCache(ERoutingAction eroutingAction) {
-			return InsertNoCache(eroutingAction,false);
+		public static long InsertNoCache(ERoutingAction eRoutingAction) {
+			return InsertNoCache(eRoutingAction,false);
 		}
 
 		///<summary>Inserts one ERoutingAction into the database.  Provides option to use the existing priKey.  Doesn't use the cache.</summary>
-		public static long InsertNoCache(ERoutingAction eroutingAction,bool useExistingPK) {
+		public static long InsertNoCache(ERoutingAction eRoutingAction,bool useExistingPK) {
 			bool isRandomKeys=Prefs.GetBoolNoCache(PrefName.RandomPrimaryKeys);
 			string command="INSERT INTO eroutingaction (";
 			if(!useExistingPK && isRandomKeys) {
-				eroutingAction.ERoutingActionNum=ReplicationServers.GetKeyNoCache("eroutingaction","ERoutingActionNum");
+				eRoutingAction.ERoutingActionNum=ReplicationServers.GetKeyNoCache("eroutingaction","ERoutingActionNum");
 			}
 			if(isRandomKeys || useExistingPK) {
 				command+="ERoutingActionNum,";
 			}
 			command+="ERoutingNum,ItemOrder,ERoutingActionType,UserNum,IsComplete,DateTimeComplete) VALUES(";
 			if(isRandomKeys || useExistingPK) {
-				command+=POut.Long(eroutingAction.ERoutingActionNum)+",";
+				command+=POut.Long(eRoutingAction.ERoutingActionNum)+",";
 			}
 			command+=
-				     POut.Long  (eroutingAction.ERoutingNum)+","
-				+    POut.Int   (eroutingAction.ItemOrder)+","
-				+    POut.Int   ((int)eroutingAction.ERoutingActionType)+","
-				+    POut.Long  (eroutingAction.UserNum)+","
-				+    POut.Bool  (eroutingAction.IsComplete)+","
-				+    POut.DateT (eroutingAction.DateTimeComplete)+")";
+				     POut.Long  (eRoutingAction.ERoutingNum)+","
+				+    POut.Int   (eRoutingAction.ItemOrder)+","
+				+    POut.Int   ((int)eRoutingAction.ERoutingActionType)+","
+				+    POut.Long  (eRoutingAction.UserNum)+","
+				+    POut.Bool  (eRoutingAction.IsComplete)+","
+				+    POut.DateT (eRoutingAction.DateTimeComplete)+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
 			else {
-				eroutingAction.ERoutingActionNum=Db.NonQ(command,true,"ERoutingActionNum","eroutingAction");
+				eRoutingAction.ERoutingActionNum=Db.NonQ(command,true,"ERoutingActionNum","eRoutingAction");
 			}
-			return eroutingAction.ERoutingActionNum;
+			return eRoutingAction.ERoutingActionNum;
 		}
 
 		///<summary>Updates one ERoutingAction in the database.</summary>
-		public static void Update(ERoutingAction eroutingAction) {
+		public static void Update(ERoutingAction eRoutingAction) {
 			string command="UPDATE eroutingaction SET "
-				+"ERoutingNum         =  "+POut.Long  (eroutingAction.ERoutingNum)+", "
-				+"ItemOrder       =  "+POut.Int   (eroutingAction.ItemOrder)+", "
-				+"ERoutingActionType  =  "+POut.Int   ((int)eroutingAction.ERoutingActionType)+", "
-				+"UserNum         =  "+POut.Long  (eroutingAction.UserNum)+", "
-				+"IsComplete      =  "+POut.Bool  (eroutingAction.IsComplete)+", "
-				+"DateTimeComplete=  "+POut.DateT (eroutingAction.DateTimeComplete)+" "
-				+"WHERE ERoutingActionNum = "+POut.Long(eroutingAction.ERoutingActionNum);
+				+"ERoutingNum       =  "+POut.Long  (eRoutingAction.ERoutingNum)+", "
+				+"ItemOrder         =  "+POut.Int   (eRoutingAction.ItemOrder)+", "
+				+"ERoutingActionType=  "+POut.Int   ((int)eRoutingAction.ERoutingActionType)+", "
+				+"UserNum           =  "+POut.Long  (eRoutingAction.UserNum)+", "
+				+"IsComplete        =  "+POut.Bool  (eRoutingAction.IsComplete)+", "
+				+"DateTimeComplete  =  "+POut.DateT (eRoutingAction.DateTimeComplete)+" "
+				+"WHERE ERoutingActionNum = "+POut.Long(eRoutingAction.ERoutingActionNum);
 			Db.NonQ(command);
 		}
 
 		///<summary>Updates one ERoutingAction in the database.  Uses an old object to compare to, and only alters changed fields.  This prevents collisions and concurrency problems in heavily used tables.  Returns true if an update occurred.</summary>
-		public static bool Update(ERoutingAction eroutingAction,ERoutingAction oldERoutingAction) {
+		public static bool Update(ERoutingAction eRoutingAction,ERoutingAction oldERoutingAction) {
 			string command="";
-			if(eroutingAction.ERoutingNum != oldERoutingAction.ERoutingNum) {
+			if(eRoutingAction.ERoutingNum != oldERoutingAction.ERoutingNum) {
 				if(command!="") { command+=",";}
-				command+="ERoutingNum = "+POut.Long(eroutingAction.ERoutingNum)+"";
+				command+="ERoutingNum = "+POut.Long(eRoutingAction.ERoutingNum)+"";
 			}
-			if(eroutingAction.ItemOrder != oldERoutingAction.ItemOrder) {
+			if(eRoutingAction.ItemOrder != oldERoutingAction.ItemOrder) {
 				if(command!="") { command+=",";}
-				command+="ItemOrder = "+POut.Int(eroutingAction.ItemOrder)+"";
+				command+="ItemOrder = "+POut.Int(eRoutingAction.ItemOrder)+"";
 			}
-			if(eroutingAction.ERoutingActionType != oldERoutingAction.ERoutingActionType) {
+			if(eRoutingAction.ERoutingActionType != oldERoutingAction.ERoutingActionType) {
 				if(command!="") { command+=",";}
-				command+="ERoutingActionType = "+POut.Int   ((int)eroutingAction.ERoutingActionType)+"";
+				command+="ERoutingActionType = "+POut.Int   ((int)eRoutingAction.ERoutingActionType)+"";
 			}
-			if(eroutingAction.UserNum != oldERoutingAction.UserNum) {
+			if(eRoutingAction.UserNum != oldERoutingAction.UserNum) {
 				if(command!="") { command+=",";}
-				command+="UserNum = "+POut.Long(eroutingAction.UserNum)+"";
+				command+="UserNum = "+POut.Long(eRoutingAction.UserNum)+"";
 			}
-			if(eroutingAction.IsComplete != oldERoutingAction.IsComplete) {
+			if(eRoutingAction.IsComplete != oldERoutingAction.IsComplete) {
 				if(command!="") { command+=",";}
-				command+="IsComplete = "+POut.Bool(eroutingAction.IsComplete)+"";
+				command+="IsComplete = "+POut.Bool(eRoutingAction.IsComplete)+"";
 			}
-			if(eroutingAction.DateTimeComplete != oldERoutingAction.DateTimeComplete) {
+			if(eRoutingAction.DateTimeComplete != oldERoutingAction.DateTimeComplete) {
 				if(command!="") { command+=",";}
-				command+="DateTimeComplete = "+POut.DateT(eroutingAction.DateTimeComplete)+"";
+				command+="DateTimeComplete = "+POut.DateT(eRoutingAction.DateTimeComplete)+"";
 			}
 			if(command=="") {
 				return false;
 			}
 			command="UPDATE eroutingaction SET "+command
-				+" WHERE ERoutingActionNum = "+POut.Long(eroutingAction.ERoutingActionNum);
+				+" WHERE ERoutingActionNum = "+POut.Long(eRoutingAction.ERoutingActionNum);
 			Db.NonQ(command);
 			return true;
 		}
 
 		///<summary>Returns true if Update(ERoutingAction,ERoutingAction) would make changes to the database.
 		///Does not make any changes to the database and can be called before remoting role is checked.</summary>
-		public static bool UpdateComparison(ERoutingAction eroutingAction,ERoutingAction oldERoutingAction) {
-			if(eroutingAction.ERoutingNum != oldERoutingAction.ERoutingNum) {
+		public static bool UpdateComparison(ERoutingAction eRoutingAction,ERoutingAction oldERoutingAction) {
+			if(eRoutingAction.ERoutingNum != oldERoutingAction.ERoutingNum) {
 				return true;
 			}
-			if(eroutingAction.ItemOrder != oldERoutingAction.ItemOrder) {
+			if(eRoutingAction.ItemOrder != oldERoutingAction.ItemOrder) {
 				return true;
 			}
-			if(eroutingAction.ERoutingActionType != oldERoutingAction.ERoutingActionType) {
+			if(eRoutingAction.ERoutingActionType != oldERoutingAction.ERoutingActionType) {
 				return true;
 			}
-			if(eroutingAction.UserNum != oldERoutingAction.UserNum) {
+			if(eRoutingAction.UserNum != oldERoutingAction.UserNum) {
 				return true;
 			}
-			if(eroutingAction.IsComplete != oldERoutingAction.IsComplete) {
+			if(eRoutingAction.IsComplete != oldERoutingAction.IsComplete) {
 				return true;
 			}
-			if(eroutingAction.DateTimeComplete != oldERoutingAction.DateTimeComplete) {
+			if(eRoutingAction.DateTimeComplete != oldERoutingAction.DateTimeComplete) {
 				return true;
 			}
 			return false;
 		}
 
 		///<summary>Deletes one ERoutingAction from the database.</summary>
-		public static void Delete(long eroutingActionNum) {
+		public static void Delete(long eRoutingActionNum) {
 			string command="DELETE FROM eroutingaction "
-				+"WHERE ERoutingActionNum = "+POut.Long(eroutingActionNum);
+				+"WHERE ERoutingActionNum = "+POut.Long(eRoutingActionNum);
 			Db.NonQ(command);
 		}
 

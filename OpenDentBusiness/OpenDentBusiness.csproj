@@ -2896,9 +2896,7 @@
     <None Include="Resources\LabelReferral.xml" />
     <None Include="Resources\LabelText.xml" />
     <None Include="Resources\LabSlip.xml" />
-    <None Include="Resources\MedicalHistNewPat.xml" />
-    <None Include="Resources\MedicalHistSimple.xml" />
-    <None Include="Resources\MedicalHistUpdate.xml" />
+    <None Include="Resources\MedicalHist.xml" />
     <None Include="Resources\PatientLetter.xml" />
     <None Include="Resources\PatientLetterTxFinder.xml" />
     <None Include="Resources\PatientRegistration.xml" />

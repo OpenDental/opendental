@@ -47,7 +47,7 @@ namespace OpenDentBusiness.Crud{
 			ERoutingDef eRoutingDef;
 			foreach(DataRow row in table.Rows) {
 				eRoutingDef=new ERoutingDef();
-				eRoutingDef.ERoutingDefNum      = PIn.Long  (row["ERoutingDefNum"].ToString());
+				eRoutingDef.ERoutingDefNum  = PIn.Long  (row["ERoutingDefNum"].ToString());
 				eRoutingDef.ClinicNum       = PIn.Long  (row["ClinicNum"].ToString());
 				eRoutingDef.Description     = PIn.String(row["Description"].ToString());
 				eRoutingDef.UserNumCreated  = PIn.Long  (row["UserNumCreated"].ToString());
@@ -94,7 +94,7 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Inserts one ERoutingDef into the database.  Provides option to use the existing priKey.</summary>
 		public static long Insert(ERoutingDef eRoutingDef,bool useExistingPK) {
 			if(!useExistingPK && PrefC.RandomKeys) {
-				eRoutingDef.ERoutingDefNum=ReplicationServers.GetKey("eRoutingdef","ERoutingDefNum");
+				eRoutingDef.ERoutingDefNum=ReplicationServers.GetKey("eroutingdef","ERoutingDefNum");
 			}
 			string command="INSERT INTO eroutingdef (";
 			if(useExistingPK || PrefC.RandomKeys) {
@@ -128,9 +128,9 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Inserts one ERoutingDef into the database.  Provides option to use the existing priKey.  Doesn't use the cache.</summary>
 		public static long InsertNoCache(ERoutingDef eRoutingDef,bool useExistingPK) {
 			bool isRandomKeys=Prefs.GetBoolNoCache(PrefName.RandomPrimaryKeys);
-			string command="INSERT INTO eRoutingdef (";
+			string command="INSERT INTO eroutingdef (";
 			if(!useExistingPK && isRandomKeys) {
-				eRoutingDef.ERoutingDefNum=ReplicationServers.GetKeyNoCache("eRoutingdef","ERoutingDefNum");
+				eRoutingDef.ERoutingDefNum=ReplicationServers.GetKeyNoCache("eroutingdef","ERoutingDefNum");
 			}
 			if(isRandomKeys || useExistingPK) {
 				command+="ERoutingDefNum,";
@@ -157,7 +157,7 @@ namespace OpenDentBusiness.Crud{
 
 		///<summary>Updates one ERoutingDef in the database.</summary>
 		public static void Update(ERoutingDef eRoutingDef) {
-			string command="UPDATE eRoutingdef SET "
+			string command="UPDATE eroutingdef SET "
 				+"ClinicNum       =  "+POut.Long  (eRoutingDef.ClinicNum)+", "
 				+"Description     = '"+POut.String(eRoutingDef.Description)+"', "
 				+"UserNumCreated  =  "+POut.Long  (eRoutingDef.UserNumCreated)+", "
@@ -195,7 +195,7 @@ namespace OpenDentBusiness.Crud{
 			if(command=="") {
 				return false;
 			}
-			command="UPDATE eRoutingdef SET "+command
+			command="UPDATE eroutingdef SET "+command
 				+" WHERE ERoutingDefNum = "+POut.Long(eRoutingDef.ERoutingDefNum);
 			Db.NonQ(command);
 			return true;
@@ -225,7 +225,7 @@ namespace OpenDentBusiness.Crud{
 
 		///<summary>Deletes one ERoutingDef from the database.</summary>
 		public static void Delete(long eRoutingDefNum) {
-			string command="DELETE FROM eRoutingdef "
+			string command="DELETE FROM eroutingdef "
 				+"WHERE ERoutingDefNum = "+POut.Long(eRoutingDefNum);
 			Db.NonQ(command);
 		}

@@ -11,7 +11,7 @@ namespace OpenDentBusiness.Crud{
 	public class ERoutingActionDefCrud {
 		///<summary>Gets one ERoutingActionDef object from the database using the primary key.  Returns null if not found.</summary>
 		public static ERoutingActionDef SelectOne(long eRoutingActionDefNum) {
-			string command="SELECT * FROM eRoutingactiondef "
+			string command="SELECT * FROM eroutingactiondef "
 				+"WHERE ERoutingActionDefNum = "+POut.Long(eRoutingActionDefNum);
 			List<ERoutingActionDef> list=TableToList(Db.GetTable(command));
 			if(list.Count==0) {
@@ -47,12 +47,12 @@ namespace OpenDentBusiness.Crud{
 			ERoutingActionDef eRoutingActionDef;
 			foreach(DataRow row in table.Rows) {
 				eRoutingActionDef=new ERoutingActionDef();
-				eRoutingActionDef.ERoutingActionDefNum = PIn.Long  (row["ERoutingActionDefNum"].ToString());
-				eRoutingActionDef.ERoutingDefNum       = PIn.Long  (row["ERoutingDefNum"].ToString());
-				eRoutingActionDef.ERoutingActionType   = (OpenDentBusiness.EnumERoutingActionType)PIn.Int(row["ERoutingActionType"].ToString());
-				eRoutingActionDef.ItemOrder        = PIn.Int   (row["ItemOrder"].ToString());
-				eRoutingActionDef.SecDateTEntry    = PIn.DateT (row["SecDateTEntry"].ToString());
-				eRoutingActionDef.DateTLastModified= PIn.DateT (row["DateTLastModified"].ToString());
+				eRoutingActionDef.ERoutingActionDefNum= PIn.Long  (row["ERoutingActionDefNum"].ToString());
+				eRoutingActionDef.ERoutingDefNum      = PIn.Long  (row["ERoutingDefNum"].ToString());
+				eRoutingActionDef.ERoutingActionType  = (OpenDentBusiness.EnumERoutingActionType)PIn.Int(row["ERoutingActionType"].ToString());
+				eRoutingActionDef.ItemOrder           = PIn.Int   (row["ItemOrder"].ToString());
+				eRoutingActionDef.SecDateTEntry       = PIn.DateT (row["SecDateTEntry"].ToString());
+				eRoutingActionDef.DateTLastModified   = PIn.DateT (row["DateTLastModified"].ToString());
 				retVal.Add(eRoutingActionDef);
 			}
 			return retVal;
@@ -91,9 +91,9 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Inserts one ERoutingActionDef into the database.  Provides option to use the existing priKey.</summary>
 		public static long Insert(ERoutingActionDef eRoutingActionDef,bool useExistingPK) {
 			if(!useExistingPK && PrefC.RandomKeys) {
-				eRoutingActionDef.ERoutingActionDefNum=ReplicationServers.GetKey("eRoutingactiondef","ERoutingActionDefNum");
+				eRoutingActionDef.ERoutingActionDefNum=ReplicationServers.GetKey("eroutingactiondef","ERoutingActionDefNum");
 			}
-			string command="INSERT INTO eRoutingactiondef (";
+			string command="INSERT INTO eroutingactiondef (";
 			if(useExistingPK || PrefC.RandomKeys) {
 				command+="ERoutingActionDefNum,";
 			}
@@ -124,9 +124,9 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Inserts one ERoutingActionDef into the database.  Provides option to use the existing priKey.  Doesn't use the cache.</summary>
 		public static long InsertNoCache(ERoutingActionDef eRoutingActionDef,bool useExistingPK) {
 			bool isRandomKeys=Prefs.GetBoolNoCache(PrefName.RandomPrimaryKeys);
-			string command="INSERT INTO eRoutingactiondef (";
+			string command="INSERT INTO eroutingactiondef (";
 			if(!useExistingPK && isRandomKeys) {
-				eRoutingActionDef.ERoutingActionDefNum=ReplicationServers.GetKeyNoCache("eRoutingactiondef","ERoutingActionDefNum");
+				eRoutingActionDef.ERoutingActionDefNum=ReplicationServers.GetKeyNoCache("eroutingactiondef","ERoutingActionDefNum");
 			}
 			if(isRandomKeys || useExistingPK) {
 				command+="ERoutingActionDefNum,";
@@ -152,12 +152,12 @@ namespace OpenDentBusiness.Crud{
 
 		///<summary>Updates one ERoutingActionDef in the database.</summary>
 		public static void Update(ERoutingActionDef eRoutingActionDef) {
-			string command="UPDATE eRoutingactiondef SET "
-				+"ERoutingDefNum       =  "+POut.Long  (eRoutingActionDef.ERoutingDefNum)+", "
-				+"ERoutingActionType   =  "+POut.Int   ((int)eRoutingActionDef.ERoutingActionType)+", "
-				+"ItemOrder        =  "+POut.Int   (eRoutingActionDef.ItemOrder)+", "
+			string command="UPDATE eroutingactiondef SET "
+				+"ERoutingDefNum      =  "+POut.Long  (eRoutingActionDef.ERoutingDefNum)+", "
+				+"ERoutingActionType  =  "+POut.Int   ((int)eRoutingActionDef.ERoutingActionType)+", "
+				+"ItemOrder           =  "+POut.Int   (eRoutingActionDef.ItemOrder)+", "
 				//SecDateTEntry not allowed to change
-				+"DateTLastModified=  "+POut.DateT (eRoutingActionDef.DateTLastModified)+" "
+				+"DateTLastModified   =  "+POut.DateT (eRoutingActionDef.DateTLastModified)+" "
 				+"WHERE ERoutingActionDefNum = "+POut.Long(eRoutingActionDef.ERoutingActionDefNum);
 			Db.NonQ(command);
 		}
@@ -185,7 +185,7 @@ namespace OpenDentBusiness.Crud{
 			if(command=="") {
 				return false;
 			}
-			command="UPDATE eRoutingactiondef SET "+command
+			command="UPDATE eroutingactiondef SET "+command
 				+" WHERE ERoutingActionDefNum = "+POut.Long(eRoutingActionDef.ERoutingActionDefNum);
 			Db.NonQ(command);
 			return true;
@@ -212,7 +212,7 @@ namespace OpenDentBusiness.Crud{
 
 		///<summary>Deletes one ERoutingActionDef from the database.</summary>
 		public static void Delete(long eRoutingActionDefNum) {
-			string command="DELETE FROM eRoutingactiondef "
+			string command="DELETE FROM eroutingactiondef "
 				+"WHERE ERoutingActionDefNum = "+POut.Long(eRoutingActionDefNum);
 			Db.NonQ(command);
 		}
@@ -222,7 +222,7 @@ namespace OpenDentBusiness.Crud{
 			if(listERoutingActionDefNums==null || listERoutingActionDefNums.Count==0) {
 				return;
 			}
-			string command="DELETE FROM eRoutingactiondef "
+			string command="DELETE FROM eroutingactiondef "
 				+"WHERE ERoutingActionDefNum IN("+string.Join(",",listERoutingActionDefNums.Select(x => POut.Long(x)))+")";
 			Db.NonQ(command);
 		}

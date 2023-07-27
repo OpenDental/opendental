@@ -10,9 +10,9 @@ using System.Linq;
 namespace OpenDentBusiness.Crud{
 	public class ERoutingDefLinkCrud {
 		///<summary>Gets one ERoutingDefLink object from the database using the primary key.  Returns null if not found.</summary>
-		public static ERoutingDefLink SelectOne(long eroutingDefLinkNum) {
+		public static ERoutingDefLink SelectOne(long eRoutingDefLinkNum) {
 			string command="SELECT * FROM eroutingdeflink "
-				+"WHERE ERoutingDefLinkNum = "+POut.Long(eroutingDefLinkNum);
+				+"WHERE ERoutingDefLinkNum = "+POut.Long(eRoutingDefLinkNum);
 			List<ERoutingDefLink> list=TableToList(Db.GetTable(command));
 			if(list.Count==0) {
 				return null;
@@ -44,14 +44,14 @@ namespace OpenDentBusiness.Crud{
 		///<summary>Converts a DataTable to a list of objects.</summary>
 		public static List<ERoutingDefLink> TableToList(DataTable table) {
 			List<ERoutingDefLink> retVal=new List<ERoutingDefLink>();
-			ERoutingDefLink eroutingDefLink;
+			ERoutingDefLink eRoutingDefLink;
 			foreach(DataRow row in table.Rows) {
-				eroutingDefLink=new ERoutingDefLink();
-				eroutingDefLink.ERoutingDefLinkNum= PIn.Long  (row["ERoutingDefLinkNum"].ToString());
-				eroutingDefLink.ERoutingDefNum    = PIn.Long  (row["ERoutingDefNum"].ToString());
-				eroutingDefLink.Fkey          = PIn.Long  (row["Fkey"].ToString());
-				eroutingDefLink.ERoutingType      = (OpenDentBusiness.EnumERoutingType)PIn.Int(row["ERoutingType"].ToString());
-				retVal.Add(eroutingDefLink);
+				eRoutingDefLink=new ERoutingDefLink();
+				eRoutingDefLink.ERoutingDefLinkNum= PIn.Long  (row["ERoutingDefLinkNum"].ToString());
+				eRoutingDefLink.ERoutingDefNum    = PIn.Long  (row["ERoutingDefNum"].ToString());
+				eRoutingDefLink.Fkey              = PIn.Long  (row["Fkey"].ToString());
+				eRoutingDefLink.ERoutingType      = (OpenDentBusiness.EnumERoutingType)PIn.Int(row["ERoutingType"].ToString());
+				retVal.Add(eRoutingDefLink);
 			}
 			return retVal;
 		}
@@ -66,26 +66,26 @@ namespace OpenDentBusiness.Crud{
 			table.Columns.Add("ERoutingDefNum");
 			table.Columns.Add("Fkey");
 			table.Columns.Add("ERoutingType");
-			foreach(ERoutingDefLink eroutingDefLink in listERoutingDefLinks) {
+			foreach(ERoutingDefLink eRoutingDefLink in listERoutingDefLinks) {
 				table.Rows.Add(new object[] {
-					POut.Long  (eroutingDefLink.ERoutingDefLinkNum),
-					POut.Long  (eroutingDefLink.ERoutingDefNum),
-					POut.Long  (eroutingDefLink.Fkey),
-					POut.Int   ((int)eroutingDefLink.ERoutingType),
+					POut.Long  (eRoutingDefLink.ERoutingDefLinkNum),
+					POut.Long  (eRoutingDefLink.ERoutingDefNum),
+					POut.Long  (eRoutingDefLink.Fkey),
+					POut.Int   ((int)eRoutingDefLink.ERoutingType),
 				});
 			}
 			return table;
 		}
 
 		///<summary>Inserts one ERoutingDefLink into the database.  Returns the new priKey.</summary>
-		public static long Insert(ERoutingDefLink eroutingDefLink) {
-			return Insert(eroutingDefLink,false);
+		public static long Insert(ERoutingDefLink eRoutingDefLink) {
+			return Insert(eRoutingDefLink,false);
 		}
 
 		///<summary>Inserts one ERoutingDefLink into the database.  Provides option to use the existing priKey.</summary>
-		public static long Insert(ERoutingDefLink eroutingDefLink,bool useExistingPK) {
+		public static long Insert(ERoutingDefLink eRoutingDefLink,bool useExistingPK) {
 			if(!useExistingPK && PrefC.RandomKeys) {
-				eroutingDefLink.ERoutingDefLinkNum=ReplicationServers.GetKey("eroutingdeflink","ERoutingDefLinkNum");
+				eRoutingDefLink.ERoutingDefLinkNum=ReplicationServers.GetKey("eroutingdeflink","ERoutingDefLinkNum");
 			}
 			string command="INSERT INTO eroutingdeflink (";
 			if(useExistingPK || PrefC.RandomKeys) {
@@ -93,106 +93,106 @@ namespace OpenDentBusiness.Crud{
 			}
 			command+="ERoutingDefNum,Fkey,ERoutingType) VALUES(";
 			if(useExistingPK || PrefC.RandomKeys) {
-				command+=POut.Long(eroutingDefLink.ERoutingDefLinkNum)+",";
+				command+=POut.Long(eRoutingDefLink.ERoutingDefLinkNum)+",";
 			}
 			command+=
-				     POut.Long  (eroutingDefLink.ERoutingDefNum)+","
-				+    POut.Long  (eroutingDefLink.Fkey)+","
-				+    POut.Int   ((int)eroutingDefLink.ERoutingType)+")";
+				     POut.Long  (eRoutingDefLink.ERoutingDefNum)+","
+				+    POut.Long  (eRoutingDefLink.Fkey)+","
+				+    POut.Int   ((int)eRoutingDefLink.ERoutingType)+")";
 			if(useExistingPK || PrefC.RandomKeys) {
 				Db.NonQ(command);
 			}
 			else {
-				eroutingDefLink.ERoutingDefLinkNum=Db.NonQ(command,true,"ERoutingDefLinkNum","eroutingDefLink");
+				eRoutingDefLink.ERoutingDefLinkNum=Db.NonQ(command,true,"ERoutingDefLinkNum","eRoutingDefLink");
 			}
-			return eroutingDefLink.ERoutingDefLinkNum;
+			return eRoutingDefLink.ERoutingDefLinkNum;
 		}
 
 		///<summary>Inserts one ERoutingDefLink into the database.  Returns the new priKey.  Doesn't use the cache.</summary>
-		public static long InsertNoCache(ERoutingDefLink eroutingDefLink) {
-			return InsertNoCache(eroutingDefLink,false);
+		public static long InsertNoCache(ERoutingDefLink eRoutingDefLink) {
+			return InsertNoCache(eRoutingDefLink,false);
 		}
 
 		///<summary>Inserts one ERoutingDefLink into the database.  Provides option to use the existing priKey.  Doesn't use the cache.</summary>
-		public static long InsertNoCache(ERoutingDefLink eroutingDefLink,bool useExistingPK) {
+		public static long InsertNoCache(ERoutingDefLink eRoutingDefLink,bool useExistingPK) {
 			bool isRandomKeys=Prefs.GetBoolNoCache(PrefName.RandomPrimaryKeys);
 			string command="INSERT INTO eroutingdeflink (";
 			if(!useExistingPK && isRandomKeys) {
-				eroutingDefLink.ERoutingDefLinkNum=ReplicationServers.GetKeyNoCache("eroutingdeflink","ERoutingDefLinkNum");
+				eRoutingDefLink.ERoutingDefLinkNum=ReplicationServers.GetKeyNoCache("eroutingdeflink","ERoutingDefLinkNum");
 			}
 			if(isRandomKeys || useExistingPK) {
 				command+="ERoutingDefLinkNum,";
 			}
 			command+="ERoutingDefNum,Fkey,ERoutingType) VALUES(";
 			if(isRandomKeys || useExistingPK) {
-				command+=POut.Long(eroutingDefLink.ERoutingDefLinkNum)+",";
+				command+=POut.Long(eRoutingDefLink.ERoutingDefLinkNum)+",";
 			}
 			command+=
-				     POut.Long  (eroutingDefLink.ERoutingDefNum)+","
-				+    POut.Long  (eroutingDefLink.Fkey)+","
-				+    POut.Int   ((int)eroutingDefLink.ERoutingType)+")";
+				     POut.Long  (eRoutingDefLink.ERoutingDefNum)+","
+				+    POut.Long  (eRoutingDefLink.Fkey)+","
+				+    POut.Int   ((int)eRoutingDefLink.ERoutingType)+")";
 			if(useExistingPK || isRandomKeys) {
 				Db.NonQ(command);
 			}
 			else {
-				eroutingDefLink.ERoutingDefLinkNum=Db.NonQ(command,true,"ERoutingDefLinkNum","eroutingDefLink");
+				eRoutingDefLink.ERoutingDefLinkNum=Db.NonQ(command,true,"ERoutingDefLinkNum","eRoutingDefLink");
 			}
-			return eroutingDefLink.ERoutingDefLinkNum;
+			return eRoutingDefLink.ERoutingDefLinkNum;
 		}
 
 		///<summary>Updates one ERoutingDefLink in the database.</summary>
-		public static void Update(ERoutingDefLink eroutingDefLink) {
+		public static void Update(ERoutingDefLink eRoutingDefLink) {
 			string command="UPDATE eroutingdeflink SET "
-				+"ERoutingDefNum    =  "+POut.Long  (eroutingDefLink.ERoutingDefNum)+", "
-				+"Fkey          =  "+POut.Long  (eroutingDefLink.Fkey)+", "
-				+"ERoutingType      =  "+POut.Int   ((int)eroutingDefLink.ERoutingType)+" "
-				+"WHERE ERoutingDefLinkNum = "+POut.Long(eroutingDefLink.ERoutingDefLinkNum);
+				+"ERoutingDefNum    =  "+POut.Long  (eRoutingDefLink.ERoutingDefNum)+", "
+				+"Fkey              =  "+POut.Long  (eRoutingDefLink.Fkey)+", "
+				+"ERoutingType      =  "+POut.Int   ((int)eRoutingDefLink.ERoutingType)+" "
+				+"WHERE ERoutingDefLinkNum = "+POut.Long(eRoutingDefLink.ERoutingDefLinkNum);
 			Db.NonQ(command);
 		}
 
 		///<summary>Updates one ERoutingDefLink in the database.  Uses an old object to compare to, and only alters changed fields.  This prevents collisions and concurrency problems in heavily used tables.  Returns true if an update occurred.</summary>
-		public static bool Update(ERoutingDefLink eroutingDefLink,ERoutingDefLink oldERoutingDefLink) {
+		public static bool Update(ERoutingDefLink eRoutingDefLink,ERoutingDefLink oldERoutingDefLink) {
 			string command="";
-			if(eroutingDefLink.ERoutingDefNum != oldERoutingDefLink.ERoutingDefNum) {
+			if(eRoutingDefLink.ERoutingDefNum != oldERoutingDefLink.ERoutingDefNum) {
 				if(command!="") { command+=",";}
-				command+="ERoutingDefNum = "+POut.Long(eroutingDefLink.ERoutingDefNum)+"";
+				command+="ERoutingDefNum = "+POut.Long(eRoutingDefLink.ERoutingDefNum)+"";
 			}
-			if(eroutingDefLink.Fkey != oldERoutingDefLink.Fkey) {
+			if(eRoutingDefLink.Fkey != oldERoutingDefLink.Fkey) {
 				if(command!="") { command+=",";}
-				command+="Fkey = "+POut.Long(eroutingDefLink.Fkey)+"";
+				command+="Fkey = "+POut.Long(eRoutingDefLink.Fkey)+"";
 			}
-			if(eroutingDefLink.ERoutingType != oldERoutingDefLink.ERoutingType) {
+			if(eRoutingDefLink.ERoutingType != oldERoutingDefLink.ERoutingType) {
 				if(command!="") { command+=",";}
-				command+="ERoutingType = "+POut.Int   ((int)eroutingDefLink.ERoutingType)+"";
+				command+="ERoutingType = "+POut.Int   ((int)eRoutingDefLink.ERoutingType)+"";
 			}
 			if(command=="") {
 				return false;
 			}
 			command="UPDATE eroutingdeflink SET "+command
-				+" WHERE ERoutingDefLinkNum = "+POut.Long(eroutingDefLink.ERoutingDefLinkNum);
+				+" WHERE ERoutingDefLinkNum = "+POut.Long(eRoutingDefLink.ERoutingDefLinkNum);
 			Db.NonQ(command);
 			return true;
 		}
 
 		///<summary>Returns true if Update(ERoutingDefLink,ERoutingDefLink) would make changes to the database.
 		///Does not make any changes to the database and can be called before remoting role is checked.</summary>
-		public static bool UpdateComparison(ERoutingDefLink eroutingDefLink,ERoutingDefLink oldERoutingDefLink) {
-			if(eroutingDefLink.ERoutingDefNum != oldERoutingDefLink.ERoutingDefNum) {
+		public static bool UpdateComparison(ERoutingDefLink eRoutingDefLink,ERoutingDefLink oldERoutingDefLink) {
+			if(eRoutingDefLink.ERoutingDefNum != oldERoutingDefLink.ERoutingDefNum) {
 				return true;
 			}
-			if(eroutingDefLink.Fkey != oldERoutingDefLink.Fkey) {
+			if(eRoutingDefLink.Fkey != oldERoutingDefLink.Fkey) {
 				return true;
 			}
-			if(eroutingDefLink.ERoutingType != oldERoutingDefLink.ERoutingType) {
+			if(eRoutingDefLink.ERoutingType != oldERoutingDefLink.ERoutingType) {
 				return true;
 			}
 			return false;
 		}
 
 		///<summary>Deletes one ERoutingDefLink from the database.</summary>
-		public static void Delete(long eroutingDefLinkNum) {
+		public static void Delete(long eRoutingDefLinkNum) {
 			string command="DELETE FROM eroutingdeflink "
-				+"WHERE ERoutingDefLinkNum = "+POut.Long(eroutingDefLinkNum);
+				+"WHERE ERoutingDefLinkNum = "+POut.Long(eRoutingDefLinkNum);
 			Db.NonQ(command);
 		}
 
@@ -205,5 +205,6 @@ namespace OpenDentBusiness.Crud{
 				+"WHERE ERoutingDefLinkNum IN("+string.Join(",",listERoutingDefLinkNums.Select(x => POut.Long(x)))+")";
 			Db.NonQ(command);
 		}
+
 	}
 }

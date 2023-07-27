@@ -59,7 +59,7 @@ namespace OpenDental {
 				List<SheetDef> listSheetDefsCon=SheetDefs.GetCustomForType(SheetTypeEnum.Consent);
 				if(listSheetDefsMed.Count==0) {
 					//showingInternalMed=true;
-					ListSheetDefs.Add(SheetsInternal.GetSheetDef(SheetInternalType.MedicalHistSimple));
+					ListSheetDefs.Add(SheetsInternal.GetSheetDef(SheetInternalType.MedicalHist));
 				}
 				else {//if user has added any of their own medical history forms
 					for(int i=0;i<listSheetDefsMed.Count;i++) {
