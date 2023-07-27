@@ -1036,7 +1036,7 @@ namespace OpenDentBusiness
 				for(int j=0;j<Math.Min(maxNoteLength,note.Length);j+=80) {
 					sw.Write("NTE"+s
 						+"ADD"+s//NTE01 3/3 Note Reference Code: ADD=Additional information.
-						+Sout(note.Substring(j),80));//NTE02 1/80 Description:
+						+Sout(note.Substring(j),80,trimWhiteSpace:false));//NTE02 1/80 Description:
 					EndSegment(sw);
 				}
 				//2300 NTE: (institutional) Billing Note. Situational. We do not use.
@@ -2718,7 +2718,7 @@ namespace OpenDentBusiness
 		///Converts to all caps and strips off all invalid characters.
 		///Optionally shortens the string to the specified length
 		///and/or makes sure the string is long enough by padding with spaces.</summary>
-		private static string Sout(string inputStr,int maxL=-1,int minL=-1,bool hasUnderscores=false) {
+		private static string Sout(string inputStr,int maxL=-1,int minL=-1,bool hasUnderscores=false,bool trimWhiteSpace=true) {
 			//The "Basic Character Set" is described in the standard on page 387 as: A...Z 0...9 ! & ( ) + * , - . / : ; ? = (space)
 			//The "Extended Character Set" is described in the standard on page 387 as: a...z % ~ @ [ ] _ { } \ | < > # $
 			//An X12 "String" is defined on page 393 as: "A string data element is a sequence of any characters from the basic or extended character sets."
@@ -2737,7 +2737,9 @@ namespace OpenDentBusiness
 			if(!hasUnderscores) {
 				retStr=Regex.Replace(retStr,"[_]","");//replaces _
 			}
-			retStr=retStr.Trim();//removes leading and trailing spaces.
+			if(trimWhiteSpace) {
+				retStr=retStr.Trim();//removes leading and trailing spaces.
+			}
 			if(maxL!=-1) {
 				if(retStr.Length>maxL) {
 					retStr=retStr.Substring(0,maxL);

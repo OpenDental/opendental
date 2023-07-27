@@ -257,16 +257,19 @@ namespace CodeBase {
 		}
 
 		///<summary>Acquires a single bitmap from the TWAIN device given by the Twain Name</summary>
-		public static Bitmap TwainAcquireBitmap(string twainName) {
+		public static Bitmap TwainAcquireBitmap(string twainName, bool doThrowException=false,int timeoutSecs=300) {
 			ODCloudClientData cloudClientData=new ODCloudClientData(){
 				OtherData=twainName
 			};
 			string resultData;
 			try{
-				resultData=SendToODCloudClientSynchronously(cloudClientData,CloudClientAction.TwainAcquireBitmap, 300);
+				resultData=SendToODCloudClientSynchronously(cloudClientData,CloudClientAction.TwainAcquireBitmap,timeoutSecs:timeoutSecs);
 			}
 			catch(Exception ex){
 				if(!string.IsNullOrEmpty(ex.Message)){
+					if(doThrowException) {
+						throw;
+					}
 					//Message is empty if the user cancelled
 					ODMessageBox.Show(ex.Message);
 				}
