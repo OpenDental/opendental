@@ -129,37 +129,41 @@ namespace OpenDental {
 				}
 				string terminalId=((PayTerminal)comboTerminal.SelectedItem).TerminalID;
 				decimal amount=(decimal)textAmount.Value;//textAmount will be a value between 0 and 100,000,000
-				if(radioSale.Checked) {
-					if(amount>0) {
-						CreateTerminalTransactionRequest request=new CreateTerminalTransactionRequest();
-						request.Amount=amountInCents;
-						request.Terminal=terminalId;
+				if(amount>0) {
+					CreateTerminalTransactionRequest request=new CreateTerminalTransactionRequest();
+					request.Amount=amountInCents;
+					request.Terminal=terminalId;
+					request.Frequency=TransactionFrequency.OneTime;
+					request.Signature=true;//For now always request signature on the terminal, PayConnect will handle if the terminal does not support signatures.
+					if(radioSale.Checked) {
 						request.TransType=TransactionType.Sale;
-						request.Frequency=TransactionFrequency.OneTime;
-						request.Signature=false;//TODO in future: Eventually PayConnect will support terminals with built in signature pads in which case this will need to be set based on the terminal/user choice for signing.
-						payConnect2Response=PayConnect2.PostCreateTerminalTransaction(request,_clinicNum);
 						TransType=PayConnectService.transType.SALE;
 					}
-					else {
-						MsgBox.Show(this,"Amount must be greater than 0.00");
+					else if(radioAuthorization.Checked) {
+							request.TransType=TransactionType.AuthorizeOnly;
+							TransType=PayConnectService.transType.AUTH;
+					}
+					UI.ProgressOD progressOD=new UI.ProgressOD();
+					progressOD.ActionMain=()=> {payConnect2Response=PayConnect2.PostCreateTerminalTransaction(request,_clinicNum);};
+					progressOD.ShowCancelButton=false;//This is neccessary as cancelling on our side will not cancel the transaction on the terminal, which could lead to the payment being processed but not show in the patients account. This also matches what we do in FormPayConnect.cs.
+					progressOD.StartingMessage=Lan.g(this,"Processing payment on terminal");
+					progressOD.StopNotAllowedMessage=Lan.g(this,"Not allowed to stop. Please wait up to 2 minutes.");
+					try{
+						progressOD.ShowDialogProgress();
+					}
+					catch(Exception ex){
+						SecurityLogs.MakeLogEntry(Permissions.CreditCardTerminal,_patient.PatNum,"No response received.");
+						MessageBox.Show(Lan.g(this,"A payment was initiated but no response was received. The payment may or may not have processed."
+							+" Verify payment with your Credit Card merchant."),ex.Message);
+						return false;
+					}
+					if(progressOD.IsCancelled){
 						return false;
 					}
 				}
-				else if(radioAuthorization.Checked) {
-					if(amount>0) {
-						CreateTerminalTransactionRequest request=new CreateTerminalTransactionRequest();
-						request.Amount=amountInCents;
-						request.Terminal=terminalId;
-						request.TransType=TransactionType.AuthorizeOnly;
-						request.Frequency=TransactionFrequency.OneTime;
-						request.Signature=false;//TODO in future: Eventually PayConnect will support terminals with built in signature pads in which case this will need to be set based on the terminal/user choice for signing.
-						payConnect2Response=PayConnect2.PostCreateTerminalTransaction(request,_clinicNum);
-						TransType=PayConnectService.transType.AUTH;
-					}
-					else {
+				else {
 						MsgBox.Show(this,"Amount must be greater than 0.00");
 						return false;
-					}
 				}
 				//The New Terminal API endpoint only allows for Sale and Auths, keeping the below block of code around incase PayConnect adds functionality later.
 				//else if(radioVoid.Checked) {
@@ -195,7 +199,7 @@ namespace OpenDental {
 						using FormPayConnect2iFrame formPayConnect2IFrame=new FormPayConnect2iFrame(_clinicNum,amountInCents,_isAddingCard);
 						formPayConnect2IFrame.ShowDialog();
 						payConnect2Response=formPayConnect2IFrame.GetResponse();
-						if(payConnect2Response.iFrameResponse==null) {
+						if(payConnect2Response.GetStatusResponse==null) {
 							return false;
 						}
 					}
@@ -313,7 +317,7 @@ namespace OpenDental {
 			_creditCard.CCNumberMasked=cardPaymentMethod.CardLast4Digits.PadLeft(16,'X');
 			_creditCard.Zip=cardPaymentMethod.ZipCode;
 			_creditCard.PayConnectToken="";
-			_creditCard.PayConnectTokenExp=_response.TokenExpiration;//Typically the same as the card expiry but just to be safe.
+			_creditCard.PayConnectTokenExp=expiryDate;//Token expiration is the same as CC expiration.
 			_creditCard.PayConnectToken=_response.PaymentToken;
 			_creditCard.CCSource=CreditCardSource.PayConnect;
 			if(_creditCard.IsNew) {

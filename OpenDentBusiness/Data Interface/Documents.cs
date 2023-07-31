@@ -710,11 +710,12 @@ namespace OpenDentBusiness {
 			tableReturn.Columns.Add("DateCreated");
 			tableReturn.Columns.Add("docCategory");
 			tableReturn.Columns.Add("DocCategory");
+			tableReturn.Columns.Add("ToothNumbers");
 			tableReturn.Columns.Add("DateTStamp");
 			tableReturn.Columns.Add("serverDateTime");
 			command="SELECT "+DbHelper.Now();
 			DateTime dateTimeServer=PIn.DateT(Db.GetScalar(command)); //run first for rigorous inclusion of documents
-			command="SELECT DocNum,FileName,Description,Note,DateCreated,DocCategory,DateTStamp FROM document WHERE PatNum='"+POut.Long(patNum)+"' AND MountItemNum=0"; //select all documents not associated with mounts
+			command="SELECT DocNum,FileName,Description,Note,DateCreated,DocCategory,ToothNumbers,DateTStamp FROM document WHERE PatNum='"+POut.Long(patNum)+"' AND MountItemNum=0"; //select all documents not associated with mounts
 			tableDocuments=Db.GetTable(command);
 			command="SELECT MountNum,Description,Note,DocCategory,DateCreated FROM mount WHERE PatNum='"+POut.Long(patNum)+"'"; //select all mounts for patient
 			tableMounts=Db.GetTable(command);
@@ -732,6 +733,7 @@ namespace OpenDentBusiness {
 				string defName=Defs.GetName(DefCat.ImageCats,docCategoryDefNum,listDefsForCategory);
 				row["docCategory"]=defName;
 				row["DocCategory"]=docCategoryDefNum;
+				row["ToothNumbers"]=tableDocuments.Rows[i]["ToothNumbers"].ToString();
 				row["DateTStamp"]=PIn.Date(tableDocuments.Rows[i]["DateTStamp"].ToString()).ToString(dateTimeFormatString);
 				row["serverDateTime"]=dateTimeServer.ToString(dateTimeFormatString);
 				listDataRows.Add(row);
@@ -749,6 +751,7 @@ namespace OpenDentBusiness {
 				string defName=Defs.GetName(DefCat.ImageCats,docCategoryDefNum,listDefsForCategory);
 				row["docCategory"]=defName;
 				row["DocCategory"]=docCategoryDefNum;
+				row["ToothNumbers"]="";//not a field for Mounts
 				row["DateTStamp"]=""; //not a field for Mounts
 				row["serverDateTime"]=dateTimeServer.ToString(dateTimeFormatString);
 				listDataRows.Add(row);

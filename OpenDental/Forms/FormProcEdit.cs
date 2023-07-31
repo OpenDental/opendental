@@ -1798,11 +1798,11 @@ namespace OpenDental {
 				//Procedures.SetHideGraphical(ProcCur);//might not matter anymore
 				ToothInitials.SetValue(_procedure.PatNum,_procedure.ToothNum,ToothInitialType.Missing);
 			}
+			_procedure.ProcStatus=ProcStat.C;
+			_procedure.SiteNum=_patient.SiteNum;
 			ProcNoteUiHelper();
 			Plugins.HookAddCode(this,"FormProcEdit.butSetComplete_Click_end",_procedure,_procedureOld,textNotes);
 			comboProcStatus.SelectedIndex=-1;
-			_procedure.ProcStatus=ProcStat.C;
-			_procedure.SiteNum=_patient.SiteNum;
 			comboPlaceService.SelectedIndex=PrefC.GetInt(PrefName.DefaultProcedurePlaceService);
 			if(EntriesAreValid()){
 				SaveAndClose();

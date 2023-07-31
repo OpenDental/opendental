@@ -10930,7 +10930,7 @@ HAVING cnt>1";
 			if(cleanedCount > 0 || errorCount > 0) {
 				strResults=Lans.g("DatabaseMaintenance","Total email messages considered")+": "+tableEmailMessageNums.Rows.Count.ToString()+"\r\n"
 					+Lans.g("DatabaseMaintenance","Email messages successfully cleaned up")+": "+cleanedCount.ToString()+"\r\n"
-					+Lans.g("DatabaseMaintenance","Email messages that did not nead to be cleaned up")+": "+noChangeCount.ToString()+"\r\n"
+					+Lans.g("DatabaseMaintenance","Email messages that did not need to be cleaned up")+": "+noChangeCount.ToString()+"\r\n"
 					+Lans.g("DatabaseMaintenance","Email messages that failed to be cleaned up")+": "+errorCount.ToString();
 			}
 			return strResults;

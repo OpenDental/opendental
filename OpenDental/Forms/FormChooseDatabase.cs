@@ -27,6 +27,7 @@ namespace OpenDental {
 				DisableAllExcept(butOK,butCancel);
 			}
 			Logger.LogToPath("Load",LogPath.Startup,LogPhase.End);
+			this.ActiveControl=comboComputerName;
 		}
 
 		private void FillForm() {
@@ -133,11 +134,13 @@ namespace OpenDental {
 				groupDirect.Enabled=false;
 				checkDynamicMode.Checked=false;
 				checkDynamicMode.Enabled=false;
+				textPEM.Enabled=false;
 			}
 			else {
 				groupServer.Enabled=false;
 				groupDirect.Enabled=true;
 				checkDynamicMode.Enabled=true;
+				textPEM.Enabled=true;
 			}
 		}
 

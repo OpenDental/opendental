@@ -599,7 +599,7 @@ namespace OpenDentBusiness{
 					}
 				}
 				//Carrier will send 01/01/1900 as a default date instead of MinVal or omission.
-				listDateTimes=listDateTimes.Distinct().Where(x => x.Year>1900).ToList();
+				listDateTimes=listDateTimes.Distinct().Where(x => x.Year>=1900).ToList();
 				//If there are no dates to consider, return early.
 				if(listDateTimes.Count==0) {
 					return null;
@@ -607,11 +607,11 @@ namespace OpenDentBusiness{
 			}
 			else {
 				//Usually claims from the same ERA will all have dates of service within a few weeks of each other.
-				if(listX12claims.Where(x => x.DateServiceStart.Year>1900).Count() > 0) {
-					dateMin=listX12claims.Where(x => x.DateServiceStart.Year>1900).Select(x => x.DateServiceStart).Min();//DateServiceStart can be 1900 for PreAuths.
+				if(listX12claims.Where(x => x.DateServiceStart.Year>=1900).Count() > 0) {
+					dateMin=listX12claims.Where(x => x.DateServiceStart.Year>=1900).Select(x => x.DateServiceStart).Min();//DateServiceStart can be 1900 for PreAuths.
 				}
-				if(listX12claims.Where(x => x.DateServiceEnd.Year>1900).Count() > 0) {
-					dateMax=listX12claims.Where(x => x.DateServiceEnd.Year>1900).Select(x => x.DateServiceEnd).Max();//DateServiceEnd can be 1900 for PreAuths.
+				if(listX12claims.Where(x => x.DateServiceEnd.Year>=1900).Count() > 0) {
+					dateMax=listX12claims.Where(x => x.DateServiceEnd.Year>=1900).Select(x => x.DateServiceEnd).Max();//DateServiceEnd can be 1900 for PreAuths.
 				}
 				if(dateMin.Year<1880 || dateMax.Year<1880) {
 					//Service dates are required for us to continue.
@@ -691,7 +691,7 @@ namespace OpenDentBusiness{
 					List<long> listEraProcNums=dictMatchesPerClaimId[etransNum][claimIdentifier].SelectMany(x => x.List835Procs.Select(y => y.ProcNum)).ToList();//All identified procNums reported from 835.
 					//Begin with basic filtering by date of service and claim total fee.
 					List <DataRow> listDbClaims=new List<DataRow>();
-					foreach(DateTime d in dictClaims.Keys.Where(x => x>=xclaim.DateServiceStart && x<=xclaim.DateServiceEnd)) {
+					foreach(DateTime d in dictClaims.Keys.Where(x => (x>=xclaim.DateServiceStart && x<=xclaim.DateServiceEnd) || x.Year==1)) {//PreAuth service date is 0001-01-01
 						listDbClaims.AddRange(dictClaims[d].FindAll(x => PIn.Double(x["ClaimFee"].ToString())==dictTotalClaimFee[etransNum][claimIdentifier]));
 					}
 					#region 835 ProcNum matching in conjunction with PlanNum and Ordinal matching.  Helps distinctly identify primary vs secondary claims.
@@ -940,7 +940,8 @@ namespace OpenDentBusiness{
 
 		///<summary>We always require the claim fee and dates of service to match, then we use additional criteria to wisely choose from the shorter list
 		///of claims.  The list of claims with matching fee and date of service should be very short.  Worst case, the list would contain all of the
-		///claims if every claim had the same fee (rare).</summary>
+		///claims if every claim had the same fee (rare).
+		///Includes PreAuths which have a date of service 0001-01-01.</summary>
 		public static DataTable GetClaimTable(List<DateTime> listDateTimes,List<double> listClaimFees) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetTable(MethodBase.GetCurrentMethod(),listDateTimes,listClaimFees);
@@ -950,14 +951,15 @@ namespace OpenDentBusiness{
 				FROM claim
 				INNER JOIN patient ON patient.PatNum=claim.PatNum
 				INNER JOIN inssub ON inssub.InsSubNum=claim.InsSubNum AND claim.PlanNum=inssub.PlanNum
-				WHERE DATE(DateService) IN ({string.Join(",",listDateTimes.Select(x => POut.Date(x)))})
+				WHERE (DATE(DateService) IN ({string.Join(",",listDateTimes.Select(x => POut.Date(x)))}) OR {DbHelper.Year("DateService")}=1)
 				AND ROUND(ClaimFee,2) IN ({string.Join(",",listClaimFees.Select(x => POut.Double(x)))})";
 			return Db.GetTable(command);
 		}
 
 		///<summary>We always require the claim fee and dates of service to match, then we use additional criteria to wisely choose from the shorter list
 		///of claims.  The list of claims with matching fee and date of service should be very short.  Worst case, the list would contain all of the
-		///claims if every claim had the same fee (rare).</summary>
+		///claims if every claim had the same fee (rare).
+		///Includes PreAuths which have a date of service 0001-01-01.</summary>
 		public static DataTable GetClaimTable(DateTime dateMin,DateTime dateMax,List<double> listClaimFees) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetTable(MethodBase.GetCurrentMethod(),dateMin,dateMax,listClaimFees);
@@ -967,7 +969,7 @@ namespace OpenDentBusiness{
 				FROM claim
 				INNER JOIN patient ON patient.PatNum=claim.PatNum
 				INNER JOIN inssub ON inssub.InsSubNum=claim.InsSubNum AND claim.PlanNum=inssub.PlanNum
-				WHERE {DbHelper.BetweenDates("DateService",dateMin,dateMax)}
+				WHERE ({DbHelper.BetweenDates("DateService",dateMin,dateMax)} OR {DbHelper.Year("DateService")}=1)
 				AND ROUND(ClaimFee,2) IN ({string.Join(",",listClaimFees.Select(x => POut.Double(x)))})";
 			return Db.GetTable(command);
 		}

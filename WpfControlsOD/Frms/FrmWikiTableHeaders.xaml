@@ -9,7 +9,7 @@
              Width="868" Height="223" 
              Text="Edit Wiki Table Headers" Loaded="FrmWikiTableHeaders_Loaded" >
 	<Grid Background="#FFFCFDFE" >
-		<ui:Grid x:Name="gridMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,12,14,74" Title="" SelectionMode="OneCell" />
+		<ui:Grid x:Name="gridMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,12,14,74" Title="" SelectionMode="OneCell" HScrollVisible="True" />
 		<ui:Button x:Name="butSave" HorizontalAlignment="Right" Width="75" VerticalAlignment="Bottom" Height="24" Margin="0,0,14,14" Text="Save" Click="butSave_Click" />
 	</Grid>
 </local:FrmODBase>
