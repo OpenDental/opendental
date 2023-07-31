@@ -3918,9 +3918,9 @@ namespace OpenDentBusiness {
 					sLine1+=statementTotal.ToString("c");
 				}
 				else {
-					double patInsEst=PIn.Double(tableMisc.Rows.OfType<DataRow>()
-						.Where(x => x["descript"].ToString()=="patInsEst")
-						.Select(x => x["value"].ToString()).FirstOrDefault());//safe, if string is blank or null PIn.Double will return 0
+					double patInsEst=tableMisc.Rows.OfType<DataRow>()
+						.Where(x=>x["descript"].ToString()=="patInsEst")
+						.Sum(x=>PIn.Double(x["value"].ToString()));
 					sLine1+=statementTotal.ToString("c");
 					sLine2+=patInsEst.ToString("c");
 					sLine3+=(statementTotal-patInsEst).ToString("c");
