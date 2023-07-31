@@ -3705,6 +3705,7 @@ namespace OpenDental {
 			documentImported.DocCategory=document.DocCategory;
 			documentImported.ImgType=document.ImgType;
 			documentImported.DateCreated=document.DateCreated;
+			documentImported.ToothNumbers=document.ToothNumbers;
 			Documents.Update(documentImported);
 			EventFillTree?.Invoke(this,false);//updates tree to immediately include new file
 			NodeTypeAndKey nodeTypeAndKey2=new NodeTypeAndKey(EnumImageNodeType.Document,documentImported.DocNum);

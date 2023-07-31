@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using OpenDental.Bridges;
 using CodeBase;
 using System.Text;
+using System.Globalization;
 
 namespace OpenDental {
 	public partial class FormCreditCardManage:FormODBase {
@@ -417,7 +418,7 @@ namespace OpenDental {
 					if(response==null) {
 						return;
 					}
-					else if(response.ResponseType==PayConnect2.ResponseType.IFrame && response.iFrameResponse.Status=="SUCCESS") {
+					else if(response.ResponseType==PayConnect2.ResponseType.IFrame && !response.iFrameResponse.Response.CardToken.IsNullOrEmpty()) {
 						PayConnect2.iFrameSuccessResponse cardData=response.iFrameResponse.Response;
 						CreditCard newCreditCard=new CreditCard();
 						newCreditCard.IsNew=true;

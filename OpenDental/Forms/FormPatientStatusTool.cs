@@ -69,6 +69,12 @@ namespace OpenDental {
 			}
 			List<Patient> listPatients=Patients.GetPatsToChangeStatus(_patientStatusFrom,odDatePickerSince.GetDateTime()
 				,includeTPProc,includeCompletedProc,includeAppointments,listClinicNums);
+			List<PatientLink> listPatientLinks=PatientLinks.GetLinks(listPatients.Select(x => x.PatNum).ToList(),PatientLinkType.Merge);
+			for(int i=listPatients.Count-1;i>=0;i--) {
+				if(PatientLinks.WasPatientMerged(listPatients[i].PatNum,listPatientLinks)) {
+					listPatients.RemoveAt(i);
+				}
+			}
 			gridMain.BeginUpdate();
 			if(gridMain.Columns.Count==0) {
 				gridMain.Columns.Add(new GridColumn(Lan.g(this,"PatNum"),75,GridSortingStrategy.AmountParse));

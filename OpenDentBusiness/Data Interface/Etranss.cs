@@ -1175,7 +1175,7 @@ namespace OpenDentBusiness{
 						claimProc.AllowedOverride+=(double)procPaidPartial.AllowedAmt;
 					}
 					if(claimProc.Status==ClaimProcStatus.Preauth) {
-						claimProc.InsPayEst+=(double)procPaidPartial.InsPaid;
+						claimProc.InsPayEst+=(double)procPaidPartial.PreAuthInsEst;
 					}
 					else {
 						claimProc.InsPayAmt+=(double)procPaidPartial.InsPaid;

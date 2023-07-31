@@ -476,20 +476,20 @@ namespace OpenDentBusiness {
 					break;
 				case ResponseType.IFrame:
 					iFrameResponse iFrameResponse=response.iFrameResponse;
-					payConnectResponse.Description=iFrameResponse.Status;
-					if(iFrameResponse.Status.ToLower()!="success") {
+					//Use IFrameStatus if we did not get a 'success' back. This would mean that they did not complete the transation in the iFrame.
+					payConnectResponse.Description=iFrameResponse.IFrameStatus;
+					if(iFrameResponse.IFrameStatus.ToLower()!="success") {
 						payConnectResponse.StatusCode="";
 						break;
 					}
+					payConnectResponse.Description=iFrameResponse.Response.TransactionStatus;
 					payConnectResponse.PaymentToken=iFrameResponse.Response.CardToken;
 					payConnectResponse.RefNumber=iFrameResponse.Response.ReferenceId;
 					int year=int.Parse(iFrameResponse.Response.ExpiryYear);
 					int month=int.Parse(iFrameResponse.Response.ExpiryMonth);
 					payConnectResponse.TokenExpiration=new DateTime(year,month,1);
 					payConnectResponse.Amount=((decimal)iFrameResponse.Response.Amount)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
-					if(iFrameResponse.Status.ToLower()=="success") {
-						payConnectResponse.StatusCode="0";
-					}
+					payConnectResponse.StatusCode="0";//0 indicates success
 					payConnectResponse.SurchargePercent=iFrameResponse.Response.SurchargePercent;
 					payConnectResponse.AmountSurcharged=((decimal)iFrameResponse.Response.AmountSurcharged)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
 					break;
@@ -508,6 +508,30 @@ namespace OpenDentBusiness {
 					if(terminalTransactionResponse.TransType==TransactionType.Sale) {
 						payConnectResponse.TransType=PayConnectResponse.TransactionType.Sale;
 					}
+					break;
+				case ResponseType.GetStatus:
+					GetStatusResponse statusResponse=response.GetStatusResponse;
+					payConnectResponse.Description=statusResponse.Status;
+					payConnectResponse.StatusCode="0";//0 indicates success
+					payConnectResponse.RefNumber=statusResponse.ReferenceId;
+					payConnectResponse.Amount=((decimal)statusResponse.Amount)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
+					payConnectResponse.SurchargePercent=statusResponse.SurchargePercent;
+					payConnectResponse.AmountSurcharged=((decimal)statusResponse.AmountSurcharged)/100;//PayConnect sends amount as total cents, convert back to OD decimal amounts.
+					payConnectResponse.AuthCode=statusResponse.AuthCode;
+					payConnectResponse.MerchantId=statusResponse.MerchantId.ToString();
+					payConnectResponse.PaymentToken=statusResponse.PaymentMethod.CardPaymentMethod.CardToken;
+					payConnectResponse.CardType=statusResponse.PaymentMethod.CardPaymentMethod.Network.ToString();
+					payConnectResponse.CardNumber=statusResponse.PaymentMethod.CardPaymentMethod.CardLast4Digits;
+					if(statusResponse.TransType==TransactionType.Sale) {
+						payConnectResponse.TransType=PayConnectResponse.TransactionType.Sale;
+					}
+					else if(statusResponse.TransType==TransactionType.AuthorizeOnly) {
+						payConnectResponse.TransType=PayConnectResponse.TransactionType.Authorize;
+					}
+					else if(statusResponse.TransType==TransactionType.Refund) {
+						payConnectResponse.TransType=PayConnectResponse.TransactionType.Refund;
+					}
+					
 					break;
 				default:
 					break;
@@ -1369,8 +1393,11 @@ namespace OpenDentBusiness {
 
 		[DataContract]
 		public class iFrameResponse {
+			///<summary>This status field contains the last known 'state' of the iFrame window. Known statuses: 
+			///ONLOAD - the iFrame has loaded. 
+			///SUCCESS - a request has been submitted successfully via the iFrame window. This does NOT correspond to the result of said request.</summary>
 			[DataMember(Name="status")]
-			public string Status;
+			public string IFrameStatus;
 			[DataMember(Name="response")]
 			public iFrameSuccessResponse Response;
 		}
@@ -1403,6 +1430,9 @@ namespace OpenDentBusiness {
 			///<summary>Percentage of the amount surcharged</summary>
 			[DataMember(Name="surchargePercent")]
 			public int SurchargePercent;
+			///<summary>Status - The actual status of the transaction being ran by PayConnect.</summary>
+			[DataMember(Name="status")]
+			public string TransactionStatus;
 		}
 		#endregion Response Objects
 
