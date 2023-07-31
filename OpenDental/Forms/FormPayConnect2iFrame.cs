@@ -100,9 +100,9 @@ namespace OpenDental {
 
 		///<summary>Throws exceptions.</summary>
 		private void GetTransactionResult(object sender,CoreWebView2WebMessageReceivedEventArgs args) {
+			iFrameResponse response=null;
 			try {
-				_response.iFrameResponse=JsonConvert.DeserializeObject<iFrameResponse>(args.WebMessageAsJson);
-				_response.ResponseType=ResponseType.IFrame;
+				response=JsonConvert.DeserializeObject<iFrameResponse>(args.WebMessageAsJson);
 			}
 			catch(JsonException jEx) {
 				//failed to deserialize, we probably did not recieve a success response from the iFrame.
@@ -110,6 +110,17 @@ namespace OpenDental {
 			}
 			catch (Exception ex) {
 				throw new ODException("Error retrieving response from PayConnect.",ex);
+			}
+			//Immediately call the GetStatus endpoint  for easier processing.
+			if(response!=null && response.IFrameStatus.ToLower()=="success") {
+				//When adding a card the transaction status and reference ID fields will return null from PayConnect, therefore we cannot run GetStatus.
+				if(_isAddingCard) {
+					_response.iFrameResponse=response;
+					_response.ResponseType=ResponseType.IFrame;
+				}
+				else {
+					_response=GetTransactionStatus(_clinicNum,response.Response.ReferenceId);
+				}
 			}
 		}
 

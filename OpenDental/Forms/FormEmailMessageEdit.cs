@@ -781,7 +781,7 @@ namespace OpenDental {
 			List<string> listRedirectShortURLs=PrefC.GetString(PrefName.RedirectShortURLsFromHQ).Split(',').ToList();
 			for(int i=0;i<listRedirectShortURLs.Count;i++) {
 				string url=listRedirectShortURLs[i];
-				if(emailPreview.BodyText.Contains(url)) {
+				if(!url.IsNullOrEmpty() && emailPreview.BodyText.Contains(url)) {
 					error.AppendLine(Lan.g(this,"Email message cannot contain the URL "+url+" as this is only allowed for eServices."));
 				}
 			}
