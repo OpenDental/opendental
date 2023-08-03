@@ -922,6 +922,7 @@ namespace OpenDentBusiness {
 			retVal.PatientDeductAmt=0;
 			retVal.PatientPortionAmt=0;
 			retVal.WriteoffAmt=0;
+			retVal.PreAuthInsEst=0;
 			//"Amounts in CLP05 must have supporting adjustments reflected in CAS segments at the 2100 (CLP) or 2110 (SVC) loop level with a
 			//Claim Adjustment Group (CAS01) code or PR (Patient Responsibility)"
 			foreach(Hx835_Adj adj in retVal.ListClaimAdjustments) {//Sum claim level adjustments.
@@ -952,6 +953,7 @@ namespace OpenDentBusiness {
 				retVal.PatientDeductAmt+=proc.DeductibleAmt;
 				retVal.PatientPortionAmt+=proc.PatientPortionAmt;
 				retVal.WriteoffAmt+=proc.WriteoffAmt;
+				retVal.PreAuthInsEst+=proc.PreAuthInsEst;
 			}
 			//Now modify the claim dates to encompass the procedure dates.  This step causes procedure dates to bubble up to the claim level when only service line dates are provided.
 			for(int i=0;i<retVal.ListProcs.Count;i++) {
@@ -970,7 +972,7 @@ namespace OpenDentBusiness {
 				}
 			}
 			retVal.SegmentCount=segNum-segNumCLP;
-			retVal.AllowedAmt=retVal.InsPaid+retVal.PatientRespAmt;
+			retVal.AllowedAmt=retVal.InsPaid+retVal.PreAuthInsEst+retVal.PatientRespAmt;
 			return retVal;
 		}
 
@@ -1358,6 +1360,9 @@ namespace OpenDentBusiness {
 				else if(adj.AdjCode=="OA") {//Other Adjustments.  Guide page 198.
 					//Going to display amount to the user, they must decide if they want to use it.
 					//"Avoid using the Other Adjustment Group COde (OA) except for business situations described in sections 1.10.2.6, 1.10.2.7 and 1.10.2.13."
+					if(adj.ReasonCode=="101") {//"Predetermination: anticipated payment upon completion of services or claim adjudication."
+						proc.PreAuthInsEst+=adj.AdjAmt;
+					}
 				}
 				else if(adj.AdjCode=="PI") {//Payor Initiated Reductions.  Guide page 198.
 					//Going to display amount to the user, they must decide if they want to use it.
@@ -1432,7 +1437,7 @@ namespace OpenDentBusiness {
 				segNum++;
 			}
 			proc.SegmentCount=segNum-segNumSVC;
-			proc.AllowedAmt=proc.InsPaid+proc.PatRespTotal;
+			proc.AllowedAmt=proc.InsPaid+proc.PreAuthInsEst+proc.PatRespTotal;
 			return proc;
 		}
 
@@ -3499,6 +3504,10 @@ namespace OpenDentBusiness {
 		public decimal ClaimFee;
 		///<summary>CLP04 The total amount insurance paid.</summary>
 		public decimal InsPaid;
+		///<summary>For preauths, is the estimated payment amount for the claim.
+		///This is an amount calculated as the sum of the procedure PreAuthInsEst amounts.
+		///Ignores claim-level preauth adjustments, because we cannot create a By Total proc for preauths, just as in the Edit Claim window.</summary>
+		public decimal PreAuthInsEst;
 		///<summary>CLP05 A portion of the ChargeAmtTotal which the patient is responsible for.</summary>
 		public decimal PatientRespAmt;
 		///<summary>Patient portion for this claim.
@@ -3531,7 +3540,7 @@ namespace OpenDentBusiness {
 		public List<Hx835_Proc> ListProcs;
 		///<summary>The sum of all adjustment amounts in ListClaimAdjustments.</summary>
 		public decimal ClaimAdjustmentTotal;
-		///<summary>AllowedAmt = (Claim InsPaid)+(Claim PatientRespAmt)</summary>
+		///<summary>AllowedAmt = (Claim InsPaid/InsEst)+(Claim PatientRespAmt)</summary>
 		public decimal AllowedAmt;
 		///<summary>True if remark code MA15 is used in either segment MIA or MOA (if present).  Also true if there are multiple CLP segments on
 		///the same 835 containing the same ClaimTrackingNumber.  We have seen carriers represent split claims this way(ex Commonwealth of Massachussetts/EOHHS/Office of Medicaid).
@@ -3761,8 +3770,11 @@ namespace OpenDentBusiness {
 		public string ProcCodeAdjudicated;
 		///<summary>SVC2.</summary>
 		public decimal ProcFee;
-		///<summary>SVC3.</summary>
+		///<summary>SVC3. For regular claims, contains actual insurance paid amount.</summary>
 		public decimal InsPaid;
+		///<summary>The sum of all adjustment amounts in ListProcAdjustments where CAS01=OA and CAS02=101.
+		///For preauths, is the estimated payment amount for the proc.</summary>
+		public decimal PreAuthInsEst;
 		///<summary>SVC6-2.  The procedure code submitted with the claim.  Helps identify the procedure the adjudication is regarding in case of bundling/unbundling and procedure splits.</summary>
 		public string ProcCodeBilled;
 		///<summary>DTM*150 or DTM*472 of loop 2110.  Situational.  If not present, then the procedure service start date is the same as the claim service start date.</summary>
@@ -3783,9 +3795,9 @@ namespace OpenDentBusiness {
 		///<summary>The sum of all adjustment amounts in ListProcAdjustments where CAS01=PR and CAS02=1.
 		///DeductibleAmt=PatRespTotal-PatientPortionAmt</summary>
 		public decimal DeductibleAmt;
-		///<summary>The sum of all adjustment amounts in ListProcAdjustments which are not patient responsibility (where CAS01!=PR).</summary>
+		///<summary>The sum of all adjustment amounts in ListProcAdjustments which are not patient responsibility (where CAS01==CO).</summary>
 		public decimal WriteoffAmt;
-		///<summary>AllowedAmt = (InsPay)+(PatRespTotal)</summary>
+		///<summary>AllowedAmt = (InsPay/InsEst)+(PatRespTotal)</summary>
 		public decimal AllowedAmt;
 		///<summary>SVC2. The original ordinal of the claims insurance when the outoing 837 was sent.</summary>
 		public long PlanOrdinal;
@@ -3916,7 +3928,7 @@ namespace OpenDentBusiness {
 		public string AdjCode;
 		///<summary>True when CAS01 = PR and (CAS02 or CAS05 or CAS08 or CAS11 or CAS14 or CAS17) is 1.</summary>
 		public bool IsDeductible;
-		///See code source 139 at http://www.wpc-edi.com/reference/codelists/healthcare/claim-adjustment-reason-codes/. 
+		///See GetDescriptFrom139(). 
 		///The most useful values in code source 139 are: 1=Deductible Amount, 2=Coinsurance Amount, 3=Co-payment Amount.</summary>
 		public string ReasonCode;
 
