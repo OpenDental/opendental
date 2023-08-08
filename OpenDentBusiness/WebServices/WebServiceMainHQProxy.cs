@@ -289,6 +289,7 @@ namespace OpenDentBusiness {
 			#endregion PatientPortalURL
 			#region Preferences
 			isCacheInvalid|=UpdatePreferences(signupOut.PushablePrefs);
+			isCacheInvalid|=Prefs.UpdateDateT(PrefName.EserviceLogUploadTimeNext,signupOut.DateTimeEServiceLogUploadNext);
 			#endregion
 			#region Limited Beta
 			LimitedBetaFeatures.SyncFromHQ(signupOut.ListLimitedBetaFeatures);
@@ -304,9 +305,7 @@ namespace OpenDentBusiness {
 				Signalods.Insert(new Signalod() { IType=InvalidType.ClinicPrefs });
 				ClinicPrefs.RefreshCache();
 			}
-			LogEServiceSetup(signupOut,oldSignupOut);
-			//Overwrite local pref with HQ value
-			Prefs.UpdateDateT(PrefName.EserviceLogUploadTimeNext,signupOut.DateTimeEServiceLogUploadNext);
+			LogEServiceSetup(signupOut,oldSignupOut);			
 			return signupOut;
 		}
 

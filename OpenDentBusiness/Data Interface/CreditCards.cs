@@ -105,7 +105,9 @@ namespace OpenDentBusiness{
 				CreditCardSource.EdgeExpressCNP,
 				CreditCardSource.EdgeExpressRCM,
 				CreditCardSource.XServer,
-				CreditCardSource.XServerPayConnect
+				CreditCardSource.XServerPayConnect,
+				CreditCardSource.EdgeExpressPaymentPortal,
+				CreditCardSource.EdgeExpressPaymentPortalGuest
 			};
 			//Prevent duplicates.
 			if(GetTokenCount(xWebResponse.Alias,listSources)>0) {

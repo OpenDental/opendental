@@ -302,6 +302,7 @@
     <Compile Include="Crud\MobileBrandingProfileCrud.cs" />
     <Compile Include="Crud\MobileDataByteCrud.cs" />
     <Compile Include="Crud\OrthoCaseCrud.cs" />
+    <Compile Include="Crud\OrthoChartLogCrud.cs" />
     <Compile Include="Crud\OrthoChartRowCrud.cs" />
     <Compile Include="Crud\OrthoHardwareCrud.cs" />
     <Compile Include="Crud\OrthoHardwareSpecCrud.cs" />
@@ -386,6 +387,7 @@
     <Compile Include="Data Interface\JobTeams.cs" />
     <Compile Include="Data Interface\JobTeamUsers.cs" />
     <Compile Include="Data Interface\LimitedBetaFeatures.cs" />
+    <Compile Include="Data Interface\OrthoChartLogs.cs" />
     <Compile Include="Data Interface\OrthoChartRows.cs" />
     <Compile Include="Data Interface\OrthoHardwares.cs" />
     <Compile Include="Data Interface\OrthoHardwareSpecs.cs" />
@@ -698,6 +700,7 @@
     <Compile Include="TableTypes\MobileDataByte.cs" />
     <Compile Include="TableTypes\ImagingDevice.cs" />
     <Compile Include="TableTypes\OrthoCase.cs" />
+    <Compile Include="TableTypes\OrthoChartLog.cs" />
     <Compile Include="TableTypes\OrthoRx.cs" />
     <Compile Include="TableTypes\OrthoHardwareSpec.cs" />
     <Compile Include="TableTypes\OrthoHardware.cs" />

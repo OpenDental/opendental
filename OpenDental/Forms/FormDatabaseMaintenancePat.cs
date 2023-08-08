@@ -58,7 +58,7 @@ namespace OpenDental {
 			FillGridOld();
 			FillGridHidden();
 			try {
-				_isUsingReplication=ReplicationServers.IsUsingReplication();
+				_isUsingReplication=PrefC.IsCloudMode || ReplicationServers.IsUsingReplication();
 			}
 			catch {
 				_hasReplicationPermission=false;
@@ -232,16 +232,32 @@ namespace OpenDental {
 			if(!MsgBox.Show(MsgBoxButtons.YesNo,"At least one dbm method is not safe to run when replication is enabled. Would you like to continue?")) {
 				return;
 			}
-			using InputBox inputBox=new InputBox("Please enter password");
-			inputBox.setTitle("Run Replication Unsafe DBMs");
-			inputBox.textResult.PasswordChar='*';
-			inputBox.ShowDialog();
-			if(inputBox.DialogResult!=DialogResult.OK) {
-				return;
+			if(PrefC.IsCloudMode) {
+				string strMsg="Replication might be enabled. Running unsafe replication methods may cause database damage. Additional steps must be taken before running unsafe database methods.";
+				string strCheckBoxMsg="I have taken the special published process provided by the software support team.";
+				InputBoxParam inputBoxParam=new InputBoxParam(InputBoxType.CheckBox,Lan.g(this,strMsg),text:strCheckBoxMsg);
+				inputBoxParam.SizeParam=new Size(400,40);
+				using InputBox inputBox=new InputBox(null,inputBoxParam);
+				inputBox.setTitle("Replication Warning");
+				if(inputBox.ShowDialog()!=DialogResult.OK || !inputBox.checkBoxResult.Checked) {
+					return;
+				}
 			}
-			if(inputBox.textResult.Text!="abracadabra") {
-				MsgBox.Show(this,"Wrong password");
-				return;
+			else {
+				if(!MsgBox.Show(MsgBoxButtons.YesNo,"At least one dbm method is not safe to run when replication is enabled. Would you like to continue?")) {
+					return;
+				}
+				using InputBox inputBox=new InputBox("Please enter password");
+				inputBox.setTitle("Run Replication Unsafe DBMs");
+				inputBox.textResult.PasswordChar='*';
+				inputBox.ShowDialog();
+				if(inputBox.DialogResult!=DialogResult.OK) {
+					return;
+				}
+				if(inputBox.textResult.Text!="abracadabra") {
+					MsgBox.Show(this,"Wrong password");
+					return;
+				}
 			}
 			_isReplicationPasswordEntered=true;
 		}

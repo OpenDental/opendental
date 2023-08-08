@@ -374,6 +374,17 @@ namespace OpenDentBusiness{
 			return retVal;
 		}
 
+		///<summary>Gets a list of sheetdefs from the DB. Used by the API. If modifying this method, please contact someone from the API team.</summary>
+		public static List<SheetDef> GetSheetDefsForApi(int limit,int offset){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<SheetDef>>(MethodBase.GetCurrentMethod(),limit,offset);
+			}
+			string command="SELECT * FROM sheetdef ";
+			command+="ORDER BY SheetDefNum "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.SheetDefCrud.SelectMany(command);
+		}
+
 		///<summary>Sets the FieldName for each SheetFieldDef in sheetDef.SheetFieldDefs to the Def.DefNum defined as the Patient Image definition.
 		///Defaults to the first definition in the Image category if Patient Image is not defined.
 		///This is necessary because the resource for the internal sheet likely does not contain a valid Def primary key.</summary>

@@ -54,6 +54,8 @@ namespace OpenDental{
 			this.comboPriority = new OpenDental.UI.ComboBox();
 			this.comboCategory = new System.Windows.Forms.ComboBox();
 			this.labelCategory = new System.Windows.Forms.Label();
+			this.labelJobTeam = new System.Windows.Forms.Label();
+			this.comboJobTeam = new OpenDental.UI.ComboBox();
 			this.tabControlExtra.SuspendLayout();
 			this.tabConcept.SuspendLayout();
 			this.tabCustomers.SuspendLayout();
@@ -127,7 +129,7 @@ namespace OpenDental{
 			this.textConcept.Location = new System.Drawing.Point(3, 3);
 			this.textConcept.MainFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.textConcept.MainRtf = "{\\rtf1\\ansi\\ansicpg1252\\deff0\\nouicompat\\deflang1033{\\fonttbl{\\f0\\fnil\\fcharset0 " +
-    "Microsoft Sans Serif;}}\r\n{\\*\\generator Riched20 10.0.19041}\\viewkind4\\uc1 \r\n\\par" +
+    "Microsoft Sans Serif;}}\r\n{\\*\\generator Riched20 10.0.22621}\\viewkind4\\uc1 \r\n\\par" +
     "d\\f0\\fs17\\par\r\n}\r\n";
 			this.textConcept.MainText = "";
 			this.textConcept.Name = "textConcept";
@@ -356,16 +358,19 @@ namespace OpenDental{
 			// 
 			// tableLayoutPanel3
 			// 
-			this.tableLayoutPanel3.ColumnCount = 3;
-			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
-			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
+			this.tableLayoutPanel3.ColumnCount = 4;
+			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
 			this.tableLayoutPanel3.Controls.Add(this.labelVersion, 2, 0);
 			this.tableLayoutPanel3.Controls.Add(this.comboProposedVersion, 2, 1);
 			this.tableLayoutPanel3.Controls.Add(this.labelPriority, 1, 0);
 			this.tableLayoutPanel3.Controls.Add(this.comboPriority, 1, 1);
 			this.tableLayoutPanel3.Controls.Add(this.comboCategory, 0, 1);
 			this.tableLayoutPanel3.Controls.Add(this.labelCategory, 0, 0);
+			this.tableLayoutPanel3.Controls.Add(this.labelJobTeam, 3, 0);
+			this.tableLayoutPanel3.Controls.Add(this.comboJobTeam, 3, 1);
 			this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 34);
 			this.tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -377,7 +382,7 @@ namespace OpenDental{
 			// 
 			// labelVersion
 			// 
-			this.labelVersion.Location = new System.Drawing.Point(367, 0);
+			this.labelVersion.Location = new System.Drawing.Point(275, 0);
 			this.labelVersion.Name = "labelVersion";
 			this.labelVersion.Size = new System.Drawing.Size(89, 16);
 			this.labelVersion.TabIndex = 323;
@@ -389,14 +394,14 @@ namespace OpenDental{
 			this.comboProposedVersion.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.comboProposedVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.comboProposedVersion.FormattingEnabled = true;
-			this.comboProposedVersion.Location = new System.Drawing.Point(367, 22);
+			this.comboProposedVersion.Location = new System.Drawing.Point(275, 22);
 			this.comboProposedVersion.Name = "comboProposedVersion";
-			this.comboProposedVersion.Size = new System.Drawing.Size(177, 21);
+			this.comboProposedVersion.Size = new System.Drawing.Size(130, 21);
 			this.comboProposedVersion.TabIndex = 322;
 			// 
 			// labelPriority
 			// 
-			this.labelPriority.Location = new System.Drawing.Point(185, 0);
+			this.labelPriority.Location = new System.Drawing.Point(139, 0);
 			this.labelPriority.Name = "labelPriority";
 			this.labelPriority.Size = new System.Drawing.Size(57, 16);
 			this.labelPriority.TabIndex = 309;
@@ -407,9 +412,9 @@ namespace OpenDental{
 			// 
 			this.comboPriority.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboPriority.Location = new System.Drawing.Point(185, 22);
+			this.comboPriority.Location = new System.Drawing.Point(139, 22);
 			this.comboPriority.Name = "comboPriority";
-			this.comboPriority.Size = new System.Drawing.Size(176, 21);
+			this.comboPriority.Size = new System.Drawing.Size(130, 21);
 			this.comboPriority.TabIndex = 311;
 			this.comboPriority.SelectionChangeCommitted += new System.EventHandler(this.comboPriority_SelectionChangeCommitted);
 			// 
@@ -421,7 +426,7 @@ namespace OpenDental{
 			this.comboCategory.FormattingEnabled = true;
 			this.comboCategory.Location = new System.Drawing.Point(3, 22);
 			this.comboCategory.Name = "comboCategory";
-			this.comboCategory.Size = new System.Drawing.Size(176, 21);
+			this.comboCategory.Size = new System.Drawing.Size(130, 21);
 			this.comboCategory.TabIndex = 312;
 			this.comboCategory.SelectionChangeCommitted += new System.EventHandler(this.comboCategory_SelectionChangeCommitted);
 			// 
@@ -433,6 +438,24 @@ namespace OpenDental{
 			this.labelCategory.TabIndex = 310;
 			this.labelCategory.Text = "Category";
 			this.labelCategory.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+			// 
+			// labelJobTeam
+			// 
+			this.labelJobTeam.Location = new System.Drawing.Point(411, 0);
+			this.labelJobTeam.Name = "labelJobTeam";
+			this.labelJobTeam.Size = new System.Drawing.Size(57, 16);
+			this.labelJobTeam.TabIndex = 324;
+			this.labelJobTeam.Text = "Team";
+			this.labelJobTeam.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+			// 
+			// comboJobTeam
+			// 
+			this.comboJobTeam.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.comboJobTeam.Location = new System.Drawing.Point(411, 22);
+			this.comboJobTeam.Name = "comboJobTeam";
+			this.comboJobTeam.Size = new System.Drawing.Size(133, 21);
+			this.comboJobTeam.TabIndex = 325;
 			// 
 			// FormJobAdd
 			// 
@@ -493,5 +516,7 @@ namespace OpenDental{
 		private UI.GridOD gridCustomers;
 		private System.Windows.Forms.ComboBox comboProposedVersion;
 		private System.Windows.Forms.Label labelVersion;
+		private System.Windows.Forms.Label labelJobTeam;
+		private UI.ComboBox comboJobTeam;
 	}
 }

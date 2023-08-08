@@ -2345,7 +2345,12 @@ namespace OpenDentBusiness {
 			//Move famfinurgnote to current patient:
 			Patient patient=patientOld.Copy();
 			patient.FamFinUrgNote=Fam.ListPats[0].FamFinUrgNote;
-			Patients.Update(patient,patientOld); //FamFinUrgNote is used in SecurityHash, Update will handle rehashing
+			Patients.Update(patient,patientOld);
+			//Clear FamFinUrgNote from old guarantor:
+			Patient patientGuarantor=Fam.ListPats[0];
+			Patient patientGuarantorOld=patientGuarantor.Copy();
+			patientGuarantor.FamFinUrgNote="";
+			Patients.Update(patientGuarantor,patientGuarantorOld);
 			//Move family financial note to current patient:
 			string command="SELECT FamFinancial FROM patientnote "
 				+"WHERE PatNum = "+POut.Long(patient.Guarantor);

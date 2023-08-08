@@ -127,6 +127,10 @@
 			this.menuGoToAccountMarketing = new System.Windows.Forms.MenuItem();
 			this.menuMain = new OpenDental.UI.MenuOD();
 			this.timerRefreshUI = new System.Windows.Forms.Timer(this.components);
+			this.labelNeedsEngineerTeam = new System.Windows.Forms.Label();
+			this.comboTeamFilterNeedsEngineer = new OpenDental.UI.ComboBox();
+			this.label12 = new System.Windows.Forms.Label();
+			this.comboTeamFilterNeedsExpert = new OpenDental.UI.ComboBox();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
@@ -680,6 +684,8 @@
 			// 
 			// tabNeedsEngineer
 			// 
+			this.tabNeedsEngineer.Controls.Add(this.labelNeedsEngineerTeam);
+			this.tabNeedsEngineer.Controls.Add(this.comboTeamFilterNeedsEngineer);
 			this.tabNeedsEngineer.Controls.Add(this.label7);
 			this.tabNeedsEngineer.Controls.Add(this.comboProposedVersionNeedsEngineer);
 			this.tabNeedsEngineer.Controls.Add(this.gridAvailableJobs);
@@ -702,9 +708,9 @@
 			// 
 			// comboProposedVersionNeedsEngineer
 			// 
-			this.comboProposedVersionNeedsEngineer.Location = new System.Drawing.Point(73, 7);
+			this.comboProposedVersionNeedsEngineer.Location = new System.Drawing.Point(76, 7);
 			this.comboProposedVersionNeedsEngineer.Name = "comboProposedVersionNeedsEngineer";
-			this.comboProposedVersionNeedsEngineer.Size = new System.Drawing.Size(117, 21);
+			this.comboProposedVersionNeedsEngineer.Size = new System.Drawing.Size(101, 21);
 			this.comboProposedVersionNeedsEngineer.TabIndex = 323;
 			this.comboProposedVersionNeedsEngineer.SelectionChangeCommitted += new System.EventHandler(this.comboProposedVersionNeedsEngineer_SelectionChangeCommitted);
 			// 
@@ -722,6 +728,8 @@
 			// 
 			// tabNeedsExpert
 			// 
+			this.tabNeedsExpert.Controls.Add(this.label12);
+			this.tabNeedsExpert.Controls.Add(this.comboTeamFilterNeedsExpert);
 			this.tabNeedsExpert.Controls.Add(this.label8);
 			this.tabNeedsExpert.Controls.Add(this.comboProposedVersionNeedsExpert);
 			this.tabNeedsExpert.Controls.Add(this.gridAvailableJobsExpert);
@@ -744,9 +752,9 @@
 			// 
 			// comboProposedVersionNeedsExpert
 			// 
-			this.comboProposedVersionNeedsExpert.Location = new System.Drawing.Point(73, 7);
+			this.comboProposedVersionNeedsExpert.Location = new System.Drawing.Point(76, 7);
 			this.comboProposedVersionNeedsExpert.Name = "comboProposedVersionNeedsExpert";
-			this.comboProposedVersionNeedsExpert.Size = new System.Drawing.Size(117, 21);
+			this.comboProposedVersionNeedsExpert.Size = new System.Drawing.Size(101, 21);
 			this.comboProposedVersionNeedsExpert.TabIndex = 325;
 			this.comboProposedVersionNeedsExpert.SelectionChangeCommitted += new System.EventHandler(this.comboProposedVersionNeedsExpert_SelectionChangeCommitted);
 			// 
@@ -1253,6 +1261,40 @@
 			this.timerRefreshUI.Interval = 1000;
 			this.timerRefreshUI.Tick += new System.EventHandler(this.timerRefreshUI_Tick);
 			// 
+			// labelNeedsEngineerTeam
+			// 
+			this.labelNeedsEngineerTeam.Location = new System.Drawing.Point(180, 8);
+			this.labelNeedsEngineerTeam.Name = "labelNeedsEngineerTeam";
+			this.labelNeedsEngineerTeam.Size = new System.Drawing.Size(45, 16);
+			this.labelNeedsEngineerTeam.TabIndex = 324;
+			this.labelNeedsEngineerTeam.Text = "Team";
+			this.labelNeedsEngineerTeam.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// comboTeamFilterNeedsEngineer
+			// 
+			this.comboTeamFilterNeedsEngineer.Location = new System.Drawing.Point(231, 7);
+			this.comboTeamFilterNeedsEngineer.Name = "comboTeamFilterNeedsEngineer";
+			this.comboTeamFilterNeedsEngineer.Size = new System.Drawing.Size(112, 21);
+			this.comboTeamFilterNeedsEngineer.TabIndex = 325;
+			this.comboTeamFilterNeedsEngineer.SelectionChangeCommitted += new System.EventHandler(this.comboTeamFilterNeedsEngineer_SelectionChangeCommitted);
+			// 
+			// label12
+			// 
+			this.label12.Location = new System.Drawing.Point(180, 8);
+			this.label12.Name = "label12";
+			this.label12.Size = new System.Drawing.Size(45, 16);
+			this.label12.TabIndex = 326;
+			this.label12.Text = "Team";
+			this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// comboTeamFilterNeedsExpert
+			// 
+			this.comboTeamFilterNeedsExpert.Location = new System.Drawing.Point(231, 7);
+			this.comboTeamFilterNeedsExpert.Name = "comboTeamFilterNeedsExpert";
+			this.comboTeamFilterNeedsExpert.Size = new System.Drawing.Size(112, 21);
+			this.comboTeamFilterNeedsExpert.TabIndex = 327;
+			this.comboTeamFilterNeedsExpert.SelectionChangeCommitted += new System.EventHandler(this.comboTeamFilterNeedsExpert_SelectionChangeCommitted);
+			// 
 			// FormJobManager
 			// 
 			this.ClientSize = new System.Drawing.Size(1516, 825);
@@ -1410,5 +1452,9 @@
 		private OpenDental.UI.CheckBox checkShowOnHoldSubmitted;
 		private UI.GridOD gridSubmittedJobs;
 		private OpenDental.UI.CheckBox checkNotifyShowHqOnly;
+		private System.Windows.Forms.Label labelNeedsEngineerTeam;
+		private UI.ComboBox comboTeamFilterNeedsEngineer;
+		private System.Windows.Forms.Label label12;
+		private UI.ComboBox comboTeamFilterNeedsExpert;
 	}
 }

@@ -1465,6 +1465,8 @@ namespace OpenDentBusiness {
 		OrthoBandingCodes,
 		///<summary>When turned on, ortho case information is shown in the ortho chart.</summary>
 		OrthoCaseInfoInOrthoChart,
+		///<summary>This gets turned on to track down bugs in the ortho chart. Saves info to OrthoChartLog table.</summary>
+		OrthoChartLoggingOn,
 		///<summary>Determines whether claims with ortho procedures on them will automatically be marked as Ortho claims.</summary>
 		OrthoClaimMarkAsOrtho,
 		///<summary>When true, ortho claims' "OrthoDate" will be automatically set to the patient's first ortho procedure when created.</summary>

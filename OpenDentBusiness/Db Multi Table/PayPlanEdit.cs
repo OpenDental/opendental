@@ -1932,6 +1932,9 @@ namespace OpenDentBusiness {
 			if(doCheckApr && !CompareDouble.IsZero(payPlanTerms.APR) && !isLocked){
 				sb.AppendLine(Lans.g("FormPayPlanDynamic","Payment plans with APR must be locked. Remove the APR or check the box for Full Lock."));
 			}
+			if(payPlanTerms.APR!=0 && (payPlanTerms.DateInterestStart.Year<1880 || payPlanTerms.DateInterestStart.Year>2100)) {
+				sb.AppendLine(Lans.g("FormPayPlanDynamic","Invalid interest start date."));
+			}
 			return sb.ToString();
 		}
 

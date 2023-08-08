@@ -168,6 +168,7 @@ namespace OpenDental {
 					sheet.InternalNote="";//because null not ok
 					sheet.ShowInTerminal=(byte)(Sheets.GetBiggestShowInTerminal(PatNum)+1);
 					Sheets.SaveNewSheet(sheet);//save each sheet.
+					Sheets.SaveParameters(sheet);
 					//Push new sheet to eClipboard.
 					if(isPatUsingEClipboard && sheetDef.HasMobileLayout) {
 						OpenDentBusiness.WebTypes.PushNotificationUtils.CI_AddSheet(sheet.PatNum,sheet.SheetNum);

@@ -197,6 +197,7 @@ namespace OpenDentBusiness{
 				if(listIns[i].FieldValue=="") {//do not insert new blank values. This happens when fields from today are not used.
 					continue;
 				}
+				OrthoChartLogs.LogDb("Sync orthochart.Insert(), FieldName:"+listIns[i].FieldName+", FieldValue:"+listIns[i].FieldValue,Environment.MachineName,listIns[i].OrthoChartRowNum,Security.CurUser.UserNum);
 				Insert(listIns[i]);
 			}
 			for(int i=0;i<listUpdNew.Count;i++) {
@@ -204,9 +205,11 @@ namespace OpenDentBusiness{
 					continue;//values equal. do not update/create log entry.
 				}
 				if(listUpdNew[i].FieldValue!="") {//Actually update rows that have a new value.
+					OrthoChartLogs.LogDb("Sync orthochart.Update(), FieldName:"+listUpdNew[i].FieldName+", FieldValue:"+listUpdNew[i].FieldValue,Environment.MachineName,listUpdNew[i].OrthoChartRowNum,Security.CurUser.UserNum);
 					Update(listUpdNew[i],listUpdDB[i]);
 				}
 				else {//instead of updating to a blank value, we delete the row from the DB.
+					OrthoChartLogs.LogDb("Sync orthochart.Add(), FieldName:"+listUpdNew[i].FieldName+", FieldValue:"+listUpdNew[i].FieldValue,Environment.MachineName,listUpdNew[i].OrthoChartRowNum,Security.CurUser.UserNum);
 					listDel.Add(listUpdDB[i]);
 				}
 				#region security log entry
@@ -294,7 +297,7 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Gets the key data string needed to create a hashstring to be used later when filling the signature.
-		///This is done seperate of the hashing so that new line replacements can be done when validating signatures before hashing.
+		///This is done separate from the hashing so that new line replacements can be done when validating signatures before hashing.
 		///The reason for the doUsePatName parameter is that we originally hashed ortho charts using the patient name. Later we switched to not use
 		///the patient name. For ortho charts that existed before we made the switch, we have to use the patient name when hashing.</summary>
 		public static string GetKeyDataForSignatureHash(Patient pat,List<OrthoChart> listOrthoCharts,DateTime dateService,bool doUsePatName=false) {

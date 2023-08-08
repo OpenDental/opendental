@@ -384,6 +384,24 @@ namespace OpenDentBusiness {
 			//End I44628
 		}//End of 23_2_1() method
 
+		private static void To23_2_5(){
+			string command="DROP TABLE IF EXISTS orthochartlog";
+			Db.NonQ(command);
+			command=@"CREATE TABLE orthochartlog (
+				OrthoChartLogNum bigint NOT NULL auto_increment PRIMARY KEY,
+				PatNum bigint NOT NULL,
+				ComputerName varchar(255) NOT NULL,
+				DateTimeLog datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+				DateTimeService datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+				UserNum bigint NOT NULL,
+				ProvNum bigint NOT NULL,
+				OrthoChartRowNum bigint NOT NULL,
+				LogData MEDIUMTEXT NOT NULL
+				) DEFAULT CHARSET=utf8";
+			Db.NonQ(command);
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('OrthoChartLoggingOn','0')";
+			Db.NonQ(command);
+		}//End of 23_2_5() method
 
 	}
 }

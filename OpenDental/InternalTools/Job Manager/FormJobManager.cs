@@ -36,6 +36,8 @@ namespace OpenDental {
 		private static Color _colorGridHeaderBack=Color.FromArgb(223,234,245);
 		///<summary>Filled with JobActions that will be collapsed when filling the Needs Action grid.</summary>
 		private List<JobAction> _listJobActionsCollapsed=new List<JobAction>();
+		///<summary>Filled with JobActions that will be collapsed when filling the Needs Teams.</summary>
+		private List<JobTeam> _listJobTeams;
 		///<summary>There is a timer monitoring this and refreshing the UI every second. The timer will set this to false once a refresh has taken place. Setting this to true will cause a refresh of the active tab and the job edit UI.</summary>
 		public static DateTime LocalLastRefreshDateTime=DateTime.MinValue;
 
@@ -105,8 +107,11 @@ namespace OpenDental {
 			comboUser.Tag=Security.CurUser;
 			FillMenu();
 			_listUsers=Userods.GetUsersForJobs();
+			_listJobTeams=JobTeams.GetDeepCopy();
 			FillPriorityList();
 			FillComboUser();
+			FillComboTeamFilter(comboTeamFilterNeedsEngineer);
+			FillComboTeamFilter(comboTeamFilterNeedsExpert);
 			#region Fill Proposed Version Combos
 			comboProposedVersionNeedsAction.Items.Add("All");
 			comboProposedVersionNeedsEngineer.Items.Add("All");
@@ -1082,7 +1087,7 @@ namespace OpenDental {
 				(int)JobCategory.NeedNoApproval,
 			};
 			//Sort jobs into category dictionary
-			Dictionary<JobCategory,List<Job>> dictCategories=JobManagerCore.ListJobsAll.GroupBy(x => x.Category).ToDictionary(y => y.Key,y => y.ToList());
+			Dictionary<JobCategory,List<Job>> dictCategories=GetJobsForTeam(comboTeamFilterNeedsEngineer.GetSelected<JobTeam>().JobTeamNum);
 			LayoutManager.Move(gridAvailableJobs,new Rectangle(0,33,tabControlNav.ClientSize.Width,tabControlNav.ClientSize.Height-33));
 			gridAvailableJobs.BeginUpdate();
 			gridAvailableJobs.Columns.Clear();
@@ -1149,7 +1154,7 @@ namespace OpenDental {
 				(int)JobCategory.NeedNoApproval,
 			};
 			//Sort jobs into category dictionary
-			Dictionary<JobCategory,List<Job>> dictCategories = JobManagerCore.ListJobsAll.GroupBy(x => x.Category).ToDictionary(y => y.Key,y => y.ToList());
+			Dictionary<JobCategory,List<Job>> dictCategories=GetJobsForTeam(comboTeamFilterNeedsExpert.GetSelected<JobTeam>().JobTeamNum);
 			LayoutManager.Move(gridAvailableJobsExpert,new Rectangle(0,33,tabControlNav.ClientSize.Width,tabControlNav.ClientSize.Height-33));
 			gridAvailableJobsExpert.BeginUpdate();
 			gridAvailableJobsExpert.Columns.Clear();
@@ -1850,6 +1855,18 @@ namespace OpenDental {
 				}
 			}
 		}
+
+		///<summary>Helper method. Returns the jobs per category for a given jobTeamNum.</summary>
+		private Dictionary<JobCategory,List<Job>> GetJobsForTeam(long jobTeamNum) {
+			List<Job> listJobs=JobManagerCore.ListJobsAll;
+			if(jobTeamNum>-1) {
+				listJobs=listJobs.FindAll(x => x.ListJobLinks.Exists(y => y.LinkType==JobLinkType.JobTeam && y.FKey==(jobTeamNum)));
+			}
+			else {
+				listJobs=listJobs.FindAll(x => !x.ListJobLinks.Exists(y => y.LinkType==JobLinkType.JobTeam));
+			}
+			return listJobs.GroupBy(x => x.Category).ToDictionary(y => y.Key,y => y.ToList());
+		}
 		#endregion
 
 		#region Job Quick Search
@@ -1970,6 +1987,14 @@ namespace OpenDental {
 		}
 
 		private void comboProposedVersionNeedsEngineer_SelectionChangeCommitted(object sender,EventArgs e) {
+			FillActiveTabGrid();
+		}
+
+		private void comboTeamFilterNeedsExpert_SelectionChangeCommitted(object sender,EventArgs e) {
+			FillActiveTabGrid();
+		}
+
+		private void comboTeamFilterNeedsEngineer_SelectionChangeCommitted(object sender,EventArgs e) {
 			FillActiveTabGrid();
 		}
 
@@ -2476,6 +2501,13 @@ namespace OpenDental {
 				comboUser.SelectedIndex=1;
 			}
 			this.Text="Job Manager"+(comboUser.Text=="" ? "" : " - "+comboUser.Text);
+		}
+
+		private void FillComboTeamFilter(UI.ComboBox comboTeam) {
+			comboTeam.Items.Clear();
+			comboTeam.Items.Add("None",new JobTeam(){JobTeamNum=-1});
+			comboTeam.Items.AddList(_listJobTeams, x => x.TeamName);
+			comboTeam.SelectedIndex=0;
 		}
 		#endregion
 

@@ -87,6 +87,10 @@ namespace OpenDental.InternalTools.Job_Manager {
 			Enum.GetNames(typeof(JobPhase)).ToList().ForEach(x => comboPhase.Items.Add(x));
 			Enum.GetNames(typeof(JobPatternReviewProject)).ToList().ForEach(x => comboProject.Items.Add(x));
 			Enum.GetNames(typeof(JobProposedVersion)).ToList().ForEach(x => comboProposedVersion.Items.Add(x));
+			List<JobTeam> listJobTeams=JobTeams.GetDeepCopy();
+			comboJobTeam.Items.Add("None", new JobTeam(){JobTeamNum=-1});
+			comboJobTeam.Items.AddList(listJobTeams,x => x.TeamName);
+			comboJobTeam.SelectedIndex=0;
 			_listCategoryNames=Enum.GetNames(typeof(JobCategory)).ToList();
 			_listCategoryNamesFiltered=_listCategoryNames.Where(x => !x.In(JobCategory.Query.ToString(),JobCategory.MarketingDesign.ToString())).ToList();
 			_listCategoryNamesFiltered.ForEach(x => comboCategory.Items.Add(x));
@@ -899,6 +903,13 @@ namespace OpenDental.InternalTools.Job_Manager {
 			comboPhase.SelectedIndex=(int)_jobCur.PhaseCur;
 			comboProposedVersion.SelectedIndex=(int)_jobCur.ProposedVersion;
 			comboProject.SelectedIndex=(int)_jobCur.PatternReviewProject;
+			JobLink jobLink=_jobCur.ListJobLinks.Find(x => x.LinkType==JobLinkType.JobTeam);
+			if(jobLink==null) {
+				comboJobTeam.SelectedIndex=0;
+			}
+			else {
+				comboJobTeam.SetSelectedKey<JobTeam>(jobLink.FKey,x => x.JobTeamNum);
+			}
 			textDateTested.Text=_jobCur.DateTimeTested.ToShortDateString();
 			checkNotTested.Checked=_jobCur.IsNotTested;
 			checkIsActive.Checked=job.ListJobActiveLinks.Exists(x => x.UserNum==Security.CurUser.UserNum && x.DateTimeEnd==DateTime.MinValue);
@@ -3160,6 +3171,14 @@ namespace OpenDental.InternalTools.Job_Manager {
 				_jobOld.ProposedVersion=jobMerge.ProposedVersion;
 				comboProposedVersion.SelectedIndex=(int)_jobCur.ProposedVersion;
 			}
+			//JOBTEAM
+			JobLink jobLink=_jobCur.ListJobLinks.Find(x => x.LinkType==JobLinkType.JobTeam);
+			if(jobLink==null) {
+				comboJobTeam.SelectedIndex=0;
+			}
+			else {
+				comboJobTeam.SetSelectedKey<JobTeam>(jobLink.FKey,x => x.JobTeamNum);
+			}
 			//APPROVAL STATUS
 			if(_jobCur.IsApprovalNeeded!=jobMerge.IsApprovalNeeded) {
 				_jobCur.IsApprovalNeeded=jobMerge.IsApprovalNeeded;
@@ -3468,6 +3487,36 @@ namespace OpenDental.InternalTools.Job_Manager {
 				Jobs.Update(job);
 				Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 			}
+		}
+
+		private void comboJobTeam_SelectionChangeCommitted(object sender,EventArgs e) {
+			if(_isLoading) {
+				return;
+			}
+			long fKey=comboJobTeam.GetSelected<JobTeam>().JobTeamNum;
+			JobLink jobLink=_jobCur.ListJobLinks.FirstOrDefault(x=>x.LinkType==JobLinkType.JobTeam);
+			//If it was switched from a team to none, remove jobLink.
+			if(fKey==-1) {
+				if(jobLink!=null) {
+					RemoveJobLink(JobLinkType.JobTeam,jobLink.FKey);
+				}
+				return;
+			}
+			//If it was switched from one team to another.
+			if(jobLink!=null) {
+				jobLink.FKey=fKey;
+				JobLinks.Update(jobLink);
+			}
+			else {//If it was switched from none to a team.
+				jobLink=new JobLink();
+				jobLink.FKey=fKey;
+				jobLink.JobNum=_jobCur.JobNum;
+				jobLink.LinkType=JobLinkType.JobTeam;
+				JobLinks.Insert(jobLink);
+				_jobCur.ListJobLinks.Add(jobLink);
+				_jobOld.ListJobLinks.Add(jobLink);
+			}
+			Signalods.SetInvalid(InvalidType.Jobs,KeyType.Job,_jobCur.JobNum);
 		}
 
 		private void comboPriorityTesting_SelectionChangeCommitted(object sender,EventArgs e) {

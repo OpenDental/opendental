@@ -270,6 +270,11 @@ namespace OpenDentBusiness{
 			if(ODBuild.IsWeb()) {
 				return false;
 			}
+			//For the majority of calling methods, they should treat the program as if replication is not being used. 
+			//For the few places in the program that cloud mode needs to act like replication is on, they need to check the IsCloudMode prior.
+			if(PrefC.IsCloudMode) {
+				return false;
+			}
 			//First ask OD
 			if(ReplicationServers.GetCount() > 0) {
 				return true;
