@@ -523,14 +523,13 @@ namespace OpenDental{
 		#region Colors
 		private static List<UserOdPref> _listUserOdPrefsToothChartColor;
 		
-		/// <summary> Checks to see if preferences are up to date. If they are, no database query is made. However if a change occurs for a user, the list needs to update itself.
+		/// <summary> Checks to see if preferences are up to date. If they are, no database query is made. However if a change occurs for a urser the list needs to update iteslf
 		private static List<UserOdPref> GetListUserOdPrefs() {
 			if(_listUserOdPrefsToothChartColor==null) {
 				RefreshToothColorsPrefs();
 			}
 			return _listUserOdPrefsToothChartColor;
 		}
-
 		///<summary>Checks ProvNums only if the logged in user has 'ToothChartUsesDiffColorByProv' user pref on</summary>
 		public bool DoesToothColorPrefApply(List<long> listCurProvNums,long procProvNum) {
 			//This first check is just being extra careful.

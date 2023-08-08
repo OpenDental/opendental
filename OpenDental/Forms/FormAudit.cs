@@ -52,6 +52,7 @@ namespace OpenDental{
 				.OrderByDescending(x => x==LogSources.None)//All and None should be the first items suggested to the user.
 				.ThenBy(x => x.GetDescription())
 				.ToList();
+			listLogSourcesAlphabetic.RemoveAll(x => x==LogSources.TextMessaging);//Does not make security log entries
 			comboLogSource.Items.AddListEnum(listLogSourcesAlphabetic);
 		}
 

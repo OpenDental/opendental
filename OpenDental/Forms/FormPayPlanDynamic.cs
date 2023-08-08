@@ -198,6 +198,11 @@ namespace OpenDental {
 				MsgBox.Show(Lan.g(this,"The selected charge hasn't been posted yet. Only posted charges can be edited."));
 				return;
 			}
+			List<PaySplit> listPaySplitsForPayPlanCharges=PaySplits.GetForPayPlanCharges(rowData.ListPayPlanChargeNums);
+			if(listPaySplitsForPayPlanCharges.Count!=0) {
+				MsgBox.Show(Lan.g(this,"Charges with payments attached cannot be edited."));
+				return;
+			}
 			//If listPayPlanCharges has more than one charge then we have to load this new form for the user to select a single charge to edit.
 			//listPayPlanCharges can have multiple charges, but they all have the same charge date. This is how they are grouped. 
 			if(listPayPlanCharges.Count>1) {
@@ -792,6 +797,11 @@ namespace OpenDental {
 				List<PayPlanCharge> listPayPlanCharges=_dynamicPaymentPlanData.ListPayPlanChargesDb.FindAll(x=>rowData.ListPayPlanChargeNums.Contains(x.PayPlanChargeNum));
 				if(listPayPlanCharges.Count==0) {
 					MsgBox.Show(Lan.g(this,"The selected charge hasn't been posted yet. Only posted charges can be edited."));
+					return;
+				}
+				List<PaySplit> listPaySplitsForPayPlanCharges=PaySplits.GetForPayPlanCharges(rowData.ListPayPlanChargeNums);
+				if(listPaySplitsForPayPlanCharges.Count!=0) {
+					MsgBox.Show(Lan.g(this,"Charges with payments attached cannot be edited."));
 					return;
 				}
 				//If listPayPlanCharges has more than one charge then we have to load this new form for the user to select a single charge to edit.

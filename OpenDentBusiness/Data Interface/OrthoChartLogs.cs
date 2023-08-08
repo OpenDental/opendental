@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -12,11 +12,7 @@ using OpenDentBusiness.Crud;
 namespace OpenDentBusiness{
 	///<summary></summary>
 	public class OrthoChartLogs{
-		public static void Log(string logData,string computerName,long patNum,long userNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),logData,computerName,patNum,userNum);
-				return;
-			}
+		public static void Log(string logData,string computerName,long patNum,long userNum){
 			if(!PrefC.GetBool(PrefName.OrthoChartLoggingOn)) {
 				return;
 			}
@@ -29,11 +25,7 @@ namespace OpenDentBusiness{
 			OrthoChartLogCrud.Insert(orthoChartLog);
 		}
 
-		public static void Log(string logData,string computerName,OrthoChartRow orthoChartRow,long userNum=0) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),logData,computerName,orthoChartRow,userNum);
-				return;
-			}
+		public static void Log(string logData,string computerName,OrthoChartRow orthoChartRow,long userNum=0){
 			if(!PrefC.GetBool(PrefName.OrthoChartLoggingOn)) {
 				return;
 			}
@@ -54,33 +46,7 @@ namespace OpenDentBusiness{
 			OrthoChartLogCrud.Insert(orthoChartLog);
 		}
 
-		public static void Log(string logData,List<OrthoChart> listOrthoCharts,long orthoChartRowNum,string computerName,long patNum,long userNum) {
-			if(!PrefC.GetBool(PrefName.OrthoChartLoggingOn)) {
-				return;
-			}
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),logData,listOrthoCharts,orthoChartRowNum,computerName,patNum,userNum);
-				return;
-			}
-			logData+=Environment.NewLine+"OrthoChart Values:"+Environment.NewLine;
-			foreach(OrthoChart orthoChart in listOrthoCharts) {
-				logData+=$"	OrthoChartNum:{orthoChart.OrthoChartNum} - {orthoChart.FieldName}:{orthoChart.FieldValue}{Environment.NewLine}";
-			}
-			OrthoChartLog orthoChartLog=new OrthoChartLog();
-			orthoChartLog.LogData=logData;
-			orthoChartLog.ComputerName=computerName;
-			orthoChartLog.PatNum=patNum;
-			orthoChartLog.UserNum=userNum;
-			orthoChartLog.OrthoChartRowNum=orthoChartRowNum;
-			orthoChartLog.DateTimeLog=DateTime.Now;
-			OrthoChartLogCrud.Insert(orthoChartLog);
-		}
-
-		public static void LogDb(string logData,string computerName,long orthoChartRowNum,long userNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),logData,computerName,orthoChartRowNum,userNum);
-				return;
-			}
+		public static void LogDb(string logData,string computerName,long orthoChartRowNum,long userNum){
 			if(!PrefC.GetBool(PrefName.OrthoChartLoggingOn)) {
 				return;
 			}
@@ -94,11 +60,7 @@ namespace OpenDentBusiness{
 			OrthoChartLogCrud.Insert(orthoChartLog);
 		}
 
-		public static void LogDb(string logData,string computerName,OrthoChartRow orthoChartRow,long userNum) {
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),logData,computerName,orthoChartRow,userNum);
-				return;
-			}
+		public static void LogDb(string logData,string computerName,OrthoChartRow orthoChartRow,long userNum){
 			if(!PrefC.GetBool(PrefName.OrthoChartLoggingOn)) {
 				return;
 			}

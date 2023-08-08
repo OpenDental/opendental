@@ -800,9 +800,41 @@ namespace OpenDental{
 				return;
 			}
 			List<long> listApptNumsSelected=gridProc.SelectedTags<Procedure>().Select(x => x.AptNum).ToList();
-			if(listApptNumsSelected.Exists(x => x!=_appointment.AptNum) && listApptNumsSelected.Any(x => x>0)) {
+			if(listApptNumsSelected.Any(x => x!=_appointment.AptNum && x!=0)) {
 				MsgBox.Show("One or more selected procedures are attached to another appointment.");
 				return;
+			}
+			//If this appointment is of a certain AppointmentType, check for required procedure codes that are going to be deleted.
+			if(comboApptType.SelectedIndex>0) {
+				AppointmentType appointmentType=_listAppointmentTypes[comboApptType.SelectedIndex-1];
+				if(appointmentType.RequiredProcCodesNeeded!=EnumRequiredProcCodesNeeded.None) {
+					List<string> listProcCodesRequiredForAppointmentType=appointmentType.CodeStrRequired.Split(",",StringSplitOptions.RemoveEmptyEntries).ToList();//Includes duplicates.
+					List<Procedure> listProceduresSelected=gridProc.SelectedTags<Procedure>();
+					List<Procedure> listProceduresGrid=gridProc.GetTags<Procedure>();
+					listProceduresGrid.RemoveAll(x => x.AptNum!=_appointment.AptNum && x.AptNum!=0);//Remove procs on other appts
+					for(int i=0;i<listProceduresSelected.Count;i++) {//Remove all procedures attempting to be deleted
+						if(listProceduresGrid.Any(x => x.ProcNum==listProceduresSelected[i].ProcNum)) {
+							listProceduresGrid.Remove(listProceduresSelected[i]);
+						}
+					}
+					List<long> listCodeNumsRemaning=listProceduresGrid.Select(x => x.CodeNum).ToList();
+					List<ProcedureCode> listProcCodesRemaining=new List<ProcedureCode>();
+					for(int j=0;j<listCodeNumsRemaning.Count;j++) {
+						ProcedureCode procedureCode=ProcedureCodes.GetFirstOrDefault(x => x.CodeNum==listCodeNumsRemaning[j]);
+						listProcCodesRemaining.Add(procedureCode);
+					}
+					//All procs in grid, minus for other appts, minus selected is simulated result. Verify simulated result meets appointment type requirements and if not then show message.
+					for(int i=0;i<listProcCodesRequiredForAppointmentType.Count;i++) {
+						if(!listProcCodesRemaining.Any(x => x.ProcCode==listProcCodesRequiredForAppointmentType[i])) {
+							//The '[Name]' Appointment Type requires [at least one | all] of the following procedures to be attached: proc1, proc2.
+							string allOrSome=(appointmentType.RequiredProcCodesNeeded==EnumRequiredProcCodesNeeded.All)?"all":"at least one";
+							MsgBox.Show(Lan.g(this,"Appointment Type")+" \""+appointmentType.AppointmentTypeName+"\" "+Lan.g(this,"requires "+allOrSome+" of the following procedures:")
+								+"\r\n"+String.Join(", ",listProcCodesRequiredForAppointmentType)
+								+"\r\n\n"+Lan.g(this,"To delete these procedures change the Appointment Type to None."));
+							return;
+						}
+					}
+				}
 			}
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Permanently delete all selected procedure(s)?")) {//deleteMsg can only be of two strings, okay to use in MsgBox.Show()
 				return;

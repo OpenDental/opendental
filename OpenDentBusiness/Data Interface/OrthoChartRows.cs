@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -136,10 +137,12 @@ namespace OpenDentBusiness {
 				if(listIns[i].UserNum==0) {
 					listIns[i].UserNum=Security.CurUser.UserNum;
 				}
+				OrthoChartLogs.LogDb("Sync orthochartrow.Insert()",Environment.MachineName,listIns[i],Security.CurUser.UserNum);
 				Insert(listIns[i]);
 			}
 			for(int i=0;i<listUpdNew.Count;i++) {
 				if(Crud.OrthoChartRowCrud.Update(listUpdNew[i],listUpdDB[i])) {
+					OrthoChartLogs.LogDb("Sync orthochartrow.Update()",Environment.MachineName,listUpdNew[i],Security.CurUser.UserNum);
 					rowsUpdatedCount++;
 					string logText="";
 					//Do not log the Base64 information into the audit trail if this is a signature column, log some short descriptive text instead.

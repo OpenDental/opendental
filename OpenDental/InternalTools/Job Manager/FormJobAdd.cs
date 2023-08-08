@@ -45,6 +45,10 @@ namespace OpenDental {
 			_listPriorities=Defs.GetDefsForCategory(DefCat.JobPriorities,true).OrderBy(x => x.ItemOrder).ToList();
 			_listPriorities.ForEach(x=>comboPriority.Items.Add(x.ItemName,x));
 			comboPriority.SelectedIndex=_listPriorities.Select(x => x.DefNum).ToList().IndexOf(_jobNew.Priority);
+			List<JobTeam> listJobTeams=JobTeams.GetDeepCopy();
+			comboJobTeam.Items.Add("None", new JobTeam(){JobTeamNum=-1});
+			comboJobTeam.Items.AddList(listJobTeams,x => x.TeamName);
+			comboJobTeam.SelectedIndex=0;
 			Enum.GetNames(typeof(JobProposedVersion)).ToList().ForEach(x => comboProposedVersion.Items.Add(x));
 			comboProposedVersion.SelectedIndex=(int)JobProposedVersion.Current;
 		}
@@ -432,6 +436,13 @@ namespace OpenDental {
 		private void butOK_Click(object sender,EventArgs e) {
 			if(!ValidateJob()) {
 				return;
+			}
+			long jobTeamNum=comboJobTeam.GetSelected<JobTeam>().JobTeamNum;
+			if(jobTeamNum>-1){
+				JobLink jobLink=new JobLink();
+				jobLink.FKey=jobTeamNum;
+				jobLink.LinkType=JobLinkType.JobTeam;
+				_listJobLinks.Add(jobLink);
 			}
 			JobProposedVersion proposedVersion=(JobProposedVersion)comboProposedVersion.SelectedIndex;
 			_jobNew.ProposedVersion=proposedVersion;

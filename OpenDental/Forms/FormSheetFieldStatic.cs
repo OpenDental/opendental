@@ -145,7 +145,7 @@ namespace OpenDental {
 			if(checkFontIsBold.Checked) {
 				fontStyle=FontStyle.Bold;
 			}
-			using Font font=new Font(comboFontName.Text,fontSize,fontStyle);
+			using Font font=new Font(comboFontName.GetSelected<string>(),fontSize,fontStyle);
 			using Graphics g=this.CreateGraphics();
 			g.TextRenderingHint=TextRenderingHint.ClearTypeGridFit;
 			SizeF sizeF=g.MeasureString(textFieldValue.Text,font);//for some reason, this is not off by the MS amount
@@ -176,6 +176,51 @@ namespace OpenDental {
 			colorDialog1.Color=butColor.BackColor;
 			colorDialog1.ShowDialog();
 			butColor.BackColor=colorDialog1.Color;
+		}
+
+		private void butCalcWidth_Click(object sender,EventArgs e) {
+			if(!textHeight.IsValid()){
+				MsgBox.Show(this,"Please enter a valid height.");
+				return;
+			}
+			FontStyle fontStyle=FontStyle.Regular;
+			if (checkFontIsBold.Checked) {
+				fontStyle=FontStyle.Bold;
+			}
+			StringFormat stringFormat=new StringFormat(StringFormatFlags.NoClip);
+			stringFormat.Trimming = StringTrimming.None;
+			int heightEntered=PIn.Int(textHeight.Text);
+			using Graphics g=CreateGraphics();
+			using Font font=new Font(comboFontName.GetSelected<string>(),float.Parse(textFontSize.Text),fontStyle);
+			SizeF sizeFtext=g.MeasureString(textFieldValue.Text,font);
+			//Example: heightEntered=50, fontHeight=10, sizeFtext.Width=200,
+			//so perfectWidth=200/(50/10)=40
+			float perfectWidth=sizeFtext.Width/(float)Math.Ceiling(heightEntered/font.GetHeight());
+			// there is no precise way to calculate width based on a given height while still respecting word/line breaks,
+			// so we use the 'pixel perfect' math and give an extra 10% buffer (*1.1).
+			SizeF sizeFProposed = new SizeF((float)Math.Ceiling(perfectWidth*1.1f),heightEntered);
+			SizeF sizeFFieldNew=g.MeasureString(textFieldValue.Text,font,sizeFProposed,stringFormat);
+			textWidth.Text=Math.Ceiling(sizeFFieldNew.Width).ToString();
+			stringFormat?.Dispose();
+		}
+
+		private void butCalcHeight_Click(object sender,EventArgs e) {
+			if(!textWidth.IsValid()){
+				MsgBox.Show(this,"Please enter a valid width.");
+				return;
+			}
+			FontStyle fontStyle=FontStyle.Regular;
+			if (checkFontIsBold.Checked) {
+				fontStyle=FontStyle.Bold;
+			}
+			StringFormat stringFormat=new StringFormat(StringFormatFlags.NoClip);
+			stringFormat.Trimming = StringTrimming.None;
+			SizeF sizeFProposed=new SizeF(PIn.Int(textWidth.Text),int.MaxValue);
+			using Graphics g=CreateGraphics();
+			using Font font=new Font(comboFontName.GetSelected<string>(),float.Parse(textFontSize.Text),fontStyle);
+			SizeF sizeFFieldNew=g.MeasureString(textFieldValue.Text,font,sizeFProposed,stringFormat);
+			textHeight.Text=Math.Ceiling(sizeFFieldNew.Height).ToString();
+			stringFormat?.Dispose();
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {

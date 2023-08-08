@@ -35,6 +35,7 @@ namespace OpenDental {
 			textOrthoAutoProc.Text=ProcedureCodes.GetStringProcCode(_orthoAutoProcCodeNum);
 			checkConsolidateInsPayment.Checked=PrefC.GetBool(PrefName.OrthoInsPayConsolidated);
 			checkDebondOverridesMonthsTreat.Checked=PrefC.GetBool(PrefName.OrthoDebondProcCompletedSetsMonthsTreat);
+			checkOrthoChartLoggingOn.Checked=PrefC.GetBool(PrefName.OrthoChartLoggingOn);
 			string strListOrthoNums = PrefC.GetString(PrefName.OrthoPlacementProcsList);
 			if(strListOrthoNums!="") {
 				_listOrthoPlacementCodeNums.AddRange(strListOrthoNums.Split(new char[] { ',' }).ToList().Select(x => PIn.Long(x)));
@@ -118,6 +119,7 @@ namespace OpenDental {
 			_hasChanges|=Prefs.UpdateBool(PrefName.OrthoCaseInfoInOrthoChart,checkOrthoFinancialInfoInChart.Checked);
 			_hasChanges|=Prefs.UpdateBool(PrefName.OrthoClaimMarkAsOrtho,checkOrthoClaimMarkAsOrtho.Checked);
 			_hasChanges|=Prefs.UpdateBool(PrefName.OrthoClaimUseDatePlacement,checkOrthoClaimUseDatePlacement.Checked);
+			_hasChanges|=Prefs.UpdateBool(PrefName.OrthoChartLoggingOn,checkOrthoChartLoggingOn.Checked);
 			_hasChanges|=Prefs.UpdateByte(PrefName.OrthoDefaultMonthsTreat,PIn.Byte(textOrthoMonthsTreat.Text));
 			_hasChanges|=Prefs.UpdateBool(PrefName.OrthoInsPayConsolidated,checkConsolidateInsPayment.Checked);
 			_hasChanges|=Prefs.UpdateBool(PrefName.OrthoDebondProcCompletedSetsMonthsTreat,checkDebondOverridesMonthsTreat.Checked);

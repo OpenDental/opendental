@@ -197,7 +197,7 @@ namespace OpenDental.UI{
 				case OpenDentBusiness.PerioSequenceType.Probing:
 					perioSequenceType3D=Sparks3D.PerioSequenceType.Probing;
 					break;
-				case OpenDentBusiness.PerioSequenceType.BleedSupPlaqCalc:
+				case OpenDentBusiness.PerioSequenceType.Bleeding:
 					perioSequenceType3D=Sparks3D.PerioSequenceType.Bleeding;
 					break;
 				case OpenDentBusiness.PerioSequenceType.CAL:

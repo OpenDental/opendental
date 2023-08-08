@@ -239,6 +239,7 @@ namespace OpenDentBusiness{
 			newSheet.ClinicNum=webFormsSheet.ClinicNum;
 			newSheet.SheetDefNum=webFormsSheet.SheetDefNum;
 			newSheet.HasMobileLayout=webFormsSheet.HasMobileLayout;
+			newSheet.RevID=webFormsSheet.RevID;
 			//loop through each variable in a single sheetfield
 			foreach(WebForms_SheetField field in webFormsSheet.SheetFields) {
 				SheetField sheetfieldCopy=new SheetField();

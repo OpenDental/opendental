@@ -7198,8 +7198,6 @@
     <Compile Include="UI\ODPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\Sparks3DInterface.cs" />
-    <Compile Include="UI\ToothChartRelay.cs" />
     <Compile Include="UI\VideoCamera\Camera.cs" />
     <Compile Include="UI\VideoCamera\CameraFrameSource.cs" />
     <Compile Include="UI\VideoCamera\CameraMethods.cs" />

@@ -38,6 +38,8 @@ namespace OpenDentBusiness.WebTypes.WebForms {
 		public long SheetDefNum;
 		///<summary>FK to customers.registrationkey.RegistrationKeyNum</summary>
 		public long RegistrationKeyNum;
+		///<summary>Revision ID. Used to determine in conjunction with PrefillMode for eClipboard to determine whether to show a patient a new form or have them update their last filled out form. Must match up with SheetDef RevID to show a previously filled out form.</summary>
+		public int RevID;
 
 		///<Summary></Summary>
 		[CrudColumn(IsNotDbColumn=true)]

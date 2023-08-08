@@ -1125,10 +1125,10 @@ namespace OpenDentBusiness{
 			TimeSpan oneOT;
 			TimeSpan daySpan=TimeSpan.Zero;//used for daily totals.
 			TimeSpan weekSpan=TimeSpan.Zero;//used for weekly totals.
+			TimeSpan timeSpanPreviousHours=TimeSpan.Zero;
 			if(mergedAL.Count>0) {
-				weekSpan=ClockEvents.GetWeekTotal(EmployeeCur.EmployeeNum,GetDateForRowHelper(mergedAL[0]));
+				timeSpanPreviousHours=ClockEvents.GetWeekTotal(EmployeeCur.EmployeeNum,GetDateForRowHelper(mergedAL[0]));
 			}
-			bool prevHours=weekSpan!=TimeSpan.Zero;
 			TimeSpan periodSpan=TimeSpan.Zero;//used to add up totals for entire page. (Not used. Left over from when this code existed in the UI.)
 			TimeSpan otspan=TimeSpan.Zero;//overtime for the entire period
 			Calendar cal=CultureInfo.CurrentCulture.Calendar;
@@ -1144,9 +1144,10 @@ namespace OpenDentBusiness{
 				//clock event row---------------------------------------------------------------------------------------------
 				if(type==typeof(ClockEvent)) {
 					clock=(ClockEvent)mergedAL[i];
-					if(prevHours) {//Add in previous pay period's hours for this week if the week started in the middle of last payperiod.  Only need to do it once.
-						listWeek.Add(Tuple.Create(clock.ClinicNum,weekSpan));
-						prevHours=false;
+					if(timeSpanPreviousHours!=TimeSpan.Zero) {//Add in previous pay period's hours for this week if the week started in the middle of last payperiod.  Only need to do it once.
+						listWeek.Add(Tuple.Create(clock.ClinicNum,timeSpanPreviousHours));
+						weekSpan+=timeSpanPreviousHours;
+						timeSpanPreviousHours=TimeSpan.Zero;
 					}
 					curDate=clock.TimeDisplayed1.Date;
 					if(clock.TimeDisplayed2.Year<1880) {

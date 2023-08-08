@@ -37,6 +37,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Sparks3D, Version=23.2.4.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Required dlls\Sparks3D\Sparks3D.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -240,6 +244,8 @@
     <Compile Include="UI\Controls\Supplemental\WindowComboPicker.xaml.cs">
       <DependentUpon>WindowComboPicker.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\ToothChart\Sparks3DInterface.cs" />
+    <Compile Include="UI\ToothChart\ToothChartRelay.cs" />
     <Page Include="Frms\FrmAccountingLock.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -658,6 +664,10 @@
     <ProjectReference Include="..\OpenDentBusiness\OpenDentBusiness.csproj">
       <Project>{3d0fc76e-803c-4de2-bdb1-47d63a4e2357}</Project>
       <Name>OpenDentBusiness</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SparksToothChart\SparksToothChart.csproj">
+      <Project>{033b77f4-2e98-49a7-901f-5f388dedf83e}</Project>
+      <Name>SparksToothChart</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

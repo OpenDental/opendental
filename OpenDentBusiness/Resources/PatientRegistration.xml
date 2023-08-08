@@ -3442,7 +3442,7 @@
 			<IsLocked>false</IsLocked>
 			<TabOrderMobile>12</TabOrderMobile>
 			<UiLabelMobile>Position:</UiLabelMobile>
-			<UiLabelMobileRadioButton>Yes</UiLabelMobileRadioButton>
+			<UiLabelMobileRadioButton/>
 			<LayoutMode>Default</LayoutMode>
 			<Language/>
 			<CanElectronicallySign>false</CanElectronicallySign>
@@ -3475,7 +3475,7 @@
 			<IsLocked>false</IsLocked>
 			<TabOrderMobile>13</TabOrderMobile>
 			<UiLabelMobile>Position:</UiLabelMobile>
-			<UiLabelMobileRadioButton>No</UiLabelMobileRadioButton>
+			<UiLabelMobileRadioButton/>
 			<LayoutMode>Default</LayoutMode>
 			<Language/>
 			<CanElectronicallySign>false</CanElectronicallySign>

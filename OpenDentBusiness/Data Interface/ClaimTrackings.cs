@@ -65,6 +65,20 @@ namespace OpenDentBusiness{
 			return Crud.ClaimTrackingCrud.SelectMany(command);
 		}
 
+		///<summary>Gets a list of ClaimTrackings from the database. Used in ODAPI. Please contact API team if modifying.</summary>
+		public static List<ClaimTracking> GetClaimTrackingsForApi(long claimNum,int limit,int offset) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ClaimTracking>>(MethodBase.GetCurrentMethod(),claimNum,limit,offset);
+			}
+			string command="SELECT * FROM claimtracking ";
+			if(claimNum>0){
+				command+="WHERE ClaimNum="+POut.Long(claimNum)+" ";
+			}
+			command+="ORDER BY DateTimeEntry DESC "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.ClaimTrackingCrud.SelectMany(command);
+		}
+
 		#endregion
 		
 		#region Insert

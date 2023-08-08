@@ -60,12 +60,12 @@ namespace OpenDental {
 					FkeyType=UserOdFkeyType.ToothChartUsesDiffColorByProv
 				});
 				doSetInvalid=true;
-//ToothChartRelay.RefreshToothColorsPrefs();
+				ToothChartRelay.RefreshToothColorsPrefs();
 			}
 			if(checkToothChartUsesDiffColorByProv.Checked==false && _userOdPrefDiffChartColorForCurProv!=null) {
 				UserOdPrefs.Delete(_userOdPrefDiffChartColorForCurProv.UserOdPrefNum);
 				doSetInvalid=true;
-//ToothChartRelay.RefreshToothColorsPrefs();
+				ToothChartRelay.RefreshToothColorsPrefs();
 			}
 			if(doSetInvalid) {
 				DataValid.SetInvalid(InvalidType.UserOdPrefs);
