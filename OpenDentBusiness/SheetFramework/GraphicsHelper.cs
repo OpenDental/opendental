@@ -224,6 +224,12 @@ namespace OpenDentBusiness {
 				//pixels:
 				//TextRenderer.MeasureText(str.Substring(i),font, //no overload for measuring line by line
 				g.MeasureString(str.Substring(i),font,sizeLayout,stringFormat,out chars,out int _lines);
+				//Newline characters \r\n, \r, and \n will not be recognized in Unicode PDF and will create rectangles on the screen, so since g.MeasureString has
+				//already calculated the next new line that will appear on the screen, we can remove the unneeded newline characters from the current substring.
+				string substring=str.Substring(i,chars);
+				substring=substring.Replace("\r\n","");
+				substring=substring.Replace("\r","");
+				substring=substring.Replace("\n","");
 				//use points here:
 				double x=PixelsToPoints(rectangleF.X);
 				if(horizontalAlignment==HorizontalAlignment.Right){
@@ -233,7 +239,7 @@ namespace OpenDentBusiness {
 					x=PixelsToPoints(rectangleF.X+rectangleF.Width/2f);
 				}
 				double y=PixelsToPoints(rectangleF.Y+pixelsPerLine*lineIdx);
-				xg.DrawString(str.Substring(i,chars),xfont,xbrush,x,y,xStringFormat);
+				xg.DrawString(substring,xfont,xbrush,x,y,xStringFormat);
 				lineIdx+=1;
 			}
 			g.Dispose();

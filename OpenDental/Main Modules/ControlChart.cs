@@ -8625,11 +8625,6 @@ namespace OpenDental {
 					return;
 				}
 				if(isDoseSpotAccessAllowed) {
-					//Enforce Latest IE Version Available.
-					if(MiscUtils.TryUpdateIeEmulation()) {
-						MsgBox.Show(this,"Browser emulation version updated.\r\nYou must restart this application before using eRx.");
-						return;
-					}
 					if(ODBuild.IsWeb()) {
 						//If ODCloud, open a new browser tab instead of using FormErx because the WebView2 control does not work with VirtualUI.
 						Process.Start(Erx.GetRxDoseSpotUrl(queryString));
@@ -8757,11 +8752,6 @@ namespace OpenDental {
 //			IE.Navigate(newCropUrl,null,null,PostDataBytes,additionalHeaders);
 			#endregion Launch eRx in external browser window.
 			try {
-				//Enforce Latest IE Version Available.
-				if(MiscUtils.TryUpdateIeEmulation()) {
-					MsgBox.Show(this,"Browser emulation version updated.\r\nYou must restart this application before using eRx.");
-					return;
-				}
 				FormErx formErx=new FormErx();
 				formErx.PatientCur=Pd.Patient;
 				formErx.ByteArray=byteArrayPostDataBytes;

@@ -30,6 +30,9 @@ namespace OpenDental {
 			LayoutMenu();
 			FillListExamTypes();
 			FillGrid();
+			//Push notifications don't currently work with ODTouch, so hide these for now
+			butSendToDevice.Visible=false;
+			label1.Visible=false;
 			if(!LimitedBetaFeatures.IsAllowed(EServiceFeatureInfoEnum.ODTouch,Clinics.ClinicNum)) {
 				//When this is no longer in limited beta, remove this code and if statement
 				groupEClipboard.Visible=false;

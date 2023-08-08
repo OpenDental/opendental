@@ -354,11 +354,12 @@ If you have questions, call <a href=""tel:[OfficePhone]"">[OfficePhone]</a>.",
 						TemplateSMS=@"[NameF] has an appointment coming up. Please fill out this form prior to the appointment [NewPatWebFormURL] ",//default message
 						TemplateEmail=@"[NameF] has an appointment coming up. Please fill out this form prior to the appointment <a href=""[NewPatWebFormURL]"">[NewPatWebFormURL]</a> ",
 						TemplateEmailSubject="New Patient Thank You",//default subject
-						TemplateSMSAggShared="Thank you for scheduling your appointments. \nPlease fill out these forms for each patient.",
+						TemplateSMSAggShared="Thank you for scheduling your appointments. \nPlease fill out these forms for each patient: [Appts]",
 						TemplateSMSAggPerAppt=@"[NameF] <a href=""[NewPatWebFormURL]"">[NewPatWebFormURL]</a>",
 						TemplateEmailSubjAggShared="New Patient, Thank you",
 						TemplateEmailAggShared=@"Thank you for scheduling your appointments. 
-Please fill out these forms for each patient.",
+Please fill out these forms for each patient:
+[Appts]",
 						TemplateEmailAggPerAppt=@"[NameF] <a href=""[NewPatWebFormURL]"">[NewPatWebFormURL]</a>",
 						//SendOrder="0,1,2" //part of ctor
 						DoNotSendWithin=new TimeSpan(2,0,0),//Do not send within 2 hours of appointment.AptDateTime.

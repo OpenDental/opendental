@@ -1003,7 +1003,6 @@ namespace OpenDentBusiness {
 					docc.Description=Lans.g(nameof(Statements),"Statement");
 				}
 			}
-			docc.DateCreated=StmtCur.DateSent;
 			StmtCur.DocNum=docc.DocNum;//this signals the calling class that the pdf was created successfully.
 			Statements.AttachDoc(StmtCur.StatementNum,docc);
 			return tempPath;

@@ -240,14 +240,8 @@ namespace OpenDental {
 			if(!PrefC.GetBool(PrefName.ApptConfirmAutoSignedUp)) {
 				listErrors.Add(Lan.g(this,$"Automated New Patient Thank-Yous cannot be used when not signed up for eConfirmations."));
 			}
-			if(!_templateEmailAggShared.Contains(ApptNewPatThankYouSents.NEW_PAT_WEB_FORM_TAG)) {
-				listErrors.Add(Lan.g(this,"Aggregated Email Template must contain ")+ApptNewPatThankYouSents.NEW_PAT_WEB_FORM_TAG);
-			}
 			if(!textEmailAggPerAppt.Text.Contains(ApptNewPatThankYouSents.NEW_PAT_WEB_FORM_TAG)) {
 				listErrors.Add(Lan.g(this,"Aggregated Email Template Per Appointment must contain ")+ApptNewPatThankYouSents.NEW_PAT_WEB_FORM_TAG);
-			}
-			if(!textSMSAggShared.Text.Contains(ApptNewPatThankYouSents.NEW_PAT_WEB_FORM_TAG)) {
-				listErrors.Add(Lan.g(this,"Aggregated SMS Template must contain ")+ApptNewPatThankYouSents.NEW_PAT_WEB_FORM_TAG);
 			}
 			if(!textSMSAggPerAppt.Text.Contains(ApptNewPatThankYouSents.NEW_PAT_WEB_FORM_TAG)) {
 				listErrors.Add(Lan.g(this,"Aggregated SMS Template Per Appointment must contain ")+ApptNewPatThankYouSents.NEW_PAT_WEB_FORM_TAG);

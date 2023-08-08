@@ -1798,23 +1798,33 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary>Sets the UI textNotes.Text to the default proc note if any. Also checks PrefName.ProcPromptForAutoNote and remots auto notes if needed.</summary>
+		///<summary>Sets the UI textNotes.Text to the default proc note if any. Also checks PrefName.ProcPromptForAutoNote and removes auto notes if needed.</summary>
 		private void ProcNoteUiHelper() {
 			string procNoteDefault="";
-			if(_isQuickAdd) {//Quick Procs should insert both TP Default Note and C Default Note.
+			if(_isQuickAdd) {
+				//Quick Procs should insert TP Default Note and the C Default Note (conditionally).
 				procNoteDefault=ProcCodeNotes.GetNote(comboProv.GetSelectedProvNum(),_procedure.CodeNum,ProcStat.TP);
-				if(!string.IsNullOrEmpty(procNoteDefault)) {
-					procNoteDefault+="\r\n";
+				//Only add the completed note if the procedure status is C.
+				if(_procedure.ProcStatus==ProcStat.C) {
+					string procNoteC=ProcCodeNotes.GetNote(comboProv.GetSelectedProvNum(),_procedure.CodeNum,ProcStat.C);
+					//Add a new line if a TP Default Note is defined.
+					if(!string.IsNullOrEmpty(procNoteDefault)) {
+						procNoteDefault+="\r\n";
+					}
+					procNoteDefault+=procNoteC;
 				}
 			}
-			if(_procedureOld.ProcStatus!=ProcStat.C && _procedure.ProcStatus==ProcStat.C) {//Only append the default note if the procedure changed status to Completed
-				procNoteDefault+=ProcCodeNotes.GetNote(comboProv.GetSelectedProvNum(),_procedure.CodeNum,ProcStat.C);
-				if(textNotes.Text!="" && procNoteDefault!="") { //check to see if a default note is defined.
-					textNotes.Text+="\r\n"; //add a new line if there was already a ProcNote on the procedure.
+			//Only append the C Default Note if the procedure changed status to Completed
+			else if(_procedureOld.ProcStatus!=ProcStat.C && _procedure.ProcStatus==ProcStat.C) {
+				procNoteDefault=ProcCodeNotes.GetNote(comboProv.GetSelectedProvNum(),_procedure.CodeNum,ProcStat.C);
+			}
+			//Check to see if any Default Note was utilized.
+			if(!string.IsNullOrEmpty(procNoteDefault)) {
+				//Add a new line if there was already a ProcNote on the procedure.
+				if(!string.IsNullOrEmpty(textNotes.Text)) {
+					textNotes.Text+="\r\n";
 				}
-				if(!string.IsNullOrEmpty(procNoteDefault)) {
-					textNotes.Text+=procNoteDefault;
-				}
+				textNotes.Text+=procNoteDefault;
 			}
 			if(!PrefC.GetBool(PrefName.ProcPromptForAutoNote)) {
 				//Users do not want to be prompted for auto notes, so remove them all from the procedure note.

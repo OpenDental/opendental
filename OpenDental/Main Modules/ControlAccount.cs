@@ -62,6 +62,10 @@ namespace OpenDental {
 		private decimal _patientPortionBalanceTotal;
 		private string _famUrgFinNoteOnLoad;
 		private string _famFinNoteOnLoad;
+		///<summary>Used to track status of split panel visibility to avoid flicker from changing status too often.</summary>
+		private bool _showGridPayPlan;
+		///<summary>Used to track status of split panel visibility to avoid flicker from changing status too often.</summary>
+		private bool _showGridRepeating;
 		#endregion Fields - Private	
 	
 		#region Constructor
@@ -3430,10 +3434,7 @@ namespace OpenDental {
 
 		private void FillPaymentPlans() {
 			_patientPortionBalanceTotal=0;
-			//Uncollapse the first panel just in case. If this is left collapsed, setting visible properties on controls within it will have no effect
-			splitContainerParent.Panel1Collapsed=false;
-			gridPayPlan.Visible=false;
-			splitContainerRepChargesPP.Panel2Collapsed=true;
+			_showGridPayPlan=false;
 			if(_patient==null) {
 				return;
 			}
@@ -3460,8 +3461,7 @@ namespace OpenDental {
 					return;//no need to do anything else.
 				}
 			}
-			splitContainerRepChargesPP.Panel2Collapsed=false;
-			gridPayPlan.Visible=true;
+			_showGridPayPlan=true;
 			gridPayPlan.BeginUpdate();
 			gridPayPlan.Columns.Clear();
 			GridColumn col=new GridColumn(Lan.g("TablePaymentPlans","Date"),65);
@@ -3504,20 +3504,21 @@ namespace OpenDental {
 				}
 				row=new GridRow();
 				row.Cells.Add(table.Rows[i]["date"].ToString());
-                if(table.Rows[i]["InstallmentPlanNum"].ToString()!="0" && table.Rows[i]["PatNum"].ToString()!=_patient.Guarantor.ToString()) {//Installment plan and not on guar
+				if(table.Rows[i]["InstallmentPlanNum"].ToString()!="0" && table.Rows[i]["PatNum"].ToString()!=_patient.Guarantor.ToString()) {//Installment plan and not on guar
 					cell=new GridCell(((string)"Invalid Guarantor"));
 					cell.Bold=YN.Yes;
 					cell.ColorText=Color.Red;
 				}
 				else {
-                    long payPlanNum=PIn.Long(table.Rows[i]["PayPlanNum"].ToString());
-                    PayPlan payPlan=PayPlans.GetOne(payPlanNum);
-                    cell=new GridCell("");
-                    if(payPlan.PlanNum==0) {//Only test via PlanNum for Insurance PayPlans as per RPPayPlan.cs' logic.
-                        cell=new GridCell(table.Rows[i]["guarantor"].ToString());//If not an Insurance PayPlan set guarantor as per usual.
-                    }
+					long payPlanNum=PIn.Long(table.Rows[i]["PayPlanNum"].ToString());
+					PayPlan payPlan=PayPlans.GetOne(payPlanNum);
+					cell=new GridCell("");
+					//Installment Plans have no payPlanNum so we must skip this next if-statement if we do not receive one.
+					if(payPlan!=null && payPlan.PlanNum==0) {//Only test via PlanNum for Insurance PayPlans as per RPPayPlan.cs' logic.
+						cell=new GridCell(table.Rows[i]["guarantor"].ToString());//If not an Insurance PayPlan set guarantor as per usual.
+					}
 				}
-                row.Cells.Add(cell);
+				row.Cells.Add(cell);
 				row.Cells.Add(table.Rows[i]["patient"].ToString());
 				row.Cells.Add(table.Rows[i]["type"].ToString());
 				long planCategory=PIn.Long(table.Rows[i]["PlanCategory"].ToString());
@@ -3573,10 +3574,7 @@ namespace OpenDental {
 
 		///<summary></summary>
 		private void FillRepeatCharges() {
-			//Uncollapse the first panel just in case. If this is left collapsed, setting visible properties on controls within it will have no effect
-			splitContainerParent.Panel1Collapsed=false;
-			gridRepeat.Visible=false;
-			splitContainerRepChargesPP.Panel1Collapsed=true;
+			_showGridRepeating=false;
 			if(_patient==null) {
 				return;
 			}
@@ -3590,8 +3588,7 @@ namespace OpenDental {
 			else {
 				gridRepeat.Title=Lan.g(gridRepeat,"Repeat Charges");
 			}
-			splitContainerRepChargesPP.Panel1Collapsed=false;
-			gridRepeat.Visible=true;
+			_showGridRepeating=true;
 			gridRepeat.BeginUpdate();
 			gridRepeat.Columns.Clear();
 			GridColumn col=new GridColumn(Lan.g("TableRepeatCharges","Description"),150);
@@ -3938,17 +3935,25 @@ namespace OpenDental {
 			LayoutManager.MoveLocation(splitContainerParent,new Point(0,LayoutManager.Scale(63)));
 			LayoutManager.MoveSize(splitContainerParent,new Size(tabControlShow.Left-1,Height-splitContainerParent.Top-1));
 			//If the two top grids are not visible, collapse the entire parent panel 1 so it does not show extra white space.
-			splitContainerParent.Panel1Collapsed=!gridRepeat.Visible && !gridPayPlan.Visible;
-			if(!gridRepeat.Visible) {
-				splitContainerRepChargesPP.Panel1Collapsed=true;
-				splitContainerParent.Panel1MinSize=LayoutManager.Scale(20);
-			}
-			if(!gridPayPlan.Visible) {
-				splitContainerRepChargesPP.Panel2Collapsed=true;
-				splitContainerParent.Panel1MinSize=LayoutManager.Scale(20);
+			splitContainerParent.Panel1Collapsed=!_showGridPayPlan && !_showGridRepeating;
+			if(!splitContainerParent.Panel1Collapsed) {
+				if(_showGridRepeating) {
+					splitContainerRepChargesPP.Panel1Collapsed=false;
+				}
+				else {
+					splitContainerRepChargesPP.Panel1Collapsed=true;
+					splitContainerParent.Panel1MinSize=LayoutManager.Scale(20);
+				}
+				if(_showGridPayPlan) {
+					splitContainerRepChargesPP.Panel2Collapsed=false;
+				}
+				else{
+					splitContainerRepChargesPP.Panel2Collapsed=true;
+					splitContainerParent.Panel1MinSize=LayoutManager.Scale(20);
+				}
 			}
 			//If both visible, make sure the minimum size is set back to orignal value.
-			if(gridPayPlan.Visible && gridRepeat.Visible) {
+			if(_showGridPayPlan && _showGridRepeating) {
 				splitContainerParent.Panel1MinSize=LayoutManager.Scale(45);
 			}
 			if(gridAccount.HScrollVisible){
