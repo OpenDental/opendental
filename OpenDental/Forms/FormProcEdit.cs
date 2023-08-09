@@ -2615,9 +2615,6 @@ namespace OpenDental {
 			if(!EntriesAreValid()) {
 				return;
 			}
-			if(!Security.IsAuthorized(Permissions.ProcComplCreate,PIn.Date(textDate.Text),_procedure.CodeNum,PIn.Double(textProcFee.Text))) {
-				return;
-			}
 			//Ask the user to re-sign if the user has changed, there was a signature when the window loaded, and the signature box is currently blank.
 			if(_hasUserChanged 
 				&& !_procedureOld.Signature.IsNullOrEmpty()
