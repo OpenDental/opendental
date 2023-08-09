@@ -10481,6 +10481,36 @@
       <summary>FK to orthochartrow.OrthoChartRowNum.</summary>
     </column>
   </table>
+  <table name="orthochartlog">
+    <summary>This stores log entries for debugging the orthochart.  Logging gets turned on and off with the pref. This table will go away once the bug is found. </summary>
+    <column order="0" name="OrthoChartLogNum" type="bigint(20)">
+      <summary>Primary key.</summary>
+    </column>
+    <column order="1" name="PatNum" type="bigint(20)" fk="patient">
+      <summary>FK to patient.PatNum.</summary>
+    </column>
+    <column order="2" name="ComputerName" type="varchar(255)">
+      <summary></summary>
+    </column>
+    <column order="3" name="DateTimeLog" type="datetime">
+      <summary>DateTime that this log entry was made</summary>
+    </column>
+    <column order="4" name="DateTimeService" type="datetime">
+      <summary>DateTime of the chart row.</summary>
+    </column>
+    <column order="5" name="UserNum" type="bigint(20)" fk="userod">
+      <summary>FK to userod.UserNum.  The user that created or last edited an ortho chart field.</summary>
+    </column>
+    <column order="6" name="ProvNum" type="bigint(20)" fk="provider">
+      <summary>FK to provider.ProvNum.</summary>
+    </column>
+    <column order="7" name="OrthoChartRowNum" type="bigint(20)" fk="orthochartrow">
+      <summary>FK to orthochartrow.OrthoChartRowNum.</summary>
+    </column>
+    <column order="8" name="LogData" type="mediumtext">
+      <summary>This can be long and complex -- whatever you want. MediumText, so max length=16M.</summary>
+    </column>
+  </table>
   <table name="orthochartrow">
     <summary>Represent a row in the ortho chart UI grid.</summary>
     <column order="0" name="OrthoChartRowNum" type="bigint(20)">
