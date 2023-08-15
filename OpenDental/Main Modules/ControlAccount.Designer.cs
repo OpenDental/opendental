@@ -772,6 +772,7 @@
 			// 
 			// checkShowCommAuto
 			// 
+			this.checkShowCommAuto.BackColor = System.Drawing.SystemColors.Window;
 			this.checkShowCommAuto.Location = new System.Drawing.Point(6, 242);
 			this.checkShowCommAuto.Name = "checkShowCommAuto";
 			this.checkShowCommAuto.Size = new System.Drawing.Size(168, 18);
@@ -781,6 +782,7 @@
 			// 
 			// checkShowCompletePayPlans
 			// 
+			this.checkShowCompletePayPlans.BackColor = System.Drawing.SystemColors.Window;
 			this.checkShowCompletePayPlans.Location = new System.Drawing.Point(6, 265);
 			this.checkShowCompletePayPlans.Name = "checkShowCompletePayPlans";
 			this.checkShowCompletePayPlans.Size = new System.Drawing.Size(168, 18);
@@ -790,6 +792,7 @@
 			// 
 			// checkShowFamilyComm
 			// 
+			this.checkShowFamilyComm.BackColor = System.Drawing.SystemColors.Window;
 			this.checkShowFamilyComm.Location = new System.Drawing.Point(6, 219);
 			this.checkShowFamilyComm.Name = "checkShowFamilyComm";
 			this.checkShowFamilyComm.Size = new System.Drawing.Size(168, 18);
@@ -799,6 +802,7 @@
 			// 
 			// checkShowDetail
 			// 
+			this.checkShowDetail.BackColor = System.Drawing.SystemColors.Window;
 			this.checkShowDetail.Checked = true;
 			this.checkShowDetail.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.checkShowDetail.Location = new System.Drawing.Point(6, 196);
