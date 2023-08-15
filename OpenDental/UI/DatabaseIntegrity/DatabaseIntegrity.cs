@@ -35,9 +35,19 @@ namespace OpenDental {
 		PayPlan
 	}
 
+	///<summary>Behaviors exhibited when an invalid SecurityHash is encountered. String matched and ordered by increasing annoyance. The last three items are completely different and only define plugin loading behavior. </summary>
 	public enum EnumIntegrityBehavior{
 		None,
+		///<summary>Orange static triangle.</summary>
 		Triangle,
+		///<summary>Red static triangle.</summary>
+		TriangleRed,
+		///<summary>Orange triangle with increasing and decreasing transparency.</summary>
+		TrianglePulse,
+		///<summary>Orange triangle toggling visibility slowly.</summary>
+		TriangleBlinkSlow,
+		///<summary>Orange triangle toggling visibility quickly.</summary>
+		TriangleBlinkFast,
 		///<summary>The message comes up without clicking on the triangle.</summary>
 		Popup,
 		///<summary>This silently allows the plugin.</summary>

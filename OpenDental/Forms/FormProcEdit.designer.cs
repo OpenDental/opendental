@@ -353,7 +353,7 @@
 			this.groupQuadrant.Controls.Add(this.radioUR);
 			this.groupQuadrant.Location = new System.Drawing.Point(104, 134);
 			this.groupQuadrant.Name = "groupQuadrant";
-			this.groupQuadrant.Size = new System.Drawing.Size(108, 56);
+			this.groupQuadrant.Size = new System.Drawing.Size(114, 56);
 			this.groupQuadrant.TabIndex = 36;
 			this.groupQuadrant.Text = "Quadrant";
 			this.groupQuadrant.Visible = false;
@@ -362,7 +362,7 @@
 			// 
 			this.radioLR.Location = new System.Drawing.Point(12, 36);
 			this.radioLR.Name = "radioLR";
-			this.radioLR.Size = new System.Drawing.Size(41, 16);
+			this.radioLR.Size = new System.Drawing.Size(47, 18);
 			this.radioLR.TabIndex = 3;
 			this.radioLR.Text = "LR";
 			this.radioLR.Click += new System.EventHandler(this.radioLR_Click);
@@ -371,7 +371,7 @@
 			// 
 			this.radioLL.Location = new System.Drawing.Point(64, 36);
 			this.radioLL.Name = "radioLL";
-			this.radioLL.Size = new System.Drawing.Size(41, 16);
+			this.radioLL.Size = new System.Drawing.Size(47, 18);
 			this.radioLL.TabIndex = 1;
 			this.radioLL.Text = "LL";
 			this.radioLL.Click += new System.EventHandler(this.radioLL_Click);
@@ -380,7 +380,7 @@
 			// 
 			this.radioUL.Location = new System.Drawing.Point(64, 16);
 			this.radioUL.Name = "radioUL";
-			this.radioUL.Size = new System.Drawing.Size(41, 16);
+			this.radioUL.Size = new System.Drawing.Size(47, 18);
 			this.radioUL.TabIndex = 0;
 			this.radioUL.Text = "UL";
 			this.radioUL.Click += new System.EventHandler(this.radioUL_Click);
@@ -389,7 +389,7 @@
 			// 
 			this.radioUR.Location = new System.Drawing.Point(12, 16);
 			this.radioUR.Name = "radioUR";
-			this.radioUR.Size = new System.Drawing.Size(41, 16);
+			this.radioUR.Size = new System.Drawing.Size(47, 18);
 			this.radioUR.TabIndex = 0;
 			this.radioUR.Text = "UR";
 			this.radioUR.Click += new System.EventHandler(this.radioUR_Click);

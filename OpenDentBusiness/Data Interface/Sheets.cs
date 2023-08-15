@@ -48,12 +48,12 @@ namespace OpenDentBusiness{
 		///<Summary>This is normally done in FormSheetFillEdit, but if we bypass that window for some reason, we can also save a new sheet here. Signature
 		///fields are inserted as they are, so they must be keyed to the field values already. Saves the sheet and sheetfields exactly as they are. Used by
 		///webforms, for example, when a sheet is retrieved from the web server and the sheet signatures have already been keyed to the field values and
-		///need to be inserted as-is into the user's db.</Summary>
-		public static void SaveNewSheet(Sheet sheet) {
+		///need to be inserted as-is into the user's db. Return the SheetNum in case we need to use it locally when using middle tier.</Summary>
+		public static long SaveNewSheet(Sheet sheet) {
 			//This remoting role check is technically unnecessary but it significantly speeds up the retrieval process for Middle Tier users due to looping.
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),sheet);
-				return;
+				sheet.SheetNum=Meth.GetLong(MethodBase.GetCurrentMethod(),sheet);
+				return sheet.SheetNum;
 			}
 			if(!sheet.IsNew) {
 				throw new ApplicationException("Only new sheets allowed");
@@ -80,6 +80,7 @@ namespace OpenDentBusiness{
 				fld.SheetNum=sheet.SheetNum;
 				SheetFields.Update(fld);
 			}
+			return sheet.SheetNum;
 		}
 
 		///<summary>Gets sheets with PatNum=0 and IsDeleted=0. Sheets with no PatNums were most likely transferred from CEMT tool.

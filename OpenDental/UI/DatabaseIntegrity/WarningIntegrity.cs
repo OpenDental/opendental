@@ -18,7 +18,10 @@ namespace OpenDental.UI{
 		private Region _regionTriangle;
 		///<summary>Usually 1, unless bigger than 18 wide.</summary>
 		private float _scale;
-		private Timer _timer;
+		///<summary>Interior of triangle.</summary>
+		private Color _color;
+		private Timer _timerTriangle;
+		private Timer _timerPopup;
 		private ToolTipOD _toolTipOD;
 		private DatabaseIntegrity _databaseIntegrity;
 
@@ -26,6 +29,8 @@ namespace OpenDental.UI{
 			InitializeComponent();
 			DoubleBuffered=true;
 			_scale=Width/18f;
+			///255, 128, 0 is pure orange
+			_color=Color.FromArgb(255,255,192,128);
 			_toolTipOD=new ToolTipOD();
 			_toolTipOD.SetControlAndAction(this,ToolTipSetString);
 		}
@@ -51,6 +56,10 @@ namespace OpenDental.UI{
 			_databaseIntegrity.WarningIntegrityType=warningIntegrityType;//if this was default, we want the correct class type
 			//for both popup and triangle, we will show this triangle
 			Visible=true;
+			if(_databaseIntegrity.Behavior==EnumIntegrityBehavior.TriangleRed) {
+				_color=Color.OrangeRed;
+			}
+			SetTriangleBehavior();
 		}
 
 		///<summary></summary>
@@ -66,6 +75,47 @@ namespace OpenDental.UI{
 			_toolTipOD.SetString("");
 		}
 
+		///<summary>Defines how the triangle will appear based on the EnumIntegrity behavior. Sets and starts a timer for behaviors with dynamic triangles.</summary>
+		private void SetTriangleBehavior() {
+			int interval;
+			if(_databaseIntegrity.Behavior==EnumIntegrityBehavior.TrianglePulse) {
+				interval=100;
+			}
+			else if(_databaseIntegrity.Behavior==EnumIntegrityBehavior.TriangleBlinkSlow) {
+				interval=1000;
+			}
+			else if(_databaseIntegrity.Behavior==EnumIntegrityBehavior.TriangleBlinkFast) {
+				interval=500;
+			}
+			else { //all other behaviors have a static triangle
+				return;
+			}
+			_timerTriangle=new Timer();
+			_timerTriangle.Interval=interval;
+			_timerTriangle.Enabled=true;
+			_timerTriangle.Tick+=TimerTriangle_Tick;
+		}
+
+		///<summary>Changes the alpha value (transparency) for triangles with dynamic behaviors. Only effects interior region; the border of the triangle can always be seen. This makes the tooltip always available to the user.</summary>
+		private void TimerTriangle_Tick(object sender, EventArgs e) {
+			int alpha;
+			if(_databaseIntegrity.Behavior==EnumIntegrityBehavior.TrianglePulse) {
+				if(_color.A%2==0) { //If even, alpha needs to increment
+					alpha=_color.A+20; 
+				}
+				else { //otherwise decrement
+					alpha=_color.A-20;
+				}
+				alpha=Math.Min(255,alpha); //No larger than 255
+				alpha=Math.Max(100,alpha); //No smaller than 100 (still paritially visible)
+			}
+			else {//Otherwise blink
+				alpha=Math.Abs(_color.A-255); //either zero(min) or 255(max)
+			}
+			_color=Color.FromArgb(alpha,_color);
+			Refresh();
+		}
+
 		private void ShowPopup(){
 			//This was called from OnPaint because I simply couldn't find anything else that would show it at the right time.
 			if(_didShowPopup){
@@ -76,14 +126,14 @@ namespace OpenDental.UI{
 				return;
 			}
 			//We use a timer so that the draw will finish before the popup
-			_timer=new Timer();
-			_timer.Interval=100;
-			_timer.Tick+=Timer_Tick;
-			_timer.Enabled=true;
+			_timerPopup=new Timer();
+			_timerPopup.Interval=100;
+			_timerPopup.Tick+=TimerPopup_Tick;
+			_timerPopup.Enabled=true;
 		}
 
-		private void Timer_Tick(object sender,EventArgs e) {
-			_timer.Enabled=false;//only happens once
+		private void TimerPopup_Tick(object sender,EventArgs e) {
+			_timerPopup.Enabled=false;//only happens once
 			if(_databaseIntegrity is null){
 				return;//probably an HQ connection issue, but this probably wouldn't fire anyway.
 			}
@@ -122,11 +172,9 @@ namespace OpenDental.UI{
 				graphicsPath.AddLine(_listTips[i].PointFTipNext3,pointFArray[4]=_listTips[i].PointFNext4);
 			}
 			_regionTriangle=new Region(graphicsPath);
-			//255, 128, 0 is pure orange
-			Color colorOrange=Color.FromArgb(255, 192, 128);
-			using SolidBrush solidBrushOrange=new SolidBrush(colorOrange);
+			using SolidBrush solidBrushOrange=new SolidBrush(_color);
 			g.FillPath(solidBrushOrange,graphicsPath);
-			using Pen penOrange=new Pen(colorOrange);
+			using Pen penOrange=new Pen(_color);
 			g.DrawPath(Pens.Orange,graphicsPath);
 			//g.DrawLine(Pens.Blue,_listTips[0].PointFPrevious0,_listTips[0].PointFTipPrevious1);
 			//g.DrawLine(Pens.Blue,pointFArray[3],pointFArray[4]);

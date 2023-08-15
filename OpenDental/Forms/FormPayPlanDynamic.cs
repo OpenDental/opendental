@@ -238,7 +238,7 @@ namespace OpenDental {
 				if(i > 0) {
 					log+=", ";
 				}
-				if(i==listChanges.Count-1) {
+				if(i==listChanges.Count-1 && listChanges.Count!=1) {
 					log+="and ";
 				}
 				log+=listChanges[i];

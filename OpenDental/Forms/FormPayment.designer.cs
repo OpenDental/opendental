@@ -163,14 +163,17 @@
 			this.tabControlCharges = new OpenDental.UI.TabControl();
 			this.tabPageOutstanding = new OpenDental.UI.TabPage();
 			this.checkShowSuperfamily = new OpenDental.UI.CheckBox();
+			this.gridCharges = new OpenDental.UI.GridOD();
 			this.checkIncludeExplicitCreditsOnly = new OpenDental.UI.CheckBox();
 			this.checkShowAll = new OpenDental.UI.CheckBox();
 			this.tabPageTreatPlan = new OpenDental.UI.TabPage();
 			this.labelTPProcWarning = new System.Windows.Forms.Label();
+			this.gridTreatPlan = new OpenDental.UI.GridOD();
 			this.butPay = new OpenDental.UI.Button();
 			this.labelPayPlan = new System.Windows.Forms.Label();
 			this.tabControlSplits = new OpenDental.UI.TabControl();
 			this.tabPageSplits = new OpenDental.UI.TabPage();
+			this.gridSplits = new OpenDental.UI.GridOD();
 			this.textChargeTotal = new System.Windows.Forms.TextBox();
 			this.butCreatePartial = new OpenDental.UI.Button();
 			this.label8 = new System.Windows.Forms.Label();
@@ -220,9 +223,6 @@
 			this.labelTransactionCompleted = new System.Windows.Forms.Label();
 			this.labelSurchargeFee = new System.Windows.Forms.Label();
 			this.textSurcharge = new System.Windows.Forms.TextBox();
-			this.gridCharges = new OpenDental.UI.GridOD();
-			this.gridTreatPlan = new OpenDental.UI.GridOD();
-			this.gridSplits = new OpenDental.UI.GridOD();
 			this.groupXWeb.SuspendLayout();
 			this.tabControlCharges.SuspendLayout();
 			this.tabPageOutstanding.SuspendLayout();
@@ -1236,7 +1236,7 @@
 			this.labelMaxPaySplitsFilter.Name = "labelMaxPaySplitsFilter";
 			this.labelMaxPaySplitsFilter.Size = new System.Drawing.Size(89, 18);
 			this.labelMaxPaySplitsFilter.TabIndex = 198;
-			this.labelMaxPaySplitsFilter.Text = "Amt End Max";
+			this.labelMaxPaySplitsFilter.Text = "Amt Max";
 			this.labelMaxPaySplitsFilter.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelMinPaySplitsFilter
@@ -1245,7 +1245,7 @@
 			this.labelMinPaySplitsFilter.Name = "labelMinPaySplitsFilter";
 			this.labelMinPaySplitsFilter.Size = new System.Drawing.Size(87, 18);
 			this.labelMinPaySplitsFilter.TabIndex = 200;
-			this.labelMinPaySplitsFilter.Text = "Amt End Min.";
+			this.labelMinPaySplitsFilter.Text = "Amt Min.";
 			this.labelMinPaySplitsFilter.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// labelClinicsPaySplitsFilter
@@ -1391,36 +1391,6 @@
 			this.textSurcharge.TabIndex = 1005;
 			this.textSurcharge.Visible = false;
 			// 
-			// gridCharges
-			// 
-			this.gridCharges.AllowSortingByColumn = true;
-			this.gridCharges.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.gridCharges.Location = new System.Drawing.Point(1, 22);
-			this.gridCharges.Name = "gridCharges";
-			this.gridCharges.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridCharges.Size = new System.Drawing.Size(602, 249);
-			this.gridCharges.TabIndex = 144;
-			this.gridCharges.Title = "Outstanding Charges";
-			this.gridCharges.TranslationName = "TableOutstandingCharges";
-			this.gridCharges.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridCharges_CellClick);
-			// 
-			// gridTreatPlan
-			// 
-			this.gridTreatPlan.AllowSortingByColumn = true;
-			this.gridTreatPlan.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.gridTreatPlan.Location = new System.Drawing.Point(1, 22);
-			this.gridTreatPlan.Name = "gridTreatPlan";
-			this.gridTreatPlan.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
-			this.gridTreatPlan.Size = new System.Drawing.Size(602, 245);
-			this.gridTreatPlan.TabIndex = 145;
-			this.gridTreatPlan.Title = "Treatment Planned Procedures";
-			this.gridTreatPlan.TranslationName = "TableOutstandingCharges";
-			this.gridTreatPlan.CellClick += new OpenDental.UI.ODGridClickEventHandler(this.gridTreatPlan_CellClick);
-			//
 			// FormPayment
 			// 
 			this.ClientSize = new System.Drawing.Size(1111, 696);

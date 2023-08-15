@@ -355,7 +355,7 @@ If you have questions, call <a href=""tel:[OfficePhone]"">[OfficePhone]</a>.",
 						TemplateEmail=@"[NameF] has an appointment coming up. Please fill out this form prior to the appointment <a href=""[NewPatWebFormURL]"">[NewPatWebFormURL]</a> ",
 						TemplateEmailSubject="New Patient Thank You",//default subject
 						TemplateSMSAggShared="Thank you for scheduling your appointments. \nPlease fill out these forms for each patient: [Appts]",
-						TemplateSMSAggPerAppt=@"[NameF] <a href=""[NewPatWebFormURL]"">[NewPatWebFormURL]</a>",
+						TemplateSMSAggPerAppt=@"[NameF] [NewPatWebFormURL]",
 						TemplateEmailSubjAggShared="New Patient, Thank you",
 						TemplateEmailAggShared=@"Thank you for scheduling your appointments. 
 Please fill out these forms for each patient:

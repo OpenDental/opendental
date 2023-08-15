@@ -147,6 +147,24 @@ namespace OpenDentBusiness{
 			return Crud.EtransCrud.SelectMany(command);
 		}
 
+		///<summary>Gets all Etrans for a Patient for the API. Also has filters for CarrierNum and ClaimNum. 
+		///Results can be truncated with the use of limit and offset. Please notify the API team if you change this code.</summary>
+		public static List<Etrans> GetEtransForApi(int limit,int offset,long patNum,long carrierNum=0,long claimNum=0) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<Etrans>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,carrierNum,claimNum);
+			}
+			string command="SELECT * FROM etrans WHERE PatNum="+POut.Long(patNum);
+			if(carrierNum!=0) {
+				command+=" AND CarrierNum="+POut.Long(carrierNum);
+			}
+			if(claimNum!=0) {
+				command+=" AND ClaimNum="+POut.Long(claimNum);
+			}
+			command+=" ORDER BY DateTimeTrans "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.EtransCrud.SelectMany(command);
+		}
+
 		///<summary>Gets all X12 835 etrans entries relating to a specific claim.</summary>
 		public static List<Etrans> GetErasOneClaim(string claimIdentifier,DateTime dateClaimService) {
 			//The main goal of this check is to prevent null claimIdentifiers from causing an exception.

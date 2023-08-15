@@ -83,7 +83,7 @@ namespace OpenDental {
 				string strCardNum=creditCard.CCNumberMasked;
 				if(Regex.IsMatch(strCardNum,"^\\d{12}(\\d{0,7})")) {	//Credit cards can have a minimum of 12 digits, maximum of 19
 					int idxLast4Digits=(strCardNum.Length-4);
-					strCardNum=(new string('X',12))+strCardNum.Substring(idxLast4Digits);//replace the first 12 with 12 X's
+					strCardNum=(new string('X',16))+strCardNum.Substring(idxLast4Digits);//replace the first 16 with 16 X's
 				}
 				row.Cells.Add(strCardNum);//1: Card Number
 				if(PrefC.HasClinicsEnabled) {
@@ -431,7 +431,7 @@ namespace OpenDental {
 						//PayConnect informed us that the last 4 digits of the token are the same as the last 4 digits
 						//of the credit card that was used to create the token. Get the last 4 characters
 						//of the token string and then pad left with 'X' to make it look like a masked CC number.
-						newCreditCard.CCNumberMasked=cardData.CardToken.Substring(cardData.CardToken.Length-4).PadLeft(12,'X');
+						newCreditCard.CCNumberMasked=cardData.CardToken.Substring(cardData.CardToken.Length-4).PadLeft(16,'X');
 						newCreditCard.Zip=cardData.ZipCode;
 						newCreditCard.PayConnectToken="";
 						newCreditCard.PayConnectTokenExp=new DateTime(expiryYear,expiryMonth,DateTime.DaysInMonth(expiryYear,expiryMonth));//Testing has shown that this is now the same as the CC expiry.
