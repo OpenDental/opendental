@@ -5408,6 +5408,9 @@ namespace OpenDentBusiness{
 		///<summary>Returns true if there is an appointment that would be empty if the associated procedures in listProcs were deleted. Otherwise false. Pass in a list of AptNums to avoid grabbing from DB.</summary>
 		public static bool AreApptsGoingToBeEmpty(List<Procedure> listProcedures, List<long> listApptNums=null, bool isForPlanned=false) {
 			if(listApptNums.IsNullOrEmpty()) {
+				if(isForPlanned) {
+					return false; //Because there are no planned appointments that could be empty.
+				}
 				listApptNums=listProcedures.Select(x => x.AptNum).Where(x => x>0).Distinct().ToList();
 			}
 			List<Procedure> listProcsAllForAppts=Procedures.GetProcsMultApts(listApptNums, isForPlanned);
