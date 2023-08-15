@@ -3752,7 +3752,7 @@ namespace OpenDentBusiness{
 			command="DELETE FROM plannedappt WHERE AptNum IN("+String.Join(",",listAllAptNums)+")";
 			Db.NonQ(command);
 			//if deleting a planned appt, make sure there are no appts with NextAptNum (which should be named PlannedAptNum) pointing to this appt
-			if(listPlannedAptNums.Count!=0) {
+			if(listPlannedAptNums.Count!=0 && listNotPlannedAptNums.Count!=0) {
 				command="UPDATE appointment SET NextAptNum=0 WHERE NextAptNum IN("+String.Join(",",listNotPlannedAptNums)+")";
 				Db.NonQ(command);
 			}
@@ -5406,15 +5406,15 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Returns true if there is an appointment that would be empty if the associated procedures in listProcs were deleted. Otherwise false. Pass in a list of AptNums to avoid grabbing from DB.</summary>
-		public static bool AreApptsGoingToBeEmpty(List<Procedure> listProcs, List<long> listApptNums=null) {
+		public static bool AreApptsGoingToBeEmpty(List<Procedure> listProcedures, List<long> listApptNums=null, bool isForPlanned=false) {
 			if(listApptNums.IsNullOrEmpty()) {
-				listApptNums=listProcs.Select(x => x.AptNum).Where(x => x>0).Distinct().ToList();
+				listApptNums=listProcedures.Select(x => x.AptNum).Where(x => x>0).Distinct().ToList();
 			}
-			List<Procedure> listProcsAllForAppts=Procedures.GetProcsMultApts(listApptNums);
+			List<Procedure> listProcsAllForAppts=Procedures.GetProcsMultApts(listApptNums, isForPlanned);
 			for(int i=0;i < listApptNums.Count;i++) {
-				long countProcsForApptCur=Procedures.GetProcsOneApt(listApptNums[i],listProcs).Length;
-				long countProcsAllForApptCur=Procedures.GetProcsOneApt(listApptNums[i],listProcsAllForAppts).Length;
-				if(countProcsForApptCur>=countProcsAllForApptCur) {
+				long countProcsForAppt=Procedures.GetProcsOneApt(listApptNums[i],listProcedures, isForPlanned).Length;
+				long countProcsAllForAppt=Procedures.GetProcsOneApt(listApptNums[i],listProcsAllForAppts, isForPlanned).Length;
+				if(countProcsForAppt>=countProcsAllForAppt) {
 					return true;
 				}
 			}
@@ -5457,9 +5457,18 @@ namespace OpenDentBusiness{
 				for(int i=0;i<listProceduresBeingMoved.Count;i++) {
 					int countProceduresBeingMoved=listProceduresBeingMoved.Count(x=>x.AptNum==listProceduresBeingMoved[i].AptNum);
 					int countProceduresTotal=listProceduresAll.Count(x=>x.AptNum==listProceduresBeingMoved[i].AptNum);
+					if(isPlanned) {
+						countProceduresBeingMoved=listProceduresBeingMoved.Count(x => x.PlannedAptNum==listProceduresBeingMoved[i].PlannedAptNum);
+						countProceduresTotal=listProceduresAll.Count(x => x.PlannedAptNum==listProceduresBeingMoved[i].PlannedAptNum);
+					}
 					//All the procedures are being moved off appointment, so mark old AptNum for deletion
 					if(countProceduresBeingMoved>0 && countProceduresTotal>0 && countProceduresBeingMoved==countProceduresTotal) {
-						listAptNumsToDelete.Add(listProceduresBeingMoved[i].AptNum);
+						if(isPlanned) {
+							listAptNumsToDelete.Add(listProceduresBeingMoved[i].PlannedAptNum);
+						}
+						else {
+							listAptNumsToDelete.Add(listProceduresBeingMoved[i].AptNum);
+						}
 					}
 				}
 			}

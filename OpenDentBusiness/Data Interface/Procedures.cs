@@ -615,12 +615,19 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Gets procedures for one appointment by looping through the procsMultApts which was filled previously from GetProcsMultApts.</summary>
-		public static Procedure[] GetProcsOneApt(long myAptNum,List<Procedure> procsMultApts) {
+		public static Procedure[] GetProcsOneApt(long myAptNum,List<Procedure> procsMultApts,bool isForPlanned=false) {
 			//No need to check MiddleTierRole; no call to db.
 			ArrayList al=new ArrayList();
 			for(int i=0;i<procsMultApts.Count;i++) {
-				if(procsMultApts[i].AptNum==myAptNum) {
-					al.Add(procsMultApts[i].Copy());
+				if(isForPlanned){
+					if(procsMultApts[i].PlannedAptNum==myAptNum) {
+						al.Add(procsMultApts[i].Copy());
+					}
+				}
+				else{
+					if(procsMultApts[i].AptNum==myAptNum) {
+						al.Add(procsMultApts[i].Copy());
+					}
 				}
 			}
 			Procedure[] retVal=new Procedure[al.Count];
@@ -1453,7 +1460,7 @@ namespace OpenDentBusiness {
 			if(oldProcedure.ProcStatus==ProcStat.C && procedure.ProcStatus!=ProcStat.C) {
 				Adjustments.DeleteForProcedure(procedure.ProcNum);
 			}
-			if(procedure.ProcStatus==ProcStat.C && procedure.DateComplete.Year<1880) {
+			if(procedure.ProcStatus==ProcStat.C && procedure.DateComplete.Year<1880 && (oldProcedure.ProcStatus!=ProcStat.C)) {
 				procedure.DateComplete=DateTime.Today;
 			}
 			else if(procedure.ProcStatus!=ProcStat.C && procedure.DateComplete.Date==DateTime.Today.Date) {

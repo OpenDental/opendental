@@ -877,6 +877,9 @@ namespace OpenDentBusiness {
 				MarkFailed(chargeData,Lans.g(_lanThis,"Unable to find patient")+" "+chargeData.RecurringCharge.PatNum);
 				return;
 			}
+			if(chargeData.PayConnectTokenExp==DateTime.MinValue) {
+				chargeData.PayConnectTokenExp=chargeData.CCExpiration;
+			}
 			DateTime exp=chargeData.PayConnectTokenExp;
 			if(tokenOrCCMasked=="") {
 				isPayConnectToken=false;
@@ -920,6 +923,7 @@ namespace OpenDentBusiness {
 				chargeData.RecurringCharge.ChargeStatus=RecurringChargeStatus.ChargeSuccessful;
 				Success++;
 				CreditCard ccCur=CreditCards.GetOne(chargeData.RecurringCharge.CreditCardNum);
+				ccCur.PayConnectTokenExp=chargeData.CCExpiration;
 				UpdateCreditCardPayConnect(ccCur,payConnectResponse);
 				//add to strbuilder that will be written to txt file and to the payment note
 				if(PrefC.HasClinicsEnabled && dictClinicNumDesc.ContainsKey(clinicNumCur)) {

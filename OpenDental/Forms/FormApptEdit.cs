@@ -804,6 +804,12 @@ namespace OpenDental{
 				MsgBox.Show("One or more selected procedures are attached to another appointment.");
 				return;
 			}
+			List<long> listPlannedApptNumsSelected=gridProc.SelectedTags<Procedure>().Select(x => x.PlannedAptNum).Where(x=>x!=0).ToList();
+			if(PrefC.GetBool(PrefName.ApptsRequireProc) && Appointments.AreApptsGoingToBeEmpty(gridProc.SelectedTags<Procedure>(), listPlannedApptNumsSelected, isForPlanned:true))
+			{
+				MsgBox.Show("Deleting selected procedure(s) will result in an empty planned appointment.");
+				return;
+			}
 			//If this appointment is of a certain AppointmentType, check for required procedure codes that are going to be deleted.
 			if(comboApptType.SelectedIndex>0) {
 				AppointmentType appointmentType=_listAppointmentTypes[comboApptType.SelectedIndex-1];

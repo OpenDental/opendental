@@ -967,22 +967,20 @@ namespace OpenDentBusiness.Eclaims {
 					,"Claim for service date "+POut.Date(claim.DateService)+" amounts overwritten using received EOB amounts."
 					,LogSources.CanadaEobAutoImport);
 			}
-			if(claim.ClaimType!="PreAuth") {
-				CCDField fieldTransRefNum=fieldInputter.GetFieldById("G01");
-				if(fieldTransRefNum!=null && fieldTransRefNum.valuestr!=null) {
-					if(etransAck.AckCode!="R") {
-						if(fieldTransRefNum.valuestr.Trim()=="") {
-							//Sometimes the transaction reference number is not set in the response.  Will come back as all spaces.
-							//In this case we have to leave the reference number on the claim empty so that the Reverse button in the Claim Edit window is disabled.
-							claim.CanadaTransRefNum="";
-						}
-						else {
-							//The transaction reference number is left justified and padded with spaces on the right.
-							//We have to save this number exactly as reported to us (including spaces) so the insurance company can recognize claim reversals.
-							claim.CanadaTransRefNum=fieldTransRefNum.valuestr;
-						}
-						Claims.Update(claim);
+			CCDField fieldTransRefNum=fieldInputter.GetFieldById("G01");
+			if(fieldTransRefNum!=null && fieldTransRefNum.valuestr!=null) {
+				if(etransAck.AckCode!="R") {
+					if(fieldTransRefNum.valuestr.Trim()=="") {
+						//Sometimes the transaction reference number is not set in the response.  Will come back as all spaces.
+						//In this case we have to leave the reference number on the claim empty so that the Reverse button in the Claim Edit window is disabled.
+						claim.CanadaTransRefNum="";
 					}
+					else {
+						//The transaction reference number is left justified and padded with spaces on the right.
+						//We have to save this number exactly as reported to us (including spaces) so the insurance company can recognize claim reversals.
+						claim.CanadaTransRefNum=fieldTransRefNum.valuestr;
+					}
+					Claims.Update(claim);
 				}
 			}
 			if(doPrint && formCCDPrint!=null) {
@@ -1419,7 +1417,7 @@ namespace OpenDentBusiness.Eclaims {
 				number=number.Substring(1,number.Length-1);
 			}
 			number=number.PadLeft(2,'0');//Guarantee at least 2 digits of length.
-			return sign+number.Substring(0,number.Length-2).TrimStart('0').PadLeft(1,'0')+"."+
+			return sign+number.Substring(0,number.Length-2).TrimStart('0').PadLeft(1,'0')+CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator+
 				number.Substring(number.Length-2,2);
 		}
 

@@ -475,12 +475,17 @@ namespace OpenDental {
 			}
 			//if stored CC has a token and the token is not expired use it instead of the CC number and CC expiration.
 			if(_creditCard!=null //if the user selected a saved CC
-				&& _creditCard.PayConnectToken!="" //there is a stored token for this card
-				&& _creditCard.PayConnectTokenExp.Date>=DateTime.Today.Date) //the token is not expired
+				&& _creditCard.PayConnectToken!="")//there is a stored token for this card
 			{
+				if(_creditCard.PayConnectTokenExp.Date>=DateTime.Today.Date) {//the token is not expired
+					expYear=_creditCard.PayConnectTokenExp.Year;
+					expMonth=_creditCard.PayConnectTokenExp.Month;
+				}
+				if(_creditCard.PayConnectTokenExp==DateTime.MinValue) {//The token exp date is invalid
+					expYear=_creditCard.CCExpiration.Year;
+					expMonth=_creditCard.CCExpiration.Month;
+				}
 				cardNumber=_creditCard.PayConnectToken;
-				expYear=_creditCard.PayConnectTokenExp.Year;
-				expMonth=_creditCard.PayConnectTokenExp.Month;
 			}
 			else if(PIn.Bool(ProgramProperties.GetPropVal(_program.ProgramNum,PayConnect.ProgramProperties.PayConnectPreventSavingNewCC,_clinicNum))) {
 				MsgBox.Show(this,"Cannot add a new credit card.");
@@ -491,10 +496,15 @@ namespace OpenDental {
 				authCode=textRefNumber.Text;
 			}
 			CreditCardRequest=PayConnect.BuildSaleRequest(PIn.Decimal(textAmount.Text),cardNumber,expYear,
-				expMonth,textNameOnCard.Text,textSecurityCode.Text,textZipCode.Text,magData,TransType,refNumber,checkSaveToken.Checked,authCode,checkForceDuplicate.Checked);
+				expMonth,textNameOnCard.Text,textSecurityCode.Text,textZipCode.Text,magData,TransType,refNumber,
+				checkSaveToken.Checked,authCode,checkForceDuplicate.Checked);
 			_transResponse=PayConnect.ProcessCreditCard(CreditCardRequest,_clinicNum,x => MessageBox.Show(x));
 			if(_transResponse==null || _transResponse.Status.code!=0) {//error in transaction
 				return false;
+			}
+			if(_creditCard!=null && _creditCard.PayConnectTokenExp.Year<1880) {
+				_creditCard.PayConnectTokenExp=_creditCard.CCExpiration;
+				CreditCards.Update(_creditCard);//Updating here for bugfix where PayConnectTokenExp fields were being invalidated. making sure that it is updated after adding the new value.
 			}
 			PayConnectService.signatureResponse signatureResponse=SendSignature(_transResponse.RefNumber);			
 			if((TransType.In(PayConnectService.transType.SALE,PayConnectService.transType.RETURN,PayConnectService.transType.VOID))

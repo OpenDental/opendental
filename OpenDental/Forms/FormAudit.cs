@@ -45,6 +45,7 @@ namespace OpenDental{
 				}
 			}
 			_listPermissionsAlphabetic.Sort();
+			_listPermissionsAlphabetic.RemoveAll(x => x=="TextMessageView");
 			_listPermissionsAlphabetic.Insert(0,Permissions.None.ToString());
 			//LogSources
 			comboLogSource.IncludeAll=true;

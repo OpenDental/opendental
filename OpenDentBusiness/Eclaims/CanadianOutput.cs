@@ -516,7 +516,7 @@ namespace OpenDentBusiness.Eclaims {
 		private static int GetOriginalOfficeSequenceNumber(Claim claim,out DateTime originalEtransDateTime) {
 			int officeSequenceNumber=0;//Clear the randomly generated office sequence number.
 			originalEtransDateTime=DateTime.MinValue;//So we can get the latest matching transaction.
-			List<Etrans> listEtrans=Etranss.GetAllForOneClaim(claim.ClaimNum).FindAll(x => x.Etype.In(EtransType.Claim_CA,EtransType.ClaimCOB_CA));
+			List<Etrans> listEtrans=Etranss.GetAllForOneClaim(claim.ClaimNum).FindAll(x => x.Etype.In(EtransType.Claim_CA,EtransType.ClaimCOB_CA,EtransType.Predeterm_CA));
 			for(int i=0;i<listEtrans.Count;i++) {
 				Etrans ack=Etranss.GetEtrans(listEtrans[i].AckEtransNum);
 				if(ack==null) {//For those claims sent that didn't receive a response (i.e. when there is an exception while sending a claim).
