@@ -81,8 +81,7 @@ namespace OpenDental{
 			// 
 			// gridSubs
 			// 
-			this.gridSubs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+			this.gridSubs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.gridSubs.Location = new System.Drawing.Point(12, 127);
 			this.gridSubs.Name = "gridSubs";
 			this.gridSubs.SelectionMode = OpenDental.UI.GridSelectionMode.MultiExtended;
@@ -352,8 +351,7 @@ namespace OpenDental{
 			// 
 			// bugSubmissionControl
 			// 
-			this.bugSubmissionControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+			this.bugSubmissionControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.bugSubmissionControl.ControlMode = BugSubmissionControlMode.General;
 			this.bugSubmissionControl.Location = new System.Drawing.Point(550, 124);

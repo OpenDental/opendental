@@ -293,6 +293,15 @@ namespace OpenDentBusiness{
 			Crud.PayPlanChargeCrud.Update(charge);
 		}
 
+		///<summary></summary>
+		public static void Update(PayPlanCharge payPlanCharge,PayPlanCharge payPlanChargeOld){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),payPlanCharge);
+				return;
+			}
+			Crud.PayPlanChargeCrud.Update(payPlanCharge,payPlanChargeOld);
+		}
+
 		///<summary>Inserts, updates, or deletes database rows to match supplied list.  Must always pass in payPlanNum.</summary>
 		public static void Sync(List<PayPlanCharge> listPayPlanCharges,long payPlanNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {

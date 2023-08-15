@@ -239,6 +239,8 @@ namespace OpenDental {
 			else {//clinics not enabled
 				comboClinicOutstandingFilter.Visible=false;
 				labelClinicOutstandingFilter.Visible=false;
+				comboClinicsPaySplitsFilter.Visible=false;
+				labelClinicsPaySplitsFilter.Visible=false;
 			}
 			if(_payment.ProcessStatus==ProcessStat.OfficeProcessed) {
 				checkProcessed.Visible=false;//This checkbox will only show if the payment originated online.
@@ -497,6 +499,7 @@ namespace OpenDental {
 					_payment.PayNote=_payment.PayNote+"\r\n"+CareCredit.GetFormattedNote(careCreditWebResponse);
 					_payment.PaymentSource=CreditCardSource.CareCredit;
 					_payment.IsCcCompleted=true;
+					_payment.MerchantFee=CareCredit.GetMerchantFee(careCreditWebResponse);
 					Payments.Update(_payment,true);
 					DisablePaymentControls();
 				}
@@ -1492,7 +1495,7 @@ namespace OpenDental {
 		private bool DoHighlightPaySplit(PaySplit paySplit) {
 			if(comboPatientPaySplitsFilter.IsAllSelected==true
 				&& comboProviderPaySplitsFilter.IsAllSelected==true
-				&& comboClinicsPaySplitsFilter.IsAllSelected==true
+				&& (!PrefC.HasClinicsEnabled || comboClinicsPaySplitsFilter.IsAllSelected==true)
 				&& amtMinEndPaySplits.Value==0
 				&& amtMaxEndPaySplits.Value==0)
 			{

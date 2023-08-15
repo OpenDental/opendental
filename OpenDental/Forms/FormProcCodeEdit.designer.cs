@@ -458,9 +458,9 @@ namespace OpenDental {
 			// 
 			// labelDrugNDC
 			// 
-			this.labelDrugNDC.Location = new System.Drawing.Point(100, 164);
+			this.labelDrugNDC.Location = new System.Drawing.Point(102, 163);
 			this.labelDrugNDC.Name = "labelDrugNDC";
-			this.labelDrugNDC.Size = new System.Drawing.Size(103, 13);
+			this.labelDrugNDC.Size = new System.Drawing.Size(103, 15);
 			this.labelDrugNDC.TabIndex = 0;
 			this.labelDrugNDC.Text = "Drug NDC";
 			this.labelDrugNDC.TextAlign = System.Drawing.ContentAlignment.MiddleRight;

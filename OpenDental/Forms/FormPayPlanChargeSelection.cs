@@ -65,6 +65,7 @@ namespace OpenDental {
 
 		private void listBoxPayPlanCharges_DoubleClick(object sender,EventArgs e) {
 			if(listBoxPayPlanCharges.SelectedIndex!=-1) {
+				PayPlanCharge payPlanChargeOld=_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex].Copy();
 				using FormPayPlanChargeEdit formPayPlanChargeEdit=new FormPayPlanChargeEdit(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex],_payPlan);
 				formPayPlanChargeEdit.ShowDialog();
 				if(formPayPlanChargeEdit.DialogResult==DialogResult.Cancel) {
@@ -72,8 +73,11 @@ namespace OpenDental {
 				}
 				if(formPayPlanChargeEdit.PayPlanChargeCur==null) {
 					_listPayPlanCharges.RemoveAt(listBoxPayPlanCharges.SelectedIndex);
+					PayPlanCharges.Delete(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex]);
 				}
-				PayPlanCharges.Sync(_listPayPlanCharges,_payPlan.PayPlanNum);
+				else {
+					PayPlanCharges.Update(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex],payPlanChargeOld);
+				}
 				FillListBox();//Refreshes the list box
 			}
 		}
@@ -84,14 +88,16 @@ namespace OpenDental {
 			}
 			//Zeros out all charges from inside of the _listPayPlanCharges list. 
 			for(int i=0;i<_listPayPlanCharges.Count;i++) {
+				PayPlanCharge payPlanChargeOld=_listPayPlanCharges[i].Copy();
 				_listPayPlanCharges[i].Principal=0;
 				_listPayPlanCharges[i].Interest=0;
+				PayPlanCharges.Update(_listPayPlanCharges[i],payPlanChargeOld);
 			}
-			PayPlanCharges.Sync(_listPayPlanCharges,_payPlan.PayPlanNum);
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
 			if(listBoxPayPlanCharges.SelectedIndex!=-1) {
+				PayPlanCharge payPlanChargeOld=_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex].Copy();
 				using FormPayPlanChargeEdit formPayPlanChargeEdit=new FormPayPlanChargeEdit(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex],_payPlan);
 				formPayPlanChargeEdit.ShowDialog();
 				if(formPayPlanChargeEdit.DialogResult==DialogResult.Cancel) {
@@ -99,8 +105,11 @@ namespace OpenDental {
 				}
 				if(formPayPlanChargeEdit.PayPlanChargeCur==null) {
 					_listPayPlanCharges.RemoveAt(listBoxPayPlanCharges.SelectedIndex);
+					PayPlanCharges.Delete(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex]);
 				}
-				PayPlanCharges.Sync(_listPayPlanCharges,_payPlan.PayPlanNum);
+				else {
+					PayPlanCharges.Update(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex],payPlanChargeOld);
+				}
 				FillListBox();//Refreshes the list box
 			}
 			else {

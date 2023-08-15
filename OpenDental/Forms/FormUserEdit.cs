@@ -371,7 +371,8 @@ namespace OpenDental{
 				string msg="One or more of your DoseSpot User IDs is already in use.\r\n" +
 					"The following list shows the users and the DoseSpot User ID aleady in use.\r\n\n";
 				msg +="DoseSpot User ID\tUser\r\n";
-				listUserOdPrefsNotEmpty=listUserOdPrefsNotEmpty.DistinctBy(x => x.UserNum).ToList();
+				listUserOdPrefsNotEmpty=listUserOdPrefsNotEmpty.DistinctBy(x => x.UserNum)
+					.OrderBy(x => PIn.Long(x.ValueString,hasExceptions:false)).ToList();//Sorting the list by value string(DoseSpot ID). ex set to false to return 0 if the input string is not a long, currently letters are allowed in value string(DoseSpot ID).
 				for(int i=0;i<listUserOdPrefsNotEmpty.Count;i++) {
 					//Add the DoseSpotIDs and corresponding user name to the msg to be displayed in the msgBox.
 					//\t\t used for layout. \r\n used to create new line.

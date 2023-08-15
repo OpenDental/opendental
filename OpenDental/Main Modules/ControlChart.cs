@@ -9519,7 +9519,7 @@ namespace OpenDental {
 					return !proc.Surf.IsNullOrEmpty(); 
 				case TreatmentArea.Arch:
 					//Consider all arch selections invalid. FormProcEdit will always show.
-					return false;
+					return !proc.Surf.IsNullOrEmpty(); 
 				case TreatmentArea.ToothRange:
 					return !proc.ToothRange.IsNullOrEmpty();
 				default: return false;

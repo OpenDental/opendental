@@ -4440,6 +4440,7 @@ namespace OpenDentBusiness {
 						else {
 							field.FieldValue=Lans.g("RxMulti","VOID");
 							field.FontSize=50;
+							field.GrowthBehavior=GrowthBehaviorEnum.FillDown;
 						}
 						break;
 					case "Drug2":
@@ -4449,6 +4450,7 @@ namespace OpenDentBusiness {
 						else {
 							field.FieldValue=Lans.g("RxMulti","VOID");
 							field.FontSize=50;
+							field.GrowthBehavior=GrowthBehaviorEnum.FillDown;
 						}
 						break;
 					case "Drug3":
@@ -4458,6 +4460,7 @@ namespace OpenDentBusiness {
 						else {
 							field.FieldValue=Lans.g("RxMulti","VOID");
 							field.FontSize=50;
+							field.GrowthBehavior=GrowthBehaviorEnum.FillDown;
 						}
 						break;
 					case "Drug4":
@@ -4467,6 +4470,7 @@ namespace OpenDentBusiness {
 						else {
 							field.FieldValue=Lans.g("RxMulti","VOID");
 							field.FontSize=50;
+							field.GrowthBehavior=GrowthBehaviorEnum.FillDown;
 						}
 						break;
 					case "Drug5":
@@ -4476,6 +4480,7 @@ namespace OpenDentBusiness {
 						else {
 							field.FieldValue=Lans.g("RxMulti","VOID");
 							field.FontSize=50;
+							field.GrowthBehavior=GrowthBehaviorEnum.FillDown;
 						}
 						break;
 					case "Drug6":
@@ -4485,6 +4490,7 @@ namespace OpenDentBusiness {
 						else {
 							field.FieldValue=Lans.g("RxMulti","VOID");
 							field.FontSize=50;
+							field.GrowthBehavior=GrowthBehaviorEnum.FillDown;
 						}
 						break;
 					case "Disp":

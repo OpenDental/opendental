@@ -377,19 +377,19 @@ namespace OpenDentBusiness{
 		}
 
 		public static long InsertFromCareCredit(long patNum,long provNum,long clinicNum,double amount,string payNote,CreditCardSource ccSource) {
-			Payment payment=new Payment() {
-				ClinicNum=clinicNum,
-				IsRecurringCC=false,
-				IsSplit=false,
-				PatNum=patNum,
-				PayAmt=amount,
-				PayDate=MiscData.GetNowDateTime(),
-				PaymentSource=ccSource,
-				PayType=PIn.Long(ProgramProperties.GetPropVal(Programs.GetCur(ProgramName.CareCredit).ProgramNum,
-					ProgramProperties.PropertyDescs.CareCredit.CareCreditPaymentType,clinicNum)),ProcessStatus=ProcessStat.OnlinePending,
-				PayNote=payNote,
-				IsCcCompleted=true,
-			};
+			Payment payment=new Payment();
+			payment.ClinicNum=clinicNum;
+			payment.IsRecurringCC=false;
+			payment.IsSplit=false;
+			payment.PatNum=patNum;
+			payment.PayAmt=amount;
+			payment.PayDate=MiscData.GetNowDateTime();
+			payment.PaymentSource=ccSource;
+			payment.PayType=PIn.Long(ProgramProperties.GetPropVal(Programs.GetCur(ProgramName.CareCredit).ProgramNum,
+				ProgramProperties.PropertyDescs.CareCredit.CareCreditPaymentType,clinicNum));
+			payment.ProcessStatus=ProcessStat.OnlinePending;
+			payment.PayNote=payNote;
+			payment.IsCcCompleted=true;
 			if(PrefC.GetBool(PrefName.OnlinePaymentsMarkAsProcessed)) {
 				payment.ProcessStatus=ProcessStat.OnlineProcessed;
 			}
