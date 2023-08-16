@@ -1010,10 +1010,25 @@ namespace OpenDentBusiness {
 		///new user in a clinic.</summary>
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		EnterpriseNoneApptViewDefaultDisabled,
+		///<summary>definition.DefNum of category InsurancePaymentType. Zero by default. Used for claimpayments made from ERA ACH payments.</summary>
+		[PrefName(ValueType=PrefValueType.LONG)]
+		EraAchPaymentType,
 		EraAllowTotalPayments,
 		///<summary>Enum:EraAutomationMode. 1 by default. 0=UseGlobal(not used in the preference table), 1=ReviewAll, 2=SemiAutomatic.</summary>
 		[PrefName(ValueType=PrefValueType.ENUM)]
 		EraAutomationBehavior,
+		///<summary>definition.DefNum of category InsurancePaymentType. Zero by default. Used for claimpayments made from ERA CHK payments.</summary>
+		[PrefName(ValueType=PrefValueType.LONG)]
+		EraChkPaymentType,
+		///<summary>definition.DefNum of category InsurancePaymentType. Zero by default. Used for claimpayments made from ERA payments of types other than ACH, CHK, and FWT.
+		///Will also be used for ACH, CHK, and FWT payments if their corresponding preferences aren't set (EraAchPaymentType, EraChkPaymentType, EraFwtPaymentType).
+		///If those preferences and this preference aren't set, we look for an InsurancePaymentType definition with the name "EFT" for ACH, "Check" for CHK, and "Wired" for FWT.
+		///The claimpayment type is set to zero (undefined) if a match is not found.</summary>
+		[PrefName(ValueType=PrefValueType.LONG)]
+		EraDefaultPaymentType,
+		///<summary>definition.DefNum of category InsurancePaymentType. Zero by default. Used for claimpayments made from ERA FWT payments.</summary>
+		[PrefName(ValueType=PrefValueType.LONG)]
+		EraFwtPaymentType,
 		///<summary>Boolean, false by default.  When true then there will be 1 page per each claim paid for an ERA header and ERA claim paid on printouts.</summary>
 		EraPrintOneClaimPerPage,
 		///<summary>Boolean, true by default.  When true, the ERA 'Verify and Enter Payment' window will post WriteOffs for procedures covered by category percentage or 

@@ -490,6 +490,14 @@ namespace OpenDentBusiness {
 					listStrCommands.Add("SELECT COUNT(*) FROM payment WHERE PayType="+POut.Long(def.DefNum));
 					break;
 				case DefCat.InsurancePaymentType:
+					if(new[]{
+						PrefName.EraChkPaymentType,
+						PrefName.EraAchPaymentType,
+						PrefName.EraFwtPaymentType,
+						PrefName.EraDefaultPaymentType,
+					}.Any(x=>PrefC.GetLong(x)==def.DefNum)){
+						return true;
+					}
 					listStrCommands.Add("SELECT COUNT(*) FROM claimpayment WHERE PayType="+POut.Long(def.DefNum));
 					break;
 				case DefCat.PaySplitUnearnedType:

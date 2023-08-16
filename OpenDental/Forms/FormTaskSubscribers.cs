@@ -2,6 +2,7 @@ using OpenDental.UI;
 using OpenDentBusiness;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Windows.Forms;
 
 namespace OpenDental {
@@ -22,28 +23,18 @@ namespace OpenDental {
 			gridODSubscribers.BeginUpdate();
 			gridODSubscribers.Columns.Clear();
 			GridColumn gridColumn;
+			GridRow gridRow;
 			gridColumn=new GridColumn("User",-1);
 			gridColumn.IsWidthDynamic=true;
 			gridODSubscribers.Columns.Add(gridColumn);
 			gridColumn=new GridColumn("Read",55,HorizontalAlignment.Center);
 			gridODSubscribers.Columns.Add(gridColumn);
 			gridODSubscribers.ListGridRows.Clear();
-			List<long> listUserNums=TaskSubscriptions.GetSubscribersForTask(TaskForSubscribers);
-			List<TaskUnread> listTaskUnreads=TaskUnreads.GetForTask(TaskForSubscribers.TaskNum);
-			for(int i=0;i<listUserNums.Count;i++) {
-				if(TaskForSubscribers.UserNum==listUserNums[i] || Userods.GetUser(listUserNums[i]).IsHidden) {
-					continue;//Skip the creator of the task.
-				}
-				GridRow gridRow=new GridRow();
-				string username=Userods.GetUser(listUserNums[i]).UserName;//Uses cache
-				gridRow.Cells.Add(username);
-				bool isUnread=listTaskUnreads.Exists(x => x.UserNum==listUserNums[i]);
-				if(isUnread) {
-					gridRow.Cells.Add("Unread");
-				}
-				else {
-					gridRow.Cells.Add("Read");
-				}
+			DataTable tabletaskUnreads=TaskUnreads.GetForTask(TaskForSubscribers.TaskNum);
+			for(int i=0;i<tabletaskUnreads.Rows.Count;i++) {
+				gridRow=new GridRow();
+				gridRow.Cells.Add(tabletaskUnreads.Rows[i]["User"].ToString());
+				gridRow.Cells.Add(tabletaskUnreads.Rows[i]["Unread"].ToString());
 				gridODSubscribers.ListGridRows.Add(gridRow);
 			}
 			gridODSubscribers.EndUpdate();

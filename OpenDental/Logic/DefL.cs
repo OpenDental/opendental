@@ -590,7 +590,11 @@ namespace OpenDental {
 					PrefC.GetLong(PrefName.LateChargeAdjustmentType),
 					PrefC.GetLong(PrefName.PrepaymentUnearnedType),
 					PrefC.GetLong(PrefName.SalesTaxAdjustmentType),
-					PrefC.GetLong(PrefName.RecurringChargesPayTypeCC)))
+					PrefC.GetLong(PrefName.RecurringChargesPayTypeCC),
+					PrefC.GetLong(PrefName.EraChkPaymentType),
+					PrefC.GetLong(PrefName.EraAchPaymentType),
+					PrefC.GetLong(PrefName.EraFwtPaymentType),
+					PrefC.GetLong(PrefName.EraDefaultPaymentType)))
 					//PrefC.GetLong(PrefName.TpUnearnedType))) //We can hide this because of the combo box code which will still set a default
 				{
 					MsgBox.Show(_lanThis,"You cannot hide a definition if it is in use within Preferences.");

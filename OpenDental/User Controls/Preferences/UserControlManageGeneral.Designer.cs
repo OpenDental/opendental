@@ -44,6 +44,14 @@ namespace OpenDental {
 			this.labelClaimsReceivedDays = new System.Windows.Forms.Label();
 			this.checkClaimPaymentBatchOnly = new OpenDental.UI.CheckBox();
 			this.groupBoxERA = new OpenDental.UI.GroupBox();
+			this.labelERADefault = new System.Windows.Forms.Label();
+			this.comboEraDefaultPaymentType = new OpenDental.UI.ComboBox();
+			this.labelFWT = new System.Windows.Forms.Label();
+			this.comboFwtPaymentType = new OpenDental.UI.ComboBox();
+			this.labelACH = new System.Windows.Forms.Label();
+			this.comboAchPaymentType = new OpenDental.UI.ComboBox();
+			this.labelCHK = new System.Windows.Forms.Label();
+			this.comboEraCheckPaymentType = new OpenDental.UI.ComboBox();
 			this.checkEraOneClaimPerPage = new OpenDental.UI.CheckBox();
 			this.checkIncludeEraWOPercCoPay = new OpenDental.UI.CheckBox();
 			this.labelEraAutomation = new System.Windows.Forms.Label();
@@ -59,7 +67,7 @@ namespace OpenDental {
 			// checkScheduleProvEmpSelectAll
 			// 
 			this.checkScheduleProvEmpSelectAll.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkScheduleProvEmpSelectAll.Location = new System.Drawing.Point(39, 447);
+			this.checkScheduleProvEmpSelectAll.Location = new System.Drawing.Point(39, 546);
 			this.checkScheduleProvEmpSelectAll.Name = "checkScheduleProvEmpSelectAll";
 			this.checkScheduleProvEmpSelectAll.Size = new System.Drawing.Size(421, 17);
 			this.checkScheduleProvEmpSelectAll.TabIndex = 201;
@@ -68,7 +76,7 @@ namespace OpenDental {
 			// checkAccountingInvoiceAttachmentsSaveInDatabase
 			// 
 			this.checkAccountingInvoiceAttachmentsSaveInDatabase.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkAccountingInvoiceAttachmentsSaveInDatabase.Location = new System.Drawing.Point(25, 470);
+			this.checkAccountingInvoiceAttachmentsSaveInDatabase.Location = new System.Drawing.Point(25, 569);
 			this.checkAccountingInvoiceAttachmentsSaveInDatabase.Name = "checkAccountingInvoiceAttachmentsSaveInDatabase";
 			this.checkAccountingInvoiceAttachmentsSaveInDatabase.Size = new System.Drawing.Size(435, 17);
 			this.checkAccountingInvoiceAttachmentsSaveInDatabase.TabIndex = 308;
@@ -80,7 +88,7 @@ namespace OpenDental {
 			this.groupBoxTimeCards.Controls.Add(this.label16);
 			this.groupBoxTimeCards.Controls.Add(this.checkTimeCardADP);
 			this.groupBoxTimeCards.Controls.Add(this.checkClockEventAllowBreak);
-			this.groupBoxTimeCards.Location = new System.Drawing.Point(20, 354);
+			this.groupBoxTimeCards.Location = new System.Drawing.Point(20, 453);
 			this.groupBoxTimeCards.Name = "groupBoxTimeCards";
 			this.groupBoxTimeCards.Size = new System.Drawing.Size(450, 87);
 			this.groupBoxTimeCards.TabIndex = 307;
@@ -129,7 +137,7 @@ namespace OpenDental {
 			this.groupBoxDeposits.Controls.Add(this.checkShowAutoDeposit);
 			this.groupBoxDeposits.Controls.Add(this.comboDepositSoftware);
 			this.groupBoxDeposits.Controls.Add(this.labelDepositSoftware);
-			this.groupBoxDeposits.Location = new System.Drawing.Point(20, 284);
+			this.groupBoxDeposits.Location = new System.Drawing.Point(20, 383);
 			this.groupBoxDeposits.Name = "groupBoxDeposits";
 			this.groupBoxDeposits.Size = new System.Drawing.Size(450, 64);
 			this.groupBoxDeposits.TabIndex = 306;
@@ -168,7 +176,7 @@ namespace OpenDental {
 			// 
 			this.groupBoxPrescriptions.Controls.Add(this.checkRxSendNewToQueue);
 			this.groupBoxPrescriptions.Controls.Add(this.checkRxHideProvsWithoutDEA);
-			this.groupBoxPrescriptions.Location = new System.Drawing.Point(20, 218);
+			this.groupBoxPrescriptions.Location = new System.Drawing.Point(20, 317);
 			this.groupBoxPrescriptions.Name = "groupBoxPrescriptions";
 			this.groupBoxPrescriptions.Size = new System.Drawing.Size(450, 60);
 			this.groupBoxPrescriptions.TabIndex = 305;
@@ -200,7 +208,7 @@ namespace OpenDental {
 			this.groupBoxClaims.Controls.Add(this.textClaimsReceivedDays);
 			this.groupBoxClaims.Controls.Add(this.labelClaimsReceivedDays);
 			this.groupBoxClaims.Controls.Add(this.checkClaimPaymentBatchOnly);
-			this.groupBoxClaims.Location = new System.Drawing.Point(20, 126);
+			this.groupBoxClaims.Location = new System.Drawing.Point(20, 225);
 			this.groupBoxClaims.Name = "groupBoxClaims";
 			this.groupBoxClaims.Size = new System.Drawing.Size(450, 86);
 			this.groupBoxClaims.TabIndex = 304;
@@ -251,6 +259,14 @@ namespace OpenDental {
 			// 
 			// groupBoxERA
 			// 
+			this.groupBoxERA.Controls.Add(this.labelERADefault);
+			this.groupBoxERA.Controls.Add(this.comboEraDefaultPaymentType);
+			this.groupBoxERA.Controls.Add(this.labelFWT);
+			this.groupBoxERA.Controls.Add(this.comboFwtPaymentType);
+			this.groupBoxERA.Controls.Add(this.labelACH);
+			this.groupBoxERA.Controls.Add(this.comboAchPaymentType);
+			this.groupBoxERA.Controls.Add(this.labelCHK);
+			this.groupBoxERA.Controls.Add(this.comboEraCheckPaymentType);
 			this.groupBoxERA.Controls.Add(this.checkEraOneClaimPerPage);
 			this.groupBoxERA.Controls.Add(this.checkIncludeEraWOPercCoPay);
 			this.groupBoxERA.Controls.Add(this.labelEraAutomation);
@@ -258,9 +274,81 @@ namespace OpenDental {
 			this.groupBoxERA.Controls.Add(this.checkEraAllowTotalPayment);
 			this.groupBoxERA.Location = new System.Drawing.Point(20, 10);
 			this.groupBoxERA.Name = "groupBoxERA";
-			this.groupBoxERA.Size = new System.Drawing.Size(450, 110);
+			this.groupBoxERA.Size = new System.Drawing.Size(450, 210);
 			this.groupBoxERA.TabIndex = 303;
 			this.groupBoxERA.Text = "ERA";
+			// 
+			// labelERADefault
+			// 
+			this.labelERADefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelERADefault.Location = new System.Drawing.Point(118, 188);
+			this.labelERADefault.Name = "labelERADefault";
+			this.labelERADefault.Size = new System.Drawing.Size(189, 17);
+			this.labelERADefault.TabIndex = 309;
+			this.labelERADefault.Text = "Default payment type";
+			this.labelERADefault.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// comboEraDefaultPaymentType
+			// 
+			this.comboEraDefaultPaymentType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.comboEraDefaultPaymentType.Location = new System.Drawing.Point(310, 185);
+			this.comboEraDefaultPaymentType.Name = "comboEraDefaultPaymentType";
+			this.comboEraDefaultPaymentType.Size = new System.Drawing.Size(130, 21);
+			this.comboEraDefaultPaymentType.TabIndex = 308;
+			// 
+			// labelFWT
+			// 
+			this.labelFWT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelFWT.Location = new System.Drawing.Point(118, 161);
+			this.labelFWT.Name = "labelFWT";
+			this.labelFWT.Size = new System.Drawing.Size(189, 17);
+			this.labelFWT.TabIndex = 307;
+			this.labelFWT.Text = "FWT payment type";
+			this.labelFWT.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// comboFwtPaymentType
+			// 
+			this.comboFwtPaymentType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.comboFwtPaymentType.Location = new System.Drawing.Point(310, 158);
+			this.comboFwtPaymentType.Name = "comboFwtPaymentType";
+			this.comboFwtPaymentType.Size = new System.Drawing.Size(130, 21);
+			this.comboFwtPaymentType.TabIndex = 306;
+			// 
+			// labelACH
+			// 
+			this.labelACH.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelACH.Location = new System.Drawing.Point(118, 135);
+			this.labelACH.Name = "labelACH";
+			this.labelACH.Size = new System.Drawing.Size(189, 17);
+			this.labelACH.TabIndex = 305;
+			this.labelACH.Text = "ACH payment type";
+			this.labelACH.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// comboAchPaymentType
+			// 
+			this.comboAchPaymentType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.comboAchPaymentType.Location = new System.Drawing.Point(310, 132);
+			this.comboAchPaymentType.Name = "comboAchPaymentType";
+			this.comboAchPaymentType.Size = new System.Drawing.Size(130, 21);
+			this.comboAchPaymentType.TabIndex = 304;
+			// 
+			// labelCHK
+			// 
+			this.labelCHK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelCHK.Location = new System.Drawing.Point(118, 109);
+			this.labelCHK.Name = "labelCHK";
+			this.labelCHK.Size = new System.Drawing.Size(189, 17);
+			this.labelCHK.TabIndex = 303;
+			this.labelCHK.Text = "CHK payment type";
+			this.labelCHK.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// comboEraCheckPaymentType
+			// 
+			this.comboEraCheckPaymentType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.comboEraCheckPaymentType.Location = new System.Drawing.Point(310, 106);
+			this.comboEraCheckPaymentType.Name = "comboEraCheckPaymentType";
+			this.comboEraCheckPaymentType.Size = new System.Drawing.Size(130, 21);
+			this.comboEraCheckPaymentType.TabIndex = 302;
 			// 
 			// checkEraOneClaimPerPage
 			// 
@@ -360,5 +448,13 @@ namespace OpenDental {
 		private UI.GroupBox groupBoxDeposits;
 		private UI.GroupBox groupBoxTimeCards;
 		private OpenDental.UI.CheckBox checkAccountingInvoiceAttachmentsSaveInDatabase;
+		private System.Windows.Forms.Label labelERADefault;
+		private UI.ComboBox comboEraDefaultPaymentType;
+		private System.Windows.Forms.Label labelFWT;
+		private UI.ComboBox comboFwtPaymentType;
+		private System.Windows.Forms.Label labelACH;
+		private UI.ComboBox comboAchPaymentType;
+		private System.Windows.Forms.Label labelCHK;
+		private UI.ComboBox comboEraCheckPaymentType;
 	}
 }
