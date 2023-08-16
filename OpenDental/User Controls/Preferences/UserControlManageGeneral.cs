@@ -78,6 +78,29 @@ namespace OpenDental {
 				.ToList();
 			comboEraAutomation.Items.AddListEnum(listEraAutomationModes);
 		}
+
+		/// <summary>Fills the CHK, ACH, FWT, and ERADefault comboboxes. If no def is chosen yet "None" is put in there</summary>
+		private void FillEraPaymentTypeCombos(){
+			//Creating a new def and adding it to the list first. Not doing Combo.Items.AddDefNone to allow us to use list.FindIndex
+			Def defNone = new Def();
+			defNone.DefNum=0;
+			defNone.ItemName="None";
+			//Setting up the list and adding the defs to it
+			List<Def> listDefs=new List<Def>() {defNone };
+			listDefs.AddRange(Defs.GetDefsForCategory(DefCat.InsurancePaymentType,true));
+			//Add each of the defs and set the default for each ERA combobox
+			FillComboEraPaymentTypeHelper(comboEraCheckPaymentType,listDefs,PrefName.EraChkPaymentType);
+			FillComboEraPaymentTypeHelper(comboAchPaymentType,listDefs,PrefName.EraAchPaymentType);
+			FillComboEraPaymentTypeHelper(comboFwtPaymentType,listDefs,PrefName.EraFwtPaymentType);
+			FillComboEraPaymentTypeHelper(comboEraDefaultPaymentType,listDefs,PrefName.EraDefaultPaymentType);
+		}
+
+		private void FillComboEraPaymentTypeHelper(UI.ComboBox comboBox, List<Def>listDefs, PrefName prefName){
+			comboBox.Items.Clear();
+			comboBox.Items.AddDefs(listDefs);
+			long defNum=PrefC.GetLong(prefName);
+			comboBox.SelectedIndex=listDefs.FindIndex(x=>x.DefNum==defNum);
+		}
 		#endregion Methods - Private
 
 		#region Methods - Public
@@ -106,6 +129,7 @@ namespace OpenDental {
 			comboDepositSoftware.SetSelectedEnum(PrefC.GetEnum<AccountingSoftware>(PrefName.AccountingSoftware));
 			checkRxHideProvsWithoutDEA.Checked=PrefC.GetBool(PrefName.RxHideProvsWithoutDEA);
 			checkAccountingInvoiceAttachmentsSaveInDatabase.Checked=PrefC.GetBool(PrefName.AccountingInvoiceAttachmentsSaveInDatabase);
+			FillEraPaymentTypeCombos();
 		}
 
 		public bool SaveManageGeneral() {
@@ -129,6 +153,10 @@ namespace OpenDental {
 			Changed|=Prefs.UpdateInt(PrefName.AccountingSoftware,(int)comboDepositSoftware.GetSelected<AccountingSoftware>());
 			Changed|=Prefs.UpdateBool(PrefName.RxHideProvsWithoutDEA,checkRxHideProvsWithoutDEA.Checked);
 			Changed|=Prefs.UpdateBool(PrefName.AccountingInvoiceAttachmentsSaveInDatabase,checkAccountingInvoiceAttachmentsSaveInDatabase.Checked);
+			Changed|=Prefs.UpdateLong(PrefName.EraChkPaymentType, comboEraCheckPaymentType.GetSelected<Def>().DefNum);
+			Changed|=Prefs.UpdateLong(PrefName.EraAchPaymentType, comboAchPaymentType.GetSelected<Def>().DefNum);
+			Changed|=Prefs.UpdateLong(PrefName.EraFwtPaymentType, comboFwtPaymentType.GetSelected<Def>().DefNum);
+			Changed|=Prefs.UpdateLong(PrefName.EraDefaultPaymentType, comboEraDefaultPaymentType.GetSelected<Def>().DefNum);
 			return true;
 		}
 		#endregion Methods - Public

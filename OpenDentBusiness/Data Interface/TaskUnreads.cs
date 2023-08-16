@@ -131,12 +131,21 @@ namespace OpenDentBusiness{
 			return task.IsUnread;
 		}
 
-		public static List<TaskUnread> GetForTask(long taskNum) {
+		public static DataTable GetForTask(long taskNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<TaskUnread>>(MethodBase.GetCurrentMethod(),taskNum);
+				return Meth.GetObject<DataTable>(MethodBase.GetCurrentMethod(),taskNum);
 			}
-			string command="SELECT * FROM taskunread WHERE TaskNum="+POut.Long(taskNum);
-			return Crud.TaskUnreadCrud.SelectMany(command);
+			string command=@"SELECT
+				userod.UserName AS 'User',
+				(CASE WHEN !ISNULL(taskunread.TaskNum) THEN 'Unread' ELSE 'Read' END) AS 'Unread' "+
+				"FROM tasksubscription "+
+				"INNER JOIN tasklist ON tasksubscription.TaskListNum=tasklist.TaskListNum "+
+				$"INNER JOIN taskancestor ON taskancestor.TaskListNum=tasklist.TaskListNum AND taskancestor.TaskNum={POut.Long(taskNum)} "+
+				"INNER JOIN userod ON userod.UserNum=tasksubscription.UserNum "+
+				$"LEFT JOIN taskunread ON taskunread.UserNum=tasksubscription.UserNum AND taskunread.TaskNum={POut.Long(taskNum)} "+
+				"WHERE userod.IsHidden=FALSE "+ //Don't include hidden users
+				"ORDER BY Unread,userod.UserName";
+			return Db.GetTable(command);
 		}
 
 		///<summary>Sets unread for a single user.  Works well without duplicates, whether it's already set to Unread(new) or not.</summary>

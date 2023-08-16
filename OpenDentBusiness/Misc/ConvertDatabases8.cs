@@ -403,5 +403,18 @@ namespace OpenDentBusiness {
 			Db.NonQ(command);
 		}//End of 23_2_5() method
 
+		private static void To23_2_9(){
+			//E46260
+			string command="INSERT INTO preference(PrefName,ValueString) VALUES('EraChkPaymentType','0')";
+			Db.NonQ(command);
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('EraAchPaymentType','0')";
+			Db.NonQ(command);
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('EraFwtPaymentType','0')";
+			Db.NonQ(command);
+			command="INSERT INTO preference(PrefName,ValueString) VALUES('EraDefaultPaymentType','0')";
+			Db.NonQ(command);
+			//End of E46260
+		}//End of To23_2_9() method
+
 	}
 }

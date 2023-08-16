@@ -1002,12 +1002,18 @@ namespace OpenDentBusiness{
 			if(includeVerifyIns){
 				string insPlanNums=string.Join(",",listPlanNums);
 				string patNums=string.Join(",",listPatNums);//always valid
-				command="SELECT FKey, DateLastVerified, VerifyType, patplan.PatNum, insplan.HideFromVerifyList, inssub.PlanNum FROM insverify"
-					+" LEFT JOIN patplan ON patplan.PatPlanNum=insverify.FKey AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.PatientEnrollment)
-					+" LEFT JOIN insplan ON insplan.PlanNum=insverify.FKey AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.InsuranceBenefit)
-					+" LEFT JOIN inssub ON inssub.InsSubNum=patplan.InsSubNum"
-					+" WHERE (insverify.FKey IN("+insPlanNums+") AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.InsuranceBenefit)+")"
-					+" OR (patplan.PatNum IN("+patNums+") AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.PatientEnrollment)+")";
+				command="SELECT FKey,DateLastVerified,VerifyType,patplan.PatNum,NULL HideFromVerifyList,inssub.PlanNum "
+					+"FROM insverify "
+					+"LEFT JOIN patplan ON patplan.PatPlanNum=insverify.FKey AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.PatientEnrollment)+" "
+					+"LEFT JOIN inssub ON inssub.InsSubNum=patplan.InsSubNum "
+					+"WHERE patplan.PatNum IN("+patNums+") "
+					+"AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.PatientEnrollment)+" "
+					+"UNION ALL "
+					+"SELECT FKey,DateLastVerified,VerifyType,NULL PatNum,insplan.HideFromVerifyList,NULL PlanNum "
+					+"FROM insverify "
+					+"LEFT JOIN insplan ON insplan.PlanNum=insverify.FKey AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.InsuranceBenefit)+" "
+					+"WHERE insverify.FKey IN("+insPlanNums+") "
+					+"AND insverify.VerifyType="+POut.Enum<VerifyTypes>(VerifyTypes.InsuranceBenefit);
 				if(insPlanNums!="") {//if no insPlans, then there can't be any patPlans.
 					tableInsVerify=dcon.GetTable(command);
 				}

@@ -613,6 +613,31 @@ namespace OpenDentBusiness {
 			return listClaims;
 		}
 
+		public long GetInsurancePaymentTypeDefNum(){
+			long defNumDefault=PrefC.GetLong(PrefName.EraDefaultPaymentType);
+			switch(_paymentMethodCode){
+				case "CHK":
+					return GetInsurancePaymentTypeDefNumHelper(PrefName.EraChkPaymentType,defNumDefault,"Check");
+				case "ACH":
+					return GetInsurancePaymentTypeDefNumHelper(PrefName.EraAchPaymentType,defNumDefault,"EFT");
+				case "FWT":
+					return GetInsurancePaymentTypeDefNumHelper(PrefName.EraAchPaymentType,defNumDefault,"Wired");
+				default:
+					return defNumDefault;
+			}
+		}
+
+		private long GetInsurancePaymentTypeDefNumHelper(PrefName prefName, long defNumDefault, string defItemName){
+			long defNum=PrefC.GetLong(prefName);
+			if(defNum!=0){
+				return defNum;
+			}
+			if(defNumDefault!=0){
+				return defNumDefault;
+			}
+			return Defs.GetByExactName(DefCat.InsurancePaymentType,defItemName);
+		}
+
 		public string GetHumanReadable() {
 			StringBuilder retVal=new StringBuilder();
 			retVal.AppendLine("Claim Status Reponse From "+PayerName);
