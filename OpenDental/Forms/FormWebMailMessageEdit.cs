@@ -87,7 +87,7 @@ namespace OpenDental {
 				|| _emailAddressSender.EmailUsername=="") 
 			{
 				//No valid "Notify" email setup for this practice yet.
-				error+="Invalid Web Mail Notify email.  Configure a Web Mail Notify email address in E-mail Setup. ";
+				error+="Invalid Web Mail Notify email. Configure a Web Mail Notify email address in Email Addresses window. ";
 			}
 			if(_emailAddressSender!=null) {
 				_emailAddressSender=EmailAddresses.OverrideSenderAddressClinical(_emailAddressSender,_patient.ClinicNum);

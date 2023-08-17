@@ -19,8 +19,7 @@ namespace OpenDental {
 				continuityOfCareText=EhrCCD.GenerateClinicalSummary(PatCur,true,true,true,true,true,true,true,true,true,true,true,true,
 					textInstructions.Text,DateTime.MinValue,out string warnings);
 				if(!string.IsNullOrEmpty(warnings)) {
-					string warningMsg=Lan.g(this,"Click OK to ignore warnings and continue, or click Cancel.")+"\r\n"+warnings;
-					if(MessageBox.Show(warningMsg,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+					if(MessageBox.Show(warnings,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
 						return;
 					}
 				}
@@ -46,8 +45,7 @@ namespace OpenDental {
 				continuityOfCareText=EhrCCD.GenerateClinicalSummary(PatCur,true,true,true,true,true,true,true,true,true,true,true,true,
 					textInstructions.Text,DateTime.MinValue,out string warnings);
 				if(!string.IsNullOrEmpty(warnings)) {
-					string warningMsg=Lan.g(this,"Click OK to ignore warnings and continue, or click Cancel.")+"\r\n"+warnings;
-					if(MessageBox.Show(warningMsg,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+					if(MessageBox.Show(warnings,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
 						return;
 					}
 				}

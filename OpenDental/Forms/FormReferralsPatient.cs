@@ -226,8 +226,7 @@ namespace OpenDental{
 				ccd=EhrCCD.GenerateSummaryOfCare(Patients.GetPat(PatNum),out string warnings);//Create summary of care, can throw exceptions
 				if(!string.IsNullOrEmpty(warnings)) {
 					this.Cursor=Cursors.Default;
-					string warningMsg=Lan.g(this,"Click OK to ignore warnings and continue, or click Cancel.")+"\r\n"+warnings;
-					if(MessageBox.Show(warningMsg,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+					if(MessageBox.Show(warnings,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
 						return;
 					}
 				}
