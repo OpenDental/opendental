@@ -94,7 +94,7 @@ namespace OpenDental {
 				|| _isAddingCard) //When adding a card, the web service must be used.
 			{
 				groupProcessMethod.Visible=false;
-				Height-=55;//All the controls except for the Transaction Type group box should be anchored to the bottom, so they will move themselves up.
+				Height-=LayoutManager.Scale(55);//All the controls except for the Transaction Type group box should be anchored to the bottom, so they will move themselves up.
 			}
 			else {
 				string procMethod=ProgramProperties.GetPropValForClinicOrDefault(_program.ProgramNum,

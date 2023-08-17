@@ -201,7 +201,7 @@ namespace OpenDental {
 			this.textNoneChecks.Multiline = true;
 			this.textNoneChecks.Name = "textNoneChecks";
 			this.textNoneChecks.ReadOnly = true;
-			this.textNoneChecks.Size = new System.Drawing.Size(365, 26);
+			this.textNoneChecks.Size = new System.Drawing.Size(365, 32);
 			this.textNoneChecks.TabIndex = 99;
 			this.textNoneChecks.TabStop = false;
 			this.textNoneChecks.Text = "No selections will cause all database methods to run.\r\nOtherwise only selected me" +

@@ -202,8 +202,7 @@ namespace OpenDental {
 					ccd=EhrCCD.GeneratePatientExport(patCur,out string warnings);
 					if(!string.IsNullOrEmpty(warnings)) {
 						this.Cursor=Cursors.Default;
-						string warningMsg=Lan.g(this,"Click OK to ignore warnings and continue, or click Cancel.")+"\r\n"+warnings;
-						if(MessageBox.Show(warningMsg,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+						if(MessageBox.Show(warnings,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
 							return;
 						}
 					}

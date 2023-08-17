@@ -175,8 +175,7 @@ namespace OpenDental {
 			try {
 				ccd=EhrCCD.GenerateSummaryOfCare(PatCur,out string warnings);
 				if(!string.IsNullOrEmpty(warnings)) {
-					string warningMsg=Lan.g(this,"Click OK to ignore warnings and continue, or click Cancel.")+"\r\n"+warnings;
-					if(MessageBox.Show(warningMsg,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+					if(MessageBox.Show(warnings,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
 						return;
 					}
 				}
@@ -232,8 +231,7 @@ namespace OpenDental {
 			try {
 				ccd=EhrCCD.GenerateSummaryOfCare(PatCur,out string warnings);
 				if(!string.IsNullOrEmpty(warnings)) {
-					string warningMsg=Lan.g(this,"Click OK to ignore warnings and continue, or click Cancel.")+"\r\n"+warnings;
-					if(MessageBox.Show(warningMsg,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+					if(MessageBox.Show(warnings,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
 						return;
 					}
 				}
@@ -301,8 +299,7 @@ namespace OpenDental {
 			try {
 				ccd=EhrCCD.GenerateSummaryOfCare(PatCur,out string warnings);
 				if(!string.IsNullOrEmpty(warnings)) {
-					string warningMsg=Lan.g(this,"Click OK to ignore warnings and continue, or click Cancel.")+"\r\n"+warnings;
-					if(MessageBox.Show(warningMsg,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+					if(MessageBox.Show(warnings,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
 						return;
 					}
 				}
@@ -329,8 +326,7 @@ namespace OpenDental {
 			try {
 				ccd=EhrCCD.GenerateSummaryOfCare(PatCur,out string warnings);
 				if(!string.IsNullOrEmpty(warnings)) {
-					string warningMsg=Lan.g(this,"Click OK to ignore warnings and continue, or click Cancel.")+"\r\n"+warnings;
-					if(MessageBox.Show(warningMsg,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
+					if(MessageBox.Show(warnings,"Warnings",MessageBoxButtons.OKCancel)==DialogResult.Cancel) {
 						return;
 					}
 				}
