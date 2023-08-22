@@ -799,10 +799,15 @@ namespace OpenDental{
 				MsgBox.Show(this,"Please select one or more procedures first.");
 				return;
 			}
-			List<long> listApptNumsSelected=gridProc.SelectedTags<Procedure>().Select(x => x.AptNum).ToList();
-			if(listApptNumsSelected.Any(x => x!=_appointment.AptNum && x!=0)) {
-				MsgBox.Show("One or more selected procedures are attached to another appointment.");
-				return;
+			if(PrefC.GetBool(PrefName.ApptsRequireProc)) {
+				List<long> listApptNumsSelected=gridProc.SelectedTags<Procedure>().Select(x => x.AptNum).ToList();
+				if(listApptNumsSelected.Any(x => x!=_appointment.AptNum && x!=0)) {
+					bool areApptsEmpty=Appointments.AreApptsGoingToBeEmpty(gridProc.SelectedTags<Procedure>(),listApptNumsSelected);
+					if(areApptsEmpty) {
+						MsgBox.Show("One or more selected procedures are attached to another appointment.");
+						return;
+					}
+				}
 			}
 			List<long> listPlannedApptNumsSelected=gridProc.SelectedTags<Procedure>().Select(x => x.PlannedAptNum).Where(x=>x!=0).ToList();
 			if(PrefC.GetBool(PrefName.ApptsRequireProc) && Appointments.AreApptsGoingToBeEmpty(gridProc.SelectedTags<Procedure>(), listPlannedApptNumsSelected, isForPlanned:true))

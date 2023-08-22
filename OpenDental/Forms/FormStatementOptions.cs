@@ -1258,7 +1258,7 @@ namespace OpenDental{
 				return;
 			}
 			//If saving a statement that doesn't yet have an image/doc, create one so we can view this in patient portal
-			if(ListStatements==null && StatementCur.DocNum==0) {
+			if(ListStatements==null && StatementCur.DocNum==0 && !_isFromBilling) {
 				SaveAsDocument(false);//needs to be called after the statement is inserted for the payment plan grid (if present)
 			}
 			if(checkExportCSV.Checked) {

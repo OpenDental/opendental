@@ -65,8 +65,8 @@ namespace OpenDental{
 			this.groupProcessMethod.Controls.Add(this.radioTerminal);
 			this.groupProcessMethod.Location = new System.Drawing.Point(12, 68);
 			this.groupProcessMethod.Name = "groupProcessMethod";
-			this.groupProcessMethod.Size = new System.Drawing.Size(228, 50);
-			this.groupProcessMethod.TabIndex = 1;
+			this.groupProcessMethod.Size = new System.Drawing.Size(248, 50);
+			this.groupProcessMethod.TabIndex = 12;
 			this.groupProcessMethod.TabStop = false;
 			this.groupProcessMethod.Text = "Processing Method";
 			// 
@@ -88,7 +88,7 @@ namespace OpenDental{
 			this.radioTerminal.Location = new System.Drawing.Point(106, 19);
 			this.radioTerminal.Name = "radioTerminal";
 			this.radioTerminal.Size = new System.Drawing.Size(70, 17);
-			this.radioTerminal.TabIndex = 0;
+			this.radioTerminal.TabIndex = 1;
 			this.radioTerminal.Text = "Terminal";
 			this.radioTerminal.UseVisualStyleBackColor = true;
 			this.radioTerminal.CheckedChanged += new System.EventHandler(this.radioTerminal_CheckedChanged);
@@ -100,8 +100,8 @@ namespace OpenDental{
 			this.sigBoxWrapper.Location = new System.Drawing.Point(12, 317);
 			this.sigBoxWrapper.Name = "sigBoxWrapper";
 			this.sigBoxWrapper.SignatureMode = OpenDental.UI.SignatureBoxWrapper.SigMode.Default;
-			this.sigBoxWrapper.Size = new System.Drawing.Size(369, 81);
-			this.sigBoxWrapper.TabIndex = 19;
+			this.sigBoxWrapper.Size = new System.Drawing.Size(389, 81);
+			this.sigBoxWrapper.TabIndex = 8;
 			this.sigBoxWrapper.TabStop = false;
 			this.sigBoxWrapper.UserSig = null;
 			// 
@@ -111,17 +111,17 @@ namespace OpenDental{
 			this.checkForceDuplicate.Location = new System.Drawing.Point(163, 252);
 			this.checkForceDuplicate.Name = "checkForceDuplicate";
 			this.checkForceDuplicate.Size = new System.Drawing.Size(217, 17);
-			this.checkForceDuplicate.TabIndex = 19;
+			this.checkForceDuplicate.TabIndex = 7;
 			this.checkForceDuplicate.Text = "Force Duplicate";
 			// 
 			// radioForce
 			// 
 			this.radioForce.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.radioForce.AutoSize = true;
-			this.radioForce.Location = new System.Drawing.Point(262, 60);
+			this.radioForce.Location = new System.Drawing.Point(282, 60);
 			this.radioForce.Name = "radioForce";
 			this.radioForce.Size = new System.Drawing.Size(77, 17);
-			this.radioForce.TabIndex = 1;
+			this.radioForce.TabIndex = 13;
 			this.radioForce.Text = "Force Auth";
 			this.radioForce.UseVisualStyleBackColor = true;
 			this.radioForce.Visible = false;
@@ -145,13 +145,13 @@ namespace OpenDental{
 			this.checkSaveToken.Location = new System.Drawing.Point(12, 252);
 			this.checkSaveToken.Name = "checkSaveToken";
 			this.checkSaveToken.Size = new System.Drawing.Size(150, 17);
-			this.checkSaveToken.TabIndex = 8;
+			this.checkSaveToken.TabIndex = 6;
 			this.checkSaveToken.Text = "Save Token";
 			// 
 			// labelRefNumber
 			// 
 			this.labelRefNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.labelRefNumber.Location = new System.Drawing.Point(263, 80);
+			this.labelRefNumber.Location = new System.Drawing.Point(283, 80);
 			this.labelRefNumber.Name = "labelRefNumber";
 			this.labelRefNumber.Size = new System.Drawing.Size(117, 16);
 			this.labelRefNumber.TabIndex = 0;
@@ -162,10 +162,10 @@ namespace OpenDental{
 			// textRefNumber
 			// 
 			this.textRefNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textRefNumber.Location = new System.Drawing.Point(263, 97);
+			this.textRefNumber.Location = new System.Drawing.Point(283, 97);
 			this.textRefNumber.Name = "textRefNumber";
 			this.textRefNumber.Size = new System.Drawing.Size(118, 20);
-			this.textRefNumber.TabIndex = 7;
+			this.textRefNumber.TabIndex = 14;
 			this.textRefNumber.Visible = false;
 			// 
 			// groupTransType
@@ -176,18 +176,16 @@ namespace OpenDental{
 			this.groupTransType.Controls.Add(this.radioVoid);
 			this.groupTransType.Location = new System.Drawing.Point(12, 12);
 			this.groupTransType.Name = "groupTransType";
-			this.groupTransType.Size = new System.Drawing.Size(228, 50);
-			this.groupTransType.TabIndex = 0;
-			this.groupTransType.TabStop = false;
+			this.groupTransType.Size = new System.Drawing.Size(248, 50);
+			this.groupTransType.TabIndex = 11;
 			this.groupTransType.Text = "Transaction Type";
 			// 
 			// radioSale
 			// 
-			this.radioSale.AutoSize = true;
 			this.radioSale.Checked = true;
 			this.radioSale.Location = new System.Drawing.Point(5, 19);
 			this.radioSale.Name = "radioSale";
-			this.radioSale.Size = new System.Drawing.Size(46, 17);
+			this.radioSale.Size = new System.Drawing.Size(56, 18);
 			this.radioSale.TabIndex = 0;
 			this.radioSale.TabStop = true;
 			this.radioSale.Text = "Sale";
@@ -196,11 +194,10 @@ namespace OpenDental{
 			// 
 			// radioReturn
 			// 
-			this.radioReturn.AutoSize = true;
-			this.radioReturn.Location = new System.Drawing.Point(156, 19);
+			this.radioReturn.Location = new System.Drawing.Point(178, 19);
 			this.radioReturn.Name = "radioReturn";
-			this.radioReturn.Size = new System.Drawing.Size(57, 17);
-			this.radioReturn.TabIndex = 0;
+			this.radioReturn.Size = new System.Drawing.Size(68, 18);
+			this.radioReturn.TabIndex = 3;
 			this.radioReturn.Text = "Return";
 			this.radioReturn.UseVisualStyleBackColor = true;
 			this.radioReturn.CheckedChanged += new System.EventHandler(this.radioReturn_Changed);
@@ -208,22 +205,20 @@ namespace OpenDental{
 			// 
 			// radioAuthorization
 			// 
-			this.radioAuthorization.AutoSize = true;
-			this.radioAuthorization.Location = new System.Drawing.Point(55, 19);
+			this.radioAuthorization.Location = new System.Drawing.Point(62, 19);
 			this.radioAuthorization.Name = "radioAuthorization";
-			this.radioAuthorization.Size = new System.Drawing.Size(47, 17);
-			this.radioAuthorization.TabIndex = 0;
+			this.radioAuthorization.Size = new System.Drawing.Size(58, 18);
+			this.radioAuthorization.TabIndex = 1;
 			this.radioAuthorization.Text = "Auth";
 			this.radioAuthorization.UseVisualStyleBackColor = true;
 			this.radioAuthorization.Click += new System.EventHandler(this.radioAuthorization_Click);
 			// 
 			// radioVoid
 			// 
-			this.radioVoid.AutoSize = true;
-			this.radioVoid.Location = new System.Drawing.Point(106, 19);
+			this.radioVoid.Location = new System.Drawing.Point(121, 19);
 			this.radioVoid.Name = "radioVoid";
-			this.radioVoid.Size = new System.Drawing.Size(46, 17);
-			this.radioVoid.TabIndex = 0;
+			this.radioVoid.Size = new System.Drawing.Size(56, 18);
+			this.radioVoid.TabIndex = 2;
 			this.radioVoid.Text = "Void";
 			this.radioVoid.UseVisualStyleBackColor = true;
 			this.radioVoid.Click += new System.EventHandler(this.radioVoid_Click);
@@ -231,35 +226,35 @@ namespace OpenDental{
 			// butOK
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butOK.Location = new System.Drawing.Point(209, 413);
+			this.butOK.Location = new System.Drawing.Point(229, 413);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 24);
-			this.butOK.TabIndex = 17;
+			this.butOK.TabIndex = 9;
 			this.butOK.Text = "&OK";
 			this.butOK.Click += new System.EventHandler(this.butOK_Click);
 			// 
 			// butCancel
 			// 
 			this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butCancel.Location = new System.Drawing.Point(306, 413);
+			this.butCancel.Location = new System.Drawing.Point(326, 413);
 			this.butCancel.Name = "butCancel";
 			this.butCancel.Size = new System.Drawing.Size(75, 24);
-			this.butCancel.TabIndex = 18;
+			this.butCancel.TabIndex = 10;
 			this.butCancel.Text = "&Cancel";
 			this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
 			// 
 			// textZipCode
 			// 
 			this.textZipCode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textZipCode.Location = new System.Drawing.Point(263, 183);
+			this.textZipCode.Location = new System.Drawing.Point(283, 183);
 			this.textZipCode.Name = "textZipCode";
 			this.textZipCode.Size = new System.Drawing.Size(118, 20);
-			this.textZipCode.TabIndex = 5;
+			this.textZipCode.TabIndex = 4;
 			// 
 			// label7
 			// 
 			this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label7.Location = new System.Drawing.Point(263, 166);
+			this.label7.Location = new System.Drawing.Point(283, 166);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(117, 16);
 			this.label7.TabIndex = 0;
@@ -269,15 +264,15 @@ namespace OpenDental{
 			// textSecurityCode
 			// 
 			this.textSecurityCode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textSecurityCode.Location = new System.Drawing.Point(263, 140);
+			this.textSecurityCode.Location = new System.Drawing.Point(283, 140);
 			this.textSecurityCode.Name = "textSecurityCode";
 			this.textSecurityCode.Size = new System.Drawing.Size(118, 20);
-			this.textSecurityCode.TabIndex = 4;
+			this.textSecurityCode.TabIndex = 3;
 			// 
 			// label6
 			// 
 			this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.label6.Location = new System.Drawing.Point(263, 123);
+			this.label6.Location = new System.Drawing.Point(283, 123);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(117, 16);
 			this.label6.TabIndex = 0;
@@ -289,8 +284,8 @@ namespace OpenDental{
 			this.textNameOnCard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.textNameOnCard.Location = new System.Drawing.Point(12, 226);
 			this.textNameOnCard.Name = "textNameOnCard";
-			this.textNameOnCard.Size = new System.Drawing.Size(228, 20);
-			this.textNameOnCard.TabIndex = 3;
+			this.textNameOnCard.Size = new System.Drawing.Size(248, 20);
+			this.textNameOnCard.TabIndex = 2;
 			// 
 			// label5
 			// 
@@ -307,8 +302,8 @@ namespace OpenDental{
 			this.textExpDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.textExpDate.Location = new System.Drawing.Point(12, 183);
 			this.textExpDate.Name = "textExpDate";
-			this.textExpDate.Size = new System.Drawing.Size(150, 20);
-			this.textExpDate.TabIndex = 2;
+			this.textExpDate.Size = new System.Drawing.Size(170, 20);
+			this.textExpDate.TabIndex = 1;
 			// 
 			// label4
 			// 
@@ -325,8 +320,8 @@ namespace OpenDental{
 			this.textCardNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.textCardNumber.Location = new System.Drawing.Point(12, 140);
 			this.textCardNumber.Name = "textCardNumber";
-			this.textCardNumber.Size = new System.Drawing.Size(228, 20);
-			this.textCardNumber.TabIndex = 1;
+			this.textCardNumber.Size = new System.Drawing.Size(248, 20);
+			this.textCardNumber.TabIndex = 0;
 			this.textCardNumber.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textCardNumber_KeyPress);
 			// 
 			// label3
@@ -342,15 +337,15 @@ namespace OpenDental{
 			// textAmount
 			// 
 			this.textAmount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.textAmount.Location = new System.Drawing.Point(263, 226);
+			this.textAmount.Location = new System.Drawing.Point(283, 226);
 			this.textAmount.Name = "textAmount";
 			this.textAmount.Size = new System.Drawing.Size(118, 20);
-			this.textAmount.TabIndex = 6;
+			this.textAmount.TabIndex = 5;
 			// 
 			// labelAmount
 			// 
 			this.labelAmount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.labelAmount.Location = new System.Drawing.Point(263, 209);
+			this.labelAmount.Location = new System.Drawing.Point(283, 209);
 			this.labelAmount.Name = "labelAmount";
 			this.labelAmount.Size = new System.Drawing.Size(117, 16);
 			this.labelAmount.TabIndex = 0;
@@ -365,7 +360,7 @@ namespace OpenDental{
 			// FormPayConnect
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(392, 449);
+			this.ClientSize = new System.Drawing.Size(412, 449);
 			this.Controls.Add(this.butCancel);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.groupProcessMethod);

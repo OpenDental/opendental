@@ -319,6 +319,9 @@ namespace OpenDental {
 				//labels
 				for(int c=0;c<listControls.Count;c++){
 					if(listControls[c] is Label label){
+						if(listControls[c].Visible==false){
+							continue;
+						}
 						if(textSearch.Text==""){
 							label.BackColor=Color.White;
 							continue;
@@ -335,6 +338,9 @@ namespace OpenDental {
 				//checkboxes
 				for(int c=0;c<listControls.Count;c++){
 					if(listControls[c] is UI.CheckBox checkBox){
+						if(listControls[c].Visible==false){
+							continue;
+						}
 						if(textSearch.Text==""){
 							checkBox.BackColor=Color.White;
 							continue;
@@ -351,6 +357,9 @@ namespace OpenDental {
 				//groupboxes
 				for(int c=0;c<listControls.Count;c++){
 					if(listControls[c] is UI.GroupBox groupBox){
+						if(listControls[c].Visible==false){
+							continue;
+						}
 						if(textSearch.Text==""){
 							groupBox.ColorBackLabel=Color.Empty;
 							continue;

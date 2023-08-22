@@ -136,10 +136,12 @@ namespace OpenDental{
 				textSMTPserver.Text="";
 				textPort.Text="";
 				if(textAccessTokenMicrosoft.Text.IsNullOrEmpty()) { //Not signed in
+					textUsername.ReadOnly=false;
 					checkDownloadMicrosoft.Enabled=false;
 					butClearTokensMicrosoft.Enabled=false;
 				}
 				else {
+					textUsername.ReadOnly=true;
 					checkDownloadMicrosoft.Enabled=true;
 					butClearTokensMicrosoft.Enabled=true;
 					textSMTPserver.Text="smtp.outlook.com";
@@ -164,6 +166,7 @@ namespace OpenDental{
 		}
 
 		private void ClearMicrosoftInfo() {
+			textUsername.ReadOnly=false;
 			textAccessTokenMicrosoft.Text="";
 			textRefreshTokenMicrosoft.Text="";
 			checkDownloadMicrosoft.Checked=false;

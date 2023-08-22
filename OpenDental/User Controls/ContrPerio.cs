@@ -2122,9 +2122,10 @@ namespace OpenDental
 					OnDirectionChangedLeft();
 				}
 			}
-			else if(section==0 && skippedTeeth.Contains(1) //skipped first tooth on first row
-				|| section==2 && skippedTeeth.Contains(32) //skipped first tooth on bottom row
-				|| section==3 && skippedTeeth.Count==32) //skipped all teeth and are on last row
+			else if((section==0 && skippedTeeth.Contains(1)) //skipped tooth 1 on facial side
+				|| (section==2 && skippedTeeth.Contains(32)) //skipped tooth 32 on lingual side
+				|| (section==3 && skippedTeeth.Contains(32)) //skipped tooth 32 on facial side
+				|| (section==3 && skippedTeeth.Count==32)) //skipped all teeth and are on last row
 			{
 				count++;//used jump back to last non missing tooth
 				if(section==2 && nextCell.X==1) {

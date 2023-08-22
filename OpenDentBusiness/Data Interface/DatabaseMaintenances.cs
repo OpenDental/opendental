@@ -10910,6 +10910,11 @@ HAVING cnt>1";
 				try {
 					EmailMessage emailMessageNew=EmailMessages.ProcessRawEmailMessageIn(emailMessage.RawEmailIn,emailMessage.EmailMessageNum
 						,emailAddress,false,oldEmailMessage.SentOrReceived);
+					emailMessageNew.FailReason=emailMessage.FailReason;// not copied over in ProcessRawEmailMessageIn()
+					if(emailMessageNew.RawEmailIn!=emailMessage.RawEmailIn && emailMessageNew.RawEmailIn.EndsWith("\r\n")) {
+						//In Health.Direct.Agent.IncomingMessage.SerializeMessage(), a trailing newline is sometimes added.
+						emailMessageNew.RawEmailIn=emailMessageNew.RawEmailIn.Substring(0,emailMessageNew.RawEmailIn.Length-2);
+					}
 					if(Crud.EmailMessageCrud.UpdateComparison(emailMessageNew,oldEmailMessage)) {
 						cleanedCount++;
 					}

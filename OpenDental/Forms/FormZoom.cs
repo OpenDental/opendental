@@ -76,6 +76,9 @@ namespace OpenDental {
 				zoom=PIn.Int(textZoom.Text);//blank=0
 			}
 			catch{}
+			if(zoom<0){
+				zoom=100;
+			}
 			if(zoom==0){
 				zoom=100;
 			}
@@ -177,7 +180,7 @@ namespace OpenDental {
 			}
 			else if(zoom<50){//Anything less than this seems to have overlapping control issues, and < 10 can cause out of memory errors.
 				string msg=Lan.g(this,"Zoom number should be greater than 50. Maybe you meant")
-					+" 1"+zoom.ToString()+".";//untranslated
+					+" "+(100+zoom).ToString()+".";//untranslated
 				MsgBox.Show(msg);
 				return;
 			}

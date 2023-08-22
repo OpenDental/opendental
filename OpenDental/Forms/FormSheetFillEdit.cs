@@ -114,7 +114,7 @@ namespace OpenDental {
 				return;
 			}
 			FillFieldsFromControls();
-			FieldValueChanged(sender);//the sender doesn't matter
+			ClearSigs();
 			LoadImages();
 			LayoutFields();
 			panelMain.Invalidate();
@@ -759,7 +759,7 @@ namespace OpenDental {
 			else{
 				SheetFields.Update(sheetField);
 			}
-			FieldValueChanged(sender);//the sender doesn't matter
+			ClearSigs();
 			sheetField.BitmapLoaded?.Dispose();
 			sheetField.BitmapLoaded=null;
 			LoadImageOnePat(sheetField);
@@ -896,7 +896,7 @@ namespace OpenDental {
 			sheetField.FontName="";
 			sheetField.RadioButtonValue="";
 			SheetCur.SheetFields.Add(sheetField);
-			FieldValueChanged(sender);
+			ClearSigs();
 			_listPoints.Clear();
 			panelScroll.Focus();
 		}
@@ -955,7 +955,11 @@ namespace OpenDental {
 				}
 				Rectangle rectangle=new Rectangle(SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width,SheetCur.SheetFields[i].Height);
 				if(SheetCur.SheetFields[i].FieldType==SheetFieldType.InputField){
-					using Brush brushBack=new SolidBrush(Color.FromArgb(245,245,200));
+					Color colorBack=Color.FromArgb(245,245,200);
+					if(!panelMain.Enabled) {
+						colorBack=Color.FromArgb(240,240,240);//light gray for disabled
+					}
+					using Brush brushBack=new SolidBrush(colorBack);
 					g.FillRectangle(brushBack,rectangle);
 				}
 				FontStyle fontStyle=FontStyle.Regular;
@@ -1000,7 +1004,11 @@ namespace OpenDental {
 					continue;
 				}
 				Rectangle rectangle=new Rectangle(SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width,SheetCur.SheetFields[i].Height);
-				using Brush brushBack=new SolidBrush(Color.FromArgb(245,245,200));
+				Color colorBack=Color.FromArgb(245,245,200);
+				if(!panelMain.Enabled) {
+					colorBack=Color.FromArgb(240,240,240);//light gray for disabled
+				}
+				using Brush brushBack=new SolidBrush(colorBack);
 				g.FillRectangle(brushBack,rectangle);
 				//combobox has no font options like fontname, size, color, bold, or align
 				using Font font=new Font(FontFamily.GenericSansSerif,LayoutManager.UnscaleMS(8.25f));
@@ -1990,41 +1998,41 @@ namespace OpenDental {
 
 		///<summary>Returns true when all of the sheet fields with IsRequired set to true have a value set. Otherwise, a message box shows and false is returned.</summary>
 		private bool VerifyRequiredFields(){
-			FillFieldsFromControls();
-			for(int i=0;i<panelMain.Controls.Count;i++){
-				if(panelMain.Controls[i].Tag==null){
+			//SigBoxes are checked separately due to specific properties not in SheetField
+			for(int i=0;i<_listSignatureBoxWrappers.Count;i++) {
+				SheetField sheetField=(SheetField)_listSignatureBoxWrappers[i].Tag;
+				if(!sheetField.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice)){
 					continue;
 				}
-				if(panelMain.Controls[i].GetType()==typeof(RichTextBox)){
-					SheetField sheetField=(SheetField)panelMain.Controls[i].Tag;
-					if(sheetField.FieldType!=SheetFieldType.InputField){
-						continue;
-					}
-					RichTextBox richTextBoxInput=(RichTextBox)panelMain.Controls[i];
-					if(sheetField.IsRequired && richTextBoxInput.Text.Trim()==""){
+				OpenDental.UI.SignatureBoxWrapper sigBox= _listSignatureBoxWrappers[i];
+				if(sheetField.IsRequired && (!sigBox.IsValid || sigBox.SigIsBlank)){
+					MsgBox.Show(this,"Signature required");
+					return false;
+				}
+			}
+			for(int i=0;i<SheetCur.SheetFields.Count;i++){
+				if(SheetCur.SheetFields[i]==null){
+					continue;
+				}
+				if(!SheetCur.SheetFields[i].IsRequired) {
+					continue;
+				}
+				//SigBoxes are different than InputFields, we do not check them here
+				if(SheetCur.SheetFields[i].FieldType==SheetFieldType.InputField){
+					SheetField sheetField=SheetCur.SheetFields[i];
+					if(string.IsNullOrWhiteSpace(sheetField.FieldValue)){
 						if(sheetField.FieldName=="misc" && !string.IsNullOrWhiteSpace(sheetField.ReportableName)) {
 							MessageBox.Show(Lan.g(this,"You must enter a value for")+" "+sheetField.ReportableName+" "+Lan.g(this,"before continuing."));
 						}
 						else {
 							MessageBox.Show(Lan.g(this,"You must enter a value for")+" "+sheetField.FieldName+" "+Lan.g(this,"before continuing."));
 						}
-						return false;			
+						return false;
 					}	
 				}
-				else if(panelMain.Controls[i].GetType()==typeof(OpenDental.UI.SignatureBoxWrapper)){
-					SheetField sheetField=(SheetField)panelMain.Controls[i].Tag;
-					if(!sheetField.FieldType.In(SheetFieldType.SigBox,SheetFieldType.SigBoxPractice)){
-						continue;
-					}
-					OpenDental.UI.SignatureBoxWrapper sigBox=(OpenDental.UI.SignatureBoxWrapper)panelMain.Controls[i];
-					if(sheetField.IsRequired && (!sigBox.IsValid || sigBox.SigIsBlank)){
-						MsgBox.Show(this,"Signature required");
-						return false;
-					}
-				}
-				else if(panelMain.Controls[i].GetType()==typeof(SheetCheckBox)){//Radio button groups or misc checkboxes
-					SheetField sheetField=(SheetField)panelMain.Controls[i].Tag;
-					if(sheetField.IsRequired && sheetField.FieldValue!="X"){//required but this one not checked
+				else if(SheetCur.SheetFields[i].FieldType==SheetFieldType.CheckBox){//Radio button groups or misc checkboxes
+					SheetField sheetField=SheetCur.SheetFields[i];
+					if(sheetField.FieldValue!="X"){//required but this one not checked
 						//first, checkboxes that are not radiobuttons.  For example, a checkbox at bottom of web form used in place of signature.
 						if(sheetField.RadioButtonValue=="" //doesn't belong to a built-in group
 							&& sheetField.RadioButtonGroup=="") //doesn't belong to a custom group
@@ -2041,11 +2049,11 @@ namespace OpenDental {
 							//Not the most efficient check, but there won't usually be more than a few hundred items so the user will not ever notice. We can speed up later if needed.
 							bool isValueSet=false;//we will be checking to see if at least one in the group has a value
 							int numGroupButtons=0;//a count of the buttons in the group
-							for(int j=0;j<panelMain.Controls.Count;j++){
-								if(panelMain.Controls[j].GetType()!=typeof(SheetCheckBox)){
+							for(int j=0;j<SheetCur.SheetFields.Count;j++){
+								if(SheetCur.SheetFields[j].FieldType!=SheetFieldType.CheckBox){
 									continue;//skip everything that's not a checkbox
 								}
-								SheetField sheetField2=(SheetField)panelMain.Controls[j].Tag;
+								SheetField sheetField2=SheetCur.SheetFields[j];
 								//whether built-in or custom, this makes sure it's a match.
 								//the other comparison will also match because they are empty strings
 								if(sheetField2.RadioButtonGroup.ToLower()==sheetField.RadioButtonGroup.ToLower()//if they are in the same group ("" for built-in, some string for custom group)
