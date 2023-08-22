@@ -177,16 +177,25 @@ namespace OpenDental{
 		#endregion Constructors
 
 		private void InputBox_Load(object sender, EventArgs e){
+			int yChange=0;
 			Height=LayoutManager.Scale(_curLocationY+90);
 			Width=LayoutManager.Scale(_minWidth);
 			if(SizeInitial!=Size.Empty){
 				Size=LayoutManager.ScaleSize(SizeInitial);
 			}
-			//Add the controls to form after sizing the window to prevent right-anchored controls from moving.
 			for(int i=0;i<_listLabels.Count;i++)	{
 				_listLabels[i].Font=new Font(FontFamily.GenericSansSerif,LayoutManager.ScaleFontODZoom(8.25f));
+				Size sizeOriginal=LayoutManager.ScaleSize(_listLabels[i].Size);
 				_listLabels[i].Size=LayoutManager.ScaleSize(_listLabels[i].Size);
-				_listLabels[i].Location=new Point(LayoutManager.Scale(_listLabels[i].Left),LayoutManager.Scale(_listLabels[i].Top));
+				_listLabels[i].Size=_listLabels[i].GetPreferredSize(_listLabels[i].Size);
+				_listLabels[i].Location=new Point(LayoutManager.Scale(_listLabels[i].Left),LayoutManager.Scale(_listLabels[i].Top)+yChange);
+				//Add to the window's size, the changes that GetPreferredSize() caused 
+				Height+=_listLabels[i].Height-sizeOriginal.Height;
+				Width+=_listLabels[i].Width-sizeOriginal.Width;
+				yChange+=_listLabels[i].Height-sizeOriginal.Height;
+			}
+			//Add the controls to form after sizing the window to prevent right-anchored controls from moving.
+			for(int i=0;i<_listLabels.Count;i++)	{
 				LayoutManager.Add(_listLabels[i],this);
 			}
 			for(int i=0;i<_listControls.Count;i++) {
@@ -196,7 +205,7 @@ namespace OpenDental{
 					_listControls[i].Font=new Font(FontFamily.GenericSansSerif,LayoutManager.ScaleF(8.25f));
 				}
 				_listControls[i].Size=LayoutManager.ScaleSize(_listControls[i].Size);
-				_listControls[i].Location=new Point(LayoutManager.Scale(_listControls[i].Left),LayoutManager.Scale(_listControls[i].Top));
+				_listControls[i].Location=new Point(LayoutManager.Scale(_listControls[i].Left),LayoutManager.Scale(_listControls[i].Top)+yChange);
 				LayoutManager.Add(_listControls[i],this);
 			}
 		}

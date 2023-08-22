@@ -955,7 +955,11 @@ namespace OpenDental {
 				}
 				Rectangle rectangle=new Rectangle(SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width,SheetCur.SheetFields[i].Height);
 				if(SheetCur.SheetFields[i].FieldType==SheetFieldType.InputField){
-					using Brush brushBack=new SolidBrush(Color.FromArgb(245,245,200));
+					Color colorBack=Color.FromArgb(245,245,200);
+					if(!panelMain.Enabled) {
+						colorBack=Color.FromArgb(240,240,240);//light gray for disabled
+					}
+					using Brush brushBack=new SolidBrush(colorBack);
 					g.FillRectangle(brushBack,rectangle);
 				}
 				FontStyle fontStyle=FontStyle.Regular;
@@ -1000,7 +1004,11 @@ namespace OpenDental {
 					continue;
 				}
 				Rectangle rectangle=new Rectangle(SheetCur.SheetFields[i].XPos,SheetCur.SheetFields[i].YPos,SheetCur.SheetFields[i].Width,SheetCur.SheetFields[i].Height);
-				using Brush brushBack=new SolidBrush(Color.FromArgb(245,245,200));
+				Color colorBack=Color.FromArgb(245,245,200);
+				if(!panelMain.Enabled) {
+					colorBack=Color.FromArgb(240,240,240);//light gray for disabled
+				}
+				using Brush brushBack=new SolidBrush(colorBack);
 				g.FillRectangle(brushBack,rectangle);
 				//combobox has no font options like fontname, size, color, bold, or align
 				using Font font=new Font(FontFamily.GenericSansSerif,LayoutManager.UnscaleMS(8.25f));

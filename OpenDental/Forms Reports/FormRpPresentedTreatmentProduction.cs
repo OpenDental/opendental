@@ -37,10 +37,6 @@ namespace OpenDental {
 				listClin.Visible=false;
 				checkAllClinics.Visible=false;
 				labelClin.Visible=false;
-				groupType.Location=new Point(185,225);
-				groupOrder.Location=new Point(185,295);
-				groupUser.Location=new Point(185,365);
-				listUser.Width+=30;
 			}
 		}
 
