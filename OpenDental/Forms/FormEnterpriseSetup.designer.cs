@@ -522,7 +522,7 @@ namespace OpenDental {
 			this.groupPatientSelect.Controls.Add(this.textPatSelectPauseMs);
 			this.groupPatientSelect.Controls.Add(this.labelPatSelectMinChars);
 			this.groupPatientSelect.Controls.Add(this.textPatSelectMinChars);
-			this.groupPatientSelect.Location = new System.Drawing.Point(6, 370);
+			this.groupPatientSelect.Location = new System.Drawing.Point(6, 372);
 			this.groupPatientSelect.Name = "groupPatientSelect";
 			this.groupPatientSelect.Size = new System.Drawing.Size(482, 191);
 			this.groupPatientSelect.TabIndex = 289;
@@ -530,7 +530,7 @@ namespace OpenDental {
 			// 
 			// checkEnterpriseAllowRefresh
 			// 
-			this.checkEnterpriseAllowRefresh.Location = new System.Drawing.Point(6, 166);
+			this.checkEnterpriseAllowRefresh.Location = new System.Drawing.Point(6, 170);
 			this.checkEnterpriseAllowRefresh.Name = "checkEnterpriseAllowRefresh";
 			this.checkEnterpriseAllowRefresh.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.checkEnterpriseAllowRefresh.Size = new System.Drawing.Size(461, 18);
@@ -540,7 +540,7 @@ namespace OpenDental {
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(364, 142);
+			this.label2.Location = new System.Drawing.Point(364, 146);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(62, 18);
 			this.label2.TabIndex = 294;
@@ -550,7 +550,7 @@ namespace OpenDental {
 			// textPhoneNumDigits
 			// 
 			this.textPhoneNumDigits.Enabled = false;
-			this.textPhoneNumDigits.Location = new System.Drawing.Point(426, 141);
+			this.textPhoneNumDigits.Location = new System.Drawing.Point(426, 145);
 			this.textPhoneNumDigits.MaxVal = 25;
 			this.textPhoneNumDigits.MinVal = 1;
 			this.textPhoneNumDigits.Name = "textPhoneNumDigits";
@@ -560,7 +560,7 @@ namespace OpenDental {
 			// 
 			// checkMatchExactPhoneNum
 			// 
-			this.checkMatchExactPhoneNum.Location = new System.Drawing.Point(6, 142);
+			this.checkMatchExactPhoneNum.Location = new System.Drawing.Point(6, 146);
 			this.checkMatchExactPhoneNum.Name = "checkMatchExactPhoneNum";
 			this.checkMatchExactPhoneNum.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.checkMatchExactPhoneNum.Size = new System.Drawing.Size(353, 18);
@@ -572,7 +572,7 @@ namespace OpenDental {
 			// checkPatientSelectFilterRestrictedClinics
 			// 
 			this.checkPatientSelectFilterRestrictedClinics.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.checkPatientSelectFilterRestrictedClinics.Location = new System.Drawing.Point(6, 121);
+			this.checkPatientSelectFilterRestrictedClinics.Location = new System.Drawing.Point(6, 125);
 			this.checkPatientSelectFilterRestrictedClinics.Name = "checkPatientSelectFilterRestrictedClinics";
 			this.checkPatientSelectFilterRestrictedClinics.Size = new System.Drawing.Size(461, 18);
 			this.checkPatientSelectFilterRestrictedClinics.TabIndex = 290;
@@ -580,7 +580,7 @@ namespace OpenDental {
 			// 
 			// butSyncPhNums
 			// 
-			this.butSyncPhNums.Location = new System.Drawing.Point(418, 95);
+			this.butSyncPhNums.Location = new System.Drawing.Point(418, 100);
 			this.butSyncPhNums.Name = "butSyncPhNums";
 			this.butSyncPhNums.Size = new System.Drawing.Size(49, 21);
 			this.butSyncPhNums.TabIndex = 292;
@@ -591,7 +591,7 @@ namespace OpenDental {
 			// 
 			this.checkUsePhoneNumTable.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkUsePhoneNumTable.Checked = false;
-			this.checkUsePhoneNumTable.Location = new System.Drawing.Point(6, 97);
+			this.checkUsePhoneNumTable.Location = new System.Drawing.Point(6, 102);
 			this.checkUsePhoneNumTable.Name = "checkUsePhoneNumTable";
 			this.checkUsePhoneNumTable.Size = new System.Drawing.Size(406, 17);
 			this.checkUsePhoneNumTable.TabIndex = 291;
@@ -602,7 +602,7 @@ namespace OpenDental {
 			this.checkPatSearchEmptyParams.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.checkPatSearchEmptyParams.Checked = true;
 			this.checkPatSearchEmptyParams.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-			this.checkPatSearchEmptyParams.Location = new System.Drawing.Point(6, 74);
+			this.checkPatSearchEmptyParams.Location = new System.Drawing.Point(6, 79);
 			this.checkPatSearchEmptyParams.Name = "checkPatSearchEmptyParams";
 			this.checkPatSearchEmptyParams.Size = new System.Drawing.Size(461, 17);
 			this.checkPatSearchEmptyParams.TabIndex = 290;
@@ -610,17 +610,17 @@ namespace OpenDental {
 			// 
 			// labelPatSelectPauseMs
 			// 
-			this.labelPatSelectPauseMs.Location = new System.Drawing.Point(6, 44);
+			this.labelPatSelectPauseMs.Location = new System.Drawing.Point(6, 47);
 			this.labelPatSelectPauseMs.Name = "labelPatSelectPauseMs";
-			this.labelPatSelectPauseMs.Size = new System.Drawing.Size(420, 26);
+			this.labelPatSelectPauseMs.Size = new System.Drawing.Size(420, 31);
 			this.labelPatSelectPauseMs.TabIndex = 281;
-			this.labelPatSelectPauseMs.Text = "The number of milliseconds to wait after a character is entered before filling th" +
-    "e grid\r\n1 to 10000 milliseconds, try starting with 1500";
+			this.labelPatSelectPauseMs.Text = "The number of milliseconds to wait after a character is entered \r\nbefore filling " +
+    "the grid, 1 to 10000 milliseconds, try starting with 1500";
 			this.labelPatSelectPauseMs.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textPatSelectPauseMs
 			// 
-			this.textPatSelectPauseMs.Location = new System.Drawing.Point(427, 47);
+			this.textPatSelectPauseMs.Location = new System.Drawing.Point(427, 50);
 			this.textPatSelectPauseMs.MaxVal = 10000;
 			this.textPatSelectPauseMs.MinVal = 1;
 			this.textPatSelectPauseMs.Name = "textPatSelectPauseMs";
@@ -632,10 +632,10 @@ namespace OpenDental {
 			// 
 			this.labelPatSelectMinChars.Location = new System.Drawing.Point(6, 14);
 			this.labelPatSelectMinChars.Name = "labelPatSelectMinChars";
-			this.labelPatSelectMinChars.Size = new System.Drawing.Size(420, 26);
+			this.labelPatSelectMinChars.Size = new System.Drawing.Size(420, 31);
 			this.labelPatSelectMinChars.TabIndex = 279;
-			this.labelPatSelectMinChars.Text = "The number of characters entered into the search fields before filling the grid\r\n" +
-    "1 to 10 characters, try starting with 3";
+			this.labelPatSelectMinChars.Text = "The number of characters entered into the search fields \r\nbefore filling the grid" +
+    ", 1 to 10 characters, try starting with 3";
 			this.labelPatSelectMinChars.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// textPatSelectMinChars
@@ -661,7 +661,7 @@ namespace OpenDental {
 			// 
 			this.label3.Location = new System.Drawing.Point(6, 341);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(392, 25);
+			this.label3.Size = new System.Drawing.Size(392, 29);
 			this.label3.TabIndex = 282;
 			this.label3.Text = "Process signal interval in seconds. Usually every 6 to 20 seconds\r\nLeave blank to" +
     " disable autorefresh";
@@ -718,9 +718,9 @@ namespace OpenDental {
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(198, 87);
+			this.label10.Location = new System.Drawing.Point(182, 87);
 			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(245, 18);
+			this.label10.Size = new System.Drawing.Size(261, 18);
 			this.label10.TabIndex = 287;
 			this.label10.Text = "Automatic logoff time in minutes (0 to disable)";
 			this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -749,7 +749,7 @@ namespace OpenDental {
 			// 
 			this.label12.Location = new System.Drawing.Point(6, 312);
 			this.label12.Name = "label12";
-			this.label12.Size = new System.Drawing.Size(392, 25);
+			this.label12.Size = new System.Drawing.Size(392, 29);
 			this.label12.TabIndex = 284;
 			this.label12.Text = "Disable signal interval after this many minutes of user inactivity\r\nLeave blank t" +
     "o disable";

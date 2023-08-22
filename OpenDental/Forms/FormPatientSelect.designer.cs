@@ -100,7 +100,7 @@ namespace OpenDental {
 			// 
 			this.label1.Location = new System.Drawing.Point(11, 58);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(154, 12);
+			this.label1.Size = new System.Drawing.Size(154, 13);
 			this.label1.TabIndex = 3;
 			this.label1.Text = "Last Name";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -301,7 +301,7 @@ namespace OpenDental {
 			// 
 			this.labelEmail.Location = new System.Drawing.Point(11, 279);
 			this.labelEmail.Name = "labelEmail";
-			this.labelEmail.Size = new System.Drawing.Size(156, 12);
+			this.labelEmail.Size = new System.Drawing.Size(156, 13);
 			this.labelEmail.TabIndex = 43;
 			this.labelEmail.Text = "E-mail";
 			this.labelEmail.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -319,7 +319,7 @@ namespace OpenDental {
 			// 
 			this.label13.Location = new System.Drawing.Point(11, 259);
 			this.label13.Name = "label13";
-			this.label13.Size = new System.Drawing.Size(156, 12);
+			this.label13.Size = new System.Drawing.Size(156, 13);
 			this.label13.TabIndex = 41;
 			this.label13.Text = "Subscriber ID";
 			this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -362,7 +362,7 @@ namespace OpenDental {
 			// 
 			this.label2.Location = new System.Drawing.Point(11, 239);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(156, 12);
+			this.label2.Size = new System.Drawing.Size(156, 13);
 			this.label2.TabIndex = 27;
 			this.label2.Text = "Birthdate";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -398,7 +398,7 @@ namespace OpenDental {
 			// 
 			this.label12.Location = new System.Drawing.Point(11, 179);
 			this.label12.Name = "label12";
-			this.label12.Size = new System.Drawing.Size(155, 12);
+			this.label12.Size = new System.Drawing.Size(155, 13);
 			this.label12.TabIndex = 24;
 			this.label12.Text = "SSN";
 			this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -407,7 +407,7 @@ namespace OpenDental {
 			// 
 			this.label11.Location = new System.Drawing.Point(11, 360);
 			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(87, 14);
+			this.label11.Size = new System.Drawing.Size(87, 15);
 			this.label11.TabIndex = 21;
 			this.label11.Text = "Billing Type";
 			this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -416,7 +416,7 @@ namespace OpenDental {
 			// 
 			this.label10.Location = new System.Drawing.Point(11, 219);
 			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(156, 12);
+			this.label10.Size = new System.Drawing.Size(156, 13);
 			this.label10.TabIndex = 20;
 			this.label10.Text = "Chart Number";
 			this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -434,7 +434,7 @@ namespace OpenDental {
 			// 
 			this.label9.Location = new System.Drawing.Point(11, 199);
 			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(156, 12);
+			this.label9.Size = new System.Drawing.Size(156, 13);
 			this.label9.TabIndex = 18;
 			this.label9.Text = "Patient Number";
 			this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -452,7 +452,7 @@ namespace OpenDental {
 			// 
 			this.label8.Location = new System.Drawing.Point(11, 159);
 			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(154, 12);
+			this.label8.Size = new System.Drawing.Size(154, 13);
 			this.label8.TabIndex = 16;
 			this.label8.Text = "State";
 			this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -515,7 +515,7 @@ namespace OpenDental {
 			// 
 			this.label5.Location = new System.Drawing.Point(11, 118);
 			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(154, 12);
+			this.label5.Size = new System.Drawing.Size(154, 13);
 			this.label5.TabIndex = 9;
 			this.label5.Text = "Address";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -551,7 +551,7 @@ namespace OpenDental {
 			// 
 			this.label3.Location = new System.Drawing.Point(11, 79);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(154, 12);
+			this.label3.Size = new System.Drawing.Size(154, 13);
 			this.label3.TabIndex = 5;
 			this.label3.Text = "First Name";
 			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;

@@ -76,13 +76,16 @@ namespace OpenDental {
 			}
 		}
 
-		private void textZoom_TextChanged(object sender, EventArgs e){
+		private void textZoom_TextChanged(object sender, EventArgs e) {
 			_fits=true;
 			int zoom=100;
 			try{
 				zoom=PIn.Int(textZoom.Text);//blank=0
 			}
 			catch{}
+			if(zoom<0){
+				zoom=100;
+			}
 			if(zoom==0){
 				zoom=100;
 			}
@@ -183,8 +186,8 @@ namespace OpenDental {
 				return;
 			}
 			else if(zoom<50){//Anything less than this seems to have overlapping control issues, and < 10 can cause out of memory errors.
-				string msg=Lans.g(this,"Zoom number should be greater than 50. Maybe you meant")
-					+" 1"+zoom.ToString()+".";//untranslated
+				string msg=Lans.g(this,"Zoom number should be greater than or equal to 50. Maybe you meant")
+					+" "+(100+zoom).ToString()+".";//untranslated
 				MsgBox.Show(msg);
 				return;
 			}

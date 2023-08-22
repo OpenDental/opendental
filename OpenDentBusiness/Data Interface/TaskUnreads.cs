@@ -133,7 +133,7 @@ namespace OpenDentBusiness{
 
 		public static DataTable GetForTask(long taskNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<DataTable>(MethodBase.GetCurrentMethod(),taskNum);
+				return Meth.GetTable(MethodBase.GetCurrentMethod(),taskNum);
 			}
 			string command=@"SELECT
 				userod.UserName AS 'User',

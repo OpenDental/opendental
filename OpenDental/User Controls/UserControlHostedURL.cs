@@ -14,11 +14,16 @@ using CodeBase;
 namespace OpenDental.User_Controls {
 	public partial class UserControlHostedURL:UserControl {
 		public LayoutManagerForms LayoutManager;
+
+		private Clinic _clinicCur;
+		private string _emailWarning;
+		private bool _isEmailValidForClinic;
 		private WebServiceMainHQProxy.EServiceSetup.SignupOut.SignupOutEService _signup;
+		private string _smsWarning;
 
 		private bool IsTextingEnabled {
 			get {
-			return (!PrefC.HasClinicsEnabled && SmsPhones.IsIntegratedTextingEnabled()) ||  
+				return (!PrefC.HasClinicsEnabled && SmsPhones.IsIntegratedTextingEnabled()) ||
 				(PrefC.HasClinicsEnabled && Clinics.IsTextingEnabled(Signup.ClinicNum));
 			}
 		}
@@ -36,7 +41,17 @@ namespace OpenDental.User_Controls {
 			AddContextMenu(textWebFormToLaunchExistingPat);
 			AddContextMenu(textSchedulingURL);
 			Signup=signup;
+			_clinicCur=Clinics.GetFirstOrDefault(x => x.ClinicNum==Signup.ClinicNum)??Clinics.GetPracticeAsClinicZero();
+			_isEmailValidForClinic=(EmailAddresses.GetFirstOrDefault(x => x.EmailAddressNum==_clinicCur.EmailAddressNum)!=null);
 			FillControl();
+			if(PrefC.HasClinicsEnabled) {
+				_smsWarning="This clinic does not have Integrated Texting enabled. Sign up for Integrated Texting in order to use this authentication method.";
+				_emailWarning="This clinic does not have a default email address set up. Assign a default email address to this clinic in order to use this authentication method.";
+			}
+			else{ 
+				_smsWarning="Your dental office does not have Integrated Texting enabled. Sign up for Integrated Texting in order to use this authentication method.";
+				_emailWarning="Your dental office does not have a default email address set up. Assign a default email address to your dental office in order to use this authentication method.";
+			}	
 		}
 
 		public string GetPrefValue(PrefName prefName) {
@@ -140,40 +155,70 @@ namespace OpenDental.User_Controls {
 			}
 		}
 
-		private void ClearHelper(bool isNewPat) {
-			if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"This will clear the formed URL and you will have to click Edit to create a new one. " +
-				"Continue?","Clear Webform URL"))
-			{
-				if(isNewPat) {
-					textWebFormToLaunchNewPat.Text="";
-				}
-				else {
-					textWebFormToLaunchExistingPat.Text="";
-				}
-			}
-		}
-
-		private void CheckHelper() {
-			if(!checkExistingPatEmail.Checked && !checkExistingPatText.Checked) {
-				checkExistingPatEmail.Checked=true;
-				MsgBox.Show(this,MsgBoxButtons.OKCancel,"At least one Two-Factor option must be selected for Existing Patient. Defaulting to email.");
-			}
-		}
-
 		private void butClearNewPat_Click(object sender,EventArgs e) {
-			ClearHelper(true);
+			if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"This will clear the formed URL and you will have to click Edit to create a new one. " 
+				+"Continue?","Clear Webform URL"))
+			{
+				textWebFormToLaunchNewPat.Text="";
+			}
 		}
 
 		private void butClearExistingPat_Click(object sender,EventArgs e) {
-			ClearHelper(false);
+			if(MsgBox.Show(this,MsgBoxButtons.OKCancel,"This will clear the formed URL and you will have to click Edit to create a new one. " 
+				+"Continue?","Clear Webform URL"))
+			{
+				textWebFormToLaunchExistingPat.Text="";
+			}
 		}
 
-		private void checkExistingPatEmail_CheckedChanged(object sender,EventArgs e) {
-			CheckHelper();
+		private void checkExistingPatEmail_Click(object sender,EventArgs e) {
+			bool hasShownEmailWarningMsg=false;
+			if(!checkExistingPatEmail.Checked && !checkExistingPatText.Checked) {
+				checkExistingPatEmail.Checked=true;
+				string errorMsg="At least one authentication method must be selected for Existing Patient. Defaulting to email.";
+				if(!_isEmailValidForClinic) {
+					errorMsg+="\r\n\r\n"+_emailWarning;
+					hasShownEmailWarningMsg=true;
+				}
+				MsgBox.Show(this,errorMsg);
+			}
+			if(checkExistingPatEmail.Checked && !hasShownEmailWarningMsg) {
+				if(!_isEmailValidForClinic) {
+					MsgBox.Show(this,_emailWarning);
+				}
+			}
 		}
 
-		private void checkExistingPatText_CheckedChanged(object sender,EventArgs e) {
-			CheckHelper();
+		private void checkExistingPatText_Click(object sender,EventArgs e) {
+			if(!checkExistingPatEmail.Checked && !checkExistingPatText.Checked) {
+				checkExistingPatEmail.Checked=true;
+				string errorMsg="At least one authentication method must be selected for Existing Patient. Defaulting to email.";
+				if(!_isEmailValidForClinic) {
+					errorMsg+="\r\n\r\n"+_emailWarning;
+				}
+				MsgBox.Show(this,errorMsg);
+			}
+			if(checkExistingPatText.Checked) {
+				if(!IsTextingEnabled) {
+					MsgBox.Show(this,_smsWarning);
+				}
+			}
+		}
+
+		private void checkNewPatEmail_Click(object sender,EventArgs e) {
+			if(checkNewPatEmail.Checked) {
+				if(!_isEmailValidForClinic) {
+					MsgBox.Show(this,_emailWarning);
+				}
+			}
+		}
+
+		private void checkNewPatText_Click(object sender,EventArgs e) {
+			if(checkNewPatText.Checked) {
+				if(!IsTextingEnabled) {
+					MsgBox.Show(this,_smsWarning);
+				}
+			}
 		}
 	}
 }
