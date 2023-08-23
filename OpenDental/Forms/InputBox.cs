@@ -187,11 +187,11 @@ namespace OpenDental{
 				_listLabels[i].Font=new Font(FontFamily.GenericSansSerif,LayoutManager.ScaleFontODZoom(8.25f));
 				Size sizeOriginal=LayoutManager.ScaleSize(_listLabels[i].Size);
 				_listLabels[i].Size=LayoutManager.ScaleSize(_listLabels[i].Size);
-				_listLabels[i].Size=_listLabels[i].GetPreferredSize(_listLabels[i].Size);
+				//Only update height because running GetPreferredSize() for width will make unwanted changes and width is already the right size
+				_listLabels[i].Height=_listLabels[i].GetPreferredSize(_listLabels[i].Size).Height;
 				_listLabels[i].Location=new Point(LayoutManager.Scale(_listLabels[i].Left),LayoutManager.Scale(_listLabels[i].Top)+yChange);
 				//Add to the window's size, the changes that GetPreferredSize() caused 
 				Height+=_listLabels[i].Height-sizeOriginal.Height;
-				Width+=_listLabels[i].Width-sizeOriginal.Width;
 				yChange+=_listLabels[i].Height-sizeOriginal.Height;
 			}
 			//Add the controls to form after sizing the window to prevent right-anchored controls from moving.
