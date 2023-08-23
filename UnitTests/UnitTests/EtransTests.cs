@@ -386,6 +386,51 @@ namespace UnitTests.Etrans_Tests {
 			Patient pat=Patients.GetPat(claim.PatNum);
 			Etranss.TryImportEraClaimData(x835,claimPaid,claim,pat,isAutomatic,listClaimProcsForClaim,insPayPlanNum:0);
 		}
+
+		/// <summary>Tests what happens when all the insurance payment type defs are hidden and we try to get one of those hidden defnums.</summary>
+		[TestMethod]
+		public void X835_InsurancePaymentTypeDefsHidden(){
+			Defs.RefreshCache();
+			//Get the list of defs for the insurance payment type and hide all of them.
+			List<Def> listDefs=Defs.GetDefsForCategory(DefCat.InsurancePaymentType);
+			//Make a list of defs we're checking.
+			List<string> listDefNamesToCheck=new List<string>(){"Check","EFT","Wired"};
+			//Grab the defs that already exist.
+			List<string> listDefNamesExisting=listDefs.Select(x => x.ItemName).ToList();
+			//Find the defs that don't exist.
+			List<string> listMissingDefNames=listDefNamesToCheck.FindAll(x=>!listDefNamesExisting.Contains(x));
+			//Create any defs that don't exist and add them to the list.
+			for(int i=0;i<listMissingDefNames.Count;i++) {
+				Def def=DefT.CreateDefinition(DefCat.InsurancePaymentType,listMissingDefNames[i],isHidden:true);
+				listDefs.Add(def);
+			}
+			//Set the prefs to 0 in case they're not 0 already. This forces GetInsurancePaymentTypeDefNum() to use paymentMethodCode.
+			Prefs.UpdateIntNoCache(PrefName.EraChkPaymentType,0);
+			Prefs.UpdateIntNoCache(PrefName.EraAchPaymentType,0);
+			Prefs.UpdateIntNoCache(PrefName.EraFwtPaymentType,0);
+			Prefs.UpdateIntNoCache(PrefName.EraDefaultPaymentType,0);
+			//Hide all the defs in the list
+			for(int i=0;i<listDefs.Count;i++){
+				Defs.HideDef(listDefs[i]);
+			}
+			Defs.RefreshCache();
+			Prefs.RefreshCache();
+			//defNum should be 0 since if all the defs are hidden it should not find a defnum and default to 0.
+			long defNum=X835.GetInsurancePaymentTypeDefNum("CHK");
+			Assert.AreEqual(0,defNum);
+			//Reset the defnum and try EFT
+			defNum=X835.GetInsurancePaymentTypeDefNum("ACH");
+			Assert.AreEqual(0,defNum);
+			//Reset the defnum and try Wired
+			defNum=X835.GetInsurancePaymentTypeDefNum("FWT");
+			Assert.AreEqual(0,defNum);
+			//Cleanup of unhiding the defs for other unit tests.
+			for(int i=0;i<listDefs.Count;i++){
+				listDefs[i].IsHidden=false;
+				Defs.Update(listDefs[i]);
+			}
+			Defs.RefreshCache();
+		}
 		#endregion
 
 		#region x834 Tests

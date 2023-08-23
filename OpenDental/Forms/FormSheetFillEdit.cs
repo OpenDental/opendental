@@ -1010,6 +1010,20 @@ namespace OpenDental {
 				}
 				using Brush brushBack=new SolidBrush(colorBack);
 				g.FillRectangle(brushBack,rectangle);
+				//Dropdown arrow to the right that indicates that this is comboBox
+				float xPosArrowStart=SheetCur.SheetFields[i].XPos+SheetCur.SheetFields[i].Width;
+				float yPosArrowStart=SheetCur.SheetFields[i].YPos+(SheetCur.SheetFields[i].Height/2f);
+				using Pen _penArrow=new Pen(Color.FromArgb(20,20,20),1.5f);
+				g.DrawLine(_penArrow,
+					x1:xPosArrowStart-LayoutManager.ScaleF(13),
+					y1:yPosArrowStart-LayoutManager.ScaleF(1.5f),
+					x2:xPosArrowStart-LayoutManager.ScaleF(9.5f),
+					y2:yPosArrowStart+LayoutManager.ScaleF(1.5f));
+				g.DrawLine(_penArrow,
+					x1:xPosArrowStart-LayoutManager.ScaleF(9.5f),
+					y1:yPosArrowStart+LayoutManager.ScaleF(1.5f),
+					x2:xPosArrowStart-LayoutManager.ScaleF(6),
+					y2:yPosArrowStart-LayoutManager.ScaleF(1.5f));
 				//combobox has no font options like fontname, size, color, bold, or align
 				using Font font=new Font(FontFamily.GenericSansSerif,LayoutManager.UnscaleMS(8.25f));
 				string str=SheetFields.GetComboSelectedOption(SheetCur.SheetFields[i]);

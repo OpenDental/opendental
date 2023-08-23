@@ -30,7 +30,7 @@ namespace OpenDentBusiness {
 		///<summary>BPR03 converted to bool.</summary>
 		private bool _isCredit;
 		///<summary>BPR04 Payment Method Code.  Required.</summary>
-		public string _paymentMethodCode;
+		public string PaymentMethodCode { get; private set; }
 		///<summary>BPR04 converted into a human readable form.</summary>
 		private string _payMethodDescript;
 		///<summary>BPR15 As many as 4 trailing digits of the account the payment was deposited into (only if payment was made electronically).  If not present, will be blank.</summary>
@@ -113,21 +113,21 @@ namespace OpenDentBusiness {
 		///<summary>If the 835 was paid electronically (EFT), then will return the effective date.  Otherwise, for physical checks, returns today's date.</summary>
 		public DateTime DateReceived {
 			get {
-				if(_paymentMethodCode=="NON") {//No payment
+				if(PaymentMethodCode=="NON") {//No payment
 					return DateTime.Today;
 				}
-				if(_paymentMethodCode=="ACH" && DateEffective.Year>1980) {//Electronic check
+				if(PaymentMethodCode=="ACH" && DateEffective.Year>1980) {//Electronic check
 					return DateEffective;
 				}
-				if(_paymentMethodCode=="BOP" && DateEffective.Year>1980) {//Financial institution option.
+				if(PaymentMethodCode=="BOP" && DateEffective.Year>1980) {//Financial institution option.
 					//I doubt we will ever see this status on our end.  A bank will usually see this status, then strip it out and replace it before it gets to us.
 					//Safe to assume most banks will probably choose electronic deposit.
 					return DateEffective;
 				}
-				if(_paymentMethodCode=="CHK") {//Physical check
+				if(PaymentMethodCode=="CHK") {//Physical check
 					return DateTime.Today;
 				}
-				if(_paymentMethodCode=="FWT" && DateEffective.Year>1980) {//Wire transfer
+				if(PaymentMethodCode=="FWT" && DateEffective.Year>1980) {//Wire transfer
 					return DateEffective;
 				}
 				return DateTime.Today;
@@ -613,21 +613,21 @@ namespace OpenDentBusiness {
 			return listClaims;
 		}
 
-		public long GetInsurancePaymentTypeDefNum(){
+		public static long GetInsurancePaymentTypeDefNum(string paymentMethodCode){
 			long defNumDefault=PrefC.GetLong(PrefName.EraDefaultPaymentType);
-			switch(_paymentMethodCode){
+			switch(paymentMethodCode){
 				case "CHK":
 					return GetInsurancePaymentTypeDefNumHelper(PrefName.EraChkPaymentType,defNumDefault,"Check");
 				case "ACH":
 					return GetInsurancePaymentTypeDefNumHelper(PrefName.EraAchPaymentType,defNumDefault,"EFT");
 				case "FWT":
-					return GetInsurancePaymentTypeDefNumHelper(PrefName.EraAchPaymentType,defNumDefault,"Wired");
+					return GetInsurancePaymentTypeDefNumHelper(PrefName.EraFwtPaymentType,defNumDefault,"Wired");
 				default:
 					return defNumDefault;
 			}
 		}
 
-		private long GetInsurancePaymentTypeDefNumHelper(PrefName prefName, long defNumDefault, string defItemName){
+		private static long GetInsurancePaymentTypeDefNumHelper(PrefName prefName,long defNumDefault,string defItemName){
 			long defNum=PrefC.GetLong(prefName);
 			if(defNum!=0){
 				return defNum;
@@ -635,7 +635,7 @@ namespace OpenDentBusiness {
 			if(defNumDefault!=0){
 				return defNumDefault;
 			}
-			return Defs.GetByExactName(DefCat.InsurancePaymentType,defItemName);
+			return Defs.GetByExactName(DefCat.InsurancePaymentType,defItemName,isShort:true);
 		}
 
 		public string GetHumanReadable() {
@@ -693,8 +693,8 @@ namespace OpenDentBusiness {
 				_isCredit=true;
 			}
 			//BPR04 Payment Method Code.  Required.
-			_paymentMethodCode=segBPR.Get(4);
-			_payMethodDescript=GetDescriptForPaymentMethodCode(_paymentMethodCode);
+			PaymentMethodCode=segBPR.Get(4);
+			_payMethodDescript=GetDescriptForPaymentMethodCode(PaymentMethodCode);
 			//BPR05 Payment Format Code.  Situational.  We do not use.
 			//BPR06 (DFI) ID Number Qualifier.  Situational.  We do not use.
 			//BPR07 (DFI) Identification Number.  Situational.  We do not use.

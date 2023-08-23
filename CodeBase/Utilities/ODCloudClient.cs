@@ -125,6 +125,24 @@ namespace CodeBase {
 			return arrayFileData.Select(x => ODFileUtils.CombinePaths(tempPathFT,x.Item2)).ToArray();
 		}
 
+		
+		public static bool ClearClipboard() {
+			try {
+				return Convert.ToBoolean(SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.ClearClipboard));
+			}
+			catch(Exception) {
+				return false;
+			}
+		}
+
+		public static string GetClipboardImageFromODCloudClient() {
+			string resultData=SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.GetClipboardImage,doShowProgressBar:false);
+			if(resultData.IsNullOrEmpty()) {
+				return null;
+			}
+			return resultData;
+		}
+
 		///<summary>Returns '.../temp/opendental/ODCloudFileTransfer' temp path.</summary>
 		private static string GetFileTransferTempPath() {
 			string tempPath=ODFileUtils.CombinePaths(Path.GetTempPath(),"opendental","ODCloudFileTransfer");
@@ -622,6 +640,38 @@ namespace CodeBase {
 			return;
 		}
 
+		public static bool StartSnipAndSketchOrSnippingTool(string _snipSketchURI) {
+			CloudClientAction action=CloudClientAction.StartSnipAndSketchOrSnippingTool;
+			ODCloudClientData oDCloudClientData=new ODCloudClientData() {
+				OtherData=_snipSketchURI
+			};
+			try {
+				return Convert.ToBoolean(SendToODCloudClientSynchronously(oDCloudClientData,action,doShowProgressBar:false));
+			}
+			catch(Exception) {
+				return false;
+			}
+		}
+
+		public static void KillProcesses() {
+			try {
+				SendToODCloudClient(new ODCloudClientData(),CloudClientAction.KillProcesses);
+			}
+			catch(Exception ex) {
+				ODMessageBox.Show(ex.Message);
+			}
+		}
+
+		public static bool GetProcessesSnipTool() {
+			try {
+				return Convert.ToBoolean(SendToODCloudClientSynchronously(new ODCloudClientData(),CloudClientAction.GetProcessesSnipTool,doShowProgressBar:false));
+			}
+			catch(Exception ex) {
+				ODMessageBox.Show(ex.Message);
+			}
+			return false;
+		}
+
 		///<summary>Contains the data to be sent to the browser to perfrom a browser action. Will be serialized as JSON.</summary>
 		public class ODBrowserData {
 			public string ElementId;
@@ -802,7 +852,17 @@ namespace CodeBase {
 			///<summary>Start HttpListener.GetContext on the cloudclient</summary>
 			HttpListenerGetContext,
 			///<summary>Close duplicate Cloud Client processes</summary>
-			TerminateDuplicateCloudClientProcesses
+			TerminateDuplicateCloudClientProcesses,
+			///<summary>Close duplicate Cloud Client processes</summary>
+			GetProcessesSnipTool,
+			///<summary>Attempts to start Snip & Sketch, then Snipping Tool on the cloud users machine. If that failseturns true if either started, false if neither did.</summary>
+			StartSnipAndSketchOrSnippingTool,
+			///<summary> Kill all passed-in processes, ignoring any failures</summary>
+			KillProcesses,
+			///<summary> Get image from clipboard. Returns empty string if no image is found. </summary>
+			GetClipboardImage,
+			///<summary> Clear clipboard on cloud users machine</summary>
+			ClearClipboard
 		}
 
 		///<summary>Tells the browser what action to take with the data passed to it.</summary>

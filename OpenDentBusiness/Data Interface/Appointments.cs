@@ -5417,7 +5417,15 @@ namespace OpenDentBusiness{
 				if(isForPlanned) {
 					return false; //Because there are no planned appointments that could be empty.
 				}
-				listApptNums=listProcedures.Select(x => x.AptNum).Where(x => x>0).Distinct().ToList();
+				listApptNums=new List<long>();
+				for(int i = 0;i<listProcedures.Count;i++) {
+					if(listProcedures[i].AptNum>0) {
+						listApptNums.Add(listProcedures[i].AptNum);
+					}
+					if(listProcedures[i].PlannedAptNum>0) {
+						listApptNums.Add(listProcedures[i].PlannedAptNum);
+					}
+				}
 			}
 			List<Procedure> listProcsAllForAppts=Procedures.GetProcsMultApts(listApptNums, isForPlanned);
 			for(int i=0;i < listApptNums.Count;i++) {

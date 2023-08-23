@@ -8,7 +8,7 @@
              mc:Ignorable="d"
              Width="784" Height="709" Loaded="FrmODBase_Loaded">
 	<Grid Background="#FFFCFDFE" >
-		<ui:Grid x:Name="gridMain" Margin="51,26,109,41" HorizontalAlignment="Stretch" CellDoubleClick="gridMain_CellDoubleClick" VerticalAlignment="Stretch" HScrollVisible="True" AlternateRowsColored="True" ArrowsWhenNoFocus="True" SelectionMode="OneCell" EditableEnterMovesDown="True" CellClick="gridMain_CellClick"  />
+		<ui:Grid x:Name="gridMain" Margin="51,26,348,41" HorizontalAlignment="Stretch" CellDoubleClick="gridMain_CellDoubleClick" VerticalAlignment="Stretch" HScrollVisible="True" AlternateRowsColored="True" ArrowsWhenNoFocus="True" SelectionMode="OneCell" EditableEnterMovesDown="True" CellClick="gridMain_CellClick"  />
 		<ui:Button x:Name="butFill" Margin="0,155,23,0" Height="24" Text="Fill" Click="Button_Click" HorizontalAlignment="Right" Width="65"/>
 		<Grid Width="50" Height="50" Background="	#cddceb" HorizontalAlignment="Right" Margin="0,322,30,0" VerticalAlignment="Top" />
 		<ui:Button x:Name="butClear" Margin="0,120,23,0" Height="24" Text="Clear" Click="butClear_Click" HorizontalAlignment="Right" Width="65"/>

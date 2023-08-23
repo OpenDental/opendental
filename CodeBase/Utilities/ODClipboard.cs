@@ -10,13 +10,19 @@ namespace CodeBase {
 
 		///<summary>Clears the clipboard.  For ODCloud this will set the clipboard to an empty string instead, since the clear function doesn't work for ODCloud.  Also, for ODCloud
 		///this will use System.Windows.Clipboard since System.Windows.Forms.Clipboard causes heap corruption and crashes OD with ntdll.dll errors in ODCloud.</summary>
-		public static void Clear() {
+		public static bool Clear() {
 			if(ODBuild.IsWeb()) {
 				System.Windows.Clipboard.SetText(string.Empty);//setting text so that the browser clipboard will match the local workstation clipboard
-				ODCloudClient.SendDataToBrowser(string.Empty,(int)ODCloudClient.BrowserAction.SetClipboard);
+				return ODCloudClient.ClearClipboard();
 			}
 			else {
-				Clipboard.Clear();
+				try {
+					Clipboard.Clear();
+					return true;
+				}
+				catch(Exception) {
+					return false;
+				}
 			}
 		}
 
@@ -45,9 +51,9 @@ namespace CodeBase {
 
 
 		///<summary>Gets the contents of the user's clipboard as an image. Returns null if the clipboard does not contain an image.</summary>
-		public static Bitmap GetImage() {
+		public static Bitmap GetImage(bool doShowProgressBar=true) {
 			if(ODBuild.IsWeb()) {
-				string base64=ODCloudClient.SendToBrowserSynchronously("",ODCloudClient.BrowserAction.GetClipboardImage,timeoutSecs:30);
+				string base64=ODCloudClient.GetClipboardImageFromODCloudClient();
 				if(base64.IsNullOrEmpty()) {
 					return null;
 				}

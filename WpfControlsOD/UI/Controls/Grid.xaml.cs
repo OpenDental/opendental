@@ -1698,9 +1698,10 @@ using WpfControls.UI;
 				}
 			}*/
 			if(_hScrollVisible) {
-				scrollH.Value=0;
-				Canvas.SetLeft(canvasMain,0);
-				Canvas.SetLeft(canvasHeaders,0);
+				//We can't be resetting the scrollH without a reason.
+				//scrollH.Value=0;
+				//Canvas.SetLeft(canvasMain,0);
+				//Canvas.SetLeft(canvasHeaders,0);
 				scrollH.Visibility=Visibility.Visible;
 				//vScroll.Height=this.Height-OriginY()-scrollH.Height-2;
 				//if(vScroll.Height<0){

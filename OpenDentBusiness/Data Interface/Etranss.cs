@@ -1451,7 +1451,7 @@ namespace OpenDentBusiness{
 			claimPay.CarrierName=x835.PayerName;
 			claimPay.CheckAmt=listClaimProcsAll.Where(x => x.ClaimPaymentNum==0).Sum(x => x.InsPayAmt);//Ignore claimprocs associated to previously finalized payments.
 			claimPay.CheckNum=x835.TransRefNum;
-			claimPay.PayType=x835.GetInsurancePaymentTypeDefNum();
+			claimPay.PayType=X835.GetInsurancePaymentTypeDefNum(x835.PaymentMethodCode);
 			claimPay.IsPartial=true;//This flag is changed to "false" when the payment is finalized from inside FormClaimPayBatch.
 			if(isAutomatic) {
 				//We shouldn't automatically make payments that don't match the amount on the ERA.
