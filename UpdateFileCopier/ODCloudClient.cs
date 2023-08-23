@@ -22,13 +22,21 @@ namespace CodeBase {
 
 		}
 
-		public static string SendToBrowserSynchronously(string data,BrowserAction browserAction,int timeoutSecs=5) {
+		public static string SendToBrowserSynchronously(string data,BrowserAction browserAction,int timeoutSecs=5,bool doShowProgressBar=true) {
 			return "";
 		}
 
 		public static string[] GetClipboardFilesFromODCloudClient() {
 			return null;
 		}
+		public static string GetClipboardImageFromODCloudClient() {
+			return null;
+		}
+
+		public static bool ClearClipboard() {
+			return false;
+		}
+
 
 		///<summary>Tells the browser what action to take with the data passed to it.</summary>
 		public enum BrowserAction {

@@ -922,7 +922,7 @@ namespace OpenDentBusiness.Eclaims {
 			}
 			CCDFieldInputter fieldInputter2=null;
 			bool canCreateSecClaim=(claim.ClaimType!="PreAuth" && claim.ClaimType!="S" && etransAck.Etype==EtransType.ClaimEOB_CA && planNum2>0);
-			if(fieldInputter.GetValue("G39")!="" && fieldInputter.GetValue("G39")!="0000") {//There exists an embedded message within the response.
+			if(fieldInputter!=null && fieldInputter.GetValue("G39")!="" && fieldInputter.GetValue("G39")!="0000") {//There exists an embedded message within the response.
 				embeddedMsg=fieldInputter.GetValue("G40");
 				fieldInputter2=new CCDFieldInputter(embeddedMsg);
 				if(canCreateSecClaim && fieldInputter2.GetFieldById("A05").valuestr==carrier2.ElectID) {//Is the embedded message for the secondary carrier?

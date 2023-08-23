@@ -4109,7 +4109,7 @@ namespace OpenDentBusiness {
 									&& listEtrans835s[j].TransRefNum==x835.TransRefNum
 									&& listEtrans835s[j].InsPaid==(double)x835.InsPaid
 									&& listEtrans835s[j].ControlId==x835.ControlId
-									&& listEtrans835s[j].PaymentMethodCode==x835._paymentMethodCode
+									&& listEtrans835s[j].PaymentMethodCode==x835.PaymentMethodCode
 									&& listEtrans835s[j].PatientName==patientName
 									//We don't want to include status because claims may have changed, and the Etrans835 status may not be up to date.
 									/*&& listEtrans835s[j].Status==x835.GetStatus()*/)

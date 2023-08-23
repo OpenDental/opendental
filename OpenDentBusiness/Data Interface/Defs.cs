@@ -90,10 +90,10 @@ namespace OpenDentBusiness {
 			return GetDef(myCat,GetByExactName(myCat,itemName));
 		}
 
-		///<summary>Returns 0 if it can't find the named def.  If the name is blank, then it returns the first def in the category.</summary>
-		public static long GetByExactName(DefCat myCat,string itemName) {
+		///<summary>Set isShort to true to exclude hidden defs. Returns 0 if it can't find the named def.  If the name is blank, then it returns the first def in the category.</summary>
+		public static long GetByExactName(DefCat myCat,string itemName,bool isShort=false) {
 			//No need to check MiddleTierRole; no call to db.
-			List<Def> listDefs=Defs.GetDefsForCategory(myCat);
+			List<Def> listDefs=Defs.GetDefsForCategory(myCat,isShort);
 			if(itemName=="" && listDefs.Count>0) {
 				return listDefs[0].DefNum;//return the first one in the list
 			}

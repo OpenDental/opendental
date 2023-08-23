@@ -977,7 +977,7 @@ using OpenDental.UI;
 			float scaleMS=_scaleMS;
 			float zoomLocal=_zoomLocal;
 			SetScaleAndZoom(1,1);
-			if(_printedRows==0 || scaleMS!=1) {
+			if(_printedRows==0 || scaleMS!=1 || zoomLocal!=1) {
 				//Recalculate row heights, 4% larger on the first page of printing, or when using zoom.
 				ComputeRows(g,doActualCalc:true);
 			}

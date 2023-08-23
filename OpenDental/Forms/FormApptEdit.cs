@@ -810,9 +810,10 @@ namespace OpenDental{
 				}
 			}
 			List<long> listPlannedApptNumsSelected=gridProc.SelectedTags<Procedure>().Select(x => x.PlannedAptNum).Where(x=>x!=0).ToList();
-			if(PrefC.GetBool(PrefName.ApptsRequireProc) && Appointments.AreApptsGoingToBeEmpty(gridProc.SelectedTags<Procedure>(), listPlannedApptNumsSelected, isForPlanned:true))
+			if(PrefC.GetBool(PrefName.ApptsRequireProc)
+				&& Appointments.AreApptsGoingToBeEmpty(gridProc.SelectedTags<Procedure>(),listPlannedApptNumsSelected,isForPlanned: true))
 			{
-				MsgBox.Show("Deleting selected procedure(s) will result in an empty planned appointment.");
+				MsgBox.Show("Deleting selected procedure(s) will result in an empty appointment.");
 				return;
 			}
 			//If this appointment is of a certain AppointmentType, check for required procedure codes that are going to be deleted.
@@ -2749,7 +2750,9 @@ namespace OpenDental{
 			if(!UpdateListAndDB(isClosing: true, doCreateSecLog: true, doInsertHL7: true)) {
 				return;
 			}
-			if(_appointment.AptStatus==ApptStatus.Scheduled && gridProc.SelectedIndices.Length==0 && PrefC.GetBool(PrefName.ApptsRequireProc)) {
+			if(PrefC.GetBool(PrefName.ApptsRequireProc)
+				&& (_appointment.AptStatus==ApptStatus.Scheduled || _appointment.AptStatus==ApptStatus.Planned)
+				&& gridProc.SelectedIndices.Length==0) {
 				MsgBox.Show("At least one procedure must be attached to the appointment.");
 				return;
 			}
@@ -2782,9 +2785,9 @@ namespace OpenDental{
 			if(_appointment==null) {//Could not find _appointment in the Db on load.
 				return;
 			}
-			if(_appointment.AptStatus==ApptStatus.Scheduled && gridProc.SelectedIndices.Length==0
-				&& PrefC.GetBool(PrefName.ApptsRequireProc) && !_isDeleted
-				&& !IsNew) {
+			if(PrefC.GetBool(PrefName.ApptsRequireProc)
+				&& (_appointment.AptStatus==ApptStatus.Scheduled || _appointment.AptStatus==ApptStatus.Planned)
+				&& gridProc.SelectedIndices.Length==0 && !_isDeleted && !IsNew) {
 				MsgBox.Show("At least one procedure must be attached to the appointment.");
 				e.Cancel=true; //form won't close until procedure is attached or appointment is canceled.
 				return;

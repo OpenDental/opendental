@@ -29,7 +29,7 @@ namespace OpenDental {
 
 		private void FrmODBase_Loaded(object sender,RoutedEventArgs e) {
 			FillDataTable();
-			//FillGrid();
+			FillGrid();
 		}
 
 		private void FillDataTable(){
@@ -92,14 +92,19 @@ namespace OpenDental {
 			col.IsEditable=true;
 			gridMain.Columns.Add(col);
 			col=new GridColumn("Col3",80);
+			col.IsEditable=true;
 			gridMain.Columns.Add(col);
 			col=new GridColumn("Col4",80);
+			col.IsEditable=true;
 			gridMain.Columns.Add(col);
 			col=new GridColumn("Col5",80);
+			col.IsEditable=true;
 			gridMain.Columns.Add(col);
 			col=new GridColumn("Col6",80);
+			col.IsEditable=true;
 			gridMain.Columns.Add(col);
 			col=new GridColumn("Col7",80);
+			col.IsEditable=true;
 			gridMain.Columns.Add(col);
 			//gridMain.NoteSpanStop=1;
 			//gridNew.FuncConstructGridRow=GridProgRowConstruction;//dataRow => GridProgRowConstruction(dataRow as DataRow);
