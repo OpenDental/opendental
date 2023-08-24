@@ -2320,6 +2320,13 @@ namespace OpenDental {
 					return;
 				}
 			}
+			if(_procedure.AptNum!=0){//If the procedure is attached to an appointment
+				string res=AppointmentL.CheckRequiredProcForApptType(procedureArrayToDelete:_procedure);
+				if(res!=""){
+					MsgBox.Show(res);
+					return;
+				}
+			}
 			try {
 				Procedures.Delete(_procedure.ProcNum);//also deletes the claimProcs and adjustments. Might throw exception.
 				Recalls.Synch(_procedure.PatNum);//needs to be moved into Procedures.Delete

@@ -248,6 +248,14 @@ namespace OpenDental {
 			row=new GridRow(Lan.g(this,"Tokens"),Lan.g(this,"Validates tokens on file with the X-Charge server."));
 			row.Tag=new Action(TokensFix);
 			gridTools.ListGridRows.Add(row);
+			if(Security.IsAuthorized(Permissions.SecurityAdmin,true)) {
+				row=new GridRow(Lan.g(this,"PPO Percentage Insurance Plan Type"),Lan.g(this,"Change all insurance plans to PPO Percentage plan type."));
+				row.Tag=new Action(ChangeToPercentageInsurancePlanType);
+				gridTools.ListGridRows.Add(row);
+				row=new GridRow(Lan.g(this,"Category Percentage Insurance Plan Type "),Lan.g(this,"Change all insurance plans to Category Percentage type."));
+				row.Tag=new Action(ChangeToCategoryInsurancePlanType);
+				gridTools.ListGridRows.Add(row);
+			}
 			gridTools.EndUpdate();
 		}
 
@@ -692,6 +700,47 @@ namespace OpenDental {
 			}
 			MsgBoxCopyPaste msgBoxCopyPaste=new MsgBoxCopyPaste(strResult);
 			msgBoxCopyPaste.Show();
+		}
+
+		private bool VerifyPermissionToChangeInsuranceType() {
+			using InputBox inputBox=new InputBox("Please enter password");
+			inputBox.setTitle("Insurance Plan Type Change");
+			inputBox.textResult.PasswordChar='*';
+			inputBox.ShowDialog();
+			if(inputBox.DialogResult!=DialogResult.OK) {
+				return false;
+			}
+			if(inputBox.textResult.Text!="ConversionsDepartment") {
+				MsgBox.Show(this,"Wrong password");
+				return false;
+			}
+			return true;
+		}
+
+		private void ChangeToCategoryInsurancePlanType() {
+			if (!VerifyPermissionToChangeInsuranceType()) {
+				return;
+			}
+			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel
+				,"Warning! This will change all PPO Percentage insurance plans to Category Percentage plan type. This action is not reversible. Continue?")) {
+				return;
+			}
+			ProgressOD progressOD=new ProgressOD();
+			progressOD.ActionMain=() => DatabaseMaintenances.UpdateInsurancePlanType("Category");
+			progressOD.ShowDialogProgress();
+		}
+
+		private void ChangeToPercentageInsurancePlanType() {
+			if (!VerifyPermissionToChangeInsuranceType()) {
+				return;
+			}
+			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel
+				,"Warning! This will change all Category Percentage insurance plans to PPO Percentage plan type. This action is not reversible. Continue?")) {
+				return;
+			}
+			ProgressOD progressOD=new ProgressOD();
+			progressOD.ActionMain=() => DatabaseMaintenances.UpdateInsurancePlanType("Percentage");
+			progressOD.ShowDialogProgress();
 		}
 
 		#endregion

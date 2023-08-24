@@ -843,38 +843,52 @@ namespace OpenDental{
 			if(HasErrors()) {
 				return;
 			}
-			if(!IsInsPayPlan) {//Patient Payment Plan
-				List<long> listProcNums=_listPayPlanCharges.Where(x => x.ProcNum!=0).Select(x => x.ProcNum).ToList();// Selects list of ProcNums from _listPayPlanCharges
-				List<Procedure> listProcedures=Procedures.GetManyProc(listProcNums,false);
-				if(listProcedures.Any(x => x.ProcStatus==ProcStat.TP)) {
-					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Treatment planned procedures are attached to the payment plan, closing the plan will remove those credits. Do you want to continue?")) {
-						return;
-					}
-				}
-				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Closing out this payment plan will remove interest from all future charges "
-					+"and make them due immediately.  Do you want to continue?")) {
-					return;
-				}
-				PayPlanCharge payPlanChargeCloseout=PayPlanEdit.CloseOutPatPayPlan(_listPayPlanCharges,_payPlan,DateTime.Today);
-				_listPayPlanCharges.RemoveAll(x => x.ChargeDate > DateTime.Today.Date); //also removes TP Procs
-				_listPayPlanCharges.Add(payPlanChargeCloseout);
+			bool shouldClosePlan;
+			if(IsInsPayPlan) {
+				shouldClosePlan=AdjustInsPayPlanChargesForClose();
 			}
-			else {
-				if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Closing out an insurance payment plan will change the Tx Completed Amt to match the amount"
-					+" insurance actually paid.  Do you want to continue?")) {
-					return;
-				}
-				double insPaidTotal=0;
-				for(int i=0;i < _tableClaimProcsBundled.Rows.Count;i++) {
-					insPaidTotal+=PIn.Double(_tableClaimProcsBundled.Rows[i]["InsPayAmt"].ToString());
-				}
-				textCompletedAmt.Text=insPaidTotal.ToString("f");
+			else { //Patient Payment Plan
+				shouldClosePlan=AdjustPatPayPlanChargesForClose();
 			}
+			if (shouldClosePlan) {
+				ClosePayPlan(_payPlan);
+			}
+		}
+
+		private bool AdjustPatPayPlanChargesForClose() {
+			List<long> listCreditedProcNums=_listPayPlanCharges.Where(x => x.ProcNum!=0).Select(x => x.ProcNum).ToList();
+			List<Procedure> listCreditedProcedures=Procedures.GetManyProc(listCreditedProcNums,includeNote:false);
+			string prompt=Lan.g(this,"Interest will be removed from future charges and they will be made due immediately. Would you like to continue?");
+			if(listCreditedProcedures.Any(x => x.ProcStatus!=ProcStat.C)) {
+				prompt=Lan.g(this,"Credits for treatment planned procedures will be removed and total principal may be reduced.")+" "+prompt;
+			}
+			if (!MsgBox.Show(MsgBoxButtons.YesNo,prompt)) {
+				return false;
+			}
+			PayPlanCharge payPlanChargeCloseout=PayPlanEdit.CalculatePatPayPlanCloseoutCharge(_listPayPlanCharges,listCreditedProcedures,_payPlan,DateTime.Today);
+			_listPayPlanCharges.RemoveAll(x => x.ChargeDate > DateTime.Today.Date); //also removes TP Procs
+			_listPayPlanCharges.Add(payPlanChargeCloseout);
+			return true;
+		 }
+
+		private bool AdjustInsPayPlanChargesForClose() {
+			if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Closing out an insurance payment plan will change the Tx Completed Amt to match the amount insurance actually paid.  Do you want to continue?")) {
+				return false;
+			}
+			double insPaidTotal=0;
+			for(int i=0;i < _tableClaimProcsBundled.Rows.Count;i++) {
+				insPaidTotal+=PIn.Double(_tableClaimProcsBundled.Rows[i]["InsPayAmt"].ToString());
+			}
+			textCompletedAmt.Text=insPaidTotal.ToString("f");
+			return true;
+		}
+
+		private void ClosePayPlan(PayPlan payPlan) {
 			butClosePlan.Enabled=false;
-			_payPlan.IsClosed=true;
+			payPlan.IsClosed=true;
 			FillCharges();
 			SaveData();
-			CreditCards.RemoveRecurringCharges(_payPlan.PayPlanNum);
+			CreditCards.RemoveRecurringCharges(payPlan.PayPlanNum);
 			DialogResult=DialogResult.OK;
 		}
 
@@ -1276,9 +1290,8 @@ namespace OpenDental{
 				for(int i=0;i<_listAdjustments.Count;i++) {
 					Adjustments.Insert(_listAdjustments[i]);
 					TsiTransLogs.CheckAndInsertLogsIfAdjTypeExcluded(_listAdjustments[i]);
-					SecurityLogs.MakeLogEntry(Permissions.AdjustmentCreate,_patient.PatNum,Lan.g(this,"Adjustment created from payment plan for")+" "
-						+_patient.GetNameFL()+", "+_listAdjustments[i].AdjAmt.ToString("c"));
-				}				
+					SecurityLogs.MakeLogEntry(Permissions.AdjustmentCreate,_patient.PatNum,Lan.g(this,"Adjustment created from payment plan for ")+_patient.GetNameFL()+", "+_listAdjustments[i].AdjAmt.ToString("c"));
+				}
 			}
 			if(PayPlans.GetOne(_payPlan.PayPlanNum)==null) {
 				//The payment plan no longer exists in the database. 

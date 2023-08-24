@@ -74,14 +74,15 @@ namespace UnitTests.PayPlanEdit_Tests {
 			Patient pat=PatientT.CreatePatient(MethodBase.GetCurrentMethod().Name);
 			Procedure proc1=ProcedureT.CreateProcedure(pat,"D1120",ProcStat.C,"",100,DateTime.Today.AddMonths(-3));
 			Procedure proc2=ProcedureT.CreateProcedure(pat,"D0220",ProcStat.C,"",92,DateTime.Today.AddMonths(-3));
-			PayPlan payplan=PayPlanT.CreatePayPlanWithCredits(pat.PatNum,30,DateTime.Today.AddMonths(-3),0,new List<Procedure> {proc1,proc2 });
+			List<Procedure> listProcs = new List<Procedure> {proc1,proc2 };
+			PayPlan payplan=PayPlanT.CreatePayPlanWithCredits(pat.PatNum,30,DateTime.Today.AddMonths(-3),0,listProcs);
 			Payment payment=PaymentT.MakePayment(pat.PatNum,30,DateTime.Today.AddMonths(-2),payplan.PayPlanNum);//make a payment for the plan
 			List<PayPlanCharge> listCharges=PayPlanCharges.GetForPayPlan(payplan.PayPlanNum);
 			double totalFutureNegAdjs=PayPlanT.GetTotalNegFutureAdjs(listCharges);
 			List<PayPlanCharge> listChargesAndCredits=PayPlanEdit.CreatePayPlanAdjustments(-62,listCharges,totalFutureNegAdjs);//make adjustments for the plan.
 			listChargesAndCredits.Add(PayPlanChargeT.CreateNegativeCreditForAdj(pat.PatNum,payplan.PayPlanNum,-62));//add the tx credit for the adjustment
 			//Balance should equal 100. $192 of completed tx - $30 payment + $-62 adjustment. 
-			PayPlanCharge closeOutCharge=PayPlanEdit.CloseOutPatPayPlan(listChargesAndCredits,payplan,today);
+			PayPlanCharge closeOutCharge=PayPlanEdit.CalculatePatPayPlanCloseoutCharge(listChargesAndCredits,listProcs,payplan,today);
 			//List<PayPlanCharge> listFinalCharges=listChargesAndCredits.RemoveAll(x => x.ChargeDate > today.Date);
 			listChargesAndCredits.RemoveAll(x => x.ChargeDate > DateTime.Today);
 			listChargesAndCredits.Add(closeOutCharge);
@@ -101,6 +102,7 @@ namespace UnitTests.PayPlanEdit_Tests {
 			//Create a manual amortization schedule where the $1000 is split up into 5 payments.
 			//Have the first payment of $200 due today. The remaining $800 will be due in the future.
 			List<PayPlanCharge> listPayPlanCharges=new List<PayPlanCharge>();
+			List<Procedure> listProcs=new List<Procedure>();
 			for(int i=0;i<5;i++) {
 				listPayPlanCharges.Add(new PayPlanCharge() {
 					ChargeDate=DateTime.Today.AddMonths(listPayPlanCharges.Count),
@@ -112,7 +114,7 @@ namespace UnitTests.PayPlanEdit_Tests {
 				});
 			}
 			//A 'Close Out Charge' of $800 should be suggested when the user closes out this payment plan.
-			PayPlanCharge payPlanChargeCloseOut=PayPlanEdit.CloseOutPatPayPlan(listPayPlanCharges,payPlan,DateTime.Today);
+			PayPlanCharge payPlanChargeCloseOut=PayPlanEdit.CalculatePatPayPlanCloseoutCharge(listPayPlanCharges,listProcs,payPlan,DateTime.Today);
 			Assert.AreEqual(800,payPlanChargeCloseOut.Principal);
 		}
 

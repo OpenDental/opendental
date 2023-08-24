@@ -9659,8 +9659,13 @@ namespace OpenDental {
 			List<long> listProcNumsSelected=listDataRowsSelected
 				.Where(x => PIn.Long(x["ProcNum"].ToString())!=0)
 				.Select(x => PIn.Long(x["ProcNum"].ToString())).ToList();
+			List<Procedure> listProceduresSelected=Procedures.GetManyProc(listProcNumsSelected,false);
+			string message=AppointmentL.CheckRequiredProcForApptType(procedureArrayToDelete:listProceduresSelected.ToArray());
+			if(message!=""){
+				MsgBox.Show(message);
+				return;
+			}
 			if(PrefC.GetBool(PrefName.ApptsRequireProc)) {
-				List<Procedure> listProceduresSelected=Procedures.GetManyProc(listProcNumsSelected,false);
 				bool areApptsGoingToBeEmpty=Appointments.AreApptsGoingToBeEmpty(listProceduresSelected);
 				if(areApptsGoingToBeEmpty) {
 					MsgBox.Show("At least one procedure must be attached to the appointment.");

@@ -80,6 +80,11 @@ namespace OpenDentBusiness {
 				PaySimpleApi.MakeNewAccountACHData(customerId,routingNumber,acctNumber,bankName,isCheckings));
 		}
 
+		public static PaySimpleApiGetACHResponse GetACHAccount(long clinicNum,string accountId) {
+			ValidateProgram(clinicNum);
+			return PaySimpleApi.GetACHAccount(GetAuthHeader(clinicNum),accountId);
+		}
+
 		public static PaySimpleApiGetCCResponse GetCreditCard(long clinicNum,string accountId) {
 			ValidateProgram(clinicNum);
 			return PaySimpleApi.GetCreditCard(GetAuthHeader(clinicNum),accountId);
@@ -477,6 +482,19 @@ namespace OpenDentBusiness {
 			public string CreatedOn;
 		}
 
+		public class PaySimpleApiGetACHResponse {
+			public bool IsCheckingAccount;
+			public string RoutingNumber;
+			public string AccountNumber;
+			public string BankName;
+			public long CustomerId;
+			public bool IsDefault;
+			public bool RequiresValidation;
+			public long Id;
+			public string LastModified;
+			public string CreatedOn;
+		}
+
 		private class PaySimpleApi {
 
 			#region SDK Calls
@@ -719,6 +737,56 @@ namespace OpenDentBusiness {
 					Amount=response.FullResponse.Response.Amount,
 					CCSource=ccSource,
 				};
+			}
+
+			public static PaySimpleApiGetACHResponse GetACHAccount(string authHeader, string externalId) {
+				#region Response
+				var response=Request(ApiRoute.AccountACH,HttpMethod.Get,authHeader,"",
+					new {
+						Meta=new {
+							Errors=new {
+								ErrorCode="InvalidInput",
+								ErrorMessages=new [] {new {
+										Field="",
+										Message="",
+									}
+								}
+							},
+							HttpStatus="",
+							HttpStatusCode="",
+							PagingDetails="",
+						},
+						Response=new {
+							IsCheckingAccount=false,
+							RoutingNumber="",
+							AccountNumber="",
+							BankName="",
+							CustomerId=(long)0,
+							IsDefault=false,
+							RequiresValidation=false,
+							Id=(long)0,
+							LastModified="",
+							CreatedOn=""
+						}
+					},externalId==""?"":externalId
+				);
+				#endregion
+				if(response==null || response.FullResponse==null || response.FullResponse.Response==null) {
+					throw new Exception("Unexpected response from PaySimple"+(response!=null ? ": "+response.RawResponse : ""));
+				}
+				return new PaySimpleApiGetACHResponse() {
+					IsCheckingAccount=response.FullResponse.Response.IsCheckingAccount,
+					RoutingNumber=response.FullResponse.Response.RoutingNumber,
+					AccountNumber=response.FullResponse.Response.AccountNumber,
+					BankName=response.FullResponse.Response.BankName,
+					CustomerId=response.FullResponse.Response.CustomerId,
+					IsDefault=response.FullResponse.Response.IsDefault,
+					RequiresValidation=response.FullResponse.Response.RequiresValidation,
+					Id=response.FullResponse.Response.Id,
+					LastModified=response.FullResponse.Response.LastModified,
+					CreatedOn=response.FullResponse.Response.CreatedOn,
+				};
+				
 			}
 
 			public static PaySimpleApiGetCCResponse GetCreditCard(string authHeader,string externalId) {

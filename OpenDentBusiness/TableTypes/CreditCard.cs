@@ -149,7 +149,6 @@ namespace OpenDentBusiness {
 		[OnlinePaymentMethod]
 		CareCredit,
 		///<summary>11 - EdgeExpress Cloud when calling the RCM program.</summary>
-		[OnlinePaymentMethod]
 		EdgeExpressRCM,
 		///<summary>12 - EdgeExpress Card Not Present API.</summary>
 		[OnlinePaymentMethod]

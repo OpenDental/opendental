@@ -784,6 +784,9 @@ namespace OpenDentBusiness{
 		///<summary>249 - Also see ArchivedPatientEdit. Blocking user from patient selection prevents changes to all the other tables besides the patient table.  It's more rigorous.</summary>
 		[Description("Archived Patient Select")]
 		ArchivedPatientSelect,
+		///<summary>250 - Only used at OD HQ. Ability to edit Cloud tab info via Broadcast Monitor.</summary>
+		[Description("Cloud Customer Edit")]
+		CloudCustomerEdit,
 	}
 }
 
