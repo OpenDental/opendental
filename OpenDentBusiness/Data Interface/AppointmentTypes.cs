@@ -201,6 +201,55 @@ namespace OpenDentBusiness{
 			return "";
 		}
 
+		///<summary>Used when closing the FormApptEdit window. Takes appointmentTypeNum and list of selected (attached) procedures for the appointment open in the window. Returns empty string if required procs for appointment type are attached to the appointment otherwise returns message with missing required procedures and prevents closing the window.</summary>
+		public static string CheckRequiredProcsAttached(long appointmentTypeNum, List<Procedure> listProcedures){
+			//No need to check MiddleTierRole; no call to db.
+			string message="";
+			AppointmentType appointmentType=AppointmentTypes.GetOne(appointmentTypeNum);
+			if(appointmentType!=null && appointmentType.RequiredProcCodesNeeded!=EnumRequiredProcCodesNeeded.None) { //Should never be null.
+				List<string> listProcCodesRequiredForAppointmentType=appointmentType.CodeStrRequired.Split(",",StringSplitOptions.RemoveEmptyEntries).ToList(); //Includes duplicates.
+				//Get the ProcCodes of the selected Procedures.
+				List<Procedure> listProceduresSelected=listProcedures;
+				List<long> listCodeNumsSelected=listProceduresSelected.Select(x => x.CodeNum).ToList();
+				List<string> listProcCodesSelected=new List<string>();
+				for(int i=0;i<listCodeNumsSelected.Count;i++) {
+					ProcedureCode procedureCode=ProcedureCodes.GetFirstOrDefault(x=>x.CodeNum==listCodeNumsSelected[i]); //Should never return null.
+					listProcCodesSelected.Add(procedureCode.ProcCode);
+				}
+				//Figure out how many of our required procedures are present in the selected codes, and which ones are not.
+				int requiredCodesSelected=0;
+				List<string> listRequiredProcCodesMissing=new List<string>();
+				for(int i=0;i<listProcCodesRequiredForAppointmentType.Count;i++) {
+					string requiredProcCode=listProcCodesRequiredForAppointmentType[i];
+					if(listProcCodesSelected.Contains(requiredProcCode)) {
+						requiredCodesSelected++;
+						listProcCodesSelected.Remove(requiredProcCode);
+						continue;
+					}
+					listRequiredProcCodesMissing.Add(requiredProcCode);
+				}
+				//If RequiredProcCodesNeeded is at least one, check for at least one CodeStrRequired code selected.
+				if(appointmentType.RequiredProcCodesNeeded==EnumRequiredProcCodesNeeded.AtLeastOne) {
+					if(requiredCodesSelected==0) {
+						message="Appointment Type"+" \""+appointmentType.AppointmentTypeName+"\" "+"must contain at least one of the following procedures:"
+							+"\r\n"+String.Join(", ", listProcCodesRequiredForAppointmentType);
+						return message;
+					}
+				}
+				//If its all, make sure all CodeStrRequired codes are selected
+				if(appointmentType.RequiredProcCodesNeeded==EnumRequiredProcCodesNeeded.All) {
+					if(requiredCodesSelected!=listProcCodesRequiredForAppointmentType.Count) {
+						message="Appointment Type"+" \""+appointmentType.AppointmentTypeName+"\" "+"requires the following procedures:"
+							+"\r\n"+String.Join(", ",listProcCodesRequiredForAppointmentType)
+							+"\r\n\r\n"+"The following procedures are missing from this appointment:"
+							+"\r\n"+String.Join(", ",listRequiredProcCodesMissing);
+						return message;
+					}
+				}
+			}
+			return message;
+		}
+
 		public static int SortItemOrder(AppointmentType appointmentType1,AppointmentType appointmentType2) {
 			if(appointmentType1.ItemOrder!=appointmentType2.ItemOrder){
 				return appointmentType1.ItemOrder.CompareTo(appointmentType2.ItemOrder);

@@ -124,6 +124,7 @@ namespace OpenDental {
 			LayoutManager.MoveWidth(tree,Width);
 			LayoutManager.MoveWidth(gridMain,Width);
 			FillGrid(new List<Signalod>());//Sets height.  Does not run query.
+			LayoutTreeAndGrid();
 		}
 
 		///<summary>Calls RefreshTasks for all known instances of UserControlTasks for each instance which is visible and not disposed.</summary>
@@ -465,6 +466,13 @@ namespace OpenDental {
 			Tasks.LastOpenGroup=tabControl.SelectedIndex;
 			Tasks.LastOpenDate=monthCalendar.SelectionStart;
 			//layout
+			LayoutTreeAndGrid();
+			}
+
+		private void LayoutTreeAndGrid() {
+			if(_listTaskListTreeHistory==null) {
+				return;
+			}
 			if(tabControl.SelectedTab==tabDate || tabControl.SelectedTab==tabWeek || tabControl.SelectedTab==tabMonth) {
 				LayoutManager.MoveLocation(tree,new Point(tree.Left,monthCalendar.Bottom+1));//Show the calendar.
 			}

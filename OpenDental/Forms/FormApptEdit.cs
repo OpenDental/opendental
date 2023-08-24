@@ -824,27 +824,11 @@ namespace OpenDental{
 					List<Procedure> listProceduresSelected=gridProc.SelectedTags<Procedure>();
 					List<Procedure> listProceduresGrid=gridProc.GetTags<Procedure>();
 					listProceduresGrid.RemoveAll(x => x.AptNum!=_appointment.AptNum && x.AptNum!=0);//Remove procs on other appts
-					for(int i=0;i<listProceduresSelected.Count;i++) {//Remove all procedures attempting to be deleted
-						if(listProceduresGrid.Any(x => x.ProcNum==listProceduresSelected[i].ProcNum)) {
-							listProceduresGrid.Remove(listProceduresSelected[i]);
-						}
-					}
-					List<long> listCodeNumsRemaning=listProceduresGrid.Select(x => x.CodeNum).ToList();
-					List<ProcedureCode> listProcCodesRemaining=new List<ProcedureCode>();
-					for(int j=0;j<listCodeNumsRemaning.Count;j++) {
-						ProcedureCode procedureCode=ProcedureCodes.GetFirstOrDefault(x => x.CodeNum==listCodeNumsRemaning[j]);
-						listProcCodesRemaining.Add(procedureCode);
-					}
-					//All procs in grid, minus for other appts, minus selected is simulated result. Verify simulated result meets appointment type requirements and if not then show message.
-					for(int i=0;i<listProcCodesRequiredForAppointmentType.Count;i++) {
-						if(!listProcCodesRemaining.Any(x => x.ProcCode==listProcCodesRequiredForAppointmentType[i])) {
-							//The '[Name]' Appointment Type requires [at least one | all] of the following procedures to be attached: proc1, proc2.
-							string allOrSome=(appointmentType.RequiredProcCodesNeeded==EnumRequiredProcCodesNeeded.All)?"all":"at least one";
-							MsgBox.Show(Lan.g(this,"Appointment Type")+" \""+appointmentType.AppointmentTypeName+"\" "+Lan.g(this,"requires "+allOrSome+" of the following procedures:")
-								+"\r\n"+String.Join(", ",listProcCodesRequiredForAppointmentType)
-								+"\r\n\n"+Lan.g(this,"To delete these procedures change the Appointment Type to None."));
-							return;
-						}
+					List<Procedure> listProceduresForReqCheck=listProceduresSelected.FindAll(x => x.AptNum!=_appointment.AptNum && x.AptNum!=0);
+					string message=AppointmentL.CheckRequiredProcForApptType(listProceduresForReqCheck.ToArray());
+					if(message!=""){
+						MsgBox.Show(message);
+						return;
 					}
 				}
 			}
@@ -2294,46 +2278,10 @@ namespace OpenDental{
 			if(comboApptType.SelectedIndex!=0) {
 				//If this appointment is of a certain AppointmentType, check for required procedure codes.
 				AppointmentType appointmentType=_listAppointmentTypes[comboApptType.SelectedIndex-1];
-				if(appointmentType!=null && appointmentType.RequiredProcCodesNeeded!=EnumRequiredProcCodesNeeded.None) { //Should never be null.
-					List<string> listProcCodesRequiredForAppointmentType=appointmentType.CodeStrRequired.Split(",",StringSplitOptions.RemoveEmptyEntries).ToList(); //Includes duplicates.
-					//Get the ProcCodes of the selected Procedures.
-					List<Procedure> listProceduresSelected=gridProc.SelectedTags<Procedure>();
-					List<long> listCodeNumsSelected=listProceduresSelected.Select(x => x.CodeNum).ToList();
-					List<string> listProcCodesSelected=new List<string>();
-					for(int i=0;i<listCodeNumsSelected.Count;i++) {
-						ProcedureCode procedureCode=ProcedureCodes.GetFirstOrDefault(x=>x.CodeNum==listCodeNumsSelected[i]); //Should never return null.
-						listProcCodesSelected.Add(procedureCode.ProcCode);
-					}
-					//Figure out how many of our required procedures are present in the selected codes, and which ones are not.
-					int requiredCodesSelected=0;
-					List<string> listRequiredProcCodesMissing=new List<string>();
-					for(int i=0;i<listProcCodesRequiredForAppointmentType.Count;i++) {
-						string requiredProcCode=listProcCodesRequiredForAppointmentType[i];
-						if(listProcCodesSelected.Contains(requiredProcCode)) {
-							requiredCodesSelected++;
-							listProcCodesSelected.Remove(requiredProcCode);
-							continue;
-						}
-						listRequiredProcCodesMissing.Add(requiredProcCode);
-					}
-					//If RequiredProcCodesNeeded is at least one, check for at least one CodeStrRequired code selected.
-					if(appointmentType.RequiredProcCodesNeeded==EnumRequiredProcCodesNeeded.AtLeastOne) {
-						if(requiredCodesSelected==0) {
-							MsgBox.Show(Lan.g(this,"Appointment Type")+" \""+appointmentType.AppointmentTypeName+"\" "+Lan.g(this,"must contain at least one of the following procedures:")
-								+"\r\n"+String.Join(", ", listProcCodesRequiredForAppointmentType));
-							return false;
-						}
-					}
-					//If its all, make sure all CodeStrRequired codes are selected
-					if(appointmentType.RequiredProcCodesNeeded==EnumRequiredProcCodesNeeded.All) {
-						if(requiredCodesSelected!=listProcCodesRequiredForAppointmentType.Count) {
-							MsgBox.Show(Lan.g(this,"Appointment Type")+" \""+appointmentType.AppointmentTypeName+"\" "+Lan.g(this,"requires the following procedures:")
-								+"\r\n"+String.Join(", ",listProcCodesRequiredForAppointmentType)
-								+"\r\n\r\n"+Lan.g(this,"The following procedures are missing from this appointment:")
-								+"\r\n"+String.Join(", ",listRequiredProcCodesMissing));
-							return false;
-						}
-					}
+				string requiredProcMsg = AppointmentTypes.CheckRequiredProcsAttached(appointmentType.AppointmentTypeNum, gridProc.SelectedTags<Procedure>());
+				if(requiredProcMsg!=""){
+					MsgBox.Show(requiredProcMsg);
+					return false;
 				}
 			}
 			#region PrefName.ApptsRequireProc and Permissions.ProcComplCreate check
@@ -2795,6 +2743,12 @@ namespace OpenDental{
 			//Do not use pat.PatNum here.  Use _appointment.PatNum instead.  Pat will be null in the case that the user does not have the appt create permission.
 			DateTime datePrevious=_appointment.DateTStamp;
 			if(DialogResult!=DialogResult.OK) {
+				string requiredProcMsg=AppointmentTypes.CheckRequiredProcsAttached(_appointment.AppointmentTypeNum, gridProc.SelectedTags<Procedure>());
+				if(requiredProcMsg!="" && !_isDeleted){
+					MsgBox.Show(requiredProcMsg);
+					e.Cancel=true; //form won't close until procedure is attached or appointment is canceled.
+					return;
+				}
 				if(_appointment.AptStatus==ApptStatus.Complete) {
 					//This is a completed appointment and we need to warn the user if they are trying to leave the window and need to detach procs first.
 					for(int i=0;i<gridProc.ListGridRows.Count;i++) {

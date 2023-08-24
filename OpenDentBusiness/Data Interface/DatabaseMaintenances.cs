@@ -11364,6 +11364,22 @@ HAVING cnt>1";
 			return strResults;
 		}
 
+		///<summary>Update all to new insurance plan type.</summary>
+		public static void UpdateInsurancePlanType(string planType) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),planType);
+				return;
+			}
+			string command="";
+			if(planType=="Percentage") {
+				command="UPDATE insplan SET PlanType='p' WHERE PlanType=''";
+			}
+			else{//"Category"
+				command="UPDATE insplan SET PlanType='' WHERE PlanType='p'";
+			}
+			Db.NonQ(command);
+		}
+
 		#endregion Tool Button and Helper Methods-----------------------------------------------------------------------------------------------------------
 
 		///<summary>Uses reflection to get all database maintenance methods that are specifically flagged for DBM.

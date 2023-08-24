@@ -165,17 +165,24 @@ namespace OpenDental {
 
 		private void timerMonitorClipboard_Tick(object sender,EventArgs e) {
 			timerMonitorClipboard.Stop();
-			List<Process> listProcesses=GetProcessesSnipTool();
-      if(listProcesses.Count==0) {
+			bool hasRunningProcess;
+			if(ODBuild.IsWeb()) {
+				hasRunningProcess=ODCloudClient.GetProcessesSnipTool();
+			}
+			else {
+				List<Process> listProcesses=GetProcessesSnipTool();
+				hasRunningProcess=listProcesses.Count>0;
+			}
+			if(!hasRunningProcess) {
 				WindowState=FormWindowState.Normal;
 				BringToFront();
 				MsgBox.Show(this,"The snipping tool was closed while waiting for a snip. Stopping snip.");
 				EndSnipping();
 				return;
-      }
-			timerMonitorClipboard.Start();
-			using Bitmap bitmapClipboard=GetImageFromClipboard(isSilent:true);
+			}
+			using Bitmap bitmapClipboard=GetImageFromClipboard(isSilent:true,doShowProgressBar:false);
 			if(bitmapClipboard==null) {
+				timerMonitorClipboard.Start();
 				return;
 			}
 			EndSnipping();
@@ -194,8 +201,15 @@ namespace OpenDental {
 		///<summary>100ms. Monitor the list of running processes for Snip & Sketch and Snipping Tool, for a short duration,
 		///and kill any matching processes.  Doesn't stop trying until the duration is over. </summary>
 		private void timerKillSnipToolProcesses_Tick(object sender,EventArgs e) {
-			List<Process> listProcesses=GetProcessesSnipTool();
-			KillProcesses(listProcesses);
+			if(ODBuild.IsWeb()) {
+				if(ODCloudClient.GetProcessesSnipTool()) { 
+					ODCloudClient.KillProcesses(); 
+				}
+			}
+			else {
+				List<Process> listProcesses=GetProcessesSnipTool();
+				KillProcesses(listProcesses);
+			}
 			if(_stopwatchKillSnipToolProcesses.Elapsed>TimeSpan.FromSeconds(3)) {
 				timerKillSnipToolProcesses.Stop();
 				_stopwatchKillSnipToolProcesses.Reset();
@@ -255,6 +269,9 @@ namespace OpenDental {
 
 		///<summary>Attempts to start Snip & Sketch, then Snipping Tool if that fails. Returns true if either started, false if neither did.</summary>
 		public static bool StartSnipAndSketchOrSnippingTool() {
+			if(ODBuild.IsWeb()) {
+				return ODCloudClient.StartSnipAndSketchOrSnippingTool(_snipSketchURI);
+			}
 			//Determine if the screensketch protocol is in the registry; if not, we assume Snip & Sketch is not installed.
 			if(DoesSnipAndSketchExist()) {
 				Process processSnipAndSketch=new Process();
@@ -272,7 +289,7 @@ namespace OpenDental {
 			if(DoesSnippingToolExist()) {
 				Process processSnippingTool=new Process();
 				string pathToSnippingTool;
-				if(!Environment.Is64BitProcess) {
+				if(!Environment.Is64BitOperatingSystem) {
 					pathToSnippingTool="sysnative";
 				}
 				else {
@@ -293,14 +310,25 @@ namespace OpenDental {
 
 		///<summary>Mimics FormImageSelectClaimAttachment.StartSnipping()</summary>
 		private void StartSnipping() {
-			ODClipboard.Clear();
+			if(!ODClipboard.Clear()) {
+				MsgBox.Show(this,"Couldn't access clipboard, try again.");
+				return;
+			}
 			//If we're in the middle of trying to kill Snip Tool processes, stop for now.
 			timerKillSnipToolProcesses.Stop();
 			_stopwatchKillSnipToolProcesses.Reset();
-			List<Process> listProcesses=GetProcessesSnipTool();
-			if(KillProcesses(listProcesses)) {
-				//Wait a short time before launching, since otherwise the Win32Exception "The remote procedure call failed and did not execute" can happen
-				Thread.Sleep(100);
+			if(ODBuild.IsWeb()) {
+				if(ODCloudClient.GetProcessesSnipTool()) {
+					ODCloudClient.KillProcesses();
+					Thread.Sleep(100);
+				}
+			}
+			else {
+				List<Process> listProcesses=GetProcessesSnipTool();
+				if(KillProcesses(listProcesses)) {
+					//Wait a short time before launching, since otherwise the Win32Exception "The remote procedure call failed and did not execute" can happen
+					Thread.Sleep(100);
+				}
 			}
 			if(!StartSnipAndSketchOrSnippingTool()) {
 				MsgBox.Show(this,"Neither the Snip & Sketch tool nor the Snipping Tool could be launched.  Copy an image to the clipboard, then use the Paste Image button to add it as an attachment.  If you are on a Remote Desktop connection, launch your local system's Snip & Sketch or Snipping Tool, and make snips using either of those, which will be automatically copied to the clipboard.  If neither tool is available on your system, use the Print Screen keyboard key, or other screenshot software, to copy screenshots to the clipboard.");
@@ -313,13 +341,20 @@ namespace OpenDental {
 			butPasteImage.Enabled=false;
 			//Wait half a second before minimizing, otherwise Snip & Sketch can end up behind Open Dental
 			Thread.Sleep(500);
-			WindowState=FormWindowState.Minimized;
+			if(!ODBuild.IsWeb()) {
+				WindowState=FormWindowState.Minimized;
+			}
 			//begin monitoring the clipboard for results
 			timerMonitorClipboard.Start();
 		}
 
 		private void buttonSnipTool_Click(object sender,EventArgs e) {
-			StartSnipping();
+			if(ODBuild.IsWeb()) {
+				ODProgress.ShowAction(()=>StartSnipping(),"Opening snipping tool...");
+			}
+			else {
+				StartSnipping();
+			}
 		}
 
 		///<summary>Caller should dispose of this bitmap.</summary>
@@ -349,7 +384,12 @@ namespace OpenDental {
 				_listImageAttachments.Add(imageAttachment);
 				FillGrid();
 				if(formClaimAttachmentItemEdit.DoNewSnip) {
-					StartSnipping();
+					if(ODBuild.IsWeb()) {
+						ODProgress.ShowAction(()=>StartSnipping(),"Opening snipping tool...");
+					}
+					else {
+						StartSnipping();
+					}
 				}
 			}
 		}
@@ -394,7 +434,7 @@ namespace OpenDental {
 			}
 		}
 
-		private Bitmap GetImageFromClipboard(bool isSilent=false) {
+		private Bitmap GetImageFromClipboard(bool isSilent=false, bool doShowProgressBar=true) {
 			Bitmap bitmapClipboard=ODClipboard.GetImage();
 			if(bitmapClipboard!=null || isSilent) {
 				return bitmapClipboard;

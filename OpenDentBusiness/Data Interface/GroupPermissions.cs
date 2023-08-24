@@ -638,6 +638,7 @@ namespace OpenDentBusiness{
 				case Permissions.ViewAppointmentAuditTrail:
 				//case Permissions.PayPlanChargeEdit:
 				case Permissions.ArchivedPatientSelect:
+				case Permissions.CloudCustomerEdit:
 				return false;//Does not have audit Trail if uncommented.
 			}
 			if(!PrefC.IsODHQ && permType.In(
@@ -647,7 +648,8 @@ namespace OpenDentBusiness{
 					Permissions.FAQEdit,
 					Permissions.EditReadOnlyTasks,
 					Permissions.TextingAccountEdit,
-					Permissions.PreferenceEditBroadcastMonitor
+					Permissions.PreferenceEditBroadcastMonitor,
+					Permissions.CloudCustomerEdit
 				)) 
 			{
 				return false;

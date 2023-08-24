@@ -545,6 +545,8 @@ namespace OpenDental {
 					node.Nodes.Add(node2);
 					node2=SetNode(Permissions.PreferenceEditBroadcastMonitor);
 					node.Nodes.Add(node2);
+					node2=SetNode(Permissions.CloudCustomerEdit);
+				  node.Nodes.Add(node2);
 				treePermissions.Nodes.Add(node);
 			}
 			#endregion

@@ -756,7 +756,7 @@ namespace OpenDental{
 				listSchedulesToInsert.Add(schedule);
 			}
 			if(listSchedulesHolidays.Count>0){
-				MsgBox.Show(this,listSchedulesHolidays.Count+" holidays exist in the destination date range. Holidays will not be replaced and must be done manually.");
+				MessageBox.Show(Lan.g(this,listSchedulesHolidays.Count+" holidays exist in the destination date range. Holidays will not be replaced and must be done manually."));
 			}
 			Schedules.Insert(false,true,listSchedulesToInsert.ToArray());
 			DateTime rememberDateStart=_dateCopyStart;
@@ -954,7 +954,7 @@ namespace OpenDental{
 				dayCount+=CalculateNextDay(dateSelectedStart.AddDays(dayCount));
 			}
 			if(listSchedulesHoliday.Count>0) {
-				MsgBox.Show(this,listSchedulesHoliday.Count+" holidays exist in the destination date range. Holidays will not be replaced and must be done manually.");
+				MessageBox.Show(Lan.g(this,listSchedulesHoliday.Count+" holidays exist in the destination date range. Holidays will not be replaced and must be done manually."));
 			}
 			Schedules.DeleteMany(listSchedNumsToDelete);
 			Schedules.Insert(false,true,listSchedulesToInsert.ToArray());
