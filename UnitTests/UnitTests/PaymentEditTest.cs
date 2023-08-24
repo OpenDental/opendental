@@ -3479,13 +3479,13 @@ namespace UnitTests.PaymentEdit_Tests {
 			long provNum=ProviderT.CreateProvider(suffix);
 			Procedure proc=ProcedureT.CreateProcedure(pat,"D1120",ProcStat.C,"",100,procDate:DateTime.Today.AddMonths(-4),provNum:provNum);
 			DateTime datePayPlanStart=DateTime.Today.AddMonths(-3);
-			PayPlan payplan=PayPlanT.CreatePayPlanWithCredits(pat.PatNum,30,datePayPlanStart,provNum:provNum,
-				listProcs:new List<Procedure>() { proc });
+			List<Procedure> listProcs=new List<Procedure>() { proc };
+			PayPlan payplan=PayPlanT.CreatePayPlanWithCredits(pat.PatNum,30,datePayPlanStart,provNum:provNum,listProcs);
 			PaymentT.MakePayment(pat.PatNum,30,payDate:DateTime.Today.AddMonths(-2),payPlanNum:payplan.PayPlanNum,provNum:provNum,procNum:proc.ProcNum);
 			//jsalmon - There is technically no reason to close out the payment plan for today because nothing is due in the future...
 			//Leaving the "close out" code here just because it was here previously and doesn't really hurt anything, but also doesn't do anything...
 			List<PayPlanCharge> listCharges=PayPlanCharges.GetForPayPlan(payplan.PayPlanNum);
-			listCharges.Add(PayPlanEdit.CloseOutPatPayPlan(listCharges,payplan,DateTime.Today));
+			listCharges.Add(PayPlanEdit.CalculatePatPayPlanCloseoutCharge(listCharges,listProcs,payplan,DateTime.Today));
 			listCharges.RemoveAll(x => x.ChargeDate > DateTime.Today);
 			payplan.IsClosed=true;
 			PayPlans.Update(payplan);

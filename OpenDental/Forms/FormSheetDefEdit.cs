@@ -976,9 +976,10 @@ namespace OpenDental {
 				_isMouseDown=false;
 				_isCtrlDown=false;
 				_isAltDown=false;
-				if(sheetFieldDef==null
-					//Some of the fields below are redundant and should never be returned from HitTest but are here to explicity exclude them.
-				   || sheetFieldDef.FieldType==SheetFieldType.Drawing || sheetFieldDef.FieldType==SheetFieldType.Image || sheetFieldDef.FieldType==SheetFieldType.Line || sheetFieldDef.FieldType==SheetFieldType.OutputText || sheetFieldDef.FieldType==SheetFieldType.Parameter || sheetFieldDef.FieldType==SheetFieldType.PatImage || sheetFieldDef.FieldType==SheetFieldType.Rectangle || sheetFieldDef.FieldType==SheetFieldType.StaticText) {
+				if(sheetFieldDef==null) {
+					return;
+				}
+				if(sheetFieldDef.FieldType!=SheetFieldType.InputField) {
 					return;
 				}
 				if(_listSheetFieldDefsTabOrder.Contains(sheetFieldDef)) {
@@ -2982,7 +2983,7 @@ namespace OpenDental {
 			Pen pen=new Pen(color,1.6f);
 			g.DrawLine(pen,sheetFieldDef.XPos,sheetFieldDef.YPos,sheetFieldDef.XPos+sheetFieldDef.Width-1,sheetFieldDef.YPos+sheetFieldDef.Height-1);
 			g.DrawLine(pen,sheetFieldDef.XPos+sheetFieldDef.Width-1,sheetFieldDef.YPos,sheetFieldDef.XPos,sheetFieldDef.YPos+sheetFieldDef.Height-1);
-			if(!_isTabMode) {
+			/*if(!_isTabMode) {
 				return;
 			}
 			Rectangle rectTab=new Rectangle(sheetFieldDef.XPos-1, //X
@@ -2997,7 +2998,7 @@ namespace OpenDental {
 			else { //Blue border, blue box, white letters
 				g.FillRectangle(Brushes.Blue,rectTab);
 				g.DrawString(sheetFieldDef.TabOrder.ToString(),_fontTabOrder,Brushes.White,rectTab.X,rectTab.Y-1);
-			}
+			}*/
 		}
 
 		private void DrawComboBox(SheetFieldDef sheetFieldDef,Graphics g,bool isSelected) {

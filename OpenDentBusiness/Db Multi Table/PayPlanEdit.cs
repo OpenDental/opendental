@@ -493,22 +493,40 @@ namespace OpenDentBusiness {
 			}
 		}
 
-		///<summary>Returns a PayPlanCharge debit whose principal is the sum of all future debits.</summary>
-		public static PayPlanCharge CloseOutPatPayPlan(List<PayPlanCharge> listPayPlanCharges,PayPlan payPlan,DateTime dateToday) {
-			//Sum up the total amount of principal associated with future debits.
-			double amountPrincipal=listPayPlanCharges.Where(x => x.ChargeType==PayPlanChargeType.Debit && x.ChargeDate > dateToday)
+		///<summary>Returns the amount of the close out charge for patient payment plans being closed.</summary>
+		public static PayPlanCharge CalculatePatPayPlanCloseoutCharge(List<PayPlanCharge> listPayPlanCharges,List<Procedure> listProceduresCredited,PayPlan payPlan,DateTime dateToday) {
+			List<long> listProcNumsTreatmentPlanned=listProceduresCredited
+				.Where(x => x.ProcStatus!=ProcStat.C)
+				.Select(x => x.ProcNum)
+				.ToList();
+			double totalPrincipal=listPayPlanCharges.Where(x => x.ChargeType==PayPlanChargeType.Debit).Sum(x => x.Principal);
+			double treatmentPlannedProcedureCredits=listPayPlanCharges
+				.Where(x => listProcNumsTreatmentPlanned.Contains(x.ProcNum))
 				.Sum(x => x.Principal);
-			PayPlanCharge closeoutCharge=new PayPlanCharge() {
+			//We can't just use credits for completed procedures here because credits don't have to be attached to anything.
+			double otherCredits=Math.Max(0,listPayPlanCharges
+				.Where(x => !listProcNumsTreatmentPlanned.Contains(x.ProcNum) && x.ChargeType==PayPlanChargeType.Credit)
+				.Sum(x => x.Principal));
+			double futureChargesPrincipal=listPayPlanCharges
+				.Where(x => x.ChargeType==PayPlanChargeType.Debit && x.ChargeDate > dateToday)
+				.Sum(x => x.Principal);
+			//Treatment planned procedure credits will be removed upon closing. We want to subtract them from the close out charge,
+			//but we don't want to force the total of all charges to be less than the total of other credits.
+			double amountToSubtract=Math.Min(treatmentPlannedProcedureCredits,totalPrincipal - otherCredits);
+			//amountToSubtract could only be negative if we have a negative credit for a TP'd procedure or more other credits than principal.
+			//Both scenarios might be possible but aren't practical, so let's avoid them.
+			amountToSubtract=Math.Max(0,amountToSubtract);
+			double closeoutChargeAmount = futureChargesPrincipal - amountToSubtract;
+			return new PayPlanCharge() {
 				PayPlanNum=payPlan.PayPlanNum,
 				Guarantor=payPlan.PatNum, //the closeout charge should always appear on the patient of the payment plan.
 				PatNum=payPlan.PatNum,
 				ChargeDate=dateToday,
 				Interest=0,
-				Principal=amountPrincipal,
+				Principal=closeoutChargeAmount,
 				Note=Lans.g("FormPayPlan","Close Out Charge"),
 				ChargeType=PayPlanChargeType.Debit,
 			};
-			return closeoutCharge;
 		}
 
 		public static void CreateScheduleCharges(PayPlanTerms terms,PayPlan payPlan,Family fam,long provNum,long clinicNum,
