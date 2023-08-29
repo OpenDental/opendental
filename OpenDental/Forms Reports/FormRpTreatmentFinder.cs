@@ -339,33 +339,41 @@ namespace OpenDental{
 		private void buttonExport_Click(object sender,EventArgs e) {
 			string fileName=Lan.g(this,"Treatment Finder");
 			string filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
+			SaveFileDialog saveFileDialog=new SaveFileDialog {
+				AddExtension=true,
+				Title=Lan.g(this,"Treatment Finder"),
+				FileName=Lan.g(this,"Treatment Finder"),
+				Filter="Text files(*.txt)|*.txt|Excel Files(*.xls)|*.xls|All files(*.*)|*.*",
+				FilterIndex=0
+			};
 			if(ODBuild.IsWeb()) {
 				//file download dialog will come up later, after file is created.
-				filePath+=".txt";//Provide the filepath an extension so that Thinfinity can offer as a download.
+				if(saveFileDialog.ShowDialog()!=DialogResult.OK) { 
+					return;
+				}
+				if(saveFileDialog.FileName.IsNullOrEmpty()) {
+					MsgBox.Show("Failed to save the file.");
+					return;
+				}
+				filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),saveFileDialog.FileName.Split('\\').Last());
 			}
 			else {
-				using SaveFileDialog saveFileDialog2=new SaveFileDialog();
-				saveFileDialog2.AddExtension=true;
-				saveFileDialog2.Title=Lan.g(this,"Treatment Finder");
-				saveFileDialog2.FileName=Lan.g(this,"Treatment Finder");
 				if(!Directory.Exists(PrefC.GetString(PrefName.ExportPath))) {
 					try {
 						Directory.CreateDirectory(PrefC.GetString(PrefName.ExportPath));
-						saveFileDialog2.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
+						saveFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
 					}
 					catch {
 						//initialDirectory will be blank
 					}
 				}
 				else {
-					saveFileDialog2.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
+					saveFileDialog.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
 				}
-				saveFileDialog2.Filter="Text files(*.txt)|*.txt|Excel Files(*.xls)|*.xls|All files(*.*)|*.*";
-				saveFileDialog2.FilterIndex=0;
-				if(saveFileDialog2.ShowDialog()!=DialogResult.OK) {
+				if(saveFileDialog.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
-				filePath=saveFileDialog2.FileName;
+				filePath=saveFileDialog.FileName;
 			}
 			try{
 			  using(StreamWriter sw=new StreamWriter(filePath,false))

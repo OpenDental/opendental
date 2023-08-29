@@ -1702,7 +1702,7 @@ namespace OpenDental {
 			comboProviderPaySplitsFilter.Items.Clear();
 			comboProviderPaySplitsFilter.IncludeAll=true;
 			comboProviderPaySplitsFilter.Items.AddProvNone();
-			List<Provider> listProviders=Providers.GetProvsByProvNums(_listAccountEntriesCharges.Select(x=>x.ProvNum).Distinct()
+			List<Provider> listProviders=Providers.GetProvsByProvNums(_listPaySplits.Select(x=>x.ProvNum).Distinct()
 				.ToList());
 			comboProviderPaySplitsFilter.Items.AddProvsAbbr(listProviders);
 			if(!wasAllSelected && doPreserveValues) {

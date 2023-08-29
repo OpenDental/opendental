@@ -7882,6 +7882,7 @@
         <EnumValue name="ViewAppointmentAuditTrail">247 - Only for viewing the audit trail in FormEditAppointment</EnumValue>
         <EnumValue name="PayPlanChargeEdit">248 - Logs when a user edits a payment plan charge.</EnumValue>
         <EnumValue name="ArchivedPatientSelect">249 - Also see ArchivedPatientEdit. Blocking user from patient selection prevents changes to all the other tables besides the patient table.  It's more rigorous.</EnumValue>
+        <EnumValue name="CloudCustomerEdit">250 - Only used at OD HQ. Ability to edit Cloud tab info via Broadcast Monitor.</EnumValue>
       </Enumeration>
     </column>
     <column order="5" name="FKey" type="bigint(20)">
@@ -15026,6 +15027,7 @@
         <EnumValue name="ViewAppointmentAuditTrail">247 - Only for viewing the audit trail in FormEditAppointment</EnumValue>
         <EnumValue name="PayPlanChargeEdit">248 - Logs when a user edits a payment plan charge.</EnumValue>
         <EnumValue name="ArchivedPatientSelect">249 - Also see ArchivedPatientEdit. Blocking user from patient selection prevents changes to all the other tables besides the patient table.  It's more rigorous.</EnumValue>
+        <EnumValue name="CloudCustomerEdit">250 - Only used at OD HQ. Ability to edit Cloud tab info via Broadcast Monitor.</EnumValue>
       </Enumeration>
     </column>
     <column order="2" name="UserNum" type="bigint(20)" fk="userod">
@@ -15550,7 +15552,7 @@
       <summary>Set to true if this field is required to have a value before the sheet is closed.</summary>
     </column>
     <column order="16" name="TabOrder" type="int(11)">
-      <summary>Tab stop order for all fields. One-based.  Only checkboxes and input fields can have values other than 0.</summary>
+      <summary>Tab stop order for all fields. One-based.  Only input fields can have values other than 0.</summary>
     </column>
     <column order="17" name="ReportableName" type="varchar(255)">
       <summary>Allows reporting on misc fields.</summary>
