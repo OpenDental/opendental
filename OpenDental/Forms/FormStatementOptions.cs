@@ -1425,7 +1425,10 @@ namespace OpenDental{
 				}
 				if(checkBoxBillShowTransSinceZero.Checked) {
 					DateTime dateFrom=DateTime.MinValue;
-					dateFrom=PIn.DateT(tablePatsDates.Select("PatNum="+ListStatements[i].PatNum.ToString())[0]["DateZeroBal"].ToString());
+					DataRow[] dataRowArray=tablePatsDates.Select("PatNum='"+ListStatements[i].PatNum.ToString()+"'");
+					if(dataRowArray.Length>0){
+						dateFrom=PIn.DateT(dataRowArray[0]["DateZeroBal"].ToString());
+					}
 					ListStatements[i].DateRangeFrom=DateTime.Now;
 					if(dateFrom!=DateTime.MinValue) {//patient does not have a zero or credit balance.
 						ListStatements[i].DateRangeFrom=dateFrom;
