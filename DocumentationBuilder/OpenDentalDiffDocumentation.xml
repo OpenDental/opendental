@@ -70,6 +70,7 @@
         <EnumValue name="ViewAppointmentAuditTrail">247 - Only for viewing the audit trail in FormEditAppointment</EnumValue>
         <EnumValue name="PayPlanChargeEdit">248 - Logs when a user edits a payment plan charge.</EnumValue>
         <EnumValue name="ArchivedPatientSelect">249 - Also see ArchivedPatientEdit. Blocking user from patient selection prevents changes to all the other tables besides the patient table.  It's more rigorous.</EnumValue>
+        <EnumValue name="CloudCustomerEdit">250 - Only used at OD HQ. Ability to edit Cloud tab info via Broadcast Monitor.</EnumValue>
       </Enumeration>
     </column>
   </table>
@@ -128,6 +129,7 @@
         <EnumValue name="ViewAppointmentAuditTrail">247 - Only for viewing the audit trail in FormEditAppointment</EnumValue>
         <EnumValue name="PayPlanChargeEdit">248 - Logs when a user edits a payment plan charge.</EnumValue>
         <EnumValue name="ArchivedPatientSelect">249 - Also see ArchivedPatientEdit. Blocking user from patient selection prevents changes to all the other tables besides the patient table.  It's more rigorous.</EnumValue>
+        <EnumValue name="CloudCustomerEdit">250 - Only used at OD HQ. Ability to edit Cloud tab info via Broadcast Monitor.</EnumValue>
       </Enumeration>
     </column>
   </table>

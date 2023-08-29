@@ -979,7 +979,7 @@ namespace OpenDental {
 				if(sheetFieldDef==null) {
 					return;
 				}
-				if(sheetFieldDef.FieldType!=SheetFieldType.InputField) {
+				if(sheetFieldDef.FieldType!=SheetFieldType.InputField && sheetFieldDef.FieldType!=SheetFieldType.CheckBox) {
 					return;
 				}
 				if(_listSheetFieldDefsTabOrder.Contains(sheetFieldDef)) {
@@ -2983,7 +2983,7 @@ namespace OpenDental {
 			Pen pen=new Pen(color,1.6f);
 			g.DrawLine(pen,sheetFieldDef.XPos,sheetFieldDef.YPos,sheetFieldDef.XPos+sheetFieldDef.Width-1,sheetFieldDef.YPos+sheetFieldDef.Height-1);
 			g.DrawLine(pen,sheetFieldDef.XPos+sheetFieldDef.Width-1,sheetFieldDef.YPos,sheetFieldDef.XPos,sheetFieldDef.YPos+sheetFieldDef.Height-1);
-			/*if(!_isTabMode) {
+			if(!_isTabMode) {
 				return;
 			}
 			Rectangle rectTab=new Rectangle(sheetFieldDef.XPos-1, //X
@@ -2998,7 +2998,7 @@ namespace OpenDental {
 			else { //Blue border, blue box, white letters
 				g.FillRectangle(Brushes.Blue,rectTab);
 				g.DrawString(sheetFieldDef.TabOrder.ToString(),_fontTabOrder,Brushes.White,rectTab.X,rectTab.Y-1);
-			}*/
+			}
 		}
 
 		private void DrawComboBox(SheetFieldDef sheetFieldDef,Graphics g,bool isSelected) {

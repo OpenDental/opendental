@@ -1038,7 +1038,7 @@
 			// textFamPriMax
 			// 
 			this.textFamPriMax.BackColor = System.Drawing.Color.White;
-			this.textFamPriMax.Location = new System.Drawing.Point(77, 35);
+			this.textFamPriMax.Location = new System.Drawing.Point(81, 35);
 			this.textFamPriMax.Name = "textFamPriMax";
 			this.textFamPriMax.ReadOnly = true;
 			this.textFamPriMax.Size = new System.Drawing.Size(60, 20);
@@ -1048,7 +1048,7 @@
 			// textFamPriDed
 			// 
 			this.textFamPriDed.BackColor = System.Drawing.Color.White;
-			this.textFamPriDed.Location = new System.Drawing.Point(77, 55);
+			this.textFamPriDed.Location = new System.Drawing.Point(81, 55);
 			this.textFamPriDed.Name = "textFamPriDed";
 			this.textFamPriDed.ReadOnly = true;
 			this.textFamPriDed.Size = new System.Drawing.Size(60, 20);
@@ -1057,7 +1057,7 @@
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(79, 16);
+			this.label4.Location = new System.Drawing.Point(76, 16);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(60, 15);
 			this.label4.TabIndex = 66;
@@ -1066,7 +1066,7 @@
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(10, 37);
+			this.label8.Location = new System.Drawing.Point(14, 37);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(66, 15);
 			this.label8.TabIndex = 67;
@@ -1076,7 +1076,7 @@
 			// textFamSecMax
 			// 
 			this.textFamSecMax.BackColor = System.Drawing.Color.White;
-			this.textFamSecMax.Location = new System.Drawing.Point(136, 35);
+			this.textFamSecMax.Location = new System.Drawing.Point(140, 35);
 			this.textFamSecMax.Name = "textFamSecMax";
 			this.textFamSecMax.ReadOnly = true;
 			this.textFamSecMax.Size = new System.Drawing.Size(60, 20);
@@ -1085,9 +1085,9 @@
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(136, 16);
+			this.label9.Location = new System.Drawing.Point(135, 16);
 			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(67, 15);
+			this.label9.Size = new System.Drawing.Size(69, 15);
 			this.label9.TabIndex = 68;
 			this.label9.Text = "Secondary";
 			this.label9.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1095,7 +1095,7 @@
 			// textFamSecDed
 			// 
 			this.textFamSecDed.BackColor = System.Drawing.Color.White;
-			this.textFamSecDed.Location = new System.Drawing.Point(136, 55);
+			this.textFamSecDed.Location = new System.Drawing.Point(140, 55);
 			this.textFamSecDed.Name = "textFamSecDed";
 			this.textFamSecDed.ReadOnly = true;
 			this.textFamSecDed.Size = new System.Drawing.Size(60, 20);
@@ -1104,7 +1104,7 @@
 			// 
 			// label17
 			// 
-			this.label17.Location = new System.Drawing.Point(10, 57);
+			this.label17.Location = new System.Drawing.Point(14, 57);
 			this.label17.Name = "label17";
 			this.label17.Size = new System.Drawing.Size(66, 15);
 			this.label17.TabIndex = 63;
@@ -1144,7 +1144,7 @@
 			// textPriDed
 			// 
 			this.textPriDed.BackColor = System.Drawing.Color.White;
-			this.textPriDed.Location = new System.Drawing.Point(77, 55);
+			this.textPriDed.Location = new System.Drawing.Point(81, 55);
 			this.textPriDed.Name = "textPriDed";
 			this.textPriDed.ReadOnly = true;
 			this.textPriDed.Size = new System.Drawing.Size(60, 20);
@@ -1154,7 +1154,7 @@
 			// textPriUsed
 			// 
 			this.textPriUsed.BackColor = System.Drawing.Color.White;
-			this.textPriUsed.Location = new System.Drawing.Point(77, 95);
+			this.textPriUsed.Location = new System.Drawing.Point(81, 95);
 			this.textPriUsed.Name = "textPriUsed";
 			this.textPriUsed.ReadOnly = true;
 			this.textPriUsed.Size = new System.Drawing.Size(60, 20);
@@ -1164,7 +1164,7 @@
 			// textPriDedRem
 			// 
 			this.textPriDedRem.BackColor = System.Drawing.Color.White;
-			this.textPriDedRem.Location = new System.Drawing.Point(77, 75);
+			this.textPriDedRem.Location = new System.Drawing.Point(81, 75);
 			this.textPriDedRem.Name = "textPriDedRem";
 			this.textPriDedRem.ReadOnly = true;
 			this.textPriDedRem.Size = new System.Drawing.Size(60, 20);
@@ -1174,7 +1174,7 @@
 			// textPriPend
 			// 
 			this.textPriPend.BackColor = System.Drawing.Color.White;
-			this.textPriPend.Location = new System.Drawing.Point(77, 115);
+			this.textPriPend.Location = new System.Drawing.Point(81, 115);
 			this.textPriPend.Name = "textPriPend";
 			this.textPriPend.ReadOnly = true;
 			this.textPriPend.Size = new System.Drawing.Size(60, 20);
@@ -1184,7 +1184,7 @@
 			// textPriRem
 			// 
 			this.textPriRem.BackColor = System.Drawing.Color.White;
-			this.textPriRem.Location = new System.Drawing.Point(77, 135);
+			this.textPriRem.Location = new System.Drawing.Point(81, 135);
 			this.textPriRem.Name = "textPriRem";
 			this.textPriRem.ReadOnly = true;
 			this.textPriRem.Size = new System.Drawing.Size(60, 20);
@@ -1194,7 +1194,7 @@
 			// textPriMax
 			// 
 			this.textPriMax.BackColor = System.Drawing.Color.White;
-			this.textPriMax.Location = new System.Drawing.Point(77, 35);
+			this.textPriMax.Location = new System.Drawing.Point(81, 35);
 			this.textPriMax.Name = "textPriMax";
 			this.textPriMax.ReadOnly = true;
 			this.textPriMax.Size = new System.Drawing.Size(60, 20);
@@ -1204,7 +1204,7 @@
 			// textSecRem
 			// 
 			this.textSecRem.BackColor = System.Drawing.Color.White;
-			this.textSecRem.Location = new System.Drawing.Point(136, 135);
+			this.textSecRem.Location = new System.Drawing.Point(140, 135);
 			this.textSecRem.Name = "textSecRem";
 			this.textSecRem.ReadOnly = true;
 			this.textSecRem.Size = new System.Drawing.Size(60, 20);
@@ -1213,7 +1213,7 @@
 			// 
 			// label10
 			// 
-			this.label10.Location = new System.Drawing.Point(79, 16);
+			this.label10.Location = new System.Drawing.Point(76, 16);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(60, 15);
 			this.label10.TabIndex = 31;
@@ -1223,7 +1223,7 @@
 			// textSecPend
 			// 
 			this.textSecPend.BackColor = System.Drawing.Color.White;
-			this.textSecPend.Location = new System.Drawing.Point(136, 115);
+			this.textSecPend.Location = new System.Drawing.Point(140, 115);
 			this.textSecPend.Name = "textSecPend";
 			this.textSecPend.ReadOnly = true;
 			this.textSecPend.Size = new System.Drawing.Size(60, 20);
@@ -1232,7 +1232,7 @@
 			// 
 			// label11
 			// 
-			this.label11.Location = new System.Drawing.Point(10, 37);
+			this.label11.Location = new System.Drawing.Point(14, 37);
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(66, 15);
 			this.label11.TabIndex = 32;
@@ -1243,23 +1243,23 @@
 			// 
 			this.label18.Location = new System.Drawing.Point(1, 77);
 			this.label18.Name = "label18";
-			this.label18.Size = new System.Drawing.Size(76, 15);
+			this.label18.Size = new System.Drawing.Size(79, 15);
 			this.label18.TabIndex = 50;
 			this.label18.Text = "Ded Remain";
 			this.label18.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// label12
 			// 
-			this.label12.Location = new System.Drawing.Point(10, 57);
+			this.label12.Location = new System.Drawing.Point(11, 57);
 			this.label12.Name = "label12";
-			this.label12.Size = new System.Drawing.Size(67, 15);
+			this.label12.Size = new System.Drawing.Size(69, 15);
 			this.label12.TabIndex = 33;
 			this.label12.Text = "Deductible";
 			this.label12.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// label13
 			// 
-			this.label13.Location = new System.Drawing.Point(10, 97);
+			this.label13.Location = new System.Drawing.Point(14, 97);
 			this.label13.Name = "label13";
 			this.label13.Size = new System.Drawing.Size(66, 15);
 			this.label13.TabIndex = 34;
@@ -1269,7 +1269,7 @@
 			// textSecDedRem
 			// 
 			this.textSecDedRem.BackColor = System.Drawing.Color.White;
-			this.textSecDedRem.Location = new System.Drawing.Point(136, 75);
+			this.textSecDedRem.Location = new System.Drawing.Point(140, 75);
 			this.textSecDedRem.Name = "textSecDedRem";
 			this.textSecDedRem.ReadOnly = true;
 			this.textSecDedRem.Size = new System.Drawing.Size(60, 20);
@@ -1278,18 +1278,18 @@
 			// 
 			// label14
 			// 
-			this.label14.Location = new System.Drawing.Point(10, 137);
+			this.label14.Location = new System.Drawing.Point(12, 137);
 			this.label14.Name = "label14";
-			this.label14.Size = new System.Drawing.Size(66, 15);
+			this.label14.Size = new System.Drawing.Size(68, 16);
 			this.label14.TabIndex = 35;
 			this.label14.Text = "Remaining";
 			this.label14.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// label15
 			// 
-			this.label15.Location = new System.Drawing.Point(10, 117);
+			this.label15.Location = new System.Drawing.Point(14, 117);
 			this.label15.Name = "label15";
-			this.label15.Size = new System.Drawing.Size(66, 15);
+			this.label15.Size = new System.Drawing.Size(66, 16);
 			this.label15.TabIndex = 36;
 			this.label15.Text = "Pending";
 			this.label15.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -1297,7 +1297,7 @@
 			// textSecMax
 			// 
 			this.textSecMax.BackColor = System.Drawing.Color.White;
-			this.textSecMax.Location = new System.Drawing.Point(136, 35);
+			this.textSecMax.Location = new System.Drawing.Point(140, 35);
 			this.textSecMax.Name = "textSecMax";
 			this.textSecMax.ReadOnly = true;
 			this.textSecMax.Size = new System.Drawing.Size(60, 20);
@@ -1306,9 +1306,9 @@
 			// 
 			// label16
 			// 
-			this.label16.Location = new System.Drawing.Point(136, 16);
+			this.label16.Location = new System.Drawing.Point(135, 16);
 			this.label16.Name = "label16";
-			this.label16.Size = new System.Drawing.Size(67, 15);
+			this.label16.Size = new System.Drawing.Size(69, 15);
 			this.label16.TabIndex = 37;
 			this.label16.Text = "Secondary";
 			this.label16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1316,7 +1316,7 @@
 			// textSecDed
 			// 
 			this.textSecDed.BackColor = System.Drawing.Color.White;
-			this.textSecDed.Location = new System.Drawing.Point(136, 55);
+			this.textSecDed.Location = new System.Drawing.Point(140, 55);
 			this.textSecDed.Name = "textSecDed";
 			this.textSecDed.ReadOnly = true;
 			this.textSecDed.Size = new System.Drawing.Size(60, 20);
@@ -1326,7 +1326,7 @@
 			// textSecUsed
 			// 
 			this.textSecUsed.BackColor = System.Drawing.Color.White;
-			this.textSecUsed.Location = new System.Drawing.Point(136, 95);
+			this.textSecUsed.Location = new System.Drawing.Point(140, 95);
 			this.textSecUsed.Name = "textSecUsed";
 			this.textSecUsed.ReadOnly = true;
 			this.textSecUsed.Size = new System.Drawing.Size(60, 20);

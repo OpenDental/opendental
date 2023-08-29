@@ -274,33 +274,37 @@ namespace OpenDentBusiness{
 		///<summary>Find all phones in the db (by PhoneNumber) and sync with listPhonesSync. If a given PhoneNumber does not already exist then insert the SmsPhone.
 		///If a given PhoneNumber exists in the local db but does not exist in the HQ-provided listPhoneSync, then deacitvate that phone locallly.
 		///Return true if a change has been made to the database.</summary>
-		public static bool UpdateOrInsertFromList(List<SmsPhone> listPhonesSync) {
+		public static bool UpdateOrInsertFromList(List<SmsPhone> listSmsPhonesSync) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),listPhonesSync);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),listSmsPhonesSync);
 			}
 			//Get all phones so we can filter as needed below.
 			string command="SELECT * FROM smsphone";
-			List<SmsPhone> listPhonesDb=Crud.SmsPhoneCrud.SelectMany(command);
+			List<SmsPhone> listSmsPhonesDb=Crud.SmsPhoneCrud.SelectMany(command);
+			List<SmsPhone> listSmsPhonesFiltered=new List<SmsPhone>();
 			bool isChanged=false;
 			//Deal with phones that occur in the HQ-supplied list.
-			foreach(SmsPhone phoneSync in listPhonesSync) {
-				SmsPhone phoneOld=listPhonesDb.FirstOrDefault(x => x.PhoneNumber==phoneSync.PhoneNumber);
-				//Upsert.
-				if(phoneOld!=null) { //This phone already exists. Update it to look like the phone we are trying to insert.
-					phoneOld.ClinicNum=phoneSync.ClinicNum; //The clinic may have changed so set it to the new clinic.
-					phoneOld.CountryCode=phoneSync.CountryCode;
-					phoneOld.DateTimeActive=phoneSync.DateTimeActive;
-					phoneOld.DateTimeInactive=phoneSync.DateTimeInactive;
-					phoneOld.InactiveCode=phoneSync.InactiveCode;
-					Update(phoneOld);
+			for(int i=0;i<listSmsPhonesSync.Count;i++) {
+				listSmsPhonesFiltered=listSmsPhonesDb.FindAll(x => x.PhoneNumber==listSmsPhonesSync[i].PhoneNumber);
+				if(listSmsPhonesFiltered.IsNullOrEmpty()) {//This phone does not yet exist in the DB.
+					Insert(listSmsPhonesSync[i]);
+					isChanged=true;
+					continue;
 				}
-				else { //This phone is new so insert it.
-					Insert(phoneSync);
+				//We don't expect this to happen often and if it does the list would be short.
+				for(int j = 0;j < listSmsPhonesFiltered.Count;j++) {
+					//This phone already exists. Update it to look like the phone we are trying to insert.
+					listSmsPhonesFiltered[j].ClinicNum=listSmsPhonesSync[i].ClinicNum; //The clinic may have changed so set it to the new clinic.
+					listSmsPhonesFiltered[j].CountryCode=listSmsPhonesSync[i].CountryCode;
+					listSmsPhonesFiltered[j].DateTimeActive=listSmsPhonesSync[i].DateTimeActive;
+					listSmsPhonesFiltered[j].DateTimeInactive=listSmsPhonesSync[i].DateTimeInactive;
+					listSmsPhonesFiltered[j].InactiveCode=listSmsPhonesSync[i].InactiveCode;
+					Update(listSmsPhonesFiltered[j]);
+					isChanged=true;
 				}
-				isChanged=true;
 			}
 			//Deal with phones which are in the local db but that do not occur in the HQ-supplied list.
-			foreach(SmsPhone phoneNotFound in listPhonesDb.FindAll(x => !listPhonesSync.Any(y => y.PhoneNumber==x.PhoneNumber))) {
+			foreach(SmsPhone phoneNotFound in listSmsPhonesDb.FindAll(x => !listSmsPhonesSync.Any(y => y.PhoneNumber==x.PhoneNumber))) {
 				//This phone not found at HQ so deactivate it.
 				phoneNotFound.DateTimeInactive=DateTime.Now;
 				phoneNotFound.InactiveCode="Phone not found at HQ";

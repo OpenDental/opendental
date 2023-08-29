@@ -28,6 +28,7 @@ namespace OpenDental {
 		private bool _isTsiAdj;
 		private bool _isEditAnyway;
 		private List<PaySplit> _listPaySplitsForAdjustment;
+		private bool _isNegativeAdjustment;
 
 		///<summary></summary>
 		public FormAdjust(Patient patient,Adjustment adjustment,bool isTsiAdj=false){
@@ -196,7 +197,7 @@ namespace OpenDental {
 			List<ClaimProc> listClaimProcs=ClaimProcs.Refresh(procedure.PatNum);
 			List<Adjustment> listAdjustments=Adjustments.Refresh(procedure.PatNum)
 				.Where(x => x.ProcNum==procedure.ProcNum && x.AdjNum!=_adjustment.AdjNum).ToList();
-			textProcDate.Text=procedure.ProcDate.ToShortDateString();
+			textProcDate.Text=procedure.ProcDate.ToShortDateString();	
 			textProcDate2.Text=procedure.ProcDate.ToShortDateString();
 			textProcProv.Text=Providers.GetAbbr(procedure.ProvNum);
 			textProcTooth.Text=Tooth.Display(procedure.ToothNum);
@@ -224,6 +225,7 @@ namespace OpenDental {
 					procAdjCur=-PIn.Double(textAmount.Text);
 				}
 			}
+			_isNegativeAdjustment=procAdjCur<0;
 			textProcAdjCur.Text=procAdjCur==0?"":procAdjCur.ToString("F");
 			//Add the current adjustment amount to the patient portion which will give the newly calculated remaining amount.
 			_adjRemAmt=(decimal)procAdjCur+(decimal)procPatPaid+patPort;
@@ -330,7 +332,7 @@ namespace OpenDental {
 					return;
 				}
 			}
-			if(_adjRemAmt<0) {
+			if(_adjRemAmt<0 && _isNegativeAdjustment) {
 				EnumAdjustmentBlockOrWarn enumAdjustmentBlockOrWarn=PrefC.GetEnum<EnumAdjustmentBlockOrWarn>(PrefName.AdjustmentBlockNegativeExceedingPatPortion);
 				if(enumAdjustmentBlockOrWarn==EnumAdjustmentBlockOrWarn.Warn) {
 					if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Remaining amount is negative.  Continue?","Overpaid Procedure Warning")) {

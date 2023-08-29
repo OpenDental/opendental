@@ -208,6 +208,14 @@ namespace OpenDental {
 			row=new GridRow(Lan.g(this,"Ins Pay Fix"),Lan.g(this,"Creates checks for insurance payments that are not attached to a check."));
 			row.Tag=new Action(InsPayFix);
 			gridTools.ListGridRows.Add(row);
+			if(Security.IsAuthorized(Permissions.SecurityAdmin,true)) {
+				row=new GridRow(Lan.g(this,"Insurance Plan Type Category Percentage"),Lan.g(this,"Change all insurance plans to Category Percentage type."));
+				row.Tag=new Action(ChangeToCategoryInsurancePlanType);
+				gridTools.ListGridRows.Add(row);
+				row=new GridRow(Lan.g(this,"Insurance Plan Type PPO Percentage"),Lan.g(this,"Change all insurance plans to PPO Percentage plan type."));
+				row.Tag=new Action(ChangeToPercentageInsurancePlanType);
+				gridTools.ListGridRows.Add(row);
+			}
 			if(!PrefC.GetBool(PrefName.DatabaseMaintenanceDisableOptimize)) {
 				row=new GridRow(Lan.g(this,"Optimize"),Lan.g(this,"Back up, optimize, and repair tables."));
 				row.Tag=new Action(OptimizeFix);
@@ -248,14 +256,6 @@ namespace OpenDental {
 			row=new GridRow(Lan.g(this,"Tokens"),Lan.g(this,"Validates tokens on file with the X-Charge server."));
 			row.Tag=new Action(TokensFix);
 			gridTools.ListGridRows.Add(row);
-			if(Security.IsAuthorized(Permissions.SecurityAdmin,true)) {
-				row=new GridRow(Lan.g(this,"PPO Percentage Insurance Plan Type"),Lan.g(this,"Change all insurance plans to PPO Percentage plan type."));
-				row.Tag=new Action(ChangeToPercentageInsurancePlanType);
-				gridTools.ListGridRows.Add(row);
-				row=new GridRow(Lan.g(this,"Category Percentage Insurance Plan Type "),Lan.g(this,"Change all insurance plans to Category Percentage type."));
-				row.Tag=new Action(ChangeToCategoryInsurancePlanType);
-				gridTools.ListGridRows.Add(row);
-			}
 			gridTools.EndUpdate();
 		}
 

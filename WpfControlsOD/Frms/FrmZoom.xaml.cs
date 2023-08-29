@@ -83,10 +83,7 @@ namespace OpenDental {
 				zoom=PIn.Int(textZoom.Text);//blank=0
 			}
 			catch{}
-			if(zoom<0){
-				zoom=100;
-			}
-			if(zoom==0){
+			if(zoom<=0 || zoom>=300){
 				zoom=100;
 			}
 			Size sizeMax1;

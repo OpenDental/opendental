@@ -915,6 +915,7 @@ namespace OpenDentBusiness {
 					public string InactiveCode;
 					public bool IsActivated;
 					public bool IsPrimary;
+					public bool IsProvisioned;
 
 					public static List<SmsPhone> ToSmsPhones(List<SignupOutPhone> listSignupPhones) {
 						return listSignupPhones.Select(x => new SmsPhone() {

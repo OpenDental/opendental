@@ -184,24 +184,29 @@ namespace OpenDental {
 				return;
 			}
 			FontStyle fontStyle=FontStyle.Regular;
-			if (checkFontIsBold.Checked) {
+			if(checkFontIsBold.Checked) {
 				fontStyle=FontStyle.Bold;
 			}
-			StringFormat stringFormat=new StringFormat(StringFormatFlags.NoClip);
-			stringFormat.Trimming = StringTrimming.None;
-			int heightEntered=PIn.Int(textHeight.Text);
 			using Graphics g=CreateGraphics();
 			using Font font=new Font(comboFontName.GetSelected<string>(),float.Parse(textFontSize.Text),fontStyle);
-			SizeF sizeFtext=g.MeasureString(textFieldValue.Text,font);
-			//Example: heightEntered=50, fontHeight=10, sizeFtext.Width=200,
-			//so perfectWidth=200/(50/10)=40
-			float perfectWidth=sizeFtext.Width/(float)Math.Ceiling(heightEntered/font.GetHeight());
-			// there is no precise way to calculate width based on a given height while still respecting word/line breaks,
-			// so we use the 'pixel perfect' math and give an extra 10% buffer (*1.1).
-			SizeF sizeFProposed = new SizeF((float)Math.Ceiling(perfectWidth*1.1f),heightEntered);
-			SizeF sizeFFieldNew=g.MeasureString(textFieldValue.Text,font,sizeFProposed,stringFormat);
-			textWidth.Text=Math.Ceiling(sizeFFieldNew.Width).ToString();
-			stringFormat?.Dispose();
+			using StringFormat stringFormat=new StringFormat(StringFormatFlags.NoClip) {Trimming=StringTrimming.None};
+			int heightEntered=PIn.Int(textHeight.Text);
+			// If final result will be a single line, just return the string width
+			if(heightEntered<(int)Math.Floor(font.GetHeight()*2)) {
+				textWidth.Text=Math.Ceiling(g.MeasureString(textFieldValue.Text,font).Width).ToString();
+				return;
+			}
+			// For multi-line calculations
+			int newWidth=1;
+			// Gradually increase width until all text fits inside the proposed height
+			while(true){
+				SizeF sizeFNew=g.MeasureString(textFieldValue.Text,font,newWidth,stringFormat);
+				if((int)Math.Floor(sizeFNew.Height)<=heightEntered){
+					break;
+				}
+				newWidth++;
+			}
+			textWidth.Text=newWidth.ToString();
 		}
 
 		private void butCalcHeight_Click(object sender,EventArgs e) {
@@ -213,14 +218,11 @@ namespace OpenDental {
 			if (checkFontIsBold.Checked) {
 				fontStyle=FontStyle.Bold;
 			}
-			StringFormat stringFormat=new StringFormat(StringFormatFlags.NoClip);
-			stringFormat.Trimming = StringTrimming.None;
-			SizeF sizeFProposed=new SizeF(PIn.Int(textWidth.Text),int.MaxValue);
 			using Graphics g=CreateGraphics();
 			using Font font=new Font(comboFontName.GetSelected<string>(),float.Parse(textFontSize.Text),fontStyle);
-			SizeF sizeFFieldNew=g.MeasureString(textFieldValue.Text,font,sizeFProposed,stringFormat);
+			using StringFormat stringFormat=new StringFormat(StringFormatFlags.NoClip) {Trimming=StringTrimming.None};
+			SizeF sizeFFieldNew=g.MeasureString(textFieldValue.Text,font,PIn.Int(textWidth.Text),stringFormat);
 			textHeight.Text=Math.Ceiling(sizeFFieldNew.Height).ToString();
-			stringFormat?.Dispose();
 		}
 
 		private void butDelete_Click(object sender,EventArgs e) {

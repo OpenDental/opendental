@@ -68,7 +68,7 @@ namespace OpenDentBusiness{
 		///<summary>The Bitmap should be converted to Base64 using POut.Bitmap() before placing in this field.  Not stored in the database.  Only used when uploading SheetDefs to the web server.</summary>
 		[CrudColumn(IsNotDbColumn=true)]
 		public string ImageData;
-		///<summary>Tab stop order for all fields. One-based.  Only input fields can have values other than 0.</summary>
+		///<summary>Tab stop order for all fields. One-based.  Only checkboxes and input fields can have values other than 0.</summary>
 		public int TabOrder;
 		///<summary>Allows reporting on misc fields.</summary>
 		public string ReportableName;

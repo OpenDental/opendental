@@ -692,5 +692,31 @@ namespace UnitTests.DatabaseMaintenance_Tests {
 			Assert.AreEqual(true,claimProcOverpay.IsOverpay);//Our overpay claimproc is still marked as such.
 			Assert.AreEqual(-13.27,claimProcOverpay.InsPayEst);//Ensure the InsPayEst column was not reset to 0 due to the claimproc being labeled as NoBillIns.
 		}
+
+		[TestMethod]
+		public void DBMTests_SmsFromMobilesInvalidClinicNum() {
+			//Create phones with valid clinicnums. This DBM only cares about clinicnum and phonenumber.
+			string patPhoneNumber1="2314560978";
+			string patPhoneNumber2="0987654322";
+			SmsPhone smsPhone=new SmsPhone();
+			smsPhone.PhoneNumber=patPhoneNumber1;
+			smsPhone.ClinicNum=0;
+			SmsPhone smsPhone2=new SmsPhone();
+			smsPhone2.PhoneNumber=patPhoneNumber2;
+			smsPhone2.ClinicNum=-1;
+			SmsPhones.Insert(smsPhone);
+			SmsPhones.Insert(smsPhone2);
+			List<SmsPhone> listSmsPhones=SmsPhones.GetAll();
+			//Create messages from those phones that have invalid clinicnums.
+			SmsFromMobile smsFromMobile=SmsFromMobileT.CreateSmsFromMobile(patNum:0,clinicNum:-1,"",patPhoneNumber1,DateTime.Now);
+			SmsFromMobile smsFromMobile2=SmsFromMobileT.CreateSmsFromMobile(patNum:0,clinicNum:-1,"",patPhoneNumber2,DateTime.Now);
+			List<SmsFromMobile> listSmsFromMobiles=SmsFromMobileT.GetAll();
+			Assert.AreEqual(2,listSmsFromMobiles.Count(x => x.ClinicNum==-1));
+			RunAllTests();
+			//Make sure both phones had had -1 clinic nums changed to 0
+			listSmsFromMobiles=SmsFromMobileT.GetAll();
+			Assert.AreEqual(1, listSmsFromMobiles.Count(x => x.ClinicNum==-1));
+			Assert.AreEqual(1, listSmsFromMobiles.Count(x => x.ClinicNum==0));
+		}
 	}
 }

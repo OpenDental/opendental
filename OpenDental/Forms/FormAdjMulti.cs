@@ -189,10 +189,34 @@ namespace OpenDental {
 						return false;
 					}
 				}
+				List<Adjustment> listAdjustmentsWarnOrBlock=new List<Adjustment>();
+				EnumAdjustmentBlockOrWarn enumAdjustmentBlockOrWarn=PrefC.GetEnum<EnumAdjustmentBlockOrWarn>(PrefName.AdjustmentBlockNegativeExceedingPatPortion);
 				for(int i=0;i<listProcedures.Count;i++) {
 					ProcAdjs procAdjs=_listProcAdjs.First(x => x.ProcedureCur==listProcedures[i]);
-					_listAdjustments.Add(GetAdjFromUI(procedureSelected: listProcedures[i],
-						listAdjustmentsRelated: procAdjs.ListAccountEntryAdjustments.Select(x => (Adjustment)x.Tag).ToList()));
+					Adjustment adjustment=GetAdjFromUI(procedureSelected: listProcedures[i],
+						listAdjustmentsRelated: procAdjs.ListAccountEntryAdjustments.Select(x => (Adjustment)x.Tag).ToList());//Get the new adjustment to be added from the UI.
+					double adjustmentAmtTotal=_listAdjustments.FindAll(x => x.ProcNum==listProcedures[i].ProcNum).Sum(x => x.AdjAmt);//Get the sum of all new adjustments.
+					//If user is adding a negative adjustment to a procedure that is already overpaid, place the new adjustment in a separate list for now if the 
+					//AdjustmentBlockNegativeExceedingPatPortion pref is set to someting other than allow.
+					if(enumAdjustmentBlockOrWarn!=EnumAdjustmentBlockOrWarn.Allow
+						&& (double)procAdjs.AccountEntryProc.AmountEnd+adjustmentAmtTotal+adjustment.AdjAmt < 0 
+						&& adjustment.AdjAmt<0) {
+						listAdjustmentsWarnOrBlock.Add(adjustment);
+						continue;
+					}
+					_listAdjustments.Add(adjustment);
+				}
+				if(listAdjustmentsWarnOrBlock.Count>0) {
+					//If pref is set to block then show error message but do not add negative adjustments to overpaid procs.
+					if(enumAdjustmentBlockOrWarn==EnumAdjustmentBlockOrWarn.Block) {//block preference set
+						MsgBox.Show(Lan.g(this,"Could not create a negative adjustment exceeding the remaining amount on ")+listAdjustmentsWarnOrBlock.Count+Lan.g(this," procedure(s)."));
+					}
+					//if pref is set to warn, then warn and only add list of negative adjustments to an overpaid proc if the user allows it.
+					else if(enumAdjustmentBlockOrWarn==EnumAdjustmentBlockOrWarn.Warn) {//warning preference set
+						if(MsgBox.Show(MsgBoxButtons.YesNo,Lan.g(this,"Remaining amount on ")+listAdjustmentsWarnOrBlock.Count+Lan.g(this," procedure(s) is negative. Continue?"),"Overpaid Procedure Warning")) {
+							_listAdjustments.AddRange(listAdjustmentsWarnOrBlock);
+						}
+					}
 				}
 			}
 			FillGrid();
@@ -460,24 +484,6 @@ namespace OpenDental {
 				listPatNums:ListTools.FromSingle(_patient.PatNum),
 				isIncomeTxfr:!radioIncludeAll.Checked,
 				loadData:loadData,hasInsOverpay:true);
-			//Verify that the user has permission to add adjustments to completed procedures if such adjustments were created.
-			List<long> listProcNums=_listAdjustments.Select(x => x.ProcNum).ToList();
-			List<AccountEntry> listAccountEntriesCompletedProcs=constructResults.ListAccountEntries.FindAll(x => x.PatNum==_patient.PatNum
-					&& x.GetType()==typeof(Procedure)
-					&& ((Procedure)x.Tag).ProcStatus==ProcStat.C
-					&& listProcNums.Contains(x.ProcNum));
-			//See if the adjustments added by the user will cause any procedures to go into the negative.
-			bool hasNegAmt=listAccountEntriesCompletedProcs.Any(x => CompareDecimal.IsLessThanZero(x.AmountEnd));
-			EnumAdjustmentBlockOrWarn enumAdjustmentBlockOrWarn=PrefC.GetEnum<EnumAdjustmentBlockOrWarn>(PrefName.AdjustmentBlockNegativeExceedingPatPortion);
-			if(enumAdjustmentBlockOrWarn==EnumAdjustmentBlockOrWarn.Block && hasNegAmt) {//block preference set
-				MsgBox.Show(this,"Cannot create a negative adjustment exceeding the remaining amount on a procedure.","Overpaid Procedure Warning");
-				return;
-			}
-			if(enumAdjustmentBlockOrWarn==EnumAdjustmentBlockOrWarn.Warn && hasNegAmt) {//warning preference set
-				if(!MsgBox.Show(this,MsgBoxButtons.YesNo,"Remaining amount on a procedure is negative. Continue?","Overpaid Procedure Warning")) {
-					return;
-				}
-			}
 			if(!Security.IsAuthorized(Permissions.AdjustmentCreate,PIn.Date(dateAdjustment.Text),true)) {//User does not have full edit permission.
 				//Therefore the user only has the ability to edit $0 adjustments (see Load()).
 				if(_listAdjustments.Any(x => !CompareDouble.IsZero(x.AdjAmt))) {

@@ -2309,7 +2309,12 @@ namespace OpenDental{
 			List<long> listAptNums_ToDelete = new List<long>();
 			Func<List<long>,bool> funcListAptsToDelete = (listAptNumsToDelete) => {
 				listAptNums_ToDelete = listAptNumsToDelete;
-				return MsgBox.Show(this, MsgBoxButtons.YesNo,Appointments.PROMPT_ListAptsToDelete);
+				bool deleteApts=MsgBox.Show(this, MsgBoxButtons.YesNo,Appointments.PROMPT_ListAptsToDelete);
+				if(deleteApts) 
+				{ 
+					return Security.IsAuthorized(Permissions.AppointmentDelete); //check that user has permission to delete apps.
+				}
+				return false;
 			};
 			Func<bool> funcProcsConcurrentAndPlanned = () => {
 				return MsgBox.Show(this, MsgBoxButtons.OKCancel,Appointments.PROMPT_PlannedProcsConcurrent);
