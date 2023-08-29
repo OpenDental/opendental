@@ -48,6 +48,7 @@ namespace OpenDental{
 			this.textUiLabelMobile = new System.Windows.Forms.TextBox();
 			this.labelUiLabelMobile = new System.Windows.Forms.Label();
 			this.listMedical = new OpenDental.UI.ListBox();
+			this.labelTabOrder = new System.Windows.Forms.Label();
 			this.labelMedical = new System.Windows.Forms.Label();
 			this.radioYes = new System.Windows.Forms.RadioButton();
 			this.radioNo = new System.Windows.Forms.RadioButton();
@@ -56,6 +57,7 @@ namespace OpenDental{
 			this.labelReportableName = new System.Windows.Forms.Label();
 			this.labelMiscInstructions = new System.Windows.Forms.Label();
 			this.labelYesNo = new System.Windows.Forms.Label();
+			this.textTabOrder = new OpenDental.ValidNum();
 			this.butDelete = new OpenDental.UI.Button();
 			this.textHeight = new OpenDental.ValidNum();
 			this.textWidth = new OpenDental.ValidNum();
@@ -301,6 +303,16 @@ namespace OpenDental{
 			this.labelUiLabelMobile.Text = "Mobile Group Caption";
 			this.labelUiLabelMobile.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
+			// labelTabOrder
+			// 
+			this.labelTabOrder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.labelTabOrder.Location = new System.Drawing.Point(385, 631);
+			this.labelTabOrder.Name = "labelTabOrder";
+			this.labelTabOrder.Size = new System.Drawing.Size(71, 16);
+			this.labelTabOrder.TabIndex = 108;
+			this.labelTabOrder.Text = "Tab Order";
+			this.labelTabOrder.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
 			// listMedical
 			// 
 			this.listMedical.Location = new System.Drawing.Point(186, 37);
@@ -400,6 +412,16 @@ namespace OpenDental{
     "he same category with the \"No\" value.  The two checkboxes will act as a radio bu" +
     "tton group.";
 			this.labelYesNo.Visible = false;
+			// 
+			// textTabOrder
+			// 
+			this.textTabOrder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.textTabOrder.Location = new System.Drawing.Point(456, 630);
+			this.textTabOrder.MaxVal = 2000;
+			this.textTabOrder.MinVal = -100;
+			this.textTabOrder.Name = "textTabOrder";
+			this.textTabOrder.Size = new System.Drawing.Size(69, 20);
+			this.textTabOrder.TabIndex = 10;
 			// 
 			// butDelete
 			// 
@@ -585,6 +607,8 @@ namespace OpenDental{
 			this.Controls.Add(this.radioNo);
 			this.Controls.Add(this.radioYes);
 			this.Controls.Add(this.labelMedical);
+			this.Controls.Add(this.textTabOrder);
+			this.Controls.Add(this.labelTabOrder);
 			this.Controls.Add(this.checkRequired);
 			this.Controls.Add(this.groupRadioMisc);
 			this.Controls.Add(this.groupRadio);
@@ -637,6 +661,8 @@ namespace OpenDental{
 		private System.Windows.Forms.Label label1;
 		private OpenDental.UI.ListBox listRadio;
 		private OpenDental.UI.GroupBox groupRadio;
+		private ValidNum textTabOrder;
+		private System.Windows.Forms.Label labelTabOrder;
 		private OpenDental.UI.ListBox listMedical;
 		private System.Windows.Forms.Label labelMedical;
 		private System.Windows.Forms.RadioButton radioYes;

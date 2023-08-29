@@ -114,9 +114,9 @@ namespace OpenDental {
 				return;
 			}
 			FillFieldsFromControls();
-			ClearSigs();
 			LoadImages();
 			LayoutFields();
+			ClearSigs();
 			panelMain.Invalidate();
 		}
 
@@ -796,6 +796,7 @@ namespace OpenDental {
 				else{
 					sheetField.FieldValue="";
 				}
+				ClearSigs();
 				panelMain.Invalidate();
 				return;
 			}
@@ -804,6 +805,7 @@ namespace OpenDental {
 				|| sheetField?.FieldType==SheetFieldType.OutputText)
 			{
 				CreateFloatingTextBox(sheetField,e.Location);
+				ClearSigs();
 				return;
 			}
 			if(sheetField?.FieldType==SheetFieldType.PatImage){
@@ -812,6 +814,7 @@ namespace OpenDental {
 			}
 			if(sheetField?.FieldType==SheetFieldType.ComboBox){
 				CreateFloatingComboOptions(sheetField);
+				ClearSigs();
 				return;
 			}
 			//Can draw everywhere else

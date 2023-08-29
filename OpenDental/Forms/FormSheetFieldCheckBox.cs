@@ -26,6 +26,9 @@ namespace OpenDental {
 		}
 
 		private void FormSheetFieldCheckBox_Load(object sender,EventArgs e) {
+			if(IsEditMobile) {
+				textTabOrder.Enabled=false;
+			}
 			if(IsReadOnly) {
 				butOK.Enabled=false;
 				butDelete.Enabled=false;
@@ -50,6 +53,7 @@ namespace OpenDental {
 			labelAlsoActs.Visible=SheetDefs.IsMobileAllowed(SheetDefCur.SheetType);
 			comboRadioGroupNameMisc.Text=SheetFieldDefCur.RadioButtonGroup;
 			checkRequired.Checked=SheetFieldDefCur.IsRequired;
+			textTabOrder.Text=SheetFieldDefCur.TabOrder.ToString();
 			textUiLabelMobileMisc.Text=SheetFieldDefCur.UiLabelMobile;
 			textUiLabelMobileRadioButtonMisc.Text=SheetFieldDefCur.UiLabelMobileRadioButton;
 			textUiLabelMobile.Text=SheetFieldDefCur.UiLabelMobile;
@@ -407,7 +411,8 @@ namespace OpenDental {
 			if(!textXPos.IsValid()
 				|| !textYPos.IsValid()
 				|| !textWidth.IsValid()
-				|| !textHeight.IsValid())
+				|| !textHeight.IsValid()
+				|| !textTabOrder.IsValid())
 			{
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return;
@@ -540,6 +545,7 @@ namespace OpenDental {
 				SheetFieldDefCur.UiLabelMobileRadioButton=textUiLabelMobileCheckBoxNonMisc.Text;
 			}
 			SheetFieldDefCur.IsRequired=checkRequired.Checked;
+			SheetFieldDefCur.TabOrder=PIn.Int(textTabOrder.Text);
 			//don't save to database here.
 			SheetFieldDefCur.IsNew=false;
 			DialogResult=DialogResult.OK;

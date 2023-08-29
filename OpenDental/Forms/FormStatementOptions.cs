@@ -291,6 +291,7 @@ namespace OpenDental{
 				butPrint.Enabled=false;
 				butPreview.Enabled=false;
 				butPatPortal.Enabled=false;
+				checkExportCSV.Enabled=false;
 				//Send Text Message-------------------------------------------------------------------------------
 				checkSendSms.ThreeState=true;
 				checkSendSms.CheckState=CheckState.Indeterminate;
@@ -1262,7 +1263,7 @@ namespace OpenDental{
 				SaveAsDocument(false);//needs to be called after the statement is inserted for the payment plan grid (if present)
 			}
 			if(checkExportCSV.Checked) {
-				Statements.SaveStatementAsCSV(StatementCur); 
+				Statements.SaveStatementAsCSV(StatementCur);
 			}
 			DialogResult=DialogResult.OK;
 		}

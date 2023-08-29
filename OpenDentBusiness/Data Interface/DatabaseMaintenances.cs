@@ -9505,7 +9505,7 @@ namespace OpenDentBusiness {
 		}
 
 		#endregion ScheduleOp, Schedule, SecurityLog, Sheet---------------------------------------------------------------------------------------------
-		#region Signal, SigMessage, Statement, SummaryOfCare--------------------------------------------------------------------------------------------
+		#region Signal, SigMessage, SmsFromMobile, Statement, SummaryOfCare--------------------------------------------------------------------------------------------
 
 		[DbmMethodAttr]
 		public static string SignalInFuture(bool verbose,DbmMode modeCur) {
@@ -9557,6 +9557,43 @@ namespace OpenDentBusiness {
 					break;
 			}
 			return log;
+		}
+
+		[DbmMethodAttr]
+		public static string SmsFromMobilesInvalidClinicNum(bool verbose, DbmMode dbmMode) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetString(MethodBase.GetCurrentMethod(),verbose,dbmMode);
+			}
+			string log="";
+			string command="";
+			switch(dbmMode){
+				case DbmMode.Check:
+					command="SELECT COUNT(*) FROM smsfrommobile WHERE ClinicNum=-1";
+					long numFound=PIn.Long(Db.GetCount(command));
+					if(numFound>0 || verbose) {
+						log+=Lans.g("FormDatabaseMaintenance","Messages found with invalid ClinicNum(s)")+": "+numFound+"\r\n";
+					}
+					break;
+			case DbmMode.Fix:
+					//Grab all the smsfrommobiles that have -1 clinicnums and try to match them up with smsphones that have valid clinicnums.
+					command="SELECT s.SmsFromMobileNum,p.ClinicNum " +
+					"FROM smsfrommobile s " +
+					"INNER JOIN smsphone p ON s.SmsPhoneNumber=p.PhoneNumber " +
+					"WHERE s.ClinicNum=-1 AND p.ClinicNum<>-1";
+					DataTable dataTable=Db.GetTable(command);
+					long numFixed=0;
+					for(int i = 0;i < dataTable.Rows.Count;i++) {
+						DataRow dataRow=dataTable.Rows[i];
+						command="UPDATE smsfrommobile SET ClinicNum="+PIn.Long(dataRow["ClinicNum"].ToString())+" WHERE SmsFromMobileNum="+PIn.Long(dataRow["SmsFromMobileNum"].ToString());
+						Db.NonQ(command);
+						numFixed++;
+					}
+					if(numFixed>0 || verbose) {
+						log+=Lans.g("FormDatabaseMaintenance","Messages with invalid ClinicNum(s) fixed")+": "+numFixed+"\r\n";
+					}
+					break;
+				}
+		 return log;
 		}
 
 		[DbmMethodAttr]

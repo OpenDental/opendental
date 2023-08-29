@@ -15482,7 +15482,7 @@
       <summary>Set to true if this field is required to have a value before the sheet is closed.</summary>
     </column>
     <column order="16" name="TabOrder" type="int(11)">
-      <summary>Tab stop order for all fields. One-based.  Only checkboxes and input fields can have values other than 0.</summary>
+      <summary>Tab stop order for all fields. One-based.  Only input fields can have values other than 0.</summary>
     </column>
     <column order="17" name="ReportableName" type="varchar(255)">
       <summary>Allows reporting on misc fields.</summary>
