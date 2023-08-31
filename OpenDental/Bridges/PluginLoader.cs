@@ -55,7 +55,14 @@ namespace OpenDental {
 					string dllPathWithVersion=dllPath.Replace("[VersionMajMin]",vers.Major.ToString()+"."+vers.Minor.ToString());
 					dllPath=dllPath.Replace("[VersionMajMin]","");//now stripped clean
 					if(File.Exists(dllPathWithVersion)) {
-						File.Copy(dllPathWithVersion,dllPath,true);
+						try {
+							File.Copy(dllPathWithVersion,dllPath,true);
+						}
+						catch(Exception e) {
+							 // Another instance of OD is tying up the file
+							 // No need to copy file again, already done by instance holding file
+							 e.DoNothing();
+						}
 					}
 					else{
 						//try the Plugins folder
@@ -63,7 +70,14 @@ namespace OpenDental {
 							string dllPathVersionCentral=FileAtoZ.CombinePaths(ImageStore.GetPreferredAtoZpath(),"Plugins",
 								listPrograms[i].PluginDllName.Replace("[VersionMajMin]",vers.Major.ToString()+"."+vers.Minor.ToString()));
 							if(FileAtoZ.Exists(dllPathVersionCentral)) {
-								FileAtoZ.Copy(dllPathVersionCentral,dllPath,FileAtoZSourceDestination.AtoZToLocal,doOverwrite:true);
+								try {
+									FileAtoZ.Copy(dllPathVersionCentral,dllPath,FileAtoZSourceDestination.AtoZToLocal,doOverwrite:true);
+								}
+								catch(Exception e) {
+									// Another instance of OD is tying up the file
+									// No need to copy file again, already done by instance holding file
+									e.DoNothing();
+								}
 							}
 						}
 					}

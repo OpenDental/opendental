@@ -2182,7 +2182,7 @@ namespace OpenDentBusiness {
 				command=$@"
 					SELECT payplanlink.AmountOverride,payplanlink.FKey,payplanlink.LinkType,payplanlink.SecDateTEntry,
 						payplan.PatNum,payplan.dynamicPayPlanTPOption,payplan.PayPlanNum,
-						prodlink.Fee,prodlink.Num,prodlink.ClinicNum,prodlink.ProvNum,prodlink.ProcStatus,prodlink.DiscountPlanAmt 
+						prodlink.Fee,prodlink.Num,prodlink.ClinicNum,prodlink.ProvNum,prodlink.ProcStatus,prodlink.DiscountPlanAmt,prodlink.Discount 
 					FROM payplanlink
 					INNER JOIN payplan ON payplan.PayPlanNum = payplanlink.PayPlanNum 
 					LEFT JOIN (
@@ -2193,7 +2193,7 @@ namespace OpenDentBusiness {
 									+COALESCE(procSplit.SplitAmt,0)
 								) Fee, 
 								procedurelog.ProcNum Num,payplanlink.LinkType,payplanlink.PayPlanLinkNum,procedurelog.ClinicNum,procedurelog.ProvNum,
-								procedurelog.ProcStatus,procedurelog.DiscountPlanAmt 
+								procedurelog.ProcStatus,procedurelog.DiscountPlanAmt,procedurelog.Discount
 						FROM payplanlink 
 						INNER JOIN procedurelog ON procedurelog.ProcNum=payplanlink.FKey AND payplanlink.LinkType={POut.Int((int)PayPlanLinkType.Procedure)} 
 						LEFT JOIN (
@@ -2230,7 +2230,7 @@ namespace OpenDentBusiness {
 						)procSplit ON procSplit.ProcNum=procedurelog.ProcNum
 						UNION ALL
 						SELECT adjustment.PatNum,adjustment.AdjAmt + COALESCE(adjSplit.SplitAmt,0) Fee,adjustment.AdjNum Num,payplanlink.LinkType
-							,payplanlink.PayPlanLinkNum,adjustment.ClinicNum,adjustment.ProvNum,'0','0'
+							,payplanlink.PayPlanLinkNum,adjustment.ClinicNum,adjustment.ProvNum,'0','0','0'
 							FROM payplanlink 
 							INNER JOIN adjustment ON adjustment.AdjNum=payplanlink.FKey 
 								AND payplanlink.LinkType={POut.Int((int)PayPlanLinkType.Adjustment)}
@@ -2258,6 +2258,7 @@ namespace OpenDentBusiness {
 					}
 					if(PIn.Enum<ProcStat>(payplanLinks.Rows[i]["ProcStatus"].ToString())!=ProcStat.C) {
 						amt-=PIn.Decimal(payplanLinks.Rows[i]["DiscountPlanAmt"].ToString());
+						amt-=PIn.Decimal(payplanLinks.Rows[i]["Discount"].ToString());
 					}
 					if(PIn.Int(payplanLinks.Rows[i]["LinkType"].ToString())==(int)PayPlanLinkType.Adjustment) {
 						adjNum=num;

@@ -583,9 +583,9 @@ namespace OpenDentBusiness {
 			}
 			if(listITypes.Contains(InvalidType.ERoutingDef) || isAll) {
 				ODEvent.Fire(ODEventType.Cache, suffix + InvalidType.PatFields.ToString());
-				ERoutingDefs.FillCacheFromTable(ds.Tables["FlowDef"]);
-				ERoutingActionDefs.FillCacheFromTable(ds.Tables["FlowActionDef"]);
-				ERoutingDefLinks.FillCacheFromTable(ds.Tables["FlowDefLink"]);
+				ERoutingDefs.FillCacheFromTable(ds.Tables["ERoutingDef"]);
+				ERoutingActionDefs.FillCacheFromTable(ds.Tables["ERoutingActionDef"]);
+				ERoutingDefLinks.FillCacheFromTable(ds.Tables["ERoutingDefLink"]);
 			}
 			if(listITypes.Contains(InvalidType.HL7Defs) || isAll) {
 				ODEvent.Fire(ODEventType.Cache,suffix+InvalidType.HL7Defs.ToString());

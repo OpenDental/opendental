@@ -170,6 +170,10 @@ namespace OpenDental {
 				MsgBox.Show(Lan.g(this,"The selected charge couldn't be deleted. Only a debit charge without a payment can be deleted."));
 				return;
 			}
+			if(listPayPlanCharges.Exists(x=>x.Note.ToLower().Contains("down payment"))){
+				MsgBox.Show(Lan.g(this,"The selected charge couldn't be deleted. Down payments cannot be deleted."));
+				return;
+			}
 			PayPlanCharges.DeleteDebitsWithoutPayments(listPayPlanCharges,doDelete:true);
 			LoadPayDataFromDB();
 			FillCharges();

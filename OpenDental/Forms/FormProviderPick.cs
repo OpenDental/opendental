@@ -127,14 +127,22 @@ namespace OpenDental{
 
 		/// <summary>Filters the list of providers by search terms and returns the filtered list. If used outside of FormProviderPick, make sure your list of providers isn't null before calling this method.</summary>
 		private List<Provider> GetFilteredProviderList(List<Provider> listProviders) {
-			List<Provider> listProvidersFiltered=listProviders;
 			if(string.IsNullOrWhiteSpace(textFilter.Text)) { 
-				return listProvidersFiltered;	
+				return listProviders;	
+			}
+			List<Provider> listProvidersFiltered=new List<Provider>();
+			for(int i=0;i<listProviders.Count;i++) {
+				if(listProviders[i].FName==null || listProviders[i].LName==null || listProviders[i].Abbr==null) {
+					continue;
+				}
+				if(listProviders[i].FName.ToUpper().Trim().Contains(textFilter.Text.ToUpper().Trim()) ||
+					listProviders[i].LName.ToUpper().Trim().Contains(textFilter.Text.ToUpper().Trim()) ||
+					listProviders[i].Abbr.ToUpper().Trim().Contains(textFilter.Text.ToUpper().Trim())) 
+				{
+					listProvidersFiltered.Add(listProviders[i]);
+				}
 			}
 			listProvidersFiltered=listProvidersFiltered
-				.FindAll(x=>x.FName.ToUpper().Trim().Contains(textFilter.Text.ToUpper().Trim())
-					|| x.LName.ToUpper().Trim().Contains(textFilter.Text.ToUpper().Trim())
-					|| x.Abbr.ToUpper().Trim().Contains(textFilter.Text.ToUpper().Trim()))
 				.OrderByDescending(x=>x.FName.ToUpper().Trim().StartsWith(textFilter.Text.ToUpper().Trim()))
 				.ThenByDescending(x=>x.LName.ToUpper().Trim().StartsWith(textFilter.Text.ToUpper().Trim()))
 				.ThenByDescending(x=>x.Abbr.ToUpper().Trim().StartsWith(textFilter.Text.ToUpper().Trim())).ToList();

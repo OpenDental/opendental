@@ -1125,7 +1125,12 @@ namespace OpenDental {
 			List<PayPlanCharge> listPayPlanCharges=PayPlanCharges.GetMany(listSelectedPayPlanChargeNums);
 			List<PayPlanCharge> listPayPlanChargesNotDeleted=PayPlanCharges.DeleteDebitsWithoutPayments(listPayPlanCharges);
 			if(listPayPlanChargesNotDeleted.Count > 0) {
-				MsgBox.Show(Lan.g(this,"One or more of the selected charges couldn't be deleted. Only debit charges without payments were deleted."));
+				string msgString="Cannot delete";
+				if(listPayPlanChargesNotDeleted.Exists(x=>x.Note.ToLower().Contains("down payment"))){
+					msgString+=" down payment charges, or";
+				}
+				msgString+=" charges with payments attached.";
+				MsgBox.Show(Lans.g(this,msgString));
 			}
 			ModuleSelected(_patient.PatNum);
 		}
@@ -1178,7 +1183,7 @@ namespace OpenDental {
 						}
 						if(payPlanCharge.StatementNum!=0) {
 							continue;
-						}					
+						}
 					}
 					else {//item must be adjustment
 						Adjustment adjustment=Adjustments.GetOne(PIn.Long(table.Rows[i]["AdjNum"].ToString()));
@@ -1417,7 +1422,7 @@ namespace OpenDental {
 			List<long> listPayPlanChargeNums=gridAccount.SelectedIndices
 				.Where(x => table.Rows[x]["PayPlanChargeNum"].ToString()!="0")
 				.Select(x => PIn.Long(table.Rows[x]["PayPlanChargeNum"].ToString())).ToList();//Debits attached to insurance payplans do not get shown in the account module.
-			Statement statement=Statements.CreateLimitedStatement(listPatNums,_patient.PatNum,listPayClaimNums,listAdjNums,listPayNums,listProcNums,listPayPlanChargeNums);
+			Statement statement=Statements.CreateLimitedStatement(listPatNums,_patient.Guarantor,listPayClaimNums,listAdjNums,listPayNums,listProcNums,listPayPlanChargeNums);
 			//All printing and emailing will be done from within the form:
 			using FormStatementOptions formStatementOptions=new FormStatementOptions();
 			formStatementOptions.StatementCur=statement;
@@ -1527,7 +1532,7 @@ namespace OpenDental {
 					.SelectMany(x => x.Value).ToList();
 				listPatients.AddRange(listPatientsSuperFamily);
 			}
-			else if(isFamMember) { 
+			else if(isFamMember) {
 				statement.LimitedCustomFamily=EnumLimitedCustomFamily.Family;
 			}
 			listPatients=listPatients.DistinctBy(x=>x.PatNum).ToList();
@@ -1565,11 +1570,11 @@ namespace OpenDental {
 				//If any patnums are selected that are not in the family, it must be a super family.
 				if(listPatNums.Any(x => !x.In(_family.GetPatNums().ToArray())))	{
 					isSuperFamLimitedStatement=true;
-				} 
+				}
 			}
-			EnumLimitedCustomFamily limitedCustomFamily=EnumLimitedCustomFamily.Patient;
-			//Figure out which patient deserves to be the PatNum associated to this statement.
-			long patNumStatement=_patient.PatNum;
+			EnumLimitedCustomFamily limitedCustomFamily=EnumLimitedCustomFamily.Family;
+			//Figure out which patient deserves to be the PatNum associated to this statement. Start with assumption we will be using the guarantor.
+			long patNumStatement=_patient.Guarantor;
 			long superFamNum=0;
 			if(isSuperFamLimitedStatement) {
 				//Only set SuperFamNum if we selected superfam entries.
@@ -1577,10 +1582,9 @@ namespace OpenDental {
 				patNumStatement=_patient.SuperFamily;
 				superFamNum=_patient.SuperFamily;
 			}
-			else if(listPatNums.Count>1 || (listPatNums.Count==1 && listPatNums[0]!=_patient.PatNum)) {
-				//This is NOT a super family statement. Therefore, it is considered a family statement when multiple patients are selected OR the current patient isn't selected.
-				limitedCustomFamily=EnumLimitedCustomFamily.Family;
-				patNumStatement=_patient.Guarantor;
+			else if(listPatNums.Count==1 && listPatNums[0]==_patient.Guarantor) {
+				//This is NOT a super family statement. Therefore, if the patient is the guarantor this is a patient statement.
+				limitedCustomFamily=EnumLimitedCustomFamily.Patient;
 			}
 			statementLimited=Statements.CreateLimitedStatement(listPatNums,patNumStatement,listPayClaimNums,listAdjNums,listPayNums,listProcNums,listPayPlanChargeNums,superFamily:superFamNum,limitedCustomFamily:limitedCustomFamily);
 			//All printing and emailing will be done from within the form:
@@ -2078,8 +2082,7 @@ namespace OpenDental {
 						List<InputBoxParam> listInputBoxParams=new List<InputBoxParam>();
 						listInputBoxParams.Add(new InputBoxParam(InputBoxType.ValidDouble,Lan.g(this,"Please enter an amount: ")));
 						if(_family.ListPats.Length>1){
-							listInputBoxParams.Add(new InputBoxParam(InputBoxType.CheckBox,"",Lan.g(this," - Prefer this patient"),
-								new Size(LayoutManager.Scale(120),20)));
+							listInputBoxParams.Add(new InputBoxParam(InputBoxType.CheckBox,"",Lan.g(this," - Prefer this patient"),new Size(120,20)));
 						}
 						Func<string, bool> funcOkClick=new Func<string, bool>((text) => {
 							if(text=="") {

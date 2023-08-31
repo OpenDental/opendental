@@ -123,7 +123,12 @@ namespace OpenDental{
 		private void butDelete_Click(object sender, System.EventArgs e) {
 			List<PayPlanCharge> listPayPlanChargesNotDeleted=PayPlanCharges.DeleteDebitsWithoutPayments(new List<PayPlanCharge>{ PayPlanChargeCur },doDelete:false);
 			if(listPayPlanChargesNotDeleted.Count > 0) {
-				MsgBox.Show("Cannot delete charges with payments attached.");
+				string msgString="Cannot delete";
+				if(listPayPlanChargesNotDeleted.Exists(x=>x.Note.ToLower().Contains("down payment"))){
+					msgString+=" down payment charges, or";
+				}
+				msgString+=" charges with payments attached.";
+				MsgBox.Show(Lans.g(this,msgString));
 				return;
 			}
 			if(IsNew){
