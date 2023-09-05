@@ -147,6 +147,7 @@ namespace OpenDental{
 			}
 			#region Bulk Edit
 			else{
+				groupInvoice.Visible=false;
 				//DateSent-------------------------------------------------------------------------------------
 				textDate.Text="?";
 				bool allSame=true;
@@ -905,10 +906,10 @@ namespace OpenDental{
 
 		private void LimitedCustomStatementLayoutHelper() {
 			this.DisableAllExcept(butDelete,butPreview,butCancel,butOK,checkIsSent,checkIntermingled,checkExportCSV,checkShowLName,checkExcludeTxfr, checkHidePayment,butPrint,butEmail,butPatPortal,textNote,textNoteBold,listMode,label1,label2,label3,label4,textDate);
-			checkSuperStatement.Checked=false;
-			checkSinglePatient.Checked=false;
-			if(StatementCur.LimitedCustomFamily==EnumLimitedCustomFamily.Patient) {
-				checkSinglePatient.Checked=true;
+			if(StatementCur.LimitedCustomFamily==EnumLimitedCustomFamily.SuperFamily) {
+				//We always want these to be unchecked if its or a SuperFamily statement, otherwise we continue using what was already generated on the statement.
+				checkSuperStatement.Checked=false;
+				checkSinglePatient.Checked=false;
 			}
 		}
 

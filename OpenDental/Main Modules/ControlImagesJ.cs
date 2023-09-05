@@ -2379,17 +2379,28 @@ namespace OpenDental
 						return;
 					}
 					LockODForMountAcquire(true);
-					ODThread thread=new ODThread(o=>{
-						bool continueScanning=true;
+					ODThread thread=new ODThread(o=> {
 						try{
-							while(IsMountShowing() && continueScanning){
-								Bitmap bitmap2=ODCloudClient.TwainAcquireBitmap(_deviceController.TwainName,doThrowException:true,timeoutSecs:60);
-								if(bitmap2==null){
-									continueScanning=false; //Cancel the scanning task
+							while(true) {
+								Bitmap bitmap=ODCloudClient.TwainAcquireBitmap(_deviceController.TwainName,doThrowException:true,timeoutSecs:60);
+								if(bitmap==null) {
+									break; //Cancel the scanning task
 								}
-								else{
-									this.Invoke(()=>PlaceAcquiredBitmapInUI(bitmap2));
+								if(!(bool)this.Invoke((Func<bool>)(()=>PlaceAcquiredBitmapInUI(bitmap)))) {
+									break;
 								}
+								if(!IsMountShowing()) {//single
+									break;
+								}
+							}
+							if(!IsMountShowing()) {
+								return;
+							}
+							if(GetMountShowing().AdjModeAfterSeries) {
+								this.Invoke(()=> {
+									SetCropPanAdj(EnumCropPanAdj.Adj);
+									LayoutControls();
+								});
 							}
 						}
 						catch(Exception ex){

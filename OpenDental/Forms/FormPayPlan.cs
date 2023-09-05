@@ -53,6 +53,8 @@ namespace OpenDental{
 		public bool IsNew;
 		///<summary>List of Negative adjustments. Will be inserted into DB as negative adjustment. </summary>
 		private List<Adjustment> _listAdjustments=new List<Adjustment>();
+///<summary>List of Audit Trail log messages to be inserted if changes are finalized.</summary>
+		private List<string> _listLogs=new List<string>();
 
 		///<summary>The supplied payment plan should already have been saved in the database.</summary>
 		public FormPayPlan(PayPlan payPlan) {
@@ -584,6 +586,7 @@ namespace OpenDental{
 			}
 			if(gridCharges.ListGridRows[e.Row].Tag.GetType()==typeof(PayPlanCharge)) {
 				PayPlanCharge payPlanCharge=(PayPlanCharge)gridCharges.ListGridRows[e.Row].Tag;
+				PayPlanCharge payPlanChargeOld=payPlanCharge.Copy();
 				double payPlanChargeOldAmt=payPlanCharge.Principal;
 				using FormPayPlanChargeEdit formPayPlanChargeEdit=new FormPayPlanChargeEdit(payPlanCharge,_payPlan);//This automatically takes care of our in-memory list because the Tag is referencing our list of objects.
 				formPayPlanChargeEdit.ShowDialog();
@@ -592,6 +595,7 @@ namespace OpenDental{
 				}
 				if(formPayPlanChargeEdit.PayPlanChargeCur==null) {//The user deleted the payplancharge.
 					_listPayPlanCharges.Remove(payPlanCharge);//We know the payPlanCharge object is inside _listPayPlanCharges.
+					_listLogs.Add("Deleted.");
 					if(payPlanCharge.Principal<0) {//adjustment
 						textAmount.Text=(PIn.Double(textAmount.Text)-(payPlanChargeOldAmt)).ToString("f");//charge will be negative, - to add the amount back
 					}
@@ -610,6 +614,10 @@ namespace OpenDental{
 						amtChanged=payPlanCharge.Principal-payPlanChargeOldAmt;//amt should be -
 					}
 					textAmount.Text=(PIn.Double(textAmount.Text)+(amtChanged)).ToString("f");
+				}
+				if(formPayPlanChargeEdit.PayPlanChargeCur!=payPlanChargeOld) {
+					string log=PayPlans.GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
+					_listLogs.Add(log);
 				}
 			}
 			else if(gridCharges.ListGridRows[e.Row].Tag.GetType()==typeof(PaySplit)) {
@@ -655,6 +663,7 @@ namespace OpenDental{
 				return;
 			}
 			_listPayPlanCharges.Add(payPlanCharge);
+			_listLogs.Add("Added.");
 			FillCharges();
 			//fills signature. Most likely will invalidate the signature due to changes to PP
 			FillSignatureBox();
@@ -1306,6 +1315,8 @@ namespace OpenDental{
 				_listPayPlanCharges[i].ProvNum=comboProv.GetSelectedProvNum();
 			}
 			PayPlanCharges.Sync(_listPayPlanCharges,_payPlan.PayPlanNum);
+			SecurityLogs.MakeLogEntries(Permissions.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,_listLogs);
+			_listLogs.Clear();//In case we save multiple times.
 		}
 
 		private void butDelete_Click(object sender,System.EventArgs e) {

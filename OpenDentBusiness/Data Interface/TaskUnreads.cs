@@ -136,7 +136,7 @@ namespace OpenDentBusiness{
 				return Meth.GetTable(MethodBase.GetCurrentMethod(),taskNum);
 			}
 			string command=@"SELECT
-				userod.UserName AS 'User',
+				DISTINCT userod.UserName AS 'User',
 				(CASE WHEN !ISNULL(taskunread.TaskNum) THEN 'Unread' ELSE 'Read' END) AS 'Unread' "+
 				"FROM tasksubscription "+
 				"INNER JOIN tasklist ON tasksubscription.TaskListNum=tasklist.TaskListNum "+

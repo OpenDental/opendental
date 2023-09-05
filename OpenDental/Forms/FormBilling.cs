@@ -710,7 +710,7 @@ namespace OpenDental {
 					}
 					//Process.Start(filePathAndName);
 					_progExtended.Fire(new ODEventArgs(ODEventType.Billing,new ProgressBarHelper(Lan.g(this,"Statement")+"\r\n"+curStatementIdx+" / "+gridBill.SelectedIndices.Length,"40%",40,100,ProgBarStyle.Blocks,"3")));
-					message=Statements.GetEmailMessageForStatement(statement,patient);
+					message=Statements.GetEmailMessageForStatement(statement,patient,emailAddress);
 					_progExtended.Fire(new ODEventArgs(ODEventType.Billing,new ProgressBarHelper(Lan.g(this,"Statement")+"\r\n"+curStatementIdx+" / "+gridBill.SelectedIndices.Length,"70%",70,100,ProgBarStyle.Blocks,"3")));
 					emailAttach=new EmailAttach();
 					emailAttach.DisplayedFileName="Statement.pdf";

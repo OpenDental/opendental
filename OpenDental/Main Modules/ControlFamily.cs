@@ -2469,17 +2469,13 @@ namespace OpenDental{
 			row.ColorLborder=Color.Black;
 			gridIns.ListGridRows.Add(row);
 			//InsHist
-			List<Procedure> listProceduresEoAndC=Procedures.GetProcsByStatusForPat(_patient.PatNum,new [] { ProcStat.EO,ProcStat.C }); //all for the patient, all plans
-			List<long> listProcNums=listProceduresEoAndC.Select(x=>x.ProcNum).ToList();
-			List<ClaimProc> listClaimProcsForEoAndCProcs=ClaimProcs.GetForProcs(listProcNums);//all for the patient, all plans
+			List<Procedure> listProceduresEoAndC=Procedures.GetProcsByStatusForPat(_patient.PatNum,new [] { ProcStat.EO,ProcStat.C });
 			List<PrefName> listPrefNames=Prefs.GetInsHistPrefNames();
 			for(int i=0;i<listPrefNames.Count();i++) {
 				row=new GridRow();
 				row.Cells.Add(Lan.g("TableCoverage",listPrefNames[i].GetDescription()));
 				for(int j=0;j<_listPatPlans.Count();j++) {
-					List<ClaimProc> listClaimProcsForPlan=listClaimProcsForEoAndCProcs.FindAll(x=>x.InsSubNum==_listPatPlans[j].InsSubNum && x.Status.In(ClaimProcStatus.InsHist,ClaimProcStatus.Received));
-					List<Procedure> listProceduresForPlan=listProceduresEoAndC.FindAll(x=>listClaimProcsForPlan.Any(y=>y.ProcNum==x.ProcNum));
-					Procedure procedure=Procedures.GetMostRecentInsHistProc(listProceduresForPlan,ProcedureCodes.GetCodeNumsForInsHistPref(listPrefNames[i]),listPrefNames[i]);
+					Procedure procedure=Procedures.GetMostRecentInsHistProc(listProceduresEoAndC,ProcedureCodes.GetCodeNumsForInsHistPref(listPrefNames[i]),listPrefNames[i]);
 					if(procedure==null) {
 						row.Cells.Add(new GridCell(Lan.g("TableCoverage","No History")));
 						continue;

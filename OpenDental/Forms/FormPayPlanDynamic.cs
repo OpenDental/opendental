@@ -177,7 +177,12 @@ namespace OpenDental {
 				MsgBox.Show(Lan.g(this,"The selected charge couldn't be deleted. Only a debit charge without a payment can be deleted."));
 				return;
 			}
+			if(listPayPlanCharges.Exists(x=>x.Note.ToLower().Contains("down payment"))){
+				MsgBox.Show(Lan.g(this,"The selected charge couldn't be deleted. Down payments cannot be deleted."));
+				return;
+			}
 			PayPlanCharges.DeleteDebitsWithoutPayments(listPayPlanCharges,doDelete:true);
+			SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeEdit,listPayPlanCharges[0].PatNum,"Deleted.");
 			LoadPayDataFromDB();
 			FillCharges();
 			FillProduction();
@@ -218,10 +223,11 @@ namespace OpenDental {
 				//FormPayPlanChargeEdit sets PayPlanChargeCur to null when the user clicks the delete button on the form.
 				if(formPayPlanChargeEdit.PayPlanChargeCur==null) {
 					PayPlanCharges.Delete(listPayPlanCharges[0]);
+					SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeEdit,listPayPlanCharges[0].PatNum,"Deleted.");
 				}
 				else {
 					if(!formPayPlanChargeEdit.ListChangeLog.IsNullOrEmpty()) {
-						string log=GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
+						string log=PayPlans.GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
 						SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeEdit,listPayPlanCharges[0].PatNum,log);
 					}
 					PayPlanCharges.Update(listPayPlanCharges[0]);
@@ -230,21 +236,6 @@ namespace OpenDental {
 			LoadPayDataFromDB();
 			FillCharges();
 			FillProduction();
-		}
-
-		private string GetChangeLog(List<string> listChanges) {
-			string log="";
-			for(int i=0;i<listChanges.Count;i++) {
-				if(i > 0) {
-					log+=", ";
-				}
-				if(i==listChanges.Count-1 && listChanges.Count!=1) {
-					log+="and ";
-				}
-				log+=listChanges[i];
-			}
-			log+=" changed.";
-			return log;
 		}
 
 		private void FillUiForSavedPayPlan() {
@@ -403,7 +394,12 @@ namespace OpenDental {
 			payPlanTerms.DateFirstPayment=PIn.Date(textDateFirstPay.Text);
 			payPlanTerms.Frequency=GetChargeFrequency();//verify this is just based on the ui, not the db.
 			payPlanTerms.DynamicPayPlanTPOption=GetSelectedTreatmentPlannedOption();
-			payPlanTerms.DateInterestStart=PIn.Date(textDateInterestStart.Text);//Will be DateTime.MinDate if field is blank.
+			if(PIn.Int(textInterestDelay.Text,false)!=0) {
+				payPlanTerms.DateInterestStart=PayPlanEdit.CalcNextPeriodDate(PIn.Date(textDateFirstPay.Text),PIn.Int(textInterestDelay.Text,false),GetChargeFrequency());
+			}
+			else {
+				payPlanTerms.DateInterestStart=PIn.Date(textDateInterestStart.Text);//Will be DateTime.MinDate if field is blank.
+			}
 			try {
 				payPlanTerms.PayCount=PIn.Int(textPaymentCount.Text);
 			}
@@ -819,10 +815,11 @@ namespace OpenDental {
 					//FormPayPlanChargeEdit sets PayPlanChargeCur to null when the user clicks the delete button on the form.
 					if(formPayPlanChargeEdit.PayPlanChargeCur==null) {
 						PayPlanCharges.Delete(listPayPlanCharges[0]);
+						SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeEdit,listPayPlanCharges[0].PatNum,"Deleted.");
 					}
 					else {
 						if(!formPayPlanChargeEdit.ListChangeLog.IsNullOrEmpty()) {
-							string log=GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
+							string log=PayPlans.GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
 							SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeEdit,listPayPlanCharges[0].PatNum,log);
 						}
 						PayPlanCharges.Update(listPayPlanCharges[0]);

@@ -126,7 +126,7 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Backs up the database to the same directory as the original just in case the user did not have sense enough to do a backup first.  Surround with try/catch.</summary>
-		public static string MakeABackup(string serverName="",string user="",string pass="",bool doVerify=false,bool isAutoBackup=true) {
+		public static string MakeABackup(string serverName="",string user="",string pass="",bool doVerify=false,bool isAutoBackup=true,string sslCa="") {
 			//This function should always make the backup on the server itself, and since no directories are
 			//referred to (all handled with MySQL), this function will always be referred to the server from
 			//client machines.
@@ -161,7 +161,7 @@ namespace OpenDentBusiness {
 			//we have to be careful to throw an exception if the backup is failing.
 			using DataConnection dcon=new DataConnection();
 			//if they provided a different server where they want their backup to be, we need a separate connection for that
-			using DataConnection dconBackupServer=useSameServer?new DataConnection():new DataConnection(serverName,"",user,pass,DatabaseType.MySql);
+			using DataConnection dconBackupServer=useSameServer?new DataConnection():new DataConnection(serverName,"",user,pass,DatabaseType.MySql,sslCa);
 			//Check that the backup server does not already contain this database
 			string command="SELECT database()";
 			DataTable table=dcon.GetTable(command);
@@ -186,7 +186,7 @@ namespace OpenDentBusiness {
 			//Set the connection to the new database now that it has been created
 			DataConnection.CommandTimeout=43200;//12 hours, because backup commands may take longer to run.
 			try {
-				using DataConnection dconBackupServerNoTimout=useSameServer?new DataConnection(newDb):new DataConnection(serverName,newDb,user,pass,DatabaseType.MySql);
+				using DataConnection dconBackupServerNoTimout=useSameServer?new DataConnection(newDb):new DataConnection(serverName,newDb,user,pass,DatabaseType.MySql,sslCa);
 				foreach(DataRow row in table.Rows) {
 					string tableName=row[0].ToString();
 					//First create the table on the new db

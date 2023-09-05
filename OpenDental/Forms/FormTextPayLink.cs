@@ -232,7 +232,7 @@ namespace OpenDental {
 			if(prefName==PrefName.TextPaymentLinkAppointmentBalance && saveToDB) {
 				statement=Statements.CreateLimitedStatement(
 					new List<long>{ _patient.PatNum },
-					_patient.PatNum,
+					_patient.Guarantor,
 					listClaimPayNumsForAppt,
 					listAdjNumsForAppt,
 					listPaymentNumsForAppt,

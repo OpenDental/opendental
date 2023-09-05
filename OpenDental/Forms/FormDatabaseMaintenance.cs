@@ -209,10 +209,10 @@ namespace OpenDental {
 			row.Tag=new Action(InsPayFix);
 			gridTools.ListGridRows.Add(row);
 			if(Security.IsAuthorized(Permissions.SecurityAdmin,true)) {
-				row=new GridRow(Lan.g(this,"Insurance Plan Type Category Percentage"),Lan.g(this,"Change all insurance plans to Category Percentage type."));
+				row=new GridRow(Lan.g(this,"Insurance Plan Type Category Percentage"),Lan.g(this,"Changes all PPO Percentage plans to Category Percentage plans."));
 				row.Tag=new Action(ChangeToCategoryInsurancePlanType);
 				gridTools.ListGridRows.Add(row);
-				row=new GridRow(Lan.g(this,"Insurance Plan Type PPO Percentage"),Lan.g(this,"Change all insurance plans to PPO Percentage plan type."));
+				row=new GridRow(Lan.g(this,"Insurance Plan Type PPO Percentage"),Lan.g(this,"Changes all Category Percentage plans to PPO Percentage plans."));
 				row.Tag=new Action(ChangeToPercentageInsurancePlanType);
 				gridTools.ListGridRows.Add(row);
 			}
@@ -718,7 +718,7 @@ namespace OpenDental {
 		}
 
 		private void ChangeToCategoryInsurancePlanType() {
-			if (!VerifyPermissionToChangeInsuranceType()) {
+			if(!VerifyPermissionToChangeInsuranceType()) {
 				return;
 			}
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel

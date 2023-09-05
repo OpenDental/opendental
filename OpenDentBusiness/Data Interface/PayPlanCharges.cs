@@ -296,7 +296,7 @@ namespace OpenDentBusiness{
 		///<summary></summary>
 		public static void Update(PayPlanCharge payPlanCharge,PayPlanCharge payPlanChargeOld){
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				Meth.GetVoid(MethodBase.GetCurrentMethod(),payPlanCharge);
+				Meth.GetVoid(MethodBase.GetCurrentMethod(),payPlanCharge,payPlanChargeOld);
 				return;
 			}
 			Crud.PayPlanChargeCrud.Update(payPlanCharge,payPlanChargeOld);
@@ -343,6 +343,8 @@ namespace OpenDentBusiness{
 			//Do not allow deleting debits.
 			List<PayPlanCharge> lisPayPlanChargesCredits=listCharges.FindAll(x => x.ChargeType==PayPlanChargeType.Credit);
 			listPayPlanChargeNumsPreserve.AddRange(lisPayPlanChargesCredits.Select(x => x.PayPlanChargeNum));
+			//Block deleting down payments.
+			listPayPlanChargeNumsPreserve.AddRange(listCharges.FindAll(x=>x.Note.ToLower().Contains("down payment")).Select(x=>x.PayPlanChargeNum));
 			//Actually delete the charges from the database if calling method requests it.
 			if(doDelete) {
 				List<PayPlanCharge> listPayPlanChargesToDelete=listCharges.FindAll(x => !listPayPlanChargeNumsPreserve.Contains(x.PayPlanChargeNum));

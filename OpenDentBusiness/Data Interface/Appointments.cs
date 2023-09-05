@@ -5524,19 +5524,32 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Helper method that deletes appointments and inserts a security log.
-		///This method is called when PrefName.ApptsRequireProc is enabled and a user moves all procs off of planned appt(s) to another appt.
+		///This method is called when PrefName.ApptsRequireProc is enabled and a user moves all procs off of appt(s) to another appt.
 		///This method does not verify the preference state or the appointment types.</summary>
-		public static void DeleteEmptyPlannedAppts(List<long> listAptNumsToDelete,long patNum) {
+		public static void DeleteEmptyAppts(List<long> listAptNumsToDelete,long patNum) {
 			//We have finished saving this appointment. We can now safely delete the unscheduled appointments marked for deletion.
 			if(listAptNumsToDelete.Count > 0) {
-				Delete(listAptNumsToDelete);
+				List<Appointment> listAppointmentsToDelete=Appointments.GetMultApts(listAptNumsToDelete); //Get appointments to use procedure and date info.
 				//Nathan asked for a specific log entry message explaining why each apt was deleted.
 				List<long> listAptNumsToDeleteDistinct=listAptNumsToDelete.Distinct().ToList();
 				for(int i=0;i<listAptNumsToDeleteDistinct.Count;i++) {
-					SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit, patNum
-						, "All procedures were moved off of the appointment, resulting in its deletion."
-						, listAptNumsToDeleteDistinct[i], DateTime.MinValue);
+					Appointment appointment=listAppointmentsToDelete.FirstOrDefault(x=>x.AptNum==listAptNumsToDeleteDistinct[i]);
+					if(appointment==null){
+						continue;
+					}
+					string message="All procedures (" + appointment.ProcDescript + ") were moved off of";
+					if(appointment.AptStatus==ApptStatus.Planned){
+						message+=" a planned appointment";
+					}
+					else{
+						string strAptDate=appointment.AptDateTime.ToShortDateString();
+						message+=" the appointment on " + strAptDate;
+					}
+					message+=", resulting in its deletion.";
+					//"All procedures ([proc abbreviations]) were moved off of [a planned appointment|the appointment on [appt date]], resulting in its deletion."
+					SecurityLogs.MakeLogEntry(Permissions.AppointmentEdit, patNum, message, listAptNumsToDeleteDistinct[i], DateTime.MinValue);
 				}
+				Delete(listAptNumsToDelete);
 			}
 		}
 		#endregion

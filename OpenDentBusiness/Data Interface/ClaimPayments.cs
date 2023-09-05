@@ -184,6 +184,20 @@ namespace OpenDentBusiness{
 			return Crud.ClaimPaymentCrud.SelectOne(command);
 		}
 
+		///<summary>Gets a list of ClaimPayments from the db. Returns an empty list if not found.</summary>
+		public static List<ClaimPayment> GetClaimPaymentsForApi(int limit,int offset,DateTime secDateTEdit) {
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
+				return Meth.GetObject<List<ClaimPayment>>(MethodBase.GetCurrentMethod(),limit,offset,secDateTEdit);
+			}
+			string command="SELECT * FROM claimpayment ";
+			if(secDateTEdit>DateTime.MinValue) {
+				command+="WHERE SecDateTEdit >="+POut.DateT(secDateTEdit)+" ";
+			}
+			command+="ORDER BY ClaimPaymentNum DESC "
+				+"LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
+			return Crud.ClaimPaymentCrud.SelectMany(command);
+		}
+
 		///<summary>Returns the number of partial batch insurance payments or if there are any claimprocs with status Received that have InsPayAmts but 
 		///are not associated to a claim payment. Used to warn users that reports will be inaccurate until insurance payments are finalized.</summary>
 		public static int GetPartialPaymentsCount() {

@@ -465,7 +465,7 @@ namespace SlowQueryTool {
 
 		private string ExtractUserName(string line){
 			try { 
-				return line.Substring(line.IndexOf(":")+1, line.IndexOf("[") - line.IndexOf(":")+1).Trim();
+				return line.Substring(line.IndexOf(":")+1, line.IndexOf("[") - (line.IndexOf(":")+1)).Trim();
 			}
 			catch {
 				throw new Exception("Could not parse user name for one of the queries.");

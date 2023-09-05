@@ -441,6 +441,14 @@ namespace OpenDental{
 				MsgBox.Show(this,"All status options on the left must be set.");
 				return;
 			}
+			for(int i = 0;i<gridMain.ListGridRows.Count;i++) {
+				int index =gridMain.Columns.GetIndex(Lan.g("TableRecallMsgs","Message"));
+				string errorText=PrefC.GetFirstShortURL(gridMain.ListGridRows[i].Cells[index].Text);
+				if(!string.IsNullOrWhiteSpace(errorText)) {
+					MsgBox.Show(this,Lan.g(this,"Message cannot contain the URL")+" "+errorText+" "+Lan.g(this,"as this is only allowed for eServices."));
+					return;
+				}
+			}
 			//End of Validation
 			if(Prefs.UpdateString(PrefName.RecallPostcardsPerSheet,textPostcardsPerSheet.Text)) {
 				if(textPostcardsPerSheet.Text=="1") {

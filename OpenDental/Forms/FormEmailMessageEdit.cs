@@ -769,7 +769,7 @@ namespace OpenDental {
 		///<summary>Checks to make sure there's a value in the From and To address text boxes. If isSecureEmail is true, will also check if there's a value in the Subject line</summary>
 		private bool ValidateFieldsForSend(bool isSecureEmail=false) {
 			StringBuilder error=new StringBuilder();
-			if(emailPreview.FromAddress==""){ 
+			if(emailPreview.FromAddress=="") {
 				error.AppendLine(Lan.g(this,"Sender address is required."));
 			}
 			if(emailPreview.ToAddress=="" && emailPreview.CcAddress=="" && emailPreview.BccAddress=="") {
@@ -778,12 +778,9 @@ namespace OpenDental {
 			if(isSecureEmail && string.IsNullOrWhiteSpace(emailPreview.Subject)) {
 				error.AppendLine(Lan.g(this,"Subject line is required."));
 			}
-			List<string> listRedirectShortURLs=PrefC.GetString(PrefName.RedirectShortURLsFromHQ).Split(',').ToList();
-			for(int i=0;i<listRedirectShortURLs.Count;i++) {
-				string url=listRedirectShortURLs[i];
-				if(!url.IsNullOrEmpty() && emailPreview.BodyText.Contains(url)) {
-					error.AppendLine(Lan.g(this,"Email message cannot contain the URL "+url+" as this is only allowed for eServices."));
-				}
+			string errorText=PrefC.GetFirstShortURL(emailPreview.BodyText);
+			if(!string.IsNullOrWhiteSpace(errorText)) {
+				error.AppendLine(Lan.g(this,"Message cannot contain the URL")+" "+errorText+" "+Lan.g(this,"as this is only allowed for eServices."));
 			}
 			string errorMsg=error.ToString();
 			if(!string.IsNullOrWhiteSpace(errorMsg)) {
@@ -960,7 +957,7 @@ namespace OpenDental {
 			if(emailAddressSender==null) {
 				return;
 			}
-			SaveMsg();//wires UI into _emailMessage and inserts/updates db.			
+			SaveMsg();//wires UI into _emailMessage and inserts/updates db.
 			string toAddress=emailPreview.ToAddress;
 			ProgressOD progressOD=new ProgressOD();
 			//Send the Email
@@ -1030,6 +1027,5 @@ namespace OpenDental {
 				EmailMessages.Delete(_emailMessage);
 			}
 		}
-
 	}
 }

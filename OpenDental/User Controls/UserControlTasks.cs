@@ -1346,7 +1346,12 @@ namespace OpenDental {
 			}
 			else {
 				int tasksNewCount=_listTaskLists.Sum(x => x.NewTaskCount);
-				tasksNewCount+=_listTasks.Sum(x => x.TaskStatus==TaskStatusEnum.New?1:0);
+				if(PrefC.GetBool(PrefName.TasksNewTrackedByUser)) {
+					tasksNewCount+=_listTasks.Count(x => x.IsUnread);
+				}
+				else {
+					tasksNewCount+=_listTasks.Count(x => x.TaskStatus==TaskStatusEnum.New);
+				}
 				ControlParentTitle=Lan.g(this,"Tasks")+" - "+taskListDescript+" ("+tasksNewCount.ToString()+")";
 			}
 			FillGridEvent.Invoke(this,new EventArgs());

@@ -532,7 +532,7 @@ namespace OpenDental {
 			IsRaw=checkIsRaw.Checked;
 			if(!IsRaw) {//do not validate for Raw emails. User is responsible for all validation themselves. 
 				if(!MarkupL.ValidateMarkup(textContentEmail,isForSaving:true,showMsgBox:true,isEmail:true)) {
-					_isInvalidPreview=true;				
+					_isInvalidPreview=true;
 					return;
 				}
 				if(_isInvalidPreview) {
@@ -552,13 +552,10 @@ namespace OpenDental {
 				MsgBox.Show(this,"Email must contain the \"[EmailDisclaimer]\" tag.");
 				return;
 			}
-			List<string> listRedirectShortURLs=PrefC.GetString(PrefName.RedirectShortURLsFromHQ).Split(',').ToList();
-			for(int i=0;i<listRedirectShortURLs.Count;i++) {
-				string url=listRedirectShortURLs[i];
-				if(!url.IsNullOrEmpty() && textContentEmail.Text.Contains(url)) {
-					MsgBox.Show(this,"Email message cannot contain the URL "+url+" as this is only allowed for eServices.");
-					return;
-				}
+			string errorText=PrefC.GetFirstShortURL(textContentEmail.Text);
+			if(!string.IsNullOrWhiteSpace(errorText)) {
+				MsgBox.Show(this,Lan.g(this,"Message cannot contain the URL")+" "+errorText+" "+Lan.g(this,"as this is only allowed for eServices."));
+				return;
 			}
 			HtmlText=webBrowserEmail.DocumentText;
 			MarkupText=textContentEmail.Text;

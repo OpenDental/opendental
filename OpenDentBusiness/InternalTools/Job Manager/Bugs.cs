@@ -346,6 +346,12 @@ namespace OpenDentBusiness{
 				case "SETHW":
 					bugUser=122;
 					break;
+				case "IRENED":
+					bugUser=124;
+					break;
+				case "NICKC":
+					bugUser=126;
+					break;
 				default:
 					bugUser=2;//Tech Support
 					break;

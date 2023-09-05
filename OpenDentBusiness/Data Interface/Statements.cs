@@ -231,7 +231,7 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Returns an email message for the patient based on the statement passed in.</summary>
-		public static EmailMessage GetEmailMessageForStatement(Statement stmt,Patient pat) {
+		public static EmailMessage GetEmailMessageForStatement(Statement stmt,Patient pat,EmailAddress fromAddress=null) {
 			if(stmt.PatNum!=pat.PatNum) {
 				string logMsg=Lans.g("Statements","Mismatched PatNums detected between current patient and current statement:")+"\r\n"
 					+Lans.g("Statements","Statement PatNum:")+" "+stmt.PatNum+" "+Lans.g("Statements","(assumed correct)")+"\r\n"
@@ -242,7 +242,10 @@ namespace OpenDentBusiness {
 			EmailMessage message=new EmailMessage();
 			message.PatNum=pat.PatNum;
 			message.ToAddress=pat.Email;
-			EmailAddress emailAddress=EmailAddresses.GetByClinic(pat.ClinicNum);
+			EmailAddress emailAddress=fromAddress;
+			if(emailAddress==null) {
+				emailAddress=EmailAddresses.GetByClinic(pat.ClinicNum);
+			}
 			message.FromAddress=EmailAddresses.OverrideSenderAddressClinical(emailAddress,pat.ClinicNum).GetFrom();
 			string str;
 			if(stmt.EmailSubject!=null && stmt.EmailSubject!="") {
@@ -701,13 +704,8 @@ namespace OpenDentBusiness {
 		public static Statement CreateLimitedStatement(List<long> listPatNumsSelected,long patNum,List<long> listPayClaimNums,List<long> listAdjustments,
 			List<long> listPayNums,List<long> listProcedures,List<long> listPayPlanChargeNums,long superFamily=0,EnumLimitedCustomFamily limitedCustomFamily=EnumLimitedCustomFamily.None)
 		{
-			Statement stmt =new Statement();
-			if(listPatNumsSelected.Count==1) {
-				stmt.PatNum=listPatNumsSelected[0];
-			}
-			else {
-				stmt.PatNum=patNum;
-			}
+			Statement stmt=new Statement();
+			stmt.PatNum=patNum;
 			stmt.DateSent=DateTime.Today;
 			stmt.IsSent=false;
 			stmt.Mode_=StatementMode.InPerson;

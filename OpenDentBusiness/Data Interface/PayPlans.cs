@@ -106,12 +106,16 @@ namespace OpenDentBusiness{
 			List<Adjustment> listAdjForProcs=Adjustments.GetForProcs(listProcedureLinkFKeys);
 			List<PaySplit> listSplitsForProcs=PaySplits.GetPaySplitsFromProcs(listProcedureLinkFKeys);
 			List<PaySplit> listSplitsForAdjustments=PaySplits.GetForAdjustments(listAdjustmentLinkFKeys);
+			List<PayPlan> listPayPlans=GetMany(listPayPlanNums.ToArray());
 			#endregion Get Data
 			List<long> listPayPlansOvercharged=new List<long>();
-			foreach(long payPlanNum in listPayPlanNums) {
-				List<PayPlanLink> listLinksForPayPlan=listPayPlanLinksAll.FindAll(x => x.PayPlanNum==payPlanNum);
+			foreach(PayPlan payPlan in listPayPlans) {
+				if(payPlan.DatePayPlanStart.Date>DateTime.Now.Date) {
+					continue;
+				}
+				List<PayPlanLink> listLinksForPayPlan=listPayPlanLinksAll.FindAll(x => x.PayPlanNum==payPlan.PayPlanNum);
 				//Get total amount that has been debited for the current pay plan thus far.
-				decimal amtDebitedTotal=listPayPlanCharges.FindAll(x => x.PayPlanNum==payPlanNum && x.ChargeType==PayPlanChargeType.Debit)
+				decimal amtDebitedTotal=listPayPlanCharges.FindAll(x => x.PayPlanNum==payPlan.PayPlanNum && x.ChargeType==PayPlanChargeType.Debit)
 					.Sum(x => (decimal)x.Principal);
 				#region Sum Linked Production
 				decimal totalPrincipalForPayPlan=0;
@@ -145,7 +149,7 @@ namespace OpenDentBusiness{
 				#endregion Sum Linked Production
 				//If the total that has been debited thus far exceeds the total principal for the pay plan, it is overcharged.
 				if(CompareDecimal.IsGreaterThan(amtDebitedTotal,totalPrincipalForPayPlan)) {
-					listPayPlansOvercharged.Add(payPlanNum);
+					listPayPlansOvercharged.Add(payPlan.PayPlanNum);
 				}
 			}
 			return GetMany(listPayPlansOvercharged.ToArray()).FindAll(x => x.IsDynamic);
@@ -818,6 +822,21 @@ namespace OpenDentBusiness{
 				return false;
 			}
 			return true;
+		}
+
+		public static string GetChangeLog(List<string> listChanges) {
+			string log="";
+			for(int i=0;i<listChanges.Count;i++) {
+				if(i > 0) {
+					log+=", ";
+				}
+				if(i==listChanges.Count-1 && listChanges.Count!=1) {
+					log+="and ";
+				}
+				log+=listChanges[i];
+			}
+			log+=" changed.";
+			return log;
 		}
 		#endregion
 
