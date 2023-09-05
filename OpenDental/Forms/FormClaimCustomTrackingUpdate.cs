@@ -57,6 +57,7 @@ namespace OpenDental {
 			}
 			textNotes.Text=claimTracking?.Note??"";
 			FillComboErrorCode();
+			SetTextErrorDesc();
 		}
 
 		private void FillComboErrorCode() {
@@ -81,13 +82,16 @@ namespace OpenDental {
 			}
 		}
 
-		private void comboErrorCode_SelectionChangeCommitted(object sender,EventArgs e) {
-			if((!comboErrorCode.Enabled) || comboErrorCode.GetSelected<Def>()==null) {
-				textErrorDesc.Text="";
-			}
-			else {
+		///<summary>Sets the read-only textbox with the description of the selected ClaimErrorCode.</summary>
+		private void SetTextErrorDesc() {
+			textErrorDesc.Text="";
+			if(comboErrorCode.Enabled && comboErrorCode.GetSelected<Def>()!=null) {
 				textErrorDesc.Text=comboErrorCode.GetSelected<Def>().ItemValue.ToString();
-			}	
+			}
+		}
+
+		private void comboErrorCode_SelectionChangeCommitted(object sender,EventArgs e) {
+			SetTextErrorDesc();
 		}
 
 		private void butUpdate_Click(object sender,EventArgs e) {

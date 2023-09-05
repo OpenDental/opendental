@@ -855,6 +855,11 @@ namespace OpenDental {
 					return;
 				}
 			}
+			string errorText=PrefC.GetFirstShortURL(textReply.Text);
+			if(!string.IsNullOrWhiteSpace(errorText)) {
+				MsgBox.Show(this,Lan.g(this,"Message cannot contain the URL")+" "+errorText+" "+Lan.g(this,"as this is only allowed for eServices."));
+				return;
+			}
 			//Verify that the highlighted blue rows and grey selected row match before allowing the user to send the message.
 			//This was happening for the user due to the way ODGrid.CellClick functions.  This issue should now be fixed, but this is a catch-all
 			//to ensure that it is impossible for the user to send to the wrong patient due to invalid selections.

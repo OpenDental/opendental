@@ -475,6 +475,23 @@ namespace OpenDentBusiness {
 				return GetInt(PrefName.SecurityLogOffAfterMinutes);
 			}
 		}
+
+		/// <summary>Returns the first short URL found, or an empty string if none are found.</summary>
+		public static string GetFirstShortURL(string msgBodyText) {
+			return GetFirstShortURL(ListTools.FromSingle(msgBodyText));
+		}
+
+		/// <summary>Returns the first short URL found, or an empty string if none are found.</summary>
+		public static string GetFirstShortURL(List<string> listMsgBodyText) {
+			List<string> listRedirectShortURLs=PrefC.GetString(PrefName.RedirectShortURLsFromHQ).Split(',').ToList();
+			for(int i = 0;i<listMsgBodyText.Count;i++) {
+				string retVal=listRedirectShortURLs.Find(x=>listMsgBodyText[i].Contains(x));
+				if (!string.IsNullOrEmpty(retVal)) {
+					return retVal;
+				}
+			}
+			return "";
+		}
 		
 		///<summary>A helper class to get Reporting Server preferences.</summary>
 		public static class ReportingServer {
@@ -592,6 +609,5 @@ namespace OpenDentBusiness {
 				}
 			}
 		}
-
 	}
 }

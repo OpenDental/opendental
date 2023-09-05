@@ -23,6 +23,8 @@ namespace OpenDental {
 			InitializeComponent();
 		}
 
+		public string TemplateSms { get {return textTemplateSms.Text;} }
+
 		public ApptReminderRule Rule { get; }
 
 		private void butEditEmail_Click(object sender,EventArgs e) {

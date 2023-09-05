@@ -67,9 +67,13 @@ namespace OpenDental {
 					return;
 				}
 			}
+			string errorText=PrefC.GetFirstShortURL(textMain.Text);
+			if(!string.IsNullOrWhiteSpace(errorText)) {
+				MsgBox.Show(this,"Message cannot contain the URL "+errorText+" as this is only allowed for eServices.");
+				return;
+			}
 			MessageVal=textMain.Text;
 			IsDialogOK=true;
 		}
-		
 	}
 }

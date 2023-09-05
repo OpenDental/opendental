@@ -283,24 +283,29 @@ namespace OpenDental {
 				MessageBox.Show(Lan.g(this,"Please run query first"));
 				return;
 			}
-			string fileName=textTitle.Text;
-			if(string.IsNullOrEmpty(fileName)) {
-				fileName="queryexport.txt";
+			string filePath;
+			saveFileDialog2=new SaveFileDialog {
+				AddExtension=true,
+				Filter="Text files(*.txt)|*.txt|Excel Files(*.xls)|*.xls|All files(*.*)|*.*",
+				FilterIndex=0
+			};
+			if(_userQuery==null || _userQuery.FileName==null || _userQuery.FileName==""){//.FileName==null)
+				saveFileDialog2.FileName=textTitle.Text;
 			}
-			string filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),fileName);
+			else{
+				saveFileDialog2.FileName=_userQuery.FileName;
+			}
 			if(ODBuild.IsWeb()) {
-				//file download dialog will come up later, after file is created.
+				if(saveFileDialog2.ShowDialog()!=DialogResult.OK) { 
+					return;
+				}
+				if(saveFileDialog2.FileName.IsNullOrEmpty()) {
+					MsgBox.Show("Failed to save the file.");
+					return;
+				}
+				filePath=ODFileUtils.CombinePaths(Path.GetTempPath(),saveFileDialog2.FileName.Split('\\').Last());
 			}
 			else {
-				saveFileDialog2=new SaveFileDialog();
-				saveFileDialog2.AddExtension=true;
-				//saveFileDialog2.Title=Lan.g(this,"Select Folder to Save File To");
-				if(_userQuery==null || _userQuery.FileName==null || _userQuery.FileName==""){//.FileName==null)
-					saveFileDialog2.FileName=textTitle.Text;
-				}
-				else{
-					saveFileDialog2.FileName=_userQuery.FileName;
-				}
 				if(!Directory.Exists(PrefC.GetString(PrefName.ExportPath))) {
 					try {
 						Directory.CreateDirectory(PrefC.GetString(PrefName.ExportPath));
@@ -311,9 +316,6 @@ namespace OpenDental {
 					}
 				}
 				else saveFileDialog2.InitialDirectory=PrefC.GetString(PrefName.ExportPath);
-				//saveFileDialog2.DefaultExt="txt";
-				saveFileDialog2.Filter="Text files(*.txt)|*.txt|Excel Files(*.xls)|*.xls|All files(*.*)|*.*";
-				saveFileDialog2.FilterIndex=0;
 				if(saveFileDialog2.ShowDialog()!=DialogResult.OK) {
 					saveFileDialog2.Dispose();
 					return;

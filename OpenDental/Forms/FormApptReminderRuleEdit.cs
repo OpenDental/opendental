@@ -434,6 +434,9 @@ namespace OpenDental {
 			if(!ValidateRule()) {
 				return;
 			}
+			if(ContainsShortURLs()) {
+				return;
+			}
 			TimeSpan timeSpanPrior=new TimeSpan(PIn.Int(textDays.Text,false),PIn.Int(textHours.Text,false),0,0);
 			if(ApptReminderRuleCur.TypeCur==ApptReminderType.PatientPortalInvite && !radioBeforeAppt.Checked) {
 				timeSpanPrior=timeSpanPrior.Negate();
@@ -547,6 +550,19 @@ namespace OpenDental {
 				return false;
 			}
 			return true;
+		}
+
+		private bool ContainsShortURLs() {
+			List<string> listTemplateBodyText=new List<string>();
+			for(int i = 0;i<tabControl.TabPages.Count;i++) {
+				listTemplateBodyText.AddRange(tabControl.TabPages[i].Controls.OfType<UserControlReminderMessage>().Select(x => x.TemplateSms));
+			}
+			string errorText=PrefC.GetFirstShortURL(listTemplateBodyText);
+			if(!string.IsNullOrWhiteSpace(errorText)) {
+				MsgBox.Show(this,Lan.g(this,"Message cannot contain the URL")+" "+errorText+" "+Lan.g(this,"as this is only allowed for eServices."));
+				return true;
+			}
+			return false;
 		}
 
 		private void checkSendAll_CheckedChanged(object sender,EventArgs e) {

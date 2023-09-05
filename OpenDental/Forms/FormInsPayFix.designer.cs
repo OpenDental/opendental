@@ -31,7 +31,7 @@ namespace OpenDental{
 			// 
 			// textBoxDescript
 			// 
-			this.textBoxDescript.BackColor = System.Drawing.SystemColors.Control;
+			this.textBoxDescript.BackColor = System.Drawing.SystemColors.Window;
 			this.textBoxDescript.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.textBoxDescript.Location = new System.Drawing.Point(12, 12);
 			this.textBoxDescript.Multiline = true;

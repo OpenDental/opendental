@@ -1134,7 +1134,7 @@ namespace OpenDental{
 			_isHeadingPrinted=false;
 			PrinterL.TryPrintOrDebugRpPreview(pd2_PrintPage,
 				Lan.g(this,"Claim history list printed"),
-				margins:new Margins(0,0,0,0),
+				margins:new Margins(0,0,0,100),
 				printoutOrigin:PrintoutOrigin.AtMargin,
 				printoutOrientation:PrintoutOrientation.Landscape
 			);

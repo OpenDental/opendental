@@ -181,7 +181,7 @@ namespace OpenDental {
 			}
 			else {//Add an adjustment for every procedure selected.
 				List<Procedure> listCompleteProcs=listProcedures.FindAll(x=>x.ProcStatus==ProcStat.C);
-				//If the user does not have permission to add adjustments to any of the selected procedures, show an error message and  return false.
+				//If the user does not have permission to add adjustments to any of the selected procedures, show an error message and return false.
 				if(listCompleteProcs.Count()>0) {
 					if(!listCompleteProcs.All(x => Security.IsAuthorized(Permissions.ProcCompleteAddAdj,Procedures.GetDateForPermCheck(x), suppressMessage:true))) 
 					{ 
@@ -195,6 +195,9 @@ namespace OpenDental {
 					ProcAdjs procAdjs=_listProcAdjs.First(x => x.ProcedureCur==listProcedures[i]);
 					Adjustment adjustment=GetAdjFromUI(procedureSelected: listProcedures[i],
 						listAdjustmentsRelated: procAdjs.ListAccountEntryAdjustments.Select(x => (Adjustment)x.Tag).ToList());//Get the new adjustment to be added from the UI.
+					if((double)procAdjs.AccountEntryProc.AmountEnd<=0 && adjustment.AdjAmt>0) {
+						continue;
+					}
 					double adjustmentAmtTotal=_listAdjustments.FindAll(x => x.ProcNum==listProcedures[i].ProcNum).Sum(x => x.AdjAmt);//Get the sum of all new adjustments.
 					//If user is adding a negative adjustment to a procedure that is already overpaid, place the new adjustment in a separate list for now if the 
 					//AdjustmentBlockNegativeExceedingPatPortion pref is set to someting other than allow.

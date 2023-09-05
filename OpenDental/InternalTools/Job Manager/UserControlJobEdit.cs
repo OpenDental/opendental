@@ -1186,7 +1186,28 @@ namespace OpenDental.InternalTools.Job_Manager {
 			textJobEditor.ReadOnlyRequirementsGrid=true;
 			comboProject.Enabled=false;
 			textDateTested.ReadOnly=true;
+			comboJobTeam.Enabled=true;
+			butVersionPrompt.Enabled=true;
+			butTimeLog.Enabled=true;
+			butAddTime.Enabled=true;
+			comboProposedVersion.Enabled=true;
+			butChangeEst.Enabled=true;
+			butTested.Enabled=true;
+			textTestingHours.Enabled=true;
+			checkNotTested.Enabled=true;
+			comboPriorityTesting.Enabled=true;
 			if(_jobCur==null) {
+				comboJobTeam.Enabled=false;
+				butVersionPrompt.Enabled=false;
+				butTimeLog.Enabled=false;
+				butAddTime.Enabled=false;
+				comboProposedVersion.Enabled=false;
+				textEditorDocumentation.ReadOnly=true;
+				butChangeEst.Enabled=false;
+				butTested.Enabled=false;
+				textTestingHours.Enabled=false;
+				checkNotTested.Enabled=false;
+				comboPriorityTesting.Enabled=false;
 				return;
 			}
 			if(JobPermissions.IsAuthorized(JobPerm.Quote,true) && _jobOld.PhaseCur!=JobPhase.Complete && _jobOld.PhaseCur!=JobPhase.Cancelled) {
@@ -3599,7 +3620,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 		}
 
 		private void gridCustomers_TitleAddClick(object sender,EventArgs e) {
-			if(_isLoading) {
+			if(_isLoading || _jobCur==null) {
 				return;
 			}
 			using FormPatientSelect FormPS=new FormPatientSelect();
@@ -3736,7 +3757,7 @@ namespace OpenDental.InternalTools.Job_Manager {
 		}
 
 		private void gridAppointments_TitleAddClick(object sender,EventArgs e) {
-			if(_isLoading) {
+			if(_isLoading || _jobCur==null) {
 				return;
 			}
 			using FormPatientSelect FormPS=new FormPatientSelect();

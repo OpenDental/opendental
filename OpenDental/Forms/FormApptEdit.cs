@@ -2667,7 +2667,7 @@ namespace OpenDental{
 			}
 			#endregion Broken Appt Logic
 			#region Cleanup Empty Apts
-			Appointments.DeleteEmptyPlannedAppts(listAptNums_ToDelete, _appointment.PatNum);
+			Appointments.DeleteEmptyAppts(listAptNums_ToDelete, _appointment.PatNum);
 			#endregion
 			return true;
 		}

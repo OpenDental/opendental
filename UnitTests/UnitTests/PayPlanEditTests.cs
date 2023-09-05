@@ -1381,6 +1381,45 @@ namespace UnitTests.PayPlanEdit_Tests {
 			Assert.AreEqual(28,totalInUnearned);
 			Assert.AreEqual(0,totalDPPUnearned);
 		}
+
+		[TestMethod]
+		public void PayPlanEdit_ApplyPrepaymentToDynamicPaymentPlan_ExtraHiddenUnearned_CloseOut_MoveToRegularUnearned() {
+			/*--------------------------------------------------------------------------
+			 * Dynamic Payment Plan with 1 procedures $100.
+			 * Make a $200 payment plan prepayment.
+			 * Issue first months charge. Payments of 100.
+			 * Apply the charges to the first months charge of $100.
+			 * Close out the dynamic payment plan. 
+			 * Assert that the close out transfers the remaining hidden unearned to regular unearned so the user can use the income transfer.
+			 *--------------------------------------------------------------------------*/
+
+			//set up payment plan
+			Patient pat=PatientT.CreatePatient(MethodBase.GetCurrentMethod().Name);
+			Family fam=Patients.GetFamily(pat.PatNum);
+			long provNum=ProviderT.CreateProvider("LS");
+
+			//create the produciton that will be attached to the payment plan with the 
+			List<Procedure> listProcs=new List<Procedure>();
+			List<Adjustment> listAdjs=new List<Adjustment>();
+			listProcs.Add(ProcedureT.CreateProcedure(pat,"D0220",ProcStat.C,"",100,DateTime.Today.AddMonths(1)));
+			PayPlan dynamicPayPlan=PayPlanT.CreateDynamicPaymentPlan(pat.PatNum,pat.PatNum,DateTime.Today,0,0,100,listProcs,listAdjs
+				,PayPlanFrequency.Monthly,dateInterestStart:DateTime.Today,dynamicPayPlanTPOptions:DynamicPayPlanTPOptions.TreatAsComplete);
+
+			//Create a DynamicPayPlanPrePayment of $200. 
+			long prepayUnearnedType=PrefC.GetLong(PrefName.DynamicPayPlanPrepaymentUnearnedType);
+			Payment paymentDynamicPrePay=PaymentT.MakePayment(pat.PatNum,200,payDate:DateTime.Now,procNum:listProcs[0].ProcNum,payPlanNum:dynamicPayPlan.PayPlanNum,unearnedType:prepayUnearnedType);
+			List<PayPlanCharge> listPayPlanCharges=PayPlanCharges.GetForPayPlan(dynamicPayPlan.PayPlanNum);
+
+			//Apply the prepayment to the dynamic payplan
+			PayPlanEdit.ApplyPrepaymentToDynamicPaymentPlan(pat.PatNum,paymentDynamicPrePay.PayAmt,listPayPlanCharges);
+
+			//Close the plan out and verify that all prepayments were moved to the charges.
+			PayPlanT.CloseDynamicPaymentPlan(dynamicPayPlan,fam);
+			List<PaySplit> listUnearned=PaySplits.GetUnearnedForAccount(new List<long> {pat.PatNum});
+
+			//Assert that the dynamic prepayment amounts were transfers to regular unearned.
+			Assert.AreEqual(0,listUnearned.FindAll(x => x.UnearnedType==prepayUnearnedType).Sum(x => x.SplitAmt));
+		}
 		#endregion
 		#region Dynamic Payment Plan Charge issuer
 		[TestMethod]

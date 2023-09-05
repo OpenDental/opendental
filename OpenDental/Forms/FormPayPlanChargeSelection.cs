@@ -72,11 +72,14 @@ namespace OpenDental {
 					return;
 				}
 				if(formPayPlanChargeEdit.PayPlanChargeCur==null) {
-					_listPayPlanCharges.RemoveAt(listBoxPayPlanCharges.SelectedIndex);
 					PayPlanCharges.Delete(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex]);
+					_listPayPlanCharges.RemoveAt(listBoxPayPlanCharges.SelectedIndex);
+					SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,"Deleted.");
 				}
 				else {
 					PayPlanCharges.Update(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex],payPlanChargeOld);
+					string log=PayPlans.GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
+					SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,log);
 				}
 				FillListBox();//Refreshes the list box
 			}
@@ -93,6 +96,7 @@ namespace OpenDental {
 				_listPayPlanCharges[i].Interest=0;
 				PayPlanCharges.Update(_listPayPlanCharges[i],payPlanChargeOld);
 			}
+			SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,"Principal and interest zeroed out.");
 		}
 
 		private void butOK_Click(object sender,EventArgs e) {
@@ -106,9 +110,12 @@ namespace OpenDental {
 				if(formPayPlanChargeEdit.PayPlanChargeCur==null) {
 					_listPayPlanCharges.RemoveAt(listBoxPayPlanCharges.SelectedIndex);
 					PayPlanCharges.Delete(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex]);
+					SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,"Deleted.");
 				}
 				else {
 					PayPlanCharges.Update(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex],payPlanChargeOld);
+					string log=PayPlans.GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
+					SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,log);
 				}
 				FillListBox();//Refreshes the list box
 			}

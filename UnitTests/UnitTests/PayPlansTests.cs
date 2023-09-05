@@ -67,6 +67,33 @@ namespace UnitTests.PayPlans_Tests {
 			Assert.AreEqual(0,listOverPaidDPP.Count);
 		}
 
+		///<summary>Ensures that running GetOverPaidPayPlans will return false if the plan start date is in the future.</summary>
+		[TestMethod]
+		public void PayPlans_GetOverChargedPayPlans_PayPlanStartDateInTheFuture() {
+			//Setup
+			long provNum=ProviderT.CreateProvider("LS");
+			Patient pat=PatientT.CreatePatient(fName:"Austin",lName:"Patient",priProvNum:provNum);
+			Carrier carrier=CarrierT.CreateCarrier("Blue Cross");
+			InsPlan insplan=InsPlanT.CreateInsPlan(carrier.CarrierNum);
+			InsuranceInfo insInfo=InsuranceT.AddInsurance(pat,carrier.CarrierName);
+			InsSubT.CreateInsSub(pat.PatNum,insplan.PlanNum,insInfo.PriInsSub.SubscriberID);
+			Procedure proc=ProcedureT.CreateProcedure(pat,"D0220",ProcStat.C,"",4100,DateTime.Today.AddMonths(-1),provNum:provNum);
+			Benefit benefit=BenefitT.CreatePercentForProc(insInfo.PriInsPlan.PlanNum,proc.CodeNum,50);
+			insInfo.AddBenefit(benefit);
+			insInfo.ListAllProcs=Procedures.Refresh(pat.PatNum);
+			//Make a dynamic payment plan where the entire amount of the procedure is due right now (today).
+			PayPlan dynamicPayPlan=PayPlanT.CreateDynamicPaymentPlan(pat.PatNum,pat.Guarantor,DateTime.Today,0,0,2051,
+				insInfo.ListAllProcs,new List<Adjustment>{ });
+			List<PayPlanCharge> listPayPlanCharges=PayPlanCharges.GetForPayPlan(dynamicPayPlan.PayPlanNum);
+			Assert.AreEqual(1,listPayPlanCharges.Count);
+			//Update the charge start date to sometime in the future. Doing it after above so the helper methods creates payplan charges correctly.
+			dynamicPayPlan.DatePayPlanStart=DateTime.Today.AddDays(4);
+			PayPlans.Update(dynamicPayPlan);
+			//Payment plan should not be overpaid.
+			List<PayPlan> listOverPaidDPP=PayPlans.GetOverChargedPayPlans(new List<long>{dynamicPayPlan.PayPlanNum});
+			Assert.AreEqual(0,listOverPaidDPP.Count);
+		}
+
 		///<summary>Ensures that running GetOverPaidPayPlans correctly discerns when a PayPlan is not overpaid then fails to return it.</summary>
 		[TestMethod]
 		public void PayPlans_GetOverpaidPayPlans_DoesNotReturnPropperlyPaidPayPlan() {

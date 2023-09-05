@@ -406,8 +406,8 @@ namespace DataConnectionBase {
 		public DataConnection(string database) : this(ServerName,database,MysqlUser,MysqlPass,DBtype) { }
 
 		///<summary>Instantiates a new database connection utilizing the connection variables passed in.</summary>
-		public DataConnection(string serverName,string database,string mysqlUser,string mysqlPass,DatabaseType dtype)
-			: this ("",serverName,database,mysqlUser,mysqlPass,dtype) { }
+		public DataConnection(string serverName,string database,string mysqlUser,string mysqlPass,DatabaseType dtype, string sslCa="")
+			: this ("",serverName,database,mysqlUser,mysqlPass,"","",dtype,false,sslCa) { }
 
 		///<summary>Instantiates a new database connection utilizing the connection variables passed in.
 		///connectStr will be used unless it is null or empty AND serverName is not null.</summary>
@@ -418,7 +418,7 @@ namespace DataConnectionBase {
 		///isLow being true will forcefully use mysqlUserLow and mysqlPassLow when building the connection string for the database connection.
 		///connectStr is never used when isLow is true; however, connectStr will be used unless it is null or empty AND serverName is not null.<summary>
 		public DataConnection(string connectStr,string serverName,string database,string mysqlUser,string mysqlPass,
-			string mysqlUserLow,string mysqlPassLow,DatabaseType dtype,bool isLow)
+			string mysqlUserLow,string mysqlPassLow,DatabaseType dtype,bool isLow,string sslCa="")
 		{
 			#region ODThread Database Context
 			//All new threads that are created will need to know about the database context of their parent thread.
@@ -453,7 +453,10 @@ namespace DataConnectionBase {
 			}
 			//isLow is false so utilize the higher level mysqlUser but only if an invalid connectStr and a valid serverName was passed in.
 			else if(string.IsNullOrEmpty(connectStr) && serverName!=null) {
-				connectStr=BuildSimpleConnectionString(dtype,serverName,database,mysqlUser,mysqlPass);
+				if(sslCa=="") {
+					sslCa=SslCa;
+				}
+				connectStr=BuildSimpleConnectionString(dtype,serverName,database,mysqlUser,mysqlPass,sslCa);
 				ServerNameCur=serverName;
 				UserCur=mysqlUser;
 			}

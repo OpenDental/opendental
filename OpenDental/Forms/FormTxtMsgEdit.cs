@@ -102,6 +102,11 @@ namespace OpenDental {
 				MsgBox.Show(this,"It is not OK to text this patient.");
 				return false;
 			}
+			string errorText=PrefC.GetFirstShortURL(message);
+			if(!string.IsNullOrWhiteSpace(errorText)) {
+				MsgBox.Show(this,Lan.g(this,"Message cannot contain the URL")+" "+errorText+" "+Lan.g(this,"as this is only allowed for eServices."));
+				return false;
+			}
 			if(SmsPhones.IsIntegratedTextingEnabled()) {
 				try {
 					SmsToMobiles.SendSmsSingle(patNum,wirelessPhone,message,clinicNum,smsMessageSource,user:Security.CurUser);  //Can pass in 0 as PatNum if no patient selected.

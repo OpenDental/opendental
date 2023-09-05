@@ -41,11 +41,12 @@ namespace OpenDental{
 		private void FillWidth(){
 			Graphics g=this.CreateGraphics();
 			int width;
+			//Add a 5 pixel buffer for slight variations of font scaling, fonts do not scale with the same ratios that other controls do, so we need some additional space to compensate. Also we don't need to use the LayoutManager.Scale for these 5 pixels since the Grid is already scaling.
 			if(textDescription.Text==""){
-				width=(int)g.MeasureString(textInternalName.Text,_font).Width+1;
+				width=(int)g.MeasureString(textInternalName.Text,_font).Width+5;
 			}
 			else{
-				width=(int)g.MeasureString(textDescription.Text,_font).Width+1;
+				width=(int)g.MeasureString(textDescription.Text,_font).Width+5;
 			}
 			textWidthMin.Text=width.ToString();
 			g.Dispose();

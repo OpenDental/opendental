@@ -159,43 +159,43 @@ namespace OpenDental{
 				return false;
 			}
 			table=FormQuery.MakeReadable(table,null,false);
-			using StreamWriter streamWriter=new StreamWriter(fileName,false);
-			string line="";  
-			for(int i=0;i<letterMerge.Fields.Count;i++){
-				if(letterMerge.Fields[i].StartsWith("referral.")){
-					line+="Ref"+letterMerge.Fields[i].Substring(9);
-				}
-				else{
-					line+=letterMerge.Fields[i];
-				}
-				if(i<letterMerge.Fields.Count-1){
-					line+="\t";
-				}
-			}
 			try{
-				streamWriter.WriteLine(line);
-			}
-			catch{
-				MsgBox.Show(this,"File in use by another program.  Close and try again.");
-				return false;
-			}
-			string cell;
-			for(int i=0;i<table.Rows.Count;i++){
-				line="";
-				for(int j=0;j<table.Columns.Count;j++){
-					cell=table.Rows[i][j].ToString();
-					cell=cell.Replace("\r","");
-					cell=cell.Replace("\n","");
-					cell=cell.Replace("\t","");
-					cell=cell.Replace("\"","");
-					line+=cell;
-					if(j<table.Columns.Count-1){
+				using StreamWriter streamWriter=new StreamWriter(fileName,false);
+				string line="";  
+				for(int i=0;i<letterMerge.Fields.Count;i++){
+					if(letterMerge.Fields[i].StartsWith("referral.")){
+						line+="Ref"+letterMerge.Fields[i].Substring(9);
+					}
+					else{
+						line+=letterMerge.Fields[i];
+					}
+					if(i<letterMerge.Fields.Count-1){
 						line+="\t";
 					}
 				}
 				streamWriter.WriteLine(line);
+				string cell;
+				for(int i=0;i<table.Rows.Count;i++){
+					line="";
+					for(int j=0;j<table.Columns.Count;j++){
+						cell=table.Rows[i][j].ToString();
+						cell=cell.Replace("\r","");
+						cell=cell.Replace("\n","");
+						cell=cell.Replace("\t","");
+						cell=cell.Replace("\"","");
+						line+=cell;
+						if(j<table.Columns.Count-1){
+							line+="\t";
+						}
+					}
+					streamWriter.WriteLine(line);
+				}
+				streamWriter.Close();
 			}
-			streamWriter.Close();
+			catch {
+				MsgBox.Show("File in use by another program.  Close and try again.");
+				return false;
+			}
 			return true;
 		}
 

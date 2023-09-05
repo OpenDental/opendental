@@ -112,6 +112,10 @@ namespace OpenDental {
 
 		public List<string> ValidateTemplates() {
 			List<string> errors=new List<string>();
+			List<string> allTextTemplates=new List<string> { textEmailSubjAggShared.Text, textEmailAggPerAppt.Text, textSMSAggPerAppt.Text, textSMSAggShared.Text, textAggregateAutoReply.Text, textSingleAutoReply.Text, textArrivalResponse.Text, textComeIn.Text };
+			if(ContainsShortURLs(allTextTemplates, out errors)) {
+				return errors;
+			}
 			if(Rule.TypeCur==ApptReminderType.Arrival) {
 				if(string.IsNullOrWhiteSpace(textSMSAggShared.Text)) {
 					errors.Add(groupBoxSMSAggShared.Text+Lan.g(this," cannot be blank."));
@@ -176,6 +180,20 @@ namespace OpenDental {
 				errors.Add(Lan.g(this,"Email must contain the \"[EmailDisclaimer]\" tag."));
 			}
 			return errors;
+		}
+
+		private bool ContainsShortURLs(List<string> allTextTemplates, out List<string> retErrors) {
+			bool retContainsURLs=false;
+			List<string> errors=new List<string>();
+			foreach(string str in allTextTemplates) {
+				string url=PrefC.GetFirstShortURL(str);
+				if(!string.IsNullOrWhiteSpace(url)) {
+					retContainsURLs=true;
+					errors.Add(Lan.g(this,"Message cannot contain the URL")+" "+url+" "+Lan.g(this,"as this is only allowed for eServices."));
+				}
+			}
+			retErrors=errors;
+			return retContainsURLs;
 		}
 
 		///<summary>Validates the AddToCalendar tag. Adds to the error list if the AddToCalendar tag is present but not signed up for eConfirmations</summary>

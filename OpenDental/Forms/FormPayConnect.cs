@@ -700,6 +700,9 @@ namespace OpenDental {
 
 		///<summary>Only call after the form is closed and the DialogResult is DialogResult.OK.</summary>
 		public string GetAmountCharged() {
+			if(TransType==PayConnectService.transType.RETURN) {
+				return PIn.Decimal("-"+textAmount.Text).ToString("F");
+			}
 			return PIn.Decimal(textAmount.Text).ToString("F");
 		}
 
