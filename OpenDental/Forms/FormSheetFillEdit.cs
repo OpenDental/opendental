@@ -1637,6 +1637,13 @@ namespace OpenDental {
 			string filePathAndName=ODFileUtils.CombinePaths(SheetUtil.GetImagePath(),sheetField.FieldName);
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ && File.Exists(filePathAndName)) {
 				Bitmap bitmap=(Bitmap)Image.FromFile(filePathAndName);
+				if (sheetField.Width<=0) {
+					sheetField.Width=bitmap.Width;
+				}
+				if (sheetField.Height<=0) {
+					// maintain aspect ratio in case the sheetfield.width was different from bitmap.width
+					sheetField.Height=(int)Math.Ceiling(1.0f*sheetField.Width/bitmap.Width*bitmap.Height);
+				}
 				sheetField.BitmapLoaded=new Bitmap(bitmap,sheetField.Width,sheetField.Height);
 				bitmap?.Dispose();
 				return;

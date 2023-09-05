@@ -72,10 +72,11 @@ namespace OpenDentBusiness {
 			List<long> listHiddenUnearnedDefNums=ReportsComplex.RunFuncOnReportServer(() => 
 				Defs.GetDefsNoCache(DefCat.PaySplitUnearnedType).FindAll(x => !string.IsNullOrEmpty(x.ItemValue)).Select(x => x.DefNum).ToList()
 			);
-			string command="SELECT FName,LName,MiddleI,PlanNum,Preferred,PlanNum, "
-				+"COALESCE((SELECT SUM(Principal+Interest) FROM payplancharge WHERE payplancharge.PayPlanNum=payplan.PayPlanNum "
-				+"AND payplancharge.ChargeType="+POut.Int((int)PayPlanChargeType.Debit)+" "//for v1, debits are the only ChargeType.
-					+"AND ChargeDate <= "+datesql+@"),0) '_accumDue', ";
+			string command="SELECT COALESCE(guar.FName,pat.FName) FName,COALESCE(guar.LName,pat.LName) LName,COALESCE(guar.MiddleI,pat.MiddleI) MiddleI," 
+				+"PlanNum,COALESCE(guar.Preferred,pat.Preferred) Preferred,PlanNum,COALESCE((SELECT SUM(Principal+Interest) FROM payplancharge " 
+				+"WHERE payplancharge.PayPlanNum=payplan.PayPlanNum AND payplancharge.ChargeType="
+				+POut.Int((int)PayPlanChargeType.Debit)+" "//for v1, debits are the only ChargeType.
+				+"AND ChargeDate <= "+datesql+@"),0) '_accumDue', ";
 			command+="COALESCE((SELECT SUM(Interest) FROM payplancharge WHERE payplancharge.PayPlanNum=payplan.PayPlanNum "
 				+"AND payplancharge.ChargeType="+POut.Int((int)PayPlanChargeType.Debit)+" "//for v1, debits are the only ChargeType.
 					+"AND ChargeDate <= "+datesql+@"),0) '_accumInt', ";
@@ -102,7 +103,7 @@ namespace OpenDentBusiness {
 				+"AND payplancharge.ChargeType="+POut.Int((int)PayPlanChargeType.Credit)+"),0) '_credits', "//for v1, will always be 0.
 				+"COALESCE((SELECT SUM(Principal) FROM payplancharge WHERE payplancharge.PayPlanNum=payplan.PayPlanNum "
 				+"AND payplancharge.ChargeType="+POut.Int((int)PayPlanChargeType.Credit)+" AND ChargeDate > "+datesql+"),0) '_notDue', "
-				+"patient.PatNum PatNum, "
+				+"COALESCE(guar.PatNum,pat.PatNum) PatNum, "
 				+"payplancharge.ProvNum ProvNum ";
 			if(hasClinicsEnabled) {
 				command+=", payplancharge.ClinicNum ClinicNum ";
@@ -114,7 +115,8 @@ namespace OpenDentBusiness {
 					+"AND payplancharge.ChargeType="+POut.Int((int)PayPlanChargeType.Debit)+" "//for v1, debits are the only ChargeType.
 					+"AND ChargeDate <= "+datesql+@"),0) '_interest' "
 				+"FROM payplan "
-				+"LEFT JOIN patient ON patient.PatNum=payplan.Guarantor "
+				+"LEFT JOIN patient guar ON guar.PatNum=payplan.Guarantor "
+				+"INNER JOIN patient pat ON pat.PatNum=payplan.PatNum "
 				+"LEFT JOIN payplancharge ON payplan.PayPlanNum=payplancharge.PayPlanNum "
 				+"LEFT JOIN "
 					//construct dppprincipal (dynamic payment plan principal) table
@@ -224,11 +226,10 @@ namespace OpenDentBusiness {
 				pat.Preferred=raw.Rows[i]["Preferred"].ToString();
 				row["provider"]=Providers.GetLName(PIn.Long(raw.Rows[i]["ProvNum"].ToString()),listProvs);
 				row["guarantor"]=pat.GetNameLF();
-                row["ins"]="";
+				row["ins"]="";
 				if(raw.Rows[i]["PlanNum"].ToString()!="0") {//Is Insurance PayPlan
 					row["ins"]="X";
-                    row["guarantor"]="";
-                }
+				}
 				row["princ"]=princ.ToString("f");
 				row["accumInt"]=interest.ToString("f");
 				row["paid"]=paid.ToString("f");
@@ -243,7 +244,7 @@ namespace OpenDentBusiness {
 					Family famCur=ReportsComplex.RunFuncOnReportServer(() => Patients.GetFamily(PIn.Long(raw.Rows[i]["PatNum"].ToString())));
 					//Prevents UE when attempting to assign from an empty list. This is only possible if the user selects Insurance PayPlans only while
 					//also checking the "Show Family Balance" checkbox - meaning a PayPlan exists but has not patient.
-                    if(famCur.ListPats.Length>0) {
+         if(famCur.ListPats.Length>0) {
 						famBal=(decimal)famCur.ListPats[0].BalTotal;
 						row["famBal"]=(famBal - (decimal)famCur.ListPats[0].InsEst).ToString("F");
 					}

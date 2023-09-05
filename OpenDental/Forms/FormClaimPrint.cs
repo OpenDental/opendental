@@ -117,7 +117,6 @@ namespace OpenDental{
 
 		///<summary>Constructs a new ODprintout and sets it to ODprintout.CurPrintout.</summary>
 		private void CreateODprintout(string auditDescription,PrintSituation printSituation,long auditPatNum) {
-			//TODO: Implement ODprintout pattern - print or debug preview control
 			_pagesPrinted=0;
 			ODprintout.InvalidMinDefaultPageHeight=400;//some printers report page size of 0.
 			ODprintout.InvalidMinDefaultPageWidth=0;

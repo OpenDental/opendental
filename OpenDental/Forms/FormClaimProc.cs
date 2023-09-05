@@ -559,8 +559,7 @@ namespace OpenDental {
 				if(insPlan.PlanType=="p") {//if ppo
 					double insFee=Fees.GetAmount0(_procedure.CodeNum,insFeeSchedNum,_procedure.ClinicNum,_procedure.ProvNum);
 					long standFeeSchedNum=Providers.GetProv(Patients.GetProvNum(_patient)).FeeSched;
-					double standardFee=Fees.GetAmount0(_procedure.CodeNum,standFeeSchedNum,_procedure.ClinicNum,_procedure.ProvNum);
-					if(standardFee>insFee) {//if standard fee is greater than ins fee for a PPO plan, show standard fee sched
+					if(_procedure.ProcFee!=insFee) {
 						textFeeSched.Text=FeeScheds.GetDescription(standFeeSchedNum);
 					}
 				}
