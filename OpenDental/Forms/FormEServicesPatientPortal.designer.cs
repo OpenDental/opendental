@@ -144,9 +144,9 @@ namespace OpenDental{
 			// 
 			this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.label3.Location = new System.Drawing.Point(15, 27);
+			this.label3.Location = new System.Drawing.Point(15, 21);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(504, 30);
+			this.label3.Size = new System.Drawing.Size(504, 48);
 			this.label3.TabIndex = 45;
 			this.label3.Text = resources.GetString("label3.Text");
 			// 
@@ -167,7 +167,7 @@ namespace OpenDental{
 			// 
 			// butEditWebMailNotificationBody
 			// 
-			this.butEditWebMailNotificationBody.Location = new System.Drawing.Point(449, 220);
+			this.butEditWebMailNotificationBody.Location = new System.Drawing.Point(435, 226);
 			this.butEditWebMailNotificationBody.Name = "butEditWebMailNotificationBody";
 			this.butEditWebMailNotificationBody.Size = new System.Drawing.Size(70, 20);
 			this.butEditWebMailNotificationBody.TabIndex = 320;
@@ -178,7 +178,7 @@ namespace OpenDental{
 			// browserWebMailNotificatonBody
 			// 
 			this.browserWebMailNotificatonBody.AllowWebBrowserDrop = false;
-			this.browserWebMailNotificatonBody.Location = new System.Drawing.Point(93, 120);
+			this.browserWebMailNotificatonBody.Location = new System.Drawing.Point(79, 126);
 			this.browserWebMailNotificatonBody.MinimumSize = new System.Drawing.Size(20, 20);
 			this.browserWebMailNotificatonBody.Name = "browserWebMailNotificatonBody";
 			this.browserWebMailNotificatonBody.Size = new System.Drawing.Size(426, 94);
@@ -191,15 +191,15 @@ namespace OpenDental{
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label9.Location = new System.Drawing.Point(15, 16);
 			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(504, 56);
+			this.label9.Size = new System.Drawing.Size(504, 63);
 			this.label9.TabIndex = 52;
 			this.label9.Text = resources.GetString("label9.Text");
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(90, 100);
+			this.label7.Location = new System.Drawing.Point(76, 105);
 			this.label7.Name = "label7";
-			this.label7.Size = new System.Drawing.Size(440, 15);
+			this.label7.Size = new System.Drawing.Size(458, 16);
 			this.label7.TabIndex = 48;
 			this.label7.Text = "[URL] will be replaced with the value of \'Patient Facing URL\' as entered above.";
 			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -208,25 +208,25 @@ namespace OpenDental{
 			// 
 			this.textBoxNotificationSubject.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.textBoxNotificationSubject.Location = new System.Drawing.Point(93, 75);
+			this.textBoxNotificationSubject.Location = new System.Drawing.Point(79, 81);
 			this.textBoxNotificationSubject.Name = "textBoxNotificationSubject";
 			this.textBoxNotificationSubject.Size = new System.Drawing.Size(426, 20);
 			this.textBoxNotificationSubject.TabIndex = 45;
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(12, 120);
+			this.label6.Location = new System.Drawing.Point(2, 126);
 			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(75, 17);
+			this.label6.Size = new System.Drawing.Size(77, 17);
 			this.label6.TabIndex = 47;
 			this.label6.Text = "Body";
 			this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(9, 76);
+			this.label4.Location = new System.Drawing.Point(2, 82);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(78, 17);
+			this.label4.Size = new System.Drawing.Size(77, 17);
 			this.label4.TabIndex = 44;
 			this.label4.Text = "Subject";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -267,9 +267,9 @@ namespace OpenDental{
 			// label1
 			// 
 			this.label1.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.label1.Location = new System.Drawing.Point(15, 24);
+			this.label1.Location = new System.Drawing.Point(15, 21);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(504, 30);
+			this.label1.Size = new System.Drawing.Size(504, 33);
 			this.label1.TabIndex = 51;
 			this.label1.Text = "This will be the link that patients will use to reach your office\'s patient porta" +
     "l. This is also the URL that will be on the printout given to patients.";

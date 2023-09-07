@@ -957,6 +957,56 @@ namespace UnitTests.Patients_Tests {
 			Assert.IsTrue(listMatchingPatNums.Contains(patA.PatNum));
 			Assert.IsTrue(listMatchingPatNums.Contains(patB.PatNum));
 		}
+
+		///<summary>B47528, starting in iOS 11, the iOS keyboard has the Smart Punctuation feature.
+		///It enters a curly single quote when the single quote key is pressed.
+		///This is counter to the majority of other operating systems that use a straight single quote.
+		///So, when an iOS user enters "O’Brien", it will fail to match "O'Brien" in the DB.
+		///It is also possible for the name in the DB to contain a curly quote.
+		///To avoid both problems, we replace all curly single quotes with straight quotes for both sides of the comparison.///</summary>	
+		[TestMethod]
+		public void Patients_GetListPatNumsByNameAndBirthday_FindPatsWithDifferentSingleQuoteTypes() {
+			string lName="O’Brien";
+			DateTime birthDate=new DateTime(2000,1,14);
+			List<string> listExactMatchFNames=new List<string>(){ "D'Wayne","D‘Wayne","D’Wayne" };
+			List<string> listPartialMatchFNames=new List<string>() { "abcD'Wayne","D‘Waynexyz","abcD’Waynexyz" };
+			List<string> listAllFNames=listExactMatchFNames.Concat(listPartialMatchFNames).ToList();
+			List<Patient> listPatients=new List<Patient>();
+			//Add six patients to the patient table, all with the same last name and birthdate, but with different variations of the first name D'Wayne.
+			for(int i=0;i<listAllFNames.Count;i++) {
+				Patient patient=PatientT.CreatePatient(lName:lName,fName:listAllFNames[i],birthDate:birthDate,clinicNum:1);
+				listPatients.Add(patient);
+			}
+			List<long>listPatNumsExactMatch=listPatients
+				.Where(x => listExactMatchFNames.Contains(x.FName))
+				.Select(x => x.PatNum)
+				.OrderBy(x => x)
+				.ToList();
+			List<long>listAllPatNums=listPatients
+				.Select(x => x.PatNum)
+				.OrderBy(x => x)
+				.ToList();
+			//Performing each variation of query to make sure there are no typos in combining WHERE and AND clauses when single quotes are involved.
+			for(int i=0;i<listExactMatchFNames.Count;i++) {
+				List<long> listPatNums=Patients.GetListPatNumsByNameAndBirthday(lName,listExactMatchFNames[i],birthDate,isExactMatch:true,isPreferredMatch:false,clinicNum:-1).OrderBy(x => x).ToList();
+				//Assert searching for exact match with name D'Wayne, D‘Wayne, or D’Wayne returns all three of those patients but no partial matches.
+				CollectionAssert.AreEqual(listPatNumsExactMatch,listPatNums);
+				listPatNums=Patients.GetListPatNumsByNameAndBirthday(lName,listExactMatchFNames[i],birthDate,isExactMatch:true,isPreferredMatch:true,clinicNum:-1).OrderBy(x => x).ToList();
+				CollectionAssert.AreEqual(listPatNumsExactMatch,listPatNums);
+				listPatNums=Patients.GetListPatNumsByNameAndBirthday(lName,listExactMatchFNames[i],birthDate,isExactMatch:true,isPreferredMatch:false,clinicNum:1).OrderBy(x => x).ToList();
+				CollectionAssert.AreEqual(listPatNumsExactMatch,listPatNums);
+				listPatNums=Patients.GetListPatNumsByNameAndBirthday(lName,listExactMatchFNames[i],birthDate,isExactMatch:true,isPreferredMatch:true,clinicNum:1).OrderBy(x => x).ToList();
+				CollectionAssert.AreEqual(listPatNumsExactMatch,listPatNums);
+				listPatNums=Patients.GetListPatNumsByNameAndBirthday(lName,listExactMatchFNames[i],birthDate,isExactMatch:false,isPreferredMatch:false,clinicNum:-1).OrderBy(x => x).ToList();
+				//Assert searching for partial match with name D'Wayne, D‘Wayne, or D’Wayne returns all six patients (exact and partial matches).
+				CollectionAssert.AreEqual(listAllPatNums,listPatNums);
+				listPatNums=Patients.GetListPatNumsByNameAndBirthday(lName,listExactMatchFNames[i],birthDate,isExactMatch:false,isPreferredMatch:true,clinicNum:-1).OrderBy(x => x).ToList();
+				CollectionAssert.AreEqual(listAllPatNums,listPatNums);
+				listPatNums=Patients.GetListPatNumsByNameAndBirthday(lName,listExactMatchFNames[i],birthDate,isExactMatch:false,isPreferredMatch:false,clinicNum:1).OrderBy(x => x).ToList();
+				CollectionAssert.AreEqual(listAllPatNums,listPatNums);
+				listPatNums=Patients.GetListPatNumsByNameAndBirthday(lName,listExactMatchFNames[i],birthDate,isExactMatch:false,isPreferredMatch:true,clinicNum:1).OrderBy(x => x).ToList();
+			}
+		}
 		#endregion
 		#endregion
 

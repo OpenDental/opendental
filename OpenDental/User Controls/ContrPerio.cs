@@ -2012,18 +2012,19 @@ namespace OpenDental
 						return false;
 					}
 				}
-				if(startedOnSkipped) {//since we started on a skipped tooth
-					return true;//we can continue entry on a skipped tooth.
-				}
-				intTooth=GetToothNumFromColRow(GetSection(colRowNext.Row),colRowNext);
+				intTooth=GetToothNumFromColRow(GetSection(colRowNext.Row),colRowNext);//next tooth
 				bool isValidLoc=true;//used when testing for skipped tooth and mobility location
-				if(_listSkippedTeeth.Contains(intTooth)) {//if we are on a skipped tooth
+				//We still want to move between skipped teeth, so only mark the next location as invalid if starting on an unskipped tooth and going to a skipped tooth.
+				if(_listSkippedTeeth.Contains(intTooth) && !startedOnSkipped) {
 					isValidLoc=false;
 				}
 				if(_perioSequenceTypeArray[GetSection(colRowNext.Row)][GetSectionRow(colRowNext.Row)]==PerioSequenceType.Mobility) {
 					if(Math.IEEERemainder(((double)colRowNext.Col+1),3) != 0) {//{2,5,8,11};examples of acceptable cols
 						isValidLoc=false;//for mobility, not allowed to click on anything but B
 					}
+				}
+				else if(startedOnSkipped) {//since we started on a skipped tooth
+					return true;//we can continue entry on a skipped tooth.
 				}
 				if(isValidLoc) {
 					return true;

@@ -195,7 +195,7 @@ namespace OpenDental {
 					ProcAdjs procAdjs=_listProcAdjs.First(x => x.ProcedureCur==listProcedures[i]);
 					Adjustment adjustment=GetAdjFromUI(procedureSelected: listProcedures[i],
 						listAdjustmentsRelated: procAdjs.ListAccountEntryAdjustments.Select(x => (Adjustment)x.Tag).ToList());//Get the new adjustment to be added from the UI.
-					if((double)procAdjs.AccountEntryProc.AmountEnd<=0 && adjustment.AdjAmt>0) {
+					if((double)procAdjs.AccountEntryProc.AmountEnd<=0 && adjustment.AdjAmt>0 && listTypeNeg.SelectedIndices.Count>0 && PIn.Decimal(textAmt.Text)>0) {
 						continue;
 					}
 					double adjustmentAmtTotal=_listAdjustments.FindAll(x => x.ProcNum==listProcedures[i].ProcNum).Sum(x => x.AdjAmt);//Get the sum of all new adjustments.
