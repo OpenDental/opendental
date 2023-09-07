@@ -14,6 +14,7 @@ using CodeBase;
 using System.IO;
 using OpenDental.Thinfinity;
 using Bridges;
+using System.Text.RegularExpressions;
 
 namespace OpenDental{
 	/// <summary>
@@ -852,7 +853,8 @@ namespace OpenDental{
 				return;
 			}
 			Sheet sheet=CreateAndFillSheet();
-			string sheetName=sheet.Description+"_"+DateTime.Now.ToString("yyyyMMdd_hhmmssfff")+".pdf";
+			string sheetDescForName=Regex.Replace(sheet.Description, @"[^\w'@-_()&]", "");
+			string sheetName=sheetDescForName+"_"+DateTime.Now.ToString("yyyyMMdd_hhmmssfff")+".pdf";
 			string tempFile=ODFileUtils.CombinePaths(PrefC.GetTempFolderPath(),sheetName);
 			string filePathAndName=FileAtoZ.CombinePaths(EmailAttaches.GetAttachPath(),sheetName);
 			SheetPrinting.CreatePdf(sheet,tempFile,null);

@@ -119,6 +119,11 @@ namespace OpenDental{
 			DateTime chargeDate=PIn.Date(textDate.Text);
 			double principal=PIn.Double(textPrincipal.Text);
 			double interest=PIn.Double(textInterest.Text);
+			Procedure procedure=Procedures.GetOneProc(PayPlanChargeCur.FKey,false);
+			if(principal > procedure.ProcFee) {
+				MsgBox.Show(this,"Principal cannot be greater than the procedure fee.");
+				return;
+			}
 			if(_payPlan.IsDynamic) {
 				if(PayPlanChargeCur.IsDebitAdjustment && principal<0) {
 					MsgBox.Show(this,"Dynamic payment plan adjustments cannot have negative principal.");

@@ -205,7 +205,7 @@ namespace OpenDental {
 			this.textNoneChecks.TabIndex = 99;
 			this.textNoneChecks.TabStop = false;
 			this.textNoneChecks.Text = "No selections will cause all database methods to run.\r\nOtherwise only selected me" +
-    "thods will run.\r\n";
+    "thods will run.";
 			this.textNoneChecks.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// tabControlDBM
@@ -531,11 +531,11 @@ namespace OpenDental {
 			// 
 			this.textTools.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(254)))));
 			this.textTools.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.textTools.Location = new System.Drawing.Point(6, 84);
+			this.textTools.Location = new System.Drawing.Point(6, 78);
 			this.textTools.Multiline = true;
 			this.textTools.Name = "textTools";
 			this.textTools.ReadOnly = true;
-			this.textTools.Size = new System.Drawing.Size(790, 40);
+			this.textTools.Size = new System.Drawing.Size(790, 46);
 			this.textTools.TabIndex = 51;
 			this.textTools.TabStop = false;
 			this.textTools.Text = resources.GetString("textTools.Text");

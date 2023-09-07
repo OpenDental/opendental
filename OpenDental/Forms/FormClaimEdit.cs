@@ -2085,20 +2085,29 @@ namespace OpenDental{
 				return;
 			}
 			//Selection validation logic ensures these are only procs that are eligible to split from this claim.
-			Claims.InsertSplitClaim(_claim,gridProc.SelectedTags<ClaimProc>());
+			List<ClaimProc> listClaimProcsToSplit=gridProc.SelectedTags<ClaimProc>().ToList();
+			Claim claimSplit=Claims.InsertSplitClaim(_claim,listClaimProcsToSplit);
 			_listClaimProcs=ClaimProcs.Refresh(_patient.PatNum);
-			List<long> listModifiedClaimNums=new List<long>();
+			List<ClaimProc> listClaimProcsOriginal=_listClaimProcs.Where(x => x.ClaimNum==_claim.ClaimNum).ToList();
 			//Update the multi-visit groups
 			for(int i=0;i<_listClaimProcs.Count;i++) {
+				if(_listClaimProcs[i].ProcNum==0) {
+					continue;//Not strictly necessary, because GetOneProc() would return an empty object. However, more efficient to skip.
+				}
 				Procedure procedure=Procedures.GetOneProc(_listClaimProcs[i].ProcNum,false);
-				List<long> listGroupModifiedClaimNums=ProcMultiVisits.UpdateGroupForProc(procedure.ProcNum,procedure.ProcStatus);
-				listModifiedClaimNums.AddRange(listGroupModifiedClaimNums);
+				ProcMultiVisits.UpdateGroupForProc(procedure.ProcNum,procedure.ProcStatus);
 			}
-			if(listModifiedClaimNums.Contains(_claim.ClaimNum)) {
-				Claim claim=Claims.GetClaim(_claim.ClaimNum);//Refresh claim from database to get current status since it might have changed.
-				ClaimStatus claimStatus=_listClaimStatuses.Where(x=>x.GetDescription(useShortVersionIfAvailable:true)==claim.ClaimStatus).FirstOrDefault();
-				comboClaimStatus.SelectedIndex=_listClaimStatuses.IndexOf(claimStatus);
-			}	
+			_claim.ClaimStatus="W";
+			if(listClaimProcsOriginal.Exists(x => ProcMultiVisits.IsProcInProcess(x.ProcNum))) {
+				_claim.ClaimStatus="I";
+			}
+			claimSplit.ClaimStatus="W";
+			if(listClaimProcsToSplit.Exists(x => ProcMultiVisits.IsProcInProcess(x.ProcNum))) {
+				claimSplit.ClaimStatus="I";
+			}
+			Claims.Update(claimSplit);
+			ClaimStatus claimStatus=_listClaimStatuses.Where(x=>x.GetDescription(useShortVersionIfAvailable:true)==_claim.ClaimStatus).FirstOrDefault();
+			comboClaimStatus.SelectedIndex=_listClaimStatuses.IndexOf(claimStatus);
 			FillGrids();
 		}
 

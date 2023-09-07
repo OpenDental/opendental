@@ -111,7 +111,7 @@ namespace OpenDental {
 					checkExcludeOverpaidWithIns.Checked);
 			}
 			string subTitleProviders=Lan.g(this,"All Providers");
-			if(listSelectedProvNums.Count>0) {
+			if(!comboBoxMultiProv.IsAllSelected) {
 				subTitleProviders=Lan.g(this,"For Providers:")+" "+string.Join(",",listSelectedProvNums.Select(x => Providers.GetFormalName(x)));
 			}
 			string subtitleClinics=comboBoxMultiClinics.GetStringSelectedClinics();

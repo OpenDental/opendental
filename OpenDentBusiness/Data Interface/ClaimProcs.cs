@@ -2985,18 +2985,24 @@ namespace OpenDentBusiness{
 		}
 
 		///<summary>Gets a list of ClaimProcs from the db. Returns an empty list if not found.</summary>
-		public static List<ClaimProc> GetClaimProcsForApi(int limit,int offset,long patNum,long claimNum) {
+		public static List<ClaimProc> GetClaimProcsForApi(int limit,int offset,long procNum,long claimNum,long patNum,long claimPaymentNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<List<ClaimProc>>(MethodBase.GetCurrentMethod(),limit,offset,patNum,claimNum);
+				return Meth.GetObject<List<ClaimProc>>(MethodBase.GetCurrentMethod(),limit,offset,procNum,claimNum,patNum,claimPaymentNum);
 			}
 			string command="SELECT * from claimproc"
 				+" WHERE SecDateTEdit>="+POut.DateT(DateTime.MinValue);
-      if(patNum>0) {
-				command+=" AND PatNum="+POut.Long(patNum);
-      }
+			if(procNum>0) {
+				command+=" AND ProcNum="+POut.Long(procNum);
+			}
 			if(claimNum>0){
 				command+=" AND ClaimNum="+POut.Long(claimNum);
-      }
+			}
+			if(patNum>0) {
+				command+=" AND PatNum="+POut.Long(patNum);
+			}
+			if(claimPaymentNum>0) {
+				command+=" AND ClaimPaymentNum="+POut.Long(claimPaymentNum);
+			}
 			command+=" ORDER BY ClaimProcNum"
 				+" LIMIT "+POut.Int(offset)+", "+POut.Int(limit);
 			return ClaimProcCrud.SelectMany(command);

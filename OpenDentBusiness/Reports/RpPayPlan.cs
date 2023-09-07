@@ -17,7 +17,7 @@ namespace OpenDentBusiness {
 			}
 			string whereProv="";
 			if(!hasAllProvs) {
-				whereProv+=" AND payplancharge.ProvNum IN(";
+				whereProv+=" AND COALESCE(payplancharge.ProvNum,dppprincipal.ProvNum) IN(";//Use payplancharge for patient plan, dppprincipal for DPP.
 				for(int i=0;i<listProvNums.Count;i++) {
 					if(i>0) {
 						whereProv+=",";
@@ -29,7 +29,7 @@ namespace OpenDentBusiness {
 			string whereClin="";
 			bool hasClinicsEnabled=ReportsComplex.RunFuncOnReportServer(() => Prefs.HasClinicsEnabledNoCache);
 			if(hasClinicsEnabled) {//Using clinics
-				whereClin+=" AND payplancharge.ClinicNum IN(";
+				whereClin+=" AND COALESCE(payplancharge.ClinicNum,dppprincipal.ClinicNum,0) IN(";//Use payplancharge for patient plan, dppprincipal for DPP.
 				for(int i=0;i<listClinicNums.Count;i++) {
 					if(i>0) {
 						whereClin+=",";
@@ -104,9 +104,9 @@ namespace OpenDentBusiness {
 				+"COALESCE((SELECT SUM(Principal) FROM payplancharge WHERE payplancharge.PayPlanNum=payplan.PayPlanNum "
 				+"AND payplancharge.ChargeType="+POut.Int((int)PayPlanChargeType.Credit)+" AND ChargeDate > "+datesql+"),0) '_notDue', "
 				+"COALESCE(guar.PatNum,pat.PatNum) PatNum, "
-				+"payplancharge.ProvNum ProvNum ";
+				+"COALESCE(payplancharge.ProvNum,dppprincipal.ProvNum) ProvNum ";//Use payplancharge for patient plan, dppprincipal for DPP.
 			if(hasClinicsEnabled) {
-				command+=", payplancharge.ClinicNum ClinicNum ";
+				command+=", COALESCE(payplancharge.ClinicNum,dppprincipal.ClinicNum,0) ClinicNum ";
 			}
 			//In order to determine if the patient has completely paid off their payment plan we need to get the total amount of interest as of today.
 			//Then, after the query has run, we'll add the interest up until today with the total principal for the entire payment plan.
@@ -132,6 +132,8 @@ namespace OpenDentBusiness {
 							//Factor in non-payplan pay splits, adjustments to procedures, and insurance estimates, payments, writeoffs, and estimated writeoffs
 							+"-COALESCE(sumsplit.SumSplit,0)+COALESCE(sumprocadj.SumProcAdj,0)-COALESCE(sumins.SumIns,0) "
 							+"END),2) AS 'TotalPrincipal' "
+							+", COALESCE(procedurelog.ClinicNum,adjustment.ClinicNum,0) 'ClinicNum'"
+							+", COALESCE(procedurelog.ProvNum,adjustment.ProvNum) 'ProvNum'"
 					+"FROM payplanlink "
 						+"LEFT JOIN adjustment ON adjustment.AdjNum=payplanlink.FKey AND payplanlink.LinkType="+POut.Int((int)PayPlanLinkType.Adjustment)+" "
 						+"LEFT JOIN procedurelog ON procedurelog.ProcNum=payplanlink.FKey AND payplanlink.LinkType="+POut.Int((int)PayPlanLinkType.Procedure)+" "

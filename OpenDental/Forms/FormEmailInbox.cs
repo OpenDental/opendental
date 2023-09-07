@@ -397,7 +397,7 @@ namespace OpenDental {
 			EmailAddress emailAddressSelected=GetSelectedAddress();
 			string[] arrayAddresses={ emailAddressSelected.EmailUsername.ToLower() };
 			if(!string.IsNullOrEmpty(emailAddressSelected.SenderAddress)) {
-				arrayAddresses.Append(emailAddressSelected.SenderAddress.ToLower());
+				arrayAddresses=arrayAddresses.Append(emailAddressSelected.SenderAddress.ToLower()).ToArray();
 			}
 			if(_isSearching) { //if searching, use the search list. Should be prefilled.
 				listEmailsFiltered=_listEmailMessagesSentSearched.FindAll(x => EmailMessages.GetAddressSimple(x.FromAddress).ToLower().In(arrayAddresses));
