@@ -3395,32 +3395,58 @@ namespace OpenDentBusiness {
 			return PIn.Long(Db.GetScalar(command));
 		}
 
-		///<summary>Will return an empty list if it can't find exact matching pat.</summary>
-		//Search is case-insensitive by default, since patient.LName and patient.FName collation is utf8_general_ci (ci=case-insensitive)
+		///<summary>Returns an empty list if it can't find matching patients. Excludes archived and deleted patients.
+		///Query is case-insensitive by default, since patient.LName and patient.FName columns have utf8_general_ci collation in the database (ci=case-insensitive).</summary>
 		public static List<long> GetListPatNumsByNameAndBirthday(string lName,string fName,DateTime birthdate,bool isPreferredMatch=false,bool isExactMatch=true,long clinicNum=-1) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
 				return Meth.GetObject<List<long>>(MethodBase.GetCurrentMethod(),lName,fName,birthdate,isPreferredMatch,isExactMatch,clinicNum);
 			}
-			string createComparator(string col,string val,bool isExact) => isExact switch {
-				//Match exactly (case insensitive):  ex, 'John'='John'
-				true	=> $"{col}='{POut.String(val)}'",
-				//Match with 0 or more chars before, and 0 or more chars after:  ex, 'Liz' is like 'Elizabeth'
-				false => $"{col} LIKE '%{POut.String(val)}%'",
-			};
-			string createNameClause(string col,string val,bool isPreferred,bool isExact) => isPreferred switch {
-				//Match both col or Preferred: ex, FName or Preferred
-				true	=> $"({createComparator(col,val,isExact)} OR {createComparator("Preferred",val,isExact)})",
-				//Match only col: ex, FName only
-				false	=> createComparator(col,val,isExact),
-			};
+			//B47528, starting in iOS 11, the iOS keyboard has the Smart Punctuation feature. It enters a curly single quote when the single quote key is pressed.
+			//This is counter to the straight single quote that the vast majority of operating systems use. So, when an iOS user enters "O’Brien",
+			//it will fail to match "O'Brien" in the DB. It is also possible for the name in the DB to contain a curly quote.
+			//To avoid both problems, we replace all curly single quotes with straight quotes for both sides of all name comparisons in the query.
+			lName=lName.Replace("‘","'").Replace("’","'");
+			fName=fName.Replace("‘","'").Replace("’","'");
+			List<string> listColumns=new List<string>(){ "LName","FName" };
+			string nameFilter="";
+			for(int i=0;i<listColumns.Count;i++) {
+				bool isLNameColumn=(listColumns[i]=="LName");
+				string normalizedName=(isLNameColumn) ? lName : fName;
+				string normalizedSqlName=listColumns[i];
+				nameFilter+=" AND ";
+				if(normalizedName.Contains("'")) {
+					normalizedSqlName=$"REPLACE(REPLACE({listColumns[i]},'‘','\\''),'’','\\'')";
+				}
+				if(isPreferredMatch && !isLNameColumn) {
+					string preferredColumn="Preferred";
+					if(normalizedName.Contains("'")) {
+						preferredColumn="REPLACE(REPLACE(Preferred,'‘','\\''),'’','\\'')";
+					}
+					if(isExactMatch) {
+						//Name without apostrophe:	AND (FName='fName' OR Preferred='fName')
+						//Name with apostrophe:		AND (REPLACE(REPLACE(FName,'‘','\\''),'’','\\'')='fName') OR (REPLACE(REPLACE(Preferred,'‘','\\''),'’','\\'')='fName')
+						nameFilter+=$"({normalizedSqlName}='{POut.String(normalizedName)}' OR {preferredColumn}='{POut.String(normalizedName)}')";
+					}
+					else {
+						nameFilter+=$"({normalizedSqlName} LIKE '%{POut.String(normalizedName)}%' OR {preferredColumn} LIKE '%{POut.String(normalizedName)}%')";
+					}
+					continue;
+				}
+				if(isExactMatch || isLNameColumn) {//Always use exact match for last name.
+					//Name without apostrophe:	AND listColumns[i]='normalizedName'
+					//Name with apostrophe:		AND REPLACE(REPLACE(listColumns[i],'‘','\\''),'’','\\'')='normalizedName'
+					nameFilter+=$"{normalizedSqlName}='{POut.String(normalizedName)}'";
+				}
+				else {
+					nameFilter+=$"{normalizedSqlName} LIKE '%{POut.String(normalizedName)}%'";
+				}
+			}
 			string command="SELECT PatNum FROM patient "
-				+"WHERE Birthdate="+POut.Date(birthdate)+" "
-				+"AND PatStatus!="+POut.Int((int)PatientStatus.Archived)+" "//Not Archived
-				+"AND PatStatus!="+POut.Int((int)PatientStatus.Deleted)+" "//Not Deleted
-				+"AND "+createNameClause("LName",lName,false,true)+" "//LName is always 'exact' match
-				+"AND "+createNameClause("FName",fName,isPreferredMatch,isExactMatch);//FName may be 'exact' or 'partial' match, and may include Preferred
+				+$"WHERE Birthdate={POut.Date(birthdate)} "
+				+$"AND PatStatus NOT IN ({POut.Int((int)PatientStatus.Archived)},{POut.Int((int)PatientStatus.Deleted)})"
+				+nameFilter;
 			if(clinicNum>=0) {
-				command+=" AND ClinicNum="+POut.Long(clinicNum);
+				command+=$" AND ClinicNum={POut.Long(clinicNum)}";
 			}
 			return Db.GetListLong(command);
 		}

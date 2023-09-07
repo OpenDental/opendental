@@ -336,12 +336,7 @@ namespace OpenDental {
 			payPlanTerms.DateFirstPayment=PIn.Date(textDateFirstPay.Text);
 			payPlanTerms.Frequency=GetChargeFrequency();//verify this is just based on the ui, not the db.
 			payPlanTerms.DynamicPayPlanTPOption=GetSelectedTreatmentPlannedOption();
-			if(PIn.Int(textInterestDelay.Text,false)!=0) {
-				payPlanTerms.DateInterestStart=PayPlanEdit.CalcNextPeriodDate(PIn.Date(textDateFirstPay.Text),PIn.Int(textInterestDelay.Text,false),GetChargeFrequency());
-			}
-			else {
-				payPlanTerms.DateInterestStart=PIn.Date(textDateInterestStart.Text);//Will be DateTime.MinDate if field is blank.
-			}
+			payPlanTerms.DateInterestStart=PIn.Date(textDateInterestStart.Text);//Will be DateTime.MinDate if field is blank.
 			try {
 				payPlanTerms.PayCount=PIn.Int(textPaymentCount.Text);
 			}

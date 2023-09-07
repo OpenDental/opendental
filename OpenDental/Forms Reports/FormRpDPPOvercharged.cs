@@ -155,7 +155,7 @@ namespace OpenDental {
 				}
 			}
 			string subTitleProviders=Lan.g(this,"All Providers");
-			if(comboBoxMultiProv.GetSelectedProvNums().Count>0) {
+			if(!comboBoxMultiProv.IsAllSelected) {
 				subTitleProviders=Lan.g(this,"For Providers:")+" "+string.Join(",",comboBoxMultiProv.GetSelectedProvNums().Select(x => Providers.GetFormalName(x)));
 			}
 			string subtitleClinics="";

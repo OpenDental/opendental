@@ -526,7 +526,7 @@
 			// 
 			this.radioS6.Location = new System.Drawing.Point(12, 36);
 			this.radioS6.Name = "radioS6";
-			this.radioS6.Size = new System.Drawing.Size(36, 16);
+			this.radioS6.Size = new System.Drawing.Size(45, 18);
 			this.radioS6.TabIndex = 5;
 			this.radioS6.Text = "6";
 			this.radioS6.Click += new System.EventHandler(this.radioS6_Click);
@@ -535,7 +535,7 @@
 			// 
 			this.radioS5.Location = new System.Drawing.Point(60, 36);
 			this.radioS5.Name = "radioS5";
-			this.radioS5.Size = new System.Drawing.Size(36, 16);
+			this.radioS5.Size = new System.Drawing.Size(45, 18);
 			this.radioS5.TabIndex = 4;
 			this.radioS5.Text = "5";
 			this.radioS5.Click += new System.EventHandler(this.radioS5_Click);
@@ -544,7 +544,7 @@
 			// 
 			this.radioS4.Location = new System.Drawing.Point(108, 36);
 			this.radioS4.Name = "radioS4";
-			this.radioS4.Size = new System.Drawing.Size(36, 16);
+			this.radioS4.Size = new System.Drawing.Size(45, 18);
 			this.radioS4.TabIndex = 1;
 			this.radioS4.Text = "4";
 			this.radioS4.Click += new System.EventHandler(this.radioS4_Click);
@@ -553,7 +553,7 @@
 			// 
 			this.radioS2.Location = new System.Drawing.Point(60, 16);
 			this.radioS2.Name = "radioS2";
-			this.radioS2.Size = new System.Drawing.Size(36, 16);
+			this.radioS2.Size = new System.Drawing.Size(45, 18);
 			this.radioS2.TabIndex = 2;
 			this.radioS2.Text = "2";
 			this.radioS2.Click += new System.EventHandler(this.radioS2_Click);
@@ -562,7 +562,7 @@
 			// 
 			this.radioS3.Location = new System.Drawing.Point(108, 16);
 			this.radioS3.Name = "radioS3";
-			this.radioS3.Size = new System.Drawing.Size(36, 16);
+			this.radioS3.Size = new System.Drawing.Size(45, 18);
 			this.radioS3.TabIndex = 0;
 			this.radioS3.Text = "3";
 			this.radioS3.Click += new System.EventHandler(this.radioS3_Click);
@@ -571,7 +571,7 @@
 			// 
 			this.radioS1.Location = new System.Drawing.Point(12, 16);
 			this.radioS1.Name = "radioS1";
-			this.radioS1.Size = new System.Drawing.Size(36, 16);
+			this.radioS1.Size = new System.Drawing.Size(45, 18);
 			this.radioS1.TabIndex = 0;
 			this.radioS1.Text = "1";
 			this.radioS1.Click += new System.EventHandler(this.radioS1_Click);
