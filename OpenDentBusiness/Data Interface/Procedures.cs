@@ -5445,10 +5445,10 @@ namespace OpenDentBusiness {
 			return procedure;
 		}
 
-		///<summary>Returns the most recent EO procedure for the InsHist preference CodeNums. Returns null if no precedure is found.</summary>
-		public static Procedure GetMostRecentInsHistProc(List<Procedure> listProceduresPatEo,List<long> listCodeNumsInsHist,PrefName prefName) {
+		///<summary>Returns the most recent procedure for the InsHist preference CodeNums. Returns null if no precedure is found.</summary>
+		public static Procedure GetMostRecentInsHistProc(List<Procedure> listProcedures,List<long> listCodeNumsInsHist,PrefName prefName) {
 			//No need to check MiddleTierRole; no call to db.
-			List<Procedure> listProceduresHistCodeNum=listProceduresPatEo.FindAll(x => listCodeNumsInsHist.Contains(x.CodeNum));
+			List<Procedure> listProceduresHistCodeNum=listProcedures.FindAll(x => listCodeNumsInsHist.Contains(x.CodeNum));
 			List<Procedure> listProceduresFiltered;
 			//For Perio procs, we also need to look at the surface a procedure was done on.
 			switch(prefName) {

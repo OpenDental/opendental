@@ -3691,6 +3691,7 @@ namespace OpenDental {
 			using SolidBrush solidBrush=new SolidBrush(colorText);
 			StringFormat stringFormat=new StringFormat();
 			stringFormat.Alignment=StringAlignment.Near;//left
+			stringFormat.SetTabStops(0.0f, new float[] {50.0f});
 			if(sheetFieldDef.TextAlign==HorizontalAlignment.Center){
 				stringFormat.Alignment=StringAlignment.Center;
 			}

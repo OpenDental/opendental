@@ -531,7 +531,7 @@ namespace OpenDental {
 				if(CreditCardCur.IsXWeb()) {
 					OpenDentBusiness.WebTypes.Shared.XWeb.XWebs.DeleteCreditCard(_patient.PatNum,CreditCardCur.CreditCardNum);//Also deletes cc from db
 				}
-				else if(CreditCardCur.CCSource==CreditCardSource.EdgeExpressRCM || CreditCardCur.CCSource==CreditCardSource.EdgeExpressCNP) {
+				else if(CreditCardCur.CCSource==CreditCardSource.EdgeExpressRCM || CreditCardCur.CCSource==CreditCardSource.EdgeExpressCNP || CreditCardCur.CCSource==CreditCardSource.EdgeExpressPaymentPortal) {
 					Cursor=Cursors.WaitCursor;
 					try {
 						EdgeExpress.RcmResponse rcmResponse=EdgeExpress.RCM.DeleteAlias(_patient,Clinics.ClinicNum,CreditCardCur.XChargeToken,isWebPayment:false);

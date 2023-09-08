@@ -335,14 +335,17 @@ namespace OpenDentBusiness{
 				payment.ProcessStatus=ProcessStat.OnlineProcessed;
 			}
 			Patient patient=Patients.GetPat(patNum);
-			long ret=ProcessPaymentForWeb(payment,patient,amount);
-			SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,patNum,Lans.g("Payments.InsertFromXWeb","XWeb payment by")+" "
-				+Patients.GetLim(patNum).GetNameLF()+", "+amount.ToString("c"),LogSources.PatientPortal);
+			long retVal=ProcessPaymentForWeb(payment,patient,amount);
+			string ccSourceString="XWeb";
+			if (ccSource.In(CreditCardSource.EdgeExpressPaymentPortal, CreditCardSource.EdgeExpressPaymentPortalGuest, CreditCardSource.EdgeExpressCNP, CreditCardSource.EdgeExpressRCM)) {
+				ccSourceString = "EdgeExpress";
+			}
+			SecurityLogs.MakeLogEntry(Permissions.PaymentCreate,patNum,ccSourceString+" "+Lans.g("Payments.InsertFromXWeb","payment by")+" "+Patients.GetLim(patNum).GetNameLF()+", "+amount.ToString("c"),LogSources.PatientPortal);
 			if(logGuid!="") {//There is no way to make an XWeb payment from the Patient Portal without making a log GUID.
 				EServiceLogs.MakeLogEntry(eServiceAction.PPPaymentCreatedByXWeb,eServiceType.PatientPortal,
-					FKeyType.PayNum,patNum:patNum,FKey:ret,clinicNum:clinicNum,logGuid:logGuid,note:amount.ToString("c"));
+					FKeyType.PayNum,patNum:patNum,FKey:retVal,clinicNum:clinicNum,logGuid:logGuid,note:amount.ToString("c"));
 			}
-			return ret;
+			return retVal;
 		}
 
 		///<summary>Insert Payment and PaySplit. Returns newly inserted Payment.PayNum.</summary>

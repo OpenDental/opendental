@@ -976,6 +976,7 @@ namespace OpenDental {
 				}
 				StringFormat stringFormat=new StringFormat();
 				stringFormat.Alignment=StringAlignment.Near;
+				stringFormat.SetTabStops(0.0f, new float[] {50.0f});
 				if(SheetCur.SheetFields[i].FieldType!=SheetFieldType.InputField){
 					if(SheetCur.SheetFields[i].TextAlign==HorizontalAlignment.Center){
 						stringFormat.Alignment=StringAlignment.Center;

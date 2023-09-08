@@ -564,8 +564,7 @@ namespace OpenDentBusiness {
 				long paymentNum=0,long clinicNum=-1,string returnUrl="")
 			{
 				//No need to check MiddleTierRole;no call to db.
-				if(!creditCardSource.In(CreditCardSource.XWeb,CreditCardSource.XWebPortalLogin,CreditCardSource.EdgeExpressCNP,
-					CreditCardSource.EdgeExpressPaymentPortal,CreditCardSource.EdgeExpressPaymentPortalGuest)) 
+				if(!creditCardSource.In(CreditCardSource.XWeb, CreditCardSource.XWebPortalLogin, CreditCardSource.XWebPaymentPortal, CreditCardSource.XWebPaymentPortalGuest, CreditCardSource.EdgeExpressCNP, CreditCardSource.EdgeExpressPaymentPortal, CreditCardSource.EdgeExpressPaymentPortalGuest, CreditCardSource.XWebPaymentPortal, CreditCardSource.XWebPaymentPortalGuest))
 				{
 					throw new ODException("Invalid CreditCardSource: "+creditCardSource.ToString(),ODException.ErrorCodes.OtkArgsInvalid);
 				}

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeBase;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -74,7 +75,7 @@ namespace OpenDentBusiness {
 		public string Nickname;
 
 		public bool IsXWeb() {
-			return CCSource==CreditCardSource.XWeb || CCSource==CreditCardSource.XWebPortalLogin;
+			return CCSource.In(CreditCardSource.XWeb, CreditCardSource.XWebPortalLogin, CreditCardSource.XWebPaymentPortal, CreditCardSource.XWebPaymentPortalGuest);
 		}
 
 		//TODO: hook this up to FormPayment for returns and voiding.
@@ -94,7 +95,7 @@ namespace OpenDentBusiness {
 			}
 			List<string> listTokens=new List<string>();
 			if(!string.IsNullOrEmpty(XChargeToken)) {
-				if(CCSource==CreditCardSource.EdgeExpressRCM || CCSource==CreditCardSource.EdgeExpressCNP) {
+				if(CCSource.In(CreditCardSource.EdgeExpressRCM,CreditCardSource.EdgeExpressCNP,CreditCardSource.EdgeExpressPaymentPortal)) {
 					listTokens.Add("EdgeExpress");
 				}
 				else {
@@ -177,6 +178,12 @@ namespace OpenDentBusiness {
 		///<summary>20 - PaySimple ACH Payment taken through the Payment Portal.</summary>
 		[OnlinePaymentMethod]
 		PaySimplePaymentPortalACH,
+		///<summary>21 - XWeb payment taken through the Payment Portal.</summary>
+		[OnlinePaymentMethod]
+		XWebPaymentPortal,
+		///<summary>22 - XWeb payment taken through the Payment Portal as a guest.</summary>
+		[OnlinePaymentMethod]
+		XWebPaymentPortalGuest,
 	}
 
 	public enum ChargeFrequencyType {
