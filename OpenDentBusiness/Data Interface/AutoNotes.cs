@@ -149,6 +149,40 @@ namespace OpenDentBusiness {
 			return Crud.AutoNoteCrud.SelectOne(autoNoteNum);
 		}
 
+		///<summary>Returns the AutoNoteName from the passed in promptRepsonse. Returns empty string if no valid AutoNote is found.</summary>
+		public static string GetAutoNoteName(string promptResponse) {
+			string retVal="";
+			Stack<int> stackBrackets=new Stack<int>();
+			//The AutoNoteResponseText should be in format "Auto Note Response Text : {AutoNoteName}". Go through each of the charactors in promptResponse
+			//and find each of the possible AutoNote names. We need to do this in case the AutoNote name has brackets("{,}") in the name. 
+			for(int posCur=0;posCur<promptResponse.Length;posCur++) {
+				if(promptResponse[posCur]=='{') {
+					stackBrackets.Push(posCur);//add the position of the '{' to the stack.
+					continue;
+				}
+				if(promptResponse[posCur]!='}' || stackBrackets.Count()==0) {//continue if the the stack does not have an open '{', or this is not a '}'
+					continue;
+				}
+				//The posOpenBracket will include the '{'. We will have to remove it.
+				int posOpenBracket=stackBrackets.Peek();
+				//Get the length of the possible autonote. The length will include the closing '}'. We will also need to remove it.
+				int length=posCur-posOpenBracket;
+				if(length<1) {
+					stackBrackets.Pop();
+					continue;
+				}
+				//Get string of possible AutoNoteName. Remove the bracket from the beginning and end. 
+				string autoNoteName=promptResponse.Substring(posOpenBracket+1,length-1);
+				if(!string.IsNullOrEmpty(autoNoteName) && AutoNotes.IsValidAutoNote(autoNoteName)) {
+					retVal=autoNoteName;
+					break;
+				}
+				//no match found. Remove position from stack and continue.
+				stackBrackets.Pop();
+			}
+			return retVal;//could be empty string if no valid autonote name is found
+		}
+
 		///<summary>Returns true if there is a valid AutoNote for the passed in AutoNoteName.</summary>
 		public static bool IsValidAutoNote(string autoNoteTitle) {
 			//No need to check MiddleTierRole; no call to db.

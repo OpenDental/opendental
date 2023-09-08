@@ -1674,8 +1674,31 @@ namespace OpenDental{
 			for(int i=0;i<_listClaimProcsForClaim.Count;i++) {
 				listClaimProcs.Add(_listClaimProcsForClaim[i].Copy());
 			}
+			List<ClaimProc> listClaimProcsForPayTotal=_listClaimProcsForClaim.FindAll(x => x.Status==ClaimProcStatus.NotReceived || x.Status==ClaimProcStatus.Supplemental).ToList(); //Filter list down to only procs that expect payments
+			for(int i=0;i<listClaimProcsForPayTotal.Count;i++) {
+				if(i==0) {
+					//Automatically set PayPlanNum if there is a payplan with matching PatNum, PlanNum, and InsSubNum that has not been paid in full.
+					//By sending in ClaimNum, we ensure that we only get the payplan a claimproc from this claim was already attached to or payplans with no claimprocs attached.
+					List<PayPlan> listPayPlans=PayPlans.GetValidInsPayPlans(_claim.PatNum,_claim.PlanNum,_claim.InsSubNum,_claim.ClaimNum);
+					if(listPayPlans.Count==1) {
+						listClaimProcsForPayTotal[i].PayPlanNum=listPayPlans[0].PayPlanNum;
+					}
+					else if(listPayPlans.Count>1) {
+						//more than one valid PayPlan
+						using FormPayPlanSelect formPayPlanSelect=new FormPayPlanSelect(listPayPlans);
+						formPayPlanSelect.ShowDialog();
+						if(formPayPlanSelect.DialogResult==DialogResult.OK) {
+							listClaimProcsForPayTotal[i].PayPlanNum=formPayPlanSelect.PayPlanNumSelected;
+						}
+					}
+				}
+				else {
+					listClaimProcsForPayTotal[i].PayPlanNum=listClaimProcsForPayTotal[0].PayPlanNum; //set all procs to the same payplan, they can change it later if not correct for each claimproc that is different
+				}
+				listClaimProcsForPayTotal[i].DateCP=DateTime.Today;
+			}
 			using FormClaimPayTotal formClaimPayTotal=new FormClaimPayTotal(_patient,_family,_listInsPlans,_listPatPlans,_listInsSubs,GetBlueBookEstimateData(),totalPayAmt:result);
-			formClaimPayTotal.ClaimProcArray=_listClaimProcsForClaim.FindAll(x => x.Status==ClaimProcStatus.NotReceived || x.Status==ClaimProcStatus.Supplemental).ToArray(); //Filter list down to only procs that expect payments
+			formClaimPayTotal.ClaimProcArray=listClaimProcsForPayTotal.ToArray();
 			if(formClaimPayTotal.ClaimProcArray.IsNullOrEmpty()){
 				MsgBox.Show(this,"There are no procedures to be paid on this claim.");
 				return false;

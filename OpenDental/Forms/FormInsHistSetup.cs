@@ -9,8 +9,9 @@ using OpenDentBusiness;
 namespace OpenDental {
 	public partial class FormInsHistSetup:FormODBase {
 		private Patient _patient;
-		///<summary></summary>
+		///<summary>EO and C procedures associated with the InsHist and Received claimprocs for the inssub passed into the constructor.</summary>
 		private List<Procedure> _listProceduresEoAndC;
+		///<summary>InsHist and Received claimprocs associated with EO and C procedures for the inssub passed into the constructor.</summary>
 		private List<ClaimProc> _listClaimProcsForEoAndCProcs;
 		private InsSub _insSub;
 		private const string NO_INSHIST="No History";
@@ -34,38 +35,52 @@ namespace OpenDental {
 			Lan.F(this);
 			_patient=Patients.GetPat(patNum);
 			_insSub=insSub;
-			_listProceduresEoAndC=Procedures.GetProcsByStatusForPat(_patient.PatNum,new [] { ProcStat.EO,ProcStat.C });
-			//Get claimprocs for EO and C procedures. 
-			List<long> listProcNums=_listProceduresEoAndC.Select(x=>x.ProcNum).ToList();
-			_listClaimProcsForEoAndCProcs=ClaimProcs.GetForProcs(listProcNums)
-				.FindAll(y => y.InsSubNum==insSub.InsSubNum && y.Status.In(ClaimProcStatus.InsHist,ClaimProcStatus.Received));
 		}
 
 		private void FormInsHistSetup_Load(object sender,EventArgs e) {
-			FillDates();
-		}
-
-		/// <summary>Returns the text box control corresponding to the given procType</summary>
-		private void FillDates() {
-			List<Pref> listPrefs= Prefs.GetInsHistPrefs();
-			string text=NO_INSHIST;
-			List<PrefName> listPrefNames = Prefs.GetInsHistPrefNames();
-			for(int i=0;i<listPrefNames.Count;i++){
-				List<long> listCodeNums=ProcedureCodes.GetCodeNumsForInsHistPref(listPrefNames[i]);
-				Procedure procedure=Procedures.GetMostRecentInsHistProc(_listProceduresEoAndC,listCodeNums,listPrefNames[i]);
-				if(procedure==null) {
-					text = NO_INSHIST;
+			//Get all EO and C procedures for the patient.
+			_listProceduresEoAndC=Procedures.GetProcsByStatusForPat(_patient.PatNum,ProcStat.EO,ProcStat.C);
+			//Get all claimprocs for the EO and C procedures.
+			List<long> listProcNums=_listProceduresEoAndC.Select(x => x.ProcNum).ToList();
+			List<ClaimProc> listClaimProcs=ClaimProcs.GetForProcs(listProcNums);
+			//Find all of the claimprocs associated with this inssub.
+			_listClaimProcsForEoAndCProcs=new List<ClaimProc>();
+			listProcNums.Clear();
+			for(int i=0;i<listClaimProcs.Count;i++) {
+				if(listClaimProcs[i].InsSubNum!=_insSub.InsSubNum) {
+					continue;
 				}
-				else {
-					text=procedure.ProcDate.ToShortDateString();
+				if(!listClaimProcs[i].Status.In(ClaimProcStatus.InsHist,ClaimProcStatus.Received)) {
+					continue;
 				}
+				_listClaimProcsForEoAndCProcs.Add(listClaimProcs[i]);
+				listProcNums.Add(listClaimProcs[i].ProcNum);
+			}
+			//Remove all procedures that are not associate with this inssub.
+			_listProceduresEoAndC.RemoveAll(x => !x.ProcNum.In(listProcNums.ToArray()));
+			//Update the text property for each text box control that represents each InsHistPref.
+			List<Pref> listPrefs=Prefs.GetInsHistPrefs();
+			List<PrefName> listPrefNames=Prefs.GetInsHistPrefNames();
+			for(int i=0;i<listPrefNames.Count;i++) {
+				//Check to see if this InsHistPref has been set by the user.
 				bool isPrefSet=listPrefs.Exists(x => x.PrefName==listPrefNames[i].ToString() && !string.IsNullOrWhiteSpace(x.ValueString));
 				TextBox textBox=GetControlForPrefName(listPrefNames[i]);
 				if(!isPrefSet) {
-					text=NO_INSHISTSET;
+					//The user has not set this InsHistPref up.
+					textBox.Text=NO_INSHISTSET;
 					textBox.Enabled=false;
+					continue;
 				}
-				textBox.Text=text;
+				//The user has correctly set this InsHistPref up.
+				//Update the text box with the most recent procedure date that this inssub
+				List<long> listCodeNums=ProcedureCodes.GetCodeNumsForInsHistPref(listPrefNames[i]);
+				Procedure procedure=Procedures.GetMostRecentInsHistProc(_listProceduresEoAndC,listCodeNums,listPrefNames[i]);
+				if(procedure!=null && procedure.ProcDate.Year > 1880) {
+					textBox.Text=procedure.ProcDate.ToShortDateString();
+				}
+				else {
+					textBox.Text=NO_INSHIST;
+				}
 			}
 		}
 		

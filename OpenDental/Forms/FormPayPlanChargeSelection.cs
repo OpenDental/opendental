@@ -1,3 +1,4 @@
+using CodeBase;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -73,13 +74,15 @@ namespace OpenDental {
 				}
 				if(formPayPlanChargeEdit.PayPlanChargeCur==null) {
 					PayPlanCharges.Delete(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex]);
-					_listPayPlanCharges.RemoveAt(listBoxPayPlanCharges.SelectedIndex);
 					SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,"Deleted.");
+					_listPayPlanCharges.RemoveAt(listBoxPayPlanCharges.SelectedIndex);
 				}
 				else {
 					PayPlanCharges.Update(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex],payPlanChargeOld);
-					string log=PayPlans.GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
-					SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,log);
+					if(!formPayPlanChargeEdit.ListChangeLog.IsNullOrEmpty()) {
+						string log=PayPlans.GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
+						SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,log);
+					}
 				}
 				FillListBox();//Refreshes the list box
 			}
@@ -108,14 +111,16 @@ namespace OpenDental {
 					return;
 				}
 				if(formPayPlanChargeEdit.PayPlanChargeCur==null) {
-					_listPayPlanCharges.RemoveAt(listBoxPayPlanCharges.SelectedIndex);
 					PayPlanCharges.Delete(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex]);
 					SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,"Deleted.");
+					_listPayPlanCharges.RemoveAt(listBoxPayPlanCharges.SelectedIndex);
 				}
 				else {
 					PayPlanCharges.Update(_listPayPlanCharges[listBoxPayPlanCharges.SelectedIndex],payPlanChargeOld);
-					string log=PayPlans.GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
-					SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,log);
+					if(!formPayPlanChargeEdit.ListChangeLog.IsNullOrEmpty()) {
+						string log=PayPlans.GetChangeLog(formPayPlanChargeEdit.ListChangeLog);
+						SecurityLogs.MakeLogEntry(Permissions.PayPlanChargeEdit,_listPayPlanCharges[0].PatNum,log);
+					}
 				}
 				FillListBox();//Refreshes the list box
 			}

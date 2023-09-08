@@ -107,7 +107,9 @@ namespace OpenDentBusiness{
 				CreditCardSource.XServer,
 				CreditCardSource.XServerPayConnect,
 				CreditCardSource.EdgeExpressPaymentPortal,
-				CreditCardSource.EdgeExpressPaymentPortalGuest
+				CreditCardSource.EdgeExpressPaymentPortalGuest,
+				CreditCardSource.XWebPaymentPortal,
+				CreditCardSource.XWebPaymentPortalGuest
 			};
 			//Prevent duplicates.
 			if(GetTokenCount(xWebResponse.Alias,listSources)>0) {
@@ -696,7 +698,7 @@ namespace OpenDentBusiness{
 			}
 			string command=$"SELECT * FROM creditcard WHERE XChargeToken='{POut.String(token)}' ";
 			if(!includeXWeb) {
-				command+=$"AND CCSource NOT IN({POut.Int((int)CreditCardSource.XWeb)},{POut.Int((int)CreditCardSource.XWebPortalLogin)}) ";
+				command+=$"AND CCSource NOT IN({POut.Int((int)CreditCardSource.XWeb)},{POut.Int((int)CreditCardSource.XWebPortalLogin)},{POut.Int((int)CreditCardSource.XWebPaymentPortal)},{POut.Int((int)CreditCardSource.XWebPaymentPortalGuest)}) ";
 			}
 			return CountSameCard(Crud.CreditCardCrud.SelectMany(command));
 		}
@@ -762,6 +764,8 @@ namespace OpenDentBusiness{
 			}
 			if(listSources.Contains(CreditCardSource.XServer)
 				|| listSources.Contains(CreditCardSource.XWeb)
+				|| listSources.Contains(CreditCardSource.XWebPaymentPortal)
+				|| listSources.Contains(CreditCardSource.XWebPaymentPortalGuest)
 				|| listSources.Contains(CreditCardSource.XServerPayConnect)
 				|| listSources.Contains(CreditCardSource.XWebPortalLogin)
 				|| listSources.Contains(CreditCardSource.EdgeExpressCNP)
@@ -794,10 +798,7 @@ namespace OpenDentBusiness{
 			if(listSources.Contains(CreditCardSource.PayConnect) || listSources.Contains(CreditCardSource.XServerPayConnect)) {
 				command+="OR PayConnectToken!='' ";
 			}
-			if(listSources.Contains(CreditCardSource.XServer)
-				|| listSources.Contains(CreditCardSource.XWeb)
-				|| listSources.Contains(CreditCardSource.XServerPayConnect)
-				|| listSources.Contains(CreditCardSource.XWebPortalLogin))
+			if(listSources.Exists(x=>x.In(CreditCardSource.XServer, CreditCardSource.XWeb, CreditCardSource.XServerPayConnect, CreditCardSource.XWebPortalLogin,CreditCardSource.XWebPaymentPortal,CreditCardSource.XWebPaymentPortalGuest)))
 			{
 				command+="OR XChargeToken!='' ";
 			}

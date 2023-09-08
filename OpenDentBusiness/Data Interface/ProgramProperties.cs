@@ -416,6 +416,7 @@ namespace OpenDentBusiness {
 			long paymentTypeDefNum;
 			string paymentTypeDefString;
 			bool isPaymentsAllowed;
+			bool isXWeb;
 			xwebProperties=new WebTypes.Shared.XWeb.WebPaymentProperties();
 			//No need to check MiddleTierRole;no call to db.
 			//Secure arguments are held in the db.
@@ -427,10 +428,11 @@ namespace OpenDentBusiness {
 				terminalID=GetPropValFromList(listEdgeExpressProperties,PropertyDescs.EdgeExpress.TerminalID,clinicNum);
 				paymentTypeDefString=GetPropValFromList(listEdgeExpressProperties,PropertyDescs.EdgeExpress.PaymentType,clinicNum);
 				isPaymentsAllowed=PIn.Bool(GetPropValFromList(listEdgeExpressProperties,PropertyDescs.EdgeExpress.IsOnlinePaymentsEnabled,clinicNum));
+				isXWeb=false;
 			}
 			else {
 				prog=Programs.GetCur(ProgramName.Xcharge);
-				if(prog==null) {					
+				if(prog==null) {
 					throw new ODException("X-Charge program link not found.",ODException.ErrorCodes.XWebProgramProperties);
 				}
 				if(!prog.Enabled) { //EdgeExpress and XCharge not turned on.
@@ -442,17 +444,18 @@ namespace OpenDentBusiness {
 				terminalID=GetPropValFromList(listXchargeProperties,"TerminalID",clinicNum);
 				paymentTypeDefString=GetPropValFromList(listXchargeProperties,"PaymentType",clinicNum);
 				isPaymentsAllowed=PIn.Bool(GetPropValFromList(listXchargeProperties,"IsOnlinePaymentsEnabled",clinicNum));
+				isXWeb=true;
 			}
-			//Validate ALL XWebID, AuthKey, and TerminalID.  Each is required for X-Web to work.		
+			//Validate ALL XWebID, AuthKey, and TerminalID.  Each is required for X-Web to work.
 			if(string.IsNullOrEmpty(xWebID) || string.IsNullOrEmpty(authKey) || string.IsNullOrEmpty(terminalID) ||
-				!long.TryParse(paymentTypeDefString,out paymentTypeDefNum)) 
+				!long.TryParse(paymentTypeDefString,out paymentTypeDefNum))
 			{
 				throw new ODException("X-Web program properties not found.",ODException.ErrorCodes.XWebProgramProperties);
 			}
 			//XWeb ID must be 12 digits, Auth Key 32 alphanumeric characters, and Terminal ID 8 digits.
 			if(!Regex.IsMatch(xWebID,"^[0-9]{12}$")
 				||!Regex.IsMatch(authKey,"^[A-Za-z0-9]{32}$")
-				||!Regex.IsMatch(terminalID,"^[0-9]{8}$")) 
+				||!Regex.IsMatch(terminalID,"^[0-9]{8}$"))
 			{
 				throw new ODException("X-Web program properties not valid.",ODException.ErrorCodes.XWebProgramProperties);
 			}
@@ -461,6 +464,7 @@ namespace OpenDentBusiness {
 			xwebProperties.AuthKey=authKey;
 			xwebProperties.PaymentTypeDefNum=paymentTypeDefNum;
 			xwebProperties.IsPaymentsAllowed=isPaymentsAllowed;
+			xwebProperties.IsXWeb=isXWeb;
 		}
 
 		///<summary>Exception means failed. Return means success. paymentsAllowed should be check after return. If false then assume payments cannot be made for this clinic.</summary>

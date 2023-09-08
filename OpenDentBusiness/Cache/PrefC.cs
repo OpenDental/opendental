@@ -336,34 +336,44 @@ namespace OpenDentBusiness {
 
 		///<summary>Returns true if either the XCharge program or PayConnect program is enabled and at least one clinic has online payments enabled.
 		///progEnabledForPayments will return the program that is enabled for online payments if it is allowed.  Both programs cannot be enabled at the same time</summary>
-		public static bool HasOnlinePaymentEnabled(out ProgramName progEnabledForPayments) {
+		public static bool HasOnlinePaymentEnabled(out ProgramName progEnabledForPayments,bool isForMobile=false) {
 			progEnabledForPayments=ProgramName.None;
 			Program progXCharge=Programs.GetCur(ProgramName.Xcharge);
 			Program progEdgeExpress=Programs.GetCur(ProgramName.EdgeExpress);
 			Program progPayConnect=Programs.GetCur(ProgramName.PayConnect);
-			if(!progXCharge.Enabled && !progPayConnect.Enabled && !progEdgeExpress.Enabled) {
-				return false;
-			}
+			Program progCareCredit=Programs.GetCur(ProgramName.CareCredit);
+			Program progPaySimple=Programs.GetCur(ProgramName.PaySimple);
 			if(progEdgeExpress.Enabled) {
-				List<ProgramProperty> listXChargeProps=ProgramProperties.GetForProgram(progEdgeExpress.ProgramNum);
-				if(listXChargeProps.Any(x => x.PropertyDesc==ProgramProperties.PropertyDescs.EdgeExpress.IsOnlinePaymentsEnabled && x.PropertyValue=="1")) {
+				List<ProgramProperty> listEdgeExpressProps=ProgramProperties.GetForProgram(progEdgeExpress.ProgramNum);
+				if(listEdgeExpressProps.Exists(x => x.PropertyDesc==ProgramProperties.PropertyDescs.EdgeExpress.IsOnlinePaymentsEnabled && x.PropertyValue=="1")) {
 					progEnabledForPayments=ProgramName.EdgeExpress;
 					return true;
 				}
 			}
-			else if(progXCharge.Enabled) {
+			if(progXCharge.Enabled) {
 				List<ProgramProperty> listXChargeProps=ProgramProperties.GetForProgram(progXCharge.ProgramNum);
-				if(listXChargeProps.Any(x => x.PropertyDesc=="IsOnlinePaymentsEnabled" && x.PropertyValue=="1")) {
+				if(listXChargeProps.Exists(x => x.PropertyDesc=="IsOnlinePaymentsEnabled" && x.PropertyValue=="1")) {
 					progEnabledForPayments=ProgramName.Xcharge;
 					return true;
 				}
 			}
 			if(progPayConnect.Enabled) {
 				List<ProgramProperty> listPayConnectProps=ProgramProperties.GetForProgram(progPayConnect.ProgramNum);
-				if(listPayConnectProps.Any(x => x.PropertyDesc==PayConnect.ProgramProperties.PatientPortalPaymentsEnabled && x.PropertyValue=="1")) {
+				if(listPayConnectProps.Exists(x => x.PropertyDesc==PayConnect.ProgramProperties.PatientPortalPaymentsEnabled && x.PropertyValue=="1")) {
 					progEnabledForPayments=ProgramName.PayConnect;
 					return true;
 				}
+			}
+			if(progPaySimple.Enabled && !isForMobile) {
+				List<ProgramProperty> listPaySimpleProps=ProgramProperties.GetForProgram(progPaySimple.ProgramNum);
+				if (listPaySimpleProps.Exists(x => x.PropertyDesc==PaySimple.PropertyDescs.PaySimpleIsOnlinePaymentsEnabled && x.PropertyValue=="1")) {
+					progEnabledForPayments=ProgramName.PaySimple;
+					return true;
+				}
+			}
+			if(progCareCredit.Enabled && !isForMobile) {
+				progEnabledForPayments=ProgramName.CareCredit;
+				return true;
 			}
 			return false;
 		}
