@@ -112,7 +112,7 @@ namespace OpenDental {
 				}
 				if(Programs.IsEnabled(ProgramName.EdgeExpress)) {
 					if(!string.IsNullOrEmpty(creditCard.XChargeToken) 
-						&& (creditCard.CCSource==CreditCardSource.EdgeExpressCNP || creditCard.CCSource==CreditCardSource.EdgeExpressRCM)) 
+						&& (creditCard.CCSource==CreditCardSource.EdgeExpressCNP || creditCard.CCSource==CreditCardSource.EdgeExpressRCM || creditCard.CCSource==CreditCardSource.EdgeExpressPaymentPortal)) 
 					{
 						row.Cells.Add("X");
 					}

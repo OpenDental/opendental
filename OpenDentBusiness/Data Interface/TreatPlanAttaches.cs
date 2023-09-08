@@ -54,6 +54,14 @@ namespace OpenDentBusiness{
 			Crud.TreatPlanAttachCrud.Delete(treatPlanAttachNum);
 		}
 
+		///<summary>Gets one TreatPlanAttach from the db.</summary>
+		public static TreatPlanAttach GetOne(long treatPlanAttachNum){
+			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
+				return Meth.GetObject<TreatPlanAttach>(MethodBase.GetCurrentMethod(),treatPlanAttachNum);
+			}
+			return Crud.TreatPlanAttachCrud.SelectOne(treatPlanAttachNum);
+		}
+
 		///<summary></summary>
 		public static List<TreatPlanAttach> GetAllForPatNum(long patNum) {
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
@@ -134,15 +142,6 @@ namespace OpenDentBusiness{
 			string command="SELECT * FROM treatplanattach WHERE PatNum = "+POut.Long(patNum);
 			return Crud.TreatPlanAttachCrud.SelectMany(command);
 		}
-
-		///<summary>Gets one TreatPlanAttach from the db.</summary>
-		public static TreatPlanAttach GetOne(long treatPlanAttachNum){
-			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT){
-				return Meth.GetObject<TreatPlanAttach>(MethodBase.GetCurrentMethod(),treatPlanAttachNum);
-			}
-			return Crud.TreatPlanAttachCrud.SelectOne(treatPlanAttachNum);
-		}
-
 		
 		*/
 	}

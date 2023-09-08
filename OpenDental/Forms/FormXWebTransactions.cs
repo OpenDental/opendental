@@ -302,7 +302,7 @@ namespace OpenDental {
 				long patNum=PIn.Long(_tableTrans.Rows[gridMain.SelectedIndices[0]]["PatNum"].ToString());
 				string alias=_tableTrans.Rows[gridMain.SelectedIndices[0]]["Alias"].ToString();
 				List<CreditCard> listCreditCards=CreditCards.GetCardsByToken(alias,
-					new List<CreditCardSource> { CreditCardSource.XWeb, CreditCardSource.XWebPortalLogin });
+					new List<CreditCardSource> { CreditCardSource.XWeb, CreditCardSource.XWebPortalLogin, CreditCardSource.XWebPaymentPortal, CreditCardSource.XWebPaymentPortalGuest });
 				if(listCreditCards.Count==0) {
 					MsgBox.Show(this,"This credit card is no longer stored in the database. Return cannot be processed.");
 					return;

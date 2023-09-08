@@ -754,7 +754,7 @@ namespace OpenDentBusiness{
 		///<summary>239 - Logs when Appointment Types are edited. For audit trails only.</summary>
 		[Description("Appointment Type Edit")]
 		AppointmentTypeEdit,
-		///<summary>240 - Allows users to edit tendlc brand information </summary>
+		///<summary>240 - Only used at OD HQ. Allows users to make high level changes in regards to texting.</summary>
 		[Description("Texting Account Edit")]
 		TextingAccountEdit,
 		///<summary>241 - Logs when web chat sessions are edited. For audit trails only.</summary>
